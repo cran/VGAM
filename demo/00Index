@@ -1,0 +1,6 @@
+binom2.or       Bivariate logistic model
+cqo		Constrained auadratic ordination
+distributions 	Maximum likelihood estimation of some distributions
+lmsqreg 	LMS quantile regression
+vgam            Vector generalized additive models
+zipoisson       Zero inflated Poisson

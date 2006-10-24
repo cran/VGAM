@@ -1,0 +1,237 @@
+\name{gpd}
+\alias{gpd}
+%- Also NEED an '\alias' for EACH other topic documented here.
+\title{ Generalized Pareto Distribution Family Function }
+\description{
+  Maximum likelihood estimation of the 2-parameter
+  generalized  Pareto distribution (GPD).
+
+}
+\usage{
+gpd(threshold = 0, lscale = "loge", lshape = "logoff",
+    escale = list(),
+    eshape = if(lshape=="logoff") list(offset=0.5) else
+                if(lshape=="elogit") list(min=-0.5, max=0.5) else NULL,
+    percentiles = c(90, 95), iscale = NULL, ishape = NULL,
+    tshape0=0.001, method.init=1, zero = 2)
+}
+%- maybe also 'usage' for other objects documented here.
+\arguments{
+  \item{threshold}{
+  Numeric of length 1. The threshold value. 
+  Only values of the response which are greater than this value
+  are kept. The response actually worked on internally is the difference.
+  Only those observations greater than the threshold value are
+  returned in the \code{y} slot of the object.
+
+  }
+  \item{lscale}{
+  Parameter link function for the scale parameter \eqn{\sigma}{sigma}.
+  See \code{\link{Links}} for more choices.
+
+  }
+  \item{lshape}{
+  Parameter link function for the shape parameter \eqn{\xi}{xi}.
+  See \code{\link{Links}} for more choices.
+  The default constrains the parameter
+  to be greater than \eqn{-0.5} (the negative of \code{Offset}).
+  This is because if \eqn{\xi \leq -0.5}{xi <= -0.5} then Fisher
+  scoring does not work.
+  However, it can be a little more interpretable if \code{Offset=1}.
+  See the Details section below for more information.
+
+  }
+  \item{escale, eshape}{
+  Extra argument for the \code{lscale} and \code{lshape} arguments.
+  See \code{earg} in \code{\link{Links}} for general information.
+  For the shape parameter,
+  if the \code{\link{logoff}} link is chosen then the offset is
+  called \eqn{A} below; and then the second linear/additive predictor is
+  \eqn{\log(\xi+A)}{log(xi+A)} which means that
+  \eqn{\xi > -A}{xi > -A}.
+  The working weight matrices are positive definite if \eqn{A=0.5}.
+
+  }
+
+% \item{Offset}{
+% Numeric, of length 1.
+% Called \eqn{A} below.
+% Offset value if \code{lshape="logoff"}.
+% Then the second linear/additive predictor is
+% \eqn{\log(\xi+A)}{log(xi+A)} which means that
+% \eqn{\xi > -A}{xi > -A}.
+% The working weight matrices are positive definite if \code{Offset=0.5}.
+
+% }
+  \item{percentiles}{
+  Numeric vector of percentiles used
+  for the fitted values. Values should be between 0 and 100.
+  See the example below for illustration.
+  However, if \code{percentiles=NULL} then the mean
+  \eqn{\mu + \sigma / (1-\xi)}{mu + sigma / (1-xi)} is returned;
+  this is only defined if \eqn{\xi<1}{xi<1}.
+
+  }
+  \item{iscale, ishape}{
+  Numeric. Optional initial values for \eqn{\sigma}{sigma}
+  and \eqn{\xi}{xi}.
+  The default is to use \code{method.init} and compute a value internally for
+  each parameter.
+  Values of \code{ishape} should be between \eqn{-0.5} and \eqn{1}.
+  Values of \code{iscale} should be positive.
+
+  }
+% \item{rshape}{ 
+% Numeric, of length 2.
+% Range of \eqn{\xi}{xi} if \code{lshape="elogit"} is chosen.
+% The default values ensures the algorithm works (\eqn{\xi > -0.5}{xi > -0.5})
+% and the variance exists (\eqn{\xi < 0.5}{xi < 0.5}).
+
+% }
+  \item{tshape0}{
+  Positive numeric.
+  Threshold/tolerance value for resting whether \eqn{\xi}{xi} is zero.
+  If the absolute value of the estimate of \eqn{\xi}{xi} is less than
+  this value then it will be assumed zero and exponential distribution
+  derivatives etc. will be used.
+
+  }
+  \item{method.init}{
+   Method of initialization, either 1 or 2. The first is the method of
+   moments, and the second is a variant of this.  If neither work try
+   assigning values to arguments \code{ishape} and/or \code{iscale}.
+
+  }
+  \item{zero}{
+  An integer-valued vector specifying which
+  linear/additive predictors are modelled as intercepts only.
+  The value must be from the set \{1,2\} corresponding
+  respectively to \eqn{\sigma}{sigma} and \eqn{\xi}{xi}.
+  It is often a good idea for the \eqn{\sigma}{sigma} parameter only
+  to be modelled through
+  a linear combination of the explanatory variables because the
+  shape parameter is probably best left as an intercept only:
+  \code{zero=2}.
+  Setting \code{zero=NULL} means both parameters are modelled with
+  explanatory variables.
+
+  }
+}
+\details{
+  The distribution function of the GPD can be written
+    \deqn{G(y) = 1 - [1 + \xi (y-\mu) / \sigma  ]_{+}^{- 1/ \xi} }{%
+          G(y) = 1 - [1 +  xi (y-mu)/  sigma  ]_{+}^{- 1/  xi}  }
+  where
+  \eqn{\mu}{mu} is the location parameter (known with value \code{threshold}),
+  \eqn{\sigma > 0}{sigma > 0} is the scale parameter,
+    \eqn{\xi}{xi} is the shape parameter, and
+  \eqn{h_+ = \max(h,0)}{h_+ = max(h,0)}.
+  The function \eqn{1-G} is known as the \emph{survivor function}.
+  The limit \eqn{\xi \rightarrow 0}{xi --> 0}
+  gives the \emph{shifted exponential} as a special case:
+    \deqn{G(y) = 1 - \exp[-(y-\mu)/ \sigma]. }{%
+          G(y) = 1 -  exp[-(y-mu)/  sigma]. }
+  The support is \eqn{y>\mu}{y>mu} for \eqn{\xi>0}{xi>0},
+  and
+  \eqn{\mu < y <\mu-\sigma / \xi}{mu < y <mu-sigma / xi} for \eqn{\xi<0}{xi<0}.
+
+  Smith (1985) showed that if \eqn{\xi <= -0.5}{xi <= -0.5} then this
+  is known as the nonregular case and problems/difficulties can arise
+  both theoretically and numerically. For the (regular) case \eqn{\xi >
+  -0.5}{xi > -0.5} the classical asymptotic theory of maximum likelihood
+  estimators is applicable; this is the default because \code{Offset=0.5}.
+
+  Although for \eqn{\xi < -0.5}{xi < -0.5} the usual asymptotic properties
+  do not apply, the maximum likelihood estimator generally exists and
+  is superefficient for \eqn{-1 < \xi < -0.5}{-1 < xi < -0.5}, so it is
+  ``better'' than normal. To allow for \eqn{-1 < \xi < -0.5}{-1 < xi <
+  -0.5} set \code{Offset=1}.  When \eqn{\xi < -1}{xi < -1} the maximum
+  likelihood estimator generally does not exist as it effectively becomes
+  a two parameter problem.
+
+  The mean of \eqn{Y} does not exist unless \eqn{\xi < 1}{xi < 1}, and
+  the variance does not exist unless \eqn{\xi < 0.5}{xi < 0.5}.  So if
+  you want to fit a model with finite variance use \code{lshape="elogit"}.
+
+}
+\note{
+  With functions \code{\link{rgpd}}, \code{\link{dgpd}}, etc., the
+  argument \code{location} matches with the argument \code{threshold}
+  here.
+
+}
+\section{Warning}{
+  Fitting the GPD by maximum likelihood estimation can be numerically
+  fraught. If \eqn{1 + \xi (y-\mu)/ \sigma \leq 0}{1 + xi*(y-mu)/sigma <=
+  0} then some crude evasive action is taken but the estimation process
+  can still fail. This is particularly the case if \code{\link{vgam}}
+  with \code{\link{s}} is used. Then smoothing is best done with
+  \code{\link{vglm}} with regression splines (\code{\link[splines]{bs}}
+  or \code{\link[splines]{ns}}) because \code{\link{vglm}} implements
+  half-stepsizing whereas \code{\link{vgam}} doesn't. Half-stepsizing
+  helps handle the problem of straying outside the parameter space.
+
+}  
+\value{
+  An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
+  The object is used by modelling functions such as \code{\link{vglm}}
+  and \code{\link{vgam}}.
+  However, for this \pkg{VGAM} family function, \code{\link{vglm}}
+  is probably preferred over \code{\link{vgam}} when there is smoothing.
+
+}
+\references{
+  Coles, S. (2001)
+  \emph{An Introduction to Statistical Modeling of Extreme Values}.
+  London: Springer-Verlag.
+
+  Smith, R. L. (1985)
+  Maximum likelihood estimation in a class of nonregular cases.
+  \emph{Biometrika}, \bold{72}, 67--90.
+
+}
+\author{ T. W. Yee }
+
+\seealso{
+  \code{\link{rgpd}},
+  \code{\link{meplot}},
+  \code{\link{gev}},
+  \code{\link{pareto1}}.
+}
+
+\examples{
+# Simulated data from an exponential distribution (xi=0)
+y = rexp(n=3000, rate=2)
+fit = vglm(y ~ 1, gpd(threshold=0.5), trace=TRUE)
+fitted(fit)[1:5,]
+coef(fit, matrix=TRUE)   # xi should be close to 0
+Coef(fit)
+summary(fit)
+
+yt = y[y>fit@extra$threshold]  # Note the threshold is stored here
+all.equal(c(yt), c(fit@y))     # TRUE
+# Check the 90 percentile
+i = yt < fitted(fit)[1,"90\%"]
+100*table(i)/sum(table(i))   # Should be 90%
+
+# Check the 95 percentile
+i = yt < fitted(fit)[1,"95\%"]
+100*table(i)/sum(table(i))   # Should be 95%
+
+\dontrun{
+plot(yt, col="blue", las=1, main="Fitted 90\% and 95\% quantiles")
+matlines(1:length(yt), fitted(fit), lty=2:3, lwd=2)
+}
+
+
+# Another example
+nn = 2000; threshold = 0; x = runif(nn)
+xi = exp(-0.8)-0.5
+y = rgpd(nn, scale=exp(1+0.2*x), shape=xi)
+fit = vglm(y ~ x, gpd(threshold), trace=TRUE)
+Coef(fit)
+coef(fit, matrix=TRUE)
+}
+\keyword{models}
+\keyword{regression}
+

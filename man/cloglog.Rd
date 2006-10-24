@@ -1,0 +1,138 @@
+\name{cloglog}
+\alias{cloglog}
+%- Also NEED an '\alias' for EACH other topic documented here.
+\title{ Complementary Log-log Link Function }
+\description{
+  Computes the complementary log-log transformation,
+  including its inverse and the
+  first two derivatives.
+  
+}
+\usage{
+cloglog(theta, earg = list(), inverse = FALSE, deriv = 0,
+        short = TRUE, tag = FALSE)
+}
+%- maybe also 'usage' for other objects documented here.
+\arguments{
+  \item{theta}{
+    Numeric or character.
+    See below for further details.
+    
+  }
+  \item{earg}{
+  Optional list. Extra argument for passing in additional information.
+  Values of \code{theta} which are less than or equal to 0 can be
+  replaced by the \code{bvalue} component of the list \code{earg}
+  before computing the link function value.
+  Values of \code{theta} which are greater than or equal to 1 can be
+  replaced by 1 minus the \code{bvalue} component of the list \code{earg}
+  before computing the link function value.
+  The component name \code{bvalue} stands for ``boundary value''.
+  See \code{\link{Links}} for general information about \code{earg}.
+
+  }
+  \item{inverse}{
+  Logical. If \code{TRUE} the inverse function is computed.
+
+  }
+  \item{deriv}{
+  Order of the derivative. Integer with value 0, 1 or 2.
+
+  }
+  \item{short}{
+  Used for labelling the \code{blurb} slot of a
+  \code{\link{vglmff-class}} object.
+
+  }
+  \item{tag}{
+  Used for labelling the linear/additive predictor in the
+  \code{initialize} slot of a \code{\link{vglmff-class}} object.
+  Contains a little more information if \code{TRUE}.
+
+  }
+}
+\details{
+  The complementary log-log link function is commonly used for parameters
+  that lie in the unit interval.  Numerical values of \code{theta}
+  close to 0 or 1 or out of range result in \code{Inf}, \code{-Inf},
+  \code{NA} or \code{NaN}.  The arguments \code{short} and \code{tag}
+  are used only if \code{theta} is character.
+
+}
+\value{
+  For \code{deriv = 0}, the complimentary log-log of \code{theta},
+  i.e., \code{log(-log(1 - theta))} when \code{inverse = FALSE}, and if
+  \code{inverse = TRUE} then \code{1-exp(-exp(theta))},.
+
+  For \code{deriv = 1}, then the function returns
+  \emph{d} \code{theta} / \emph{d} \code{eta} as a function of \code{theta}
+  if \code{inverse = FALSE},
+  else if \code{inverse = TRUE} then it returns the reciprocal.
+
+  Here, all logarithms are natural logarithms, i.e., to base \eqn{e}.
+  
+}
+\references{
+    McCullagh, P. and Nelder, J. A. (1989)
+    \emph{Generalized Linear Models}, 2nd ed. London: Chapman & Hall.
+    
+}
+\author{ Thomas W. Yee }
+
+\note{
+  Numerical instability may occur when \code{theta} is close to 1 or 0.
+  One way of overcoming this is to use \code{earg}.
+
+  With constrained ordination (e.g., \code{\link{cqo}} and
+  \code{\link{cao}}) used with \code{\link{binomialff}}, a complementary
+  log-log link function is preferred over the default \code{\link{logit}}
+  link, for a good reason.  See the example below.
+
+  In terms of the threshold approach with cumulative probabilities for
+  an ordinal response this link function corresponds to the extreme
+  value distribution.
+
+}
+
+\seealso{ 
+    \code{\link{Links}},
+    \code{\link{logit}},
+    \code{\link{probit}},
+    \code{\link{cauchit}}.
+
+}
+\examples{
+p = seq(0.01, 0.99, by=0.01)
+cloglog(p)
+max(abs(cloglog(cloglog(p), inverse=TRUE) - p)) # Should be 0
+
+p = c(seq(-0.02, 0.02, by=0.01), seq(0.97, 1.02, by=0.01))
+cloglog(p)  # Has NAs
+cloglog(p, earg=list(bvalue= .Machine$double.eps))  # Has no NAs
+
+\dontrun{
+plot(p, logit(p), type="l", col="limegreen", ylab="transformation",
+     lwd=2, las=1, main="Some probability link functions")
+lines(p, probit(p), col="purple", lwd=2)
+lines(p, cloglog(p), col="chocolate", lwd=2)
+lines(p, cauchit(p), col="tan", lwd=2)
+abline(v=0.5, h=0, lty="dashed")
+legend(0.1, 4, c("logit", "probit", "cloglog", "cauchit"),
+       col=c("limegreen","purple","chocolate", "tan"), lwd=2)
+}
+
+# This example shows that a cloglog link is preferred over the logit
+n = 500; p = 5; S = 3; Rank = 1  # Species packing model:
+mydata = rcqo(n, p, S, EqualTol=TRUE, ESOpt=TRUE, EqualMax=TRUE,
+              family="binomial", hiabundance=5, seed=123, Rank=Rank)
+fitc = cqo(attr(mydata, "formula"), ITol=TRUE, data=mydata, 
+           fam=binomialff(mv=TRUE, link="cloglog"), Rank=Rank)
+fitl = cqo(attr(mydata, "formula"), ITol=TRUE, data=mydata, 
+           fam=binomialff(mv=TRUE, link="logit"), Rank=Rank)
+
+# Compare the fitted models (cols 1 and 3) with the truth (col 2)
+cbind(ccoef(fitc), attr(mydata, "ccoefficients"), ccoef(fitl))
+}
+\keyword{math}
+\keyword{models}
+\keyword{regression}
