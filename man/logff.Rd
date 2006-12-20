@@ -6,7 +6,7 @@
  Estimating the parameter of the logarithmic distribution.
 }
 \usage{
-logff(link = "logit", init.c = NULL)
+logff(link = "logit", earg=list(), init.c = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -14,6 +14,11 @@ logff(link = "logit", init.c = NULL)
   Parameter link function applied to the parameter \eqn{c},
   which lies between 0 and 1.
   See \code{\link{Links}} for more choices.
+
+  }
+  \item{earg}{
+  List. Extra argument for the link.
+  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{init.c}{

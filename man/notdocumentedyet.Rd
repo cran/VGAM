@@ -93,8 +93,8 @@
 \alias{dimm}
 % \alias{dneg.binomial}
 \alias{dnorm2}
-% \alias{dotC}
-% \alias{dotFortran}
+\alias{dotC}
+\alias{dotFortran}
 % \alias{dpsi.dlambda.yjn}
 % \alias{drop1.vgam}
 % \alias{drop1.vglm}
@@ -117,7 +117,6 @@
 \alias{fitted.values}
 \alias{fitted.values.uqo}
 \alias{fittedvsmooth.spline}
-\alias{fsqrt}
 \alias{gammaff}
 % \alias{get.arg}
 % \alias{get.rrvglm.se1}
@@ -133,8 +132,8 @@
 % \alias{gleg.weight.yjn.12}
 % \alias{gleg.weight.yjn.13}
 \alias{glm}
-\alias{hyper.secant}
-% \alias{hyper.secant.1}
+% \alias{hypersecant}
+% \alias{hypersecant.1}
 % \alias{ima}
 % \alias{interleave.VGAM}
 \alias{invbinomial}
@@ -163,7 +162,7 @@
 \alias{m2adefault}
 \alias{m2avglm}
 % \alias{matrix.power}
-% \alias{mbesselI0}
+\alias{mbesselI0}
 \alias{model.matrix.qrrvglm}
 % \alias{mux11}
 % \alias{mux111}
@@ -184,6 +183,7 @@
 % \alias{negbin.ab}
 % \alias{new.assign}
 \alias{nlminbcontrol}
+\alias{nbolf2}
 \alias{ns}
 % \alias{num.deriv.rrr}
 \alias{persp}
@@ -196,7 +196,6 @@
 \alias{pnorm2}
 % \alias{poissonqn}
 \alias{poly}
-\alias{powl}
 \alias{predict}
 \alias{predict.cao}
 \alias{predict.glm}
@@ -375,6 +374,8 @@
 \alias{vlmsmall-class}
 \alias{vsmooth.spline-class}
 \alias{vsmooth.spline.fit-class}
+\alias{Coef.cao-class}
+\alias{summary.cao-class}
 %
 %
 %- Also NEED an '\alias' for EACH other topic documented here.

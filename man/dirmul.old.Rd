@@ -7,7 +7,8 @@
   non-negative integers.
 }
 \usage{
-dirmul.old(link = "loge", init.alpha = 0.01, parallel = FALSE, zero = NULL)
+dirmul.old(link = "loge", earg = list(),
+           init.alpha = 0.01, parallel = FALSE, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -16,6 +17,11 @@ dirmul.old(link = "loge", init.alpha = 0.01, parallel = FALSE, zero = NULL)
   shape parameters \eqn{\alpha_j}{alpha_j} for \eqn{j=1,\ldots,M}. 
   See \code{\link{Links}} for more choices.
   Here, \eqn{M} is the number of columns of the response matrix.
+
+  }
+  \item{earg}{
+  List. Extra argument for \code{link}.
+  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{init.alpha}{

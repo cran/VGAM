@@ -4,7 +4,7 @@
 \title{Link functions for VGLM/VGAM/etc. families}
 \description{
   The \pkg{VGAM} package provides a number of (parameter) link functions
-  which are described in general here. Collectively they offer the user
+  which are described in general here. Collectively, they offer the user
   considerable flexibility for modelling data.
 
 }
@@ -13,8 +13,11 @@ TypicalVGAMlinkFunction(theta, earg=list(), inverse=FALSE,
                         deriv=0, short=TRUE, tag=FALSE)
 }
 \arguments{
-  All \pkg{VGAM} link functions have the same argument list as given
-  above.  In the following we have \eqn{\eta=g(\theta)}{eta=g(theta)}
+  Almost all \pkg{VGAM} link functions have something similar to
+  the argument list as given above.
+  That is, there is a matching \code{earg} for each \code{link}
+  argument.
+  In the following we have \eqn{\eta=g(\theta)}{eta=g(theta)}
   where \eqn{g} is the link function, \eqn{\theta}{theta} is the parameter
   and \eqn{\eta}{eta} is the linear/additive predictor.
 
@@ -33,6 +36,16 @@ TypicalVGAMlinkFunction(theta, earg=list(), inverse=FALSE,
   contain the offset value.  The argument \code{earg} is
   always a list with \emph{named} components. See each specific link
   function to find the component names for the list.
+
+  Almost all \pkg{VGAM} family functions with a single link
+  function have an argument (often called \code{earg}) which will
+  allow parameters to be inputted for that link function.
+  For \pkg{VGAM} family functions with more than one link
+  function there usually will be an \code{earg}-type argument for
+  each link. For example, if there are two links called
+  \code{lshape} and \code{lscale} then 
+  the \code{earg}-type arguments for these might be called
+  \code{eshape} and \code{escale}, say.
 
   }
   \item{inverse}{
@@ -88,7 +101,7 @@ TypicalVGAMlinkFunction(theta, earg=list(), inverse=FALSE,
   \code{\link{cloglog}},
   \code{\link{cauchit}},
   \code{\link{loglog}},
-  \code{fsqrt},
+  \code{\link{fsqrt}},
   \code{\link{logc}},
   \code{\link{golf}},
   \code{\link{polf}},
@@ -97,7 +110,7 @@ TypicalVGAMlinkFunction(theta, earg=list(), inverse=FALSE,
   For positive parameters (i.e., greater than 0):
   \code{\link{loge}},
   \code{\link{nloge}},
-  \code{powl}.
+  \code{\link{powl}}.
 
   For parameters greater than 1:
   \code{\link{loglog}}.
@@ -158,8 +171,8 @@ logit("a")
 logit("a", short=FALSE)
 logit("a", short=FALSE, tag=TRUE)
 
-logoff(2:5, earg=list(offset=1))  # Same as log(2:5 + 1)
-powl(2:5, earg=list(power=2))     # Same as (2:5)^2
+logoff(1:5, earg=list(offset=1))  # Same as log(1:5 + 1)
+powl(1:5, earg=list(power=2))     # Same as (1:5)^2
 
 data(hunua)
 fit1 = vgam(agaaus ~ altitude, binomialff(link=cloglog), hunua)    # ok
@@ -168,6 +181,18 @@ fit2 = vgam(agaaus ~ altitude, binomialff(link="cloglog"), hunua)  # ok
 \dontrun{
 # This no longer works since "clog" is not a valid VGAM link function:
 fit3 = vgam(agaaus ~ altitude, binomialff(link="clog"), hunua) # not ok
+
+
+# No matter what the link is the estimated var-cov matrix is the same
+y = rbeta(n=1000, shape1=exp(0), shape2=exp(1))
+fit1 = vglm(y ~ 1, betaff(link="identity"), trace = TRUE, crit="c")
+fit2 = vglm(y ~ 1, betaff(link=logoff, earg=list(offset=1.1)),
+            trace = TRUE, crit="c")
+vcov(fit1, untran=TRUE)
+vcov(fit1, untran=TRUE)-vcov(fit2, untran=TRUE)  # Should be all 0s
+fit1@misc$earg   # No 'special' parameters
+fit2@misc$earg   # Some 'special' parameters are here
+
 
 par(mfrow=c(2,2))
 p = seq(0.01, 0.99, len=200)

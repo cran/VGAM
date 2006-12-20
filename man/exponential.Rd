@@ -7,13 +7,18 @@
 
 }
 \usage{
-exponential(link = "loge", location = 0, expected = TRUE, earg = NULL)
+exponential(link = "loge", earg = list(), location = 0, expected = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{link}{
   Parameter link function applied to the positive parameter \eqn{rate}.
   See \code{\link{Links}} for more choices.
+
+  }
+  \item{earg}{
+  List. Extra argument for the link.
+  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{location}{
@@ -23,11 +28,6 @@ exponential(link = "loge", location = 0, expected = TRUE, earg = NULL)
   \item{expected}{
   Logical. If \code{TRUE} Fisher scoring is used,
   otherwise Newton-Raphson. The latter is usually faster.
-
-  }
-  \item{earg}{
-  Extra argument for the \pkg{VGAM} link function.
-  See \code{\link{Links}} for more details.
 
   }
 

@@ -142,9 +142,9 @@ predict.vlm <- function(object, newdata=NULL, type=c("response","terms"),
             attr(X, "assign") = as.save  # Restored 
         }
 
-        offset <- if (!is.null(off.num<-attr(tt,"offset")))
+        offset <- if (!is.null(off.num<-attr(tt,"offset"))) {
             eval(attr(tt,"variables")[[off.num+1]], newdata)
-        else if (!is.null(object@offset))
+        } else if (!is.null(object@offset))
             eval(object@call$offset, newdata)
 
         if(is.smart(object) && length(object@smart.prediction)) {
@@ -246,12 +246,13 @@ predict.vlm <- function(object, newdata=NULL, type=c("response","terms"),
         constant <- attr(pred, "constant")
 
 
-    if(length(offset) && any(offset != 0))
+    if(type != "terms" && length(offset) && any(offset != 0)) {
         if(se.fit) {
             pred$fitted.values <- pred$fitted.values + offset
         } else {
             pred <- pred + offset
         }
+    }
 
     if(type == "terms") {
         Blist <- subconstraints(object@misc$orig.assign, object@constraints)

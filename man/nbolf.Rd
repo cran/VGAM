@@ -24,6 +24,7 @@ nbolf(theta, earg = stop("'earg' must be given"), inverse = FALSE,
   and \code{k}. Here, \code{k} is the \eqn{k} parameter associated
   with the negative binomial distribution; see 
   \code{\link{negbinomial}}.
+  The cutpoints should be non-negative integers.
   If \code{nbolf()} is used as the link function in
   \code{\link{cumulative}} then one should choose
   \code{reverse=TRUE, parallel=TRUE, intercept.apply=TRUE}.
@@ -69,7 +70,7 @@ nbolf(theta, earg = stop("'earg' must be given"), inverse = FALSE,
 }
 \references{
   Yee, T. W. (2006)
-  \emph{Link functions for ordinal count data}, 
+  \emph{Ordinal ordination with normalizing link functions for count data}, 
   (submitted for publication).
 
 }
@@ -100,15 +101,16 @@ nbolf(theta, earg = stop("'earg' must be given"), inverse = FALSE,
   \code{\link{negbinomial}},
   \code{\link{polf}},
   \code{\link{golf}},
+  \code{nbolf2},
   \code{\link{cumulative}}.
 
 }
 \examples{
-nbolf("prob", short=FALSE)
-nbolf("prob", tag=TRUE)
+earg = list(cutpoint=2, k=1)
+nbolf("p", earg=earg, short=FALSE)
+nbolf("p", earg=earg, tag=TRUE)
 
 p = seq(0.02, 0.98, by=0.01)
-earg = list(cutpoint=2, k=1)
 y = nbolf(p, earg=earg)
 y. = nbolf(p, earg=earg, deriv=1)
 max(abs(nbolf(y, earg=earg, inv=TRUE) - p)) # Should be 0

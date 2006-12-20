@@ -8,7 +8,8 @@
 
 }
 \usage{
-dcnormal1(r1 = 0, r2 = 0, link.sd = "loge", isd = NULL, zero = NULL)
+dcnormal1(r1 = 0, r2 = 0, link.sd = "loge",
+          earg=list(), isd = NULL, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -20,6 +21,11 @@ dcnormal1(r1 = 0, r2 = 0, link.sd = "loge", isd = NULL, zero = NULL)
   Parameter link function applied to the standard deviation.
   See \code{\link{Links}} for more choices.
   Being a positive quantity, a log link is the default.
+
+  }
+  \item{earg}{
+  List. Extra argument for the link.
+  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{isd}{

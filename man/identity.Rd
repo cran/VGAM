@@ -88,8 +88,8 @@ nidentity(theta, earg = list(), inverse = FALSE, deriv = 0,
   \code{\link{loge}},
   \code{\link{logit}},
   \code{\link{probit}},
-  \code{powl}.
- }
+  \code{\link{powl}}.
+}
 \examples{
 identity((-5):5) 
 identity((-5):5, deriv=1)

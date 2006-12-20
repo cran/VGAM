@@ -8,6 +8,7 @@
 }
 \usage{
 lomax(link.scale = "loge", link.q = "loge",
+      earg.scale=list(), earg.q=list(),
       init.scale = NULL, init.q = 1, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -16,6 +17,11 @@ lomax(link.scale = "loge", link.q = "loge",
   Parameter link function applied to the
   (positive) parameters \code{scale} and \code{q}.
   See \code{\link{Links}} for more choices.
+
+  }
+  \item{earg.scale, earg.q}{
+  List. Extra argument for each of the links.
+  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{init.scale, init.q}{

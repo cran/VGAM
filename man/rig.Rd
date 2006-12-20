@@ -8,7 +8,8 @@
 
 }
 \usage{
-rig(lmu = "identity", llambda = "loge", imu = NULL, ilambda = 1)
+rig(lmu = "identity", llambda = "loge",
+    emu=list(), elambda=list(), imu = NULL, ilambda = 1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -20,6 +21,11 @@ rig(lmu = "identity", llambda = "loge", imu = NULL, ilambda = 1)
   \item{imu, ilambda}{
   Initial values for \code{mu} and \code{lambda}.
   A \code{NULL} means a value is computed internally.
+
+  }
+  \item{emu, elambda}{
+  List. Extra argument for each of the links.
+  See \code{earg} in \code{\link{Links}} for general information.
 
   }
 }

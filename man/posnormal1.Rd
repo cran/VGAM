@@ -7,6 +7,7 @@
 }
 \usage{
 posnormal1(lmean="identity", lsd="loge",
+           emean=list(), esd=list(),
            imean=NULL, isd=NULL, zero=NULL)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -16,6 +17,11 @@ posnormal1(lmean="identity", lsd="loge",
   deviation parameters of the usual univariate normal distribution.
   They are \eqn{\mu}{mu} and \eqn{\sigma}{sigma} respectively.
   See \code{\link{Links}} for more choices.
+
+  }
+  \item{emean, esd}{
+  List. Extra argument for each of the links.
+  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{imean, isd}{

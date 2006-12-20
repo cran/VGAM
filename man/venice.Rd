@@ -12,15 +12,8 @@
   \describe{
     \item{year}{a numeric vector. }
     \item{r1}{a numeric vector; the highest recorded value. }
-    \item{r2}{a numeric vector; the second highest recorded value. }
-    \item{r3}{a numeric vector; the third highest recorded value. }
-    \item{r4}{a numeric vector; the fourth highest recorded value. }
-    \item{r5}{a numeric vector; the fifth highest recorded value. }
-    \item{r6}{a numeric vector; the sixth highest recorded value. }
-    \item{r7}{a numeric vector; the seventh highest recorded value. }
-    \item{r8}{a numeric vector; the eighth highest recorded value. }
-    \item{r9}{a numeric vector; the ninth highest recorded value. }
-    \item{r10}{a numeric vector; the tenth highest recorded value. }
+    \item{r2,r3,r4,r5,r6,r7,r8,r9,r10}{numeric vectors; the second highest recorded value
+     down to the tenth highest recorded value. }
   }
 }
 \details{

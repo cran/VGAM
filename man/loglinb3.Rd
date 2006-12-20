@@ -18,16 +18,21 @@ loglinb3(exchangeable = FALSE, zero = NULL)
 }
 \details{
   The model is \eqn{P(Y_1=y_1,Y_2=y_2,Y_3=y_3) =}{P(Y1=y1,Y2=y2,Y3=y3) =}
-  \deqn{\exp(u_0+u_1 y_1+u_2 y_2+u_3 y_3+u_{12} y_1 y_2+u_{12} y_1 y_2+
-    u_{13} y_1 y_3+u_{23} y_2 y_3)}{%
-    exp(u0 + u1*y1 + u2*y2 + u3*y3 + u12*y1*y2 + u13*y1*y3+ u23*y2*y3)}
+  \deqn{\exp(u_0+u_1 y_1+u_2 y_2+u_3 y_3+u_{12} y_1 y_2+
+        u_{13} y_1 y_3+u_{23} y_2 y_3)}{%
+        exp(u0 + u1*y1 + u2*y2 + u3*y3 + u12*y1*y2 + u13*y1*y3+ u23*y2*y3)}
   where \eqn{y_1}{y1}, \eqn{y_2}{y2} and \eqn{y_3}{y3} are 0 or 1,
   and the parameters are \eqn{u_1}{u1}, \eqn{u_2}{u2}, \eqn{u_3}{u3},
   \eqn{u_{12}}{u12}, \eqn{u_{13}}{u13}, \eqn{u_{23}}{u23}.  The
   normalizing parameter \eqn{u_0}{u0} can be expressed as a function of
   the other parameters. Note that a third-order association parameter,
-  \eqn{u_{123}}{u123} for the produce \eqn{y_1 y_2 y_3}{y1*y2*y3},
+  \eqn{u_{123}}{u123} for the product \eqn{y_1 y_2 y_3}{y1*y2*y3},
   is assumed to be zero for this family function.
+
+  The linear/additive predictors are
+  \eqn{(\eta_1,\eta_2,\ldots,\eta_6)^T =
+       (u_1,u_2,u_3,u_{12},u_{13},u_{23})^T}{(eta1,eta2,...,eta6) =
+       (u1,u2,u3,u12,u13,u23)}.
 
 }
 

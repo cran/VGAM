@@ -9,17 +9,24 @@
 }
 \usage{
 benini(y0=stop("argument \"y0\" must be specified"),
-       lshape="loge", ishape=NULL, method.init=1)
+       lshape="loge", earg=list(), ishape=NULL, method.init=1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{y0}{ Positive scale parameter. 
+  \item{y0}{
+  Positive scale parameter. 
+
   }
   \item{lshape}{
   Parameter link function applied to the parameter \eqn{b},
   which is the shape parameter.
   See \code{\link{Links}} for more choices.
   A log link is the default because \eqn{b} is positive.
+
+  }
+  \item{earg}{
+  List. Extra argument for the link.
+  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{ishape}{

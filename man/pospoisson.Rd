@@ -6,7 +6,7 @@
   Fits a positive Poisson distribution.
 }
 \usage{
-pospoisson(link = "loge")
+pospoisson(link = "loge", earg=list())
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -14,6 +14,11 @@ pospoisson(link = "loge")
   Link function for the usual mean (lambda) parameter of
   an ordinary Poisson distribution.
   See \code{\link{Links}} for more choices.
+
+  }
+  \item{earg}{
+  List. Extra argument for the link.
+  See \code{earg} in \code{\link{Links}} for general information.
 
   }
 }

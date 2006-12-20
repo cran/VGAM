@@ -25,6 +25,7 @@ golf(theta, earg = list(lambda = 1), inverse = FALSE, deriv = 0,
   in \code{\link{gamma2}}.
   A component in the list called \code{cutpoint} is optional; if omitted
   then \code{cutpoint} is ignored from the GOLF definition.
+  If given, the cutpoints should be non-negative integers.
   If \code{golf()} is used as the link function in
   \code{\link{cumulative}} then, if the cutpoints are known, then
   one should choose
@@ -73,7 +74,7 @@ golf(theta, earg = list(lambda = 1), inverse = FALSE, deriv = 0,
 }
 \references{
   Yee, T. W. (2006)
-  \emph{Link functions for ordinal count data}, 
+  \emph{Ordinal ordination with normalizing link functions for count data}, 
   (submitted for publication).
 
 }
@@ -108,11 +109,11 @@ golf(theta, earg = list(lambda = 1), inverse = FALSE, deriv = 0,
 
 }
 \examples{
-golf("prob", short=FALSE)
-golf("prob", tag=TRUE)
+earg = list(lambda=1)
+golf("p", earg=earg, short=FALSE)
+golf("p", earg=earg, tag=TRUE)
 
 p = seq(0.02, 0.98, len=201)
-earg = list(lambda=1)
 y = golf(p, earg=earg)
 y. = golf(p, earg=earg, deriv=1)
 max(abs(golf(y, earg=earg, inv=TRUE) - p)) # Should be 0
@@ -137,6 +138,7 @@ y1 = rgamma(nn, shape=lambda, scale=mymu/lambda)
 cutpoints = c(-Inf, 10, 20, Inf)
 cuty = Cut(y1, breaks=cutpoints)
 \dontrun{
+par(mfrow=c(1,1), las=1)
 plot(x2, x3, col=cuty, pch=as.character(cuty))
 }
 table(cuty) / sum(table(cuty))

@@ -122,6 +122,11 @@ contains further information and examples.
   walking, etc.  For other details about the \code{xij} argument see
   \code{\link{vglm.control}} and \code{\link{fill}}.
 
+  The \code{\link[nnet]{multinom}} function in the \pkg{nnet} package
+  uses the first level of the factor as baseline, whereas the last
+  level of the factor is used here. Consequently the estimated 
+  regression coefficients differ.
+
 }
 
 % In the future, this family function may be renamed to

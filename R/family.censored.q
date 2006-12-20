@@ -115,8 +115,9 @@ cnormal1 = function(lmu="identity", lsd="loge", imethod=1, zero=2)
         if(any(extra$rightcensored & extra$leftcensored))
             stop("some observations are both right and left censored!")
 
-        predictors.names = c(namesof("mu", .lmu, tag= FALSE),
-                             namesof("sd", .lsd, tag= FALSE))
+        predictors.names = 
+        c(namesof("mu", .lmu, tag= FALSE),
+          namesof("sd", .lsd, tag= FALSE))
         if(!length(etastart)) {
             anyc = extra$leftcensored | extra$rightcensored
             i11 = if( .imethod == 1) anyc else FALSE  # can be all data
@@ -231,54 +232,58 @@ cnormal1 = function(lmu="identity", lsd="loge", imethod=1, zero=2)
 
 
 
-crayleigh = function(link="loge", expected=FALSE) {
+crayleigh = function(link="loge", earg = list(), expected=FALSE) {
     if(mode(link) != "character" && mode(link) != "name")
         link = as.character(substitute(link))
     if(!is.logical(expected) || length(expected) != 1)
         stop("bad input for argument \"expected\"")
+    if(!is.list(earg)) earg = list()
 
     new("vglmff",
     blurb=c("Censored Rayleigh distribution",
             "f(y) = y*exp(-0.5*(y/a)^2)/a^2, y>0, a>0\n",
             "Link:    ",
-            namesof("a", link), "\n", "\n",
+            namesof("a", link, earg= earg ), "\n", "\n",
             "Mean:    a * sqrt(pi / 2)"),
     initialize=eval(substitute(expression({
+        if(ncol(cbind(y)) != 1)
+            stop("response must be a vector or a one-column matrix")
         if(length(extra$leftcensored)) stop("cannot handle left-censored data")
         if(!length(extra$rightcensored)) extra$rightcensored = rep(FALSE, len=n)
-        predictors.names = namesof("a", .link, tag= FALSE) 
+        predictors.names = namesof("a", .link, earg= .earg, tag= FALSE) 
         if(!length(etastart)) {
             a.init = (y+1/8) / sqrt(pi/2)
-            etastart = theta2eta(a.init, .link)
+            etastart = theta2eta(a.init, .link, earg= .earg )
         }
-    }), list( .link=link ))),
+    }), list( .link=link, .earg=earg ))),
     inverse=eval(substitute(function(eta, extra=NULL) {
-        a = eta2theta(eta, .link)
+        a = eta2theta(eta, .link, earg= .earg )
         a * sqrt(pi/2)
-    }, list( .link=link ))),
+    }, list( .link=link, .earg=earg ))),
     last=eval(substitute(expression({
         misc$link = c("a"= .link)
+        misc$earg = list(a= .earg)
         misc$expected = .expected
-    }), list( .link=link, .expected=expected ))),
+    }), list( .link=link, .earg=earg, .expected=expected ))),
     loglikelihood=eval(substitute(
         function(mu,y,w,residuals= FALSE,eta, extra=NULL) {
-        a = eta2theta(eta, .link)
+        a = eta2theta(eta, .link, earg= .earg )
         cen0 = !extra$rightcensored   # uncensored obsns
         cenU = extra$rightcensored
         if(residuals) stop("loglikelihood residuals not implemented yet") else
         sum(w[cen0]*(log(y[cen0]) - 2*log(a[cen0]) - 0.5*(y[cen0]/a[cen0])^2)) -
         0.5 * sum(w[cenU] * (y[cenU]/a[cenU])^2)
-    }, list( .link=link ))),
+    }, list( .link=link, .earg=earg ))),
     vfamily=c("crayleigh"),
     deriv=eval(substitute(expression({
         cen0 = !extra$rightcensored   # uncensored obsns
         cenU = extra$rightcensored
-        a = eta2theta(eta, .link)
+        a = eta2theta(eta, .link, earg= .earg )
         dl.da = ((y/a)^2 - 2) / a
-        da.deta = dtheta.deta(a, .link) 
+        da.deta = dtheta.deta(a, .link, earg= .earg )
         dl.da[cenU] = y[cenU]^2 / a[cenU]^3
         w * dl.da * da.deta
-    }), list( .link=link ))),
+    }), list( .link=link, .earg=earg ))),
     weight=eval(substitute(expression({
         ed2l.da2 = 4 / a^2
         wz = da.deta^2 * ed2l.da2
@@ -287,11 +292,11 @@ crayleigh = function(link="loge", expected=FALSE) {
             wz[cenU] = (da.deta[cenU])^2 * ed2l.da2[cenU]
         } else {
             d2l.da2 = 3 * (y[cenU])^2 / (a[cenU])^4
-            d2a.deta2 = d2theta.deta2(a[cenU], .link)
+            d2a.deta2 = d2theta.deta2(a[cenU], .link, earg= .earg )
             wz[cenU] = (da.deta[cenU])^2 * d2l.da2 - dl.da[cenU] * d2a.deta2
         }
         w * wz
-    }), list( .link=link, .expected=expected ))))
+    }), list( .link=link, .earg=earg, .expected=expected ))))
 }
 
 
@@ -333,8 +338,9 @@ weibull = function(lshape="logoff", lscale="loge",
         if(any(extra$rightcensored & extra$leftcensored))
             stop("some observations are both right and left censored!")
 
-        predictors.names = c(namesof("shape", .lshape, earg= .eshape, tag=FALSE),
-                             namesof("scale", .lscale, earg= .escale, tag=FALSE))
+        predictors.names =
+        c(namesof("shape", .lshape, earg= .eshape, tag=FALSE),
+          namesof("scale", .lscale, earg= .escale, tag=FALSE))
         if(!length(.ishape) || !length(.iscale)) {
             anyc = extra$leftcensored | extra$rightcensored
             i11 = if( .imethod == 1) anyc else FALSE  # can be all data

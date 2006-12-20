@@ -105,13 +105,11 @@ about how much information the parameters contain.
 }
 
 \examples{
-\dontrun{
 set.seed(123)
-n = 100
-x1 = rnorm(n)
-x2 = rnorm(n)
+x2 = rnorm(n <- 100)
 x3 = rnorm(n)
-lv1 = 0 + x2 - 2*x3
+x4 = rnorm(n)
+lv1 = 0 + x3 - 2*x4
 lambda1 = exp(3 - 0.5 * (lv1-0)^2)
 lambda2 = exp(2 - 0.5 * (lv1-1)^2)
 lambda3 = exp(2 - 0.5 * ((lv1+4)/2)^2) # Unequal tolerances
@@ -119,11 +117,12 @@ y1 = rpois(n, lambda1)
 y2 = rpois(n, lambda2)
 y3 = rpois(n, lambda3)
 set.seed(111)
-p1 = cqo(cbind(y1,y2,y3) ~ x1 + x2 + x3, poissonff, trace=FALSE)
+p1 = cqo(cbind(y1,y2,y3) ~ x2 + x3 + x4, poissonff, trace=FALSE)
+\dontrun{
 lvplot(p1, y=TRUE, lcol=1:3, pch=1:3, pcol=1:3)
+}
 Coef(p1)
 print(Coef(p1), digits=3)
-}
 }
 \keyword{models}
 \keyword{regression}

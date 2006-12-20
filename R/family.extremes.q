@@ -56,9 +56,10 @@ gev <- function(llocation="identity",
         constraints = cm.zero.vgam(constraints, x, .zero, M)
     }), list( .zero=zero ))),
     initialize=eval(substitute(expression({
-        predictors.names = c(namesof("location", .llocation, earg= .elocation, short=TRUE),
-                             namesof("scale", .lscale, earg= .escale, short=TRUE),
-                             namesof("shape", .lshape, earg= .eshape, short=TRUE))
+        predictors.names = 
+        c(namesof("location", .llocation, earg= .elocation, short=TRUE),
+          namesof("scale", .lscale, earg= .escale, short=TRUE),
+          namesof("shape", .lshape, earg= .eshape, short=TRUE))
         y = as.matrix(y)
         if(ncol(y) > 1)
             y = -t(apply(-y, 1, sort, na.last=TRUE))
@@ -650,8 +651,9 @@ gumbel <- function(llocation="identity",
         constraints = cm.zero.vgam(constraints, x, .zero, M)
     }), list( .zero=zero ))),
     initialize=eval(substitute(expression({
-        predictors.names = c(namesof("location", .llocation, earg= .elocation, short=TRUE),
-                             namesof("scale", .lscale, earg= .escale , short=TRUE))
+        predictors.names = 
+        c(namesof("location", .llocation, earg= .elocation, short=TRUE),
+          namesof("scale", .lscale, earg= .escale , short=TRUE))
         y = as.matrix(y)
         if(ncol(y) > 1)
         y = if(is.R()) -t(apply(-y,1,sort, na.last = TRUE)) else {
@@ -932,8 +934,9 @@ gpd = function(threshold=0,
         extra$threshold = .threshold
         w = w[keep] # -> origw
         n = length(w)
-        predictors.names= c(namesof("scale", .lscale, earg= .escale, short=TRUE),
-                            namesof("shape", .lshape, earg= .eshape, short=TRUE ))
+        predictors.names=
+        c(namesof("scale", .lscale, earg= .escale, short=TRUE),
+          namesof("shape", .lshape, earg= .eshape, short=TRUE ))
         if(!length(etastart)) {
             meany = mean(y)
             vary = var(y)
@@ -1157,9 +1160,12 @@ bvevd.log.qn <- function(lscale="loge",
     initialize=eval(substitute(expression({
         M = if(is.matrix(y)) ncol(y) else 1
         if(M != 1) stop("response must be a vector or a one-column matrix")
-        predictors.names = c("loc1", namesof("scale1", lscale), "shape1",  
-                             "loc2", namesof("scale2", lscale), "shape2",
-                             namesof("dep", ldep))
+        predictors.names =
+        c("loc1",
+          namesof("scale1", lscale), "shape1",
+          "loc2",
+          namesof("scale2", lscale), "shape2",
+          namesof("dep", ldep))
         if(!length(etastart)) {
             etastart <- theta2eta(mu, link=.link)
         }
@@ -1350,8 +1356,9 @@ egumbel = function(llocation="identity",
             stop("Use gumbel() to handle multivariate responses")
         if(min(y) <= 0)
             stop("all response values must be positive")
-        predictors.names = c(namesof("location", .llocation, earg= .elocation, tag= FALSE),
-                             namesof("scale", .lscale, earg= .escale , tag= FALSE))
+        predictors.names =
+        c(namesof("location", .llocation, earg= .elocation, tag= FALSE),
+          namesof("scale", .lscale, earg= .escale , tag= FALSE))
 
         extra$R = .R
         extra$mpv = .mpv
@@ -1486,8 +1493,8 @@ cgumbel = function(llocation="identity",
             stop("some observations are both right and left censored!")
 
         predictors.names =
-            c(namesof("location", .llocation, earg= .elocation, tag= FALSE),
-              namesof("scale", .lscale, earg= .escale , tag= FALSE))
+        c(namesof("location", .llocation, earg= .elocation, tag= FALSE),
+          namesof("scale", .lscale, earg= .escale , tag= FALSE))
         if(!length(etastart)) {
             sc.init =  if(is.Numeric( .iscale, posit=TRUE)) 
                            .iscale else 1.1 * sqrt(var(y) * 6 ) / pi
@@ -1675,8 +1682,9 @@ frechet2 = function(location=0,
         constraints <- cm.zero.vgam(constraints, x, .zero, M)
     }), list( .zero=zero ))),
     initialize=eval(substitute(expression({
-        predictors.names = c(namesof("scale", .lscale, earg=.escale, short=TRUE),
-                             namesof("shape", .lshape, earg=.eshape, short=TRUE))
+        predictors.names =
+        c(namesof("scale", .lscale, earg=.escale, short=TRUE),
+          namesof("shape", .lshape, earg=.eshape, short=TRUE))
         extra$location = rep( .location, len=n) # stored here
         if(!length(etastart)) {
             # Initial values for limiting case as xi --> 0, r_i==1
@@ -2112,13 +2120,14 @@ exbilogi <- function(zero=c(3,6,7),
         constraints = cm.zero.vgam(constraints, x, .zero, M)
     }), list( .zero=zero ))),
     initialize=eval(substitute(expression({
-        predictors.names = c(namesof("loc1",  .llocation,  short=TRUE),
-                      namesof("scale1",  .lscale,  short=TRUE),
-                      namesof("shape1",  .lshape,  short=TRUE),
-                      namesof("loc2",  .llocation,  short=TRUE),
-                      namesof("scale2",  .lscale,  short=TRUE),
-                      namesof("shape2",  .lshape,  short=TRUE),
-                      namesof("dependency",  .ldependency,  short=TRUE))
+        predictors.names = c(
+        namesof("loc1",  .llocation,  short=TRUE),
+        namesof("scale1",  .lscale,  short=TRUE),
+        namesof("shape1",  .lshape,  short=TRUE),
+        namesof("loc2",  .llocation,  short=TRUE),
+        namesof("scale2",  .lscale,  short=TRUE),
+        namesof("shape2",  .lshape,  short=TRUE),
+        namesof("dependency",  .ldependency,  short=TRUE))
         if(ncol(as.matrix(y)) != 2)
             stop("the response must be a two-column matrix")
 

@@ -187,10 +187,13 @@ rcqo(n, p, S, Rank = 1,
     
   }
   \item{seed}{
-    Optionally, a single value, interpreted as an integer.
     If given, it is passed into \code{\link[base:Random]{set.seed}}.
     This argument can be used to obtain reproducible results.
-    
+    If set, the value is saved as the \code{"seed"}
+    attribute of the returned value. The default will
+    not change the random generator state, and return
+    \code{\link[base:Random]{.Random.seed}} as \code{"seed"} attribute.
+
   }
   \item{Crow1positive}{
     See \code{\link{qrrvglm.control}} for details.
@@ -288,7 +291,7 @@ rcqo(n, p, S, Rank = 1,
   \code{"family"}, \code{"Rank"},
   \code{"loabundance"}, \code{"hiabundance"},
   \code{"EqualTolerances"}, \code{"EqualMaxima"},
-  \code{"seed"}, as inputted.
+  \code{"seed"} as used.
 
 }
 \references{

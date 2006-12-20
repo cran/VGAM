@@ -9,6 +9,7 @@
 }
 \usage{
 mix2poisson(lphi = "logit", llambda = "loge",
+            ephi=list(), el1=list(), el2=list(),
             iphi = 0.5, il1 = NULL, il2 = NULL,
             qmu = c(0.2, 0.8), zero = 1)
 }
@@ -23,6 +24,11 @@ mix2poisson(lphi = "logit", llambda = "loge",
   \item{llambda}{
     Link function applied to each \eqn{\lambda}{lambda} parameter.
     See \code{\link{Links}} for more choices.
+
+  }
+  \item{ephi, el1, el2}{
+  List. Extra argument for each of the links.
+  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{iphi}{
@@ -89,6 +95,8 @@ mix2poisson(lphi = "logit", llambda = "loge",
   In particular, results based on the weight matrices (e.g., from
   \code{vcov} and \code{summary}) may be quite incorrect, especially when
   the arguments \code{weights} is used to input prior weights.
+
+  This \pkg{VGAM} family function should be used with caution.
 
 }
 

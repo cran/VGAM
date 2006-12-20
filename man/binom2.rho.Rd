@@ -6,13 +6,19 @@
   Fits a bivariate probit model to two binary responses.
 }
 \usage{
-binom2.rho(lrho = "rhobit", init.rho = 0.4, zero = 3, exchangeable = FALSE)
+binom2.rho(lrho = "rhobit", erho=list(),
+           init.rho = 0.4, zero = 3, exchangeable = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{lrho}{
   Link function applied to the \eqn{\rho}{rho} association parameter.
   See \code{\link{Links}} for more choices.
+
+  }
+  \item{erho}{
+  List. Extra argument for the \code{lrho} link.
+  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{init.rho}{

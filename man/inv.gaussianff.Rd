@@ -8,7 +8,9 @@
 
 }
 \usage{
-inv.gaussianff(lmu="loge", llambda="loge", ilambda=1, zero=NULL)
+inv.gaussianff(lmu="loge", llambda="loge",
+               emu=list(), elambda=list(),
+               ilambda=1, zero=NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -16,6 +18,11 @@ inv.gaussianff(lmu="loge", llambda="loge", ilambda=1, zero=NULL)
   Parameter link functions for the \eqn{\mu}{mu} and
   \eqn{\lambda}{lambda} parameters.
   See \code{\link{Links}} for more choices.
+
+  }
+  \item{emu, elambda}{
+  List. Extra argument for each of the links.
+  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{ilambda}{ 
@@ -65,11 +72,10 @@ New York: Wiley-Interscience, Third edition.
 }
 \author{ T. W. Yee }
 \note{
-  The inverse Gaussian distribution can be fitted (to a
-  certain extent) using the usual GLM framework involving
-  a scale parameter. This family function is different from
-  that approach in that it estimates both parameters by
-  full maximum likelihood estimation.
+  The inverse Gaussian distribution can be fitted (to a certain extent)
+  using the usual GLM framework involving a scale parameter. This family
+  function is different from that approach in that it estimates both
+  parameters by full maximum likelihood estimation.
 
 }
 
@@ -85,9 +91,9 @@ New York: Wiley-Interscience, Third edition.
 }
 \examples{
 n = 1000
-shape = 5
-y = rgamma(n=n, shape=shape) # Not inverse Gaussian!!
-fit = vglm(y ~ 1, inv.gaussianff, trace=TRUE, crit="coef")
+shape = exp(3)
+y = rinv.gaussian(n=n, mu=exp(2), lambda=shape)
+fit = vglm(y ~ 1, inv.gaussianff(ilam=shape), trace=TRUE)
 coef(fit, matrix=TRUE)
 Coef(fit)
 summary(fit)

@@ -8,8 +8,9 @@
 
 }
 \usage{
-betaff(link = "loge", i1 = NULL, i2 = NULL, trim = 0.05,
-       A = 0, B = 1, earg=list(), zero = NULL)
+betaff(link = "loge", earg=list(),
+       i1 = NULL, i2 = NULL, trim = 0.05,
+       A = 0, B = 1, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -17,6 +18,11 @@ betaff(link = "loge", i1 = NULL, i2 = NULL, trim = 0.05,
   Parameter link function applied to the two shape parameters. 
   See \code{\link{Links}} for more choices.
   A log link (default) ensures that the parameters are positive.
+
+  }
+  \item{earg}{
+  List. Extra argument for the link.
+  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{i1, i2}{ 
@@ -35,13 +41,6 @@ betaff(link = "loge", i1 = NULL, i2 = NULL, trim = 0.05,
   Lower and upper limits of the distribution.
   The defaults correspond to the \emph{standard beta distribution}
   where the response lies between 0 and 1.
-
-  }
-  \item{earg}{ 
-  List. Extra argument associated with \code{link}
-  containing any extra information.
-  See \code{\link{Links}} for general information about \pkg{VGAM} link
-  functions.
 
   }
   \item{zero}{
@@ -124,7 +123,7 @@ betaff(link = "loge", i1 = NULL, i2 = NULL, trim = 0.05,
   \code{beta4}.
 }
 \examples{
-y = rbeta(n=1000, shape1=1, shape2=3)
+y = rbeta(n=1000, shape1=exp(0), shape2=exp(1))
 fit = vglm(y ~ 1, betaff(link="identity"), trace = TRUE, crit="c")
 fit = vglm(y ~ 1, betaff, trace = TRUE, crit="c")
 coef(fit, matrix=TRUE)
@@ -137,4 +136,10 @@ fitted(fit)[1:4,]
 }
 \keyword{models}
 \keyword{regression}
+
+% 3/1/06; this works well:
+% fit=vglm(y~1, betaffqn(link=logoff,earg=list(offset=1)), tr=TRUE, cri="c")
+% 3/1/06; this does not work so well:
+%  it=vglm(y~1, betaffqn(link=logoff,earg=list(offset=0)), tr=TRUE, cri="c")
+% Interesting!!
 

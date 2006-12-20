@@ -9,7 +9,8 @@
 
 }
 \usage{
-betabin.ab(link.shape12 = "loge", i1 = 1, i2 = NULL, zero = NULL)
+betabin.ab(link.shape12 = "loge", earg = list(),
+           i1 = 1, i2 = NULL, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -17,6 +18,11 @@ betabin.ab(link.shape12 = "loge", i1 = 1, i2 = NULL, zero = NULL)
   Link function applied to both (positive) shape parameters
   of the beta distribution.
   See \code{\link{Links}} for more choices.
+
+  }
+  \item{earg}{
+  List. Extra argument for the link.
+  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{i1, i2}{ 

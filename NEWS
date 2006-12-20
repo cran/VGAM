@@ -6,6 +6,39 @@
 
 
 
+                CHANGES IN VGAM VERSION 0.7-2
+
+NEW FEATURES
+
+    o   Almost all VGAM family functions now have an earg-type argument
+        to support each link function. This allows parameters specific
+        to each link to be passed in,
+        e.g., VGAMfamilyfunction(link="logoff", earg=list(offset=1))
+    o   rinv.gaussian() is new.
+    o   New VGAM family functions: morgenstern(), fgm(), gumbelIbiv(),
+        ordpoisson().
+    o   New documentation: powl(), fsqrt(). 
+
+BUG FIXES
+
+    o   zanegbinomial()@last had wrong names in misc$link.
+    o   summary(vgam.object) failed to print the anova table.
+    o   summary(cao.object) failed.
+
+
+CHANGES
+
+    o   binom2.or() has argument names changed from "lp" to "lmu" etc.
+        This is partly to make it in keeping with other VGAM family
+        functions for binary responses.
+    o   Other VGAM family functions with argument names changed: frank().
+    o   lms.bcn(), lms.bcg(), lms.yjn() arguments have changed order.
+    o   hyper() renamed to hyperg().
+    o   plotvgam() uses ylim if it is inputted.
+
+
+
+
 		CHANGES IN VGAM VERSION 0.7-1
 
 NEW FEATURES

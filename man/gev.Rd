@@ -33,7 +33,7 @@ egev(llocation = "identity", lscale = "loge", lshape = "logoff",
 
   }
   \item{elocation, escale, eshape}{
-  Extra argument for the respective links.
+  List. Extra argument for the respective links.
   See \code{earg} in \code{\link{Links}} for general information.
   For the shape parameter,
   if the \code{\link{logoff}} link is chosen then the offset is
@@ -251,7 +251,7 @@ plot(fit1, se=TRUE, lcol="blue", scol="forestgreen",
      main="Fitted mu(year) function (centered)")
 attach(venice)
 matplot(year, y[,1:2], ylab="Sea level (cm)", col=1:2,
-        main="Highest 2 annual sealevels & fitted 95 percentile")
+        main="Highest 2 annual sealevels and fitted 95 percentile")
 lines(year, fitted(fit1)[,1], lty="dashed", col="blue")
 detach(venice)
 }

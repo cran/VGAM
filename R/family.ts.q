@@ -260,10 +260,10 @@ vglm.garma.control <- function(save.weight=TRUE, ...)
 
 garma <- function(link=c("identity","loge","reciprocal",
                         "logit","probit","cloglog","cauchit"),
+                  earg=list(),
                   p.ar.lag=1, q.lag.ma=0,
                   coefstart=NULL,
-                  step=1.0,
-                  constant=0.1)
+                  step=1.0)
 {
     if(mode(link) != "character" && mode(link) != "name")
         link = as.character(substitute(link))
@@ -275,15 +275,16 @@ garma <- function(link=c("identity","loge","reciprocal",
         stop("bad input for argument \"q.lag.ma\"")
     if(q.lag.ma != 0)
         stop("sorry, only q.lag.ma=0 is currently implemented")
+    if(!is.list(earg)) earg = list()
 
     new("vglmff",
     blurb=c("GARMA(", p.ar.lag, ",", q.lag.ma, ")\n\n",
            "Link:     ",
-           namesof("mu_t", link),
+           namesof("mu_t", link, earg= earg),
            ", t = ", paste(paste(1:p.ar.lag, coll=",", sep=""))),
     initialize=eval(substitute(expression({
         plag <- .p.ar.lag
-        predictors.names = namesof("mu", .link, tag=FALSE)
+        predictors.names = namesof("mu", .link, earg= .earg, tag=FALSE)
         indices <- 1:plag
         tt <- (1+plag):nrow(x) 
         pp <- ncol(x)
@@ -323,14 +324,15 @@ garma <- function(link=c("identity","loge","reciprocal",
         for(i in 1:plag)
             more[[i]] <- i + max(unlist(attr(x.save, "assign")))
         attr(x, "assign") <- c(attr(x.save, "assign"), more)
-    }), list( .link=link, .p.ar.lag=p.ar.lag, .coefstart=coefstart ))), 
+    }), list( .link=link, .p.ar.lag=p.ar.lag, .coefstart=coefstart, .earg=earg ))), 
     inverse=eval(substitute(function(eta, extra=NULL) {
-        eta2theta(eta, link= .link)
-    }, list( .link=link ))),
+        eta2theta(eta, link= .link, earg= .earg)
+    }, list( .link=link, .earg=earg ))),
     last=eval(substitute(expression({
         misc$link <- c(mu = .link)
+        misc$earg <- list(mu = .earg)
         misc$plag <- plag
-    }), list( .link=link ))),
+    }), list( .link=link, .earg=earg ))),
     loglikelihood=eval(substitute(
         function(mu, y, w, residuals = FALSE, eta, extra=NULL) {
         if(residuals) switch( .link,
@@ -343,7 +345,7 @@ garma <- function(link=c("identity","loge","reciprocal",
             loge=sum(w*(-mu + y*log(mu))),
             inverse=sum(w*(-mu + y*log(mu))),
             sum(w*(y*log(mu) + (1-y)*log(1-mu))))
-    }, list( .link=link ))),
+    }, list( .link=link, .earg=earg ))),
     middle2=eval(substitute(expression({
         realfv <- fv
         for(i in 1:plag) {
@@ -353,7 +355,7 @@ garma <- function(link=c("identity","loge","reciprocal",
 
         true.eta <- realfv + offset  
         mu <- family@inverse(true.eta, extra)  # overwrite mu with correct one
-    }), list( .link=link ))),
+    }), list( .link=link, .earg=earg ))),
     vfamily=c("garma", "vglmgam"),
     deriv=eval(substitute(expression({
         dl.dmu <- switch( .link,
@@ -361,17 +363,15 @@ garma <- function(link=c("identity","loge","reciprocal",
                       loge=(y-mu)/mu,
                       inverse=(y-mu)/mu,
                       (y-mu) / (mu*(1-mu)))
-        dmu.deta <- dtheta.deta(mu, .link)
+        dmu.deta <- dtheta.deta(mu, .link, earg= .earg)
         step <- .step      # This is another method of adjusting step lengths
         step * w * dl.dmu * dmu.deta
-    }), list( .link=link, .step=step ))),
+    }), list( .link=link, .step=step, .earg=earg ))),
     weight=eval(substitute(expression({
         x[,1:pp] <- x.save[tt,1:pp] # Reinstate 
 
         for(i in 1:plag) {
-            temp = theta2eta(y.save[tt-i], .link,
-                   earg=if( any( .link == c("loge","logit")) )
-                   .constant else NULL)
+            temp = theta2eta(y.save[tt-i], .link, earg= .earg)
             x[,1:pp] <- x[,1:pp] - x.save[tt-i,1:pp] * new.coeffs[i+pp] 
             x[,pp+i] <- temp - x.save[tt-i,1:pp,drop=FALSE] %*% new.coeffs[1:pp]
         }
@@ -387,8 +387,9 @@ garma <- function(link=c("identity","loge","reciprocal",
                        loge=mu,
                        inverse=mu^2,
                        mu*(1-mu))
-        w * dtheta.deta(mu, link= .link)^2 / vary
-    }), list( .link=link, .constant=constant ))))
+        w * dtheta.deta(mu, link= .link, earg= .earg)^2 / vary
+    }), list( .link=link,
+              .earg=earg ))))
 }
 
 
@@ -397,7 +398,7 @@ garma <- function(link=c("identity","loge","reciprocal",
 
 
 if(FALSE) {
-setClass("Coef.rrar", representation(
+setClass(Class="Coef.rrar", representation(
          "plag"    = "integer",
          "Ranks"   = "integer",
          "omega"   = "integer",
@@ -411,7 +412,7 @@ setClass("Coef.rrar", representation(
 
 
 Coef.rrar = function(object, ...) {
-    result = new("Coef.rrar",
+    result = new(Class="Coef.rrar",
          "plag"     = object@misc$plag,
          "Ranks"    = object@misc$Ranks,
          "omega"    = object@misc$omega,

@@ -10,8 +10,10 @@
 
 }
 \usage{
-logistic1(llocation="identity", scale.arg=1, method.init=1)
+logistic1(llocation="identity", elocation=list(),
+          scale.arg=1, method.init=1)
 logistic2(llocation="identity", lscale="loge",
+          elocation=list(), escale=list(),
           ilocation=NULL, iscale=NULL, method.init=1, zero=NULL)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -19,6 +21,11 @@ logistic2(llocation="identity", lscale="loge",
   \item{llocation}{
   Link function applied to the location parameter \eqn{l}.
   See \code{\link{Links}} for more choices.
+
+  }
+  \item{elocation, escale}{
+  List. Extra argument for each of the links.
+  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{scale.arg}{

@@ -8,13 +8,18 @@
 
 }
 \usage{
-skewnormal1(lshape = "identity", ishape = NULL)
+skewnormal1(lshape = "identity", earg = list(), ishape = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{lshape}{
   Link function applied to the shape parameter.
   See \code{\link{Links}} for more choices.
+
+  }
+  \item{earg}{
+  List. Extra argument for the link.
+  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{ishape}{

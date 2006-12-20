@@ -83,7 +83,7 @@ round(dpospois(1:10, lambda) * 1000) # Should be similar
 x = 0:7
 plot(x, dpospois(x, lambda), type="h", ylab="Probability",
      main=paste("Positive Poisson(", lambda, ") (blue) vs",
-     " Poisson(", lambda, ") (red & shifted slightly)", sep=""),
+     " Poisson(", lambda, ") (red and shifted slightly)", sep=""),
      lwd=2, col="blue", las=1)
 lines(x+0.05, dpois(x, lambda), type="h", lwd=2, col="red")
 }

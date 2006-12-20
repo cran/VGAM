@@ -40,9 +40,11 @@ New York: Wiley-Interscience, Third edition.
   for estimating the parameter \eqn{a} by maximum likelihood estimation,
   for the formula of the probability density function and range restrictions
   on the parameter \eqn{a}.
+
 }
 \note{
   The Rayleigh distribution is related to the Maxwell distribution.
+
 }
 \seealso{
   \code{\link{rayleigh}},

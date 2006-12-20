@@ -8,6 +8,7 @@
 \usage{
 micmen(rpar = 0.001, divisor = 10, init1 = NULL, init2 = NULL,
        link1 = "identity", link2 = "identity",
+       earg1=list(), earg2=list(),
        dispersion = 0, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -32,6 +33,11 @@ micmen(rpar = 0.001, divisor = 10, init1 = NULL, init2 = NULL,
   Parameter link function applied to the first and second
   parameters, respectively.
   See \code{\link{Links}} for more choices.
+
+  }
+  \item{earg1, earg2}{
+  List. Extra argument for each of the links.
+  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{dispersion}{

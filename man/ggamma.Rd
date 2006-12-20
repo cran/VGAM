@@ -9,6 +9,7 @@
 }
 \usage{
 ggamma(lscale="loge", ld="loge", lk="loge",
+       escale=list(), ed=list(), ek=list(),
        iscale=NULL, id=NULL, ik=NULL, zero=NULL)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -17,6 +18,11 @@ ggamma(lscale="loge", ld="loge", lk="loge",
   Parameter link function applied to each of the positive parameters
   \eqn{b}, \eqn{d} and \eqn{k}, respectively.
   See \code{\link{Links}} for more choices.
+
+  }
+  \item{escale, ed, ek}{
+  List. Extra argument for each of the links.
+  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{iscale, id, ik}{

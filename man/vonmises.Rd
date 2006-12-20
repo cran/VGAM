@@ -7,15 +7,24 @@
   von Mises distribution by maximum likelihood estimation.
 }
 \usage{
-vonmises(lscale="loge", ilocation=NULL,
-         iscale=NULL, method.init=1, zero=NULL)
+vonmises(llocation="elogit", lscale="loge",
+      elocation=if(llocation=="elogit") list(min=0, max=2*pi) else list(),
+      escale=list(),
+      ilocation=NULL, iscale=NULL,
+      method.init=1, zero=NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{lscale}{
-  Parameter link function applied to the scale parameter \eqn{k}.
+  \item{llocation, lscale}{
+  Parameter link functions applied to the location \eqn{a} parameter
+  and scale parameter \eqn{k}, respectively.
   See \code{\link{Links}} for more choices.
-  A log link is the default because the parameter is positive.
+  For \eqn{k}, a log link is the default because the parameter is positive.
+
+  }
+  \item{elocation, escale}{
+  List. Extra argument for each of the link functions.
+  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{ilocation}{
@@ -70,16 +79,18 @@ vonmises(lscale="loge", ilocation=NULL,
  \eqn{1 - I_1(k) / I_0(k)}{1 - I1(k) / I0(k)}
  where \eqn{I_1(k)}{I1(k)} is the modified Bessel
  function of order 1.
- By default, \eqn{\eta_1=a}{eta1=a} and
- \eqn{\eta_2=\log(k)}{eta2=log(k)} for this family function, but
- later an extended logit link \eqn{\eta_1=\log(a/(2\pi-a))}{eta1=log(a/(2*pi-a))}
- might be provided for \eqn{\eta_1}{eta1}.
+ By default,
+ \eqn{\eta_1=\log(a/(2\pi-a))}{eta1=log(a/(2*pi-a))}
+ and
+ \eqn{\eta_2=\log(k)}{eta2=log(k)} for this family function.
+
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}},
   \code{\link{rrvglm}}
   and \code{\link{vgam}}.
+
 }
 \references{ 
 Evans, M., Hastings, N. and Peacock, B. (2000)
@@ -92,12 +103,14 @@ New York: Wiley-Interscience, Third edition.
  \eqn{0\leq y< 2\pi}{0<=y<2*pi}.
  The linear/additive predictors are left alone.
  Fisher scoring is used.
+
 }
 \section{Warning }{
   Numerically, the von~Mises can be difficult to fit because of a
   log-likelihood having multiple maxima.
   The user is therefore encouraged to try different starting values,
   i.e., make use of \code{ilocation} and \code{iscale}.
+
 }
 
 \seealso{
@@ -105,6 +118,7 @@ New York: Wiley-Interscience, Third edition.
 
   \pkg{CircStats} and \pkg{circular} currently have a lot more
   R functions for circular data than the \pkg{VGAM} package. 
+
 }
 \examples{
 x = runif(n <- 1000)
@@ -117,4 +131,8 @@ range(fit@y)   # processed data is in [0,2*pi)
 }
 \keyword{models}
 \keyword{regression}
+
+%later an extended logit link \eqn{\eta_1=\log(a/(2\pi-a))}{eta1=log(a/(2*pi-a))}
+%might be provided for \eqn{\eta_1}{eta1}.
+%\eqn{\eta_1=a}{eta1=a} and
 

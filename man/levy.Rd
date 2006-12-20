@@ -7,7 +7,8 @@ Estimates the two parameters of the Levy distribution
 by maximum likelihood estimation.
 }
 \usage{
-levy(delta = NULL, link.gamma = "loge", idelta = NULL, igamma = NULL)
+levy(delta = NULL, link.gamma = "loge", earg=list(),
+     idelta = NULL, igamma = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -19,6 +20,11 @@ levy(delta = NULL, link.gamma = "loge", idelta = NULL, igamma = NULL)
   \item{link.gamma}{
   Parameter link function for the (positive) \eqn{\gamma}{gamma} parameter. 
   See \code{\link{Links}} for more choices.
+
+  }
+  \item{earg}{
+  List. Extra argument for the link.
+  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{idelta}{

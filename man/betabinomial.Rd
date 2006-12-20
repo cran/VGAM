@@ -8,7 +8,8 @@
 
 }
 \usage{
-betabinomial(lmu="logit", lrho="logit", irho=0.5, zero=2)
+betabinomial(lmu="logit", lrho="logit", emu=list(), erho=list(),
+             irho=0.5, zero=2)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -16,6 +17,11 @@ betabinomial(lmu="logit", lrho="logit", irho=0.5, zero=2)
   Link functions applied to the two parameters.
   See \code{\link{Links}} for more choices.
   The defaults ensure the parameters remain in \eqn{(0,1)}. 
+
+  }
+  \item{emu, erho}{ 
+  List. Extra argument for each of the links.
+  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{irho}{ 

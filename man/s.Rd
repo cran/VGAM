@@ -26,6 +26,8 @@ s(x, df = 4, spar = 0, ...)
   numerical vector of length \eqn{r}.
   Effective degrees of freedom: must lie between 1 (linear fit)
   and \eqn{n} (interpolation). 
+  Thus one could say that \code{df-1} is the
+  \emph{nonlinear degrees of freedom} of the smooth.
   Recycling of values will be used if \code{df} is not of length \eqn{r}.
 
   }

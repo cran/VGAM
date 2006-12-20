@@ -202,6 +202,9 @@ vcovvlm <- function(object, dispersion=NULL, untransform=FALSE) {
     if(!object@misc$intercept.only)
        stop("object must be an intercept-only fit, i.e., y ~ 1 is the response")
 
+    if(!all(trivial.constraints(constraints(object))))
+       stop("object must have trivial constraints")
+
     M = object@misc$M
     Links = object@misc$link
     if(length(Links) != M && length(Links) != 1)

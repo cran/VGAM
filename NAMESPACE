@@ -22,6 +22,7 @@ export(
 d2theta.deta2, Deviance.categorical.data.vgam, 
 lm2qrrvlm.model.matrix,
 m2avglm, 
+dotFortran, dotC,
 dimm)
 
 
@@ -46,6 +47,7 @@ frechet2, frechet3, dfrechet, pfrechet, qfrechet, rfrechet,
 frank, dfrank, pfrank, rfrank, 
 benini, dbenini, pbenini, qbenini, rbenini, 
 maxwell, dmaxwell, pmaxwell, qmaxwell, rmaxwell,
+morgenstern, fgm, gumbelIbiv,
 erf, erfc, lerch,
 tpareto1, dtpareto, qtpareto, rtpareto, ptpareto,
 pareto1, dpareto, qpareto, rpareto, ppareto,
@@ -58,7 +60,7 @@ dgumbel, pgumbel, qgumbel, rgumbel,
 cnormal1, dcnormal1,
 recnormal1, recexp1,
 crayleigh, rayleigh, drayleigh, prayleigh, qrayleigh, rrayleigh, 
-dinv.gaussian, pinv.gaussian, wald, expexp1, expexp)
+dinv.gaussian, pinv.gaussian, rinv.gaussian, wald, expexp1, expexp)
 
 
 export(A1A2A3, a2m, AAaa.nohw,
@@ -86,7 +88,8 @@ dtheta.deta)
 
 export(cloglog,cauchit,elogit,fisherz,logc,loge,logit,logoff,nreciprocal,
        probit,reciprocal,rhobit,
-       golf,polf,nbolf,Cut)
+       golf,polf,nbolf,nbolf2,Cut)
+export(ordpoisson)
 
 
 export(m2adefault, 
@@ -94,8 +97,8 @@ erlang,
 family.vglm, 
 fitted.values.uqo, fitted.vlm, fittedvsmooth.spline, fsqrt,
 garma, gaussianff,
-hyper.secant,
-hyper,
+hypersecant, hypersecant.1, 
+hyperg,
 invbinomial, InverseBrat, inverse.gaussianff, inv.gaussianff,
 is.Numeric,
 mccullagh89, leipnik, levy,
@@ -132,7 +135,6 @@ qtplot.lms.bcn, qtplot.lms.yjn, qtplot.vextremes, qtplot.vglm,
 rlplot,
 rlplot.egev, rlplot.gev,
 rlplot.vextremes, rlplot.vglm,
-quasiff,
 rlplot, rlplot.vglm, rrar.control,
 rrvglm.control.Gaussian)
 
@@ -182,6 +184,7 @@ export(dgpd, pgpd, qgpd, rgpd, gpd)
 export(dgev, pgev, qgev, rgev, gev, egev)
 export(dlaplace, plaplace, qlaplace, rlaplace)
 export(fff, fff.control,
+       mbesselI0,
        vonmises)
 
 
@@ -260,11 +263,13 @@ dzibinom, pzibinom, qzibinom, rzibinom, zibinomial)
 
 
 
-exportClasses("vglmff", "vlm", "vglm", "vgam", "summary.vgam",
-"summary.vglm","summary.vlm", "rrvglm", "qrrvglm", "grc", 
-"vlmsmall", "uqo", "cao", "Coef.rrvglm", 
-"Coef.uqo", "Coef.qrrvglm", "summary.qrrvglm", 
-"vcov.qrrvglm", "summary.rrvglm", 
+exportClasses("vglmff", "vlm", "vglm", "vgam",
+"rrvglm", "qrrvglm", "grc", 
+"vlmsmall", "uqo", "cao",
+"summary.vgam", "summary.vglm","summary.vlm",
+"summary.qrrvglm", "summary.cao", "summary.rrvglm", 
+"Coef.rrvglm", "Coef.uqo", "Coef.qrrvglm", "Coef.cao",
+"vcov.qrrvglm",
 "vsmooth.spline.fit", "vsmooth.spline") 
 
 

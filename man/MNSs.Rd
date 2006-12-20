@@ -7,13 +7,18 @@
   the MNSs blood group system.
 }
 \usage{
-MNSs(link = "logit", imS = NULL, ims = NULL, inS = NULL)
+MNSs(link = "logit", earg=list(), imS = NULL, ims = NULL, inS = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{link}{
   Link function applied to the three parameters.
   See \code{\link{Links}} for more choices.
+
+  }
+  \item{earg}{
+  List. Extra argument applied to each of the links.
+  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{imS, ims, inS}{

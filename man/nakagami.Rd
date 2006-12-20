@@ -8,7 +8,8 @@
 
 }
 \usage{
-nakagami(lshape = "loge", lscale = "loge", ishape = NULL, iscale = 1)
+nakagami(lshape = "loge", lscale = "loge",
+         eshape=list(), escale=list(), ishape = NULL, iscale = 1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -17,6 +18,11 @@ nakagami(lshape = "loge", lscale = "loge", ishape = NULL, iscale = 1)
   \emph{shape} and \emph{scale} parameters.
   Log links ensure they are positive.
   See \code{\link{Links}} for more choices.
+
+  }
+  \item{eshape, escale}{
+  List. Extra argument for each of the links.
+  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{ishape, iscale}{

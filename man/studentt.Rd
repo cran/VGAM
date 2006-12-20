@@ -6,7 +6,7 @@
   Estimation of the degrees of freedom for a Student t distribution.
 }
 \usage{
-studentt(link.df = "loglog")
+studentt(link.df = "loglog", earg=list())
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -14,6 +14,11 @@ studentt(link.df = "loglog")
   Parameter link function for the degrees of freedom \eqn{\nu}{nu}.
   See \code{\link{Links}} for more choices.
   The default ensures the parameter is greater than unity.
+
+  }
+  \item{earg}{
+  List. Extra argument for the link.
+  See \code{earg} in \code{\link{Links}} for general information.
 
   }
 }
@@ -65,8 +70,8 @@ The probable error of a mean.
 
 }
 \examples{
-n = 200
-y = rt(n, df=exp(2))
+n = 500
+y = rt(n, df=exp(exp(1)))
 fit = vglm(y ~ 1, studentt)
 coef(fit, matrix=TRUE)
 Coef(fit) 

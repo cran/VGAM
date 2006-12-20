@@ -251,7 +251,7 @@ plot(lv(p1), lv(up1), xlim=c(-3,4), ylim=c(-3,4), las=1)
 abline(a=0, b=-1, lty=2, col="blue", xpd=FALSE)
 cor(lv(p1, ITol=TRUE), lv(up1))
 
-# Another comparison between the constrained & unconstrained models
+# Another comparison between the constrained and unconstrained models
 # The signs are not right so they are similar when reflected about 0 
 par(mfrow=c(2,1))
 persp(up1, main="Red/Blue are the constrained/unconstrained models",

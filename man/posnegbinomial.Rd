@@ -8,7 +8,8 @@
 
 }
 \usage{
-posnegbinomial(lmunb = "loge", lk = "loge", ik = NULL,
+posnegbinomial(lmunb = "loge", lk = "loge", 
+               emunb =list(), ek = list(), ik = NULL,
                zero = -2, cutoff = 0.995, method.init=1)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -23,6 +24,11 @@ posnegbinomial(lmunb = "loge", lk = "loge", ik = NULL,
   Parameter link function applied to the dispersion parameter,
   called \code{k}.
   See \code{\link{Links}} for more choices.
+
+  }
+  \item{emunb, ek}{
+  List. Extra argument for the respective links.
+  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{ik}{ 

@@ -7,13 +7,18 @@
   the AB-Ab-aB-ab2 blood group system.
 }
 \usage{
-AB.Ab.aB.ab2(link = "logit", init.p = NULL)
+AB.Ab.aB.ab2(link = "logit", earg=list(), init.p = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{link}{ 
   Link function applied to \code{p}.
   See \code{\link{Links}} for more choices.
+
+  }
+  \item{earg}{
+  List. Extra argument for the link.
+  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{init.p}{ Optional initial value for \code{p}. }
@@ -58,8 +63,6 @@ family function.
 # Estimated variance is approx 0.0021
 y = cbind(68, 11, 13, 21)
 fit = vglm(y ~ 1, AB.Ab.aB.ab2(link=logit), trace=TRUE, crit="coef")
-fit = vglm(y ~ 1, AB.Ab.aB.ab2(link=probit), trace=TRUE, crit="coef")
-fit = vglm(y ~ 1, AB.Ab.aB.ab2(link=identity), trace=TRUE, crit="coef")
 fit = vglm(y ~ 1, AB.Ab.aB.ab2(link=cloglog), trace=TRUE, crit="coef")
 Coef(fit)   # Estimated p
 rbind(y, sum(y)*fitted(fit))

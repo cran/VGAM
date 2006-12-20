@@ -8,8 +8,9 @@
 
 }
 \usage{
-cumulative(link = "logit", parallel = FALSE, reverse = FALSE,
-           earg = list(), mv = FALSE, intercept.apply = FALSE)
+cumulative(link = "logit", earg = list(),
+           parallel = FALSE, reverse = FALSE,
+           mv = FALSE, intercept.apply = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -21,6 +22,11 @@ cumulative(link = "logit", parallel = FALSE, reverse = FALSE,
   \item{link}{
   Link function applied to the \eqn{M} cumulative probabilities. 
   See \code{\link{Links}} for more choices.
+
+  }
+  \item{earg}{
+  List. Extra argument for the link function.
+  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{parallel}{
@@ -43,11 +49,6 @@ cumulative(link = "logit", parallel = FALSE, reverse = FALSE,
   \code{\link{nbolf}}.
   For these links the cutpoints must be an increasing sequence;
   if \code{reverse=FALSE} for then the cutpoints must be an decreasing sequence.
-
-  }
-  \item{earg}{
-  List. Extra argument for the link function.
-  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{mv}{

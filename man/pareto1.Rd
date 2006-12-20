@@ -10,8 +10,8 @@
 
 }
 \usage{
-pareto1(lshape = "loge", location=NULL)
-tpareto1(lower, upper, lshape = "loge", ishape=NULL)
+pareto1(lshape = "loge", earg=list(), location=NULL)
+tpareto1(lower, upper, lshape = "loge", earg=list(), ishape=NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -19,6 +19,11 @@ tpareto1(lower, upper, lshape = "loge", ishape=NULL)
   Parameter link function applied to the parameter \eqn{k}.
   See \code{\link{Links}} for more choices.
   A log link is the default because \eqn{k} is positive.
+
+  }
+  \item{earg}{
+  List. Extra argument for the link.
+  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{lower, upper}{

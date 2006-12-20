@@ -1,6 +1,6 @@
-\name{hyper}
-%\alias{hyper}
-\alias{hyper}
+\name{hyperg}
+%\alias{hyperg}
+\alias{hyperg}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Hypergeometric Family Function }
 \description{
@@ -10,7 +10,7 @@
 
 }
 \usage{
-hyper(N=NULL, D=NULL, lprob="logit", iprob=NULL)
+hyperg(N=NULL, D=NULL, lprob="logit", earg=list(), iprob=NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -30,6 +30,11 @@ hyper(N=NULL, D=NULL, lprob="logit", iprob=NULL)
   \item{lprob}{ 
   Link function for the probabilities.
   See \code{\link{Links}} for more choices.
+
+  }
+  \item{earg}{
+  List. Extra argument for the link.
+  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{iprob}{ 
@@ -109,12 +114,12 @@ y  = rhyper(nn=nn, m=m, n=n, k=k)
 yprop = y / k  # sample proportions
 
 # N is unknown, D is known. Both models are equivalent:
-fit = vglm(cbind(y,k-y) ~ 1, hyper(D=m), trace=TRUE, crit="c")
-fit = vglm(yprop ~ 1, hyper(D=m), weight=k, trace=TRUE, crit="c")
+fit = vglm(cbind(y,k-y) ~ 1, hyperg(D=m), trace=TRUE, crit="c")
+fit = vglm(yprop ~ 1, hyperg(D=m), weight=k, trace=TRUE, crit="c")
 
 # N is known, D is unknown. Both models are equivalent:
-fit = vglm(cbind(y,k-y) ~ 1, hyper(N=m+n), trace=TRUE, crit="l")
-fit = vglm(yprop ~ 1, hyper(N=m+n), weight=k, trace=TRUE, crit="l")
+fit = vglm(cbind(y,k-y) ~ 1, hyperg(N=m+n), trace=TRUE, crit="l")
+fit = vglm(yprop ~ 1, hyperg(N=m+n), weight=k, trace=TRUE, crit="l")
 
 coef(fit, matrix=TRUE)
 Coef(fit)  # Should be equal to the true population proportion

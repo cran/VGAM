@@ -12,10 +12,13 @@
 }
 \usage{
 paretoIV(location=0, lscale="loge", linequality="loge", lshape="loge",
+         escale=list(), einequality=list(), eshape=list(),
          iscale=1, iinequality=1, ishape=NULL, method.init=1)
 paretoIII(location=0, lscale="loge", linequality="loge",
+          escale=list(), einequality=list(),
           iscale=NULL, iinequality=NULL)
 paretoII(location=0, lscale="loge", lshape="loge",
+         escale=list(), eshape=list(),
          iscale=NULL, ishape=NULL)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -33,6 +36,11 @@ paretoII(location=0, lscale="loge", lshape="loge",
   See \code{\link{Links}} for more choices.
   A log link is the default for all because all these parameters are
   positive.
+
+  }
+  \item{escale, einequality, eshape}{
+  List. Extra argument for each of the links.
+  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{iscale, iinequality, ishape}{

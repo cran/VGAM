@@ -9,7 +9,7 @@
 }
 \usage{
 cauchy1(scale.arg=1, llocation="identity",
-        ilocation=NULL, method.init=1)
+        elocation=list(), ilocation=NULL, method.init=1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -20,6 +20,11 @@ cauchy1(scale.arg=1, llocation="identity",
   \item{llocation}{ 
   Parameter link function for the \eqn{a}{a} location parameter.
   See \code{\link{Links}} for more choices.
+
+  }
+  \item{elocation}{ 
+  List. Extra argument for the link.
+  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{ilocation}{ 

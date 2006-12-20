@@ -87,7 +87,7 @@ round(dposbinom(1:10, size, prob) * 1000) # Should be similar
 x = 0:size
 plot(x, dposbinom(x, size, prob), type="h", ylab="Probability",
      main=paste("Positive-binomial(", size, ",", prob, ") (blue) vs",
-     " Binomial(", size, ",", prob, ") (red & shifted slightly)", sep=""),
+     " Binomial(", size, ",", prob, ") (red and shifted slightly)", sep=""),
      lwd=2, col="blue", las=1)
 lines(x+0.05, dbinom(x, size, prob), type="h", lwd=2, col="red")
 }
