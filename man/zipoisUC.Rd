@@ -70,7 +70,7 @@ round(dzipois(0:10, lambda, phi) * 100) # Should be similar
 x = 0:10
 plot(x, dzipois(x, lambda, phi), type="h", ylab="Probability", 
      main=paste("ZIP(", lambda, ", phi=", phi, ") (blue) vs",
-     " Poisson(", lambda, ") (red & shifted slightly)", sep=""),
+     " Poisson(", lambda, ") (red and shifted slightly)", sep=""),
      lwd=2, col="blue", las=1)
 lines(x+0.05, dpois(x, lambda), type="h", lwd=2, col="red")
 }

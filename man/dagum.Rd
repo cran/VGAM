@@ -8,6 +8,7 @@
 }
 \usage{
 dagum(link.a = "loge", link.scale = "loge", link.p = "loge",
+      earg.a=list(), earg.scale=list(), earg.p=list(),
       init.a = NULL, init.scale = NULL, init.p = 1, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -16,6 +17,11 @@ dagum(link.a = "loge", link.scale = "loge", link.p = "loge",
   Parameter link functions applied to the
   (positive) parameters \code{a}, \code{scale}, and \code{p}.
   See \code{\link{Links}} for more choices.
+
+  }
+  \item{earg.a, earg.scale, earg.p}{
+  List. Extra argument for each of the links.
+  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{init.a, init.scale, init.p}{

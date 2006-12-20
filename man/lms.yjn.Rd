@@ -9,6 +9,7 @@
 \usage{
 lms.yjn(percentiles = c(25, 50, 75), zero = NULL, 
         link.lambda = "identity", link.sigma = "loge",
+        elambda=list(), esigma=list(),
         dfmu.init=4, dfsigma.init=2,
         init.lambda = 1, init.sigma = NULL, 
         rule = c(10, 5), yoffset = NULL,
@@ -41,6 +42,11 @@ lms.yjn(percentiles = c(25, 50, 75), zero = NULL,
   See \code{\link{Links}} for more choices.
 
 % It is the natural log by default because sigma is positive.
+
+  }
+  \item{elambda, esigma}{
+  List. Extra argument for each of the links.
+  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{dfmu.init}{

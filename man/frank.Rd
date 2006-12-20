@@ -3,22 +3,27 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Frank's Bivariate Distribution Family Function }
 \description{
-  Estimate the correlation parameter of Frank's bivariate distribution
+  Estimate the association parameter of Frank's bivariate distribution
   using maximum likelihood estimation.
 
 }
 \usage{
-frank(lcorp="loge", icorp=2)
+frank(lapar="loge", eapar=list(), iapar=2)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{lcorp}{
-  Link function applied to the (positive) correlation parameter
+  \item{lapar}{
+  Link function applied to the (positive) association parameter
   \eqn{\alpha}{alpha}.
   See \code{\link{Links}} for more choices.
 
   }
-  \item{icorp}{
+  \item{eapar}{
+  List. Extra argument for the link.
+  See \code{earg} in \code{\link{Links}} for general information.
+
+  }
+  \item{iapar}{
   Numeric. Initial value for \eqn{\alpha}{alpha}.
   If a convergence failure occurs try assigning a different value.
 
@@ -79,7 +84,8 @@ Frank's family of bivariate distributions.
 }
 
 \seealso{
-  \code{\link{rfrank}}.
+  \code{\link{rfrank}},
+  \code{\link{fgm}}.
 }
 \examples{
 ymat = rfrank(n=2000, alpha=exp(4))

@@ -9,6 +9,7 @@
 }
 \usage{
 bisa(lshape = "loge", lscale = "loge",
+     eshape = list(), escale = list(),
      ishape = NULL, iscale = 1, method.init = 1,
      fsmax=9001, zero = NULL)
 }
@@ -19,6 +20,11 @@ bisa(lshape = "loge", lscale = "loge",
   (\eqn{a} and \eqn{b} below).
   See \code{\link{Links}} for more choices.
   A log link is the default for both because they are positive.
+
+  }
+  \item{escale, eshape}{
+  List. Extra argument for each of the links.
+  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{iscale, ishape}{ 
@@ -125,14 +131,14 @@ New York: Wiley.
 }
 \examples{
 y = rbisa(n=1000, shape=exp(-0.5), scale=exp(0.5))
-fit1 = vglm(y ~ 1, bisa, trace=TRUE)
-coef(fit1, matrix=TRUE)
+fit = vglm(y ~ 1, bisa, trace=TRUE)
+coef(fit, matrix=TRUE)
 mean(y)
-fitted(fit1)[1:4]
+fitted(fit)[1:4]
 
 \dontrun{hist(y, prob=TRUE)
 x = seq(0, max(y), len=200)
-lines(x, dbisa(x, Coef(fit1)[1], Coef(fit1)[2]), col="red")
+lines(x, dbisa(x, Coef(fit)[1], Coef(fit)[2]), col="red")
 }
 }
 \keyword{models}

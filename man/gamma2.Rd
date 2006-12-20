@@ -9,6 +9,7 @@
 }
 \usage{
 gamma2(lmu = "loge", lshape = "loge",
+       emu = list(), eshape = list(),
        method.init = 1, deviance.arg = FALSE,
        ishape = NULL, zero = -2)
 }
@@ -18,6 +19,11 @@ gamma2(lmu = "loge", lshape = "loge",
   Link functions applied to the (positive) \emph{mu} and \emph{shape}
   parameters (called \eqn{\mu}{mu} and \eqn{\lambda}{shape} respectively).
   See \code{\link{Links}} for more choices.
+
+  }
+  \item{emu, eshape}{
+  List. Extra argument for each of the links.
+  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{ishape}{

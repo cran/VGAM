@@ -6,24 +6,43 @@
   Maps the elements of an array containing symmetric positive-definite
   matrices to a matrix with sufficient columns to hold them 
   (called matrix-band format.)
+
 }
 \usage{
 iam(j, k, M, hbw = M, both = FALSE, diagonal = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{j}{ An integer from the set \{\code{1:M}\} giving the row number 
-   of an element.}
-  \item{k}{ An integer from the set \{\code{1:M}\} giving the column number 
-   of an element.}
-  \item{M}{ The number of linear/additive predictors. This is the
-  dimension of each positive-definite symmetric matrix. }
-  \item{hbw}{ Defunct. }
-  \item{both}{ Logical. Return both the row and column indices? 
-  See below for more details. }
-  \item{diagonal}{ Logical. Return the indices for the diagonal elements? 
+  \item{j}{
+  An integer from the set \{\code{1:M}\} giving the row number 
+  of an element.
+
+  }
+  \item{k}{
+  An integer from the set \{\code{1:M}\} giving the column number 
+  of an element.
+
+  }
+  \item{M}{
+  The number of linear/additive predictors. This is the
+  dimension of each positive-definite symmetric matrix.
+
+  }
+  \item{hbw}{
+  Defunct.
+
+  }
+  \item{both}{
+  Logical. Return both the row and column indices? 
+  See below for more details.
+
+  }
+  \item{diagonal}{
+  Logical. Return the indices for the diagonal elements? 
   If \code{FALSE} then only the strictly upper triangular part of the matrix 
-  elements are used. }
+  elements are used.
+
+  }
 }
 \details{
   Suppose we have \eqn{n} symmetric positive-definite square matrices,
@@ -44,30 +63,37 @@ iam(j, k, M, hbw = M, both = FALSE, diagonal = TRUE)
 
 }
 \value{
-This function has a dual purpose depending on the value of \code{both}.
-  If \code{both=FALSE} then the column number corresponding to the
-  \code{j}-\code{k} element of the matrix is returned.
+  This function has a dual purpose depending on the value of \code{both}.
+  If \code{both=FALSE} then the column number corresponding
+  to the \code{j}-\code{k} element of the matrix is returned.
   If \code{both=TRUE} then \code{j} and \code{k} are ignored and a list
-  with the following components are returned. 
-  \item{row.index}{The row indices of the upper triangular part of the
-   matrix (This may or may not include the diagonal elements, depending
-   on the argument \code{diagonal}).
+  with the following components are returned.
+
+  \item{row.index}{
+  The row indices of the upper triangular part of the
+  matrix (This may or may not include the diagonal elements, depending
+  on the argument \code{diagonal}).
+
   }
-  \item{col.index}{The column indices of the upper triangular part of the
-   matrix (This may or may not include the diagonal elements, depending
-   on the argument \code{diagonal}). 
+  \item{col.index}{
+  The column indices of the upper triangular part of the
+  matrix (This may or may not include the diagonal elements, depending
+  on the argument \code{diagonal}). 
+
   }
 }
 \references{ 
-The website \url{http://www.stat.auckland.ac.nz/~yee} contains
-some additional information.
+  The website \url{http://www.stat.auckland.ac.nz/~yee} contains
+  some additional information.
+
 }
 \author{ T. W. Yee }
 \note{
-This function is used in the \code{weight} slot of many
-\pkg{VGAM} family functions (see \code{\link{vglmff-class}}),
-especially those whose \eqn{M} is determined by the data,
-e.g., \code{\link{dirichlet}}, \code{\link{multinomial}}.
+  This function is used in the \code{weight} slot of many \pkg{VGAM}
+  family functions (see \code{\link{vglmff-class}}), especially those
+  whose \eqn{M} is determined by the data, e.g., \code{\link{dirichlet}},
+  \code{\link{multinomial}}.
+
 }
 
 \seealso{ 
@@ -76,7 +102,7 @@ e.g., \code{\link{dirichlet}}, \code{\link{multinomial}}.
 }
 \examples{
 iam(1, 2, M=3) # The 4th column represents element (1,2) of a 3x3 matrix
-iam(NULL, NULL, M=3, both=TRUE) # Return the row & column indices
+iam(NULL, NULL, M=3, both=TRUE) # Return the row and column indices
 
 
 dirichlet()@weight

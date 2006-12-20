@@ -7,13 +7,18 @@
    AA-Aa-aa blood group system.
 }
 \usage{
-AA.Aa.aa(link = "logit", init.pA = NULL)
+AA.Aa.aa(link = "logit", earg=list(), init.pA = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{link}{
   Link function applied to \code{pA}.
   See \code{\link{Links}} for more choices.
+
+  }
+  \item{earg}{
+  List. Extra argument for the link.
+  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{init.pA}{ Optional initial value for \code{pA}. }
@@ -54,8 +59,6 @@ argument is used to specify the total number of counts for each row.
 y = cbind(53, 95, 38)
 fit = vglm(y ~ 1, AA.Aa.aa(link="logit"), trace=TRUE)
 fit = vglm(y ~ 1, AA.Aa.aa(link="probit"), trace=TRUE)
-fit = vglm(y ~ 1, AA.Aa.aa(link="cloglog", init.p=0.9), trace=TRUE)
-fit = vglm(y ~ 1, AA.Aa.aa(link="identity"), trace=TRUE)
 rbind(y, sum(y)*fitted(fit))
 Coef(fit) # Estimated pA
 summary(fit)

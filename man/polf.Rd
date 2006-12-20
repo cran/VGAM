@@ -21,6 +21,7 @@ polf(theta, earg = stop("'earg' must be given"), inverse = FALSE,
   \item{earg}{
   Extra argument for passing in additional information.
   This must be list with component \code{cutpoint}.
+  The cutpoints should be non-negative integers.
   If \code{polf()} is used as the link function in
   \code{\link{cumulative}} then one should choose
   \code{reverse=TRUE, parallel=TRUE, intercept.apply=TRUE}.
@@ -51,6 +52,7 @@ polf(theta, earg = stop("'earg' must be given"), inverse = FALSE,
   parameter lying in the unit interval.
   Its purpose is to link cumulative probabilities associated with
   an ordinal response coming from an underlying Poisson distribution. 
+  If the cutpoint is zero then a complementary log-log link is used.
 
   The arguments \code{short} and \code{tag} are used only if
   \code{theta} is character.
@@ -65,7 +67,7 @@ polf(theta, earg = stop("'earg' must be given"), inverse = FALSE,
 }
 \references{
   Yee, T. W. (2006)
-  \emph{Link functions for ordinal count data}, 
+  \emph{Ordinal ordination with normalizing link functions for count data}, 
   (submitted for publication).
 
 }
@@ -93,17 +95,18 @@ polf(theta, earg = stop("'earg' must be given"), inverse = FALSE,
 
 \seealso{ 
   \code{\link{Links}},
+  \code{\link{ordpoisson}},
   \code{\link{poissonff}},
   \code{\link{nbolf}},
   \code{\link{golf}},
   \code{\link{cumulative}}.
 }
 \examples{
-polf("prob", short=FALSE)
-polf("prob", tag=TRUE)
+earg = list(cutpoint=2)
+polf("p", earg=earg, short=FALSE)
+polf("p", earg=earg, tag=TRUE)
 
 p = seq(0.01, 0.99, by=0.01)
-earg = list(cutpoint=2)
 y = polf(p, earg=earg)
 y. = polf(p, earg=earg, deriv=1)
 max(abs(polf(y, earg=earg, inv=TRUE) - p)) # Should be 0

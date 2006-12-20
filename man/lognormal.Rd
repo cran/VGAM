@@ -9,17 +9,24 @@
 
 }
 \usage{
-lognormal(lmeanlog = "identity", lsdlog = "loge", zero = NULL)
+lognormal(lmeanlog = "identity", lsdlog = "loge",
+          emeanlog=list(), esdlog=list(), zero = NULL)
 lognormal3(lmeanlog = "identity", lsdlog = "loge",
+           emeanlog=list(), esdlog=list(),
            powers.try = (-3):3, delta = NULL, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{lmeanlog, lsdlog}{ 
+  \item{lmeanlog, lsdlog}{
   Parameter link functions applied to the mean and (positive)
   \eqn{\sigma}{sigma} (standard deviation) parameter.
   Both of these are on the log scale. 
   See \code{\link{Links}} for more choices.
+
+  }
+  \item{emeanlog, esdlog}{
+  List. Extra argument for each of the links.
+  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{zero}{
@@ -109,9 +116,8 @@ fit = vglm(y ~ x, lognormal(zero=1), trace=TRUE, crit="c")
 coef(fit, mat=TRUE)
 Coef(fit)
 
-n = 1000
 lambda = 4
-y = lambda + rlnorm(n, mean=1.5, sd=exp(-0.8))
+y = lambda + rlnorm(n <- 1000, mean=1.5, sd=exp(-0.8))
 fit = vglm(y ~ 1, lognormal3, trace=TRUE)
 fit = vglm(y ~ 1, lognormal3, trace=TRUE, crit="c")
 coef(fit, mat=TRUE)

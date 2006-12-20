@@ -7,7 +7,9 @@
 
 }
 \usage{
-tikuv(d, lmean="identity", lsigma="loge", isigma=NULL, zero=2)
+tikuv(d, lmean="identity", lsigma="loge",
+      emean=list(), esigma=list(),
+      isigma=NULL, zero=2)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -22,6 +24,11 @@ tikuv(d, lmean="identity", lsigma="loge", isigma=NULL, zero=2)
   (see \bold{Details} below).
   They are \eqn{\mu}{mu} and \eqn{\sigma}{sigma} respectively.
   See \code{\link{Links}} for more choices.
+
+  }
+  \item{emean, esigma}{
+  List. Extra argument for each of the links.
+  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{isigma}{

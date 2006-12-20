@@ -9,28 +9,31 @@
 
 }
 \usage{
-binom2.or(lp = "logit", lp1 = lp, lp2 = lp, lor = "loge",
+binom2.or(lmu = "logit", lmu1 = lmu, lmu2 = lmu, lor = "loge",
+          emu=list(), emu1=emu, emu2=emu, eor=list(),
           zero = 3, exchangeable = FALSE, tol = 0.001)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{lp}{
+  \item{lmu}{
   Link function applied to the two marginal probabilities. 
   See \code{\link{Links}} for more choices.
   See the note below.
 
   }
-  \item{lp1}{
-  Link function applied to the first of the two marginal probabilities.
-
-  }
-  \item{lp2}{
-  Link function applied to the second of the two marginal probabilities.
+  \item{lmu1, lmu2}{
+  Link function applied to the first and second of the two marginal
+  probabilities.
 
   }
   \item{lor}{
   Link function applied to the odds ratio.
   See \code{\link{Links}} for more choices.
+
+  }
+  \item{emu, emu1, emu2, eor}{
+  List. Extra argument for each of the links.
+  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{zero}{
@@ -127,12 +130,12 @@ binom2.or(lp = "logit", lp1 = lp, lp2 = lp, lor = "loge",
   function of the explanatory variables; however, numerical problems
   are more likely to occur.
 
-  The argument \code{lp}, which is actually redundant, is used for
-  convenience and for upward compatibility: specifying \code{lp} only
-  means the link function will be applied to \code{lp1} and \code{lp2}.
+  The argument \code{lmu}, which is actually redundant, is used for
+  convenience and for upward compatibility: specifying \code{lmu} only
+  means the link function will be applied to \code{lmu1} and \code{lmu2}.
   Users who want a different link function for each of the two marginal
-  probabilities should use the \code{lp1} and \code{lp2} arguments,
-  and the argument \code{lp} is then ignored.  It doesn't make sense
+  probabilities should use the \code{lmu1} and \code{lmu2} arguments,
+  and the argument \code{lmu} is then ignored.  It doesn't make sense
   to specify \code{exchangeable=TRUE} and have different link functions
   for the two marginal probabilities.
 

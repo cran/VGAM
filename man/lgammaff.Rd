@@ -9,8 +9,9 @@
 
 }
 \usage{
-lgammaff(link = "loge", init.k = NULL)
+lgammaff(link = "loge", earg=list(), init.k = NULL)
 lgamma3ff(llocation="identity", lscale="loge", lshape="loge",
+          elocation=list(), escale=list(), eshape=list(),
           ilocation=NULL, iscale=NULL, ishape=1, zero=NULL)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -31,6 +32,11 @@ lgamma3ff(llocation="identity", lscale="loge", lshape="loge",
   Parameter link function applied to 
   the positive shape parameter \eqn{k}. 
   See \code{\link{Links}} for more choices.
+
+  }
+  \item{earg, elocation, escale, eshape}{
+  List. Extra argument for each of the links.
+  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{init.k, ishape}{

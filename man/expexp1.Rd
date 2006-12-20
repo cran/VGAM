@@ -5,15 +5,21 @@
 \description{
   Estimates the two parameters of the exponentiated exponential
   distribution by maximizing a profile (concentrated) likelihood.
+
 }
 \usage{
-expexp1(lscale = "loge", iscale = NULL, ishape = 1)
+expexp1(lscale = "loge", escale=list(), iscale = NULL, ishape = 1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{lscale}{
   Parameter link function for the (positive) \eqn{\lambda}{scale} parameter.
   See \code{\link{Links}} for more choices.
+
+  }
+  \item{escale}{
+  List. Extra argument for the link.
+  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{iscale}{
@@ -28,17 +34,15 @@ expexp1(lscale = "loge", iscale = NULL, ishape = 1)
   }
 }
 \details{
-  See \code{\link{expexp}} for details about the
-  exponentiated exponential distribution. This
-  family function uses a different algorithm for fitting
-  the model. Given \eqn{\lambda}{scale}, the MLE of
-  \eqn{\alpha}{shape} can easily be solved in terms of
-  \eqn{\lambda}{scale}. This family function maximizes
-  a profile (concentrated) likelihood with respect to \eqn{\lambda}{scale}.
-  Newton-Raphson is used, which compares with Fisher scoring
-  with \code{\link{expexp}}.
+  See \code{\link{expexp}} for details about the exponentiated
+  exponential distribution. This family function uses a different
+  algorithm for fitting the model. Given \eqn{\lambda}{scale},
+  the MLE of \eqn{\alpha}{shape} can easily be solved in terms of
+  \eqn{\lambda}{scale}. This family function maximizes a profile
+  (concentrated) likelihood with respect to \eqn{\lambda}{scale}.
+  Newton-Raphson is used, which compares with Fisher scoring with
+  \code{\link{expexp}}.
 
-  
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).

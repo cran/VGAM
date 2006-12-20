@@ -9,6 +9,7 @@
 }
 \usage{
 expexp(lshape = "loge", lscale = "loge",
+       eshape=list(), escale=list(),
        ishape = 1.1, iscale = NULL, 
        tolerance = 1.0e-6, zero = NULL)
 }
@@ -19,6 +20,11 @@ expexp(lshape = "loge", lscale = "loge",
   \eqn{\alpha}{shape} and \eqn{\lambda}{scale} parameters.
   See \code{\link{Links}} for more choices.
   The defaults ensure both parameters are positive.
+
+  }
+  \item{eshape, escale}{
+  List. Extra argument for each of the links.
+  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{ishape}{

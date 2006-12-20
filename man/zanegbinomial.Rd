@@ -10,6 +10,7 @@
 }
 \usage{
 zanegbinomial(lp0="logit", lmunb = "loge", lk = "loge",
+              ep0=list(), emunb =list(), ek = list(),
               ik = 1, zero = -3, cutoff = 0.995, method.init=3)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -30,6 +31,11 @@ zanegbinomial(lp0="logit", lmunb = "loge", lk = "loge",
     parameter, called \code{k}. That is, as \code{k} increases, the
     variance of the response decreases.
     See \code{\link{Links}} for more choices.
+
+  }
+  \item{ep0, emunb, ek}{
+  List. Extra argument for the respective links.
+  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{ik}{ 

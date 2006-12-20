@@ -21,6 +21,8 @@ micmen <- function(rpar=0.001, divisor=10,
                    init1=NULL, init2=NULL,
                    link1="identity",
                    link2="identity",
+                   earg1=list(), 
+                   earg2=list(), 
                    dispersion=0,
                    zero=NULL)
 {
@@ -32,13 +34,15 @@ micmen <- function(rpar=0.001, divisor=10,
         link1 <- as.character(substitute(link1))
     if(mode(link2) != "character" && mode(link2) != "name")
         link2 <- as.character(substitute(link2))
+    if(!is.list(earg1)) earg1 = list()
+    if(!is.list(earg2)) earg2 = list()
 
     new("vglmff",
     blurb=c("Michaelis-Menton regression model\n",
            "Y_i=theta1 * x_i / (theta2 + x_i) + e_i\n\n",
            "Links:    ",
-           namesof("theta1", link1), ", ",
-           namesof("theta2", link2), 
+           namesof("theta1", link1, earg=earg1), ", ",
+           namesof("theta2", link2, earg=earg2),
            "\n",
            "Variance: constant"),
     constraints=eval(substitute(expression({
@@ -52,11 +56,15 @@ micmen <- function(rpar=0.001, divisor=10,
             rss.vgam(y-mu, w, M=M)
     },
     initialize=eval(substitute(expression({
+        if(ncol(cbind(y)) != 1)
+            stop("response must be a vector or a one-column matrix")
+
         uvec = control$regressor   # This is the regressor
         extra$uvec = uvec          # Needed for @inverse
 
-        predictors.names <- c(namesof("theta1", .link1, tag=FALSE),
-                              namesof("theta2", .link2, tag=FALSE))
+        predictors.names <-
+          c(namesof("theta1", .link1, earg= .earg1, tag=FALSE),
+            namesof("theta2", .link2, earg= .earg2, tag=FALSE))
 
         if(length(mustart) || length(coefstart))
             stop("can't handle mustart or coefstart")
@@ -68,21 +76,25 @@ micmen <- function(rpar=0.001, divisor=10,
             if(length(.init1)) init1 = .init1
             if(length(.init2)) init2 = .init2
 
-            etastart = cbind(rep(theta2eta(init1, .link1), len=n),
-                             rep(theta2eta(init2, .link2), len=n))
+            etastart = cbind(
+                rep(theta2eta(init1, .link1, earg= .earg1), len=n),
+                rep(theta2eta(init2, .link2, earg= .earg2), len=n))
         } else {
             stop("can't handle etastart or mustart")
         }
 
     }), list(.init1=init1, .init2=init2,
-            .link1=link1, .link2=link2))),
+             .earg1=earg1, .earg2=earg2,
+             .link1=link1, .link2=link2))),
     inverse=eval(substitute(function(eta, extra=NULL) {
-        theta1 <- eta2theta(eta[,1], .link1)
-        theta2 <- eta2theta(eta[,2], .link2)
+        theta1 <- eta2theta(eta[,1], .link1, earg= .earg1)
+        theta2 <- eta2theta(eta[,2], .link2, earg= .earg2)
         theta1 * extra$uvec / (theta2 + extra$uvec)
-    }, list(.link1=link1, .link2=link2))),
+    }, list(.link1=link1, .link2=link2,
+            .earg1=earg1, .earg2=earg2 ))),
     last=eval(substitute(expression({
         misc$link <- c(theta1= .link1, theta2= .link2)
+        misc$earg = list(theta1= .earg1, theta2= .earg2 )
         misc$rpar <- rpar
         fit$df.residual <- n - rank   # Not n.big - rank
         fit$df.total <- n             # Not n.big
@@ -95,6 +107,7 @@ micmen <- function(rpar=0.001, divisor=10,
         misc$default.dispersion <- 0
         misc$estimated.dispersion <- .estimated.dispersion
     }), list(.link1=link1, .link2=link2, .dispersion=dispersion,
+             .earg1=earg1, .earg2=earg2,
              .estimated.dispersion=estimated.dispersion))),
     summary.dispersion=FALSE,
     vfamily=c("micmen","vnonlinear"),
@@ -107,8 +120,8 @@ micmen <- function(rpar=0.001, divisor=10,
                         c("theta1","theta2"), hessian=FALSE)
         }
 
-        theta1 <- eta2theta(eta[,1], .link1)
-        theta2 <- eta2theta(eta[,2], .link2)
+        theta1 <- eta2theta(eta[,1], .link1, earg= .earg1)
+        theta2 <- eta2theta(eta[,2], .link2, earg= .earg2)
 
         if(TRUE) {
             dmus.dthetas  = attr(eval(d3), "gradient")
@@ -118,8 +131,8 @@ micmen <- function(rpar=0.001, divisor=10,
             dmus.dthetas  = cbind(dmu.dtheta1, dmu.dtheta2)
         }
 
-        dthetas.detas = cbind(dtheta.deta(theta1, .link1),
-                              dtheta.deta(theta2, .link2))
+        dthetas.detas = cbind(dtheta.deta(theta1, .link1, earg= .earg1),
+                              dtheta.deta(theta2, .link2, earg= .earg2))
 
         if(TRUE) {
             index = iam(NA, NA, M=M, both=TRUE)
@@ -132,7 +145,9 @@ micmen <- function(rpar=0.001, divisor=10,
             cbind(dmus.dthetas[,1] * dthetas.detas[,1],
                   dmus.dthetas[,2] * dthetas.detas[,2] + sqrt(rpar))
         }
-    }), list(.link1=link1, .link2=link2, .rpar=rpar, .divisor=divisor))),
+    }), list( .link1=link1, .link2=link2, .rpar=rpar,
+              .earg1=earg1, .earg2=earg2,
+              .divisor=divisor))),
     weight=eval(substitute(expression({
         if(TRUE) {
             wz = dmus.dthetas[,index$row] * dmus.dthetas[,index$col] *

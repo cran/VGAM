@@ -8,7 +8,9 @@
 
 }
 \usage{
-zibinomial(lphi="logit", link.mu="logit", iphi=NULL, zero=1, mv=FALSE)
+zibinomial(lphi="logit", link.mu="logit",
+           ephi=list(), emu=list(),
+           iphi=NULL, zero=1, mv=FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -16,31 +18,37 @@ zibinomial(lphi="logit", link.mu="logit", iphi=NULL, zero=1, mv=FALSE)
   Link function for the parameter \eqn{\phi}{phi}.
   See \code{\link{Links}} for more choices.
 
-}
+  }
   \item{link.mu}{ 
   Link function for the usual binomial probability \eqn{\mu}{mu} parameter.
   See \code{\link{Links}} for more choices.
 
-}
-\item{iphi}{
+  }
+  \item{ephi, emu}{
+  List. Extra argument for the respective links.
+  See \code{earg} in \code{\link{Links}} for general information.
+
+  }
+
+  \item{iphi}{
   Optional initial value for \eqn{\phi}{phi}, whose value must lie
   between 0 and 1.  The default is to compute an initial value internally.
 
-}
-\item{zero}{ 
+  }
+  \item{zero}{ 
   An integer specifying which linear/additive predictor is modelled
   as intercepts only.  If given, the value must be either 1 or 2,
   and the default is the first. Setting \code{zero=NULL} enables both
   \eqn{\phi}{phi} and \eqn{\mu}{mu} to be modelled as a function of
   the explanatory variables.
 
-}
-\item{mv}{ 
+  }
+  \item{mv}{ 
   Logical. Currently it must be \code{FALSE} to mean the function does
   not handle multivariate responses. This is to remain compatible with
   the same argument in \code{\link{binomialff}}.
 
-}
+  }
 }
 \details{
   This function uses Fisher scoring and is based on

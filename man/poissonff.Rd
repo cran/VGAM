@@ -10,13 +10,19 @@
 
 }
 \usage{
-poissonff(link = "loge", dispersion = 1,
+poissonff(link = "loge", earg=list(), dispersion = 1,
           onedpar = FALSE, parallel = FALSE, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{link}{
-  Link function. See \code{\link{Links}} for more choices.
+  Link function applied to the mean or means.
+  See \code{\link{Links}} for more choices.
+
+  }
+  \item{earg}{
+  Extra argument optionally used by the link function.
+  See \code{\link{Links}} for more information.
 
   }
   \item{dispersion}{
@@ -109,6 +115,7 @@ poissonff(link = "loge", dispersion = 1,
     \code{\link{Links}},
     \code{\link{quasipoissonff}},
     \code{\link{zipoisson}},
+    \code{\link{ordpoisson}},
     \code{\link{loge}},
     \code{\link{polf}},
     \code{\link{rrvglm}},

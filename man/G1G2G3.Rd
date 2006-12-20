@@ -5,15 +5,21 @@
 \description{
   Estimates the three independent parameters of the 
   the G1G2G3 blood group system.
+
 }
 \usage{
-G1G2G3(link = "logit", ip1 = NULL, ip2 = NULL, iF = NULL)
+G1G2G3(link = "logit", earg=list(), ip1 = NULL, ip2 = NULL, iF = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{link}{
   Link function applied to \code{p1}, \code{p2} and \code{f}.
   See \code{\link{Links}} for more choices.
+
+  }
+  \item{earg}{
+  List. Extra argument for the link.
+  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{ip1, ip2, iF}{
@@ -65,7 +71,8 @@ argument is used to specify the total number of counts for each row.
 \examples{
 y = cbind(108, 196, 429, 143, 513, 559)
 fit = vglm(y ~ 1, G1G2G3(link=probit), trace=TRUE, crit="coef")
-fit = vglm(y ~ 1, G1G2G3(link=logit, .3, .3, .02), trace=TRUE, crit="coef")
+fit = vglm(y ~ 1, G1G2G3(link=logit, ip1=.3, ip2=.3, iF=.02),
+           trace=TRUE, crit="coef")
 fit = vglm(y ~ 1, G1G2G3(link="identity"), trace=TRUE)
 Coef(fit) # Estimated p1, p2 and f
 rbind(y, sum(y)*fitted(fit))

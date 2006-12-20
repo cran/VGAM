@@ -6,7 +6,8 @@
    Maximum likelihood estimation of the (2-parameter) F distribution.
 }
 \usage{
-fff(link="loge", idf1=NULL, idf2=NULL, method.init=1, zero=NULL)
+fff(link="loge", earg=list(), idf1=NULL, idf2=NULL,
+    method.init=1, zero=NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -16,7 +17,12 @@ fff(link="loge", idf1=NULL, idf2=NULL, method.init=1, zero=NULL)
   The default keeps the parameters positive.
 
   }
-  \item{idf1,idf2}{
+  \item{earg}{
+  List. Extra argument for the link.
+  See \code{earg} in \code{\link{Links}} for general information.
+
+  }
+  \item{idf1, idf2}{
   Numeric and positive. 
   Initial value for the parameters.
   The default is to choose each value internally.
@@ -84,10 +90,24 @@ df1 = exp(2+0.5*x)
 df2 = exp(2-0.5*x)
 y = rf(n, df1, df2)
 fit = vglm(y  ~ x, fff, trace=TRUE)
+fit = vglm(y  ~ x, fff(link="logoff", earg=list(offset=0.5)), trace=TRUE)
 coef(fit, matrix=TRUE)
 Coef(fit)
 vcov(fit)   # caution needed!
 }
 \keyword{models}
 \keyword{regression}
+
+
+
+%# Another simpler example
+%set.seed(123)
+%df1 = exp(2)
+%df2 = exp(2)
+%y = rf(n <- 1000, df1, df2)
+%fit1 = vglm(y  ~ 1, fff, trace=TRUE)
+%fit2 = vglm(y  ~ 1, fff(link="logoff", earg=list(offset=0.5)), trace=TRUE)
+%vcov(fit1)   # caution needed!
+%vcov(fit2)   # caution needed!
+
 

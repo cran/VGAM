@@ -6,7 +6,7 @@
   Estimating the parameter of Haight's Zeta function.
 }
 \usage{
-hzeta(link = "loglog", init.alpha = NULL)
+hzeta(link = "loglog", earg=list(), init.alpha = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -15,6 +15,11 @@ hzeta(link = "loglog", init.alpha = NULL)
   See \code{\link{Links}} for more choices.
   Here, a log-log link keeps the parameter greater than one, meaning
   the mean is finite.
+
+  }
+  \item{earg}{
+  List. Extra argument for the link.
+  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{init.alpha}{
@@ -67,8 +72,8 @@ hzeta(link = "loglog", init.alpha = NULL)
     \code{\link{loglog}}.
 }
 \examples{
-alpha = exp(0.1)  # The parameter
-y = rhzeta(n=400, alpha) # Generate some hzeta random variates
+alpha = exp(exp(0.5))  # The parameter
+y = rhzeta(n=1000, alpha) # Generate some hzeta random variates
 fit = vglm(y ~ 1, hzeta, trace = TRUE, crit="c")
 coef(fit, matrix=TRUE)
 Coef(fit)  # Useful for intercept-only models; should be same as alpha

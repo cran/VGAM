@@ -6,7 +6,7 @@
   Maximum likelihood estimation for the geometric distribution.
 }
 \usage{
-geometric(link = "logit", expected = TRUE)
+geometric(link = "logit", earg=list(), expected = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -14,6 +14,11 @@ geometric(link = "logit", expected = TRUE)
   Parameter link function applied to the
   parameter \eqn{p}{prob}, which lies in the unit interval.
   See \code{\link{Links}} for more choices.
+
+  }
+  \item{earg}{
+  List. Extra argument for the link.
+  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{expected}{ 

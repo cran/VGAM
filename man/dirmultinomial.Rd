@@ -7,7 +7,8 @@
 
 }
 \usage{
-dirmultinomial(lphi="logit", iphi = 0.10, parallel= FALSE, zero="M")
+dirmultinomial(lphi="logit", ephi = list(), iphi = 0.10,
+               parallel= FALSE, zero="M")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -15,6 +16,11 @@ dirmultinomial(lphi="logit", iphi = 0.10, parallel= FALSE, zero="M")
   Link function applied to the \eqn{\phi}{phi} 
   parameter, which lies in the open unit interval \eqn{(0,1)}.
   See \code{\link{Links}} for more choices.
+
+  }
+  \item{ephi}{
+  List. Extra argument for \code{lphi}.
+  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{iphi}{

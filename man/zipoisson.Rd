@@ -6,7 +6,9 @@
   Fits a zero-inflated Poisson distribution.
 }
 \usage{
-zipoisson(lphi="logit", llambda = "loge", iphi = NULL, zero = NULL)
+zipoisson(lphi="logit", llambda = "loge", 
+          ephi=list(), elambda =list(),
+          iphi = NULL, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -14,24 +16,30 @@ zipoisson(lphi="logit", llambda = "loge", iphi = NULL, zero = NULL)
   Link function for the parameter \eqn{\phi}{phi}.
   See \code{\link{Links}} for more choices.
 
-}
+  }
   \item{llambda}{ 
   Link function for the usual \eqn{\lambda}{lambda} parameter.
   See \code{\link{Links}} for more choices.
 
-}
-\item{iphi}{
+  }
+  \item{ephi, elambda}{
+  List. Extra argument for the respective links.
+  See \code{earg} in \code{\link{Links}} for general information.
+
+  }
+
+  \item{iphi}{
   Optional initial value for \eqn{\phi}{phi}, whose value must lie
   between 0 and 1.  The default is to compute an initial value internally.
 
-}
-\item{zero}{ 
+  }
+  \item{zero}{ 
   An integer specifying which linear/additive predictor is modelled as
   intercepts only.  If given, the value must be either 1 or 2, and the
   default is none of them. Setting \code{zero=1} makes \eqn{\phi}{phi}
   a single parameter.
 
-}
+  }
 }
 \details{
   This function uses Fisher scoring and is based on

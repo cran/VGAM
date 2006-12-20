@@ -6,13 +6,18 @@
   Fits a positive binomial distribution.
 }
 \usage{
-posbinomial(link = "logit")
+posbinomial(link = "logit", earg=list())
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{link}{
   Link function for the usual probability parameter.   
   See \code{\link{Links}} for more choices.
+
+  }
+  \item{earg}{
+  List. Extra argument for the link.
+  See \code{earg} in \code{\link{Links}} for general information.
 
   }
 }

@@ -7,6 +7,7 @@
 }
 \usage{
 genpoisson(llambda = "logit", ltheta = "loge",
+           elambda=list(), etheta=list(),
            ilambda = 0.5, itheta = NULL, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -22,6 +23,11 @@ genpoisson(llambda = "logit", ltheta = "loge",
   Parameter link function for \code{theta}. 
   See \code{\link{Links}} for more choices.
   The parameter is positive, therefore the default is the log link. 
+
+  }
+  \item{elambda, etheta}{
+  List. Extra argument for each of the links.
+  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{ilambda}{ Optional initial value for \code{lambda}. }

@@ -8,6 +8,7 @@
 }
 \usage{
 prentice74(llocation="identity", lscale="loge", lshape="identity",
+           elocation=list(), escale=list(), eshape=list(),
            ilocation=NULL, iscale=NULL, ishape=NULL, zero=NULL)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -28,6 +29,11 @@ prentice74(llocation="identity", lscale="loge", lshape="identity",
   Parameter link function applied to 
   the shape parameter \eqn{q}. 
   See \code{\link{Links}} for more choices.
+
+  }
+  \item{elocation, escale, eshape}{
+  List. Extra argument for each of the links.
+  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{ilocation, iscale}{

@@ -472,7 +472,6 @@ if(exists("flush.console")) flush.console()
 
     temp.smooth.frame = vector("list", p1+Rank)  # A temporary makeshift frame
     names(temp.smooth.frame) = c(names(control$colx1.index), mynames5)
-    temp.smooth.frame[[1]] = rep(1, len=n)  # Ideally should pass in x1mat
     for(uu in 1:(p1+Rank)) {
         temp.smooth.frame[[uu]] = nu1mat[,uu]
     }
@@ -482,7 +481,7 @@ if(exists("flush.console")) flush.console()
         attr(temp.smooth.frame[,uu+p1], "df") = 4    # this value unused
     }
 
-    pstar.  = p1star.  + p2star.   # Mdot + Rank
+    pstar.  = p1star.  + p2star.   # = Mdot + Rank
     nstar = if(Nice21) ifelse(modelno==3 || modelno==5,n*2,n) else n*M
     lenbeta = pstar. * ifelse(Nice21, NOS, 1) # Holds the linear coeffs
 
@@ -508,7 +507,7 @@ if(exists("flush.console")) flush.console()
     nwhich = names(which) = mynames5
 
     origBlist = Blist. = create.cms(Rank=Rank, M=M., MSratio=MSratio, 
-                                    which=which,p1=p1) # For 1 species
+                                    which=which, p1=p1) # For 1 species only
     ncolBlist. <- unlist(lapply(Blist. , ncol))
     smooth.frame = s.vam(x=nu1mat, z=NULL, wz=NULL, s=NULL,
                          which=which,
@@ -523,9 +522,7 @@ if(exists("flush.console")) flush.console()
                          all.knots=control$all.knots, nk=NULL,
                          sf.only=TRUE)
 
-    ldk <- 4 * max(ncolBlist.[nwhich])   # was M;     # Prior to 11/7/02
     ldk <- 3 * max(ncolBlist.[nwhich]) + 1   # 11/7/02
-
 
     dimw. = M.   # Smoothing one spp. at a time
     dimu. = M.
@@ -537,7 +534,6 @@ if(exists("flush.console")) flush.console()
     trivc = rep(2 - M. , len=queue)   # All of queue smooths are basic smooths
     ncbvec <- ncolBlist.[nwhich]
     ncolb <- max(ncbvec)
-    pmax.mwk <- rep( dimw. , length(trivc))
     pmax.mwk <- pmax(ncbvec*(ncbvec+1)/2, dimw. )
     size.twk <- max((4+4*smooth.frame$nef)*ncbvec + dimu. * smooth.frame$nef)
     size.twk <- max(size.twk, M*smooth.frame$n)
@@ -637,7 +633,7 @@ if(exists("flush.console")) flush.console()
                 ind7 = (smooth.frame$bindex[ii]):(smooth.frame$bindex[ii+1]-1)
                 ans = ans1$bcoeff[ind9+ind7]
                 ans = matrix(ans, ncol=ncolBlist[nwhich[ii]])
-                Bspline[[ii]] = new("vsmooth.spline.fit",
+                Bspline[[ii]] = new(Class="vsmooth.spline.fit",
                     "Bcoefficients" = ans,
                     "xmax"          = smooth.frame$xmax[ii],
                     "xmin"          = smooth.frame$xmin[ii],
@@ -879,7 +875,7 @@ if(exists("flush.console")) flush.console()
                 ind9 = ind9[length(ind9)] + (bindex[i]):(bindex[i+1]-1)
                 ans = ans1$bcoeff[ind9]
                 ans = matrix(ans, ncol=ncolBlist[nwhich[i]])
-                Bspline[[i]] = new("vsmooth.spline.fit",
+                Bspline[[i]] = new(Class="vsmooth.spline.fit",
                     "Bcoefficients" = ans,
                     "xmax"          = smooth.frame$xmax[i],
                     "xmin"          = smooth.frame$xmin[i],
@@ -914,6 +910,27 @@ if(exists("flush.console")) flush.console()
 
 
 
+
+
+
+setClass(Class="Coef.cao", representation(
+      "Bspline"      = "list",
+      "C"            = "matrix",
+      "Constrained"  = "logical",
+      "df1.nl"       = "numeric",
+      "df2.nl"       = "numeric",
+      "dispersion"   = "numeric",
+      "eta2"         = "matrix",
+      "lv"           = "matrix",
+      "lvOrder"      = "matrix",
+      "M"            = "numeric",
+      "Maximum"      = "numeric",
+      "NOS"          = "numeric",
+      "Optimum"      = "matrix",
+      "OptimumOrder" = "matrix",
+      "Rank"         = "numeric",
+      "spar1"        = "numeric",
+      "spar2"        = "numeric"))
 
 
 Coef.cao = function(object,
@@ -1110,26 +1127,6 @@ Coef.cao = function(object,
     dimnames(ans@Optimum) = list(lv.names, ynames)
     ans 
 }
-
-
-setClass("Coef.cao", representation(
-      "Bspline"      = "list",
-      "C"            = "matrix",
-      "Constrained"  = "logical",
-      "df1.nl"       = "numeric",
-      "df2.nl"       = "numeric",
-      "dispersion"   = "numeric",
-      "eta2"         = "matrix",
-      "lv"           = "matrix",
-      "lvOrder"      = "matrix",
-      "M"            = "numeric",
-      "Maximum"      = "numeric",
-      "NOS"          = "numeric",
-      "Optimum"      = "matrix",
-      "OptimumOrder" = "matrix",
-      "Rank"         = "numeric",
-      "spar1"        = "numeric",
-      "spar2"        = "numeric"))
 
 
 printCoef.cao = function(object, digits = max(2, options()$digits-2), ...) {
@@ -1734,7 +1731,7 @@ setMethod("lv", "Coef.cao", function(object, ...) lv.Coef.cao(object, ...))
 
 
 
-setClass("summary.cao", representation("Coef.cao",
+setClass(Class="summary.cao", representation("Coef.cao",
          "misc" = "list",
          "call" = "call"))
 

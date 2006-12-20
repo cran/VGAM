@@ -7,13 +7,18 @@
    AB-Ab-aB-ab blood group system.
 }
 \usage{
-AB.Ab.aB.ab(link = "logit", init.p = NULL)
+AB.Ab.aB.ab(link = "logit", earg=list(), init.p = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{link}{
   Link function applied to \code{p}.
   See \code{\link{Links}} for more choices.
+
+  }
+  \item{earg}{
+  List. Extra argument for the link.
+  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{init.p}{ Optional initial value for \code{p}. }

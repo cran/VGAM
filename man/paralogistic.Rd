@@ -8,6 +8,7 @@
 }
 \usage{
 paralogistic(link.a = "loge", link.scale = "loge",
+             earg.a=list(), earg.scale=list(),
              init.a = 1, init.scale = NULL, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -17,6 +18,11 @@ paralogistic(link.a = "loge", link.scale = "loge",
   (positive) shape parameter \code{a} and
   (positive) scale parameter \code{scale}.
   See \code{\link{Links}} for more choices.
+
+  }
+  \item{earg.a, earg.scale}{
+  List. Extra argument for each of the links.
+  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{init.a, init.scale}{

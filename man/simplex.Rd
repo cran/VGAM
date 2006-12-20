@@ -6,7 +6,9 @@
   The two parameters of the univariate simplex distribution are estimated.
 }
 \usage{
-simplex(lmu = "logit", lsigma = "loge", imu = NULL, isigma = NULL)
+simplex(lmu = "logit", lsigma = "loge", 
+        emu=list(), esigma=list(),
+        imu = NULL, isigma = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -20,6 +22,11 @@ simplex(lmu = "logit", lsigma = "loge", imu = NULL, isigma = NULL)
   Link function for \code{sigma}. 
   See \code{\link{Links}} for more choices.
   The parameter is positive, therefore the log link is the default.
+
+  }
+  \item{emu, esigma}{
+  List. Extra argument for each of the links.
+  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{imu, isigma}{

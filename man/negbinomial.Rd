@@ -8,6 +8,7 @@
 }
 \usage{
 negbinomial(lmu = "loge", lk = "loge",
+            emu =list(), ek=list(),
             ik = NULL, cutoff = 0.995, Maxiter=5000, 
             deviance.arg = FALSE, method.init=1, zero = -2)
 }
@@ -16,6 +17,11 @@ negbinomial(lmu = "loge", lk = "loge",
   \item{lmu, lk}{
   Link functions applied to the \eqn{\mu}{mu} and \eqn{k} parameters.
   See \code{\link{Links}} for more choices.
+
+  }
+  \item{emu, ek}{
+  List. Extra argument for each of the links.
+  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{ik}{

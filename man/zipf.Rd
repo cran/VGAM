@@ -7,7 +7,7 @@
 
 }
 \usage{
-zipf(N=NULL, link="loge", init.s=NULL)
+zipf(N=NULL, link="loge", earg=list(), init.s=NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -22,6 +22,11 @@ zipf(N=NULL, link="loge", init.s=NULL)
   \item{link}{
   Parameter link function applied to the (positive) parameter \eqn{s}.
   See \code{\link{Links}} for more choices.
+
+  }
+  \item{earg}{
+  List. Extra argument for the link.
+  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{init.s}{

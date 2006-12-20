@@ -9,6 +9,7 @@
 }
 \usage{
 mix2normal1(lphi="logit", lmu="identity", lsd="loge",
+            ephi=list(), emu1=list(), emu2=list(), esd1=list(), esd2=list(),
             iphi=0.5, imu1=NULL, imu2=NULL, isd1=NULL, isd2=NULL,
             qmu=c(0.2, 0.8), esd=FALSE, zero=1)
 }
@@ -28,6 +29,12 @@ mix2normal1(lphi="logit", lmu="identity", lsd="loge",
   \item{lsd}{
     Link function applied to each \eqn{\sigma}{sd} parameter.
     See \code{\link{Links}} for more choices.
+
+  }
+  \item{ephi, emu1, emu2, esd1, esd2}{
+  List. Extra argument for each of the links.
+  See \code{earg} in \code{\link{Links}} for general information.
+  If \code{esd=TRUE} then \code{esd1} is used and not \code{esd2}.
 
   }
   \item{iphi}{
@@ -115,6 +122,8 @@ London: Chapman & Hall.
   In particular, results based on the weight matrices (e.g., from
   \code{vcov} and \code{summary}) may be quite incorrect, especially when
   the arguments \code{weights} is used to input prior weights.
+
+  This \pkg{VGAM} family function should be used with caution.
 
 }
 

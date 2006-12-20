@@ -63,7 +63,7 @@ plotvgam <- function(x, newdata=NULL, y=NULL, residuals=NULL, rugplot=TRUE,
                 for(rtype in type.residuals)
                     if(!is.null(residuals <- resid(x, type=rtype))) break
             } else {
-                residuals=resid(x,typ=type.residuals) #Get the prespecified type
+             residuals=resid(x,typ=type.residuals) #Get the prespecified type
                 if(!length(residuals))
                     warning("residuals are NULL. Ignoring residuals=T")
             }
@@ -502,6 +502,7 @@ vplot.numeric <- function(x, y, se.y=NULL, xlab, ylab,
 
 
 
+
     ylim0 <- ylim
 
     if(length(y)/length(x)  != round(length(y)/length(x)))
@@ -609,12 +610,16 @@ vplot.numeric <- function(x, y, se.y=NULL, xlab, ylab,
         if(!length(which.cf) ||
            (length(which.cf) && any(which.cf==i))) {
 
-            ylim <- range(ylim0, uy[,i], na.rm= TRUE)
-            if(se && !is.null(se.y))
-                ylim <- range(ylim0, se.lower[,i], se.upper[,i], na.rm= TRUE)
-            if(!is.null(residuals))
-                ylim <- range(c(ylim, residuals[,i]), na.rm= TRUE)
-            ylim <- ylim.scale(ylim, scale)
+            if(is.Numeric(ylim0, allow=2)) {
+                ylim = ylim0
+            } else {
+                ylim <- range(ylim0, uy[,i], na.rm= TRUE)
+                if(se && !is.null(se.y))
+                    ylim <- range(ylim0, se.lower[,i], se.upper[,i], na.rm= TRUE)
+                if(!is.null(residuals))
+                    ylim <- range(c(ylim, residuals[,i]), na.rm= TRUE)
+                ylim <- ylim.scale(ylim, scale)
+            }
             if(ncol(uy)>1 && length(separator))
                 YLAB <- paste(ylab, separator, i, sep="")  
             if(!add.arg) {

@@ -26,7 +26,11 @@ loglinb2(exchangeable = FALSE, zero = NULL)
   The normalizing parameter \eqn{u_0}{u0} can be expressed as a function
   of the other parameters, viz.,
   \deqn{u_0 = -\log[1 + \exp(u_1) + \exp(u_2) + \exp(u_1 + u_2 + u_{12})].}{%
-    u0 = -log[1 + exp(u1) + exp(u2) + exp(u1 + u2 + u12)].}
+        u0 = -log[1 + exp(u1) + exp(u2) + exp(u1 + u2 + u12)].}
+  The linear/additive predictors are 
+  \eqn{(\eta_1,\eta_2,\eta_3)^T = (u_1,u_2,u_{12})^T}{(eta1,eta2,eta3) =
+       (u1,u2,u12)}.
+
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
@@ -61,6 +65,8 @@ contains further information and examples.
   The response must be a two-column matrix of ones and zeros only.
   This is more restrictive than \code{\link{binom2.or}}, which can handle
   more types of input formats.
+  Note that each of the 4 combinations of the multivariate response
+  need to appear in the data set.
 
 }
 

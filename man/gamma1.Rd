@@ -8,13 +8,18 @@
 
 }
 \usage{
-gamma1(link = "loge")
+gamma1(link = "loge", earg=list())
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{link}{
   Link function applied to the (positive) \emph{shape} parameter.
   See \code{\link{Links}} for more choices.
+
+  }
+  \item{earg}{
+  List. Extra argument for the link.
+  See \code{earg} in \code{\link{Links}} for general information.
 
   }
 }

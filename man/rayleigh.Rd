@@ -9,8 +9,8 @@
 
 }
 \usage{
-rayleigh(link = "loge")
-crayleigh(link ="loge", expected=FALSE)
+rayleigh(link = "loge", earg=list())
+crayleigh(link ="loge", earg=list(), expected=FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -18,6 +18,11 @@ crayleigh(link ="loge", expected=FALSE)
   Parameter link function applied to the parameter \eqn{a}.
   See \code{\link{Links}} for more choices.
   A log link is the default because \eqn{a} is positive.
+
+  }
+  \item{earg}{
+  List. Extra argument for the link.
+  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{expected}{

@@ -8,6 +8,7 @@
 }
 \usage{
 fisk(link.a = "loge", link.scale = "loge",
+     earg.a=list(), earg.scale=list(),
      init.a = NULL, init.scale = NULL, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -16,6 +17,11 @@ fisk(link.a = "loge", link.scale = "loge",
   Parameter link functions applied to the
   (positive) parameters \code{a} and \code{scale}.
   See \code{\link{Links}} for more choices.
+
+  }
+  \item{earg.a, earg.scale}{
+  List. Extra argument for each of the links.
+  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{init.a, init.scale}{

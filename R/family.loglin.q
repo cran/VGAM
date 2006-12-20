@@ -46,6 +46,7 @@ loglinb2 <- function(exchangeable=FALSE, zero=NULL)
     },
     last=expression({
         misc$link = c("u1" = "identity", "u2" = "identity", "u12" = "identity")
+        misc$earg = list(u1=list(), u2=list(), u12=list())
     }),
     link= function(mu, extra=NULL)  {
         u0 <-  log(mu[,1]) 
@@ -162,6 +163,8 @@ loglinb3 <- function(exchangeable=FALSE, zero=NULL)
     last=expression({
         misc$link = rep("identity", length=M)
         names(misc$link) = predictors.names
+        misc$earg = list(u1=list(), u2=list(), u3=list(),
+                         u12=list(), u13=list(), u23=list())
     }),
     link= function(mu, extra=NULL)  {
         u0 <-  log(mu[,1])

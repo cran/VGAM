@@ -77,7 +77,17 @@ rcqo <- function(n, p, S,
     if(Rank > 1 && any(diff(sdlv) > 0))
      stop("argument \"sdlv)\" must be a vector with decreasing values")
 
-    if(length(seed)) set.seed(seed)
+    if(!exists(".Random.seed", envir = .GlobalEnv, inherits = FALSE))
+        runif(1)                       # initialize the RNG if necessary
+    if(is.null(seed)) {
+        RNGstate <- get(".Random.seed", envir = .GlobalEnv)
+    } else {
+        R.seed <- get(".Random.seed", envir = .GlobalEnv)
+        set.seed(seed)
+        RNGstate <- structure(seed, kind = as.list(RNGkind()))
+        on.exit(assign(".Random.seed", R.seed, envir = .GlobalEnv))
+    }
+
     V = matrix(rhox, p-1, p-1)
     diag(V) = 1
     L = chol(V)
@@ -216,7 +226,7 @@ rcqo <- function(n, p, S,
     attr(ans, "EqualTolerances") = EqualTolerances
     attr(ans, "EqualMaxima") = EqualMaxima || all(loabundance == hiabundance)
     attr(ans, "ESOptima") = ESOptima
-    attr(ans, "seed") = seed
+    attr(ans, "seed") = RNGstate
     attr(ans, "sdTolerances") = sdTolerances
     attr(ans, "sdlv") = sdlv
     attr(ans, "sdOptima") = sdOptima

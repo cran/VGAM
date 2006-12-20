@@ -7,13 +7,18 @@
     a chi-squared distribution.
 }
 \usage{
-chisq(link = "loge")
+chisq(link = "loge", earg=list())
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{link}{
   Parameter link function.
   See \code{\link{Links}} for more choices.
+
+  }
+  \item{earg}{
+  List. Extra argument for the link.
+  See \code{earg} in \code{\link{Links}} for general information.
 
   }
 }
@@ -37,8 +42,9 @@ New York: Wiley-Interscience, Third edition.
 
 \author{ T. W. Yee }
 \note{ 
-There may be convergence problems if the degrees of freedom
-is very large.
+  There may be convergence problems if the degrees of freedom
+  is very large.
+
 }
 
 \seealso{

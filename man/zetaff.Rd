@@ -6,7 +6,7 @@
   Estimates the parameter of the zeta distribution.
 }
 \usage{
-zetaff(link = "loge", init.p = NULL)
+zetaff(link = "loge", earg=list(), init.p = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -15,6 +15,11 @@ zetaff(link = "loge", init.p = NULL)
   See \code{\link{Links}} for more choices.
   Choosing \code{\link{loglog}} constrains \eqn{p>1}, but
   may fail if the maximum likelihood estimate is less than one.
+
+  }
+  \item{earg}{
+  List. Extra argument for the link.
+  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{init.p}{

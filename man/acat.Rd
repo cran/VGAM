@@ -7,7 +7,8 @@
   (preferably) factor response.
 }
 \usage{
-acat(link = "loge", parallel = FALSE, reverse = FALSE, zero = NULL)
+acat(link = "loge", earg = list(),
+     parallel = FALSE, reverse = FALSE, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -22,7 +23,11 @@ acat(link = "loge", parallel = FALSE, reverse = FALSE, zero = NULL)
   See \code{\link{Links}} for more choices.
 
   }
+  \item{earg}{
+  List. Extra argument for the link function.
+  See \code{earg} in \code{\link{Links}} for general information.
 
+  }
   \item{parallel}{
   A logical, or formula specifying which terms have
   equal/unequal coefficients.

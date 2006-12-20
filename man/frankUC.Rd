@@ -7,6 +7,7 @@
 \description{
   Density, distribution function, quantile function and random
   generation for the one parameter Frank distribution.
+
 }
 \usage{
 dfrank(x1, x2, alpha)
@@ -17,7 +18,7 @@ rfrank(n, alpha)
   \item{x1, x2, q1, q2}{vector of quantiles.}
   \item{n}{number of observations.
     Must be a positive integer of length 1.}
-  \item{alpha}{the positive correlation parameter \eqn{\alpha}{alpha}.}
+  \item{alpha}{the positive association parameter \eqn{\alpha}{alpha}.}
 }
 \value{
   \code{dfrank} gives the density,
@@ -35,7 +36,7 @@ Frank's family of bivariate distributions.
 \author{ T. W. Yee }
 \details{
   See \code{\link{frank}}, the \pkg{VGAM}
-  family functions for estimating the correlation
+  family functions for estimating the association
   parameter by maximum likelihood estimation, for the formula of the
   cumulative distribution function and other details.
 

@@ -8,6 +8,7 @@
 }
 \usage{
 invlomax(link.scale = "loge", link.p = "loge",
+         earg.scale=list(), earg.p=list(),
          init.scale = NULL, init.p = 1, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -17,6 +18,11 @@ invlomax(link.scale = "loge", link.p = "loge",
   (positive) scale parameter \code{scale} and
   (positive) shape parameter \code{p}.
   See \code{\link{Links}} for more choices.
+
+  }
+  \item{earg.scale, earg.p}{
+  List. Extra argument for each of the links.
+  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{init.scale, init.p}{

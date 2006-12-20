@@ -1086,7 +1086,7 @@ Coef.qrrvglm <- function(object, varlvI = FALSE, reference = NULL, ...) {
 }
 
 
-setClass("Coef.rrvglm", representation(
+setClass(Class="Coef.rrvglm", representation(
       "A"            = "matrix",
       "B1"           = "matrix",
       "C"            = "matrix",
@@ -1095,7 +1095,7 @@ setClass("Coef.rrvglm", representation(
       "colx2.index"  = "numeric",
       "Atilde"       = "matrix"))
 
-setClass("Coef.uqo", representation(
+setClass(Class="Coef.uqo", representation(
       "A"            = "matrix",
       "B1"           = "matrix",
       "Constrained"  = "logical",
@@ -1112,7 +1112,7 @@ setClass("Coef.uqo", representation(
       "Dzero"        = "logical",
       "Tolerance"    = "array"))
 
-setClass("Coef.qrrvglm", representation("Coef.uqo",
+setClass(Class="Coef.qrrvglm", representation("Coef.uqo",
       "C"            = "matrix"))
 
 printCoef.qrrvglm = function(x, ...) {
@@ -2512,7 +2512,7 @@ printsummary.qrrvglm = function(x, ...) {
 
 }
 
-setClass("summary.qrrvglm", representation("qrrvglm"))
+setClass(Class="summary.qrrvglm", representation("qrrvglm"))
 
 setMethod("summary", "qrrvglm",
           function(object, ...)
@@ -2806,7 +2806,7 @@ vcovqrrvglm = function(object,
         "Maximum"))
     NAthere = is.na(answer %*% rep(1, len=3))
     answer[NAthere,] = NA # NA in tolerance means NA everywhere else
-    new("vcov.qrrvglm",
+    new(Class="vcov.qrrvglm",
         Cov.unscaled=Cov.unscaled,
         dispersion=dispersion,
         se=sqrt(answer))
@@ -2819,7 +2819,7 @@ setMethod("vcov", "rrvglm", function(object, ...)
 setMethod("vcov", "qrrvglm", function(object, ...)
     vcovqrrvglm(object, ...))
 
-setClass("vcov.qrrvglm", representation(
+setClass(Class="vcov.qrrvglm", representation(
          Cov.unscaled="array",  # permuted cov.unscaled
          dispersion="numeric",
          se="matrix"))

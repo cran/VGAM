@@ -155,6 +155,7 @@ rposnorm = function(n, mean=0, sd=1) {
 }
 
 posnormal1 = function(lmean="identity", lsd="loge",
+                      emean=list(), esd=list(),
                       imean=NULL, isd=NULL, zero=NULL)
 {
     if(mode(lmean) != "character" && mode(lmean) != "name")
@@ -165,66 +166,70 @@ posnormal1 = function(lmean="identity", lsd="loge",
         stop("bad input for argument \"zero\"")
     if(length(isd) && !is.Numeric(isd, posit=TRUE))
         stop("bad input for argument \"isd\"")
+    if(!is.list(emean)) emean = list()
+    if(!is.list(esd)) esd = list()
 
     new("vglmff",
     blurb=c("Positive (univariate) normal distribution\n\n",
             "Links:    ",
-            namesof("mean", lmean, tag= TRUE), "; ",
-            namesof("sd", lsd, tag= TRUE)),
+            namesof("mean", lmean, earg= emean, tag= TRUE), "; ",
+            namesof("sd", lsd, earg= esd, tag= TRUE)),
     constraints=eval(substitute(expression({
         constraints = cm.zero.vgam(constraints, x, .zero, M)
     }), list( .zero=zero ))),
     initialize=eval(substitute(expression({
-        predictors.names = c(namesof("mean", .lmean, tag= FALSE),
-                             namesof("sd",   .lsd, tag= FALSE))
         if(ncol(y <- cbind(y)) != 1)
             stop("response must be a vector or a one-column matrix")
         if(min(y) <= 0)
             stop("response must be positive")
+        predictors.names = c(namesof("mean", .lmean, earg= .emean, tag= FALSE),
+                             namesof("sd",   .lsd, earg= .esd, tag= FALSE))
         if(!length(etastart)) {
             init.me = if(length( .imean)) rep( .imean, len=n) else NULL
             init.sd = if(length( .isd  )) rep( .isd  , len=n) else NULL
             if(!length(init.me)) init.me = rep(quantile(y, probs=0.40), len=n)
             if(!length(init.sd)) init.sd = rep(sd(y)*1.2, len=n)
-            etastart = cbind(theta2eta(init.me, .lmean),
-                             theta2eta(init.sd, .lsd))
+            etastart = cbind(theta2eta(init.me, .lmean, earg= .emean),
+                             theta2eta(init.sd, .lsd, earg= .esd))
         }
-    }), list( .lmean=lmean, .lsd=lsd, .imean=imean, .isd=isd ))),
+    }), list( .lmean=lmean, .lsd=lsd, .imean=imean, .isd=isd,
+              .emean=emean, .esd=esd ))),
     inverse=eval(substitute(function(eta, extra=NULL) {
-        mymu = eta2theta(eta[,1], .lmean)
-        mysd = eta2theta(eta[,2], .lsd)
+        mymu = eta2theta(eta[,1], .lmean, earg= .emean)
+        mysd = eta2theta(eta[,2], .lsd, earg= .esd)
         mymu + mysd * dnorm(-mymu/mysd) / (1-pnorm(-mymu/mysd))
-    }, list( .lmean=lmean, .lsd=lsd ))),
+    }, list( .lmean=lmean, .lsd=lsd, .emean=emean, .esd=esd ))),
     last=eval(substitute(expression({
         misc$link = c("mean"= .lmean, "sd"= .lsd)  # zz mu or mean ?
+        misc$earg = list("mean"= .emean, "sd"= .esd )
         misc$expected = TRUE
-    }), list( .lmean=lmean, .lsd=lsd ))),
+    }), list( .lmean=lmean, .lsd=lsd, .emean=emean, .esd=esd ))),
     loglikelihood=eval(substitute(
         function(mu,y,w,residuals= FALSE,eta, extra=NULL) {
-        mymu = eta2theta(eta[,1], .lmean)
-        mysd = eta2theta(eta[,2], .lsd)
+        mymu = eta2theta(eta[,1], .lmean, earg= .emean)
+        mysd = eta2theta(eta[,2], .lsd, earg= .esd)
         if(residuals) stop("loglikelihood residuals not implemented yet") else {
         if(is.R())
             sum(w*(dnorm(y, m=mymu, sd=mysd, log=TRUE) -
                    pnorm(-mymu/mysd, log=TRUE, lower.tail=FALSE))) else
             sum(w*(-log(mysd)-0.5*((y-mymu)/mysd)^2 -log(1-pnorm(-mymu/mysd))))
         }
-    }, list( .lmean=lmean, .lsd=lsd ))),
+    }, list( .lmean=lmean, .lsd=lsd, .emean=emean, .esd=esd ))),
     vfamily=c("posnormal1"),
     deriv=eval(substitute(expression({
-        mymu = eta2theta(eta[,1], .lmean)
-        mysd = eta2theta(eta[,2], .lsd)
+        mymu = eta2theta(eta[,1], .lmean, earg= .emean)
+        mysd = eta2theta(eta[,2], .lsd, earg= .esd)
         zedd = (y-mymu) / mysd
         temp7 = dnorm(-mymu/mysd)
         temp8 = if(is.R()) pnorm(-mymu/mysd, low=FALSE) else 1-pnorm(-mymu/mysd)
         temp8 = temp8 * mysd
         dl.dmu = zedd / mysd - temp7 / temp8
         dl.dsd = (mymu*temp7/temp8 + zedd^2 - 1) / mysd
-        dmu.deta = dtheta.deta(mymu, .lmean) 
-        dsd.deta = dtheta.deta(mysd, .lsd) 
+        dmu.deta = dtheta.deta(mymu, .lmean, earg= .emean)
+        dsd.deta = dtheta.deta(mysd, .lsd, earg= .esd)
         w * cbind(dl.dmu * dmu.deta,
                   dl.dsd * dsd.deta)
-    }), list( .lmean=lmean, .lsd=lsd ))),
+    }), list( .lmean=lmean, .lsd=lsd, .emean=emean, .esd=esd ))),
     weight=eval(substitute(expression({
         wz = matrix(as.numeric(NA), n, dimm(M))
         ed2l.dmu2 = (1 - temp7*mymu/temp8) / mysd^2  - (temp7/temp8)^2
@@ -236,7 +241,7 @@ posnormal1 = function(lmean="identity", lsd="loge",
         wz[,iam(2,2,M)] = ed2l.dsd2  * dsd.deta^2
         wz[,iam(1,2,M)] = ed2l.dmusd * dsd.deta * dmu.deta
         w * wz
-    }), list( .lmean=lmean, .lsd=lsd ))))
+    }), list( .lmean=lmean, .lsd=lsd, .emean=emean, .esd=esd ))))
 }
 
 
@@ -281,6 +286,7 @@ rbetanorm = function(n, shape1, shape2, mean=0, sd=1) {
 
 
 tikuv = function(d, lmean="identity", lsigma="loge",
+                 emean=list(), esigma=list(),
                  isigma=NULL, zero=2)
 {
     if(mode(lmean) != "character" && mode(lmean) != "name")
@@ -292,12 +298,14 @@ tikuv = function(d, lmean="identity", lsigma="loge",
         stop("bad input for argument \"zero\"")
     if(!is.Numeric(d, allow=1) || max(d) >= 2)
         stop("bad input for argument \"d\"")
+    if(!is.list(emean)) emean = list()
+    if(!is.list(esigma)) esigma = list()
 
     new("vglmff",
     blurb=c("Short-tailed symmetric [Tiku and Vaughan (1999)] distribution\n",
             "Link:     ",
-            namesof("mean", lmean), ", ",
-            namesof("sigma", lsigma),
+            namesof("mean", lmean, earg= emean), ", ",
+            namesof("sigma", lsigma, earg= esigma),
             "\n",
             "\n",
             "Mean:     mean"),
@@ -307,8 +315,9 @@ tikuv = function(d, lmean="identity", lsigma="loge",
     initialize=eval(substitute(expression({
         if(ncol(cbind(y)) != 1)
             stop("the response must be a vector or one-column matrix")
-        predictors.names = c(namesof("mean", .lmean, tag= FALSE),
-                             namesof("sigma", .lsigma, tag= FALSE))
+        predictors.names = 
+            c(namesof("mean", .lmean, earg= .emean, tag= FALSE),
+              namesof("sigma", .lsigma, earg= .esigma, tag= FALSE))
         if(!length(etastart)) {
             sigma.init = if(length(.isigma)) rep(.isigma, length=n) else {
                 hh = 2 - .d
@@ -317,41 +326,47 @@ tikuv = function(d, lmean="identity", lsigma="loge",
                 rep(sqrt(var(y) / (KK*K2)), len=n)
             }
             mean.init = rep(weighted.mean(y, w), len=n) 
-            etastart = cbind(theta2eta(mean.init,  .lmean),
-                             theta2eta(sigma.init, .lsigma))
+            etastart = cbind(theta2eta(mean.init,  .lmean, earg= .emean),
+                             theta2eta(sigma.init, .lsigma, earg= .esigma))
         }
-    }),list( .lmean=lmean, .lsigma=lsigma, .isigma=isigma, .d=d ))),
+    }),list( .lmean=lmean, .lsigma=lsigma, .isigma=isigma, .d=d,
+             .emean=emean, .esigma=esigma ))),
     inverse=eval(substitute(function(eta, extra=NULL) {
-        eta2theta(eta[,1], .lmean)
-    }, list( .lmean=lmean ))),
+        eta2theta(eta[,1], .lmean, earg= .emean)
+    }, list( .lmean=lmean,
+             .emean=emean, .esigma=esigma ))),
     last=eval(substitute(expression({
         misc$link = c("mean"= .lmean, "sigma"= .lsigma)
+        misc$earg = list("mean"= .emean, "sigma"= .esigma )
         misc$expected = TRUE
         misc$d = .d 
-    }), list( .lmean=lmean, .lsigma=lsigma, .d=d ))),
+    }), list( .lmean=lmean, .lsigma=lsigma, .d=d,
+             .emean=emean, .esigma=esigma ))),
     loglikelihood=eval(substitute(
         function(mu,y,w,residuals= FALSE,eta, extra=NULL) {
-        mymu = eta2theta(eta[,1], .lmean)
-        sigma = eta2theta(eta[,2], .lsigma)
+        mymu = eta2theta(eta[,1], .lmean, earg= .emean)
+        sigma = eta2theta(eta[,2], .lsigma, earg= .esigma)
         if(residuals) stop("loglikelihood residuals not implemented yet") else {
             zedd = (y - mymu) / sigma
             hh = 2 - .d
             sum(w * (-log(sigma) + 2 * log(1 + 0.5*zedd^2 / hh) - 0.5*zedd^2))
         }
-    }, list( .lmean=lmean, .lsigma=lsigma, .d=d ))),
+    }, list( .lmean=lmean, .lsigma=lsigma, .d=d,
+             .emean=emean, .esigma=esigma ))),
     vfamily=c("tikuv"),
     deriv=eval(substitute(expression({
-        mymu = eta2theta(eta[,1], .lmean)
-        sigma = eta2theta(eta[,2], .lsigma)
-        dmu.deta = dtheta.deta(mymu, .lmean)
-        dsigma.deta = dtheta.deta(sigma, .lsigma)
+        mymu = eta2theta(eta[,1], .lmean, earg= .emean)
+        sigma = eta2theta(eta[,2], .lsigma, earg= .esigma)
+        dmu.deta = dtheta.deta(mymu, .lmean, earg= .emean)
+        dsigma.deta = dtheta.deta(sigma, .lsigma, earg= .esigma)
         zedd = (y - mymu) / sigma
         hh = 2 - .d 
         gzedd = zedd / (1 + 0.5*zedd^2 / hh)
         dl.dmu = zedd / sigma - 2 * gzedd / (hh*sigma)
         dl.dsigma = (zedd^2 - 1 - 2 * zedd * gzedd / hh) / sigma
         w * cbind(dl.dmu * dmu.deta, dl.dsigma * dsigma.deta)
-    }), list( .lmean=lmean, .lsigma=lsigma, .d=d ))),
+    }), list( .lmean=lmean, .lsigma=lsigma, .d=d,
+             .emean=emean, .esigma=esigma ))),
     weight=eval(substitute(expression({
         ayy = 1 / (2*hh)
         Dnos = 1 - (2/hh) * (1 - ayy) / (1 + 2*ayy + 3*ayy^2)
@@ -362,7 +377,8 @@ tikuv = function(d, lmean="identity", lsigma="loge",
         wz[,iam(1,1,M)] = ed2l.dmymu2 * dmu.deta^2
         wz[,iam(2,2,M)] = ed2l.dnu2 * dsigma.deta^2
         w * wz
-    }), list( .lmean=lmean, .lsigma=lsigma ))))
+    }), list( .lmean=lmean, .lsigma=lsigma,
+             .emean=emean, .esigma=esigma ))))
 }
 
 

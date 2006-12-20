@@ -8,7 +8,8 @@
   and a positive-Poisson distribution.
 }
 \usage{
-zapoisson(lp0 = "logit", llambda = "loge")
+zapoisson(lp0 = "logit", llambda = "loge",
+          ep0=list(), elambda=list())
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -20,6 +21,11 @@ zapoisson(lp0 = "logit", llambda = "loge")
   \item{llambda}{
   Link function for the usual \eqn{\lambda}{lambda} parameter.
   See \code{\link{Links}} for more choices.
+
+  }
+  \item{ep0, elambda}{
+  Extra argument for the respective links.
+  See \code{earg} in \code{\link{Links}} for general information.
 
   }
 }

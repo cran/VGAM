@@ -8,8 +8,9 @@
 \usage{
 garma(link = c("identity", "loge", "reciprocal",
                "logit", "probit", "cloglog", "cauchit"),
+      earg=list(),
       p.ar.lag = 1, q.lag.ma = 0,
-      coefstart = NULL, step = 1, constant = 0.1)
+      coefstart = NULL, step = 1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -21,6 +22,18 @@ garma(link = c("identity", "loge", "reciprocal",
   The links \code{\link{logit}}, \code{\link{probit}},
   \code{\link{cloglog}},
   \code{\link{cauchit}} are suitable for binary responses.
+
+  }
+  \item{earg}{
+  List. Extra argument for the link.
+  See \code{earg} in \code{\link{Links}} for general information.
+  In particular, this argument is useful
+  when the log or logit link is chosen:
+  for log and logit,
+  zero values can be replaced by \code{bvalue} which
+  is inputted as \code{earg=list(bvalue = bvalue)}.
+  See \code{\link{loge}} and \code{\link{logit}} etc. for specific
+  information about each link function.
 
   }
 \item{p.ar.lag}{
@@ -45,13 +58,13 @@ garma(link = c("identity", "loge", "reciprocal",
   Numeric. Step length, e.g., \code{0.5} means half-stepsizing.
 
   }
-  \item{constant}{
-  Used when the log or logit link is chosen.
-  For log, zero values are replaced by \code{constant}.
-  For logit, zero values are replaced by \code{constant} and
-  unit values replaced by \code{1-constant}.
+% \item{constant}{
+% Used when the log or logit link is chosen.
+% For log, zero values are replaced by \code{constant}.
+% For logit, zero values are replaced by \code{constant} and
+% unit values replaced by \code{1-constant}.
 
-  }
+% }
 }
 \details{
   This function draws heavily on Benjamin \emph{et al.} (1998).
@@ -162,7 +175,9 @@ interspike = c(68, 41, 82, 66, 101, 66, 57,  41,  27, 78,
 23, 24, 35, 22,  29, 28, 17,  30,  34, 17,
 20, 49, 29, 35,  49, 25, 55,  42,  29, 16)
 spikenum = seq(interspike)
-fit = vglm(interspike ~ 1, garma("loge",p=2,coef=c(4,.3,.4)), tra=TRUE)
+bvalue = 0.1  # .Machine$double.xmin # Boundary value
+fit = vglm(interspike ~ 1, trace=TRUE,
+   garma("loge", earg=list(bvalue=bvalue), p=2, coef=c(4,.3,.4)))
 summary(fit)
 coef(fit, matrix=TRUE)
 Coef(fit)  # A bug here

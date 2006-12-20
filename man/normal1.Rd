@@ -8,7 +8,8 @@
 
 }
 \usage{
-normal1(lmean="identity", lsd="loge", zero=NULL)
+normal1(lmean="identity", lsd="loge", 
+        emean=list(), esd=list(), zero=NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -21,6 +22,11 @@ normal1(lmean="identity", lsd="loge", zero=NULL)
   Parameter link function applied to the standard deviation.
   See \code{\link{Links}} for more choices.
   Being a positive quantity, a log link is the default.
+
+  }
+  \item{emean, esd}{
+  List. Extra argument for the links.
+  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{zero}{ 

@@ -8,7 +8,9 @@
 
 }
 \usage{
-leipnik(lmu = "logit", llambda = "loge", imu = NULL, ilambda = NULL)
+leipnik(lmu = "logit", llambda = "loge",
+        emu=list(), elambda=list(),
+        imu = NULL, ilambda = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -22,10 +24,15 @@ leipnik(lmu = "logit", llambda = "loge", imu = NULL, ilambda = NULL)
   \eqn{\lambda}{lambda}.
 
   }
+  \item{emu, elambda}{
+  List. Extra argument for each of the links.
+  See \code{earg} in \code{\link{Links}} for general information.
+
+  }
 }
 \details{
   The (transformed) Leipnik distribution has density function
- \deqn{f(y;\mu,\lambda) = \frac{ \{ y(1-y) \}^{-\frac12}}{
+  \deqn{f(y;\mu,\lambda) = \frac{ \{ y(1-y) \}^{-\frac12}}{
   \mbox{Beta}( \frac{\lambda+1}{2}, \frac12 )}
   \left[ 1 +  \frac{(y-\mu)^2 }{y(1-y)}
   \right]^{ -\frac{\lambda}{2}}}{%
@@ -89,8 +96,8 @@ leipnik(lmu = "logit", llambda = "loge", imu = NULL, ilambda = NULL)
 \examples{
 y = rnorm(n=2000, mean=0.5, sd=0.1)  # Not good data
 fit = vglm(y ~ 1, leipnik(ilambda=1), tr=TRUE, checkwz=FALSE)
-fit = vglm(y ~ 1, leipnik(ilambda=1), tr=TRUE, cri="c", checkwz=FALSE)
-
+fit = vglm(y ~ 1, leipnik(ilambda=1,llam=logoff, elam=list(offset=1)),
+           trace=TRUE, cri="coef")
 fitted(fit)[1:5]
 mean(y)
 summary(fit)
@@ -103,3 +110,4 @@ sum(weights(fit, type="w")) # sum of the working weights
 \keyword{models}
 \keyword{regression}
 
+%fit = vglm(y ~ 1, leipnik(ilambda=1), tr=TRUE, cri="c", checkwz=FALSE)

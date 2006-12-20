@@ -471,81 +471,83 @@ dfrank = function(x1, x2, alpha) {
 
 
 
-frank = function(lcorp="loge", icorp=2) {
-    if(mode(lcorp) != "character" && mode(lcorp) != "name")
-        lcorp = as.character(substitute(lcorp))
-    if(!is.Numeric(icorp, positive = TRUE))
-        stop("\"icorp\" must be positive")
+frank = function(lapar="loge", eapar=list(), iapar=2) {
+    if(mode(lapar) != "character" && mode(lapar) != "name")
+        lapar = as.character(substitute(lapar))
+    if(!is.Numeric(iapar, positive = TRUE))
+        stop("\"iapar\" must be positive")
+    if(!is.list(eapar)) eapar = list()
 
     new("vglmff",
     blurb=c("Frank's Bivariate Distribution\n",
            "Links:    ",
-           namesof("corp", lcorp)),
+           namesof("apar", lapar, earg= eapar )),
     initialize=eval(substitute(expression({
         if(!is.matrix(y) || ncol(y) != 2)
             stop("the response must be a 2 column matrix") 
         if(any(y <= 0) || any(y >= 1))
             stop("the response must have values between 0 and 1") 
-        predictors.names = c(namesof("corp", .lcorp, short=TRUE))
+        predictors.names = c(namesof("apar", .lapar, earg= .eapar, short=TRUE))
         if(!length(etastart)) {
-            corp.init = rep(.icorp, len=n)
-            etastart = cbind(theta2eta(corp.init, .lcorp))
+            apar.init = rep(.iapar, len=n)
+            etastart = cbind(theta2eta(apar.init, .lapar, earg= .eapar ))
         }
-    }), list(.lcorp=lcorp, .icorp=icorp))),
+    }), list( .lapar=lapar, .eapar=eapar, .iapar=iapar))),
     inverse=eval(substitute(function(eta, extra=NULL) {
-        corp = eta2theta(eta, .lcorp)
+        apar = eta2theta(eta, .lapar, earg= .eapar )
         cbind(rep(0.5, len=length(eta)), rep(0.5, len=length(eta)))
-    }, list(.lcorp=lcorp))),
+    }, list(.lapar=lapar, .eapar=eapar ))),
     last=eval(substitute(expression({
-        misc$link = c("corp"= .lcorp)
+        misc$link = c("apar"= .lapar)
+        misc$earg = list("apar"= .eapar )
         misc$pooled.weight = pooled.weight
-    }), list(.lcorp=lcorp))),
+    }), list(.lapar=lapar, .eapar=eapar ))),
     loglikelihood= eval(substitute(
             function(mu, y, w, residuals = FALSE, eta, extra=NULL) {
-        corp = eta2theta(eta, .lcorp)
+        apar = eta2theta(eta, .lapar, earg= .eapar )
         if(residuals) stop("loglikelihood residuals not implemented yet") else {
-            denom = corp-1 + (corp^y[,1] -1) * (corp^y[,2] -1)
+            denom = apar-1 + (apar^y[,1] -1) * (apar^y[,2] -1)
             denom = abs(denom)  # Needed; Genest (1987) uses this too, eqn (4.1)
-            sum(w * (log((corp-1) * log(corp)) + (y[,1]+y[,2])*log(corp) -
+            sum(w * (log((apar-1) * log(apar)) + (y[,1]+y[,2])*log(apar) -
                     2 * log(denom)))
         }
-    }, list(.lcorp=lcorp))),
+    }, list(.lapar=lapar, .eapar=eapar ))),
     vfamily=c("frank"),
     deriv=eval(substitute(expression({
-        corp = eta2theta(eta, .lcorp)
-        denom = corp-1 + (corp^y[,1] -1) * (corp^y[,2] -1)
-        tmp700 = 2*corp^(y[,1]+y[,2]) - corp^y[,1] - corp^y[,2]
-        numerator = 1 + y[,1] * corp^(y[,1]-1) * (corp^y[,2] -1) + 
-                        y[,2] * corp^(y[,2]-1) * (corp^y[,1] -1)
-        Dl.dcorp = 1/(corp-1) + 1/(corp*log(corp)) + (y[,1]+y[,2])/corp -
+        apar = eta2theta(eta, .lapar, earg= .eapar )
+        denom = apar-1 + (apar^y[,1] -1) * (apar^y[,2] -1)
+        tmp700 = 2*apar^(y[,1]+y[,2]) - apar^y[,1] - apar^y[,2]
+        numerator = 1 + y[,1] * apar^(y[,1]-1) * (apar^y[,2] -1) + 
+                        y[,2] * apar^(y[,2]-1) * (apar^y[,1] -1)
+        Dl.dapar = 1/(apar-1) + 1/(apar*log(apar)) + (y[,1]+y[,2])/apar -
                    2 * numerator / denom
-        dcorp.deta = dtheta.deta(corp, .lcorp)
+        dapar.deta = dtheta.deta(apar, .lapar, earg= .eapar )
 
-        w * Dl.dcorp * dcorp.deta
-    }), list(.lcorp=lcorp))),
+        w * Dl.dapar * dapar.deta
+    }), list(.lapar=lapar, .eapar=eapar ))),
     weight=eval(substitute(expression({
-        nump = corp^(y[,1]+y[,2]-2) * (2 * y[,1] * y[,2] +
+        nump = apar^(y[,1]+y[,2]-2) * (2 * y[,1] * y[,2] +
                      y[,1]*(y[,1]-1) + y[,2]*(y[,2]-1)) - 
-                     y[,1]*(y[,1]-1) * corp^(y[,1]-2) - 
-                     y[,2]*(y[,2]-1) * corp^(y[,2]-2)
-        D2l.dcorp2 = 1/(corp-1)^2 + (1+log(corp))/(corp*log(corp))^2 +
-                     (y[,1]+y[,2])/corp^2 + 2 *
+                     y[,1]*(y[,1]-1) * apar^(y[,1]-2) - 
+                     y[,2]*(y[,2]-1) * apar^(y[,2]-2)
+        D2l.dapar2 = 1/(apar-1)^2 + (1+log(apar))/(apar*log(apar))^2 +
+                     (y[,1]+y[,2])/apar^2 + 2 *
                      (nump / denom - (numerator/denom)^2)
-        d2corp.deta2 = d2theta.deta2(corp, .lcorp)
-        wz = w * (dcorp.deta^2 * D2l.dcorp2 - Dl.dcorp * d2corp.deta2)
+        d2apar.deta2 = d2theta.deta2(apar, .lapar)
+        wz = w * (dapar.deta^2 * D2l.dapar2 - Dl.dapar * d2apar.deta2)
 
         if(TRUE && intercept.only) {
             wz = cbind(wz)
             sumw = sum(w)
-            for(i in 1:ncol(wz))
-                wz[,i] = sum(wz[,i]) / sumw
+            for(iii in 1:ncol(wz))
+                wz[,iii] = sum(wz[,iii]) / sumw
             pooled.weight = TRUE
             wz = w * wz   # Put back the weights
         } else
             pooled.weight = FALSE
 
         wz
-    }), list(.lcorp=lcorp))))
+    }), list( .lapar=lapar, .eapar=eapar ))))
 }
 
 
@@ -610,6 +612,292 @@ gammahyp = function(ltheta="loge", itheta=NULL, expected=FALSE) {
 }
 
 
+
+morgenstern = function(lapar="rhobit", earg=list(), iapar=NULL, tola0=0.01,
+                       method.init=1) {
+    if(mode(lapar) != "character" && mode(lapar) != "name")
+        lapar = as.character(substitute(lapar))
+    if(!is.list(earg)) earg = list()
+    if(length(iapar) && (!is.Numeric(iapar, allow=1) || abs(iapar) >= 1))
+        stop("'iapar' must be a single number between -1 and 1") 
+    if(!is.Numeric(tola0, allow=1, posit=TRUE))
+        stop("'tola0' must be a single positive number") 
+    if(length(iapar) && abs(iapar) <= tola0)
+        stop("'iapar' must not be between -tola0 and tola0") 
+    if(!is.Numeric(method.init, allow=1, integ=TRUE, positi=TRUE) ||
+       method.init > 2.5)
+        stop("argument \"method.init\" must be 1 or 2")
+
+    new("vglmff",
+    blurb=c("Morgenstern's Bivariate Exponential Distribution\n",
+           "Links:    ",
+           namesof("apar", lapar, earg= earg )),
+    initialize=eval(substitute(expression({
+        if(!is.matrix(y) || ncol(y) != 2)
+            stop("the response must be a 2 column matrix") 
+        if(any(y < 0))
+            stop("the response must have non-negative values only") 
+        predictors.names = c(namesof("apar", .lapar, earg= .earg , short=TRUE))
+        if(!length(etastart)) {
+            ainit  = if(length(.iapar))  rep(.iapar, len=n) else {
+                mean1 = if( .method.init == 1) median(y[,1]) else mean(y[,1])
+                mean2 = if( .method.init == 1) median(y[,2]) else mean(y[,2])
+                Finit = 0.01 + mean(y[,1] <= mean1 & y[,2] <= mean2)
+                ((Finit-1+exp(-mean1)+exp(-mean2)) / exp(-mean1-mean2)  -
+                 1) / ((1-exp(-mean1)) * (1-exp(-mean2)))
+              }
+            etastart = theta2eta(rep(ainit, len=n), .lapar, earg= .earg )
+        }
+    }), list( .iapar=iapar, .lapar=lapar, .earg=earg,
+              .method.init=method.init ))),
+    inverse=eval(substitute(function(eta, extra=NULL) {
+        alpha = eta2theta(eta, .lapar, earg= .earg )
+        cbind(rep(1, len=length(alpha)),
+              rep(1, len=length(alpha)))
+    }, list( .lapar=lapar, .earg=earg ))),
+    last=eval(substitute(expression({
+        misc$link = c("apar"= .lapar)
+        misc$earg = list(apar = .earg)
+        misc$expected = FALSE
+        misc$pooled.weight = pooled.weight
+    }), list( .lapar=lapar, .earg=earg ))),
+    loglikelihood= eval(substitute(
+            function(mu, y, w, residuals = FALSE, eta, extra=NULL) {
+        alpha  = eta2theta(eta, .lapar, earg= .earg )
+        alpha[abs(alpha) < .tola0 ] = .tola0
+        if(residuals) stop("loglikelihood residuals not implemented yet") else {
+        denom = (1 + alpha - 2*alpha*(exp(-y[,1]) + exp(-y[,2])) +
+                4*alpha*exp(-y[,1] - y[,2]))
+        sum(w * (-y[,1] - y[,2] + log(denom)))
+        }
+    }, list( .lapar=lapar, .earg=earg, .tola0=tola0 ))),
+    vfamily=c("morgenstern"),
+    deriv=eval(substitute(expression({
+        alpha  = eta2theta(eta, .lapar, earg= .earg )
+        alpha[abs(alpha) < .tola0 ] = .tola0
+        numerator = 1 - 2*(exp(-y[,1]) + exp(-y[,2])) + 4*exp(-y[,1] - y[,2])
+        denom = (1 + alpha - 2*alpha*(exp(-y[,1]) + exp(-y[,2])) +
+                4 *alpha*exp(-y[,1] - y[,2]))
+        dl.dalpha = numerator / denom
+        dalpha.deta = dtheta.deta(alpha,  .lapar, earg= .earg )
+        w * cbind(dl.dalpha * dalpha.deta)
+    }), list( .lapar=lapar, .earg=earg, .tola0=tola0 ))),
+    weight=eval(substitute(expression({
+        d2l.dalpha2 = dl.dalpha^2
+        d2alpha.deta2 = d2theta.deta2(alpha,  .lapar, earg= .earg )
+        wz = w * (dalpha.deta^2 * d2l.dalpha2 - d2alpha.deta2 * dl.dalpha)
+        if(TRUE &&
+           intercept.only) {
+            wz = cbind(wz)
+            sumw = sum(w)
+            for(iii in 1:ncol(wz))
+                wz[,iii] = sum(wz[,iii]) / sumw
+            pooled.weight = TRUE
+            wz = w * wz   # Put back the weights
+        } else
+            pooled.weight = FALSE
+        wz
+    }), list( .lapar=lapar, .earg=earg ))))
+}
+
+
+
+
+dfgm = function(x1, x2, alpha) {
+    if(!is.Numeric(alpha)) stop("bad input for \"alpha\"")
+    if(any(alpha < -1 | alpha > 1)) stop("\"alpha\" values out of range")
+    L = max(length(x1), length(x2), length(alpha))
+    if(length(x1) != L)  x1 = rep(x1, len=L)
+    if(length(x2) != L)  x2 = rep(x2, len=L)
+    if(length(alpha) != L)  alpha = rep(alpha, len=L)
+    ans = 1 + alpha * (1-2*x1) * (1-2*x2)
+    ans[(x1 <= 0) | (x1 >= 1) | (x2 <= 0) | (x2 >= 1)] = 0
+    if(any(ans<0))
+        stop("negative values in the density (alpha out of range)") else
+    ans
+}
+
+
+
+fgm = function(lapar="identity", earg=list(), iapar=NULL,
+               method.init=1) { # , tola0=0.01
+    if(mode(lapar) != "character" && mode(lapar) != "name")
+        lapar = as.character(substitute(lapar))
+    if(!is.list(earg)) earg = list()
+    if(length(iapar) && !is.Numeric(iapar, allow=1))
+        stop("'iapar' must be a single number")
+    if(!is.Numeric(method.init, allow=1, integ=TRUE, positi=TRUE) ||
+       method.init > 2.5)
+        stop("argument \"method.init\" must be 1 or 2")
+
+    new("vglmff",
+    blurb=c("Farlie-Gumbel-Morgenstern Distribution\n",
+           "Links:    ",
+           namesof("apar", lapar, earg= earg )),
+    initialize=eval(substitute(expression({
+        if(!is.matrix(y) || ncol(y) != 2)
+            stop("the response must be a 2 column matrix") 
+        if(any(y < 0) || any(y > 1))
+            stop("the response must have values in the unit square")
+        predictors.names = namesof("apar", .lapar, earg= .earg, short=TRUE)
+        if(!length(etastart)) {
+            ainit  = if(length( .iapar ))  rep( .iapar, len=n) else {
+                mean1 = if( .method.init == 1) median(y[,1]) else mean(y[,1])
+                mean2 = if( .method.init == 1) median(y[,2]) else mean(y[,2])
+                Finit = 0.01 + mean(y[,1] <= mean1 & y[,2] <= mean2)
+                (Finit / (mean1 * mean2) - 1) / ((1-mean1) * (1-mean2))
+            } 
+            etastart = theta2eta(rep(ainit, len=n), .lapar, earg= .earg )
+        }
+    }), list( .iapar=iapar, .lapar=lapar, .earg=earg,
+              .method.init=method.init ))),
+    inverse=eval(substitute(function(eta, extra=NULL) {
+        alpha = eta2theta(eta, .lapar, earg= .earg )
+        cbind(rep(0.5, len=length(alpha)),
+              rep(0.5, len=length(alpha)))
+    }, list( .lapar=lapar, .earg=earg ))),
+    last=eval(substitute(expression({
+        misc$link = c("apar"= .lapar)
+        misc$earg = list(apar = .earg)
+        misc$expected = FALSE
+        misc$pooled.weight = pooled.weight
+    }), list( .lapar=lapar, .earg=earg ))),
+    loglikelihood= eval(substitute(
+            function(mu, y, w, residuals = FALSE, eta, extra=NULL) {
+        alpha = eta2theta(eta, .lapar, earg= .earg )
+        if(residuals) stop("loglikelihood residuals not implemented yet") else {
+            denom = 1 + alpha * (1 - 2 * y[,1])  * (1 - 2 * y[,2])
+            mytolerance = .Machine$double.eps
+            bad <- (denom <= mytolerance)   # Range violation
+            if(any(bad)) {
+                cat("There are some range violations in @loglikelihood\n")
+                if(exists("flush.console")) flush.console()
+            }
+            sum(bad) * (-1.0e10) + 
+            sum(w[!bad] * log(denom[!bad]))
+        }
+    }, list( .lapar=lapar, .earg=earg ))),
+    vfamily=c("fgm"),
+    deriv=eval(substitute(expression({
+        alpha  = eta2theta(eta, .lapar, earg= .earg )
+        numerator = (1 - 2 * y[,1])  * (1 - 2 * y[,2])
+        denom = 1 + alpha * numerator
+            mytolerance = .Machine$double.eps
+            bad <- (denom <= mytolerance)   # Range violation
+            if(any(bad)) {
+                cat("There are some range violations in @deriv\n")
+                if(exists("flush.console")) flush.console()
+                denom[bad] = 2 * mytolerance
+            }
+        dl.dalpha = numerator / denom
+        dalpha.deta = dtheta.deta(alpha, .lapar, earg= .earg )
+        w * cbind(dl.dalpha * dalpha.deta)
+    }), list( .lapar=lapar, .earg=earg ))),
+    weight=eval(substitute(expression({
+        d2l.dalpha2 = dl.dalpha^2
+        d2alpha.deta2 = d2theta.deta2(alpha, .lapar, earg= .earg )
+        wz = w * (dalpha.deta^2 * d2l.dalpha2 - d2alpha.deta2 * dl.dalpha)
+        if(TRUE &&
+           intercept.only) {
+            wz = cbind(wz)
+            sumw = sum(w)
+            for(iii in 1:ncol(wz))
+                wz[,iii] = sum(wz[,iii]) / sumw
+            pooled.weight = TRUE
+            wz = w * wz   # Put back the weights
+        } else
+            pooled.weight = FALSE
+        wz
+    }), list( .lapar=lapar, .earg=earg ))))
+}
+
+
+
+gumbelIbiv = function(lapar="identity", earg=list(), iapar=NULL, method.init=1) {
+    if(mode(lapar) != "character" && mode(lapar) != "name")
+        lapar = as.character(substitute(lapar))
+    if(!is.list(earg)) earg = list()
+    if(length(iapar) && !is.Numeric(iapar, allow=1))
+        stop("'iapar' must be a single number")
+    if(!is.Numeric(method.init, allow=1, integ=TRUE, positi=TRUE) ||
+       method.init > 2.5)
+        stop("argument \"method.init\" must be 1 or 2")
+
+    new("vglmff",
+    blurb=c("Gumbel's Type I Bivariate Distribution\n",
+           "Links:    ",
+           namesof("apar", lapar, earg= earg )),
+    initialize=eval(substitute(expression({
+        if(!is.matrix(y) || ncol(y) != 2)
+            stop("the response must be a 2 column matrix") 
+        if(any(y < 0))
+            stop("the response must have non-negative values only")
+        predictors.names = c(namesof("apar", .lapar, earg= .earg , short=TRUE))
+        if(!length(etastart)) {
+            ainit  = if(length( .iapar ))  rep( .iapar, len=n) else {
+                mean1 = if( .method.init == 1) median(y[,1]) else mean(y[,1])
+                mean2 = if( .method.init == 1) median(y[,2]) else mean(y[,2])
+                Finit = 0.01 + mean(y[,1] <= mean1 & y[,2] <= mean2)
+                (log(Finit-1+exp(-mean1)+exp(-mean2))+mean1+mean2)/(mean1*mean2)
+            }
+            etastart = theta2eta(rep(ainit,  len=n), .lapar, earg= .earg )
+        }
+    }), list( .iapar=iapar, .lapar=lapar, .earg=earg,
+              .method.init=method.init ))),
+    inverse=eval(substitute(function(eta, extra=NULL) {
+        alpha = eta2theta(eta, .lapar, earg= .earg )
+        cbind(rep(1, len=length(alpha)),
+              rep(1, len=length(alpha)))
+    }, list( .lapar=lapar ))),
+    last=eval(substitute(expression({
+        misc$link = c("apar"= .lapar)
+        misc$earg = list(apar = .earg)
+        misc$expected = FALSE
+        misc$pooled.weight = pooled.weight
+    }), list( .lapar=lapar, .earg=earg ))),
+    loglikelihood= eval(substitute(
+            function(mu, y, w, residuals = FALSE, eta, extra=NULL) {
+        alpha  = eta2theta(eta, .lapar, earg= .earg )
+        if(residuals) stop("loglikelihood residuals not implemented yet") else {
+            denom = (alpha*y[,1] - 1) * (alpha*y[,2] - 1) + alpha
+            mytolerance = .Machine$double.xmin
+            bad <- (denom <= mytolerance)   # Range violation
+            if(any(bad)) {
+                cat("There are some range violations in @deriv\n")
+                if(exists("flush.console")) flush.console()
+            }
+            sum(bad) * (-1.0e10) + 
+            sum(w[!bad] * (-y[!bad,1] - y[!bad,2] +
+                alpha[!bad]*y[!bad,1]*y[!bad,2] + log(denom[!bad])))
+        }
+    }, list( .lapar=lapar, .earg=earg ))),
+    vfamily=c("gumbelIbiv"),
+    deriv=eval(substitute(expression({
+        alpha  = eta2theta(eta, .lapar, earg= .earg )
+        numerator = (alpha*y[,1] - 1)*y[,2] + (alpha*y[,2] - 1)*y[,1] + 1
+        denom = (alpha*y[,1] - 1) * (alpha*y[,2] - 1) + alpha
+        denom = abs(denom)
+        dl.dalpha = numerator / denom + y[,1]*y[,2]
+        dalpha.deta = dtheta.deta(alpha,  .lapar, earg= .earg )
+        w * cbind(dl.dalpha * dalpha.deta)
+    }), list( .lapar=lapar, .earg=earg ))),
+    weight=eval(substitute(expression({
+        d2l.dalpha2 = (numerator/denom)^2 - 2*y[,1]*y[,2] / denom
+        d2alpha.deta2 = d2theta.deta2(alpha, .lapar, earg= .earg )
+        wz = w * (dalpha.deta^2 * d2l.dalpha2 - d2alpha.deta2 * dl.dalpha)
+        if(TRUE &&
+           intercept.only) {
+            wz = cbind(wz)
+            sumw = sum(w)
+            for(iii in 1:ncol(wz))
+                wz[,iii] = sum(wz[,iii]) / sumw
+            pooled.weight = TRUE
+            wz = w * wz   # Put back the weights
+        } else
+            pooled.weight = FALSE
+        wz
+    }), list( .lapar=lapar, .earg=earg ))))
+}
 
 
 

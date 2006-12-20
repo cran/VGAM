@@ -7,7 +7,7 @@
  maximum likelihood estimation.
 }
 \usage{
-maxwell(link = "loge")
+maxwell(link = "loge", earg=list())
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -15,6 +15,11 @@ maxwell(link = "loge")
   Parameter link function applied to the parameter \eqn{a}. 
   See \code{\link{Links}} for more choices.
   A log link is the default because the parameter is positive.
+
+  }
+  \item{earg}{
+  List. Extra argument for the link.
+  See \code{earg} in \code{\link{Links}} for general information.
 
   }
 }

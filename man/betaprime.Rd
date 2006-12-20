@@ -8,13 +8,18 @@
 
 }
 \usage{
-betaprime(link = "loge", i1 = 2, i2 = NULL, zero = NULL)
+betaprime(link = "loge", earg=list(), i1 = 2, i2 = NULL, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{link}{ 
   Parameter link function applied to the two (positive) shape parameters.
   See \code{\link{Links}} for more choices.
+
+  }
+  \item{earg}{
+  List. Extra argument for each of the links.
+  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{i1, i2}{

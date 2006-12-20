@@ -7,7 +7,7 @@
 
 }
 \usage{
-dirichlet(link = "loge", zero=NULL)
+dirichlet(link = "loge", earg=list(), zero=NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -21,6 +21,11 @@ dirichlet(link = "loge", zero=NULL)
   parameters \eqn{\alpha_j}{alpha_j}.
   See \code{\link{Links}} for more choices.
   The default gives \eqn{\eta_j=\log(\alpha_j)}{eta_j=log(alpha_j)}.
+
+  }
+  \item{earg}{
+  List. Extra argument for the link.
+  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{zero}{

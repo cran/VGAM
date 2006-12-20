@@ -9,8 +9,9 @@
 
 }
 \usage{
-binomialff(link = "logit", dispersion = 1, mv = FALSE, onedpar = !mv,
-           parallel = FALSE, earg = NULL, zero = NULL)
+binomialff(link = "logit", earg = list(),
+           dispersion = 1, mv = FALSE, onedpar = !mv,
+           parallel = FALSE, zero = NULL)
 
 }
 %- maybe also 'usage' for other objects documented here.
@@ -20,6 +21,11 @@ binomialff(link = "logit", dispersion = 1, mv = FALSE, onedpar = !mv,
 
   \item{link}{ 
   Link function. See \code{\link{Links}} for more choices.
+
+  }
+  \item{earg}{ 
+  Extra argument optionally used by the link function.
+  See \code{\link{Links}} for more information.
 
   }
   \item{dispersion}{ 
@@ -52,11 +58,6 @@ binomialff(link = "logit", dispersion = 1, mv = FALSE, onedpar = !mv,
   argument allows for the parallelism assumption whereby the regression
   coefficients for a variable is constrained to be equal over the \eqn{M}
   linear/additive predictors.
-
-  }
-  \item{earg}{ 
-  Extra argument optionally used by the link function.
-  See \code{\link{Links}} for more information.
 
   }
   \item{zero}{ 

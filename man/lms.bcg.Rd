@@ -8,7 +8,8 @@
 }
 \usage{
 lms.bcg(percentiles = c(25, 50, 75), zero = NULL, 
-        link.sigma = "loge", link.mu="identity",
+        link.mu="identity", link.sigma = "loge",
+        emu=list(), esigma=list(),
         dfmu.init=4, dfsigma.init=2,
         init.lambda = 1, init.sigma = NULL)
 }
@@ -29,13 +30,6 @@ lms.bcg(percentiles = c(25, 50, 75), zero = NULL,
   functions of the covariates.
 
   }
-  \item{link.sigma}{
-  Parameter link function applied to the third linear/additive predictor.
-  See \code{\link{Links}} for more choices.
-
-% It is the natural log by default because sigma is positive.
-
-  }
   \item{link.mu}{
   Parameter link function applied to the second linear/additive predictor.
 
@@ -43,6 +37,18 @@ lms.bcg(percentiles = c(25, 50, 75), zero = NULL,
 % is positive, but it is not the default because mu is more directly
 % interpretable than log(mu)
 % (it is something similar to the running median).
+
+  }
+  \item{link.sigma}{
+  Parameter link function applied to the third linear/additive predictor.
+  See \code{\link{Links}} for more choices.
+
+% It is the natural log by default because sigma is positive.
+
+  }
+  \item{emu, esigma}{
+  List. Extra argument for each of the links.
+  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{dfmu.init}{
@@ -158,7 +164,7 @@ plotvgam(fit, se=TRUE) # Plot mu function (only)
 # Here, we prematurely stop iterations because it fails near the solution
 fit = vgam(BMI ~ s(age, df=c(4,2)), maxit=4,
            fam=lms.bcg(zero=1, init.lam=3), data=bminz, tr=TRUE)
-
+summary(fit)
 predict(fit)[1:3,]
 fitted(fit)[1:3,]
 bminz[1:3,]

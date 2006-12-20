@@ -110,8 +110,7 @@ printsummary.vgam <- function(x, quote=TRUE, prefix="", digits=options()$digits-
 
     presid <- x@pearson.resid
     rdf <- x@df[2]
-    if(F && !is.null(presid) && all(!is.na(presid)))
-    {
+    if(FALSE && !is.null(presid) && all(!is.na(presid))) {
         cat("\nPearson Residuals:\n")
         if(rdf/M > 5) {
             rq <-  apply(as.matrix(presid), 2, quantile) # 5 x M
@@ -170,7 +169,7 @@ printsummary.vgam <- function(x, quote=TRUE, prefix="", digits=options()$digits-
     cat("\nNumber of Iterations: ", x@iter, "\n")
 
     if(length(x@anova)) {
-        print.vanova(x@anova, dig=digits)   # ".vanova" for Splus6
+        printvanova(x@anova, dig=digits)   # ".vanova" for Splus6
     }
 
     invisible(NULL)
@@ -196,7 +195,7 @@ printsummary.vgam <- function(x, quote=TRUE, prefix="", digits=options()$digits-
 
  
  
-print.vanova <- function(x, digits=.Options$digits, ...)
+printvanova <- function(x, digits=.Options$digits, ...)
 {
     rrr <- row.names(x) 
     heading <- attr(x, "heading")
@@ -211,7 +210,8 @@ print.vanova <- function(x, digits=.Options$digits, ...)
         x[[i]] <- xx
     }
     if(is.R()) {
-        invisible(NextMethod("print"))
+        print.data.frame(as.data.frame(x, row.names=rrr))
+        invisible(x)
     } else {
         print.data.frame(as.data.frame(x, row.names=rrr))
         invisible(x)
@@ -225,7 +225,7 @@ as.vanova <- function(x, heading)
     rrr <- row.names(x) 
     attr(x, "heading") <- heading
     if(is.R()) { 
-        class(x) <- c("vanova", class(x)) 
+        x <- as.data.frame(x, row.names=rrr)
     } else {
         x <- as.data.frame(x, row.names=rrr)
     }
@@ -237,7 +237,7 @@ if(!is.R()) {
 
 setMethod("print", "vanova",
           function(x, ...)
-          print.vanova(x, ...))
+          printvanova(x, ...))
 
 }
 

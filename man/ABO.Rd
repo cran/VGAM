@@ -7,13 +7,18 @@
   the ABO blood group system.
 }
 \usage{
-ABO(link = "logit", ir = NULL, ip = NULL)
+ABO(link = "logit", earg=list(), ir = NULL, ip = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{link}{
   Link function applied to \code{p} and \code{q}.
   See \code{\link{Links}} for more choices.
+
+  }
+  \item{earg}{
+  List. Extra argument applied to each of the links.
+  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{ir, ip}{ Optional initial value for \code{r} and \code{p}.
@@ -58,8 +63,6 @@ ABO(link = "logit", ir = NULL, ip = NULL)
 \examples{
 y = cbind(A=725, B=258, AB=72, O=1073) # Order matters, not the name
 fit = vglm(y ~ 1, ABO(link=logit), trace=TRUE, cri="coef")
-fit = vglm(y ~ 1, ABO(link=probit), trace=TRUE, cri="coef")
-fit = vglm(y ~ 1, ABO(link=cloglog), trace=TRUE, cri="coef")
 fit = vglm(y ~ 1, ABO(link=identity), trace=TRUE, cri="coef")
 coef(fit, matrix=TRUE)
 Coef(fit) # Estimated p and q

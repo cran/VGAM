@@ -9,6 +9,7 @@
 \usage{
 genbetaII(link.a = "loge", link.scale = "loge",
           link.p = "loge", link.q = "loge",
+          earg.a=list(), earg.scale=list(), earg.p=list(), earg.q=list(),
           init.a = NULL, init.scale = NULL, init.p = 1, init.q = 1,
           zero = NULL)
 }
@@ -22,6 +23,11 @@ genbetaII(link.a = "loge", link.scale = "loge",
   shape parameter \code{q}.
   All four parameters are positive.
   See \code{\link{Links}} for more choices.
+
+  }
+  \item{earg.a, earg.scale, earg.p, earg.q}{
+  List. Extra argument for each of the links.
+  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{init.a, init.scale}{

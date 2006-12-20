@@ -8,6 +8,7 @@
 }
 \usage{
 sinmad(link.a = "loge", link.scale = "loge", link.q = "loge",
+       earg.a=list(), earg.scale=list(), earg.q=list(),
        init.a = NULL, init.scale = NULL, init.q = 1, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -16,6 +17,11 @@ sinmad(link.a = "loge", link.scale = "loge", link.q = "loge",
   Parameter link functions applied to the
   (positive) parameters \code{a}, \code{scale}, and \code{q}.
   See \code{\link{Links}} for more choices.
+
+  }
+  \item{earg.a, earg.scale, earg.q}{
+  List. Extra argument for each of the links.
+  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{init.a, init.scale, init.q}{

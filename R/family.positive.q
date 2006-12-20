@@ -6,6 +6,7 @@
 
 
 posnegbinomial = function(lmunb = "loge", lk = "loge",
+                          emunb =list(), ek = list(),
                           ik = NULL, zero = -2, cutoff = 0.995,
                           method.init=1)
 {
@@ -20,12 +21,14 @@ posnegbinomial = function(lmunb = "loge", lk = "loge",
         lmunb = as.character(substitute(lmunb))
     if(mode(lk) != "character" && mode(lk) != "name")
         lk = as.character(substitute(lk))
+    if(!is.list(emunb)) emunb = list()
+    if(!is.list(ek)) ek = list()
 
     new("vglmff",
     blurb=c("Positive-negative binomial distribution\n\n",
            "Links:    ",
-           namesof("munb", lmunb), ", ",
-           namesof("k", lk), "\n",
+           namesof("munb", lmunb, earg= emunb ), ", ",
+           namesof("k", lk, earg= ek ), "\n",
            "Mean:     munb / (1 - (k/(k+munb))^k)"),
     constraints=eval(substitute(expression({
         temp752 = .zero
@@ -39,9 +42,9 @@ posnegbinomial = function(lmunb = "loge", lk = "loge",
         M = 2 * ncol(y) 
         extra$NOS = NOS = ncoly = ncol(y)  # Number of species
         predictors.names = c(namesof(if(NOS==1) "munb" else
-            paste("munb", 1:NOS, sep=""), .lmunb, tag= FALSE),
+            paste("munb", 1:NOS, sep=""), .lmunb, earg= .emunb, tag= FALSE),
             namesof(if(NOS==1) "k" else paste("k", 1:NOS, sep=""),
-            .lk, tag= FALSE))
+            .lk, earg= .ek, tag= FALSE))
         predictors.names = predictors.names[interleave.VGAM(M, M=2)]
         if(!length(etastart)) {
             if( .method.init == 3) {
@@ -73,44 +76,55 @@ posnegbinomial = function(lmunb = "loge", lk = "loge",
                 }
             }
             p00 = (kmat0 / (kmat0 + mu.init))^kmat0
-            etastart = cbind(theta2eta(mu.init*(1-p00), .lmunb),
-                             theta2eta(kmat0, .lk))
+            etastart = cbind(theta2eta(mu.init*(1-p00), .lmunb, earg= .emunb ),
+                             theta2eta(kmat0, .lk, earg= .ek ))
             etastart = etastart[,interleave.VGAM(M, M=2),drop=FALSE]
         }
-    }), list( .lmunb=lmunb, .lk=lk, .ik=ik, .method.init=method.init ))),
+    }), list( .lmunb=lmunb, .lk=lk, .ik=ik,
+              .emunb=emunb, .ek=ek,
+              .method.init=method.init ))),
     inverse=eval(substitute(function(eta, extra=NULL) {
         NOS = ncol(eta) / 2
-        munb = eta2theta(eta[,2*(1:NOS)-1,drop=FALSE], .lmunb)
-        kmat = eta2theta(eta[,2*(1:NOS),drop=FALSE], .lk)
+        munb = eta2theta(eta[,2*(1:NOS)-1,drop=FALSE], .lmunb, earg= .emunb )
+        kmat = eta2theta(eta[,2*(1:NOS),drop=FALSE], .lk, earg= .ek )
         p0 = (kmat / (kmat + munb))^kmat
         munb / (1 - p0)
-    }, list( .lk=lk, .lmunb=lmunb ))),
+    }, list( .lk=lk, .lmunb=lmunb,
+             .emunb=emunb, .ek=ek ))),
     last=eval(substitute(expression({
-        temp0303 = c(rep(.lmunb, length=NOS), rep(.lk, length=NOS))
+        temp0303 = c(rep( .lmunb, length=NOS), rep( .lk, length=NOS))
         names(temp0303) = c(if(NOS==1) "munb" else paste("munb", 1:NOS, sep=""), 
                             if(NOS==1) "k" else paste("k", 1:NOS, sep=""))
         temp0303 = temp0303[interleave.VGAM(M, M=2)]
         misc$link = temp0303  # Already named
+        misc$earg = vector("list", 2*NOS)
+        names(misc$earg) = names(misc$link)
+        for(ii in 1:NOS) {
+            misc$earg[[2*ii-1]] = .emunb
+            misc$earg[[2*ii  ]] = .ek
+        }
         misc$cutoff = .cutoff 
         misc$method.init = .method.init
     }), list( .lmunb=lmunb, .lk=lk, .cutoff=cutoff,
+              .emunb=emunb, .ek=ek,
               .method.init=method.init ))),
     loglikelihood=eval(substitute(
         function(mu,y,w,residuals= FALSE,eta, extra=NULL) {
         NOS = ncol(eta) / 2
-        munb = eta2theta(eta[,2*(1:NOS)-1,drop=FALSE], .lmunb)
-        kmat = eta2theta(eta[,2*(1:NOS),drop=FALSE], .lk)
+        munb = eta2theta(eta[,2*(1:NOS)-1,drop=FALSE], .lmunb, earg= .emunb )
+        kmat = eta2theta(eta[,2*(1:NOS),drop=FALSE], .lk, earg= .ek )
         p0 = (kmat / (kmat + munb))^kmat
         if(residuals) stop("loglikelihood residuals not implemented yet") else
         sum(w * (y * log(munb/(munb+kmat)) + kmat*log(kmat/(munb+kmat)) +
                  lgamma(y+kmat) - lgamma(kmat) - lgamma(y+1) -
                  (if(is.R()) log1p(-p0) else log(1 - p0))))
-    }, list( .lmunb=lmunb, .lk=lk ))),
+    }, list( .lmunb=lmunb, .lk=lk,
+             .emunb=emunb, .ek=ek ))),
     vfamily=c("posnegbinomial"),
     deriv=eval(substitute(expression({
         NOS= extra$NOS
-        munb = eta2theta(eta[,2*(1:NOS)-1,drop=FALSE], .lmunb)
-        kmat = eta2theta(eta[,2*(1:NOS),drop=FALSE], .lk)
+        munb = eta2theta(eta[,2*(1:NOS)-1,drop=FALSE], .lmunb, earg= .emunb )
+        kmat = eta2theta(eta[,2*(1:NOS),drop=FALSE], .lk, earg= .ek )
         d3 = deriv3(~ -log(1 - (kmat. /(kmat. + munb. ))^kmat. ),
                     c("munb.", "kmat."), hessian= TRUE) # Extra term
         dl0.dthetas =  array(NA, c(n, NOS, 2))
@@ -130,11 +144,12 @@ posnegbinomial = function(lmunb = "loge", lk = "loge",
         dl.dmunb = y/munb - (y+kmat)/(kmat+munb) + dl0.dthetas[,,1]
         dl.dk = digamma(y+kmat) - digamma(kmat) - (y+kmat)/(munb+kmat) + 1 +
                 log(kmat/(kmat+munb)) + dl0.dthetas[,,2]
-        dmunb.deta = dtheta.deta(munb, .lmunb) 
-        dk.deta = dtheta.deta(kmat, .lk)
+        dmunb.deta = dtheta.deta(munb, .lmunb, earg= .emunb )
+        dk.deta = dtheta.deta(kmat, .lk, earg= .ek )
         myderiv = w * cbind(dl.dmunb * dmunb.deta, dl.dk * dk.deta)
         myderiv[,interleave.VGAM(M, M=2)]
-    }), list( .lmunb=lmunb, .lk=lk ))),
+    }), list( .lmunb=lmunb, .lk=lk,
+              .emunb=emunb, .ek=ek ))),
     weight=eval(substitute(expression({
         wz = matrix(0, n, 4*NOS-1)  # wz is no longer 'diagonal' 
         p0 = (kmat / (kmat + munb))^kmat
@@ -207,94 +222,103 @@ rpospois = function(n, lambda) {
 
 
 
-pospoisson = function(link="loge")
+pospoisson = function(link="loge", earg=list())
 {
     if(!missing(link))
         link = as.character(substitute(link))
+    if(!is.list(earg)) earg = list()
 
     new("vglmff",
     blurb=c("Positive-Poisson distribution\n\n",
            "Links:    ",
-           namesof("lambda", link, tag=FALSE),
+           namesof("lambda", link, earg= earg, tag=FALSE),
            "\n"),
     initialize=eval(substitute(expression({
         y = as.matrix(y)
         predictors.names = namesof(if(ncol(y)==1) "lambda"
-            else paste("lambda", 1:ncol(y), sep=""), .link, tag=FALSE)
+            else paste("lambda", 1:ncol(y), sep=""), .link,
+            earg= .earg, tag=FALSE)
         if(!length(etastart))
-            etastart = theta2eta(y / (1-exp(-y)), .link)
-    }), list( .link=link ))), 
+            etastart = theta2eta(y / (1-exp(-y)), .link, earg= .earg )
+    }), list( .link=link, .earg= earg ))), 
     inverse=eval(substitute(function(eta, extra=NULL) {
-        lambda = eta2theta(eta, .link)
+        lambda = eta2theta(eta, .link, earg= .earg )
         lambda / (1-exp(-lambda))
-    }, list( .link=link ))),
+    }, list( .link=link, .earg= earg ))),
     last=eval(substitute(expression({
-        misc$link = c(lambda = .link)
-    }), list( .link=link ))),
+        misc$link = rep( .link, len=M)
+        names(misc$link) = if(M==1) "lambda" else paste("lambda", 1:M, sep="")
+        misc$earg = vector("list", M)
+        names(misc$earg) = names(misc$link)
+        for(ii in 1:M)
+            misc$earg[[ii]] = .earg
+    }), list( .link=link, .earg= earg ))),
     loglikelihood=eval(substitute(
         function(mu,y,w,residuals=FALSE, eta,extra=NULL) {
-        lambda = eta2theta(eta, .link) 
+        lambda = eta2theta(eta, .link, earg= .earg ) 
         if(residuals) stop("loglikelihood residuals not implemented yet") else
         sum(w * (-log(1-exp(-lambda)) - lambda + y*log(lambda)))
-    }, list( .link=link ))),
+    }, list( .link=link, .earg= earg ))),
     vfamily=c("pospoisson"),
     deriv=eval(substitute(expression({
-         lambda = eta2theta(eta, .link) 
+         lambda = eta2theta(eta, .link, earg= .earg ) 
          dl.dlambda = y/lambda - 1 - 1/(exp(lambda)-1)
-         dlambda.deta = dtheta.deta(lambda, .link)
+         dlambda.deta = dtheta.deta(lambda, .link, earg= .earg )
          w * dl.dlambda * dlambda.deta
-    }), list( .link=link ))),
+    }), list( .link=link, .earg= earg ))),
     weight=eval(substitute(expression({
          temp = exp(lambda)
          ed2l.dlambda2 = -temp * (1/lambda - 1/(temp-1)) / (temp-1)
          wz = -w * (dlambda.deta^2) * ed2l.dlambda2
          wz
-    }), list( .link=link ))))
+    }), list( .link=link, .earg= earg ))))
 }
 
 
 
-posbinomial = function(link="logit")
+posbinomial = function(link="logit", earg=list())
 {
 
     if(!missing(link))
         link = as.character(substitute(link))
+    if(!is.list(earg)) earg = list()
        
     new("vglmff",
     blurb=c("Positive-Binomial distribution\n\n",
            "Links:    ",
-           namesof("p", link, tag=FALSE), "\n"),
+           namesof("p", link, earg= earg, tag=FALSE), "\n"),
     initialize=eval(substitute(expression({
       	eval(binomialff(link= .link)@initialize)
-        predictors.names = namesof("p", .link, tag = FALSE)
+        predictors.names = namesof("p", .link, earg= .earg , tag=FALSE)
 	if(length(extra)) extra$w = w else extra = list(w=w)
         if(!length(etastart))
-	    etastart = cbind(theta2eta(mustart, .link))
-    }), list( .link = link ))),
+	    etastart = cbind(theta2eta(mustart, .link, earg= .earg ))
+    }), list( .link = link, .earg=earg ))),
     inverse=eval(substitute(function(eta, extra=NULL){
-        theta = eta2theta(eta, .link)
+        theta = eta2theta(eta, .link, earg= .earg )
         theta/(1-(1-theta)^(extra$w))},
-    list(.link=link ))),
+    list(.link=link, .earg=earg ))),
     last=eval(substitute(expression({
         extra$w = NULL   # Kill it off 
         misc$link = c(p = .link)
-    }), list( .link=link ))),
+        misc$earg = list(p = .earg )
+    }), list( .link=link, .earg=earg ))),
     loglikelihood=eval(substitute(
         function(mu,y,w,residuals=FALSE,eta,extra=NULL) {
         yi = round(y*w)
-        theta = eta2theta(eta, .link)
+        theta = eta2theta(eta, .link, earg= .earg )
         if(residuals) stop("loglikelihood residuals not implemented yet") else
         sum(yi*log(theta)+(w-yi)*log(1-theta)-log(1-(1-theta)^w))
-    }, list( .link=link ))),
+    }, list( .link=link, .earg=earg ))),
     vfamily=c("posbinomial"),
     deriv=eval(substitute(expression({
         yi = round(y*w)     
-        theta = eta2theta(eta, .link) 
+        theta = eta2theta(eta, .link, earg= .earg )
         dldtheta = yi/theta-(w-yi)/(1-theta)-w*(1-theta)^(w-1) /
                     (1-(1-theta)^w)
-        dthetadeta = dtheta.deta(theta, .link)
+        dthetadeta = dtheta.deta(theta, .link, earg= .earg )
         dldtheta * dthetadeta
-    }), list( .link=link ))),
+    }), list( .link=link, .earg=earg ))),
     weight=eval(substitute(expression({
         temp = 1 - (1-theta)^w
         temp2 = (1-theta)^2
@@ -303,7 +327,7 @@ posbinomial = function(link="logit")
             w^2 * temp2^(w-1) / temp^2
         wz = -(dthetadeta^2) * ed2ldtheta2
         wz
-    }), list( .link=link ))))
+    }), list( .link=link, .earg=earg ))))
 }
 
 

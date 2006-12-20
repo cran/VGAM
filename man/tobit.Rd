@@ -7,7 +7,7 @@
 }
 \usage{
 tobit(Lower = 0, Upper = Inf, lmu="identity", lsd="loge",
-      imethod=1, zero=2)
+      emu=list(), esd=list(), imethod=1, zero=2)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -33,6 +33,11 @@ tobit(Lower = 0, Upper = Inf, lmu="identity", lsd="loge",
   See \code{\link{Links}} for more choices.
   The standard deviation is a positive quantity, therefore a log link 
   is its default.
+
+  }
+  \item{emu, esd}{
+  List. Extra argument for each of the links.
+  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{imethod}{
@@ -102,7 +107,7 @@ Estimation of relationships for limited dependent variables.
     \code{\link{cnormal1}}.
     \code{\link{dcnormal1}}.
 }
-\examples{\dontrun{
+\examples{
 n = 1000
 x = seq(-1, 1, len=n)
 f = function(x) 1 + 4*x
@@ -111,16 +116,17 @@ Lower = 1
 Upper = 4
 y  = pmax(ystar, Lower)
 y  = pmin(y, Upper)
-plot(x, y, main="Tobit model", las=1)
-legend(-0.9, 3, c("Truth", "Estimate"), col=c("Blue", "Red"), lwd=2)
 table(y==Lower | y==Upper)   # How many censored values?
 fit = vglm(y ~ x, tobit(Lower=Lower, Upper=Upper), trace=TRUE)
 table(fit@extra$censoredL)
 table(fit@extra$censoredU)
 coef(fit, matrix=TRUE)
+summary(fit)
+\dontrun{
+plot(x, y, main="Tobit model", las=1)
+legend(-0.9, 3, c("Truth", "Estimate"), col=c("Blue", "Red"), lwd=2)
 lines(x, f(x), col="blue", lwd=2)  # The truth
 lines(x, fitted(fit), col="red", lwd=2, lty="dashed")  # The estimate
-summary(fit)
 }
 }
 \keyword{models}
