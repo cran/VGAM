@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2006 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2007 T.W. Yee, University of Auckland. All rights reserved.
 
 
 
@@ -1809,6 +1809,13 @@ if(!isGeneric("Tol"))
 setMethod("Tol", "cao", function(object, ...)
           Tol.cao(object, ...))
 
+
+
+
+
+
+setMethod("show",  "cao", function(object) print.vgam(object))
+setMethod("print", "cao", function(x, ...) print.vgam(x, ...))
 
 
 

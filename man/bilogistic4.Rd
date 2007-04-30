@@ -99,7 +99,7 @@ Hoboken, N.J.: Wiley-Interscience.
 \author{ T. W. Yee }
 \note{
   This family function uses the BFGS quasi-Newton update formula for the
-  working weight matrices.  Consequently the estimated variance-covariance
+  working weight matrices. Consequently the estimated variance-covariance
   matrix may be inaccurate or simply wrong! The standard errors must be
   therefore treated with caution; these are computed in functions such
   as \code{vcov()} and \code{summary()}.

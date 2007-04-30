@@ -183,7 +183,7 @@ fit2 = vgam(agaaus ~ altitude, binomialff(link="cloglog"), hunua)  # ok
 fit3 = vgam(agaaus ~ altitude, binomialff(link="clog"), hunua) # not ok
 
 
-# No matter what the link is the estimated var-cov matrix is the same
+# No matter what the link, the estimated var-cov matrix is the same
 y = rbeta(n=1000, shape1=exp(0), shape2=exp(1))
 fit1 = vglm(y ~ 1, betaff(link="identity"), trace = TRUE, crit="c")
 fit2 = vglm(y ~ 1, betaff(link=logoff, earg=list(offset=1.1)),

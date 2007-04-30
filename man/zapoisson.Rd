@@ -6,10 +6,12 @@
   Fits a zero-altered Poisson distribution based on a conditional
   model involving a binomial distribution
   and a positive-Poisson distribution.
+
 }
 \usage{
 zapoisson(lp0 = "logit", llambda = "loge",
-          ep0=list(), elambda=list())
+          ep0=list(), elambda=list(),
+          zero=NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -26,6 +28,20 @@ zapoisson(lp0 = "logit", llambda = "loge",
   \item{ep0, elambda}{
   Extra argument for the respective links.
   See \code{earg} in \code{\link{Links}} for general information.
+
+  }
+  \item{zero}{
+  Integer valued vector, usually assigned \eqn{-1} or \eqn{1} if used
+  at all.  Specifies which of the two linear/additive predictors are
+  modelled as an intercept only.
+  By default, both linear/additive predictors are modelled using
+  the explanatory variables.
+  If \code{zero=1} then the \eqn{p_0}{p0} parameter
+  (after \code{lp0} is applied) is modelled as a single unknown
+  number that is estimated. It is modelled as a function of the
+  explanatory variables by \code{zero=NULL}. A negative value
+  means that the value is recycled, so setting \eqn{-1} means all \eqn{p_0}{p0}
+  are intercept-only (for multivariate responses).
 
   }
 }
@@ -81,12 +97,13 @@ Inference obtained from \code{summary.vglm} and
 In particular, the p-values, standard errors and degrees of freedom
 may need adjustment. Use simulation on artificial data to check
 that these are reasonable.
+
 }
 
 \author{ T. W. Yee }
 \note{
   There are subtle differences between this family function and
-  \code{\link{yip88}} and \code{\link{zipoisson}}.
+  \code{\link{zipoisson}} and \code{\link{yip88}}.
   In particular, \code{\link{zipoisson}} is a
   \emph{mixture} model whereas \code{zapoisson} and \code{\link{yip88}}
   are \emph{conditional} models.
@@ -101,6 +118,7 @@ that these are reasonable.
 
   This family function can handle a multivariate response, e.g.,
   more than one species.
+
 }
 
 \seealso{

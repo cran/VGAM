@@ -103,8 +103,7 @@ zipoisson(lphi="logit", llambda = "loge",
   \code{\link[stats:Poisson]{rpois}}.
 }
 \examples{
-n = 5000
-x = runif(n)
+x = runif(n <- 2000)
 phi = logit(-0.5 + 1*x, inverse=TRUE)
 lambda = loge(0.5 + 2*x, inverse=TRUE)
 y = rzipois(n, lambda, phi)

@@ -104,6 +104,11 @@ Castillo, E., Hadi, A. S., Balakrishnan, N. Sarabia, J. S. (2005)
       Engineering and Science},
 Hoboken, N.J.: Wiley-Interscience, p.130.
 
+deCani, J. S. and Stine, R. A. (1986)
+A note on Deriving the Information Matrix for a Logistic Distribution,
+\emph{The American Statistician},
+\bold{40}, 220--222.
+
 }
 \author{ T. W. Yee }
 \note{

@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2006 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2007 T.W. Yee, University of Auckland. All rights reserved.
 
 
 
@@ -196,6 +196,7 @@ vgam <- function(formula,
       "family"       = fit$family,
       "misc"         = fit$misc,
       "model"        = if(model) mf else data.frame(),
+      "R"            = fit$R,
       "rank"         = fit$rank,
       "residuals"    = as.matrix(fit$residuals),
       "rss"          = fit$rss,
@@ -251,10 +252,11 @@ vgam <- function(formula,
         if(length(fit$var)) {
             slot(answer, "var") = fit$var
         }
-        if(length(fit$R)) {
-            slot(answer, "R") = fit$R   # is null if totally parametric model
-        } else 
-            warning("the \"R\" slot is NULL. Best to run vglm()")  # zz; 
+
+
+
+
+
 
     }
     if(length(fit$effects))

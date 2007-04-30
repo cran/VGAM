@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2006 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2007 T.W. Yee, University of Auckland. All rights reserved.
 
 
 
@@ -192,13 +192,13 @@ vglm.fit <- function(x, y, w=rep(1, length(x[, 1])),
 
 
     if(length(slot(family, "initialize")))
-        eval(slot(family, "initialize")) # Initialize mu and M (and optionally w)
-    n <- n.save 
+        eval(slot(family, "initialize")) # Initialize mu & M (and optionally w)
 
 
     if(length(etastart)) {
         eta <- etastart
-        mu <- if(length(mustart)) mustart else slot(family, "inverse")(eta, extra)
+        mu <- if(length(mustart)) mustart else
+              slot(family, "inverse")(eta, extra)
     } else {
         if(length(mustart))
             mu <- mustart
@@ -360,7 +360,8 @@ vglm.fit <- function(x, y, w=rep(1, length(x[, 1])),
         residuals <- as.vector(residuals)
         names(residuals) <- names(tfit$predictors) <- yn
     } else {
-        dimnames(residuals) <- dimnames(tfit$predictors) <- list(yn, predictors.names)
+        dimnames(residuals) <- dimnames(tfit$predictors) <-
+                               list(yn, predictors.names)
     }
 
     if(is.matrix(mu)) {
