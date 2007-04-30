@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2006 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2007 T.W. Yee, University of Auckland. All rights reserved.
 
 
 
@@ -136,7 +136,8 @@ yip88 = function(link.lambda="loge", n.arg=NULL)
 
 
 zapoisson = function(lp0="logit", llambda="loge",
-                     ep0=list(), elambda=list())
+                     ep0=list(), elambda=list(),
+                     zero=NULL)
 {
     if(mode(lp0) != "character" && mode(lp0) != "name")
         lp0 = as.character(substitute(lp0))
@@ -152,6 +153,12 @@ zapoisson = function(lp0="logit", llambda="loge",
            namesof("p0", lp0, earg=ep0, tag=FALSE), ", ",
            namesof("lambda", llambda, earg= .elambda, tag=FALSE),
            "\n"),
+    constraints=eval(substitute(expression({
+        temp752 = .zero
+        if(length(temp752) && all(temp752 == -1))
+            temp752 = 2*(1:ncol(y)) - 1
+        constraints = cm.zero.vgam(constraints, x, temp752, M)
+    }), list( .zero=zero ))),
     initialize=eval(substitute(expression({
         y = as.matrix(y)
         extra$y0 = y0 = ifelse(y==0, 1, 0)

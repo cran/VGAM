@@ -69,7 +69,8 @@ egev(llocation = "identity", lscale = "loge", lshape = "logoff",
   The argument \code{ishape} is more important than the other two because
   they are initialized from the initial \eqn{\xi}{xi}.
   If a failure to converge occurs, or even to obtain initial values occurs,
-  try assigning \code{ishape} some value.
+  try assigning \code{ishape} some value
+  (positive or negative; the sign can be very important).
   Also, in general, a larger value of \code{iscale} is better than a
   smaller value.
 

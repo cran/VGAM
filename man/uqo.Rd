@@ -218,6 +218,7 @@ this is not done.
   \code{\link{hspider}}.
 }
 \examples{
+\dontrun{
 data(hspider)
 set.seed(123)  # This leads to the global solution
 hspider[,1:6] = scale(hspider[,1:6]) # Standardized environmental vars
@@ -235,10 +236,9 @@ up1 = uqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,
                 Trocterr, Zoraspin) ~ 1,
           family = poissonff, data = hspider,
           ITolerances = TRUE,
-          Crow1positive = TRUE, lvstart = lv(p1))
+          Crow1positive = TRUE, lvstart = -lv(p1))
 if(deviance(up1) > 1310.0) stop("suboptimal fit obtained")
 
-\dontrun{
 nos = ncol(up1@y) # Number of species
 clr = (1:(nos+1))[-7]  # to omit yellow
 lvplot(up1, las=1, y=TRUE, pch=1:nos, scol=clr, lcol=clr, 

@@ -6,6 +6,33 @@
 
 
 
+                CHANGES IN VGAM VERSION 0.7-3
+
+NEW FEATURES
+
+    o   gpd() now does not delete any data internally. The user should
+        use the subset argument of vglm() and vgam() in order to select
+        any subset of a data frame.
+    o	zapoisson() has a zero argument, and this can be assigned
+        a negative value.
+    o	"partial for" is added to the ylabel of linear terms of a vgam()
+        object when it is plotted.
+    o	When a vgam() object is plotted with se=TRUE and if there are
+        linear terms then the mean of x is added to the plot (this makes
+        the standard error curves meet there).
+    o   This package has been tested (somewhat) under R 2.5.0.
+
+BUG FIXES
+
+    o   plotvgam() did not work for vgam() objects using the subset argument.
+    o   cao() objects would not show() or print(), at least under R 2.4.1.
+    o   summary(vgam.object) failed if vgam.object was a totally linear
+        model (i.e., no s() term in the formula). Now the "R" slot is
+        assigned for all vgam() objects.
+    o   preplotvgam() had a bug regarding $se.fit of an atomic pred$se.fit.
+
+
+
                 CHANGES IN VGAM VERSION 0.7-2
 
 NEW FEATURES

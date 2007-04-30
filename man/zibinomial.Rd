@@ -113,14 +113,14 @@ zibinomial(lphi="logit", link.mu="logit",
 \examples{
 size = 10  # number of trials; N in the notation above
 n = 200
-phi = 0.50
-mubin = 0.3  # Mean of an ordinary binomial distribution
+phi = logit(0,inv=TRUE)  # 0.50
+mubin = logit(-1,inv=TRUE) # Mean of an ordinary binomial distribution
 sv = rep(size, len=n)
 y = rzibinom(n=n, size=sv, prob=mubin, phi=phi) / sv # A proportion
 table(y)
 fit = vglm(y ~ 1, zibinomial, weight=sv, trace=TRUE)
 coef(fit, matrix=TRUE)
-Coef(fit)
+Coef(fit) # Useful for intercept-only models
 fit@misc$p0  # Estimate of P(Y=0)
 fitted(fit)[1:4,]
 mean(y) # Compare this with fitted(fit)

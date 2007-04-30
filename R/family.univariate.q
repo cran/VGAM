@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2006 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2007 T.W. Yee, University of Auckland. All rights reserved.
 
 
 
@@ -1883,7 +1883,7 @@ gamma2 = function(lmu="loge", lshape="loge",
     ans = 
     new("vglmff",
     blurb=c("2-parameter Gamma distribution",
-            " (McCullagh \& Nelder 1989 parameterization)\n",
+            " (McCullagh and Nelder 1989 parameterization)\n",
             "Links:    ",
             namesof("mu", lmu, earg=emu), ", ", 
             namesof("shape", lshape, earg=eshape), "\n",
@@ -7918,7 +7918,7 @@ logistic2 = function(llocation="identity",
                 scale.init = sqrt(3) * sd(y) / pi
             } else {
                 location.init = median(rep(y, w))
-                scale.init = sqrt(3) * sum(w*(y-location.init)^2) / (sum(w) *pi)
+                scale.init = sqrt(3) * sum(w*(y-location.init)^2) / (sum(w)*pi)
             }
             location.init = if(length(.ilocation)) rep(.ilocation, len=n) else
                              rep(location.init, len=n)

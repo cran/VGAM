@@ -123,6 +123,7 @@
 \alias{print,Coef.uqo-method}
 \alias{print,summary.uqo-method}
 \alias{print,vsmooth.spline-method}
+\alias{print,cao-method}
 \alias{qtplot,vglm-method}
 \alias{qtplot,vgam-method}
 \alias{residuals,qrrvglm-method}
@@ -155,6 +156,7 @@
 \alias{show,Coef.uqo-method}
 \alias{show,summary.uqo-method}
 \alias{show,vsmooth.spline-method}
+\alias{show,cao-method}
 \alias{summary,grc-method}
 \alias{summary,cao-method}
 \alias{summary,qrrvglm-method}

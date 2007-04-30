@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2006 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2007 T.W. Yee, University of Auckland. All rights reserved.
 
 
 
@@ -175,6 +175,8 @@ gev <- function(llocation="identity",
         misc$tshape0 = .tshape0
         if(ncol(y)==1)
             y = as.vector(y)
+        if(any(xi < -0.5))
+            warning("some values of the shape parameter are less than -0.5")
     }), list( .llocation=llocation, .lscale=lscale, .lshape=lshape,
               .elocation = elocation, .escale = escale, .eshape= eshape,
               .tshape0=tshape0, .percentiles=percentiles ))),
@@ -488,6 +490,8 @@ egev <- function(llocation="identity",
         misc$earg= list(location= .elocation, scale= .escale, shape= .eshape)
         misc$tshape0 = .tshape0
         misc$expected = TRUE 
+        if(any(xi < -0.5))
+            warning("some values of the shape parameter are less than -0.5")
       }), list( .llocation=llocation, .lscale=lscale, .lshape=lshape,
                 .elocation = elocation, .escale = escale, .eshape= eshape,
                 .tshape0=tshape0,  .percentiles=percentiles ))),
@@ -881,6 +885,7 @@ qgpd = function(p, location=0, scale=1, shape=0) {
 
 
 
+
 gpd = function(threshold=0,
                lscale="loge",
                lshape="logoff",
@@ -893,7 +898,7 @@ gpd = function(threshold=0,
                tshape0=0.001,
                method.init=1,
                zero=2) {
-    if(!is.Numeric(threshold, allow=1)) 
+    if(!is.Numeric(threshold)) 
         stop("bad input for argument \"threshold\"")
     if(!is.Numeric(method.init, allow=1, posit=TRUE, integer=TRUE) ||
        method.init > 2.5)
@@ -923,30 +928,25 @@ gpd = function(threshold=0,
     initialize=eval(substitute(expression({
         if(ncol(as.matrix(y)) != 1)
             stop("response must be a vector or one-column matrix")
-        extra$orig.n = length(y)
-        keep = (y > .threshold)
-        orig.y = y[keep]
-        y = orig.y - .threshold
-        a = attr(x,"assign")
-        x = x[keep,,drop=FALSE]
-        attr(x,"assign") = a
-        extra$sumkeep = sum(keep) 
-        extra$threshold = .threshold
-        w = w[keep] # -> origw
-        n = length(w)
+        Threshold = if(is.Numeric( .threshold)) .threshold else 0
+        if(is.Numeric(  .threshold)) {
+            orig.y = y
+        }
+        ystar = y - Threshold  # Operate on ystar
+        extra$threshold = Threshold
         predictors.names=
-        c(namesof("scale", .lscale, earg= .escale, short=TRUE),
-          namesof("shape", .lshape, earg= .eshape, short=TRUE ))
+            c(namesof("scale", .lscale, earg= .escale, short=TRUE),
+              namesof("shape", .lshape, earg= .eshape, short=TRUE ))
         if(!length(etastart)) {
-            meany = mean(y)
-            vary = var(y)
+            meany = mean(ystar)
+            vary = var(ystar)
             xiinit = if(length(.ishape)) .ishape else {
                 if( .method.init == 1) -0.5*(meany^2/vary - 1) else
-                    0.5 * (1 - median(y)^2 / vary)
+                    0.5 * (1 - median(ystar)^2 / vary)
             }
             siginit = if(length(.iscale)) .iscale else {
                 if(.method.init==1) 0.5*meany*(meany^2/vary + 1) else
-                    abs(1-xiinit) * median(y)
+                    abs(1-xiinit) * median(ystar)
             }
             siginit[siginit <= 0] = 0.01    # sigma > 0
             xiinit[xiinit <= -0.5] = -0.40  # Fisher scoring works if xi > -0.5
@@ -954,6 +954,7 @@ gpd = function(threshold=0,
             if( .lshape == "loge") xiinit[xiinit <=  0.0] =  0.05
             siginit = rep(siginit, leng=length(y))
             xiinit = rep(xiinit, leng=length(y))
+
             etastart = cbind(theta2eta(siginit, .lscale, earg= .escale ),
                              theta2eta(xiinit,  .lshape, earg= .eshape ))
         }
@@ -966,19 +967,20 @@ gpd = function(threshold=0,
         xi = eta2theta(eta[,2], .lshape, earg= .eshape )
         cent = .percentiles
         lp = length(cent)  # NULL means lp==0 and the mean is returned
+        Threshold = if(is.Numeric( .threshold)) .threshold else 0
         if(lp) {
             fv = matrix(as.numeric(NA), nrow(eta), lp)
             iszero = (abs(xi) < .tshape0)
             for(i in 1:lp) {
                 temp = 1-cent[i]/100
-                fv[!iszero,i] = .threshold + (temp^(-xi[!iszero]) -1) *
+                fv[!iszero,i] = Threshold + (temp^(-xi[!iszero]) -1) *
                                 sigma[!iszero] / xi[!iszero]
-                fv[iszero,i] = .threshold - sigma[iszero] * log(temp)
+                fv[iszero,i] = Threshold - sigma[iszero] * log(temp)
             }
             dimnames(fv) = list(dimnames(eta)[[1]],
                                 paste(as.character(.percentiles), "%", sep=""))
         } else {
-            fv = .threshold + sigma / (1 - xi)   # This is the mean, E(Y)
+            fv = Threshold + sigma / (1 - xi)   # This is the mean, E(Y)
             fv[xi >= 1] = NA  # Mean exists only if xi < 1.
         }
         fv
@@ -986,14 +988,15 @@ gpd = function(threshold=0,
              .escale=escale, .eshape=eshape,
              .tshape0=tshape0, .percentiles=percentiles ))),
     last=eval(substitute(expression({
-        y = orig.y    # Put in @y, i.e., y slot of the fitted object
         misc$links = c(scale = .lscale, shape = .lshape)
         misc$true.mu = FALSE     # @fitted is not a true mu
         misc$earg= list(scale= .escale , shape= .eshape )
         misc$percentiles = .percentiles
-        misc$threshold = .threshold
+        misc$threshold = if(is.Numeric( .threshold)) .threshold else 0
         misc$expected = TRUE
         misc$tshape0 = .tshape0
+        if(any(xi < -0.5))
+            warning("some values of the shape parameter are less than -0.5")
     }), list( .lscale=lscale, .lshape=lshape, .threshold=threshold,
               .escale=escale, .eshape=eshape,
               .tshape0=tshape0, .percentiles=percentiles ))),
@@ -1003,19 +1006,21 @@ gpd = function(threshold=0,
             xi = eta2theta(eta[,2], .lshape, earg= .eshape )
             if(any(iszero <- (abs(xi) < .tshape0))) {
             }
-            A = 1 + xi*y/sigma
+            Threshold = extra$threshold
+            ystar = y - Threshold  # Operate on ystar
+            A = 1 + xi*ystar/sigma
             mytolerance = .Machine$double.eps
             bad <- (A<=mytolerance)   # Range violation
-            if(any(bad)) {
+            if(any(sum(w[bad]))) {
                 cat("There are some range violations\n")
                 if(exists("flush.console")) flush.console()
             }
             igpd = !iszero &  !bad
             iexp =  iszero &  !bad
           if(residuals) stop("loglikelihood residuals not implemented yet") else
-            sum(bad) * (-1.0e10) +
+            sum(w[bad]) * (-1.0e10) +
             sum(w[igpd] * (-log(sigma[igpd]) - (1+1/xi[igpd])*log(A[igpd]))) +
-            sum(w[iexp] * (-log(sigma[iexp]) - y[iexp]/sigma[iexp]))
+            sum(w[iexp] * (-log(sigma[iexp]) - ystar[iexp]/sigma[iexp]))
         }, list( .tshape0=tshape0, .lscale=lscale,
                  .escale=escale, .eshape=eshape,
                  .lshape=lshape ))),
@@ -1023,11 +1028,13 @@ gpd = function(threshold=0,
     deriv=eval(substitute(expression({
         sigma = eta2theta(eta[,1], .lscale, earg= .escale )
         xi = eta2theta(eta[,2], .lshape, earg= .eshape )
-        A = 1 + xi*y/sigma
+        Threshold = extra$threshold
+        ystar = y - Threshold  # Operate on ystar
+        A = 1 + xi*ystar/sigma
         mytolerance = .Machine$double.eps
         bad <- (A <= mytolerance)
-        if(any(bad)) {
-            cat(sum(bad,na.rm=TRUE), # "; ignoring them"
+        if(any(sum(w[bad]))) {
+            cat(sum(w[bad],na.rm=TRUE), # "; ignoring them"
                 "observations violating boundary constraints\n")
             if(exists("flush.console")) flush.console()
         }
@@ -1036,11 +1043,12 @@ gpd = function(threshold=0,
         igpd = !iszero &  !bad
         iexp =  iszero &  !bad
         dl.dxi = dl.dsigma = rep(0, len=length(y))
-        dl.dsigma[igpd] = ((1 + xi[igpd]) * y[igpd] / (sigma[igpd] + 
-                          xi[igpd]*y[igpd]) - 1) / sigma[igpd]
-        dl.dxi[igpd] = log(A[igpd])/xi[igpd]^2 - (1 + 1/xi[igpd]) * y[igpd] /
-                       (A[igpd] * sigma[igpd])
-        dl.dxi[iexp] = y[iexp] * (0.5*y[iexp]/sigma[iexp] - 1) / sigma[iexp]
+        dl.dsigma[igpd] = ((1 + xi[igpd]) * ystar[igpd] / (sigma[igpd] + 
+                          xi[igpd]*ystar[igpd]) - 1) / sigma[igpd]
+        dl.dxi[igpd] = log(A[igpd])/xi[igpd]^2 - (1 + 1/xi[igpd]) *
+                       ystar[igpd] / (A[igpd] * sigma[igpd])
+        dl.dxi[iexp] = ystar[iexp] *
+                       (0.5*ystar[iexp]/sigma[iexp] - 1) / sigma[iexp]
         dsigma.deta = dtheta.deta(sigma, .lscale, earg= .escale )
         dxi.deta = dtheta.deta(xi, .lshape, earg= .eshape )
         w * cbind(dl.dsigma * dsigma.deta, dl.dxi * dxi.deta)

@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2006 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2007 T.W. Yee, University of Auckland. All rights reserved.
 
 
 
@@ -203,20 +203,20 @@ rrvglm.fit <- function(x, y, w=rep(1, length(x[, 1])),
     Rank <- control$Rank
     rrcontrol <- control  #
 
-    if(length(family@initialize))
-        eval(family@initialize)       # Initialize mu and M (and optionally w)
-    n <- n.save 
+    if(length(slot(family, "initialize")))
+        eval(slot(family, "initialize")) # Initialize mu & M (and optionally w)
 
 
     eval(rrr.init.expression)  
 
     if(length(etastart)) {
         eta <- etastart
-        mu <- if(length(mustart)) mustart else family@inverse(eta, extra)
+        mu <- if(length(mustart)) mustart else
+              slot(family, "inverse")(eta, extra)
     } else {
         if(length(mustart))
             mu <- mustart
-        eta <- family@link(mu, extra)
+        eta <- slot(family, "link")(mu, extra)
     }
 
     M <- if(is.matrix(eta)) ncol(eta) else 1

@@ -123,8 +123,8 @@ c
       double precision function ddot8(n,dx,incx,dy,incy)
 c
 c 12/7/02; T.Yee
-c I've modifed "real function ddot" to "double precision function ddot8" for
-c the VGAM package
+c I've modifed "real function ddot" to
+c "double precision function ddot8" for the VGAM package
 c I've added the "implicit logical (a-z)" line
 
       implicit logical (a-z) 

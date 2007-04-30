@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2006 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2007 T.W. Yee, University of Auckland. All rights reserved.
 
 
 
@@ -105,19 +105,20 @@ vgam.fit <- function(x, y, w, mf,
     old.coeffs <- coefstart
 
     intercept.only <- ncol(x) == 1 && dimnames(x)[[2]] == "(Intercept)"
-    y.names <- predictors.names <- NULL    # May be overwritten in $initialize
+    y.names <- predictors.names <- NULL    # May be overwritten in @initialize
 
-    n.save <- dim(x)[1]
-    eval(family@initialize)
-    n <- n.save
+    n.save <- n
+    if(length(slot(family, "initialize")))
+        eval(slot(family, "initialize")) # Initialize mu & M (and optionally w)
 
     if(length(etastart)) {
         eta <- etastart
-        mu <- if(length(mustart)) mustart else family@inverse(eta, extra)
+        mu <- if(length(mustart)) mustart else
+              slot(family, "inverse")(eta, extra)
     } else {
         if(length(mustart))
             mu <- mustart
-        eta <- family@link(mu, extra)
+        eta <- slot(family, "link")(mu, extra)
     }
 
     M <- if(is.matrix(eta)) ncol(eta) else 1
@@ -161,7 +162,8 @@ vgam.fit <- function(x, y, w, mf,
         bf.call <- if(is.R()) expression(vlm.wfit(xbig.save, z, Blist=NULL,
             U=U, matrix.out=FALSE, XBIG=TRUE, qr=qr.arg, xij=NULL)) else 
                               expression(vlm.wfit(xbig.save, z, Blist=NULL,
-            U=U, matrix.out=FALSE, XBIG=TRUE, singular.ok=TRUE, qr=qr.arg, xij=NULL))
+            U=U, matrix.out=FALSE, XBIG=TRUE, singular.ok=TRUE, qr=qr.arg,
+            xij=NULL))
         bf <- "vlm.wfit"
     }
 
@@ -248,6 +250,16 @@ vgam.fit <- function(x, y, w, mf,
             stop("rank < ncol(x) is bad")
     } else rank <- ncol(x)    # zz 8/12/01 I think rank is all wrong
 
+    R <- if(is.R()) tfit$qr$qr[1:p.big, 1:p.big, drop=FALSE] else {
+             if(backchat) tfit$qr[1:p.big, 1:p.big, drop=FALSE] else
+                          tfit$qr$qr[1:p.big, 1:p.big, drop=FALSE]
+         }
+    R[lower.tri(R)] <- 0
+    attributes(R) <- if(is.R()) list(dim=c(p.big, p.big),
+                     dimnames=list(cnames, cnames), rank=rank) else
+                  list(dim=c(p.big, p.big),
+                     dimnames=list(cnames, cnames), rank=rank, class="upper")
+
 
 
     dn <- labels(x)
@@ -278,6 +290,7 @@ vgam.fit <- function(x, y, w, mf,
                 iter=iter,
                 offset=offset,
                 rank=rank,
+                R=R,
                 terms=Terms)))
 
     df.residual <- n.big - rank 

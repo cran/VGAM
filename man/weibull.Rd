@@ -58,6 +58,7 @@ weibull(lshape = "logoff", lscale = "loge",
   The density is unbounded for \eqn{a<1}.
   The \eqn{k}th moment about the origin is
   \eqn{E(Y^k) = b^k \, \Gamma(1+ k/a)}{E(Y^k) = b^k * gamma(1+ k/a)}.
+  The hazard function is \eqn{a t^{a-1} / b^a}{a * t^(a-1) / b^a}.
 
   This \pkg{VGAM} family function handles Type-I right censored data as
   well as complete data.
