@@ -15,7 +15,7 @@ grc(y, Rank = 1, Index.corner = 2:(1 + Rank),
   \item{y}{
   A matrix of counts. Output from \code{table()} is acceptable;
   it is converted into a matrix.
-  \code{y} must be at least 3 by 3. 
+  Note that \code{y} must be at least 3 by 3. 
   }
   \item{Rank}{
   An integer in the range 
@@ -24,7 +24,7 @@ grc(y, Rank = 1, Index.corner = 2:(1 + Rank),
 
   }
   \item{Index.corner}{
-  A \code{Rank}-vector of integers.
+  A vector of \code{Rank} integers.
   These are used to store the \code{Rank} by \code{Rank}
   identity matrix in the
   \code{A} matrix; corner constraints are used.

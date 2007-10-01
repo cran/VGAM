@@ -37,7 +37,7 @@ cao(formula, family, data = list(),
   \item{family}{ 
     a function of class \code{"vglmff"} describing what statistical
     model is to be fitted.
-    See \code{\link{cqo}} for a list of those presently implemented,
+    See \code{\link{cqo}} for a list of those presently implemented.
 
   }
 
@@ -250,6 +250,10 @@ Constrained additive ordination.
 
 % The code is a little fragile at this stage, so the function might
 % hang/lock up in the microsoft Windows version.
+
+  Currently the dispersion parameter for a
+  \code{\link{gaussianff}} CAO model is estimated slightly differently
+  and may be slightly biassed downwards (usually a little too small).
 
 }
 

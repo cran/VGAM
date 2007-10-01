@@ -28,6 +28,8 @@ cao.fit <- function(x, y, w=rep(1, length(x[, 1])),
 
     copyxbig <- FALSE    # May be overwritten in @initialize
 
+    xbig.save <- NULL
+
     intercept.only <- ncol(x) == 1 && dimnames(x)[[2]] == "(Intercept)"
     y.names <- predictors.names <- NULL    # May be overwritten in @initialize
 
@@ -1006,7 +1008,8 @@ Coef.cao = function(object,
 
         thisSpecies = whichSpecies[sppno]
         indexSpecies = if(is.character(whichSpecies))
-            match(whichSpecies[sppno], sppnames) else whichSpecies[sppno]
+            match(whichSpecies[sppno], ynames) else whichSpecies[sppno]
+
         if(is.na(indexSpecies))
             stop("mismatch found in \"whichSpecies\"")
 
@@ -1579,7 +1582,6 @@ plot.cao = function(x,
             }
             if(residuals.arg) {
                 stop("can't handle residuals=TRUE yet")
-                points(x@x, yymat[,i], col=pcol[i], pch=pch[i], cex=pcex[i])
             } 
             counter = counter + 1
             lines(xvals, yvals,

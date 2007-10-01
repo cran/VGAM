@@ -114,7 +114,7 @@ yip88 = function(link.lambda="loge", n.arg=NULL)
     loglikelihood=eval(substitute( 
         function(mu,y,w,residuals=FALSE, eta, extra=NULL) {
         lambda = eta2theta(eta, .link.lambda)
-        lstar = -lambda + y * log(lambda) - log(1-exp(-lambda))
+        lstar = -lambda + y * log(lambda) - log1p(-exp(-lambda))
         sum(w * lstar)
     }, list( .link.lambda=link.lambda ))),
     vfamily=c("yip88"),
@@ -151,7 +151,7 @@ zapoisson = function(lp0="logit", llambda="loge",
   "Zero-altered Poisson (binomial and positive-Poisson conditional model)\n\n",
            "Links:    ",
            namesof("p0", lp0, earg=ep0, tag=FALSE), ", ",
-           namesof("lambda", llambda, earg= .elambda, tag=FALSE),
+           namesof("lambda", llambda, earg= elambda, tag=FALSE),
            "\n"),
     constraints=eval(substitute(expression({
         temp752 = .zero
@@ -206,8 +206,8 @@ zapoisson = function(lp0="logit", llambda="loge",
         ans = 0
         for(spp. in 1:NOS) {
             ans = ans + sum(w[skip[,spp.]] * log(p0[skip[,spp.],spp.])) +
-                  sum(w[!skip[,spp.]] * (log(1-p0[!skip[,spp.],spp.]) -
-                      log(1-exp(-lambda[!skip[,spp.],spp.])) -
+                  sum(w[!skip[,spp.]] * (log1p(-p0[!skip[,spp.],spp.]) -
+                      log1p(-exp(-lambda[!skip[,spp.],spp.])) -
                       lambda[!skip[,spp.],spp.] +
                       y[!skip[,spp.],spp.]*log(lambda[!skip[,spp.],spp.])))
         }
@@ -374,14 +374,14 @@ zanegbinomial = function(lp0="logit", lmunb = "loge", lk = "loge",
         for(spp. in 1:NOS) {
             i8 = skip[,spp.]
             ans = ans + sum(w[i8] * log(p0[i8,spp.])) +
-            sum(w[!i8] * (log(1-p0[!i8,spp.]) + y[!i8,spp.] * 
+            sum(w[!i8] * (log1p(-p0[!i8,spp.]) + y[!i8,spp.] * 
                 log(munb[!i8,spp.]/(munb[!i8,spp.]+
                 kmat[!i8,spp.])) + kmat[!i8,spp.]*log(kmat[!i8,spp.] /
                 (munb[!i8,spp.]+kmat[!i8,spp.])) +
                 lgamma(y[!i8,spp.]+kmat[!i8,spp.]) - 
                 lgamma(kmat[!i8,spp.]) - lgamma(y[!i8,spp.]+1) -
                 (if(is.R())
-                log1p(-pnb0[!i8,spp.]) else log(1 - pnb0[!i8,spp.]))))
+                log1p(-pnb0[!i8,spp.]) else log1p( - pnb0[!i8,spp.]))))
         }
         ans
     }, list( .lp0=lp0, .lmunb=lmunb, .lk=lk,
@@ -497,7 +497,8 @@ rposnegbin = function(n, munb, k) {
 
 zipoisson = function(lphi="logit", llambda="loge",
                      ephi=list(), elambda =list(),
-                     iphi=NULL, zero=NULL)
+                     iphi=NULL, method.init=1,
+                     shrinkage.init=0.8, zero=NULL)
 {
     if(mode(lphi) != "character" && mode(lphi) != "name")
         lphi = as.character(substitute(lphi))
@@ -508,6 +509,10 @@ zipoisson = function(lphi="logit", llambda="loge",
             stop("iphi must be a single number inside the interval (0,1)")
     if(!is.list(ephi)) ephi = list()
     if(!is.list(elambda)) elambda = list()
+    if(!is.Numeric(method.init, allow=1, integ=TRUE, posit=TRUE) ||
+       method.init > 2) stop("argument \"method.init\" must be 1 or 2")
+    if(!is.Numeric(shrinkage.init, allow=1) || shrinkage.init < 0 ||
+       shrinkage.init > 1) stop("bad input for argument \"shrinkage.init\"")
 
     new("vglmff",
     blurb=c("Zero-inflated Poisson\n\n",
@@ -526,14 +531,23 @@ zipoisson = function(lphi="logit", llambda="loge",
             phi.init = if(length( .iphi)) .iphi else {
                 sum(w[y==0]) / sum(w)
             }
-            if(phi.init <= 0 || phi.init >=1) phi.init = 0.1  # Last resort
-            lambda.init = y + 1/8
+            phi.init[phi.init <= 0] = 0.05  # Last resort
+            phi.init[phi.init >= 1] = 0.95  # Last resort
+            if( .method.init == 2) {
+                mymean = weighted.mean(y[y>0], w[y>0]) + 1/16
+                lambda.init = (1- .sinit) * (y+1/8) + .sinit * mymean
+            } else {
+                mymedian = median(y[y>0]) + 1/16
+                lambda.init = (1- .sinit) * (y+1/8) + .sinit * mymedian
+            }
             etastart = cbind(theta2eta(rep(phi.init, len=n), .lphi, earg= .ephi ),
                              theta2eta(lambda.init, .llambda, earg= .ephi ))
         }
     }), list( .lphi=lphi, .llambda=llambda,
               .ephi=ephi, .elambda=elambda,
-              .iphi=iphi ))),
+              .method.init=method.init,
+              .iphi=iphi,
+              .sinit=shrinkage.init ))),
     inverse=eval(substitute(function(eta, extra=NULL) {
         phi = eta2theta(eta[,1], .lphi, earg= .ephi )
         lambda = eta2theta(eta[,2], .llambda, earg= .elambda )
@@ -552,18 +566,25 @@ zipoisson = function(lphi="logit", llambda="loge",
               .ephi=ephi, .elambda=elambda ))),
     loglikelihood=eval(substitute( 
         function(mu,y,w,residuals=FALSE, eta, extra=NULL) {
+        smallno = 100 * .Machine$double.eps
         phi = eta2theta(eta[,1], .lphi, earg= .ephi )
+        phi = pmax(phi, smallno)
+        phi = pmin(phi, 1.0-smallno)
         lambda = eta2theta(eta[,2], .llambda, earg= .elambda )
         index = (y==0)
-        tmp8 = phi + (1-phi)*exp(-lambda)
+        tmp8 = phi + (1.0-phi)*exp(-lambda)
         ell0 = log(tmp8[index])
-        ell1 = log((1-phi[!index]) * dpois(y[!index], lambda= lambda[!index]))
+        ell1 = log1p(-phi[!index]) +
+               dpois(y[!index], lambda= lambda[!index], log=TRUE)
         sum(w[index] * ell0) + sum(w[!index] * ell1)
     }, list( .lphi=lphi, .llambda=llambda,
              .ephi=ephi, .elambda=elambda ))),
     vfamily=c("zipoisson"),
     deriv=eval(substitute(expression({
+        smallno = 100 * .Machine$double.eps
         phi = eta2theta(eta[,1], .lphi, earg= .ephi )
+        phi = pmax(phi, smallno)
+        phi = pmin(phi, 1.0-smallno)
         lambda = eta2theta(eta[,2], .llambda, earg= .elambda )
         tmp8 = phi + (1-phi)*exp(-lambda)
         index = (y==0)
@@ -597,7 +618,6 @@ zipoisson = function(lphi="logit", llambda="loge",
     }), list( .lphi=lphi, .llambda=llambda,
               .ephi=ephi, .elambda=elambda ))))
 }
-
 
 
 
@@ -688,7 +708,7 @@ zibinomial = function(lphi="logit", link.mu="logit",
         index = (y==0)
         tmp8 = phi + (1-phi)*(1-mubin)^w
         ell0 = log(tmp8[index])
-        ell1 = log(1-phi[!index]) + dbinom(x=round(w[!index]*y[!index]), 
+        ell1 = log1p(-phi[!index]) + dbinom(x=round(w[!index]*y[!index]), 
                size=w[!index], prob=mubin[!index], log=TRUE)
         sum(ell0) + sum(ell1)
     }, list( .lphi=lphi, .link.mu=link.mu,

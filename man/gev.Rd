@@ -27,8 +27,8 @@ egev(llocation = "identity", lscale = "loge", lshape = "logoff",
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{llocation, lscale, lshape}{
-  Parameter link function for \eqn{\mu}{mu}, \eqn{\sigma}{sigma} and
-  \eqn{\xi}{xi}.
+  Parameter link functions for \eqn{\mu}{mu}, \eqn{\sigma}{sigma} and
+  \eqn{\xi}{xi} respectively.
   See \code{\link{Links}} for more choices.
 
   }
@@ -172,11 +172,11 @@ egev(llocation = "identity", lscale = "loge", lshape = "logoff",
   fraught. If \eqn{1 + \xi (y-\mu)/ \sigma \leq 0}{1 + xi*(y-mu)/sigma <=
   0} then some crude evasive action is taken but the estimation process
   can still fail. This is particularly the case if \code{\link{vgam}}
-  with \code{\link{s}} is used. Then smoothing is best done with
+  with \code{\link{s}} is used; then smoothing is best done with
   \code{\link{vglm}} with regression splines (\code{\link[splines]{bs}}
   or \code{\link[splines]{ns}}) because \code{\link{vglm}} implements
-  half-stepsizing whereas \code{\link{vgam}} doesn't. Half-stepsizing
-  helps handle the problem of straying outside the parameter space.
+  half-stepsizing whereas \code{\link{vgam}} doesn't (half-stepsizing
+  helps handle the problem of straying outside the parameter space.)
 
 }
 \value{
@@ -185,6 +185,10 @@ egev(llocation = "identity", lscale = "loge", lshape = "logoff",
   and \code{\link{vgam}}.
 }
 \references{ 
+  Yee, T. W. and Stephenson, A. G. (2007)
+  Vector generalized linear and additive extreme value models.
+  \emph{Extremes}, \bold{10}, 1--19.
+
   Tawn, J. A. (1988)
   An extreme-value theory model for dependent observations.
   \emph{Journal of Hydrology}, \bold{101}, 227--250.
@@ -203,8 +207,9 @@ egev(llocation = "identity", lscale = "loge", lshape = "logoff",
 
 \note{ 
   The \pkg{VGAM} family function \code{gev} can handle a multivariate
-  (matrix) response.  If so, each row of the matrix is sorted into
-  descending order.  With a vector or one-column matrix response using
+  (matrix) response. If so, each row of the matrix is sorted into
+  descending order and \code{NA}s are put last.
+  With a vector or one-column matrix response using
   \code{egev} will give the same result but be faster and it handles
   the \eqn{\xi=0}{xi=0} case.
   The function \code{gev} implements Tawn (1988) while 
@@ -220,8 +225,8 @@ egev(llocation = "identity", lscale = "loge", lshape = "logoff",
 
   Successful convergence often depends on having a reasonably good initial
   value for \eqn{\xi}{xi}. If failure occurs try various values for the
-  argument \code{ishape}, and if there are covariates, setting \code{zero=3}
-  is advised.
+  argument \code{ishape}, and if there are covariates, 
+  having \code{zero=3} is advised.
 
 }
 

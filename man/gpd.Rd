@@ -181,6 +181,10 @@ gpd(threshold = 0, lscale = "loge", lshape = "logoff",
 
 }
 \references{
+  Yee, T. W. and Stephenson, A. G. (2007)
+  Vector generalized linear and additive extreme value models.
+  \emph{Extremes}, \bold{10}, 1--19.
+
   Coles, S. (2001)
   \emph{An Introduction to Statistical Modeling of Extreme Values}.
   London: Springer-Verlag.

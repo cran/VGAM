@@ -1,7 +1,7 @@
 \name{waitakere}
 \alias{waitakere}
 \non_function{}
-\title{Waitakere Ranges data}
+\title{Waitakere Ranges Data}
 \usage{data(waitakere)}
 \description{
   The \code{waitakere} data frame has 579 rows and 18 columns.
@@ -50,7 +50,7 @@
 }
 \examples{
 data(waitakere)
-fit = vgam(agaaus ~ s(altitude), binomialff, waitakere)
+fit = vgam(agaaus ~ s(altitude, df=2), binomialff, waitakere)
 \dontrun{
 plot(fit, se=TRUE, lcol="red", scol="blue") }
 predict(fit, waitakere, type="response")[1:3]

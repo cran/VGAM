@@ -9,7 +9,7 @@
 
 }
 \usage{
-rayleigh(link = "loge", earg=list())
+rayleigh(link = "loge", earg=list(), nrfs=1/3+0.01)
 crayleigh(link ="loge", earg=list(), expected=FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -23,6 +23,14 @@ crayleigh(link ="loge", earg=list(), expected=FALSE)
   \item{earg}{
   List. Extra argument for the link.
   See \code{earg} in \code{\link{Links}} for general information.
+
+  }
+  \item{nrfs}{
+  Numeric, of length one, with value in \eqn{[0,1]}.
+  Weighting factor between Newton-Raphson and Fisher scoring.
+  The value 0 means pure Newton-Raphson, while 1 means pure Fisher scoring.
+  The default value uses a mixture of the two algorithms, and retaining
+  positive-definite working weights.
 
   }
   \item{expected}{
@@ -61,17 +69,18 @@ crayleigh(link ="loge", earg=list(), expected=FALSE)
   \code{\link{rrvglm}}
   and \code{\link{vgam}}.
 }
-\references{ 
+\references{
 Evans, M., Hastings, N. and Peacock, B. (2000)
 \emph{Statistical Distributions},
 New York: Wiley-Interscience, Third edition.
 }
 \author{ T. W. Yee }
-\note{ A related distribution is the Maxwell distribution.
+\note{
+A related distribution is the Maxwell distribution.
 }
 \seealso{
-     \code{\link{Rayleigh}},
-     \code{\link{maxwell}}.
+    \code{\link{Rayleigh}},
+    \code{\link{maxwell}}.
 }
 \examples{
 n = 1000; a = exp(2)
@@ -85,7 +94,9 @@ Coef(fit)
 # Censored data
 U = runif(n, 5, 15)
 y = pmin(U, ystar)
-\dontrun{ par(mfrow=c(1,2)); hist(ystar); hist(y); }
+\dontrun{
+par(mfrow=c(1,2)); hist(ystar); hist(y)
+}
 extra = list(rightcensored = ystar > U)
 fit = vglm(y ~ 1, crayleigh, trace=TRUE, extra=extra)
 table(fit@extra$rightcen)

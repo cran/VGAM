@@ -198,7 +198,7 @@ Useful for extreme value data models.}
     \item{summary}{\code{signature(object = "vglm")}:
 a more detailed summary of the object. }
   }
-}
+
 \references{
 Yee, T. W. and Wild, C. J. (1996)
 Vector generalized additive models.

@@ -10,7 +10,8 @@
 negbinomial(lmu = "loge", lk = "loge",
             emu =list(), ek=list(),
             ik = NULL, cutoff = 0.995, Maxiter=5000, 
-            deviance.arg = FALSE, method.init=1, zero = -2)
+            deviance.arg = FALSE, method.init=1,
+            shrinkage.init=0.95, zero = -2)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -64,10 +65,19 @@ negbinomial(lmu = "loge", lk = "loge",
 
   }
   \item{method.init}{
-  An integer with value \code{1}, \code{2} or \code{3} which
+  An integer with value \code{1} or \code{2} which
   specifies the initialization method for the \eqn{\mu}{mu} parameter.
-  If failure to converge occurs
-  try another value (and/or specify a value for \code{ik}).
+  If failure to converge occurs try another value
+  and/or else specify a value for \code{shrinkage.init}
+  and/or else specify a value for \code{ik}.
+
+  }
+  \item{shrinkage.init}{
+  How much shrinkage is used when initializing \eqn{\mu}{mu}.
+  The value must be between 0 and 1 inclusive, and
+  a value of 0 means the individual response values are used,
+  and a value of 1 means the median or mean is used.
+  This argument is used in conjunction with \code{method.init}.
 
   }
   \item{zero}{

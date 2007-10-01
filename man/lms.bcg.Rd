@@ -146,7 +146,8 @@ Green manuscript.)
 \code{\link{qtplot.lmscreg}},
 \code{\link{deplot.lmscreg}},
 \code{\link{cdf.lmscreg}},
-\code{\link{bminz}}.
+\code{\link{bminz}},
+\code{\link{alsqreg}}.
 }
 
 \examples{

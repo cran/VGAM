@@ -948,3 +948,212 @@ lms.yjn1 = function(percentiles=c(25,50,75),
 
 
 
+
+
+
+
+alsqreg <- function(w=1, method.init=1)
+{
+    w.arg = w
+    if(!is.Numeric(w.arg, posit=TRUE, allow=1))
+        stop("'w' must be a single positive number")
+    lmean = "identity"
+    emean = list()
+    if(!is.Numeric(method.init, allow=1, integ=TRUE, posit=TRUE) ||
+       method.init > 3) stop("argument \"method.init\" must be 1, 2 or 3")
+
+    new("vglmff",
+    blurb=c("Asymmetric least squares quantile regression\n\n"),
+    initialize=eval(substitute(expression({
+        predictors.names = c(namesof("w-regression plane",
+                                     .lmean, earg=.emean, tag=FALSE))
+        extra$w = .w.arg
+        if(ncol(y <- cbind(y)) != 1)
+            stop("response must be a vector or a one-column matrix")
+        if(!length(etastart)) {
+            mean.init = if( .method.init == 1)
+                rep(median(y), length=n) else if( .method.init == 2)
+                rep(weighted.mean(y, w), length=n) else {
+                    junk = if(is.R()) lm.wfit(x=x, y=y, w=w) else
+                                      lm.wfit(x=x, y=y, w=w, method="qr")
+                    junk$fitted
+            }
+            etastart = cbind(theta2eta(mean.init, .lmean, earg= .emean))
+        }
+    }), list( .lmean=lmean, .emean=emean, .method.init=method.init,
+              .w.arg=w.arg ))),
+    inverse=eval(substitute(function(eta, extra=NULL) {
+        eta2theta(eta, .lmean, earg= .emean)  
+    }, list( .lmean=lmean, .emean=emean,
+              .w.arg=w.arg ))),
+    last=eval(substitute(expression({
+        misc$link = c("mu"= .lmean)
+        misc$earg = list("mu"= .emean)
+        misc$expected = TRUE
+        extra$percentile = 100 * weighted.mean(myresid <= 0, w)
+    }), list( .lmean=lmean, .emean=emean,
+              .w.arg=w.arg ))),
+    loglikelihood=eval(substitute(
+        function(mu,y,w,residuals= FALSE,eta, extra=NULL) {
+        if(residuals) stop("loglikelihood residuals not implemented yet") else {
+            Qw <- function(r, w, deriv.arg=0) {
+                Wr <- function(r, w) ifelse(r <= 0, 1, w)
+                switch(as.character(deriv.arg),
+                       "0"= Wr(r, w) * r^2,
+                       "1"= 2 * Wr(r, w) * r,
+                       stop("'deriv' not matched"))
+            }
+            myresid = y - mu
+            -sum(w * Qw(myresid, .w.arg))
+        }
+    }, list( .lmean=lmean, .emean=emean,
+              .w.arg=w.arg ))),
+    vfamily=c("alsqreg"),
+    deriv=eval(substitute(expression({
+        Wr <- function(r, w) ifelse(r <= 0, 1, w)
+        mymu = eta2theta(eta, .lmean, earg= .emean)
+        myresid = y - mymu
+        temp1 = Wr(myresid, w= .w.arg)
+        w * myresid * temp1
+    }), list( .lmean=lmean, .emean=emean,
+              .w.arg=w.arg ))),
+    weight=eval(substitute(expression({
+        wz = w * temp1
+        wz
+    }), list( .lmean=lmean, .emean=emean,
+              .w.arg=w.arg ))))
+}
+
+
+
+
+
+
+alspoisson <- function(link="loge", earg=list(),
+                       w=1, method.init=1)
+{
+    if(mode(link )!= "character" && mode(link )!= "name")
+        link <- as.character(substitute(link))
+    if(!is.list(earg)) earg = list()
+    w.arg = w
+    if(!is.Numeric(w.arg, posit=TRUE, allow=1))
+        stop("'w' must be a single positive number")
+    lmean = "identity"
+    emean = list()
+
+    new("vglmff",
+    blurb=c("Poisson distribution estimated by asymmetric least squares\n\n",
+           "Link:     ", namesof("mu", link, earg= earg), "\n",
+           "Variance: mu"),
+    deviance= function(mu, y, w, residuals = FALSE, eta, extra=NULL) {
+        nz <- y > 0
+        devi <-  - (y - mu)
+        devi[nz] <- devi[nz] + y[nz] * log(y[nz]/mu[nz])
+        if(residuals) sign(y - mu) * sqrt(2 * abs(devi) * w) else
+            2 * sum(w * devi)
+    },
+    initialize=eval(substitute(expression({
+        if(ncol(cbind(y)) != 1)
+            stop("response must be a vector or a one-column matrix")
+        M = if(is.matrix(y)) ncol(y) else 1
+        dn2 = if(is.matrix(y)) dimnames(y)[[2]] else NULL
+        dn2 = if(length(dn2)) {
+            paste("E[", dn2, "]", sep="") 
+        } else {
+            paste("mu", 1:M, sep="") 
+        }
+        predictors.names = namesof(if(M>1) dn2 else "mu", .link,
+            earg= .earg, short=TRUE)
+        mu = pmax(y, 1/8)
+        if(!length(etastart))
+            etastart <- theta2eta(mu, link= .link, earg= .earg)
+    }), list( .link=link, 
+              .earg=earg ))),
+    inverse=eval(substitute(function(eta, extra=NULL) {
+        mu = eta2theta(eta, link= .link, earg= .earg)
+        mu
+    }, list( .link=link, .earg=earg ))),
+    last=eval(substitute(expression({
+        misc$expected = TRUE
+        misc$link = rep( .link, length=M)
+        names(misc$link) = if(M>1) dn2 else "mu"
+
+        extra$percentile = 100 * weighted.mean(myresid <= 0, w)
+
+        misc$earg = vector("list", M)
+        names(misc$earg) = names(misc$link)
+        for(ii in 1:M) misc$earg[[ii]] = .earg
+    }), list( .link=link, .earg=earg ))),
+    link=eval(substitute(function(mu, extra=NULL) {
+        theta2eta(mu, link= .link, earg= .earg)
+    }, list( .link=link, .earg=earg ))),
+
+
+    loglikelihood=eval(substitute(
+        function(mu,y,w,residuals= FALSE,eta, extra=NULL) {
+        if(residuals) stop("loglikelihood residuals not implemented yet") else {
+            Qw <- function(r, w, deriv.arg=0) {
+                Wr <- function(r, w) ifelse(r <= 0, 1, w)
+                switch(as.character(deriv.arg),
+                       "0"= Wr(r, w) * r^2,
+                       "1"= 2 * Wr(r, w) * r,
+                       stop("'deriv' not matched"))
+            }
+            myresid = extra$z - mu
+            -sum(w * Qw(myresid, .w.arg))
+        }
+    }, list( .lmean=lmean, .emean=emean,
+              .w.arg=w.arg ))),
+
+    vfamily="alspoisson",
+
+    deriv=eval(substitute(expression({
+
+        if( iter > 1) extra$z = z
+ print("iter")
+ print( iter )
+
+        derivUsual =
+        if( .link == "loge" && (any(mu < .Machine$double.eps))) {
+            w * (y - mu)
+        } else {
+            lambda <- mu
+            dl.dlambda <- (y-lambda) / lambda
+            dlambda.deta <- dtheta.deta(theta=lambda, link= .link, earg= .earg)
+            w * dl.dlambda * dlambda.deta
+        }
+
+        if(iter > 1) {
+            Wr <- function(r, w) ifelse(r <= 0, 1, w)
+            mymu = eta2theta(eta, .lmean, earg= .emean)
+            myresid = z - mymu
+            temp1 = Wr(myresid, w= wzUsual)   # zz should the wt be wzUsual??
+            temp1 = Wr(myresid, w= .w.arg)   # zz should the wt be wzUsual??
+        }
+
+        if(iter %% 3 == 1) cat("=================\n")
+
+        if(iter %% 3 == 1) derivUsual else w * myresid * temp1
+    }), list( .link=link, .earg=earg, .w.arg=w.arg,
+              .lmean=lmean, .emean=emean ))),
+
+    weight=eval(substitute(expression({
+        wzUsual =
+        if( .link == "loge" && (any(mu < .Machine$double.eps))) {
+            tmp600 = mu
+            tmp600[tmp600 < .Machine$double.eps] = .Machine$double.eps
+            w * tmp600
+        } else {
+            d2l.dlambda2 = 1 / lambda
+            w * dlambda.deta^2 * d2l.dlambda2
+        }
+        if(iter %% 3 == 1) wzUsual else w * temp1
+    }), list( .link=link, .earg=earg,
+              .lmean=lmean, .emean=emean,
+              .w.arg=w.arg ))))
+
+}
+
+
+
+

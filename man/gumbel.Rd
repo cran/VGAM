@@ -116,6 +116,10 @@ egumbel(llocation = "identity", lscale = "loge",
   and \code{\link{vgam}}.
 }
 \references{
+  Yee, T. W. and Stephenson, A. G. (2007)
+  Vector generalized linear and additive extreme value models.
+  \emph{Extremes}, \bold{10}, 1--19.
+
   Smith, R. L. (1986)
   Extreme value theory based on the \emph{r} largest annual events.
   \emph{Journal of Hydrology},

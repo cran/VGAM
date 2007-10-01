@@ -4,16 +4,13 @@
 
 
 
-
+if(FALSE)
 printsummary.lms <- function(x, digits = NULL, quote = TRUE, prefix = "")
 {
 
     printsummary.vglm(x, digits = NULL, quote = TRUE, prefix = "")
 
-    cat("\nLMS method!!!\n")
 
-    cat("\nfirst 4 rows of $lin are\n")
-    print.matrix(x$testing)
 
     invisible(NULL)
 }

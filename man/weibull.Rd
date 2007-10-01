@@ -4,14 +4,14 @@
 \title{ Weibull Distribution Family Function }
 \description{
   Maximum likelihood estimation of the 2-parameter Weibull distribution.
-  Allows for Type-I right censored data.
+  No observations should be censored.
 
 }
 \usage{
-weibull(lshape = "logoff", lscale = "loge", 
-        eshape=if(lshape == "logoff") list(offset=-2) else list(),
-        escale=list(),
-        ishape = NULL, iscale = NULL, imethod=1, zero = 2)
+weibull(lshape = "loge", lscale = "loge", 
+        eshape = list(), escale = list(),
+        ishape = NULL, iscale = NULL,
+        nrfs = 1, imethod=1, zero = 2)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -30,6 +30,16 @@ weibull(lshape = "logoff", lscale = "loge",
   Parameter link functions applied to the 
   \item{ishape, iscale}{
   Optional initial values for the shape and scale parameters.
+
+  }
+  \item{nrfs}{
+  Currently this argument is ignored.
+  Numeric, of length one, with value in \eqn{[0,1]}.
+  Weighting factor between Newton-Raphson and Fisher scoring.
+  The value 0 means pure Newton-Raphson, while 1 means pure Fisher scoring.
+  The default value uses a mixture of the two algorithms, and retaining
+  positive-definite working weights.
+
   }
   \item{imethod}{
   Initialization method used if there are censored observations.
@@ -60,14 +70,17 @@ weibull(lshape = "logoff", lscale = "loge",
   \eqn{E(Y^k) = b^k \, \Gamma(1+ k/a)}{E(Y^k) = b^k * gamma(1+ k/a)}.
   The hazard function is \eqn{a t^{a-1} / b^a}{a * t^(a-1) / b^a}.
 
-  This \pkg{VGAM} family function handles Type-I right censored data as
-  well as complete data.
+  This \pkg{VGAM} family function currently does not handle 
+  censored data.
   Fisher scoring is used to estimate the two parameters.
-  The Fisher information matrices used here are only valid
-  if \eqn{a>2}; these are where the regularity conditions for maximum
-  likelihood estimation are satisfied.
-  For this reason, the default link function for the shape parameter is
-  a log-link with an offset value of \eqn{-2}.
+  Although the Fisher information matrices used here are valid
+  in all regions of the parameter space,
+  the regularity conditions for maximum
+  likelihood estimation are satisfied only if \eqn{a>2}
+  (according to Kleiber and Kotz (2003)).
+  If this is violated then a warning message is issued.
+  One can enforce \eqn{a>2} by choosing \code{lshape = "logoff"}
+  and \code{eshape=list(offset=-2)}.
 
 }
 \value{
@@ -98,10 +111,6 @@ Weibull and GE distributions,
   Successful convergence depends on having reasonably good initial
   values. If the initial values chosen by this function are not good,
   make use the two initial value arguments.
-  For censored data, numerical integration is used to compute the
-  expected working weight matrices; this may fail if the data is
-  censored `too much' and/or may be quite slow.
-  See the example below on how to input censored data.
 
   The Weibull distribution is often an alternative to the lognormal
   distribution.  The inverse Weibull distribution, which is that of
@@ -110,9 +119,14 @@ Weibull and GE distributions,
 
 }
 \section{Warning}{
-  If the shape parameter is less than two then numerical problems may
-  occur during the fitting and/or misleading inference may result in
-  the \code{summary} of the object.
+  This function is under development to handle other censoring situations.
+  The version of this function which will handle censored data will be
+  called \code{cenweibull()}. It is currently being written and will use
+  \code{\link{Surv}} as input. 
+  It should be released in later versions of \pkg{VGAM}.
+
+  If the shape parameter is less than two then misleading inference may
+  result, e.g., in the \code{summary} and \code{vcov} of the object.
 
 }
 
@@ -125,25 +139,11 @@ Weibull and GE distributions,
 \examples{
 # Complete data
 x = runif(n <- 1000)
-y = rweibull(n, shape=2+exp(1+x), scale = exp(-0.5))
-fit = vglm(y ~ x, weibull, tra=TRUE)
+y = rweibull(n, shape=exp(1+x), scale = exp(-0.5))
+fit = vglm(y ~ x, weibull, trace=TRUE)
 coef(fit, mat=TRUE)
-Coef(fit)
-
-# Type-I right censored data
-cutpt = 0.6 # Making this too small results in numerical problems
-rcensored = y > cutpt
-cy = ifelse(rcensored, cutpt, y)
-table(rcensored)
-\dontrun{
-par(mfrow=1:2)
-hist(y, xlim=range(y))
-hist(cy, xlim=range(y), main="Censored y")
-}
-cfit = vglm(cy ~ x, weibull, trace=TRUE, crit="l",
-            extra=list(rightcensored=rcensored))
-coef(cfit, mat=TRUE)
-summary(cfit)
+vcov(fit)
+summary(fit)
 }
 \keyword{models}
 \keyword{regression}

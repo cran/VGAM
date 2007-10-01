@@ -151,7 +151,7 @@ vgam <- function(formula,
         function.name=function.name, ...)
 
 
-    if(any(fit$nl.df < 0)) {
+    if(is.Numeric(fit$nl.df) && any(fit$nl.df < 0)) {
         fit$nl.df[fit$nl.df < 0] = 0
     }
 
@@ -246,7 +246,8 @@ vgam <- function(formula,
     if(nonparametric) {
         slot(answer, "Bspline") = fit$Bspline
         slot(answer, "nl.chisq") = fit$nl.chisq
-        slot(answer, "nl.df") = fit$nl.df
+        if(is.Numeric(fit$nl.df))
+            slot(answer, "nl.df") = fit$nl.df
         slot(answer, "spar") = fit$spar
         slot(answer, "s.xargument") = fit$s.xargument
         if(length(fit$var)) {

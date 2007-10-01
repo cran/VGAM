@@ -114,7 +114,8 @@ ordpoisson(cutpoints, countdata=FALSE, NOS=NULL,
 
 \seealso{ 
   \code{\link{poissonff}},
-  \code{\link{polf}}.
+  \code{\link{polf}},
+  \code{\link[base:factor]{ordered}}.
 
 }
 \examples{

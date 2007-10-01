@@ -85,7 +85,7 @@ eij = function(i, n) {
 dneg.binomial <- function(x, k, prob)
 {
 
-    care.exp(x * log(1-prob) + k * log(prob) + lgamma(x+k) - lgamma(k) -
+    care.exp(x * log1p(-prob) + k * log(prob) + lgamma(x+k) - lgamma(k) -
                  lgamma(x+1))
 }
 

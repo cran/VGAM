@@ -1,7 +1,7 @@
 \name{enzyme}
 \alias{enzyme}
 \docType{data}
-\title{ Enzyme data}
+\title{ Enzyme Data}
 \description{
   Enzyme velocity and substrate concentration. 
 }

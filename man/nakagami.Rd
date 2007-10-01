@@ -61,7 +61,7 @@ nakagami(lshape = "loge", lscale = "loge",
 
 }
 \references{
-  Nakagami, M. (1960).
+  Nakagami, M. (1960)
   The  \emph{m}-distribution: a general  formula  of
   intensity  distribution  of  rapid  fading,
   pp.3--36 in:

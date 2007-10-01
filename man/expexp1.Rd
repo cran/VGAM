@@ -59,7 +59,6 @@ expexp1(lscale = "loge", escale=list(), iscale = NULL, ishape = 1)
 
 }
 
-}
 \author{ T. W. Yee }
 \note{
   This family function works only for intercept-only models,

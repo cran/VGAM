@@ -179,11 +179,13 @@ The generic function \code{predict}, when applied to a
 \code{\link{qtplot.lmscreg}},
 \code{\link{deplot.lmscreg}},
 \code{\link{cdf.lmscreg}},
-\code{\link{bminz}}.
+\code{\link{bminz}},
+\code{\link{alsqreg}}.
 }
 \examples{
 data(bminz)
-fit = vgam(BMI ~ s(age, df=c(2,4,2)), fam=lms.yjn, data=bminz, tr=TRUE)
+fit = vgam(BMI ~ s(age, df=4), fam=lms.yjn(zero=c(1,3)),
+           data=bminz, trace=TRUE)
 predict(fit)[1:3,]
 fitted(fit)[1:3,]
 bminz[1:3,]
@@ -210,3 +212,4 @@ a@post$deplot  # Contains density function values
 \keyword{models}
 \keyword{regression}
 
+%fit = vgam(BMI ~ s(age, df=c(2,4,2)), fam=lms.yjn, data=bminz, tr=TRUE)

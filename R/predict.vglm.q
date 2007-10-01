@@ -191,6 +191,8 @@ predict.rrvglm = function(object,
                             dispersion=dispersion, ...))
     }
 
+    na.act = object@na.action
+
     if(!length(newdata) && length(na.act)) {
         if(se.fit) {
             pred$fitted.values = napredict(na.act[[1]], pred$fitted.values)

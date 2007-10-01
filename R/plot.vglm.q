@@ -358,22 +358,8 @@ plotvglm <- function(x, residuals=NULL, smooths= FALSE,
 {
     stop("this function hasn't been written yet")  # zz
 
-    M <- x@misc$M
-    true.mu <- object@misc$true.mu
-    response <- as.matrix(x@y)
-    if(is.null(true.mu))
-        true.mu <- T
 
-    Residuals <- resid(x, type="deviance")
-    if(!is.null(residuals))
-    {
-        if(length(residuals) == 1 && residuals)
-            residuals <- Residuals else
-            Residuals <- residuals
-    }
 
-    if(ncol(response)==1 && true.mu && !is.null(Residuals))
-        invisible(NextMethod("plot")) else
     invisible(x)
 }
 
@@ -417,12 +403,10 @@ plotpreplotvgam <- function(x, y=NULL, residuals=NULL,
     } else {
         dummy <- function(residuals=NULL, rugplot= TRUE, se= FALSE, scale=0, 
                           offset.arg=0, deriv.arg=0, overlay= FALSE, 
-                          which.cf=NULL, control=plotvgam.control(...))
+                          which.cf=NULL, control=plotvgam.control())
             c(list(residuals=residuals, rugplot=rugplot, se=se, scale=scale,
-                   offset.arg=offset.arg, deriv.arg=deriv.arg,
-                   overlay=overlay,
-                   which.cf=which.cf),
-                   control)
+                   offset.arg=offset.arg, deriv.arg=deriv.arg, overlay=overlay,
+                   which.cf=which.cf), control)
 
         d <- dummy(residuals=residuals, rugplot=rugplot, se=se, scale=scale,
                    offset.arg=offset.arg, deriv.arg=deriv.arg,
