@@ -495,6 +495,7 @@ wweights = function(object, matrix.arg=TRUE, deriv.arg=FALSE,
         return(wz) 
     }
 
+    M <- object@misc$M  # Done below
     n <- object@misc$n  # Done below
 
     if(any(slotNames(object)=="extra")) {
@@ -790,9 +791,7 @@ assign2VGAMenv = function(varnames, mylist, prefix="") {
             assign(evarnames[i], mylist[[(varnames[i])]], envir = VGAMenv)
         }
     } else {
-        warning("not sure about the assign function---esp. re. frame 0")
-        for(i in 1:length(varnames))
-            assign(evarnames[i], mylist[[(varnames[i])]], frame=0)
+        stop("uncomment the lines below")
     }
 }
 

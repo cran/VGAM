@@ -213,7 +213,7 @@ mix2poisson = function(lphi="logit", llambda="loge",
     new("vglmff",
     blurb=c("Mixture of two univariate normals\n\n",
            "Links:    ",
-           namesof("phi",lphi, earg= .ephi), ", ", 
+           namesof("phi",lphi, earg= ephi), ", ", 
            namesof("lambda1", llambda, earg= el1, tag=FALSE), ", ",
            namesof("lambda2", llambda, earg= el2, tag=FALSE), "\n",
            "Mean:     phi*lambda1 + (1-phi)*lambda2\n",
@@ -312,4 +312,177 @@ mix2poisson = function(lphi="logit", llambda="loge",
     }), list(.lphi=lphi, .llambda=llambda))))
 }
 
+
+mix2exp = function(lphi="logit", llambda="loge",
+                   ephi=list(), el1=list(), el2=list(),
+                   iphi=0.5, il1=NULL, il2=NULL,
+                   qmu=c(0.2, 0.8), zero=1)
+{
+    if(mode(lphi) != "character" && mode(lphi) != "name")
+        lphi = as.character(substitute(lphi))
+    if(mode(llambda) != "character" && mode(llambda) != "name")
+        llambda = as.character(substitute(llambda))
+    if(!is.Numeric(qmu, allow=2, positive=TRUE) || any(qmu >= 1))
+        stop("bad input for argument \"qmu\"")
+    if(length(iphi) && (!is.Numeric(iphi, allow=1, positive=TRUE) || iphi>= 1))
+        stop("bad input for argument \"iphi\"")
+    if(length(il1) && !is.Numeric(il1))
+        stop("bad input for argument \"il1\"")
+    if(length(il2) && !is.Numeric(il2))
+        stop("bad input for argument \"il2\"")
+    if(!is.list(ephi)) ephi = list()
+    if(!is.list(el1)) el1 = list()
+    if(!is.list(el2)) el2 = list()
+
+    new("vglmff",
+    blurb=c("Mixture of two univariate exponentials\n\n",
+           "Links:    ",
+           namesof("phi", lphi, earg= ephi), ", ", 
+           namesof("lambda1", llambda, earg= el1, tag=FALSE), ", ",
+           namesof("lambda2", llambda, earg= el2, tag=FALSE), "\n",
+           "Mean:     phi/lambda1 + (1-phi)/lambda2\n"),
+    constraints=eval(substitute(expression({
+        constraints = cm.zero.vgam(constraints, x, .zero, M)
+    }), list(.zero=zero ))),
+    initialize=eval(substitute(expression({
+        if(ncol(y <- cbind(y)) != 1)
+            stop("the response must be a vector or one-column matrix")
+        predictors.names = c(namesof("phi", .lphi, earg= .ephi, tag=FALSE),
+                             namesof("lambda1", .llambda, earg= .el1, tag=FALSE),
+                             namesof("lambda2", .llambda, earg= .el2, tag=FALSE))
+        if(!length(etastart)) {
+            qy = quantile(y, prob= .qmu)
+            init.phi = if(length(.iphi)) rep(.iphi, length=n) else {
+                0.5
+            }
+            init.lambda1 = if(length(.il1)) rep(.il1, length=n) else {
+                rep(qy[1], length=n)
+            }
+            init.lambda2 = if(length(.il2)) rep(.il2, length=n) else {
+                rep(qy[2], length=n)
+            }
+            etastart = cbind(theta2eta(init.phi, .lphi, earg= .ephi),
+                             theta2eta(init.lambda1, .llambda, earg= .el1),
+                             theta2eta(init.lambda2, .llambda, earg= .el2))
+ print("etastart[1:4,]")
+ print( etastart[1:4,] )
+        }
+    }), list(.lphi=lphi, .llambda=llambda, .iphi=iphi, .il1=il1, .il2=il2,
+             .ephi=ephi, .el1=el1, .el2=el2,
+             .qmu=qmu))),
+    inverse=eval(substitute(function(eta, extra=NULL){
+        phi = eta2theta(eta[,1], link= .lphi, earg= .ephi)
+        lambda1 = eta2theta(eta[,2], link= .llambda, earg= .el1)
+        lambda2 = eta2theta(eta[,3], link= .llambda, earg= .el2)
+        phi/lambda1 + (1-phi)/lambda2
+    }, list(.lphi=lphi, .llambda=llambda,
+            .ephi=ephi, .el1=el1, .el2=el2 ))),
+    last=eval(substitute(expression({
+        misc$link = c("phi"= .lphi, "lambda1"= .llambda, "lambda2"= .llambda)
+        misc$earg = list("phi"= .ephi, "lambda1"= .el1, "lambda2"= .el2)
+        misc$expected = FALSE
+        misc$pooled.weight = pooled.weight
+    }), list(.lphi=lphi, .llambda=llambda,
+             .ephi=ephi, .el1=el1, .el2=el2 ))),
+    loglikelihood=eval(substitute(
+            function(mu,y,w,residuals=FALSE,eta,extra=NULL) {
+        phi = eta2theta(eta[,1], link= .lphi, earg= .ephi)
+        lambda1 = eta2theta(eta[,2], link= .llambda, earg= .el1)
+        lambda2 = eta2theta(eta[,3], link= .llambda, earg= .el2)
+        f1 = dexp(y, rate=lambda1)
+        f2 = dexp(y, rate=lambda2)
+        if(residuals) stop("loglikelihood residuals not implemented yet") else
+        sum(w * log(phi*f1 + (1-phi)*f2))
+    }, list(.lphi=lphi, .llambda=llambda,
+             .ephi=ephi, .el1=el1, .el2=el2 ))),
+    vfamily=c("mix2exp"),
+    deriv=eval(substitute(expression({
+        phi = eta2theta(eta[,1], link= .lphi, earg= .ephi)
+        lambda1 = eta2theta(eta[,2], link= .llambda, earg= .el1)
+        lambda2 = eta2theta(eta[,3], link= .llambda, earg= .el2)
+        pdf1 = dexp(x=y, rate=lambda1) * phi
+        pdf2 = dexp(x=y, rate=lambda2) * (1-phi)
+        delta = pdf1 / (pdf1 + pdf2)
+        expy  = phi / lambda1 + (1-phi) / lambda2  # E(Y)
+        expy2 = phi * 2 / lambda1^2 + (1-phi) * 2 / lambda2^2  # E(Y^2)
+        dl.dphi = (delta - phi) / (phi * (1-phi))
+        dl.dlambda1 = -(y - 1/lambda1) * delta
+        dl.dlambda2 = -(y - 1/lambda2) * (1-delta)
+        dphi.deta = dtheta.deta(phi, link= .lphi, earg= .ephi)
+        dlambda1.deta = dtheta.deta(lambda1, link= .llambda, earg= .el1)
+        dlambda2.deta = dtheta.deta(lambda2, link= .llambda, earg= .el2)
+        w * cbind(dl.dphi * dphi.deta,
+                  dl.dlambda1 * dlambda1.deta,
+                  dl.dlambda2 * dlambda2.deta)
+    }), list(.lphi=lphi, .llambda=llambda,
+             .ephi=ephi, .el1=el1, .el2=el2 ))),
+    weight = eval(substitute(expression({
+        d2phi.deta2 = d2theta.deta2(phi, link= .lphi, earg= .ephi)
+        d2lambda1.deta2 = d2theta.deta2(lambda1, link= .llambda, earg= .el1)
+        d2lambda2.deta2 = d2theta.deta2(lambda2, link= .llambda, earg= .el2)
+        wz = matrix(0, n, dimm(M))
+        d2l.dphi2 = ((delta-phi) / (phi*(1-phi)))^2
+        d2l.dlambda12 = delta / lambda1^2 -  delta * (1-delta) *
+                        (y - 1 / lambda1)^2
+        d2l.dlambda22 = (1-delta) / lambda2^2 -  delta * (1-delta) *
+                        (y - 1 / lambda2)^2
+        d2l.dphidlambda1 =  delta * (1-delta) *
+                           (y - 1 / lambda1) / (phi * (1-phi))
+        d2l.dphidlambda2 = -delta * (1-delta) *
+                           (y - 1 / lambda2) / (phi * (1-phi))
+        d2l.dlambda1dlambda2 = delta * (1-delta) *
+                           (y - 1 / lambda1) * (y - 1 / lambda2)
+        wz[,iam(1,1,M)] = d2l.dphi2 * dphi.deta^2 - dl.dphi * d2phi.deta2
+        wz[,iam(2,2,M)] = d2l.dlambda12 * dlambda1.deta^2 -
+                          dl.dlambda1 * d2lambda1.deta2
+        wz[,iam(3,3,M)] = d2l.dlambda22 * dlambda2.deta^2 -
+                          dl.dlambda2 * d2lambda2.deta2
+        wz[,iam(1,2,M)] = d2l.dphidlambda1 * dphi.deta * dlambda1.deta
+        wz[,iam(1,3,M)] = d2l.dphidlambda2 * dphi.deta * dlambda2.deta
+        wz[,iam(2,3,M)] = d2l.dlambda1dlambda2 * dlambda1.deta * dlambda2.deta
+        wz = w * wz
+
+
+
+
+        wz = matrix(0, n, dimm(M))
+        d2l.dphi2 = ((delta-phi) / (phi*(1-phi)))^2
+        d2l.dlambda12 = delta / lambda1^2 -  delta * (1-delta) *
+                        (expy2 - 2 * expy / lambda1 + 1/lambda1^2)
+        d2l.dlambda22 = (1-delta) / lambda2^2 -  delta * (1-delta) *
+                        (expy2 - 2 * expy / lambda2 + 1/lambda2^2)
+        d2l.dphidlambda1 =  delta * (1-delta) *
+                           (expy - 1 / lambda1) / (phi * (1-phi))
+        d2l.dphidlambda2 = -delta * (1-delta) *
+                           (expy - 1 / lambda2) / (phi * (1-phi))
+        d2l.dlambda1dlambda2 = delta * (1-delta) *
+                           (expy2 - expy / lambda1 - expy / lambda2 +
+                            1 / (lambda1 * lambda2))
+        wz[,iam(1,1,M)] = d2l.dphi2 * dphi.deta^2
+        wz[,iam(2,2,M)] = d2l.dlambda12 * dlambda1.deta^2
+        wz[,iam(3,3,M)] = d2l.dlambda22 * dlambda2.deta^2
+        wz[,iam(1,2,M)] = d2l.dphidlambda1 * dphi.deta * dlambda1.deta
+        wz[,iam(1,3,M)] = d2l.dphidlambda2 * dphi.deta * dlambda2.deta
+        wz[,iam(2,3,M)] = d2l.dlambda1dlambda2 * dlambda1.deta * dlambda2.deta
+ print("wz[1:3,]")
+ print( wz[1:3,] )
+        wz = w * wz
+
+
+
+        if(TRUE && intercept.only) {
+            sumw = sum(w)
+            for(i in 1:ncol(wz))
+                wz[,i] = sum(wz[,i]) / sumw
+            pooled.weight = TRUE
+            wz = w * wz   # Put back the weights
+        } else
+            pooled.weight = FALSE
+ print("pooled wz[1:3,]")
+ print( wz[1:3,] )
+
+        wz
+    }), list(.lphi=lphi, .llambda=llambda,
+             .ephi=ephi, .el1=el1, .el2=el2))))
+}
 

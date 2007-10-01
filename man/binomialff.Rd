@@ -134,6 +134,8 @@ binomialff(link = "logit", earg = list(),
     \code{\link{cqo}},
     \code{\link{cao}},
     \code{\link{zibinomial}},
+    \code{\link{dexpbinomial}},
+    \code{\link{seq2binomial}},
     \code{\link[stats:Binomial]{binomial}}.
 }
 \section{Warning }{

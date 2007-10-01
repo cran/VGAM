@@ -131,6 +131,13 @@ void mux5(double *cc, double *x,
         printf("Error: can only handle matrix.arg == 1\n");
         exit(-1); 
 */
+
+/*
+26/9/07:
+The following line was added only to avoid a warning message from the compiler
+*/
+        pd = pd2 = wk;
+
     }
 
     for(i = 0; i < *n; i++)

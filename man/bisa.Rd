@@ -10,8 +10,7 @@
 \usage{
 bisa(lshape = "loge", lscale = "loge",
      eshape = list(), escale = list(),
-     ishape = NULL, iscale = 1, method.init = 1,
-     fsmax=9001, zero = NULL)
+     ishape = NULL, iscale = 1, method.init = 1, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -27,27 +26,20 @@ bisa(lshape = "loge", lscale = "loge",
   See \code{earg} in \code{\link{Links}} for general information.
 
   }
-  \item{iscale, ishape}{ 
+  \item{iscale, ishape}{
   Initial values for \eqn{a} and \eqn{b}.
   A \code{NULL} means an initial value is chosen internally using
   \code{method.init}.
 
   }
   \item{method.init}{
-  An integer with value \code{1} or \code{2} which
+  An integer with value \code{1} or \code{2} or \code{3} which
   specifies the initialization method. If failure to converge occurs
   try the other value, or else specify a value for 
   \code{ishape} and/or \code{iscale}. 
 
   }
-  \item{fsmax}{ 
-  Integer. If the formula is an intercept-only or if the number of
-  observations \eqn{n} is less than \code{fsmax} then Fisher scoring is
-  used (recommended), else a BFGS quasi-Newton update formula for the
-  working weight matrices is used.
-
-  }
-  \item{zero}{ 
+  \item{zero}{
   An integer-valued vector specifying which
   linear/additive predictors are modelled as intercepts only.
   The default is none of them.
@@ -74,6 +66,11 @@ bisa(lshape = "loge", lscale = "loge",
   By default, \eqn{\eta_1=\log(a)}{eta1=log(a)} and
   \eqn{\eta_2=\log(b)}{eta2=log(b)} for this family function.
 
+  Note that \eqn{a} and \eqn{b} are orthogonal,
+  i.e., the Fisher information matrix is diagonal.
+  This family function implements Fisher scoring, and
+  it is unnecessary to compute any integrals numerically.
+
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
@@ -81,17 +78,22 @@ bisa(lshape = "loge", lscale = "loge",
   and \code{\link{vgam}}.
 
 }
-\references{ 
+\references{
 
-Birnbaum, Z. W. and Saunders, S. C. (1969).
+Lemonte, A. J. and Cribari-Neto, F. and Vasconcellos, K. L. P. (2007)
+Improved statistical inference for the two-parameter
+Birnbaum-Saunders distribution.
+\emph{Computational Statistics \& Data Analysis}, \bold{51}, 4656--4681.
+
+Birnbaum, Z. W. and Saunders, S. C. (1969)
 A new family of life distributions.
 \emph{Journal of Applied Probability}, \bold{6}, 319--327.
 
-Birnbaum, Z. W. and Saunders, S. C. (1969).
+Birnbaum, Z. W. and Saunders, S. C. (1969)
 Estimation for a family of life distributions with applications to fatigue.
 \emph{Journal of Applied Probability}, \bold{6}, 328--347.
 
-Engelhardt, M. and Bain, L. J. and Wright, F. T. (1981).
+Engelhardt, M. and Bain, L. J. and Wright, F. T. (1981)
 Inferences on the parameters of the Birnbaum-Saunders fatigue
 life distribution based on maximum likelihood estimation.
 \emph{Technometrics}, \bold{23}, 251--256.
@@ -102,25 +104,11 @@ Johnson, N. L. and Kotz, S. and Balakrishnan, N. (1995)
 Volume 2,
 New York: Wiley.
 
-
 }
 \author{ T. W. Yee }
-\note{
-  If the formula is an intercept-only or \eqn{n} is sufficiently small,
-  then this family function implements Fisher scoring.  This involves
-  computing an integral numerically.
-  Fisher scoring is generally recommended here provided the integrals
-  can be computed successfully and it does not take too long.
-
-  For \eqn{n} large and non-intercept-only formulas the BFGS quasi-Newton
-  update formula for the working weight matrices is used by default.
-  This is more numerically fraught.
-  Additionally, the estimated variance-covariance matrix may be inaccurate
-  or simply wrong! The standard errors must be therefore treated with
-  caution; these are computed in functions such as \code{vcov()} and
-  \code{summary()}.
-
-}
+%\note{
+%
+%}
 %\section{Warning }{
 %}
 
@@ -130,15 +118,20 @@ New York: Wiley.
 
 }
 \examples{
+x = runif(n <- 1000)
+y = rbisa(n, shape=exp(-0.5+x), scale=exp(1.5))
+fit = vglm(y ~ x, bisa(zero=2), trace=TRUE)
+coef(fit, matrix=TRUE)
+
+\dontrun{
 y = rbisa(n=1000, shape=exp(-0.5), scale=exp(0.5))
 fit = vglm(y ~ 1, bisa, trace=TRUE)
+hist(y, prob=TRUE, ylim=c(0,0.5), col="lightblue")
 coef(fit, matrix=TRUE)
 mean(y)
 fitted(fit)[1:4]
-
-\dontrun{hist(y, prob=TRUE)
 x = seq(0, max(y), len=200)
-lines(x, dbisa(x, Coef(fit)[1], Coef(fit)[2]), col="red")
+lines(x, dbisa(x, Coef(fit)[1], Coef(fit)[2]), col="red", lwd=2)
 }
 }
 \keyword{models}

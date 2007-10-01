@@ -1601,10 +1601,8 @@ get.rrvglm.se1 <- function(fit, omit13= FALSE, kill.all= FALSE,
     }
 
     if(!is.R()) {
-        assign("zmat", zmat, frame = 1)
-        assign("offs", offs, frame = 1)
-        assign("wz", wz, frame = 1)
-        assign("lv.mat", lv.mat, frame = 1)
+
+        stop("26-9-2007: uncomment out the following lines to run it in Splus")
     }
 
     fit1122 <- if(dspec) vlm(bb,
@@ -1950,7 +1948,7 @@ rrr.deriv.gradient.fast <- function(theta, wz, U, z, M, r, xmat,
     }
 
     coeffs <- vlm.wfit(xmat, z, Blist, U=U, matrix.out= TRUE,
-                       xij=xij)$mat.coef
+                       xij=NULL)$mat.coef
     c3 <- coeffs <- t(coeffs)  # transpose to make M x (pp+1)
 
 
@@ -2758,7 +2756,7 @@ vcovqrrvglm = function(object,
                             len=M), ...) {
     stop("this function is not yet completed")
 
-    if(mode(MaxScale) != "character" && mode(link) != "name")
+    if(mode(MaxScale) != "character" && mode(MaxScale) != "name")
         MaxScale <- as.character(substitute(MaxScale))
     MaxScale <- match.arg(MaxScale, c("predictors", "response"))[1]
     if(MaxScale != "predictors")

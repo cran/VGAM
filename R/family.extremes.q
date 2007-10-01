@@ -118,8 +118,8 @@ gev <- function(llocation="identity",
                 xiinit = rep(0.05, len=nrow(y))
                 if(!length(siginit))
                     siginit = rep(sqrt(6 * var(y[,1]))/pi, len=nrow(y))
-                Euler = 0.57721566490153286 
-                muinit = rep(median(y[,1]) - Euler*siginit, len=nrow(y))
+                EulerM = -digamma(1)
+                muinit = rep(median(y[,1]) - EulerM*siginit, len=nrow(y))
             }
 
             bad = ((1 + xiinit*(y-muinit)/siginit) <= 0)
@@ -157,8 +157,8 @@ gev <- function(llocation="identity",
             dimnames(fv) = list(dimnames(eta)[[1]],
                                 paste(as.character(cent), "%", sep=""))
         } else {
-            Euler = 0.57721566490153286 
-            fv = loc + sigma * Euler   # When xi=0, is Gumbel
+            EulerM = -digamma(1)
+            fv = loc + sigma * EulerM  # When xi=0, is Gumbel
             fv[!iszero] = loc[!iszero] + sigma[!iszero] *
                           (gamma(1-xi[!iszero])-1) / xi[!iszero]
             fv[xi >= 1] = NA  # Mean exists only if xi < 1.
@@ -284,10 +284,10 @@ gev <- function(llocation="identity",
             if(ncol(y) > 1)
                 stop("cannot handle xi==0 with a multivariate response")
 
-            Euler = 0.57721566490153286 
-            wz[iszero,iam(2,2,M)] = (pi^2/6 + (1-Euler)^2) / sigma^2
+            EulerM = -digamma(1)
+            wz[iszero,iam(2,2,M)] = (pi^2/6 + (1-EulerM)^2) / sigma^2
             wz[iszero,iam(3,3,M)] = 2.4236 #  Solved numerically zz
-            wz[iszero,iam(1,2,M)] = (digamma(2) + 2*(Euler-1)) / sigma^2
+            wz[iszero,iam(1,2,M)] = (digamma(2) + 2*(EulerM-1)) / sigma^2
             wz[iszero,iam(1,3,M)]= -(trigamma(1)/2 + digamma(1)*
                                     (digamma(1)/2+1))/sigma
             wz[iszero,iam(2,3,M)] = (-dgammadx(2,3)/6 + dgammadx(1,1) +
@@ -416,9 +416,9 @@ egev <- function(llocation="identity",
                     muTry = rep(fit0$coef["Intercept"], len=length(y))
                     llTry = egev()@loglikelihood(mu=NULL,y=y,w=w,
                             residuals=FALSE, extra=list(giveWarning=FALSE),
-                            eta=cbind(theta2eta(muTry,  .llocation, earg= .elocation),
-                                      theta2eta(sigmaTry, .lscale, earg= .escale), 
-                                      theta2eta(xi.try,  .lshape, earg= .eshape)))
+                        eta=cbind(theta2eta(muTry, .llocation,earg= .elocation),
+                                  theta2eta(sigmaTry, .lscale, earg= .escale), 
+                                  theta2eta(xi.try,  .lshape, earg= .eshape)))
                     if(llTry >= objecFunction) {
                         if(est.sigma)
                             siginit = sigmaTry
@@ -434,8 +434,8 @@ egev <- function(llocation="identity",
                 xiinit = rep(if(length(xiinit)) xiinit else 0.05, len=length(y))
                 if(!length(siginit))
                     siginit = rep(sqrt(6*var(y))/pi, len=length(y))
-                Euler = 0.57721566490153286 
-                muinit <- rep(median(y) - Euler * siginit, len=length(y))
+                EulerM = -digamma(1)
+                muinit = rep(median(y) - EulerM * siginit, len=length(y))
             }
             bad <- (1 + xiinit*(y-muinit)/siginit <= 0)
             if(fred <- sum(bad, na.rm=TRUE)) {
@@ -473,8 +473,8 @@ egev <- function(llocation="identity",
             dimnames(fv) = list(dimnames(eta)[[1]],
                                 paste(as.character(cent), "%", sep=""))
         } else {
-            Euler = 0.57721566490153286 
-            fv = loc + sigma * Euler   # When xi=0, is Gumbel
+            EulerM = -digamma(1)
+            fv = loc + sigma * EulerM  # When xi=0, is Gumbel
             fv[!iszero] = loc[!iszero] + sigma[!iszero] *
                           (gamma(1-xi[!iszero])-1) / xi[!iszero]
             fv[xi >= 1] = NA  # Mean exists only if xi < 1.
@@ -559,24 +559,24 @@ egev <- function(llocation="identity",
         if(any(bad, na.rm = TRUE)) stop(paste(sum(bad, na.rm = TRUE),
              "observations violating boundary constraints in @weight"))
         kay = -xi  # for the formulae 
+        kay[abs(kay-0.5) < .tshape0] = 0.501
         temp100 = gamma(2-kay)
-        pp = (1-kay)^2 * gamma(1-2*kay)
+        pp = (1-kay)^2 * gamma(1-2*kay)    # gamma(0) is undefined so kay != 0.5
         qq = temp100 * (digamma(1-kay) - (1-kay)/kay)
         wz = matrix(as.numeric(NA), n, 6)
         wz[,iam(1,1,M)] = pp / sigma^2
         wz[,iam(2,2,M)] = (1-2*temp100 + pp) / (sigma * kay)^2
-        Euler = 0.57721566490153286 
-        wz[,iam(3,3,M)] = (pi^2 / 6 + (1-Euler-1/kay)^2 +
+        EulerM = -digamma(1)
+        wz[,iam(3,3,M)] = (pi^2 / 6 + (1-EulerM-1/kay)^2 +
                            (2*qq + pp/kay)/kay) / kay^2 
         wz[,iam(1,2,M)] = (pp - temp100) / (sigma^2 * kay)
         wz[,iam(1,3,M)] = -(qq + pp/kay) / (sigma * kay)
-        wz[,iam(2,3,M)] = (1-Euler - (1-temp100)/kay - qq -
+        wz[,iam(2,3,M)] = (1-EulerM - (1-temp100)/kay - qq -
                             pp/kay) / (sigma * kay^2)
-
         if(any(iszero)) {
-            wz[iszero,iam(2,2,M)] = (pi^2/6 + (1-Euler)^2) / sigma^2
+            wz[iszero,iam(2,2,M)] = (pi^2/6 + (1-EulerM)^2) / sigma^2
             wz[iszero,iam(3,3,M)] = 2.4236 #  Solved numerically zz
-            wz[iszero,iam(1,2,M)] = (digamma(2) + 2*(Euler-1)) / sigma^2
+            wz[iszero,iam(1,2,M)] = (digamma(2) + 2*(EulerM-1)) / sigma^2
             wz[iszero,iam(1,3,M)]= -(trigamma(1)/2 + digamma(1)*
                                     (digamma(1)/2+1))/sigma
             wz[iszero,iam(2,3,M)] = (-dgammadx(2,3)/6 + dgammadx(1,1) +
@@ -680,8 +680,8 @@ gumbel <- function(llocation="identity",
             sc.init =  if(is.Numeric( .iscale, posit=TRUE))
                            .iscale else 1.1 * (0.01+sqrt(var(y)*6)) / pi
             sc.init = rep(sc.init, len=n)
-            Euler = 0.57721566490153286
-            loc.init = (y - sc.init * Euler)
+            EulerM = -digamma(1)
+            loc.init = (y - sc.init * EulerM)
             loc.init[loc.init <= 0] = min(y)
         }
 
@@ -717,8 +717,8 @@ gumbel <- function(llocation="identity",
                 dmn2 = c(dmn2, "MPV")
             dimnames(mu) = list(dimnames(eta)[[1]], dmn2)
         } else {
-            Euler = 0.57721566490153286 
-            mu = loc + sigma * Euler
+            EulerM = -digamma(1)
+            mu = loc + sigma * EulerM
         }
         mu
     }, list( .llocation=llocation, .lscale=lscale,
@@ -877,7 +877,7 @@ qgpd = function(p, location=0, scale=1, shape=0) {
             ((1-p[!scase])^(-shape[!scase]) - 1) / shape[!scase]
     }
     if(nscase) {
-        ans[scase] = location[scase] - scale[scase] * log(1-p[scase])
+        ans[scase] = location[scase] - scale[scase] * log1p(-p[scase])
     }
     ans
 }
@@ -940,11 +940,11 @@ gpd = function(threshold=0,
         if(!length(etastart)) {
             meany = mean(ystar)
             vary = var(ystar)
-            xiinit = if(length(.ishape)) .ishape else {
+            xiinit = if(length( .ishape)) .ishape else {
                 if( .method.init == 1) -0.5*(meany^2/vary - 1) else
                     0.5 * (1 - median(ystar)^2 / vary)
             }
-            siginit = if(length(.iscale)) .iscale else {
+            siginit = if(length( .iscale)) .iscale else {
                 if(.method.init==1) 0.5*meany*(meany^2/vary + 1) else
                     abs(1-xiinit) * median(ystar)
             }
@@ -1376,8 +1376,8 @@ egumbel = function(llocation="identity",
             sc.init =  if(is.Numeric( .iscale, posit=TRUE)) 
                            .iscale else 1.5 * (0.01+sqrt(var(y)*6)) / pi
             sc.init = rep(sc.init, len=n)
-            Euler = 0.57721566490153286 
-            loc.init = (y - sc.init * Euler)
+            EulerM = -digamma(1)
+            loc.init = (y - sc.init * EulerM)
             etastart = cbind(theta2eta(loc.init, .llocation, earg= .elocation),
                              theta2eta(sc.init,  .lscale, earg= .escale ))
         }
@@ -1387,11 +1387,11 @@ egumbel = function(llocation="identity",
     inverse=eval(substitute( function(eta, extra=NULL) {
         loc = eta2theta(eta[,1], .llocation, earg= .elocation)
         sigma = eta2theta(eta[,2], .lscale, earg= .escale )
-        Euler = 0.57721566490153286 
+        EulerM = -digamma(1)
         Percentiles = extra$percentiles
         mpv = extra$mpv
         lp = length(Percentiles)  # may be 0
-        if(!lp) return(loc + sigma * Euler)
+        if(!lp) return(loc + sigma * EulerM)
         mu = matrix(as.numeric(NA), nrow(eta), lp + mpv)
         Rvec = extra$R
         if(1 <= lp)
@@ -1507,8 +1507,8 @@ cgumbel = function(llocation="identity",
             sc.init =  if(is.Numeric( .iscale, posit=TRUE)) 
                            .iscale else 1.1 * sqrt(var(y) * 6 ) / pi
             sc.init = rep(sc.init, len=n)
-            Euler = 0.57721566490153286 
-            loc.init = (y - sc.init * Euler)
+            EulerM = -digamma(1)
+            loc.init = (y - sc.init * EulerM)
             loc.init[loc.init <= 0] = min(y)
             etastart = cbind(theta2eta(loc.init, .llocation, earg= .elocation ),
                              theta2eta(sc.init,  .lscale, earg= .escale ))
@@ -1519,8 +1519,8 @@ cgumbel = function(llocation="identity",
     inverse=eval(substitute( function(eta, extra=NULL) {
         loc  = eta2theta(eta[,1], .llocation)
         sc   = eta2theta(eta[,2], .lscale)
-        Euler = 0.57721566490153286 
-        if(.mean) loc + sc * Euler else {
+        EulerM = -digamma(1)
+        if(.mean) loc + sc * EulerM else {
             lp = length(.percentiles)  # 0 if NULL
             mu = matrix(as.numeric(NA), nrow(eta), lp)
             for(i in 1:lp) {
@@ -1556,7 +1556,7 @@ cgumbel = function(llocation="identity",
         Fy = exp(-exp(-zedd))
         ell1 = -log(sc[cen0]) - zedd[cen0] - exp(-zedd[cen0])
         ell2 = log(Fy[cenL])
-        ell3 = log(1 - Fy[cenU])
+        ell3 = log1p(-Fy[cenU])
         if(residuals) stop("loglikelihood residuals not implemented yet") else
         sum(w[cen0] * ell1) + sum(w[cenL] * ell2) + sum(w[cenU] * ell3)
     }, list( .lscale=lscale,
@@ -1977,7 +1977,7 @@ recnormal1 = function(lmean="identity", lsd="loge",
             zedd = (y - mu) / sd
             NN = nrow(eta)
             sum(w * (-log(sd) - 0.5 * zedd^2)) -
-            sum(w[-NN] * (log(1 - pnorm(zedd[-NN]))))
+            sum(w[-NN] * (log1p(-pnorm(zedd[-NN]))))
         }
     }, list( .lsd=lsd ))),
     vfamily=c("recnormal1"),
@@ -2140,13 +2140,13 @@ exbilogi <- function(zero=c(3,6,7),
             stop("the response must be a two-column matrix")
 
         if(!length(etastart)) {
-            Euler = 0.57721566490153286 
+            EulerM = -digamma(1)
             # Initial values for limiting case as xi --> 0, r_i==1
             sig1.init = sqrt(6 * var(y[,1]))/pi
-            mu1.init = median(y[,1]) - Euler * sig1.init
+            mu1.init = median(y[,1]) - EulerM * sig1.init
             xi1.init = if(length(.ishape1)) .ishape1 else 0.1
             sig2.init = sqrt(6 * var(y[,2]))/pi
-            mu2.init = median(y[,2]) - Euler * sig2.init
+            mu2.init = median(y[,2]) - EulerM * sig2.init
             xi2.init = if(length(.ishape2)) .ishape2 else 0.1
             alpha.init = if(length(.idependency)) .idependency else 1
             etastart = cbind(rep(theta2eta(mu1.init, .llocation), nrow(y)),
@@ -2196,7 +2196,7 @@ exbilogi <- function(zero=c(3,6,7),
         zedds = (y - mmus) / sigmas
         V = (zedds[,1]^(1/alpha) + zedds[,2]^(1/alpha))^alpha
         if(residuals) stop("loglikelihood residuals not implemented yet") else
-            sum(w * (log(1-alpha) - log(alpha) -
+            sum(w * (log1p(-alpha) - log(alpha) -
                      log(sigmas[,1]) - log(sigmas[,2]) +
                      (xis[,1] + 1/alpha) * log(zedds[,1]) +
                      (xis[,2] + 1/alpha) * log(zedds[,2]) +
@@ -2270,4 +2270,107 @@ exbilogi <- function(zero=c(3,6,7),
 
 
 
+
+poissonp = function(ostatistic, dimension=2, link="loge", earg=list(),
+                    idensity=NULL, method.init=1) {
+    if(!is.Numeric(ostatistic, posit=TRUE, allow=1, integ=TRUE))
+        stop("argument 'ostatistic' must be a single positive integer")
+    if(!is.Numeric(dimension, posit=TRUE, allow=1, integ=TRUE) ||
+       dimension > 3)
+        stop("argument 'dimension' must be 2 or 3")
+    if(mode(link) != "character" && mode(link) != "name")
+        link = as.character(substitute(link))
+    if(!is.list(earg)) earg = list()
+    if(!is.Numeric(method.init, allow=1, posit=TRUE, integer=TRUE) ||
+       method.init > 2.5)
+        stop("argument \"method.init\" must be 1 or 2")
+    if(length(idensity) && !is.Numeric(idensity, posit=TRUE))
+        stop("bad input for argument \"idensity\"")
+
+    new("vglmff",
+    blurb=c(if(dimension==2)
+            "Poisson-points-on-a-plane distances distribution\n" else
+            "Poisson-points-on-a-volume distances distribution\n",
+            "Link:    ",
+            namesof("density", link, earg=earg), "\n\n",
+            if(dimension==2)
+            "Mean:    gamma(s+0.5) / (gamma(s) * sqrt(density * pi))" else
+            "Mean:    gamma(s+1/3) / (gamma(s) * (4*density*pi/3)^(1/3))"),
+    initialize=eval(substitute(expression({
+        if(ncol(cbind(y)) != 1)
+            stop("response must be a vector or a one-column matrix")
+        if(any(y <= 0))
+            stop("response must contain positive values only")
+        predictors.names = namesof("density", .link, earg=.earg, tag=FALSE) 
+        if(!length(etastart)) {
+            use.this = if( .method.init == 1) median(y) + 1/8 else
+                       weighted.mean(y,w)
+            if( .dimension == 2) {
+                myratio = exp(lgamma( .ostatistic +0.5) - lgamma( .ostatistic))
+                density.init = if(is.Numeric( .idensity))
+                    rep( .idensity, len=n) else
+                    rep(myratio^2 / (pi * use.this^2), len=n)
+                etastart = theta2eta(density.init, .link, earg= .earg)
+            } else {
+                myratio = exp(lgamma( .ostatistic +1/3) - lgamma( .ostatistic))
+                density.init = if(is.Numeric( .idensity))
+                    rep( .idensity, len=n) else
+                    rep(3 * myratio^3 / (4 * pi * use.this^3), len=n)
+                etastart = theta2eta(density.init, .link, earg= .earg)
+            }
+        }
+    }), list( .link=link, .earg=earg, .ostatistic=ostatistic,
+              .dimension=dimension, .method.init=method.init,
+              .idensity=idensity ))),
+    inverse=eval(substitute(function(eta, extra=NULL) {
+        density = eta2theta(eta, .link, earg= .earg)
+        if( .dimension == 2) {
+            myratio = exp(lgamma( .ostatistic +0.5) - lgamma( .ostatistic ))
+            myratio / sqrt(density * pi)
+        } else {
+            myratio = exp(lgamma( .ostatistic +1/3) - lgamma( .ostatistic))
+            myratio / (4*density * pi/3)^(1/3)
+        }
+    }, list( .link=link, .earg=earg, .ostatistic=ostatistic,
+             .dimension=dimension ))),
+    last=eval(substitute(expression({
+        misc$link = c("density"= .link)
+        misc$earg = list("density"= .earg)
+        misc$expected = TRUE
+        misc$ostatistic = .ostatistic
+        misc$dimension = .dimension
+    }), list( .link=link, .earg=earg, .ostatistic=ostatistic,
+              .dimension=dimension ))),
+    loglikelihood=eval(substitute(
+        function(mu,y,w,residuals= FALSE,eta, extra=NULL) {
+        density = eta2theta(eta, .link, earg= .earg)
+        if(residuals) stop("loglikelihood residuals not implemented yet") else
+            if( .dimension == 2)
+                sum(w * (log(2) + .ostatistic * log(pi * density) -
+                     lgamma( .ostatistic) + (2* .ostatistic-1) * log(y) -
+                     density * pi * y^2)) else
+                sum(w * (log(3) + .ostatistic * log(4*pi * density/3) -
+                     lgamma( .ostatistic) + (3* .ostatistic-1) * log(y) -
+                     (4/3) * density * pi * y^3))
+    }, list( .link=link, .earg=earg, .ostatistic=ostatistic,
+             .dimension=dimension ))),
+    vfamily=c("poissonp"),
+    deriv=eval(substitute(expression({
+        density = eta2theta(eta, .link, earg= .earg)
+        if( .dimension == 2) {
+            dl.ddensity = .ostatistic / density - pi * y^2
+        } else {
+            dl.ddensity = .ostatistic / density - (4/3) * pi * y^3
+        }
+        ddensity.deta = dtheta.deta(density, .link, earg= .earg)
+        w * dl.ddensity * ddensity.deta
+    }), list( .link=link, .earg=earg, .ostatistic=ostatistic,
+              .dimension=dimension ))),
+    weight=eval(substitute(expression({
+        ed2l.ddensity2 = .ostatistic / density^2
+        wz = ddensity.deta^2 * ed2l.ddensity2
+        w * wz
+    }), list( .link=link, .earg=earg, .ostatistic=ostatistic,
+              .dimension=dimension ))))
+}
 

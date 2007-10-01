@@ -63,10 +63,9 @@ London: Chapman & Hall
 \examples{
 x = runif(n <- 100)
 y = rbeta(n, shape1=3+x, shape2=4-x)
-fit = vglm(y ~ 1, simplex, trace=TRUE, eps=1e-9, cri="c")
+(fit = vglm(y ~ 1, simplex, trace=TRUE, cri="coef"))
 coef(fit, matrix=TRUE)
 Coef(fit)
-fit
 summary(fit)
 }
 \keyword{models}

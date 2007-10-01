@@ -63,7 +63,7 @@ ranging from values near 0 to values about 10 or more.
 
 \references{ 
 pp.465--471, Chapter 11 of
-Johnson NL, Kotz S, and Kemp AW (1993)
+Johnson N. L., Kotz S., and Kemp A. W. (1993)
 \emph{Univariate Discrete Distributions},
 2nd ed.
 New York: Wiley.

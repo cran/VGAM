@@ -64,7 +64,7 @@ posnegbinomial = function(lmunb = "loge", lk = "loge",
                     p0 = (kmat / (kmat + munb))^kmat
         sum(w * (y * log(munb/(munb+kmat)) + kmat*log(kmat/(munb+kmat)) +
                  lgamma(y+kmat) - lgamma(kmat) - lgamma(y+1) - 
-                 (if(is.R()) log1p(-p0) else log(1 - p0)))) }
+                 (if(is.R()) log1p(-p0) else log1p(-p0)))) }
 
                 k.grid = rvar = 2^((-3):6)
                 for(spp. in 1:NOS) {
@@ -117,7 +117,7 @@ posnegbinomial = function(lmunb = "loge", lk = "loge",
         if(residuals) stop("loglikelihood residuals not implemented yet") else
         sum(w * (y * log(munb/(munb+kmat)) + kmat*log(kmat/(munb+kmat)) +
                  lgamma(y+kmat) - lgamma(kmat) - lgamma(y+1) -
-                 (if(is.R()) log1p(-p0) else log(1 - p0))))
+                 (if(is.R()) log1p(-p0) else log1p(-p0))))
     }, list( .lmunb=lmunb, .lk=lk,
              .emunb=emunb, .ek=ek ))),
     vfamily=c("posnegbinomial"),
@@ -257,7 +257,7 @@ pospoisson = function(link="loge", earg=list())
         function(mu,y,w,residuals=FALSE, eta,extra=NULL) {
         lambda = eta2theta(eta, .link, earg= .earg ) 
         if(residuals) stop("loglikelihood residuals not implemented yet") else
-        sum(w * (-log(1-exp(-lambda)) - lambda + y*log(lambda)))
+        sum(w * (-log1p(-exp(-lambda)) - lambda + y*log(lambda)))
     }, list( .link=link, .earg= earg ))),
     vfamily=c("pospoisson"),
     deriv=eval(substitute(expression({
@@ -308,7 +308,7 @@ posbinomial = function(link="logit", earg=list())
         yi = round(y*w)
         theta = eta2theta(eta, .link, earg= .earg )
         if(residuals) stop("loglikelihood residuals not implemented yet") else
-        sum(yi*log(theta)+(w-yi)*log(1-theta)-log(1-(1-theta)^w))
+        sum(yi*log(theta)+(w-yi)*log1p(-theta)-log1p(-(1-theta)^w))
     }, list( .link=link, .earg=earg ))),
     vfamily=c("posbinomial"),
     deriv=eval(substitute(expression({

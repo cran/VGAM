@@ -50,6 +50,7 @@ elogit(theta, earg = list(min=0, max=1), inverse = FALSE, deriv = 0,
   }
   \item{inverse}{
   Logical. If \code{TRUE} the inverse function is computed.
+  The inverse logit function is known as the \emph{expit} function.
 
   }
   \item{deriv}{

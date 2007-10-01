@@ -803,9 +803,6 @@ printqrrvglm <- function(x, ...)
     }
 
     if(FALSE) {
-    Rank <- x@Rank
-    if(!length(Rank))
-        Rank <- sum(!nas)
     }
 
     if(FALSE) {

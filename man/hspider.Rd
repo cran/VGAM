@@ -56,6 +56,7 @@ data(hspider)
 str(hspider)
 
 \dontrun{
+# Fit a rank-1 Poisson CQO
 set.seed(111)  # This leads to the global solution
 hspider[,1:6]=scale(hspider[,1:6]) # Standardize the environmental variables
 p1 = cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi, Auloalbi,
@@ -66,6 +67,20 @@ nos = ncol(p1@y)
 lvplot(p1, y=TRUE, lcol=1:nos, pch=1:nos, pcol=1:nos) 
 Coef(p1)
 summary(p1)
+
+
+
+# Fit a rank-1 binomial CAO
+hsbin = hspider   # Binary species data
+hsbin[,-(1:6)] = as.numeric(hsbin[,-(1:6)] > 0)
+set.seed(123)
+ahsb1 = cao(cbind(Alopcune,Arctlute,Auloalbi,Zoraspin) ~
+            WaterCon + ReflLux, family = binomialff(mv=TRUE),
+            df1.nl = 2.2, Bestof=3, data = hsbin)
+par(mfrow=2:1, las=1)
+lvplot(ahsb1, type="predictors", llwd=2, ylab="logit p", lcol=1:9)
+persp(ahsb1, rug=TRUE, col=1:10, lwd=2)
+coef(ahsb1)
 }
 }
 \keyword{datasets}

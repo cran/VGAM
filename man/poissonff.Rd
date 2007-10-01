@@ -123,7 +123,8 @@ poissonff(link = "loge", earg=list(), dispersion = 1,
     \code{\link{cao}},
     \code{\link{binomialff}},
     \code{\link{quasibinomialff}},
-    \code{\link[stats]{poisson}}.
+    \code{\link[stats]{poisson}},
+    \code{\link{poissonp}}.
 }
 \examples{
 poissonff()

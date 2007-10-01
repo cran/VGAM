@@ -62,7 +62,7 @@ dcnormal1 = function(r1=0, r2=0, link.sd="loge",
         if(residuals) stop("loglikelihood residuals not implemented yet") else
         sum(w * (-log(sd) - 0.5 * ((y - mu)/sd)^2)) +
         (if(.r1==0) 0 else {z1=min((y-mu)/sd); Fz1=pnorm(z1); .r1*log(Fz1)}) +
-        (if(.r2==0) 0 else {z2=max((y-mu)/sd); Fz2=pnorm(z2); .r2*log(1-Fz2)})
+        (if(.r2==0) 0 else {z2=max((y-mu)/sd); Fz2=pnorm(z2); .r2*log1p(-Fz2)})
     } , list( .link.sd=link.sd, .r1=r1, .r2=r2,
                .earg=earg ))),
     vfamily=c("dcnormal1"),
@@ -114,7 +114,7 @@ dbisa = function(x, shape, scale=1, log = FALSE) {
     if(!is.Numeric(scale, pos=TRUE)) stop("bad input for argument \"scale\"")
     xifun = function(x) {temp <- sqrt(x); temp - 1/temp}
     ans = if(log)
-          dnorm(xifun(x/scale) / shape, log=TRUE) + log(1 + scale/x) - log(2) -
+          dnorm(xifun(x/scale) / shape, log=TRUE) + log1p(scale/x) - log(2) -
           0.5 * log(x) - 0.5 * log(scale) - log(shape) else
           dnorm(xifun(x/scale) / shape) * (1 + scale/x) / (2 * sqrt(x) *
           sqrt(scale) * shape)
@@ -161,16 +161,10 @@ rbisa = function(n, shape, scale=1) {
 
 
 
-bisa.control <- function(save.weight=TRUE, ...)
-{
-    list(save.weight=save.weight)
-}
-
-bisa = function(lshape="loge",
-                lscale="loge",
+bisa = function(lshape = "loge", lscale = "loge",
                 eshape = list(), escale = list(),
-                ishape=NULL, iscale=1,
-                method.init=1, fsmax=9001, zero=NULL)
+                ishape = NULL,   iscale=1,
+                method.init=1, zero=NULL)
 {
     if(mode(lshape) != "character" && mode(lshape) != "name")
         lshape = as.character(substitute(lshape))
@@ -181,10 +175,8 @@ bisa = function(lshape="loge",
     if(!is.Numeric(iscale, posit=TRUE))
         stop("bad input for argument \"iscale\"")
     if(!is.Numeric(method.init, allow=1, integ=TRUE, posit=TRUE) ||
-       method.init > 2)
-        stop("method.init must be 1 or 2")
-    if(!is.Numeric(fsmax, allow=1, integ=TRUE))
-        stop("bad input for \"fsmax\"")
+       method.init > 3)
+        stop("method.init must be 1 or 2 or 3")
     if(!is.list(eshape)) eshape = list()
     if(!is.list(escale)) escale = list()
 
@@ -199,48 +191,53 @@ bisa = function(lshape="loge",
     initialize=eval(substitute(expression({
         if(ncol(y <- cbind(y)) != 1)
             stop("the response must be a vector or a one-column matrix")
-        useFS <- intercept.only || n < .fsmax
-        save.weight <- control$save.weight <- !useFS
-        predictors.names = c(namesof("shape", .lshape, earg= .eshape, tag= FALSE),
-                             namesof("scale", .lscale, tag= FALSE))
+        predictors.names = c(namesof("shape", .lshape,earg= .eshape,tag=FALSE),
+                             namesof("scale", .lscale, tag=FALSE))
         if(!length(etastart)) {
             scale.init = rep( .iscale, len=n)
-            shape.init = if( .method.init==2) sqrt(2*( pmax(y, scale.init+0.1) /
-                scale.init - 1)) else {
-                ybar = rep(weighted.mean(y, w), len=n)
-                sqrt(2*( pmax(ybar, scale.init+0.1) / scale.init - 1))
+            shape.init = if(is.Numeric( .ishape)) rep( .ishape, len=n) else {
+                if( .method.init==1) {
+                    ybar = rep(weighted.mean(y, w), len=n)
+                    ybarr = rep(1 / weighted.mean(1/y, w), len=n) # Reqrs y > 0
+                    sqrt(ybar / scale.init + scale.init / ybarr - 2)
+                } else if( .method.init==2) {
+                    sqrt(2*( pmax(y, scale.init+0.1) / scale.init - 1))
+                } else {
+                    ybar = rep(weighted.mean(y, w), len=n)
+                    sqrt(2*( pmax(ybar, scale.init+0.1) / scale.init - 1))
                 }
+            }
             etastart = cbind(theta2eta(shape.init, .lshape, earg= .eshape),
                              theta2eta(scale.init, .lscale, earg= .escale))
         }
-    }) , list( .lshape=lshape, .lscale=lscale, .ishape=ishape, .iscale=iscale,
-              .eshape=eshape, .escale=escale,
-                .fsmax=fsmax, .method.init=method.init ))),
+    }) , list( .lshape=lshape, .lscale=lscale,
+               .ishape=ishape, .iscale=iscale,
+               .eshape=eshape, .escale=escale,
+               .method.init=method.init ))),
     inverse=eval(substitute(function(eta, extra=NULL) {
         sh = eta2theta(eta[,1], .lshape, earg= .eshape)
         sc = eta2theta(eta[,2], .lscale, earg= .escale)
         sc * (1 + sh^2 / 2)
     }, list( .lshape=lshape, .lscale=lscale,
-              .eshape=eshape, .escale=escale ))),
+             .eshape=eshape, .escale=escale ))),
     last=eval(substitute(expression({
         misc$link = c(shape= .lshape, scale= .lscale)
         misc$earg = list(shape= .eshape, scale= .escale)
-        misc$expected = useFS
-        misc$BFGS = !useFS
+        misc$expected = TRUE
     }) , list( .lshape=lshape, .lscale=lscale,
-              .eshape=eshape, .escale=escale ))),
+               .eshape=eshape, .escale=escale ))),
     loglikelihood=eval(substitute(
         function(mu,y,w,residuals= FALSE,eta, extra=NULL) {
         sh = eta2theta(eta[,1], .lshape, earg= .eshape)
         sc = eta2theta(eta[,2], .lscale, earg= .escale)
         if(residuals) stop("loglikelihood residuals not implemented yet") else
-        sum(w * (-log(sh) - 0.5 * log(sc) + log(1 + sc/y) -
-            (y/sc - 2 + sc/y) / (2*sh^2)))
+        sum(w * (-log(sh) - 0.5 * log(sc) + log1p(sc/y) -
+                 0.5*log(8*pi) - 0.5 * log(y) -
+                 (y/sc - 2 + sc/y) / (2*sh^2)))
     } , list( .lshape=lshape, .lscale=lscale,
               .eshape=eshape, .escale=escale ))),
     vfamily=c("bisa"),
     deriv=eval(substitute(expression({
-        useFS <- intercept.only || n < .fsmax   # must be same as above
         sh = eta2theta(eta[,1], .lshape, earg= .eshape)
         sc = eta2theta(eta[,2], .lscale, earg= .escale)
         dl.dsh = ((y/sc - 2 + sc/y) / sh^2 - 1) / sh 
@@ -248,56 +245,18 @@ bisa = function(lshape="loge",
                  (sqrt(y/sc) - sqrt(sc/y)) / (2 * sh^2 * sc^1.5)
         dsh.deta = dtheta.deta(sh, .lshape, earg= .eshape)
         dsc.deta = dtheta.deta(sc, .lscale, earg= .escale)
-        if(useFS) {
-            w * cbind(dl.dsh * dsh.deta, dl.dsc * dsc.deta)
-        } else {
-            if(iter == 1) {
-                etanew = eta
-            } else {
-                derivold = derivnew
-                etaold = etanew
-                etanew = eta
-            }
-            derivnew = w * cbind(dl.dsh * dsh.deta, dl.dsc * dsc.deta)
-            derivnew
-        }
+        w * cbind(dl.dsh * dsh.deta, dl.dsc * dsc.deta)
     }) , list( .lshape=lshape, .lscale=lscale,
-              .eshape=eshape, .escale=escale,
-               .fsmax=fsmax ))),
+               .eshape=eshape, .escale=escale ))),
     weight=eval(substitute(expression({
-        if(useFS) {
-            wz = matrix(as.numeric(NA), n, M)  # Diagonal!!
-            wz[,iam(1,1,M)] = 2 * dsh.deta^2 / sh^2
-            invxi = function(y) {
-                1 + 0.5 * y^2 + y * sqrt(4 + y^2) / 2
-            }
-            myfun = function(x, alpha)
-                2 * (1 / (1 + invxi(alpha*x)) - 0.5)^2 * dnorm(x)
-            if(intercept.only) {
-                temp9 = integrate(f=myfun, lower=0, upper=Inf, alpha=sh[1])
-                if(temp9$message != "OK") stop("integration was unsuccessful")
-                wz[,iam(2,2,M)] = dsc.deta^2 * (0.25+ 1/sh^2 +temp9$value)/sc^2
-            } else {
-                for(iii in 1:n) {
-                    temp9= integrate(f=myfun, lower=0, upper=Inf, alpha=sh[iii])
-                    if(temp9$message!="OK") stop("integration was unsuccessful")
-                    wz[iii,iam(2,2,M)] = dsc.deta[iii]^2 *
-                            (0.25 + 1 / sh[iii]^2 + temp9$value) / sc[iii]^2
-                }
-            }
-            w * wz
-        } else {
-            if(iter == 1) {
-                wznew = cbind(matrix(w, n, M), matrix(0, n, dimm(M)-M))
-            } else {
-                wzold = wznew
-                wznew = qnupdate(w=w, wzold=wzold, dderiv=(derivold - derivnew),
-                                 deta=etanew-etaold, M=M,
-                                 trace=trace)  # weights incorporated in args
-            }
-            wznew
-        }
-    }), list( .fsmax=fsmax ))))
+        wz = matrix(as.numeric(NA), n, M)  # Diagonal!!
+        wz[,iam(1,1,M)] = 2 * dsh.deta^2 / sh^2
+        hfunction = function(alpha)
+            alpha * sqrt(pi/2) - pi * exp(2/alpha^2) * (1-pnorm(2/alpha))
+        wz[,iam(2,2,M)] = dsc.deta^2 * (sh * hfunction(sh)  / sqrt(2*pi) +
+                          1) / (sh*sc)^2
+        w * wz
+    }), list( .zero=zero ))))
 }
 
 

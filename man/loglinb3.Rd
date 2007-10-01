@@ -50,7 +50,7 @@ loglinb3(exchangeable = FALSE, zero = NULL)
 
 \references{
 
-Yee, T. W. and Wild, C. J. (2001).
+Yee, T. W. and Wild, C. J. (2001)
 Discussion to: ``Smoothing spline ANOVA for multivariate Bernoulli
 observations, with application to ophthalmology data (with discussion)''
 by Gao, F., Wahba, G., Klein, R., Klein, B.

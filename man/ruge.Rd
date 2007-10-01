@@ -1,7 +1,7 @@
 \name{ruge}
 \alias{ruge}
 \non_function{}
-\title{Rutherford-Geiger polonium data}
+\title{Rutherford-Geiger Polonium Data}
 \usage{data(ruge)}
 \description{
   Decay counts of polonium  recorded by Rutherford and Geiger (1910).

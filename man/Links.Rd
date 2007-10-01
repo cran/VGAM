@@ -74,7 +74,8 @@ TypicalVGAMlinkFunction(theta, earg=list(), inverse=FALSE,
   or a character description of the link.
 
   Here are the general details.
-  If \code{inverse=FALSE} and \code{deriv=0} (default) then the ordinary link
+  If \code{inverse=FALSE} and \code{deriv=0} (default) then the
+  ordinary link
   function \eqn{\eta=g(\theta)}{eta=g(theta)} is returned.
   If \code{inverse=FALSE} and \code{deriv=1} then it is
   \eqn{d\theta / d\eta}{d theta / d eta} 

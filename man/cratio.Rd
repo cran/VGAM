@@ -101,7 +101,8 @@ contains further information and examples.
 
 }
 \section{Warning }{
-  No check is made to verify that the response is ordinal.
+  No check is made to verify that the response is ordinal;
+  see \code{\link[base:factor]{ordered}}.
 }
 
 \seealso{

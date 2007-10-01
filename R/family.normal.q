@@ -78,7 +78,8 @@ gaussianff = function(dispersion=0, parallel=FALSE, zero=NULL)
         if(!dpar) {
                 wz = VGAM.weights.function(w=w, M=M, n=n)
                 temp = rss.vgam(y-mu, wz=wz, M=M)
-                dpar = temp / (length(y) - ncol(xbig.save))
+                dpar = temp / (length(y) -
+                       (if(is.numeric(ncol(xbig.save))) ncol(xbig.save) else 0))
         }
         misc$dispersion = dpar
         misc$default.dispersion = 0
@@ -212,7 +213,7 @@ posnormal1 = function(lmean="identity", lsd="loge",
         if(is.R())
             sum(w*(dnorm(y, m=mymu, sd=mysd, log=TRUE) -
                    pnorm(-mymu/mysd, log=TRUE, lower.tail=FALSE))) else
-            sum(w*(-log(mysd)-0.5*((y-mymu)/mysd)^2 -log(1-pnorm(-mymu/mysd))))
+            sum(w*(-log(mysd)-0.5*((y-mymu)/mysd)^2 -log1p(-pnorm(-mymu/mysd))))
         }
     }, list( .lmean=lmean, .lsd=lsd, .emean=emean, .esd=esd ))),
     vfamily=c("posnormal1"),
@@ -349,7 +350,7 @@ tikuv = function(d, lmean="identity", lsigma="loge",
         if(residuals) stop("loglikelihood residuals not implemented yet") else {
             zedd = (y - mymu) / sigma
             hh = 2 - .d
-            sum(w * (-log(sigma) + 2 * log(1 + 0.5*zedd^2 / hh) - 0.5*zedd^2))
+            sum(w * (-log(sigma) + 2 * log1p(0.5*zedd^2 / hh) - 0.5*zedd^2))
         }
     }, list( .lmean=lmean, .lsigma=lsigma, .d=d,
              .emean=emean, .esigma=esigma ))),

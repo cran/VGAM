@@ -66,13 +66,7 @@ fit
 fitted(fit)
 
 
-# Nonparametric logistic regression example 2
-data(hunua) 
-fit = vgam(agaaus ~ s(altitude), binomialff, hunua)
-fitted(fit, matrix=FALSE)[1:3]
-
-
-# LMS quantile regression example 3
+# LMS quantile regression example 2
 data(bminz)
 fit = vgam(BMI ~ s(age, df=c(4,2)), 
            fam=lms.bcn(zero=1), data=bminz, trace=TRUE)

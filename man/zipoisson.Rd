@@ -3,12 +3,14 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Zero-Inflated Poisson Distribution Family Function }
 \description{
-  Fits a zero-inflated Poisson distribution.
+  Fits a zero-inflated Poisson distribution using full maximum likelihood
+  estimation.
+
 }
 \usage{
 zipoisson(lphi="logit", llambda = "loge", 
           ephi=list(), elambda =list(),
-          iphi = NULL, zero = NULL)
+          iphi = NULL, method.init=1, shrinkage.init=0.8, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -31,6 +33,22 @@ zipoisson(lphi="logit", llambda = "loge",
   \item{iphi}{
   Optional initial value for \eqn{\phi}{phi}, whose value must lie
   between 0 and 1.  The default is to compute an initial value internally.
+
+  }
+  \item{method.init}{
+  An integer with value \code{1} or \code{2} which
+  specifies the initialization method for \eqn{\lambda}{lambda}.
+  If failure to converge occurs try another value
+  and/or else specify a value for \code{shrinkage.init}
+  and/or else specify a value for \code{iphi}.
+
+  }
+  \item{shrinkage.init}{
+  How much shrinkage is used when initializing \eqn{\lambda}{lambda}.
+  The value must be between 0 and 1 inclusive, and 
+  a value of 0 means the individual response values are used,
+  and a value of 1 means the median or mean is used.
+  This argument is used in conjunction with \code{method.init}.
 
   }
   \item{zero}{ 
@@ -83,7 +101,7 @@ zipoisson(lphi="logit", llambda = "loge",
   This family function is now recommended above \code{\link{yip88}}.
 
   The zero-\emph{deflated} Poisson distribution cannot be handled with
-  this family function.  It can be handled with the zero-altered Poisson
+  this family function. It can be handled with the zero-altered Poisson
   distribution; see \code{\link{zapoisson}}.
 
 }
@@ -91,7 +109,10 @@ zipoisson(lphi="logit", llambda = "loge",
 \section{Warning }{
   Numerical problems can occur.
   Half-stepping is not uncommon.
-  If failure to converge occurs, try using \code{iphi} and/or
+  If failure to converge occurs, try using combinations of
+  \code{method.init},
+  \code{shrinkage.init},
+  \code{iphi}, and/or
   \code{zero=1} if there are explanatory variables.
 
 } 
@@ -115,7 +136,7 @@ coef(fit, matrix=TRUE)  # These should agree with the above values
 # Another example: data from McKendrick (1926).
 y = 0:4  # Number of cholera cases per household in an Indian village
 w = c(168, 32, 16, 6, 1)  # Frequencies; there are 223=sum(w) households
-fit = vglm(y ~ 1, zipoisson(iphi=0.3), wei=w, trace=TRUE)
+fit = vglm(y ~ 1, zipoisson, wei=w, trace=TRUE)
 coef(fit, matrix=TRUE)
 cbind(actual=w, fitted=
       dzipois(y, lambda=Coef(fit)[2], phi=Coef(fit)[1]) * sum(w))

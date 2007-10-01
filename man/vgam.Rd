@@ -265,13 +265,14 @@ vgam(cbind(normal,mild,severe) ~ s(let), cumulative(par=TRUE), pneumo)
 
 # Nonparametric logistic regression 
 data(hunua) 
-fit = vgam(agaaus ~ s(altitude), binomialff, hunua)
+fit = vgam(agaaus ~ s(altitude, df=2), binomialff, hunua)
 \dontrun{
 plot(fit, se=TRUE)
 }
 
 # Fit two species simultaneously 
-fit2 = vgam(cbind(agaaus, kniexc) ~ s(altitude), binomialff(mv=TRUE), hunua)
+fit2 = vgam(cbind(agaaus, kniexc) ~ s(altitude, df=c(2,3)),
+            binomialff(mv=TRUE), hunua)
 coef(fit2, mat=TRUE)   # Not really interpretable 
 \dontrun{
 plot(fit2, se=TRUE, overlay=TRUE, lcol=1:2, scol=1:2)

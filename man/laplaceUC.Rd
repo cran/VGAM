@@ -22,29 +22,33 @@ rlaplace(n, location=0, scale=1)
   \item{x, q}{vector of quantiles.}
   \item{p}{vector of probabilities.}
   \item{n}{number of observations. Positive integer of length 1.}
-  \item{location}{the location parameter \eqn{\mu}{mu}, which
-    is the mean. }
-  \item{scale}{the scale parameter \eqn{b}. Must consist of
-  positive values. }
+  \item{location}{
+    the location parameter \eqn{a}, which is the mean.
+  }
+  \item{scale}{
+  the scale parameter \eqn{b}.
+  Must consist of positive values.
+  }
 }
 \details{
   The Laplace distribution is often known as the double-exponential
   distribution and, for modelling, has heavier tail
   than the normal distribution.
   The Laplace density function is 
-  \deqn{f(y) = \frac{1}{2b} \exp \left( - \frac{|y-\mu|}{b}
+  \deqn{f(y) = \frac{1}{2b} \exp \left( - \frac{|y-a|}{b}
                     \right) }{%
-        f(y) =  (1/(2b)) exp( -|y-mu|/b ) }
+        f(y) =  (1/(2b)) exp( -|y-a|/b ) }
   where \eqn{-\infty<y<\infty}{-Inf<y<Inf},
-  \eqn{-\infty<\mu<\infty}{-Inf<mu<Inf} and
+  \eqn{-\infty<a<\infty}{-Inf<a<Inf} and
   \eqn{b>0}.
-  The mean is \eqn{\mu}{mu} and the variance is \eqn{2b^2}. 
+  The mean is \eqn{a}{a} and the variance is \eqn{2b^2}. 
 
-%  See \code{\link{laplace}}, the \pkg{VGAM} family function
-%  for estimating the two parameters by maximum likelihood estimation,
-%  for formulae and details.
-%  Apart from \code{n}, all the above arguments may be vectors and
-%  are recyled to the appropriate length if necessary.
+  See \code{\link{laplace}}, the \pkg{VGAM} family function
+  for estimating the two parameters by maximum likelihood estimation,
+  for formulae and details.
+  Apart from \code{n}, all the above arguments may be vectors and
+  are recyled to the appropriate length if necessary.
+
 }
 \value{
   \code{dlaplace} gives the density,
@@ -63,9 +67,9 @@ New York: Wiley-Interscience, Third edition.
 %  estimates the two parameters by maximum likelihood estimation.
 %}
 
-%\seealso{
-%  \code{\link{laplace}}.
-%}
+\seealso{
+  \code{\link{laplace}}.
+}
 \examples{
 loc = 1; b = 2
 y = rlaplace(n=100, loc=loc, scale=b)

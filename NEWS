@@ -5,6 +5,42 @@
 	**************************************************
 
 
+                CHANGES IN VGAM VERSION 0.7-4
+
+NEW FEATURES
+
+    o   weibull() does not handle any censored observations at all.
+        The function cenweibull(), which will handle censored
+        observations, is currently being written and will use Surv()
+        as input; it should be distributed with version 0.7-5 of VGAM.
+    o   bisa() now implements full Fisher scoring. No numerical
+        integration is needed.
+    o   Certain functions from the smartpred package are no longer
+        distributed with the VGAM package. These are
+        lm, glm, predict.lm, predict.mlm, predict.glm.
+        This is done because many users have found they interfere with
+        the VGAM package in unpredictable ways.
+    o   The following VGAM family functions have improved initial values:
+        betabinomial(), cauchy1(), mccullagh89(), negbinomial(),
+        tpareto1(), zipoisson().
+    o   New family functions: alsqreg(), dexpbinomial(), laplace(),
+        poissonp(), seq2binomial(), triangle(dpqr).
+    o   VGAM family functions currently withdrawn:
+        cexpon().
+    o   A new class called "SurvS4" has been prepared. It will be used
+        later to handle VGAM family functions beginning with "cen" that
+        use Surv() as input.
+    o   log1p() used whenever possible.
+
+
+BUG FIXES
+
+    o   bisa() did not make use of ishape.
+    o   cao(..., family=gaussianff) failed. It now works, although the
+        dispersion parameter is computed using a slightly different
+        formula.
+
+
 
                 CHANGES IN VGAM VERSION 0.7-3
 
@@ -296,7 +332,7 @@ NEW FEATURES
 
     o   New functions: guplot(), meplot(), ggamma(dpqr), fff(),
         vonmises(), lgamma3ff, lgamma(dpqr), prentice74, tobit, 
-        zipoisson(dpqr), [dpqr]pospois(), laplace(dpqr) but there is 
+        zipoisson(dpqr), [dpqr]pospois(), [dpqr]laplace but there is 
         no laplace().
     o   cqo() has been largely rewritten. It now sports a new algorithm
         for ITolerances=TRUE. It can handle large data sets (e.g., 1000

@@ -163,7 +163,8 @@ contains further information and examples.
 
 }
 \section{Warning }{
-  No check is made to verify that the response is ordinal.
+  No check is made to verify that the response is ordinal;
+  see \code{\link[base:factor]{ordered}}.
 
 }
 
@@ -199,6 +200,12 @@ fit2 = vgam(cbind(normal, mild, severe) ~ s(let, df=2),
 \dontrun{
 plot(fit2, se=TRUE, overlay=TRUE, lcol=1:2, scol=1:2)
 }
+
+# Check the proportional odds assumption with a likelihood ratio test
+(fit3 = vglm(cbind(normal, mild, severe) ~ let,
+             cumulative(parallel=FALSE, reverse=TRUE), pneumo))
+1 - pchisq(2*(logLik(fit3)-logLik(fit)),
+           df=length(coef(fit3))-length(coef(fit)))
 }
 \keyword{models}
 \keyword{regression}

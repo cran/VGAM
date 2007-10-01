@@ -6,7 +6,13 @@
 
 
 
-cexpon = function(link="loge", location=0)
+
+
+
+
+if(FALSE)
+cexpon = 
+ecexpon = function(link="loge", location=0)
 {
     if(!is.Numeric(location, allow=1))
         stop("bad input for \"location\"")
@@ -16,23 +22,62 @@ cexpon = function(link="loge", location=0)
     new("vglmff",
     blurb=c("Censored exponential distribution\n\n",
             "Link:     ", namesof("rate", link, tag= TRUE), "\n",
-            "Mean:     ", "mu =", location, "+ 1 / ",
-            namesof("rate", link, tag= TRUE), "\n",
+            "Mean:     ", "mu = ", location, " + 1 / ",
+            namesof("rate", link, tag= FALSE), "\n",
             "Variance: ",
             if(location==0) "Exponential: mu^2" else
             paste("(mu-", location, ")^2", sep="")),
     initialize=eval(substitute(expression({
         extra$location = .location # This is passed into, e.g., link, deriv etc.
-        if(any(y <= extra$location))
+        if(any(y[,1] <= extra$location))
             stop(paste("all responses must be greater than", extra$location))
         predictors.names = namesof("rate", .link, tag= FALSE)
-        mu = y + (abs(y - extra$location) < 0.001) / 8
+        type <- attr(y, "type")
+        if (type=="right" || type=="left"){
+          mu = y[,1] + (abs(y[,1] - extra$location) < 0.001) / 8
+        }else
+        if (type=="interval"){
+          temp <- y[,3]
+          mu = ifelse(temp == 3, y[,2] + (abs(y[,2] - extra$location) < 0.001)
+          / 8,y[,1] + (abs(y[,1] - extra$location) < 0.001) / 8)
+        }
         if(!length(etastart))
             etastart = theta2eta(1/(mu-extra$location), .link)
-        if(!length(extra$leftcensored)) extra$leftcensored = rep(FALSE, len=n)
-        if(!length(extra$rightcensored)) extra$rightcensored = rep(FALSE, len=n)
-        if(any(extra$rightcensored & extra$leftcensored))
-            stop("some observations are both right and left censored!")
+
+        if (type=="right") {
+          temp <- y[, 2]
+          extra$uncensored = ifelse(temp == 1, TRUE, FALSE)
+          extra$rightcensored = ifelse(temp == 0, TRUE, FALSE)
+          extra$leftcensored = rep(FALSE, len=n)
+          extra$interval = rep(FALSE, len=n)
+        } else
+        if (type=="left") {
+          temp <- y[, 2]
+          extra$uncensored = ifelse(temp == 1, TRUE, FALSE)
+          extra$rightcensored = rep(FALSE, len=n)
+          extra$leftcensored = ifelse(temp == 0, TRUE, FALSE)
+          extra$interval = rep(FALSE, len=n)
+        } else
+        if (type=="counting") {
+          stop("type=='counting' not recognized")
+          extra$uncensored = rep(temp == 1, TRUE, FALSE)
+          extra$interval = rep(FALSE, len=n)
+          extra$leftcensored = rep(FALSE, len=n)
+          extra$rightcensored = rep(FALSE, len=n)
+          extra$counting = ifelse(temp == 0, TRUE, FALSE)
+        } else
+        if (type=="interval") {
+          temp <- y[, 3]
+          extra$uncensored = ifelse(temp == 1, TRUE, FALSE)
+          extra$rightcensored = ifelse(temp == 0, TRUE, FALSE)
+          extra$leftcensored = ifelse(temp == 2, TRUE, FALSE)
+          extra$interval = ifelse(temp == 3, TRUE, FALSE)
+        } else
+          stop("'type' not recognized")
+        #if(!length(extra$leftcensored)) extra$leftcensored = rep(FALSE, len=n)
+        #if(!length(extra$rightcensored)) extra$rightcensored = rep(FALSE, len=n)
+        #if(any(extra$rightcensored & extra$leftcensored))
+        #    stop("some observations are both right and left censored!")
     }), list( .location=location, .link=link ))),
     inverse=eval(substitute(function(eta, extra=NULL)
         extra$location + 1 / eta2theta(eta, .link),
@@ -41,45 +86,56 @@ cexpon = function(link="loge", location=0)
         misc$location = extra$location
         misc$link = c("rate" = .link)
     }), list( .link=link ))),
-    link=eval(substitute(function(mu, extra=NULL) 
+    link=eval(substitute(function(mu, extra=NULL)
         theta2eta(1/(mu-extra$location), .link),
     list( .link=link ) )),
     loglikelihood=eval(substitute(
         function(mu,y,w,residuals= FALSE,eta, extra=NULL) {
         rate = 1 / (mu - extra$location)
-        cen0 = !extra$leftcensored & !extra$rightcensored   # uncensored obsns
+        cen0 = extra$uncensored
         cenL = extra$leftcensored
         cenU = extra$rightcensored
+        cenI = extra$interval
         if(residuals) stop("loglikelihood residuals not implemented yet") else
-        sum(w[cenL] * log(1 - exp(-rate[cenL]*(y[cenL]-extra$location)))) +
-        sum(w[cenU] * (-rate[cenU]*(y[cenU]-extra$location))) +
-        sum(w[cen0] * (log(rate[cen0]) - rate[cen0]*(y[cen0]-extra$location)))
+        sum(w[cenL] * log1p(-exp(-rate[cenL]*(y[cenL,1]-extra$location)))) +
+        sum(w[cenU] * (-rate[cenU]*(y[cenU,1]-extra$location))) +
+        sum(w[cen0] * (log(rate[cen0]) - rate[cen0]*(y[cen0,1]-extra$location)))+
+        sum(w[cenI] * log(-exp(-rate[cenI]*(y[cenI,2]-extra$location))+
+        exp(-rate[cenI]*(y[cenI,1]-extra$location))))
     }, list( .link=link ))),
-    vfamily=c("cexpon"),
+    vfamily=c("ecexpon"),
     deriv=eval(substitute(expression({
         rate = 1 / (mu - extra$location)
-        cen0 = !extra$leftcensored & !extra$rightcensored   # uncensored obsns
+        cen0 = extra$uncensored
         cenL = extra$leftcensored
         cenU = extra$rightcensored
-        dl.drate = 1/rate - (y-extra$location)  # uncensored
-        tmp200 = exp(-rate*(y-extra$location))
+        cenI = extra$interval
+        dl.drate = 1/rate - (y[,1]-extra$location)  # uncensored
+        tmp200 = exp(-rate*(y[,1]-extra$location))
+        tmp200b = exp(-rate*(y[,2]-extra$location)) # for interval censored
         if(any(cenL))
-            dl.drate[cenL] = (y[cenL]-extra$location) * tmp200[cenL] / 
-                             (1 - tmp200[cenL])
+            dl.drate[cenL] = (y[cenL,1]-extra$location) *
+                             tmp200[cenL] / (1 - tmp200[cenL])
         if(any(cenU))
-            dl.drate[cenU] = -(y[cenU]-extra$location)
+            dl.drate[cenU] = -(y[cenU,1]-extra$location)
+        if(any(cenI))
+            dl.drate[cenI] = ((y[cenI,2]-extra$location)*tmp200b[cenI]-
+            (y[cenI,1]-extra$location)*tmp200[cenI])/
+            (-tmp200b[cenI]+tmp200[cenI])
         drate.deta = dtheta.deta(rate, .link)
         w * dl.drate * drate.deta
     }), list( .link=link ) )),
     weight=eval(substitute(expression({
-        A123 = ((mu-extra$location)^2) # uncensored d2l.drate2 
-        Lowpt = ifelse(cenL, y, extra$location)
-        Upppt = ifelse(cenU, y, Inf)
+        A123 = ((mu-extra$location)^2) # uncensored d2l.drate2
+        Lowpt = ifelse(cenL, y[,1], extra$location)
+        Lowpt = ifelse(cenI, y[,1], Lowpt) #interval censored
+        Upppt = ifelse(cenU, y[,1], Inf)
+        Upppt = ifelse(cenI, y[,2], Upppt) #interval censored
         tmp300 = exp(-rate*(Lowpt - extra$location))
-        d2l.drate2 = 0 * y
+        d2l.drate2 = 0 * y[,1]
         ind50 = Lowpt > extra$location
-        d2l.drate2[ind50] = (Lowpt[ind50]-extra$location)^2 * tmp300[ind50] /
-                            (1-tmp300[ind50])
+        d2l.drate2[ind50] = (Lowpt[ind50]-extra$location)^2 *
+                            tmp300[ind50] / (1-tmp300[ind50])
         d2l.drate2 = d2l.drate2 + (exp(-rate*(Lowpt-extra$location)) -
                                    exp(-rate*(Upppt-extra$location))) * A123
         wz = w * (drate.deta^2) * d2l.drate2
@@ -145,8 +201,8 @@ cnormal1 = function(lmu="identity", lsd="loge", imethod=1, zero=2)
         Lower = ifelse(cenL, y, -Inf)
         Upper = ifelse(cenU, y,  Inf)
         ell1 = -log(sd[cen0]) - 0.5 * ((y[cen0] - mum[cen0])/sd[cen0])^2
-        ell2 = log(1 - pnorm((mum[cenL] - Lower[cenL])/sd[cenL]))
-        ell3 = log(1 - pnorm(( Upper[cenU] -  mum[cenU])/sd[cenU]))
+        ell2 = log1p(-pnorm((mum[cenL] - Lower[cenL])/sd[cenL]))
+        ell3 = log1p(-pnorm(( Upper[cenU] -  mum[cenU])/sd[cenU]))
         if(residuals) stop("loglikelihood residuals not implemented yet") else
         sum(w[cen0] * ell1) + sum(w[cenL] * ell2) + sum(w[cenU] * ell3)
     }, list( .lmu=lmu, .lsd=lsd ))),
@@ -300,11 +356,12 @@ crayleigh = function(link="loge", earg = list(), expected=FALSE) {
 }
 
 
-weibull = function(lshape="logoff", lscale="loge",
-                   eshape=if(lshape == "logoff") list(offset=-2) else list(),
-                   escale=list(),
-                   ishape=NULL, iscale=NULL,
-                   imethod=1, zero=2)
+weibull = 
+weibull.sev = function(lshape="loge", lscale="loge",
+                       eshape=list(), escale=list(),
+                       ishape=NULL, iscale=NULL,
+                       nrfs = 1,
+                       imethod=1, zero=2)
 {
 
     if(mode(lshape) != "character" && mode(lshape) != "name")
@@ -317,9 +374,11 @@ weibull = function(lshape="logoff", lscale="loge",
         stop("argument \"imethod\" must be 1 or 2")
     if(!is.list(eshape)) eshape = list()
     if(!is.list(escale)) escale = list()
+    if(!is.Numeric(nrfs, allow=1) || nrfs<0 || nrfs > 1)
+        stop("bad input for 'nrfs'")
 
     new("vglmff",
-    blurb=c("Censored Weibull distribution\n\n",
+    blurb=c("Weibull distribution\n\n",
             "Links:    ",
             namesof("shape", lshape, earg= eshape), ", ", 
             namesof("scale", lscale, earg= escale), "\n", 
@@ -332,21 +391,18 @@ weibull = function(lshape="logoff", lscale="loge",
         y = cbind(y)
         if(ncol(y)>1) stop("the response must be a vector or a 1-column matrix")
 
-        if(length(extra$leftcensored)) stop("left-censoring not allowed") else
-            extra$leftcensored = rep(FALSE, len=n)
-        if(!length(extra$rightcensored)) extra$rightcensored = rep(FALSE, len=n)
-        if(any(extra$rightcensored & extra$leftcensored))
-            stop("some observations are both right and left censored!")
+        if(is.SurvS4(y))
+            stop("only uncensored observations are allowed; don't use Surv()")
 
         predictors.names =
         c(namesof("shape", .lshape, earg= .eshape, tag=FALSE),
           namesof("scale", .lscale, earg= .escale, tag=FALSE))
         if(!length(.ishape) || !length(.iscale)) {
-            anyc = extra$leftcensored | extra$rightcensored
+            anyc = FALSE  # extra$leftcensored | extra$rightcensored
             i11 = if( .imethod == 1) anyc else FALSE  # can be all data
             qvec = c(.25, .5, .75)   # Arbitrary; could be made an argument
             init.shape = if(length( .ishape)) .ishape else 1
-            xvec = log(-log(1-qvec))
+            xvec = log(-log1p(-qvec))
             fit0 = lsfit(x=xvec, y=log(quantile(y[!i11], qvec)))
         }
 
@@ -368,86 +424,224 @@ weibull = function(lshape="logoff", lscale="loge",
     }, list( .lscale=lscale, .lshape=lshape,
              .escale=escale, .eshape=eshape ) )),
     last=eval(substitute(expression({
+        if(regnotok <- any(shape <= 2))
+            warning(paste("MLE regularity conditions are violated",
+                          "(shape <= 2) at the final iteration"))
         misc$link = c(shape= .lshape, scale= .lscale)
         misc$earg= list(shape= .eshape, scale= .escale)
-        misc$expected = TRUE   # all(cen0)
+        misc$nrfs = .nrfs
+        misc$RegCondOK = !regnotok   # Save this for later
     }), list( .lscale=lscale, .lshape=lshape,
-              .escale=escale, .eshape=eshape ) )),
+              .escale=escale, .eshape=eshape, .nrfs=nrfs ) )),
     loglikelihood=eval(substitute(
             function(mu, y, w, residuals= FALSE,eta, extra=NULL) {
-        cenL = extra$leftcensored
-        cenU = extra$rightcensored
-        cen0 = !cenL & !cenU   # uncensored obsns
         shape = eta2theta(eta[,1], .lshape, earg= .eshape )
         scale = eta2theta(eta[,2], .lscale, earg= .escale )
-        ell1 = (log(shape[cen0]) - log(scale[cen0]) + (shape[cen0]-1) *
-               log(y[cen0]/scale[cen0]) - (y[cen0] / scale[cen0])^shape[cen0])
-        ell3 = -((y[cenU] / scale[cenU])^shape[cenU])
+        ell1 = (log(shape) - log(scale) + (shape-1) *
+               log(y/scale) - (y / scale)^shape)
         if(residuals) stop("loglikelihood residuals not implemented yet") else
-            sum(w[cen0] * ell1) + sum(w[cenU] * ell3)
+            sum(w * ell1)
     }, list( .lscale=lscale, .lshape=lshape,
              .escale=escale, .eshape=eshape ) )),
-    vfamily=c("cweibull"),
+    vfamily=c("weibull.sev"),
     deriv=eval(substitute(expression({
-        cenL = extra$leftcensored
-        cenU = extra$rightcensored
-        cen0 = !cenL & !cenU   # uncensored obsns
         shape = eta2theta(eta[,1], .lshape, earg= .eshape )
         scale = eta2theta(eta[,2], .lscale, earg= .escale )
-        dl.dshape = 1/shape + log(y/scale) - (y/scale)^shape * log(y/scale)
+        dl.dshape = 1/shape + log(y/scale) - log(y/scale) * (y/scale)^shape
         dl.dscale = (shape/scale) * (-1 + (y/scale)^shape)
         dshape.deta = dtheta.deta(shape, .lshape, earg= .eshape )
         dscale.deta = dtheta.deta(scale, .lscale, earg= .escale )
-        if(any(cenU)) {
-            fred21 = (y[cenU] / scale[cenU])
-            temp21 = fred21^shape[cenU]
-            dl.dshape[cenU] = -temp21 * log(fred21)
-            dl.dscale[cenU] = temp21 * shape[cenU] / scale[cenU]
-        }
         w * cbind( dl.dshape * dshape.deta, dl.dscale * dscale.deta )
     }), list( .lscale=lscale, .lshape=lshape,
               .escale=escale, .eshape=eshape ) )),
     weight=eval(substitute(expression({
-        Euler = 0.57721566490153286 
-        if(any(cen0)) {
-            if(any(shape[cen0] <= 2))
-                cat("warning: Fisher info matrices invalid\n")
-        }
+        EulerM = -digamma(1.0)
         wz = matrix(as.numeric(NA), n, dimm(M))  #3=dimm(M)
-        ed2l.dshape = (6*(Euler-1)^2 + pi^2) / (6*shape^2)
+        ed2l.dshape = (6*(EulerM-1)^2 +pi^2)/(6*shape^2) # Kleiber & Kotz (2003)
         ed2l.dscale = (shape/scale)^2
-        ed2l.dshapescale = (Euler-1)/scale
+        ed2l.dshapescale = (EulerM-1)/scale
         wz[,iam(1,1,M)] = ed2l.dshape * dshape.deta^2
         wz[,iam(2,2,M)] = ed2l.dscale * dscale.deta^2
         wz[,iam(1,2,M)] = ed2l.dshapescale * dscale.deta * dshape.deta
-        if(any(cenU)) {
-            Integrand11 = function(x) exp(-x) * (1 + log(x))^2
-            Integrand12 = function(x) exp(-x) * (1 + log(x))
-            ptilde = 1 - exp(-(y/scale)^shape)
-            index2 = (1:n)[cenU]
-            ed2l.dshape2 = ed2l.dscale2 = ed2l.dshapescale =
-                rep(as.numeric(NA), len=sum(cenU))
-            icount = 1
-            for(iii in index2) {
-                integral11 = integrate(Integrand11, low=0, upp=-log(1-ptilde[iii]))
-                if(integral11$message != "OK")
-                    warning("problem numerically integrating elt (1,1)")
-                integral12 = integrate(Integrand12, low=0, upp=-log(1-ptilde[iii]))
-                if(integral12$message != "OK")
-                    warning("problem numerically integrating elt (1,2)")
-                ed2l.dshape2[icount] = integral11$value / shape[iii]^2
-                ed2l.dshapescale[icount] = integral12$value * scale[iii]
-                icount = icount + 1
-            }
-            ed2l.dscale2 = (shape[cenU]/scale[cenU])^2 * ptilde[cenU]
-            wz[cenU,iam(1,1,M)] = ed2l.dshape2 * dshape.deta[cenU]^2
-            wz[cenU,iam(2,2,M)] = ed2l.dscale2 * dscale.deta[cenU]^2
-            wz[cenU,iam(1,2,M)] = ed2l.dshapescale *
-                                  dshape.deta[cenU] * dscale.deta[cenU]
-        }
         wz = w * wz
         wz
-    }), list( .eshape=eshape ))))
+    }), list( .eshape=eshape, .nrfs=nrfs ))))
 }
+
+
+
+
+
+
+setOldClass(c("SurvS4","Surv"))
+
+
+Surv <-
+function (time, time2, event, type = c("right", "left", "interval",
+    "counting", "interval2"), origin = 0)
+{
+    nn <- length(time)
+    ng <- nargs()
+    if (missing(type)) {
+        if (ng == 1 || ng == 2)
+            type <- "right" else if (ng == 3)
+            type <- "counting" else stop("Invalid number of arguments")
+    } else {
+        type <- match.arg(type)
+        ng <- ng - 1
+        if (ng != 3 && (type == "interval" || type == "counting"))
+            stop("Wrong number of args for this type of survival data")
+        if (ng != 2 && (type == "right" || type == "left" ||
+            type == "interval2"))
+            stop("Wrong number of args for this type of survival data")
+    }
+    who <- !is.na(time)
+    if (ng == 1) {
+        if (!is.numeric(time))
+            stop("Time variable is not numeric")
+        ss <- cbind(time, 1)
+        dimnames(ss) <- list(NULL, c("time", "status"))
+    } else if (type == "right" || type == "left") {
+        if (!is.numeric(time))
+            stop("Time variable is not numeric")
+        if (length(time2) != nn)
+            stop("Time and status are different lengths")
+        if (is.logical(time2))
+            status <- 1 * time2 else if (is.numeric(time2)) {
+            who2 <- !is.na(time2)
+            if (max(time2[who2]) == 2)
+                status <- time2 - 1 else status <- time2
+            if (any(status[who2] != 0 & status[who2] != 1))
+                stop("Invalid status value")
+        } else stop("Invalid status value")
+        ss <- cbind(time, status)
+        dimnames(ss) <- list(NULL, c("time", "status"))
+    } else if (type == "counting") {
+        if (length(time2) != nn)
+            stop("Start and stop are different lengths")
+        if (length(event) != nn)
+            stop("Start and event are different lengths")
+        if (!is.numeric(time))
+            stop("Start time is not numeric")
+        if (!is.numeric(time2))
+            stop("Stop time is not numeric")
+        who3 <- who & !is.na(time2)
+        if (any(time[who3] >= time2[who3]))
+            stop("Stop time must be > start time")
+        if (is.logical(event))
+            status <- 1 * event else if (is.numeric(event)) {
+            who2 <- !is.na(event)
+            if (max(event[who2]) == 2)
+                status <- event - 1 else status <- event
+            if (any(status[who2] != 0 & status[who2] != 1))
+                stop("Invalid status value")
+        } else stop("Invalid status value")
+        ss <- cbind(time - origin, time2 - origin, status)
+    } else {
+        if (type == "interval2") {
+            event <- ifelse(is.na(time), 2, ifelse(is.na(time2),
+                0, ifelse(time == time2, 1, 3)))
+            if (any(time[event == 3] > time2[event == 3]))
+                stop("Invalid interval: start > stop")
+            time <- ifelse(event != 2, time, time2)
+            type <- "interval"
+        } else {
+            temp <- event[!is.na(event)]
+            if (!is.numeric(temp))
+                stop("Status indicator must be numeric")
+            if (length(temp) > 0 && any(temp != floor(temp) |
+                temp < 0 | temp > 3))
+                stop("Status indicator must be 0, 1, 2 or 3")
+        }
+        status <- event
+        ss <- cbind(time, ifelse(!is.na(event) & event == 3,
+            time2, 1), status)
+    }
+    attr(ss, "type") <- type
+    class(ss) <- "SurvS4"
+    ss
+}
+
+
+
+is.SurvS4 <- function(x) inherits(x, "SurvS4")
+
+
+
+
+as.character.SurvS4 <-
+function (x, ...)
+{
+    class(x) <- NULL
+    type <- attr(x, "type")
+
+    if (type == "right") {
+        temp <- x[, 2]
+        temp <- ifelse(is.na(temp), "?", ifelse(temp == 0, "+", " "))
+        paste(format(x[, 1]), temp, sep = "")
+    } else if (type == "counting") {
+        temp <- x[, 3]
+        temp <- ifelse(is.na(temp), "?", ifelse(temp == 0, "+", " "))
+        paste("(", format(x[, 1]), ",", format(x[, 2]), temp, "]", sep = "")
+    } else if (type == "left") {
+        temp <- x[, 2]
+        temp <- ifelse(is.na(temp), "?", ifelse(temp == 0, "<", " "))
+        paste(temp, format(x[, 1]), sep = "")
+    } else {
+        stat <- x[, 3]
+        temp <- c("+", "", "-", "]")[stat + 1]
+        temp2 <- ifelse(stat == 3, paste("[", format(x[, 1]),
+            ", ", format(x[, 2]), sep = ""), format(x[, 1]))
+        ifelse(is.na(stat), as.character(NA), paste(temp2, temp, sep = ""))
+    }
+}
+
+
+
+"[.SurvS4" <- function(x, i,j, drop=FALSE) {
+    if (missing(j)) {
+        temp <- class(x)
+        type <- attr(x, "type")
+        class(x) <- NULL
+        x <- x[i, , drop=FALSE]
+        class(x) <- temp
+        attr(x, "type") <- type
+        x
+    } else {
+
+        class(x) <- NULL
+        NextMethod("[")
+    }
+}
+
+is.na.SurvS4 <- function(x) {
+    as.vector( (1* is.na(unclass(x)))%*% rep(1, ncol(x)) >0)
+}
+
+
+
+
+
+print.SurvS4 <-
+function (x, quote = FALSE, ...)
+invisible(print(as.character.SurvS4(x), quote = quote, ...))
+
+
+setMethod("print", "SurvS4",
+         function(x, ...)
+         invisible(print.SurvS4(x, ...)))
+
+setMethod("show", "SurvS4",
+         function(object)
+         invisible(print.SurvS4(object)))
+
+
+
+
+
+
+
+
+
 
 

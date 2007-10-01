@@ -207,7 +207,9 @@ vsmooth.spline <- function(x, y, w, df=rep(5,M), spar=NULL, # rep(0,M),
         ispar <- 1
         if(any(spar <= 0) || !is.numeric(spar))
             stop("not allowed non-positive or non-numeric smoothing parameters")
-        nonlin <- if(is.R()) (spar != Inf) else (!is.inf(spar))
+
+
+        nonlin <- (spar != Inf)
     } else {
         ispar <- 0
         if(!is.numeric(df) || any(df < 2 | df > nef))
@@ -482,7 +484,8 @@ predictvsmooth.spline <- function(object, x, deriv=0, se.fit=FALSE)
     if(!length(nlfit@knots))
         return(list(x=x, y=pred))
 
-    nonlin <- if(is.R()) (object@spar != Inf) else (!is.inf(object@spar))
+
+    nonlin <- (object@spar != Inf)
 
     conmat <- if(!length(lfit@constraints)) diag(M) else lfit@constraints[[2]]
     conmat <- conmat[,nonlin,drop=FALSE] # Of nonlinear functions

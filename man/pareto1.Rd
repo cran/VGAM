@@ -11,7 +11,8 @@
 }
 \usage{
 pareto1(lshape = "loge", earg=list(), location=NULL)
-tpareto1(lower, upper, lshape = "loge", earg=list(), ishape=NULL)
+tpareto1(lower, upper, lshape = "loge", earg=list(), ishape=NULL,
+         method.init=1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -37,6 +38,7 @@ tpareto1(lower, upper, lshape = "loge", earg=list(), ishape=NULL)
   Numeric.
   Optional initial value for the shape parameter.
   A \code{NULL} means a value is obtained internally.
+  If failure to converge occurs try specifying a value, e.g., 1 or 2.
 
   }
   \item{location}{
@@ -45,6 +47,12 @@ tpareto1(lower, upper, lshape = "loge", earg=list(), ishape=NULL)
   The default means it is estimated by maximum likelihood
   estimation, which means \code{min(y)} where \code{y} is the response
   vector.
+
+  }
+  \item{method.init}{
+  An integer with value \code{1} or \code{2} which
+  specifies the initialization method. If failure to converge occurs
+  try the other value, or else specify a value for \code{ishape}.
 
   }
 }
@@ -95,7 +103,7 @@ tpareto1(lower, upper, lshape = "loge", earg=list(), ishape=NULL)
   \emph{Statistical Distributions},
   New York: Wiley-Interscience, Third edition.
 
-  Aban, I. B., Meerschaert, M. M. and Panorska, A. K. (2006).
+  Aban, I. B., Meerschaert, M. M. and Panorska, A. K. (2006)
   Parameter estimation for the truncated Pareto distribution,
   \emph{Journal of the American Statistical Association},
   \bold{101}(473),
@@ -172,4 +180,6 @@ c(fit3@misc$lower, fit3@misc$upper)
 }
 \keyword{models}
 \keyword{regression}
+
+% Package lmomco fits generalized pareto (three parameter) using method of L-moments.
 

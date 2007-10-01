@@ -344,7 +344,7 @@ garma <- function(link=c("identity","loge","reciprocal",
             identity=sum(w*(y-mu)^2),
             loge=sum(w*(-mu + y*log(mu))),
             inverse=sum(w*(-mu + y*log(mu))),
-            sum(w*(y*log(mu) + (1-y)*log(1-mu))))
+            sum(w*(y*log(mu) + (1-y)*log1p(-mu))))
     }, list( .link=link, .earg=earg ))),
     middle2=eval(substitute(expression({
         realfv <- fv

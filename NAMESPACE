@@ -27,7 +27,6 @@ dimm)
 
 
 
-export(lm, glm, predict.lm, predict.mlm, predict.glm) 
 
 export(is.smart, smart.mode.is, wrapup.smart, setup.smart, my1, my2)
 export(
@@ -69,6 +68,7 @@ anova.vglm,
 beta4,
 bisa, dbisa, pbisa, qbisa, rbisa,
 betabin.ab, betabinomial,
+dexpbinomial,
 dbetabin, pbetabin, rbetabin, dbetabin.ab, pbetabin.ab, rbetabin.ab,
 biplot.qrrvglm,
 borel.tanner,
@@ -89,7 +89,7 @@ dtheta.deta)
 export(cloglog,cauchit,elogit,fisherz,logc,loge,logit,logoff,nreciprocal,
        probit,reciprocal,rhobit,
        golf,polf,nbolf,nbolf2,Cut)
-export(ordpoisson)
+export(ordpoisson, poissonp)
 
 
 export(m2adefault, 
@@ -139,13 +139,15 @@ rlplot, rlplot.vglm, rrar.control,
 rrvglm.control.Gaussian)
 
 export(
-cexpon,
-simple.exponential, simple.poisson, size.binomial,
+Surv, is.SurvS4,
+simple.exponential, simple.poisson,
+seq2binomial, size.binomial,
 stdze1, stdze2,
 summary.cao, summary.grc, summary.lms, summary.qrrvglm,
 summary.rc.exponential, summary.rrvglm, summary.uqo, summaryvgam,
 summaryvglm, summaryvlm, s.vam, terms.vlm, 
 theta2eta, Tol.Coef.qrrvglm, Tol.Coef.uqo, Tol.qrrvglm, Tol.uqo,
+triangle, dtriangle, ptriangle, qtriangle, rtriangle, 
 vglm.garma.control, vglm.multinomial.control,
 vglm.multinomial.deviance.control, vglm.vcategorical.control,
 vlm, vlm.control,
@@ -182,7 +184,7 @@ export(lognormal)
 export(dpolono, rpolono)
 export(dgpd, pgpd, qgpd, rgpd, gpd)
 export(dgev, pgev, qgev, rgev, gev, egev)
-export(dlaplace, plaplace, qlaplace, rlaplace)
+export(dlaplace, plaplace, qlaplace, rlaplace, laplace)
 export(fff, fff.control,
        mbesselI0,
        vonmises)
@@ -219,6 +221,7 @@ nidentity, identity,
 prentice74,
 lms.bcg, lms.bcn,
 lms.yjn,
+alsqreg,
 logff, dlog, plog, rlog,
 loglinb2, loglinb3,
 loglog, lognormal3, lvplot.qrrvglm,
@@ -272,6 +275,7 @@ exportClasses("vglmff", "vlm", "vglm", "vgam",
 "vcov.qrrvglm",
 "vsmooth.spline.fit", "vsmooth.spline") 
 
+exportClasses("SurvS4")
 
 
 exportMethods(

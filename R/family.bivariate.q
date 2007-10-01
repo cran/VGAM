@@ -91,7 +91,7 @@ bilogistic4 = function(llocation="identity",
         zedd1 = (y[,1]-loc1) / Scale1
         zedd2 = (y[,2]-loc2) / Scale2
         if(residuals) stop("loglikelihood residuals not implemented yet") else
-        sum(w * (-zedd1 - zedd2 - 3 * log(1+exp(-zedd1)+exp(-zedd2)) -
+        sum(w * (-zedd1 - zedd2 - 3 * log1p(exp(-zedd1)+exp(-zedd2)) -
                  log(Scale1) - log(Scale2)))
     }, list(.lscale=lscale, .llocation=llocation))),
     vfamily=c("bilogistic4"),

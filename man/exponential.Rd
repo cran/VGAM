@@ -66,7 +66,7 @@ New York: Wiley-Interscience, Third edition.
 
 }
 \seealso{
-    \code{\link{cexpon}},
+%   \code{\link{cexpon}},
     \code{\link{poissonff}},
     \code{\link{freund61}}.
 }

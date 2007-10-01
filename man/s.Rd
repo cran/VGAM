@@ -87,7 +87,7 @@ Vector generalized additive models.
 \examples{
 # Nonparametric logistic regression
 data(hunua)
-fit = vgam(agaaus ~ s(altitude, df=3), binomialff, hunua)
+fit = vgam(agaaus ~ s(altitude, df=2), binomialff, hunua)
 \dontrun{
 plot(fit, se=TRUE)}
 

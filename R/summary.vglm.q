@@ -194,6 +194,10 @@ vcovvlm <- function(object, dispersion=NULL, untransform=FALSE) {
            is.Numeric(so@dispersion)) so@dispersion else 1
     answer = d * so@cov.unscaled
 
+    if(is.logical(OKRC <- object@misc$RegCondOK) && !OKRC)
+        warning(paste("MLE regularity conditions were violated",
+                          "at the final iteration of the fitted object"))
+
     if(!untransform) return(answer)
 
     if(!is.logical(object@misc$intercept.only))

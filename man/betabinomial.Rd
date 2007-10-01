@@ -9,7 +9,7 @@
 }
 \usage{
 betabinomial(lmu="logit", lrho="logit", emu=list(), erho=list(),
-             irho=0.5, zero=2)
+             irho=NULL, method.init=1, zero=2)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -27,9 +27,16 @@ betabinomial(lmu="logit", lrho="logit", emu=list(), erho=list(),
   \item{irho}{ 
   Optional initial value for the correlation parameter.
   If given, it must be in \eqn{(0,1)}, and is recyled to the necessary
-  length.  Assign this argument a value if a convergence failure occurs.
-  Setting \code{irho=NULL} means an initial value is obtained internally,
+  length. Assign this argument a value if a convergence failure occurs.
+  Having \code{irho=NULL} means an initial value is obtained internally,
   though this can give unsatisfactory results.
+
+  }
+  \item{method.init}{
+  An integer with value \code{1} or \code{2} which
+  specifies the initialization method for \eqn{\mu}{mu}.
+  If failure to converge occurs try the other value
+  and/or else specify a value for \code{irho}.
 
   }
   \item{zero}{ 
@@ -137,8 +144,8 @@ betabinomial(lmu="logit", lrho="logit", emu=list(), erho=list(),
   This family function is prone to numerical difficulties
   due to the expected information matrices not being positive-definite
   or ill-conditioned over some regions of the parameter space.
-  If problems occur try setting \code{irho} to some other
-  value, or else use the \code{etastart} argument of
+  If problems occur try setting \code{irho} to some numerical
+  value, or else use \code{etastart} argument of
   \code{\link{vglm}}, etc.
 
 }

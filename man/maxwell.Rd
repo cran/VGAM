@@ -34,21 +34,25 @@ maxwell(link = "loge", earg=list())
   \eqn{\sqrt{8 / (a \pi)}}{sqrt(8 / (a * pi))}
   (returned as the fitted values), and its variance is
   \eqn{(3\pi - 8)/(\pi a)}{(3*pi - 8)/(pi*a)}.
+
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}},
   \code{\link{rrvglm}}
   and \code{\link{vgam}}.
+
 }
 \references{ 
   von Seggern, D. H. (1993)
   \emph{CRC Standard Curves and Surfaces},
   Boca Raton, FL.: CRC Press.
+
 }
 \author{ T. W. Yee }
 \note{
-A related distribution is the Rayleigh distribution.
+  A related distribution is the Rayleigh distribution.
+  Fisher-scoring and Newton-Raphson are the same here.
 
 }
 

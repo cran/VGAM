@@ -127,10 +127,10 @@ quasibinomialff(link="probit")
 data(hunua)
 hunua = transform(hunua, a.5 = sqrt(altitude))    # Transformation of altitude
 fit1 = vglm(agaaus ~ poly(a.5, 2), quasibinomialff, hunua)
-fit2 = vgam(agaaus ~ s(a.5), quasibinomialff, hunua)
+fit2 = vgam(agaaus ~ s(a.5, df=2), quasibinomialff, hunua)
 \dontrun{
-plot(fit2, se=TRUE, llwd=2, lcol="darkgreen", scol="darkgreen",
-     xlab="sqrt(altitude)",
+plot(fit2, se=TRUE, llwd=2, lcol="red", scol="red",
+     xlab="sqrt(altitude)", ylim=c(-3,1),
      main="GAM and quadratic GLM fitted to species data")
 plotvgam(fit1, se=TRUE, lcol="blue", scol="blue", add=TRUE, llwd=2)
 }
