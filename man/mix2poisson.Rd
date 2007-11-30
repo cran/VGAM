@@ -11,13 +11,12 @@
 mix2poisson(lphi = "logit", llambda = "loge",
             ephi=list(), el1=list(), el2=list(),
             iphi = 0.5, il1 = NULL, il2 = NULL,
-            qmu = c(0.2, 0.8), zero = 1)
+            qmu = c(0.2, 0.8), nsimEIM=100, zero = 1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{lphi}{
     Link function for the parameter \eqn{\phi}{phi}.
-    See below for more details.
     See \code{\link{Links}} for more choices.
 
   }
@@ -51,6 +50,10 @@ mix2poisson(lphi = "logit", llambda = "loge",
     \code{\link[stats]{quantile}}.
 
   }
+  \item{nsimEIM}{
+  See \code{\link{CommonVGAMffArguments}}.
+
+  }
   \item{zero}{
   An integer specifying which linear/additive predictor is modelled as
   intercepts only.  If given, the value must be either 1 and/or 2 and/or
@@ -58,6 +61,7 @@ mix2poisson(lphi = "logit", llambda = "loge",
   is a single parameter even when there are explanatory variables.
   Set \code{zero=NULL} to model all linear/additive predictors as
   functions of the explanatory variables.
+  See \code{\link{CommonVGAMffArguments}} for more information.
 
   }
 }
@@ -78,67 +82,82 @@ mix2poisson(lphi = "logit", llambda = "loge",
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
-  The object is used by modelling functions such as \code{\link{vglm}},
+  The object is used by modelling functions such as \code{\link{vglm}}
   and \code{\link{vgam}}.
 
 }
 % \references{ ~put references to the literature/web site here ~ }
 \section{Warning }{
-  Numerical problems can occur.
-  Half-stepping is not uncommon.
-  If failure to converge occurs, try obtaining better initial values,
-  e.g., by using \code{iphi} and \code{qmu} etc.
+  This \pkg{VGAM} family function requires care for a successful
+  application.
+  In particular, good initial values are required because of the presence
+  of local solutions. Therefore running this function with several
+  different combinations of arguments such as \code{iphi}, \code{il1},
+  \code{il2}, \code{qmu} is highly recommended. Graphical methods such
+  as \code{\link[graphics]{hist}} can be used as an aid.
 
-  This function uses a quasi-Newton update for the working weight matrices
-  (BFGS variant). It builds up approximations to the weight matrices,
-  and currently the code is not fully tested.
-  In particular, results based on the weight matrices (e.g., from
-  \code{vcov} and \code{summary}) may be quite incorrect, especially when
-  the arguments \code{weights} is used to input prior weights.
-
-  This \pkg{VGAM} family function should be used with caution.
+  With grouped data (i.e., using the \code{weights} argument)
+  one has to use a large value of \code{nsimEIM};
+  see the example below.
 
 }
 
 \author{ T. W. Yee }
 \note{
-  Fitting this model successfully to data can be difficult due to
-  numerical problems and ill-conditioned data.  It pays to fit the model
-  several times with different initial values, and check that the best fit
-  looks reasonable. Plotting the results is recommended.  This function
+  The response must be integer-valued since \code{\link[stats]{dpois}}
+  is invoked.
+
+  Fitting this model successfully to data can be difficult due to local
+  solutions and ill-conditioned data. It pays to fit the model several
+  times with different initial values, and check that the best fit
+  looks reasonable. Plotting the results is recommended. This function
   works better as \eqn{\lambda_1}{lambda1} and \eqn{\lambda_2}{lambda2}
   become more different.
-
-  Convergence is often slow, especially when the two component
-  distributions are not well separated. The control argument \code{maxit}
-  should be set to a higher value, e.g., 200, and use \code{trace=TRUE}
-  to monitor convergence.
+  The default control argument \code{trace=TRUE} is to encourage
+  monitoring convergence.
 
 }
 
 \seealso{
   \code{\link[stats:Poisson]{rpois}},
+  \code{\link{poissonff}},
   \code{\link{mix2normal1}}.
 }
 
 \examples{
-n = 3000
-mu1 = exp(2.4) # also known as lambda1
-mu2 = exp(3.1)
-phi = 0.3
+# Example 1: simulated data
+n = 1000
+mu1 = exp(2.5) # also known as lambda1
+mu2 = exp(3)
+(phi = logit(-0.5, inverse=TRUE))
 y = ifelse(runif(n) < phi, rpois(n, mu1), rpois(n, mu2))
-
-fit = vglm(y ~ 1, mix2poisson, maxit=200) # good idea to have trace=TRUE
+fit = vglm(y ~ 1, mix2poisson)
 coef(fit, matrix=TRUE)
-Coef(fit) # the estimates
-c(phi, mu1, mu2) # the truth
+
+# Compare the results with the truth
+round(rbind('Estimated'=Coef(fit), 'Truth'=c(phi, mu1, mu2)), dig=2)
 
 \dontrun{# Plot the results
 ty = table(y)
 plot(names(ty), ty, type="h", main="Red=estimate, blue=truth")
-abline(v=Coef(fit)[-1], lty=2, col="red")
-abline(v=c(mu1, mu2), lty=2, col="blue")
+abline(v=Coef(fit)[-1], lty=2, col="red", lwd=2)
+abline(v=c(mu1, mu2), lty=2, col="blue", lwd=2)
 }
+
+# Example 2: London Times data (Lange, 1997, p.31)
+deaths = 0:9
+freq = c(162, 267, 271, 185, 111, 61, 27, 8, 3, 1)
+y = rep(deaths, freq)
+
+# Usually this does not work well unless nsimEIM is large
+fit = vglm(deaths ~ 1, weight = freq,
+           mix2poisson(iphi=0.3, il1=1, il2=2.5, nsimEIM=5000))
+
+# This works better in general
+fit = vglm(y ~ 1, mix2poisson(iphi=0.3, il1=1, il2=2.5))
+
+coef(fit, matrix=TRUE)
+Coef(fit)
 }
 \keyword{models}
 \keyword{regression}

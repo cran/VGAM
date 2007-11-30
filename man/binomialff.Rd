@@ -37,9 +37,9 @@ binomialff(link = "logit", earg = list(),
   }
   \item{mv}{ 
   Multivariate response? If \code{TRUE}, then the response is interpreted
-  as \eqn{M} binary responses, where \eqn{M} is the number of columns
-  of the response matrix. In this case, the response matrix should have
-  zero/one values only.
+  as \eqn{M} independent binary responses, where \eqn{M} is the number
+  of columns of the response matrix. In this case, the response matrix
+  should have zero/one values only.
 
   If \code{FALSE} and the response is a (2-column) matrix, then the number
   of successes is given in the first column, and the second column is
@@ -97,8 +97,9 @@ binomialff(link = "logit", earg = list(),
 
 }
 \references{
- McCullagh, P. and Nelder, J. A. (1989)
+  McCullagh, P. and Nelder, J. A. (1989)
   \emph{Generalized Linear Models}, 2nd ed. London: Chapman & Hall.
+
 }
 \author{ Thomas W. Yee }
 

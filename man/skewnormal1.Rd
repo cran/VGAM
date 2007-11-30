@@ -8,7 +8,7 @@
 
 }
 \usage{
-skewnormal1(lshape = "identity", earg = list(), ishape = NULL)
+skewnormal1(lshape = "identity", earg = list(), ishape = NULL, nsimEIM=NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -26,6 +26,10 @@ skewnormal1(lshape = "identity", earg = list(), ishape = NULL)
   Optional inital value for the shape parameter.
   The default is to choose one internally.
   See the note below.
+
+  }
+  \item{nsimEIM}{
+  See \code{\link{CommonVGAMffArguments}}.
 
   }
 }
@@ -51,7 +55,8 @@ skewnormal1(lshape = "identity", earg = list(), ishape = NULL)
    \eqn{\mu=\alpha \sqrt{2/(\pi (1+\alpha^2))}}{mu=alpha*sqrt(2/(pi*(1+alpha^2)))}
    and these are returned as the fitted values.
    The variance of the distribution is \eqn{1-\mu^2}{1-mu^2}.
-   The Newton-Raphson algorithm is used.
+   The Newton-Raphson algorithm is used unless the \code{nsimEIM}
+   argument is used.
 
 }
 \value{
@@ -89,7 +94,9 @@ distribution.
 %}  
 \seealso{
   \code{\link{snorm}},
-  \code{\link{normal1}}.
+  \code{\link{normal1}},
+  \code{\link{fnormal1}}.
+
 }
 
 \examples{

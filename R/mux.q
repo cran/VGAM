@@ -208,13 +208,12 @@ mux111 <- function(cc, xmat, M, upper=TRUE)
 
 mux15 <- function(cc, xmat)
 {
-
     n <- nrow(xmat)
     M <- ncol(xmat)
     if(nrow(cc) != M || ncol(cc) != M)
         stop("input inconformable")
     if(max(abs(t(cc)-cc))>0.000001)
-        stop("cc not symmetric")
+        stop("argument 'cc' is not symmetric")
 
     ans <- rep(as.numeric(NA),n*M*M)
     fred <- dotC(name="mux15", as.double(cc), as.double(t(xmat)),

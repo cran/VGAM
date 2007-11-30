@@ -3,7 +3,7 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Zero-Inflated Poisson Distribution Family Function }
 \description{
-  Fits a zero-inflated Poisson distribution using full maximum likelihood
+  Fits a zero-inflated Poisson distribution by full maximum likelihood
   estimation.
 
 }
@@ -138,8 +138,8 @@ y = 0:4  # Number of cholera cases per household in an Indian village
 w = c(168, 32, 16, 6, 1)  # Frequencies; there are 223=sum(w) households
 fit = vglm(y ~ 1, zipoisson, wei=w, trace=TRUE)
 coef(fit, matrix=TRUE)
-cbind(actual=w, fitted=
-      dzipois(y, lambda=Coef(fit)[2], phi=Coef(fit)[1]) * sum(w))
+cbind(actual=w, fitted= round(
+      dzipois(y, lambda=Coef(fit)[2], phi=Coef(fit)[1]) * sum(w), dig=2))
 
 
 # Another example: data from Angers and Biswas (2003)

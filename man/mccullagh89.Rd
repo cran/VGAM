@@ -59,12 +59,10 @@ The mean is of \eqn{Y} is \eqn{\nu \theta / (1+\nu)}{nu*theta/(1+nu)},
 and these are returned as the fitted values.
 
 This distribution is related to the Leipnik distribution (see Johnson
-et al. (1995)), is related to ultraspherical functions,
-and under certain conditions, arises as exit
-distributions for Brownian motion.
-Fisher scoring is implemented here and it uses a diagonal matrix
-so the parameters are globally orthogonal in the Fisher information
-sense.
+et al. (1995)), is related to ultraspherical functions, and under
+certain conditions, arises as exit distributions for Brownian motion.
+Fisher scoring is implemented here and it uses a diagonal matrix so
+the parameters are globally orthogonal in the Fisher information sense.
 McCullagh (1989) also states that, to some extent, \eqn{\theta}{theta}
 and \eqn{\nu}{nu} have the properties of a location parameter and a
 precision parameter, respectively.

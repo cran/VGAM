@@ -139,6 +139,7 @@ TypicalVGAMlinkFunction(theta, earg=list(), inverse=FALSE,
 }
 
 \seealso{
+  \code{\link{TypicalVGAMfamilyFunction}},
   \code{\link{vglm}},
   \code{\link{vgam}},
   \code{\link{rrvglm}}.
@@ -186,8 +187,10 @@ fit3 = vgam(agaaus ~ altitude, binomialff(link="clog"), hunua) # not ok
 
 # No matter what the link, the estimated var-cov matrix is the same
 y = rbeta(n=1000, shape1=exp(0), shape2=exp(1))
-fit1 = vglm(y ~ 1, betaff(link="identity"), trace = TRUE, crit="c")
-fit2 = vglm(y ~ 1, betaff(link=logoff, earg=list(offset=1.1)),
+fit1 = vglm(y ~ 1, beta.ab(lshape1="identity", lshape2="identity"),
+            trace = TRUE, crit="c")
+fit2 = vglm(y ~ 1, beta.ab(lshape1=logoff, eshape1=list(offset=1.1),
+                           lshape2=logoff, eshape2=list(offset=1.1)),
             trace = TRUE, crit="c")
 vcov(fit1, untran=TRUE)
 vcov(fit1, untran=TRUE)-vcov(fit2, untran=TRUE)  # Should be all 0s

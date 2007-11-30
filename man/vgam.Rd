@@ -32,10 +32,11 @@ vgam(formula, family, data = list(), weights = NULL, subset = NULL,
 
   }
   \item{family}{
-  a function of class \code{"vglmff"} 
-  (see \code{\link{vglmff-class}}) describing
-  what statistical model is to be fitted.
-  These are called ``\pkg{VGAM} family functions''.
+  a function of class \code{"vglmff"} (see \code{\link{vglmff-class}})
+  describing what statistical model is to be fitted. This is called a
+  ``\pkg{VGAM} family function''.  See \code{\link{CommonVGAMffArguments}}
+  for general information about many types of arguments found in this
+  type of function.
 
   }
   \item{data}{
@@ -209,7 +210,10 @@ Vector generalized additive models.
 \emph{Journal of the Royal Statistical Society, Series B, Methodological},
 \bold{58}, 481--493.
 
-\url{http://www.stat.auckland.ac.nz/~yee}
+  Documentation accompanying the \pkg{VGAM} package at
+  \url{http://www.stat.auckland.ac.nz/~yee}
+  contains further information and examples.
+
 }
 
 \author{ Thomas W. Yee }

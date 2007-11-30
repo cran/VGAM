@@ -8,7 +8,7 @@
 
 }
 \usage{
-frank(lapar="loge", eapar=list(), iapar=2)
+frank(lapar="loge", eapar=list(), iapar=2, nsimEIM=250)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -26,6 +26,10 @@ frank(lapar="loge", eapar=list(), iapar=2)
   \item{iapar}{
   Numeric. Initial value for \eqn{\alpha}{alpha}.
   If a convergence failure occurs try assigning a different value.
+
+  }
+  \item{nsimEIM}{
+  See \code{\link{CommonVGAMffArguments}}.
 
   }
 }
@@ -55,8 +59,10 @@ frank(lapar="loge", eapar=list(), iapar=2)
   As \eqn{\alpha}{alpha} approaches infinity then
   \eqn{H(y_1,y_2) = \max(0, y_1+y_2-1)}{H(y1,y2)=max(0,y1+y2-1)}.
 
-  A variant of Newton-Raphson is used, which only seems to work for an
-  intercept model.
+  The default is to use Fisher scoring implemented using
+  \code{\link{rfrank}}.
+  For intercept-only models an alternative is to set \code{nsimEIM=NULL}
+  so that a variant of Newton-Raphson is used.
 
 }
 \value{
@@ -86,10 +92,11 @@ Frank's family of bivariate distributions.
 \seealso{
   \code{\link{rfrank}},
   \code{\link{fgm}}.
+
 }
 \examples{
 ymat = rfrank(n=2000, alpha=exp(4))
-\dontrun{plot(ymat)}
+\dontrun{plot(ymat, col="blue")}
 fit = vglm(ymat ~ 1, fam=frank, trace=TRUE)
 coef(fit, matrix=TRUE)
 Coef(fit)

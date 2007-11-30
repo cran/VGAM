@@ -84,6 +84,9 @@ posnormal1(lmean="identity", lsd="loge",
   Reasonably good initial values are needed.
   Fisher scoring is implemented.
 
+  The distribution of the reciprocal of a positive normal random variable
+  is known as an alpha distribution.
+
 }
 
 \section{Warning }{

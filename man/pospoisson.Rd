@@ -6,7 +6,8 @@
   Fits a positive Poisson distribution.
 }
 \usage{
-pospoisson(link = "loge", earg=list())
+pospoisson(link = "loge", earg=list(),
+           expected=TRUE, ilambda=NULL, method.init=1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -21,6 +22,24 @@ pospoisson(link = "loge", earg=list())
   See \code{earg} in \code{\link{Links}} for general information.
 
   }
+  \item{expected}{
+  Logical.
+  Fisher scoring is used if \code{expected = TRUE}, else Newton-Raphson.
+
+  }
+  \item{ilambda}{
+  Optional initial value for \eqn{\lambda}{lambda}.
+  A \code{NULL} means a value is computed internally.
+
+  }
+  \item{method.init}{
+  An integer with value \code{1} or \code{2} which
+  specifies the initialization method for \eqn{\lambda}{lambda}.
+  If failure to converge occurs try another value
+  and/or else specify a value for \code{ilambda}.
+
+  }
+
 }
 \details{
   The positive Poisson  distribution is the ordinary Poisson
@@ -78,7 +97,7 @@ fitted(fit)
 
 # Artificial data
 x = runif(n <- 1000)
-lambda = exp(2 + 3*x)
+lambda = exp(1 - 2*x)
 y = rpospois(n, lambda)
 table(y)
 fit = vglm(y ~ x, pospoisson, trace=TRUE, crit="c")

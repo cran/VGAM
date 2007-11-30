@@ -104,10 +104,13 @@ contains further information and examples.
 \keyword{ package }
 \keyword{models}
 \keyword{regression}
-%\seealso{
+\seealso{
+    \code{\link{TypicalVGAMfamilyFunction}},
+    \code{\link{CommonVGAMffArguments}}.
+
 %~~ Optional links to other man pages, e.g. ~~
 %~~ \code{\link[<pkg>:<pkg>-package]{<pkg>}} ~~
-%}
+}
 \examples{
 # Example 1
 # Fit the proportional odds model, p.179, in McCullagh and Nelder (1989)

@@ -16,6 +16,7 @@ Create a Survival Object
 \description{
   Create a survival object, usually used as a response variable in a
   model formula.
+
 }
 \usage{
 Surv(time, time2, event, type =, origin = 0)
@@ -58,12 +59,14 @@ is.SurvS4(x)
     from one strata to another.}
 }
 \value{
-  An object of class \code{Surv}.  There are methods for \code{print},
-  \code{is.na}, and subscripting survival objects.   \code{Surv} objects
+  An object of class \code{SurvS4} (formerly \code{Surv}).
+  There are methods for \code{print},
+  \code{is.na}, and subscripting survival objects. \code{SurvS4} objects
   are implemented as a matrix of 2 or 3 columns.
 
   In the case of \code{is.SurvS4}, a logical value \code{TRUE} if \code{x}
-  inherits from class \code{"SurvS4"}, otherwise an \code{FALSE}.
+  inherits from class \code{"SurvS4"}, otherwise a \code{FALSE}.
+
 }
 \details{
   Typical usages are
@@ -107,25 +110,36 @@ guess wrong.  Use 0/1 coding in this case.
 
 \author{
   The code and documentation comes from \pkg{survival}.
-  Slight modifications have been made for conversion to S4
-  by Thomas W. Yee.
+  Slight modifications have been made for conversion to S4 by T. W. Yee.
+  Also, for \code{"interval"} data, \code{as.character.SurvS4()} has
+  been modified to print intervals of the form
+  \code{(start, end]} and not
+  \code{[start, end]} as previously.
+  (This makes a difference for discrete data, such as for
+  \code{\link{cenpoisson}}).
+  All \pkg{VGAM} family functions beginning with \code{"cen"} require
+  the packaging function \code{Surv} to format the input.
+
 }
 \note{
-  The purpose of having \code{Surv} in \pkg{VGAM} is so that the
-  same input can be fed into \code{\link{vglm}} as functions
-  in \pkg{survival} such as \code{\link[survival]{survreg}}.
-  The class name has been changed from
-  \code{"Surv"} to \code{"SurvS4"}.
+  The purpose of having \code{Surv} in \pkg{VGAM} is so that
+  the same input can be fed into \code{\link{vglm}} as functions in
+  \pkg{survival} such as \code{\link[survival]{survreg}}.  The class
+  name has been changed from \code{"Surv"} to \code{"SurvS4"}; see
+  \code{\link{SurvS4-class}}.
+
+  The format \code{J+} is interpreted in \pkg{VGAM} as \eqn{\ge J}.
+  If \code{type="interval"} then these should not be used in \pkg{VGAM}:
+  \code{(L,U-]} or  \code{(L,U+]}.
+% zz is this for type="count" only?
 
 }
-
-
-
 
 \seealso{
   \code{\link{SurvS4-class}},
-  \code{\link[survival]{coxph}},
-  \code{\link[survival]{survfit}},
+  \code{\link{cenpoisson}},
+% \code{\link[survival]{coxph}},
+% \code{\link[survival]{survfit}},
   \code{\link[survival]{survreg}},
   \code{\link{aml}}.
 }

@@ -63,11 +63,11 @@ zipf(N=NULL, link="loge", earg=list(), init.s=NULL)
 }
 
 \references{ 
-pp.465--471, Chapter 11 of
-Johnson N. L., Kotz S., and Kemp A. W. (1993)
-\emph{Univariate Discrete Distributions},
-2nd ed.
-New York: Wiley.
+pp.526-- of Chapter 11 of
+    Johnson N. L., Kemp, A. W. and Kotz S. (2005)
+    \emph{Univariate Discrete Distributions},
+    3rd edition,
+    Hoboken, New Jersey: Wiley.
 
 }
 \author{ T. W. Yee }
@@ -92,3 +92,11 @@ fitted(fit, mat=FALSE)
 }
 \keyword{models}
 \keyword{regression}
+
+
+%pp.465--471, Chapter 11 of
+%Johnson N. L., Kotz S., and Kemp A. W. (1993)
+%\emph{Univariate Discrete Distributions},
+%2nd ed.
+%New York: Wiley.
+

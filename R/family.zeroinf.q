@@ -12,7 +12,7 @@ dzipois = function(x, lambda, phi=0) {
     x = rep(x, len=L); lambda = rep(lambda, len=L); phi = rep(phi, len=L);
     ans = dpois(x, lambda)
     if(!is.Numeric(phi) || any(phi < 0) || any(phi > 1))
-        stop("phi must be between 0 and 1 inclusive")
+        stop("'phi' must be between 0 and 1 inclusive")
     ifelse(x==0, phi + (1-phi) * ans, (1-phi) * ans)
 }
 
@@ -20,7 +20,7 @@ pzipois = function(q, lambda, phi=0) {
     ans = ppois(q, lambda)
     phi = rep(phi, length=length(ans))
     if(!is.Numeric(phi) || any(phi < 0) || any(phi > 1))
-        stop("phi must be between 0 and 1 inclusive")
+        stop("'phi' must be between 0 and 1 inclusive")
     phi + (1-phi) * ans
 }
 
@@ -30,7 +30,7 @@ qzipois = function(p, lambda, phi=0) {
     lambda = rep(lambda, len=nn)
     phi = rep(phi, len=nn)
     if(!is.Numeric(phi) || any(phi < 0) || any(phi > 1))
-        stop("phi must be between 0 and 1 inclusive")
+        stop("'phi' must be between 0 and 1 inclusive")
     ans = p 
     ans[p<=phi] = 0 
     ans[p>phi] = qpois((p[p>phi]-phi[p>phi])/(1-phi[p>phi]), lam=lambda[p>phi])
@@ -39,7 +39,7 @@ qzipois = function(p, lambda, phi=0) {
 
 rzipois = function(n, lambda, phi=0) {
     if(!is.Numeric(n, positive=TRUE, integer=TRUE, allow=1))
-        stop("n must be a single positive integer")
+        stop("'n' must be a single positive integer")
     ans = rpois(n, lambda)
     phi = rep(phi, len=length(ans))
     if(!is.Numeric(phi) || any(phi < 0) || any(phi > 1))
@@ -531,8 +531,8 @@ zipoisson = function(lphi="logit", llambda="loge",
             phi.init = if(length( .iphi)) .iphi else {
                 sum(w[y==0]) / sum(w)
             }
-            phi.init[phi.init <= 0] = 0.05  # Last resort
-            phi.init[phi.init >= 1] = 0.95  # Last resort
+            phi.init[phi.init <= 0.02] = 0.02  # Last resort
+            phi.init[phi.init >= 0.98] = 0.98  # Last resort
             if( .method.init == 2) {
                 mymean = weighted.mean(y[y>0], w[y>0]) + 1/16
                 lambda.init = (1- .sinit) * (y+1/8) + .sinit * mymean
@@ -799,6 +799,353 @@ rzibinom = function(n, size, prob, phi=0) {
 }
 
 
+
+
+
+
+
+
+
+
+dzinb = function(x, phi, size, prob, munb, log.arg=FALSE) {
+    if (!missing(munb)) {
+        if (!missing(prob))
+            stop("'prob' and 'munb' both specified")
+        prob <- size/(size + munb)
+    }
+    if(!is.logical(log.arg) || length(log.arg) != 1)
+        stop("bad input for 'log.arg'")
+    ans = dnbinom(x=x, size=size, prob=prob, log = log.arg)
+    if(!is.Numeric(phi) || any(phi < 0) || any(phi > 1))
+        stop("'phi' must be between 0 and 1 inclusive")
+    phi = rep(phi, length=length(ans))
+    if(log.arg) ifelse(x==0, log(phi+(1-phi)*exp(ans)), log1p(-phi) + ans) else
+                ifelse(x==0, phi + (1-phi) * ans, (1-phi) * ans)
+}
+
+pzinb = function(q, phi, size, prob, munb) {
+    if (!missing(munb)) {
+        if (!missing(prob))
+            stop("'prob' and 'munb' both specified")
+        prob <- size/(size + munb)
+    }
+    ans = pnbinom(q=q, size=size, prob=prob)
+    if(!is.Numeric(phi) || any(phi < 0) || any(phi > 1))
+        stop("'phi' must be between 0 and 1 inclusive")
+    phi + (1-phi) * ans
+}
+
+qzinb = function(p, phi, size, prob, munb) {
+    if (!missing(munb)) {
+        if (!missing(prob))
+            stop("'prob' and 'munb' both specified")
+        prob <- size/(size + munb)
+    }
+    nn = max(length(p), length(prob), length(phi), length(size))
+    p = rep(p, len=nn)
+    phi = rep(phi, len=nn)
+    prob = rep(prob, len=nn)
+    size = rep(size, len=nn)
+    if(!is.Numeric(phi) || any(phi < 0) || any(phi > 1))
+        stop("'phi' must be between 0 and 1 inclusive")
+    ans = p 
+    ans[p<=phi] = 0
+    ans[p>phi] = qnbinom(p=(p[p>phi]-phi[p>phi])/(1-phi[p>phi]),
+                         size=size[p>phi], prob=prob[p>phi])
+    ans
+}
+
+rzinb = function(n, phi, size, prob, munb) {
+    if (!missing(munb)) {
+        if (!missing(prob))
+            stop("'prob' and 'munb' both specified")
+        prob <- size/(size + munb)
+    }
+    if(!is.Numeric(n, positive=TRUE, integer=TRUE, allow=1))
+        stop("'n' must be a single positive integer")
+    ans = rnbinom(n=n, size=size, prob=prob)
+    if(!is.Numeric(phi) || any(phi < 0) || any(phi > 1))
+        stop("'phi' must be between 0 and 1 inclusive")
+    phi = rep(phi, len=length(ans))
+    ifelse(runif(n) < phi, rep(0, n), ans)
+}
+
+
+
+
+zinegbinomial.control <- function(save.weight=TRUE, ...)
+{
+    list(save.weight=save.weight)
+}
+
+
+
+zinegbinomial = function(lphi="logit", lmunb = "loge", lk = "loge",
+                         ephi=list(), emunb =list(), ek = list(),
+                         iphi = NULL, ik = NULL, zero = -3, method.init=1,
+                         shrinkage.init=0.95,
+                         nsimEIM=200)
+{
+    if(length(iphi) && (!is.Numeric(iphi, positiv=TRUE) || any(iphi >= 1)))
+        stop("'iphi' must contain values in (0,1)")
+    if(length(ik) && !is.Numeric(ik, positiv=TRUE))
+        stop("'ik' must contain positive values only")
+    if(!is.Numeric(method.init, allow=1, integ=TRUE, posit=TRUE) ||
+       method.init > 3) stop("argument \"method.init\" must be 1, 2 or 3")
+    if(!is.Numeric(nsimEIM, allow=1, integ=TRUE) || nsimEIM <= 50)
+        stop("'nsimEIM' should be an integer greater than 50")
+    if(!is.Numeric(shrinkage.init, allow=1) || shrinkage.init < 0 ||
+       shrinkage.init > 1) stop("bad input for argument \"shrinkage.init\"")
+
+    if(mode(lmunb) != "character" && mode(lmunb) != "name")
+        lmunb = as.character(substitute(lmunb))
+    if(mode(lk) != "character" && mode(lk) != "name")
+        lk = as.character(substitute(lk))
+    if(mode(lphi) != "character" && mode(lphi) != "name")
+        lphi = as.character(substitute(lphi))
+    if(!is.list(ephi)) ephi = list()
+    if(!is.list(emunb)) emunb = list()
+    if(!is.list(ek)) ek = list()
+
+    new("vglmff",
+    blurb=c("Zero-inflated negative binomial\n\n",
+           "Links:    ",
+           namesof("phi", lphi, earg= ephi, tag=FALSE), ", ",
+           namesof("munb", lmunb, earg= emunb, tag=FALSE), ", ",
+           namesof("k", lk, earg= ek, tag=FALSE), "\n",
+           "Mean:     (1-phi) * munb"),
+    constraints=eval(substitute(expression({
+        temp752 = .zero
+        if(length(temp752) && all(temp752 == -3))
+            temp752 = 3*(1:ncol(y))
+        constraints = cm.zero.vgam(constraints, x, temp752, M)
+    }), list( .zero=zero ))),
+    initialize=eval(substitute(expression({
+        y = as.matrix(y)
+        extra$NOS = NOS = ncoly = ncol(y)  # Number of species
+        if(length(dimnames(y)))
+            extra$dimnamesy2 = dimnames(y)[[2]]
+
+        mynames1 = if(NOS==1) "phi" else paste("phi", 1:NOS, sep="")
+        mynames2 = if(NOS==1) "munb" else paste("munb", 1:NOS, sep="")
+        mynames3 = if(NOS==1) "k" else paste("k", 1:NOS, sep="")
+        predictors.names =
+            c(namesof(mynames1, .lphi, earg= .ephi, tag= FALSE),
+              namesof(mynames2, .lmunb, earg= .emunb, tag= FALSE),
+              namesof(mynames3, .lk, earg= .ek, tag= FALSE))
+        predictors.names = predictors.names[interleave.VGAM(3*NOS, M=3)]
+        if(!length(etastart)) {
+            mu.init = if( .method.init == 3) {
+                y + 1/16
+            } else {
+                mu.init = y
+                for(iii in 1:ncol(y)) {
+                    index = (y[,iii] > 0)
+                    mu.init[,iii] = if( .method.init == 2)
+                        weighted.mean(y[index,iii], w=w[index]) else
+                        median(rep(y[index,iii], w[index])) + 1/8
+                }
+                (1- .sinit) * (y+1/16) + .sinit * mu.init
+            }
+
+            phi.init = if(length( .iphi))
+                matrix( .iphi, n, ncoly, byrow=TRUE) else {
+                phi.init = y
+                for(iii in 1:ncol(y))
+                    phi.init[,iii] = sum(w[y[,iii]==0]) / sum(w)
+                phi.init[phi.init <= 0.02] = 0.02  # Last resort
+                phi.init[phi.init >= 0.98] = 0.98  # Last resort
+                phi.init
+            }
+
+            kay.init =
+            if( is.Numeric( .ik )) {
+                matrix( .ik, nr=n, nc=ncoly, byrow=TRUE)
+            } else {
+                zinb.Loglikfun = function(kval, y, x, w, extraargs) {
+                    index = (y == 0)
+                    phivec = extraargs$phi
+                    muvec = extraargs$mu
+                    tmp8 = phivec[index] + (1.0-phivec[index]) *
+                           dnbinom(y[index], mu= muvec[index], size=kval)
+                    ell0 = log(tmp8)
+                    ell1 = log1p(-phivec[!index]) + dnbinom(y[!index],
+                                mu= muvec[!index], size=kval, log=TRUE)
+                    sum(w[index] * ell0) + sum(w[!index] * ell1)
+                }
+                k.grid = 2^((-3):6)
+                kay.init = matrix(0, nr=n, nc=NOS)
+                for(spp. in 1:NOS) {
+                    kay.init[,spp.] = getMaxMin(k.grid,
+                                      objfun=zinb.Loglikfun,
+                                      y=y[,spp.], x=x, w=w,
+                                      extraargs= list(phi=phi.init[,spp.],
+                                                      mu=mu.init[,spp.]))
+                }
+                kay.init
+            }
+
+            etastart = cbind(theta2eta(phi.init,  .lphi,  earg= .ephi),
+                             theta2eta(mu.init,   .lmunb, earg= .emunb),
+                             theta2eta(kay.init, .lk,    earg= .ek))
+            etastart = etastart[,interleave.VGAM(ncol(etastart),M=3)]
+        }
+    }), list( .lphi=lphi, .lmunb=lmunb, .lk=lk, .iphi=iphi, .ik=ik,
+              .sinit=shrinkage.init,
+              .ephi=ephi, .emunb=emunb, .ek=ek,
+              .method.init=method.init ))), 
+    inverse=eval(substitute(function(eta, extra=NULL) {
+        NOS = extra$NOS
+        phi  = eta2theta(eta[,3*(1:NOS)-2,drop=FALSE], .lphi,  earg= .ephi )
+        munb = eta2theta(eta[,3*(1:NOS)-1,drop=FALSE], .lmunb, earg= .emunb )
+        fv.matrix = (1 - phi) * munb
+        if(length(extra$dimnamesy2))
+            dimnames(fv.matrix) = list(dimnames(phi)[[1]], extra$dimnamesy2)
+        fv.matrix
+    }, list( .lphi=lphi, .lk=lk, .lmunb=lmunb,
+             .ephi=ephi, .emunb=emunb, .ek=ek ))),
+    last=eval(substitute(expression({
+        misc$link = c(rep( .lphi, length=NOS), rep( .lmunb, length=NOS),
+                      rep( .lk, length=NOS))
+        temp.names = c(mynames1, mynames2, mynames3)
+        temp.names = temp.names[interleave.VGAM(3*NOS, M=3)]
+        names(misc$link) = temp.names
+        misc$earg = vector("list", 3*NOS)
+        names(misc$earg) = temp.names
+        for(ii in 1:NOS) {
+            misc$earg[[3*ii-2]] = .ephi
+            misc$earg[[3*ii-1]] = .emunb
+            misc$earg[[3*ii  ]] = .ek
+        }
+        misc$method.init = .method.init
+        misc$nsimEIM = .nsimEIM
+        misc$expected = TRUE
+        if(intercept.only) {
+            phi  = eta2theta(eta[1,3*(1:NOS)-2], .lphi,  earg= .ephi)
+            munb = eta2theta(eta[1,3*(1:NOS)-1], .lmunb, earg= .emunb )
+            kval = eta2theta(eta[1,3*(1:NOS)],   .lk, earg= .ek)
+            misc$prob0 = phi + (1-phi) * (kval / (kval + munb))^kval # P(Y=0)
+        }
+    }), list( .lphi=lphi, .lmunb=lmunb, .lk=lk,
+              .ephi=ephi, .emunb=emunb, .ek=ek, .nsimEIM=nsimEIM,
+              .method.init=method.init ))),
+    loglikelihood=eval(substitute(
+        function(mu,y,w,residuals=FALSE, eta,extra=NULL) {
+        NOS = extra$NOS
+        phi  = eta2theta(eta[,3*(1:NOS)-2,drop=FALSE], .lphi,  earg= .ephi )
+        munb = eta2theta(eta[,3*(1:NOS)-1,drop=FALSE], .lmunb, earg= .emunb )
+        kmat = eta2theta(eta[,3*(1:NOS),  drop=FALSE], .lk,    earg= .ek )
+
+
+        ans = 0.0
+        for(spp. in 1:NOS) {
+            ytemp = y[,spp.]
+            phitemp = phi[,spp.]
+            ktemp = kmat[,spp.]
+            mutemp = munb[,spp.]
+            index = (ytemp == 0)
+            tmp8 = phitemp[index] + (1.0-phitemp[index]) *
+                   dnbinom(ytemp[index], mu= mutemp[index], size=ktemp[index])
+            ell0 = log(tmp8)
+            ell1 = log1p(-phitemp[!index]) + dnbinom(ytemp[!index],
+                        mu= mutemp[!index], size=ktemp[!index], log=TRUE)
+            ans = ans + sum(w[index] * ell0) + sum(w[!index] * ell1)
+        }
+        ans
+    }, list( .lphi=lphi, .lmunb=lmunb, .lk=lk,
+             .ephi=ephi, .emunb=emunb, .ek=ek ))),
+    vfamily=c("zinegbinomial"),
+    deriv=eval(substitute(expression({
+        NOS = extra$NOS
+        phi  = eta2theta(eta[,3*(1:NOS)-2,drop=FALSE], .lphi,  earg= .ephi )
+        munb = eta2theta(eta[,3*(1:NOS)-1,drop=FALSE], .lmunb, earg= .emunb )
+        kmat = eta2theta(eta[,3*(1:NOS),  drop=FALSE], .lk,    earg= .ek )
+        dphi.deta = dtheta.deta(phi, .lphi, earg= .ephi )
+        dmunb.deta = dtheta.deta(munb, .lmunb, earg= .emunb )
+        dk.deta = dtheta.deta(kmat, .lk, earg= .ek )
+        dthetas.detas = (cbind(dphi.deta, dmunb.deta,
+                              dk.deta))[,interleave.VGAM(3*NOS, M=3)]
+
+        d3 = deriv3(~ log(phi. + (1 - phi.) * (kmat. /(kmat. + munb. ))^kmat.),
+                    c("phi.", "munb.", "kmat."), hessian=FALSE)
+        dl.dthetas =  matrix(0, n, M)  # M=3*NOS; for all species
+        for(spp. in 1:NOS) {
+            index = (y[,spp.] == 0)
+            if(!sum(index) || !sum(!index))
+                stop("must have some 0s AND some positive counts in the data")
+
+            yvec. = y[index,spp.]
+            kmat. = kmat[index,spp.]
+            munb. = munb[index,spp.]
+            phi. = phi[index,spp.]
+            eval.d3 = eval(d3)  # Evaluated for one species
+            dl.dthetas[index,(3*spp.-2):(3*spp.)] = attr(eval.d3, "gradient")
+
+            yvec. = y[!index,spp.]
+            kmat. = kmat[!index,spp.]
+            munb. = munb[!index,spp.]
+            phi. = phi[!index,spp.]
+            dl.dphi = -1/(1-phi.)
+            dl.dmunb = yvec. / munb. - (yvec. +kmat.)/(kmat.+munb.)
+            dl.dk = digamma(yvec. +kmat.) - digamma(kmat.) -
+                    (yvec. +kmat.)/(munb.+kmat.) + 1 +
+                    log(kmat./(kmat.+munb.))
+            dl.dthetas[!index,(3*spp.-2):(3*spp.)] =
+                cbind(dl.dphi, dl.dmunb, dl.dk)
+        }
+        w * dl.dthetas * dthetas.detas
+    }), list( .lphi=lphi, .lmunb=lmunb, .lk=lk,
+              .ephi=ephi, .emunb=emunb, .ek=ek ))),
+    weight=eval(substitute(expression({
+
+        wz = matrix(0, n, 3*(M-1))
+        ind8 = iam(NA, NA, M=M, both=TRUE, diag=TRUE)
+        ind1 = iam(NA, NA, M=3, both=TRUE, diag=TRUE)
+        for(spp. in 1:NOS) {
+            run.varcov = 0
+            sdl.dthetas =  matrix(0, n, 3)
+            for(ii in 1:( .nsimEIM )) {
+                ysim = rzinb(n=n,phi=phi[,spp.],size=kmat[,spp.],mu=munb[,spp.])
+                index = (ysim == 0)
+
+                yvec. = ysim[index]
+                kmat. = kmat[index,spp.]
+                munb. = munb[index,spp.]
+                phi. = phi[index,spp.]
+                eval.d3 = eval(d3)  # Evaluated for one species
+                sdl.dthetas[index,] = attr(eval.d3, "gradient")
+
+                yvec. = ysim[!index]
+                kmat. = kmat[!index,spp.]
+                munb. = munb[!index,spp.]
+                phi. = phi[!index,spp.]
+                dl.dphi = -1/(1-phi.)
+                dl.dmunb = yvec. / munb. - (yvec. +kmat.)/(kmat.+munb.)
+                dl.dk = digamma(yvec. +kmat.) - digamma(kmat.) -
+                        (yvec. +kmat.)/(munb.+kmat.) + 1 +
+                        log(kmat./(kmat.+munb.))
+                sdl.dthetas[!index,] = cbind(dl.dphi, dl.dmunb, dl.dk)
+                rm(ysim)
+                temp3 = sdl.dthetas
+                run.varcov = ((ii-1) * run.varcov +
+                           temp3[,ind1$row.index]*temp3[,ind1$col.index]) / ii
+            }
+            wz1 = if(intercept.only)
+                matrix(apply(run.varcov, 2, mean),
+                       nr=n, nc=ncol(run.varcov), byrow=TRUE) else run.varcov
+
+            wz1 = wz1 * dthetas.detas[,3*(spp. -1) + ind1$row] *
+                        dthetas.detas[,3*(spp. -1) + ind1$col]
+
+            for(jay in 1:3)
+                for(kay in jay:3) {
+                    cptr = iam((spp.-1)*3+jay, (spp.-1)*3+kay, M=M)
+                    wz[,cptr] = wz1[,iam(jay, kay, M=3)]
+                }
+        }
+        w * wz
+    }), list( .lphi=lphi, .ephi=ephi, .nsimEIM=nsimEIM ))))
+}
 
 
 

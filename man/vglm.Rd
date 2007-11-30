@@ -28,9 +28,11 @@ vglm(formula, family, data = list(), weights = NULL, subset = NULL,
 
   }
   \item{family}{
-  a function of class \code{"vglmff"} describing
-  what statistical model is to be fitted.
-  These are called ``\pkg{VGAM} family functions''.
+  a function of class \code{"vglmff"} (see \code{\link{vglmff-class}})
+  describing what statistical model is to be fitted. This is called a
+  ``\pkg{VGAM} family function''.  See \code{\link{CommonVGAMffArguments}}
+  for general information about many types of arguments found in this
+  type of function.
 
   }
   \item{data}{
@@ -198,9 +200,11 @@ vglm(formula, family, data = list(), weights = NULL, subset = NULL,
   \item{df.total}{the total degrees of freedom.}
   \item{dispersion}{the scaling parameter.}
   \item{effects}{the effects.}
-  \item{fitted.values}{the fitted values, as a matrix.
-  This may be missing or consist entirely
-  of \code{NA}s, e.g., the Cauchy model.
+  \item{fitted.values}{
+  the fitted values, as a matrix.
+  This is usually the mean but may be quantiles, or the location
+  parameter, e.g., in the Cauchy model.
+
   }
   \item{misc}{a list to hold miscellaneous parameters.}
   \item{model}{the model frame.}
@@ -242,9 +246,11 @@ Vector generalized additive models.
 \emph{Journal of the Royal Statistical Society, Series B, Methodological},
 \bold{58}, 481--493.
 
-The \pkg{VGAM} library can be downloaded
-starting from \url{http://www.stat.auckland.ac.nz/~yee}.
-Other \pkg{VGAM} resources and documentation can be found there. 
+  Documentation accompanying the \pkg{VGAM} package at
+  \url{http://www.stat.auckland.ac.nz/~yee}
+  contains further information and examples.
+
+
 }
 
 

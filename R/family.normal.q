@@ -486,3 +486,208 @@ rtikuv = function(n, d, mean=0, sigma=1, Smallno=1.0e-6) {
 
 
 
+dfnorm = function(x, mean=0, sd=1, a1=1, a2=1) {
+    if(!is.Numeric(a1, posit=TRUE) || !is.Numeric(a2, posit=TRUE))
+        stop("bad input for arguments 'a1' and 'a2'")
+    if(any(a1 <= 0 | a2 <= 0))
+        stop("arguments 'a1' and 'a2' must have positive values only")
+    ans = dnorm(x=x/(a1*sd) - mean/sd)/(a1*sd) +
+          dnorm(x=x/(a2*sd) + mean/sd)/(a2*sd)
+    ans[x < 0] = 0
+    ans[a1 <= 0 | a2 <= 0 | is.na(a1) | is.na(a2)] = NA
+    ans
+}
+
+pfnorm = function(q, mean=0, sd=1, a1=1, a2=1) {
+    if(!is.Numeric(a1, posit=TRUE) || !is.Numeric(a2, posit=TRUE))
+        stop("bad input for arguments 'a1' and 'a2'")
+    if(any(a1 <= 0 | a2 <= 0))
+        stop("arguments 'a1' and 'a2' must have positive values only")
+    L = max(length(q), length(mean), length(sd))
+    q = rep(q, len=L); mean = rep(mean, len=L); sd = rep(sd, len=L);
+    ifelse(q < 0, 0, pnorm(q=q/(a1*sd) - mean/sd) - pnorm(q=-q/(a2*sd) - mean/sd))
+}
+
+qfnorm = function(p, mean=0, sd=1, a1=1, a2=1, ...) {
+    if(!is.Numeric(p, posit=TRUE) || max(p) >= 1)
+        stop("bad input for argument \"p\"")
+    if(!is.Numeric(a1, posit=TRUE) || !is.Numeric(a2, posit=TRUE))
+        stop("bad input for arguments 'a1' and 'a2'")
+    if(any(a1 <= 0 | a2 <= 0))
+        stop("arguments 'a1' and 'a2' must have positive values only")
+
+    L = max(length(p), length(mean), length(sd), length(a1), length(a2))
+    p = rep(p, len=L); mean = rep(mean, len=L); sd = rep(sd, len=L);
+    a1 = rep(a1, len=L); a2 = rep(a2, len=L);
+    ans = rep(0.0, len=L)
+    myfun = function(x, mean=0, sd=1, a1=1, a2=2, p)
+        pfnorm(q=x, mean=mean, sd=sd, a1=a1, a2=a2) - p
+    for(i in 1:L) {
+        mytheta = mean[i]/sd[i]
+        EY = sd[i] * ((a1[i]+a2[i]) * (mytheta * pnorm(mytheta) + dnorm(mytheta)) -
+             a2[i] * mytheta)
+        Upper = 2 * EY
+        while(pfnorm(q=Upper, mean=mean[i], sd=sd[i], a1=a1[i], a2=a2[i]) < p[i])
+            Upper = Upper + sd[i]
+        ans[i] = uniroot(f=myfun, lower=0, upper=Upper,
+                         mean=mean[i], sd=sd[i], a1=a1[i], a2=a2[i], p=p[i], ...)$root
+    }
+    ans
+}
+
+rfnorm = function(n, mean=0, sd=1, a1=1, a2=1) {
+    if(!is.Numeric(n, integ=TRUE, posit=TRUE))
+        stop("bad input for argument \"n\"")
+    if(!is.Numeric(a1, posit=TRUE) || !is.Numeric(a2, posit=TRUE))
+        stop("bad input for arguments 'a1' and 'a2'")
+    if(any(a1 <= 0 | a2 <= 0))
+        stop("arguments 'a1' and 'a2' must have positive values only")
+    X = rnorm(n, mean=mean, sd=sd)
+    pmax(a1 * X, -a2*X)
+}
+
+
+fnormal1 =  function(lmean="identity", lsd="loge", emean=list(), esd=list(),
+                     imean=NULL, isd=NULL, a1=1, a2=1, nsimEIM=500,
+                     method.init=1, zero=NULL)
+{
+    if(!is.Numeric(a1, posit=TRUE, allow=1) ||
+       !is.Numeric(a2, posit=TRUE, allow=1))
+        stop("bad input for arguments 'a1' and 'a2'")
+    if(any(a1 <= 0 | a2 <= 0))
+        stop("arguments 'a1' and 'a2' must each be a positive value")
+    if(!is.Numeric(method.init, allow=1, integ=TRUE, posit=TRUE) ||
+       method.init > 2)
+        stop("'method.init' must be 1 or 2")
+
+    if(mode(lmean) != "character" && mode(lmean) != "name")
+        lmean = as.character(substitute(lmean))
+    if(mode(lsd) != "character" && mode(lsd) != "name")
+        lsd = as.character(substitute(lsd))
+    if(length(zero) && !is.Numeric(zero, integer=TRUE, posit=TRUE))
+        stop("bad input for argument \"zero\"")
+    if(!is.list(emean)) emean = list()
+    if(!is.list(esd)) esd = list()
+    if(!is.Numeric(nsimEIM, allow=1, integ=TRUE) || nsimEIM <= 10)
+        stop("'nsimEIM' should be an integer greater than 10")
+    if(length(imean) && !is.Numeric(imean))
+        stop("bad input for 'imean'")
+    if(length(isd) && !is.Numeric(isd, posit=TRUE))
+        stop("bad input for 'isd'")
+
+    new("vglmff",
+    blurb=c("(Generalized) folded univariate normal distribution\n\n",
+            "Link:     ",
+            namesof("mean", lmean, earg=emean, tag= TRUE), "; ",
+            namesof("sd", lsd, earg=esd, tag= TRUE)),
+    initialize=eval(substitute(expression({
+        predictors.names = c(namesof("mean", .lmean, earg=.emean, tag=FALSE),
+                             namesof("sd",   .lsd, earg=.esd, tag=FALSE))
+        if((ncol(y <- cbind(y)) != 1) || any(y <= 0))
+ stop("response must be a vector or a one-column matrix with positive values")
+        if(!length(etastart)) {
+            junk = if(is.R()) lm.wfit(x=x, y=y, w=w) else
+                              lm.wfit(x=x, y=y, w=w, method="qr")
+
+
+if(FALSE) {
+        if((ncol(cbind(w)) != 1) || any(w != round(w)))
+   stop("'weights' must be a vector or a one-column matrix with integer values")
+            m1d = meany = weighted.mean(y, w)
+            m2d = weighted.mean(y^2, w)
+            stddev = sqrt( sum(w * junk$resid^2) / junk$df.residual )
+            Ahat = m1d^2 / m2d
+            thetahat = sqrt(max(1/Ahat -1, 0.1))
+            mean.init = rep(if(length( .imean)) .imean else
+                thetahat * sqrt((stddev^2 + meany^2) * Ahat), len=n)
+            sd.init = rep(if(length( .isd)) .isd else
+                sqrt((stddev^2 + meany^2) * Ahat), len=n)
+}
+
+
+            stddev = sqrt( sum(w * junk$resid^2) / junk$df.residual )
+            meany = weighted.mean(y, w)
+            mean.init = rep(if(length( .imean)) .imean else
+                {if( .method.init == 1) median(y) else meany}, len=n)
+            sd.init = rep(if(length( .isd)) .isd else
+                {if( .method.init == 1)  stddev else 1.2*sd(y)}, len=n)
+            etastart = cbind(theta2eta(mean.init, .lmean, earg= .emean),
+                             theta2eta(sd.init, .lsd, earg= .esd))
+        }
+    }), list( .lmean=lmean, .lsd=lsd, .emean=emean, .esd=esd,
+              .imean=imean, .isd=isd, .a1=a1, .a2=a2,
+              .method.init=method.init ))),
+    inverse=eval(substitute(function(eta, extra=NULL) {
+        mymu = eta2theta(eta[,1], .lmean, earg= .emean)
+        mysd = eta2theta(eta[,2], .lsd, earg= .esd)
+        mytheta = mymu/mysd
+        mysd * (( .a1+ .a2) * (mytheta * pnorm(mytheta) +
+                dnorm(mytheta)) - .a2 * mytheta)
+    }, list( .lmean=lmean, .lsd=lsd, .emean=emean, .esd=esd, .a1=a1, .a2=a2 ))),
+    last=eval(substitute(expression({
+        misc$link = c("mu"= .lmean, "sd"= .lsd)
+        misc$earg = list("mu"= .emean, "sd"= .esd)
+        misc$expected = TRUE
+        misc$nsimEIM = .nsimEIM
+        misc$simEIM = TRUE
+        misc$a1 = .a1
+        misc$a2 = .a2
+    }), list( .lmean=lmean, .lsd=lsd, .emean=emean, .esd=esd,
+              .nsimEIM=nsimEIM, .a1=a1, .a2=a2 ))),
+    loglikelihood=eval(substitute(
+        function(mu,y,w,residuals= FALSE,eta, extra=NULL) {
+        mymu = eta2theta(eta[,1], .lmean, earg= .emean)
+        mysd = eta2theta(eta[,2], .lsd, earg= .esd)
+        a1vec = .a1
+        a2vec = .a2
+        if(residuals) stop("loglikelihood residuals not implemented yet") else {
+            sum(w*log(dnorm(x=y/(a1vec*mysd) - mymu/mysd)/(a1vec*mysd) +
+                      dnorm(x=y/(a2vec*mysd) + mymu/mysd)/(a2vec*mysd)))
+        }
+    }, list( .lmean=lmean, .lsd=lsd, .emean=emean, .esd=esd, .a1=a1, .a2=a2 ))),
+    vfamily=c("fnormal1"),
+    deriv=eval(substitute(expression({
+        mymu = eta2theta(eta[,1], .lmean, earg= .emean)
+        mysd = eta2theta(eta[,2], .lsd, earg= .esd)
+        dmu.deta = dtheta.deta(mymu, .lmean, earg= .emean)
+        dsd.deta = dtheta.deta(mysd, .lsd, earg= .esd)
+        a1vec = .a1
+        a2vec = .a2
+        d3 = deriv3(~ log((exp(-0.5*(y/(a1vec*mysd) - mymu/mysd)^2)/a1vec +
+                           exp(-0.5*(y/(a2vec*mysd) + mymu/mysd)^2)/a2vec)/(mysd*sqrt(2*pi))),
+                    name=c("mymu","mysd"), hessian= FALSE)
+        eval.d3 = eval(d3)
+        dl.dthetas =  attr(eval.d3, "gradient")  # == cbind(dl.dmu, dl.dsd)
+        dtheta.detas = cbind(dmu.deta, dsd.deta)
+        w * dtheta.detas * dl.dthetas
+    }), list( .lmean=lmean, .lsd=lsd, .emean=emean, .esd=esd, .a1=a1, .a2=a2 ))),
+    weight=eval(substitute(expression({
+        de3 = deriv3(~ log((exp(-0.5*(ysim/(a1vec*mysd) - mymu/mysd)^2)/a1vec +
+                            exp(-0.5*(ysim/(a2vec*mysd) + mymu/mysd)^2)/a2vec)/(mysd*sqrt(2*pi))),
+                     name=c("mymu","mysd"), hessian= TRUE)
+        run.mean = 0
+        for(ii in 1:( .nsimEIM )) {
+            ysim = rfnorm(n=n, mean=mymu, sd=mysd, a1= a1vec, a2= a2vec)
+            eval.de3 = eval(de3)
+            d2l.dthetas2 =  attr(eval.de3, "hessian")
+            rm(ysim)
+
+            temp3 = matrix(0, n, dimm(M))
+            for(ss in 1:M)
+                for(tt in ss:M)
+                    temp3[,iam(ss,tt,M)] =  -d2l.dthetas2[,ss,tt]
+
+            run.mean = ((ii-1) * run.mean + temp3) / ii
+        }
+
+        wz = if(intercept.only)
+            matrix(apply(run.mean,2,mean), n, dimm(M), byrow=TRUE) else run.mean
+
+        index0 = iam(NA, NA, M=M, both=TRUE, diag=TRUE)
+        wz = wz * dtheta.detas[,index0$row] * dtheta.detas[,index0$col]
+        w * wz
+    }), list( .nsimEIM=nsimEIM, .a1=a1, .a2=a2 ))))
+}
+
+
+

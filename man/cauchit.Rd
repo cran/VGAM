@@ -96,6 +96,7 @@ cauchit(theta, earg = list(bvalue= .Machine$double.eps),
     \code{\link{probit}},
     \code{\link{cloglog}},
     \code{\link{loge}},
+    \code{\link{cauchy}},
     \code{\link{cauchy1}}.
  }
 \examples{

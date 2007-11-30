@@ -90,13 +90,10 @@ information.
 # Fit the proportional odds model
 data(pneumo)
 pneumo = transform(pneumo, let=log(exposure.time))
-fit = vglm(cbind(normal, mild, severe) ~ let,
-           cumulative(parallel=TRUE, reverse=TRUE), pneumo)
-fit
+(fit = vglm(cbind(normal, mild, severe) ~ let,
+           cumulative(parallel=TRUE, reverse=TRUE), pneumo))
 coef(fit, matrix=TRUE)
 constraints(fit)  # Parallel assumption results in this
-
-
 
 
 # Fit a rank-1 stereotype (RR-multinomial logit) model 

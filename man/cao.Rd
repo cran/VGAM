@@ -35,8 +35,11 @@ cao(formula, family, data = list(),
 
   }
   \item{family}{ 
-    a function of class \code{"vglmff"} describing what statistical
-    model is to be fitted.
+  a function of class \code{"vglmff"} (see \code{\link{vglmff-class}})
+  describing what statistical model is to be fitted. This is called a
+  ``\pkg{VGAM} family function''.  See \code{\link{CommonVGAMffArguments}}
+  for general information about many types of arguments found in this
+  type of function.
     See \code{\link{cqo}} for a list of those presently implemented.
 
   }
@@ -222,6 +225,10 @@ cao(formula, family, data = list(),
 Yee, T. W. (2006)
 Constrained additive ordination.
 \emph{Ecology}, \bold{87}, 203--213.
+
+  Documentation accompanying the \pkg{VGAM} package at
+  \url{http://www.stat.auckland.ac.nz/~yee}
+  contains further information and examples.
 
 }   
 \author{T. W. Yee}

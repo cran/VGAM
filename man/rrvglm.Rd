@@ -27,8 +27,11 @@ rrvglm(formula, family, data = list(), weights = NULL, subset = NULL,
 
   }
   \item{family}{
-  a function of class \code{"vglmff"} describing
-  what statistical model is to be fitted.
+  a function of class \code{"vglmff"} (see \code{\link{vglmff-class}})
+  describing what statistical model is to be fitted. This is called a
+  ``\pkg{VGAM} family function''.  See \code{\link{CommonVGAMffArguments}}
+  for general information about many types of arguments found in this
+  type of function.
 
   }
   \item{data}{
@@ -201,6 +204,10 @@ Anderson, J. A. (1984)
 Regression and ordered categorical variables.
 \emph{Journal of the Royal Statistical Society, Series B, Methodological},
 \bold{46}, 1--30.
+
+  Documentation accompanying the \pkg{VGAM} package at
+  \url{http://www.stat.auckland.ac.nz/~yee}
+  contains further information and examples.
 
 }
 

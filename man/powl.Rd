@@ -88,21 +88,19 @@ powl(theta, earg = list(power=1), inverse = FALSE, deriv = 0,
 \examples{
 powl("a", earg=list(power=2), short=FALSE, tag=TRUE)
 
-x = 1:5
-powl(x)
+powl(x <- 1:5)
 powl(x, earg=list(power=2))
 
 earg=list(power=2)
 max(abs(powl(powl(x, earg=earg), earg=earg, inverse=TRUE) - x)) # Should be 0
 
-x = (-5):5
-powl(x, earg=list(power=0.5))  # Has NAs
+powl(x <- (-5):5, earg=list(power=0.5))  # Has NAs
 
 # 1/2 = 0.5
 y = rbeta(n=1000, shape1=2^2, shape2=3^2)
-fit = vglm(y ~ 1, betaff(link="powl", earg=list(power=0.5), i1=3, i2=7),
-           trace=TRUE, cri="coef")
-coef(fit, matrix=TRUE)
+fit = vglm(y ~ 1, beta.ab(lshape1="powl", lshape2="powl",
+           eshape1=list(power=0.5), eshape2=list(power=0.5), i1=3, i2=7))
+t(coef(fit, matrix=TRUE))
 Coef(fit)  # Useful for intercept-only models
 vcov(fit, untrans=TRUE)
 }

@@ -80,6 +80,7 @@ A related distribution is the Maxwell distribution.
 }
 \seealso{
     \code{\link{Rayleigh}},
+    \code{\link{riceff}},
     \code{\link{maxwell}}.
 }
 \examples{

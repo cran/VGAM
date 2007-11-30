@@ -854,7 +854,7 @@ pgpd = function(q, location=0, scale=1, shape=0) {
     if(nscase) {
         pos = q>=0
         ind9 =  pos & scase
-        ans[ind9] = 1 - exp(-q[ind9]/scale[ind9])
+        ans[ind9] =  -expm1(-q[ind9]/scale[ind9])
         ind9 = !pos & scase
         ans[ind9] = 0
     }
@@ -1433,7 +1433,7 @@ egumbel = function(llocation="identity",
         loc = eta2theta(eta[,1], .llocation, earg= .elocation)
         sc = eta2theta(eta[,2], .lscale, earg= .escale )
         zedd = (y-loc) / sc
-        temp2 = 1 - exp(-zedd)
+        temp2 = -expm1(-zedd)
         dl.dloc = temp2 / sc
         dl.dsc = -1/sc + temp2 * zedd / sc
         dloc.deta = dtheta.deta(loc, .llocation, earg= .elocation)
@@ -1571,7 +1571,7 @@ cgumbel = function(llocation="identity",
         loc = eta2theta(eta[,1], .llocation, earg= .elocation )
         sc  = eta2theta(eta[,2], .lscale, earg= .escale )
         zedd = (y-loc) / sc
-        temp2 = 1 - exp(-zedd)
+        temp2 = -expm1(-zedd)
         dl.dloc = temp2 / sc
         dl.dsc = -1/sc + temp2 * zedd / sc
         dloc.deta = dtheta.deta(loc, .llocation, earg= .elocation )

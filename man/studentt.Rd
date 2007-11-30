@@ -6,7 +6,7 @@
   Estimation of the degrees of freedom for a Student t distribution.
 }
 \usage{
-studentt(link.df = "loglog", earg=list())
+studentt(link.df = "loglog", earg=list(), idf=NULL, nsimEIM=100)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -19,6 +19,17 @@ studentt(link.df = "loglog", earg=list())
   \item{earg}{
   List. Extra argument for the link.
   See \code{earg} in \code{\link{Links}} for general information.
+
+  }
+  \item{idf}{
+  Optional initial value.
+  If given, its value must be greater than 1.
+  The default is to compute an initial value internally.
+
+  }
+
+  \item{nsimEIM}{
+  See \code{\link{CommonVGAMffArguments}}.
 
   }
 }
@@ -36,6 +47,13 @@ studentt(link.df = "loglog", earg=list())
   corresponds to the standard Cauchy distribution.
   The degrees of freedom is treated as a parameter to be estimated,
   and as real and not integer.
+
+  Simulation is used to estimate the EIM.
+  Consequently the results will be reproducible only if
+  a function such as \code{\link[base:Random]{set.seed}} is used.
+  Increasing the value of \code{nsimEIM} will give more accurate results.
+  In general convergence will be slow, especially when there are
+  covariates.
 
 }
 \value{
@@ -57,6 +75,10 @@ The probable error of a mean.
 
 \author{ T. W. Yee }
 \note{
+  Practical experience has shown reasonably good initial values are
+  required. If convergence failure occurs try using \code{idf}.
+  Local solutions are also possible.
+
   A standard normal distribution corresponds to a \emph{t} distribution
   with infinite degrees of freedom.  Consequently, if the data is close
   to normal, there may be convergence problems.
@@ -67,12 +89,11 @@ The probable error of a mean.
     \code{\link{loglog}},
     \code{\link[stats]{TDist}}.
 
-
 }
 \examples{
 n = 500
-y = rt(n, df=exp(exp(1)))
-fit = vglm(y ~ 1, studentt)
+y = rt(n, df=exp(exp(0.5)))
+fit = vglm(y ~ 1, studentt, trace=TRUE)
 coef(fit, matrix=TRUE)
 Coef(fit) 
 }

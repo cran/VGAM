@@ -84,7 +84,7 @@ Hoboken, N.J.: Wiley-Interscience.
 }
 \author{ T. W. Yee }
 \note{
-  The response must be a two-column matrix.  Currently, the fitted
+  The response must be a two-column matrix. Currently, the fitted
   value is a matrix with two columns and values equal to 1.
   This is because each marginal distribution corresponds to a
   exponential distribution with unit mean.

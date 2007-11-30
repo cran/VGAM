@@ -1,12 +1,12 @@
 \name{ruge}
 \alias{ruge}
-\non_function{}
+\docType{data}
 \title{Rutherford-Geiger Polonium Data}
-\usage{data(ruge)}
 \description{
   Decay counts of polonium  recorded by Rutherford and Geiger (1910).
 
 }
+\usage{data(ruge)}
 \format{
   This data frame contains the following columns:
   \describe{

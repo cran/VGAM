@@ -26,6 +26,7 @@ chisq(link = "loge", earg=list())
   The degrees of freedom is treated as a parameter to be estimated.
   It is treated as real and not integer.
   Being positive, a log link is used by default.
+  Fisher scoring is used.
 
 }
 \value{
