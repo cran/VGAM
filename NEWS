@@ -5,6 +5,35 @@
 	**************************************************
 
 
+                CHANGES IN VGAM VERSION 0.7-5
+
+NEW FEATURES
+
+    o   New VGAM family functions:
+        betaff(), cardioid(dpqr), cauchy(), felix(d), fnormal1(dpqr),
+        invbinomial(), kumar(dpqr), lms.yjn2(), mix2exp(), plackett(dpr),
+        riceff(dr), skellam(dr), zinegbinomial(dpqr).
+    o   These VGAM family functions have been improved:
+        frank(), genpoisson(), hzeta(), mix2normal1(), mix2poisson(),
+        pospoisson(), studentt().
+    o   These VGAM family functions have had their default arguments changed:
+        genpoisson(), mix2normal1().
+    o   New documentation: borel.tanner(dr).
+    o   expm1() used whenever possible.
+    o   Renamed VGAM family functions: betaff() changed to beta.ab().
+    o   cauchy1() now returns the location estimates as the fitted values
+        instead of NA (for the mean).
+
+
+BUG FIXES
+
+    o   cumulative(), sratio(), cratio(), acat() had response-matrix
+        column names which got lost.
+    o   lms.yjn() failed if there was not enough data.
+
+
+
+
                 CHANGES IN VGAM VERSION 0.7-4
 
 NEW FEATURES

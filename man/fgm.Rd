@@ -9,7 +9,8 @@
 
 }
 \usage{
-fgm(lapar="identity", earg=list(), iapar=NULL, method.init=1)
+fgm(lapar="rhobit", earg=list(), iapar=NULL,
+    method.init=1, nsimEIM=200)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -37,6 +38,10 @@ fgm(lapar="identity", earg=list(), iapar=NULL, method.init=1)
   try the other value, or else specify a value for \code{ia}.
 
   }
+  \item{nsimEIM}{
+  See \code{\link{CommonVGAMffArguments}} for more information.
+
+  }
 }
 \details{
   The cumulative distribution function is
@@ -44,17 +49,16 @@ fgm(lapar="identity", earg=list(), iapar=NULL, method.init=1)
              ( 1 + \alpha (1 - y_1) (1 - y_2) ) }{%
         P(Y1 <= y1, Y2 <= y2) = 
         y1 * y2 * ( 1 + alpha * (1 - y1) * (1 - y2) ) }
-  for real \eqn{\alpha}{alpha}
-  (the range is data-dependent).
+  for \eqn{-1 < \alpha < 1}{-1 < alpha < 1}.
   The support of the function is the unit square.
   The marginal distributions are the standard uniform distributions.
-  When \eqn{\alpha = 0}{alpha=0} then the random variables are
+  When \eqn{\alpha = 0}{alpha=0} the random variables are
   independent.
 
-  A variant of Newton-Raphson is used, which only seems to work for an
-  intercept model.
-  It is a very good idea to set \code{trace=TRUE}.
-  This \pkg{VGAM} family function is prone to numerical difficulties.
+% A variant of Newton-Raphson is used, which only seems to work for an
+% intercept model.
+% It is a very good idea to set \code{trace=TRUE}.
+% This \pkg{VGAM} family function is prone to numerical difficulties.
 
 }
 \value{
@@ -82,15 +86,15 @@ Hoboken, N.J.: Wiley-Interscience.
 }
 
 \seealso{
+  \code{\link{rfgm}},
   \code{\link{frank}},
   \code{\link{morgenstern}}.
+
 }
 \examples{
-n = 1000
-ymat = cbind(runif(n), runif(n))
-\dontrun{plot(ymat)}
+ymat = rfgm(n = 1000, alpha=rhobit(3, inverse=TRUE))
+\dontrun{plot(ymat, col="blue")}
 fit = vglm(ymat ~ 1, fam=fgm, trace=TRUE)
-fit = vglm(ymat ~ 1, fam=fgm, trace=TRUE, crit="coef")
 coef(fit, matrix=TRUE)
 Coef(fit)
 fitted(fit)[1:5,]
@@ -98,3 +102,4 @@ fitted(fit)[1:5,]
 \keyword{models}
 \keyword{regression}
 
+% for real \eqn{\alpha}{alpha} (the range is data-dependent).

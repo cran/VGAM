@@ -5,8 +5,8 @@
 \alias{rfrank}
 \title{Frank's Bivariate Distribution}
 \description{
-  Density, distribution function, quantile function and random
-  generation for the one parameter Frank distribution.
+  Density, distribution function, and random
+  generation for the (one parameter) bivariate Frank distribution.
 
 }
 \usage{

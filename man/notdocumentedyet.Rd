@@ -44,7 +44,7 @@
 \alias{biplot}
 \alias{biplot.qrrvglm}
 % \alias{block.diag}
-\alias{borel.tanner}
+% \alias{borel.tanner}
 \alias{bs}
 % \alias{callcaof}
 % \alias{callcqof}
@@ -83,6 +83,7 @@
 \alias{deplot.lms.bcg}
 \alias{deplot.lms.bcn}
 \alias{deplot.lms.yjn}
+\alias{deplot.lms.yjn2}
 \alias{deplot.vglm}
 \alias{deviance}
 \alias{deviance.uqo}
@@ -110,6 +111,8 @@
 \alias{eta2theta}
 % \alias{extract.arg}
 \alias{family.vglm}
+%\alias{felix}
+%\alias{dfelix}
 \alias{fff.control}
 \alias{fill2}
 \alias{fill3}
@@ -136,7 +139,7 @@
 % \alias{hypersecant.1}
 % \alias{ima}
 % \alias{interleave.VGAM}
-\alias{invbinomial}
+% \alias{invbinomial}
 \alias{inverse.gaussianff}
 \alias{is.Numeric}
 \alias{is.bell}
@@ -163,6 +166,9 @@
 \alias{m2avglm}
 % \alias{matrix.power}
 \alias{mbesselI0}
+\alias{mix2exp.control}
+\alias{mix2normal1.control}
+\alias{mix2poisson.control}
 \alias{model.matrix.qrrvglm}
 % \alias{mux11}
 % \alias{mux111}
@@ -247,6 +253,7 @@
 \alias{qtplot.lms.bcg}
 \alias{qtplot.lms.bcn}
 \alias{qtplot.lms.yjn}
+\alias{qtplot.lms.yjn2}
 \alias{qtplot.vextremes}
 \alias{qtplot.vglm}
 \alias{quasiff}

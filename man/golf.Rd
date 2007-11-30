@@ -69,13 +69,13 @@ golf(theta, earg = list(lambda = 1), inverse = FALSE, deriv = 0,
 
 }
 \value{
-  See Yee (2006) for details.
+  See Yee (2007) for details.
 
 }
 \references{
-  Yee, T. W. (2006)
+  Yee, T. W. (2007)
   \emph{Ordinal ordination with normalizing link functions for count data}, 
-  (submitted for publication).
+  (in preparation).
 
 }
 \author{ Thomas W. Yee }

@@ -9,6 +9,154 @@
 
 
 
+cenpoisson = function(link = "loge", earg = list(), imu = NULL) {
+    if(mode(link) != "character" && mode(link) != "name")
+        link = as.character(substitute(link))
+    if(!is.list(earg))
+        earg = list()
+
+    new("vglmff",
+    blurb = c("Censored Poisson distribution\n\n",
+              "Link:     ", namesof("mu", link, earg = earg), "\n",
+              "Variance: mu"),
+    initialize = eval(substitute(expression({
+        if(any(is.na(y)))
+            stop("NAs are not allowed in the response")
+
+        if(any(y != round(y)))
+            warning("the response should be integer-valued")
+        centype = attr(y, "type")
+        if(centype=="right") {
+            temp = y[, 2]
+            extra$uncensored = ifelse(temp == 1, TRUE, FALSE)
+            extra$rightcensored = ifelse(temp == 0, TRUE, FALSE)
+            extra$leftcensored = rep(FALSE, len=n)
+            extra$interval = rep(FALSE, len=n)
+            init.mu = pmax(y[,1], 1/8)
+        } else
+        if(centype=="left") {
+            temp = y[, 2]
+            extra$uncensored = ifelse(temp == 1, TRUE, FALSE)
+            extra$rightcensored = rep(FALSE, len=n)
+            extra$leftcensored = ifelse(temp == 0, TRUE, FALSE)
+            extra$interval = rep(FALSE, len=n)
+            init.mu = pmax(y[,1], 1/8)
+        } else
+        if(centype=="interval" || centype=="interval2") {
+            temp = y[, 3]
+            extra$uncensored = ifelse(temp == 1, TRUE, FALSE)
+            extra$rightcensored = ifelse(temp == 0, TRUE, FALSE)
+            extra$leftcensored = ifelse(temp == 2, TRUE, FALSE)
+            extra$intervalcensored = ifelse(temp == 3, TRUE, FALSE)
+            init.mu = pmax((y[,1] + y[,2])/2, 1/8) # for intervalcensored
+            if(any(extra$uncensored))
+            init.mu[extra$uncensored] = pmax(y[extra$uncensored,1], 1/8)
+            if(any(extra$rightcensored))
+            init.mu[extra$rightcensored] = pmax(y[extra$rightcensored,1], 1/8)
+            if(any(extra$leftcensored))
+            init.mu[extra$leftcensored] = pmax(y[extra$leftcensored,1], 1/8)
+        } else
+        if(centype=="counting") {
+            stop("type=='counting' not compatible with cenpoisson()")
+            init.mu = pmax(y[,1], 1/8)
+            stop("currently not working")
+        } else
+            stop("response have to be in a class of SurvS4")
+
+        if(length( .imu )) init.mu = 0 * y[,1] + .imu
+    
+        predictors.names = namesof("mu", .link, earg= .earg, short=TRUE)
+        if(!length(etastart))
+            etastart = theta2eta(init.mu, link = .link, earg = .earg)
+    }), list( .link = link, .earg = earg, .imu = imu))),
+    inverse = eval(substitute(function(eta, extra = NULL) {
+        mu = eta2theta(eta, link = .link, earg = .earg)
+        mu
+    }, list( .link = link, .earg = earg ))),
+    last = eval(substitute(expression({
+        misc$expected = FALSE
+        misc$link = c("mu" = .link)
+        misc$earg = list("mu" = .earg)
+    }), list( .link = link, .earg = earg ))),
+    link = eval(substitute(function(mu, extra = NULL) {
+        theta2eta(mu, link = .link, earg = .earg)
+    }, list( .link = link, .earg = earg ))),
+    loglikelihood = function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
+        cen0 = extra$uncensored
+        cenL = extra$leftcensored
+        cenU = extra$rightcensored
+        cenI = extra$intervalcensored
+        if(residuals){
+          stop("loglikelihood residuals not implemented yet")
+        } else {
+          sum(w[cen0] * dpois(y[cen0,1], mu[cen0], log=TRUE)) +
+          sum(w[cenU] * log1p(-ppois(y[cenU,1] - 1, mu[cenU]))) +
+          sum(w[cenL] * ppois(y[cenL,1] - 1, mu[cenL], log=TRUE)) +
+          sum(w[cenI] * log(ppois(y[cenI,2], mu[cenI]) -
+                            ppois(y[cenI,1], mu[cenI])))
+        }
+    },
+    vfamily = "cenpoisson",
+    deriv = eval(substitute(expression({
+        cen0 = extra$uncensored
+        cenL = extra$leftcensored
+        cenU = extra$rightcensored
+        cenI = extra$intervalcensored
+        lambda = eta2theta(eta, link = .link, earg = .earg)
+        dl.dlambda = (y[,1] - lambda)/lambda   # uncensored
+        yllim = yulim = y[,1]   # uncensored
+        if(any(cenU)) {
+            yllim[cenU] = y[cenU,1]
+            densm1 = dpois(yllim-1, lambda)
+            queue = ppois(yllim-1, lambda, lower=FALSE) # Right tail probability
+            dl.dlambda[cenU] = densm1[cenU] / queue[cenU]
+        }
+        if(any(cenL)) {
+            yulim[cenL] = y[cenL,1]-1
+            densm0 = dpois(yulim, lambda)
+            Queue = ppois(yulim, lambda)    # Left tail probability
+            dl.dlambda[cenL] = -densm0[cenL] / Queue[cenL]
+        }
+        if(any(cenI)) {
+            yllim[cenI] = y[cenI,1]+1
+            yulim[cenI] = y[cenI,2]
+            Queue1 = ppois(yllim-1, lambda)
+            Queue2 = ppois(yulim, lambda)
+            densm02 = dpois(yulim, lambda)
+            densm12 = dpois(yllim-1, lambda)
+            dl.dlambda[cenI] =
+                (-densm02[cenI]+densm12[cenI]) / (Queue2[cenI]-Queue1[cenI])
+        }
+        dlambda.deta = dtheta.deta(theta=lambda, link= .link, earg= .earg)
+        w * dl.dlambda * dlambda.deta
+    }), list( .link = link, .earg = earg ))),
+    weight = eval(substitute(expression({
+        d2lambda.deta2 = d2theta.deta2(theta=lambda, link= .link, earg= .earg)
+        d2l.dlambda2 = 1 / lambda # uncensored; Fisher scoring
+        if(any(cenU)) {
+            densm2 = dpois(yllim-2, lambda)
+            d2l.dlambda2[cenU] = (dl.dlambda[cenU])^2 -
+                (densm2[cenU]-densm1[cenU])/queue[cenU]
+        }
+        if(any(cenL)) {
+            densm1 = dpois(yulim-1, lambda)
+            d2l.dlambda2[cenL] = (dl.dlambda[cenL])^2 -
+                (densm0[cenL]-densm1[cenL])/Queue[cenL]
+        }
+        if(any(cenI)) {
+            densm03 = dpois(yulim-1, lambda)
+            densm13 = dpois(yllim-2, lambda)
+            d2l.dlambda2[cenI] = (dl.dlambda[cenI])^2 -
+                (densm13[cenI]-densm12[cenI]-densm03[cenI] +
+                 densm02[cenI]) / (Queue2[cenI]-Queue1[cenI])
+        }
+        wz =  w *((dlambda.deta^2) * d2l.dlambda2)
+        wz
+    }), list( .link = link, .earg = earg ))))
+}
+
+
+
 
 if(FALSE)
 cexpon = 
@@ -38,8 +186,8 @@ ecexpon = function(link="loge", location=0)
         }else
         if (type=="interval"){
           temp <- y[,3]
-          mu = ifelse(temp == 3, y[,2] + (abs(y[,2] - extra$location) < 0.001)
-          / 8,y[,1] + (abs(y[,1] - extra$location) < 0.001) / 8)
+          mu = ifelse(temp==3, y[,2] + (abs(y[,2] - extra$location) < 0.001)/8,
+                      y[,1] + (abs(y[,1] - extra$location) < 0.001) / 8)
         }
         if(!length(etastart))
             etastart = theta2eta(1/(mu-extra$location), .link)
@@ -566,6 +714,7 @@ function (time, time2, event, type = c("right", "left", "interval",
 
 is.SurvS4 <- function(x) inherits(x, "SurvS4")
 
+  setIs(class1="SurvS4", class2="matrix") # Forces vglm()@y to be a matrix
 
 
 
@@ -590,7 +739,7 @@ function (x, ...)
     } else {
         stat <- x[, 3]
         temp <- c("+", "", "-", "]")[stat + 1]
-        temp2 <- ifelse(stat == 3, paste("[", format(x[, 1]),
+        temp2 <- ifelse(stat == 3, paste("(", format(x[, 1]),
             ", ", format(x[, 2]), sep = ""), format(x[, 1]))
         ifelse(is.na(stat), as.character(NA), paste(temp2, temp, sep = ""))
     }

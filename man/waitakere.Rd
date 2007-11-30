@@ -1,14 +1,14 @@
 \name{waitakere}
 \alias{waitakere}
-\non_function{}
+\docType{data}
 \title{Waitakere Ranges Data}
-\usage{data(waitakere)}
 \description{
   The \code{waitakere} data frame has 579 rows and 18 columns.
   Altitude is explanatory, and there are binary responses 
   (presence/absence = 1/0 respectively) for 17 plant species.
 
 }
+\usage{data(waitakere)}
 \format{
   This data frame contains the following columns:
   \describe{

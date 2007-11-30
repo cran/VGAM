@@ -61,9 +61,7 @@ rzibinom(n, size, prob, phi = 0)
     \code{\link[stats:Binomial]{dbinom}}.
 }
 \examples{
-prob = 0.2
-size = 10
-phi = 0.5
+prob = 0.2; size = 10; phi = 0.5
 (i = dzibinom(0:size, size, prob, phi=phi))
 cumsum(i) - pzibinom(0:size, size, prob, phi=phi)  # Should be 0s
 table(rzibinom(100, size, prob, phi=phi))
@@ -73,11 +71,12 @@ round(dzibinom(0:10, size, prob, phi=phi) * 100) # Should be similar
 
 \dontrun{
 x = 0:size
-plot(x, dzibinom(x, size, prob, phi=phi), type="h", ylab="Probability", 
-     main=paste("ZIB(", size, ", ", prob, ", phi=", phi, ") (blue) vs",
-     " Binomial(", size, ", ", prob, ") (red and shifted slightly)", sep=""),
-     lwd=2, col="blue", las=1)
-lines(x+0.05, dbinom(x, size, prob), type="h", lwd=2, col="red")
+barplot(rbind(dzibinom(x, size, prob, phi=phi),
+              dbinom(x, size, prob)),
+        beside = TRUE, col = c("blue","green"),
+        main=paste("ZIB(", size, ", ", prob, ", phi=", phi, ") (blue) vs",
+                   " Binomial(", size, ", ", prob, ") (green)", sep=""),
+        names.arg = as.character(x), las=1, lwd=2)
 }
 }
 \keyword{distribution}

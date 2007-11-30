@@ -181,7 +181,7 @@ dpospois = function(x, lambda) {
         stop("bad input for argument \"lambda\"")
     L = max(length(x), length(lambda))
     x = rep(x, len=L); lambda = rep(lambda, len=L); 
-    ans = ifelse(x==0, 0, dpois(x, lambda) / (1 - exp(-lambda)))
+    ans = ifelse(x==0, 0, -dpois(x, lambda) / expm1(-lambda))
     ans
 }
 
@@ -191,7 +191,7 @@ ppospois = function(q, lambda) {
         stop("bad input for argument \"lambda\"")
     L = max(length(q), length(lambda))
     q = rep(q, len=L); lambda = rep(lambda, len=L); 
-    ifelse(q<1, 0, (ppois(q, lambda) - exp(-lambda)) / (1 - exp(-lambda)))
+    ifelse(q<1, 0, (ppois(q, lambda) - exp(-lambda)) / (-expm1(-lambda)))
 }
 
 qpospois = function(p, lambda) {
@@ -199,7 +199,7 @@ qpospois = function(p, lambda) {
         stop("bad input for argument \"lambda\"")
     if(!is.Numeric(p, posit=TRUE) || any(p >= 1))
         stop("bad input for argument \"p\"")
-    qpois(p * (1 - exp(-lambda)) + exp(-lambda), lambda)
+    qpois(p * (-expm1(-lambda)) + exp(-lambda), lambda)
 }
 
 
@@ -222,11 +222,18 @@ rpospois = function(n, lambda) {
 
 
 
-pospoisson = function(link="loge", earg=list())
+pospoisson = function(link="loge", earg=list(), expected=TRUE,
+                      ilambda=NULL, method.init=1)
 {
     if(!missing(link))
         link = as.character(substitute(link))
     if(!is.list(earg)) earg = list()
+    if(!is.logical(expected) || length(expected) != 1)
+        stop("bad input for argument \"expected\"")
+    if(length( ilambda) && !is.Numeric(ilambda, posit=TRUE))
+        stop("bad input for argument \"ilambda\"")
+    if(!is.Numeric(method.init, allow=1, integ=TRUE, posit=TRUE) ||
+       method.init > 2) stop("argument \"method.init\" must be 1 or 2")
 
     new("vglmff",
     blurb=c("Positive-Poisson distribution\n\n",
@@ -238,40 +245,55 @@ pospoisson = function(link="loge", earg=list())
         predictors.names = namesof(if(ncol(y)==1) "lambda"
             else paste("lambda", 1:ncol(y), sep=""), .link,
             earg= .earg, tag=FALSE)
+        if( .method.init == 1) {
+            lambda.init = apply(y, 2, weighted.mean, w=w)
+            lambda.init = matrix(lambda.init, n, ncol(y), byrow=TRUE)
+        } else {
+            lambda.init = -y / expm1(-y)
+        }
         if(!length(etastart))
-            etastart = theta2eta(y / (1-exp(-y)), .link, earg= .earg )
-    }), list( .link=link, .earg= earg ))), 
+            etastart = theta2eta(if(length( .ilambda)) (y*0 + .ilambda) else
+                lambda.init, .link, earg= .earg)
+    }), list( .link=link, .earg= earg,
+              .ilambda=ilambda, .method.init=method.init ))),
     inverse=eval(substitute(function(eta, extra=NULL) {
         lambda = eta2theta(eta, .link, earg= .earg )
-        lambda / (1-exp(-lambda))
+        -lambda / expm1(-lambda)
     }, list( .link=link, .earg= earg ))),
     last=eval(substitute(expression({
+        misc$expected = .expected
         misc$link = rep( .link, len=M)
         names(misc$link) = if(M==1) "lambda" else paste("lambda", 1:M, sep="")
         misc$earg = vector("list", M)
         names(misc$earg) = names(misc$link)
         for(ii in 1:M)
             misc$earg[[ii]] = .earg
-    }), list( .link=link, .earg= earg ))),
+    }), list( .link=link, .earg= earg, .expected=expected ))),
     loglikelihood=eval(substitute(
         function(mu,y,w,residuals=FALSE, eta,extra=NULL) {
         lambda = eta2theta(eta, .link, earg= .earg ) 
         if(residuals) stop("loglikelihood residuals not implemented yet") else
-        sum(w * (-log1p(-exp(-lambda)) - lambda + y*log(lambda)))
+        sum(w * (y*log(lambda) - log1p(-exp(-lambda)) - lambda))
     }, list( .link=link, .earg= earg ))),
     vfamily=c("pospoisson"),
     deriv=eval(substitute(expression({
-         lambda = eta2theta(eta, .link, earg= .earg ) 
-         dl.dlambda = y/lambda - 1 - 1/(exp(lambda)-1)
-         dlambda.deta = dtheta.deta(lambda, .link, earg= .earg )
-         w * dl.dlambda * dlambda.deta
+        lambda = eta2theta(eta, .link, earg= .earg ) 
+        temp = exp(lambda)
+        dl.dlambda = y/lambda - 1 - 1/(temp-1)
+        dlambda.deta = dtheta.deta(lambda, .link, earg= .earg )
+        w * dl.dlambda * dlambda.deta
     }), list( .link=link, .earg= earg ))),
     weight=eval(substitute(expression({
-         temp = exp(lambda)
-         ed2l.dlambda2 = -temp * (1/lambda - 1/(temp-1)) / (temp-1)
-         wz = -w * (dlambda.deta^2) * ed2l.dlambda2
-         wz
-    }), list( .link=link, .earg= earg ))))
+        if( .expected ) {
+            ed2l.dlambda2 = temp * (1/lambda - 1/(temp-1)) / (temp-1)
+            wz = (dlambda.deta^2) * ed2l.dlambda2
+        } else {
+            d2l.dlambda2 = y/lambda^2 - temp/(temp-1)^2
+            d2lambda.deta2 = d2theta.deta2(lambda, .link, earg=.earg)
+            wz = (dlambda.deta^2) * d2l.dlambda2 - dl.dlambda * d2lambda.deta2
+        }
+        w * wz
+    }), list( .link=link, .earg= earg, .expected=expected ))))
 }
 
 

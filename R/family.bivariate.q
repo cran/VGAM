@@ -412,7 +412,7 @@ rfrank = function(n, alpha) {
     if(any(!index))
         Y[!index] = logb(T[!index]/(T[!index]+(1-alpha[!index])*V[!index]),
                          base=alpha[!index])
-    ans = matrix(c(X,Y), nrow=n, ncol=2) # Want to suppress column names
+    ans = matrix(c(X,Y), nrow=n, ncol=2)
     if(any(index)) {
         ans[index,1] = runif(sum(index)) # Uniform density for alpha==1
         ans[index,2] = runif(sum(index))
@@ -471,12 +471,22 @@ dfrank = function(x1, x2, alpha) {
 
 
 
-frank = function(lapar="loge", eapar=list(), iapar=2) {
+frank.control <- function(save.weight=TRUE, ...)
+{
+    list(save.weight=save.weight)
+}
+
+
+
+frank = function(lapar="loge", eapar=list(), iapar=2, nsimEIM=250) {
     if(mode(lapar) != "character" && mode(lapar) != "name")
         lapar = as.character(substitute(lapar))
     if(!is.Numeric(iapar, positive = TRUE))
         stop("\"iapar\" must be positive")
     if(!is.list(eapar)) eapar = list()
+    if(length(nsimEIM) &&
+       (!is.Numeric(nsimEIM, allow=1, integ=TRUE) || nsimEIM <= 50))
+        stop("'nsimEIM' should be an integer greater than 50")
 
     new("vglmff",
     blurb=c("Frank's Bivariate Distribution\n",
@@ -488,6 +498,8 @@ frank = function(lapar="loge", eapar=list(), iapar=2) {
         if(any(y <= 0) || any(y >= 1))
             stop("the response must have values between 0 and 1") 
         predictors.names = c(namesof("apar", .lapar, earg= .eapar, short=TRUE))
+        if(length(dimnames(y)))
+            extra$dimnamesy2 = dimnames(y)[[2]]
         if(!length(etastart)) {
             apar.init = rep(.iapar, len=n)
             etastart = cbind(theta2eta(apar.init, .lapar, earg= .eapar ))
@@ -495,13 +507,18 @@ frank = function(lapar="loge", eapar=list(), iapar=2) {
     }), list( .lapar=lapar, .eapar=eapar, .iapar=iapar))),
     inverse=eval(substitute(function(eta, extra=NULL) {
         apar = eta2theta(eta, .lapar, earg= .eapar )
-        cbind(rep(0.5, len=length(eta)), rep(0.5, len=length(eta)))
+        fv.matrix = matrix(0.5, length(apar), 2)
+        if(length(extra$dimnamesy2))
+            dimnames(fv.matrix) = list(names(eta), extra$dimnamesy2)
+        fv.matrix
     }, list(.lapar=lapar, .eapar=eapar ))),
     last=eval(substitute(expression({
         misc$link = c("apar"= .lapar)
         misc$earg = list("apar"= .eapar )
+        misc$expected = TRUE
+        misc$nsimEIM = .nsimEIM
         misc$pooled.weight = pooled.weight
-    }), list(.lapar=lapar, .eapar=eapar ))),
+    }), list(.lapar=lapar, .eapar=eapar, .nsimEIM=nsimEIM ))),
     loglikelihood= eval(substitute(
             function(mu, y, w, residuals = FALSE, eta, extra=NULL) {
         apar = eta2theta(eta, .lapar, earg= .eapar )
@@ -515,17 +532,42 @@ frank = function(lapar="loge", eapar=list(), iapar=2) {
     vfamily=c("frank"),
     deriv=eval(substitute(expression({
         apar = eta2theta(eta, .lapar, earg= .eapar )
+        dapar.deta = dtheta.deta(apar, .lapar, earg= .eapar )
+
+        de3 = deriv3(~ (log((apar-1) * log(apar)) + (y1+y2)*log(apar) -
+                          2 * log(apar-1 + (apar^y1 -1) * (apar^y2 -1))),
+                        name="apar", hessian= TRUE)
+
         denom = apar-1 + (apar^y[,1] -1) * (apar^y[,2] -1)
         tmp700 = 2*apar^(y[,1]+y[,2]) - apar^y[,1] - apar^y[,2]
         numerator = 1 + y[,1] * apar^(y[,1]-1) * (apar^y[,2] -1) + 
                         y[,2] * apar^(y[,2]-1) * (apar^y[,1] -1)
         Dl.dapar = 1/(apar-1) + 1/(apar*log(apar)) + (y[,1]+y[,2])/apar -
                    2 * numerator / denom
-        dapar.deta = dtheta.deta(apar, .lapar, earg= .eapar )
-
         w * Dl.dapar * dapar.deta
-    }), list(.lapar=lapar, .eapar=eapar ))),
+    }), list(.lapar=lapar, .eapar=eapar, .nsimEIM=nsimEIM ))),
     weight=eval(substitute(expression({
+    if( is.Numeric( .nsimEIM)) {
+
+        pooled.weight = FALSE  # For @last
+
+
+        run.mean = 0
+        for(ii in 1:( .nsimEIM )) {
+            ysim = rfrank(n,alpha=apar)
+            y1 = ysim[,1]; y2 = ysim[,2];
+            eval.de3 = eval(de3)
+            d2l.dthetas2 =  attr(eval.de3, "hessian")
+            rm(ysim)
+            temp3 = -d2l.dthetas2[,1,1]   # M=1
+            run.mean = ((ii-1) * run.mean + temp3) / ii
+        }
+        wz = if(intercept.only)
+            matrix(mean(run.mean), n, dimm(M)) else run.mean
+
+        wz = wz * dapar.deta^2
+        w * wz
+    } else {
         nump = apar^(y[,1]+y[,2]-2) * (2 * y[,1] * y[,2] +
                      y[,1]*(y[,1]-1) + y[,2]*(y[,2]-1)) - 
                      y[,1]*(y[,1]-1) * apar^(y[,1]-2) - 
@@ -535,7 +577,6 @@ frank = function(lapar="loge", eapar=list(), iapar=2) {
                      (nump / denom - (numerator/denom)^2)
         d2apar.deta2 = d2theta.deta2(apar, .lapar)
         wz = w * (dapar.deta^2 * D2l.dapar2 - Dl.dapar * d2apar.deta2)
-
         if(TRUE && intercept.only) {
             wz = cbind(wz)
             sumw = sum(w)
@@ -545,9 +586,9 @@ frank = function(lapar="loge", eapar=list(), iapar=2) {
             wz = w * wz   # Put back the weights
         } else
             pooled.weight = FALSE
-
         wz
-    }), list( .lapar=lapar, .eapar=eapar ))))
+    }
+    }), list( .lapar=lapar, .eapar=eapar, .nsimEIM=nsimEIM ))))
 }
 
 
@@ -638,13 +679,15 @@ morgenstern = function(lapar="rhobit", earg=list(), iapar=NULL, tola0=0.01,
         if(any(y < 0))
             stop("the response must have non-negative values only") 
         predictors.names = c(namesof("apar", .lapar, earg= .earg , short=TRUE))
+        if(length(dimnames(y)))
+            extra$dimnamesy2 = dimnames(y)[[2]]
         if(!length(etastart)) {
             ainit  = if(length(.iapar))  rep(.iapar, len=n) else {
                 mean1 = if( .method.init == 1) median(y[,1]) else mean(y[,1])
                 mean2 = if( .method.init == 1) median(y[,2]) else mean(y[,2])
                 Finit = 0.01 + mean(y[,1] <= mean1 & y[,2] <= mean2)
-                ((Finit-1+exp(-mean1)+exp(-mean2)) / exp(-mean1-mean2)  -
-                 1) / ((1-exp(-mean1)) * (1-exp(-mean2)))
+                ((Finit+expm1(-mean1)+exp(-mean2)) / exp(-mean1-mean2)-1)/(
+                 expm1(-mean1) * expm1(-mean2))
               }
             etastart = theta2eta(rep(ainit, len=n), .lapar, earg= .earg )
         }
@@ -652,8 +695,10 @@ morgenstern = function(lapar="rhobit", earg=list(), iapar=NULL, tola0=0.01,
               .method.init=method.init ))),
     inverse=eval(substitute(function(eta, extra=NULL) {
         alpha = eta2theta(eta, .lapar, earg= .earg )
-        cbind(rep(1, len=length(alpha)),
-              rep(1, len=length(alpha)))
+        fv.matrix = matrix(1, length(alpha), 2)
+        if(length(extra$dimnamesy2))
+            dimnames(fv.matrix) = list(names(eta), extra$dimnamesy2)
+        fv.matrix
     }, list( .lapar=lapar, .earg=earg ))),
     last=eval(substitute(expression({
         misc$link = c("apar"= .lapar)
@@ -703,32 +748,95 @@ morgenstern = function(lapar="rhobit", earg=list(), iapar=NULL, tola0=0.01,
 
 
 
-dfgm = function(x1, x2, alpha) {
+rfgm = function(n, alpha) {
+    if(!is.Numeric(n, posit=TRUE, allow=1, integ=TRUE)) stop("bad input for n")
     if(!is.Numeric(alpha)) stop("bad input for \"alpha\"")
-    if(any(alpha < -1 | alpha > 1)) stop("\"alpha\" values out of range")
+    if(any(abs(alpha) > 1)) stop("\"alpha\" values out of range")
+
+    y1 = V1 = runif(n)
+    V2 = runif(n)
+    temp = 2*y1 - 1
+    A = alpha * temp - 1
+    B = sqrt(1 - 2 * alpha * temp + (alpha*temp)^2 + 4 * alpha * V2 * temp)
+    y2 = 2 * V2 / (B - A)
+    matrix(c(y1,y2), nrow=n, ncol=2)
+}
+
+
+
+dfgm = function(x1, x2, alpha, log.arg=FALSE) {
+    if(!is.Numeric(alpha)) stop("bad input for \"alpha\"")
+    if(any(abs(alpha) > 1)) stop("\"alpha\" values out of range")
+    if( !is.logical( log.arg ) || length( log.arg )!=1 )
+        stop("bad input for 'log.arg'")
+
     L = max(length(x1), length(x2), length(alpha))
     if(length(x1) != L)  x1 = rep(x1, len=L)
     if(length(x2) != L)  x2 = rep(x2, len=L)
     if(length(alpha) != L)  alpha = rep(alpha, len=L)
-    ans = 1 + alpha * (1-2*x1) * (1-2*x2)
-    ans[(x1 <= 0) | (x1 >= 1) | (x2 <= 0) | (x2 >= 1)] = 0
-    if(any(ans<0))
-        stop("negative values in the density (alpha out of range)") else
+    ans = 0 * x1
+    xnok = (x1 <= 0) | (x1 >= 1) | (x2 <= 0) | (x2 >= 1)
+    if( log.arg ) {
+        ans[!xnok] = log1p(alpha[!xnok] * (1-2*x1[!xnok]) * (1-2*x2[!xnok]))
+        ans[xnok] = log(0)
+    } else {
+        ans[!xnok] = 1 + alpha[!xnok] * (1-2*x1[!xnok]) * (1-2*x2[!xnok])
+        ans[xnok] = 0
+        if(any(ans<0))
+            stop("negative values in the density (alpha out of range)")
+    }
+    ans
+}
+
+
+pfgm = function(q1, q2, alpha) {
+    if(!is.Numeric(q1)) stop("bad input for \"q1\"")
+    if(!is.Numeric(q2)) stop("bad input for \"q2\"")
+    if(!is.Numeric(alpha)) stop("bad input for \"alpha\"")
+    if(any(abs(alpha) > 1)) stop("\"alpha\" values out of range")
+
+    L = max(length(q1), length(q2), length(alpha))
+    if(length(q1) != L)  q1 = rep(q1, len=L)
+    if(length(q2) != L)  q2 = rep(q2, len=L)
+    if(length(alpha) != L)  alpha = rep(alpha, len=L)
+
+    x=q1; y=q2
+    index = (x>=1 & y<1) | (y>=1 & x<1) | (x<=0 | y<=0) | (x>=1 & y>=1)
+    ans = as.numeric(index)
+    if(any(!index)) {
+        ans[!index] = q1[!index] * q2[!index] * (1 + alpha[!index] *
+                      (1-q1[!index])*(1-q2[!index]))
+    }
+    ans[x>=1 & y<1] = y[x>=1 & y<1]   # P(Y2 < q2) = q2
+    ans[y>=1 & x<1] = x[y>=1 & x<1]   # P(Y1 < q1) = q1
+    ans[x<=0 | y<=0] = 0
+    ans[x>=1 & y>=1] = 1
     ans
 }
 
 
 
-fgm = function(lapar="identity", earg=list(), iapar=NULL,
-               method.init=1) { # , tola0=0.01
+fgm.control <- function(save.weight=TRUE, ...)
+{
+    list(save.weight=save.weight)
+}
+
+
+
+fgm = function(lapar="rhobit", earg=list(), iapar=NULL,
+               method.init=1, nsimEIM=200) {
     if(mode(lapar) != "character" && mode(lapar) != "name")
         lapar = as.character(substitute(lapar))
     if(!is.list(earg)) earg = list()
-    if(length(iapar) && !is.Numeric(iapar, allow=1))
-        stop("'iapar' must be a single number")
     if(!is.Numeric(method.init, allow=1, integ=TRUE, positi=TRUE) ||
        method.init > 2.5)
         stop("argument \"method.init\" must be 1 or 2")
+    if(!length(nsimEIM) ||
+       (!is.Numeric(nsimEIM, allow=1, integ=TRUE) || nsimEIM <= 50))
+        stop("'nsimEIM' should be an integer greater than 50")
+    if(length(iapar) &&
+       (abs(iapar) >= 1))
+        stop("'iapar' should be less than 1 in absolute value")
 
     new("vglmff",
     blurb=c("Farlie-Gumbel-Morgenstern Distribution\n",
@@ -740,46 +848,57 @@ fgm = function(lapar="identity", earg=list(), iapar=NULL,
         if(any(y < 0) || any(y > 1))
             stop("the response must have values in the unit square")
         predictors.names = namesof("apar", .lapar, earg= .earg, short=TRUE)
+        if(length(dimnames(y)))
+            extra$dimnamesy2 = dimnames(y)[[2]]
         if(!length(etastart)) {
-            ainit  = if(length( .iapar ))  rep( .iapar, len=n) else {
-                mean1 = if( .method.init == 1) median(y[,1]) else mean(y[,1])
-                mean2 = if( .method.init == 1) median(y[,2]) else mean(y[,2])
-                Finit = 0.01 + mean(y[,1] <= mean1 & y[,2] <= mean2)
+            ainit  = if(length( .iapar ))  .iapar else {
+                mean1 = if( .method.init == 1) weighted.mean(y[,1],w) else
+                        median(y[,1])
+                mean2 = if( .method.init == 1) weighted.mean(y[,2],w) else
+                        median(y[,2])
+                Finit = weighted.mean(y[,1] <= mean1 & y[,2] <= mean2, w)
                 (Finit / (mean1 * mean2) - 1) / ((1-mean1) * (1-mean2))
-            } 
+            }
+
+            ainit = min(0.95, max(ainit, -0.95))
+
             etastart = theta2eta(rep(ainit, len=n), .lapar, earg= .earg )
         }
     }), list( .iapar=iapar, .lapar=lapar, .earg=earg,
               .method.init=method.init ))),
     inverse=eval(substitute(function(eta, extra=NULL) {
         alpha = eta2theta(eta, .lapar, earg= .earg )
-        cbind(rep(0.5, len=length(alpha)),
-              rep(0.5, len=length(alpha)))
+        fv.matrix = matrix(0.5, length(alpha), 2)
+        if(length(extra$dimnamesy2))
+            dimnames(fv.matrix) = list(names(eta), extra$dimnamesy2)
+        fv.matrix
     }, list( .lapar=lapar, .earg=earg ))),
     last=eval(substitute(expression({
         misc$link = c("apar"= .lapar)
         misc$earg = list(apar = .earg)
         misc$expected = FALSE
-        misc$pooled.weight = pooled.weight
-    }), list( .lapar=lapar, .earg=earg ))),
+        misc$nsimEIM = .nsimEIM
+    }), list(.lapar=lapar, .earg=earg, .nsimEIM=nsimEIM ))),
     loglikelihood= eval(substitute(
             function(mu, y, w, residuals = FALSE, eta, extra=NULL) {
         alpha = eta2theta(eta, .lapar, earg= .earg )
         if(residuals) stop("loglikelihood residuals not implemented yet") else {
-            denom = 1 + alpha * (1 - 2 * y[,1])  * (1 - 2 * y[,2])
-            mytolerance = .Machine$double.eps
+            denm1 = alpha * (1 - 2 * y[,1])  * (1 - 2 * y[,2])
+            denom = 1 + denm1
+            mytolerance = 0.0  # .Machine$double.eps
             bad <- (denom <= mytolerance)   # Range violation
             if(any(bad)) {
                 cat("There are some range violations in @loglikelihood\n")
                 if(exists("flush.console")) flush.console()
             }
-            sum(bad) * (-1.0e10) + 
-            sum(w[!bad] * log(denom[!bad]))
+            sum(w[bad]) * (-1.0e10) + 
+            sum(w[!bad] * log1p(denm1[!bad]))
         }
     }, list( .lapar=lapar, .earg=earg ))),
     vfamily=c("fgm"),
     deriv=eval(substitute(expression({
         alpha  = eta2theta(eta, .lapar, earg= .earg )
+        dalpha.deta = dtheta.deta(alpha, .lapar, earg= .earg )
         numerator = (1 - 2 * y[,1])  * (1 - 2 * y[,2])
         denom = 1 + alpha * numerator
             mytolerance = .Machine$double.eps
@@ -790,25 +909,26 @@ fgm = function(lapar="identity", earg=list(), iapar=NULL,
                 denom[bad] = 2 * mytolerance
             }
         dl.dalpha = numerator / denom
-        dalpha.deta = dtheta.deta(alpha, .lapar, earg= .earg )
         w * cbind(dl.dalpha * dalpha.deta)
-    }), list( .lapar=lapar, .earg=earg ))),
+    }), list( .lapar=lapar, .earg=earg, .nsimEIM=nsimEIM ))),
     weight=eval(substitute(expression({
-        d2l.dalpha2 = dl.dalpha^2
-        d2alpha.deta2 = d2theta.deta2(alpha, .lapar, earg= .earg )
-        wz = w * (dalpha.deta^2 * d2l.dalpha2 - d2alpha.deta2 * dl.dalpha)
-        if(TRUE &&
-           intercept.only) {
-            wz = cbind(wz)
-            sumw = sum(w)
-            for(iii in 1:ncol(wz))
-                wz[,iii] = sum(wz[,iii]) / sumw
-            pooled.weight = TRUE
-            wz = w * wz   # Put back the weights
-        } else
-            pooled.weight = FALSE
-        wz
-    }), list( .lapar=lapar, .earg=earg ))))
+        run.var = 0
+        for(ii in 1:( .nsimEIM )) {
+            ysim = rfgm(n, alpha=alpha)
+            numerator = (1 - 2 * ysim[,1])  * (1 - 2 * ysim[,2])
+            denom = 1 + alpha * numerator
+            dl.dalpha = numerator / denom
+            rm(ysim)
+            temp3 = dl.dalpha
+            run.var = ((ii-1) * run.var + temp3^2) / ii
+        }
+        wz = if(intercept.only)
+            matrix(apply(cbind(run.var), 2, mean),
+                   n, dimm(M), byrow=TRUE) else cbind(run.var)
+
+        wz = wz * dalpha.deta^2
+        w * wz
+    }), list( .lapar=lapar, .earg=earg, .nsimEIM=nsimEIM ))))
 }
 
 
@@ -838,7 +958,7 @@ gumbelIbiv = function(lapar="identity", earg=list(), iapar=NULL, method.init=1) 
                 mean1 = if( .method.init == 1) median(y[,1]) else mean(y[,1])
                 mean2 = if( .method.init == 1) median(y[,2]) else mean(y[,2])
                 Finit = 0.01 + mean(y[,1] <= mean1 & y[,2] <= mean2)
-                (log(Finit-1+exp(-mean1)+exp(-mean2))+mean1+mean2)/(mean1*mean2)
+                (log(Finit+expm1(-mean1)+exp(-mean2))+mean1+mean2)/(mean1*mean2)
             }
             etastart = theta2eta(rep(ainit,  len=n), .lapar, earg= .earg )
         }
@@ -898,6 +1018,204 @@ gumbelIbiv = function(lapar="identity", earg=list(), iapar=NULL, method.init=1) 
         wz
     }), list( .lapar=lapar, .earg=earg ))))
 }
+
+
+
+
+
+
+
+pplack = function(q1, q2, oratio) {
+    if(!is.Numeric(q1)) stop("bad input for \"q1\"")
+    if(!is.Numeric(q2)) stop("bad input for \"q2\"")
+    if(!is.Numeric(oratio, posit=TRUE)) stop("bad input for \"oratio\"")
+
+    L = max(length(q1), length(q2), length(oratio))
+    if(length(q1) != L)  q1 = rep(q1, len=L)
+    if(length(q2) != L)  q2 = rep(q2, len=L)
+    if(length(oratio) != L)  oratio = rep(oratio, len=L)
+
+    x=q1; y=q2
+    index = (x>=1 & y<1) | (y>=1 & x<1) | (x<=0 | y<=0) | (x>=1 & y>=1) |
+            (abs(oratio-1) < 1.0e-6)  #  .Machine$double.eps
+    ans = as.numeric(index)
+    if(any(!index)) {
+        temp1 = 1 + (oratio[!index] -1) * (q1[!index] + q2[!index])
+        temp2 = temp1 - sqrt(temp1^2 - 4 * oratio[!index] *
+                (oratio[!index]-1) * q1[!index] * q2[!index])
+        ans[!index] = 0.5 * temp2 / (oratio[!index] - 1)
+    }
+
+    ind2 = (abs(oratio-1) < 1.0e-6) # .Machine$double.eps
+    ans[ind2] = x[ind2] * y[ind2]
+    ans[x>=1 & y<1] = y[x>=1 & y<1]   # P(Y2 < q2) = q2
+    ans[y>=1 & x<1] = x[y>=1 & x<1]   # P(Y1 < q1) = q1
+    ans[x<=0 | y<=0] = 0
+    ans[x>=1 & y>=1] = 1
+    ans
+}
+
+
+
+rplack = function(n, oratio) {
+    if(!is.Numeric(n, posit=TRUE, allow=1, integ=TRUE)) stop("bad input for n")
+    if(!is.Numeric(oratio, posit=TRUE)) stop("bad input for \"oratio\"")
+    if(length(oratio) != n)  oratio = rep(oratio, len=n)
+
+    y1 = U = runif(n)
+    V = runif(n)
+    Z = V * (1-V)
+    y2 = (2*Z*(y1*oratio^2 + 1 - y1) + oratio * (1 - 2 * Z) -
+          (1 - 2 * V) *
+          sqrt(oratio * (oratio + 4*Z*y1*(1-y1)*(1-oratio)^2))) / (oratio +
+          Z*(1-oratio)^2)
+    matrix(c(y1, 0.5 * y2), nrow=n, ncol=2)
+}
+
+
+
+dplack = function(x1, x2, oratio, log.arg=FALSE) {
+    if(!is.Numeric(oratio, posit=TRUE)) stop("bad input for \"oratio\"")
+    L = max(length(x1), length(x2), length(oratio))
+    if(length(x1) != L)  x1 = rep(x1, len=L)
+    if(length(x2) != L)  x2 = rep(x2, len=L)
+    if(length(oratio) != L)  oratio = rep(oratio, len=L)
+    if( !is.logical( log.arg ) || length( log.arg )!=1 )
+        stop("bad input for 'log.arg'")
+
+    if( log.arg ) {
+        ans = log(oratio) + log1p((oratio-1) *
+              (x1+x2-2*x1*x2)) - 1.5 *
+              log((1 + (x1+x2)*(oratio-1))^2 - 4 * oratio * (oratio-1)*x1*x2)
+        ans[(x1 < 0) | (x1 > 1) | (x2 < 0) | (x2 > 1)] = log(0)
+    } else {
+        ans = oratio * ((oratio -1) * (x1+x2-2*x1*x2) + 1) / ((1 +
+              (x1+x2)*(oratio-1))^2 - 4 * oratio * (oratio-1)*x1*x2)^1.5
+        ans[(x1 < 0) | (x1 > 1) | (x2 < 0) | (x2 > 1)] = 0
+    }
+    ans
+}
+
+
+
+plackett.control <- function(save.weight=TRUE, ...)
+{
+    list(save.weight=save.weight)
+}
+
+
+
+plackett = function(link="loge", earg=list(),
+                    ioratio=NULL, method.init=1, nsimEIM=200) {
+    if(mode(link) != "character" && mode(link) != "name")
+        link = as.character(substitute(link))
+    if(!is.list(earg)) earg = list()
+    if(length(ioratio) && (!is.Numeric(ioratio, posit=TRUE)))
+        stop("'ioratio' must be positive")
+    if(!is.Numeric(method.init, allow=1, integ=TRUE, posit=TRUE) ||
+       method.init > 2) stop("method.init must be 1 or 2")
+
+
+    new("vglmff",
+    blurb=c("Plackett Distribution\n",
+           "Links:    ",
+           namesof("oratio", link, earg= earg )),
+    initialize=eval(substitute(expression({
+        if(!is.matrix(y) || ncol(y) != 2)
+            stop("the response must be a 2 column matrix") 
+        if(any(y < 0) || any(y > 1))
+            stop("the response must have values in the unit square")
+        predictors.names = namesof("oratio", .link, earg= .earg, short=TRUE)
+        if(length(dimnames(y)))
+            extra$dimnamesy2 = dimnames(y)[[2]]
+        if(!length(etastart)) {
+            orinit = if(length( .ioratio ))  .ioratio else {
+                if( .method.init == 2) {
+                    scorp = cor(y)[1,2]
+                    if(abs(scorp) <= 0.1) 1 else
+                    if(abs(scorp) <= 0.3) 3^sign(scorp) else
+                    if(abs(scorp) <= 0.6) 5^sign(scorp) else
+                    if(abs(scorp) <= 0.8) 20^sign(scorp) else 40^sign(scorp)
+                } else {
+                    y10 = weighted.mean(y[,1], w)
+                    y20 = weighted.mean(y[,2], w)
+                    (0.5 + sum(w[(y[,1] <  y10) & (y[,2] <  y20)])) *
+                    (0.5 + sum(w[(y[,1] >= y10) & (y[,2] >= y20)])) / (
+                    ((0.5 + sum(w[(y[,1] <  y10) & (y[,2] >= y20)])) *
+                     (0.5 + sum(w[(y[,1] >= y10) & (y[,2] <  y20)]))))
+                }
+            }
+            etastart = theta2eta(rep(orinit, len=n), .link, earg= .earg)
+        }
+    }), list( .ioratio=ioratio, .link=link, .earg=earg,
+              .method.init=method.init ))),
+    inverse=eval(substitute(function(eta, extra=NULL) {
+        oratio = eta2theta(eta, .link, earg= .earg )
+        fv.matrix = matrix(0.5, length(oratio), 2)
+        if(length(extra$dimnamesy2))
+            dimnames(fv.matrix) = list(dimnames(eta)[[1]], extra$dimnamesy2)
+        fv.matrix
+    }, list( .link=link, .earg=earg ))),
+    last=eval(substitute(expression({
+        misc$link = c("oratio"= .link)
+        misc$earg = list(oratio = .earg)
+        misc$expected = FALSE
+        misc$nsimEIM = .nsimEIM
+    }), list( .link=link, .earg=earg,
+              .nsimEIM=nsimEIM ))),
+    loglikelihood= eval(substitute(
+            function(mu, y, w, residuals = FALSE, eta, extra=NULL) {
+        oratio = eta2theta(eta, .link, earg= .earg )
+        if(residuals) stop("loglikelihood residuals not implemented yet") else {
+            y1 = y[,1]
+            y2 = y[,2]
+            sum(w * (log(oratio) + log1p((oratio-1) * (y1+y2-2*y1*y2)) - 1.5 *
+                log((1 + (y1+y2)*(oratio-1))^2 - 4*oratio*(oratio-1)*y1*y2)))
+        }
+    }, list( .link=link, .earg=earg ))),
+    vfamily=c("plackett"),
+    deriv=eval(substitute(expression({
+        oratio  = eta2theta(eta, .link, earg= .earg )
+        doratio.deta = dtheta.deta(oratio, .link, earg= .earg )
+        y1 = y[,1]
+        y2 = y[,2]
+        de3 = deriv3(~ (log(oratio) + log(1+(oratio-1) *
+              (y1+y2-2*y1*y2)) - 1.5 *
+              log((1 + (y1+y2)*(oratio-1))^2 - 4 * oratio * (oratio-1)*y1*y2)),
+                        name="oratio", hessian= FALSE)
+        eval.de3 = eval(de3)
+        dl.doratio =  attr(eval.de3, "gradient")
+        w * dl.doratio * doratio.deta
+    }), list( .link=link, .earg=earg ))),
+    weight=eval(substitute(expression({
+        sd3 = deriv3(~ (log(oratio) + log(1+(oratio-1) *
+              (y1sim+y2sim-2*y1sim*y2sim)) - 1.5 *
+              log((1 + (y1sim+y2sim)*(oratio-1))^2 -
+              4 * oratio * (oratio-1)*y1sim*y2sim)),
+                        name="oratio", hessian= FALSE)
+        run.var = 0
+        for(ii in 1:( .nsimEIM )) {
+            ysim = rplack(n, oratio=oratio)
+            y1sim = ysim[,1]
+            y2sim = ysim[,1]
+            eval.sd3 = eval(sd3)
+            dl.doratio =  attr(eval.sd3, "gradient")
+            rm(ysim, y1sim, y2sim)
+            temp3 = dl.doratio
+            run.var = ((ii-1) * run.var + temp3^2) / ii
+        }
+        wz = if(intercept.only)
+            matrix(apply(cbind(run.var), 2, mean),
+                   n, dimm(M), byrow=TRUE) else cbind(run.var)
+
+        wz = wz * doratio.deta^2
+        w * wz
+    }), list( .link=link, .earg=earg, .nsimEIM=nsimEIM ))))
+}
+
+
+
+
 
 
 

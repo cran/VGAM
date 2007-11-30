@@ -96,7 +96,7 @@ coef(fit, matrix=TRUE)
 # Quantile plot
 with(bminz, plot(age, BMI, col="blue", main=
      paste(round(fit@extra$percentile, dig=1), "percentile curve")))
-with(bminz, lines(age, c(fitted(fit)), col="red"))
+with(bminz, lines(age, c(fitted(fit)), col="black"))
 }
 
 
@@ -104,8 +104,8 @@ with(bminz, lines(age, c(fitted(fit)), col="red"))
 # Example 2
 # Find the w values that give the 25, 50 and 75 percentiles
 findw = function(w, percentile=50) {
-    fit = vglm(BMI ~ bs(age), fam=alsqreg(w=w), data=bminz)
-    fit@extra$percentile - percentile
+    fit2 = vglm(BMI ~ bs(age), fam=alsqreg(w=w), data=bminz)
+    fit2@extra$percentile - percentile
 }
 \dontrun{
 # Quantile plot
@@ -114,10 +114,27 @@ with(bminz, plot(age, BMI, col="blue", las=1, main=
 }
 for(myp in c(25,50,75)) {
     bestw = uniroot(f=findw, interval=c(1/10^4, 10^4), percentile=myp)
-    fit = vglm(BMI ~ bs(age), fam=alsqreg(w=bestw$root), data=bminz)
+    fit2 = vglm(BMI ~ bs(age), fam=alsqreg(w=bestw$root), data=bminz)
 \dontrun{
-    with(bminz, lines(age, c(fitted(fit)), col="red"))
+    with(bminz, lines(age, c(fitted(fit2)), col="red"))
 }
+}
+
+
+
+# Example 3; this is Example 1 but with smoothing splines.
+data(bminz)
+o = with(bminz, order(age))
+bminz = bminz[o,]  # Sort by age
+fit3 = vgam(BMI ~ s(age, df=4), fam=alsqreg(w=0.07), data=bminz, trac=TRUE)
+fit3@extra  # Gives the w value and the percentile
+
+\dontrun{
+# Quantile plot
+with(bminz, plot(age, BMI, col="blue", main=
+     paste(round(fit3@extra$percentile, dig=1), "percentile curve")))
+with(bminz, lines(age, c(fitted(fit3)), col="red"))
+with(bminz, lines(age, c(fitted(fit )), col="black")) # For comparison
 }
 }
 \keyword{models}

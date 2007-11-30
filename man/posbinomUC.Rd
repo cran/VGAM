@@ -84,12 +84,12 @@ table(qposbinom(runif(1000), size, prob))
 round(dposbinom(1:10, size, prob) * 1000) # Should be similar
 
 \dontrun{
-x = 0:size
-plot(x, dposbinom(x, size, prob), type="h", ylab="Probability",
-     main=paste("Positive-binomial(", size, ",", prob, ") (blue) vs",
-     " Binomial(", size, ",", prob, ") (red and shifted slightly)", sep=""),
-     lwd=2, col="blue", las=1)
-lines(x+0.05, dbinom(x, size, prob), type="h", lwd=2, col="red")
+barplot(rbind(dposbinom(x, size, prob),
+              dbinom(x, size, prob)),
+        beside = TRUE, col = c("blue","green"),
+        main=paste("Positive-binomial(", size, ",", prob, ") (blue) vs",
+        " Binomial(", size, ",", prob, ") (green)", sep=""),
+        names.arg = as.character(x), las=1)
 }
 }
 \keyword{distribution}

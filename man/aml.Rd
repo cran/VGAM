@@ -1,12 +1,12 @@
 \name{aml}
-\docType{data}
 \alias{aml}
-\alias{leukemia}
+%\alias{leukemia}
+\docType{data}
 \title{Acute Myelogenous Leukemia Survival Data}
 \description{Survival in patients with Acute Myelogenous Leukemia}
 \usage{
-aml
-leukemia
+data(aml)
+%data(leukemia)
 }
 \format{
   \tabular{ll}{

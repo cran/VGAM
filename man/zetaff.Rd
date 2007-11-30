@@ -62,15 +62,17 @@ ranging from values near 0 to values about 10 or more.
 %Oxford: Clarendon Press. 
 
 \references{ 
-pp.465--471, Chapter 11 of
-Johnson N. L., Kotz S., and Kemp A. W. (1993)
-\emph{Univariate Discrete Distributions},
-2nd ed.
-New York: Wiley.
+
+pp.527-- of Chapter 11 of
+    Johnson N. L., Kemp, A. W. and Kotz S. (2005)
+    \emph{Univariate Discrete Distributions},
+    3rd edition,
+    Hoboken, New Jersey: Wiley.
 
 Knight, K. (2000)
 \emph{Mathematical Statistics}. 
 Boca Raton: Chapman & Hall/CRC Press.
+
 }
 \author{ T. W. Yee }
 \note{ The \code{\link{zeta}} function may be used to

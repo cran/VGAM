@@ -1,11 +1,12 @@
 \name{usagrain}
 \alias{usagrain}
-\non_function{}
+\docType{data}
 \title{USA grain prices}
-\usage{data(usagrain)}
 \description{
 A 4-column matrix.
+
 }
+\usage{data(usagrain)}
 \format{
   The columns are:
   \describe{

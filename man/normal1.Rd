@@ -3,13 +3,12 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Univariate normal distribution }
 \description{
-  Maximum likelihood estimation of the two parameters of a
-  univariate normal distribution.
+  Maximum likelihood estimation of the two parameters of a univariate
+  normal distribution.
 
 }
 \usage{
-normal1(lmean="identity", lsd="loge", 
-        emean=list(), esd=list(), zero=NULL)
+normal1(lmean="identity", lsd="loge", emean=list(), esd=list(), zero=NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -40,9 +39,9 @@ normal1(lmean="identity", lsd="loge",
 }
 \details{
   By default, the mean is the first linear/additive predictor and 
-  the log of the standard deviation is the second linear/additive
-  predictor.
+  the log of the standard deviation is the second linear/additive predictor.
   The Fisher information matrix is diagonal.
+
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
@@ -54,6 +53,7 @@ normal1(lmean="identity", lsd="loge",
 Evans, M., Hastings, N. and Peacock, B. (2000)
 \emph{Statistical Distributions},
 New York: Wiley-Interscience, Third edition.
+
 }
 
 \author{ T. W. Yee }
@@ -66,10 +66,15 @@ New York: Wiley-Interscience, Third edition.
 \seealso{
     \code{gaussianff},
     \code{\link{posnormal1}},
+    \code{\link{mix2normal1}},
     \code{\link{tobit}},
     \code{\link{cnormal1}},
+    \code{\link{fnormal1}},
+    \code{\link{skewnormal1}},
     \code{\link{dcnormal1}},
-    \code{\link{studentt}}.
+    \code{\link{studentt}},
+    \code{\link[stats]{dnorm}}.
+
 }
 \examples{
 n = 200

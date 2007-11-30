@@ -130,11 +130,11 @@ cmlist = list("(Intercept)"=diag(2),
               "I(srainfall^3)"=rbind(1,0),
               "I(sN)"=rbind(0,1),
               "I(sN^2)"=rbind(0,1))
-elist = list(min=0, max=1.25)
+dlist = list(min=0, max=1.25)
 fit = vglm(phat ~ I(srainfall) + I(srainfall^2) + I(srainfall^3) +
                   I(sN) + I(sN^2),
            fam = dexpbinomial(ldisp="elogit", idisp=0.2,
-                              edisp=elist, zero=NULL),
+                              edisp=dlist, zero=NULL),
            data=toxop, weight=ssize, trace=TRUE, constraints=cmlist)
 
 # Now look at the results
@@ -147,7 +147,7 @@ sqrt(diag(vcov(fit)))   # Standard errors
 
 # Effective sample size (not quite the last column of Table 1)
 predict(fit)[1:4,]
-Dispersion = elogit(predict(fit)[,2], earg=elist, inverse=TRUE)
+Dispersion = elogit(predict(fit)[,2], earg=dlist, inverse=TRUE)
 c(round(weights(fit, type="prior") * Dispersion, dig=1))
 
 
@@ -162,7 +162,7 @@ cmlist2 = list("(Intercept)"=diag(2),
                "poly(sN, 2)"=rbind(0,1))
 fit2 = vglm(phat ~ poly(srainfall, 3) + poly(sN, 2),
             fam = dexpbinomial(ldisp="elogit", idisp=0.2,
-                               edisp=list(min=0, max=1.25), zero=NULL),
+                               edisp=dlist, zero=NULL),
             data=toxop, weight=ssize, trace=TRUE, constraints=cmlist2)
 \dontrun{
 par(mfrow=c(1,2))

@@ -200,7 +200,9 @@ Fitting the negative binomial distribution to biological data.
   \code{\link{poissonff}},
   \code{\link{cao}},
   \code{\link{cqo}},
+  \code{\link{zinegbinomial}},
   \code{\link{posnegbinomial}},
+  \code{\link{invbinomial}},
 % \code{\link[MASS]{rnegbin}}.
   \code{\link[stats:NegBinomial]{rnbinom}},
   \code{\link{nbolf}}.
@@ -214,11 +216,10 @@ coef(fit, matrix=TRUE)
 Coef(fit)
 
 \dontrun{
-n = 500  # Example 2: simulated data
-x = runif(n)
+x = runif(n <- 500) # Example 2: simulated data with multivariate response
 y1 = rnbinom(n, mu=exp(3+x), size=exp(1)) # k is size
 y2 = rnbinom(n, mu=exp(2-x), size=exp(0))
-fit = vglm(cbind(y1,y2) ~ x, negbinomial, tra=TRUE) # multivariate response
+fit = vglm(cbind(y1,y2) ~ x, negbinomial, trace=TRUE)
 coef(fit, matrix=TRUE)
 }
 }

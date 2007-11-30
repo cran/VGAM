@@ -114,7 +114,8 @@ New York: Wiley-Interscience, Third edition.
 }
 
 \seealso{
-  \code{\link[base]{Bessel}}.
+  \code{\link[base]{Bessel}},
+  \code{\link{cardioid}}.
 
   \pkg{CircStats} and \pkg{circular} currently have a lot more
   R functions for circular data than the \pkg{VGAM} package. 

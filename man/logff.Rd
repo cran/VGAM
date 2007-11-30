@@ -46,10 +46,13 @@ logff(link = "logit", earg=list(), init.c = NULL)
 
 }
 \references{ 
+
 Chapter 7 of
-Johnson N. L., Kotz S. and Kemp, A. W. (1993)
-\emph{Univariate Discrete Distributions},
-2nd edition, Volume 2, New York: Wiley.
+    Johnson N. L., Kemp, A. W. and Kotz S. (2005)
+    \emph{Univariate Discrete Distributions},
+    3rd edition,
+    Hoboken, New Jersey: Wiley.
+
 
 Evans, M., Hastings, N. and Peacock, B. (2000)
 \emph{Statistical Distributions},

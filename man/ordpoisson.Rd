@@ -92,9 +92,9 @@ ordpoisson(cutpoints, countdata=FALSE, NOS=NULL,
 
 }
 \references{
-  Yee, T. W. (2006)
+  Yee, T. W. (2007)
   \emph{Ordinal ordination with normalizing link functions for count data}, 
-  (submitted for publication).
+  (in preparation).
 
 }
 \author{ Thomas W. Yee }

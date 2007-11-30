@@ -27,12 +27,13 @@ Class \code{"\linkS4class{vector}"}, by class "matrix", distance 4, with explici
   See \pkg{survival}.
 }
 \author{
-  Thomas W. Yee.
+  T. W. Yee.
 }
 \note{
-  The purpose of having \code{\link{Surv}} in \pkg{VGAM} is so that the
-  same input can be fed into \code{\link{vglm}} as functions
-  in \pkg{survival} such as \code{\link[survival]{survreg}}.
+  The purpose of having \code{\link{Surv}} in \pkg{VGAM} is so that
+  the same input can be fed into \code{\link{vglm}} as functions in
+  \pkg{survival} such as \code{\link[survival]{survreg}}.
+
 }
 
 \section{Warning }{

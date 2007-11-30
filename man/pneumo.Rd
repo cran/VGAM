@@ -1,12 +1,13 @@
 \name{pneumo}
 \alias{pneumo}
-\non_function{}
+\docType{data}
 \title{Pneumoconiosis amongst a group of coalminers}
-\usage{data(pneumo)}
 \description{
 The \code{pneumo} data frame has 8 rows and 4 columns.
 Exposure time is explanatory, and there are 3 ordinal response variables.
+
 }
+\usage{data(pneumo)}
 \format{
   This data frame contains the following columns:
   \describe{

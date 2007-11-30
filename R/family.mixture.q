@@ -6,18 +6,22 @@
 
 
 
-mix2normal1.control <- function(save.weight=TRUE, ...)
+
+mix2normal1.control <- function(trace=TRUE, ...)
 {
-    list(save.weight=save.weight)
+    list(trace=trace)
 }
+
 
 mix2normal1 = function(lphi="logit",
                        lmu="identity",
                        lsd="loge",
-                       ephi=list(), emu1=list(), emu2=list(), esd1=list(), esd2=list(),
+                       ephi=list(), emu1=list(), emu2=list(),
+                       esd1=list(), esd2=list(),
                        iphi=0.5, imu1=NULL, imu2=NULL, isd1=NULL, isd2=NULL,
                        qmu=c(0.2, 0.8),
-                       esd=FALSE,
+                       ESD=TRUE,
+                       nsimEIM=100,
                        zero=1)
 {
     if(mode(lphi) != "character" && mode(lphi) != "name")
@@ -43,22 +47,26 @@ mix2normal1 = function(lphi="logit",
     if(!is.list(emu2)) emu2 = list()
     if(!is.list(esd1)) esd1 = list()
     if(!is.list(esd2)) esd2 = list()
+    if(!is.logical(ESD) || length(ESD) != 1)
+        stop("bad input for argument \"ESD\"")
+    if(!is.Numeric(nsimEIM, allow=1, integ=TRUE) || nsimEIM <= 10)
+        stop("'nsimEIM' should be an integer greater than 10")
 
     new("vglmff",
     blurb=c("Mixture of two univariate normals\n\n",
            "Links:    ",
-           namesof("phi",lphi, earg= ephi), ", ", 
-           namesof("mu1", lmu, earg= emu1, tag=FALSE), ", ",
-           namesof("sd1", lsd, earg= esd1, tag=FALSE), ", ",
-           namesof("mu2", lmu, earg= emu2, tag=FALSE), ", ",
-           namesof("sd2", lsd, earg= esd2, tag=FALSE), "\n",
+           namesof("phi", lphi, earg= ephi, tag=FALSE), ", ", 
+           namesof("mu1",  lmu, earg= emu1, tag=FALSE), ", ",
+           namesof("sd1",  lsd, earg= esd1, tag=FALSE), ", ",
+           namesof("mu2",  lmu, earg= emu2, tag=FALSE), ", ",
+           namesof("sd2",  lsd, earg= esd2, tag=FALSE), "\n",
            "Mean:     phi*mu1 + (1-phi)*mu2\n",
            "Variance: phi*sd1^2 + (1-phi)*sd2^2 + phi*(1-phi)*(mu1-mu2)^2"),
     constraints=eval(substitute(expression({
-        constraints = cm.vgam(rbind(diag(4), c(0,0,1,0)), x, .esd,
+        constraints = cm.vgam(rbind(diag(4), c(0,0,1,0)), x, .ESD,
                               constraints, int=TRUE)
         constraints = cm.zero.vgam(constraints, x, .zero, M)
-    }), list(.zero=zero, .esd=esd))),
+    }), list(.zero=zero, .ESD=ESD))),
     initialize=eval(substitute(expression({
         if(ncol(y <- cbind(y)) != 1)
             stop("the response must be a vector or one-column matrix")
@@ -70,39 +78,35 @@ mix2normal1 = function(lphi="logit",
             namesof("sd2", .lsd, earg= .esd2, tag=FALSE))
         if(!length(etastart)) {
             qy = quantile(y, prob= .qmu)
-            init.phi = if(length(.iphi)) rep(.iphi, length=n) else {
-                0.5
-            }
-            init.mu1 = if(length(.imu1)) rep(.imu1, length=n) else {
-                rep(qy[1], length=n)
-            }
-            init.mu2 = if(length(.imu2)) rep(.imu2, length=n) else {
-                rep(qy[2], length=n)
-            }
+            init.phi = rep(if(length(.iphi)) .iphi else 0.5, length=n)
+            init.mu1 = rep(if(length(.imu1)) .imu1 else qy[1], length=n)
+            init.mu2 = rep(if(length(.imu2)) .imu2 else qy[2], length=n)
             ind.1 = if(init.mu1[1] < init.mu2[1]) 1:round(n* init.phi[1]) else
                 round(n* init.phi[1]):n
             ind.2 = if(init.mu1[1] < init.mu2[1]) round(n* init.phi[1]):n else
                 1:round(n* init.phi[1])
             sorty = sort(y)
-            init.sd1 = if(length(.isd1)) rep(.isd1, length=n) else {
-                sd(sorty[ind.1])
-            }
-            init.sd2 = if(length(.isd2)) rep(.isd2, length=n) else {
-                sd(sorty[ind.2])
+            init.sd1 = rep(if(length(.isd1)) .isd1 else sd(sorty[ind.1]), len=n)
+            init.sd2 = rep(if(length(.isd2)) .isd2 else sd(sorty[ind.2]), len=n)
+            if( .ESD ) {
+                init.sd1 = init.sd2 = (init.sd1 + init.sd2)/2
+                if(!all.equal( .esd1, .esd2 ))
+                    stop("'esd1' and 'esd2' must be equal if ESD=TRUE")
             }
             etastart = cbind(theta2eta(init.phi, .lphi, earg= .ephi),
-                             theta2eta(init.mu1, .lmu, earg= .emu1),
-                             theta2eta(init.sd1, .lsd, earg= .esd1),
-                             theta2eta(init.mu2, .lmu, earg= .emu2),
-                             theta2eta(init.sd2, .lsd, earg= .esd2))
+                             theta2eta(init.mu1,  .lmu, earg= .emu1),
+                             theta2eta(init.sd1,  .lsd, earg= .esd1),
+                             theta2eta(init.mu2,  .lmu, earg= .emu2),
+                             theta2eta(init.sd2,  .lsd, earg= .esd2))
         }
     }), list(.lphi=lphi, .lmu=lmu, .iphi=iphi, .imu1=imu1, .imu2=imu2,
              .ephi=ephi, .emu1=emu1, .emu2=emu2, .esd1=esd1, .esd2=esd2,
+             .ESD=ESD,
              .lsd=lsd, .isd1=isd1, .isd2=isd2, .qmu=qmu))),
     inverse=eval(substitute(function(eta, extra=NULL){
         phi = eta2theta(eta[,1], link= .lphi, earg= .ephi)
-        mu1 = eta2theta(eta[,2], link= .lmu, earg= .emu1)
-        mu2 = eta2theta(eta[,4], link= .lmu, earg= .emu2)
+        mu1 = eta2theta(eta[,2], link=  .lmu, earg= .emu1)
+        mu2 = eta2theta(eta[,4], link=  .lmu, earg= .emu2)
         phi*mu1 + (1-phi)*mu2
     }, list(.lphi=lphi, .lmu=lmu,
              .ephi=ephi, .emu1=emu1, .emu2=emu2, .esd1=esd1, .esd2=esd2 ))),
@@ -111,18 +115,19 @@ mix2normal1 = function(lphi="logit",
                       "sd1"= .lsd, "mu2"= .lmu, "sd2"= .lsd)
         misc$earg = list("phi"= .ephi, "mu1"= .emu1,
                          "sd1"= .esd1, "mu2"= .emu2, "sd2"= .esd2)
-        misc$expected = FALSE
-        misc$esd = .esd
-        misc$BFGS = TRUE
-    }), list(.lphi=lphi, .lmu=lmu, .lsd=lsd, .esd=esd,
-             .ephi=ephi, .emu1=emu1, .emu2=emu2, .esd1=esd1, .esd2=esd2 ))),
+        misc$expected = TRUE
+        misc$ESD = .ESD
+        misc$nsimEIM = .nsimEIM
+    }), list(.lphi=lphi, .lmu=lmu, .lsd=lsd, .ESD=ESD,
+             .ephi=ephi, .emu1=emu1, .emu2=emu2, .esd1=esd1, .esd2=esd2,
+             .nsimEIM=nsimEIM ))),
     loglikelihood=eval(substitute(
             function(mu,y,w,residuals=FALSE,eta,extra=NULL) {
         phi = eta2theta(eta[,1], link= .lphi, earg= .ephi)
-        mu1 = eta2theta(eta[,2], link= .lmu, earg= .emu1)
-        sd1 = eta2theta(eta[,3], link= .lsd, earg= .esd1)
-        mu2 = eta2theta(eta[,4], link= .lmu, earg= .emu2)
-        sd2 = eta2theta(eta[,5], link= .lsd, earg= .esd2)
+        mu1 = eta2theta(eta[,2], link= .lmu,  earg= .emu1)
+        sd1 = eta2theta(eta[,3], link= .lsd,  earg= .esd1)
+        mu2 = eta2theta(eta[,4], link= .lmu,  earg= .emu2)
+        sd2 = eta2theta(eta[,5], link= .lsd,  earg= .esd2)
         f1 = dnorm(y, mean=mu1, sd=sd1)
         f2 = dnorm(y, mean=mu2, sd=sd2)
         if(residuals) stop("loglikelihood residuals not implemented yet") else
@@ -133,66 +138,81 @@ mix2normal1 = function(lphi="logit",
     vfamily=c("mix2normal1"),
     deriv=eval(substitute(expression({
         phi = eta2theta(eta[,1], link= .lphi, earg= .ephi)
-        mu1 = eta2theta(eta[,2], link= .lmu, earg= .emu1)
-        sd1 = eta2theta(eta[,3], link= .lsd, earg= .esd1)
-        mu2 = eta2theta(eta[,4], link= .lmu, earg= .emu2)
-        sd2 = eta2theta(eta[,5], link= .lsd, earg= .esd2)
-        f1 = dnorm(y, mean=mu1, sd=sd1)
-        f2 = dnorm(y, mean=mu2, sd=sd2)
-        pdf = phi*f1 + (1-phi)*f2
-        df1.dmu1 = (y-mu1) * f1 / sd1^2
-        df2.dmu2 = (y-mu2) * f2 / sd2^2
-        dl.dphi = (f1-f2) / pdf
-        dl.dmu1 = phi * df1.dmu1 / pdf
-        dl.dmu2 = (1-phi) * df2.dmu2 / pdf
-        dl.dsd1 = phi * f1 * (((y-mu1)/sd1)^2 - 1) / (sd1 * pdf)
-        dl.dsd2 = (1-phi) * f2 * (((y-mu2)/sd2)^2 - 1) / (sd2 * pdf)
+        mu1 = eta2theta(eta[,2], link= .lmu,  earg= .emu1)
+        sd1 = eta2theta(eta[,3], link= .lsd,  earg= .esd1)
+        mu2 = eta2theta(eta[,4], link= .lmu,  earg= .emu2)
+        sd2 = eta2theta(eta[,5], link= .lsd,  earg= .esd2)
         dphi.deta = dtheta.deta(phi, link= .lphi, earg= .ephi)
         dmu1.deta = dtheta.deta(mu1, link= .lmu, earg= .emu1)
         dmu2.deta = dtheta.deta(mu2, link= .lmu, earg= .emu2)
         dsd1.deta = dtheta.deta(sd1, link= .lsd, earg= .esd1)
         dsd2.deta = dtheta.deta(sd2, link= .lsd, earg= .esd2)
-        if(iter == 1) {
-            etanew = eta
-        } else {
-            derivold = derivnew
-            etaold = etanew
-            etanew = eta
-        }
-        derivnew = w * cbind(dl.dphi * dphi.deta,
-                             dl.dmu1 * dmu1.deta,
-                             dl.dsd1 * dsd1.deta,
-                             dl.dmu2 * dmu2.deta,
-                             dl.dsd2 * dsd2.deta)
-        derivnew
+        f1 = dnorm(y, mean=mu1, sd=sd1)
+        f2 = dnorm(y, mean=mu2, sd=sd2)
+        pdf = phi*f1 + (1-phi)*f2
+        z1 = (y-mu1) / sd1
+        z2 = (y-mu2) / sd2
+        df1.dmu1 = z1 * f1 / sd1
+        df2.dmu2 = z2 * f2 / sd2
+        df1.dsd1 = (z1^2 - 1) * f1 / sd1
+        df2.dsd2 = (z2^2 - 1) * f2 / sd2
+        dl.dphi = (f1-f2) / pdf
+        dl.dmu1 = phi * df1.dmu1 / pdf
+        dl.dmu2 = (1-phi) * df2.dmu2 / pdf
+        dl.dsd1 = phi * df1.dsd1 / pdf
+        dl.dsd2 = (1-phi) * df2.dsd2 / pdf
+        w * cbind(dl.dphi * dphi.deta,
+                  dl.dmu1 * dmu1.deta,
+                  dl.dsd1 * dsd1.deta,
+                  dl.dmu2 * dmu2.deta,
+                  dl.dsd2 * dsd2.deta)
     }), list(.lphi=lphi, .lmu=lmu, .lsd=lsd,
-             .ephi=ephi, .emu1=emu1, .emu2=emu2, .esd1=esd1, .esd2=esd2 ))),
+             .ephi=ephi, .emu1=emu1, .emu2=emu2, .esd1=esd1, .esd2=esd2,
+             .nsimEIM=nsimEIM ))),
     weight = eval(substitute(expression({
-        if(iter == 1) {
-            wznew = cbind(matrix(w, n, M), matrix(0, n, dimm(M)-M))
-        } else {
-            wzold = wznew
-            wznew = qnupdate(w=w, wzold=wzold, dderiv=(derivold - derivnew),
-                             deta=etanew-etaold, M=M,
-                             trace=trace)  # weights incorporated in args
+
+        d3 = deriv3(~ log(
+            phi * dnorm((ysim-mu1)/sd1) / sd1 +
+            (1-phi) * dnorm((ysim-mu2)/sd2) / sd2),
+            c("phi","mu1","sd1","mu2","sd2"), hessian= TRUE)
+        run.mean = 0
+        for(ii in 1:( .nsimEIM )) {
+            ysim = ifelse(runif(n) < phi, rnorm(n,mu1,sd1), rnorm(n,mu2,sd2))
+
+            eval.d3 = eval(d3)
+            d2l.dthetas2 =  attr(eval.d3, "hessian")
+            rm(ysim)
+
+            temp3 = matrix(0, n, dimm(M))
+            for(ss in 1:M)
+                for(tt in ss:M)
+                    temp3[,iam(ss,tt,M)] =  -d2l.dthetas2[,ss,tt]
+
+            run.mean = ((ii-1) * run.mean + temp3) / ii
         }
-        wznew
-    }), list(.lphi=lphi, .lmu=lmu))))
+        wz = if(intercept.only)
+            matrix(apply(run.mean,2,mean), n, dimm(M), byrow=TRUE) else run.mean
+
+        dtheta.detas = cbind(dphi.deta,dmu1.deta,dsd1.deta,dmu2.deta,dsd2.deta)
+        index0 = iam(NA, NA, M=M, both=TRUE, diag=TRUE)
+        wz = wz * dtheta.detas[,index0$row] * dtheta.detas[,index0$col]
+        w * wz
+    }), list(.lphi=lphi, .lmu=lmu, .nsimEIM=nsimEIM ))))
 }
 
 
 
 
-mix2poisson.control <- function(save.weight=TRUE, ...)
+mix2poisson.control <- function(trace=TRUE, ...)
 {
-    list(save.weight=save.weight)
+    list(trace=trace)
 }
 
 
 mix2poisson = function(lphi="logit", llambda="loge",
                        ephi=list(), el1=list(), el2=list(),
                        iphi=0.5, il1=NULL, il2=NULL,
-                       qmu=c(0.2, 0.8), zero=1)
+                       qmu=c(0.2, 0.8), nsimEIM=100, zero=1)
 {
     if(mode(lphi) != "character" && mode(lphi) != "name")
         lphi = as.character(substitute(lphi))
@@ -209,15 +229,16 @@ mix2poisson = function(lphi="logit", llambda="loge",
     if(!is.list(ephi)) ephi = list()
     if(!is.list(el1)) el1 = list()
     if(!is.list(el2)) el2 = list()
+    if(!is.Numeric(nsimEIM, allow=1, integ=TRUE) || nsimEIM <= 10)
+        stop("'nsimEIM' should be an integer greater than 10")
 
     new("vglmff",
-    blurb=c("Mixture of two univariate normals\n\n",
+    blurb=c("Mixture of two Poisson distributions\n\n",
            "Links:    ",
            namesof("phi",lphi, earg= ephi), ", ", 
            namesof("lambda1", llambda, earg= el1, tag=FALSE), ", ",
            namesof("lambda2", llambda, earg= el2, tag=FALSE), "\n",
-           "Mean:     phi*lambda1 + (1-phi)*lambda2\n",
-           "Variance: phi*lambda1^2 + (1-phi)*lambda2^2 + phi*(1-phi)*(lambda1-lambda2)^2"),
+           "Mean:     phi*lambda1 + (1-phi)*lambda2"),
     constraints=eval(substitute(expression({
         constraints = cm.zero.vgam(constraints, x, .zero, M)
     }), list(.zero=zero ))),
@@ -225,19 +246,14 @@ mix2poisson = function(lphi="logit", llambda="loge",
         if(ncol(y <- cbind(y)) != 1)
             stop("the response must be a vector or one-column matrix")
         predictors.names = c(namesof("phi", .lphi, earg= .ephi, tag=FALSE),
-                             namesof("lambda1", .llambda, earg= .el1, tag=FALSE),
-                             namesof("lambda2", .llambda, earg= .el2, tag=FALSE))
+                           namesof("lambda1", .llambda, earg= .el1, tag=FALSE),
+                           namesof("lambda2", .llambda, earg= .el2, tag=FALSE))
         if(!length(etastart)) {
             qy = quantile(y, prob= .qmu)
-            init.phi = if(length(.iphi)) rep(.iphi, length=n) else {
-                0.5
-            }
-            init.lambda1 = if(length(.il1)) rep(.il1, length=n) else {
-                rep(qy[1], length=n)
-            }
-            init.lambda2 = if(length(.il2)) rep(.il2, length=n) else {
-                rep(qy[2], length=n)
-            }
+            init.phi =     rep(if(length(.iphi)) .iphi else 0.5, length=n)
+            init.lambda1 = rep(if(length(.il1)) .il1 else qy[1], length=n)
+            init.lambda2 = rep(if(length(.il2)) .il2 else qy[2], length=n)
+            if(!length(etastart))  
             etastart = cbind(theta2eta(init.phi, .lphi, earg= .ephi),
                              theta2eta(init.lambda1, .llambda, earg= .el1),
                              theta2eta(init.lambda2, .llambda, earg= .el2))
@@ -255,10 +271,10 @@ mix2poisson = function(lphi="logit", llambda="loge",
     last=eval(substitute(expression({
         misc$link = c("phi"= .lphi, "lambda1"= .llambda, "lambda2"= .llambda)
         misc$earg = list("phi"= .ephi, "lambda1"= .el1, "lambda2"= .el2)
-        misc$expected = FALSE
-        misc$BFGS = TRUE
+        misc$expected = TRUE
+        misc$nsimEIM = .nsimEIM
     }), list(.lphi=lphi, .llambda=llambda,
-             .ephi=ephi, .el1=el1, .el2=el2 ))),
+             .ephi=ephi, .el1=el1, .el2=el2, .nsimEIM=nsimEIM ))),
     loglikelihood=eval(substitute(
             function(mu,y,w,residuals=FALSE,eta,extra=NULL) {
         phi = eta2theta(eta[,1], link= .lphi, earg= .ephi)
@@ -275,6 +291,9 @@ mix2poisson = function(lphi="logit", llambda="loge",
         phi = eta2theta(eta[,1], link= .lphi, earg= .ephi)
         lambda1 = eta2theta(eta[,2], link= .llambda, earg= .el1)
         lambda2 = eta2theta(eta[,3], link= .llambda, earg= .el2)
+        dphi.deta = dtheta.deta(phi, link= .lphi, earg= .ephi)
+        dlambda1.deta = dtheta.deta(lambda1, link= .llambda, earg= .el1)
+        dlambda2.deta = dtheta.deta(lambda2, link= .llambda, earg= .el2)
         f1 = dpois(x=y, lam=lambda1)
         f2 = dpois(x=y, lam=lambda2)
         pdf = phi*f1 + (1-phi)*f2
@@ -283,40 +302,71 @@ mix2poisson = function(lphi="logit", llambda="loge",
         dl.dphi = (f1-f2) / pdf
         dl.dlambda1 = phi * df1.dlambda1 / pdf
         dl.dlambda2 = (1-phi) * df2.dlambda2 / pdf
-        dphi.deta = dtheta.deta(phi, link= .lphi, earg= .ephi)
-        dlambda1.deta = dtheta.deta(lambda1, link= .llambda, earg= .el1)
-        dlambda2.deta = dtheta.deta(lambda2, link= .llambda, earg= .el2)
-        if(iter == 1) {
-            etanew = eta
-        } else {
-            derivold = derivnew
-            etaold = etanew
-            etanew = eta
-        }
-        derivnew = w * cbind(dl.dphi * dphi.deta,
-                             dl.dlambda1 * dlambda1.deta,
-                             dl.dlambda2 * dlambda2.deta)
-        derivnew
+        w * cbind(dl.dphi * dphi.deta,
+                  dl.dlambda1 * dlambda1.deta,
+                  dl.dlambda2 * dlambda2.deta)
     }), list(.lphi=lphi, .llambda=llambda,
-             .ephi=ephi, .el1=el1, .el2=el2 ))),
+             .ephi=ephi, .el1=el1, .el2=el2, .nsimEIM=nsimEIM ))),
     weight = eval(substitute(expression({
-        if(iter == 1) {
-            wznew = cbind(matrix(w, n, M), matrix(0, n, dimm(M)-M))
-        } else {
-            wzold = wznew
-            wznew = qnupdate(w=w, wzold=wzold, dderiv=(derivold - derivnew),
-                             deta=etanew-etaold, M=M,
-                             trace=trace)  # weights incorporated in args
+        run.mean = 0
+        for(ii in 1:( .nsimEIM )) {
+            ysim = ifelse(runif(n) < phi, rpois(n,lambda1), rpois(n,lambda2))
+            f1 = dpois(x=ysim, lam=lambda1)
+            f2 = dpois(x=ysim, lam=lambda2)
+            pdf = phi*f1 + (1-phi)*f2
+            df1.dlambda1 = dpois(ysim-1, lam=lambda1) - f1
+            df2.dlambda2 = dpois(ysim-1, lam=lambda2) - f2
+            dl.dphi = (f1-f2) / pdf
+            dl.dlambda1 = phi * df1.dlambda1 / pdf
+            dl.dlambda2 = (1-phi) * df2.dlambda2 / pdf
+            d2f1.dlambda12 = dpois(ysim-2,lambda1) - 2*dpois(ysim-1,lambda1) +
+                             dpois(ysim,lambda1)
+            d2f2.dlambda22 = dpois(ysim-2,lambda2) - 2*dpois(ysim-1,lambda2) +
+                             dpois(ysim,lambda2)
+            d2l.dphi2 =  dl.dphi^2
+            d2l.dlambda12 = phi * (phi * df1.dlambda1^2 / pdf -
+                            d2f1.dlambda12) / pdf
+            d2l.dlambda22 = (1-phi) * ((1-phi) * df2.dlambda2^2 / pdf -
+                            d2f2.dlambda22) / pdf
+            d2l.dlambda1lambda2 =  phi * (1-phi) *
+                                   df1.dlambda1 * df2.dlambda2 / pdf^2
+            d2l.dphilambda1 = df1.dlambda1 * (phi*(f1-f2)/pdf - 1) / pdf
+            d2l.dphilambda2 = df2.dlambda2 * ((1-phi)*(f1-f2)/pdf - 1) / pdf
+
+            rm(ysim)
+            temp3 = matrix(0, n, dimm(M))
+            temp3[,iam(1,1,M=3)] = d2l.dphi2
+            temp3[,iam(2,2,M=3)] = d2l.dlambda12
+            temp3[,iam(3,3,M=3)] = d2l.dlambda22
+            temp3[,iam(1,2,M=3)] = d2l.dphilambda1
+            temp3[,iam(1,3,M=3)] = d2l.dphilambda2
+            temp3[,iam(2,3,M=3)] = d2l.dlambda1lambda2
+            run.mean = ((ii-1) * run.mean + temp3) / ii
         }
-        wznew
-    }), list(.lphi=lphi, .llambda=llambda))))
+        wz = if(intercept.only)
+            matrix(apply(run.mean,2,mean), n, dimm(M), byrow=TRUE) else run.mean
+
+        dtheta.detas = cbind(dphi.deta, dlambda1.deta, dlambda2.deta)
+        index0 = iam(NA, NA, M=M, both=TRUE, diag=TRUE)
+        wz = wz * dtheta.detas[,index0$row] * dtheta.detas[,index0$col]
+        w * wz
+    }), list(.lphi=lphi, .llambda=llambda,
+             .ephi=ephi, .el1=el1, .el2=el2, .nsimEIM=nsimEIM ))))
 }
 
+
+
+
+
+mix2exp.control <- function(trace=TRUE, ...)
+{
+    list(trace=trace)
+}
 
 mix2exp = function(lphi="logit", llambda="loge",
                    ephi=list(), el1=list(), el2=list(),
                    iphi=0.5, il1=NULL, il2=NULL,
-                   qmu=c(0.2, 0.8), zero=1)
+                   qmu=c(0.8, 0.2), nsimEIM=100, zero=1)
 {
     if(mode(lphi) != "character" && mode(lphi) != "name")
         lphi = as.character(substitute(lphi))
@@ -333,6 +383,8 @@ mix2exp = function(lphi="logit", llambda="loge",
     if(!is.list(ephi)) ephi = list()
     if(!is.list(el1)) el1 = list()
     if(!is.list(el2)) el2 = list()
+    if(!is.Numeric(nsimEIM, allow=1, integ=TRUE) || nsimEIM <= 10)
+        stop("'nsimEIM' should be an integer greater than 10")
 
     new("vglmff",
     blurb=c("Mixture of two univariate exponentials\n\n",
@@ -348,24 +400,17 @@ mix2exp = function(lphi="logit", llambda="loge",
         if(ncol(y <- cbind(y)) != 1)
             stop("the response must be a vector or one-column matrix")
         predictors.names = c(namesof("phi", .lphi, earg= .ephi, tag=FALSE),
-                             namesof("lambda1", .llambda, earg= .el1, tag=FALSE),
-                             namesof("lambda2", .llambda, earg= .el2, tag=FALSE))
+                             namesof("lambda1", .llambda, earg= .el1,tag=FALSE),
+                             namesof("lambda2", .llambda, earg= .el2,tag=FALSE))
         if(!length(etastart)) {
             qy = quantile(y, prob= .qmu)
-            init.phi = if(length(.iphi)) rep(.iphi, length=n) else {
-                0.5
-            }
-            init.lambda1 = if(length(.il1)) rep(.il1, length=n) else {
-                rep(qy[1], length=n)
-            }
-            init.lambda2 = if(length(.il2)) rep(.il2, length=n) else {
-                rep(qy[2], length=n)
-            }
+            init.phi =     rep(if(length(.iphi)) .iphi else 0.5, length=n)
+            init.lambda1 = rep(if(length(.il1)) .il1 else 1/qy[1], length=n)
+            init.lambda2 = rep(if(length(.il2)) .il2 else 1/qy[2], length=n)
+            if(!length(etastart))  
             etastart = cbind(theta2eta(init.phi, .lphi, earg= .ephi),
                              theta2eta(init.lambda1, .llambda, earg= .el1),
                              theta2eta(init.lambda2, .llambda, earg= .el2))
- print("etastart[1:4,]")
- print( etastart[1:4,] )
         }
     }), list(.lphi=lphi, .llambda=llambda, .iphi=iphi, .il1=il1, .il2=il2,
              .ephi=ephi, .el1=el1, .el2=el2,
@@ -380,9 +425,9 @@ mix2exp = function(lphi="logit", llambda="loge",
     last=eval(substitute(expression({
         misc$link = c("phi"= .lphi, "lambda1"= .llambda, "lambda2"= .llambda)
         misc$earg = list("phi"= .ephi, "lambda1"= .el1, "lambda2"= .el2)
-        misc$expected = FALSE
-        misc$pooled.weight = pooled.weight
-    }), list(.lphi=lphi, .llambda=llambda,
+        misc$expected = TRUE
+        misc$nsimEIM = .nsimEIM
+    }), list(.lphi=lphi, .llambda=llambda, .nsimEIM=nsimEIM,
              .ephi=ephi, .el1=el1, .el2=el2 ))),
     loglikelihood=eval(substitute(
             function(mu,y,w,residuals=FALSE,eta,extra=NULL) {
@@ -400,89 +445,63 @@ mix2exp = function(lphi="logit", llambda="loge",
         phi = eta2theta(eta[,1], link= .lphi, earg= .ephi)
         lambda1 = eta2theta(eta[,2], link= .llambda, earg= .el1)
         lambda2 = eta2theta(eta[,3], link= .llambda, earg= .el2)
-        pdf1 = dexp(x=y, rate=lambda1) * phi
-        pdf2 = dexp(x=y, rate=lambda2) * (1-phi)
-        delta = pdf1 / (pdf1 + pdf2)
-        expy  = phi / lambda1 + (1-phi) / lambda2  # E(Y)
-        expy2 = phi * 2 / lambda1^2 + (1-phi) * 2 / lambda2^2  # E(Y^2)
-        dl.dphi = (delta - phi) / (phi * (1-phi))
-        dl.dlambda1 = -(y - 1/lambda1) * delta
-        dl.dlambda2 = -(y - 1/lambda2) * (1-delta)
         dphi.deta = dtheta.deta(phi, link= .lphi, earg= .ephi)
         dlambda1.deta = dtheta.deta(lambda1, link= .llambda, earg= .el1)
         dlambda2.deta = dtheta.deta(lambda2, link= .llambda, earg= .el2)
+        f1 = dexp(x=y, rate=lambda1)
+        f2 = dexp(x=y, rate=lambda2)
+        pdf = phi*f1 + (1-phi)*f2
+        df1.dlambda1 = exp(-lambda1*y) - y * dexp(y, rate=lambda1)
+        df2.dlambda2 = exp(-lambda2*y) - y * dexp(y, rate=lambda2)
+        dl.dphi = (f1-f2) / pdf
+        dl.dlambda1 = phi * df1.dlambda1 / pdf
+        dl.dlambda2 = (1-phi) * df2.dlambda2 / pdf
         w * cbind(dl.dphi * dphi.deta,
                   dl.dlambda1 * dlambda1.deta,
                   dl.dlambda2 * dlambda2.deta)
     }), list(.lphi=lphi, .llambda=llambda,
              .ephi=ephi, .el1=el1, .el2=el2 ))),
     weight = eval(substitute(expression({
-        d2phi.deta2 = d2theta.deta2(phi, link= .lphi, earg= .ephi)
-        d2lambda1.deta2 = d2theta.deta2(lambda1, link= .llambda, earg= .el1)
-        d2lambda2.deta2 = d2theta.deta2(lambda2, link= .llambda, earg= .el2)
-        wz = matrix(0, n, dimm(M))
-        d2l.dphi2 = ((delta-phi) / (phi*(1-phi)))^2
-        d2l.dlambda12 = delta / lambda1^2 -  delta * (1-delta) *
-                        (y - 1 / lambda1)^2
-        d2l.dlambda22 = (1-delta) / lambda2^2 -  delta * (1-delta) *
-                        (y - 1 / lambda2)^2
-        d2l.dphidlambda1 =  delta * (1-delta) *
-                           (y - 1 / lambda1) / (phi * (1-phi))
-        d2l.dphidlambda2 = -delta * (1-delta) *
-                           (y - 1 / lambda2) / (phi * (1-phi))
-        d2l.dlambda1dlambda2 = delta * (1-delta) *
-                           (y - 1 / lambda1) * (y - 1 / lambda2)
-        wz[,iam(1,1,M)] = d2l.dphi2 * dphi.deta^2 - dl.dphi * d2phi.deta2
-        wz[,iam(2,2,M)] = d2l.dlambda12 * dlambda1.deta^2 -
-                          dl.dlambda1 * d2lambda1.deta2
-        wz[,iam(3,3,M)] = d2l.dlambda22 * dlambda2.deta^2 -
-                          dl.dlambda2 * d2lambda2.deta2
-        wz[,iam(1,2,M)] = d2l.dphidlambda1 * dphi.deta * dlambda1.deta
-        wz[,iam(1,3,M)] = d2l.dphidlambda2 * dphi.deta * dlambda2.deta
-        wz[,iam(2,3,M)] = d2l.dlambda1dlambda2 * dlambda1.deta * dlambda2.deta
-        wz = w * wz
+        run.mean = 0
+        for(ii in 1:( .nsimEIM )) {
+            ysim = ifelse(runif(n) < phi, rexp(n,lambda1), rexp(n,lambda2))
+            f1 = dexp(x=ysim, rate=lambda1)
+            f2 = dexp(x=ysim, rate=lambda2)
+            pdf = phi*f1 + (1-phi)*f2
+            df1.dlambda1 = exp(-lambda1*ysim) - ysim * dexp(ysim, rate=lambda1)
+            df2.dlambda2 = exp(-lambda2*ysim) - ysim * dexp(ysim, rate=lambda2)
+            dl.dphi = (f1-f2) / pdf
+            dl.dlambda1 = phi * df1.dlambda1 / pdf
+            dl.dlambda2 = (1-phi) * df2.dlambda2 / pdf
+            d2f1.dlambda12 = ysim*(ysim*lambda1-2)*exp(-lambda1*ysim)
+            d2f2.dlambda22 = ysim*(ysim*lambda2-2)*exp(-lambda2*ysim)
+            d2l.dphi2 =  dl.dphi^2
+            d2l.dlambda12 = phi * (phi * df1.dlambda1^2 / pdf -
+                            d2f1.dlambda12) / pdf
+            d2l.dlambda22 = (1-phi) * ((1-phi) * df2.dlambda2^2 / pdf -
+                            d2f2.dlambda22) / pdf
+            d2l.dlambda1lambda2 =  phi * (1-phi) *
+                                   df1.dlambda1 * df2.dlambda2 / pdf^2
+            d2l.dphilambda1 = df1.dlambda1 * (phi*(f1-f2)/pdf - 1) / pdf
+            d2l.dphilambda2 = df2.dlambda2 * ((1-phi)*(f1-f2)/pdf - 1) / pdf
+            rm(ysim)
+            temp3 = matrix(0, n, dimm(M))
+            temp3[,iam(1,1,M=3)] = d2l.dphi2
+            temp3[,iam(2,2,M=3)] = d2l.dlambda12
+            temp3[,iam(3,3,M=3)] = d2l.dlambda22
+            temp3[,iam(1,2,M=3)] = d2l.dphilambda1
+            temp3[,iam(1,3,M=3)] = d2l.dphilambda2
+            temp3[,iam(2,3,M=3)] = d2l.dlambda1lambda2
+            run.mean = ((ii-1) * run.mean + temp3) / ii
+        }
+        wz = if(intercept.only)
+            matrix(apply(run.mean,2,mean), n, dimm(M), byrow=TRUE) else run.mean
 
-
-
-
-        wz = matrix(0, n, dimm(M))
-        d2l.dphi2 = ((delta-phi) / (phi*(1-phi)))^2
-        d2l.dlambda12 = delta / lambda1^2 -  delta * (1-delta) *
-                        (expy2 - 2 * expy / lambda1 + 1/lambda1^2)
-        d2l.dlambda22 = (1-delta) / lambda2^2 -  delta * (1-delta) *
-                        (expy2 - 2 * expy / lambda2 + 1/lambda2^2)
-        d2l.dphidlambda1 =  delta * (1-delta) *
-                           (expy - 1 / lambda1) / (phi * (1-phi))
-        d2l.dphidlambda2 = -delta * (1-delta) *
-                           (expy - 1 / lambda2) / (phi * (1-phi))
-        d2l.dlambda1dlambda2 = delta * (1-delta) *
-                           (expy2 - expy / lambda1 - expy / lambda2 +
-                            1 / (lambda1 * lambda2))
-        wz[,iam(1,1,M)] = d2l.dphi2 * dphi.deta^2
-        wz[,iam(2,2,M)] = d2l.dlambda12 * dlambda1.deta^2
-        wz[,iam(3,3,M)] = d2l.dlambda22 * dlambda2.deta^2
-        wz[,iam(1,2,M)] = d2l.dphidlambda1 * dphi.deta * dlambda1.deta
-        wz[,iam(1,3,M)] = d2l.dphidlambda2 * dphi.deta * dlambda2.deta
-        wz[,iam(2,3,M)] = d2l.dlambda1dlambda2 * dlambda1.deta * dlambda2.deta
- print("wz[1:3,]")
- print( wz[1:3,] )
-        wz = w * wz
-
-
-
-        if(TRUE && intercept.only) {
-            sumw = sum(w)
-            for(i in 1:ncol(wz))
-                wz[,i] = sum(wz[,i]) / sumw
-            pooled.weight = TRUE
-            wz = w * wz   # Put back the weights
-        } else
-            pooled.weight = FALSE
- print("pooled wz[1:3,]")
- print( wz[1:3,] )
-
-        wz
+        dtheta.detas = cbind(dphi.deta, dlambda1.deta, dlambda2.deta)
+        index0 = iam(NA, NA, M=M, both=TRUE, diag=TRUE)
+        wz = wz * dtheta.detas[,index0$row] * dtheta.detas[,index0$col]
+        w * wz
     }), list(.lphi=lphi, .llambda=llambda,
-             .ephi=ephi, .el1=el1, .el2=el2))))
+             .ephi=ephi, .el1=el1, .el2=el2, .nsimEIM=nsimEIM ))))
 }
 

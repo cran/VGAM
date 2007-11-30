@@ -1,6 +1,6 @@
 Package: VGAM
-Version: 0.7-4
-Date: 2007-10-1
+Version: 0.7-5
+Date: 2007-11-30
 Title: Vector Generalized Linear and Additive Models
 Author: Thomas W. Yee <t.yee@auckland.ac.nz>
 Maintainer: Thomas Yee <t.yee@auckland.ac.nz> 
@@ -15,4 +15,4 @@ License: GPL version 2
 URL: http://www.stat.auckland.ac.nz/~yee/VGAM
 LazyLoad: yes
 LazyData: yes
-Packaged: Mon Oct  1 16:58:20 2007; yee
+Packaged: Fri Nov 30 09:35:51 2007; yee

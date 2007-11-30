@@ -11,13 +11,12 @@
 mix2normal1(lphi="logit", lmu="identity", lsd="loge",
             ephi=list(), emu1=list(), emu2=list(), esd1=list(), esd2=list(),
             iphi=0.5, imu1=NULL, imu2=NULL, isd1=NULL, isd2=NULL,
-            qmu=c(0.2, 0.8), esd=FALSE, zero=1)
+            qmu=c(0.2, 0.8), ESD=TRUE, nsimEIM=100, zero=1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{lphi}{
     Link function for the parameter \eqn{\phi}{phi}.
-    See below for more details.
     See \code{\link{Links}} for more choices.
 
   }
@@ -34,7 +33,7 @@ mix2normal1(lphi="logit", lmu="identity", lsd="loge",
   \item{ephi, emu1, emu2, esd1, esd2}{
   List. Extra argument for each of the links.
   See \code{earg} in \code{\link{Links}} for general information.
-  If \code{esd=TRUE} then \code{esd1} is used and not \code{esd2}.
+  If \code{ESD=TRUE} then \code{esd1} must equal \code{esd2}.
 
   }
   \item{iphi}{
@@ -52,6 +51,8 @@ mix2normal1(lphi="logit", lmu="identity", lsd="loge",
     Optional initial value for \eqn{\sigma_1}{sd1} and \eqn{\sigma_2}{sd2}.
     The default is to compute initial values internally based on
     the argument \code{qmu}.
+    Currently these are not great, therefore using these arguments 
+    where practical is a good idea.
 
   }
   \item{qmu}{
@@ -62,13 +63,17 @@ mix2normal1(lphi="logit", lmu="identity", lsd="loge",
     \code{\link[stats]{quantile}}.
 
   }
-  \item{esd}{
+  \item{ESD}{
     Logical indicating whether the two standard deviations should be 
-    constrained to be equal. If set \code{TRUE}, the appropriate
+    constrained to be equal. If \code{TRUE} then the appropriate
     constraint matrices will be used.
 
   }
-\item{zero}{
+  \item{nsimEIM}{
+  See \code{\link{CommonVGAMffArguments}}.
+
+  }
+  \item{zero}{
   An integer specifying which linear/additive predictor is modelled as
   intercepts only.  If given, the value or values must be from the
   set \eqn{\{1,2,\ldots,5\}}{1,2,...,5}. 
@@ -76,13 +81,14 @@ mix2normal1(lphi="logit", lmu="identity", lsd="loge",
   is a single parameter even when there are explanatory variables.
   Set \code{zero=NULL} to model all linear/additive predictors as
   functions of the explanatory variables.
+  See \code{\link{CommonVGAMffArguments}} for more information.
 
 }
 }
 \details{
   The probability function can be loosely written as 
-  \deqn{f(y) = \phi \, N(\mu_1,\sigma_1^2) + (1-\phi) \, N(\mu_2, \sigma_2^2)}{%
-        f(y) = phi * N(mu1, sd1^2) + (1-phi) * N(mu2, sd2^2)}
+  \deqn{f(y) = \phi \, N(\mu_1,\sigma_1) + (1-\phi) \, N(\mu_2, \sigma_2)}{%
+        f(y) = phi * N(mu1, sd1) + (1-phi) * N(mu2, sd2)}
   where \eqn{\phi}{phi} is the probability an observation belongs
   to the first group.
   The parameters \eqn{\mu_1}{mu1} and \eqn{\mu_2}{mu2} are the means, and 
@@ -94,7 +100,7 @@ mix2normal1(lphi="logit", lmu="identity", lsd="loge",
   By default, the five linear/additive predictors are
   \eqn{(logit(\phi), \mu_1, \log(\sigma_1), \mu_2, \log(\sigma_2))^T}{(logit(phi),
   mu1, log(sd1), mu2, log(sd2))^T}.
-  If \code{esd=TRUE} then \eqn{\sigma_1 = \sigma_2}{sd1=sd2} is enforced.
+  If \code{ESD=TRUE} then \eqn{\sigma_1 = \sigma_2}{sd1=sd2} is enforced.
 
 }
 \value{
@@ -105,25 +111,35 @@ mix2normal1(lphi="logit", lmu="identity", lsd="loge",
 }
 \references{
 
+McLachlan, G. J. and Peel, D. (2000)
+\emph{Finite Mixture Models}.
+New York: Wiley.
+
 Everitt, B. S. and Hand, D. J. (1981)
 \emph{Finite Mixture Distributions}.
 London: Chapman & Hall.
 
 }
 \section{Warning }{
-  Numerical problems can occur.
-  Half-stepping is not uncommon.
-  If failure to converge occurs, try obtaining better initial values,
-  e.g., by using \code{iphi} and \code{qmu} etc.
+  Numerical problems can occur and
+  half-stepping is not uncommon.
+  If failure to converge occurs, try inputting better initial values,
+  e.g., by using \code{iphi},
+  \code{qmu},
+  \code{imu1},
+  \code{imu2},
+  \code{isd1},
+  \code{isd2},
+  etc.
 
-  This function uses a quasi-Newton update for the working weight matrices
-  (BFGS variant). It builds up approximations to the weight matrices,
-  and currently the code is not fully tested.
-  In particular, results based on the weight matrices (e.g., from
-  \code{vcov} and \code{summary}) may be quite incorrect, especially when
-  the arguments \code{weights} is used to input prior weights.
+% This function uses a quasi-Newton update for the working weight matrices
+% (BFGS variant). It builds up approximations to the weight matrices,
+% and currently the code is not fully tested.
+% In particular, results based on the weight matrices (e.g., from
+% \code{vcov} and \code{summary}) may be quite incorrect, especially when
+% the arguments \code{weights} is used to input prior weights.
 
-  This \pkg{VGAM} family function should be used with caution.
+  This \pkg{VGAM} family function should be used with care.
 
 }
 
@@ -131,17 +147,17 @@ London: Chapman & Hall.
 \note{
   Fitting this model successfully to data can be difficult due to
   numerical problems and ill-conditioned data.  It pays to fit the
-  model several times with different initial values, and check that
+  model several times with different initial values and check that
   the best fit looks reasonable. Plotting the results is recommended.
   This function works better as \eqn{\mu_1}{mu1} and \eqn{\mu_2}{mu2}
   become more different.
 
-  Convergence is often slow, especially when the two component
-  distributions are not well separated. The control argument \code{maxit}
-  should be set to a higher value, e.g., 200, and use \code{trace=TRUE}
-  to monitor convergence.  If appropriate in the first place, setting
-  \code{esd=TRUE} often makes the optimization problem much easier
-  in general.
+  Convergence can be slow, especially when the two component
+  distributions are not well separated.
+  The default control argument \code{trace=TRUE} is to encourage
+  monitoring convergence.
+  Having \code{ESD=TRUE} often makes the overall optimization problem
+  easier.
 
 }
 
@@ -149,24 +165,27 @@ London: Chapman & Hall.
   \code{\link{normal1}},
   \code{\link[stats:Normal]{Normal}},
   \code{\link{mix2poisson}}.
+
 }
 
 \examples{
 n = 1000
-mu1 =  99   # Mean IQ of geography professors
-mu2 = 150   # Mean IQ of mathematics professors
-sd1 = sd2 = 16
-phi = 0.3
+mu1 =  99
+mu2 = 150
+sd1 = sd2 = exp(3)
+(phi = logit(-1, inverse=TRUE))
 y = ifelse(runif(n) < phi, rnorm(n, mu1, sd1), rnorm(n, mu2, sd2))
 
-# Good idea to have trace=TRUE:
-fit = vglm(y ~ 1, mix2normal1(esd=TRUE), maxit=200)
-coef(fit, matrix=TRUE) # the estimates
-c(phi, mu1, sd1, mu2, sd2) # the truth
+fit = vglm(y ~ 1, mix2normal1(ESD=TRUE))
+
+# Compare the results
+cf = coef(fit)
+round(rbind('Estimated'=c(logit(cf[1], inv=TRUE),
+    cf[2], exp(cf[3]), cf[4]), 'Truth'=c(phi, mu1, sd1, mu2)), dig=2)
 
 \dontrun{# Plot the results
 xx = seq(min(y), max(y), len=200)
-plot(xx, (1-phi)*dnorm(xx, mu2, sd2), type="l", xlab="IQ",
+plot(xx, (1-phi)*dnorm(xx, mu2, sd2), type="l", xlab="y",
      main="Red=estimate, blue=truth", col="blue")
 phi.est = logit(coef(fit)[1], inverse=TRUE)
 sd.est = exp(coef(fit)[3])

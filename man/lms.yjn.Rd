@@ -1,5 +1,6 @@
 \name{lms.yjn}
 \alias{lms.yjn}
+\alias{lms.yjn2}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ LMS Quantile Regression with a Yeo-Johnson Transformation to Normality }
 \description{
@@ -14,6 +15,13 @@ lms.yjn(percentiles = c(25, 50, 75), zero = NULL,
         init.lambda = 1, init.sigma = NULL, 
         rule = c(10, 5), yoffset = NULL,
         diagW=FALSE, iters.diagW=6)
+lms.yjn2(percentiles=c(25,50,75), zero=NULL,
+         link.lambda="identity", link.sigma="loge",
+         elambda=list(), esigma=list(),
+         dfmu.init=4, dfsigma.init=2,
+         init.lambda=1.0, init.sigma=NULL,
+         yoffset=NULL, nsimEIM=250)
+
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -108,19 +116,27 @@ lms.yjn(percentiles = c(25, 50, 75), zero = NULL,
   Only used if \code{diagW = TRUE}.
 
   }
+  \item{nsimEIM}{
+  See \code{\link{CommonVGAMffArguments}} for more information.
+
+  }
 }
 \details{
  Given a value of the covariate, this function applies a Yeo-Johnson
  transformation to the response to best obtain normality. The parameters
  chosen to do this are estimated by maximum likelihood or penalized
  maximum likelihood.
-  
+ The function \code{lms.yjn2()} estimates the expected information
+ matrices using simulation (and is consequently slower) while
+ \code{lms.yjn()} uses numerical integration.
+  Try the other if one function fails.
+
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
-  The object is used by modelling functions such as \code{\link{vglm}},
-  \code{\link{rrvglm}}
+  The object is used by modelling functions such as \code{\link{vglm}}
   and \code{\link{vgam}}.
+
 }
 \references{ 
 Yeo, I.-K. and Johnson, R. A. (2000)
@@ -181,6 +197,7 @@ The generic function \code{predict}, when applied to a
 \code{\link{cdf.lmscreg}},
 \code{\link{bminz}},
 \code{\link{alsqreg}}.
+
 }
 \examples{
 data(bminz)

@@ -45,6 +45,7 @@ qtplot.lms.bcg <- function(percentiles=c(25,50,75),
     answer 
 }
  
+qtplot.lms.yjn2 <- 
 qtplot.lms.yjn <- function(percentiles=c(25,50,75),
                            eta=NULL, yoffset=0)
 {
@@ -395,20 +396,21 @@ deplot.lms.bcg <- function(object,
 }
 
 
-
+deplot.lms.yjn2 <-
 deplot.lms.yjn <- function(object,
                            newdata,
                            y.arg, 
                            eta0)
 {
 
-    if(!any(object@family@vfamily == "lms.yjn"))
+    if(!any(object@family@vfamily == c("lms.yjn","lms.yjn2")))
         warning("I think you've called the wrong function")
 
     lambda <- eta0[,1]
     Zvec <- (yeo.johnson(y.arg+object@misc$yoffset, lambda=eta0[,1]) -
                  eta0[,2]) / eta0[,3]
-    dZ.dy <- dyj.dy(y.arg+object@misc$yoffset, lambda=eta0[,1]) / eta0[,3]
+    dZ.dy <- dyj.dy.yeojohnson(y.arg+object@misc$yoffset,
+                               lambda=eta0[,1]) / eta0[,3]
     yvec <- dnorm(Zvec) * abs(dZ.dy) 
 
     list(newdata=newdata, y=y.arg, density=yvec)

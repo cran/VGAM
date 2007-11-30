@@ -16,6 +16,13 @@
 
 
 
+TypicalVGAMfamilyFunction <- function(lsigma="loge", esigma=list(),
+                                      isigma=NULL, parallel=TRUE,
+                                      method.init=1,
+                                      nsimEIM=100, zero=NULL) {
+    NULL
+}
+
 TypicalVGAMlinkFunction <- function(theta,
     earg=list(), inverse=FALSE, deriv=0, short=TRUE, tag=FALSE) {
     NULL
@@ -178,13 +185,13 @@ cloglog <- function(theta, earg=list(), inverse=FALSE, deriv=0,
             1 / Recall(theta=theta, earg=earg, inverse=FALSE, deriv=deriv)
         } else {
             junk <- exp(theta)
-            1 - exp(-junk)
+            -expm1(-junk)
         }
     } else {
         switch(deriv+1, {
-            log(-log(1-theta))},
-            -(1-theta) * log(1-theta),
-            {  junk <- log(1 - theta)
+            log(-log1p(-theta))},
+            -(1-theta) * log1p(-theta),
+            {  junk <- log1p(-theta)
                -(1-theta) * (1 + junk) * junk
             },
             stop("'deriv' unmatched"))
@@ -464,11 +471,11 @@ rhobit <- function(theta, earg=list(), inverse=FALSE, deriv=0,
             1/Recall(theta=theta, earg=earg, inverse=FALSE, deriv=deriv)
         } else {
             junk <- exp(theta)
-            (junk-1.0) / (junk+1.0)
+            expm1(theta) / (junk+1.0)
         }
     } else {
         switch(deriv+1,{
-            log((1+theta)/(1-theta))},
+            log1p(theta) - log1p(-theta)},
             (1 - theta^2) / 2,
             (1 - theta^2)^2 / (4*theta))
     }
@@ -500,11 +507,11 @@ fisherz <- function(theta, earg=list(), inverse=FALSE, deriv=0,
             1/Recall(theta=theta, earg=earg, inverse=FALSE, deriv=deriv)
         } else {
             junk <- exp(2*theta)
-            (junk-1.0)/(junk+1.0)
+            expm1(2*theta) / (junk+1.0)
         }
     } else {
         switch(deriv+1,
-           0.5 * log((1.0+theta)/(1.0-theta)),
+           0.5 * log1p(theta) - log1p(-theta),
            1.0 - theta^2,
            (1.0 - theta^2)^2 / (2*theta))
     }
@@ -637,7 +644,7 @@ elogit <- function(theta, earg=list(min=0, max=1), inverse=FALSE, deriv=0,
             1/Recall(theta=theta, earg=earg, inverse=FALSE, deriv=deriv)
         } else {
             junk <- if(is.R()) care.exp(theta) else care.exp(theta)
-            (A + B*junk) / (1 + junk)
+            (A + B*junk) / (1.0 + junk)
         }
     } else {
         switch(deriv+1, {
@@ -669,12 +676,12 @@ logit <- function(theta, earg=list(), inverse=FALSE, deriv=0,
             1/Recall(theta=theta, earg=earg, inverse=FALSE, deriv=deriv)
         } else {
             eta <- care.exp(theta)
-            eta / (1 + eta)
+            eta / (1.0 + eta)
         }
     } else {
         switch(deriv+1, {
-           log(theta/(1-theta))},
-           theta * (1 - theta),
+           log(theta) - log1p(-theta)},
+           exp(log(theta) + log1p(-theta)),
            theta * (1 - theta) * (1 - 2 * theta))
     }
 }
@@ -700,13 +707,13 @@ logc <- function(theta, earg=list(), inverse=FALSE, deriv=0,
         if(deriv>0) {
             1 / Recall(theta=theta, earg=earg, inverse=FALSE, deriv=deriv)
         } else {
-            1 - exp(theta)
+            -expm1(theta)
         }
     } else {
         switch(deriv+1,{
-            log(1-theta)},
-           -(1 - theta),
-           -(1 - theta)^2)
+            log1p(-theta)},
+           -(1.0 - theta),
+           -(1.0 - theta)^2)
     }
 }
 

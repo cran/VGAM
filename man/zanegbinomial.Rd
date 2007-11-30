@@ -135,8 +135,10 @@ for counts with extra zeros.
 
 \seealso{
   \code{\link{posnegbinomial}},
+  \code{\link{negbinomial}},
   \code{\link{binomialff}},
   \code{\link{rposnegbin}},
+  \code{\link{zinegbinomial}},
   \code{\link{zipoisson}}.
 }
 

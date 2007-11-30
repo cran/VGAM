@@ -6,7 +6,7 @@
   Estimating the parameter of Haight's Zeta function.
 }
 \usage{
-hzeta(link = "loglog", earg=list(), init.alpha = NULL)
+hzeta(link = "loglog", earg=list(), ialpha = NULL, nsimEIM=100)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -22,10 +22,14 @@ hzeta(link = "loglog", earg=list(), init.alpha = NULL)
   See \code{earg} in \code{\link{Links}} for general information.
 
   }
-  \item{init.alpha}{
+  \item{ialpha}{
   Optional initial value for the (positive) parameter. 
   The default is to obtain an initial value internally. Use this argument
   if the default fails.
+
+  }
+  \item{nsimEIM}{
+  See \code{\link{CommonVGAMffArguments}} for more information.
 
   }
 }
@@ -53,12 +57,11 @@ hzeta(link = "loglog", earg=list(), init.alpha = NULL)
 }
 \references{ 
 
-    Page 470 of
-    Johnson N. L., Kotz S. and Kemp, A. W. (1993)
+    Page 533 of
+    Johnson N. L., Kemp, A. W. and Kotz S. (2005)
     \emph{Univariate Discrete Distributions},
-    2nd edition,
-    Volume 2,
-    New York: Wiley.
+    3rd edition,
+    Hoboken, New Jersey: Wiley.
 
 }
 \author{ T. W. Yee }
@@ -72,12 +75,13 @@ hzeta(link = "loglog", earg=list(), init.alpha = NULL)
     \code{\link{loglog}}.
 }
 \examples{
-alpha = exp(exp(0.5))  # The parameter
+alpha = exp(exp(-0.1))  # The parameter
 y = rhzeta(n=1000, alpha) # Generate some hzeta random variates
 fit = vglm(y ~ 1, hzeta, trace = TRUE, crit="c")
 coef(fit, matrix=TRUE)
 Coef(fit)  # Useful for intercept-only models; should be same as alpha
-fitted(fit)[1:4,]
+c(mean(y), fitted(fit)[1,])
+summary(fit)
 }
 \keyword{models}
 \keyword{regression}

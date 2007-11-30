@@ -47,12 +47,11 @@ rhzeta(n, alpha)
 }
 \references{ 
 
-Page 470 of
-Johnson N. L., Kotz S. and Kemp, A. W. (1993)
-\emph{Univariate Discrete Distributions},
-2nd edition,
-Volume 2,
-New York: Wiley.
+    Page 533 of
+    Johnson N. L., Kemp, A. W. and Kotz S. (2005)
+    \emph{Univariate Discrete Distributions},
+    3rd edition,
+    Hoboken, New Jersey: Wiley.
 
 }
 \author{ T. W. Yee }
@@ -67,18 +66,18 @@ New York: Wiley.
     \code{\link{zetaff}}.
 }
 \examples{
-dhzeta(1:20, 0.5)
-rhzeta(20, 0.5)
+dhzeta(1:20, 2.1)
+rhzeta(20, 2.1)
 
 round(1000 * dhzeta(1:8, 2))
 table(rhzeta(1000, 2))
 
 \dontrun{
-alpha = 0.5; x = 1:10
-plot(x, dhzeta(x, alpha=alpha), type="h", ylim=0:1,
-     sub="alpha=0.5", las=1, col="blue", ylab="Probability",
+alpha = 1.1; x = 1:10
+plot(x, dhzeta(x, alpha=alpha), type="h", ylim=0:1, lwd=2,
+     sub=paste("alpha =", alpha), las=1, col="blue", ylab="Probability",
      main="Haight's zeta: blue=density; red=distribution function")
-lines(x+0.1, phzeta(x, alpha=alpha), col="red", lty=3, type="h")
+lines(x+0.1, phzeta(x, alpha=alpha), col="red", lty=3, lwd=2, type="h")
 }
 }
 \keyword{distribution}

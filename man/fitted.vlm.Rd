@@ -23,8 +23,9 @@ fitted.vlm(object, matrix = TRUE, ...)
 \details{
   The ``fitted values'' usually corresponds to the mean response,
   however, because the \pkg{VGAM} package fits so many models,
-  this sometimes refers to quantities such as quantiles. It may
-  even not exist, e.g., for a Cauchy distribution.
+  this sometimes refers to quantities such as quantiles.
+  The mean may even not exist, e.g., for a Cauchy distribution.
+
 }
 \value{
   The fitted values as returned by the

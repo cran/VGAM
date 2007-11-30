@@ -1,14 +1,14 @@
 \name{hunua}
 \alias{hunua}
-\non_function{}
+\docType{data}
 \title{Hunua Ranges Data}
-\usage{data(hunua)}
 \description{
   The \code{hunua} data frame has 392 rows and 18 columns.
   Altitude is explanatory, and there are binary responses 
   (presence/absence = 1/0 respectively) for 17 plant species.
 
 }
+\usage{data(hunua)}
 \format{
   This data frame contains the following columns:
   \describe{
