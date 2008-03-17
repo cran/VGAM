@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2007 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2008 T.W. Yee, University of Auckland. All rights reserved.
 
 
 
@@ -379,10 +379,12 @@ setClass("vfamily",
 
 
 if(!isGeneric("Coef"))
-setGeneric("Coef", function(object, ...) standardGeneric("Coef"))
+setGeneric("Coef", function(object, ...) standardGeneric("Coef"),
+           package="VGAM")
 if(!isGeneric("Coefficients"))
 setGeneric("Coefficients", function(object, ...)
-            standardGeneric("Coefficients"))
+            standardGeneric("Coefficients"),
+           package="VGAM")
 
 
 
@@ -393,7 +395,8 @@ setGeneric("Coefficients", function(object, ...)
 if(FALSE) {
 
 if(!isGeneric("AIC"))
-    setGeneric("AIC", function(object, ..., k=2) standardGeneric("AIC"))
+    setGeneric("AIC", function(object, ..., k=2) standardGeneric("AIC"),
+           package="VGAM")
 
 AIC.vlm = function(object, ..., k=2) {
     ed = object@misc$estimated.dispersion
@@ -444,13 +447,16 @@ setMethod("AIC", "qrrvglm",
 }
 
 if(!isGeneric("logLik"))
-    setGeneric("logLik", function(object, ...) standardGeneric("logLik"))
+    setGeneric("logLik", function(object, ...) standardGeneric("logLik"),
+           package="VGAM")
 
 if(!isGeneric("plot"))
-    setGeneric("plot", function(x, y, ...) standardGeneric("plot"))
+    setGeneric("plot", function(x, y, ...) standardGeneric("plot"),
+           package="VGAM")
 
 if(!isGeneric("vcov"))
-    setGeneric("vcov", function(object, ...) standardGeneric("vcov"))
+    setGeneric("vcov", function(object, ...) standardGeneric("vcov"),
+           package="VGAM")
 
 
 
@@ -490,32 +496,39 @@ setClass(Class="cao", repr=representation("vgam", "uqo"))
 
 
 if(!isGeneric("lvplot"))
-setGeneric("lvplot", function(object, ...) standardGeneric("lvplot"))
+setGeneric("lvplot", function(object, ...) standardGeneric("lvplot"),
+           package="VGAM")
 
 if(!isGeneric("ccoef"))
-    setGeneric("ccoef", function(object, ...) standardGeneric("ccoef")) 
+    setGeneric("ccoef", function(object, ...) standardGeneric("ccoef"),
+           package="VGAM")
 
 
 
 
 
 if(!isGeneric("coef"))
-    setGeneric("coef", function(object, ...) standardGeneric("coef"))
+    setGeneric("coef", function(object, ...) standardGeneric("coef"),
+           package="VGAM")
 
 if(!isGeneric("coefficients"))
     setGeneric("coefficients", function(object, ...)
-                               standardGeneric("coefficients"))
+                               standardGeneric("coefficients"),
+               package="VGAM")
 
 if(!isGeneric("df.residual"))
     setGeneric("df.residual", function(object, ...)
-                              standardGeneric("df.residual"))
+                              standardGeneric("df.residual"),
+           package="VGAM")
 
 if(!isGeneric("fitted"))
-    setGeneric("fitted", function(object, ...) standardGeneric("fitted"))
+    setGeneric("fitted", function(object, ...) standardGeneric("fitted"),
+           package="VGAM")
 
  if(!isGeneric("fitted.values"))
      setGeneric("fitted.values", function(object, ...)
-                                 standardGeneric("fitted.values"))
+                                 standardGeneric("fitted.values"),
+           package="VGAM")
 
 if(!isGeneric("model.matrix"))
     setGeneric("model.matrix", function(object, ...)
@@ -526,17 +539,24 @@ if(!isGeneric("model.frame"))
                               standardGeneric("model.frame"))
 
 
+
+
+
 if(!isGeneric("predict"))
-    setGeneric("predict", function(object, ...) standardGeneric("predict"))
+     setGeneric("predict", function(object, ...) standardGeneric("predict"))
+
+
 
 if(!isGeneric("resid"))
     setGeneric("resid", function(object, ...) standardGeneric("resid"))
 
 if(!isGeneric("residuals"))
-    setGeneric("residuals", function(object, ...) standardGeneric("residuals"))
+    setGeneric("residuals", function(object, ...) standardGeneric("residuals"),
+           package="VGAM")
 
 if(!isGeneric("weights"))
-    setGeneric("weights", function(object, ...) standardGeneric("weights"))
+    setGeneric("weights", function(object, ...) standardGeneric("weights"),
+           package="VGAM")
 
 
 

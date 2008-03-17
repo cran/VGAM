@@ -71,8 +71,9 @@ The effects.
  }
     \item{\code{fitted.values}:}{Object of class
 \code{"matrix"}, from class \code{ "vlm"}.
-The fitted values. This may be missing or consist entirely
-of \code{NA}s, e.g., the Cauchy model. 
+The fitted values.
+%This may be missing or consist entirely
+%of \code{NA}s, e.g., the Cauchy model. 
  }
     \item{\code{misc}:}{Object of class \code{"list"},
  from class \code{ "vlm"}.

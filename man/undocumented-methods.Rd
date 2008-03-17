@@ -52,6 +52,7 @@
 \alias{fitted,vsmooth.spline-method}
 \alias{guplot,numeric-method}
 \alias{guplot,vlm-method}
+%\alias{model.frame,ANY-method}
 \alias{model.frame,vlm-method}
 \alias{plot,cao,ANY-method}
 \alias{plot,vlm,ANY-method}
@@ -85,6 +86,7 @@
 \alias{Max,uqo-method}
 \alias{meplot,numeric-method}
 \alias{meplot,vlm-method}
+%\alias{model.matrix,ANY-method}
 \alias{model.matrix,qrrvglm-method}
 \alias{model.matrix,vlm-method}
 \alias{Opt,qrrvglm-method}

@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2007 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2008 T.W. Yee, University of Auckland. All rights reserved.
 
 
 
@@ -335,7 +335,9 @@ riceff = function(lvee="loge", lsigma="loge",
 
 
 
-dskellam = function(x, mu1, mu2, log.arg=FALSE) {
+dskellam = function(x, mu1, mu2, log=FALSE) {
+    log.arg = log
+    rm(log)
     if( !is.logical( log.arg ) || length( log.arg )!=1 )
         stop("bad input for 'log.arg'")
     if( log.arg ) {
@@ -493,15 +495,18 @@ skellam = function(lmu1="loge", lmu2="loge",
 
 
 
-dyules = function(x, rho, log.arg=FALSE) {
+dyules = function(x, rho, log=FALSE) {
+    log.arg = log
+    rm(log)
     if( !is.logical( log.arg ) || length( log.arg )!=1 )
         stop("bad input for 'log.arg'")
     if( log.arg ) {
         ans = log(rho) + lbeta(abs(x), rho+1)
+        ans[(x != round(x)) | (x < 1)] = log(0)
     } else {
         ans = rho * beta(x, rho+1)
+        ans[(x != round(x)) | (x < 1)] = 0
     }
-    ans[(x != round(x)) | (x < 1)] = 0
     ans[!is.finite(rho) | (rho <= 0) | (rho <= 0)] = NA
     ans
 }
@@ -610,18 +615,38 @@ yulesimon = function(link="loge", earg=list(), irho=NULL, nsimEIM=200)
 
 
 
-dslash <- function(x, mu=0, sigma=1,log.arg=FALSE){
+
+
+dslash <- function(x, mu=0, sigma=1, log=FALSE,
+                   smallno=.Machine$double.eps*1000){
+    log.arg = log
+    rm(log)
     if (!is.Numeric(sigma) || any(sigma <= 0))
       stop("'sigma' must be positive")
     L = max(length(x), length(mu), length(sigma))
     x = rep(x, len = L); mu = rep(mu, len = L); sigma = rep(sigma, len = L)
-    smallno = .Machine$double.eps*1000
+    zedd = (x-mu)/sigma
     if(log.arg)
-      ifelse(abs(x-mu)<smallno -log(2*sigma*sqrt(2*pi)),
-      log1p(-exp(-(((x-mu)/sigma)^2)/2))-
-      log(sqrt(2*pi)*sigma*((x-mu)/sigma)^2)) else
-      ifelse(abs(x-mu)<smallno, 1/(2*sigma*sqrt(2*pi)),
-      -expm1(-(((x-mu)/sigma)^2)/2)/(sqrt(2*pi)*sigma*((x-mu)/sigma)^2))
+      ifelse(abs(zedd)<smallno, -log(2*sigma*sqrt(2*pi)),
+      log1p(-exp(-zedd^2/2)) - log(sqrt(2*pi)*sigma*zedd^2)) else
+      ifelse(abs(zedd)<smallno, 1/(2*sigma*sqrt(2*pi)),
+      -expm1(-zedd^2/2)/(sqrt(2*pi)*sigma*zedd^2))
+}
+
+pslash <- function(q, mu=0, sigma=1){
+    if (!is.Numeric(sigma) || any(sigma <= 0))
+      stop("'sigma' must be positive")
+    L = max(length(q), length(mu), length(sigma))
+    q = rep(q, len = L); mu = rep(mu, len = L); sigma = rep(sigma, len = L)
+    ans = q * NA
+    for (ii in 1:L) {
+        temp = integrate(dslash, lower = -Inf, upper = q[ii])
+        if(temp$message != "OK") {
+            warning("integrate() failed")
+        } else
+            ans[ii] = temp$value
+    }
+    ans
 }
 
 rslash <- function (n, mu=0, sigma=1){
@@ -638,7 +663,10 @@ slash.control <- function(save.weight=TRUE, ...)
 }
 
 slash = function(lmu="identity", lsigma="loge", emu=list(), esigma=list(),
-                 imu=NULL, isigma=NULL, nsimEIM=250, zero=NULL)
+                 imu=NULL, isigma=NULL,
+                 iprobs = c(0.1, 0.9),
+                 nsimEIM=250, zero=NULL,
+                 smallno = .Machine$double.eps*1000)
 {
     if(mode(lmu) != "character" && mode(lmu) != "name")
         lmu = as.character(substitute(lmu))
@@ -652,6 +680,11 @@ slash = function(lmu="identity", lsigma="loge", emu=list(), esigma=list(),
     if(!is.list(esigma)) esigma = list()
     if(!is.Numeric(nsimEIM, allow=1, integ=TRUE) || nsimEIM <= 50)
         stop("'nsimEIM' should be an integer greater than 50")
+    if(!is.Numeric(iprobs, posit=TRUE) || max(iprobs) >= 1 ||
+       length(iprobs)!=2)
+        stop("bad input for argument \"iprobs\"")
+    if(!is.Numeric(smallno, posit=TRUE) || smallno > 0.1)
+        stop("bad input for argument \"smallno\"")
 
     new("vglmff",
     blurb=c("Slash distribution\n\n",
@@ -673,16 +706,30 @@ slash = function(lmu="identity", lsigma="loge", emu=list(), esigma=list(),
                        namesof("mu", .lmu, earg= .emu, tag=FALSE),
                        namesof("sigma", .lsigma, earg= .esigma, tag=FALSE))
         if(!length(etastart)) {
-          mu.init = if(is.Numeric(.imu)) .imu else median(rep(y,w))/2
-          sigma.init = if(is.Numeric(.isigma)) .isigma else
-             max(0.01, ((quantile(rep(y,w), prob=0.75)/2)-mu.init)/qnorm(0.75))
-          etastart = matrix(0, n, 2)
-          etastart[,1] = theta2eta(mu.init, .lmu, earg=.emu)
-          etastart[,2] = theta2eta(sigma.init, .lsigma, earg=.esigma)
+
+            slash.Loglikfun = function(mu, y, x, w, extraargs) {
+                sigma = if(is.Numeric(.isigma)) .isigma else
+                  max(0.01, ((quantile(rep(y,w), prob=0.75)/2)-mu)/qnorm(0.75))
+                zedd = (y-mu)/sigma
+                sum(w * ifelse(abs(zedd)<.smallno, -log(2*sigma*sqrt(2*pi)),
+                log1p(-exp(-zedd^2/2)) - log(sqrt(2*pi)*sigma*zedd^2)))
+            }
+            iprobs = .iprobs
+            mu.grid = quantile(rep(y,w), probs=iprobs)
+            mu.grid = seq(mu.grid[1], mu.grid[2], length=100)
+            mu.init = if(length( .imu )) .imu else
+                      getMaxMin(mu.grid, objfun=slash.Loglikfun, y=y,  x=x, w=w)
+            sigma.init = if(is.Numeric(.isigma)) .isigma else
+              max(0.01, ((quantile(rep(y,w), prob=0.75)/2)-mu.init)/qnorm(0.75))
+            mu.init = rep(mu.init, length=length(y))
+            etastart = matrix(0, n, 2)
+            etastart[,1] = theta2eta(mu.init, .lmu, earg=.emu)
+            etastart[,2] = theta2eta(sigma.init, .lsigma, earg=.esigma)
         }
     }), list( .lmu=lmu, .lsigma=lsigma,
               .imu=imu, .isigma=isigma,
-              .emu=emu, .esigma=esigma ))),
+              .emu=emu, .esigma=esigma,
+              .iprobs=iprobs, .smallno=smallno))),
     inverse=eval(substitute(function(eta, extra=NULL){
         NA * eta2theta(eta[,1], link= .lmu, earg= .emu)
     }, list( .lmu=lmu, .emu=emu ))),
@@ -697,49 +744,49 @@ slash = function(lmu="identity", lsigma="loge", emu=list(), esigma=list(),
             function(mu,y,w,residuals=FALSE,eta,extra=NULL) {
         mu = eta2theta(eta[,1], link= .lmu, earg= .emu)
         sigma = eta2theta(eta[,2], link= .lsigma, earg= .esigma)
-        smallno = .Machine$double.eps*100000
+        zedd = (y-mu)/sigma
         if(residuals) stop("loglikelihood residuals not implemented yet") else
-        sum(w * ifelse(abs(y-mu)<smallno, -log(2*sigma*sqrt(2*pi)),
-        log1p(-exp(-(((y-mu)/sigma)^2)/2))-
-        log(sqrt(2*pi)*sigma*((y-mu)/sigma)^2)))
+        sum(w * ifelse(abs(zedd)<.smallno, -log(2*sigma*sqrt(2*pi)),
+        log1p(-exp(-zedd^2/2)) - log(sqrt(2*pi)*sigma*zedd^2)))
     }, list( .lmu=lmu, .lsigma=lsigma,
-             .emu=emu, .esigma=esigma ))),
+             .emu=emu, .esigma=esigma, .smallno=smallno ))),
     vfamily=c("slash"),
     deriv=eval(substitute(expression({
-        smallno = .Machine$double.eps * 100000
         mu = eta2theta(eta[,1], link= .lmu, earg= .emu)
         sigma = eta2theta(eta[,2], link= .lsigma, earg= .esigma)
         dmu.deta = dtheta.deta(mu, link= .lmu, earg= .emu)
         dsigma.deta = dtheta.deta(sigma, link= .lsigma, earg= .esigma)
         zedd = (y-mu)/sigma
-        maxzedd = pmax(-101, pmin(101, zedd))
-        dl.dmu = (2/zedd - zedd/(exp(maxzedd^2/2)-1))/sigma
-        dl.dsigma = (1 - zedd^2/(exp(maxzedd^2/2)-1))/sigma
-
-        ind0 = (abs(zedd) < smallno)
+        d3 = deriv3(~ w * log(1-exp(-(((y-mu)/sigma)^2)/2))-
+                    log(sqrt(2*pi)*sigma*((y-mu)/sigma)^2), c("mu", "sigma"))
+        eval.d3 = eval(d3)
+        dl.dthetas =  attr(eval.d3, "gradient")
+        dl.dmu = dl.dthetas[,1]
+        dl.dsigma = dl.dthetas[,2]
+        ind0 = (abs(zedd) < .smallno)
         dl.dmu[ind0] = 0
         dl.dsigma[ind0] = -1/sigma[ind0]
-
- ans =  w * cbind(dl.dmu * dmu.deta,
-                  dl.dsigma * dsigma.deta)
+        ans =  w * cbind(dl.dmu * dmu.deta,
+                         dl.dsigma * dsigma.deta)
         ans
     }), list( .lmu=lmu, .lsigma=lsigma,
-              .emu=emu, .esigma=esigma ))),
-    weight = eval(substitute(expression({
+              .emu=emu, .esigma=esigma, .smallno=smallno ))),
+    weight=eval(substitute(expression({
         run.varcov = 0
         ind1 = iam(NA, NA, M=M, both=TRUE, diag=TRUE)
+        sd3 = deriv3(~ w * log(1-exp(-(((ysim-mu)/sigma)^2)/2))-
+                     log(sqrt(2*pi)*sigma*((ysim-mu)/sigma)^2),
+                     c("mu", "sigma"))
         for(ii in 1:( .nsimEIM )) {
             ysim = rslash(n, mu=mu, sigma=sigma)
-            zeddsim = (ysim-mu)/sigma
-            maxzedd = pmax(-101, pmin(101, zeddsim))
-            dl.dmu = (2/zeddsim - zeddsim/expm1(maxzedd^2/2))/sigma
-            dl.dsigma = (1 - zeddsim^2/expm1(maxzedd^2/2))/sigma
+            seval.d3 = eval(sd3)
 
-            ind0 = (abs(zeddsim) < smallno)
-            dl.dmu[ind0] = 0
-            dl.dsigma[ind0] = -1/sigma[ind0]
+            dl.dthetas =  attr(seval.d3, "gradient")
+            dl.dmu = dl.dthetas[,1]
+            dl.dsigma = dl.dthetas[,2]
 
-            rm(ysim,zeddsim)
+
+
             temp3 = cbind(dl.dmu, dl.dsigma)
             run.varcov = ((ii-1) * run.varcov +
                        temp3[,ind1$row.index]*temp3[,ind1$col.index]) / ii
@@ -751,8 +798,10 @@ slash = function(lmu="identity", lsigma="loge", emu=list(), esigma=list(),
         wz = wz * dthetas.detas[,ind1$row] * dthetas.detas[,ind1$col]
         w * wz
     }), list( .lmu=lmu, .lsigma=lsigma,
-              .emu=emu, .esigma=esigma, .nsimEIM=nsimEIM ))))
+              .emu=emu, .esigma=esigma,
+              .nsimEIM=nsimEIM, .smallno=smallno ))))
 }
+
 
 
 

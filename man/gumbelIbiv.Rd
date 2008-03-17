@@ -4,7 +4,7 @@
 \title{ Gumbel's Type I Bivariate Distribution Family Function }
 \description{
   Estimate the association parameter of Gumbel's Type I bivariate
-  distribution using maximum likelihood estimation.
+  distribution by maximum likelihood estimation.
 
 }
 \usage{

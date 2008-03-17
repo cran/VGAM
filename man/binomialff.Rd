@@ -136,8 +136,11 @@ binomialff(link = "logit", earg = list(),
     \code{\link{cao}},
     \code{\link{zibinomial}},
     \code{\link{dexpbinomial}},
+    \code{\link{mbinomial}},
     \code{\link{seq2binomial}},
+    \code{\link{amlbinomial}},
     \code{\link[stats:Binomial]{binomial}}.
+
 }
 \section{Warning }{
     With a multivariate response, assigning a known dispersion parameter

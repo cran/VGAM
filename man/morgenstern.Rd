@@ -4,7 +4,7 @@
 \title{ Morgenstern's Bivariate Distribution Family Function }
 \description{
   Estimate the association parameter of Morgenstern's bivariate
-  distribution using maximum likelihood estimation.
+  distribution by maximum likelihood estimation.
 
 }
 \usage{

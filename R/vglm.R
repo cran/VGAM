@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2007 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2008 T.W. Yee, University of Auckland. All rights reserved.
 
 
 
@@ -26,35 +26,26 @@ vglm <- function(formula,
     if(smart) 
         setup.smart("write")
 
-    mt <- terms(formula, data = data)
     if(missing(data)) 
         data <- environment(formula)
 
-    mf <- match.call(expand=FALSE)
-    mf$family <- mf$method <- mf$model <- mf$x.arg <- mf$y.arg <- mf$control <-
-        mf$contrasts <- mf$constraints <- mf$extra <- mf$qr.arg <- NULL
-    mf$coefstart <- mf$etastart <- mf$... <- NULL
-    mf$smart <- NULL
-    mf$drop.unused.levels <- TRUE 
+    mf <- match.call(expand.dots = FALSE)
+    m <- match(c("formula", "data", "subset", "weights", "na.action",
+        "etastart", "mustart", "offset"), names(mf), 0)
+    mf <- mf[c(1, m)]
+    mf$drop.unused.levels <- TRUE
     mf[[1]] <- as.name("model.frame")
+    mf <- eval(mf, parent.frame())
+    switch(method, model.frame = return(mf), vglm.fit = 1,
+           stop("invalid 'method': ", method))
+    mt <- attr(mf, "terms")
 
-    mf <- eval(mf, parent.frame()) 
-
-    if(method == "model.frame")
-        return(mf)
-    na.act <- attr(mf, "na.action")
-
-    xvars <- as.character(attr(mt, "variables"))[-1]
-    if ((yvar <- attr(mt, "response")) > 0)
-        xvars <- xvars[-yvar]
-    xlev <- if (length(xvars) > 0) {
-        xlev <- lapply(mf[xvars], levels)
-        xlev[!sapply(xlev, is.null)]
-    }
-
-    y <- model.response(mf, "numeric") # model.extract(mf, "response")
-    x <- model.matrix(mt, mf, contrasts)
+    xlev = .getXlevels(mt, mf)
+    y <- model.response(mf, "any") # model.extract(mf, "response")
+    x <- if (!is.empty.model(mt)) model.matrix(mt, mf, contrasts) else
+         matrix(, NROW(Y), 0)
     attr(x, "assign") <- attrassigndefault(x, mt) # So as to make it like Splus
+
     offset <- model.offset(mf)
     if(is.null(offset)) 
         offset <- 0 # yyy ???
@@ -128,7 +119,8 @@ vglm <- function(formula,
         slot(answer, "contrasts") = attr(x, "contrasts")
     if(length(fit$fitted.values))
         slot(answer, "fitted.values") = as.matrix(fit$fitted.values)
-    slot(answer, "na.action") = if(length(na.act)) list(na.act) else list()
+    slot(answer, "na.action") = if(length(aaa <- attr(mf, "na.action")))
+        list(aaa) else list()
     if(length(offset))
         slot(answer, "offset") = as.matrix(offset)
 

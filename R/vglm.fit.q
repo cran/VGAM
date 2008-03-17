@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2007 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2008 T.W. Yee, University of Auckland. All rights reserved.
 
 
 
@@ -14,6 +14,7 @@ vglm.fit <- function(x, y, w=rep(1, length(x[, 1])),
     extra=NULL,
     Terms=Terms, function.name="vglm", ...)
 {
+    specialCM = NULL
     post = list()
     check.rank <- TRUE # Set this to false for family functions vppr() etc.
     nonparametric <- FALSE
@@ -213,7 +214,8 @@ vglm.fit <- function(x, y, w=rep(1, length(x[, 1])),
     if(length(slot(family, "constraints")))
         eval(slot(family, "constraints"))
 
-    Blist <- process.constraints(constraints, x, M)
+
+    Blist <- process.constraints(constraints, x, M, specialCM=specialCM)
 
 
     ncolBlist <- unlist(lapply(Blist, ncol))

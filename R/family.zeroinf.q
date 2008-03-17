@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2007 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2008 T.W. Yee, University of Auckland. All rights reserved.
 
 
 
@@ -807,12 +807,14 @@ rzibinom = function(n, size, prob, phi=0) {
 
 
 
-dzinb = function(x, phi, size, prob, munb, log.arg=FALSE) {
+dzinb = function(x, phi, size, prob, munb, log=FALSE) {
     if (!missing(munb)) {
         if (!missing(prob))
             stop("'prob' and 'munb' both specified")
         prob <- size/(size + munb)
     }
+    log.arg = log
+    rm(log)
     if(!is.logical(log.arg) || length(log.arg) != 1)
         stop("bad input for 'log.arg'")
     ans = dnbinom(x=x, size=size, prob=prob, log = log.arg)

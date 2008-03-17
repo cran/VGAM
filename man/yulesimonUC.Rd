@@ -11,7 +11,7 @@
 
 }
 \usage{
-dyules(x, rho, log.arg=FALSE)
+dyules(x, rho, log=FALSE)
 pyules(q, rho)
 %qyules(p, rho)
 ryules(n, rho)
@@ -29,7 +29,7 @@ ryules(n, rho)
    See \code{\link{yulesimon}}.
 
   }
-  \item{log.arg}{logical; if TRUE, the logarithm is returned. }
+  \item{log}{logical; if TRUE, the logarithm is returned. }
 }
 \details{
    See \code{\link{yulesimon}}, the \pkg{VGAM} family function

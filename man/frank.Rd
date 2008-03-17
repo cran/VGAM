@@ -4,7 +4,7 @@
 \title{ Frank's Bivariate Distribution Family Function }
 \description{
   Estimate the association parameter of Frank's bivariate distribution
-  using maximum likelihood estimation.
+  by maximum likelihood estimation.
 
 }
 \usage{

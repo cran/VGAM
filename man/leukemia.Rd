@@ -1,12 +1,13 @@
-\name{aml}
-\alias{aml}
-%\alias{leukemia}
+%\name{aml}
+\name{leukemia}
+%\alias{aml}
+\alias{leukemia}
 \docType{data}
 \title{Acute Myelogenous Leukemia Survival Data}
 \description{Survival in patients with Acute Myelogenous Leukemia}
 \usage{
-data(aml)
-%data(leukemia)
+%data(aml)
+data(leukemia)
 }
 \format{
   \tabular{ll}{
@@ -22,6 +23,7 @@ data(aml)
   ISBN: 0-471-25218-2.
 }
 \note{
-  This data set has been transferred from \pkg{survival}.
+  This data set has been transferred from \pkg{survival} and renamed
+  from \code{aml} to \code{leukemia}.
 }
 \keyword{datasets}

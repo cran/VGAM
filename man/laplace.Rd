@@ -3,13 +3,15 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Laplace Distribution }
 \description{
-   Maximum likelihood estimation of the 2-parameter Laplace distribution.
+   Maximum likelihood estimation of
+   the 2-parameter classical Laplace distribution.
+
 }
 \usage{
 laplace(llocation="identity", lscale="loge",
         elocation=list(), escale=list(),
         ilocation=NULL, iscale=NULL,
-        method.init=1, zero=NULL)
+        method.init=1, zero=2)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -36,13 +38,7 @@ laplace(llocation="identity", lscale="loge",
 
   }
   \item{zero}{
-  An integer-valued vector specifying which
-  linear/additive predictors are modelled as intercepts only.
-  The value (possibly values) must be from the 
-  set \{1,2\} corresponding
-  respectively to \eqn{a} and \eqn{b}.
-  By default all linear/additive predictors are modelled as
-  a linear combination of the explanatory variables.
+  See \code{\link{CommonVGAMffArguments}} for more information.
 
   }
 }
@@ -58,6 +54,9 @@ laplace(llocation="identity", lscale="loge",
   \eqn{-\infty<a<\infty}{-Inf<a<Inf} and
   \eqn{b>0}.
   Its mean is \eqn{a} and its variance is \eqn{2b^2}.
+  This parameterization is called the \emph{classical Laplace
+  distribution} by Kotz et al. (2001), and the density is symmetric
+  about \eqn{a}.
 
   For \code{y ~ 1} (where \code{y} is the response) the maximum likelihood
   estimate (MLE) for the location parameter is the sample median, and
@@ -95,7 +94,11 @@ Boston: Birkhauser.
 }
 
 \seealso{
-  \code{\link{rlaplace}}.
+  \code{\link{rlaplace}},
+  \code{\link{alaplace2}} (which differs slightly from this parameterization),
+  \code{\link{exponential}},
+  \code{\link[stats]{median}}.
+
 }
 
 \examples{

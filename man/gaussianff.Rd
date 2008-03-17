@@ -111,6 +111,7 @@ gaussianff(dispersion = 0, parallel = FALSE, zero = NULL)
 
 \seealso{
   \code{\link{normal1}},
+  \code{\link{lqnorm}},
   \code{vlm},
   \code{\link{vglm}},
   \code{\link{vgam}},

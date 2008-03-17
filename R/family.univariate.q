@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2007 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2008 T.W. Yee, University of Auckland. All rights reserved.
 
 
 
@@ -696,6 +696,7 @@ dirichlet = function(link="loge", earg=list(), zero=NULL)
         misc$earg = vector("list", M)
         names(misc$earg) = names(misc$link)
         for(ii in 1:M) misc$earg[[ii]] = .earg
+        misc$expected = TRUE
     }), list( .link=link, .earg=earg ))),
     loglikelihood=eval(substitute(
         function(mu,y,w,residuals= FALSE,eta, extra=NULL) {
@@ -1221,7 +1222,8 @@ cauchy1 = function(scale.arg=1, llocation="identity",
     if(!is.list(elocation)) elocation = list()
 
     new("vglmff",
-    blurb=c("One parameter Cauchy distribution (location unknown, scale known)\n\n",
+    blurb=c("One-parameter Cauchy distribution ",
+            "(location unknown, scale known)\n\n",
             "Link:    ",
             namesof("location", llocation, earg=elocation), "\n\n",
             "Mean:     NA\n",
@@ -1308,7 +1310,8 @@ logistic1 = function(llocation="identity",
     if(!is.list(elocation)) elocation = list()
 
     new("vglmff",
-    blurb=c("One-parameter logistic distribution (location unknown, scale known)\n\n",
+    blurb=c("One-parameter logistic distribution ",
+            "(location unknown, scale known)\n\n",
             "Link:    ",
             namesof("location", llocation, earg=elocation), "\n\n",
             "Mean:     location", "\n",
@@ -2148,17 +2151,27 @@ exponential = function(link="loge", earg=list(), location=0, expected=TRUE)
     new("vglmff",
     blurb=c("Exponential distribution\n\n",
             "Link:     ", namesof("rate", link, tag= TRUE), "\n",
-            "Mean:     ", "mu =", location, "+ 1 / ",
-            namesof("rate", link, tag= TRUE, earg=earg), "\n",
+            "Mean:     ", "mu = ", 
+             if(location == 0) "1/rate" else
+             paste(location, "+ 1/rate"), "\n",
             "Variance: ",
             if(location==0) "Exponential: mu^2" else
             paste("(mu-", location, ")^2", sep="")),
+    deviance=eval(substitute(
+        function(mu,y,w,residuals= FALSE,eta,extra=NULL) {
+        devy = -log(y - .location) - 1
+        devmu = -log(mu - .location) - (y - .location)/(mu - .location)
+        devi = 2 * (devy - devmu)
+        if(residuals)
+            sign(y - mu) * sqrt(abs(devi) * w) else 
+            sum(w * devi)
+    }, list( .location=location, .earg=earg ))),
     initialize=eval(substitute(expression({
         if(ncol(cbind(y)) != 1)
             stop("response must be a vector or a one-column matrix")
         extra$loc = .location   # This is passed into, e.g., link, deriv etc.
         if(any(y <= extra$loc))
-            stop(paste("all responses must be greater than",extra$loc))
+            stop(paste("all responses must be greater than", extra$loc))
         predictors.names = namesof("rate", .link, tag=FALSE)
         mu = y + (y == extra$loc) / 8
         if(!length(etastart))
@@ -2176,15 +2189,6 @@ exponential = function(link="loge", earg=list(), location=0, expected=TRUE)
     link=eval(substitute(function(mu, extra=NULL) 
         theta2eta(1/(mu-extra$loc), .link, earg=.earg),
     list( .link=link, .earg=earg ))),
-    deviance=eval(substitute(
-        function(mu,y,w,residuals= FALSE,eta,extra=NULL) {
-        devy = -log(y - .location) - 1
-        devmu = -log(mu - .location) - (y - .location)/(mu - .location)
-        devi = 2 * (devy - devmu)
-        if(residuals)
-            sign(y - mu) * sqrt(abs(devi) * w) else 
-            sum(w * devi)
-    }, list( .location=location, .earg=earg ))),
     vfamily=c("exponential"),
     deriv=eval(substitute(expression({
         rate = 1 / (mu - extra$loc)
@@ -2815,7 +2819,7 @@ normal1 = function(lmean="identity", lsd="loge",
     if(!is.list(esd)) esd = list()
 
     new("vglmff",
-    blurb=c("Univariate Normal distribution\n\n",
+    blurb=c("Univariate normal distribution\n\n",
             "Links:    ",
             namesof("mean", lmean, earg=emean, tag= TRUE), "; ",
             namesof("sd", lsd, earg=esd, tag= TRUE),
@@ -2866,7 +2870,7 @@ normal1 = function(lmean="identity", lsd="loge",
         cbind(w * dl.dmu * dmu.deta, w * dl.dsd * dsd.deta)
     }), list( .lmean=lmean, .lsd=lsd, .emean=emean, .esd=esd ))),
     weight=expression({
-        wz = matrix(as.numeric(NA), n, 2)  # diagonal matrix; y is one-column too
+        wz = matrix(as.numeric(NA), n, 2) # diagonal matrix; y is one-column too
         ed2l.dmu2 = -1 / sd^2
         ed2l.dsd2 = -2 / sd^2    # zz; replace 2 by 0.5 ??
         wz[,iam(1,1,M)] = -w * ed2l.dmu2 * dmu.deta^2
@@ -5124,6 +5128,7 @@ logff = function(link="logit", earg=list(), init.c=NULL)
     last=eval(substitute(expression({
         misc$link = c(c= .link)
         misc$earg = list(c= .earg)
+        misc$expected = TRUE
     }), list( .link=link, .earg=earg ))),
     loglikelihood=eval(substitute(
         function(mu,y,w,residuals= FALSE,eta, extra=NULL) {
@@ -8566,12 +8571,364 @@ logistic2 = function(llocation="identity",
 
 
 
-alaplace = function(llocation="identity", lscale="loge",
-                    lkappa="loge",
-                    elocation=list(), escale=list(),
-                    ekappa=list(),
+alaplace2 = function(tau = NULL,
+                     llocation="identity", lscale="loge",
+                     elocation=list(), escale=list(),
+                     ilocation=NULL, iscale=NULL,
+                     kappa = sqrt(tau/(1-tau)),
+                     shrinkage.init=0.95, parallelLocation=FALSE, digt=4,
+                     sameScale=TRUE,
+                     dfmu.init = 3,
+                     method.init=1, zero="(1 + M/2):M") {
+
+    if(!is.Numeric(kappa, posit=TRUE))
+        stop("bad input for argument \"kappa\"")
+    if(length(tau) && max(abs(kappa - sqrt(tau/(1-tau)))) > 1.0e-6)
+        stop("arguments 'kappa' and 'tau' do not match")
+    if(mode(llocation) != "character" && mode(llocation) != "name")
+        llocation = as.character(substitute(llocation))
+    if(mode(lscale) != "character" && mode(lscale) != "name")
+        lscale = as.character(substitute(lscale))
+    if(!is.Numeric(method.init, allow=1, integ=TRUE, posit=TRUE) ||
+       method.init > 4) stop("argument \"method.init\" must be 1, 2 or ... 4")
+    if(length(iscale) && !is.Numeric(iscale, posit=TRUE))
+        stop("bad input for argument \"iscale\"")
+    if(!is.list(elocation)) elocation = list()
+    if(!is.list(escale)) escale = list()
+    if(!is.Numeric(shrinkage.init, allow=1) || shrinkage.init < 0 ||
+       shrinkage.init > 1) stop("bad input for argument \"shrinkage.init\"")
+    if(length(zero) &&
+       !(is.Numeric(zero, integer=TRUE, posit=TRUE) || is.character(zero )))
+        stop("bad input for argument \"zero\"")
+    if(!is.logical(sameScale) || length(sameScale) != 1)
+        stop("bad input for argument \"sameScale\"")
+    if(!is.logical(parallelLocation) || length(parallelLocation) != 1)
+        stop("bad input for argument \"parallelLocation\"")
+    fittedMean = FALSE
+    if(!is.logical(fittedMean) || length(fittedMean) != 1)
+        stop("bad input for argument \"fittedMean\"")
+
+    new("vglmff",
+    blurb=c("Two-parameter asymmetric Laplace distribution\n\n",
+            "Links:      ",
+            namesof("location", llocation, earg=elocation), ", ",
+            namesof("scale", lscale, earg=escale),
+            "\n", "\n",
+            "Mean:       location + scale * (1/kappa - kappa) / sqrt(2)", "\n",
+            "Quantiles:  location", "\n",
+            "Variance:   scale^2 * (1 + kappa^4) / (2 * kappa^2)"),
+    constraints=eval(substitute(expression({
+        .ZERO = .zero
+        if(is.character(.ZERO)) .ZERO = eval(parse(text = .ZERO))
+        .PARALLEL = .parallelLocation
+        parHmat = if(is.logical(.PARALLEL) && .PARALLEL)
+                    matrix(1, M/2, 1) else diag(M/2)
+        scaleHmat = if(is.logical(.sameScale) && .sameScale)
+                    matrix(1, M/2, 1) else diag(M/2)
+        mycmatrix = cbind(rbind(parHmat, 0*parHmat),
+                          rbind(0*scaleHmat, scaleHmat))
+        constraints=cm.vgam(mycmatrix, x, .PARALLEL, constraints, int=FALSE)
+        constraints = cm.zero.vgam(constraints, x, .ZERO, M)
+
+        if(.PARALLEL && names(constraints)[1] == "(Intercept)") {
+            parHmat = diag(M/2)
+            mycmatrix = cbind(rbind(parHmat, 0*parHmat),
+                              rbind(0*scaleHmat, scaleHmat))
+            constraints[["(Intercept)"]] = mycmatrix
+        }
+        if(is.logical(.sameScale) && .sameScale &&
+           names(constraints)[1] == "(Intercept)") {
+            temp3 = constraints[["(Intercept)"]]
+            temp3 = cbind(temp3[,1:(M/2)], rbind(0*scaleHmat, scaleHmat))
+            constraints[["(Intercept)"]] = temp3
+        }
+    }), list( .sameScale=sameScale, .parallelLocation=parallelLocation,
+              .zero=zero ))),
+    initialize=eval(substitute(expression({
+        extra$kappa = .kappa
+        extra$tau = extra$kappa^2 / (1 + extra$kappa^2)
+        if(ncol(y <- cbind(y)) != 1)
+            stop("response must be a vector or a one-column matrix")
+        extra$M = M = 2 * length(extra$kappa)
+        extra$n = n
+        extra$y.names = y.names = paste("tau=", round(extra$tau, dig=.digt),
+                                        sep="")
+        extra$individual = FALSE
+        predictors.names = 
+            c(namesof(paste("quantile(", y.names, ")", sep=""),
+                                     .llocation, earg=.elocation, tag=FALSE),
+              namesof(if(M==2) "scale" else paste("scale", 1:(M/2), sep=""),
+                      .lscale,    earg=.escale,    tag=FALSE))
+
+        if(!length(etastart)) {
+            if( .method.init == 1) {
+                location.init = weighted.mean(y, w)
+                scale.init = sqrt(var(y) / 2)
+            } else if( .method.init == 2) {
+                location.init = median(y)
+                scale.init = sqrt(sum(w*abs(y-median(y))) / (sum(w) *2))
+            } else if( .method.init == 3) {
+                fit500 = vsmooth.spline(x=x[,min(ncol(x),2)], y=y, w=w,
+                                        df= .dfmu.init)
+                location.init = c(predict(fit500, x=x[,min(ncol(x),2)])$y)
+                scale.init = sqrt(sum(w*abs(y-median(y))) / (sum(w) *2))
+            } else {
+                use.this = weighted.mean(y, w)
+                location.init = (1- .sinit)*y + .sinit * use.this
+                scale.init = sqrt(sum(w*abs(y-median(y ))) / (sum(w) *2))
+            }
+            location.init = if(length(.ilocation)) rep(.ilocation, len=n) else
+                             rep(location.init, len=n)
+            location.init = matrix(location.init, n, M/2)
+            scale.init = if(length(.iscale)) rep(.iscale, len=n) else
+                             rep(scale.init, len=n)
+            scale.init = matrix(scale.init, n, M/2)
+            etastart =
+                cbind(theta2eta(location.init, .llocation, earg= .elocation),
+                      theta2eta(scale.init, .lscale, earg= .escale))
+        }
+    }), list( .method.init=method.init,
+              .dfmu.init=dfmu.init,
+              .sinit=shrinkage.init, .digt=digt,
+              .elocation=elocation, .escale=escale,
+              .llocation=llocation, .lscale=lscale, .kappa=kappa,
+              .ilocation=ilocation, .iscale=iscale ))),
+    inverse=eval(substitute(function(eta, extra=NULL) {
+        if( .fittedMean) {
+            kappamat = matrix(extra$kappa, extra$n, extra$M/2, byrow=TRUE)
+            location = eta2theta(eta[,1:(extra$M/2),drop=FALSE],
+                                 .llocation, earg= .elocation)
+            Scale = eta2theta(eta[,(1+extra$M/2):extra$M], .lscale, earg= .escale)
+            location + Scale * (1/kappamat - kappamat)
+        } else {
+            location = eta2theta(eta[,1:(extra$M/2),drop=FALSE],
+                                 .llocation, earg= .elocation)
+            dimnames(location) = list(dimnames(eta)[[1]], extra$y.names)
+            location
+        }
+    }, list( .elocation=elocation, .llocation=llocation,
+             .fittedMean=fittedMean, .escale=escale, .lscale=lscale,
+             .kappa=kappa ))),
+    last=eval(substitute(expression({
+        misc$link = c(location= .llocation, scale= .lscale)
+        misc$earg = list(location= .elocation, scale= .escale)
+        misc$expected = TRUE
+        extra$kappa = misc$kappa = .kappa
+        extra$tau = misc$tau = misc$kappa^2 / (1 + misc$kappa^2)
+        misc$true.mu = .fittedMean # @fitted is not a true mu?
+        extra$percentile = numeric(length(misc$kappa))
+        location = as.matrix(location)
+        for(ii in 1:length(misc$kappa))
+            extra$percentile[ii] = 100 * weighted.mean(y <= location[,ii], w)
+    }), list( .elocation=elocation, .llocation=llocation,
+              .escale=escale, .lscale=lscale,
+              .fittedMean=fittedMean,
+              .kappa=kappa ))),
+    loglikelihood=eval(substitute(
+        function(mu,y,w,residuals= FALSE,eta, extra=NULL) {
+        ymat = matrix(y, extra$n, extra$M/2)
+        kappamat = matrix(extra$kappa, extra$n, extra$M/2, byrow=TRUE)
+        location = eta2theta(eta[,1:(extra$M/2),drop=FALSE],
+                             .llocation, earg= .elocation)
+        Scale = eta2theta(eta[,(1+extra$M/2):extra$M], .lscale, earg= .escale)
+        zedd = ifelse(ymat >= location, kappamat, 1/kappamat) * sqrt(2) *
+               abs(ymat-location) / Scale
+        if(residuals) stop("loglikelihood residuals not implemented yet") else
+        sum(w*(-zedd - log(Scale) - log(2)/2 + log(kappa) - log1p(kappamat^2)))
+    }, list( .elocation=elocation, .llocation=llocation,
+             .escale=escale, .lscale=lscale,
+             .kappa=kappa ))),
+    vfamily=c("alaplace2"),
+    deriv=eval(substitute(expression({
+        ymat = matrix(y, n, M/2)
+        Scale = eta2theta(eta[,(1+extra$M/2):extra$M], .lscale, earg= .escale)
+        location = eta2theta(eta[,1:(extra$M/2),drop=FALSE],
+                             .llocation, earg= .elocation)
+        kappamat = matrix(extra$kappa, n, M/2, byrow=TRUE)
+        zedd = abs(ymat-location) / Scale
+        dl.dlocation = sqrt(2) * ifelse(ymat >= location, kappamat, 1/kappamat) *
+                       sign(ymat-location) / Scale
+        dl.dscale =  sqrt(2) * ifelse(ymat >= location, kappamat, 1/kappamat) *
+                     zedd / Scale - 1 / Scale
+        dlocation.deta = dtheta.deta(location, .llocation, earg= .elocation)
+        dscale.deta = dtheta.deta(Scale, .lscale, earg= .escale)
+        w * cbind(dl.dlocation * dlocation.deta,
+                  dl.dscale * dscale.deta)
+    }), list( .escale=escale, .lscale=lscale,
+              .elocation=elocation, .llocation=llocation,
+              .kappa=kappa ))),
+    weight=eval(substitute(expression({
+        d2l.dlocation2 = 2 / Scale^2
+        d2l.dscale2 = 1 / Scale^2
+        wz = cbind(d2l.dlocation2 * dlocation.deta^2,
+                   d2l.dscale2 * dscale.deta^2)
+        w * wz
+    }), list( .escale=escale, .lscale=lscale,
+              .elocation=elocation, .llocation=llocation ))))
+}
+
+
+
+
+alaplace1 = function(tau = NULL,
+                     llocation="identity",
+                     elocation=list(),
+                     ilocation=NULL,
+                     kappa = sqrt(tau/(1-tau)),
+                     Scale.arg=1,
+                     shrinkage.init=0.95, parallelLocation=FALSE, digt=4,
+                     dfmu.init = 3,
+                     method.init=1, zero=NULL) {
+
+    if(!is.Numeric(kappa, posit=TRUE))
+        stop("bad input for argument \"kappa\"")
+    if(length(tau) && max(abs(kappa - sqrt(tau/(1-tau)))) > 1.0e-6)
+        stop("arguments 'kappa' and 'tau' do not match")
+    if(mode(llocation) != "character" && mode(llocation) != "name")
+        llocation = as.character(substitute(llocation))
+    if(!is.Numeric(method.init, allow=1, integ=TRUE, posit=TRUE) ||
+       method.init > 4) stop("argument \"method.init\" must be 1, 2 or ... 4")
+    if(!is.list(elocation)) elocation = list()
+    if(!is.Numeric(shrinkage.init, allow=1) || shrinkage.init < 0 ||
+       shrinkage.init > 1) stop("bad input for argument \"shrinkage.init\"")
+    if(length(zero) &&
+       !(is.Numeric(zero, integer=TRUE, posit=TRUE) || is.character(zero )))
+        stop("bad input for argument \"zero\"")
+    if(!is.Numeric(Scale.arg, posit=TRUE))
+        stop("bad input for argument \"Scale.arg\"")
+    if(!is.logical(parallelLocation) || length(parallelLocation) != 1)
+        stop("bad input for argument \"parallelLocation\"")
+    fittedMean = FALSE
+    if(!is.logical(fittedMean) || length(fittedMean) != 1)
+        stop("bad input for argument \"fittedMean\"")
+
+    new("vglmff",
+    blurb=c("One-parameter asymmetric Laplace distribution\n\n",
+            "Links:      ",
+            namesof("location", llocation, earg=elocation),
+            "\n", "\n",
+            "Mean:       location + scale * (1/kappa - kappa) / sqrt(2)", "\n",
+            "Quantiles:  location", "\n",
+            "Variance:   scale^2 * (1 + kappa^4) / (2 * kappa^2)"),
+    constraints=eval(substitute(expression({
+        constraints = cm.vgam(matrix(1,M,1), x, .parallelLocation,
+                              constraints, intercept=FALSE)
+        constraints = cm.zero.vgam(constraints, x, .zero, M)
+    }), list( .parallelLocation=parallelLocation,
+              .Scale.arg=Scale.arg, .zero=zero ))),
+    initialize=eval(substitute(expression({
+        extra$M = M = max(length( .Scale.arg ), length( .kappa )) # Recycle
+        extra$Scale = rep( .Scale.arg, length=M)
+        extra$kappa = rep( .kappa, length=M)
+        extra$tau = extra$kappa^2 / (1 + extra$kappa^2)
+        if(ncol(y <- cbind(y)) != 1)
+            stop("response must be a vector or a one-column matrix")
+        extra$n = n
+        extra$y.names = y.names = paste("tau=", round(extra$tau, dig=.digt),
+                                        sep="")
+        extra$individual = FALSE
+        predictors.names = namesof(paste("quantile(", y.names, ")", sep=""),
+                                   .llocation, earg=.elocation, tag=FALSE)
+
+        if(!length(etastart)) {
+            if( .method.init == 1) {
+                location.init = weighted.mean(y, w)
+            } else if( .method.init == 2) {
+                location.init = median(y)
+            } else if( .method.init == 3) {
+                fit500 = vsmooth.spline(x=x[,min(ncol(x),2)], y=y, w=w,
+                                        df= .dfmu.init)
+                location.init = c(predict(fit500, x=x[,min(ncol(x),2)])$y)
+            } else {
+                use.this = weighted.mean(y, w)
+                location.init = (1- .sinit)*y + .sinit * use.this
+            }
+            location.init = if(length(.ilocation)) rep(.ilocation, len=n) else
+                             rep(location.init, len=n)
+            location.init = matrix(location.init, n, M)
+            etastart =
+                cbind(theta2eta(location.init, .llocation, earg= .elocation))
+        }
+    }), list( .method.init=method.init,
+              .dfmu.init=dfmu.init,
+              .sinit=shrinkage.init, .digt=digt,
+              .elocation=elocation, .Scale.arg=Scale.arg,
+              .llocation=llocation, .kappa=kappa,
+              .ilocation=ilocation ))),
+    inverse=eval(substitute(function(eta, extra=NULL) {
+        if( .fittedMean) {
+            kappamat = matrix(extra$kappa, extra$n, extra$M, byrow=TRUE)
+            location = eta2theta(eta, .llocation, earg= .elocation)
+            Scale = matrix(extra$Scale, extra$n, extra$M, byrow=TRUE)
+            location + Scale * (1/kappamat - kappamat)
+        } else {
+            location = eta2theta(eta, .llocation, earg= .elocation)
+            if(length(location) > extra$n)
+                dimnames(location) = list(dimnames(eta)[[1]], extra$y.names)
+            location
+        }
+    }, list( .elocation=elocation, .llocation=llocation,
+             .fittedMean=fittedMean, .Scale.arg=Scale.arg,
+             .kappa=kappa ))),
+    last=eval(substitute(expression({
+        misc$link = c(location= .llocation)
+        misc$earg = list(location= .elocation)
+        misc$expected = TRUE
+        extra$kappa = misc$kappa = .kappa
+        extra$tau = misc$tau = misc$kappa^2 / (1 + misc$kappa^2)
+        extra$Scale.arg = .Scale.arg
+        misc$true.mu = .fittedMean # @fitted is not a true mu?
+        extra$percentile = numeric(length(misc$kappa))
+        location = as.matrix(location)
+        for(ii in 1:length(misc$kappa))
+            extra$percentile[ii] = 100 * weighted.mean(y <= location[,ii], w)
+    }), list( .elocation=elocation, .llocation=llocation,
+              .Scale.arg=Scale.arg, .fittedMean=fittedMean,
+              .kappa=kappa ))),
+    loglikelihood=eval(substitute(
+        function(mu,y,w,residuals= FALSE,eta, extra=NULL) {
+        ymat = matrix(y, extra$n, extra$M)
+        kappamat = matrix(extra$kappa, extra$n, extra$M, byrow=TRUE)
+        location = eta2theta(eta, .llocation, earg= .elocation)
+        Scale = matrix(extra$Scale, extra$n, extra$M, byrow=TRUE)
+        zedd = ifelse(ymat >= location, kappamat, 1/kappamat) * sqrt(2) *
+               abs(ymat-location) / Scale
+        if(residuals) stop("loglikelihood residuals not implemented yet") else
+        sum(w*(-zedd - log(Scale) - log(2)/2 + log(kappa) - log1p(kappamat^2)))
+    }, list( .elocation=elocation, .llocation=llocation,
+             .Scale.arg=Scale.arg, .kappa=kappa ))),
+    vfamily=c("alaplace1"),
+    deriv=eval(substitute(expression({
+        ymat = matrix(y, n, M)
+        Scale = matrix(extra$Scale, extra$n, extra$M, byrow=TRUE)
+        location = eta2theta(eta, .llocation, earg= .elocation)
+        kappamat = matrix(extra$kappa, n, M, byrow=TRUE)
+        zedd = abs(ymat-location) / Scale
+        dl.dlocation = ifelse(ymat >= location, kappamat, 1/kappamat) *
+                       sqrt(2) * sign(ymat-location) / Scale
+        dl.dscale =  ifelse(ymat >= location, kappamat, 1/kappamat) *
+                     sqrt(2) * zedd / Scale - 1 / Scale
+        dlocation.deta = dtheta.deta(location, .llocation, earg= .elocation)
+        w * cbind(dl.dlocation * dlocation.deta)
+    }), list( .Scale.arg=Scale.arg, .elocation=elocation,
+              .llocation=llocation, .kappa=kappa ))),
+    weight=eval(substitute(expression({
+        d2l.dlocation2 = 2 / Scale^2
+        wz = cbind(d2l.dlocation2 * dlocation.deta^2)
+        w * wz
+    }), list( .Scale.arg=Scale.arg,
+              .elocation=elocation, .llocation=llocation ))))
+}
+
+
+
+
+
+
+alaplace3 = function(llocation="identity", lscale="loge", lkappa="loge",
+                    elocation=list(), escale=list(), ekappa=list(),
                     ilocation=NULL, iscale=NULL, ikappa=1.0,
-                    method.init=1, zero=NULL) {
+                    method.init=1, zero=2:3) {
     if(mode(llocation) != "character" && mode(llocation) != "name")
         llocation = as.character(substitute(llocation))
     if(mode(lscale) != "character" && mode(lscale) != "name")
@@ -8597,7 +8954,7 @@ alaplace = function(llocation="identity", lscale="loge",
             "\n", "\n",
             "Mean:     location + scale * (1/kappa - kappa) / sqrt(2)",
             "\n",
-            "Variance: mean^2 + scale^2"),
+            "Variance: Scale^2 * (1 + kappa^4) / (2 * kappa^2)"),
     constraints=eval(substitute(expression({
         constraints = cm.zero.vgam(constraints, x, .zero, M)
     }), list( .zero=zero ))),
@@ -8637,7 +8994,7 @@ alaplace = function(llocation="identity", lscale="loge",
         kappa = eta2theta(eta[,3], .lkappa, earg= .ekappa)
         location + Scale * (1/kappa - kappa) / sqrt(2)
     }, list( .elocation=elocation, .llocation=llocation,
-             .escale=ekappa, .lscale=lkappa,
+             .escale=escale, .lscale=lscale,
              .ekappa=ekappa, .lkappa=lkappa ))),
     last=eval(substitute(expression({
         misc$link = c(location= .llocation, scale= .lscale, kappa= .lkappa)
@@ -8658,7 +9015,7 @@ alaplace = function(llocation="identity", lscale="loge",
     }, list( .elocation=elocation, .llocation=llocation,
              .escale=escale, .lscale=lscale,
              .ekappa=ekappa, .lkappa=lkappa ))),
-    vfamily=c("alaplace"),
+    vfamily=c("alaplace3"),
     deriv=eval(substitute(expression({
         location = eta2theta(eta[,1], .llocation, earg= .elocation)
         Scale = eta2theta(eta[,2], .lscale, earg= .escale)
@@ -8698,16 +9055,19 @@ alaplace = function(llocation="identity", lscale="loge",
 }
 
 
+
+
+
 laplace = function(llocation="identity", lscale="loge",
                    elocation=list(), escale=list(),
                    ilocation=NULL, iscale=NULL,
-                   method.init=1, zero=NULL) {
+                   method.init=1, zero=2) {
     if(mode(llocation) != "character" && mode(llocation) != "name")
         llocation = as.character(substitute(llocation))
     if(mode(lscale) != "character" && mode(lscale) != "name")
         lscale = as.character(substitute(lscale))
     if(!is.Numeric(method.init, allow=1, integ=TRUE, posit=TRUE) ||
-       method.init > 2) stop("argument \"method.init\" must be 1 or 2")
+       method.init > 3) stop("argument \"method.init\" must be 1 or 2 or 3")
     if(length(zero) && !is.Numeric(zero, integer=TRUE, posit=TRUE))
         stop("bad input for argument \"zero\"")
     if(!is.list(elocation)) elocation = list()
@@ -8736,8 +9096,11 @@ laplace = function(llocation="identity", lscale="loge",
             if( .method.init == 1) {
                 location.init = median(y)
                 scale.init = sqrt(var(y) / 2)
+            } else if( .method.init == 2) {
+                location.init = weighted.mean(y, w)
+                scale.init = sqrt(var(y) / 2)
             } else {
-                location.init = y
+                location.init = median(y)
                 scale.init = sqrt(sum(w*abs(y-median(y ))) / (sum(w) *2))
             }
             location.init = if(length(.ilocation)) rep(.ilocation, len=n) else
@@ -8784,9 +9147,8 @@ laplace = function(llocation="identity", lscale="loge",
     }), list( .escale=escale, .lscale=lscale,
               .elocation=elocation, .llocation=llocation ))),
     weight=eval(substitute(expression({
-        d2l.dlocation2 = 1 / Scale^2
-        d2l.dscale2 = 1 / Scale^2
-        wz = matrix(0, nrow=n, ncol=2) # diagonal
+        d2l.dlocation2 = d2l.dscale2 = 1 / Scale^2
+        wz = matrix(0, nrow=n, ncol=M) # diagonal
         wz[,iam(1,1,M)] = d2l.dlocation2 * dlocation.deta^2
         wz[,iam(2,2,M)] = d2l.dscale2 * dscale.deta^2
         w * wz
@@ -9180,27 +9542,41 @@ benini = function(y0=stop("argument \"y0\" must be specified"),
 
 
 
-dpolono = function(x, meanlog=0, sdlog=1, ...) {
-    if(!is.Numeric(x)) stop("bad input for argument \"x\"")
-    if(!is.Numeric(meanlog)) stop("bad input for argument \"meanlog\"")
-    if(!is.Numeric(sdlog, posit=TRUE)) stop("bad input for argument \"sdlog\"")
+dpolono = function(x, meanlog=0, sdlog=1, bigx=Inf, ...) {
+    if(!is.Numeric(x)) stop("bad input for argument 'x'")
+    if(!is.Numeric(meanlog)) stop("bad input for argument 'meanlog'")
+    if(!is.Numeric(sdlog, posit=TRUE)) stop("bad input for argument 'sdlog'")
+    if(length(bigx) != 1)
+        stop("bad input for argument 'bigx'")
+    if(bigx < 10)
+        warning("argument 'bigx' is probably too small")
     N = max(length(x), length(meanlog), length(sdlog))
-    x = rep(x, len=N); meanlog = rep(meanlog, len=N); sdlog = rep(sdlog, len=N);
+    x = rep(x, len=N); meanlog = rep(meanlog, len=N); sdlog = rep(sdlog, len=N)
     ans = x * 0
     integrand = function(t, x, meanlog, sdlog)
         exp(t*x - exp(t) - 0.5*((t-meanlog)/sdlog)^2)
     for(i in 1:N) {
         if(x[i] == round(x[i]) && x[i] >= 0) {
-            temp = integrate(f=integrand, lower=-Inf, upper=Inf,
-                             x=x[i], meanlog=meanlog[i], sdlog=sdlog[i], ...)
-            if(temp$message == "OK") ans[i] = temp$value else {
-            warning(paste("could not integrate (numerically) observation", i))
-                ans[i] = NA
+            if(x[i] >= bigx) {
+                zedd =  (log(x[i])-meanlog[i]) / sdlog[i]
+                temp = 1 + (zedd^2 + log(x[i]) - meanlog[i] -
+                       1) / (2*x[i]*(sdlog[i])^2)
+                ans[i] = temp * exp(-0.5*zedd^2)/(sqrt(2*pi) * sdlog[i] * x[i])
+            } else {
+                temp = integrate(f=integrand, lower=-Inf, upper=Inf,
+                                 x=x[i], meanlog=meanlog[i], sdlog=sdlog[i], ...)
+                if(temp$message == "OK") {
+                    ans[i] = temp$value / (sqrt(2*pi) * sdlog[i] *
+                             exp(lgamma(x[i]+1)))
+                } else {
+                    warning(paste("could not integrate",
+                                  " (numerically) observation", i))
+                    ans[i] = NA
+                }
             }
         }
     }
-    ans = ans / (sqrt(2*pi) * sdlog * gamma(x+1))
-    ifelse(x == round(x) & x >= 0, ans, 0)
+    ans
 }
 
 

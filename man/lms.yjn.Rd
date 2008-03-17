@@ -8,20 +8,16 @@
   to normality.
 }
 \usage{
-lms.yjn(percentiles = c(25, 50, 75), zero = NULL, 
-        link.lambda = "identity", link.sigma = "loge",
-        elambda=list(), esigma=list(),
-        dfmu.init=4, dfsigma.init=2,
-        init.lambda = 1, init.sigma = NULL, 
-        rule = c(10, 5), yoffset = NULL,
-        diagW=FALSE, iters.diagW=6)
+lms.yjn(percentiles = c(25, 50, 75), zero = NULL,
+        link.lambda = "identity", link.sigma = "loge", elambda=list(),
+        esigma=list(), dfmu.init=4, dfsigma.init=2, init.lambda = 1,
+        init.sigma = NULL, rule = c(10, 5), yoffset = NULL, diagW=FALSE,
+        iters.diagW=6)
 lms.yjn2(percentiles=c(25,50,75), zero=NULL,
-         link.lambda="identity", link.sigma="loge",
-         elambda=list(), esigma=list(),
-         dfmu.init=4, dfsigma.init=2,
-         init.lambda=1.0, init.sigma=NULL,
-         yoffset=NULL, nsimEIM=250)
-
+         link.lambda="identity", link.mu = "identity", link.sigma="loge",
+         elambda=list(), emu = list(), esigma=list(), dfmu.init=4,
+         dfsigma.init=2, init.lambda=1.0, init.sigma=NULL, yoffset=NULL,
+         nsimEIM=250)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -40,19 +36,13 @@ lms.yjn2(percentiles=c(25,50,75), zero=NULL,
   functions of the covariates.
 
   } 
-  \item{link.lambda}{
-  Parameter link function applied to the first linear/additive predictor.
+  \item{link.lambda, link.mu, link.sigma}{
+  Parameter link function applied to the first, second and third
+  linear/additive predictor.
   See \code{\link{Links}} for more choices.
 
   }
-  \item{link.sigma}{
-  Parameter link function applied to the third linear/additive predictor.
-  See \code{\link{Links}} for more choices.
-
-% It is the natural log by default because sigma is positive.
-
-  }
-  \item{elambda, esigma}{
+  \item{elambda, emu, esigma}{
   List. Extra argument for each of the links.
   See \code{earg} in \code{\link{Links}} for general information.
 

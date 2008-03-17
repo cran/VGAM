@@ -11,7 +11,7 @@
 
 }
 \usage{
-dbetanorm(x, shape1, shape2, mean=0, sd=1, log.arg=FALSE)
+dbetanorm(x, shape1, shape2, mean=0, sd=1, log=FALSE)
 pbetanorm(q, shape1, shape2, mean=0, sd=1, lower.tail=TRUE, log.p=FALSE)
 qbetanorm(p, shape1, shape2, mean=0, sd=1)
 rbetanorm(n, shape1, shape2, mean=0, sd=1)
@@ -32,7 +32,7 @@ rbetanorm(n, shape1, shape2, mean=0, sd=1)
   normal distribution.
 
   }
-  \item{log.arg, log.p}{
+  \item{log, log.p}{
   Logical.
   If \code{TRUE} then all probabilities \code{p} are given as \code{log(p)}.
 

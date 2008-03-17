@@ -1,9 +1,9 @@
-`aml` <-
+`leukemia` <-
 structure(list(time = c(9, 13, 13, 18, 23, 28, 31, 34, 45, 48, 
 161, 5, 5, 8, 8, 12, 16, 23, 27, 30, 33, 43, 45), status = c(1, 
 1, 0, 1, 1, 0, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 
-1), x = structure(c(1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 
-2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L), .Label = c("Maintained", 
+1), x = structure(c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2), .Label = c("Maintained", 
 "Nonmaintained"), class = "factor")), .Names = c("time", "status", 
 "x"), row.names = c("1", "2", "3", "4", "5", "6", "7", "8", "9", 
 "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", 

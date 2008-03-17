@@ -11,7 +11,7 @@
 
 }
 \usage{
-dfgm(x1, x2, alpha, log.arg=FALSE)
+dfgm(x1, x2, alpha, log=FALSE)
 pfgm(q1, q2, alpha)
 rfgm(n, alpha)
 }
@@ -20,7 +20,7 @@ rfgm(n, alpha)
   \item{n}{number of observations.
     Must be a positive integer of length 1.}
   \item{alpha}{the association parameter.}
-  \item{log.arg}{
+  \item{log}{
   Logical.
   If \code{TRUE} then the logarithm is returned.
 

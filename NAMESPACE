@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2007 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2008 T.W. Yee, University of Auckland. All rights reserved.
 
 
 
@@ -41,6 +41,7 @@ export( bs, ns, scale.default, poly )
 
 export(iam,
 fill, fill1, fill2, fill3,
+amh, damh, pamh, ramh, 
 freund61,
 frechet2, frechet3, dfrechet, pfrechet, qfrechet, rfrechet,
 frank, dfrank, pfrank, rfrank, 
@@ -113,6 +114,7 @@ mccullagh89, leipnik, levy,
 lms.bcg.control, lms.bcn.control, lmscreg.control,
 lms.yjn.control, 
 lms.bcg, lms.bcn, lms.yjn, lms.yjn2,
+lqnorm,
 dbilogis4, pbilogis4, rbilogis4, bilogistic4,
 logistic1, logistic2,
 logLik.vlm, lv.cao, lv.Coef.cao, lv.Coef.qrrvglm,
@@ -151,6 +153,7 @@ rrvglm.control.Gaussian)
 export(
 Surv, is.SurvS4, as.character.SurvS4, print.SurvS4,
 simple.exponential, simple.poisson,
+mbinomial,
 seq2binomial, size.binomial,
 stdze1, stdze2,
 summary.cao, summary.grc, summary.lms, summary.qrrvglm,
@@ -195,6 +198,8 @@ export(dpolono, rpolono)
 export(dgpd, pgpd, qgpd, rgpd, gpd)
 export(dgev, pgev, qgev, rgev, gev, egev)
 export(dlaplace, plaplace, qlaplace, rlaplace, laplace)
+export(dalaplace, palaplace, qalaplace, ralaplace,
+        alaplace1, alaplace2, alaplace3)
 export(dcard, pcard, qcard, rcard, cardioid)
 export(fff, fff.control,
        mbesselI0,
@@ -211,7 +216,7 @@ bratt, Brat, calibrate.qrrvglm.control, calibrate.qrrvglm,
 calibrate, cao.control,
 cao, ccoef, cdf.lmscreg, cgo, chisq, clo, 
 Coef.qrrvglm, Coef, Coef.rrvglm, Coef.vlm,
-cratio, cumulative, deplot.lmscreg, dirichlet,
+cratio, cumulative, scumulative, deplot.lmscreg, dirichlet,
 exponential, G1G2G3)
 
 export(
@@ -230,7 +235,7 @@ grc,
 dhzeta, phzeta, qhzeta, rhzeta, hzeta, 
 nidentity, identity,
 prentice74,
-alsqreg,
+alsqreg, amlbinomial, amlexponential, amlpoisson, Wr1, Wr2,
 dkumar, pkumar, qkumar, rkumar, kumar,
 dyules, pyules, ryules, yulesimon, 
 logff, dlog, plog, rlog,
@@ -238,6 +243,8 @@ loglinb2, loglinb3,
 loglog, lognormal3, lvplot.qrrvglm,
 lvplot, lvplot.rrvglm, lv, Max, MNSs, multinomial)
 
+export(
+slash, dslash, pslash, rslash)
 
 export(
 meplot, meplot.default, meplot.vlm,
@@ -292,11 +299,19 @@ exportClasses("vglmff", "vlm", "vglm", "vgam",
 exportClasses("SurvS4")
 
 
+
 exportMethods(
-"coef", "Coef", "coefficients", "constraints", 
-"effects", "fitted", "fitted.values", "predict",
-"print", "resid", "residuals", "show",
-"summary", "terms", "model.frame", "model.matrix",
+"coef", "Coef", "coefficients",
+"constraints", 
+"effects", "fitted", "fitted.values",
+"predict",
+"print",
+"resid",
+"residuals", "show",
+"summary",
+"terms",
+"model.frame",
+"model.matrix",
 "deviance", "logLik", "vcov",
 "calibrate", "cdf", "ccoef", "df.residual",
 "lv", "Max", "Opt", "Tol",
@@ -304,4 +319,8 @@ exportMethods(
 "plot", "trplot", "vplot",
 "weights",
 "persp")
+
+
+
+
 

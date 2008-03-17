@@ -4,7 +4,7 @@
 \title{ Gamma Hyperbola Bivariate Distribution }
 \description{
   Estimate the parameter of a gamma hyperbola bivariate distribution
-  using maximum likelihood estimation.
+  by maximum likelihood estimation.
 }
 \usage{
 gammahyp(ltheta="loge", itheta=NULL, expected=FALSE)

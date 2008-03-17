@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2007 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2008 T.W. Yee, University of Auckland. All rights reserved.
 
 
 
@@ -14,6 +14,7 @@ cao.fit <- function(x, y, w=rep(1, length(x[, 1])),
     qr.arg=FALSE, constraints=NULL, extra=NULL,
     Terms=Terms, function.name="cao", ...)
 {
+    specialCM = NULL
     post = list()
     check.rank = TRUE # 
     nonparametric <- TRUE
@@ -118,7 +119,7 @@ cao.fit <- function(x, y, w=rep(1, length(x[, 1])),
 
     rrcontrol$Cinit = control$Cinit = Cmat   # Good for valt()
 
-    Blist <- process.constraints(constraints, x, M)
+    Blist <- process.constraints(constraints, x, M, specialCM=specialCM)
 
     nice31 = checkCMCO(Blist, control=control, modelno=modelno)
     if(nice31 != 1) stop("not nice")

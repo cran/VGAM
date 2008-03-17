@@ -67,6 +67,8 @@ New York: Wiley-Interscience, Third edition.
 }
 \seealso{
 %   \code{\link{cexpon}},
+    \code{\link{amlexponential}},
+    \code{\link{laplace}},
     \code{\link{poissonff}},
     \code{\link{mix2exp}},
     \code{\link{freund61}}.

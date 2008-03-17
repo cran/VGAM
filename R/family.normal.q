@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2007 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2008 T.W. Yee, University of Auckland. All rights reserved.
 
 
 
@@ -247,9 +247,11 @@ posnormal1 = function(lmean="identity", lsd="loge",
 
 
 
-dbetanorm = function(x, shape1, shape2, mean=0, sd=1, log.arg=FALSE) {
+dbetanorm = function(x, shape1, shape2, mean=0, sd=1, log=FALSE) {
+    log.arg = log
+    rm(log)
     if(!is.logical(log.arg) || length(log.arg)!=1)
-        stop("bad input for argument \"log.arg\"")
+        stop("bad input for argument \"log\"")
     ans =
     if(is.R() && log.arg) {
         dnorm(x=x, mean=mean, sd=sd, log=TRUE) +
@@ -259,8 +261,7 @@ dbetanorm = function(x, shape1, shape2, mean=0, sd=1, log.arg=FALSE) {
     } else {
         dnorm(x=x, mean=mean, sd=sd) *
         pnorm(q=x, mean=mean, sd=sd)^(shape1-1) *
-        pnorm(q=x, mean=mean, sd=sd, lower=FALSE)^(shape2-1) /
-        beta(shape1, shape2)
+    pnorm(q=x, mean=mean, sd=sd, lower=FALSE)^(shape2-1) / beta(shape1, shape2)
     }
     if(!is.R() && log.arg) ans = log(ans)
     ans
@@ -630,10 +631,11 @@ if(FALSE) {
         misc$expected = TRUE
         misc$nsimEIM = .nsimEIM
         misc$simEIM = TRUE
+        misc$method.init = .method.init
         misc$a1 = .a1
         misc$a2 = .a2
     }), list( .lmean=lmean, .lsd=lsd, .emean=emean, .esd=esd,
-              .nsimEIM=nsimEIM, .a1=a1, .a2=a2 ))),
+              .method.init=method.init, .nsimEIM=nsimEIM, .a1=a1, .a2=a2 ))),
     loglikelihood=eval(substitute(
         function(mu,y,w,residuals= FALSE,eta, extra=NULL) {
         mymu = eta2theta(eta[,1], .lmean, earg= .emean)
@@ -654,7 +656,8 @@ if(FALSE) {
         a1vec = .a1
         a2vec = .a2
         d3 = deriv3(~ log((exp(-0.5*(y/(a1vec*mysd) - mymu/mysd)^2)/a1vec +
-                           exp(-0.5*(y/(a2vec*mysd) + mymu/mysd)^2)/a2vec)/(mysd*sqrt(2*pi))),
+                           exp(-0.5*(y/(a2vec*mysd) +
+                               mymu/mysd)^2)/a2vec)/(mysd*sqrt(2*pi))),
                     name=c("mymu","mysd"), hessian= FALSE)
         eval.d3 = eval(d3)
         dl.dthetas =  attr(eval.d3, "gradient")  # == cbind(dl.dmu, dl.dsd)
@@ -688,6 +691,91 @@ if(FALSE) {
         w * wz
     }), list( .nsimEIM=nsimEIM, .a1=a1, .a2=a2 ))))
 }
+
+
+
+
+
+lqnorm.control = function(trace=TRUE, ...)
+{
+    list(trace=trace)
+}
+
+
+lqnorm = function(qpower=2, link="identity", earg=list(),
+                  method.init=1, imu=NULL, shrinkage.init=0.95)
+{
+    if(mode(link) != "character" && mode(link) != "name")
+        link = as.character(substitute(link))
+    if(!is.list(earg)) eerg = list()
+    if(!is.Numeric(qpower, allow=1) || qpower <= 1)
+        stop("bad input for argument 'qpower'")
+    if(!is.Numeric(method.init, allow=1, integ=TRUE, posit=TRUE) ||
+       method.init > 3)
+        stop("'method.init' must be 1 or 2 or 3")
+    if(!is.Numeric(shrinkage.init, allow=1) || shrinkage.init < 0 ||
+       shrinkage.init > 1) stop("bad input for argument \"shrinkage.init\"")
+
+    new("vglmff",
+    blurb=c("Minimizing the q-norm of residuals\n",
+            "Links:    ",
+            namesof("Y1", link, earg=earg, tag= TRUE)),
+    initialize=eval(substitute(expression({
+        M = if(is.matrix(y)) ncol(y) else 1
+        if(M != 1)
+            stop("response must be a vector or a one-column matrix")
+        dy = dimnames(y)
+        predictors.names = if(!is.null(dy[[2]])) dy[[2]] else
+                           paste("mu", 1:M, sep="")
+        predictors.names = namesof(predictors.names, link= .link,
+                                   earg= .earg, short=TRUE)
+        if(!length(etastart))  {
+            meany = weighted.mean(y, w)
+            mean.init = rep(if(length( .imu)) .imu else
+                {if( .method.init == 2) median(y) else 
+                 if( .method.init == 1) meany else
+                 .sinit * meany + (1 - .sinit) * y
+                }, len=n)
+            etastart = theta2eta(mean.init, link= .link, earg= .earg)
+        }
+    }), list( .method.init=method.init, .imu=imu, .sinit=shrinkage.init,
+              .link=link, .earg=earg ))),
+    inverse=eval(substitute(function(eta, extra=NULL) {
+        mu = eta2theta(eta, link= .link, earg= .earg)
+        mu
+    }, list( .link=link, .earg=earg ))),
+    last=eval(substitute(expression({
+        dy = dimnames(y)
+        if(!is.null(dy[[2]]))
+            dimnames(fit$fitted.values) = dy
+        misc$link = rep( .link, length=M)
+        names(misc$link) = predictors.names
+        misc$earg = list(mu = .earg)
+        misc$qpower = .qpower
+        misc$method.init = .method.init
+        misc$objectiveFunction = sum( w * (abs(y - mu))^(.qpower) )
+    }), list( .qpower=qpower,
+              .link=link, .earg=earg,
+              .method.init=method.init ))),
+    link=eval(substitute(function(mu, extra=NULL) {
+        theta2eta(mu, link= .link, earg=.earg)
+    }, list( .link=link, .earg=earg ))),
+    vfamily="lqnorm",
+    deriv=eval(substitute(expression({
+        dmu.deta = dtheta.deta(theta=mu, link=.link, earg= .earg )
+        myresid = y - mu
+        signresid = sign(myresid)
+        temp2 = (abs(myresid))^(.qpower-1)
+        .qpower * w * temp2 * signresid * dmu.deta
+    }), list( .qpower=qpower, .link=link, .earg=earg ))),
+    weight=eval(substitute(expression({
+        temp3 = (abs(myresid))^(.qpower-2)
+        wz = .qpower * (.qpower - 1) * w * temp3 * dmu.deta^2
+        wz
+    }), list( .qpower=qpower, .link=link, .earg=earg ))))
+}
+
+
 
 
 

@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2007 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2008 T.W. Yee, University of Auckland. All rights reserved.
 
 
 
@@ -522,7 +522,7 @@ cumulative = function(link="logit", earg = list(),
             extra$NOS = NOS
             extra$Llevels = Llevels
         } else {
-            delete.zero.colns = TRUE # Cannot have F since then prob(Y=jay)=0
+            delete.zero.colns=TRUE # Cannot have FALSE since then prob(Y=jay)=0
             eval(process.categorical.data.vgam)
             M = ncol(y)-1
             mynames = if( .reverse ) paste("P[Y>=",2:(1+M),"]", sep="") else
@@ -637,7 +637,7 @@ cumulative = function(link="logit", earg = list(),
             cump = eta2theta(eta, .link, earg= .earg)
             dcump.deta = dtheta.deta(cump, .link, earg= .earg)
             (if( .reverse) -w  else w) * dcump.deta *
-                (y[,1:M]/mu.use[,1:M] - y[,-1]/mu.use[,-1])
+                (y[,-(M+1)]/mu.use[,-(M+1)] - y[,-1]/mu.use[,-1])
         }
         deriv.answer
     }), list( .link=link, .reverse=reverse, .earg= earg, .mv=mv ))),
@@ -674,9 +674,9 @@ cumulative = function(link="logit", earg = list(),
 
             }
         } else {
-            wz = w * dcump.deta[,1:M]^2 * (1/mu.use[,1:M] + 1/mu.use[,-1])
+            wz = w * dcump.deta^2 * (1/mu.use[,1:M] + 1/mu.use[,-1])
             if(M > 1)
-                wz = cbind(wz, -w * dcump.deta[,1:(M-1)] *
+                wz = cbind(wz, -w * dcump.deta[,-M] *
                             dcump.deta[,2:M] / mu.use[,2:M])
         }
         wz
@@ -844,7 +844,7 @@ brat = function(refgp="last",
         etastart = matrix(theta2eta(init.alpha, "loge", earg=list()), n, M, byrow=TRUE)
         refgp = .refgp
         if(!intercept.only)
-            warning("this function only works with intercept only models")
+            warning("this function only works with intercept-only models")
         extra$ybrat.indices = .brat.indices(NCo=M+1, are.ties=FALSE)
         uindex = if( .refgp =="last") 1:M else (1:(M+1))[-( .refgp ) ]
 
@@ -961,7 +961,7 @@ bratt = function(refgp="last",
                          theta2eta( rep(ialpha0, len=n), "loge"))
         refgp = .refgp
         if(!intercept.only)
-            warning("this function only works with intercept only models")
+            warning("this function only works with intercept-only models")
         extra$ties = ties  # Flat (1-row) matrix
         extra$ybrat.indices = .brat.indices(NCo=NCo, are.ties=FALSE)
         extra$tbrat.indices = .brat.indices(NCo=NCo, are.ties=TRUE) # unused
@@ -1399,25 +1399,48 @@ ordpoissonProbs = function(extra, mu, deriv=0) {
 
 
 
- if(FALSE)
 scumulative = function(link="logit", earg = list(),
                        lscale="loge", escale = list(),
-                       parallel=FALSE,
-                       sparallel=FALSE ~ 1, reverse=FALSE)
+                       parallel=FALSE, sparallel=TRUE, reverse=FALSE,
+                       iscale = 1)
 {
+    stop("sorry, not working yet")
     if(mode(link) != "character" && mode(link) != "name")
         link = as.character(substitute(link))
     if(!is.list(earg)) earg = list()
+    if(mode(lscale) != "character" && mode(lscale) != "name")
+        lscale = as.character(substitute(lscale))
+    if(!is.list(escale)) escale = list()
+    if(!is.Numeric(iscale, posit=TRUE))
+        stop("bad input for argument \"iscale\"")
+
 
     new("vglmff",
     blurb=c(paste("Scaled cumulative", link, "model\n\n"),
            "Links:   ",
            namesof(if(reverse) "P[Y>=j+1]" else "P[Y<=j]", link, earg=earg),
+           ", ",
            namesof("scale_j", lscale, escale)),
     constraints=eval(substitute(expression({
-            constraints = cm.vgam(matrix(1,M,1), x, .parallel, constraints,
-                                  intercept.apply = FALSE)
-    }), list( .parallel=parallel ))),
+        J = M / 2
+        constraints = cm.vgam(matrix(1,J,1), x, .parallel, constraints,
+                              intercept.apply = FALSE)
+        constraints[["(Intercept)"]] = rbind(constraints[["(Intercept)"]],
+            matrix(0, J, ncol(constraints[["(Intercept)"]])))
+
+        cm2 = cm.vgam(matrix(1,J,1), x, .sparallel, constraints=NULL,
+                      intercept.apply = FALSE)
+
+        for(ii in 2:length(constraints))
+            constraints[[ii]] =
+                cbind(rbind(constraints[[ii]],
+                            matrix(0, J, ncol(constraints[[ii]]))),
+                      rbind(matrix(0, J, ncol(cm2[[ii]])), cm2[[ii]]))
+
+        for(ii in 1:length(constraints))
+            constraints[[ii]] =
+                (constraints[[ii]])[interleave.VGAM(M, M=2),,drop=FALSE]
+    }), list( .parallel=parallel, .sparallel=sparallel ))),
     deviance=eval(substitute(
         function(mu, y, w, residuals=FALSE, eta, extra=NULL) {
         answer =
@@ -1426,27 +1449,40 @@ scumulative = function(link="logit", earg = list(),
         answer
     }, list( .earg=earg, .link=link ) )),
     initialize=eval(substitute(expression({
-        delete.zero.colns = TRUE # Cannot have F since then prob(Y=jay)=0
+        if(intercept.only)
+            stop("use cumulative() for intercept-only models")
+        delete.zero.colns = TRUE # Cannot have FALSE since then prob(Y=jay)=0
         eval(process.categorical.data.vgam)
         M = 2*(ncol(y)-1)
         J = M / 2
         extra$J = J
         mynames = if( .reverse ) paste("P[Y>=",2:(1+J),"]", sep="") else
             paste("P[Y<=",1:J,"]", sep="")
-        predictors.names = namesof(mynames, .link, short=TRUE, earg= .earg)
+        predictors.names = c(
+            namesof(mynames, .link, short=TRUE, earg= .earg),
+            namesof(paste("scale_", 1:J, sep=""),
+                    .lscale, short=TRUE, earg= .escale))
         y.names = paste("mu", 1:(J+1), sep="")
 
         if(length(dimnames(y)))
             extra$dimnamesy2 = dimnames(y)[[2]]
-    }), list( .link=link, .reverse=reverse, .earg = earg ))),
+
+        predictors.names = predictors.names[interleave.VGAM(M, M=2)]
+
+    }), list( .link=link, .lscale=lscale, .reverse=reverse,
+              .earg= earg, .escale=escale ))),
     inverse=eval(substitute( function(eta, extra=NULL) {
         J = extra$J
+        M = 2*J
+        etamat1 = eta[,2*(1:J)-1,drop=FALSE]
+        etamat2 = eta[,2*(1:J),  drop=FALSE]
+        scalemat = eta2theta(etamat2, .lscale, earg= .escale)
         fv.matrix =
         if( .reverse ) {
-            ccump = cbind(1, eta2theta(eta[,1:J], .link, earg= .earg))
+            ccump = cbind(1, eta2theta(etamat1/scalemat, .link, earg=.earg))
             cbind(-tapplymat1(ccump, "diff"), ccump[,ncol(ccump)])
         } else {
-            cump = cbind(eta2theta(eta[,1:J], .link, earg= .earg), 1)
+            cump = cbind(eta2theta(etamat1/scalemat, .link, earg= .earg), 1)
             cbind(cump[,1], tapplymat1(cump, "diff"))
         }
         if(length(extra$dimnamesy2))
@@ -1455,55 +1491,103 @@ scumulative = function(link="logit", earg = list(),
     }, list( .link=link, .lscale=lscale, .reverse=reverse,
              .earg= earg, .escale=escale ))),
     last=eval(substitute(expression({
-        misc$link = rep( .link, length=J)
-        names(misc$link) = mynames
+        J = extra$J
+        misc$link = c(rep( .link, length=J),
+                      rep( .lscale, length=J))[interleave.VGAM(M, M=2)]
+        names(misc$link) = predictors.names  # zz mynames
         misc$earg = vector("list", M)
         names(misc$earg) = names(misc$link)
-        for(ii in 1:J) misc$earg[[ii]] = .earg
-        for(ii in 1:J) misc$earg[[J+ii]] = .escale
-
+        for(ii in 1:J) misc$earg[[2*ii-1]] = .earg
+        for(ii in 1:J) misc$earg[[2*ii  ]] = .escale
         misc$parameters = mynames
         misc$reverse = .reverse
         misc$parallel = .parallel
+        misc$sparallel = .sparallel
     }), list( .link=link, .lscale=lscale,
-              .reverse=reverse, .parallel=parallel,
+              .reverse=reverse, .parallel=parallel, .sparallel=sparallel,
               .earg=earg, .escale=escale ))),
     link=eval(substitute( function(mu, extra=NULL) {
         cump = tapplymat1(as.matrix(mu), "cumsum")
         J = ncol(as.matrix(mu)) - 1
-        answer = 
+        M = 2 * J
+        answer =  cbind(
             theta2eta(if( .reverse ) 1-cump[,1:J] else cump[,1:J], .link,
-                      earg= .earg)
+                      earg= .earg),
+            matrix(theta2eta( .iscale, .lscale, earg = .escale),
+                   nrow(as.matrix(mu)), J, byrow=TRUE))
+        answer = answer[,interleave.VGAM(M, M=2)]
         answer
     }, list( .link=link, .lscale=lscale, .reverse=reverse,
-             .earg=earg, .escale=escale ))),
+             .iscale=iscale, .earg=earg, .escale=escale ))),
     loglikelihood= function(mu, y, w, residuals = FALSE, eta, extra=NULL)
         if(residuals) stop("loglikelihood residuals not implemented yet") else
        sum(w * y * log(mu)), 
-    vfamily=c("cumulative", "vcategorical"),
+    vfamily=c("scumulative", "vcategorical"),
     deriv=eval(substitute(expression({
+        ooz = iter %% 2
+ print("ooz")
+ print( ooz )
+
         J = extra$J
         mu.use = pmax(mu, .Machine$double.eps * 1.0e-0)
-        cump = eta2theta(eta[,1:J], .link, earg= .earg)
-        scalemat = eta2theta(eta[,(J+1):(2*J)], .link, earg= .earg)
+
+        etamat1 = eta[,2*(1:J)-1,drop=FALSE]
+        etamat2 = eta[,2*(1:J),  drop=FALSE]
+        scalemat = eta2theta(etamat2, .lscale, earg= .escale)
+
+        cump = eta2theta(etamat1 / scalemat, .link, earg= .earg)
         dcump.deta = dtheta.deta(cump, .link, earg= .earg)
         dscale.deta = dtheta.deta(scalemat, .lscale, earg= .escale)
         dl.dcump = (if( .reverse) -w  else w) * 
                 (y[,1:J]/mu.use[,1:J] - y[,-1]/mu.use[,-1])
-        dl.dscale = zz
-        dcump.dscale = zz
-
-        cbind(dl.cump * dcump.deta,
-              dl.dcump * dcump.dscale * dscale.deta)
+        dcump.dscale = -dcump.deta * etamat1 / scalemat^2
+        ans = cbind(dl.dcump * dcump.deta / scalemat,
+                    dl.dcump * dcump.dscale * dscale.deta)
+        ans = ans[,interleave.VGAM(M, M=2)]
+        if(ooz) ans[,c(TRUE,FALSE)] = 0 else ans[,c(FALSE,TRUE)] = 0
+        ans
     }), list( .link=link, .lscale=lscale, .reverse=reverse,
               .earg= earg, .escale=escale ))),
     weight= eval(substitute(expression({
-        wz = w * dcump.deta[,1:J]^2 * (1/mu.use[,1:J] + 1/mu.use[,-1])
-        if(J > 1)
-            wz = cbind(wz, -w * dcump.deta[,1:(J-1)] *
-                       dcump.deta[,2:J] / mu.use[,2:J])
-        wz = cbind(wz, -w * dcump.deta[,1:(J-1)] *
-                   dcump.deta[,2:J] / mu.use[,2:J])
+
+        wz = matrix(0, n, 2*(2*M-3))
+
+        wz[,2*(1:J)-1] = if(ooz) w * (dcump.deta / scalemat)^2 *
+                         (1/mu.use[,1:J] + 1/mu.use[,-1]) else 1
+        wz[,2*(1:J)] = if(ooz) 1 else w * (dcump.dscale * dscale.deta)^2 *
+                       (1/mu.use[,1:J] + 1/mu.use[,-1])
+        wz0 = w * (dcump.deta / scalemat) * 
+                  (dcump.dscale * dscale.deta) *
+                  (1/mu.use[,1:J] + 1/mu.use[,-1])
+        wz0 = as.matrix(wz0)
+        for(ii in 1:J)
+            wz[,iam(2*ii-1,2*ii,M=M)] = if(ooz) wz0[,ii] else 0
+
+        if(J > 1) {
+            wz0 = -w * (dcump.deta[,-J] / scalemat[,-J]) *
+                       (dcump.deta[,-1]  / scalemat[,-1]) / mu.use[,2:J]
+            wz0 = as.matrix(wz0) # Just in case J=2
+            for(ii in 1:(J-1))
+                wz[,iam(2*ii-1,2*ii+1,M=M)] = if(ooz) wz0[,ii] else 0
+            wz0 = -w * (dcump.dscale[,-1] * dscale.deta[,-1]) *
+                       (dcump.dscale[,-J] * dscale.deta[,-J]) / mu.use[,2:J]
+            wz0 = as.matrix(wz0)
+            for(ii in 1:(J-1))
+                wz[,iam(2*ii,2*ii+2,M=M)] = if(ooz) wz0[,ii] else 0
+
+
+
+            wz0 = -w * (dcump.deta[,-J] / scalemat[,-J]) *
+                       (dcump.dscale[,-1] * dscale.deta[,-1]) / mu.use[,2:J]
+            wz0 = as.matrix(wz0)
+            for(ii in 1:(J-1))
+                wz[,iam(2*ii-1,2*ii+2,M=M)] = if(ooz) wz0[,ii] else 0
+            wz0 = -w * (dcump.deta[,-1] / scalemat[,-1]) *
+                       (dcump.dscale[,-J] * dscale.deta[,-J]) / mu.use[,2:J]
+            wz0 = as.matrix(wz0)
+            for(ii in 1:(J-1))
+                wz[,iam(2*ii,2*ii+1,M=M)] = if(ooz) wz0[,ii] else 0
+        }
         wz
     }), list( .link=link, .lscale=lscale, .earg=earg, .escale=escale ))))
 }

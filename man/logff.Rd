@@ -64,15 +64,15 @@ contains further information and examples.
 }
 \author{ T. W. Yee }
 \note{
-  The function \code{\link[base]{log}} computes the natural logarithm. In
-  the \pkg{VGAM} library, a link function with option \code{\link{loge}}
-  corresponds to this.
+  The function \code{\link[base:Log]{log}} computes the natural logarithm.
+  In the \pkg{VGAM} library, a link function with option
+  \code{\link{loge}} corresponds to this.
 
 }
 
 \seealso{ 
   \code{\link{rlog}},
-  \code{\link[base]{log}},
+  \code{\link[base:Log]{log}},
   \code{\link{loge}},
   \code{\link{logoff}}.
 }

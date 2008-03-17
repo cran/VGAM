@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2007 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2008 T.W. Yee, University of Auckland. All rights reserved.
 
 
 
@@ -193,8 +193,9 @@ cm.zero.vgam <- function(constraints, x, zero, M)
 }
 
 
-process.constraints <- function(constraints, x, M, by.col=TRUE)
+process.constraints <- function(constraints, x, M, by.col=TRUE, specialCM=NULL)
 {
+
 
 
 
@@ -246,14 +247,19 @@ process.constraints <- function(constraints, x, M, by.col=TRUE)
     if(!by.col)
         return(temp)
 
-
     constraints <- temp
     Blist <- vector("list", ncol(x))
-    for(i in 1:length(asgn)) {
-        cols <- asgn[[i]]
-        cm <- constraints[[i]]
-        for(j in cols)
-            Blist[[j]] <- cm 
+    for(ii in 1:length(asgn)) {
+        cols <- asgn[[ii]]
+        ictr = 0
+        for(jay in cols) {
+            ictr = ictr + 1
+            cm = if(is.list(specialCM) && any(nasgn[ii] == names(specialCM))) {
+                    slist = specialCM[[(nasgn[ii])]]
+                    slist[[ictr]]
+                } else constraints[[ii]]
+            Blist[[jay]] <- cm 
+        }
     }
     names(Blist) <- dimnames(x)[[2]]
     Blist

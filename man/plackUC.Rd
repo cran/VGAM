@@ -10,7 +10,7 @@
 
 }
 \usage{
-dplack(x1, x2, oratio, log.arg=FALSE)
+dplack(x1, x2, oratio, log=FALSE)
 pplack(q1, q2, oratio)
 rplack(n, oratio)
 }
@@ -19,7 +19,7 @@ rplack(n, oratio)
   \item{n}{number of observations.
     Must be a positive integer of length 1.}
   \item{oratio}{the positive odds ratio \eqn{\psi}{psi}.}
-  \item{log.arg}{
+  \item{log}{
   Logical.
   If \code{TRUE} then the logarithm is returned.
 

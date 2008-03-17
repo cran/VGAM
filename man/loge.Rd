@@ -79,7 +79,7 @@ nloge(theta, earg = list(), inverse = FALSE, deriv = 0,
 
 \note{
   This function is called \code{loge} to avoid conflict with the
-  \code{\link[base]{log}} function.
+  \code{\link[base:Log]{log}} function.
 
   Numerical instability may occur when \code{theta} is close to 0 unless
   \code{earg} is used.
@@ -91,7 +91,7 @@ nloge(theta, earg = list(), inverse = FALSE, deriv = 0,
     \code{\link{logit}},
     \code{\link{logc}},
     \code{\link{loglog}},
-    \code{\link[base]{log}},
+    \code{\link[base:Log]{log}},
     \code{\link{logoff}}.
 }
 \examples{
