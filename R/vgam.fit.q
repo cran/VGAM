@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2007 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2008 T.W. Yee, University of Auckland. All rights reserved.
 
 
 
@@ -12,6 +12,7 @@ vgam.fit <- function(x, y, w, mf,
         nonparametric, smooth.labels,
         function.name="vgam", ...)
 {
+    specialCM = NULL
     post = list()
     check.Rank <- TRUE # Set this to false for family functions vppr() etc.
     epsilon <- control$epsilon
@@ -126,7 +127,7 @@ vgam.fit <- function(x, y, w, mf,
 
     if(length(family@constraints))
         eval(family@constraints)
-    Blist <- process.constraints(constraints, x, M)
+    Blist <- process.constraints(constraints, x, M, specialCM=specialCM)
 
     ncolBlist <- unlist(lapply(Blist, ncol))
     dimB <- sum(ncolBlist)
@@ -318,7 +319,8 @@ vgam.fit <- function(x, y, w, mf,
         dimnames(fit$residuals) <- dimnames(fit$predictors) <-
             list(yn, predictors.names)
 
-    NewBlist <- process.constraints(constraints, x, M, by.col=FALSE)
+    NewBlist <- process.constraints(constraints, x, M, specialCM=specialCM,
+                                    by.col=FALSE)
 
     misc <- list(
         colnames.x = xn,

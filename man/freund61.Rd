@@ -5,7 +5,7 @@
 \description{
   Estimate the four parameters of the Freund (1961) bivariate extension
   of the exponential distribution
-  using maximum likelihood estimation.
+  by maximum likelihood estimation.
 
 }
 \usage{

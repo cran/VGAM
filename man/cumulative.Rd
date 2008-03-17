@@ -1,5 +1,6 @@
 \name{cumulative}
 \alias{cumulative}
+\alias{scumulative}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Ordinal Regression with Cumulative Probabilities }
 \description{
@@ -11,37 +12,56 @@
 cumulative(link = "logit", earg = list(),
            parallel = FALSE, reverse = FALSE,
            mv = FALSE, intercept.apply = FALSE)
+scumulative(link="logit", earg = list(),
+            lscale="loge", escale = list(),
+            parallel=FALSE, sparallel=TRUE, reverse=FALSE, iscale = 1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   In the following, the response \eqn{Y} is assumed to be a factor
-  with ordered values \eqn{1,2,\dots,M+1}, so that
+  with ordered values \eqn{1,2,\dots,J+1}.
   \eqn{M} is the number of linear/additive predictors
-  \eqn{\eta_j}{eta_j}.
+  \eqn{\eta_j}{eta_j};
+  for \code{cumulative()} \eqn{M=J},
+  and for \code{scumulative()} \eqn{M=2J}.
 
   \item{link}{
-  Link function applied to the \eqn{M} cumulative probabilities. 
+  Link function applied to the \eqn{J} cumulative probabilities. 
   See \code{\link{Links}} for more choices.
 
   }
-  \item{earg}{
-  List. Extra argument for the link function.
+  \item{lscale}{
+  Link function applied to the \eqn{J} scaling parameters.
+  See \code{\link{Links}} for more choices.
+
+  }
+  \item{earg, escale}{
+  List. Extra argument for the respective link functions.
   See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{parallel}{
+  A logical or formula specifying which terms have
+  equal/unequal coefficients.
+
+  }
+  \item{sparallel}{
+  For the scaling parameters.
   A logical, or formula specifying which terms have
   equal/unequal coefficients.
+  This argument is not applied to the intercept.
+  The \code{scumulative()} function requires covariates; for
+  intercept models use \code{cumulative()}.
 
   }
   \item{reverse}{
   Logical.
   By default, the cumulative probabilities used are
   \eqn{P(Y\leq 1)}{P(Y<=1)}, \eqn{P(Y\leq 2)}{P(Y<=2)},
-  \dots, \eqn{P(Y\leq M)}{P(Y<=M)}.
+  \dots, \eqn{P(Y\leq J)}{P(Y<=J)}.
   If \code{reverse} is \code{TRUE}, then 
   \eqn{P(Y\geq 2)}{P(Y>=2)}, \eqn{P(Y\geq 3)}{P(Y>=3)}, \dots,
-  \eqn{P(Y\geq M+1)}{P(Y>=M+1)} will be used.
+  \eqn{P(Y\geq J+1)}{P(Y>=J+1)} will be used.
 
   This should be set to \code{TRUE} for \code{link=}
   \code{\link{golf}},
@@ -54,7 +74,7 @@ cumulative(link = "logit", earg = list(),
   \item{mv}{
   Logical.
   Multivariate response? If \code{TRUE} then the input should be
-  a matrix with values \eqn{1,2,\dots,L}, where \eqn{L} is the
+  a matrix with values \eqn{1,2,\dots,L}, where \eqn{L=J+1} is the
   number of levels.
   Each column of the matrix is a response, i.e., multivariate response.
   A suitable matrix can be obtained from \code{Cut}.
@@ -67,6 +87,10 @@ cumulative(link = "logit", earg = list(),
   \code{\link{golf}},
   \code{\link{polf}},
   \code{\link{nbolf}}.
+
+  }
+  \item{iscale}{
+  Numeric. Initial values for the scale parameters.
 
   }
 }
@@ -92,6 +116,12 @@ cumulative(link = "logit", earg = list(),
   Currently, reduced-rank vector generalized additive models
   (RR-VGAMs) have not been implemented here.
 
+  The scaled version of \code{cumulative()}, called \code{scumulative()},
+  has \eqn{J} positive scaling factors.
+  They are described in pages 154 and 177 of McCullagh and Nelder (1989);
+  see their equation (5.4) in particular,
+  which they call the \emph{generalized rational model}.
+
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
@@ -110,7 +140,7 @@ Dobson, A. J. (2001)
 2nd ed. Boca Raton: Chapman & Hall/CRC Press.
 
 McCullagh, P. and Nelder, J. A. (1989)
-  \emph{Generalized Linear Models}, 2nd ed. London: Chapman & Hall.
+\emph{Generalized Linear Models}, 2nd ed. London: Chapman & Hall.
 
 Simonoff, J. S. (2003)
 \emph{Analyzing Categorical Data},
@@ -139,8 +169,8 @@ contains further information and examples.
   With the logit link, setting \code{parallel=TRUE} will fit a
   proportional odds model. Note that the \code{TRUE} here does
   not apply to the intercept term. 
-  In practice, the validity of the proportional odds
-  assumption needs to be checked, e.g., by a likelihood ratio test.
+  In practice, the validity of the proportional odds assumption
+  needs to be checked, e.g., by a likelihood ratio test (LRT).
   If acceptable on the data,
   then numerical problems are less likely to occur during the fitting,
   and there are less parameters. Numerical problems occur when
@@ -194,18 +224,32 @@ weights(fit, type="prior")   # Number of observations
 coef(fit, matrix=TRUE)
 constraints(fit)   # Constraint matrices
 
-# Check that the model is linear in let
+# Check that the model is linear in let ----------------------
 fit2 = vgam(cbind(normal, mild, severe) ~ s(let, df=2),
             cumulative(reverse=TRUE), pneumo)
 \dontrun{
 plot(fit2, se=TRUE, overlay=TRUE, lcol=1:2, scol=1:2)
 }
 
-# Check the proportional odds assumption with a likelihood ratio test
+# Check the proportional odds assumption with a LRT ----------
 (fit3 = vglm(cbind(normal, mild, severe) ~ let,
              cumulative(parallel=FALSE, reverse=TRUE), pneumo))
 1 - pchisq(2*(logLik(fit3)-logLik(fit)),
            df=length(coef(fit3))-length(coef(fit)))
+
+# A factor() version of fit ----------------------------------
+nobs = round(fit@y * c(weights(fit, type="prior")))
+sumnobs = apply(nobs, 2, sum)
+mydat = data.frame(
+    response = ordered(c(rep("normal", times=sumnobs["normal"]),
+                         rep("mild", times=sumnobs["mild"]),
+                         rep("severe", times=sumnobs["severe"])),
+                       levels = c("normal","mild","severe")),
+    LET = c(with(pneumo, rep(let, times=nobs[,"normal"])),
+            with(pneumo, rep(let, times=nobs[,"mild"])),
+            with(pneumo, rep(let, times=nobs[,"severe"]))))
+(fit4 = vglm(response ~ LET, data=mydat,
+             cumulative(parallel=TRUE, reverse=TRUE), trace=TRUE))
 }
 \keyword{models}
 \keyword{regression}

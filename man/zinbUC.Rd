@@ -12,7 +12,7 @@
 
 }
 \usage{
-dzinb(x, phi, size, prob, munb, log.arg=FALSE)
+dzinb(x, phi, size, prob, munb, log=FALSE)
 pzinb(q, phi, size, prob, munb)
 qzinb(p, phi, size, prob, munb)
 rzinb(n, phi, size, prob, munb)
@@ -22,7 +22,7 @@ rzinb(n, phi, size, prob, munb)
   \item{x, q}{vector of quantiles.}
   \item{p}{vector of probabilities.}
   \item{n}{number of observations. Must be a single positive integer. }
-  \item{size, prob, munb, log.arg}{
+  \item{size, prob, munb, log}{
   Arguments matching \code{\link[stats:NegBinomial]{dnbinom}}.
   The argument \code{munb} corresponds to \code{mu} in
   \code{\link[stats:NegBinomial]{dnbinom}} and has been renamed

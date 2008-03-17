@@ -8,4 +8,4 @@ structure(list(rainfall = c(1735, 1936, 2000, 1973, 1750, 1800,
     positive = c(2, 3, 1, 3, 2, 3, 2, 7, 3, 8, 7, 0, 15, 4, 0, 
     6, 0, 33, 4, 5, 2, 0, 8, 41, 24, 7, 46, 9, 23, 53, 8, 3, 
     1, 23)), .Names = c("rainfall", "ssize", "cityNo", "positive"
-), row.names = c(NA, -34L), class = "data.frame")
+), row.names = c(NA, -34), class = "data.frame")

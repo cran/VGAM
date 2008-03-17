@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2007 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2008 T.W. Yee, University of Auckland. All rights reserved.
 
 
 
@@ -17,6 +17,7 @@ rrvglm.fit <- function(x, y, w=rep(1, length(x[, 1])),
     extra=NULL,
     Terms=Terms, function.name="rrvglm", ...)
 {
+    specialCM = NULL
     post = list()
     check.rank = TRUE # !control$Quadratic
     nonparametric <- FALSE
@@ -302,7 +303,7 @@ rrvglm.fit <- function(x, y, w=rep(1, length(x[, 1])),
     rrcontrol$Ainit = control$Ainit = Amat   # Good for valt()
     rrcontrol$Cinit = control$Cinit = Cmat   # Good for valt()
 
-    Blist <- process.constraints(constraints, x, M)
+    Blist <- process.constraints(constraints, x, M, specialCM=specialCM)
 
     nice31 = control$Quadratic && (!control$EqualTol || control$ITolerances) &&
              all(trivial.constraints(Blist))

@@ -1,6 +1,6 @@
 Package: VGAM
-Version: 0.7-5
-Date: 2007-11-30
+Version: 0.7-6
+Date: 2008-03-17
 Title: Vector Generalized Linear and Additive Models
 Author: Thomas W. Yee <t.yee@auckland.ac.nz>
 Maintainer: Thomas Yee <t.yee@auckland.ac.nz> 
@@ -11,8 +11,8 @@ Description: Vector generalized linear and additive models, and
     distribution by maximum likelihood estimation (MLE) or
     penalized MLE. Also fits constrained ordination models in
     ecology.
-License: GPL version 2
+License: GPL-2
 URL: http://www.stat.auckland.ac.nz/~yee/VGAM
 LazyLoad: yes
 LazyData: yes
-Packaged: Fri Nov 30 09:35:51 2007; yee
+Packaged: Mon Mar 17 19:11:07 2008; yee

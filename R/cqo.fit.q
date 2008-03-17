@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2007 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2008 T.W. Yee, University of Auckland. All rights reserved.
 
 
 
@@ -267,6 +267,7 @@ cqo.fit <- function(x, y, w=rep(1, length(x[, 1])),
     Terms=Terms, function.name="cqo", ...)
 {
     if(!all(offset == 0)) stop("cqo.fit() cannot handle offsets")
+    specialCM = NULL
     post = list()
     nonparametric <- FALSE
     epsilon <- control$epsilon
@@ -393,7 +394,7 @@ cqo.fit <- function(x, y, w=rep(1, length(x[, 1])),
     rrcontrol$Ainit = control$Ainit = Amat   # Good for valt()
     rrcontrol$Cinit = control$Cinit = Cmat   # Good for valt()
 
-    Blist <- process.constraints(constraints, x, M)
+    Blist <- process.constraints(constraints, x, M, specialCM=specialCM)
     nice31 = checkCMCO(Blist, control=control, modelno=modelno)
     ncolBlist <- unlist(lapply(Blist, ncol))
     dimB <- sum(ncolBlist)

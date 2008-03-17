@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2007 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2008 T.W. Yee, University of Auckland. All rights reserved.
 
 
 
@@ -1063,4 +1063,253 @@ dexpbinomial <- function(lmean="logit", ldispersion="logit",
     }), list( .lmean=lmean, .emean=emean,
               .ldispersion=ldispersion, .edispersion=edispersion ))))
 }
+
+
+
+
+mbinomial <- function(mvar=NULL, link="logit", earg=list(),
+                      parallel = TRUE, smallno = .Machine$double.eps^(3/4))
+{
+    if(mode(link )!= "character" && mode(link )!= "name")
+        link <- as.character(substitute(link))
+    if(!is.list(earg)) earg = list()
+    if(!is.Numeric(smallno, positive=TRUE, allow=1) || smallno > 1e-4)
+        stop("bad input for 'smallno'")
+    if(is.logical(parallel) && !parallel)
+        stop("'parallel' must be TRUE")
+
+    temp = terms(mvar)
+    mvar = attr(temp,"term.labels")
+    if(length(mvar) != 1) stop("cannot obtain the matching variable")
+    if(!is.character(mvar) || length(mvar) != 1) {
+        stop("bad input for 'mvar'")
+    }
+
+    new("vglmff",
+    blurb= c("Matched binomial model (intercepts fitted)\n\n", 
+           "Link:     ", namesof("mu[,j]", link, earg= earg)),
+    constraints=eval(substitute(expression({
+        constraints <- cm.vgam(matrix(1,M,1), x, .parallel, constraints,
+                               intercept.apply=TRUE)
+        constraints[[extra$mvar]] <- diag(M)
+
+        specialCM = list(a = vector("list", M-1))
+        for(ii in 1:(M-1)) {
+            specialCM[[1]][[ii]] = (constraints[[extra$mvar]])[,1+ii,drop=FALSE]
+        }
+        names(specialCM) = extra$mvar
+    }), list( .parallel=parallel ))),
+    initialize=eval(substitute(expression({
+        mvar = .mvar
+
+        NCOL = function (x) 
+            if(is.array(x) && length(dim(x)) > 1 ||
+            is.data.frame(x)) ncol(x) else as.integer(1)
+
+        if(NCOL(y) == 1) {
+            if(is.factor(y)) y = y != levels(y)[1]
+            nn = rep(1, n)
+            if(!all(y >= 0 & y <= 1))
+                stop("response values must be in [0, 1]")
+            mustart = (0.5 + w * y) / (1 + w)
+            no.successes = w * y
+            if(any(abs(no.successes - round(no.successes)) > 0.001))
+                stop("Number of successes must be integer-valued")
+        } else if(NCOL(y) == 2) {
+            if(any(abs(y - round(y)) > 0.001))
+                stop("Count data must be integer-valued")
+            nn = y[,1] + y[,2]
+            y = ifelse(nn > 0, y[,1]/nn, 0)
+            w = w * nn
+            mustart = (0.5 + nn * y) / (1 + nn)
+        } else 
+             stop("Response not of the right form")
+
+        temp1 = attr(x, "assign")
+        if(colnames(x)[1] != "(Intercept)") stop("x must have an intercept")
+        M = CCC = length(temp1[[mvar]]) + (colnames(x)[1] == "(Intercept)")
+        temp9 = x[,temp1[[mvar]],drop=FALSE]
+        temp9 = temp9 * matrix(2:CCC, n, CCC-1, byrow=TRUE)
+        temp9 = apply(temp9, 1, max)
+        temp9[temp9 == 0] = 1
+        extra$NoMatchedSets = CCC
+        extra$n = n
+        extra$M = M
+        extra$mvar = mvar
+        extra$index9 = temp9
+
+        predictors.names = namesof("mu", .link, earg= .earg, short=TRUE)
+        predictors.names = rep(predictors.names, len=M)
+    }), list( .link=link, .earg=earg, .mvar=mvar ))),
+    inverse=eval(substitute(function(eta, extra=NULL) {
+        mu = eta2theta(eta, link= .link, earg = .earg)
+        mu[cbind(1:extra$n, extra$index9)]
+    }, list( .link=link, .earg = earg  ))),
+    last=eval(substitute(expression({
+        misc$link = rep( .link, length=M)
+        names(misc$link) = if(M>1) paste("mu(matched set ",
+            1:M, ")", sep="") else "mu"
+        misc$earg = vector("list", M)
+        names(misc$earg) = names(misc$link)
+        for(ii in 1:M) misc$earg[[ii]] = .earg
+
+        misc$expected = TRUE
+    }), list( .link=link, .earg = earg ))),
+    link=eval(substitute(function(mu, extra=NULL) {
+        temp = theta2eta(mu, .link, earg = .earg )
+        matrix(temp, extra$n, extra$M)
+    }, list( .link=link, .earg = earg ))),
+    loglikelihood= function(mu, y, w, residuals = FALSE, eta, extra=NULL) {
+        if(residuals) w*(y/mu - (1-y)/(1-mu)) else
+            sum(w*(y*log(mu) + (1-y)*log1p(-mu)))
+    },
+    vfamily=c("mbinomial", "vcategorical"),
+    deriv=eval(substitute(expression({
+        answer =
+        if( .link == "logit") {
+            w * (y - mu)
+        } else if( .link == "cloglog") {
+            mu.use = mu
+            smallno = 100 * .Machine$double.eps
+            mu.use[mu.use < smallno] = smallno
+            mu.use[mu.use > 1 - smallno] = 1 - smallno
+            -w * (y - mu) * log1p(-mu.use) / mu.use
+        } else
+            w * dtheta.deta(mu, link= .link, earg = .earg )* (y/mu - 1)/(1-mu)
+        result = matrix(0, n, M)
+        result[cbind(1:n, extra$index9)] = answer
+        result
+    }), list( .link=link, .earg = earg ))),
+    weight=eval(substitute(expression({
+        tmp100 = mu*(1-mu)
+        answer = if( .link == "logit") {
+            cbind(w * tmp100)
+        } else if( .link == "cloglog") {
+            cbind(w * (1-mu.use) * (log1p(-mu.use))^2 / mu.use )
+        } else {
+            cbind(w * dtheta.deta(mu, link= .link, earg = .earg)^2 / tmp100)
+        }
+
+        result = matrix( .smallno, n, M)
+        result[cbind(1:n, extra$index9)] = answer
+        result
+    }), list( .link=link, .earg = earg, .smallno=smallno ))))
+}
+
+
+
+
+mypool = function(x, index) {
+    answer = x
+    uindex = unique(index)
+    for(i in uindex) {
+        ind0 = index == i
+        answer[ind0] = sum(x[ind0])
+    }
+    answer
+}
+
+
+mbino     <- function()
+{
+    link = "logit"
+    earg = list()
+    parallel = TRUE
+
+    if(mode(link )!= "character" && mode(link )!= "name")
+        link <- as.character(substitute(link))
+    if(!is.list(earg)) earg = list()
+    if(is.logical(parallel) && !parallel)
+        stop("'parallel' must be TRUE")
+
+
+    new("vglmff",
+    blurb= c("Matched binomial model (intercepts not fitted)\n\n", 
+           "Link:     ", namesof("mu[,j]", link, earg= earg)),
+    constraints=eval(substitute(expression({
+        constraints <- cm.vgam(matrix(1,M,1), x, .parallel, constraints,
+                               intercept.apply=FALSE)
+    }), list( .parallel=parallel ))),
+    initialize=eval(substitute(expression({
+        if(colnames(x)[1] == "(Intercept)")
+            stop("the model matrix must not have an intercept")
+
+        NCOL = function (x) 
+            if(is.array(x) && length(dim(x)) > 1 ||
+            is.data.frame(x)) ncol(x) else as.integer(1)
+
+        if(NCOL(y) == 1) {
+            if(is.factor(y)) y = y != levels(y)[1]
+            nn = rep(1, n)
+            if(!all(y >= 0 & y <= 1))
+                stop("response values must be in [0, 1]")
+            mustart = (0.5 + w * y) / (1 + w)
+            no.successes = w * y
+            if(any(abs(no.successes - round(no.successes)) > 0.001))
+                stop("Number of successes must be integer-valued")
+        } else if(NCOL(y) == 2) {
+            if(any(abs(y - round(y)) > 0.001))
+                stop("Count data must be integer-valued")
+            nn = y[,1] + y[,2]
+            y = ifelse(nn > 0, y[,1]/nn, 0)
+            w = w * nn
+            mustart = (0.5 + nn * y) / (1 + nn)
+        } else 
+             stop("Response not of the right form")
+
+        if(!length(etastart))
+            etastart <- theta2eta(mustart, link= "logit", earg= list())
+
+        temp1 = attr(x, "assign")
+        mvar = extra$mvar
+        if(length(mvar) != n) stop("input extra$mvar doesn't look right")
+
+        if(any(y != 0 & y != 1))
+            stop("response vector must have 0 or 1 values only")
+        xrle = rle(mvar)
+        if(length(unique(mvar)) != length(xrel$zz))
+            stop("extra$mvar must take on contiguous values")
+
+        temp9 = factor(mvar)
+        extra$NoMatchedSets = levels(temp9)
+        extra$n = n
+        extra$M = M
+        extra$rlex = xrle
+        extra$index9 = temp9
+        predictors.names = namesof("mu", .link, earg= .earg, short=TRUE)
+    }), list( .link=link, .earg=earg, .mvar=mvar ))),
+    inverse=eval(substitute(function(eta, extra=NULL) {
+        denominator = exp(eta)
+        numerator = mypool(denominator, extra$mvar)
+        numerator / denominator
+    }, list( .link=link, .earg = earg  ))),
+    last=eval(substitute(expression({
+        misc$link = c(mu = .link)
+        misc$earg = list( mu = .earg )
+        misc$expected = TRUE
+    }), list( .link=link, .earg = earg ))),
+    loglikelihood= function(mu, y, w, residuals = FALSE, eta, extra=NULL) {
+        if(residuals) w*(y/mu - (1-y)/(1-mu)) else
+            sum(w*(y*log(mu) + (1-y)*log1p(-mu)))
+    },
+    vfamily=c("mbin", "vcategorical"),
+    deriv=eval(substitute(expression({
+        answer =
+        if( .link == "logit") {
+            w * (y - mu)
+        } else stop("can only handle the logit link")
+        answer
+    }), list( .link=link, .earg = earg ))),
+    weight=eval(substitute(expression({
+        tmp100 = mu*(1-mu)
+        answer = if( .link == "logit") {
+            cbind(w * tmp100)
+        } else stop("can only handle the logit link")
+
+        result = matrix( .smallno, n, M)
+        result[cbind(1:n, extra$index9)] = answer
+        result
+    }), list( .link=link, .earg = earg, .smallno=smallno ))))
+}
+
 

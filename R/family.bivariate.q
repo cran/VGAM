@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2007 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2008 T.W. Yee, University of Auckland. All rights reserved.
 
 
 
@@ -764,11 +764,13 @@ rfgm = function(n, alpha) {
 
 
 
-dfgm = function(x1, x2, alpha, log.arg=FALSE) {
+dfgm = function(x1, x2, alpha, log=FALSE) {
+    log.arg = log
+    rm(log)
     if(!is.Numeric(alpha)) stop("bad input for \"alpha\"")
     if(any(abs(alpha) > 1)) stop("\"alpha\" values out of range")
     if( !is.logical( log.arg ) || length( log.arg )!=1 )
-        stop("bad input for 'log.arg'")
+        stop("bad input for 'log'")
 
     L = max(length(x1), length(x2), length(alpha))
     if(length(x1) != L)  x1 = rep(x1, len=L)
@@ -1074,14 +1076,16 @@ rplack = function(n, oratio) {
 
 
 
-dplack = function(x1, x2, oratio, log.arg=FALSE) {
+dplack = function(x1, x2, oratio, log=FALSE) {
+    log.arg = log
+    rm(log)
     if(!is.Numeric(oratio, posit=TRUE)) stop("bad input for \"oratio\"")
     L = max(length(x1), length(x2), length(oratio))
     if(length(x1) != L)  x1 = rep(x1, len=L)
     if(length(x2) != L)  x2 = rep(x2, len=L)
     if(length(oratio) != L)  oratio = rep(oratio, len=L)
     if( !is.logical( log.arg ) || length( log.arg )!=1 )
-        stop("bad input for 'log.arg'")
+        stop("bad input for 'log'")
 
     if( log.arg ) {
         ans = log(oratio) + log1p((oratio-1) *
@@ -1216,6 +1220,169 @@ plackett = function(link="loge", earg=list(),
 
 
 
+damh = function(x1, x2, alpha, log=FALSE) {
+    log.arg = log
+    rm(log)
+    if(!is.Numeric(x1)) stop("bad input for \"x1\"")
+    if(!is.Numeric(x2)) stop("bad input for \"x2\"")
+    if(!is.Numeric(alpha)) stop("bad input for \"alpha\"")
+    if(any(abs(alpha) > 1)) stop("\"alpha\" values out of range")
+    L = max(length(x1), length(x2), length(alpha))
+    alpha = rep(alpha, len=L)
+    x1 = rep(x1, len=L)
+    x2 = rep(x2, len=L)
+    temp = 1-alpha*(1-x1)*(1-x2)
+    if(log.arg) {
+        ans = log1p(-alpha+2*alpha*x1*x2/temp) - 2*log(temp)
+        ans[(x1 <= 0) | (x1 >= 1) | (x2 <= 0) | (x2 >= 1)] = log(0)
+    } else {
+        ans = (1-alpha+2*alpha*x1*x2/temp) / (temp^2)
+        ans[(x1 <= 0) | (x1 >= 1) | (x2 <= 0) | (x2 >= 1)] = 0
+    }
+    ans
+}
+
+pamh = function(q1, q2, alpha) {
+    if(!is.Numeric(q1)) stop("bad input for \"q1\"")
+    if(!is.Numeric(q2)) stop("bad input for \"q2\"")
+    if(!is.Numeric(alpha)) stop("bad input for \"alpha\"")
+    if(any(abs(alpha) > 1)) stop("\"alpha\" values out of range")
+
+    L = max(length(q1), length(q2), length(alpha))
+    if(length(q1) != L)  q1 = rep(q1, len=L)
+    if(length(q2) != L)  q2 = rep(q2, len=L)
+    if(length(alpha) != L)  alpha = rep(alpha, len=L)
+
+    x=q1; y=q2
+    index = (x>=1 & y<1) | (y>=1 & x<1) | (x<=0 | y<=0) | (x>=1 & y>=1)
+    ans = as.numeric(index)
+    if(any(!index)) {
+        ans[!index] = (q1[!index]*q2[!index]) / (1 -
+                      alpha[!index]*(1-q1[!index])*(1-q2[!index]))
+    }
+    ans[x>=1 & y<1] = y[x>=1 & y<1]   # P(Y2 < q2) = q2
+    ans[y>=1 & x<1] = x[y>=1 & x<1]   # P(Y1 < q1) = q1
+    ans[x<=0 | y<=0] = 0
+    ans[x>=1 & y>=1] = 1
+    ans
+}
+
+ramh = function(n, alpha) {
+    if(!is.Numeric(n, posit=TRUE, allow=1, integ=TRUE)) stop("bad input for n")
+    if(!is.Numeric(alpha)) stop("bad input for \"alpha\"")
+    if(any(abs(alpha) > 1)) stop("\"alpha\" values out of range")
+
+    U1 = V1 = runif(n)
+    V2 = runif(n)
+    b = 1-V1
+    A = -alpha*(2*b*V2+1)+2*alpha^2*b^2*V2+1
+    B = alpha^2*(4*b^2*V2-4*b*V2+1)+alpha*(4*V2-4*b*V2-2)+1
+    U2 = (2*V2*(alpha*b-1)^2)/(A+sqrt(B))
+    matrix(c(U1,U2), nrow=n, ncol=2)
+}
+
+amh.control <- function(save.weight=TRUE, ...)
+{
+    list(save.weight=save.weight)
+}
+
+amh = function(lalpha="rhobit", ealpha=list(), ialpha=NULL,
+               method.init=1, nsimEIM=250)
+{
+    if(mode(lalpha) != "character" && mode(lalpha) != "name")
+      lalpha = as.character(substitute(lalpha))
+    if(!is.list(ealpha)) ealpha = list()
+    if(length(ialpha) && (abs(ialpha) > 1))
+      stop("'ialpha' should be less than or equal to 1 in absolute value")
+    if(!is.Numeric(method.init, allow=1, integ=TRUE, posit=TRUE) ||
+      method.init > 2) stop("method.init must be 1 or 2")
+    if(length(nsimEIM) &&
+      (!is.Numeric(nsimEIM, allow=1, integ=TRUE) || nsimEIM <= 50))
+      stop("'nsimEIM' should be an integer greater than 50")
+
+    new("vglmff",
+    blurb=c("Ali-Mikhail-Haq Distribution\n",
+           "Links:    ",
+           namesof("alpha", lalpha, earg= ealpha )),
+    initialize=eval(substitute(expression({
+        if(!is.matrix(y) || ncol(y) != 2)
+            stop("the response must be a 2 column matrix")
+        if(any(y < 0) || any(y > 1))
+            stop("the response must have values in the unit square")
+        predictors.names=c(namesof("alpha", .lalpha, earg= .ealpha, short=TRUE))
+        if(length(dimnames(y)))
+            extra$dimnamesy2 = dimnames(y)[[2]]
+        if(!length(etastart)) {
+            ainit  = if(length( .ialpha ))  .ialpha else {
+                mean1 = if( .method.init == 1) weighted.mean(y[,1],w) else
+                        median(y[,1])
+                mean2 = if( .method.init == 1) weighted.mean(y[,2],w) else
+                        median(y[,2])
+                Finit = weighted.mean(y[,1] <= mean1 & y[,2] <= mean2, w)
+                (1 - (mean1 * mean2 / Finit)) / ((1-mean1) * (1-mean2))
+            }
+            ainit = min(0.95, max(ainit, -0.95))
+            etastart = theta2eta(rep(ainit, len=n), .lalpha, earg= .ealpha )
+        }
+    }), list( .lalpha=lalpha, .ealpha=ealpha, .ialpha=ialpha,
+              .method.init=method.init))),
+    inverse=eval(substitute(function(eta, extra=NULL) {
+        alpha = eta2theta(eta, .lalpha, earg= .ealpha )
+        fv.matrix = matrix(0.5, length(alpha), 2)
+        if(length(extra$dimnamesy2))
+            dimnames(fv.matrix) = list(names(eta), extra$dimnamesy2)
+        fv.matrix
+    }, list(.lalpha=lalpha, .ealpha=ealpha ))),
+    last=eval(substitute(expression({
+        misc$link = c("alpha"= .lalpha)
+        misc$earg = list("alpha"= .ealpha )
+        misc$expected = TRUE
+        misc$nsimEIM = .nsimEIM
+    }), list(.lalpha=lalpha, .ealpha=ealpha, .nsimEIM=nsimEIM ))),
+    loglikelihood= eval(substitute(
+            function(mu, y, w, residuals = FALSE, eta, extra=NULL) {
+        alpha = eta2theta(eta, .lalpha, earg= .ealpha )
+        if(residuals) stop("loglikelihood residuals not implemented yet") else {
+            denom = 1 - alpha*(1-y[,1])*(1-y[,2])
+            sum(w * (log1p(-alpha+2*alpha*y[,1]*y[,2]/denom) - 2*log(denom)))
+        }
+    }, list( .lalpha=lalpha, .earg=ealpha ))),
+    vfamily=c("amh"),
+    deriv=eval(substitute(expression({
+        alpha = eta2theta(eta, .lalpha, earg= .ealpha )
+        dalpha.deta = dtheta.deta(alpha, .lalpha, earg= .ealpha )
+        y1 = y[,1]
+        y2 = y[,2]
+        de3 = deriv3(~ (log(1-alpha+(2*alpha*y1*y2/(1-alpha*(1-y1)*(1-y2))))-
+                        2*log(1-alpha*(1-y1)*(1-y2))) ,
+                        name="alpha", hessian= FALSE)
+        eval.de3 = eval(de3)
+        dl.dalpha =  attr(eval.de3, "gradient")
+        w * dl.dalpha * dalpha.deta
+    }), list(.lalpha=lalpha, .ealpha=ealpha ))),
+    weight=eval(substitute(expression({
+        sd3 = deriv3(~ (log(1-alpha+
+                        (2*alpha*y1sim*y2sim/(1-alpha*(1-y1sim)*(1-y2sim))))-
+                        2*log(1-alpha*(1-y1sim)*(1-y2sim))) ,
+                        name="alpha", hessian= FALSE)
+        run.var = 0
+        for(ii in 1:( .nsimEIM )) {
+            ysim = ramh(n, alpha=alpha)
+            y1sim = ysim[,1]
+            y2sim = ysim[,1]
+            eval.sd3 = eval(sd3)
+            dl.alpha =  attr(eval.sd3, "gradient")
+            rm(ysim, y1sim, y2sim)
+            temp3 = dl.dalpha
+            run.var = ((ii-1) * run.var + temp3^2) / ii
+        }
+        wz = if(intercept.only)
+            matrix(apply(cbind(run.var), 2, mean),
+                   n, dimm(M), byrow=TRUE) else cbind(run.var)
+        wz = wz * dalpha.deta^2
+        w * wz
+    }), list( .lalpha=lalpha, .ealpha=ealpha, .nsimEIM=nsimEIM ))))
+}
 
 
 

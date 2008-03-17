@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2007 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2008 T.W. Yee, University of Auckland. All rights reserved.
 
 
 
@@ -344,5 +344,17 @@ vchol.greenstadt <- function(cc, M, silent=FALSE)
         ans <- vchol(t(temp3), M=M, n=n, silent=silent) # , matrix.arg=TRUE)
     ans
 }
+
+
+
+
+myf = function(x) {
+    dotFortran("VGAM_F90_fill9",  
+               x=as.double(x), lenx=as.integer(length(x)),
+               answer=as.double(x),
+               NAOK=TRUE)$answer
+}
+
+
 
 

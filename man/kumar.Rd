@@ -35,7 +35,7 @@ kumar(lshape1="loge", lshape2="loge",
   }
 }
 \details{
-  The Kumaraswamy distribution distribution has density function
+  The Kumaraswamy distribution has density function
   \deqn{f(y;a=shape1,b=shape2) =
   a b y^{a-1} (1-y^{a})^{b-1}}{%
   a*b*y^(a-1)*(1-y^a)^(b-1)}
@@ -74,7 +74,7 @@ kumar(lshape1="loge", lshape2="loge",
 }
 \examples{
 shape1 = exp(1); shape2 = exp(2);
-y = rkumar(n<- 1000, shape1, shape2)
+y = rkumar(n <- 1000, shape1, shape2)
 fit = vglm(y ~ 1, kumar, trace =TRUE)
 c(mean(y), fitted(fit)[1])
 coef(fit, matrix=TRUE)

@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2007 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2008 T.W. Yee, University of Auckland. All rights reserved.
 
 
 
@@ -25,29 +25,39 @@ vgam <- function(formula,
 
     ocall <- match.call()
 
-    mf <- match.call(expand=FALSE)
-
     if(smart)
         setup.smart("write")
-
-
-
-
-    mt <- terms(formula, "s", data = data)
 
     if(missing(data))
         data <- environment(formula)
 
-    mf$family <- mf$method <- mf$model <- mf$x.arg <- mf$y.arg <-
-        mf$control <- mf$etastart <- mf$mustart <- mf$coefstart <-
-        mf$qr.arg <- mf$contrasts <- mf$constraints <-mf$smart <-
-        mf$extra <- mf$... <- NULL
+    mtsave <- terms(formula, "s", data = data)
+
+    mf <- match.call(expand.dots = FALSE)
+    m <- match(c("formula", "data", "subset", "weights", "na.action",
+        "etastart", "mustart", "offset"), names(mf), 0)
+    mf <- mf[c(1, m)]
+    mf$drop.unused.levels <- TRUE
     mf[[1]] <- as.name("model.frame")
-    mf2 <- mf
-
-
     mf <- eval(mf, parent.frame())
+    switch(method, model.frame = return(mf), vgam.fit = 1,
+           stop("invalid 'method': ", method))
+    mt <- attr(mf, "terms")
 
+    xlev = .getXlevels(mt, mf)
+    y <- model.response(mf, "any") # model.extract(mf, "response")
+    x <- if (!is.empty.model(mt)) model.matrix(mt, mf, contrasts) else
+         matrix(, NROW(Y), 0)
+    attr(x, "assign") <- attrassigndefault(x, mt) # So as to make it like Splus
+
+    offset <- model.offset(mf)
+    if(is.null(offset))
+        offset <- 0 # yyy ???
+
+
+
+
+    mf2 = mf
     if(!missing(subset)) {
         mf2$subset <- NULL 
         mf2 <- eval(mf2, parent.frame())   # mf2 is the full data frame. 
@@ -64,24 +74,7 @@ vgam <- function(formula,
         rm(mf2) 
     }
 
-    if(method == "model.frame")
-        return(mf)
 
-    na.act <- attr(mf, "na.action")
-    xvars <- as.character(attr(mt, "variables"))[-1]
-    if ((yvar <- attr(mt, "response")) > 0)
-        xvars <- xvars[-yvar]
-    xlev <- if (length(xvars) > 0) {
-        xlev <- lapply(mf[xvars], levels)
-        xlev[!sapply(xlev, is.null)]
-    }
-
-    na.message <- attr(mf, "na.message")
-
-    y <- model.response(mf, "numeric") # model.extract(m, "response")
-    if(!is.empty.model(mt))
-        x <- model.matrix(mt, mf, contrasts)
-    attr(x, "assign") <- attrassigndefault(x, mt)
 
     w <- model.weights(mf)
     if(!length(w))
@@ -91,9 +84,6 @@ vgam <- function(formula,
 
 
 
-    offset <- model.offset(mf)
-    if(is.null(offset))
-        offset <- 0 # yyy ???
 
     if (is.character(family))
         family <- get(family)
@@ -123,7 +113,7 @@ vgam <- function(formula,
 
     # --------------------------------------------------------------
 
-    aa <- attributes(mt)
+    aa <- attributes(mtsave)
     smoothers <- aa$specials
 
 
@@ -146,7 +136,7 @@ vgam <- function(formula,
         offset=offset, family=family, control=control,
         criterion=control$criterion,
         constraints=constraints, extra=extra, qr.arg=qr.arg,
-        Terms=mt,
+        Terms=mtsave,
         nonparametric=nonparametric, smooth.labels=smooth.labels,
         function.name=function.name, ...)
 
@@ -178,7 +168,6 @@ vgam <- function(formula,
 
     fit$misc$dataname <- dataname
 
-    attr(fit, "na.message") <- na.message
 
     if(smart)
         fit$smart.prediction <- get.smart.prediction()
@@ -213,7 +202,8 @@ vgam <- function(formula,
         slot(answer, "contrasts") = attr(x, "contrasts")
     if(length(fit$fitted.values))
         slot(answer, "fitted.values") = as.matrix(fit$fitted.values)
-    slot(answer, "na.action") = if(length(na.act)) list(na.act) else list()
+    slot(answer, "na.action") = if(length(aaa <- attr(mf, "na.action")))
+        list(aaa) else list()
     if(length(offset))
         slot(answer, "offset") = as.matrix(offset)
     if(length(fit$weights))

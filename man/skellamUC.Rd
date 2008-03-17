@@ -13,7 +13,7 @@
 
 }
 \usage{
-dskellam(x, mu1, mu2, log.arg=FALSE)
+dskellam(x, mu1, mu2, log=FALSE)
 %pskellam(q, mu1, mu2)
 %qskellam(p, mu1, mu2)
 rskellam(n, mu1, mu2)
@@ -24,7 +24,7 @@ rskellam(n, mu1, mu2)
   \item{n}{number of observations.
     Must be a positive integer of length 1.}
   \item{mu1, mu2}{ See \code{\link{skellam}}}.
-  \item{log.arg}{ Logical; if TRUE, the logarithm is returned. }
+  \item{log}{ Logical; if TRUE, the logarithm is returned. }
 }
 \value{
   \code{dskellam} gives the density, and

@@ -141,10 +141,10 @@ guess wrong.  Use 0/1 coding in this case.
 % \code{\link[survival]{coxph}},
 % \code{\link[survival]{survfit}},
   \code{\link[survival]{survreg}},
-  \code{\link{aml}}.
+  \code{\link{leukemia}}.
 }
 \examples{
-with(aml, Surv(time, status))
+with(leukemia, Surv(time, status))
 }
 \keyword{survival}
 % Converted by Sd2Rd version 0.3-2.

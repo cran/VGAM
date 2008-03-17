@@ -4,7 +4,7 @@
 \title{ McKay's Bivariate Gamma Distribution }
 \description{
   Estimate the two parameters of McKay's bivariate gamma distribution
-  using maximum likelihood estimation.
+  by maximum likelihood estimation.
 }
 \usage{
 mckaygamma2(la = "loge", lp = "loge", lq = "loge",

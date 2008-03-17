@@ -5,7 +5,7 @@
 \description{
   Estimate the association parameter of 
   Farlie-Gumbel-Morgenstern's bivariate
-  distribution using maximum likelihood estimation.
+  distribution by maximum likelihood estimation.
 
 }
 \usage{

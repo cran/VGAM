@@ -5,6 +5,36 @@
 	**************************************************
 
 
+                CHANGES IN VGAM VERSION 0.7-6
+
+NEW FEATURES
+
+    o   dpolono() has a new argument 'bigx' which implements an
+        approximation. It is for handling large values of x.
+    o   vglm() and vgam() now create the response and model matrices etc.
+        in the same way as glm(). A consequence is that the response
+        does not have to be "numeric" as in lm(), e.g., a factor response
+        is now permitted.
+    o   New VGAM family functions:
+        alaplace1(), alaplace2(), alaplace3(dpqr),
+        amlbinomial(), amlexponential(), amlpoisson(), amh(),
+        lqnorm(), mbinomial(), scumulative().
+    o   Other VGAM family functions with argument names changed or added:
+        lms.yjn2().
+    o   These VGAM family functions have been improved:
+        alsqreg() [parallel option, w argument can be a vector, link function
+        for the expectiles].
+    o   The data set "aml" has been renamed "leukemia".
+    o   Previously laplace(zero=NULL), now laplace(zero=2).
+
+BUG FIXES
+
+    o   deplot() applied to a "lms.yjn2" object gave an unnecessary warning. 
+    o   In the leukemia and toxop data sets 1L is replaced by 1 and 2L by 2 etc.
+
+
+
+
                 CHANGES IN VGAM VERSION 0.7-5
 
 NEW FEATURES

@@ -81,7 +81,8 @@ Mathematical Analysis of Random Noise.
 
 \seealso{ 
   \code{\link{drice}},
-  \code{\link{rayleigh}}.
+  \code{\link{rayleigh}},
+  \code{\link[base]{besselI}}.
 
 }
 \examples{

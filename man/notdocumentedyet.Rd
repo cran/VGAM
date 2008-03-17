@@ -359,6 +359,8 @@
 \alias{vplot.numeric}
 \alias{vvplot.factor}
 \alias{weights}
+\alias{Wr1}
+\alias{Wr2}
 % \alias{wweighted.mean}
 \alias{wweights}
 % \alias{yformat}

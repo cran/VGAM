@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2007 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2008 T.W. Yee, University of Auckland. All rights reserved.
 
 
 
@@ -382,7 +382,7 @@ deplot.lms.bcg <- function(object,
                            y.arg, 
                            eta0)
 {
-    if(!any(object@family@vfamily == "lms.bcg"))
+    if(!any(object@family@vfamily == "lms.bcg")) 
         warning("I think you've called the wrong function")
 
     Zvec <- (y.arg/eta0[,2])^(eta0[,1])  # different from lms.bcn
@@ -403,7 +403,7 @@ deplot.lms.yjn <- function(object,
                            eta0)
 {
 
-    if(!any(object@family@vfamily == c("lms.yjn","lms.yjn2")))
+    if(!length(intersect(object@family@vfamily, c("lms.yjn","lms.yjn2"))))
         warning("I think you've called the wrong function")
 
     lambda <- eta0[,1]

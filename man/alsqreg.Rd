@@ -7,21 +7,42 @@
 
 }
 \usage{
-alsqreg(w=1, method.init=1)
+alsqreg(w.als=1, parallel=FALSE, lexpectile = "identity",
+        eexpectile = list(), iexpectile = NULL,
+        method.init=1, digw=4)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{w}{
-  Positive constant controlling the percentile.
+  \item{w.als}{
+  Numeric, a vector of positive constants controlling the percentiles.
   The larger the value the larger the fitted percentile value
   (the proportion of points below the ``w-regression plane'').
   The default value of unity results in the ordinary least squares
   (OLS) solution.
 
   }
+  \item{parallel}{
+  If \code{w.als} has more than one value then
+  this argument allows the quantile curves to differ by the same amount
+  as a function of the covariates.
+  Setting this to be \code{TRUE} should force the quantile curves to
+  not cross (although they may not cross anyway).
+  See \code{\link{CommonVGAMffArguments}} for more information.
+
+  }
+  \item{lexpectile, eexpectile, iexpectile}{
+  See \code{\link{CommonVGAMffArguments}} for more information.
+
+  }
   \item{method.init}{
   Integer, either 1 or 2 or 3. Initialization method.
   Choose another value if convergence fails.
+
+  }
+  \item{digw }{
+  Passed into \code{\link[base]{Round}} as the \code{digits} argument
+  for the \code{w.als} values;
+  used cosmetically for labelling.
 
   }
 }
@@ -42,8 +63,9 @@ alsqreg(w=1, method.init=1)
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
-  The object is used by modelling functions such as \code{\link{vglm}},
+  The object is used by modelling functions such as \code{\link{vglm}}
   and \code{\link{vgam}}.
+
 }
 \references{
   Efron, B. (1991)
@@ -55,27 +77,41 @@ alsqreg(w=1, method.init=1)
 
 \author{ Thomas W. Yee }
 \note{
-  On fitting, the \code{extra} slot has list components \code{"w"} and
+  On fitting, the \code{extra} slot has list components \code{"w.als"} and
   \code{"percentile"}. The latter is the percent of observations below
   the ``w-regression plane'', which is the fitted values.
 
-  One difficulty is finding the \code{w} value giving a specified
+  One difficulty is finding the \code{w.als} value giving a specified
   percentile. One solution is to fit the model within a root finding
   function such as \code{\link[stats]{uniroot}}; see the example below.
 
   For \code{alsqreg} objects, methods functions for the generic functions
   \code{qtplot} and \code{cdf} have not been written yet.
 
+  See the note in \code{\link{amlpoisson}} on the jargon, including
+  \emph{expectiles} and \emph{regression quantiles}.
+
+  The \code{deviance} slot computes the total asymmetric squared error
+  loss (2.5).
+  If \code{w.als} has more than one value then the value returned by
+  the slot is the sum taken over all the \code{w.als} values.
+
 }
 
-\section{Warning }{
-  The \code{loglikelihood} slot currently does not return the
-  log-likelihood but negative the total asymmetric
-  squared error loss (2.5).
+%\section{Warning }{
+% The \code{loglikelihood} slot currently does not return the
+% log-likelihood but negative the total asymmetric squared error
+% loss (2.5).
+% If \code{w} has more than one value then the value returned by
+% \code{loglikelihood} is the sum taken over all the \code{w} values.
+%} 
 
-} 
 \seealso{
+  \code{\link{amlpoisson}},
+  \code{\link{amlbinomial}},
+  \code{\link{amlexponential}},
   \code{\link{bminz}},
+  \code{\link{alaplace2}},
   \code{\link{lms.bcn}} and similar variants are alternative
   methods for quantile regression.
 
@@ -86,8 +122,7 @@ alsqreg(w=1, method.init=1)
 data(bminz)
 o = with(bminz, order(age))
 bminz = bminz[o,]  # Sort by age
-fit = vglm(BMI ~ bs(age), fam=alsqreg(w=0.07), data=bminz)
-fit # Note "loglikelihood" is -total asymmetric squared error loss (2.5)
+(fit = vglm(BMI ~ bs(age), fam=alsqreg(w.als=0.1), data=bminz))
 fit@extra  # Gives the w value and the percentile
 coef(fit)
 coef(fit, matrix=TRUE)
@@ -113,6 +148,7 @@ with(bminz, plot(age, BMI, col="blue", las=1, main=
      "25, 50 and 75 percentile curves"))
 }
 for(myp in c(25,50,75)) {
+# Note: uniroot() can only find one root at a time
     bestw = uniroot(f=findw, interval=c(1/10^4, 10^4), percentile=myp)
     fit2 = vglm(BMI ~ bs(age), fam=alsqreg(w=bestw$root), data=bminz)
 \dontrun{
@@ -122,18 +158,24 @@ for(myp in c(25,50,75)) {
 
 
 
-# Example 3; this is Example 1 but with smoothing splines.
+# Example 3; this is Example 1 but with smoothing splines and
+# a vector w and a parallelism assumption.
 data(bminz)
 o = with(bminz, order(age))
 bminz = bminz[o,]  # Sort by age
-fit3 = vgam(BMI ~ s(age, df=4), fam=alsqreg(w=0.07), data=bminz, trac=TRUE)
-fit3@extra  # Gives the w value and the percentile
+fit3 = vgam(BMI ~ s(age, df=4), fam=alsqreg(w=c(.1,1,10), parallel=TRUE),
+            data=bminz, trac=TRUE)
+fit3@extra # The w values, percentiles and weighted deviances
+
+# The linear components of the fit; not for human consumption:
+coef(fit3, matrix=TRUE)
 
 \dontrun{
 # Quantile plot
 with(bminz, plot(age, BMI, col="blue", main=
-     paste(round(fit3@extra$percentile, dig=1), "percentile curve")))
-with(bminz, lines(age, c(fitted(fit3)), col="red"))
+     paste(paste(round(fit3@extra$percentile, dig=1), collapse=", "),
+           "percentile curves")))
+with(bminz, matlines(age, fitted(fit3), col=1:fit3@extra$M, lwd=2))
 with(bminz, lines(age, c(fitted(fit )), col="black")) # For comparison
 }
 }

@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2007 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2008 T.W. Yee, University of Auckland. All rights reserved.
 
 
 
@@ -62,7 +62,8 @@ setMethod("logLik",  "summary.vglm", function(object, ...)
     logLik.vlm(object, ...))
 
 
-printsummary.vglm <- function(x, digits = NULL, quote = TRUE, prefix = "")
+printsummary.vglm <- function(x, digits = NULL, quote = TRUE, prefix = "",
+                              presid = TRUE)
 {
 
     M <- x@misc$M
@@ -74,20 +75,20 @@ printsummary.vglm <- function(x, digits = NULL, quote = TRUE, prefix = "")
     cat("\nCall:\n")
     dput(x@call)
 
-    presid <- x@pearson.resid
+    Presid <- x@pearson.resid
     rdf <- x@df[2]
-    if(length(presid) && all(!is.na(presid)) && is.finite(rdf))
+    if(presid && length(Presid) && all(!is.na(Presid)) && is.finite(rdf))
     {
         cat("\nPearson Residuals:\n")
         if(rdf/M > 5) 
         {
-            rq <-  apply(as.matrix(presid), 2, quantile) # 5 x M
+            rq <-  apply(as.matrix(Presid), 2, quantile) # 5 x M
             dimnames(rq) <- list(c("Min", "1Q", "Median", "3Q", "Max"),
                                  x@misc$predictors.names)
             print(t(rq), digits = digits)
         } else
         if(rdf > 0) {
-            print(presid, digits = digits)
+            print(Presid, digits = digits)
         }
     }
 

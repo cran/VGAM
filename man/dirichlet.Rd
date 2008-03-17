@@ -113,7 +113,7 @@ New York: Wiley-Interscience, Third edition.
 
 }
 \examples{
-y = rdiric(n=1000, shape=c(3, 1, 4))
+y = rdiric(n=1000, shape=exp(c(-1,1,0)))
 fit = vglm(y ~ 1, dirichlet, trace = TRUE, crit="c")
 Coef(fit)
 coef(fit, matrix=TRUE)
