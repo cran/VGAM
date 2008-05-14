@@ -207,7 +207,7 @@
 \alias{predict.glm}
 \alias{predict.lm}
 \alias{predict.mlm}
-\alias{predict.qrrvglm}
+% \alias{predict.qrrvglm}
 \alias{predict.rrvglm}
 \alias{predict.uqo}
 \alias{predict.vgam}

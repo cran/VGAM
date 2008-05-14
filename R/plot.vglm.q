@@ -356,7 +356,7 @@ plotvlm <- function(object, residuals=NULL, rugplot= FALSE, ...)
 plotvglm <- function(x, residuals=NULL, smooths= FALSE,
                       rugplot= FALSE, id.n= FALSE, ...)
 {
-    stop("this function hasn't been written yet")  # zz
+    stop("this function hasn't been written yet")
 
 
 

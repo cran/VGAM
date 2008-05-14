@@ -995,8 +995,8 @@ bratt = function(refgp="last",
         names(misc$link) = c(paste("alpha",uindex,sep=""), "alpha0")
         misc$refgp = .refgp
         misc$refvalue = .refvalue
-        misc$alpha  = alpha   # zz; last one saved (ok since n=1)
-        misc$alpha0 = alpha0  # zz; last one saved (ok since n=1)
+        misc$alpha  = alpha
+        misc$alpha0 = alpha0
     }), list( .refgp=refgp, .refvalue=refvalue ))),
     loglikelihood= function(mu, y, w, residuals = FALSE, eta, extra=NULL)
         if(residuals) stop("loglikelihood residuals not implemented yet") else
@@ -1494,7 +1494,7 @@ scumulative = function(link="logit", earg = list(),
         J = extra$J
         misc$link = c(rep( .link, length=J),
                       rep( .lscale, length=J))[interleave.VGAM(M, M=2)]
-        names(misc$link) = predictors.names  # zz mynames
+        names(misc$link) = predictors.names
         misc$earg = vector("list", M)
         names(misc$earg) = names(misc$link)
         for(ii in 1:J) misc$earg[[2*ii-1]] = .earg

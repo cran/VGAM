@@ -5,6 +5,33 @@
 	**************************************************
 
 
+                CHANGES IN VGAM VERSION 0.7-7
+
+NEW FEATURES
+
+    o   Labelling changes: binom2.or() uses "oratio" instead of "OR" (stands
+        for the odds ratio).
+    o   New VGAM family functions:
+        zipebcom().
+    o   New functions: dbinom2.or(), rbinom2.or().
+    o   binom2.or() has new arguments 'imu1, 'imu2' and 'ioratio' for
+        inputting optional marginal probabilities and odds ratio.
+        The third element of the score vector uses a new formula.
+    o   [dpqr]zinb() has arguments prob and munb set to NULL by default.
+    o   Compatible with R 2.7.0.
+
+
+BUG FIXES
+
+    o   gaussianff()@loglikelihood was buggy.
+    o   all(trivial.constraints(Blist)) changed to
+        all(trivial.constraints(Blist) == 1) to avoid a warning in R 2.7.0.
+        Ditto for 'all(findex)' and 'any(diff(Alphavec))'.
+    o   qtriangle(0.3, theta=0.3) used to fail.
+    o   gharmonic() handles a negative argument s.
+
+
+
                 CHANGES IN VGAM VERSION 0.7-6
 
 NEW FEATURES

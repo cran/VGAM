@@ -126,7 +126,9 @@ mbinomial(mvar=NULL, link="logit", earg=list(),
 }
 \examples{
 \dontrun{
-# cf. Hastie and Tibshirani (1990) p.209. The variable n must be even.
+# Cf. Hastie and Tibshirani (1990) p.209. The variable n must be even.
+# Here, the intercept for each matched set accounts for x3 which is
+# the confounder or matching variable.
 n = 700 # Requires a big machine with lots of memory. Expensive wrt time
 n = 100 # This requires a reasonably big machine.
 mydat = data.frame(x2 = rnorm(n), x3 = rep(rnorm(n/2), each=2))
@@ -140,6 +142,7 @@ mydat = transform(mydat, y = c(y1, 1-y1),
                          ID = factor(c(row(etamat))))
 fit = vglm(y ~ 1 + ID + x2, trace=TRUE,
            fam = mbinomial(mvar = ~ ID - 1), data=mydat)
+dimnames(coef(fit, mat=TRUE))
 coef(fit, mat=TRUE)
 summary(fit)
 fitted(fit)[1:5]

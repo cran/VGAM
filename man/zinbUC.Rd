@@ -12,10 +12,10 @@
 
 }
 \usage{
-dzinb(x, phi, size, prob, munb, log=FALSE)
-pzinb(q, phi, size, prob, munb)
-qzinb(p, phi, size, prob, munb)
-rzinb(n, phi, size, prob, munb)
+dzinb(x, phi, size, prob=NULL, munb=NULL, log=FALSE)
+pzinb(q, phi, size, prob=NULL, munb=NULL)
+qzinb(p, phi, size, prob=NULL, munb=NULL)
+rzinb(n, phi, size, prob=NULL, munb=NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

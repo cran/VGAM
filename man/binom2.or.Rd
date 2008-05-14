@@ -1,16 +1,18 @@
 \name{binom2.or}
 \alias{binom2.or}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{ Bivariate Logistic Regression }
+\title{ Bivariate Binary Regression with an Odds Ratio (Family Function) }
 \description{
   Fits a Palmgren (bivariate logistic regression) model to two binary
-  responses.  Actually, a bivariate logistic/probit/cloglog/cauchit
+  responses. Actually, a bivariate logistic/probit/cloglog/cauchit
   model can be fitted.
+  The odds ratio is used as a measure of dependency.
 
 }
 \usage{
-binom2.or(lmu = "logit", lmu1 = lmu, lmu2 = lmu, lor = "loge",
-          emu=list(), emu1=emu, emu2=emu, eor=list(),
+binom2.or(lmu = "logit", lmu1 = lmu, lmu2 = lmu, loratio = "loge",
+          emu=list(), emu1=emu, emu2=emu, eoratio=list(),
+          imu1=NULL, imu2=NULL, ioratio = NULL,
           zero = 3, exchangeable = FALSE, tol = 0.001)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -26,12 +28,19 @@ binom2.or(lmu = "logit", lmu1 = lmu, lmu2 = lmu, lor = "loge",
   probabilities.
 
   }
-  \item{lor}{
+  \item{loratio}{
   Link function applied to the odds ratio.
   See \code{\link{Links}} for more choices.
 
   }
-  \item{emu, emu1, emu2, eor}{
+  \item{imu1, imu2, ioratio}{
+  Optional initial values for the marginal probabilities and odds ratio.
+  See \code{\link{CommonVGAMffArguments}} for more details.
+  In general good initial values are often required so use these
+  arguments if convergence failure occurs.
+
+  }
+  \item{emu, emu1, emu2, eoratio}{
   List. Extra argument for each of the links.
   See \code{earg} in \code{\link{Links}} for general information.
 
@@ -55,7 +64,7 @@ binom2.or(lmu = "logit", lmu1 = lmu, lmu2 = lmu, lor = "loge",
 \details{
   Known also as the \emph{Palmgren model}, the bivariate logistic model is
   a full-likelihood based model defined as two logistic regressions plus
-  \code{log(OR) = eta3} where \code{eta3} is the third linear/additive
+  \code{log(oratio) = eta3} where \code{eta3} is the third linear/additive
   predictor relating the odds ratio to explanatory variables.
   Explicitly, the default model is
   \deqn{logit[P(Y_j=1)] = \eta_j,\ \ \ j=1,2}{%
@@ -70,12 +79,14 @@ binom2.or(lmu = "logit", lmu1 = lmu, lmu2 = lmu, lor = "loge",
   likelihood is specified.  The two binary responses are independent
   if and only if the odds ratio is unity, or equivalently, the log odds
   ratio is zero.
+  Fisher scoring is implemented.
 
   The default models \eqn{\eta_3}{eta3} as a single parameter only,
   i.e., an intercept-only model, but this can be circumvented by setting
-  \code{zero=NULL} to model the odds ratio as a function of all the
+  \code{zero=NULL} in order to model the odds ratio as a function of all the
   explanatory variables.
-  The function \code{binom2.or} can handle \code{\link{probit}},
+  The function \code{binom2.or} can handle other probability link
+  functions such as \code{\link{probit}},
   \code{\link{cloglog}} and \code{\link{cauchit}} links as well, so is
   quite general.  In fact, the two marginal probabilities can each have
   a different link function.  A similar model is the \emph{bivariate
@@ -89,8 +100,8 @@ binom2.or(lmu = "logit", lmu1 = lmu, lmu2 = lmu, lor = "loge",
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
-  The object is used by modelling functions such as \code{\link{vglm}},
-  \code{\link{rrvglm}} and \code{\link{vgam}}.
+  The object is used by modelling functions such as \code{\link{vglm}}
+  and \code{\link{vgam}}.
 
   When fitted, the \code{fitted.values} slot of the object contains the
   four joint probabilities, labelled as \eqn{(Y_1,Y_2)}{(Y1,Y2)} = (0,0),
@@ -124,6 +135,7 @@ binom2.or(lmu = "logit", lmu1 = lmu, lmu2 = lmu, lor = "loge",
   columns correspond to \eqn{(Y_1,Y_2)}{(Y1,Y2)} = (0,0), (0,1), (1,0),
   (1,1) respectively), or a two-column matrix where each column has two
   distinct values.
+  The function \code{\link{rbinom2.or}} may be used to generate such data.
 
   By default, a constant odds ratio is fitted because \code{zero=3}.
   Set \code{zero=NULL} if you want the odds ratio to be modelled as a
@@ -141,8 +153,10 @@ binom2.or(lmu = "logit", lmu1 = lmu, lmu2 = lmu, lor = "loge",
 
 }
 \seealso{
+  \code{\link{rbinom2.or}},
   \code{\link{binom2.rho}},
   \code{\link{loglinb2}},
+  \code{\link{zipebcom}},
   \code{\link{coalminers}},
   \code{\link{binomialff}},
   \code{\link{logit}},
@@ -159,13 +173,16 @@ fitted(fit)
 summary(fit)
 coef(fit, matrix=TRUE)
 \dontrun{
-attach(coalminers)
-matplot(Age, fitted(fit), type="l", las=1, xlab="(age - 42) / 5",
-        main=paste("B=Breathlessness, W=Wheeze; 1=(B=0,W=0),",
-                   "2=(B=0,W=1), 3=(B=1,W=0), 4=(B=1,W=1)"))
-matpoints(Age, fit@y, col=1:4)
-detach(coalminers)
+with(coalminers, matplot(Age, fitted(fit), type="l", las=1,
+                         xlab="(age - 42) / 5", lwd=2))
+with(coalminers, matpoints(Age, fit@y, col=1:4))
+legend(x=-4, y=0.5, lty=1:4, col=1:4, lwd=2,
+       legend=c("1 = (Breathlessness=0, Wheeze=0)",
+                "2 = (Breathlessness=0, Wheeze=1)",
+                "3 = (Breathlessness=1, Wheeze=0)",
+                "4 = (Breathlessness=1, Wheeze=1)"))
 }
 }
 \keyword{models}
 \keyword{regression}
+

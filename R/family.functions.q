@@ -157,11 +157,11 @@ matrix.power <- function(wz, M, power, fast=TRUE)
     index <- as.vector( matrix(1, 1, M) %*% is.na(temp) )
 
 
-    index <- index == 0       # zz <=?
+    index <- index == 0
     if(!all(index)) {
         warning(paste("Some weight matrices have negative",
                       "eigenvalues. They\nwill be assigned NAs"))
-        temp[,!index] <- 1   # zz; Replace by a pos value
+        temp[,!index] <- 1
     }
 
     WW <- mux55(evects, temp, M=M)
@@ -177,8 +177,8 @@ rss.vgam <- function(z, wz, M)
 
     if(M==1)
         return(sum(c(wz) * c(z^2)))
-    wzz <- mux22(t(wz), z, M, as.mat=TRUE) # else mux2(wz, z)
-    ans <- sum(wzz * z)
+    wz.z <- mux22(t(wz), z, M, as.mat=TRUE) # else mux2(wz, z)
+    ans <- sum(wz.z * z)
     ans
 }
 

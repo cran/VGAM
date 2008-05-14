@@ -286,7 +286,7 @@ gev <- function(llocation="identity",
 
             EulerM = -digamma(1)
             wz[iszero,iam(2,2,M)] = (pi^2/6 + (1-EulerM)^2) / sigma^2
-            wz[iszero,iam(3,3,M)] = 2.4236 #  Solved numerically zz
+            wz[iszero,iam(3,3,M)] = 2.4236
             wz[iszero,iam(1,2,M)] = (digamma(2) + 2*(EulerM-1)) / sigma^2
             wz[iszero,iam(1,3,M)]= -(trigamma(1)/2 + digamma(1)*
                                     (digamma(1)/2+1))/sigma
@@ -575,7 +575,7 @@ egev <- function(llocation="identity",
                             pp/kay) / (sigma * kay^2)
         if(any(iszero)) {
             wz[iszero,iam(2,2,M)] = (pi^2/6 + (1-EulerM)^2) / sigma^2
-            wz[iszero,iam(3,3,M)] = 2.4236 #  Solved numerically zz
+            wz[iszero,iam(3,3,M)] = 2.4236
             wz[iszero,iam(1,2,M)] = (digamma(2) + 2*(EulerM-1)) / sigma^2
             wz[iszero,iam(1,3,M)]= -(trigamma(1)/2 + digamma(1)*
                                     (digamma(1)/2+1))/sigma

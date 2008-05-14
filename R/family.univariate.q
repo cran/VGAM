@@ -903,10 +903,9 @@ zetaff = function(link="loge", earg=list(), init.p=NULL)
 
 
 gharmonic = function(n, s=1, lognexponent=0) {
+
     if(!is.Numeric(n, integ=TRUE, posit=TRUE))
         stop("bad input for argument \"n\"")
-    if(!is.Numeric(s, posit=TRUE))
-        stop("bad input for argument \"s\"")
     if(!is.Numeric(lognexponent, allow=1))
         stop("bad input for argument \"lognexponent\"")
     if(length(n) == 1 && length(s) == 1) {
@@ -1018,7 +1017,7 @@ zipf = function(N=NULL, link="loge", earg=list(), init.s=NULL)
     }), list( .link=link, .earg=earg, .init.s=init.s, .N=N ))),
     inverse=eval(substitute(function(eta, extra=NULL) {
         ss = eta2theta(eta, .link, earg= .earg)
-        gharmonic(extra$N, s=ss-1) / gharmonic(extra$N, s=ss)
+        gharmonic(extra$N, s=ss - 1) / gharmonic(extra$N, s=ss)
     }, list( .link=link, .earg=earg ))),
     last=eval(substitute(expression({
         misc$expected = FALSE
@@ -2872,7 +2871,7 @@ normal1 = function(lmean="identity", lsd="loge",
     weight=expression({
         wz = matrix(as.numeric(NA), n, 2) # diagonal matrix; y is one-column too
         ed2l.dmu2 = -1 / sd^2
-        ed2l.dsd2 = -2 / sd^2    # zz; replace 2 by 0.5 ??
+        ed2l.dsd2 = -2 / sd^2
         wz[,iam(1,1,M)] = -w * ed2l.dmu2 * dmu.deta^2
         wz[,iam(2,2,M)] = -w * ed2l.dsd2 * dsd.deta^2
         wz
@@ -5355,9 +5354,9 @@ stoppa = function(y0,
     }), list( .link.theta=link.theta, .link.alpha=link.alpha ))),
     weight=eval(substitute(expression({
         ed2l.dalpha = 1/alpha^2 + theta * (2 * log(extra$y0) * (digamma(2)-
-                      digamma(theta+4)) -
-                      (trigamma(1)+trigamma(theta+3)) / alpha^3) /
-                      (alpha * (theta+1) * (theta+2) / n) # zz / sum(w)
+                      digamma(theta+4)) - (trigamma(1) +
+                      trigamma(theta+3)) / alpha^3) / (alpha *
+                      (theta+1) * (theta+2) / n)
         ed2l.dtheta = 1 / theta^2
         ed2l.dalphatheta = (digamma(2)-digamma(theta+2)) / (alpha*(theta+1))
         wz = matrix(as.numeric(NA), n, dimm(M))  #3=dimm(M)
@@ -7524,7 +7523,7 @@ paretoIV = function(location=0,
             "Links:    ", namesof("scale", lscale, earg=escale ), ", ",
                           namesof("inequality", linequality, earg=einequality ), ", ",
                           namesof("shape", lshape, earg=eshape ), "\n",
-            "Mean:    location + scale * NA"),  # zz
+            "Mean:    location + scale * NA"),
     initialize=eval(substitute(expression({
         if(ncol(cbind(y)) != 1)
             stop("response must be a vector or a one-column matrix")
@@ -7653,7 +7652,7 @@ paretoIII = function(location=0,
             location, ", scale > 0, inequality > 0, \n",
             "Links:    ", namesof("scale", lscale, earg=escale ), ", ",
                           namesof("inequality", linequality, earg=einequality ), "\n",
-            "Mean:    location + scale * NA"),  # zz
+            "Mean:    location + scale * NA"),
     initialize=eval(substitute(expression({
         if(ncol(cbind(y)) != 1)
             stop("the response must be a vector or a one-column matrix")
@@ -7760,7 +7759,7 @@ paretoII = function(location=0,
             location, ", scale > 0,  shape > 0,\n",
             "Links:    ", namesof("scale", lscale, earg=escale ), ", ",
                           namesof("shape", lshape, earg=eshape ), "\n",
-            "Mean:    location + scale * NA"),  # zz
+            "Mean:    location + scale * NA"),
     initialize=eval(substitute(expression({
         if(ncol(cbind(y)) != 1)
             stop("the response must be a vector or a one-column matrix")
@@ -7775,7 +7774,7 @@ paretoII = function(location=0,
             shape.init = if(length( .ishape)) .ishape else  NULL
             if(!length(shape.init) || !length(scale.init)) {
                 probs = (1:4)/5
-                scale.init.0 = 1  # zz; have to put some value here...
+                scale.init.0 = 1
                 ytemp = quantile(x=log(y-location+scale.init.0), probs=probs)
                 fittemp = lsfit(x=log1p(-probs), y=ytemp, int=TRUE)
                 if(!length(shape.init))
@@ -8780,6 +8779,7 @@ alaplace1 = function(tau = NULL,
                      dfmu.init = 3,
                      method.init=1, zero=NULL) {
 
+
     if(!is.Numeric(kappa, posit=TRUE))
         stop("bad input for argument \"kappa\"")
     if(length(tau) && max(abs(kappa - sqrt(tau/(1-tau)))) > 1.0e-6)
@@ -8846,6 +8846,7 @@ alaplace1 = function(tau = NULL,
             location.init = if(length(.ilocation)) rep(.ilocation, len=n) else
                              rep(location.init, len=n)
             location.init = matrix(location.init, n, M)
+            if( .llocation == "loge") location.init = abs(location.init)
             etastart =
                 cbind(theta2eta(location.init, .llocation, earg= .elocation))
         }
@@ -9663,7 +9664,7 @@ qtriangle = function(p, theta, lower=0, upper=1) {
         pstar = (p - (theta-lower)/(upper-lower)) / (1 -
                 (theta-lower)/(upper-lower))
         qstar = cbind(1 - sqrt(1-pstar), 1 + sqrt(1-pstar))
-        qstar = qstar[Pos,]
+        qstar = qstar[Pos,,drop=FALSE]
         qstar = ifelse(qstar[,1] >= 0 & qstar[,1] <= 1, qstar[,1], qstar[,2])
         ans[Pos] = theta[Pos] + qstar * (upper-theta)[Pos]
     }

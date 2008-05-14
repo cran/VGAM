@@ -31,8 +31,7 @@ vglm.fit <- function(x, y, w=rep(1, length(x[, 1])),
     n <- dim(x)[1]
 
     new.s.call <- expression({
-        if(c.list$one.more)
-        {
+        if(c.list$one.more) {
             fv <- if(backchat) {
                       if(M>1) matrix(c.list$fit,n,M,byrow=TRUE) else c.list$fit
                   } else c.list$fit
@@ -76,8 +75,7 @@ vglm.fit <- function(x, y, w=rep(1, length(x[, 1])),
                               (criterion!="coefficients" &&
                              (if(minimize.criterion) new.crit > old.crit else
                              new.crit < old.crit)))
-                if(take.half.step)
-                {
+                if(take.half.step) {
                     stepsize <- 2 * min(orig.stepsize, 2*stepsize)
                     new.coeffs.save <- new.coeffs
                     if(trace) 
@@ -117,29 +115,27 @@ vglm.fit <- function(x, y, w=rep(1, length(x[, 1])),
                            ( minimize.criterion && new.crit < old.crit) ||
                            (!minimize.criterion && new.crit > old.crit))
                             break
-                    }
+                    } # of repeat
 
                     if(trace) 
                         cat("\n")
-                    if(too.small)
-                    {
+                    if(too.small) {
                         warning(paste("iterations terminated because",
                               "half-step sizes are very small"))
                         one.more <- FALSE
-                    } else
-                    {
+                    } else {
                         if(trace) {
-                       cat("VGLM    linear loop ", iter, ": ", criterion, "= ")
+                            cat("VGLM    linear loop ",
+                                iter, ": ", criterion, "= ")
 
-                            uuuu = 
-                            switch(criterion,
+                            uuuu = switch(criterion,
                             coefficients=if(is.R())
                             format(new.crit, dig=round(2-log10(epsilon))) else
                             format(round(new.crit, round(2-log10(epsilon)))),
                             format(round(new.crit, 4)))
 
                             switch(criterion,
-                            coefficients={if(length(new.crit) > 2) cat("\n"); 
+                            coefficients={if(length(new.crit) > 2) cat("\n");
                                cat(uuuu, fill=TRUE, sep=", ")}, 
                             cat(uuuu, fill=TRUE, sep=", "))
                         }
@@ -154,8 +150,7 @@ vglm.fit <- function(x, y, w=rep(1, length(x[, 1])),
                 flush.console()
 
             if(!is.logical(one.more)) one.more = FALSE
-            if(one.more)
-            {
+            if(one.more) {
                 iter <- iter + 1
                 deriv.mu <- eval(slot(family, "deriv"))
                 wz <- eval(slot(family, "weight"))
@@ -300,7 +295,7 @@ vglm.fit <- function(x, y, w=rep(1, length(x[, 1])),
     
                 c.list$coeff <- tfit$coefficients 
     
-            tfit$predictors <- tfit$fitted.values   # zz + offset?? 
+            tfit$predictors <- tfit$fitted.values
     
             c.list$fit <- tfit$fitted.values
             c.list <- eval(new.s.call)
@@ -356,7 +351,7 @@ vglm.fit <- function(x, y, w=rep(1, length(x[, 1])),
     xn <- dn[[2]]
 
 
-    residuals <- z - tfit$predictors   # zz - offset ??
+    residuals <- z - tfit$predictors
     if(M==1) {
         tfit$predictors <- as.vector(tfit$predictors)
         residuals <- as.vector(residuals)

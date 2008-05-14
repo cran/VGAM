@@ -96,6 +96,10 @@ alsqreg(w.als=1, parallel=FALSE, lexpectile = "identity",
   If \code{w.als} has more than one value then the value returned by
   the slot is the sum taken over all the \code{w.als} values.
 
+  This \pkg{VGAM} family function could well be renamed \code{amlnormal()}
+  instead, given the other function names \code{\link{amlpoisson}},
+  \code{\link{amlbinomial}}, etc.
+
 }
 
 %\section{Warning }{
@@ -111,7 +115,7 @@ alsqreg(w.als=1, parallel=FALSE, lexpectile = "identity",
   \code{\link{amlbinomial}},
   \code{\link{amlexponential}},
   \code{\link{bminz}},
-  \code{\link{alaplace2}},
+  \code{\link{alaplace1}},
   \code{\link{lms.bcn}} and similar variants are alternative
   methods for quantile regression.
 
@@ -130,7 +134,8 @@ coef(fit, matrix=TRUE)
 \dontrun{
 # Quantile plot
 with(bminz, plot(age, BMI, col="blue", main=
-     paste(round(fit@extra$percentile, dig=1), "percentile curve")))
+     paste(round(fit@extra$percentile, dig=1),
+           "expectile-percentile curve")))
 with(bminz, lines(age, c(fitted(fit)), col="black"))
 }
 
@@ -145,7 +150,7 @@ findw = function(w, percentile=50) {
 \dontrun{
 # Quantile plot
 with(bminz, plot(age, BMI, col="blue", las=1, main=
-     "25, 50 and 75 percentile curves"))
+     "25, 50 and 75 expectile-percentile curves"))
 }
 for(myp in c(25,50,75)) {
 # Note: uniroot() can only find one root at a time
@@ -174,7 +179,7 @@ coef(fit3, matrix=TRUE)
 # Quantile plot
 with(bminz, plot(age, BMI, col="blue", main=
      paste(paste(round(fit3@extra$percentile, dig=1), collapse=", "),
-           "percentile curves")))
+           "expectile-percentile curves")))
 with(bminz, matlines(age, fitted(fit3), col=1:fit3@extra$M, lwd=2))
 with(bminz, lines(age, c(fitted(fit )), col="black")) # For comparison
 }

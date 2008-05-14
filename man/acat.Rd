@@ -38,7 +38,7 @@ acat(link = "loge", earg = list(),
   By default, the linear/additive predictors used are
   \eqn{\eta_j = \log(P[Y=j+1]/P[Y=j])}{eta_j = log(P[Y=j+1]/P[Y=j])}
   for \eqn{j=1,\ldots,M}.
-  If \code{reverse} is \code{TRUE}, then
+  If \code{reverse} is \code{TRUE} then
   \eqn{\eta_j = \log(P[Y=j]/P[Y=j+1])}{eta_j=log(P[Y=j]/P[Y=j+1])}
   will be used.
 

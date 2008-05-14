@@ -20,10 +20,10 @@ fisherz(theta, earg = list(), inverse = FALSE, deriv = 0,
   }
   \item{earg}{
   Optional list. Extra argument for passing in additional information.
-  Values of \code{theta} which are less than or equal to -1 can be
+  Values of \code{theta} which are less than or equal to \eqn{-1} can be
   replaced by the \code{bminvalue} component of the list \code{earg}
   before computing the link function value.
-  Values of \code{theta} which are greater than or equal to 1 can be
+  Values of \code{theta} which are greater than or equal to \eqn{1} can be
   replaced by the \code{bmaxvalue} component of the list \code{earg}
   before computing the link function value.
   See \code{\link{Links}} for general information about \code{earg}.
@@ -51,9 +51,9 @@ fisherz(theta, earg = list(), inverse = FALSE, deriv = 0,
 }
 \details{
   The \code{fisherz} link function is commonly used for parameters that
-  lie between -1 and 1.
-  Numerical values of \code{theta} close to -1 or 1 or out of range
-  result in
+  lie between \eqn{-1} and \eqn{1}.
+  Numerical values of \code{theta} close to \eqn{-1} or \eqn{1} or
+  out of range result in
   \code{Inf}, \code{-Inf}, \code{NA} or \code{NaN}.
   The arguments \code{short} and \code{tag} are used only if
   \code{theta} is character.
@@ -79,7 +79,8 @@ fisherz(theta, earg = list(), inverse = FALSE, deriv = 0,
 \author{ Thomas W. Yee }
 
 \note{
-  Numerical instability may occur when \code{theta} is close to -1 or 1.
+  Numerical instability may occur when \code{theta} is close to \eqn{-1} or 
+  \eqn{1}.
   One way of overcoming this is to use \code{earg}.
 
   The link function \code{\link{rhobit}} is very similar to \code{fisherz},

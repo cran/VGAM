@@ -60,22 +60,27 @@ zipoisson(lphi="logit", llambda = "loge",
   }
 }
 \details{
-  This function uses Fisher scoring and is based on
+  The model is a mixture of a Poisson distribution and the value 0;
+  it has value 0 with probability \eqn{\phi}{phi} else is
+  Poisson(\eqn{\lambda}{lambda}) distributed.
+  The model can be written
   \deqn{P(Y=0) =  \phi + (1-\phi) \exp(-\lambda),}{%
         P(Y=0) =  phi + (1-phi) * exp(-lambda),}
   and for \eqn{y=1,2,\ldots},
   \deqn{P(Y=y) =  (1-\phi) \exp(-\lambda) \lambda^y / y!.}{%
         P(Y=y) =  (1-phi) * exp(-lambda) * lambda^y / y!.}
-  The parameter \eqn{\phi}{phi} satisfies \eqn{0 < \phi < 1}{0 < phi < 1}.
+  Here, the parameter \eqn{\phi}{phi} satisfies
+  \eqn{0 < \phi < 1}{0 < phi < 1}.
   The mean of \eqn{Y} is \eqn{(1-\phi) \lambda}{(1-phi)*lambda} and these
   are returned as the fitted values.  By default, the two linear/additive
   predictors are \eqn{(logit(\phi), \log(\lambda))^T}{(logit(phi),
   log(lambda))^T}.
+  This function implements Fisher scoring.
 
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
-  The object is used by modelling functions such as \code{\link{vglm}},
+  The object is used by modelling functions such as \code{\link{vglm}}
   and \code{\link{vgam}}.
 
 }
@@ -89,6 +94,10 @@ zipoisson(lphi="logit", llambda = "loge",
   A Bayesian analysis of zero-inflated generalized Poisson model.
   \emph{Computational Statistics & Data Analysis},
   \bold{42}, 37--46.
+
+  Cameron, A. C. and Trivedi, P. K. (1998)
+  \emph{Regression Analysis of Count Data}.
+  Cambridge University Press: Cambridge.
 
 }
 \author{ T. W. Yee }
@@ -121,7 +130,9 @@ zipoisson(lphi="logit", llambda = "loge",
   \code{\link{zapoisson}},
   \code{\link{Zipois}},
   \code{\link{yip88}},
+  \code{\link{zipebcom}},
   \code{\link[stats:Poisson]{rpois}}.
+
 }
 \examples{
 x = runif(n <- 2000)

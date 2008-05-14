@@ -1267,7 +1267,7 @@ mbino     <- function()
         if(any(y != 0 & y != 1))
             stop("response vector must have 0 or 1 values only")
         xrle = rle(mvar)
-        if(length(unique(mvar)) != length(xrel$zz))
+        if(length(unique(mvar)) != length(xrel$length))
             stop("extra$mvar must take on contiguous values")
 
         temp9 = factor(mvar)

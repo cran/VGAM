@@ -100,7 +100,7 @@ gaussianff = function(dispersion=0, parallel=FALSE, zero=NULL)
         M = if(is.matrix(y)) ncol(y) else 1
         n = if(is.matrix(y)) nrow(y) else length(y)
         wz = VGAM.weights.function(w=w, M=M, n=n)
-        temp = rss.vgam(y, wz=wz, M=M)
+        temp = rss.vgam(y-mu, wz=wz, M=M)
         -0.5 * temp
     },
     link=function(mu, extra=NULL) mu,
@@ -201,7 +201,7 @@ posnormal1 = function(lmean="identity", lsd="loge",
         mymu + mysd * dnorm(-mymu/mysd) / (1-pnorm(-mymu/mysd))
     }, list( .lmean=lmean, .lsd=lsd, .emean=emean, .esd=esd ))),
     last=eval(substitute(expression({
-        misc$link = c("mean"= .lmean, "sd"= .lsd)  # zz mu or mean ?
+        misc$link = c("mean"= .lmean, "sd"= .lsd)
         misc$earg = list("mean"= .emean, "sd"= .esd )
         misc$expected = TRUE
     }), list( .lmean=lmean, .lsd=lsd, .emean=emean, .esd=esd ))),

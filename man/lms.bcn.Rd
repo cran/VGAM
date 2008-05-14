@@ -143,6 +143,7 @@ number corresponding to the highest likelihood value.
 \code{\link{deplot.lmscreg}},
 \code{\link{cdf.lmscreg}},
 \code{\link{bminz}},
+\code{\link{alaplace1}},
 \code{\link{alsqreg}}.
 }
 

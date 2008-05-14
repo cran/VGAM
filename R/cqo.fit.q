@@ -239,7 +239,7 @@ checkCMCO <- function(Blist, control, modelno) {
             Blist2[[k]] = (Blist2[[k]])[c(TRUE,FALSE),,drop=FALSE]
     }
 
-    if(!all(trivial.constraints(Blist2)))
+    if(!all(trivial.constraints(Blist2) == 1))
         stop("the constraint matrices for the non-Norrr terms are not trivial")
     if(!trivial.constraints(Blist1[[1]]))
         stop("the constraint matrices for intercept term is not trivial")
@@ -335,7 +335,7 @@ cqo.fit <- function(x, y, w=rep(1, length(x[, 1])),
            " that will be overwritten by reduced-rank regression", sep=""))
     }
 
-    if(all(findex))
+    if(all(findex == 1))
         stop("use vglm(), not rrvglm()!")
     colx1.index = names.colx1.index = NULL
     dx2 = dimnames(x)[[2]]
@@ -446,7 +446,7 @@ cqo.fit <- function(x, y, w=rep(1, length(x[, 1])),
     dn <- labels(x)
     yn <- dn[[1]]
     xn <- dn[[2]]
-    residuals <- z - fv  # zz - offset ??   # not sure 3/10/05
+    residuals <- z - fv
     if(M==1) {
         residuals <- as.vector(residuals)
         names(residuals) <- yn
@@ -466,10 +466,10 @@ cqo.fit <- function(x, y, w=rep(1, length(x[, 1])),
         names(mu) <- names(fv)
     }
 
-    df.residual <- 55 - 8 - Rank*p2  # zz n.big==55, rank==8 
+    df.residual <- 55 - 8 - Rank*p2
     fit <- list(assign=asgn,
                 coefficients=coefs,
-                constraints=Blist,   # B.list? zz 
+                constraints=Blist,
                 df.residual=df.residual,
                 df.total=n*M,
                 fitted.values=mu,
@@ -652,7 +652,7 @@ if(FALSE) {
     constraints=replace.constraints(constraints,diag(M),rrcontrol$colx2.index)
 
     nice31 = (!control$EqualTol || control$ITolerances) &&
-             all(trivial.constraints(constraints))
+             all(trivial.constraints(constraints) == 1)
 }
 
     NOS = ifelse(modelno==3 || modelno==5, M/2, M)

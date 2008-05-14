@@ -381,6 +381,7 @@ Constrained additive ordination.
 \seealso{
   \code{\link{qrrvglm.control}},
   \code{\link{Coef.qrrvglm}},
+  \code{\link{predict.qrrvglm}},
   \code{\link{rcqo}},
   \code{\link{cao}},
   \code{\link{uqo}},
@@ -407,6 +408,7 @@ contains further information and examples.
 # Example 1; Fit an unequal tolerances model to the hunting spiders data
 data(hspider)
 hspider[,1:6]=scale(hspider[,1:6]) # Standardize the environmental variables
+set.seed(1234)
 p1 = cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi, Auloalbi, 
                Pardlugu, Pardmont, Pardnigr, Pardpull, Trocterr, Zoraspin) ~
          WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
@@ -461,10 +463,12 @@ lvplot(p2, ellips=FALSE, label=TRUE, xlim=c(-3,4),
 
 
 # Example 3: species packing model with presence/absence data
+set.seed(2345)
 n = 200; p = 5; S = 5
 mydata = rcqo(n, p, S, fam="binomial", hiabundance=4,
               EqualTol=TRUE, ESOpt=TRUE, EqualMax=TRUE)
 myform = attr(mydata, "formula")
+set.seed(1234)
 b1 = cqo(myform, fam=binomialff(mv=TRUE, link="cloglog"), data=mydata)
 sort(b1@misc$deviance.Bestof) # A history of all the iterations
 \dontrun{

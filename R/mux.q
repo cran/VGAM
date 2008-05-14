@@ -3,6 +3,24 @@
 
 
 
+
+mux34 <- function(xmat, cc, symmetric=FALSE)
+{
+
+    if(!is.matrix(xmat))
+        xmat <- as.matrix(xmat)
+    d <- dim(xmat)
+    n <- d[1]
+    R <- d[2]
+    if(length(cc) == 1) cc = matrix(cc, 1, 1)
+    if(!is.matrix(cc)) stop("'cc' is not a matrix")
+    c(dotFortran(name="vgamf90mux34", as.double(xmat), as.double(cc),
+               as.integer(n), as.integer(R),
+               as.integer(symmetric), ans=as.double(rep(0.0, n)),
+               NAOK=TRUE)$ans)
+}
+
+
 mux2 <- function(cc, xmat)
 {
 

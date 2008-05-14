@@ -1,0 +1,86 @@
+\name{predict.qrrvglm}
+\alias{predict.qrrvglm}
+%- Also NEED an '\alias' for EACH other topic documented here.
+\title{ Predict Method for a CQO fit }
+\description{
+  Predicted values based on a constrained quadratic ordination (CQO)
+  object.
+
+}
+\usage{
+predict.qrrvglm(object, newdata=NULL,
+                type=c("link", "response", "lv", "terms"),
+                se.fit=FALSE, deriv=0, dispersion=NULL,
+                extra=object@extra, varlvI = FALSE, reference = NULL, ...)
+
+}
+%- maybe also 'usage' for other objects documented here.
+\arguments{
+  \item{object}{ Object of class inheriting from \code{"qrrvglm"}. }
+  \item{newdata}{
+  An optional data frame in which to look for variables with which
+  to predict. If omitted, the fitted linear predictors are used.
+
+  }
+  \item{type, se.fit, dispersion, extra}{
+  See \code{\link{predict.vglm}}.
+
+  }
+  \item{deriv}{ Derivative. Currently only 0 is handled. }
+  \item{varlvI, reference}{
+  Arguments passed into \code{\link{Coef.qrrvglm}}.
+  }
+  \item{\dots}{ Currently undocumented. }
+}
+\details{
+  Obtains predictions
+  from a fitted CQO object.
+  Currently there are lots of limitations of this function; it is
+  unfinished.
+
+% and optionally estimates standard errors of those predictions
+
+}
+\value{
+  See \code{\link{predict.vglm}}.
+}
+\references{ 
+Yee, T. W. (2004)
+A new technique for maximum-likelihood
+canonical Gaussian ordination.
+\emph{Ecological Monographs},
+\bold{74}, 685--701.
+
+}
+
+\author{ T. W. Yee }
+\note{
+  This function is not robust and has not been checked fully.
+
+}
+
+\seealso{ 
+  \code{\link{cqo}}.
+
+}
+
+\examples{
+data(hspider)
+hspider[,1:6]=scale(hspider[,1:6]) # Standardize the environmental variables
+set.seed(1234)
+p1 = cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi, Auloalbi,
+               Pardlugu, Pardmont, Pardnigr, Pardpull, Trocterr, Zoraspin) ~
+         WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
+         fam=poissonff, data=hspider, Crow1positive=FALSE, ITol=TRUE)
+sort(p1@misc$deviance.Bestof) # A history of all the iterations
+
+predict(p1)[1:3,]
+
+# The following should be all zeros
+max(abs(predict(p1, new=hspider[1:3,]) - predict(p1)[1:3,]))
+max(abs(predict(p1, new=hspider[1:3,], type="res") - fitted(p1)[1:3,]))
+}
+\keyword{models}
+\keyword{regression}
+
+

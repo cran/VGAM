@@ -108,7 +108,7 @@ yip88 = function(link.lambda="loge", n.arg=NULL)
             suma = extra$sumw
             phi = (1 - temp5[1] - suma/narg) / (1 - temp5[1])
             phi = if(phi < 0 || phi>1) NA else phi  # phi is a probability
-            misc$phi = phi    # zz call it $p0 = phi ?? 
+            misc$phi = phi
         }
     }), list( .link.lambda=link.lambda ))),
     loglikelihood=eval(substitute( 
@@ -807,9 +807,9 @@ rzibinom = function(n, size, prob, phi=0) {
 
 
 
-dzinb = function(x, phi, size, prob, munb, log=FALSE) {
-    if (!missing(munb)) {
-        if (!missing(prob))
+dzinb = function(x, phi, size, prob=NULL, munb=NULL, log=FALSE) {
+    if (length(munb)) {
+        if (length(prob))
             stop("'prob' and 'munb' both specified")
         prob <- size/(size + munb)
     }
@@ -825,9 +825,9 @@ dzinb = function(x, phi, size, prob, munb, log=FALSE) {
                 ifelse(x==0, phi + (1-phi) * ans, (1-phi) * ans)
 }
 
-pzinb = function(q, phi, size, prob, munb) {
-    if (!missing(munb)) {
-        if (!missing(prob))
+pzinb = function(q, phi, size, prob=NULL, munb=NULL) {
+    if (length(munb)) {
+        if (length(prob))
             stop("'prob' and 'munb' both specified")
         prob <- size/(size + munb)
     }
@@ -837,9 +837,9 @@ pzinb = function(q, phi, size, prob, munb) {
     phi + (1-phi) * ans
 }
 
-qzinb = function(p, phi, size, prob, munb) {
-    if (!missing(munb)) {
-        if (!missing(prob))
+qzinb = function(p, phi, size, prob=NULL, munb=NULL) {
+    if (length(munb)) {
+        if (length(prob))
             stop("'prob' and 'munb' both specified")
         prob <- size/(size + munb)
     }
@@ -857,9 +857,9 @@ qzinb = function(p, phi, size, prob, munb) {
     ans
 }
 
-rzinb = function(n, phi, size, prob, munb) {
-    if (!missing(munb)) {
-        if (!missing(prob))
+rzinb = function(n, phi, size, prob=NULL, munb=NULL) {
+    if (length(munb)) {
+        if (length(prob))
             stop("'prob' and 'munb' both specified")
         prob <- size/(size + munb)
     }

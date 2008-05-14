@@ -81,7 +81,7 @@ setClass("vglmff", representation(
       "inverse"      = "function",
       "last"         = "expression",
       "link"         = "function",
-      "loglikelihood"= "function",   # problem: zz function() NULL if unspecified
+      "loglikelihood"= "function",
       "middle"       = "expression",
       "middle2"      = "expression",
       "summary.dispersion"  = "logical",
@@ -99,7 +99,7 @@ setClass("vglmff", representation(
       "inverse"      = "function",
       "last"         = "expression",
       "link"         = "function",
-      "loglikelihood"= "function",   # problem: zz function() NULL if unspecified
+      "loglikelihood"= "function",
       "middle"       = "expression",
       "middle2"      = "expression",
       "summary.dispersion"  = "logical",

@@ -82,7 +82,7 @@ valt <- function(x, z, U, Rank=1,
         Criterion <- as.character(substitute(Criterion))
     Criterion <- match.arg(Criterion, c("rss", "coefficients"))[1]
 
-    if(any(diff(Alphavec)) <= 0)
+    if(any(diff(Alphavec) <= 0))
         stop("Alphavec must be an increasing sequence") 
 
     if(!is.matrix(z))
@@ -273,7 +273,7 @@ lm2qrrvlm.model.matrix = function(x, Blist, C, control, assign=TRUE,
     if(assign) {
         asx = attr(x, "assign")
         asx = vector("list", ncol(new.lv.model.matrix))
-        names(asx) = names(cmat2)   # wrong zz 
+        names(asx) = names(cmat2)
         for(i in 1:length(names(asx))) {
             asx[[i]] = i
         }
@@ -583,9 +583,9 @@ rrr.derivative.expression <- expression({
 
     constraints=replace.constraints(constraints,diag(M),rrcontrol$colx2.index)
     nice31 = (!control$EqualTol || control$ITolerances) &&
-             all(trivial.constraints(constraints))
+             all(trivial.constraints(constraints) == 1)
 
-    theta0 <- c(Cmat) # zz; Possibly bad because of normalization?
+    theta0 <- c(Cmat)
     if(is.R()) assign(".VGAM.dot.counter", 0, envir = VGAMenv) else
         .VGAM.dot.counter <<- 0 
 if(control$OptimizeWrtC) {
@@ -1184,6 +1184,7 @@ printCoef.qrrvglm = function(x, ...) {
     setMethod("summary", "qrrvglm", function(object, ...)
         summary.qrrvglm(object, ...))
 
+
 predict.qrrvglm <- function(object,
                          newdata=NULL,
                          type=c("link", "response", "lv", "terms"),
@@ -1206,65 +1207,117 @@ predict.qrrvglm <- function(object,
     if(type=="terms")
         stop("can't handle type='terms' yet")
 
-    na.act = object@na.action
-    object@na.action = list()
     M = object@misc$M
     Rank  = object@control$Rank
 
-    if(length(newdata)) {
-        p1 = length(object@control$colx1.index)
-        Coefs = Coef(object, varlvI = varlvI, reference = reference)
-        temptype = ifelse(type=="link", "response", type[1]) 
+    na.act = object@na.action
+    object@na.action = list()
 
-        conmat =  replace.constraints(vector("list", object@misc$p),
-                      diag(M), object@control$colx1.index)
-        conmat =  replace.constraints(conmat, Coefs@A,
-                                      object@control$colx2.index)
-        names(conmat) = object@misc$colnames.x
-        object@constraints = conmat # To get RR-VGLM type eta
+    if(!length(newdata) && type=="response" && length(object@fitted.values)) {
+        if(length(na.act)) {
+            return(napredict(na.act[[1]], object@fitted.values))
+        } else {
+            return(object@fitted.values)
+        }
+    }
 
-        newcoefs = lm2vlm.model.matrix(object@x, conmat, xij=object@control$xij)
-        newcoefs = dimnames(newcoefs)[[2]]
-        newcoefs = coef(object)[newcoefs] # Fixes up order of coefficients
-        c.index = is.na(newcoefs) # Indices corresponding to C matrix 
-        newcoefs[c.index] = t(Coefs@C) # Fill in the rest (C) of the outerprod
+    attrassignlm <- function(object, ...)
+        attrassigndefault(model.matrix(object), object@terms)
 
-        object@coefficients = newcoefs 
+    attrassigndefault <- function(mmat, tt) {
+      if (!inherits(tt, "terms"))
+        stop("need terms object")
+      aa <- attr(mmat, "assign")
+      if (is.null(aa))
+        stop("argument is not really a model matrix")
+      ll <- attr(tt, "term.labels")
+      if (attr(tt, "intercept") > 0)
+        ll <- c("(Intercept)", ll)
+      aaa <- factor(aa, labels = ll)
+      split(order(aa), aaa)
+    }
 
-        pvlm =  predict.vlm(object, newdata=newdata, type=temptype,
-                            se.fit=se.fit, deriv=deriv,
-                            dispersion=dispersion, extra=extra, ...)
-
-        newcoefs[c.index] = 0  # Trick; set C==0 here to give B1 terms only
-        object@coefficients = newcoefs
-        pvlm1 =  if(!length(object@control$colx1.index)) 0 else 
-                 predict.vlm(object, newdata=newdata, type=temptype,
-                             se.fit=se.fit, deriv=deriv,
-                             dispersion=dispersion, extra=extra, ...)
-
-        lvmat = if(object@control$Corner)
-            (pvlm - pvlm1)[,object@control$Index.corner,drop=FALSE] else
-            stop("corner constraints needed") 
-
-        for(j in 1:M)
-            pvlm[,j] = pvlm[,j] + (if(Rank==1) (lvmat^2 * Coefs@D[,,j]) else
-                (((lvmat %*% Coefs@D[,,j]) * lvmat) %*% rep(1, Rank)))
+    if(!length(newdata)) {
+        X <- model.matrixvlm(object, type="lm", ...)
+        offset <- object@offset
+        tt <- object@terms$terms   # terms(object)
+        if(is.R() && !length(object@x))
+            attr(X, "assign") <- attrassignlm(X, tt)
     } else {
-        pvlm =  predict.vglm(object, type=type, se.fit=se.fit,
-                             deriv=deriv, dispersion=dispersion,
-                             extra=extra, ...)
+        if(is.smart(object) && length(object@smart.prediction)) {
+            setup.smart("read", smart.prediction=object@smart.prediction)
+        }
+
+        tt <- object@terms$terms # terms(object) # 11/8/03; object@terms$terms
+        X <- model.matrix(delete.response(tt), newdata, contrasts =
+                      if(length(object@contrasts)) object@contrasts else NULL,
+                      xlev = object@xlevels)
+
+        if(is.R() && nrow(X)!=nrow(newdata)) {
+            as.save = attr(X, "assign")
+            X = X[rep(1, nrow(newdata)),,drop=FALSE]
+            dimnames(X) = list(dimnames(newdata)[[1]], "(Intercept)")
+            attr(X, "assign") = as.save  # Restored
+        }
+
+        offset <- if (!is.null(off.num<-attr(tt,"offset"))) {
+            eval(attr(tt,"variables")[[off.num+1]], newdata)
+        } else if (!is.null(object@offset))
+            eval(object@call$offset, newdata)
+
+        if(any(c(offset) != 0)) stop("currently cannot handle nonzero offsets")
+
+        if(is.smart(object) && length(object@smart.prediction)) {
+            wrapup.smart()
+        }
+
+        if(is.R())
+            attr(X, "assign") <- attrassigndefault(X, tt)
+    }
+
+    ocontrol = object@control
+
+    Rank = ocontrol$Rank
+    NOS = ncol(object@y)
+    sppnames = dimnames(object@y)[[2]]
+    modelno = ocontrol$modelno  # 1,2,3,5 or 0
+    M = if(any(slotNames(object) == "predictors") &&
+           is.matrix(object@predictors)) ncol(object@predictors) else
+           object@misc$M
+    MSratio = M / NOS  # First value is g(mean) = quadratic form in lv
+    if(MSratio != 1) stop("can only handle MSratio==1 for now")
+
+
+    if(length(newdata)) {
+        Coefs = Coef(object, varlvI = varlvI, reference = reference)
+        X1mat = X[,ocontrol$colx1.index,drop=FALSE]
+        X2mat = X[,ocontrol$colx2.index,drop=FALSE]
+        lvmat = as.matrix(X2mat %*% Coefs@C) # n x Rank
+
+        etamat = as.matrix(X1mat %*% Coefs@B1 + lvmat %*% t(Coefs@A))
+        whichSpecies = 1:NOS  # Do it all for all species
+        for(sppno in 1:length(whichSpecies)) {
+            thisSpecies = whichSpecies[sppno]
+            Dmat = matrix(Coefs@D[,,thisSpecies], Rank, Rank)
+            etamat[,thisSpecies] = etamat[,thisSpecies] +
+                                   mux34(lvmat, Dmat, symm=TRUE)
+        }
+    } else {
+        etamat =  object@predictors
     }
 
     pred = switch(type,
-    response={ fv = if(length(newdata)) object@family@inverse(pvlm, extra) else
-                    pvlm
+    response={
+        fv = if(length(newdata)) object@family@inverse(etamat, extra) else
+                    fitted(object)
         if(M > 1 && is.matrix(fv)) {
             dimnames(fv) <- list(dimnames(fv)[[1]],
                                  dimnames(object@fitted.values)[[2]])
         }
         fv
     },
-    link = pvlm,
+    link = etamat,
+    lv=stop("failure here"),
     terms=stop("failure here"))
 
     if(!length(newdata) && length(na.act)) {
@@ -1624,7 +1677,7 @@ get.rrvglm.se1 <- function(fit, omit13= FALSE, kill.all= FALSE,
     cov11 = cov1122[log.vec11,  log.vec11, drop=FALSE]
     cov12 = cov1122[ log.vec11, -log.vec11, drop=FALSE]
     cov22 = cov1122[-log.vec11, -log.vec11, drop=FALSE]
-    cov13 = delct.da %*% cov33    # zz; this always seems to be negative 
+    cov13 = delct.da %*% cov33
 
 
     if(omit13) 
@@ -2299,7 +2352,7 @@ lvplot.rrvglm = function(object,
     nuhat = x2mat %*% Cmat
     if(!plot.it) return(as.matrix(nuhat))
 
-    index.nosz = 1:M   # index of no structural zeros; zz  
+    index.nosz = 1:M
     allmat = rbind(if(A) Amat else NULL, 
                    if(C) Cmat else NULL, 
                    if(scores) nuhat else NULL)

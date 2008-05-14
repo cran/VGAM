@@ -18,7 +18,7 @@ coefvlm <- function(object, matrix.out=FALSE, label=TRUE, compress=TRUE)
 
     xij <- object@control$xij
     Blist <- object@constraints
-    if(!length(xij) && all(trivial.constraints(Blist))) {
+    if(!length(xij) && all(trivial.constraints(Blist) == 1)) {
         B <- matrix(ans, nrow=ncolx, ncol=M, byrow=TRUE)
     } else {
         B <- matrix(as.numeric(NA), nrow=ncolx, ncol=M)
