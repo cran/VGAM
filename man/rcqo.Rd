@@ -13,10 +13,10 @@ rcqo(n, p, S, Rank = 1,
      EqualMaxima = FALSE, EqualTolerances = TRUE, ESOptima = FALSE,
      loabundance = if (EqualMaxima) hiabundance else 10,
      hiabundance = 100, sdlv = c(1.5/2^(0:3))[1:Rank],
-     sdOptima = ifelse(ESOptima, 1.5/Rank, 1) * sdlv,
+     sdOptima = ifelse(ESOptima, 1.5/Rank, 1) * ifelse(scalelv, sdlv, 1),
      sdTolerances = 0.25, Kvector = 1, Shape = 1,
      sqrt = FALSE, Log = FALSE, rhox = 0.5, breaks = 4,
-     seed = NULL, Crow1positive=TRUE)
+     seed = NULL, Crow1positive=TRUE, xmat = NULL, scalelv = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -199,6 +199,18 @@ rcqo(n, p, S, Rank = 1,
     See \code{\link{qrrvglm.control}} for details.
     
   }
+  \item{xmat}{
+   The
+   \eqn{n \times (p-1)}{n * (p-1)}
+   environmental matrix can be inputted.
+    
+  }
+  \item{scalelv}{
+   Logical. If \code{FALSE} the argument
+   \code{sdlv} is ignored and no scaling of the latent variable
+   values is performed. 
+    
+  }
 }
 \details{
   This function generates data coming from a constrained quadratic
@@ -273,6 +285,10 @@ rcqo(n, p, S, Rank = 1,
     Each successive column (latent variable) has
     sample standard deviation
     equal to successive values of \code{sdlv}.
+    
+  }
+  \item{"eta"}{
+    The linear/additive predictor value.
     
   }
   \item{"optima"}{

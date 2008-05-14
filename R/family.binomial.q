@@ -215,130 +215,226 @@ betabinomial <- function(lmu="logit", lrho="logit",
 
 
 
+dbinom2.or = function(mu1,
+                      mu2=if(exchangeable) mu1 else stop("'mu2' not specified"),
+                      oratio=1,
+                      exchangeable=FALSE,
+                      tol=0.001,
+                      colnames=c("00", "01", "10", "11"),
+                      ErrorCheck=TRUE)
+{
+    if(ErrorCheck) {
+        if(!is.Numeric(mu1, positive=TRUE) || max(mu1) >= 1)
+            stop("bad input for argument 'mu1'") 
+        if(!is.Numeric(mu2, positive=TRUE) || max(mu2) >= 1)
+            stop("bad input for argument 'mu2'") 
+        if(!is.Numeric(oratio, positive=TRUE))
+            stop("bad input for argument 'oratio'") 
+        if(!is.Numeric(tol, positive=TRUE, allow=1) || tol > 0.1)
+            stop("bad input for argument \"tol\"") 
+        if(exchangeable && max(abs(mu1 - mu2)) > 0.00001)
+            stop("argument 'exchangeable' is TRUE but 'mu1' and 'mu2' differ") 
+    }
 
-binom2.or <- function(lmu="logit", lmu1=lmu, lmu2=lmu, lor="loge",
-                      emu=list(), emu1=emu, emu2=emu, eor=list(),
-                      zero=3, exchangeable=FALSE, tol=0.001)
+    n = max(length(mu1), length(mu2), length(oratio))
+    oratio = rep(oratio, len=n)
+    mu1 = rep(mu1, len=n)
+    mu2 = rep(mu2, len=n)
+
+    a.temp = 1 + (mu1+mu2)*(oratio-1)
+    b.temp = -4 * oratio * (oratio-1) * mu1 * mu2
+    temp = sqrt(a.temp^2 + b.temp)
+    p11 = ifelse(abs(oratio-1) < tol, mu1*mu2, (a.temp-temp)/(2*(oratio-1)))
+    p01 = mu2 - p11
+    p10 = mu1 - p11
+    p00 = 1 - p11 - p01 - p10
+    matrix(c(p00,p01,p10,p11), n, 4, dimnames=list(NULL,colnames))
+}
+
+
+
+
+rbinom2.or = function(n, mu1,
+                      mu2=if(exchangeable) mu1 else stop("'mu2' not specified"),
+                      oratio=1,
+                      exchangeable=FALSE,
+                      tol=0.001,
+                      twoCols=TRUE,
+            colnames=if(twoCols) c("y1","y2") else c("00", "01", "10", "11"),
+                      ErrorCheck=TRUE)
+{
+    if(ErrorCheck) {
+        if(!is.Numeric(n, integer=TRUE, posit=TRUE, allow=1))
+            stop("bad input for argument 'n'")
+        if(!is.Numeric(mu1, positive=TRUE) || max(mu1) >= 1)
+            stop("bad input for argument 'mu1'") 
+        if(!is.Numeric(mu2, positive=TRUE) || max(mu2) >= 1)
+            stop("bad input for argument 'mu2'") 
+        if(!is.Numeric(oratio, positive=TRUE))
+            stop("bad input for argument 'oratio'") 
+        if(!is.Numeric(tol, positive=TRUE, allow=1) || tol > 0.1)
+            stop("bad input for argument \"tol\"") 
+        if(exchangeable && max(abs(mu1 - mu2)) > 0.00001)
+            stop("argument 'exchangeable' is TRUE but 'mu1' and 'mu2' differ") 
+    }
+
+    dmat = dbinom2.or(mu1=mu1, mu2=mu2, oratio=oratio, exchang=exchangeable,
+                      tol=tol, ErrorCheck=ErrorCheck)
+
+    answer = matrix(0, n, 2, dimnames=list(NULL, if(twoCols) colnames else NULL))
+    yy = runif(n)
+    cs1 = dmat[,"00"] + dmat[,"01"]
+    cs2 = cs1 + dmat[,"10"]
+    index = (dmat[,"00"] < yy) & (yy <= cs1)
+    answer[index,2] = 1
+    index = (cs1 < yy) & (yy <= cs2)
+    answer[index,1] = 1
+    index = (yy > cs2)
+    answer[index,] = 1
+    if(twoCols) answer else {
+        answer4 = matrix(0, n, 4, dimnames=list(NULL, colnames))
+        answer4[cbind(1:n, 1 + 2*answer[,1] + answer[,2])] = 1
+        answer4
+    }
+}
+
+
+
+
+binom2.or = function(lmu="logit", lmu1=lmu, lmu2=lmu, loratio="loge",
+                     emu=list(), emu1=emu, emu2=emu, eoratio=list(),
+                     imu1=NULL, imu2=NULL, ioratio = NULL,
+                     zero=3, exchangeable=FALSE, tol=0.001)
 {
     if(mode(lmu) != "character" && mode(lmu) != "name")
-        lmu <- as.character(substitute(lmu))
+        lmu = as.character(substitute(lmu))
     if(mode(lmu1) != "character" && mode(lmu1) != "name")
-        lmu1 <- as.character(substitute(lmu1))
+        lmu1 = as.character(substitute(lmu1))
     if(mode(lmu2) != "character" && mode(lmu2) != "name")
-        lmu2 <- as.character(substitute(lmu2))
-    if(mode(lor) != "character" && mode(lor) != "name")
-        lor <- as.character(substitute(lor))
+        lmu2 = as.character(substitute(lmu2))
+    if(mode(loratio) != "character" && mode(loratio) != "name")
+        loratio = as.character(substitute(loratio))
     if(is.logical(exchangeable) && exchangeable && ((lmu1 != lmu2) ||
        !all.equal(emu1, emu2)))
         stop("exchangeable=TRUE but marginal links are not equal") 
-    if(!is.Numeric(tol, positive=TRUE, allow=1))
+    if(!is.Numeric(tol, positive=TRUE, allow=1) || tol > 0.1)
         stop("bad input for argument \"tol\"") 
     if(!is.list(emu1)) emu1  = list()
     if(!is.list(emu2)) emu2  = list()
-    if(!is.list(eor)) eor = list()
+    if(!is.list(eoratio)) eoratio = list()
 
     new("vglmff",
-    blurb=c("Palmgren model\n",
-           "Links:    ",
-           namesof("mu1", lmu1, earg=emu1), ", ",
-           namesof("mu2", lmu2, earg=emu2), "; ",
-           namesof("OR", lor, earg=eor)),
+    blurb=c("Bivariate binomial regression with an odds ratio\n",
+            "Links:    ",
+            namesof("mu1", lmu1, earg=emu1), ", ",
+            namesof("mu2", lmu2, earg=emu2), "; ",
+            namesof("oratio", loratio, earg=eoratio)),
     constraints=eval(substitute(expression({
-        constraints <- cm.vgam(matrix(c(1,1,0,0,0,1),3,2), x, 
-                               .exchangeable, constraints,
-                               intercept.apply=TRUE)
-        constraints <- cm.zero.vgam(constraints, x, .zero, M)
+        constraints = cm.vgam(matrix(c(1,1,0,0,0,1),3,2), x, 
+                              .exchangeable, constraints,
+                              intercept.apply=TRUE)
+        constraints = cm.zero.vgam(constraints, x, .zero, M)
     }), list( .exchangeable=exchangeable, .zero=zero ))),
     deviance=Deviance.categorical.data.vgam,
     initialize=eval(substitute(expression({
         eval(process.binomial2.data.vgam)
-        predictors.names <- c(namesof("mu1", .lmu1, earg= .emu1, short=TRUE), 
-                              namesof("mu2", .lmu2, earg= .emu2, short=TRUE), 
-                              namesof("OR",  .lor, earg= .eor, short=TRUE))
-    }), list( .lmu1=lmu1, .lmu2=lmu2,
-              .emu1=emu1, .emu2=emu2, .eor=eor,
-              .lor=lor ))),
+        predictors.names = c(namesof("mu1", .lmu1, earg= .emu1, short=TRUE), 
+                 namesof("mu2", .lmu2, earg= .emu2, short=TRUE), 
+                 namesof("oratio",  .loratio, earg= .eoratio, short=TRUE))
+
+        if(!length(etastart)) {
+            pmargin = cbind(mu[,3]+mu[,4], mu[,2]+mu[,4])
+            ioratio = if(length( .ioratio)) rep( .ioratio, len=n) else
+                      mu[,4]*mu[,1]/(mu[,2]*mu[,3])
+            if(length( .imu1)) pmargin[,1] = .imu1
+            if(length( .imu2)) pmargin[,2] = .imu2
+            etastart = cbind(theta2eta(pmargin[,1], .lmu1, earg= .emu1),
+                             theta2eta(pmargin[,2], .lmu2, earg= .emu2), 
+                             theta2eta(ioratio, .loratio, earg= .eoratio))
+        }
+    }), list( .lmu1=lmu1, .lmu2=lmu2, .loratio=loratio,
+              .emu1=emu1, .emu2=emu2, .eoratio=eoratio,
+              .imu1=imu1, .imu2=imu2, .ioratio=ioratio ))),
     inverse=eval(substitute(function(eta, extra=NULL) {
-        pm <- cbind(eta2theta(eta[,1], .lmu1, earg= .emu1),
-                    eta2theta(eta[,2], .lmu2, earg= .emu2))
-        or <- eta2theta(eta[,3], .lor, earg= .eor)
-        a <- 1 + (pm[,1]+pm[,2])*(or-1)
-        b <- -4 * or * (or-1) * pm[,1] * pm[,2]
-        temp <- sqrt(a^2+b)
-        pj4 <- ifelse(abs(or-1) < .tol, pm[,1]*pm[,2], (a-temp)/(2*(or-1)))
-        pj2 <- pm[,2] - pj4
-        pj3 <- pm[,1] - pj4
+        pmargin = cbind(eta2theta(eta[,1], .lmu1, earg= .emu1),
+                        eta2theta(eta[,2], .lmu2, earg= .emu2))
+        oratio = eta2theta(eta[,3], .loratio, earg= .eoratio)
+        a.temp = 1 + (pmargin[,1]+pmargin[,2])*(oratio-1)
+        b.temp = -4 * oratio * (oratio-1) * pmargin[,1] * pmargin[,2]
+        temp = sqrt(a.temp^2 + b.temp)
+        pj4 = ifelse(abs(oratio-1) < .tol, pmargin[,1]*pmargin[,2],
+                     (a.temp-temp)/(2*(oratio-1)))
+        pj2 = pmargin[,2] - pj4
+        pj3 = pmargin[,1] - pj4
         cbind("00" = 1-pj4-pj2-pj3, "01" = pj2, "10" = pj3, "11" = pj4)
     }, list( .tol=tol, .lmu1=lmu1, .lmu2=lmu2,
-             .emu1=emu1, .emu2=emu2, .eor=eor,
-             .lor=lor ))),
+             .emu1=emu1, .emu2=emu2, .eoratio=eoratio,
+             .loratio=loratio ))),
     last=eval(substitute(expression({
-        misc$link <- c("mu1"= .lmu1, "mu2"= .lmu2, "OR"= .lor)
-        misc$earg <- list(mu1 = .emu1, mu2 = .emu2, OR = .eor)
-        misc$tol <- .tol
+        misc$link = c("mu1"= .lmu1, "mu2"= .lmu2, "oratio"= .loratio)
+        misc$earg = list(mu1 = .emu1, mu2 = .emu2, oratio = .eoratio)
+        misc$tol = .tol
+        misc$expected = TRUE
     }), list( .tol=tol, .lmu1=lmu1, .lmu2=lmu2,
-              .emu1=emu1, .emu2=emu2, .eor=eor,
-              .lor=lor ))),
+              .emu1=emu1, .emu2=emu2, .eoratio=eoratio,
+              .loratio=loratio ))),
     link=eval(substitute(function(mu, extra=NULL) {
-        pm <- cbind(mu[,3]+mu[,4], mu[,2]+mu[,4])
-        or <- mu[,4]*mu[,1]/(mu[,2]*mu[,3])
-        cbind(theta2eta(pm[,1], .lmu1, earg= .emu1),
-              theta2eta(pm[,2], .lmu2, earg= .emu2), 
-              theta2eta(or, .lor, earg= .eor))
+        pmargin = cbind(mu[,3]+mu[,4], mu[,2]+mu[,4])
+        oratio = mu[,4]*mu[,1] / (mu[,2]*mu[,3])
+        cbind(theta2eta(pmargin[,1], .lmu1, earg= .emu1),
+              theta2eta(pmargin[,2], .lmu2, earg= .emu2), 
+              theta2eta(oratio, .loratio, earg= .eoratio))
     }, list( .lmu1=lmu1, .lmu2=lmu2,
-             .emu1=emu1, .emu2=emu2, .eor=eor,
-             .lor=lor ))),
+             .emu1=emu1, .emu2=emu2, .eoratio=eoratio,
+             .loratio=loratio ))),
     loglikelihood= function(mu, y, w, residuals = FALSE, eta, extra=NULL)
         if(residuals) stop("loglikelihood residuals not implemented yet") else
         sum(w * y * log(mu)),
     vfamily=c("binom2.or", "binom2"),
     deriv=eval(substitute(expression({
-        pm <- cbind(mu[,3]+mu[,4], mu[,2]+mu[,4])
-        or <- mu[,4]*mu[,1]/(mu[,2]*mu[,3])
+        pmargin = cbind(mu[,3]+mu[,4], mu[,2]+mu[,4])
+        oratio = mu[,4]*mu[,1] / (mu[,2]*mu[,3])
+        a.temp = 1 + (pmargin[,1]+pmargin[,2])*(oratio-1)
+        b.temp = -4 * oratio * (oratio-1) * pmargin[,1] * pmargin[,2]
+        temp9 = sqrt(a.temp^2 + b.temp)
 
-        a <- 1 + (pm[,1]+pm[,2])*(or-1)
-        b <- -4 * or * (or-1) * pm[,1] * pm[,2]
-        temp <- sqrt(a^2+b)
-
-        coeff1 <- -0.5 + (2*or*pm[,2]-a)/(2*temp)
-        d1 <- coeff1*(y[,1]/mu[,1]-y[,3]/mu[,3])-
-           (1+coeff1)*(y[,2]/mu[,2]-y[,4]/mu[,4])
+        coeff12 = -0.5 + (2*oratio*pmargin - a.temp) / (2*temp9)
+        dl.dmu1 = coeff12[,2] * (y[,1]/mu[,1]-y[,3]/mu[,3]) -
+           (1+coeff12[,2]) * (y[,2]/mu[,2]-y[,4]/mu[,4])
     
-        coeff2 <- -0.5 + (2*or*pm[,1]-a)/(2*temp)
-        d2 <- coeff2*(y[,1]/mu[,1]-y[,2]/mu[,2])-
-           (1+coeff2)*(y[,3]/mu[,3]-y[,4]/mu[,4])
+        dl.dmu2 = coeff12[,1] * (y[,1]/mu[,1]-y[,2]/mu[,2]) -
+           (1+coeff12[,1]) * (y[,3]/mu[,3]-y[,4]/mu[,4])
     
-        coeff3 <- (y[,1]/mu[,1]-y[,2]/mu[,2]-y[,3]/mu[,3]+y[,4]/mu[,4])
-        d3 <- ifelse(abs(or-1) < .tol,
-                 coeff3 * pm[,1] * (1-pm[,1]) * pm[,2] * (1-pm[,2]),
-                 (1/(or-1)) * coeff3 * ( (pm[,1]+pm[,2])*(1-a/temp)/2 +
-                 (2*or-1)*pm[,1]*pm[,2]/temp  - (a-temp)/(2*(or-1)) ))
-        w * cbind(d1 * dtheta.deta(pm[,1], .lmu1, earg= .emu1),
-                  d2 * dtheta.deta(pm[,2], .lmu2, earg= .emu2),
-                  d3 * dtheta.deta(or, .lor, earg= .eor))
-    }), list( .tol=tol, .lmu1=lmu1, .lmu2=lmu2,
-              .emu1=emu1, .emu2=emu2, .eor=eor,
-              .lor=lor ))),
-    weight=eval(substitute(expression({
-        Vab <- 1/(1/mu[,1] + 1/mu[,2] + 1/mu[,3] + 1/mu[,4])
-        deltapi <- mu[,3]*mu[,2] - mu[,4]*mu[,1]
-        delta  <- mu[,1]*mu[,2]*mu[,3]*mu[,4]
-        pq <- pm[,1:2]*(1-pm[,1:2])
+        coeff3 = (y[,1]/mu[,1] - y[,2]/mu[,2] - y[,3]/mu[,3] + y[,4]/mu[,4])
+        Vab = 1 / (1/mu[,1] + 1/mu[,2] + 1/mu[,3] + 1/mu[,4])
+        dp11.doratio = Vab / oratio
+        dl.doratio = coeff3 * dp11.doratio
 
-        wz <- matrix(0, n, 4)
-        wz[,iam(1,1,M)] <- dtheta.deta(pm[,1], .lmu1, earg= .emu1)^2 *
-                           pq[,2] * Vab / delta
-        wz[,iam(2,2,M)] <- dtheta.deta(pm[,2], .lmu2, earg= .emu2)^2 *
-                           pq[,1] * Vab / delta
-        wz[,iam(3,3,M)] <- Vab *
-       (dtheta.deta(or, .lor, earg= .eor) / dtheta.deta(or, "loge"))^2
-        wz[,iam(1,2,M)] <- Vab * deltapi *
-                           dtheta.deta(pm[,1], .lmu1, earg= .emu1) *
-                           dtheta.deta(pm[,2], .lmu2, earg= .emu2) / delta
-       w * wz
+        w * cbind(dl.dmu1 * dtheta.deta(pmargin[,1], .lmu1, earg= .emu1),
+                  dl.dmu2 * dtheta.deta(pmargin[,2], .lmu2, earg= .emu2),
+                  dl.doratio * dtheta.deta(oratio, .loratio, earg= .eoratio))
     }), list( .lmu1=lmu1, .lmu2=lmu2,
-              .emu1=emu1, .emu2=emu2, .eor=eor,
-              .lor=lor ))))
+              .emu1=emu1, .emu2=emu2, .eoratio=eoratio,
+              .loratio=loratio ))),
+    weight=eval(substitute(expression({
+        Deltapi = mu[,3]*mu[,2] - mu[,4]*mu[,1]
+        myDelta  = mu[,1] * mu[,2] * mu[,3] * mu[,4]
+        pqmargin = pmargin * (1-pmargin)
+
+        wz = matrix(0, n, 4)
+        wz[,iam(1,1,M)] = (pqmargin[,2] * Vab / myDelta) *
+                          dtheta.deta(pmargin[,1], .lmu1, earg= .emu1)^2
+        wz[,iam(2,2,M)] = (pqmargin[,1] * Vab / myDelta) *
+                          dtheta.deta(pmargin[,2], .lmu2, earg= .emu2)^2
+        wz[,iam(3,3,M)] = (Vab / oratio^2) *
+                          dtheta.deta(oratio, .loratio, earg= .eoratio)^2
+        wz[,iam(1,2,M)] = (Vab * Deltapi / myDelta) *
+                          dtheta.deta(pmargin[,1], .lmu1, earg= .emu1) *
+                          dtheta.deta(pmargin[,2], .lmu2, earg= .emu2)
+        w * wz
+    }), list( .lmu1=lmu1, .lmu2=lmu2,
+              .emu1=emu1, .emu2=emu2, .eoratio=eoratio,
+              .loratio=loratio ))))
 }
 
 
@@ -977,6 +1073,182 @@ seq2binomial = function(lprob1="logit", lprob2="logit",
 }
 
 
+
+zipebcom   = function(lmu12="cloglog", lphi12="logit", loratio="loge",
+                      emu12=list(), ephi12=list(), eoratio=list(), 
+                      imu12=NULL, iphi12=NULL, ioratio = NULL, 
+                      zero=2:3, tol=0.001,
+                      addRidge=0.001)
+{
+
+
+
+    if(mode(lphi12) != "character" && mode(lphi12) != "name")
+        lphi12 = as.character(substitute(lphi12))
+    if(mode(loratio) != "character" && mode(loratio) != "name")
+        loratio = as.character(substitute(loratio))
+    if(!is.Numeric(tol, positive=TRUE, allow=1) || tol > 0.1)
+        stop("bad input for argument \"tol\"") 
+    if(!is.Numeric(addRidge, allow=1, posit=TRUE) || addRidge > 0.5)
+        stop("bad input for argument \"addRidge\"") 
+    if(!is.list(emu12)) emu12  = list()
+    if(!is.list(ephi12)) ephi12  = list()
+    if(!is.list(eoratio)) eoratio = list()
+    if(lmu12 != "cloglog")
+        warning("argument 'lmu12' should be 'cloglog'")
+
+    new("vglmff",
+    blurb=c("Exchangeable bivariate ", lmu12, " odds-ratio model based on\n",
+            "a zero-inflated Poisson distribution\n\n",
+            "Links:    ",
+            namesof("mu12", lmu12, earg=emu12), ", ",
+            namesof("phi12", lphi12, earg=ephi12), ", ",
+            namesof("oratio", loratio, earg=eoratio)),
+    constraints=eval(substitute(expression({
+        constraints = cm.zero.vgam(constraints, x, .zero, M)
+    }), list( .zero=zero ))),
+    initialize=eval(substitute(expression({
+        eval(process.binomial2.data.vgam)
+        predictors.names = c(
+                 namesof("mu12",   .lmu12, earg= .emu12, short=TRUE), 
+                 namesof("phi12",  .lphi12, earg= .ephi12, short=TRUE),
+                 namesof("oratio", .loratio, earg= .eoratio, short=TRUE))
+
+        propY1.eq.0 = weighted.mean(y[,'00'], w) + weighted.mean(y[,'01'], w)
+        propY2.eq.0 = weighted.mean(y[,'00'], w) + weighted.mean(y[,'10'], w)
+        if(length( .iphi12) && any(.iphi12 > propY1.eq.0))
+            warning("iphi12 must be less than the sample proportion of Y1==0")
+        if(length( .iphi12) && any(.iphi12 > propY2.eq.0))
+            warning("iphi12 must be less than the sample proportion of Y2==0")
+
+        if(!length(etastart)) {
+            pstar.init = ((mu[,3]+mu[,4]) + (mu[,2]+mu[,4])) / 2
+            phi.init = if(length(.iphi12)) rep(.iphi12, len=n) else
+                min(propY1.eq.0 * 0.95, propY2.eq.0 * 0.95, pstar.init/1.5)
+            oratio.init = if(length( .ioratio)) rep( .ioratio, len=n) else
+                      mu[,4]*mu[,1]/(mu[,2]*mu[,3])
+            mu12.init = if(length(.imu12)) rep(.imu12, len=n) else
+                pstar.init / (1-phi.init)
+            etastart = cbind(
+                theta2eta(mu12.init, .lmu12, earg= .emu12),
+                theta2eta(phi.init, .lphi12, earg= .ephi12),
+                theta2eta(oratio.init, .loratio, earg= .eoratio))
+        }
+    }), list( .lmu12=lmu12, .lphi12=lphi12, .loratio=loratio,
+              .emu12=emu12, .ephi12=ephi12, .eoratio=eoratio,
+              .imu12=imu12, .iphi12=iphi12, .ioratio=ioratio ))),
+    inverse=eval(substitute(function(eta, extra=NULL) {
+        A1vec  = eta2theta(eta[,1], .lmu12,  earg= .emu12)
+        phivec = eta2theta(eta[,2], .lphi12, earg= .ephi12)
+        pmargin = matrix((1 - phivec) * A1vec, nrow(eta), 2)
+        oratio = eta2theta(eta[,3], .loratio, earg= .eoratio)
+        a.temp = 1 + (pmargin[,1]+pmargin[,2])*(oratio-1)
+        b.temp = -4 * oratio * (oratio-1) * pmargin[,1] * pmargin[,2]
+        temp = sqrt(a.temp^2 + b.temp)
+        pj4 = ifelse(abs(oratio-1) < .tol, pmargin[,1]*pmargin[,2],
+                     (a.temp-temp)/(2*(oratio-1)))
+        pj2 = pmargin[,2] - pj4
+        pj3 = pmargin[,1] - pj4
+        cbind("00" = 1-pj4-pj2-pj3, "01" = pj2, "10" = pj3, "11" = pj4)
+    }, list( .tol=tol,
+             .lmu12=lmu12, .lphi12=lphi12, .loratio=loratio,
+             .emu12=emu12, .ephi12=ephi12, .eoratio=eoratio ))),
+    last=eval(substitute(expression({
+        misc$link = c("mu12"= .lmu12, "phi12" = .lphi12, "oratio"= .loratio)
+        misc$earg = list("mu12"= .emu12, "phi12"= .ephi12, "oratio"= .eoratio)
+        misc$tol = .tol
+        misc$expected = TRUE
+        misc$addRidge = .addRidge
+    }), list( .tol=tol, .addRidge = addRidge,
+              .lmu12=lmu12, .lphi12=lphi12, .loratio=loratio,
+              .emu12=emu12, .ephi12=ephi12, .eoratio=eoratio ))),
+    loglikelihood= function(mu, y, w, residuals = FALSE, eta, extra=NULL)
+        if(residuals) stop("loglikelihood residuals not implemented yet") else
+        sum(w * y * log(mu)),
+    vfamily=c("zipebcom"),
+    deriv=eval(substitute(expression({
+        A1vec  = eta2theta(eta[,1], .lmu12,  earg= .emu12)
+        smallno = .Machine$double.eps^(2/4)
+        A1vec[A1vec > 1.0 -smallno] = 1.0 - smallno
+
+
+        phivec = eta2theta(eta[,2], .lphi12, earg= .ephi12)
+        pmargin = matrix((1 - phivec) * A1vec, n, 2)
+        oratio = eta2theta(eta[,3], .loratio, earg= .eoratio)
+
+
+
+        Vab = 1 / (1/mu[,1] + 1/mu[,2] + 1/mu[,3] + 1/mu[,4])
+        Vabc = 1/mu[,1] + 1/mu[,2]
+        denom3 = 2 * oratio * mu[,2] + mu[,1] + mu[,4]
+        temp1 = oratio * mu[,2] + mu[,4]
+        dp11star.dp1unstar = 2*(1-phivec)*Vab * Vabc
+
+        dp11star.dphi1 = -2 * A1vec * Vab * Vabc
+
+        dp11star.doratio = Vab / oratio 
+
+        yandmu = (y[,1]/mu[,1] - y[,2]/mu[,2] - y[,3]/mu[,3] + y[,4]/mu[,4])
+        dp11.doratio = Vab / oratio
+        check.dl.doratio = yandmu * dp11.doratio
+
+        cyandmu = (y[,2]+y[,3])/mu[,2] - 2 * y[,1]/mu[,1]
+        dl.dmu1 = dp11star.dp1unstar * yandmu + (1-phivec) * cyandmu
+        dl.dphi1 = dp11star.dphi1 * yandmu - A1vec * cyandmu
+        dl.doratio = check.dl.doratio
+
+        dthetas.detas = cbind(dtheta.deta(A1vec,  .lmu12,   earg= .emu12),
+                              dtheta.deta(phivec, .lphi12,  earg= .ephi12),
+                              dtheta.deta(oratio, .loratio, earg= .eoratio))
+        w * cbind(dl.dmu1, dl.dphi1, dl.doratio) * dthetas.detas
+    }), list( .tol=tol,
+              .lmu12=lmu12, .lphi12=lphi12, .loratio=loratio,
+              .emu12=emu12, .ephi12=ephi12, .eoratio=eoratio ))),
+    weight=eval(substitute(expression({
+        myvarfun1 = function(y, mu, a=1, b=0) (a-2*b)^2 / mu[,1] +
+            (b-a)^2 * (1/mu[,2] +  1/mu[,3]) + a^2 / mu[,4]
+
+        mycovfun1 = function(y, mu, a1=1, b1=0, a2=1, b2=0)
+            (a1-2*b1)*(a2-2*b2) / mu[,1] +
+            (b1-a1) * (b2-a2) * (1/mu[,2] +  1/mu[,3]) +
+            a1 * a2 / mu[,4]
+
+        wz = matrix(0, n, 4)
+        alternwz11 = 2*(1-phivec)^2 *(2/mu[,1] + 1/mu[,2] - 2*Vab*Vabc^2) *
+                     (dthetas.detas[,1])^2
+        wz[,iam(1,1,M)] = alternwz11
+
+
+        alternwz22 = 2* A1vec^2 *(2/mu[,1] + 1/mu[,2] - 2*Vab*Vabc^2) *
+                     (dthetas.detas[,2])^2
+        wz[,iam(2,2,M)] = alternwz22
+
+
+
+
+
+        alternwz12 = -2*A1vec*(1-phivec)*(2/mu[,1] + 1/mu[,2] - 2*Vab*Vabc^2) *
+                     dthetas.detas[,1] * dthetas.detas[,2]
+        wz[,iam(1,2,M)] = alternwz12
+
+
+
+
+        alternwz33 = (Vab / oratio^2) * dthetas.detas[,3]^2
+        wz[,iam(3,3,M)] = alternwz33
+
+
+
+
+
+
+        wz[,1:2] = wz[,1:2] * (1 + .addRidge)
+
+        w * wz
+    }), list( .tol=tol, .addRidge = addRidge,
+              .lmu12=lmu12, .lphi12=lphi12, .loratio=loratio,
+              .emu12=emu12, .ephi12=ephi12, .eoratio=eoratio ))))
+}
 
 
 

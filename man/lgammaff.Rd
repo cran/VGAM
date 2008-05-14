@@ -111,6 +111,7 @@ New York: Wiley.
 \code{\link{rlgamma}},
 \code{\link{ggamma}},
 \code{\link{prentice74}},
+\code{\link{gamma1}},
 \code{\link[base:Special]{lgamma}}.
 }
 \examples{

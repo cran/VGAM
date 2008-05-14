@@ -15,7 +15,7 @@ G1G2G3 <- function(link="logit", earg = list(), ip1=NULL, ip2=NULL, iF=NULL)
     if(!is.list(earg)) earg = list()
 
     new("vglmff",
-    blurb=c("G1/G2/G3 zzphenotype\n\n",
+    blurb=c("G1/G2/G3 phenotype\n\n",
             "Links:    ",
             namesof("p1", link, earg= earg), ", ", 
             namesof("p2", link, earg= earg), ", ", 

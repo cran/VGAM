@@ -78,7 +78,7 @@ cao.fit <- function(x, y, w=rep(1, length(x[, 1])),
     tc1 = trivial.constraints(constraints)
 
 
-    if(all(findex))
+    if(all(findex == 1))
         stop("No covariates to form latent variables from.")
     colx1.index = names.colx1.index = NULL
     dx2 = dimnames(x)[[2]]
@@ -667,7 +667,7 @@ if(exists("flush.console")) flush.console()
              coefficients = ans1$beta,
              df1.nl = df1.nl,
              df2.nl = if(Rank == 2) df2.nl else NULL,
-             df.residual = n*M - qrank - sum(ans1$df - 1),  # zz ??
+             df.residual = n*M - qrank - sum(ans1$df - 1),
              fitted = ans1$fv,  # NOS x n
              kindex = ans1$kindex,
              predictors = matrix(ans1$etamat, n, M, byrow=TRUE),
@@ -689,7 +689,9 @@ calldcaof = function(cmatrix,
                      n, M, 
                      othint, othdbl,
                      alldump=FALSE) {
-    if(alldump) stop("zz really used?")
+
+
+    if(alldump) stop("really used?")
 if(exists("flush.console")) flush.console()
 
     if(!Nice21) stop("Nice21 must be TRUE")
@@ -898,7 +900,7 @@ if(exists("flush.console")) flush.console()
              coefficients=ans1$beta,
              df1.nl=ans1$spardf[  NOS+(1:NOS)] - 1,
              df2.nl=ans1$spardf[3*NOS+(1:NOS)] - 1,
-             df.residual = n*M - qrank - sum(ans1$df - 1),  # zz ??
+             df.residual = n*M - qrank - sum(ans1$df - 1),
              fitted=ans1$fv,
              kindex = ans1$kindex,
              predictors=matrix(ans1$etamat, n, M, byrow=TRUE),
@@ -1363,9 +1365,9 @@ predict.cao <- function (object, newdata=NULL,
             attr(X, "assign") = as.save  # Restored 
         }
 
-        offset <- if (!is.null(off.num<-attr(tt,"offset")))
+        offset <- if (!is.null(off.num<-attr(tt,"offset"))) {
             eval(attr(tt,"variables")[[off.num+1]], newdata)
-        else if (!is.null(object@offset))
+        } else if (!is.null(object@offset))
             eval(object@call$offset, newdata)
 
         if(is.smart(object) && length(object@smart.prediction)) {
@@ -1376,7 +1378,6 @@ predict.cao <- function (object, newdata=NULL,
             attr(X, "assign") <- attrassigndefault(X, tt)
     }
 
-    # zz 30/8/06; use object@extra$Cmat instead? # Not 100% sure here
     cancoefs = ccoef(object)
 
     lvmat = X[,ocontrol$colx2.index,drop=FALSE] %*% cancoefs   # n x Rank
@@ -1621,7 +1622,7 @@ persp.cao = function(x,
                      rugplot=FALSE,
                      ...) {
     object = x  # don't like x as the primary argument 
-    coefobj = Coef(object)  # (Rotate=FALSE, IToleranc=TRUE)  # zzzz 
+    coefobj = Coef(object) 
     if((Rank <- coefobj@Rank) > 2)
         stop("object must be a rank-1 or rank-2 model")
     fvmat = fitted(object)

@@ -32,8 +32,7 @@ vgam.fit <- function(x, y, w, mf,
 
     # --------------------------------------------------------------
     new.s.call <- expression({
-        if(c.list$one.more)
-        {
+        if(c.list$one.more) {
             fv <- if(backchat && M>1 && nonparametric)
                 matrix(c.list$fit,n,M,byrow=TRUE) else c.list$fit
             new.coeffs <- c.list$coeff
@@ -49,10 +48,9 @@ vgam.fit <- function(x, y, w, mf,
 
             old.crit <- new.crit
 
-            new.crit <- 
-                switch(criterion,
-                    coefficients=new.coeffs,
-                    tfun(mu=mu, y=y, w=w, res=FALSE, eta=eta, extra))
+            new.crit <- switch(criterion,
+                               coefficients=new.coeffs,
+                               tfun(mu=mu, y=y, w=w, res=FALSE, eta=eta, extra))
             if(trace) {
                 cat("VGAM ", bf, " loop ", iter, ": ", criterion, "= ")
 
@@ -74,8 +72,7 @@ vgam.fit <- function(x, y, w, mf,
                 flush.console()
 
             if(!is.finite(one.more) || !is.logical(one.more)) one.more = FALSE
-            if(one.more)
-            {
+            if(one.more) {
                 iter <- iter + 1
                 deriv.mu <- eval(family@deriv)
                 wz <- eval(family@weight)
@@ -137,7 +134,7 @@ vgam.fit <- function(x, y, w, mf,
 
 
 
-        smooth.frame <- mf   # zz
+        smooth.frame <- mf
         assignx <- attr(x, "assign")
         which <- assignx[smooth.labels]
 
@@ -249,7 +246,7 @@ vgam.fit <- function(x, y, w, mf,
         rank <- tfit$rank
         if(rank < ncol(x)) 
             stop("rank < ncol(x) is bad")
-    } else rank <- ncol(x)    # zz 8/12/01 I think rank is all wrong
+    } else rank <- ncol(x)
 
     R <- if(is.R()) tfit$qr$qr[1:p.big, 1:p.big, drop=FALSE] else {
              if(backchat) tfit$qr[1:p.big, 1:p.big, drop=FALSE] else
@@ -347,7 +344,7 @@ vgam.fit <- function(x, y, w, mf,
 
     if(se.fit && length(fit$s.xargument)) {
         misc$varassign <- 
-            varassign(Blist, names(fit$s.xargument)) # zz or constraints?
+            varassign(Blist, names(fit$s.xargument))
     }
 
 

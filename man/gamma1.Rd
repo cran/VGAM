@@ -65,7 +65,8 @@ New York: Wiley-Interscience, Third edition.
 }
 
 \seealso{
-  \code{\link{gamma2.ab}} for the 2-parameter gamma distribution.
+  \code{\link{gamma2.ab}} for the 2-parameter gamma distribution,
+  \code{\link{lgammaff}}.
 
 }
 \examples{

@@ -940,7 +940,7 @@ lms.yjn <- function(percentiles=c(25,50,75),
                      as.double(gleg.abs), as.double(gleg.wts), as.integer(n),
                      as.integer(length(gleg.abs)), as.double(lambda),
                      as.double(mymu), as.double(sigma), answer=double(3*n),
-                     eps=as.double(1.0e-5))$ans #zz adjust eps for more accuracy
+                     eps=as.double(1.0e-5))$ans
             dim(temp9) = c(3,n)
             wz[,iam(1,1,M)] = temp9[1,]
             wz[,iam(1,2,M)] = temp9[2,]
@@ -1052,7 +1052,6 @@ alsqreg <- function(w.als=1, parallel=FALSE,
 
     if(!is.Numeric(w.als, posit=TRUE))
         stop("'w.als' must be a vector of positive values")
- print("hi 13/3/08")
     if(!is.Numeric(method.init, allow=1, integ=TRUE, posit=TRUE) ||
        method.init > 3) stop("argument \"method.init\" must be 1, 2 or 3")
     if(mode(lexpectile) != "character" && mode(lexpectile) != "name")
@@ -1693,8 +1692,6 @@ qregal = function(tau=c(0.25, 0.5, 0.75),
         extra$n = n
         extra$y.names = y.names = paste("tau=", round(extra$tau, dig=.digt),
                                         sep="")
- print("y.names")
- print( y.names )
         extra$individual = FALSE
         predictors.names = c(
                   namesof("scale",    .lscale,    earg=.escale,    tag=FALSE),
@@ -1724,8 +1721,6 @@ qregal = function(tau=c(0.25, 0.5, 0.75),
               .ilocation=ilocation ))),
     inverse=eval(substitute(function(eta, extra=NULL) {
         eta = as.matrix(eta)
- print("eta[1:5,]")
- print( eta[1:5,] )
         xi.ans = matrix(0, nrow(eta), ncol(eta)-1)
         for(ii in 1:(ncol(eta)-1))
             xi.ans[,ii] = eta2theta(eta[,ii+1], .llocation, earg= .elocation)

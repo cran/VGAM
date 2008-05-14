@@ -67,7 +67,7 @@ lm2vlm.model.matrix <- function(x, Blist=NULL, assign.attributes=TRUE,
         }
     }
     n <- nrow(x)
-    if(all(trivial.constraints(Blist)) && !length(Aarray)) {
+    if(all(trivial.constraints(Blist) == 1) && !length(Aarray)) {
         xbig <- if(M > 1) kronecker(x, diag(M)) else x
         ncolBlist <- rep(M, ncol(x))
     } else {

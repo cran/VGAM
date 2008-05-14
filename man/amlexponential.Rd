@@ -106,7 +106,8 @@ amlexponential(w.aml=1, parallel=FALSE, method.init=1, digw=4,
   \code{\link{exponential}},
   \code{\link{amlbinomial}},
   \code{\link{amlpoisson}},
-  \code{\link{alsqreg}}.
+  \code{\link{alsqreg}},
+  \code{\link{alaplace1}}.
 
 }
 
@@ -126,7 +127,7 @@ par(mfrow=c(1,2))
 # Quantile plot
 with(mydat, plot(x, sqrt(y), col="blue", las=1, main=
      paste(paste(round(fit@extra$percentile, dig=1), collapse=", "),
-           "expectile curves")))
+           "percentile-expectile curves")))
 with(mydat, matlines(x, sqrt(fitted(fit)), lwd=2, col="blue", lty=1))
 
 # Compare the fitted expectiles with the quantiles

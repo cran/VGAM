@@ -163,7 +163,7 @@ rrvglm.fit <- function(x, y, w=rep(1, length(x[, 1])),
                     wz = checkwz(wz, M=M, trace=trace, wzeps=control$wzepsilon)
 
 
-                wz = matrix(wz, nrow=n)   # zz 3/10/05
+                wz = matrix(wz, nrow=n)
                 U <- vchol(wz, M=M, n=n, silent=!trace)
                 tvfor <- vforsub(U, as.matrix(deriv.mu), M=M, n=n)
                 z = eta + vbacksub(U, tvfor, M, n) - offset # Contains \bI \bnu
@@ -252,7 +252,7 @@ rrvglm.fit <- function(x, y, w=rep(1, length(x[, 1])),
            " that will be overwritten by reduced-rank regression", sep=""))
     }
 
-    if(all(findex))
+    if(all(findex == 1))
         stop("use vglm(), not rrvglm()!")
     colx1.index = names.colx1.index = NULL
     dx2 = dimnames(x)[[2]]
@@ -306,7 +306,7 @@ rrvglm.fit <- function(x, y, w=rep(1, length(x[, 1])),
     Blist <- process.constraints(constraints, x, M, specialCM=specialCM)
 
     nice31 = control$Quadratic && (!control$EqualTol || control$ITolerances) &&
-             all(trivial.constraints(Blist))
+             all(trivial.constraints(Blist) == 1)
 
     Blist = Blist.save = replace.constraints(Blist, Amat, colx2.index)
 
@@ -466,8 +466,8 @@ rrvglm.fit <- function(x, y, w=rep(1, length(x[, 1])),
 
     asgn <- attr(xbig.save, "assign")
     if(nice31) {
-        coefs <- rep(0, len=length(xn.big)) # zz
-        rank <- p.big  # zz 3/10/05
+        coefs <- rep(0, len=length(xn.big))
+        rank <- p.big
     } else {
         coefs <- tfit$coefficients
         names(coefs) <- xn.big
@@ -480,7 +480,7 @@ rrvglm.fit <- function(x, y, w=rep(1, length(x[, 1])),
         stop("rrvglm only handles full-rank models (currently)")
 
     if(nice31) {
-        R <- matrix(as.numeric(NA), 5, 5) # zz 3/10/05 
+        R <- matrix(as.numeric(NA), 5, 5)
     } else {
         R <- if(is.R()) tfit$qr$qr[1:p.big, 1:p.big, drop=FALSE] else {
                  if(backchat) tfit$qr[1:p.big, 1:p.big, drop=FALSE] else 
@@ -494,7 +494,7 @@ rrvglm.fit <- function(x, y, w=rep(1, length(x[, 1])),
     }
 
     if(nice31) {
-        effects <- rep(0, len=77) # zz 3/10/05 
+        effects <- rep(0, len=77)
     } else {
         effects <- tfit$effects
         neff <- rep("", n.big)
@@ -508,7 +508,7 @@ rrvglm.fit <- function(x, y, w=rep(1, length(x[, 1])),
     xn <- dn[[2]]
 
     if(nice31) {
-        residuals <- z - fv  # zz - offset ??   # not sure 3/10/05
+        residuals <- z - fv
         if(M==1) {
             residuals <- as.vector(residuals)
             names(residuals) <- yn
@@ -516,7 +516,7 @@ rrvglm.fit <- function(x, y, w=rep(1, length(x[, 1])),
             dimnames(residuals) <- list(yn, predictors.names)
         }
     } else {
-        residuals <- z - tfit$predictors   # zz - offset ??
+        residuals <- z - tfit$predictors
         if(M==1) {
             tfit$predictors <- as.vector(tfit$predictors)
             residuals <- as.vector(residuals)

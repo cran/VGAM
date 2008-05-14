@@ -68,7 +68,7 @@ predict.vgam <- function(object, newdata=NULL,
     if(!length(newdata)) {
         if(type=="link") {
             if(se.fit) {
-                stop("cannot handle this option (se.fit=TRUE) currently")  # zz
+                stop("cannot handle this option (se.fit=TRUE) currently")
             } else {
                 if(length(na.act)) {
                     answer = napredict(na.act[[1]], object@predictors)
@@ -81,7 +81,7 @@ predict.vgam <- function(object, newdata=NULL,
         } else 
         if(type=="response") {
             if(se.fit) {
-                stop("cannot handle this option (se.fit=TRUE) currently")  # zz
+                stop("cannot handle this option (se.fit=TRUE) currently")
             } else {
                 if(length(na.act)) {
                     return(napredict(na.act[[1]], object@fitted.values))

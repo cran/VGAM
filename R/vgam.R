@@ -118,7 +118,7 @@ vgam <- function(formula,
 
 
 
-    nonparametric <- length(smoothers$s) > 0   # zz; different
+    nonparametric <- length(smoothers$s) > 0
     if(nonparametric) {
 
         ff <- apply(aa$factors[smoothers[["s"]],,drop=FALSE], 2, any)

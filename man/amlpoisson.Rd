@@ -125,7 +125,8 @@ amlpoisson(w.aml=1, parallel=FALSE, method.init=1, digw=4,
 } 
 \seealso{
   \code{\link{alsqreg}},
-  \code{\link{amlbinomial}}.
+  \code{\link{amlbinomial}},
+  \code{\link{alaplace1}}.
 
 }
 
@@ -141,7 +142,7 @@ fit@extra
 # Quantile plot
 with(mydat, plot(x, jitter(y), col="blue", las=1, main=
      paste(paste(round(fit@extra$percentile, dig=1), collapse=", "),
-           "percentile curves")))
+           "percentile-expectile curves")))
 with(mydat, matlines(x, fitted(fit), lwd=2))
 }
 }

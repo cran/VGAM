@@ -196,8 +196,7 @@ economics, engineering, and finance},
 Boston: Birkhauser.
 
   Yee, T. W. (2008)
-  Quantile regression by scoring
-  an asymmetric Laplace distribution.
+  Quantile regression for counts and binomial proportions.
   In preparation.
 
 }
@@ -228,6 +227,12 @@ Boston: Birkhauser.
   \code{alaplace1()} with one \eqn{\tau}{tau} at a time but
   using offsets and an intercept-only model.
 
+  A second method for solving the noncrossing quantile problem is
+  illustrated below in Example 3.
+  This is called the \emph{accumulative quantile method} (AQM)
+  and details are in Yee (2008).
+  It does not make the strong parallelism assumption.
+
   The functions \code{alaplace2()} and \code{\link{laplace}}
   differ slightly in terms of the parameterizations.
 
@@ -254,7 +259,7 @@ fitp = vgam(y ~ s(x, df=mydof), alaplace1(tau=mytau, llocation="loge",
             parallelLoc=TRUE), data=alldat, trace=TRUE)
  
 \dontrun{
-par(xpd=TRUE, las=1)
+par(las=1)
 mylwd = 1.5
 with(alldat, plot(x, jitter(y, factor=0.5), col="red",
                   main="Example 1; green: parallelLoc=TRUE",
@@ -286,6 +291,42 @@ with(alldat, plot(x, jitter(y, factor=0.5), col="red", ylab="y",
                   main="Example 2; parallelLoc=TRUE"))
 with(alldat, matlines(x, fitted(fitp2), col="blue", lty="solid", lwd=mylwd))
 with(alldat, matlines(x, fitted(fitp3), col="black", lty="solid", lwd=mylwd))
+}
+
+
+
+# Example 3: noncrossing regression quantiles using a trick: obtain
+# successive solutions which are added to previous solutions; use a log
+# link to ensure an increasing quantiles at any value of x.
+
+mytau = seq(0.1, 0.9, by=0.1)
+answer = matrix(0, nrow(alldat), length(mytau)) # Stores the quantiles
+alldat = transform(alldat, offsety=y*0)
+usetau = mytau
+for(ii in 1:length(mytau)) {
+#   cat("\n\nii =", ii, "\n")
+    alldat = transform(alldat, usey=y-offsety)
+    iloc = ifelse(ii==1, with(alldat, median(y)), 1.0) # Well-chosen!
+    mydf = ifelse(ii==1, 5, 3)  # Maybe less smoothing will help
+    lloc = ifelse(ii==1, "loge", "loge")  # 2nd value must be "loge"
+    fit3 = vglm(usey ~ ns(x, df=mydf), data=alldat, trace=TRUE,
+                fam=alaplace1(tau=usetau[ii], lloc=lloc, iloc=iloc))
+    answer[,ii] = (if(ii==1) 0 else answer[,ii-1]) + fitted(fit3)
+    alldat = transform(alldat, offsety=answer[,ii])
+}
+
+# Plot the results.
+\dontrun{
+with(alldat, plot(x, y, col="blue",
+     main=paste("Noncrossing and nonparallel; tau =",
+                paste(mytau, collapse=", "))))
+with(alldat, matlines(x, answer, col="red", lty=1))
+
+# Zoom in near the origin.
+with(alldat, plot(x, y, col="blue", xlim=c(0, 0.2), ylim=0:1,
+     main=paste("Noncrossing and nonparallel; tau =",
+                paste(mytau, collapse=", "))))
+with(alldat, matlines(x, answer, col="red", lty=1))
 }
 }
 \keyword{models}

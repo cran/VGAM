@@ -111,7 +111,7 @@ residualsvglm  <- function(object,
         deviance = {
             n <- object@misc$n
 
-            y <- as.matrix(object@y)   # zz as.matrix
+            y <- as.matrix(object@y)
             mu <- object@fitted.values
 
 
@@ -138,7 +138,7 @@ residualsvglm  <- function(object,
         },
         ldot = {
             n <- object@misc$n
-            y <- as.matrix(object@y)   # zz as.matrix
+            y <- as.matrix(object@y)
             mu <- object@fitted
             w <- object@prior.weights
             if(is.null(w))
@@ -157,7 +157,7 @@ residualsvglm  <- function(object,
         response = {
             y <- object@y
 
-            mu <- fitted(object)       # zz object@fitted 
+            mu <- fitted(object)
 
             true.mu <- object@misc$true.mu
             if(is.null(true.mu))

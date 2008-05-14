@@ -54,7 +54,7 @@ vlm.wfit <- function(x, z, Blist, wz=NULL, U=NULL,
     }
 
     ans <- if(!is.R()) lm.fit.qr(x=xbig, y=z.big, qr=qr, ...) else  
-               lm.fit(xbig, z.big, ...) # zz; also qr=qr,  
+               lm.fit(xbig, z.big, ...)
 
     if(rss) {
         ans$rss <- sum(ans$resid^2)
