@@ -243,7 +243,7 @@ nos = ncol(up1@y) # Number of species
 clr = (1:(nos+1))[-7]  # to omit yellow
 lvplot(up1, las=1, y=TRUE, pch=1:nos, scol=clr, lcol=clr, 
        pcol=clr, llty=1:nos, llwd=2)
-legend(x=2, y=135, dimnames(up1@y)[[2]], col=clr, lty=1:nos,
+legend(x=2, y=135, colnames(up1@y), col=clr, lty=1:nos,
        lwd=2, merge=FALSE, ncol=1, x.inter=4.0, bty="l", cex=0.9)
 
 # Compare the site scores between the two models

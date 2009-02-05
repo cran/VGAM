@@ -116,7 +116,11 @@ zipoisson(lphi="logit", llambda = "loge",
 }
 
 \section{Warning }{
-  Numerical problems can occur.
+  Numerical problems can occur, e.g., when the probability of
+  zero is actually less than, not more than, the nominal
+  probability of zero.
+  For example, in the Angers and Biswas (2003) data below,
+  replacing 182 by 1 results in nonconvergence.
   Half-stepping is not uncommon.
   If failure to converge occurs, try using combinations of
   \code{method.init},
@@ -158,6 +162,10 @@ y = 0:7
 w = c(182, 41, 12, 2, 2, 0, 0, 1)
 y = y[w>0]
 w = w[w>0]
+\dontrun{
+# The zero is deflated, not inflated, giving convergence problems
+w[1] = 1
+}
 fit = vglm(y ~ 1, zipoisson(lphi=probit, iphi=0.3), wei=w, tra=TRUE)
 fit@misc$prob0  # Estimate of P(Y=0)
 coef(fit, matrix=TRUE)

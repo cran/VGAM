@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2008 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2009 T.W. Yee, University of Auckland. All rights reserved.
 
 
 
@@ -729,7 +729,7 @@ rlplot.gev <-
             zpp[,ii] = object@family@inverse(eta=peta, extra=extra2)[1,]
             zpp[,ii] = (zpp[,ii] - zp) / epsilon  # On the transformed scale
         }
-        VCOV = vcov(object, untransform=TRUE)
+        VCOV = vcovvlm(object, untransform=TRUE)
         v = numeric(nrow(zpp))
         for(ii in 1:nrow(zpp))
             v[ii] = t(as.matrix(zpp[ii,])) %*% VCOV %*% as.matrix(zpp[ii,])

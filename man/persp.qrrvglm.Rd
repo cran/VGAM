@@ -16,7 +16,9 @@ persp.qrrvglm(x, varlvI = FALSE, reference = NULL, plot.it = TRUE,
               ylab = if(Rank==1) "Expected Value" else "Latent Variable 2",
               zlab = "Expected value", labelSpecies = FALSE,
               stretch = 1.05, main="", ticktype = "detailed",
-              col = if(Rank==1) par()$col else "white", add1 = FALSE, ...)
+              col = if(Rank==1) par()$col else "white",
+              llty=par()$lty, llwd=par()$lwd,
+              add1 = FALSE, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -96,6 +98,14 @@ persp.qrrvglm(x, varlvI = FALSE, reference = NULL, plot.it = TRUE,
   \item{col}{ Color. 
   See \code{\link[graphics]{persp}} for more information. 
 
+  }
+  \item{llty}{ Line type.
+  Rank-1 models only.
+  See the \code{lty} argument of \code{\link[graphics]{par}}.
+  }
+  \item{llwd}{ Line width.
+  Rank-1 models only.
+  See the \code{lwd} argument of \code{\link[graphics]{par}}.
   }
   \item{add1}{ Logical. Add to an existing plot?
   Used only for rank-1 models.

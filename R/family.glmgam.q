@@ -1,110 +1,10 @@
 # These functions are
-# Copyright (C) 1998-2008 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2009 T.W. Yee, University of Auckland. All rights reserved.
 
 
 
 
 
-if(FALSE)
-quasiff = function(link="polw",
-                   earg=if(link=="powl") list(power=1) else list(),
-                   dispersion=0)
-{
-    warning("link=powl doesn't work yet")
-    estimated.dispersion <- dispersion==0
-
-    if(mode(link )!= "character" && mode(link )!= "name")
-        link <- as.character(substitute(link))
-    if(!is.list(earg)) earg = list()
-
-
-
-    result <- 
-    new("vglmff",
-    blurb=c("Quasi family\n\n",
-           "Link:     ", namesof("mu", link, earg=earg), "\n",
-           "Variance: ", ifelse(power.variance==1, variance,
-           paste(variance, "^", power.variance, sep=""))),
-    deviance= function(mu, y, w, residuals = FALSE, eta, extra=NULL) {
-        pow <- extra$power.variance
-        thing <- extra$variance
-        if(thing=="mu" && (pow==1 || pow==2))
-            stop("this deviance function not right")
-
-        devy  <- y^(2-pow) / (1-pow) - y^(2-pow) / (2-pow)
-        devmu <- y * mu^(1-pow) / (1-pow) - mu^(2-pow) / (2-pow)
-        devi <- 2 * (devy - devmu)
-        if(residuals) {
-            sign(y - mu) * sqrt(abs(devi) * w)
-        } else sum(w * devi)
-    },
-    initialize=eval(substitute(expression({
-        extra$link <- .link
-        extra$variance <- .variance
-        extra$power.variance <- .power.variance
-
-        if(.variance=="mu(1-mu)") {
-            delete.zero.colns <- TRUE 
-            eval(process.categorical.data.vgam)
-    
-            mustart <- mustart[,1]
-            y <- y[,1]
-        } else {
-            mustart <- y + 0.167 * (y == 0)
-        }
-
-
-    }), list( .link=link, .variance=variance,
-              .earg=earg, .power.variance=power.variance ))),
-    inverse=eval(substitute(function(eta, extra=NULL) {
-        eta2theta(eta, link= .link, earg=.earg)
-    }, list( .link=link,
-              .earg=earg ))),
-    last=eval(substitute(expression({
-        dpar <- .dispersion
-        if(!dpar) {
-            temp <- w * dmu.deta^2
-            dpar <- sum( w * (y-mu)^2 * wz / temp ) / (length(mu) - ncol(x))
-        }
-        misc$dispersion <- dpar
-        misc$default.dispersion <- 0
-        misc$estimated.dispersion <- .estimated.dispersion
-        misc$power.variance <- .power.variance
-        misc$link = c("mu" = .link )
-    }), list( .dispersion=dispersion,
-              .earg=earg, .estimated.dispersion=estimated.dispersion,
-            .link=link, .power.variance=power.variance ))),
-    link=eval(substitute(function(mu, extra=NULL) {
-        theta2eta(mu, link= .link, earg=.earg)
-    }, list( .link=link,
-              .earg=earg ))),
-    vfamily="quasiff",
-    deriv=eval(substitute(expression({
-        pow <- extra$power.variance
-        thing <- extra$variance
-        dQ.dmu <- if(thing=="mu") (y-mu)/mu^pow else (y-mu)/(mu*(1-mu))^pow
-        dmu.deta <- dtheta.deta(theta=mu, link= .link, earg=.earg)
-        w * dQ.dmu * dmu.deta
-    }), list( .link=link, .power.variance=power.variance,
-              .earg=earg ))),
-    weight=eval(substitute(expression({
-        d2Q.dmu2 <- if(thing=="mu") 1 / mu^pow else 
-            1 / (mu*(1-mu))^pow
-        w * dmu.deta^2 * d2Q.dmu2
-    }), list( .link=link, .power.variance=power.variance,
-              .earg=earg ))))
-
-    if(variance=="mu") {
-        if(power.variance==1)
-            result@deviance <- poissonff()@deviance
-        if(power.variance==2)
-            result@deviance <- gammaff()@deviance
-    } else {
-        result@deviance <- if(power.variance==1) binomialff()@deviance else NULL 
-    }
-
-    result
-}
 
 
 
@@ -557,6 +457,7 @@ inv.gaussianff <- function(lmu="loge", llambda="loge",
 
 poissonff <- function(link="loge", earg=list(),
                       dispersion=1, onedpar=FALSE,
+                      imu=NULL, method.init=1,
                       parallel=FALSE, zero=NULL)
 {
 
@@ -564,6 +465,11 @@ poissonff <- function(link="loge", earg=list(),
     if(mode(link )!= "character" && mode(link )!= "name")
         link <- as.character(substitute(link))
     if(!is.list(earg)) earg = list()
+    if(!is.Numeric(method.init, allow=1, integ=TRUE, posit=TRUE) ||
+       method.init > 3)
+        stop("'method.init' must be 1 or 2 or 3")
+    if(length(imu) && !is.Numeric(imu, posit=TRUE))
+        stop("bad input for argument 'imu'")
 
     new("vglmff",
     blurb=c("Poisson distribution\n\n",
@@ -581,10 +487,12 @@ poissonff <- function(link="loge", earg=list(),
             2 * sum(w * devi)
     },
     initialize=eval(substitute(expression({
+        y = as.matrix(y)
+        M = ncoly = ncol(y)
+
         if(is.R()) assign("CQO.FastAlgorithm",
             ( .link == "loge"), envir = VGAMenv) else
             CQO.FastAlgorithm <<- ( .link == "loge")
-        M = if(is.matrix(y)) ncol(y) else 1
         dn2 = if(is.matrix(y)) dimnames(y)[[2]] else NULL
         dn2 = if(length(dn2)) {
             paste("E[", dn2, "]", sep="") 
@@ -593,11 +501,22 @@ poissonff <- function(link="loge", earg=list(),
         }
         predictors.names = namesof(if(M>1) dn2 else "mu", .link,
             earg= .earg, short=TRUE)
-        mu = pmax(y, 1/8) # y + 0.167 * (y == 0)
-        if(!length(etastart))
-            etastart <- theta2eta(mu, link= .link, earg= .earg)
+
+        if(!length(etastart)) {
+            mu.init = pmax(y, 1/8)
+            for(iii in 1:ncol(y)) {
+                if( .method.init == 2) {
+                    mu.init[,iii] = weighted.mean(y[,iii], w) + 1/8
+                } else if( .method.init == 3) {
+                    mu.init[,iii] = median(y[,iii]) + 1/8
+                }
+            }
+            if(length(.imu))
+                mu.init = matrix( .imu, n, ncoly, byrow=TRUE)
+            etastart <- theta2eta(mu.init, link= .link, earg= .earg)
+        }
     }), list( .link=link, .estimated.dispersion=estimated.dispersion,
-              .earg=earg ))),
+              .method.init=method.init, .imu=imu, .earg=earg ))),
     inverse=eval(substitute(function(eta, extra=NULL) {
         mu = eta2theta(eta, link= .link, earg= .earg)
         mu
@@ -631,12 +550,14 @@ poissonff <- function(link="loge", earg=list(),
         misc$expected = TRUE
         misc$link = rep( .link, length=M)
         names(misc$link) = if(M>1) dn2 else "mu"
+        misc$method.init = .method.init
 
         misc$earg = vector("list", M)
         names(misc$earg) = names(misc$link)
         for(ii in 1:M) misc$earg[[ii]] = .earg
-    }), list( .dispersion=dispersion, .estimated.dispersion=estimated.dispersion,
-            .onedpar=onedpar, .link=link, .earg=earg ))),
+    }), list( .dispersion=dispersion, .method.init=method.init,
+              .estimated.dispersion=estimated.dispersion,
+              .onedpar=onedpar, .link=link, .earg=earg ))),
     link=eval(substitute(function(mu, extra=NULL) {
         theta2eta(mu, link= .link, earg= .earg)
     }, list( .link=link, .earg=earg ))),

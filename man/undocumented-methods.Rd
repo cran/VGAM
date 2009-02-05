@@ -5,6 +5,11 @@
 %
 %
 %
+\alias{AIC,vlm-method}
+\alias{AIC,vglm-method}
+\alias{AIC,vgam-method}
+\alias{AIC,rrvglm-method}
+\alias{AIC,qrrvglm-method}
 \alias{attrassign,lm-method}
 \alias{calibrate,qrrvglm-method}
 \alias{calibrate,cao-method}
@@ -70,6 +75,8 @@
 \alias{is.bell,Coef.qrrvglm-method}
 \alias{logLik,vlm-method}
 \alias{logLik,summary.vglm-method}
+\alias{logLik,vglm-method}
+\alias{logLik,vgam-method}
 \alias{lvplot,cao-method}
 \alias{lvplot,qrrvglm-method}
 \alias{lvplot,rrvglm-method}

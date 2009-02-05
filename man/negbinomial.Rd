@@ -9,7 +9,8 @@
 \usage{
 negbinomial(lmu = "loge", lk = "loge",
             emu =list(), ek=list(),
-            ik = NULL, cutoff = 0.995, Maxiter=5000, 
+            ik = NULL, nsimEIM=100,
+            cutoff = 0.995, Maxiter=5000, 
             deviance.arg = FALSE, method.init=1,
             shrinkage.init=0.95, zero = -2)
 }
@@ -36,11 +37,20 @@ negbinomial(lmu = "loge", lk = "loge",
   the \code{iKvector} argument of \code{\link{qrrvglm.control}} instead.
 
   }
+  \item{nsimEIM}{
+  This argument is used
+  for computing the diagonal element of the
+  \emph{expected information matrix} (EIM) corresponding to \eqn{k}.
+  See \code{\link{CommonVGAMffArguments}} for more information
+  and the note below.
+
+  }
   \item{cutoff}{
+  Used in the finite series approximation.
   A numeric which is close to 1 but never exactly 1.
   Used to specify how many terms of the infinite series
-  for computing the second diagonal element of the expected information
-  matrix are actually used.
+  for computing the second diagonal element of the
+  EIM are actually used.
   The sum of the probabilites are added until they reach this value or more
   (but no more than \code{Maxiter} terms allowed).
   It is like specifying \code{p} in an imaginary function
@@ -48,8 +58,9 @@ negbinomial(lmu = "loge", lk = "loge",
 
   }
   \item{Maxiter}{
+  Used in the finite series approximation.
   Integer. The maximum number of terms allowed when computing
-  the second diagonal element of the expected information matrix.
+  the second diagonal element of the EIM.
   In theory, the value involves an infinite series.
   If this argument is too small then the value may be inaccurate.
 
@@ -78,6 +89,7 @@ negbinomial(lmu = "loge", lk = "loge",
   a value of 0 means the individual response values are used,
   and a value of 1 means the median or mean is used.
   This argument is used in conjunction with \code{method.init}.
+  If convergence failure occurs try setting this argument to 1.
 
   }
   \item{zero}{
@@ -91,6 +103,7 @@ negbinomial(lmu = "loge", lk = "loge",
   are intercept-only.
 
   }
+
 }
 \details{
   The negative binomial distribution can be motivated in several ways,
@@ -122,12 +135,13 @@ negbinomial(lmu = "loge", lk = "loge",
   MASS library). This \pkg{VGAM} family function \code{negbinomial} treats
   both parameters on the same footing, and estimates them both by full
   maximum likelihood estimation.
+  Simulated Fisher scoring is employed as the default
+  (see the \code{nsimEIM} argument).
 
-  The parameters \eqn{\mu}{mu} and \eqn{k} are independent (diagonal
-  expected information matrix), and the
-  confidence region for \eqn{k} is extremely skewed so that its standard
-  error is often of no practical use. The parameter \eqn{1/k} has been
-  used as a measure of aggregation.
+  The parameters \eqn{\mu}{mu} and \eqn{k} are independent (diagonal EIM),
+  and the confidence region for \eqn{k} is extremely skewed so that its
+  standard error is often of no practical use. The parameter \eqn{1/k}
+  has been used as a measure of aggregation.
 
   This \pkg{VGAM} function handles \emph{multivariate} responses, so
   that a matrix can be used as the response. The number of columns is the
@@ -163,6 +177,10 @@ Negative binomial and mixed Poisson regression.
 \emph{The Canadian Journal of Statistics}
 \bold{15}, 209--225.
 
+Hilbe, J. M. (2007)
+\emph{Negative Binomial Regression}.
+Cambridge: Cambridge University Press.
+
 Bliss, C. and Fisher, R. A. (1953)
 Fitting the negative binomial distribution to biological data.
 \emph{Biometrics}
@@ -174,6 +192,32 @@ Fitting the negative binomial distribution to biological data.
 % The \pkg{VGAM} package has a few other family functions for the
 % negative binomial distribution. Currently, none of these others work
 % very well.
+
+  Suppose the response is called \code{ymat}.
+  The diagonal element of the \emph{expected information matrix}
+  (EIM) for parameter \eqn{k}
+  involves an infinite series; consequently simulated Fisher scoring
+  (see \code{nsimEIM}) is the default. This algorithm should definitely be
+  used if \code{max(ymat)} is large, e.g., \code{max(ymat) > 300} or there
+  are any outliers in \code{ymat}.
+  A second algorithm involving a finite series approximation can be
+  invoked by setting \code{nsimEIM = NULL}.
+  Then the arguments
+  \code{Maxiter} and
+  \code{cutoff} are pertinent.
+
+  Regardless of the algorithm used,
+  convergence problems may occur, especially when the response has large
+  outliers or is large in magnitude.
+  If convergence failure occurs, try using arguments
+  (in recommended decreasing order)
+  \code{nsimEIM},
+  \code{shrinkage.init},
+  \code{method.init},
+  \code{Maxiter}, 
+  \code{cutoff},
+  \code{ik},
+  \code{zero}.
 
   This function can be used by the fast algorithm in
   \code{\link{cqo}}, however, setting \code{EqualTolerances=TRUE} and
@@ -208,20 +252,27 @@ Fitting the negative binomial distribution to biological data.
   \code{\link{nbolf}}.
 }
 \examples{
-y = 0:7  # Example 1: apple tree data
+# Example 1: apple tree data
+y = 0:7
 w = c(70, 38, 17, 10, 9, 3, 2, 1)
 fit = vglm(y ~ 1, negbinomial, weights=w)
 summary(fit)
 coef(fit, matrix=TRUE)
 Coef(fit)
 
-\dontrun{
-x = runif(n <- 500) # Example 2: simulated data with multivariate response
+# Example 2: simulated data with multivariate response
+x = runif(n <- 500)
 y1 = rnbinom(n, mu=exp(3+x), size=exp(1)) # k is size
 y2 = rnbinom(n, mu=exp(2-x), size=exp(0))
 fit = vglm(cbind(y1,y2) ~ x, negbinomial, trace=TRUE)
 coef(fit, matrix=TRUE)
-}
+
+# Example 3: large counts so definitely use the nsimEIM argument
+x = runif(n <- 500)
+y = rnbinom(n, mu=exp(12+x), size=exp(1)) # k is size
+range(y)  # Large counts
+fit = vglm(y ~ x, negbinomial(nsimEIM=100), trace=TRUE)
+coef(fit, matrix=TRUE)
 }
 \keyword{models}
 \keyword{regression}

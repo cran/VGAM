@@ -1,12 +1,11 @@
 # These functions are
-# Copyright (C) 1998-2008 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2009 T.W. Yee, University of Auckland. All rights reserved.
 
 
 
 
 if(FALSE)
-printsummary.lms <- function(x, digits = NULL, quote = TRUE, prefix = "")
-{
+printsummary.lms <- function(x, digits = NULL, quote = TRUE, prefix = "") {
 
     printsummary.vglm(x, digits = NULL, quote = TRUE, prefix = "")
 
@@ -17,8 +16,8 @@ printsummary.lms <- function(x, digits = NULL, quote = TRUE, prefix = "")
 
 
 
-printsummary.rc.exponential <- function(x, digits = NULL, quote = TRUE, prefix = "")
-{
+printsummary.rc.exponential <- function(x, digits = NULL, quote = TRUE,
+        prefix = "") {
 
     printsummary.vglm(x, digits = NULL, quote = TRUE, prefix = "")
 

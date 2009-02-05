@@ -74,3 +74,23 @@ end subroutine vgamf90mux34
 
 
 
+
+
+subroutine vgamf90memalloc(m, n)
+implicit none
+
+integer :: m, n
+real(kind(0.0d0)), allocatable :: A(:,:)
+integer :: errno
+
+allocate(A(m,n), stat=errno)
+if(errno /= 0) then ! allocation failed
+    call INTPR("in vgamf90memalloc; errno: ",-1, errno, 1)
+    stop
+end if
+
+return
+end subroutine vgamf90memalloc
+
+
+

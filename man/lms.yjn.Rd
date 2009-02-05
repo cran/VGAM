@@ -8,15 +8,15 @@
   to normality.
 }
 \usage{
-lms.yjn(percentiles = c(25, 50, 75), zero = NULL,
-        link.lambda = "identity", link.sigma = "loge", elambda=list(),
-        esigma=list(), dfmu.init=4, dfsigma.init=2, init.lambda = 1,
-        init.sigma = NULL, rule = c(10, 5), yoffset = NULL, diagW=FALSE,
+lms.yjn(percentiles = c(25, 50, 75), zero = c(1,3),
+        llambda = "identity", lsigma = "loge", elambda=list(),
+        esigma=list(), dfmu.init=4, dfsigma.init=2, ilambda = 1,
+        isigma = NULL, rule = c(10, 5), yoffset = NULL, diagW=FALSE,
         iters.diagW=6)
-lms.yjn2(percentiles=c(25,50,75), zero=NULL,
-         link.lambda="identity", link.mu = "identity", link.sigma="loge",
+lms.yjn2(percentiles=c(25,50,75), zero=c(1,3),
+         llambda="identity", lmu = "identity", lsigma="loge",
          elambda=list(), emu = list(), esigma=list(), dfmu.init=4,
-         dfsigma.init=2, init.lambda=1.0, init.sigma=NULL, yoffset=NULL,
+         dfsigma.init=2, ilambda=1.0, isigma=NULL, yoffset=NULL,
          nsimEIM=250)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -36,9 +36,9 @@ lms.yjn2(percentiles=c(25,50,75), zero=NULL,
   functions of the covariates.
 
   } 
-  \item{link.lambda, link.mu, link.sigma}{
+  \item{llambda, lmu, lsigma}{
   Parameter link function applied to the first, second and third
-  linear/additive predictor.
+  linear/additive predictors.
   See \code{\link{Links}} for more choices.
 
   }
@@ -60,12 +60,12 @@ lms.yjn2(percentiles=c(25,50,75), zero=NULL,
   using some other algorithm.
 
   }
-  \item{init.lambda}{
+  \item{ilambda}{
   Initial value for lambda.
   If necessary, it is recycled to be a vector of length \eqn{n}.
 
   }
-  \item{init.sigma}{
+  \item{isigma}{
   Optional initial value for sigma.
   If necessary, it is recycled to be a vector of length \eqn{n}.
   The default value, \code{NULL}, means an initial value is computed
@@ -158,8 +158,8 @@ methods only handle a positive response because the
 Box-Cox transformation cannot handle negative values.
 
 In general, the lambda and sigma functions should be more smoother
-than the mean function. Often setting \code{zero=1} or
-\code{zero=3} or \code{zero=c(1,3)} is a good idea.
+than the mean function.
+Having \code{zero=1}, \code{zero=3} or \code{zero=c(1,3)} is often a good idea.
 See the example below.
 
 While it is usual to regress the response against a single
@@ -213,10 +213,9 @@ a = deplot(fit, x0=20, y=ygrid, xlab="BMI", col="black",
 a
 a = deplot(fit, x0=42, y=ygrid, add=TRUE, llty=2, col="red")
 a = deplot(fit, x0=55, y=ygrid, add=TRUE, llty=4, col="blue", Attach=TRUE)
-a@post$deplot  # Contains density function values
+with(a@post, deplot) # Contains density function values; == a@post$deplot
 }
 }
 \keyword{models}
 \keyword{regression}
 
-%fit = vgam(BMI ~ s(age, df=c(2,4,2)), fam=lms.yjn, data=bminz, tr=TRUE)

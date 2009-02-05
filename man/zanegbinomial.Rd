@@ -10,8 +10,9 @@
 }
 \usage{
 zanegbinomial(lp0="logit", lmunb = "loge", lk = "loge",
-              ep0=list(), emunb =list(), ek = list(),
-              ik = 1, zero = -3, cutoff = 0.995, method.init=3)
+              ep0=list(), emunb =list(), ek = list(), ipnb0 = NULL,
+              ik = NULL, zero = -3, cutoff = 0.995, method.init=1,
+              shrinkage.init=0.95)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -38,8 +39,15 @@ zanegbinomial(lp0="logit", lmunb = "loge", lk = "loge",
   See \code{earg} in \code{\link{Links}} for general information.
 
   }
+  \item{ipnb0}{ 
+    Optional initial values for the probability \eqn{p_0}{p0}.
+    If given, they must be in \eqn{(0,1)},
+    and it is ok to give one value each for each response/species.
+
+  }
   \item{ik}{ 
-    Initial values for \code{k}. They must be positive, and one value
+    Optional initial values for \code{k}.
+    If given, they must be positive, and give one value
     for each response/species.
 
   }
@@ -62,7 +70,7 @@ zanegbinomial(lp0="logit", lmunb = "loge", lk = "loge",
     \code{qnegbin(p)}.
 
   }
-  \item{method.init}{
+  \item{method.init, shrinkage.init}{
   See \code{\link{negbinomial}}.
 
   }
@@ -77,7 +85,7 @@ zanegbinomial(lp0="logit", lmunb = "loge", lk = "loge",
   binomial distribution in that the former has zeros coming from one
   source, whereas the latter has zeros coming from the negative binomial
   distribution too.  The zero-inflated negative binomial distribution
-  is currently not implemented in the \pkg{VGAM} package.  Some people
+  is implemented in the \pkg{VGAM} package.  Some people
   call the zero-altered negative binomial a \emph{hurdle} model.
 
   For one response/species, by default, the three linear/additive
@@ -134,20 +142,21 @@ for counts with extra zeros.
 }
 
 \seealso{
+  \code{\link{dzanegbin}},
   \code{\link{posnegbinomial}},
   \code{\link{negbinomial}},
   \code{\link{binomialff}},
   \code{\link{rposnegbin}},
   \code{\link{zinegbinomial}},
-  \code{\link{zipoisson}}.
+  \code{\link{zipoisson}},
+  \code{\link[stats:NegBinomial]{dnbinom}}.
 }
 
 \examples{
-\dontrun{
 x = runif(n <- 2000)
 p0 = logit(-1 + 2*x, inverse=TRUE)
-y1 = rposnegbin(n, munb=exp(0+2*x), k=exp(1))   # With covariates
-y2 = rposnegbin(n, munb=exp(1+2*x), k=exp(1))   # With covariates
+y1 = rposnegbin(n, munb=exp(0+2*x), size=exp(1))   # With covariates
+y2 = rposnegbin(n, munb=exp(1+2*x), size=exp(1))   # With covariates
 y1 = ifelse(runif(n) < p0, 0, y1)
 y2 = ifelse(runif(n) < p0, 0, y2)
 table(y1)
@@ -155,9 +164,8 @@ table(y2)
 
 fit = vglm(cbind(y1,y2) ~ x, zanegbinomial, trace=TRUE)
 coef(fit, matrix=TRUE)
-fitted(fit)[1:9,]
-predict(fit)[1:9,]
-}
+fitted(fit)[1:3,]
+predict(fit)[1:3,]
 }
 \keyword{models}
 \keyword{regression}

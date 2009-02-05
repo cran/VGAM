@@ -105,11 +105,11 @@ lqnorm(qpower=2, link="identity", earg=list(),
 
 \examples{
 set.seed(123)
-d = data.frame(x = sort(runif(n <- 100)))
+d = data.frame(x = sort(runif(n <- 10 )))
 realfun = function(x) 4 + 5*x
 d = transform(d, y = realfun(x) + rnorm(n, sd=exp(1)))
-d$y[1] = 4 * d$y[1]  # Outlier
-d$x[1] = -1 # Outlier
+# Make the first observation an outlier
+d = transform(d, y = c(4*y[1], y[-1]), x=c(-1, x[-1]))
 fit = vglm(y ~ x, fam = lqnorm(qpower=1.2), data=d)
 coef(fit, matrix=TRUE)
 fitted(fit)[1:4,]

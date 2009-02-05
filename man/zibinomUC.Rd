@@ -63,7 +63,7 @@ rzibinom(n, size, prob, phi = 0)
 \examples{
 prob = 0.2; size = 10; phi = 0.5
 (i = dzibinom(0:size, size, prob, phi=phi))
-cumsum(i) - pzibinom(0:size, size, prob, phi=phi)  # Should be 0s
+max(abs(cumsum(i) - pzibinom(0:size, size, prob, phi=phi)))  # Should be 0
 table(rzibinom(100, size, prob, phi=phi))
 
 table(qzibinom(runif(100), size, prob, phi=phi))

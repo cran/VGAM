@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2008 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2009 T.W. Yee, University of Auckland. All rights reserved.
 
 
 
@@ -478,6 +478,7 @@ plotvgam.control = function(
                           add.arg= FALSE,
                           one.at.a.time= FALSE, 
                           .include.dots= TRUE,
+                          noxmean= FALSE,
                           ...) {
 
 
@@ -489,6 +490,7 @@ plotvgam.control = function(
          pcol=pcol, lcol=lcol, rcol=rcol, scol=scol,
          llwd=llwd, slwd=slwd,
          add.arg=add.arg,
+         noxmean=noxmean,
          one.at.a.time=one.at.a.time)
 
     if(.include.dots) {
@@ -538,6 +540,7 @@ vplot.numeric <- function(x, y, se.y=NULL, xlab, ylab,
                           slwd=par()$lwd,
                           add.arg= FALSE,
                           one.at.a.time= FALSE, 
+                          noxmean = FALSE, 
                           separator = ":",
 
                           ...)
@@ -573,8 +576,8 @@ vplot.numeric <- function(x, y, se.y=NULL, xlab, ylab,
     ylab <- add.hookey(ylab, deriv.arg)
 
 
-    if(xmeanAdded <- (se && !is.null(se.y) &&
-       all(substring(ylab, 1:nchar(ylab), 1:nchar(ylab)) != "("))) {
+    if(xmeanAdded <- (se && !is.null(se.y) && !noxmean &&
+                  all(substring(ylab, 1:nchar(ylab), 1:nchar(ylab)) != "("))) {
             x = c(x, mean(x))
             y = rbind(y, 0 * y[1,])
             se.y = rbind(se.y, 0 * se.y[1,])
@@ -594,9 +597,9 @@ vplot.numeric <- function(x, y, se.y=NULL, xlab, ylab,
     }
 
     if(se && !is.null(se.y)) {
-        se.upper <- uy[,which.cf] + 2 * se.y[o,which.cf,drop= FALSE]
-        se.lower <- uy[,which.cf] - 2 * se.y[o,which.cf,drop= FALSE]
-        ylim <- range(c(ylim, se.upper, se.lower))
+        se.upper <- uy + 2 * se.y[o,,drop= FALSE]
+        se.lower <- uy - 2 * se.y[o,,drop= FALSE]
+        ylim <- range(c(ylim, se.upper[,which.cf], se.lower[,which.cf]))
     }
 
     if(!is.null(residuals)) {
@@ -660,46 +663,51 @@ vplot.numeric <- function(x, y, se.y=NULL, xlab, ylab,
         scol = rep(scol, len=ncol(uy))
         slwd = rep(slwd, len=ncol(uy))
 
-        for(i in 1:ncol(uy))
-        if(!length(which.cf) ||
-           (length(which.cf) && any(which.cf==i))) {
+        for(ii in 1:ncol(uy)) {
+            if(!length(which.cf) ||
+               (length(which.cf) && any(which.cf == ii))) {
 
-            if(is.Numeric(ylim0, allow=2)) {
-                ylim = ylim0
-            } else {
-                ylim <- range(ylim0, uy[,i], na.rm= TRUE)
-                if(se && !is.null(se.y))
-                    ylim <- range(ylim0, se.lower[,i], se.upper[,i], na.rm= TRUE)
-                if(!is.null(residuals))
-                    ylim <- range(c(ylim, residuals[,i]), na.rm= TRUE)
-                ylim <- ylim.scale(ylim, scale)
-            }
-            if(ncol(uy)>1 && length(separator))
-                YLAB <- paste(ylab, separator, i, sep="")  
-            if(!add.arg) {
-                if(one.at.a.time) {
-                    readline("Hit return for the next plot ")
-                }
-                if(is.R()) {
-                    plot(ux, uy[,i], type="n", 
-                         xlim=xlim, ylim=ylim, 
-                         xlab=xlab, ylab=YLAB, ...)
+                if(is.Numeric(ylim0, allow=2)) {
+                    ylim = ylim0
                 } else {
-                    plot(ux, uy[,i], type="n", 
-                         xlim=xlim, ylim=ylim, 
-                         xlab=xlab, ylab=YLAB, ...)
+                    ylim <- range(ylim0, uy[,ii], na.rm= TRUE)
+                    if(se && !is.null(se.y))
+                        ylim <- range(ylim0, se.lower[,ii], se.upper[,ii],
+                                      na.rm=TRUE)
+                    if(!is.null(residuals))
+                        ylim <- range(c(ylim, residuals[,ii]), na.rm= TRUE)
+                    ylim <- ylim.scale(ylim, scale)
                 }
-            }
-            lines(ux, uy[,i], 
-                 lwd=llwd[i], col=lcol[i], lty=llty[i])
-            if(!is.null(residuals))
-                points(x, residuals[,i], pch=pch[i], col=pcol[i], cex=pcex[i]) 
-            if(rugplot)
-                if(is.R()) rug(jx, col=rcol[i]) else rug(jx)
-
-            if(se && !is.null(se.y)) {
-                lines(ux, se.upper[,i], lty=slty[i], lwd=slwd[i], col=scol[i])
-                lines(ux, se.lower[,i], lty=slty[i], lwd=slwd[i], col=scol[i])
+                if(ncol(uy)>1 && length(separator))
+                    YLAB <- paste(ylab, separator, ii, sep="")  
+                if(!add.arg) {
+                    if(one.at.a.time) {
+                        readline("Hit return for the next plot ")
+                    }
+                    if(is.R()) {
+                        plot(ux, uy[,ii], type="n", 
+                             xlim=xlim, ylim=ylim, 
+                             xlab=xlab, ylab=YLAB, ...)
+                    } else {
+                        plot(ux, uy[,ii], type="n", 
+                             xlim=xlim, ylim=ylim, 
+                             xlab=xlab, ylab=YLAB, ...)
+                    }
+                }
+                lines(ux, uy[,ii], 
+                     lwd=llwd[ii], col=lcol[ii], lty=llty[ii])
+                if(!is.null(residuals))
+                    points(x, residuals[,ii], pch=pch[ii],
+                           col=pcol[ii], cex=pcex[ii]) 
+                if(rugplot)
+                    if(is.R()) rug(jx, col=rcol[ii]) else rug(jx)
+    
+                if(se && !is.null(se.y)) {
+                    lines(ux, se.upper[,ii], lty=slty[ii], lwd=slwd[ii],
+                          col=scol[ii])
+                    lines(ux, se.lower[,ii], lty=slty[ii], lwd=slwd[ii],
+                          col=scol[ii])
+                }
             }
         }
     }

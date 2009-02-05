@@ -21,7 +21,7 @@ rfnorm(n, mean=0, sd=1, a1=1, a2=1)
   \item{p}{vector of probabilities.}
   \item{n}{number of observations.
     Must be a positive integer of length 1.}
-  \item{mean, sd}{ see \code{\link[stats]{rnorm}}. }
+  \item{mean, sd}{ see \code{\link[stats:Normal]{rnorm}}. }
   \item{a1, a2}{ see \code{\link{fnormal1}}. }
   \item{\ldots}{
   Arguments that can be passed into \code{\link[stats]{uniroot}}.

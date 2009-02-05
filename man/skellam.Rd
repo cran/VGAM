@@ -8,10 +8,8 @@
 
 }
 \usage{
-skellam(lmu1="loge", lmu2="loge",
-        emu1=list(), emu2=list(),
-        imu1=NULL, imu2=NULL,
-        nsimEIM=100, parallel=FALSE, zero=NULL)
+skellam(lmu1="loge", lmu2="loge", emu1=list(), emu2=list(),
+        imu1=NULL, imu2=NULL, nsimEIM=100, parallel=FALSE, zero=NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -68,6 +66,13 @@ f(y;mu1,mu2) =
   and \code{\link{vgam}}.
 
 }
+\section{Warning }{
+  This \pkg{VGAM} family function seems fragile and very sensitive to
+  the initial values.
+  Use very cautiously!!
+
+}
+
 \references{
 Skellam, J. G. (1946)
 The frequency distribution of the difference between 
@@ -85,6 +90,7 @@ two Poisson variates belonging to different populations.
 
 \seealso{ 
   \code{\link{dskellam}},
+  \code{\link[stats:Poisson]{dpois}},
   \code{\link{poissonff}}.
 
 }

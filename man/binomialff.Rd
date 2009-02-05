@@ -156,12 +156,10 @@ quasibinomialff(link="probit")
 data(hunua)
 fit = vgam(agaaus ~ poly(altitude, 2), binomialff(link=cloglog), hunua)
 \dontrun{
-attach(hunua)
-plot(altitude, agaaus, col="blue", ylab="P(agaaus=1)",
-     main="Presence/absence of Agathis australis", las=1)
-o = order(altitude)
-lines(altitude[o], fitted(fit)[o], col="red", lwd=2)
-detach(hunua)
+with(hunua, plot(altitude, agaaus, col="blue", ylab="P(agaaus=1)",
+                 main="Presence/absence of Agathis australis", las=1))
+o = with(hunua, order(altitude))
+with(hunua, lines(altitude[o], fitted(fit)[o], col="red", lwd=2))
 }
 }
 \keyword{models}

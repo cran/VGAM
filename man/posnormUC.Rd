@@ -11,7 +11,7 @@
 
 }
 \usage{
-dposnorm(x, mean=0, sd=1)
+dposnorm(x, mean=0, sd=1, log=FALSE)
 pposnorm(q, mean=0, sd=1)
 qposnorm(p, mean=0, sd=1)
 rposnorm(n, mean=0, sd=1)
@@ -21,7 +21,7 @@ rposnorm(n, mean=0, sd=1)
   \item{p}{vector of probabilities.}
   \item{n}{number of observations.
     Must be a positive integer of length 1.}
-  \item{mean, sd}{ see \code{\link[stats]{rnorm}}. }
+  \item{mean, sd, log}{ see \code{\link[stats:Normal]{rnorm}}. }
 }
 \value{
   \code{dposnorm} gives the density,
@@ -34,12 +34,14 @@ rposnorm(n, mean=0, sd=1)
   See \code{\link{posnormal1}}, the \pkg{VGAM} family function
   for estimating the parameters, 
   for the formula of the probability density function and other details.
+
 }
-\note{
-  \code{rposnorm()} may run very slowly if the mean is very negative.
-}
+%\note{
+
+%}
 \seealso{
   \code{\link{posnormal1}}.
+
 }
 \examples{
 \dontrun{
@@ -56,7 +58,7 @@ Q = qposnorm(probs, m=m)
 lines(Q, dposnorm(Q, m=m), col="purple", lty=3, type="h")
 lines(Q, pposnorm(Q, m=m), col="purple", lty=3, type="h")
 abline(h=probs, col="purple", lty=3)
-pposnorm(Q, m=m) - probs # Should be all 0
+max(abs(pposnorm(Q, m=m) - probs)) # Should be 0
 }
 }
 \keyword{distribution}

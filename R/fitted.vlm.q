@@ -1,13 +1,13 @@
 # These functions are
-# Copyright (C) 1998-2008 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2009 T.W. Yee, University of Auckland. All rights reserved.
 
 
 
-fitted.vlm <- function(object, matrix=TRUE, ...)
+fitted.vlm <- function(object, matrix.arg=TRUE, ...)
 {
 
     answer = 
-    if(matrix)
+    if(matrix.arg)
         object@fitted.values else
     {
         if(!is.matrix(object@fitted.values) || !length(object@fitted.values))

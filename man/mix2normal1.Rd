@@ -11,7 +11,7 @@
 mix2normal1(lphi="logit", lmu="identity", lsd="loge",
             ephi=list(), emu1=list(), emu2=list(), esd1=list(), esd2=list(),
             iphi=0.5, imu1=NULL, imu2=NULL, isd1=NULL, isd2=NULL,
-            qmu=c(0.2, 0.8), ESD=TRUE, nsimEIM=100, zero=1)
+            qmu=c(0.2, 0.8), equalsd=TRUE, nsimEIM=100, zero=1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -33,7 +33,7 @@ mix2normal1(lphi="logit", lmu="identity", lsd="loge",
   \item{ephi, emu1, emu2, esd1, esd2}{
   List. Extra argument for each of the links.
   See \code{earg} in \code{\link{Links}} for general information.
-  If \code{ESD=TRUE} then \code{esd1} must equal \code{esd2}.
+  If \code{equalsd=TRUE} then \code{esd1} must equal \code{esd2}.
 
   }
   \item{iphi}{
@@ -63,7 +63,7 @@ mix2normal1(lphi="logit", lmu="identity", lsd="loge",
     \code{\link[stats]{quantile}}.
 
   }
-  \item{ESD}{
+  \item{equalsd}{
     Logical indicating whether the two standard deviations should be 
     constrained to be equal. If \code{TRUE} then the appropriate
     constraint matrices will be used.
@@ -86,7 +86,7 @@ mix2normal1(lphi="logit", lmu="identity", lsd="loge",
 }
 }
 \details{
-  The probability function can be loosely written as 
+  The probability density function can be loosely written as 
   \deqn{f(y) = \phi \, N(\mu_1,\sigma_1) + (1-\phi) \, N(\mu_2, \sigma_2)}{%
         f(y) = phi * N(mu1, sd1) + (1-phi) * N(mu2, sd2)}
   where \eqn{\phi}{phi} is the probability an observation belongs
@@ -100,7 +100,7 @@ mix2normal1(lphi="logit", lmu="identity", lsd="loge",
   By default, the five linear/additive predictors are
   \eqn{(logit(\phi), \mu_1, \log(\sigma_1), \mu_2, \log(\sigma_2))^T}{(logit(phi),
   mu1, log(sd1), mu2, log(sd2))^T}.
-  If \code{ESD=TRUE} then \eqn{\sigma_1 = \sigma_2}{sd1=sd2} is enforced.
+  If \code{equalsd=TRUE} then \eqn{\sigma_1 = \sigma_2}{sd1=sd2} is enforced.
 
 }
 \value{
@@ -156,7 +156,7 @@ London: Chapman & Hall.
   distributions are not well separated.
   The default control argument \code{trace=TRUE} is to encourage
   monitoring convergence.
-  Having \code{ESD=TRUE} often makes the overall optimization problem
+  Having \code{equalsd=TRUE} often makes the overall optimization problem
   easier.
 
 }
@@ -176,7 +176,7 @@ sd1 = sd2 = exp(3)
 (phi = logit(-1, inverse=TRUE))
 y = ifelse(runif(n) < phi, rnorm(n, mu1, sd1), rnorm(n, mu2, sd2))
 
-fit = vglm(y ~ 1, mix2normal1(ESD=TRUE))
+fit = vglm(y ~ 1, mix2normal1(equalsd=TRUE))
 
 # Compare the results
 cf = coef(fit)
@@ -186,7 +186,7 @@ round(rbind('Estimated'=c(logit(cf[1], inv=TRUE),
 \dontrun{# Plot the results
 xx = seq(min(y), max(y), len=200)
 plot(xx, (1-phi)*dnorm(xx, mu2, sd2), type="l", xlab="y",
-     main="Red=estimate, blue=truth", col="blue")
+     main="Red=estimate, blue=truth", col="blue", ylab="Density")
 phi.est = logit(coef(fit)[1], inverse=TRUE)
 sd.est = exp(coef(fit)[3])
 lines(xx, phi*dnorm(xx, mu1, sd1), col="blue")

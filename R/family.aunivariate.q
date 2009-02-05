@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2008 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2009 T.W. Yee, University of Auckland. All rights reserved.
 
 
 
@@ -336,26 +336,42 @@ riceff = function(lvee="loge", lsigma="loge",
 
 
 dskellam = function(x, mu1, mu2, log=FALSE) {
-    log.arg = log
-    rm(log)
+    log.arg = log; rm(log)
     if( !is.logical( log.arg ) || length( log.arg )!=1 )
         stop("bad input for 'log.arg'")
-    if( log.arg ) {
+
+    L = max(length(x), length(mu1), length(mu2))
+    x = rep(x, len=L); mu1 = rep(mu1, len=L); mu2 = rep(mu2, len=L);
+    ok2 <- is.finite(mu1) && is.finite(mu2) & (mu1 >= 0) & (mu2 >= 0)
+    ok3 <- (mu1 == 0) & (mu2 >  0)
+    ok4 <- (mu1 >  0) & (mu2 == 0)
+    ok5 <- (mu1 == 0) & (mu2 == 0)
+    if(log.arg) {
         ans = -mu1 - mu2 + 2 * sqrt(mu1*mu2) +
               0.5 * x * log(mu1) - 0.5 * x * log(mu2) +
               log(besselI(2 * sqrt(mu1*mu2), nu=x, expon=TRUE))
+        ans[ok3] = dpois(x=-x[ok3], lambda=mu2[ok3], log=TRUE)
+        ans[ok4] = dpois(x=-x[ok4], lambda=mu1[ok4], log=TRUE)
+        ans[ok5] = dpois(x= x[ok5], lambda=0.0,      log=TRUE)
+        ans[x != round(x)] = log(0.0)
     } else {
         ans = (mu1/mu2)^(x/2) * exp(-mu1-mu2 + 2 * sqrt(mu1*mu2)) *
               besselI(2 * sqrt(mu1*mu2), nu=x, expon=TRUE)
+        ans[ok3] = dpois(x=-x[ok3], lambda=mu2[ok3])
+        ans[ok4] = dpois(x=-x[ok4], lambda=mu1[ok4])
+        ans[ok5] = dpois(x= x[ok5], lambda=0.0)
+        ans[x != round(x)] = 0.0
     }
-    ans[(x != round(x))] = 0
-    ans[!is.finite(mu1) | !is.finite(mu2) | (mu1 <= 0) | (mu2 <= 0)] = NA
+    ans[!ok2] = NaN
     ans
 }
 
 
+
+
+
+
 rskellam = function(n, mu1, mu2) {
-    if(!is.Numeric(n, integ=TRUE,allow=1)) stop("bad input for argument \"n\"")
     rpois(n, mu1) - rpois(n, mu2)
 }
 
@@ -393,7 +409,8 @@ skellam = function(lmu1="loge", lmu2="loge",
            "Mean:     mu1-mu2", "\n",
            "Variance: mu1+mu2"),
     constraints=eval(substitute(expression({
-        constraints = cm.vgam(matrix(1,M,1), x, .parallel, constraints, int= TRUE)
+        constraints = cm.vgam(matrix(1,M,1), x, .parallel, constraints,
+                              int=TRUE)
         constraints = cm.zero.vgam(constraints, x, .zero, M)
     }), list( .parallel=parallel, .zero=zero ))),
     initialize=eval(substitute(expression({
@@ -409,8 +426,8 @@ skellam = function(lmu1="loge", lmu2="loge",
                               lm.wfit(x=x, y=y, w=w, method="qr")
             var.y.est = sum(w * junk$resid^2) / junk$df.residual
             mean.init = weighted.mean(y, w)
-            mu1.init = max((var.y.est + mean.init) / 2, 0.01)
-            mu2.init = max((var.y.est - mean.init) / 2, 0.01)
+            mu1.init = max((var.y.est + mean.init)/2, 0.01)
+            mu2.init = max((var.y.est - mean.init)/2, 0.01)
             mu1.init = rep(if(length( .imu1)) .imu1 else mu1.init, length=n)
             mu2.init = rep(if(length( .imu2)) .imu2 else mu2.init, length=n)
             etastart = cbind(theta2eta(mu1.init, .lmu1, earg= .emu1),
@@ -440,9 +457,10 @@ skellam = function(lmu1="loge", lmu2="loge",
             if( is.logical( .parallel ) && length( .parallel )==1 &&
                 .parallel )
                 sum(w * log(besselI(2*mu1, nu=y, expon=TRUE))) else
-                sum(w * (-mu1 - mu2 + 2 * sqrt(mu1*mu2) +
+                sum(w * (-mu1 - mu2 +
                         0.5 * y * log(mu1) -
                         0.5 * y * log(mu2) +
+                        2 * sqrt(mu1*mu2) +  # Use this when expon=TRUE
                         log(besselI(2 * sqrt(mu1*mu2), nu=y, expon=TRUE))))
             }
     }, list( .lmu1=lmu1, .lmu2=lmu2,
@@ -801,6 +819,268 @@ slash = function(lmu="identity", lsigma="loge", emu=list(), esigma=list(),
               .emu=emu, .esigma=esigma,
               .nsimEIM=nsimEIM, .smallno=smallno ))))
 }
+
+
+
+
+dnefghs = function(x, tau) {
+    ans = sin(pi*tau) * exp((1-tau)*x) / (pi*(1+exp(x)))
+    ans[(tau < 0) | (tau > 1)] = NA
+    ans
+}
+
+
+
+nefghs = function(link="logit", earg=list(), itau=NULL, method.init=1)
+{
+    if(length(itau) && !is.Numeric(itau, positi=TRUE) || any(itau >= 1))
+        stop("argument \"itau\" must be in (0,1)")
+    if(mode(link) != "character" && mode(link) != "name")
+        link = as.character(substitute(link))
+    if(!is.list(earg)) earg = list()
+    if(!is.Numeric(method.init, allow=1, integ=TRUE, posit=TRUE) ||
+       method.init > 2)
+        stop("'method.init' must be 1 or 2")
+
+    new("vglmff",
+    blurb=c("Natural exponential family generalized hyperbolic ",
+            "secant distribution\n",
+            "f(y) = sin(pi*tau)*exp((1-tau)*y)/(pi*(1+exp(y))\n\n",
+            "Link:    ",
+            namesof("tau", link, earg=earg), "\n\n",
+            "Mean:     pi / tan(pi * tau)\n"),
+    initialize=eval(substitute(expression({
+        if(ncol(cbind(y)) != 1)
+            stop("response must be a vector or a one-column matrix")
+        predictors.names = namesof("tau", .link, earg=.earg, tag=FALSE) 
+
+        if(!length(etastart)) {
+            wmeany = if( .method.init == 1) weighted.mean(y,w) else
+                     median(rep(y,w))
+            if(abs(wmeany) < 0.01) wmeany = 0.01
+            tau.init = atan(pi / wmeany) / pi + 0.5
+            tau.init[tau.init < 0.03] = 0.03
+            tau.init[tau.init > 0.97] = 0.97
+            tau.init = rep( if(length( .itau )) .itau else tau.init, len=n)
+            etastart = theta2eta(tau.init, .link, earg=.earg)
+        }
+    }), list( .link=link, .earg=earg, .itau=itau, .method.init=method.init ))),
+    inverse=eval(substitute(function(eta, extra=NULL) {
+        tau = eta2theta(eta, .link, earg=.earg)
+        pi / tan(pi * tau)
+    }, list( .link=link, .earg=earg ))),
+    last=eval(substitute(expression({
+        misc$link = c(tau= .link)
+        misc$earg = list(tau = .earg)
+        misc$expected = TRUE
+        misc$method.init= .method.init
+    }), list( .link=link, .earg=earg, .method.init=method.init ))),
+    loglikelihood=eval(substitute(
+        function(mu,y,w,residuals= FALSE,eta, extra=NULL) {
+        tau = eta2theta(eta, .link, earg=.earg)
+        if(residuals) stop("loglikelihood residuals not implemented yet") else
+        sum(w * (log(sin(pi*tau)) - log(pi) + (1-tau)*y - log1p(exp(y))) )
+    }, list( .link=link, .earg=earg ))),
+    vfamily=c("nefghs"),
+    deriv=eval(substitute(expression({
+        tau = eta2theta(eta, .link, earg=.earg)
+        dl.dtau = pi / tan(pi * tau) - y
+        dtau.deta = dtheta.deta(tau, .link, earg=.earg)
+        w * dl.dtau * dtau.deta
+    }), list( .link=link, .earg=earg ))),
+    weight = eval(substitute(expression({
+        d2l.dtau2 = (pi / sin(pi * tau))^2
+        wz = d2l.dtau2 * dtau.deta^2
+        w * wz
+    }), list( .link = link ))))
+}
+
+
+
+
+logF = function(lshape1="loge", lshape2="loge",
+                eshape1=list(), eshape2=list(),
+                ishape1=NULL, ishape2=1,
+                method.init=1)
+{
+    if(length(ishape1) && !is.Numeric(ishape1, positi=TRUE))
+        stop("argument \"ishape1\" must be positive")
+    if( # length(ishape2) &&
+       !is.Numeric(ishape2, positi=TRUE))
+        stop("argument \"ishape2\" must be positive")
+    if(mode(lshape1) != "character" && mode(lshape1) != "name")
+        lshape1 = as.character(substitute(lshape1))
+    if(mode(lshape2) != "character" && mode(lshape2) != "name")
+        lshape2 = as.character(substitute(lshape2))
+    if(!is.list(eshape1)) eshape1 = list()
+    if(!is.list(eshape2)) eshape2 = list()
+    if(!is.Numeric(method.init, allow=1, integ=TRUE, posit=TRUE) ||
+       method.init > 2)
+        stop("'method.init' must be 1 or 2")
+
+    new("vglmff",
+    blurb=c("log F distribution\n",
+            "f(y) = exp(-shape2*y)/(beta(shape1,shape2)*",
+            "(1+exp(-y))^(shape1+shape2))\n\n",
+            "Link:    ",
+            namesof("shape1", lshape1, earg=eshape1),
+            ", ",
+            namesof("shape2", lshape2, earg=eshape2),
+            "\n\n",
+            "Mean:     digamma(shape1) - digamma(shape2)"),
+    initialize=eval(substitute(expression({
+        if(ncol(cbind(y)) != 1)
+            stop("response must be a vector or a one-column matrix")
+        predictors.names = c(
+            namesof("shape1", .lshape1, earg=.eshape1, tag=FALSE),
+            namesof("shape2", .lshape2, earg=.eshape2, tag=FALSE))
+
+        if(!length(etastart)) {
+            wmeany = if( .method.init == 1) weighted.mean(y,w) else
+                     median(rep(y,w))
+
+
+            shape1.init = shape2.init = rep( .ishape2, len=n)
+            shape1.init = if(length( .ishape1)) rep( .ishape1, len=n) else {
+                index1 = (y > wmeany)
+                shape1.init[index1] = shape2.init[index1] + 1/1
+                shape1.init[!index1] = shape2.init[!index1] - 1/1
+                shape1.init = pmax(shape1.init, 1/8)
+                shape1.init
+            }
+            etastart = cbind(theta2eta(shape1.init, .lshape1, earg=.eshape1),
+                             theta2eta(shape2.init, .lshape2, earg=.eshape2))
+        }
+    }), list( .lshape1=lshape1, .lshape2=lshape2,
+              .eshape1=eshape1, .eshape2=eshape2,
+              .ishape1=ishape1, .ishape2=ishape2,
+              .method.init=method.init ))),
+    inverse=eval(substitute(function(eta, extra=NULL) {
+        shape1 = eta2theta(eta[,1], .lshape1, earg=.eshape1)
+        shape2 = eta2theta(eta[,2], .lshape2, earg=.eshape2)
+        digamma(shape1) - digamma(shape2)
+    }, list( .lshape1=lshape1, .lshape2=lshape2,
+             .eshape1=eshape1, .eshape2=eshape2 ))),
+    last=eval(substitute(expression({
+        misc$link = c(shape1= .lshape1, shape2= .lshape2)
+        misc$earg = list(shape1= .eshape1, shape2= .eshape2)
+        misc$expected = TRUE
+        misc$method.init= .method.init
+    }), list( .lshape1=lshape1, .lshape2=lshape2,
+              .eshape1=eshape1, .eshape2=eshape2,
+              .method.init=method.init ))),
+    loglikelihood=eval(substitute(
+        function(mu,y,w,residuals= FALSE,eta, extra=NULL) {
+        shape1 = eta2theta(eta[,1], .lshape1, earg=.eshape1)
+        shape2 = eta2theta(eta[,2], .lshape2, earg=.eshape2)
+        if(residuals) stop("loglikelihood residuals not implemented yet") else
+        sum(w * (-shape2*y - lbeta(shape1, shape2) -
+                (shape1 + shape2) * log1p(exp(-y))) )
+    }, list( .lshape1=lshape1, .lshape2=lshape2,
+             .eshape1=eshape1, .eshape2=eshape2 ))),
+    vfamily=c("logF"),
+    deriv=eval(substitute(expression({
+        shape1 = eta2theta(eta[,1], .lshape1, earg=.eshape1)
+        shape2 = eta2theta(eta[,2], .lshape2, earg=.eshape2)
+        tmp888 = digamma(shape1 + shape2) - log1p(exp(-y))
+        dl.dshape1 = tmp888 - digamma(shape1)
+        dl.dshape2 = tmp888 - digamma(shape2) - y
+        dshape1.deta = dtheta.deta(shape1, .lshape1, earg=.eshape1)
+        dshape2.deta = dtheta.deta(shape2, .lshape2, earg=.eshape2)
+        w * cbind(dl.dshape1 * dshape1.deta, dl.dshape2 * dshape2.deta)
+    }), list( .lshape1=lshape1, .lshape2=lshape2,
+              .eshape1=eshape1, .eshape2=eshape2 ))),
+    weight = eval(substitute(expression({
+        tmp888 = trigamma(shape1 + shape2)
+        d2l.dshape12 = trigamma(shape1) - tmp888
+        d2l.dshape22 = trigamma(shape2) - tmp888
+        d2l.dshape1shape2 = -tmp888
+        wz = matrix(0, n, dimm(M))
+        wz[,iam(1,1,M=M)] = d2l.dshape12 * dshape1.deta^2
+        wz[,iam(2,2,M=M)] = d2l.dshape22 * dshape2.deta^2
+        wz[,iam(1,2,M=M)] = d2l.dshape1shape2 * dshape1.deta * dshape2.deta
+        w * wz
+    }), list( .lshape1=lshape1, .lshape2=lshape2,
+              .eshape1=eshape1, .eshape2=eshape2 ))))
+}
+
+
+dbenf = function(x, ndigits=1, log=FALSE) {
+    if(!is.Numeric(ndigits, allow=1, posit=TRUE, integ=TRUE) || ndigits > 2)
+        stop("argument 'ndigits' must be 1 or 2")
+    lowerlimit = ifelse(ndigits==1, 1, 10)
+    upperlimit = ifelse(ndigits==1, 9, 99)
+    log.arg = log; rm(log)
+    ans = x * NA
+    indexTF = is.finite(x) & (x >= lowerlimit)
+    ans[indexTF] = log10(1 + 1/x[indexTF])
+    ans[!is.na(x) & !is.nan(x) & ((x < lowerlimit) |
+        (x > upperlimit) |
+        (x != round(x)))] = 0.0
+    if(log.arg) log(ans) else ans
+}
+
+
+rbenf = function(n, ndigits=1) {
+    if(!is.Numeric(ndigits, allow=1, posit=TRUE, integ=TRUE) || ndigits > 2)
+        stop("argument 'ndigits' must be 1 or 2")
+    lowerlimit = ifelse(ndigits==1, 1, 10)
+    upperlimit = ifelse(ndigits==1, 9, 99)
+    use.n = if((length.n <- length(n)) > 1) length.n else
+            if(!is.Numeric(n, integ=TRUE, allow=1)) 
+                stop("bad input for argument \"n\"") else n
+    myrunif = runif(use.n)
+    ans = rep(lowerlimit, length = use.n)
+    for(ii in (lowerlimit+1):upperlimit) {
+        indexTF = (pbenf(ii-1, ndigits=ndigits) < myrunif) &
+                  (myrunif <= pbenf(ii, ndigits=ndigits))
+        ans[indexTF] = ii
+    }
+    ans
+}
+
+
+pbenf = function(q, ndigits=1, log.p=FALSE) {
+    if(!is.Numeric(ndigits, allow=1, posit=TRUE, integ=TRUE) || ndigits > 2)
+        stop("argument 'ndigits' must be 1 or 2")
+    lowerlimit = ifelse(ndigits==1, 1, 10)
+    upperlimit = ifelse(ndigits==1, 9, 99)
+    ans = q * NA
+    floorq = floor(q)
+    indexTF = is.finite(q) & (floorq >= lowerlimit)
+    ans[indexTF] = log10(1 + floorq[indexTF]) - ifelse(ndigits==1, 0, 1)
+    ans[!is.na(q) & !is.nan(q) & (q>=upperlimit)] = 1
+    ans[!is.na(q) & !is.nan(q) & (q< lowerlimit)] = 0
+    if(log.p) log(ans) else ans
+}
+
+
+
+
+qbenf = function(p, ndigits=1) {
+    if(!is.Numeric(ndigits, allow=1, posit=TRUE, integ=TRUE) || ndigits > 2)
+        stop("argument 'ndigits' must be 1 or 2")
+    lowerlimit = ifelse(ndigits==1, 1, 10)
+    upperlimit = ifelse(ndigits==1, 9, 99)
+    bad = !is.na(p) & !is.nan(p) & ((p < 0) | (p > 1))
+    if(any(bad))
+        stop("bad input for 'p'")
+
+    ans = rep(lowerlimit, length = length(p))
+    for(ii in (lowerlimit+1):upperlimit) {
+        indexTF = is.finite(p) &
+                  (pbenf(ii-1, ndigits=ndigits) < p) &
+                  (p <= pbenf(ii, ndigits=ndigits))
+        ans[indexTF] = ii
+    }
+
+    ans[is.na(p) | is.nan(p)] = NA
+    ans[!is.na(p) & !is.nan(p) & (p==0)] = lowerlimit
+    ans[!is.na(p) & !is.nan(p) & (p==1)] = upperlimit
+    ans
+}
+
+
 
 
 

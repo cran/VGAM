@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2008 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2009 T.W. Yee, University of Auckland. All rights reserved.
 
 
 
@@ -82,8 +82,7 @@ vsmooth.spline <- function(x, y, w, df=rep(5,M), spar=NULL, # rep(0,M),
                       constraints=list("(Intercepts)"=diag(M), x=diag(M)),
                       tol.nl=0.01, var.arg=FALSE,
                       scale.w=TRUE,
-                      nk=NULL)
-{
+                      nk=NULL) {
 
 
     if(var.arg) {
@@ -280,8 +279,8 @@ vsmooth.spline <- function(x, y, w, df=rep(5,M), spar=NULL, # rep(0,M),
     spar.nl <- spar[nonlin]
     df.nl <- df[nonlin]
 
-    edimu <- if(trivc) dimw else max(ncb*(ncb+1)/2, dimw) # for wbar's size
-    dimu <- if(trivc) dimw else ncb*(ncb+1)/2
+    edimu <- if(trivc != 0) dimw else max(ncb*(ncb+1)/2, dimw) # for wbar's size
+    dimu <- if(trivc != 0) dimw else ncb*(ncb+1)/2
     o <- 1:nef   # Already sorted
 
     collaps <- dotFortran(name="vsuff9",
@@ -308,7 +307,7 @@ vsmooth.spline <- function(x, y, w, df=rep(5,M), spar=NULL, # rep(0,M),
     varmat <- if(var.arg) {if(ncb > 1) matrix(0, nef, ncb) else
                            rep(0, nef)} else double(1)
     index <- iam(NA, NA, ncb, both=TRUE, diagonal=TRUE)
-    dimwbar <- if(trivc) dimw else ncb*(ncb+1)/2
+    dimwbar <- if(trivc != 0) dimw else ncb*(ncb+1)/2
 
     vsplin <- dotFortran(name="vsplin",
                      xs=as.double(xbar),  wz=as.double(collaps$wz), 
@@ -386,8 +385,7 @@ vsmooth.spline <- function(x, y, w, df=rep(5,M), spar=NULL, # rep(0,M),
 }
 
 
-printvsmooth.spline <- function(x, ...)
-{
+printvsmooth.spline <- function(x, ...) {
     if(!is.null(cl <- x@call)) {
         cat("Call:\n")
         dput(cl)
@@ -402,7 +400,7 @@ printvsmooth.spline <- function(x, ...)
         if(length(ncb) && ncb==1) format(x@df) else
             paste(format(x@df), collapse=", "), "\n")
 
-    if(!all(trivial.constraints(x@constraints))) {
+    if(!all(trivial.constraints(x@constraints) == 1)) {
         cat("\nConstraint matrices:\n")
         print(x@constraints)
     }
@@ -411,13 +409,15 @@ printvsmooth.spline <- function(x, ...)
 }
 
 
-coefvsmooth.spline = function(object, matrix=FALSE, ...) {
-        list(lfit=coef(object@lfit, matrix=matrix), nlfit=coef(object@nlfit))
+coefvsmooth.spline.fit = function(object, ...) {
+    object@Bcoefficients 
 }
 
 
-coefvsmooth.spline.fit = function(object, ...) {
-    object@Bcoefficients 
+coefvsmooth.spline = function(object, matrix=FALSE, ...) {
+
+        list(lfit=coefvlm(object@lfit, matrix=matrix),
+             nlfit=coefvsmooth.spline.fit(object@nlfit))
 }
 
 
@@ -435,8 +435,7 @@ plotvsmooth.spline <- function(x, xlab="x", ylab="", points=TRUE,
                                 pcol=par()$col, pcex=par()$cex,
                                 pch=par()$pch,
                                 lcol=par()$col, lwd=par()$lwd, lty=par()$lty, 
-                                add=FALSE, ...)
-{
+                                add=FALSE, ...) {
     M = ncol(x@y)
     pcol = rep(pcol, length=M)
     pcex = rep(pcex, length=M)
@@ -456,8 +455,7 @@ plotvsmooth.spline <- function(x, xlab="x", ylab="", points=TRUE,
 
 
 
-predictvsmooth.spline <- function(object, x, deriv=0, se.fit=FALSE)
-{
+predictvsmooth.spline <- function(object, x, deriv=0, se.fit=FALSE) {
     if(se.fit)
         warning("se.fit=TRUE is not currently implemented. Using se.fit=FALSE")
 
@@ -474,7 +472,7 @@ predictvsmooth.spline <- function(object, x, deriv=0, se.fit=FALSE)
 
     }
 
-    mat.coef = coef(lfit, matrix=TRUE)
+    mat.coef = coefvlm(lfit, matrix=TRUE)
     coeflfit <- t(mat.coef)   # M x p now
     M <- nrow(coeflfit) # if(is.matrix(object@y)) ncol(object@y) else 1 
 
@@ -494,8 +492,7 @@ predictvsmooth.spline <- function(object, x, deriv=0, se.fit=FALSE)
 }
 
 
-predictvsmooth.spline.fit <- function(object, x, deriv=0)
-{
+predictvsmooth.spline.fit <- function(object, x, deriv=0) {
     nk = nrow(object@Bcoefficients)
     drangex <- object@xmax - object@xmin
     if(missing(x))

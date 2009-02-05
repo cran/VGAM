@@ -139,7 +139,8 @@ round(rbind('Estimated'=Coef(fit), 'Truth'=c(phi, mu1, mu2)), dig=2)
 
 \dontrun{# Plot the results
 ty = table(y)
-plot(names(ty), ty, type="h", main="Red=estimate, blue=truth")
+plot(names(ty), ty, type="h", main="Red=estimate, blue=truth",
+     ylab="Frequency", xlab="y")
 abline(v=Coef(fit)[-1], lty=2, col="red", lwd=2)
 abline(v=c(mu1, mu2), lty=2, col="blue", lwd=2)
 }

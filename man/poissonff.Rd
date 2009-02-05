@@ -10,8 +10,8 @@
 
 }
 \usage{
-poissonff(link = "loge", earg=list(), dispersion = 1,
-          onedpar = FALSE, parallel = FALSE, zero = NULL)
+poissonff(link = "loge", earg=list(), dispersion = 1, onedpar = FALSE,
+          imu=NULL, method.init=1, parallel = FALSE, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -44,6 +44,10 @@ poissonff(link = "loge", earg=list(), dispersion = 1,
   }
   \item{parallel}{
   A logical or formula. Used only if the response is a matrix.
+
+  }
+  \item{imu, method.init}{
+  See \code{\link{CommonVGAMffArguments}} for more information.
 
   }
   \item{zero}{
@@ -135,8 +139,13 @@ poissonff(link = "loge", earg=list(), dispersion = 1,
 \examples{
 poissonff()
 
-n = 100
-x2 = rnorm(n)
+x = rnorm(n <- 100)
+y = rpois(n, exp(1+x))
+(fit = vglm(y ~ x, family=poissonff))
+coef(fit, matrix=TRUE)
+
+
+x2 = rnorm(n <- 100)
 x3 = rnorm(n)
 x4 = rnorm(n)
 lv1 = 0 + x3 - 2*x4

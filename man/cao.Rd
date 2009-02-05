@@ -246,14 +246,18 @@ Constrained additive ordination.
 
 }
 \section{Warning }{
+  CAO is very costly to compute. With version 0.7-8 it took 28 minutes on 
+  a fast machine. I hope to look at ways of speeding things up in the
+  future.
+
   CAO models present a difficult optimization problem, partly because the
-  log-likelihood function contains many local solutions.  To obtain the
+  log-likelihood function contains many local solutions. To obtain the
   (global) solution the user is advised to try many initial values. This
   can be done by setting \code{Bestof} some appropriate value (see
   \code{\link{cao.control}}). Trying many initial values becomes
   progressively more important as the nonlinear degrees of freedom of
   the smooths increase. Use \code{\link[base:Random]{set.seed}} to make your
-  results reproducible.  
+  results reproducible.
 
 % The code is a little fragile at this stage, so the function might
 % hang/lock up in the microsoft Windows version.
@@ -283,6 +287,7 @@ Constrained additive ordination.
 } 
 
 \examples{
+\dontrun{
 data(hspider)
 hspider[,1:6] = scale(hspider[,1:6]) # Standardized environmental vars
 set.seed(149)
@@ -297,7 +302,6 @@ sort(ap1@misc$deviance.Bestof) # A history of all the iterations
 Coef(ap1)
 ccoef(ap1)
 
-\dontrun{
 par(mfrow=c(2,2))
 plot(ap1)   # All the curves are unimodal; some quite symmetric
 

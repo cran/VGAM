@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2008 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2009 T.W. Yee, University of Auckland. All rights reserved.
 
 
 
@@ -1387,8 +1387,8 @@ printrrvglm <- function(x, ...)
 
     if(length(deviance(x)))
         cat("Residual Deviance:", format(deviance(x)), "\n")
-    if(length(logLik(x)))
-        cat("Log-likelihood:", format(logLik(x)), "\n")
+    if(length(vll <- logLik.vlm(x)))
+        cat("Log-likelihood:", format(vll), "\n")
 
     if(length(x@criterion)) {
         ncrit <- names(x@criterion)
@@ -1543,8 +1543,8 @@ get.rrvglm.se1 <- function(fit, omit13= FALSE, kill.all= FALSE,
     Rank <- fit@control$Rank  # fit@misc$Nested.Rank   
 
     Amat <- fit@constraints[[colx2.index[1]]]
-    Bmat <- if(p1) coef(fit, mat= TRUE)[colx1.index,,drop=FALSE] else NULL
-    C.try <- coef(fit, mat= TRUE)[colx2.index,,drop=FALSE]
+    Bmat <- if(p1) coefvlm(fit, mat= TRUE)[colx1.index,,drop=FALSE] else NULL
+    C.try <- coefvlm(fit, mat= TRUE)[colx2.index,,drop=FALSE]
     Cmat <- C.try %*% Amat %*% solve(t(Amat) %*% Amat)
 
     x1mat <- if(p1) fit@x[,colx1.index,drop=FALSE] else NULL
@@ -1672,7 +1672,7 @@ get.rrvglm.se1 <- function(fit, omit13= FALSE, kill.all= FALSE,
     cov1122 <- solve(sfit1122@cov.unscaled)
     dimnames(cov1122) = list(d8, d8)
 
-    lcs = length(coef(sfit1122))
+    lcs = length(coefvlm(sfit1122))
     log.vec11 = (lcs-(M-Rank-length(Structural.zero))*Rank+1):lcs
     cov11 = cov1122[log.vec11,  log.vec11, drop=FALSE]
     cov12 = cov1122[ log.vec11, -log.vec11, drop=FALSE]
@@ -2311,7 +2311,7 @@ lvplot.rrvglm = function(object,
                          Acex=par()$cex,
                          Acol=par()$col,
                          Apch=NULL,
-                         Clabels=dimnames(Cmat)[[1]],
+                         Clabels=rownames(Cmat),
                          Cadj=par()$adj,
                          Ccex=par()$cex,
                          Ccol=par()$col, 
@@ -2325,7 +2325,7 @@ lvplot.rrvglm = function(object,
                          spch=NULL,
                          scex=par()$cex,
                          scol=par()$col,
-                         slabels=dimnames(x2mat)[[1]],
+                         slabels=rownames(x2mat),
                          ...)
 {
 
@@ -2447,8 +2447,13 @@ Coef.rrvglm <- function(object, ...) {
     colx2.index = object@control$colx2.index
     p1 = length(colx1.index)
     Amat <- object@constraints[[colx2.index[1]]]
-    B1mat <- if(p1) coef(object, mat= TRUE)[colx1.index,,drop=FALSE] else NULL
-    C.try <- coef(object, mat= TRUE)[colx2.index,,drop=FALSE]
+
+    B1mat = if(p1) coefvlm(object, mat=TRUE)[colx1.index,,drop=FALSE] else NULL
+
+
+    C.try <- coefvlm(object, mat= TRUE)[colx2.index,,drop=FALSE]
+
+
     Cmat <- C.try %*% Amat %*% solve(t(Amat) %*% Amat)
 
 
@@ -2696,7 +2701,7 @@ trplot.qrrvglm = function(object,
                           whichSpecies=NULL,
                           add=FALSE, plot.it=TRUE,
                           label.sites=FALSE, 
-                          sitenames = dimnames(object@y)[[1]],
+                          sitenames = rownames(object@y),
                           axes.equal = TRUE,
                           cex=par()$cex,
                           col=1:(nos*(nos-1)/2),
@@ -2908,6 +2913,7 @@ persp.qrrvglm = function(x, varlvI = FALSE, reference = NULL,
                   main="",
                   ticktype = "detailed", 
                   col = if(Rank==1) par()$col else "white",
+                  llty=par()$lty, llwd=par()$lwd,
                   add1 = FALSE,
                   ...) {
     oylim = ylim
@@ -2966,12 +2972,15 @@ persp.qrrvglm = function(x, varlvI = FALSE, reference = NULL,
             if(!length(oylim))
             ylim = c(0, max(fitvals[,whichSpecies.numer])*stretch) # A revision
             col = rep(col, len=length(whichSpecies.numer))
+            llty = rep(llty, leng=length(whichSpecies.numer))
+            llwd = rep(llwd, leng=length(whichSpecies.numer))
             if(!add1)
             matplot(lv1, fitvals, xlab=xlab, ylab=ylab, type="n", 
                     main=main, xlim=xlim, ylim=ylim, ...) 
             for(j in 1:length(whichSpecies.numer)) {
                 ptr2 = whichSpecies.numer[j]  # points to species column
-                lines(lv1, fitvals[,ptr2], col=col[j], ...)
+                lines(lv1, fitvals[,ptr2], col=col[j],
+                      lty=llty[j], lwd=llwd[j], ...)
                 if(labelSpecies) {
                     ptr1=(1:nrow(fitvals))[max(fitvals[,ptr2])==fitvals[,ptr2]]
                     ptr1 = ptr1[1]

@@ -1,13 +1,16 @@
 \name{binom2.rho}
 \alias{binom2.rho}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{ Bivariate Probit Model }
+\title{ Bivariate Probit Model (Family Function) }
 \description{
   Fits a bivariate probit model to two binary responses.
+  The correlation parameter rho is the measure of dependency.
+
 }
 \usage{
 binom2.rho(lrho = "rhobit", erho=list(),
-           init.rho = 0.4, zero = 3, exchangeable = FALSE)
+           imu1 = NULL, imu2 = NULL, init.rho = NULL,
+           zero = 3, exchangeable = FALSE, nsimEIM=NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -22,13 +25,21 @@ binom2.rho(lrho = "rhobit", erho=list(),
 
   }
   \item{init.rho}{
-  Initial value for \eqn{\rho}{rho}.
-  This should lie between \eqn{-1} and \eqn{1}.
+  Optional initial value for \eqn{\rho}{rho}.
+  If given, this should lie between \eqn{-1} and \eqn{1}.
+  See below for more comments.
+
+  }
+  \item{imu1, imu2}{
+  Optional initial values for the two marginal probabilities.
+  May be a vector.
 
   }
   \item{zero}{
-  Which linear/additive predictor is modelled as an
-  intercept only? A \code{NULL} means none.
+  Which linear/additive predictor is modelled as an intercept only?
+  A \code{NULL} means none.
+  Numerically, the \eqn{\rho}{rho} parameter is easiest modelled as
+  an intercept only, hence the default.
 
   }
   \item{exchangeable}{
@@ -37,6 +48,13 @@ binom2.rho(lrho = "rhobit", erho=list(),
   be equal.
 
   }
+  \item{nsimEIM}{
+  See \code{\link{CommonVGAMffArguments}} for more information.
+  A value of at least 100 is recommended;
+  the larger the value the better.
+
+  }
+
 }
 \details{
   The \emph{bivariate probit model} was one of the earliest regression
@@ -47,11 +65,12 @@ binom2.rho(lrho = "rhobit", erho=list(),
   unit variances). One can think of the joint probabilities being
   \eqn{\Phi(\eta_1,\eta_2;\rho)}{Phi(eta1,eta2;rho)} where \eqn{\Phi}{Phi}
   is the cumulative distribution function of a standard bivariate normal
-  distribution with correlation parameter \eqn{\rho}{rho}.
+  distribution (i.e., \code{\link[stats:Normal]{pnorm}})
+  with correlation parameter \eqn{\rho}{rho}.
 
   The bivariate probit model should not be confused with a \emph{bivariate
   logit model} with a probit link (see \code{\link{binom2.or}}).
-  The latter uses the odds ratio to quantify the association.  Actually,
+  The latter uses the odds ratio to quantify the association. Actually,
   the bivariate logit model is recommended over the bivariate probit
   model because the odds ratio is a more natural way of measuring the
   association between two binary responses.
@@ -91,21 +110,30 @@ contains further information and examples.
   \eqn{\rho}{rho} lies in the interval \eqn{(-1,1)}{(-1,1)}, therefore
   a \code{\link{rhobit}} link is default.
 
-  If converge problems occur, try setting \code{init.rho} to some
-  value, e.g., a negative number such as \eqn{-0.5}{-0.5}.
+  Converge problems can occur.
+  If so, assign \code{init.rho} a range of
+  values and monitor convergence (e.g., set \code{trace=TRUE}).
+  Practical experience shows that local solutions can occur,
+  and that \code{init.rho} needs to be quite close to the (global)
+  solution.
+  Also, \code{imu1} and \code{imu2} may be used.
+
 }
 \seealso{
+  \code{\link{rbinom2.rho}},
   \code{\link{binom2.or}},
   \code{\link{loglinb2}},
   \code{\link{coalminers}},
   \code{\link{binomialff}},
   \code{\link{rhobit}},
   \code{\link{fisherz}}.
+
 }
 \examples{
 data(coalminers)
 coalminers = transform(coalminers, Age = (age - 42) / 5)
-fit = vglm(cbind(nBnW,nBW,BnW,BW) ~ Age, binom2.rho, coalminers)
+fit = vglm(cbind(nBnW,nBW,BnW,BW) ~ Age, binom2.rho,
+           data=coalminers, trace=TRUE)
 summary(fit)
 coef(fit, matrix=TRUE)
 }

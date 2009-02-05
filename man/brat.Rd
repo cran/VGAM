@@ -63,7 +63,7 @@ Citation patterns in the journals of statistics and probability.
 \emph{Statistical Science},
 \bold{9}, 94--108.
 
-The \code{BradleyTerry} package has more comprehensive capabilities
+The \pkg{BradleyTerry} package has more comprehensive capabilities
 than this function.
 }
 \author{ T. W. Yee }

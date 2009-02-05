@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2008 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2009 T.W. Yee, University of Auckland. All rights reserved.
 
 
 
@@ -129,8 +129,8 @@ printsummary.vglm <- function(x, digits = NULL, quote = TRUE, prefix = "",
             cat(" on", round(rdf, digits), "degrees of freedom\n") else
             cat("\n")
     }
-    if(length(logLik(x))) {
-        cat("\nLog-likelihood:", yformat(logLik(x), digits))
+    if(length(vll <- logLik.vlm(x))) {
+        cat("\nLog-likelihood:", yformat(vll, digits))
         if(is.finite(rdf))
             cat(" on", round(rdf, digits), "degrees of freedom\n") else
             cat("\n")

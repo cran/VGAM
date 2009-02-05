@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2008 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2009 T.W. Yee, University of Auckland. All rights reserved.
 
 
 
@@ -148,11 +148,11 @@ gev <- function(llocation="identity",
         lp = length(cent)
         fv = matrix(as.numeric(NA), nrow(eta), lp)
         if(lp) {
-            for(i in 1:lp) {
-                yp = -log(cent[i]/100)
-                fv[!iszero,i] = loc[!iszero] - sigma[!iszero] *
+            for(ii in 1:lp) {
+                yp = -log(cent[ii]/100)
+                fv[!iszero,ii] = loc[!iszero] - sigma[!iszero] *
                                 (1 - yp^(-xi[!iszero])) / xi[!iszero]
-                fv[iszero,i] = loc[iszero] - sigma[iszero] * log(yp)
+                fv[iszero,ii] = loc[iszero] - sigma[iszero] * log(yp)
             }
             dimnames(fv) = list(dimnames(eta)[[1]],
                                 paste(as.character(cent), "%", sep=""))
@@ -464,11 +464,11 @@ egev <- function(llocation="identity",
         lp <- length(cent)
         fv <- matrix(as.numeric(NA), nrow(eta), lp)
         if(lp) {
-            for(i in 1:lp) {
-                yp = -log(cent[i]/100)
-                fv[!iszero,i] = loc[!iszero] - sigma[!iszero] *
+            for(ii in 1:lp) {
+                yp = -log(cent[ii]/100)
+                fv[!iszero,ii] = loc[!iszero] - sigma[!iszero] *
                                 (1 - yp^(-xi[!iszero])) / xi[!iszero]
-                fv[iszero,i] = loc[iszero] - sigma[iszero] * log(yp)
+                fv[iszero,ii] = loc[iszero] - sigma[iszero] * log(yp)
             }
             dimnames(fv) = list(dimnames(eta)[[1]],
                                 paste(as.character(cent), "%", sep=""))
@@ -700,19 +700,18 @@ gumbel <- function(llocation="identity",
         sigma = eta2theta(eta[,2], .lscale, earg= .escale )  # sigma
         Percentiles = extra$percentiles
         lp = length(Percentiles)  # may be 0
-        if(lp) {
+        if(lp > 0) {
             mpv = extra$mpv
             mu = matrix(as.numeric(NA), nrow(eta), lp + mpv) # lp could be 0
             Rvec = extra$R
-            if(1 <= lp)
-            for(i in 1:lp) {
-                ci = if(is.Numeric(Rvec)) Rvec * (1 - Percentiles[i] / 100) else
-                    -log( Percentiles[i] / 100)
-                mu[,i] = loc - sigma * log(ci)
+            for(ii in 1:lp) {
+                ci = if(is.Numeric(Rvec)) Rvec * (1 - Percentiles[ii] / 100) else
+                    -log(Percentiles[ii] / 100)
+                mu[,ii] = loc - sigma * log(ci)
             }
             if(mpv) 
                 mu[,ncol(mu)] = loc - sigma * log(log(2))
-            dmn2 = if(lp>=1) paste(as.character(Percentiles), "%", sep="") else NULL
+            dmn2 = paste(as.character(Percentiles), "%", sep="")
             if(mpv) 
                 dmn2 = c(dmn2, "MPV")
             dimnames(mu) = list(dimnames(eta)[[1]], dmn2)
@@ -1011,7 +1010,7 @@ gpd = function(threshold=0,
             A = 1 + xi*ystar/sigma
             mytolerance = .Machine$double.eps
             bad <- (A<=mytolerance)   # Range violation
-            if(any(sum(w[bad]))) {
+            if(any(bad) && any(w[bad] != 0)) {
                 cat("There are some range violations\n")
                 if(exists("flush.console")) flush.console()
             }
@@ -1033,7 +1032,7 @@ gpd = function(threshold=0,
         A = 1 + xi*ystar/sigma
         mytolerance = .Machine$double.eps
         bad <- (A <= mytolerance)
-        if(any(sum(w[bad]))) {
+        if(any(bad) && any(w[bad] != 0)) {
             cat(sum(w[bad],na.rm=TRUE), # "; ignoring them"
                 "observations violating boundary constraints\n")
             if(exists("flush.console")) flush.console()

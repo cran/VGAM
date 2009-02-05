@@ -7,11 +7,11 @@
   to normality.
 }
 \usage{
-lms.bcn(percentiles = c(25, 50, 75), zero = NULL, 
-        link.mu="identity", link.sigma = "loge",
-        emu=list(), esigma=list(),
+lms.bcn(percentiles = c(25, 50, 75), zero = c(1,3), 
+        llambda="identity", lmu="identity", lsigma = "loge",
+        elambda=list(), emu=list(), esigma=list(),
         dfmu.init=4, dfsigma.init=2,
-        init.lambda = 1, init.sigma = NULL)
+        ilambda = 1, isigma = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -30,7 +30,12 @@ lms.bcn(percentiles = c(25, 50, 75), zero = NULL,
   functions of the covariates.
 
   }
-  \item{link.mu}{
+  \item{llambda}{
+  Parameter link function applied to the first linear/additive predictor.
+  See \code{\link{Links}} for more choices.
+
+  }
+  \item{lmu}{
   Parameter link function applied to the second linear/additive predictor.
   See \code{\link{Links}} for more choices.
 
@@ -39,14 +44,14 @@ lms.bcn(percentiles = c(25, 50, 75), zero = NULL,
 % (it is something similar to the running median).
 
   }
-  \item{link.sigma}{
+  \item{lsigma}{
   Parameter link function applied to the third linear/additive predictor.
   See \code{\link{Links}} for more choices.
 
 % It is the natural log by default because sigma is positive.
 
   }
-  \item{emu, esigma}{
+  \item{elambda, emu, esigma}{
   List. Extra argument for each of the links.
   See \code{earg} in \code{\link{Links}} for general information.
 
@@ -65,12 +70,12 @@ lms.bcn(percentiles = c(25, 50, 75), zero = NULL,
   using some other algorithm.
 
   }
-  \item{init.lambda}{
+  \item{ilambda}{
   Initial value for lambda.
   If necessary, it is recycled to be a vector of length \eqn{n}.
 
   }
-  \item{init.sigma}{
+  \item{isigma}{
   Optional initial value for sigma.
   If necessary, it is recycled to be a vector of length \eqn{n}.
   The default value, \code{NULL}, means an initial value is computed
@@ -115,8 +120,8 @@ The  LMS-Yeo-Johnson-normal method can handle
 both positive and negative values.
 
 In general, the lambda and sigma functions should be more smoother
-than the mean function. Often setting \code{zero=1} or
-\code{zero=3} or \code{zero=c(1,3)} is a good idea.
+than the mean function.
+Having \code{zero=1}, \code{zero=3} or \code{zero=c(1,3)} is often a good idea.
 See the example below.
 
 While it is usual to regress the response against a single

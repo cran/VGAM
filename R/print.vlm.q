@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2008 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2009 T.W. Yee, University of Auckland. All rights reserved.
 
 
 
@@ -13,8 +13,7 @@ setMethod("print", "vlm",
     function(x, ...)
     print.vlm(x, ...))
 
-print.vlm <- function(x, ...)
-{
+print.vlm <- function(x, ...) {
     if(!is.null(cl <- x@call)) {
         cat("Call:\n")
         dput(cl)

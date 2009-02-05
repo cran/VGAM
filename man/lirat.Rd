@@ -57,11 +57,9 @@ are accounted for.
 \examples{
 \dontrun{
 data(lirat)
-attach(lirat)
 # cf. Figure 3 of Moore and Tsiatis (1991)
-plot(hb, R/N, pch=as.character(grp), col=grp, las=1,
-     xlab="Hemoglobin level", ylab="Proportion Dead")
-detach(lirat)
+with(lirat, plot(hb, R/N, pch=as.character(grp), col=grp, las=1,
+                 xlab="Hemoglobin level", ylab="Proportion Dead"))
 }
 }
 \keyword{datasets}

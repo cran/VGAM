@@ -109,7 +109,9 @@ zinegbinomial(lphi="logit", lmunb = "loge", lk = "loge",
 }
 
 \section{Warning }{
-  Numerical problems can occur.
+  Numerical problems can occur, e.g., when the probability of
+  zero is actually less than, not more than, the nominal
+  probability of zero.
   Half-stepping is not uncommon.
   If failure to converge occurs, try using combinations of
   \code{method.init},
@@ -121,7 +123,7 @@ zinegbinomial(lphi="logit", lmunb = "loge", lk = "loge",
 } 
 
 \seealso{
-  \code{\link{Zinb}},
+  \code{\link{Zinegbin}},
   \code{\link{negbinomial}},
   \code{\link[stats:negative binomial]{rpois}}.
 
@@ -131,8 +133,8 @@ x = runif(n <- 1000)
 phi = logit(-0.5+1*x, inverse=TRUE)
 munb = exp(3+x)
 k = exp(0+2*x)
-y1 = rzinb(n, phi, mu=munb, size=k)
-y2 = rzinb(n, phi, mu=munb, size=k)
+y1 = rzinegbin(n, phi, mu=munb, size=k)
+y2 = rzinegbin(n, phi, mu=munb, size=k)
 table(y1)["0"] / sum(table(y1))
 table(y2)["0"] / sum(table(y2))
 fit = vglm(cbind(y1,y2) ~ x, zinegbinomial(zero=NULL), trace=TRUE)

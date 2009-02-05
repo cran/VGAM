@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2008 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2009 T.W. Yee, University of Auckland. All rights reserved.
 
 
 
@@ -20,7 +20,7 @@ mix2normal1 = function(lphi="logit",
                        esd1=list(), esd2=list(),
                        iphi=0.5, imu1=NULL, imu2=NULL, isd1=NULL, isd2=NULL,
                        qmu=c(0.2, 0.8),
-                       ESD=TRUE,
+                       equalsd=TRUE,
                        nsimEIM=100,
                        zero=1)
 {
@@ -47,8 +47,8 @@ mix2normal1 = function(lphi="logit",
     if(!is.list(emu2)) emu2 = list()
     if(!is.list(esd1)) esd1 = list()
     if(!is.list(esd2)) esd2 = list()
-    if(!is.logical(ESD) || length(ESD) != 1)
-        stop("bad input for argument \"ESD\"")
+    if(!is.logical(equalsd) || length(equalsd) != 1)
+        stop("bad input for argument \"equalsd\"")
     if(!is.Numeric(nsimEIM, allow=1, integ=TRUE) || nsimEIM <= 10)
         stop("'nsimEIM' should be an integer greater than 10")
 
@@ -63,10 +63,10 @@ mix2normal1 = function(lphi="logit",
            "Mean:     phi*mu1 + (1-phi)*mu2\n",
            "Variance: phi*sd1^2 + (1-phi)*sd2^2 + phi*(1-phi)*(mu1-mu2)^2"),
     constraints=eval(substitute(expression({
-        constraints = cm.vgam(rbind(diag(4), c(0,0,1,0)), x, .ESD,
+        constraints = cm.vgam(rbind(diag(4), c(0,0,1,0)), x, .equalsd,
                               constraints, int=TRUE)
         constraints = cm.zero.vgam(constraints, x, .zero, M)
-    }), list(.zero=zero, .ESD=ESD))),
+    }), list(.zero=zero, .equalsd=equalsd))),
     initialize=eval(substitute(expression({
         if(ncol(y <- cbind(y)) != 1)
             stop("the response must be a vector or one-column matrix")
@@ -88,10 +88,10 @@ mix2normal1 = function(lphi="logit",
             sorty = sort(y)
             init.sd1 = rep(if(length(.isd1)) .isd1 else sd(sorty[ind.1]), len=n)
             init.sd2 = rep(if(length(.isd2)) .isd2 else sd(sorty[ind.2]), len=n)
-            if( .ESD ) {
+            if( .equalsd ) {
                 init.sd1 = init.sd2 = (init.sd1 + init.sd2)/2
                 if(!all.equal( .esd1, .esd2 ))
-                    stop("'esd1' and 'esd2' must be equal if ESD=TRUE")
+                    stop("'esd1' and 'esd2' must be equal if equalsd=TRUE")
             }
             etastart = cbind(theta2eta(init.phi, .lphi, earg= .ephi),
                              theta2eta(init.mu1,  .lmu, earg= .emu1),
@@ -101,7 +101,7 @@ mix2normal1 = function(lphi="logit",
         }
     }), list(.lphi=lphi, .lmu=lmu, .iphi=iphi, .imu1=imu1, .imu2=imu2,
              .ephi=ephi, .emu1=emu1, .emu2=emu2, .esd1=esd1, .esd2=esd2,
-             .ESD=ESD,
+             .equalsd=equalsd,
              .lsd=lsd, .isd1=isd1, .isd2=isd2, .qmu=qmu))),
     inverse=eval(substitute(function(eta, extra=NULL){
         phi = eta2theta(eta[,1], link= .lphi, earg= .ephi)
@@ -116,9 +116,9 @@ mix2normal1 = function(lphi="logit",
         misc$earg = list("phi"= .ephi, "mu1"= .emu1,
                          "sd1"= .esd1, "mu2"= .emu2, "sd2"= .esd2)
         misc$expected = TRUE
-        misc$ESD = .ESD
+        misc$equalsd = .equalsd
         misc$nsimEIM = .nsimEIM
-    }), list(.lphi=lphi, .lmu=lmu, .lsd=lsd, .ESD=ESD,
+    }), list(.lphi=lphi, .lmu=lmu, .lsd=lsd, .equalsd=equalsd,
              .ephi=ephi, .emu1=emu1, .emu2=emu2, .esd1=esd1, .esd2=esd2,
              .nsimEIM=nsimEIM ))),
     loglikelihood=eval(substitute(

@@ -170,14 +170,14 @@ plot(fit2, lcol=mycols, pcol=mycols, las=1)
 }
 
 p = predict(fit, x=fit@x, deriv=0)
-max(abs(fit@y - p$y))  # Should be zero
+max(abs(fit@y - with(p, y))) # Should be zero
 
 par(mfrow=c(3,1))
 ux = seq(1, 8, len=100)
 for(d in 1:3) {
     p = predict(fit, x=ux, deriv=d)
 \dontrun{
-    matplot(p$x, p$y, type="l", main=paste("deriv =", d), lwd=2)
+    with(p, matplot(x, y, type="l", main=paste("deriv =", d), lwd=2))
 }
 }
 }

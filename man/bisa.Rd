@@ -54,7 +54,7 @@ bisa(lshape = "loge", lscale = "loge",
         F(y;a,k) = pnorm[xi(y/b)/a] }
   where \eqn{\Phi(\cdot)}{pnorm()} is the 
   cumulative distribution function of a standard normal
-  (see \code{\link[stats]{pnorm}}),
+  (see \code{\link[stats:Normal]{pnorm}}),
   \eqn{\xi(t) = \sqrt{t} - 1 / \sqrt{t}}{xi(t) = t^(0.5) - t^(-0.5)},
   \eqn{y > 0},
   \eqn{a>0} is the shape parameter,

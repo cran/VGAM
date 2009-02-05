@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2008 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2009 T.W. Yee, University of Auckland. All rights reserved.
 
 
 
@@ -9,59 +9,10 @@ if(!exists("is.R")) is.R <- function()
     exists("version") && !is.null(version$language) && version$language=="R"
 
 
-if(FALSE) vmodel.matrix.lm <- function(object, ...) {
-    x <- slot(object, "x")
-    if(!length(x)) {
-        data <- model.framevlm(object, xlev = object@xlevels, ...)
 
-
-        x <- if(is.R()) {
-                 kill.con <- if(length(object@contrasts)) object@contrasts else
-                             NULL 
-                 vmodel.matrix.default(object, data = data,
-                                      contrasts = kill.con)
-             } else 
-             model.matrix.default(terms(object), data = data, 
-                                   contrasts = object@contrasts)
-    } 
-    x
-}
-
-
-if(!is.R()) {
-if(FALSE)    vmodel.frame.lm <- function(formula, data = NULL, 
-                                na.action = NULL, ...) {
-        m <- formula@model
-        if(!is.null(m))
-            return(m)
-        oc <- formula@call
-        oc$method <- "model.frame"
-        oc[[1.]] <- as.name("lm")
-        if(length(data)) {
-            oc$data <- substitute(data)
-            eval(oc, sys.parent())
-        }
-        else eval(oc, list())
-    }
-}
-
-
-if(is.R()) {
-if(FALSE) vmodel.frame.lm = function (formula, data, na.action, ...) {
-        if (is.null(formula@model)) {
-            fcall <- formula@call
-            fcall$method <- "model.frame"
-            fcall[[1]] <- as.name("lm")
-            env <- environment(fcall$formula)
-            if (is.null(env))
-                env <- parent.frame()
-            eval(fcall, env)
-        } else formula@model
-    }
-}
-
-
-predict.vlm <- function(object, newdata=NULL, type=c("response","terms"),
+predict.vlm <- function(object,
+                        newdata=NULL,
+                        type=c("response","terms","lm2"),
                         se.fit = FALSE, scale = NULL,
                         terms.arg=NULL,
                         raw=FALSE,
@@ -70,7 +21,7 @@ predict.vlm <- function(object, newdata=NULL, type=c("response","terms"),
 
     if(mode(type) != "character" && mode(type) != "name")
         type <- as.character(substitute(type))
-    type <- match.arg(type, c("response","terms"))[1]
+    type <- match.arg(type, c("response","terms","lm2"))[1]
 
     na.act = object@na.action
     object@na.action = list()
@@ -90,37 +41,14 @@ predict.vlm <- function(object, newdata=NULL, type=c("response","terms"),
 
 
     tt <- terms(object)  # 11/8/03; object@terms$terms
+    if(type == "lm2")
+        ttXm2 = terms(object@misc$form2)
+
     if(!length(newdata)) {
         offset <- object@offset
-
-        if(FALSE) {
-
-            X <- model.matrixvlm(object, type="lm")
-
-
-
-            if(is.R() && !length(object@x)) {
-                attrassigndefault <- function(mmat, tt) {
-                  if (!inherits(tt, "terms"))
-                    stop("need terms object")
-                  aa <- attr(mmat, "assign")
-                  if (is.null(aa))
-                    stop("argument is not really a model matrix")
-                  ll <- attr(tt, "term.labels")
-                  if (attr(tt, "intercept") > 0)
-                    ll <- c("(Intercept)", ll)
-                  aaa <- factor(aa, labels = ll)
-                  split(order(aa), aaa)
-                }
-                attrassignlm <- function(object, ...) 
-                    attrassigndefault(model.matrix(object, type="lm"),
-                                      terms(object))
-
-                attr(X, "assign") <- attrassignlm(X, tt)
-            }
-        } else {
-            X <- model.matrix(object, type="lm")
-        }
+        X   <- model.matrix(object, type="lm")
+        if(type == "lm2")
+            Xm2 <- model.matrix(object, type="lm2")
     } else {
 
         if(is.smart(object) && length(object@smart.prediction)) {
@@ -133,6 +61,11 @@ predict.vlm <- function(object, newdata=NULL, type=c("response","terms"),
         X = model.matrix(delete.response(tt), newdata,
             contrasts=if(length(object@contrasts)) object@contrasts else NULL,
             xlev = object@xlevels)
+        if(type == "lm2")
+            Xm2 = model.matrix(delete.response(ttXm2), newdata,
+                  contrasts=if(length(object@contrasts)) object@contrasts else
+                            NULL,
+                  xlev = object@xlevels)
 
 
         if(is.R() && object@misc$intercept.only && nrow(X)!=nrow(newdata)) {
@@ -151,11 +84,16 @@ predict.vlm <- function(object, newdata=NULL, type=c("response","terms"),
             wrapup.smart() 
         }
 
-        if(is.R())
+        if(is.R()) {
             attr(X, "assign") <- attrassigndefault(X, tt)
+            if(type == "lm2" && length(Xm2))
+                attr(Xm2, "assign") <- attrassigndefault(Xm2, ttXm2)
+        }
 
     }
 
+    if(type == "lm2")
+        return(Xm2)
 
     hasintercept <- attr(tt, "intercept")
 
@@ -196,7 +134,7 @@ predict.vlm <- function(object, newdata=NULL, type=c("response","terms"),
     X <- lm2vlm.model.matrix(X, Blist=Blist, M=M, xij=object@control$xij)
     attr(X, "constant") <- xbar 
 
-    coefs <- coef(object)
+    coefs <- coefvlm(object)
     vasgn <- attr(X, "vassign")
 
  
@@ -235,14 +173,14 @@ predict.vlm <- function(object, newdata=NULL, type=c("response","terms"),
                                 vasgn,
                                 collapse=type!="terms", M=M,
                                 dimname=list(dx1, dname2),
-                                coefmat=coef(object, matrix=TRUE))
+                                coefmat=coefvlm(object, matrix=TRUE))
         pred$df <- object@df.residual
         pred$sigma <- sigma
     } else
         pred <- Build.terms.vlm(X, coefs, cov=NULL, assign = vasgn,
                                 collapse=type!="terms", M=M,
                                 dimname=list(dx1, dname2),
-                                coefmat=coef(object, matrix=TRUE))
+                                coefmat=coefvlm(object, matrix=TRUE))
         constant <- attr(pred, "constant")
 
 
@@ -394,17 +332,9 @@ canonical.Blist <- function(Blist) {
 
 
 
-
-    setMethod("predict", "vlm", 
-              function(object, ...)
-              predict.vlm(object, ...))
-
-
-
-
-
-
-
+setMethod("predict", "vlm", 
+          function(object, ...)
+          predict.vlm(object, ...))
 
 
 

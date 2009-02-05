@@ -420,7 +420,7 @@ if(deviance(p1) > 1177) stop("suboptimal fit obtained")
 S = ncol(p1@y) # Number of species
 clr = (1:(S+1))[-7] # omits yellow
 lvplot(p1, y=TRUE, lcol=clr, pch=1:S, pcol=clr, las=1) # ordination diagram
-legend("topright", leg=dimnames(p1@y)[[2]], col=clr,
+legend("topright", leg=colnames(p1@y), col=clr,
        pch=1:S, merge=TRUE, bty="n", lty=1:S, lwd=2)
 }
 (cp = Coef(p1))
@@ -482,5 +482,5 @@ cbind(truth=attr(mydata, "ccoefficients"), fitted=ccoef(b1))
 \keyword{models}
 \keyword{regression}
 
-%legend("topright", x=1, y=135, leg=dimnames(p1@y)[[2]], col=clr,
+%legend("topright", x=1, y=135, leg=colnames(p1@y), col=clr,
 %       pch=1:S, merge=TRUE, bty="n", lty=1:S, lwd=2)

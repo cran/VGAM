@@ -32,14 +32,8 @@ Watts, D. G. (1981)
 }
 \examples{
 data(enzyme)
-fit = vglm(velocity ~ 1, micmen, enzyme, trace = TRUE, crit = "c",
-           regressor = enzyme$conc)
-\dontrun{attach(enzyme)
-plot(conc, velocity, xlab="concentration", las=1, main="enzyme data")
-lines(conc, fitted(fit), col="blue")
-detach(enzyme)
-}
-
+fit = vglm(velocity ~ 1, micmen, data=enzyme, trace = TRUE,
+           form2 = ~ conc - 1, crit = "crit")
 summary(fit)
 }
 \keyword{datasets}

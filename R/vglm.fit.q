@@ -1,10 +1,11 @@
 # These functions are
-# Copyright (C) 1998-2008 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2009 T.W. Yee, University of Auckland. All rights reserved.
 
 
 
 
 vglm.fit <- function(x, y, w=rep(1, length(x[, 1])),
+    Xm2=NULL, Ym2=NULL,
     etastart=NULL, mustart=NULL, coefstart=NULL,
     offset=0, family,
     control=vglm.control(),
@@ -75,6 +76,8 @@ vglm.fit <- function(x, y, w=rep(1, length(x[, 1])),
                               (criterion!="coefficients" &&
                              (if(minimize.criterion) new.crit > old.crit else
                              new.crit < old.crit)))
+                if(!is.logical(take.half.step))
+                    take.half.step = TRUE
                 if(take.half.step) {
                     stepsize <- 2 * min(orig.stepsize, 2*stepsize)
                     new.coeffs.save <- new.coeffs

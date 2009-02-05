@@ -20,6 +20,10 @@ s(x, df = 4, spar = 0, ...)
 
   \item{x}{
   covariate (abscissae) to be smoothed.
+  Note that \code{x} must be a single variable
+  and not a function of a variable.
+  For example, \code{s(x)} is fine but \code{s(log(x))} will fail. 
+  In this case, let \code{logx <- log(x)}, say, and use \code{s(logx)}.
 
   }
   \item{df}{
@@ -65,11 +69,6 @@ Vector generalized additive models.
 }
 \author{ Thomas W. Yee }
 \note{
-  The \code{x} argument of \code{s()} must be a single variable
-  and not a function of a variable.
-  For example, \code{s(x)} is fine but \code{s(log(x))} will fail. 
-  In this case, let \code{logx <- log(x)}, say, and use
-  \code{s(logx)}.
 
   The vector cubic smoothing spline which \code{s()} represents is
   computationally demanding for large \eqn{M}. The cost is approximately

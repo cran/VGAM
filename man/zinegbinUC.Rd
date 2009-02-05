@@ -1,9 +1,9 @@
-\name{Zinb}
-\alias{Zinb}
-\alias{dzinb}
-\alias{pzinb}
-\alias{qzinb}
-\alias{rzinb}
+\name{Zinegbin}
+\alias{Zinegbin}
+\alias{dzinegbin}
+\alias{pzinegbin}
+\alias{qzinegbin}
+\alias{rzinegbin}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Zero-Inflated Negative Binomial Distribution }
 \description{
@@ -12,10 +12,10 @@
 
 }
 \usage{
-dzinb(x, phi, size, prob=NULL, munb=NULL, log=FALSE)
-pzinb(q, phi, size, prob=NULL, munb=NULL)
-qzinb(p, phi, size, prob=NULL, munb=NULL)
-rzinb(n, phi, size, prob=NULL, munb=NULL)
+dzinegbin(x, phi, size, prob=NULL, munb=NULL, log=FALSE)
+pzinegbin(q, phi, size, prob=NULL, munb=NULL)
+qzinegbin(p, phi, size, prob=NULL, munb=NULL)
+rzinegbin(n, phi, size, prob=NULL, munb=NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -50,10 +50,10 @@ rzinb(n, phi, size, prob=NULL, munb=NULL)
 
 }
 \value{
-  \code{dzinb} gives the density,
-  \code{pzinb} gives the distribution function,
-  \code{qzinb} gives the quantile function, and
-  \code{rzinb} generates random deviates.
+  \code{dzinegbin} gives the density,
+  \code{pzinegbin} gives the distribution function,
+  \code{qzinegbin} gives the quantile function, and
+  \code{rzinegbin} generates random deviates.
 }
 %\references{ }
 \author{ Thomas W. Yee }
@@ -70,22 +70,22 @@ rzinb(n, phi, size, prob=NULL, munb=NULL)
 
 }
 \examples{
-munb = 3; phi = 0.2; k = 10
+munb = 3; phi = 0.2; size = k = 10
 x = 0:10
-(i = dzinb(x, phi=phi, mu=munb, size=k))
-cumsum(i) - pzinb(x, phi=phi, mu=munb, size=k)  # Should be 0s
-table(rzinb(100, phi=phi, mu=munb, size=k))
+(i = dzinegbin(x, phi=phi, mu=munb, size=k))
+max(abs(cumsum(i) - pzinegbin(x, phi=phi, mu=munb, size=k))) # Should be 0
+table(rzinegbin(100, phi=phi, mu=munb, size=k))
 
-table(qzinb(runif(1000), phi=phi, mu=munb, size=k))
-round(dzinb(x, phi=phi, mu=munb, size=k) * 1000) # Should be similar
+table(qzinegbin(runif(1000), phi=phi, mu=munb, size=k))
+round(dzinegbin(x, phi=phi, mu=munb, size=k) * 1000) # Should be similar
 
 \dontrun{
-barplot(rbind(dzinb(x, phi=phi, mu=munb, size=k),
+barplot(rbind(dzinegbin(x, phi=phi, mu=munb, size=k),
               dnbinom(x, mu=munb, size=k)),
         beside = TRUE, col = c("blue","green"),
         main=paste("ZINB(mu=", munb, ", k=", k, ", phi=", phi,
                    ") (blue) vs negative binomial(mu=", munb,
-                   ", k=", k, ") (green)", sep=""),
+                   ", size=", k, ") (green)", sep=""),
         names.arg = as.character(x))
 }
 }

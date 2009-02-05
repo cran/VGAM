@@ -39,9 +39,8 @@ Health Study: design and baseline findings.
 \examples{
 \dontrun{
 data(bminz)
-attach(bminz); plot(age, BMI, col="blue"); detach(bminz)
-
-fit = vgam(BMI ~ s(age, df=c(2,4,2)), fam=lms.yjn, data=bminz, tr=TRUE)
+with(bminz, plot(age, BMI, col="blue"))
+fit = vgam(BMI ~ s(age, df=c(2,4,2)), fam=lms.yjn, bminz, tr=TRUE)
 qtplot(fit, pcol="blue", tcol="brown", lcol="brown")
 }
 }

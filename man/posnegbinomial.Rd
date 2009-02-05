@@ -9,8 +9,8 @@
 }
 \usage{
 posnegbinomial(lmunb = "loge", lk = "loge", 
-               emunb =list(), ek = list(), ik = NULL,
-               zero = -2, cutoff = 0.995, method.init=1)
+               emunb =list(), ek = list(), ik = NULL, zero = -2,
+               cutoff = 0.995, shrinkage.init=0.95, method.init=1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -61,7 +61,7 @@ posnegbinomial(lmunb = "loge", lk = "loge",
   \code{qnegbin(p)}.
 
   }
-  \item{method.init}{
+  \item{shrinkage.init, method.init}{
   See \code{\link{negbinomial}}.
 
   }
@@ -128,35 +128,26 @@ Generalized additive modelling and zero inflated count data.
 }
 
 \examples{
-\dontrun{
 x = runif(nn <- 2000)
-y1 = rnbinom(nn, mu=exp(0+2*x), size=exp(1)) # k is size in rnbinom()
-y2 = rnbinom(nn, mu=exp(1+2*x), size=exp(3))
-fit = vglm(cbind(y1,y2) ~ 1, posnegbinomial, subset=(y1>0)&(y2>1),
-           trace=TRUE)
+y1 = rposnegbin(nn, munb=exp(0+2*x), size=exp(1))
+y2 = rposnegbin(nn, munb=exp(1+2*x), size=exp(3))
+fit = vglm(cbind(y1,y2) ~ x, posnegbinomial, trace=TRUE)
 coef(fit, matrix=TRUE)
 dim(fit@y)
-fitted(fit)[1:5,]
-predict(fit)[1:5,]
 
 
 # Another artificial data example
-munb = exp(2); k = exp(3); n = 1000
-y = rposnegbin(n, munb=munb, k=k)
+munb = exp(2); size = k = exp(3); nn = 1000
+y = rposnegbin(nn, munb=munb, size=size)
 table(y)
 fit = vglm(y ~ 1, posnegbinomial, trace=TRUE)
 coef(fit, matrix=TRUE)
 mean(y)    # Sample mean
-munb / (1 - (k/(k+munb))^k) # Population mean
-fitted(fit)[1:5,]
-predict(fit)[1:5,]
-}
+munb / (1 - (size/(size+munb))^size) # Population mean
+fitted(fit)[1:3,]
+predict(fit)[1:3,]
 }
 \keyword{models}
 \keyword{regression}
 
 
-%library(MASS)
-%detach() # detach MASS
-%y1 = rnegbin(nn, mu=exp(0+2*x), theta=exp(1)) # k is theta in rnegbin()
-%y2 = rnegbin(nn, mu=exp(1+2*x), theta=exp(3))

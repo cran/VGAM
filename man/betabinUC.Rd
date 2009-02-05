@@ -92,19 +92,25 @@ rbetabin.ab(n, size, shape1, shape2)
 \dontrun{
 N = 9; x = 0:N; s1=2; s2=3
 dy = dbetabin.ab(x, size=N, shape1=s1, shape2=s2)
-plot(x, dy, type="h", col="red", ylim=c(0,0.25), ylab="Probability",
-     main=paste("Beta-binomial (size=",N,", shape1=",s1,
-                ", shape2=",s2,")", sep=""))
-lines(x+0.1, dbinom(x, size=N, prob=s1/(s1+s2)), type="h", col="blue")
+barplot(rbind(dy, dbinom(x, size=N, prob=s1/(s1+s2))),
+        beside = TRUE, col = c("blue","green"),
+        main=paste("Beta-binomial (size=",N,", shape1=",s1,
+                   ", shape2=",s2,") (blue) vs\n",
+        " Binomial(size=", N, ", prob=", s1/(s1+s2), ") (green)", sep=""),
+        names.arg = as.character(x))
 sum(dy*x) # Check expected values are equal
 sum(dbinom(x, size=N, prob=s1/(s1+s2))*x)
 cumsum(dy) -  pbetabin.ab(x, N, shape1=s1, shape2=s2)
 
 y = rbetabin.ab(n=10000, size=N, shape1=s1, shape2=s2)
 ty = table(y)
-lines(as.numeric(names(ty))+0.2, ty/sum(ty), type="h", col="green")
-legend(5, 0.25, leg=c("beta-binomial","binomial", "random generated"),
-       col=c("red","blue","green"), lty=1)
+barplot(rbind(dy, ty/sum(ty)),
+        beside = TRUE, col = c("blue","red"),
+        main=paste("Beta-binomial (size=",N,", shape1=",s1,
+                   ", shape2=",s2,") (blue) vs\n",
+        " Random generated beta-binomial(size=", N, ", prob=", s1/(s1+s2),
+        ") (red)", sep=""),
+        names.arg = as.character(x))
 }
 }
 \keyword{distribution}

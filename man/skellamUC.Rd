@@ -47,7 +47,8 @@ rskellam(n, mu1, mu2)
 
 }
 \seealso{
-  \code{\link{skellam}}.
+  \code{\link{skellam}},
+  \code{\link[stats:Poisson]{dpois}}.
 
 }
 \examples{

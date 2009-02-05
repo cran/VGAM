@@ -135,7 +135,7 @@ round(rbind('Estimated'=Coef(fit),
             'Truth'=c(phi, lambda1, lambda2)), dig=2)
 
 \dontrun{# Plot the results
-hist(y, prob=TRUE, main="red=estimate, blue=truth")
+hist(y, prob=TRUE, main="Red=estimate, blue=truth")
 abline(v=1/Coef(fit)[c(2,3)], lty=2, col="red", lwd=2)
 abline(v=1/c(lambda1, lambda2), lty=2, col="blue", lwd=2)
 }

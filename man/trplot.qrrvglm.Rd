@@ -13,7 +13,7 @@ It is only applicable for rank-1 models with argument
 trplot.qrrvglm(object, whichSpecies = NULL,
                add=FALSE, plot.it=TRUE,
                label.sites = FALSE, 
-               sitenames = dimnames(object@y)[[1]], 
+               sitenames = rownames(object@y), 
                axes.equal = TRUE, cex = par()$cex, 
                col = 1:(nos * (nos - 1)/2), log = "", 
                lty = rep(par()$lty, len = nos * (nos - 1)/2), 
@@ -157,8 +157,8 @@ p1 = cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi, Auloalbi,
 trplot(p1, whichSpecies=1:3, log="xy", type="b", lty=1,
        main="Trajectory plot of three hunting spiders species",
        col=c("blue","red","green"), lwd=2, label=TRUE) -> ii
-legend(0.00005, 0.3, paste(ii$species[,1], ii$species[,2], sep=" and "),
-       lwd=2, lty=1, col=c("blue","red","green"))
+legend(0.00005, 0.3, lwd=2, lty=1, col=c("blue","red","green"),
+       with(ii, paste(species.names[,1], species.names[,2], sep=" and ")))
 abline(a=0, b=1, lty="dashed")  # Useful reference line
 }
 }

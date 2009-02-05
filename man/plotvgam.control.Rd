@@ -14,7 +14,7 @@ plotvgam.control(which.cf = NULL,
                   lcol = par()$col, rcol = par()$col,
                   scol = par()$col, llwd = par()$lwd, slwd = par()$lwd,
                   add.arg = FALSE, one.at.a.time = FALSE,
-                  .include.dots = TRUE, ...)
+                  .include.dots = TRUE, noxmean= FALSE, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -44,12 +44,21 @@ plotvgam.control(which.cf = NULL,
     Fed into \code{par(lwd)}. }
   \item{slwd}{ Line width of the standard error bands.
     Fed into \code{par(lwd)}. }
-  \item{add.arg}{ Logical. If \code{TRUE}, the plot will be added
+  \item{add.arg}{ Logical. If \code{TRUE} then the plot will be added
     to an existing plot, otherwise a new plot will be made. }
-  \item{one.at.a.time}{ Logical. If \code{TRUE}, the plots are done
+  \item{one.at.a.time}{ Logical. If \code{TRUE} then the plots are done
     one at a time, with the user having to hit the return key
     between the plots. }
   \item{.include.dots}{ Not to be used by the user. }
+  \item{noxmean}{
+  Logical. If \code{TRUE} then the point at the mean of \eqn{x},
+  which is added when
+  standard errors are specified and
+  it thinks the function is linear,
+  is not added.
+  One might use this argument if \code{ylab} is specified.
+
+  }
   \item{\dots}{ Other arguments that may be fed into \code{par()}. }
   In the above, \eqn{M} is the number of linear/additive predictors.
 }

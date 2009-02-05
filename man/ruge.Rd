@@ -33,10 +33,9 @@
 %}
 \examples{
 data(ruge)
-attach(ruge)
-lambdahat = weighted.mean(number, w=counts)
-(N = sum(counts))
-cbind(number, counts, fitted=round(N * dpois(number, lam=lambdahat)))
-detach(ruge)
+lambdahat = with(ruge, weighted.mean(number, w=counts))
+(N = with(ruge, sum(counts)))
+with(ruge, cbind(number, counts,
+                 fitted=round(N * dpois(number, lam=lambdahat))))
 }
 \keyword{datasets}

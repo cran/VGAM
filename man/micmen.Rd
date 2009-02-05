@@ -54,8 +54,8 @@ micmen(rpar = 0.001, divisor = 10, init1 = NULL, init2 = NULL,
 }
 \details{
   The Michaelis-Menten Model is given by
-  \deqn{E(Y_i) = (\theta_1 x_i) / (\theta_2 + x_i)}{%
-      E(Y_i) = theta1 * x_i / (theta2 + x_i)}
+  \deqn{E(Y_i) = (\theta_1 u_i) / (\theta_2 + u_i)}{%
+      E(Y_i) = theta1 * u_i / (theta2 + u_i)}
   where \eqn{\theta_1}{theta1} and \eqn{\theta_2}{theta2}
   are the two parameters.
 
@@ -92,11 +92,15 @@ micmen(rpar = 0.001, divisor = 10, init1 = NULL, init2 = NULL,
 }
 \author{ T. W. Yee }
 \note{
-  The regressor values \eqn{x_i}{x_i} are inputted as a vector in the
-  \code{regressor} argument.
-  To predict the response at new values of \eqn{x_i}{x_i} one must assign
-  the \code{@extra$uvec} slot in the fitted object these values, e.g.,
-  see the example below.
+  The regressor values \eqn{u_i}{u_i} are inputted as the RHS of
+  the \code{form2} argument.
+  It should just be a simple term; no smart prediction is used.
+  It should just a single vector so omit the intercept term.
+  The LHS is ignored.
+
+% To predict the response at new values of \eqn{u_i}{u_i} one must assign
+% the \code{@extra$uvec} slot in the fitted object these values, e.g.,
+% see the example below.
 
   Numerical problems may occur. If so, try setting some initial values
   for the parameters. In the future, several self-starting initial values
@@ -111,17 +115,17 @@ micmen(rpar = 0.001, divisor = 10, init1 = NULL, init2 = NULL,
 \examples{
 data(enzyme)
 fit = vglm(velocity ~ 1, micmen, enzyme, trace=TRUE, crit="c",
-           regressor=enzyme$conc)
+           form2 = ~ conc - 1)
 \dontrun{
-attach(enzyme)
-plot(conc, velocity, xlab="concentration", las=1, main="Enzyme data")
-lines(conc, fitted(fit), col="blue") # Join up the fitted values
-detach(enzyme)
+with(enzyme, plot(conc, velocity, xlab="concentration", las=1,
+                  main="Enzyme data", ylim=c(0,max(velocity)),
+                  xlim=c(0,max(conc))))
+with(enzyme, points(conc, fitted(fit), col="blue", pch="+"))
 
-# Predict the response at other concentrations and add it to the plot
-newdata = new=data.frame(concentration=seq(0, 2, len=200))
-fit@extra$uvec = newdata$concentration
-lines(newdata$conc, predict(fit, new=newdata, type="res"), col="red")
+# This predicts the response at a finer grid:
+newenzyme = data.frame(conc = with(enzyme, seq(0, max(conc),len=200)))
+with(newenzyme, lines(conc, predict(fit, newenzyme, type="response"),
+                      col="red"))
 }
 summary(fit)
 }

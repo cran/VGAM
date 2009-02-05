@@ -16,7 +16,7 @@ erf(x)
   \eqn{Erf(x)} is defined as
   \deqn{Erf(x) = \frac{2}{\sqrt{\pi}} \int_0^x \exp(-t^2) dt}{%
     Erf(x) = (2/sqrt(pi)) int_0^x exp(-t^2) dt}
-  so that it is closely related to \code{\link[stats]{pnorm}}.
+  so that it is closely related to \code{\link[stats:Normal]{pnorm}}.
 }
 \value{
   Returns the value of the function evaluated at \code{x}.
@@ -38,7 +38,10 @@ New York: Dover Publications Inc.
   as \eqn{1-erf(x)}, and is implemented by \code{erfc}.
 }
 
-\seealso{ \code{\link[stats]{pnorm}}. }
+\seealso{
+  \code{\link[stats:Normal]{pnorm}}.
+}
+
 \examples{
 \dontrun{
 x = seq(-3, 3, len=200)

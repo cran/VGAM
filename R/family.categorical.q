@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2008 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2009 T.W. Yee, University of Auckland. All rights reserved.
 
 
 
@@ -26,8 +26,7 @@ process.categorical.data.vgam = expression({
     if(!exists("delete.zero.colns") ||
       (exists("delete.zero.colns") && delete.zero.colns)) {
         sumy2 = as.vector(t(y) %*% rep(1,nrow(y)))
-        if(any(index <- sumy2==0))
-        {
+        if(any(index <- sumy2==0)) {
             y = y[,!index,drop = FALSE]
             sumy2 = sumy2[!index]
             if(all(index) || ncol(y)<=1) stop("y matrix has 0 or 1 columns")
@@ -36,8 +35,7 @@ process.categorical.data.vgam = expression({
         }
     }
 
-    if(any(miss <- nvec==0))
-    {
+    if(any(miss <- nvec==0)) {
         warning(paste(sm <- sum(miss),
                       "observation(s) deleted (zero counts)"))
         x = x[!miss,,drop = FALSE]
@@ -360,12 +358,34 @@ vglm.vcategorical.control = function(maxit=30, trace=FALSE, panic=TRUE, ...)
 
 
 
-multinomial = function(zero=NULL, parallel=FALSE, nointercept=NULL)
+multinomial = function(zero=NULL, parallel=FALSE, nointercept=NULL,
+                       refLevel="last")
 {
+    if(length(refLevel) != 1) stop("the length of 'refLevel' must be one")
+    if(is.character(refLevel)) {
+        if(refLevel != "last") stop('if a character, refLevel must be "last"')
+        refLevel = -1
+    } else if(is.factor(refLevel)) {
+        if(is.ordered(refLevel)) warning("'refLevel' is from an ordered factor")
+        refLevel = as.character(refLevel) == levels(refLevel)
+        refLevel = (1:length(refLevel))[refLevel]
+        if(!is.Numeric(refLevel, allow=1, integer=TRUE, posit=TRUE))
+            stop("could not coerce 'refLevel' into a single positive integer")
+    } else if(!is.Numeric(refLevel, allow=1, integer=TRUE, posit=TRUE))
+            stop("\"refLevel\" must be a single positive integer")
 
     new("vglmff",
     blurb=c("Multinomial logit model\n\n", 
-           "Links:    log(mu[,j]/mu[,M+1])\n",
+           if(refLevel < 0)
+           "Links:    log(mu[,j]/mu[,M+1]), j=1:M,\n" else {
+               if(refLevel==1)
+                   paste("Links:    log(mu[,j]/mu[,", refLevel,
+                         "]), j=2:(M+1),\n", sep="") else
+                   paste("Links:    log(mu[,j]/mu[,", refLevel,
+                         "]), j=c(1:", refLevel-1,
+                         ",", refLevel+1, ":(M+1)),\n",
+                     sep="")
+           },
            "Variance: mu[,j]*(1-mu[,j]); -mu[,j]*mu[,k]"),
     constraints=eval(substitute(expression({
 
@@ -377,52 +397,87 @@ multinomial = function(zero=NULL, parallel=FALSE, nointercept=NULL)
                                intercept.apply=FALSE)
         constraints = cm.zero.vgam(constraints, x, .zero, M)
         constraints = cm.nointercept.vgam(constraints, x, .nointercept, M)
-    }), list( .parallel=parallel, .zero=zero, .nointercept=nointercept ))),
+    }), list( .parallel=parallel, .zero=zero, .nointercept=nointercept,
+              .refLevel=refLevel ))),
     deviance=Deviance.categorical.data.vgam,
-    initialize=expression({
+    initialize=eval(substitute(expression({
         delete.zero.colns = TRUE 
         eval(process.categorical.data.vgam)
         M = ncol(y)-1
-        predictors.names = paste("log(mu[,",1:M,"]/mu[,",M+1,"])",sep="")
+        use.refLevel = if( .refLevel < 0) M+1 else .refLevel
+        if(use.refLevel > (M+1))
+            stop("argument 'refLevel' has a value that is too high")
+        allbut.refLevel = (1:(M+1))[-use.refLevel]
+        predictors.names = paste("log(mu[,", allbut.refLevel,
+                                 "]/mu[,", use.refLevel, "])", sep="")
         y.names = paste("mu", 1:(M+1), sep="")
-    }),
-    inverse=function(eta, extra=NULL) {
+    }), list( .refLevel = refLevel ))),
+    inverse=eval(substitute( function(eta, extra=NULL) {
         if(any(is.na(eta)))
             warning("there are NAs in eta in slot inverse")
-        phat = cbind(exp(eta), 1) 
+        M = ncol(cbind(eta))
+        if( (.refLevel < 0) || (.refLevel == M+1)) {
+            phat = cbind(exp(eta), 1)
+        } else if( .refLevel == 1) {
+            phat = cbind(1, exp(eta))
+        } else {
+            use.refLevel = if( .refLevel < 0) M+1 else .refLevel
+            etamat = cbind(eta[,1:( .refLevel - 1)], 0,
+                           eta[,( .refLevel ):M])
+            phat = exp(etamat)
+        }
         ans = phat / as.vector(phat %*% rep(1, ncol(phat)))
         if(any(is.na(ans)))
             warning("there are NAs here in slot inverse")
         ans
-    }, 
-    last=expression({
+    }), list( .refLevel = refLevel )),
+    last=eval(substitute(expression({
+        misc$refLevel = if( .refLevel < 0) M+1 else .refLevel
         misc$link = "mlogit"
         misc$earg = list(mlogit = list()) # vector("list", M)
 
         dy = dimnames(y)
         if(!is.null(dy[[2]]))
             dimnames(fit$fitted.values) = dy
-    }),
-    link=function(mu, extra=NULL)
-        log(mu[,-ncol(mu)]/mu[,ncol(mu)]),
+    }), list( .refLevel = refLevel ))),
+    link=eval(substitute( function(mu, extra=NULL) {
+        if( .refLevel < 0) {
+            log(mu[,-ncol(mu)] / mu[,ncol(mu)])
+        } else {
+            use.refLevel = if( .refLevel < 0) ncol(mu) else .refLevel
+            log(mu[,-( use.refLevel )] / mu[, use.refLevel ])
+        }
+    }), list( .refLevel = refLevel )),
     loglikelihood= function(mu, y, w, residuals = FALSE, eta, extra=NULL)
         if(residuals) stop("loglikelihood residuals not implemented yet") else
         sum(w * y * log(mu)), 
     vfamily=c("multinomial", "vcategorical"),
-    deriv=expression({
-        w * (y[,-ncol(y)] - mu[,-ncol(y)])
-    }),
-    weight= expression({
-        tiny = (mu < .Machine$double.eps^.5) | 
-                (mu > 1 - .Machine$double.eps^.5)
+    deriv=eval(substitute(expression({
+        if( .refLevel < 0) {
+            w * (y[,-ncol(y)] - mu[,-ncol(y)])
+        } else {
+            use.refLevel = if( .refLevel < 0) M+1 else .refLevel
+            w * (y[,-use.refLevel] - mu[,-use.refLevel])
+        }
+    }), list( .refLevel=refLevel ))),
+    weight=eval(substitute(expression({
+        mytiny = (mu < sqrt(.Machine$double.eps)) | 
+                 (mu > 1 - sqrt(.Machine$double.eps))
 
-        if(M==1) wz = mu[,1] * (1-mu[,1]) else {
+        use.refLevel = if( .refLevel < 0) M+1 else .refLevel
+
+        if(M==1) wz = mu[,3-use.refLevel] * (1-mu[,3-use.refLevel]) else {
             index = iam(NA, NA, M, both=TRUE, diag=TRUE)
+            myinc = (index$row.index >= use.refLevel)
+            index$row.index[myinc] = index$row.index[myinc] + 1
+            myinc = (index$col.index >= use.refLevel)
+            index$col.index[myinc] = index$col.index[myinc] + 1
+
             wz = -mu[,index$row] * mu[,index$col]
-            wz[,1:M] = wz[,1:M] + mu[,1:M]
+            wz[,1:M] = wz[,1:M] + mu[, -use.refLevel ]
         }
 
-        atiny = (tiny %*% rep(1, ncol(mu))) > 0 # apply(tiny, 1, any) 
+        atiny = (mytiny %*% rep(1, ncol(mu))) > 0 # apply(mytiny, 1, any)
         if(any(atiny)) {
             if(M==1) wz[atiny] = wz[atiny] * (1 + .Machine$double.eps^0.5) +
                            .Machine$double.eps else 
@@ -430,7 +485,7 @@ multinomial = function(zero=NULL, parallel=FALSE, nointercept=NULL)
                              .Machine$double.eps
         }
         w * wz
-    }))
+    }), list( .refLevel = refLevel ))))
 }
 
 
@@ -490,6 +545,10 @@ cumulative = function(link="logit", earg = list(),
         answer
     }, list( .earg=earg, .link=link, .mv = mv ) )),
     initialize=eval(substitute(expression({
+
+        if(colnames(x)[1] != "(Intercept)")
+            stop("there is no intercept term!")
+
         extra$mv = .mv
         if( .mv ) {
             checkCut(y)  # Check the input; stops if there is an error.
@@ -828,6 +887,7 @@ brat = function(refgp="last",
     if(!is.character(refgp) &&
        !is.Numeric(refgp, allow=1, integer=TRUE, posit=TRUE))
         stop("\"refgp\" must be a single positive integer")
+
     new("vglmff",
     blurb=c(paste("Bradley-Terry model (without ties)\n\n"), 
            "Links:   ",
@@ -1525,8 +1585,6 @@ scumulative = function(link="logit", earg = list(),
     vfamily=c("scumulative", "vcategorical"),
     deriv=eval(substitute(expression({
         ooz = iter %% 2
- print("ooz")
- print( ooz )
 
         J = extra$J
         mu.use = pmax(mu, .Machine$double.eps * 1.0e-0)

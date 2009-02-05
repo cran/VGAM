@@ -46,8 +46,8 @@ c  preceding one of lower order, and combined with the values of b-
 c  splines of corresponding order in  dbiatx  to produce the desired
 c  values.
 c
-      integer k,left,nderiv,   i,ideriv,il,j,jlow,jp1mid,kp1,kp1mm
-     *      ,ldummy,m,mhigh
+      integer k,left,nderiv,   i,ideriv,il,j,jlow,jp1mid,kp1,kp1mm,
+     *        ldummy,m,mhigh
       double precision a(k,k),dbiatx(k,nderiv),t(1),x
       double precision factor,fkp1mm,sum
       mhigh = max0(min0(nderiv,k),1)
@@ -210,8 +210,12 @@ c
    99                                   return
       end
 
-      double precision function bvalue ( t, bcoef, n, k, x, jderiv )
+
+
+c 20090105; converted bvalue into a subroutine.
+      subroutine wbvalue ( t, bcoef, n, k, x, jderiv, bvalue)
       implicit double precision(a-h,o-z) 
+      double precision bvalue
 calls  vinterv
 c
 calculates value at  x  of  jderiv-th derivative of spline from b-repr.
@@ -274,7 +278,7 @@ c     dimension t(n+k)
 current fortran standard makes it impossible to specify the length of
 c  t  precisely without the introduction of otherwise superfluous
 c  additional arguments.
-      bvalue = 0.
+      bvalue = 0.0d0
       if (jderiv .ge. k)                go to 99
 c
 c  *** find  i  s.t.  1 .le. i .lt. n+k  and  t(i) .lt. t(i+1) and

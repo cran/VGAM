@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2008 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2009 T.W. Yee, University of Auckland. All rights reserved.
 
 
 
@@ -166,6 +166,7 @@ if(is.R())
 setClass("vlm", representation(
       "assign"       = "list",
       "call"         = "call",
+      "callXm2"      = "call",
       "coefficients" = if(is.R()) "numeric" else "named",
       "constraints"  = "list",
       "contrasts"    = "list",
@@ -192,6 +193,8 @@ setClass("vlm", representation(
       "terms"        = "list",
       "weights"      = "matrix",
       "x"            = if(is.R()) "matrix" else "model.matrix",
+      "Xm2"          = if(is.R()) "matrix" else "model.matrix",
+      "Ym2"          = if(is.R()) "matrix" else "model.matrix",
       "xlevels"      = "list",
       "y"            = "matrix")
 ) else 
@@ -318,6 +321,8 @@ prototype(anova=data.frame())) else
       "terms"        = "list",
       "weights"      = "matrix",
       "x"            = if(is.R()) "matrix" else "model.matrix",
+      "Xm2"          = if(is.R()) "matrix" else "model.matrix",
+      "Ym2"          = if(is.R()) "matrix" else "model.matrix",
       "xlevels"      = "list",
       "y"            = "matrix")
 )
@@ -391,60 +396,6 @@ setGeneric("Coefficients", function(object, ...)
 
 
 
-
-if(FALSE) {
-
-if(!isGeneric("AIC"))
-    setGeneric("AIC", function(object, ..., k=2) standardGeneric("AIC"),
-           package="VGAM")
-
-AIC.vlm = function(object, ..., k=2) {
-    ed = object@misc$estimated.dispersion
-    no.dpar = if(length(ed) && is.logical(ed) && ed)
-        length(object@misc$dispersion) else 0 
-    -2 * logLik(object, ...) + k * (length(coef(object)) + no.dpar)
-}
-
-AIC.vgam = function(object, ..., k=2) {
-    ed = object@misc$estimated.dispersion
-    no.dpar = if(length(ed) && is.logical(ed) && ed)
-        length(object@misc$dispersion) else 0 
-    nldf = if(is.Numeric(object@nl.df)) sum(object@nl.df) else 0
-    -2 * logLik(object, ...) + k * (length(coef(object)) + no.dpar + nldf)
-}
-
-AIC.rrvglm = function(object, ..., k=2) {
-    ed = object@misc$estimated.dispersion
-    no.dpar = if(length(ed) && is.logical(ed) && ed)
-        length(object@misc$dispersion) else 0 
-    elts.tildeA = (object@misc$M - object@control$Rank) * object@control$Rank
-    -2 * logLik(object, ...) + k * (length(coef(object)) + no.dpar + elts.tildeA)
-}
-
-AIC.qrrgvlm = function(object, ..., k=2) {
-    stop("this function not written yet")
-}
-
-setMethod("AIC", "vlm",
-         function(object, ..., k=2)
-         AIC.vlm(object, ..., k=k))
-
-setMethod("AIC", "vglm",
-         function(object, ..., k=2)
-         AIC.vlm(object, ..., k=k))
-
-setMethod("AIC", "vgam",
-         function(object, ..., k=2)
-         AIC.vgam(object, ..., k=k))
-
-setMethod("AIC", "rrvglm",
-         function(object, ..., k=2)
-         AIC.rrvglm(object, ..., k=k))
-
-setMethod("AIC", "qrrvglm",
-         function(object, ..., k=2)
-         AIC.qrrvglm(object, ..., k=k))
-}
 
 if(!isGeneric("logLik"))
     setGeneric("logLik", function(object, ...) standardGeneric("logLik"),
@@ -557,6 +508,18 @@ if(!isGeneric("residuals"))
 if(!isGeneric("weights"))
     setGeneric("weights", function(object, ...) standardGeneric("weights"),
            package="VGAM")
+
+
+
+
+
+if(!isGeneric("AIC"))
+    setGeneric("AIC", function(object, ..., k=2) standardGeneric("AIC"),
+           package="VGAM")
+
+
+
+
 
 
 

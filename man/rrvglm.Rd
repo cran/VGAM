@@ -267,10 +267,8 @@ Regression and ordered categorical variables.
 
 \examples{
 data(car.all)
-attach(car.all)
-index = Country == "Germany" | Country == "USA" |
-        Country == "Japan" | Country == "Korea"
-detach(car.all)
+index = with(car.all, Country == "Germany" | Country == "USA" |
+                      Country == "Japan" | Country == "Korea")
 scar = car.all[index, ]  # standardized car data
 fcols = c(13,14,18:20,22:26,29:31,33,34,36)  # These are factors
 scar[,-fcols] = scale(scar[,-fcols]) # Standardize all numerical vars

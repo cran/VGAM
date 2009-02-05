@@ -255,11 +255,9 @@ fitted(fit1)[1:4,]
 par(mfrow=c(1,2), las=1)
 plot(fit1, se=TRUE, lcol="blue", scol="forestgreen",
      main="Fitted mu(year) function (centered)")
-attach(venice)
-matplot(year, y[,1:2], ylab="Sea level (cm)", col=1:2,
-        main="Highest 2 annual sealevels and fitted 95 percentile")
-lines(year, fitted(fit1)[,1], lty="dashed", col="blue")
-detach(venice)
+with(venice, matplot(year, y[,1:2], ylab="Sea level (cm)", col=1:2,
+     main="Highest 2 annual sealevels + fitted 95 percentile"))
+with(venice, lines(year, fitted(fit1)[,1], lty="dashed", col="blue"))
 }
 
 
