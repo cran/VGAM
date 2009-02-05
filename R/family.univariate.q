@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2008 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2009 T.W. Yee, University of Auckland. All rights reserved.
 
 
 
@@ -625,8 +625,8 @@ dirmul.old = function(link="loge", earg=list(), init.alpha = 0.01,
 
         if(TRUE && intercept.only) {
             sumw = sum(w)
-            for(i in 1:ncol(wz))
-                wz[,i] = sum(wz[,i]) / sumw
+            for(ii in 1:ncol(wz))
+                wz[,ii] = sum(wz[,ii]) / sumw
             pooled.weight = TRUE
             wz = w * wz   # Put back the weights
         } else
@@ -1146,7 +1146,9 @@ cauchy = function(llocation="identity", lscale="loge",
         misc$expected = TRUE
         misc$link = c("location"= .llocation, "scale"=.lscale)
         misc$earg = list(location= .elocation, scale= .escale)
+        misc$method.init = .method.init
     }), list( .escale=escale, .elocation=elocation,
+              .method.init=method.init,
               .llocation=llocation, .lscale=lscale ))),
     loglikelihood=eval(substitute(
         function(mu,y,w,residuals= FALSE,eta, extra=NULL) {
@@ -3113,12 +3115,18 @@ lognormal3 = function(lmeanlog="identity", lsdlog="loge",
 
 interleave.VGAM = function(L, M) c(matrix(1:L, nrow=M, byrow=TRUE))
 
-negbinomial = function(lmu = "loge", lk = "loge",
-                       emu =list(), ek=list(),
-                       ik = NULL, cutoff = 0.995, Maxiter=5000,
-                       deviance.arg=FALSE, method.init=1, shrinkage.init=0.95,
-                       zero = -2)
+negbinomial.control <- function(save.weight=TRUE, ...)
 {
+    list(save.weight=save.weight)
+}
+
+ negbinomial = function(lmu = "loge", lk = "loge",
+                        emu =list(), ek=list(),
+                        ik = NULL, nsimEIM=100, cutoff = 0.995, Maxiter=5000,
+                        deviance.arg=FALSE, method.init=1, shrinkage.init=0.95,
+                        zero = -2)
+{
+
 
 
 
@@ -3133,6 +3141,12 @@ negbinomial = function(lmu = "loge", lk = "loge",
        method.init > 2) stop("argument \"method.init\" must be 1 or 2")
     if(!is.Numeric(shrinkage.init, allow=1) || shrinkage.init < 0 ||
        shrinkage.init > 1) stop("bad input for argument \"shrinkage.init\"")
+    if(!is.null(nsimEIM)) {
+        if(!is.Numeric(nsimEIM, allow=1, integ=TRUE))
+            stop("bad input for argument 'nsimEIM'")
+        if(nsimEIM <= 10)
+            warning("'nsimEIM' should be an integer greater than 10, say")
+    }
 
     if(mode(lmu) != "character" && mode(lmu) != "name")
         lmu = as.character(substitute(lmu))
@@ -3164,6 +3178,10 @@ negbinomial = function(lmu = "loge", lk = "loge",
            is.Numeric( .zero, allow=1) && .zero != -2)
             stop("argument zero=-2 is required")
 
+        if(any(y<0))
+            stop("negative values not allowed for the negbinomial family")
+        if(any(round(y) != y))
+            stop("integer-values only allowed for the negbinomial family")
         y = as.matrix(y) 
         M = 2 * ncol(y) 
         NOS = ncoly = ncol(y)  # Number of species
@@ -3172,6 +3190,11 @@ negbinomial = function(lmu = "loge", lk = "loge",
             namesof(if(NOS==1) "k" else paste("k",1:NOS,sep=""), .lk, earg=.ek,
             tag=FALSE))
         predictors.names = predictors.names[interleave.VGAM(M, M=2)]
+
+        if(is.null( .nsimEIM)) {
+             save.weight <- control$save.weight <- FALSE
+        }
+
         if(!length(etastart)) {
             mu.init = y
             for(iii in 1:ncol(y)) {
@@ -3181,18 +3204,20 @@ negbinomial = function(lmu = "loge", lk = "loge",
                     median(y[,iii]) + 1/16
                 }
                 mu.init[,iii] = (1- .sinit)*(y[,iii]+1/16) + .sinit * use.this
+                max.use.this =  7 * use.this + 10
+                vecTF = (mu.init[,iii] > max.use.this)
+                if(any(vecTF))
+                    mu.init[vecTF,iii] = max.use.this
             }
 
             if( is.Numeric( .k.init )) {
                 kay.init = matrix( .k.init, nr=n, nc=NOS, byrow=TRUE)
             } else {
                 negbinomial.Loglikfun = function(kmat, y, x, w, extraargs) {
-                     mu = extraargs
-                     sum(w * (y * log(mu/(mu+kmat)) +
-                              kmat*log(kmat/(mu+kmat)) + lgamma(y+kmat) -
-                              lgamma(kmat) - lgamma(y+1)))
+                    mu = extraargs
+                    sum(w * dnbinom(x=y, mu=mu, size=kmat, log=TRUE))
                 }
-                k.grid = 2^((-3):6)
+                k.grid = 2^((-6):6)
                 kay.init = matrix(0, nr=n, nc=NOS)
                 for(spp. in 1:NOS) {
                     kay.init[,spp.] = getMaxMin(k.grid,
@@ -3207,7 +3232,7 @@ negbinomial = function(lmu = "loge", lk = "loge",
         }
     }), list( .lmu=lmu, .lk=lk, .k.init=ik, .zero=zero,
               .emu=emu, .ek=ek,
-              .sinit=shrinkage.init,
+              .sinit=shrinkage.init, .nsimEIM=nsimEIM,
               .method.init=method.init ))),
     inverse=eval(substitute(function(eta, extra=NULL) {
         NOS = ncol(eta) / 2
@@ -3234,8 +3259,10 @@ negbinomial = function(lmu = "loge", lk = "loge",
         }
         misc$cutoff = .cutoff 
         misc$method.init = .method.init 
+        misc$nsimEIM = .nsimEIM
+        misc$expected = TRUE
     }), list( .lmu=lmu, .lk=lk, .cutoff=cutoff,
-              .emu=emu, .ek=ek,
+              .emu=emu, .ek=ek, .nsimEIM=nsimEIM,
               .method.init=method.init ))),
     link=eval(substitute(function(mu, extra=NULL) {
         temp = theta2eta(mu, .lmu, earg= .emu)
@@ -3252,11 +3279,9 @@ negbinomial = function(lmu = "loge", lk = "loge",
             temp300 = ifelse(temp300 < -bigval, -bigval, temp300)
         }
         kmat = eta2theta(temp300, .lk, earg= .ek)
-        ans = 
-        sum(w * (y * log(mu/(mu+kmat)) + kmat*log(kmat/(mu+kmat)) +
-                 lgamma(y+kmat) - lgamma(kmat) - lgamma(y+1 )))
+
         if(residuals) stop("loglikelihood residuals not implemented yet") else
-        ans
+            sum(w * dnbinom(x=y, mu=mu, size=kmat, log=TRUE))
     }, list( .lk=lk, .emu=emu, .ek=ek ))),
     vfamily=c("negbinomial"),
     deriv=eval(substitute(expression({
@@ -3272,26 +3297,44 @@ negbinomial = function(lmu = "loge", lk = "loge",
                 log(kmat/(kmat+mu))
         dmu.deta = dtheta.deta(mu, .lmu, earg= .emu)
         dk.deta = dtheta.deta(kmat, .lk, earg= .ek)
-        myderiv = w * cbind(dl.dmu * dmu.deta, dl.dk * dk.deta)
+        dthetas.detas = cbind(dmu.deta, dk.deta)
+        myderiv = w * cbind(dl.dmu, dl.dk) * dthetas.detas
         myderiv[,interleave.VGAM(M, M=2)]
     }), list( .lmu=lmu, .lk=lk, .emu=emu, .ek=ek ))),
     weight=eval(substitute(expression({
         wz = matrix(as.numeric(NA), n, M)  # wz is 'diagonal' 
+        if(is.null( .nsimEIM)) {
+            fred2 = dotFortran(name="enbin9", ans=double(n*NOS),
+                        as.double(kmat), as.double(mu), as.double( .cutoff ),
+                        as.integer(n), ok=as.integer(1), as.integer(NOS),
+                        sumpdf=double(1), as.double(.Machine$double.eps),
+                        as.integer( .Maxiter ))
+            if(fred2$ok != 1)
+                stop("error in Fortran subroutine exnbin9")
+            dim(fred2$ans) = c(n, NOS)
+            ed2l.dk2 = -fred2$ans - 1/kmat + 1/(kmat+mu)
+            wz[,2*(1:NOS)] = dk.deta^2 * ed2l.dk2
+        } else {
+            run.varcov = matrix(0, n, NOS)
+            ind1 = iam(NA, NA, M=M, both=TRUE, diag=TRUE)
+            for(ii in 1:( .nsimEIM )) {
+                ysim = rnbinom(n=n*NOS, mu=c(mu), size=c(kmat))
+                if(NOS > 1) dim(ysim) = c(n, NOS)
+                dl.dk = digamma(ysim+kmat) - digamma(kmat) -
+                        (ysim+kmat)/(mu+kmat) + 1 + log(kmat/(kmat+mu))
+                run.varcov = run.varcov + dl.dk^2
+            }
+            run.varcov = cbind(run.varcov / .nsimEIM)
+            wz[,2*(1:NOS)] = if(intercept.only)
+                matrix(apply(run.varcov, 2, mean),
+                       n, ncol(run.varcov), byrow=TRUE) else run.varcov
+
+            wz[,2*(1:NOS)] = wz[,2*(1:NOS)] * dk.deta^2
+        }
         ed2l.dmu2 = 1/mu - 1/(mu+kmat)
-        fred2 = dotFortran(name="enbin9",
-                      ans=double(n*NOS), as.double(kmat),
-                      as.double(mu), as.double( .cutoff ),
-                      as.integer(n), ok=as.integer(1), as.integer(NOS),
-                      sumpdf=double(1), macheps=as.double(.Machine$double.eps),
-                      as.integer( .Maxiter ))
-        if(fred2$ok != 1)
-            stop("error in Fortran subroutine exnbin9")
-        dim(fred2$ans) = c(n, NOS)
-        ed2l.dk2 = -fred2$ans - 1/kmat + 1/(kmat+mu)
         wz[,2*(1:NOS)-1] = dmu.deta^2 * ed2l.dmu2
-        wz[,2*(1:NOS)] = dk.deta^2 * ed2l.dk2
         w * wz
-    }), list( .cutoff=cutoff, .Maxiter=Maxiter ))))
+    }), list( .cutoff=cutoff, .Maxiter=Maxiter, .nsimEIM=nsimEIM ))))
 
     if(deviance.arg) ans@deviance=eval(substitute(
         function(mu,y,w,residuals= FALSE,eta,extra=NULL) {
@@ -3923,8 +3966,8 @@ simplex = function(lmu="logit", lsigma="loge",
 
         if(intercept.only) {
             sumw = sum(w)
-            for(i in 1:ncol(wz))
-                wz[,i] = sum(wz[,i]) / sumw
+            for(ii in 1:ncol(wz))
+                wz[,ii] = sum(wz[,ii]) / sumw
             pooled.weight = TRUE
             wz = w * wz   # Put back the weights
         } else
@@ -4034,8 +4077,8 @@ rig = function(lmu="identity", llambda="loge",
 
         if(intercept.only) {
             sumw = sum(w)
-            for(i in 1:ncol(wz))
-                wz[,i] = sum(wz[,i]) / sumw
+            for(ii in 1:ncol(wz))
+                wz[,ii] = sum(wz[,ii]) / sumw
             pooled.weight = TRUE
             wz = w * wz   # Put back the weights
         } else
@@ -4285,8 +4328,8 @@ leipnik = function(lmu="logit", llambda="loge",
 
         if(intercept.only) {
             sumw = sum(w)
-            for(i in 1:ncol(wz))
-                wz[,i] = sum(wz[,i]) / sumw
+            for(ii in 1:ncol(wz))
+                wz[,ii] = sum(wz[,ii]) / sumw
             pooled.weight = TRUE
             wz = w * wz   # Put back the weights
         } else
@@ -4540,8 +4583,8 @@ genpoisson = function(llambda="elogit", ltheta="loge",
 
             if(intercept.only) {
                 sumw = sum(w)
-                for(i in 1:ncol(wz))
-                    wz[,i] = sum(wz[,i]) / sumw
+                for(ii in 1:ncol(wz))
+                    wz[,ii] = sum(wz[,ii]) / sumw
                 pooled.weight = TRUE
                 wz = w * wz   # Put back the weights
             } else
@@ -5016,22 +5059,76 @@ ggamma = function(lscale="loge", ld="loge", lk="loge",
 }
 
 
-dlog = function(x, prob) {
-    if(!is.Numeric(x)) stop("bad input for argument \"x\"")
+dlog = function(x, prob, log=FALSE) {
+    if(!is.logical(log) || length(log) != 1)
+        stop("bad input for argument 'log'")
+    log.arg = log; rm(log)
+
     if(!is.Numeric(prob, posit=TRUE) || max(prob) >= 1)
         stop("bad input for argument \"prob\"")
     N = max(length(x), length(prob))
     x = rep(x, len=N); prob = rep(prob, len=N); 
     ox = !is.finite(x)
-    zero = round(x) != x | x < 1
+    zero = ox | round(x) != x | x < 1
     ans = rep(0.0, len=length(x))
-    if(any(!zero))
-        ans[!zero] = -(prob[!zero]^(x[!zero])) / (x[!zero] * log1p(-prob[!zero]))
+        if(log.arg) {
+            ans[ zero] = log(0.0)
+            ans[!zero] = x[!zero] * log(prob[!zero]) - log(x[!zero]) -
+                         log(-log1p(-prob[!zero]))
+        } else {
+            ans[!zero] = -(prob[!zero]^(x[!zero])) / (x[!zero] *
+                         log1p(-prob[!zero]))
+        }
     if(any(ox))
         ans[ox] = NA
     ans
 }
 
+
+
+plog  = function(q, prob, log.p=FALSE) {
+    if(!is.Numeric(q)) stop("bad input for argument \"q\"")
+    if(!is.Numeric(prob, posit=TRUE) || max(prob) >= 1)
+        stop("bad input for argument \"prob\"")
+    N = max(length(q), length(prob))
+    q = rep(q, len=N); prob = rep(prob, len=N);
+
+    bigno = 10
+    owen1965 = (q * (1 - prob) > bigno)
+    if(specialCase <- any(owen1965)) {
+        qqq = q[owen1965]
+        ppp = prob[owen1965]
+        pqp = qqq * (1 - ppp)
+        bigans = (ppp^(1+qqq) / (1-ppp)) * (1/qqq -
+                 1 / (            pqp * (qqq-1)) +
+                 2 / ((1-ppp)   * pqp * (qqq-1) * (qqq-2)) -
+                 6 / ((1-ppp)^2 * pqp * (qqq-1) * (qqq-2) * (qqq-3)) +
+                24 / ((1-ppp)^3 * pqp * (qqq-1) * (qqq-2) * (qqq-3) * (qqq-4)))
+        bigans = 1 + bigans / log1p(-ppp)
+    }
+
+    floorq = pmax(1, floor(q)) # Ensures at least one element per q value
+    floorq[owen1965] = 1
+    seqq = sequence(floorq)
+    seqp = rep(prob, floorq)
+    onevector = (seqp^seqq / seqq) / (-log1p(-seqp))
+    rlist =  dotFortran(name="cum8sum",
+                        x=as.double(onevector), answer=double(N),
+                        as.integer(N), as.double(seqq),
+                        as.integer(length(onevector)), notok=integer(1))
+    if(rlist$notok != 0) stop("error in 'cum8sum'")
+    ans = if(log.p) log(rlist$answer) else rlist$answer
+    if(specialCase)
+        ans[owen1965] = if(log.p) log(bigans) else bigans
+    ans[q < 1] = if(log.p) log(0.0) else 0.0
+    ans
+}
+
+
+
+
+
+if(FALSE)
 plog = function(q, prob, log.p=FALSE) {
     if(!is.Numeric(q)) stop("bad input for argument \"q\"")
     if(!is.Numeric(prob, posit=TRUE) || max(prob) >= 1)
@@ -5044,17 +5141,23 @@ plog = function(q, prob, log.p=FALSE) {
         temp = if(max(qstar) >= 1) dlog(x=1:max(qstar), 
                prob=prob[1]) else 0*qstar
         unq = unique(qstar)
-        for(i in unq) {
-            index = qstar == i
-            ans[index] = if(i >= 1) sum(temp[1:i]) else 0
+        for(ii in unq) {
+            index = qstar == ii
+            ans[index] = if(ii >= 1) sum(temp[1:ii]) else 0
         }
     } else
-    for(i in 1:N) {
-        qstar = floor(q[i])
-        ans[i] = if(qstar >= 1) sum(dlog(x=1:qstar, prob=prob[i])) else 0
+    for(ii in 1:N) {
+        qstar = floor(q[ii])
+        ans[ii] = if(qstar >= 1) sum(dlog(x=1:qstar, prob=prob[ii])) else 0
     }
     if(log.p) log(ans) else ans
 }
+
+
+
+
+
+
 
 rlog = function(n, prob, Smallno=1.0e-6) {
     if(!is.Numeric(n, posit=TRUE, integ=TRUE))
@@ -5088,6 +5191,12 @@ rlog = function(n, prob, Smallno=1.0e-6) {
     }
     ans
 }
+
+
+
+
+
+
 
 
 logff = function(link="logit", earg=list(), init.c=NULL)
@@ -5150,6 +5259,9 @@ logff = function(link="logit", earg=list(), init.c=NULL)
         wz
     }), list( .link=link, .earg=earg ))))
 }
+
+
+
 
 
 levy = function(delta=NULL, link.gamma="loge",
@@ -7163,13 +7275,13 @@ qnaka = function(p, shape, scale=1, ...) {
     ans = rep(0.0, len=L)
     myfun = function(x, shape, scale=1, p)
         pnaka(q=x, shape=shape, scale=scale) - p
-    for(i in 1:L) {
-        EY = sqrt(scale[i]/shape[i]) * gamma(shape[i]+0.5) / gamma(shape[i])
+    for(ii in 1:L) {
+        EY = sqrt(scale[ii]/shape[ii]) * gamma(shape[ii]+0.5) / gamma(shape[ii])
         Upper = 5 * EY
-        while(pnaka(q=Upper, shape=shape[i], scale=scale[i]) < p[i])
-            Upper = Upper + scale[i]
-        ans[i] = uniroot(f=myfun, lower=0, upper=Upper,
-                         shape=shape[i], scale=scale[i], p=p[i], ...)$root
+        while(pnaka(q=Upper, shape=shape[ii], scale=scale[ii]) < p[ii])
+            Upper = Upper + scale[ii]
+        ans[ii] = uniroot(f=myfun, lower=0, upper=Upper,
+                         shape=shape[ii], scale=scale[ii], p=p[ii], ...)$root
     }
     ans
 }
@@ -8346,8 +8458,8 @@ expexp1 = function(lscale="loge",
 
         if(FALSE && intercept.only) {
             sumw = sum(w)
-            for(i in 1:ncol(wz))
-                wz[,i] = sum(wz[,i]) / sumw
+            for(ii in 1:ncol(wz))
+                wz[,ii] = sum(wz[,ii]) / sumw
             pooled.weight = TRUE
             wz = w * wz   # Put back the weights
         } else
@@ -8768,6 +8880,12 @@ alaplace2 = function(tau = NULL,
 
 
 
+
+
+alaplace1.control <- function(maxit=300, ...)
+{
+    list(maxit=maxit)
+}
 
 alaplace1 = function(tau = NULL,
                      llocation="identity",

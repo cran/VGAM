@@ -173,8 +173,7 @@ cbind(fit@y, weights(fit, type="prior"))[1:5,]
 
 # Example 2
 data(lirat)
-fit = vglm(cbind(R,N-R) ~ 1, betabin.ab, data=lirat,
-           trace=TRUE, subset=N>1)
+fit = vglm(cbind(R,N-R) ~ 1, betabin.ab, data=lirat, tra=TRUE, subset=N>1)
 coef(fit, matrix=TRUE)
 Coef(fit)
 fit@misc$rho      # The correlation parameter
@@ -196,24 +195,21 @@ coef(fit2, matrix=TRUE)
 Coef(fit2)
 coef(fit2, matrix=TRUE)[,1] - coef(fit2, matrix=TRUE)[,2] # logit(p)
 \dontrun{
-plot(lirat$hb[lirat$N>1], fit2@misc$rho,
-     xlab="Hemoglobin", ylab="Estimated rho",
-     pch=as.character(lirat$grp[lirat$N>1]),
-     col=lirat$grp[lirat$N>1])
+with(lirat, plot(hb[N>1], fit2@misc$rho,
+                 xlab="Hemoglobin", ylab="Estimated rho",
+                 pch=as.character(grp[N>1]), col=grp[N>1]))
 }
 \dontrun{
 data(lirat)
-attach(lirat)
 # cf. Figure 3 of Moore and Tsiatis (1991)
-plot(hb, R/N, pch=as.character(grp), col=grp, las=1,
-     xlab="Hemoglobin level", ylab="Proportion Dead",
-     main="Fitted values (lines)")
-detach(lirat)
+with(lirat, plot(hb, R/N, pch=as.character(grp), col=grp, las=1,
+            xlab="Hemoglobin level", ylab="Proportion Dead",
+            main="Fitted values (lines)"))
 
-smalldf = lirat[lirat$N>1,]
+smalldf = with(lirat, lirat[N>1,])
 for(gp in 1:4) {
-    xx = smalldf$hb[smalldf$grp==gp]
-    yy = fitted(fit2)[smalldf$grp==gp]
+    xx = with(smalldf, hb[grp==gp])
+    yy = with(smalldf, fitted(fit2)[grp==gp])
     o = order(xx)
     lines(xx[o], yy[o], col=gp)
 }

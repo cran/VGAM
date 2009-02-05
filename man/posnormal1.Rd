@@ -8,7 +8,7 @@
 \usage{
 posnormal1(lmean="identity", lsd="loge",
            emean=list(), esd=list(),
-           imean=NULL, isd=NULL, zero=NULL)
+           imean=NULL, isd=NULL, nsimEIM = 100, zero=NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -27,6 +27,10 @@ posnormal1(lmean="identity", lsd="loge",
   \item{imean, isd}{
   Optional initial values for \eqn{\mu}{mu} and \eqn{\sigma}{sigma}.
   A \code{NULL} means a value is computed internally.
+
+  }
+  \item{nsimEIM}{
+  See \code{\link{CommonVGAMffArguments}} for more information.
 
   }
   \item{zero}{
@@ -51,13 +55,13 @@ posnormal1(lmean="identity", lsd="loge",
         f(y) = (1/(sqrt(2*pi)*sigma)) * exp( -0.5 * (y-mu)^2/  sigma^2) /
                [1-Phi(-mu/ sigma)] }
   where \eqn{\Phi()}{Phi} is the cumulative distribution function of a
-  standard normal (\code{\link[stats]{pnorm}}).
+  standard normal (\code{\link[stats:Normal]{pnorm}}).
   Equivalently, this is
   \deqn{f(y) = \frac{1}{\sigma} \frac{\phi((y-\mu) / \sigma)}{
                1-\Phi(-\mu/ \sigma)}.}{%
         f(y) = (1/sigma) * dnorm((y-mu)/sigma) / [1-pnorm(-mu/ sigma)].}
   where \eqn{\phi()}{dnorm()} is the probability density function of a 
-  standard normal distribution (\code{\link[stats]{dnorm}}).
+  standard normal distribution (\code{\link[stats:Normal]{dnorm}}).
 
   The mean of \eqn{Y} is
   \deqn{E(Y) = \mu + \sigma \frac{\phi(-\mu/ \sigma)}{

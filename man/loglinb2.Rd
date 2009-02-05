@@ -84,15 +84,16 @@ temp = vglm(cbind(nBnW,nBW,BnW,BW) ~ age, binom2.or, coalminers)
 counts = round(c(weights(temp, type="prior")) * temp@y)
 
 # Create a n x 2 matrix response for loglinb2()
-fred = matrix(c(0,0, 0,1, 1,0, 1,1), 4, 2, byrow=TRUE)
-yy = kronecker(matrix(1, nrow(counts), 1), fred)
-wt = c(t(counts))
-age = rep(coalminers$age, rep(4, length(coalminers$age)))
-yy = yy[wt>0,]
-age = age[wt>0]
-wt = wt[wt>0]
+# bwmat = matrix(c(0,0, 0,1, 1,0, 1,1), 4, 2, byrow=TRUE)
+bwmat = cbind(bln=c(0,0,1,1), wheeze=c(0,1,0,1))
+matof1 = matrix(1, nrow(counts), 1)
+newminers = data.frame(bln = kronecker(matof1, bwmat[,1]),
+                       wheeze = kronecker(matof1, bwmat[,2]),
+                       wt = c(t(counts)),
+                       age = with(coalminers, rep(age, rep(4, length(age)))))
+newminers = newminers[with(newminers, wt) > 0,]
 
-fit = vglm(yy ~ age, loglinb2, trace=TRUE, wei=wt)
+fit = vglm(cbind(bln,wheeze) ~ age, loglinb2, wei=wt, data=newminers)
 coef(fit, mat=TRUE)    # Same! (at least for the log odds-ratio) 
 summary(fit)
 
@@ -102,5 +103,3 @@ summary(fit)
 \keyword{models}
 \keyword{regression}
 
-%coalminers$age = (coalminers$age - 42) / 5
-%counts = round(temp@prior.weights * temp@y)

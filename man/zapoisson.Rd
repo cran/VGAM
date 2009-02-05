@@ -9,9 +9,8 @@
 
 }
 \usage{
-zapoisson(lp0 = "logit", llambda = "loge",
-          ep0=list(), elambda=list(),
-          zero=NULL)
+zapoisson(lp0 = "logit", llambda = "loge", ep0=list(),
+          elambda=list(), zero=NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -40,8 +39,8 @@ zapoisson(lp0 = "logit", llambda = "loge",
   (after \code{lp0} is applied) is modelled as a single unknown
   number that is estimated. It is modelled as a function of the
   explanatory variables by \code{zero=NULL}. A negative value
-  means that the value is recycled, so setting \eqn{-1} means all \eqn{p_0}{p0}
-  are intercept-only (for multivariate responses).
+  means that the value is recycled, so setting \eqn{-1} means
+  all \eqn{p_0}{p0} are intercept-only (for multivariate responses).
 
   }
 }
@@ -52,7 +51,7 @@ zapoisson(lp0 = "logit", llambda = "loge",
   which is modelled as a function of the covariates.  The zero-altered
   Poisson distribution differs from the zero-inflated Poisson distribution
   in that the former has zeros coming from one source, whereas the latter
-  has zeros coming from the Poisson distribution too.  Some people call
+  has zeros coming from the Poisson distribution too. Some people call
   the zero-altered Poisson a \emph{hurdle} model.
 
   For one response/species, by default, the two linear/additive predictors
@@ -122,12 +121,13 @@ that these are reasonable.
 }
 
 \seealso{
+  \code{\link{rzapois}},
   \code{\link{zipoisson}},
-  \code{\link{yip88}},
   \code{\link{pospoisson}},
   \code{\link{posnegbinomial}},
   \code{\link{binomialff}},
   \code{\link{rpospois}}.
+
 }
 
 \examples{

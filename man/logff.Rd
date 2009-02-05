@@ -3,7 +3,7 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Logarithmic Distribution  }
 \description{
- Estimating the parameter of the logarithmic distribution.
+ Estimating the (single) parameter of the logarithmic distribution.
 }
 \usage{
 logff(link = "logit", earg=list(), init.c = NULL)
@@ -67,6 +67,10 @@ contains further information and examples.
   The function \code{\link[base:Log]{log}} computes the natural logarithm.
   In the \pkg{VGAM} library, a link function with option
   \code{\link{loge}} corresponds to this.
+
+  The logarithmic distribution is sometimes confused with the log-series
+  distribution. The latter was used by Fisher et al. for species abundance
+  data, and has two parameters.
 
 }
 

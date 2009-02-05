@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2008 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2009 T.W. Yee, University of Auckland. All rights reserved.
 
 
 
@@ -114,7 +114,7 @@ vlm.wfit <- function(x, z, Blist, wz=NULL, U=NULL,
         cm <- Blist[[i]]
         B[,i] <- cm %*% ans$coef[index]
     }
-    ans$mat.coefficients <- t(B)       # 20/9/99; not $coefficients
+    ans$mat.coefficients <- t(B)
     ans
 }
 

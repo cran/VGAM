@@ -52,7 +52,7 @@ proby = dzipf(y, N=N, s=s)
 plot(y, proby, type="h", col="blue", ylab="P[Y=y]", ylim=c(0,0.2),
      main=paste("Zipf(N=",N,", s=",s,")", sep=""))
 sum(proby)  # Should be 1
-max(abs(cumsum(proby) - pzipf(y, N=N, s=s)))  # Should be 0
+max(abs(cumsum(proby) - pzipf(y, N=N, s=s))) # Should be 0
 }
 }
 \keyword{distribution}

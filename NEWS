@@ -5,6 +5,65 @@
 	**************************************************
 
 
+                CHANGES IN VGAM VERSION 0.7-8
+
+NEW FEATURES
+
+    o   [dpqr]benf() written for Benford's distribution.
+    o   plog() and dlog() improved.
+    o   multinomial() now has a refLevel argument to specify the
+        reference or baseline level of the factor.
+    o   binom2.or() has a new argument 'morerobust'.
+    o   Renamed arguments in mix2normal1().
+    o   DeLury() written.
+    o   [dpqr]-type functions related to the negative binomial distribution
+        have changed wrt argument names and order. 
+    o   [pq]posnegbin(), [dpqr]zapois(), [dr]zanegbin() written.
+    o   [dpqr]zinb() renamed to [dpqr]zinegbin().
+    o   lms.bcn(), lms.bcg(), lms.yjn() have zero=c(1,3) as the new default.
+        This will increase the chances of successive convergence.
+    o   Renamed arguments in lms.bcn(), lms.bcg(), lms.yjn(), e.g.,
+        link.sigma is now lsigma.
+        Some new arguments added too, e.g., llambda.
+    o   Works for R 2.5.0 and later (not 2.4.0 and later).
+        Compatible with R 2.7.2.
+    o   Contains Fortran 90 code (since 0.7-7, actually). This will
+        cause problems on older Linux machines without such a
+        compiler. Actually, removing the .f90 file(s) will not be too
+        much of a problem as there is very little F90 code in use by
+        the package at the moment.
+    o   New functions: dbinom2.rho(), rbinom2.rho(), dposnegbin(), 
+    o   New data: wffc, wffc.indiv, wffc.teams, wffc.nc.
+    o   Improved functions: binom2.rho(), micmen(), negbinomial(),
+        poissonff(), posnegbinomial(), zanegbinomial(),
+    o   A new form2 argument has been added to vglm().
+        VGAM family functions such as micmen() have the regressor inputted
+        using form2 now, rather than the regressor argument.
+        The resulting usage is a more elegant.
+        Fitted objects have a few more slots and formulas put in set
+        places on the object.
+    o	AIC() methods functions has been modified.
+
+
+BUG FIXES
+
+    o   The big bug whereby vgam(... ~ s(x), ... ) did not work under
+        Windows was due to a single array element that was not initialized.
+        Evidently, Linux compilers seemed to have set it to zero.
+        Funny, the code has worked for decade or so...
+    o   dposbinom() was buggy at x=0. Also it now handles size=0 and
+        prob=0 or prob=1.
+    o   pzipois() was buggy at x<0.
+    o   dbetabin.ab(log=T) was incorrect outside its support.
+    o   zipf() did not handle 0 < s < 1.
+    o   data(ruge) was faulty.
+    o   summary(rrvglmObject) failed.
+    o   persp.cao(ylim=) did not work.
+    o   plotvgam() failed when se=TRUE and which.cf was specified.
+
+
+
+
                 CHANGES IN VGAM VERSION 0.7-7
 
 NEW FEATURES

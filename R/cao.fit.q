@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2008 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2009 T.W. Yee, University of Auckland. All rights reserved.
 
 
 
@@ -1633,7 +1633,7 @@ persp.cao = function(x,
     MSratio = M / NOS  # First value is g(mean) = quadratic form in lv
 
     xlim = if(length(xlim)) xlim else range(coefobj@lv[,1])
-    if(!length(ylim)) {
+    if(!length(ylim.orig <- ylim)) {
         ylim = if(Rank==1) c(0, max(fvmat)*stretch) else range(coefobj@lv[,2])
     }
     xlim = rep(xlim, length=2)
@@ -1668,7 +1668,8 @@ persp.cao = function(x,
 
     if(Rank==1) {
         if(plot.it) {
-            ylim = c(0, max(fitvals[,whichSpecies.numer])*stretch) # A revision
+            if(!length(ylim.orig))
+                ylim = c(0, max(fitvals[,whichSpecies.numer])*stretch) # A revision
             col = rep(col, len=length(whichSpecies.numer))
             lty = rep(lty, len=length(whichSpecies.numer))
             lwd = rep(lwd, len=length(whichSpecies.numer))

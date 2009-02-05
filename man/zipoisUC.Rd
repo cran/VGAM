@@ -12,7 +12,7 @@
 
 }
 \usage{
-dzipois(x, lambda, phi = 0)
+dzipois(x, lambda, phi = 0, log = FALSE)
 pzipois(q, lambda, phi = 0)
 qzipois(p, lambda, phi = 0)
 rzipois(n, lambda, phi = 0)
@@ -29,6 +29,7 @@ rzipois(n, lambda, phi = 0)
   to the response having an ordinary Poisson distribution.
 
   }
+  \item{log}{ Logical. Return the logarithm of the answer? }
 }
 \details{
   The probability function of \eqn{Y} is 0 with probability
@@ -55,14 +56,15 @@ rzipois(n, lambda, phi = 0)
 \seealso{ 
     \code{\link[stats:Poisson]{dpois}},
     \code{\link{zipoisson}},
-    \code{\link{rzinb}}.
+    \code{\link{rzinegbin}}.
 
 }
 \examples{
 lambda = 3
 phi = 0.2
-(i = dzipois(0:7, lambda, phi))
-cumsum(i) - pzipois(0:7, lambda, phi)  # Should be 0s
+x <- (-1):7
+(i = dzipois(x, lambda, phi))
+max(abs(cumsum(i) - pzipois(x, lambda, phi))) # Should be 0
 table(rzipois(100, lambda, phi))
 
 table(qzipois(runif(100), lambda, phi))

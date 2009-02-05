@@ -6,7 +6,8 @@
   Fits a multinomial logit model to an unordered factor response.
 }
 \usage{
-multinomial(zero = NULL, parallel = FALSE, nointercept = NULL)
+multinomial(zero = NULL, parallel = FALSE, nointercept = NULL,
+            refLevel = "last")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -32,9 +33,22 @@ multinomial(zero = NULL, parallel = FALSE, nointercept = NULL)
   The values must be from the set \{1,2,\ldots,\eqn{M}\}.
 
   }
+  \item{refLevel}{
+  Either a single positive integer or a value of a factor.
+  If an integer then it specifies which
+  column of the response matrix is the reference or baseline level.
+  The default is the last one (the \eqn{(M+1)}th one).
+  If used, this argument will be often assigned the value \code{1}.
+  If inputted as a value of a factor then beware of missing values
+  of certain levels of the factor
+  (\code{drop.unused.levels=TRUE} or
+   \code{drop.unused.levels=FALSE}).
+  See the example below.
+
+  }
 }
 \details{
-  The model can be written
+  The default model can be written
   \deqn{\eta_j = \log(P[Y=j]/ P[Y=M+1])}{%
          eta_j =  log(P[Y=j]/ P[Y=M+1])}
   where \eqn{\eta_j}{eta_j} is the \eqn{j}th linear/additive predictor.
@@ -42,6 +56,8 @@ multinomial(zero = NULL, parallel = FALSE, nointercept = NULL)
   definition.  That is, the last level of the factor, or last column of
   the response matrix, is taken as the reference level or baseline---this
   is for identifiability of the parameters.
+  The reference or baseline level can be chosen by using the
+  \code{refLevel} argument.
 
   In almost all the literature, the constraint matrices associated
   with this family of models are known. For example, setting
@@ -59,6 +75,7 @@ multinomial(zero = NULL, parallel = FALSE, nointercept = NULL)
   The object is used by modelling functions such as \code{\link{vglm}},
   \code{\link{rrvglm}}
   and \code{\link{vgam}}.
+
 }
 \references{
 Yee, T. W. and Hastie, T. J. (2003)
@@ -156,6 +173,7 @@ contains further information and examples.
     \code{\link{rrvglm}},
     \code{\link[stats:Multinom]{Multinomial}},
     \code{\link[base]{iris}}.
+
 }
 %   \code{\link[base:Multinom]{rmultinom}}
 
@@ -177,7 +195,12 @@ weights(fit, type="prior", matrix=FALSE) # The better method
 fit@y   # Sample proportions
 constraints(fit)   # Constraint matrices
 
-# Example 2b: Different input to Example 2a but same result
+# Example 2b: Different reference level used as the baseline 
+fit2 = vglm(y ~ 1, multinomial(refLevel=2))
+coef(fit2, matrix=TRUE)
+coef(fit , matrix=TRUE) # Easy to reconcile this output with fit2
+
+# Example 2c: Different input to Example 2a but same result
 w = apply(y, 1, sum) # Prior weights
 yprop = y / w    # Sample proportions
 fitprop = vglm(yprop ~ 1, multinomial, weights=w)
@@ -186,19 +209,29 @@ weights(fitprop, type="prior", matrix=FALSE)
 fitprop@y # Same as the input
 
 
-# Example 3: Fit a rank-1 stereotype model 
+# Example 3: The response is a factor.
+nn = 10
+yfactor = gl(3, nn, labels = c("Control", "Treatment1", "Treatment2"))
+x = runif(3 * nn)
+fit3a = vglm(yfactor ~ x, multinomial(refLevel=yfactor[12]))
+fit3b = vglm(yfactor ~ x, multinomial(refLevel=2))
+coef(fit3a, matrix=TRUE)  # "Treatment1" is the reference level
+coef(fit3b, matrix=TRUE)  # "Treatment1" is the reference level
+
+
+# Example 4: Fit a rank-1 stereotype model 
 data(car.all)
-fit = rrvglm(Country ~ Width + Height + HP, multinomial, car.all, Rank=1)
-coef(fit)   # Contains the C matrix
-constraints(fit)$HP     # The A matrix 
-coef(fit, matrix=TRUE)  # The B matrix
-Coef(fit)@C             # The C matrix 
-ccoef(fit)              # Better to get the C matrix this way
-Coef(fit)@A             # The A matrix 
-svd(coef(fit, matrix=TRUE)[-1,])$d    # This has rank 1; = C %*% t(A) 
+fit4 = rrvglm(Country ~ Width + Height + HP, multinomial, car.all, Rank=1)
+coef(fit4)   # Contains the C matrix
+constraints(fit4)$HP     # The A matrix 
+coef(fit4, matrix=TRUE)  # The B matrix
+Coef(fit4)@C             # The C matrix 
+ccoef(fit4)              # Better to get the C matrix this way
+Coef(fit4)@A             # The A matrix 
+svd(coef(fit4, matrix=TRUE)[-1,])$d    # This has rank 1; = C %*% t(A) 
 
 
-# Example 4: The use of the xij argument (conditional logit model)
+# Example 5: The use of the xij argument (conditional logit model)
 set.seed(111)
 n = 100  # Number of people who travel to work
 M = 3  # There are M+1 models of transport

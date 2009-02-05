@@ -1,9 +1,8 @@
 # These functions are
-# Copyright (C) 1998-2008 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2009 T.W. Yee, University of Auckland. All rights reserved.
 
 
-print.vglm <- function(x, ...)
-{
+print.vglm <- function(x, ...) {
     if(!is.null(cl <- x@call)) {
         cat("Call:\n")
         dput(cl)
@@ -30,7 +29,8 @@ print.vglm <- function(x, ...)
 
     if(length(deviance(x)))
         cat("Residual Deviance:", format(deviance(x)), "\n")
-    llx = logLik(x)
+    llx = logLik.vlm(object = x)
+
     if(length(llx))
         cat("Log-likelihood:", format(llx), "\n")
 
@@ -45,8 +45,7 @@ print.vglm <- function(x, ...)
 }
 
 
-print.vgam <- function(x, digits=2, ...)
-{
+print.vgam <- function(x, digits=2, ...) {
 
     if(!is.null(cl <- x@call)) {
         cat("Call:\n")
@@ -68,14 +67,15 @@ print.vgam <- function(x, digits=2, ...)
 
     if(length(deviance(x)))
         cat("Residual Deviance:", format(deviance(x)), "\n")
-    llx = logLik(x)
+
+    llx = logLik.vlm(object = x)
+
     if(length(llx))
         cat("Log-likelihood:", format(llx), "\n")
 
     criterion <- attr(terms(x), "criterion")  # 11/8/03; x@terms$terms,
     if(!is.null(criterion) && criterion!="coefficients")
-        cat(paste(criterion, ":", sep=""), format(x[[criterion]]),
-        "\n")
+        cat(paste(criterion, ":", sep=""), format(x[[criterion]]), "\n")
 
     invisible(x)
 }

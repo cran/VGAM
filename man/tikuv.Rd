@@ -91,7 +91,8 @@ tikuv(d, lmean="identity", lsigma="loge",
   A normal distribution arises as the limit as \eqn{d} approaches
   \eqn{-\infty}{-Inf}, i.e., as \eqn{h} approaches \eqn{\infty}{Inf}.
   Fisher scoring is implemented.
-  After fitting the value of \code{d} is stored as \code{@misc\$d}.
+  After fitting the value of \code{d} is stored in \code{@misc} with
+  component name \code{d}.
 
 }
 

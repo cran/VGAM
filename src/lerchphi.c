@@ -117,12 +117,15 @@ static int aj1234(double *z, double *s, double *v, int j, double *acc, double *r
 int lerchphi(double *z, double *s, double *v, double *acc, 
              double *result, int *iter)
     {
-  
+
 	const unsigned short int beta = 1, n = 0, imax = 100;
 	unsigned short int j, m; 
 	int i, sign, flag;
 	double v1, sn, eps0, eps, skn, skn0, omega, *num, *den, *StoreAj,
 	    factor, factor1, x, est, iom, sum1, cacc;
+
+/* Added 20090205 by T.Yee to suppress 4 warnings */
+sum1 = est = 0.0; StoreAj = &v1; m = 0;
 	
 	/* Local copy of v. */
 

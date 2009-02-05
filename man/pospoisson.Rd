@@ -33,7 +33,7 @@ pospoisson(link = "loge", earg=list(),
 
   }
   \item{method.init}{
-  An integer with value \code{1} or \code{2} which
+  An integer with value \code{1} or \code{2} or \code{3} which 
   specifies the initialization method for \eqn{\lambda}{lambda}.
   If failure to converge occurs try another value
   and/or else specify a value for \code{ilambda}.

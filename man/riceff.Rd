@@ -38,7 +38,7 @@ riceff(lvee="loge", lsigma="loge",
   }
 }
 \details{
-  The Rice distribution has density function
+  The Rician distribution has density function
   \deqn{f(y;v,\sigma) =
   \frac{ y }{\sigma^2} \, \exp(-(y^2+v^2) / (2\sigma^2)) \, I_0(y v / \sigma^2)
   }{%
@@ -82,7 +82,7 @@ Mathematical Analysis of Random Noise.
 \seealso{ 
   \code{\link{drice}},
   \code{\link{rayleigh}},
-  \code{\link[base]{besselI}}.
+  \code{\link[base:Bessel]{besselI}}.
 
 }
 \examples{

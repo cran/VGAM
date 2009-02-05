@@ -13,7 +13,7 @@
 binom2.or(lmu = "logit", lmu1 = lmu, lmu2 = lmu, loratio = "loge",
           emu=list(), emu1=emu, emu2=emu, eoratio=list(),
           imu1=NULL, imu2=NULL, ioratio = NULL,
-          zero = 3, exchangeable = FALSE, tol = 0.001)
+          zero = 3, exchangeable = FALSE, tol = 0.001, morerobust=FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -58,6 +58,13 @@ binom2.or(lmu = "logit", lmu1 = lmu, lmu2 = lmu, loratio = "loge",
   \item{tol}{
   Tolerance for testing independence. Should be some
   small positive numerical value.
+
+  }
+  \item{morerobust}{
+  Logical. If \code{TRUE} then some measures are taken to compute the
+  derivatives and working weights more robustly, i.e., in an attempt
+  to avoid numerical problems. Currently this feature is not debugged
+  if set \code{TRUE}.
 
   }
 }
@@ -172,6 +179,9 @@ fit = vglm(cbind(nBnW,nBW,BnW,BW) ~ Age, binom2.or(zero=NULL), coalminers)
 fitted(fit)
 summary(fit)
 coef(fit, matrix=TRUE)
+
+c(weights(fit, type="prior")) * fitted(fit)  # Table 6.8
+
 \dontrun{
 with(coalminers, matplot(Age, fitted(fit), type="l", las=1,
                          xlab="(age - 42) / 5", lwd=2))

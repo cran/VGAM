@@ -2,13 +2,19 @@
 \alias{model.matrixvlm}
 \title{Construct the Design Matrix of a VLM Object}
 \usage{
-model.matrixvlm(object, type=c("vlm","lm"), \dots)
+model.matrixvlm(object, type=c("vlm","lm","lm2"), \dots)
 }
 \arguments{
   \item{object}{an object of a class that inherits from the
     \emph{vector linear model} (VLM).
   }
   \item{type}{Type of design matrix returned. The first is the default. 
+  The value \code{"vlm"} is the VLM model matrix corresponding
+  to the \code{formula} argument.
+  The value \code{"lm"} is the LM model matrix corresponding
+  to the \code{formula} argument.
+  The value \code{"lm2"} is the second (LM) model matrix corresponding
+  to the \code{form2} argument.
   }
   \item{\dots}{further arguments passed to or from other methods.
     These include \code{data} (which

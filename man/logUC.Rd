@@ -2,7 +2,7 @@
 \alias{Log}
 \alias{dlog}
 \alias{plog}
-\alias{qlog}
+% \alias{qlog}
 \alias{rlog}
 \title{ Logarithmic Distribution }
 \description{
@@ -13,7 +13,7 @@
 
 }
 \usage{
-dlog(x, prob)
+dlog(x, prob, log=FALSE)
 plog(q, prob, log.p=FALSE)
 % qlog(p, prob)
 rlog(n, prob, Smallno=1.0e-6)
@@ -33,9 +33,10 @@ rlog(n, prob, Smallno=1.0e-6)
    For \code{rlog()} this parameter must be of length 1.
 
   }
-  \item{log.p}{
+  \item{log, log.p}{
   Logical.
-  If \code{TRUE} then all probabilities \code{p} are given as \code{log(p)}.
+  If \code{log.p=TRUE} then all probabilities \code{p} are
+  given as \code{log(p)}.
 
   }
   \item{Smallno}{
@@ -67,6 +68,12 @@ New York: Wiley-Interscience, Third edition.
 \note{ 
    Given some response data, the \pkg{VGAM} family function
    \code{\link{logff}} estimates the parameter \code{prob}.
+  For \code{plog()}, if argument \code{q} contains large values
+  and/or \code{q} is long in length
+  then the memory requirements may be very high.
+  Very large values in \code{q} are handled by an approximation by
+  Owen (1965).
+
 }
 
 \seealso{

@@ -8,10 +8,9 @@
 }
 \usage{
 vonmises(llocation="elogit", lscale="loge",
-      elocation=if(llocation=="elogit") list(min=0, max=2*pi) else list(),
-      escale=list(),
-      ilocation=NULL, iscale=NULL,
-      method.init=1, zero=NULL)
+         elocation=if(llocation=="elogit") list(min=0, max=2*pi)
+         else list(), escale=list(), ilocation=NULL,
+         iscale=NULL, method.init=1, zero=NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -64,8 +63,9 @@ vonmises(llocation="elogit", lscale="loge",
 
 }
 \details{
-  The (two-parameter) von Mises distribution 
-  has a density that can be written as
+  The (two-parameter) von Mises
+  is the most commonly used distribution in practice for circular data.
+  It has a density that can be written as
   \deqn{f(y;a,k) = \frac{\exp[k\cos(y-a)]}{
       2\pi I_0(k)}}{%
         f(y;a,k) = exp[k*cos(y-a)] / (2*pi*I0(k))}

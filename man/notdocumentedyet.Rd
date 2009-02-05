@@ -2,9 +2,11 @@
 \alias{notdocumentedyet}
 \alias{A1A2A3}
 \alias{AAaa.nohw}
-%\alias{AIC.qrrgvlm}
+%\alias{AIC}
+%\alias{AIC.qrrvglm}
 %\alias{AIC.rrvglm}
 %\alias{AIC.vgam}
+%\alias{AIC.vglm}
 %\alias{AIC.vlm}
 % \alias{Build.terms}
 % \alias{Build.terms.vlm}
@@ -31,6 +33,7 @@
 \alias{add1.vgam}
 \alias{add1.vglm}
 % \alias{adjust.Dmat.expression}
+\alias{alaplace1.control}
 % \alias{alias.vgam}
 % \alias{alias.vglm}
 \alias{anova.vgam}

@@ -151,6 +151,18 @@ The levels of the factors, if any, used in fitting.
  from class \code{ "vlm"}.
 The response, in matrix form.
  }
+    \item{\code{Xm2}:}{Object of class \code{"matrix"},
+ from class \code{ "vlm"}.
+ See \code{\link{vglm-class}}).
+ }
+    \item{\code{Ym2}:}{Object of class \code{"matrix"},
+ from class \code{ "vlm"}.
+ See \code{\link{vglm-class}}).
+ }
+  \item{\code{callXm2}:}{
+  Object of class \code{"call"}, from class \code{ "vlm"}.
+  The matched call for argument \code{form2}.
+  }
   }
 }
 \section{Extends}{

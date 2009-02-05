@@ -54,9 +54,12 @@ rposbinom(n, size, prob)
 
 \author{ T. W. Yee }
 \note{
-  For \code{rposbinom}, the arguments of the function are fed into
+  For \code{dposbinom()}, if arguments \code{size} or \code{prob}
+  equal 0 then a \code{NaN} is returned.
+
+  For \code{rposbinom()}, the arguments of the function are fed into
   \code{\link[stats:Binomial]{rbinom}} until \eqn{n} positive values
-  are obtained.  This may take a long time if \code{prob} has values
+  are obtained. This may take a long time if \code{prob} has values
   close to 0.
 
   The family function \code{\link{posbinomial}} estimates the parameters

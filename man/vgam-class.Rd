@@ -163,13 +163,24 @@ The levels of the factors, if any, used in fitting.
  from class \code{ "vlm"}.
 The response, in matrix form.
  }
-  }
+    \item{\code{Xm2}:}{Object of class \code{"matrix"},
+ from class \code{ "vlm"}.
+ See \code{\link{vglm-class}}).
+ }
+    \item{\code{Ym2}:}{Object of class \code{"matrix"},
+ from class \code{ "vlm"}.
+ See \code{\link{vglm-class}}).
+ }
+  \item{\code{callXm2}:}{
+  Object of class \code{"call"}, from class \code{ "vlm"}.
+  The matched call for argument \code{form2}.
+ }
+ }
 }
-
 
 \section{Extends}{
 Class \code{"vglm"}, directly.
-Class \code{"vlm"}, by class "vglm".
+Class \code{"vlm"}, by class \code{"vglm"}.
 }
 \section{Methods}{
   \describe{
@@ -179,7 +190,6 @@ Useful for quantile regression and extreme value data models.}
     \item{deplot}{\code{signature(object = "vglm")}:
       density plot.
       Useful for quantile regression models.}
- }
     \item{deviance}{\code{signature(object = "vglm")}:
 deviance of the model (where applicable). }
     \item{plot}{\code{signature(x = "vglm")}:
@@ -200,6 +210,7 @@ Useful for extreme value data models.}
     \item{summary}{\code{signature(object = "vglm")}:
 a more detailed summary of the object. }
   }
+}
 
 \references{
 Yee, T. W. and Wild, C. J. (1996)
@@ -214,6 +225,7 @@ Vector generalized additive models.
   VGAMs have all the slots that \code{\link{vglm}} objects
   have (\code{\link{vglm-class}}), plus the first few slots
   described in the section above. 
+
 }
 
 %~Make other sections like WARNING with \section{WARNING }{....} ~
@@ -224,6 +236,7 @@ Vector generalized additive models.
 \code{\link[VGAM]{s}},
 \code{\link{vglm-class}},
 \code{\link{vglmff-class}}.
+
 }
 
 \examples{

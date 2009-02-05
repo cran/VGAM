@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2008 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2009 T.W. Yee, University of Auckland. All rights reserved.
 
 
 
@@ -119,19 +119,28 @@ gaussianff = function(dispersion=0, parallel=FALSE, zero=NULL)
 
 
 
-dposnorm = function(x, mean=0, sd=1) {
+
+dposnorm = function(x, mean=0, sd=1, log=FALSE) {
+    log.arg = log
+    rm(log)
+    if(!is.logical(log.arg) || length(log.arg)!=1)
+        stop("bad input for argument \"log\"")
     L = max(length(x), length(mean), length(sd))
     x = rep(x, len=L); mean = rep(mean, len=L); sd = rep(sd, len=L);
-    ifelse(x < 0, 0, dnorm(x=x, mean=mean, sd=sd) /
-                     (1-pnorm(q=0, mean=mean, sd=sd)))
+
+    if(log.arg) {
+        ifelse(x < 0, log(0), dnorm(x, m=mean, sd=sd, log=TRUE) -
+               pnorm(mean/sd, log=TRUE))
+    } else {
+        ifelse(x < 0, 0, dnorm(x=x, me=mean, sd=sd) / pnorm(mean/sd))
+    }
 }
 
 pposnorm = function(q, mean=0, sd=1) {
     L = max(length(q), length(mean), length(sd))
     q = rep(q, len=L); mean = rep(mean, len=L); sd = rep(sd, len=L);
     ifelse(q < 0, 0, (pnorm(q=q, mean=mean, sd=sd) -
-                      pnorm(q=0, mean=mean, sd=sd)) /
-                     (1-pnorm(q=0, mean=mean, sd=sd)))
+                      pnorm(q=0, mean=mean, sd=sd)) / pnorm(q= mean/sd))
 }
 
 qposnorm = function(p, mean=0, sd=1) {
@@ -143,22 +152,27 @@ qposnorm = function(p, mean=0, sd=1) {
 rposnorm = function(n, mean=0, sd=1) {
     if(!is.Numeric(n, integ=TRUE, posit=TRUE))
         stop("bad input for argument \"n\"")
-    y = rnorm(n, mean=mean, sd=sd)
     mean = rep(mean, length=n)
     sd = rep(sd, length=n)
-    repeat {
-        index = y < 0
-        if(any(index)) {
-            y[index] = rnorm(n=sum(index), mean=mean[index], sd=sd[index])
-        } else break
-    }
-    y
+    qnorm(p=runif(n, min=pnorm(0, m=mean, sd=sd)), m=mean, sd=sd)
 }
 
-posnormal1 = function(lmean="identity", lsd="loge",
-                      emean=list(), esd=list(),
-                      imean=NULL, isd=NULL, zero=NULL)
+
+
+ posnormal1.control <- function(save.weight=TRUE, ...) {
+    list(save.weight=save.weight)
+}
+
+
+
+
+ posnormal1 = function(lmean="identity", lsd="loge",
+                       emean=list(), esd=list(),
+                       imean=NULL, isd=NULL,
+                       nsimEIM=100, zero=NULL)
 {
+ warning("this VGAM family function is not working properly yet")
+
     if(mode(lmean) != "character" && mode(lmean) != "name")
         lmean = as.character(substitute(lmean))
     if(mode(lsd) != "character" && mode(lsd) != "name")
@@ -169,6 +183,9 @@ posnormal1 = function(lmean="identity", lsd="loge",
         stop("bad input for argument \"isd\"")
     if(!is.list(emean)) emean = list()
     if(!is.list(esd)) esd = list()
+    if(length(nsimEIM))
+        if(!is.Numeric(nsimEIM, allow=1, integ=TRUE) || nsimEIM <= 10)
+            stop("'nsimEIM' should be an integer greater than 10")
 
     new("vglmff",
     blurb=c("Positive (univariate) normal distribution\n\n",
@@ -198,22 +215,22 @@ posnormal1 = function(lmean="identity", lsd="loge",
     inverse=eval(substitute(function(eta, extra=NULL) {
         mymu = eta2theta(eta[,1], .lmean, earg= .emean)
         mysd = eta2theta(eta[,2], .lsd, earg= .esd)
-        mymu + mysd * dnorm(-mymu/mysd) / (1-pnorm(-mymu/mysd))
+        mymu + mysd * dnorm(-mymu/mysd) / pnorm(mymu/mysd)
     }, list( .lmean=lmean, .lsd=lsd, .emean=emean, .esd=esd ))),
     last=eval(substitute(expression({
         misc$link = c("mean"= .lmean, "sd"= .lsd)
         misc$earg = list("mean"= .emean, "sd"= .esd )
         misc$expected = TRUE
-    }), list( .lmean=lmean, .lsd=lsd, .emean=emean, .esd=esd ))),
+        misc$nsimEIM = .nsimEIM
+    }), list( .lmean=lmean, .lsd=lsd, .emean=emean, .esd=esd,
+              .nsimEIM=nsimEIM ))),
     loglikelihood=eval(substitute(
         function(mu,y,w,residuals= FALSE,eta, extra=NULL) {
         mymu = eta2theta(eta[,1], .lmean, earg= .emean)
         mysd = eta2theta(eta[,2], .lsd, earg= .esd)
         if(residuals) stop("loglikelihood residuals not implemented yet") else {
-        if(is.R())
-            sum(w*(dnorm(y, m=mymu, sd=mysd, log=TRUE) -
-                   pnorm(-mymu/mysd, log=TRUE, lower.tail=FALSE))) else
-            sum(w*(-log(mysd)-0.5*((y-mymu)/mysd)^2 -log1p(-pnorm(-mymu/mysd))))
+
+            sum(w * dposnorm(x=y, m=mymu, sd=mysd, log=TRUE))
         }
     }, list( .lmean=lmean, .lsd=lsd, .emean=emean, .esd=esd ))),
     vfamily=c("posnormal1"),
@@ -222,27 +239,52 @@ posnormal1 = function(lmean="identity", lsd="loge",
         mysd = eta2theta(eta[,2], .lsd, earg= .esd)
         zedd = (y-mymu) / mysd
         temp7 = dnorm(-mymu/mysd)
-        temp8 = if(is.R()) pnorm(-mymu/mysd, low=FALSE) else 1-pnorm(-mymu/mysd)
-        temp8 = temp8 * mysd
-        dl.dmu = zedd / mysd - temp7 / temp8
-        dl.dsd = (mymu*temp7/temp8 + zedd^2 - 1) / mysd
+        temp8 = pnorm(mymu/mysd) * mysd
+        dl.dmu = zedd / mysd^2 - temp7 / temp8
+        dl.dsd = (mymu*temp7/temp8 + zedd^3 / mysd - 1) / mysd
         dmu.deta = dtheta.deta(mymu, .lmean, earg= .emean)
         dsd.deta = dtheta.deta(mysd, .lsd, earg= .esd)
-        w * cbind(dl.dmu * dmu.deta,
-                  dl.dsd * dsd.deta)
+        dthetas.detas = cbind(dmu.deta, dsd.deta)
+        w * dthetas.detas * cbind(dl.dmu, dl.dsd)
     }), list( .lmean=lmean, .lsd=lsd, .emean=emean, .esd=esd ))),
     weight=eval(substitute(expression({
-        wz = matrix(as.numeric(NA), n, dimm(M))
-        ed2l.dmu2 = (1 - temp7*mymu/temp8) / mysd^2  - (temp7/temp8)^2
-        ed2l.dmusd = (temp7 /(mysd * temp8)) * (1 + (mymu/mysd)^2 +
-                     mymu*temp7 / temp8)
-        ed2l.dsd2 = 2 / mysd^2  - (temp7 * mymu /(mysd^2 * temp8)) *
-                    (1 + (mymu/mysd)^2 + mymu*temp7/temp8)
-        wz[,iam(1,1,M)] = ed2l.dmu2  * dmu.deta^2
-        wz[,iam(2,2,M)] = ed2l.dsd2  * dsd.deta^2
-        wz[,iam(1,2,M)] = ed2l.dmusd * dsd.deta * dmu.deta
-        w * wz
-    }), list( .lmean=lmean, .lsd=lsd, .emean=emean, .esd=esd ))))
+        run.varcov = 0
+        ind1 = iam(NA, NA, M=M, both=TRUE, diag=TRUE)
+        if(length( .nsimEIM )) {
+            for(ii in 1:( .nsimEIM )) {
+                ysim <- rposnorm(n, m=mymu, sd=mysd)
+                zedd = (ysim-mymu) / mysd
+                temp7 = dnorm(-mymu/mysd)
+                temp8 = pnorm(mymu/mysd) * mysd
+                dl.dmu = zedd / mysd^2 - temp7 / temp8
+                dl.dsd = (mymu*temp7/temp8 + zedd^3 / mysd - 1) / mysd
+
+                rm(ysim)
+                temp3 = matrix(c(dl.dmu, dl.dsd), n, 2)
+                run.varcov = ((ii-1) * run.varcov +
+                           temp3[,ind1$row.index]*temp3[,ind1$col.index]) / ii
+            }
+            wz = if(intercept.only)
+                matrix(apply(run.varcov, 2, mean),
+                       n, ncol(run.varcov), byrow=TRUE) else run.varcov
+
+            wz = wz * dthetas.detas[,ind1$row] * dthetas.detas[,ind1$col]
+            wz = w * matrix(wz, n, dimm(M))
+        } else {
+            wz = matrix(as.numeric(NA), n, dimm(M))
+            ed2l.dmu2 = (1 - temp7*mymu/temp8) / mysd^2  - (temp7/temp8)^2
+            ed2l.dmusd = (temp7 /(mysd * temp8)) * (1 + (mymu/mysd)^2 +
+                         mymu*temp7 / temp8)
+            ed2l.dsd2 = 2 / mysd^2  - (temp7 * mymu /(mysd^2 * temp8)) *
+                        (1 + (mymu/mysd)^2 + mymu*temp7/temp8)
+            wz[,iam(1,1,M)] = ed2l.dmu2  * dmu.deta^2
+            wz[,iam(2,2,M)] = ed2l.dsd2  * dsd.deta^2
+            wz[,iam(1,2,M)] = ed2l.dmusd * dsd.deta * dmu.deta
+            wz = w * wz
+        }
+        wz
+    }), list( .lmean=lmean, .lsd=lsd, .emean=emean, .esd=esd,
+              .nsimEIM=nsimEIM ))))
 }
 
 

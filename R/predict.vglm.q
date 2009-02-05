@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2008 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2009 T.W. Yee, University of Auckland. All rights reserved.
 
 
 
@@ -53,6 +53,15 @@ predict.vglm <- function(object,
     if(untransform && (type!="link" || se.fit || deriv != 0))
         stop(paste("argument \"untransform\"=TRUE only if type=\"link\",",
                    "se.fit=FALSE, deriv=0"))
+
+
+
+
+
+    if(length(object@misc$form2)) {
+        Xm2 = predict.vlm(object, newdata=newdata, type="lm2", ...)
+        object@extra$Xm2 = Xm2
+    }
 
 
     pred = 

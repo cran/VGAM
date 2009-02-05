@@ -19,33 +19,39 @@ rrvglm.control(Rank = 1, Algorithm = c("alternating", "derivative"),
 }
 %- maybe also `usage' for other objects documented here.
 \arguments{
-  \item{Rank}{ The numerical rank \eqn{R} of the model.
+  \item{Rank}{
+    The numerical rank \eqn{R} of the model.
     Must be an element from the set \{1,2,\ldots,min(\eqn{M},\emph{p2})\}. 
     Here, the vector of explanatory variables \bold{x} is partitioned into
     (\bold{x1},\bold{x2}), which is of dimension \emph{p1}+\emph{p2}.
     The variables making up \bold{x1} are given by the terms in
     \code{Norrr} argument, and the rest of the terms comprise \bold{x2}.
-    }
-  \item{Algorithm}{ Character string indicating what algorithm is
+
+  }
+  \item{Algorithm}{
+    Character string indicating what algorithm is
     to be used. The default is the first one.
 
   }
-  \item{Corner}{ Logical indicating whether corner constraints are
+  \item{Corner}{
+    Logical indicating whether corner constraints are
     to be used. This is one method for ensuring a unique solution.
     If \code{TRUE}, \code{Index.corner} specifies the \eqn{R} rows
     of the constraint matrices that are use as the corner constraints,
     i.e., they hold an order-\eqn{R} identity matrix.
 
   }
-\item{Uncor}{ Logical indicating whether uncorrelated 
-  latent variables are to be used.  This is another normalization that
-  forces the variance-covariance matrix of the latent variables to be
-  \code{diag(Rank)}, i.e., unit variance and uncorrelated. This constraint
-  does not lead to a unique solution because it can be rotated.
+\item{Uncor}{
+  Logical indicating whether uncorrelated latent variables are to be used.
+  This is normalization forces the variance-covariance
+  matrix of the latent variables to be \code{diag(Rank)}, i.e., unit
+  variance and uncorrelated. This constraint does not lead to a unique
+  solution because it can be rotated.
 
 }
   \item{Wmat}{ Yet to be done. }
-  \item{Svd.arg}{ Logical indicating whether a singular value decomposition
+  \item{Svd.arg}{
+    Logical indicating whether a singular value decomposition
     of the outer product is to computed.  This is another normalization
     which ensures uniqueness.  See the argument \code{Alpha} below.
 
@@ -66,17 +72,21 @@ rrvglm.control(Rank = 1, Algorithm = c("alternating", "derivative"),
     \eqn{D^{1-\alpha}  V^T}{D^(1-Alpha) \%*\% t(V)} respectively.
     A value of 0.5 is `symmetrical'. 
     This argument is used only when \code{Svd.arg=TRUE}.
+
   }
-  \item{Bestof}{ Integer. The best of \code{Bestof} models fitted is
+  \item{Bestof}{
+    Integer. The best of \code{Bestof} models fitted is
     returned. This argument helps guard against local solutions by
     (hopefully) finding the global solution from many fits. The
     argument works only when the function generates its own initial value
     for \bold{C},
     i.e., when \bold{C} is \emph{not} passed in as initial values.
+
   }
   \item{Cinit}{
     Initial \bold{C} matrix which may speed up convergence.
     It must be of the correct dimension.
+
   }
   \item{Etamat.colmax}{
     Positive integer, no smaller than \code{Rank}.  Controls the amount
@@ -96,7 +106,8 @@ rrvglm.control(Rank = 1, Algorithm = c("alternating", "derivative"),
       Integer vector specifying which rows
       of the constraint matrices are to be all zeros.
   }
-  \item{SD.Cinit}{ Standard deviation of the initial values for the elements
+  \item{SD.Cinit}{
+      Standard deviation of the initial values for the elements
       of \bold{C}.
       These are normally distributed with mean zero.  
       This argument is used only if \code{Use.Init.Poisson.QO = FALSE}.
@@ -110,7 +121,8 @@ rrvglm.control(Rank = 1, Algorithm = c("alternating", "derivative"),
     \eqn{\bold{B}_2}{\bold{B}2} matrix.
 
   }
-  \item{trace}{ Logical indicating if output should be produced for
+  \item{trace}{
+    Logical indicating if output should be produced for
     each iteration.
 
 %   Useful when \code{Quadratic=TRUE} because QRR-VGLMs are
@@ -126,7 +138,8 @@ rrvglm.control(Rank = 1, Algorithm = c("alternating", "derivative"),
     realistic for RR-VGLMs compared to QRR-VGLMs.
 
   }
-  \item{checkwz}{ logical indicating whether the diagonal elements of
+  \item{checkwz}{
+    logical indicating whether the diagonal elements of
     the working weight matrices should be checked whether they are
     sufficiently positive, i.e., greater than \code{wzepsilon}. If not,
     any values less than \code{wzepsilon} are replaced with this value.
@@ -137,7 +150,8 @@ rrvglm.control(Rank = 1, Algorithm = c("alternating", "derivative"),
   weight matrices are sufficiently positive.
 
   }
-  \item{\dots}{ Variables in \dots are passed into
+  \item{\dots}{
+    Variables in \dots are passed into
     \code{\link{vglm.control}}. If the derivative algorithm is used, then
     \dots are also passed into \code{\link{rrvglm.optim.control}}.
   }

@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2008 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2009 T.W. Yee, University of Auckland. All rights reserved.
 
 
 
@@ -12,6 +12,11 @@ if(!isGeneric("logLik"))
 setMethod("logLik",  "vlm", function(object, ...)
     logLik.vlm(object, ...))
 
+setMethod("logLik",  "vglm", function(object, ...)
+    logLik.vlm(object, ...))
+
+setMethod("logLik",  "vgam", function(object, ...)
+    logLik.vlm(object, ...))
 
 
 

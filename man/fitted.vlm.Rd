@@ -10,13 +10,13 @@
 
 }
 \usage{
-fitted.vlm(object, matrix = TRUE, ...)
+fitted.vlm(object, matrix.arg = TRUE, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{object}{ a model object that inherits from a VLM.
     }
-  \item{matrix}{ Logical. Return the answer as a matrix?
+  \item{matrix.arg}{ Logical. Return the answer as a matrix?
   If \code{FALSE} then it will be a vector. }
   \item{\dots}{ Currently unused. }
 }

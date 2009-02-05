@@ -73,7 +73,7 @@ New York: Wiley-Interscience, Third edition.
     \code{\link{skewnormal1}},
     \code{\link{dcnormal1}},
     \code{\link{studentt}},
-    \code{\link[stats]{dnorm}}.
+    \code{\link[stats:Normal]{dnorm}}.
 
 }
 \examples{

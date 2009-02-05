@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2008 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2009 T.W. Yee, University of Auckland. All rights reserved.
 
 
 
@@ -21,29 +21,37 @@ lms.yjn.control <- function(trace=TRUE, ...)
 
 
 lms.bcn <- function(percentiles=c(25,50,75),
-                    zero=NULL,
-                    link.mu="identity",
-                    link.sigma="loge",
-                    emu=list(), esigma=list(),
+                    zero=c(1,3),
+                    llambda="identity",
+                    lmu="identity",
+                    lsigma="loge",
+                    elambda=list(), emu=list(), esigma=list(),
                     dfmu.init=4,
                     dfsigma.init=2,
-                    init.lambda=1,
-                    init.sigma=NULL)
+                    ilambda=1,
+                    isigma=NULL)
 {
-    if(mode(link.sigma) != "character" && mode(link.sigma) != "name")
-        link.sigma = as.character(substitute(link.sigma))
-    if(mode(link.mu) != "character" && mode(link.mu) != "name")
-        link.mu = as.character(substitute(link.mu))
+    if(mode(llambda) != "character" && mode(llambda) != "name")
+        llambda = as.character(substitute(llambda))
+    if(mode(lmu) != "character" && mode(lmu) != "name")
+        lmu = as.character(substitute(lmu))
+    if(mode(lsigma) != "character" && mode(lsigma) != "name")
+        lsigma = as.character(substitute(lsigma))
+    if(!is.list(elambda)) elambda = list()
     if(!is.list(emu)) emu = list()
     if(!is.list(esigma)) esigma = list()
+    if(!is.Numeric(ilambda))
+        stop("bad input for argument 'ilambda'")
+    if(length(isigma) && !is.Numeric(isigma, posit=TRUE))
+        stop("bad input for argument 'isigma'")
 
     new("vglmff",
         blurb=c("LMS Quantile Regression ",
                 "(Box-Cox transformation to normality)\n",
             "Links:    ",
-            "lambda", ", ",
-            namesof("mu", link=link.mu, earg= emu), ", ",
-            namesof("sigma", link=link.sigma, earg= esigma)),
+            namesof("lambda", link=llambda, earg= elambda), ", ",
+            namesof("mu", link=lmu, earg= emu), ", ",
+            namesof("sigma", link=lsigma, earg= esigma)),
     constraints=eval(substitute(expression({
         constraints = cm.zero.vgam(constraints, x, .zero, M)
     }), list(.zero=zero))),
@@ -54,17 +62,17 @@ lms.bcn <- function(percentiles=c(25,50,75),
             stop("negative responses not allowed")
 
         predictors.names =
-            c(namesof("lambda", "identity"),
-              namesof("mu",  .link.mu, earg= .emu,  short= TRUE),
-              namesof("sigma",  .link.sigma, earg= .esigma,  short= TRUE))
+            c(namesof("lambda", .llambda, earg= .elambda,  short= TRUE),
+              namesof("mu",  .lmu, earg= .emu,  short= TRUE),
+              namesof("sigma",  .lsigma, earg= .esigma,  short= TRUE))
  
         if(!length(etastart)) {
 
             fit500=vsmooth.spline(x=x[,min(ncol(x),2)],y=y,w=w, df= .dfmu.init)
             fv.init = c(predict(fit500, x=x[,min(ncol(x),2)])$y)
 
-            lambda.init = if(is.Numeric( .init.lambda)) .init.lambda else 1.0
-            sigma.init = if(is.null(.init.sigma)) {
+            lambda.init = if(is.Numeric( .ilambda)) .ilambda else 1.0
+            sigma.init = if(is.null(.isigma)) {
                 myratio = ((y/fv.init)^lambda.init - 1) / lambda.init
                 if(is.Numeric( .dfsigma.init)) {
                     fit600 = vsmooth.spline(x=x[,min(ncol(x),2)], y=myratio^2,
@@ -72,113 +80,112 @@ lms.bcn <- function(percentiles=c(25,50,75),
                     sqrt(c(abs(predict(fit600, x=x[,min(ncol(x),2)])$y)))
                 } else 
                     sqrt(var(myratio))
-            } else .init.sigma
+            } else .isigma
  
-            etastart = cbind(lambda.init,
-                              theta2eta(fv.init, .link.mu, earg= .emu),
-                              theta2eta(sigma.init,  .link.sigma, earg= .esigma))
+            etastart = cbind(theta2eta(lambda.init, .llambda, earg= .elambda),
+                             theta2eta(fv.init,     .lmu, earg= .emu),
+                             theta2eta(sigma.init,  .lsigma, earg= .esigma))
         }
-    }), list(.link.sigma=link.sigma,
-             .link.mu=link.mu,
-             .esigma=esigma, .emu=emu,
-             .dfmu.init=dfmu.init,
-             .dfsigma.init=dfsigma.init,
-             .init.lambda=init.lambda,
-             .init.sigma=init.sigma))),
+    }), list( .llambda=llambda, .lmu=lmu, .lsigma=lsigma,
+              .elambda=elambda, .emu=emu, .esigma=esigma, 
+              .dfmu.init=dfmu.init,
+              .dfsigma.init=dfsigma.init,
+              .ilambda=ilambda, .isigma=isigma ))),
     inverse=eval(substitute(function(eta, extra=NULL) {
-        eta[,2] = eta2theta(eta[,2], .link.mu, earg= .emu)
-        eta[,3] = eta2theta(eta[,3], .link.sigma, earg= .esigma)
+        eta[,1] = eta2theta(eta[,1], .llambda, earg= .elambda)
+        eta[,2] = eta2theta(eta[,2], .lmu, earg= .emu)
+        eta[,3] = eta2theta(eta[,3], .lsigma, earg= .esigma)
         qtplot.lms.bcn(percentiles= .percentiles, eta=eta)
-    }, list(.percentiles=percentiles,
-            .link.mu=link.mu,
-            .esigma=esigma, .emu=emu,
-            .link.sigma=link.sigma))),
+    }, list( .llambda=llambda, .lmu=lmu, .lsigma=lsigma,
+             .elambda=elambda, .emu=emu, .esigma=esigma, 
+             .percentiles=percentiles ))),
     last=eval(substitute(expression({
         misc$percentiles = .percentiles
-        misc$links = c(lambda = "identity", mu = .link.mu, sigma = .link.sigma)
-        misc$earg = list(lambda = list(), mu = .emu, sigma = .esigma)
+        misc$links = c(lambda = .llambda, mu = .lmu, sigma = .lsigma)
+        misc$earg = list(lambda = .elambda, mu = .emu, sigma = .esigma)
         misc$true.mu = FALSE    # $fitted is not a true mu
         if(control$cdf) {
             post$cdf = cdf.lms.bcn(y, eta0=matrix(c(lambda,mymu,sigma), 
                 ncol=3, dimnames=list(dimnames(x)[[1]], NULL)))
         }
-    }), list(.percentiles=percentiles,
-            .link.mu=link.mu,
-            .esigma=esigma, .emu=emu,
-            .link.sigma=link.sigma))),
+    }), list( .llambda=llambda, .lmu=lmu, .lsigma=lsigma,
+              .elambda=elambda, .emu=emu, .esigma=esigma, 
+              .percentiles=percentiles ))),
     loglikelihood=eval(substitute(
         function(mu,y,w, residuals= FALSE, eta, extra=NULL) {
-            lambda = eta[,1]
-            mu = eta2theta(eta[,2], .link.mu, earg= .emu)
-            sigma = eta2theta(eta[,3], .link.sigma, earg= .esigma)
+            lambda = eta2theta(eta[,1], .llambda, earg= .elambda)
+            mu = eta2theta(eta[,2], .lmu, earg= .emu)
+            sigma = eta2theta(eta[,3], .lsigma, earg= .esigma)
             z = ((y/mu)^lambda - 1) / (lambda * sigma)
          if(residuals) stop("loglikelihood residuals not implemented yet") else
             sum(w * (lambda * log(y/mu) - log(sigma) - 0.5*z^2))
-        }, list(.link.sigma=link.sigma,
-                .esigma=esigma, .emu=emu,
-                .link.mu=link.mu))),
+        }, list( .llambda=llambda, .lmu=lmu, .lsigma=lsigma,
+                 .elambda=elambda, .emu=emu, .esigma=esigma ))),
     vfamily=c("lms.bcn", "lmscreg"),
     deriv=eval(substitute(expression({
-        lambda = eta[,1]
-        mymu = eta2theta(eta[,2], .link.mu, earg= .emu)
-        sigma = eta2theta(eta[,3], .link.sigma, earg= .esigma)
+        lambda = eta2theta(eta[,1], .llambda, earg= .elambda)
+        mymu   = eta2theta(eta[,2], .lmu, earg= .emu)
+        sigma  = eta2theta(eta[,3], .lsigma, earg= .esigma)
         z = ((y/mymu)^lambda - 1) / (lambda * sigma)
         z2m1 = z * z - 1
-        d1 = z*(z - log(y/mymu) / sigma) / lambda - z2m1 * log(y/mymu)
-        d2 = z / (mymu * sigma) + z2m1 * lambda / mymu
-        d2 = d2 * dtheta.deta(mymu, .link.mu, earg= .emu)
-        d3 = z2m1 / sigma
-        d3 = d3 * dtheta.deta(sigma, .link.sigma, earg= .esigma)
-        w * cbind(d1, d2, d3)
-    }), list(.link.sigma=link.sigma, .link.mu=link.mu,
-             .esigma=esigma, .emu=emu ))),
+        dl.dlambda = z*(z - log(y/mymu) / sigma) / lambda - z2m1 * log(y/mymu)
+        dl.dmu = z / (mymu * sigma) + z2m1 * lambda / mymu
+        dl.dsigma = z2m1 / sigma
+        dlambda.deta  = dtheta.deta(lambda, .llambda, earg= .elambda)
+        dmu.deta  = dtheta.deta(mymu, .lmu, earg= .emu)
+        dsigma.deta = dtheta.deta(sigma, .lsigma, earg= .esigma)
+        w * cbind(dl.dlambda * dlambda.deta,
+                  dl.dmu * dmu.deta,
+                  dl.dsigma * dsigma.deta)
+    }), list( .llambda=llambda, .lmu=lmu, .lsigma=lsigma,
+              .elambda=elambda, .emu=emu, .esigma=esigma ))),
     weight=eval(substitute(expression({
         wz = matrix(as.numeric(NA), n, 6)
-        wz[,iam(1,1,M)] = (7 * sigma^2 / 4)
-        wz[,iam(2,2,M)] = (1 + 2*(lambda * sigma)^2) / (mymu*sigma)^2 *
-                           dtheta.deta(mymu, .link.mu, earg= .emu)^2
-        wz[,iam(3,3,M)] = (2 / sigma^2) *
-                           dtheta.deta(sigma, .link.sigma, earg= .esigma)^2
-        wz[,iam(1,2,M)] = (-1 / (2 * mymu)) *
-                           dtheta.deta(mymu, .link.mu, earg= .emu)
-        wz[,iam(1,3,M)] = (lambda * sigma) *
-                           dtheta.deta(sigma, .link.sigma, earg= .esigma)
-        wz[,iam(2,3,M)] = (2 * lambda / (mymu * sigma)) *
-                           dtheta.deta(sigma, .link.sigma, earg= .esigma) *
-                           dtheta.deta(mymu, .link.mu, earg= .emu)
+        wz[,iam(1,1,M)] = (7 * sigma^2 / 4) * dlambda.deta^2
+        wz[,iam(2,2,M)] = (1 + 2*(lambda*sigma)^2)/(mymu*sigma)^2 * dmu.deta^2
+        wz[,iam(3,3,M)] = (2 / sigma^2) * dsigma.deta^2
+        wz[,iam(1,2,M)] = (-1 / (2 * mymu)) * dlambda.deta * dmu.deta
+        wz[,iam(1,3,M)] = (lambda * sigma) * dlambda.deta * dsigma.deta
+        wz[,iam(2,3,M)] = (2*lambda/(mymu * sigma)) * dmu.deta * dsigma.deta
         wz * w
-    }), list(.link.sigma=link.sigma, .link.mu=link.mu,
-             .esigma=esigma, .emu=emu ))))
+    }), list( .llambda=llambda, .lmu=lmu, .lsigma=lsigma,
+              .elambda=elambda, .emu=emu, .esigma=esigma ))))
 }
 
 
 
 lms.bcg = function(percentiles=c(25,50,75),
-                          zero=NULL,
-                          link.mu="identity",
-                          link.sigma="loge",
-                          emu=list(), esigma=list(),
-                          dfmu.init=4,
-                          dfsigma.init=2,
-                          init.lambda=1,
-                          init.sigma=NULL)
+                   zero=c(1,3),
+                   llambda="identity",
+                   lmu="identity",
+                   lsigma="loge",
+                   elambda=list(), emu=list(), esigma=list(),
+                   dfmu.init=4,
+                   dfsigma.init=2,
+                   ilambda=1,
+                   isigma=NULL)
 {
-    if(mode(link.sigma) != "character" && mode(link.sigma) != "name")
-        link.sigma = as.character(substitute(link.sigma))
-    if(mode(link.mu) != "character" && mode(link.mu) != "name")
-        link.mu = as.character(substitute(link.mu))
+    if(mode(llambda) != "character" && mode(llambda) != "name")
+        llambda = as.character(substitute(llambda))
+    if(mode(lmu) != "character" && mode(lmu) != "name")
+        lmu = as.character(substitute(lmu))
+    if(mode(lsigma) != "character" && mode(lsigma) != "name")
+        lsigma = as.character(substitute(lsigma))
+    if(!is.list(elambda)) elambda = list()
     if(!is.list(emu)) emu = list()
     if(!is.list(esigma)) esigma = list()
+    if(!is.Numeric(ilambda))
+        stop("bad input for argument 'ilambda'")
+    if(length(isigma) && !is.Numeric(isigma, posit=TRUE))
+        stop("bad input for argument 'isigma'")
 
     new("vglmff",
     blurb=c("LMS Quantile Regression ",
             "(Box-Cox transformation to a Gamma distribution)\n",
             "Links:    ",
-            "lambda",
-            ", ",
-            namesof("mu", link=link.mu, earg= emu),
-            ", ",
-            namesof("sigma", link=link.sigma, earg= esigma)),
+            namesof("lambda", link=llambda, earg= elambda), ", ",
+            namesof("mu", link=lmu, earg= emu), ", ",
+            namesof("sigma", link=lsigma, earg= esigma)),
     constraints=eval(substitute(expression({
         constraints = cm.zero.vgam(constraints, x, .zero, M)
     }), list(.zero=zero))),
@@ -188,18 +195,19 @@ lms.bcg = function(percentiles=c(25,50,75),
       if(any(y<0, na.rm = TRUE))
             stop("negative responses not allowed")
 
-        predictors.names = c(namesof("lambda", "identity"),
-            namesof("mu",  .link.mu, earg= .emu,  short=TRUE),
-            namesof("sigma",  .link.sigma, earg= .esigma, short=TRUE))
+        predictors.names = c(
+            namesof("lambda", .llambda, earg= .elambda,  short=TRUE),
+            namesof("mu",     .lmu, earg= .emu,  short=TRUE),
+            namesof("sigma",  .lsigma, earg= .esigma, short=TRUE))
 
         if(!length(etastart)) {
 
             fit500=vsmooth.spline(x=x[,min(ncol(x),2)],y=y,w=w, df= .dfmu.init)
             fv.init = c(predict(fit500, x=x[,min(ncol(x),2)])$y)
 
-            lambda.init = if(is.Numeric( .init.lambda)) .init.lambda else 1.0
+            lambda.init = if(is.Numeric( .ilambda)) .ilambda else 1.0
 
-            sigma.init = if(is.null(.init.sigma)) {
+            sigma.init = if(is.null(.isigma)) {
                myratio=((y/fv.init)^lambda.init-1)/lambda.init #~(0,var=sigma^2)
                 if(is.numeric( .dfsigma.init) && is.finite( .dfsigma.init)) {
                     fit600 = vsmooth.spline(x=x[,min(ncol(x),2)],
@@ -208,100 +216,97 @@ lms.bcg = function(percentiles=c(25,50,75),
                     sqrt(c(abs(predict(fit600, x=x[,min(ncol(x),2)])$y)))
                 } else 
                     sqrt(var(myratio))
-            } else .init.sigma
+            } else .isigma
 
-            etastart = cbind(lambda.init,
-                             theta2eta(fv.init,  .link.mu, earg= .emu),
-                             theta2eta(sigma.init,  .link.sigma, earg= .esigma))
+            etastart = cbind(theta2eta(lambda.init,  .llambda, earg= .elambda),
+                             theta2eta(fv.init,      .lmu, earg= .emu),
+                             theta2eta(sigma.init,   .lsigma, earg= .esigma))
         }
-    }), list(.link.sigma=link.sigma,
-             .link.mu=link.mu,
-             .esigma=esigma, .emu=emu,
-             .dfmu.init=dfmu.init,
-             .dfsigma.init=dfsigma.init,
-             .init.lambda=init.lambda,
-             .init.sigma=init.sigma))),
+    }), list( .llambda=llambda, .lmu=lmu, .lsigma=lsigma,
+              .elambda=elambda, .emu=emu, .esigma=esigma, 
+              .dfmu.init=dfmu.init,
+              .dfsigma.init=dfsigma.init,
+              .ilambda=ilambda, .isigma=isigma ))),
     inverse=eval(substitute(function(eta, extra=NULL) {
-        eta[,2] = eta2theta(eta[,2], .link.mu, earg= .emu)
-        eta[,3] = eta2theta(eta[,3], .link.sigma, earg= .esigma)
+        eta[,1] = eta2theta(eta[,1], .llambda, earg= .elambda)
+        eta[,2] = eta2theta(eta[,2], .lmu, earg= .emu)
+        eta[,3] = eta2theta(eta[,3], .lsigma, earg= .esigma)
         qtplot.lms.bcg(percentiles= .percentiles, eta=eta)
-    }, list(.percentiles=percentiles,
-            .link.mu=link.mu,
-            .esigma=esigma, .emu=emu,
-            .link.sigma=link.sigma))),
+    }, list( .llambda=llambda, .lmu=lmu, .lsigma=lsigma,
+             .elambda=elambda, .emu=emu, .esigma=esigma, 
+             .percentiles=percentiles ))),
     last=eval(substitute(expression({
         misc$percentiles = .percentiles
-        misc$link = c(lambda = "identity", mu = .link.mu, sigma = .link.sigma)
-        misc$earg = list(lambda = list(), mu = .emu, sigma = .esigma)
+        misc$link = c(lambda = .llambda, mu = .lmu, sigma = .lsigma)
+        misc$earg = list(lambda = .elambda, mu = .emu, sigma = .esigma)
         misc$true.mu = FALSE    # $fitted is not a true mu
         if(control$cdf) {
             post$cdf = cdf.lms.bcg(y, eta0=matrix(c(lambda,mymu,sigma), 
                 ncol=3, dimnames=list(dimnames(x)[[1]], NULL)))
         }
-    }), list(.percentiles=percentiles,
-            .link.mu=link.mu,
-             .esigma=esigma, .emu=emu,
-            .link.sigma=link.sigma))),
+    }), list( .llambda=llambda, .lmu=lmu, .lsigma=lsigma,
+              .elambda=elambda, .emu=emu, .esigma=esigma, 
+              .percentiles=percentiles ))),
     loglikelihood=eval(substitute(
         function(mu,y,w, residuals= FALSE, eta, extra=NULL) {
-            lambda = eta[,1]
-            mu = eta2theta(eta[,2], .link.mu, earg= .emu)
-            sigma = eta2theta(eta[,3], .link.sigma, earg= .esigma)
+            lambda = eta2theta(eta[,1], .llambda, earg= .elambda)
+            mu = eta2theta(eta[,2], .lmu, earg= .emu)
+            sigma = eta2theta(eta[,3], .lsigma, earg= .esigma)
             g = (y/mu)^lambda
             theta = 1 / (sigma * lambda)^2
          if(residuals) stop("loglikelihood residuals not implemented yet") else
             sum(w * (log(abs(lambda)) + theta*(log(theta)+log(g)-g) - 
                      lgamma(theta) - log(y)))
-        }, list(.link.sigma=link.sigma,
-                .esigma=esigma, .emu=emu,
-                .link.mu=link.mu))),
+        }, list( .llambda=llambda, .lmu=lmu, .lsigma=lsigma,
+                 .elambda=elambda, .emu=emu, .esigma=esigma ))),
     vfamily=c("lms.bcg", "lmscreg"),
     deriv=eval(substitute(expression({
-        lambda = eta[,1]
-        mymu = eta2theta(eta[,2], .link.mu, earg= .emu)
-        sigma = eta2theta(eta[,3], .link.sigma, earg= .esigma)
+        lambda = eta2theta(eta[,1], .llambda, earg= .elambda)
+        mymu = eta2theta(eta[,2], .lmu, earg= .emu)
+        sigma = eta2theta(eta[,3], .lsigma, earg= .esigma)
 
         g = (y/mymu)^lambda
         theta = 1 / (sigma * lambda)^2
         dd = digamma(theta)
 
-        dl.dlambda = (1 + 2*theta*(dd+g-1-log(theta) -
-                      0.5 * (g+1)*log(g))) / lambda
+        dl.dlambda = (1 + 2*theta*(dd+g-1-log(theta)-0.5*(g+1)*log(g)))/lambda
         dl.dmu = lambda * theta * (g-1) / mymu
         dl.dsigma = 2*theta*(dd+g-log(theta * g)-1) / sigma
-        dsigma.deta = dtheta.deta(sigma, link=.link.sigma, earg= .esigma)
+        dlambda.deta = dtheta.deta(lambda, link=.llambda, earg= .elambda)
+        dmu.deta = dtheta.deta(mymu, link=.lmu, earg= .emu)
+        dsigma.deta = dtheta.deta(sigma, link=.lsigma, earg= .esigma)
 
-        cbind(dl.dlambda,
-              dl.dmu * dtheta.deta(mymu, link= .link.mu, earg= .emu),
-              dl.dsigma * dsigma.deta) * w
-    }), list(.link.sigma=link.sigma, .link.mu=link.mu,
-             .esigma=esigma, .emu=emu ))),
+        cbind(dl.dlambda * dlambda.deta,
+              dl.dmu     * dmu.deta,
+              dl.dsigma  * dsigma.deta) * w
+    }), list( .llambda=llambda, .lmu=lmu, .lsigma=lsigma,
+              .elambda=elambda, .emu=emu, .esigma=esigma ))),
     weight=eval(substitute(expression({
-        tt = trigamma(theta)
- 
+        tritheta = trigamma(theta)
         wz = matrix(0, n, 6)
 
         if(TRUE) {
             part2 = dd + 2/theta - 2*log(theta)
-            wz[,iam(1,1,M)] = (1 + theta*(tt*(1+4*theta) - 4*(1+1/theta) -
-                log(theta)*(2/theta - log(theta)) + dd*part2)) / lambda^2
+            wz[,iam(1,1,M)] = ((1 + theta*(tritheta*(1+4*theta) -
+                               4*(1+1/theta) - log(theta)*(2/theta -
+                               log(theta)) + dd*part2)) / lambda^2) *
+                              dlambda.deta^2
         } else {
             temp = mean( g*(log(g))^2 )
-            wz[,iam(1,1,M)] = (4*theta*(theta*tt-1) -1+ theta*temp)/lambda^2
+            wz[,iam(1,1,M)] = ((4*theta*(theta*tritheta-1) -1 +
+                               theta*temp)/lambda^2) *
+                              dlambda.deta^2
         }
 
-        wz[,iam(2,2,M)] = 1 / (mymu*sigma)^2  *
-                           dtheta.deta(mymu, .link.mu, earg= .emu)^2
-        wz[,iam(3,3,M)] = (4*theta*(theta*tt-1) / sigma^2) *
-                           dtheta.deta(sigma, .link.sigma, earg= .esigma)^2
-        wz[,iam(1,2,M)] = -theta * (dd + 1/theta - log(theta)) / mymu
-        wz[,iam(1,2,M)] = wz[,iam(1,2,M)] * 
-                           dtheta.deta(mymu, .link.mu, earg= .emu)
-        wz[,iam(1,3,M)] = 2 * theta^1.5 * (2 * theta * tt - 2 -
-                           1/theta) * dtheta.deta(sigma, .link.sigma, earg= .esigma)
+        wz[,iam(2,2,M)] = dmu.deta^2 / (mymu*sigma)^2
+        wz[,iam(3,3,M)] = (4*theta*(theta*tritheta-1)/sigma^2) * dsigma.deta^2
+        wz[,iam(1,2,M)] = (-theta * (dd + 1/theta - log(theta)) / mymu) *
+                          dlambda.deta * dmu.deta
+        wz[,iam(1,3,M)] = 2 * theta^1.5 * (2 * theta * tritheta - 2 -
+                           1/theta) * dlambda.deta * dsigma.deta
         wz * w
-    }), list(.link.sigma=link.sigma, .link.mu=link.mu,
-             .esigma=esigma, .emu=emu ))))
+    }), list( .llambda=llambda, .lmu=lmu, .lsigma=lsigma,
+              .elambda=elambda, .emu=emu, .esigma=esigma ))))
 }
 
 
@@ -532,38 +537,42 @@ lms.yjn2.control <- function(save.weight=TRUE, ...)
 }
 
 lms.yjn2 = function(percentiles=c(25,50,75),
-                    zero=NULL,
-                    link.lambda="identity",
-                    link.mu="identity",
-                    link.sigma="loge",
+                    zero=c(1,3),
+                    llambda="identity",
+                    lmu="identity",
+                    lsigma="loge",
                     elambda=list(), emu=list(), esigma=list(),
                     dfmu.init=4,
                     dfsigma.init=2,
-                    init.lambda=1.0,
-                    init.sigma=NULL,
+                    ilambda=1.0,
+                    isigma=NULL,
                     yoffset=NULL,
                     nsimEIM=250)
 {
 
-    if(mode(link.lambda) != "character" && mode(link.lambda) != "name")
-        link.lambda = as.character(substitute(link.lambda))
-    if(mode(link.mu) != "character" && mode(link.mu) != "name")
-        link.mu = as.character(substitute(link.mu))
-    if(mode(link.sigma) != "character" && mode(link.sigma) != "name")
-        link.sigma = as.character(substitute(link.sigma))
+    if(mode(llambda) != "character" && mode(llambda) != "name")
+        llambda = as.character(substitute(llambda))
+    if(mode(lmu) != "character" && mode(lmu) != "name")
+        lmu = as.character(substitute(lmu))
+    if(mode(lsigma) != "character" && mode(lsigma) != "name")
+        lsigma = as.character(substitute(lsigma))
     if(!is.list(elambda)) elambda = list()
     if(!is.list(emu)) emu = list()
     if(!is.list(esigma)) esigma = list()
+    if(!is.Numeric(ilambda))
+        stop("bad input for argument 'ilambda'")
+    if(length(isigma) && !is.Numeric(isigma, posit=TRUE))
+        stop("bad input for argument 'isigma'")
 
     new("vglmff",
     blurb=c("LMS Quantile Regression (Yeo-Johnson transformation",
             " to normality)\n",
             "Links:    ",
-            namesof("lambda", link=link.lambda, earg= elambda),
+            namesof("lambda", link=llambda, earg= elambda),
             ", ",
-            namesof("mu", link=link.mu, earg= emu),
+            namesof("mu", link=lmu, earg= emu),
             ", ",
-            namesof("sigma", link=link.sigma, earg= esigma)),
+            namesof("sigma", link=lsigma, earg= esigma)),
     constraints=eval(substitute(expression({
         constraints = cm.zero.vgam(constraints, x, .zero, M)
     }), list(.zero=zero))),
@@ -571,9 +580,9 @@ lms.yjn2 = function(percentiles=c(25,50,75),
       if(ncol(cbind(y)) != 1)
           stop("response must be a vector or a one-column matrix")
         predictors.names =
-          c(namesof("lambda", .link.lambda, earg= .elambda, short= TRUE),
-            namesof("mu",     .link.mu,     earg= .emu,     short= TRUE),
-            namesof("sigma",  .link.sigma, earg= .esigma,  short= TRUE))
+          c(namesof("lambda", .llambda, earg= .elambda, short= TRUE),
+            namesof("mu",     .lmu,     earg= .emu,     short= TRUE),
+            namesof("sigma",  .lsigma, earg= .esigma,  short= TRUE))
 
         y.save = y
         yoff = if(is.Numeric( .yoffset)) .yoffset else -median(y) 
@@ -581,7 +590,7 @@ lms.yjn2 = function(percentiles=c(25,50,75),
         y = y + yoff
 
         if(!length(etastart)) {
-            lambda.init = if(is.Numeric( .init.lambda)) .init.lambda else 1.
+            lambda.init = if(is.Numeric( .ilambda)) .ilambda else 1.
 
             y.tx = yeo.johnson(y, lambda.init)
             fv.init = 
@@ -593,7 +602,7 @@ lms.yjn2 = function(percentiles=c(25,50,75),
                 rep(weighted.mean(y, w), len=n)
             }
 
-            sigma.init = if(!is.Numeric(.init.sigma)) {
+            sigma.init = if(!is.Numeric(.isigma)) {
                               if(is.Numeric( .dfsigma.init) && smoothok) {
                                    fit710 = vsmooth.spline(x=x[,min(ncol(x),2)],
                                             y=(y.tx - fv.init)^2,
@@ -604,34 +613,34 @@ lms.yjn2 = function(percentiles=c(25,50,75),
                                    sqrt( sum( w * (y.tx - fv.init)^2 ) / sum(w) )
                               }
                           } else
-                              .init.sigma
+                              .isigma
 
             etastart = matrix(0, n, 3)
-            etastart[,1] = theta2eta(lambda.init, .link.lambda, earg=.elambda)
-            etastart[,2] = theta2eta(fv.init, .link.mu, earg=.emu)
-            etastart[,3] = theta2eta(sigma.init, .link.sigma, earg=.esigma)
+            etastart[,1] = theta2eta(lambda.init, .llambda, earg=.elambda)
+            etastart[,2] = theta2eta(fv.init, .lmu, earg=.emu)
+            etastart[,3] = theta2eta(sigma.init, .lsigma, earg=.esigma)
 
         }
-    }), list(.link.lambda=link.lambda, .link.mu=link.mu, .link.sigma=link.sigma,
+    }), list(.llambda=llambda, .lmu=lmu, .lsigma=lsigma,
              .elambda=elambda, .emu=emu, .esigma=esigma, 
              .dfmu.init=dfmu.init,
              .dfsigma.init=dfsigma.init,
-             .init.lambda=init.lambda,
+             .ilambda=ilambda,
              .yoffset=yoffset,
-             .init.sigma=init.sigma))),
+             .isigma=isigma))),
     inverse=eval(substitute(function(eta, extra=NULL) {
-        eta[,1] = eta2theta(eta[,1], .link.lambda, earg= .elambda)
-        eta[,3] = eta2theta(eta[,3], .link.sigma, earg= .esigma)
+        eta[,1] = eta2theta(eta[,1], .llambda, earg= .elambda)
+        eta[,3] = eta2theta(eta[,3], .lsigma, earg= .esigma)
         qtplot.lms.yjn(percentiles= .percentiles, eta=eta, yoffset= extra$yoff)
     }, list(.percentiles=percentiles,
             .esigma=esigma, .elambda=elambda,
-            .link.lambda=link.lambda,
-            .link.sigma=link.sigma))),
+            .llambda=llambda,
+            .lsigma=lsigma))),
     last=eval(substitute(expression({
         misc$expected = TRUE
         misc$nsimEIM = .nsimEIM
         misc$percentiles = .percentiles
-        misc$link = c(lambda= .link.lambda, mu= .link.mu, sigma= .link.sigma)
+        misc$link = c(lambda= .llambda, mu= .lmu, sigma= .lsigma)
         misc$earg = list(lambda = .elambda, mu = .emu, sigma = .esigma)
         misc$true.mu = FALSE # $fitted is not a true mu
         misc[["yoffset"]] = extra$yoffset
@@ -646,27 +655,27 @@ lms.yjn2 = function(percentiles=c(25,50,75),
     }), list(.percentiles=percentiles,
              .elambda=elambda, .emu=emu, .esigma=esigma, 
              .nsimEIM=nsimEIM,
-             .link.lambda=link.lambda, .link.mu=link.mu, .link.sigma=link.sigma ))),
+             .llambda=llambda, .lmu=lmu, .lsigma=lsigma ))),
     loglikelihood=eval(substitute(
         function(mu,y,w, residuals= FALSE, eta, extra=NULL) {
-            lambda = eta2theta(eta[,1], .link.lambda, earg= .elambda)
-            mu = eta2theta(eta[,2], .link.mu, earg= .emu)
-            sigma = eta2theta(eta[,3], .link.sigma, earg= .esigma)
+            lambda = eta2theta(eta[,1], .llambda, earg= .elambda)
+            mu = eta2theta(eta[,2], .lmu, earg= .emu)
+            sigma = eta2theta(eta[,3], .lsigma, earg= .esigma)
             psi = yeo.johnson(y, lambda)
          if(residuals) stop("loglikelihood residuals not implemented yet") else
             sum(w * (-log(sigma) - 0.5 * ((psi-mu)/sigma)^2 +
                      (lambda-1) * sign(y) * log1p(abs(y))))
         }, list( .elambda=elambda, .emu=emu, .esigma=esigma, 
-                 .link.lambda=link.lambda, .link.mu=link.mu,
-                 .link.sigma=link.sigma ))),
+                 .llambda=llambda, .lmu=lmu,
+                 .lsigma=lsigma ))),
     vfamily=c("lms.yjn2", "lmscreg"),
     deriv=eval(substitute(expression({
-        lambda = eta2theta(eta[,1], .link.lambda, earg= .elambda)
-        mymu = eta2theta(eta[,2], .link.mu, earg= .emu)
-        sigma = eta2theta(eta[,3], .link.sigma, earg= .esigma)
-        dlambda.deta = dtheta.deta(lambda, link=.link.lambda, earg= .elambda)
-        dmu.deta = dtheta.deta(mymu, link=.link.mu, earg= .emu)
-        dsigma.deta = dtheta.deta(sigma, link=.link.sigma, earg= .esigma)
+        lambda = eta2theta(eta[,1], .llambda, earg= .elambda)
+        mymu = eta2theta(eta[,2], .lmu, earg= .emu)
+        sigma = eta2theta(eta[,3], .lsigma, earg= .esigma)
+        dlambda.deta = dtheta.deta(lambda, link=.llambda, earg= .elambda)
+        dmu.deta = dtheta.deta(mymu, link=.lmu, earg= .emu)
+        dsigma.deta = dtheta.deta(sigma, link=.lsigma, earg= .esigma)
 
         psi = yeo.johnson(y, lambda)
         d1 = yeo.johnson(y, lambda, deriv=1)
@@ -677,8 +686,8 @@ lms.yjn2 = function(percentiles=c(25,50,75),
         dthetas.detas = cbind(dlambda.deta, dmu.deta, dsigma.deta)
         w * cbind(dl.dlambda, dl.dmu, dl.dsigma) * dthetas.detas
     }), list( .elambda=elambda, .emu=emu, .esigma=esigma, 
-              .link.lambda=link.lambda, .link.mu=link.mu,
-                 .link.sigma=link.sigma ))),
+              .llambda=llambda, .lmu=lmu,
+                 .lsigma=lsigma ))),
     weight=eval(substitute(expression({
 
 
@@ -706,22 +715,22 @@ lms.yjn2 = function(percentiles=c(25,50,75),
         wz = run.varcov * dthetas.detas[,ind1$row] * dthetas.detas[,ind1$col]
         dimnames(wz) = list(rownames(wz), NULL)  # Remove the colnames
         wz * w
-    }), list(.link.sigma=link.sigma,
+    }), list(.lsigma=lsigma,
              .esigma=esigma, .elambda=elambda,
              .nsimEIM=nsimEIM,
-             .link.lambda=link.lambda))))
+             .llambda=llambda))))
 }
 
 
 lms.yjn <- function(percentiles=c(25,50,75),
-                    zero=NULL,
-                    link.lambda="identity",
-                    link.sigma="loge",
+                    zero=c(1,3),
+                    llambda="identity",
+                    lsigma="loge",
                     elambda=list(), esigma=list(),
                     dfmu.init=4,
                     dfsigma.init=2,
-                    init.lambda=1.0,
-                    init.sigma=NULL,
+                    ilambda=1.0,
+                    isigma=NULL,
                     rule=c(10,5),
                     yoffset=NULL,
                     diagW=FALSE, iters.diagW=6)
@@ -729,10 +738,10 @@ lms.yjn <- function(percentiles=c(25,50,75),
 
 
 
-    if(mode(link.sigma) != "character" && mode(link.sigma) != "name")
-        link.sigma = as.character(substitute(link.sigma))
-    if(mode(link.lambda) != "character" && mode(link.lambda) != "name")
-        link.lambda = as.character(substitute(link.lambda))
+    if(mode(lsigma) != "character" && mode(lsigma) != "name")
+        lsigma = as.character(substitute(lsigma))
+    if(mode(llambda) != "character" && mode(llambda) != "name")
+        llambda = as.character(substitute(llambda))
     if(!is.list(elambda)) elambda = list()
     if(!is.list(esigma)) esigma = list()
 
@@ -744,9 +753,9 @@ lms.yjn <- function(percentiles=c(25,50,75),
     blurb=c("LMS Quantile Regression ",
             "(Yeo-Johnson transformation to normality)\n",
             "Links:    ",
-            namesof("lambda", link=link.lambda, earg= elambda),
+            namesof("lambda", link=llambda, earg= elambda),
             ", mu, ",
-            namesof("sigma", link=link.sigma, earg= esigma)),
+            namesof("sigma", link=lsigma, earg= esigma)),
     constraints=eval(substitute(expression({
         constraints = cm.zero.vgam(constraints, x, .zero, M)
     }), list(.zero=zero))),
@@ -754,9 +763,9 @@ lms.yjn <- function(percentiles=c(25,50,75),
       if(ncol(cbind(y)) != 1)
           stop("response must be a vector or a one-column matrix")
         predictors.names =
-          c(namesof("lambda", .link.lambda, earg= .elambda, short= TRUE),
+          c(namesof("lambda", .llambda, earg= .elambda, short= TRUE),
                 "mu",
-            namesof("sigma",  .link.sigma, earg= .esigma,  short= TRUE))
+            namesof("sigma",  .lsigma, earg= .esigma,  short= TRUE))
 
         y.save = y
         yoff = if(is.Numeric( .yoffset)) .yoffset else -median(y) 
@@ -765,7 +774,7 @@ lms.yjn <- function(percentiles=c(25,50,75),
 
         if(!length(etastart)) {
 
-            lambda.init = if(is.Numeric( .init.lambda)) .init.lambda else 1.0
+            lambda.init = if(is.Numeric( .ilambda)) .ilambda else 1.0
 
             y.tx = yeo.johnson(y, lambda.init)
             if(smoothok <- (length(unique(sort(x[,min(ncol(x),2)]))) > 7)) {
@@ -776,7 +785,7 @@ lms.yjn <- function(percentiles=c(25,50,75),
                 fv.init = rep(weighted.mean(y, w), len=n)
             }
 
-            sigma.init = if(!is.Numeric(.init.sigma)) {
+            sigma.init = if(!is.Numeric(.isigma)) {
                               if(is.Numeric( .dfsigma.init) && smoothok) {
                                    fit710 = vsmooth.spline(x=x[,min(ncol(x),2)],
                                             y=(y.tx - fv.init)^2,
@@ -787,32 +796,32 @@ lms.yjn <- function(percentiles=c(25,50,75),
                                    sqrt( sum( w * (y.tx - fv.init)^2 ) / sum(w) )
                               }
                           } else
-                              .init.sigma
+                              .isigma
 
-            etastart = cbind(theta2eta(lambda.init,.link.lambda, earg=.elambda),
+            etastart = cbind(theta2eta(lambda.init,.llambda, earg=.elambda),
                              fv.init,
-                             theta2eta(sigma.init, .link.sigma, earg=.esigma))
+                             theta2eta(sigma.init, .lsigma, earg=.esigma))
 
         }
-    }), list(.link.sigma=link.sigma,
-             .link.lambda=link.lambda,
+    }), list(.lsigma=lsigma,
+             .llambda=llambda,
              .esigma=esigma, .elambda=elambda,
              .dfmu.init=dfmu.init,
              .dfsigma.init=dfsigma.init,
-             .init.lambda=init.lambda,
+             .ilambda=ilambda,
              .yoffset=yoffset,
-             .init.sigma=init.sigma))),
+             .isigma=isigma))),
     inverse=eval(substitute(function(eta, extra=NULL) {
-        eta[,1] = eta2theta(eta[,1], .link.lambda, earg= .elambda)
-        eta[,3] = eta2theta(eta[,3], .link.sigma, earg= .esigma)
+        eta[,1] = eta2theta(eta[,1], .llambda, earg= .elambda)
+        eta[,3] = eta2theta(eta[,3], .lsigma, earg= .esigma)
         qtplot.lms.yjn(percentiles= .percentiles, eta=eta, yoffset= extra$yoff)
     }, list(.percentiles=percentiles,
              .esigma=esigma, .elambda=elambda,
-            .link.lambda=link.lambda,
-            .link.sigma=link.sigma))),
+            .llambda=llambda,
+            .lsigma=lsigma))),
     last=eval(substitute(expression({
         misc$percentiles = .percentiles
-        misc$link = c(lambda= .link.lambda, mu= "identity", sigma= .link.sigma)
+        misc$link = c(lambda= .llambda, mu= "identity", sigma= .lsigma)
         misc$earg = list(lambda = .elambda, mu = list(), sigma = .esigma)
         misc$true.mu = FALSE    # $fitted is not a true mu
         misc[["yoffset"]] = extra$yoff
@@ -826,24 +835,24 @@ lms.yjn <- function(percentiles=c(25,50,75),
         }
     }), list(.percentiles=percentiles,
              .esigma=esigma, .elambda=elambda,
-            .link.lambda=link.lambda,
-            .link.sigma=link.sigma))),
+            .llambda=llambda,
+            .lsigma=lsigma))),
     loglikelihood=eval(substitute(
         function(mu,y,w, residuals= FALSE, eta, extra=NULL) {
-            lambda = eta2theta(eta[,1], .link.lambda, earg= .elambda)
+            lambda = eta2theta(eta[,1], .llambda, earg= .elambda)
             mu = eta[,2]
-            sigma = eta2theta(eta[,3], .link.sigma, earg= .esigma)
+            sigma = eta2theta(eta[,3], .lsigma, earg= .esigma)
             psi = yeo.johnson(y, lambda)
          if(residuals) stop("loglikelihood residuals not implemented yet") else
             sum(w * (-log(sigma) - 0.5 * ((psi-mu)/sigma)^2 +
                      (lambda-1) * sign(y) * log1p(abs(y))))
         }, list( .esigma=esigma, .elambda=elambda,
-                 .link.sigma=link.sigma, .link.lambda=link.lambda))),
+                 .lsigma=lsigma, .llambda=llambda))),
     vfamily=c("lms.yjn", "lmscreg"),
     deriv=eval(substitute(expression({
-        lambda = eta2theta(eta[,1], .link.lambda, earg= .elambda)
+        lambda = eta2theta(eta[,1], .llambda, earg= .elambda)
         mymu = eta[,2]
-        sigma = eta2theta(eta[,3], .link.sigma, earg= .esigma)
+        sigma = eta2theta(eta[,3], .lsigma, earg= .esigma)
 
         psi = yeo.johnson(y, lambda)
         d1 = yeo.johnson(y, lambda, deriv=1)
@@ -852,14 +861,14 @@ lms.yjn <- function(percentiles=c(25,50,75),
         dl.dlambda = -AA * d1 /sigma + sign(y) * log1p(abs(y))
         dl.dmu = AA / sigma 
         dl.dsigma = (AA^2 -1) / sigma
-        dlambda.deta = dtheta.deta(lambda, link=.link.lambda, earg= .elambda)
-        dsigma.deta = dtheta.deta(sigma, link=.link.sigma, earg= .esigma)
+        dlambda.deta = dtheta.deta(lambda, link=.llambda, earg= .elambda)
+        dsigma.deta = dtheta.deta(sigma, link=.lsigma, earg= .esigma)
 
         cbind(dl.dlambda * dlambda.deta,
               dl.dmu,
               dl.dsigma * dsigma.deta) * w
     }), list( .esigma=esigma, .elambda=elambda,
-              .link.sigma=link.sigma, .link.lambda=link.lambda ))),
+              .lsigma=lsigma, .llambda=llambda ))),
     weight=eval(substitute(expression({
         wz = matrix(0, n, 6)
 
@@ -990,12 +999,12 @@ lms.yjn <- function(percentiles=c(25,50,75),
 
         wz = wz * w
         wz
-    }), list(.link.sigma=link.sigma,
+    }), list(.lsigma=lsigma,
              .esigma=esigma, .elambda=elambda,
              .rule=rule,
              .diagW=diagW,
              .iters.diagW=iters.diagW,
-             .link.lambda=link.lambda))))
+             .llambda=llambda))))
 }
 
 

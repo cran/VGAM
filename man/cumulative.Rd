@@ -5,7 +5,7 @@
 \title{ Ordinal Regression with Cumulative Probabilities }
 \description{
   Fits a cumulative logit/probit/cloglog/cauchit/...
-  regression model to an ordered (preferably) factor response. 
+  regression model to a (preferably ordered) factor response. 
 
 }
 \usage{
@@ -43,6 +43,7 @@ scumulative(link="logit", earg = list(),
   \item{parallel}{
   A logical or formula specifying which terms have
   equal/unequal coefficients.
+  See below for more information about the parallelism assumption.
 
   }
   \item{sparallel}{
@@ -107,8 +108,8 @@ scumulative(link="logit", earg = list(),
 
   In almost all the literature, the constraint matrices associated
   with this family of models are known. For example, setting
-  \code{parallel=TRUE} will make all constraint matrices (except for
-  the intercept) equal to a vector of \eqn{M} 1's.
+  \code{parallel=TRUE} will make all constraint matrices
+  (except for the intercept) equal to a vector of \eqn{M} 1's.
   If the constraint matrices are equal, unknown and to be estimated, then
   this can be achieved by fitting the model as a
   reduced-rank vector generalized
@@ -162,6 +163,11 @@ contains further information and examples.
   are all positive), or a factor. In both cases, the \code{y} slot
   returned by \code{vglm}/\code{vgam}/\code{rrvglm} is the matrix
   of counts.
+  The formula must contain an intercept term.
+  Other \pkg{VGAM} family functions for an ordinal response include
+  \code{\link{acat}},
+  \code{\link{cratio}},
+  \code{\link{sratio}}.
 
   For a nominal (unordered) factor response, the multinomial
   logit model (\code{\link{multinomial}}) is more appropriate.
@@ -185,9 +191,18 @@ contains further information and examples.
   the regression coefficients for \code{x1} and \code{x2} to be
   equal; those of the intercepts and \code{x3} would be different.
 
-  In the future, this family function may be renamed to
-  ``\code{cups}'' (for \bold{cu}mulative \bold{p}robabilitie\bold{s})
-  or ``\code{cute}'' (for \bold{cu}mulative probabili\bold{t}i\bold{e}s).
+  If the data is inputted in \emph{long} format
+  (not \emph{wide} format, as in \code{\link{pneumo}} below)
+  then good initial values are needed; use
+  \code{mustart},
+  \code{coefstart} and/or 
+  \code{etatstart}.
+  See the example below.
+
+
+% In the future, this family function may be renamed to
+% ``\code{cups}'' (for \bold{cu}mulative \bold{p}robabilitie\bold{s})
+% or ``\code{cute}'' (for \bold{cu}mulative probabili\bold{t}i\bold{e}s).
 
 % Please let me know if you strongly agree or disagree about this.
 
@@ -204,6 +219,7 @@ contains further information and examples.
   \code{\link{sratio}},
   \code{\link{multinomial}},
   \code{\link{pneumo}},
+  \code{\link{Links}},
   \code{\link{logit}},
   \code{\link{probit}},
   \code{\link{cloglog}},
@@ -239,7 +255,7 @@ plot(fit2, se=TRUE, overlay=TRUE, lcol=1:2, scol=1:2)
 
 # A factor() version of fit ----------------------------------
 nobs = round(fit@y * c(weights(fit, type="prior")))
-sumnobs = apply(nobs, 2, sum)
+sumnobs = colSums(nobs) # apply(nobs, 2, sum)
 mydat = data.frame(
     response = ordered(c(rep("normal", times=sumnobs["normal"]),
                          rep("mild", times=sumnobs["mild"]),
@@ -250,6 +266,21 @@ mydat = data.frame(
             with(pneumo, rep(let, times=nobs[,"severe"]))))
 (fit4 = vglm(response ~ LET, data=mydat,
              cumulative(parallel=TRUE, reverse=TRUE), trace=TRUE))
+
+
+# Long format (cf. wide format above) ----------------------------------
+longdata = data.frame(symptoms=ordered(rep(rep(colnames(nobs), nrow(nobs)),
+                                           times=c(t(nobs))),
+                                       levels = colnames(nobs)),
+                      let = rep(rep(with(pneumo, let), each=ncol(nobs)),
+                                times=c(t(nobs))))
+with(longdata, table(let, symptoms)) # check it; should be same as pneumo
+mymustart = matrix(sumnobs / sum(sumnobs),
+                   nrow(longdata), ncol(nobs), byrow=TRUE)
+fit.long = vglm(symptoms ~ let,
+                fam = cumulative(parallel=TRUE, reverse=TRUE),
+                mustart=mymustart, data = longdata, trace=TRUE)
+coef(fit.long, matrix=TRUE) # Should be same as coef(fit, matrix=TRUE)
 }
 \keyword{models}
 \keyword{regression}

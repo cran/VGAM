@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2008 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2009 T.W. Yee, University of Auckland. All rights reserved.
 
 
 
@@ -10,7 +10,7 @@ loglinb2 <- function(exchangeable=FALSE, zero=NULL)
     new("vglmff",
     blurb=c("Log-linear model for binary data\n\n",
            "Links:    ",
-           "Identity: u_1, u_2, u_{12}",
+           "Identity: u1, u2, u12",
            "\n"),
     constraints=eval(substitute(expression({
         constraints <- cm.vgam(matrix(c(1,1,0, 0,0,1), 3, 2), x,

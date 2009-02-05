@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2008 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2009 T.W. Yee, University of Auckland. All rights reserved.
 
 
 
@@ -154,8 +154,9 @@ printsummary.vgam <- function(x, quote=TRUE, prefix="", digits=options()$digits-
     if(length(deviance(x)))
         cat("\nResidual Deviance: ", format(round(deviance(x), digits)),
             "on", format(round(rdf, 3)), "degrees of freedom\n")
-    if(length(logLik(x)))
-        cat("\nLog-likelihood:", format(round(logLik(x), digits)),
+
+    if(length(logLik.vlm(x)))
+        cat("\nLog-likelihood:", format(round(logLik.vlm(x), digits)),
             "on", format(round(rdf, 3)), "degrees of freedom\n")
 
     if(length(x@criterion)) {

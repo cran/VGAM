@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2008 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2009 T.W. Yee, University of Auckland. All rights reserved.
 
 
 
@@ -15,6 +15,7 @@ vglm <- function(formula,
                  contrasts=NULL, 
                  constraints=NULL,
                  extra=list(), 
+                 form2=NULL, 
                  qr.arg=FALSE, smart=TRUE, ...)
 {
     dataname <- as.character(substitute(data))  # "list" if no data=
@@ -46,6 +47,41 @@ vglm <- function(formula,
          matrix(, NROW(Y), 0)
     attr(x, "assign") <- attrassigndefault(x, mt) # So as to make it like Splus
 
+
+
+
+
+
+if(!is.null(form2)) {
+    if(!is.null(subset))
+        stop("argument 'subset' cannot be used when argument 'form2' is used")
+    retlist = shadowvglm(formula=
+                 form2,
+                 family=family, data=data,
+                 na.action=na.action,
+                 control=vglm.control(...), 
+                 method=method,
+                 model=model, x.arg=x.arg, y.arg=y.arg,
+                 contrasts=contrasts, 
+                 constraints=constraints,
+                 extra=extra, 
+                 qr.arg=qr.arg)
+    Ym2 <- retlist$Ym2
+    Xm2 <- retlist$Xm2
+
+    if(length(Ym2)) {
+        if(nrow(as.matrix(Ym2)) != nrow(as.matrix(y)))
+            stop("number of rows of y and Ym2 are unequal")
+    }
+    if(length(Xm2)) {
+        if(nrow(as.matrix(Xm2)) != nrow(as.matrix(x)))
+            stop("number of rows of y and Ym2 are unequal")
+    }
+} else {
+    Xm2 = Ym2 = NULL
+}
+
+
     offset <- model.offset(mf)
     if(is.null(offset)) 
         offset <- 0 # yyy ???
@@ -72,6 +108,7 @@ vglm <- function(formula,
     vglm.fitter <- get(method)
 
     fit <- vglm.fitter(x=x, y=y, w=w, offset=offset, 
+                       Xm2=Xm2, Ym2=Ym2,
                        etastart=etastart, mustart=mustart, coefstart=coefstart,
                        family=family, 
                        control=control,
@@ -128,7 +165,15 @@ vglm <- function(formula,
         slot(answer, "weights") = as.matrix(fit$weights)
 
     if(x.arg)
-        slot(answer, "x") = fit$x # The 'small' design matrix
+        slot(answer, "x") = fit$x # The 'small' (lm) design matrix
+    if(x.arg && length(Xm2))
+        slot(answer, "Xm2") = Xm2 # The second (lm) design matrix
+    if(y.arg && length(Ym2))
+        slot(answer, "Ym2") = as.matrix(Ym2) # The second response
+    if(!is.null(form2))
+        slot(answer, "callXm2") = retlist$call
+    answer@misc$formula = formula
+    answer@misc$form2 = form2
 
     if(length(xlev))
         slot(answer, "xlevels") = xlev
@@ -156,6 +201,64 @@ vglm <- function(formula,
     answer
 }
 attr(vglm, "smart") <- TRUE
+
+
+
+
+
+
+shadowvglm <-
+        function(formula,
+                 family, data=list(), 
+                 weights=NULL, subset=NULL, na.action=na.fail,
+                 etastart=NULL, mustart=NULL, coefstart=NULL,
+                 control=vglm.control(...), 
+                 offset=NULL, 
+                 method="vglm.fit",
+                 model=FALSE, x.arg=TRUE, y.arg=TRUE,
+                 contrasts=NULL, 
+                 constraints=NULL,
+                 extra=list(), 
+                 qr.arg=FALSE, ...)
+{
+    dataname <- as.character(substitute(data))  # "list" if no data=
+    function.name <- "shadowvglm"
+
+    ocall <- match.call()
+
+    if(missing(data)) 
+        data <- environment(formula)
+
+    mf <- match.call(expand.dots = FALSE)
+    m <- match(c("formula", "data", "subset", "weights", "na.action",
+        "etastart", "mustart", "offset"), names(mf), 0)
+    mf <- mf[c(1, m)]
+    mf$drop.unused.levels <- TRUE
+    mf[[1]] <- as.name("model.frame")
+    mf <- eval(mf, parent.frame())
+    switch(method, model.frame = return(mf), vglm.fit = 1,
+           stop("invalid 'method': ", method))
+    mt <- attr(mf, "terms")
+
+    x <- y <- NULL 
+
+    xlev = .getXlevels(mt, mf)
+    y <- model.response(mf, "any") # model.extract(mf, "response")
+    x <- if (!is.empty.model(mt)) model.matrix(mt, mf, contrasts) else
+         matrix(, NROW(Y), 0)
+    attr(x, "assign") <- attrassigndefault(x, mt) # So as to make it like Splus
+
+    list(Xm2=x, Ym2=y, call=ocall)
+}
+
+
+
+
+
+
+
+
+
 
 
 

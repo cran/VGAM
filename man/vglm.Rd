@@ -14,7 +14,7 @@ vglm(formula, family, data = list(), weights = NULL, subset = NULL,
      coefstart = NULL, control = vglm.control(...), offset = NULL, 
      method = "vglm.fit", model = FALSE, x.arg = TRUE, y.arg = TRUE, 
      contrasts = NULL, constraints = NULL, extra = list(), 
-     qr.arg = FALSE, smart = TRUE, ...)
+     form2 = NULL, qr.arg = FALSE, smart = TRUE, ...)
 }
 %- maybe also `usage' for other objects documented here.
 \arguments{
@@ -136,6 +136,14 @@ vglm(formula, family, data = list(), weights = NULL, subset = NULL,
   the \pkg{VGAM} family function.
 
   }
+  \item{form2}{
+  The second (optional) formula.
+  Some \pkg{VGAM} family functions such as \code{\link{micmen}})
+  use this argument to onput the regressor variable.
+  If given, the slots \code{@Xm2} and \code{@Ym2} may be assigned.
+  Warning: smart prediction is not used for this argument.
+
+  }
   \item{qr.arg}{
   logical value indicating whether
   the slot \code{qr}, which returns the QR decomposition of the
@@ -246,6 +254,10 @@ Vector generalized additive models.
 \emph{Journal of the Royal Statistical Society, Series B, Methodological},
 \bold{58}, 481--493.
 
+Yee, T. W. (2008)
+The \code{VGAM} Package.
+\emph{R News}, \bold{8}, 28--39.
+
   Documentation accompanying the \pkg{VGAM} package at
   \url{http://www.stat.auckland.ac.nz/~yee}
   contains further information and examples.
@@ -306,6 +318,7 @@ Vector generalized additive models.
   \code{coef.vlm},
   \code{\link{predict.vglm}},
   \code{summary.vglm},
+  \code{AIC.vglm},
   etc.
 }
 

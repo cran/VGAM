@@ -118,7 +118,7 @@ zipebcom(lmu12="cloglog", lphi12="logit", loratio="loge",
 
   If \eqn{\phi=0}{phi=0} then \code{zipebcom()} should be equivalent to
   \code{binom2.or("cloglog", exch=TRUE)}.
-  Full details are given in Yee and Dirnbock (2008).
+  Full details are given in Yee and Dirnbock (2009).
 
   The leading \eqn{2 \times 2}{2 x 2} submatrix of the expected
   information matrix (EIM) is of rank-1, not 2! This is due to the
@@ -149,10 +149,9 @@ zipebcom(lmu12="cloglog", lphi12="logit", loratio="loge",
 } 
 \references{
 
-  Yee, T. W. and Dirnbock, T. (2008)
-  A model for species presence/absence data at two time
-  points based on an odds ratio and zero-inflated Poisson
-  distribution.
+  Yee, T. W. and Dirnbock, T. (2009)
+  Models for species' presence/absence data at two time
+  points based on constrained ordination and odds ratio.
   In preparation.
 
 }

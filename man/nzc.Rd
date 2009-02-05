@@ -30,18 +30,15 @@
 \examples{
 \dontrun{
 data(nzc)
-attach(nzc)
-plot(year, female/(male+female), type="b", ylab="Proportion",
-     main="Proportion of Chinese that are female",
-     col="blue", las=1)
+with(nzc, plot(year, female/(male+female), type="b", ylab="Proportion",
+               main="Proportion of NZ Chinese that are female",
+               col="blue", las=1))
 abline(h=0.5, lty="dashed")
 
-plot(year, 100*(male+female)/nz, type="b", ylab="Percent",
-     ylim=c(0, max(100*(male+female)/nz)), col="blue",
-     main="Percent of New Zealanders that are Chinese", las=1)
+with(nzc, plot(year, 100*(male+female)/nz, type="b", ylab="Percent",
+               ylim=c(0, max(100*(male+female)/nz)), col="blue", las=1,
+               main="Percent of NZers that are Chinese"))
 abline(h=0, lty="dashed")
-
-detach(nzc)
 }
 }
 \keyword{datasets}

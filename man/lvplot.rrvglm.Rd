@@ -20,13 +20,13 @@ lvplot.rrvglm(object,
               object@misc$predictors.names else paste("LP", 1:M, sep = ""), 
               Aadj = par()$adj, Acex = par()$cex, Acol = par()$col, 
               Apch = NULL, 
-              Clabels = dimnames(Cmat)[[1]], Cadj = par()$adj, 
+              Clabels = rownames(Cmat), Cadj = par()$adj, 
               Ccex = par()$cex, Ccol = par()$col, Clty = par()$lty, 
               Clwd = par()$lwd, 
               chull.arg = FALSE, ccex = par()$cex, ccol = par()$col, 
               clty = par()$lty, clwd = par()$lwd, 
               spch = NULL, scex = par()$cex, scol = par()$col,
-              slabels = dimnames(x2mat)[[1]], ...)
+              slabels = rownames(x2mat), ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2008 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2009 T.W. Yee, University of Auckland. All rights reserved.
 
 
 
@@ -166,15 +166,15 @@ Coef.vlm <- function(object, ...) {
        object@misc$intercept.only &&
        trivial.constraints(object@constraints)) {
 
-        answer = eta2theta(rbind(coef(object)),
-                           link=object@misc$link,
-                           earg=object@misc$earg)
+        answer = eta2theta(rbind(coefvlm(object)),
+                           link = object@misc$link,
+                           earg = object@misc$earg)
         answer = c(answer)
         if(length(ntmp2 <- names(tmp2)) == object@misc$M)
             names(answer) = ntmp2
         answer
     } else {
-        coef(object, ... )
+        coefvlm(object, ... )
     }
 }
 

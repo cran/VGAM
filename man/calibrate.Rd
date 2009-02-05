@@ -55,6 +55,7 @@ calibrate(object, ...)
 }
 
 \examples{
+\dontrun{
 data(hspider)
 hspider[,1:6] = scale(hspider[,1:6]) # Standardized environmental vars
 set.seed(123)
@@ -68,7 +69,6 @@ p1 = cao(cbind(Pardlugu, Pardmont, Pardnigr, Pardpull, Zoraspin) ~
 siteNos = 1:2  # Calibrate these sites
 cp1 = calibrate(p1, new=data.frame(p1@y[siteNos,]), trace=TRUE)
 
-\dontrun{
 # Graphically compare the actual site scores with their calibrated values
 persp(p1, main="Solid=actual, dashed=calibrated site scores",
       label=TRUE, col="blue", las=1)

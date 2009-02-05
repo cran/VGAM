@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2008 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2009 T.W. Yee, University of Auckland. All rights reserved.
 
 
 
@@ -360,7 +360,8 @@ vchol.greenstadt <- function(cc, M, silent=FALSE)
 
         temp3 <- mux55(temp$vectors, temp$values, M=M)  # , matrix.arg=TRUE)
         ans <- vchol(t(temp3), M=M, n=n, silent=silent) # , matrix.arg=TRUE)
-    ans
+
+    if(nrow(ans) == MM) ans else ans[1:MM,,drop=FALSE]
 }
 
 

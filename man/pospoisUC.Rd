@@ -12,7 +12,7 @@
 
 }
 \usage{
-dpospois(x, lambda)
+dpospois(x, lambda, log=FALSE)
 ppospois(q, lambda)
 qpospois(p, lambda)
 rpospois(n, lambda)
@@ -24,6 +24,8 @@ rpospois(n, lambda)
   \item{n}{number of observations. Must be a single positive integer. }
   \item{lambda}{ vector of positive means (of an ordinary Poisson distribution). 
   Short vectors are recycled. }
+  \item{log}{ logical.
+  }
 }
 \details{
   The positive-Poisson distribution is a Poisson distribution but with

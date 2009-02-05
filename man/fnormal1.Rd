@@ -73,7 +73,7 @@ fnormal1(lmean="identity", lsd="loge", emean=list(), esd=list(),
                mu*[1-2*Phi(-mu/sigma)] }
   and these are returned as the fitted values.
   Here, \eqn{\Phi()}{Phi} is the cumulative distribution function of a
-  standard normal (\code{\link[stats]{pnorm}}).
+  standard normal (\code{\link[stats:Normal]{pnorm}}).
 
 }
 \value{
@@ -108,7 +108,7 @@ fnormal1(lmean="identity", lsd="loge", emean=list(), esd=list(),
 \seealso{ 
     \code{\link{rfnorm}},
     \code{\link{normal1}},
-    \code{\link[stats]{dnorm}},
+    \code{\link[stats:Normal]{dnorm}},
     \code{\link{skewnormal1}}.
 }
 

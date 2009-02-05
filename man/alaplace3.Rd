@@ -299,7 +299,7 @@ with(alldat, matlines(x, fitted(fitp3), col="black", lty="solid", lwd=mylwd))
 # successive solutions which are added to previous solutions; use a log
 # link to ensure an increasing quantiles at any value of x.
 
-mytau = seq(0.1, 0.9, by=0.1)
+mytau = seq(0.2, 0.9, by=0.1)
 answer = matrix(0, nrow(alldat), length(mytau)) # Stores the quantiles
 alldat = transform(alldat, offsety=y*0)
 usetau = mytau
@@ -308,7 +308,7 @@ for(ii in 1:length(mytau)) {
     alldat = transform(alldat, usey=y-offsety)
     iloc = ifelse(ii==1, with(alldat, median(y)), 1.0) # Well-chosen!
     mydf = ifelse(ii==1, 5, 3)  # Maybe less smoothing will help
-    lloc = ifelse(ii==1, "loge", "loge")  # 2nd value must be "loge"
+    lloc = ifelse(ii==1, "identity", "loge")  # 2nd value must be "loge"
     fit3 = vglm(usey ~ ns(x, df=mydf), data=alldat, trace=TRUE,
                 fam=alaplace1(tau=usetau[ii], lloc=lloc, iloc=iloc))
     answer[,ii] = (if(ii==1) 0 else answer[,ii-1]) + fitted(fit3)

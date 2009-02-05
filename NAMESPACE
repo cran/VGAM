@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2008 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2009 T.W. Yee, University of Auckland. All rights reserved.
 
 
 
@@ -70,6 +70,7 @@ dinv.gaussian, pinv.gaussian, rinv.gaussian, wald, expexp1, expexp)
 
 
 export(A1A2A3, a2m, AAaa.nohw,
+AICvlm, AICvgam, AICrrvglm, 
 anova.vgam,
 anova.vglm, 
 beta4,
@@ -166,7 +167,7 @@ vglm.multinomial.deviance.control, vglm.vcategorical.control,
 vlm, vlm.control,
 vnonlinear.control,
 wweights, yeo.johnson,
-zipf, dzipf, pzipf,
+dzipf, pzipf, zipf,
 zeta, zetaff,
 dzeta)
 
@@ -175,10 +176,17 @@ export(lm2vlm.model.matrix)
 
 
 
- importFrom(stats, model.matrix)
- importFrom(stats, model.frame)
- importFrom(stats, terms)
+ importFrom("stats", model.matrix)
+ importFrom("stats", model.frame)
+ importFrom("stats", terms)
 
+
+  importFrom("stats", "coef")
+  importFrom("stats", "logLik")
+  importFrom("graphics", "plot")
+  importFrom("stats", "vcov")
+
+  importFrom("stats", "AIC")
 
 
 
@@ -199,7 +207,8 @@ export(dgpd, pgpd, qgpd, rgpd, gpd)
 export(dgev, pgev, qgev, rgev, gev, egev)
 export(dlaplace, plaplace, qlaplace, rlaplace, laplace)
 export(dalaplace, palaplace, qalaplace, ralaplace,
-        alaplace1, alaplace2, alaplace3)
+       alaplace1.control,
+       alaplace1, alaplace2, alaplace3)
 export(dcard, pcard, qcard, rcard, cardioid)
 export(fff, fff.control,
        mbesselI0,
@@ -213,8 +222,9 @@ dbetageom, pbetageom, rbetageom, betageometric,
 betaprime,
 betaII,
 zipebcom,
-binom2.or, dbinom2.or, rbinom2.or,
-binom2.rho, binomialff, biplot.rrvglm, brat,
+binom2.or,  dbinom2.or,  rbinom2.or,
+binom2.rho, dbinom2.rho, rbinom2.rho,
+binomialff, biplot.rrvglm, brat,
 bratt, Brat, calibrate.qrrvglm.control, calibrate.qrrvglm,
 calibrate, cao.control,
 cao, ccoef, cdf.lmscreg, cgo, chisq, clo, 
@@ -233,6 +243,7 @@ export(dggamma, pggamma, qggamma, rggamma)
 
 
 export(
+dbenf, pbenf, qbenf, rbenf,
 genbetaII, genpoisson, geometric,
 dlino, plino, qlino, rlino, lino, 
 grc, 
@@ -254,17 +265,15 @@ export(
 meplot, meplot.default, meplot.vlm,
 guplot, guplot.default, guplot.vlm,
 negbinomial, normal1, tobit, Opt, 
-dzinb, pzinb, qzinb, rzinb, zinegbinomial,
 persp.qrrvglm, plotdeplot.lmscreg, plotqrrvglm, plotqtplot.lmscreg,
 plotvgam.control, plotvgam, 
 cenpoisson,
 poissonff,
-dposnorm, pposnorm, qposnorm, rposnorm, posnormal1,
 dposbinom, pposbinom, qposbinom, rposbinom, posbinomial,
-posnegbinomial,
+dposnegbin, pposnegbin, qposnegbin, rposnegbin, posnegbinomial,
+dposnorm, pposnorm, qposnorm, rposnorm, posnormal1,
 dpospois, ppospois, qpospois, rpospois, pospoisson,
-qtplot.lmscreg, quasibinomialff, quasipoissonff, rdiric, 
-rig, rposnegbin,
+qtplot.lmscreg, quasibinomialff, quasipoissonff, rdiric, rig,
 rrar, rrvglm.control,
 rrvglm.optim.control)
 
@@ -278,17 +287,23 @@ qrrvglm.control,
 uqo.control, uqo,
 vgam.control, vgam, vglm.control, vglm,
 vsmooth.spline,
-weibull, yip88, zanegbinomial, zapoisson,
+weibull, yip88,
+dzanegbin, pzanegbin, qzanegbin, rzanegbin, zanegbinomial,
+dzapois, pzapois, qzapois, rzapois, zapoisson,
+dzibinom, pzibinom, qzibinom, rzibinom, zibinomial,
+dzinegbin, pzinegbin, qzinegbin, rzinegbin, zinegbinomial,
 dzipois, pzipois, qzipois, rzipois, zipoisson,
 mix2exp, mix2normal1, mix2poisson,
 mix2exp.control, mix2normal1.control, mix2poisson.control,
 skewnormal1, dsnorm, rsnorm,
-tikuv, dtikuv, ptikuv, qtikuv, rtikuv,
-dzibinom, pzibinom, qzibinom, rzibinom, zibinomial)
+tikuv, dtikuv, ptikuv, qtikuv, rtikuv)
 
 
 
 
+export(DeLury,
+       wffc.P1, wffc.P1star, wffc.P2, wffc.P2star
+)
 
 
 exportClasses("vglmff", "vlm", "vglm", "vgam",
@@ -316,6 +331,7 @@ exportMethods(
 "terms",
 "model.frame",
 "model.matrix",
+"AIC",
 "deviance", "logLik", "vcov",
 "calibrate", "cdf", "ccoef", "df.residual",
 "lv", "Max", "Opt", "Tol",

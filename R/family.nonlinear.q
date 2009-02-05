@@ -1,19 +1,17 @@
 # These functions are
-# Copyright (C) 1998-2008 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2009 T.W. Yee, University of Auckland. All rights reserved.
 
 
 
 
 
 
-
-vnonlinear.control <- function(regressor, save.weight=TRUE, ...)
+vnonlinear.control <- function(save.weight=TRUE, ...)
 {
 
 
 
-    list(regressor=regressor,
-         save.weight=as.logical(save.weight)[1])
+    list(save.weight=as.logical(save.weight)[1])
 }
 
 
@@ -28,6 +26,7 @@ micmen <- function(rpar=0.001, divisor=10,
 {
 
 
+
     estimated.dispersion <- dispersion==0
 
     if(mode(link1) != "character" && mode(link1) != "name")
@@ -39,7 +38,7 @@ micmen <- function(rpar=0.001, divisor=10,
 
     new("vglmff",
     blurb=c("Michaelis-Menton regression model\n",
-           "Y_i=theta1 * x_i / (theta2 + x_i) + e_i\n\n",
+           "Y_i = theta1 * u_i / (theta2 + u_i) + e_i\n\n",
            "Links:    ",
            namesof("theta1", link1, earg=earg1), ", ",
            namesof("theta2", link2, earg=earg2),
@@ -59,8 +58,13 @@ micmen <- function(rpar=0.001, divisor=10,
         if(ncol(cbind(y)) != 1)
             stop("response must be a vector or a one-column matrix")
 
-        uvec = control$regressor   # This is the regressor
-        extra$uvec = uvec          # Needed for @inverse
+        if(!length(Xm2))
+            stop("regressor not found")
+        if(ncol(as.matrix(Xm2)) != 1)
+            stop(paste("regressor not found or is not a vector. Use the",
+                 "'form2' argument without an intercept"))
+        Xm2 = as.vector(Xm2) # Make sure
+        extra$Xm2 = Xm2          # Needed for @inverse
 
         predictors.names <-
           c(namesof("theta1", .link1, earg= .earg1, tag=FALSE),
@@ -69,9 +73,9 @@ micmen <- function(rpar=0.001, divisor=10,
         if(length(mustart) || length(coefstart))
             stop("can't handle mustart or coefstart")
         if(!length(etastart)) {
-            index <- (1:n)[uvec>quantile(uvec, prob=.85)]
+            index <- (1:n)[Xm2>quantile(Xm2, prob=.85)]
             init1 <- median(y[index])
-            init2 <- median(init1*uvec/y - uvec)
+            init2 <- median(init1*Xm2/y - Xm2)
 
             if(length(.init1)) init1 = .init1
             if(length(.init2)) init2 = .init2
@@ -80,7 +84,7 @@ micmen <- function(rpar=0.001, divisor=10,
                 rep(theta2eta(init1, .link1, earg= .earg1), len=n),
                 rep(theta2eta(init2, .link2, earg= .earg2), len=n))
         } else {
-            stop("can't handle etastart or mustart")
+            stop("cannot handle etastart or mustart")
         }
 
     }), list(.init1=init1, .init2=init2,
@@ -89,7 +93,7 @@ micmen <- function(rpar=0.001, divisor=10,
     inverse=eval(substitute(function(eta, extra=NULL) {
         theta1 <- eta2theta(eta[,1], .link1, earg= .earg1)
         theta2 <- eta2theta(eta[,2], .link2, earg= .earg2)
-        theta1 * extra$uvec / (theta2 + extra$uvec)
+        theta1 * extra$Xm2 / (theta2 + extra$Xm2)
     }, list(.link1=link1, .link2=link2,
             .earg1=earg1, .earg2=earg2 ))),
     last=eval(substitute(expression({
@@ -99,6 +103,7 @@ micmen <- function(rpar=0.001, divisor=10,
         fit$df.residual <- n - rank   # Not n.big - rank
         fit$df.total <- n             # Not n.big
 
+        extra$Xm2 = NULL             # Regressor is in control$regressor 
         dpar <- .dispersion
         if(!dpar) {
             dpar <- sum(w * (y-mu)^2) / (n - p.big)
@@ -116,7 +121,7 @@ micmen <- function(rpar=0.001, divisor=10,
             rpar = max(rpar / .divisor, 1000 * .Machine$double.eps)
         } else {
             rpar = .rpar
-            d3 = deriv3(~ theta1 * uvec / (theta2 + uvec),
+            d3 = deriv3(~ theta1 * Xm2 / (theta2 + Xm2),
                         c("theta1","theta2"), hessian=FALSE)
         }
 
@@ -126,8 +131,8 @@ micmen <- function(rpar=0.001, divisor=10,
         if(TRUE) {
             dmus.dthetas  = attr(eval(d3), "gradient")
         } else {
-            dmu.dtheta1 <- uvec / (theta2 + uvec)
-            dmu.dtheta2 <- -theta1 * uvec / (uvec + theta2)^2
+            dmu.dtheta1 <- Xm2 / (theta2 + Xm2)
+            dmu.dtheta2 <- -theta1 * Xm2 / (Xm2 + theta2)^2
             dmus.dthetas  = cbind(dmu.dtheta1, dmu.dtheta2)
         }
 
@@ -136,10 +141,10 @@ micmen <- function(rpar=0.001, divisor=10,
 
         if(TRUE) {
             index = iam(NA, NA, M=M, both=TRUE)
-            temp = dmus.dthetas * dthetas.detas
+            temp200809 = dmus.dthetas * dthetas.detas
             if(M>1)
-                temp[,2:M] = temp[,2:M] + sqrt(rpar)
-            w * (y-mu) * temp
+                temp200809[,2:M] = temp200809[,2:M] + sqrt(rpar)
+            w * (y-mu) * temp200809
         } else {
             w * (y-mu) *
             cbind(dmus.dthetas[,1] * dthetas.detas[,1],

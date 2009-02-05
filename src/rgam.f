@@ -68,7 +68,7 @@
       ax = lspar 
       bx = uspar
       c = 0.381966011250105097d0
-      kqoy6w = 2.0d-7
+      kqoy6w = 2.0d-5
       vucgi1r = 0
       a = ax
       b = bx
@@ -193,13 +193,15 @@
       integer nb
       double precision vf1jtn(nb),eh6nly(nb),mvx9at(nb),vbxpg4(nb),tb(
      &nb+4)
-      integer m5xudf,ilo,i6ndbu, ynmzp6, def4wn
+      integer m5xudf,ilo,i6ndbu, ynmzp6, def4wn, nbp1
       integer w3gohz,p1rifj,d9rjek
+      integer tlpr2hal
       double precision uq9jtc(4,3),bgu6fw(16),avoe4y(4),yw2(4), wpt
       double precision uoqx2m
       uoqx2m = 1.0d0 / 3.0d0
       ynmzp6 = 3
       def4wn = 4
+      nbp1 = nb + 1
       do 23045 w3gohz = 1,nb 
       vf1jtn(w3gohz) = 0.0d0
       eh6nly(w3gohz) = 0.0d0
@@ -208,7 +210,7 @@
 23045 continue
       ilo = 1
       do 23047 w3gohz = 1,nb 
-      call vinterv(tb(1),(nb+1),tb(w3gohz),m5xudf,i6ndbu)
+      call vinterv(tb(1), nbp1 ,tb(w3gohz),m5xudf,i6ndbu)
       call vbsplvd(tb,def4wn,tb(w3gohz),m5xudf,bgu6fw,uq9jtc,ynmzp6)
       do 23049 p1rifj = 1,4 
       avoe4y(p1rifj) = uq9jtc(p1rifj,3) 
@@ -221,26 +223,27 @@
       if(.not.(m5xudf .ge. 4))goto 23053
       do 23055 p1rifj = 1,4 
       d9rjek = p1rifj
-      vf1jtn(m5xudf-4+p1rifj) = vf1jtn(m5xudf-4+p1rifj) + wpt * (avoe4y(
-     &p1rifj)*avoe4y(d9rjek) + (yw2(p1rifj)*avoe4y(d9rjek) + yw2(d9rjek)
-     &*avoe4y(p1rifj))*0.50 + yw2(p1rifj)*yw2(d9rjek)*uoqx2m)
+      tlpr2hal = m5xudf-4+p1rifj
+      vf1jtn(tlpr2hal) = vf1jtn(tlpr2hal) + wpt * (avoe4y(p1rifj)*
+     &avoe4y(d9rjek) + (yw2(p1rifj)*avoe4y(d9rjek) + yw2(d9rjek)*avoe4y(
+     &p1rifj))*0.50 + yw2(p1rifj)*yw2(d9rjek)*uoqx2m)
       d9rjek = p1rifj+1
       if(.not.(d9rjek .le. 4))goto 23057
-      eh6nly(m5xudf+p1rifj-4) = eh6nly(m5xudf+p1rifj-4) + wpt* (avoe4y(
-     &p1rifj)*avoe4y(d9rjek) + (yw2(p1rifj)*avoe4y(d9rjek) + yw2(d9rjek)
-     &*avoe4y(p1rifj))*0.50 + yw2(p1rifj)*yw2(d9rjek)*uoqx2m)
+      eh6nly(tlpr2hal) = eh6nly(tlpr2hal) + wpt* (avoe4y(p1rifj)*avoe4y(
+     &d9rjek) + (yw2(p1rifj)*avoe4y(d9rjek) + yw2(d9rjek)*avoe4y(p1rifj)
+     &)*0.50 + yw2(p1rifj)*yw2(d9rjek)*uoqx2m)
 23057 continue
       d9rjek = p1rifj+2
       if(.not.(d9rjek .le. 4))goto 23059
-      mvx9at(m5xudf+p1rifj-4) = mvx9at(m5xudf+p1rifj-4) + wpt* (avoe4y(
-     &p1rifj)*avoe4y(d9rjek) + (yw2(p1rifj)*avoe4y(d9rjek) + yw2(d9rjek)
-     &*avoe4y(p1rifj))*0.50 + yw2(p1rifj)*yw2(d9rjek)*uoqx2m)
+      mvx9at(tlpr2hal) = mvx9at(tlpr2hal) + wpt* (avoe4y(p1rifj)*avoe4y(
+     &d9rjek) + (yw2(p1rifj)*avoe4y(d9rjek) + yw2(d9rjek)*avoe4y(p1rifj)
+     &)*0.50 + yw2(p1rifj)*yw2(d9rjek)*uoqx2m)
 23059 continue
       d9rjek = p1rifj+3
       if(.not.(d9rjek .le. 4))goto 23061
-      vbxpg4(m5xudf+p1rifj-4) = vbxpg4(m5xudf+p1rifj-4) + wpt* (avoe4y(
-     &p1rifj)*avoe4y(d9rjek) + (yw2(p1rifj)*avoe4y(d9rjek) + yw2(d9rjek)
-     &*avoe4y(p1rifj))*0.50 + yw2(p1rifj)*yw2(d9rjek)*uoqx2m)
+      vbxpg4(tlpr2hal) = vbxpg4(tlpr2hal) + wpt* (avoe4y(p1rifj)*avoe4y(
+     &d9rjek) + (yw2(p1rifj)*avoe4y(d9rjek) + yw2(d9rjek)*avoe4y(p1rifj)
+     &)*0.50 + yw2(p1rifj)*yw2(d9rjek)*uoqx2m)
 23061 continue
 23055 continue
       goto 23054
@@ -248,20 +251,21 @@
       if(.not.(m5xudf .eq. 3))goto 23063
       do 23065 p1rifj = 1,3 
       d9rjek = p1rifj
-      vf1jtn(m5xudf-3+p1rifj) = vf1jtn(m5xudf-3+p1rifj) + wpt* (avoe4y(
-     &p1rifj)*avoe4y(d9rjek) + (yw2(p1rifj)*avoe4y(d9rjek) + yw2(d9rjek)
-     &*avoe4y(p1rifj))*0.50 + yw2(p1rifj)*yw2(d9rjek)*uoqx2m)
+      tlpr2hal = m5xudf-3+p1rifj
+      vf1jtn(tlpr2hal) = vf1jtn(tlpr2hal) + wpt* (avoe4y(p1rifj)*avoe4y(
+     &d9rjek) + (yw2(p1rifj)*avoe4y(d9rjek) + yw2(d9rjek)*avoe4y(p1rifj)
+     &)*0.50 + yw2(p1rifj)*yw2(d9rjek)*uoqx2m)
       d9rjek = p1rifj+1
       if(.not.(d9rjek .le. 3))goto 23067
-      eh6nly(m5xudf+p1rifj-3) = eh6nly(m5xudf+p1rifj-3) + wpt* (avoe4y(
-     &p1rifj)*avoe4y(d9rjek) + (yw2(p1rifj)*avoe4y(d9rjek) + yw2(d9rjek)
-     &*avoe4y(p1rifj))*0.50 + yw2(p1rifj)*yw2(d9rjek)*uoqx2m)
+      eh6nly(tlpr2hal) = eh6nly(tlpr2hal) + wpt* (avoe4y(p1rifj)*avoe4y(
+     &d9rjek) + (yw2(p1rifj)*avoe4y(d9rjek) + yw2(d9rjek)*avoe4y(p1rifj)
+     &)*0.50 + yw2(p1rifj)*yw2(d9rjek)*uoqx2m)
 23067 continue
       d9rjek = p1rifj+2
       if(.not.(d9rjek .le. 3))goto 23069
-      mvx9at(m5xudf+p1rifj-3) = mvx9at(m5xudf+p1rifj-3) + wpt* (avoe4y(
-     &p1rifj)*avoe4y(d9rjek) + (yw2(p1rifj)*avoe4y(d9rjek) + yw2(d9rjek)
-     &*avoe4y(p1rifj))*0.50 + yw2(p1rifj)*yw2(d9rjek)*uoqx2m)
+      mvx9at(tlpr2hal) = mvx9at(tlpr2hal) + wpt* (avoe4y(p1rifj)*avoe4y(
+     &d9rjek) + (yw2(p1rifj)*avoe4y(d9rjek) + yw2(d9rjek)*avoe4y(p1rifj)
+     &)*0.50 + yw2(p1rifj)*yw2(d9rjek)*uoqx2m)
 23069 continue
 23065 continue
       goto 23064
@@ -269,14 +273,15 @@
       if(.not.(m5xudf .eq. 2))goto 23071
       do 23073 p1rifj = 1,2 
       d9rjek = p1rifj
-      vf1jtn(m5xudf-2+p1rifj) = vf1jtn(m5xudf-2+p1rifj) + wpt* (avoe4y(
-     &p1rifj)*avoe4y(d9rjek) + (yw2(p1rifj)*avoe4y(d9rjek) + yw2(d9rjek)
-     &*avoe4y(p1rifj))*0.50 + yw2(p1rifj)*yw2(d9rjek)*uoqx2m)
+      tlpr2hal = m5xudf-2+p1rifj
+      vf1jtn(tlpr2hal) = vf1jtn(tlpr2hal) + wpt* (avoe4y(p1rifj)*avoe4y(
+     &d9rjek) + (yw2(p1rifj)*avoe4y(d9rjek) + yw2(d9rjek)*avoe4y(p1rifj)
+     &)*0.50 + yw2(p1rifj)*yw2(d9rjek)*uoqx2m)
       d9rjek = p1rifj+1
       if(.not.(d9rjek .le. 2))goto 23075
-      eh6nly(m5xudf+p1rifj-2) = eh6nly(m5xudf+p1rifj-2) + wpt* (avoe4y(
-     &p1rifj)*avoe4y(d9rjek) + (yw2(p1rifj)*avoe4y(d9rjek) + yw2(d9rjek)
-     &*avoe4y(p1rifj))*0.50 + yw2(p1rifj)*yw2(d9rjek)*uoqx2m)
+      eh6nly(tlpr2hal) = eh6nly(tlpr2hal) + wpt* (avoe4y(p1rifj)*avoe4y(
+     &d9rjek) + (yw2(p1rifj)*avoe4y(d9rjek) + yw2(d9rjek)*avoe4y(p1rifj)
+     &)*0.50 + yw2(p1rifj)*yw2(d9rjek)*uoqx2m)
 23075 continue
 23073 continue
       goto 23072
@@ -284,9 +289,10 @@
       if(.not.(m5xudf .eq. 1))goto 23077
       do 23079 p1rifj = 1,1 
       d9rjek = p1rifj
-      vf1jtn(m5xudf-1+p1rifj) = vf1jtn(m5xudf-1+p1rifj) + wpt* (avoe4y(
-     &p1rifj)*avoe4y(d9rjek) + (yw2(p1rifj)*avoe4y(d9rjek) + yw2(d9rjek)
-     &*avoe4y(p1rifj))*0.50 + yw2(p1rifj)*yw2(d9rjek)*uoqx2m)
+      tlpr2hal = m5xudf-1+p1rifj
+      vf1jtn(tlpr2hal) = vf1jtn(tlpr2hal) + wpt* (avoe4y(p1rifj)*avoe4y(
+     &d9rjek) + (yw2(p1rifj)*avoe4y(d9rjek) + yw2(d9rjek)*avoe4y(p1rifj)
+     &)*0.50 + yw2(p1rifj)*yw2(d9rjek)*uoqx2m)
 23079 continue
 23077 continue
 23072 continue
@@ -295,38 +301,40 @@
 23047 continue
       return
       end
-      subroutine gayot2(rlep7v,lunah2,p2ip, mk2vyr,nk,thfyl1,sbkvx6)
+      subroutine gayot2(rlep7v,lunah2,p2ip, mk2vyr,nk,thfyl1,isbkvx6)
       implicit logical (a-z)
-      integer mk2vyr,nk,thfyl1,sbkvx6
+      integer mk2vyr,nk,thfyl1,isbkvx6
       double precision rlep7v(mk2vyr,nk), lunah2(mk2vyr,nk), p2ip(
      &thfyl1,nk)
       integer w3gohz, d9rjek, nd6mep
       double precision yrbij3(3),vef2gk(2),cfko0l(1),c0,c1,c2,c3
+      double precision wxj6p6, k6nvd6, s6w6ny, ijk1l1, ya6c6v, vj6e6b, 
+     &rm44is, pe0ko0, by99io
       c1 = 0.0d0
       c2 = 0.0d0
       c3 = 0.0d0
       yrbij3(1) = 0.0d0
       yrbij3(2) = 0.0d0
-      yrbij3(1) = 0.0d0
+      yrbij3(3) = 0.0d0
       vef2gk(1) = 0.0d0
       vef2gk(2) = 0.0d0
       cfko0l(1) = 0.0d0
       do 23081 w3gohz = 1,nk 
       d9rjek = nk-w3gohz+1
       c0 = 1.0d0 / rlep7v(4,d9rjek)
-      if(.not.(d9rjek .le. nk-3))goto 23083
+      if(.not.(d9rjek .le. (nk-3)))goto 23083
       c1 = rlep7v(1,d9rjek+3)*c0
       c2 = rlep7v(2,d9rjek+2)*c0
       c3 = rlep7v(3,d9rjek+1)*c0
       goto 23084
 23083 continue
-      if(.not.(d9rjek .eq. nk-2))goto 23085
+      if(.not.(d9rjek .eq. (nk-2)))goto 23085
       c1 = 0.0d0
       c2 = rlep7v(2,d9rjek+2)*c0
       c3 = rlep7v(3,d9rjek+1)*c0
       goto 23086
 23085 continue
-      if(.not.(d9rjek .eq. nk-1))goto 23087
+      if(.not.(d9rjek .eq. (nk-1)))goto 23087
       c1 = 0.0d0
       c2 = 0.0d0
       c3 = rlep7v(3,d9rjek+1)*c0
@@ -340,15 +348,20 @@
 23088 continue
 23086 continue
 23084 continue
-      lunah2(1,d9rjek) = 0.0d0 - (c1*yrbij3(1)+c2*yrbij3(2)+c3*yrbij3(3)
-     &)
-      lunah2(2,d9rjek) = 0.0d0 - (c1*yrbij3(2)+c2*vef2gk(1)+c3*vef2gk(2)
-     &)
-      lunah2(3,d9rjek) = 0.0d0 - (c1*yrbij3(3)+c2*vef2gk(2)+c3*cfko0l(1)
-     &)
-      lunah2(4,d9rjek) = c0**2 + c1**2 * yrbij3(1) + 2.0d0*c1*c2*yrbij3(
-     &2)+2.0d0*c1*c3*yrbij3(3) + c2**2 * vef2gk(1) + 2.0d0*c2*c3*vef2gk(
-     &2) + c3**2 * cfko0l(1)
+      wxj6p6 = c1*yrbij3(1)
+      k6nvd6 = c2*yrbij3(2)
+      s6w6ny = c3*yrbij3(3)
+      ijk1l1 = c1*yrbij3(2)
+      ya6c6v = c2*vef2gk(1)
+      vj6e6b = c3*vef2gk(2)
+      rm44is = c1*yrbij3(3)
+      pe0ko0 = c2*vef2gk(2)
+      by99io = c3*cfko0l(1)
+      lunah2(1,d9rjek) = 0.0d0 - (wxj6p6+k6nvd6+s6w6ny)
+      lunah2(2,d9rjek) = 0.0d0 - (ijk1l1+ya6c6v+vj6e6b)
+      lunah2(3,d9rjek) = 0.0d0 - (rm44is+pe0ko0+by99io)
+      lunah2(4,d9rjek) = c0**2 + c1*(wxj6p6 + 2.0d0*(k6nvd6 + s6w6ny)) +
+     & c2*(ya6c6v + 2.0d0* vj6e6b) + c3*by99io
       yrbij3(1) = vef2gk(1)
       yrbij3(2) = vef2gk(2)
       yrbij3(3) = lunah2(2,d9rjek)
@@ -356,7 +369,7 @@
       vef2gk(2) = lunah2(3,d9rjek)
       cfko0l(1) = lunah2(4,d9rjek)
 23081 continue
-      if(.not.(sbkvx6 .eq. 0))goto 23091
+      if(.not.(isbkvx6 .eq. 0))goto 23091
       return
 23091 continue
       do 23093 w3gohz = 1,nk 
@@ -391,21 +404,25 @@
      &thfyl1,fjg0qv)
       implicit logical (a-z)
       integer nfiumb4,nk,rlhz2a, mk2vyr,thfyl1,fjg0qv
-      double precision egoxa3,atqh0o,x(nfiumb4),y(nfiumb4),w(nfiumb4), 
-     &knot(nk+4), coef(nk),sz(nfiumb4),rjcq9o(nfiumb4), n9peut, dwgkz6, 
-     &mheq6i(nk), n7cuql(nk),dvpc8x(nk),hdv8br(nk),cbg5ys(nk), vf1jtn(
-     &nk),eh6nly(nk),mvx9at(nk),vbxpg4(nk), rlep7v(mk2vyr,nk),lunah2(
-     &mk2vyr,nk),p2ip(thfyl1,nk)
+      double precision egoxa3,atqh0o,x(nfiumb4),y(nfiumb4),w(nfiumb4)
+      double precision knot(nk+4), coef(nk),sz(nfiumb4),rjcq9o(nfiumb4),
+     & n9peut, dwgkz6, mheq6i(nk)
+      double precision n7cuql(nk),dvpc8x(nk),hdv8br(nk),cbg5ys(nk)
+      double precision vf1jtn(nk),eh6nly(nk),mvx9at(nk),vbxpg4(nk), 
+     &rlep7v(mk2vyr,nk),lunah2(mk2vyr,nk),p2ip(thfyl1,nk)
       double precision das4bx, bgu6fw(16), b0,b1,b2,b3,kqoy6w, uq9jtc(4,
-     &1), xv,bvalue,df
+     &1), xv,eqdf
+      double precision zh0bs0
       double precision risyv0
-      integer oht3ga, ynmzp6, ilo, i6ndbu, d9rjek, w3gohz, px1yhr, 
-     &m5xudf, def4wn
+      integer oht3ga, ynmzp6, ilo, i6ndbu, d9rjek, w3gohz
+      integer px1yhr, m5xudf, def4wn, uxzze7, nkp1
       ilo = 1
       kqoy6w = 0.1d-10
       oht3ga = 0
       ynmzp6 = 3
       def4wn = 4
+      uxzze7 = 1
+      nkp1 = nk + 1
       do 23103 w3gohz = 1,nk 
       coef(w3gohz) = mheq6i(w3gohz) 
 23103 continue
@@ -429,7 +446,7 @@
       px1yhr = 1
       do 23115 w3gohz = 1,nfiumb4 
       xv = x(w3gohz)
-      sz(w3gohz) = bvalue(knot,coef, nk,def4wn,xv,oht3ga)
+      call wbvalue(knot,coef, nk,def4wn,xv,oht3ga, sz(w3gohz))
 23115 continue
       if(.not.(rlhz2a .eq. 0))goto 23117
       return
@@ -437,7 +454,7 @@
       call gayot2(rlep7v,lunah2,p2ip, mk2vyr,nk,thfyl1,oht3ga)
       do 23119 w3gohz = 1,nfiumb4 
       xv = x(w3gohz)
-      call vinterv(knot(1),(nk+1),xv,m5xudf,i6ndbu)
+      call vinterv(knot(1), nkp1 ,xv,m5xudf,i6ndbu)
       if(.not.(i6ndbu .eq. -1))goto 23121
       m5xudf = 4 
       xv = knot(4) + kqoy6w 
@@ -447,28 +464,28 @@
       xv = knot(nk+1) - kqoy6w 
 23123 continue
       d9rjek = m5xudf-3
-      call vbsplvd(knot,4,xv,m5xudf,bgu6fw,uq9jtc,1)
+      call vbsplvd(knot,def4wn,xv,m5xudf,bgu6fw,uq9jtc,uxzze7)
       b0 = uq9jtc(1,1)
       b1 = uq9jtc(2,1)
       b2 = uq9jtc(3,1)
       b3 = uq9jtc(4,1)
-      rjcq9o(w3gohz) = (lunah2(4,d9rjek)*b0**2 + 2.0d0*lunah2(3,d9rjek)*
-     &b0*b1 + 2.0d0*lunah2(2,d9rjek)*b0*b2 + 2.0d0*lunah2(1,d9rjek)*b0*
-     &b3 + lunah2(4,d9rjek+1)*b1**2 + 2.0d0*lunah2(3,d9rjek+1)*b1*b2 + 
-     &2.0d0*lunah2(2,d9rjek+1)*b1*b3 + lunah2(4,d9rjek+2)*b2**2 + 2.0d0*
-     &lunah2(3,d9rjek+2)*b2*b3 + lunah2(4,d9rjek+3)*b3**2 ) * w(w3gohz)*
-     &*2
+      zh0bs0 = (b0 *(lunah2(4,d9rjek)*b0 + 2.0d0*(lunah2(3,d9rjek)*b1 + 
+     &lunah2(2,d9rjek)*b2 + lunah2(1,d9rjek)*b3)) + b1 *(lunah2(4,
+     &d9rjek+1)*b1 + 2.0d0*(lunah2(3,d9rjek+1)*b2 + lunah2(2,d9rjek+1)*
+     &b3)) + b2 *(lunah2(4,d9rjek+2)*b2 + 2.0d0* lunah2(3,d9rjek+2)*b3 )
+     &+ b3**2* lunah2(4,d9rjek+3)) * w(w3gohz)**2
+      rjcq9o(w3gohz) = zh0bs0
 23119 continue
       if(.not.(rlhz2a .eq. 1))goto 23125
       das4bx = 0.0d0 
-      df = 0.0d0 
+      eqdf = 0.0d0 
       risyv0 = 0.0d0
       do 23127 w3gohz = 1,nfiumb4 
       das4bx = das4bx + ((y(w3gohz)-sz(w3gohz))*w(w3gohz))**2
-      df = df + rjcq9o(w3gohz)
+      eqdf = eqdf + rjcq9o(w3gohz)
       risyv0 = risyv0 + w(w3gohz)*w(w3gohz)
 23127 continue
-      n9peut = (das4bx/risyv0)/((1.0d0-(atqh0o+egoxa3*df)/risyv0)**2)
+      n9peut = (das4bx/risyv0)/((1.0d0-(atqh0o+egoxa3*eqdf)/risyv0)**2)
       goto 23126
 23125 continue
       if(.not.(rlhz2a .eq. 2))goto 23129
@@ -500,7 +517,12 @@
      &nfiumb4+4), wevr5o(nfiumb4), n7cuql(nfiumb4),dvpc8x(nfiumb4),
      &hdv8br(nfiumb4),cbg5ys(nfiumb4)
       double precision kqoy6w,uq9jtc(4,1),bgu6fw(16)
-      integer d9rjek,w3gohz,ilo,m5xudf,i6ndbu
+      double precision gyn0o0, sce5d5
+      integer d9rjek,w3gohz,ilo,m5xudf,i6ndbu, nhwi2tb1
+      integer def4wn, uxzze7
+      uxzze7 = 1
+      def4wn = 4
+      nhwi2tb1 = nfiumb4 + 1
       do 23135 w3gohz = 1,nfiumb4 
       wevr5o(w3gohz) = 0.0d0 
       n7cuql(w3gohz) = 0.0d0 
@@ -511,7 +533,7 @@
       ilo = 1
       kqoy6w = 0.1d-9
       do 23137 w3gohz = 1,xl6qgm 
-      call vinterv(onyz6j(1),(nfiumb4+1),p3vlea(w3gohz),m5xudf,i6ndbu)
+      call vinterv(onyz6j(1), nhwi2tb1 ,p3vlea(w3gohz),m5xudf,i6ndbu)
       if(.not.(i6ndbu .eq. 1))goto 23139
       if(.not.(p3vlea(w3gohz) .le. (onyz6j(m5xudf)+kqoy6w)))goto 23141
       m5xudf = m5xudf-1
@@ -520,35 +542,31 @@
       return
 23142 continue
 23139 continue
-      call vbsplvd(onyz6j,4,p3vlea(w3gohz),m5xudf,bgu6fw,uq9jtc,1)
+      call vbsplvd(onyz6j,def4wn,p3vlea(w3gohz),m5xudf,bgu6fw,uq9jtc,
+     &uxzze7)
       d9rjek = m5xudf-4+1
-      wevr5o(d9rjek) = wevr5o(d9rjek)+w(w3gohz)**2*hr83e(w3gohz)*uq9jtc(
-     &1,1)
-      n7cuql(d9rjek) = n7cuql(d9rjek)+w(w3gohz)**2*uq9jtc(1,1)**2
-      dvpc8x(d9rjek) = dvpc8x(d9rjek)+w(w3gohz)**2*uq9jtc(1,1)*uq9jtc(2,
-     &1)
-      hdv8br(d9rjek) = hdv8br(d9rjek)+w(w3gohz)**2*uq9jtc(1,1)*uq9jtc(3,
-     &1)
-      cbg5ys(d9rjek) = cbg5ys(d9rjek)+w(w3gohz)**2*uq9jtc(1,1)*uq9jtc(4,
-     &1)
+      gyn0o0 = w(w3gohz)**2
+      sce5d5 = gyn0o0 * uq9jtc(1,1)
+      wevr5o(d9rjek) = wevr5o(d9rjek) + sce5d5*hr83e(w3gohz)
+      n7cuql(d9rjek) = n7cuql(d9rjek) + sce5d5*uq9jtc(1,1)
+      dvpc8x(d9rjek) = dvpc8x(d9rjek) + sce5d5*uq9jtc(2,1)
+      hdv8br(d9rjek) = hdv8br(d9rjek) + sce5d5*uq9jtc(3,1)
+      cbg5ys(d9rjek) = cbg5ys(d9rjek) + sce5d5*uq9jtc(4,1)
       d9rjek = m5xudf-4+2
-      wevr5o(d9rjek) = wevr5o(d9rjek)+w(w3gohz)**2*hr83e(w3gohz)*uq9jtc(
-     &2,1)
-      n7cuql(d9rjek) = n7cuql(d9rjek)+w(w3gohz)**2*uq9jtc(2,1)**2
-      dvpc8x(d9rjek) = dvpc8x(d9rjek)+w(w3gohz)**2*uq9jtc(2,1)*uq9jtc(3,
-     &1)
-      hdv8br(d9rjek) = hdv8br(d9rjek)+w(w3gohz)**2*uq9jtc(2,1)*uq9jtc(4,
-     &1)
+      sce5d5 = gyn0o0 * uq9jtc(2,1)
+      wevr5o(d9rjek) = wevr5o(d9rjek) + sce5d5*hr83e(w3gohz)
+      n7cuql(d9rjek) = n7cuql(d9rjek) + sce5d5*uq9jtc(2,1)
+      dvpc8x(d9rjek) = dvpc8x(d9rjek) + sce5d5*uq9jtc(3,1)
+      hdv8br(d9rjek) = hdv8br(d9rjek) + sce5d5*uq9jtc(4,1)
       d9rjek = m5xudf-4+3
-      wevr5o(d9rjek) = wevr5o(d9rjek)+w(w3gohz)**2*hr83e(w3gohz)*uq9jtc(
-     &3,1)
-      n7cuql(d9rjek) = n7cuql(d9rjek)+w(w3gohz)**2*uq9jtc(3,1)**2
-      dvpc8x(d9rjek) = dvpc8x(d9rjek)+w(w3gohz)**2*uq9jtc(3,1)*uq9jtc(4,
-     &1)
-      d9rjek = m5xudf-4+4
-      wevr5o(d9rjek) = wevr5o(d9rjek)+w(w3gohz)**2*hr83e(w3gohz)*uq9jtc(
-     &4,1)
-      n7cuql(d9rjek) = n7cuql(d9rjek)+w(w3gohz)**2*uq9jtc(4,1)**2
+      sce5d5 = gyn0o0 * uq9jtc(3,1)
+      wevr5o(d9rjek) = wevr5o(d9rjek) + sce5d5*hr83e(w3gohz)
+      n7cuql(d9rjek) = n7cuql(d9rjek) + sce5d5*uq9jtc(3,1)
+      dvpc8x(d9rjek) = dvpc8x(d9rjek) + sce5d5*uq9jtc(4,1)
+      d9rjek = m5xudf
+      sce5d5 = gyn0o0 * uq9jtc(4,1)
+      wevr5o(d9rjek) = wevr5o(d9rjek) + sce5d5*hr83e(w3gohz)
+      n7cuql(d9rjek) = n7cuql(d9rjek) + sce5d5*uq9jtc(4,1)
 23137 continue
       return
       end

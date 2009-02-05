@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2008 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2009 T.W. Yee, University of Auckland. All rights reserved.
 
 
 
@@ -191,13 +191,16 @@ lm2vlm.model.matrix <- function(x, Blist=NULL, assign.attributes=TRUE,
 }
 
 
-model.matrixvlm = function(object, type=c("vlm","lm"), ...) {
+model.matrixvlm = function(object, type=c("vlm","lm","lm2"), ...) {
+
 
     if(mode(type) != "character" && mode(type) != "name")
     type <- as.character(substitute(type))
-    type <- match.arg(type, c("vlm","lm"))[1]
+    type <- match.arg(type, c("vlm","lm","lm2"))[1]
 
     x <- slot(object, "x")
+    Xm2 <- slot(object, "Xm2")
+
     if(!length(x)) {
         data = model.frame(object, xlev=object@xlevels, ...) 
 
@@ -207,22 +210,53 @@ model.matrixvlm = function(object, type=c("vlm","lm"), ...) {
                                    contrasts.arg = kill.con)
         if(is.R()) {
 
-if(TRUE) {
-    attrassigndefault <- function(mmat, tt) {
-      if (!inherits(tt, "terms"))
-        stop("need terms object")
-      aa <- attr(mmat, "assign")
-      if (is.null(aa))
-        stop("argument is not really a model matrix")
-      ll <- attr(tt, "term.labels")
-      if (attr(tt, "intercept") > 0)
-        ll <- c("(Intercept)", ll)
-      aaa <- factor(aa, labels = ll)
-      split(order(aa), aaa)
-    }
-}
+            if(TRUE) {
+                attrassigndefault <- function(mmat, tt) {
+                  if (!inherits(tt, "terms"))
+                    stop("need terms object")
+                  aa <- attr(mmat, "assign")
+                  if (is.null(aa))
+                    stop("argument is not really a model matrix")
+                  ll <- attr(tt, "term.labels")
+                  if (attr(tt, "intercept") > 0)
+                    ll <- c("(Intercept)", ll)
+                  aaa <- factor(aa, labels = ll)
+                  split(order(aa), aaa)
+                }
+            }
             tt = terms(object)
             attr(x, "assign") <- attrassigndefault(x, tt)
+        }
+    }
+
+    if(type == "lm2" && !length(Xm2)) {
+        object.copy2 = object
+        object.copy2@call = object.copy2@callXm2
+        data = model.frame(object.copy2, xlev=object.copy2@xlevels, ...) 
+
+        kill.con = if(length(object.copy2@contrasts))
+                   object.copy2@contrasts else NULL
+
+        Xm2 <- vmodel.matrix.default(object.copy2, data=data,
+                                   contrasts.arg = kill.con)
+        if(is.R()) {
+
+            if(TRUE) {
+                attrassigndefault <- function(mmat, tt) {
+                  if (!inherits(tt, "terms"))
+                    stop("need terms object")
+                  aa <- attr(mmat, "assign")
+                  if (is.null(aa))
+                    stop("argument is not really a model matrix")
+                  ll <- attr(tt, "term.labels")
+                  if (attr(tt, "intercept") > 0)
+                    ll <- c("(Intercept)", ll)
+                  aaa <- factor(aa, labels = ll)
+                  split(order(aa), aaa)
+                }
+            }
+            ttXm2 = terms(object.copy2@misc$form2)
+            attr(Xm2, "assign") <- attrassigndefault(Xm2, ttXm2)
         }
     }
 
@@ -230,6 +264,9 @@ if(TRUE) {
 
     if(type == "lm") {
         return(x)
+    } else
+    if(type == "lm2") {
+        return(Xm2)
     } else {
         M <- object@misc$M  
         Blist <- object@constraints # Is NULL if there were no constraints?

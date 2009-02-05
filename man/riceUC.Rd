@@ -9,7 +9,7 @@
   Density
 % distribution function, quantile function
   and random generation for the
-  Rice distribution.
+  Rician distribution.
 
 }
 \usage{

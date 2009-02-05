@@ -128,3 +128,28 @@
 23020 continue
       return
       end
+      subroutine cum8sum(bz4gufr, ghry8z, nghry8z, valong, ntot, 
+     &notc4uxow)
+      implicit logical (a-z)
+      integer nghry8z, ntot, notc4uxow
+      double precision bz4gufr(ntot), ghry8z(nghry8z), valong(ntot)
+      integer w3gohz, p1rifj
+      p1rifj = 1
+      ghry8z(p1rifj) = bz4gufr(p1rifj)
+      do 23024 w3gohz=2,ntot 
+      if(.not.(valong(w3gohz) .gt. valong(w3gohz-1)))goto 23026
+      ghry8z(p1rifj) = ghry8z(p1rifj) + bz4gufr(w3gohz)
+      goto 23027
+23026 continue
+      p1rifj = p1rifj + 1
+      ghry8z(p1rifj) = bz4gufr(w3gohz)
+23027 continue
+23024 continue
+      if(.not.(p1rifj .eq. nghry8z))goto 23028
+      notc4uxow = 0
+      goto 23029
+23028 continue
+      notc4uxow = 1
+23029 continue
+      return
+      end

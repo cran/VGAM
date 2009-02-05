@@ -186,24 +186,20 @@ fit2 = vglm(cbind(R,N-R) ~ fgrp + hb, betabinomial(zero=2),
            data=lirat, trace=TRUE, subset=N>1)
 coef(fit2, matrix=TRUE)
 \dontrun{
-plot(lirat$hb[lirat$N>1], fit2@misc$rho,
-     xlab="Hemoglobin", ylab="Estimated rho",
-     pch=as.character(lirat$grp[lirat$N>1]),
-     col=lirat$grp[lirat$N>1])
+with(lirat, plot(hb[N>1], fit2@misc$rho,
+                 xlab="Hemoglobin", ylab="Estimated rho",
+                 pch=as.character(grp[N>1]), col=grp[N>1]))
 }
 \dontrun{
 data(lirat)
-attach(lirat)
 # cf. Figure 3 of Moore and Tsiatis (1991)
-plot(hb, R/N, pch=as.character(grp), col=grp, las=1,
-     xlab="Hemoglobin level", ylab="Proportion Dead",
-     main="Fitted values (lines)")
-detach(lirat)
-
-smalldf = lirat[lirat$N>1,]
+with(lirat, plot(hb, R/N, pch=as.character(grp), col=grp, las=1,
+                 xlab="Hemoglobin level", ylab="Proportion Dead",
+                 main="Fitted values (lines)"))
+smalldf = with(lirat, lirat[N>1,])
 for(gp in 1:4) {
-    xx = smalldf$hb[smalldf$grp==gp]
-    yy = fitted(fit2)[smalldf$grp==gp]
+    xx = with(smalldf, hb[grp==gp])
+    yy = with(smalldf, fitted(fit2)[grp==gp])
     o = order(xx)
     lines(xx[o], yy[o], col=gp)
 }

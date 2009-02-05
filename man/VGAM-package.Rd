@@ -95,6 +95,10 @@ Yee, T. W. (2006)
 Constrained additive ordination.
 \emph{Ecology}, \bold{87}, 203--213.
 
+Yee, T. W. (2008)
+The \code{VGAM} Package.
+\emph{R News}, \bold{8}, 28--39.
+
 Documentation accompanying the \pkg{VGAM} package at
 \url{http://www.stat.auckland.ac.nz/~yee/VGAM}
 contains further information and examples.
@@ -143,20 +147,19 @@ fit2 = vgam(cbind(agaaus, kniexc) ~ s(altitude, df=c(2,3)),
 coef(fit2, mat=TRUE)   # Not really interpretable
 \dontrun{
 plot(fit2, se=TRUE, overlay=TRUE, lcol=1:2, scol=1:2)
-attach(hunua)
-o = order(altitude)
-matplot(altitude[o], fitted(fit2)[o,], type="l", lwd=2, las=1,
-    xlab="Altitude (m)", ylab="Probability of presence",
-    main="Two plant species' response curves", ylim=c(0,.8))
-rug(altitude)
-detach(hunua)
+
+o = with(hunua, order(altitude))
+with(hunua,  matplot(altitude[o], fitted(fit2)[o,], type="l", lwd=2,
+     xlab="Altitude (m)", ylab="Probability of presence", las=1,
+     main="Two plant species' response curves", ylim=c(0,.8)))
+with(hunua, rug(altitude))
 }
 
 
 # Example 4
 # LMS quantile regression
 data(bminz)
-fit = vgam(BMI ~ s(age, df=c(4,2)), fam=lms.bcn(zero=1), data=bminz, tr=TRUE)
+fit = vgam(BMI ~ s(age, df=c(4,2)), lms.bcn(zero=1), dat=bminz, tr=TRUE)
 predict(fit)[1:3,]
 fitted(fit)[1:3,]
 bminz[1:3,]

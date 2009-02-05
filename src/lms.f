@@ -2,11 +2,11 @@
       implicit logical (a-z)
       integer g8jieq
       double precision psi, dwgkz6, sfnva0, fpqrt7, ghry8z(3)
-      integer one, zl9udh
+      integer uxzze7, oht3ga
       double precision aa, bb, ig5cma, fiumb4
       logical cc, pos
-      one = 1
-      zl9udh = 0
+      uxzze7 = 1
+      oht3ga = 0
       fiumb4 = 1.0d-04
       cc = (psi .ge. 0.0d0)
       if(.not.(cc))goto 23000
@@ -51,11 +51,11 @@
       implicit logical (a-z)
       integer ws5jcg
       double precision hr83e, dwgkz6, sfnva0, fpqrt7, uvf4mp(4), ghry8z
-      integer one, two, ynmzp6
+      integer uxzze7, itwo2, ynmzp6
       double precision psi, hc0tub, xkwp2m(3), dq3rxy
       ynmzp6 = 3
-      two = 2
-      one = 1
+      itwo2 = 2
+      uxzze7 = 1
       dq3rxy = 1.41421356237309515d0
       if(.not.(ws5jcg .gt. 0))goto 23014
       ghry8z = uvf4mp(4) * (uvf4mp(2)**2 + dq3rxy * fpqrt7 * hr83e * 
@@ -64,7 +64,7 @@
 23014 continue
       hc0tub = 0.564189583547756279d0
       psi = sfnva0 + dq3rxy * fpqrt7 * hr83e
-      call dpdlyjn(psi, dwgkz6, sfnva0, fpqrt7, two, xkwp2m)
+      call dpdlyjn(psi, dwgkz6, sfnva0, fpqrt7, itwo2, xkwp2m)
       ghry8z = (dexp(-hr83e*hr83e) * hc0tub) * (xkwp2m(2)**2 + (psi - 
      &sfnva0) * xkwp2m(3)) / fpqrt7**2
 23015 continue
@@ -75,10 +75,10 @@
       implicit logical (a-z)
       integer ws5jcg
       double precision hr83e, dwgkz6, sfnva0, fpqrt7, uvf4mp(4), ghry8z
-      integer one, two
+      integer uxzze7, itwo2
       double precision psi, hc0tub, mw6reg(2), dq3rxy
-      two = 2
-      one = 1
+      itwo2 = 2
+      uxzze7 = 1
       if(.not.(ws5jcg .gt. 0))goto 23016
       ghry8z = uvf4mp(4) * (-uvf4mp(2))
       goto 23017
@@ -86,7 +86,7 @@
       hc0tub = 0.564189583547756279d0
       dq3rxy = 1.41421356237309515d0
       psi = sfnva0 + dq3rxy * fpqrt7 * hr83e
-      call dpdlyjn(psi, dwgkz6, sfnva0, fpqrt7, one, mw6reg)
+      call dpdlyjn(psi, dwgkz6, sfnva0, fpqrt7, uxzze7, mw6reg)
       ghry8z = (dexp(-hr83e*hr83e) * hc0tub) * (-mw6reg(2)) / fpqrt7**2
 23017 continue
       return
@@ -96,10 +96,10 @@
       implicit logical (a-z)
       integer ws5jcg
       double precision hr83e, dwgkz6, sfnva0, fpqrt7, uvf4mp(4), ghry8z
-      integer one, two
+      integer uxzze7, itwo2
       double precision psi, oaqng6, mw6reg(2), dq3rxy
-      two = 2
-      one = 1
+      itwo2 = 2
+      uxzze7 = 1
       if(.not.(ws5jcg .gt. 0))goto 23018
       ghry8z = uvf4mp(4) * (-uvf4mp(2)) * dsqrt(8.0d0) * hr83e
       goto 23019
@@ -107,7 +107,7 @@
       oaqng6 = -1.12837916709551256d0
       dq3rxy = 1.41421356237309515d0
       psi = sfnva0 + dq3rxy * fpqrt7 * hr83e
-      call dpdlyjn(psi, dwgkz6, sfnva0, fpqrt7, one, mw6reg)
+      call dpdlyjn(psi, dwgkz6, sfnva0, fpqrt7, uxzze7, mw6reg)
       ghry8z = dexp(-hr83e*hr83e) * oaqng6 * mw6reg(2) * (psi - sfnva0) 
      &/ fpqrt7**3
 23019 continue
@@ -161,10 +161,10 @@
      &oqie8v(kk), dwgkz6(nfiumb4), sfnva0(nfiumb4), fpqrt7(nfiumb4), 
      &ghry8z(3,nfiumb4), kqoy6w
       integer w3gohz, p1rifj, nd6mep, o2yadh, btip7u, epx9jf, nepms8, 
-     &one, two
+     &uxzze7, itwo2
       double precision mu4ygk, azgts7, xmr7cj
-      one = 1
-      two = 2
+      uxzze7 = 1
+      itwo2 = 2
       o2yadh = 12
       do 23032 w3gohz = 1,nfiumb4 
       do 23034 nepms8=1,3 

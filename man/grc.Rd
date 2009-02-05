@@ -18,8 +18,8 @@ grc(y, Rank = 1, Index.corner = 2:(1 + Rank),
   Note that \code{y} must be at least 3 by 3. 
   }
   \item{Rank}{
-  An integer in the range 
-  {1,\ldots,\code{min(nrow(y), ncol(y))}}. 
+  An integer from the set
+  \{1,\ldots,\code{min(nrow(y), ncol(y))}\}.
   This is the dimension of the fit.
 
   }
@@ -31,7 +31,7 @@ grc(y, Rank = 1, Index.corner = 2:(1 + Rank),
 
   }
   \item{Structural.zero}{ 
-  An integer in the range {1,\ldots,\code{min(nrow(y), ncol(y))}},
+  An integer from the set \{1,\ldots,\code{min(nrow(y), ncol(y))}\},
   specifying the row that is used as the structural zero.
   }
   \item{summary.arg}{
