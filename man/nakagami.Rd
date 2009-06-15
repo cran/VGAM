@@ -94,7 +94,7 @@ y = sqrt(rgamma(n, shape=shape, scale=Scale/shape))
 fit = vglm(y ~ 1, nakagami, trace=TRUE, crit="c")
 y = rnaka(n, shape=shape, scale=Scale)
 fit = vglm(y ~ 1, nakagami(iscale=3), trace=TRUE)
-fitted(fit)[1:5]
+head(fitted(fit))
 mean(y)
 coef(fit, matrix=TRUE)
 (Cfit = Coef(fit))

@@ -3,9 +3,9 @@
 %\alias{AICvglm}
 \alias{AICvgam}
 \alias{AICrrvglm}
-%\alias{AICqrrvglm}
+\alias{AICqrrvglm}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{ Akaike's An Information Criterion }
+\title{ Akaike's Information Criterion }
 \description{
   Calculates the Akaike information criterion for a fitted model object
   for which a log-likelihood value has been obtained.
@@ -34,7 +34,7 @@ AICvlm(object, \dots, k = 2)
   \eqn{-2 \mbox{log-likelihood} + k n_{par}}{-2*log-likelihood
   + k*npar}, where \eqn{n_{par}}{npar} represents the number of parameters
   in the fitted model, and \eqn{k = 2} for the usual AIC.
-  One can assign \eqn{k = \log(n)} (\eqn{n} the number of observations)
+  One could assign \eqn{k = \log(n)} (\eqn{n} the number of observations)
   for the so-called BIC or SBC (Schwarz's Bayesian criterion).
 
   This code relies on the log-likelihood being defined, and computed,
@@ -47,7 +47,7 @@ AICvlm(object, \dots, k = 2)
   parameter.
 
   For VGAMs the nonlinear effective degrees of freedom for each
-  smoothed component is used. This is heuristic.
+  smoothed component is used. This formula is heuristic.
 
 }
 \value{
@@ -55,7 +55,7 @@ AICvlm(object, \dots, k = 2)
   depending on \code{k}).
 
 }
-\author{T. W. Yee }
+\author{T. W. Yee. }
 \note{
   AIC has not been defined for QRR-VGLMs yet.
 
@@ -78,13 +78,12 @@ AICvlm(object, \dots, k = 2)
 
 \seealso{
   VGLMs are described in \code{\link{vglm-class}};
+  VGAMs are described in \code{\link{vgam-class}};
   RR-VGLMs are described in \code{\link{rrvglm-class}};
   \code{\link[stats]{AIC}}.
 
 }
 \examples{
-# Fit a proportional odds model
-data(pneumo)
 pneumo = transform(pneumo, let=log(exposure.time))
 (fit1 = vglm(cbind(normal, mild, severe) ~ let,
            cumulative(parallel=TRUE, reverse=TRUE), pneumo))

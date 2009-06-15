@@ -267,12 +267,10 @@ The \code{VGAM} Package.
 
 \examples{
 # Nonparametric proportional odds model 
-data(pneumo)
 pneumo = transform(pneumo, let=log(exposure.time))
 vgam(cbind(normal,mild,severe) ~ s(let), cumulative(par=TRUE), pneumo)
 
 # Nonparametric logistic regression 
-data(hunua) 
 fit = vgam(agaaus ~ s(altitude, df=2), binomialff, hunua)
 \dontrun{
 plot(fit, se=TRUE)

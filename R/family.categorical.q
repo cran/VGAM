@@ -4,7 +4,53 @@
 
 
 
+
+
+
+dmultinomial = function(x, size = NULL, prob, log = FALSE,
+                        dochecking=TRUE, smallno = 1.0e-7) {
+    if(!is.logical(log.arg <- log))
+        stop("bad input for argument 'log'")
+    rm(log)
+
+    x = as.matrix(x)
+    prob = as.matrix(prob)
+    if(((K <- ncol(x)) <= 1) || ncol(prob) != K)
+        stop("'x' and 'prob' must be matrices with two or more columns")
+    if(dochecking) {
+        if(min(prob) < 0)
+            stop("'prob' contains some negative values")
+        if(any(abs((rsprob <- rowSums(prob)) - 1) > smallno))
+            stop("some rows of 'prob' do not add to unity")
+        if(any(abs(x - round(x)) > smallno))
+            stop("'x' should be integer valued")
+        if(length(size)) {
+            if(any(abs(size - rowSums(x)) > smallno))
+                stop("rowSums(x) does not agree with 'size'")
+        } else {
+            size = round(rowSums(x))
+        }
+    } else {
+        if(!length(size))
+            size = round(rowSums(prob))
+    }
+    logdensity = lgamma(size + 1) + rowSums(x * log(prob) - lgamma(x + 1))
+    if(log.arg) logdensity else exp(logdensity)
+}
+
+
+
+
+
+
+
+
+
+
 process.categorical.data.vgam = expression({
+
+
+
 
  
     if(!is.matrix(y)) {
@@ -49,10 +95,11 @@ process.categorical.data.vgam = expression({
     y = y / nvec             # Convert to proportions
 
     if(!length(mustart)) {
-        mustart = (nvec * y + 1/ncol(y)) / (nvec+1)   # This may be better 
-        mustart = y + (1/ncol(y) - y)/nvec   # This may be wrong 
+        mustart = (nvec * y + 1/ncol(y)) / (nvec+1)
+        mustart = y + (1/ncol(y) - y)/nvec
     }
 })
+
 
 
 
@@ -94,11 +141,8 @@ Deviance.categorical.data.vgam <-
 
 
 
-
-
-
-sratio = function(link="logit", earg=list(),
-                  parallel=FALSE, reverse=FALSE, zero=NULL)
+ sratio = function(link="logit", earg=list(),
+                   parallel=FALSE, reverse=FALSE, zero=NULL)
 {
     if(mode(link) != "character" && mode(link) != "name")
         link = as.character(substitute(link))
@@ -172,8 +216,9 @@ sratio = function(link="logit", earg=list(),
         }
     }, list( .earg=earg, .link=link, .reverse=reverse) )),
     loglikelihood= function(mu, y, w, residuals = FALSE, eta, extra=NULL)
-        if(residuals) stop("loglikelihood residuals not implemented yet") else
-        sum(w * y * log(mu)),
+        if(residuals) stop("loglikelihood residuals not implemented yet") else {
+            sum(dmultinomial(x=w*y, size=w, prob=mu, log=TRUE, docheck=FALSE))
+        },
     vfamily=c("sratio", "vcategorical"),
     deriv=eval(substitute(expression({
         if(!length(extra$mymat)) {
@@ -209,8 +254,8 @@ sratio = function(link="logit", earg=list(),
 
 
 
-cratio = function(link="logit", earg=list(),
-                  parallel=FALSE, reverse=FALSE, zero=NULL)
+ cratio = function(link="logit", earg=list(),
+                   parallel=FALSE, reverse=FALSE, zero=NULL)
 {
     if(mode(link) != "character" && mode(link) != "name")
         link = as.character(substitute(link))
@@ -282,8 +327,9 @@ cratio = function(link="logit", earg=list(),
         }
     }, list( .earg=earg, .link=link, .reverse=reverse) )),
     loglikelihood= function(mu, y, w, residuals = FALSE, eta, extra=NULL)
-        if(residuals) stop("loglikelihood residuals not implemented yet") else
-        sum(w * y * log(mu)), 
+        if(residuals) stop("loglikelihood residuals not implemented yet") else {
+            sum(w * y * log(mu))
+        },
     vfamily=c("cratio", "vcategorical"),
     deriv=eval(substitute(expression({
         if(!length(extra$mymat)) {
@@ -331,7 +377,6 @@ vglm.multinomial.deviance.control = function(maxit=21, panic=FALSE, ...)
 vglm.multinomial.control = function(maxit=21, panic=FALSE, 
       criterion=c("aic1", "aic2", names( .min.criterion.VGAM )), ...)
 {
-
     if(mode(criterion) != "character" && mode(criterion) != "name")
         criterion = as.character(substitute(criterion))
     criterion = match.arg(criterion,
@@ -358,8 +403,8 @@ vglm.vcategorical.control = function(maxit=30, trace=FALSE, panic=TRUE, ...)
 
 
 
-multinomial = function(zero=NULL, parallel=FALSE, nointercept=NULL,
-                       refLevel="last")
+ multinomial = function(zero=NULL, parallel=FALSE, nointercept=NULL,
+                        refLevel="last")
 {
     if(length(refLevel) != 1) stop("the length of 'refLevel' must be one")
     if(is.character(refLevel)) {
@@ -372,7 +417,7 @@ multinomial = function(zero=NULL, parallel=FALSE, nointercept=NULL,
         if(!is.Numeric(refLevel, allow=1, integer=TRUE, posit=TRUE))
             stop("could not coerce 'refLevel' into a single positive integer")
     } else if(!is.Numeric(refLevel, allow=1, integer=TRUE, posit=TRUE))
-            stop("\"refLevel\" must be a single positive integer")
+            stop("'refLevel' must be a single positive integer")
 
     new("vglmff",
     blurb=c("Multinomial logit model\n\n", 
@@ -449,8 +494,9 @@ multinomial = function(zero=NULL, parallel=FALSE, nointercept=NULL,
         }
     }), list( .refLevel = refLevel )),
     loglikelihood= function(mu, y, w, residuals = FALSE, eta, extra=NULL)
-        if(residuals) stop("loglikelihood residuals not implemented yet") else
-        sum(w * y * log(mu)), 
+        if(residuals) stop("loglikelihood residuals not implemented yet") else {
+            sum(dmultinomial(x=w*y, size=w, prob=mu, log=TRUE, docheck=FALSE))
+        },
     vfamily=c("multinomial", "vcategorical"),
     deriv=eval(substitute(expression({
         if( .refLevel < 0) {
@@ -490,14 +536,14 @@ multinomial = function(zero=NULL, parallel=FALSE, nointercept=NULL,
 
 
 
-cumulative = function(link="logit", earg = list(),
-                      parallel=FALSE, reverse=FALSE, 
-                      mv=FALSE,
-                      intercept.apply = FALSE)
+ cumulative = function(link="logit", earg = list(),
+                       parallel=FALSE, reverse=FALSE, 
+                       mv=FALSE,
+                       intercept.apply = FALSE)
 {
     if(mode(link) != "character" && mode(link) != "name")
         link = as.character(substitute(link))
-    if(!is.logical(mv) || length(mv)!=1) stop("\"mv\" must be a single logical")
+    if(!is.logical(mv) || length(mv)!=1) stop("'mv' must be a single logical")
     if(!is.list(earg)) earg = list()
 
     new("vglmff",
@@ -588,6 +634,10 @@ cumulative = function(link="logit", earg = list(),
                 paste("P[Y<=",1:M,"]", sep="")
             predictors.names = namesof(mynames, .link, short=TRUE, earg= .earg)
             y.names = paste("mu", 1:(M+1), sep="")
+            if(ncol(cbind(w)) == 1) {
+                for(iii in 1:ncol(y))
+                    mustart[,iii] = weighted.mean(y[,iii], w)
+            }
 
             if(length(dimnames(y)))
                 extra$dimnamesy2 = dimnames(y)[[2]]
@@ -672,8 +722,9 @@ cumulative = function(link="logit", earg = list(),
         answer
     }, list( .link=link, .reverse=reverse, .earg=earg, .mv=mv ))),
     loglikelihood= function(mu, y, w, residuals = FALSE, eta, extra=NULL)
-        if(residuals) stop("loglikelihood residuals not implemented yet") else
-       sum(w * y * log(mu)), 
+        if(residuals) stop("loglikelihood residuals not implemented yet") else {
+            sum(dmultinomial(x=w*y, size=w, prob=mu, log=TRUE, docheck=FALSE))
+        },
     vfamily=c("cumulative", "vcategorical"),
     deriv=eval(substitute(expression({
         mu.use = pmax(mu, .Machine$double.eps * 1.0e-0)
@@ -681,17 +732,17 @@ cumulative = function(link="logit", earg = list(),
         if( .mv ) {
             NOS = extra$NOS
             Llevels = extra$Llevels
-            dcump.deta = answer.matrix = matrix(0, n, NOS * (Llevels-1))
+            dcump.deta = resmat = matrix(0, n, NOS * (Llevels-1))
             for(iii in 1:NOS) {
                 cindex = (iii-1)*(Llevels-1) + 1:(Llevels-1)
                 aindex = (iii-1)*(Llevels)   + 1:(Llevels-1)
                 cump = eta2theta(eta[,cindex,drop=FALSE], .link, earg= .earg)
                 dcump.deta[,cindex] = dtheta.deta(cump, .link, earg= .earg)
-                answer.matrix[,cindex] =
+                resmat[,cindex] =
                     (y[,aindex,drop=FALSE]/mu.use[,aindex,drop=FALSE] -
-                   y[,1+aindex,drop=FALSE]/mu.use[,1+aindex,drop=FALSE])
+                     y[,1+aindex,drop=FALSE]/mu.use[,1+aindex,drop=FALSE])
             }
-            (if( .reverse) -w  else w) * dcump.deta * answer.matrix 
+            (if( .reverse) -w  else w) * dcump.deta * resmat 
         } else {
             cump = eta2theta(eta, .link, earg= .earg)
             dcump.deta = dtheta.deta(cump, .link, earg= .earg)
@@ -744,8 +795,8 @@ cumulative = function(link="logit", earg = list(),
 
 
 
-acat = function(link="loge", earg = list(),
-                parallel=FALSE, reverse=FALSE, zero=NULL)
+ acat = function(link="loge", earg = list(),
+                 parallel=FALSE, reverse=FALSE, zero=NULL)
 {
     if(mode(link) != "character" && mode(link) != "name")
         link = as.character(substitute(link))
@@ -811,8 +862,9 @@ acat = function(link="loge", earg = list(),
                   .link, earg= .earg )
     }, list( .earg=earg, .link=link, .reverse=reverse) )),
     loglikelihood= function(mu, y, w, residuals = FALSE, eta, extra=NULL)
-        if(residuals) stop("loglikelihood residuals not implemented yet") else
-        sum(w * y * log(mu)), 
+        if(residuals) stop("loglikelihood residuals not implemented yet") else {
+            sum(dmultinomial(x=w*y, size=w, prob=mu, log=TRUE, docheck=FALSE))
+        },
     vfamily=c("acat", "vcategorical"),
     deriv=eval(substitute(expression({
         zeta = eta2theta(eta, .link, earg= .earg )    # May be zetar
@@ -833,10 +885,10 @@ acat = function(link="loge", earg = list(),
         hess = attr(d1, "hessian") / d1
 
         if(M>1)
-        for(j in 1:(M-1)) 
-            for(k in (j+1):M) 
-                wz[,iam(j,k,M)] = (hess[,j,k] - score[,j] * score[,k]) * 
-                    dzeta.deta[,j] * dzeta.deta[,k]
+            for(jay in 1:(M-1)) 
+                for(kay in (jay+1):M) 
+                    wz[,iam(jay,kay,M)] = (hess[,jay,kay] - score[,jay] *
+                        score[,kay]) * dzeta.deta[,jay] * dzeta.deta[,kay]
         if( .reverse ) {
             cump = tapplymat1(mu, "cumsum")
             wz[,1:M] = (cump[,1:M]/zeta^2 - score^2) * dzeta.deta^2 
@@ -852,8 +904,8 @@ acat.deriv = function(zeta, reverse, M, n)
 {
 
     alltxt = NULL
-    for(i in 1:M) {
-        index = if(reverse) i:M else 1:i
+    for(ii in 1:M) {
+        index = if(reverse) ii:M else 1:ii
         vars = paste("zeta", index, sep="")
         txt = paste(vars, collapse="*")
         alltxt = c(alltxt, txt) 
@@ -866,8 +918,8 @@ acat.deriv = function(zeta, reverse, M, n)
     d1 = deriv3(txt, allvars, hessian=TRUE)  # deriv3() computes the Hessian
 
     zeta = as.matrix(zeta)
-    for(i in 1:M)
-        assign(paste("zeta", i, sep=""), zeta[,i])
+    for(ii in 1:M)
+        assign(paste("zeta", ii, sep=""), zeta[,ii])
 
     ans = eval(d1)
     ans
@@ -876,17 +928,17 @@ acat.deriv = function(zeta, reverse, M, n)
 
 
 
-brat = function(refgp="last",
+ brat = function(refgp="last",
                  refvalue = 1,
                  init.alpha = 1)
 {
     if(!is.Numeric(init.alpha, posit=TRUE))
-        stop("\"init.alpha\" must contain positive values only")
+        stop("'init.alpha' must contain positive values only")
     if(!is.Numeric(refvalue, allow=1, posit=TRUE))
-        stop("\"refvalue\" must be a single positive value")
+        stop("'refvalue' must be a single positive value")
     if(!is.character(refgp) &&
        !is.Numeric(refgp, allow=1, integer=TRUE, posit=TRUE))
-        stop("\"refgp\" must be a single positive integer")
+        stop("'refgp' must be a single positive integer")
 
     new("vglmff",
     blurb=c(paste("Bradley-Terry model (without ties)\n\n"), 
@@ -899,7 +951,7 @@ brat = function(refgp="last",
 
         try.index = 1:400
         M = (1:length(try.index))[(try.index+1)*(try.index) == ncol(y)]
-        if(!is.finite(M)) stop("can't determine M")
+        if(!is.finite(M)) stop("cannot determine 'M'")
         init.alpha = matrix( rep( .init.alpha, len=M), n, M, byrow=TRUE)
         etastart = matrix(theta2eta(init.alpha, "loge", earg=list()), n, M, byrow=TRUE)
         refgp = .refgp
@@ -930,8 +982,9 @@ brat = function(refgp="last",
         misc$refvalue = .refvalue
     }), list( .refgp=refgp, .refvalue=refvalue ))),
     loglikelihood= function(mu, y, w, residuals = FALSE, eta, extra=NULL)
-        if(residuals) stop("loglikelihood residuals not implemented yet") else
-        sum(w * y * log(mu)), 
+        if(residuals) stop("loglikelihood residuals not implemented yet") else {
+            sum(dmultinomial(x=w*y, size=w, prob=mu, log=TRUE, docheck=FALSE))
+        },
     vfamily=c("brat"),
     deriv=eval(substitute(expression({
         ans = NULL
@@ -986,14 +1039,14 @@ bratt = function(refgp="last",
                   i0 = 0.01)
 {
     if(!is.Numeric(i0, allow=1, positi=TRUE))
-        stop("\"i0\" must be a single positive value")
+        stop("'i0' must be a single positive value")
     if(!is.Numeric(init.alpha, positi=TRUE))
-        stop("\"init.alpha\" must contain positive values only")
+        stop("'init.alpha' must contain positive values only")
     if(!is.Numeric(refvalue, allow=1, positi=TRUE))
-        stop("\"refvalue\" must be a single positive value")
+        stop("'refvalue' must be a single positive value")
     if(!is.character(refgp) && 
        !is.Numeric(refgp, allow=1, integer=TRUE, positi=TRUE))
-        stop("\"refgp\" must be a single positive integer")
+        stop("'refgp' must be a single positive integer")
     new("vglmff",
     blurb=c(paste("Bradley-Terry model (with ties)\n\n"), 
            "Links:   ",
@@ -1001,7 +1054,7 @@ bratt = function(refgp="last",
     initialize=eval(substitute(expression({
         try.index = 1:400
         M = (1:length(try.index))[(try.index*(try.index-1)) == ncol(y)]
-        if(!is.Numeric(M, allow=1, integ=TRUE)) stop("can't determine M")
+        if(!is.Numeric(M, allow=1, integ=TRUE)) stop("cannot determine 'M'")
         NCo = M  # number of contestants
 
         are.ties = attr(y, "are.ties")  # If Brat() was used
@@ -1038,7 +1091,7 @@ bratt = function(refgp="last",
         probs = qprobs = NULL
         M = ncol(eta)
         for(ii in 1:nrow(eta)) {
-            alpha = .brat.alpha(eta2theta(eta[ii,-M], "loge"), .refvalue, .refgp)
+            alpha = .brat.alpha(eta2theta(eta[ii,-M],"loge"), .refvalue, .refgp)
             alpha0 = eta2theta(eta[ii,M], "loge")
             alpha1 = alpha[extra$ybrat.indices[,"rindex"]]
             alpha2 = alpha[extra$ybrat.indices[,"cindex"]]
@@ -1059,8 +1112,9 @@ bratt = function(refgp="last",
         misc$alpha0 = alpha0
     }), list( .refgp=refgp, .refvalue=refvalue ))),
     loglikelihood= function(mu, y, w, residuals = FALSE, eta, extra=NULL)
-        if(residuals) stop("loglikelihood residuals not implemented yet") else
-        sum(w * (y * log(mu) + 0.5 * extra$ties * log(attr(mu, "probtie")))),
+        if(residuals) stop("loglikelihood residuals not implemented yet") else {
+            sum(w * (y * log(mu) + 0.5 * extra$ties * log(attr(mu, "probtie"))))
+        },
     vfamily=c("bratt"),
     deriv=eval(substitute(expression({
         ans = NULL
@@ -1069,7 +1123,7 @@ bratt = function(refgp="last",
         uindex = if( .refgp =="last") 1:(M-1) else (1:(M))[-( .refgp )]
         eta = as.matrix(eta)
         for(ii in 1:nrow(eta)) {
-            alpha = .brat.alpha(eta2theta(eta[ii,-M], "loge"), .refvalue, .refgp)
+            alpha = .brat.alpha(eta2theta(eta[ii,-M],"loge"), .refvalue, .refgp)
             alpha0 = eta2theta(eta[ii,M], "loge") # M == ncol(eta)
             ymat = InverseBrat(y[ii,], NCo=M, diag=0)
             tmat = InverseBrat(ties[ii,], NCo=M, diag=0)
@@ -1098,7 +1152,7 @@ bratt = function(refgp="last",
     weight= eval(substitute(expression({
         wz = matrix(0, n, dimm(M))   # includes diagonal
         for(ii in 1:nrow(eta)) {
-            alpha = .brat.alpha(eta2theta(eta[ii,-M], "loge"), .refvalue, .refgp)
+            alpha = .brat.alpha(eta2theta(eta[ii,-M],"loge"), .refvalue, .refgp)
             alpha0 = eta2theta(eta[ii,M], "loge") # M == ncol(eta)
             ymat = InverseBrat(y[ii,], NCo=M, diag=0)
             tmat = InverseBrat(ties[ii,], NCo=M, diag=0)
@@ -1121,17 +1175,16 @@ bratt = function(refgp="last",
                 ind5 = iam(1,1, M=NCo, both=TRUE, diag=FALSE)
                 alphajunk = c(alpha, junk=NA)
                 mat4 = cbind(uindex[ind5$row],uindex[ind5$col])
-                wz[ii,(M+1):ncol(wz)] =
-                  -(ymat[mat4] + ymat[mat4[,2:1]] + tmat[mat4]) *
-                    alphajunk[uindex[ind5$col]] * alphajunk[uindex[ind5$row]] /
-                    (alpha0 + alphajunk[uindex[ind5$row]] +
-                     alphajunk[uindex[ind5$col]])^2
+                wz[ii,(M+1):ncol(wz)] = -(ymat[mat4] + ymat[mat4[,2:1]] +
+                   tmat[mat4]) * alphajunk[uindex[ind5$col]] *
+                   alphajunk[uindex[ind5$row]] / (alpha0 +
+                   alphajunk[uindex[ind5$row]] + alphajunk[uindex[ind5$col]])^2
             }
-            for(j in 1:length(uindex)) {
-                jay = uindex[j]
+            for(sss in 1:length(uindex)) {
+                jay = uindex[sss]
                 naj = ymat[,jay] + ymat[jay,] + tmat[,jay]
                 Daj = alpha[jay] + alpha + alpha0
-                wz[ii,iam(j, NCo, M=NCo, diag=TRUE)] = 
+                wz[ii,iam(sss, NCo, M=NCo, diag=TRUE)] = 
                     -alpha[jay] * alpha0 * sum(naj / Daj^2)
             }
         }
@@ -1151,7 +1204,7 @@ bratt = function(refgp="last",
 
 .brat.indices = function(NCo, are.ties=FALSE) {
     if(!is.Numeric(NCo, allow=1, integ=TRUE) || NCo < 2)
-        stop("bad input for NCo")
+        stop("bad input for 'NCo'")
     m = diag(NCo)
     if(are.ties) {
         cbind(rindex=row(m)[col(m) < row(m)], cindex=col(m)[col(m) < row(m)])
@@ -1165,8 +1218,8 @@ Brat = function(mat, ties=0*mat, string=c(" > "," == ")) {
     callit = if(length(names(allargs))) names(allargs) else
         as.character(1:length(allargs))
     ans = ans.ties = NULL
-    for(i in 1:length(allargs)) {
-        m = allargs[[i]]
+    for(ii in 1:length(allargs)) {
+        m = allargs[[ii]]
         if(!is.matrix(m) || dim(m)[1] != dim(m)[2]) 
             stop("m must be a square matrix")
 
@@ -1207,19 +1260,20 @@ InverseBrat = function(yvec, NCo=
     yvec = c(yvec)
     ptr = 1
     for(mul in 1:multiplicity)
-    for(i1 in 1:(NCo))
-        for(i2 in 1:(NCo))
-            if(i1 != i2) {
-                ans[i2,i1,mul] = yvec[ptr]
-                ptr = ptr + 1
-            }
+        for(i1 in 1:(NCo))
+            for(i2 in 1:(NCo))
+                if(i1 != i2) {
+                    ans[i2,i1,mul] = yvec[ptr]
+                    ptr = ptr + 1
+                }
     ans = if(multiplicity>1) ans else matrix(ans, NCo, NCo)
 
     if(is.array(yvec.orig) || is.matrix(yvec.orig)) {
         names.yvec = dimnames(yvec.orig)[[2]]
-        i = strsplit(names.yvec, string[1])
+        ii = strsplit(names.yvec, string[1])
         cal = NULL
-        for(k in c(NCo, 1:(NCo-1))) cal = c(cal, (i[[k]])[1])
+        for(kk in c(NCo, 1:(NCo-1)))
+            cal = c(cal, (ii[[kk]])[1])
         if(multiplicity>1) {
             dimnames(ans) = list(cal, cal, dimnames(yvec.orig)[[1]])
         } else 
@@ -1231,58 +1285,55 @@ InverseBrat = function(yvec, NCo=
 
 
 
-tapplymat1 <- function(mat, function.arg=c("cumsum", "diff", "cumprod"))
+tapplymat1 = function(mat, function.arg=c("cumsum", "diff", "cumprod"))
 {
 
 
     if(!missing(function.arg))
-        function.arg <- as.character(substitute(function.arg))
-    function.arg <- match.arg(function.arg, c("cumsum", "diff", "cumprod"))[1]
+        function.arg = as.character(substitute(function.arg))
+    function.arg = match.arg(function.arg, c("cumsum", "diff", "cumprod"))[1]
 
-    type <- switch(function.arg,
-        cumsum=1,
-        diff=2,
-        cumprod=3,
-        stop("function.arg not matched"))
+    type = switch(function.arg, cumsum=1, diff=2, cumprod=3,
+                  stop("function.arg not matched"))
 
     if(!is.matrix(mat))
-        mat <- as.matrix(mat)
-    nr <- nrow(mat)
-    nc <- ncol(mat)
-    fred <- dotC(name="tapplymat1", mat=as.double(mat),
-        as.integer(nr), as.integer(nc), as.integer(type))
+        mat = as.matrix(mat)
+    nr = nrow(mat)
+    nc = ncol(mat)
+    fred = dotC(name="tapplymat1", mat=as.double(mat),
+                as.integer(nr), as.integer(nc), as.integer(type))
 
-    dim(fred$mat) <- c(nr, nc)
-    dimnames(fred$mat) <- dimnames(mat)
+    dim(fred$mat) = c(nr, nc)
+    dimnames(fred$mat) = dimnames(mat)
     switch(function.arg,
-        cumsum=fred$mat,
-        diff=fred$mat[,-1,drop=FALSE],
-        cumprod=fred$mat)
+           cumsum =fred$mat,
+           diff   =fred$mat[,-1,drop=FALSE],
+           cumprod=fred$mat)
 }
 
 
 
 
-ordpoisson = function(cutpoints,
-                      countdata=FALSE, NOS=NULL, Levels=NULL,
-                      init.mu = NULL, parallel=FALSE, zero=NULL,
-                      link="loge", earg = list()) {
+ ordpoisson = function(cutpoints,
+                       countdata=FALSE, NOS=NULL, Levels=NULL,
+                       init.mu = NULL, parallel=FALSE, zero=NULL,
+                       link="loge", earg = list()) {
     if(mode(link) != "character" && mode(link) != "name")
         link = as.character(substitute(link))
     if(!is.list(earg)) earg = list()
     fcutpoints = cutpoints[is.finite(cutpoints)]
     if(!is.Numeric(fcutpoints, integ=TRUE) || any(fcutpoints < 0))
-        stop("\"cutpoints\" must have non-negative integer or Inf values only")
+        stop("'cutpoints' must have non-negative integer or Inf values only")
     if(is.finite(cutpoints[length(cutpoints)]))
         cutpoints = c(cutpoints, Inf)
 
     if(!is.logical(countdata) || length(countdata)!=1)
-        stop("\"countdata\" must be a single logical")
+        stop("'countdata' must be a single logical")
     if(countdata) {
         if(!is.Numeric(NOS, integ=TRUE, posit=TRUE))
-            stop("\"NOS\" must have integer values only")
+            stop("'NOS' must have integer values only")
         if(!is.Numeric(Levels, integ=TRUE, posit=TRUE)  || any(Levels < 2))
-            stop("\"Levels\" must have integer values (>= 2) only")
+            stop("'Levels' must have integer values (>= 2) only")
         Levels = rep(Levels, length=NOS)
     }
 
@@ -1367,16 +1418,18 @@ ordpoisson = function(cutpoints,
         }
         misc$parameters = mynames
         misc$countdata = .countdata
-        misc$true.mu <- FALSE    # $fitted is not a true mu
+        misc$true.mu = FALSE    # $fitted is not a true mu
     }), list( .link=link, .countdata = countdata, .earg= earg ))),
     loglikelihood= function(mu, y, w, residuals = FALSE, eta, extra=NULL) {
         if(residuals) stop("loglikelihood residuals not implemented yet") else {
-        probs = ordpoissonProbs(extra, mu)
-        index0 <- y == 0
-        probs[index0] = 1
-        pindex0 <- probs == 0
-        probs[pindex0] = 1
-        sum(pindex0) * (-1.0e+10) + sum(w * y * log(probs))}},
+            probs = ordpoissonProbs(extra, mu)
+            index0 = y == 0
+            probs[index0] = 1
+            pindex0 = probs == 0
+            probs[pindex0] = 1
+            sum(pindex0) * (-1.0e+10) + sum(w * y * log(probs))
+        }
+    },
     vfamily=c("ordpoisson", "vcategorical"),
     deriv=eval(substitute(expression({
         probs = ordpoissonProbs(extra, mu)
@@ -1385,20 +1438,19 @@ ordpoisson = function(cutpoints,
         cp.vector = extra$cutpoints
         NOS = extra$NOS
         Levels = extra$Levels
-        answer.matrix = matrix(0, n, M)
+        resmat = matrix(0, n, M)
         dl.dprob = y / probs.use
         dmu.deta = dtheta.deta(mu, .link, earg=.earg)
         dprob.dmu = ordpoissonProbs(extra, mu, deriv=1)
         cptr = 1
         for(iii in 1:NOS) {
             for(kkk in 1:Levels[iii]) {
-                answer.matrix[,iii] = answer.matrix[,iii] + 
-                    dl.dprob[,cptr] * dprob.dmu[,cptr]
-                cptr = cptr + 1
+               resmat[,iii] = resmat[,iii] + dl.dprob[,cptr] * dprob.dmu[,cptr]
+               cptr = cptr + 1
             }
         }
-        answer.matrix = w * answer.matrix * dmu.deta
-        answer.matrix
+        resmat = w * resmat * dmu.deta
+        resmat
     }), list( .link=link, .earg= earg, .countdata=countdata ))),
     weight= eval(substitute(expression({
         d2l.dmu2 = matrix(0, n, M)  # Diagonal matrix
@@ -1459,10 +1511,11 @@ ordpoissonProbs = function(extra, mu, deriv=0) {
 
 
 
-scumulative = function(link="logit", earg = list(),
-                       lscale="loge", escale = list(),
-                       parallel=FALSE, sparallel=TRUE, reverse=FALSE,
-                       iscale = 1)
+ if(FALSE)
+ scumulative = function(link="logit", earg = list(),
+                        lscale="loge", escale = list(),
+                        parallel=FALSE, sparallel=TRUE, reverse=FALSE,
+                        iscale = 1)
 {
     stop("sorry, not working yet")
     if(mode(link) != "character" && mode(link) != "name")
@@ -1472,7 +1525,7 @@ scumulative = function(link="logit", earg = list(),
         lscale = as.character(substitute(lscale))
     if(!is.list(escale)) escale = list()
     if(!is.Numeric(iscale, posit=TRUE))
-        stop("bad input for argument \"iscale\"")
+        stop("bad input for argument 'iscale'")
 
 
     new("vglmff",
@@ -1580,8 +1633,9 @@ scumulative = function(link="logit", earg = list(),
     }, list( .link=link, .lscale=lscale, .reverse=reverse,
              .iscale=iscale, .earg=earg, .escale=escale ))),
     loglikelihood= function(mu, y, w, residuals = FALSE, eta, extra=NULL)
-        if(residuals) stop("loglikelihood residuals not implemented yet") else
-       sum(w * y * log(mu)), 
+        if(residuals) stop("loglikelihood residuals not implemented yet") else {
+            sum(dmultinomial(x=w*y, size=w, prob=mu, log=TRUE, docheck=FALSE))
+        }, 
     vfamily=c("scumulative", "vcategorical"),
     deriv=eval(substitute(expression({
         ooz = iter %% 2
@@ -1649,6 +1703,139 @@ scumulative = function(link="logit", earg = list(),
         wz
     }), list( .link=link, .lscale=lscale, .earg=earg, .escale=escale ))))
 }
+
+
+
+
+
+margeff = function(object, subset=NULL) {
+
+    ii = ii.save = subset
+    if(!is(object, "vglm"))
+        stop("'object' is not a vglm() object")
+    if(!any(temp.logical <- is.element(c("multinomial","cumulative"),
+                                       object@family@vfamily)))
+        stop("'object' is not a 'multinomial' or 'cumulative' VGLM!")
+    model.multinomial = temp.logical[1]
+    if(is(object, "vgam"))
+        stop("'object' is a vgam() object")
+    if(length(object@control$xij))
+        stop("'object' contains 'xij' terms")
+    if(length(object@misc$form2))
+        stop("'object' contains 'form2' terms")
+
+    oassign = object@misc$orig.assign
+    if(any(unlist(lapply(oassign, length)) > 1))
+        warning("some terms in 'object' create more than one column of ",
+                "the LM design matrix")
+
+    nnn = object@misc$n
+    M = object@misc$M # ncol(B) # length(pvec) - 1
+
+
+    if(model.multinomial) {
+    rlev = object@misc$refLevel
+    cfit = coefvlm(object, matrix=TRUE)
+    B = if(!length(rlev)) {
+        cbind(cfit, 0)
+    } else {
+        if(rlev == M+1) { # Default
+            cbind(cfit, 0)
+        } else if(rlev == 1) {
+            cbind(0, cfit)
+        } else {
+            cbind(cfit[,1:(rlev-1)], 0, cfit[,rlev:M])
+        }
+    }
+    ppp   = nrow(B)
+    pvec1 = fitted(object)[ 1,]
+    colnames(B) = if(length(names(pvec1))) names(pvec1) else
+                  paste("mu", 1:(M+1), sep="")
+
+    if(is.null(ii)) {
+        BB = array(B, c(ppp, M+1, nnn))
+        pvec  = c(t(fitted(object)))
+        pvec  = rep(pvec, each=ppp)
+        temp1 = array(BB * pvec, c(ppp, M+1, nnn))
+        temp2 = aperm(temp1, c(2,1,3)) # (M+1) x ppp x nnn
+        temp2 = colSums(temp2) # ppp x nnn
+        temp2 = array(rep(temp2, each=M+1), c(M+1, ppp, nnn))
+        temp2 = aperm(temp2, c(2, 1, 3)) # ppp x (M+1) x nnn
+        temp3 = pvec
+        ans = array((BB - temp2) * temp3, c(ppp, M+1, nnn),
+                    dimnames = list(dimnames(B)[[1]],
+                    dimnames(B)[[2]], dimnames(fitted(object))[[1]]))
+        ans
+    } else
+    if(is.numeric(ii) && (length(ii) == 1)) {
+        pvec  = fitted(object)[ii,]
+        temp1 = B * matrix(pvec, ppp, M+1, byrow=TRUE)
+        temp2 = matrix(rowSums(temp1), ppp, M+1)
+        temp3 = matrix(pvec, nrow(B), M+1, byrow=TRUE)
+        (B - temp2) * temp3
+    } else {
+        if(is.logical(ii))
+            ii = (1:nnn)[ii]
+
+        ans = array(0, c(ppp, M+1, length(ii)), dimnames=list(dimnames(B)[[1]],
+                    dimnames(B)[[2]], dimnames(fitted(object)[ii,])[[1]]))
+        for(ilocal in 1:length(ii)) {
+            pvec  = fitted(object)[ii[ilocal],]
+            temp1 = B * matrix(pvec, ppp, M+1, byrow=TRUE)
+            temp2 = matrix(rowSums(temp1), ppp, M+1)
+            temp3 = matrix(pvec, nrow(B), M+1, byrow=TRUE)
+            ans[,,ilocal] = (B - temp2) * temp3
+        }
+        ans
+    }
+    } else {
+
+    if(is.logical(is.multivariateY <- object@misc$mv) && is.multivariateY)
+        stop("cannot handle cumulative(mv=TRUE)")
+    reverse = object@misc$reverse
+    linkfunctions = object@misc$link
+    all.eargs  = object@misc$earg
+    B = cfit = coefvlm(object, matrix=TRUE)
+    ppp   = nrow(B)
+
+    hdot = lpmat = kronecker(predict(object), matrix(1, ppp, 1))
+    resmat = cbind(hdot, 1)
+    for(jlocal in 1:M) {
+        Cump = eta2theta(lpmat[,jlocal], link = linkfunctions[jlocal],
+                         earg = all.eargs[[jlocal]])
+        hdot[,jlocal] = dtheta.deta(Cump, link = linkfunctions[jlocal],
+                                    earg = all.eargs[[jlocal]])
+    }
+
+    resmat[,1] = ifelse(reverse, -1, 1) * hdot[,1] * cfit[,1]
+
+    if(M > 1) {
+        resmat[,2:M] = ifelse(reverse, -1, 1) *
+                          (hdot[,(2:M)  ] * cfit[,(2:M)  ] -
+                           hdot[,(2:M)-1] * cfit[,(2:M)-1])
+    }
+
+    resmat[,M+1] = ifelse(reverse, 1, -1) * hdot[,M] * cfit[,M]
+
+    temp1 = array(resmat, c(ppp, nnn, M+1),
+                  dimnames=list(dimnames(B)[[1]], dimnames(fitted(object))[[1]],
+                                dimnames(fitted(object))[[2]]))
+    temp1 = aperm(temp1, c(1,3,2)) # ppp x (M+1) x nnn
+
+    if(is.null(ii)) {
+        return(temp1)
+    } else
+    if(is.numeric(ii) && (length(ii) == 1)) {
+        return(temp1[,,ii])
+    } else {
+        return(temp1[,,ii])
+    }
+    }
+}
+
+
+
+
 
 
 

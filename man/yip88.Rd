@@ -106,27 +106,24 @@ contains further information and examples.
 
 \examples{
 # Generate some artificial data
-n = 1000
-phi = 0.35  
-lambda = 2
-y = rzipois(n, lambda, phi)
+phi = 0.35; lambda = 2
+y = rzipois(n <- 1000, lambda, phi)
 table(y)
 
 # Two equivalent ways of fitting the same model
 fit1 = vglm(y ~ 1, yip88(n=length(y)), subset=y>0, trace=TRUE, crit="c")
 fit2 = vglm(y ~ 1, yip88, trace=TRUE, crit="c")
-true.mean = (1-phi) * lambda
-true.mean
+(true.mean = (1-phi) * lambda)
 mean(y) 
-fitted(fit1)[1:5,]
+head(fitted(fit1))
 fit1@misc$phi      # The estimate of phi
 
 # Compare the ZIP with the positive Poisson distribution 
 pp = vglm(y ~ 1, pospoisson, subset=y>0, tr=TRUE, crit="c")
 coef(pp)
 Coef(pp)
-(coef(fit1) - coef(pp))   # Same 
-((fitted(fit1) - fitted(pp))[1:5,])   # Different 
+coef(fit1) - coef(pp)            # Same 
+head(fitted(fit1) - fitted(pp))  # Different 
 
 # Another example ------------------------------
 y = 0:7    # Data from Angers and Biswas (2003)
@@ -139,7 +136,7 @@ fit3 = vglm(yy ~ 1, yip88(n=length(yy)), subset=yy>0, trace=TRUE, crit="c")
 fit3@misc$phi  # Estimate of phi (they get 0.5154 with standard error 0.0707)
 coef(fit3, matrix=TRUE)
 Coef(fit3)  # Estimate of lambda (they get 0.6997 with standard error 0.1520)
-fitted(fit3)[1:5]
+head(fitted(fit3))
 mean(yy) # compare this with fitted(fit3)
 }
 \keyword{models}

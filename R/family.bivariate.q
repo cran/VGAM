@@ -7,16 +7,20 @@
 
 
 
+
+
+
+
 bilogistic4.control <- function(save.weight=TRUE, ...)
 {
     list(save.weight=save.weight)
 }
 
-bilogistic4 = function(llocation="identity",
-                       lscale="loge",
-                       iloc1=NULL, iscale1=NULL,
-                       iloc2=NULL, iscale2=NULL,
-                       method.init=1, zero=NULL) {
+ bilogistic4 = function(llocation="identity",
+                        lscale="loge",
+                        iloc1=NULL, iscale1=NULL,
+                        iloc2=NULL, iscale2=NULL,
+                        method.init=1, zero=NULL) {
     if(mode(llocation) != "character" && mode(llocation) != "name")
         llocation = as.character(substitute(llocation))
     if(mode(lscale) != "character" && mode(lscale) != "name")
@@ -142,9 +146,9 @@ bilogistic4 = function(llocation="identity",
 
 
 rbilogis4 = function(n, loc1=0, scale1=1, loc2=0, scale2=1) {
-    if(!is.Numeric(n, posit=TRUE, allow=1, integ=TRUE)) stop("bad input for n")
-    if(!is.Numeric(scale1, posit=TRUE)) stop("bad input for \"scale1\"")
-    if(!is.Numeric(scale2, posit=TRUE)) stop("bad input for \"scale2\"")
+    if(!is.Numeric(n, posit=TRUE,allow=1,integ=TRUE)) stop("bad input for 'n'")
+    if(!is.Numeric(scale1, posit=TRUE)) stop("bad input for 'scale1'")
+    if(!is.Numeric(scale2, posit=TRUE)) stop("bad input for 'scale2'")
     y1 = rlogis(n, loc=loc1, scale=scale1)
     ezedd1 = exp(-(y1-loc1)/scale1)
     y2 = loc2 - scale2 * log(1/sqrt(runif(n) / (1 + ezedd1)^2) - 1 - ezedd1)
@@ -152,35 +156,43 @@ rbilogis4 = function(n, loc1=0, scale1=1, loc2=0, scale2=1) {
 }
 
 pbilogis4 = function(q1, q2, loc1=0, scale1=1, loc2=0, scale2=1) {
-    if(!is.Numeric(q1)) stop("bad input for \"q1\"")
-    if(!is.Numeric(q2)) stop("bad input for \"q2\"")
-    if(!is.Numeric(scale1, posit=TRUE)) stop("bad input for \"scale1\"")
-    if(!is.Numeric(scale2, posit=TRUE)) stop("bad input for \"scale2\"")
+    if(!is.Numeric(q1)) stop("bad input for 'q1'")
+    if(!is.Numeric(q2)) stop("bad input for 'q2'")
+    if(!is.Numeric(scale1, posit=TRUE)) stop("bad input for 'scale1'")
+    if(!is.Numeric(scale2, posit=TRUE)) stop("bad input for 'scale2'")
 
 
     1 / (1 + exp(-(q1-loc1)/scale1) + exp(-(q2-loc2)/scale2))
 }
 
-dbilogis4 = function(x1, x2, loc1=0, scale1=1, loc2=0, scale2=1) {
-    if(!is.Numeric(x1)) stop("bad input for \"x1\"")
-    if(!is.Numeric(x2)) stop("bad input for \"x2\"")
-    if(!is.Numeric(scale1, posit=TRUE)) stop("bad input for \"scale1\"")
-    if(!is.Numeric(scale2, posit=TRUE)) stop("bad input for \"scale2\"")
-    ezedd1 = exp(-(x1-loc1)/scale1)
-    ezedd2 = exp(-(x2-loc2)/scale2)
-    2 * ezedd1 * ezedd2 / (scale1 * scale2 * (1 + ezedd1 + ezedd2)^3)
+dbilogis4 = function(x1, x2, loc1=0, scale1=1, loc2=0, scale2=1, log=FALSE) {
+    if(!is.logical(log.arg <- log))
+        stop("bad input for argument 'log'")
+    rm(log)
+
+
+    L = max(length(x1), length(x2), length(loc1), length(loc2),
+            length(scale1), length(scale2))
+    x1 = rep(x1, len=L); x2 = rep(x2, len=L);
+    loc1 = rep(loc1, len=L); loc2 = rep(loc2, len=L);
+    scale1 = rep(scale1, len=L); scale2 = rep(scale2, len=L);
+    zedd1 = (-(x1-loc1)/scale1)
+    zedd2 = (-(x2-loc2)/scale2)
+    logdensity = log(2) + log(zedd1) + log(zedd2) - log(scale1) - 
+                 log(scale1) - 3 * log1p(exp(zedd1) + exp(zedd2))
+    if(log.arg) logdensity else exp(logdensity)
 }
 
 
 
 
-freund61 = function(la="loge",
-                    lap="loge",
-                    lb="loge",
-                    lbp="loge",
-                    ia=NULL, iap=NULL, ib=NULL, ibp=NULL,
-                    independent=FALSE,
-                    zero=NULL) {
+ freund61 = function(la="loge",
+                     lap="loge",
+                     lb="loge",
+                     lbp="loge",
+                     ia=NULL, iap=NULL, ib=NULL, ibp=NULL,
+                     independent=FALSE,
+                     zero=NULL) {
     if(mode(la) != "character" && mode(la) != "name")
         la = as.character(substitute(la))
     if(mode(lap) != "character" && mode(lap) != "name")
@@ -297,13 +309,13 @@ freund61 = function(la="loge",
 
 
 
-mckaygamma2 = function(la="loge",
-                       lp="loge",
-                       lq="loge",
-                       ia=NULL,
-                       ip=1,
-                       iq=1,
-                       zero=NULL) {
+ mckaygamma2 = function(la="loge",
+                        lp="loge",
+                        lq="loge",
+                        ia=NULL,
+                        ip=1,
+                        iq=1,
+                        zero=NULL) {
     if(mode(la) != "character" && mode(la) != "name")
         la = as.character(substitute(la))
     if(mode(lp) != "character" && mode(lp) != "name")
@@ -400,8 +412,8 @@ mckaygamma2 = function(la="loge",
 
 
 rfrank = function(n, alpha) {
-    if(!is.Numeric(n, posit=TRUE, allow=1, integ=TRUE)) stop("bad input for n")
-    if(!is.Numeric(alpha, posit=TRUE)) stop("bad input for \"alpha\"")
+    if(!is.Numeric(n, posit=TRUE, allow=1, integ=TRUE)) stop("bad input for 'n'")
+    if(!is.Numeric(alpha, posit=TRUE)) stop("bad input for 'alpha'")
     alpha = rep(alpha, len=n)
     U = runif(n)
     V = runif(n)
@@ -421,9 +433,9 @@ rfrank = function(n, alpha) {
 }
 
 pfrank = function(q1, q2, alpha) {
-    if(!is.Numeric(q1)) stop("bad input for \"q1\"")
-    if(!is.Numeric(q2)) stop("bad input for \"q2\"")
-    if(!is.Numeric(alpha, posit=TRUE)) stop("bad input for \"alpha\"")
+    if(!is.Numeric(q1)) stop("bad input for 'q1'")
+    if(!is.Numeric(q2)) stop("bad input for 'q2'")
+    if(!is.Numeric(alpha, posit=TRUE)) stop("bad input for 'alpha'")
 
     L = max(length(q1), length(q2), length(alpha))
     alpha = rep(alpha, len=L)
@@ -447,25 +459,35 @@ pfrank = function(q1, q2, alpha) {
     ans
 }
 
-dfrank = function(x1, x2, alpha) {
-    if(!is.Numeric(x1)) stop("bad input for \"x1\"")
-    if(!is.Numeric(x2)) stop("bad input for \"x2\"")
-    if(!is.Numeric(alpha, posit=TRUE)) stop("bad input for \"alpha\"")
+dfrank = function(x1, x2, alpha, log = FALSE) {
+    if(!is.logical(log.arg <- log))
+        stop("bad input for argument 'log'")
+    rm(log)
+
+    if(!is.Numeric(x1)) stop("bad input for 'x1'")
+    if(!is.Numeric(x2)) stop("bad input for 'x2'")
+    if(!is.Numeric(alpha, posit=TRUE)) stop("bad input for 'alpha'")
 
     L = max(length(x1), length(x2), length(alpha))
     alpha = rep(alpha, len=L)
     x1 = rep(x1, len=L)
     x2 = rep(x2, len=L)
 
-    temp = (alpha-1) + (alpha^x1 - 1) * (alpha^x2 - 1)
-    index = (abs(alpha-1) < .Machine$double.eps)
-    ans = x1
-    if(any(!index))
-        ans[!index] = (alpha[!index]-1) * log(alpha[!index]) *
-            (alpha[!index])^(x1[!index]+x2[!index]) / (temp[!index])^2
-    ans[x1<=0 | x2<=0 | x1>=1 | x2>=1] = 0
-    ans[index] = 1
-    ans
+    if(log.arg) {
+        denom = alpha-1 + (alpha^x1 -1) * (alpha^x2 -1)
+        denom = abs(denom)  # Needed; Genest (1987) uses this too, eqn (4.1)
+        log((alpha-1) * log(alpha)) + (x1+x2)*log(alpha) - 2 * log(denom)
+    } else {
+        temp = (alpha-1) + (alpha^x1 - 1) * (alpha^x2 - 1)
+        index = (abs(alpha-1) < .Machine$double.eps)
+        ans = x1
+        if(any(!index))
+            ans[!index] = (alpha[!index]-1) * log(alpha[!index]) *
+                (alpha[!index])^(x1[!index]+x2[!index]) / (temp[!index])^2
+        ans[x1<=0 | x2<=0 | x1>=1 | x2>=1] = 0
+        ans[index] = 1
+        ans
+    }
 }
 
 
@@ -478,11 +500,11 @@ frank.control <- function(save.weight=TRUE, ...)
 
 
 
-frank = function(lapar="loge", eapar=list(), iapar=2, nsimEIM=250) {
+ frank = function(lapar="loge", eapar=list(), iapar=2, nsimEIM=250) {
     if(mode(lapar) != "character" && mode(lapar) != "name")
         lapar = as.character(substitute(lapar))
     if(!is.Numeric(iapar, positive = TRUE))
-        stop("\"iapar\" must be positive")
+        stop("'iapar' must be positive")
     if(!is.list(eapar)) eapar = list()
     if(length(nsimEIM) &&
        (!is.Numeric(nsimEIM, allow=1, integ=TRUE) || nsimEIM <= 50))
@@ -523,10 +545,7 @@ frank = function(lapar="loge", eapar=list(), iapar=2, nsimEIM=250) {
             function(mu, y, w, residuals = FALSE, eta, extra=NULL) {
         apar = eta2theta(eta, .lapar, earg= .eapar )
         if(residuals) stop("loglikelihood residuals not implemented yet") else {
-            denom = apar-1 + (apar^y[,1] -1) * (apar^y[,2] -1)
-            denom = abs(denom)  # Needed; Genest (1987) uses this too, eqn (4.1)
-            sum(w * (log((apar-1) * log(apar)) + (y[,1]+y[,2])*log(apar) -
-                    2 * log(denom)))
+            sum(w * dfrank(x1=y[,1], x2=y[,2], alpha=apar, log = TRUE))
         }
     }, list(.lapar=lapar, .eapar=eapar ))),
     vfamily=c("frank"),
@@ -593,11 +612,11 @@ frank = function(lapar="loge", eapar=list(), iapar=2, nsimEIM=250) {
 
 
 
-gammahyp = function(ltheta="loge", itheta=NULL, expected=FALSE) {
+ gammahyp = function(ltheta="loge", itheta=NULL, expected=FALSE) {
     if(mode(ltheta) != "character" && mode(ltheta) != "name")
         ltheta = as.character(substitute(ltheta))
     if(!is.logical(expected) || length(expected)!=1)
-        stop("\"expected\" must be a single logical")
+        stop("'expected' must be a single logical")
 
     new("vglmff",
     blurb=c("Gamma Hyperbola Bivariate Distribution\n",
@@ -654,8 +673,8 @@ gammahyp = function(ltheta="loge", itheta=NULL, expected=FALSE) {
 
 
 
-morgenstern = function(lapar="rhobit", earg=list(), iapar=NULL, tola0=0.01,
-                       method.init=1) {
+ morgenstern = function(lapar="rhobit", earg=list(), iapar=NULL, tola0=0.01,
+                        method.init=1) {
     if(mode(lapar) != "character" && mode(lapar) != "name")
         lapar = as.character(substitute(lapar))
     if(!is.list(earg)) earg = list()
@@ -667,7 +686,7 @@ morgenstern = function(lapar="rhobit", earg=list(), iapar=NULL, tola0=0.01,
         stop("'iapar' must not be between -tola0 and tola0") 
     if(!is.Numeric(method.init, allow=1, integ=TRUE, positi=TRUE) ||
        method.init > 2.5)
-        stop("argument \"method.init\" must be 1 or 2")
+        stop("argument 'method.init' must be 1 or 2")
 
     new("vglmff",
     blurb=c("Morgenstern's Bivariate Exponential Distribution\n",
@@ -749,9 +768,9 @@ morgenstern = function(lapar="rhobit", earg=list(), iapar=NULL, tola0=0.01,
 
 
 rfgm = function(n, alpha) {
-    if(!is.Numeric(n, posit=TRUE, allow=1, integ=TRUE)) stop("bad input for n")
-    if(!is.Numeric(alpha)) stop("bad input for \"alpha\"")
-    if(any(abs(alpha) > 1)) stop("\"alpha\" values out of range")
+    if(!is.Numeric(n, posit=TRUE, allow=1, integ=TRUE)) stop("bad input for 'n'")
+    if(!is.Numeric(alpha)) stop("bad input for 'alpha'")
+    if(any(abs(alpha) > 1)) stop("'alpha' values out of range")
 
     y1 = V1 = runif(n)
     V2 = runif(n)
@@ -767,8 +786,8 @@ rfgm = function(n, alpha) {
 dfgm = function(x1, x2, alpha, log=FALSE) {
     log.arg = log
     rm(log)
-    if(!is.Numeric(alpha)) stop("bad input for \"alpha\"")
-    if(any(abs(alpha) > 1)) stop("\"alpha\" values out of range")
+    if(!is.Numeric(alpha)) stop("bad input for 'alpha'")
+    if(any(abs(alpha) > 1)) stop("'alpha' values out of range")
     if( !is.logical( log.arg ) || length( log.arg )!=1 )
         stop("bad input for 'log'")
 
@@ -792,10 +811,10 @@ dfgm = function(x1, x2, alpha, log=FALSE) {
 
 
 pfgm = function(q1, q2, alpha) {
-    if(!is.Numeric(q1)) stop("bad input for \"q1\"")
-    if(!is.Numeric(q2)) stop("bad input for \"q2\"")
-    if(!is.Numeric(alpha)) stop("bad input for \"alpha\"")
-    if(any(abs(alpha) > 1)) stop("\"alpha\" values out of range")
+    if(!is.Numeric(q1)) stop("bad input for 'q1'")
+    if(!is.Numeric(q2)) stop("bad input for 'q2'")
+    if(!is.Numeric(alpha)) stop("bad input for 'alpha'")
+    if(any(abs(alpha) > 1)) stop("'alpha' values out of range")
 
     L = max(length(q1), length(q2), length(alpha))
     if(length(q1) != L)  q1 = rep(q1, len=L)
@@ -825,14 +844,14 @@ fgm.control <- function(save.weight=TRUE, ...)
 
 
 
-fgm = function(lapar="rhobit", earg=list(), iapar=NULL,
-               method.init=1, nsimEIM=200) {
+ fgm = function(lapar="rhobit", earg=list(), iapar=NULL,
+                method.init=1, nsimEIM=200) {
     if(mode(lapar) != "character" && mode(lapar) != "name")
         lapar = as.character(substitute(lapar))
     if(!is.list(earg)) earg = list()
     if(!is.Numeric(method.init, allow=1, integ=TRUE, positi=TRUE) ||
        method.init > 2.5)
-        stop("argument \"method.init\" must be 1 or 2")
+        stop("argument 'method.init' must be 1 or 2")
     if(!length(nsimEIM) ||
        (!is.Numeric(nsimEIM, allow=1, integ=TRUE) || nsimEIM <= 50))
         stop("'nsimEIM' should be an integer greater than 50")
@@ -885,16 +904,7 @@ fgm = function(lapar="rhobit", earg=list(), iapar=NULL,
             function(mu, y, w, residuals = FALSE, eta, extra=NULL) {
         alpha = eta2theta(eta, .lapar, earg= .earg )
         if(residuals) stop("loglikelihood residuals not implemented yet") else {
-            denm1 = alpha * (1 - 2 * y[,1])  * (1 - 2 * y[,2])
-            denom = 1 + denm1
-            mytolerance = 0.0  # .Machine$double.eps
-            bad <- (denom <= mytolerance)   # Range violation
-            if(any(bad)) {
-                cat("There are some range violations in @loglikelihood\n")
-                if(exists("flush.console")) flush.console()
-            }
-            sum(w[bad]) * (-1.0e10) + 
-            sum(w[!bad] * log1p(denm1[!bad]))
+            sum(w * dfgm(x1=y[,1], x2=y[,2], alpha=alpha, log=TRUE))
         }
     }, list( .lapar=lapar, .earg=earg ))),
     vfamily=c("fgm"),
@@ -907,7 +917,7 @@ fgm = function(lapar="rhobit", earg=list(), iapar=NULL,
             bad <- (denom <= mytolerance)   # Range violation
             if(any(bad)) {
                 cat("There are some range violations in @deriv\n")
-                if(exists("flush.console")) flush.console()
+                flush.console()
                 denom[bad] = 2 * mytolerance
             }
         dl.dalpha = numerator / denom
@@ -925,7 +935,7 @@ fgm = function(lapar="rhobit", earg=list(), iapar=NULL,
             run.var = ((ii-1) * run.var + temp3^2) / ii
         }
         wz = if(intercept.only)
-            matrix(apply(cbind(run.var), 2, mean),
+            matrix(colMeans(cbind(run.var)),
                    n, dimm(M), byrow=TRUE) else cbind(run.var)
 
         wz = wz * dalpha.deta^2
@@ -935,7 +945,8 @@ fgm = function(lapar="rhobit", earg=list(), iapar=NULL,
 
 
 
-gumbelIbiv = function(lapar="identity", earg=list(), iapar=NULL, method.init=1) {
+ gumbelIbiv = function(lapar="identity", earg=list(),
+                       iapar=NULL, method.init=1) {
     if(mode(lapar) != "character" && mode(lapar) != "name")
         lapar = as.character(substitute(lapar))
     if(!is.list(earg)) earg = list()
@@ -943,7 +954,7 @@ gumbelIbiv = function(lapar="identity", earg=list(), iapar=NULL, method.init=1) 
         stop("'iapar' must be a single number")
     if(!is.Numeric(method.init, allow=1, integ=TRUE, positi=TRUE) ||
        method.init > 2.5)
-        stop("argument \"method.init\" must be 1 or 2")
+        stop("argument 'method.init' must be 1 or 2")
 
     new("vglmff",
     blurb=c("Gumbel's Type I Bivariate Distribution\n",
@@ -986,7 +997,7 @@ gumbelIbiv = function(lapar="identity", earg=list(), iapar=NULL, method.init=1) 
             bad <- (denom <= mytolerance)   # Range violation
             if(any(bad)) {
                 cat("There are some range violations in @deriv\n")
-                if(exists("flush.console")) flush.console()
+                flush.console()
             }
             sum(bad) * (-1.0e10) + 
             sum(w[!bad] * (-y[!bad,1] - y[!bad,2] +
@@ -1028,9 +1039,9 @@ gumbelIbiv = function(lapar="identity", earg=list(), iapar=NULL, method.init=1) 
 
 
 pplack = function(q1, q2, oratio) {
-    if(!is.Numeric(q1)) stop("bad input for \"q1\"")
-    if(!is.Numeric(q2)) stop("bad input for \"q2\"")
-    if(!is.Numeric(oratio, posit=TRUE)) stop("bad input for \"oratio\"")
+    if(!is.Numeric(q1)) stop("bad input for 'q1'")
+    if(!is.Numeric(q2)) stop("bad input for 'q2'")
+    if(!is.Numeric(oratio, posit=TRUE)) stop("bad input for 'oratio'")
 
     L = max(length(q1), length(q2), length(oratio))
     if(length(q1) != L)  q1 = rep(q1, len=L)
@@ -1060,8 +1071,8 @@ pplack = function(q1, q2, oratio) {
 
 
 rplack = function(n, oratio) {
-    if(!is.Numeric(n, posit=TRUE, allow=1, integ=TRUE)) stop("bad input for n")
-    if(!is.Numeric(oratio, posit=TRUE)) stop("bad input for \"oratio\"")
+    if(!is.Numeric(n, posit=TRUE, allow=1, integ=TRUE)) stop("bad input for 'n'")
+    if(!is.Numeric(oratio, posit=TRUE)) stop("bad input for 'oratio'")
     if(length(oratio) != n)  oratio = rep(oratio, len=n)
 
     y1 = U = runif(n)
@@ -1079,7 +1090,7 @@ rplack = function(n, oratio) {
 dplack = function(x1, x2, oratio, log=FALSE) {
     log.arg = log
     rm(log)
-    if(!is.Numeric(oratio, posit=TRUE)) stop("bad input for \"oratio\"")
+    if(!is.Numeric(oratio, posit=TRUE)) stop("bad input for 'oratio'")
     L = max(length(x1), length(x2), length(oratio))
     if(length(x1) != L)  x1 = rep(x1, len=L)
     if(length(x2) != L)  x2 = rep(x2, len=L)
@@ -1109,8 +1120,8 @@ plackett.control <- function(save.weight=TRUE, ...)
 
 
 
-plackett = function(link="loge", earg=list(),
-                    ioratio=NULL, method.init=1, nsimEIM=200) {
+ plackett = function(link="loge", earg=list(),
+                     ioratio=NULL, method.init=1, nsimEIM=200) {
     if(mode(link) != "character" && mode(link) != "name")
         link = as.character(substitute(link))
     if(!is.list(earg)) earg = list()
@@ -1118,7 +1129,6 @@ plackett = function(link="loge", earg=list(),
         stop("'ioratio' must be positive")
     if(!is.Numeric(method.init, allow=1, integ=TRUE, posit=TRUE) ||
        method.init > 2) stop("method.init must be 1 or 2")
-
 
     new("vglmff",
     blurb=c("Plackett Distribution\n",
@@ -1171,10 +1181,7 @@ plackett = function(link="loge", earg=list(),
             function(mu, y, w, residuals = FALSE, eta, extra=NULL) {
         oratio = eta2theta(eta, .link, earg= .earg )
         if(residuals) stop("loglikelihood residuals not implemented yet") else {
-            y1 = y[,1]
-            y2 = y[,2]
-            sum(w * (log(oratio) + log1p((oratio-1) * (y1+y2-2*y1*y2)) - 1.5 *
-                log((1 + (y1+y2)*(oratio-1))^2 - 4*oratio*(oratio-1)*y1*y2)))
+            sum(w * dplack(x1= y[,1], x2= y[,2], oratio=oratio, log=TRUE))
         }
     }, list( .link=link, .earg=earg ))),
     vfamily=c("plackett"),
@@ -1209,7 +1216,7 @@ plackett = function(link="loge", earg=list(),
             run.var = ((ii-1) * run.var + temp3^2) / ii
         }
         wz = if(intercept.only)
-            matrix(apply(cbind(run.var), 2, mean),
+            matrix(colMeans(cbind(run.var)),
                    n, dimm(M), byrow=TRUE) else cbind(run.var)
 
         wz = wz * doratio.deta^2
@@ -1223,10 +1230,10 @@ plackett = function(link="loge", earg=list(),
 damh = function(x1, x2, alpha, log=FALSE) {
     log.arg = log
     rm(log)
-    if(!is.Numeric(x1)) stop("bad input for \"x1\"")
-    if(!is.Numeric(x2)) stop("bad input for \"x2\"")
-    if(!is.Numeric(alpha)) stop("bad input for \"alpha\"")
-    if(any(abs(alpha) > 1)) stop("\"alpha\" values out of range")
+    if(!is.Numeric(x1)) stop("bad input for 'x1'")
+    if(!is.Numeric(x2)) stop("bad input for 'x2'")
+    if(!is.Numeric(alpha)) stop("bad input for 'alpha'")
+    if(any(abs(alpha) > 1)) stop("'alpha' values out of range")
     L = max(length(x1), length(x2), length(alpha))
     alpha = rep(alpha, len=L)
     x1 = rep(x1, len=L)
@@ -1243,10 +1250,10 @@ damh = function(x1, x2, alpha, log=FALSE) {
 }
 
 pamh = function(q1, q2, alpha) {
-    if(!is.Numeric(q1)) stop("bad input for \"q1\"")
-    if(!is.Numeric(q2)) stop("bad input for \"q2\"")
-    if(!is.Numeric(alpha)) stop("bad input for \"alpha\"")
-    if(any(abs(alpha) > 1)) stop("\"alpha\" values out of range")
+    if(!is.Numeric(q1)) stop("bad input for 'q1'")
+    if(!is.Numeric(q2)) stop("bad input for 'q2'")
+    if(!is.Numeric(alpha)) stop("bad input for 'alpha'")
+    if(any(abs(alpha) > 1)) stop("'alpha' values out of range")
 
     L = max(length(q1), length(q2), length(alpha))
     if(length(q1) != L)  q1 = rep(q1, len=L)
@@ -1268,9 +1275,9 @@ pamh = function(q1, q2, alpha) {
 }
 
 ramh = function(n, alpha) {
-    if(!is.Numeric(n, posit=TRUE, allow=1, integ=TRUE)) stop("bad input for n")
-    if(!is.Numeric(alpha)) stop("bad input for \"alpha\"")
-    if(any(abs(alpha) > 1)) stop("\"alpha\" values out of range")
+    if(!is.Numeric(n, posit=TRUE, allow=1, integ=TRUE)) stop("bad input for 'n'")
+    if(!is.Numeric(alpha)) stop("bad input for 'alpha'")
+    if(any(abs(alpha) > 1)) stop("'alpha' values out of range")
 
     U1 = V1 = runif(n)
     V2 = runif(n)
@@ -1286,8 +1293,8 @@ amh.control <- function(save.weight=TRUE, ...)
     list(save.weight=save.weight)
 }
 
-amh = function(lalpha="rhobit", ealpha=list(), ialpha=NULL,
-               method.init=1, nsimEIM=250)
+ amh = function(lalpha="rhobit", ealpha=list(), ialpha=NULL,
+                method.init=1, nsimEIM=250)
 {
     if(mode(lalpha) != "character" && mode(lalpha) != "name")
       lalpha = as.character(substitute(lalpha))
@@ -1343,8 +1350,7 @@ amh = function(lalpha="rhobit", ealpha=list(), ialpha=NULL,
             function(mu, y, w, residuals = FALSE, eta, extra=NULL) {
         alpha = eta2theta(eta, .lalpha, earg= .ealpha )
         if(residuals) stop("loglikelihood residuals not implemented yet") else {
-            denom = 1 - alpha*(1-y[,1])*(1-y[,2])
-            sum(w * (log1p(-alpha+2*alpha*y[,1]*y[,2]/denom) - 2*log(denom)))
+            sum(w * damh(x1=y[,1], x2=y[,2], alpha=alpha, log=TRUE))
         }
     }, list( .lalpha=lalpha, .earg=ealpha ))),
     vfamily=c("amh"),
@@ -1377,7 +1383,7 @@ amh = function(lalpha="rhobit", ealpha=list(), ialpha=NULL,
             run.var = ((ii-1) * run.var + temp3^2) / ii
         }
         wz = if(intercept.only)
-            matrix(apply(cbind(run.var), 2, mean),
+            matrix(colMeans(cbind(run.var)),
                    n, dimm(M), byrow=TRUE) else cbind(run.var)
         wz = wz * dalpha.deta^2
         w * wz

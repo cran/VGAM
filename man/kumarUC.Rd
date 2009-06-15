@@ -11,7 +11,7 @@
 
 }
 \usage{
-dkumar(x, shape1, shape2)
+dkumar(x, shape1, shape2, log=FALSE)
 pkumar(q, shape1, shape2)
 qkumar(p, shape1, shape2)
 rkumar(n, shape1, shape2)
@@ -20,8 +20,14 @@ rkumar(n, shape1, shape2)
   \item{x, q}{vector of quantiles.}
   \item{p}{vector of probabilities.}
   \item{n}{number of observations.
-    Must be a positive integer of length 1.}
+    If \code{length(n) > 1} then the length is taken to be the number required. }
   \item{shape1, shape2}{ positive shape parameters. }
+  \item{log}{
+  Logical.
+  If \code{log=TRUE} then the logarithm of the density is returned.
+
+  }
+
 }
 \value{
   \code{dkumar} gives the density,
@@ -44,17 +50,15 @@ rkumar(n, shape1, shape2)
 }
 \examples{
 \dontrun{
-# shape1 = shape2 = 0.5;
-shape1 = 2; shape2 = 2;
-nn = 201
-x = seq(0.01, 0.99, len=nn)
+shape1 = 2; shape2 = 2; nn = 201; # shape1 = shape2 = 0.5;
+x = seq(0.0 , 1.00, len=nn)
+x = seq(-0.05, 1.05, len=nn)
 plot(x, dkumar(x, shape1, shape2), type="l", las=1, ylim=c(0,1.5),
      ylab=paste("fkumar(shape1=", shape1, ", shape2=", shape2, ")"),
-     col="blue",
+     col="blue", cex.main=0.8,
      main="Blue is density, red is cumulative distribution function",
      sub="Purple lines are the 10,20,...,90 percentiles")
 lines(x, pkumar(x, shape1, shape2), col="red")
-abline(h=0)
 probs = seq(0.1, 0.9, by=0.1)
 Q = qkumar(probs, shape1, shape2)
 lines(Q, dkumar(Q, shape1, shape2), col="purple", lty=3, type="h")

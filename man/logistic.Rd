@@ -120,7 +120,10 @@ A note on Deriving the Information Matrix for a Logistic Distribution,
 
 \seealso{
   \code{\link[stats:Logistic]{rlogis}},
+  \code{\link{logit}},
+  \code{\link{cumulative}},
   \code{\link{bilogistic4}}.
+
 }
 \examples{
 # location unknown, scale known

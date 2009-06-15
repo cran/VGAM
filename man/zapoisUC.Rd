@@ -21,7 +21,8 @@ rzapois(n, lambda, p0 = 0)
 \arguments{
   \item{x, q}{vector of quantiles.}
   \item{p}{vector of probabilities.}
-  \item{n}{number of observations. Must be a single positive integer. }
+  \item{n}{number of observations.
+  If \code{length(n) > 1} then the length is taken to be the number required. }
   \item{lambda}{ Vector of positive means. }
   \item{p0}{
   Probability of zero, called \eqn{p0}.

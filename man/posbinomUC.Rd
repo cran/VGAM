@@ -21,7 +21,8 @@ rposbinom(n, size, prob)
 \arguments{
   \item{x, q}{vector of quantiles.}
   \item{p}{vector of probabilities.}
-  \item{n}{number of observations. Must be a single positive integer. }
+  \item{n}{number of observations. 
+  If \code{length(n) > 1} then the length is taken to be the number required. }
   \item{size}{number of trials. It is the \eqn{N} symbol in the formula
    given in \code{\link{posbinomial}}. }
   \item{prob}{probability of success on each trial. }

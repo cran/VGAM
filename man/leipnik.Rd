@@ -98,7 +98,7 @@ y = rnorm(n=2000, mean=0.5, sd=0.1)  # Not good data
 fit = vglm(y ~ 1, leipnik(ilambda=1), tr=TRUE, checkwz=FALSE)
 fit = vglm(y ~ 1, leipnik(ilambda=1,llam=logoff, elam=list(offset=1)),
            trace=TRUE, cri="coef")
-fitted(fit)[1:5]
+head(fitted(fit))
 mean(y)
 summary(fit)
 coef(fit, matrix=TRUE)

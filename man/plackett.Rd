@@ -107,7 +107,7 @@ fit = vglm(ymat ~ 1, fam=plackett, trace=TRUE)
 coef(fit, matrix=TRUE)
 Coef(fit)
 vcov(fit)
-fitted(fit)[1:5,]
+head(fitted(fit))
 summary(fit)
 }
 \keyword{models}

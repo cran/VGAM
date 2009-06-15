@@ -33,9 +33,9 @@ mckaygamma2(la = "loge", lp = "loge", lq = "loge",
 }
 \details{
   The joint probability density function is given by
-  \deqn{f(y_1,y_2) = a^{p+q} y_1^{p-1} (y_2-y_1)^{q-1}
+  \deqn{f(y_1,y_2;a,p,q) = a^{p+q} y_1^{p-1} (y_2-y_1)^{q-1}
     \exp(-a y_2) / [\Gamma(p) \Gamma(q)]}{%
-    f(y1,y2) = a^(p+q) y1^(p-1) (y2-y1)^(q-1)
+    f(y1,y2;a,p,q) = a^(p+q) y1^(p-1) (y2-y1)^(q-1)
     exp(-a y2) / [gamma(p) gamma(q)]    }
   for \eqn{a > 0}, \eqn{p > 0}, \eqn{q > 0} and
   \eqn{0 < y_1 < y_2}{0<y1<y2}.
@@ -77,9 +77,9 @@ New York: Wiley.
 \author{ T. W. Yee }
 \note{
   The response must be a two column matrix.
-  Currently, the fitted value is a matrix with two columns; the
-  first column has values \eqn{(p+q)/a} for the mean of
-  \code{pmin(y1,y2)}, while the second column is filled with \code{NA}
+  Currently, the fitted value is a matrix with two columns;
+  the first column has values \eqn{(p+q)/a} for the mean of \code{pmin(y1,y2)},
+  while the second column is filled with \code{NA}
   for the unknown mean of \code{pmax(y1,y2)}.
   The data are sorted internally and the user need not input the
   data presorted.
@@ -98,7 +98,7 @@ fit = vglm(ymat ~ 1, fam=mckaygamma2, trace=TRUE)
 coef(fit, matrix=TRUE)
 Coef(fit)
 vcov(fit)
-fitted(fit)[1:5,]
+head(fitted(fit))
 summary(fit)
 }
 \keyword{models}

@@ -82,8 +82,8 @@ vlm <- function(formula,
         identity.wts <- FALSE
         temp = ncol(as.matrix(wz))
         if(temp < M || temp > M*(M+1)/2)
-            stop(paste("input w must have at between", M, "and",
-                       M*(M+1)/2, "columns"))
+            stop("input 'w' must have between ", M, " and ", M*(M+1)/2, 
+                 " columns")
         wz <- prior.weights * wz
     }
 
@@ -91,12 +91,12 @@ vlm <- function(formula,
     Blist <- process.constraints(constraints, x, M)
     intercept.only <- ncol(x) == 1 && dimnames(x)[[2]] == "(Intercept)"
 
-    fit <- vlm.wfit(x=x, z=y, Blist=Blist, wz=wz, U=NULL,
-                    matrix.out=FALSE, XBIG=FALSE, rss=TRUE, qr=qr.arg,
-                    x.ret=TRUE, offset = offset)
+    fit = vlm.wfit(xmat=x, z=y, Blist=Blist, wz=wz, U=NULL,
+                   matrix.out=FALSE, is.vlmX=FALSE, rss=TRUE, qr=qr.arg,
+                   x.ret=TRUE, offset = offset)
 
-    p.big <- fit$rank
-    fit$R <- fit$qr$qr[1:p.big, 1:p.big, drop=FALSE]
+    ncol_X_vlm <- fit$rank
+    fit$R <- fit$qr$qr[1:ncol_X_vlm, 1:ncol_X_vlm, drop=FALSE]
     fit$R[lower.tri(fit$R)] <- 0
 
 
@@ -104,26 +104,26 @@ vlm <- function(formula,
 
     fit$constraints <- Blist
 
-    dn.big <- labels(fit$xbig)
-    xn.big <- dn.big[[2]]
+    dnrow_X_vlm <- labels(fit$X_vlm)
+    xnrow_X_vlm <- dnrow_X_vlm[[2]]
     dn <- labels(x)
     xn <- dn[[2]]
-    dxbig <- as.integer(dim(fit$xbig))
-    n.big <- dxbig[[1]]
-    p.big <- dxbig[[2]]
+    dX_vlm <- as.integer(dim(fit$X_vlm))
+    nrow_X_vlm <- dX_vlm[[1]]
+    ncol_X_vlm <- dX_vlm[[2]]
 
     misc <- list(
         colnames.x = xn,
-        colnames.xbig = xn.big,
+        colnames.X_vlm = xnrow_X_vlm,
         function.name = function.name,
         intercept.only=intercept.only,
         predictors.names = predictors.names,
         M = M,
         n = nrow(x),
-        n.big = n.big,
+        nrow_X_vlm = nrow_X_vlm,
         orig.assign = attr(x, "assign"),
         p = ncol(x),
-        p.big = p.big,
+        ncol_X_vlm = ncol_X_vlm,
         ynames = dimnames(y)[[2]])
     
     fit$misc <- misc

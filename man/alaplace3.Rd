@@ -41,12 +41,14 @@ alaplace3(llocation = "identity", lscale = "loge", lkappa = "loge",
   \item{llocation, lscale, lkappa}{ Character.
   Parameter link functions for
   location parameter \eqn{\xi}{xi},
-  scale parameter \eqn{b},
+  scale parameter \eqn{\sigma}{sigma},
   asymmetry parameter \eqn{\kappa}{kappa}.
   See \code{\link{Links}} for more choices.
   For example, the argument \code{llocation} can help handle
   count data by restricting the quantiles to be positive
   (use \code{llocation="loge"}).
+  However, \code{llocation} is best left alone since the theory
+  only works properly with the identity link.
 
   }
   \item{elocation, escale, ekappa}{
@@ -61,8 +63,8 @@ alaplace3(llocation = "identity", lscale = "loge", lkappa = "loge",
   The default is to choose the value internally.
   }
   \item{parallelLocation}{ Logical.
-    Should the quantiles be parallel on the transformed scale (argument
-    \code{llocation})?
+    Should the quantiles be parallel on the transformed scale
+    (argument \code{llocation})?
     Assigning this argument to \code{TRUE} circumvents the
     seriously embarrassing quantile crossing problem.
 
@@ -95,7 +97,7 @@ alaplace3(llocation = "identity", lscale = "loge", lkappa = "loge",
 
   }
   \item{Scale.arg}{
-  The value of the scale parameter \eqn{b}.
+  The value of the scale parameter \eqn{\sigma}{sigma}.
   This argument may be used to compute quantiles at different
   \eqn{\tau}{tau} values from an existing fitted \code{alaplace2()} model
   (practical only if it has a single value).
@@ -116,7 +118,7 @@ alaplace3(llocation = "identity", lscale = "loge", lkappa = "loge",
   \item{zero}{
     See \code{\link{CommonVGAMffArguments}} for more information.
     Where possible,
-    the default is to model all the \eqn{b} and \eqn{\kappa}{kappa}
+    the default is to model all the \eqn{\sigma}{sigma} and \eqn{\kappa}{kappa}
     as an intercept-only term.
 
   }
@@ -126,29 +128,29 @@ alaplace3(llocation = "identity", lscale = "loge", lkappa = "loge",
   Laplace distributions (ALDs) suitable for quantile regression.
   Kotz et al. (2001) call it \emph{the} ALD.
   Its density function is
-  \deqn{f(y;\xi,b,\kappa) = \frac{\sqrt{2}}{b} \,
+  \deqn{f(y;\xi,\sigma,\kappa) = \frac{\sqrt{2}}{\sigma} \,
     \frac{\kappa}{1 + \kappa^2} \,
-    \exp \left( - \frac{\sqrt{2}}{b \, \kappa} |y - \xi |
+    \exp \left( - \frac{\sqrt{2}}{\sigma \, \kappa} |y - \xi |
                     \right) }{%
-     f(y) =  (sqrt(2)/b) * (kappa/(1+ \kappa^2)) * exp( -
-     (sqrt(2) / (b * kappa)) * |y-xi| ) }
+     f(y;xi,sigma,kappa) =  (sqrt(2)/sigma) * (kappa/(1+ \kappa^2)) *
+         exp( -(sqrt(2) / (sigma * kappa)) * |y-xi| ) }
    for \eqn{y \leq \xi}{y <= xi}, and
-  \deqn{f(y;\xi,b,\kappa) = \frac{\sqrt{2}}{b} \,
+  \deqn{f(y;\xi,\sigma,\kappa) = \frac{\sqrt{2}}{\sigma} \,
     \frac{\kappa}{1 + \kappa^2} \,
-    \exp \left( - \frac{\sqrt{2} \, \kappa}{b} |y - \xi |
+    \exp \left( - \frac{\sqrt{2} \, \kappa}{\sigma} |y - \xi |
                     \right) }{%
-     f(y) =  (sqrt(2)/b) * (kappa/(1+ \kappa^2)) * exp( -
-     (sqrt(2) * kappa / b) * |y-xi| ) }
+     f(y;xi,sigma,kappa) =  (sqrt(2)/sigma) * (kappa/(1+ \kappa^2)) * exp( -
+     (sqrt(2) * kappa / sigma) * |y-xi| ) }
    for \eqn{y > \xi}{y > xi}.
    Here, the ranges are
-   for all real \eqn{y} and \eqn{\xi}{xi}, positive \eqn{b} and
+   for all real \eqn{y} and \eqn{\xi}{xi}, positive \eqn{\sigma}{sigma} and
    positive \eqn{\kappa}{kappa}.
    The special case \eqn{\kappa=1}{kappa=1} corresponds to the
    (symmetric) Laplace distribution of Kotz et al. (2001).
-   The mean is \eqn{\xi + b (1/\kappa - \kappa) / \sqrt{2}}{xi +
-     b * (1/kappa - kappa) / sqrt(2)}
+   The mean is \eqn{\xi + \sigma (1/\kappa - \kappa) / \sqrt{2}}{xi +
+     sigma * (1/kappa - kappa) / sqrt(2)}
    and the variance is
-   \eqn{b^2 (1 + \kappa^4) / (2  \kappa^2)}{b^2 * (1 +
+   \eqn{\sigma^2 (1 + \kappa^4) / (2  \kappa^2)}{sigma^2 * (1 +
      kappa^4) / (2 * kappa^2)}.
    The enumeration of the linear/additive predictors used here is to
    first have all the location parameters, followed by all the
@@ -157,9 +159,8 @@ alaplace3(llocation = "identity", lscale = "loge", lkappa = "loge",
 
    It is known that the maximum likelihood estimate of the
    location parameter \eqn{\xi}{xi} corresponds to the regression
-   quantile estimate
-   of the classical quantile regression approach of Koenker and Bassett
-   (1978). An important property of the ALD is that
+   quantile estimate of the classical quantile regression approach of
+   Koenker and Bassett (1978). An important property of the ALD is that
    \eqn{P(Y \leq \xi) = \tau}{P(Y <=  xi) = tau} where 
    \eqn{\tau = \kappa^2 / (1 + \kappa^2)}{tau = kappa^2 / (1 + kappa^2)}
    so that
@@ -195,8 +196,8 @@ a revisit with applications to communications,
 economics, engineering, and finance},
 Boston: Birkhauser.
 
-  Yee, T. W. (2008)
-  Quantile regression for counts and binomial proportions.
+  Yee, T. W. (2009)
+  Quantile regression for counts and proportions.
   In preparation.
 
 }
@@ -212,6 +213,13 @@ Boston: Birkhauser.
 
 }
 \note{ 
+% Commented out 20090326
+% The function \code{alaplace2()} is recommended over \code{alaplace1()}
+% for quantile regression because the solution is 
+% invariant to location and scale,
+% i.e., linear transformation of the response produces the
+% same linear transformation of the fitted quantiles.
+
   These \pkg{VGAM} family functions use Fisher scoring.
   Convergence may be slow and
   half-stepping is usual (although one can use \code{trace=TRUE} to see
@@ -230,7 +238,7 @@ Boston: Birkhauser.
   A second method for solving the noncrossing quantile problem is
   illustrated below in Example 3.
   This is called the \emph{accumulative quantile method} (AQM)
-  and details are in Yee (2008).
+  and details are in Yee (2009).
   It does not make the strong parallelism assumption.
 
   The functions \code{alaplace2()} and \code{\link{laplace}}
@@ -239,10 +247,10 @@ Boston: Birkhauser.
 }
 
 \seealso{
-  \code{\link{ralaplace}},
+  \code{\link{ralap}},
   \code{\link{laplace}},
   \code{\link{lms.bcn}},
-  \code{\link{alsqreg}}.
+  \code{\link{amlnormal}}.
 
 }
 

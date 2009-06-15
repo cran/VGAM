@@ -132,9 +132,9 @@ plot(x2, x3, col=ystar, pch=as.character(ystar))
 }
 table(ystar) / sum(table(ystar))
 fit = vglm(ystar ~ x2 + x3, fam = ordpoisson(cutpoi=fcutpts))
-fit@y[1:5,]  # This can be input if countdata=TRUE
-fitted(fit)[1:5,]
-predict(fit)[1:5,]
+head(fit@y)        # This can be input if countdata=TRUE
+head(fitted(fit))
+head(predict(fit))
 coef(fit, matrix=TRUE)
 fit@extra
 

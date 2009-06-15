@@ -7,42 +7,52 @@
 
 
 
-dkumar = function(x, shape1, shape2) {
-    ans = shape1 * shape2 * x^(shape1-1) * (1 - x^shape1)^(shape2-1)
-    ans[(x <= 0) | (x >= 1)] = 0
-    ans[(shape1 <= 0) | (shape2 <= 0)] = NA
-    ans
+
+
+
+
+dkumar = function(x, shape1, shape2, log = FALSE) {
+    if(!is.logical(log.arg <- log))
+        stop("bad input for argument 'log'")
+    rm(log)
+
+    N = max(length(x), length(shape1), length(shape2))
+    x = rep(x, len=N); shape1 = rep(shape1, len=N); shape2 = rep(shape2, len=N)
+
+    logdensity = rep(log(0), len=N)
+    xok = (0 <= x & x <= 1)
+    logdensity[xok] = log(shape1[xok]) + log(shape2[xok]) +
+                      (shape1[xok]-1) * log(x[xok]) +
+                      (shape2[xok]-1) * log1p(-x[xok]^shape1[xok])
+    logdensity[shape1 <= 0] = NaN
+    logdensity[shape2 <= 0] = NaN
+    if(log.arg) logdensity else exp(logdensity)
 }
 
 
 rkumar = function(n, shape1, shape2) {
-    if(!is.Numeric(n, integ=TRUE,allow=1)) stop("bad input for argument \"n\"")
     ans = (1 - (1 - runif(n))^(1/shape2))^(1/shape1)
-    ans[(shape1 <= 0) | (shape2 <= 0)] = NA
+    ans[(shape1 <= 0) | (shape2 <= 0)] = NaN
     ans
 }
 
 
 qkumar = function(p, shape1, shape2) {
-    if(!is.Numeric(p)) stop("bad input for argument \"p\"")
-    if(!is.Numeric(shape1, posi=TRUE)) stop("bad input for argument \"shape1\"")
-    if(!is.Numeric(shape2, posi=TRUE)) stop("bad input for argument \"shape2\"")
 
-    bad = (p < 0) | (p > 1)
-    if(any(bad))
-        stop("bad input for 'p'")
 
     ans = (1 - (1 - p)^(1/shape2))^(1/shape1)
-    ans[(shape1 <= 0) | (shape2 <= 0)] = NA
+    ans[(shape1 <= 0) | (shape2 <= 0)] = NaN
+    ans[p <  0] = NaN
+    ans[p >  1] = NaN
     ans
 }
 
 
 pkumar = function(q, shape1, shape2) {
     ans = 1 - (1 - q^shape1)^shape2
-    ans[q>=1] = 1
-    ans[q<=0] = 0
-    ans[(shape1 <= 0) | (shape2 <= 0)] = NA
+    ans[q <= 0] = 0
+    ans[q >= 1] = 1
+    ans[(shape1 <= 0) | (shape2 <= 0)] = NaN
     ans
 }
 
@@ -54,19 +64,19 @@ kumar.control <- function(save.weight=TRUE, ...)
 }
 
 
-kumar = function(lshape1="loge", lshape2="loge",
-                 eshape1=list(), eshape2=list(),
-                 ishape1=NULL, ishape2=NULL,
-                 nsimEIM=500, zero=NULL)
+ kumar = function(lshape1="loge", lshape2="loge",
+                  eshape1=list(), eshape2=list(),
+                  ishape1=NULL, ishape2=NULL,
+                  nsimEIM=500, zero=NULL)
 {
     if(mode(lshape1) != "character" && mode(lshape1) != "name")
         lshape1 = as.character(substitute(lshape1))
     if(mode(lshape2) != "character" && mode(lshape2) != "name")
         lshape2 = as.character(substitute(lshape2))
     if(length(ishape1) && (!is.Numeric(ishape1, allow=1, positive=TRUE)))
-        stop("bad input for argument \"ishape1\"")
+        stop("bad input for argument 'ishape1'")
     if(length(ishape2) && !is.Numeric(ishape2))
-        stop("bad input for argument \"ishape2\"")
+        stop("bad input for argument 'ishape2'")
     if(!is.list(eshape1)) eshape1 = list()
     if(!is.list(eshape2)) eshape2 = list()
     if(!is.Numeric(nsimEIM, allow=1, integ=TRUE) || nsimEIM <= 50)
@@ -130,9 +140,9 @@ kumar = function(lshape1="loge", lshape2="loge",
             function(mu,y,w,residuals=FALSE,eta,extra=NULL) {
         shape1 = eta2theta(eta[,1], link= .lshape1, earg= .eshape1)
         shape2 = eta2theta(eta[,2], link= .lshape2, earg= .eshape2)
-        if(residuals) stop("loglikelihood residuals not implemented yet") else
-        sum(w * (log(shape1) + log(shape2) + (shape1-1)*log(y) +
-                 (shape2-1)*log1p(-y^shape1)))
+        if(residuals) stop("loglikelihood residuals not implemented yet") else {
+            sum(w * dkumar(x=y, shape1=shape1, shape2=shape2, log=TRUE))
+        }
     }, list( .lshape1=lshape1, .lshape2=lshape2,
              .eshape1=eshape1, .eshape2=eshape2 ))),
     vfamily=c("kumar"),
@@ -167,7 +177,7 @@ kumar = function(lshape1="loge", lshape2="loge",
             run.mean = ((ii-1) * run.mean + temp3) / ii
         }
         wz = if(intercept.only)
-            matrix(apply(run.mean,2,mean), n, dimm(M), byrow=TRUE) else run.mean
+            matrix(colMeans(run.mean), n, dimm(M), byrow=TRUE) else run.mean
 
         dtheta.detas = cbind(dshape1.deta, dshape2.deta)
         index0 = iam(NA, NA, M=M, both=TRUE, diag=TRUE)
@@ -180,17 +190,29 @@ kumar = function(lshape1="loge", lshape2="loge",
 
 
 
-drice = function(x, vee, sigma) {
-    ans = (x / sigma^2) * exp(-(x^2+vee^2)/(2*sigma^2)) *
-          besselI(abs(x*vee/sigma^2), nu=0)
-    ans[(x <= 0)] = 0
-    ans[!is.finite(vee) | !is.finite(sigma) | (vee < 0) | (sigma <= 0)] = NA
-    ans
+drice = function(x, vee, sigma, log = FALSE) {
+    if(!is.logical(log.arg <- log))
+        stop("bad input for argument 'log'")
+    rm(log)
+
+
+    N = max(length(x), length(vee), length(sigma))
+    x = rep(x, len=N); vee = rep(vee, len=N); sigma = rep(sigma, len=N)
+
+    logdensity = rep(log(0), len=N)
+    xok = (x > 0)
+    x.abs = abs(x[xok]*vee[xok]/sigma[xok]^2)
+    logdensity[xok] = log(x[xok]) - 2 * log(sigma[xok]) +
+                      (-(x[xok]^2+vee[xok]^2)/(2*sigma[xok]^2)) +
+                      log(besselI(x.abs, nu=0, expon.scaled = TRUE)) + x.abs
+    logdensity[sigma <= 0] = NaN
+    logdensity[vee < 0] = NaN
+    if(log.arg) logdensity else exp(logdensity)
 }
 
 
 rrice = function(n, vee, sigma) {
-    if(!is.Numeric(n, integ=TRUE,allow=1)) stop("bad input for argument \"n\"")
+    if(!is.Numeric(n, integ=TRUE,allow=1)) stop("bad input for argument 'n'")
     theta = 1 # any number
     X = rnorm(n, mean=vee * cos(theta), sd=sigma)
     Y = rnorm(n, mean=vee * sin(theta), sd=sigma)
@@ -205,7 +227,7 @@ riceff.control <- function(save.weight=TRUE, ...)
 }
 
 
-riceff = function(lvee="loge", lsigma="loge",
+ riceff = function(lvee="loge", lsigma="loge",
                   evee=list(), esigma=list(),
                   ivee=NULL, isigma=NULL,
                   nsimEIM=100, zero=NULL)
@@ -215,9 +237,9 @@ riceff = function(lvee="loge", lsigma="loge",
     if(mode(lsigma) != "character" && mode(lsigma) != "name")
         lsigma = as.character(substitute(lsigma))
     if(length(ivee) && !is.Numeric(ivee, positive=TRUE))
-        stop("bad input for argument \"ivee\"")
+        stop("bad input for argument 'ivee'")
     if(length(isigma) && !is.Numeric(isigma, positive=TRUE))
-        stop("bad input for argument \"isigma\"")
+        stop("bad input for argument 'isigma'")
     if(!is.list(evee)) evee = list()
     if(!is.list(esigma)) esigma = list()
     if(!is.Numeric(nsimEIM, allow=1, integ=TRUE) || nsimEIM <= 50)
@@ -284,10 +306,9 @@ riceff = function(lvee="loge", lsigma="loge",
             function(mu,y,w,residuals=FALSE,eta,extra=NULL) {
         vee = eta2theta(eta[,1], link= .lvee, earg= .evee)
         sigma = eta2theta(eta[,2], link= .lsigma, earg= .esigma)
-        if(residuals) stop("loglikelihood residuals not implemented yet") else
-        sum(w * (log(y) - 2*log(sigma) +
-                 log(besselI(y*vee/sigma^2, nu=0)) -
-                 (y^2 + vee^2)/(2*sigma^2)))
+        if(residuals) stop("loglikelihood residuals not implemented yet") else {
+            sum(w * drice(x=y, vee=vee, sigma=sigma, log = TRUE))
+        }
     }, list( .lvee=lvee, .lsigma=lsigma,
              .evee=evee, .esigma=esigma ))),
     vfamily=c("riceff"),
@@ -321,7 +342,7 @@ riceff = function(lvee="loge", lsigma="loge",
             run.cov = ((ii-1) * run.cov + temp3[,1] * temp3[,2]) / ii
         }
         wz = if(intercept.only)
-            matrix(apply(cbind(run.var, run.cov), 2, mean),
+            matrix(colMeans(cbind(run.var, run.cov)),
                    n, dimm(M), byrow=TRUE) else cbind(run.var, run.cov)
 
         dtheta.detas = cbind(dvee.deta, dsigma.deta)
@@ -383,19 +404,19 @@ skellam.control <- function(save.weight=TRUE, ...)
 }
 
 
-skellam = function(lmu1="loge", lmu2="loge",
-                   emu1=list(), emu2=list(),
-                   imu1=NULL, imu2=NULL,
-                   nsimEIM=100, parallel=FALSE, zero=NULL)
+ skellam = function(lmu1="loge", lmu2="loge",
+                    emu1=list(), emu2=list(),
+                    imu1=NULL, imu2=NULL,
+                    nsimEIM=100, parallel=FALSE, zero=NULL)
 {
     if(mode(lmu1) != "character" && mode(lmu1) != "name")
         lmu1 = as.character(substitute(lmu1))
     if(mode(lmu2) != "character" && mode(lmu2) != "name")
         lmu2 = as.character(substitute(lmu2))
     if(length(imu1) && !is.Numeric(imu1, positive=TRUE))
-        stop("bad input for argument \"imu1\"")
+        stop("bad input for argument 'imu1'")
     if(length(imu2) && !is.Numeric(imu2, positive=TRUE))
-        stop("bad input for argument \"imu2\"")
+        stop("bad input for argument 'imu2'")
     if(!is.list(emu1)) emu1 = list()
     if(!is.list(emu2)) emu2 = list()
     if(!is.Numeric(nsimEIM, allow=1, integ=TRUE) || nsimEIM <= 50)
@@ -422,8 +443,7 @@ skellam = function(lmu1="loge", lmu2="loge",
                        namesof("mu1", .lmu1, earg= .emu1, tag=FALSE),
                        namesof("mu2", .lmu2, earg= .emu2, tag=FALSE))
         if(!length(etastart)) {
-            junk = if(is.R()) lm.wfit(x=x, y=y, w=w) else
-                              lm.wfit(x=x, y=y, w=w, method="qr")
+            junk = lm.wfit(x=x, y=y, w=w)
             var.y.est = sum(w * junk$resid^2) / junk$df.residual
             mean.init = weighted.mean(y, w)
             mu1.init = max((var.y.est + mean.init)/2, 0.01)
@@ -454,6 +474,10 @@ skellam = function(lmu1="loge", lmu2="loge",
         mu1 = eta2theta(eta[,1], link= .lmu1, earg= .emu1)
         mu2 = eta2theta(eta[,2], link= .lmu2, earg= .emu2)
         if(residuals) stop("loglikelihood residuals not implemented yet") else {
+
+
+
+
             if( is.logical( .parallel ) && length( .parallel )==1 &&
                 .parallel )
                 sum(w * log(besselI(2*mu1, nu=y, expon=TRUE))) else
@@ -499,7 +523,7 @@ skellam = function(lmu1="loge", lmu2="loge",
             run.cov = ((ii-1) * run.cov + temp3[,1] * temp3[,2]) / ii
         }
         wz = if(intercept.only)
-            matrix(apply(cbind(run.var, run.cov), 2, mean),
+            matrix(colMeans(cbind(run.var, run.cov)),
                    n, dimm(M), byrow=TRUE) else cbind(run.var, run.cov)
 
         dtheta.detas = cbind(dmu1.deta, dmu2.deta)
@@ -531,7 +555,7 @@ dyules = function(x, rho, log=FALSE) {
 
 
 ryules = function(n, rho) {
-    if(!is.Numeric(n, integ=TRUE,allow=1)) stop("bad input for argument \"n\"")
+    if(!is.Numeric(n, integ=TRUE,allow=1)) stop("bad input for argument 'n'")
     rgeom(n, prob=exp(-rexp(n, rate=rho))) + 1
 }
 
@@ -553,10 +577,10 @@ yulesimon.control <- function(save.weight=TRUE, ...)
 }
 
 
-yulesimon = function(link="loge", earg=list(), irho=NULL, nsimEIM=200)
+ yulesimon = function(link="loge", earg=list(), irho=NULL, nsimEIM=200)
 {
     if(length(irho) && !is.Numeric(irho, positi=TRUE))
-        stop("argument \"irho\" must be > 0")
+        stop("argument 'irho' must be > 0")
     if(mode(link) != "character" && mode(link) != "name")
         link = as.character(substitute(link))
     if(!is.list(earg)) earg = list()
@@ -601,8 +625,9 @@ yulesimon = function(link="loge", earg=list(), irho=NULL, nsimEIM=200)
     loglikelihood=eval(substitute(
         function(mu,y,w,residuals= FALSE,eta, extra=NULL) {
         rho = eta2theta(eta, .link, earg=.earg)
-        if(residuals) stop("loglikelihood residuals not implemented yet") else
-        sum(w * (log(rho) + lbeta(y, rho+1)))
+        if(residuals) stop("loglikelihood residuals not implemented yet") else {
+            sum(w * dyules(x=y, rho=rho, log=TRUE))
+        }
     }, list( .link=link, .earg=earg ))),
     vfamily=c("yulesimon"),
     deriv=eval(substitute(expression({
@@ -621,7 +646,7 @@ yulesimon = function(link="loge", earg=list(), irho=NULL, nsimEIM=200)
             run.var = ((ii-1) * run.var + temp3^2) / ii
         }
         wz = if(intercept.only)
-            matrix(apply(cbind(run.var), 2, mean),
+            matrix(colMeans(cbind(run.var)),
                    n, dimm(M), byrow=TRUE) else cbind(run.var)
 
         wz = wz * drho.deta^2
@@ -669,9 +694,9 @@ pslash <- function(q, mu=0, sigma=1){
 
 rslash <- function (n, mu=0, sigma=1){
     if (!is.Numeric(n, posit = TRUE, integ = TRUE, allow = 1))
-      stop("bad input for argument \"n\"")
+      stop("bad input for argument 'n'")
     if (any(sigma <= 0))
-      stop("argument \"sigma\" must be positive")
+      stop("argument 'sigma' must be positive")
     rnorm(n=n, mean=mu, sd=sigma) / runif(n=n)
 }
 
@@ -680,11 +705,11 @@ slash.control <- function(save.weight=TRUE, ...)
     list(save.weight=save.weight)
 }
 
-slash = function(lmu="identity", lsigma="loge", emu=list(), esigma=list(),
-                 imu=NULL, isigma=NULL,
-                 iprobs = c(0.1, 0.9),
-                 nsimEIM=250, zero=NULL,
-                 smallno = .Machine$double.eps*1000)
+ slash = function(lmu="identity", lsigma="loge", emu=list(), esigma=list(),
+                  imu=NULL, isigma=NULL,
+                  iprobs = c(0.1, 0.9),
+                  nsimEIM=250, zero=NULL,
+                  smallno = .Machine$double.eps*1000)
 {
     if(mode(lmu) != "character" && mode(lmu) != "name")
         lmu = as.character(substitute(lmu))
@@ -693,16 +718,16 @@ slash = function(lmu="identity", lsigma="loge", emu=list(), esigma=list(),
     if(length(isigma) && !is.Numeric(isigma, posit=TRUE))
         stop("'isigma' must be > 0")
     if(length(zero) && !is.Numeric(zero, integer=TRUE, posit=TRUE))
-        stop("bad input for argument \"zero\"")
+        stop("bad input for argument 'zero'")
     if(!is.list(emu)) emu = list()
     if(!is.list(esigma)) esigma = list()
     if(!is.Numeric(nsimEIM, allow=1, integ=TRUE) || nsimEIM <= 50)
         stop("'nsimEIM' should be an integer greater than 50")
     if(!is.Numeric(iprobs, posit=TRUE) || max(iprobs) >= 1 ||
        length(iprobs)!=2)
-        stop("bad input for argument \"iprobs\"")
+        stop("bad input for argument 'iprobs'")
     if(!is.Numeric(smallno, posit=TRUE) || smallno > 0.1)
-        stop("bad input for argument \"smallno\"")
+        stop("bad input for argument 'smallno'")
 
     new("vglmff",
     blurb=c("Slash distribution\n\n",
@@ -763,9 +788,10 @@ slash = function(lmu="identity", lsigma="loge", emu=list(), esigma=list(),
         mu = eta2theta(eta[,1], link= .lmu, earg= .emu)
         sigma = eta2theta(eta[,2], link= .lsigma, earg= .esigma)
         zedd = (y-mu)/sigma
-        if(residuals) stop("loglikelihood residuals not implemented yet") else
-        sum(w * ifelse(abs(zedd)<.smallno, -log(2*sigma*sqrt(2*pi)),
-        log1p(-exp(-zedd^2/2)) - log(sqrt(2*pi)*sigma*zedd^2)))
+        if(residuals) stop("loglikelihood residuals not implemented yet") else {
+            sum(w * dslash(x=y, mu=mu, sigma=sigma, log=TRUE,
+                           smallno= .smallno))
+        }
     }, list( .lmu=lmu, .lsigma=lsigma,
              .emu=emu, .esigma=esigma, .smallno=smallno ))),
     vfamily=c("slash"),
@@ -810,7 +836,7 @@ slash = function(lmu="identity", lsigma="loge", emu=list(), esigma=list(),
                        temp3[,ind1$row.index]*temp3[,ind1$col.index]) / ii
         }
         wz = if(intercept.only)
-            matrix(apply(run.varcov, 2, mean, na.rm=FALSE),
+            matrix(colMeans(run.varcov, na.rm=FALSE),
                    n, ncol(run.varcov), byrow=TRUE) else run.varcov
         dthetas.detas = cbind(dmu.deta, dsigma.deta)
         wz = wz * dthetas.detas[,ind1$row] * dthetas.detas[,ind1$col]
@@ -823,18 +849,26 @@ slash = function(lmu="identity", lsigma="loge", emu=list(), esigma=list(),
 
 
 
-dnefghs = function(x, tau) {
-    ans = sin(pi*tau) * exp((1-tau)*x) / (pi*(1+exp(x)))
-    ans[(tau < 0) | (tau > 1)] = NA
-    ans
+dnefghs = function(x, tau, log=FALSE) {
+    if(!is.logical(log.arg <- log))
+        stop("bad input for argument 'log'")
+    rm(log)
+
+    N = max(length(x), length(tau))
+    x = rep(x, len=N); tau = rep(tau, len=N);
+
+    logdensity = log(sin(pi*tau)) + (1-tau)*x - log(pi) - log1p(exp(x))
+    logdensity[tau < 0] = NaN
+    logdensity[tau > 1] = NaN
+    if(log.arg) logdensity else exp(logdensity)
 }
 
 
 
-nefghs = function(link="logit", earg=list(), itau=NULL, method.init=1)
+ nefghs = function(link="logit", earg=list(), itau=NULL, method.init=1)
 {
     if(length(itau) && !is.Numeric(itau, positi=TRUE) || any(itau >= 1))
-        stop("argument \"itau\" must be in (0,1)")
+        stop("argument 'itau' must be in (0,1)")
     if(mode(link) != "character" && mode(link) != "name")
         link = as.character(substitute(link))
     if(!is.list(earg)) earg = list()
@@ -878,8 +912,9 @@ nefghs = function(link="logit", earg=list(), itau=NULL, method.init=1)
     loglikelihood=eval(substitute(
         function(mu,y,w,residuals= FALSE,eta, extra=NULL) {
         tau = eta2theta(eta, .link, earg=.earg)
-        if(residuals) stop("loglikelihood residuals not implemented yet") else
-        sum(w * (log(sin(pi*tau)) - log(pi) + (1-tau)*y - log1p(exp(y))) )
+        if(residuals) stop("loglikelihood residuals not implemented yet") else {
+            sum(w * dnefghs(x=y, tau=tau, log=TRUE))
+        }
     }, list( .link=link, .earg=earg ))),
     vfamily=c("nefghs"),
     deriv=eval(substitute(expression({
@@ -898,16 +933,29 @@ nefghs = function(link="logit", earg=list(), itau=NULL, method.init=1)
 
 
 
-logF = function(lshape1="loge", lshape2="loge",
-                eshape1=list(), eshape2=list(),
-                ishape1=NULL, ishape2=1,
-                method.init=1)
+dlogF = function(x, shape1, shape2, log=FALSE) {
+    if(!is.logical(log.arg <- log))
+        stop("bad input for argument 'log'")
+    rm(log)
+
+    logdensity = -shape2*x - lbeta(shape1, shape2) -
+                (shape1 + shape2) * log1p(exp(-x))
+    if(log.arg) logdensity else exp(logdensity)
+}
+
+
+
+
+ logF = function(lshape1="loge", lshape2="loge",
+                 eshape1=list(), eshape2=list(),
+                 ishape1=NULL, ishape2=1,
+                 method.init=1)
 {
     if(length(ishape1) && !is.Numeric(ishape1, positi=TRUE))
-        stop("argument \"ishape1\" must be positive")
+        stop("argument 'ishape1' must be positive")
     if( # length(ishape2) &&
        !is.Numeric(ishape2, positi=TRUE))
-        stop("argument \"ishape2\" must be positive")
+        stop("argument 'ishape2' must be positive")
     if(mode(lshape1) != "character" && mode(lshape1) != "name")
         lshape1 = as.character(substitute(lshape1))
     if(mode(lshape2) != "character" && mode(lshape2) != "name")
@@ -973,9 +1021,9 @@ logF = function(lshape1="loge", lshape2="loge",
         function(mu,y,w,residuals= FALSE,eta, extra=NULL) {
         shape1 = eta2theta(eta[,1], .lshape1, earg=.eshape1)
         shape2 = eta2theta(eta[,2], .lshape2, earg=.eshape2)
-        if(residuals) stop("loglikelihood residuals not implemented yet") else
-        sum(w * (-shape2*y - lbeta(shape1, shape2) -
-                (shape1 + shape2) * log1p(exp(-y))) )
+        if(residuals) stop("loglikelihood residuals not implemented yet") else {
+            sum(w * dlogF(x=y, shape1=shape1, shape2=shape2, log=TRUE))
+        }
     }, list( .lshape1=lshape1, .lshape2=lshape2,
              .eshape1=eshape1, .eshape2=eshape2 ))),
     vfamily=c("logF"),
@@ -1005,6 +1053,9 @@ logF = function(lshape1="loge", lshape2="loge",
 }
 
 
+
+
+
 dbenf = function(x, ndigits=1, log=FALSE) {
     if(!is.Numeric(ndigits, allow=1, posit=TRUE, integ=TRUE) || ndigits > 2)
         stop("argument 'ndigits' must be 1 or 2")
@@ -1027,8 +1078,8 @@ rbenf = function(n, ndigits=1) {
     lowerlimit = ifelse(ndigits==1, 1, 10)
     upperlimit = ifelse(ndigits==1, 9, 99)
     use.n = if((length.n <- length(n)) > 1) length.n else
-            if(!is.Numeric(n, integ=TRUE, allow=1)) 
-                stop("bad input for argument \"n\"") else n
+            if(!is.Numeric(n, integ=TRUE, allow=1, posit=TRUE)) 
+                stop("bad input for argument 'n'") else n
     myrunif = runif(use.n)
     ans = rep(lowerlimit, length = use.n)
     for(ii in (lowerlimit+1):upperlimit) {

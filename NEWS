@@ -5,6 +5,63 @@
 	**************************************************
 
 
+                CHANGES IN VGAM VERSION 0.7-9
+
+NEW FEATURES
+
+    o	New functions: margeff() for marginal effects of a vglm()
+        "multinomial" or "cumulative" model.
+    o	Almost all VGAM family functions now have a "loglikelihood"
+        slot that incorporates any constants in the density function.
+        Hence the fitted likelihood may differ by a constant from
+        previous results.
+        In particular, models such as multinomial(), cumulative() 
+        and binom2.or() have this new feature.
+    o	vglm() now has a modified 'xij' argument which implements
+        eta-specific covariates. Usage now involves the form2' argument,
+        and the 'xij' argument does not interfere with constraint matrices.
+	Documentation is supplied on the VGAM website, in particular,
+        http://www.stat.auckland.ac.nz/~yee/VGAM/doc/xij.pdf
+    o   cases.names() and variable.names() methods functions
+        written for vglm()/vgam() objects.
+    o   cumulative() has improved initial values, especially for
+        long data format, i.e., when each row of the data frame is an
+        observation rather than inputting a matrix of counts.
+    o   rrvglm() handles a factor response without giving a warning.
+    o   New data: olympic.
+    o   testf90.f90 has been renamed to testf90.f95. This may decrease
+        the incidences of compiler problems on some platforms (f95 seems
+        more popular than f90).
+    o	For cqo() objects: AIC(), resid() have been written.
+    o   Improved functions: negbinomial() default initial values are
+        more robust to outliers in the response, betabinomial() and
+        betabin.ab() have better initialization and "loglikelihood"
+        slot matches dbetabin.ab(log=TRUE).
+    o   Renamed VGAM family functions: alsqreg() becomes amlnormal().
+    o   Renamed arguments: lmu replaces link.mu in zibinomial().
+    o   dzeta(p) has changed wrt 'p'.
+    o   The functions summary.lms() and summary.rc.exponential() are
+        no longer distributed to avoid a warning wrt S3 vs S4
+        methods dispatch.
+    o   The VGAM family functions for genetic models have been improved,
+        e.g., some basic error checking.
+        Also some changes in the names of the parameters, e.g.,
+        "q" to "pB" for ABO(), plus some switching of the order of the
+        arguments.
+
+
+BUG FIXES
+
+    o   VGAM interferes much less in regard to generic functions
+        such as predict(), fitted(), resid(), wrt other packages and
+        also including base's lm(), glm(), etc.
+    o	AIC() method for rrvglm() objects was wrong (did not account
+        for argument 'Structural.zero').
+    o	dzibinom(log=TRUE) was wrong.
+
+
+
+
                 CHANGES IN VGAM VERSION 0.7-8
 
 NEW FEATURES
@@ -32,7 +89,7 @@ NEW FEATURES
         compiler. Actually, removing the .f90 file(s) will not be too
         much of a problem as there is very little F90 code in use by
         the package at the moment.
-    o   New functions: dbinom2.rho(), rbinom2.rho(), dposnegbin(), 
+    o   New functions: dbinom2.rho(), rbinom2.rho(), dposnegbin().
     o   New data: wffc, wffc.indiv, wffc.teams, wffc.nc.
     o   Improved functions: binom2.rho(), micmen(), negbinomial(),
         poissonff(), posnegbinomial(), zanegbinomial(),
@@ -970,7 +1027,7 @@ NEW FEATURES
 
 NEW FEATURES
 
-    o	vglm() now has a xij argument which implments eta-specific covariates. 
+    o	vglm() now has a xij argument which implements eta-specific covariates. 
 	Documentation is supplied on the VGAM website. 
     o	grc() has been written for Goodman's RC association model for a 
 	contingency table. Documentation is in rrvglm.pdf 

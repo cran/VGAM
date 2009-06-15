@@ -26,15 +26,15 @@
 
 }
 \usage{
-dparetoIV(x, location=0, scale=1, inequality=1, shape=1)
+dparetoIV(x, location=0, scale=1, inequality=1, shape=1, log=FALSE)
 pparetoIV(q, location=0, scale=1, inequality=1, shape=1)
 qparetoIV(p, location=0, scale=1, inequality=1, shape=1)
 rparetoIV(n, location=0, scale=1, inequality=1, shape=1)
-dparetoIII(x, location=0, scale=1, inequality=1)
+dparetoIII(x, location=0, scale=1, inequality=1, log=FALSE)
 pparetoIII(q, location=0, scale=1, inequality=1)
 qparetoIII(p, location=0, scale=1, inequality=1)
 rparetoIII(n, location=0, scale=1, inequality=1)
-dparetoII(x, location=0, scale=1, shape=1)
+dparetoII(x, location=0, scale=1, shape=1, log=FALSE)
 pparetoII(q, location=0, scale=1, shape=1)
 qparetoII(p, location=0, scale=1, shape=1)
 rparetoII(n, location=0, scale=1, shape=1)
@@ -50,6 +50,12 @@ rparetoI(n, scale=1, shape=1)
   \item{location}{the location parameter. }
   \item{scale, shape, inequality}{the (positive) scale,
   inequality and shape parameters. }
+  \item{log}{
+  Logical.
+  If \code{log=TRUE} then the logarithm of the density is returned.
+
+  }
+
 }
 \value{
   Functions beginning with the letter \code{d} give the density,

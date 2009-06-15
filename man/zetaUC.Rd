@@ -8,18 +8,24 @@
 }
 % zz p is not a good argument name, esp. with qzeta(p, p)
 \usage{
-dzeta(x, p)
+dzeta(x, p, log=FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{x}{ Numerical vector/matrix to evaluate the density. }
-  \item{p}{ The parameter \eqn{p}. This must be greater than 1. }
+  \item{p}{ The parameter \eqn{p}. This must be positive. }
+  \item{log}{
+  Logical.
+  If \code{log=TRUE} then the logarithm of the density is returned.
+
+  }
+
 }
 \details{
   The density function of the zeta distribution is given by
-  \deqn{y^{-p} / \zeta(p)}{%
-        y^(-p) /  zeta(p)}
-  where \eqn{p>1}, \eqn{y=1,2,\ldots}, and \eqn{\zeta}{zeta} is
+  \deqn{y^{-p-1} / \zeta(p+1)}{%
+        y^(-p-1) /  zeta(p+1)}
+  where \eqn{p>0}, \eqn{y=1,2,\ldots}, and \eqn{\zeta}{zeta} is
   Riemann's zeta function.
 
 }

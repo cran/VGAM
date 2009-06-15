@@ -8,8 +8,7 @@
 
 }
 \usage{
-vglm.control(backchat = if (is.R()) FALSE else TRUE,
-             checkwz=TRUE, criterion = names(.min.criterion.VGAM),
+vglm.control(checkwz=TRUE, criterion = names(.min.criterion.VGAM),
              epsilon = 1e-07, half.stepsizing = TRUE,
              maxit = 30, stepsize = 1, save.weight = FALSE,
              trace = FALSE, wzepsilon = .Machine$double.eps^0.75, 
@@ -17,11 +16,6 @@ vglm.control(backchat = if (is.R()) FALSE else TRUE,
 }
 %- maybe also `usage' for other objects documented here.
 \arguments{
-  \item{backchat}{
-  logical indicating if a backchat is to be used
-  (not applicable in \R).
-
-  }
   \item{checkwz}{
   logical indicating whether the diagonal elements of
   the working weight matrices should be checked whether they are
@@ -84,22 +78,44 @@ vglm.control(backchat = if (is.R()) FALSE else TRUE,
 
   }
   \item{wzepsilon}{
-  Small positive number used to test whether the diagonals of the working
+  small positive number used to test whether the diagonals of the working
   weight matrices are sufficiently positive.
 
   }
   \item{xij}{
-  formula giving terms making up a covariate-dependent term (a variable
-  that takes on different values for each linear/additive predictor.
-  For example, the ocular pressure of each eye).
-  There should be \eqn{M} unique terms; use
-  \code{\link{fill1}}, \code{fill2}, \code{fill3}, etc. if necessary.
+  A formula or a list of formulas.
+  Each formula has a RHS giving \eqn{M} terms making up a
+  covariate-dependent term (whose name is the response).
+  That is, it creates a variable
+  that takes on different values for each linear/additive predictor,
+  e.g., the ocular pressure of each eye.
+  The \eqn{M} terms must be unique;
+  use \code{\link{fill1}}, \code{fill2}, \code{fill3}, etc. if necessary.
   Each formula should have a response which is taken as the name of
-  that variable, and the terms are enumerated in sequential order.
-  With more than one formula, use a list of formulas.
-  See Example 2 below.
+  that variable, and the \eqn{M} terms are enumerated in sequential order.
+  Each of the \eqn{M} terms multiply each successive row of the constraint
+  matrix.
+  When \code{xij} is used, the use of \code{form2} is also required
+  to give \emph{every} term used by the model.
 
   }
+% \item{jix}{
+% A formula or a list of formulas specifying
+% which explanatory variables are to be plotted for each \code{xij} term.
+% For example, in the code below,
+% the term \code{BS(dumm)} could be plotted against either
+% \code{dum1} or \code{dum2}, therefore
+% either \code{jix=dum1} or \code{jix=dum2} are ok.
+% This argument is made use of by \code{plotvgam()}.
+% Each formula has a RHS giving \eqn{r_k} unique terms,
+% one for each column of the constraint matrix.
+% Each formula should have a response that matches the \code{formula} argument.
+% The argument \code{jix} is a reversal of \code{xij} to emphasize
+% the same framework for handling terms involving covariates that have
+% different values for each linear/additive predictor.
+%
+% }
+
   \item{\dots}{
   other parameters that may be picked up from control
   functions that are specific to the \pkg{VGAM} family function.
@@ -143,35 +159,105 @@ These are handled using the \code{xij} argument.
 \seealso{
   \code{\link{vglm}},
   \code{\link{fill}}.
+  The author's homepage has further documentation about the
+  \code{xij} argument.
+
 }
 
 \examples{
 # Example 1.
-data(pneumo)
 pneumo = transform(pneumo, let=log(exposure.time))
-vglm(cbind(normal,mild,severe) ~ let, multinomial, pneumo,
+vglm(cbind(normal,mild,severe) ~ let, multinomial, data=pneumo,
      crit="coef", step=0.5, trace=TRUE, eps=1e-8, maxit=40)
 
 
-# Example 2. The use of the xij argument
-set.seed(111)
-n = 1000
-ymat = rdiric(n, shape=c(4,7,3,1))
+# Example 2. The use of the xij argument (simple case).
+ymat = rdiric(n <- 1000, shape=rep(exp(2), len=4))
 mydat = data.frame(x1=runif(n), x2=runif(n), x3=runif(n), x4=runif(n),
                    z1=runif(n), z2=runif(n), z3=runif(n), z4=runif(n))
+mydat = transform(mydat, X=x1, Z=z1)
 mydat = round(mydat, dig=2)
-fit = vglm(ymat ~ x1 + x2 + x3 + x4 + z1 + z2 + z3 + z4,
-           fam = dirichlet, data=mydat, crit="c",
-           xij = list(z ~ z1 + z2 + z3 + z4,
-                      x ~ x1 + x2 + x3 + x4))
-model.matrix(fit, type="lm")[1:7,]   # LM model matrix
-model.matrix(fit, type="vlm")[1:7,]  # Big VLM model matrix
-coef(fit)
-coef(fit, matrix=TRUE)
-coef(fit, matrix=TRUE, compress=FALSE)
-max(abs(predict(fit)-predict(fit, new=mydat))) # Predicts correctly
-summary(fit)
+fit2 = vglm(ymat ~ X + Z,
+            dirichlet(parallel=TRUE), data=mydat, trace=TRUE,
+            xij = list(Z ~ z1 + z2 + z3 + z4,
+                       X ~ x1 + x2 + x3 + x4),
+            form2 = ~  Z + z1 + z2 + z3 + z4 +
+                       X + x1 + x2 + x3 + x4)
+head(model.matrix(fit2, type="lm"))   # LM model matrix
+head(model.matrix(fit2, type="vlm"))  # Big VLM model matrix
+coef(fit2)
+coef(fit2, matrix=TRUE)
+max(abs(predict(fit2)-predict(fit2, new=mydat))) # Predicts correctly
+summary(fit2)
+\dontrun{
+# plotvgam(fit2, se=TRUE, xlab="x1", which.term=1) # Bug!
+# plotvgam(fit2, se=TRUE, xlab="z1", which.term=2) # Bug!
+plotvgam(fit2, xlab="x1") # Correct
+plotvgam(fit2, xlab="z1") # Correct
+}
+
+
+
+
+# Example 3. The use of the xij argument (complex case).
+set.seed(123)
+coalminers = transform(coalminers,
+                       Age = (age - 42) / 5,
+                       dum1 = round(runif(nrow(coalminers)), dig=2),
+                       dum2 = round(runif(nrow(coalminers)), dig=2),
+                       dum3 = round(runif(nrow(coalminers)), dig=2),
+                       dumm = round(runif(nrow(coalminers)), dig=2))
+BS = function(x, ..., df=3) bs(c(x,...), df=df)[1:length(x),,drop=FALSE]
+NS = function(x, ..., df=3) ns(c(x,...), df=df)[1:length(x),,drop=FALSE]
+
+# Equivalently...
+BS = function(x, ..., df=3) head(bs(c(x,...), df=df), length(x), drop=FALSE)
+NS = function(x, ..., df=3) head(ns(c(x,...), df=df), length(x), drop=FALSE)
+
+fit3 = vglm(cbind(nBnW,nBW,BnW,BW) ~ Age + NS(dum1,dum2),
+            fam = binom2.or(exchang=TRUE, zero=3),
+            xij = list(NS(dum1,dum2) ~ NS(dum1,dum2) +
+                                       NS(dum2,dum1) +
+                                       fill(NS(dum1))),
+            form2 = ~  NS(dum1,dum2) + NS(dum2,dum1) + fill(NS(dum1)) +
+                       dum1 + dum2 + dum3 + Age + age + dumm,
+            data = coalminers, trace=TRUE)
+head(model.matrix(fit3, type="lm"))   # LM model matrix
+head(model.matrix(fit3, type="vlm"))  # Big VLM model matrix
+coef(fit3)
+coef(fit3, matrix=TRUE)
+\dontrun{
+plotvgam(fit3, se=TRUE, lcol="red", scol="blue", xlab="dum1")
+}
 }
 \keyword{models}
 \keyword{regression}
+
+
+
+
+
+% zz 20090506 put elsewhere:
+%
+%
+%# Example 4. The use of the xij argument (complex case).
+%# Here is one method to handle the xij argument with a term that
+%# produces more than one column in the model matrix.
+%# The constraint matrix for 'op' has one column.
+%POLY3 = function(x, ...) {
+%    # A cubic; ensures that the basis functions are the same.
+%    poly(c(x,...), 3)[1:length(x),]
+%}
+%
+%\dontrun{
+%fit4 = vglm(cbind(leye,reye) ~ POLY3(op), trace=TRUE,
+%            fam = binom2.or(exchangeable=TRUE, zero=3),  data=eyesdata,
+%            xij = list(POLY3(op) ~ POLY3(lop,rop) + POLY3(rop,lop) +
+%                                   fill(POLY3(lop,rop))),
+%            form2 =  ~ POLY3(op) + POLY3(lop,rop) + POLY3(rop,lop) +
+%                                   fill(POLY3(lop,rop)))
+%coef(fit4)
+%coef(fit4, matrix=TRUE)
+%head(predict(fit4))
+%}
 

@@ -77,7 +77,7 @@ fit = vglm(cbind(y1,y2) ~ x, fam=gammahyp(expected=TRUE), trace=TRUE)
 fit = vglm(cbind(y1,y2) ~ x, fam=gammahyp, trace=TRUE, crit="coef")
 coef(fit, matrix=TRUE)
 Coef(fit)
-fitted(fit)[1:4,]
+head(fitted(fit))
 summary(fit)
 }
 \keyword{models}

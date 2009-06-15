@@ -8,8 +8,7 @@ fill =
 fill1 = fill2 = fill3 =
 function(x, values=0, ncolx=ncol(x)) {
     x = as.matrix(x)
-    ans = matrix(values, nrow=nrow(x), ncol=ncolx)
-    ans
+    matrix(values, nrow=nrow(x), ncol=ncolx, byrow=TRUE)
 }
 
 
@@ -144,7 +143,7 @@ matrix.power <- function(wz, M, power, fast=TRUE)
         evals <- k$values           # M x n
         evects <- k$vectors         # M x M x n
     } else {
-        stop("sorry, can't handle matrix-band form yet")
+        stop("sorry, cannot handle matrix-band form yet")
         k <- unlist(apply(wz,3,eigen), use.names=FALSE)
         dim(k) <- c(M,M+1,n)
         evals <- k[,1,,drop=TRUE]      # M x n
@@ -230,7 +229,7 @@ veigen <- function(x, M)
         error.code = integer(1))
 
     if(z$error.code)
-        stop(paste("Eigen algorithm (rs) returned error code", z$error.code))
+        stop("eigen algorithm (rs) returned error code ", z$error.code)
     ord <- M:1
     dim(z$values) <- c(M,n)
     z$values <- z$values[ord,,drop=FALSE]

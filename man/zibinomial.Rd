@@ -8,19 +8,15 @@
 
 }
 \usage{
-zibinomial(lphi="logit", link.mu="logit",
+zibinomial(lphi="logit", lmu="logit",
            ephi=list(), emu=list(),
            iphi=NULL, zero=1, mv=FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{lphi}{ 
-  Link function for the parameter \eqn{\phi}{phi}.
-  See \code{\link{Links}} for more choices.
-
-  }
-  \item{link.mu}{ 
-  Link function for the usual binomial probability \eqn{\mu}{mu} parameter.
+  \item{lphi, lmu}{ 
+  Link functions for the parameter \eqn{\phi}{phi}
+  and the usual binomial probability \eqn{\mu}{mu} parameter.
   See \code{\link{Links}} for more choices.
 
   }
@@ -112,18 +108,19 @@ zibinomial(lphi="logit", link.mu="logit",
 }
 \examples{
 size = 10  # number of trials; N in the notation above
-n = 200
-phi = logit(0,inv=TRUE)  # 0.50
-mubin = logit(-1,inv=TRUE) # Mean of an ordinary binomial distribution
-sv = rep(size, len=n)
-y = rzibinom(n=n, size=sv, prob=mubin, phi=phi) / sv # A proportion
-table(y)
-fit = vglm(y ~ 1, zibinomial, weight=sv, trace=TRUE)
+nn = 200
+zibdata = data.frame(phi = logit(0, inv=TRUE), # 0.50
+                     mubin = logit(-1, inv=TRUE), # Mean of usual binomial
+                     sv = rep(size, len=nn))
+zibdata = transform(zibdata, 
+                    y = rzibinom(n=nn, size=sv, prob=mubin, phi=phi)/sv)
+with(zibdata, table(y))
+fit = vglm(y ~ 1, zibinomial, weight=sv, data=zibdata, trace=TRUE)
 coef(fit, matrix=TRUE)
 Coef(fit) # Useful for intercept-only models
 fit@misc$p0  # Estimate of P(Y=0)
-fitted(fit)[1:4,]
-mean(y) # Compare this with fitted(fit)
+head(fitted(fit))
+with(zibdata, mean(y)) # Compare this with fitted(fit)
 summary(fit)
 }
 \keyword{models}

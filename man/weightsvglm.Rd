@@ -107,7 +107,6 @@ weightsvglm(object, type = c("prior", "working"),
   \code{\link{vglm}}.
 }
 \examples{
-data(pneumo)
 pneumo = transform(pneumo, let=log(exposure.time))
 (fit = vglm(cbind(normal, mild, severe) ~ let,
            cumulative(parallel=TRUE, reverse=TRUE), pneumo))

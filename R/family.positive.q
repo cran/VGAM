@@ -57,22 +57,23 @@ qposnegbin = function(p, size, prob=NULL, munb=NULL) {
         prob <- size/(size + munb)
     }
     if(!is.Numeric(p, posit=TRUE) || any(p >= 1))
-        stop("bad input for argument \"p\"")
+        stop("bad input for argument 'p'")
     qnbinom(p * pnbinom(q=p*0, size=size, prob=prob, lower.tail = FALSE) +
             dnbinom(x=p*0, size=size, prob=prob), size=size, prob=prob)
 }
 
 
 rposnegbin = function(n, size, prob=NULL, munb=NULL) {
+    use.n = if((length.n <- length(n)) > 1) length.n else
+            if(!is.Numeric(n, integ=TRUE, allow=1, posit=TRUE))
+                stop("bad input for argument 'n'") else n
+
     if (length(munb)) {
         if (length(prob))
             stop("'prob' and 'munb' both specified")
         prob <- size/(size + munb)
     }
-    if(!is.Numeric(n, positive=TRUE, integer=TRUE, allow=1))
-        stop("'n' must be a single positive integer")
-    ans = rnbinom(n, size=size, prob=prob)
-
+    ans = rnbinom(use.n, size=size, prob=prob)
     index = (ans == 0)
     size = rep(size, len=length(ans))
     prob = rep(prob, len=length(ans))
@@ -96,13 +97,13 @@ rposnegbin = function(n, size, prob=NULL, munb=NULL) {
                            shrinkage.init=0.95, method.init=1)
 {
     if(!is.Numeric(cutoff, allow=1) || cutoff<0.8 || cutoff>=1)
-        stop("range error in the argument \"cutoff\"")
+        stop("range error in the argument 'cutoff'")
     if(!is.Numeric(method.init, allow=1, integ=TRUE, posit=TRUE) ||
-       method.init > 2) stop("argument \"method.init\" must be 1 or 2")
+       method.init > 2) stop("argument 'method.init' must be 1 or 2")
     if(length(ik) && !is.Numeric(ik, posit=TRUE))
-        stop("bad input for argument \"ik\"")
+        stop("bad input for argument 'ik'")
     if(!is.Numeric(shrinkage.init, allow=1) || shrinkage.init < 0 ||
-       shrinkage.init > 1) stop("bad input for argument \"shrinkage.init\"")
+       shrinkage.init > 1) stop("bad input for argument 'shrinkage.init'")
 
     if(mode(lmunb) != "character" && mode(lmunb) != "name")
         lmunb = as.character(substitute(lmunb))
@@ -268,8 +269,9 @@ rposnegbin = function(n, size, prob=NULL, munb=NULL) {
 dpospois = function(x, lambda, log=FALSE) {
     if(!is.logical(log.arg <- log)) stop("bad input for 'log'")
     rm(log)
+
     if(!is.Numeric(lambda, posit=TRUE))
-        stop("bad input for argument \"lambda\"")
+        stop("bad input for argument 'lambda'")
     L = max(length(x), length(lambda))
     x = rep(x, len=L); lambda = rep(lambda, len=L); 
     ans = if(log.arg) {
@@ -283,7 +285,7 @@ dpospois = function(x, lambda, log=FALSE) {
 
 ppospois = function(q, lambda) {
     if(!is.Numeric(lambda, posit=TRUE))
-        stop("bad input for argument \"lambda\"")
+        stop("bad input for argument 'lambda'")
     L = max(length(q), length(lambda))
     q = rep(q, len=L); lambda = rep(lambda, len=L); 
     ifelse(q<1, 0, (ppois(q, lambda) - exp(-lambda)) / (-expm1(-lambda)))
@@ -291,23 +293,25 @@ ppospois = function(q, lambda) {
 
 qpospois = function(p, lambda) {
     if(!is.Numeric(lambda, posit=TRUE))
-        stop("bad input for argument \"lambda\"")
+        stop("bad input for argument 'lambda'")
     if(!is.Numeric(p, posit=TRUE) || any(p >= 1))
-        stop("bad input for argument \"p\"")
+        stop("bad input for argument 'p'")
     qpois(p * (-expm1(-lambda)) + exp(-lambda), lambda)
 }
 
 
 rpospois = function(n, lambda) {
-    if(!is.Numeric(n, posit=TRUE, allow=1, integ=TRUE))
-        stop("bad input for argument \"n\"")
-    if(!is.Numeric(lambda, posit=TRUE))
-        stop("bad input for argument \"lambda\"")
-    ans = rpois(n, lambda)
-    lambda = rep(lambda, len=n)
+    use.n = if((length.n <- length(n)) > 1) length.n else
+            if(!is.Numeric(n, integ=TRUE, allow=1, posit=TRUE))
+                stop("bad input for argument 'n'") else n
+
+    if(any(lambda == 0))
+        stop("no zero values allowed for argument 'lambda'")
+    ans = rpois(use.n, lambda)
+    lambda = rep(lambda, len=use.n)
     index = (ans == 0)
     while(any(index)) {
-        more = rpois(sum(index), lambda[index])
+        more = rpois(n=sum(index), lambda[index])
         ans[index] = more
         index = (ans == 0)
     }
@@ -324,11 +328,11 @@ rpospois = function(n, lambda) {
         link = as.character(substitute(link))
     if(!is.list(earg)) earg = list()
     if(!is.logical(expected) || length(expected) != 1)
-        stop("bad input for argument \"expected\"")
+        stop("bad input for argument 'expected'")
     if(length( ilambda) && !is.Numeric(ilambda, posit=TRUE))
-        stop("bad input for argument \"ilambda\"")
+        stop("bad input for argument 'ilambda'")
     if(!is.Numeric(method.init, allow=1, integ=TRUE, posit=TRUE) ||
-       method.init > 3) stop("argument \"method.init\" must be 1 or 2 or 3")
+       method.init > 3) stop("argument 'method.init' must be 1 or 2 or 3")
 
     new("vglmff",
     blurb=c("Positive-Poisson distribution\n\n",
@@ -493,7 +497,7 @@ dposbinom = function(x, size, prob, log = FALSE) {
 
 pposbinom = function(q, size, prob, lower.tail = TRUE, log.p = FALSE) {
     if(!is.Numeric(prob, positive=TRUE)) 
-        stop("no zero or non-numeric values allowed for argument \"prob\"")
+        stop("no zero or non-numeric values allowed for argument 'prob'")
     L = max(length(q), length(size), length(prob))
     q = rep(q, len=L); size = rep(size, len=L); prob = rep(prob, len=L);
     ifelse(q<1, 0, (pbinom(q=q, size=size, prob=prob, lower.tail=lower.tail,
@@ -502,19 +506,21 @@ pposbinom = function(q, size, prob, lower.tail = TRUE, log.p = FALSE) {
 
 qposbinom = function(p, size, prob, lower.tail = TRUE, log.p = FALSE) {
     if(!is.Numeric(prob, positive=TRUE)) 
-        stop("no zero or non-numeric values allowed for argument \"prob\"")
+        stop("no zero or non-numeric values allowed for argument 'prob'")
     if(!is.Numeric(p, posit=TRUE) || any(p >= 1))
-        stop("bad input for argument \"p\"")
+        stop("bad input for argument 'p'")
     qbinom(p=p * (1 - (1-prob)^size) + (1-prob)^size, size=size, prob=prob,
            lower.tail=lower.tail, log.p=log.p)
 }
 
 rposbinom = function(n, size, prob) {
-    if(!is.Numeric(n, posit=TRUE, allow=1, integ=TRUE))
-        stop("bad input for argument \"n\"")
-    if(!is.Numeric(prob, positive=TRUE)) 
-        stop("no zero or non-numeric values allowed for argument \"prob\"")
-    ans = rbinom(n=n, size=size, prob=prob)
+    use.n = if((length.n <- length(n)) > 1) length.n else
+            if(!is.Numeric(n, integ=TRUE, allow=1, posit=TRUE))
+                stop("bad input for argument 'n'") else n
+
+    if(any(prob == 0))
+        stop("no zero values allowed for argument 'prob'")
+    ans = rbinom(n=use.n, size=size, prob=prob)
     index = (ans == 0)
     size = rep(size, len=length(ans))
     prob = rep(prob, len=length(ans))

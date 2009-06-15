@@ -5,17 +5,25 @@
 
 
 
-dcard = function(x, mu, rho) {
-    if(!is.Numeric(mu) || any(mu < 0) || any(mu > 2*pi))
-        stop("'mu' must be between 0 and 2*pi inclusive")
-    if(!is.Numeric(rho) || max(abs(rho) > 0.5))
-        stop("'rho' must be between -0.5 and 0.5 inclusive")
+
+
+
+
+dcard = function(x, mu, rho, log = FALSE) {
+    if(!is.logical(log.arg <- log))
+        stop("bad input for argument 'log'")
+    rm(log)
+
     L = max(length(x), length(mu), length(rho))
     x = rep(x, len=L); mu = rep(mu, len=L); rho = rep(rho, len=L);
-    ans = (1 + 2 * rho * cos(x-mu)) / (2*pi)
-    ans[x > (2*pi)] = 0
-    ans[x < 0] = 0
-    ans
+    logdensity = rep(log(0), len=L)
+    xok = (x > 0) & (x < (2*pi))
+    logdensity[xok] = -log(2*pi) + log1p(2 * rho[xok] * cos(x[xok]-mu[xok]))
+    logdensity[mu  <=    0] = NaN
+    logdensity[mu  >= 2*pi] = NaN
+    logdensity[rho <= -0.5] = NaN
+    logdensity[rho >=  0.5] = NaN
+    if(log.arg) logdensity else exp(logdensity)
 }
 
 pcard = function(q, mu, rho) {
@@ -78,20 +86,20 @@ cardioid.control <- function(save.weight=TRUE, ...)
 }
 
 
-cardioid = function(lmu="elogit", lrho="elogit",
-                    emu=if(lmu=="elogit") list(min=0, max=2*pi) else list(),
-                    erho=if(lmu=="elogit") list(min=-0.5, max=0.5) else list(),
-                    imu=NULL, irho=0.3,
-                    nsimEIM=100, zero=NULL)
+ cardioid = function(lmu="elogit", lrho="elogit",
+                     emu=if(lmu=="elogit") list(min=0, max=2*pi) else list(),
+                     erho=if(lmu=="elogit") list(min=-0.5, max=0.5) else list(),
+                     imu=NULL, irho=0.3,
+                     nsimEIM=100, zero=NULL)
 {
     if(mode(lmu) != "character" && mode(lmu) != "name")
         lmu = as.character(substitute(lmu))
     if(mode(lrho) != "character" && mode(lrho) != "name")
         lrho = as.character(substitute(lrho))
     if(length(imu) && (!is.Numeric(imu, positive=TRUE) || any(imu > 2*pi)))
-        stop("bad input for argument \"imu\"")
+        stop("bad input for argument 'imu'")
     if(!is.Numeric(irho) || max(abs(irho)) > 0.5)
-        stop("bad input for argument \"irho\"")
+        stop("bad input for argument 'irho'")
     if(!is.list(emu)) emu = list()
     if(!is.list(erho)) erho = list()
     if(!is.Numeric(nsimEIM, allow=1, integ=TRUE) || nsimEIM <= 50)
@@ -152,8 +160,9 @@ cardioid = function(lmu="elogit", lrho="elogit",
             function(mu,y,w,residuals=FALSE,eta,extra=NULL) {
         mu = eta2theta(eta[,1], link= .lmu, earg= .emu)
         rho = eta2theta(eta[,2], link= .lrho, earg= .erho)
-        if(residuals) stop("loglikelihood residuals not implemented yet") else
-        sum(w * (-log(2*pi) + log1p(2*rho*cos(y-mu))))
+        if(residuals) stop("loglikelihood residuals not implemented yet") else {
+            sum(w * dcard(x=y, mu=mu, rho=rho, log=TRUE))
+        }
     }, list( .lmu=lmu, .lrho=lrho,
              .emu=emu, .erho=erho ))),
     vfamily=c("cardioid"),
@@ -182,7 +191,7 @@ cardioid = function(lmu="elogit", lrho="elogit",
                        temp3[,ind1$row.index]*temp3[,ind1$col.index]) / ii
         }
         wz = if(intercept.only)
-            matrix(apply(run.varcov, 2, mean),
+            matrix(colMeans(run.varcov),
                    n, ncol(run.varcov), byrow=TRUE) else run.varcov
 
         dtheta.detas = cbind(dmu.deta, drho.deta)
@@ -194,20 +203,21 @@ cardioid = function(lmu="elogit", lrho="elogit",
 
 
 
-vonmises = function(llocation="elogit",
-                    lscale="loge",
-      elocation=if(llocation=="elogit") list(min=0, max=2*pi) else list(),
-      escale=list(),
-                    ilocation=NULL, iscale=NULL,
-                    method.init=1, zero=NULL) {
+ vonmises = function(llocation="elogit",
+                     lscale="loge",
+                     elocation=if(llocation=="elogit") list(min=0, max=2*pi)
+                               else list(),
+                     escale=list(),
+                     ilocation=NULL, iscale=NULL,
+                     method.init=1, zero=NULL) {
     if(mode(llocation) != "character" && mode(llocation) != "name")
         llocation = as.character(substitute(llocation))
     if(mode(lscale) != "character" && mode(lscale) != "name")
         lscale = as.character(substitute(lscale))
     if(!is.Numeric(method.init, allow=1, integ=TRUE, posit=TRUE) ||
-       method.init > 2) stop("argument \"method.init\" must be 1 or 2")
+       method.init > 2) stop("argument 'method.init' must be 1 or 2")
     if(length(zero) && !is.Numeric(zero, integer=TRUE, posit=TRUE))
-        stop("bad input for argument \"zero\"")
+        stop("bad input for argument 'zero'")
     if(!is.list(escale)) escale = list()
 
     new("vglmff",

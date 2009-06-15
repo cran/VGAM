@@ -1,10 +1,10 @@
 \name{cumulative}
 \alias{cumulative}
-\alias{scumulative}
+%\alias{scumulative}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Ordinal Regression with Cumulative Probabilities }
 \description{
-  Fits a cumulative logit/probit/cloglog/cauchit/...
+  Fits a cumulative link
   regression model to a (preferably ordered) factor response. 
 
 }
@@ -12,49 +12,52 @@
 cumulative(link = "logit", earg = list(),
            parallel = FALSE, reverse = FALSE,
            mv = FALSE, intercept.apply = FALSE)
-scumulative(link="logit", earg = list(),
-            lscale="loge", escale = list(),
-            parallel=FALSE, sparallel=TRUE, reverse=FALSE, iscale = 1)
 }
+%scumulative(link="logit", earg = list(),
+%            lscale="loge", escale = list(),
+%            parallel=FALSE, sparallel=TRUE, reverse=FALSE, iscale = 1)
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   In the following, the response \eqn{Y} is assumed to be a factor
   with ordered values \eqn{1,2,\dots,J+1}.
-  \eqn{M} is the number of linear/additive predictors
+  Hence \eqn{M} is the number of linear/additive predictors
   \eqn{\eta_j}{eta_j};
-  for \code{cumulative()} \eqn{M=J},
-  and for \code{scumulative()} \eqn{M=2J}.
+  for \code{cumulative()} \eqn{M=J}.
+% and for \code{scumulative()} \eqn{M=2J}.
 
   \item{link}{
   Link function applied to the \eqn{J} cumulative probabilities. 
-  See \code{\link{Links}} for more choices.
+  See \code{\link{Links}} for more choices,
+  e.g., for the cumulative
+  \code{\link{probit}}/\code{\link{cloglog}}/\code{\link{cauchit}}/\ldots
+  models.
 
   }
-  \item{lscale}{
-  Link function applied to the \eqn{J} scaling parameters.
-  See \code{\link{Links}} for more choices.
-
-  }
-  \item{earg, escale}{
-  List. Extra argument for the respective link functions.
+% \item{lscale}{
+% Link function applied to the \eqn{J} scaling parameters.
+% See \code{\link{Links}} for more choices.
+%
+% }
+  \item{earg}{
+  List. Extra argument for the link function.
   See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{parallel}{
-  A logical or formula specifying which terms have
+  A logical  or formula specifying which terms have
   equal/unequal coefficients.
   See below for more information about the parallelism assumption.
 
   }
-  \item{sparallel}{
-  For the scaling parameters.
-  A logical, or formula specifying which terms have
-  equal/unequal coefficients.
-  This argument is not applied to the intercept.
-  The \code{scumulative()} function requires covariates; for
-  intercept models use \code{cumulative()}.
+% \item{sparallel}{
+% For the scaling parameters.
+% A logical, or formula specifying which terms have
+% equal/unequal coefficients.
+% This argument is not applied to the intercept.
+% The \code{scumulative()} function requires covariates; for
+% intercept models use \code{cumulative()}.
 
-  }
+% }
   \item{reverse}{
   Logical.
   By default, the cumulative probabilities used are
@@ -90,12 +93,14 @@ scumulative(link="logit", earg = list(),
   \code{\link{nbolf}}.
 
   }
-  \item{iscale}{
-  Numeric. Initial values for the scale parameters.
+% \item{iscale}{
+% Numeric. Initial values for the scale parameters.
 
-  }
+% }
 }
 \details{
+  This \pkg{VGAM} family function fits the class of
+  cumulative link models to (hopefully) an ordinal response.
   By default, the non-parallel cumulative logit model is fitted, i.e.,
   \deqn{\eta_j = logit(P[Y \leq j])}{%
          eta_j = logit(P[Y<=j])}
@@ -117,11 +122,11 @@ scumulative(link="logit", earg = list(),
   Currently, reduced-rank vector generalized additive models
   (RR-VGAMs) have not been implemented here.
 
-  The scaled version of \code{cumulative()}, called \code{scumulative()},
-  has \eqn{J} positive scaling factors.
-  They are described in pages 154 and 177 of McCullagh and Nelder (1989);
-  see their equation (5.4) in particular,
-  which they call the \emph{generalized rational model}.
+% The scaled version of \code{cumulative()}, called \code{scumulative()},
+% has \eqn{J} positive scaling factors.
+% They are described in pages 154 and 177 of McCullagh and Nelder (1989);
+% see their equation (5.4) in particular,
+% which they call the \emph{generalized rational model}.
 
 }
 \value{
@@ -161,7 +166,8 @@ contains further information and examples.
 \note{
   The response should be either a matrix of counts (with row sums that
   are all positive), or a factor. In both cases, the \code{y} slot
-  returned by \code{vglm}/\code{vgam}/\code{rrvglm} is the matrix
+  returned by \code{\link{vglm}}/\code{\link{vgam}}/\code{\link{rrvglm}}
+  is the matrix
   of counts.
   The formula must contain an intercept term.
   Other \pkg{VGAM} family functions for an ordinal response include
@@ -181,19 +187,20 @@ contains further information and examples.
   then numerical problems are less likely to occur during the fitting,
   and there are less parameters. Numerical problems occur when
   the linear/additive predictors cross, which results in probabilities
-  outside of (0,1); setting \code{parallel=TRUE} will help avoid
+  outside of \eqn{(0,1)}; setting \code{parallel=TRUE} will help avoid
   this problem.
 
   Here is an example of the usage of the \code{parallel} argument.
-  If there are covariates \code{x1}, \code{x2} and \code{x3}, then
-  \code{parallel = TRUE ~ x1 + x2 -1} and
-  \code{parallel = FALSE ~ x3} are equivalent. This would constrain
-  the regression coefficients for \code{x1} and \code{x2} to be
-  equal; those of the intercepts and \code{x3} would be different.
+  If there are covariates \code{x2}, \code{x3} and \code{x4}, then
+  \code{parallel = TRUE ~ x2 + x3 -1} and
+  \code{parallel = FALSE ~ x4} are equivalent. This would constrain
+  the regression coefficients for \code{x2} and \code{x3} to be
+  equal; those of the intercepts and \code{x4} would be different.
 
   If the data is inputted in \emph{long} format
   (not \emph{wide} format, as in \code{\link{pneumo}} below)
-  then good initial values are needed; use
+  and the self-starting initial values are not good enough then
+  try using
   \code{mustart},
   \code{coefstart} and/or 
   \code{etatstart}.
@@ -214,6 +221,7 @@ contains further information and examples.
 }
 
 \seealso{
+  \code{\link{margeff}},
   \code{\link{acat}},
   \code{\link{cratio}},
   \code{\link{sratio}},
@@ -226,12 +234,12 @@ contains further information and examples.
   \code{\link{cauchit}},
   \code{\link{golf}},
   \code{\link{polf}},
-  \code{\link{nbolf}}.
+  \code{\link{nbolf}},
+  \code{\link{logistic1}}.
 
 }
 \examples{
 # Fit the proportional odds model, p.179, in McCullagh and Nelder (1989)
-data(pneumo)
 pneumo = transform(pneumo, let=log(exposure.time))
 (fit = vglm(cbind(normal, mild, severe) ~ let,
             cumulative(parallel=TRUE, reverse=TRUE), pneumo))
@@ -254,33 +262,29 @@ plot(fit2, se=TRUE, overlay=TRUE, lcol=1:2, scol=1:2)
            df=length(coef(fit3))-length(coef(fit)))
 
 # A factor() version of fit ----------------------------------
+# This is in long format (cf. wide format above)
 nobs = round(fit@y * c(weights(fit, type="prior")))
 sumnobs = colSums(nobs) # apply(nobs, 2, sum)
-mydat = data.frame(
-    response = ordered(c(rep("normal", times=sumnobs["normal"]),
-                         rep("mild", times=sumnobs["mild"]),
-                         rep("severe", times=sumnobs["severe"])),
-                       levels = c("normal","mild","severe")),
-    LET = c(with(pneumo, rep(let, times=nobs[,"normal"])),
-            with(pneumo, rep(let, times=nobs[,"mild"])),
-            with(pneumo, rep(let, times=nobs[,"severe"]))))
-(fit4 = vglm(response ~ LET, data=mydat,
+
+pneumo.long = data.frame(symptoms=ordered(rep(rep(colnames(nobs),
+                                  nrow(nobs)),
+                                  times=c(t(nobs))),
+                                  levels = colnames(nobs)),
+                         let = rep(rep(with(pneumo, let), each=ncol(nobs)),
+                                   times=c(t(nobs))))
+with(pneumo.long, table(let, symptoms)) # check it; should be same as pneumo
+
+
+(fit.long1 = vglm(symptoms ~ let, data=pneumo.long,
              cumulative(parallel=TRUE, reverse=TRUE), trace=TRUE))
-
-
-# Long format (cf. wide format above) ----------------------------------
-longdata = data.frame(symptoms=ordered(rep(rep(colnames(nobs), nrow(nobs)),
-                                           times=c(t(nobs))),
-                                       levels = colnames(nobs)),
-                      let = rep(rep(with(pneumo, let), each=ncol(nobs)),
-                                times=c(t(nobs))))
-with(longdata, table(let, symptoms)) # check it; should be same as pneumo
+coef(fit.long1, matrix=TRUE) # Should be same as coef(fit, matrix=TRUE)
+# Could try using mustart if fit.long1 failed to converge.
 mymustart = matrix(sumnobs / sum(sumnobs),
-                   nrow(longdata), ncol(nobs), byrow=TRUE)
-fit.long = vglm(symptoms ~ let,
+                   nrow(pneumo.long), ncol(nobs), byrow=TRUE)
+fit.long2 = vglm(symptoms ~ let,
                 fam = cumulative(parallel=TRUE, reverse=TRUE),
-                mustart=mymustart, data = longdata, trace=TRUE)
-coef(fit.long, matrix=TRUE) # Should be same as coef(fit, matrix=TRUE)
+                mustart=mymustart, data = pneumo.long, trace=TRUE)
+coef(fit.long2, matrix=TRUE) # Should be same as coef(fit, matrix=TRUE)
 }
 \keyword{models}
 \keyword{regression}

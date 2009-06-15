@@ -112,7 +112,7 @@ coef(fit3, matrix=TRUE)
 
 # Compare the fitted values
 mean(y3)
-fitted(fit3)[1:5]
+head(fitted(fit3))
 Coef(fit3)  # Useful for intercept-only models
 }
 \keyword{models}

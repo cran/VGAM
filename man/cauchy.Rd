@@ -35,8 +35,11 @@ cauchy1(scale.arg=1, llocation="identity",
 
   }
   \item{method.init}{ 
-  Integer, either 1 or 2 or 3. Initial method, three algorithms are
-  implemented. Choose the another value if convergence fails, or use
+  Integer, either 1 or 2 or 3.
+  Initial method, three algorithms are implemented.
+  The user should try all possible values to help avoid converging
+  to a local solution.
+  Also, choose the another value if convergence fails, or use
   \code{ilocation} and/or \code{iscale}.
 
   }
@@ -80,6 +83,14 @@ cauchy1(scale.arg=1, llocation="identity",
   and \code{\link{vgam}}.
 
 }
+\section{Warning }{
+  It is well-known that the Cauchy distribution may have local
+  maxima in its likelihood function;
+  make full use of \code{method.init}, \code{ilocation}, \code{iscale}
+  etc.
+
+}
+
 \references{ 
 
 Evans, M., Hastings, N. and Peacock, B. (2000)
@@ -118,6 +129,7 @@ Observed versus expected Fisher information.
 \seealso{ 
   \code{\link[stats:Cauchy]{Cauchy}},
   \code{\link{cauchit}}.
+
 }
 \examples{
 # Both location and scale parameters unknown
@@ -125,7 +137,7 @@ x = runif(n <- 1000)
 y = rcauchy(n, loc=exp(1+0.5*x), scale=exp(1))
 fit = vglm(y ~ x, cauchy(lloc="loge"), trace=TRUE)
 coef(fit, matrix=TRUE)
-fitted(fit)[1:4]  # location estimates
+head(fitted(fit))  # Location estimates
 summary(fit)
 
 # Location parameter unknown

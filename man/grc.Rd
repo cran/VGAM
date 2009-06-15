@@ -110,16 +110,16 @@ indicator variables.
 }
 
 \seealso{
-\code{\link{rrvglm}},
-\code{\link{rrvglm.control}},
-\code{\link{rrvglm-class}},
-\code{summary.grc},
-\code{\link{auuc}}.
+  \code{\link{rrvglm}},
+  \code{\link{rrvglm.control}},
+  \code{\link{rrvglm-class}},
+  \code{summary.grc},
+  \code{\link{auuc}},
+  \code{\link{olympic}}.
 }
 
 \examples{
 # Some undergraduate student enrolments at the University of Auckland in 1990
-data(auuc) 
 g1 = grc(auuc, Rank=1)
 fitted(g1)
 summary(g1)
@@ -127,6 +127,23 @@ summary(g1)
 g2 = grc(auuc, Rank=2, Index.corner=c(2,5))
 fitted(g2)
 summary(g2)
+
+
+# 2008 Summer Olympic Games in Beijing
+top10 = head(olympic, n=10)
+oly1 = with(top10, grc(cbind(gold,silver,bronze)))
+round(fitted(oly1))
+round(resid(oly1, type="response"), dig=1)  # Response residuals
+summary(oly1)
+Coef(oly1)
 }
 \keyword{models}
 \keyword{regression}
+% plot(oly1)
+% oly2 = with(top10, grc(cbind(gold,silver,bronze), Rank=2)) # Saturated model
+% round(fitted(oly2))
+% round(fitted(oly2)) - with(top10, cbind(gold,silver,bronze))
+% summary(oly2) # Saturated model
+
+
+

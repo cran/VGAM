@@ -59,7 +59,6 @@ Chambers, J. M. and T. J. Hastie (eds) (1992)
 }
 \examples{
 # Categorical regression example 1
-data(pneumo)
 pneumo = transform(pneumo, let=log(exposure.time))
 fit = vglm(cbind(normal, mild, severe) ~ let,
            cumulative(parallel=TRUE, reverse=TRUE), pneumo)
@@ -68,13 +67,12 @@ fitted(fit)
 
 
 # LMS quantile regression example 2
-data(bminz)
 fit = vgam(BMI ~ s(age, df=c(4,2)), 
            fam=lms.bcn(zero=1), data=bminz, trace=TRUE)
 # The following are equal
-predict(fit, type="r")[1:3,]
-fitted(fit)[1:3,]
-predict(fit, type="r", newdata=bminz[1:3,])
+head(predict(fit, type="r"))
+head(fitted(fit))
+predict(fit, type="r", newdata=head(bminz))
 }
 \keyword{models}
 \keyword{regression}

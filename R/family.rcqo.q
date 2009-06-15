@@ -16,7 +16,7 @@ rcqo <- function(n, p, S,
                  ESOptima = FALSE,
                  loabundance = if(EqualMaxima) hiabundance else 10,
                  hiabundance = 100,
-                 sdlv = c(1.5/2^(0:3))[1:Rank],
+                 sdlv = head(1.5/2^(0:3), Rank),
                  sdOptima = ifelse(ESOptima, 1.5/Rank, 1) *
                             ifelse(scalelv, sdlv, 1),
                  sdTolerances = 0.25,
@@ -63,8 +63,8 @@ rcqo <- function(n, p, S,
     if(!is.Numeric(sdOptima, posit=TRUE))
         stop("bad input for argument 'sdOptima'")
     if(EqualMaxima && loabundance != hiabundance)
-        stop(paste("arguments 'loabundance)' and 'hiabundance)' must",
-                   "be equal when EqualTolerances=TRUE"))
+        stop("arguments 'loabundance' and 'hiabundance' must ",
+                   "be equal when 'EqualTolerances=TRUE'")
     if(any(loabundance > hiabundance))
         stop("loabundance > hiabundance is not allowed")
     if(!is.logical(Crow1positive)) {
@@ -301,8 +301,8 @@ dcqo <- function(x, p, S,
     if(!is.logical(EqualTolerances) || length(EqualTolerances)>1)
         stop("bad input for argument 'EqualTolerances)'")
     if(EqualMaxima && loabundance != hiabundance)
-        stop(paste("'loabundance)' and 'hiabundance)' must",
-                   "be equal when EqualTolerances=TRUE"))
+        stop("'loabundance' and 'hiabundance' must ",
+                   "be equal when 'EqualTolerances=TRUE'")
     if(length(seed)) set.seed(seed)
 
     xmat = matrix(rnorm(n*(p-1)), n, p-1, dimnames=list(as.character(1:n),

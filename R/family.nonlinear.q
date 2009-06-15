@@ -61,8 +61,8 @@ micmen <- function(rpar=0.001, divisor=10,
         if(!length(Xm2))
             stop("regressor not found")
         if(ncol(as.matrix(Xm2)) != 1)
-            stop(paste("regressor not found or is not a vector. Use the",
-                 "'form2' argument without an intercept"))
+            stop("regressor not found or is not a vector. Use the ",
+                 "'form2' argument without an intercept")
         Xm2 = as.vector(Xm2) # Make sure
         extra$Xm2 = Xm2          # Needed for @inverse
 
@@ -71,7 +71,7 @@ micmen <- function(rpar=0.001, divisor=10,
             namesof("theta2", .link2, earg= .earg2, tag=FALSE))
 
         if(length(mustart) || length(coefstart))
-            stop("can't handle mustart or coefstart")
+            stop("cannot handle mustart or coefstart")
         if(!length(etastart)) {
             index <- (1:n)[Xm2>quantile(Xm2, prob=.85)]
             init1 <- median(y[index])
@@ -100,13 +100,13 @@ micmen <- function(rpar=0.001, divisor=10,
         misc$link <- c(theta1= .link1, theta2= .link2)
         misc$earg = list(theta1= .earg1, theta2= .earg2 )
         misc$rpar <- rpar
-        fit$df.residual <- n - rank   # Not n.big - rank
-        fit$df.total <- n             # Not n.big
+        fit$df.residual <- n - rank   # Not nrow_X_vlm - rank
+        fit$df.total <- n             # Not nrow_X_vlm
 
         extra$Xm2 = NULL             # Regressor is in control$regressor 
         dpar <- .dispersion
         if(!dpar) {
-            dpar <- sum(w * (y-mu)^2) / (n - p.big)
+            dpar <- sum(w * (y-mu)^2) / (n - ncol_X_vlm)
         }
         misc$dispersion <- dpar
         misc$default.dispersion <- 0

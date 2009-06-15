@@ -131,6 +131,10 @@ some plots of his are reproduced.
 Note that he used log to base 10 whereas natural logs are used here.
 His plots had some observations obscured by the y-axis!
 
+The DeLury method is not applicable to the data frame
+\code{\link{wffc.nc}} since the 2008 World Fly Fishing Competition was
+strictly catch-and-release.
+
 }
 \seealso{ \code{\link{wffc.nc}}. }
 \examples{

@@ -9,12 +9,13 @@
 
 }
 \usage{
-betabin.ab(link.shape12 = "loge", earg = list(),
-           i1 = 1, i2 = NULL, zero = NULL)
+betabin.ab(lshape12 = "loge", earg = list(),
+           i1 = 1, i2 = NULL,  method.init=1,
+           shrinkage.init=0.95, nsimEIM=NULL, zero=NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{link.shape12}{ 
+  \item{lshape12}{ 
   Link function applied to both (positive) shape parameters
   of the beta distribution.
   See \code{\link{Links}} for more choices.
@@ -39,6 +40,13 @@ betabin.ab(link.shape12 = "loge", earg = list(),
   \code{1} or \code{2}.  The default is to model both shape parameters
   as functions of the covariates.  If a failure to converge occurs,
   try \code{zero=2}.
+
+  }
+  \item{shrinkage.init, nsimEIM, method.init}{
+  See \code{\link{CommonVGAMffArguments}} for more information.
+  The argument \code{shrinkage.init} is used only if \code{method.init=2}.
+  Using the argument \code{nsimEIM} may offer large advantages for large
+  values of \eqn{N} and/or large data sets.
 
   }
 }
@@ -149,6 +157,7 @@ betabin.ab(link.shape12 = "loge", earg = list(),
   positive value, using \code{i2} and/or setting \code{zero=2}.
 
   This family function may be renamed in the future.
+  See the warnings in \code{\link{betabinomial}}.
 
 }
 \seealso{
@@ -167,12 +176,11 @@ y = rbetabin.ab(n=100, size=N, shape1=s1, shape2=s2)
 fit = vglm(cbind(y,N-y) ~ 1, betabin.ab, trace=TRUE)
 coef(fit, matrix=TRUE)
 Coef(fit)
-fit@misc$rho[1:4] # The correlation parameter
-cbind(fit@y, weights(fit, type="prior"))[1:5,]
+head(fit@misc$rho) # The correlation parameter
+head(cbind(fit@y, weights(fit, type="prior")))
 
 
 # Example 2
-data(lirat)
 fit = vglm(cbind(R,N-R) ~ 1, betabin.ab, data=lirat, tra=TRUE, subset=N>1)
 coef(fit, matrix=TRUE)
 Coef(fit)
@@ -180,8 +188,7 @@ fit@misc$rho      # The correlation parameter
 t(fitted(fit))
 t(fit@y)
 t(weights(fit, type="prior"))
-# A loge link for the 2 shape parameters results in 
-# a logistic regression:
+# A "loge" link for the 2 shape parameters is a logistic regression:
 all.equal(c(fitted(fit)),
 c(logit(predict(fit)[,1] - predict(fit)[,2], inverse=TRUE)))
 
@@ -200,7 +207,6 @@ with(lirat, plot(hb[N>1], fit2@misc$rho,
                  pch=as.character(grp[N>1]), col=grp[N>1]))
 }
 \dontrun{
-data(lirat)
 # cf. Figure 3 of Moore and Tsiatis (1991)
 with(lirat, plot(hb, R/N, pch=as.character(grp), col=grp, las=1,
             xlab="Hemoglobin level", ylab="Proportion Dead",

@@ -164,8 +164,8 @@ table(y2)
 
 fit = vglm(cbind(y1,y2) ~ x, zanegbinomial, trace=TRUE)
 coef(fit, matrix=TRUE)
-fitted(fit)[1:3,]
-predict(fit)[1:3,]
+head(fitted(fit))
+head(predict(fit))
 }
 \keyword{models}
 \keyword{regression}

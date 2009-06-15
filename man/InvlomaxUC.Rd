@@ -12,10 +12,10 @@
 
 }
 \usage{
-dinvlomax(x, scale, p.arg)
-pinvlomax(q, scale, p.arg)
-qinvlomax(p, scale, p.arg)
-rinvlomax(n, scale, p.arg)
+dinvlomax(x, scale=1, p.arg, log = FALSE)
+pinvlomax(q, scale=1, p.arg)
+qinvlomax(p, scale=1, p.arg)
+rinvlomax(n, scale=1, p.arg)
 }
 \arguments{
   \item{x, q}{vector of quantiles.}
@@ -24,6 +24,12 @@ rinvlomax(n, scale, p.arg)
     is taken to be the number required.}
   \item{p.arg}{shape parameter.}
   \item{scale}{scale parameter.}
+  \item{log}{
+  Logical.
+  If \code{log=TRUE} then the logarithm of the density is returned.
+
+  }
+
 }
 \value{
   \code{dinvlomax} gives the density,

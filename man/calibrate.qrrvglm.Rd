@@ -114,7 +114,6 @@ Cambridge.
   \code{\link{cao}}.
 }
 \examples{
-data(hspider)
 hspider[,1:6] = scale(hspider[,1:6]) # Standardize the environmental variables
 set.seed(123)
 p1 = cqo(cbind(Pardlugu, Pardmont, Pardnigr, Pardpull, Zoraspin) ~

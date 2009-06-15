@@ -49,7 +49,7 @@ cqo <- function(formula,
 
     y <- model.response(mf, "numeric") # model.extract(mf, "response")
     x <- model.matrix(mt, mf, contrasts)
-    attr(x, "assign") <- attrassigndefault(x, mt) # So as to make it like Splus
+    attr(x, "assign") = attrassigndefault(x, mt)
     offset <- model.offset(mf)
     if(is.null(offset)) 
         offset <- 0 # yyy ???
@@ -64,7 +64,7 @@ cqo <- function(formula,
     if(is.function(family))
         family <- family()
     if(!inherits(family, "vglmff")) {
-        stop(paste("family=", family, "is not a VGAM family function"))
+        stop("'family=", family, "' is not a VGAM family function")
     }
 
     control$criterion = "coefficients"   # Specifically for vcontrol.expression

@@ -12,7 +12,7 @@
 
 }
 \usage{
-dcard(x, mu, rho)
+dcard(x, mu, rho, log=FALSE)
 pcard(q, mu, rho)
 qcard(p, mu, rho, tolerance = 1e-07, maxits = 500)
 rcard(n, mu, rho, ...)
@@ -35,6 +35,12 @@ rcard(n, mu, rho, ...)
   to vary the two arguments.
 
   }
+  \item{log}{
+  Logical.
+  If \code{log=TRUE} then the logarithm of the density is returned.
+
+  }
+
 }
 \details{
   See \code{\link{cardioid}}, the \pkg{VGAM} family function

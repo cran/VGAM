@@ -55,7 +55,7 @@ For a complete list of this package, use \code{library(help="VGAM")}.
 New \pkg{VGAM} family functions are continually being written and
 added to the package.
 A monograph about VGLM and VGAMs etc. is in the making but unfortunately
-won't be finished for a while.
+will not be finished for a while.
 
 
 %~~ An overview of how to use the package, including the most important ~~
@@ -118,7 +118,6 @@ contains further information and examples.
 \examples{
 # Example 1
 # Fit the proportional odds model, p.179, in McCullagh and Nelder (1989)
-data(pneumo)
 pneumo = transform(pneumo, let=log(exposure.time))
 (fit = vglm(cbind(normal, mild, severe) ~ let,
             cumulative(parallel=TRUE, reverse=TRUE), pneumo))
@@ -141,7 +140,6 @@ coef(fit, matrix=TRUE)  # These should agree with the above values
 
 # Example 3
 # Fit a two species GAM simultaneously
-data(hunua)
 fit2 = vgam(cbind(agaaus, kniexc) ~ s(altitude, df=c(2,3)),
             binomialff(mv=TRUE), hunua)
 coef(fit2, mat=TRUE)   # Not really interpretable
@@ -158,13 +156,11 @@ with(hunua, rug(altitude))
 
 # Example 4
 # LMS quantile regression
-data(bminz)
-fit = vgam(BMI ~ s(age, df=c(4,2)), lms.bcn(zero=1), dat=bminz, tr=TRUE)
-predict(fit)[1:3,]
-fitted(fit)[1:3,]
-bminz[1:3,]
-# Person 1 is near the lower quartile of BMI amongst people his age
-cdf(fit)[1:3]
+fit = vgam(BMI ~ s(age, df=c(4,2)), lms.bcn(zero=1), dat=bminz, trac=TRUE)
+head(predict(fit))
+head(fitted(fit))
+head(bminz) # Person 1 is near the lower quartile among people his age
+head(cdf(fit))
 
 \dontrun{
 # Quantile plot
@@ -186,9 +182,8 @@ a@post$deplot  # Contains density function values
 
 # Example 5
 # GEV distribution for extremes
-data(oxtemp)
 (fit = vglm(maxtemp ~ 1, egev, data=oxtemp, trace=TRUE))
-fitted(fit)[1:3,]
+head(fitted(fit))
 coef(fit, mat=TRUE)
 Coef(fit)
 vcov(fit)

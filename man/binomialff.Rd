@@ -100,6 +100,10 @@ binomialff(link = "logit", earg = list(),
   McCullagh, P. and Nelder, J. A. (1989)
   \emph{Generalized Linear Models}, 2nd ed. London: Chapman & Hall.
 
+  Altman, M. and Gill, J. and McDonald, M. P. (2004)
+  \emph{Numerical Issues in Statistical Computing for the Social
+        Scientist}, Hoboken, NJ: Wiley-Interscience.
+
 }
 \author{ Thomas W. Yee }
 
@@ -134,6 +138,7 @@ binomialff(link = "logit", earg = list(),
     \code{\link{rrvglm}},
     \code{\link{cqo}},
     \code{\link{cao}},
+    \code{\link{betabinomial}},
     \code{\link{zibinomial}},
     \code{\link{dexpbinomial}},
     \code{\link{mbinomial}},
@@ -144,8 +149,14 @@ binomialff(link = "logit", earg = list(),
 }
 \section{Warning }{
     With a multivariate response, assigning a known dispersion parameter
-    for \emph{each} response is not handled well yet.  Currently, only
-    a single known dispersion parameter is handled well.
+    for \emph{each} response is not handled well yet.
+    Currently, only a single known dispersion parameter is handled well.
+
+  The maximum likelihood estimate will not exist if the data is
+  \emph{completely separable} or \emph{quasi-completely separable}.
+  See Chapter 10 of Altman et al. (2004) for more details.
+  Yet to do: add a \code{sepcheck=TRUE}, say, argument to detect this
+  problem and give an appropriate warning.
 
 }
 
@@ -153,7 +164,6 @@ binomialff(link = "logit", earg = list(),
 quasibinomialff()
 quasibinomialff(link="probit")
 
-data(hunua)
 fit = vgam(agaaus ~ poly(altitude, 2), binomialff(link=cloglog), hunua)
 \dontrun{
 with(hunua, plot(altitude, agaaus, col="blue", ylab="P(agaaus=1)",

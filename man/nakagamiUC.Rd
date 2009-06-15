@@ -12,7 +12,7 @@
 
 }
 \usage{
-dnaka(x, shape, scale=1)
+dnaka(x, shape, scale=1, log = FALSE)
 pnaka(q, shape, scale=1)
 qnaka(p, shape, scale=1, ...)
 rnaka(n, shape, scale=1, Smallno=1.0e-6)
@@ -37,6 +37,11 @@ rnaka(n, shape, scale=1, Smallno=1.0e-6)
   }
   \item{\ldots}{
   Arguments that can be passed into \code{\link[stats]{uniroot}}.
+
+  }
+  \item{log}{
+  Logical.
+  If \code{log=TRUE} then the logarithm of the density is returned.
 
   }
 }

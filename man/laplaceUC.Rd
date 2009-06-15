@@ -12,7 +12,7 @@
 
 }
 \usage{
-dlaplace(x, location=0, scale=1)
+dlaplace(x, location=0, scale=1, log=FALSE)
 plaplace(q, location=0, scale=1)
 qlaplace(p, location=0, scale=1)
 rlaplace(n, location=0, scale=1)
@@ -29,6 +29,12 @@ rlaplace(n, location=0, scale=1)
   the scale parameter \eqn{b}.
   Must consist of positive values.
   }
+  \item{log}{
+  Logical.
+  If \code{log=TRUE} then the logarithm of the density is returned.
+
+  }
+
 }
 \details{
   The Laplace distribution is often known as the double-exponential

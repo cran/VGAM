@@ -70,7 +70,6 @@ contains further information and examples.
 }
 
 \examples{\dontrun{
-data(bminz)
 fit = vgam(BMI ~ s(age, df=c(4,2)), fam=lms.bcn(zero=1), data=bminz)
 ygrid = seq(15, 43, by=0.25)
 deplot(fit, x0=20, y=ygrid, xlab="BMI", col="green", llwd=2,
@@ -80,8 +79,8 @@ deplot(fit, x0=60, y=ygrid, add=TRUE, col="red", llwd=2) -> a
 
 names(a@post$deplot)
 a@post$deplot$newdata
-a@post$deplot$y[1:5]
-a@post$deplot$density[1:5]
+head(a@post$deplot$y)
+head(a@post$deplot$density)
 }
 }
 \keyword{hplot}

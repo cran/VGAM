@@ -76,7 +76,6 @@ contains further information and examples.
   \code{\link{loglinb3}}.
 }
 \examples{
-data(coalminers)
 coalminers = transform(coalminers, age=(age-42)/5)
 
 # Get the n x 4 matrix of counts 

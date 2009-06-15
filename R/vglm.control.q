@@ -10,16 +10,15 @@
 
 vlm.control <- function(save.weight=TRUE, tol=1e-7, method="qr", 
                         checkwz=TRUE, wzepsilon = .Machine$double.eps^0.75,
-                        ...)
-{
+                        ...) {
     if(tol <= 0) {
         warning("tol not positive; using 1e-7 instead")
         tol <- 1e-7
     }
     if(!is.logical(checkwz) || length(checkwz) != 1)
-        stop("bad input for \"checkwz\"")
+        stop("bad input for 'checkwz'")
     if(!is.Numeric(wzepsilon, allow=1, positive=TRUE))
-        stop("bad input for \"wzepsilon\"")
+        stop("bad input for 'wzepsilon'")
 
     list(save.weight=save.weight, tol=tol, method=method,
          checkwz=checkwz,
@@ -27,8 +26,7 @@ vlm.control <- function(save.weight=TRUE, tol=1e-7, method="qr",
 }
 
 
-vglm.control <- function(backchat=if(is.R()) FALSE else TRUE,
-                         checkwz=TRUE,
+vglm.control <- function(checkwz=TRUE,
                          criterion = names(.min.criterion.VGAM), 
                          epsilon=1e-7,
                          half.stepsizing=TRUE,
@@ -37,7 +35,8 @@ vglm.control <- function(backchat=if(is.R()) FALSE else TRUE,
                          save.weight=FALSE,
                          trace=FALSE,
                          wzepsilon = .Machine$double.eps^0.75,
-                         xij=NULL, ...)
+                         xij=NULL,
+                         ...)
 {
 
 
@@ -50,9 +49,9 @@ vglm.control <- function(backchat=if(is.R()) FALSE else TRUE,
 
 
     if(!is.logical(checkwz) || length(checkwz) != 1)
-        stop("bad input for \"checkwz\"")
+        stop("bad input for 'checkwz'")
     if(!is.Numeric(wzepsilon, allow=1, positive=TRUE))
-        stop("bad input for \"wzepsilon\"")
+        stop("bad input for 'wzepsilon'")
 
     convergence <- expression({
 
@@ -64,20 +63,19 @@ vglm.control <- function(backchat=if(is.R()) FALSE else TRUE,
     })
 
     if(!is.Numeric(epsilon, allow=1, posit=TRUE)) {
-        warning("bad input for \"epsilon\"; using 0.00001 instead")
+        warning("bad input for 'epsilon'; using 0.00001 instead")
         epsilon <- 0.00001
     }
     if(!is.Numeric(maxit, allow=1, posit=TRUE, integ=TRUE)) {
-        warning("bad input for \"maxit\"; using 20 instead")
+        warning("bad input for 'maxit'; using 20 instead")
         maxit <- 20
     }
     if(!is.Numeric(stepsize, allow=1, posit=TRUE)) {
-        warning("bad input for \"stepsize\"; using 1 instead")
+        warning("bad input for 'stepsize'; using 1 instead")
         stepsize <- 1
     }
 
-    list(backchat=as.logical(backchat)[1],
-         checkwz=checkwz,
+    list(checkwz=checkwz,
          convergence=convergence, 
          criterion=criterion,
          epsilon=epsilon,
@@ -88,7 +86,7 @@ vglm.control <- function(backchat=if(is.R()) FALSE else TRUE,
          stepsize=stepsize,
          trace=as.logical(trace)[1],
          wzepsilon = wzepsilon,
-         xij=xij)
+         xij=if(is(xij, "formula")) list(xij) else xij)
 }
 
 

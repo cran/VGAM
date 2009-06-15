@@ -5,7 +5,7 @@
 \description{
   \code{vglm} is used to fit vector generalized linear models (VGLMs).
   This is a large class of models that includes
-  generalized linear models (GLMs) as special cases.
+  generalized linear models (GLMs) as a special case.
 
 }
 \usage{
@@ -138,10 +138,12 @@ vglm(formula, family, data = list(), weights = NULL, subset = NULL,
   }
   \item{form2}{
   The second (optional) formula.
-  Some \pkg{VGAM} family functions such as \code{\link{micmen}})
-  use this argument to onput the regressor variable.
+  If argument \code{xij} is used (see \code{\link{vglm.control}}) then
+  \code{form2} needs to have \emph{all} terms in the model.
+  Also, some \pkg{VGAM} family functions such as \code{\link{micmen}}
+  use this argument to input the regressor variable.
   If given, the slots \code{@Xm2} and \code{@Ym2} may be assigned.
-  Warning: smart prediction is not used for this argument.
+  Note that smart prediction applies to terms in \code{form2} too.
 
   }
   \item{qr.arg}{
@@ -172,7 +174,7 @@ vglm(formula, family, data = list(), weights = NULL, subset = NULL,
   and
   \eqn{\beta_j}{beta_j} is a vector of regression coefficients
   to be estimated.
-  Here, \eqn{j=1,\ldots,M} where \eqn{M} is finite.
+  Here, \eqn{j=1,\ldots,M}, where \eqn{M} is finite.
   Then one can write
   \eqn{\eta=(\eta_1,\ldots,\eta_M)^T}{eta=(eta_1,\ldots,\eta_M)^T}
   as a vector of linear predictors.
@@ -210,7 +212,7 @@ vglm(formula, family, data = list(), weights = NULL, subset = NULL,
   \item{effects}{the effects.}
   \item{fitted.values}{
   the fitted values, as a matrix.
-  This is usually the mean but may be quantiles, or the location
+  This is often the mean but may be quantiles, or the location
   parameter, e.g., in the Cauchy model.
 
   }
@@ -221,7 +223,12 @@ vglm(formula, family, data = list(), weights = NULL, subset = NULL,
   \item{post}{a list where post-analysis results may be put.}
   \item{preplot}{used by \code{\link{plotvgam}}, the plotting parameters
         may be put here.}
-  \item{prior.weights}{initially supplied weights.}
+  \item{prior.weights}{
+  initially supplied weights
+  (the \code{weights} argument).
+  Also see \code{\link{weightsvglm}}.
+
+  }
   \item{qr}{the QR decomposition used in the fitting.}
   \item{R}{the \bold{R} matrix in the QR decomposition used in the fitting.}
   \item{rank}{numerical rank of the fitted model.}
@@ -234,7 +241,7 @@ vglm(formula, family, data = list(), weights = NULL, subset = NULL,
 
   }
   \item{terms}{the \code{\link[stats]{terms}} object used.}
-  \item{weights}{the weight matrices at the final IRLS iteration.
+  \item{weights}{the working weight matrices at the final IRLS iteration.
     This is in matrix-band form.}
   \item{x}{the model matrix (linear model LM, not VGLM).}
   \item{xlevels}{the levels of the factors, if any, used in fitting.}
@@ -287,8 +294,8 @@ The \code{VGAM} Package.
   (and also \code{\link[gam]{gam}} in the \pkg{gam} library and
   \code{\link[mgcv]{gam}} in the \pkg{mgcv} library).
 
-  The smart prediction (\code{\link{smartpred}}) library is packed with
-  the \pkg{VGAM} library.
+  The smart prediction (\code{\link{smartpred}}) library is incorporated
+  within the \pkg{VGAM} library.
 
   The theory behind the scaling parameter is currently being made more
   rigorous, but it it should give the same value as the scale parameter
@@ -296,9 +303,13 @@ The \code{VGAM} Package.
 
   In Example 5 below, the \code{xij} argument to illustrate covariates
   that are specific to a linear predictor. Here, \code{lop}/\code{rop} are
-  the ocular pressures of the left/right eye (artificial data). Variables
-  \code{leye} and \code{reye} might be the presence/absence of a particular
-  disease on the LHS/RHS eye respectively.  See \code{\link{fill}}
+  the ocular pressures of the left/right eye (artificial data).
+  Variables \code{leye} and \code{reye} might be the presence/absence of
+  a particular disease on the LHS/RHS eye respectively.
+  See
+  \code{\link{vglm.control}}
+  and
+  \code{\link{fill}}
   for more details and examples.
 
 }
@@ -333,57 +344,102 @@ summary(vglm.D93)
 
 
 # Example 2. Multinomial logit model
-data(pneumo)
 pneumo = transform(pneumo, let=log(exposure.time))
 vglm(cbind(normal, mild, severe) ~ let, multinomial, pneumo)
 
 
 # Example 3. Proportional odds model
-fit = vglm(cbind(normal,mild,severe) ~ let, cumulative(par=TRUE), pneumo)
-coef(fit, matrix=TRUE) 
-constraints(fit) 
-fit@x # LM model matrix
-model.matrix(fit) # Larger VGLM model matrix
+fit3 = vglm(cbind(normal,mild,severe) ~ let, trace=TRUE,
+            cumulative(parallel=TRUE, reverse=TRUE), pneumo)
+coef(fit3, matrix=TRUE) 
+constraints(fit3)
+model.matrix(fit3, type="lm") # LM model matrix
+model.matrix(fit3)            # Larger VGLM (or VLM) model matrix
 
 
 # Example 4. Bivariate logistic model 
-data(coalminers)
-fit = vglm(cbind(nBnW, nBW, BnW, BW) ~ age, binom2.or, coalminers, trace=TRUE)
-coef(fit, matrix=TRUE)
-fit@y
+fit4 = vglm(cbind(nBnW, nBW, BnW, BW) ~ age, binom2.or, coalminers)
+coef(fit4, matrix=TRUE)
+fit4@y  # Response are proportions
+weights(fit4, type="prior")
 
 
-# Example 5. The use of the xij argument
-n = 1000
-eyes = data.frame(lop = runif(n), rop = runif(n)) 
-eyes = transform(eyes, 
-                 leye = ifelse(runif(n) < logit(-1+2*lop, inverse=TRUE), 1, 0),
-                 reye = ifelse(runif(n) < logit(-1+2*rop, inverse=TRUE), 1, 0))
-fit = vglm(cbind(leye,reye) ~ lop + rop + fill(lop),
-           binom2.or(exchangeable=TRUE, zero=3),
-           xij = op ~ lop + rop + fill(lop), data=eyes)
-coef(fit)
-coef(fit, matrix=TRUE)
-coef(fit, matrix=TRUE, compress=FALSE)
+# Example 5. The use of the xij argument (simple case).
+# The constraint matrix for 'op' has one column.
+nn = 1000
+eyesdat = round(data.frame(lop = runif(nn),
+                           rop = runif(nn),
+                            op = runif(nn)), dig=2)
+eyesdat = transform(eyesdat, eta1 = -1+2*lop,
+                             eta2 = -1+2*lop)
+eyesdat = transform(eyesdat,
+                    leye = rbinom(nn, size=1, prob=logit(eta1, inv=TRUE)),
+                    reye = rbinom(nn, size=1, prob=logit(eta2, inv=TRUE)))
+fit5 = vglm(cbind(leye,reye) ~ op,
+            binom2.or(exchangeable=TRUE, zero=3),
+            data=eyesdat, trace=TRUE,
+            xij = list(op ~ lop + rop + fill(lop)),
+            form2 = ~  op + lop + rop + fill(lop))
+coef(fit5)
+coef(fit5, matrix=TRUE)
 
-# Here's one method to handle the xij argument with a term that
-# produces more than one column in the model matrix. 
-POLY3 = function(x, ...) {
-    # A cubic 
-    poly(c(x,...), 3)[1:length(x),]
-}
 
-fit = vglm(cbind(leye,reye) ~ POLY3(lop,rop) + POLY3(rop,lop) + fill(POLY3(lop,rop)),
-           binom2.or(exchangeable=TRUE, zero=3),  data=eyes,
-           xij = POLY3(op) ~ POLY3(lop,rop) + POLY3(rop,lop) + 
-                             fill(POLY3(lop,rop)))
-coef(fit)
-coef(fit, matrix=TRUE)
-coef(fit, matrix=TRUE, compress=FALSE)
-predict(fit)[1:4,]
 } 
 \keyword{models}
 \keyword{regression}
 
-%eyes$leye = ifelse(runif(n) < 1/(1+exp(-1+2*eyes$lop)), 1, 0)
-%eyes$reye = ifelse(runif(n) < 1/(1+exp(-1+2*eyes$rop)), 1, 0)
+%eyesdat$leye = ifelse(runif(n) < 1/(1+exp(-1+2*eyesdat$lop)), 1, 0)
+%eyesdat$reye = ifelse(runif(n) < 1/(1+exp(-1+2*eyesdat$rop)), 1, 0)
+%coef(fit, matrix=TRUE, compress=FALSE)
+
+
+
+% 20090506 zz Put these examples elsewhere:
+%
+%# Example 6. The use of the xij argument (complex case).
+%# Here is one method to handle the xij argument with a term that
+%# produces more than one column in the model matrix.
+%# The constraint matrix for 'op' has essentially one column.
+%POLY3 = function(x, ...) {
+%    # A cubic; ensures that the basis functions are the same.
+%    poly(c(x,...), 3)[1:length(x),]
+%    head(poly(c(x,...), 3), length(x), drop=FALSE)
+%}
+%
+%fit6 = vglm(cbind(leye,reye) ~ POLY3(op), trace=TRUE,
+%            fam = binom2.or(exchangeable=TRUE, zero=3),  data=eyesdat,
+%            xij = list(POLY3(op) ~ POLY3(lop,rop) + POLY3(rop,lop) +
+%                                   fill(POLY3(lop,rop))),
+%            form2 = ~  POLY3(op) + POLY3(lop,rop) + POLY3(rop,lop) +
+%                       fill(POLY3(lop,rop)))
+%coef(fit6)
+%coef(fit6, matrix=TRUE)
+%head(predict(fit6))
+%\dontrun{
+%plotvgam(fit6, se=TRUE) # Wrong since it plots against op, not lop.
+%}
+%
+%
+%# Example 7. The use of the xij argument (simple case).
+%# Each constraint matrix has 4 columns.
+%ymat = rdiric(n <- 1000, shape=c(4,7,3,1))
+%mydat = data.frame(x1=runif(n), x2=runif(n), x3=runif(n), x4=runif(n),
+%                   z1=runif(n), z2=runif(n), z3=runif(n), z4=runif(n),
+%                   X2=runif(n), Z2=runif(n))
+%mydat = round(mydat, dig=2)
+%fit7 = vglm(ymat ~ X2 + Z2, data=mydat, crit="c",
+%           fam = dirichlet(parallel=TRUE), # Intercept is also parallel.
+%           xij = list(Z2 ~ z1 + z2 + z3 + z4,
+%                      X2 ~ x1 + x2 + x3 + x4),
+%           form2 =  ~ Z2 + z1 + z2 + z3 + z4 +
+%                      X2 + x1 + x2 + x3 + x4)
+%head(model.matrix(fit7, type="lm"))   # LM model matrix
+%head(model.matrix(fit7, type="vlm"))  # Big VLM model matrix
+%coef(fit7)
+%coef(fit7, matrix=TRUE)
+%max(abs(predict(fit7)-predict(fit7, new=mydat))) # Predicts correctly
+%summary(fit7)
+
+
+
+

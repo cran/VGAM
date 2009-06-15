@@ -3,6 +3,10 @@
 
 
 
+
+
+
+
 vgam <- function(formula, 
                  family, 
                  data=list(), 
@@ -47,8 +51,8 @@ vgam <- function(formula,
     xlev = .getXlevels(mt, mf)
     y <- model.response(mf, "any") # model.extract(mf, "response")
     x <- if (!is.empty.model(mt)) model.matrix(mt, mf, contrasts) else
-         matrix(, NROW(Y), 0)
-    attr(x, "assign") <- attrassigndefault(x, mt) # So as to make it like Splus
+         matrix(, NROW(y), 0)
+    attr(x, "assign") = attrassigndefault(x, mt)
 
     offset <- model.offset(mf)
     if(is.null(offset))
@@ -90,7 +94,7 @@ vgam <- function(formula,
     if (is.function(family))
         family <- family()
     if(!inherits(family, "vglmff")) {
-        stop(paste("family=", family, "is not a VGAM family function"))
+        stop("'family=", family, "' is not a VGAM family function")
     }
 
     eval(vcontrol.expression)
@@ -214,7 +218,7 @@ vgam <- function(formula,
         slot(answer, "xlevels") = xlev
     if(y.arg)
         slot(answer, "y") = as.matrix(fit$y)
-
+    answer@misc$formula = formula
 
 
     slot(answer, "control") = fit$control

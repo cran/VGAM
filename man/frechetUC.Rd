@@ -10,7 +10,7 @@
   generation for the three parameter Frechet distribution.
 }
 \usage{
-dfrechet(x, location=0, scale=1, shape)
+dfrechet(x, location=0, scale=1, shape, log=FALSE)
 pfrechet(q, location=0, scale=1, shape)
 qfrechet(p, location=0, scale=1, shape)
 rfrechet(n, location=0, scale=1, shape)
@@ -22,6 +22,12 @@ rfrechet(n, location=0, scale=1, shape)
     Must be a positive integer of length 1.}
   \item{location, scale, shape}{the location parameter \eqn{a},
   scale parameter \eqn{b}, and shape parameter \eqn{s}.}
+  \item{log}{
+  Logical.
+  If \code{log=TRUE} then the logarithm of the density is returned.
+
+  }
+
 }
 \value{
   \code{dfrechet} gives the density,

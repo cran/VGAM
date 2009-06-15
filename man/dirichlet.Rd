@@ -7,7 +7,7 @@
 
 }
 \usage{
-dirichlet(link = "loge", earg=list(), zero=NULL)
+dirichlet(link = "loge", earg=list(), parallel = FALSE, zero=NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -28,11 +28,8 @@ dirichlet(link = "loge", earg=list(), zero=NULL)
   See \code{earg} in \code{\link{Links}} for general information.
 
   }
-  \item{zero}{
-  An integer-valued vector specifying which
-  linear/additive predictors are modelled as intercepts only.
-  The default is none of them.
-  If used, choose values from the set \eqn{\{1,2,\ldots,M\}}.
+  \item{parallel, zero}{
+  See \code{\link{CommonVGAMffArguments}} for more information.
 
   }
 }
@@ -117,7 +114,7 @@ y = rdiric(n=1000, shape=exp(c(-1,1,0)))
 fit = vglm(y ~ 1, dirichlet, trace = TRUE, crit="c")
 Coef(fit)
 coef(fit, matrix=TRUE)
-fitted(fit)[1:2,]
+head(fitted(fit))
 }
 \keyword{models}
 \keyword{regression}

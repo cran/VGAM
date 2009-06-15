@@ -15,9 +15,16 @@
 
 
 
+
+
+
+
+
+
+
 getMaxMin = function(vov, objfun, y, x, w, extraargs=NULL, maximize=TRUE,
                      abs.arg=FALSE) {
-    if(!is.vector(vov)) stop("vov must be a vector")
+    if(!is.vector(vov)) stop("'vov' must be a vector")
     objvals = vov
     for(ii in 1:length(vov))
         objvals[ii] = objfun(vov[ii], y=y, x=x, w=w, extraargs=extraargs)
@@ -34,7 +41,7 @@ getMaxMin = function(vov, objfun, y, x, w, extraargs=NULL, maximize=TRUE,
 
 
 
-mccullagh89 = function(ltheta="rhobit", lnu="logoff",
+ mccullagh89 = function(ltheta="rhobit", lnu="logoff",
                        itheta=NULL, inu=NULL,
                        etheta=list(),
                        enu=if(lnu == "logoff") list(offset=0.5) else list(),
@@ -45,7 +52,7 @@ mccullagh89 = function(ltheta="rhobit", lnu="logoff",
     if(mode(lnu) != "character" && mode(lnu) != "name")
         lnu = as.character(substitute(lnu))
     if(length(zero) && !is.Numeric(zero, integer=TRUE, posit=TRUE))
-        stop("bad input for argument \"zero\"")
+        stop("bad input for argument 'zero'")
     if(!is.list(etheta)) etheta = list()
     if(!is.list(enu)) enu = list()
 
@@ -67,6 +74,7 @@ mccullagh89 = function(ltheta="rhobit", lnu="logoff",
         y = as.numeric(y)
         if(any(y <= -1 | y >= 1))
             stop("all y values must be in (-1,1)")
+
         predictors.names= c(namesof("theta", .ltheta, earg= .etheta,tag=FALSE),
                             namesof("nu",    .lnu,    earg= .enu,   tag=FALSE))
         if(!length(etastart)) {
@@ -105,8 +113,8 @@ mccullagh89 = function(ltheta="rhobit", lnu="logoff",
         Theta = eta2theta(eta[,1], .ltheta, earg= .etheta )
         nu = eta2theta(eta[,2], .lnu, earg= .enu )
         if(residuals) stop("loglikelihood residuals not implemented yet") else
-        sum(w * ((nu-0.5)*log1p(-y^2) - nu * log1p(-2*Theta*y + Theta^2) -
-                lbeta(nu+0.5,0.5 )))
+            sum(w * ((nu-0.5)*log1p(-y^2) - nu * log1p(-2*Theta*y + Theta^2) -
+                    lbeta(nu+0.5,0.5 )))
     }, list( .ltheta=ltheta, .lnu=lnu, .etheta = etheta, .enu=enu ))),
     vfamily=c("mccullagh89"),
     deriv=eval(substitute(expression({
@@ -139,12 +147,11 @@ hzeta.control <- function(save.weight=TRUE, ...)
 
 
 
-hzeta = function(link="loglog", earg=list(), ialpha=NULL, nsimEIM=100)
+ hzeta = function(link="loglog", earg=list(), ialpha=NULL, nsimEIM=100)
 {
-    if(length(ialpha) && !is.Numeric(ialpha, positive=TRUE))
-        stop("'ialpha' must be > 0")
-    if(!is.Numeric(nsimEIM, allow=1, integ=TRUE) || nsimEIM <= 10)
-        stop("'nsimEIM' should be an integer greater than 10")
+
+    stopifnot(ialpha > 0)
+    stopifnot(nsimEIM > 10, length(nsimEIM)==1, nsimEIM==round(nsimEIM))
 
     if(mode(link) != "character" && mode(link) != "name")
         link = as.character(substitute(link))
@@ -189,8 +196,9 @@ hzeta = function(link="loglog", earg=list(), ialpha=NULL, nsimEIM=100)
     loglikelihood=eval(substitute(
         function(mu,y,w,residuals= FALSE,eta, extra=NULL) {
         alpha = eta2theta(eta, .link, earg= .earg )
-        if(residuals) stop("loglikelihood residuals not implemented yet") else
-        sum(w * log((2*y-1)^(-alpha) - (2*y+1)^(-alpha)))
+        if(residuals) stop("loglikelihood residuals not implemented yet") else {
+            sum(w * dhzeta(x=y, alpha=alpha, log=TRUE))
+        }
     }, list( .link=link, .earg=earg ))),
     vfamily=c("hzeta"),
     deriv=eval(substitute(expression({
@@ -215,7 +223,7 @@ hzeta = function(link="loglog", earg=list(), ialpha=NULL, nsimEIM=100)
             run.var = ((ii-1) * run.var + temp3^2) / ii
         }
         wz = if(intercept.only)
-            matrix(apply(cbind(run.var), 2, mean),
+            matrix(colMeans(cbind(run.var)),
                    n, dimm(M), byrow=TRUE) else cbind(run.var)
 
         wz = wz * dalpha.deta^2
@@ -226,18 +234,21 @@ hzeta = function(link="loglog", earg=list(), ialpha=NULL, nsimEIM=100)
 
 
 
-dhzeta = function(x, alpha) 
+dhzeta = function(x, alpha, log = FALSE)
 {
+    if(!is.logical(log.arg <- log))
+        stop("bad input for argument 'log'")
+    rm(log)
+
     if(!is.Numeric(alpha, posit=TRUE))
         stop("'alpha' must be numeric and have positive values")
     nn = max(length(x), length(alpha))
-    x = rep(x, len=nn)
-    alpha = rep(alpha, len=nn)
+    x = rep(x, len=nn); alpha = rep(alpha, len=nn)
     ox = !is.finite(x)
     zero = ox | round(x) != x | x < 1
-    ans = 0 * x
+    ans = rep(0, len=nn)
     ans[!zero] = (2*x[!zero]-1)^(-alpha[!zero]) - (2*x[!zero]+1)^(-alpha[!zero])
-    ans
+    if(log.arg) log(ans) else ans
 }
 
 
@@ -262,7 +273,7 @@ qhzeta = function(p, alpha)
     if(!is.Numeric(alpha, posit=TRUE))
         stop("'alpha' must be numeric and have positive values")
     if(!is.Numeric(p, posit=TRUE) || any(p >= 1))
-        stop("argument \"p\" must have values inside the interval (0,1)")
+        stop("argument 'p' must have values inside the interval (0,1)")
     nn = max(length(p), length(alpha))
     p = rep(p, len=nn)
     alpha = rep(alpha, len=nn)
@@ -275,13 +286,13 @@ rhzeta = function(n, alpha)
     if(!is.Numeric(alpha, posit=TRUE))
         stop("'alpha' must be numeric and have positive values")
     if(!is.Numeric(n, posit=TRUE, integ=TRUE, allow=1))
-        stop("argument \"n\" must be a positive integer")
+        stop("argument 'n' must be a positive integer")
     ans = ((runif(n)^(-1/alpha) - 1) / 2)
     floor(ans+1)
 }
 
 
-dirmultinomial = function(lphi="logit", ephi = list(),
+ dirmultinomial = function(lphi="logit", ephi = list(),
                           iphi = 0.10, parallel= FALSE, zero="M")
 {
 
@@ -289,9 +300,9 @@ dirmultinomial = function(lphi="logit", ephi = list(),
         lphi = as.character(substitute(lphi))
     if(length(zero) && 
        !(is.Numeric(zero, integer=TRUE, posit=TRUE) || is.character(zero )))
-        stop("bad input for argument \"zero\"")
+        stop("bad input for argument 'zero'")
     if(!is.Numeric(iphi, positive=TRUE) || max(iphi) >= 1.0)
-        stop("bad input for argument \"iphi\"")
+        stop("bad input for argument 'iphi'")
     if(!is.list(ephi)) ephi = list()
 
     new("vglmff",
@@ -329,7 +340,7 @@ dirmultinomial = function(lphi="logit", ephi = list(),
               namesof("phi", .lphi, short=TRUE))
         extra$n2 = w  # aka omega, must be integer # as.vector(apply(y, 1, sum))
         if(!length(etastart)) {
-            prob.init = apply(ycount, 2, sum)
+            prob.init = colSums(ycount)
             prob.init = prob.init / sum(prob.init)
             prob.init = matrix(prob.init, n, M, byrow=TRUE)
             phi.init = rep( .iphi, len=n)
@@ -551,7 +562,7 @@ dirmul.old = function(link="loge", earg=list(), init.alpha = 0.01,
     if(mode(link) != "character" && mode(link) != "name")
         link = as.character(substitute(link))
     if(length(zero) && !is.Numeric(zero, integer=TRUE, posit=TRUE))
-        stop("bad input for argument \"zero\"")
+        stop("bad input for argument 'zero'")
     if(!is.Numeric(init.alpha, posit=TRUE))
         stop("'init.alpha' must contain positive values only")
     if(!is.list(earg)) earg = list()
@@ -574,7 +585,7 @@ dirmul.old = function(link="loge", earg=list(), init.alpha = 0.01,
 
         predictors.names = namesof(paste("shape", 1:M, sep=""), .link,
             earg=.earg, short=TRUE)
-        extra$n2 = as.vector(apply(y, 1, sum))  # Nb. don't multiply by 2
+        extra$n2 = rowSums(y)  # Nb. don't multiply by 2
         extra$y  = y
         if(!length(etastart)) {
             yy = if(is.numeric(.init.alpha)) 
@@ -644,22 +655,21 @@ rdiric = function(n, shape, dimension=NULL) {
         dimension = length(shape)
     shape = rep(shape, len=dimension)
 
-    ans = if(is.R()) rgamma(n*dimension, rep(shape, rep(n, dimension ))) else
-               rgamma(n*dimension, rep(shape, each=n)) 
+    ans = rgamma(n*dimension, rep(shape, rep(n, dimension)))
     dim(ans) = c(n, dimension) 
 
 
-    ans = ans / apply(ans, 1, sum)
-    ans 
+    ans = ans / rowSums(ans)
+    ans
 }
 
 
-dirichlet = function(link="loge", earg=list(), zero=NULL)
+ dirichlet = function(link="loge", earg=list(), parallel= FALSE, zero=NULL)
 {
     if(mode(link) != "character" && mode(link) != "name")
         link = as.character(substitute(link))
     if(length(zero) && !is.Numeric(zero, integer=TRUE, posit=TRUE))
-        stop("bad input for argument \"zero\"")
+        stop("bad input for argument 'zero'")
     if(!is.list(earg)) earg = list()
 
     new("vglmff",
@@ -668,8 +678,9 @@ dirichlet = function(link="loge", earg=list(), zero=NULL)
             namesof("shapej", link, earg=earg), "\n\n",
             "Mean:     shape_j/(1 + sum(shape_j)), j=1,..,ncol(y)"),
     constraints=eval(substitute(expression({
+        constraints = cm.vgam(matrix(1,M,1), x, .parallel, constraints, int= TRUE)
         constraints = cm.zero.vgam(constraints, x, .zero, M)
-    }), list( .zero=zero ))),
+    }), list( .parallel=parallel, .zero=zero ))),
     initialize=eval(substitute(expression({
         y = as.matrix(y)
         M = ncol(y)
@@ -685,7 +696,7 @@ dirichlet = function(link="loge", earg=list(), zero=NULL)
     inverse=eval(substitute(function(eta, extra=NULL) {
         shape = eta2theta(eta, .link, earg= .earg )
         M = if(is.matrix(eta)) ncol(eta) else 1
-        sumshape = as.vector(shape %*% rep(1, len=M))  # apply(shape, 1, sum)
+        sumshape = rowSums(shape)
         shape / sumshape
     }, list( .link=link, .earg=earg ))),
     last=eval(substitute(expression({
@@ -725,7 +736,8 @@ dirichlet = function(link="loge", earg=list(), zero=NULL)
 
 
 
-zeta = function(x, deriv=0) {
+ zeta = function(x, deriv=0) {
+
 
 
     deriv.arg = deriv
@@ -768,16 +780,16 @@ zeta = function(x, deriv=0) {
     a=12; k=8  # Markman paper 
     B = c(1/6, -1/30,1/42,-1/30,5/66,-691/2730,7/6,-3617/510)
     ans = 0
-    for(i in 1:(a-1))
-       ans = ans + 1.0 / i^x
+    for(ii in 1:(a-1))
+       ans = ans + 1.0 / ii^x
     ans = ans + 1.0 / ((x-1.0)* a^(x-1.0)) + 1.0 / (2.0 * a^x)
 
     term = (x/2) / a^(x+1)
     ans = ans + term * B[1]
 
-    for(m in 2:k) {
-        term = term * (x+2*m-2) * (x+2*m-3) / (a*a* 2*m * (2*m-1))
-        ans = ans + term * B[m]
+    for(mm in 2:k) {
+        term = term * (x+2*mm-2) * (x+2*mm-3) / (a*a* 2*mm * (2*mm-1))
+        ans = ans + term * B[mm]
     }
     ans
 }
@@ -814,27 +826,37 @@ zeta.derivative = function(x, deriv=0)
 }
 
 
-dzeta = function(x, p) 
+dzeta = function(x, p, log = FALSE)
 {
-    if(!is.Numeric(p, allow=1, posit=TRUE) || p <= 1)
-        stop("'p' must be numeric and > 1")
-    p = rep(p, len=length(x))
+    if(!is.logical(log.arg <- log))
+        stop("bad input for argument 'log'")
+    rm(log)
+
+    if(!is.Numeric(p, posit=TRUE)) # || min(p) <= 1
+        stop("'p' must be numeric and > 0")
+    LLL = max(length(p), length(x))
+    x = rep(x, len=LLL); p = rep(p, len=LLL)
 
     ox = !is.finite(x)
     zero = ox | round(x) != x | x < 1
     if(any(zero)) warning("non-integer x and/or x < 1 or NAs")
-    ans = rep(0.0, len=length(x))
-    if(any(!zero))
-        ans[!zero] = x[!zero]^(-p[!zero]) / zeta(p[!zero]) 
+    ans = rep(if(log.arg) log(0) else 0, len=LLL)
+    if(any(!zero)) {
+        if(log.arg) {
+            ans[!zero] = (-p[!zero]-1)*log(x[!zero]) - log(zeta(p[!zero]+1))
+        } else {
+            ans[!zero] = x[!zero]^(-p[!zero]-1) / zeta(p[!zero]+1)
+        }
+    }
     if(any(ox)) ans[ox] = NA
     ans
 }
 
-zetaff = function(link="loge", earg=list(), init.p=NULL)
+ zetaff = function(link="loge", earg=list(), init.p=NULL)
 {
 
     if(length(init.p) && !is.Numeric(init.p, positi=TRUE))
-        stop("argument \"init.p\" must be > 0")
+        stop("argument 'init.p' must be > 0")
     if(mode(link) != "character" && mode(link) != "name")
         link = as.character(substitute(link))
     if(!is.list(earg)) earg = list()
@@ -850,7 +872,7 @@ zetaff = function(link="loge", earg=list(), init.p=NULL)
         if(any(y < 1))
             stop("all y values must be in 1,2,3,...")
         if(any(y != round(y )))
-            warning("y should be integer-valued")
+            warning("'y' should be integer-valued")
         if(ncol(cbind(y)) != 1)
             stop("response must be a vector or a one-column matrix")
 
@@ -858,7 +880,7 @@ zetaff = function(link="loge", earg=list(), init.p=NULL)
 
         if(!length(etastart)) {
             zetaff.Loglikfun = function(pp, y, x, w, extraargs) {
-                sum(w * (-(pp+1) * log(y) - log(zeta(pp+1))))
+                sum(w * dzeta(x=y, p=pp, log=TRUE))
             }
             p.grid = seq(0.1, 3.0, len=19)
             pp.init = if(length( .init.p )) .init.p else
@@ -881,8 +903,9 @@ zetaff = function(link="loge", earg=list(), init.p=NULL)
     loglikelihood=eval(substitute(
         function(mu,y,w,residuals= FALSE,eta, extra=NULL) {
         pp = eta2theta(eta, .link, earg=.earg)
-        if(residuals) stop("loglikelihood residuals not implemented yet") else
-        sum(w * (-(pp+1) * log(y) - log(zeta(pp+1 ))))
+        if(residuals) stop("loglikelihood residuals not implemented yet") else {
+            sum(w * dzeta(x=y, p=pp, log=TRUE))
+        }
     }, list( .link=link, .earg=earg ))),
     vfamily=c("zetaff"),
     deriv=eval(substitute(expression({
@@ -905,9 +928,9 @@ zetaff = function(link="loge", earg=list(), init.p=NULL)
 gharmonic = function(n, s=1, lognexponent=0) {
 
     if(!is.Numeric(n, integ=TRUE, posit=TRUE))
-        stop("bad input for argument \"n\"")
+        stop("bad input for argument 'n'")
     if(!is.Numeric(lognexponent, allow=1))
-        stop("bad input for argument \"lognexponent\"")
+        stop("bad input for argument 'lognexponent'")
     if(length(n) == 1 && length(s) == 1) {
         if(lognexponent != 0) sum(log(1:n)^lognexponent * (1:n)^(-s)) else
             sum((1:n)^(-s))
@@ -916,30 +939,39 @@ gharmonic = function(n, s=1, lognexponent=0) {
         n = rep(n, len=LEN)
         ans = s = rep(s, len=LEN)
         if(lognexponent != 0) {
-            for(i in 1:LEN)
-                ans[i] = sum(log(1:n[i])^lognexponent * (1:n[i])^(-s[i]))
+            for(ii in 1:LEN)
+                ans[ii] = sum(log(1:n[ii])^lognexponent * (1:n[ii])^(-s[ii]))
         } else
-            for(i in 1:LEN)
-                ans[i] = sum((1:n[i])^(-s[i]))
+            for(ii in 1:LEN)
+                ans[ii] = sum((1:n[ii])^(-s[ii]))
         ans
     }
 }
 
-dzipf = function(x, N, s)
+dzipf = function(x, N, s, log=FALSE)
 {
+    if(!is.logical(log.arg <- log))
+        stop("bad input for argument 'log'")
+    rm(log)
+
     if(!is.Numeric(x))
-        stop("bad input for argument \"x\"")
+        stop("bad input for argument 'x'")
     if(!is.Numeric(N, integ=TRUE, posit=TRUE))
-        stop("bad input for argument \"N\"")
+        stop("bad input for argument 'N'")
     if(!is.Numeric(s, posit=TRUE))
-        stop("bad input for argument \"s\"")
+        stop("bad input for argument 's'")
     nn = max(length(x), length(N), length(s))
     x = rep(x, len=nn); N = rep(N, len=nn); s = rep(s, len=nn);
     ox = !is.finite(x)
     zero = ox | round(x) != x | x < 1 | x > N
-    ans = 0 * x
+    ans = (if(log.arg) log(0) else 0) * x
     if(any(!zero))
-        ans[!zero] = x[!zero]^(-s[!zero]) / gharmonic(N[!zero], s[!zero])
+        if(log.arg) {
+            ans[!zero] = (-s[!zero]) * log(x[!zero]) -
+                         log(gharmonic(N[!zero], s[!zero]))
+        } else {
+            ans[!zero] = x[!zero]^(-s[!zero]) / gharmonic(N[!zero], s[!zero])
+        }
     ans
 }
 
@@ -947,11 +979,11 @@ dzipf = function(x, N, s)
 
 pzipf = function(q, N, s) {
     if(!is.Numeric(q))
-        stop("bad input for argument \"q\"")
+        stop("bad input for argument 'q'")
     if(!is.Numeric(N, integ=TRUE, posit=TRUE))
-        stop("bad input for argument \"N\"")
+        stop("bad input for argument 'N'")
     if(!is.Numeric(s, posit=TRUE))
-        stop("bad input for argument \"s\"")
+        stop("bad input for argument 's'")
 
     nn = max(length(q), length(N), length(s))
     q = rep(q, len=nn); N = rep(N, len=nn); s = rep(s, len=nn);
@@ -967,14 +999,14 @@ pzipf = function(q, N, s) {
 }
 
 
-zipf = function(N=NULL, link="loge", earg=list(), init.s=NULL)
+ zipf = function(N=NULL, link="loge", earg=list(), init.s=NULL)
 {
     if(length(N) &&
       (!is.Numeric(N, positi=TRUE, integ=TRUE, allow=1) || N <= 1))
-        stop("bad input for argument \"N\"")
+        stop("bad input for argument 'N'")
     enteredN = length(N)
     if(length(init.s) && !is.Numeric(init.s, positi=TRUE))
-        stop("argument \"init.s\" must be > 0")
+        stop("argument 'init.s' must be > 0")
 
     if(mode(link) != "character" && mode(link) != "name")
         link = as.character(substitute(link))
@@ -999,13 +1031,13 @@ zipf = function(N=NULL, link="loge", earg=list(), init.s=NULL)
         if(!is.Numeric(NN, allow=1, posit=TRUE, integ=TRUE))
             NN = max(y)
         if(max(y) > NN)
-            stop("maximum of the response is greater than argument \"N\"")
+            stop("maximum of the response is greater than argument 'N'")
         if(any(y < 1))
-            stop(paste("all response values must be in 1,2,3,...,N=",NN,sep=""))
+            stop("all response values must be in 1,2,3,...,N(=", NN,")")
         extra$N = NN
         if(!length(etastart)) {
             llfun = function(ss, y, N, w) {
-                sum(w * ((-ss) * log(y) - log(gharmonic(N, ss))))
+                sum(w * dzipf(x=y, N=extra$N, s=ss, log=TRUE))
             }
             ss.init = if(length( .init.s )) .init.s else
                 getInitVals(gvals=seq(0.1, 3.0, len=19), llfun=llfun,
@@ -1028,8 +1060,9 @@ zipf = function(N=NULL, link="loge", earg=list(), init.s=NULL)
     loglikelihood=eval(substitute(
         function(mu,y,w,residuals= FALSE,eta, extra=NULL) {
         ss = eta2theta(eta, .link, earg= .earg)
-        if(residuals) stop("loglikelihood residuals not implemented yet") else
-        sum(w * ((-ss) * log(y) - log(gharmonic(extra$N, ss ))))
+        if(residuals) stop("loglikelihood residuals not implemented yet") else {
+            sum(w * dzipf(x=y, N=extra$N, s=ss, log=TRUE))
+        }
     }, list( .link=link, .earg=earg ))),
     vfamily=c("zipf"),
     deriv=eval(substitute(expression({
@@ -1055,7 +1088,7 @@ cauchy.control <- function(save.weight=TRUE, ...)
     list(save.weight=save.weight)
 }
 
-cauchy = function(llocation="identity", lscale="loge",
+ cauchy = function(llocation="identity", lscale="loge",
                   elocation=list(), escale=list(),
                   ilocation=NULL, iscale=NULL,
                   iprobs = seq(0.2, 0.8, by=0.2),
@@ -1071,14 +1104,14 @@ cauchy = function(llocation="identity", lscale="loge",
     if(!is.list(elocation)) elocation = list()
     if(!is.list(escale)) escale = list()
     if(length(zero) && !is.Numeric(zero, integer=TRUE, posit=TRUE))
-        stop("bad input for argument \"zero\"")
+        stop("bad input for argument 'zero'")
     if(length(nsimEIM) &&
        (!is.Numeric(nsimEIM, allow=1, integ=TRUE) || nsimEIM <= 50))
         stop("'nsimEIM' should be an integer greater than 50")
     if(length(iscale) && !is.Numeric(iscale, posit=TRUE))
-        stop("bad input for argument \"iscale\"")
+        stop("bad input for argument 'iscale'")
     if(!is.Numeric(iprobs, posit=TRUE) || max(iprobs) >= 1)
-        stop("bad input for argument \"iprobs\"")
+        stop("bad input for argument 'iprobs'")
 
     new("vglmff",
     blurb=c("Two parameter Cauchy distribution (location & scale unknown)\n\n",
@@ -1108,7 +1141,7 @@ cauchy = function(llocation="identity", lscale="loge",
                          btry = (qy - loc) / ztry
                          scal = median(btry, na.rm = TRUE)
                          if(scal <= 0) scal = 0.1
-                         sum(w * (-log1p(((y-loc)/scal)^2) - log(scal)))
+                         sum(w * dcauchy(x=y, loc=loc, scale=scal, log=TRUE))
                      }
                      loc.grid = c(quantile(y, probs=seq(0.1, 0.9, by=0.05)))
                      try.this = getMaxMin(loc.grid, objfun=cauchy2.Loglikfun,
@@ -1153,10 +1186,10 @@ cauchy = function(llocation="identity", lscale="loge",
     loglikelihood=eval(substitute(
         function(mu,y,w,residuals= FALSE,eta, extra=NULL) {
         location = eta2theta(eta[,1], .llocation, earg=.elocation)
-        myscale = eta2theta(eta[,2], .lscale, earg=.escale)
-        Z = (y-location)/ myscale
-        if(residuals) stop("loglikelihood residuals not implemented yet") else
-        sum(w * (-log1p(Z^2) - log(pi) - log(myscale)))
+        myscale  = eta2theta(eta[,2], .lscale,    earg=.escale)
+        if(residuals) stop("loglikelihood residuals not implemented yet") else {
+            sum(w * dcauchy(x=y, loc=location, sc=myscale, log=TRUE))
+        }
     }, list( .escale=escale, .lscale=lscale,
              .elocation=elocation, .llocation=llocation ))),
     vfamily=c("cauchy"),
@@ -1188,7 +1221,7 @@ cauchy = function(llocation="identity", lscale="loge",
                            temp3[,ind1$row.index]*temp3[,ind1$col.index]) / ii
             }
             wz = if(intercept.only)
-                matrix(apply(run.varcov, 2, mean),
+                matrix(colMeans(run.varcov),
                        n, ncol(run.varcov), byrow=TRUE) else run.varcov
 
             wz = wz * dthetas.detas[,ind1$row] * dthetas.detas[,ind1$col]
@@ -1210,13 +1243,13 @@ cauchy = function(llocation="identity", lscale="loge",
 
 
 
-cauchy1 = function(scale.arg=1, llocation="identity",
-                   elocation=list(),
-                   ilocation=NULL, method.init=1)
+ cauchy1 = function(scale.arg=1, llocation="identity",
+                    elocation=list(),
+                    ilocation=NULL, method.init=1)
 {
     if(mode(llocation) != "character" && mode(llocation) != "name")
         llocation = as.character(substitute(llocation))
-    if(!is.Numeric(scale.arg, posit=TRUE)) stop("bad input for \"scale.arg\"")
+    if(!is.Numeric(scale.arg, posit=TRUE)) stop("bad input for 'scale.arg'")
     if(!is.Numeric(method.init, allow=1, integ=TRUE, posit=TRUE) ||
        method.init > 3)
         stop("'method.init' must be 1 or 2 or 3")
@@ -1241,7 +1274,7 @@ cauchy1 = function(scale.arg=1, llocation="identity",
                 if( .method.init == 3) y else {
                     cauchy1.Loglikfun = function(loc, y, x, w, extraargs) {
                          scal = extraargs
-                         sum(w * (-log1p(((y-loc)/scal)^2) - log(scal)))
+                         sum(w * dcauchy(x=y, loc=loc, scale=scal, log=TRUE))
                      }
                      loc.grid = quantile(y, probs=seq(0.1, 0.9, by=0.05))
                      try.this = getMaxMin(loc.grid, objfun=cauchy1.Loglikfun,
@@ -1271,9 +1304,9 @@ cauchy1 = function(scale.arg=1, llocation="identity",
     loglikelihood=eval(substitute(
         function(mu,y,w,residuals= FALSE,eta, extra=NULL) {
         location = eta2theta(eta, .llocation, earg=.elocation)
-        temp = (y-location)/ .scale.arg
-        if(residuals) stop("loglikelihood residuals not implemented yet") else
-        sum(w * (-log1p(temp^2) - log(pi) - log(.scale.arg )))
+        if(residuals) stop("loglikelihood residuals not implemented yet") else {
+            sum(w * dcauchy(x=y, loc=location, scale= .scale.arg, log=TRUE))
+        }
     }, list( .scale.arg=scale.arg, .elocation=elocation,
              .llocation=llocation ))),
     vfamily=c("cauchy1"),
@@ -1297,7 +1330,7 @@ cauchy1 = function(scale.arg=1, llocation="identity",
 
 
 
-logistic1 = function(llocation="identity",
+ logistic1 = function(llocation="identity",
                      elocation=list(),
                      scale.arg=1, method.init=1)
 {
@@ -1343,8 +1376,10 @@ logistic1 = function(llocation="identity",
         function(mu,y,w,residuals= FALSE,eta, extra=NULL) {
         location = eta2theta(eta, .llocation, earg= .elocation)
         zedd = (y-location)/.scale.arg
-        if(residuals) stop("loglikelihood residuals not implemented yet") else
-        sum(w * (-zedd - 2 * log1p(exp(-zedd)) - log(.scale.arg )))
+        if(residuals) stop("loglikelihood residuals not implemented yet") else {
+            sum(w * dlogis(x=y, location = location,
+                           scale = .scale.arg, log = TRUE))
+        }
     }, list( .llocation=llocation,
              .elocation=elocation, .scale.arg=scale.arg ))),
     vfamily=c("logistic1"),
@@ -1365,14 +1400,14 @@ logistic1 = function(llocation="identity",
 
 
 
-erlang = function(shape.arg, link="loge", earg=list(), method.init=1)
+ erlang = function(shape.arg, link="loge", earg=list(), method.init=1)
 {
 
     if(!is.Numeric(shape.arg, allow=1, integer=TRUE, positi=TRUE))
-        stop("\"shape\" must be a positive integer")
+        stop("'shape' must be a positive integer")
     if(!is.Numeric(method.init, allow=1, integer=TRUE, positi=TRUE) ||
        method.init > 2)
-        stop("\"method.init\" must be 1 or 2")
+        stop("'method.init' must be 1 or 2")
 
     if(mode(link) != "character" && mode(link) != "name")
         link = as.character(substitute(link))
@@ -1415,9 +1450,10 @@ erlang = function(shape.arg, link="loge", earg=list(), method.init=1)
     loglikelihood=eval(substitute(
         function(mu,y,w,residuals= FALSE,eta, extra=NULL) {
         sc = eta2theta(eta, .link, earg=.earg)
-        if(residuals) stop("loglikelihood residuals not implemented yet") else
-        sum(w * ((.shape.arg - 1) * log(y) - y / sc - .shape.arg * log(sc) -
-                 lgamma( .shape.arg )))
+        if(residuals) stop("loglikelihood residuals not implemented yet") else {
+            sum(w * ((.shape.arg - 1) * log(y) - y / sc - .shape.arg * log(sc) -
+                     lgamma( .shape.arg )))
+        }
     }, list( .link=link, .earg=earg, .shape.arg=shape.arg ))),
     vfamily=c("erlang"),
     deriv=eval(substitute(expression({
@@ -1437,32 +1473,38 @@ erlang = function(shape.arg, link="loge", earg=list(), method.init=1)
 
 
 
-dbort = function(x, Qsize=1, a=0.5) {
-    if(!is.Numeric(x)) stop("bad input for argument \"x\"")
+dbort = function(x, Qsize=1, a=0.5, log=FALSE) {
+    if(!is.logical(log.arg <- log))
+        stop("bad input for argument 'log'")
+    rm(log)
+
+    if(!is.Numeric(x)) stop("bad input for argument 'x'")
     if(!is.Numeric(Qsize, allow=1, integ=TRUE, posit=TRUE))
-        stop("bad input for argument \"Qsize\"")
+        stop("bad input for argument 'Qsize'")
     if(!is.Numeric(a, posit=TRUE) || max(a) >= 1)
-        stop("bad input for argument \"a\"")
+        stop("bad input for argument 'a'")
     N = max(length(x), length(Qsize), length(a))
     x = rep(x, len=N); Qsize = rep(Qsize, len=N); a = rep(a, len=N);
 
     xok = (x >= Qsize) & (x == round(x)) & (a > 0) & (a < 1)
-    ans = x * 0 
-    loglik = lgamma(1 + Qsize[xok]) - lgamma(x[xok] + 1 - Qsize[xok]) +
-             (x[xok] - 1 - Qsize[xok]) * log(x[xok]) +
-             (x[xok] - Qsize[xok]) * log(a[xok]) - a[xok] * x[xok]
-    ans[xok] = exp(loglik)
+    ans = rep(if(log.arg) log(0) else 0, len=N) # loglikelihood
+    ans[xok] = lgamma(1 + Qsize[xok]) - lgamma(x[xok] + 1 - Qsize[xok]) +
+               (x[xok] - 1 - Qsize[xok]) * log(x[xok]) +
+               (x[xok] - Qsize[xok]) * log(a[xok]) - a[xok] * x[xok]
+    if(!log.arg) {
+        ans[xok] = exp(ans[xok])
+    }
     ans
 }
 
 
 rbort = function(n, Qsize=1, a=0.5) {
     if(!is.Numeric(n, integ=TRUE, posit=TRUE, allow=1))
-        stop("bad input for argument \"n\"")
+        stop("bad input for argument 'n'")
     if(!is.Numeric(Qsize, allow=1, integ=TRUE, posit=TRUE))
-        stop("bad input for argument \"Qsize\"")
+        stop("bad input for argument 'Qsize'")
     if(!is.Numeric(a, posit=TRUE) || max(a) >= 1)
-        stop("bad input for argument \"a\"")
+        stop("bad input for argument 'a'")
     N = n
     qsize = rep(Qsize, len=N); a = rep(a, len=N)
     totqsize = qsize
@@ -1478,10 +1520,10 @@ rbort = function(n, Qsize=1, a=0.5) {
 }
 
 
-borel.tanner = function(Qsize=1, link="logit", earg=list(), method.init=1)
+ borel.tanner = function(Qsize=1, link="logit", earg=list(), method.init=1)
 {
     if(!is.Numeric(Qsize, allow=1, integ=TRUE, posit=TRUE))
-        stop("bad input for argument \"Qsize\"")
+        stop("bad input for argument 'Qsize'")
     if(mode(link) != "character" && mode(link) != "name")
         link = as.character(substitute(link))
     if(!is.list(earg)) earg = list()
@@ -1500,7 +1542,7 @@ borel.tanner = function(Qsize=1, link="logit", earg=list(), method.init=1)
         if(ncol(cbind(y)) != 1)
             stop("response must be a vector or a one-column matrix")
         if(any(y < .Qsize))
-            stop(paste("all y values must be >=", .Qsize))
+            stop("all y values must be >= ", .Qsize)
         if(any(y != round(y)))
             warning("response should be integer-valued")
 
@@ -1528,11 +1570,10 @@ borel.tanner = function(Qsize=1, link="logit", earg=list(), method.init=1)
     }), list( .link=link, .earg=earg, .Qsize=Qsize ))),
     loglikelihood=eval(substitute(
         function(mu,y,w,residuals= FALSE,eta, extra=NULL) {
-        a = eta2theta(eta, .link, earg=.earg)
-        if(residuals) stop("loglikelihood residuals not implemented yet") else
-        sum(w * (lgamma( 1 + .Qsize) - lgamma( y + 1 - .Qsize) +
-                 (y - 1 - .Qsize) * log(y) +
-                (y- .Qsize) * log(a) - a * y))
+        aa = eta2theta(eta, .link, earg=.earg)
+        if(residuals) stop("loglikelihood residuals not implemented yet") else {
+            sum(w * dbort(x=y, Qsize= .Qsize, a=aa, log=TRUE))
+        }
     }, list( .link=link, .earg=earg, .Qsize=Qsize ))),
     vfamily=c("borel.tanner"),
     deriv=eval(substitute(expression({
@@ -1550,23 +1591,29 @@ borel.tanner = function(Qsize=1, link="logit", earg=list(), method.init=1)
 
 
 
-dfelix = function(x, a=0.25) {
-    if(!is.Numeric(x)) stop("bad input for argument \"x\"")
-    if(!is.Numeric(a, posit=TRUE)) stop("bad input for argument \"a\"")
+dfelix = function(x, a=0.25, log = FALSE) {
+    if(!is.logical(log.arg <- log))
+        stop("bad input for argument 'log'")
+    rm(log)
+
+    if(!is.Numeric(x)) stop("bad input for argument 'x'")
+    if(!is.Numeric(a, posit=TRUE)) stop("bad input for argument 'a'")
     N = max(length(x), length(a))
     x = rep(x, len=N); a = rep(a, len=N);
 
     xok = (x %% 2 == 1) & (x == round(x)) & (x >= 1) & (a > 0) & (a < 0.5)
-    ans = x * 0 
-    loglik = ((x[xok]-3)/2) * log(x[xok]) + ((x[xok]-1)/2) * log(a[xok]) -
-                 lgamma( x[xok]/2 + 0.5) - a[xok] * x[xok]
-    ans[xok] = exp(loglik)
+    ans = rep(if(log.arg) log(0) else 0, len=N) # loglikelihood
+    ans[xok] = ((x[xok]-3)/2) * log(x[xok]) + ((x[xok]-1)/2) * log(a[xok]) -
+               lgamma(x[xok]/2 + 0.5) - a[xok] * x[xok]
+    if(!log.arg) {
+        ans[xok] = exp(ans[xok])
+    }
     ans
 }
 
 
 
-felix = function(link="elogit",
+ felix = function(link="elogit",
                  earg=if(link=="elogit") list(min=0, max=0.5) else list(),
                  method.init=1)
 {
@@ -1612,10 +1659,10 @@ felix = function(link="elogit",
     }), list( .link=link, .earg=earg ))),
     loglikelihood=eval(substitute(
         function(mu,y,w,residuals= FALSE,eta, extra=NULL) {
-        a = eta2theta(eta, .link, earg=.earg)
-        if(residuals) stop("loglikelihood residuals not implemented yet") else
-        sum(w * (((y-3)/2) * log(y) + ((y-1)/2) * log(a) -
-                 lgamma( y/2 + 0.5) - a * y))
+        aa = eta2theta(eta, .link, earg=.earg)
+        if(residuals) stop("loglikelihood residuals not implemented yet") else {
+           sum(w * dfelix(x=y, a=aa, log = TRUE))
+       }
     }, list( .link=link, .earg=earg ))),
     vfamily=c("felix"),
     deriv=eval(substitute(expression({
@@ -1631,21 +1678,31 @@ felix = function(link="elogit",
     }), list( .link=link ))))
 }
 
-dsnorm = function(x, location=0, scale=1, shape=0) {
+dsnorm = function(x, location=0, scale=1, shape=0, log=FALSE) {
+    if(!is.logical(log.arg <- log))
+        stop("bad input for argument 'log'")
+    rm(log)
+
     if(!is.Numeric(scale, posit=TRUE))
-        stop("bad input for argument \"scale\"")
+        stop("bad input for argument 'scale'")
     zedd = (x - location) / scale
-    2 * dnorm(zedd) * pnorm(shape * zedd) / scale
+    loglik = log(2) + dnorm(zedd, log=TRUE) + pnorm(shape * zedd, log.p=TRUE) -
+             log(scale)
+    if(log.arg) {
+        loglik
+    } else {
+        exp(loglik)
+    }
 }
 
 
 
 rsnorm = function(n, location=0, scale=1, shape=0) {
     if(!is.Numeric(n, posit=TRUE, integ=TRUE, allow=1))
-        stop("bad input for argument \"n\"")
+        stop("bad input for argument 'n'")
     if(!is.Numeric(scale, posit=TRUE))
-        stop("bad input for argument \"scale\"")
-    if(!is.Numeric(shape)) stop("bad input for argument \"shape\"")
+        stop("bad input for argument 'scale'")
+    if(!is.Numeric(shape)) stop("bad input for argument 'shape'")
     rho = shape / sqrt(1 + shape^2)
     u0 = rnorm(n)
     v = rnorm(n)
@@ -1654,8 +1711,8 @@ rsnorm = function(n, location=0, scale=1, shape=0) {
 }
 
 
-skewnormal1 = function(lshape="identity", earg = list(), ishape=NULL,
-                       nsimEIM=NULL)
+ skewnormal1 = function(lshape="identity", earg = list(), ishape=NULL,
+                        nsimEIM=NULL)
 {
     if(mode(lshape) != "character" && mode(lshape) != "name")
         lshape = as.character(substitute(lshape))
@@ -1703,8 +1760,9 @@ skewnormal1 = function(lshape="identity", earg = list(), ishape=NULL,
     loglikelihood=eval(substitute(
          function(mu, y, w, residuals = FALSE, eta, extra=NULL) {
             alpha = eta2theta(eta, .lshape, earg=.earg)
-        if(residuals) stop("loglikelihood residuals not implemented yet") else
-            sum(w * (pnorm(y*alpha, log=TRUE )))
+        if(residuals) stop("loglikelihood residuals not implemented yet") else {
+            sum(w * dsnorm(x=y, location=0, scale=1, shape=alpha, log=TRUE))
+        }
     }, list( .earg=earg, .lshape=lshape ))), 
     vfamily=c("skewnormal1"),
     deriv=eval(substitute(expression({
@@ -1745,11 +1803,11 @@ skewnormal1 = function(lshape="identity", earg = list(), ishape=NULL,
 
 
 
-betaff = function(A=0, B=1,
-                  lmu=if(A==0 & B==1) "logit" else "elogit", lphi="loge",
-                  emu=if(lmu=="elogit") list(min=A,max=B) else list(),
-                  ephi=list(),
-                  imu=NULL, iphi=NULL, method.init=1, zero=NULL)
+ betaff = function(A=0, B=1,
+                   lmu=if(A==0 & B==1) "logit" else "elogit", lphi="loge",
+                   emu=if(lmu=="elogit") list(min=A,max=B) else list(),
+                   ephi=list(),
+                   imu=NULL, iphi=NULL, method.init=1, zero=NULL)
 {
     if(!is.Numeric(A, allow=1) || !is.Numeric(B, allow=1) || A >= B)
         stop("A must be < B, and both must be of length one")
@@ -1760,12 +1818,12 @@ betaff = function(A=0, B=1,
     if(mode(lphi) != "character" && mode(lphi) != "name")
         lphi = as.character(substitute(lphi))
     if(length(zero) && !is.Numeric(zero, integer=TRUE, posit=TRUE))
-        stop("bad input for argument \"zero\"")
+        stop("bad input for argument 'zero'")
     if(length(imu) && (!is.Numeric(imu, posit=TRUE) ||
        any(imu <= A) || any(imu >= B)))
-        stop("bad input for argument \"imu\"")
+        stop("bad input for argument 'imu'")
     if(length(iphi) && !is.Numeric(iphi, posit=TRUE))
-        stop("bad input for argument \"iphi\"")
+        stop("bad input for argument 'iphi'")
     if(!is.Numeric(method.init, allow=1, integ=TRUE, posit=TRUE) ||
        method.init > 2)
         stop("'method.init' must be 1 or 2")
@@ -1826,10 +1884,11 @@ betaff = function(A=0, B=1,
         m1u = if( .stdbeta ) mu else (mu - .A) / (.B - .A)
         phi = eta2theta(eta[,2], .lphi, .ephi )
         if(residuals) stop("loglikelihood residuals not implemented yet") else {
-        if( .stdbeta ) sum(w * (-lbeta(mu*phi,(1-mu)*phi) +
-                (phi*mu-1)*log(y) + ((1-mu)*phi-1)*log1p(-y))) else
-            sum(w * (-lbeta(m1u*phi,(1-m1u)*phi) + (phi*m1u-1)*log(y-.A) +
-                    ((1-m1u)*phi-1)*log(.B-y) - (phi-1)*log(.B-.A)))
+            shape1 = phi * m1u
+            shape2 = (1 - m1u) * phi
+            zedd = (y - .A) / ( .B - .A)
+            sum(w * (dbeta(x=zedd, shape1=shape1, shape2=shape2, log=TRUE) -
+                     log( abs( .B - .A ))))
         }
     }, list( .lmu=lmu, .lphi=lphi, .A=A, .B=B, .emu=emu, .ephi=ephi,
              .stdbeta = stdbeta ))),
@@ -1874,21 +1933,21 @@ betaff = function(A=0, B=1,
 
 
 
-beta.ab = function(lshape1="loge", lshape2="loge",
-                   eshape1=list(), eshape2=list(),
-                   i1=NULL, i2=NULL, trim=0.05,
-                   A=0, B=1, parallel=FALSE, zero=NULL)
+ beta.ab = function(lshape1="loge", lshape2="loge",
+                    eshape1=list(), eshape2=list(),
+                    i1=NULL, i2=NULL, trim=0.05,
+                    A=0, B=1, parallel=FALSE, zero=NULL)
 {
     if(mode(lshape1) != "character" && mode(lshape1) != "name")
         lshape1 = as.character(substitute(lshape1))
     if(mode(lshape2) != "character" && mode(lshape2) != "name")
         lshape2 = as.character(substitute(lshape2))
     if(length(zero) && !is.Numeric(zero, integer=TRUE, posit=TRUE))
-        stop("bad input for argument \"zero\"")
+        stop("bad input for argument 'zero'")
     if(length( i1 ) && !is.Numeric( i1, posit=TRUE))
-        stop("bad input for argument \"i1\"")
+        stop("bad input for argument 'i1'")
     if(length( i2 ) && !is.Numeric( i2, posit=TRUE))
-        stop("bad input for argument \"i2\"")
+        stop("bad input for argument 'i2'")
 
     if(!is.Numeric(A, allow=1) || !is.Numeric(B, allow=1) || A >= B)
         stop("A must be < B, and both must be of length one")
@@ -1953,15 +2012,14 @@ beta.ab = function(lshape1="loge", lshape2="loge",
     }), list( .lshape1=lshape1, .lshape2=lshape2, .A=A, .B=B, 
               .eshape1=eshape1, .eshape2=eshape2 ))),
     loglikelihood=eval(substitute(
-         function(mu, y, w, residuals= FALSE, eta, extra=NULL){
+        function(mu, y, w, residuals= FALSE, eta, extra=NULL){
         shapes = cbind(eta2theta(eta[,1], .lshape1, earg= .eshape1 ),
                        eta2theta(eta[,2], .lshape2, earg= .eshape2 ))
-        temp = if(is.R()) lbeta(shapes[,1], shapes[,2]) else
-               lgamma(shapes[,1]) + lgamma(shapes[,2]) -
-               lgamma(shapes[,1]+shapes[,2])
-        if(residuals) stop("loglikelihood residuals not implemented yet") else
-        sum(w * ((shapes[,1]-1) * log(y- .A) + (shapes[,2]-1) * log( .B -y) -
-                 temp - (shapes[,1]+shapes[,2]-1) * log( .B - .A )))
+        if(residuals) stop("loglikelihood residuals not implemented yet") else {
+            zedd = (y - .A) / ( .B - .A)
+            sum(w * (dbeta(x=zedd, shape1=shapes[,1], shape2=shapes[,2],
+                           log=TRUE) - log( abs( .B - .A ))))
+        }
     }, list( .lshape1=lshape1, .lshape2=lshape2, .A=A, .B=B, 
              .eshape1=eshape1, .eshape2=eshape2 ))),
     vfamily="beta.ab",
@@ -1992,8 +2050,8 @@ beta.ab = function(lshape1="loge", lshape2="loge",
 
 
 
-beta4 = function(link="loge", earg=list(),
-                 i1=2.3, i2=2.4, iA=NULL, iB=NULL)
+ beta4 = function(link="loge", earg=list(),
+                  i1=2.3, i2=2.4, iA=NULL, iB=NULL)
 {
 
 
@@ -2046,9 +2104,7 @@ beta4 = function(link="loge", earg=list(),
         shapes = eta2theta(eta[,1:2], .link, earg=.earg)
         .A = eta[,3]
         .B = eta[,4]
-        temp = if(is.R()) lbeta(shapes[,1], shapes[,2]) else
-               lgamma(shapes[,1]) + lgamma(shapes[,2]) -
-               lgamma(shapes[,1]+shapes[,2])
+        temp = lbeta(shapes[,1], shapes[,2])
         if(residuals) stop("loglikelihood residuals not implemented yet") else
         sum(w * ((shapes[,1]-1)*log(y-.A) + (shapes[,2]-1)*log(.B-y) - temp -
             (shapes[,1]+shapes[,2]-1)*log(.B-.A )))
@@ -2104,7 +2160,7 @@ beta4 = function(link="loge", earg=list(),
 
 
 
-simple.exponential = function()
+ simple.exponential = function()
 {
     new("vglmff",
     blurb=c("Simple Exponential distribution\n",
@@ -2138,16 +2194,15 @@ simple.exponential = function()
 }
 
 
-exponential = function(link="loge", earg=list(), location=0, expected=TRUE)
-{
+ exponential = function(link="loge", earg=list(), location=0, expected=TRUE) {
     if(!is.Numeric(location, allow=1))
-        stop("bad input for argument \"location\"")
+        stop("bad input for argument 'location'")
 
     if(mode(link) != "character" && mode(link) != "name")
         link = as.character(substitute(link))
     if(!is.list(earg)) earg = list()
     if(!is.logical(expected) || length(expected) != 1)
-        stop("bad input for argument \"expected\"")
+        stop("bad input for argument 'expected'")
 
     new("vglmff",
     blurb=c("Exponential distribution\n\n",
@@ -2172,7 +2227,7 @@ exponential = function(link="loge", earg=list(), location=0, expected=TRUE)
             stop("response must be a vector or a one-column matrix")
         extra$loc = .location   # This is passed into, e.g., link, deriv etc.
         if(any(y <= extra$loc))
-            stop(paste("all responses must be greater than", extra$loc))
+            stop("all responses must be greater than ", extra$loc)
         predictors.names = namesof("rate", .link, tag=FALSE)
         mu = y + (y == extra$loc) / 8
         if(!length(etastart))
@@ -2212,7 +2267,7 @@ exponential = function(link="loge", earg=list(), location=0, expected=TRUE)
 
 
 
-gamma1 = function(link="loge", earg=list())
+ gamma1 = function(link="loge", earg=list())
 {
     if(mode(link) != "character" && mode(link) != "name")
         link = as.character(substitute(link))
@@ -2249,8 +2304,9 @@ gamma1 = function(link="loge", earg=list())
         theta2eta(mu, .link, earg=.earg)),
     list( .link=link, .earg=earg )),
     loglikelihood= function(mu, y, w, residuals = FALSE, eta, extra=NULL)
-        if(residuals) stop("loglikelihood residuals not implemented yet") else
-        sum(w * ((mu-1)*log(y) - y - lgamma(mu))),
+        if(residuals) stop("loglikelihood residuals not implemented yet") else {
+        sum(w * dgamma(x=y, shape=mu, scale=1, log=TRUE))
+    },
     vfamily=c("gamma1"),
     deriv=eval(substitute(expression({
         shape = mu
@@ -2266,22 +2322,22 @@ gamma1 = function(link="loge", earg=list())
 }
 
 
-gamma2.ab = function(lrate="loge", lshape="loge",
-                     erate=list(), eshape=list(),
-                     irate=NULL, ishape=NULL, expected=TRUE, zero=2)
+ gamma2.ab = function(lrate="loge", lshape="loge",
+                      erate=list(), eshape=list(),
+                      irate=NULL, ishape=NULL, expected=TRUE, zero=2)
 {
     if(mode(lrate) != "character" && mode(lrate) != "name")
         lrate = as.character(substitute(lrate))
     if(mode(lshape) != "character" && mode(lshape) != "name")
         lshape = as.character(substitute(lshape))
     if(length( irate) && !is.Numeric(irate, posit=TRUE))
-        stop("bad input for argument \"irate\"")
+        stop("bad input for argument 'irate'")
     if(length( ishape) && !is.Numeric(ishape, posit=TRUE))
-        stop("bad input for argument \"ishape\"")
+        stop("bad input for argument 'ishape'")
     if(length(zero) && !is.Numeric(zero, integer=TRUE, posit=TRUE))
-        stop("bad input for argument \"zero\"")
+        stop("bad input for argument 'zero'")
     if(!is.logical(expected) || length(expected) != 1)
-        stop("bad input for argument \"expected\"")
+        stop("bad input for argument 'expected'")
     if(!is.list(erate)) erate = list()
     if(!is.list(eshape)) eshape = list()
 
@@ -2332,8 +2388,9 @@ gamma2.ab = function(lrate="loge", lshape="loge",
         function(mu, y, w, residuals= FALSE,eta, extra=NULL) {
         rate = eta2theta(eta[,1], .lrate, earg=.erate)
         shape = eta2theta(eta[,2], .lshape, earg=.eshape)
-        if(residuals) stop("loglikelihood residuals not implemented yet") else
-        sum(w*(-rate * y + (shape-1)*log(y) + shape*log(rate) - lgamma(shape )))
+        if(residuals) stop("loglikelihood residuals not implemented yet") else {
+            sum(w * dgamma(x=y, shape=shape, rate=rate, log=TRUE))
+        }
     }, list( .lrate=lrate, .lshape=lshape,
              .erate=erate, .eshape=eshape ))),
     vfamily=c("gamma2.ab"),
@@ -2368,7 +2425,7 @@ gamma2.ab = function(lrate="loge", lshape="loge",
 
 
 
-gamma2 = function(lmu="loge", lshape="loge",
+ gamma2 = function(lmu="loge", lshape="loge",
                   emu=list(), eshape=list(),
                   method.init=1,
                   deviance.arg=FALSE, ishape=NULL, zero=-2)
@@ -2378,9 +2435,9 @@ gamma2 = function(lmu="loge", lshape="loge",
     if(mode(lshape) != "character" && mode(lshape) != "name")
         lshape = as.character(substitute(lshape))
     if(length(zero) && !is.Numeric(zero, integer=TRUE))
-        stop("bad input for argument \"zero\"")
+        stop("bad input for argument 'zero'")
     if(length( ishape) && !is.Numeric(ishape, posit=TRUE))
-        stop("bad input for argument \"ishape\"")
+        stop("bad input for argument 'ishape'")
     if(!is.Numeric(method.init, allow=1, integ=TRUE, posit=TRUE) ||
        method.init > 2)
         stop("'method.init' must be 1 or 2")
@@ -2403,9 +2460,8 @@ gamma2 = function(lmu="loge", lshape="loge",
         constraints = cm.zero.vgam(constraints, x, temp752, M)
     }), list( .zero=zero ))),
     initialize=eval(substitute(expression({
-        if(is.R()) assign("CQO.FastAlgorithm",
-            ( .lmu == "loge" && .lshape == "loge"), envir = VGAMenv) else
-            CQO.FastAlgorithm <<- ( .lmu == "loge" && .lshape == "loge")
+        assign("CQO.FastAlgorithm", ( .lmu == "loge" && .lshape == "loge"),
+               envir = VGAMenv)
         if(any(function.name == c("cqo","cao")) &&
            is.Numeric( .zero, allow=1) && .zero != -2)
             stop("argument zero=-2 is required")
@@ -2452,13 +2508,8 @@ gamma2 = function(lmu="loge", lshape="loge",
         eta2theta(eta[,2*(1:NOS)-1,drop=FALSE], .lmu, earg=.emu )
     }, list( .lmu=lmu, .emu=emu ))),
     last=eval(substitute(expression({
-       if(is.R()) {
-            if(exists("CQO.FastAlgorithm", envir = VGAMenv))
-                rm("CQO.FastAlgorithm", envir = VGAMenv)
-        } else {
-            while(exists("CQO.FastAlgorithm"))
-                remove("CQO.FastAlgorithm")
-        }
+        if(exists("CQO.FastAlgorithm", envir = VGAMenv))
+            rm("CQO.FastAlgorithm", envir = VGAMenv)
         tmp34 = c(rep( .lmu, length=NOS), rep( .lshape, length=NOS))
         names(tmp34) = c(if(NOS==1) "mu" else paste("mu", 1:NOS, sep=""), 
                          if(NOS==1) "shape" else paste("shape", 1:NOS, sep=""))
@@ -2483,9 +2534,10 @@ gamma2 = function(lmu="loge", lshape="loge",
         NOS = ncol(eta) / 2
         mymu = mu  # eta2theta(eta[,2*(1:NOS)-1], .lmu, earg=.emu )
         shapemat = eta2theta(eta[,2*(1:NOS),drop=FALSE], .lshape, earg=.eshape )
-        if(residuals) stop("loglikelihood residuals not implemented yet") else
-        sum(w*((shapemat - 1) * log(y) + shapemat *
-                (log(shapemat) - y / mymu - log(mymu)) - lgamma(shapemat )))
+        if(residuals) stop("loglikelihood residuals not implemented yet") else {
+            sum(w * dgamma(x=y, shape=c(shapemat), scale=c(mymu/shapemat),
+                           log=TRUE))
+        }
     }, list( .lmu=lmu, .lshape=lshape,
              .emu=emu, .eshape=eshape ))),
     vfamily=c("gamma2"),
@@ -2533,10 +2585,10 @@ gamma2 = function(lmu="loge", lshape="loge",
 }
 
 
-geometric =function(link="logit", earg=list(), expected=TRUE)
+ geometric =function(link="logit", earg=list(), expected=TRUE)
 {
     if(!is.logical(expected) || length(expected) != 1)
-        stop("bad input for argument \"expected\"")
+        stop("bad input for argument 'expected'")
     if(mode(link) != "character" && mode(link) != "name")
         link = as.character(substitute(link))
     if(!is.list(earg)) earg = list()
@@ -2571,8 +2623,7 @@ geometric =function(link="logit", earg=list(), expected=TRUE)
         function(mu, y, w, residuals= FALSE,eta, extra=NULL) {
         prob = eta2theta(eta, .link, earg= .earg)
         if(residuals) stop("loglikelihood residuals not implemented yet") else {
-            if(is.R()) sum(w * dgeom(x=y, prob=prob, log=TRUE)) else
-            sum(w*(y * log1p(-prob) + log(prob )))
+            sum(w * dgeom(x=y, prob=prob, log=TRUE))
         }
     }, list( .link=link, .earg=earg ))),
     vfamily=c("geometric"),
@@ -2593,25 +2644,30 @@ geometric =function(link="logit", earg=list(), expected=TRUE)
 
 
 dbetageom = function(x, shape1, shape2, log=FALSE) {
-    if(!is.Numeric(x)) stop("bad input for argument \"x\"")
-    if(!is.Numeric(shape1, pos=TRUE)) stop("bad input for argument \"shape1\"")
-    if(!is.Numeric(shape2, pos=TRUE)) stop("bad input for argument \"shape2\"")
+    if(!is.logical(log.arg <- log))
+        stop("bad input for argument 'log'")
+    rm(log)
+
+    if(!is.Numeric(x)) stop("bad input for argument 'x'")
+    if(!is.Numeric(shape1, pos=TRUE)) stop("bad input for argument 'shape1'")
+    if(!is.Numeric(shape2, pos=TRUE)) stop("bad input for argument 'shape2'")
     N = max(length(x), length(shape1), length(shape2))
     x = rep(x, len=N); shape1 = rep(shape1, len=N); shape2 = rep(shape2, len=N)
-    if(!is.R()) {
-        beta  = function(x,y) gamma(x) * gamma(y) / gamma(x+y)
-        lbeta = function(x,y) lgamma(x) + lgamma(y) - lgamma(x+y)
+    loglik = lbeta(1+shape1, shape2+abs(x)) - lbeta(shape1, shape2)
+    xok = (x == round(x) & x >= 0)
+    loglik[!xok] = log(0)
+    if(log.arg) {
+        loglik
+    } else {
+        exp(loglik)
     }
-    ans = if(log) lbeta(1+shape1, shape2+abs(x)) - lbeta(shape1, shape2) else
-          beta(1+shape1, shape2+abs(x)) / beta(shape1, shape2)
-    ifelse(x == round(x) & x >= 0, ans, if(log) -Inf else 0)
 }
 
 
 pbetageom = function(q, shape1, shape2, log.p=FALSE) {
-    if(!is.Numeric(q)) stop("bad input for argument \"q\"")
-    if(!is.Numeric(shape1, pos=TRUE)) stop("bad input for argument \"shape1\"")
-    if(!is.Numeric(shape2, pos=TRUE)) stop("bad input for argument \"shape2\"")
+    if(!is.Numeric(q)) stop("bad input for argument 'q'")
+    if(!is.Numeric(shape1, pos=TRUE)) stop("bad input for argument 'shape1'")
+    if(!is.Numeric(shape2, pos=TRUE)) stop("bad input for argument 'shape2'")
     N = max(length(q), length(shape1), length(shape2))
     q = rep(q, len=N); shape1 = rep(shape1, len=N); shape2 = rep(shape2, len=N)
     ans = q * 0  # Retains names(q)
@@ -2626,25 +2682,25 @@ pbetageom = function(q, shape1, shape2, log.p=FALSE) {
             ans[index] = if(i >= 0) sum(temp[1:(1+i)]) else 0
         }
     } else
-    for(i in 1:N) {
-        qstar = floor(q[i])
-        ans[i] = if(qstar >= 0) sum(dbetageom(x=0:qstar, 
-                 shape1=shape1[i], shape2=shape2[i])) else 0
+    for(ii in 1:N) {
+        qstar = floor(q[ii])
+        ans[ii] = if(qstar >= 0) sum(dbetageom(x=0:qstar, 
+                 shape1=shape1[ii], shape2=shape2[ii])) else 0
     }
     if(log.p) log(ans) else ans
 }
 
 rbetageom = function(n, shape1, shape2) {
-    if(!is.Numeric(n, integ=TRUE,allow=1)) stop("bad input for argument \"n\"")
-    if(!is.Numeric(shape1, pos=TRUE)) stop("bad input for argument \"shape1\"")
-    if(!is.Numeric(shape2, pos=TRUE)) stop("bad input for argument \"shape2\"")
+    if(!is.Numeric(n, integ=TRUE,allow=1)) stop("bad input for argument 'n'")
+    if(!is.Numeric(shape1, pos=TRUE)) stop("bad input for argument 'shape1'")
+    if(!is.Numeric(shape2, pos=TRUE)) stop("bad input for argument 'shape2'")
     rgeom(n=n, prob = rbeta(n=n, shape1=shape1, shape2=shape2))
 }
 
 
 
 
-tobit = function(Lower = 0, Upper = Inf, lmu="identity",
+ tobit = function(Lower = 0, Upper = Inf, lmu="identity",
                  lsd="loge", emu=list(), esd=list(), imethod=1, zero=2)
 {
     if(mode(lmu) != "character" && mode(lmu) != "name")
@@ -2657,7 +2713,7 @@ tobit = function(Lower = 0, Upper = Inf, lmu="identity",
        !is.numeric(Lower) || !is.numeric(Upper) || Lower >= Upper)
     stop("Lower and Upper must have length 1 and be numeric with Lower < Upper")
     if(length(zero) && !is.Numeric(zero, integer=TRUE, posit=TRUE))
-        stop("bad input for argument \"zero\"")
+        stop("bad input for argument 'zero'")
     if(!is.list(emu)) emu = list()
     if(!is.list(esd)) esd = list()
 
@@ -2675,13 +2731,13 @@ tobit = function(Lower = 0, Upper = Inf, lmu="identity",
         extra$censoredL = (y <= .Lower)
         extra$censoredU = (y >= .Upper)
         if(min(y) < .Lower) {
-             warning(paste("replacing response values less than the value ",
-                           .Lower, "by", .Lower))
+             warning("replacing response values less than the value ",
+                           .Lower, " by ", .Lower)
              y[y < .Lower] = .Lower
         }
         if(max(y) > .Upper) {
-             warning(paste("replacing response values greater than the value", 
-                            .Upper, "by", .Upper))
+             warning("replacing response values greater than the value ", 
+                            .Upper, " by ", .Upper)
              y[y > .Upper] = .Upper
         }
         predictors.names = c(namesof("mu", .lmu, earg=.emu, tag=FALSE),
@@ -2689,10 +2745,10 @@ tobit = function(Lower = 0, Upper = Inf, lmu="identity",
         if(!length(etastart)) {
             anyc = extra$censoredL | extra$censoredU
             i11 = if( .imethod == 1) anyc else FALSE  # can be all data
-            junk=if(is.R()) lm.wfit(x=cbind(x[!i11,]),y=y[!i11],w=w[!i11]) else
-                   lm.wfit(x=cbind(x[!i11,]), y=y[!i11], w=w[!i11],method="qr")
+            junk = lm.wfit(x=cbind(x[!i11,]), y=y[!i11], w=w[!i11])
             sd.y.est = sqrt( sum(w[!i11] * junk$resid^2) / junk$df.residual )
-            etastart = cbind(mu=y, rep(theta2eta(sd.y.est, .lsd, earg= .esd), length=n))
+            etastart = cbind(mu=y, rep(theta2eta(sd.y.est, .lsd, earg= .esd),
+                                       length=n))
             if(any(anyc)) etastart[anyc,1] = x[anyc,,drop=FALSE] %*% junk$coeff
         }
    }), list( .Lower=Lower, .Upper=Upper, .lmu=lmu, .lsd=lsd,
@@ -2806,16 +2862,17 @@ tobit = function(Lower = 0, Upper = Inf, lmu="identity",
 
 
 
-normal1 = function(lmean="identity", lsd="loge",
+ normal1 = function(lmean="identity", lsd="loge",
                    emean=list(), esd=list(), zero=NULL)
 {
+ print("20090416; in normal1()")
 
     if(mode(lmean) != "character" && mode(lmean) != "name")
         lmean = as.character(substitute(lmean))
     if(mode(lsd) != "character" && mode(lsd) != "name")
         lsd = as.character(substitute(lsd))
     if(length(zero) && !is.Numeric(zero, integer=TRUE, posit=TRUE))
-        stop("bad input for argument \"zero\"")
+        stop("bad input for argument 'zero'")
     if(!is.list(emean)) emean = list()
     if(!is.list(esd)) esd = list()
 
@@ -2835,8 +2892,7 @@ normal1 = function(lmean="identity", lsd="loge",
         if(ncol(y <- cbind(y)) != 1)
             stop("response must be a vector or a one-column matrix")
         if(!length(etastart)) {
-            junk = if(is.R()) lm.wfit(x=x, y=y, w=w) else 
-                              lm.wfit(x=x, y=y, w=w, method="qr")
+            junk = lm.wfit(x=x, y=y, w=w)
             sd.y.est = sqrt( sum(w * junk$resid^2) / junk$df.residual )
             mean.init = if( .lmean == "loge") pmax(1/1024, y) else y
             etastart = cbind(theta2eta(mean.init, .lmean, earg= .emean),
@@ -2855,9 +2911,7 @@ normal1 = function(lmean="identity", lsd="loge",
         function(mu,y,w,residuals= FALSE,eta, extra=NULL) {
         sd = eta2theta(eta[,2], .lsd, earg= .esd)
         if(residuals) stop("loglikelihood residuals not implemented yet") else {
-        if(is.R())
-            sum(w*dnorm(y, m=mu, sd=sd, log=TRUE)) else
-            sum(w * (-log(sd*sqrt(2*pi)) - 0.5 * ((y - mu)/sd)^2))
+            sum(w * dnorm(y, m=mu, sd=sd, log=TRUE))
         }
     }, list( .lsd=lsd, .emean=emean, .esd=esd ))),
     vfamily=c("normal1"),
@@ -2884,15 +2938,15 @@ normal1 = function(lmean="identity", lsd="loge",
 
 
 
-lognormal = function(lmeanlog="identity", lsdlog="loge",
-                     emeanlog=list(), esdlog=list(), zero=NULL)
+ lognormal = function(lmeanlog="identity", lsdlog="loge",
+                      emeanlog=list(), esdlog=list(), zero=NULL)
 {
     if(mode(lmeanlog) != "character" && mode(lmeanlog) != "name")
         lmeanlog = as.character(substitute(lmeanlog))
     if(mode(lsdlog) != "character" && mode(lsdlog) != "name")
         lsdlog = as.character(substitute(lsdlog))
     if(length(zero) && (!is.Numeric(zero, integer=TRUE, posit=TRUE) ||
-                        zero > 2)) stop("bad input for argument argument \"zero\"")
+                        zero > 2)) stop("bad input for argument argument 'zero'")
     if(!is.list(emeanlog)) emeanlog = list()
     if(!is.list(esdlog)) esdlog = list()
 
@@ -2910,8 +2964,7 @@ lognormal = function(lmeanlog="identity", lsdlog="loge",
         predictors.names = c(namesof("meanlog", .lmeanlog, earg=.emeanlog, tag=FALSE),
                              namesof("sdlog", .lsdlog, earg=.esdlog, tag=FALSE))
         if(!length(etastart)) {
-            junk = if(is.R()) lm.wfit(x=x, y=log(y), w=w) else 
-                              lm.wfit(x=x, y=log(y), w=w, method="qr")
+            junk = lm.wfit(x=x, y=log(y), w=w)
             sdlog.y.est = sqrt( sum(w * junk$resid^2) / junk$df.residual )
             etastart = cbind(
             meanlog= rep(theta2eta(log(median(y)), .lmeanlog, earg= .emeanlog), length=n),
@@ -2936,9 +2989,7 @@ lognormal = function(lmeanlog="identity", lsdlog="loge",
         mulog = eta2theta(eta[,1], .lmeanlog, earg= .emeanlog)
         sdlog = eta2theta(eta[,2], .lsdlog, earg= .esdlog)
         if(residuals) stop("loglikelihood residuals not implemented yet") else {
-        if(is.R())
-            sum(w*dlnorm(y, meanlog=mulog, sdlog=sdlog, log=TRUE)) else
-            sum(w * (-log(y*sdlog*sqrt(2*pi)) - 0.5 * ((log(y) - mulog)/sdlog)^2))
+            sum(w * dlnorm(y, meanlog=mulog, sdlog=sdlog, log=TRUE))
         }
     }, list( .lmeanlog = lmeanlog, .lsdlog=lsdlog,
               .emeanlog = emeanlog, .esdlog=esdlog ))),
@@ -2966,39 +3017,25 @@ lognormal = function(lmeanlog="identity", lsdlog="loge",
     }))
 }
 
-if(!is.R()) {
-
-    qlognormal = function(p, meanlog=0, sdlog=1, lambda=0)
-        lambda + exp(qnorm(p=p, mean=meanlog, sd=sdlog))
-
-    dlognormal = function(x, meanlog=0, sdlog=1, lambda=0)
-        (x > lambda) *
-        dnorm(x=log(abs(x-lambda)), mean=meanlog, sd=sdlog) / (x-lambda)
-
-    rlognormal = function(n, meanlog=0, sdlog=1, lambda=0)
-        lambda + exp(rnorm(n, mean=meanlog, sd=sdlog))
-
-    plognormal = function(q, meanlog=0, sdlog=1, lambda=0)
-        (q>lambda) * pnorm(q=log(abs(q-lambda)), mean=meanlog, sd=sdlog)
-}
 
 
 
 
-lognormal3 = function(lmeanlog="identity", lsdlog="loge",
+
+ lognormal3 = function(lmeanlog="identity", lsdlog="loge",
                       emeanlog=list(), esdlog=list(),
                       powers.try = (-3):3,
                       delta=NULL, zero=NULL)
 {
     if(length(delta) && !is.Numeric(delta, positive=TRUE))
-        stop("bad input for argument argument \"delta\"")
+        stop("bad input for argument argument 'delta'")
     if(mode(lmeanlog) != "character" && mode(lmeanlog) != "name")
         lmeanlog = as.character(substitute(lmeanlog))
     if(mode(lsdlog) != "character" && mode(lsdlog) != "name")
         lsdlog = as.character(substitute(lsdlog))
     if(length(zero) && (!is.Numeric(zero, integer=TRUE, posit=TRUE) ||
                         zero > 3))
-        stop("bad input for argument argument \"zero\"")
+        stop("bad input for argument argument 'zero'")
     if(!is.list(emeanlog)) emeanlog = list()
     if(!is.list(esdlog)) esdlog = list()
 
@@ -3033,8 +3070,7 @@ lognormal3 = function(lmeanlog="identity", lsdlog="loge",
                 index.lambda=(1:length(powers.try))[pvalue.vec==max(pvalue.vec)]
                 lambda.init = miny - 10^powers.try[index.lambda]
             }
-            junk = if(is.R()) lm.wfit(x=x, y=log(y-lambda.init), w=w) else 
-                              lm.wfit(x=x, y=log(y-lambda.init), w=w, method="qr")
+            junk = lm.wfit(x=x, y=log(y-lambda.init), w=w)
             sdlog.y.est = sqrt( sum(w * junk$resid^2) / junk$df.residual )
             etastart = cbind(mu=log(median(y - lambda.init)),
             sdlog=rep(theta2eta(sdlog.y.est, .lsdlog, earg= .esdlog), length=n),
@@ -3063,12 +3099,9 @@ lognormal3 = function(lmeanlog="identity", lsdlog="loge",
         sdlog = eta2theta(eta[,2], .lsdlog, earg= .esdlog)
         lambda = eta2theta(eta[,3], "identity", earg=list())
         if(any(y < lambda))
-            cat("warning: bad y\n")
+            warning("bad 'y'")
         if(residuals) stop("loglikelihood residuals not implemented yet") else {
-        if(is.R())
-            sum(w*dlnorm(y-lambda, meanlog=mymu, sdlog=sdlog, log=TRUE)) else
-            sum(w * (-log((y-lambda)*sdlog*sqrt(2*pi)) -
-                     0.5 * ((log(y-lambda) - mymu)/sdlog)^2))
+            sum(w*dlnorm(y-lambda, meanlog=mymu, sdlog=sdlog, log=TRUE))
         }
     }, list( .lmeanlog=lmeanlog, .lsdlog=lsdlog,
               .emeanlog = emeanlog, .esdlog=esdlog ))),
@@ -3078,7 +3111,7 @@ lognormal3 = function(lmeanlog="identity", lsdlog="loge",
         sdlog = eta2theta(eta[,2], .lsdlog, earg= .esdlog)
         lambda = eta2theta(eta[,3], "identity", earg=list())
         if(any(y < lambda))
-            cat("warning: bad y\n")
+            warning("bad 'y'")
         dl.dmymu = (log(y-lambda)-mymu) / sdlog^2
         dl.dsdlog = -1/sdlog + (log(y-lambda)-mymu)^2 / sdlog^3
         dl.dlambda = (1 + (log(y-lambda)-mymu) / sdlog^2) / (y-lambda)
@@ -3108,11 +3141,6 @@ lognormal3 = function(lmeanlog="identity", lsdlog="loge",
 
 
 
-
-
-
-
-
 interleave.VGAM = function(L, M) c(matrix(1:L, nrow=M, byrow=TRUE))
 
 negbinomial.control <- function(save.weight=TRUE, ...)
@@ -3130,17 +3158,16 @@ negbinomial.control <- function(save.weight=TRUE, ...)
 
 
 
-
     if(length(ik) && !is.Numeric(ik, posit=TRUE))
-        stop("bad input for argument \"ik\"")
+        stop("bad input for argument 'ik'")
     if(!is.Numeric(cutoff, allow=1) || cutoff<0.8 || cutoff>=1)
-        stop("range error in the argument \"cutoff\"")
+        stop("range error in the argument 'cutoff'")
     if(!is.Numeric(Maxiter, integ=TRUE, allow=1) || Maxiter < 100)
-        stop("bad input for argument \"Maxiter\"")
+        stop("bad input for argument 'Maxiter'")
     if(!is.Numeric(method.init, allow=1, integ=TRUE, posit=TRUE) ||
-       method.init > 2) stop("argument \"method.init\" must be 1 or 2")
+       method.init > 3) stop("argument 'method.init' must be 1 or 2 or 3")
     if(!is.Numeric(shrinkage.init, allow=1) || shrinkage.init < 0 ||
-       shrinkage.init > 1) stop("bad input for argument \"shrinkage.init\"")
+       shrinkage.init > 1) stop("bad input for argument 'shrinkage.init'")
     if(!is.null(nsimEIM)) {
         if(!is.Numeric(nsimEIM, allow=1, integ=TRUE))
             stop("bad input for argument 'nsimEIM'")
@@ -3170,10 +3197,8 @@ negbinomial.control <- function(save.weight=TRUE, ...)
         constraints = cm.zero.vgam(constraints, x, temp752, M)
     }), list( .zero=zero ))),
     initialize=eval(substitute(expression({
-        if(is.R())
-            assign("CQO.FastAlgorithm", ( .lmu == "loge") &&
-                   ( .lk == "loge"), envir = VGAMenv) else
-            CQO.FastAlgorithm <<- ( .lmu == "loge") && ( .lk == "loge")
+        assign("CQO.FastAlgorithm",
+              ( .lmu == "loge") && ( .lk == "loge"), envir = VGAMenv)
         if(any(function.name == c("cqo","cao")) &&
            is.Numeric( .zero, allow=1) && .zero != -2)
             stop("argument zero=-2 is required")
@@ -3198,16 +3223,17 @@ negbinomial.control <- function(save.weight=TRUE, ...)
         if(!length(etastart)) {
             mu.init = y
             for(iii in 1:ncol(y)) {
-                use.this = if( .method.init == 2) {
+                use.this = if( .method.init == 1) {
                     weighted.mean(y[,iii], w) + 1/16
+                } else if( .method.init == 3) {
+                    c(quantile(y[,iii], probs = 0.75) + 1/16)
                 } else {
                     median(y[,iii]) + 1/16
                 }
-                mu.init[,iii] = (1- .sinit)*(y[,iii]+1/16) + .sinit * use.this
-                max.use.this =  7 * use.this + 10
-                vecTF = (mu.init[,iii] > max.use.this)
-                if(any(vecTF))
-                    mu.init[vecTF,iii] = max.use.this
+                medabsres = median(abs(y[,iii] - use.this)) + 1/32
+                allowfun = function(z, maxtol=1) sign(z) * pmin(abs(z), maxtol)
+                mu.init[,iii] = use.this +
+                    (1- .sinit)*allowfun(y[,iii] - use.this, maxtol=medabsres)
             }
 
             if( is.Numeric( .k.init )) {
@@ -3239,13 +3265,8 @@ negbinomial.control <- function(save.weight=TRUE, ...)
         eta2theta(eta[,2*(1:NOS)-1,drop=FALSE], .lmu, earg= .emu)
     }, list( .lmu=lmu, .emu=emu, .ek=ek ))),
     last=eval(substitute(expression({
-        if(is.R()) {
-            if(exists("CQO.FastAlgorithm", envir = VGAMenv))
-                rm("CQO.FastAlgorithm", envir = VGAMenv)
-        } else {
-            while(exists("CQO.FastAlgorithm"))
-                remove("CQO.FastAlgorithm")
-        }
+        if(exists("CQO.FastAlgorithm", envir = VGAMenv))
+            rm("CQO.FastAlgorithm", envir = VGAMenv)
         temp0303 = c(rep( .lmu, length=NOS), rep( .lk, length=NOS))
         names(temp0303) = c(if(NOS==1) "mu" else paste("mu", 1:NOS, sep=""), 
                             if(NOS==1) "k" else paste("k", 1:NOS, sep=""))
@@ -3326,7 +3347,7 @@ negbinomial.control <- function(save.weight=TRUE, ...)
             }
             run.varcov = cbind(run.varcov / .nsimEIM)
             wz[,2*(1:NOS)] = if(intercept.only)
-                matrix(apply(run.varcov, 2, mean),
+                matrix(colMeans(run.varcov),
                        n, ncol(run.varcov), byrow=TRUE) else run.varcov
 
             wz[,2*(1:NOS)] = wz[,2*(1:NOS)] * dk.deta^2
@@ -3356,7 +3377,7 @@ negbinomial.control <- function(save.weight=TRUE, ...)
 }
 
 
-negbin.ab = function(link.alpha ="loge", link.k ="loge",
+ negbin.ab = function(link.alpha ="loge", link.k ="loge",
                      ealpha=list(), ek=list(),
                      k.init=1,
                      zero=2,
@@ -3368,7 +3389,7 @@ negbin.ab = function(link.alpha ="loge", link.k ="loge",
     if(!is.Numeric(cutoff, allow=1) || cutoff<0.8 || cutoff>=1)
         stop("range error in the argument cutoff")
     if(length(zero) && !is.Numeric(zero, integer=TRUE, posit=TRUE))
-        stop("bad input for argument \"zero\"")
+        stop("bad input for argument 'zero'")
 
     if(mode(link.alpha) != "character" && mode(link.alpha) != "name")
         link.alpha = as.character(substitute(link.alpha))
@@ -3417,10 +3438,10 @@ negbin.ab = function(link.alpha ="loge", link.k ="loge",
     loglikelihood=eval(substitute(
             function(mu,y,w,residuals= FALSE,eta, extra=NULL) {
         alpha = eta2theta(eta[,1], .link.alpha, earg= .ealpha)
-        k = eta2theta(eta[,2], .link.k, earg= .ek)
-        if(residuals) stop("loglikelihood residuals not implemented yet") else
-        sum(w * (y * log(alpha) - (y+k)*log1p(alpha) + lgamma(y+k) -
-                 lgamma(k) - lgamma(y+1 )))
+        kvec = eta2theta(eta[,2], .link.k, earg= .ek)
+        if(residuals) stop("loglikelihood residuals not implemented yet") else {
+            sum(w * dnbinom(x=y, mu=kvec*alpha, size=kvec, log=TRUE))
+        }
     }, list( .link.alpha=link.alpha, .link.k=link.k,
               .ealpha=ealpha, .ek=ek ))),
     vfamily=c("negbin.ab"),
@@ -3482,7 +3503,7 @@ nbmud = function(lmu = c("loge","identity","reciprocal"),
 
 
 if(FALSE)
-neg.binomial = function(link.p="logit", link.k="loge",
+ neg.binomial = function(link.p="logit", link.k="loge",
                         ep=list(), ek=list(),
                         zero=2,
                         ik=NULL,
@@ -3618,11 +3639,11 @@ neg.binomial = function(link.p="logit", link.k="loge",
 
 
 if(FALSE)
-neg.binomial.k = function(k, link="logit", earg=list(), expected=TRUE, ...)
+ neg.binomial.k = function(k, link="logit", earg=list(), expected=TRUE, ...)
 {
 
     if(!is.Numeric(k, allow=1, posit=TRUE))
-        stop("bad input for argument argument \"k\"")
+        stop("bad input for argument argument 'k'")
     if(mode(link) != "character" && mode(link) != "name")
         link = as.character(substitute(link))
     if(!is.list(earg)) earg = list()
@@ -3693,7 +3714,7 @@ neg.binomial.k = function(k, link="logit", earg=list(), expected=TRUE, ...)
 
 
 
-simple.poisson = function()
+ simple.poisson = function()
 {
     new("vglmff",
     blurb=c("Poisson distribution\n\n",
@@ -3738,7 +3759,7 @@ simple.poisson = function()
 
 
 
-studentt =  function(link.df="loglog", earg=list(),
+ studentt =  function(link.df="loglog", earg=list(),
                      idf=NULL, nsimEIM=100)
 {
 
@@ -3783,9 +3804,7 @@ studentt =  function(link.df="loglog", earg=list(),
         function(mu,y,w,residuals=FALSE,eta,extra=NULL) {
         df =  eta2theta(eta, .link.df, earg= .earg)
         if(residuals) stop("loglikelihood residuals not implemented yet") else {
-        if(is.R()) sum(w * dt(x=y, df=df, log=TRUE)) else
-            sum(w * (-log(pi*df)/2 - (df+1)*log1p(y^2 / df)/2 +
-                    lgamma((df+1)/2) - lgamma(df/2)))
+            sum(w * dt(x=y, df=df, log=TRUE))
         }
     }, list( .link.df=link.df, .earg=earg ))), 
     vfamily=c("studentt"),
@@ -3819,7 +3838,7 @@ studentt =  function(link.df="loglog", earg=list(),
 }
 
  
-chisq = function(link = "loge", earg=list())
+ chisq = function(link = "loge", earg=list())
 {
     if(mode(link) != "character" && mode(link) != "name")
         link = as.character(substitute(link))
@@ -3849,7 +3868,7 @@ chisq = function(link = "loge", earg=list())
         function(mu,y,w,residuals= FALSE,eta,extra=NULL) {
         df = eta2theta(eta, .link, earg= .earg)
         if(residuals) stop("loglikelihood residuals not implemented yet") else
-        sum(w * dchisq(x=y, df=df, ncp = 0, log = TRUE))
+            sum(w * dchisq(x=y, df=df, ncp = 0, log = TRUE))
     }, list( .link = link, .earg=earg ))),
     vfamily="chisq",
     deriv=eval(substitute(expression({
@@ -3871,7 +3890,7 @@ chisq = function(link = "loge", earg=list())
 
 
 
-simplex = function(lmu="logit", lsigma="loge",
+ simplex = function(lmu="logit", lsigma="loge",
                    emu=list(), esigma=list(), imu=NULL, isigma=NULL)
 {
 
@@ -3980,7 +3999,7 @@ simplex = function(lmu="logit", lsigma="loge",
 
 
 
-rig = function(lmu="identity", llambda="loge",
+ rig = function(lmu="identity", llambda="loge",
                emu=list(), elambda=list(), imu=NULL, ilambda=1)
 {
 
@@ -3989,7 +4008,7 @@ rig = function(lmu="identity", llambda="loge",
     if(mode(llambda) != "character" && mode(llambda) != "name")
         llambda = as.character(substitute(llambda))
     if(!is.Numeric(ilambda, posit=TRUE))
-        stop("bad input for \"ilambda\"")
+        stop("bad input for 'ilambda'")
     if(!is.list(emu)) emu = list()
     if(!is.list(elambda)) elambda = list()
 
@@ -4091,7 +4110,7 @@ rig = function(lmu="identity", llambda="loge",
 
 
 
-hypersecant = function(link.theta="elogit",
+ hypersecant = function(link.theta="elogit",
     earg=if(link.theta=="elogit") list(min=-pi/2, max=pi/2) else list(),
     init.theta=NULL)
 {
@@ -4148,7 +4167,7 @@ hypersecant = function(link.theta="elogit",
 
 
 
-hypersecant.1 = function(link.theta="elogit",
+ hypersecant.1 = function(link.theta="elogit",
     earg=if(link.theta=="elogit") list(min=-pi/2, max=pi/2) else list(),
     init.theta=NULL)
 {
@@ -4212,8 +4231,8 @@ hypersecant.1 = function(link.theta="elogit",
 
 
 
-leipnik = function(lmu="logit", llambda="loge",
-                   emu=list(), elambda=list(), imu=NULL, ilambda=NULL)
+ leipnik = function(lmu="logit", llambda="loge",
+                    emu=list(), elambda=list(), imu=NULL, ilambda=NULL)
 {
 
 
@@ -4260,8 +4279,6 @@ leipnik = function(lmu="logit", llambda="loge",
     }, list( .lmu=lmu,
              .emu=emu, .elambda=elambda ))),
     last=eval(substitute(expression({
-        if(!is.R()) 
-            misc$d3 = d3    # because save.weights=FALSE
         misc$link = c(mu= .lmu, lambda= .llambda)
         misc$earg = list(mu= .emu, lambda= .elambda)
         misc$pooled.weight = pooled.weight
@@ -4280,21 +4297,10 @@ leipnik = function(lmu="logit", llambda="loge",
     vfamily=c("leipnik"),
     deriv=eval(substitute(expression({
         lambda = eta2theta(eta[,2], .llambda, earg= .elambda)
-        if(is.R()) {
-            dl.dthetas = w * cbind(dl.dmu=lambda*(y-mu)/(y*(1-y)+(y-mu)^2),
-                                   dl.dlambda=-0.5*log1p((y-mu)^2 / (y*(1-y))) -
-                                   0.5*digamma((lambda+1)/2) +
-                                   0.5*digamma(1+lambda/2))
-        } else {
-            if(iter==1) {
-                d3 = dfun(~ w * (-0.5*log(y*(1-y)) - 0.5 * lambda * log(1 +
-                    (y-mu)^2 / (y*(1-y ))) - lgamma((lambda+1)/2) +
-                    lgamma(1+ lambda/2)),
-                    c("mu", "lambda"), hessian= TRUE)
-            }
-            eval.d3 = eval(d3)
-            dl.dthetas =  attr(eval.d3, "gradient")
-        }
+        dl.dthetas = w * cbind(dl.dmu = lambda*(y-mu) / (y*(1-y)+(y-mu)^2),
+                               dl.dlambda= -0.5 * log1p((y-mu)^2 / (y*(1-y))) -
+                               0.5*digamma((lambda+1)/2) +
+                               0.5*digamma(1+lambda/2))
         dmu.deta = dtheta.deta(mu, .lmu, earg= .emu)
         dlambda.deta = dtheta.deta(lambda, .llambda, earg= .elambda)
         dtheta.detas = cbind(dmu.deta, dlambda.deta)
@@ -4344,8 +4350,8 @@ leipnik = function(lmu="logit", llambda="loge",
 
 
 
-invbinomial = function(lrho="elogit", llambda="loge",
-              erho=if(lrho=="elogit") list(min = 0.5, max = 1) else list(),
+ invbinomial = function(lrho="elogit", llambda="loge",
+               erho=if(lrho=="elogit") list(min = 0.5, max = 1) else list(),
                        elambda=list(),
                        irho=NULL,
                        ilambda=NULL,
@@ -4357,7 +4363,7 @@ invbinomial = function(lrho="elogit", llambda="loge",
     if(mode(llambda) != "character" && mode(llambda) != "name")
         llambda = as.character(substitute(llambda))
     if(length(zero) && !is.Numeric(zero, integer=TRUE, posit=TRUE))
-        stop("bad input for argument \"zero\"")
+        stop("bad input for argument 'zero'")
     if(!is.list(erho)) erho = list()
     if(!is.list(elambda)) elambda = list()
 
@@ -4455,7 +4461,7 @@ invbinomial = function(lrho="elogit", llambda="loge",
 
 
 
-genpoisson = function(llambda="elogit", ltheta="loge",
+ genpoisson = function(llambda="elogit", ltheta="loge",
                   elambda=if(llambda=="elogit") list(min=-1,max=1) else list(),
                       etheta=list(),
                       ilambda=NULL, itheta=NULL,
@@ -4463,12 +4469,13 @@ genpoisson = function(llambda="elogit", ltheta="loge",
                       method.init=1, zero=1)
 {
 
+
     if(mode(llambda) != "character" && mode(llambda) != "name")
         llambda = as.character(substitute(llambda))
     if(mode(ltheta) != "character" && mode(ltheta) != "name")
         ltheta = as.character(substitute(ltheta))
     if(length(zero) && !is.Numeric(zero, integer=TRUE, posit=TRUE))
-        stop("bad input for argument \"zero\"")
+        stop("bad input for argument 'zero'")
     if(!is.list(elambda)) elambda = list()
     if(!is.list(etheta)) etheta = list()
     if(!is.Numeric(method.init, allow=1, integ=TRUE, posit=TRUE) ||
@@ -4598,7 +4605,47 @@ genpoisson = function(llambda="elogit", ltheta="loge",
 
 
 
-lgammaff = function(link="loge", earg=list(), init.k=NULL)
+
+
+
+dlgamma = function(x, location=0, scale=1, k=1, log=FALSE) {
+    if(!is.logical(log.arg <- log))
+        stop("bad input for argument 'log'")
+    rm(log)
+
+    if(!is.Numeric(scale, posit=TRUE)) stop("bad input for argument 'scale'")
+    if(!is.Numeric(k, posit=TRUE)) stop("bad input for argument 'k'")
+    z = (x-location) / scale
+    if(log.arg) {
+        k * z - exp(z) - log(scale) - lgamma(k)
+    } else {
+        exp(k * z - exp(z)) / (scale * gamma(k))
+    }
+}
+plgamma = function(q, location=0, scale=1, k=1) {
+    if(!is.Numeric(scale, posit=TRUE)) stop("bad input for argument 'scale'")
+    if(!is.Numeric(k, posit=TRUE)) stop("bad input for argument 'k'")
+    z = (q-location)/scale
+    pgamma(exp(z), k)
+}
+qlgamma = function(p, location=0, scale=1, k=1) {
+    if(!is.Numeric(scale, posit=TRUE)) stop("bad input for argument 'scale'")
+    if(!is.Numeric(k, posit=TRUE)) stop("bad input for argument 'k'")
+    q = qgamma(p, k)
+    location + scale * log(q)
+}
+rlgamma = function(n, location=0, scale=1, k=1) {
+    if(!is.Numeric(n, posit=TRUE, integ=TRUE, allow=1)) 
+        stop("bad input for argument 'n'")
+    if(!is.Numeric(scale, posit=TRUE)) stop("bad input for argument 'scale'")
+    if(!is.Numeric(k, posit=TRUE)) stop("bad input for argument 'k'")
+    y = rgamma(n, k)
+    location + scale * log(y)
+}
+
+
+
+ lgammaff = function(link="loge", earg=list(), init.k=NULL)
 {
     if(mode(link) != "character" && mode(link) != "name")
         link = as.character(substitute(link))
@@ -4632,9 +4679,10 @@ lgammaff = function(link="loge", earg=list(), init.k=NULL)
     }), list( .link=link, .earg=earg ))),
     loglikelihood=eval(substitute(
         function(mu,y,w,residuals= FALSE,eta, extra=NULL) {
-        k = eta2theta(eta, .link, earg= .earg)
-        if(residuals) stop("loglikelihood residuals not implemented yet") else
-        sum(w * (k * y - exp(y) - lgamma(k )))
+        kk = eta2theta(eta, .link, earg= .earg)
+        if(residuals) stop("loglikelihood residuals not implemented yet") else {
+            sum(w * dlgamma(x=y, location=0, scale=1, k=kk, log=TRUE))
+        }
     }, list( .link=link, .earg=earg ))),
     vfamily=c("lgammaff"),
     deriv=eval(substitute(expression({
@@ -4651,35 +4699,7 @@ lgammaff = function(link="loge", earg=list(), init.k=NULL)
 }
 
 
-dlgamma = function(x, location=0, scale=1, k=1) {
-    if(!is.Numeric(scale, posit=TRUE)) stop("bad input for argument \"scale\"")
-    if(!is.Numeric(k, posit=TRUE)) stop("bad input for argument \"k\"")
-    z = (x-location) / scale
-    exp(k * z - exp(z)) / (scale * gamma(k))
-}
-plgamma = function(q, location=0, scale=1, k=1) {
-    if(!is.Numeric(scale, posit=TRUE)) stop("bad input for argument \"scale\"")
-    if(!is.Numeric(k, posit=TRUE)) stop("bad input for argument \"k\"")
-    z = (q-location)/scale
-    pgamma(exp(z), k)
-}
-qlgamma = function(p, location=0, scale=1, k=1) {
-    if(!is.Numeric(scale, posit=TRUE)) stop("bad input for argument \"scale\"")
-    if(!is.Numeric(k, posit=TRUE)) stop("bad input for argument \"k\"")
-    q = qgamma(p, k)
-    location + scale * log(q)
-}
-rlgamma = function(n, location=0, scale=1, k=1) {
-    if(!is.Numeric(n, posit=TRUE, integ=TRUE, allow=1)) 
-        stop("bad input for argument \"n\"")
-    if(!is.Numeric(scale, posit=TRUE)) stop("bad input for argument \"scale\"")
-    if(!is.Numeric(k, posit=TRUE)) stop("bad input for argument \"k\"")
-    y = rgamma(n, k)
-    location + scale * log(y)
-}
-
-
-lgamma3ff = function(llocation="identity", lscale="loge", lshape="loge",
+ lgamma3ff = function(llocation="identity", lscale="loge", lshape="loge",
                      elocation=list(), escale=list(), eshape=list(),
                      ilocation=NULL, iscale=NULL, ishape=1, zero=NULL)
 {
@@ -4690,9 +4710,9 @@ lgamma3ff = function(llocation="identity", lscale="loge", lshape="loge",
     if(mode(lshape) != "character" && mode(lshape) != "name")
         lshape = as.character(substitute(lshape))
     if(length(zero) && !is.Numeric(zero, integer=TRUE, posit=TRUE))
-        stop("bad input for argument \"zero\"")
+        stop("bad input for argument 'zero'")
     if(length(iscale) && !is.Numeric(iscale, posit=TRUE))
-        stop("bad input for argument \"iscale\"")
+        stop("bad input for argument 'iscale'")
     if(!is.list(elocation)) elocation = list()
     if(!is.list(escale)) escale = list()
     if(!is.list(eshape)) eshape = list()
@@ -4746,12 +4766,12 @@ lgamma3ff = function(llocation="identity", lscale="loge", lshape="loge",
               .elocation=elocation, .escale=escale, .eshape=eshape ))),
     loglikelihood=eval(substitute(
         function(mu,y,w,residuals= FALSE,eta, extra=NULL) {
-        a = eta2theta(eta[,1], .llocation, earg= .elocation)
-        b = eta2theta(eta[,2], .lscale, earg= .escale)
-        k = eta2theta(eta[,3], .lshape, earg= .eshape)
-        zedd = (y-a)/b
-        if(residuals) stop("loglikelihood residuals not implemented yet") else
-        sum(w * (k * zedd - exp(zedd) - lgamma(k) - log(b )))
+        aa = eta2theta(eta[,1], .llocation, earg= .elocation)
+        bb = eta2theta(eta[,2], .lscale, earg= .escale)
+        kk = eta2theta(eta[,3], .lshape, earg= .eshape)
+        if(residuals) stop("loglikelihood residuals not implemented yet") else {
+            sum(w * dlgamma(x=y, location=aa, scale=bb, k=kk, log=TRUE))
+        }
     }, list( .llocation=llocation, .lscale=lscale, .lshape=lshape,
              .elocation=elocation, .escale=escale, .eshape=eshape ))),
     vfamily=c("lgamma3ff"),
@@ -4789,7 +4809,7 @@ lgamma3ff = function(llocation="identity", lscale="loge", lshape="loge",
               .elocation=elocation, .escale=escale, .eshape=eshape ))))
 }
 
-prentice74 = function(llocation="identity", lscale="loge", lshape="identity",
+ prentice74 = function(llocation="identity", lscale="loge", lshape="identity",
                       elocation=list(), escale=list(), eshape=list(),
                       ilocation=NULL, iscale=NULL, ishape=NULL, zero=NULL)
 {
@@ -4800,9 +4820,9 @@ prentice74 = function(llocation="identity", lscale="loge", lshape="identity",
     if(mode(lshape) != "character" && mode(lshape) != "name")
         lshape = as.character(substitute(lshape))
     if(length(zero) && !is.Numeric(zero, integer=TRUE, posit=TRUE))
-        stop("bad input for argument \"zero\"")
+        stop("bad input for argument 'zero'")
     if(length(iscale) && !is.Numeric(iscale, posit=TRUE))
-        stop("bad input for argument \"iscale\"")
+        stop("bad input for argument 'iscale'")
     if(!is.list(elocation)) elocation = list()
     if(!is.list(escale)) escale = list()
     if(!is.list(eshape)) eshape = list()
@@ -4907,47 +4927,60 @@ prentice74 = function(llocation="identity", lscale="loge", lshape="identity",
 
 
 
-dggamma = function(x, scale=1, d=1, k=1) {
-    if(!is.Numeric(scale, posit=TRUE)) stop("bad input for argument \"scale\"")
-    if(!is.Numeric(d, posit=TRUE)) stop("bad input for argument \"d\"")
-    if(!is.Numeric(k, posit=TRUE)) stop("bad input for argument \"k\"")
+dggamma = function(x, scale=1, d=1, k=1, log = FALSE) {
+    if(!is.logical(log.arg <- log))
+        stop("bad input for argument 'log'")
+    rm(log)
+
+    if(!is.Numeric(scale, posit=TRUE)) stop("bad input for argument 'scale'")
+    if(!is.Numeric(d, posit=TRUE)) stop("bad input for argument 'd'")
+    if(!is.Numeric(k, posit=TRUE)) stop("bad input for argument 'k'")
     N = max(length(x), length(scale), length(d), length(k))
     x = rep(x, len=N); scale = rep(scale, len=N);
     d = rep(d, len=N); k = rep(k, len=N); 
-    ans = rep(0.0, len=N)
-    ind = x > 0
-    if(any(ind)) {
-        z = (x[ind]/scale[ind])^d[ind]
-        ans[ind] = d[ind] * scale[ind]^(-d[ind]*k[ind]) *
-                   x[ind]^(d[ind]*k[ind]-1) * exp(-z) / gamma(k[ind])
+
+    Loglik = rep(log(0), len=N)
+    xok = x > 0
+    if(any(xok)) {
+        zedd = (x[xok]/scale[xok])^d[xok]
+        Loglik[xok] = log(d[xok]) + (-d[xok]*k[xok]) * log(scale[xok]) +
+                   (d[xok]*k[xok]-1) * log(x[xok]) - zedd - lgamma(k[xok])
     }
-    ans
+    if(log.arg) {
+        Loglik
+    } else {
+        exp(Loglik)
+    }
 }
+
+
+
+
 pggamma = function(q, scale=1, d=1, k=1) {
-    if(!is.Numeric(scale, posit=TRUE)) stop("bad input for argument \"scale\"")
-    if(!is.Numeric(d, posit=TRUE)) stop("bad input for argument \"d\"")
-    if(!is.Numeric(k, posit=TRUE)) stop("bad input for argument \"k\"")
+    if(!is.Numeric(scale, posit=TRUE)) stop("bad input for argument 'scale'")
+    if(!is.Numeric(d, posit=TRUE)) stop("bad input for argument 'd'")
+    if(!is.Numeric(k, posit=TRUE)) stop("bad input for argument 'k'")
     z = (q/scale)^d
     pgamma(z, k)
 }
 qggamma = function(p, scale=1, d=1, k=1) {
-    if(!is.Numeric(scale, posit=TRUE)) stop("bad input for argument \"scale\"")
-    if(!is.Numeric(d, posit=TRUE)) stop("bad input for argument \"d\"")
-    if(!is.Numeric(k, posit=TRUE)) stop("bad input for argument \"k\"")
+    if(!is.Numeric(scale, posit=TRUE)) stop("bad input for argument 'scale'")
+    if(!is.Numeric(d, posit=TRUE)) stop("bad input for argument 'd'")
+    if(!is.Numeric(k, posit=TRUE)) stop("bad input for argument 'k'")
     q = qgamma(p, k)
     scale * q^(1/d)
 }
 rggamma = function(n, scale=1, d=1, k=1) {
     if(!is.Numeric(n, posit=TRUE, integ=TRUE, allow=1)) 
-        stop("bad input for \"n\"")
-    if(!is.Numeric(scale, posit=TRUE)) stop("bad input for \"scale\"")
-    if(!is.Numeric(d, posit=TRUE)) stop("bad input for \"d\"")
-    if(!is.Numeric(k, posit=TRUE)) stop("bad input for \"k\"")
+        stop("bad input for 'n'")
+    if(!is.Numeric(scale, posit=TRUE)) stop("bad input for 'scale'")
+    if(!is.Numeric(d, posit=TRUE)) stop("bad input for 'd'")
+    if(!is.Numeric(k, posit=TRUE)) stop("bad input for 'k'")
     y = rgamma(n, k)
     scale * y^(1/d)
 }
 
-ggamma = function(lscale="loge", ld="loge", lk="loge",
+ ggamma = function(lscale="loge", ld="loge", lk="loge",
                   escale=list(), ed=list(), ek=list(),
                   iscale=NULL, id=NULL, ik=NULL, zero=NULL)
 {
@@ -4958,9 +4991,9 @@ ggamma = function(lscale="loge", ld="loge", lk="loge",
     if(mode(lk) != "character" && mode(lk) != "name")
         lk = as.character(substitute(lk))
     if(length(zero) && !is.Numeric(zero, integer=TRUE, posit=TRUE))
-        stop("bad input for argument \"zero\"")
+        stop("bad input for argument 'zero'")
     if(length(iscale) && !is.Numeric(iscale, posit=TRUE))
-        stop("bad input for argument \"iscale\"")
+        stop("bad input for argument 'iscale'")
     if(!is.list(escale)) escale = list()
     if(!is.list(ed)) ed = list()
     if(!is.list(ek)) ek = list()
@@ -5018,8 +5051,9 @@ ggamma = function(lscale="loge", ld="loge", lk="loge",
         b = eta2theta(eta[,1], .lscale, earg= .escale)
         d = eta2theta(eta[,2], .ld, earg= .ed)
         k = eta2theta(eta[,3], .lk, earg= .ek)
-        if(residuals) stop("loglikelihood residuals not implemented yet") else
-        sum(w*(log(d) - lgamma(k) + (d*k-1) * log(y) - d*k*log(b) - (y/b)^d))
+        if(residuals) stop("loglikelihood residuals not implemented yet") else {
+            sum(w * dggamma(x=y, scale=b, d=d, k=k, log = TRUE))
+        }
     }, list( .lscale=lscale, .ld=ld, .lk=lk,
              .escale=escale, .ed=ed, .ek=ek ))),
     vfamily=c("ggamma"),
@@ -5060,12 +5094,12 @@ ggamma = function(lscale="loge", ld="loge", lk="loge",
 
 
 dlog = function(x, prob, log=FALSE) {
-    if(!is.logical(log) || length(log) != 1)
+    if(!is.logical(log.arg <- log))
         stop("bad input for argument 'log'")
-    log.arg = log; rm(log)
+    rm(log)
 
     if(!is.Numeric(prob, posit=TRUE) || max(prob) >= 1)
-        stop("bad input for argument \"prob\"")
+        stop("bad input for argument 'prob'")
     N = max(length(x), length(prob))
     x = rep(x, len=N); prob = rep(prob, len=N); 
     ox = !is.finite(x)
@@ -5087,9 +5121,9 @@ dlog = function(x, prob, log=FALSE) {
 
 
 plog  = function(q, prob, log.p=FALSE) {
-    if(!is.Numeric(q)) stop("bad input for argument \"q\"")
+    if(!is.Numeric(q)) stop("bad input for argument 'q'")
     if(!is.Numeric(prob, posit=TRUE) || max(prob) >= 1)
-        stop("bad input for argument \"prob\"")
+        stop("bad input for argument 'prob'")
     N = max(length(q), length(prob))
     q = rep(q, len=N); prob = rep(prob, len=N);
 
@@ -5130,9 +5164,9 @@ plog  = function(q, prob, log.p=FALSE) {
 
 if(FALSE)
 plog = function(q, prob, log.p=FALSE) {
-    if(!is.Numeric(q)) stop("bad input for argument \"q\"")
+    if(!is.Numeric(q)) stop("bad input for argument 'q'")
     if(!is.Numeric(prob, posit=TRUE) || max(prob) >= 1)
-        stop("bad input for argument \"prob\"")
+        stop("bad input for argument 'prob'")
     N = max(length(q), length(prob))
     q = rep(q, len=N); prob = rep(prob, len=N);
     ans = q * 0  # Retains names(q)
@@ -5161,12 +5195,12 @@ plog = function(q, prob, log.p=FALSE) {
 
 rlog = function(n, prob, Smallno=1.0e-6) {
     if(!is.Numeric(n, posit=TRUE, integ=TRUE))
-        stop("bad input for argument \"n\"")
+        stop("bad input for argument 'n'")
     if(!is.Numeric(prob, allow=1, posit=TRUE) || max(prob) >= 1)
-        stop("bad input for argument \"prob\"")
+        stop("bad input for argument 'prob'")
     if(!is.Numeric(Smallno, posit=TRUE, allow=1) || Smallno > 0.01 ||
        Smallno < 2 * .Machine$double.eps)
-        stop("bad input for argument \"Smallno\"")
+        stop("bad input for argument 'Smallno'")
     ans = rep(0.0, len=n)
 
     ptr1 = 1; ptr2 = 0
@@ -5199,7 +5233,7 @@ rlog = function(n, prob, Smallno=1.0e-6) {
 
 
 
-logff = function(link="logit", earg=list(), init.c=NULL)
+ logff = function(link="logit", earg=list(), init.c=NULL)
 {
     if(length(init.c) &&
        (!is.Numeric(init.c, posit=TRUE) || max(init.c) >= 1))
@@ -5242,8 +5276,9 @@ logff = function(link="logit", earg=list(), init.c=NULL)
         function(mu,y,w,residuals= FALSE,eta, extra=NULL) {
         cc = eta2theta(eta, .link, earg= .earg)
         a = -1 / log1p(-cc)
-        if(residuals) stop("loglikelihood residuals not implemented yet") else
-        sum(w * (log(a) + y * log(cc) - log(y )))
+        if(residuals) stop("loglikelihood residuals not implemented yet") else {
+            sum(w * dlog(x=y, prob=-expm1(-1/a), log=TRUE))
+        }
     }, list( .link=link, .earg=earg ))),
     vfamily=c("logff"),
     deriv=eval(substitute(expression({
@@ -5264,7 +5299,7 @@ logff = function(link="logit", earg=list(), init.c=NULL)
 
 
 
-levy = function(delta=NULL, link.gamma="loge",
+ levy = function(delta=NULL, link.gamma="loge",
                 earg=list(), idelta=NULL, igamma=NULL)
 {
 
@@ -5381,7 +5416,7 @@ levy = function(delta=NULL, link.gamma="loge",
         
 
 if(FALSE) 
-stoppa = function(y0,
+ stoppa = function(y0,
                   link.alpha="loge",
                   link.theta="loge", ealpha=list(), etheta=list(),
                   ialpha=NULL,
@@ -5396,7 +5431,7 @@ stoppa = function(y0,
     if(mode(link.theta) != "character" && mode(link.theta) != "name")
         link.theta = as.character(substitute(link.theta))
     if(length(zero) && !is.Numeric(zero, integer=TRUE, posit=TRUE))
-        stop("bad input for argument \"zero\"")
+        stop("bad input for argument 'zero'")
     if(!is.list(ealpha)) ealpha = list()
     if(!is.list(etheta)) etheta = list()
 
@@ -5405,8 +5440,7 @@ stoppa = function(y0,
             "Links:    ",
             namesof("alpha", link.alpha, earg=ealpha), ", ", 
             namesof("theta", link.theta, earg=etheta), "\n", 
-            if(is.R()) "Mean:     theta*y0*beta(1-1/alpha, theta)" else
-                       "Mean:     theta*y0*beta(1-1/alpha, theta)"),
+            "Mean:     theta*y0*beta(1-1/alpha, theta)"),
     constraints=eval(substitute(expression({
         constraints = cm.zero.vgam(constraints, x, .zero, M)
     }), list( .zero=zero ))),
@@ -5482,36 +5516,36 @@ stoppa = function(y0,
 
 
 
-dlino = function(x, shape1, shape2, lambda=1) {
-    if(!is.Numeric(x)) stop("bad input for argument \"x\"")
-    if(!is.Numeric(shape1, posit=TRUE)) 
-        stop("bad input for argument \"shape1\"")
-    if(!is.Numeric(shape2, posit=TRUE)) 
-        stop("bad input for argument \"shape2\"")
-    if(!is.Numeric(lambda, posit=TRUE)) 
-        stop("bad input for argument \"lambda\"")
-    dbeta(x=x, shape1=shape1, shape2=shape2) * lambda^shape1 /
-        (1 - (1-lambda)*x)^(shape1+shape2)
+
+dlino = function(x, shape1, shape2, lambda=1, log = FALSE) {
+    if(!is.logical(log.arg <- log))
+        stop("bad input for argument 'log'")
+    rm(log)
+
+    loglik =  dbeta(x=x, shape1=shape1, shape2=shape2, log=TRUE) +
+              shape1 * log(lambda) -
+              (shape1+shape2) * log1p(-(1-lambda)*x)
+    if(log.arg) loglik else exp(loglik)
 }
 
 plino = function(q, shape1, shape2, lambda=1) {
-    if(!is.Numeric(q)) stop("bad input for \"q\"")
+    if(!is.Numeric(q)) stop("bad input for 'q'")
     if(!is.Numeric(shape1, posit=TRUE)) 
-        stop("bad input for argument \"shape1\"")
+        stop("bad input for argument 'shape1'")
     if(!is.Numeric(shape2, posit=TRUE)) 
-        stop("bad input for argument \"shape2\"")
+        stop("bad input for argument 'shape2'")
     if(!is.Numeric(lambda, posit=TRUE)) 
-        stop("bad input for argument \"lambda\"")
+        stop("bad input for argument 'lambda'")
     pbeta(q=lambda*q/(1 - (1-lambda)*q), shape1=shape1, shape2=shape2)
 }
 
 qlino = function(p, shape1, shape2, lambda=1) {
     if(!is.Numeric(p, posit=TRUE) || any(p >= 1)) 
-        stop("bad input for argument \"p\"")
+        stop("bad input for argument 'p'")
     if(!is.Numeric(shape1, posit=TRUE)) 
-        stop("bad input for argument \"shape1\"")
+        stop("bad input for argument 'shape1'")
     if(!is.Numeric(lambda, posit=TRUE)) 
-        stop("bad input for argument \"lambda\"")
+        stop("bad input for argument 'lambda'")
     Y = qbeta(p=p, shape1=shape1, shape2=shape2)
     Y / (lambda + (1-lambda)*Y)
 }
@@ -5519,24 +5553,24 @@ qlino = function(p, shape1, shape2, lambda=1) {
 
 rlino = function(n, shape1, shape2, lambda=1) {
     if(!is.Numeric(n, posit=TRUE, integ=TRUE, allow=1)) 
-        stop("bad input for argument \"n\"")
+        stop("bad input for argument 'n'")
     if(!is.Numeric(shape1, posit=TRUE)) 
-        stop("bad input for argument \"shape1\"")
+        stop("bad input for argument 'shape1'")
     if(!is.Numeric(shape2, posit=TRUE)) 
-        stop("bad input for argument \"shape2\"")
+        stop("bad input for argument 'shape2'")
     if(!is.Numeric(lambda, posit=TRUE)) 
-        stop("bad input for argument \"lambda\"")
+        stop("bad input for argument 'lambda'")
     Y = rbeta(n=n, shape1=shape1, shape2=shape2)
     Y / (lambda + (1-lambda)*Y)
 }
 
 
 
-lino = function(lshape1="loge",
-                lshape2="loge",
-                llambda="loge",
-                eshape1=list(), eshape2=list(), elambda=list(),
-                ishape1=NULL, ishape2=NULL, ilambda=1, zero=NULL)
+ lino = function(lshape1="loge",
+                 lshape2="loge",
+                 llambda="loge",
+                 eshape1=list(), eshape2=list(), elambda=list(),
+                 ishape1=NULL, ishape2=NULL, ilambda=1, zero=NULL)
 {
     if(mode(lshape1) != "character" && mode(lshape1) != "name")
         lshape1 = as.character(substitute(lshape1))
@@ -5545,9 +5579,9 @@ lino = function(lshape1="loge",
     if(mode(llambda) != "character" && mode(llambda) != "name")
         llambda = as.character(substitute(llambda))
     if(length(zero) && !is.Numeric(zero, integer=TRUE, posit=TRUE))
-        stop("bad input for argument \"zero\"")
+        stop("bad input for argument 'zero'")
     if(!is.Numeric(ilambda, positive=TRUE))
-        stop("bad input for argument \"ilambda\"")
+        stop("bad input for argument 'ilambda'")
     if(!is.list(eshape1)) eshape1 = list()
     if(!is.list(eshape2)) eshape2 = list()
     if(!is.list(elambda)) elambda = list()
@@ -5606,10 +5640,9 @@ lino = function(lshape1="loge",
         sh1 = eta2theta(eta[,1], .lshape1, earg= .eshape1)
         sh2 = eta2theta(eta[,2], .lshape2, earg= .eshape2)
         lambda = eta2theta(eta[,3], .llambda, earg= .elambda)
-        if(!is.R()) lbeta = function(a,b) lgamma(a) + lgamma(b) - lgamma(a+b)
-        if(residuals) stop("loglikelihood residuals not implemented yet") else
-        sum(w*(sh1*log(lambda) + (sh1-1)*log(y) + (sh2-1)*log1p(-y) -
-               lbeta(sh1,sh2) -(sh1+sh2)*log1p(-(1-lambda)*y)) )
+        if(residuals) stop("loglikelihood residuals not implemented yet") else {
+            sum(w * dlino(y, shape1=sh1, shape2=sh2, lambda=lambda, log=TRUE))
+        }
     }, list( .lshape1=lshape1, .lshape2=lshape2, .llambda=llambda,
              .eshape1=eshape1, .eshape2=eshape2, .elambda=elambda ))),
     vfamily=c("lino"),
@@ -5631,7 +5664,6 @@ lino = function(lshape1="loge",
     }), list( .lshape1=lshape1, .lshape2=lshape2, .llambda=llambda,
               .eshape1=eshape1, .eshape2=eshape2, .elambda=elambda ))),
     weight=eval(substitute(expression({
-        if(!is.R()) beta = function(a,b) (gamma(a) / gamma(a+b)) * gamma(b)
         temp3 = trigamma(sh1+sh2)
         ed2l.dsh1 = trigamma(sh1) - temp3
         ed2l.dsh2 = trigamma(sh2) - temp3
@@ -5653,16 +5685,17 @@ lino = function(lshape1="loge",
 }
 
 
-genbetaII= function(link.a="loge",
-                    link.scale="loge",
-                    link.p="loge",
-                    link.q="loge",
-                    earg.a=list(), earg.scale=list(), earg.p=list(), earg.q=list(),
-                    init.a=NULL,
-                    init.scale=NULL,
-                    init.p=1.0,
-                    init.q=1.0,
-                    zero=NULL)
+ genbetaII= function(link.a="loge",
+                     link.scale="loge",
+                     link.p="loge",
+                     link.q="loge",
+                     earg.a=list(), earg.scale=list(),
+                     earg.p=list(), earg.q=list(),
+                     init.a=NULL,
+                     init.scale=NULL,
+                     init.p=1.0,
+                     init.q=1.0,
+                     zero=NULL)
 {
 
     if(mode(link.a) != "character" && mode(link.a) != "name")
@@ -5674,7 +5707,7 @@ genbetaII= function(link.a="loge",
     if(mode(link.q) != "character" && mode(link.q) != "name")
         link.q = as.character(substitute(link.q))
     if(length(zero) && !is.Numeric(zero, integer=TRUE, posit=TRUE))
-        stop("bad input for argument \"zero\"")
+        stop("bad input for argument 'zero'")
     if(!is.list(earg.a)) earg.a = list()
     if(!is.list(earg.scale)) earg.scale = list()
     if(!is.list(earg.p)) earg.p = list()
@@ -5747,10 +5780,10 @@ genbetaII= function(link.a="loge",
         scale = eta2theta(eta[,2], .link.scale, earg= .earg.scale)
         parg = eta2theta(eta[,3], .link.p, earg= .earg.p)
         qq = eta2theta(eta[,4], .link.q, earg= .earg.q)
-        if(residuals) stop("loglikelihood residuals not implemented yet") else
-        sum(w*(log(aa) + (aa*parg-1)*log(y) - aa*parg*log(scale) +
-   (if(is.R()) -lbeta(parg, qq) else lgamma(parg+qq)-lgamma(parg)-lgamma(qq))-
-            (parg+qq)*log1p((y/scale)^aa)))
+        if(residuals) stop("loglikelihood residuals not implemented yet") else {
+            sum(w*(log(aa) + (aa*parg-1)*log(y) - aa*parg*log(scale) +
+                   -lbeta(parg, qq) - (parg+qq)*log1p((y/scale)^aa)))
+        }
     }, list( .link.a=link.a, .link.scale=link.scale,
               .earg.a=earg.a, .earg.scale=earg.scale, 
               .earg.p=earg.p, .earg.q=earg.q,
@@ -5820,31 +5853,31 @@ genbetaII= function(link.a="loge",
 }
 
 
-rsinmad = function(n, a, scale, q.arg)
+rsinmad = function(n, a, scale=1, q.arg)
     qsinmad(runif(n), a, scale, q.arg)
 
-rlomax = function(n, scale, q.arg)
+rlomax = function(n, scale=1, q.arg)
     rsinmad(n, a=1, scale, q.arg)
 
-rfisk = function(n, a, scale)
+rfisk = function(n, a, scale=1)
     rsinmad(n, a, scale, q.arg=1)
 
-rparalogistic = function(n, a, scale)
+rparalogistic = function(n, a, scale=1)
     rsinmad(n, a, scale, a)
 
-rdagum = function(n, a, scale, p.arg)
-    qdagum(runif(n), a, scale, p.arg)
+rdagum = function(n, a, scale=1, p.arg)
+    qdagum(runif(n), a, scale=1, p.arg)
 
-rinvlomax = function(n, scale, p.arg)
+rinvlomax = function(n, scale=1, p.arg)
     rdagum(n, a=1, scale, p.arg)
 
-rinvparalogistic = function(n, a, scale)
+rinvparalogistic = function(n, a, scale=1)
     rdagum(n, a, scale, a)
 
 
 
 
-qsinmad = function(p, a, scale, q.arg) {
+qsinmad = function(p, a, scale=1, q.arg) {
     bad = (p < 0) | (p > 1)
     ans = NA * p
     a = rep(a, len=length(p))[!bad]
@@ -5855,16 +5888,16 @@ qsinmad = function(p, a, scale, q.arg) {
     ans
 }
 
-qlomax = function(p, scale, q.arg)
+qlomax = function(p, scale=1, q.arg)
     qsinmad(p, a=1, scale, q.arg)
 
-qfisk = function(p, a, scale)
+qfisk = function(p, a, scale=1)
     qsinmad(p, a, scale, q.arg=1)
 
-qparalogistic = function(p, a, scale)
+qparalogistic = function(p, a, scale=1)
     qsinmad(p, a, scale, a)
 
-qdagum = function(p, a, scale, p.arg) {
+qdagum = function(p, a, scale=1, p.arg) {
     bad = (p < 0) | (p > 1)
     ans = NA * p
     a = rep(a, len=length(p))[!bad]
@@ -5875,10 +5908,10 @@ qdagum = function(p, a, scale, p.arg) {
     ans
 }
 
-qinvlomax = function(p, scale, p.arg)
+qinvlomax = function(p, scale=1, p.arg)
     qdagum(p, a=1, scale, p.arg)
 
-qinvparalogistic = function(p, a, scale)
+qinvparalogistic = function(p, a, scale=1)
     qdagum(p, a, scale, a)
 
 
@@ -5886,7 +5919,7 @@ qinvparalogistic = function(p, a, scale)
 
 
 
-psinmad = function(q, a, scale, q.arg) {
+psinmad = function(q, a, scale=1, q.arg) {
     zero = q <= 0
     a = rep(a, len=length(q))[!zero]
     scale = rep(scale, len=length(q))[!zero]
@@ -5897,18 +5930,18 @@ psinmad = function(q, a, scale, q.arg) {
     ans
 }
 
-plomax = function(q, scale, q.arg)
+plomax = function(q, scale=1, q.arg)
     psinmad(q, a=1, scale, q.arg)
 
-pfisk = function(q, a, scale)
+pfisk = function(q, a, scale=1)
     psinmad(q, a, scale, q.arg=1)
 
-pparalogistic = function(q, a, scale)
+pparalogistic = function(q, a, scale=1)
     psinmad(q, a, scale, a)
 
 
 
-pdagum = function(q, a, scale, p.arg) {
+pdagum = function(q, a, scale=1, p.arg) {
     zero = q <= 0
     a = rep(a, len=length(q))[!zero]
     scale = rep(scale, len=length(q))[!zero]
@@ -5919,56 +5952,70 @@ pdagum = function(q, a, scale, p.arg) {
     ans
 }
 
-pinvlomax = function(q, scale, p.arg)
+pinvlomax = function(q, scale=1, p.arg)
     pdagum(q, a=1, scale, p.arg)
 
-pinvparalogistic = function(q, a, scale)
+pinvparalogistic = function(q, a, scale=1)
     pdagum(q, a, scale, a)
 
 
 
-dsinmad = function(x, a, scale, q.arg) {
-    zero = x <= 0
-    a = rep(a, len=length(x))[!zero]
-    scale = rep(scale, len=length(x))[!zero]
-    q = rep(q.arg, len=length(x))[!zero]
-    ans = 0 * x
-    xx = x[!zero]
-    ans[!zero] = a * q * xx^(a-1) / (scale^a * (1 + (xx/scale)^a)^(1+q))
-    ans
+dsinmad = function(x, a, scale=1, q.arg, log=FALSE) {
+    if(!is.logical(log.arg <- log))
+        stop("bad input for argument 'log'")
+    rm(log)
+    LLL = max(length(x), length(a), length(scale), length(q.arg))
+    x = rep(x, len=LLL); a = rep(a, len=LLL)
+    scale = rep(scale, len=LLL); q.arg = rep(q.arg, len=LLL)
+
+    Loglik = rep(log(0), len=LLL)
+    xok = (x > 0)  # Avoids evaluating log(x) if x is negative.
+    Loglik[xok] = log(a[xok]) + log(q.arg[xok]) + (a[xok]-1)*log(x[xok]) -
+                  a[xok]*log(scale[xok]) -
+             (1+q.arg[xok]) * log1p((x[xok]/scale[xok])^a[xok])
+    if(log.arg) Loglik else exp(Loglik)
 }
 
-dlomax = function(x, scale, q.arg)
-    dsinmad(x, a=1, scale, q.arg)
+dlomax = function(x, scale=1, q.arg, log=FALSE)
+    dsinmad(x, a=1, scale, q.arg, log=log)
 
-dfisk = function(x, a, scale)
-    dsinmad(x, a, scale, q.arg=1)
+dfisk = function(x, a, scale=1, log=FALSE)
+    dsinmad(x, a, scale, q.arg=1, log=log)
 
-dparalogistic = function(x, a, scale)
-    dsinmad(x, a, scale, a)
+dparalogistic = function(x, a, scale=1, log=FALSE)
+    dsinmad(x, a, scale, a, log=log)
 
 
 
-ddagum = function(x, a, scale, p.arg) {
-    zero = x <= 0
-    a = rep(a, len=length(x))[!zero]
-    scale = rep(scale, len=length(x))[!zero]
-    p = rep(p.arg, len=length(x))[!zero]
-    ans = 0 * x
-    xx = x[!zero]
-    ans[!zero] = a * p * xx^(a*p-1) / (scale^(a*p) * (1 + (xx/scale)^a)^(1+p))
-    ans
+ddagum = function(x, a, scale=1, p.arg, log=FALSE) {
+    if(!is.logical(log.arg <- log))
+        stop("bad input for argument 'log'")
+    rm(log)
+
+    LLL = max(length(x), length(a), length(scale), length(p.arg))
+    x = rep(x, len=LLL); a = rep(a, len=LLL)
+    scale = rep(scale, len=LLL); p.arg = rep(p.arg, len=LLL)
+
+    Loglik = rep(log(0), len=LLL)
+    xok = (x > 0)  # Avoids evaluating log(x) if x is negative.
+    Loglik[xok] = log(a[xok]) + log(p.arg[xok]) +
+                  (a[xok]*p.arg[xok]-1)*log(x[xok]) -
+                  a[xok]*p.arg[xok]*log(scale[xok]) -
+             (1+p.arg[xok]) * log1p((x[xok]/scale[xok])^a[xok])
+    Loglik[p.arg <= 0] = NaN
+    if(log.arg) Loglik else exp(Loglik)
+
 }
 
-dinvlomax = function(x, scale, p.arg)
-    ddagum(x, a=1, scale, p.arg)
+dinvlomax = function(x, scale=1, p.arg, log=FALSE)
+    ddagum(x, a=1, scale, p.arg, log=log)
 
-dinvparalogistic = function(x, a, scale)
-    ddagum(x, a, scale, a)
+dinvparalogistic = function(x, a, scale=1, log=FALSE)
+    ddagum(x, a, scale, a, log=log)
 
 
 
-sinmad = function(link.a="loge",
+ sinmad = function(link.a="loge",
                   link.scale="loge",
                   link.q="loge",
                   earg.a=list(), earg.scale=list(), earg.q=list(),
@@ -5985,7 +6032,7 @@ sinmad = function(link.a="loge",
     if(mode(link.q) != "character" && mode(link.q) != "name")
         link.q = as.character(substitute(link.q))
     if(length(zero) && !is.Numeric(zero, integer=TRUE, posit=TRUE))
-        stop("bad input for argument \"zero\"")
+        stop("bad input for argument 'zero'")
     if(!is.list(earg.a)) earg.a = list()
     if(!is.list(earg.scale)) earg.scale = list()
     if(!is.list(earg.q)) earg.q = list()
@@ -6053,14 +6100,11 @@ sinmad = function(link.a="loge",
         scale = eta2theta(eta[,2], .link.scale, earg= .earg.scale)
         parg = 1
         qq = eta2theta(eta[,3], .link.q, earg= .earg)
-        if(residuals) stop("loglikelihood residuals not implemented yet") else
-        sum(w*(log(aa) + (aa*parg-1)*log(y) - aa*parg*log(scale) +
-   (if(is.R()) -lbeta(parg, qq) else lgamma(parg+qq)-lgamma(parg)-lgamma(qq))-
-            (parg+qq)*log1p((y/scale)^aa)))
-    }, list( .link.a=link.a, .link.scale=link.scale,
-              .earg.a=earg.a, .earg.scale=earg.scale, 
-              .earg.q=earg.q,
-            .link.q=link.q ))),
+        if(residuals) stop("loglikelihood residuals not implemented yet") else {
+            sum(w * dsinmad(x=y, a=aa, scale=scale, q.arg=qq, log=TRUE))
+        }
+    }, list( .link.a=link.a, .link.scale=link.scale, .link.q=link.q,
+             .earg.a=earg.a, .earg.scale=earg.scale, .earg.q=earg.q ))),
     vfamily=c("sinmad"),
     deriv=eval(substitute(expression({
         aa = eta2theta(eta[,1], .link.a, earg= .earg.a)
@@ -6128,7 +6172,7 @@ sinmad = function(link.a="loge",
     if(mode(link.p) != "character" && mode(link.p) != "name")
         link.p = as.character(substitute(link.p))
     if(length(zero) && !is.Numeric(zero, integer=TRUE, posit=TRUE))
-        stop("bad input for argument \"zero\"")
+        stop("bad input for argument 'zero'")
     if(!is.list(earg.a)) earg.a = list()
     if(!is.list(earg.scale)) earg.scale = list()
     if(!is.list(earg.p)) earg.p = list()
@@ -6196,14 +6240,11 @@ sinmad = function(link.a="loge",
         scale = eta2theta(eta[,2], .link.scale, earg= .earg.scale)
         parg = eta2theta(eta[,3], .link.p, earg= .earg.p)
         qq = 1
-        if(residuals) stop("loglikelihood residuals not implemented yet") else
-        sum(w*(log(aa) + (aa*parg-1)*log(y) - aa*parg*log(scale) +
-   (if(is.R()) -lbeta(parg, qq) else lgamma(parg+qq)-lgamma(parg)-lgamma(qq))-
-            (parg+qq)*log1p((y/scale)^aa)))
-    }, list( .link.a=link.a, .link.scale=link.scale,
-              .earg.a=earg.a, .earg.scale=earg.scale, 
-              .earg.p=earg.p,
-            .link.p=link.p ))),
+        if(residuals) stop("loglikelihood residuals not implemented yet") else {
+            sum(w * ddagum(x=y, a=aa, scale=scale, p.arg=parg, log=TRUE))
+        }
+    }, list( .link.a=link.a, .link.scale=link.scale, .link.p=link.p, 
+             .earg.a=earg.a, .earg.scale=earg.scale, .earg.p=earg.p ))),
     vfamily=c("dagum"),
     deriv=eval(substitute(expression({
         aa = eta2theta(eta[,1], .link.a, earg= .earg.a)
@@ -6255,14 +6296,9 @@ sinmad = function(link.a="loge",
 
 
 
-betaII= function(link.scale="loge",
-                 link.p="loge",
-                 link.q="loge",
-                  earg.scale=list(), earg.p=list(), earg.q=list(),
-                 init.scale=NULL,
-                 init.p=1.0, 
-                 init.q=1.0, 
-                 zero=NULL)
+ betaII = function(link.scale="loge", link.p="loge", link.q="loge",
+                   earg.scale=list(), earg.p=list(), earg.q=list(),
+                   init.scale=NULL, init.p=1.0, init.q=1.0, zero=NULL)
 {
 
     if(mode(link.scale) != "character" && mode(link.scale) != "name")
@@ -6272,7 +6308,7 @@ betaII= function(link.scale="loge",
     if(mode(link.q) != "character" && mode(link.q) != "name")
         link.q = as.character(substitute(link.q))
     if(length(zero) && !is.Numeric(zero, integer=TRUE, posit=TRUE))
-        stop("bad input for argument \"zero\"")
+        stop("bad input for argument 'zero'")
     if(!is.list(earg.scale)) earg.scale = list()
     if(!is.list(earg.p)) earg.p = list()
     if(!is.list(earg.q)) earg.q = list()
@@ -6341,9 +6377,8 @@ betaII= function(link.scale="loge",
         parg = eta2theta(eta[,2], .link.p, earg= .earg.p)
         qq = eta2theta(eta[,3], .link.q, earg= .earg.q)
         if(residuals) stop("loglikelihood residuals not implemented yet") else
-        sum(w*(log(aa) + (aa*parg-1)*log(y) - aa*parg*log(scale) +
-   (if(is.R()) -lbeta(parg, qq) else lgamma(parg+qq)-lgamma(parg)-lgamma(qq))-
-            (parg+qq)*log1p((y/scale)^aa)))
+            sum(w*(log(aa) + (aa*parg-1)*log(y) - aa*parg*log(scale) +
+                  (-lbeta(parg, qq)) - (parg+qq)*log1p((y/scale)^aa)))
     }, list( .link.scale=link.scale,
               .earg.scale=earg.scale, 
               .earg.p=earg.p, .earg.q=earg.q,
@@ -6399,7 +6434,7 @@ betaII= function(link.scale="loge",
 
 
 
-lomax = function(link.scale="loge",
+ lomax = function(link.scale="loge",
                  link.q="loge",
                  earg.scale=list(), earg.q=list(),
                  init.scale=NULL,
@@ -6412,7 +6447,7 @@ lomax = function(link.scale="loge",
     if(mode(link.q) != "character" && mode(link.q) != "name")
         link.q = as.character(substitute(link.q))
     if(length(zero) && !is.Numeric(zero, integer=TRUE, posit=TRUE))
-        stop("bad input for argument \"zero\"")
+        stop("bad input for argument 'zero'")
     if(!is.list(earg.scale)) earg.scale = list()
     if(!is.list(earg.q)) earg.q = list()
 
@@ -6447,41 +6482,31 @@ lomax = function(link.scale="loge",
             etastart = cbind(theta2eta(scale, .link.scale, earg= .earg.scale),
                              theta2eta(qq, .link.q, earg= .earg.q))
         }
-    }), list( .link.scale=link.scale,
-              .link.q=link.q,
-              .earg.scale=earg.scale, 
-              .earg.q=earg.q,
-              .init.scale=init.scale, 
-              .init.q=init.q ))),
+    }), list( .link.scale=link.scale, .link.q=link.q,
+              .earg.scale=earg.scale, .earg.q=earg.q,
+              .init.scale=init.scale, .init.q=init.q ))),
     inverse=eval(substitute(function(eta, extra=NULL) {
         scale = eta2theta(eta[,1], .link.scale, earg= .earg.scale)
         qq = eta2theta(eta[,2], .link.q, earg= .earg.q)
         scale/(qq-1)
-    }, list( .link.scale=link.scale,
-              .earg.scale=earg.scale, 
-              .earg.q=earg.q,
-             .link.q=link.q ))),
+    }, list( .link.scale=link.scale, .link.q=link.q,
+             .earg.scale=earg.scale, .earg.q=earg.q ))),
     last=eval(substitute(expression({
         misc$link = c(scale= .link.scale, q= .link.q)
         misc$earg = list(scale= .earg.scale, q= .earg.q)
-    }), list( .link.scale=link.scale,
-              .earg.scale=earg.scale, 
-              .earg.q=earg.q,
-              .link.q=link.q ))),
+    }), list( .link.scale=link.scale, .link.q=link.q,
+              .earg.scale=earg.scale, .earg.q=earg.q ))),
     loglikelihood=eval(substitute(
             function(mu, y, w, residuals= FALSE,eta, extra=NULL) {
         aa = 1
         scale = eta2theta(eta[,1], .link.scale, earg= .earg.scale)
         parg = 1
         qq = eta2theta(eta[,2], .link.q, earg= .earg.q)
-        if(residuals) stop("loglikelihood residuals not implemented yet") else
-        sum(w*(log(aa) + (aa*parg-1)*log(y) - aa*parg*log(scale) +
-   (if(is.R()) -lbeta(parg, qq) else lgamma(parg+qq)-lgamma(parg)-lgamma(qq))-
-            (parg+qq)*log1p((y/scale)^aa)))
-    }, list( .link.scale=link.scale,
-              .earg.scale=earg.scale, 
-              .earg.q=earg.q,
-            .link.q=link.q ))),
+        if(residuals) stop("loglikelihood residuals not implemented yet") else {
+            sum(w * dlomax(x=y, scale=scale, q.arg=qq, log=TRUE))
+        }
+    }, list( .link.scale=link.scale, .link.q=link.q,
+             .earg.scale=earg.scale, .earg.q=earg.q ))),
     vfamily=c("lomax"),
     deriv=eval(substitute(expression({
         aa = 1
@@ -6496,10 +6521,8 @@ lomax = function(link.scale="loge",
         dq.deta = dtheta.deta(qq, .link.q, earg= .earg.q)
         w * cbind( dl.dscale * dscale.deta,
                    dl.dq * dq.deta )
-    }), list( .link.scale=link.scale,
-              .earg.scale=earg.scale, 
-              .earg.q=earg.q,
-              .link.q=link.q ))),
+    }), list( .link.scale=link.scale, .link.q=link.q,
+              .earg.scale=earg.scale, .earg.q=earg.q ))),
     weight=eval(substitute(expression({
         ed2l.dscale = aa^2 * parg * qq / (scale^2 * (1+parg+qq))
         ed2l.dq = 1/qq^2 
@@ -6510,10 +6533,8 @@ lomax = function(link.scale="loge",
         wz[,iam(1,2,M)] = ed2l.dscaleq * dscale.deta * dq.deta
         wz = w * wz
         wz
-    }), list( .link.scale=link.scale,
-              .earg.scale=earg.scale, 
-              .earg.q=earg.q,
-              .link.q=link.q ))))
+    }), list( .link.scale=link.scale, .link.q=link.q,
+              .earg.scale=earg.scale, .earg.q=earg.q ))))
 }
 
 
@@ -6530,7 +6551,7 @@ lomax = function(link.scale="loge",
     if(mode(link.scale) != "character" && mode(link.scale) != "name")
         link.scale = as.character(substitute(link.scale))
     if(length(zero) && !is.Numeric(zero, integer=TRUE, posit=TRUE))
-        stop("bad input for argument \"zero\"")
+        stop("bad input for argument 'zero'")
     if(!is.list(earg.a)) earg.a = list()
     if(!is.list(earg.scale)) earg.scale = list()
 
@@ -6564,16 +6585,14 @@ lomax = function(link.scale="loge",
         }
     }), list( .link.a=link.a, .link.scale=link.scale,
               .earg.a=earg.a, .earg.scale=earg.scale, 
-              .init.a=init.a, .init.scale=init.scale
-            ))),
+              .init.a=init.a, .init.scale=init.scale ))),
     inverse=eval(substitute(function(eta, extra=NULL) {
         aa = eta2theta(eta[,1], .link.a, earg= .earg.a)
         scale = eta2theta(eta[,2], .link.scale, earg= .earg.scale)
         qq = 1
         scale*gamma(1 + 1/aa)*gamma(1-1/aa)
     }, list( .link.a=link.a, .link.scale=link.scale,
-              .earg.a=earg.a, .earg.scale=earg.scale
-           ))),
+              .earg.a=earg.a, .earg.scale=earg.scale ))),
     last=eval(substitute(expression({
         misc$link = c(a= .link.a, scale= .link.scale)
         misc$earg = list(a= .earg.a, scale= .earg.scale)
@@ -6585,12 +6604,11 @@ lomax = function(link.scale="loge",
         aa = eta2theta(eta[,1], .link.a, earg= .earg)
         scale = eta2theta(eta[,2], .link.scale, earg= .earg.scale)
         parg = qq = 1
-        if(residuals) stop("loglikelihood residuals not implemented yet") else
-        sum(w*(log(aa) + (aa*parg-1)*log(y) - aa*parg*log(scale) +
-   (if(is.R()) -lbeta(parg, qq) else lgamma(parg+qq)-lgamma(parg)-lgamma(qq))-
-            (parg+qq)*log1p((y/scale)^aa)))
+        if(residuals) stop("loglikelihood residuals not implemented yet") else {
+            sum(w * dfisk(x=y, a=aa, scale=scale, log=TRUE))
+        }
     }, list( .link.a=link.a, .link.scale=link.scale,
-              .earg.a=earg.a, .earg.scale=earg.scale ))),
+             .earg.a=earg.a, .earg.scale=earg.scale ))),
     vfamily=c("fisk"),
     deriv=eval(substitute(expression({
         aa = eta2theta(eta[,1], .link.a, earg= .earg.a)
@@ -6608,8 +6626,7 @@ lomax = function(link.scale="loge",
         dscale.deta = dtheta.deta(scale, .link.scale, earg= .earg.scale)
         w * cbind( dl.da * da.deta, dl.dscale * dscale.deta )
     }), list( .link.a=link.a, .link.scale=link.scale,
-              .earg.a=earg.a, .earg.scale=earg.scale
-              ))),
+              .earg.a=earg.a, .earg.scale=earg.scale ))),
     weight=eval(substitute(expression({
         ed2l.da = (1 + parg+qq + parg * qq * (trigamma(parg) + trigamma(qq) + 
                   (temp3b - temp3a + (parg-qq)/(parg*qq))^2 - 
@@ -6628,12 +6645,12 @@ lomax = function(link.scale="loge",
 }
 
 
-invlomax = function(link.scale="loge",
-                    link.p="loge",
-                    earg.scale=list(), earg.p=list(),
-                    init.scale=NULL,
-                    init.p=1.0, 
-                    zero=NULL)
+ invlomax = function(link.scale="loge",
+                     link.p="loge",
+                     earg.scale=list(), earg.p=list(),
+                     init.scale=NULL,
+                     init.p=1.0, 
+                     zero=NULL)
 {
 
     if(mode(link.scale) != "character" && mode(link.scale) != "name")
@@ -6641,7 +6658,7 @@ invlomax = function(link.scale="loge",
     if(mode(link.p) != "character" && mode(link.p) != "name")
         link.p = as.character(substitute(link.p))
     if(length(zero) && !is.Numeric(zero, integer=TRUE, posit=TRUE))
-        stop("bad input for argument \"zero\"")
+        stop("bad input for argument 'zero'")
     if(!is.list(earg.scale)) earg.scale = list()
     if(!is.list(earg.p)) earg.p = list()
 
@@ -6699,14 +6716,11 @@ invlomax = function(link.scale="loge",
         aa = qq = 1
         scale = eta2theta(eta[,1], .link.scale, earg= .earg.scale)
         parg = eta2theta(eta[,2], .link.p, earg= .earg.p)
-        if(residuals) stop("loglikelihood residuals not implemented yet") else
-        sum(w*(log(aa) + (aa*parg-1)*log(y) - aa*parg*log(scale) +
-   (if(is.R()) -lbeta(parg, qq) else lgamma(parg+qq)-lgamma(parg)-lgamma(qq))-
-            (parg+qq)*log1p((y/scale)^aa)))
-    }, list( .link.scale=link.scale,
-              .earg.scale=earg.scale, 
-              .earg.p=earg.p,
-            .link.p=link.p ))),
+        if(residuals) stop("loglikelihood residuals not implemented yet") else {
+           sum(w * dinvlomax(x=y, scale=scale, p.arg=parg, log=TRUE))
+        }
+    }, list( .link.scale=link.scale, .link.p=link.p,
+             .earg.scale=earg.scale, .earg.p=earg.p ))),
     vfamily=c("invlomax"),
     deriv=eval(substitute(expression({
         aa = qq = 1 
@@ -6722,10 +6736,8 @@ invlomax = function(link.scale="loge",
         dp.deta = dtheta.deta(parg, .link.p, earg= .earg.p)
         w * cbind( dl.dscale * dscale.deta,
                    dl.dp * dp.deta )
-    }), list( .link.scale=link.scale,
-              .earg.scale=earg.scale, 
-              .earg.p=earg.p,
-              .link.p=link.p ))),
+    }), list( .link.scale=link.scale, .link.p=link.p,
+              .earg.scale=earg.scale, .earg.p=earg.p ))),
     weight=eval(substitute(expression({
         ed2l.dscale = aa^2 * parg * qq / (scale^2 * (1+parg+qq))
         ed2l.dp = 1/parg^2 
@@ -6736,19 +6748,17 @@ invlomax = function(link.scale="loge",
         wz[,iam(1,2,M)] = ed2l.dscalep * dscale.deta * dp.deta
         wz = w * wz
         wz
-    }), list( .link.scale=link.scale,
-              .earg.scale=earg.scale, 
-              .earg.p=earg.p,
-              .link.p=link.p ))))
+    }), list( .link.scale=link.scale, .link.p=link.p,
+              .earg.scale=earg.scale, .earg.p=earg.p ))))
 }
 
 
-paralogistic = function(link.a="loge",
-                  link.scale="loge",
-                    earg.a=list(), earg.scale=list(), 
-                  init.a=1.0,
-                  init.scale=NULL,
-                  zero=NULL)
+ paralogistic = function(link.a="loge",
+                         link.scale="loge",
+                         earg.a=list(), earg.scale=list(), 
+                         init.a=1.0,
+                         init.scale=NULL,
+                         zero=NULL)
 {
 
     if(mode(link.a) != "character" && mode(link.a) != "name")
@@ -6756,7 +6766,7 @@ paralogistic = function(link.a="loge",
     if(mode(link.scale) != "character" && mode(link.scale) != "name")
         link.scale = as.character(substitute(link.scale))
     if(length(zero) && !is.Numeric(zero, integer=TRUE, posit=TRUE))
-        stop("bad input for argument \"zero\"")
+        stop("bad input for argument 'zero'")
     if(!is.list(earg.a)) earg.a = list()
     if(!is.list(earg.scale)) earg.scale = list()
 
@@ -6801,27 +6811,23 @@ paralogistic = function(link.a="loge",
         qq = aa
         scale*gamma(1 + 1/aa)*gamma(qq-1/aa)/(gamma(qq))
     }, list( .link.a=link.a, .link.scale=link.scale,
-              .earg.a=earg.a, .earg.scale=earg.scale
-             ))),
+             .earg.a=earg.a, .earg.scale=earg.scale ))),
     last=eval(substitute(expression({
         misc$link = c(a= .link.a, scale= .link.scale)
         misc$earg = list(a= .earg.a, scale= .earg.scale )
     }), list( .link.a=link.a, .link.scale=link.scale,
-              .earg.a=earg.a, .earg.scale=earg.scale
-              ))),
+              .earg.a=earg.a, .earg.scale=earg.scale ))),
     loglikelihood=eval(substitute(
             function(mu, y, w, residuals= FALSE,eta, extra=NULL) {
         aa = eta2theta(eta[,1], .link.a, earg= .earg.a)
         scale = eta2theta(eta[,2], .link.scale, earg= .earg.scale)
         parg = 1
         qq = aa
-        if(residuals) stop("loglikelihood residuals not implemented yet") else
-        sum(w*(log(aa) + (aa*parg-1)*log(y) - aa*parg*log(scale) +
-   (if(is.R()) -lbeta(parg, qq) else lgamma(parg+qq)-lgamma(parg)-lgamma(qq))-
-            (parg+qq)*log1p((y/scale)^aa)))
+        if(residuals) stop("loglikelihood residuals not implemented yet") else {
+            sum(w * dparalogistic(x=y, a=aa, scale=scale, log=TRUE))
+        }
     }, list( .link.a=link.a, .link.scale=link.scale,
-              .earg.a=earg.a, .earg.scale=earg.scale
-            ))),
+              .earg.a=earg.a, .earg.scale=earg.scale ))),
     vfamily=c("paralogistic"),
     deriv=eval(substitute(expression({
         aa = eta2theta(eta[,1], .link.a, earg= .earg.a)
@@ -6840,8 +6846,7 @@ paralogistic = function(link.a="loge",
         dscale.deta = dtheta.deta(scale, .link.scale, earg= .earg.scale)
         w * cbind( dl.da * da.deta, dl.dscale * dscale.deta)
     }), list( .link.a=link.a, .link.scale=link.scale,
-              .earg.a=earg.a, .earg.scale=earg.scale 
-              ))),
+              .earg.a=earg.a, .earg.scale=earg.scale ))),
     weight=eval(substitute(expression({
         ed2l.da = (1 + parg+qq + parg * qq * (trigamma(parg) + trigamma(qq) +
                   (temp3b - temp3a + (parg-qq)/(parg*qq))^2 - 
@@ -6856,8 +6861,7 @@ paralogistic = function(link.a="loge",
         wz = w * wz
         wz
     }), list( .link.a=link.a, .link.scale=link.scale,
-              .earg.a=earg.a, .earg.scale=earg.scale
-              ))))
+              .earg.a=earg.a, .earg.scale=earg.scale ))))
 }
 
 
@@ -6874,7 +6878,7 @@ paralogistic = function(link.a="loge",
     if(mode(link.scale) != "character" && mode(link.scale) != "name")
         link.scale = as.character(substitute(link.scale))
     if(length(zero) && !is.Numeric(zero, integer=TRUE, posit=TRUE))
-        stop("bad input for argument \"zero\"")
+        stop("bad input for argument 'zero'")
     if(!is.list(earg.a)) earg.a = list()
     if(!is.list(earg.scale)) earg.scale = list()
 
@@ -6931,10 +6935,9 @@ paralogistic = function(link.a="loge",
         scale = eta2theta(eta[,2], .link.scale, earg= .earg.scale)
         parg = aa
         qq = 1
-        if(residuals) stop("loglikelihood residuals not implemented yet") else
-        sum(w*(log(aa) + (aa*parg-1)*log(y) - aa*parg*log(scale) +
-   (if(is.R()) -lbeta(parg, qq) else lgamma(parg+qq)-lgamma(parg)-lgamma(qq))-
-            (parg+qq)*log1p((y/scale)^aa)))
+        if(residuals) stop("loglikelihood residuals not implemented yet") else {
+            sum(w * dinvparalogistic(x=y, a=aa, scale=scale, log=TRUE))
+        }
     }, list( .link.a=link.a, .link.scale=link.scale,
              .earg.a=earg.a, .earg.scale=earg.scale ))),
     vfamily=c("invparalogistic"),
@@ -6976,22 +6979,22 @@ paralogistic = function(link.a="loge",
 
 
 if(FALSE)
-genlognormal = function(link.sigma="loge", link.r="loge",
+ genlognormal = function(link.sigma="loge", link.r="loge",
                         esigma=list(), er=list(),
                         init.sigma=1, init.r=1, zero=NULL)
 {
-warning(paste("2/4/04; doesn't work, possibly because first derivs are",
-        "not continuous (sign() is used). Certainly, the derivs wrt",
-        "mymu are problematic (run with maxit=4:9 and look at weight",
-        "matrices). Possibly fundamentally cannot be estimated by IRLS.",
-        "Pooling doesn't seem to help."))
+warning("2/4/04; doesn't work, possibly because first derivs are ",
+        "not continuous (sign() is used). Certainly, the derivs wrt ",
+        "mymu are problematic (run with maxit=4:9 and look at weight ",
+        "matrices). Possibly fundamentally cannot be estimated by IRLS. ",
+        "Pooling doesn't seem to help")
 
     if(mode(link.sigma) != "character" && mode(link.sigma) != "name")
         link.sigma = as.character(substitute(link.sigma))
     if(mode(link.r) != "character" && mode(link.r) != "name")
         link.r = as.character(substitute(link.r))
     if(length(zero) && !is.Numeric(zero, integer=TRUE, posit=TRUE))
-        stop("bad input for argument \"zero\"")
+        stop("bad input for argument 'zero'")
     if(!is.list(esigma)) esigma = list()
     if(!is.list(er)) er = list()
 
@@ -7082,7 +7085,7 @@ warning(paste("2/4/04; doesn't work, possibly because first derivs are",
 }
 
 
-betaprime = function(link="loge", earg=list(), i1=2, i2=NULL, zero=NULL)
+ betaprime = function(link="loge", earg=list(), i1=2, i2=NULL, zero=NULL)
 {
     if(mode(link) != "character" && mode(link) != "name")
         link = as.character(substitute(link))
@@ -7128,13 +7131,12 @@ betaprime = function(link="loge", earg=list(), i1=2, i2=NULL, zero=NULL)
         misc$earg = list(shape1 = .earg, shape2 = .earg)
     }), list( .link=link, .earg=earg ))),
     loglikelihood=eval(substitute(
-         function(mu, y, w, residuals= FALSE, eta, extra=NULL){
+        function(mu, y, w, residuals= FALSE, eta, extra=NULL){
         shapes = eta2theta(eta, .link, earg= .earg)
-        temp = if(is.R()) lbeta(shapes[,1], shapes[,2]) else
-               lgamma(shapes[,1]) + lgamma(shapes[,2]) -
-               lgamma(shapes[,1]+shapes[,2])
-        if(residuals) stop("loglikelihood residuals not implemented yet") else
-        sum(w *((shapes[,1]-1)*log(y)-(shapes[,2]+shapes[,1])*log1p(y)-temp))
+        if(residuals) stop("loglikelihood residuals not implemented yet") else {
+            sum(w *((shapes[,1]-1) * log(y) - lbeta(shapes[,1], shapes[,2]) -
+                   (shapes[,2]+shapes[,1]) * log1p(y)))
+        }
     }, list( .link=link, .earg=earg ))),
     vfamily="betaprime",
     deriv=eval(substitute(expression({
@@ -7163,7 +7165,47 @@ betaprime = function(link="loge", earg=list(), i1=2, i2=NULL, zero=NULL)
 
 
 
-maxwell = function(link="loge", earg=list()) {
+
+
+
+dmaxwell = function(x, a, log = FALSE) {
+    if(!is.logical(log.arg <- log))
+        stop("bad input for argument 'log'")
+    rm(log)
+
+    L = max(length(x), length(a))
+    x = rep(x, len=L); a = rep(a, len=L);
+    logdensity = rep(log(0), len=L)
+    xok = (x > 0)
+    logdensity[xok] = 0.5 * log(2/pi) + 1.5 * log(a[xok]) +
+                      2 * log(x[xok]) - 0.5 * a[xok] * x[xok]^2
+    if(log.arg) logdensity else exp(logdensity)
+}
+
+pmaxwell = function(q, a) {
+    if(any(a <= 0)) stop("argument 'a' must be positive")
+    L = max(length(q), length(a)) 
+    q = rep(q, len=L); a = rep(a, len=L); 
+    ifelse(q > 0, erf(q*sqrt(a/2)) - q*exp(-0.5*a*q^2) * sqrt(2*a/pi), 0)
+}
+
+rmaxwell = function(n, a) {
+    if(!is.Numeric(n, posit=TRUE, allow=1)) 
+        stop("bad input for argument 'n'")
+    if(any(a <= 0)) stop("argument 'a' must be positive")
+    sqrt(2 * rgamma(n=n, 1.5) / a)
+}
+
+qmaxwell = function(p, a) {
+    if(!is.Numeric(p, posit=TRUE) || any(p>=1)) 
+        stop("bad input for argument 'p'")
+    if(any(a <= 0)) stop("argument 'a' must be positive")
+    N = max(length(p), length(a)); p = rep(p, len=N); a = rep(a, len=N)
+    sqrt(2 * qgamma(p=p, 1.5) / a)
+}
+
+
+ maxwell = function(link="loge", earg=list()) {
     if(mode(link) != "character" && mode(link) != "name")
         link = as.character(substitute(link))
     if(!is.list(earg)) earg = list()
@@ -7192,9 +7234,9 @@ maxwell = function(link="loge", earg=list()) {
     }), list( .link=link, .earg=earg ))),
     loglikelihood=eval(substitute(
         function(mu,y,w,residuals= FALSE,eta, extra=NULL) {
-        a = eta2theta(eta, .link, earg= .earg)
+        aa = eta2theta(eta, .link, earg= .earg)
         if(residuals) stop("loglikelihood residuals not implemented yet") else
-        sum(w * (1.5 * log(a) + 2 * log(y) - 0.5 * a * y^2 + 0.5*log(2/pi)))
+            sum(w * dmaxwell(x=y, a=aa, log = TRUE))
     }, list( .link=link, .earg=earg ))),
     vfamily=c("maxwell"),
     deriv=eval(substitute(expression({
@@ -7211,52 +7253,31 @@ maxwell = function(link="loge", earg=list()) {
 }
 
 
-dmaxwell = function(x, a) {
-    if(any(a <= 0)) stop("argument \"a\" must be positive")
-    L = max(length(x), length(a)) 
-    x = rep(x, len=L); a = rep(a, len=L); 
-    ifelse(x>0, sqrt(2/pi) * a^(1.5) * x^2 * exp(-0.5*a*x^2), 0)
-}
-
-pmaxwell = function(q, a) {
-    if(any(a <= 0)) stop("argument \"a\" must be positive")
-    L = max(length(q), length(a)) 
-    q = rep(q, len=L); a = rep(a, len=L); 
-    ifelse(q > 0, erf(q*sqrt(a/2)) - q*exp(-0.5*a*q^2) * sqrt(2*a/pi), 0)
-}
-
-rmaxwell = function(n, a) {
-    if(!is.Numeric(n, posit=TRUE, allow=1)) 
-        stop("bad input for argument \"n\"")
-    if(any(a <= 0)) stop("argument \"a\" must be positive")
-    sqrt(2 * rgamma(n=n, 1.5) / a)
-}
-
-qmaxwell = function(p, a) {
-    if(!is.Numeric(p, posit=TRUE) || any(p>=1)) 
-        stop("bad input for argument \"p\"")
-    if(any(a <= 0)) stop("argument \"a\" must be positive")
-    N = max(length(p), length(a)); p = rep(p, len=N); a = rep(a, len=N)
-    sqrt(2 * qgamma(p=p, 1.5) / a)
-}
 
 
-
-
-dnaka = function(x, shape, scale=1) {
+dnaka = function(x, shape, scale=1, log = FALSE) {
+    if(!is.logical(log.arg <- log))
+        stop("bad input for argument 'log'")
+    rm(log)
     L = max(length(x), length(shape), length(scale))
     x = rep(x, len=L); shape = rep(shape, len=L); scale = rep(scale, len=L);
-    ifelse(x <= 0, 0, dgamma(x=x^2, shape=shape, scale=scale/shape) * 2 * x)
+
+    logdensity = rep(log(0), len=L)
+    xok = (x > 0)
+    logdensity[xok] = dgamma(x=x[xok]^2, shape=shape[xok],
+                             scale=scale[xok]/shape[xok], log=TRUE) +
+                      log(2) + log(x[xok])
+    if(log.arg) logdensity else exp(logdensity)
 }
 
 
 pnaka = function(q, shape, scale=1) {
     if(!is.Numeric(q))
-        stop("bad input for argument \"q\"")
+        stop("bad input for argument 'q'")
     if(!is.Numeric(shape, posit=TRUE))
-        stop("bad input for argument \"shape\"")
+        stop("bad input for argument 'shape'")
     if(!is.Numeric(scale, posit=TRUE))
-        stop("bad input for argument \"scale\"")
+        stop("bad input for argument 'scale'")
     L = max(length(q), length(shape), length(scale))
     q = rep(q, len=L); shape = rep(shape, len=L); scale = rep(scale, len=L);
     ifelse(q <= 0, 0, pgamma(shape * q^2 / scale, shape))
@@ -7265,11 +7286,11 @@ pnaka = function(q, shape, scale=1) {
 
 qnaka = function(p, shape, scale=1, ...) {
     if(!is.Numeric(p, posit=TRUE) || max(p) >= 1)
-        stop("bad input for argument \"p\"")
+        stop("bad input for argument 'p'")
     if(!is.Numeric(shape, posit=TRUE))
-        stop("bad input for argument \"shape\"")
+        stop("bad input for argument 'shape'")
     if(!is.Numeric(scale, posit=TRUE))
-        stop("bad input for argument \"scale\"")
+        stop("bad input for argument 'scale'")
     L = max(length(p), length(shape), length(scale))
     p = rep(p, len=L); shape = rep(shape, len=L); scale = rep(scale, len=L);
     ans = rep(0.0, len=L)
@@ -7289,14 +7310,14 @@ qnaka = function(p, shape, scale=1, ...) {
 
 rnaka = function(n, shape, scale=1, Smallno=1.0e-6) {
     if(!is.Numeric(n, posit=TRUE, integ=TRUE))
-        stop("bad input for argument \"n\"")
+        stop("bad input for argument 'n'")
     if(!is.Numeric(scale, posit=TRUE, allow=1))
-        stop("bad input for argument \"scale\"")
+        stop("bad input for argument 'scale'")
     if(!is.Numeric(shape, posit=TRUE, allow=1))
-        stop("bad input for argument \"shape\"")
+        stop("bad input for argument 'shape'")
     if(!is.Numeric(Smallno, posit=TRUE, allow=1) || Smallno > 0.01 ||
        Smallno < 2 * .Machine$double.eps)
-        stop("bad input for argument \"Smallno\"")
+        stop("bad input for argument 'Smallno'")
     ans = rep(0.0, len=n)
 
     ptr1 = 1; ptr2 = 0
@@ -7323,16 +7344,14 @@ rnaka = function(n, shape, scale=1, Smallno=1.0e-6) {
 
 
 
-
-
-nakagami = function(lshape="loge", lscale="loge",
-                    eshape=list(), escale=list(), ishape=NULL, iscale=1) {
+ nakagami = function(lshape="loge", lscale="loge",
+                     eshape=list(), escale=list(), ishape=NULL, iscale=1) {
     if(mode(lshape) != "character" && mode(lshape) != "name")
         lshape = as.character(substitute(lshape))
     if(mode(lscale) != "character" && mode(lscale) != "name")
         lscale = as.character(substitute(lscale))
     if(!is.null(iscale) && !is.Numeric(iscale, positi=TRUE))
-        stop("argument \"iscale\" must be a positive number or NULL")
+        stop("argument 'iscale' must be a positive number or NULL")
     if(!is.list(eshape)) eshape = list()
     if(!is.list(escale)) escale = list()
 
@@ -7382,8 +7401,7 @@ nakagami = function(lshape="loge", lscale="loge",
         shape = eta2theta(eta[,1], .lshape, earg= .eshape)
         scale = eta2theta(eta[,2], .lscale, earg= .escale)
         if(residuals) stop("loglikelihood residuals not implemented yet") else
-        sum(w * (log(2) + shape * log(shape/scale) - lgamma(shape) +
-                 (2*shape-1) * log(y) - shape * y^2 / scale))
+            sum(w * dnaka(x=y, shape=shape, scale=scale, log=TRUE))
     }, list( .lscale=lscale, .lshape=lshape,
              .escale=escale, .eshape=eshape ))),
     vfamily=c("nakagami"),
@@ -7411,8 +7429,42 @@ nakagami = function(lshape="loge", lscale="loge",
 
 
 
+drayleigh = function(x, a, log=FALSE) {
+    if(!is.logical(log.arg <- log))
+        stop("bad input for argument 'log'")
+    rm(log)
 
-rayleigh = function(link="loge", earg=list(), nrfs=1/3+0.01) {
+    L = max(length(x), length(a))
+    x = rep(x, len=L); a = rep(a, len=L);
+    logdensity = rep(log(0), len=L)
+    xok = (x > 0)
+    logdensity[xok] = log(x[xok]) - 0.5 * (x[xok]/a[xok])^2 - 2*log(a[xok])
+    if(log.arg) logdensity else exp(logdensity)
+}
+
+prayleigh = function(q, a) {
+    if(any(a <= 0)) stop("argument 'a' must be positive")
+    L = max(length(q), length(a)) 
+    q = rep(q, len=L); a = rep(a, len=L); 
+    ifelse(q > 0, 1 - exp(-0.5*(q/a)^2), 0)
+}
+
+qrayleigh = function(p, a) {
+   if(any(a <= 0)) stop("argument 'a' must be positive")
+   if(any(p <= 0) || any(p >= 1)) stop("argument 'p' must be between 0 and 1")
+   a * sqrt(-2 * log1p(-p))
+}
+
+rrayleigh = function(n, a) {
+    if(!is.Numeric(n, posit=TRUE, allow=1, integ=TRUE))
+        stop("bad input for argument 'n'")
+    if(any(a <= 0)) stop("a must be positive")
+    a * sqrt(-2 * log(runif(n )))
+}
+
+
+
+ rayleigh = function(link="loge", earg=list(), nrfs=1/3+0.01) {
     if(mode(link) != "character" && mode(link) != "name")
         link = as.character(substitute(link))
     if(!is.list(earg)) earg = list()
@@ -7445,8 +7497,9 @@ rayleigh = function(link="loge", earg=list(), nrfs=1/3+0.01) {
     loglikelihood=eval(substitute(
         function(mu,y,w,residuals= FALSE,eta, extra=NULL) {
         a = eta2theta(eta, .link, earg= .earg)
-        if(residuals) stop("loglikelihood residuals not implemented yet") else
-        sum(w * (log(y) - 2 * log(a) - 0.5 * (y/a)^2))
+        if(residuals) stop("loglikelihood residuals not implemented yet") else {
+            sum(w * drayleigh(x=y, a=a, log=TRUE))
+        }
     }, list( .link=link, .earg=earg ))),
     vfamily=c("rayleigh"),
     deriv=eval(substitute(expression({
@@ -7464,64 +7517,37 @@ rayleigh = function(link="loge", earg=list(), nrfs=1/3+0.01) {
 }
 
 
-drayleigh = function(x, a) {
-    if(any(a <= 0)) stop("argument \"a\" must be positive")
-    L = max(length(x), length(a)) 
-    x = rep(x, len=L); a = rep(a, len=L); 
-    ifelse(x>0, x*exp(-0.5*(x/a)^2)/a^2, 0)
-}
-
-prayleigh = function(q, a) {
-    if(any(a <= 0)) stop("argument \"a\" must be positive")
-    L = max(length(q), length(a)) 
-    q = rep(q, len=L); a = rep(a, len=L); 
-    ifelse(q > 0, 1 - exp(-0.5*(q/a)^2), 0)
-}
-
-qrayleigh = function(p, a) {
-   if(any(a <= 0)) stop("argument \"a\" must be positive")
-   if(any(p <= 0) || any(p >= 1)) stop("argument \"p\" must be between 0 and 1")
-   a * sqrt(-2 * log1p(-p))
-}
-
-rrayleigh = function(n, a) {
-    if(!is.Numeric(n, posit=TRUE, allow=1, integ=TRUE))
-        stop("bad input for argument \"n\"")
-    if(any(a <= 0)) stop("a must be positive")
-    a * sqrt(-2 * log(runif(n )))
-}
 
 
 
+dparetoIV = function(x, location=0, scale=1, inequality=1, shape=1, log=FALSE) {
+    if(!is.logical(log.arg <- log))
+        stop("bad input for argument 'log'")
+    rm(log)
 
-
-dparetoIV = function(x, location=0, scale=1, inequality=1, shape=1) {
-    if(!is.Numeric(x)) stop("bad input for argument \"x\"")
-    if(!is.Numeric(scale, posit=TRUE)) stop("bad input for argument \"scale\"")
-    if(!is.Numeric(inequality, posi=TRUE)) 
-        stop("bad input for argument \"inequality\"")
-    if(!is.Numeric(shape, posit=TRUE)) stop("bad input for argument \"shape\"")
     N = max(length(x), length(location), length(scale), length(inequality),
             length(shape))
     x = rep(x, len=N); location = rep(location, len=N)
     scale = rep(scale, len=N); inequality = rep(inequality, len=N)
     shape = rep(shape, len=N)
-    answer = x * 0
-    ii = x > location
-    zedd = (x[ii] - location[ii]) / scale[ii]
-    answer[ii] = (shape[ii]/(scale[ii]*inequality[ii])) *
-        zedd^(1/inequality[ii]-1) / (1+zedd^(1/inequality[ii]))^(shape[ii]+1)
-    answer
+
+    logdensity = rep(log(0), len=N)
+    xok = (x > location)
+    zedd = (x - location) / scale
+    logdensity[xok] = log(shape[xok]) - log(scale[xok]) -  log(inequality[xok])+
+                      (1/inequality[xok]-1) * log(zedd[xok]) - 
+                      (shape[xok]+1) * log1p(zedd[xok]^(1/inequality[xok]))
+    if(log.arg) logdensity else exp(logdensity)
 }
 
 pparetoIV = function(q, location=0, scale=1, inequality=1, shape=1) {
-    if(!is.Numeric(q)) stop("bad input for argument \"q\"")
+    if(!is.Numeric(q)) stop("bad input for argument 'q'")
     if(!is.Numeric(scale, posit=TRUE)) 
-        stop("bad input for argument \"scale\"")
+        stop("bad input for argument 'scale'")
     if(!is.Numeric(inequality, posi=TRUE)) 
-        stop("bad input for argument \"inequality\"")
+        stop("bad input for argument 'inequality'")
     if(!is.Numeric(shape, posit=TRUE)) 
-        stop("bad input for argument \"shape\"")
+        stop("bad input for argument 'shape'")
     N = max(length(q), length(location), length(scale), length(inequality),
             length(shape))
     q = rep(q, len=N); location = rep(location, len=N)
@@ -7536,43 +7562,48 @@ pparetoIV = function(q, location=0, scale=1, inequality=1, shape=1) {
 
 qparetoIV = function(p, location=0, scale=1, inequality=1, shape=1) {
     if(!is.Numeric(p, posit=TRUE) || any(p >= 1)) 
-        stop("bad input for argument \"p\"")
+        stop("bad input for argument 'p'")
     if(!is.Numeric(scale, posit=TRUE)) 
-        stop("bad input for argument \"scale\"")
+        stop("bad input for argument 'scale'")
     if(!is.Numeric(inequality, posi=TRUE)) 
-        stop("bad input for argument \"inequality\"")
+        stop("bad input for argument 'inequality'")
     if(!is.Numeric(shape, posit=TRUE)) 
-        stop("bad input for argument \"shape\"")
+        stop("bad input for argument 'shape'")
     location + scale * (-1 + (1-p)^(-1/shape))^inequality
 }
 
 rparetoIV = function(n, location=0, scale=1, inequality=1, shape=1) {
     if(!is.Numeric(n, posit=TRUE, integ=TRUE, allow=1)) 
         stop("bad input for argument n")
-    if(!is.Numeric(scale, posit=TRUE)) stop("bad input for argument \"scale\"")
+    if(!is.Numeric(scale, posit=TRUE)) stop("bad input for argument 'scale'")
     if(!is.Numeric(inequality, posi=TRUE)) 
-        stop("bad input for argument \"inequality\"")
-    if(!is.Numeric(shape, posit=TRUE)) stop("bad input for argument \"shape\"")
+        stop("bad input for argument 'inequality'")
+    if(!is.Numeric(shape, posit=TRUE)) stop("bad input for argument 'shape'")
     location + scale * (-1 + runif(n)^(-1/shape))^inequality
 }
 
 
-dparetoIII = function(x, location=0, scale=1, inequality=1)
-    dparetoIV(x=x, location=location, scale=scale, inequality=inequality, shape=1)
+dparetoIII = function(x, location=0, scale=1, inequality=1, log=FALSE)
+    dparetoIV(x=x, location=location, scale=scale, inequality=inequality,
+              shape=1, log=log)
 
 pparetoIII = function(q, location=0, scale=1, inequality=1)
-    pparetoIV(q=q, location=location, scale=scale, inequality=inequality, shape=1)
+    pparetoIV(q=q, location=location, scale=scale, inequality=inequality,
+              shape=1)
 
 qparetoIII = function(p, location=0, scale=1, inequality=1)
-    qparetoIV(p=p, location=location, scale=scale, inequality=inequality, shape=1)
+    qparetoIV(p=p, location=location, scale=scale, inequality=inequality,
+              shape=1)
 
 rparetoIII = function(n, location=0, scale=1, inequality=1)
-    rparetoIV(n=n, location=location, scale=scale, inequality=inequality, shape=1)
+    rparetoIV(n=n, location=location, scale=scale, inequality=inequality,
+              shape=1)
 
 
 
-dparetoII = function(x, location=0, scale=1, shape=1)
-    dparetoIV(x=x, location=location, scale=scale, inequality=1, shape=shape)
+dparetoII = function(x, location=0, scale=1, shape=1, log=FALSE)
+    dparetoIV(x=x, location=location, scale=scale, inequality=1, shape=shape,
+              log=log)
 
 pparetoII = function(q, location=0, scale=1, shape=1)
     pparetoIV(q=q, location=location, scale=scale, inequality=1, shape=shape)
@@ -7598,7 +7629,7 @@ rparetoI = function(n, scale=1, shape=1)
 
 
 
-paretoIV = function(location=0,
+ paretoIV = function(location=0,
                     lscale="loge",
                     linequality="loge",
                     lshape="loge",
@@ -7612,17 +7643,17 @@ paretoIV = function(location=0,
     if(mode(lshape) != "character" && mode(lshape) != "name")
         lshape = as.character(substitute(lshape))
     if(!is.Numeric(location))
-        stop("argument \"location\" must be numeric")
+        stop("argument 'location' must be numeric")
     if(is.Numeric(iscale) && any(iscale <= 0))
-        stop("argument \"iscale\" must be positive")
+        stop("argument 'iscale' must be positive")
     if(is.Numeric(iinequality) && any(iinequality <= 0))
-        stop("argument \"iinequality\" must be positive")
+        stop("argument 'iinequality' must be positive")
     if(is.Numeric(ishape) && any(ishape <= 0))
-        stop("argument \"ishape\" must be positive")
+        stop("argument 'ishape' must be positive")
     if(!is.Numeric(method.init, allow=1, integ=TRUE) || method.init>2)
-        stop("bad input for argument \"method.init\"")
+        stop("bad input for argument 'method.init'")
     if(linequality == "nloge" && location != 0)
-        warning("The Burr distribution has location=0 and linequality=nloge")
+        warning("The Burr distribution has 'location=0' and 'linequality=nloge'")
     if(!is.list(escale)) escale = list()
     if(!is.list(einequality)) einequality = list()
     if(!is.list(eshape)) eshape = list()
@@ -7645,7 +7676,7 @@ paretoIV = function(location=0,
           namesof("shape", .lshape, earg=.eshape, tag=FALSE))
         extra$location = location = .location
         if(any(y <= location))
-        stop("the response must have values > than the \"location\" argument")
+        stop("the response must have values > than the 'location' argument")
         if(!length(etastart)) {
             inequality.init = if(length(.iinequality)) .iinequality else  1
             scale.init = if(length( .iscale)) .iscale else 1
@@ -7693,9 +7724,10 @@ paretoIV = function(location=0,
         inequality = eta2theta(eta[,2], .linequality, earg= .einequality)
         shape = eta2theta(eta[,3], .lshape, earg= .eshape)
         zedd = (y - location) / Scale
-        if(residuals) stop("loglikelihood residuals not implemented yet") else
-        sum(w * (log(shape) - log(inequality) - log(Scale) + (1/inequality -1) *
-                 log(zedd) - (shape+1) * log1p(zedd^(1/inequality))))
+        if(residuals) stop("loglikelihood residuals not implemented yet") else {
+            sum(w * dparetoIV(x=y, location=location, scale=Scale,
+                              inequality=inequality, shape=shape, log=TRUE))
+        }
     }, list( .lscale=lscale,  .linequality=linequality, .lshape=lshape,
              .escale=escale, .einequality=einequality, .eshape=eshape ))),
     vfamily=c("paretoIV"),
@@ -7739,21 +7771,24 @@ paretoIV = function(location=0,
               .escale=escale, .einequality=einequality, .eshape=eshape ))))
 }
 
-paretoIII = function(location=0,
-                     lscale="loge",
-                     linequality="loge",
-                     escale=list(), einequality=list(),
-                     iscale=NULL, iinequality=NULL) {
+
+
+
+ paretoIII = function(location=0,
+                      lscale="loge",
+                      linequality="loge",
+                      escale=list(), einequality=list(),
+                      iscale=NULL, iinequality=NULL) {
     if(mode(lscale) != "character" && mode(lscale) != "name")
         lscale = as.character(substitute(lscale))
     if(mode(linequality) != "character" && mode(linequality) != "name")
         linequality = as.character(substitute(linequality))
     if(!is.Numeric(location))
-        stop("argument \"location\" must be numeric")
+        stop("argument 'location' must be numeric")
     if(is.Numeric(iscale) && any(iscale <= 0))
-        stop("argument \"iscale\" must be positive")
+        stop("argument 'iscale' must be positive")
     if(is.Numeric(iinequality) && any(iinequality <= 0))
-        stop("argument \"iinequality\" must be positive")
+        stop("argument 'iinequality' must be positive")
     if(!is.list(escale)) escale = list()
     if(!is.list(einequality)) einequality = list()
 
@@ -7762,8 +7797,9 @@ paretoIII = function(location=0,
             ")/scale)^(1/inequality)]^(-1),",
             "\n", "         y > ",
             location, ", scale > 0, inequality > 0, \n",
-            "Links:    ", namesof("scale", lscale, earg=escale ), ", ",
-                          namesof("inequality", linequality, earg=einequality ), "\n",
+            "Links:    ",
+            namesof("scale", lscale, earg=escale ), ", ",
+            namesof("inequality", linequality, earg=einequality ), "\n",
             "Mean:    location + scale * NA"),
     initialize=eval(substitute(expression({
         if(ncol(cbind(y)) != 1)
@@ -7773,7 +7809,7 @@ paretoIII = function(location=0,
           namesof("inequality", .linequality, earg=.einequality, tag=FALSE))
         extra$location = location = .location
         if(any(y <= location))
-        stop("the response must have values > than the \"location\" argument")
+        stop("the response must have values > than the 'location' argument")
         if(!length(etastart)) {
             inequality.init = if(length(.iinequality)) .iinequality else  NULL
             scale.init = if(length( .iscale)) .iscale else NULL
@@ -7788,7 +7824,8 @@ paretoIII = function(location=0,
             }
             etastart=cbind(
             theta2eta(rep(scale.init, len=n), .lscale, earg= .escale),
-            theta2eta(rep(inequality.init, len=n), .linequality, earg= .einequality))
+            theta2eta(rep(inequality.init, len=n), .linequality,
+                      earg= .einequality))
         }
     }), list( .location=location, .lscale=lscale, .linequality=linequality,
               .escale=escale, .einequality=einequality,
@@ -7812,9 +7849,10 @@ paretoIII = function(location=0,
         Scale = eta2theta(eta[,1], .lscale, earg= .escale)
         inequality = eta2theta(eta[,2], .linequality, earg= .einequality)
         zedd = (y - location) / Scale
-        if(residuals) stop("loglikelihood residuals not implemented yet") else
-        sum(w * (-log(inequality) - log(Scale) + (1/inequality -1) *
-                 log(zedd) - (1+1) * log1p(zedd^(1/inequality))))
+        if(residuals) stop("loglikelihood residuals not implemented yet") else {
+            sum(w * dparetoIII(x=y, location=location, scale=Scale,
+                               inequality=inequality, log=TRUE))
+        }
     }, list( .lscale=lscale, .linequality=linequality,
              .escale=escale, .einequality=einequality ))),
     vfamily=c("paretoIII"),
@@ -7846,21 +7884,24 @@ paretoIII = function(location=0,
 }
 
 
-paretoII = function(location=0,
-                    lscale="loge",
-                    lshape="loge",
-                    escale=list(), eshape=list(),
-                    iscale=NULL, ishape=NULL) {
+
+
+
+ paretoII = function(location=0,
+                     lscale="loge",
+                     lshape="loge",
+                     escale=list(), eshape=list(),
+                     iscale=NULL, ishape=NULL) {
     if(mode(lscale) != "character" && mode(lscale) != "name")
         lscale = as.character(substitute(lscale))
     if(mode(lshape) != "character" && mode(lshape) != "name")
         lshape = as.character(substitute(lshape))
     if(!is.Numeric(location))
-        stop("argument \"location\" must be numeric")
+        stop("argument 'location' must be numeric")
     if(is.Numeric(iscale) && any(iscale <= 0))
-        stop("argument \"iscale\" must be positive")
+        stop("argument 'iscale' must be positive")
     if(is.Numeric(ishape) && any(ishape <= 0))
-        stop("argument \"ishape\" must be positive")
+        stop("argument 'ishape' must be positive")
     if(!is.list(escale)) escale = list()
     if(!is.list(eshape)) eshape = list()
 
@@ -7880,7 +7921,7 @@ paretoII = function(location=0,
           namesof("shape", .lshape, earg=.eshape, tag=FALSE))
         extra$location = location = .location
         if(any(y <= location))
-        stop("the response must have values > than the \"location\" argument")
+        stop("the response must have values > than the 'location' argument")
         if(!length(etastart)) {
             scale.init = if(length( .iscale)) .iscale else NULL
             shape.init = if(length( .ishape)) .ishape else  NULL
@@ -7920,8 +7961,10 @@ paretoII = function(location=0,
         Scale = eta2theta(eta[,1], .lscale, earg= .escale)
         shape = eta2theta(eta[,2], .lshape, earg= .eshape)
         zedd = (y - location) / Scale
-        if(residuals) stop("loglikelihood residuals not implemented yet") else
-        sum(w * (log(shape) - log(Scale) - (shape+1) * log1p(zedd)))
+        if(residuals) stop("loglikelihood residuals not implemented yet") else {
+            sum(w * dparetoII(x=y, location=location, scale=Scale,
+                              shape=shape, log=TRUE))
+        }
     }, list( .lscale=lscale, .lshape=lshape,
              .escale=escale, .eshape=eshape ))),
     vfamily=c("paretoII"),
@@ -7954,16 +7997,58 @@ paretoII = function(location=0,
 
 
 
-pareto1 = function(lshape="loge", earg=list(), location=NULL) {
+
+
+dpareto = function(x, location, shape, log = FALSE) {
+    if(!is.logical(log.arg <- log))
+        stop("bad input for argument 'log'")
+    rm(log)
+
+    L = max(length(x), length(location), length(shape)) 
+    x = rep(x, len=L); location = rep(location, len=L); shape= rep(shape, len=L)
+
+    logdensity = rep(log(0), len=L)
+    xok = (x > location)
+    logdensity[xok] = log(shape[xok]) + shape[xok] * log(location[xok]) -
+                      (shape[xok]+1) * log(x[xok])
+    if(log.arg) logdensity else exp(logdensity)
+}
+
+ppareto = function(q, location, shape) {
+    if(any(location <= 0)) stop("argument 'location' must be positive")
+    if(any(shape <= 0)) stop("argument 'shape' must be positive")
+    L = max(length(q), length(location), length(shape))
+    q = rep(q, len=L); location = rep(location, len=L); shape= rep(shape, len=L)
+    ifelse(q > location, 1 - (location/q)^shape, 0)
+}
+
+qpareto = function(p, location, shape) {
+    if(any(location <= 0)) stop("argument 'location' must be positive")
+    if(any(shape <= 0)) stop("argument 'shape' must be positive")
+   if(any(p <= 0) || any(p >= 1)) stop("argument 'p' must be between 0 and 1")
+    location / (1 - p)^(1/shape)
+}
+
+rpareto = function(n, location, shape) {
+    if(!is.Numeric(n, posit=TRUE, integ=TRUE, allow=1)) 
+        stop("bad input for argument 'n'")
+    if(any(location <= 0)) stop("argument 'location' must be positive")
+    if(any(shape <= 0)) stop("argument 'shape' must be positive")
+    location / runif(n)^(1/shape)
+}
+
+
+
+ pareto1 = function(lshape="loge", earg=list(), location=NULL) {
     if(mode(lshape) != "character" && mode(lshape) != "name")
         lshape = as.character(substitute(lshape))
     if(is.Numeric(location) && location <= 0)
-        stop("argument \"location\" must be positive")
+        stop("argument 'location' must be positive")
     if(!is.list(earg)) earg = list()
 
     new("vglmff",
     blurb=c("Pareto distribution f(y) = shape * location^shape / y^(shape+1),",
-            " y>location>0, shape>0\n",
+            " 0<location<y, shape>0\n",
             "Link:    ", namesof("shape", lshape, earg=earg), "\n", "\n",
             "Mean:    location*shape/(shape-1) for shape>1"),
     initialize=eval(substitute(expression({
@@ -7972,7 +8057,7 @@ pareto1 = function(lshape="loge", earg=list(), location=NULL) {
         predictors.names = namesof("shape", .lshape, earg=.earg, tag=FALSE) 
         locationhat = if(!length( .location)) {
             locationEstimated = TRUE
-            min(y)
+            min(y) # - .smallno
         } else {
             locationEstimated = FALSE
             .location
@@ -7985,7 +8070,8 @@ pareto1 = function(lshape="loge", earg=list(), location=NULL) {
             k.init = (y + 1/8) / (y - locationhat + 1/8)
             etastart = theta2eta(k.init, .lshape, earg= .earg)
         }
-    }), list( .lshape=lshape, .earg=earg, .location=location ))),
+    }), list( .lshape=lshape, .earg=earg,
+              .location=location ))),
     inverse=eval(substitute(function(eta, extra=NULL) {
         k = eta2theta(eta, .lshape, earg= .earg)
         location = extra$location
@@ -8000,8 +8086,11 @@ pareto1 = function(lshape="loge", earg=list(), location=NULL) {
         function(mu,y,w,residuals= FALSE,eta, extra=NULL) {
         k = eta2theta(eta, .lshape, earg= .earg)
         location = extra$location
-        if(residuals) stop("loglikelihood residuals not implemented yet") else
-        sum(w * (log(k) + k * log(location) - (k+1) * log(y )))
+        if(residuals) stop("loglikelihood residuals not implemented yet") else {
+
+
+            sum(w * (log(k) + k * log(location) - (k+1) * log(y )))
+        }
     }, list( .lshape=lshape, .earg=earg ))),
     vfamily=c("pareto1"),
     deriv=eval(substitute(expression({
@@ -8019,50 +8108,66 @@ pareto1 = function(lshape="loge", earg=list(), location=NULL) {
 }
 
 
-dpareto = function(x, location, shape) {
-    if(any(location <= 0)) stop("argument \"location\" must be positive")
-    if(any(shape <= 0)) stop("argument \"shape\" must be positive")
-    L = max(length(x), length(location), length(shape)) 
-    x = rep(x, len=L); location = rep(location, len=L); shape= rep(shape, len=L)
-    ifelse(x>location, shape * location^shape / x^(shape+1), 0)
+
+dtpareto = function(x, lower, upper, shape) {
+    if(!is.Numeric(x)) stop("bad input for argument 'x'")
+    if(!is.Numeric(lower, pos=TRUE)) stop("argument 'lower' must be positive")
+    if(!is.Numeric(upper, pos=TRUE)) stop("argument 'upper' must be positive")
+    if(!is.Numeric(shape, pos=TRUE)) stop("argument 'shape' must be positive")
+    L = max(length(x), length(lower), length(upper), length(shape)) 
+    x = rep(x, len=L); lower = rep(lower, len=L); upper = rep(upper, len=L);
+    shape= rep(shape, len=L)
+    ifelse(x > lower & x < upper, 
+    shape * lower^shape / (x^(shape+1) * (1-(lower/upper)^shape)), 0)
 }
 
-ppareto = function(q, location, shape) {
-    if(any(location <= 0)) stop("argument \"location\" must be positive")
-    if(any(shape <= 0)) stop("argument \"shape\" must be positive")
-    L = max(length(q), length(location), length(shape))
-    q = rep(q, len=L); location = rep(location, len=L); shape= rep(shape, len=L)
-    ifelse(q > location, 1 - (location/q)^shape, 0)
+ptpareto = function(q, lower, upper, shape) {
+    if(!is.Numeric(q)) stop("bad input for argument 'q'")
+    if(!is.Numeric(lower, pos=TRUE)) stop("argument 'lower' must be positive")
+    if(!is.Numeric(upper, pos=TRUE)) stop("argument 'upper' must be positive")
+    if(!is.Numeric(shape, pos=TRUE)) stop("argument 'shape' must be positive")
+    L = max(length(q), length(lower), length(upper), length(shape)) 
+    q = rep(q, len=L); lower = rep(lower, len=L); upper = rep(upper, len=L);
+    shape= rep(shape, len=L)
+    ans = q * 0
+    ans[q > lower & q < upper] = (1-(lower/q)^shape) / (1-(lower/upper)^shape)
+    ans[q >= upper] = 1
+    ans
 }
 
-qpareto = function(p, location, shape) {
-    if(any(location <= 0)) stop("argument \"location\" must be positive")
-    if(any(shape <= 0)) stop("argument \"shape\" must be positive")
-   if(any(p <= 0) || any(p >= 1)) stop("argument \"p\" must be between 0 and 1")
-    location / (1 - p)^(1/shape)
+qtpareto = function(p, lower, upper, shape) {
+    if(!is.Numeric(p, posit=TRUE)) stop("bad input for argument 'p'")
+    if(!is.Numeric(lower, pos=TRUE)) stop("argument 'lower' must be positive")
+    if(!is.Numeric(upper, pos=TRUE)) stop("argument 'upper' must be positive")
+    if(!is.Numeric(shape, pos=TRUE)) stop("argument 'shape' must be positive")
+    if(max(p) >= 1) stop("argument 'p' must be between 0 and 1")
+    lower / (1 - p*(1-(lower/upper)^shape))^(1/shape)
 }
 
-rpareto = function(n, location, shape) {
+rtpareto = function(n, lower, upper, shape) {
     if(!is.Numeric(n, posit=TRUE, integ=TRUE, allow=1)) 
-        stop("bad input for argument \"n\"")
-    if(any(location <= 0)) stop("argument \"location\" must be positive")
-    if(any(shape <= 0)) stop("argument \"shape\" must be positive")
-    location / runif(n)^(1/shape)
+        stop("bad input for argument 'n'")
+    if(!is.Numeric(lower, pos=TRUE)) stop("argument 'lower' must be positive")
+    if(!is.Numeric(upper, pos=TRUE)) stop("argument 'upper' must be positive")
+    if(!is.Numeric(shape, pos=TRUE)) stop("argument 'shape' must be positive")
+    lower / (1 - runif(n)*(1-(lower/upper)^shape))^(1/shape)
 }
 
 
-tpareto1 = function(lower, upper, lshape="loge", earg=list(), ishape=NULL,
+
+
+ tpareto1 = function(lower, upper, lshape="loge", earg=list(), ishape=NULL,
                     method.init=1) {
     if(mode(lshape) != "character" && mode(lshape) != "name")
         lshape = as.character(substitute(lshape))
     if(!is.Numeric(lower, posit=TRUE, allow=1))
-        stop("bad input for argument \"lower\"")
+        stop("bad input for argument 'lower'")
     if(!is.Numeric(upper, posit=TRUE, allow=1))
-        stop("bad input for argument \"upper\"")
+        stop("bad input for argument 'upper'")
     if(lower >= upper)
         stop("lower < upper is required")
     if(length(ishape) && !is.Numeric(ishape, posit=TRUE))
-        stop("bad input for argument \"ishape\"")
+        stop("bad input for argument 'ishape'")
     if(!is.list(earg)) earg = list()
     if(!is.Numeric(method.init, allow=1, integ=TRUE, posit=TRUE) ||
        method.init > 2)
@@ -8080,12 +8185,12 @@ tpareto1 = function(lower, upper, lshape="loge", earg=list(), ishape=NULL,
             stop("response must be a vector or a one-column matrix")
         predictors.names = namesof("shape", .lshape, earg=.earg, tag=FALSE) 
         if(any(y <= .lower))
-            stop(paste("the value of argument \"lower\" is too high",
-                 "(requires 0 < lower < min(y))"))
+            stop("the value of argument 'lower' is too high ",
+                 "(requires '0 < lower < min(y)')")
         extra$lower = .lower
         if(any(y >= .upper))
-            stop(paste("the value of argument \"upper\" is too low",
-                 "(requires max(y) < upper)"))
+            stop("the value of argument 'upper' is too low ",
+                 "(requires 'max(y) < upper')")
         extra$upper = .upper
         if(!length(etastart)) {
             shape.init = if(is.Numeric( .ishape)) 0 * y + .ishape else
@@ -8146,49 +8251,7 @@ tpareto1 = function(lower, upper, lshape="loge", earg=list(), ishape=NULL,
     }), list( .lshape=lshape, .earg=earg, .lower=lower, .upper=upper ))))
 }
 
-dtpareto = function(x, lower, upper, shape) {
-    if(!is.Numeric(x)) stop("bad input for argument \"x\"")
-    if(!is.Numeric(lower, pos=TRUE)) stop("argument \"lower\" must be positive")
-    if(!is.Numeric(upper, pos=TRUE)) stop("argument \"upper\" must be positive")
-    if(!is.Numeric(shape, pos=TRUE)) stop("argument \"shape\" must be positive")
-    L = max(length(x), length(lower), length(upper), length(shape)) 
-    x = rep(x, len=L); lower = rep(lower, len=L); upper = rep(upper, len=L);
-    shape= rep(shape, len=L)
-    ifelse(x > lower & x < upper, 
-    shape * lower^shape / (x^(shape+1) * (1-(lower/upper)^shape)), 0)
-}
 
-ptpareto = function(q, lower, upper, shape) {
-    if(!is.Numeric(q)) stop("bad input for argument \"q\"")
-    if(!is.Numeric(lower, pos=TRUE)) stop("argument \"lower\" must be positive")
-    if(!is.Numeric(upper, pos=TRUE)) stop("argument \"upper\" must be positive")
-    if(!is.Numeric(shape, pos=TRUE)) stop("argument \"shape\" must be positive")
-    L = max(length(q), length(lower), length(upper), length(shape)) 
-    q = rep(q, len=L); lower = rep(lower, len=L); upper = rep(upper, len=L);
-    shape= rep(shape, len=L)
-    ans = q * 0
-    ans[q > lower & q < upper] = (1-(lower/q)^shape) / (1-(lower/upper)^shape)
-    ans[q >= upper] = 1
-    ans
-}
-
-qtpareto = function(p, lower, upper, shape) {
-    if(!is.Numeric(p, posit=TRUE)) stop("bad input for argument \"p\"")
-    if(!is.Numeric(lower, pos=TRUE)) stop("argument \"lower\" must be positive")
-    if(!is.Numeric(upper, pos=TRUE)) stop("argument \"upper\" must be positive")
-    if(!is.Numeric(shape, pos=TRUE)) stop("argument \"shape\" must be positive")
-    if(max(p) >= 1) stop("argument \"p\" must be between 0 and 1")
-    lower / (1 - p*(1-(lower/upper)^shape))^(1/shape)
-}
-
-rtpareto = function(n, lower, upper, shape) {
-    if(!is.Numeric(n, posit=TRUE, integ=TRUE, allow=1)) 
-        stop("bad input for argument \"n\"")
-    if(!is.Numeric(lower, pos=TRUE)) stop("argument \"lower\" must be positive")
-    if(!is.Numeric(upper, pos=TRUE)) stop("argument \"upper\" must be positive")
-    if(!is.Numeric(shape, pos=TRUE)) stop("argument \"shape\" must be positive")
-    lower / (1 - runif(n)*(1-(lower/upper)^shape))^(1/shape)
-}
 
 
 erf = function(x)
@@ -8199,7 +8262,7 @@ erfc = function(x)
 
 
 
-wald <- function(link.lambda="loge", earg=list(), init.lambda=NULL)
+ wald <- function(link.lambda="loge", earg=list(), init.lambda=NULL)
 {
     if(mode(link.lambda) != "character" && mode(link.lambda) != "name")
         link.lambda = as.character(substitute(link.lambda))
@@ -8238,8 +8301,7 @@ wald <- function(link.lambda="loge", earg=list(), init.lambda=NULL)
              function(mu, y, w, residuals = FALSE, eta, extra=NULL) {
         lambda = eta2theta(eta, link=.link.lambda, earg= .earg)
         if(residuals) stop("loglikelihood residuals not implemented yet") else
-        sum(w*(0.5 * log(lambda / (2 * pi * y^3)) -
-                lambda *(y-1)^2 / (2* y )))
+        sum(w * (0.5 * log(lambda/(2*pi*y^3)) - lambda * (y-1)^2 / (2*y)))
     }, list( .link.lambda=link.lambda, .earg=earg ))),
     vfamily="wald",
     deriv=eval(substitute(expression({
@@ -8255,7 +8317,7 @@ wald <- function(link.lambda="loge", earg=list(), init.lambda=NULL)
 }
 
 
-expexp = function(lshape="loge", lscale="loge",
+ expexp = function(lshape="loge", lscale="loge",
                   eshape=list(), escale=list(),
                   ishape=1.1, iscale=NULL,  # ishape cannot be 1
                   tolerance = 1.0e-6,
@@ -8266,13 +8328,13 @@ expexp = function(lshape="loge", lscale="loge",
     if(mode(lscale) != "character" && mode(lscale) != "name")
         lscale = as.character(substitute(lscale))
     if(length(zero) && !is.Numeric(zero, integer=TRUE, posit=TRUE))
-        stop("bad input for argument \"zero\"")
+        stop("bad input for argument 'zero'")
     if(!is.Numeric(tolerance, posit=TRUE, allow=1) || tolerance>1.0e-2)
-        stop("bad input for argument \"tolerance\"")
+        stop("bad input for argument 'tolerance'")
     if(!is.Numeric(ishape, posit=TRUE))
-        stop("bad input for argument \"ishape\"")
+        stop("bad input for argument 'ishape'")
     if(length(iscale) && !is.Numeric(iscale, posit=TRUE))
-        stop("bad input for argument \"iscale\"")
+        stop("bad input for argument 'iscale'")
     ishape[ishape==1] = 1.1   # Fails in @deriv
     if(!is.list(escale)) escale = list()
     if(!is.list(eshape)) eshape = list()
@@ -8294,7 +8356,7 @@ expexp = function(lshape="loge", lscale="loge",
           namesof("scale", .lscale, earg=.escale, short=TRUE))
         if(!length(etastart)) {
             shape.init = if(!is.Numeric( .ishape, posit=TRUE))
-                   stop("argument \"ishape\" must be positive") else
+                   stop("argument 'ishape' must be positive") else
                    rep(.ishape, len=n)
             scale.init = if(length( .iscale)) rep(.iscale, len=n) else
                         (digamma(shape.init+1) - digamma(1)) / (y+1/8)
@@ -8379,7 +8441,7 @@ expexp = function(lshape="loge", lscale="loge",
 
 
 
-expexp1 = function(lscale="loge",
+ expexp1 = function(lscale="loge",
                    escale=list(),
                    iscale=NULL,
                    ishape=1) {
@@ -8387,7 +8449,7 @@ expexp1 = function(lscale="loge",
         lscale = as.character(substitute(lscale))
     if(!is.list(escale)) escale = list()
     if(length(iscale) && !is.Numeric(iscale, posit=TRUE))
-        stop("bad input for argument \"iscale\"")
+        stop("bad input for argument 'iscale'")
 
     new("vglmff",
     blurb=c("Exponentiated Exponential Distribution",
@@ -8408,7 +8470,7 @@ expexp1 = function(lscale="loge",
         extra$w = w
         if(!length(etastart)) {
             shape.init = if(!is.Numeric( .ishape, posit=TRUE))
-                   stop("argument \"ishape\" must be positive") else
+                   stop("argument 'ishape' must be positive") else
                    rep(.ishape, len=n)
             scaleinit = if(length( .iscale)) rep(.iscale, len=n) else
                         (digamma(shape.init+1) - digamma(1)) / (y+1/8)  
@@ -8477,7 +8539,8 @@ betaffqn.control <- function(save.weight=TRUE, ...)
 
 
 
-betaffqn = function(link="loge", earg=list(),
+if(FALSE)
+ betaffqn = function(link="loge", earg=list(),
                     i1=NULL, i2=NULL, trim=0.05, A=0, B=1)
 {
     if(mode(link) != "character" && mode(link) != "name")
@@ -8540,12 +8603,14 @@ betaffqn = function(link="loge", earg=list(),
     loglikelihood=eval(substitute(
          function(mu, y, w, residuals= FALSE, eta, extra=NULL){
         shapes = eta2theta(eta, .link, earg= .earg)
-        temp = if(is.R()) lbeta(shapes[,1], shapes[,2]) else
-               lgamma(shapes[,1]) + lgamma(shapes[,2]) -
-               lgamma(shapes[,1]+shapes[,2])
-        if(residuals) stop("loglikelihood residuals not implemented yet") else
+        temp = lbeta(shapes[,1], shapes[,2])
+        if(residuals) stop("loglikelihood residuals not implemented yet") else {
+
+
+
         sum(w * ((shapes[,1]-1)*log(y-.A) + (shapes[,2]-1)*log(.B-y) - temp -
             (shapes[,1]+shapes[,2]-1)*log(.B-.A )))
+        }
     }, list( .link=link, .earg=earg, .A=A, .B=B ))),
     vfamily="betaffqn",
     deriv=eval(substitute(expression({
@@ -8578,7 +8643,9 @@ betaffqn = function(link="loge", earg=list(),
 
 
 
-logistic2 = function(llocation="identity",
+
+
+ logistic2 = function(llocation="identity",
                      lscale="loge",
                      elocation=list(),
                      escale=list(),
@@ -8589,11 +8656,11 @@ logistic2 = function(llocation="identity",
     if(mode(lscale) != "character" && mode(lscale) != "name")
         lscale = as.character(substitute(lscale))
     if(!is.Numeric(method.init, allow=1, integ=TRUE, posit=TRUE) ||
-       method.init > 2) stop("argument \"method.init\" must be 1 or 2")
+       method.init > 2) stop("argument 'method.init' must be 1 or 2")
     if(length(zero) && !is.Numeric(zero, integer=TRUE, posit=TRUE))
-        stop("bad input for argument \"zero\"")
+        stop("bad input for argument 'zero'")
     if(length(iscale) && !is.Numeric(iscale, posit=TRUE))
-        stop("bad input for argument \"iscale\"")
+        stop("bad input for argument 'iscale'")
     if(!is.list(elocation)) elocation = list()
     if(!is.list(escale)) escale = list()
 
@@ -8647,9 +8714,10 @@ logistic2 = function(llocation="identity",
         function(mu,y,w,residuals= FALSE,eta, extra=NULL) {
         location = eta2theta(eta[,1], .llocation, earg= .elocation)
         Scale = eta2theta(eta[,2], .lscale, earg= .escale)
-        zedd = (y-location) / Scale
-        if(residuals) stop("loglikelihood residuals not implemented yet") else
-        sum(w * (-zedd - 2 * log1p(exp(-zedd)) - log(Scale )))
+        if(residuals) stop("loglikelihood residuals not implemented yet") else {
+            sum(w * dlogis(x=y, location = location,
+                           scale = Scale, log = TRUE))
+        }
     }, list( .llocation=llocation, .lscale=lscale,
              .elocation=elocation, .escale=escale ))),
     vfamily=c("logistic2"),
@@ -8682,7 +8750,7 @@ logistic2 = function(llocation="identity",
 
 
 
-alaplace2 = function(tau = NULL,
+ alaplace2 = function(tau = NULL,
                      llocation="identity", lscale="loge",
                      elocation=list(), escale=list(),
                      ilocation=NULL, iscale=NULL,
@@ -8693,7 +8761,7 @@ alaplace2 = function(tau = NULL,
                      method.init=1, zero="(1 + M/2):M") {
 
     if(!is.Numeric(kappa, posit=TRUE))
-        stop("bad input for argument \"kappa\"")
+        stop("bad input for argument 'kappa'")
     if(length(tau) && max(abs(kappa - sqrt(tau/(1-tau)))) > 1.0e-6)
         stop("arguments 'kappa' and 'tau' do not match")
     if(mode(llocation) != "character" && mode(llocation) != "name")
@@ -8701,23 +8769,23 @@ alaplace2 = function(tau = NULL,
     if(mode(lscale) != "character" && mode(lscale) != "name")
         lscale = as.character(substitute(lscale))
     if(!is.Numeric(method.init, allow=1, integ=TRUE, posit=TRUE) ||
-       method.init > 4) stop("argument \"method.init\" must be 1, 2 or ... 4")
+       method.init > 4) stop("argument 'method.init' must be 1, 2 or ... 4")
     if(length(iscale) && !is.Numeric(iscale, posit=TRUE))
-        stop("bad input for argument \"iscale\"")
+        stop("bad input for argument 'iscale'")
     if(!is.list(elocation)) elocation = list()
     if(!is.list(escale)) escale = list()
     if(!is.Numeric(shrinkage.init, allow=1) || shrinkage.init < 0 ||
-       shrinkage.init > 1) stop("bad input for argument \"shrinkage.init\"")
+       shrinkage.init > 1) stop("bad input for argument 'shrinkage.init'")
     if(length(zero) &&
        !(is.Numeric(zero, integer=TRUE, posit=TRUE) || is.character(zero )))
-        stop("bad input for argument \"zero\"")
+        stop("bad input for argument 'zero'")
     if(!is.logical(sameScale) || length(sameScale) != 1)
-        stop("bad input for argument \"sameScale\"")
+        stop("bad input for argument 'sameScale'")
     if(!is.logical(parallelLocation) || length(parallelLocation) != 1)
-        stop("bad input for argument \"parallelLocation\"")
+        stop("bad input for argument 'parallelLocation'")
     fittedMean = FALSE
     if(!is.logical(fittedMean) || length(fittedMean) != 1)
-        stop("bad input for argument \"fittedMean\"")
+        stop("bad input for argument 'fittedMean'")
 
     new("vglmff",
     blurb=c("Two-parameter asymmetric Laplace distribution\n\n",
@@ -8842,10 +8910,10 @@ alaplace2 = function(tau = NULL,
         location = eta2theta(eta[,1:(extra$M/2),drop=FALSE],
                              .llocation, earg= .elocation)
         Scale = eta2theta(eta[,(1+extra$M/2):extra$M], .lscale, earg= .escale)
-        zedd = ifelse(ymat >= location, kappamat, 1/kappamat) * sqrt(2) *
-               abs(ymat-location) / Scale
-        if(residuals) stop("loglikelihood residuals not implemented yet") else
-        sum(w*(-zedd - log(Scale) - log(2)/2 + log(kappa) - log1p(kappamat^2)))
+        if(residuals) stop("loglikelihood residuals not implemented yet") else {
+            sum(w * dalap(x=c(ymat), location=c(location),
+                          scale=c(Scale), kappa=c(kappamat), log=TRUE))
+        }
     }, list( .elocation=elocation, .llocation=llocation,
              .escale=escale, .lscale=lscale,
              .kappa=kappa ))),
@@ -8887,7 +8955,7 @@ alaplace1.control <- function(maxit=300, ...)
     list(maxit=maxit)
 }
 
-alaplace1 = function(tau = NULL,
+ alaplace1 = function(tau = NULL,
                      llocation="identity",
                      elocation=list(),
                      ilocation=NULL,
@@ -8899,26 +8967,26 @@ alaplace1 = function(tau = NULL,
 
 
     if(!is.Numeric(kappa, posit=TRUE))
-        stop("bad input for argument \"kappa\"")
+        stop("bad input for argument 'kappa'")
     if(length(tau) && max(abs(kappa - sqrt(tau/(1-tau)))) > 1.0e-6)
         stop("arguments 'kappa' and 'tau' do not match")
     if(mode(llocation) != "character" && mode(llocation) != "name")
         llocation = as.character(substitute(llocation))
     if(!is.Numeric(method.init, allow=1, integ=TRUE, posit=TRUE) ||
-       method.init > 4) stop("argument \"method.init\" must be 1, 2 or ... 4")
+       method.init > 4) stop("argument 'method.init' must be 1, 2 or ... 4")
     if(!is.list(elocation)) elocation = list()
     if(!is.Numeric(shrinkage.init, allow=1) || shrinkage.init < 0 ||
-       shrinkage.init > 1) stop("bad input for argument \"shrinkage.init\"")
+       shrinkage.init > 1) stop("bad input for argument 'shrinkage.init'")
     if(length(zero) &&
        !(is.Numeric(zero, integer=TRUE, posit=TRUE) || is.character(zero )))
-        stop("bad input for argument \"zero\"")
+        stop("bad input for argument 'zero'")
     if(!is.Numeric(Scale.arg, posit=TRUE))
-        stop("bad input for argument \"Scale.arg\"")
+        stop("bad input for argument 'Scale.arg'")
     if(!is.logical(parallelLocation) || length(parallelLocation) != 1)
-        stop("bad input for argument \"parallelLocation\"")
+        stop("bad input for argument 'parallelLocation'")
     fittedMean = FALSE
     if(!is.logical(fittedMean) || length(fittedMean) != 1)
-        stop("bad input for argument \"fittedMean\"")
+        stop("bad input for argument 'fittedMean'")
 
     new("vglmff",
     blurb=c("One-parameter asymmetric Laplace distribution\n\n",
@@ -9010,10 +9078,10 @@ alaplace1 = function(tau = NULL,
         kappamat = matrix(extra$kappa, extra$n, extra$M, byrow=TRUE)
         location = eta2theta(eta, .llocation, earg= .elocation)
         Scale = matrix(extra$Scale, extra$n, extra$M, byrow=TRUE)
-        zedd = ifelse(ymat >= location, kappamat, 1/kappamat) * sqrt(2) *
-               abs(ymat-location) / Scale
-        if(residuals) stop("loglikelihood residuals not implemented yet") else
-        sum(w*(-zedd - log(Scale) - log(2)/2 + log(kappa) - log1p(kappamat^2)))
+        if(residuals) stop("loglikelihood residuals not implemented yet") else {
+            sum(w * dalap(x=c(ymat), location=c(location),
+                          scale=c(Scale), kappa=c(kappamat), log=TRUE))
+        }
     }, list( .elocation=elocation, .llocation=llocation,
              .Scale.arg=Scale.arg, .kappa=kappa ))),
     vfamily=c("alaplace1"),
@@ -9025,8 +9093,6 @@ alaplace1 = function(tau = NULL,
         zedd = abs(ymat-location) / Scale
         dl.dlocation = ifelse(ymat >= location, kappamat, 1/kappamat) *
                        sqrt(2) * sign(ymat-location) / Scale
-        dl.dscale =  ifelse(ymat >= location, kappamat, 1/kappamat) *
-                     sqrt(2) * zedd / Scale - 1 / Scale
         dlocation.deta = dtheta.deta(location, .llocation, earg= .elocation)
         w * cbind(dl.dlocation * dlocation.deta)
     }), list( .Scale.arg=Scale.arg, .elocation=elocation,
@@ -9044,7 +9110,7 @@ alaplace1 = function(tau = NULL,
 
 
 
-alaplace3 = function(llocation="identity", lscale="loge", lkappa="loge",
+ alaplace3 = function(llocation="identity", lscale="loge", lkappa="loge",
                     elocation=list(), escale=list(), ekappa=list(),
                     ilocation=NULL, iscale=NULL, ikappa=1.0,
                     method.init=1, zero=2:3) {
@@ -9055,11 +9121,11 @@ alaplace3 = function(llocation="identity", lscale="loge", lkappa="loge",
     if(mode(lkappa) != "character" && mode(lkappa) != "name")
         lkappa = as.character(substitute(lkappa))
     if(!is.Numeric(method.init, allow=1, integ=TRUE, posit=TRUE) ||
-       method.init > 2) stop("argument \"method.init\" must be 1 or 2")
+       method.init > 2) stop("argument 'method.init' must be 1 or 2")
     if(length(zero) && !is.Numeric(zero, integer=TRUE, posit=TRUE))
-        stop("bad input for argument \"zero\"")
+        stop("bad input for argument 'zero'")
     if(length(iscale) && !is.Numeric(iscale, posit=TRUE))
-        stop("bad input for argument \"iscale\"")
+        stop("bad input for argument 'iscale'")
     if(!is.list(elocation)) elocation = list()
     if(!is.list(escale)) escale = list()
     if(!is.list(ekappa)) ekappa = list()
@@ -9126,11 +9192,11 @@ alaplace3 = function(llocation="identity", lscale="loge", lkappa="loge",
         function(mu,y,w,residuals= FALSE,eta, extra=NULL) {
         location = eta2theta(eta[,1], .llocation, earg= .elocation)
         Scale = eta2theta(eta[,2], .lscale, earg= .escale)
-        kappa = eta2theta(eta[,3], .lkappa, earg= .ekappa)
-        zedd = ifelse(y >= location, kappa, 1/kappa) * sqrt(2) *
-               abs(y-location) / Scale
-        if(residuals) stop("loglikelihood residuals not implemented yet") else
-        sum(w * (-zedd - log(Scale) - log(2)/2 + log(kappa) - log1p(kappa^2)))
+        kappamat = eta2theta(eta[,3], .lkappa, earg= .ekappa)
+        if(residuals) stop("loglikelihood residuals not implemented yet") else {
+            sum(w * dalap(x=y, location=location,
+                          scale=Scale, kappa=kappamat, log=TRUE))
+        }
     }, list( .elocation=elocation, .llocation=llocation,
              .escale=escale, .lscale=lscale,
              .ekappa=ekappa, .lkappa=lkappa ))),
@@ -9175,9 +9241,43 @@ alaplace3 = function(llocation="identity", lscale="loge", lkappa="loge",
 
 
 
+dlaplace = function(x, location=0, scale=1, log = FALSE) {
+    if(!is.logical(log.arg <- log))
+        stop("bad input for argument 'log'")
+    rm(log)
+
+    logdensity = (-abs(x-location)/scale) - log(2*scale)
+    if(log.arg) logdensity else exp(logdensity)
+}
+
+plaplace = function(q, location=0, scale=1) {
+    if(!is.Numeric(scale, posit=TRUE)) 
+        stop("argument 'scale' must be positive")
+    zedd = (q-location) / scale
+    L = max(length(q), length(location), length(scale))
+    q = rep(q, len=L); location = rep(location, len=L); scale= rep(scale, len=L)
+    ifelse(q < location, 0.5*exp(zedd), 1-0.5*exp(-zedd))
+}
+
+qlaplace = function(p, location=0, scale=1) {
+    if(!is.Numeric(scale, posit=TRUE)) 
+        stop("argument 'scale' must be positive")
+    L = max(length(p), length(location), length(scale))
+    p = rep(p, len=L); location = rep(location, len=L); scale= rep(scale, len=L)
+    location - sign(p-0.5) * scale * log(2*ifelse(p < 0.5, p, 1-p))
+}
+
+rlaplace = function(n, location=0, scale=1) {
+    if(!is.Numeric(n, posit=TRUE, integ=TRUE, allow=1)) 
+        stop("bad input for argument 'n'")
+    if(!is.Numeric(scale, posit=TRUE)) stop("'scale' must be positive")
+    location = rep(location, len=n); scale= rep(scale, len=n)
+    r = runif(n)
+    location - sign(r-0.5) * scale * log(2*ifelse(r < 0.5, r, 1-r))
+}
 
 
-laplace = function(llocation="identity", lscale="loge",
+ laplace = function(llocation="identity", lscale="loge",
                    elocation=list(), escale=list(),
                    ilocation=NULL, iscale=NULL,
                    method.init=1, zero=2) {
@@ -9186,13 +9286,13 @@ laplace = function(llocation="identity", lscale="loge",
     if(mode(lscale) != "character" && mode(lscale) != "name")
         lscale = as.character(substitute(lscale))
     if(!is.Numeric(method.init, allow=1, integ=TRUE, posit=TRUE) ||
-       method.init > 3) stop("argument \"method.init\" must be 1 or 2 or 3")
+       method.init > 3) stop("argument 'method.init' must be 1 or 2 or 3")
     if(length(zero) && !is.Numeric(zero, integer=TRUE, posit=TRUE))
-        stop("bad input for argument \"zero\"")
+        stop("bad input for argument 'zero'")
     if(!is.list(elocation)) elocation = list()
     if(!is.list(escale)) escale = list()
     if(length(iscale) && !is.Numeric(iscale, posit=TRUE))
-        stop("bad input for argument \"iscale\"")
+        stop("bad input for argument 'iscale'")
 
     new("vglmff",
     blurb=c("Two-parameter Laplace distribution\n\n",
@@ -9248,9 +9348,9 @@ laplace = function(llocation="identity", lscale="loge",
         function(mu,y,w,residuals= FALSE,eta, extra=NULL) {
         location = eta2theta(eta[,1], .llocation, earg= .elocation)
         Scale = eta2theta(eta[,2], .lscale, earg= .escale)
-        zedd = abs(y-location) / Scale
-        if(residuals) stop("loglikelihood residuals not implemented yet") else
-        sum(w * (-zedd - log(Scale) - log(2)))
+        if(residuals) stop("loglikelihood residuals not implemented yet") else {
+            sum(w * dlaplace(x=y, location=location, scale=Scale, log=TRUE))
+        }
     }, list( .escale=escale, .lscale=lscale,
              .elocation=elocation, .llocation=llocation ))),
     vfamily=c("laplace"),
@@ -9275,39 +9375,6 @@ laplace = function(llocation="identity", lscale="loge",
               .elocation=elocation, .llocation=llocation ))))
 }
 
-dlaplace = function(x, location=0, scale=1) {
-    if(!is.Numeric(scale, posit=TRUE)) 
-        stop("argument \"scale\" must be positive")
-    exp(-abs(x-location)/scale) / (2*scale)
-}
-
-plaplace = function(q, location=0, scale=1) {
-    if(!is.Numeric(scale, posit=TRUE)) 
-        stop("argument \"scale\" must be positive")
-    zedd = (q-location) / scale
-    L = max(length(q), length(location), length(scale))
-    q = rep(q, len=L); location = rep(location, len=L); scale= rep(scale, len=L)
-    ifelse(q < location, 0.5*exp(zedd), 1-0.5*exp(-zedd))
-}
-
-qlaplace = function(p, location=0, scale=1) {
-    if(!is.Numeric(scale, posit=TRUE)) 
-        stop("argument \"scale\" must be positive")
-    L = max(length(p), length(location), length(scale))
-    p = rep(p, len=L); location = rep(location, len=L); scale= rep(scale, len=L)
-    location - sign(p-0.5) * scale * log(2*ifelse(p < 0.5, p, 1-p))
-}
-
-rlaplace = function(n, location=0, scale=1) {
-    if(!is.Numeric(n, posit=TRUE, integ=TRUE, allow=1)) 
-        stop("bad input for argument \"n\"")
-    if(!is.Numeric(scale, posit=TRUE)) stop("\"scale\" must be positive")
-    location = rep(location, len=n); scale= rep(scale, len=n)
-    r = runif(n)
-    location - sign(r-0.5) * scale * log(2*ifelse(r < 0.5, r, 1-r))
-}
-
-
 
 
 fff.control <- function(save.weight=TRUE, ...)
@@ -9315,15 +9382,15 @@ fff.control <- function(save.weight=TRUE, ...)
     list(save.weight=save.weight)
 }
 
-fff = function(link="loge", earg=list(),
+ fff = function(link="loge", earg=list(),
                idf1=NULL, idf2=NULL,
                method.init=1, zero=NULL) {
     if(mode(link) != "character" && mode(link) != "name")
         link = as.character(substitute(link))
     if(!is.Numeric(method.init, allow=1, integ=TRUE, posit=TRUE) ||
-       method.init > 2) stop("argument \"method.init\" must be 1 or 2")
+       method.init > 2) stop("argument 'method.init' must be 1 or 2")
     if(length(zero) && !is.Numeric(zero, integer=TRUE, posit=TRUE))
-        stop("bad input for argument \"zero\"")
+        stop("bad input for argument 'zero'")
     if(!is.list(earg)) earg = list()
 
     new("vglmff",
@@ -9376,10 +9443,9 @@ fff = function(link="loge", earg=list(),
         function(mu,y,w,residuals= FALSE,eta, extra=NULL) {
         df1 = eta2theta(eta[,1], .link, earg= .earg)
         df2 = eta2theta(eta[,2], .link, earg= .earg)
-        if(residuals) stop("loglikelihood residuals not implemented yet") else
-        sum(w * (lgamma(0.5*(df1+df2)) + 0.5*df1*log(df1/df2) +
-                 0.5*(df1-2) * log(y) - lgamma(df1/2) - lgamma(df2/2) -
-                 0.5*(df1+df2)*log1p(df1*y/df2)))
+        if(residuals) stop("loglikelihood residuals not implemented yet") else {
+            sum(w * df(x=y, df1=df1, df2=df2, log=TRUE))
+        }
     }, list( .link=link, .earg=earg ))),
     vfamily=c("fff"),
     deriv=eval(substitute(expression({
@@ -9422,17 +9488,18 @@ fff = function(link="loge", earg=list(),
 
 
 
-hyperg = function(N=NULL, D=NULL,
-                 lprob="logit", earg=list(),
-                 iprob=NULL) {
+ hyperg = function(N=NULL, D=NULL,
+                   lprob="logit", earg=list(),
+                   iprob=NULL) {
+ print("hi 20090409")
     if(mode(lprob) != "character" && mode(lprob) != "name")
         lprob = as.character(substitute(lprob))
     inputN = is.Numeric(N, positive=TRUE)
     inputD = is.Numeric(D, positive=TRUE)
     if(inputD && inputN)
-        stop("only one of \"N\" and \"D\" is to be inputted")
+        stop("only one of 'N' and 'D' is to be inputted")
     if(!inputD && !inputN)
-        stop("one of \"N\" and \"D\" needs to be inputted")
+        stop("one of 'N' and 'D' needs to be inputted")
     if(!is.list(earg)) earg = list()
 
     new("vglmff",
@@ -9471,6 +9538,7 @@ hyperg = function(N=NULL, D=NULL,
         if(!length(etastart)) {
             init.prob = if(length( .iprob)) rep( .iprob, len=n) else mustart
             etastart = matrix(init.prob, n, ncol(cbind(y )))
+
         }
     }), list( .lprob=lprob, .earg=earg, .N=N, .D=D, .iprob=iprob ))), 
     inverse=eval(substitute(function(eta, extra=NULL) {
@@ -9492,13 +9560,19 @@ hyperg = function(N=NULL, D=NULL,
         prob = mu
         yvec = w * y
         if(residuals) stop("loglikelihood residuals not implemented yet") else {
-        if(extra$Nunknown) {
-            tmp12 = Dvec * (1-prob) / prob
-            sum(lgamma(1+tmp12) + lgamma(1+Dvec/prob-w) -
-                   lgamma(1+tmp12-w+yvec) - lgamma(1+Dvec/prob))
-        } else
-            sum(lgamma(1+N*prob) + lgamma(1+N*(1-prob)) -
-                   lgamma(1+N*prob-yvec) - lgamma(1+N*(1-prob) -w + yvec))
+            if(extra$Nunknown) {
+                tmp12 = Dvec * (1-prob) / prob
+
+
+                sum(lgamma(1+tmp12) + lgamma(1+Dvec/prob-w) -
+                       lgamma(1+tmp12-w+yvec) - lgamma(1+Dvec/prob))
+
+            } else {
+
+
+                sum(lgamma(1+N*prob) + lgamma(1+N*(1-prob)) -
+                       lgamma(1+N*prob-yvec) - lgamma(1+N*(1-prob) -w + yvec))
+            }
         }
     }, list( .lprob=lprob, .earg=earg ))), 
     vfamily=c("hyperg"),
@@ -9548,23 +9622,26 @@ hyperg = function(N=NULL, D=NULL,
 
 
 
-dbenini = function(x, shape, y0) {
-    if(!is.Numeric(x)) stop("bad input for argument \"x\"")
-    if(!is.Numeric(shape, posit=TRUE)) stop("bad input for argument \"shape\"")
-    if(!is.Numeric(y0, posit=TRUE)) stop("bad input for argument \"y0\"")
+dbenini = function(x, shape, y0, log=FALSE) {
+    if(!is.logical(log.arg <- log))
+        stop("bad input for argument 'log'")
+    rm(log)
+
     N = max(length(x), length(shape), length(y0))
     x = rep(x, len=N); shape = rep(shape, len=N); y0 = rep(y0, len=N); 
-    ok = x > y0
-    temp = log(x[ok]/y0[ok])
-    ans = y0 * 0
-    ans[ok] = 2 * shape[ok] * exp(-shape[ok] * temp^2) * temp / x[ok]
-    ans
+
+    logdensity = rep(log(0), len=N)
+    xok = (x > y0)
+    tempxok = log(x[xok]/y0[xok])
+    logdensity[xok] = log(2*shape[xok]) - shape[xok] * tempxok^2 +
+                      log(tempxok) - log(x[xok])
+    if(log.arg) logdensity else exp(logdensity)
 }
 
 pbenini = function(q, shape, y0) {
-    if(!is.Numeric(q)) stop("bad input for argument \"q\"")
-    if(!is.Numeric(shape, posit=TRUE)) stop("bad input for argument \"shape\"")
-    if(!is.Numeric(y0, posit=TRUE)) stop("bad input for argument \"y0\"")
+    if(!is.Numeric(q)) stop("bad input for argument 'q'")
+    if(!is.Numeric(shape, posit=TRUE)) stop("bad input for argument 'shape'")
+    if(!is.Numeric(y0, posit=TRUE)) stop("bad input for argument 'y0'")
     N = max(length(q), length(shape), length(y0))
     q = rep(q, len=N); shape = rep(shape, len=N); y0 = rep(y0, len=N); 
     ans = y0 * 0
@@ -9575,29 +9652,29 @@ pbenini = function(q, shape, y0) {
 
 qbenini = function(p, shape, y0) {
     if(!is.Numeric(p, posit=TRUE) || any(p >= 1)) 
-        stop("bad input for argument \"p\"")
-    if(!is.Numeric(shape, posit=TRUE)) stop("bad input for argument \"shape\"")
-    if(!is.Numeric(y0, posit=TRUE)) stop("bad input for argument \"y0\"")
+        stop("bad input for argument 'p'")
+    if(!is.Numeric(shape, posit=TRUE)) stop("bad input for argument 'shape'")
+    if(!is.Numeric(y0, posit=TRUE)) stop("bad input for argument 'y0'")
     y0 * exp(sqrt(-log1p(-p) / shape))
 }
 
 rbenini = function(n, shape, y0) {
     if(!is.Numeric(n, posit=TRUE, integ=TRUE, allow=1)) 
-        stop("bad input for argument \"n\"")
-    if(!is.Numeric(shape, posit=TRUE)) stop("bad input for argument \"shape\"")
-    if(!is.Numeric(y0, posit=TRUE)) stop("bad input for argument \"y0\"")
+        stop("bad input for argument 'n'")
+    if(!is.Numeric(shape, posit=TRUE)) stop("bad input for argument 'shape'")
+    if(!is.Numeric(y0, posit=TRUE)) stop("bad input for argument 'y0'")
     y0 * exp(sqrt(-log(runif(n)) / shape))
 }
 
-benini = function(y0=stop("argument \"y0\" must be specified"),
-                  lshape="loge", earg=list(),
-                  ishape=NULL, method.init=1) {
+ benini = function(y0=stop("argument 'y0' must be specified"),
+                   lshape="loge", earg=list(),
+                   ishape=NULL, method.init=1) {
     if(mode(lshape) != "character" && mode(lshape) != "name")
         lshape = as.character(substitute(lshape))
     if(!is.Numeric(method.init, allow=1, integ=TRUE, posit=TRUE) ||
-       method.init > 2) stop("argument \"method.init\" must be 1 or 2")
+       method.init > 2) stop("argument 'method.init' must be 1 or 2")
     if(!is.Numeric(y0, allow=1, posit=TRUE))
-       stop("bad input for argument \"y0\"")
+       stop("bad input for argument 'y0'")
     if(!is.list(earg)) earg = list()
 
     new("vglmff",
@@ -9610,7 +9687,7 @@ benini = function(y0=stop("argument \"y0\" must be specified"),
             stop("response must be a vector or a one-column matrix")
         predictors.names = c(namesof("shape", .lshape, earg=.earg, tag=FALSE))
         extra$y0 = .y0
-        if(min(y) <= extra$y0) stop("argument \"y0\" is too large")
+        if(min(y) <= extra$y0) stop("argument 'y0' is too large")
         if(!length(etastart)) {
             probs = (1:3) / 4
             qofy= quantile(rep(y, times=w), probs=probs) # fails if w != integer
@@ -9640,8 +9717,9 @@ benini = function(y0=stop("argument \"y0\" must be specified"),
         function(mu,y,w,residuals= FALSE,eta, extra=NULL) {
         shape = eta2theta(eta, .lshape, earg= .earg)
         y0 = extra$y0
-        if(residuals) stop("loglikelihood residuals not implemented yet") else
-        sum(w * (log(shape) - log(y) - shape*(log(y/y0))^2 + log(log(y/y0 ))))
+        if(residuals) stop("loglikelihood residuals not implemented yet") else {
+            sum(w * dbenini(x=y, shape=shape, y0=y0, log=TRUE))
+        }
     }, list( .lshape=lshape, .earg=earg ))),
     vfamily=c("benini"),
     deriv=eval(substitute(expression({
@@ -9674,23 +9752,22 @@ dpolono = function(x, meanlog=0, sdlog=1, bigx=Inf, ...) {
     ans = x * 0
     integrand = function(t, x, meanlog, sdlog)
         exp(t*x - exp(t) - 0.5*((t-meanlog)/sdlog)^2)
-    for(i in 1:N) {
-        if(x[i] == round(x[i]) && x[i] >= 0) {
-            if(x[i] >= bigx) {
-                zedd =  (log(x[i])-meanlog[i]) / sdlog[i]
-                temp = 1 + (zedd^2 + log(x[i]) - meanlog[i] -
-                       1) / (2*x[i]*(sdlog[i])^2)
-                ans[i] = temp * exp(-0.5*zedd^2)/(sqrt(2*pi) * sdlog[i] * x[i])
+    for(ii in 1:N) {
+        if(x[ii] == round(x[ii]) && x[ii] >= 0) {
+            if(x[ii] >= bigx) {
+                zedd =  (log(x[ii])-meanlog[ii]) / sdlog[ii]
+                temp = 1 + (zedd^2 + log(x[ii]) - meanlog[ii] -
+                       1) / (2*x[ii]*(sdlog[ii])^2)
+                ans[ii] = temp * exp(-0.5*zedd^2)/(sqrt(2*pi)*sdlog[ii] * x[ii])
             } else {
-                temp = integrate(f=integrand, lower=-Inf, upper=Inf,
-                                 x=x[i], meanlog=meanlog[i], sdlog=sdlog[i], ...)
+                temp = integrate(f=integrand, lower=-Inf, upper=Inf, x=x[ii],
+                                 meanlog=meanlog[ii], sdlog=sdlog[ii], ...)
                 if(temp$message == "OK") {
-                    ans[i] = temp$value / (sqrt(2*pi) * sdlog[i] *
-                             exp(lgamma(x[i]+1)))
+                    ans[ii] = temp$value / (sqrt(2*pi) * sdlog[ii] *
+                              exp(lgamma(x[ii]+1)))
                 } else {
-                    warning(paste("could not integrate",
-                                  " (numerically) observation", i))
-                    ans[i] = NA
+                    warning("could not integrate (numerically) observation ",ii)
+                    ans[ii] = NA
                 }
             }
         }
@@ -9700,12 +9777,7 @@ dpolono = function(x, meanlog=0, sdlog=1, bigx=Inf, ...) {
 
 
 rpolono = function(n, meanlog=0, sdlog=1) {
-    if(!is.Numeric(n, integ=TRUE,allow=1)) stop("bad input for argument \"n\"")
-    if(!is.Numeric(meanlog)) stop("bad input for argument \"meanlog\"")
-    if(!is.Numeric(sdlog)) stop("bad input for argument \"sdlog\"")
-    meanlog = rep(meanlog, len=n); sdlog = rep(sdlog, len=n);
-    lambda = if(is.R()) rlnorm(n=n, meanlog=meanlog, sdlog=sdlog) else
-             stop("suppressing a warning message")
+    lambda = rlnorm(n=n, meanlog=meanlog, sdlog=sdlog)
     rpois(n=n, lambda=lambda)
 }
 
@@ -9717,32 +9789,36 @@ rpolono = function(n, meanlog=0, sdlog=1) {
 
 
 
-dtriangle = function(x, theta, lower=0, upper=1) {
-    if(!is.Numeric(x)) stop("bad input for argument \"x\"")
-    if(!is.Numeric(theta)) stop("bad input for argument \"theta\"")
-    if(!is.Numeric(lower)) stop("bad input for argument \"lower\"")
-    if(!is.Numeric(upper)) stop("bad input for argument \"upper\"")
-    if(!all(lower < theta & theta < upper))
-        stop("lower < theta < upper values are required")
+
+
+dtriangle = function(x, theta, lower=0, upper=1, log = FALSE) {
+    if(!is.logical(log.arg <- log))
+        stop("bad input for argument 'log'")
+    rm(log)
+
     N = max(length(x), length(theta), length(lower), length(upper))
     x = rep(x, len=N); lower = rep(lower, len=N); upper = rep(upper, len=N);
     theta = rep(theta, len=N)
-    ans = x * 0
-    neg = (lower <= x) & (x <= theta)
-    pos = (theta <= x) & (x <= upper)
+
     denom1 = ((upper-lower)*(theta-lower))
     denom2 = ((upper-lower)*(upper-theta))
-    ans[neg] = pmax(2 * (x-lower) / denom1, 0)[neg]
-    ans[pos] = pmax(2 * (upper-x) / denom2, 0)[pos]
-    ans
+    logdensity = rep(log(0), len=N)
+    xok.neg = (lower <  x) & (x <= theta)
+    xok.pos = (theta <= x) & (x <  upper)
+    logdensity[xok.neg] = log(2 * (x[xok.neg]-lower[xok.neg]) / denom1[xok.neg])
+    logdensity[xok.pos] = log(2 * (upper[xok.pos]-x[xok.pos]) / denom2[xok.pos])
+    logdensity[lower >= upper] = NaN
+    logdensity[lower >  theta] = NaN
+    logdensity[upper <  theta] = NaN
+    if(log.arg) logdensity else exp(logdensity)
 }
 
 
 rtriangle = function(n, theta, lower=0, upper=1) {
-    if(!is.Numeric(n, integ=TRUE,allow=1)) stop("bad input for argument \"n\"")
-    if(!is.Numeric(theta)) stop("bad input for argument \"theta\"")
-    if(!is.Numeric(lower)) stop("bad input for argument \"lower\"")
-    if(!is.Numeric(upper)) stop("bad input for argument \"upper\"")
+    if(!is.Numeric(n, integ=TRUE,allow=1)) stop("bad input for argument 'n'")
+    if(!is.Numeric(theta)) stop("bad input for argument 'theta'")
+    if(!is.Numeric(lower)) stop("bad input for argument 'lower'")
+    if(!is.Numeric(upper)) stop("bad input for argument 'upper'")
     if(!all(lower < theta & theta < upper))
         stop("lower < theta < upper values are required")
     N = n
@@ -9757,10 +9833,10 @@ rtriangle = function(n, theta, lower=0, upper=1) {
 
 
 qtriangle = function(p, theta, lower=0, upper=1) {
-    if(!is.Numeric(p, posit=TRUE)) stop("bad input for argument \"p\"")
-    if(!is.Numeric(theta)) stop("bad input for argument \"theta\"")
-    if(!is.Numeric(lower)) stop("bad input for argument \"lower\"")
-    if(!is.Numeric(upper)) stop("bad input for argument \"upper\"")
+    if(!is.Numeric(p, posit=TRUE)) stop("bad input for argument 'p'")
+    if(!is.Numeric(theta)) stop("bad input for argument 'theta'")
+    if(!is.Numeric(lower)) stop("bad input for argument 'lower'")
+    if(!is.Numeric(upper)) stop("bad input for argument 'upper'")
     if(!all(lower < theta & theta < upper))
         stop("lower < theta < upper values are required")
 
@@ -9791,10 +9867,10 @@ qtriangle = function(p, theta, lower=0, upper=1) {
 
 
 ptriangle = function(q, theta, lower=0, upper=1) {
-    if(!is.Numeric(q)) stop("bad input for argument \"q\"")
-    if(!is.Numeric(theta)) stop("bad input for argument \"theta\"")
-    if(!is.Numeric(lower)) stop("bad input for argument \"lower\"")
-    if(!is.Numeric(upper)) stop("bad input for argument \"upper\"")
+    if(!is.Numeric(q)) stop("bad input for argument 'q'")
+    if(!is.Numeric(theta)) stop("bad input for argument 'theta'")
+    if(!is.Numeric(lower)) stop("bad input for argument 'lower'")
+    if(!is.Numeric(upper)) stop("bad input for argument 'upper'")
     if(!all(lower < theta & theta < upper))
         stop("lower < theta < upper values are required")
 
@@ -9817,12 +9893,12 @@ ptriangle = function(q, theta, lower=0, upper=1) {
 
 
 
-triangle = function(lower=0, upper=1,
+ triangle = function(lower=0, upper=1,
                     link="elogit", earg=if(link=="elogit") 
                     list(min = lower, max = upper) else list(), itheta=NULL)
 {
-    if(!is.Numeric(lower)) stop("bad input for argument \"lower\"")
-    if(!is.Numeric(upper)) stop("bad input for argument \"upper\"")
+    if(!is.Numeric(lower)) stop("bad input for argument 'lower'")
+    if(!is.Numeric(upper)) stop("bad input for argument 'upper'")
     if(!all(lower < upper))
         stop("lower < upper values are required")
     if(length(itheta) && !is.Numeric(itheta))
@@ -9877,11 +9953,8 @@ triangle = function(lower=0, upper=1,
         lower = extra$lower
         upper = extra$upper
         if(residuals) stop("loglikelihood residuals not implemented yet") else {
-            pos = y >= Theta
-            neg = y <  Theta
-            sum(w * (log(2) - log(upper-lower))) +
-            sum(w[neg]*(log(y[neg]-lower[neg]) - log(Theta[neg]-lower[neg]))) +
-            sum(w[pos]*(log(upper[pos]-y[pos]) - log(upper[pos]-Theta[pos])))
+            sum(w * dtriangle(x=y, theta=Theta, lower=lower,
+                              upper=upper, log=TRUE))
         }
     }, list( .link=link, .earg=earg ))),
     vfamily=c("triangle"),
@@ -9903,6 +9976,682 @@ triangle = function(lower=0, upper=1,
         w * wz
     }), list( .link=link, .earg=earg ))))
 }
+
+
+
+
+
+
+
+adjust0.loglaplace1 = function(ymat, y, w, rep0) {
+    rangey0 = range(y[y > 0])
+    ymat[ymat <= 0] = min(rangey0[1] / 2, rep0)
+    ymat
+}
+
+
+loglaplace1.control <- function(maxit=300, ...)
+{
+    list(maxit=maxit)
+}
+
+ loglaplace1 = function(tau = NULL,
+                     llocation="loge",
+                     elocation=list(),
+                     ilocation=NULL,
+                     kappa = sqrt(tau/(1-tau)),
+                     Scale.arg=1,
+                     shrinkage.init=0.95, parallelLocation=FALSE, digt=4,
+                     dfmu.init = 3,
+                     rep0 = 0.5, # 0.0001,
+                     minquantile = 0, maxquantile = Inf,
+                     method.init=1, zero=NULL) {
+
+ print("loglaplace1 20090406 a")
+    if(length(minquantile) != 1)
+        stop("bad input for argument 'minquantile'")
+    if(length(maxquantile) != 1)
+        stop("bad input for argument 'maxquantile'")
+    if(!is.Numeric(rep0, posit=TRUE, allow=1) || rep0 > 1)
+        stop("bad input for argument 'rep0'")
+    if(!is.Numeric(kappa, posit=TRUE))
+        stop("bad input for argument 'kappa'")
+    if(length(tau) && max(abs(kappa - sqrt(tau/(1-tau)))) > 1.0e-6)
+        stop("arguments 'kappa' and 'tau' do not match")
+    if(mode(llocation) != "character" && mode(llocation) != "name")
+        llocation = as.character(substitute(llocation))
+    if(!is.Numeric(method.init, allow=1, integ=TRUE, posit=TRUE) ||
+       method.init > 4) stop("argument 'method.init' must be 1, 2 or ... 4")
+    if(!is.list(elocation)) elocation = list()
+    if(!is.Numeric(shrinkage.init, allow=1) || shrinkage.init < 0 ||
+       shrinkage.init > 1) stop("bad input for argument 'shrinkage.init'")
+    if(length(zero) &&
+       !(is.Numeric(zero, integer=TRUE, posit=TRUE) || is.character(zero )))
+        stop("bad input for argument 'zero'")
+    if(!is.Numeric(Scale.arg, posit=TRUE))
+        stop("bad input for argument 'Scale.arg'")
+    if(!is.logical(parallelLocation) || length(parallelLocation) != 1)
+        stop("bad input for argument 'parallelLocation'")
+    fittedMean = FALSE
+    if(!is.logical(fittedMean) || length(fittedMean) != 1)
+        stop("bad input for argument 'fittedMean'")
+
+    mystring0 = namesof("location", llocation, earg=elocation)
+    mychars = substring(mystring0, fi=1:nchar(mystring0), la=1:nchar(mystring0))
+    mychars[nchar(mystring0)] = ", inverse=TRUE)"
+    mystring1 = paste(mychars, collapse="")
+
+    new("vglmff",
+    blurb=c("One-parameter ",
+            if(llocation=="loge") "log-Laplace" else c(llocation, "-Laplace"),
+            " distribution\n\n",
+            "Links:      ", mystring0, "\n", "\n",
+            "Quantiles:  ", mystring1),
+    constraints=eval(substitute(expression({
+        constraints = cm.vgam(matrix(1,M,1), x, .parallelLocation,
+                              constraints, intercept=FALSE)
+        constraints = cm.zero.vgam(constraints, x, .zero, M)
+    }), list( .parallelLocation=parallelLocation,
+              .Scale.arg=Scale.arg, .zero=zero ))),
+    initialize=eval(substitute(expression({
+        extra$M = M = max(length( .Scale.arg ), length( .kappa )) # Recycle
+        extra$Scale = rep( .Scale.arg, length=M)
+        extra$kappa = rep( .kappa, length=M)
+        extra$tau = extra$kappa^2 / (1 + extra$kappa^2)
+        if(ncol(y <- cbind(y)) != 1)
+            stop("response must be a vector or a one-column matrix")
+        extra$n = n
+        extra$y.names = y.names = paste("tau=", round(extra$tau, dig=.digt),
+                                        sep="")
+        extra$individual = FALSE
+        predictors.names = namesof(paste("quantile(", y.names, ")", sep=""),
+                                   .llocation, earg=.elocation, tag=FALSE)
+
+
+        if(FALSE) {
+        if(min(y) < 0) stop("negative response values detected")
+        if((prop.0. <- weighted.mean(1*(y == 0), w)) >= min(extra$tau))
+            stop("sample proportion of 0s == ", round(prop.0., dig=4),
+                 " > minimum 'tau' value. Choose larger values for 'tau'.")
+        if(.rep0 == 0.5 &&
+            (ave.tau <- (weighted.mean(1*(y <= 0), w) +
+             weighted.mean(1*(y <= 1), w))/2) >= min(extra$tau))
+            warning("the minimum 'tau' value should be greater than ",
+                 round(ave.tau, dig=4))
+        }
+
+ print("extra$tau")
+ print( extra$tau )
+        if(!length(etastart)) {
+            if( .method.init == 1) {
+                location.init = quantile(rep(y, w), probs= extra$tau) + 1/16
+            } else if( .method.init == 2) {
+                location.init = weighted.mean(y, w)
+            } else if( .method.init == 3) {
+                location.init = median(y)
+            } else if( .method.init == 4) {
+                fit500 = vsmooth.spline(x=x[,min(ncol(x),2)], y=y, w=w,
+                                        df= .dfmu.init)
+                location.init = c(predict(fit500, x=x[,min(ncol(x),2)])$y)
+            } else {
+                use.this = weighted.mean(y, w)
+                location.init = (1- .sinit)*y + .sinit * use.this
+            }
+            location.init = if(length(.ilocation)) rep(.ilocation, len=M) else
+                             rep(location.init, len=M)
+            location.init = matrix(location.init, n, M, byrow=TRUE)
+            if( .llocation == "loge")
+                location.init = abs(location.init)
+            etastart =
+                cbind(theta2eta(location.init, .llocation, earg= .elocation))
+        }
+ print("location.init[1:3,]")
+ print( location.init[1:3,] )
+ print("etastart[1:3,]")
+ print( etastart[1:3,] )
+    }), list( .method.init=method.init,
+              .dfmu.init=dfmu.init, .rep0 = rep0,
+              .sinit=shrinkage.init, .digt=digt,
+              .elocation=elocation, .Scale.arg=Scale.arg,
+              .llocation=llocation, .kappa=kappa,
+              .ilocation=ilocation ))),
+    inverse=eval(substitute(function(eta, extra=NULL) {
+        location.y = eta2theta(eta, .llocation, earg= .elocation)
+        if( .fittedMean) {
+            stop("Yet to do: handle 'fittedMean = TRUE'")
+            kappamat = matrix(extra$kappa, extra$n, extra$M, byrow=TRUE)
+            Scale = matrix(extra$Scale, extra$n, extra$M, byrow=TRUE)
+            location.y + Scale * (1/kappamat - kappamat)
+        } else {
+            if(length(location.y) > extra$n)
+                dimnames(location.y) = list(dimnames(eta)[[1]], extra$y.names)
+            location.y
+        }
+        location.y[location.y < .minquantile] = .minquantile
+        location.y[location.y > .maxquantile] = .maxquantile
+        location.y
+    }, list( .elocation=elocation, .llocation=llocation,
+             .minquantile = minquantile, .maxquantile = maxquantile,
+             .fittedMean=fittedMean, .Scale.arg=Scale.arg,
+             .kappa=kappa ))),
+    last=eval(substitute(expression({
+        misc$link = c(location= .llocation)
+        misc$earg = list(location= .elocation)
+        misc$expected = TRUE
+        extra$kappa = misc$kappa = .kappa
+        extra$tau = misc$tau = misc$kappa^2 / (1 + misc$kappa^2)
+        extra$Scale.arg = .Scale.arg
+        misc$true.mu = .fittedMean # @fitted is not a true mu?
+        misc$rep0 = .rep0
+        misc$minquantile = .minquantile
+        misc$maxquantile = .maxquantile
+        extra$percentile = numeric(length(misc$kappa))
+        location.y = as.matrix(location.y)
+        for(ii in 1:length(misc$kappa))
+            extra$percentile[ii] = 100 * weighted.mean(y <= location.y[,ii], w)
+    }), list( .elocation=elocation, .llocation=llocation,
+              .Scale.arg=Scale.arg, .fittedMean=fittedMean,
+              .minquantile = minquantile, .maxquantile = maxquantile,
+              .rep0 = rep0, .kappa=kappa ))),
+    loglikelihood=eval(substitute(
+        function(mu,y,w,residuals= FALSE,eta, extra=NULL) {
+        kappamat = matrix(extra$kappa, extra$n, extra$M, byrow=TRUE)
+        Scale.w = matrix(extra$Scale, extra$n, extra$M, byrow=TRUE)
+        ymat = matrix(y, extra$n, extra$M)
+
+
+        if( .llocation == "loge")
+            ymat = adjust0.loglaplace1(ymat=ymat, y=y, w=w, rep0= .rep0)
+        w.mat = theta2eta(ymat, .llocation, earg= .elocation) # e.g., logoff()
+        if(residuals) stop("loglikelihood residuals not implemented yet") else {
+            ALDans =
+                sum(w * dalap(x=c(w.mat), location=c(eta),
+                              scale=c(Scale.w), kappa=c(kappamat), log=TRUE))
+            ALDans
+        }
+    }, list( .elocation=elocation, .llocation=llocation,
+             .rep0 = rep0,
+             .Scale.arg=Scale.arg, .kappa=kappa ))),
+    vfamily=c("loglaplace1"),
+    deriv=eval(substitute(expression({
+        ymat = matrix(y, n, M)
+        Scale.w = matrix(extra$Scale, extra$n, extra$M, byrow=TRUE)
+        location.w = eta
+        location.y = eta2theta(location.w, .llocation, earg= .elocation)
+        kappamat = matrix(extra$kappa, n, M, byrow=TRUE)
+
+        ymat = adjust0.loglaplace1(ymat=ymat, y=y, w=w, rep0= .rep0)
+        w.mat = theta2eta(ymat, .llocation, earg= .elocation) # e.g., logit()
+        zedd = abs(w.mat-location.w) / Scale.w
+        dl.dlocation = ifelse(w.mat >= location.w, kappamat, 1/kappamat) *
+                       sqrt(2) * sign(w.mat-location.w) / Scale.w
+        dlocation.deta = dtheta.deta(location.w, "identity", earg= .elocation)
+        w * cbind(dl.dlocation * dlocation.deta)
+    }), list( .Scale.arg=Scale.arg, .elocation=elocation,
+              .rep0 = rep0,
+              .llocation=llocation, .kappa=kappa ))),
+    weight=eval(substitute(expression({
+        d2l.dlocation2 = 2 / Scale.w^2
+        wz = cbind(d2l.dlocation2 * dlocation.deta^2)
+        w * wz
+    }), list( .Scale.arg=Scale.arg,
+              .elocation=elocation, .llocation=llocation ))))
+}
+
+
+
+
+
+loglaplace2.control <- function(save.weight=TRUE, ...)
+{
+    list(save.weight=save.weight)
+}
+
+ loglaplace2 = function(tau = NULL,
+                     llocation="loge", lscale="loge",
+                     elocation=list(), escale=list(),
+                     ilocation=NULL, iscale=NULL,
+                     kappa = sqrt(tau/(1-tau)),
+                     shrinkage.init=0.95, parallelLocation=FALSE, digt=4,
+                     sameScale=TRUE,
+                     dfmu.init = 3,
+                     rep0 = 0.5, nsimEIM=NULL,
+                     method.init=1, zero="(1 + M/2):M") {
+ warning("it is best to use loglaplace1()")
+
+    if(length(nsimEIM) &&
+       (!is.Numeric(nsimEIM, allow=1, integ=TRUE) || nsimEIM <= 10))
+        stop("'nsimEIM' should be an integer greater than 10")
+    if(!is.Numeric(rep0, posit=TRUE, allow=1) || rep0 > 1)
+        stop("bad input for argument 'rep0'")
+    if(!is.Numeric(kappa, posit=TRUE))
+        stop("bad input for argument 'kappa'")
+    if(length(tau) && max(abs(kappa - sqrt(tau/(1-tau)))) > 1.0e-6)
+        stop("arguments 'kappa' and 'tau' do not match")
+    if(mode(llocation) != "character" && mode(llocation) != "name")
+        llocation = as.character(substitute(llocation))
+    if(mode(lscale) != "character" && mode(lscale) != "name")
+        lscale = as.character(substitute(lscale))
+    if(!is.Numeric(method.init, allow=1, integ=TRUE, posit=TRUE) ||
+       method.init > 4) stop("argument 'method.init' must be 1, 2 or ... 4")
+    if(length(iscale) && !is.Numeric(iscale, posit=TRUE))
+        stop("bad input for argument 'iscale'")
+    if(!is.list(elocation)) elocation = list()
+    if(!is.list(escale)) escale = list()
+    if(!is.Numeric(shrinkage.init, allow=1) || shrinkage.init < 0 ||
+       shrinkage.init > 1) stop("bad input for argument 'shrinkage.init'")
+    if(length(zero) &&
+       !(is.Numeric(zero, integer=TRUE, posit=TRUE) || is.character(zero )))
+        stop("bad input for argument 'zero'")
+    if(!is.logical(sameScale) || length(sameScale) != 1)
+        stop("bad input for argument 'sameScale'")
+    if(!is.logical(parallelLocation) || length(parallelLocation) != 1)
+        stop("bad input for argument 'parallelLocation'")
+    fittedMean = FALSE
+    if(!is.logical(fittedMean) || length(fittedMean) != 1)
+        stop("bad input for argument 'fittedMean'")
+
+    if(llocation != "loge")
+        stop("argument 'llocation' must be \"loge\"")
+
+    new("vglmff",
+    blurb=c("Two-parameter log-Laplace distribution\n\n",
+            "Links:      ",
+            namesof("location", llocation, earg=elocation), ", ",
+            namesof("scale", lscale, earg=escale),
+            "\n", "\n",
+            "Mean:       zz location + scale * (1/kappa - kappa) / sqrt(2)", "\n",
+            "Quantiles:  location", "\n",
+            "Variance:   zz scale^2 * (1 + kappa^4) / (2 * kappa^2)"),
+    constraints=eval(substitute(expression({
+        .ZERO = .zero
+        if(is.character(.ZERO)) .ZERO = eval(parse(text = .ZERO))
+        .PARALLEL = .parallelLocation
+        parHmat = if(is.logical(.PARALLEL) && .PARALLEL)
+                    matrix(1, M/2, 1) else diag(M/2)
+        scaleHmat = if(is.logical(.sameScale) && .sameScale)
+                    matrix(1, M/2, 1) else diag(M/2)
+        mycmatrix = cbind(rbind(parHmat, 0*parHmat),
+                          rbind(0*scaleHmat, scaleHmat))
+        constraints=cm.vgam(mycmatrix, x, .PARALLEL, constraints, int=FALSE)
+        constraints = cm.zero.vgam(constraints, x, .ZERO, M)
+
+        if(.PARALLEL && names(constraints)[1] == "(Intercept)") {
+            parHmat = diag(M/2)
+            mycmatrix = cbind(rbind(parHmat, 0*parHmat),
+                              rbind(0*scaleHmat, scaleHmat))
+            constraints[["(Intercept)"]] = mycmatrix
+        }
+        if(is.logical(.sameScale) && .sameScale &&
+           names(constraints)[1] == "(Intercept)") {
+            temp3 = constraints[["(Intercept)"]]
+            temp3 = cbind(temp3[,1:(M/2)], rbind(0*scaleHmat, scaleHmat))
+            constraints[["(Intercept)"]] = temp3
+        }
+    }), list( .sameScale=sameScale, .parallelLocation=parallelLocation,
+              .zero=zero ))),
+    initialize=eval(substitute(expression({
+        extra$kappa = .kappa
+        extra$tau = extra$kappa^2 / (1 + extra$kappa^2)
+        if(ncol(y <- cbind(y)) != 1)
+            stop("response must be a vector or a one-column matrix")
+        extra$M = M = 2 * length(extra$kappa)
+        extra$n = n
+        extra$y.names = y.names = paste("tau=", round(extra$tau, dig=.digt),
+                                        sep="")
+        extra$individual = FALSE
+        predictors.names = 
+            c(namesof(paste("quantile(", y.names, ")", sep=""),
+                                     .llocation, earg=.elocation, tag=FALSE),
+              namesof(if(M==2) "scale" else paste("scale", 1:(M/2), sep=""),
+                      .lscale,    earg=.escale,    tag=FALSE))
+        if(weighted.mean(1*(y < 0.001), w) >= min(extra$tau))
+            stop("sample proportion of 0s > minimum 'tau' value. ",
+                 "Choose larger values for 'tau'.")
+
+        if(!length(etastart)) {
+            if( .method.init == 1) {
+                location.init.y = weighted.mean(y, w)
+                scale.init = sqrt(var(y) / 2)
+            } else if( .method.init == 2) {
+                location.init.y = median(y)
+                scale.init = sqrt(sum(w*abs(y-median(y))) / (sum(w) *2))
+            } else if( .method.init == 3) {
+                fit500 = vsmooth.spline(x=x[,min(ncol(x),2)], y=y, w=w,
+                                        df= .dfmu.init)
+                location.init.y = c(predict(fit500, x=x[,min(ncol(x),2)])$y)
+                scale.init = sqrt(sum(w*abs(y-median(y))) / (sum(w) *2))
+            } else {
+                use.this = weighted.mean(y, w)
+                location.init.y = (1- .sinit)*y + .sinit * use.this
+                scale.init = sqrt(sum(w*abs(y-median(y ))) / (sum(w) *2))
+            }
+            location.init.y = if(length(.ilocation)) rep(.ilocation, len=n) else
+                             rep(location.init.y, len=n)
+            location.init.y = matrix(location.init.y, n, M/2)
+            scale.init = if(length(.iscale)) rep(.iscale, len=n) else
+                             rep(scale.init, len=n)
+            scale.init = matrix(scale.init, n, M/2)
+            etastart =
+                cbind(theta2eta(location.init.y, .llocation, earg= .elocation),
+                      theta2eta(scale.init, .lscale, earg= .escale))
+        }
+    }), list( .method.init=method.init,
+              .dfmu.init=dfmu.init,
+              .sinit=shrinkage.init, .digt=digt,
+              .elocation=elocation, .escale=escale,
+              .llocation=llocation, .lscale=lscale, .kappa=kappa,
+              .ilocation=ilocation, .iscale=iscale ))),
+    inverse=eval(substitute(function(eta, extra=NULL) {
+        location.y = eta2theta(eta[,1:(extra$M/2),drop=FALSE],
+                               .llocation, earg= .elocation)
+        if( .fittedMean) {
+            kappamat = matrix(extra$kappa, extra$n, extra$M/2, byrow=TRUE)
+            Scale.y = eta2theta(eta[,(1+extra$M/2):extra$M], .lscale, earg= .escale)
+            location.y + Scale.y * (1/kappamat - kappamat)
+        } else {
+            dimnames(location.y) = list(dimnames(eta)[[1]], extra$y.names)
+            location.y
+        }
+    }, list( .elocation=elocation, .llocation=llocation,
+             .fittedMean=fittedMean, .escale=escale, .lscale=lscale,
+             .kappa=kappa ))),
+    last=eval(substitute(expression({
+        misc$link = c(location= .llocation, scale= .lscale)
+        misc$earg = list(location= .elocation, scale= .escale)
+        misc$expected = TRUE
+        extra$kappa = misc$kappa = .kappa
+        extra$tau = misc$tau = misc$kappa^2 / (1 + misc$kappa^2)
+        misc$true.mu = .fittedMean # @fitted is not a true mu?
+        misc$nsimEIM = .nsimEIM
+        misc$rep0 = .rep0
+        extra$percentile = numeric(length(misc$kappa))
+        location = as.matrix(location.y)
+        for(ii in 1:length(misc$kappa))
+            extra$percentile[ii] = 100 * weighted.mean(y <= location.y[,ii], w)
+    }), list( .elocation=elocation, .llocation=llocation,
+              .escale=escale, .lscale=lscale,
+              .fittedMean=fittedMean,
+              .nsimEIM=nsimEIM, .rep0 = rep0,
+              .kappa=kappa ))),
+    loglikelihood=eval(substitute(
+        function(mu,y,w,residuals= FALSE,eta, extra=NULL) {
+        kappamat = matrix(extra$kappa, extra$n, extra$M/2, byrow=TRUE)
+        Scale.w = eta2theta(eta[,(1+extra$M/2):extra$M], .lscale, earg= .escale)
+        ymat = matrix(y, extra$n, extra$M/2)
+        ymat[ymat <= 0] = min(min(y[y > 0]), .rep0)  # Adjust for 0s
+        ell.mat = matrix(c(dloglaplace(x=c(ymat),
+                                       location.ald=c(eta[,1:(extra$M/2)]),
+                                       scale.ald=c(Scale.w),
+                                       kappa=c(kappamat), log=TRUE)),
+                         extra$n, extra$M/2)
+        if(residuals) stop("loglikelihood residuals not implemented yet") else
+            sum(w * ell.mat)
+    }, list( .elocation=elocation, .llocation=llocation,
+             .escale=escale, .lscale=lscale,
+             .rep0 = rep0, .kappa=kappa ))),
+    vfamily=c("loglaplace2"),
+    deriv=eval(substitute(expression({
+        ymat = matrix(y, n, M/2)
+        Scale.w = eta2theta(eta[,(1+extra$M/2):extra$M], .lscale, earg= .escale)
+        location.w = eta[,1:(extra$M/2),drop=FALSE]
+        location.y = eta2theta(location.w, .llocation, earg= .elocation)
+        kappamat = matrix(extra$kappa, n, M/2, byrow=TRUE)
+        w.mat = ymat
+        w.mat[w.mat <= 0] = min(min(w.mat[w.mat > 0]), .rep0) # Adjust for 0s
+        w.mat= theta2eta(w.mat, .llocation, earg= .elocation) # w.mat=log(w.mat)
+        zedd = abs(w.mat-location.w) / Scale.w
+        dl.dlocation = sqrt(2) *
+                       ifelse(w.mat >= location.w, kappamat, 1/kappamat) *
+                       sign(w.mat-location.w) / Scale.w
+        dl.dscale =  sqrt(2) *
+                     ifelse(w.mat >= location.w, kappamat, 1/kappamat) *
+                     zedd / Scale.w - 1 / Scale.w
+        dlocation.deta = dtheta.deta(location.w, .llocation, earg= .elocation)
+        dscale.deta = dtheta.deta(Scale.w, .lscale, earg= .escale)
+        w * cbind(dl.dlocation * dlocation.deta,
+                  dl.dscale * dscale.deta)
+    }), list( .escale=escale, .lscale=lscale,
+              .elocation=elocation, .llocation=llocation,
+              .rep0 = rep0, .kappa=kappa ))),
+    weight=eval(substitute(expression({
+        run.varcov = 0
+        ind1 = iam(NA, NA, M=M, both=TRUE, diag=TRUE)
+        dthetas.detas = cbind(dlocation.deta, dscale.deta)
+        if(length( .nsimEIM )) {
+            for(ii in 1:( .nsimEIM )) {
+                wsim = matrix(rloglap(n*M/2, loc=c(location.w),
+                                      sca=c(Scale.w),
+                                      kappa=c(kappamat)), n, M/2)
+                zedd = abs(wsim-location.w) / Scale.w
+                dl.dlocation = sqrt(2) *
+                    ifelse(wsim >= location.w, kappamat, 1/kappamat) *
+                    sign(wsim-location.w) / Scale.w
+                dl.dscale =  sqrt(2) *
+                    ifelse(wsim >= location.w, kappamat, 1/kappamat) *
+                    zedd / Scale.w - 1 / Scale.w
+
+                rm(wsim)
+                temp3 = cbind(dl.dlocation, dl.dscale)  # n x M matrix
+                run.varcov = ((ii-1) * run.varcov +
+                           temp3[,ind1$row.index]*temp3[,ind1$col.index]) / ii
+            }
+            wz = if(intercept.only)
+                matrix(colMeans(run.varcov),
+                       n, ncol(run.varcov), byrow=TRUE) else run.varcov
+
+            wz = wz * dthetas.detas[,ind1$row] * dthetas.detas[,ind1$col]
+            wz = w * matrix(wz, n, dimm(M))
+            wz
+        } else {
+            d2l.dlocation2 = 2 / (Scale.w * location.w)^2
+            d2l.dscale2 = 1 / Scale.w^2
+            wz = cbind(d2l.dlocation2 * dlocation.deta^2,
+                       d2l.dscale2 * dscale.deta^2)
+            w * wz
+        }
+    }), list( .escale=escale, .lscale=lscale,
+              .nsimEIM=nsimEIM,
+              .elocation=elocation, .llocation=llocation ))))
+}
+
+
+
+
+logitlaplace1.control <- function(maxit=300, ...)
+{
+    list(maxit=maxit)
+}
+
+
+adjust01.logitlaplace1 = function(ymat, y, w, rep01) {
+    rangey01 = range(y[(y > 0) & (y < 1)])
+    ymat[ymat <= 0] = min(rangey01[1] / 2,           rep01 / w[y <= 0])
+    ymat[ymat >= 1] = max((1 + rangey01[2]) / 2, 1 - rep01 / w[y >= 1])
+    ymat
+}
+
+ logitlaplace1 = function(tau = NULL,
+                     llocation="logit",
+                     elocation=list(),
+                     ilocation=NULL,
+                     kappa = sqrt(tau/(1-tau)),
+                     Scale.arg=1,
+                     shrinkage.init=0.95, parallelLocation=FALSE, digt=4,
+                     dfmu.init = 3,
+                     rep01 = 0.5,
+                     method.init=1, zero=NULL) {
+
+    if(!is.Numeric(rep01, posit=TRUE, allow=1) || rep01 > 0.5)
+        stop("bad input for argument 'rep01'")
+    if(!is.Numeric(kappa, posit=TRUE))
+        stop("bad input for argument 'kappa'")
+    if(length(tau) && max(abs(kappa - sqrt(tau/(1-tau)))) > 1.0e-6)
+        stop("arguments 'kappa' and 'tau' do not match")
+    if(mode(llocation) != "character" && mode(llocation) != "name")
+        llocation = as.character(substitute(llocation))
+    if(!is.Numeric(method.init, allow=1, integ=TRUE, posit=TRUE) ||
+       method.init > 4) stop("argument 'method.init' must be 1, 2 or ... 4")
+    if(!is.list(elocation)) elocation = list()
+    if(!is.Numeric(shrinkage.init, allow=1) || shrinkage.init < 0 ||
+       shrinkage.init > 1) stop("bad input for argument 'shrinkage.init'")
+    if(length(zero) &&
+       !(is.Numeric(zero, integer=TRUE, posit=TRUE) || is.character(zero )))
+        stop("bad input for argument 'zero'")
+    if(!is.Numeric(Scale.arg, posit=TRUE))
+        stop("bad input for argument 'Scale.arg'")
+    if(!is.logical(parallelLocation) || length(parallelLocation) != 1)
+        stop("bad input for argument 'parallelLocation'")
+    fittedMean = FALSE
+    if(!is.logical(fittedMean) || length(fittedMean) != 1)
+        stop("bad input for argument 'fittedMean'")
+
+    mystring0 = namesof("location", llocation, earg=elocation)
+    mychars = substring(mystring0, fi=1:nchar(mystring0), la=1:nchar(mystring0))
+    mychars[nchar(mystring0)] = ", inverse=TRUE)"
+    mystring1 = paste(mychars, collapse="")
+
+    new("vglmff",
+    blurb=c("One-parameter ", llocation, "-Laplace distribution\n\n",
+            "Links:      ", mystring0, "\n", "\n",
+            "Quantiles:  ", mystring1),
+    constraints=eval(substitute(expression({
+        constraints = cm.vgam(matrix(1,M,1), x, .parallelLocation,
+                              constraints, intercept=FALSE)
+        constraints = cm.zero.vgam(constraints, x, .zero, M)
+    }), list( .parallelLocation=parallelLocation,
+              .Scale.arg=Scale.arg, .zero=zero ))),
+    initialize=eval(substitute(expression({
+        extra$M = M = max(length( .Scale.arg ), length( .kappa )) # Recycle
+        extra$Scale = rep( .Scale.arg, length=M)
+        extra$kappa = rep( .kappa, length=M)
+        extra$tau = extra$kappa^2 / (1 + extra$kappa^2)
+        if(ncol(y <- cbind(y)) != 1)
+            stop("response must be a vector or a one-column matrix")
+        extra$n = n
+        extra$y.names = y.names = paste("tau=", round(extra$tau, dig=.digt),
+                                        sep="")
+        extra$individual = FALSE
+        predictors.names = namesof(paste("quantile(", y.names, ")", sep=""),
+                                   .llocation, earg=.elocation, tag=FALSE)
+
+        if(all(y == 0 | y == 1)) stop("response cannot be all 0s or 1s")
+        if(min(y) < 0) stop("negative response values detected")
+        if(max(y) > 1) stop("response values greater than 1 detected")
+        if((prop.0. <- weighted.mean(1*(y == 0), w)) >= min(extra$tau))
+            stop("sample proportion of 0s == ", round(prop.0., dig=4),
+                 " > minimum 'tau' value. Choose larger values for 'tau'.")
+        if((prop.1. <- weighted.mean(1*(y == 1), w)) >= max(extra$tau))
+            stop("sample proportion of 1s == ", round(prop.1., dig=4),
+                 " < maximum 'tau' value. Choose smaller values for 'tau'.")
+        if(!length(etastart)) {
+            if( .method.init == 1) {
+                location.init = quantile(rep(y, w), probs= extra$tau)
+            } else if( .method.init == 2) {
+                location.init = weighted.mean(y, w)
+                location.init = median(rep(y, w))
+            } else if( .method.init == 3) {
+                use.this = weighted.mean(y, w)
+                location.init = (1- .sinit)*y + use.this * .sinit
+            } else {
+                stop("this option not implemented")
+            }
+
+
+            location.init = if(length(.ilocation)) rep(.ilocation, len=M) else
+                             rep(location.init, len=M)
+            location.init = matrix(location.init, n, M, byrow=TRUE)
+            location.init = abs(location.init)
+            etastart =
+                cbind(theta2eta(location.init, .llocation, earg= .elocation))
+        }
+ print("location.init[1:3,]")
+ print( location.init[1:3,] )
+ print("etastart[1:3,]")
+ print( etastart[1:3,] )
+    }), list( .method.init=method.init,
+              .dfmu.init=dfmu.init,
+              .sinit=shrinkage.init, .digt=digt,
+              .elocation=elocation, .Scale.arg=Scale.arg,
+              .llocation=llocation, .kappa=kappa,
+              .ilocation=ilocation ))),
+    inverse=eval(substitute(function(eta, extra=NULL) {
+        location.y = eta2theta(eta, .llocation, earg= .elocation)
+        if( .fittedMean) {
+            stop("Yet to do: handle 'fittedMean = TRUE'")
+            kappamat = matrix(extra$kappa, extra$n, extra$M, byrow=TRUE)
+            Scale = matrix(extra$Scale, extra$n, extra$M, byrow=TRUE)
+            location.y + Scale * (1/kappamat - kappamat)
+        } else {
+            if(length(location.y) > extra$n)
+                dimnames(location.y) = list(dimnames(eta)[[1]], extra$y.names)
+            location.y
+        }
+    }, list( .elocation=elocation, .llocation=llocation,
+             .fittedMean=fittedMean, .Scale.arg=Scale.arg,
+             .kappa=kappa ))),
+    last=eval(substitute(expression({
+        misc$link = c(location= .llocation)
+        misc$earg = list(location= .elocation)
+        misc$expected = TRUE
+        extra$kappa = misc$kappa = .kappa
+        extra$tau = misc$tau = misc$kappa^2 / (1 + misc$kappa^2)
+        extra$Scale.arg = .Scale.arg
+        misc$true.mu = .fittedMean # @fitted is not a true mu?
+        misc$rep01 = .rep01
+
+        extra$percentile = numeric(length(misc$kappa))
+        location.y = eta2theta(eta, .llocation, earg= .elocation)
+        location.y = as.matrix(location.y)
+        for(ii in 1:length(misc$kappa))
+            extra$percentile[ii] = 100 * weighted.mean(y <= location.y[,ii], w)
+
+    }), list( .elocation=elocation, .llocation=llocation,
+              .Scale.arg=Scale.arg, .fittedMean=fittedMean,
+              .rep01 = rep01,
+              .kappa=kappa ))),
+    loglikelihood=eval(substitute(
+        function(mu,y,w,residuals= FALSE,eta, extra=NULL) {
+        kappamat = matrix(extra$kappa, extra$n, extra$M, byrow=TRUE)
+        Scale.w = matrix(extra$Scale, extra$n, extra$M, byrow=TRUE)
+        ymat = matrix(y, extra$n, extra$M)
+        ymat = adjust01.logitlaplace1(ymat=ymat, y=y, w=w, rep01= .rep01)
+        w.mat = theta2eta(ymat, .llocation, earg= .elocation) # e.g., logit()
+        if(residuals) stop("loglikelihood residuals not implemented yet") else {
+            ALDans =
+                sum(w * dalap(x=c(w.mat), location=c(eta),
+                              scale=c(Scale.w), kappa=c(kappamat), log=TRUE))
+            ALDans
+        }
+    }, list( .elocation=elocation, .llocation=llocation,
+             .rep01 = rep01,
+             .Scale.arg=Scale.arg, .kappa=kappa ))),
+    vfamily=c("logitlaplace1"),
+    deriv=eval(substitute(expression({
+        ymat = matrix(y, n, M)
+        Scale.w = matrix(extra$Scale, extra$n, extra$M, byrow=TRUE)
+        location.w = eta
+        kappamat = matrix(extra$kappa, n, M, byrow=TRUE)
+        ymat = adjust01.logitlaplace1(ymat=ymat, y=y, w=w, rep01= .rep01)
+        w.mat = theta2eta(ymat, .llocation, earg= .elocation) # e.g., logit()
+        zedd = abs(w.mat-location.w) / Scale.w
+        dl.dlocation = ifelse(w.mat >= location.w, kappamat, 1/kappamat) *
+                       sqrt(2) * sign(w.mat-location.w) / Scale.w
+        dlocation.deta = dtheta.deta(location.w, "identity", earg= .elocation)
+        w * cbind(dl.dlocation * dlocation.deta)
+    }), list( .Scale.arg=Scale.arg, .elocation=elocation,
+              .rep01 = rep01,
+              .llocation=llocation, .kappa=kappa ))),
+    weight=eval(substitute(expression({
+        d2l.dlocation2 = 2 / Scale.w^2
+        wz = cbind(d2l.dlocation2 * dlocation.deta^2)
+        w * wz
+    }), list( .Scale.arg=Scale.arg,
+              .elocation=elocation, .llocation=llocation ))))
+}
+
+
+
 
 
 

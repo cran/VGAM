@@ -49,10 +49,9 @@
     \code{\link{hunua}}.
 }
 \examples{
-data(waitakere)
 fit = vgam(agaaus ~ s(altitude, df=2), binomialff, waitakere)
 \dontrun{
 plot(fit, se=TRUE, lcol="red", scol="blue") }
-predict(fit, waitakere, type="response")[1:3]
+head(predict(fit, waitakere, type="response"))
 }
 \keyword{datasets}

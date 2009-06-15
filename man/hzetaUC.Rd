@@ -11,7 +11,7 @@
 
 }
 \usage{
-dhzeta(x, alpha)
+dhzeta(x, alpha, log=FALSE)
 phzeta(q, alpha)
 qhzeta(p, alpha)
 rhzeta(n, alpha)
@@ -28,6 +28,11 @@ rhzeta(n, alpha)
   \item{alpha}{ 
    The parameter value. Must contain positive values and is recycled to
    the length of \code{x} or \code{p} or \code{q} if necessary.
+
+  }
+  \item{log}{
+  Logical.
+  If \code{log=TRUE} then the logarithm of the density is returned.
 
   }
 }

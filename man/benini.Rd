@@ -8,7 +8,7 @@
 
 }
 \usage{
-benini(y0=stop("argument \"y0\" must be specified"),
+benini(y0=stop("argument 'y0' must be specified"),
        lshape="loge", earg=list(), ishape=NULL, method.init=1)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -46,7 +46,7 @@ benini(y0=stop("argument \"y0\" must be specified"),
   has a probability density function that can be written
   \deqn{f(y) = 2 b \exp(-b[(\log(y/y_0))^2]) \log(y/y_0) / y }{%
         f(y) = 2*b*exp(-b * [(log(y/y0))^2]) * log(y/y0) / y}
-  for \eqn{y_0>0}, \eqn{y_0<y}{y0<y}, and \eqn{b>0}.
+  for \eqn{0 < y_0 < y}{0<y0<y}, and \eqn{b>0}.
   The cumulative distribution function for \eqn{Y} is
   \deqn{F(y) = 1 - \exp(-b[(\log(y/y_0))^2]).}{%
         F(y) = 1 - exp(-b * [(log(y/y0))^2]). }
@@ -92,7 +92,7 @@ Coef(fit)
 fit@extra$y0
 
 # Apparent discrepancy:
-fitted(fit)[1:5]
+head(fitted(fit))
 mean(y)
 }
 \keyword{models}

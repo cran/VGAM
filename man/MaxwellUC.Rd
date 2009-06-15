@@ -11,7 +11,7 @@
 
 }
 \usage{
-dmaxwell(x, a)
+dmaxwell(x, a, log=FALSE)
 pmaxwell(q, a)
 qmaxwell(p, a)
 rmaxwell(n, a)
@@ -21,6 +21,12 @@ rmaxwell(n, a)
   \item{p}{vector of probabilities.}
   \item{n}{number of observations. A single positive integer. }
   \item{a}{the parameter.}
+  \item{log}{
+  Logical.
+  If \code{log=TRUE} then the logarithm of the density is returned.
+
+  }
+
 }
 \value{
   \code{dmaxwell} gives the density,

@@ -125,7 +125,7 @@ coef(fit, matrix=TRUE)
 Coef(fit)  # Should be equal to the true population proportion
 unique(m / (m+n))  # The true population proportion
 fit@extra
-fitted(fit)[1:4]
+head(fitted(fit))
 summary(fit)
 }
 \keyword{models}

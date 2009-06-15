@@ -140,7 +140,7 @@ table(y2)["0"] / sum(table(y2))
 fit = vglm(cbind(y1,y2) ~ x, zinegbinomial(zero=NULL), trace=TRUE)
 coef(fit, matrix=TRUE)
 summary(fit)
-cbind(fitted(fit), (1-phi) * munb)[1:5,]
+head(cbind(fitted(fit), (1-phi) * munb))
 vcov(fit)
 }
 \keyword{models}

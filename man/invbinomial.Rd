@@ -102,7 +102,7 @@ results in a EIM that is diagonal.
 \examples{
 y <- rnbinom(n <- 1000, mu=exp(3), size=exp(1))
 fit  <- vglm(y ~ 1, invbinomial, trace=TRUE)
-c(mean(y), fitted(fit)[1:5])
+c(mean(y), head(fitted(fit)))
 summary(fit)
 coef(fit, matrix=TRUE)
 Coef(fit)

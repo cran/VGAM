@@ -766,11 +766,11 @@
 23298 continue
       return
       end
-      subroutine vbfa(d8gwha,n,lku8xq,gqai81, p3vlea,jmwo0z,w8xfic,
-     &l6xrjt,dof, ynk9ah,uxs1iq,vliac4, vfd2pw,sazp9g,go0l1q,s0, lq8reh,
-     &zo5jyl,h4fgoy, ioqzvb,i0qvzl, i83h1, xbig, jrxg6l, ifo4ew, ozuw3p,
-     & hwi2tb, nbd5rl, wj5shg, ykdc2t, wk2, zxao0o, phqco4, vb81l0, bmb,
-     & rjcq9o, mwk, t5vlzq, j1l0o1, qc7zyb, das4bx, vlni8d, jko0o1, 
+      subroutine vbfa( n,lku8xq,gqai81, p3vlea,jmwo0z,w8xfic,l6xrjt,dof,
+     & ynk9ah,uxs1iq,vliac4, vfd2pw,sazp9g,go0l1q,s0, lq8reh,zo5jyl,
+     &h4fgoy, ioqzvb,i0qvzl, i83h1, xbig, jrxg6l, ifo4ew, ozuw3p, 
+     &hwi2tb, nbd5rl, wj5shg, ykdc2t, wk2, zxao0o, phqco4, vb81l0, bmb, 
+     &rjcq9o, mwk, t5vlzq, j1l0o1, qc7zyb, das4bx, vlni8d, jko0o1, 
      &mnh3up, fg3pxq)
       implicit logical (a-z)
       integer d8gwha, n, lku8xq, gqai81(15), ynk9ah(1),uxs1iq(1),vliac4(
@@ -788,6 +788,7 @@
       integer ucgi1r
       integer sehz7y
       integer w3gohz, j0qwtz, zx1610
+      d8gwha = 0
       j0qwtz = lku8xq*(lku8xq+1)/2
       p=gqai81(2)
       q=gqai81(3)
@@ -1260,100 +1261,5 @@
       do 23474 w3gohz=(nfiumb4-3),nfiumb4 
       keep(w3gohz) = 1
 23474 continue
-      return
-      end
-      subroutine vglmf(xbig,c4bdmu,o9ljyn,d8gwha,nfiumb4, jmwo0z,lq8reh,
-     &go0l1q,blq5vu, ioqzvb,i0qvzl, zx1610,i83h1, bgu6fw,zxao0o,jrxg6l, 
-     &lku8xq,zkjqhi,xhe4cg, zqve1l, vvl1li, cpxbig, das4bx)
-      implicit logical (a-z)
-      integer c4bdmu,o9ljyn,d8gwha,nfiumb4, zx1610,i83h1(o9ljyn), 
-     &lku8xq,zkjqhi,xhe4cg, zqve1l(1), vvl1li(1), cpxbig
-      double precision xbig(c4bdmu,o9ljyn), jmwo0z(nfiumb4,lku8xq),
-     &lq8reh(o9ljyn),go0l1q(lku8xq,nfiumb4),blq5vu(c4bdmu), ioqzvb(
-     &c4bdmu,o9ljyn),i0qvzl(o9ljyn), bgu6fw(1), zxao0o(lku8xq,lku8xq,5),
-     & jrxg6l(1), das4bx
-      integer sehz7y
-      call qh4ulb(zqve1l,vvl1li,lku8xq)
-      sehz7y = 1
-23476 if(.not.(sehz7y .ne. 0))goto 23477
-      call vfit(lku8xq,c4bdmu,o9ljyn,nfiumb4, xbig,jmwo0z,lq8reh,go0l1q,
-     &blq5vu, jrxg6l,ioqzvb,i0qvzl,das4bx, zx1610,i83h1, bgu6fw,zxao0o, 
-     &xhe4cg,zkjqhi,zqve1l,vvl1li)
-      if(.not.(d8gwha .ne. 0))goto 23478
-      call vcall1(sehz7y,jmwo0z,go0l1q,lq8reh,jrxg6l,xbig,cpxbig)
-      goto 23479
-23478 continue
-      sehz7y= 0
-23479 continue
-      if(.not.(sehz7y .ne. 0))goto 23480
-      zx1610=0
-23480 continue
-      goto 23476
-23477 continue
-      return
-      end
-      subroutine vfit(lku8xq,c4bdmu,o9ljyn,nfiumb4, xbig,jmwo0z,lq8reh,
-     &go0l1q,blq5vu, jrxg6l,ioqzvb,i0qvzl,das4bx, zx1610,i83h1, bgu6fw,
-     &zxao0o, xhe4cg, zkjqhi, zqve1l, vvl1li)
-      implicit logical (a-z)
-      integer lku8xq, c4bdmu, o9ljyn, nfiumb4, zx1610, i83h1(o9ljyn), 
-     &xhe4cg, zkjqhi, zqve1l(1), vvl1li(1)
-      double precision xbig(c4bdmu,o9ljyn), jmwo0z(nfiumb4,lku8xq), 
-     &lq8reh(o9ljyn), go0l1q(lku8xq,nfiumb4), blq5vu(c4bdmu), jrxg6l(
-     &zkjqhi,nfiumb4), ioqzvb(c4bdmu,o9ljyn), i0qvzl(o9ljyn), das4bx, 
-     &bgu6fw(c4bdmu), zxao0o(lku8xq,lku8xq,5)
-      integer w3gohz, d9rjek, nd6mep, xi1mqb, hv3wja, tvyd2b, fjg0qv
-      double precision gwu72m, dyb3po, t7sbea
-      t7sbea=1.0d-7
-      tvyd2b=101
-      fjg0qv=1
-      dyb3po=1.0d0
-      if(.not.(zx1610 .eq. 0))goto 23482
-      do 23484 d9rjek=1,o9ljyn 
-      do 23486 w3gohz=1,c4bdmu 
-      ioqzvb(w3gohz,d9rjek) = xbig(w3gohz,d9rjek)
-23486 continue
-23484 continue
-      do 23488 nd6mep=1,o9ljyn 
-      i83h1(nd6mep) = nd6mep
-23488 continue
-      call mux17f(jrxg6l, ioqzvb, lku8xq, o9ljyn, nfiumb4, zxao0o(1,1,1)
-     &, zxao0o(1,1,2), zqve1l, vvl1li, zkjqhi, c4bdmu)
-      call dhkt9w(ioqzvb,c4bdmu,c4bdmu,o9ljyn,i0qvzl,i83h1,bgu6fw,
-     &zx1610,t7sbea)
-23482 continue
-      call mux22f(jrxg6l,jmwo0z,bgu6fw,zkjqhi,zqve1l,vvl1li,nfiumb4,
-     &lku8xq,zxao0o)
-      nd6mep=1
-      do 23490 d9rjek=1,lku8xq 
-      do 23492 w3gohz=1,nfiumb4 
-      jmwo0z(w3gohz,d9rjek)=bgu6fw(nd6mep)
-      nd6mep=nd6mep+1
-23492 continue
-23490 continue
-      call vdqrsl(ioqzvb,c4bdmu,c4bdmu,zx1610,i0qvzl,jmwo0z,bgu6fw(1),
-     &blq5vu,lq8reh, bgu6fw(1),go0l1q,tvyd2b,fjg0qv)
-      das4bx=0.0d0
-      xi1mqb=0
-      hv3wja=1
-      do 23494 w3gohz=1,nfiumb4 
-      do 23496 d9rjek=1,lku8xq 
-      xi1mqb = xi1mqb + 1
-      if(.not.(xi1mqb .gt. nfiumb4))goto 23498
-      xi1mqb = 1
-      hv3wja = hv3wja + 1
-23498 continue
-      gwu72m = jmwo0z(xi1mqb,hv3wja) - go0l1q(d9rjek,w3gohz)
-      das4bx = das4bx + gwu72m * gwu72m
-23496 continue
-23494 continue
-      call vbksf(jrxg6l,go0l1q,lku8xq,nfiumb4,zxao0o,zqve1l,vvl1li,
-     &xhe4cg)
-      do 23500 d9rjek=1,o9ljyn 
-      bgu6fw(d9rjek) = lq8reh(d9rjek)
-23500 continue
-      do 23502 d9rjek=1,o9ljyn 
-      lq8reh(i83h1(d9rjek)) = bgu6fw(d9rjek)
-23502 continue
       return
       end

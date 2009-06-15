@@ -112,7 +112,7 @@ d = transform(d, y = realfun(x) + rnorm(n, sd=exp(1)))
 d = transform(d, y = c(4*y[1], y[-1]), x=c(-1, x[-1]))
 fit = vglm(y ~ x, fam = lqnorm(qpower=1.2), data=d)
 coef(fit, matrix=TRUE)
-fitted(fit)[1:4,]
+head(fitted(fit))
 fit@misc$qpower 
 fit@misc$objectiveFunction 
 

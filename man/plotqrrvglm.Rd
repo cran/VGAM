@@ -58,7 +58,6 @@ by \code{\link{lvplot.qrrvglm}}.
 \examples{\dontrun{
 # QRR-VGLM on the hunting spiders data
 # This is computationally expensive
-data(hspider)
 set.seed(111)  # This leads to the global solution
 # hspider[,1:6]=scale(hspider[,1:6]) # Standardize the environmental variables
 p1 = cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,

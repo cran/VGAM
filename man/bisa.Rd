@@ -129,7 +129,7 @@ fit = vglm(y ~ 1, bisa, trace=TRUE)
 hist(y, prob=TRUE, ylim=c(0,0.5), col="lightblue")
 coef(fit, matrix=TRUE)
 mean(y)
-fitted(fit)[1:4]
+head(fitted(fit))
 x = seq(0, max(y), len=200)
 lines(x, dbisa(x, Coef(fit)[1], Coef(fit)[2]), col="red", lwd=2)
 }

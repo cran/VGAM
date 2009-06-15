@@ -12,6 +12,7 @@
 \usage{
 TypicalVGAMfamilyFunction(lsigma="loge", esigma=list(),
                           isigma=NULL, parallel = TRUE,
+                          shrinkage.init = 0.95,
                           method.init=1, nsimEIM=100, zero=NULL)
 }
 \arguments{
@@ -78,13 +79,22 @@ TypicalVGAMfamilyFunction(lsigma="loge", esigma=list(),
 
   }
   \item{method.init}{
-  An integer with value \code{1} or \code{2} or or \code{3} ... which
+  An integer with value \code{1} or \code{2} or \code{3} or ... which
   specifies the initialization method for some parameters or a specific
-  parameter.  If failure to converge occurs try the next higher value.
+  parameter.
+  If failure to converge occurs try the next higher value, and
+  continue until success.
   For example, \code{method.init=1} might be the method of moments,
   and \code{method.init=2} might be another method.
   If no value of \code{method.init} works then it will be necessary
   to use arguments such as \code{isigma}.
+  For many \pkg{VGAM} family functions it is advisable to try
+  this argument with all possible values to safeguard against
+  problems such as converging to a local solution.
+  \pkg{VGAM} family functions with this argument usually correspond
+  to a model or distribution that is relatively hard to fit successfully,
+  therefore care is needed to ensure the global solution is obtained.
+  So using all possible values that this argument supplies is a good idea.
 
   }
   \item{zero}{
@@ -106,6 +116,22 @@ TypicalVGAMfamilyFunction(lsigma="loge", esigma=list(),
   a matrix of responses.
 
   }
+  \item{shrinkage.init}{
+  Shrinkage factor \eqn{s} used for obtaining initial values.
+  Numeric, between 0 and 1.
+  In general, the formula used is something like
+  \eqn{s \mu + (1-s) y}{s*mu + (1-s)*y}
+  where \eqn{\mu}{mu} is a measure of central tendency such as a weighted
+  mean or median, and \eqn{y} is the response vector.
+  The the initial values are slight perturbations of the mean towards the
+  actual data.
+  For many type of models this method seems to work well and is often
+  reasonably robust to outliers in the response.
+  Often this argument is only used if
+  the argument \code{method.init} is assigned a certain value.
+
+  }
+
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).

@@ -113,7 +113,6 @@ micmen(rpar = 0.001, divisor = 10, init1 = NULL, init2 = NULL,
 % \code{skira}.
 }
 \examples{
-data(enzyme)
 fit = vglm(velocity ~ 1, micmen, enzyme, trace=TRUE, crit="c",
            form2 = ~ conc - 1)
 \dontrun{

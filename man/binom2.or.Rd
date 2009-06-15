@@ -131,6 +131,11 @@ binom2.or(lmu = "logit", lmu1 = lmu, lmu2 = lmu, loratio = "loge",
   Technical Report no. 101, Department of Biostatistics, 
   University of Washington, Seattle.
 
+  Yee, T. W. and Dirnbock, T. (2009)
+  Models for analysing species' presence/absence data
+  at two time points.
+  Journal of Theoretical Biology, \bold{259}. In press.
+
   Documentation accompanying the \pkg{VGAM} package at
   \url{http://www.stat.auckland.ac.nz/~yee}
   contains further information and examples.
@@ -158,6 +163,12 @@ binom2.or(lmu = "logit", lmu1 = lmu, lmu2 = lmu, loratio = "loge",
   to specify \code{exchangeable=TRUE} and have different link functions
   for the two marginal probabilities.
 
+  Regarding Yee and Dirnbock (2009),
+  the \code{xij} (see \code{\link{vglm.control}}) argument enables
+  environmental variables with different values at the two time points
+  to be entered into an exchangeable \code{\link{binom2.or}} model.
+  See the author's webpage for sample code.
+
 }
 \seealso{
   \code{\link{rbinom2.or}},
@@ -173,7 +184,6 @@ binom2.or(lmu = "logit", lmu1 = lmu, lmu2 = lmu, loratio = "loge",
 }
 \examples{
 # Fit the model in Table 6.7 in McCullagh and Nelder (1989)
-data(coalminers)
 coalminers = transform(coalminers, Age = (age - 42) / 5)
 fit = vglm(cbind(nBnW,nBW,BnW,BW) ~ Age, binom2.or(zero=NULL), coalminers)
 fitted(fit)

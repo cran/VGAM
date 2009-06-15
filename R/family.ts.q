@@ -133,7 +133,7 @@ rrar <- function(Ranks=1, coefstart=NULL)
         pp <- ncol(x)
         indices <- 1:plag
 
-        copyxbig <- TRUE   # xbig.save matrix changes at each iteration 
+        copy_X_vlm <- TRUE   # X_vlm_save matrix changes at each iteration 
 
         dsrank <- -sort(-Ranks.)   # ==rev(sort(Ranks.))
         if(any(dsrank != Ranks.))
@@ -154,7 +154,7 @@ rrar <- function(Ranks=1, coefstart=NULL)
             warning("ignoring explanatory variables")
 
         if(any(MM < Ranks.))
-            stop(paste("max(Ranks) can only be", MM, "or less"))
+            stop("'max(Ranks)' can only be ", MM, " or less")
         y.save <- y  # Save the original
         if(any(w != 1))
             stop("all weights should be 1")
@@ -164,10 +164,10 @@ rrar <- function(Ranks=1, coefstart=NULL)
                           rep(new.coeffs, len=aa+sum(Ranks.)*MM) else
                           runif(aa+sum(Ranks.)*MM)
         temp8 <- rrar.Wmat(y.save,Ranks.,MM,ki,plag,aa,uu,nn,new.coeffs)
-        xbig.save <- temp8$UU %*% temp8$Ht 
+        X_vlm_save <- temp8$UU %*% temp8$Ht 
 
         if(!length(etastart)) {
-            etastart <- xbig.save %*% new.coeffs
+            etastart <- X_vlm_save %*% new.coeffs
             etastart <- matrix(etastart, ncol=ncol(y), byrow=TRUE) # So M=ncol(y)
         }
 
@@ -220,7 +220,7 @@ rrar <- function(Ranks=1, coefstart=NULL)
     vfamily="rrar",
     deriv=expression({
         temp8 <- rrar.Wmat(y.save,Ranks.,MM,ki,plag,aa,uu,nn,new.coeffs)
-        xbig.save <- temp8$UU %*% temp8$Ht 
+        X_vlm_save <- temp8$UU %*% temp8$Ht 
 
         extra$coeffs <- new.coeffs
 
@@ -270,9 +270,9 @@ garma <- function(link=c("identity","loge","reciprocal",
     link = match.arg(link, c("identity","loge","reciprocal",
                              "logit","probit","cloglog","cauchit"))[1]
     if(!is.Numeric(p.ar.lag, integer=TRUE))
-        stop("bad input for argument \"p.ar.lag\"")
+        stop("bad input for argument 'p.ar.lag'")
     if(!is.Numeric(q.lag.ma, integer=TRUE))
-        stop("bad input for argument \"q.lag.ma\"")
+        stop("bad input for argument 'q.lag.ma'")
     if(q.lag.ma != 0)
         stop("sorry, only q.lag.ma=0 is currently implemented")
     if(!is.list(earg)) earg = list()
@@ -289,7 +289,7 @@ garma <- function(link=c("identity","loge","reciprocal",
         tt <- (1+plag):nrow(x) 
         pp <- ncol(x)
 
-        copyxbig <- TRUE   # x matrix changes at each iteration 
+        copy_X_vlm <- TRUE   # x matrix changes at each iteration 
 
         if( .link == "logit" || .link == "probit" || .link == "cloglog" ||
             .link == "cauchit") {
@@ -380,7 +380,7 @@ garma <- function(link=c("identity","loge","reciprocal",
         if(iter==1)
             old.coeffs <- new.coeffs 
 
-        xbig.save <- lm2vlm.model.matrix(x, Blist, xij=control$xij)
+        X_vlm_save <- lm2vlm.model.matrix(x, Blist, xij=control$xij)
 
         vary = switch( .link,
                        identity=1,

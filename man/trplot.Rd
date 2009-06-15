@@ -54,7 +54,6 @@ quadratic ordination.
 
 \examples{
 \dontrun{
-data(hspider)
 hspider[,1:6] = scale(hspider[,1:6]) # Standardized environmental vars
 set.seed(123)
 

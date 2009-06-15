@@ -13,7 +13,9 @@
   shape parameter \code{shape}.
 }
 \usage{
-dgpd(x, location=0, scale=1, shape=0)
+dgpd(x, location=0, scale=1, shape=0, log=FALSE,
+     tolshape0 = sqrt(.Machine$double.eps),
+     oobounds.log = -Inf, giveWarning=FALSE)
 pgpd(q, location=0, scale=1, shape=0)
 qgpd(p, location=0, scale=1, shape=0)
 rgpd(n, location=0, scale=1, shape=0)
@@ -21,10 +23,41 @@ rgpd(n, location=0, scale=1, shape=0)
 \arguments{
   \item{x, q}{vector of quantiles.}
   \item{p}{vector of probabilities.}
-  \item{n}{number of observations. Positive integer of length 1.}
+  \item{n}{number of observations.
+  If \code{length(n) > 1} then the length is taken to be the number required.}
   \item{location}{the location parameter \eqn{\mu}{mu}.}
-  \item{scale}{the scale parameter \eqn{\sigma}{sigma}.}
+  \item{scale}{the (positive) scale parameter \eqn{\sigma}{sigma}.}
   \item{shape}{the shape parameter \eqn{\xi}{xi}.}
+  \item{log}{
+  Logical.
+  If \code{log=TRUE} then the logarithm of the density is returned.
+
+  }
+  \item{tolshape0}{
+  Positive numeric.
+  Threshold/tolerance value for resting whether \eqn{\xi}{xi} is zero.
+  If the absolute value of the estimate of \eqn{\xi}{xi} is less than
+  this value then it will be assumed zero and an exponential distribution will
+  be used.
+
+  }
+  \item{oobounds.log, giveWarning}{
+  Numeric and logical.
+  The GPD distribution has support in the region satisfying
+  \code{(x-location)/scale > 0}
+  and
+  \code{1+shape*(x-location)/scale > 0}.
+  Outside that region, the
+  logarithm of the density is assigned \code{oobounds.log}, which
+  equates to a zero density.
+  It should not be assigned a positive number, and ideally is very negative.
+  Since \code{\link{gpd}} uses this function it is necessary
+  to return a finite value outside this region  so as to allow
+  for half-stepping. Both arguments are in support of this.
+  This argument and others match those of \code{\link{gpd}}.
+
+  }
+
 }
 \value{
   \code{dgpd} gives the density,
@@ -54,6 +87,7 @@ London: Springer-Verlag.
 }
 \seealso{
   \code{\link{gpd}}.
+
 }
 \examples{
 \dontrun{

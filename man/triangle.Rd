@@ -73,9 +73,8 @@ y  = rtriangle(n <- 3000, theta=3/4)
 fit = vglm(y ~ 1, triangle(link="identity"), trace=TRUE)
 coef(fit, matrix=TRUE)
 Coef(fit)
-fit@extra$lower[1:5]
-
-fitted(fit)[1:5]
+head(fit@extra$lower)
+head(fitted(fit))
 mean(y)
 }
 \keyword{models}

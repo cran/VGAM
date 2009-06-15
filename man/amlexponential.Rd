@@ -13,6 +13,10 @@ amlexponential(w.aml=1, parallel=FALSE, method.init=1, digw=4,
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
+  In this documentation the word \emph{quantile} can often be
+  interchangeably replaced by \emph{expectile}
+  (things are informal here).
+
   \item{w.aml}{
   Numeric, a vector of positive constants controlling the expectiles.
   The larger the value the larger the fitted expectile value
@@ -106,7 +110,7 @@ amlexponential(w.aml=1, parallel=FALSE, method.init=1, digw=4,
   \code{\link{exponential}},
   \code{\link{amlbinomial}},
   \code{\link{amlpoisson}},
-  \code{\link{alsqreg}},
+  \code{\link{amlnormal}},
   \code{\link{alaplace1}}.
 
 }

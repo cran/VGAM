@@ -1,7 +1,7 @@
 \name{chest}
 \alias{chest}
 \docType{data}
-\title{ Chest Pain in NZ Adults }
+\title{ Chest Pain in NZ Adults Data}
 \description{
   Presence/absence of chest pain in 10186 New Zealand adults.
 }
@@ -32,7 +32,6 @@
   \bold{108}, 499--502.
 }
 \examples{
-data(chest)
 fit = vgam(cbind(nolnor, nolr,lnor,lr) ~ s(age, c(4,3)), 
            binom2.or(exchan=TRUE, zero=NULL), data = chest)
 coef(fit, matrix=TRUE)

@@ -11,7 +11,7 @@
   by Libby and Novick (1982).
 }
 \usage{
-dlino(x, shape1, shape2, lambda=1)
+dlino(x, shape1, shape2, lambda=1, log=FALSE)
 plino(q, shape1, shape2, lambda=1)
 qlino(p, shape1, shape2, lambda=1)
 rlino(n, shape1, shape2, lambda=1)
@@ -22,6 +22,11 @@ rlino(n, shape1, shape2, lambda=1)
   \item{n}{number of observations.
     Must be a positive integer of length 1.}
   \item{shape1, shape2, lambda}{ see \code{\link{lino}}. }
+  \item{log}{
+  Logical.
+  If \code{log=TRUE} then the logarithm of the density is returned.
+
+  }
 }
 \value{
   \code{dlino} gives the density,

@@ -11,60 +11,68 @@
 plotvgam(x, newdata = NULL, y = NULL, residuals = NULL,
          rugplot = TRUE, se = FALSE, scale = 0, raw = TRUE,
          offset.arg = 0, deriv.arg = 0, overlay = FALSE,
-         type.residuals = c("deviance", "working", "pearson", "response"),
+         type.residuals = c("deviance","working","pearson","response"),
          plot.arg = TRUE, which.term = NULL, which.cf = NULL,
-         control = plotvgam.control(...), ...)
+         control = plotvgam.control(...), varxij = 1, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
+  In the following, \eqn{M} is the number of linear/additive
+  predictors, and \eqn{r} is the number of columns of the
+  constraint matrix of interest.
+
   \item{x}{ A fitted \pkg{VGAM} object, e.g., produced by
     \code{vgam()}, \code{vglm()}, or \code{rrvglm()}. }
   \item{newdata}{ Data frame.
     May be used to reconstruct the original data set. }
   \item{y}{ Unused. }
-  \item{residuals}{ Logical. If \code{TRUE}, residuals are plotted. See
-  \code{type.residuals}}
-\item{rugplot}{ Logical. If \code{TRUE}, a rug plot is plotted at the
+  \item{residuals}{
+  Logical. If \code{TRUE} then residuals are plotted.
+  See \code{type.residuals}}
+\item{rugplot}{
+  Logical. If \code{TRUE} then a rug plot is plotted at the
   foot of each plot. These values are jittered to expose ties.
   }
   \item{se}{
-    Logical. If \code{TRUE}, approximate \eqn{\pm 2}{+-2} pointwise
+    Logical. If \code{TRUE} then approximate \eqn{\pm 2}{+-2} pointwise
     standard error bands are included in the plot.
 
   }
-  \item{scale}{ Numerical. By default, each plot will have its own
+  \item{scale}{
+    Numerical. By default, each plot will have its own
     y-axis scale. However, by specifying a value, each plot's y-axis
     scale will be at least \code{scale} wide.
     }
-    \item{raw}{ Logical. If \code{TRUE}, the smooth functions are those
-      obtained directly by the algorithm, and are
-      plotted without
+  \item{raw}{
+    Logical. If \code{TRUE} then the smooth functions are those
+    obtained directly by the algorithm, and are plotted without
     having to premultiply with the constraint matrices.
-    If \code{FALSE}, the smooth functions have been premultiply by
+    If \code{FALSE} then the smooth functions have been premultiply by
     the constraint matrices.
     The \code{raw} argument is directly fed into \code{predict.vgam()}.
+
   }
   \item{offset.arg}{ Numerical vector of length \eqn{r}.
     These are added to the component functions. Useful for
     separating out the functions when \code{overlay} is \code{TRUE}.
-    If \code{overlay} is \code{TRUE} and there is one covariate, using the
-    intercept values as the offsets can be a good idea.
+    If \code{overlay} is \code{TRUE} and there is one covariate then
+    using the intercept values as the offsets can be a good idea.
   }
   \item{deriv.arg}{ Numerical. The order of the derivative.
     Should be assigned an small 
     integer such as 0, 1, 2. Only applying to \code{s()} terms,
     it plots the derivative.
   }
-  \item{overlay}{ Logical. If \code{TRUE}, component functions of the same
+  \item{overlay}{ Logical. If \code{TRUE} then component functions of the same
     covariate are overlaid on each other.
     The functions are centered, so \code{offset.arg} can be useful
     when \code{overlay} is \code{TRUE}.
     }
-    \item{type.residuals}{ if \code{residuals} is \code{TRUE}, the first
+    \item{type.residuals}{ if \code{residuals} is \code{TRUE} then the first
       possible value
       of this vector, is used to specify the type of
       residual. }
-  \item{plot.arg}{ Logical. If \code{FALSE}, no plot is produced. }
+  \item{plot.arg}{ Logical. If \code{FALSE} then no plot is produced. }
   \item{which.term}{ Character or integer vector containing all
     terms to be
     plotted, e.g., \code{which.term=c("s(age)", "s(height"))} or
@@ -81,9 +89,19 @@ plotvgam(x, newdata = NULL, y = NULL, residuals = NULL,
     \code{\link{plotvgam.control}}. This includes line colors,
     line widths, line types, etc.
   }
-  In the above, \eqn{M} is the number of linear/additive
-  predictors, and \eqn{r} is the number of columns of the
-  constraint matrix of interest.
+
+  \item{varxij}{ Positive integer.
+    Used if \code{xij} of \code{\link{vglm.control}} was used,
+    this chooses which inner argument the component is plotted against.
+    This argument is related to \code{raw=TRUE} and terms such as
+    \code{NS(dum1,dum2)} and constraint matrices that have more than
+    one column. The default would plot the smooth against \code{dum1}
+    but setting \code{varxij=2} could mean plotting the smooth against
+    \code{dum2}.
+    See the \pkg{VGAM} website for further information.
+
+  }
+
 }
 \details{
   Many of \code{plotvgam()}'s options can be found in  
@@ -114,9 +132,11 @@ contains further information and examples.
   explicitly otherwise.
   
   \code{plotvgam()} is quite buggy at the moment.
-  \code{plotvgam()} works in a similar
-  manner to S-PLUS's \code{plot.gam()}, however, there is no
-  options for interactive construction of the plots yet. 
+
+% \code{plotvgam()} works in a similar
+% manner to S-PLUS's \code{plot.gam()}, however, there is no
+% options for interactive construction of the plots yet. 
+
 }
 
 \seealso{
@@ -126,7 +146,6 @@ contains further information and examples.
   \code{\link{vglm}}.
 }
 \examples{
-data(coalminers)
 coalminers = transform(coalminers, Age = (age - 42) / 5)
 fit = vgam(cbind(nBnW,nBW,BnW,BW) ~ s(Age), binom2.or(zero=NULL), coalminers)
 \dontrun{

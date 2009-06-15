@@ -97,7 +97,7 @@ ymat = rfgm(n = 1000, alpha=rhobit(3, inverse=TRUE))
 fit = vglm(ymat ~ 1, fam=fgm, trace=TRUE)
 coef(fit, matrix=TRUE)
 Coef(fit)
-fitted(fit)[1:5,]
+head(fitted(fit))
 }
 \keyword{models}
 \keyword{regression}

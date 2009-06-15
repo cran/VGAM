@@ -131,7 +131,9 @@ elogit(theta, earg = list(min=0, max=1), inverse = FALSE, deriv = 0,
     \code{\link{probit}},
     \code{\link{cloglog}},
     \code{\link{cauchit}},
+    \code{\link{logistic1}},
     \code{\link{loge}}.
+
  }
 \examples{
 p = seq(0.01, 0.99, by=0.01)

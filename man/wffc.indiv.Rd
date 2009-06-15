@@ -1,7 +1,7 @@
 \name{wffc.indiv}
 \alias{wffc.indiv}
 \docType{data}
-\title{ 2008 World Fly Fishing Championships (Individual results) }
+\title{ 2008 World Fly Fishing Championships (Individual results) Data}
 \description{
   Individual competitors' results of the 2008 FIPS-MOUCHE
   World Fly Fishing Championships held in Rotorua, New Zealand during
@@ -32,18 +32,16 @@
   details and links.
 
 }
-\source{
-  \url{http://www.2008worldflyfishingchamps.com/}.
-}
+%\source{
+%  \url{http://www.2008worldflyfishingchamps.com/}.
+%}
 \references{
-  Yee, T. W. (2008)
-  Vector generalized linear and additive models, with
-  applications to the 2008 World Fly Fishing Championships.
+  Yee, T. W. (2009)
+  VGLMs and VGAMs: an overview for applications in fisheries research.
   In preparation.
 
 }
 \examples{
-data(wffc.indiv)
 summary(wffc.indiv)
 }
 \keyword{datasets}

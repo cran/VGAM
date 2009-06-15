@@ -176,7 +176,6 @@ logit("a", short=FALSE, tag=TRUE)
 logoff(1:5, earg=list(offset=1))  # Same as log(1:5 + 1)
 powl(1:5, earg=list(power=2))     # Same as (1:5)^2
 
-data(hunua)
 fit1 = vgam(agaaus ~ altitude, binomialff(link=cloglog), hunua)    # ok
 fit2 = vgam(agaaus ~ altitude, binomialff(link="cloglog"), hunua)  # ok
 

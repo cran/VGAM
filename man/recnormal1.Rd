@@ -79,13 +79,8 @@ recnormal1(lmean="identity", lsd="loge",
 n = 10000
 mymean = 100
 # First value is reference value or trivial record
-rawy = c(mymean, rnorm(n, me=mymean, sd=16))
-
-# Keep only observations that are records
-delete = c(FALSE, rep(TRUE, len=n))
-for(i in 2:length(rawy))
-    if(rawy[i] > max(rawy[1:(i-1)])) delete[i] = FALSE
-(y = rawy[!delete])
+rawy = c(mymean, rnorm(n, me=mymean, sd=exp(3)))
+(y = unique(cummax(rawy))) # Keep only observations that are records
 
 fit = vglm(y ~ 1, recnormal1, trace=TRUE, maxit=200)
 coef(fit, matrix=TRUE)
@@ -94,4 +89,10 @@ summary(fit)
 }
 \keyword{models}
 \keyword{regression}
+
+%# Keep only observations that are records
+%delete = c(FALSE, rep(TRUE, len=n))
+%for(i in 2:length(rawy))
+%    if(rawy[i] > max(rawy[1:(i-1)])) delete[i] = FALSE
+%(y = rawy[!delete])
 

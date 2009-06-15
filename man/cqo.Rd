@@ -326,6 +326,10 @@ Constrained additive ordination.
   With multivariate binary responses, one must use \code{mv=TRUE} to
   indicate that the response (matrix) is multivariate. Otherwise, it is
   interpreted as a single binary response variable.
+  In Example 4 below, the deviance residuals are plotted for each species.
+  This is useful as a diagnostic plot.
+  This is done by (re)regressing each species separately against the latent
+  variable.
 
   Sometime in the future, this function might handle input of the form
   \code{cqo(x, y)}, where \code{x} and \code{y} are matrices containing
@@ -406,24 +410,24 @@ contains further information and examples.
 }
 \examples{
 # Example 1; Fit an unequal tolerances model to the hunting spiders data
-data(hspider)
 hspider[,1:6]=scale(hspider[,1:6]) # Standardize the environmental variables
 set.seed(1234)
-p1 = cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi, Auloalbi, 
-               Pardlugu, Pardmont, Pardnigr, Pardpull, Trocterr, Zoraspin) ~
-         WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
-         fam=poissonff, data=hspider, Crow1positive=FALSE, ITol=FALSE)
-sort(p1@misc$deviance.Bestof) # A history of all the iterations
-if(deviance(p1) > 1177) stop("suboptimal fit obtained")
+p1ut = cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,
+                 Auloalbi, Pardlugu, Pardmont, Pardnigr, Pardpull,
+                 Trocterr, Zoraspin) ~
+           WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
+           fam=poissonff, data=hspider, Crow1positive=FALSE, ITol=FALSE)
+sort(p1ut@misc$deviance.Bestof) # A history of all the iterations
+if(deviance(p1ut) > 1177) stop("suboptimal fit obtained")
 
 \dontrun{
-S = ncol(p1@y) # Number of species
+S = ncol(p1ut@y) # Number of species
 clr = (1:(S+1))[-7] # omits yellow
-lvplot(p1, y=TRUE, lcol=clr, pch=1:S, pcol=clr, las=1) # ordination diagram
-legend("topright", leg=colnames(p1@y), col=clr,
+lvplot(p1ut, y=TRUE, lcol=clr, pch=1:S, pcol=clr, las=1) # ordination diagram
+legend("topright", leg=colnames(p1ut@y), col=clr,
        pch=1:S, merge=TRUE, bty="n", lty=1:S, lwd=2)
 }
-(cp = Coef(p1))
+(cp = Coef(p1ut))
 
 (a = cp@lv[cp@lvOrder])  # The ordered site scores along the gradient
 # Names of the ordered sites along the gradient:
@@ -433,22 +437,23 @@ a = a[!is.na(a)] # Delete the species that is not unimodal
 names(a)         # Names of the ordered optima along the gradient
 
 \dontrun{
-trplot(p1, whichSpecies=1:3, log="xy", type="b", lty=1, lwd=2,
+trplot(p1ut, whichSpecies=1:3, log="xy", type="b", lty=1, lwd=2,
        col=c("blue","red","green"), label=TRUE) -> ii # trajectory plot
 legend(0.00005, 0.3, paste(ii$species[,1], ii$species[,2], sep=" and "),
        lwd=2, lty=1, col=c("blue","red","green"))
 abline(a=0, b=1, lty="dashed")
 
-S = ncol(p1@y) # Number of species
+S = ncol(p1ut@y) # Number of species
 clr = (1:(S+1))[-7] # omits yellow
-persp(p1, col=clr, label=TRUE, las=1) # perspective plot
+persp(p1ut, col=clr, label=TRUE, las=1) # perspective plot
 }
 
 # Example 2: A rank-2 equal tolerances CQO model with Poisson data
 # This example is numerically fraught.
 set.seed(555)
-p2 = cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi, Auloalbi,
-               Pardlugu, Pardmont, Pardnigr, Pardpull, Trocterr, Zoraspin) ~
+p2 = cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,
+               Auloalbi, Pardlugu, Pardmont, Pardnigr, Pardpull,
+               Trocterr, Zoraspin) ~
          WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
          fam=poissonff, data=hspider, Crow1positive=FALSE,
 #        ITol=FALSE, EqualTol=TRUE,
@@ -469,18 +474,53 @@ mydata = rcqo(n, p, S, fam="binomial", hiabundance=4,
               EqualTol=TRUE, ESOpt=TRUE, EqualMax=TRUE)
 myform = attr(mydata, "formula")
 set.seed(1234)
-b1 = cqo(myform, fam=binomialff(mv=TRUE, link="cloglog"), data=mydata)
-sort(b1@misc$deviance.Bestof) # A history of all the iterations
+b1et = cqo(myform, fam=binomialff(mv=TRUE, link="cloglog"), data=mydata)
+sort(b1et@misc$deviance.Bestof) # A history of all the iterations
 \dontrun{
-lvplot(b1, y=TRUE, lcol=1:S, pch=1:S, pcol=1:S, las=1)
+lvplot(b1et, y=TRUE, lcol=1:S, pch=1:S, pcol=1:S, las=1)
 }
-Coef(b1)
+Coef(b1et)
 
 # Compare the fitted model with the 'truth'
-cbind(truth=attr(mydata, "ccoefficients"), fitted=ccoef(b1))
+cbind(truth=attr(mydata, "ccoefficients"), fitted=ccoef(b1et))
+
+
+# Example 4: Plot the deviance residuals for diagnostic purposes
+set.seed(1234)
+p1et = cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,
+                 Auloalbi, Pardlugu, Pardmont, Pardnigr, Pardpull,
+                 Trocterr, Zoraspin) ~
+           WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
+           fam=poissonff, data=hspider, ITol=TRUE, trace=FALSE)
+sort(p1et@misc$deviance.Bestof) # A history of all the iterations
+if(deviance(p1et) > 1586) stop("suboptimal fit obtained")
+S = ncol(p1et@y)
+par(mfrow=c(3,4))
+for(ii in 1:S) {
+    tempdata = data.frame(lv1 = c(lv(p1et)), sppCounts = p1et@y[,ii])
+    tempdata = transform(tempdata, myOffset = -0.5 * lv1^2)
+
+# For species ii, refit the model to get the deviance residuals
+    fit1 = vglm(sppCounts ~ offset(myOffset) + lv1, fam=poissonff,
+                data=tempdata, trace=FALSE)
+
+# For checking: this should be 0
+    print("max(abs(c(Coef(p1et)@B1[1,ii], Coef(p1et)@A[ii,1]) - coef(fit1)))")
+    print( max(abs(c(Coef(p1et)@B1[1,ii], Coef(p1et)@A[ii,1]) - coef(fit1))) )
+
+#   # Plot the deviance residuals
+    devresid = resid(fit1, type = "deviance")
+    predvalues = predict(fit1) + fit1@offset
+    oo = with(tempdata, order(lv1))
+\dontrun{
+    with(tempdata, plot(lv1, predvalues + devresid, col="darkgreen",
+                        xlab="lv1", ylab="", main=colnames(p1et@y)[ii]))
+    with(tempdata, lines(lv1[oo], predvalues[oo], col="blue"))
+}
+}
 }
 \keyword{models}
 \keyword{regression}
 
-%legend("topright", x=1, y=135, leg=colnames(p1@y), col=clr,
+%legend("topright", x=1, y=135, leg=colnames(p1ut@y), col=clr,
 %       pch=1:S, merge=TRUE, bty="n", lty=1:S, lwd=2)

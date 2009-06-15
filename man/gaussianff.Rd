@@ -134,7 +134,7 @@ vcov(fit)
 vcov(lmfit)
 
 t(weights(fit, type="prior"))         # Unweighted observations
-weights(fit, type="working")[1:4,]    # Identity matrices
+head(weights(fit, type="working"))    # Identity matrices
 
 # Reduced-rank VLM (rank-1)
 fit2 = rrvglm(cbind(y1,y2,y3) ~ x, gaussianff, data=d)

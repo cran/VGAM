@@ -56,6 +56,11 @@ constraints(object, ...)
   and \code{\link{vgam}} allows constraint matrices to
   be inputted. If so, then \code{constraints(fit)} should
   return the same as the input.
+
+The \code{xij} argument does not affect constraint matrices; rather,
+it allows each row of the constraint matrix to be multiplied by a
+specified vector.
+
 }
 
 \references{
@@ -73,9 +78,6 @@ Reduced-rank vector generalized linear models.
 information.
 }
 
-\section{Warning }{The \code{xij} argument changes things,
-  and this has not been fully resolved yet.
-}
 
 \seealso{
   VGLMs are described in \code{\link{vglm-class}};
@@ -85,10 +87,11 @@ information.
   found in many \pkg{VGAM}
   family functions are a way of creating/modifying constraint
   matrices conveniently, e.g., see \code{\link{zero}}.
+  See \code{\link{CommonVGAMffArguments}} for more information.
+
 }
 \examples{
 # Fit the proportional odds model
-data(pneumo)
 pneumo = transform(pneumo, let=log(exposure.time))
 (fit = vglm(cbind(normal, mild, severe) ~ let,
            cumulative(parallel=TRUE, reverse=TRUE), pneumo))

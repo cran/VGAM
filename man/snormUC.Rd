@@ -14,7 +14,7 @@
 
 }
 \usage{
-dsnorm(x, location = 0, scale = 1, shape = 0)
+dsnorm(x, location = 0, scale = 1, shape = 0, log = FALSE)
 %psnorm(q, lambda)
 %qsnorm(p, lambda)
 rsnorm(n, location = 0, scale = 1, shape = 0)
@@ -35,6 +35,12 @@ rsnorm(n, location = 0, scale = 1, shape = 0)
   The shape parameter. It is called \eqn{\alpha}{alpha} in
   \code{\link{skewnormal1}}.
   }
+  \item{log}{
+  Logical.
+  If \code{log=TRUE} then the logarithm of the density is returned.
+
+  }
+
 }
 \details{
   See \code{\link{skewnormal1}}, which currently only estimates the shape

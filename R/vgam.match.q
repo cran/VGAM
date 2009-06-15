@@ -38,7 +38,7 @@ vgam.match <- function(x, all.knots=FALSE, nk=NULL) {
     }
 
     if(!is.null(attributes(x)$NAs) || any(is.na(x)))
-        stop("can't smooth on variables with NAs") 
+        stop("cannot smooth on variables with NAs") 
 
     sx <- unique(sort(as.vector(x))) # "as.vector()" strips off attributes
     o <- match(x, sx)  # as.integer(match(x, sx))      # sx[o]==x

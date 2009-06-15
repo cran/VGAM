@@ -1,7 +1,7 @@
 \name{coalminers}
 \alias{coalminers}
 \docType{data}
-\title{ Breathlessness and Wheeze Amongst Coalminers }
+\title{ Breathlessness and Wheeze Amongst Coalminers Data}
 \description{
   Coalminers who are smokers without radiological pneumoconiosis,
   classified by age, breathlessness and wheeze.
@@ -33,7 +33,6 @@
 
 }
 \examples{
-data(coalminers)
 str(coalminers)
 }
 \keyword{datasets}

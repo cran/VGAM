@@ -81,7 +81,6 @@ this function should not be called directly.
 }
 
 \examples{
-data(bminz)
 fit = vgam(BMI ~ s(age, df=c(4,2)), fam=lms.bcn(zero=1), data=bminz)
 \dontrun{
 y = seq(15, 43, by=0.25)
@@ -92,8 +91,8 @@ deplot(fit, x0=60, y=y, add=TRUE, col="red", llwd=2) -> a
 
 names(a@post$deplot)
 a@post$deplot$newdata
-a@post$deplot$y[1:5]
-a@post$deplot$density[1:5]
+head(a@post$deplot$y)
+head(a@post$deplot$density)
 }
 }
 \keyword{dplot}

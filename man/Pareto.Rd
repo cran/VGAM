@@ -12,7 +12,7 @@
 
 }
 \usage{
-dpareto(x, location, shape)
+dpareto(x, location, shape, log=FALSE)
 ppareto(q, location, shape)
 qpareto(p, location, shape)
 rpareto(n, location, shape)
@@ -22,6 +22,12 @@ rpareto(n, location, shape)
   \item{p}{vector of probabilities.}
   \item{n}{number of observations. Must be a single positive integer. }
   \item{location, shape}{the \eqn{\alpha}{alpha} and \eqn{k} parameters.}
+  \item{log}{
+  Logical.
+  If \code{log=TRUE} then the logarithm of the density is returned.
+
+  }
+
 }
 \value{
   \code{dpareto} gives the density,

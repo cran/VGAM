@@ -5,7 +5,7 @@
 
 
 callcqof = function(cmatrix, etamat, xmat, ymat, wvec,
-                    xbig.save1, modelno, Control,
+                    X_vlm_1save, modelno, Control,
                     n, M, p1star, p2star, nice31, allofit=FALSE) {
     ocmatrix = cmatrix
     control = Control
@@ -37,7 +37,7 @@ callcqof = function(cmatrix, etamat, xmat, ymat, wvec,
                 if(control$trace) {
                     cat(paste("Taking evasive action for latent variable ",
                               lookat, ".\n", sep=""))
-                    if(exists("flush.console")) flush.console()
+                    flush.console()
                 }
                 rmfromVGAMenv(c("etamat", "z", "U", "beta", "deviance",
                                 "cmatrix", "ocmatrix"), prefix=".VGAM.CQO.")
@@ -67,7 +67,7 @@ callcqof = function(cmatrix, etamat, xmat, ymat, wvec,
                p1star=p1star, p2star=p2star, nice31=nice31, lenbeta,
                itol=itol, control$trace, p1, p2, control$method.init)
     bnumat = if(nice31) matrix(0,nstar,pstar) else
-             cbind(matrix(0,nstar,p2star), xbig.save1)
+             cbind(matrix(0,nstar,p2star), X_vlm_1save)
 if(TRUE) {
 }
 
@@ -107,14 +107,14 @@ if(TRUE) {
         rmfromVGAMenv(c("etamat", "z", "U", "beta", "deviance",
                         "cmatrix", "ocmatrix"), prefix=".VGAM.CQO.")
     }
-    if(control$trace && exists("flush.console"))
+    if(control$trace)
         flush.console()
     if(allofit) list(deviance=ans1$deviance, coefficients=ans1$beta) else
         ans1$deviance
 }
 
 calldcqof = function(cmatrix, etamat, xmat, ymat, wvec,
-                     xbig.save1, modelno, Control,
+                     X_vlm_1save, modelno, Control,
                      n, M, p1star, p2star, nice31, allofit=FALSE) {
     control = Control
     Rank = control$Rank
@@ -147,7 +147,7 @@ calldcqof = function(cmatrix, etamat, xmat, ymat, wvec,
                 if(control$trace) {
                     cat(paste("Taking evasive action for latent variable ",
                               lookat, ".\n", sep=""))
-                    if(exists("flush.console")) flush.console()
+                    flush.console()
                 }
                 rmfromVGAMenv(c("etamat", "z", "U", "beta", "deviance",
                                 "cmatrix", "ocmatrix"), prefix=".VGAM.CQO.")
@@ -178,9 +178,8 @@ calldcqof = function(cmatrix, etamat, xmat, ymat, wvec,
                itol=itol, control$trace,
                p1, p2, control$method.init) # other ints
     bnumat = if(nice31) matrix(0,nstar,pstar) else
-             cbind(matrix(0,nstar,p2star), xbig.save1)
-    if(exists("flush.console"))
-        flush.console()
+             cbind(matrix(0,nstar,p2star), X_vlm_1save)
+    flush.console()
 
     ans1 <- 
     dotFortran(name="dcqof", numat=as.double(numat), as.double(ymat), 
@@ -208,8 +207,7 @@ calldcqof = function(cmatrix, etamat, xmat, ymat, wvec,
         warning(paste("error code in calldcqof =", ans1$errcode))
     }
 
-    if(exists("flush.console"))
-        flush.console()
+    flush.console()
     ans1$deriv
 }
 
@@ -290,7 +288,6 @@ cqo.fit <- function(x, y, w=rep(1, length(x[, 1])),
 
     Rank <- control$Rank
     rrcontrol <- control  #
-    backchat = FALSE  # Specifically for rrr.init.expression
 
     if(length(family@initialize))
         eval(family@initialize)       # Initialize mu and M (and optionally w)
@@ -314,8 +311,8 @@ cqo.fit <- function(x, y, w=rep(1, length(x[, 1])),
         if(any(is.na(index)))
             stop("Dzero argument didn't fully match y-names")
         if(length(index) == M)
-            stop(paste("all linear predictors are linear in the",
-                       "latent variable(s); so set Quadratic=FALSE"))
+            stop("all linear predictors are linear in the",
+                 " latent variable(s); so set 'Quadratic=FALSE'")
         rrcontrol$Dzero = control$Dzero = index
     }
 
@@ -399,7 +396,7 @@ cqo.fit <- function(x, y, w=rep(1, length(x[, 1])),
     ncolBlist <- unlist(lapply(Blist, ncol))
     dimB <- sum(ncolBlist)
 
-    xbig.save <- if(nice31) {
+    X_vlm_save <- if(nice31) {
         NULL 
     } else {
         tmp500=lm2qrrvlm.model.matrix(x=x,Blist=Blist,C=Cmat,control=control)
@@ -412,9 +409,9 @@ cqo.fit <- function(x, y, w=rep(1, length(x[, 1])),
         lm2vlm.model.matrix(xsmall.qrr, B.list, xij=control$xij)
     }
 
-    if(length(coefstart) && length(xbig.save)) {
-        eta <- if(ncol(xbig.save) > 1) xbig.save %*% coefstart +
-                   offset else xbig.save * coefstart + offset
+    if(length(coefstart) && length(X_vlm_save)) {
+        eta <- if(ncol(X_vlm_save) > 1) X_vlm_save %*% coefstart +
+                   offset else X_vlm_save * coefstart + offset
         eta <- if(M > 1) matrix(eta, ncol=M, byrow=TRUE) else c(eta) 
         mu <- family@inverse(eta, extra)
     }
@@ -535,8 +532,7 @@ cqo.fit <- function(x, y, w=rep(1, length(x[, 1])),
                             if(Rank==1) "lv" else paste("lv", 1:Rank, sep=""))
             if(p2>5) print(ans, dig=3) else  print(t(ans), dig=3)
         }
-        if(exists("flush.console"))
-            flush.console()
+        flush.console()
     })
     sd.scale.X2.expression = expression({
         if(length(isdlv)) {
@@ -604,8 +600,8 @@ cqo.fit <- function(x, y, w=rep(1, length(x[, 1])),
     } else {
         xij = NULL # temporary measure
         U = t(sqrt(wts))
-        tmp = vlm.wfit(x=X1, z=etamat, Blist=NULL, U=U, matrix.out=TRUE,
-                       XBIG=FALSE, rss=TRUE, qr=FALSE, xij=xij)
+        tmp = vlm.wfit(xmat=X1, zmat=etamat, Blist=NULL, U=U, matrix.out=TRUE,
+                       is.vlmX=FALSE, rss=TRUE, qr=FALSE, xij=xij)
         ans = crow1C(as.matrix(tmp$resid), rep(Crow1positive, len=effrank))
         if(effrank < Rank) {
             ans = cbind(ans, ans.save[,-(1:effrank)]) # ans is better
@@ -643,8 +639,7 @@ cqo.init.derivative.expression <- expression({
     } else "Quasi-Newton" 
     if(trace && control$OptimizeWrtC) {
         cat("\nUsing", which.optimizer, "algorithm\n")
-        if(exists("flush.console"))
-            flush.console()
+        flush.console()
     } 
 
 
@@ -661,14 +656,14 @@ if(FALSE) {
         get("CQO.FastAlgorithm", envir = VGAMenv)) else
     (exists("CQO.FastAlgorithm",inherits=TRUE) && CQO.FastAlgorithm)
     if(!canfitok)
-        stop("can't fit this model using fast algorithm")
+        stop("cannot fit this model using fast algorithm")
 
     p2star = if(nice31) 
       ifelse(control$IToleran, Rank, Rank+0.5*Rank*(Rank+1)) else
       (NOS*Rank + Rank*(Rank+1)/2 * ifelse(control$EqualTol,1,NOS))
     p1star = if(nice31) ifelse(modelno==3 || modelno==5,1+p1,p1) else
-             (ncol(xbig.save)-p2star)
-    xbig.save1 = if(p1star > 0) xbig.save[,-(1:p2star)] else NULL
+             (ncol(X_vlm_save)-p2star)
+    X_vlm_1save = if(p1star > 0) X_vlm_save[,-(1:p2star)] else NULL
 })
     
 
@@ -686,7 +681,7 @@ if(is.R()) {
                     parscale=rep(control$Parscale, len=length(Cmat)),
                     maxit=control$Maxit.optim),
                 etamat=eta, xmat=x, ymat=y, wvec=w,
-                xbig.save1 = xbig.save1,
+                X_vlm_1save = X_vlm_1save,
                 modelno=modelno, Control=control,
                 n=n, M=M, p1star=p1star, p2star=p2star, nice31=nice31)
 
@@ -720,8 +715,7 @@ tmp.fitted = alt$fitted  # contains \bI_{Rank} \bnu if Corner
 if(trace && control$OptimizeWrtC) {
     cat("\n")
     cat(which.optimizer, "using", if(is.R()) "optim():" else "nlminb():", "\n")
-    cat("Objective =", if(is.R()) 
-         quasi.newton$value else format(quasi.newton$objective), "\n")
+    cat("Objective =", quasi.newton$value, "\n")
     cat("Parameters (= c(C)) = ", if(length(quasi.newton$par) < 5) "" else "\n")
     cat(if(is.R()) alt$Cmat else format(alt$Cmat), fill=TRUE)
     cat("\n")
@@ -734,8 +728,7 @@ if(trace && control$OptimizeWrtC) {
     if(length(quasi.newton$message))
         cat("Message =", quasi.newton$message, "\n")
     cat("\n")
-    if(exists("flush.console"))
-        flush.console()
+    flush.console()
 }
 
 Amat = alt$Amat  # 

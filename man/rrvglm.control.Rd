@@ -10,7 +10,7 @@
 rrvglm.control(Rank = 1, Algorithm = c("alternating", "derivative"),
     Corner = TRUE, Uncor = FALSE, Wmat = NULL, Svd.arg = FALSE, 
     Index.corner = if (length(Structural.zero)) 
-    ((1:1000)[-Structural.zero])[1:Rank] else 1:Rank,
+    head((1:1000)[-Structural.zero], Rank) else 1:Rank,
     Alpha = 0.5, Bestof = 1, Cinit = NULL,
     Etamat.colmax = 10,
     SD.Cinit = 0.02, Structural.zero = NULL,
@@ -197,7 +197,7 @@ rrvglm.control(Rank = 1, Algorithm = c("alternating", "derivative"),
   The arguments in this function begin with an upper case letter to help
   avoid interference with those of \code{\link{vglm.control}}.
 
-  In the example below a rank-1 stereotype model (Anderson, 1984)
+  In the example below a rank-1 \emph{stereotype} model (Anderson, 1984)
   is fitted.
 
 }
@@ -214,7 +214,6 @@ rrvglm.control(Rank = 1, Algorithm = c("alternating", "derivative"),
 }
 
 \examples{
-data(pneumo)
 set.seed(111)
 pneumo = transform(pneumo, let=log(exposure.time),
             x1 = runif(nrow(pneumo)))  # x1 is some unrelated covariate

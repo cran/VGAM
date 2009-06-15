@@ -118,9 +118,9 @@ ymat = rbilogis4(n <- 1000, loc1=5, loc2=7, scale2=exp(1))
 fit = vglm(ymat ~ 1, fam=bilogistic4, trace=TRUE)
 coef(fit, matrix=TRUE)
 Coef(fit)
-fitted(fit)[1:4,]
+head(fitted(fit))
 vcov(fit)
-weights(fit, type="w")[1:4,]
+head(weights(fit, type="w"))
 summary(fit)
 }
 \keyword{models}

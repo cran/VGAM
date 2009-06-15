@@ -77,8 +77,8 @@ summary(fit)
 summary(fit2)
 Coef(fit2)   # = MLE of p
 Coef(fit)    # = MLE of p
-fitted(fit2)[1:2]
-fitted(fit)[1:2]
+head(fitted(fit2))
+head(fitted(fit))
 }
 \keyword{models}
 \keyword{regression}

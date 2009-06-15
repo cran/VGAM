@@ -31,24 +31,24 @@ mix2normal1 = function(lphi="logit",
     if(mode(lsd) != "character" && mode(lsd) != "name")
         lsd = as.character(substitute(lsd))
     if(!is.Numeric(qmu, allow=2, positive=TRUE) || any(qmu >= 1))
-        stop("bad input for argument \"qmu\"")
+        stop("bad input for argument 'qmu'")
     if(length(iphi) && (!is.Numeric(iphi, allow=1, positive=TRUE) || iphi>= 1))
-        stop("bad input for argument \"iphi\"")
+        stop("bad input for argument 'iphi'")
     if(length(imu1) && !is.Numeric(imu1))
-        stop("bad input for argument \"imu1\"")
+        stop("bad input for argument 'imu1'")
     if(length(imu2) && !is.Numeric(imu2))
-        stop("bad input for argument \"imu2\"")
+        stop("bad input for argument 'imu2'")
     if(length(isd1) && !is.Numeric(isd1, positive=TRUE))
-        stop("bad input for argument \"isd1\"")
+        stop("bad input for argument 'isd1'")
     if(length(isd2) && !is.Numeric(isd2, positive=TRUE))
-        stop("bad input for argument \"isd2\"")
+        stop("bad input for argument 'isd2'")
     if(!is.list(ephi)) ephi = list()
     if(!is.list(emu1)) emu1 = list()
     if(!is.list(emu2)) emu2 = list()
     if(!is.list(esd1)) esd1 = list()
     if(!is.list(esd2)) esd2 = list()
     if(!is.logical(equalsd) || length(equalsd) != 1)
-        stop("bad input for argument \"equalsd\"")
+        stop("bad input for argument 'equalsd'")
     if(!is.Numeric(nsimEIM, allow=1, integ=TRUE) || nsimEIM <= 10)
         stop("'nsimEIM' should be an integer greater than 10")
 
@@ -191,7 +191,7 @@ mix2normal1 = function(lphi="logit",
             run.mean = ((ii-1) * run.mean + temp3) / ii
         }
         wz = if(intercept.only)
-            matrix(apply(run.mean,2,mean), n, dimm(M), byrow=TRUE) else run.mean
+            matrix(colMeans(run.mean), n, dimm(M), byrow=TRUE) else run.mean
 
         dtheta.detas = cbind(dphi.deta,dmu1.deta,dsd1.deta,dmu2.deta,dsd2.deta)
         index0 = iam(NA, NA, M=M, both=TRUE, diag=TRUE)
@@ -219,13 +219,13 @@ mix2poisson = function(lphi="logit", llambda="loge",
     if(mode(llambda) != "character" && mode(llambda) != "name")
         llambda = as.character(substitute(llambda))
     if(!is.Numeric(qmu, allow=2, positive=TRUE) || any(qmu >= 1))
-        stop("bad input for argument \"qmu\"")
+        stop("bad input for argument 'qmu'")
     if(length(iphi) && (!is.Numeric(iphi, allow=1, positive=TRUE) || iphi>= 1))
-        stop("bad input for argument \"iphi\"")
+        stop("bad input for argument 'iphi'")
     if(length(il1) && !is.Numeric(il1))
-        stop("bad input for argument \"il1\"")
+        stop("bad input for argument 'il1'")
     if(length(il2) && !is.Numeric(il2))
-        stop("bad input for argument \"il2\"")
+        stop("bad input for argument 'il2'")
     if(!is.list(ephi)) ephi = list()
     if(!is.list(el1)) el1 = list()
     if(!is.list(el2)) el2 = list()
@@ -344,7 +344,7 @@ mix2poisson = function(lphi="logit", llambda="loge",
             run.mean = ((ii-1) * run.mean + temp3) / ii
         }
         wz = if(intercept.only)
-            matrix(apply(run.mean,2,mean), n, dimm(M), byrow=TRUE) else run.mean
+            matrix(colMeans(run.mean), n, dimm(M), byrow=TRUE) else run.mean
 
         dtheta.detas = cbind(dphi.deta, dlambda1.deta, dlambda2.deta)
         index0 = iam(NA, NA, M=M, both=TRUE, diag=TRUE)
@@ -373,13 +373,13 @@ mix2exp = function(lphi="logit", llambda="loge",
     if(mode(llambda) != "character" && mode(llambda) != "name")
         llambda = as.character(substitute(llambda))
     if(!is.Numeric(qmu, allow=2, positive=TRUE) || any(qmu >= 1))
-        stop("bad input for argument \"qmu\"")
+        stop("bad input for argument 'qmu'")
     if(length(iphi) && (!is.Numeric(iphi, allow=1, positive=TRUE) || iphi>= 1))
-        stop("bad input for argument \"iphi\"")
+        stop("bad input for argument 'iphi'")
     if(length(il1) && !is.Numeric(il1))
-        stop("bad input for argument \"il1\"")
+        stop("bad input for argument 'il1'")
     if(length(il2) && !is.Numeric(il2))
-        stop("bad input for argument \"il2\"")
+        stop("bad input for argument 'il2'")
     if(!is.list(ephi)) ephi = list()
     if(!is.list(el1)) el1 = list()
     if(!is.list(el2)) el2 = list()
@@ -495,7 +495,7 @@ mix2exp = function(lphi="logit", llambda="loge",
             run.mean = ((ii-1) * run.mean + temp3) / ii
         }
         wz = if(intercept.only)
-            matrix(apply(run.mean,2,mean), n, dimm(M), byrow=TRUE) else run.mean
+            matrix(colMeans(run.mean), n, dimm(M), byrow=TRUE) else run.mean
 
         dtheta.detas = cbind(dphi.deta, dlambda1.deta, dlambda2.deta)
         index0 = iam(NA, NA, M=M, both=TRUE, diag=TRUE)

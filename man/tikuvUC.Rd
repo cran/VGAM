@@ -12,7 +12,7 @@
 
 }
 \usage{
-dtikuv(x, d, mean=0, sigma=1)
+dtikuv(x, d, mean=0, sigma=1, log=FALSE)
 ptikuv(q, d, mean=0, sigma=1)
 qtikuv(p, d, mean=0, sigma=1, ...)
 rtikuv(n, d, mean=0, sigma=1, Smallno=1.0e-6)
@@ -40,6 +40,12 @@ rtikuv(n, d, mean=0, sigma=1, Smallno=1.0e-6)
   Arguments that can be passed into \code{\link[stats]{uniroot}}.
 
   }
+  \item{log}{
+  Logical.
+  If \code{log=TRUE} then the logarithm of the density is returned.
+
+  }
+
 }
 \value{
   \code{dtikuv} gives the density,

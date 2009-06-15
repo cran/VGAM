@@ -41,7 +41,6 @@
 
 }
 \examples{
-data(toxop)
 \dontrun{
 with(toxop, plot(rainfall, positive/ssize, col="blue"))
 plot(toxop, col="blue")

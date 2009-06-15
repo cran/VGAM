@@ -241,7 +241,6 @@ Vector generalized additive models.
 
 \examples{
 # Fit a nonparametric proportional odds model
-data(pneumo)
 pneumo = transform(pneumo, let=log(exposure.time))
 vgam(cbind(normal, mild, severe) ~ s(let),
      cumulative(parallel=TRUE), pneumo)

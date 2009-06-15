@@ -45,14 +45,17 @@ rrvglm <- function(formula,
     xvars <- as.character(attr(mt, "variables"))[-1]
     if ((yvar <- attr(mt, "response")) > 0)
         xvars <- xvars[-yvar]
-    xlev <- if (length(xvars) > 0) {
-        xlev <- lapply(mf[xvars], levels)
-        xlev[!sapply(xlev, is.null)]
-    }
 
-    y <- model.response(mf, "numeric") # model.extract(mf, "response")
-    x <- model.matrix(mt, mf, contrasts)
-    attr(x, "assign") <- attrassigndefault(x, mt) # So as to make it like Splus
+
+
+    xlev = .getXlevels(mt, mf)
+    y <- model.response(mf, "any")
+    x <- if (!is.empty.model(mt)) model.matrix(mt, mf, contrasts) else
+         matrix(, NROW(y), 0)
+    attr(x, "assign") = attrassigndefault(x, mt)
+
+
+
     offset <- model.offset(mf)
     if(is.null(offset)) 
         offset <- 0 # yyy ???
@@ -67,7 +70,7 @@ rrvglm <- function(formula,
     if(is.function(family))
         family <- family()
     if(!inherits(family, "vglmff")) {
-        stop(paste("family=", family, "is not a VGAM family function"))
+        stop("'family=", family, "' is not a VGAM family function")
     }
 
     eval(vcontrol.expression)
@@ -78,8 +81,8 @@ rrvglm <- function(formula,
     # 10/12/04: testing for an empty (function) slot not elegant:
     if(control$Quadratic && control$FastAlgorithm &&
        length(as.list(family@deviance)) <= 1)
-        stop(paste("The fast algorithm requires the family",
-                   "function to have a deviance slot"))
+        stop("The fast algorithm requires the family ",
+             "function to have a deviance slot")
 
 
     rrvglm.fitter <- get(method)
@@ -165,6 +168,7 @@ rrvglm <- function(formula,
         slot(answer, "xlevels") = xlev
     if(y.arg)
         slot(answer, "y") = as.matrix(fit$y)
+    answer@misc$formula = formula
 
 
     slot(answer, "control") = fit$control

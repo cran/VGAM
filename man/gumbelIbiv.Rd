@@ -89,7 +89,7 @@ fit = vglm(ymat ~ 1, fam=gumbelIbiv, trace=TRUE)
 fit = vglm(ymat ~ 1, fam=gumbelIbiv, trace=TRUE, crit="coef")
 coef(fit, matrix=TRUE)
 Coef(fit)
-fitted(fit)[1:5,]
+head(fitted(fit))
 }
 \keyword{models}
 \keyword{regression}

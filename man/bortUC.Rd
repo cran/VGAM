@@ -12,7 +12,7 @@
 
 }
 \usage{
-dbort(x, Qsize=1, a=0.5)
+dbort(x, Qsize=1, a=0.5, log=FALSE)
 %pbort(q, Qsize=1, a=0.5)
 %qbort(p, Qsize=1, a=0.5)
 rbort(n, Qsize=1, a=0.5)
@@ -22,8 +22,15 @@ rbort(n, Qsize=1, a=0.5)
 % \item{p}{vector of probabilities.}
   \item{n}{number of observations.
     Must be a positive integer of length 1.}
-  \item{Qsize, a}{ See \code{\link{borel.tanner}}.
-    }
+  \item{Qsize, a}{
+  See \code{\link{borel.tanner}}.
+  }
+  \item{log}{
+  Logical.
+  If \code{log=TRUE} then the logarithm of the density is returned.
+
+  }
+
 }
 \value{
   \code{dbort} gives the density,

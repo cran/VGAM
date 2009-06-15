@@ -103,7 +103,7 @@ qtplot.lmscreg <- function(object,
         fitted.values <- as.matrix(fitted.values)
     } else {
         if(!is.numeric(percentiles))
-            stop("\"percentiles\" must be specified")
+            stop("'percentiles' must be specified")
 
         eta <- if(length(newdata)) predict(object, newdata=newdata, type="link") else
                object@predictors
@@ -275,10 +275,10 @@ qtplot.gumbel <-
              tcol.arg=par()$col, tadj=1, ...)
 {
     if(!is.logical(mpv) || length(mpv) != 1)
-        stop("bad input for \"mpv\"")
+        stop("bad input for 'mpv'")
     if(!length(percentiles) ||
        (!is.Numeric(percentiles, posit=TRUE) || max(percentiles) >= 100))
-        stop("bad input for \"percentiles\"")
+        stop("bad input for 'percentiles'")
 
 
 
@@ -289,7 +289,7 @@ qtplot.gumbel <-
         R <- rep(R, length=nrow(eta))
 
     if(!is.Numeric(percentiles))
-        stop("the \"percentiles\" argument needs to be assigned a value")
+        stop("the 'percentiles' argument needs to be assigned a value")
 
 
     extra = object@extra
@@ -670,14 +670,14 @@ rlplot.gev <-
              ...)
 {
     if(!is.Numeric(epsilon, allow=1) || abs(epsilon) > 0.10)
-        stop("bad input for \"epsilon\"")
+        stop("bad input for 'epsilon'")
     if(!is.Numeric(probability, posit=TRUE) || max(probability) >= 1 ||
        length(probability) < 5)
-        stop("bad input for \"probability\"")
+        stop("bad input for 'probability'")
     if(!is.logical(Log) || length(Log) != 1)
-        stop("bad input for argument \"Log\"")
+        stop("bad input for argument 'Log'")
     if(!is.logical(CI) || length(CI) != 1)
-        stop("bad input for argument \"CI\"")
+        stop("bad input for argument 'CI'")
     if(!object@misc$intercept.only)
        stop("object must be an intercept-only fit, i.e., y ~ 1 is the response")
 
@@ -759,6 +759,8 @@ if(!isGeneric("rlplot"))
 
 setMethod("rlplot",  "vglm", function(object, ...)
         rlplot.vglm(object, ...))
+
+
 
 
 

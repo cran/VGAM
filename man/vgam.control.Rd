@@ -7,14 +7,12 @@
  are set using this function. 
 }
 \usage{
-vgam.control(all.knots = FALSE, backchat = if (is.R()) FALSE else TRUE,
-             bf.epsilon = 1e-07, bf.maxit = 30, 
-             checkwz=TRUE,
-             criterion = names(.min.criterion.VGAM), 
+vgam.control(all.knots = FALSE, bf.epsilon = 1e-07, bf.maxit = 30, 
+             checkwz=TRUE, criterion = names(.min.criterion.VGAM),
              epsilon = 1e-07, maxit = 30, na.action = na.fail,
              nk = NULL, save.weight = FALSE, se.fit = TRUE,
              trace = FALSE, wzepsilon = .Machine$double.eps^0.75,
-             xij = NULL, ...)
+             ...)
 }
 %- maybe also `usage' for other objects documented here.
 \arguments{
@@ -34,10 +32,6 @@ in the formula.
   This increases very slowly with \eqn{n}
   so that the number of knots is approximately between 50 and 60
   for large \eqn{n}.
-  }
-  \item{backchat}{
-  logical indicating if a backchat is to be used (not
-  applicable in \R).
   }
   \item{bf.epsilon}{
   tolerance used by the modified vector
@@ -108,10 +102,12 @@ in the formula.
   weight matrices are sufficiently positive.
 
   }
-  \item{xij}{
-  formula giving terms making up a covariate-dependent term.
 
-  }
+% \item{xij}{
+% formula giving terms making up a covariate-dependent term.
+%
+% }
+
   \item{\dots}{
   other parameters that may be picked up from control
   functions that are specific to the \pkg{VGAM} family function.
@@ -157,6 +153,7 @@ Vector generalized additive models.
 
 \seealso{
   \code{\link{vgam}},
+  \code{\link{vglm.control}},
   \code{\link{vsmooth.spline}},
   \code{\link{vglm}}. 
 }
@@ -170,3 +167,10 @@ vgam(cbind(normal, mild, severe) ~ s(let, df=3), multinomial,
 \keyword{models}
 \keyword{regression}
 \keyword{smooth}
+
+
+
+% xij = NULL,
+
+
+

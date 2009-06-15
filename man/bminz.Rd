@@ -1,7 +1,7 @@
 \name{bminz}
 \alias{bminz}
 \docType{data}
-\title{ Body Mass Index of New Zealand Adults }
+\title{ Body Mass Index of New Zealand Adults Data}
 \description{
   The body mass indexes and ages from an approximate random 
   sample of 700 New Zealand adults.
@@ -12,8 +12,8 @@
   \describe{
     \item{age}{a numeric vector; their age (years). }
     \item{BMI}{a numeric vector; their body mass indexes, which is 
-    their weight divided by the square of their height (kg /
-     \eqn{m^2}{m^2} ).}
+    their weight divided by the square of their height
+    (kg / \eqn{m^2}{m^2}).}
   }
 }
 \details{
@@ -38,7 +38,6 @@ Health Study: design and baseline findings.
 }
 \examples{
 \dontrun{
-data(bminz)
 with(bminz, plot(age, BMI, col="blue"))
 fit = vgam(BMI ~ s(age, df=c(2,4,2)), fam=lms.yjn, bminz, tr=TRUE)
 qtplot(fit, pcol="blue", tcol="brown", lcol="brown")

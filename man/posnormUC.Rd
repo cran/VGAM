@@ -20,7 +20,7 @@ rposnorm(n, mean=0, sd=1)
   \item{x, q}{vector of quantiles.}
   \item{p}{vector of probabilities.}
   \item{n}{number of observations.
-    Must be a positive integer of length 1.}
+  If \code{length(n) > 1} then the length is taken to be the number required. }
   \item{mean, sd, log}{ see \code{\link[stats:Normal]{rnorm}}. }
 }
 \value{

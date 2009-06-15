@@ -105,7 +105,7 @@ y2 = successes2 / successes1
 fit = vglm(cbind(y1,y2) ~ x, seq2binomial, trace=TRUE, weight=mvector)
 coef(fit)
 coef(fit, mat=TRUE)
-fitted(fit)[1:5,]
+head(fitted(fit))
 }
 \keyword{models}
 \keyword{regression}

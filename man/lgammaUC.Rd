@@ -14,7 +14,7 @@
 
 }
 \usage{
-dlgamma(x, location=0, scale=1, k=1)
+dlgamma(x, location=0, scale=1, k=1, log=FALSE)
 plgamma(q, location=0, scale=1, k=1)
 qlgamma(p, location=0, scale=1, k=1)
 rlgamma(n, location=0, scale=1, k=1)
@@ -26,6 +26,12 @@ rlgamma(n, location=0, scale=1, k=1)
   \item{location}{the location parameter \eqn{a}.}
   \item{scale}{the (positive) scale parameter \eqn{b}.}
   \item{k}{the (positive) shape parameter \eqn{k}.}
+  \item{log}{
+  Logical.
+  If \code{log=TRUE} then the logarithm of the density is returned.
+
+  }
+
 }
 \value{
   \code{dlgamma} gives the density,

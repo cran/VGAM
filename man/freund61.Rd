@@ -167,7 +167,7 @@ fit =  vglm(ymat ~ 1, fam=freund61, trace=TRUE)
 coef(fit, matrix=TRUE)
 Coef(fit)
 vcov(fit)
-fitted(fit)[1:5,]
+head(fitted(fit))
 summary(fit)
 
 # y1 and y2 are independent, so fit an independence model

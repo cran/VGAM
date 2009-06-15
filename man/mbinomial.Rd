@@ -145,7 +145,7 @@ fit = vglm(y ~ 1 + ID + x2, trace=TRUE,
 dimnames(coef(fit, mat=TRUE))
 coef(fit, mat=TRUE)
 summary(fit)
-fitted(fit)[1:5]
+head(fitted(fit))
 objsizemb = function(object) round(object.size(object) / 2^20, dig=2)
 objsizemb(fit) # in Mb
 

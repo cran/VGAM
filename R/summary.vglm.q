@@ -22,8 +22,8 @@ summaryvglm <- function(object, correlation=FALSE, dispersion=NULL, digits=NULL)
     if(length(dispersion) && dispersion == 0 && 
        length(object@family@summary.dispersion) && 
        !object@family@summary.dispersion) {
-        stop(paste("Can't use the general VGLM formula (based on a residual",
-                   "sum of squares) for computing the dispersion parameter.")) 
+        stop("cannot use the general VGLM formula (based on a residual ",
+             "sum of squares) for computing the dispersion parameter")
     }
 
     stuff <- summaryvlm(as(object, "vlm"),
@@ -149,15 +149,15 @@ printsummary.vglm <- function(x, digits = NULL, quote = TRUE, prefix = "",
 
     if(!is.null(correl)) 
     {
-        p.big <- dim(correl)[2]
-        if(p.big > 1) 
+        ncol_X_vlm <- dim(correl)[2]
+        if(ncol_X_vlm > 1) 
         {
             cat("\nCorrelation of Coefficients:\n")
             ll <- lower.tri(correl)
             correl[ll] <- format(round(correl[ll], digits))
             correl[!ll] <- ""
-            print(correl[-1,  -p.big, drop = FALSE], quote = FALSE, digits = 
-                digits)
+            print(correl[-1,  -ncol_X_vlm, drop = FALSE], quote = FALSE,
+                  digits = digits)
         }
     }
     invisible(NULL)
@@ -196,16 +196,17 @@ vcovvlm <- function(object, dispersion=NULL, untransform=FALSE) {
     answer = d * so@cov.unscaled
 
     if(is.logical(OKRC <- object@misc$RegCondOK) && !OKRC)
-        warning(paste("MLE regularity conditions were violated",
-                          "at the final iteration of the fitted object"))
+        warning("MLE regularity conditions were violated ",
+                "at the final iteration of the fitted object")
 
     if(!untransform) return(answer)
 
     if(!is.logical(object@misc$intercept.only))
-       stop(paste("cannot determine whether the object is",
-                  "an intercept-only fit, i.e., y ~ 1 is the response"))
+       stop("cannot determine whether the object is",
+            "an intercept-only fit, i.e., 'y ~ 1' is the response")
     if(!object@misc$intercept.only)
-       stop("object must be an intercept-only fit, i.e., y ~ 1 is the response")
+       stop("object must be an intercept-only fit, i.e., ",
+            "y ~ 1 is the response")
 
     if(!all(trivial.constraints(constraints(object)) == 1))
        stop("object must have trivial constraints")
@@ -220,8 +221,7 @@ vcovvlm <- function(object, dispersion=NULL, untransform=FALSE) {
     etavector = predict(object)[1,]   # Contains transformed parameters
     earg = object@misc$earg  # This could be a NULL
     if(!is.null(earg) && M > 1 && (!is.list(earg) || length(earg) != M))
-        stop(paste("the earg component of object@misc should be of length ",
-                   M, sep=""))
+        stop("the 'earg' component of 'object@misc' should be of length ", M)
     for(ii in 1:M) {
         TTheta = etavector[ii]  # Transformed theta
         use.earg = if(M == 1 || is.null(earg)) earg else earg[[ii]]

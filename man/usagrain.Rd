@@ -1,7 +1,7 @@
 \name{usagrain}
 \alias{usagrain}
 \docType{data}
-\title{USA grain prices}
+\title{USA Grain Prices Data}
 \description{
 A 4-column matrix.
 
@@ -33,7 +33,6 @@ Nested reduced-rank autoregressive models for multiple time series.
 \bold{83}, 849--856.
 }
 \examples{
-data(usagrain)
 cgrain = scale(usagrain, scale=FALSE)   # Center the time series only
 fit = vglm(cgrain ~ 1, rrar(Rank=c(4,1)),
            eps=1e-3, step=0.5, trace=TRUE, maxit=40)

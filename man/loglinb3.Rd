@@ -79,10 +79,9 @@ contains further information and examples.
   \code{\link{hunua}}.
 }
 \examples{
-data(hunua)
 fit = vglm(cbind(cyadea,beitaw,kniexc) ~ altitude, loglinb3, data=hunua)
 coef(fit, mat=TRUE)
-fitted(fit)[1:4,]
+head(fitted(fit))
 summary(fit)
 }
 \keyword{models}

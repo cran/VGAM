@@ -18,7 +18,7 @@
 
 TypicalVGAMfamilyFunction <- function(lsigma="loge", esigma=list(),
                                       isigma=NULL, parallel=TRUE,
-                                      method.init=1,
+                                      shrinkage.init = 0.95, method.init=1,
                                       nsimEIM=100, zero=NULL) {
     NULL
 }
@@ -656,8 +656,10 @@ elogit <- function(theta, earg=list(min=0, max=1), inverse=FALSE, deriv=0,
 
 
 
-logit <- function(theta, earg=list(), inverse=FALSE, deriv=0,
-                  short=TRUE, tag=FALSE)
+
+
+ logit <- function(theta, earg=list(), inverse=FALSE, deriv=0,
+                   short=TRUE, tag=FALSE)
 {
     if(is.character(theta)) {
         string <- if(short) 
@@ -680,9 +682,13 @@ logit <- function(theta, earg=list(), inverse=FALSE, deriv=0,
         }
     } else {
         switch(deriv+1, {
-           log(theta) - log1p(-theta)},
+           temp2 = log(theta) - log1p(-theta)
+           if(any(near0.5 <- (abs(theta - 0.5) < 0.000125)))
+               temp2[near0.5] = log(theta[near0.5] / (1-theta[near0.5]))
+           temp2
+           },
            exp(log(theta) + log1p(-theta)),
-           theta * (1 - theta) * (1 - 2 * theta))
+           exp(log(theta) + log1p(-theta)) * (1 - 2 * theta))
     }
 }
 
@@ -1229,7 +1235,7 @@ checkCut = function(y) {
     oklevels = 1:L
     if(L == 1) stop("only one unique value")
     for(ii in oklevels) {
-        if(all(ii != uy)) stop(paste("there is no", ii, "value"))
+        if(all(ii != uy)) stop("there is no ", ii, " value")
     }
     TRUE
 }

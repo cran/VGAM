@@ -38,12 +38,11 @@ wffc.P2star(length, min.eligible = 0.18)
 }
 
 \references{
-  \url{http://www.2008worldflyfishingchamps.com}
-  is the official website.
+%  \url{http://www.2008worldflyfishingchamps.com}
+%  is the official website.
 
-  Yee, T. W. (2008)
-  Vector generalized linear and additive models, with
-  applications to the 2008 World Fly Fishing Championships.
+  Yee, T. W. (2009)
+  VGLMs and VGAMs: an overview for applications in fisheries research.
   In preparation.
 
 }
@@ -58,7 +57,7 @@ wffc.P2star(length, min.eligible = 0.18)
 \dontrun{
 fishlength = seq(0.0, 0.72, by=0.001)
 plot(fishlength, wffc.P2star(fishlength), type="l", col="blue",
-     las=1, lty="dashed", lwd=2, las=1,
+     las=1, lty="dashed", lwd=2, las=1, cex.main=0.8,
      xlab="Fish length (m)", ylab="Competition points",
      main="Current (red) and proposed (blue) WFFC point system")
 lines(fishlength, wffc.P1star(fishlength), type="l", col="red", lwd=2)

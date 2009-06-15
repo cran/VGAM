@@ -1,7 +1,7 @@
 \name{nzc}
 \alias{nzc}
 \docType{data}
-\title{ Chinese Population in New Zealand 1867--2001}
+\title{ Chinese Population in New Zealand 1867--2001 Data}
 \description{
   The  Chinese population in New Zealand from 1867 to 2001,
   along with the whole of the New Zealand population.
@@ -29,7 +29,6 @@
 }
 \examples{
 \dontrun{
-data(nzc)
 with(nzc, plot(year, female/(male+female), type="b", ylab="Proportion",
                main="Proportion of NZ Chinese that are female",
                col="blue", las=1))

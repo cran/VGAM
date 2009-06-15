@@ -10,7 +10,7 @@
 
 }
 \usage{
-dbilogis4(x1, x2, loc1=0, scale1=1, loc2=0, scale2=1)
+dbilogis4(x1, x2, loc1=0, scale1=1, loc2=0, scale2=1, log=FALSE)
 pbilogis4(q1, q2, loc1=0, scale1=1, loc2=0, scale2=1)
 rbilogis4(n, loc1=0, scale1=1, loc2=0, scale2=1)
 }
@@ -20,6 +20,12 @@ rbilogis4(n, loc1=0, scale1=1, loc2=0, scale2=1)
     Must be a positive integer of length 1.}
   \item{loc1, loc2}{the location parameters \eqn{l_1}{l1} and \eqn{l_2}{l2}.}
   \item{scale1, scale2}{the scale parameters \eqn{s_1}{s1} and \eqn{s_2}{s2}.}
+  \item{log}{
+  Logical.
+  If \code{log=TRUE} then the logarithm of the density is returned.
+
+  }
+
 }
 \value{
   \code{dbilogis4} gives the density,

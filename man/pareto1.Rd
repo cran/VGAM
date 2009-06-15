@@ -158,7 +158,7 @@ alpha = 2; k = exp(3)
 y = rpareto(n=1000, location=alpha, shape=k)
 fit = vglm(y ~ 1, pareto1, trace=TRUE)
 fit@extra   # The estimate of alpha is here
-fitted(fit)[1:5]
+head(fitted(fit))
 mean(y)
 coef(fit, matrix=TRUE)
 summary(fit)     # Standard errors are incorrect!!
@@ -166,7 +166,7 @@ summary(fit)     # Standard errors are incorrect!!
 # Here, alpha is assumed known
 fit2 = vglm(y ~ 1, pareto1(location=alpha), trace=TRUE, crit="c")
 fit2@extra   # alpha stored here
-fitted(fit2)[1:5]
+head(fitted(fit2))
 mean(y)
 coef(fit2, matrix=TRUE)
 summary(fit2)    # Standard errors are ok
