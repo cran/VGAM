@@ -147,12 +147,21 @@ zipebcom(lmu12="cloglog", lphi12="logit", loratio="loge",
   generic function.
 
 } 
+\section{Warning }{
+  The fact that the EIM is not of full rank may mean the model is
+  naturally ill-conditioned.
+  Not sure whether there are any negative consequences wrt theory.
+  For now
+  it is certainly safer to fit \code{\link{binom2.or}} to bivariate binary
+  responses.
+
+} 
 \references{
 
   Yee, T. W. and Dirnbock, T. (2009)
-  Models for species' presence/absence data at two time
-  points based on constrained ordination and odds ratio.
-  In preparation.
+  Models for analysing species' presence/absence data
+  at two time points.
+  Journal of Theoretical Biology, \bold{259}. In press.
 
 }
 \author{ Thomas W. Yee }
@@ -166,6 +175,11 @@ zipebcom(lmu12="cloglog", lphi12="logit", loratio="loge",
   See \code{\link{binom2.or}} for details that are pertinent to this
   \pkg{VGAM} family function too.
   Even better initial values are usually needed here.
+
+  The \code{xij} (see \code{\link{vglm.control}}) argument enables
+  environmental variables with different values at the two time points
+  to be entered into an exchangeable \code{\link{binom2.or}} model.
+  See the author's webpage for sample code.
 
 }
 \seealso{

@@ -1,7 +1,7 @@
 \name{auuc}
 \alias{auuc}
 \docType{data}
-\title{ Auckland University Undergraduate Counts}
+\title{ Auckland University Undergraduate Counts Data}
 \description{
 Undergraduate student enrolments
 at the University of Auckland in 1990.
@@ -32,7 +32,6 @@ down to 4 = lowest).
 New York: Wiley.
 }
 \examples{
-data(auuc)
 round(fitted(grc(auuc)))
 round(fitted(grc(auuc, Rank=2)))
 }

@@ -7,9 +7,11 @@
 
 
 
-dcnormal1 = function(r1=0, r2=0, link.sd="loge",
-                     earg=list(), 
-                     isd=NULL, zero=NULL)
+
+
+ dcnormal1 = function(r1=0, r2=0, link.sd="loge",
+                      earg=list(), 
+                      isd=NULL, zero=NULL)
 {
     if(!is.Numeric(r1, allow=1, integ=TRUE) || r1<0) stop("bad input for r1")
     if(!is.Numeric(r2, allow=1, integ=TRUE) || r2<0) stop("bad input for r2")
@@ -32,8 +34,8 @@ dcnormal1 = function(r1=0, r2=0, link.sd="loge",
         if(ncol(y <- cbind(y)) != 1)
             stop("the response must be a vector or a one-column matrix")
         if(length(w) != n || !is.Numeric(w, integ=TRUE, posit=TRUE))
-            stop(paste("the argument \"weights\" must be a vector",
-                       "of positive integers"))
+            stop("the argument 'weights' must be a vector ",
+                 "of positive integers")
         sumw = sum(w)
         extra$bign = sumw + .r1 + .r2 # Tot num of censored & uncensored obsns
         if(!length(etastart)) {
@@ -109,24 +111,27 @@ dcnormal1 = function(r1=0, r2=0, link.sd="loge",
 
 
 dbisa = function(x, shape, scale=1, log = FALSE) {
-    if(!is.Numeric(x)) stop("bad input for argument \"x\"")
-    if(!is.Numeric(shape, pos=TRUE)) stop("bad input for argument \"shape\"")
-    if(!is.Numeric(scale, pos=TRUE)) stop("bad input for argument \"scale\"")
+    if(!is.logical(log.arg <- log))
+        stop("bad input for argument 'log'")
+    rm(log)
+
+    L = max(length(x), length(shape), length(scale))
+    x = rep(x, len=L); shape = rep(shape, len=L); scale = rep(scale, len=L);
+    logdensity = rep(log(0), len=L)
+    xok = (x > 0)
     xifun = function(x) {temp <- sqrt(x); temp - 1/temp}
-    ans = if(log)
-          dnorm(xifun(x/scale) / shape, log=TRUE) + log1p(scale/x) - log(2) -
-          0.5 * log(x) - 0.5 * log(scale) - log(shape) else
-          dnorm(xifun(x/scale) / shape) * (1 + scale/x) / (2 * sqrt(x) *
-          sqrt(scale) * shape)
-    ans[scale < 0 | shape < 0] = NA
-    ans[x <= 0] = if(log) log(0) else 0
-    ans
+    logdensity[xok] = dnorm(xifun(x[xok]/scale[xok]) / shape[xok], log=TRUE) +
+                      log1p(scale[xok]/x[xok]) - log(2) - log(shape[xok]) -
+                      0.5 * log(x[xok]) - 0.5 * log(scale[xok])
+    logdensity[scale <= 0] = NaN
+    logdensity[shape <= 0] = NaN
+    if(log.arg) logdensity else exp(logdensity)
 }
 
 pbisa = function(q, shape, scale=1) {
-    if(!is.Numeric(q)) stop("bad input for argument \"q\"")
-    if(!is.Numeric(shape, pos=TRUE)) stop("bad input for argument \"shape\"")
-    if(!is.Numeric(scale, pos=TRUE)) stop("bad input for argument \"scale\"")
+    if(!is.Numeric(q)) stop("bad input for argument 'q'")
+    if(!is.Numeric(shape, pos=TRUE)) stop("bad input for argument 'shape'")
+    if(!is.Numeric(scale, pos=TRUE)) stop("bad input for argument 'scale'")
     ans = pnorm(((temp <- sqrt(q/scale)) - 1/temp) / shape)
     ans[scale < 0 | shape < 0] = NA
     ans[q <= 0] = 0
@@ -135,9 +140,9 @@ pbisa = function(q, shape, scale=1) {
 
 qbisa = function(p, shape, scale=1) {
     if(!is.Numeric(p, posit=TRUE) || any(p >= 1))
-        stop("argument \"p\" must have values inside the interval (0,1)")
-    if(!is.Numeric(shape, pos=TRUE)) stop("bad input for argument \"shape\"")
-    if(!is.Numeric(scale, pos=TRUE)) stop("bad input for argument \"scale\"")
+        stop("argument 'p' must have values inside the interval (0,1)")
+    if(!is.Numeric(shape, pos=TRUE)) stop("bad input for argument 'shape'")
+    if(!is.Numeric(scale, pos=TRUE)) stop("bad input for argument 'scale'")
     A = qnorm(p)
     temp1 = A * shape * sqrt(4 + A^2 * shape^2)
     ans1 = (2 + A^2 * shape^2 + temp1) * scale / 2
@@ -146,34 +151,38 @@ qbisa = function(p, shape, scale=1) {
 }
 
 rbisa = function(n, shape, scale=1) {
-    if(!is.Numeric(n,integ=TRUE, allow=1)) stop("bad input for argument \"n\"")
-    if(!is.Numeric(shape, pos=TRUE)) stop("bad input for argument \"shape\"")
-    if(!is.Numeric(scale, pos=TRUE)) stop("bad input for argument \"scale\"")
-    A = rnorm(n)
+    use.n = if((length.n <- length(n)) > 1) length.n else
+            if(!is.Numeric(n, integ=TRUE, allow=1, posit=TRUE))
+                stop("bad input for argument 'n'") else n
+
+    A = rnorm(use.n)
     temp1 = A * shape
     temp1 = temp1 * sqrt(4 + temp1^2)
     ans1 = (2 + A^2 * shape^2 + temp1) * scale / 2
     ans2 = (2 + A^2 * shape^2 - temp1) * scale / 2
 
 
-    ifelse(A < 0, pmin(ans1, ans2), pmax(ans1, ans2))
+    ans = ifelse(A < 0, pmin(ans1, ans2), pmax(ans1, ans2))
+    ans[shape <= 0] = NaN
+    ans[scale <= 0] = NaN
+    ans
 }
 
 
 
-bisa = function(lshape = "loge", lscale = "loge",
-                eshape = list(), escale = list(),
-                ishape = NULL,   iscale=1,
-                method.init=1, zero=NULL)
+ bisa = function(lshape = "loge", lscale = "loge",
+                 eshape = list(), escale = list(),
+                 ishape = NULL,   iscale=1,
+                 method.init=1, zero=NULL)
 {
     if(mode(lshape) != "character" && mode(lshape) != "name")
         lshape = as.character(substitute(lshape))
     if(mode(lscale) != "character" && mode(lscale) != "name")
         lscale = as.character(substitute(lscale))
     if(length(ishape) && !is.Numeric(ishape, posit=TRUE))
-        stop("bad input for argument \"ishape\"")
+        stop("bad input for argument 'ishape'")
     if(!is.Numeric(iscale, posit=TRUE))
-        stop("bad input for argument \"iscale\"")
+        stop("bad input for argument 'iscale'")
     if(!is.Numeric(method.init, allow=1, integ=TRUE, posit=TRUE) ||
        method.init > 3)
         stop("method.init must be 1 or 2 or 3")
@@ -230,10 +239,9 @@ bisa = function(lshape = "loge", lscale = "loge",
         function(mu,y,w,residuals= FALSE,eta, extra=NULL) {
         sh = eta2theta(eta[,1], .lshape, earg= .eshape)
         sc = eta2theta(eta[,2], .lscale, earg= .escale)
-        if(residuals) stop("loglikelihood residuals not implemented yet") else
-        sum(w * (-log(sh) - 0.5 * log(sc) + log1p(sc/y) -
-                 0.5*log(8*pi) - 0.5 * log(y) -
-                 (y/sc - 2 + sc/y) / (2*sh^2)))
+        if(residuals) stop("loglikelihood residuals not implemented yet") else {
+            sum(w * dbisa(x=y, shape=sh, scale=sc, log = TRUE))
+        }
     } , list( .lshape=lshape, .lscale=lscale,
               .eshape=eshape, .escale=escale ))),
     vfamily=c("bisa"),

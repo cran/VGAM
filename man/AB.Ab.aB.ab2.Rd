@@ -3,8 +3,9 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ The AB-Ab-aB-ab2 Blood Group System }
 \description{
-   Estimates the parameter of the 
+  Estimates the parameter of the 
   the AB-Ab-aB-ab2 blood group system.
+
 }
 \usage{
 AB.Ab.aB.ab2(link = "logit", earg=list(), init.p = NULL)
@@ -25,11 +26,13 @@ AB.Ab.aB.ab2(link = "logit", earg=list(), init.p = NULL)
 }
 \details{
   This one parameter model involves a probability called \code{p}.
+
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}}
   and \code{\link{vgam}}.
+
 }
 \references{
 Elandt-Johnson, R. C. (1971)
@@ -66,7 +69,7 @@ fit = vglm(y ~ 1, AB.Ab.aB.ab2(link=logit), trace=TRUE, crit="coef")
 fit = vglm(y ~ 1, AB.Ab.aB.ab2(link=cloglog), trace=TRUE, crit="coef")
 Coef(fit)   # Estimated p
 rbind(y, sum(y)*fitted(fit))
-diag(vcov(fit))^0.5
+sqrt(diag(vcov(fit)))
 }
 \keyword{models}
 \keyword{regression}

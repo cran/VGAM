@@ -7,16 +7,15 @@
 
 s.vam <- function(x, z, wz, s, which, smooth.frame, bf.maxit=10,
                   bf.epsilon=0.001, trace=FALSE, se.fit=TRUE, 
-                  xbig.save, Blist, ncolBlist, M, qbig, U,
-                  backchat=if(is.R()) FALSE else TRUE,
+                  X_vlm_save, Blist, ncolBlist, M, qbig, U,
                   all.knots=FALSE, nk=NULL,
                   sf.only=FALSE)
 {
     nwhich <- names(which)
 
 
-    dxbig <- as.integer(dim(xbig.save))
-    pbig <- dxbig[2]
+    dX_vlm <- as.integer(dim(X_vlm_save))
+    pbig <- dX_vlm[2]
 
 
     if(!length(smooth.frame$first)) {
@@ -40,25 +39,22 @@ s.vam <- function(x, z, wz, s, which, smooth.frame, bf.maxit=10,
             if(!is.numeric(temp) || any(temp<0))
                 stop("spar cannot be negative or non-numeric")
             if(length(temp) > ncolBlist[i])
-                warning(paste("only the first", ncolBlist[i],
-                              "values of spar used for variable \"",
-                              s.xargument, "\""))
+                warning("only the first ", ncolBlist[i], " values of 'spar' ",
+                        " are used for variable '", s.xargument, "'")
             spar[[i]] <- rep(temp, length=ncolBlist[i])   # recycle
     
             temp <- df[[i]]
             if(!is.numeric(temp) || any(temp<1))
                 stop("df is non-numeric or less than 1")
             if(length(temp) > ncolBlist[i])
-                warning(paste("only the first", ncolBlist[i],
-                              "values of df used for variable \"",
-                              s.xargument, "\""))
+                warning("only the first", ncolBlist[i], "values of 'df' ",
+                        "are used for variable '", s.xargument, "'")
             df[[i]] <- rep(temp, length=ncolBlist[i])    # recycle
             if(max(temp) > smooth.frame$nef[k]-1)
-                stop(paste("df value too high for variable \"",
-                           s.xargument, "\""))
+                stop("'df' value too high for variable '", s.xargument, "'")
     
             if(any(spar[[i]]!=0) && any(df[[i]]!=4))
-                stop("can't specify both spar and df")
+                stop("cannot specify both 'spar' and 'df'")
         }
 
         spar <- unlist(spar)
@@ -70,14 +66,14 @@ s.vam <- function(x, z, wz, s, which, smooth.frame, bf.maxit=10,
             smooth.frame$n * sum(ncolBlist[nwhich]))
             stop("too many parameters/dof for data on hand")
     
-        xn.big <- labels(xbig.save)[[2]]
-        asgn <- attr(xbig.save, "assign")
+        xnrow_X_vlm <- labels(X_vlm_save)[[2]]
+        asgn <- attr(X_vlm_save, "assign")
         aa <- NULL
         for(i in nwhich) {
-            aa <- c(aa, xn.big[asgn[[i]]])
+            aa <- c(aa, xnrow_X_vlm[asgn[[i]]])
         }
         smooth.frame$ndfspar <- aa             # Stored here
-        smooth.frame$xn.big <- xn.big          # Stored here
+        smooth.frame$xnrow_X_vlm <- xnrow_X_vlm          # Stored here
         smooth.frame$s.xargument <- s.xargument    # Stored here
     
         smooth.frame$smap=as.vector(cumsum(
@@ -125,7 +121,7 @@ s.vam <- function(x, z, wz, s, which, smooth.frame, bf.maxit=10,
     size.twk <- max(size.twk, M*smooth.frame$n)
 
     fit <- dotFortran(name="vbfa", 
-        as.integer(backchat), n = as.integer(n), M = as.integer(M),
+        n = as.integer(n), M = as.integer(M),
             npetc = as.integer(c(n, p, length(which), se.fit, 0, 
                                  bf.maxit, 0, M, n*M, pbig, 
                                  qbig, dimw, dimu, ier=0, ldk=ldk)),
@@ -138,9 +134,9 @@ s.vam <- function(x, z, wz, s, which, smooth.frame, bf.maxit=10,
             s0 = double((2*M)*(2*M)*2),
         beta = double(pbig), var = if(se.fit) as.double(s) else double(1),
             as.double(bf.epsilon),
-        qr = as.double(xbig.save), qraux = double(pbig),
+        qr = as.double(X_vlm_save), qraux = double(pbig),
         qpivot = as.integer(1:pbig),
-        xbig = if(backchat) as.double(xbig.save) else double(1),
+        X_vlm = double(1),
             U = as.double(U),
             as.double(unlist(Blist)),
         as.integer(ncbvec), as.integer(smooth.frame$smap),
@@ -164,8 +160,8 @@ s.vam <- function(x, z, wz, s, which, smooth.frame, bf.maxit=10,
             itwk = integer(2*M),
             kindex = as.integer(smooth.frame$kindex))
 
-    dim(fit$qr) = dim(xbig.save)
-    dimnames(fit$qr) = dimnames(xbig.save)
+    dim(fit$qr) = dim(X_vlm_save)
+    dimnames(fit$qr) = dimnames(X_vlm_save)
     dim(fit$y) = dim(z)
     dimnames(fit$y) = dimnames(z)
     dim(fit$smooth) = dim(s)
@@ -196,8 +192,7 @@ s.vam <- function(x, z, wz, s, which, smooth.frame, bf.maxit=10,
     smooth.frame$prev.dof <- fit$df
 
     if((nit == bf.maxit) & bf.maxit > 1)
-        warning(paste("s.vam convergence not obtained in", bf.maxit, 
-            "iterations"))
+        warning("'s.vam' convergence not obtained in ", bf.maxit, " iterations")
 
     R <- fit$qr[1:pbig, 1:pbig]
     R[lower.tri(R)] <- 0
@@ -233,7 +228,7 @@ s.vam <- function(x, z, wz, s, which, smooth.frame, bf.maxit=10,
         s.xargument = unlist(smooth.frame$s.xargument))
 
 
-    names(rl$coefficients) <- smooth.frame$xn.big
+    names(rl$coefficients) <- smooth.frame$xnrow_X_vlm
     names(rl$spar) <- smooth.frame$ndfspar
     names(rl$nl.df) <- smooth.frame$ndfspar
 

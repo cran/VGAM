@@ -186,18 +186,17 @@ The generic function \code{predict}, when applied to a
 \code{\link{deplot.lmscreg}},
 \code{\link{cdf.lmscreg}},
 \code{\link{bminz}},
-\code{\link{alsqreg}}.
+\code{\link{amlnormal}}.
 
 }
 \examples{
-data(bminz)
 fit = vgam(BMI ~ s(age, df=4), fam=lms.yjn(zero=c(1,3)),
            data=bminz, trace=TRUE)
-predict(fit)[1:3,]
-fitted(fit)[1:3,]
-bminz[1:3,]
+head(predict(fit))
+head(fitted(fit))
+head(bminz)
 # Person 1 is near the lower quartile of BMI amongst people his age
-cdf(fit)[1:3]
+head(cdf(fit))
 
 \dontrun{
 # Quantile plot

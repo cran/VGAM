@@ -13,7 +13,7 @@ gpd(threshold = 0, lscale = "loge", lshape = "logoff",
     eshape = if(lshape=="logoff") list(offset=0.5) else
                 if(lshape=="elogit") list(min=-0.5, max=0.5) else NULL,
     percentiles = c(90, 95), iscale = NULL, ishape = NULL,
-    tshape0=0.001, method.init=1, zero=2)
+    tolshape0=0.001, giveWarning=TRUE, method.init=1, zero=2)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -83,14 +83,19 @@ gpd(threshold = 0, lscale = "loge", lshape = "logoff",
 % and the variance exists (\eqn{\xi < 0.5}{xi < 0.5}).
 
 % }
-  \item{tshape0}{
-  Positive numeric.
-  Threshold/tolerance value for resting whether \eqn{\xi}{xi} is zero.
-  If the absolute value of the estimate of \eqn{\xi}{xi} is less than
-  this value then it will be assumed zero and exponential distribution
-  derivatives etc. will be used.
+  \item{tolshape0, giveWarning}{
+  Passed into \code{\link{dgpd}} when computing the log-likelihood.
 
   }
+
+% \item{tolshape0}{
+% Positive numeric.
+% Threshold/tolerance value for resting whether \eqn{\xi}{xi} is zero.
+% If the absolute value of the estimate of \eqn{\xi}{xi} is less than
+% this value then it will be assumed zero and exponential distribution
+% derivatives etc. will be used.
+
+% }
   \item{method.init}{
    Method of initialization, either 1 or 2. The first is the method of
    moments, and the second is a variant of this.  If neither work, try
@@ -204,6 +209,7 @@ gpd(threshold = 0, lscale = "loge", lshape = "logoff",
   \code{\link{vglm}},
   \code{\link{vgam}},
   \code{\link{s}}.
+
 }
 
 \examples{
@@ -211,7 +217,7 @@ gpd(threshold = 0, lscale = "loge", lshape = "logoff",
 threshold = 0.5
 y = threshold + rexp(n=3000, rate=2)
 fit = vglm(y ~ 1, gpd(threshold=threshold), trace=TRUE)
-fitted(fit)[1:5,]
+head(fitted(fit))
 coef(fit, matrix=TRUE)   # xi should be close to 0
 Coef(fit)
 summary(fit)

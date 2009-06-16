@@ -1,18 +1,26 @@
-\name{alsqreg}
-\alias{alsqreg}
+\name{amlnormal}
+\alias{amlnormal}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Asymmetric Least Squares Quantile Regression }
 \description{
-  Quantile regression using asymmetric least squares error loss.
+  Asymmetric least squares,
+  a special case of maximizing an asymmetric
+  likelihood function of a normal distribution.
+  This allows for expectile/quantile regression using asymmetric least
+  squares error loss.
 
 }
 \usage{
-alsqreg(w.als=1, parallel=FALSE, lexpectile = "identity",
-        eexpectile = list(), iexpectile = NULL,
-        method.init=1, digw=4)
+amlnormal(w.als=1, parallel=FALSE, lexpectile = "identity",
+          eexpectile = list(), iexpectile = NULL,
+          method.init=1, digw=4)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
+  In this documentation the word \emph{quantile} can often be
+  interchangeably replaced by \emph{expectile}
+  (things are informal here).
+
   \item{w.als}{
   Numeric, a vector of positive constants controlling the percentiles.
   The larger the value the larger the fitted percentile value
@@ -47,7 +55,7 @@ alsqreg(w.als=1, parallel=FALSE, lexpectile = "identity",
   }
 }
 \details{
-  This method was proposed by Efron (1991) and full details can
+  This is an implementation of Efron (1991) and full details can
   be obtained there.
   Equation numbers below refer to that article.
   The model is essentially a linear model
@@ -85,7 +93,7 @@ alsqreg(w.als=1, parallel=FALSE, lexpectile = "identity",
   percentile. One solution is to fit the model within a root finding
   function such as \code{\link[stats]{uniroot}}; see the example below.
 
-  For \code{alsqreg} objects, methods functions for the generic functions
+  For \code{amlnormal} objects, methods functions for the generic functions
   \code{qtplot} and \code{cdf} have not been written yet.
 
   See the note in \code{\link{amlpoisson}} on the jargon, including
@@ -123,10 +131,9 @@ alsqreg(w.als=1, parallel=FALSE, lexpectile = "identity",
 
 \examples{
 # Example 1
-data(bminz)
 o = with(bminz, order(age))
 bminz = bminz[o,]  # Sort by age
-(fit = vglm(BMI ~ bs(age), fam=alsqreg(w.als=0.1), data=bminz))
+(fit = vglm(BMI ~ bs(age), fam=amlnormal(w.als=0.1), data=bminz))
 fit@extra  # Gives the w value and the percentile
 coef(fit)
 coef(fit, matrix=TRUE)
@@ -144,7 +151,7 @@ with(bminz, lines(age, c(fitted(fit)), col="black"))
 # Example 2
 # Find the w values that give the 25, 50 and 75 percentiles
 findw = function(w, percentile=50) {
-    fit2 = vglm(BMI ~ bs(age), fam=alsqreg(w=w), data=bminz)
+    fit2 = vglm(BMI ~ bs(age), fam=amlnormal(w=w), data=bminz)
     fit2@extra$percentile - percentile
 }
 \dontrun{
@@ -155,7 +162,7 @@ with(bminz, plot(age, BMI, col="blue", las=1, main=
 for(myp in c(25,50,75)) {
 # Note: uniroot() can only find one root at a time
     bestw = uniroot(f=findw, interval=c(1/10^4, 10^4), percentile=myp)
-    fit2 = vglm(BMI ~ bs(age), fam=alsqreg(w=bestw$root), data=bminz)
+    fit2 = vglm(BMI ~ bs(age), fam=amlnormal(w=bestw$root), data=bminz)
 \dontrun{
     with(bminz, lines(age, c(fitted(fit2)), col="red"))
 }
@@ -165,10 +172,9 @@ for(myp in c(25,50,75)) {
 
 # Example 3; this is Example 1 but with smoothing splines and
 # a vector w and a parallelism assumption.
-data(bminz)
 o = with(bminz, order(age))
 bminz = bminz[o,]  # Sort by age
-fit3 = vgam(BMI ~ s(age, df=4), fam=alsqreg(w=c(.1,1,10), parallel=TRUE),
+fit3 = vgam(BMI ~ s(age, df=4), fam=amlnormal(w=c(.1,1,10), parallel=TRUE),
             data=bminz, trac=TRUE)
 fit3@extra # The w values, percentiles and weighted deviances
 

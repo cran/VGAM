@@ -13,7 +13,7 @@
 
 }
 \usage{
-dfelix(x, a=0.25)
+dfelix(x, a=0.25, log=FALSE)
 %pfelix(q, a=0.25)
 %qfelix(p, a=0.25)
 %rfelix(n, a=0.25)
@@ -25,6 +25,12 @@ dfelix(x, a=0.25)
 %   Must be a positive integer of length 1.}
   \item{a}{ See \code{\link{felix}}.
     }
+  \item{log}{
+  Logical.
+  If \code{log=TRUE} then the logarithm of the density is returned.
+
+  }
+
 }
 \value{
   \code{dfelix} gives the density.

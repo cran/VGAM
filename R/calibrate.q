@@ -16,7 +16,7 @@ calibrate.qrrvglm.control = function(object,
     Rank = object@control$Rank
     EqualTolerances = object@control$EqualTolerances
     if(!is.Numeric(gridSize, positive=TRUE, integer=TRUE, allow=1))
-        stop("bad input for \"gridSize\"")
+        stop("bad input for 'gridSize'")
     if(gridSize < 2)
         stop("gridSize must be >= 2")
     list(# maxit=Maxit.optim,   # Note the name change
@@ -48,7 +48,7 @@ calibrate.qrrvglm = function(object,
     type <- match.arg(type, c("lv","predictors","response","vcov","all3or4"))[1]
 
     if(!Quadratic && type=="vcov")
-        stop("cannot have type=\"vcov\" when object is a \"cao\" object")
+        stop("cannot have 'type=\"vcov\"' when object is a \"cao\" object")
 
     if(is.vector(newdata))
         newdata = rbind(newdata)
@@ -92,8 +92,7 @@ calibrate.qrrvglm = function(object,
         for(ii in 1:nrow(initial.vals)) {
             if(optim.control$trace) {
                 cat("Starting from grid-point", ii, ":")
-                if(exists("flush.console"))
-                    flush.console()
+                flush.console()
             }
             ans = if(is.R()) {
                 if(Quadratic)
@@ -129,7 +128,6 @@ calibrate.qrrvglm = function(object,
                 if(ans$convergence == 0)
                     cat("Successful convergence\n") else 
                     cat("Unsuccessful convergence\n")
-                if(exists("flush.console"))
                     flush.console()
             }
             if(ans$convergence == 0) {
@@ -260,6 +258,8 @@ calibrate.qrrvglm = function(object,
     if(everything) list(eta=eta, mu=mu, value=value, vcmat=vcmat) else value
 }
 
+
+
 .my.calib.objfunction.cao = function(bnu, y, extra=NULL,
                         objfun, object, Coefs,
                         misc.list,
@@ -283,5 +283,9 @@ calibrate.qrrvglm = function(object,
 
 setMethod("calibrate", "qrrvglm", function(object, ...)
           calibrate.qrrvglm(object, ...))
+
+
+
+
 
 

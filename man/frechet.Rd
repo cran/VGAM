@@ -148,12 +148,12 @@ fit2 = vglm(y ~ 1, frechet2, trace=TRUE, maxit=155)
 fit3 = vglm(y ~ 1, frechet3(ilocation=0), trace=TRUE, maxit=155)
 coef(fit3, matrix=TRUE)
 Coef(fit3)
-fitted(fit3)[1:5,]
+head(fitted(fit3))
 mean(y)
-weights(fit3, type="w")[1:5,]
+head(weights(fit3, type="w"))
 vcov(fit3)   # caution needed!
-fit3@extra$location[1:3]  # Estimate of the location parameter
-fit3@extra$LHSanchor  # Anchor point
+head(fit3@extra$location)  # Estimate of the location parameter
+fit3@extra$LHSanchor       # Anchor point
 min(y)
 }
 \keyword{models}

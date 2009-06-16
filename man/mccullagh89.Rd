@@ -112,7 +112,7 @@ all else fails.
 n = 1000
 y = rnorm(n, mean=0.0, sd=0.2)  # Limit as theta is 0, nu is infinity
 fit = vglm(y ~ 1, mccullagh89, trace=TRUE)
-fitted(fit)[1:5]
+head(fitted(fit))
 mean(y)
 summary(fit)
 coef(fit, matrix=TRUE)

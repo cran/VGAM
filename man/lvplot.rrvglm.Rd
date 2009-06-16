@@ -145,7 +145,6 @@ Reduced-rank vector generalized linear models.
     \code{\link{rrvglm.control}}.
 }
 \examples{
-data(pneumo)
 n = nrow(pneumo)  # x1, x2 and x3 are some unrelated covariates
 pneumo = transform(pneumo, slet=scale(log(exposure.time)),
                    x1 = rnorm(n), x2 = rnorm(n), x3 = rnorm(n))

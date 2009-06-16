@@ -140,20 +140,18 @@ for(d in 0) {
 
 # This is lucky to converge
 earg = list(min=0, max=1, mux=5)
-data(hunua)
 fit.h = vglm(agaaus ~ bs(altitude),
              fam= binomialff(link="fsqrt", earg=earg),
              data=hunua, trace=TRUE, crit="d")
 \dontrun{
 plotvgam(fit.h, se=TRUE, lcol="red", scol="red",
-     main="Red is Hunua, Blue is Waitakere")
+         main="Red is Hunua, Blue is Waitakere")
 }
-predict(fit.h, hunua, type="response")[1:3]
+head(predict(fit.h, hunua, type="response"))
 
 
 \dontrun{
 # The following fails.
-data(pneumo)
 pneumo = transform(pneumo, let=log(exposure.time))
 earg = list(min=0, max=1, mux=10)
 fit = vglm(cbind(normal, mild, severe) ~ let,

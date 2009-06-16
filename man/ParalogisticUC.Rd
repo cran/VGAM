@@ -11,10 +11,10 @@
   and scale parameter \code{scale}.
 }
 \usage{
-dparalogistic(x, a, scale)
-pparalogistic(q, a, scale)
-qparalogistic(p, a, scale)
-rparalogistic(n, a, scale)
+dparalogistic(x, a, scale=1, log=FALSE)
+pparalogistic(q, a, scale=1)
+qparalogistic(p, a, scale=1)
+rparalogistic(n, a, scale=1)
 }
 \arguments{
   \item{x, q}{vector of quantiles.}
@@ -23,6 +23,12 @@ rparalogistic(n, a, scale)
     is taken to be the number required.}
   \item{a}{shape parameter.}
   \item{scale}{scale parameter.}
+  \item{log}{
+  Logical.
+  If \code{log=TRUE} then the logarithm of the density is returned.
+
+  }
+
 }
 \value{
   \code{dparalogistic} gives the density,

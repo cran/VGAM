@@ -4,7 +4,6 @@
 
 
 vgam.control <- function(all.knots=FALSE,
-                         backchat=if(is.R()) FALSE else TRUE,
                          bf.epsilon=1e-7,
                          bf.maxit=30, 
                          checkwz=TRUE,
@@ -17,7 +16,7 @@ vgam.control <- function(all.knots=FALSE,
                          se.fit=TRUE,
                          trace=FALSE,
                          wzepsilon = .Machine$double.eps^0.75,
-                         xij=NULL, ...)
+                         ...)
 {
 
 
@@ -30,26 +29,26 @@ vgam.control <- function(all.knots=FALSE,
     criterion <- names(.min.criterion.VGAM)[criterion]
 
     if(!is.logical(checkwz) || length(checkwz) != 1)
-        stop("bad input for \"checkwz\"")
+        stop("bad input for 'checkwz'")
     if(!is.Numeric(wzepsilon, allow=1, positive=TRUE))
-        stop("bad input for \"wzepsilon\"")
+        stop("bad input for 'wzepsilon'")
 
     if(length(all.knots) > 1)
         warning("all.knots should be of length 1; using first value only")
     if(!is.Numeric(bf.epsilon, allow=1, posit=TRUE)) {
-        warning("bad input for \"bf.epsilon\"; using 0.00001 instead")
+        warning("bad input for 'bf.epsilon'; using 0.00001 instead")
         bf.epsilon <- 0.00001
     }
     if(!is.Numeric(bf.maxit, allow=1, posit=TRUE, integ=TRUE)) {
-        warning("bad input for \"bf.maxit\"; using 20 instead")
+        warning("bad input for 'bf.maxit'; using 20 instead")
         bf.maxit <- 20
     }
     if(!is.Numeric(epsilon, allow=1, posit=TRUE)) {
-        warning("bad input for \"epsilon\"; using 0.0001 instead")
+        warning("bad input for 'epsilon'; using 0.0001 instead")
         epsilon <- 0.0001
     }
     if(!is.Numeric(maxit, allow=1, posit=TRUE, integ=TRUE)) {
-        warning("bad input for \"maxit\"; using 20 instead")
+        warning("bad input for 'maxit'; using 20 instead")
         maxit <- 20
     }
 
@@ -61,7 +60,6 @@ vgam.control <- function(all.knots=FALSE,
     })
 
     list(all.knots=as.logical(all.knots)[1],
-         backchat=as.logical(backchat)[1],
          bf.epsilon=bf.epsilon, 
          bf.maxit=bf.maxit, 
          checkwz=checkwz,
@@ -74,8 +72,7 @@ vgam.control <- function(all.knots=FALSE,
          save.weight=as.logical(save.weight)[1],
          se.fit=as.logical(se.fit)[1],
          trace=as.logical(trace)[1],
-         wzepsilon = wzepsilon,
-         xij=xij)
+         wzepsilon = wzepsilon)
 }
 
 

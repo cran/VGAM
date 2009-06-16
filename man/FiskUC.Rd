@@ -11,18 +11,24 @@
   and scale parameter \code{scale}.
 }
 \usage{
-dfisk(x, a, scale)
-pfisk(q, a, scale)
-qfisk(p, a, scale)
-rfisk(n, a, scale)
+dfisk(x, a, scale=1, log=FALSE)
+pfisk(q, a, scale=1)
+qfisk(p, a, scale=1)
+rfisk(n, a, scale=1)
 }
 \arguments{
   \item{x, q}{vector of quantiles.}
   \item{p}{vector of probabilities.}
-  \item{n}{number of observations. If \code{length(n) > 1}, the length
-    is taken to be the number required.}
+  \item{n}{number of observations.
+  If \code{length(n) > 1} then the length is taken to be the number required.}
   \item{a}{shape parameter.}
   \item{scale}{scale parameter.}
+  \item{log}{
+  Logical.
+  If \code{log=TRUE} then the logarithm of the density is returned.
+
+  }
+
 }
 \value{
   \code{dfisk} gives the density,

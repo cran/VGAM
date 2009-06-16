@@ -11,10 +11,10 @@
   and \code{q}, and scale parameter \code{scale}.
 }
 \usage{
-dsinmad(x, a, scale, q.arg)
-psinmad(q, a, scale, q.arg)
-qsinmad(p, a, scale, q.arg)
-rsinmad(n, a, scale, q.arg)
+dsinmad(x, a, scale=1, q.arg, log=FALSE)
+psinmad(q, a, scale=1, q.arg)
+qsinmad(p, a, scale=1, q.arg)
+rsinmad(n, a, scale=1, q.arg)
 }
 \arguments{
   \item{x, q}{vector of quantiles.}
@@ -23,6 +23,12 @@ rsinmad(n, a, scale, q.arg)
     is taken to be the number required.}
   \item{a, q.arg}{shape parameters.}
   \item{scale}{scale parameter.}
+  \item{log}{
+  Logical.
+  If \code{log=TRUE} then the logarithm of the density is returned.
+
+  }
+
 }
 \value{
   \code{dsinmad} gives the density,

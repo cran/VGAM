@@ -146,7 +146,7 @@ uqo  <- function(formula,
 
     y <- model.response(mf, "numeric") # model.extract(mf, "response")
     x <- model.matrix(mt, mf, contrasts)
-    attr(x, "assign") <- attrassigndefault(x, mt) # So as to make it like Splus
+    attr(x, "assign") = attrassigndefault(x, mt)
     offset <- model.offset(mf)
     if(is.null(offset)) 
         offset <- 0 # yyy ???
@@ -161,7 +161,7 @@ uqo  <- function(formula,
     if(is.function(family))
         family <- family()
     if(!inherits(family, "vglmff")) {
-        stop(paste("family=", family, "is not a VGAM family function"))
+        stop("'family=", family, "' is not a VGAM family function")
     }
 
     if(!is.null(family@first))
@@ -173,8 +173,8 @@ uqo  <- function(formula,
 
     if(control$FastAlgorithm &&
        length(as.list(family@deviance)) <= 1)
-        stop(paste("The fast algorithm requires the family",
-                   "function to have a deviance slot"))
+        stop("The fast algorithm requires the family ",
+             "function to have a deviance slot")
     deviance.Bestof = rep(as.numeric(NA), len=control$Bestof)
     for(tries in 1:control$Bestof) {
          if(control$trace && (control$Bestof>1))
@@ -221,8 +221,8 @@ uqo  <- function(formula,
         slot(answer, "y") = as.matrix(fit$y)
     slot(answer, "extra") = if(length(fit$extra)) {
         if(is.list(fit$extra)) fit$extra else {
-            warning(paste("\"extra\" is not a list, therefore",
-                          "placing \"extra\" into a list"))
+            warning("'extra' is not a list, therefore ",
+                    "placing 'extra' into a list")
             list(fit$extra)
         }
     } else list() # R-1.5.0
@@ -403,7 +403,7 @@ uqo.fit <- function(x, y, w=rep(1, len=nrow(x)),
     n <- dim(x)[1]
 
 
-    copyxbig <- FALSE    # May be overwritten in @initialize
+    copy_X_vlm <- FALSE    # May be overwritten in @initialize
     stepsize <- orig.stepsize
     old.coeffs <- coefstart
 
@@ -415,8 +415,6 @@ uqo.fit <- function(x, y, w=rep(1, len=nrow(x)),
 
     Rank <- control$Rank
     rrcontrol <- control  #
-
-    backchat = FALSE 
 
     if(length(family@initialize))
         eval(family@initialize)       # Initialize mu and M (and optionally w)
@@ -512,14 +510,14 @@ uqo.fit <- function(x, y, w=rep(1, len=nrow(x)),
              all(trivial.constraints(Blist))
 
 
-    xbig.save1 <- if(nice31) {
+    X_vlm_1save <- if(nice31) {
         NULL
     } else {
         lm2vlm.model.matrix(x, Blist, xij=control$xij)
     }
 
     NOS = ifelse(modelno==3 || modelno==5, M/2, M)
-    p1star = if(nice31) p1*ifelse(modelno==3 || modelno==5,2,1) else ncol(xbig.save1)
+    p1star = if(nice31) p1*ifelse(modelno==3 || modelno==5,2,1) else ncol(X_vlm_1save)
     p2star = if(nice31)
       ifelse(control$IToleran, Rank, Rank+0.5*Rank*(Rank+1)) else
       (NOS*Rank + Rank*(Rank+1)/2 * ifelse(control$EqualTol,1,NOS))
@@ -539,7 +537,7 @@ uqo.fit <- function(x, y, w=rep(1, len=nrow(x)),
                kinit=rep(control$Kinit, len=NOS),
                shapeinit=rep(control$shapeinit, len=NOS))
     bnumat = if(nice31) matrix(0,nstar,pstar) else
-             cbind(matrix(0,nstar,p2star), xbig.save1)
+             cbind(matrix(0,nstar,p2star), X_vlm_1save)
 
     rmfromVGAMenv(c("etamat", "z", "U", "beta", "deviance", "fv",
                          "cmatrix", "ocmatrix"), prefix=".VGAM.UQO.")
@@ -570,7 +568,7 @@ uqo.fit <- function(x, y, w=rep(1, len=nrow(x)),
     }
 
     if(!converged && optim.maxit>1)
-        warning(paste("convergence not obtained"))
+        warning("convergence not obtained")
 
 
     temp9 = 

@@ -1,8 +1,8 @@
-# These functions are Copyright (C) 1998-2008 T. W. Yee   All rights reserved.
+# These functions are Copyright (C) 1998-2009 T. W. Yee   All rights reserved.
 
 # "family.fishing.q"
 # Last modified: 01/12/08, 02/12/08
-# Copyright Thomas W. Yee (2008)
+# Copyright Thomas W. Yee (2009)
 
 
 # ====================================================================

@@ -105,7 +105,6 @@ London: Springer-Verlag.
 
 \examples{
 # Example 1
-data(venice)
 ystar = venice[["r1"]]  # Use the first order statistic as the response
 n = length(ystar)
 L = runif(n, 100, 104) # Lower censoring points
@@ -116,7 +115,7 @@ extra = list(leftcensored = ystar < L, rightcensored = ystar > U)
 fit = vglm(y ~ scale(year), data=venice, trace=TRUE, extra=extra,
            cgumbel(mean=FALSE, perc=c(5,25,50,75,95)))
 coef(fit, matrix=TRUE)
-fitted(fit)[1:5,]
+head(fitted(fit))
 fit@extra
 
 # Example 2: simulated data

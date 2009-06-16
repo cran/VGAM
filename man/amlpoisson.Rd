@@ -13,6 +13,10 @@ amlpoisson(w.aml=1, parallel=FALSE, method.init=1, digw=4,
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
+  In this documentation the word \emph{quantile} can often be
+  interchangeably replaced by \emph{expectile}
+  (things are informal here).
+
   \item{w.aml}{
   Numeric, a vector of positive constants controlling the percentiles.
   The larger the value the larger the fitted percentile value
@@ -124,7 +128,7 @@ amlpoisson(w.aml=1, parallel=FALSE, method.init=1, digw=4,
 
 } 
 \seealso{
-  \code{\link{alsqreg}},
+  \code{\link{amlnormal}},
   \code{\link{amlbinomial}},
   \code{\link{alaplace1}}.
 

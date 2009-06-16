@@ -59,12 +59,7 @@ recexp1(lrate="loge", irate=NULL, method.init=1)
 }
 \examples{
 rawy = rexp(n <- 10000, rate=exp(1))
-
-# Keep only the records
-delete = c(FALSE, rep(TRUE, len=n-1))
-for(i in 2:length(rawy))
-    if(rawy[i] > max(rawy[1:(i-1)])) delete[i] = FALSE
-(y = rawy[!delete])
+y = unique(cummax(rawy)) # Keep only the records
 
 length(y) / y[length(y)]   # MLE of rate
 
@@ -74,4 +69,12 @@ Coef(fit)
 }
 \keyword{models}
 \keyword{regression}
+
+%# Keep only the records
+%delete = c(FALSE, rep(TRUE, len=n-1))
+%for(i in 2:length(rawy))
+%    if(rawy[i] > max(rawy[1:(i-1)])) delete[i] = FALSE
+%(y = rawy[!delete])
+
+
 

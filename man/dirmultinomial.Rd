@@ -164,7 +164,7 @@ n = 10
 M = 5
 y = round(matrix(runif(n*M)*10, n, M))  # Integer counts
 fit = vglm(y ~ 1, dirmultinomial, trace=TRUE)
-fitted(fit)[1:2,]
+head(fitted(fit))
 fit@y  # Sample proportions
 weights(fit, type="prior", matrix=FALSE) # Total counts per row
 

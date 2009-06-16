@@ -219,7 +219,7 @@ Regression and ordered categorical variables.
   The arguments of \code{rrvglm} are the same as those of
   \code{\link{vglm}} but with some extras in \code{\link{rrvglm.control}}.
 
-  In the example below, a rank-1 stereotype model of Anderson (1984)
+  In the example below, a rank-1 \emph{stereotype} model of Anderson (1984)
   is fitted to some car data.  The reduced-rank regression is performed,
   adjusting for two covariates. Setting a trivial constraint matrix for
   the latent variable variables in \eqn{x_2}{x2} avoids a warning message

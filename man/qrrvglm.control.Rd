@@ -445,7 +445,6 @@ chances of obtaining the global solution.
 
 \examples{
 # Poisson CQO with equal tolerances
-data(hspider)
 set.seed(111)  # This leads to the global solution
 hspider[,1:6]=scale(hspider[,1:6]) # Good idea when ITolerances = TRUE
 p1 = cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi, Auloalbi,

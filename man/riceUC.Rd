@@ -13,7 +13,7 @@
 
 }
 \usage{
-drice(x, vee, sigma)
+drice(x, vee, sigma, log=FALSE)
 %price(q, vee, sigma)
 %qrice(p, vee, sigma)
 rrice(n, vee, sigma)
@@ -25,6 +25,12 @@ rrice(n, vee, sigma)
    Must be a positive integer of length 1.}
   \item{vee, sigma}{ See \code{\link{riceff}}.
     }
+  \item{log}{
+  Logical.
+  If \code{log=TRUE} then the logarithm of the density is returned.
+
+  }
+
 }
 \value{
   \code{drice} gives the density,

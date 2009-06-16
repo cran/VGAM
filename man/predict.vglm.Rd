@@ -108,31 +108,30 @@ Reduced-rank vector generalized linear models.
 
 \examples{
 # Illustrates smart prediction
-data(pneumo)
 pneumo = transform(pneumo, let=log(exposure.time))
 fit = vglm(cbind(normal,mild, severe) ~ poly(c(scale(let)), 2),
-           fam=cumulative(parallel=TRUE),
+           cumulative(parallel=TRUE),
            data=pneumo, trace=TRUE, x=FALSE)
 class(fit)
 
-(q0 = predict(fit)[1:3,])
-(q1 = predict(fit, newdata=pneumo)[1:3,])
-(q2 = predict(fit, newdata=pneumo[1:3,]))
+(q0 = head(predict(fit)))
+(q1 = predict(fit, newdata=head(pneumo)))
+(q2 = predict(fit, newdata=head(pneumo)))
 all.equal(q0, q1)  # Should be TRUE
 all.equal(q1, q2)  # Should be TRUE
 
-predict(fit)[1:3,]
-predict(fit, untransform=TRUE)[1:3,]
+head(predict(fit))
+head(predict(fit, untransform=TRUE))
 
-p0 = predict(fit, type="res")[1:3,]
-p1 = predict(fit, type="res", newdata=pneumo)[1:3,]
-p2 = predict(fit, type="res", newdata=pneumo[1:3,])
-p3 = fitted(fit)[1:3,]
+p0 = head(predict(fit, type="res"))
+p1 = head(predict(fit, type="res", newdata=pneumo))
+p2 = head(predict(fit, type="res", newdata=pneumo))
+p3 = head(fitted(fit))
 all.equal(p0, p1)  # Should be TRUE
 all.equal(p1, p2)  # Should be TRUE
 all.equal(p2, p3)  # Should be TRUE
 
-predict(fit, type="t", se=TRUE)
+predict(fit, type="terms", se=TRUE)
 }
 \keyword{models}
 \keyword{regression}

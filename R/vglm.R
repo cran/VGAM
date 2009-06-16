@@ -44,8 +44,8 @@ vglm <- function(formula,
     xlev = .getXlevels(mt, mf)
     y <- model.response(mf, "any") # model.extract(mf, "response")
     x <- if (!is.empty.model(mt)) model.matrix(mt, mf, contrasts) else
-         matrix(, NROW(Y), 0)
-    attr(x, "assign") <- attrassigndefault(x, mt) # So as to make it like Splus
+         matrix(, NROW(y), 0)
+    attr(x, "assign") = attrassigndefault(x, mt)
 
 
 
@@ -96,7 +96,7 @@ if(!is.null(form2)) {
     if(is.function(family))
         family <- family()
     if(!inherits(family, "vglmff")) {
-        stop(paste("family=", family, "is not a VGAM family function"))
+        stop("'family=", family, "' is not a VGAM family function")
     }
 
     eval(vcontrol.expression)
@@ -245,8 +245,8 @@ shadowvglm <-
     xlev = .getXlevels(mt, mf)
     y <- model.response(mf, "any") # model.extract(mf, "response")
     x <- if (!is.empty.model(mt)) model.matrix(mt, mf, contrasts) else
-         matrix(, NROW(Y), 0)
-    attr(x, "assign") <- attrassigndefault(x, mt) # So as to make it like Splus
+         matrix(, NROW(y), 0)
+    attr(x, "assign") = attrassigndefault(x, mt)
 
     list(Xm2=x, Ym2=y, call=ocall)
 }

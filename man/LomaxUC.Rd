@@ -11,10 +11,10 @@
   and shape parameter \code{q}.
 }
 \usage{
-dlomax(x, scale, q.arg)
-plomax(q, scale, q.arg)
-qlomax(p, scale, q.arg)
-rlomax(n, scale, q.arg)
+dlomax(x, scale=1, q.arg, log=FALSE)
+plomax(q, scale=1, q.arg)
+qlomax(p, scale=1, q.arg)
+rlomax(n, scale=1, q.arg)
 }
 \arguments{
   \item{x, q}{vector of quantiles.}
@@ -23,6 +23,12 @@ rlomax(n, scale, q.arg)
     is taken to be the number required.}
   \item{q.arg}{shape parameter.}
   \item{scale}{scale parameter.}
+  \item{log}{
+  Logical.
+  If \code{log=TRUE} then the logarithm of the density is returned.
+
+  }
+
 }
 \value{
   \code{dlomax} gives the density,

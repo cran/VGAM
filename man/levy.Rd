@@ -99,7 +99,7 @@ fit = vglm(y ~ 1, levy(idelta=delta, igamma=mygamma),
 coef(fit, matrix=TRUE)
 Coef(fit)
 summary(fit)
-weights(fit, type="w")[1:4,]
+head(weights(fit, type="w"))
 }
 \keyword{models}
 \keyword{regression}

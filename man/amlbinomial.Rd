@@ -12,6 +12,10 @@ amlbinomial(w.aml=1, parallel=FALSE, digw=4, link="logit", earg=list())
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
+  In this documentation the word \emph{quantile} can often be
+  interchangeably replaced by \emph{expectile}
+  (things are informal here).
+
   \item{w.aml}{
   Numeric, a vector of positive constants controlling the percentiles.
   The larger the value the larger the fitted percentile value
@@ -95,7 +99,7 @@ amlbinomial(w.aml=1, parallel=FALSE, digw=4, link="logit", earg=list())
 \seealso{
   \code{\link{amlpoisson}},
   \code{\link{amlexponential}},
-  \code{\link{alsqreg}},
+  \code{\link{amlnormal}},
   \code{\link{alaplace1}}.
 
 }

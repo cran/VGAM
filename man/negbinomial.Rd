@@ -19,6 +19,8 @@ negbinomial(lmu = "loge", lk = "loge",
   \item{lmu, lk}{
   Link functions applied to the \eqn{\mu}{mu} and \eqn{k} parameters.
   See \code{\link{Links}} for more choices.
+  Note that the \eqn{k} parameter is the \code{size} argument of 
+  \code{\link[stats:NegBinomial]{rnbinom}} etc.
 
   }
   \item{emu, ek}{
@@ -76,7 +78,7 @@ negbinomial(lmu = "loge", lk = "loge",
 
   }
   \item{method.init}{
-  An integer with value \code{1} or \code{2} which
+  An integer with value \code{1} or \code{2} or \code{3} which
   specifies the initialization method for the \eqn{\mu}{mu} parameter.
   If failure to converge occurs try another value
   and/or else specify a value for \code{shrinkage.init}

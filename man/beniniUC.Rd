@@ -11,7 +11,7 @@
   \code{shape}.
 }
 \usage{
-dbenini(x, shape, y0)
+dbenini(x, shape, y0, log=FALSE)
 pbenini(q, shape, y0)
 qbenini(p, shape, y0)
 rbenini(n, shape, y0)
@@ -23,6 +23,12 @@ rbenini(n, shape, y0)
     Must be a positive integer of length 1.}
   \item{shape}{the shape parameter \eqn{b}.}
   \item{y0}{the scale parameter \eqn{y_0}{y0}.}
+  \item{log}{
+  Logical.
+  If \code{log=TRUE} then the logarithm of the density is returned.
+
+  }
+
 }
 \value{
   \code{dbenini} gives the density,

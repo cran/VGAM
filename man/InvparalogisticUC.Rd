@@ -12,10 +12,10 @@
 
 }
 \usage{
-dinvparalogistic(x, a, scale)
-pinvparalogistic(q, a, scale)
-qinvparalogistic(p, a, scale)
-rinvparalogistic(n, a, scale)
+dinvparalogistic(x, a, scale=1, log=FALSE)
+pinvparalogistic(q, a, scale=1)
+qinvparalogistic(p, a, scale=1)
+rinvparalogistic(n, a, scale=1)
 }
 \arguments{
   \item{x, q}{vector of quantiles.}
@@ -24,6 +24,12 @@ rinvparalogistic(n, a, scale)
     is taken to be the number required.}
   \item{a}{shape parameter.}
   \item{scale}{scale parameter.}
+  \item{log}{
+  Logical.
+  If \code{log=TRUE} then the logarithm of the density is returned.
+
+  }
+
 }
 \value{
   \code{dinvparalogistic} gives the density,

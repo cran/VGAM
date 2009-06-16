@@ -67,7 +67,7 @@ Yet to do: merge \code{InverseBrat} into \code{brat}.
 \examples{
 journal = c("Biometrika", "Comm Statist", "JASA", "JRSS-B")
 m = matrix(c( NA, 33, 320, 284,   730, NA, 813, 276,
-             498, 68,  NA, 325,   221, 17, 142, NA), 4,4)
+             498, 68,  NA, 325,   221, 17, 142, NA), 4, 4)
 dimnames(m) = list(winner = journal, loser = journal)
 Brat(m)
 vglm(Brat(m) ~ 1, brat, trace=TRUE)

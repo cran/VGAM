@@ -23,6 +23,7 @@ rposnegbin(n, size, prob=NULL, munb=NULL)
   \item{p}{vector of probabilities.}
   \item{n}{
   number of random values to return.
+  If \code{length(n) > 1} then the length is taken to be the number required.
 
   }
   \item{size, prob, munb, log}{

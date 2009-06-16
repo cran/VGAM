@@ -65,7 +65,6 @@ canonical Gaussian ordination.
 }
 
 \examples{
-data(hspider)
 hspider[,1:6]=scale(hspider[,1:6]) # Standardize the environmental variables
 set.seed(1234)
 p1 = cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi, Auloalbi,
@@ -74,11 +73,11 @@ p1 = cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi, Auloalbi,
          fam=poissonff, data=hspider, Crow1positive=FALSE, ITol=TRUE)
 sort(p1@misc$deviance.Bestof) # A history of all the iterations
 
-predict(p1)[1:3,]
+head(predict(p1))
 
 # The following should be all zeros
-max(abs(predict(p1, new=hspider[1:3,]) - predict(p1)[1:3,]))
-max(abs(predict(p1, new=hspider[1:3,], type="res") - fitted(p1)[1:3,]))
+max(abs(predict(p1, new=head(hspider)) - head(predict(p1))))
+max(abs(predict(p1, new=head(hspider), type="res") - head(fitted(p1))))
 }
 \keyword{models}
 \keyword{regression}

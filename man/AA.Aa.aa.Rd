@@ -41,12 +41,14 @@ Sunderland, MA: Sinauer Associates, Inc.
 }
 \author{ T. W. Yee }
 \note{ 
-The input can be a 3-column matrix of counts, where the columns 
-are AA, Ab and aa
-(in order).
-Alternatively, the input can be a 3-column matrix of 
-proportions (so each row adds to 1) and the \code{weights}
-argument is used to specify the total number of counts for each row.
+  The input can be a 3-column matrix of counts, where the columns 
+  are AA, Ab and aa
+  (in order).
+  Alternatively, the input can be a 3-column matrix of 
+  proportions (so each row adds to 1) and the \code{weights}
+  argument is used to specify the total number of counts for each row.
+
+
 }
 \seealso{
 \code{\link{AB.Ab.aB.ab}},
@@ -54,6 +56,7 @@ argument is used to specify the total number of counts for each row.
 \code{\link{ABO}},
 \code{\link{G1G2G3}},
 \code{\link{MNSs}}.
+
 }
 \examples{
 y = cbind(53, 95, 38)

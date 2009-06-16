@@ -12,11 +12,18 @@ useDynLib(VGAM)
 
 
 export(
+Build.terms.vlm,
 procVec,
 rss.vgam,
 vcontrol.expression, 
 vplot, vplot.default, vplot.factor, vplot.list,
 vplot.matrix, vplot.numeric, vvplot.factor)
+
+export(
+case.namesvlm,
+variable.namesvlm
+)
+
 
 export(
 d2theta.deta2, Deviance.categorical.data.vgam, 
@@ -71,6 +78,7 @@ dinv.gaussian, pinv.gaussian, rinv.gaussian, wald, expexp1, expexp)
 
 export(A1A2A3, a2m, AAaa.nohw,
 AICvlm, AICvgam, AICrrvglm, 
+AICqrrvglm, # AICvglm, 
 anova.vgam,
 anova.vglm, 
 beta4,
@@ -106,6 +114,7 @@ erlang,
 family.vglm, 
 dfelix, felix,
 fitted.values.uqo, fitted.vlm, fittedvsmooth.spline, fsqrt,
+formulavlm, formulaNA.VGAM,
 garma, gaussianff,
 hypersecant, hypersecant.1, 
 hyperg,
@@ -118,7 +127,8 @@ lms.bcg, lms.bcn, lms.yjn, lms.yjn2,
 lqnorm,
 dbilogis4, pbilogis4, rbilogis4, bilogistic4,
 logistic1, logistic2,
-logLik.vlm, lv.cao, lv.Coef.cao, lv.Coef.qrrvglm,
+logLik.vlm, lv.cao,
+lv.Coef.qrrvglm,
 lvplot.cao, lv.qrrvglm,
 Max.Coef.qrrvglm, Max.qrrvglm,
 is.bell.vlm, is.bell.rrvglm, is.bell.qrrvglm, is.bell.cao, is.bell,
@@ -157,8 +167,9 @@ simple.exponential, simple.poisson,
 mbinomial,
 seq2binomial, size.binomial,
 stdze1, stdze2,
-summary.cao, summary.grc, summary.lms, summary.qrrvglm,
-summary.rc.exponential, summary.rrvglm, summary.uqo, summaryvgam,
+summary.cao, summary.grc,
+  summary.qrrvglm,
+summary.rrvglm, summary.uqo, summaryvgam,
 summaryvglm, summaryvlm, s.vam, terms.vlm, 
 theta2eta, Tol.Coef.qrrvglm, Tol.Coef.uqo, Tol.qrrvglm, Tol.uqo,
 triangle, dtriangle, ptriangle, qtriangle, rtriangle, 
@@ -176,17 +187,53 @@ export(lm2vlm.model.matrix)
 
 
 
+
+
  importFrom("stats", model.matrix)
  importFrom("stats", model.frame)
  importFrom("stats", terms)
 
 
   importFrom("stats", "coef")
+  importFrom("stats", "coefficients")
   importFrom("stats", "logLik")
   importFrom("graphics", "plot")
   importFrom("stats", "vcov")
 
   importFrom("stats", "AIC")
+
+
+
+
+
+
+  importFrom("stats", "resid")
+  importFrom("stats", "residuals")
+  importFrom("stats", "fitted")
+  importFrom("stats", "predict")
+  importFrom("stats", "df.residual")
+
+  importFrom("stats", "deviance")
+  importFrom("stats", "fitted.values")
+  importFrom("stats", "effects")
+  importFrom("stats", "weights")
+
+  importFrom("stats", "formula")
+  importFrom("stats", "case.names")
+  importFrom("stats", "variable.names")
+
+
+  importFrom("stats", dchisq, pchisq,
+             pf,
+             dexp, rexp,
+             dpois, ppois, qpois, rpois,
+             dnorm, pnorm, qnorm, rnorm)
+
+  importFrom("graphics", "persp")
+
+
+
+
 
 
 
@@ -206,9 +253,15 @@ export(dpolono, rpolono)
 export(dgpd, pgpd, qgpd, rgpd, gpd)
 export(dgev, pgev, qgev, rgev, gev, egev)
 export(dlaplace, plaplace, qlaplace, rlaplace, laplace)
-export(dalaplace, palaplace, qalaplace, ralaplace,
+export(dalap, palap, qalap, ralap,
        alaplace1.control,
        alaplace1, alaplace2, alaplace3)
+export(dloglap, ploglap, qloglap, rloglap)
+export(loglaplace1.control, loglaplace1)
+export(dlogitlap, plogitlap, qlogitlap, rlogitlap,
+       logitlaplace1.control, logitlaplace1)
+export(dprobitlap, pprobitlap, qprobitlap, rprobitlap)
+export(dclogloglap, pclogloglap, qclogloglap, rclogloglap)
 export(dcard, pcard, qcard, rcard, cardioid)
 export(fff, fff.control,
        mbesselI0,
@@ -217,7 +270,7 @@ export(fff, fff.control,
 
 export(
 AA.Aa.aa, AB.Ab.aB.ab2, AB.Ab.aB.ab, ABO, acat,
-beta.ab, betaff, betaffqn,
+beta.ab, betaff,
 dbetageom, pbetageom, rbetageom, betageometric, 
 betaprime,
 betaII,
@@ -230,7 +283,9 @@ calibrate, cao.control,
 cao, ccoef, cdf.lmscreg, cgo, chisq, clo, 
 Coef.qrrvglm, Coef, Coef.rrvglm, Coef.vlm,
 predict.qrrvglm,
-cratio, cumulative, scumulative, deplot.lmscreg, dirichlet,
+cratio, cumulative)
+export(
+deplot.lmscreg, dirichlet,
 exponential, G1G2G3)
 
 export(
@@ -250,13 +305,14 @@ grc,
 dhzeta, phzeta, qhzeta, rhzeta, hzeta, 
 nidentity, identity,
 prentice74,
-alsqreg, amlbinomial, amlexponential, amlpoisson, Wr1, Wr2,
+amlnormal, amlbinomial, amlexponential, amlpoisson, Wr1, Wr2,
 dkumar, pkumar, qkumar, rkumar, kumar,
 dyules, pyules, ryules, yulesimon, 
 logff, dlog, plog, rlog,
 loglinb2, loglinb3,
 loglog, lognormal3, lvplot.qrrvglm,
-lvplot, lvplot.rrvglm, lv, Max, MNSs, multinomial)
+lvplot, lvplot.rrvglm, lv, Max, MNSs,
+dmultinomial, multinomial, margeff)
 
 export(
 slash, dslash, pslash, rslash)
@@ -310,7 +366,8 @@ exportClasses("vglmff", "vlm", "vglm", "vgam",
 "rrvglm", "qrrvglm", "grc", 
 "vlmsmall", "uqo", "cao",
 "summary.vgam", "summary.vglm","summary.vlm",
-"summary.qrrvglm", "summary.cao", "summary.rrvglm", 
+  "summary.qrrvglm",
+"summary.cao", "summary.rrvglm", 
 "Coef.rrvglm", "Coef.uqo", "Coef.qrrvglm", "Coef.cao",
 "vcov.qrrvglm",
 "vsmooth.spline.fit", "vsmooth.spline") 
@@ -322,8 +379,8 @@ exportClasses("SurvS4")
 exportMethods(
 "coef", "Coef", "coefficients",
 "constraints", 
-"effects", "fitted", "fitted.values",
-"predict",
+"effects",
+"predict", "fitted", "fitted.values",
 "print",
 "resid",
 "residuals", "show",
@@ -337,6 +394,7 @@ exportMethods(
 "lv", "Max", "Opt", "Tol",
 "biplot", "deplot", "lvplot", "qtplot", "rlplot", "meplot",
 "plot", "trplot", "vplot",
+"formula", "case.names", "variable.names",
 "weights",
 "persp")
 

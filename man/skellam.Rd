@@ -104,7 +104,8 @@ coef(fit1, matrix=TRUE)
 coef(fit2, matrix=TRUE)
 summary(fit1)
 # Likelihood ratio test for equal means:
-1-pchisq(logLik(fit1)-logLik(fit2), df=fit2@df.residual-fit1@df.residual)
+1-pchisq(2*(logLik(fit1)-logLik(fit2)),
+         df=fit2@df.residual-fit1@df.residual)
 }
 \keyword{models}
 \keyword{regression}

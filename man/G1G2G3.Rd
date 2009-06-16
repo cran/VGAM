@@ -49,12 +49,12 @@ Lange, K. (2002)
 \note{ 
 The input can be a 6-column matrix of counts,
 with columns corresponding to   
-\code{G_1/G_1},
-\code{G_1/G_2},
-\code{G_1/G_3},
-\code{G_2/G_2},
-\code{G_2/G_3},
-\code{G_3/G_3} (in order). 
+\code{G1G1},
+\code{G1G2},
+\code{G1G3},
+\code{G2G2},
+\code{G2G3},
+\code{G3G3} (in order). 
 Alternatively, the input can be a 6-column matrix of 
 proportions (so each row adds to 1) and the \code{weights}
 argument is used to specify the total number of counts for each row.

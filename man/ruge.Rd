@@ -32,7 +32,6 @@
 %\references{
 %}
 \examples{
-data(ruge)
 lambdahat = with(ruge, weighted.mean(number, w=counts))
 (N = with(ruge, sum(counts)))
 with(ruge, cbind(number, counts,

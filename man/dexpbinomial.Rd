@@ -114,7 +114,6 @@ dexpbinomial(lmean="logit", ldispersion="logit",
 \examples{
 # This example mimics the example in Efron (1986). The results here
 # differ slightly.
-data(toxop)
 
 # Scale the variables
 toxop = transform(toxop,
@@ -140,13 +139,13 @@ fit = vglm(phat ~ I(srainfall) + I(srainfall^2) + I(srainfall^3) +
 # Now look at the results
 coef(fit)
 coef(fit, matrix=TRUE)
-fitted(fit)[1:4,]
+head(fitted(fit))
 summary(fit)
 vcov(fit)
 sqrt(diag(vcov(fit)))   # Standard errors
 
 # Effective sample size (not quite the last column of Table 1)
-predict(fit)[1:4,]
+head(predict(fit))
 Dispersion = elogit(predict(fit)[,2], earg=dlist, inverse=TRUE)
 c(round(weights(fit, type="prior") * Dispersion, dig=1))
 

@@ -99,7 +99,7 @@ os = 2
 fit = vglm(y ~ 1, poissonp(os, 2), tra=TRUE, cri="c")
 fit = vglm(y ~ 1, poissonp(os, 3), tra=TRUE, cri="c") # Slow convergence?
 fit = vglm(y ~ 1, poissonp(os, 3, idensi=1), tra=TRUE, cri="c")
-fitted(fit)[1:4]
+head(fitted(fit))
 mean(y)
 coef(fit, matrix=TRUE)
 Coef(fit)

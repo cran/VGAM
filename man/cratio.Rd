@@ -118,7 +118,6 @@ contains further information and examples.
 }
 
 \examples{
-data(pneumo)
 pneumo = transform(pneumo, let=log(exposure.time))
 (fit = vglm(cbind(normal,mild,severe) ~ let, cratio(parallel=TRUE), pneumo))
 coef(fit, matrix=TRUE)

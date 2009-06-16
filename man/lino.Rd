@@ -115,7 +115,7 @@ y = rbeta(n=1000, exp(0.5), exp(1)) # Standard beta distribution
 fit = vglm(y ~ 1, lino, trace=TRUE)
 coef(fit, mat=TRUE)
 Coef(fit)
-fitted(fit)[1:4]
+head(fitted(fit))
 summary(fit)
 
 # Nonstandard beta distribution

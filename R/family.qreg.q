@@ -708,7 +708,7 @@ lms.yjn2 = function(percentiles=c(25,50,75),
         }
 
         if(intercept.only)
-            run.varcov = matrix(apply(run.varcov, 2, mean),
+            run.varcov = matrix(colMeans(run.varcov),
                                 nr=n, nc=ncol(run.varcov), byrow=TRUE)
 
 
@@ -1013,7 +1013,7 @@ lmscreg.control <- function(cdf= TRUE, at.arg=NULL, x0=NULL, ...)
 {
 
     if(!is.logical(cdf)) {
-        warning("\"cdf\" is not logical; using TRUE instead")
+        warning("'cdf' is not logical; using TRUE instead")
         cdf = TRUE
     }
     list(cdf=cdf, at.arg=at.arg, x0=x0)
@@ -1029,7 +1029,7 @@ Wr1 <- function(r, w) ifelse(r <= 0, 1, w)
 Wr2 <- function(r, w) (r <= 0) * 1 + (r > 0) * w
 
 
-alsqreg.deviance = function(mu, y, w, residuals = FALSE, eta, extra=NULL) {
+amlnormal.deviance = function(mu, y, w, residuals = FALSE, eta, extra=NULL) {
 
     M <- length(extra$w.als)
 
@@ -1052,17 +1052,17 @@ alsqreg.deviance = function(mu, y, w, residuals = FALSE, eta, extra=NULL) {
 
 
 
-alsqreg <- function(w.als=1, parallel=FALSE,
-                    lexpectile = "identity", eexpectile = list(),
-                    iexpectile = NULL,
-                    method.init=1, digw=4)
+ amlnormal <- function(w.als=1, parallel=FALSE,
+                       lexpectile = "identity", eexpectile = list(),
+                       iexpectile = NULL,
+                       method.init=1, digw=4)
 {
 
 
     if(!is.Numeric(w.als, posit=TRUE))
         stop("'w.als' must be a vector of positive values")
     if(!is.Numeric(method.init, allow=1, integ=TRUE, posit=TRUE) ||
-       method.init > 3) stop("argument \"method.init\" must be 1, 2 or 3")
+       method.init > 3) stop("argument 'method.init' must be 1, 2 or 3")
     if(mode(lexpectile) != "character" && mode(lexpectile) != "name")
         lexpectile = as.character(substitute(lexpectile))
     if(!is.list(eexpectile)) eexpectile = list()
@@ -1077,8 +1077,8 @@ alsqreg <- function(w.als=1, parallel=FALSE,
         constraints = cm.vgam(matrix(1,M,1), x, .parallel, constraints)
     }), list( .parallel=parallel ))),
     deviance= function(mu, y, w, residuals = FALSE, eta, extra=NULL) {
-        alsqreg.deviance(mu=mu, y=y, w=w, residuals=residuals,
-                            eta=eta, extra=extra)
+        amlnormal.deviance(mu=mu, y=y, w=w, residuals=residuals,
+                           eta=eta, extra=extra)
     },
     initialize=eval(substitute(expression({
         extra$w.als = .w.als
@@ -1129,12 +1129,12 @@ alsqreg <- function(w.als=1, parallel=FALSE,
         names(extra$percentile) = names(misc$link)
 
         extra$individual = TRUE
-        extra$deviance = alsqreg.deviance(mu=mu, y=y, w=w,
-                         residuals=FALSE, eta=eta, extra=extra)
+        extra$deviance = amlnormal.deviance(mu=mu, y=y, w=w, residuals=FALSE,
+                                            eta=eta, extra=extra)
         names(extra$deviance) = extra$y.names
     }), list( .lexpectile=lexpectile, .eexpectile=eexpectile,
               .parallel=parallel ))),
-    vfamily=c("alsqreg"),
+    vfamily=c("amlnormal"),
     deriv=eval(substitute(expression({
         mymu = eta2theta(eta, .lexpectile, earg= .eexpectile)
         dexpectile.deta = dtheta.deta(mymu, .lexpectile, earg= .eexpectile)
@@ -1460,7 +1460,7 @@ amlexponential <- function(w.aml=1, parallel=FALSE, method.init=1, digw=4,
         link = as.character(substitute(link))
     if(!is.list(earg)) earg = list()
     if(!is.Numeric(method.init, allow=1, integ=TRUE, posit=TRUE) ||
-       method.init > 3) stop("argument \"method.init\" must be 1, 2 or 3")
+       method.init > 3) stop("argument 'method.init' must be 1, 2 or 3")
 
     y.names = paste("w.aml=", round(w.aml, dig=digw), sep="")
     predictors.names = c(namesof(
@@ -1556,77 +1556,91 @@ amlexponential <- function(w.aml=1, parallel=FALSE, method.init=1, digw=4,
 rho1check = function(u, tau=0.5)
     u * (tau - (u <= 0))
 
-dalaplace = function(x, location=0, scale=1, tau=0.5, kappa=sqrt(tau/(1-tau))) {
-    if(!is.Numeric(scale, posit=TRUE)) stop("\"scale\" must be positive")
-    if(!is.Numeric(kappa, posit=TRUE)) stop("\"kappa\" must be positive")
-    const = (sqrt(2) / scale) * kappa / (1 + kappa^2)
+dalap = function(x, location=0, scale=1, tau=0.5,
+                 kappa=sqrt(tau/(1-tau)), log=FALSE) {
+    if(!is.logical(log.arg <- log)) stop("bad input for argument 'log'")
+    rm(log)
+
+    NN = max(length(x), length(location), length(scale), length(kappa))
+    location = rep(location, len=NN); scale= rep(scale, len=NN)
+    kappa = rep(kappa, len=NN); x = rep(x, len=NN)
+    tau = rep(tau, len=NN)
+
+    logconst = 0.5 * log(2) - log(scale) + log(kappa) - log1p(kappa^2)
     exponent = -(sqrt(2) / scale) * abs(x - location) *
                ifelse(x >= location, kappa, 1/kappa)
-    const * exp(exponent)
+
+    indexTF = (scale > 0) & (tau > 0) & (tau < 1) & (kappa > 0) # &
+    logconst[!indexTF] = NaN
+
+    if(log.arg) logconst + exponent else exp(logconst + exponent)
 }
 
 
-ralaplace = function(n, location=0, scale=1, tau=0.5, kappa=sqrt(tau/(1-tau))) {
-    if(!is.Numeric(n, posit=TRUE, integ=TRUE, allow=1))
-        stop("bad input for argument \"n\"")
-    if(!is.Numeric(scale, posit=TRUE)) stop("\"scale\" must be positive")
-    if(!is.Numeric(kappa, posit=TRUE)) stop("\"kappa\" must be positive")
-    location = rep(location, len=n); scale= rep(scale, len=n)
-    kappa = rep(kappa, len=n);
-    U1 = runif(n)
-    U2 = runif(n)
-    location + scale * log(U1^kappa / U2^(1/kappa)) / sqrt(2)
-}
+ralap = function(n, location=0, scale=1, tau=0.5, kappa=sqrt(tau/(1-tau))) {
+    use.n = if((length.n <- length(n)) > 1) length.n else
+            if(!is.Numeric(n, integ=TRUE, allow=1, posit=TRUE))
+                stop("bad input for argument 'n'") else n
 
-
-palaplace = function(q, location=0, scale=1, tau=0.5, kappa=sqrt(tau/(1-tau))) {
-    if(!is.Numeric(q))
-        stop("bad input for argument \"q\"")
-    if(!is.Numeric(location))
-        stop("bad input for argument \"location\"")
-    if(!is.Numeric(scale, posit=TRUE)) stop("\"scale\" must be positive")
-    if(!is.Numeric(kappa, posit=TRUE))
-        stop("bad input for argument \"kappa\"")
-    N = max(length(q), length(location), length(scale), length(kappa))
-    location = rep(location, len=N); scale= rep(scale, len=N)
-    kappa = rep(kappa, len=N); q= rep(q, len=N)
-    exponent = -(sqrt(2) / scale) * abs(q - location) *
-               ifelse(q >= location, kappa, 1/kappa)
-    temp = exp(exponent) / (1 + kappa^2)
-    ans = 1 - temp
-    index1 = (q < location)
-    ans[index1] = (kappa[index1])^2 * temp[index1]
+    location = rep(location, len=use.n); scale= rep(scale, len=use.n)
+    tau = rep(tau, len=use.n); kappa = rep(kappa, len=use.n);
+    ans = location + scale *
+          log(runif(use.n)^kappa / runif(use.n)^(1/kappa)) / sqrt(2)
+    indexTF = (scale > 0) & (tau > 0) & (tau < 1) & (kappa > 0) # &
+    ans[!indexTF] = NaN
     ans
 }
 
 
-qalaplace = function(p, location=0, scale=1, tau=0.5, kappa=sqrt(tau/(1-tau))) {
-    if(!is.Numeric(p, posit=TRUE) || max(p) >= 1)
-        stop("bad input for argument \"p\"")
-    if(!is.Numeric(location))
-        stop("bad input for argument \"location\"")
-    if(!is.Numeric(scale, posit=TRUE)) stop("\"scale\" must be positive")
-    if(!is.Numeric(kappa, posit=TRUE))
-        stop("bad input for argument \"kappa\"")
-    N = max(length(p), length(location), length(scale), length(kappa))
-    location = rep(location, len=N); scale= rep(scale, len=N)
-    kappa = rep(kappa, len=N); p = rep(p, len=N)
+palap = function(q, location=0, scale=1, tau=0.5, kappa=sqrt(tau/(1-tau))) {
+    NN = max(length(q), length(location), length(scale), length(kappa))
+    location = rep(location, len=NN); scale= rep(scale, len=NN)
+    kappa = rep(kappa, len=NN); q= rep(q, len=NN)
+    tau = rep(tau, len=NN);
+
+    exponent = -(sqrt(2) / scale) * abs(q - location) *
+               ifelse(q >= location, kappa, 1/kappa)
+    temp5 = exp(exponent) / (1 + kappa^2)
+    ans = 1 - temp5
+    index1 = (q < location)
+    ans[index1] = (kappa[index1])^2 * temp5[index1]
+
+    indexTF = (scale > 0) & (tau > 0) & (tau < 1) & (kappa > 0) # &
+    ans[!indexTF] = NaN
+    ans
+}
+
+
+qalap = function(p, location=0, scale=1, tau=0.5, kappa=sqrt(tau/(1-tau))) {
+    NN = max(length(p), length(location), length(scale), length(kappa))
+    location = rep(location, len=NN); scale= rep(scale, len=NN)
+    kappa = rep(kappa, len=NN); p = rep(p, len=NN)
+    tau = rep(tau, len=NN)
     ans = p
-    temp = kappa^2 / (1 + kappa^2)
-    index1 = (p <= temp)
-    exponent = p[index1] / temp[index1]
+    temp5 = kappa^2 / (1 + kappa^2)
+    index1 = (p <= temp5)
+    exponent = p[index1] / temp5[index1]
     ans[index1] = location[index1] + (scale[index1] * kappa[index1]) *
                   log(exponent) / sqrt(2)
     ans[!index1] = location[!index1] - (scale[!index1] / kappa[!index1]) *
                    (log1p((kappa[!index1])^2) + log1p(-p[!index1])) / sqrt(2)
+
+    indexTF = (scale > 0) & (tau > 0) & (tau < 1) & (kappa > 0) &
+              (p >= 0) & (p <= 1)
+    ans[!indexTF] = NaN
+    ans[p == 0 & indexTF] = -Inf
+    ans[p == 1 & indexTF] = Inf
     ans
 }
 
+
+
+
 if(FALSE)
 dqregal = function(x, tau=0.5, location=0, scale=1) {
-    if(!is.Numeric(scale, posit=TRUE)) stop("\"scale\" must be positive")
+    if(!is.Numeric(scale, posit=TRUE)) stop("'scale' must be positive")
     if(!is.Numeric(tau, posit=TRUE) || max(tau) >= 1)
-        stop("\"tau\" must have values in (0,1)")
+        stop("'tau' must have values in (0,1)")
     const = tau * (1-tau) / scale
     const * exp(-rho1check((x-location)/scale, tau=tau))
 }
@@ -1636,10 +1650,10 @@ dqregal = function(x, tau=0.5, location=0, scale=1) {
 if(FALSE)
 rqregal = function(n, tau=0.5, location=0, scale=1) {
     if(!is.Numeric(n, posit=TRUE, integ=TRUE, allow=1))
-        stop("bad input for argument \"n\"")
-    if(!is.Numeric(scale, posit=TRUE)) stop("\"scale\" must be positive")
+        stop("bad input for argument 'n'")
+    if(!is.Numeric(scale, posit=TRUE)) stop("'scale' must be positive")
     if(!is.Numeric(tau, posit=TRUE) || max(tau) >= 1)
-        stop("\"tau\" must have values in (0,1)")
+        stop("'tau' must have values in (0,1)")
     location = rep(location, len=n); scale= rep(scale, len=n)
     r = runif(n)
     location - sign(r-tau) * scale * log(2*ifelse(r < tau, r, 1-r))
@@ -1652,12 +1666,12 @@ pqregal = function(q, tau=0.5, location=0, scale=1) {
     if(!all(scale == 1))
         stop("currently can only handle scale == 1")
     if(!is.Numeric(q))
-        stop("bad input for argument \"q\"")
+        stop("bad input for argument 'q'")
     if(!is.Numeric(location))
-        stop("bad input for argument \"location\"")
-    if(!is.Numeric(scale, posit=TRUE)) stop("\"scale\" must be positive")
+        stop("bad input for argument 'location'")
+    if(!is.Numeric(scale, posit=TRUE)) stop("'scale' must be positive")
     if(!is.Numeric(tau, posit=TRUE) || max(tau) >= 1)
-        stop("\"tau\" must have values in (0,1)")
+        stop("'tau' must have values in (0,1)")
     N = max(length(q), length(tau), length(location), length(scale))
     location = rep(location, len=N); scale= rep(scale, len=N)
     tau = rep(tau, len=N); q= rep(q, len=N)
@@ -1677,9 +1691,9 @@ qregal = function(tau=c(0.25, 0.5, 0.75),
     if(mode(llocation) != "character" && mode(llocation) != "name")
         llocation = as.character(substitute(llocation))
     if(!is.Numeric(method.init, allow=1, integ=TRUE, posit=TRUE) ||
-       method.init > 2) stop("argument \"method.init\" must be 1 or 2")
+       method.init > 2) stop("argument 'method.init' must be 1 or 2")
     if(!is.Numeric(tau, posit=TRUE) || max(tau) >= 1)
-        stop("bad input for argument \"tau\"")
+        stop("bad input for argument 'tau'")
     if(!is.list(elocation)) elocation = list()
     if(mode(lscale) != "character" && mode(lscale) != "name")
         lscale = as.character(substitute(lscale))
@@ -1792,6 +1806,352 @@ qregal = function(tau=c(0.25, 0.5, 0.75),
     }), list( .tau=tau, .elocation=elocation, .llocation=llocation,
              .escale=escale, .lscale=lscale ))))
 }
+
+
+
+
+
+rloglap = function(n, location.ald=0, scale.ald=1, tau=0.5,
+                       kappa=sqrt(tau/(1-tau))) {
+    use.n = if((length.n <- length(n)) > 1) length.n else
+            if(!is.Numeric(n, integ=TRUE, allow=1, posit=TRUE))
+                stop("bad input for argument 'n'") else n
+    location.ald = rep(location.ald, len=use.n);
+    scale.ald= rep(scale.ald, len=use.n)
+    tau = rep(tau, len=use.n);
+    kappa = rep(kappa, len=use.n);
+    ans = exp(location.ald) *
+          (runif(use.n)^kappa / runif(use.n)^(1/kappa))^(scale.ald / sqrt(2))
+    indexTF = (scale.ald > 0) & (tau > 0) & (tau < 1) & (kappa > 0) # &
+    ans[!indexTF] = NaN
+    ans
+}
+
+
+dloglap = function(x, location.ald=0, scale.ald=1, tau=0.5,
+                       kappa=sqrt(tau/(1-tau)), log=FALSE) {
+    if(!is.logical(log.arg <- log)) stop("bad input for argument 'log'")
+    rm(log)
+
+    NN = max(length(x), length(location.ald), length(scale.ald), length(kappa))
+    location = rep(location.ald, len=NN); scale= rep(scale.ald, len=NN)
+    kappa = rep(kappa, len=NN); x = rep(x, len=NN)
+    tau = rep(tau, len=NN)
+
+    Alpha = sqrt(2) * kappa / scale.ald
+    Beta  = sqrt(2) / (scale.ald * kappa)
+    Delta = exp(location.ald)
+    exponent = ifelse(x >= Delta, -(Alpha+1), (Beta-1)) * (log(x) - location.ald)
+    logdensity = -location.ald + log(Alpha) + log(Beta) -
+                 log(Alpha + Beta) + exponent
+    indexTF = (scale.ald > 0) & (tau > 0) & (tau < 1) & (kappa > 0) # &
+    logdensity[!indexTF] = NaN
+    logdensity[x <  0 & indexTF] = -Inf
+    if(log.arg) logdensity else exp(logdensity)
+}
+
+
+qloglap = function(p, location.ald=0, scale.ald=1,
+                       tau=0.5, kappa=sqrt(tau/(1-tau))) {
+    NN = max(length(p), length(location.ald), length(scale.ald), length(kappa))
+    location = rep(location.ald, len=NN); scale= rep(scale.ald, len=NN)
+    kappa = rep(kappa, len=NN); p = rep(p, len=NN)
+    tau = rep(tau, len=NN)
+
+    Alpha = sqrt(2) * kappa / scale.ald
+    Beta  = sqrt(2) / (scale.ald * kappa)
+    Delta = exp(location.ald)
+
+    temp9 = Alpha + Beta
+    ans = Delta * (p * temp9 / Alpha)^(1/Beta)
+    index1 = (p > Alpha / temp9)
+    ans[index1] = (Delta * ((1-p) * temp9 / Beta)^(-1/Alpha))[index1]
+    ans[p == 0] = 0
+    ans[p == 1] = Inf
+
+    indexTF = (scale.ald > 0) & (tau > 0) & (tau < 1) & (kappa > 0)
+              (p >= 0) & (p <= 1) # &
+    ans[!indexTF] = NaN
+    ans
+}
+
+
+
+ploglap = function(q, location.ald=0, scale.ald=1,
+                       tau=0.5, kappa=sqrt(tau/(1-tau))) {
+    NN = max(length(q), length(location.ald), length(scale.ald), length(kappa))
+    location = rep(location.ald, len=NN); scale = rep(scale.ald, len=NN)
+    kappa = rep(kappa, len=NN); q = rep(q, len=NN)
+    tau = rep(tau, len=NN)
+
+    Alpha = sqrt(2) * kappa / scale.ald
+    Beta  = sqrt(2) / (scale.ald * kappa)
+    Delta = exp(location.ald)
+
+    temp9 = Alpha + Beta
+    ans = (Alpha / temp9) * (q / Delta)^(Beta)
+    ans[q <= 0] = 0
+    index1 = (q >= Delta)
+    ans[index1] = (1 - (Beta/temp9) * (Delta/q)^(Alpha))[index1]
+
+    indexTF = (scale.ald > 0) & (tau > 0) & (tau < 1) & (kappa > 0) # &
+    ans[!indexTF] = NaN
+    ans
+}
+
+
+
+
+rlogitlap = function(n, location.ald=0, scale.ald=1, tau=0.5,
+                         kappa=sqrt(tau/(1-tau)), earg=list()) {
+    logit(ralap(n=n, location=location.ald, scale=scale.ald,
+                tau=tau, kappa=kappa), inverse=TRUE, earg=earg)
+}
+
+
+dlogitlap = function(x, location.ald=0, scale.ald=1, tau=0.5,
+                         kappa=sqrt(tau/(1-tau)), log=FALSE, earg=list()) {
+    if(!is.logical(log.arg <- log)) stop("bad input for argument 'log'")
+    rm(log)
+
+    NN = max(length(x), length(location.ald), length(scale.ald), length(kappa))
+    location = rep(location.ald, len=NN); scale= rep(scale.ald, len=NN)
+    kappa = rep(kappa, len=NN); x = rep(x, len=NN)
+    tau = rep(tau, len=NN)
+
+    Alpha = sqrt(2) * kappa / scale.ald
+    Beta  = sqrt(2) / (scale.ald * kappa)
+    Delta = logit(location.ald, inverse=TRUE, earg=earg)
+
+    exponent = ifelse(x >= Delta, -Alpha, Beta) *
+               (logit(x, earg=earg) - location.ald)
+    logdensity = log(Alpha) + log(Beta) - log(Alpha + Beta) -
+                 log(x) - log1p(-x) + exponent
+    indexTF = (scale.ald > 0) & (tau > 0) & (tau < 1) & (kappa > 0) # &
+    logdensity[!indexTF] = NaN
+    logdensity[x <  0 & indexTF] = -Inf
+    logdensity[x >  1 & indexTF] = -Inf
+    if(log.arg) logdensity else exp(logdensity)
+}
+
+
+qlogitlap = function(p, location.ald=0, scale.ald=1,
+                         tau=0.5, kappa=sqrt(tau/(1-tau)), earg=list()) {
+    qqq = qalap(p=p, location=location.ald, scale=scale.ald,
+                tau=tau, kappa=kappa)
+    ans = logit(qqq, inverse=TRUE, earg=earg)
+    ans[(p < 0) | (p > 1)] = NaN
+    ans[p == 0] = 0
+    ans[p == 1] = 1
+    ans
+}
+
+
+
+plogitlap = function(q, location.ald=0, scale.ald=1,
+                         tau=0.5, kappa=sqrt(tau/(1-tau)), earg=list()) {
+    NN = max(length(q), length(location.ald), length(scale.ald),
+             length(kappa))
+    location.ald = rep(location.ald, len=NN); scale.ald= rep(scale.ald, len=NN)
+    kappa = rep(kappa, len=NN); q= rep(q, len=NN)
+    tau = rep(tau, len=NN);
+
+    indexTF = (q > 0) & (q < 1)
+    qqq = logit(q[indexTF], earg=earg)
+    ans = q
+    ans[indexTF] = palap(q=qqq, location=location.ald[indexTF],
+                         scale=scale.ald[indexTF],
+                         tau=tau[indexTF], kappa=kappa[indexTF])
+    ans[q >= 1] = 1
+    ans[q <= 0] = 0
+    ans
+}
+
+
+
+rprobitlap = function(n, location.ald=0, scale.ald=1, tau=0.5,
+                          kappa=sqrt(tau/(1-tau)), earg=list()) {
+    probit(ralap(n=n, location=location.ald, scale=scale.ald,
+                 tau=tau, kappa=kappa), inverse=TRUE, earg=earg)
+}
+
+
+dprobitlap = function(x, location.ald=0, scale.ald=1, tau=0.5,
+                          kappa=sqrt(tau/(1-tau)), log=FALSE,
+                          earg=list(), meth2=TRUE) {
+    if(!is.logical(log.arg <- log)) stop("bad input for argument 'log'")
+    rm(log)
+
+    NN = max(length(x), length(location.ald), length(scale.ald), length(kappa))
+    location.ald = rep(location.ald, len=NN); scale.ald= rep(scale.ald, len=NN)
+    kappa = rep(kappa, len=NN); x = rep(x, len=NN)
+    tau = rep(tau, len=NN)
+
+    logdensity = x * NaN
+    index1 = (x > 0) & (x < 1)
+    indexTF = (scale.ald > 0) & (tau > 0) & (tau < 1) & (kappa > 0) # &
+    if(meth2) {
+        dx.dy = x
+        use.x = probit(x[index1], earg=earg)
+        logdensity[index1] = dalap(x=use.x, location=location.ald[index1],
+                                   scale=scale.ald[index1], tau=tau[index1],
+                                   kappa=kappa[index1], log=TRUE)
+    } else {
+        Alpha = sqrt(2) * kappa / scale.ald
+        Beta  = sqrt(2) / (scale.ald * kappa)
+        Delta = pnorm(location.ald)
+        use.x  = qnorm(x) # qnorm(x[index1])
+        log.dy.dw = dnorm(use.x, log=TRUE)
+
+        exponent = ifelse(x >= Delta, -Alpha, Beta) * (use.x - location.ald) -
+                   log.dy.dw
+
+        logdensity[index1] = (log(Alpha) + log(Beta) -
+                             log(Alpha + Beta) + exponent)[index1]
+    }
+    logdensity[!indexTF] = NaN
+    logdensity[x <  0 & indexTF] = -Inf
+    logdensity[x >  1 & indexTF] = -Inf
+
+    if(meth2) {
+        dx.dy[index1] = probit(x[index1], earg=earg, inverse=FALSE, deriv=1)
+        dx.dy[!index1] = 0 # zz 0 seems to work. -Inf
+        dx.dy[!indexTF] = NaN
+        if(log.arg) logdensity - log(abs(dx.dy)) else exp(logdensity) / abs(dx.dy)
+    } else {
+        if(log.arg) logdensity else exp(logdensity)
+    }
+}
+
+
+qprobitlap = function(p, location.ald=0, scale.ald=1,
+                          tau=0.5, kappa=sqrt(tau/(1-tau)), earg=list()) {
+    qqq = qalap(p=p, location=location.ald, scale=scale.ald,
+                tau=tau, kappa=kappa)
+    ans = probit(qqq, inverse=TRUE, earg=earg)
+    ans[(p < 0) | (p > 1)] = NaN
+    ans[p == 0] = 0
+    ans[p == 1] = 1
+    ans
+}
+
+
+
+pprobitlap = function(q, location.ald=0, scale.ald=1,
+                          tau=0.5, kappa=sqrt(tau/(1-tau)), earg=list()) {
+    NN = max(length(q), length(location.ald), length(scale.ald),
+             length(kappa))
+    location.ald = rep(location.ald, len=NN); scale.ald= rep(scale.ald, len=NN)
+    kappa = rep(kappa, len=NN); q= rep(q, len=NN)
+    tau = rep(tau, len=NN);
+
+    indexTF = (q > 0) & (q < 1)
+    qqq = probit(q[indexTF], earg=earg)
+    ans = q
+    ans[indexTF] = palap(q=qqq, location=location.ald[indexTF],
+                         scale=scale.ald[indexTF],
+                         tau=tau[indexTF], kappa=kappa[indexTF])
+    ans[q >= 1] = 1
+    ans[q <= 0] = 0
+    ans
+}
+
+
+rclogloglap = function(n, location.ald=0, scale.ald=1, tau=0.5,
+                          kappa=sqrt(tau/(1-tau)), earg=list()) {
+    cloglog(ralap(n=n, location=location.ald, scale=scale.ald,
+                  tau=tau, kappa=kappa), inverse=TRUE, earg=earg)
+}
+
+
+dclogloglap = function(x, location.ald=0, scale.ald=1, tau=0.5,
+                           kappa=sqrt(tau/(1-tau)), log=FALSE,
+                           earg=list(), meth2=TRUE) {
+    if(!is.logical(log.arg <- log)) stop("bad input for argument 'log'")
+    rm(log)
+
+    NN = max(length(x), length(location.ald), length(scale.ald), length(kappa))
+    location.ald = rep(location.ald, len=NN); scale.ald= rep(scale.ald, len=NN)
+    kappa = rep(kappa, len=NN); x = rep(x, len=NN)
+    tau = rep(tau, len=NN)
+
+    logdensity = x * NaN
+    index1 = (x > 0) & (x < 1)
+    indexTF = (scale.ald > 0) & (tau > 0) & (tau < 1) & (kappa > 0) # &
+    if(meth2) {
+        dx.dy = x
+        use.w = cloglog(x[index1], earg=earg)
+        logdensity[index1] = dalap(x=use.w, location=location.ald[index1],
+                                   scale=scale.ald[index1], tau=tau[index1],
+                                   kappa=kappa[index1], log=TRUE)
+
+    } else {
+        Alpha = sqrt(2) * kappa / scale.ald
+        Beta  = sqrt(2) / (scale.ald * kappa)
+        Delta = cloglog(location.ald, inverse=TRUE)
+
+        exponent = ifelse(x >= Delta, -(Alpha+1), Beta-1) * log(-log1p(-x)) +
+                   ifelse(x >= Delta, Alpha, -Beta) * location.ald
+        logdensity[index1] = (log(Alpha) + log(Beta) -
+                             log(Alpha + Beta) - log1p(-x) + exponent)[index1]
+    }
+    logdensity[!indexTF] = NaN
+    logdensity[x <  0 & indexTF] = -Inf
+    logdensity[x >  1 & indexTF] = -Inf
+
+    if(meth2) {
+        dx.dy[index1] = cloglog(x[index1], earg=earg, inverse=FALSE, deriv=1)
+        dx.dy[!index1] = 0 # zz 0 seems to work. -Inf
+        dx.dy[!indexTF] = NaN
+        if(log.arg) logdensity - log(abs(dx.dy)) else exp(logdensity) / abs(dx.dy)
+    } else {
+        if(log.arg) logdensity else exp(logdensity)
+    }
+}
+
+
+qclogloglap = function(p, location.ald=0, scale.ald=1,
+                          tau=0.5, kappa=sqrt(tau/(1-tau)), earg=list()) {
+    qqq = qalap(p=p, location=location.ald, scale=scale.ald,
+                tau=tau, kappa=kappa)
+    ans = cloglog(qqq, inverse=TRUE, earg=earg)
+    ans[(p < 0) | (p > 1)] = NaN
+    ans[p == 0] = 0
+    ans[p == 1] = 1
+    ans
+}
+
+
+
+pclogloglap = function(q, location.ald=0, scale.ald=1,
+                           tau=0.5, kappa=sqrt(tau/(1-tau)), earg=list()) {
+    NN = max(length(q), length(location.ald), length(scale.ald),
+             length(kappa))
+    location.ald = rep(location.ald, len=NN); scale.ald= rep(scale.ald, len=NN)
+    kappa = rep(kappa, len=NN); q= rep(q, len=NN)
+    tau = rep(tau, len=NN);
+
+    indexTF = (q > 0) & (q < 1)
+    qqq = cloglog(q[indexTF], earg=earg)
+    ans = q
+    ans[indexTF] = palap(q=qqq, location=location.ald[indexTF],
+                         scale=scale.ald[indexTF],
+                         tau=tau[indexTF], kappa=kappa[indexTF])
+    ans[q >= 1] = 1
+    ans[q <= 0] = 0
+    ans
+}
+
+
+
+
+
+
+
+
+
+
+
 
 
 

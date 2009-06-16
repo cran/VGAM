@@ -89,11 +89,10 @@ qtplot.gumbel(object, plot.it = TRUE,
   \code{\link{gumbel}}.
 }
 \examples{
-data(venice)
 y = as.matrix(venice[,paste("r",1:10,sep="")])
 fit1 = vgam(y ~ s(year, df=3), gumbel(R=365, mpv=TRUE),
             data=venice, trace=TRUE, na.action=na.pass)
-fitted(fit1)[1:4,]
+head(fitted(fit1))
 
 \dontrun{
 par(mfrow=c(1,1), bty="l", xpd=TRUE, las=1)
@@ -102,7 +101,7 @@ qtplot(fit1, mpv=TRUE, lcol=c(1,2,5), tcol=c(1,2,5), lwd=2,
 
 qtplot(fit1, perc=97, mpv=FALSE, lcol=3, tcol=3,
        lwd=2, tadj=0.4, add=TRUE) -> i
-i@post$qtplot$fitted[1:4,]
+head(i@post$qtplot$fitted)
 }
 }
 \keyword{hplot}

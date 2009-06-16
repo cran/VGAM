@@ -10,7 +10,7 @@
 
 }
 \usage{
-dfrank(x1, x2, alpha)
+dfrank(x1, x2, alpha, log=FALSE)
 pfrank(q1, q2, alpha)
 rfrank(n, alpha)
 }
@@ -19,6 +19,12 @@ rfrank(n, alpha)
   \item{n}{number of observations.
     Must be a positive integer of length 1.}
   \item{alpha}{the positive association parameter \eqn{\alpha}{alpha}.}
+  \item{log}{
+  Logical.
+  If \code{log=TRUE} then the logarithm of the density is returned.
+
+  }
+
 }
 \value{
   \code{dfrank} gives the density,

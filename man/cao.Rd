@@ -250,14 +250,16 @@ Constrained additive ordination.
   a fast machine. I hope to look at ways of speeding things up in the
   future.
 
-  CAO models present a difficult optimization problem, partly because the
+  Use \code{\link[base:Random]{set.seed}} just prior to calling
+  \code{cao()} to make your results reproducible.
+  The reason for this is finding the optimal
+  CAO model presents a difficult optimization problem, partly because the
   log-likelihood function contains many local solutions. To obtain the
-  (global) solution the user is advised to try many initial values. This
-  can be done by setting \code{Bestof} some appropriate value (see
-  \code{\link{cao.control}}). Trying many initial values becomes
+  (global) solution the user is advised to try \emph{many} initial values.
+  This can be done by setting \code{Bestof} some appropriate value
+  (see \code{\link{cao.control}}). Trying many initial values becomes
   progressively more important as the nonlinear degrees of freedom of
-  the smooths increase. Use \code{\link[base:Random]{set.seed}} to make your
-  results reproducible.
+  the smooths increase.
 
 % The code is a little fragile at this stage, so the function might
 % hang/lock up in the microsoft Windows version.
@@ -288,9 +290,8 @@ Constrained additive ordination.
 
 \examples{
 \dontrun{
-data(hspider)
 hspider[,1:6] = scale(hspider[,1:6]) # Standardized environmental vars
-set.seed(149)
+set.seed(149) # For reproducible results 
 ap1 = cao(cbind(Pardlugu, Pardmont, Pardnigr, Pardpull) ~
           WaterCon + BareSand + FallTwig +
           CoveMoss + CoveHerb + ReflLux,

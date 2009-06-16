@@ -163,7 +163,7 @@ cexpon =
 ecexpon = function(link="loge", location=0)
 {
     if(!is.Numeric(location, allow=1))
-        stop("bad input for \"location\"")
+        stop("bad input for 'location'")
     if(mode(link) != "character" && mode(link) != "name")
         link = as.character(substitute(link))
 
@@ -178,7 +178,7 @@ ecexpon = function(link="loge", location=0)
     initialize=eval(substitute(expression({
         extra$location = .location # This is passed into, e.g., link, deriv etc.
         if(any(y[,1] <= extra$location))
-            stop(paste("all responses must be greater than", extra$location))
+            stop("all responses must be greater than ", extra$location)
         predictors.names = namesof("rate", .link, tag= FALSE)
         type <- attr(y, "type")
         if (type=="right" || type=="left"){
@@ -440,7 +440,7 @@ crayleigh = function(link="loge", earg = list(), expected=FALSE) {
     if(mode(link) != "character" && mode(link) != "name")
         link = as.character(substitute(link))
     if(!is.logical(expected) || length(expected) != 1)
-        stop("bad input for argument \"expected\"")
+        stop("bad input for argument 'expected'")
     if(!is.list(earg)) earg = list()
 
     new("vglmff",
@@ -517,9 +517,9 @@ weibull.sev = function(lshape="loge", lscale="loge",
     if(mode(lscale) != "character" && mode(lscale) != "name")
         lscale = as.character(substitute(lscale))
     if(length(zero) && !is.Numeric(zero, integer=TRUE, posit=TRUE))
-        stop("bad input for argument \"zero\"")
+        stop("bad input for argument 'zero'")
     if(!is.Numeric(imethod, allow=1, integer=TRUE, positi=TRUE) || imethod > 2)
-        stop("argument \"imethod\" must be 1 or 2")
+        stop("argument 'imethod' must be 1 or 2")
     if(!is.list(eshape)) eshape = list()
     if(!is.list(escale)) escale = list()
     if(!is.Numeric(nrfs, allow=1) || nrfs<0 || nrfs > 1)

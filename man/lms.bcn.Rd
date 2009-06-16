@@ -149,17 +149,16 @@ number corresponding to the highest likelihood value.
 \code{\link{cdf.lmscreg}},
 \code{\link{bminz}},
 \code{\link{alaplace1}},
-\code{\link{alsqreg}}.
+\code{\link{amlnormal}}.
 }
 
 \examples{
-data(bminz)
 fit = vgam(BMI ~ s(age, df=c(4,2)), fam=lms.bcn(zero=1), data=bminz, tr=TRUE)
-predict(fit)[1:3,]
-fitted(fit)[1:3,]
-bminz[1:3,]
+head(predict(fit))
+head(fitted(fit))
+head(bminz)
 # Person 1 is near the lower quartile of BMI amongst people his age
-cdf(fit)[1:3]
+head(cdf(fit))
 
 \dontrun{
 # Quantile plot

@@ -85,9 +85,9 @@ y = rlog(n=1000, prob=logit(0.2, inverse=TRUE))
 fit = vglm(y ~ 1, logff, trace=TRUE, crit="c")
 coef(fit, matrix=TRUE)
 Coef(fit)
-\dontrun{hist(y, prob=TRUE, breaks=seq(0.5, max(y)+0.5, by=1))
+\dontrun{hist(y, prob=TRUE, breaks=seq(0.5, max(y)+0.5, by=1), border="blue")
 x = seq(1, max(y), by=1)
-lines(x, dlog(x, Coef(fit)[1]), col="red", type="h")
+lines(x, dlog(x, Coef(fit)[1]), col="red", type="h", lwd=2)
 }
 }
 \keyword{models}

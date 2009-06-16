@@ -27,24 +27,24 @@ predict.vgam <- function(object, newdata=NULL,
 
 
     if(untransform && (type!="link" || se.fit || deriv.arg != 0 || offset != 0))
-        stop(paste("argument \"untransform\"=TRUE only if type=\"link\",",
-                   "se.fit=FALSE, deriv=0"))
+        stop("argument 'untransform=TRUE' only if type='link', ",
+             "se.fit=FALSE, deriv=0")
 
     if(raw && type!="terms")
-        stop("raw=TRUE only works when type=\"terms\"")
+        stop("'raw=TRUE' only works when 'type=\"terms\"'")
 
     if(!is.numeric(deriv.arg) || deriv.arg<0 ||
        deriv.arg!=round(deriv.arg) || length(deriv.arg)>1)
-        stop("bad input for the deriv argument")
+        stop("bad input for the 'deriv' argument")
 
     if(deriv.arg>0 && type!="terms")
-        stop("deriv>0 can only be specified if type=\"terms\"")
+        stop("'deriv>0' can only be specified if 'type=\"terms\"'")
 
     if(deriv.arg != 0 && !(type!="response" && !se.fit))
-        stop(paste("deriv= only works with type!=\"response\"and se.fit=FALSE"))
+        stop("'deriv=' only works with type!='response' and se.fit=FALSE")
 
     if(se.fit && length(newdata))
-        stop("can't specify se.fit=TRUE when there is newdata")
+        stop("cannot specify 'se.fit=TRUE' when 'newdata' is assigned")
 
 
     tt <- terms(object) # 11/8/03; object@terms$terms
@@ -168,14 +168,13 @@ predict.vgam <- function(object, newdata=NULL,
             xx <- newdata[,fred] # [,s.xargument[i]]   # [,nindex[i]]   
             ox <- order(xx)
 
-            raw.mat <- predictvsmooth.spline.fit(
+            rawMat <- predictvsmooth.spline.fit(
                                  object@Bspline[[i]],
                                  x=xx,
                                  deriv=deriv.arg)$y
 
 
-            eta.mat <- if(raw) raw.mat else
-                     raw.mat %*% t(Blist[[i]])
+            eta.mat <- if(raw) rawMat else (rawMat %*% t(Blist[[i]]))
 
             if(type=="terms") {
                 ii <- tmp6[[i]]
@@ -190,7 +189,7 @@ predict.vgam <- function(object, newdata=NULL,
                                         iii <- iii[[i]]
                                         object@var[,iii,drop=FALSE]
                                     } else
-                                        stop("can't handle se's with raw=FALSE")
+                                        stop("cannot handle se's with raw=FALSE")
 
                         predictor$se.fit[,ii] <- (predictor$se.fit[,ii]^2 +
                            TS * temp.var)^0.5

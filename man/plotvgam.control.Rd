@@ -9,7 +9,7 @@
 \usage{
 plotvgam.control(which.cf = NULL,
                   xlim = NULL, ylim = NULL, llty = par()$lty,
-                  slty = if (is.R()) "dashed" else 3, pcex = par()$cex,
+                  slty = "dashed", pcex = par()$cex,
                   pch = par()$pch, pcol = par()$col,
                   lcol = par()$col, rcol = par()$col,
                   scol = par()$col, llwd = par()$lwd, slwd = par()$lwd,
@@ -82,10 +82,13 @@ contains further information and examples.
 
 }
 \author{ Thomas W. Yee }
-\note{ This function enables \code{plotvgam()} to work in a similar
-  manner to S-PLUS's \code{plot.gam()}. However, there is no
-  interactive options yet.
-}
+
+%\note{
+%  This function enables \code{plotvgam()} to work in a similar
+%  manner to S-PLUS's \code{plot.gam()}.
+%  However, there is no interactive options yet.
+%
+%}
 
 \seealso{
   \code{\link{plotvgam}}.

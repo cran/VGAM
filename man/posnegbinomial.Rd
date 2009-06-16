@@ -144,8 +144,8 @@ fit = vglm(y ~ 1, posnegbinomial, trace=TRUE)
 coef(fit, matrix=TRUE)
 mean(y)    # Sample mean
 munb / (1 - (size/(size+munb))^size) # Population mean
-fitted(fit)[1:3,]
-predict(fit)[1:3,]
+head(fitted(fit))
+head(predict(fit))
 }
 \keyword{models}
 \keyword{regression}

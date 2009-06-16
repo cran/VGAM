@@ -8,10 +8,10 @@
 
 
 
-binomialff <- function(link="logit", earg=list(),
+
+ binomialff = function(link="logit", earg=list(),
                        dispersion=1, mv=FALSE, onedpar=!mv,
-                       parallel = FALSE,
-                       zero=NULL)
+                       parallel = FALSE, zero=NULL)
 
 {
 
@@ -33,26 +33,9 @@ binomialff <- function(link="logit", earg=list(),
         constraints <- cm.zero.vgam(constraints, x, .zero, M)
     }), list( .parallel=parallel, .zero=zero ))),
     deviance=function(mu, y, w, residuals = FALSE, eta, extra=NULL) {
-        devy <- y
-        nz <- y != 0
-        devy[nz] <- y[nz] * log(y[nz])
-        nz <- (1 - y) != 0
-        devy[nz] <- devy[nz] + (1 - y[nz]) * log1p(-y[nz])
-        devmu <- y * log(mu) + (1 - y) * log1p(-mu)
-        if(any(small <- mu * (1 - mu) < .Machine$double.eps)) {
-            warning("fitted values close to 0 or 1")
-            smu <- mu[small]
-            sy <- y[small]
-            smu <- ifelse(smu < .Machine$double.eps, 
-                        .Machine$double.eps, smu)
-            onemsmu <- ifelse((1 - smu) < .Machine$
-                        double.eps, .Machine$double.eps, 1 - smu)
-            devmu[small] <- sy * log(smu) + (1 - sy) * log(onemsmu)
-        }
-        devi <- 2 * (devy - devmu)
-        if(residuals) {
-            sign(y - mu) * sqrt(abs(devi) * w)
-        } else sum(w * devi)
+        Deviance.categorical.data.vgam(mu=cbind(mu,1-mu), y=cbind(y,1-y),
+                                       w=w, residuals = residuals,
+                                       eta=eta, extra=extra)
     },
     initialize=eval(substitute(expression({
         if(is.R()) {
@@ -129,8 +112,8 @@ binomialff <- function(link="logit", earg=list(),
                 dpar = rep(as.numeric(NA), len=M)
                 temp87 = cbind(temp87)
                 nrow.mu = if(is.matrix(mu)) nrow(mu) else length(mu)
-                for(i in 1:M)
-                    dpar[i] = sum(temp87[,i]) / (nrow.mu - ncol(x))
+                for(ii in 1:M)
+                    dpar[ii] = sum(temp87[,ii]) / (nrow.mu - ncol(x))
                 if(is.matrix(y) && length(dimnames(y)[[2]])==length(dpar))
                     names(dpar) = dimnames(y)[[2]]
             } else 
@@ -154,8 +137,9 @@ binomialff <- function(link="logit", earg=list(),
         theta2eta(mu, .link, earg = .earg )
     , list( .link=link, .earg = earg ))),
     loglikelihood= function(mu, y, w, residuals = FALSE, eta, extra=NULL) {
-        if(residuals) w*(y/mu - (1-y)/(1-mu)) else
-            sum(w*(y*log(mu) + (1-y)*log1p(-mu)))
+        if(residuals) w*(y/mu - (1-y)/(1-mu)) else {
+            sum(dbinom(x=w*y, size=w, prob=mu, log=TRUE))
+        }
     },
     vfamily=c("binomialff", "vcategorical"),
     deriv=eval(substitute(expression({
@@ -193,8 +177,7 @@ binomialff <- function(link="logit", earg=list(),
 
 
 
-gammaff <- function(link="nreciprocal", earg=list(),
-                    dispersion=0)
+ gammaff = function(link="nreciprocal", earg=list(), dispersion=0)
 {
     estimated.dispersion <- dispersion==0
     if(mode(link )!= "character" && mode(link )!= "name")
@@ -274,7 +257,7 @@ gammaff <- function(link="nreciprocal", earg=list(),
 
 
 
-inverse.gaussianff <- function(link="natural.ig", dispersion=0)
+ inverse.gaussianff = function(link="natural.ig", dispersion=0)
 {
     estimated.dispersion <- dispersion==0
     warning("@deviance() not finished")
@@ -337,17 +320,20 @@ inverse.gaussianff <- function(link="natural.ig", dispersion=0)
 
 
 
-dinv.gaussian = function(x, mu, lambda) {
-    if(any(mu <=0)) stop("mu must be positive")
-    if(any(lambda <=0)) stop("lambda must be positive")
-    ans = x
-    mu = rep(mu, len=length(x))
-    lambda = rep(lambda, len=length(x))
-    ans[x <= 0] = 0
-    bb = x > 0
-    ans[bb] = sqrt(lambda[bb]/(2*pi*x[bb]^3)) *
-              exp(-lambda[bb]*(x[bb]-mu[bb])^2/(2*mu[bb]^2*x[bb]))
-    ans
+dinv.gaussian = function(x, mu, lambda, log=FALSE) {
+    if(!is.logical(log.arg <- log))
+        stop("bad input for argument 'log'")
+    rm(log)
+
+    LLL = max(length(x), length(mu), length(lambda))
+    x = rep(x, len=LLL); mu = rep(mu, len=LLL); lambda = rep(lambda, len=LLL)
+    logdensity = rep(log(0), len=LLL)
+    xok = (x > 0)
+    logdensity[xok] = 0.5 * log(lambda[xok] / (2 * pi * x[xok]^3)) -
+                      lambda[xok] * (x[xok]-mu[xok])^2 / (2*mu[xok]^2 * x[xok])
+    logdensity[mu     <= 0] = NaN
+    logdensity[lambda <= 0] = NaN
+    if(log.arg) logdensity else exp(logdensity)
 }
 
 
@@ -367,24 +353,23 @@ pinv.gaussian = function(q, mu, lambda) {
 
 
 rinv.gaussian = function(n, mu, lambda) {
-    if(!is.Numeric(n, positive=TRUE, integer=TRUE, allow=1))
-        stop("'n' must be a single positive integer")
-    if(!is.Numeric(mu, positive=TRUE))
-        stop("'mu' must have positive values only")
-    if(!is.Numeric(lambda, positive=TRUE))
-        stop("'lambda' must have positive values only")
-    mu = rep(mu, len=n)
-    lambda = rep(lambda, len=n)
-    u = runif(n)
-    z = rnorm(n)^2
+    use.n = if((length.n <- length(n)) > 1) length.n else
+            if(!is.Numeric(n, integ=TRUE, allow=1, posit=TRUE))
+                stop("bad input for argument 'n'") else n
+    mu = rep(mu, len=use.n); lambda = rep(lambda, len=use.n)
+    u = runif(use.n)
+    Z = rnorm(use.n)^2 # rchisq(use.n, df=1)
     phi = lambda / mu
-    y1 = 1 - 0.5 * (sqrt(z^2 + 4*phi*z) - z) / phi
-    mu * ifelse((1+y1)*u > 1, 1/y1, y1)
+    y1 = 1 - 0.5 * (sqrt(Z^2 + 4*phi*Z) - Z) / phi
+    ans = mu * ifelse((1+y1)*u > 1, 1/y1, y1)
+    ans[mu     <= 0] = NaN
+    ans[lambda <= 0] = NaN
+    ans
 }
 
 
 
-inv.gaussianff <- function(lmu="loge", llambda="loge",
+ inv.gaussianff = function(lmu="loge", llambda="loge",
                            emu=list(), elambda=list(),
                            ilambda=1,
                            zero=NULL)
@@ -433,9 +418,9 @@ inv.gaussianff <- function(lmu="loge", llambda="loge",
     loglikelihood=eval(substitute(
              function(mu, y, w, residuals = FALSE, eta, extra=NULL) {
         lambda <- eta2theta(eta[,2], link=.llambda, earg= .elambda)
-        if(residuals) stop("loglikelihood residuals not implemented yet") else
-        sum(w*(0.5 * log(lambda / (2 * pi * y^3)) -
-                lambda *(y-mu)^2 / (2*mu^2 * y)))
+        if(residuals) stop("loglikelihood residuals not implemented yet") else {
+            sum(w * dinv.gaussian(x=y, mu=mu, lambda=lambda, log=TRUE))
+        }
     }, list( .llambda=llambda, .emu=emu, .elambda=elambda ))),
     vfamily="inv.gaussianff",
     deriv=eval(substitute(expression({
@@ -455,7 +440,7 @@ inv.gaussianff <- function(lmu="loge", llambda="loge",
 
 
 
-poissonff <- function(link="loge", earg=list(),
+ poissonff = function(link="loge", earg=list(),
                       dispersion=1, onedpar=FALSE,
                       imu=NULL, method.init=1,
                       parallel=FALSE, zero=NULL)
@@ -480,9 +465,9 @@ poissonff <- function(link="loge", earg=list(),
         constraints <- cm.zero.vgam(constraints, x, .zero, M)
     }), list( .parallel=parallel, .zero=zero ))),
     deviance= function(mu, y, w, residuals = FALSE, eta, extra=NULL) {
-        nz <- y > 0
-        devi <-  - (y - mu)
-        devi[nz] <- devi[nz] + y[nz] * log(y[nz]/mu[nz])
+        nz = y > 0
+        devi =  -(y - mu)
+        devi[nz] = devi[nz] + y[nz] * log(y[nz]/mu[nz])
         if(residuals) sign(y - mu) * sqrt(2 * abs(devi) * w) else
             2 * sum(w * devi)
     },
@@ -537,8 +522,8 @@ poissonff <- function(link="loge", earg=list(),
                 dpar = rep(as.numeric(NA), len=M)
                 temp87 = cbind(temp87)
                 nrow.mu = if(is.matrix(mu)) nrow(mu) else length(mu)
-                for(i in 1:M)
-                    dpar[i] = sum(temp87[,i]) / (nrow.mu - ncol(x))
+                for(ii in 1:M)
+                    dpar[ii] = sum(temp87[,ii]) / (nrow.mu - ncol(x))
                 if(is.matrix(y) && length(dimnames(y)[[2]])==length(dpar))
                     names(dpar) = dimnames(y)[[2]]
             } else 
@@ -562,7 +547,9 @@ poissonff <- function(link="loge", earg=list(),
         theta2eta(mu, link= .link, earg= .earg)
     }, list( .link=link, .earg=earg ))),
     loglikelihood= function(mu, y, w, residuals = FALSE, eta, extra=NULL) {
-        if(residuals) w*(y/mu - 1) else sum(w*(-mu + y*log(mu) - lgamma(y+1)))
+        if(residuals) w*(y/mu - 1) else {
+            sum(w * dpois(x=y, lambda=mu, log=TRUE))
+        }
     },
     vfamily="poissonff",
     deriv=eval(substitute(expression({
@@ -589,8 +576,8 @@ poissonff <- function(link="loge", earg=list(),
 }
 
 
-quasibinomialff = function(link = "logit", mv = FALSE, onedpar = !mv, 
-                           parallel = FALSE, zero = NULL) {
+ quasibinomialff = function(link = "logit", mv = FALSE, onedpar = !mv, 
+                            parallel = FALSE, zero = NULL) {
     dispersion = 0 # Estimated; this is the only difference with binomialff()
     ans =
     binomialff(link = link, dispersion=dispersion, mv=mv, onedpar=onedpar,
@@ -599,8 +586,8 @@ quasibinomialff = function(link = "logit", mv = FALSE, onedpar = !mv,
     ans
 }
 
-quasipoissonff = function(link = "loge", onedpar = FALSE, parallel = FALSE,
-                          zero = NULL) {
+ quasipoissonff = function(link = "loge", onedpar = FALSE, parallel = FALSE,
+                           zero = NULL) {
     dispersion = 0 # Estimated; this is the only difference with poissonff()
     ans =
     poissonff(link = link, dispersion=dispersion, onedpar=onedpar,
@@ -612,28 +599,13 @@ quasipoissonff = function(link = "loge", onedpar = FALSE, parallel = FALSE,
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 poissonqn.control <- function(save.weight=TRUE, ...)
 {
     list(save.weight=save.weight)
 }
 
 
-poissonqn <- function(link="loge", earg=list(),
+ poissonqn = function(link="loge", earg=list(),
                       dispersion=1, onedpar=FALSE,
                       parallel=FALSE, zero=NULL,
                       wwts=c("expected","observed","qn"))
@@ -655,9 +627,9 @@ poissonqn <- function(link="loge", earg=list(),
         constraints <- cm.zero.vgam(constraints, x, .zero, M)
     }), list( .parallel=parallel, .zero=zero ))),
     deviance= function(mu, y, w, residuals = FALSE, eta, extra=NULL) {
-        nz <- y > 0
-        devi <-  - (y - mu)
-        devi[nz] <- devi[nz] + y[nz] * log(y[nz]/mu[nz])
+        nz = y > 0
+        devi =  -(y - mu)
+        devi[nz] = devi[nz] + y[nz] * log(y[nz]/mu[nz])
         if(residuals) sign(y - mu) * sqrt(2 * abs(devi) * w) else
             2 * sum(w * devi)
     },
@@ -683,7 +655,7 @@ poissonqn <- function(link="loge", earg=list(),
     last=eval(substitute(expression({
         dpar <- .dispersion
         if(!dpar) {
-            temp87 = (y-mu)^2 * wz / (dtheta.deta(mu, link= .link, earg= .earg)^2) # w cancel
+            temp87= (y-mu)^2 * wz/(dtheta.deta(mu, link= .link, earg= .earg)^2)
             if(M > 1 && ! .onedpar) {
                 dpar = rep(as.numeric(NA), len=M)
                 temp87 = cbind(temp87)
@@ -715,7 +687,9 @@ poissonqn <- function(link="loge", earg=list(),
     }, list( .link=link,
               .earg=earg ))),
     loglikelihood= function(mu, y, w, residuals = FALSE, eta, extra=NULL) {
-        if(residuals) w*(y/mu - 1) else sum(w*(-mu + y*log(mu) - lgamma(y+1)))
+        if(residuals) w*(y/mu - 1) else {
+            sum(w * dpois(x=y, lambda=mu, log=TRUE))
+        }
     },
     vfamily="poissonqn",
     deriv=eval(substitute(expression({
@@ -775,9 +749,7 @@ poissonqn <- function(link="loge", earg=list(),
 
 
 
-
-
-dexppoisson <- function(lmean="loge", emean=list(),
+ dexppoisson = function(lmean="loge", emean=list(),
                         ldispersion="logit", edispersion=list(),
                         idispersion=0.8,
                         zero=NULL)
@@ -867,7 +839,7 @@ dexppoisson <- function(lmean="loge", emean=list(),
 
 
 
-dexpbinomial <- function(lmean="logit", ldispersion="logit",
+ dexpbinomial = function(lmean="logit", ldispersion="logit",
                          emean=list(), edispersion=list(),
                          idispersion=0.25,
                          zero=2)
@@ -988,7 +960,7 @@ dexpbinomial <- function(lmean="logit", ldispersion="logit",
 
 
 
-mbinomial <- function(mvar=NULL, link="logit", earg=list(),
+ mbinomial = function(mvar=NULL, link="logit", earg=list(),
                       parallel = TRUE, smallno = .Machine$double.eps^(3/4))
 {
     if(mode(link )!= "character" && mode(link )!= "name")
@@ -1081,8 +1053,9 @@ mbinomial <- function(mvar=NULL, link="logit", earg=list(),
         matrix(temp, extra$n, extra$M)
     }, list( .link=link, .earg = earg ))),
     loglikelihood= function(mu, y, w, residuals = FALSE, eta, extra=NULL) {
-        if(residuals) w*(y/mu - (1-y)/(1-mu)) else
+        if(residuals) w*(y/mu - (1-y)/(1-mu)) else {
             sum(w*(y*log(mu) + (1-y)*log1p(-mu)))
+        }
     },
     vfamily=c("mbinomial", "vcategorical"),
     deriv=eval(substitute(expression({
@@ -1123,15 +1096,16 @@ mbinomial <- function(mvar=NULL, link="logit", earg=list(),
 mypool = function(x, index) {
     answer = x
     uindex = unique(index)
-    for(i in uindex) {
-        ind0 = index == i
+    for(ii in uindex) {
+        ind0 = index == ii
         answer[ind0] = sum(x[ind0])
     }
     answer
 }
 
 
-mbino     <- function()
+if(FALSE)
+ mbino = function()
 {
     link = "logit"
     earg = list()
@@ -1210,8 +1184,9 @@ mbino     <- function()
         misc$expected = TRUE
     }), list( .link=link, .earg = earg ))),
     loglikelihood= function(mu, y, w, residuals = FALSE, eta, extra=NULL) {
-        if(residuals) w*(y/mu - (1-y)/(1-mu)) else
+        if(residuals) w*(y/mu - (1-y)/(1-mu)) else {
             sum(w*(y*log(mu) + (1-y)*log1p(-mu)))
+        }
     },
     vfamily=c("mbin", "vcategorical"),
     deriv=eval(substitute(expression({
@@ -1232,5 +1207,9 @@ mbino     <- function()
         result
     }), list( .link=link, .earg = earg, .smallno=smallno ))))
 }
+
+
+
+
 
 

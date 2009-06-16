@@ -21,7 +21,8 @@ rzanegbin(n, p0, size, prob=NULL, munb=NULL)
 \arguments{
   \item{x, q}{vector of quantiles.}
   \item{p}{vector of probabilities.}
-  \item{n}{number of observations. Must be a single positive integer. }
+  \item{n}{number of observations. 
+  If \code{length(n) > 1} then the length is taken to be the number required. }
   \item{size, prob, munb, log}{
   Parameters from the ordinary negative binomial distribution
   (see \code{\link[stats:NegBinomial]{dnbinom}}).
@@ -37,12 +38,15 @@ rzanegbin(n, p0, size, prob=NULL, munb=NULL)
 }
 \details{
   The probability function of \eqn{Y} is 0 with probability \code{p0},
-  else a positive \eqn{negative binomial(\mu_{nb}, size)}{negative binomial(munb, size)}
+  else a positive
+  \eqn{negative binomial(\mu_{nb}, size)}{negative binomial(munb, size)}
   distribution.
 
 }
 \value{
   \code{dzanegbin} gives the density and
+  \code{pzanegbin} gives the distribution function,
+  \code{qzanegbin} gives the quantile function, and
   \code{rzanegbin} generates random deviates.
 }
 %\references{ }
@@ -59,11 +63,9 @@ rzanegbin(n, p0, size, prob=NULL, munb=NULL)
 
 }
 \examples{
-munb = 3
-size = 4
-p0 = 0.3
+munb = 3; size = 4; p0 = 0.3
 x = (-1):7
-(i = dzanegbin(x, p0=p0, munb=munb, size=size))
+(ii = dzanegbin(x, p0=p0, munb=munb, size=size))
 table(rzanegbin(100, p0=p0, munb=munb, size=size))
 
 \dontrun{
@@ -73,7 +75,7 @@ barplot(rbind(dzanegbin(x, p0=p0, munb=munb, size=size),
         beside = TRUE, col = c("blue","green"),
         main=paste("ZANB(p0=", p0, ", munb=", munb, ", size=", size, ") (blue) vs",
                         " NB(mu=", munb, ", size=", size, ") (green)", sep=""),
-        names.arg = as.character(x))
+        names.arg = as.character(x), cex.main=0.7, las=1)
 }
 }
 \keyword{distribution}

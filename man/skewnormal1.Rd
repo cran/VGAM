@@ -103,7 +103,7 @@ distribution.
 y = rsnorm(n <- 1000, shape=5)
 fit = vglm(y ~ 1, skewnormal1, trace=TRUE)
 coef(fit, matrix=TRUE)
-fitted(fit)[1:4,]
+head(fitted(fit))
 mean(y)
 \dontrun{
 hist(y, prob=TRUE)

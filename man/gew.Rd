@@ -34,7 +34,6 @@ and tests for aggregation bias.
 
 }
 \examples{
-data(gew)
 str(gew)
 }
 \keyword{datasets}

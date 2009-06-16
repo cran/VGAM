@@ -3,8 +3,10 @@
 
 
 
-if(!exists("is.R")) is.R <- function()
-    exists("version") && !is.null(version$language) && version$language=="R"
+
+
+
+
 
 is.Numeric <- function(x, allowable.length=Inf, integer.valued=FALSE, positive=FALSE)
     if(all(is.numeric(x)) && all(is.finite(x)) &&
@@ -13,35 +15,23 @@ is.Numeric <- function(x, allowable.length=Inf, integer.valued=FALSE, positive=F
     (if(positive) all(x>0) else TRUE)) TRUE else FALSE
 
 
-if(is.R())
-    VGAMenv = new.env()
+VGAMenv = new.env()
 
 
-
-
-
-if(is.R()) {
-    .onLoad <- function(lib, pkg) require(methods)  # 25/1/05
+.onLoad <- function(lib, pkg) require(methods)  # 25/1/05
  
+ 
+ 
+if(!any(search()=="package:methods"))
+    library(methods)
 
 
-    if(!any(search()=="package:methods"))
-        library(methods)
-
-    if(!any(search()=="package:splines"))
-        require(splines)
-
-}
-
-
+if(!any(search()=="package:splines"))
+    require(splines)
 
 
 
-
-
-
-.VGAM.prototype.list = if(is.R())
-list(
+.VGAM.prototype.list = list(
       "constraints"  = expression({}),
       "fini"         = expression({}),
       "first"        = expression({}),
@@ -50,27 +40,9 @@ list(
       "middle"       = expression({}),
       "middle2"      = expression({}),
       "deriv"        = expression({}),
-      "weight"       = expression({})) else 
-list(
-      "blurb"        = "",
-      "constraints"  = expression({}),
-      "deviance"     = function() {},
-      "fini"         = expression({}),
-      "first"        = expression({}),
-      "initialize"   = expression({}),
-      "inverse"      = function() {},
-      "last"         = expression({}),
-      "link"         = function() {},
-      "loglikelihood"= function() {},
-      "middle"       = expression({}),
-      "middle2"      = expression({}),
-      "summary.dispersion"  = FALSE,
-      "vfamily"      = "",
-      "deriv"        = expression({}),
-      "weight"       = expression({})) # Splus doesn't use prototypes 
+      "weight"       = expression({}))
 
 
-if(is.R())
 setClass("vglmff", representation(
       "blurb"        = "character",
       "constraints"  = "expression",
@@ -88,32 +60,14 @@ setClass("vglmff", representation(
       "vfamily"      = "character",
       "deriv"        = "expression",
       "weight"       = "expression"),  #  "call"
-prototype = .VGAM.prototype.list) else 
-setClass("vglmff", representation(
-      "blurb"        = "character",
-      "constraints"  = "expression",
-      "deviance"     = "function",
-      "fini"         = "expression",
-      "first"        = "expression",
-      "initialize"   = "expression",
-      "inverse"      = "function",
-      "last"         = "expression",
-      "link"         = "function",
-      "loglikelihood"= "function",
-      "middle"       = "expression",
-      "middle2"      = "expression",
-      "summary.dispersion"  = "logical",
-      "vfamily"      = "character",
-      "deriv"        = "expression",
-      "weight"       = "expression"))
+prototype = .VGAM.prototype.list)
 
 
 valid.vglmff = function(object) {
-
     compulsory = c("initialize", "weight", "deriv", "inverse")
-    for(i in compulsory) {
-        if(!length(slot(object, i)))
-            stop(paste("slot \"", i, "\" is empty"))
+    for(ii in compulsory) {
+        if(!length(slot(object, ii)))
+            stop("slot ", ii, " is empty")
     }
 
     if(length(as.list(object@inverse)) != 3)
@@ -121,12 +75,19 @@ valid.vglmff = function(object) {
 }
 
 if(FALSE) 
-setValidity("vglmff", valid.vglmff)
+    setValidity("vglmff", valid.vglmff)
 
 
 
-print.vglmff <- function(x, ...)
-{
+
+
+if(!isGeneric("print"))
+    setGeneric("print", function(x, ...) standardGeneric("print"),
+               package="VGAM")
+
+
+
+print.vglmff <- function(x, ...) {
     f <- x@vfamily
     if(is.null(f))
         stop("not a VGAM family function")
@@ -139,8 +100,8 @@ print.vglmff <- function(x, ...)
     if(length(f)>1) cat("Informal classes:", paste(f, collapse=", "), "\n")
     cat("\n")
 
-    for(i in 1:length(nn))
-        cat(nn[i])
+    for(ii in 1:length(nn))
+        cat(nn[ii])
     cat("\n")
     invisible(return(x))
 }
@@ -162,141 +123,113 @@ setMethod("show", "vglmff",
 
 
 
-if(is.R())
-setClass("vlm", representation(
-      "assign"       = "list",
+
+setClass("vlmsmall", representation(
       "call"         = "call",
-      "callXm2"      = "call",
-      "coefficients" = if(is.R()) "numeric" else "named",
+      "coefficients" = "numeric",
       "constraints"  = "list",
-      "contrasts"    = "list",
       "control"      = "list",
       "criterion"    = "list",
-      "df.residual"  = "numeric",
-      "df.total"     = "numeric",
-      "dispersion"   = "numeric",
-      "effects"      = "numeric",
       "fitted.values"= "matrix",
       "misc"         = "list",
       "model"        = "data.frame",
-      "na.action"    = "list",    # ' if(is.R()) "omit" else ' 
-      "offset"       = "matrix",
+      "na.action"    = "list",
       "post"         = "list",
       "preplot"      = "list",
-      "prior.weights"= if(is.R()) "numeric" else "named",
-      "qr"           = "list",
-      "R"            = if(is.R()) "matrix" else "upper",
-      "rank"         = "integer",
+      "prior.weights"= "numeric",
       "residuals"    = "matrix",
-      "rss"          = "numeric",
-      "smart.prediction" = "list",
-      "terms"        = "list",
       "weights"      = "matrix",
-      "x"            = if(is.R()) "matrix" else "model.matrix",
-      "Xm2"          = if(is.R()) "matrix" else "model.matrix",
-      "Ym2"          = if(is.R()) "matrix" else "model.matrix",
-      "xlevels"      = "list",
-      "y"            = "matrix")
-) else 
-setClass("vlm", representation(
-      "assign"       = "list",
-      "call"         = "call",
-      "coefficients" = if(is.R()) "numeric" else "named",
-      "constraints"  = "list",
-      "contrasts"    = "list",
-      "control"      = "list",
-      "criterion"    = "list",
-      "df.residual"  = "numeric",
-      "df.total"     = "numeric",
-      "dispersion"   = "numeric",
-      "effects"      = "numeric",
-      "fitted.values"= "matrix",
-      "misc"         = "list",
-      "model"        = "data.frame",
-      "na.action"    = "list",    # ' if(is.R()) "omit" else ' 
-      "offset"       = "matrix",
-      "post"         = "list",
-      "preplot"      = "list",
-      "prior.weights"= if(is.R()) "numeric" else "named",
-      "qr"           = "qr",
-      "R"            = if(is.R()) "matrix" else "upper",
-      "rank"         = "integer",
-      "residuals"    = "matrix",
-      "rss"          = "numeric",
-      "smart.prediction" = "list",
-      "terms"        = "list",
-      "weights"      = "matrix",
-      "x"            = if(is.R()) "matrix" else "model.matrix",
-      "xlevels"      = "list",
-      "y"            = "matrix")
+      "x"            = "matrix",
+      "y"            = "matrix"),
 )
 
 
-setClass("vglm", representation("vlm",
+setClass("vlm", representation(
+      "assign"       = "list",
+      "callXm2"      = "call",
+      "contrasts"    = "list",
+      "df.residual"  = "numeric",
+      "df.total"     = "numeric",
+      "dispersion"   = "numeric",
+      "effects"      = "numeric",
+      "offset"       = "matrix",
+      "qr"           = "list",
+      "R"            = "matrix",
+      "rank"         = "integer",
+      "rss"          = "numeric",
+      "smart.prediction" = "list",
+      "terms"        = "list",
+      "Xm2"          = "matrix",
+      "Ym2"          = "matrix",
+      "xlevels"      = "list"
+      ),
+    contains = "vlmsmall"
+)
+
+
+setClass("vglm", representation(
       "extra"            = "list",
       "family"           = "vglmff",
-      "iter"             = if(is.R()) "numeric" else "integer",
-      "predictors"       = if(is.R()) "matrix" else "matrix"))
+      "iter"             = "numeric",
+      "predictors"       = "matrix"),
+    contains = "vlm")
 
 
-setClass("vgam", representation("vglm",
+setClass("vgam", representation(
       "Bspline"             = "list", # each [[i]] is a "vsmooth.spline.fit"
-      "nl.chisq"            = if(is.R()) "numeric" else "named",
-      "nl.df"               = if(is.R()) "numeric" else "named",
-      "spar"                = if(is.R()) "numeric" else "named",
-      "s.xargument"         = if(is.R()) "character" else "named", 
-      "var"                 = "matrix"))
+      "nl.chisq"            = "numeric",
+      "nl.df"               = "numeric",
+      "spar"                = "numeric",
+      "s.xargument"         = "character",
+      "var"                 = "matrix"),
+    contains = "vglm")
 
 
 
 
 
-if(is.R()) 
-    setClass("summary.vgam",
-             representation("vgam",
+setClass("summary.vgam", representation(
         anova="data.frame",
         cov.unscaled="matrix",
         correlation="matrix",
         df="numeric",
         pearson.resid="matrix",
         sigma="numeric"),
-prototype(anova=data.frame())) else 
-    setClass("summary.vgam",
-             representation("vgam",
-        anova="data.frame",
-        cov.unscaled="matrix",
-        correlation="matrix",
-        df="numeric",
-        pearson.resid="matrix",
-        sigma="numeric"))
+    prototype(anova=data.frame()),
+    contains = "vgam")
 
 
-    setClass("summary.vglm",
-             representation("vglm",
+setClass("summary.vglm", representation(
         coef3="matrix",
         cov.unscaled="matrix",
         correlation="matrix",
         df="numeric",
         pearson.resid="matrix",
-        sigma="numeric"))
+        sigma="numeric"),
+    contains = "vglm")
 
-    setClass("summary.vlm",
-             representation("vlm",
+
+setClass("summary.vlm", representation(
         coef3="matrix",
         cov.unscaled="matrix",
         correlation="matrix",
         df="numeric",
         pearson.resid="matrix",
-        sigma="numeric"))
+        sigma="numeric"),
+    contains = "vlm")
 
 
 
- setClass( "rrvglm", representation("vglm"))
+ setClass(Class="rrvglm",
+          contains="vglm")
 
+
+
+if(FALSE)
  setClass("qrrvglm", representation(
       "assign"       = "list",
       "call"         = "call",
-      "coefficients" = if(is.R()) "numeric" else "named",
+      "coefficients" = "numeric",
       "constraints"  = "list",
       "contrasts"    = "list",
       "control"      = "list",
@@ -307,25 +240,36 @@ prototype(anova=data.frame())) else
       "extra"        = "list",
       "family"       = "vglmff",
       "fitted.values"= "matrix",
-      "iter"         = if(is.R()) "numeric" else "integer",
+      "iter"         = "numeric",
       "misc"         = "list",
       "model"        = "data.frame",
-      "na.action"    = "list",    # ' if(is.R()) "omit" else ' 
+      "na.action"    = "list",
       "offset"       = "matrix",
       "post"         = "list",
-      "predictors"   = if(is.R()) "matrix" else "matrix",
+      "predictors"   = "matrix",
       "preplot"      = "list",
-      "prior.weights"= if(is.R()) "numeric" else "named",
+      "prior.weights"= "numeric",
       "residuals"    = "matrix",
       "smart.prediction" = "list",
       "terms"        = "list",
       "weights"      = "matrix",
-      "x"            = if(is.R()) "matrix" else "model.matrix",
-      "Xm2"          = if(is.R()) "matrix" else "model.matrix",
-      "Ym2"          = if(is.R()) "matrix" else "model.matrix",
+      "x"            = "matrix",
+      "Xm2"          = "matrix",
+      "Ym2"          = "matrix",
       "xlevels"      = "list",
       "y"            = "matrix")
 )
+
+
+
+
+ setClass(Class="qrrvglm",
+          contains = "rrvglm")
+
+
+
+
+
 
 if(FALSE)
 setAs("qrrvglm", "vglm", function(from)
@@ -366,7 +310,8 @@ new("vglm", "extra"=from@extra,
 
 
 
- setClass("grc", representation("rrvglm", not.needed="numeric"))
+ setClass("grc", representation(not.needed="numeric"),
+          contains = "rrvglm")
 
 
 setMethod("summary", "grc",
@@ -374,12 +319,10 @@ setMethod("summary", "grc",
           summary.grc(object, ...))
 
 
-
 if(FALSE) {
-setClass("vfamily",
-  representation("list"))
+    setClass("vfamily",
+        representation("list"))
 }
-
 
 
 
@@ -390,6 +333,7 @@ if(!isGeneric("Coefficients"))
 setGeneric("Coefficients", function(object, ...)
             standardGeneric("Coefficients"),
            package="VGAM")
+
 
 
 
@@ -416,34 +360,17 @@ if(!isGeneric("vcov"))
 
 
 
-setClass("vlmsmall", representation(
-      "call"         = "call",
-      "coefficients" = if(is.R()) "numeric" else "named",
-      "constraints"  = "list",
-      "control"      = "list",
-      "criterion"    = "list",
-      "fitted.values"= "matrix",
-      "misc"         = "list",
-      "model"        = "data.frame",
-      "na.action"    = "list",    # ' if(is.R()) "omit" else ' 
-      "post"         = "list",
-      "preplot"      = "list",
-      "prior.weights"= if(is.R()) "numeric" else "named",
-      "residuals"    = "matrix",
-      "weights"      = "matrix",
-      "x"            = if(is.R()) "matrix" else "model.matrix",
-      "y"            = "matrix"),
-)
-
-setClass("uqo", representation("vlmsmall",
+setClass("uqo", representation(
       "lv"               = "matrix",
       "extra"            = "list",
       "family"           = "vglmff",
-      "iter"             = if(is.R()) "numeric" else "integer",
-      "predictors"       = "matrix"))
+      "iter"             = "numeric",
+      "predictors"       = "matrix"),
+    contains = "vlmsmall")
 
 
-setClass(Class="cao", repr=representation("vgam", "uqo"))
+setClass(Class="cao",
+         contains="vgam")
 
 
 if(!isGeneric("lvplot"))
@@ -516,6 +443,25 @@ if(!isGeneric("weights"))
 if(!isGeneric("AIC"))
     setGeneric("AIC", function(object, ..., k=2) standardGeneric("AIC"),
            package="VGAM")
+
+
+
+  if(!isGeneric("formula"))
+      setGeneric("formula", function(x, ...) standardGeneric("formula"),
+           package="VGAM")
+
+
+  if(!isGeneric("case.names"))
+      setGeneric("case.names", function(object, ...)
+           standardGeneric("case.names"),
+           package="VGAM")
+
+  if(!isGeneric("variable.names"))
+      setGeneric("variable.names", function(object, ...)
+           standardGeneric("variable.names"),
+           package="VGAM")
+
+
 
 
 

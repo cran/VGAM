@@ -52,7 +52,6 @@ in a dune area.
 \bold{25}, 1--45.
 }
 \examples{
-data(hspider)
 str(hspider)
 
 \dontrun{

@@ -1,7 +1,7 @@
 \name{wffc}
 \alias{wffc}
 \docType{data}
-\title{ 2008 World Fly Fishing Championships }
+\title{ 2008 World Fly Fishing Championships Data}
 \description{
   Capture records of the 2008 FIPS-MOUCHE
   World Fly Fishing Championships held in Rotorua, New Zealand during
@@ -55,7 +55,7 @@ Wales (WAL).
   }
 }
 \details{
-  Details may be obtained at the official website and Yee (2008).
+  Details may be obtained at Yee (2009b).
   Here is a brief summary.
   The three competition days were 28--30 March.
   Each session was fixed at 9.00am--12.00pm and 2.30--5.30pm daily.
@@ -106,6 +106,19 @@ is rather poor and furthermore they were not recorded electronically.
   Note that some fish may have been caught more than once, hence
   these data do not represent individual fish but rather recorded captures.
 
+  Note also that a few internal discrepancies may be found within and between
+  the data frames
+  \code{\link{wffc}},
+  \code{\link{wffc.nc}},
+  \code{\link{wffc.indiv}},
+  \code{\link{wffc.teams}}.
+  This is due to various reasons, such as
+  competitors being replaced by reserves when sick,
+  fish that were included or excluded upon the local judge's decision,
+  competitors who fished two hours instead of three by mistake, etc.
+  The data has already been cleaned of errors and internal inconsistencies
+  but a few may remain.
+
 }
 
 \seealso{
@@ -128,26 +141,29 @@ is rather poor and furthermore they were not recorded electronically.
 
 }
 \references{
-  \url{http://www.2008worldflyfishingchamps.com}
-  is the official website.
+%  \url{http://www.2008worldflyfishingchamps.com}
+%  is the official website.
 
-  Yee, T. W. (2008)
-  Vector generalized linear and additive models, with
-  applications to the 2008 World Fly Fishing Championships.
+  Yee, T. W. (2009a)
+  VGLMs and VGAMs: an overview for applications in fisheries research.
+  In preparation.
+
+  Yee, T. W. (2009b)
+  Some issues raised by the analysis of
+  the 2008 World Fly Fishing Championships data.
   In preparation.
 
 }
 \examples{
-data(wffc)
 summary(wffc)
-with(wffc, table(water,session))
+with(wffc, table(water, session))
 
 # Obtain some simple plots
-waihou = with(wffc, wffc[water=="Waihou",])
-waimak = with(wffc, wffc[water=="Waimakariri",])
-whang = with(wffc, wffc[water=="Whanganui",])
-otam = with(wffc, wffc[water=="Otamangakau",])
-roto = with(wffc, wffc[water=="Rotoaira",])
+waihou = subset(wffc, water == "Waihou")
+waimak = subset(wffc, water == "Waimakariri")
+whang  = subset(wffc, water == "Whanganui")
+otam   = subset(wffc, water == "Otamangakau")
+roto   = subset(wffc, water == "Rotoaira")
 minlength = min(wffc[,"length"])
 maxlength = max(wffc[,"length"])
 nwater = c("Waihou"=nrow(waihou), "Waimakariri"=nrow(waimak),
@@ -157,11 +173,11 @@ nwater = c("Waihou"=nrow(waihou), "Waimakariri"=nrow(waimak),
 par(mfrow=c(2,3), las=1)
 # Overall distribution of length
 with(wffc, boxplot(length/10 ~ water, ylim=c(minlength, maxlength)/10,
-                   border="blue", main="Length (cm)"))
+                   border="blue", main="Length (cm)", cex.axis=0.5))
 
 # Overall distribution of LOG length
 with(wffc, boxplot(length/10 ~ water, ylim=c(minlength, maxlength)/10,
-                   border="blue", log="y",
+                   border="blue", log="y", cex.axis=0.5,
                    main="Length (cm) on a log scale"))
 
 # Overall distribution of number of captures
@@ -170,15 +186,16 @@ pie(nwater, border="blue", main="Proportion of captures",
     angle=85+30* 1:length(nwater))
 
 # Overall distribution of number of captures
-with(wffc, barplot(nwater, main="Number of captures", cex.names=0.5))
+with(wffc, barplot(nwater, main="Number of captures", cex.names=0.5,
+                   col="lightblue"))
 
 # Overall distribution of proportion of number of captures
-with(wffc, barplot(nwater / sum(nwater), cex.names=0.5,
+with(wffc, barplot(nwater / sum(nwater), cex.names=0.5, col="lightblue",
                    main="Proportion of captures"))
 # An interesting lake
-with(roto, hist(length/10, xlab="Fish lengths (cm)", breaks=seq(18, 70, by=3),
-                prob=TRUE, ylim=c(0, 0.08), border="blue", ylab="",
-                main="Lake Rotoaira", lwd=2))
+with(roto, hist(length/10, xlab="Fish length (cm)", col="lightblue",
+                breaks=seq(18, 70, by=3), prob=TRUE, ylim=c(0, 0.08),
+                border="blue", ylab="", main="Lake Rotoaira", lwd=2))
 }
 }
 \keyword{datasets}

@@ -1,5 +1,25 @@
 \name{notdocumentedyet}
 \alias{notdocumentedyet}
+%
+%
+%20090330
+\alias{dclogloglap}
+\alias{dlogitlap}
+\alias{dprobitlap}
+\alias{logitlaplace1.control}
+\alias{loglaplace1.control}
+\alias{pclogloglap}
+\alias{plogitlap}
+\alias{pprobitlap}
+\alias{qclogloglap}
+\alias{qlogitlap}
+\alias{qprobitlap}
+\alias{rclogloglap}
+\alias{rlogitlap}
+\alias{rprobitlap}
+%
+%
+%
 \alias{A1A2A3}
 \alias{AAaa.nohw}
 %\alias{AIC}
@@ -9,7 +29,7 @@
 %\alias{AIC.vglm}
 %\alias{AIC.vlm}
 % \alias{Build.terms}
-% \alias{Build.terms.vlm}
+\alias{Build.terms.vlm}
 \alias{Coef.cao}
 \alias{Coefficients}
 \alias{Cut}
@@ -43,7 +63,7 @@
 % \alias{attrassigndefault}
 % \alias{attrassignlm}
 \alias{beta4}
-\alias{betaffqn}
+% \alias{betaffqn}
 \alias{biplot}
 \alias{biplot.qrrvglm}
 % \alias{block.diag}
@@ -123,6 +143,16 @@
 \alias{fitted.values}
 \alias{fitted.values.uqo}
 \alias{fittedvsmooth.spline}
+%
+\alias{variable.names}
+\alias{variable.namesvlm}
+\alias{variable.namesrrvglm}
+\alias{case.names}
+\alias{case.namesvlm}
+%
+\alias{formula}
+\alias{formulavlm}
+\alias{formulaNA.VGAM}
 \alias{gammaff}
 % \alias{get.arg}
 % \alias{get.rrvglm.se1}
@@ -160,7 +190,7 @@
 \alias{lms.yjn.control}
 \alias{lmscreg.control}
 \alias{logLik.vlm}
-\alias{lv.Coef.cao}
+% \alias{lv.Coef.cao}  20090505
 \alias{lv.Coef.qrrvglm}
 \alias{lv.cao}
 \alias{lv.qrrvglm}
@@ -221,6 +251,7 @@
 \alias{predictvsmooth.spline}
 \alias{predictvsmooth.spline.fit}
 % \alias{preplotvgam}
+\alias{print}
 % \alias{print.vanova}
 % \alias{print.vfamily}
 % \alias{print.vgam}
@@ -347,6 +378,7 @@
 \alias{vglm.garma.control}
 \alias{vglm.multinomial.control}
 \alias{vglm.multinomial.deviance.control}
+\alias{dmultinomial}
 \alias{vglm.vcategorical.control}
 % \alias{vindex}
 % \alias{vlabel}
@@ -436,3 +468,11 @@
 %}
 \keyword{models}
 \keyword{regression}
+\keyword{internal}
+
+
+
+
+
+
+

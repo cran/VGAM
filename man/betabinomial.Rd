@@ -9,14 +9,16 @@
 }
 \usage{
 betabinomial(lmu="logit", lrho="logit", emu=list(), erho=list(),
-             irho=NULL, method.init=1, zero=2)
+             irho=NULL, method.init=1, shrinkage.init=0.95,
+             nsimEIM=NULL, zero=2)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{lmu, lrho}{ 
   Link functions applied to the two parameters.
   See \code{\link{Links}} for more choices.
-  The defaults ensure the parameters remain in \eqn{(0,1)}. 
+  The defaults ensure the parameters remain in \eqn{(0,1)},
+  however, see the warning below.
 
   }
   \item{emu, erho}{ 
@@ -33,9 +35,9 @@ betabinomial(lmu="logit", lrho="logit", emu=list(), erho=list(),
 
   }
   \item{method.init}{
-  An integer with value \code{1} or \code{2} which
-  specifies the initialization method for \eqn{\mu}{mu}.
-  If failure to converge occurs try the other value
+  An integer with value \code{1} or \code{2} or \ldots,
+  which specifies the initialization method for \eqn{\mu}{mu}.
+  If failure to converge occurs try the another value
   and/or else specify a value for \code{irho}.
 
   }
@@ -46,6 +48,14 @@ betabinomial(lmu="logit", lrho="logit", emu=list(), erho=list(),
   The default is to have a single correlation parameter.
   To model both parameters as functions of the covariates assign
   \code{zero=NULL}.
+  See \code{\link{CommonVGAMffArguments}} for more information.
+
+  }
+  \item{shrinkage.init, nsimEIM}{ 
+  See \code{\link{CommonVGAMffArguments}} for more information.
+  The argument \code{shrinkage.init} is used only if \code{method.init=2}.
+  Using the argument \code{nsimEIM} may offer large advantages for large
+  values of \eqn{N} and/or large data sets.
 
   }
 }
@@ -72,7 +82,8 @@ betabinomial(lmu="logit", lrho="logit", emu=list(), erho=list(),
   \deqn{P(T=t) = {N \choose t} \frac{B(\alpha+t, \beta+N-t)}
                   {B(\alpha, \beta)}}{%
         P(T=t) = choose(N,t) B(alpha+t, beta+N-t) / B(alpha, beta)}
-   where \eqn{t=0,1,\ldots,N}, and \eqn{B} is the beta function
+   where \eqn{t=0,1,\ldots,N}, and \eqn{B} is the
+   \code{\link[base:Special]{beta}} function
    with shape parameters \eqn{\alpha}{alpha} and \eqn{\beta}{beta}.
    Recall \eqn{Y = T/N} is the real response being modelled.
    
@@ -138,14 +149,20 @@ betabinomial(lmu="logit", lrho="logit", emu=list(), erho=list(),
   is currently not implemented in the \pkg{VGAM} package as it has
   range-restrictions for the correlation parameter that are currently
   too difficult to handle in this package.
-  
+  However, try \code{lrho="rhobit"}.
+
 }
 \section{Warning }{
+
+  If the estimated rho parameter is close to zero then it pays to try
+  \code{lrho="rhobit"}. One day this may become the default link function.
+
   This family function is prone to numerical difficulties
   due to the expected information matrices not being positive-definite
   or ill-conditioned over some regions of the parameter space.
-  If problems occur try setting \code{irho} to some numerical
-  value, or else use \code{etastart} argument of
+  If problems occur try setting \code{irho} to some numerical value,
+  \code{nsimEIM=100}, say,
+  or else use \code{etastart} argument of
   \code{\link{vglm}}, etc.
 
 }
@@ -165,11 +182,10 @@ y = rbetabin(n=100, size=N, prob=mu, rho=rho)
 fit = vglm(cbind(y,N-y) ~ 1, betabinomial, trace=TRUE)
 coef(fit, matrix=TRUE)
 Coef(fit)
-cbind(fit@y, weights(fit, type="prior"))[1:5,]
+head(cbind(fit@y, weights(fit, type="prior")))
 
 
 # Example 2
-data(lirat)
 fit = vglm(cbind(R,N-R) ~ 1, betabinomial, data=lirat,
            trace=TRUE, subset=N>1)
 coef(fit, matrix=TRUE)
@@ -191,7 +207,6 @@ with(lirat, plot(hb[N>1], fit2@misc$rho,
                  pch=as.character(grp[N>1]), col=grp[N>1]))
 }
 \dontrun{
-data(lirat)
 # cf. Figure 3 of Moore and Tsiatis (1991)
 with(lirat, plot(hb, R/N, pch=as.character(grp), col=grp, las=1,
                  xlab="Hemoglobin level", ylab="Proportion Dead",

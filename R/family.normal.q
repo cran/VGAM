@@ -27,7 +27,7 @@ VGAM.weights.function = function(w, M, n) {
 
 
 
-gaussianff = function(dispersion=0, parallel=FALSE, zero=NULL)
+ gaussianff = function(dispersion=0, parallel=FALSE, zero=NULL)
 {
     if(!is.Numeric(dispersion, allow=1) || dispersion < 0)
         stop("bad input for argument 'dispersion'")
@@ -79,7 +79,7 @@ gaussianff = function(dispersion=0, parallel=FALSE, zero=NULL)
                 wz = VGAM.weights.function(w=w, M=M, n=n)
                 temp = rss.vgam(y-mu, wz=wz, M=M)
                 dpar = temp / (length(y) -
-                       (if(is.numeric(ncol(xbig.save))) ncol(xbig.save) else 0))
+                       (if(is.numeric(ncol(X_vlm_save))) ncol(X_vlm_save) else 0))
         }
         misc$dispersion = dpar
         misc$default.dispersion = 0
@@ -124,7 +124,7 @@ dposnorm = function(x, mean=0, sd=1, log=FALSE) {
     log.arg = log
     rm(log)
     if(!is.logical(log.arg) || length(log.arg)!=1)
-        stop("bad input for argument \"log\"")
+        stop("bad input for argument 'log'")
     L = max(length(x), length(mean), length(sd))
     x = rep(x, len=L); mean = rep(mean, len=L); sd = rep(sd, len=L);
 
@@ -145,13 +145,13 @@ pposnorm = function(q, mean=0, sd=1) {
 
 qposnorm = function(p, mean=0, sd=1) {
     if(!is.Numeric(p, posit=TRUE) || max(p) >= 1)
-        stop("bad input for argument \"p\"")
+        stop("bad input for argument 'p'")
     qnorm(p=p+(1-p)*pnorm(0, mean=mean, sd=sd), mean=mean, sd=sd)
 }
 
 rposnorm = function(n, mean=0, sd=1) {
     if(!is.Numeric(n, integ=TRUE, posit=TRUE))
-        stop("bad input for argument \"n\"")
+        stop("bad input for argument 'n'")
     mean = rep(mean, length=n)
     sd = rep(sd, length=n)
     qnorm(p=runif(n, min=pnorm(0, m=mean, sd=sd)), m=mean, sd=sd)
@@ -178,9 +178,9 @@ rposnorm = function(n, mean=0, sd=1) {
     if(mode(lsd) != "character" && mode(lsd) != "name")
         lsd = as.character(substitute(lsd))
     if(length(zero) && !is.Numeric(zero, integer=TRUE, posit=TRUE))
-        stop("bad input for argument \"zero\"")
+        stop("bad input for argument 'zero'")
     if(length(isd) && !is.Numeric(isd, posit=TRUE))
-        stop("bad input for argument \"isd\"")
+        stop("bad input for argument 'isd'")
     if(!is.list(emean)) emean = list()
     if(!is.list(esd)) esd = list()
     if(length(nsimEIM))
@@ -265,7 +265,7 @@ rposnorm = function(n, mean=0, sd=1) {
                            temp3[,ind1$row.index]*temp3[,ind1$col.index]) / ii
             }
             wz = if(intercept.only)
-                matrix(apply(run.varcov, 2, mean),
+                matrix(colMeans(run.varcov),
                        n, ncol(run.varcov), byrow=TRUE) else run.varcov
 
             wz = wz * dthetas.detas[,ind1$row] * dthetas.detas[,ind1$col]
@@ -293,7 +293,7 @@ dbetanorm = function(x, shape1, shape2, mean=0, sd=1, log=FALSE) {
     log.arg = log
     rm(log)
     if(!is.logical(log.arg) || length(log.arg)!=1)
-        stop("bad input for argument \"log\"")
+        stop("bad input for argument 'log'")
     ans =
     if(is.R() && log.arg) {
         dnorm(x=x, mean=mean, sd=sd, log=TRUE) +
@@ -317,21 +317,136 @@ pbetanorm = function(q, shape1, shape2, mean=0, sd=1,
 
 qbetanorm = function(p, shape1, shape2, mean=0, sd=1) {
     if(!is.Numeric(p, posit=TRUE) || max(p) >= 1)
-        stop("bad input for argument \"p\"")
+        stop("bad input for argument 'p'")
     qnorm(p=qbeta(p=p, shape1=shape1, shape2=shape2), mean=mean, sd=sd)
 }
 
 rbetanorm = function(n, shape1, shape2, mean=0, sd=1) {
     if(!is.Numeric(n, integ=TRUE, posit=TRUE))
-        stop("bad input for argument \"n\"")
+        stop("bad input for argument 'n'")
     qnorm(p=qbeta(p=runif(n), shape1=shape1, shape2=shape2), mean=mean, sd=sd)
 }
 
 
 
-tikuv = function(d, lmean="identity", lsigma="loge",
-                 emean=list(), esigma=list(),
-                 isigma=NULL, zero=2)
+
+dtikuv = function(x, d, mean=0, sigma=1, log = FALSE) {
+    if(!is.logical(log.arg <- log))
+        stop("bad input for argument 'log'")
+    rm(log)
+
+    if(!is.Numeric(d, allow=1) || max(d) >= 2)
+        stop("bad input for argument 'd'")
+    L = max(length(x), length(mean), length(sigma))
+    x = rep(x, len=L); mean = rep(mean, len=L); sigma = rep(sigma, len=L);
+    hh = 2 - d
+    KK = 1 / (1 + 1/hh + 0.75/hh^2)
+    if(log.arg) {
+        dnorm(x=x, mean=mean, sd=sigma, log=TRUE) + log(KK) +
+        2 * log1p(((x-mean)/sigma)^2 / (2*hh))
+    } else {
+        dnorm(x=x, mean=mean, sd=sigma) * KK *
+        (1 + ((x-mean)/sigma)^2 / (2*hh))^2
+    }
+}
+
+
+ptikuv = function(q, d, mean=0, sigma=1) {
+    if(!is.Numeric(d, allow=1) || max(d) >= 2)
+        stop("bad input for argument 'd'")
+    L = max(length(q), length(mean), length(sigma))
+    q = rep(q, len=L); mean = rep(mean, len=L); sigma = rep(sigma, len=L);
+    zedd1 = 0.5 * ((q - mean) / sigma)^2
+    ans = q*0 + 0.5
+    hh = 2 - d
+    KK = 1 / (1 + 1/hh + 0.75/hh^2)
+    if(any(lhs <- q < mean)) {
+        ans[lhs] = ( KK/(2*sqrt(pi))) * (
+        gamma(0.5) * (1 - pgamma(zedd1[lhs], 0.5)) +
+        2 * gamma(1.5) * (1 - pgamma(zedd1[lhs], 1.5)) / hh +
+        gamma(2.5) * (1 - pgamma(zedd1[lhs], 2.5)) / hh^2)
+    }
+    if(any(rhs <- q > mean)) {
+        ans[rhs] = 1.0 - Recall(q=(2*mean[rhs]-q[rhs]), d=d,
+                   mean=mean[rhs], sigma=sigma[rhs])
+    }
+    ans
+}
+
+
+qtikuv = function(p, d, mean=0, sigma=1, ...) {
+    if(!is.Numeric(p, posit=TRUE) || max(p) >= 1)
+        stop("bad input for argument 'p'")
+    if(!is.Numeric(d, allow=1) || max(d) >= 2)
+        stop("bad input for argument 'd'")
+    if(!is.Numeric(mean))
+        stop("bad input for argument 'mean'")
+    if(!is.Numeric(sigma))
+        stop("bad input for argument 'sigma'")
+    L = max(length(p), length(mean), length(sigma))
+    p = rep(p, len=L); mean = rep(mean, len=L); sigma = rep(sigma, len=L);
+    ans = rep(0.0, len=L)
+    myfun = function(x, d, mean=0, sigma=1, p)
+        ptikuv(q=x, d=d, mean=mean, sigma=sigma) - p
+    for(i in 1:L) {
+        Lower = ifelse(p[i] <= 0.5, mean[i] - 3 * sigma[i], mean[i])
+        while(ptikuv(q=Lower, d=d, mean=mean[i], sigma=sigma[i]) > p[i])
+            Lower = Lower - sigma[i]
+        Upper = ifelse(p[i] >= 0.5, mean[i] + 3 * sigma[i], mean[i])
+        while(ptikuv(q=Upper, d=d, mean=mean[i], sigma=sigma[i]) < p[i])
+            Upper = Upper + sigma[i]
+        ans[i] = uniroot(f=myfun, lower=Lower, upper=Upper,
+                         d=d, mean=mean[i], sigma=sigma[i], p=p[i], ...)$root
+    }
+    ans
+}
+
+
+rtikuv = function(n, d, mean=0, sigma=1, Smallno=1.0e-6) {
+    if(!is.Numeric(n, posit=TRUE, integ=TRUE))
+        stop("bad input for argument 'n'")
+    if(!is.Numeric(d, allow=1) || max(d) >= 2)
+        stop("bad input for argument 'd'")
+    if(!is.Numeric(mean, allow=1))
+        stop("bad input for argument 'mean'")
+    if(!is.Numeric(sigma, allow=1))
+        stop("bad input for argument 'sigma'")
+    if(!is.Numeric(Smallno, posit=TRUE, allow=1) || Smallno > 0.01 ||
+       Smallno < 2 * .Machine$double.eps)
+        stop("bad input for argument 'Smallno'")
+    ans = rep(0.0, len=n)
+
+    ptr1 = 1; ptr2 = 0
+    hh = 2 - d
+    KK = 1 / (1 + 1/hh + 0.75/hh^2)
+    ymax = ifelse(hh < 2,
+                  dtikuv(x=mean + sigma*sqrt(4 - 2*hh), d=d, m=mean, s=sigma),
+                  KK / (sqrt(2 * pi) * sigma))
+    while(ptr2 < n) {
+        Lower = mean - 5 * sigma
+        while(ptikuv(q=Lower, d=d, mean=mean, sigma=sigma) > Smallno)
+            Lower = Lower - sigma
+        Upper = mean + 5 * sigma
+        while(ptikuv(q=Upper, d=d, mean=mean, sigma=sigma) < 1-Smallno)
+            Upper = Upper + sigma
+        x = runif(2*n, min=Lower, max=Upper)
+        index = runif(2*n, max=ymax) < dtikuv(x,d=d,m=mean,s=sigma)
+        sindex = sum(index)
+        if(sindex) {
+            ptr2 = min(n, ptr1 + sindex - 1)
+            ans[ptr1:ptr2] = (x[index])[1:(1+ptr2-ptr1)]
+            ptr1 = ptr2 + 1
+        }
+    }
+    ans
+}
+
+
+
+
+ tikuv = function(d, lmean="identity", lsigma="loge",
+                  emean=list(), esigma=list(),
+                  isigma=NULL, zero=2)
 {
     if(mode(lmean) != "character" && mode(lmean) != "name")
         lmean = as.character(substitute(lmean))
@@ -339,9 +454,9 @@ tikuv = function(d, lmean="identity", lsigma="loge",
         lsigma = as.character(substitute(lsigma))
     if(length(zero) && (!is.Numeric(zero, integer=TRUE, posit=TRUE) ||
        max(zero) > 2))
-        stop("bad input for argument \"zero\"")
+        stop("bad input for argument 'zero'")
     if(!is.Numeric(d, allow=1) || max(d) >= 2)
-        stop("bad input for argument \"d\"")
+        stop("bad input for argument 'd'")
     if(!is.list(emean)) emean = list()
     if(!is.list(esigma)) esigma = list()
 
@@ -391,9 +506,7 @@ tikuv = function(d, lmean="identity", lsigma="loge",
         mymu = eta2theta(eta[,1], .lmean, earg= .emean)
         sigma = eta2theta(eta[,2], .lsigma, earg= .esigma)
         if(residuals) stop("loglikelihood residuals not implemented yet") else {
-            zedd = (y - mymu) / sigma
-            hh = 2 - .d
-            sum(w * (-log(sigma) + 2 * log1p(0.5*zedd^2 / hh) - 0.5*zedd^2))
+            sum(w * dtikuv(x=y, d= .d, mean=mymu, sigma=sigma, log = TRUE))
         }
     }, list( .lmean=lmean, .lsigma=lsigma, .d=d,
              .emean=emean, .esigma=esigma ))),
@@ -426,108 +539,6 @@ tikuv = function(d, lmean="identity", lsigma="loge",
 }
 
 
-dtikuv = function(x, d, mean=0, sigma=1) {
-    if(!is.Numeric(d, allow=1) || max(d) >= 2)
-        stop("bad input for argument \"d\"")
-    L = max(length(x), length(mean), length(sigma))
-    x = rep(x, len=L); mean = rep(mean, len=L); sigma = rep(sigma, len=L);
-    hh = 2 - d
-    KK = 1 / (1 + 1/hh + 0.75/hh^2)
-    dnorm(x=x, mean=mean, sd=sigma) * KK * (1 + ((x-mean)/sigma)^2 / (2*hh))^2
-}
-
-
-ptikuv = function(q, d, mean=0, sigma=1) {
-    if(!is.Numeric(d, allow=1) || max(d) >= 2)
-        stop("bad input for argument \"d\"")
-    L = max(length(q), length(mean), length(sigma))
-    q = rep(q, len=L); mean = rep(mean, len=L); sigma = rep(sigma, len=L);
-    zedd1 = 0.5 * ((q - mean) / sigma)^2
-    ans = q*0 + 0.5
-    hh = 2 - d
-    KK = 1 / (1 + 1/hh + 0.75/hh^2)
-    if(any(lhs <- q < mean)) {
-        ans[lhs] = ( KK/(2*sqrt(pi))) * (
-        gamma(0.5) * (1 - pgamma(zedd1[lhs], 0.5)) +
-        2 * gamma(1.5) * (1 - pgamma(zedd1[lhs], 1.5)) / hh +
-        gamma(2.5) * (1 - pgamma(zedd1[lhs], 2.5)) / hh^2)
-    }
-    if(any(rhs <- q > mean)) {
-        ans[rhs] = 1.0 - Recall(q=(2*mean[rhs]-q[rhs]), d=d,
-                   mean=mean[rhs], sigma=sigma[rhs])
-    }
-    ans
-}
-
-
-qtikuv = function(p, d, mean=0, sigma=1, ...) {
-    if(!is.Numeric(p, posit=TRUE) || max(p) >= 1)
-        stop("bad input for argument \"p\"")
-    if(!is.Numeric(d, allow=1) || max(d) >= 2)
-        stop("bad input for argument \"d\"")
-    if(!is.Numeric(mean))
-        stop("bad input for argument \"mean\"")
-    if(!is.Numeric(sigma))
-        stop("bad input for argument \"sigma\"")
-    L = max(length(p), length(mean), length(sigma))
-    p = rep(p, len=L); mean = rep(mean, len=L); sigma = rep(sigma, len=L);
-    ans = rep(0.0, len=L)
-    myfun = function(x, d, mean=0, sigma=1, p)
-        ptikuv(q=x, d=d, mean=mean, sigma=sigma) - p
-    for(i in 1:L) {
-        Lower = ifelse(p[i] <= 0.5, mean[i] - 3 * sigma[i], mean[i])
-        while(ptikuv(q=Lower, d=d, mean=mean[i], sigma=sigma[i]) > p[i])
-            Lower = Lower - sigma[i]
-        Upper = ifelse(p[i] >= 0.5, mean[i] + 3 * sigma[i], mean[i])
-        while(ptikuv(q=Upper, d=d, mean=mean[i], sigma=sigma[i]) < p[i])
-            Upper = Upper + sigma[i]
-        ans[i] = uniroot(f=myfun, lower=Lower, upper=Upper,
-                         d=d, mean=mean[i], sigma=sigma[i], p=p[i], ...)$root
-    }
-    ans
-}
-
-
-rtikuv = function(n, d, mean=0, sigma=1, Smallno=1.0e-6) {
-    if(!is.Numeric(n, posit=TRUE, integ=TRUE))
-        stop("bad input for argument \"n\"")
-    if(!is.Numeric(d, allow=1) || max(d) >= 2)
-        stop("bad input for argument \"d\"")
-    if(!is.Numeric(mean, allow=1))
-        stop("bad input for argument \"mean\"")
-    if(!is.Numeric(sigma, allow=1))
-        stop("bad input for argument \"sigma\"")
-    if(!is.Numeric(Smallno, posit=TRUE, allow=1) || Smallno > 0.01 ||
-       Smallno < 2 * .Machine$double.eps)
-        stop("bad input for argument \"Smallno\"")
-    ans = rep(0.0, len=n)
-
-    ptr1 = 1; ptr2 = 0
-    hh = 2 - d
-    KK = 1 / (1 + 1/hh + 0.75/hh^2)
-    ymax = ifelse(hh < 2,
-                  dtikuv(x=mean + sigma*sqrt(4 - 2*hh), d=d, m=mean, s=sigma),
-                  KK / (sqrt(2 * pi) * sigma))
-    while(ptr2 < n) {
-        Lower = mean - 5 * sigma
-        while(ptikuv(q=Lower, d=d, mean=mean, sigma=sigma) > Smallno)
-            Lower = Lower - sigma
-        Upper = mean + 5 * sigma
-        while(ptikuv(q=Upper, d=d, mean=mean, sigma=sigma) < 1-Smallno)
-            Upper = Upper + sigma
-        x = runif(2*n, min=Lower, max=Upper)
-        index = runif(2*n, max=ymax) < dtikuv(x,d=d,m=mean,s=sigma)
-        sindex = sum(index)
-        if(sindex) {
-            ptr2 = min(n, ptr1 + sindex - 1)
-            ans[ptr1:ptr2] = (x[index])[1:(1+ptr2-ptr1)]
-            ptr1 = ptr2 + 1
-        }
-    }
-    ans
-}
-
-
 
 dfnorm = function(x, mean=0, sd=1, a1=1, a2=1) {
     if(!is.Numeric(a1, posit=TRUE) || !is.Numeric(a2, posit=TRUE))
@@ -553,7 +564,7 @@ pfnorm = function(q, mean=0, sd=1, a1=1, a2=1) {
 
 qfnorm = function(p, mean=0, sd=1, a1=1, a2=1, ...) {
     if(!is.Numeric(p, posit=TRUE) || max(p) >= 1)
-        stop("bad input for argument \"p\"")
+        stop("bad input for argument 'p'")
     if(!is.Numeric(a1, posit=TRUE) || !is.Numeric(a2, posit=TRUE))
         stop("bad input for arguments 'a1' and 'a2'")
     if(any(a1 <= 0 | a2 <= 0))
@@ -580,7 +591,7 @@ qfnorm = function(p, mean=0, sd=1, a1=1, a2=1, ...) {
 
 rfnorm = function(n, mean=0, sd=1, a1=1, a2=1) {
     if(!is.Numeric(n, integ=TRUE, posit=TRUE))
-        stop("bad input for argument \"n\"")
+        stop("bad input for argument 'n'")
     if(!is.Numeric(a1, posit=TRUE) || !is.Numeric(a2, posit=TRUE))
         stop("bad input for arguments 'a1' and 'a2'")
     if(any(a1 <= 0 | a2 <= 0))
@@ -590,9 +601,9 @@ rfnorm = function(n, mean=0, sd=1, a1=1, a2=1) {
 }
 
 
-fnormal1 =  function(lmean="identity", lsd="loge", emean=list(), esd=list(),
-                     imean=NULL, isd=NULL, a1=1, a2=1, nsimEIM=500,
-                     method.init=1, zero=NULL)
+ fnormal1 =  function(lmean="identity", lsd="loge", emean=list(), esd=list(),
+                      imean=NULL, isd=NULL, a1=1, a2=1, nsimEIM=500,
+                      method.init=1, zero=NULL)
 {
     if(!is.Numeric(a1, posit=TRUE, allow=1) ||
        !is.Numeric(a2, posit=TRUE, allow=1))
@@ -608,7 +619,7 @@ fnormal1 =  function(lmean="identity", lsd="loge", emean=list(), esd=list(),
     if(mode(lsd) != "character" && mode(lsd) != "name")
         lsd = as.character(substitute(lsd))
     if(length(zero) && !is.Numeric(zero, integer=TRUE, posit=TRUE))
-        stop("bad input for argument \"zero\"")
+        stop("bad input for argument 'zero'")
     if(!is.list(emean)) emean = list()
     if(!is.list(esd)) esd = list()
     if(!is.Numeric(nsimEIM, allow=1, integ=TRUE) || nsimEIM <= 10)
@@ -726,7 +737,7 @@ if(FALSE) {
         }
 
         wz = if(intercept.only)
-            matrix(apply(run.mean,2,mean), n, dimm(M), byrow=TRUE) else run.mean
+            matrix(colMeans(run.mean), n, dimm(M), byrow=TRUE) else run.mean
 
         index0 = iam(NA, NA, M=M, both=TRUE, diag=TRUE)
         wz = wz * dtheta.detas[,index0$row] * dtheta.detas[,index0$col]
@@ -756,7 +767,7 @@ lqnorm = function(qpower=2, link="identity", earg=list(),
        method.init > 3)
         stop("'method.init' must be 1 or 2 or 3")
     if(!is.Numeric(shrinkage.init, allow=1) || shrinkage.init < 0 ||
-       shrinkage.init > 1) stop("bad input for argument \"shrinkage.init\"")
+       shrinkage.init > 1) stop("bad input for argument 'shrinkage.init'")
 
     new("vglmff",
     blurb=c("Minimizing the q-norm of residuals\n",

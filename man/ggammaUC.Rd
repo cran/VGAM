@@ -12,7 +12,7 @@
   and parameters \code{d} and \code{k}.
 }
 \usage{
-dggamma(x, scale=1, d=1, k=1)
+dggamma(x, scale=1, d=1, k=1, log=FALSE)
 pggamma(q, scale=1, d=1, k=1)
 qggamma(p, scale=1, d=1, k=1)
 rggamma(n, scale=1, d=1, k=1)
@@ -23,6 +23,12 @@ rggamma(n, scale=1, d=1, k=1)
   \item{n}{number of observations. Positive integer of length 1.}
   \item{scale}{the (positive) scale parameter \eqn{b}.}
   \item{d, k}{the (positive) parameters \eqn{d} and \eqn{k}.}
+  \item{log}{
+  Logical.
+  If \code{log=TRUE} then the logarithm of the density is returned.
+
+  }
+
 }
 \value{
   \code{dggamma} gives the density,

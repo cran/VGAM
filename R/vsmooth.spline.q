@@ -68,7 +68,7 @@ setMethod("show",  "vsmooth.spline",
           printvsmooth.spline(object))
 setMethod("plot", "vsmooth.spline",
           function(x, y, ...) {
-          if(!missing(y)) stop("can't process the \"y\" argument")
+          if(!missing(y)) stop("cannot process the 'y' argument")
           invisible(plotvsmooth.spline(x, ...))})
 setMethod("predict",  "vsmooth.spline.fit",
           function(object, ...)
@@ -93,14 +93,14 @@ vsmooth.spline <- function(x, y, w, df=rep(5,M), spar=NULL, # rep(0,M),
     missing.constraints <- missing(constraints)
 
     if(!(missing.spar <- missing(spar)) && !missing(df))
-        stop("can't specify both spar and df")
+        stop("cannot specify both 'spar' and 'df'")
 
 
     my.call <- match.call()
     if(missing(y)) {
         if(is.list(x)) {
             if(any(is.na(match(c("x", "y"), names(x)))))
-                stop("cannot find x and y in list")
+                stop("cannot find 'x' and 'y' in list")
             y <- x$y
             x <- x$x
         } else if(is.complex(x)) {
@@ -120,21 +120,21 @@ vsmooth.spline <- function(x, y, w, df=rep(5,M), spar=NULL, # rep(0,M),
     ny2 <- dimnames(y)[[2]]  # NULL if vector 
     M <- ncol(y)
     if(n != nrow(y))
-        stop("lengths of x and y must match")
+        stop("lengths of 'x' and 'y' must match")
 
     if(any(is.na(x)) || any(is.na(y)))
-        stop("NAs not allowed in x or y")
+        stop("NAs not allowed in 'x' or 'y'")
 
     if(missing(w)) {
         w <- matrix(1, n, M)
     } else {
         if(any(is.na(w)))
-            stop("NAs not allowed in w")
+            stop("NAs not allowed in 'w'")
 
         w <- as.matrix(w)
 
         if(nrow(y) != nrow(w) || ncol(w)>M*(M+1)/2)
-            stop("w and y don't match")
+            stop("'w' and 'y' don't match")
 
         if(scale.w)
             w <- w / mean(w[,1:M])    # 'Average' value is 1
@@ -148,11 +148,11 @@ vsmooth.spline <- function(x, y, w, df=rep(5,M), spar=NULL, # rep(0,M),
     if(is.matrix(constraints))
        constraints <- list("(Intercepts)"=constraints, x=constraints)
     if(!is.list(constraints) || length(constraints)!=2)
-        stop("constraints must equal a list (of length 2) or a matrix")
+        stop("'constraints' must equal a list (of length 2) or a matrix")
     for(i in 1:2) 
         if(!is.numeric(constraints[[i]]) || !is.matrix(constraints[[i]]) || 
            nrow(constraints[[i]])!=M || ncol(constraints[[i]])>M)
-            stop("something wrong with the constraints")
+            stop("something wrong with 'constraints'")
     names(constraints) <- c("(Intercepts)", "x")
 
 
@@ -160,7 +160,7 @@ vsmooth.spline <- function(x, y, w, df=rep(5,M), spar=NULL, # rep(0,M),
     o <- match(x, sx)             # sx[o]==x
     nef <- length(sx)
     if(nef < 7)
-        stop("not enough unique x values (need 7 or more)")
+        stop("not enough unique 'x' values (need 7 or more)")
 
 
     index <- iam(NA, NA, M, both=TRUE, diagonal=TRUE)
@@ -181,7 +181,7 @@ vsmooth.spline <- function(x, y, w, df=rep(5,M), spar=NULL, # rep(0,M),
 
 
     if(collaps$ok != 1)
-       stop("some non-positive-definite weight matrices detected in \"vsuff9\"")
+       stop("some non-positive-definite weight matrices detected in 'vsuff9'")
     dim(collaps$ybar) <- dim(collaps$wz) <- c(nef, M)
 
 
@@ -212,8 +212,8 @@ vsmooth.spline <- function(x, y, w, df=rep(5,M), spar=NULL, # rep(0,M),
     } else {
         ispar <- 0
         if(!is.numeric(df) || any(df < 2 | df > nef))
-            stop(paste("you must supply 2 <= df <=", nef))
-        if(tol.nl <= 0) stop("bad value for tol.nl")
+            stop("you must supply '2 <= df <= ", nef, "'")
+        if(tol.nl <= 0) stop("bad value for 'tol.nl'")
         nonlin <- abs(df-2) > tol.nl
     }
 
@@ -252,12 +252,12 @@ vsmooth.spline <- function(x, y, w, df=rep(5,M), spar=NULL, # rep(0,M),
         } else { 
             knot <- c(rep(xbar[1], 3), xbar, rep(xbar[nef], 3))
         }
-        if(length(nk)) warning("overriding nk by all.knots=TRUE")
+        if(length(nk)) warning("overriding 'nk' by 'all.knots=TRUE'")
         nk <- length(knot) - 4     # No longer nef + 2
     } else {
         chosen = length(nk)
         if(chosen && (nk > nef+2 || nk <= 5))
-            stop("bad value for nk")
+            stop("bad value for 'nk'")
         if(!chosen) nk = 0
         knot.list <- dotFortran(name="vknotl2", as.double(xbar), as.integer(nef),
                               knot=double(nef+6), k=as.integer(nk+4),
@@ -294,7 +294,7 @@ vsmooth.spline <- function(x, y, w, df=rep(5,M), spar=NULL, # rep(0,M),
                 as.double(conmat), as.integer(ncb), 
                 as.integer(trivc), wuwbar=as.integer(0), ok=as.integer(0))
     if(collaps$ok != 1)
-       stop("some non-positive-definite weight matrices detected in \"vsuff9\"")
+       stop("some non-positive-definite weight matrices detected in 'vsuff9'")
 
     dim(collaps$ybar) <- dim(collaps$wz) <- c(nef, M)
     collaps$ybar = collaps$ybar[,1:ncb,drop=FALSE]
@@ -330,12 +330,11 @@ vsmooth.spline <- function(x, y, w, df=rep(5,M), spar=NULL, # rep(0,M),
 
 
     if(vsplin$ier != 0) {
-        cat("vsplin$ier ==", vsplin$ier, "\n")
-        stop("something gone wrong in \"vsplin\"")
+        stop("vsplin$ier == ", vsplin$ier, ". Something gone wrong in 'vsplin'")
     }
     if(vsplin$info != 0)
-        stop(paste("leading minor of order", vsplin$info,
-                   "is not positive definite"))
+        stop("leading minor of order ", vsplin$info,
+             " is not positive-definite")
 
     dim(vsplin$lev) <- c(nef, ncb)   # A matrix even when ncb==1
     if(ncb > 1) {
@@ -344,7 +343,7 @@ vsmooth.spline <- function(x, y, w, df=rep(5,M), spar=NULL, # rep(0,M),
             dim(vsplin$var) <- c(nef, ncb)
     }
 
-    df.nl <- apply(vsplin$lev, 2, sum)  # Actual EDF used 
+    df.nl <- colSums(vsplin$lev)  # Actual EDF used 
 
 
     fv <- lfit@fitted.values + vsplin$fv %*% t(conmat)
@@ -457,7 +456,8 @@ plotvsmooth.spline <- function(x, xlab="x", ylab="", points=TRUE,
 
 predictvsmooth.spline <- function(object, x, deriv=0, se.fit=FALSE) {
     if(se.fit)
-        warning("se.fit=TRUE is not currently implemented. Using se.fit=FALSE")
+        warning("'se.fit=TRUE' is not currently implemented. ",
+                "Using 'se.fit=FALSE'")
 
     lfit <- object@lfit     # Linear part of the vector spline
     nlfit <- object@nlfit   # Nonlinear part of the vector spline

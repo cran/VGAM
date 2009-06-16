@@ -106,7 +106,6 @@ contains further information and examples.
     \code{\link{pneumo}}.
 }
 \examples{
-data(pneumo)
 pneumo = transform(pneumo, let=log(exposure.time))
 (fit = vglm(cbind(normal,mild,severe) ~ let, acat, pneumo))
 coef(fit, matrix=TRUE)

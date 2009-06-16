@@ -18,7 +18,7 @@ rpolono(n, meanlog=0, sdlog=1)
   \item{x}{vector of quantiles.}
 % \item{p}{vector of probabilities.}
   \item{n}{number of observations.
-  Must be a positive integer of length 1.}
+  If \code{length(n) > 1} then the length is taken to be the number required. }
   \item{meanlog, sdlog }{
   the mean and standard deviation of the normal distribution
   (on the log scale).

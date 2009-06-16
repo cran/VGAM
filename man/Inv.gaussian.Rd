@@ -10,16 +10,23 @@
 
 }
 \usage{
-dinv.gaussian(x, mu, lambda)
+dinv.gaussian(x, mu, lambda, log=FALSE)
 pinv.gaussian(q, mu, lambda)
 rinv.gaussian(n, mu, lambda)
 }
 \arguments{
   \item{x, q}{vector of quantiles.}
 %%\item{p}{vector of probabilities.}
-  \item{n}{number of observations. Must be a single positive integer. }
+  \item{n}{number of observations.  If \code{length(n) > 1} then the length
+    is taken to be the number required. }
   \item{mu}{the mean parameter.}
   \item{lambda}{the \eqn{\lambda}{lambda} parameter.}
+  \item{log}{
+  Logical.
+  If \code{log=TRUE} then the logarithm of the density is returned.
+
+  }
+
 }
 \value{
   \code{dinv.gaussian} gives the density,

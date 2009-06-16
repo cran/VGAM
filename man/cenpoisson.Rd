@@ -132,7 +132,7 @@ table(print(fit@y))  # Another check
 
 # Example 4: Add in some uncensored observations
 index = (1:n)[icensored]
-index = index[1:min(4,length(index))]
+index = head(index, 4)
 status[index] = 1 # actual or uncensored value
 Lvec[index] = y[index]
 table(i <- print(Surv(Lvec, Uvec, status, type="interval")))  # Check

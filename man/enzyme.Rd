@@ -31,7 +31,6 @@ Watts, D. G. (1981)
 \code{\link{micmen}}.
 }
 \examples{
-data(enzyme)
 fit = vglm(velocity ~ 1, micmen, data=enzyme, trace = TRUE,
            form2 = ~ conc - 1, crit = "crit")
 summary(fit)

@@ -293,7 +293,6 @@ London: Chapman & Hall.
 }
 
 \examples{\dontrun{
-data(hspider)
 hspider[,1:6] = scale(hspider[,1:6]) # Standardized environmental vars
 set.seed(123)
 ap1 = cao(cbind(Pardlugu, Pardmont, Pardnigr, Pardpull, Zoraspin) ~

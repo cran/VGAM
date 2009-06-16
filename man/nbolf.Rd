@@ -141,9 +141,9 @@ fit = vglm(cuty ~ x2 + x3, fam = cumulative(link="nbolf",
            reverse=TRUE, parallel=TRUE, intercept.apply=TRUE,
            mv=TRUE, earg=list(cutpoint=cutpoints[2:3], k=k)),
            trace=TRUE)
-fit@y[1:5,]
-fitted(fit)[1:5,]
-predict(fit)[1:5,]
+head(fit@y)
+head(fitted(fit))
+head(predict(fit))
 coef(fit)
 coef(fit, matrix=TRUE)
 constraints(fit)

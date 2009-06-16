@@ -1,8 +1,8 @@
 \name{alaplaceUC}
-\alias{dalaplace}
-\alias{palaplace}
-\alias{qalaplace}
-\alias{ralaplace}
+\alias{dalap}
+\alias{palap}
+\alias{qalap}
+\alias{ralap}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ The Laplace Distribution }
 \description{
@@ -13,21 +13,25 @@
 
 }
 \usage{
-dalaplace(x, location=0, scale=1, tau=0.5, kappa=sqrt(tau/(1-tau)))
-palaplace(q, location=0, scale=1, tau=0.5, kappa=sqrt(tau/(1-tau)))
-qalaplace(p, location=0, scale=1, tau=0.5, kappa=sqrt(tau/(1-tau)))
-ralaplace(n, location=0, scale=1, tau=0.5, kappa=sqrt(tau/(1-tau)))
+dalap(x, location=0, scale=1, tau=0.5, kappa=sqrt(tau/(1-tau)),
+      log=FALSE)
+palap(q, location=0, scale=1, tau=0.5, kappa=sqrt(tau/(1-tau)))
+qalap(p, location=0, scale=1, tau=0.5, kappa=sqrt(tau/(1-tau)))
+ralap(n, location=0, scale=1, tau=0.5, kappa=sqrt(tau/(1-tau)))
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{x, q}{vector of quantiles.}
   \item{p}{vector of probabilities.}
-  \item{n}{number of observations. Positive integer of length 1.}
+  \item{n}{
+  number of observations.
+  If \code{length(n) > 1} then the length is taken to be the number required.
+  }
   \item{location}{
     the location parameter \eqn{\xi}{xi}.
   }
   \item{scale}{
-  the scale parameter \eqn{b}.
+  the scale parameter \eqn{\sigma}{sigma}.
   Must consist of positive values.
   }
   \item{tau}{
@@ -41,22 +45,24 @@ ralaplace(n, location=0, scale=1, tau=0.5, kappa=sqrt(tau/(1-tau)))
   the asymmetry parameter \eqn{\kappa}{kappa}.
   Must consist of positive values.
   }
+  \item{log}{
+  if \code{TRUE}, probabilities \code{p} are given as \code{log(p)}.
+  }
+
 }
 \details{
-  There are several variants of asymmetric Laplace distributions (ALDs) and
+  There are many variants of asymmetric Laplace distributions (ALDs) and
   this one is known as \emph{the} ALD by Kotz et al. (2001).
   See \code{\link{alaplace3}}, the \pkg{VGAM} family function
   for estimating the three parameters by maximum likelihood estimation,
   for formulae and details.
-  Apart from \code{n}, all the above arguments may be vectors and
-  are recyled to the appropriate length if necessary.
 
 }
 \value{
-  \code{dalaplace} gives the density,
-  \code{palaplace} gives the distribution function,
-  \code{qalaplace} gives the quantile function, and
-  \code{ralaplace} generates random deviates.
+  \code{dalap} gives the density,
+  \code{palap} gives the distribution function,
+  \code{qalap} gives the quantile function, and
+  \code{ralap} generates random deviates.
 }
 \references{
 Kotz, S., Kozubowski, T. J. and Podgorski, K. (2001)
@@ -74,23 +80,26 @@ Boston: Birkhauser.
 
 \seealso{
   \code{\link{alaplace3}}.
+% \code{\link{dloglap}}.
+
 }
 \examples{
 x = seq(-5, 5, by=0.01)
-loc = 0; b = 1.5; kappa = 2
+loc = 0; sigma = 1.5; kappa = 2
 \dontrun{
-plot(x, dalaplace(x, loc, b, kappa=kappa), type="l", col="blue",
+plot(x, dalap(x, loc, sigma, kappa=kappa), type="l", col="blue",
      main="Blue is density, red is cumulative distribution function",
-     ylim=c(0,1), sub="Purple are 5,10,...,95 percentiles", las=1, ylab="")
+     ylim=c(0,1), sub="Purple are 5,10,...,95 percentiles",
+     las=1, ylab="", cex.main=0.5)
 abline(h=0, col="blue", lty=2)
-lines(qalaplace(seq(0.05,0.95,by=0.05), loc, b, kappa=kappa),
-      dalaplace(qalaplace(seq(0.05,0.95,by=0.05), loc, b, kappa=kappa),
-                loc, b, kappa=kappa), col="purple", lty=3, type="h")
-lines(x, palaplace(x, loc, b, kappa=kappa), type="l", col="red")
+lines(qalap(seq(0.05,0.95,by=0.05), loc, sigma, kappa=kappa),
+      dalap(qalap(seq(0.05,0.95,by=0.05), loc, sigma, kappa=kappa),
+                loc, sigma, kappa=kappa), col="purple", lty=3, type="h")
+lines(x, palap(x, loc, sigma, kappa=kappa), type="l", col="red")
 abline(h=0, lty=2)
 }
-palaplace(qalaplace(seq(0.05,0.95,by=0.05), loc, b, kappa=kappa),
-          loc, b, kappa=kappa)
+palap(qalap(seq(0.05,0.95,by=0.05), loc, sigma, kappa=kappa),
+          loc, sigma, kappa=kappa)
 }
 \keyword{distribution}
 

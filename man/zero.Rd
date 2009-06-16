@@ -89,7 +89,6 @@ args(gpd)
 
 
 #LMS quantile regression example
-data(bminz)
 fit = vglm(BMI ~ bs(age, df=4), fam=lms.bcg(zero=c(1,3)),
            data=bminz, trace=TRUE)
 coef(fit, matrix=TRUE)

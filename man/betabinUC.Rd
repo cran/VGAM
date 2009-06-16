@@ -93,11 +93,11 @@ rbetabin.ab(n, size, shape1, shape2)
 N = 9; x = 0:N; s1=2; s2=3
 dy = dbetabin.ab(x, size=N, shape1=s1, shape2=s2)
 barplot(rbind(dy, dbinom(x, size=N, prob=s1/(s1+s2))),
-        beside = TRUE, col = c("blue","green"),
+        beside = TRUE, col = c("blue","green"), las=1,
         main=paste("Beta-binomial (size=",N,", shape1=",s1,
                    ", shape2=",s2,") (blue) vs\n",
         " Binomial(size=", N, ", prob=", s1/(s1+s2), ") (green)", sep=""),
-        names.arg = as.character(x))
+        names.arg = as.character(x), cex.main=0.8)
 sum(dy*x) # Check expected values are equal
 sum(dbinom(x, size=N, prob=s1/(s1+s2))*x)
 cumsum(dy) -  pbetabin.ab(x, N, shape1=s1, shape2=s2)
@@ -105,11 +105,11 @@ cumsum(dy) -  pbetabin.ab(x, N, shape1=s1, shape2=s2)
 y = rbetabin.ab(n=10000, size=N, shape1=s1, shape2=s2)
 ty = table(y)
 barplot(rbind(dy, ty/sum(ty)),
-        beside = TRUE, col = c("blue","red"),
+        beside = TRUE, col = c("blue","red"), las=1,
         main=paste("Beta-binomial (size=",N,", shape1=",s1,
                    ", shape2=",s2,") (blue) vs\n",
         " Random generated beta-binomial(size=", N, ", prob=", s1/(s1+s2),
-        ") (red)", sep=""),
+        ") (red)", sep=""), cex.main=0.8,
         names.arg = as.character(x))
 }
 }

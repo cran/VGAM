@@ -17,8 +17,8 @@ summaryvlm <- function(object, correlation=FALSE, dispersion=NULL)
 
     M <- object@misc$M
     n <- object@misc$n
-    n.big <- object@misc$n.big 
-    p.big <- object@misc$p.big   # May be NULL for CQO objects
+    nrow_X_vlm <- object@misc$nrow_X_vlm 
+    ncol_X_vlm <- object@misc$ncol_X_vlm   # May be NULL for CQO objects
 
     coef <- object@coefficients
     cnames <- names(coef)
@@ -55,21 +55,21 @@ summaryvlm <- function(object, correlation=FALSE, dispersion=NULL)
     }
     sigma <- dispersion^0.5     # Can be a vector 
 
-    if(is.Numeric(p.big)) {
+    if(is.Numeric(ncol_X_vlm)) {
         R <- object@R
 
-        if(p.big < max(dim(R)))
+        if(ncol_X_vlm < max(dim(R)))
             stop("R is rank deficient")
     
-        rinv = diag(p.big)
+        rinv = diag(ncol_X_vlm)
         rinv = backsolve(R, rinv)
-        rowlen = drop(((rinv^2) %*% rep(1, p.big))^0.5)
+        rowlen = drop(((rinv^2) %*% rep(1, ncol_X_vlm))^0.5)
         covun = rinv %*% t(rinv)
         dimnames(covun) <- list(cnames, cnames)
     }
     coef <- matrix(rep(coef, 3), ncol=3)
     dimnames(coef) <- list(cnames, c("Value", "Std. Error", "t value"))
-    if(length(sigma) == 1 && is.Numeric(p.big)) {
+    if(length(sigma) == 1 && is.Numeric(ncol_X_vlm)) {
         coef[, 2] <- rowlen %o% sigma      # Fails here when sigma is a vector 
         coef[, 3] <- coef[, 1]/coef[, 2]
     } else {
@@ -90,10 +90,10 @@ summaryvlm <- function(object, correlation=FALSE, dispersion=NULL)
         object,
         coef3=coef, 
         correlation=correl,
-        df=c(p.big, rdf),
+        df=c(ncol_X_vlm, rdf),
         sigma=sigma)
 
-    if(is.Numeric(p.big)) answer@cov.unscaled = covun
+    if(is.Numeric(ncol_X_vlm)) answer@cov.unscaled = covun
     answer@dispersion = dispersion        # Overwrite this 
 
     if(length(presid))
@@ -163,13 +163,13 @@ printsummary.vlm <- function(x, digits=NULL, quote=TRUE, prefix="")
             "on", round(rdf, digits), "degrees of freedom\n")
 
     if(length(correl)) {
-        p.big <- dim(correl)[2]
-        if(p.big > 1) {
+        ncol_X_vlm <- dim(correl)[2]
+        if(ncol_X_vlm > 1) {
             cat("\nCorrelation of Coefficients:\n")
             ll <- lower.tri(correl)
             correl[ll] <- format(round(correl[ll], digits))
             correl[!ll] <- ""
-            print(correl[-1, -p.big, drop=FALSE], quote=FALSE, digits=digits)
+            print(correl[-1, -ncol_X_vlm, drop=FALSE], quote=FALSE, digits=digits)
         }
     }
     invisible(NULL)

@@ -219,7 +219,6 @@ this is not done.
 }
 \examples{
 \dontrun{
-data(hspider)
 set.seed(123)  # This leads to the global solution
 hspider[,1:6] = scale(hspider[,1:6]) # Standardized environmental vars
 p1 = cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,

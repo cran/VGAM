@@ -5,6 +5,7 @@
 \description{
    Estimates the parameter of the 
    AB-Ab-aB-ab blood group system.
+
 }
 \usage{
 AB.Ab.aB.ab(link = "logit", earg=list(), init.p = NULL)
@@ -45,6 +46,7 @@ are AB, Ab, aB and ab
 Alternatively, the input can be a 4-column matrix of 
 proportions (so each row adds to 1) and the \code{weights}
 argument is used to specify the total number of counts for each row.
+
 }
 
 \seealso{
@@ -53,10 +55,11 @@ argument is used to specify the total number of counts for each row.
 \code{\link{ABO}},
 \code{\link{G1G2G3}},
 \code{\link{MNSs}}.
+
 }
 
 \examples{
-y = cbind(1997, 906, 904, 32) # Data from Fisher (1925)
+y = cbind(AB=1997, Ab=906, aB=904, ab=32) # Data from Fisher (1925)
 fit = vglm(y ~ 1, AB.Ab.aB.ab(link="identity", init.p=0.9), trace=TRUE)
 fit = vglm(y ~ 1, AB.Ab.aB.ab, trace=TRUE)
 rbind(y, sum(y)*fitted(fit))

@@ -186,6 +186,75 @@ residualsvglm  <- function(object,
     }
 }
 
+
+
+
+
+residualsqrrvglm  <- function(object,
+              type = c("response"),
+              matrix.arg=TRUE)
+{
+
+
+    if(mode(type) != "character" && mode(type) != "name")
+        type <- as.character(substitute(type))
+    type <- match.arg(type,
+            c("response"))[1]
+
+    na.act = object@na.action
+    object@na.action = list()
+
+    pooled.weight <- object@misc$pooled.weight
+    if(is.null(pooled.weight))
+        pooled.weight <- FALSE
+
+    answer = 
+    switch(type,
+        working = if(pooled.weight) NULL else object@residuals,
+        pearson = {
+            stop("have not programmed pearson resids yet")
+        },
+        deviance = {
+            stop("have not programmed deviance resids yet")
+        },
+        ldot = {
+            stop("have not programmed ldot resids yet")
+        },
+        response = {
+            y <- object@y
+            mu <- fitted(object)
+
+            true.mu <- object@misc$true.mu
+            if(is.null(true.mu))
+                true.mu <- TRUE
+ 
+            ans <- if(true.mu) y - mu else NULL
+
+
+            if(!matrix.arg && length(ans)) {
+                if(ncol(ans) == 1) {
+                    names.ans = dimnames(ans)[[1]] 
+                    ans = c(ans) 
+                    names(ans) = names.ans
+                    ans
+                } else {
+                    warning("ncol(ans) is not 1")
+                    ans
+                }
+            } else ans
+        })
+
+    if(length(answer) && length(na.act)) {
+        napredict(na.act[[1]], answer)
+    } else {
+        answer
+    }
+}
+
+
+
+
+
     setMethod("residuals",  "vlm",
               function(object, ...) 
               residualsvlm(object, ...))
@@ -195,6 +264,9 @@ residualsvglm  <- function(object,
     setMethod("residuals",  "vgam",
               function(object, ...) 
               residualsvglm(object, ...))
+    setMethod("residuals",  "qrrvglm",
+              function(object, ...) 
+              residualsqrrvglm(object, ...))
 
     setMethod("resid",  "vlm",
               function(object, ...) 
@@ -205,6 +277,9 @@ residualsvglm  <- function(object,
     setMethod("resid",  "vgam",
               function(object, ...) 
               residualsvglm(object, ...))
+    setMethod("resid",  "qrrvglm",
+              function(object, ...) 
+              residualsqrrvglm(object, ...))
 
 
 

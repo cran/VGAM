@@ -59,7 +59,6 @@ Reduced-rank vector generalized linear models.
 
 \examples{
 # Rank-1 stereotype model of Anderson (1984)
-data(pneumo)
 n = nrow(pneumo)
 pneumo = transform(pneumo, let=log(exposure.time), x1=runif(n), x2=runif(n))
 fit = rrvglm(cbind(normal,mild,severe) ~ let + x1 + x2, multinomial, pneumo)

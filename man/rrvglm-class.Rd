@@ -252,7 +252,6 @@ Vector generalized additive models.
 
 \examples{
 # Rank-1 stereotype model of Anderson (1984)
-data(pneumo)
 set.seed(111)
 pneumo = transform(pneumo, let=log(exposure.time),
              x1=runif(nrow(pneumo))) # x1 is some unrelated covariate

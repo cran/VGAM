@@ -11,7 +11,7 @@
   \code{a}.
 }
 \usage{
-drayleigh(x, a)
+drayleigh(x, a, log=FALSE)
 prayleigh(q, a)
 qrayleigh(p, a)
 rrayleigh(n, a)
@@ -22,6 +22,12 @@ rrayleigh(n, a)
   \item{n}{number of observations.
     Must be a positive integer of length 1.}
   \item{a}{the parameter \eqn{a}.}
+  \item{log}{
+  Logical.
+  If \code{log=TRUE} then the logarithm of the density is returned.
+
+  }
+
 }
 \value{
   \code{drayleigh} gives the density,

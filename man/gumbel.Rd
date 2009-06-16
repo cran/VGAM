@@ -187,15 +187,14 @@ y = rgumbel(n=1000, loc = 100, scale=exp(1))
 fit = vglm(y ~ 1, egumbel(perc=NULL), trace=TRUE)
 coef(fit, matrix=TRUE)
 Coef(fit)
-fitted(fit)[1:4,]
+head(fitted(fit))
 mean(y)
 
 
 # Example 2: Venice data
-data(venice)
 (fit = vglm(cbind(r1,r2,r3,r4,r5) ~ year, data=venice,
            gumbel(R=365, mpv=TRUE), trace=TRUE))
-fitted(fit)[1:5,]
+head(fitted(fit))
 coef(fit, mat=TRUE)
 vcov(summary(fit))  
 sqrt(diag(vcov(summary(fit))))   # Standard errors

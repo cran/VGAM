@@ -11,7 +11,7 @@
   \code{theta}.
 }
 \usage{
-dtriangle(x, theta, lower=0, upper=1)
+dtriangle(x, theta, lower=0, upper=1, log=FALSE)
 ptriangle(q, theta, lower=0, upper=1)
 qtriangle(p, theta, lower=0, upper=1)
 rtriangle(n, theta, lower=0, upper=1)
@@ -26,6 +26,12 @@ rtriangle(n, theta, lower=0, upper=1)
   \item{lower, upper}{lower and upper limits of the distribution.
      Must be finite.
    }
+  \item{log}{
+  Logical.
+  If \code{log=TRUE} then the logarithm of the density is returned.
+
+  }
+
 }
 \value{
   \code{dtriangle} gives the density,

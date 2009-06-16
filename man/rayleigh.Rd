@@ -87,7 +87,7 @@ A related distribution is the Maxwell distribution.
 n = 1000; a = exp(2)
 ystar = rrayleigh(n, a=a)
 fit = vglm(ystar ~ 1, rayleigh, trace=TRUE, crit="c")
-fitted(fit)[1:5]
+head(fitted(fit))
 mean(ystar)
 coef(fit, matrix=TRUE)
 Coef(fit)
@@ -102,7 +102,7 @@ extra = list(rightcensored = ystar > U)
 fit = vglm(y ~ 1, crayleigh, trace=TRUE, extra=extra)
 table(fit@extra$rightcen)
 coef(fit, matrix=TRUE)
-fitted(fit)[1:4,]
+head(fitted(fit))
 }
 \keyword{models}
 \keyword{regression}

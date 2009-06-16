@@ -138,9 +138,9 @@ y = ifelse(runif(n) < p0, 0, rpospois(n, lambda))
 table(y)
 fit = vglm(y ~ x, zapoisson, trace=TRUE)
 fit = vglm(y ~ x, zapoisson, trace=TRUE, crit="c")
-fitted(fit)[1:5]
-predict(fit)[1:5,]
-predict(fit, untransform=TRUE)[1:5,]
+head(fitted(fit))
+head(predict(fit))
+head(predict(fit, untransform=TRUE))
 coef(fit, matrix=TRUE)
 
 
@@ -153,7 +153,7 @@ yy = rep(y,w)
 fit3 = vglm(yy ~ 1, zapoisson, trace=TRUE, crit="c")
 coef(fit3, matrix=TRUE)
 Coef(fit3)  # Estimate of lambda (they get 0.6997 with standard error 0.1520)
-fitted(fit3)[1:5]
+head(fitted(fit3))
 mean(yy) # compare this with fitted(fit3)
 }
 \keyword{models}

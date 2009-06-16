@@ -23,7 +23,6 @@
 % \references{
 % }
 \examples{
-data(oxtemp)
 fit = vglm(maxtemp ~ 1, egev, trace=TRUE, data=oxtemp)
 }
 \keyword{datasets}

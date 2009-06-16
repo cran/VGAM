@@ -191,7 +191,6 @@ canonical Gaussian ordination.
 \code{\link[graphics]{title}}.
 }
 \examples{\dontrun{
-data(hspider)
 hspider[,1:6] = scale(hspider[,1:6]) # Good idea when ITolerances = TRUE
 set.seed(111)
 r1 = cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,

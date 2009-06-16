@@ -74,12 +74,12 @@ written.
 }
 \examples{
 \dontrun{
-data(usagrain)
 year = seq(1961+1/12, 1972+10/12, by=1/12)
 par(mar=c(4,4,2,2)+0.1, mfrow=c(2,2))
-for(i in 1:4) {
-    plot(year, usagrain[,i], main=names(usagrain)[i], type="l", xlab="", ylab="")
-    points(year, usagrain[,i], pch="*")
+for(ii in 1:4) {
+    plot(year, usagrain[,ii], main=names(usagrain)[ii],
+         type="l", xlab="", ylab="")
+    points(year, usagrain[,ii], pch="*")
 }
 apply(usagrain, 2, mean)     # mu vector
 cgrain = scale(usagrain, scale=FALSE) # Center the time series only
@@ -93,10 +93,10 @@ print(fit@misc$omegahat, dig=3)
 print(fit@misc$Phimatrices, dig=2)
 
 par(mar=c(4,4,2,2)+0.1, mfrow=c(4,1))
-for(i in 1:4) {
-    plot(year, fit@misc$Z[,i], main=paste("Z", i, sep=""),
+for(ii in 1:4) {
+    plot(year, fit@misc$Z[,ii], main=paste("Z", ii, sep=""),
          type="l", xlab="", ylab="")
-    points(year, fit@misc$Z[,i], pch="*")
+    points(year, fit@misc$Z[,ii], pch="*")
 }
 }
 }

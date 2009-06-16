@@ -80,7 +80,6 @@ On constrained and unconstrained quadratic ordination.
   \code{\link{Coef.qrrvglm}}.
 }
 \examples{
-data(hspider)
 hspider[,1:6] = scale(hspider[,1:6]) # Needed when ITol = TRUE
 set.seed(123)
 p1 = cqo(cbind(Alopacce, Alopcune, Pardlugu, Pardnigr, 

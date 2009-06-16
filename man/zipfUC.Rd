@@ -11,7 +11,7 @@
 
 }
 \usage{
-dzipf(x, N, s)
+dzipf(x, N, s, log = FALSE)
 pzipf(q, N, s)
 }
 \arguments{
@@ -25,6 +25,12 @@ pzipf(q, N, s)
   See \code{\link{zipf}} for more details.
 
   }
+  \item{log}{
+  Logical.
+  If \code{log=TRUE} then the logarithm of the density is returned.
+
+  }
+
 }
 \value{
   \code{dzipf} gives the density, and

@@ -55,6 +55,36 @@
 \alias{fitted,vglm-method}
 \alias{fitted,uqo-method}
 \alias{fitted,vsmooth.spline-method}
+%
+%
+%\alias{case.names,ANY-method}
+\alias{case.names,vlm-method}
+\alias{case.names,vgam-method}
+\alias{case.names,vglm-method}
+\alias{case.names,rrvglm-method}
+\alias{case.names,qrrvglm-method}
+\alias{case.names,grc-method}
+%
+%\alias{variable.names,ANY-method}
+\alias{variable.names,vlm-method}
+\alias{variable.names,vgam-method}
+\alias{variable.names,vglm-method}
+\alias{variable.names,rrvglm-method}
+\alias{variable.names,qrrvglm-method}
+\alias{variable.names,grc-method}
+%
+%
+%\alias{formula,ANY-method}
+\alias{formula,vlm-method}
+\alias{formula,vgam-method}
+\alias{formula,vglm-method}
+\alias{formula,rrvglm-method}
+\alias{formula,qrrvglm-method}
+\alias{formula,grc-method}
+%\alias{formula,uqo-method}
+% \alias{formula,vsmooth.spline-method}
+%
+%
 \alias{guplot,numeric-method}
 \alias{guplot,vlm-method}
 %\alias{model.frame,ANY-method}
@@ -113,12 +143,18 @@
 \alias{predict,uqo-method}
 \alias{predict,vsmooth.spline-method}
 \alias{predict,vsmooth.spline.fit-method}
+%
+%
+% Added 20090505:
+%\alias{print,ANY-method}
+%
 \alias{print,vglmff-method}
 \alias{print,Coef.cao-method}
 \alias{print,summary.cao-method}
 \alias{print,qrrvglm-method}
 \alias{print,Coef.qrrvglm-method}
 \alias{print,rrvglm-method}
+% 20090505
 \alias{print,summary.qrrvglm-method}
 \alias{print,Coef.rrvglm-method}
 \alias{print,vlm-method}
@@ -141,6 +177,7 @@
 \alias{residuals,vgam-method}
 \alias{residuals,uqo-method}
 \alias{residuals,vsmooth.spline-method}
+\alias{resid,qrrvglm-method}
 \alias{resid,vlm-method}
 \alias{resid,vglm-method}
 \alias{resid,vgam-method}
@@ -152,6 +189,7 @@
 \alias{show,qrrvglm-method}
 \alias{show,Coef.qrrvglm-method}
 \alias{show,rrvglm-method}
+% 20090505
 \alias{show,summary.qrrvglm-method}
 \alias{show,Coef.rrvglm-method}
 \alias{show,vlm-method}
@@ -228,6 +266,7 @@
 %\keyword{ ~~ other possible keyword(s)}
 \keyword{models}
 \keyword{regression}
+\keyword{internal}
 
 
 

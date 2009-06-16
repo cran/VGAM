@@ -1,7 +1,7 @@
 \name{venice}
 \alias{venice}
 \docType{data}
-\title{ Venice Maximum Sea Levels }
+\title{ Venice Maximum Sea Levels Data}
 \description{
   The maximum heights of sea levels recorded at Venice, Italy, between
   1931 and 1981.
@@ -43,7 +43,6 @@ Maree estreme a Venezia (periodo 1872--1981).
 
 }
 \examples{
-data(venice)
 \dontrun{
 matplot(venice[["year"]], venice[,-1], xlab="Year", ylab="Sea level (cm)")
 }
@@ -51,7 +50,7 @@ matplot(venice[["year"]], venice[,-1], xlab="Year", ylab="Sea level (cm)")
 y = as.matrix(venice[,paste("r",1:10,sep="")])
 fit1 = vgam(y ~ s(year, df=3), gumbel(R=365, mpv=TRUE),
             data=venice, trace=TRUE, na.action=na.pass)
-fitted(fit1)[1:4,]
+head(fitted(fit1))
 
 \dontrun{
 par(mfrow=c(2,1), xpd=TRUE)

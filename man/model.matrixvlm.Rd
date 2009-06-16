@@ -2,7 +2,7 @@
 \alias{model.matrixvlm}
 \title{Construct the Design Matrix of a VLM Object}
 \usage{
-model.matrixvlm(object, type=c("vlm","lm","lm2"), \dots)
+model.matrixvlm(object, type=c("vlm","lm","lm2","bothlmlm2"), \dots)
 }
 \arguments{
   \item{object}{an object of a class that inherits from the
@@ -15,6 +15,8 @@ model.matrixvlm(object, type=c("vlm","lm","lm2"), \dots)
   to the \code{formula} argument.
   The value \code{"lm2"} is the second (LM) model matrix corresponding
   to the \code{form2} argument.
+  The value \code{"bothlmlm2"} means both LM and VLM model matrices.
+
   }
   \item{\dots}{further arguments passed to or from other methods.
     These include \code{data} (which
@@ -42,6 +44,9 @@ model.matrixvlm(object, type=c("vlm","lm","lm2"), \dots)
 \value{
   The design matrix for a regression model with the specified formula
   and data. 
+  If \code{type="bothlmlm2"} then a list is returned with components
+  \code{"X"} and \code{"Xm2"}.
+
 }
 \references{
 Yee, T. W. and Hastie, T. J. (2003)
@@ -63,7 +68,6 @@ Reduced-rank vector generalized linear models.
 }
 \examples{
 # Illustrates smart prediction
-data(pneumo)
 pneumo = transform(pneumo, let=log(exposure.time))
 fit = vglm(cbind(normal,mild, severe) ~ poly(c(scale(let)), 2),
            fam=multinomial,
@@ -72,15 +76,15 @@ class(fit)
 fit@x
 model.matrix(fit)
 
-Check1 = model.matrix(fit, type="lm")[1:3,]
+Check1 = head(model.matrix(fit, type="lm"))
 Check1
-Check2 = model.matrix(fit, data=pneumo[1:3,], type="lm")
+Check2 = model.matrix(fit, data=head(pneumo), type="lm")
 Check2
 all.equal(c(Check1), c(Check2))
 
-q0 = predict(fit)[1:3,]
-q1 = predict(fit, newdata=pneumo)[1:3,]
-q2 = predict(fit, newdata=pneumo[1:3,])
+q0 = head(predict(fit))
+q1 = head(predict(fit, newdata=pneumo))
+q2 = predict(fit, newdata=head(pneumo))
 all.equal(q0, q1)  # Should be TRUE
 all.equal(q1, q2)  # Should be TRUE
 }

@@ -138,7 +138,7 @@ Coef(fit)  # Useful for intercept-only models
 Y = 5 + 8 * y    # From 5 to 13, not 0 to 1
 fit = vglm(Y ~ 1, beta.ab(A=5, B=13), trace = TRUE)
 Coef(fit)  
-c(mean(Y), fitted(fit)[1:2,])
+c(mean(Y), head(fitted(fit)))
 }
 \keyword{models}
 \keyword{regression}

@@ -19,7 +19,6 @@ cao.fit <- function(x, y, w=rep(1, length(x[, 1])),
     check.rank = TRUE # 
     nonparametric <- TRUE
     optim.maxit <- control$optim.maxit
-    backchat <- FALSE # control$backchat && !control$Quadratic  # rrr;
     save.weight <- control$save.weight
     trace <- control$trace
     minimize.criterion <- control$min.criterion
@@ -27,9 +26,9 @@ cao.fit <- function(x, y, w=rep(1, length(x[, 1])),
     n <- dim(x)[1]
 
 
-    copyxbig <- FALSE    # May be overwritten in @initialize
+    copy_X_vlm <- FALSE    # May be overwritten in @initialize
 
-    xbig.save <- NULL
+    X_vlm_save <- NULL
 
     intercept.only <- ncol(x) == 1 && dimnames(x)[[2]] == "(Intercept)"
     y.names <- predictors.names <- NULL    # May be overwritten in @initialize
@@ -49,7 +48,7 @@ cao.fit <- function(x, y, w=rep(1, length(x[, 1])),
               "binomialff"=1, "quasipoissonff"=0, "quasibinomialff"=0,
               "negbinomial"=3,
               "gamma2"=5, "gaussianff"=8,
-              0)  # stop("can't fit this model using fast algorithm")
+              0)  # stop("cannot fit this model using fast algorithm")
     if(!modelno) stop("the family function does not work with cao()")
     if(modelno == 1) modelno = get("modelno", envir = VGAMenv)
 
@@ -152,10 +151,8 @@ cao.fit <- function(x, y, w=rep(1, length(x[, 1])),
     for(iter in 1:optim.maxit) {
         if(control$trace) {
             cat("\nIteration", iter, "\n")
-            if(exists("flush.console"))
-                flush.console()
+            flush.console()
         }
-flush.console()
 
         conjgrad = optim(par=c(Cmat), fn=callcaof, 
                      gr=if(control$GradientFunction) calldcaof else NULL,
@@ -189,7 +186,7 @@ flush.console()
     }
     Cmat = crow1C(Cmat, control$Crow1positive)   # Make sure the signs are right
 
-flush.console()
+    flush.console()
     temp9 = 
     callcaof(cmatrix=Cmat,
              etamat=eta, xmat=x, ymat=y, wvec=w, modelno=modelno,
@@ -323,56 +320,56 @@ cao.control = function(Rank=1,
           spar2 = 0,    # 0 means df2.nl is used
           ...)
 {
-    if(!is.Numeric(iShape, posit=TRUE)) stop("bad input for \"iShape\"")
-    if(!is.Numeric(iKvector, posit=TRUE)) stop("bad input for \"iKvector\"")
+    if(!is.Numeric(iShape, posit=TRUE)) stop("bad input for 'iShape'")
+    if(!is.Numeric(iKvector, posit=TRUE)) stop("bad input for 'iKvector'")
     if(!is.Numeric(method.init, posit=TRUE, allow=1, integer=TRUE))
-        stop("bad input for \"method.init\"")
-    if(criterion != "deviance") stop("\"criterion\" must be \"deviance\"")
+        stop("bad input for 'method.init'")
+    if(criterion != "deviance") stop("'criterion' must be \"deviance\"")
     if(GradientFunction) stop("14/1/05; GradientFunction=TRUE not working yet")
     se.fit = as.logical(FALSE)
     if(se.fit) stop("se.fit = FALSE handled only")
 
     if(length(Cinit) && !is.Numeric(Cinit))
-        stop("Bad input for \"Cinit\"")
+        stop("Bad input for 'Cinit'")
     if(!is.Numeric(Bestof, allow=1, integ=TRUE, posit=TRUE))
-        stop("Bad input for \"Bestof\"")
+        stop("Bad input for 'Bestof'")
     if(!is.Numeric(maxitl, allow=1, integ=TRUE, posit=TRUE))
-        stop("Bad input for \"maxitl\"")
+        stop("Bad input for 'maxitl'")
     if(!is.Numeric(bf.epsilon, allow=1, posit=TRUE))
-        stop("Bad input for \"bf.epsilon\"")
+        stop("Bad input for 'bf.epsilon'")
     if(!is.Numeric(bf.maxit, integ=TRUE, posit=TRUE, allow=1))
-        stop("Bad input for \"bf.maxit\"")
+        stop("Bad input for 'bf.maxit'")
     if(!is.Numeric(Etamat.colmax, posit=TRUE, allow=1) || Etamat.colmax < Rank)
-        stop("bad input for \"Etamat.colmax\"")
+        stop("bad input for 'Etamat.colmax'")
     if(!is.Numeric(Maxit.optim, integ=TRUE, posit=TRUE, allow=1))
-        stop("Bad input for \"Maxit.optim\"")
+        stop("Bad input for 'Maxit.optim'")
     if(!is.Numeric(optim.maxit, allow=1, integ=TRUE, posit=TRUE))
-        stop("Bad input for \"optim.maxit\"")
+        stop("Bad input for 'optim.maxit'")
     if(!is.Numeric(SD.sitescores, allow=1, posit=TRUE))
-        stop("Bad input for \"SD.sitescores\"")
+        stop("Bad input for 'SD.sitescores'")
     if(!is.Numeric(SD.Cinit, allow=1, posit=TRUE))
-        stop("Bad input for \"SD.Cinit\"")
+        stop("Bad input for 'SD.Cinit'")
     if(!is.Numeric(df1.nl) || any(df1.nl < 0))
-        stop("Bad input for \"df1.nl\"")
+        stop("Bad input for 'df1.nl'")
     if(any(df1.nl >= 0 & df1.nl < 0.05)) {
         warning("df1.nl values between 0 and 0.05 converted to 0.05")
         df1.nl[df1.nl < 0.05] = 0.05
     }
     if(!is.Numeric(df2.nl) || any(df2.nl < 0))
-        stop("Bad input for \"df2.nl\"")
+        stop("Bad input for 'df2.nl'")
     if(any(df2.nl >= 0 & df2.nl < 0.05)) {
         warning("df2.nl values between 0 and 0.05 converted to 0.05")
         df2.nl[df2.nl < 0.05] = 0.05
     }
     if(!is.Numeric(spar1) || any(spar1 < 0))
-        stop("Bad input for \"spar1\"")
+        stop("Bad input for 'spar1'")
     if(!is.Numeric(spar2) || any(spar2 < 0))
-        stop("Bad input for \"spar2\"")
+        stop("Bad input for 'spar2'")
     if(!is.Numeric(epsilon, posit=TRUE, allow=1))
-        stop("Bad input for \"epsilon\"")
+        stop("Bad input for 'epsilon'")
 
     if(!is.Numeric(SmallNo, posit=TRUE, allow=1))
-        stop("Bad input for \"SmallNo\"")
+        stop("Bad input for 'SmallNo'")
     if((SmallNo < .Machine$double.eps) ||
        (SmallNo > .0001)) stop("SmallNo is out of range") 
 
@@ -433,6 +430,8 @@ create.cms <- function(Rank=1, M, MSratio=1, which, p1=1) {
 }
 
 
+
+
 callcaof = function(cmatrix,
                     etamat, xmat, ymat, wvec, modelno, 
                     Control, Nice21=TRUE,
@@ -440,7 +439,7 @@ callcaof = function(cmatrix,
                     n, M, 
                     othint, othdbl,
                     alldump=FALSE) {
-if(exists("flush.console")) flush.console()
+    flush.console()
 
     control = Control
     Rank = control$Rank
@@ -488,9 +487,7 @@ if(exists("flush.console")) flush.console()
     nstar = if(Nice21) ifelse(modelno==3 || modelno==5,n*2,n) else n*M
     lenbeta = pstar. * ifelse(Nice21, NOS, 1) # Holds the linear coeffs
 
-    inited = if(is.R()) {
-        if(exists(".VGAM.CAO.etamat", envir=VGAMenv)) 1 else 0
-    } else 0
+    inited = if(exists(".VGAM.CAO.etamat", envir=VGAMenv)) 1 else 0
     usethiseta = if(inited==1)
         getfromVGAMenv("etamat", prefix = ".VGAM.CAO.") else t(etamat)
 
@@ -518,10 +515,9 @@ if(exists("flush.console")) flush.console()
                          bf.maxit=control$bf.maxit,
                          bf.epsilon=control$bf.epsilon,
                          trace=FALSE, se.fit=control$se.fit,
-                         xbig.save=bnumat, Blist=Blist. ,
+                         X_vlm_save=bnumat, Blist=Blist. ,
                          ncolBlist=ncolBlist. ,
                          M= M. , qbig=NULL, U=NULL, # NULL implies not needed
-                         backchat=FALSE,
                          all.knots=control$all.knots, nk=NULL,
                          sf.only=TRUE)
 
@@ -545,7 +541,6 @@ if(exists("flush.console")) flush.console()
     if(!all.equal(as.vector(ncbvec), rep(1, len=queue)))
         stop("ncbvec not right---should be a queue-vector of ones")
     pbig = pstar. #
-    backchat = FALSE
 
 
     npetc = c(n=nrow(nu1mat), p. =ncol(nu1mat), q=Rank, # q=length(which),
@@ -605,21 +600,16 @@ if(exists("flush.console")) flush.console()
             nknots = as.integer(smooth.frame$nknots),
             itwk = integer(2 * M. ),
             kindex = as.integer(smooth.frame$kindex))
-if(exists("flush.console")) flush.console()
+flush.console()
 
 
     if(ans1$errcode == 0) {
         assign2VGAMenv(c("etamat", "beta"), ans1, prefix=".VGAM.CAO.")
-        if(is.R()) {
-            assign(".VGAM.CAO.cmatrix", matrix(cmatrix,p2,Rank), envir=VGAMenv)
-        } else {
-            .VGAM.CAO.cmatrix <<- matrix(cmatrix,p2,Rank) # matrix reqd for R=2
-        }
-
+        assign(".VGAM.CAO.cmatrix", matrix(cmatrix,p2,Rank), envir=VGAMenv)
     } else {
         cat("warning in callcaof: error code =", ans1$errcode, "\n")
         cat("warning in callcaof: npetc[14] =", ans1$npetc[14], "\n")
-        if(exists("flush.console")) flush.console()
+        flush.console()
         rmfromVGAMenv(c("etamat", "beta"), prefix=".VGAM.CAO.")
     }
 
@@ -676,7 +666,7 @@ if(exists("flush.console")) flush.console()
              spar2=if(Rank == 2) spar2 else NULL)
     } else
         ans1$deviance
-    if(exists("flush.console")) flush.console()
+    flush.console()
     returnans
 }
 
@@ -692,7 +682,7 @@ calldcaof = function(cmatrix,
 
 
     if(alldump) stop("really used?")
-if(exists("flush.console")) flush.console()
+    flush.console()
 
     if(!Nice21) stop("Nice21 must be TRUE")
     control = Control
@@ -725,14 +715,12 @@ if(exists("flush.console")) flush.console()
     lenbeta = pstar. * ifelse(Nice21, NOS, 1)
 
     if(TRUE) {
-        inited = if(is.R()) {
-            if(exists(".VGAM.CAO.etamat", envir = VGAMenv)) 1 else 0
-        } else 0
-        usethiseta = if(inited==1) {if(is.R()) get(".VGAM.CAO.etamat",
-            envir = VGAMenv) else .VGAM.CAO.etamat} else t(etamat)
+        inited = if(exists(".VGAM.CAO.etamat", envir = VGAMenv)) 1 else 0
+        usethiseta = if(inited==1) get(".VGAM.CAO.etamat",
+            envir = VGAMenv) else t(etamat)
     }
-    usethisbeta = if(inited==2) {if(is.R()) get(".VGAM.CAO.beta",
-        envir = VGAMenv) else .VGAM.CAO.beta} else double(lenbeta)
+    usethisbeta = if(inited==2) get(".VGAM.CAO.beta",
+        envir = VGAMenv) else double(lenbeta)
 
 
 
@@ -757,10 +745,9 @@ if(exists("flush.console")) flush.console()
                          bf.maxit=control$bf.maxit,
                          bf.epsilon=control$bf.epsilon,
                          trace=FALSE, se.fit=control$se.fit,
-                         xbig.save=bnumat, Blist=Blist.,
+                         X_vlm_save=bnumat, Blist=Blist.,
                          ncolBlist=ncolBlist. ,
                          M= M. , qbig=NULL, U=U, # NULL value implies not needed
-                         backchat=FALSE,
                          all.knots=control$all.knots, nk=NULL,
                          sf.only=TRUE)
 
@@ -793,7 +780,6 @@ if(exists("flush.console")) flush.console()
         df1.nl = procVec(control$df1.nl, yn= yn , Def=control$DF1)
         spar1 = procVec(control$spar1, yn= yn , Def= control$SPAR1)
     }
-    backchat = FALSE
 
 
     npetc = c(n=n, p=1+Rank, length(which), se.fit=control$se.fit, 0,
@@ -801,7 +787,7 @@ if(exists("flush.console")) flush.console()
             pbig=sum( ncolBlist.),
         qbig=qbig, dimw= dimw. , dimu= dimu. , ier=0, ldk=ldk)
 
-if(exists("flush.console")) flush.console()
+    flush.console()
 
     ans1 <- 
   dotFortran(name = if(Nice21) "vdcaof" else stop("need Nice21"),
@@ -849,22 +835,15 @@ if(exists("flush.console")) flush.console()
             nknots = as.integer(smooth.frame$nknots),
             itwk = integer(2* M. ),
             kindex = as.integer(smooth.frame$kindex))
-if(exists("flush.console")) flush.console()
+        flush.console()
 
-           if(is.R()) {
-               assign(".VGAM.CAO.etamat", ans1$etamat, envir = VGAMenv)
-           assign(".VGAM.CAO.z",ans1$z,envir=VGAMenv)# z; minus any offset
-               assign(".VGAM.CAO.U", ans1$U, envir=VGAMenv)  # U
-           } else {
-               .VGAM.CAO.etamat <<- ans1$etamat
-               .VGAM.CAO.z <<- ans1$z
-               .VGAM.CAO.U <<- ans1$U
-           }
+           assign(".VGAM.CAO.etamat", ans1$etamat, envir = VGAMenv)
+           assign(".VGAM.CAO.z", ans1$z, envir=VGAMenv) # z; minus any offset
+           assign(".VGAM.CAO.U", ans1$U, envir=VGAMenv)  # U
        if(ans1$errcode == 0) {
        } else {
            cat("warning in calldcaof: error code =", ans1$errcode, "\n")
-            if(exists("flush.console"))
-                flush.console()
+           flush.console()
        }
 
     returnans = if(alldump) {
@@ -909,7 +888,7 @@ if(exists("flush.console")) flush.console()
              spar2=ans1$spardf[2*NOS+(1:NOS)])
     } else
         ans1$deriv
-    if(exists("flush.console")) flush.console()
+    flush.console()
     returnans 
 }
 
@@ -952,7 +931,7 @@ Coef.cao = function(object,
     if(!is.Numeric(maxgriditer, posit=TRUE, allow=1, int=TRUE) || maxgriditer<3)
         stop("bad input for argument 'maxgriditer'")
     if(!is.logical(ConstrainedO <- object@control$ConstrainedO))
-        stop("can't determine whether the model is constrained or not")
+        stop("cannot determine whether the model is constrained or not")
     if(!is.Numeric(smallno, posit=TRUE, allow=1) ||
        smallno > 0.5 || smallno < 0.0001)
         stop("bad input for argument 'smallno'")
@@ -1014,7 +993,7 @@ Coef.cao = function(object,
             match(whichSpecies[sppno], ynames) else whichSpecies[sppno]
 
         if(is.na(indexSpecies))
-            stop("mismatch found in \"whichSpecies\"")
+            stop("mismatch found in 'whichSpecies'")
 
         while(griditer == 1 ||
               ((griditer <= maxgriditer) &&
@@ -1167,11 +1146,10 @@ printCoef.cao = function(object, digits = max(2, options()$digits-2), ...) {
 
 
 
-    setMethod("show", "Coef.cao", function(object)
-        printCoef.cao(object))
-    setMethod("print", "Coef.cao", function(x, ...)
-        printCoef.cao(object=x, ...))
-
+setMethod("show", "Coef.cao", function(object)
+    printCoef.cao(object))
+setMethod("print", "Coef.cao", function(x, ...)
+    printCoef.cao(object=x, ...))
 
 setMethod("coef", "cao", function(object, ...) Coef.cao(object, ...))
 setMethod("coefficients", "cao", function(object, ...) Coef.cao(object, ...))
@@ -1252,7 +1230,7 @@ lvplot.cao = function(object,
             indexSpecies = if(is.character(whichSpecies))
                  match(whichSpecies[sppno], sppnames) else whichSpecies[sppno]
             if(is.na(indexSpecies))
-                stop("mismatch found in \"whichSpecies\"")
+                stop("mismatch found in 'whichSpecies'")
             xx = lvmat 
             yy = r.curves[,indexSpecies]
             o = sort.list(xx)
@@ -1278,7 +1256,7 @@ lvplot.cao = function(object,
             indexSpecies = if(is.character(whichSpecies))
                  match(whichSpecies[sppno], sppnames) else whichSpecies[sppno]
             if(is.na(indexSpecies))
-                stop("mismatch found in \"whichSpecies\"")
+                stop("mismatch found in 'whichSpecies'")
             points(Coeflist@Optimum[1,indexSpecies],
                    Coeflist@Optimum[2,indexSpecies],
                    col=pcol[sppno], cex=pcex[sppno], pch=pch[sppno])
@@ -1326,27 +1304,11 @@ predict.cao <- function (object, newdata=NULL,
         }
     }
 
-    attrassignlm <- function(object, ...) 
-        attrassigndefault(model.matrix(object), object@terms)
-
-    attrassigndefault <- function(mmat, tt) {
-      if (!inherits(tt, "terms"))
-        stop("need terms object")
-      aa <- attr(mmat, "assign")
-      if (is.null(aa))
-        stop("argument is not really a model matrix")
-      ll <- attr(tt, "term.labels")
-      if (attr(tt, "intercept") > 0)
-        ll <- c("(Intercept)", ll)
-      aaa <- factor(aa, labels = ll)
-      split(order(aa), aaa)
-    }
-
     if(!length(newdata)) {
         X <- model.matrixvlm(object, type="lm", ...)
         offset <- object@offset
         tt <- terms(object)
-        if(is.R() && !length(object@x))
+        if(!length(object@x))
             attr(X, "assign") <- attrassignlm(X, tt)
     } else {
         if(is.smart(object) && length(object@smart.prediction)) {
@@ -1358,24 +1320,23 @@ predict.cao <- function (object, newdata=NULL,
                       if(length(object@contrasts)) object@contrasts else NULL,
                       xlev = object@xlevels)
 
-        if(is.R() && nice21 && nrow(X)!=nrow(newdata)) {
+        if(nice21 && nrow(X)!=nrow(newdata)) {
             as.save = attr(X, "assign")
             X = X[rep(1, nrow(newdata)),,drop=FALSE]
             dimnames(X) = list(dimnames(newdata)[[1]], "(Intercept)")
             attr(X, "assign") = as.save  # Restored 
         }
 
-        offset <- if (!is.null(off.num<-attr(tt,"offset"))) {
-            eval(attr(tt,"variables")[[off.num+1]], newdata)
-        } else if (!is.null(object@offset))
+        offset = if(!is.null(off.num <- attr(tt, "offset"))) {
+            eval(attr(tt, "variables")[[off.num+1]], newdata)
+        } else if(!is.null(object@offset))
             eval(object@call$offset, newdata)
 
         if(is.smart(object) && length(object@smart.prediction)) {
             wrapup.smart() 
         }
 
-        if(is.R())
-            attr(X, "assign") <- attrassigndefault(X, tt)
+        attr(X, "assign") <- attrassigndefault(X, tt)
     }
 
     cancoefs = ccoef(object)
@@ -1403,7 +1364,7 @@ predict.cao <- function (object, newdata=NULL,
         indexSpecies = if(is.character(whichSpecies))
             match(whichSpecies[sppno], sppnames) else whichSpecies[sppno]
         if(is.na(indexSpecies))
-            stop("mismatch found in \"whichSpecies\"")
+            stop("mismatch found in 'whichSpecies'")
 
         temp345 = predictcao(object, grid=lvmat, sppno=thisSpecies,
                              Rank=Rank, deriv=deriv, MSratio=MSratio,
@@ -1456,7 +1417,7 @@ predictcao <- function(object, grid, sppno, Rank=1, deriv=0, MSratio=1,
     if(type != "link" && type != "terms")
         stop("'link' must be \"link\" or \"terms\"")
     if(ncol(grid <- as.matrix(grid)) != Rank)
-        stop(paste("'grid' must have", Rank, "columns"))
+        stop("'grid' must have ", Rank, " columns")
     if(!is.Numeric(1+deriv, allow=1, positive=TRUE, integ=TRUE))
         stop("'deriv' must be a non-negative integer")
     if(type == "terms" && deriv != 0)
@@ -1464,7 +1425,7 @@ predictcao <- function(object, grid, sppno, Rank=1, deriv=0, MSratio=1,
 
     temp.b = object@Bspline[[sppno]]
     if(type == "terms") {
-        meanlv = apply(grid, 2, mean)
+        meanlv = colMeans(grid)
         answer = matrix(0, nrow(grid), Rank)
     } else {
         nlfunvalues = 0
@@ -1558,7 +1519,7 @@ plot.cao = function(x,
         indexSpecies = if(is.character(whichSpecies))
             match(whichSpecies[sppno], sppnames) else whichSpecies[sppno]
         if(is.na(indexSpecies))
-            stop("mismatch found in \"whichSpecies\"")
+            stop("mismatch found in 'whichSpecies'")
         terms.mat = predictcao(object=x, grid=lvmat, type="terms",
                                sppno=indexSpecies, Rank=Rank,
                                deriv=deriv, MSratio=MSratio)
@@ -1583,7 +1544,7 @@ plot.cao = function(x,
                         ...)
             }
             if(residuals.arg) {
-                stop("can't handle residuals=TRUE yet")
+                stop("cannot handle residuals=TRUE yet")
             } 
             counter = counter + 1
             lines(xvals, yvals,
@@ -1599,7 +1560,7 @@ plot.cao = function(x,
 
 setMethod("plot", "cao",
            function(x, y, ...) {
-           if(!missing(y)) stop("can't process the \"y\" argument")
+           if(!missing(y)) stop("cannot process the 'y' argument")
            invisible(plot.cao(x, ...))})
 
 
@@ -1721,32 +1682,46 @@ setMethod("persp", "cao", function(x, ...) persp.cao(x=x, ...))
 lv.cao = function(object, ...) {
     Coef(object, ...)@lv
 }
-lv.Coef.cao = function(object, ...) {
-    if(length(list(...))) warning("Too late! Ignoring the extra arguments")
-    object@lv
-}
+
 
 
 if(!isGeneric("lv"))
-    setGeneric("lv", function(object, ...) standardGeneric("lv"))
-setMethod("lv",  "cao", function(object, ...) lv.cao(object, ...))
-setMethod("lv", "Coef.cao", function(object, ...) lv.Coef.cao(object, ...))
+    setGeneric("lv", function(object, ...) standardGeneric("lv"),
+    package="VGAM")
+
+ setMethod("lv", "cao", function(object, ...) lv.cao(object, ...))
 
 
 
 
 
-setClass(Class="summary.cao", representation("Coef.cao",
-         "misc" = "list",
-         "call" = "call"))
+setClass(Class="summary.cao",
+         representation("misc" = "list",
+                        "call" = "call"),
+         contains="Coef.cao")
+
+
+
+
 
 summary.cao = function(object, ...) {
     answer = Coef(object, ...)
-    class(answer) = "summary.cao"
+
+ print("20090417; in summary.cao()")
+
+    answer = as(answer, "summary.cao")
+
+ print('20090417 get warning; need to stop "class(answer) = "summary.cao"" ')
+
     answer@misc = object@misc
     answer@call = object@call
     answer
 }
+
+setMethod("summary", "cao", function(object, ...)
+    summary.cao(object, ...))
+
+
 
 printsummary.cao = function(x, ...) {
     cat("\nCall:\n")
@@ -1764,9 +1739,6 @@ printsummary.cao = function(x, ...) {
     }
     invisible(x)
 }
-
-setMethod("summary", "cao", function(object, ...)
-    summary.cao(object, ...))
 
 setMethod("print", "summary.cao",
           function(x, ...)
@@ -1791,6 +1763,7 @@ ccoef.Coef.cao = function(object, ...) {
 
 if(!isGeneric("ccoef"))
     setGeneric("ccoef", function(object, ...) standardGeneric("ccoef"))
+
 setMethod("ccoef", "cao", function(object, ...) ccoef.cao(object, ...))
 setMethod("ccoef", "Coef.cao", function(object, ...) ccoef.Coef.cao(object, ...))
 
@@ -1821,6 +1794,17 @@ setMethod("Tol", "cao", function(object, ...)
 
 setMethod("show",  "cao", function(object) print.vgam(object))
 setMethod("print", "cao", function(x, ...) print.vgam(x, ...))
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -11,7 +11,7 @@
   and \code{p}, and scale parameter \code{scale}.
 }
 \usage{
-ddagum(x, a, scale, p.arg)
+ddagum(x, a, scale, p.arg, log=FALSE)
 pdagum(q, a, scale, p.arg)
 qdagum(p, a, scale, p.arg)
 rdagum(n, a, scale, p.arg)
@@ -23,6 +23,12 @@ rdagum(n, a, scale, p.arg)
     is taken to be the number required.}
   \item{a, p.arg}{shape parameters.}
   \item{scale}{scale parameter.}
+  \item{log}{
+  Logical.
+  If \code{log=TRUE} then the logarithm of the density is returned.
+
+  }
+
 }
 \value{
   \code{ddagum} gives the density,

@@ -1,7 +1,7 @@
 \name{pneumo}
 \alias{pneumo}
 \docType{data}
-\title{Pneumoconiosis amongst a group of coalminers}
+\title{Pneumoconiosis in Coalminers Data}
 \description{
 The \code{pneumo} data frame has 8 rows and 4 columns.
 Exposure time is explanatory, and there are 3 ordinal response variables.
@@ -31,8 +31,6 @@ data set, the two most severe categories were combined.
   \emph{Generalized Linear Models}, 2nd ed. London: Chapman & Hall.
 }
 \examples{
-data(pneumo)
-
 # Fit the proportional odds model, p.179, in McCullagh and Nelder (1989) 
 pneumo = transform(pneumo, let=log(exposure.time))
 vglm(cbind(normal,mild,severe) ~ let, 

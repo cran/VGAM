@@ -54,7 +54,7 @@ cao  <- function(formula,
 
     y <- model.response(mf, "numeric") # model.extract(mf, "response")
     x <- model.matrix(mt, mf, contrasts)
-    attr(x, "assign") <- attrassigndefault(x, mt) # So as to make it like Splus
+    attr(x, "assign") = attrassigndefault(x, mt)
     offset <- model.offset(mf)
     if(is.null(offset)) 
         offset <- 0 # yyy ???
@@ -69,7 +69,7 @@ cao  <- function(formula,
     if(is.function(family))
         family <- family()
     if(!inherits(family, "vglmff")) {
-        stop(paste("family=", family, "is not a VGAM family function"))
+        stop("'family=", family, "' is not a VGAM family function")
     }
 
     eval(vcontrol.expression)
@@ -151,8 +151,8 @@ cao  <- function(formula,
     slot(answer, "control") = fit$control
     slot(answer, "extra") = if(length(fit$extra)) {
         if(is.list(fit$extra)) fit$extra else {
-            warning(paste("\"extra\" is not a list, therefore",
-                          "placing \"extra\" into a list"))
+            warning("'extra' is not a list, therefore ",
+                    "placing 'extra' into a list")
             list(fit$extra)
         }
     } else list() # R-1.5.0

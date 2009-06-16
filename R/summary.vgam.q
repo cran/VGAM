@@ -11,8 +11,8 @@ summaryvgam <- function(object, dispersion=NULL, digits=options()$digits-2)
     if(length(dispersion) && dispersion == 0 &&
        length(object@family@summary.dispersion) &&
        !object@family@summary.dispersion) {
-        stop(paste("Can't use the general VGLM formula (based on a residual",
-                   "sum of squares) for computing the dispersion parameter."))
+        stop("cannot use the general VGLM formula (based on a residual ",
+             "sum of squares) for computing the dispersion parameter")
     }
 
     newobject <- object 
@@ -21,7 +21,7 @@ summaryvgam <- function(object, dispersion=NULL, digits=options()$digits-2)
     rdf <- stuff@df[2] <- object@df.residual  # NA 
 
     M <- object@misc$M
-    n.big <- object@misc$n.big
+    nrow_X_vlm <- object@misc$nrow_X_vlm
     rank <- if(is.null(object@qr$rank)) length(object@coefficients) else
             object@qr$rank
 

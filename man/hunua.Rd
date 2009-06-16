@@ -50,17 +50,15 @@
 }
 \examples{
 # Fit a GAM using vgam() and compare it with the Waitakere Ranges one
-data(hunua)
 fit.h = vgam(agaaus ~ s(altitude, df=2), binomialff, hunua)
 \dontrun{
 plot(fit.h, se=TRUE, lcol="red", scol="red",
      main="Red is Hunua, Blue is Waitakere") }
-predict(fit.h, hunua, type="response")[1:3]
+head(predict(fit.h, hunua, type="response"))
 
-data(waitakere)
 fit.w = vgam(agaaus ~ s(altitude, df=2), binomialff, waitakere)
 \dontrun{
 plot(fit.w, se=TRUE, lcol="blue", scol="blue", add=TRUE) }
-predict(fit.w, hunua, type="response")[1:3]        # Same as above? 
+head(predict(fit.w, hunua, type="response"))   # Same as above? 
 }
 \keyword{datasets}

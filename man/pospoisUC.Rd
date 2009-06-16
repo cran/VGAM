@@ -21,7 +21,8 @@ rpospois(n, lambda)
 \arguments{
   \item{x, q}{vector of quantiles.}
   \item{p}{vector of probabilities.}
-  \item{n}{number of observations. Must be a single positive integer. }
+  \item{n}{number of observations. 
+  If \code{length(n) > 1} then the length is taken to be the number required. }
   \item{lambda}{ vector of positive means (of an ordinary Poisson distribution). 
   Short vectors are recycled. }
   \item{log}{ logical.
