@@ -57,15 +57,14 @@ Hoboken, NJ: Wiley-Interscience.
 }
 \examples{
 \dontrun{
-y0 = 1
-shape = exp(1)
-x = seq(-0.0, 4, len=101)
-plot(x, dbenini(x, y0=y0,shape=shape), type="l", col="blue", las=1,
+y0 = 1; shape = exp(1)
+xx = seq(0.0, 4, len=101)
+plot(xx, dbenini(xx, y0=y0,shape=shape), type="l", col="blue", las=1,
      main="Blue is density, red is cumulative distribution function",
      sub="Purple lines are the 10,20,...,90 percentiles", ylim=0:1,
-     ylab="")
+     ylab="", xlab="x")
 abline(h=0, col="blue", lty=2)
-lines(x, pbenini(x, y0=y0,shape=shape), col="red")
+lines(xx, pbenini(xx, y0=y0,shape=shape), col="red")
 probs = seq(0.1, 0.9, by=0.1)
 Q = qbenini(probs, y0=y0,shape=shape)
 lines(Q, dbenini(Q, y0=y0,shape=shape), col="purple", lty=3, type="h")

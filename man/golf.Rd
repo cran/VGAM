@@ -129,23 +129,21 @@ plot(p, y., type="l", col="blue",
 
 
 # Another example
-nn = 1000
-x2 = sort(runif(nn))
-x3 = runif(nn)
-mymu = exp( 3 + 1 * x2 - 2 * x3)
+gdata = data.frame(x2 = sort(runif(nn <- 1000)))
+gdata = transform(gdata, x3 = runif(nn))
+gdata = transform(gdata, mymu = exp( 3 + 1 * x2 - 2 * x3))
 lambda = 4
-y1 = rgamma(nn, shape=lambda, scale=mymu/lambda)
+gdata = transform(gdata, y1 = rgamma(nn, shape=lambda, scale=mymu/lambda))
 cutpoints = c(-Inf, 10, 20, Inf)
-cuty = Cut(y1, breaks=cutpoints)
+gdata = transform(gdata, cuty = Cut(y1, breaks=cutpoints))
 \dontrun{
 par(mfrow=c(1,1), las=1)
-plot(x2, x3, col=cuty, pch=as.character(cuty))
-}
-table(cuty) / sum(table(cuty))
+with(gdata, plot(x2, x3, col=cuty, pch=as.character(cuty))) }
+with(gdata, table(cuty) / sum(table(cuty)))
 fit = vglm(cuty ~ x2 + x3, fam = cumulative(link="golf",
            reverse=TRUE, parallel=TRUE, intercept.apply=TRUE,
            mv=TRUE, earg=list(cutpoint=cutpoints[2:3], lambda=lambda)),
-           trace=TRUE)
+           gdata, trace=TRUE)
 head(fit@y)
 head(fitted(fit))
 head(predict(fit))

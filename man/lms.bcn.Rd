@@ -9,13 +9,11 @@
 \usage{
 lms.bcn(percentiles = c(25, 50, 75), zero = c(1,3), 
         llambda="identity", lmu="identity", lsigma = "loge",
-        elambda=list(), emu=list(), esigma=list(),
-        dfmu.init=4, dfsigma.init=2,
-        ilambda = 1, isigma = NULL)
+        elambda=list(), emu=list(), esigma=list(), dfmu.init=4,
+        dfsigma.init=2, ilambda = 1, isigma = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  In the following, \eqn{n} is the number of (independent) observations.
 
   \item{percentiles}{
   A numerical vector containing values between 0 and 100,
@@ -72,7 +70,8 @@ lms.bcn(percentiles = c(25, 50, 75), zero = c(1,3),
   }
   \item{ilambda}{
   Initial value for lambda.
-  If necessary, it is recycled to be a vector of length \eqn{n}.
+  If necessary, it is recycled to be a vector of length \eqn{n}
+  where \eqn{n} is the number of (independent) observations.
 
   }
   \item{isigma}{
@@ -169,12 +168,11 @@ qtplot(fit, percentiles=c(5,50,90,99), main="Quantiles",
 # Density plot
 ygrid = seq(15, 43, len=100)  # BMI ranges
 par(mfrow=c(1,1), lwd=2)
-a = deplot(fit, x0=20, y=ygrid, xlab="BMI", col="black",
-    main="Density functions at Age = 20 (black), 42 (red) and 55 (blue)")
-a
-a = deplot(fit, x0=42, y=ygrid, add=TRUE, llty=2, col="red")
-a = deplot(fit, x0=55, y=ygrid, add=TRUE, llty=4, col="blue", Attach=TRUE)
-a@post$deplot  # Contains density function values
+(aa = deplot(fit, x0=20, y=ygrid, xlab="BMI", col="black",
+    main="Density functions at Age = 20 (black), 42 (red) and 55 (blue)"))
+aa = deplot(fit, x0=42, y=ygrid, add=TRUE, llty=2, col="red")
+aa = deplot(fit, x0=55, y=ygrid, add=TRUE, llty=4, col="blue", Attach=TRUE)
+aa@post$deplot  # Contains density function values
 }
 }
 \keyword{models}

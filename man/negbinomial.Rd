@@ -7,10 +7,8 @@
   distribution.
 }
 \usage{
-negbinomial(lmu = "loge", lk = "loge",
-            emu =list(), ek=list(),
-            ik = NULL, nsimEIM=100,
-            cutoff = 0.995, Maxiter=5000, 
+negbinomial(lmu = "loge", lk = "loge", emu = list(), ek = list(),
+            ik = NULL, nsimEIM = 100, cutoff = 0.995, Maxiter=5000,
             deviance.arg = FALSE, method.init=1,
             shrinkage.init=0.95, zero = -2)
 }
@@ -252,29 +250,28 @@ Fitting the negative binomial distribution to biological data.
 % \code{\link[MASS]{rnegbin}}.
   \code{\link[stats:NegBinomial]{rnbinom}},
   \code{\link{nbolf}}.
+
 }
 \examples{
 # Example 1: apple tree data
-y = 0:7
-w = c(70, 38, 17, 10, 9, 3, 2, 1)
-fit = vglm(y ~ 1, negbinomial, weights=w)
+appletree = data.frame(y = 0:7, w = c(70, 38, 17, 10, 9, 3, 2, 1))
+fit = vglm(y ~ 1, negbinomial, appletree, weights=w)
 summary(fit)
 coef(fit, matrix=TRUE)
 Coef(fit)
 
 # Example 2: simulated data with multivariate response
-x = runif(n <- 500)
-y1 = rnbinom(n, mu=exp(3+x), size=exp(1)) # k is size
-y2 = rnbinom(n, mu=exp(2-x), size=exp(0))
-fit = vglm(cbind(y1,y2) ~ x, negbinomial, trace=TRUE)
-coef(fit, matrix=TRUE)
+ndata = data.frame(x = runif(nn <- 500))
+ndata = transform(ndata, y1 = rnbinom(nn, mu=exp(3+x), size=exp(1)),
+                         y2 = rnbinom(nn, mu=exp(2-x), size=exp(0)))
+fit1 = vglm(cbind(y1,y2) ~ x, negbinomial, ndata, trace=TRUE)
+coef(fit1, matrix=TRUE)
 
 # Example 3: large counts so definitely use the nsimEIM argument
-x = runif(n <- 500)
-y = rnbinom(n, mu=exp(12+x), size=exp(1)) # k is size
-range(y)  # Large counts
-fit = vglm(y ~ x, negbinomial(nsimEIM=100), trace=TRUE)
-coef(fit, matrix=TRUE)
+ndata = transform(ndata, y3 = rnbinom(nn, mu=exp(12+x), size=exp(1)))
+with(ndata, range(y3))  # Large counts
+fit2 = vglm(y3 ~ x, negbinomial(nsimEIM=100), ndata, trace=TRUE)
+coef(fit2, matrix=TRUE)
 }
 \keyword{models}
 \keyword{regression}

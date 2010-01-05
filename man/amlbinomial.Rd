@@ -8,13 +8,10 @@
 
 }
 \usage{
-amlbinomial(w.aml=1, parallel=FALSE, digw=4, link="logit", earg=list())
+amlbinomial(w.aml = 1, parallel = FALSE, digw = 4, link = "logit", earg = list())
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  In this documentation the word \emph{quantile} can often be
-  interchangeably replaced by \emph{expectile}
-  (things are informal here).
 
   \item{w.aml}{
   Numeric, a vector of positive constants controlling the percentiles.
@@ -81,11 +78,19 @@ amlbinomial(w.aml=1, parallel=FALSE, digw=4, link="logit", earg=list())
   Also, the individual deviance values corresponding to each element of
   the argument \code{w.aml} is stored in the \code{extra} slot.
 
+
   For \code{amlbinomial} objects, methods functions for the generic functions
   \code{qtplot} and \code{cdf} have not been written yet.
 
+
   See \code{\link{amlpoisson}} about comments on the jargon, e.g.,
   \emph{expectiles} etc.
+
+
+  In this documentation the word \emph{quantile} can often be
+  interchangeably replaced by \emph{expectile}
+  (things are informal here).
+
 
 }
 
@@ -107,11 +112,10 @@ amlbinomial(w.aml=1, parallel=FALSE, digw=4, link="logit", earg=list())
 \examples{
 # Example: binomial data with lots of trials per observation
 set.seed(1234)
-sizevec = rep(100, length=(n <- 200))
-mydat = data.frame(x = sort(runif(n)))
-mydat = transform(mydat,
-                  prob=logit(-0+2.5*x+x^2, inverse=TRUE))
-mydat = transform(mydat, y = rbinom(n, size=sizevec, prob=prob))
+sizevec = rep(100, length=(nn <- 200))
+mydat = data.frame(x = sort(runif(nn)))
+mydat = transform(mydat, prob=logit(-0+2.5*x+x^2, inverse=TRUE))
+mydat = transform(mydat, y = rbinom(nn, size=sizevec, prob=prob))
 mydat = transform(mydat, y = y / sizevec)  # Convert to proportions
 (fit = vgam(y ~ s(x, df=3), fam=amlbinomial(w=c(0.01,0.2,1,5,60)),
            data=mydat, weight=sizevec, trace=TRUE))

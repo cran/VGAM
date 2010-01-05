@@ -89,9 +89,9 @@ Hoboken, NJ: Wiley-Interscience.
 }
 
 \examples{
-y = rsinmad(n=2000, a=1, 6, 2)  # Not genuine data!
-fit = vglm(y ~ 1, betaII, trace=TRUE)
-fit = vglm(y ~ 1, betaII(init.p=0.7, init.q=0.7), trace=TRUE, crit="c")
+bdata = data.frame(y = rsinmad(n=2000, a=1, 6, 2))  # Not genuine data!
+fit = vglm(y ~ 1, betaII, bdata, trace=TRUE)
+fit = vglm(y ~ 1, betaII(init.p=0.7, init.q=0.7), bdata, trace=TRUE, crit="c")
 coef(fit, mat=TRUE)
 Coef(fit)
 summary(fit)

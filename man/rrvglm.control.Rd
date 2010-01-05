@@ -8,7 +8,7 @@
 }
 \usage{
 rrvglm.control(Rank = 1, Algorithm = c("alternating", "derivative"),
-    Corner = TRUE, Uncor = FALSE, Wmat = NULL, Svd.arg = FALSE, 
+    Corner = TRUE, Uncorrelated.lv = FALSE, Wmat = NULL, Svd.arg = FALSE, 
     Index.corner = if (length(Structural.zero)) 
     head((1:1000)[-Structural.zero], Rank) else 1:Rank,
     Alpha = 0.5, Bestof = 1, Cinit = NULL,
@@ -41,7 +41,7 @@ rrvglm.control(Rank = 1, Algorithm = c("alternating", "derivative"),
     i.e., they hold an order-\eqn{R} identity matrix.
 
   }
-\item{Uncor}{
+\item{Uncorrelated.lv}{
   Logical indicating whether uncorrelated latent variables are to be used.
   This is normalization forces the variance-covariance
   matrix of the latent variables to be \code{diag(Rank)}, i.e., unit

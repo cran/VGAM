@@ -7,8 +7,7 @@
 
 }
 \usage{
-tikuv(d, lmean="identity", lsigma="loge",
-      emean=list(), esigma=list(),
+tikuv(d, lmean="identity", lsigma="loge", emean=list(), esigma=list(),
       isigma=NULL, zero=2)
 }
 %- maybe also 'usage' for other objects documented here.

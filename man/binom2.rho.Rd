@@ -8,9 +8,8 @@
 
 }
 \usage{
-binom2.rho(lrho = "rhobit", erho=list(),
-           imu1 = NULL, imu2 = NULL, init.rho = NULL,
-           zero = 3, exchangeable = FALSE, nsimEIM=NULL)
+binom2.rho(lrho = "rhobit", erho=list(), imu1 = NULL, imu2 = NULL,
+           init.rho = NULL, zero = 3, exchangeable = FALSE, nsimEIM=NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -131,8 +130,7 @@ contains further information and examples.
 }
 \examples{
 coalminers = transform(coalminers, Age = (age - 42) / 5)
-fit = vglm(cbind(nBnW,nBW,BnW,BW) ~ Age, binom2.rho,
-           data=coalminers, trace=TRUE)
+fit = vglm(cbind(nBnW,nBW,BnW,BW) ~ Age, binom2.rho, coalminers, trace=TRUE)
 summary(fit)
 coef(fit, matrix=TRUE)
 }

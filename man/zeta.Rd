@@ -8,13 +8,14 @@
 }
 \usage{
 zeta(x, deriv = 0)
+
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{x}{ 
-   A complex-valued vector/matrix whose real values must be \eqn{\geq
-   1}{>= 1}. Otherwise, if \code{x} may be real.  If \code{deriv} is 1
-   or 2 then \code{x} must be real and positive.
+   A complex-valued vector/matrix whose real values must be
+   \eqn{\geq 1}{>= 1}. Otherwise, if \code{x} may be real.
+   If \code{deriv} is 1 or 2 then \code{x} must be real and positive.
 
   }
   \item{deriv}{ 
@@ -58,9 +59,11 @@ Riemann, B. (1859)
 Ueber die Anzahl der Primzahlen unter einer gegebenen Grosse.
 \emph{Monatsberichte der Berliner Akademie, November 1859}.
 
+
 Edwards, H. M. (1974)
 \emph{Riemann's Zeta Function}.
 Academic Press: New York. 
+
 
 Markman, B. (1965)
 The Riemann zeta function.
@@ -68,10 +71,12 @@ The Riemann zeta function.
 \bold{5},
 138--141.
 
+
 Abramowitz, M. and Stegun, I. A. (1972)
 \emph{Handbook of Mathematical Functions with Formulas, Graphs, and
 Mathematical Tables},
 New York: Dover Publications Inc.
+
 
 }
 \author{ T. W. Yee, with the help of G. J. Tee. }
@@ -85,25 +90,24 @@ New York: Dover Publications Inc.
   \code{\link{zetaff}},
   \code{\link{lerch}},
   \code{\link[base:Special]{gamma}}.
+
 }
 \examples{
 zeta(2:10)
 
 \dontrun{
-x = seq(1.2, 10, len=100)
-plot(x, zeta(x), type="l", las=1, xlim=c(-12,10), ylim=c(-1,4), col="red")
-x = seq(-12, 0.8, len=100)
-lines(x, zeta(x), col="red")
+curve(zeta, -13, 0.8, xlim=c(-12,10), ylim=c(-1,4), col="red")
+curve(zeta, 1.2,  12, add = TRUE, col="red")
 abline(v=0, h=c(0,1), lty="dashed")
 
 # Close up plot
-x = seq(-14, -0.4, len=100)
-plot(x, zeta(x), type="l", las=1, col="red")
+curve(zeta, -14, -0.4, col="red")
 abline(v=0, h=0, lty="dashed")
 
-# Plot of the first derivatives
+# Plot of the first derivative
 x = seq(0.04, 0.8, len=100)
-plot(x, zeta(x, deriv=1), type="l", las=1, col="blue", xlim=c(0.04,3), ylim=c(-6,0))
+plot(x, zeta(x, deriv=1), type="l", las=1, col="blue",
+     xlim=c(0.04,3), ylim=c(-6,0), main="zeta'(x)")
 x = seq(1.2, 3, len=100)
 lines(x, zeta(x, deriv=1), col="blue")
 abline(v=0, h=0, lty="dashed") }
@@ -115,4 +119,10 @@ zeta(8) - pi^8 / 9450   # Should be 0
 # zeta(0, deriv=1) + 0.5 * log(2*pi) # Should be 0
 }
 \keyword{math}
+
+% curve(zeta, -13, 0.8, xlim=c(-12,10), ylim=c(-1,4), col="red")
+% curve(zeta, 1.2,  12, add = TRUE, col="red")
+% abline(v=0, h=c(0,1), lty="dashed")
+
+
 

@@ -56,13 +56,10 @@ rzapois(n, lambda, p0 = 0)
 
 }
 \examples{
-lambda = 3
-p0 = 0.2
-x = (-1):7
-(i = dzapois(x, lambda, p0))
-max(abs(cumsum(i) - pzapois(x, lambda, p0)))  # Should be 0
+lambda = 3; p0 = 0.2; x = (-1):7
+(ii = dzapois(x, lambda, p0))
+max(abs(cumsum(ii) - pzapois(x, lambda, p0)))  # Should be 0
 table(rzapois(100, lambda, p0))
-
 table(qzapois(runif(100), lambda, p0))
 round(dzapois(0:10, lambda, p0) * 100) # Should be similar
 
@@ -70,9 +67,8 @@ round(dzapois(0:10, lambda, p0) * 100) # Should be similar
 x = 0:10
 barplot(rbind(dzapois(x, lambda, p0), dpois(x, lambda)),
         beside = TRUE, col = c("blue","green"),
-        main=paste("ZAP(", lambda, ", p0=", p0, ") (blue) vs",
-                        " Poisson(", lambda, ") (green)", sep=""),
-        names.arg = as.character(x))
-}
+        main=paste("ZAP(", lambda, ", p0=", p0, ") [blue] vs",
+                   " Poisson(", lambda, ") [green] densities", sep=""),
+        names.arg = as.character(x), ylab="Probability") }
 }
 \keyword{distribution}

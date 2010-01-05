@@ -70,13 +70,13 @@ called the \emph{species score}.
 \examples{
 set.seed(111)  # This leads to the global solution
 hspider[,1:6] = scale(hspider[,1:6]) # Standardized environmental vars
-p1 = cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,
-               Auloalbi, Pardlugu, Pardmont, Pardnigr, Pardpull,
-               Trocterr, Zoraspin) ~
-         WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
-         Bestof = 2,
-         fam = quasipoissonff, data = hspider, Crow1positive=FALSE)
-Opt(p1)
+# vvv p1 = cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,
+# vvv                Auloalbi, Pardlugu, Pardmont, Pardnigr, Pardpull,
+# vvv                Trocterr, Zoraspin) ~
+# vvv          WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
+# vvv          Bestof = 2,
+# vvv          fam = quasipoissonff, data = hspider, Crow1positive=FALSE)
+# vvv Opt(p1)
 
 \dontrun{
 index = 1:ncol(p1@y)

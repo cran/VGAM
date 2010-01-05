@@ -1032,6 +1032,7 @@
       double precision dh3rio, ig5cmad, ig5v8gzsp, dldshape
       double precision l0zqm, q1znur
       integer lqhm2g
+      vi231l = 1
       uxzze7 = 1
       ogq67o = 0.990d0
       ogq67o = 0.995d0
@@ -1282,7 +1283,12 @@
       integer uxzze7, foej1u
       double precision hq710, fiumb4, t7sbea, xmr7cj, elq2cs, qik6ym, 
      &zl11l0, wlkaa3, jftq1
+      double precision epx9jf1, epx9jf2
+      integer scvgce
       uxzze7 = 1
+      scvgce = 0
+      oju3yh(1,1) = 1
+      zxao0o(1) = 0.0d0
       cqui1v = p1i8xz(1)
       w5tcfp = p1i8xz(2)
       zxiwf1 = p1i8xz(3)
@@ -1311,7 +1317,8 @@
       call p0lk40(hft28, ur73jo, nfiumb4, lku8xq, vi231l, cqui1v, 
      &zvxw1l, aqk377, w5tcfp, cr8hav, i5uvkm, zqve1l, vvl1li, h3mrfq, 
      &q121lc)
-653   if(.not.(ugsma5 .eq. 0))goto 23496
+653   epx9jf2 = 1.0d0
+      if(.not.(ugsma5 .eq. 0))goto 23496
       do 23498 d9rjek=1,aqk377 
       call nbq4ua(jmwo0z, go0l1q, l1zvxx, nfiumb4, lku8xq, aqk377, 
      &zvxw1l, d9rjek, w8xfic, foej1u)
@@ -1406,16 +1413,23 @@
       call kqx20o(zvxw1l, jmwo0z, w8xfic, w5poyv, nfiumb4, lku8xq, 
      &aqk377, xhe4cg, go0l1q, nx1bat,oht3ga,fiumb4,wlkaa3, oht3ga)
 23544 continue
-      return
+      scvgce = 1
+      goto 20097
+      goto 23543
 23542 continue
       hq710 = nx1bat
+      scvgce = 0
 23543 continue
 23504 continue
-      if(.not.(ugsma5 .eq. 1 .or. ugsma5 .eq. 2))goto 23546
+20097 epx9jf1 = 0.0d0
+      if(.not.(scvgce .eq. 1))goto 23546
+      return
+23546 continue
+      if(.not.(ugsma5 .eq. 1 .or. ugsma5 .eq. 2))goto 23548
       ugsma5 = 0
       p1i8xz(9) = 1
       goto 653
-23546 continue
+23548 continue
       gqxvz8 = 3
       return
       end
@@ -1443,6 +1457,11 @@
       double precision ni1qfp, epx9jf
       ni1qfp = 0.0d0
       uxzze7 = 1
+      zxao0o(1) = 1.0d0
+      call intpr(
+     &"entering cqo1f uxzze7 -------------------------------: ",-1,
+     &uxzze7,1)
+      call intpr("in cqo1f aqk377: ",-1,aqk377,1)
       cqui1v = p1i8xz(1)
       w5tcfp = p1i8xz(2)
       zxiwf1 = p1i8xz(3)
@@ -1452,19 +1471,20 @@
       pga6nul = p1i8xz(7)
       p1i8xz(9) = 0
       dyt0pg = p1i8xz(12)
-      if(.not.(dyt0pg .ne. 1))goto 23548
+      if(.not.(dyt0pg .ne. 1))goto 23550
       gqxvz8 = 4
       return
-23548 continue
+23550 continue
       h3mrfq = p1i8xz(14)
       uvnk0i = p1i8xz(15)
       p1 = p1i8xz(16)
       foej1u = p1i8xz(18)
+      call intpr("Entry to cqo1f: ugsma5 ",-1,ugsma5,1)
       fiumb4 = l1zvxx(1)
       zl11l0 = dsqrt(fiumb4)
-      if(.not.((zvxw1l .eq. 1) .or. (zvxw1l .eq. 4)))goto 23550
+      if(.not.((zvxw1l .eq. 1) .or. (zvxw1l .eq. 4)))goto 23552
       wlkaa3 = dlog(fiumb4)
-23550 continue
+23552 continue
       qik6ym = l1zvxx(2)
       jftq1 = l1zvxx(3)
       elq2cs = 0.0d0
@@ -1474,140 +1494,175 @@
       i5uvkm = cqui1v * (cqui1v+1) / 2
       call u16zxj(hft28, ur73jo, nfiumb4, cqui1v, zvxw1l, q121lc, 
      &vi231l, zxiwf1, i5uvkm, zqve1l, vvl1li, oju3yh, p1, h3mrfq)
-      do 23552 lir0o1=1,aqk377 
+      call dblepr("cqo1f: q121lc()",-1,q121lc,nfiumb4)
+      call dblepr("cqo1f: ur73jo(,)",-1,ur73jo,vi231l*zxiwf1)
+      call dblepr("cqo1f: w8xfic(,1)",-1,w8xfic(1,1),nfiumb4)
+      do 23554 lir0o1=1,aqk377 
+      call intpr("cqo1f: lir0o1======================: ",-1,lir0o1,1)
 653   epx9jf = 1.0d0
-      if(.not.(ugsma5 .eq. 0))goto 23554
+      if(.not.(ugsma5 .eq. 0))goto 23556
+      call intpr("cqo1f: calling nbq4ua ",-1,lir0o1,1)
       call nbq4ua(jmwo0z, go0l1q, l1zvxx, nfiumb4, lku8xq, aqk377, 
      &zvxw1l, lir0o1, w8xfic, foej1u)
-      goto 23555
-23554 continue
-      if(.not.(ugsma5 .eq. 2))goto 23556
+      goto 23557
+23556 continue
+      if(.not.(ugsma5 .eq. 2))goto 23558
+      call intpr("cqo1f: calling pjw1l; dyt0pg== ",-1,dyt0pg,1)
       call pjw1l(ur73jo, lq8reh(1+(lir0o1-1)*zxiwf1), go0l1q, nfiumb4, 
      &lku8xq, vi231l, zxiwf1, dyt0pg, lir0o1, zvxw1l, h3mrfq, q121lc)
-23556 continue
-23555 continue
+23558 continue
+23557 continue
       call o47zxq(go0l1q, w5poyv, nfiumb4, lku8xq, aqk377, zvxw1l, 
      &lir0o1)
-      if(.not.(ugsma5 .eq. 2))goto 23558
+      if(.not.(ugsma5 .eq. 2))goto 23560
       call kqx20o(zvxw1l, jmwo0z, w8xfic, w5poyv, nfiumb4, lku8xq, 
      &aqk377, xhe4cg, go0l1q, hq710, lir0o1, fiumb4, wlkaa3, uxzze7)
-      goto 23559
-23558 continue
+      goto 23561
+23560 continue
       hq710 = -1.0d0
-23559 continue
-      do 23560 ucgi1r=1,pga6nul 
+23561 continue
+      do 23562 ucgi1r=1,pga6nul 
+      call intpr("ucgi1r: ",-1,ucgi1r,1)
+      call intpr("posn 7: ",-1,uxzze7,1)
+      call intpr("zvxw1l: ",-1,zvxw1l,1)
+      call dblepr("hq710",-1,hq710,1)
       call kqsxz1(jmwo0z, w8xfic, go0l1q, w5poyv, hr83e, lj4dph, jrxg6l,
      & jftq1, fiumb4, zl11l0, nfiumb4, lku8xq, aqk377, vi231l, zkjqhi, 
      &lir0o1, zvxw1l, gqxvz8, h3mrfq, q121lc)
-      do 23562 nd6mep=1,zxiwf1 
-      do 23564 w3gohz=1,vi231l 
+      call dblepr("cqo1f: go0l1q",-1,go0l1q,lku8xq*nfiumb4)
+      call dblepr("cqo1f: jrxg6l",-1,jrxg6l,zkjqhi*nfiumb4)
+      call dblepr("cqo1f: hr83e",-1,hr83e,nfiumb4*lku8xq)
+      call dblepr("cqo1f: lj4dph",-1,lj4dph,nfiumb4*lku8xq)
+      do 23564 nd6mep=1,zxiwf1 
+      do 23566 w3gohz=1,vi231l 
       ioqzvb(w3gohz,nd6mep) = ur73jo(w3gohz,nd6mep)
+23566 continue
 23564 continue
-23562 continue
-      if(.not.((zvxw1l .eq. 3) .or. (zvxw1l .eq. 5)))goto 23566
-      do 23568 nd6mep=1,zxiwf1 
-      do 23570 w3gohz=1,nfiumb4 
+      call intpr("posn 3: ",-1,uxzze7,1)
+      if(.not.((zvxw1l .eq. 3) .or. (zvxw1l .eq. 5)))goto 23568
+      do 23570 nd6mep=1,zxiwf1 
+      do 23572 w3gohz=1,nfiumb4 
       ioqzvb(2*w3gohz-1,nd6mep) = jrxg6l(2*lir0o1-1,w3gohz) * ioqzvb(2*
      &w3gohz-1,nd6mep)
       ioqzvb(2*w3gohz ,nd6mep) = jrxg6l(2*lir0o1 ,w3gohz) * ioqzvb(2*
      &w3gohz ,nd6mep)
+23572 continue
 23570 continue
+      goto 23569
 23568 continue
-      goto 23567
-23566 continue
-      do 23572 nd6mep=1,zxiwf1 
-      do 23574 w3gohz=1,nfiumb4 
+      do 23574 nd6mep=1,zxiwf1 
+      do 23576 w3gohz=1,nfiumb4 
       ioqzvb(w3gohz,nd6mep) = jrxg6l(lir0o1,w3gohz) * ioqzvb(w3gohz,
      &nd6mep)
-23574 continue
-23572 continue
-23567 continue
-      do 23576 nd6mep=1,zxiwf1 
-      i83h1(nd6mep) = nd6mep
 23576 continue
+23574 continue
+23569 continue
+      call intpr("posn 4: ",-1,uxzze7,1)
+      do 23578 nd6mep=1,zxiwf1 
+      i83h1(nd6mep) = nd6mep
+23578 continue
+      call dblepr("cqo1f: ioqzvb",-1,ioqzvb,vi231l*zxiwf1)
+      call intpr("ucgi1r: ",-1,ucgi1r,1)
       t7sbea = 1.0d-7
       call dhkt9w(ioqzvb,vi231l,vi231l,zxiwf1,i0qvzl,i83h1,t5vlzq,
      &zx1610,t7sbea)
-      if(.not.(zx1610 .ne. zxiwf1))goto 23578
+      call intpr("i83h1: ",-1,i83h1,zxiwf1)
+      if(.not.(zx1610 .ne. zxiwf1))goto 23580
       gqxvz8 = 2
       return
-23578 continue
-      if(.not.((zvxw1l .eq. 3) .or. (zvxw1l .eq. 5)))goto 23580
-      do 23582 w3gohz=1,nfiumb4 
-      t5vlzq(2*w3gohz-1,1)=jrxg6l(2*lir0o1-1,w3gohz)*hr83e(w3gohz,2*
-     &lir0o1-1)
-      t5vlzq(2*w3gohz ,1)=jrxg6l(2*lir0o1 ,w3gohz)*hr83e(w3gohz,2*
-     &lir0o1 )
-23582 continue
-      goto 23581
 23580 continue
-      do 23584 w3gohz=1,nfiumb4
-      t5vlzq(w3gohz,1) = jrxg6l(lir0o1,w3gohz) * hr83e(w3gohz,lir0o1)
+      if(.not.((zvxw1l .eq. 3) .or. (zvxw1l .eq. 5)))goto 23582
+      do 23584 w3gohz=1,nfiumb4 
+      t5vlzq(2*w3gohz-1,1) = jrxg6l(2*lir0o1-1,w3gohz) * hr83e(w3gohz,2*
+     &lir0o1-1)
+      t5vlzq(2*w3gohz ,1) = jrxg6l(2*lir0o1 ,w3gohz) * hr83e(w3gohz,2*
+     &lir0o1 )
 23584 continue
-23581 continue
+      goto 23583
+23582 continue
+      do 23586 w3gohz=1,nfiumb4
+      t5vlzq(w3gohz,1) = jrxg6l(lir0o1,w3gohz) * hr83e(w3gohz,lir0o1)
+23586 continue
+23583 continue
+      call intpr("posn 5: ",-1,uxzze7,1)
       tvyd2b = 101
+      call intpr("posn 6: ",-1,uxzze7,1)
       call vdqrsl(ioqzvb,vi231l,vi231l,zx1610,i0qvzl, t5vlzq(1,1), 
      &elq2cs, t5vlzq(1,2), lq8reh(1+(lir0o1-1)*zxiwf1), elq2cs,t5vlzq(1,
      &3),tvyd2b,fjg0qv)
-      if(.not.(uvnk0i .gt. 1))goto 23586
-23586 continue
-      do 23588 nd6mep=1,zxiwf1 
-      t5vlzq(nd6mep,1) = lq8reh((lir0o1-1)*zxiwf1 + nd6mep)
+      call dblepr("lq8reh(1+(lir0o1-1)*zxiwf1)",-1,lq8reh(1+(lir0o1-1)*
+     &zxiwf1),zxiwf1)
+      if(.not.(uvnk0i .gt. 1))goto 23588
 23588 continue
       do 23590 nd6mep=1,zxiwf1 
-      lq8reh((lir0o1-1)*zxiwf1 + i83h1(nd6mep)) = t5vlzq(nd6mep,1)
+      t5vlzq(nd6mep,1) = lq8reh((lir0o1-1)*zxiwf1 + nd6mep)
 23590 continue
-      if(.not.((zvxw1l .eq. 3) .or. (zvxw1l .eq. 5)))goto 23592
-      do 23594 w3gohz=1,nfiumb4 
-      go0l1q(2*lir0o1-1,w3gohz)=t5vlzq(2*w3gohz-1,3)/jrxg6l(2*lir0o1-1,
-     &w3gohz)
+      do 23592 nd6mep=1,zxiwf1 
+      lq8reh((lir0o1-1)*zxiwf1 + i83h1(nd6mep)) = t5vlzq(nd6mep,1)
+23592 continue
+      call intpr("posn 7: ",-1,uxzze7,1)
+      if(.not.((zvxw1l .eq. 3) .or. (zvxw1l .eq. 5)))goto 23594
+      do 23596 w3gohz=1,nfiumb4 
+      go0l1q(2*lir0o1-1,w3gohz) = t5vlzq(2*w3gohz-1,3) / jrxg6l(2*
+     &lir0o1-1,w3gohz)
       go0l1q(2*lir0o1 ,w3gohz) = t5vlzq(2*w3gohz ,3) / jrxg6l(2*lir0o1 ,
      &w3gohz)
-23594 continue
-      if(.not.(h3mrfq .eq. 1))goto 23596
-      do 23598 w3gohz=1,nfiumb4 
+23596 continue
+      if(.not.(h3mrfq .eq. 1))goto 23598
+      do 23600 w3gohz=1,nfiumb4 
       go0l1q(2*lir0o1-1,w3gohz) = go0l1q(2*lir0o1-1,w3gohz) + q121lc(
      &w3gohz)
-23598 continue
-23596 continue
-      goto 23593
-23592 continue
-      do 23600 w3gohz=1,nfiumb4 
-      go0l1q(lir0o1,w3gohz) = t5vlzq(w3gohz,3) / jrxg6l(lir0o1,w3gohz)
 23600 continue
-      if(.not.(h3mrfq .eq. 1))goto 23602
-      do 23604 w3gohz=1,nfiumb4 
-      go0l1q(lir0o1,w3gohz) = go0l1q(lir0o1,w3gohz) + q121lc(w3gohz)
-23604 continue
+23598 continue
+      goto 23595
+23594 continue
+      do 23602 w3gohz=1,nfiumb4 
+      go0l1q(lir0o1,w3gohz) = t5vlzq(w3gohz,3) / jrxg6l(lir0o1,w3gohz)
 23602 continue
-23593 continue
+      if(.not.(h3mrfq .eq. 1))goto 23604
+      do 23606 w3gohz=1,nfiumb4 
+      go0l1q(lir0o1,w3gohz) = go0l1q(lir0o1,w3gohz) + q121lc(w3gohz)
+23606 continue
+23604 continue
+23595 continue
+      call intpr("posn 8: ",-1,uxzze7,1)
       call o47zxq(go0l1q, w5poyv, nfiumb4, lku8xq, aqk377, zvxw1l, 
      &lir0o1)
+      call intpr("posn 8b: ",-1,uxzze7,1)
       call kqx20o(zvxw1l, jmwo0z, w8xfic, w5poyv, nfiumb4, lku8xq, 
      &aqk377, xhe4cg, go0l1q, nx1bat,lir0o1,fiumb4,wlkaa3,uxzze7)
+      call intpr("posn 8c: ",-1,uxzze7,1)
       xmr7cj = dabs(nx1bat - hq710) / (1.0d0 + dabs(nx1bat))
-      if(.not.(xmr7cj .lt. qik6ym))goto 23606
+      call intpr("cqo1f: ucgi1r -------------",-1,ucgi1r,1)
+      call dblepr("cqo1f: xmr7cj",-1,xmr7cj,1)
+      if(.not.(xmr7cj .lt. qik6ym))goto 23608
       gqxvz8 = 0
       p1i8xz(8)=ucgi1r
-      if(.not.((zvxw1l .eq. 3) .or. (zvxw1l .eq. 5)))goto 23608
+      call intpr("cqo1f p1i8xz(8): ",-1,p1i8xz(8),1)
+      if(.not.((zvxw1l .eq. 3) .or. (zvxw1l .eq. 5)))goto 23610
       call kqx20o(zvxw1l, jmwo0z, w8xfic, w5poyv, nfiumb4, lku8xq, 
      &aqk377, xhe4cg, go0l1q, nx1bat,lir0o1,fiumb4,wlkaa3, oht3ga)
-23608 continue
+23610 continue
       ni1qfp = ni1qfp + nx1bat
       goto 1011
-      goto 23607
-23606 continue
+      goto 23609
+23608 continue
       hq710 = nx1bat
-23607 continue
-23560 continue
-      if(.not.(ugsma5 .eq. 1))goto 23610
+23609 continue
+      call intpr("posn 9: ",-1,uxzze7,1)
+23562 continue
+      call intpr("cqo1f; unsuccessful convergence: ",-1,uxzze7,1)
+      if(.not.(ugsma5 .eq. 1))goto 23612
       ugsma5 = 0
       p1i8xz(9) = 1
       goto 653
-23610 continue
+23612 continue
       gqxvz8 = 3
 1011  epx9jf = 1.0d0
-23552 continue
+23554 continue
+      call intpr(
+     &"exiting cqo1f uxzze7 ============================ : ",-1,uxzze7,
+     &1)
       nx1bat = ni1qfp
       return
       end
@@ -1657,6 +1712,8 @@
       d8gwha = p1i8xz(19)
       ni1qfp = 0.0d0
       uxzze7 = 1
+      zxao0o(1) = 1.0d0
+      t5vlzq(1,1) = 1.0d0
       cqui1v = p1i8xz(1)
       zxiwf1 = p1i8xz(3)
       xhe4cg = p1i8xz(4)
@@ -1666,85 +1723,85 @@
       p1i8xz(9) = 0
       tiav4e = p1i8xz(11)
       dyt0pg = p1i8xz(12)
-      if(.not.((dyt0pg .ne. 1) .or. (tiav4e .ne. cqui1v)))goto 23612
+      if(.not.((dyt0pg .ne. 1) .or. (tiav4e .ne. cqui1v)))goto 23614
       gqxvz8 = 4
       return
-23612 continue
+23614 continue
       uvnk0i = p1i8xz(15)
       foej1u = p1i8xz(18)
       h4fgoy = l1zvxx(3+aqk377+aqk377+2)
       fiumb4 = l1zvxx(1)
       zl11l0 = dsqrt(fiumb4)
-      if(.not.((zvxw1l .eq. 1) .or. (zvxw1l .eq. 4)))goto 23614
+      if(.not.((zvxw1l .eq. 1) .or. (zvxw1l .eq. 4)))goto 23616
       wlkaa3 = dlog(fiumb4)
-23614 continue
+23616 continue
       qik6ym = l1zvxx(2)
       jftq1 = l1zvxx(3)
       elq2cs = 0.0d0
       oht3ga = 0
       gqxvz8 = 1
-      do 23616 lir0o1=1,aqk377 
+      do 23618 lir0o1=1,aqk377 
 653   epx9jf = 1.0d0
-      if(.not.(ugsma5 .eq. 0))goto 23618
+      if(.not.(ugsma5 .eq. 0))goto 23620
       call nbq4ua(jmwo0z, go0l1q, l1zvxx, nfiumb4, lku8xq, aqk377, 
      &zvxw1l, lir0o1, w8xfic, foej1u)
-      goto 23619
-23618 continue
-      if(.not.(ugsma5 .ne. 1))goto 23620
+      goto 23621
+23620 continue
+      if(.not.(ugsma5 .ne. 1))goto 23622
       gqxvz8 = 6
       return
-23620 continue
-23619 continue
+23622 continue
+23621 continue
       call o47zxq(go0l1q, w5poyv, nfiumb4, lku8xq, aqk377, zvxw1l, 
      &lir0o1)
-      if(.not.(ugsma5 .eq. 2))goto 23622
+      if(.not.(ugsma5 .eq. 2))goto 23624
       call kqx20o(zvxw1l, jmwo0z, w8xfic, w5poyv, nfiumb4, lku8xq, 
      &aqk377, xhe4cg, go0l1q, hq710, lir0o1, fiumb4, wlkaa3, uxzze7)
-      goto 23623
-23622 continue
+      goto 23625
+23624 continue
       hq710 = -1.0d0
-23623 continue
-      do 23624 ucgi1r=1,pga6nul 
+23625 continue
+      do 23626 ucgi1r=1,pga6nul 
       call sptoq8(hft28, ioqzvb, nfiumb4, vi231l, cqui1v, zvxw1l)
       gqai81(7) = 0
       call kqsxz1(jmwo0z, w8xfic, go0l1q, w5poyv, hr83e, lj4dph, jrxg6l,
      & jftq1, fiumb4, zl11l0, nfiumb4, lku8xq, aqk377, vi231l, zkjqhi, 
      &lir0o1, zvxw1l, gqxvz8, oht3ga, q121lc)
-      if(.not.((zvxw1l .eq. 3) .or. (zvxw1l .eq. 5)))goto 23626
+      if(.not.((zvxw1l .eq. 3) .or. (zvxw1l .eq. 5)))goto 23628
       ymetu2 = 2*lir0o1-1
-      goto 23627
-23626 continue
+      goto 23629
+23628 continue
       ymetu2 = lir0o1
-23627 continue
-      do 23628 myx3od=1,h2mzlo 
-      do 23630 w3gohz=1,nfiumb4 
+23629 continue
+      do 23630 myx3od=1,h2mzlo 
+      do 23632 w3gohz=1,nfiumb4 
       zrcbl2(myx3od,w3gohz) = jrxg6l(ymetu2-1+myx3od,w3gohz)
       nyg3mt(myx3od,w3gohz) = go0l1q(ymetu2-1+myx3od,w3gohz)
+23632 continue
 23630 continue
-23628 continue
       c3qxjo = tiav4e * aqk377
       sglfr1 = cqui1v * (lir0o1-1)
-      if(.not.(ucgi1r .eq. 1))goto 23632
+      if(.not.(ucgi1r .eq. 1))goto 23634
       x1boaf = sq5cvf( sglfr1 + hwi2tb(1))
       ad3xzo = sq5cvf(c3qxjo + sglfr1 + hwi2tb(1))
-      if(.not.(cqui1v .eq. 2))goto 23634
+      if(.not.(cqui1v .eq. 2))goto 23636
       j6gbnx = sq5cvf( sglfr1 + hwi2tb(2))
       rk3jet = sq5cvf(c3qxjo + sglfr1 + hwi2tb(2))
-23634 continue
-      do 23636 myx3od=1,tiav4e 
-      do 23638 w3gohz=1,nfiumb4 
-      sazp9g(w3gohz,sglfr1 + hwi2tb(myx3od)) = 0.0d0
-23638 continue
 23636 continue
-      goto 23633
-23632 continue
+      do 23638 myx3od=1,tiav4e 
+      do 23640 w3gohz=1,nfiumb4 
+      sazp9g(w3gohz,sglfr1 + hwi2tb(myx3od)) = 0.0d0
+23640 continue
+23638 continue
+      goto 23635
+23634 continue
       sq5cvf( sglfr1 + hwi2tb(1)) = x1boaf
       sq5cvf(c3qxjo + sglfr1 + hwi2tb(1)) = ad3xzo
-      if(.not.(cqui1v .eq. 2))goto 23640
+      if(.not.(cqui1v .eq. 2))goto 23642
       sq5cvf( sglfr1 + hwi2tb(2)) = j6gbnx
       sq5cvf(c3qxjo + sglfr1 + hwi2tb(2)) = rk3jet
-23640 continue
-23633 continue
+23642 continue
+23635 continue
       call vbfa(d8gwha,nfiumb4,h2mzlo,gqai81, e6tljz, hr83e(1,ymetu2), 
      &lj4dph(1,ymetu2), sq5cvf( sglfr1 + hwi2tb(1)), sq5cvf(c3qxjo + 
      &sglfr1 + hwi2tb(1)), ynk9ah,uxs1iq,vliac4, vfd2pw,sazp9g(1,sglfr1 
@@ -1755,43 +1812,43 @@
      &qc7zyb, das4bx, vlni8d, jko0o1, mnh3up, fg3pxq)
       l1zvxx(3+aqk377+aqk377+1) = das4bx
       ibd3vc = gqai81(14)
-      if(.not.(ibd3vc .ne. 0))goto 23642
+      if(.not.(ibd3vc .ne. 0))goto 23644
       call intpr("vcao6f: exiting because of an error",-1,ibd3vc,1)
       gqxvz8 = 8
       return
-23642 continue
-      do 23644 myx3od=1,h2mzlo 
-      do 23646 w3gohz=1,nfiumb4 
-      go0l1q(ymetu2-1+myx3od,w3gohz) = nyg3mt(myx3od,w3gohz)
-23646 continue
 23644 continue
+      do 23646 myx3od=1,h2mzlo 
+      do 23648 w3gohz=1,nfiumb4 
+      go0l1q(ymetu2-1+myx3od,w3gohz) = nyg3mt(myx3od,w3gohz)
+23648 continue
+23646 continue
       call o47zxq(go0l1q, w5poyv, nfiumb4, lku8xq, aqk377, zvxw1l, 
      &lir0o1)
       call kqx20o(zvxw1l, jmwo0z, w8xfic, w5poyv, nfiumb4, lku8xq, 
      &aqk377, xhe4cg, go0l1q, nx1bat, lir0o1, fiumb4, wlkaa3, uxzze7)
       xmr7cj = dabs(nx1bat - hq710) / (1.0d0 + dabs(nx1bat))
-      if(.not.(xmr7cj .lt. qik6ym))goto 23648
+      if(.not.(xmr7cj .lt. qik6ym))goto 23650
       gqxvz8 = 0
       p1i8xz(8) = ucgi1r
-      if(.not.((zvxw1l .eq. 3) .or. (zvxw1l .eq. 5)))goto 23650
+      if(.not.((zvxw1l .eq. 3) .or. (zvxw1l .eq. 5)))goto 23652
       call kqx20o(zvxw1l, jmwo0z, w8xfic, w5poyv, nfiumb4, lku8xq, 
      &aqk377, xhe4cg, go0l1q, nx1bat,lir0o1,fiumb4,wlkaa3, oht3ga)
-23650 continue
+23652 continue
       ni1qfp = ni1qfp + nx1bat
       goto 1011
-      goto 23649
-23648 continue
+      goto 23651
+23650 continue
       hq710 = nx1bat
-23649 continue
-23624 continue
-      if(.not.(ugsma5 .eq. 1))goto 23652
+23651 continue
+23626 continue
+      if(.not.(ugsma5 .eq. 1))goto 23654
       ugsma5 = 0
       p1i8xz(9) = 1
       goto 653
-23652 continue
+23654 continue
       gqxvz8 = 3
 1011  epx9jf = 1.0d0
-23616 continue
+23618 continue
       nx1bat = ni1qfp
       return
       end
@@ -1823,65 +1880,65 @@
       dyt0pg = p1i8xz(12)
       z2q1li = p1i8xz(13)
       foej1u = p1i8xz(18)
-      do 23654 pvnfr4=1,cqui1v 
-      do 23656 w3gohz=1,nfiumb4 
+      do 23656 pvnfr4=1,cqui1v 
+      do 23658 w3gohz=1,nfiumb4 
       wrbc3q = 0.0d0
-      do 23658 s9otpy=1,p2 
+      do 23660 s9otpy=1,p2 
       wrbc3q = wrbc3q + ize5km(w3gohz,s9otpy) * v8gzsp(s9otpy,pvnfr4)
-23658 continue
+23660 continue
       ip0ox8(w3gohz,pvnfr4) = wrbc3q
       hft28(w3gohz,pvnfr4) = wrbc3q
+23658 continue
 23656 continue
-23654 continue
-      if(.not.(dyt0pg.eq.1))goto 23660
+      if(.not.(dyt0pg.eq.1))goto 23662
       call cqo1f(hft28, jmwo0z, oju3yh, w8xfic, go0l1q, q121lc, w5poyv, 
      &hr83e, lj4dph, jrxg6l, ur73jo, ioqzvb, i0qvzl, i83h1, nfiumb4, 
      &lku8xq, aqk377, vi231l, zkjqhi, gqxvz8, p1i8xz, zqve1l, vvl1li, 
      &gibj6t, zclbn2, t5vlzq, zxao0o, l1zvxx)
-      goto 23661
-23660 continue
-      call cqo2f(hft28, jmwo0z, oju3yh, w8xfic, go0l1q, q121lc, w5poyv, 
-     &hr83e, lj4dph, jrxg6l, ur73jo, ioqzvb, i0qvzl, i83h1, nfiumb4, 
-     &lku8xq, aqk377, vi231l, zkjqhi, gqxvz8, p1i8xz, zqve1l, vvl1li, 
-     &gibj6t, zclbn2, t5vlzq, zxao0o, l1zvxx)
-23661 continue
-      do 23662 s9otpy=1,p2 
-      do 23664 w3gohz=1,nfiumb4 
-      ize5km(w3gohz,s9otpy) = o4xmfj * ize5km(w3gohz,s9otpy)
-23664 continue
+      goto 23663
 23662 continue
-      do 23666 pvnfr4=1,cqui1v 
-      do 23668 s9otpy=1,p2 
-      do 23670 w3gohz=1,nfiumb4 
+      call cqo2f(hft28, jmwo0z, oju3yh, w8xfic, go0l1q, q121lc, w5poyv, 
+     &hr83e, lj4dph, jrxg6l, ur73jo, ioqzvb, i0qvzl, i83h1, nfiumb4, 
+     &lku8xq, aqk377, vi231l, zkjqhi, gqxvz8, p1i8xz, zqve1l, vvl1li, 
+     &gibj6t, zclbn2, t5vlzq, zxao0o, l1zvxx)
+23663 continue
+      do 23664 s9otpy=1,p2 
+      do 23666 w3gohz=1,nfiumb4 
+      ize5km(w3gohz,s9otpy) = o4xmfj * ize5km(w3gohz,s9otpy)
+23666 continue
+23664 continue
+      do 23668 pvnfr4=1,cqui1v 
+      do 23670 s9otpy=1,p2 
+      do 23672 w3gohz=1,nfiumb4 
       hft28(w3gohz,pvnfr4)=ip0ox8(w3gohz,pvnfr4)+ize5km(w3gohz,s9otpy)
-23670 continue
-      p1i8xz(5) = 2
-      do 23672 nd6mep=1,z2q1li 
-      lq8reh(nd6mep) = zclbn2(nd6mep)
 23672 continue
-      if(.not.(dyt0pg.eq.1))goto 23674
+      p1i8xz(5) = 2
+      do 23674 nd6mep=1,z2q1li 
+      lq8reh(nd6mep) = zclbn2(nd6mep)
+23674 continue
+      if(.not.(dyt0pg.eq.1))goto 23676
       call cqo1f(hft28, jmwo0z, oju3yh, w8xfic, go0l1q, q121lc, w5poyv, 
      &hr83e, lj4dph, jrxg6l, ur73jo, ioqzvb, i0qvzl, i83h1, nfiumb4, 
      &lku8xq, aqk377, vi231l, zkjqhi, gqxvz8, p1i8xz, zqve1l, vvl1li, 
      &nx1bat, lq8reh, t5vlzq, zxao0o, l1zvxx)
-      goto 23675
-23674 continue
+      goto 23677
+23676 continue
       call cqo2f(hft28, jmwo0z, oju3yh, w8xfic, go0l1q, q121lc, w5poyv, 
      &hr83e, lj4dph, jrxg6l, ur73jo, ioqzvb, i0qvzl, i83h1, nfiumb4, 
      &lku8xq, aqk377, vi231l, zkjqhi, gqxvz8, p1i8xz, zqve1l, vvl1li, 
      &nx1bat, lq8reh, t5vlzq, zxao0o, l1zvxx)
-23675 continue
-      if(.not.(gqxvz8 .ne. 0))goto 23676
+23677 continue
+      if(.not.(gqxvz8 .ne. 0))goto 23678
       return
-23676 continue
-      xt3fko(s9otpy,pvnfr4) = (nx1bat - gibj6t) / o4xmfj
-23668 continue
-      if(.not.(cqui1v .gt. 1))goto 23678
-      do 23680 w3gohz=1,nfiumb4 
-      hft28(w3gohz,pvnfr4) = ip0ox8(w3gohz,pvnfr4)
-23680 continue
 23678 continue
-23666 continue
+      xt3fko(s9otpy,pvnfr4) = (nx1bat - gibj6t) / o4xmfj
+23670 continue
+      if(.not.(cqui1v .gt. 1))goto 23680
+      do 23682 w3gohz=1,nfiumb4 
+      hft28(w3gohz,pvnfr4) = ip0ox8(w3gohz,pvnfr4)
+23682 continue
+23680 continue
+23668 continue
       p1i8xz(5) = fiy4lc
       return
       end
@@ -1930,17 +1987,17 @@
       foej1u = p1i8xz(18)
       h4fgoy = l1zvxx(3+aqk377+aqk377+2)
       o4xmfj = l1zvxx(3+aqk377+aqk377+3)
-      do 23682 pvnfr4=1,cqui1v 
-      do 23684 w3gohz=1,nfiumb4 
+      do 23684 pvnfr4=1,cqui1v 
+      do 23686 w3gohz=1,nfiumb4 
       wrbc3q = 0.0d0
-      do 23686 pp=1,p2 
+      do 23688 pp=1,p2 
       wrbc3q = wrbc3q + ize5km(w3gohz,pp) * v8gzsp(pp,pvnfr4)
-23686 continue
+23688 continue
       ip0ox8(w3gohz,pvnfr4) = wrbc3q
       hft28(w3gohz,pvnfr4) = wrbc3q
+23686 continue
 23684 continue
-23682 continue
-      if(.not.(dyt0pg.eq.1))goto 23688
+      if(.not.(dyt0pg.eq.1))goto 23690
       call vcao6f(hft28, jmwo0z, w8xfic, go0l1q, w5poyv, hr83e, lj4dph, 
      &jrxg6l, ioqzvb, i0qvzl, i83h1, nfiumb4, lku8xq, aqk377, vi231l, 
      &zkjqhi, gqxvz8, p1i8xz, gibj6t, zclbn2, t5vlzq, zxao0o, l1zvxx, 
@@ -1949,21 +2006,21 @@
      &ykdc2t, wk2, wzxao0o, phqco4, vb81l0, bmb, rjcq9o, mwk, n1zwoi, 
      &j1l0o1, qc7zyb, vlni8d, jko0o1, mnh3up, fg3pxq)
       l1zvxx(3+aqk377+aqk377+1) = das4bx
-      goto 23689
-23688 continue
-23689 continue
-      do 23690 pp=1,p2 
-      do 23692 w3gohz=1,nfiumb4 
-      ize5km(w3gohz,pp) = o4xmfj * ize5km(w3gohz,pp)
-23692 continue
+      goto 23691
 23690 continue
-      do 23694 pvnfr4=1,cqui1v 
-      do 23696 pp=1,p2 
-      do 23698 w3gohz=1,nfiumb4 
+23691 continue
+      do 23692 pp=1,p2 
+      do 23694 w3gohz=1,nfiumb4 
+      ize5km(w3gohz,pp) = o4xmfj * ize5km(w3gohz,pp)
+23694 continue
+23692 continue
+      do 23696 pvnfr4=1,cqui1v 
+      do 23698 pp=1,p2 
+      do 23700 w3gohz=1,nfiumb4 
       hft28(w3gohz,pvnfr4) = ip0ox8(w3gohz,pvnfr4) + ize5km(w3gohz,pp)
-23698 continue
+23700 continue
       p1i8xz(5) = 0
-      if(.not.(dyt0pg.eq.1))goto 23700
+      if(.not.(dyt0pg.eq.1))goto 23702
       call vcao6f(hft28, jmwo0z, w8xfic, go0l1q, w5poyv, hr83e, lj4dph, 
      &jrxg6l, ioqzvb, i0qvzl, i83h1, nfiumb4, lku8xq, aqk377, vi231l, 
      &zkjqhi, gqxvz8, p1i8xz, nx1bat, lq8reh, t5vlzq, zxao0o, l1zvxx, 
@@ -1972,20 +2029,20 @@
      &ykdc2t, wk2, wzxao0o, phqco4, vb81l0, bmb, rjcq9o, mwk, n1zwoi, 
      &j1l0o1, qc7zyb, vlni8d, jko0o1, mnh3up, fg3pxq)
       l1zvxx(3+aqk377+aqk377+1) = das4bx
-      goto 23701
-23700 continue
-23701 continue
-      if(.not.(gqxvz8 .ne. 0))goto 23702
-      return
+      goto 23703
 23702 continue
-      xt3fko(pp,pvnfr4) = (nx1bat - gibj6t) / o4xmfj
-23696 continue
-      if(.not.(cqui1v .gt. 1))goto 23704
-      do 23706 w3gohz=1,nfiumb4 
-      hft28(w3gohz,pvnfr4) = ip0ox8(w3gohz,pvnfr4)
-23706 continue
+23703 continue
+      if(.not.(gqxvz8 .ne. 0))goto 23704
+      return
 23704 continue
-23694 continue
+      xt3fko(pp,pvnfr4) = (nx1bat - gibj6t) / o4xmfj
+23698 continue
+      if(.not.(cqui1v .gt. 1))goto 23706
+      do 23708 w3gohz=1,nfiumb4 
+      hft28(w3gohz,pvnfr4) = ip0ox8(w3gohz,pvnfr4)
+23708 continue
+23706 continue
+23696 continue
       p1i8xz(5) = fiy4lc
       return
       end
@@ -2014,44 +2071,44 @@
       fiy4lc = p1i8xz(5)
       dyt0pg = p1i8xz(12)
       z2q1li = p1i8xz(13)
-      if(.not.(dyt0pg.eq.1))goto 23708
+      if(.not.(dyt0pg.eq.1))goto 23710
       call cqo1f(hft28, jmwo0z, oju3yh, w8xfic, go0l1q, q121lc, w5poyv, 
      &hr83e, lj4dph, jrxg6l, ur73jo, ioqzvb, i0qvzl, i83h1, nfiumb4, 
      &lku8xq, aqk377, vi231l, zkjqhi, gqxvz8, p1i8xz, zqve1l, vvl1li, 
      &gibj6t, zclbn2, t5vlzq, zxao0o, l1zvxx)
-      goto 23709
-23708 continue
+      goto 23711
+23710 continue
       call cqo2f(hft28, jmwo0z, oju3yh, w8xfic, go0l1q, q121lc, w5poyv, 
      &hr83e, lj4dph, jrxg6l, ur73jo, ioqzvb, i0qvzl, i83h1, nfiumb4, 
      &lku8xq, aqk377, vi231l, zkjqhi, gqxvz8, p1i8xz, zqve1l, vvl1li, 
      &gibj6t, zclbn2, t5vlzq, zxao0o, l1zvxx)
-23709 continue
-      do 23710 pvnfr4=1,cqui1v 
-      do 23712 w3gohz=1,nfiumb4 
+23711 continue
+      do 23712 pvnfr4=1,cqui1v 
+      do 23714 w3gohz=1,nfiumb4 
       hft28(w3gohz,pvnfr4) = ip0ox8(w3gohz,pvnfr4) + o4xmfj
       p1i8xz(5) = 2
-      do 23714 nd6mep=1,z2q1li 
+      do 23716 nd6mep=1,z2q1li 
       lq8reh(nd6mep) = zclbn2(nd6mep)
-23714 continue
-      if(.not.(dyt0pg.eq.1))goto 23716
+23716 continue
+      if(.not.(dyt0pg.eq.1))goto 23718
       call cqo1f(hft28, jmwo0z, oju3yh, w8xfic, go0l1q, q121lc, w5poyv, 
      &hr83e, lj4dph, jrxg6l, ur73jo, ioqzvb, i0qvzl, i83h1, nfiumb4, 
      &lku8xq, aqk377, vi231l, zkjqhi, gqxvz8, p1i8xz, zqve1l, vvl1li, 
      &nx1bat, lq8reh, t5vlzq, zxao0o, l1zvxx)
-      goto 23717
-23716 continue
+      goto 23719
+23718 continue
       call cqo2f(hft28, jmwo0z, oju3yh, w8xfic, go0l1q, q121lc, w5poyv, 
      &hr83e, lj4dph, jrxg6l, ur73jo, ioqzvb, i0qvzl, i83h1, nfiumb4, 
      &lku8xq, aqk377, vi231l, zkjqhi, gqxvz8, p1i8xz, zqve1l, vvl1li, 
      &nx1bat, lq8reh, t5vlzq, zxao0o, l1zvxx)
-23717 continue
-      if(.not.(gqxvz8 .ne. 0))goto 23718
+23719 continue
+      if(.not.(gqxvz8 .ne. 0))goto 23720
       return
-23718 continue
+23720 continue
       xt3fko(w3gohz,pvnfr4) = (nx1bat - gibj6t) / o4xmfj
       hft28(w3gohz,pvnfr4) = ip0ox8(w3gohz,pvnfr4)
+23714 continue
 23712 continue
-23710 continue
       p1i8xz(5) = fiy4lc
       return
       end

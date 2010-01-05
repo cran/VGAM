@@ -81,7 +81,7 @@ two Poisson variates belonging to different populations.
 \bold{109}, 296.
 
 }
-\author{ T. W. Yee }
+%\author{ T. W. Yee }
 \note{
   Numerical problems may occur for data if \eqn{\mu_1}{mu1} and/or
   \eqn{\mu_2}{mu2} are large.
@@ -95,17 +95,17 @@ two Poisson variates belonging to different populations.
 
 }
 \examples{
-x = runif(n <- 1000)
-mu1 = exp(1+x); mu2 = exp(1+x);
-y = rskellam(n, mu1, mu2)
-fit1 = vglm(y ~ x, skellam, trace=TRUE, crit="l")
-fit2 = vglm(y ~ x, skellam(parallel=TRUE), trace=TRUE, crit="c")
+sdata = data.frame(x = runif(nn <- 1000))
+sdata = transform(sdata, mu1 = exp(1+x), mu2 = exp(1+x))
+sdata = transform(sdata, y = rskellam(nn, mu1, mu2))
+fit1 = vglm(y ~ x, skellam, sdata, trace=TRUE)
+fit2 = vglm(y ~ x, skellam(parallel=TRUE), sdata, trace=TRUE, crit="c")
 coef(fit1, matrix=TRUE)
 coef(fit2, matrix=TRUE)
 summary(fit1)
 # Likelihood ratio test for equal means:
-1-pchisq(2*(logLik(fit1)-logLik(fit2)),
-         df=fit2@df.residual-fit1@df.residual)
+pchisq(2*(logLik(fit1)-logLik(fit2)),
+       df=fit2@df.residual-fit1@df.residual, lower.tail=FALSE)
 }
 \keyword{models}
 \keyword{regression}

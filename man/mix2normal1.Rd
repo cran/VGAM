@@ -169,22 +169,21 @@ London: Chapman & Hall.
 }
 
 \examples{
-n = 1000
-mu1 =  99
-mu2 = 150
+mu1 =  99; mu2 = 150
 sd1 = sd2 = exp(3)
 (phi = logit(-1, inverse=TRUE))
-y = ifelse(runif(n) < phi, rnorm(n, mu1, sd1), rnorm(n, mu2, sd2))
-
-fit = vglm(y ~ 1, mix2normal1(equalsd=TRUE))
+nn = 1000
+mdata = data.frame(y = ifelse(runif(nn) < phi, rnorm(nn, mu1, sd1),
+                                               rnorm(nn, mu2, sd2)))
+fit = vglm(y ~ 1, mix2normal1(equalsd=TRUE), mdata)
 
 # Compare the results
-cf = coef(fit)
-round(rbind('Estimated'=c(logit(cf[1], inv=TRUE),
-    cf[2], exp(cf[3]), cf[4]), 'Truth'=c(phi, mu1, sd1, mu2)), dig=2)
+cfit = coef(fit)
+round(rbind('Estimated'=c(logit(cfit[1], inv=TRUE),
+    cfit[2], exp(cfit[3]), cfit[4]), 'Truth'=c(phi, mu1, sd1, mu2)), dig=2)
 
 \dontrun{# Plot the results
-xx = seq(min(y), max(y), len=200)
+xx = with(mdata, seq(min(y), max(y), len=200))
 plot(xx, (1-phi)*dnorm(xx, mu2, sd2), type="l", xlab="y",
      main="Red=estimate, blue=truth", col="blue", ylab="Density")
 phi.est = logit(coef(fit)[1], inverse=TRUE)
@@ -193,8 +192,7 @@ lines(xx, phi*dnorm(xx, mu1, sd1), col="blue")
 lines(xx, phi.est * dnorm(xx, Coef(fit)[2], sd.est), col="red")
 lines(xx, (1-phi.est) * dnorm(xx, Coef(fit)[4], sd.est), col="red")
 abline(v=Coef(fit)[c(2,4)], lty=2, col="red")
-abline(v=c(mu1, mu2), lty=2, col="blue")
-}
+abline(v=c(mu1, mu2), lty=2, col="blue") }
 }
 \keyword{models}
 \keyword{regression}

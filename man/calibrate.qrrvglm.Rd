@@ -114,6 +114,7 @@ Cambridge.
   \code{\link{cao}}.
 }
 \examples{
+\dontrun{
 hspider[,1:6] = scale(hspider[,1:6]) # Standardize the environmental variables
 set.seed(123)
 p1 = cqo(cbind(Pardlugu, Pardmont, Pardnigr, Pardpull, Zoraspin) ~
@@ -124,6 +125,7 @@ p1 = cqo(cbind(Pardlugu, Pardmont, Pardnigr, Pardpull, Zoraspin) ~
 
 siteNos = 1:2  # Calibrate these sites
 cp1 = calibrate(p1, new=data.frame(p1@y[siteNos,]), trace=TRUE)
+}
 
 \dontrun{
 # Graphically compare the actual site scores with their calibrated values

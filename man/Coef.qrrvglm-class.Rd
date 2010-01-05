@@ -114,10 +114,10 @@ y1 = rpois(n, lambda1)
 y2 = rpois(n, lambda2)
 y3 = rpois(n, lambda3)
 yy = cbind(y1,y2,y3)
-p1 = cqo(yy ~ x2 + x3 + x4, fam=poissonff, trace=FALSE)
+# vvv p1 = cqo(yy ~ x2 + x3 + x4, fam=poissonff, trace=FALSE)
 \dontrun{
 lvplot(p1, y=TRUE, lcol=1:3, pch=1:3, pcol=1:3)
 }
-print(Coef(p1), digits=3)
+# vvv print(Coef(p1), digits=3)
 }
 \keyword{classes}

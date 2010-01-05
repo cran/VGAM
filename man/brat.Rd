@@ -5,6 +5,7 @@
 \description{
   Fits a Bradley Terry model (intercept-only model) by maximum
   likelihood estimation.
+
 }
 \usage{
 brat(refgp = "last", refvalue = 1, init.alpha = 1)
@@ -18,35 +19,34 @@ brat(refgp = "last", refvalue = 1, init.alpha = 1)
   }
   \item{refvalue}{ Numeric. A positive value for the reference group. }
   \item{init.alpha}{ Initial values for the \eqn{\alpha}{alpha}s. 
-  These are recycled to the appropriate length. }
+  These are recycled to the appropriate length.
+  }
+
 }
 \details{
-    The Bradley Terry model involves \eqn{M+1} competitors who either
-win or lose against each other (no draws/ties allowed in this
-implementation--see \code{\link{bratt}} if there are ties).
-The probability that Competitor \eqn{i} beats Competitor \eqn{j} is
-\eqn{\alpha_i / (\alpha_i+\alpha_j)}{alpha_i / (alpha_i + alpha_j)},
-where all the \eqn{\alpha}{alpha}s are positive. 
-Loosely, the \eqn{\alpha}{alpha}s can be thought of as the
-competitors' `abilities'.
-For identifiability, one of the \eqn{\alpha_i}{alpha_i} is set to a
-known value \code{refvalue}, e.g., 1. 
-By default, this function chooses the last competitor to 
-have this reference value.
-The data can be represented in the form of a 
-\eqn{M+1} by \eqn{M+1} matrix of counts,
-where winners are the rows and losers are the columns.
-However, this is not the way the data should be inputted (see below).
+  The Bradley Terry model involves \eqn{M+1} competitors who
+  either win or lose against each other (no draws/ties allowed in
+  this implementation--see \code{\link{bratt}} if there are ties).
+  The probability that Competitor \eqn{i} beats Competitor \eqn{j}
+  is \eqn{\alpha_i / (\alpha_i+\alpha_j)}{alpha_i / (alpha_i +
+  alpha_j)}, where all the \eqn{\alpha}{alpha}s are positive.  Loosely,
+  the \eqn{\alpha}{alpha}s can be thought of as the competitors'
+  `abilities'.  For identifiability, one of the \eqn{\alpha_i}{alpha_i}
+  is set to a known value \code{refvalue}, e.g., 1.  By default, this
+  function chooses the last competitor to have this reference value.
+  The data can be represented in the form of a \eqn{M+1} by \eqn{M+1}
+  matrix of counts, where winners are the rows and losers are the columns.
+  However, this is not the way the data should be inputted (see below).
 
-Excluding the reference value/group, this function chooses
-\eqn{\log(\alpha_j)}{log(alpha_j)} as the \eqn{M} linear predictors.
-The log link ensures that the \eqn{\alpha}{alpha}s are positive.
+  Excluding the reference value/group, this function chooses
+  \eqn{\log(\alpha_j)}{log(alpha_j)} as the \eqn{M} linear predictors.
+  The log link ensures that the \eqn{\alpha}{alpha}s are positive.
 
-The Bradley Terry model can be fitted by logistic regression, but this
-approach is not taken here.  The Bradley Terry model can be fitted
-with covariates, e.g., a home advantage variable, but unfortunately,
-this lies outside the VGLM theoretical framework and therefore cannot
-be handled with this code.
+  The Bradley Terry model can be fitted by logistic regression, but this
+  approach is not taken here.  The Bradley Terry model can be fitted
+  with covariates, e.g., a home advantage variable, but unfortunately,
+  this lies outside the VGLM theoretical framework and therefore cannot
+  be handled with this code.
 
 }
 \value{
@@ -68,33 +68,31 @@ than this function.
 }
 \author{ T. W. Yee }
 \note{ 
-The function \code{\link{Brat}} is useful for coercing a \eqn{M+1}
-by \eqn{M+1} matrix of counts into a one-row matrix suitable for
-\code{brat}.
-Diagonal elements are skipped, and the usual S order of \code{c(a.matrix)}
-of elements is used. There should be no missing
-values apart from the diagonal elements of the square matrix.
-The matrix should have winners as the rows, and losers 
-as the columns.
-In general, the response should be a 1-row matrix with \eqn{M(M+1)} columns.
+  The function \code{\link{Brat}} is useful for coercing a \eqn{M+1}
+  by \eqn{M+1} matrix of counts into a one-row matrix suitable
+  for \code{brat}.  Diagonal elements are skipped, and the usual S
+  order of \code{c(a.matrix)} of elements is used. There should be no
+  missing values apart from the diagonal elements of the square matrix.
+  The matrix should have winners as the rows, and losers as the columns.
+  In general, the response should be a 1-row matrix with \eqn{M(M+1)}
+  columns.
 
-Only an intercept model is recommended with \code{brat}. 
-It doesn't make
-sense really to include covariates because of the limited
-VGLM framework. 
+  Only an intercept model is recommended with \code{brat}.  It doesn't
+  make sense really to include covariates because of the limited VGLM
+  framework.
 
-Notationally, note that the \pkg{VGAM} family function \code{\link{brat}}
-has \eqn{M+1} contestants, while \code{bratt} has \eqn{M} contestants.
+  Notationally, note that the \pkg{VGAM} family function
+  \code{\link{brat}} has \eqn{M+1} contestants, while \code{bratt}
+  has \eqn{M} contestants.
 
 }
 \section{Warning }{
-Presently, the residuals are wrong, and the prior
-weights are not handled correctly.
-Ideally, the total number of counts should be the
-prior weights, after the response has been converted to
-proportions. This would make it similar to family
-functions such as \code{\link{multinomial}} and
-\code{\link{binomialff}}.
+  Presently, the residuals are wrong, and the prior weights are not
+  handled correctly.  Ideally, the total number of counts should
+  be the prior weights, after the response has been converted to
+  proportions. This would make it similar to family functions such as
+  \code{\link{multinomial}} and \code{\link{binomialff}}.
+
 }
 
 \seealso{
@@ -105,7 +103,7 @@ functions such as \code{\link{multinomial}} and
 }
 \examples{
 # citation statistics: being cited is a 'win'; citing is a 'loss'
-journal = c("Biometrika", "Comm Statist", "JASA", "JRSS-B")
+journal = c("Biometrika", "Comm.Statist", "JASA", "JRSS-B")
 m = matrix(c( NA,  33, 320, 284,
               730, NA, 813, 276,
               498, 68,  NA, 325,

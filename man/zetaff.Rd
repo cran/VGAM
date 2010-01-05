@@ -48,13 +48,14 @@ provided \eqn{p>2}.
 It appears that good initial values are needed for successful
 convergence. If convergence is not obtained, try several values
 ranging from values near 0 to values about 10 or more.
+
 }
 
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}},
-  \code{\link{rrvglm}}
   and \code{\link{vgam}}.
+
 }
 
 %Lindsey, J. K. (1995)
@@ -75,34 +76,31 @@ Boca Raton: Chapman & Hall/CRC Press.
 
 }
 \author{ T. W. Yee }
-\note{ The \code{\link{zeta}} function may be used to
-compute values of the zeta function.
+\note{
+  The \code{\link{zeta}} function may be used to compute values of the
+  zeta function.
+
 }
 
 \seealso{ 
-\code{\link{zeta}},
-\code{\link{dzeta}},
-\code{\link{hzeta}},
-\code{\link{zipf}}.
-
-Documentation accompanying the \pkg{VGAM} package at
-\url{http://www.stat.auckland.ac.nz/~yee}
-contains further information and examples.
+  \code{\link{zeta}},
+  \code{\link{dzeta}},
+  \code{\link{hzeta}},
+  \code{\link{zipf}}.
 
 }
 \examples{
-y = 1:5     # Knight, p.304
-w =  c(63, 14, 5, 1, 2)
-fit = vglm(y ~ 1, zetaff, trace=TRUE, wei=w, crit="c")
+zdata = data.frame(y = 1:5, w =  c(63, 14, 5, 1, 2)) # Knight, p.304
+fit = vglm(y ~ 1, zetaff, zdata, trace=TRUE, wei=w, crit="c")
 (phat = Coef(fit)) # 1.682557
-cbind(dzeta(y, phat) * sum(w), w)
+with(zdata, cbind(dzeta(y, phat) * sum(w), w))
 
-weighted.mean(y, w)
+with(zdata, weighted.mean(y, w))
 fitted(fit, mat=FALSE)
 predict(fit)
 
-# MLE should satisfy the following:
-mean(log(rep(y, w))) + zeta(1+phat, deriv=1)/zeta(1+phat) # Should be 0
+# The following should be zero at the MLE:
+with(zdata, mean(log(rep(y, w))) + zeta(1+phat, deriv=1)/zeta(1+phat))
 }
 \keyword{models}
 \keyword{regression}

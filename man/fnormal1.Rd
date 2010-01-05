@@ -6,14 +6,11 @@
   Fits a (generalized) folded (univariate) normal distribution.
 }
 \usage{
-fnormal1(lmean="identity", lsd="loge", emean=list(), esd=list(),
-         imean=NULL, isd=NULL, a1=1, a2=1, nsimEIM=500,
-         method.init=1, zero=NULL)
+fnormal1(lmean="identity", lsd="loge", emean=list(), esd=list(), imean=NULL,
+         isd=NULL, a1=1, a2=1, nsimEIM=500, method.init=1, zero=NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  See \code{\link{CommonVGAMffArguments}} for general information about
-  many of these arguments.
 
   \item{lmean, lsd}{
   Link functions for the mean and standard
@@ -48,6 +45,7 @@ fnormal1(lmean="identity", lsd="loge", emean=list(), esd=list(),
   normal distribution}. That is, the sign has not been recorded; only
   the magnitude has been measured.
 
+
   More generally, suppose \eqn{X} is normal with mean \code{mean} and
   standard deviation \code{sd}.
   Let \eqn{Y=\max(a_1 X, -a_2 X)}{Y=max(a1*X, -a2*X)}
@@ -57,6 +55,7 @@ fnormal1(lmean="identity", lsd="loge", emean=list(), esd=list(),
   Then \eqn{Y} is said to have a \emph{generalized folded normal distribution}.
   The ordinary folded normal distribution corresponds to the
   special case \eqn{a_1 = a_2 = 1}{a1 = a2 = 1}.
+
 
   The probability density function of the ordinary folded normal distribution
   can be written
@@ -74,6 +73,7 @@ fnormal1(lmean="identity", lsd="loge", emean=list(), esd=list(),
   and these are returned as the fitted values.
   Here, \eqn{\Phi()}{Phi} is the cumulative distribution function of a
   standard normal (\code{\link[stats:Normal]{pnorm}}).
+
 
 }
 \value{
@@ -96,6 +96,10 @@ fnormal1(lmean="identity", lsd="loge", emean=list(), esd=list(),
   \code{\link{normal1}} except positive values are required.
   Reasonably good initial values are needed.
   Fisher scoring using simulation is implemented.
+
+
+  See \code{\link{CommonVGAMffArguments}} for general information about
+  many of these arguments.
 
 }
 

@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2009 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2010 T.W. Yee, University of Auckland. All rights reserved.
 
 
 
@@ -41,7 +41,7 @@ if(is.R()) {
     setMethod("df.residual", "vlm", function(object, ...)
                df.residual.vlm(object, ...))
 } else {
-    if(!isGeneric("df.residual"))
+    if (!isGeneric("df.residual"))
     setGeneric("df.residual", function(object, ...)
                standardGeneric("df.residual"))
     setMethod("df.residual", "vlm", function(object, ...)

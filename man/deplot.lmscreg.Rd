@@ -7,8 +7,7 @@
   associated with a LMS quantile regression.
 }
 \usage{
-deplot.lmscreg(object, newdata = NULL, 
-               x0, y.arg, plot.it = TRUE, ...)
+deplot.lmscreg(object, newdata = NULL, x0, y.arg, plot.it = TRUE, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -83,6 +82,6 @@ head(a@post$deplot$y)
 head(a@post$deplot$density)
 }
 }
-\keyword{hplot}
+\keyword{graphs}
 \keyword{models}
 \keyword{regression}

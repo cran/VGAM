@@ -11,7 +11,7 @@
 
 }
 \usage{
-dmaxwell(x, a, log=FALSE)
+dmaxwell(x, a, log = FALSE)
 pmaxwell(q, a)
 qmaxwell(p, a)
 rmaxwell(n, a)
@@ -45,19 +45,21 @@ rmaxwell(n, a)
   See \code{\link{maxwell}}, the \pkg{VGAM} family function
   for estimating the parameter \eqn{a} by maximum likelihood estimation,
   for the formula of the probability density function.
+
 }
 \note{
   The Maxwell distribution is related to the Rayleigh distribution.
+
 }
 \seealso{
   \code{\link{maxwell}},
   \code{\link{Rayleigh}},
   \code{\link{rayleigh}}.
+
 }
 \examples{
 \dontrun{
-a = 3
-x = seq(-0.5, 3, len=100)
+a = 3; x = seq(-0.5, 3, len = 100)
 plot(x, dmaxwell(x, a=a), type="l", col="blue", las=1, ylab="",
      main="blue is density, red is cumulative distribution function",
      sub="Purple lines are the 10,20,...,90 percentiles")

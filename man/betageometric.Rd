@@ -7,9 +7,9 @@
 
 }
 \usage{
-betageometric(lprob="logit", lshape="loge",
-              eprob=list(), eshape=list(),
-              iprob = NULL, ishape = 0.1,
+betageometric(lprob = "logit", lshape = "loge",
+              eprob = list(),  eshape = list(),
+              iprob = NULL,    ishape = 0.1,
               moreSummation=c(2,100), tolerance=1.0e-10, zero=NULL)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -113,16 +113,16 @@ betageometric(lprob="logit", lshape="loge",
 
 }
 \examples{
-y = 0:11; wts = c(227,123,72,42,21,31,11,14,6,4,7,28)
-fit  = vglm(y ~ 1, fam=betageometric, weight=wts, trace=TRUE)
-fitg = vglm(y ~ 1, fam=    geometric, weight=wts, trace=TRUE)
+bg.data = data.frame(y = 0:11, wts = c(227,123,72,42,21,31,11,14,6,4,7,28))
+fit  = vglm(y ~ 1, fam=betageometric, bg.data, weight=wts, trace=TRUE)
+fitg = vglm(y ~ 1, fam=    geometric, bg.data, weight=wts, trace=TRUE)
 coef(fit, matrix=TRUE)
 Coef(fit)
 diag(vcov(fit, untrans=TRUE))^0.5
 fit@misc$shape1
 fit@misc$shape2
 # Very strong evidence of a beta-geometric:
-1-pchisq(2*(logLik(fit)-logLik(fitg)), df=1)
+pchisq(2*(logLik(fit)-logLik(fitg)), df=1, lower.tail=FALSE)
 }
 \keyword{models}
 \keyword{regression}

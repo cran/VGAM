@@ -8,10 +8,9 @@
 
 }
 \usage{
-gpd(threshold = 0, lscale = "loge", lshape = "logoff",
-    escale = list(),
-    eshape = if(lshape=="logoff") list(offset=0.5) else
-                if(lshape=="elogit") list(min=-0.5, max=0.5) else NULL,
+gpd(threshold = 0, lscale = "loge", lshape = "logoff", escale = list(),
+    eshape = if (lshape == "logoff") list(offset=0.5) else
+             if (lshape == "elogit") list(min=-0.5, max=0.5) else NULL,
     percentiles = c(90, 95), iscale = NULL, ishape = NULL,
     tolshape0=0.001, giveWarning=TRUE, method.init=1, zero=2)
 }
@@ -215,8 +214,8 @@ gpd(threshold = 0, lscale = "loge", lshape = "logoff",
 \examples{
 # Simulated data from an exponential distribution (xi=0)
 threshold = 0.5
-y = threshold + rexp(n=3000, rate=2)
-fit = vglm(y ~ 1, gpd(threshold=threshold), trace=TRUE)
+gdata = data.frame(y = threshold + rexp(n=3000, rate=2))
+fit = vglm(y ~ 1, gpd(threshold=threshold), gdata, trace=TRUE)
 head(fitted(fit))
 coef(fit, matrix=TRUE)   # xi should be close to 0
 Coef(fit)
@@ -225,36 +224,34 @@ summary(fit)
 fit@extra$threshold  # Note the threshold is stored here
 
 # Check the 90 percentile
-i = fit@y < fitted(fit)[1,"90\%"]
-100*table(i)/sum(table(i))   # Should be 90%
+ii = fit@y < fitted(fit)[1,"90\%"]
+100*table(ii)/sum(table(ii))   # Should be 90%
 
 # Check the 95 percentile
-i = fit@y < fitted(fit)[1,"95\%"]
-100*table(i)/sum(table(i))   # Should be 95%
+ii = fit@y < fitted(fit)[1,"95\%"]
+100*table(ii)/sum(table(ii))   # Should be 95%
 
 \dontrun{
 plot(fit@y, col="blue", las=1, main="Fitted 90\% and 95\% quantiles")
-matlines(1:length(fit@y), fitted(fit), lty=2:3, lwd=2)
-}
+matlines(1:length(fit@y), fitted(fit), lty=2:3, lwd=2) }
 
 
 # Another example
-nn = 2000; threshold = 0; x = runif(nn)
+threshold = 0
+gdata = data.frame(x = runif(nn <- 2000))
 xi = exp(-0.8)-0.5
-y = rgpd(nn, scale=exp(1+0.2*x), shape=xi)
-fit = vglm(y ~ x, gpd(threshold), trace=TRUE)
+gdata = transform(gdata, y = rgpd(nn, scale=exp(1+0.1*x), shape=xi))
+fit = vglm(y ~ x, gpd(threshold), gdata, trace=TRUE)
 coef(fit, matrix=TRUE)
 
 
-\dontrun{
-# Nonparametric fits
-yy = y + rnorm(nn, sd=0.1)
-fit1 = vgam(yy ~ s(x), gpd(threshold), trace=TRUE) # Not so recommended
+\dontrun{ # Nonparametric fits
+gdata = transform(gdata, yy = y + rnorm(nn, sd=0.1))
+fit1 = vgam(yy ~ s(x), gpd(threshold), gdata, trace=TRUE) # Not so recommended
 par(mfrow=c(2,1))
-plot(fit1, se=TRUE, scol="blue")
-fit2 = vglm(yy ~ bs(x), gpd(threshold), trace=TRUE) # More recommended
-plotvgam(fit2, se=TRUE, scol="blue")
-}
+plotvgam(fit1, se=TRUE, scol="blue")
+fit2 = vglm(yy ~ bs(x), gpd(threshold), gdata, trace=TRUE) # More recommended
+plotvgam(fit2, se=TRUE, scol="blue") }
 }
 \keyword{models}
 \keyword{regression}

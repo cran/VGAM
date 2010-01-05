@@ -56,6 +56,7 @@ pospoisson(link = "loge", earg=list(),
 }
 \section{Warning }{
     Under- or over-flow may occur if the data is ill-conditioned.
+
 }
 
 \value{
@@ -72,6 +73,7 @@ The equilibrium size distribution of freely-forming groups.
 Documentation accompanying the \pkg{VGAM} package at
 \url{http://www.stat.auckland.ac.nz/~yee}
 contains further information and examples.
+
 }
 \author{ Thomas W. Yee }
 \note{
@@ -86,21 +88,22 @@ contains further information and examples.
 \code{\link{posnegbinomial}},
 \code{\link{poissonff}},
 \code{\link{zipoisson}}.
+
 }
 \examples{
-y = 1:6
-w = c(1486, 694, 195, 37, 10, 1) # Data from Coleman and James (1961)
-fit = vglm(y ~ 1, pospoisson, weights=w)
+# Data from Coleman and James (1961)
+cjdat = data.frame(y = 1:6, w = c(1486, 694, 195, 37, 10, 1))
+fit = vglm(y ~ 1, pospoisson, cjdat, weights=w)
 Coef(fit)
 summary(fit)
 fitted(fit)
 
 # Artificial data
-x = runif(n <- 1000)
-lambda = exp(1 - 2*x)
-y = rpospois(n, lambda)
-table(y)
-fit = vglm(y ~ x, pospoisson, trace=TRUE, crit="c")
+pdat = data.frame(x = runif(nn <- 1000))
+pdat = transform(pdat, lambda = exp(1 - 2*x))
+pdat = transform(pdat, y = rpospois(nn, lambda))
+with(pdat, table(y))
+fit = vglm(y ~ x, pospoisson, pdat, trace=TRUE, crit="c")
 coef(fit, matrix=TRUE)
 }
 \keyword{models}

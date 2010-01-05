@@ -86,8 +86,8 @@ Log-Laplace distributions.
 
 }
 \examples{
-x = seq(-0.2, 5, by=0.01)
 loc = 0; sigma = exp(0.5); kappa = 1
+x = seq(-0.2, 5, by=0.01)
 \dontrun{
 plot(x, dloglap(x, loc, sigma, kappa=kappa), type="l", col="blue",
      main="Blue is density, red is cumulative distribution function",

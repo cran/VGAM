@@ -104,7 +104,7 @@ qtplot(fit1, perc=97, mpv=FALSE, lcol=3, tcol=3,
 head(i@post$qtplot$fitted)
 }
 }
-\keyword{hplot}
+\keyword{graphs}
 \keyword{models}
 \keyword{regression}
 

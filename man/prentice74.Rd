@@ -81,33 +81,37 @@ else \eqn{q<0} is right skew.
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}},
   and \code{\link{vgam}}.
+
 }
 \references{
-Prentice, R. L. (1974)
-A log gamma model and its maximum likelihood estimation.
-\emph{Biometrika}, \bold{61}, 539--544.
+  Prentice, R. L. (1974)
+  A log gamma model and its maximum likelihood estimation.
+  \emph{Biometrika}, \bold{61}, 539--544.
+
 }
 \section{Warning }{
-The special case \eqn{q=0} is not handled, therefore
-estimates of \eqn{q} too close to zero may cause numerical problems.
+  The special case \eqn{q=0} is not handled, therefore
+  estimates of \eqn{q} too close to zero may cause numerical problems.
+
 }
 \author{ T. W. Yee }
 \note{ 
-The notation used here differs from Prentice (1974):
-\eqn{\alpha=a}{alpha=a},
-\eqn{\sigma=b}{sigma=b}.
-Fisher scoring is used. 
+  The notation used here differs from Prentice (1974):
+  \eqn{\alpha=a}{alpha=a},
+  \eqn{\sigma=b}{sigma=b}.
+  Fisher scoring is used. 
+
 }
 \seealso{
-\code{\link{lgamma3ff}},
-\code{\link[base:Special]{lgamma}}.
+  \code{\link{lgamma3ff}},
+  \code{\link[base:Special]{lgamma}}.
+
 }
 \examples{
-x = runif(n <- 5000)
-loc = -1 + 2*x
-Scale = exp(1+x)
-y = rlgamma(n, loc=loc, scale=Scale, k=1)
-fit = vglm(y ~ x, prentice74(zero=3), trace=TRUE)
+pdat = data.frame(x = runif(nn <- 5000))
+pdat = transform(pdat, loc = -1 + 2*x, Scale = exp(1+x))
+pdat = transform(pdat, y = rlgamma(nn, loc=loc, scale=Scale, k=1))
+fit = vglm(y ~ x, prentice74(zero=3), pdat, trace=TRUE)
 coef(fit, matrix=TRUE)  # Note the coefficients for location
 }
 \keyword{models}

@@ -9,8 +9,7 @@
 }
 \usage{
 calibrate.qrrvglm.control(object, trace = FALSE, Method.optim = "BFGS",
-                          gridSize = if (Rank == 1) 9 else 5,
-                          varlvI = FALSE, ...)
+    gridSize = if (Rank == 1) 9 else 5, varlvI = FALSE, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -80,6 +79,7 @@ On constrained and unconstrained quadratic ordination.
   \code{\link{Coef.qrrvglm}}.
 }
 \examples{
+\dontrun{
 hspider[,1:6] = scale(hspider[,1:6]) # Needed when ITol = TRUE
 set.seed(123)
 p1 = cqo(cbind(Alopacce, Alopcune, Pardlugu, Pardnigr, 
@@ -91,6 +91,7 @@ sort(p1@misc$deviance.Bestof) # A history of all the iterations
 
 siteNos = 1:2  # Calibrate these sites
 cp1 = calibrate(p1, new=data.frame(p1@y[siteNos,]), trace=TRUE)
+}
 
 \dontrun{
 # Graphically compare the actual site scores with their calibrated values

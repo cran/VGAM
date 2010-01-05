@@ -9,21 +9,14 @@
 
 }
 \usage{
-cumulative(link = "logit", earg = list(),
-           parallel = FALSE, reverse = FALSE,
-           mv = FALSE, intercept.apply = FALSE)
+cumulative(link = "logit", earg = list(), parallel = FALSE,
+           reverse = FALSE, mv = FALSE, intercept.apply = FALSE)
 }
 %scumulative(link="logit", earg = list(),
 %            lscale="loge", escale = list(),
 %            parallel=FALSE, sparallel=TRUE, reverse=FALSE, iscale = 1)
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  In the following, the response \eqn{Y} is assumed to be a factor
-  with ordered values \eqn{1,2,\dots,J+1}.
-  Hence \eqn{M} is the number of linear/additive predictors
-  \eqn{\eta_j}{eta_j};
-  for \code{cumulative()} \eqn{M=J}.
-% and for \code{scumulative()} \eqn{M=2J}.
 
   \item{link}{
   Link function applied to the \eqn{J} cumulative probabilities. 
@@ -38,6 +31,7 @@ cumulative(link = "logit", earg = list(),
 % See \code{\link{Links}} for more choices.
 %
 % }
+
   \item{earg}{
   List. Extra argument for the link function.
   See \code{earg} in \code{\link{Links}} for general information.
@@ -63,9 +57,9 @@ cumulative(link = "logit", earg = list(),
   By default, the cumulative probabilities used are
   \eqn{P(Y\leq 1)}{P(Y<=1)}, \eqn{P(Y\leq 2)}{P(Y<=2)},
   \dots, \eqn{P(Y\leq J)}{P(Y<=J)}.
-  If \code{reverse} is \code{TRUE}, then 
+  If \code{reverse} is \code{TRUE} then 
   \eqn{P(Y\geq 2)}{P(Y>=2)}, \eqn{P(Y\geq 3)}{P(Y>=3)}, \dots,
-  \eqn{P(Y\geq J+1)}{P(Y>=J+1)} will be used.
+  \eqn{P(Y\geq J+1)}{P(Y>=J+1)} are used.
 
   This should be set to \code{TRUE} for \code{link=}
   \code{\link{golf}},
@@ -99,13 +93,21 @@ cumulative(link = "logit", earg = list(),
 % }
 }
 \details{
+  In this help file the response \eqn{Y} is assumed to be a factor
+  with ordered values \eqn{1,2,\dots,J+1}.
+  Hence \eqn{M} is the number of linear/additive predictors
+  \eqn{\eta_j}{eta_j};
+  for \code{cumulative()} one has \eqn{M=J}.
+% and for \code{scumulative()} \eqn{M=2J}.
+
+
   This \pkg{VGAM} family function fits the class of
-  cumulative link models to (hopefully) an ordinal response.
-  By default, the non-parallel cumulative logit model is fitted, i.e.,
+  \emph{cumulative link models} to (hopefully) an ordinal response.
+  By default, the \emph{non-parallel} cumulative logit model is fitted, i.e.,
   \deqn{\eta_j = logit(P[Y \leq j])}{%
          eta_j = logit(P[Y<=j])}
-       where \eqn{j=1,2,\dots,M} and
-       the \eqn{\eta_j}{eta_j} are not constrained to be parallel.
+  where \eqn{j=1,2,\dots,M} and
+  the \eqn{\eta_j}{eta_j} are not constrained to be parallel.
   This is also known as the \emph{non-proportional odds model}.
   If the logit link is replaced by a complementary log-log link 
   (\code{\link{cloglog}}) then
@@ -132,7 +134,6 @@ cumulative(link = "logit", earg = list(),
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}},
-  \code{\link{rrvglm}}
   and \code{\link{vgam}}.
 
 }
@@ -141,9 +142,9 @@ Agresti, A. (2002)
 \emph{Categorical Data Analysis},
 2nd ed. New York: Wiley.
 
-Dobson, A. J. (2001)
+Dobson, A. J. and Barnett, A. (2008)
 \emph{An Introduction to Generalized Linear Models},
-2nd ed. Boca Raton: Chapman & Hall/CRC Press.
+3rd ed. Boca Raton: Chapman & Hall/CRC Press.
 
 McCullagh, P. and Nelder, J. A. (1989)
 \emph{Generalized Linear Models}, 2nd ed. London: Chapman & Hall.
@@ -152,14 +153,24 @@ Simonoff, J. S. (2003)
 \emph{Analyzing Categorical Data},
 New York: Springer-Verlag.
 
+
+Yee, T. W. (2010)
+The \pkg{VGAM} package for categorical data analysis.
+\emph{Journal of Statistical Software},
+\bold{32}, 1--34.
+\url{http://www.jstatsoft.org/v32/i10/}.
+
+
 Yee, T. W. and Wild, C. J. (1996)
 Vector generalized additive models.
 \emph{Journal of the Royal Statistical Society, Series B, Methodological},
 \bold{58}, 481--493.
 
-Documentation accompanying the \pkg{VGAM} package at
-\url{http://www.stat.auckland.ac.nz/~yee}
-contains further information and examples.
+
+Further information and examples on categorical data analysis
+by the \pkg{VGAM} package can be found at
+\url{http://www.stat.auckland.ac.nz/~yee/VGAM/doc/categorical.pdf}.
+
 
 }
 \author{ Thomas W. Yee }
@@ -174,7 +185,6 @@ contains further information and examples.
   \code{\link{acat}},
   \code{\link{cratio}},
   \code{\link{sratio}}.
-
   For a nominal (unordered) factor response, the multinomial
   logit model (\code{\link{multinomial}}) is more appropriate.
 
@@ -206,6 +216,15 @@ contains further information and examples.
   \code{etatstart}.
   See the example below.
 
+  To fit the proportional odds model one can use the
+  \pkg{VGAM} family function \code{\link{propodds}}.
+  Note that \code{propodds(reverse)} is equivalent to 
+  \code{cumulative(parallel=TRUE, reverse=reverse)} (which is equivalent to 
+  \code{cumulative(parallel=TRUE, reverse=reverse, link="logit")}).
+  It is for convenience only. A call to \code{cumulative()} is preferred
+  since it reminds the user that a parallelism assumption is made, as
+  well as being a lot more flexible.
+
 
 % In the future, this family function may be renamed to
 % ``\code{cups}'' (for \bold{cu}mulative \bold{p}robabilitie\bold{s})
@@ -221,6 +240,8 @@ contains further information and examples.
 }
 
 \seealso{
+  \code{\link{propodds}},
+  \code{\link{prplot}},
   \code{\link{margeff}},
   \code{\link{acat}},
   \code{\link{cratio}},
@@ -252,14 +273,13 @@ constraints(fit)   # Constraint matrices
 fit2 = vgam(cbind(normal, mild, severe) ~ s(let, df=2),
             cumulative(reverse=TRUE), pneumo)
 \dontrun{
-plot(fit2, se=TRUE, overlay=TRUE, lcol=1:2, scol=1:2)
-}
+plot(fit2, se=TRUE, overlay=TRUE, lcol=1:2, scol=1:2) }
 
 # Check the proportional odds assumption with a LRT ----------
 (fit3 = vglm(cbind(normal, mild, severe) ~ let,
              cumulative(parallel=FALSE, reverse=TRUE), pneumo))
-1 - pchisq(2*(logLik(fit3)-logLik(fit)),
-           df=length(coef(fit3))-length(coef(fit)))
+pchisq(2*(logLik(fit3)-logLik(fit)),
+       df=length(coef(fit3))-length(coef(fit)), lower.tail=FALSE)
 
 # A factor() version of fit ----------------------------------
 # This is in long format (cf. wide format above)

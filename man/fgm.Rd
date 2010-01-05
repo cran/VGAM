@@ -9,8 +9,7 @@
 
 }
 \usage{
-fgm(lapar="rhobit", earg=list(), iapar=NULL,
-    method.init=1, nsimEIM=200)
+fgm(lapar="rhobit", earg=list(), iapar=NULL, method.init=1, nsimEIM=200)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

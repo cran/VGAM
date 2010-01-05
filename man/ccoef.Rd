@@ -77,6 +77,7 @@ Constrained additive ordination.
 
 }
 \examples{
+\dontrun{
 set.seed(111)  # This leads to the global solution
 hspider[,1:6] = scale(hspider[,1:6]) # Standardized environmental vars
 p1 = cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,
@@ -85,6 +86,7 @@ p1 = cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,
          WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
          fam = quasipoissonff, data = hspider, Crow1positive=FALSE)
 ccoef(p1)
+}
 }
 \keyword{models}
 \keyword{regression}

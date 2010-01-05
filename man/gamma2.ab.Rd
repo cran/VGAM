@@ -6,8 +6,7 @@
   by maximum likelihood estimation.
 }
 \usage{
-gamma2.ab(lrate = "loge", lshape = "loge",
-          erate=list(), eshape=list(),
+gamma2.ab(lrate = "loge", lshape = "loge", erate=list(), eshape=list(),
           irate=NULL, ishape=NULL, expected = TRUE, zero = 2)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -103,18 +102,16 @@ gamma2.ab(lrate = "loge", lshape = "loge",
 }
 \examples{
 # Essentially a 1-parameter gamma
-y = rgamma(n <- 100, shape= exp(1))
-fit1 = vglm(y ~ 1, gamma1, trace=TRUE, crit="c")
-fit2 = vglm(y ~ 1, gamma2.ab, trace=TRUE, crit="c")
-coef(fit1, matrix=TRUE)
-Coef(fit1)
+gdata = data.frame(y = rgamma(n <- 100, shape= exp(1)))
+fit1 = vglm(y ~ 1, gamma1, gdata, trace=TRUE)
+fit2 = vglm(y ~ 1, gamma2.ab, gdata, trace=TRUE, crit="c")
 coef(fit2, matrix=TRUE)
 Coef(fit2)
 
 
 # Essentially a 2-parameter gamma
-y = rgamma(n <- 500, rate=exp(1), shape=exp(2))
-fit2 = vglm(y ~ 1, gamma2.ab, trace=TRUE, crit="c")
+gdata = data.frame(y = rgamma(n=500, rate=exp(1), shape=exp(2)))
+fit2 = vglm(y ~ 1, gamma2.ab, gdata, trace=TRUE, crit="c")
 coef(fit2, matrix=TRUE)
 Coef(fit2)
 summary(fit2)

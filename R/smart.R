@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2009 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2010 T.W. Yee, University of Auckland. All rights reserved.
 
 
 
@@ -18,16 +18,16 @@ smartpredenv = new.env()
 
 
 smart.mode.is <- function(mode.arg=NULL) {
-    if(!length(mode.arg)) {
-        if(exists(".smart.prediction", env=smartpredenv)) {
+    if (!length(mode.arg)) {
+        if (exists(".smart.prediction", env=smartpredenv)) {
             get(".smart.prediction.mode", env=smartpredenv)
         } else {
             "neutral"
         }
     } else {
-        if(mode.arg != "neutral" && mode.arg != "read" && mode.arg != "write")
+        if (mode.arg != "neutral" && mode.arg != "read" && mode.arg != "write")
 stop("argument \"mode.arg\" must be one of \"neutral\", \"read\" or \"write\"")
-        if(exists(".smart.prediction", env=smartpredenv)) {
+        if (exists(".smart.prediction", env=smartpredenv)) {
             get(".smart.prediction.mode", env=smartpredenv)==mode.arg
         } else {
             mode.arg=="neutral"
@@ -37,13 +37,13 @@ stop("argument \"mode.arg\" must be one of \"neutral\", \"read\" or \"write\"")
 
 
 setup.smart <- function(mode.arg, smart.prediction=NULL, max.smart=30) {
-    actual <- if(mode.arg=="write") vector("list", max.smart) else 
-              if(mode.arg=="read") smart.prediction else
+    actual <- if (mode.arg=="write") vector("list", max.smart) else 
+              if (mode.arg=="read") smart.prediction else
               stop("value of mode.arg unrecognized")
 
     wrapup.smart()  # make sure
 
-    if(length(actual)) {
+    if (length(actual)) {
         # Double check that smart.prediction is not trivial (in "read" mode)
         # If it is trivial then ignore it. This saves testing whether 
         # length(object$smart.prediction) > 0 in the predict methods function
@@ -58,13 +58,13 @@ setup.smart <- function(mode.arg, smart.prediction=NULL, max.smart=30) {
 }
 
 wrapup.smart <- function() {
-    if(exists(".smart.prediction", envir = smartpredenv))
+    if (exists(".smart.prediction", envir = smartpredenv))
         rm(".smart.prediction", envir = smartpredenv)
-    if(exists(".smart.prediction.counter", envir = smartpredenv))
+    if (exists(".smart.prediction.counter", envir = smartpredenv))
         rm(".smart.prediction.counter", envir = smartpredenv)
-    if(exists(".smart.prediction.mode", envir = smartpredenv))
+    if (exists(".smart.prediction.mode", envir = smartpredenv))
         rm(".smart.prediction.mode", envir = smartpredenv)
-    if(exists(".max.smart", envir = smartpredenv))
+    if (exists(".max.smart", envir = smartpredenv))
         rm(".max.smart", envir = smartpredenv)
 }
 
@@ -75,10 +75,10 @@ get.smart.prediction <- function() {
         envir = smartpredenv)
     max.smart <- get(".max.smart", envir = smartpredenv)
 
-    if(smart.prediction.counter > 0) {
+    if (smart.prediction.counter > 0) {
         # Save this on the object for smart prediction later
         smart.prediction <- get(".smart.prediction", envir = smartpredenv)
-        if(max.smart >= (smart.prediction.counter+1))
+        if (max.smart >= (smart.prediction.counter+1))
             for(i in max.smart:(smart.prediction.counter+1))
                 smart.prediction[[i]] <- NULL
         smart.prediction
@@ -100,7 +100,7 @@ put.smart <- function(smart) {
     smart.prediction <- get(".smart.prediction", envir = smartpredenv)
         smart.prediction.counter <- smart.prediction.counter + 1
 
-        if(smart.prediction.counter > max.smart) {
+        if (smart.prediction.counter > max.smart) {
             # if list is too small, make it larger
             max.smart <- max.smart + (inc.smart <- 10) # can change inc.smart
             smart.prediction <- c(smart.prediction, vector("list", inc.smart))
@@ -147,16 +147,16 @@ smart.expression <- expression({
 
 
 is.smart <- function(object) {
-    if(is.function(object)) {
-        if(is.logical(a <- attr(object, "smart"))) a else FALSE
+    if (is.function(object)) {
+        if (is.logical(a <- attr(object, "smart"))) a else FALSE
     } else {
-        if(length(slotNames(object))) {
-            if(length(object@smart.prediction) == 1 &&
+        if (length(slotNames(object))) {
+            if (length(object@smart.prediction) == 1 &&
                 is.logical(object@smart.prediction$smart.arg))
             object@smart.prediction$smart.arg else
                 any(slotNames(object) == "smart.prediction")
         } else {
-            if(length(object$smart.prediction) == 1 &&
+            if (length(object$smart.prediction) == 1 &&
                 is.logical(object$smart.prediction$smart.arg))
             object$smart.prediction$smart.arg else
             any(names(object) == "smart.prediction")
@@ -176,7 +176,7 @@ function (x, df = NULL, knots = NULL, degree = 3, intercept = FALSE,
     Boundary.knots = range(x)) 
 {
     x <- x  # Evaluate x
-    if(smart.mode.is("read")) {
+    if (smart.mode.is("read")) {
         return(eval(smart.expression))
     }
 
@@ -246,7 +246,7 @@ function (x, df = NULL, knots = NULL, degree = 3, intercept = FALSE,
     attributes(basis) <- c(attributes(basis), a)
     class(basis) <- c("bs", "basis")
 
-    if(smart.mode.is("write"))
+    if (smart.mode.is("write"))
         put.smart(list(df=df,
                        knots=knots,
                        degree=degree,
@@ -262,7 +262,7 @@ ns <-
 function (x, df = NULL, knots = NULL, intercept = FALSE, Boundary.knots = range(x)) 
 {
     x <- x  # Evaluate x
-    if(smart.mode.is("read")) {
+    if (smart.mode.is("read")) {
         return(eval(smart.expression))
     }
 
@@ -329,7 +329,7 @@ function (x, df = NULL, knots = NULL, intercept = FALSE, Boundary.knots = range(
     attributes(basis) <- c(attributes(basis), a)
     class(basis) <- c("ns", "basis")
 
-    if(smart.mode.is("write"))
+    if (smart.mode.is("write"))
         put.smart(list(df=df,
                        knots=knots,
                        intercept=intercept,
@@ -347,7 +347,7 @@ poly <-
 function (x, ..., degree = 1, coefs = NULL, raw = FALSE) 
 {
     x <- x  # Evaluate x
-    if(!raw && smart.mode.is("read")) {
+    if (!raw && smart.mode.is("read")) {
         smart <- get.smart()
         degree <- smart$degree
         coefs  <- smart$coefs
@@ -368,7 +368,7 @@ function (x, ..., degree = 1, coefs = NULL, raw = FALSE)
         stop("'degree' must be at least 1")
 
     # At prediction time x may be less than the degree
-    if(smart.mode.is("write") || smart.mode.is("neutral"))
+    if (smart.mode.is("write") || smart.mode.is("neutral"))
     if (degree >= length(x))
         stop("degree must be less than number of points")
 
@@ -420,7 +420,7 @@ function (x, ..., degree = 1, coefs = NULL, raw = FALSE)
         class(Z) <- c("poly", "matrix")
     }
 
-    if(smart.mode.is("write"))
+    if (smart.mode.is("write"))
         put.smart(list(degree=degree, coefs=attr(Z, "coefs"),
                        raw=FALSE,  # raw is changed above
                        match.call=match.call()))
@@ -435,7 +435,7 @@ function (x, center = TRUE, scale = TRUE)
 {
     x <- as.matrix(x)
 
-    if(smart.mode.is("read")) {
+    if (smart.mode.is("read")) {
         return(eval(smart.expression))
     }
 
@@ -465,7 +465,7 @@ function (x, center = TRUE, scale = TRUE)
     if (is.numeric(scale)) 
         attr(x, "scaled:scale") <- scale
 
-    if(smart.mode.is("write")) {
+    if (smart.mode.is("write")) {
         put.smart(list(center=center, scale=scale,
                        match.call=match.call()))
     }
@@ -485,11 +485,11 @@ attr(scale, "smart") <- TRUE
 
     x <- x   # Evaluate x
 
-    if(smart.mode.is("read")) {
+    if (smart.mode.is("read")) {
         smart  <- get.smart()
         minx <- smart$minx          # Overwrite its value 
     } else 
-    if(smart.mode.is("write"))
+    if (smart.mode.is("write"))
         put.smart(list(minx=minx))
 
     (x-minx)^2
@@ -503,10 +503,10 @@ attr(my1, "smart") <- TRUE
 
     x <- x   # Evaluate x
 
-    if(smart.mode.is("read")) {
+    if (smart.mode.is("read")) {
         return(eval(smart.expression))
     } else 
-    if(smart.mode.is("write"))
+    if (smart.mode.is("write"))
         put.smart(list(minx=minx, match.call=match.call()))
 
     (x-minx)^2
@@ -521,20 +521,20 @@ attr(my2, "smart") <- TRUE
 
     x <- x  # Evaluate x
 
-    if(!is.vector(x))
+    if (!is.vector(x))
         stop("x must be a vector")
 
-    if(smart.mode.is("read")) {
+    if (smart.mode.is("read")) {
         smart  <- get.smart()
         return((x-smart$center)/smart$scale)
     }
 
-    if(is.logical(center))
-        center <- if(center) mean(x) else 0
-    if(is.logical(scale))
-        scale <- if(scale) sqrt(var(x)) else 1
+    if (is.logical(center))
+        center <- if (center) mean(x) else 0
+    if (is.logical(scale))
+        scale <- if (scale) sqrt(var(x)) else 1
 
-    if(smart.mode.is("write"))
+    if (smart.mode.is("write"))
         put.smart(list(center=center,
                        scale=scale))
     # Normal use
@@ -546,19 +546,19 @@ attr(stdze1, "smart") <- TRUE
 
     x <- x  # Evaluate x
 
-    if(!is.vector(x))
+    if (!is.vector(x))
         stop("x must be a vector")
 
-    if(smart.mode.is("read")) {
+    if (smart.mode.is("read")) {
         return(eval(smart.expression))
     }
 
-    if(is.logical(center))
-        center <- if(center) mean(x) else 0
-    if(is.logical(scale))
-        scale <- if(scale) sqrt(var(x)) else 1
+    if (is.logical(center))
+        center <- if (center) mean(x) else 0
+    if (is.logical(scale))
+        scale <- if (scale) sqrt(var(x)) else 1
 
-    if(smart.mode.is("write"))
+    if (smart.mode.is("write"))
         put.smart(list(center=center,
                        scale=scale,
                        match.call=match.call()))

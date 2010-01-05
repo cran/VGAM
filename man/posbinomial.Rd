@@ -24,13 +24,13 @@ posbinomial(link = "logit", earg=list())
 \details{
   The positive binomial distribution is the ordinary binomial distribution
   but with the probability of zero being zero.
-  Thus the other probabilities are scaled up (i.e., divided by 1-P(Y=0)).
+  Thus the other probabilities are scaled up
+  (i.e., divided by \eqn{1-P(Y=0)}{1-P(Y=0)}).
 
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}},
-  \code{\link{rrvglm}}
   and \code{\link{vgam}}.
 
 }
@@ -59,26 +59,21 @@ parameter.
 
 \section{Warning }{
     Under- or over-flow may occur if the data is ill-conditioned.
+
 }
 \seealso{ 
     \code{\link{binomialff}}.
 }
 
 \examples{
-# Number of albinotic children in families with 5 children
-# Data from Patil (1962) 
-y = c(rep(1,25), rep(2,23), rep(3,10), 4, 5)  # No zeros 
-n = rep(5, 60)
-yprop = y / 5
-# Fit the identical models in two ways; MLE of p is 0.3088 
-fit = vglm(yprop ~ 1, posbinomial, trace=TRUE, weights=n)
-fit2 = vglm(cbind(y, n-y) ~ 1, posbinomial, trace=TRUE)
-summary(fit)
-summary(fit2)
-Coef(fit2)   # = MLE of p
-Coef(fit)    # = MLE of p
+# Number of albinotic children in families with 5 kids (from Patil, 1962)
+akids = data.frame(y = c(rep(1,25), rep(2,23), rep(3,10), 4,5), n=rep(5,60))
+akids = transform(akids, yprop = y / 5)
+fit1 = vglm(yprop~1, posbinomial, akids, trace=TRUE, weights=n)
+fit2 = vglm(cbind(y,n-y)~1, posbinomial, akids, trace=TRUE) # Same model
+summary(fit1)
+Coef(fit2)   # = MLE of p = 0.3088
 head(fitted(fit2))
-head(fitted(fit))
 }
 \keyword{models}
 \keyword{regression}

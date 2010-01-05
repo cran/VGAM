@@ -10,13 +10,13 @@ applicable for rank-1 or rank-2 models with argument \code{Norrr = ~ 1}.
 \usage{
 persp.qrrvglm(x, varlvI = FALSE, reference = NULL, plot.it = TRUE, 
               xlim=NULL, ylim=NULL, zlim=NULL,
-              gridlength=if(Rank==1) 301 else c(51,51),
+              gridlength = if (Rank==1) 301 else c(51,51),
               whichSpecies = NULL,
-              xlab = if(Rank==1) "Latent Variable" else "Latent Variable 1",
-              ylab = if(Rank==1) "Expected Value" else "Latent Variable 2",
+              xlab = if (Rank==1) "Latent Variable" else "Latent Variable 1",
+              ylab = if (Rank==1) "Expected Value" else "Latent Variable 2",
               zlab = "Expected value", labelSpecies = FALSE,
               stretch = 1.05, main="", ticktype = "detailed",
-              col = if(Rank==1) par()$col else "white",
+              col = if (Rank==1) par()$col else "white",
               llty=par()$lty, llwd=par()$lwd,
               add1 = FALSE, ...)
 }
@@ -206,7 +206,7 @@ r2 = cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,
 
 sort(r1@misc$deviance.Bestof)  # A history of the fits
 sort(r2@misc$deviance.Bestof)  # A history of the fits
-if(deviance(r2) > 857) stop("suboptimal fit obtained")
+if (deviance(r2) > 857) stop("suboptimal fit obtained")
 
 persp(r1, xlim=c(-6,5), col=1:4, label=TRUE)
 
@@ -219,5 +219,5 @@ persp(r2, xlim=c(-6,5), ylim=c(-4,5), theta=10, phi=20, zlim=c(0,220),
 }
 \keyword{models}
 \keyword{regression}
-\keyword{hplot}
+\keyword{graphs}
 

@@ -139,25 +139,23 @@ poissonff(link = "loge", earg=list(), dispersion = 1, onedpar = FALSE,
 \examples{
 poissonff()
 
-x = rnorm(n <- 100)
-y = rpois(n, exp(1+x))
-(fit = vglm(y ~ x, family=poissonff))
+pdat = data.frame(x = rnorm(nn <- 100))
+pdat = transform(pdat, y = rpois(nn, exp(1+x)))
+(fit = vglm(y ~ x, family=poissonff, pdat))
 coef(fit, matrix=TRUE)
 
-
-x2 = rnorm(n <- 100)
-x3 = rnorm(n)
-x4 = rnorm(n)
-lv1 = 0 + x3 - 2*x4
-lambda1 = exp(3 - 0.5 * (lv1-0)^2)
-lambda2 = exp(2 - 0.5 * (lv1-1)^2)
-lambda3 = exp(2 - 0.5 * ((lv1+4)/2)^2)
-y1 = rpois(n, lambda1)
-y2 = rpois(n, lambda2)
-y3 = rpois(n, lambda3)
-p1 = cqo(cbind(y1,y2,y3) ~ x2 + x3 + x4, poissonff, EqualTol=FALSE,
-         ITol=FALSE)
-summary(p1)  # # Three dispersion parameters are all unity
+nn = 200
+cdat = data.frame(x2 = rnorm(nn), x3 = rnorm(nn), x4 = rnorm(nn))
+cdat = transform(cdat, lv1 = 0 + x3 - 2*x4)
+cdat = transform(cdat, lambda1 = exp(3 - 0.5 *  (lv1-0)^2),
+                       lambda2 = exp(2 - 0.5 *  (lv1-1)^2),
+                       lambda3 = exp(2 - 0.5 * ((lv1+4)/2)^2))
+cdat = transform(cdat, y1 = rpois(nn, lambda1),
+                       y2 = rpois(nn, lambda2),
+                       y3 = rpois(nn, lambda3))
+# vvv p1 = cqo(cbind(y1,y2,y3) ~ x2 + x3 + x4, poissonff, cdat,
+# vvv          EqualTol=FALSE, ITol=FALSE)
+# vvv summary(p1)  # # Three dispersion parameters are all unity
 \dontrun{
 lvplot(p1, y=TRUE, lcol=2:4, pch=2:4, pcol=2:4, rug=FALSE)
 }

@@ -133,18 +133,21 @@ Observed versus expected Fisher information.
 }
 \examples{
 # Both location and scale parameters unknown
-x = runif(n <- 1000)
-y = rcauchy(n, loc=exp(1+0.5*x), scale=exp(1))
-fit = vglm(y ~ x, cauchy(lloc="loge"), trace=TRUE)
+nn <- 1000
+cdata1 = data.frame(x = runif(nn))
+cdata1 = transform(cdata1, loc=exp(1+0.5*x), scale=exp(1))
+cdata1 = transform(cdata1, y = rcauchy(nn, loc, scale))
+fit = vglm(y ~ x, cauchy(lloc="loge"), cdata1, trace=TRUE)
 coef(fit, matrix=TRUE)
 head(fitted(fit))  # Location estimates
 summary(fit)
 
 # Location parameter unknown
 set.seed(123)
-x = runif(n <- 500)
-y = rcauchy(n, loc=1+5*x, scale=0.4)
-fit = vglm(y ~ x, cauchy1(scale=0.4), trace=TRUE, crit="c")
+cdata2 = data.frame(x = runif(nn <- 500))
+cdata2 = transform(cdata2, loc=1+0.5*x, scale=0.4)
+cdata2 = transform(cdata2, y = rcauchy(nn, loc, scale))
+fit = vglm(y ~ x, cauchy1(scale=0.4), cdata2, trace=TRUE, crit="c")
 coef(fit, matrix=TRUE)
 }
 \keyword{models}

@@ -4,9 +4,11 @@
 \title{ Loglinear Model for Two Binary Responses }
 \description{
   Fits a loglinear model to two binary responses.
+
 }
 \usage{
 loglinb2(exchangeable = FALSE, zero = NULL)
+
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -15,6 +17,7 @@ loglinb2(exchangeable = FALSE, zero = NULL)
     be equal. Should be set \code{TRUE} for ears, eyes, etc. data. }
   \item{zero}{ Which linear/additive predictor is modelled as an
     intercept only? A \code{NULL} means none of them. }
+
 }
 \details{
   The model is
@@ -76,10 +79,10 @@ contains further information and examples.
   \code{\link{loglinb3}}.
 }
 \examples{
-coalminers = transform(coalminers, age=(age-42)/5)
+coalminers = transform(coalminers, Age=(age-42)/5)
 
 # Get the n x 4 matrix of counts 
-temp = vglm(cbind(nBnW,nBW,BnW,BW) ~ age, binom2.or, coalminers)
+temp = vglm(cbind(nBnW,nBW,BnW,BW) ~ Age, binom2.or, coalminers)
 counts = round(c(weights(temp, type="prior")) * temp@y)
 
 # Create a n x 2 matrix response for loglinb2()
@@ -89,10 +92,10 @@ matof1 = matrix(1, nrow(counts), 1)
 newminers = data.frame(bln = kronecker(matof1, bwmat[,1]),
                        wheeze = kronecker(matof1, bwmat[,2]),
                        wt = c(t(counts)),
-                       age = with(coalminers, rep(age, rep(4, length(age)))))
+                       Age = with(coalminers, rep(age, rep(4, length(age)))))
 newminers = newminers[with(newminers, wt) > 0,]
 
-fit = vglm(cbind(bln,wheeze) ~ age, loglinb2, wei=wt, data=newminers)
+fit = vglm(cbind(bln,wheeze) ~ Age, loglinb2, wei=wt, data=newminers)
 coef(fit, mat=TRUE)    # Same! (at least for the log odds-ratio) 
 summary(fit)
 

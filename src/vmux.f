@@ -517,13 +517,12 @@
       double precision f0, t0, m0, f1, t1, m1, f2, t2, m2
       double precision toobig
       toobig = 20.0d0
+      gqxvz8 = 0
       if(.not.(.not.(xt3fko .eq. 0 .or. xt3fko .eq. 1 .or. xt3fko .eq. 
      &2)))goto 23171
       gqxvz8 = 1
       return
 23171 continue
-      gqxvz8 = 0
-23172 continue
       do 23173 nd6mep=1,nfiumb4 
       if(.not.(dabs(yg1jzv(nd6mep)) .gt. toobig))goto 23175
       gqxvz8 = 1

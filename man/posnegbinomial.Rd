@@ -8,9 +8,9 @@
 
 }
 \usage{
-posnegbinomial(lmunb = "loge", lk = "loge", 
-               emunb =list(), ek = list(), ik = NULL, zero = -2,
-               cutoff = 0.995, shrinkage.init=0.95, method.init=1)
+posnegbinomial(lmunb = "loge", lk = "loge", emunb =list(), ek = list(),
+               ik = NULL, zero = -2, cutoff = 0.995, shrinkage.init=0.95,
+               method.init=1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -111,6 +111,12 @@ Generalized additive modelling and zero inflated count data.
 \bold{157},
 179--188.
 
+Williamson, E. and Bretherton, M. H. (1964)
+Tables of the logarithmic series distribution.
+\emph{Annals of Mathematical Statistics},
+\bold{35},
+284--297.
+
 }
 \author{ Thomas W. Yee }
 \note{
@@ -128,26 +134,39 @@ Generalized additive modelling and zero inflated count data.
 }
 
 \examples{
-x = runif(nn <- 2000)
-y1 = rposnegbin(nn, munb=exp(0+2*x), size=exp(1))
-y2 = rposnegbin(nn, munb=exp(1+2*x), size=exp(3))
-fit = vglm(cbind(y1,y2) ~ x, posnegbinomial, trace=TRUE)
+pndat = data.frame(x = runif(nn <- 2000))
+pndat = transform(pndat, y1 = rposnegbin(nn, munb=exp(0+2*x), size=exp(1)),
+                         y2 = rposnegbin(nn, munb=exp(1+2*x), size=exp(3)))
+fit = vglm(cbind(y1,y2) ~ x, posnegbinomial, pndat, trace=TRUE)
 coef(fit, matrix=TRUE)
 dim(fit@y)
 
 
 # Another artificial data example
-munb = exp(2); size = k = exp(3); nn = 1000
-y = rposnegbin(nn, munb=munb, size=size)
-table(y)
-fit = vglm(y ~ 1, posnegbinomial, trace=TRUE)
+pndat2 = data.frame(munb = exp(2), size = exp(3)); nn = 1000
+pndat2 = transform(pndat2, y = rposnegbin(nn, munb=munb, size=size))
+with(pndat2, table(y))
+fit = vglm(y ~ 1, posnegbinomial, pndat2, trace=TRUE)
 coef(fit, matrix=TRUE)
-mean(y)    # Sample mean
-munb / (1 - (size/(size+munb))^size) # Population mean
-head(fitted(fit))
-head(predict(fit))
+with(pndat2, mean(y))    # Sample mean
+head(with(pndat2, munb/(1-(size/(size+munb))^size)), 1) # Population mean
+head(fitted(fit), 3)
+head(predict(fit), 3)
+
+
+# Example: Corbet (1943) butterfly Malaya data
+corbet = data.frame(nindiv = 1:24,
+                    ofreq = c(118, 74, 44, 24, 29, 22, 20, 19, 20, 15, 12,
+                              14, 6, 12, 6, 9, 9, 6, 10, 10, 11, 5, 3, 3))
+fit = vglm(nindiv ~ 1, posnegbinomial, weights=ofreq, data=corbet)
+coef(fit, matrix=TRUE)
+Coef(fit)
+(khat = Coef(fit)['k'])
+pdf2 = dposnegbin(x=with(corbet, nindiv), mu=fitted(fit), size=khat)
+print( with(corbet, cbind(nindiv, ofreq, fitted=pdf2*sum(ofreq))), dig=1)
 }
 \keyword{models}
 \keyword{regression}
 
 
+% bigN = with(corbet, sum(ofreq))

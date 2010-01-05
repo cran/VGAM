@@ -97,9 +97,9 @@ default value is not \code{NULL}.
 }
 
 \examples{
-y = rsinmad(n=3000, 3, 5, 2)
-fit = vglm(y ~ 1, sinmad, trace=TRUE)
-fit = vglm(y ~ 1, sinmad, trace=TRUE, crit="c")
+sdata = data.frame(y = rsinmad(n=3000, 3, 5, 2))
+fit = vglm(y ~ 1, sinmad, sdata, trace=TRUE)
+fit = vglm(y ~ 1, sinmad, sdata, trace=TRUE, crit="c")
 coef(fit, mat=TRUE)
 Coef(fit)
 summary(fit)

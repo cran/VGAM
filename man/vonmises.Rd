@@ -122,13 +122,13 @@ New York: Wiley-Interscience, Third edition.
 
 }
 \examples{
-x = runif(n <- 1000)
-y = rnorm(n, m=2+x, sd=exp(0.2))   # Not von Mises data!!
-fit = vglm(y  ~ x, vonmises(zero=2), trace=TRUE)
+vdata = data.frame(x = runif(nn <- 1000))
+vdata = transform(vdata, y = rnorm(nn, m=2+x, sd=exp(0.2))) # Not good data!!
+fit = vglm(y  ~ x, vonmises(zero=2), vdata, trace=TRUE)
 coef(fit, matrix=TRUE)
 Coef(fit)
-range(y)       # original data
-range(fit@y)   # processed data is in [0,2*pi)
+with(vdata, range(y))   # original data
+range(fit@y)            # processed data is in [0,2*pi)
 }
 \keyword{models}
 \keyword{regression}

@@ -11,10 +11,6 @@ dirichlet(link = "loge", earg=list(), parallel = FALSE, zero=NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  In the following, the response is assumed to be a \eqn{M}-column
-  matrix with positive values and whose rows each sum to unity. Such
-  data can be thought of as compositional data.
-  There are \eqn{M} linear/additive predictors \eqn{\eta_j}{eta_j}.
 
   \item{link}{
   Link function applied to each of the \eqn{M} (positive) shape
@@ -34,6 +30,12 @@ dirichlet(link = "loge", earg=list(), parallel = FALSE, zero=NULL)
   }
 }
 \details{
+  In this help file the response is assumed to be a \eqn{M}-column
+  matrix with positive values and whose rows each sum to unity.
+  Such data can be thought of as compositional data.
+  There are \eqn{M} linear/additive predictors \eqn{\eta_j}{eta_j}.
+
+
   The Dirichlet distribution is commonly used to model compositional
   data, including applications in genetics.
   Suppose \eqn{(Y_1,\ldots,Y_{M})^T}{(Y_1,\ldots,Y_M)^T} is

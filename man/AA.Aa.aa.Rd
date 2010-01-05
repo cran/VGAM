@@ -60,7 +60,6 @@ Sunderland, MA: Sinauer Associates, Inc.
 }
 \examples{
 y = cbind(53, 95, 38)
-fit = vglm(y ~ 1, AA.Aa.aa(link="logit"), trace=TRUE)
 fit = vglm(y ~ 1, AA.Aa.aa(link="probit"), trace=TRUE)
 rbind(y, sum(y)*fitted(fit))
 Coef(fit) # Estimated pA

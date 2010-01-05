@@ -100,20 +100,19 @@ distribution.
 }
 
 \examples{
-y = rsnorm(n <- 1000, shape=5)
-fit = vglm(y ~ 1, skewnormal1, trace=TRUE)
+sdata = data.frame(y = rsnorm(nn <- 1000, shape=5))
+fit = vglm(y ~ 1, skewnormal1, sdata, trace=TRUE)
 coef(fit, matrix=TRUE)
-head(fitted(fit))
-mean(y)
+head(fitted(fit), 1)
+with(sdata, mean(y))
 \dontrun{
-hist(y, prob=TRUE)
-x = seq(min(y), max(y), len=200)
-lines(x, dsnorm(x, shape=Coef(fit)), col="blue")
-}
+with(sdata, hist(y, prob=TRUE))
+x = with(sdata, seq(min(y), max(y), len=200))
+with(sdata, lines(x, dsnorm(x, shape=Coef(fit)), col="blue")) }
 
-x = runif(n)
-y = rsnorm(n, shape=1 + 2*x)
-fit = vglm(y ~ x, skewnormal1, trace=TRUE, crit="coef")
+sdata = data.frame(x = runif(nn))
+sdata = transform(sdata, y = rsnorm(nn, shape=1 + 2*x))
+fit = vglm(y ~ x, skewnormal1, sdata, trace=TRUE, crit="coef")
 summary(fit)
 }
 \keyword{models}

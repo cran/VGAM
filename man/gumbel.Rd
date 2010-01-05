@@ -9,14 +9,12 @@
 
 }
 \usage{
-gumbel(llocation = "identity", lscale = "loge",
-       elocation = list(), escale = list(),
-       iscale = NULL, R = NA, percentiles = c(95, 99), mpv = FALSE,
-       zero = NULL)
-egumbel(llocation = "identity", lscale = "loge",
-        elocation = list(), escale = list(),
-        iscale = NULL, R = NA, percentiles = c(95, 99), mpv = FALSE,
-        zero = NULL)
+gumbel(llocation = "identity", lscale = "loge", elocation = list(), 
+       escale = list(), iscale = NULL, R = NA, percentiles = c(95, 99),
+       mpv = FALSE, zero = NULL)
+egumbel(llocation = "identity", lscale = "loge", elocation = list(),
+        escale = list(), iscale = NULL, R = NA, percentiles = c(95, 99),
+        mpv = FALSE, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -183,17 +181,17 @@ egumbel(llocation = "identity", lscale = "loge",
 
 \examples{
 # Example 1: Simulated data
-y = rgumbel(n=1000, loc = 100, scale=exp(1))
-fit = vglm(y ~ 1, egumbel(perc=NULL), trace=TRUE)
+gdata = data.frame(y = rgumbel(n=1000, loc = 100, scale=exp(1)))
+fit = vglm(y ~ 1, egumbel(perc=NULL), gdata, trace=TRUE)
 coef(fit, matrix=TRUE)
 Coef(fit)
 head(fitted(fit))
-mean(y)
+with(gdata, mean(y))
 
 
 # Example 2: Venice data
 (fit = vglm(cbind(r1,r2,r3,r4,r5) ~ year, data=venice,
-           gumbel(R=365, mpv=TRUE), trace=TRUE))
+            gumbel(R=365, mpv=TRUE), trace=TRUE))
 head(fitted(fit))
 coef(fit, mat=TRUE)
 vcov(summary(fit))  

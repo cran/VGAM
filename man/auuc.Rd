@@ -22,14 +22,16 @@ Each student is cross-classified by their
 colleges (Science and Engineering have been combined) and
 the socio-economic status (SES) of their fathers (1 = highest, 
 down to 4 = lowest).
+
 }
 \source{
     Dr Tony Morrison.
 }
 \references{
   Wild, C. J. and Seber, G. A. F. (2000)
-\emph{Chance Encounters: A First Course in Data Analysis and Inference},
-New York: Wiley.
+  \emph{Chance Encounters: A First Course in Data Analysis and Inference},
+  New York: Wiley.
+
 }
 \examples{
 round(fitted(grc(auuc)))

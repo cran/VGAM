@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2009 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2010 T.W. Yee, University of Auckland. All rights reserved.
 
 
 
@@ -162,7 +162,7 @@ rlplot, rlplot.vglm, rrar.control,
 rrvglm.control.Gaussian)
 
 export(
-Surv, is.SurvS4, as.character.SurvS4, print.SurvS4,
+SurvS4, is.SurvS4, as.character.SurvS4, print.SurvS4,
 simple.exponential, simple.poisson,
 mbinomial,
 seq2binomial, size.binomial,
@@ -272,6 +272,7 @@ export(
 AA.Aa.aa, AB.Ab.aB.ab2, AB.Ab.aB.ab, ABO, acat,
 beta.ab, betaff,
 dbetageom, pbetageom, rbetageom, betageometric, 
+dbetanorm, pbetanorm, qbetanorm, rbetanorm, # betanorm,
 betaprime,
 betaII,
 zipebcom,
@@ -283,7 +284,7 @@ calibrate, cao.control,
 cao, ccoef, cdf.lmscreg, cgo, chisq, clo, 
 Coef.qrrvglm, Coef, Coef.rrvglm, Coef.vlm,
 predict.qrrvglm,
-cratio, cumulative)
+cratio, cumulative, propodds, prplot, prplot.control)
 export(
 deplot.lmscreg, dirichlet,
 exponential, G1G2G3)

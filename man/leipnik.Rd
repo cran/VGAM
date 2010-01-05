@@ -8,9 +8,8 @@
 
 }
 \usage{
-leipnik(lmu = "logit", llambda = "loge",
-        emu=list(), elambda=list(),
-        imu = NULL, ilambda = NULL)
+leipnik(lmu = "logit", llambda = "loge", emu=list(),
+        elambda=list(), imu = NULL, ilambda = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -92,14 +91,15 @@ leipnik(lmu = "logit", llambda = "loge",
 
 \seealso{ 
     \code{\link{mccullagh89}}.
+
 }
 \examples{
-y = rnorm(n=2000, mean=0.5, sd=0.1)  # Not good data
-fit = vglm(y ~ 1, leipnik(ilambda=1), tr=TRUE, checkwz=FALSE)
+ldat = data.frame(y = rnorm(n=2000, mean=0.5, sd=0.1)) # Not good data
+fit = vglm(y ~ 1, leipnik(ilambda=1), ldat, tr=TRUE, checkwz=FALSE)
 fit = vglm(y ~ 1, leipnik(ilambda=1,llam=logoff, elam=list(offset=1)),
-           trace=TRUE, cri="coef")
+           ldat, trace=TRUE, cri="coef")
 head(fitted(fit))
-mean(y)
+with(ldat, mean(y))
 summary(fit)
 coef(fit, matrix=TRUE)
 Coef(fit)

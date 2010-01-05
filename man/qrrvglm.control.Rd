@@ -10,41 +10,23 @@
 
 }
 \usage{
-qrrvglm.control(Rank = 1,
-                Bestof = if(length(Cinit)) 1 else 10,
-                checkwz=TRUE,
-                Cinit = NULL,
-                Crow1positive = TRUE,
-                epsilon = 1.0e-06,
-                EqualTolerances = ITolerances,
-                Etamat.colmax = 10,
-                FastAlgorithm = TRUE,
-                GradientFunction=TRUE,
-                Hstep = 0.001,
+qrrvglm.control(Rank = 1, Bestof = if (length(Cinit)) 1 else 10,
+                checkwz=TRUE, Cinit = NULL, Crow1positive = TRUE,
+                epsilon = 1.0e-06, EqualTolerances = ITolerances,
+                Etamat.colmax = 10, FastAlgorithm = TRUE,
+                GradientFunction=TRUE, Hstep = 0.001,
                 isdlv = rep(c(2, 1, rep(0.5, len=Rank)), len=Rank),
-                iKvector = 0.1,
-                iShape = 0.1,
-                ITolerances = TRUE,
-                maxitl = 40,
-                method.init = 1,
-                Maxit.optim = 250,
-                MUXfactor = rep(7, length=Rank),
-                Norrr = ~ 1,
+                iKvector = 0.1, iShape = 0.1, ITolerances = TRUE,
+                maxitl = 40, method.init = 1, Maxit.optim = 250,
+                MUXfactor = rep(7, length=Rank), Norrr = ~ 1,
                 optim.maxit = 20,
-                Parscale = if(ITolerances) 0.001 else 1.0,
-                SD.Cinit = 0.02,
-                SmallNo = 5.0e-13, 
-                trace = TRUE,
+                Parscale = if (ITolerances) 0.001 else 1.0,
+                SD.Cinit = 0.02, SmallNo = 5.0e-13, trace = TRUE,
                 Use.Init.Poisson.QO=TRUE, 
                 wzepsilon = .Machine$double.eps^0.75, ...)
 }
 %- maybe also `usage' for other objects documented here.
 \arguments{
-    In the following, \eqn{R} is the \code{Rank}, \eqn{M} is the number
-    of linear predictors, and \eqn{S} is the number of responses
-    (species).
-    Thus \eqn{M=S} for binomial and Poisson responses, and
-    \eqn{M=2S} for the negative binomial and 2-parameter gamma distributions.
 
   \item{Rank}{
     The numerical rank \eqn{R} of the model, i.e., the
@@ -287,6 +269,12 @@ qrrvglm.control(Rank = 1,
 \item{\dots}{ Ignored at present.  }
 }
 \details{
+  In this help file \eqn{R} is the \code{Rank}, \eqn{M} is the number
+  of linear predictors, and \eqn{S} is the number of responses (species).
+  Thus \eqn{M=S} for binomial and Poisson responses, and
+  \eqn{M=2S} for the negative binomial and 2-parameter gamma distributions.
+
+
   Recall that the central formula for CQO is
   \deqn{\eta = B_1^T x_1 + A \nu +
                \sum_{m=1}^M (\nu^T D_m \nu) e_m}{%
@@ -447,36 +435,6 @@ chances of obtaining the global solution.
 # Poisson CQO with equal tolerances
 set.seed(111)  # This leads to the global solution
 hspider[,1:6]=scale(hspider[,1:6]) # Good idea when ITolerances = TRUE
-p1 = cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi, Auloalbi,
-               Pardlugu, Pardmont, Pardnigr, Pardpull, Trocterr, Zoraspin) ~
-         WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
-         ITolerances = TRUE, 
-         fam = quasipoissonff, data = hspider)
-sort(p1@misc$deviance.Bestof) # A history of all the iterations
-
-(isdlv = sd(lv(p1))) # should be approx isdlv
- 
-# Refit the model with better initial values
-set.seed(111)  # This leads to the global solution
-p1 = cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi, Auloalbi, 
-               Pardlugu, Pardmont, Pardnigr, Pardpull, Trocterr, Zoraspin) ~
-         WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
-         ITolerances = TRUE, isdlv = isdlv,   # Note the use of isdlv here
-         fam = quasipoissonff, data = hspider)
-sort(p1@misc$deviance.Bestof) # A history of all the iterations
-
-# Negative binomial CQO; smallest deviance is about 275.389
-set.seed(111)  # This leads to the global solution
-nb1 = cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi, Auloalbi, 
-                Pardlugu, Pardmont, Pardnigr, Pardpull, Trocterr, Zoraspin) ~
-          WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
-          ITol = FALSE, EqualTol = TRUE, # A good idea for negbinomial
-          fam = negbinomial, data = hspider)
-sort(nb1@misc$deviance.Bestof) # A history of all the iterations
-summary(nb1)
-\dontrun{
-lvplot(nb1, lcol=1:12, y=TRUE, pcol=1:12)
-}
 }
 \keyword{models}
 \keyword{regression}

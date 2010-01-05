@@ -7,9 +7,8 @@
   paralogistic distribution.
 }
 \usage{
-paralogistic(link.a = "loge", link.scale = "loge",
-             earg.a=list(), earg.scale=list(),
-             init.a = 1, init.scale = NULL, zero = NULL)
+paralogistic(link.a = "loge", link.scale = "loge", earg.a=list(),
+             earg.scale=list(), init.a = 1, init.scale = NULL, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -86,13 +85,14 @@ default value is not \code{NULL}.
     \code{\link{invlomax}},
     \code{\link{lomax}},
     \code{\link{invparalogistic}}.
+
 }
 
 \examples{
-y = rparalogistic(n=3000, 4, 6)
-fit = vglm(y ~ 1, paralogistic, trace=TRUE)
+pdat = data.frame(y = rparalogistic(n=3000, 4, 6))
+fit = vglm(y ~ 1, paralogistic, pdat, trace=TRUE)
 fit = vglm(y ~ 1, paralogistic(init.a=2.3, init.sc=5),
-           trace=TRUE, crit="c")
+           pdat, trace=TRUE, crit="c")
 coef(fit, mat=TRUE)
 Coef(fit)
 summary(fit)

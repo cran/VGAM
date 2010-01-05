@@ -42,6 +42,7 @@ rig(lmu = "identity", llambda = "loge",
 Jorgensen, B. (1997)
 \emph{The Theory of Dispersion Models}.
 London: Chapman & Hall
+
 }
 \author{ T. W. Yee }
 \note{ 
@@ -50,11 +51,12 @@ London: Chapman & Hall
 }
 \seealso{
   \code{\link{simplex}}.
+
 }
 \examples{
-y = rchisq(n=100, df=14)    # Not 'proper' data!!
-fit = vglm(y ~ 1, rig, trace=TRUE)
-fit = vglm(y ~ 1, rig, trace=TRUE, eps=1e-9, cri="c")
+rdata = data.frame(y = rchisq(n=100, df=14))    # Not 'proper' data!!
+fit = vglm(y ~ 1, rig, rdata, trace=TRUE)
+fit = vglm(y ~ 1, rig, rdata, trace=TRUE, eps=1e-9, cri="c")
 summary(fit)
 }
 \keyword{models}

@@ -12,10 +12,6 @@ cratio(link = "logit", earg = list(),
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  In the following, the response \eqn{Y} is assumed to be a factor
-  with ordered values \eqn{1,2,\dots,M+1}, so that
-  \eqn{M} is the number of linear/additive predictors
-  \eqn{\eta_j}{eta_j}.
 
   \item{link}{
   Link function applied to the \eqn{M} continuation ratio probabilities.
@@ -51,18 +47,26 @@ cratio(link = "logit", earg = list(),
   }
 }
 \details{
+  In this help file the response \eqn{Y} is assumed to be a factor
+  with ordered values \eqn{1,2,\dots,M+1}, so that
+  \eqn{M} is the number of linear/additive predictors
+  \eqn{\eta_j}{eta_j}.
+
+
   There are a number of definitions for the \emph{continuation ratio}
   in the literature. To make life easier, in the \pkg{VGAM} package,
   we use \emph{continuation} ratios and \emph{stopping} ratios
   (see \code{\link{sratio}}). 
   Stopping ratios deal with quantities such as
   \code{logit(P[Y=j|Y>=j])}.
+
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}},
   \code{\link{rrvglm}}
   and \code{\link{vgam}}.
+
 }
 \references{
 Agresti, A. (2002)
@@ -75,6 +79,14 @@ New York: Springer-Verlag.
 
 McCullagh, P. and Nelder, J. A. (1989)
 \emph{Generalized Linear Models}, 2nd ed. London: Chapman & Hall.
+
+
+Yee, T. W. (2010)
+The \pkg{VGAM} package for categorical data analysis.
+\emph{Journal of Statistical Software},
+\bold{32}, 1--34.
+\url{http://www.jstatsoft.org/v32/i10/}.
+
 
 Documentation accompanying the \pkg{VGAM} package at
 \url{http://www.stat.auckland.ac.nz/~yee}
@@ -98,11 +110,11 @@ contains further information and examples.
   the regression coefficients for \code{x1} and \code{x2} to be
   equal; those of the intercepts and \code{x3} would be different.
 
-
 }
 \section{Warning }{
   No check is made to verify that the response is ordinal;
   see \code{\link[base:factor]{ordered}}.
+
 }
 
 \seealso{
@@ -115,6 +127,7 @@ contains further information and examples.
   \code{\link{probit}},
   \code{\link{cloglog}},
   \code{\link{cauchit}}.
+
 }
 
 \examples{

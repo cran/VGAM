@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2009 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2010 T.W. Yee, University of Auckland. All rights reserved.
 
 
 
@@ -7,10 +7,10 @@
 rrvglm.control = function(Rank=1, 
                           Algorithm=c("alternating", "derivative"),
                           Corner=TRUE,
-                          Uncor=FALSE,
+                          Uncorrelated.lv=FALSE,
                           Wmat=NULL,
                           Svd.arg=FALSE,
-                          Index.corner=if(length(Structural.zero)) 
+                          Index.corner = if (length(Structural.zero)) 
                           head((1:1000)[-Structural.zero], Rank) else 1:Rank,
                           Alpha=0.5, 
                           Bestof = 1,
@@ -29,58 +29,58 @@ rrvglm.control = function(Rank=1,
 
 
 
-    if(mode(Algorithm) != "character" && mode(Algorithm) != "name")
+    if (mode(Algorithm) != "character" && mode(Algorithm) != "name")
         Algorithm <- as.character(substitute(Algorithm))
     Algorithm <- match.arg(Algorithm, c("alternating", "derivative"))[1]
 
-    if(Svd.arg) Corner = FALSE 
+    if (Svd.arg) Corner = FALSE 
 
-    if(!is.Numeric(Rank, posit=TRUE, allow=1, integer=TRUE))
+    if (!is.Numeric(Rank, posit=TRUE, allow=1, integer=TRUE))
         stop("bad input for 'Rank'")
-    if(!is.Numeric(Alpha, posit=TRUE, allow=1) || Alpha > 1)
+    if (!is.Numeric(Alpha, posit=TRUE, allow=1) || Alpha > 1)
         stop("bad input for 'Alpha'")
-    if(!is.Numeric(Bestof, posit=TRUE, allow=1, integer=TRUE))
+    if (!is.Numeric(Bestof, posit=TRUE, allow=1, integer=TRUE))
         stop("bad input for 'Bestof'")
-    if(!is.Numeric(SD.Cinit, posit=TRUE, allow=1))
+    if (!is.Numeric(SD.Cinit, posit=TRUE, allow=1))
         stop("bad input for 'SD.Cinit'")
-    if(!is.Numeric(Etamat.colmax, posit=TRUE, allow=1) || Etamat.colmax < Rank)
+    if (!is.Numeric(Etamat.colmax, posit=TRUE, allow=1) || Etamat.colmax < Rank)
         stop("bad input for 'Etamat.colmax'")
 
-    if(length(Structural.zero) && (any(round(Structural.zero) != Structural.zero)
+    if (length(Structural.zero) && (any(round(Structural.zero) != Structural.zero)
        || any(Structural.zero<1)))
         stop("bad input for the argument 'Structural.zero'")
 
 
     Quadratic = FALSE
-    if(!Quadratic && Algorithm == "derivative" && !Corner) {
+    if (!Quadratic && Algorithm == "derivative" && !Corner) {
         dd = "derivative algorithm only supports corner constraints"
-        if(length(Wmat) || Uncor || Svd.arg)
+        if (length(Wmat) || Uncorrelated.lv || Svd.arg)
             stop(dd)
         warning(dd)
         Corner = TRUE
     }
-    if(Quadratic && Algorithm != "derivative")
+    if (Quadratic && Algorithm != "derivative")
         stop("Quadratic model can only be fitted using the derivative algorithm")
 
-    if(Corner && (Svd.arg || Uncor || length(Wmat)))
-        stop("cannot have Corner=TRUE and either Svd=TRUE or Uncor=TRUE or Wmat")
+    if (Corner && (Svd.arg || Uncorrelated.lv || length(Wmat)))
+        stop("cannot have Corner=TRUE and either Svd=TRUE or Uncorrelated.lv=TRUE or Wmat")
 
-    if(Corner && length(intersect(Structural.zero, Index.corner)))
+    if (Corner && length(intersect(Structural.zero, Index.corner)))
     stop("cannot have Structural.zero and Index.corner having common values")
 
-    if(length(Index.corner) != Rank)
+    if (length(Index.corner) != Rank)
         stop("length(Index.corner) != Rank")
 
-    if(!is.logical(checkwz) || length(checkwz) != 1)
+    if (!is.logical(checkwz) || length(checkwz) != 1)
         stop("bad input for 'checkwz'")
-    if(!is.Numeric(wzepsilon, allow=1, positive=TRUE))
+    if (!is.Numeric(wzepsilon, allow=1, positive=TRUE))
         stop("bad input for 'wzepsilon'")
 
     ans =
     c(vglm.control(trace = trace, ...),
       switch(Algorithm,
              "alternating" = valt.control(...),
-             "derivative" = if(is.R()) rrvglm.optim.control(...) else
+             "derivative" = if (is.R()) rrvglm.optim.control(...) else
                                 nlminbcontrol(...)),
       list(Rank=Rank,
            Algorithm=Algorithm,
@@ -89,7 +89,7 @@ rrvglm.control = function(Rank=1,
            Cinit=Cinit,
            Index.corner=Index.corner,
            Norrr=Norrr,
-           Corner=Corner, Uncor=Uncor, Wmat=Wmat,
+           Corner=Corner, Uncorrelated.lv=Uncorrelated.lv, Wmat=Wmat,
            OptimizeWrtC = TRUE, # OptimizeWrtC,
            Quadratic = FALSE,   # A constant now, here.
            SD.Cinit = SD.Cinit,
@@ -99,11 +99,11 @@ rrvglm.control = function(Rank=1,
            Use.Init.Poisson.QO=Use.Init.Poisson.QO),
            checkwz=checkwz,
            wzepsilon = wzepsilon,
-      if(Quadratic) qrrvglm.control(Rank=Rank, ...) else NULL)
+      if (Quadratic) qrrvglm.control(Rank=Rank, ...) else NULL)
 
-    if(Quadratic && ans$ITolerances) {
+    if (Quadratic && ans$ITolerances) {
         ans$Svd.arg = FALSE
-        ans$Uncor = FALSE
+        ans$Uncorrelated.lv = FALSE
         ans$Corner = FALSE
     }
 
@@ -126,11 +126,13 @@ setMethod("summary", "rrvglm",
          summary.rrvglm(object, ...))
 
 
+
+
 printsummary.rrvglm <- function(x, digits=NULL, quote= TRUE, prefix="")
 {
 
 
-    printsummary.vglm(x, digits = NULL, quote = TRUE, prefix = "")
+    printsummary.vglm(x, digits = digits, quote = quote, prefix = prefix)
 
 
     invisible(x)

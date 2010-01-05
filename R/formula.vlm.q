@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2009 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2010 T.W. Yee, University of Auckland. All rights reserved.
 
 
 
@@ -8,14 +8,14 @@
 
 
 formulavlm = function(x, fnumber=1, ...) {
-    if(!is.Numeric(fnumber, integ=TRUE, allow=1, posit=TRUE) ||
+    if (!is.Numeric(fnumber, integ=TRUE, allow=1, posit=TRUE) ||
        fnumber > 2)
         stop("argument 'fnumber' must be 1 or 2")
 
-    if(!any(slotNames(x) == "misc"))
+    if (!any(slotNames(x) == "misc"))
         stop("cannot find slot 'misc'")
 
-    if(fnumber == 1) x@misc$formula else x@misc$form2
+    if (fnumber == 1) x@misc$formula else x@misc$form2
 }
 
 
@@ -65,15 +65,15 @@ setMethod("formula", "grc",
 
 variable.namesvlm <- function(object, full = FALSE, ...) {
     qrslot <- object@qr
-    if(!length(qrslot$qr)) {
+    if (!length(qrslot$qr)) {
         use.this <- object@x
-        if(!length(use.this))
+        if (!length(use.this))
             stop("argument 'object' has empty 'qr' and 'x' slots.")
     } else {
         use.this = qrslot$qr
     }
-    if(full) dimnames(use.this)[[2]] else
-    if(object@rank) dimnames(use.this)[[2]][seq_len(object@rank)] else
+    if (full) dimnames(use.this)[[2]] else
+    if (object@rank) dimnames(use.this)[[2]][seq_len(object@rank)] else
     character(0)
 }
 
@@ -83,9 +83,9 @@ variable.namesvlm <- function(object, full = FALSE, ...) {
 variable.namesrrvglm <- function(object, ...) {
 
     qrslot <- object@qr
-    if(!length(qrslot$qr)) {
+    if (!length(qrslot$qr)) {
         use.this <- object@x
-        if(!length(use.this))
+        if (!length(use.this))
             stop("argument 'object' has empty 'qr' and 'x' slots.")
     } else {
         use.this = qrslot$qr
@@ -102,14 +102,14 @@ variable.namesrrvglm <- function(object, ...) {
 case.namesvlm <- function(object, full = FALSE, ...) {
     w <- weights(object, type="prior")
     use.this <- residuals(object, type="working")
-    if(!length(use.this))
+    if (!length(use.this))
         use.this <- object@x
-    if(!length(use.this))
+    if (!length(use.this))
         use.this <- object@y
-    if(!length(use.this))
+    if (!length(use.this))
         stop("argument 'object' has empty 'x' and 'y' slots.")
     dn <- dimnames(use.this)[[1]]
-    if(full || is.null(w) || ncol(cbind(w)) != 1) dn else dn[w!=0]
+    if (full || is.null(w) || ncol(cbind(w)) != 1) dn else dn[w!=0]
 }
 
 

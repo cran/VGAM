@@ -31,6 +31,7 @@ logoff(theta, earg = list(offset=0), inverse = FALSE, deriv = 0,
   \item{tag}{ Used for labelling the linear/additive predictor in the
        \code{initialize} slot of a \code{\link{vglmff-class}} object.
        Contains a little more information if \code{TRUE}. }
+
 }
 \details{
   The log-offset link function is very commonly used for parameters that
@@ -64,6 +65,7 @@ logoff(theta, earg = list(offset=0), inverse = FALSE, deriv = 0,
 \references{
     McCullagh, P. and Nelder, J. A. (1989)
     \emph{Generalized Linear Models}, 2nd ed. London: Chapman & Hall.
+
 }
 \author{ Thomas W. Yee }
 
@@ -83,8 +85,7 @@ logoff(theta, earg = list(offset=0), inverse = FALSE, deriv = 0,
 \dontrun{
 logoff(seq(-0.2, 0.5, by=0.1))
 logoff(seq(-0.2, 0.5, by=0.1), earg=list(offset=0.5))
-log(seq(-0.2, 0.5, by=0.1) + 0.5)
-}
+log(seq(-0.2, 0.5, by=0.1) + 0.5) }
 }
 \keyword{math}
 \keyword{models}

@@ -87,10 +87,8 @@ args(multinomial)
 args(binom2.or)
 args(gpd)
 
-
 #LMS quantile regression example
-fit = vglm(BMI ~ bs(age, df=4), fam=lms.bcg(zero=c(1,3)),
-           data=bminz, trace=TRUE)
+fit = vglm(BMI ~ bs(age, df=4), lms.bcg(zero=c(1,3)), bminz, trace=TRUE)
 coef(fit, matrix=TRUE)
 }
 \keyword{models}

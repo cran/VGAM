@@ -21,7 +21,9 @@ yeo.johnson(y, lambda, derivative = 0,
   \item{epsilon}{ Numeric and positive value. The tolerance given
    to values of \code{lambda} when comparing it to 0 or 2. }
   \item{inverse}{ Logical.
-   Return the inverse transformation? }
+   Return the inverse transformation?
+  }
+
 }
 \details{
   The Yeo-Johnson transformation can be thought of as an extension
@@ -30,10 +32,12 @@ yeo.johnson(y, lambda, derivative = 0,
   positive values. Both can be used to transform the data so
   as to improve normality. They can be used to perform LMS
   quantile regression.
+
 }
 \value{
   The Yeo-Johnson transformation or its inverse, or its
   derivatives with respect to \code{lambda}, of \code{y}.
+
 }
 \references{
 Yeo, I.-K. and Johnson, R. A. (2000)
@@ -44,26 +48,27 @@ A new family of power transformations to improve normality or symmetry.
 Yee, T. W. (2004)
 Quantile regression via vector generalized additive models.
 \emph{Statistics in Medicine}, \bold{23}, 2295--2315.
+
 }
 
 \author{ Thomas W. Yee }
 \note{
 If \code{inverse=TRUE} then the argument \code{derivative=0} is required.
+
 }
 
 \seealso{
 \code{\link{lms.yjn}},
 \code{\link[MASS]{boxcox}}.
+
 }
 \examples{
-n = 200
-y = seq(-4, 4, len=n)
+y = seq(-4, 4, len= (nn <- 200))
 ltry = c(0, 0.5, 1, 1.5, 2)  # Try these values of lambda
 lltry = length(ltry)
-psi = matrix(NA, n, lltry)
-for(i in 1:lltry) {
-    psi[,i] = yeo.johnson(y, lambda=ltry[i])
-}
+psi = matrix(NA, nn, lltry)
+for(ii in 1:lltry)
+    psi[,ii] = yeo.johnson(y, lambda=ltry[ii])
 
 \dontrun{
 matplot(y, psi, type="l", ylim=c(-4, 4), lwd=2, lty=1:lltry,
@@ -71,8 +76,7 @@ matplot(y, psi, type="l", ylim=c(-4, 4), lwd=2, lty=1:lltry,
         main="Yeo-Johnson transformation with some values of lambda")
 abline(v=0, h=0)
 legend(x=c(1), y=c(-0.5), lty=1:lltry, legend=as.character(ltry),
-       lwd=2, col=1:lltry)
-}
+       lwd=2, col=1:lltry) }
 }
 \keyword{models}
 \keyword{regression}

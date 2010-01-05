@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2009 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2010 T.W. Yee, University of Auckland. All rights reserved.
 
 
 
@@ -24,10 +24,10 @@ vglm <- function(formula,
 
     ocall <- match.call()
 
-    if(smart) 
+    if (smart) 
         setup.smart("write")
 
-    if(missing(data)) 
+    if (missing(data)) 
         data <- environment(formula)
 
     mf <- match.call(expand.dots = FALSE)
@@ -52,8 +52,8 @@ vglm <- function(formula,
 
 
 
-if(!is.null(form2)) {
-    if(!is.null(subset))
+if (!is.null(form2)) {
+    if (!is.null(subset))
         stop("argument 'subset' cannot be used when argument 'form2' is used")
     retlist = shadowvglm(formula=
                  form2,
@@ -69,12 +69,12 @@ if(!is.null(form2)) {
     Ym2 <- retlist$Ym2
     Xm2 <- retlist$Xm2
 
-    if(length(Ym2)) {
-        if(nrow(as.matrix(Ym2)) != nrow(as.matrix(y)))
+    if (length(Ym2)) {
+        if (nrow(as.matrix(Ym2)) != nrow(as.matrix(y)))
             stop("number of rows of y and Ym2 are unequal")
     }
-    if(length(Xm2)) {
-        if(nrow(as.matrix(Xm2)) != nrow(as.matrix(x)))
+    if (length(Xm2)) {
+        if (nrow(as.matrix(Xm2)) != nrow(as.matrix(x)))
             stop("number of rows of y and Ym2 are unequal")
     }
 } else {
@@ -83,25 +83,25 @@ if(!is.null(form2)) {
 
 
     offset <- model.offset(mf)
-    if(is.null(offset)) 
+    if (is.null(offset)) 
         offset <- 0 # yyy ???
     w <- model.weights(mf)
-    if(!length(w))
+    if (!length(w))
         w <- rep(1, nrow(mf))
-    else if(ncol(as.matrix(w))==1 && any(w < 0))
+    else if (ncol(as.matrix(w))==1 && any(w < 0))
         stop("negative weights not allowed")
 
-    if(is.character(family))
+    if (is.character(family))
         family <- get(family)
-    if(is.function(family))
+    if (is.function(family))
         family <- family()
-    if(!inherits(family, "vglmff")) {
+    if (!inherits(family, "vglmff")) {
         stop("'family=", family, "' is not a VGAM family function")
     }
 
     eval(vcontrol.expression)
 
-    if(length(slot(family, "first")))
+    if (length(slot(family, "first")))
         eval(slot(family, "first"))
 
 
@@ -120,7 +120,7 @@ if(!is.null(form2)) {
 
     fit$misc$dataname <- dataname
 
-    if(smart) {
+    if (smart) {
         fit$smart.prediction <- get.smart.prediction()
         wrapup.smart()
     }
@@ -138,7 +138,7 @@ if(!is.null(form2)) {
       "effects"      = fit$effects,
       "family"       = fit$family,
       "misc"         = fit$misc,
-      "model"        = if(model) mf else data.frame(), 
+      "model"        = if (model) mf else data.frame(), 
       "R"            = fit$R,
       "rank"         = fit$rank,
       "residuals"    = as.matrix(fit$residuals),
@@ -146,44 +146,44 @@ if(!is.null(form2)) {
       "smart.prediction" = as.list(fit$smart.prediction),
       "terms"        = list(terms=mt))
 
-    if(!smart) answer@smart.prediction <- list(smart.arg=FALSE)
+    if (!smart) answer@smart.prediction <- list(smart.arg=FALSE)
 
-    if(qr.arg) {
+    if (qr.arg) {
         class(fit$qr) = "list"
         slot(answer, "qr") = fit$qr
     }
-    if(length(attr(x, "contrasts")))
+    if (length(attr(x, "contrasts")))
         slot(answer, "contrasts") = attr(x, "contrasts")
-    if(length(fit$fitted.values))
+    if (length(fit$fitted.values))
         slot(answer, "fitted.values") = as.matrix(fit$fitted.values)
-    slot(answer, "na.action") = if(length(aaa <- attr(mf, "na.action")))
+    slot(answer, "na.action") = if (length(aaa <- attr(mf, "na.action")))
         list(aaa) else list()
-    if(length(offset))
+    if (length(offset))
         slot(answer, "offset") = as.matrix(offset)
 
-    if(length(fit$weights))
+    if (length(fit$weights))
         slot(answer, "weights") = as.matrix(fit$weights)
 
-    if(x.arg)
+    if (x.arg)
         slot(answer, "x") = fit$x # The 'small' (lm) design matrix
-    if(x.arg && length(Xm2))
+    if (x.arg && length(Xm2))
         slot(answer, "Xm2") = Xm2 # The second (lm) design matrix
-    if(y.arg && length(Ym2))
+    if (y.arg && length(Ym2))
         slot(answer, "Ym2") = as.matrix(Ym2) # The second response
-    if(!is.null(form2))
+    if (!is.null(form2))
         slot(answer, "callXm2") = retlist$call
     answer@misc$formula = formula
     answer@misc$form2 = form2
 
-    if(length(xlev))
+    if (length(xlev))
         slot(answer, "xlevels") = xlev
-    if(y.arg)
+    if (y.arg)
         slot(answer, "y") = as.matrix(fit$y)
 
 
     slot(answer, "control") = fit$control
-    slot(answer, "extra") = if(length(fit$extra)) {
-        if(is.list(fit$extra)) fit$extra else {
+    slot(answer, "extra") = if (length(fit$extra)) {
+        if (is.list(fit$extra)) fit$extra else {
             warning("\"extra\" is not a list, therefore placing \"extra\" into a list")
             list(fit$extra)
         }
@@ -194,7 +194,7 @@ if(!is.null(form2)) {
     dimnames(fit$predictors) = list(dimnames(fit$predictors)[[1]],
                                     fit$misc$predictors.names)
     slot(answer, "predictors") = fit$predictors
-    if(length(fit$prior.weights))
+    if (length(fit$prior.weights))
         slot(answer, "prior.weights") = fit$prior.weights
 
 
@@ -226,7 +226,7 @@ shadowvglm <-
 
     ocall <- match.call()
 
-    if(missing(data)) 
+    if (missing(data)) 
         data <- environment(formula)
 
     mf <- match.call(expand.dots = FALSE)

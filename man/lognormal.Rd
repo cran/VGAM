@@ -105,23 +105,21 @@ Hoboken, NJ: Wiley-Interscience.
 }
 
 \examples{
-y = rlnorm(n <- 1000, meanlog=1.5, sdlog=exp(-0.8))
-fit = vglm(y ~ 1, lognormal, trace=TRUE)
+lndat = data.frame(y = rlnorm(nn <- 1000, meanlog=1.5, sdlog=exp(-0.8)))
+fit = vglm(y ~ 1, lognormal, lndat, trace=TRUE)
 coef(fit, mat=TRUE)
 Coef(fit)
 
-x = runif(n <- 1000)
-y = rlnorm(n, mean=0.5, sd=exp(x))
-fit = vglm(y ~ x, lognormal(zero=1), trace=TRUE, crit="c")
+lndat2 = data.frame(x = runif(nn <- 1000))
+lndat2 = transform(lndat2, y = rlnorm(nn, mean=0.5, sd=exp(x)))
+fit = vglm(y ~ x, lognormal(zero=1), lndat2, trace=TRUE, crit="c")
 coef(fit, mat=TRUE)
 Coef(fit)
 
 lambda = 4
-y = lambda + rlnorm(n <- 1000, mean=1.5, sd=exp(-0.8))
-fit = vglm(y ~ 1, lognormal3, trace=TRUE)
-fit = vglm(y ~ 1, lognormal3, trace=TRUE, crit="c")
+lndat3 = data.frame(y = lambda + rlnorm(n=1000, mean=1.5, sd=exp(-0.8)))
+fit = vglm(y ~ 1, lognormal3, lndat3, trace=TRUE, crit="c")
 coef(fit, mat=TRUE)
-Coef(fit)
 summary(fit)
 }
 \keyword{models}

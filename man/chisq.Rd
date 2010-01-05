@@ -53,10 +53,10 @@ New York: Wiley-Interscience, Third edition.
   \code{\link{normal1}}.
 }
 \examples{
-y = rchisq(n=200, df=exp(2))
-fit = vglm(y ~ 1, chisq)
+cdata = data.frame(x = runif(nn <- 1000))
+cdata = transform(cdata, y = rchisq(nn, df=exp(2 - x)))
+fit = vglm(y ~ x, chisq, cdata, trace=TRUE)
 coef(fit, matrix=TRUE)
-Coef(fit)
 }
 \keyword{models}
 \keyword{regression}

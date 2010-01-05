@@ -65,7 +65,6 @@ family function.
 # See Elandt-Johnson, pp.430,427
 # Estimated variance is approx 0.0021
 y = cbind(68, 11, 13, 21)
-fit = vglm(y ~ 1, AB.Ab.aB.ab2(link=logit), trace=TRUE, crit="coef")
 fit = vglm(y ~ 1, AB.Ab.aB.ab2(link=cloglog), trace=TRUE, crit="coef")
 Coef(fit)   # Estimated p
 rbind(y, sum(y)*fitted(fit))

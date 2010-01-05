@@ -107,7 +107,7 @@
   \code{\link{wrapup.smart}}.
   Commonly used data-dependent functions include
   \code{\link[base]{scale}}, 
-  \code{\link[base]{poly}}, 
+  \code{\link[stats]{poly}}, 
   \code{\link[splines]{bs}}, 
   \code{\link[splines]{ns}}.
   In \R, 

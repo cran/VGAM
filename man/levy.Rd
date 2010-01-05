@@ -84,18 +84,17 @@ levy(delta = NULL, link.gamma = "loge", earg=list(),
 
 }
 \examples{
-n = 1000
+nn = 1000; delta = 0
 mygamma = 1         # log link ==> 0 is the answer
-delta = 0
-y = delta + mygamma / rnorm(n)^2 # This is Levy(mygamma, delta)
+ldat = data.frame(y = delta + mygamma/rnorm(nn)^2) # Levy(mygamma, delta)
 
 # Cf. Table 1.1 of Nolan for Levy(1,0)
-sum(y > 1) / length(y)  # Should be 0.6827
-sum(y > 2) / length(y)  # Should be 0.5205
+with(ldat, sum(y > 1) / length(y))  # Should be 0.6827
+with(ldat, sum(y > 2) / length(y))  # Should be 0.5205
 
-fit = vglm(y ~ 1, levy(delta=delta), trace=TRUE) # 1 parameter
+fit = vglm(y ~ 1, levy(delta=delta), ldat, trace=TRUE) # 1 parameter
 fit = vglm(y ~ 1, levy(idelta=delta, igamma=mygamma),
-           trace=TRUE)    # 2 parameters
+           ldat, trace=TRUE)    # 2 parameters
 coef(fit, matrix=TRUE)
 Coef(fit)
 summary(fit)

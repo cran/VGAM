@@ -69,6 +69,7 @@ rhzeta(n, alpha)
     \code{\link{hzeta}},
     \code{\link{zeta}},
     \code{\link{zetaff}}.
+
 }
 \examples{
 dhzeta(1:20, 2.1)

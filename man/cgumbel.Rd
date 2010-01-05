@@ -9,9 +9,8 @@
 
 }
 \usage{
-cgumbel(llocation="identity", lscale = "loge",
-        elocation = list(), escale = list(), iscale=NULL,
-        mean=TRUE, percentiles=NULL, zero=2)
+cgumbel(llocation = "identity", lscale = "loge", elocation = list(),
+        escale = list(), iscale=NULL, mean=TRUE, percentiles=NULL, zero=2)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2009 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2010 T.W. Yee, University of Auckland. All rights reserved.
 
 
 
@@ -23,38 +23,38 @@ vgam.control <- function(all.knots=FALSE,
 
 
 
-    if(mode(criterion) != "character" && mode(criterion) != "name")
+    if (mode(criterion) != "character" && mode(criterion) != "name")
         criterion <- as.character(substitute(criterion))
     criterion <- pmatch(criterion[1], names(.min.criterion.VGAM), nomatch=1)
     criterion <- names(.min.criterion.VGAM)[criterion]
 
-    if(!is.logical(checkwz) || length(checkwz) != 1)
+    if (!is.logical(checkwz) || length(checkwz) != 1)
         stop("bad input for 'checkwz'")
-    if(!is.Numeric(wzepsilon, allow=1, positive=TRUE))
+    if (!is.Numeric(wzepsilon, allow=1, positive=TRUE))
         stop("bad input for 'wzepsilon'")
 
-    if(length(all.knots) > 1)
+    if (length(all.knots) > 1)
         warning("all.knots should be of length 1; using first value only")
-    if(!is.Numeric(bf.epsilon, allow=1, posit=TRUE)) {
+    if (!is.Numeric(bf.epsilon, allow=1, posit=TRUE)) {
         warning("bad input for 'bf.epsilon'; using 0.00001 instead")
         bf.epsilon <- 0.00001
     }
-    if(!is.Numeric(bf.maxit, allow=1, posit=TRUE, integ=TRUE)) {
+    if (!is.Numeric(bf.maxit, allow=1, posit=TRUE, integ=TRUE)) {
         warning("bad input for 'bf.maxit'; using 20 instead")
         bf.maxit <- 20
     }
-    if(!is.Numeric(epsilon, allow=1, posit=TRUE)) {
+    if (!is.Numeric(epsilon, allow=1, posit=TRUE)) {
         warning("bad input for 'epsilon'; using 0.0001 instead")
         epsilon <- 0.0001
     }
-    if(!is.Numeric(maxit, allow=1, posit=TRUE, integ=TRUE)) {
+    if (!is.Numeric(maxit, allow=1, posit=TRUE, integ=TRUE)) {
         warning("bad input for 'maxit'; using 20 instead")
         maxit <- 20
     }
 
     convergence <- expression({
         switch(criterion,
-        coefficients=if(iter==1) iter<maxit else (iter<maxit &&
+        coefficients = if (iter == 1) iter < maxit else (iter < maxit &&
         max(abs(new.coeffs - old.coeffs)/(abs(old.coeffs)+epsilon)) > epsilon),
         abs(old.crit-new.crit)/(abs(old.crit)+epsilon) > epsilon && iter<maxit)
     })
@@ -83,10 +83,10 @@ vgam.nlchisq <- function(qr, resid, wz, s, deriv, U, smooth.labels,
         attr(qr, "class") = "qr" 
         class(qr) <- "qr"
 
-    if(!is.matrix(s)) s <- as.matrix(s)
-    if(!is.matrix(wz)) wz <- as.matrix(wz)
-    if(!is.matrix(deriv)) deriv <- as.matrix(deriv)
-    if(!is.matrix(resid)) resid <- as.matrix(resid)
+    if (!is.matrix(s)) s <- as.matrix(s)
+    if (!is.matrix(wz)) wz <- as.matrix(wz)
+    if (!is.matrix(deriv)) deriv <- as.matrix(deriv)
+    if (!is.matrix(resid)) resid <- as.matrix(resid)
 
     trivc <- trivial.constraints(constraints)
 

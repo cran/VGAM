@@ -69,14 +69,13 @@ rpospois(n, lambda)
   \code{\link[stats:Poisson]{rpois}}.
 }
 \examples{
-lambda = 2
-y = rpospois(n=1000, lambda)
+lambda = 2; y = rpospois(n=1000, lambda)
 table(y)
 mean(y)  # Sample mean
 lambda / (1-exp(-lambda)) # Population mean
 
-(i = dpospois(0:7, lambda))
-cumsum(i) - ppospois(0:7, lambda)  # Should be 0s
+(ii = dpospois(0:7, lambda))
+cumsum(ii) - ppospois(0:7, lambda)  # Should be 0s
 table(rpospois(100, lambda))
 
 table(qpospois(runif(1000), lambda))
@@ -88,8 +87,7 @@ barplot(rbind(dpospois(x, lambda), dpois(x, lambda)),
         beside = TRUE, col = c("blue","green"),
         main=paste("Positive Poisson(", lambda, ") (blue) vs",
         " Poisson(", lambda, ") (green)", sep=""),
-        names.arg = as.character(x), las=1, lwd=2)
-}
+        names.arg = as.character(x), las=1, lwd=2) }
 }
 \keyword{distribution}
 

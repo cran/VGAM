@@ -7,9 +7,8 @@
 }
 \usage{
 micmen(rpar = 0.001, divisor = 10, init1 = NULL, init2 = NULL,
-       link1 = "identity", link2 = "identity",
-       earg1=list(), earg2=list(),
-       dispersion = 0, zero = NULL)
+       link1 = "identity", link2 = "identity", earg1=list(),
+       earg2=list(), dispersion = 0, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

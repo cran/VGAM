@@ -153,16 +153,16 @@ for counts with extra zeros.
 }
 
 \examples{
-x = runif(n <- 2000)
-p0 = logit(-1 + 2*x, inverse=TRUE)
-y1 = rposnegbin(n, munb=exp(0+2*x), size=exp(1))   # With covariates
-y2 = rposnegbin(n, munb=exp(1+2*x), size=exp(1))   # With covariates
-y1 = ifelse(runif(n) < p0, 0, y1)
-y2 = ifelse(runif(n) < p0, 0, y2)
-table(y1)
-table(y2)
+zdata = data.frame(x = runif(nn <- 2000))
+zdata = transform(zdata, p0 = logit(-1 + 2*x, inverse=TRUE),
+                         y1 = rposnegbin(nn, munb=exp(0+2*x), size=exp(1)),
+                         y2 = rposnegbin(nn, munb=exp(1+2*x), size=exp(1)))
+zdata = transform(zdata, y1 = ifelse(runif(nn) < p0, 0, y1),
+                         y2 = ifelse(runif(nn) < p0, 0, y2))
+with(zdata, table(y1))
+with(zdata, table(y2))
 
-fit = vglm(cbind(y1,y2) ~ x, zanegbinomial, trace=TRUE)
+fit = vglm(cbind(y1,y2) ~ x, zanegbinomial, zdata, trace=TRUE)
 coef(fit, matrix=TRUE)
 head(fitted(fit))
 head(predict(fit))

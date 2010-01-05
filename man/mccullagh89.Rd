@@ -8,11 +8,9 @@
 
 }
 \usage{
-mccullagh89(ltheta="rhobit", lnu="logoff",
-            itheta=NULL, inu=NULL,
-            etheta=list(),
-            enu=if(lnu == "logoff") list(offset=0.5) else list(),
-            zero=NULL)
+mccullagh89(ltheta="rhobit", lnu="logoff", itheta=NULL, inu=NULL,
+            etheta=list(), enu=if(lnu == "logoff") list(offset=0.5)
+            else list(), zero=NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

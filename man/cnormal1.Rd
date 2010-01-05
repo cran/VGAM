@@ -73,17 +73,17 @@ cnormal1(lmu="identity", lsd="loge", imethod=1, zero=2)
 }
 
 \examples{
-n = 1000
-x = runif(n)
-ystar  = rnorm(n, mean=100 + 15 * x, sd=exp(3)) # True values
+cdata = data.frame(x = runif(nn <- 1000)) # ystar are true values
+cdata = transform(cdata, ystar  = rnorm(nn, mean=100 + 15 * x, sd=exp(3)))
 \dontrun{hist(ystar)}
-L = runif(n,  80,  90) # Lower censoring points
-U = runif(n, 130, 140) # Upper censoring points
-y = pmax(L, ystar) # Left  censored
-y = pmin(U, y)     # Right censored
+L = runif(nn,  80,  90) # Lower censoring points
+U = runif(nn, 130, 140) # Upper censoring points
+cdata = transform(cdata, y = pmax(L, ystar)) # Left  censored
+cdata = transform(cdata, y = pmin(U, y))     # Right censored
 \dontrun{hist(y)}
-extra = list(leftcensored = ystar < L, rightcensored = ystar > U)
-fit = vglm(y ~ x, cnormal1(zero=2), trace=TRUE, extra=extra)
+extra = list(leftcensored = with(cdata, ystar < L),
+            rightcensored = with(cdata, ystar > U))
+fit = vglm(y ~ x, cnormal1(zero=2), cdata, trace=TRUE, extra=extra)
 coef(fit, matrix=TRUE)
 Coef(fit)
 names(fit@extra)

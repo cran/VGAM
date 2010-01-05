@@ -12,8 +12,8 @@
 \usage{
 binom2.or(lmu = "logit", lmu1 = lmu, lmu2 = lmu, loratio = "loge",
           emu=list(), emu1=emu, emu2=emu, eoratio=list(),
-          imu1=NULL, imu2=NULL, ioratio = NULL,
-          zero = 3, exchangeable = FALSE, tol = 0.001, morerobust=FALSE)
+          imu1=NULL, imu2=NULL, ioratio = NULL, zero = 3,
+          exchangeable = FALSE, tol = 0.001, morerobust=FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -83,10 +83,10 @@ binom2.or(lmu = "logit", lmu1 = lmu, lmu2 = lmu, loratio = "loge",
   equal 1 for a success and a 0 for a failure, and the odds ratio is often
   written \eqn{\psi=p_{00}p_{11}/(p_{10}p_{01})}{psi=p00 p11 / (p10 p01)}.
   The model is fitted by maximum likelihood estimation since the full
-  likelihood is specified.  The two binary responses are independent
-  if and only if the odds ratio is unity, or equivalently, the log odds
-  ratio is zero.
-  Fisher scoring is implemented.
+  likelihood is specified.
+  The two binary responses are independent if and only if the odds ratio
+  is unity, or equivalently, the log odds ratio is zero.  Fisher scoring
+  is implemented.
 
   The default models \eqn{\eta_3}{eta3} as a single parameter only,
   i.e., an intercept-only model, but this can be circumvented by setting
@@ -143,11 +143,13 @@ binom2.or(lmu = "logit", lmu1 = lmu, lmu2 = lmu, loratio = "loge",
 }
 \author{ Thomas W. Yee }
 \note{
-  The response should be either a 4-column matrix of counts (whose
-  columns correspond to \eqn{(Y_1,Y_2)}{(Y1,Y2)} = (0,0), (0,1), (1,0),
+  The response should be either a 4-column matrix of counts
+  (whose columns correspond to \eqn{(Y_1,Y_2)}{(Y1,Y2)} = (0,0), (0,1), (1,0),
   (1,1) respectively), or a two-column matrix where each column has two
   distinct values.
   The function \code{\link{rbinom2.or}} may be used to generate such data.
+  Successful convergence requires at least one case of each of the four
+  possible outcomes.
 
   By default, a constant odds ratio is fitted because \code{zero=3}.
   Set \code{zero=NULL} if you want the odds ratio to be modelled as a
@@ -189,7 +191,6 @@ fit = vglm(cbind(nBnW,nBW,BnW,BW) ~ Age, binom2.or(zero=NULL), coalminers)
 fitted(fit)
 summary(fit)
 coef(fit, matrix=TRUE)
-
 c(weights(fit, type="prior")) * fitted(fit)  # Table 6.8
 
 \dontrun{

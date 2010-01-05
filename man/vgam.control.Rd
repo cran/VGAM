@@ -18,8 +18,6 @@ vgam.control(all.knots = FALSE, bf.epsilon = 1e-07, bf.maxit = 30,
 \arguments{
 % zz na.action differs from vglm 
 
-In the following, we let \eqn{d} be the number of \code{\link{s}} terms
-in the formula. 
 
   \item{all.knots}{
   logical indicating if all distinct points of 
@@ -32,16 +30,19 @@ in the formula.
   This increases very slowly with \eqn{n}
   so that the number of knots is approximately between 50 and 60
   for large \eqn{n}.
+
   }
   \item{bf.epsilon}{
   tolerance used by the modified vector
   backfitting algorithm for testing convergence.
   Must be a positive number.
+
   }
   \item{bf.maxit}{
   maximum number of iterations allowed in
   the modified vector
   backfitting algorithm. Must be a positive integer.
+
   }
   \item{checkwz}{
   logical indicating whether the diagonal elements of
@@ -55,6 +56,7 @@ in the formula.
   be used to test for convergence. 
   The possibilities are listed in \code{.min.criterion.VGAM}, but
   most family functions only implement a few of these.
+
   }
   \item{epsilon}{
   positive convergence tolerance epsilon. Roughly
@@ -62,40 +64,46 @@ in the formula.
   are assumed to have
   converged when two successive \code{criterion} values are within
   \code{epsilon} of each other.
+
   }
   \item{maxit}{
   maximum number of
-      Newton-Raphson/Fisher-scoring/local-scoring iterations allowed.
+  Newton-Raphson/Fisher-scoring/local-scoring iterations allowed.
+
   }
   \item{na.action}{
-  how to handle missing values. Unlike the
-    SPLUS \code{gam} function, \code{\link{vgam}} cannot handle
-    \code{NA}s when smoothing.
+  how to handle missing values.
+  Unlike the SPLUS \code{gam} function, \code{\link{vgam}} cannot handle
+  \code{NA}s when smoothing.
+
   }
   \item{nk}{
   vector of length \eqn{d} containing positive integers.
-   Recycling is used if necessary. 
-   The \eqn{i}th value is the number of B-spline coefficients to be
-   estimated for each component function of the \eqn{i}th 
-   \code{s()} term.
-   \code{nk} differs from the number of knots by some constant.
-   If specified, \code{nk} overrides the automatic knot selection
-   procedure.
+  where \eqn{d} be the number of \code{\link{s}} terms
+  in the formula. 
+  Recycling is used if necessary. 
+  The \eqn{i}th value is the number of B-spline coefficients to be
+  estimated for each component function of the \eqn{i}th 
+  \code{s()} term.
+  \code{nk} differs from the number of knots by some constant.
+  If specified, \code{nk} overrides the automatic knot selection procedure.
+
   }
   \item{save.weight}{
   logical indicating whether the \code{weights} slot
-  of a \code{"vglm"} object will be saved on the object. If not, it will
-  be reconstructed when needed, e.g., \code{summary}.
+  of a \code{"vglm"} object will be saved on the object.
+  If not, it will be reconstructed when needed, e.g., \code{summary}.
+
   }
   \item{se.fit}{
   logical indicating whether approximate
-    pointwise standard errors are to be saved on the object.
-    If \code{TRUE}, then these can be plotted with \code{plot(..., se=TRUE)}. 
+  pointwise standard errors are to be saved on the object.
+  If \code{TRUE}, then these can be plotted with \code{plot(..., se=TRUE)}. 
 
   }
   \item{trace}{
-  logical indicating if output should be produced for
-  each iteration.
+  logical indicating if output should be produced for each iteration.
+
   }
   \item{wzepsilon}{
   Small positive number used to test whether the diagonals of the working
@@ -116,6 +124,7 @@ in the formula.
   }
 }
 \details{
+
   Most of the control parameters are used within \code{vgam.fit} and
   you will have to look at that to understand the full details.  Many of
   the control parameters are used in a similar manner by \code{vglm.fit}
@@ -132,6 +141,7 @@ in the formula.
   A list with components matching the input names. A little error
   checking is done, but not much.
   The list is assigned to the \code{control} slot of \code{\link{vgam}} objects.
+
 }
 \references{ 
 Yee, T. W. and Wild, C. J. (1996)
@@ -140,6 +150,7 @@ Vector generalized additive models.
 \bold{58}, 481--493.
 
 \url{http://www.stat.auckland.ac.nz/~yee}
+
 }
 \author{ Thomas W. Yee}
 
@@ -147,6 +158,7 @@ Vector generalized additive models.
   \code{\link{vgam}} does not implement half-stepsizing, therefore parametric
   models should be fitted with \code{\link{vglm}}. Also, \code{\link{vgam}} is
   slower than  \code{\link{vglm}} too.
+
 }
 
 % ~Make other sections like Warning with \section{Warning }{....} ~
@@ -156,6 +168,7 @@ Vector generalized additive models.
   \code{\link{vglm.control}},
   \code{\link{vsmooth.spline}},
   \code{\link{vglm}}. 
+
 }
 
 \examples{

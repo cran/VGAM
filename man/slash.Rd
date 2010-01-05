@@ -102,8 +102,8 @@ f(y) = 1/(2*sigma*sqrt(2*pi)) if y=mu
 
 }
 \examples{
-y = rslash(n=1000, mu=4, sigma=exp(2))
-fit = vglm(y ~ 1, slash, trace=TRUE) 
+sdata = data.frame(y = rslash(n=1000, mu=4, sigma=exp(2)))
+fit = vglm(y ~ 1, slash, sdata, trace=TRUE) 
 coef(fit, matrix=TRUE)
 Coef(fit)
 summary(fit)

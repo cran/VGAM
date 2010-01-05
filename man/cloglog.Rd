@@ -83,6 +83,11 @@ cloglog(theta, earg = list(), inverse = FALSE, deriv = 0,
   Numerical instability may occur when \code{theta} is close to 1 or 0.
   One way of overcoming this is to use \code{earg}.
 
+  Changing 1s to 0s and 0s to 1s in the response means that effectively
+  a loglog link is fitted. That is, tranform \eqn{y} by \eqn{1-y}.
+  That's why only one of \code{\link{cloglog}}
+  and \code{loglog} is written.
+
   With constrained ordination (e.g., \code{\link{cqo}} and
   \code{\link{cao}}) used with \code{\link{binomialff}}, a complementary
   log-log link function is preferred over the default \code{\link{logit}}
@@ -121,6 +126,7 @@ legend(0.1, 4, c("logit", "probit", "cloglog", "cauchit"),
        col=c("limegreen","purple","chocolate", "tan"), lwd=2)
 }
 
+\dontrun{
 # This example shows that a cloglog link is preferred over the logit
 n = 500; p = 5; S = 3; Rank = 1  # Species packing model:
 mydata = rcqo(n, p, S, EqualTol=TRUE, ESOpt=TRUE, EqualMax=TRUE,
@@ -132,6 +138,7 @@ fitl = cqo(attr(mydata, "formula"), ITol=TRUE, data=mydata,
 
 # Compare the fitted models (cols 1 and 3) with the truth (col 2)
 cbind(ccoef(fitc), attr(mydata, "ccoefficients"), ccoef(fitl))
+}
 }
 \keyword{math}
 \keyword{models}

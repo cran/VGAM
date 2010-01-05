@@ -62,8 +62,8 @@ rzibinom(n, size, prob, phi = 0)
 }
 \examples{
 prob = 0.2; size = 10; phi = 0.5
-(i = dzibinom(0:size, size, prob, phi=phi))
-max(abs(cumsum(i) - pzibinom(0:size, size, prob, phi=phi)))  # Should be 0
+(ii = dzibinom(0:size, size, prob, phi=phi))
+max(abs(cumsum(ii) - pzibinom(0:size, size, prob, phi=phi)))  # Should be 0
 table(rzibinom(100, size, prob, phi=phi))
 
 table(qzibinom(runif(100), size, prob, phi=phi))
@@ -76,7 +76,6 @@ barplot(rbind(dzibinom(x, size, prob, phi=phi),
         beside = TRUE, col = c("blue","green"),
         main=paste("ZIB(", size, ", ", prob, ", phi=", phi, ") (blue) vs",
                    " Binomial(", size, ", ", prob, ") (green)", sep=""),
-        names.arg = as.character(x), las=1, lwd=2)
-}
+        names.arg = as.character(x), las=1, lwd=2) }
 }
 \keyword{distribution}

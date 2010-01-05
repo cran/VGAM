@@ -6,8 +6,7 @@
   Fits a positive (univariate) normal distribution.
 }
 \usage{
-posnormal1(lmean="identity", lsd="loge",
-           emean=list(), esd=list(),
+posnormal1(lmean="identity", lsd="loge", emean=list(), esd=list(),
            imean=NULL, isd=NULL, nsimEIM = 100, zero=NULL)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -102,13 +101,15 @@ posnormal1(lmean="identity", lsd="loge",
 }
 
 \examples{
-m =  1.0; SD = exp(1.0)
-y = rposnorm(n <- 1000, m=m, sd=SD)
-\dontrun{hist(y, prob=TRUE, main=paste("posnorm(m=",m,", sd=",round(SD,2),")"))}
-fit = vglm(y ~ 1, fam=posnormal1, trace=TRUE)
+pndat = data.frame(m =  1.0, SD = exp(1.0))
+pndat = transform(pndat, y = rposnorm(n <- 1000, m=m, sd=SD))
+
+\dontrun{with(pndat, hist(y, prob=TRUE, border="blue",
+         main=paste("posnorm(m=",m[1],", sd=",round(SD[1],2),")"))) }
+fit = vglm(y ~ 1, fam=posnormal1, pndat, trace=TRUE)
 coef(fit, mat=TRUE)
 (Cfit = Coef(fit))
-mygrid = seq(min(y), max(y), len=200) # Add the fit to the histogram
+mygrid = with(pndat, seq(min(y), max(y), len=200)) # Add the fit to the histogram
 \dontrun{lines(mygrid, dposnorm(mygrid, Cfit[1], Cfit[2]), col="red")}
 }
 \keyword{models}

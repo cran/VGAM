@@ -45,8 +45,7 @@ rposnorm(n, mean=0, sd=1)
 }
 \examples{
 \dontrun{
-m =  0.8
-x = seq(-1, 4, len=501)
+m =  0.8; x = seq(-1, 4, len=501)
 plot(x, dposnorm(x, m=m), type="l", ylim=0:1, las=1,
      ylab=paste("posnorm(m=",m,", sd=1)"), col="blue",
      main="Blue is density, red is cumulative distribution function",

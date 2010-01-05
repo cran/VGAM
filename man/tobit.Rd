@@ -108,26 +108,24 @@ Estimation of relationships for limited dependent variables.
     \code{\link{dcnormal1}}.
 }
 \examples{
-n = 1000
-x = seq(-1, 1, len=n)
-f = function(x) 1 + 4*x
-ystar = f(x) + rnorm(n)
-Lower = 1
-Upper = 4
-y  = pmax(ystar, Lower)
-y  = pmin(y, Upper)
-table(y==Lower | y==Upper)   # How many censored values?
-fit = vglm(y ~ x, tobit(Lower=Lower, Upper=Upper), trace=TRUE)
+tdata = data.frame(x = seq(-1, 1, len=(nn <- 1000)))
+foo = function(x) 1 + 4*x
+tdata = transform(tdata, ystar = foo(x) + rnorm(nn))
+Lower = 1; Upper = 4
+tdata = transform(tdata, y  = pmax(ystar, Lower))
+tdata = transform(tdata, y  = pmin(y, Upper))
+with(tdata, table(y==Lower | y==Upper))   # How many censored values?
+
+fit = vglm(y ~ x, tobit(Lower=Lower, Upper=Upper), tdata, trace=TRUE)
 table(fit@extra$censoredL)
 table(fit@extra$censoredU)
 coef(fit, matrix=TRUE)
 summary(fit)
 \dontrun{
-plot(x, y, main="Tobit model", las=1)
-legend(-0.9, 3, c("Truth", "Estimate"), col=c("Blue", "Red"), lwd=2)
-lines(x, f(x), col="blue", lwd=2)  # The truth
-lines(x, fitted(fit), col="red", lwd=2, lty="dashed")  # The estimate
-}
+with(tdata, plot(x, y, main="Tobit model", las=1))
+legend(-0.9, 3, c("Truth", "Estimate"), col=c("blue", "red"), lwd=2)
+with(tdata, lines(x, foo(x), col="blue", lwd=2))
+with(tdata, lines(x, fitted(fit), col="red", lwd=2, lty="dashed")) }
 }
 \keyword{models}
 \keyword{regression}

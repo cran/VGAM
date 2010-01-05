@@ -8,8 +8,7 @@
 
 }
 \usage{
-inv.gaussianff(lmu="loge", llambda="loge",
-               emu=list(), elambda=list(),
+inv.gaussianff(lmu="loge", llambda="loge", emu=list(), elambda=list(),
                ilambda=1, zero=NULL)
 }
 %- maybe also 'usage' for other objects documented here.

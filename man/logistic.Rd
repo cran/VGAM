@@ -127,17 +127,15 @@ A note on Deriving the Information Matrix for a Logistic Distribution,
 }
 \examples{
 # location unknown, scale known
-n = 500
-x = runif(n)
-y = rlogis(n, loc=1+5*x, scale=4)
-fit = vglm(y ~ x, logistic1(scale=4), trace=TRUE, crit="c")
+lodat1 = data.frame(x = runif(nn <- 500))
+lodat1 = transform(lodat1, y = rlogis(nn, loc=1+5*x, scale=4))
+fit = vglm(y ~ x, logistic1(scale=4), lodat1, trace=TRUE, crit="c")
 coef(fit, matrix=TRUE)
 
 # Both location and scale unknown
-n = 2000
-x = runif(n)
-y = rlogis(n, loc=1+5*x, scale=exp(0+1*x))
-fit = vglm(y ~ x, logistic2)
+lodat2 = data.frame(x = runif(nn <- 2000))
+lodat2 = transform(lodat2, y = rlogis(nn, loc=1+5*x, scale=exp(0+1*x)))
+fit = vglm(y ~ x, logistic2, lodat2)
 coef(fit, matrix=TRUE)
 vcov(fit)
 summary(fit)

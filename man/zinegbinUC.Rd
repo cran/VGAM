@@ -72,8 +72,8 @@ rzinegbin(n, phi, size, prob=NULL, munb=NULL)
 \examples{
 munb = 3; phi = 0.2; size = k = 10
 x = 0:10
-(i = dzinegbin(x, phi=phi, mu=munb, size=k))
-max(abs(cumsum(i) - pzinegbin(x, phi=phi, mu=munb, size=k))) # Should be 0
+(ii = dzinegbin(x, phi=phi, mu=munb, size=k))
+max(abs(cumsum(ii) - pzinegbin(x, phi=phi, mu=munb, size=k))) # Should be 0
 table(rzinegbin(100, phi=phi, mu=munb, size=k))
 
 table(qzinegbin(runif(1000), phi=phi, mu=munb, size=k))
@@ -86,7 +86,6 @@ barplot(rbind(dzinegbin(x, phi=phi, mu=munb, size=k),
         main=paste("ZINB(mu=", munb, ", k=", k, ", phi=", phi,
                    ") (blue) vs negative binomial(mu=", munb,
                    ", size=", k, ") (green)", sep=""),
-        names.arg = as.character(x))
-}
+        names.arg = as.character(x)) }
 }
 \keyword{distribution}

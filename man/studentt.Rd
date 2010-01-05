@@ -6,7 +6,7 @@
   Estimation of the degrees of freedom for a Student t distribution.
 }
 \usage{
-studentt(link.df = "loglog", earg=list(), idf=NULL, nsimEIM=100)
+studentt(link.df = "loglog", earg=list(), idf=NULL, nsimEIM=300)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -91,11 +91,10 @@ The probable error of a mean.
 
 }
 \examples{
-n = 500
-y = rt(n, df=exp(exp(0.5)))
-fit = vglm(y ~ 1, studentt, trace=TRUE)
+sdata = data.frame(x = runif(nn <- 1000))
+sdata = transform(sdata, y = rt(nn, df=exp(exp(0.5 - x))))
+fit = vglm(y ~ x, studentt, sdata, trace=TRUE)
 coef(fit, matrix=TRUE)
-Coef(fit) 
 }
 \keyword{models}
 \keyword{regression}

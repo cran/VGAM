@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2009 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2010 T.W. Yee, University of Auckland. All rights reserved.
 
 
 
@@ -8,46 +8,43 @@
 
 
 
-if(TRUE) {
+if (TRUE) {
 
 
 AICvlm = function(object, ..., k=2) {
     estdisp = object@misc$estimated.dispersion
-    no.dpar = if(length(estdisp) && is.logical(estdisp) && estdisp)
+    no.dpar = if (length(estdisp) && is.logical(estdisp) && estdisp)
         length(object@misc$dispersion) else 0
     -2 * logLik.vlm(object, ...) + k * (length(coefvlm(object)) + no.dpar)
 }
 
+
 AICvgam = function(object, ..., k=2) {
     estdisp = object@misc$estimated.dispersion
-    no.dpar = if(length(estdisp) && is.logical(estdisp) && estdisp)
+    no.dpar = if (length(estdisp) && is.logical(estdisp) && estdisp)
         length(object@misc$dispersion) else 0 
-    nldf = if(is.Numeric(object@nl.df)) sum(object@nl.df) else 0
+    nldf = if (is.Numeric(object@nl.df)) sum(object@nl.df) else 0
     -2 * logLik.vlm(object, ...) + k * (length(coefvlm(object)) + no.dpar + nldf)
 }
 
+
 AICrrvglm = function(object, ..., k=2) {
- print("20090316; k in AICrrvglm(); zz")
- print( k )
     estdisp = object@misc$estimated.dispersion
-    no.dpar = if(length(estdisp) && is.logical(estdisp) && estdisp)
+    no.dpar = if (length(estdisp) && is.logical(estdisp) && estdisp)
         length(object@misc$dispersion) else 0 
     Structural.zero = object@control$Structural.zero
     MMM = object@misc$M
     Rank = object@control$Rank
     elts.tildeA = (MMM - Rank - length(Structural.zero)) * Rank
- print("object@control$Structural.zero")
- print("object@control$Structural.zero")
     -2 * logLik.vlm(object, ...) +
     k * (length(coefvlm(object)) + no.dpar + elts.tildeA)
 }
 
+
 AICqrrvglm = function(object, ..., k=2) {
- print("20090316; k in AICqrrvglm(); zz")
- print( k )
 
     estdisp = object@misc$estimated.dispersion
-    no.dpar = if(length(estdisp) && is.logical(estdisp) && estdisp)
+    no.dpar = if (length(estdisp) && is.logical(estdisp) && estdisp)
         length(object@misc$dispersion) else 0 
     Structural.zero = object@control$Structural.zero
     MMM = object@misc$M
@@ -56,20 +53,23 @@ AICqrrvglm = function(object, ..., k=2) {
 
     EqualTolerances = object@control$EqualTolerances
     ITolerances = object@control$ITolerances
-    if(!(length(EqualTolerances) == 1 && is.logical(EqualTolerances)))
+    if (!(length(EqualTolerances) == 1 && is.logical(EqualTolerances)))
         stop("could not determine whether the fitted object used an ",
              "equal-tolerances assumption based on argument 'EqualTolerances'")
-    if(!(length(ITolerances) == 1 && is.logical(ITolerances)))
+    if (!(length(ITolerances) == 1 && is.logical(ITolerances)))
         stop("could not determine whether the fitted object used an ",
              "equal-tolerances assumption based on argument 'ITolerances'")
-    NOS = if(length(object@y)) ncol(object@y) else MMM
+    NOS = if (length(object@y)) ncol(object@y) else MMM
     MSratio = MMM / NOS  # First value is g(mean) = quadratic form in l
-    if(round(MSratio) != MSratio) stop("'MSratio' is not an integer")
+    if (round(MSratio) != MSratio) stop("'MSratio' is not an integer")
     elts.D = ifelse(ITolerances || EqualTolerances, 1, NOS) * Rank*(Rank+1)/2
 
     deviance(object, ...) +
     k * (length(coefvlm(object)) + no.dpar + elts.tildeA + elts.D)
 }
+
+
+
 
 setMethod("AIC", "vlm",
          function(object, ..., k=2)
@@ -98,11 +98,7 @@ setMethod("AIC", "qrrvglm",
 
 
 
-
-
-
-
-if(FALSE) {
+if (FALSE) {
 
 
 
@@ -119,11 +115,11 @@ AICrrvglm = function(object, ..., k=2) {
     stop("not working yet")
     crit = logLik.vlm(object)
     sign = -2
-    if(!length(crit) || !is.numeric(crit)) {
+    if (!length(crit) || !is.numeric(crit)) {
         crit = deviance(object)
         sign = 1
     }
-    if(!length(crit) || !is.numeric(crit))
+    if (!length(crit) || !is.numeric(crit))
         stop("cannot get at the deviance or loglikelihood of the object")
 
     sign * crit + 2 * (length(coef(object)) +

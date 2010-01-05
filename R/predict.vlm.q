@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2009 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2010 T.W. Yee, University of Auckland. All rights reserved.
 
 
 
@@ -17,19 +17,19 @@ predict.vlm = function(object,
     Xm2 = NULL
     xij.used = length(form2 <- object@misc$form2) || length(object@control$xij)
 
-    if(mode(type) != "character" && mode(type) != "name")
+    if (mode(type) != "character" && mode(type) != "name")
         type = as.character(substitute(type))
     type = match.arg(type, c("response","terms"))[1]
 
     na.act = object@na.action
     object@na.action = list()
 
-    if(raw && type != "terms")
+    if (raw && type != "terms")
         stop("sorry, 'raw=TRUE' only works when 'type=\"terms\"'")
 
-    if(!length(newdata) && type == "response" && !se.fit &&
+    if (!length(newdata) && type == "response" && !se.fit &&
         length(object@fitted.values)) {
-        if(length(na.act)) {
+        if (length(na.act)) {
             return(napredict(na.act[[1]], object@fitted.values))
         } else {
             return(object@fitted.values)
@@ -39,10 +39,10 @@ predict.vlm = function(object,
     ttob = terms(object)  # 11/8/03; object@terms$terms
 
 
-    if(!length(newdata)) {
+    if (!length(newdata)) {
         offset = object@offset
 
-        if(xij.used) {
+        if (xij.used) {
             bothList = model.matrix(object, type="bothlmlm2")
             X   = bothList$X
             Xm2 = bothList$Xm2
@@ -51,40 +51,40 @@ predict.vlm = function(object,
         }
     } else {
 
-        if(is.smart(object) && length(object@smart.prediction)) {
+        if (is.smart(object) && length(object@smart.prediction)) {
             setup.smart("read", smart.prediction=object@smart.prediction)
         }
 
         X = model.matrix(delete.response(ttob), newdata,
-                         contrasts=if(length(object@contrasts)) object@contrasts
-                                   else NULL,
+                         contrasts = if (length(object@contrasts))
+                                     object@contrasts else NULL,
                          xlev = object@xlevels)
-        if(xij.used) {
+        if (xij.used) {
             ttXm2 = terms(form2)
             Xm2 = model.matrix(delete.response(ttXm2), newdata,
-                               contrasts = if(length(object@contrasts))
+                               contrasts = if (length(object@contrasts))
                                            object@contrasts else NULL,
                                xlev = object@xlevels)
         }
 
-        if(object@misc$intercept.only && nrow(X) != nrow(newdata)) {
+        if (object@misc$intercept.only && nrow(X) != nrow(newdata)) {
             as.save = attr(X, "assign")
             X = X[rep(1, nrow(newdata)),,drop=FALSE] # =matrix(1,nrow(newdata),1)
             dimnames(X) = list(dimnames(newdata)[[1]], "(Intercept)")
             attr(X, "assign") = as.save  # Restored 
         }
 
-        offset = if(!is.null(off.num <- attr(ttob, "offset"))) {
+        offset = if (!is.null(off.num <- attr(ttob, "offset"))) {
             eval(attr(ttob, "variables")[[off.num+1]], newdata)
-        } else if(!is.null(object@offset))
+        } else if (!is.null(object@offset))
             eval(object@call$offset, newdata)
 
-        if(is.smart(object) && length(object@smart.prediction)) {
+        if (is.smart(object) && length(object@smart.prediction)) {
             wrapup.smart() 
         }
 
         attr(X, "assign") = attrassigndefault(X, ttob)
-        if(length(Xm2))
+        if (length(Xm2))
             attr(Xm2, "assign") = attrassigndefault(Xm2, ttXm2)
     }
 
@@ -95,20 +95,20 @@ predict.vlm = function(object,
     M = object@misc$M
     Blist = object@constraints
     ncolBlist = unlist(lapply(Blist, ncol))
-    if(hasintercept)
+    if (hasintercept)
         ncolBlist = ncolBlist[-1]
 
     xbar = x2bar = NULL
-    if(type == "terms" && hasintercept) {
-        if(length(object@control$xij)) {
+    if (type == "terms" && hasintercept) {
+        if (length(object@control$xij)) {
             x2bar = colMeans(Xm2)
             Xm2 = sweep(Xm2, 2, x2bar)
         }
         xbar = colMeans(X)
         X = sweep(X, 2, xbar)
         nac = is.na(object@coefficients)
-        if(any(nac)) {
-            if(length(object@control$xij))
+        if (any(nac)) {
+            if (length(object@control$xij))
                 stop("cannot handle 'xij' argument when ",
                      "there are NAs in the coefficients")
             X = X[, !nac, drop=FALSE]
@@ -116,11 +116,11 @@ predict.vlm = function(object,
         }
     }
 
-    if(!is.null(newdata) && !is.data.frame(newdata))
+    if (!is.null(newdata) && !is.data.frame(newdata))
         newdata = as.data.frame(newdata)
 
-    nn = if(!is.null(newdata)) nrow(newdata) else object@misc$n
-    if(raw) {
+    nn = if (!is.null(newdata)) nrow(newdata) else object@misc$n
+    if (raw) {
         Blist = canonical.Blist(Blist)
         object@constraints = Blist
     }
@@ -142,28 +142,28 @@ predict.vlm = function(object,
     vasgn = attr(X_vlm, "vassign")
 
  
-    if(type == "terms") {
+    if (type == "terms") {
         nv = names(vasgn)
-        if(hasintercept)
+        if (hasintercept)
             nv = nv[-(1:ncol(object@constraints[["(Intercept)"]]))]
-        terms.arg = if(is.null(terms.arg)) nv else terms.arg
+        terms.arg = if (is.null(terms.arg)) nv else terms.arg
 
         index = charmatch(terms.arg, nv)
-        if(all(index == 0)) {
+        if (all(index == 0)) {
             warning("no match found; returning all terms")
             index = 1:length(nv)
         }
         vasgn = vasgn[nv[index]]
     }
 
-    if(any(is.na(object@coefficients)))
+    if (any(is.na(object@coefficients)))
         stop("cannot handle NAs in 'object@coefficients'")
 
     dname2 = object@misc$predictors.names
-    if(se.fit) {
+    if (se.fit) {
         object = as(object, "vlm") # Coerce
         fit.summary = summaryvlm(object, dispersion=dispersion)
-        sigma = if(is.numeric(fit.summary@sigma)) fit.summary@sigma else
+        sigma = if (is.numeric(fit.summary@sigma)) fit.summary@sigma else
                 sqrt(deviance(object) / object@df.residual) # was @rss
         pred = Build.terms.vlm(x=X_vlm, coefs=coefs,
                                cov=sigma^2 * fit.summary@cov.unscaled,
@@ -184,8 +184,8 @@ predict.vlm = function(object,
 
     constant  = attr(pred, "constant")
 
-    if(type != "terms" && length(offset) && any(offset != 0)) {
-        if(se.fit) {
+    if (type != "terms" && length(offset) && any(offset != 0)) {
+        if (se.fit) {
             pred$fitted.values = pred$fitted.values + offset
         } else {
             pred = pred + offset
@@ -194,17 +194,17 @@ predict.vlm = function(object,
 
 
 
-    if(type == "terms") {
+    if (type == "terms") {
         Blist = subconstraints(object@misc$orig.assign, object@constraints)
         ncolBlist = unlist(lapply(Blist, ncol))
-        if(hasintercept)
+        if (hasintercept)
             ncolBlist = ncolBlist[-1]
 
         cs = cumsum(c(1, ncolBlist))  # Like a pointer
         for(ii in 1:(length(cs)-1))
-            if(cs[ii+1]-cs[ii] > 1)
+            if (cs[ii+1]-cs[ii] > 1)
                 for(kk in (cs[ii]+1):(cs[ii+1]-1))
-                    if(se.fit) {
+                    if (se.fit) {
                       pred$fitted.values[,cs[ii]]= pred$fitted.values[,cs[ii]] +
                                                    pred$fitted.values[,kk]
                       pred$se.fit[,cs[ii]] = pred$se.fit[,cs[ii]] +
@@ -213,15 +213,15 @@ predict.vlm = function(object,
                         pred[,cs[ii]] = pred[,cs[ii]] + pred[,kk]
                     }
 
-        if(se.fit) {
+        if (se.fit) {
             pred$fitted.values = pred$fitted.values[,cs[-length(cs)],drop=FALSE]
             pred$se.fit = pred$se.fit[, cs[-length(cs)], drop=FALSE]
         } else {
             pred = pred[, cs[-length(cs)], drop=FALSE]
         }
       
-        pp = if(se.fit) ncol(pred$fitted.values) else ncol(pred)
-        if(se.fit) {
+        pp = if (se.fit) ncol(pred$fitted.values) else ncol(pred)
+        if (se.fit) {
             dimnames(pred$fitted.values) = dimnames(pred$se.fit) = NULL
             dim(pred$fitted.values) = dim(pred$se.fit) = c(M, nn, pp)
             pred$fitted.values = aperm(pred$fitted.values, c(2,1,3))
@@ -234,11 +234,11 @@ predict.vlm = function(object,
             dim(pred) = c(nn, M*pp)
         }
 
-        if(raw) {
+        if (raw) {
             kindex = NULL
             for(ii in 1:pp) 
                 kindex = c(kindex, (ii-1)*M + (1:ncolBlist[ii]))
-            if(se.fit) {
+            if (se.fit) {
                 pred$fitted.values = pred$fitted.values[,kindex,drop=FALSE]
                 pred$se.fit = pred$se.fit[,kindex,drop=FALSE]
             } else {
@@ -246,9 +246,9 @@ predict.vlm = function(object,
             }
         } 
 
-        temp = if(raw) ncolBlist else rep(M, length(ncolBlist))
+        temp = if (raw) ncolBlist else rep(M, length(ncolBlist))
         dd = vlabel(names(ncolBlist), temp, M)
-        if(se.fit) {
+        if (se.fit) {
             dimnames(pred$fitted.values) = 
             dimnames(pred$se.fit) = list(if(length(newdata))
                                          dimnames(newdata)[[1]] else dx1, dd)
@@ -257,8 +257,8 @@ predict.vlm = function(object,
                                   dimnames(newdata)[[1]] else dx1, dd)
         }
 
-        if(!length(newdata) && length(na.act)) {
-            if(se.fit) {
+        if (!length(newdata) && length(na.act)) {
+            if (se.fit) {
                 pred$fitted.values = napredict(na.act[[1]], pred$fitted.values)
                 pred$se.fit = napredict(na.act[[1]], pred$se.fit)
             } else {
@@ -266,22 +266,22 @@ predict.vlm = function(object,
             }
         }
 
-        if(!raw)
+        if (!raw)
             cs = cumsum(c(1, M + 0*ncolBlist))
         fred = vector("list", length(ncolBlist))
         for(ii in 1:length(fred))
             fred[[ii]] = cs[ii]:(cs[ii+1]-1)
         names(fred) = names(ncolBlist)
-        if(se.fit) {
+        if (se.fit) {
             attr(pred$fitted.values, "vterm.assign") = fred
             attr(pred$se.fit, "vterm.assign") = fred
         } else {
             attr(pred, "vterm.assign") = fred
         }
-    } # End of if(type == "terms")
+    } # End of if (type == "terms")
 
-    if(!is.null(xbar)) {
-        if(se.fit) {
+    if (!is.null(xbar)) {
+        if (se.fit) {
             attr(pred$fitted.values, "constant")  = constant
         } else {
             attr(pred, "constant")  = constant
@@ -304,7 +304,7 @@ subconstraints = function(assign, constraints) {
 
 
     ans = vector("list", length(assign))
-    if(!length(assign) || !length(constraints))
+    if (!length(assign) || !length(constraints))
         stop("assign and/or constraints is empty")
     for(ii in 1:length(assign))
         ans[[ii]] = constraints[[assign[[ii]][1]]]

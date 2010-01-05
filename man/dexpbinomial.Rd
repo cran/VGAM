@@ -9,9 +9,8 @@
 
 }
 \usage{
-dexpbinomial(lmean="logit", ldispersion="logit",
-             emean=list(),  edispersion=list(),
-             idispersion=0.25, zero=2)
+dexpbinomial(lmean="logit", ldispersion="logit", emean=list(),
+             edispersion=list(), idispersion=0.25, zero=2)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

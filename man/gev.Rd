@@ -11,15 +11,15 @@
 \usage{
 gev(llocation = "identity", lscale = "loge", lshape = "logoff",
     elocation = list(), escale = list(),
-    eshape = if(lshape=="logoff") list(offset=0.5) else
-    if(lshape=="elogit") list(min=-0.5, max=0.5) else list(),
+    eshape = if (lshape=="logoff") list(offset=0.5) else
+    if (lshape=="elogit") list(min=-0.5, max=0.5) else list(),
     percentiles = c(95, 99), iscale=NULL, ishape = NULL,
     method.init = 1, gshape=c(-0.45, 0.45), tolshape0=0.001,
     giveWarning=TRUE, zero = 3)
 egev(llocation = "identity", lscale = "loge", lshape = "logoff",
      elocation = list(), escale = list(),
-     eshape = if(lshape=="logoff") list(offset=0.5) else
-     if(lshape=="elogit") list(min=-0.5, max=0.5) else list(),
+     eshape = if (lshape=="logoff") list(offset=0.5) else
+     if (lshape=="elogit") list(min=-0.5, max=0.5) else list(),
      percentiles = c(95, 99), iscale=NULL,  ishape = NULL,
      method.init=1, gshape=c(-0.45, 0.45), tolshape0=0.001,
      giveWarning=TRUE, zero = 3)
@@ -179,6 +179,7 @@ egev(llocation = "identity", lscale = "loge", lshape = "logoff",
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}},
   and \code{\link{vgam}}.
+
 }
 \references{ 
   Yee, T. W. and Stephenson, A. G. (2007)
@@ -242,8 +243,7 @@ egev(llocation = "identity", lscale = "loge", lshape = "logoff",
 
 \examples{
 # Multivariate example
-y = as.matrix(venice[,paste("r", 1:10, sep="")])
-fit1 = vgam(y[,1:2] ~ s(year, df=3), gev(zero=2:3), venice, trace=TRUE)
+fit1 = vgam(cbind(r1,r2) ~ s(year, df=3), gev(zero=2:3), venice, trace=TRUE)
 coef(fit1, matrix=TRUE)
 head(fitted(fit1))
 \dontrun{
@@ -253,12 +253,11 @@ plot(fit1, se=TRUE, lcol="blue", scol="forestgreen",
 with(venice, matplot(year, y[,1:2], ylab="Sea level (cm)", col=1:2,
      main="Highest 2 annual sea levels", cex.main=0.8))
 with(venice, lines(year, fitted(fit1)[,1], lty="dashed", col="blue"))
-legend("topleft", lty="dashed", col="blue", "Fitted 95 percentile")
-}
+legend("topleft", lty="dashed", col="blue", "Fitted 95 percentile") }
 
 
 # Univariate example
-(fit = vglm(maxtemp ~ 1, egev, data=oxtemp, trace=TRUE))
+(fit = vglm(maxtemp ~ 1, egev, oxtemp, trace=TRUE))
 head(fitted(fit))
 coef(fit, mat=TRUE)
 Coef(fit)

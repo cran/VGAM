@@ -10,39 +10,18 @@
 
 }
 \usage{
-cao.control(Rank=1, all.knots = FALSE,
-            criterion="deviance",
-            Cinit=NULL,
-            Crow1positive=TRUE,
-            epsilon = 1.0e-05,
-            Etamat.colmax = 10,
-            GradientFunction=FALSE,
-            iKvector = 0.1,
-            iShape = 0.1,
-            Norrr = ~ 1,
-            SmallNo = 5.0e-13,
-            Use.Init.Poisson.QO=TRUE,
-            Bestof = if(length(Cinit)) 1 else 10,
-            maxitl = 40,
-            method.init = 1,
-            bf.epsilon = 1.0e-7,
-            bf.maxit = 40,
-            Maxit.optim = 250,
-            optim.maxit = 20,
-            SD.sitescores = 1.0,
-            SD.Cinit = 0.02,
-            trace = TRUE,
-            df1.nl = 2.5, df2.nl = 2.5,
+cao.control(Rank=1, all.knots = FALSE, criterion="deviance", Cinit=NULL,
+            Crow1positive=TRUE, epsilon = 1.0e-05, Etamat.colmax = 10,
+            GradientFunction=FALSE, iKvector = 0.1, iShape = 0.1,
+            Norrr = ~ 1, SmallNo = 5.0e-13, Use.Init.Poisson.QO=TRUE,
+            Bestof = if (length(Cinit)) 1 else 10, maxitl = 40,
+            method.init = 1, bf.epsilon = 1.0e-7, bf.maxit = 40,
+            Maxit.optim = 250, optim.maxit = 20, SD.sitescores = 1.0,
+            SD.Cinit = 0.02, trace = TRUE, df1.nl = 2.5, df2.nl = 2.5,
             spar1 = 0, spar2 = 0, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  Many of these arguments are identical to \code{\link{qrrvglm.control}}.
-    Here, \eqn{R} is the \code{Rank}, \eqn{M} is the number
-    of additive predictors, and \eqn{S} is the number of responses
-    (species).
-    Thus \eqn{M=S} for binomial and Poisson responses, and
-    \eqn{M=2S} for the negative binomial and 2-parameter gamma distributions.
 
   \item{Rank}{ 
     The numerical rank \eqn{R} of the model, i.e., the number of latent
@@ -250,6 +229,14 @@ cao.control(Rank=1, all.knots = FALSE,
   \item{\dots}{ Ignored at present. }
 }
 \details{
+  Many of these arguments are identical to \code{\link{qrrvglm.control}}.
+  Here, \eqn{R} is the \code{Rank}, \eqn{M} is the number
+  of additive predictors, and \eqn{S} is the number of responses
+  (species).
+  Thus \eqn{M=S} for binomial and Poisson responses, and
+  \eqn{M=2S} for the negative binomial and 2-parameter gamma distributions.
+
+
   Allowing the smooths too much flexibility means the CAO optimization
   problem becomes more difficult to solve. This is because the number
   of local solutions increases as the nonlinearity of the smooths
@@ -338,7 +325,7 @@ persp(ap1, label=TRUE, col=1:4)
 %%           Parscale = 1, 
 %            SmallNo = 5e-13,
 %            Use.Init.Poisson.QO = TRUE, 
-%            Bestof = if(length(Cinit)) 1 else 10, maxitl = 40,
+%            Bestof = if (length(Cinit)) 1 else 10, maxitl = 40,
 %            bf.epsilon = 1.0e-7, bf.maxit = 40,
 %            Maxit.optim = 250, optim.maxit = 20,
 %%           se.fit = FALSE, 

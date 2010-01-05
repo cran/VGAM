@@ -115,18 +115,17 @@ New York: Wiley.
 \code{\link[base:Special]{lgamma}}.
 }
 \examples{
-y = rlgamma(n <- 100, k=exp(1))
-fit = vglm(y ~ 1, lgammaff, trace=TRUE, crit="c")
+ldat = data.frame(y = rlgamma(nn <- 100, k=exp(1)))
+fit = vglm(y ~ 1, lgammaff, ldat, trace=TRUE, crit="c")
 summary(fit)
 coef(fit, matrix=TRUE)
 Coef(fit)
 
-# Another example
-x = runif(n <- 5000)
-loc = -1 + 2*x
-Scale = exp(1+x)
-y = rlgamma(n, loc=loc, scale=Scale, k=exp(0))
-fit = vglm(y ~ x, lgamma3ff(zero=3), trace=TRUE, crit="c")
+ldat = data.frame(x = runif(nn <- 5000))     # Another example
+ldat = transform(ldat, loc = -1 + 2*x,
+                       Scale = exp(1+x))
+ldat = transform(ldat, y = rlgamma(nn, loc=loc, scale=Scale, k=exp(0)))
+fit = vglm(y ~ x, lgamma3ff(zero=3), ldat, trace=TRUE, crit="c")
 coef(fit, matrix=TRUE)
 }
 \keyword{models}

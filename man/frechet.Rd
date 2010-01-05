@@ -10,11 +10,9 @@
 
 }
 \usage{
-frechet2(location=0, lscale="loge", lshape="loglog",
-         escale = list(), eshape = list(),
-         iscale=NULL, ishape=3, zero=NULL)
-frechet3(anchor=NULL, ldifference="loge",
-         lscale="loge", lshape="loglog",
+frechet2(location=0, lscale="loge", lshape="loglog", escale = list(),
+         eshape = list(), iscale=NULL, ishape=3, zero=NULL)
+frechet3(anchor=NULL, ldifference="loge", lscale="loge", lshape="loglog",
          edifference=list(), escale = list(), eshape = list(),
          ilocation=NULL, iscale=NULL, ishape=3, zero=NULL,
          effpos = .Machine$double.eps^0.75)

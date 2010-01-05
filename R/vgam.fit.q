@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2009 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2010 T.W. Yee, University of Auckland. All rights reserved.
 
 
 
@@ -31,17 +31,17 @@ vgam.fit <- function(x, y, w, mf,
 
     # --------------------------------------------------------------
     new.s.call <- expression({
-        if(c.list$one.more) {
+        if (c.list$one.more) {
             fv <- c.list$fit
             new.coeffs <- c.list$coeff
 
-            if(length(family@middle))
+            if (length(family@middle))
                 eval(family@middle)
 
             eta <- fv + offset
             mu <- family@inverse(eta, extra)
 
-            if(length(family@middle2))
+            if (length(family@middle2))
                 eval(family@middle2)
 
             old.crit <- new.crit
@@ -49,7 +49,7 @@ vgam.fit <- function(x, y, w, mf,
             new.crit <- switch(criterion,
                                coefficients=new.coeffs,
                                tfun(mu=mu, y=y, w=w, res=FALSE, eta=eta, extra))
-            if(trace) {
+            if (trace) {
                 cat("VGAM ", bf, " loop ", iter, ": ", criterion, "= ")
 
                 uuuu = switch(criterion, coefficients=
@@ -66,12 +66,12 @@ vgam.fit <- function(x, y, w, mf,
 
             flush.console()
 
-            if(!is.finite(one.more) || !is.logical(one.more)) one.more = FALSE
-            if(one.more) {
+            if (!is.finite(one.more) || !is.logical(one.more)) one.more = FALSE
+            if (one.more) {
                 iter <- iter + 1
                 deriv.mu <- eval(family@deriv)
                 wz <- eval(family@weight)
-                if(control$checkwz)
+                if (control$checkwz)
                     wz = checkwz(wz, M=M, trace=trace, wzeps=control$wzepsilon)
 
                 U <- vchol(wz, M=M, n=n, silent=!trace)
@@ -100,23 +100,23 @@ vgam.fit <- function(x, y, w, mf,
     y.names <- predictors.names <- NULL    # May be overwritten in @initialize
 
     n.save <- n
-    if(length(slot(family, "initialize")))
+    if (length(slot(family, "initialize")))
         eval(slot(family, "initialize")) # Initialize mu & M (and optionally w)
 
-    if(length(etastart)) {
+    if (length(etastart)) {
         eta <- etastart
-        mu <- if(length(mustart)) mustart else
+        mu <- if (length(mustart)) mustart else
               slot(family, "inverse")(eta, extra)
     } else {
-        if(length(mustart))
+        if (length(mustart))
             mu <- mustart
         eta <- slot(family, "link")(mu, extra)
     }
 
-    M <- if(is.matrix(eta)) ncol(eta) else 1
+    M <- if (is.matrix(eta)) ncol(eta) else 1
 
 
-    if(length(family@constraints))
+    if (length(family@constraints))
         eval(family@constraints)
     Blist <- process.constraints(constraints, x, M, specialCM=specialCM)
 
@@ -124,7 +124,7 @@ vgam.fit <- function(x, y, w, mf,
     dimB <- sum(ncolBlist)
 
 
-    if(nonparametric) {
+    if (nonparametric) {
 
 
 
@@ -142,8 +142,8 @@ vgam.fit <- function(x, y, w, mf,
 
         qbig <- sum(ncolBlist[smooth.labels])  # Number of component funs
         s <- matrix(0, n, qbig)
-        dy <- if(is.matrix(y)) dimnames(y)[[1]] else names(y)
-        d2 <- if(is.null(predictors.names))
+        dy <- if (is.matrix(y)) dimnames(y)[[1]] else names(y)
+        d2 <- if (is.null(predictors.names))
             paste("(Additive predictor ",1:M,")", sep="") else
             predictors.names
         dimnames(s) <- list(dy, vlabel(smooth.labels,
@@ -160,15 +160,15 @@ vgam.fit <- function(x, y, w, mf,
     X_vlm_save <- lm2vlm.model.matrix(x, Blist, xij=control$xij)
 
 
-    if(length(coefstart)) {
-        eta <- if(ncol(X_vlm_save)>1) X_vlm_save %*% coefstart +
+    if (length(coefstart)) {
+        eta <- if (ncol(X_vlm_save)>1) X_vlm_save %*% coefstart +
                    offset else X_vlm_save * coefstart + offset
-        eta <- if(M > 1) matrix(eta, ncol=M, byrow=TRUE) else c(eta)
+        eta <- if (M > 1) matrix(eta, ncol=M, byrow=TRUE) else c(eta)
         mu <- family@inverse(eta, extra)
     }
 
 
-    if(criterion != "coefficients") {
+    if (criterion != "coefficients") {
         tfun <- slot(family, criterion) # Needed for R, so have to follow suit
     }
 
@@ -176,11 +176,11 @@ vgam.fit <- function(x, y, w, mf,
     new.crit <- switch(criterion,
                       coefficients=1,
                       tfun(mu=mu, y=y, w=w, res=FALSE, eta=eta, extra))
-    old.crit <- if(minimize.criterion) 10*new.crit+10 else -10*new.crit-10
+    old.crit <- if (minimize.criterion) 10*new.crit+10 else -10*new.crit-10
 
     deriv.mu <- eval(family@deriv)
     wz <- eval(family@weight)
-    if(control$checkwz)
+    if (control$checkwz)
         wz = checkwz(wz, M=M, trace=trace, wzeps=control$wzepsilon)
 
     U <- vchol(wz, M=M, n=n, silent=!trace)
@@ -196,7 +196,7 @@ vgam.fit <- function(x, y, w, mf,
     dX_vlm <- as.integer(dim(X_vlm_save))
     nrow_X_vlm <- dX_vlm[[1]]
     ncol_X_vlm <- dX_vlm[[2]]
-    if(nrow_X_vlm < ncol_X_vlm)
+    if (nrow_X_vlm < ncol_X_vlm)
         stop(ncol_X_vlm, " parameters but only ", nrow_X_vlm, " observations")
 
     while(c.list$one.more) {
@@ -211,7 +211,7 @@ vgam.fit <- function(x, y, w, mf,
         NULL
     }
 
-    if(maxit>1 && iter>=maxit)
+    if (maxit>1 && iter>=maxit)
         warning("convergence not obtained in ", maxit, " iterations")
 
 
@@ -219,7 +219,7 @@ vgam.fit <- function(x, y, w, mf,
     xnrow_X_vlm <- dnrow_X_vlm[[2]]
     ynrow_X_vlm <- dnrow_X_vlm[[1]]
 
-    if(length(family@fini))
+    if (length(family@fini))
         eval(family@fini)
 
     coefs <- tfit$coefficients
@@ -228,9 +228,9 @@ vgam.fit <- function(x, y, w, mf,
     names(coefs) <- xnrow_X_vlm
     cnames <- xnrow_X_vlm
 
-    if(!is.null(tfit$rank)) {
+    if (!is.null(tfit$rank)) {
         rank <- tfit$rank
-        if(rank < ncol(x)) 
+        if (rank < ncol(x)) 
             stop("rank < ncol(x) is bad")
     } else rank <- ncol(x)
 
@@ -246,11 +246,11 @@ vgam.fit <- function(x, y, w, mf,
 
 
 
-    if(is.matrix(mu)) {
-          if(length(dimnames(mu)[[2]])) {
+    if (is.matrix(mu)) {
+          if (length(dimnames(mu)[[2]])) {
               y.names <- dimnames(mu)[[2]]
           } else
-          if(length(dimnames(y)[[2]])) {
+          if (length(dimnames(y)[[2]])) {
               y.names <- dimnames(y)[[2]]
           }
           dimnames(mu) <- list(yn, y.names)
@@ -273,18 +273,18 @@ vgam.fit <- function(x, y, w, mf,
 
     df.residual <- nrow_X_vlm - rank 
 
-    if(!se.fit) {
+    if (!se.fit) {
         fit$var <- NULL
     }
 
-    if(M==1) {
+    if (M==1) {
         wz <- as.vector(wz)  # Convert wz into a vector
     } # else
-    fit$weights <- if(save.weight) wz else NULL
+    fit$weights <- if (save.weight) wz else NULL
 
 
 
-    if(M==1) {
+    if (M==1) {
         fit$predictors <- as.vector(fit$predictors)
         fit$residuals <- as.vector(fit$residuals)
         names(fit$residuals) <- names(fit$predictors) <- yn
@@ -313,28 +313,28 @@ vgam.fit <- function(x, y, w, mf,
         ynames = dimnames(y)[[2]])
 
 
-    if(criterion != "coefficients")
+    if (criterion != "coefficients")
         fit[[criterion]] <- new.crit
 
 
 
-    if(se.fit && length(fit$s.xargument)) {
+    if (se.fit && length(fit$s.xargument)) {
         misc$varassign <- 
             varassign(Blist, names(fit$s.xargument))
     }
 
 
 
-    if(nonparametric) {
+    if (nonparametric) {
         misc$smooth.labels <- smooth.labels
     }
 
 
     crit.list <- list()
-    if(criterion != "coefficients")
+    if (criterion != "coefficients")
         crit.list[[criterion]] <- fit[[criterion]] <- new.crit
     for(ii in names(.min.criterion.VGAM)) {
-        if(ii != criterion &&
+        if (ii != criterion &&
             any(slotNames(family) == ii) && length(body(slot(family, ii)))) {
                 fit[[ii]] <- crit.list[[ii]] <-
                 (slot(family, ii))(mu=mu, y=y, w=w, res=FALSE, eta=eta, extra)
@@ -345,7 +345,7 @@ vgam.fit <- function(x, y, w, mf,
 
 
 
-    if(M==1) {
+    if (M==1) {
         fit$predictors <- as.vector(fit$predictors)
         fit$residuals <- as.vector(fit$residuals)
         names(fit$residuals) <- names(fit$predictors) <- yn
@@ -356,14 +356,14 @@ vgam.fit <- function(x, y, w, mf,
 
 
  
-    if(w[1] != 1 || any(w != w[1]))
+    if (w[1] != 1 || any(w != w[1]))
         fit$prior.weights <- w
 
-    if(length(family@last))
+    if (length(family@last))
         eval(family@last)
 
 
-    if(!is.null(fit$smooth)) {
+    if (!is.null(fit$smooth)) {
         fit$nl.chisq <- vgam.nlchisq(fit$qr, fit$resid, wz=wz,
                                      s=fit$smooth, deriv=deriv.mu, U=U,
                                      smooth.labels, attr(x, "assign"),
@@ -371,7 +371,7 @@ vgam.fit <- function(x, y, w, mf,
     }
 
 
-    if(!qr.arg) { 
+    if (!qr.arg) { 
         fit$qr <- NULL
     }
 

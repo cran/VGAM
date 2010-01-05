@@ -21,8 +21,6 @@ vgam(formula, family, data = list(), weights = NULL, subset = NULL,
 \arguments{
   % The following comes from vglm.Rd but with minor tweaks
 
-  In the following, \eqn{M} is the number of additive predictors.
-
   \item{formula}{
   a symbolic description of the model to be fit.
   The RHS of the formula is applied to each linear/additive predictor.
@@ -155,8 +153,7 @@ vgam(formula, family, data = list(), weights = NULL, subset = NULL,
 }
 \details{
   A vector generalized additive model (VGAM) is loosely defined
-  as a statistical model that is a function of \eqn{M} additive
-  predictors.
+  as a statistical model that is a function of \eqn{M} additive predictors.
   The central formula is given by
   \deqn{\eta_j = \sum_{k=1}^p f_{(j)k}(x_k)}{%
          eta_j = sum_{k=1}^p f_{(j)k}(x_k)}
@@ -283,8 +280,8 @@ coef(fit2, mat=TRUE)   # Not really interpretable
 \dontrun{
 plot(fit2, se=TRUE, overlay=TRUE, lcol=1:2, scol=1:2)
 
-o = with(hunua, order(altitude))
-with(hunua, matplot(altitude[o], fitted(fit2)[o,], type="l", lwd=2,
+ooo = with(hunua, order(altitude))
+with(hunua, matplot(altitude[ooo], fitted(fit2)[ooo,], type="l", lwd=2,
      xlab="Altitude (m)", ylab="Probability of presence", las=1,
      main="Two plant species' response curves", ylim=c(0,.8)))
 with(hunua, rug(altitude))

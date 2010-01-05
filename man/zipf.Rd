@@ -60,6 +60,7 @@ zipf(N=NULL, link="loge", earg=list(), init.s=NULL)
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}}
   and \code{\link{vgam}}.
+
 }
 
 \references{ 
@@ -82,12 +83,12 @@ pp.526-- of Chapter 11 of
 
 }
 \examples{
-y = 1:5; w = c(63, 14, 5, 1, 2)
-fit = vglm(y ~ 1, zipf, trace=TRUE, weight=w)
-fit = vglm(y ~ 1, zipf(link=identity, init=3.4), tra=TRUE, weight=w, cri="c")
+zdat = data.frame(y = 1:5, w = c(63, 14, 5, 1, 2))
+fit = vglm(y ~ 1, zipf, zdat, trace=TRUE, weight=w, cri="c")
+fit = vglm(y ~ 1, zipf(link=identity, init=3.4), zdat, tra=TRUE, weight=w)
 fit@misc$N
 (shat = Coef(fit))
-weighted.mean(y, w)
+with(zdat, weighted.mean(y, w))
 fitted(fit, mat=FALSE)
 }
 \keyword{models}

@@ -90,6 +90,7 @@ contains further information and examples.
   \code{\link{Links}},
   \code{\link{binom2.rho}},
   \code{\link{fisherz}}.
+
 }
 
 \examples{

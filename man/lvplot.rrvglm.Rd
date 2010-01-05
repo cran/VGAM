@@ -145,19 +145,18 @@ Reduced-rank vector generalized linear models.
     \code{\link{rrvglm.control}}.
 }
 \examples{
-n = nrow(pneumo)  # x1, x2 and x3 are some unrelated covariates
+nn = nrow(pneumo)  # x1, x2 and x3 are some unrelated covariates
 pneumo = transform(pneumo, slet=scale(log(exposure.time)),
-                   x1 = rnorm(n), x2 = rnorm(n), x3 = rnorm(n))
+                           x1 = rnorm(nn), x2 = rnorm(nn), x3 = rnorm(nn))
 fit = rrvglm(cbind(normal, mild, severe) ~ slet + x1 + x2 + x3,
-             multinomial, pneumo, Rank=2, Corner=FALSE, Uncor=TRUE)
+             multinomial, pneumo, Rank=2, Corner=FALSE, Uncorrel=TRUE)
 \dontrun{
 lvplot(fit, chull=TRUE, scores=TRUE, clty=2, ccol="blue", scol="red",
        Ccol="darkgreen", Clwd=2, Ccex=2,
-       main="Biplot of some fictitional data")
-}
+       main="Biplot of some fictitional data") }
 }
 \keyword{models}
 \keyword{regression}
-\keyword{hplot}
+\keyword{graphs}
 
 % pneumo$slet = scale(log(pneumo$exposure.time))

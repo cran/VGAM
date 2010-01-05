@@ -35,13 +35,12 @@ The second value is used to handle ties.
 }
 }
 \details{
-  In the \pkg{VGAM} package 
-  it is necessary for each matrix to be represented as a single
-row of data by \code{\link{brat}} and \code{\link{bratt}}.
-Hence the non-diagonal elements of the \eqn{M+1} by \eqn{M+1} matrix
-are concatenated into \eqn{M(M+1)} values (no ties), while
-if there are ties, the non-diagonal elements of the \eqn{M} by \eqn{M} matrix
-are concatenated into \eqn{M(M-1)} values.
+  In the \pkg{VGAM} package it is necessary for each matrix to
+  be represented as a single row of data by \code{\link{brat}} and
+  \code{\link{bratt}}.  Hence the non-diagonal elements of the \eqn{M+1}
+  by \eqn{M+1} matrix are concatenated into \eqn{M(M+1)} values (no ties),
+  while if there are ties, the non-diagonal elements of the \eqn{M}
+  by \eqn{M} matrix are concatenated into \eqn{M(M-1)} values.
 
 }
 \value{

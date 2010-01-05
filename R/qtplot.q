@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2009 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2010 T.W. Yee, University of Auckland. All rights reserved.
 
 
 
@@ -79,7 +79,7 @@ qtplot.default <- function(object, ...) {
                     "(object, ...)", sep="")
     newcall = parse(text=newcall)[[1]]
 
-    if(Attach) {
+    if (Attach) {
         object@post$qtplot = eval(newcall)
         invisible(object)
     } else 
@@ -96,16 +96,16 @@ qtplot.lmscreg <- function(object,
             all(percentiles==object@misc$percentiles)
 
     lp <- length(percentiles)
-    if(same) {
-        fitted.values <- if(!length(newdata)) object@fitted.values else {
+    if (same) {
+        fitted.values <- if (!length(newdata)) object@fitted.values else {
                     predict(object, newdata=newdata, type="response") 
                 }
         fitted.values <- as.matrix(fitted.values)
     } else {
-        if(!is.numeric(percentiles))
+        if (!is.numeric(percentiles))
             stop("'percentiles' must be specified")
 
-        eta <- if(length(newdata)) predict(object, newdata=newdata, type="link") else
+        eta <- if (length(newdata)) predict(object, newdata=newdata, type="link") else
                object@predictors
         eta <- eta2theta(eta, object@misc$link) # Now lambda, mu, sigma
 
@@ -117,7 +117,7 @@ qtplot.lmscreg <- function(object,
                                    paste(as.character(percentiles), "%", sep=""))
     }
 
-    if(plot.it) {
+    if (plot.it) {
         plotqtplot.lmscreg(fit=fitted.values, obj=object,
                             newdata=newdata,
                             lp=lp,
@@ -134,7 +134,8 @@ plotqtplot.lmscreg <- function(fitted.values, object,
                            percentiles=object@misc$percentiles, 
                            lp=NULL,
                            add.arg=FALSE,
-                           y=if(length(newdata)) FALSE else TRUE, spline.fit=FALSE,
+                           y = if (length(newdata)) FALSE else TRUE,
+                           spline.fit=FALSE,
                            label=TRUE,
                            size.label=0.06,
                            xlab=NULL, ylab="",
@@ -148,32 +149,32 @@ plotqtplot.lmscreg <- function(fitted.values, object,
 
 
 
-    if(!length(newdata)) {
+    if (!length(newdata)) {
         X <- model.matrixvlm(object, type="lm")
-        if(is.matrix(X) && length(object@y) && ncol(X)==2 && 
+        if (is.matrix(X) && length(object@y) && ncol(X)==2 && 
            dimnames(X)[[2]][1]=="(Intercept)")
         {
             xx <- X[,2]
-            if(is.null(xlab)) {
-                xlab <- if(object@misc$nonparametric)
+            if (is.null(xlab)) {
+                xlab <- if (object@misc$nonparametric)
                         as.vector(slot(object, "s.xargument")) else
                         names(object@assign)[2]
                 }
 
-            if(!add.arg) {
-                if(!is.numeric(xlim))
-                    xlim <- if(label)
+            if (!add.arg) {
+                if (!is.numeric(xlim))
+                    xlim <- if (label)
                         c(min(xx), max(xx)+size.label*diff(range(xx))) else
                         c(min(xx), max(xx))
                 fred <- cbind(object@y, fitted.values)
-                if(!is.numeric(ylim))
+                if (!is.numeric(ylim))
                     ylim <- c(min(fred), max(fred))
                 matplot(x=xx, y=fred,
                         xlab=xlab, ylab=ylab, type="n", 
                         xlim=xlim, ylim=ylim, ...)
             }
 
-            if(y && length(object@y))
+            if (y && length(object@y))
                 matpoints(x=xx, y=object@y, pch=pch, cex=pcex,
                           col=pcol.arg)
         } else {
@@ -185,28 +186,28 @@ plotqtplot.lmscreg <- function(fitted.values, object,
 
         firstterm = attr(terms(object), "term.labels")[1]
 
-        if(object@misc$nonparametric &&
+        if (object@misc$nonparametric &&
            length(object@s.xargument[firstterm]))
             firstterm <-  object@s.xargument[firstterm]
 
         xx <- newdata[[firstterm]] 
-        if(!is.numeric(xx))
+        if (!is.numeric(xx))
             stop("couldn't extract the 'primary' variable from newdata")
 
-        if(!add.arg) {
-            if(is.null(xlab)) 
+        if (!add.arg) {
+            if (is.null(xlab)) 
                 xlab <- firstterm 
-            if(!is.numeric(xlim))
-                xlim <- if(label)
+            if (!is.numeric(xlim))
+                xlim <- if (label)
                     c(min(xx), max(xx)+size.label*diff(range(xx))) else
                     c(min(xx), max(xx))
-            if(!is.numeric(ylim))
+            if (!is.numeric(ylim))
                 ylim <- c(min(fitted.values), max(fitted.values))
             matplot(x=xx, y=fitted.values,
                     xlab=xlab, ylab=ylab, type="n", 
                         xlim=xlim, ylim=ylim, col=pcol.arg)
         }
-        if(y && length(object@y))
+        if (y && length(object@y))
             matpoints(x=xx, y=object@y, pch=pch, cex=pcex,
                       col=pcol.arg)
 
@@ -220,14 +221,14 @@ plotqtplot.lmscreg <- function(fitted.values, object,
         temp <- cbind(xx, fitted.values[,i])
         temp <- temp[sort.list(temp[,1]),]
         index <- !duplicated(temp[,1])
-        if(spline.fit) {
+        if (spline.fit) {
             lines(spline(temp[index,1], temp[index,2]),
                   lty=llty.arg[i], col=lcol.arg[i], err=-1, lwd=llwd.arg[i])
         } else {
             lines(temp[index,1], temp[index,2],
                   lty=llty.arg[i], col=lcol.arg[i], err=-1, lwd=llwd.arg[i])
         }
-        if(label)
+        if (label)
             text(par()$usr[2], temp[nrow(temp),2],
                  paste( percentiles[i], "%", sep=""),
                  adj=tadj, col=tcol.arg[i], err=-1)
@@ -237,8 +238,8 @@ plotqtplot.lmscreg <- function(fitted.values, object,
 }
  
 
-if(TRUE) {
-    if(!isGeneric("qtplot"))
+if (TRUE) {
+    if (!isGeneric("qtplot"))
     setGeneric("qtplot", function(object, ...) standardGeneric("qtplot"))
 
 
@@ -274,9 +275,9 @@ qtplot.gumbel <-
              llty.arg=par()$lty, lcol.arg=par()$col, llwd.arg=par()$lwd,
              tcol.arg=par()$col, tadj=1, ...)
 {
-    if(!is.logical(mpv) || length(mpv) != 1)
+    if (!is.logical(mpv) || length(mpv) != 1)
         stop("bad input for 'mpv'")
-    if(!length(percentiles) ||
+    if (!length(percentiles) ||
        (!is.Numeric(percentiles, posit=TRUE) || max(percentiles) >= 100))
         stop("bad input for 'percentiles'")
 
@@ -285,10 +286,10 @@ qtplot.gumbel <-
     eta <- predict(object)
 
 
-    if(is.Numeric(R))
+    if (is.Numeric(R))
         R <- rep(R, length=nrow(eta))
 
-    if(!is.Numeric(percentiles))
+    if (!is.Numeric(percentiles))
         stop("the 'percentiles' argument needs to be assigned a value")
 
 
@@ -301,7 +302,7 @@ qtplot.gumbel <-
     answer = list(fitted.values = fitted.values,
                   percentiles = percentiles)
 
-    if(!plot.it)
+    if (!plot.it)
         return(answer)
 
 
@@ -313,20 +314,20 @@ qtplot.gumbel <-
     llty.arg  = rep(llty.arg,  length=lp+mpv)
 
     X <- model.matrixvlm(object, type="lm")
-    if(is.matrix(X) && length(object@y) && ncol(X)==2 && 
+    if (is.matrix(X) && length(object@y) && ncol(X)==2 && 
        dimnames(X)[[2]][1]=="(Intercept)")
     {
         xx <- X[,2]
-        if(!length(xlab)) 
-            xlab <- if(object@misc$nonparametric &&
+        if (!length(xlab)) 
+            xlab <- if (object@misc$nonparametric &&
                        length(object@s.xargument))
                         object@s.xargument else names(object@assign)[2]
 
-        if(!add.arg)
+        if (!add.arg)
             matplot(x=xx, y=cbind(object@y, fitted.values), main=main,
                     xlab=xlab, ylab=ylab, type="n", ...)
 
-        if(y.arg) {
+        if (y.arg) {
                matpoints(x=xx, y=object@y, pch=pch, col=pcol.arg) 
         }
     } else {
@@ -339,14 +340,14 @@ qtplot.gumbel <-
         temp <- cbind(xx, fitted.values[,i])
         temp <- temp[sort.list(temp[,1]),]
         index <- !duplicated(temp[,1])
-        if(spline.fit) {
+        if (spline.fit) {
             lines(spline(temp[index,1], temp[index,2]),
                   lty=llty.arg[i], col=lcol.arg[i], lwd=llwd.arg[i])
         } else {
             lines(temp[index,1], temp[index,2],
                   lty=llty.arg[i], col=lcol.arg[i], lwd=llwd.arg[i])
         }
-        if(label) {
+        if (label) {
             mylabel = (dimnames(answer$fitted)[[2]])[i]
             text(par()$usr[2], temp[nrow(temp),2],
                  mylabel, adj=tadj, col=tcol.arg[i], err=-1)
@@ -365,7 +366,7 @@ deplot.lms.bcn <- function(object,
                            y.arg, 
                            eta0)
 {
-    if(!any(object@family@vfamily == "lms.bcn")) 
+    if (!any(object@family@vfamily == "lms.bcn")) 
         warning("I think you've called the wrong function")
 
     Zvec <- ((y.arg/eta0[,2])^(eta0[,1]) -1) / (eta0[,1] * eta0[,3])
@@ -382,7 +383,7 @@ deplot.lms.bcg <- function(object,
                            y.arg, 
                            eta0)
 {
-    if(!any(object@family@vfamily == "lms.bcg")) 
+    if (!any(object@family@vfamily == "lms.bcg")) 
         warning("I think you've called the wrong function")
 
     Zvec <- (y.arg/eta0[,2])^(eta0[,1])  # different from lms.bcn
@@ -403,7 +404,7 @@ deplot.lms.yjn <- function(object,
                            eta0)
 {
 
-    if(!length(intersect(object@family@vfamily, c("lms.yjn","lms.yjn2"))))
+    if (!length(intersect(object@family@vfamily, c("lms.yjn","lms.yjn2"))))
         warning("I think you've called the wrong function")
 
     lambda <- eta0[,1]
@@ -432,7 +433,7 @@ deplot.default <- function(object, ...) {
                     "(object, ...)", sep="")
     newcall = parse(text=newcall)[[1]]
 
-    if(Attach) {
+    if (Attach) {
         object@post$deplot = eval(newcall)
         invisible(object)
     } else 
@@ -447,19 +448,19 @@ deplot.default <- function(object, ...) {
                        y.arg, plot.it= TRUE, ...) {
 
 
-    if(!length(newdata)) {
+    if (!length(newdata)) {
         newdata <- data.frame(x0=x0)
         var1name <- attr(terms(object), "term.labels")[1] 
         names(newdata) <- var1name
 
-        ii <- if(object@misc$nonparametric) 
+        ii <- if (object@misc$nonparametric) 
                 slot(object, "s.xargument") else NULL
-        if(length(ii) && any(logic.vec <-
+        if (length(ii) && any(logic.vec <-
             names(slot(object, "s.xargument"))==var1name))
             names(newdata) <- ii[logic.vec]   # should be the first one 
     }
 
-    eta0 = if(length(newdata)) predict(object, newdata) else predict(object)
+    eta0 = if (length(newdata)) predict(object, newdata) else predict(object)
     eta0 <- eta2theta(eta0, object@misc$link)   # lambda, mu, sigma
 
     newcall = paste("deplot.", object@family@vfamily[1], 
@@ -467,7 +468,7 @@ deplot.default <- function(object, ...) {
     newcall = parse(text=newcall)[[1]]
     answer = eval(newcall)
 
-    if(plot.it) 
+    if (plot.it) 
         plotdeplot.lmscreg(answer, y.arg=y.arg, ...)
 
     invisible(answer) 
@@ -487,10 +488,10 @@ plotdeplot.lmscreg <- function(answer,
     yvec <- answer$density
     xx <- y.arg
 
-    if(!add.arg) {
-        if(!is.numeric(xlim))
+    if (!add.arg) {
+        if (!is.numeric(xlim))
             xlim <- c(min(xx), max(xx))
-        if(!is.numeric(ylim))
+        if (!is.numeric(ylim))
             ylim <- c(min(yvec), max(yvec))
         matplot(x=xx, y=yvec,
                 xlab=xlab, ylab=ylab, type="n", 
@@ -509,9 +510,9 @@ plotdeplot.lmscreg <- function(answer,
  
 
 
-if(TRUE) {
+if (TRUE) {
 
-    if(!isGeneric("deplot"))
+    if (!isGeneric("deplot"))
     setGeneric("deplot", function(object, ...) standardGeneric("deplot"))
 
     setMethod("deplot", signature(object="vglm"),
@@ -525,9 +526,9 @@ if(TRUE) {
 
 
 
-if(TRUE) {
+if (TRUE) {
 
-    if(!isGeneric("cdf"))
+    if (!isGeneric("cdf"))
     setGeneric("cdf", function(object, ...) standardGeneric("cdf"))
 
     setMethod("cdf", signature(object="vglm"),
@@ -546,7 +547,7 @@ if(TRUE) {
                     "(object, newdata, ...)", sep="")
     newcall = parse(text=newcall)[[1]]
 
-    if(Attach) {
+    if (Attach) {
         object@post$cdf = eval(newcall)
         object
     } else 
@@ -560,10 +561,10 @@ if(TRUE) {
 
 
 
-    if(!length(newdata))
+    if (!length(newdata))
         return(object@post$cdf)
 
-    eta0 = if(length(newdata)) predict(object, newdata) else predict(object)
+    eta0 = if (length(newdata)) predict(object, newdata) else predict(object)
     eta0 <- eta2theta(eta0, link=object@misc$link)   # lambda, mu, sigma
 
     y = vgety(object, newdata)   # Includes yoffset 
@@ -610,13 +611,13 @@ cdf.lms.yjn <- function(y, eta0)
 
 vgety = function(object, newdata=NULL) {
 
-    y = if(length(newdata)) {
+    y = if (length(newdata)) {
         yname = dimnames(attr(terms(object@terms),"factors"))[[1]][1]
         newdata[[yname]]
     } else {
         object@y
     }
-    if(length(object@misc$yoffset))
+    if (length(object@misc$yoffset))
         y = y + object@misc$yoffset
     y
 }
@@ -633,7 +634,7 @@ vgety = function(object, newdata=NULL) {
                     "(object, ...)", sep="")
     newcall = parse(text=newcall)[[1]]
 
-    if(Attach) {
+    if (Attach) {
         object@post$rlplot = eval(newcall)
         invisible(object)
     } else
@@ -669,16 +670,16 @@ rlplot.gev <-
              epsilon = 1.0e-05,
              ...)
 {
-    if(!is.Numeric(epsilon, allow=1) || abs(epsilon) > 0.10)
+    if (!is.Numeric(epsilon, allow=1) || abs(epsilon) > 0.10)
         stop("bad input for 'epsilon'")
-    if(!is.Numeric(probability, posit=TRUE) || max(probability) >= 1 ||
+    if (!is.Numeric(probability, posit=TRUE) || max(probability) >= 1 ||
        length(probability) < 5)
         stop("bad input for 'probability'")
-    if(!is.logical(Log) || length(Log) != 1)
+    if (!is.logical(Log) || length(Log) != 1)
         stop("bad input for argument 'Log'")
-    if(!is.logical(CI) || length(CI) != 1)
+    if (!is.logical(CI) || length(CI) != 1)
         stop("bad input for argument 'CI'")
-    if(!object@misc$intercept.only)
+    if (!object@misc$intercept.only)
        stop("object must be an intercept-only fit, i.e., y ~ 1 is the response")
 
     extra2 = object@extra
@@ -687,26 +688,26 @@ rlplot.gev <-
     yp = -log(probability)
     ydata = sort(object@y[,1])
     n = object@misc$n
-    if(Log) {
-        if(!add.arg)
+    if (Log) {
+        if (!add.arg)
             plot(log(1/yp), zp, log="", type="n",
-                 ylim=if(length(ylim)) ylim else
+                 ylim = if (length(ylim)) ylim else
                       c(min(c(ydata, zp)), max(c(ydata, zp))),
                  xlab=xlab, ylab=ylab, main=main, ...)
         points(log(-1/log((1:n)/(n+1))), ydata, col=pcol.arg, pch=pch, cex=pcex)
         lines(log(1/yp), zp,
               lwd=llwd.arg, col=lcol.arg, lty=llty.arg)
     } else {
-        if(!add.arg)
+        if (!add.arg)
             plot(1/yp, zp, log="x", type="n",
-                 ylim=if(length(ylim)) ylim else
+                 ylim = if (length(ylim)) ylim else
                       c(min(c(ydata, zp)), max(c(ydata, zp))),
                  xlab=xlab, ylab=ylab, main=main, ...)
         points(-1/log((1:n)/(n+1)), ydata, col=pcol.arg, pch=pch, cex=pcex)
         lines(1/yp, zp, lwd=llwd.arg, col=lcol.arg, lty=llty.arg)
     }
 
-    if(CI) {
+    if (CI) {
         zpp = cbind(zp, zp, zp)  # lp x 3
         eta = predict(object)
         Links = object@misc$link
@@ -733,7 +734,7 @@ rlplot.gev <-
         v = numeric(nrow(zpp))
         for(ii in 1:nrow(zpp))
             v[ii] = t(as.matrix(zpp[ii,])) %*% VCOV %*% as.matrix(zpp[ii,])
-        if(Log) {
+        if (Log) {
             lines(log(1/yp), zp - 1.96 * sqrt(v),
                   lwd=slwd.arg, col=scol.arg, lty=slty.arg)
             lines(log(1/yp), zp + 1.96 * sqrt(v),
@@ -747,14 +748,14 @@ rlplot.gev <-
     }
     answer = list(yp = yp,
                   zp = zp)
-    if(CI) {
+    if (CI) {
         answer$lower = zp - 1.96 * sqrt(v)
         answer$upper = zp + 1.96 * sqrt(v)
     }
     invisible(answer)
 }
 
-if(!isGeneric("rlplot"))
+if (!isGeneric("rlplot"))
     setGeneric("rlplot", function(object, ...) standardGeneric("rlplot"))
 
 setMethod("rlplot",  "vglm", function(object, ...)

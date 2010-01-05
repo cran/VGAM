@@ -4,6 +4,7 @@
 \title{ Loglinear Model for Three Binary Responses }
 \description{
   Fits a loglinear model to three binary responses.
+
 }
 \usage{
 loglinb3(exchangeable = FALSE, zero = NULL)
@@ -15,6 +16,7 @@ loglinb3(exchangeable = FALSE, zero = NULL)
     be equal. }
   \item{zero}{ Which linear/additive predictor is modelled as an
     intercept only? A \code{NULL} means none. }
+
 }
 \details{
   The model is \eqn{P(Y_1=y_1,Y_2=y_2,Y_3=y_3) =}{P(Y1=y1,Y2=y2,Y3=y3) =}
@@ -77,6 +79,7 @@ contains further information and examples.
 \seealso{
   \code{\link{loglinb2}},
   \code{\link{hunua}}.
+
 }
 \examples{
 fit = vglm(cbind(cyadea,beitaw,kniexc) ~ altitude, loglinb3, data=hunua)

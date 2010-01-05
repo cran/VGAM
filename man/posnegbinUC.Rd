@@ -106,8 +106,7 @@ barplot(rbind(dposnegbin(x, munb=munb, size=size), dnbinom(x, mu=munb, size=size
         beside = TRUE, col = c("blue","green"),
         main=paste("dposnegbin(munb=", munb, ", size=", size, ") (blue) vs",
                         " dnbinom(mu=", munb, ", size=", size, ") (green)", sep=""),
-        names.arg = as.character(x))
-}
+        names.arg = as.character(x)) }
 
 # Another test for pposnegbin()
 nn = 5000

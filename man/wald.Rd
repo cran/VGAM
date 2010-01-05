@@ -54,11 +54,13 @@ Johnson, N. L. and Kotz, S. and Balakrishnan, N. (1994)
 2nd edition,
 Volume 1,
 New York: Wiley.
+
 }
 \author{ T. W. Yee }
 \note{
   The \pkg{VGAM} family function \code{\link{inv.gaussianff}}
   estimates the location parameter \eqn{\mu}{mu} too.
+
 }
 
 
@@ -67,10 +69,8 @@ New York: Wiley.
 
 }
 \examples{
-set.seed(123)
-shape = 1
-y = rgamma(n=1000, shape=shape) # Not inverse Gaussian!!
-fit = vglm(y ~ 1, wald(init=0.2), trace=TRUE)
+wdata = data.frame(y = rgamma(n=1000, shape=1)) # Not inverse Gaussian!!
+fit = vglm(y ~ 1, wald(init=0.2), wdata, trace=TRUE)
 coef(fit, matrix=TRUE)
 Coef(fit)
 summary(fit)

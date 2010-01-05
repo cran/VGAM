@@ -30,7 +30,7 @@ Class \code{"\linkS4class{vector}"}, by class "matrix", distance 4, with explici
   T. W. Yee.
 }
 \note{
-  The purpose of having \code{\link{Surv}} in \pkg{VGAM} is so that
+  The purpose of having \code{\link{SurvS4}} in \pkg{VGAM} is so that
   the same input can be fed into \code{\link{vglm}} as functions in
   \pkg{survival} such as \code{\link[survival]{survreg}}.
 
@@ -42,7 +42,7 @@ Class \code{"\linkS4class{vector}"}, by class "matrix", distance 4, with explici
 }
 
 \seealso{
-  \code{\link{Surv}}.
+  \code{\link{SurvS4}}.
 % or \code{\linkS4class{CLASSNAME}} for links to other classes
 }
 \examples{

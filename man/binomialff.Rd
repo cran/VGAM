@@ -9,15 +9,12 @@
 
 }
 \usage{
-binomialff(link = "logit", earg = list(),
-           dispersion = 1, mv = FALSE, onedpar = !mv,
-           parallel = FALSE, zero = NULL)
+binomialff(link = "logit", earg = list(), dispersion = 1, mv = FALSE,
+           onedpar = !mv, parallel = FALSE, zero = NULL)
 
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  The notation \eqn{M} is used to denote the number of linear/additive
-  predictors.
 
   \item{link}{ 
   Link function. See \code{\link{Links}} for more choices.
@@ -104,6 +101,10 @@ binomialff(link = "logit", earg = list(),
   \emph{Numerical Issues in Statistical Computing for the Social
         Scientist}, Hoboken, NJ: Wiley-Interscience.
 
+  Ridout, M. S. (1990)
+  Non-convergence of Fisher's method of scoring---a simple example.
+  \emph{GLIM Newsletter}, 20(6).
+
 }
 \author{ Thomas W. Yee }
 
@@ -115,6 +116,9 @@ binomialff(link = "logit", earg = list(),
   also be specified. In particular, for a general vector of proportions,
   you will need to specify \code{weights} because the number of trials
   is needed.
+
+  The notation \eqn{M} is used to denote the number of linear/additive
+  predictors.
 
   If \code{mv} is \code{TRUE}, then the matrix response can only be of
   one format: a matrix of 1's and 0's (1=success).
@@ -131,6 +135,9 @@ binomialff(link = "logit", earg = list(),
 % With the introduction of name spaces for the \pkg{VGAM} package,
 % \code{"ff"} can be dropped for this family function.
 
+  Fisher scoring is used. This can sometimes fail to converge by oscillating between
+  successive iterations (Ridout, 1990). See the example below.
+
 }
 \seealso{
     \code{\link{quasibinomialff}},
@@ -144,7 +151,8 @@ binomialff(link = "logit", earg = list(),
     \code{\link{mbinomial}},
     \code{\link{seq2binomial}},
     \code{\link{amlbinomial}},
-    \code{\link[stats:Binomial]{binomial}}.
+    \code{\link[stats:Binomial]{binomial}},
+    \pkg{safeBinaryRegression}.
 
 }
 \section{Warning }{
@@ -154,7 +162,8 @@ binomialff(link = "logit", earg = list(),
 
   The maximum likelihood estimate will not exist if the data is
   \emph{completely separable} or \emph{quasi-completely separable}.
-  See Chapter 10 of Altman et al. (2004) for more details.
+  See Chapter 10 of Altman et al. (2004) for more details,
+  and \pkg{safeBinaryRegression}.
   Yet to do: add a \code{sepcheck=TRUE}, say, argument to detect this
   problem and give an appropriate warning.
 
@@ -168,9 +177,21 @@ fit = vgam(agaaus ~ poly(altitude, 2), binomialff(link=cloglog), hunua)
 \dontrun{
 with(hunua, plot(altitude, agaaus, col="blue", ylab="P(agaaus=1)",
                  main="Presence/absence of Agathis australis", las=1))
-o = with(hunua, order(altitude))
-with(hunua, lines(altitude[o], fitted(fit)[o], col="red", lwd=2))
-}
+ooo = with(hunua, order(altitude))
+with(hunua, lines(altitude[ooo], fitted(fit)[ooo], col="red", lwd=2)) }
+
+
+# Shows that Fisher scoring can sometime fail. See Ridout (1990).
+ridout = data.frame(v = c(1000, 100, 10), r = c(4, 3, 3), n = c(5, 5, 5))
+(ridout = transform(ridout, logv = log(v)))
+# The iterations oscillates between two local solutions:
+glm.fail = glm(r/n ~ offset(logv) + 1, weight=n,
+               binomial(link=cloglog), ridout, trace=TRUE)
+coef(glm.fail)
+# vglm()'s half-stepping ensures the MLE of -5.4007 is obtained:
+vglm.ok = vglm(r/n ~ offset(logv) + 1, weight=n,
+               binomialff(link=cloglog), ridout, trace=TRUE)
+coef(vglm.ok)
 }
 \keyword{models}
 \keyword{regression}

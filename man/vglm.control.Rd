@@ -75,6 +75,14 @@ vglm.control(checkwz=TRUE, criterion = names(.min.criterion.VGAM),
   }
   \item{trace}{
   logical indicating if output should be produced for each iteration.
+  Setting \code{trace=TRUE} is recommended in general because
+  \pkg{VGAM} fits a very broad variety of models and distributions, and
+  for some of them, convergence is intrinsically more difficult.
+  Monitoring convergence can help check that the solution is reasonable
+  or that a problem has occurred.
+  It may suggest better initial values are needed,
+  the making of invalid assumptions, or that
+  the model is inappropriate for the data, etc.
 
   }
   \item{wzepsilon}{
@@ -148,6 +156,10 @@ Reduced-rank vector generalized linear models.
 }
 \author{ Thomas W. Yee}
 \note{ 
+  Reiterating from above,
+  setting \code{trace=TRUE} is recommended in general.
+
+
 In Example 2 below there are two covariates that have linear/additive
 predictor specific values.
 These are handled using the \code{xij} argument.

@@ -58,14 +58,14 @@ str(hspider)
 # Fit a rank-1 Poisson CQO
 set.seed(111)  # This leads to the global solution
 hspider[,1:6]=scale(hspider[,1:6]) # Standardize the environmental variables
-p1 = cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi, Auloalbi,
-               Pardlugu, Pardmont, Pardnigr, Pardpull, Trocterr, Zoraspin) ~
-         WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
-         fam = poissonff, data = hspider, Crow1posit=FALSE)
-nos = ncol(p1@y)
-lvplot(p1, y=TRUE, lcol=1:nos, pch=1:nos, pcol=1:nos) 
-Coef(p1)
-summary(p1)
+# vvv p1 = cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi, Auloalbi,
+# vvv                Pardlugu, Pardmont, Pardnigr, Pardpull, Trocterr, Zoraspin) ~
+# vvv          WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
+# vvv          fam = poissonff, data = hspider, Crow1posit=FALSE)
+# vvv nos = ncol(p1@y)
+# vvv lvplot(p1, y=TRUE, lcol=1:nos, pch=1:nos, pcol=1:nos) 
+# vvv Coef(p1)
+# vvv summary(p1)
 
 
 
