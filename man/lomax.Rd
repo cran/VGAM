@@ -7,9 +7,8 @@
   Lomax distribution.
 }
 \usage{
-lomax(link.scale = "loge", link.q = "loge",
-      earg.scale=list(), earg.q=list(),
-      init.scale = NULL, init.q = 1, zero = NULL)
+lomax(link.scale = "loge", link.q = "loge", earg.scale=list(),
+      earg.q=list(), init.scale = NULL, init.q = 1, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -94,9 +93,8 @@ default value is not \code{NULL}.
 }
 
 \examples{
-y = rlomax(n=2000, 6, 2)
-fit = vglm(y ~ 1, lomax, trace=TRUE)
-fit = vglm(y ~ 1, lomax, trace=TRUE, crit="c")
+lodat = data.frame(y = rlomax(n=2000, 6, 2))
+fit = vglm(y ~ 1, lomax, lodat, trace=TRUE, crit="c")
 coef(fit, mat=TRUE)
 Coef(fit)
 summary(fit)

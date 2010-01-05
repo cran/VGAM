@@ -9,8 +9,7 @@
 
 }
 \usage{
-amh(lalpha="rhobit", ealpha=list(), ialpha=NULL,
-    method.init=1, nsimEIM=250)
+amh(lalpha="rhobit", ealpha=list(), ialpha=NULL, method.init=1, nsimEIM=250)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

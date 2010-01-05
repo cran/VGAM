@@ -19,10 +19,6 @@ cao(formula, family, data = list(),
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  The arguments of \code{cao} are a mixture of those from
-  \code{\link{vgam}} and \code{\link{cqo}}, but with some extras
-  in \code{\link{cao.control}}. Currently, not all of the following
-  arguments work properly.
 
   \item{formula}{ 
     a symbolic description of the model to be fit.  The RHS of the
@@ -153,6 +149,12 @@ cao(formula, family, data = list(),
   }
 }
 \details{
+  The arguments of \code{cao} are a mixture of those from
+  \code{\link{vgam}} and \code{\link{cqo}}, but with some extras
+  in \code{\link{cao.control}}. Currently, not all of the
+  arguments work properly.
+
+
   CAO can be loosely be thought of as the result of fitting generalized
   additive models (GAMs) to several responses (e.g., species) against
   a very small number of latent variables.  Each latent variable is a
@@ -162,6 +164,7 @@ cao(formula, family, data = list(),
   weights or loadings. The \bold{C} are estimated by maximum likelihood
   estimation.  It is often a good idea to apply \code{\link[base]{scale}}
   to each explanatory variable first.
+
 
   For each response (e.g., species), each latent variable is smoothed
   by a cubic smoothing spline, thus CAO is data-driven. If each smooth
@@ -173,8 +176,10 @@ cao(formula, family, data = list(),
   \code{cao} by specifying \code{df1.nl=0}, however it is more efficient
   to use \code{\link{rrvglm}}.
 
+
   Currently, only \code{Rank=1} is implemented, and only
   \code{Norrr = ~1} models are handled.
+
 
 % Poisson and binary responses are implemented (viz.,
 % \code{\link{poissonff}}, \code{\link{binomialff}}), and
@@ -182,6 +187,7 @@ cao(formula, family, data = list(),
 % \code{\link{quasipoissonff}} and \code{\link{quasibinomialff}} will
 % currently fail.  Also, currently, only \code{Norrr = ~ 1} models are
 % handled.
+
 
   With binomial data, the default formula is
   \deqn{logit(P[Y_s=1]) = \eta_s = f_s(\nu), \ \ \ s=1,2,\ldots,S}{%
@@ -198,10 +204,12 @@ cao(formula, family, data = list(),
   A \code{\link{cloglog}} link may be preferable over a
   \code{\link{logit}} link.
 
+
   With Poisson count data, the formula is
   \deqn{\log(E[Y_s]) = \eta_s = f_s(\nu)}{%
          log(E[Y_s]) =  eta_s = f_s(\nu)}
   which models the mean response as an additive models on the log scale.
+
 
   The fitted latent variables (site scores) are scaled to have
   unit variance.  The concept of a tolerance is undefined for
@@ -210,6 +218,7 @@ cao(formula, family, data = list(),
   CAO objects, but note that if the maximum occurs at the boundary then
   \code{\link{Max}} will return a \code{NA}.  Inference for CAO models
   is currently undeveloped.
+
 
 }
 \value{
@@ -237,6 +246,7 @@ Constrained additive ordination.
   = TRUE} is a good idea, as well as running it on a simple random sample
   of the data set instead.
 
+
   Sometimes the IRLS algorithm does not converge within the FORTRAN
   code. This results in warnings being issued.  In particular, if an
   error code of 3 is issued, then this indicates the IRLS algorithm has
@@ -244,11 +254,13 @@ Constrained additive ordination.
   the nonlinear degrees of freedom so that the curves become more or
   less flexible, respectively.
 
+
 }
 \section{Warning }{
   CAO is very costly to compute. With version 0.7-8 it took 28 minutes on 
   a fast machine. I hope to look at ways of speeding things up in the
   future.
+
 
   Use \code{\link[base:Random]{set.seed}} just prior to calling
   \code{cao()} to make your results reproducible.
@@ -261,12 +273,15 @@ Constrained additive ordination.
   progressively more important as the nonlinear degrees of freedom of
   the smooths increase.
 
+
 % The code is a little fragile at this stage, so the function might
 % hang/lock up in the microsoft Windows version.
+
 
   Currently the dispersion parameter for a
   \code{\link{gaussianff}} CAO model is estimated slightly differently
   and may be slightly biassed downwards (usually a little too small).
+
 
 }
 
@@ -285,8 +300,9 @@ Constrained additive ordination.
   \code{\link{gamma2}},
   \code{\link{gaussianff}},
   \code{\link[base:Random]{set.seed}},
-  \code{gam}.
-} 
+  \code{\link[gam]{gam}}.
+
+}
 
 \examples{
 \dontrun{

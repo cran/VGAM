@@ -60,9 +60,7 @@ rlino(n, shape1, shape2, lambda=1)
 }
 \examples{
 \dontrun{
-lambda = 0.4
-shape1 = exp(1.3)
-shape2 = exp(1.3)
+lambda = 0.4; shape1 = exp(1.3); shape2 = exp(1.3)
 x = seq(0.0, 1.0, len=101)
 plot(x, dlino(x, shape1=shape1, shape2=shape2, lambda=lambda),
      type="l", col="blue", las=1, ylab="",

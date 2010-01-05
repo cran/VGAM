@@ -72,22 +72,20 @@ New York: Wiley-Interscience, Third edition.
     \code{\link{poissonff}},
     \code{\link{mix2exp}},
     \code{\link{freund61}}.
+
 }
 
 \examples{
-nn = 100
-x1 = runif(nn) - 0.5
-x2 = runif(nn) - 0.5
-eta = 0.2 - 0.7 * x1 + 1.9 * x2
-rate = exp(eta)
-y = rexp(nn, rate=rate)
-stem(y)
-fit = vglm(y ~ x1 + x2, exponential, trace=TRUE, crit="c") # slower
-fit = vglm(y ~ x1 + x2, exponential(exp=FALSE), trace=TRUE, crit="c") # faster
-coef(fit)
-coef(fit, mat=TRUE)
-Coef(fit)
-summary(fit)
+edata = data.frame(x2 = runif(nn <- 100) - 0.5)
+edata = transform(edata, x3 = runif(nn) - 0.5)
+edata = transform(edata, eta = 0.2 - 0.7 * x2 + 1.9 * x3)
+edata = transform(edata, rate = exp(eta))
+edata = transform(edata, y = rexp(nn, rate=rate))
+with(edata, stem(y))
+fit.slow = vglm(y ~ x2 + x3, exponential, edata, trace=TRUE, crit="c")
+fit.fast = vglm(y ~ x2 + x3, exponential(exp=FALSE), edata, trace=TRUE, crit="c")
+coef(fit.slow, mat=TRUE)
+summary(fit.slow)
 }
 \keyword{models}
 \keyword{regression}

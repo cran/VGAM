@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2009 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2010 T.W. Yee, University of Auckland. All rights reserved.
 
 
 
@@ -19,7 +19,7 @@ summaryvglm <- function(object, correlation=FALSE, dispersion=NULL, digits=NULL)
 
 
 
-    if(length(dispersion) && dispersion == 0 && 
+    if (length(dispersion) && dispersion == 0 && 
        length(object@family@summary.dispersion) && 
        !object@family@summary.dispersion) {
         stop("cannot use the general VGLM formula (based on a residual ",
@@ -42,12 +42,12 @@ summaryvglm <- function(object, correlation=FALSE, dispersion=NULL, digits=NULL)
         sigma=stuff@sigma)
 
     presid = resid(object, type="pearson")
-    if(length(presid))
+    if (length(presid))
         answer@pearson.resid = as.matrix(presid)
 
     slot(answer, "misc") = stuff@misc  # Replace
 
-    if(is.numeric(stuff@dispersion))
+    if (is.numeric(stuff@dispersion))
         slot(answer, "dispersion") = stuff@dispersion
 
     answer
@@ -70,24 +70,24 @@ printsummary.vglm <- function(x, digits = NULL, quote = TRUE, prefix = "",
     coef <- x@coef3   # icients
     correl <- x@correlation
 
-    digits <- if(is.null(digits)) options()$digits - 2 else digits
+    digits <- if (is.null(digits)) options()$digits - 2 else digits
 
     cat("\nCall:\n")
     dput(x@call)
 
     Presid <- x@pearson.resid
     rdf <- x@df[2]
-    if(presid && length(Presid) && all(!is.na(Presid)) && is.finite(rdf))
+    if (presid && length(Presid) && all(!is.na(Presid)) && is.finite(rdf))
     {
         cat("\nPearson Residuals:\n")
-        if(rdf/M > 5) 
+        if (rdf/M > 5) 
         {
             rq <-  apply(as.matrix(Presid), 2, quantile) # 5 x M
             dimnames(rq) <- list(c("Min", "1Q", "Median", "3Q", "Max"),
                                  x@misc$predictors.names)
             print(t(rq), digits = digits)
         } else
-        if(rdf > 0) {
+        if (rdf > 0) {
             print(Presid, digits = digits)
         }
     }
@@ -97,24 +97,24 @@ printsummary.vglm <- function(x, digits = NULL, quote = TRUE, prefix = "",
 
     cat("\nNumber of linear predictors: ", M, "\n")
 
-    if(!is.null(x@misc$predictors.names))
-    if(M==1) 
+    if (!is.null(x@misc$predictors.names))
+    if (M==1) 
         cat("\nName of linear predictor:",
-            paste(x@misc$predictors.names, collapse=", "), "\n") else if(M<=5)
+            paste(x@misc$predictors.names, collapse=", "), "\n") else if (M<=5)
         cat("\nNames of linear predictors:",
             paste(x@misc$predictors.names, collapse=", "), fill=TRUE)
 
     prose <- ""
-    if(length(x@dispersion)) {
-        if(is.logical(x@misc$estimated.dispersion) &&
+    if (length(x@dispersion)) {
+        if (is.logical(x@misc$estimated.dispersion) &&
            x@misc$estimated.dispersion)
             prose <- "(Estimated) " else {
 
-            if(is.numeric(x@misc$default.dispersion) &&
+            if (is.numeric(x@misc$default.dispersion) &&
                x@dispersion==x@misc$default.dispersion)
                 prose <- "(Default) "
 
-            if(is.numeric(x@misc$default.dispersion) &&
+            if (is.numeric(x@misc$default.dispersion) &&
                x@dispersion!=x@misc$default.dispersion)
                 prose <- "(Pre-specified) "
         }
@@ -123,23 +123,23 @@ printsummary.vglm <- function(x, digits = NULL, quote = TRUE, prefix = "",
             " family:   ", yformat(x@dispersion, digits), "\n", sep=""))
     }
 
-    if(length(deviance(x))) {
+    if (length(deviance(x))) {
         cat("\nResidual Deviance:", yformat(deviance(x), digits))
-        if(is.finite(rdf))
+        if (is.finite(rdf))
             cat(" on", round(rdf, digits), "degrees of freedom\n") else
             cat("\n")
     }
-    if(length(vll <- logLik.vlm(x))) {
+    if (length(vll <- logLik.vlm(x))) {
         cat("\nLog-likelihood:", yformat(vll, digits))
-        if(is.finite(rdf))
+        if (is.finite(rdf))
             cat(" on", round(rdf, digits), "degrees of freedom\n") else
             cat("\n")
     }
 
-    if(length(x@criterion)) {
+    if (length(x@criterion)) {
         ncrit <- names(x@criterion)
         for(i in ncrit)
-            if(i!="loglikelihood" && i!="deviance")
+            if (i!="loglikelihood" && i!="deviance")
                 cat(paste(i, ":", sep=""), yformat(x@criterion[[i]], digits),
                     "\n")
     }
@@ -147,10 +147,10 @@ printsummary.vglm <- function(x, digits = NULL, quote = TRUE, prefix = "",
 
     cat("\nNumber of Iterations:", format(trunc(x@iter)), "\n")
 
-    if(!is.null(correl)) 
+    if (!is.null(correl)) 
     {
         ncol_X_vlm <- dim(correl)[2]
-        if(ncol_X_vlm > 1) 
+        if (ncol_X_vlm > 1) 
         {
             cat("\nCorrelation of Coefficients:\n")
             ll <- lower.tri(correl)
@@ -184,48 +184,48 @@ printsummary.vglm <- function(x, digits = NULL, quote = TRUE, prefix = "",
 
 
 vcovdefault <- function(object, ...) {
-    if(is.null(object@vcov))
+    if (is.null(object@vcov))
         stop("no default")
     object@vcov
 }
 
 vcovvlm <- function(object, dispersion=NULL, untransform=FALSE) {
     so <- summaryvlm(object, corr=FALSE, dispersion=dispersion)
-    d = if(any(slotNames(so) == "dispersion") && 
+    d = if (any(slotNames(so) == "dispersion") && 
            is.Numeric(so@dispersion)) so@dispersion else 1
     answer = d * so@cov.unscaled
 
-    if(is.logical(OKRC <- object@misc$RegCondOK) && !OKRC)
+    if (is.logical(OKRC <- object@misc$RegCondOK) && !OKRC)
         warning("MLE regularity conditions were violated ",
                 "at the final iteration of the fitted object")
 
-    if(!untransform) return(answer)
+    if (!untransform) return(answer)
 
-    if(!is.logical(object@misc$intercept.only))
+    if (!is.logical(object@misc$intercept.only))
        stop("cannot determine whether the object is",
             "an intercept-only fit, i.e., 'y ~ 1' is the response")
-    if(!object@misc$intercept.only)
+    if (!object@misc$intercept.only)
        stop("object must be an intercept-only fit, i.e., ",
             "y ~ 1 is the response")
 
-    if(!all(trivial.constraints(constraints(object)) == 1))
+    if (!all(trivial.constraints(constraints(object)) == 1))
        stop("object must have trivial constraints")
 
     M = object@misc$M
     Links = object@misc$link
-    if(length(Links) != M && length(Links) != 1)
+    if (length(Links) != M && length(Links) != 1)
        stop("cannot obtain the link functions to untransform the object")
 
 
     tvector = numeric(M)
     etavector = predict(object)[1,]   # Contains transformed parameters
     earg = object@misc$earg  # This could be a NULL
-    if(!is.null(earg) && M > 1 && (!is.list(earg) || length(earg) != M))
+    if (!is.null(earg) && M > 1 && (!is.list(earg) || length(earg) != M))
         stop("the 'earg' component of 'object@misc' should be of length ", M)
     for(ii in 1:M) {
         TTheta = etavector[ii]  # Transformed theta
-        use.earg = if(M == 1 || is.null(earg)) earg else earg[[ii]]
-        if(is.list(use.earg) && !length(use.earg))
+        use.earg = if (M == 1 || is.null(earg)) earg else earg[[ii]]
+        if (is.list(use.earg) && !length(use.earg))
             use.earg = NULL
         newcall = paste(Links[ii],
                         "(theta=TTheta, earg=use.earg, inverse=TRUE)", sep="")
@@ -238,7 +238,7 @@ vcovvlm <- function(object, dispersion=NULL, untransform=FALSE) {
     }
     tvector = abs(tvector)
     answer = (cbind(tvector) %*% rbind(tvector)) * answer
-    if(length(dmn2 <- names(object@misc$link)) == M)
+    if (length(dmn2 <- names(object@misc$link)) == M)
         dimnames(answer) = list(dmn2, dmn2)
     answer
 }

@@ -5,6 +5,36 @@
 	**************************************************
 
 
+
+                CHANGES IN VGAM VERSION 0.7-10
+
+NEW FEATURES
+
+    o   Surv() renamed to Surv4(), class "SurvS4" renamed to "Surv4".
+    o   coef(summary(vglmObject)) returns a 3-column matrix of estimates,
+        standard errors and Wald statistics, rather than coef(vglmObject)
+        in the past.
+    o   Improved VGAM family functions: fff() uses simulated Fisher
+        scoring now and has slightly better initial values.
+    o   New VGAM family functions:
+        propodds(reverse) is equivalent to
+        cumulative(parallel=TRUE, reverse=reverse) (for convenience only).
+    o   Compatible with R 2.10.1 and the article "The VGAM package
+        for categorical data analysis," Journal of Statistical Software,
+        2010. A vignette based on this paper is included.
+    o   Argument w.als renamed to w.aml in amlnormal().
+
+
+BUG FIXES
+
+    o   VGAM family functions: fff() had poor initial values.
+    o   betabinomial()@loglikelihood required 'ycounts' to be integer.
+    o   [dpqr]betanorm() were written but not in the NAMESPACE.
+
+
+
+
+
                 CHANGES IN VGAM VERSION 0.7-9
 
 NEW FEATURES

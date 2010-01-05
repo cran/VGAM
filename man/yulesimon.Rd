@@ -67,10 +67,10 @@ yulesimon(link="loge", earg=list(), irho=NULL, nsimEIM=200)
 
 }
 \examples{
-x = runif(n <- 1000)
-y = ryules(n, rho=exp(1.5-x))
-table(y)
-fit = vglm(y ~ x, yulesimon, trace=TRUE)
+ydata = data.frame(x = runif(nn <- 1000))
+ydata = transform(ydata, y = ryules(nn, rho=exp(1.5-x)))
+with(ydata, table(y))
+fit = vglm(y ~ x, yulesimon, ydata, trace=TRUE)
 coef(fit, matrix=TRUE)
 summary(fit)
 }

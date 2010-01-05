@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2009 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2010 T.W. Yee, University of Auckland. All rights reserved.
 
 
 
@@ -16,24 +16,24 @@ predict.vglm = function(object,
     na.act = object@na.action
     object@na.action = list()
 
-    if(missing(extra)) {
+    if (missing(extra)) {
     }
 
-    if(deriv != 0)
+    if (deriv != 0)
         stop("'deriv' must be 0 for predict.vglm()")
 
-    if(mode(type) != "character" && mode(type) != "name")
+    if (mode(type) != "character" && mode(type) != "name")
         type = as.character(substitute(type))
     type = match.arg(type, c("link", "response", "terms"))[1]
 
-    if(untransform && (type!="link" || se.fit || deriv != 0))
+    if (untransform && (type!="link" || se.fit || deriv != 0))
         stop("argument 'untransform=TRUE' only if 'type=\"link\", ",
              "se.fit=FALSE, deriv=0'")
 
 
 
 
-    pred = if(se.fit) {
+    pred = if (se.fit) {
         switch(type,
                response = {
                    warning("'type=\"response\"' and 'se.fit=TRUE' not valid ",
@@ -59,7 +59,7 @@ predict.vglm = function(object,
                                deriv=deriv, dispersion=dispersion, ...) 
                 }) # End of switch
       } else {
-        if(is.null(newdata)) {
+        if (is.null(newdata)) {
             switch(type, 
                    link = object@predictors, 
                    response = object@fitted.values,
@@ -69,7 +69,7 @@ predict.vglm = function(object,
                                    deriv=deriv, dispersion=dispersion, ...) 
                    })
         } else {
-            if(!(length(object@offset) == 1 && object@offset == 0))
+            if (!(length(object@offset) == 1 && object@offset == 0))
                 warning("zero offset used") 
             switch(type, 
                    response={
@@ -87,7 +87,7 @@ predict.vglm = function(object,
                        M = object@misc$M
 
                        fv = object@family@inverse(predictor, extra)
-                       if(M > 1 && is.matrix(fv)) {
+                       if (M > 1 && is.matrix(fv)) {
                            dimnames(fv) = list(dimnames(fv)[[1]],
                                           dimnames(object@fitted.values)[[2]])
                        } else {
@@ -113,8 +113,8 @@ predict.vglm = function(object,
         }
     }
 
-    if(!length(newdata) && length(na.act)) {
-        if(se.fit) {
+    if (!length(newdata) && length(na.act)) {
+        if (se.fit) {
             pred$fitted.values = napredict(na.act[[1]], pred$fitted.values)
             pred$se.fit = napredict(na.act[[1]], pred$se.fit)
         } else {
@@ -122,7 +122,7 @@ predict.vglm = function(object,
         }
     }
     
-    if(untransform) untransformVGAM(object, pred) else pred
+    if (untransform) untransformVGAM(object, pred) else pred
 }
 
 
@@ -142,7 +142,7 @@ predict.rrvglm = function(object,
                           dispersion=NULL, 
                           extra=object@extra, ...) {
 
-    if(se.fit) {
+    if (se.fit) {
         stop("11/8/03; predict.rrvglm(..., se.fit=TRUE) not complete yet") 
         pred = 
         switch(type,
@@ -180,8 +180,8 @@ predict.rrvglm = function(object,
 
     na.act = object@na.action
 
-    if(!length(newdata) && length(na.act)) {
-        if(se.fit) {
+    if (!length(newdata) && length(na.act)) {
+        if (se.fit) {
             pred$fitted.values = napredict(na.act[[1]], pred$fitted.values)
             pred$se.fit = napredict(na.act[[1]], pred$se.fit)
         } else {
@@ -201,7 +201,7 @@ setMethod("predict", "rrvglm", function(object, ...)
 untransformVGAM = function(object, pred) {
     M = object@misc$M
     Links = object@misc$link
-    if(length(Links) != M && length(Links) != 1)
+    if (length(Links) != M && length(Links) != 1)
        stop("cannot obtain the link functions to untransform the object")
     upred = pred
     earg = object@misc$earg
@@ -212,8 +212,8 @@ untransformVGAM = function(object, pred) {
         Theta = eval(newcall) # Theta, the untransformed parameter
         upred[,ii] = Theta
     }
-    dmn2 = if(length(names(object@misc$link))) names(object@misc$link) else {
-        if(length(object@misc$parameters)) object@misc$parameters else NULL
+    dmn2 = if (length(names(object@misc$link))) names(object@misc$link) else {
+        if (length(object@misc$parameters)) object@misc$parameters else NULL
     }
     dimnames(upred) = list(dimnames(upred)[[1]], dmn2)
     upred

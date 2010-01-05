@@ -4,6 +4,7 @@
 \title{ Haight's Zeta Family Function }
 \description{
   Estimating the parameter of Haight's Zeta function.
+
 }
 \usage{
 hzeta(link = "loglog", earg=list(), ialpha = NULL, nsimEIM=100)
@@ -73,14 +74,15 @@ hzeta(link = "loglog", earg=list(), ialpha = NULL, nsimEIM=100)
     \code{\link{zeta}},
     \code{\link{zetaff}},
     \code{\link{loglog}}.
+
 }
 \examples{
 alpha = exp(exp(-0.1))  # The parameter
-y = rhzeta(n=1000, alpha) # Generate some hzeta random variates
-fit = vglm(y ~ 1, hzeta, trace = TRUE, crit="c")
-coef(fit, matrix=TRUE)
+hdata = data.frame(y = rhzeta(n = 1000, alpha))
+fit = vglm(y ~ 1, hzeta, hdata, trace = TRUE, crit = "c")
+coef(fit, matrix = TRUE)
 Coef(fit)  # Useful for intercept-only models; should be same as alpha
-c(mean(y), fitted(fit)[1,])
+c(with(hdata, mean(y)), head(fitted(fit), 1))
 summary(fit)
 }
 \keyword{models}

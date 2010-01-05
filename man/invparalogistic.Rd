@@ -8,7 +8,7 @@
 }
 \usage{
 invparalogistic(link.a = "loge", link.scale = "loge",
-                earg.a=list(), earg.scale=list(),
+                earg.a=list(),   earg.scale=list(),
                 init.a = 1, init.scale = NULL, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.

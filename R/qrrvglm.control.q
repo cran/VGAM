@@ -1,9 +1,9 @@
 # These functions are
-# Copyright (C) 1998-2009 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2010 T.W. Yee, University of Auckland. All rights reserved.
 
 
 qrrvglm.control = function(Rank=1,
-          Bestof = if(length(Cinit)) 1 else 10,
+          Bestof = if (length(Cinit)) 1 else 10,
           checkwz=TRUE,
           Cinit = NULL,
           Crow1positive=TRUE,
@@ -23,7 +23,7 @@ qrrvglm.control = function(Rank=1,
           MUXfactor = rep(7, length=Rank),
           Norrr = ~ 1,
           optim.maxit = 20,
-          Parscale = if(ITolerances) 0.001 else 1.0,
+          Parscale = if (ITolerances) 0.001 else 1.0,
           SD.Cinit = 0.02,
           SmallNo = 5.0e-13,
           trace = TRUE,
@@ -34,53 +34,53 @@ qrrvglm.control = function(Rank=1,
 
 
 
-    if(!is.Numeric(iShape, posit=TRUE)) stop("bad input for 'iShape'")
-    if(!is.Numeric(iKvector, posit=TRUE)) stop("bad input for 'iKvector'")
-    if(!is.Numeric(isdlv, posit=TRUE)) stop("bad input for 'isdlv'")
-    if(any(isdlv < 0.2 | isdlv > 10))
+    if (!is.Numeric(iShape, posit=TRUE)) stop("bad input for 'iShape'")
+    if (!is.Numeric(iKvector, posit=TRUE)) stop("bad input for 'iKvector'")
+    if (!is.Numeric(isdlv, posit=TRUE)) stop("bad input for 'isdlv'")
+    if (any(isdlv < 0.2 | isdlv > 10))
         stop("isdlv values must lie between 0.2 and 10")
-    if(length(isdlv) > 1 && any(diff(isdlv) > 0))
+    if (length(isdlv) > 1 && any(diff(isdlv) > 0))
         stop("successive isdlv values must not increase")
-    if(!is.Numeric(epsilon, posit=TRUE, allow=1)) 
+    if (!is.Numeric(epsilon, posit=TRUE, allow=1)) 
         stop("bad input for 'epsilon'")
-    if(!is.Numeric(Etamat.colmax, posit=TRUE, allow=1) || Etamat.colmax < Rank)
+    if (!is.Numeric(Etamat.colmax, posit=TRUE, allow=1) || Etamat.colmax < Rank)
         stop("bad input for 'Etamat.colmax'")
-    if(!is.Numeric(Hstep, posit=TRUE, allow=1)) 
+    if (!is.Numeric(Hstep, posit=TRUE, allow=1)) 
         stop("bad input for 'Hstep'")
-    if(!is.Numeric(maxitl, posit=TRUE, allow=1, integer=TRUE)) 
+    if (!is.Numeric(maxitl, posit=TRUE, allow=1, integer=TRUE)) 
         stop("bad input for 'maxitl'")
-    if(!is.Numeric(method.init, posit=TRUE, allow=1, integer=TRUE)) 
+    if (!is.Numeric(method.init, posit=TRUE, allow=1, integer=TRUE)) 
         stop("bad input for 'method.init'")
-    if(!is.Numeric(Maxit.optim, integ=TRUE, posit=TRUE))
+    if (!is.Numeric(Maxit.optim, integ=TRUE, posit=TRUE))
         stop("Bad input for 'Maxit.optim'")
-    if(!is.Numeric(MUXfactor, posit=TRUE)) 
+    if (!is.Numeric(MUXfactor, posit=TRUE)) 
         stop("bad input for 'MUXfactor'")
-    if(any(MUXfactor < 1 | MUXfactor > 10))
+    if (any(MUXfactor < 1 | MUXfactor > 10))
         stop("MUXfactor values must lie between 1 and 10")
-    if(!is.Numeric(optim.maxit, allow=1, integ=TRUE, posit=TRUE))
+    if (!is.Numeric(optim.maxit, allow=1, integ=TRUE, posit=TRUE))
         stop("Bad input for 'optim.maxit'")
-    if(!is.Numeric(Rank, posit=TRUE, allow=1, integer=TRUE)) 
+    if (!is.Numeric(Rank, posit=TRUE, allow=1, integer=TRUE)) 
         stop("bad input for 'Rank'")
-    if(!is.Numeric(SD.Cinit, posit=TRUE, allow=1)) 
+    if (!is.Numeric(SD.Cinit, posit=TRUE, allow=1)) 
         stop("bad input for 'SD.Cinit'")
-    if(ITolerances && !EqualTolerances)
+    if (ITolerances && !EqualTolerances)
         stop("EqualTolerances must be TRUE if ITolerances is TRUE")
-    if(!is.Numeric(Bestof, posit=TRUE, allow=1, integer=TRUE)) 
+    if (!is.Numeric(Bestof, posit=TRUE, allow=1, integer=TRUE)) 
         stop("bad input for 'Bestof'")
 
 
     FastAlgorithm = as.logical(FastAlgorithm)[1]
-    if(!FastAlgorithm)
+    if (!FastAlgorithm)
         stop("FastAlgorithm=TRUE is now required")
 
-    if((SmallNo < .Machine$double.eps) ||
+    if ((SmallNo < .Machine$double.eps) ||
        (SmallNo > .0001)) stop("SmallNo is out of range") 
-    if(any(Parscale <= 0))
+    if (any(Parscale <= 0))
        stop("Parscale must contain positive numbers only") 
 
-    if(!is.logical(checkwz) || length(checkwz) != 1)
+    if (!is.logical(checkwz) || length(checkwz) != 1)
         stop("bad input for 'checkwz'")
-    if(!is.Numeric(wzepsilon, allow=1, positive=TRUE))
+    if (!is.Numeric(wzepsilon, allow=1, positive=TRUE))
         stop("bad input for 'wzepsilon'")
 
     ans = list(
@@ -116,7 +116,7 @@ qrrvglm.control = function(Rank=1,
            SD.Cinit = SD.Cinit,
            SmallNo = SmallNo,
            Structural.zero = NULL,
-           Svd.arg = TRUE, Alpha=0.5, Uncor = TRUE,
+           Svd.arg = TRUE, Alpha=0.5, Uncorrelated.lv = TRUE,
            trace = trace,
            Use.Init.Poisson.QO=as.logical(Use.Init.Poisson.QO)[1],
            wzepsilon = wzepsilon)

@@ -7,9 +7,8 @@
   Fisk distribution.
 }
 \usage{
-fisk(link.a = "loge", link.scale = "loge",
-     earg.a=list(), earg.scale=list(),
-     init.a = NULL, init.scale = NULL, zero = NULL)
+fisk(link.a = "loge", link.scale = "loge", earg.a=list(),
+     earg.scale=list(), init.a = NULL, init.scale = NULL, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

@@ -63,8 +63,7 @@ rzanegbin(n, p0, size, prob=NULL, munb=NULL)
 
 }
 \examples{
-munb = 3; size = 4; p0 = 0.3
-x = (-1):7
+munb = 3; size = 4; p0 = 0.3; x = (-1):7
 (ii = dzanegbin(x, p0=p0, munb=munb, size=size))
 table(rzanegbin(100, p0=p0, munb=munb, size=size))
 
@@ -72,10 +71,10 @@ table(rzanegbin(100, p0=p0, munb=munb, size=size))
 x = 0:10
 barplot(rbind(dzanegbin(x, p0=p0, munb=munb, size=size),
               dnbinom(x, mu=munb, size=size)),
-        beside = TRUE, col = c("blue","green"),
-        main=paste("ZANB(p0=", p0, ", munb=", munb, ", size=", size, ") (blue) vs",
-                        " NB(mu=", munb, ", size=", size, ") (green)", sep=""),
-        names.arg = as.character(x), cex.main=0.7, las=1)
-}
+        beside = TRUE, col = c("blue","green"), cex.main=0.7, las=1,
+        ylab = "Probability",names.arg = as.character(x),
+        main=paste("ZANB(p0=", p0, ", munb=", munb, ", size=", size,
+                   ") [blue] vs", " NB(mu=", munb, ", size=", size,
+                   ") [green] densities", sep="")) }
 }
 \keyword{distribution}

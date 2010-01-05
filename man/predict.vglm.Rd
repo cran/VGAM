@@ -70,6 +70,7 @@ predict.vglm(object, newdata = NULL,
 
   This code implements \emph{smart prediction}
   (see \code{\link{smartpred}}).
+
 }
 \value{
   If \code{se.fit = FALSE}, a vector or matrix of predictions.
@@ -97,6 +98,7 @@ Reduced-rank vector generalized linear models.
 
 \section{Warning }{
   This function may change in the future.
+
 }
 
 \seealso{ 
@@ -104,14 +106,14 @@ Reduced-rank vector generalized linear models.
   \code{\link{vglm}},
   \code{predict.vlm},
   \code{\link{smartpred}}.
+
 }
 
 \examples{
 # Illustrates smart prediction
 pneumo = transform(pneumo, let=log(exposure.time))
 fit = vglm(cbind(normal,mild, severe) ~ poly(c(scale(let)), 2),
-           cumulative(parallel=TRUE),
-           data=pneumo, trace=TRUE, x=FALSE)
+           propodds, data=pneumo, trace=TRUE, x=FALSE)
 class(fit)
 
 (q0 = head(predict(fit)))

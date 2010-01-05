@@ -6,8 +6,7 @@
   The two parameters of the univariate simplex distribution are estimated.
 }
 \usage{
-simplex(lmu = "logit", lsigma = "loge", 
-        emu=list(), esigma=list(),
+simplex(lmu = "logit", lsigma = "loge", emu=list(), esigma=list(),
         imu = NULL, isigma = NULL)
 }
 %- maybe also 'usage' for other objects documented here.

@@ -70,8 +70,8 @@ New York: Wiley-Interscience, Third edition.
 
 }
 \examples{
-y = rgamma(n=100, shape= exp(3))
-fit = vglm(y ~ 1, gamma1, trace=TRUE, crit="c")
+gdata = data.frame(y = rgamma(n=100, shape= exp(3)))
+fit = vglm(y ~ 1, gamma1, gdata, trace=TRUE, crit="c")
 coef(fit, matrix=TRUE)
 Coef(fit)
 summary(fit)

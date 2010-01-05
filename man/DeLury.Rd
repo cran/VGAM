@@ -123,6 +123,11 @@ statistics of fish populations.
 \emph{Bull. Fish. Res. Bd. Can.},
 \bold{191}, 382--
 
+  Yee, T. W. (2009)
+  VGLMs and VGAMs: an overview for applications in fisheries research.
+  In press.
+
+
 }
 \author{ T. W. Yee. }
 \note{

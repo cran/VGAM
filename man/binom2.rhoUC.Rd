@@ -95,7 +95,7 @@ dbinom2.rho(mu1,
 nn = 2000
 (myrho <- rhobit(2, inverse=TRUE))
 ymat = rbinom2.rho(n=nn, mu1=0.8, rho=myrho, exch=TRUE)
-(mytab <- table(ymat[,1], ymat[,2]))
+(mytab = table(ymat[,1], ymat[,2], dnn=c("Y1","Y2")))                                     
 fit = vglm(ymat ~ 1, binom2.rho(exch=TRUE))
 coef(fit, matrix=TRUE)
 

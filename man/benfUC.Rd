@@ -107,24 +107,21 @@ Note on the Frequency of Use of the Different Digits in Natural Numbers.
 %    \code{\link{logff}}.
 %}
 \examples{
-x = c(0:10, NA, NaN, -Inf, Inf)
-dbenf(x)
+dbenf(x <- c(0:10, NA, NaN, -Inf, Inf))
 pbenf(x)
 
 \dontrun{
-x = 1:9; # par(mfrow=c(2,1))
-barplot(dbenf(x), col = "lightblue", las=1, xlab="Leading digit",
-        ylab = "Probability",
-        main=paste("Benford's distribution",  sep=""),
-        names.arg = as.character(x))
+xx = 1:9; # par(mfrow=c(2,1))
+barplot(dbenf(xx), col = "lightblue", las=1, xlab="Leading digit",
+        ylab = "Probability", names.arg = as.character(xx),
+        main=paste("Benford's distribution",  sep=""))
 
 hist(rbenf(n=1000), border = "blue", prob=TRUE,
-     main="Random variates from Benford's distribution",
-     xlab="Leading digit",
-     sub="Red is the true probability",
+     main="1000 random variates from Benford's distribution",
+     xlab="Leading digit", sub="Red is the true probability",
      breaks=0:9+0.5, ylim=c(0, 0.35), xlim=c(0, 10.0))
-lines(1:9, dbenf(1:9), col="red", type="h")
-points(1:9, dbenf(1:9), col="red")
+lines(xx, dbenf(xx), col="red", type="h")
+points(xx, dbenf(xx), col="red")
 }
 }
 \keyword{distribution}

@@ -8,10 +8,8 @@
 
 }
 \usage{
-gamma2(lmu = "loge", lshape = "loge",
-       emu = list(), eshape = list(),
-       method.init = 1, deviance.arg = FALSE,
-       ishape = NULL, zero = -2)
+gamma2(lmu = "loge", lshape = "loge", emu = list(), eshape = list(),
+       method.init = 1, deviance.arg = FALSE, ishape = NULL, zero = -2)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -149,18 +147,16 @@ McCullagh, P. and Nelder, J. A. (1989)
 }
 \examples{
 # Essentially a 1-parameter gamma
-y = rgamma(n <- 100, shape= exp(1))
-fit1 = vglm(y ~ 1, gamma1, trace=TRUE, crit="c")
-fit2 = vglm(y ~ 1, gamma2, trace=TRUE, crit="c")
-coef(fit1, matrix=TRUE)
-Coef(fit1)
+gdata = data.frame(y = rgamma(n=100, shape= exp(1)))
+fit1 = vglm(y ~ 1, gamma1, gdata)
+fit2 = vglm(y ~ 1, gamma2, gdata, trace=TRUE, crit="c")
 coef(fit2, matrix=TRUE)
 Coef(fit2)
 
 
 # Essentially a 2-parameter gamma
-y = rgamma(n <- 500, rate=exp(1), shape=exp(2))
-fit2 = vglm(y ~ 1, gamma2, trace=TRUE, crit="c")
+gdata = data.frame(y = rgamma(n=500, rate=exp(1), shape=exp(2)))
+fit2 = vglm(y ~ 1, gamma2, gdata, trace=TRUE, crit="c")
 coef(fit2, matrix=TRUE)
 Coef(fit2)
 summary(fit2)

@@ -17,9 +17,6 @@ plotvgam(x, newdata = NULL, y = NULL, residuals = NULL,
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  In the following, \eqn{M} is the number of linear/additive
-  predictors, and \eqn{r} is the number of columns of the
-  constraint matrix of interest.
 
   \item{x}{ A fitted \pkg{VGAM} object, e.g., produced by
     \code{vgam()}, \code{vglm()}, or \code{rrvglm()}. }
@@ -104,6 +101,11 @@ plotvgam(x, newdata = NULL, y = NULL, residuals = NULL,
 
 }
 \details{
+  In this help file \eqn{M} is the number of linear/additive
+  predictors, and \eqn{r} is the number of columns of the
+  constraint matrix of interest.
+
+
   Many of \code{plotvgam()}'s options can be found in  
   \code{\link{plotvgam.control}}, e.g., line types, line widths,
   colors.
@@ -151,7 +153,6 @@ fit = vgam(cbind(nBnW,nBW,BnW,BW) ~ s(Age), binom2.or(zero=NULL), coalminers)
 \dontrun{
 par(mfrow=c(1,3))
 plot(fit, se=TRUE, ylim=c(-3,2), las=1)
-
 plot(fit, se=TRUE, which.cf=1:2, lcol="blue", scol="red", ylim=c(-3,2))
 plot(fit, se=TRUE, which.cf=1:2, lcol="blue", scol="red", overlay=TRUE)
 }
@@ -159,4 +160,4 @@ plot(fit, se=TRUE, which.cf=1:2, lcol="blue", scol="red", overlay=TRUE)
 \keyword{models}
 \keyword{regression}
 \keyword{smooth}
-\keyword{hplot}
+\keyword{graphs}

@@ -117,10 +117,10 @@ More improvements could be made here.
 }
 
 \examples{
-y = rsinmad(n=3000, 4, 6, 2) # Not very good data!
-fit = vglm(y ~ 1, genbetaII, trace=TRUE)
+gdata = data.frame(y = rsinmad(n=3000, 4, 6, 2)) # Not very good data!
+fit = vglm(y ~ 1, genbetaII, gdata, trace=TRUE)
 fit = vglm(y ~ 1, genbetaII(init.p=1.0, init.a=4, init.sc=7, init.q=2.3),
-           trace=TRUE, crit="c")
+           gdata, trace=TRUE, crit="c")
 coef(fit, mat=TRUE)
 Coef(fit)
 summary(fit)

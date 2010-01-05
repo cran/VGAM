@@ -55,19 +55,18 @@ Some contributions to contingency-type distributions.
 }
 \examples{
 \dontrun{
-N = 101
+N = 101; oratio = exp(1)
 x = seq(0.0, 1.0, len=N)
-oratio = exp(1)
 ox = expand.grid(x, x)
 z = dplack(ox[,1], ox[,2], oratio=oratio)
 contour(x, x, matrix(z, N, N), col="blue")
 z = pplack(ox[,1], ox[,2], oratio=oratio)
 contour(x, x, matrix(z, N, N), col="blue")
 
-plot(r <- rplack(n=3000, oratio=oratio))
+plot(rr <- rplack(n=3000, oratio=oratio))
 par(mfrow=c(1,2))
-hist(r[,1]) # Should be uniform
-hist(r[,2]) # Should be uniform
+hist(rr[,1]) # Should be uniform
+hist(rr[,2]) # Should be uniform
 }
 }
 \keyword{distribution}

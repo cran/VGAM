@@ -104,9 +104,9 @@ while estimates for \eqn{a} and \eqn{p} can be considered unbiased for
 }
 
 \examples{
-y = rdagum(n=3000, 4, 6, 2)
-fit = vglm(y ~ 1, dagum, trace=TRUE)
-fit = vglm(y ~ 1, dagum(init.a=2.1), trace=TRUE, crit="c")
+ddata = data.frame(y = rdagum(n=3000, 4, 6, 2))
+fit = vglm(y ~ 1, dagum, ddata, trace=TRUE)
+fit = vglm(y ~ 1, dagum(init.a=2.1), ddata, trace=TRUE, crit="c")
 coef(fit, mat=TRUE)
 Coef(fit)
 summary(fit)

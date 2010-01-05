@@ -8,10 +8,8 @@
 
 }
 \usage{
-riceff(lvee="loge", lsigma="loge",
-       evee=list(), esigma=list(),
-       ivee=NULL, isigma=NULL,
-       nsimEIM=100, zero=NULL)
+riceff(lvee="loge", lsigma="loge", evee=list(), esigma=list(),
+       ivee=NULL, isigma=NULL, nsimEIM=100, zero=NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

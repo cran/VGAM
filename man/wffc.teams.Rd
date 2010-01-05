@@ -30,12 +30,9 @@
 %\source{
 %  \url{http://www.2008worldflyfishingchamps.com/}.
 %}
-\references{
-  Yee, T. W. (2009)
-  VGLMs and VGAMs: an overview for applications in fisheries research.
-  In preparation.
-
-}
+%\references{
+%
+%}
 \examples{
 wffc.teams
 }

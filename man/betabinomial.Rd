@@ -8,9 +8,8 @@
 
 }
 \usage{
-betabinomial(lmu="logit", lrho="logit", emu=list(), erho=list(),
-             irho=NULL, method.init=1, shrinkage.init=0.95,
-             nsimEIM=NULL, zero=2)
+betabinomial(lmu="logit", lrho="logit", emu=list(), erho=list(), irho=NULL,
+             method.init=1, shrinkage.init=0.95, nsimEIM=NULL, zero=2)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -177,17 +176,17 @@ betabinomial(lmu="logit", lrho="logit", emu=list(), erho=list(),
 }
 \examples{
 # Example 1
-N = 10; mu = 0.5; rho = 0.8 
-y = rbetabin(n=100, size=N, prob=mu, rho=rho)
-fit = vglm(cbind(y,N-y) ~ 1, betabinomial, trace=TRUE)
+betabindat = data.frame(N = 10, mu = 0.5, rho = 0.8)
+betabindat = transform(betabindat,
+                       y = rbetabin(n=100, size=N, prob=mu, rho=rho))
+fit = vglm(cbind(y,N-y) ~ 1, betabinomial, betabindat, trace=TRUE)
 coef(fit, matrix=TRUE)
 Coef(fit)
 head(cbind(fit@y, weights(fit, type="prior")))
 
 
 # Example 2
-fit = vglm(cbind(R,N-R) ~ 1, betabinomial, data=lirat,
-           trace=TRUE, subset=N>1)
+fit = vglm(cbind(R,N-R)~1, betabinomial, lirat, trace=TRUE, subset=N>1)
 coef(fit, matrix=TRUE)
 Coef(fit)
 t(fitted(fit))
@@ -215,8 +214,8 @@ smalldf = with(lirat, lirat[N>1,])
 for(gp in 1:4) {
     xx = with(smalldf, hb[grp==gp])
     yy = with(smalldf, fitted(fit2)[grp==gp])
-    o = order(xx)
-    lines(xx[o], yy[o], col=gp)
+    ooo = order(xx)
+    lines(xx[ooo], yy[ooo], col=gp)
 }
 }
 }

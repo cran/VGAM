@@ -118,20 +118,23 @@ New York: Wiley.
 
 }
 \examples{
-x = runif(n <- 1000)
-y = rbisa(n, shape=exp(-0.5+x), scale=exp(1.5))
-fit = vglm(y ~ x, bisa(zero=2), trace=TRUE)
+nn <- 1000
+bisa1dat = data.frame(x = runif(nn))
+bisa1dat = transform(bisa1dat, shape=exp(-0.5+x), scale=exp(1.5))
+bisa1dat = transform(bisa1dat, y = rbisa(nn, shape, scale))
+fit = vglm(y ~ x, bisa(zero=2), bisa1dat, trace=TRUE)
 coef(fit, matrix=TRUE)
 
 \dontrun{
-y = rbisa(n=1000, shape=exp(-0.5), scale=exp(0.5))
-fit = vglm(y ~ 1, bisa, trace=TRUE)
-hist(y, prob=TRUE, ylim=c(0,0.5), col="lightblue")
+bisa2dat = data.frame(shape=exp(-0.5), scale=exp(0.5))
+bisa2dat = transform(bisa2dat, y = rbisa(nn, shape, scale))
+fit = vglm(y ~ 1, bisa, bisa2dat, trace=TRUE)
+with(bisa2dat, hist(y, prob=TRUE, ylim=c(0,0.5), col="lightblue"))
 coef(fit, matrix=TRUE)
-mean(y)
+with(bisa2dat, mean(y))
 head(fitted(fit))
-x = seq(0, max(y), len=200)
-lines(x, dbisa(x, Coef(fit)[1], Coef(fit)[2]), col="red", lwd=2)
+x = with(bisa2dat, seq(0, max(y), len=200))
+with(bisa2dat, lines(x, dbisa(x, Coef(fit)[1], Coef(fit)[2]), col="red", lwd=2))
 }
 }
 \keyword{models}

@@ -6,20 +6,16 @@
   Fits GARMA models to time series data.
 }
 \usage{
-garma(link = c("identity", "loge", "reciprocal",
-               "logit", "probit", "cloglog", "cauchit"),
-      earg=list(),
-      p.ar.lag = 1, q.lag.ma = 0,
+garma(link = "identity", earg=list(), p.ar.lag = 1, q.lag.ma = 0,
       coefstart = NULL, step = 1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{link}{
   Link function applied to the mean response.
-  By default, the first choice is used, which is suitable for
-  continuous responses.
+  The default is suitable for continuous responses.
   The link \code{\link{loge}} should be chosen if the data are counts.
-  The links \code{\link{logit}}, \code{\link{probit}},
+  Links such as \code{\link{logit}}, \code{\link{probit}},
   \code{\link{cloglog}},
   \code{\link{cauchit}} are suitable for binary responses.
 
@@ -177,7 +173,7 @@ interspike = c(68, 41, 82, 66, 101, 66, 57,  41,  27, 78,
 spikenum = seq(interspike)
 bvalue = 0.1  # .Machine$double.xmin # Boundary value
 fit = vglm(interspike ~ 1, trace=TRUE,
-   garma("loge", earg=list(bvalue=bvalue), p=2, coef=c(4,.3,.4)))
+           garma("loge", earg=list(bvalue=bvalue), p=2, coef=c(4,.3,.4)))
 summary(fit)
 coef(fit, matrix=TRUE)
 Coef(fit)  # A bug here

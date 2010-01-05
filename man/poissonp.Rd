@@ -92,16 +92,17 @@ poissonp(ostatistic, dimension=2, link="loge", earg=list(),
 %}
 \seealso{
      \code{\link{poissonff}}.
+
 }
 \examples{
-y = rgamma(n <- 10, shape=exp(-1))   # Not good data!
+pdat = data.frame(y = rgamma(10, shape=exp(-1))) # Not good data!
 os = 2
-fit = vglm(y ~ 1, poissonp(os, 2), tra=TRUE, cri="c")
-fit = vglm(y ~ 1, poissonp(os, 3), tra=TRUE, cri="c") # Slow convergence?
-fit = vglm(y ~ 1, poissonp(os, 3, idensi=1), tra=TRUE, cri="c")
+fit = vglm(y ~ 1, poissonp(os, 2), pdat, tra=TRUE, crit="c")
+fit = vglm(y ~ 1, poissonp(os, 3), pdat, tra=TRUE, crit="c") # Slow convergence?
+fit = vglm(y ~ 1, poissonp(os, 3, idensi=1), pdat, trace=TRUE, crit="c")
 head(fitted(fit))
-mean(y)
-coef(fit, matrix=TRUE)
+with(pdat, mean(y))
+coef(fit, matrix = TRUE)
 Coef(fit)
 }
 \keyword{models}

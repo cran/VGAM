@@ -33,7 +33,7 @@ rskellam(n, mu1, mu2)
   \code{rskellam} generates random deviates.
 
 }
-\author{ T. W. Yee }
+%\author{ T. W. Yee }
 \details{
   See \code{\link{skellam}}, the \pkg{VGAM} family function
   for estimating the parameters,

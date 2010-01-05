@@ -65,10 +65,8 @@ London: Imperial College Press.
 }
 \examples{
 \dontrun{
+loc = 1; Scale = 1.5; k = 1.4
 x = seq(-3.2, 5, by=0.01)
-loc = 1
-Scale = 1.5
-k = 1.4
 plot(x, dlgamma(x, loc, Scale, k), type="l", col="blue", ylim=c(0,1),
      main="Blue is density, red is cumulative distribution function",
      sub="Purple are 5,10,...,95 percentiles", las=1, ylab="")

@@ -9,9 +9,8 @@
 
 }
 \usage{
-betabin.ab(lshape12 = "loge", earg = list(),
-           i1 = 1, i2 = NULL,  method.init=1,
-           shrinkage.init=0.95, nsimEIM=NULL, zero=NULL)
+betabin.ab(lshape12 = "loge", earg = list(), i1 = 1, i2 = NULL,
+           method.init=1, shrinkage.init=0.95, nsimEIM=NULL, zero=NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -190,7 +189,7 @@ t(fit@y)
 t(weights(fit, type="prior"))
 # A "loge" link for the 2 shape parameters is a logistic regression:
 all.equal(c(fitted(fit)),
-c(logit(predict(fit)[,1] - predict(fit)[,2], inverse=TRUE)))
+          c(logit(predict(fit)[,1] - predict(fit)[,2], inverse=TRUE)))
 
 
 # Example 3, which is more complicated
@@ -216,8 +215,8 @@ smalldf = with(lirat, lirat[N>1,])
 for(gp in 1:4) {
     xx = with(smalldf, hb[grp==gp])
     yy = with(smalldf, fitted(fit2)[grp==gp])
-    o = order(xx)
-    lines(xx[o], yy[o], col=gp)
+    ooo = order(xx)
+    lines(xx[ooo], yy[ooo], col=gp)
 }
 }
 }

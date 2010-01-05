@@ -131,13 +131,14 @@ that these are reasonable.
 }
 
 \examples{
-x = runif(n <- 1000)
-p0 = logit(-1 + 1*x, inverse=TRUE)
-lambda = loge(-0.3 + 2*x, inverse=TRUE)
-y = ifelse(runif(n) < p0, 0, rpospois(n, lambda))
-table(y)
-fit = vglm(y ~ x, zapoisson, trace=TRUE)
-fit = vglm(y ~ x, zapoisson, trace=TRUE, crit="c")
+zapdata = data.frame(x = runif(nn <- 1000))
+zapdata = transform(zapdata, p0 = logit(-1 + 1*x, inverse=TRUE),
+                             lambda = loge(-0.5 + 2*x, inverse=TRUE))
+zapdata = transform(zapdata, y = rzapois(nn, lambda, p0=p0))
+
+with(zapdata, table(y))
+fit = vglm(y ~ x, zapoisson, zapdata, trace=TRUE)
+fit = vglm(y ~ x, zapoisson, zapdata, trace=TRUE, crit="c")
 head(fitted(fit))
 head(predict(fit))
 head(predict(fit, untransform=TRUE))
@@ -146,14 +147,13 @@ coef(fit, matrix=TRUE)
 
 # Another example ------------------------------
 # Data from Angers and Biswas (2003)
-y = 0:7;   w = c(182, 41, 12, 2, 2, 0, 0, 1)
-y = y[w>0]
-w = w[w>0]
-yy = rep(y,w)
+abdata = data.frame(y = 0:7, w = c(182, 41, 12, 2, 2, 0, 0, 1))
+abdata = subset(abdata, w>0)
+yy = with(abdata, rep(y, w))
 fit3 = vglm(yy ~ 1, zapoisson, trace=TRUE, crit="c")
 coef(fit3, matrix=TRUE)
 Coef(fit3)  # Estimate of lambda (they get 0.6997 with standard error 0.1520)
-head(fitted(fit3))
+head(fitted(fit3), 1)
 mean(yy) # compare this with fitted(fit3)
 }
 \keyword{models}

@@ -13,14 +13,6 @@ TypicalVGAMlinkFunction(theta, earg=list(), inverse=FALSE,
                         deriv=0, short=TRUE, tag=FALSE)
 }
 \arguments{
-  Almost all \pkg{VGAM} link functions have something similar to
-  the argument list as given above.
-  That is, there is a matching \code{earg} for each \code{link}
-  argument.
-  In the following we have \eqn{\eta=g(\theta)}{eta=g(theta)}
-  where \eqn{g} is the link function, \eqn{\theta}{theta} is the parameter
-  and \eqn{\eta}{eta} is the linear/additive predictor.
-
   \item{theta}{
   Numeric or character.
   Actually this can be \eqn{\theta}{theta} (default) or \eqn{\eta}{eta},
@@ -69,6 +61,7 @@ TypicalVGAMlinkFunction(theta, earg=list(), inverse=FALSE,
   }
 }
 \value{
+
   Returns one of the link function value or its first or second derivative,
   the inverse link or its first or second derivative,
   or a character description of the link.
@@ -94,6 +87,18 @@ TypicalVGAMlinkFunction(theta, earg=list(), inverse=FALSE,
 
 }
 \details{
+  Almost all \pkg{VGAM} link functions have something similar to
+  the argument list as given above.
+  That is, there is a matching \code{earg} for each \code{link} argument.
+  In this help file
+  we have \eqn{\eta=g(\theta)}{eta=g(theta)}
+  where \eqn{g} is the link function, \eqn{\theta}{theta} is the parameter
+  and \eqn{\eta}{eta} is the linear/additive predictor.
+
+
+
+
+
   The following is a brief enumeration of all \pkg{VGAM} link functions.
 
   For parameters lying between 0 and 1 (e.g., probabilities):
@@ -150,6 +155,11 @@ TypicalVGAMlinkFunction(theta, earg=list(), inverse=FALSE,
 }
 \author{T. W. Yee}
 \note{
+  \pkg{VGAM} link functions are generally not compatible with other functions
+  outside the package.
+  In particular, they won't work with
+  \code{\link[stats]{glm}} or any other package for fitting GAMs.
+
   From October 2006 onwards,
   all \pkg{VGAM} family functions will only
   contain one default value for each link argument rather than giving a

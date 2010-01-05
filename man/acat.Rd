@@ -12,10 +12,6 @@ acat(link = "loge", earg = list(),
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  In the following, the response \eqn{Y} is assumed to be a factor
-  with ordered values \eqn{1,2,\ldots,M+1}, so that
-  \eqn{M} is the number of linear/additive predictors
-  \eqn{\eta_j}{eta_j}.
 
   \item{link}{
   Link function applied to the ratios of the 
@@ -51,6 +47,12 @@ acat(link = "loge", earg = list(),
   }
 }
 \details{
+  In this help file the response \eqn{Y} is assumed to be a factor
+  with ordered values \eqn{1,2,\ldots,M+1}, so that
+  \eqn{M} is the number of linear/additive predictors
+  \eqn{\eta_j}{eta_j}.
+
+
   By default, the log link is used because the ratio of two probabilities
   is positive.
 
@@ -67,9 +69,18 @@ Agresti, A. (2002)
 \emph{Categorical Data Analysis},
 2nd ed. New York: Wiley.
 
+
 Simonoff, J. S. (2003)
 \emph{Analyzing Categorical Data},
 New York: Springer-Verlag.
+
+
+Yee, T. W. (2010)
+The \pkg{VGAM} package for categorical data analysis.
+\emph{Journal of Statistical Software},
+\bold{32}, 1--34.
+\url{http://www.jstatsoft.org/v32/i10/}.
+
 
 Documentation accompanying the \pkg{VGAM} package at
 \url{http://www.stat.auckland.ac.nz/~yee}
@@ -107,7 +118,7 @@ contains further information and examples.
 }
 \examples{
 pneumo = transform(pneumo, let=log(exposure.time))
-(fit = vglm(cbind(normal,mild,severe) ~ let, acat, pneumo))
+(fit <- vglm(cbind(normal,mild,severe) ~ let, acat, pneumo))
 coef(fit, matrix=TRUE)
 constraints(fit)
 model.matrix(fit)

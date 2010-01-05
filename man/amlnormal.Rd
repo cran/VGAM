@@ -11,17 +11,13 @@
 
 }
 \usage{
-amlnormal(w.als=1, parallel=FALSE, lexpectile = "identity",
-          eexpectile = list(), iexpectile = NULL,
-          method.init=1, digw=4)
+amlnormal(w.aml = 1, parallel = FALSE, lexpectile = "identity",
+          eexpectile = list(), iexpectile = NULL, method.init = 1, digw = 4)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  In this documentation the word \emph{quantile} can often be
-  interchangeably replaced by \emph{expectile}
-  (things are informal here).
 
-  \item{w.als}{
+  \item{w.aml}{
   Numeric, a vector of positive constants controlling the percentiles.
   The larger the value the larger the fitted percentile value
   (the proportion of points below the ``w-regression plane'').
@@ -30,7 +26,7 @@ amlnormal(w.als=1, parallel=FALSE, lexpectile = "identity",
 
   }
   \item{parallel}{
-  If \code{w.als} has more than one value then
+  If \code{w.aml} has more than one value then
   this argument allows the quantile curves to differ by the same amount
   as a function of the covariates.
   Setting this to be \code{TRUE} should force the quantile curves to
@@ -49,7 +45,7 @@ amlnormal(w.als=1, parallel=FALSE, lexpectile = "identity",
   }
   \item{digw }{
   Passed into \code{\link[base]{Round}} as the \code{digits} argument
-  for the \code{w.als} values;
+  for the \code{w.aml} values;
   used cosmetically for labelling.
 
   }
@@ -85,28 +81,39 @@ amlnormal(w.als=1, parallel=FALSE, lexpectile = "identity",
 
 \author{ Thomas W. Yee }
 \note{
-  On fitting, the \code{extra} slot has list components \code{"w.als"} and
+  On fitting, the \code{extra} slot has list components \code{"w.aml"} and
   \code{"percentile"}. The latter is the percent of observations below
   the ``w-regression plane'', which is the fitted values.
 
-  One difficulty is finding the \code{w.als} value giving a specified
+
+  One difficulty is finding the \code{w.aml} value giving a specified
   percentile. One solution is to fit the model within a root finding
   function such as \code{\link[stats]{uniroot}}; see the example below.
+
 
   For \code{amlnormal} objects, methods functions for the generic functions
   \code{qtplot} and \code{cdf} have not been written yet.
 
+
   See the note in \code{\link{amlpoisson}} on the jargon, including
   \emph{expectiles} and \emph{regression quantiles}.
 
+
   The \code{deviance} slot computes the total asymmetric squared error
   loss (2.5).
-  If \code{w.als} has more than one value then the value returned by
-  the slot is the sum taken over all the \code{w.als} values.
+  If \code{w.aml} has more than one value then the value returned by
+  the slot is the sum taken over all the \code{w.aml} values.
+
 
   This \pkg{VGAM} family function could well be renamed \code{amlnormal()}
   instead, given the other function names \code{\link{amlpoisson}},
   \code{\link{amlbinomial}}, etc.
+
+
+  In this documentation the word \emph{quantile} can often be
+  interchangeably replaced by \emph{expectile}
+  (things are informal here).
+
 
 }
 
@@ -131,11 +138,10 @@ amlnormal(w.als=1, parallel=FALSE, lexpectile = "identity",
 
 \examples{
 # Example 1
-o = with(bminz, order(age))
-bminz = bminz[o,]  # Sort by age
-(fit = vglm(BMI ~ bs(age), fam=amlnormal(w.als=0.1), data=bminz))
+ooo = with(bminz, order(age))
+bminz = bminz[ooo,]  # Sort by age
+(fit = vglm(BMI ~ bs(age), fam=amlnormal(w.aml=0.1), bminz))
 fit@extra  # Gives the w value and the percentile
-coef(fit)
 coef(fit, matrix=TRUE)
 
 \dontrun{
@@ -143,8 +149,7 @@ coef(fit, matrix=TRUE)
 with(bminz, plot(age, BMI, col="blue", main=
      paste(round(fit@extra$percentile, dig=1),
            "expectile-percentile curve")))
-with(bminz, lines(age, c(fitted(fit)), col="black"))
-}
+with(bminz, lines(age, c(fitted(fit)), col="black")) }
 
 
 
@@ -157,25 +162,23 @@ findw = function(w, percentile=50) {
 \dontrun{
 # Quantile plot
 with(bminz, plot(age, BMI, col="blue", las=1, main=
-     "25, 50 and 75 expectile-percentile curves"))
-}
+     "25, 50 and 75 expectile-percentile curves")) }
 for(myp in c(25,50,75)) {
 # Note: uniroot() can only find one root at a time
     bestw = uniroot(f=findw, interval=c(1/10^4, 10^4), percentile=myp)
     fit2 = vglm(BMI ~ bs(age), fam=amlnormal(w=bestw$root), data=bminz)
 \dontrun{
-    with(bminz, lines(age, c(fitted(fit2)), col="red"))
-}
+    with(bminz, lines(age, c(fitted(fit2)), col="red")) }
 }
 
 
 
 # Example 3; this is Example 1 but with smoothing splines and
 # a vector w and a parallelism assumption.
-o = with(bminz, order(age))
-bminz = bminz[o,]  # Sort by age
+ooo = with(bminz, order(age))
+bminz = bminz[ooo,]  # Sort by age
 fit3 = vgam(BMI ~ s(age, df=4), fam=amlnormal(w=c(.1,1,10), parallel=TRUE),
-            data=bminz, trac=TRUE)
+            bminz, trac=TRUE)
 fit3@extra # The w values, percentiles and weighted deviances
 
 # The linear components of the fit; not for human consumption:

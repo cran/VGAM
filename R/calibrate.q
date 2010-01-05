@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2009 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2010 T.W. Yee, University of Auckland. All rights reserved.
 
 
 
@@ -11,13 +11,13 @@
 calibrate.qrrvglm.control = function(object,
         trace=FALSE,  # passed into optim()
         Method.optim="BFGS",   # passed into optim(method=Method)
-        gridSize = if(Rank==1) 9 else 5,
+        gridSize = if (Rank==1) 9 else 5,
         varlvI = FALSE, ...) {
     Rank = object@control$Rank
     EqualTolerances = object@control$EqualTolerances
-    if(!is.Numeric(gridSize, positive=TRUE, integer=TRUE, allow=1))
+    if (!is.Numeric(gridSize, positive=TRUE, integer=TRUE, allow=1))
         stop("bad input for 'gridSize'")
-    if(gridSize < 2)
+    if (gridSize < 2)
         stop("gridSize must be >= 2")
     list(# maxit=Maxit.optim,   # Note the name change
          trace=as.numeric(trace)[1],
@@ -35,67 +35,67 @@ calibrate.qrrvglm = function(object,
                         type=c("lv","predictors","response","vcov","all3or4"),
                              initial.vals=NULL, ...) {
 
-    Quadratic = if(is.logical(object@control$Quadratic))
+    Quadratic = if (is.logical(object@control$Quadratic))
                 object@control$Quadratic else FALSE  # T if CQO, F if CAO
 
-    if(!length(newdata)) {
-        if(!length(object@y)) stop("no newdata") else
+    if (!length(newdata)) {
+        if (!length(object@y)) stop("no newdata") else
         newdata = data.frame(object@y)
     }
 
-    if(mode(type) != "character" && mode(type) != "name")
+    if (mode(type) != "character" && mode(type) != "name")
         type <- as.character(substitute(type))
     type <- match.arg(type, c("lv","predictors","response","vcov","all3or4"))[1]
 
-    if(!Quadratic && type=="vcov")
+    if (!Quadratic && type=="vcov")
         stop("cannot have 'type=\"vcov\"' when object is a \"cao\" object")
 
-    if(is.vector(newdata))
+    if (is.vector(newdata))
         newdata = rbind(newdata)
-    if(!is.matrix(newdata))
+    if (!is.matrix(newdata))
         newdata = as.matrix(newdata)
     newdata = newdata[,object@misc$ynames,drop=FALSE]
 
     obfunct = slot(object@family, object@misc$criterion) # Objective function
-    minimize.obfunct = if(Quadratic) object@control$min.criterion else
+    minimize.obfunct = if (Quadratic) object@control$min.criterion else
         TRUE  # Logical; TRUE for CAO objects because deviance is minimized
-    if(!is.logical(minimize.obfunct)) 
+    if (!is.logical(minimize.obfunct)) 
         stop("object@control$min.criterion is not a logical")
     optim.control = calibrate.qrrvglm.control(object=object, ...) # For cao too
 
-    if((Rank <- object@control$Rank) > 2)
+    if ((Rank <- object@control$Rank) > 2)
         stop("currently can only handle Rank=1 and 2")
-    Coefobject = if(Quadratic) {
+    Coefobject = if (Quadratic) {
         Coef(object, varlvI=optim.control$varlvI)
     } else {
         Coef(object)
     }
-    if(!length(initial.vals)) {
+    if (!length(initial.vals)) {
         L = apply(Coefobject@lv, 2, min)
         U = apply(Coefobject@lv, 2, max)
-        initial.vals = if(Rank==1)
+        initial.vals = if (Rank==1)
             cbind(seq(L, U, length=optim.control$gridSize)) else
             expand.grid(seq(L[1], U[1], length=optim.control$gridSize),
                         seq(L[2], U[2], length=optim.control$gridSize))
     }
     ok = length(object@control$colx1.index)==1 &&
          names(object@control$colx1.index) == "(Intercept)"
-    if(!ok) stop("The x1 vector must be an intercept only")
+    if (!ok) stop("The x1 vector must be an intercept only")
 
     nn = nrow(newdata)
     BestOFpar = NULL   # It may be more efficient not to append 
     BestOFvalues = NULL   # Best OF objective function values
     for(i1 in 1:nn) {
-        if(optim.control$trace)
+        if (optim.control$trace)
             cat("\nOptimizing for observation", i1, "-----------------\n")
         OFvalues = OFpar = NULL   # OF means objective function
         for(ii in 1:nrow(initial.vals)) {
-            if(optim.control$trace) {
+            if (optim.control$trace) {
                 cat("Starting from grid-point", ii, ":")
                 flush.console()
             }
-            ans = if(is.R()) {
-                if(Quadratic)
+            ans = if (is.R()) {
+                if (Quadratic)
                 optim(par=initial.vals[ii,],
                       fn=.my.calib.objfunction.qrrvglm,
                       method=optim.control$Method.optim,  # "BFGS", or "CG" or ...
@@ -124,26 +124,26 @@ calibrate.qrrvglm = function(object,
             } else 
                 stop("not implemented in S-PLUS yet")
 
-            if(optim.control$trace) {
-                if(ans$convergence == 0)
+            if (optim.control$trace) {
+                if (ans$convergence == 0)
                     cat("Successful convergence\n") else 
                     cat("Unsuccessful convergence\n")
                     flush.console()
             }
-            if(ans$convergence == 0) {
+            if (ans$convergence == 0) {
                 OFvalues = c(OFvalues, ans$value)
                 OFpar = rbind(OFpar, ans$par)
             }
         }
-        if(length(OFpar)) {
-            index = if(minimize.obfunct)
+        if (length(OFpar)) {
+            index = if (minimize.obfunct)
                     (1:nrow(OFpar))[OFvalues==min(OFvalues)] else
                     (1:nrow(OFpar))[OFvalues==max(OFvalues)]
-            if(length(index) > 1) {
+            if (length(index) > 1) {
                 warning(paste("multiple solutions found for observation ", i1,
                               ". Choosing one randomly.", sep=""))
                 index = sample(index, size=1)
-            } else if(length(index) == 0)
+            } else if (length(index) == 0)
                 stop("length(index) is zero")
             BestOFpar = rbind(BestOFpar, OFpar[index,])
             BestOFvalues = c(BestOFvalues, OFvalues[index])
@@ -154,25 +154,25 @@ calibrate.qrrvglm = function(object,
     }
 
     pretty = function(BestOFpar, newdata, Rank) {
-        if(Rank==1) {
+        if (Rank==1) {
             BestOFpar = c(BestOFpar) 
             names(BestOFpar) = dimnames(newdata)[[1]]
         } else
             dimnames(BestOFpar) = list(dimnames(newdata)[[1]],
-                if(Rank==1) "lv" else paste("lv", 1:Rank, sep=""))
+                if (Rank==1) "lv" else paste("lv", 1:Rank, sep=""))
         BestOFpar
     }
 
-    if(type=="lv") {
+    if (type=="lv") {
         BestOFpar = pretty(BestOFpar, newdata, Rank)
         attr(BestOFpar,"objectiveFunction")=pretty(BestOFvalues,newdata,Rank=1)
         BestOFpar
     } else {
         etaValues = muValues = NULL   #
-        if(Quadratic)
+        if (Quadratic)
             vcValues = array(0, c(Rank,Rank,nn))
         for(i1 in 1:nn) {
-            ans = if(Quadratic) .my.calib.objfunction.qrrvglm(BestOFpar[i1, ],
+            ans = if (Quadratic) .my.calib.objfunction.qrrvglm(BestOFpar[i1, ],
                           y=newdata[i1,],
                           extra=object@extra,
                           objfun=obfunct,
@@ -191,24 +191,24 @@ calibrate.qrrvglm = function(object,
                           mu.function = slot(object@family, "inverse"))
             muValues = rbind(muValues, matrix(ans$mu, nrow=1))
             etaValues = rbind(etaValues, matrix(ans$eta, nrow=1))
-            if(Quadratic)
+            if (Quadratic)
                 vcValues[,,i1] = ans$vcmat  # Can be NULL for "cao" objects
         }
-        if(type=="response") {
+        if (type=="response") {
              dimnames(muValues) = dimnames(newdata)
              muValues
-        } else if(type=="predictors") {
+        } else if (type=="predictors") {
              dimnames(etaValues) = list(dimnames(newdata)[[1]],
                                         dimnames(object@predictors)[[2]])
              etaValues
-        } else if(type=="vcov") {
-             if(Quadratic)
+        } else if (type=="vcov") {
+             if (Quadratic)
              dimnames(vcValues) = list(as.character(1:Rank), 
                                        as.character(1:Rank),
                                        dimnames(newdata)[[1]])
              vcValues
-        } else if(type=="all3or4") {
-             if(Quadratic)
+        } else if (type=="all3or4") {
+             if (Quadratic)
              dimnames(vcValues) = list(as.character(1:Rank), 
                                        as.character(1:Rank),
                                        dimnames(newdata)[[1]])
@@ -221,7 +221,7 @@ calibrate.qrrvglm = function(object,
              list(lv=BestOFpar,
                   predictors=etaValues,
                   response=muValues,
-                  vcov=if(Quadratic) vcValues else NULL)
+                  vcov = if(Quadratic) vcValues else NULL)
         } else stop("type not matched")
     }
 }
@@ -246,7 +246,7 @@ calibrate.qrrvglm = function(object,
     value = objfun(mu=mu, y=y,
                    w=1,  # ignore prior.weights on the object
                    residuals=FALSE, eta=eta, extra=extra)
-    if(everything) {
+    if (everything) {
         vcmat = matrix(0, Rank, Rank)
         for(s in 1:M) {
             vec1 = cbind(Coefs@A[s,]) + 2 *
@@ -255,7 +255,7 @@ calibrate.qrrvglm = function(object,
         }
         vcmat = solve(vcmat)
     } else vcmat = NULL
-    if(everything) list(eta=eta, mu=mu, value=value, vcmat=vcmat) else value
+    if (everything) list(eta=eta, mu=mu, value=value, vcmat=vcmat) else value
 }
 
 
@@ -277,7 +277,7 @@ calibrate.qrrvglm = function(object,
                    w=1,  # ignore prior.weights on the object
                    residuals=FALSE, eta=eta, extra=extra)
     vcmat = NULL  # No theory as of yet to compute the vcmat
-    if(everything) list(eta=eta, mu=mu, value=value, vcmat=vcmat) else value
+    if (everything) list(eta=eta, mu=mu, value=value, vcmat=vcmat) else value
 }
 
 

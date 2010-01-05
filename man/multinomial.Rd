@@ -13,9 +13,6 @@ multinomial(zero = NULL, parallel = FALSE, nointercept = NULL,
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  In the following, the response \eqn{Y} is assumed to be a factor with
-  unordered values \eqn{1,2,\dots,M+1}, so that \eqn{M} is the number
-  of linear/additive predictors \eqn{\eta_j}{eta_j}.
 
   \item{zero}{
   An integer-valued vector specifying which
@@ -30,9 +27,7 @@ multinomial(zero = NULL, parallel = FALSE, nointercept = NULL,
 
   }
   \item{nointercept}{
-  An integer-valued vector specifying which
-  linear/additive predictors have no intercepts.
-  Any values must be from the set \{1,2,\ldots,\eqn{M}\}.
+  See \code{\link{CommonVGAMffArguments}} for more details.
 
   }
   \item{refLevel}{
@@ -50,6 +45,11 @@ multinomial(zero = NULL, parallel = FALSE, nointercept = NULL,
   }
 }
 \details{
+  In this help file the response \eqn{Y} is assumed to be a factor with
+  unordered values \eqn{1,2,\dots,M+1}, so that \eqn{M} is the number
+  of linear/additive predictors \eqn{\eta_j}{eta_j}.
+
+
   The default model can be written
   \deqn{\eta_j = \log(P[Y=j]/ P[Y=M+1])}{%
          eta_j =  log(P[Y=j]/ P[Y=M+1])}
@@ -80,36 +80,51 @@ multinomial(zero = NULL, parallel = FALSE, nointercept = NULL,
 
 }
 \references{
+
+Yee, T. W. (2009)
+The \pkg{VGAM} package for categorical data analysis.
+\emph{Journal of Statistical Software},
+\bold{32}, % zzz--zzz.
+\url{http://www.jstatsoft.org/v32/i10/}.
+
+
 Yee, T. W. and Hastie, T. J. (2003)
 Reduced-rank vector generalized linear models.
 \emph{Statistical Modelling}, 
 \bold{3}, 15--41.
 
+
 McCullagh, P. and Nelder, J. A. (1989)
 \emph{Generalized Linear Models}, 2nd ed.
 London: Chapman & Hall.
 
+
 Agresti, A. (2002)
 \emph{Categorical Data Analysis},
 2nd ed. New York: Wiley.
+
 
 Hastie, T. J., Tibshirani, R. J. and Friedman, J. H. (2009)
 \emph{The Elements of Statistical Learning: Data Mining, Inference and Prediction},
 2nd ed.
 New York: Springer-Verlag.
 
+
 Simonoff, J. S. (2003)
 \emph{Analyzing Categorical Data},
 New York: Springer-Verlag.
+
 
 Anderson, J. A. (1984)
 Regression and ordered categorical variables. 
 \emph{Journal of the Royal Statistical Society, Series B, Methodological},
 \bold{46}, 1--30.
 
-Documentation accompanying the \pkg{VGAM} package at
-\url{http://www.stat.auckland.ac.nz/~yee}
-contains further information and examples.
+
+Further information and examples on categorical data analysis
+by the \pkg{VGAM} package can be found at
+\url{http://www.stat.auckland.ac.nz/~yee/VGAM/doc/categorical.pdf}.
+
 
 }
 \author{ Thomas W. Yee }
@@ -130,6 +145,7 @@ contains further information and examples.
   are separable and/or the fitted probabilities are close to 0 or 1.
   The fitted values returned are estimates of the probabilities
   \eqn{P[Y=j]} for \eqn{j=1,\ldots,M+1}.
+  See \pkg{safeBinaryRegression} for the logistic regression case.
 
   Here is an example of the usage of the \code{parallel} argument.
   If there are covariates \code{x2}, \code{x3} and \code{x4}, then
@@ -161,14 +177,9 @@ contains further information and examples.
 \section{Warning }{
   No check is made to verify that the response is nominal.
 
-  The arguments \code{zero} and \code{nointercept} can be inputted
-  with values that fail. For example, \code{multinomial(zero=2,
-  nointercept=1:3)} means the second linear/additive predictor is
-  identically zero, which will cause a failure.
 
-  Be careful about the use of other potentially contradictory constraints,
-  e.g., \code{multinomial(zero=2, parallel = TRUE ~ x3)}.  If in doubt,
-  apply \code{constraints()} to the fitted object to check.
+  See \code{\link{CommonVGAMffArguments}} for more warnings.
+
 
 }
 \seealso{
@@ -182,7 +193,7 @@ contains further information and examples.
     \code{\link{rrvglm}},
     \code{\link{fill1}},
     \code{\link[stats:Multinom]{Multinomial}},
-    \code{\link[base]{iris}}.
+    \code{\link[datasets]{iris}}.
   The author's homepage has further documentation about
   categorical data analysis using \pkg{VGAM}.
 

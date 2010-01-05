@@ -107,7 +107,7 @@
       q = dabs(q)
       r = e
       e = d
-30    if(.not.((dabs(p) .ge. dabs(0.5d0*q*r)) .or.(q .eq. 0.0d0)))goto 2
+      if(.not.((dabs(p) .ge. dabs(0.5d0*q*r)) .or.(q .eq. 0.0d0)))goto 2
      &3021
       go to 40
 23021 continue
@@ -185,7 +185,6 @@
       dwgkz6 = dyb3po * dexp((-2.0d0 + x*6.0d0) * dlog(16.0d0))
       n9peut = fx
       return
-23012 continue
       return
       end
       subroutine poqy8c(vf1jtn,eh6nly,mvx9at,vbxpg4,tb,nb)
@@ -396,7 +395,6 @@
 23102 continue
 23098 continue
       return
-23092 continue
       end
       subroutine oipu6h(egoxa3,atqh0o,x,y,w, nfiumb4,nk,rlhz2a, knot,
      &coef,sz,rjcq9o, n9peut, dwgkz6, mheq6i, n7cuql,dvpc8x,hdv8br,
@@ -507,7 +505,6 @@
 23130 continue
 23126 continue
       return
-23118 continue
       end
       subroutine ak9vxi(p3vlea,hr83e,w,onyz6j, xl6qgm,nfiumb4, wevr5o,
      &n7cuql,dvpc8x,hdv8br,cbg5ys)

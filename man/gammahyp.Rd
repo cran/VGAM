@@ -69,12 +69,12 @@ Asymptotics and the theory of inference.
   \code{\link{exponential}}.
 }
 \examples{
-x  = runif(n <- 1000)
-theta = exp(-2+x)
-y1 = rexp(n, rate=exp(-theta)/theta)
-y2 = 1 + rexp(n, rate=theta)
-fit = vglm(cbind(y1,y2) ~ x, fam=gammahyp(expected=TRUE), trace=TRUE)
-fit = vglm(cbind(y1,y2) ~ x, fam=gammahyp, trace=TRUE, crit="coef")
+gdata = data.frame(x  = runif(nn <- 1000))
+gdata = transform(gdata, theta = exp(-2+x))
+gdata = transform(gdata, y1 = rexp(nn, rate=exp(-theta)/theta),
+                         y2 = rexp(nn, rate=theta) + 1)
+fit = vglm(cbind(y1,y2) ~ x, fam=gammahyp(expected=TRUE), gdata)
+fit = vglm(cbind(y1,y2) ~ x, fam=gammahyp, gdata, trace=TRUE, crit="coef")
 coef(fit, matrix=TRUE)
 Coef(fit)
 head(fitted(fit))

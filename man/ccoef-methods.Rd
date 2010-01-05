@@ -30,8 +30,8 @@
 \item{object}{
   The object from which the constrained coefficients are
   extracted.
-
 }
+
 }
 }
 \keyword{methods}

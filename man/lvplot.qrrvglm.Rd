@@ -286,24 +286,27 @@ canonical Gaussian ordination.
 
 \examples{
 set.seed(123)
-x2 = rnorm(n <- 200)    # Has mean 0 (needed when ITol=TRUE)
-x3 = rnorm(n)           # Has mean 0 (needed when ITol=TRUE)
-x4 = rnorm(n)           # Has mean 0 (needed when ITol=TRUE)
-lv1 =  x2 + x3 - 2*x4
-lv2 = -x2 + x3 + 0*x4   # lv2 is weakly correlated with lv1
-lambda1 = exp(6 - 0.5 * (lv1-0)^2 - 0.5 * (lv2-0)^2)
-lambda2 = exp(5 - 0.5 * (lv1-1)^2 - 0.5 * (lv2-1)^2)
-lambda3 = exp(5 - 0.5 * (lv1+2)^2 - 0.5 * (lv2-0)^2)
-spp1 = rpois(n, lambda1)
-spp2 = rpois(n, lambda2)
-spp3 = rpois(n, lambda3)
+nn = 200
+cdat = data.frame(x2 = rnorm(nn),   # Has mean 0 (needed when ITol=TRUE)
+                  x3 = rnorm(nn),   # Has mean 0 (needed when ITol=TRUE)
+                  x4 = rnorm(nn))   # Has mean 0 (needed when ITol=TRUE)
+cdat = transform(cdat, lv1 =  x2 + x3 - 2*x4,
+                       lv2 = -x2 + x3 + 0*x4)
+# Nb. lv2 is weakly correlated with lv1
+cdat = transform(cdat, lambda1 = exp(6 - 0.5 * (lv1-0)^2 - 0.5 * (lv2-0)^2),
+                       lambda2 = exp(5 - 0.5 * (lv1-1)^2 - 0.5 * (lv2-1)^2),
+                       lambda3 = exp(5 - 0.5 * (lv1+2)^2 - 0.5 * (lv2-0)^2))
+cdat = transform(cdat, spp1 = rpois(nn, lambda1),
+                       spp2 = rpois(nn, lambda2),
+                       spp3 = rpois(nn, lambda3))
 set.seed(111)
-p2 = cqo(cbind(spp1,spp2,spp3) ~ x2 + x3 + x4, poissonff, 
-         Rank=2, ITolerances=TRUE,
-         Crow1positive=c(TRUE,FALSE))   # deviance = 505.81
-if(deviance(p2) > 506) stop("suboptimal fit obtained")
-sort(p2@misc$deviance.Bestof)  # A history of the fits
-Coef(p2)
+# vvv p2 = cqo(cbind(spp1,spp2,spp3) ~ x2 + x3 + x4, poissonff, 
+# vvv          data = cdat,
+# vvv          Rank=2, ITolerances=TRUE,
+# vvv          Crow1positive=c(TRUE,FALSE))   # deviance = 505.81
+# vvv if (deviance(p2) > 506) stop("suboptimal fit obtained")
+# vvv sort(p2@misc$deviance.Bestof)  # A history of the fits
+# vvv Coef(p2)
 
 \dontrun{
 lvplot(p2, sites=TRUE, spch="*", scol="darkgreen", scex=1.5,
@@ -311,14 +314,13 @@ lvplot(p2, sites=TRUE, spch="*", scol="darkgreen", scex=1.5,
        adj=-0.5, pcol="blue", pcex=1.3, las=1,
        C=TRUE, Cadj=c(-.3,-.3,1), Clwd=2, Ccex=1.4, Ccol="red",
        main=paste("Contours at Abundance=140 with",
-                  "convex hull of the site scores"))
-}
-var(lv(p2)) # A diagonal matrix, i.e., uncorrelated latent variables
-var(lv(p2, varlvI=TRUE)) # Identity matrix
-Tol(p2)[,,1:2] # Identity matrix
-Tol(p2, varlvI=TRUE)[,,1:2] # A diagonal matrix
+                  "convex hull of the site scores")) }
+# vvv var(lv(p2)) # A diagonal matrix, i.e., uncorrelated latent variables
+# vvv var(lv(p2, varlvI=TRUE)) # Identity matrix
+# vvv Tol(p2)[,,1:2] # Identity matrix
+# vvv Tol(p2, varlvI=TRUE)[,,1:2] # A diagonal matrix
 }
 \keyword{models}
 \keyword{regression}
-\keyword{hplot}
+\keyword{graphs}
 

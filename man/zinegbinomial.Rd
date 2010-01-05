@@ -8,10 +8,9 @@
 
 }
 \usage{
-zinegbinomial(lphi="logit", lmunb = "loge", lk = "loge",
-              ephi=list(), emunb =list(), ek = list(),
-              iphi = NULL, ik = NULL, zero = -3, method.init=1,
-              shrinkage.init=0.95, nsimEIM=200)
+zinegbinomial(lphi="logit", lmunb = "loge", lk = "loge", ephi=list(),
+              emunb =list(), ek = list(), iphi = NULL, ik = NULL,
+              zero = -3, method.init=1, shrinkage.init=0.95, nsimEIM=200)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -30,6 +29,7 @@ zinegbinomial(lphi="logit", lmunb = "loge", lk = "loge",
   \item{iphi, ik}{
   Optional initial values for \eqn{\phi}{phi} and \eqn{k}{k}.
   The default is to compute an initial value internally for both.
+  If a vector then recycling is used.
 
   }
   \item{method.init}{
@@ -125,23 +125,22 @@ zinegbinomial(lphi="logit", lmunb = "loge", lk = "loge",
 \seealso{
   \code{\link{Zinegbin}},
   \code{\link{negbinomial}},
-  \code{\link[stats:negative binomial]{rpois}}.
+  \code{\link[stats:Poisson]{rpois}}.
 
 }
 \examples{
-x = runif(n <- 1000)
-phi = logit(-0.5+1*x, inverse=TRUE)
-munb = exp(3+x)
-k = exp(0+2*x)
-y1 = rzinegbin(n, phi, mu=munb, size=k)
-y2 = rzinegbin(n, phi, mu=munb, size=k)
-table(y1)["0"] / sum(table(y1))
-table(y2)["0"] / sum(table(y2))
-fit = vglm(cbind(y1,y2) ~ x, zinegbinomial(zero=NULL), trace=TRUE)
+nbdat = data.frame(x = runif(nn <- 1000))
+nbdat = transform(nbdat, phi = logit(-0.5+1*x, inverse=TRUE),
+                         munb = exp(3+x),
+                         k = exp(0+2*x))
+nbdat = transform(nbdat, y1 = rzinegbin(nn, phi, mu=munb, size=k),
+                         y2 = rzinegbin(nn, phi, mu=munb, size=k))
+with(nbdat, table(y1)["0"] / sum(table(y1)))
+fit = vglm(cbind(y1,y2) ~ x, zinegbinomial(zero=NULL), nbdat, trace=TRUE)
 coef(fit, matrix=TRUE)
 summary(fit)
-head(cbind(fitted(fit), (1-phi) * munb))
-vcov(fit)
+head(cbind(fitted(fit), with(nbdat, (1-phi) * munb)))
+round(vcov(fit), 3)
 }
 \keyword{models}
 \keyword{regression}

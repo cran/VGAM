@@ -85,15 +85,15 @@ Hoboken, NJ: Wiley-Interscience.
      \code{\link{Benini}}.
 }
 \examples{
-y  = rbenini(n <- 3000, y0=1, shape=exp(2))
-fit = vglm(y ~ 1, benini(y0=1), trace=TRUE, crit="c")
+y0 = 1
+bdata = data.frame(y  = rbenini(n=3000, y0=y0, shape=exp(2)))
+fit = vglm(y ~ 1, benini(y0=y0), bdata, trace=TRUE, crit="c")
 coef(fit, matrix=TRUE)
 Coef(fit)
 fit@extra$y0
 
-# Apparent discrepancy:
-head(fitted(fit))
-mean(y)
+head(fitted(fit), 1)   # Apparent discrepancy:
+with(bdata, mean(y))
 }
 \keyword{models}
 \keyword{regression}

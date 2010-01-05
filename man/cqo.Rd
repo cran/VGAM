@@ -19,10 +19,6 @@ cqo(formula, family, data = list(), weights = NULL, subset = NULL,
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  In this documentation, \eqn{M} is the number of linear predictors,
-  \eqn{S} is the number of responses (species). Then
-  \eqn{M=S} for Poisson and binomial species data,
-  and \eqn{M=2S} for negative binomial and gamma distributed species data.
 
   \item{formula}{ a symbolic description of the model to be fit.
   The RHS of the formula is applied to each linear predictor. Different
@@ -182,6 +178,7 @@ cqo(formula, family, data = list(), weights = NULL, subset = NULL,
   in order to maximize the log-likelihood function, or equivalently,
   minimize the deviance.
 
+
   The central formula (for Poisson and binomial species data) is
   given by
   \deqn{\eta = B_1^T x_1 + A \nu +
@@ -202,6 +199,7 @@ cqo(formula, family, data = list(), weights = NULL, subset = NULL,
   in \code{\link{qrrvglm.control}}, e.g., the argument \code{Norrr}
   specifies which variables comprise \eqn{x_1}{x_1}.
 
+
   Theoretically, the four most popular \pkg{VGAM} family functions
   to be used with \code{cqo} correspond to the Poisson, binomial,
   normal, and negative binomial distributions. The latter is a
@@ -212,12 +210,14 @@ cqo(formula, family, data = list(), weights = NULL, subset = NULL,
   Those beginning with \code{"quasi"} have dispersion parameters that
   are estimated for each species.
 
+
   %the negative binomial by \code{\link{negbinomial}}, and the normal by
   %\code{gaussianff}.
 
   %For overdispersed Poisson data, using \code{\link{quasipoissonff}} is
   %strongly recommended over \code{\link{negbinomial}}; the latter is
   %\emph{very} sensitive to departures from the model assumptions.
+
 
   For initial values, the function \code{.Init.Poisson.QO} should
   work reasonably well if the data is Poisson with species having equal
@@ -230,6 +230,13 @@ cqo(formula, family, data = list(), weights = NULL, subset = NULL,
   result is a data-driven approach rather than a model-driven approach,
   so that CQO is extended to \emph{constrained additive ordination}
   (CAO) when \eqn{R=1}.  See \code{\link{cao}} for more details.
+
+
+  In this documentation, \eqn{M} is the number of linear predictors,
+  \eqn{S} is the number of responses (species). Then
+  \eqn{M=S} for Poisson and binomial species data,
+  and \eqn{M=2S} for negative binomial and gamma distributed species data.
+
 
 }
 \value{
@@ -412,112 +419,6 @@ contains further information and examples.
 # Example 1; Fit an unequal tolerances model to the hunting spiders data
 hspider[,1:6]=scale(hspider[,1:6]) # Standardize the environmental variables
 set.seed(1234)
-p1ut = cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,
-                 Auloalbi, Pardlugu, Pardmont, Pardnigr, Pardpull,
-                 Trocterr, Zoraspin) ~
-           WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
-           fam=poissonff, data=hspider, Crow1positive=FALSE, ITol=FALSE)
-sort(p1ut@misc$deviance.Bestof) # A history of all the iterations
-if(deviance(p1ut) > 1177) stop("suboptimal fit obtained")
-
-\dontrun{
-S = ncol(p1ut@y) # Number of species
-clr = (1:(S+1))[-7] # omits yellow
-lvplot(p1ut, y=TRUE, lcol=clr, pch=1:S, pcol=clr, las=1) # ordination diagram
-legend("topright", leg=colnames(p1ut@y), col=clr,
-       pch=1:S, merge=TRUE, bty="n", lty=1:S, lwd=2)
-}
-(cp = Coef(p1ut))
-
-(a = cp@lv[cp@lvOrder])  # The ordered site scores along the gradient
-# Names of the ordered sites along the gradient:
-rownames(cp@lv)[cp@lvOrder]
-(a = (cp@Optimum)[,cp@OptimumOrder]) # The ordered optima along the gradient
-a = a[!is.na(a)] # Delete the species that is not unimodal
-names(a)         # Names of the ordered optima along the gradient
-
-\dontrun{
-trplot(p1ut, whichSpecies=1:3, log="xy", type="b", lty=1, lwd=2,
-       col=c("blue","red","green"), label=TRUE) -> ii # trajectory plot
-legend(0.00005, 0.3, paste(ii$species[,1], ii$species[,2], sep=" and "),
-       lwd=2, lty=1, col=c("blue","red","green"))
-abline(a=0, b=1, lty="dashed")
-
-S = ncol(p1ut@y) # Number of species
-clr = (1:(S+1))[-7] # omits yellow
-persp(p1ut, col=clr, label=TRUE, las=1) # perspective plot
-}
-
-# Example 2: A rank-2 equal tolerances CQO model with Poisson data
-# This example is numerically fraught.
-set.seed(555)
-p2 = cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,
-               Auloalbi, Pardlugu, Pardmont, Pardnigr, Pardpull,
-               Trocterr, Zoraspin) ~
-         WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
-         fam=poissonff, data=hspider, Crow1positive=FALSE,
-#        ITol=FALSE, EqualTol=TRUE,
-         Rank=2, Bestof=1, isdlv=c(2.1,0.9))
-sort(p2@misc$deviance.Bestof) # A history of all the iterations
-if(deviance(p2) > 1127) stop("suboptimal fit obtained")
-\dontrun{
-lvplot(p2, ellips=FALSE, label=TRUE, xlim=c(-3,4),
-       C=TRUE, Ccol="brown", sites=TRUE, scol="grey", 
-       pcol="blue", pch="+", chull=TRUE, ccol="grey")
-}
-
-
-# Example 3: species packing model with presence/absence data
-set.seed(2345)
-n = 200; p = 5; S = 5
-mydata = rcqo(n, p, S, fam="binomial", hiabundance=4,
-              EqualTol=TRUE, ESOpt=TRUE, EqualMax=TRUE)
-myform = attr(mydata, "formula")
-set.seed(1234)
-b1et = cqo(myform, fam=binomialff(mv=TRUE, link="cloglog"), data=mydata)
-sort(b1et@misc$deviance.Bestof) # A history of all the iterations
-\dontrun{
-lvplot(b1et, y=TRUE, lcol=1:S, pch=1:S, pcol=1:S, las=1)
-}
-Coef(b1et)
-
-# Compare the fitted model with the 'truth'
-cbind(truth=attr(mydata, "ccoefficients"), fitted=ccoef(b1et))
-
-
-# Example 4: Plot the deviance residuals for diagnostic purposes
-set.seed(1234)
-p1et = cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,
-                 Auloalbi, Pardlugu, Pardmont, Pardnigr, Pardpull,
-                 Trocterr, Zoraspin) ~
-           WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
-           fam=poissonff, data=hspider, ITol=TRUE, trace=FALSE)
-sort(p1et@misc$deviance.Bestof) # A history of all the iterations
-if(deviance(p1et) > 1586) stop("suboptimal fit obtained")
-S = ncol(p1et@y)
-par(mfrow=c(3,4))
-for(ii in 1:S) {
-    tempdata = data.frame(lv1 = c(lv(p1et)), sppCounts = p1et@y[,ii])
-    tempdata = transform(tempdata, myOffset = -0.5 * lv1^2)
-
-# For species ii, refit the model to get the deviance residuals
-    fit1 = vglm(sppCounts ~ offset(myOffset) + lv1, fam=poissonff,
-                data=tempdata, trace=FALSE)
-
-# For checking: this should be 0
-    print("max(abs(c(Coef(p1et)@B1[1,ii], Coef(p1et)@A[ii,1]) - coef(fit1)))")
-    print( max(abs(c(Coef(p1et)@B1[1,ii], Coef(p1et)@A[ii,1]) - coef(fit1))) )
-
-#   # Plot the deviance residuals
-    devresid = resid(fit1, type = "deviance")
-    predvalues = predict(fit1) + fit1@offset
-    oo = with(tempdata, order(lv1))
-\dontrun{
-    with(tempdata, plot(lv1, predvalues + devresid, col="darkgreen",
-                        xlab="lv1", ylab="", main=colnames(p1et@y)[ii]))
-    with(tempdata, lines(lv1[oo], predvalues[oo], col="blue"))
-}
-}
 }
 \keyword{models}
 \keyword{regression}

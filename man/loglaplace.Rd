@@ -17,8 +17,7 @@
 loglaplace1(tau = NULL, llocation = "loge", elocation = list(),
     ilocation = NULL, kappa = sqrt(tau/(1 - tau)), Scale.arg = 1,
     shrinkage.init = 0.95, parallelLocation = FALSE, digt = 4,
-    dfmu.init = 3, rep0 = 0.5, 
-    minquantile = 0, maxquantile = Inf,
+    dfmu.init = 3, rep0 = 0.5, minquantile = 0, maxquantile = Inf,
     method.init = 1, zero = NULL)
 logitlaplace1(tau = NULL, llocation = "logit", elocation = list(),
     ilocation = NULL, kappa = sqrt(tau/(1 - tau)),

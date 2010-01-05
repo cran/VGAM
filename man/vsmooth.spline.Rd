@@ -6,36 +6,41 @@
   Fits a vector cubic smoothing spline.
 }
 \usage{
-vsmooth.spline(x, y, w, df = rep(5, M), spar = NULL, 
-               all.knots = FALSE, 
+vsmooth.spline(x, y, w, df = rep(5, M), spar = NULL, all.knots = FALSE,
                iconstraint = diag(M), xconstraint = diag(M), 
                constraints = list("(Intercepts)" = diag(M), x = diag(M)), 
                tol.nl = 0.01, var.arg = FALSE, scale.w = TRUE, nk = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{x}{ A vector, matrix or a list.
-If a list, the  \code{x} component is used.
-If a matrix, the first column is used.
-\code{x} may also be a complex vector, in which case
-the real part is used, and the imaginary part is used for the response.
-In this help file, \code{n} is the number of unique values of \code{x}. 
+  \item{x}{
+  A vector, matrix or a list.
+  If a list, the  \code{x} component is used.
+  If a matrix, the first column is used.
+  \code{x} may also be a complex vector, in which case
+  the real part is used, and the imaginary part is used for the response.
+  In this help file, \code{n} is the number of unique values of \code{x}. 
+
 }
-  \item{y}{ A vector, matrix or a list.
-If a list, the  \code{y} component is used.
-If a matrix, all but the first column is used.
-In this help file, \code{M} is the number of columns of \code{y} if
-there are no constraints on the functions. 
+  \item{y}{
+  A vector, matrix or a list.
+  If a list, the  \code{y} component is used.
+  If a matrix, all but the first column is used.
+  In this help file, \code{M} is the number of columns of \code{y} if
+  there are no constraints on the functions. 
+
 }
   \item{w}{ 
-The weight matrices or the number of observations.
-If the  weight matrices, then this must be a \code{n}-row matrix
-with the elements in matrix-band form (see \code{iam}).
-If a vector, then these are the number of observations.
-By default, \code{w} is the \code{M} by \code{M} identity
-matrix, denoted by  \code{matrix(1, n, M)}.
+  The weight matrices or the number of observations.
+  If the  weight matrices, then this must be a \code{n}-row matrix
+  with the elements in matrix-band form (see \code{iam}).
+  If a vector, then these are the number of observations.
+  By default, \code{w} is the \code{M} by \code{M} identity
+  matrix, denoted by  \code{matrix(1, n, M)}.
+
 }
-  \item{df}{ Numerical vector containing the degrees of
+  \item{df}{
+Numerical vector containing the degrees of
 freedom for each component function (smooth). 
 If necessary, the vector is recycled to have length equal
 to the number of component functions to be estimated
@@ -45,6 +50,7 @@ A value of 2 means a linear fit, and each element of
 \code{df} should lie between 2 and \code{n}.
 The larger the values of \code{df} the more wiggly the
 smooths.
+
 }
   \item{spar}{ 
 Numerical vector containing the non-negative smoothing
@@ -60,46 +66,55 @@ be linear.
 By default, the \code{NULL} value of \code{spar} means
 \code{df} is used to determine the smoothing
 parameters.
+
 }
   \item{all.knots}{ Logical. If \code{TRUE} then each distinct
 value of \code{x} will be a knot. By default, only a subset of
 the unique values  of \code{x} are used; typically, the number
 of knots is \code{O(n^0.25)} for \code{n} large, 
 but if \code{n <= 40} then all the unique values of \code{x} are used.
+
 }
   \item{iconstraint}{ A \code{M}-row constraint matrix for the
 intercepts. It must be of full column rank.
 By default, the constraint matrix for the intercepts is the
 \code{M} by \code{M} identity matrix, meaning no constraints.
+
 }
   \item{xconstraint}{ A \code{M}-row constraint matrix for \code{x}. 
 It must be of full column rank.
 By default, the constraint matrix for the intercepts is the
 \code{M} by \code{M} identity matrix, meaning no constraints.
+
 }
   \item{constraints}{ 
 An alternative to specifying \code{iconstraint} and \code{xconstraint},
 this is a list with two components corresponding to the
 intercept and \code{x} respectively. They must both be a
 \code{M}-row constraint matrix with full column rank.
+
 }
   \item{tol.nl}{ Tolerance for testing nonlinearity for the
 component functions. If \code{df} is within \code{tol.nl} of
 2 then the function is treated as linear.
+
 }
   \item{var.arg}{ Logical: return the pointwise variances 
 of the fit?
 Currently, this corresponds only to the nonlinear part of the
 fit, and may be wrong.
+
 }
   \item{scale.w}{ 
 Logical.
 By default, the weights \code{w} are scaled so that the
 diagonal elements have mean 1.
+
 }
   \item{nk}{ Number of knots.
 If used, this argument overrides \code{all.knots}, and
 must lie between 6 and \code{n}+2 inclusive.
+
 }
 }
 \details{

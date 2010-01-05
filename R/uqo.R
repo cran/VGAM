@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2009 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2010 T.W. Yee, University of Auckland. All rights reserved.
 
 
 
@@ -7,7 +7,7 @@
 
 
 uqo.control = function(Rank=1,
-          Bestof = if(length(lvstart) && !jitter.sitescores) 1 else 10,
+          Bestof = if (length(lvstart) && !jitter.sitescores) 1 else 10,
           CA1 = FALSE,
           Crow1positive = TRUE,
           epsilon = 1.0e-07,
@@ -32,40 +32,40 @@ uqo.control = function(Rank=1,
 {
 
     Kinit = 0.001
-    if(!is.Numeric(MUXfactor, posit=TRUE))
+    if (!is.Numeric(MUXfactor, posit=TRUE))
         stop("bad input for \"MUXfactor\"")
-    if(any(MUXfactor < 1 | MUXfactor > 10))
+    if (any(MUXfactor < 1 | MUXfactor > 10))
         stop("MUXfactor values must lie between 1 and 10")
-    if(!is.Numeric(isdlv, posit=TRUE)) stop("bad input for \"isdlv\"")
-    if(any(isdlv < 0.2 | isdlv > 10))
+    if (!is.Numeric(isdlv, posit=TRUE)) stop("bad input for \"isdlv\"")
+    if (any(isdlv < 0.2 | isdlv > 10))
         stop("isdlv values must lie between 0.2 and 10")
-    if(length(isdlv) > 1 && any(diff(isdlv) > 0))
+    if (length(isdlv) > 1 && any(diff(isdlv) > 0))
         stop("successive isdlv values must not increase")
-    if(!is.Numeric(Rank, allow=1, integ=TRUE, posit=TRUE))
+    if (!is.Numeric(Rank, allow=1, integ=TRUE, posit=TRUE))
         stop("Bad input for \"Rank\"")
-    if(!is.Numeric(Bestof, allow=1, integ=TRUE, posit=TRUE))
+    if (!is.Numeric(Bestof, allow=1, integ=TRUE, posit=TRUE))
         stop("Bad input for \"Bestof\"")
-    if(!is.Numeric(Etamat.colmax, posit=TRUE, allow=1) || Etamat.colmax < Rank)
+    if (!is.Numeric(Etamat.colmax, posit=TRUE, allow=1) || Etamat.colmax < Rank)
         stop("bad input for \"Etamat.colmax\"")
-    if(!is.Numeric(maxitl, allow=1, integ=TRUE, posit=TRUE))
+    if (!is.Numeric(maxitl, allow=1, integ=TRUE, posit=TRUE))
         stop("Bad input for \"maxitl\"")
-    if(!is.Numeric(Maxit.optim, integ=TRUE, posit=TRUE, allow=1))
+    if (!is.Numeric(Maxit.optim, integ=TRUE, posit=TRUE, allow=1))
         stop("Bad input for \"Maxit.optim\"")
-    if(!is.Numeric(optim.maxit, allow=1, integ=TRUE, posit=TRUE))
+    if (!is.Numeric(optim.maxit, allow=1, integ=TRUE, posit=TRUE))
         stop("Bad input for \"optim.maxit\"")
-    if(!is.Numeric(nRmax, allow=1, integ=TRUE, posit=TRUE))
+    if (!is.Numeric(nRmax, allow=1, integ=TRUE, posit=TRUE))
         stop("Bad input for \"nRmax\"")
-    if(!is.Numeric(Hstep, allow=1, posit=TRUE))
+    if (!is.Numeric(Hstep, allow=1, posit=TRUE))
         stop("Bad input for \"Hstep\"")
-    if(!is.Numeric(epsilon, allow=1, posit=TRUE))
+    if (!is.Numeric(epsilon, allow=1, posit=TRUE))
         stop("Bad input for \"epsilon\"")
-    if(!is.Numeric(SmallNo, allow=1, posit=TRUE))
+    if (!is.Numeric(SmallNo, allow=1, posit=TRUE))
         stop("Bad input for \"SmallNo\"")
 
-    if((SmallNo < .Machine$double.eps) || (SmallNo > .0001))
+    if ((SmallNo < .Machine$double.eps) || (SmallNo > .0001))
         stop("SmallNo is out of range") 
 
-    if(Use.Init.Poisson.QO && CA1)
+    if (Use.Init.Poisson.QO && CA1)
         stop("cannot have both Use.Init.Poisson.QO=TRUE and CA1=TRUE")
 
     ans = list(
@@ -122,7 +122,7 @@ uqo  <- function(formula,
     ocall <- match.call()
 
     mt <- terms(formula, data = data)
-    if(missing(data)) 
+    if (missing(data)) 
         data <- environment(formula)
 
     mf <- match.call(expand=FALSE)
@@ -132,7 +132,7 @@ uqo  <- function(formula,
     mf$drop.unused.levels <- TRUE 
     mf[[1]] <- as.name("model.frame")
     mf <- eval(mf, parent.frame()) 
-    if(method == "model.frame")
+    if (method == "model.frame")
         return(mf)
     na.act <- attr(mf, "na.action")
 
@@ -148,36 +148,36 @@ uqo  <- function(formula,
     x <- model.matrix(mt, mf, contrasts)
     attr(x, "assign") = attrassigndefault(x, mt)
     offset <- model.offset(mf)
-    if(is.null(offset)) 
+    if (is.null(offset)) 
         offset <- 0 # yyy ???
     w <- model.weights(mf)
-    if(!length(w))
+    if (!length(w))
         w <- rep(1, nrow(mf))
-    else if(ncol(as.matrix(w))==1 && any(w < 0))
+    else if (ncol(as.matrix(w))==1 && any(w < 0))
         stop("negative weights not allowed")
 
-    if(is.character(family))
+    if (is.character(family))
         family <- get(family)
-    if(is.function(family))
+    if (is.function(family))
         family <- family()
-    if(!inherits(family, "vglmff")) {
+    if (!inherits(family, "vglmff")) {
         stop("'family=", family, "' is not a VGAM family function")
     }
 
-    if(!is.null(family@first))
+    if (!is.null(family@first))
         eval(family@first)
 
     uqo.fitter <- get(method)
-    if(ncol(x) != 1 || dimnames(x)[[2]] != "(Intercept)")
+    if (ncol(x) != 1 || dimnames(x)[[2]] != "(Intercept)")
         stop("uqo()'s formula must have ~ 1 on the RHS") 
 
-    if(control$FastAlgorithm &&
+    if (control$FastAlgorithm &&
        length(as.list(family@deviance)) <= 1)
         stop("The fast algorithm requires the family ",
              "function to have a deviance slot")
     deviance.Bestof = rep(as.numeric(NA), len=control$Bestof)
     for(tries in 1:control$Bestof) {
-         if(control$trace && (control$Bestof>1))
+         if (control$trace && (control$Bestof>1))
          cat(paste("\n========================= Fitting model", tries,
                      "=========================\n"))
          it <- uqo.fitter(x=x, y=y, w=w, offset=offset,
@@ -187,7 +187,7 @@ uqo  <- function(formula,
                    qr.arg = qr.arg, Terms=mt, function.name=function.name,
                    ca1 = control$CA1 && tries==1, ...)
         deviance.Bestof[tries] = it$crit.list$deviance
-        if(tries==1||min(deviance.Bestof[1:(tries-1)]) > deviance.Bestof[tries])
+        if (tries==1||min(deviance.Bestof[1:(tries-1)]) > deviance.Bestof[tries])
             fit = it
     }
     fit$misc$deviance.Bestof = deviance.Bestof
@@ -207,26 +207,26 @@ uqo  <- function(formula,
       "fitted.values"= as.matrix(fit$fitted.values),
       "iter"         = fit$iter,
       "misc"         = fit$misc,
-      "model"        = if(model) mf else data.frame(),
-      "na.action"    = if(length(na.act)) list(na.act) else list(),
+      "model"        = if (model) mf else data.frame(),
+      "na.action"    = if (length(na.act)) list(na.act) else list(),
       "predictors"  = as.matrix(fit$predictors))
 
     answer@control$min.criterion = TRUE # Needed for calibrate; 21/1/05
 
-    if(length(fit$weights))
+    if (length(fit$weights))
         slot(answer, "weights") = as.matrix(fit$weights)
-    if(x.arg)
+    if (x.arg)
         slot(answer, "x") = x
-    if(y.arg)
+    if (y.arg)
         slot(answer, "y") = as.matrix(fit$y)
-    slot(answer, "extra") = if(length(fit$extra)) {
-        if(is.list(fit$extra)) fit$extra else {
+    slot(answer, "extra") = if (length(fit$extra)) {
+        if (is.list(fit$extra)) fit$extra else {
             warning("'extra' is not a list, therefore ",
                     "placing 'extra' into a list")
             list(fit$extra)
         }
     } else list() # R-1.5.0
-    if(length(fit$prior.weights))
+    if (length(fit$prior.weights))
         slot(answer, "prior.weights") = fit$prior.weights
 
     answer
@@ -239,22 +239,22 @@ calluqof = function(sitescores, etamat, ymat, wvec, modelno, nice31, xmat,
     control = Control
     Rank = control$Rank
     itol = othint[14]
-    inited = if(is.R()) {
+    inited = if (is.R()) {
         as.numeric(existsinVGAMenv("etamat", prefix=".VGAM.UQO."))
     } else 0
     othint[5] = inited  # Replacement
-    usethiseta = if(inited==1)
+    usethiseta = if (inited==1)
         getfromVGAMenv("etamat", prefix = ".VGAM.UQO.") else t(etamat)
     usethisbeta = double(othint[13])
     pstar = othint[3]
-    nstar = if(nice31) ifelse(modelno==3 || modelno==5,n*2,n) else n*M
+    nstar = if (nice31) ifelse(modelno==3 || modelno==5,n*2,n) else n*M
     NOS = ifelse(modelno == 3 || modelno==5, M/2, M)
 
     sitescores = matrix(sitescores, ncol=Rank)
     sitescores = scale(sitescores, center = TRUE, scale = FALSE)
-    if(itol) {
+    if (itol) {
         numat = matrix(sitescores, ncol=Rank)
-        if(Rank > 1) {
+        if (Rank > 1) {
             evnu = eigen(var(numat))
             numat = numat %*% evnu$vector
         }
@@ -263,23 +263,23 @@ calluqof = function(sitescores, etamat, ymat, wvec, modelno, nice31, xmat,
 
         sdnumat = sd(numat)
         for(lookat in 1:Rank)
-            if(sdnumat[lookat]>control$MUXfactor[lookat]*control$isdlv[lookat]){
+            if (sdnumat[lookat]>control$MUXfactor[lookat]*control$isdlv[lookat]){
                 muxer = control$isdlv[lookat] * control$MUXfactor[lookat] / 
                         sdnumat[lookat]
                 numat[,lookat] = numat[,lookat] * muxer
-                if(control$trace) {
+                if (control$trace) {
                 }
             }
     } else {
         numat = matrix(sitescores, ncol=Rank)
         evnu = eigen(var(numat))
-        temp7 = if(Rank > 1) evnu$vector %*% diag(evnu$value^(-0.5)) else
+        temp7 = if (Rank > 1) evnu$vector %*% diag(evnu$value^(-0.5)) else
                 evnu$vector %*% evnu$value^(-0.5)
         numat = numat %*% temp7
     }
 
     ans1 <- 
-    dotFortran(name = if(nice31) "cqo1f" else "cqo2f",
+    dotFortran(name = if (nice31) "cqo1f" else "cqo2f",
        numat=as.double(numat), as.double(ymat), 
              as.double(xmat),
        as.double(wvec), etamat=as.double(usethiseta),
@@ -295,9 +295,9 @@ calluqof = function(sitescores, etamat, ymat, wvec, modelno, nice31, xmat,
        twk=double(if(nice31) nstar*3 else M*n*2), wkmm=double(M*(M+pstar)),
            othdbl=as.double(othdbl))
 
-       if(ans1$errcode == 0) {
+       if (ans1$errcode == 0) {
             assign2VGAMenv(c("etamat","numat"), ans1, prefix=".VGAM.UQO.")
-            if(alldump) {
+            if (alldump) {
                 ans1$fv = matrix(ans1$fv,n,M,byrow=TRUE,dimnames=dimnames(ymat))
                 assign2VGAMenv(c("beta","fv"), ans1, prefix=".VGAM.UQO.")
                 assign2VGAMenv(c("z","U"), ans1, prefix=".VGAM.UQO.")
@@ -314,40 +314,40 @@ callduqof = function(sitescores, etamat, ymat, wvec, modelno, nice31, xmat,
                      n, M, maxMr5, othint, othdbl, bnumat, Hstep, alldump) {
     control = Control
     itol = othint[14]
-    inited = if(is.R()) {
-        if(exists(".VGAM.UQO.etamat", envir = VGAMenv)) 1 else 0
+    inited = if (is.R()) {
+        if (exists(".VGAM.UQO.etamat", envir = VGAMenv)) 1 else 0
     } else 0 # 0 means fortran initializes the etamat
     othint[5] = inited  # Replacement
-    usethiseta = if(inited==1)
+    usethiseta = if (inited==1)
         getfromVGAMenv("etamat", prefix = ".VGAM.UQO.") else t(etamat)
     usethisbeta = double(othint[13])
     pstar = othint[3]
-    nstar = if(nice31) ifelse(modelno==3 || modelno==5,n*2,n) else n*M
+    nstar = if (nice31) ifelse(modelno==3 || modelno==5,n*2,n) else n*M
     NOS = ifelse(modelno == 3 || modelno==5, M/2, M)
     Rank = othint[1]
 
     sitescores = matrix(sitescores, ncol=Rank)
     sitescores = scale(sitescores, center = TRUE, scale = FALSE)
-    if(itol) {
+    if (itol) {
         numat = matrix(sitescores, ncol=Rank)
-        if(Rank > 1) {
+        if (Rank > 1) {
             evnu = eigen(var(numat))
             numat = numat %*% evnu$vector
         }
 
         sdnumat = sd(numat)
         for(lookat in 1:Rank)
-            if(sdnumat[lookat]>control$MUXfactor[lookat]*control$isdlv[lookat]){
+            if (sdnumat[lookat]>control$MUXfactor[lookat]*control$isdlv[lookat]){
                 muxer = control$isdlv[lookat] * control$MUXfactor[lookat] / 
                         sdnumat[lookat]
                 numat[,lookat] = numat[,lookat] * muxer
-                if(control$trace) {
+                if (control$trace) {
                 }
             }
     } else {
         numat = matrix(sitescores, ncol=Rank)
         evnu = eigen(var(numat))
-        temp7 = if(Rank > 1) evnu$vector %*% diag(evnu$value^(-0.5)) else
+        temp7 = if (Rank > 1) evnu$vector %*% diag(evnu$value^(-0.5)) else
                 evnu$vector %*% evnu$value^(-0.5)
         numat = numat %*% temp7
     }
@@ -373,7 +373,7 @@ callduqof = function(sitescores, etamat, ymat, wvec, modelno, nice31, xmat,
        deriv=double(n*Rank), hstep=as.double(Hstep),
        betasave=usethisbeta)
 
-       if(ans1$errcode == 0) {
+       if (ans1$errcode == 0) {
            assign2VGAMenv(c("etamat"), ans1, prefix=".VGAM.UQO.")
        } else {
            cat("warning in callduqof: error code =", ans1$errcode, "\n")
@@ -391,7 +391,7 @@ uqo.fit <- function(x, y, w=rep(1, len=nrow(x)),
     qr.arg=FALSE, constraints=NULL, extra=NULL,
     Terms=Terms, function.name="uqo", ca1=TRUE, ...)
 {
-    if(!all(offset == 0)) stop("cqo.fit() cannot handle offsets")
+    if (!all(offset == 0)) stop("cqo.fit() cannot handle offsets")
     nonparametric <- FALSE
     epsilon <- control$epsilon
     optim.maxit <- control$optim.maxit
@@ -416,36 +416,36 @@ uqo.fit <- function(x, y, w=rep(1, len=nrow(x)),
     Rank <- control$Rank
     rrcontrol <- control  #
 
-    if(length(family@initialize))
+    if (length(family@initialize))
         eval(family@initialize)       # Initialize mu and M (and optionally w)
     n <- n.save 
 
 
     eval(rrr.init.expression)
 
-    if(length(etastart)) {
+    if (length(etastart)) {
         eta <- etastart
-        mu <- if(length(mustart)) mustart else family@inverse(eta, extra)
+        mu <- if (length(mustart)) mustart else family@inverse(eta, extra)
     } else {
-        if(length(mustart))
+        if (length(mustart))
             mu <- mustart
         eta <- family@link(mu, extra)
     }
 
-    M <- if(is.matrix(eta)) ncol(eta) else 1
+    M <- if (is.matrix(eta)) ncol(eta) else 1
 
-    if(is.character(rrcontrol$Dzero)) {
+    if (is.character(rrcontrol$Dzero)) {
         index = match(rrcontrol$Dzero, dimnames(as.matrix(y))[[2]]) 
-        if(any(is.na(index)))
+        if (any(is.na(index)))
             stop("Dzero argument didn't fully match y-names")
-        if(length(index) == M)
+        if (length(index) == M)
             stop("all linear predictors are linear in the latent variable(s)")
         rrcontrol$Dzero = control$Dzero = index
     }
 
 
 
-    if(length(family@constraints))
+    if (length(family@constraints))
         eval(family@constraints)
 
 
@@ -460,10 +460,10 @@ uqo.fit <- function(x, y, w=rep(1, len=nrow(x)),
 
 
 
-    sitescores <- if(length(rrcontrol$lvstart)) {
+    sitescores <- if (length(rrcontrol$lvstart)) {
         matrix(rrcontrol$lvstart, n, Rank)
     } else {
-        if(rrcontrol$Use.Init.Poisson) {
+        if (rrcontrol$Use.Init.Poisson) {
             .Init.Poisson.QO(ymat=as.matrix(y),
                              X1=x, X2=NULL,
                              Rank=rrcontrol$Rank, trace=rrcontrol$trace,
@@ -473,8 +473,8 @@ uqo.fit <- function(x, y, w=rep(1, len=nrow(x)),
                constwt= any(family@vfamily[1] ==
                             c("negbinomial","gamma2","gaussianff")),
                takelog= any(family@vfamily[1] != c("gaussianff")))
-        } else if(ca1) {
-            if(Rank == 1) .VGAM.UQO.CA(y)[,1:Rank]  else {
+        } else if (ca1) {
+            if (Rank == 1) .VGAM.UQO.CA(y)[,1:Rank]  else {
                 temp = .VGAM.UQO.CA(y)[,1:Rank]
                 temp %*% solve(chol(var(temp)))
             }
@@ -482,7 +482,7 @@ uqo.fit <- function(x, y, w=rep(1, len=nrow(x)),
             matrix((runif(n*Rank)-0.5)*rrcontrol$SD.sitescores,n,Rank)
         }
     }
-    if(rrcontrol$jitter.sitescores)
+    if (rrcontrol$jitter.sitescores)
         sitescores <- jitteruqo(sitescores)
 
 
@@ -496,34 +496,34 @@ uqo.fit <- function(x, y, w=rep(1, len=nrow(x)),
               "negbinomial"=0,
               "gamma2"=5,
               0)  # stop("can't fit this model using fast algorithm")
-    if(!modelno) stop("the family function does not work with uqo()")
-    if(modelno == 1) modelno = get("modelno", envir = VGAMenv)
+    if (!modelno) stop("the family function does not work with uqo()")
+    if (modelno == 1) modelno = get("modelno", envir = VGAMenv)
     rmfromVGAMenv(c("etamat", "beta"), prefix=".VGAM.UQO.")
 
-    cqofastok = if(is.R()) (exists("CQO.FastAlgorithm", envir = VGAMenv) &&
+    cqofastok = if (is.R()) (exists("CQO.FastAlgorithm", envir = VGAMenv) &&
                   get("CQO.FastAlgorithm", envir = VGAMenv)) else
               (exists("CQO.FastAlgorithm", inherits=TRUE) && CQO.FastAlgorithm)
-    if(!cqofastok)
+    if (!cqofastok)
         stop("can't fit this model using fast algorithm")
 
     nice31 = (!control$EqualTol || control$ITolerances) && control$Quadratic &&
              all(trivial.constraints(Blist))
 
 
-    X_vlm_1save <- if(nice31) {
+    X_vlm_1save <- if (nice31) {
         NULL
     } else {
         lm2vlm.model.matrix(x, Blist, xij=control$xij)
     }
 
     NOS = ifelse(modelno==3 || modelno==5, M/2, M)
-    p1star = if(nice31) p1*ifelse(modelno==3 || modelno==5,2,1) else ncol(X_vlm_1save)
-    p2star = if(nice31)
+    p1star = if (nice31) p1*ifelse(modelno==3 || modelno==5,2,1) else ncol(X_vlm_1save)
+    p2star = if (nice31)
       ifelse(control$IToleran, Rank, Rank+0.5*Rank*(Rank+1)) else
       (NOS*Rank + Rank*(Rank+1)/2 * ifelse(control$EqualTol,1,NOS))
 
     pstar = p1star + p2star
-    nstar = if(nice31) ifelse(modelno==3 || modelno==5,n*2,n) else n*M
+    nstar = if (nice31) ifelse(modelno==3 || modelno==5,n*2,n) else n*M
     maxMr = max(M, Rank)
     maxMr5 = maxMr*(maxMr+1)/2
     lenbeta = pstar * ifelse(nice31, NOS, 1)
@@ -536,7 +536,7 @@ uqo.fit <- function(x, y, w=rep(1, len=nrow(x)),
                .Machine$double.eps,
                kinit=rep(control$Kinit, len=NOS),
                shapeinit=rep(control$shapeinit, len=NOS))
-    bnumat = if(nice31) matrix(0,nstar,pstar) else
+    bnumat = if (nice31) matrix(0,nstar,pstar) else
              cbind(matrix(0,nstar,p2star), X_vlm_1save)
 
     rmfromVGAMenv(c("etamat", "z", "U", "beta", "deviance", "fv",
@@ -544,11 +544,11 @@ uqo.fit <- function(x, y, w=rep(1, len=nrow(x)),
 
 
     for(iter in 1:optim.maxit) {
-        if(control$trace)
+        if (control$trace)
             cat("\nIteration", iter, "\n")
         conjgrad <- optim(par=sitescores, fn=calluqof, 
-                     gr=if(control$GradientFunction) callduqof else NULL,
-                     method=if(n*Rank>control$nRmax) "CG" else "BFGS",
+                     gr = if (control$GradientFunction) callduqof else NULL,
+                     method = if (n*Rank>control$nRmax) "CG" else "BFGS",
                      control=list(fnscale=1, trace=as.integer(control$trace),
                                   maxit=control$Maxit.optim),
                      etamat=eta, ymat=y, wvec=w, modelno=modelno,
@@ -561,13 +561,13 @@ uqo.fit <- function(x, y, w=rep(1, len=nrow(x)),
         dim(sitescores) = c(n, Rank)
         sitescores = scale(sitescores, center = TRUE, scale = FALSE)
         sitescores = crow1C(sitescores, rrcontrol$Crow1positive)
-        dimnames(sitescores) = list(dimnames(y)[[1]], if(Rank==1) "lv" else
+        dimnames(sitescores) = list(dimnames(y)[[1]], if (Rank==1) "lv" else
                                     paste("lv", 1:Rank, sep=""))
 
-        if(converged <- (conjgrad$convergence == 0)) break
+        if (converged <- (conjgrad$convergence == 0)) break
     }
 
-    if(!converged && optim.maxit>1)
+    if (!converged && optim.maxit>1)
         warning("convergence not obtained")
 
 
@@ -587,13 +587,13 @@ uqo.fit <- function(x, y, w=rep(1, len=nrow(x)),
     dim(wresids) = c(n,M)
 
 
-    if(!intercept.only)
+    if (!intercept.only)
         stop("can only handle intercept.only==TRUE currently")
-    if(nice31) {
+    if (nice31) {
         coefs = c(t(matrix(coefs, ncol=M))) # Get into right order
         coefs = matrix(coefs, nrow=M)
         Amat = coefs[,1:Rank,drop=FALSE]
-        if(rrcontrol$IToleran) {
+        if (rrcontrol$IToleran) {
             B1 = coefs[,-(1:Rank),drop=FALSE]
             Dmat = matrix(0, M, Rank*(Rank+1)/2)
             Dmat[,1:Rank] = -0.5
@@ -610,9 +610,9 @@ uqo.fit <- function(x, y, w=rep(1, len=nrow(x)),
         B1 = coefs[(cptr1+1):length(coefs)]
     }
 
-    lv.names = if(Rank==1) "lv" else paste("lv", 1:Rank, sep="") 
+    lv.names = if (Rank==1) "lv" else paste("lv", 1:Rank, sep="") 
     lp.names = predictors.names
-    if(!length(lp.names)) lp.names = NULL
+    if (!length(lp.names)) lp.names = NULL
     extra$Amat = matrix(Amat, M, Rank, dimnames = list(lp.names, lv.names))
     extra$B1   = matrix(B1, ncol=M, dimnames = 
                         list(names.colx1.index, predictors.names))
@@ -627,7 +627,7 @@ uqo.fit <- function(x, y, w=rep(1, len=nrow(x)),
 
     rmfromVGAMenv(c("etamat", "beta", "fv"), prefix=".VGAM.UQO.")
 
-    if(length(family@fini))
+    if (length(family@fini))
         eval(family@fini)
 
     misc <- list(function.name = function.name, 
@@ -666,7 +666,7 @@ uqo.fit <- function(x, y, w=rep(1, len=nrow(x)),
 
 printuqo <- function(x, ...)
 {
-    if(!is.null(cl <- x@call)) {
+    if (!is.null(cl <- x@call)) {
         cat("Call:\n")
         dput(cl)
     }
@@ -677,7 +677,7 @@ printuqo <- function(x, ...)
     cat(",", ifelse(x@control$EqualToler, "equal-tolerances", 
         "unequal-tolerances"), "\n")
 
-    if(length(deviance(x)))
+    if (length(deviance(x)))
         cat("\nResidual Deviance:", format(deviance(x)), "\n")
 
     invisible(x)
@@ -719,7 +719,7 @@ residualsuqo  <- function(object,
               type = c("deviance", "pearson", "working", "response"),
               matrix.arg= TRUE) {
 
-    if(mode(type) != "character" && mode(type) != "name")
+    if (mode(type) != "character" && mode(type) != "name")
         type = as.character(substitute(type))
     type = match.arg(type, c("deviance", "pearson", "working", "response"))[1]
 
@@ -745,7 +745,7 @@ setMethod("fitted.values", "uqo", function(object, ...)
 
 
 predict.uqo  <- function(object, newdata = NULL, ...) {
-    if(length(newdata) > 0)
+    if (length(newdata) > 0)
         stop("can't handle newdata argument yet")
     object@predictors
 }
@@ -788,15 +788,15 @@ setMethod("lvplot", "uqo", function(object, ...)
 
 
 
-if(FALSE) {
+if (FALSE) {
     scores.uqo <- function (x, type = c("sites", "species"), ...) {
-        if(mode(type) != "character" && mode(type) != "name")
+        if (mode(type) != "character" && mode(type) != "name")
             type = as.character(substitute(type))
         type = match.arg(type, c("sites", "species"))[1]
     
         switch(type,
-            sites=if(any(slotNames(x)=="lv")) x@lv else Coef(x)@lv,
-            species=if(any(slotNames(x)=="Optimum")) x@Optimum else Coef(x)@Optimum
+            sites = if (any(slotNames(x)=="lv")) x@lv else Coef(x)@lv,
+            species = if (any(slotNames(x)=="Optimum")) x@Optimum else Coef(x)@Optimum
         )
     }
 
@@ -813,7 +813,7 @@ setMethod("lv",  "uqo", function(object, ...)  lv.qrrvglm(object, ...))
 
 
 
-if(!isGeneric("calibrate"))
+if (!isGeneric("calibrate"))
     setGeneric("calibrate", function(object, ...) standardGeneric("calibrate"))
 setMethod("calibrate", "uqo", function(object, ...)
           calibrate.qrrvglm(object, ...))
@@ -837,7 +837,7 @@ printsummary.uqo = function(x, ...) {
 
     cat("\nNumber of responses/species: ", x@NOS, "\n")
 
-    if(length(x@misc$dispersion) == 1) 
+    if (length(x@misc$dispersion) == 1) 
     cat("\nDispersion parameter(s): ", x@misc$dispersion, "\n")
     invisible(x)
 }
@@ -864,11 +864,11 @@ Tol.uqo = function(object, ...) {
 }
 
 Tol.Coef.uqo = function(object, ...) {
-    if(length(list(...))) warning("Too late! Ignoring the extra arguments")
+    if (length(list(...))) warning("Too late! Ignoring the extra arguments")
     Coef(object, ...)@Tolerance
 }
 
-if(!isGeneric("Tol"))
+if (!isGeneric("Tol"))
     setGeneric("Tol", function(object, ...) standardGeneric("Tol"))
 setMethod("Tol", "uqo", function(object, ...) Tol.uqo(object, ...))
 setMethod("Tol", "Coef.uqo", function(object, ...) Tol.Coef.uqo(object, ...))

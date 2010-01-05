@@ -9,9 +9,8 @@
 
 }
 \usage{
-freund61(la="loge", lap="loge", lb="loge", lbp="loge",
-         ia=NULL, iap=NULL, ib=NULL, ibp=NULL, 
-         independent=FALSE, zero=NULL)
+freund61(la="loge", lap="loge", lb="loge", lbp="loge", ia=NULL, iap=NULL,
+         ib=NULL, ibp=NULL, independent=FALSE, zero=NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -174,7 +173,7 @@ summary(fit)
 fit2 = vglm(ymat ~ 1, fam=freund61(indep=TRUE), trace=TRUE)
 coef(fit2, matrix=TRUE)
 constraints(fit2)
-1 - pchisq(2*(logLik(fit)-logLik(fit2)), df=2) # p-value
+pchisq(2*(logLik(fit)-logLik(fit2)), df=2, lower.tail=FALSE) # p-value
 }
 \keyword{models}
 \keyword{regression}

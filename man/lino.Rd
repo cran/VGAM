@@ -111,16 +111,16 @@ lino(lshape1="loge", lshape2="loge", llambda="loge",
 }
 
 \examples{
-y = rbeta(n=1000, exp(0.5), exp(1)) # Standard beta distribution
-fit = vglm(y ~ 1, lino, trace=TRUE)
+ldat1 = data.frame(y = rbeta(n=1000, exp(0.5), exp(1))) # ~ standard beta
+fit = vglm(y ~ 1, lino, ldat1, trace=TRUE)
 coef(fit, mat=TRUE)
 Coef(fit)
 head(fitted(fit))
 summary(fit)
 
 # Nonstandard beta distribution
-y = rlino(n=1000, shape1=2, shape2=3, lambda=exp(1))
-fit = vglm(y ~ 1, lino(lshape1=identity, lshape2=identity, ilambda=10))
+ldat2 = data.frame(y = rlino(n=1000, shape1=2, shape2=3, lambda=exp(1)))
+fit = vglm(y~1, lino(lshape1=identity, lshape2=identity, ilamb=10), ldat2)
 coef(fit, mat=TRUE)
 }
 \keyword{models}

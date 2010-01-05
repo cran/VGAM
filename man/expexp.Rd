@@ -8,10 +8,8 @@
 
 }
 \usage{
-expexp(lshape = "loge", lscale = "loge",
-       eshape=list(), escale=list(),
-       ishape = 1.1, iscale = NULL, 
-       tolerance = 1.0e-6, zero = NULL)
+expexp(lshape = "loge", lscale = "loge", eshape=list(), escale=list(),
+       ishape = 1.1, iscale = NULL, tolerance = 1.0e-6, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

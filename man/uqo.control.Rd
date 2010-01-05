@@ -11,7 +11,7 @@
   
 }
 \usage{
-uqo.control(Rank=1, Bestof = if(length(lvstart) &&
+uqo.control(Rank=1, Bestof = if (length(lvstart) &&
             !jitter.sitescores) 1 else 10, CA1 = FALSE, Crow1positive
             = TRUE, epsilon = 1.0e-07, EqualTolerances = ITolerances,
             Etamat.colmax = 10, GradientFunction=TRUE, Hstep = 0.001,

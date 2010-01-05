@@ -41,9 +41,10 @@ wffc.P2star(length, min.eligible = 0.18)
 %  \url{http://www.2008worldflyfishingchamps.com}
 %  is the official website.
 
-  Yee, T. W. (2009)
-  VGLMs and VGAMs: an overview for applications in fisheries research.
-  In preparation.
+  Yee, T. W. (2010)
+  On strategies and issues raised by an analysis of
+  the 2008 World Fly Fishing Championships data.
+  \emph{In preparation}.
 
 }
 

@@ -84,10 +84,8 @@ loc      # population mean
 var(y)
 2 * b^2  # population variance
 
-
 \dontrun{
-x = seq(-5, 5, by=0.01)
-loc = 0; b = 1.5
+loc = 0; b = 1.5; x = seq(-5, 5, by=0.01)
 plot(x, dlaplace(x, loc, b), type="l", col="blue", ylim=c(0,1),
      main="Blue is density, red is cumulative distribution function",
      sub="Purple are 5,10,...,95 percentiles", las=1, ylab="")
@@ -96,8 +94,7 @@ lines(qlaplace(seq(0.05,0.95,by=0.05), loc, b),
       dlaplace(qlaplace(seq(0.05,0.95,by=0.05), loc, b), loc, b),
       col="purple", lty=3, type="h")
 lines(x, plaplace(x, loc, b), type="l", col="red")
-abline(h=0, lty=2)
-}
+abline(h=0, lty=2) }
 
 plaplace(qlaplace(seq(0.05,0.95,by=0.05), loc, b), loc, b)
 }

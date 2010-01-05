@@ -117,39 +117,36 @@ plot(p, y, type="l", col="blue", main="polf()")
 abline(h=0, v=0.5, col="red", lty="dashed")
 
 plot(p, y., type="l", col="blue",
-     main="(Reciprocal of) first POLF derivative")
-}
+     main="(Reciprocal of) first POLF derivative") }
 
 
 # Rutherford and Geiger data
-ruge = c(57,203,383,525,532,408,273,139,45,27,10,4,0,1,1)
-y = 0:14
-yy = rep(y, times=ruge)
-length(yy)  # 2608 1/8-minute intervals
+ruge = data.frame(yy = rep(0:14,
+          times=c(57,203,383,525,532,408,273,139,45,27,10,4,0,1,1)))
+
+with(ruge, length(yy))  # 2608 1/8-minute intervals
 cutpoint = 5
-yy01 = ifelse(yy <= cutpoint, 0, 1)
+ruge = transform(ruge, yy01 = ifelse(yy <= cutpoint, 0, 1))
 earg = list(cutpoint=cutpoint)
-fit = vglm(yy01 ~ 1, binomialff(link="polf", earg=earg))
+fit = vglm(yy01 ~ 1, binomialff(link="polf", earg=earg), ruge)
 coef(fit, matrix=TRUE)
 exp(coef(fit))
 
 
 # Another example
-nn = 1000
-x2 = sort(runif(nn))
-x3 = runif(nn)
-mymu = exp( 3 + 1 * x2 - 2 * x3)
-y1 = rpois(nn, lambda=mymu)
+pdat = data.frame(x2 = sort(runif(nn <- 1000)))
+pdat = transform(pdat, x3 = runif(nn))
+pdat = transform(pdat, mymu = exp( 3 + 1 * x2 - 2 * x3))
+pdat = transform(pdat, y1 = rpois(nn, lambda=mymu))
 cutpoints = c(-Inf, 10, 20, Inf)
-cuty = Cut(y1, breaks=cutpoints)
+pdat = transform(pdat, cuty = Cut(y1, breaks=cutpoints))
 \dontrun{
-plot(x2, x3, col=cuty, pch=as.character(cuty))
-}
-table(cuty) / sum(table(cuty))
+with(pdat, plot(x2, x3, col=cuty, pch=as.character(cuty))) }
+with(pdat, table(cuty) / sum(table(cuty)))
 fit = vglm(cuty ~ x2 + x3, fam = cumulative(link="polf",
            reverse=TRUE, parallel=TRUE, intercept.apply=TRUE,
            mv=TRUE, earg=list(cutpoint=cutpoints[2:3])),
-           trace=TRUE)
+           pdat, trace=TRUE)
 head(fit@y)
 head(fitted(fit))
 head(predict(fit))

@@ -155,26 +155,25 @@ tpareto1(lower, upper, lshape = "loge", earg=list(), ishape=NULL,
 }
 \examples{
 alpha = 2; k = exp(3)
-y = rpareto(n=1000, location=alpha, shape=k)
-fit = vglm(y ~ 1, pareto1, trace=TRUE)
+pdat = data.frame(y = rpareto(n=1000, location=alpha, shape=k))
+fit = vglm(y ~ 1, pareto1, pdat, trace=TRUE)
 fit@extra   # The estimate of alpha is here
 head(fitted(fit))
-mean(y)
+with(pdat, mean(y))
 coef(fit, matrix=TRUE)
 summary(fit)     # Standard errors are incorrect!!
 
 # Here, alpha is assumed known
-fit2 = vglm(y ~ 1, pareto1(location=alpha), trace=TRUE, crit="c")
+fit2 = vglm(y ~ 1, pareto1(location=alpha), pdat, trace=TRUE, crit="c")
 fit2@extra   # alpha stored here
 head(fitted(fit2))
-mean(y)
 coef(fit2, matrix=TRUE)
 summary(fit2)    # Standard errors are ok
 
 # Upper truncated Pareto distribution
 lower = 2; upper = 8; k = exp(2)
-y = rtpareto(n=100, lower=lower, upper=upper, shape=k)
-fit3 = vglm(y ~ 1, tpareto1(lower, upper), trace=TRUE, cri="c")
+pdat3 = data.frame(y = rtpareto(n=100, lower=lower, upper=upper, shape=k))
+fit3 = vglm(y ~ 1, tpareto1(lower, upper), pdat3, trace=TRUE, cri="c")
 coef(fit3, matrix=TRUE)
 c(fit3@misc$lower, fit3@misc$upper)
 }

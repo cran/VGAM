@@ -65,9 +65,8 @@ rbetageom(n, shape1, shape2)
 \dontrun{
 shape1 = 1; shape2 = 2; y = 0:30
 proby = dbetageom(y, shape1, shape2, log=FALSE)
-plot(y, proby, type="h", col="blue", ylab="P[Y=y]",
-     main=paste("Y ~ Beta-geometric(shape1=",shape1,", shape2=",shape2,")",
-     sep=""))
+plot(y, proby, type="h", col="blue", ylab="P[Y=y]", main=paste(
+     "Y ~ Beta-geometric(shape1=",shape1,", shape2=",shape2,")", sep=""))
 sum(proby)
 }
 }

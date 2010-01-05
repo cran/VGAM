@@ -10,7 +10,7 @@
 \usage{
 weibull(lshape = "loge", lscale = "loge", 
         eshape = list(), escale = list(),
-        ishape = NULL, iscale = NULL,
+        ishape = NULL,   iscale = NULL,
         nrfs = 1, imethod=1, zero = 2)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -122,7 +122,7 @@ Weibull and GE distributions,
   This function is under development to handle other censoring situations.
   The version of this function which will handle censored data will be
   called \code{cenweibull()}. It is currently being written and will use
-  \code{\link{Surv}} as input. 
+  \code{\link{SurvS4}} as input. 
   It should be released in later versions of \pkg{VGAM}.
 
   If the shape parameter is less than two then misleading inference may

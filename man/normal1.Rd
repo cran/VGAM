@@ -36,6 +36,7 @@ normal1(lmean="identity", lsd="loge", emean=list(), esd=list(), zero=NULL)
   are modelled as functions of the explanatory variables.
 
   }
+
 }
 \details{
   By default, the mean is the first linear/additive predictor and 
@@ -77,18 +78,17 @@ New York: Wiley-Interscience, Third edition.
 
 }
 \examples{
-n = 200
-x = rnorm(n)
-y = rnorm(n, mean=1-3*x, sd=exp(1+0.2*x))
-fit = vglm(y ~ x, normal1)
+ndata = data.frame(x = rnorm(nn <- 200))
+ndata = transform(ndata, y = rnorm(nn, mean=1-3*x, sd=exp(1+0.2*x)))
+fit = vglm(y ~ x, normal1, ndata, trace=TRUE)
 coef(fit, matrix=TRUE)
 
 # Generate a random sample from a N(mu=theta, sigma=theta)
 # distribution with theta=10. Then estimate theta.
 theta = 10
-y = rnorm(100, m=theta, sd=theta)
-fit = vglm(y ~ 1, normal1(lsd="identity"),
-           constraints=list("(Intercept)"=rbind(1,1)))
+ndata = data.frame(y = rnorm(100, m=theta, sd=theta))
+fit = vglm(y ~ 1, normal1(lsd="identity"), ndata,
+           constraints = list("(Intercept)"=rbind(1,1)))
 coef(fit, matrix=TRUE)
 }
 \keyword{models}

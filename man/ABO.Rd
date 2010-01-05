@@ -72,7 +72,6 @@ ABO(link = "logit", earg=list(), ipA = NULL, ipO = NULL)
 }
 \examples{
 y = cbind(A=725, B=258, AB=72, O=1073) # Order matters, not the name
-fit = vglm(y ~ 1, ABO(link=logit), trace=TRUE, cri="coef")
 fit = vglm(y ~ 1, ABO(link=identity), trace=TRUE, cri="coef")
 coef(fit, matrix=TRUE)
 Coef(fit) # Estimated pA and pB

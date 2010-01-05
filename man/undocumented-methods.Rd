@@ -23,6 +23,7 @@
 \alias{coefficients,uqo-method}
 \alias{coefficients,vsmooth.spline-method}
 \alias{coefficients,vsmooth.spline.fit-method}
+\alias{coefficients,summary.vglm-method}
 \alias{Coefficients,vlm-method}
 \alias{coef,cao-method}
 \alias{coef,vlm-method}
@@ -31,6 +32,7 @@
 \alias{coef,uqo-method}
 \alias{coef,vsmooth.spline-method}
 \alias{coef,vsmooth.spline.fit-method}
+\alias{coef,summary.vglm-method}
 \alias{Coef,cao-method}
 \alias{Coef,vlm-method}
 \alias{Coef,qrrvglm-method}

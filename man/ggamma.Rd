@@ -113,19 +113,17 @@ Rayleigh          \eqn{f(y;c\sqrt{2},2,1)}{f(y;c sqrt(2),2,1)} where \eqn{c>0}.
 
 }
 \examples{
-k = exp(-1)
-Scale = exp(1)
-y = rgamma(n=1000, shape=k, scale=Scale)
-fit = vglm(y ~ 1, ggamma, trace=TRUE)
+k = exp(-1); Scale = exp(1)
+gdata = data.frame(y = rgamma(n=1000, shape=k, scale=Scale))
+fit = vglm(y ~ 1, ggamma, gdata, trace=TRUE)
 coef(fit, matrix=TRUE)
 
 # Another example
-x = runif(n <- 5000)
-Scale = exp(1)
-d = exp(0 + 1.2*x)
-k = exp(-1 + 2*x)
-y = rggamma(n, scale=Scale, d=d, k=k)
-fit = vglm(y ~ x, ggamma(zero=1, iscal=6), trace=TRUE)
+gdata = data.frame(x = runif(nn <- 5000))
+gdata = transform(gdata, Scale = exp(1), d = exp(0 + 1.2*x), k = exp(-1 + 2*x))
+gdata = transform(gdata, y = rggamma(nn, scale=Scale, d=d, k=k))
+fit = vglm(y ~ x, ggamma(zero=1, iscal=6), gdata, trace=TRUE)
+fit = vglm(y ~ x, ggamma(zero=1), gdata, trace=TRUE, maxit=50)
 coef(fit, matrix=TRUE)
 }
 \keyword{models}

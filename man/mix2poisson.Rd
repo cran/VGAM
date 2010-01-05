@@ -126,37 +126,35 @@ mix2poisson(lphi = "logit", llambda = "loge",
 
 \examples{
 # Example 1: simulated data
-n = 1000
+nn = 1000
 mu1 = exp(2.5) # also known as lambda1
 mu2 = exp(3)
 (phi = logit(-0.5, inverse=TRUE))
-y = ifelse(runif(n) < phi, rpois(n, mu1), rpois(n, mu2))
-fit = vglm(y ~ 1, mix2poisson)
+mdata = data.frame(y = ifelse(runif(nn) < phi, rpois(nn, mu1), rpois(nn, mu2)))
+fit = vglm(y ~ 1, mix2poisson, mdata)
 coef(fit, matrix=TRUE)
 
 # Compare the results with the truth
 round(rbind('Estimated'=Coef(fit), 'Truth'=c(phi, mu1, mu2)), dig=2)
 
 \dontrun{# Plot the results
-ty = table(y)
+ty = with(mdata, table(y))
 plot(names(ty), ty, type="h", main="Red=estimate, blue=truth",
      ylab="Frequency", xlab="y")
 abline(v=Coef(fit)[-1], lty=2, col="red", lwd=2)
-abline(v=c(mu1, mu2), lty=2, col="blue", lwd=2)
-}
+abline(v=c(mu1, mu2), lty=2, col="blue", lwd=2) }
 
 # Example 2: London Times data (Lange, 1997, p.31)
-deaths = 0:9
-freq = c(162, 267, 271, 185, 111, 61, 27, 8, 3, 1)
-y = rep(deaths, freq)
+ltdata1 = data.frame(deaths = 0:9,
+                     freq = c(162, 267, 271, 185, 111, 61, 27, 8, 3, 1))
+ltdata2 = data.frame(y = with(ltdata1, rep(deaths, freq)))
 
 # Usually this does not work well unless nsimEIM is large
-fit = vglm(deaths ~ 1, weight = freq,
+fit = vglm(deaths ~ 1, weight=freq, data=ltdata1,
            mix2poisson(iphi=0.3, il1=1, il2=2.5, nsimEIM=5000))
 
 # This works better in general
-fit = vglm(y ~ 1, mix2poisson(iphi=0.3, il1=1, il2=2.5))
-
+fit = vglm(y ~ 1, mix2poisson(iphi=0.3, il1=1, il2=2.5), ltdata2)
 coef(fit, matrix=TRUE)
 Coef(fit)
 }

@@ -94,8 +94,8 @@ c(sd(mu.save), sd(sd.save))
 }
 
 # Data from Sarhan and Greenberg (1962); MLEs are mu=9.2606, sd=1.3754
-strontium90 = c(8.2, 8.4, 9.1, 9.8, 9.9)
-fit = vglm(strontium90 ~ 1, dcnormal1(r1=2, r2=3, isd=6), trace=TRUE)
+strontium90 = data.frame(y = c(8.2, 8.4, 9.1, 9.8, 9.9))
+fit = vglm(y ~ 1, dcnormal1(r1=2, r2=3, isd=6), strontium90, trace=TRUE)
 coef(fit, matrix=TRUE)
 Coef(fit)
 }

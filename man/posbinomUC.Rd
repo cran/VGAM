@@ -73,15 +73,15 @@ rposbinom(n, size, prob)
   \code{\link[stats:Binomial]{rbinom}}.
 }
 \examples{
-prob = 0.2
-size = 10
+prob = 0.2; size = 10
 y = rposbinom(n=1000, size, prob)
+
 table(y)
 mean(y)  # Sample mean
 prob / (1-(1-prob)^size) # Population mean
 
-(i = dposbinom(0:size, size, prob))
-cumsum(i) - pposbinom(0:size, size, prob)  # Should be 0s
+(ii = dposbinom(0:size, size, prob))
+cumsum(ii) - pposbinom(0:size, size, prob)  # Should be 0s
 table(rposbinom(100, size, prob))
 
 table(qposbinom(runif(1000), size, prob))
@@ -93,8 +93,7 @@ barplot(rbind(dposbinom(x, size, prob),
         beside = TRUE, col = c("blue","green"),
         main=paste("Positive-binomial(", size, ",", prob, ") (blue) vs",
         " Binomial(", size, ",", prob, ") (green)", sep=""),
-        names.arg = as.character(x), las=1)
-}
+        names.arg = as.character(x), las=1) }
 }
 \keyword{distribution}
 

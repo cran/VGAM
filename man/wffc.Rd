@@ -24,8 +24,8 @@
     \item{\code{sector}}{a numeric vector; a value from the set 1,2,\ldots,5.}
     \item{\code{beatboat}}{a numeric vector; beat or boat number,
     a value from the set 1,2,\ldots,19.}
-    \item{\code{comid}}{a numeric vector; the competitor's ID number. Uniquely
-    identifies each competitor.
+    \item{\code{comid}}{a numeric vector; the competitor's ID number.
+    Uniquely identifies each competitor.
     These ID numbers actually correspond to their rankings
     in the individual level. }
     \item{\code{iname}}{a character vector; the individual competitor's name. }
@@ -53,9 +53,10 @@ USA (USA),
 Wales (WAL).
   }
   }
+
 }
 \details{
-  Details may be obtained at Yee (2009b).
+  Details may be obtained at Yee (2010) and Yee (2010b).
   Here is a brief summary.
   The three competition days were 28--30 March.
   Each session was fixed at 9.00am--12.00pm and 2.30--5.30pm daily.
@@ -73,6 +74,7 @@ Wales (WAL).
   except for one boat which only had one.
   Each competitor was randomly assigned to a beat/boat.
 
+
 Competitors were ranked according to their placings at each sector-session
 combination, and then these placings were summed. Those with the minimum
 total placings were the winners, thus it was not necessarily those who had
@@ -80,6 +82,7 @@ the maximum points who won. For example, in Session 1 at the Waihou River,
 each of the 19 competitors was ranked 1 (best) to 19 (worst) according
 to the point system. This is the ``placing'' for that session. These
 placings were added up over the 5 sessions to give the ``total placings''.
+
 
 All sectors have naturally wild Rainbow trout (\emph{Oncorhynchus mykiss})
 while Lake Otamangakau and the Whanganui River also holds Brown trout
@@ -93,9 +96,11 @@ The gender of the fish were also not recorded electronically, and
 anyway, distinguishing between male and female was very difficult
 for small fish.
 
+
 Although species and gender data were supposed to have been
 collected at the time of capture the quality of these variables 
 is rather poor and furthermore they were not recorded electronically.
+
 
 % 11 out of (11 + 210) were brown trout, in Otamangakau.
 %  52 were NAs.
@@ -103,8 +108,10 @@ is rather poor and furthermore they were not recorded electronically.
 %  3 out of ( 3 + 179) were brown trout, in Rotoaira.
 %  19 were NAs.
 
+
   Note that some fish may have been caught more than once, hence
   these data do not represent individual fish but rather recorded captures.
+
 
   Note also that a few internal discrepancies may be found within and between
   the data frames
@@ -118,6 +125,7 @@ is rather poor and furthermore they were not recorded electronically.
   competitors who fished two hours instead of three by mistake, etc.
   The data has already been cleaned of errors and internal inconsistencies
   but a few may remain.
+
 
 }
 
@@ -144,14 +152,17 @@ is rather poor and furthermore they were not recorded electronically.
 %  \url{http://www.2008worldflyfishingchamps.com}
 %  is the official website.
 
-  Yee, T. W. (2009a)
+  Yee, T. W. (2010)
   VGLMs and VGAMs: an overview for applications in fisheries research.
-  In preparation.
+  \emph{Fisheries Research},
+  \bold{101}, 116--126.
 
-  Yee, T. W. (2009b)
-  Some issues raised by the analysis of
+
+  Yee, T. W. (2010b)
+  On strategies and issues raised by an analysis of
   the 2008 World Fly Fishing Championships data.
-  In preparation.
+  \emph{In preparation}.
+  
 
 }
 \examples{

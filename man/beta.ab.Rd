@@ -95,7 +95,7 @@ beta.ab(lshape1="loge", lshape2="loge",
 
   Gupta, A. K. and Nadarajah, S. (2004)
   \emph{Handbook of Beta Distribution and Its Applications},
-  NY: Marcel Dekker, Inc.
+  New York: Marcel Dekker.
 
 %Evans, M., Hastings, N. and Peacock, B. (2000)
 %\emph{Statistical Distributions},
@@ -128,17 +128,17 @@ beta.ab(lshape1="loge", lshape2="loge",
 
 }
 \examples{
-y = rbeta(n=1000, shape1=exp(0), shape2=exp(1))
+betadat = data.frame(y = rbeta(n=1000, shape1=exp(0), shape2=exp(1)))
 fit = vglm(y ~ 1, beta.ab(lshape1="identity", lshape2="identity"),
-           trace = TRUE, crit="c")
-fit = vglm(y ~ 1, beta.ab, trace = TRUE, crit="c")
+           data=betadat, trace=TRUE, crit="c")
+fit = vglm(y ~ 1, beta.ab, data=betadat, trace=TRUE, crit="c")
 coef(fit, matrix=TRUE)
 Coef(fit)  # Useful for intercept-only models
 
-Y = 5 + 8 * y    # From 5 to 13, not 0 to 1
-fit = vglm(Y ~ 1, beta.ab(A=5, B=13), trace = TRUE)
-Coef(fit)  
-c(mean(Y), head(fitted(fit)))
+betadat = transform(betadat, Y = 5 + 8 * y)   # From 5 to 13, not 0 to 1
+fit = vglm(Y ~ 1, beta.ab(A=5, B=13), data=betadat, trace=TRUE)
+Coef(fit)
+c(meanY=with(betadat, mean(Y)), head(fitted(fit),2))
 }
 \keyword{models}
 \keyword{regression}

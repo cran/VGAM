@@ -58,15 +58,14 @@ rslash(n, mu=0, sigma=1)
 }
 \examples{
 \dontrun{
-x = seq(-5,5,length=201)
-plot(x, dslash(x), type="l", col="blue", ylab="f(x)", ylim=c(0,0.4),
-     main="Standard Slash, Normal and Cauchy Densities", lwd=2)
-lines(x, dnorm(x), col="black", lty=2, lwd=2)
-lines(x, dcauchy(x), col="red", lty=3, lwd=2)
-legend(x=2, y=0.3, c("slash","normal","cauchy"), lty=1:3,
+curve(dslash, col="blue", ylab="f(x)", -5, 5, ylim=c(0,0.4),
+     main="Standard slash, normal and Cauchy densities", lwd=2)
+curve(dnorm, col="black", lty=2, lwd=2, add=TRUE)
+curve(dcauchy, col="red", lty=3, lwd=2, add=TRUE)
+legend(x=2, y=0.3, c("slash","normal","Cauchy"), lty=1:3,
        col=c("blue","black","red"), lwd=2)
 
-plot(x, pslash(q=x), col="blue", type="l", ylim=0:1)
+curve(pslash, col="blue", -5, 5, ylim=0:1)
 }
 }
 \keyword{distribution}

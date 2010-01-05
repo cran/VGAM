@@ -33,7 +33,6 @@ data set, the two most severe categories were combined.
 \examples{
 # Fit the proportional odds model, p.179, in McCullagh and Nelder (1989) 
 pneumo = transform(pneumo, let=log(exposure.time))
-vglm(cbind(normal,mild,severe) ~ let, 
-     cumulative(parallel=TRUE, reverse=TRUE), pneumo)
+vglm(cbind(normal,mild,severe) ~ let, propodds,  pneumo)
 }
 \keyword{datasets}

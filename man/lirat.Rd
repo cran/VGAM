@@ -58,7 +58,6 @@ are accounted for.
 \dontrun{
 # cf. Figure 3 of Moore and Tsiatis (1991)
 with(lirat, plot(hb, R/N, pch=as.character(grp), col=grp, las=1,
-                 xlab="Hemoglobin level", ylab="Proportion Dead"))
-}
+                 xlab="Hemoglobin level", ylab="Proportion Dead")) }
 }
 \keyword{datasets}

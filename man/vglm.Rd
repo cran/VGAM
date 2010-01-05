@@ -18,7 +18,6 @@ vglm(formula, family, data = list(), weights = NULL, subset = NULL,
 }
 %- maybe also `usage' for other objects documented here.
 \arguments{
-  In the following, \eqn{M} is the number of linear predictors.
 
   \item{formula}{
   a symbolic description of the model to be fit.
@@ -334,7 +333,7 @@ The \code{VGAM} Package.
 }
 
 \examples{
-# Example 1. Dobson (1990) Page 93: Randomized Controlled Trial :
+# Example 1. See help(glm)
 counts = c(18,17,15,20,10,20,25,13,12)
 outcome = gl(3,1,9)
 treatment = gl(3,3)
@@ -349,8 +348,7 @@ vglm(cbind(normal, mild, severe) ~ let, multinomial, pneumo)
 
 
 # Example 3. Proportional odds model
-fit3 = vglm(cbind(normal,mild,severe) ~ let, trace=TRUE,
-            cumulative(parallel=TRUE, reverse=TRUE), pneumo)
+fit3 = vglm(cbind(normal,mild,severe) ~ let, propodds, pneumo, trace=TRUE)
 coef(fit3, matrix=TRUE) 
 constraints(fit3)
 model.matrix(fit3, type="lm") # LM model matrix
@@ -375,6 +373,7 @@ eyesdat = transform(eyesdat, eta1 = -1+2*lop,
 eyesdat = transform(eyesdat,
                     leye = rbinom(nn, size=1, prob=logit(eta1, inv=TRUE)),
                     reye = rbinom(nn, size=1, prob=logit(eta2, inv=TRUE)))
+head(eyesdat)
 fit5 = vglm(cbind(leye,reye) ~ op,
             binom2.or(exchangeable=TRUE, zero=3),
             data=eyesdat, trace=TRUE,
@@ -382,8 +381,7 @@ fit5 = vglm(cbind(leye,reye) ~ op,
             form2 = ~  op + lop + rop + fill(lop))
 coef(fit5)
 coef(fit5, matrix=TRUE)
-
-
+constraints(fit5)
 } 
 \keyword{models}
 \keyword{regression}

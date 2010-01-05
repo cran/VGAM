@@ -85,12 +85,12 @@ AICvlm(object, \dots, k = 2)
 }
 \examples{
 pneumo = transform(pneumo, let=log(exposure.time))
-(fit1 = vglm(cbind(normal, mild, severe) ~ let,
-           cumulative(parallel=TRUE, reverse=TRUE), pneumo))
+(fit1 <- vglm(cbind(normal, mild, severe) ~ let,
+              cumulative(parallel=TRUE, reverse=TRUE), pneumo))
 coef(fit1, matrix=TRUE)
 AIC(fit1)
-(fit2 = vglm(cbind(normal, mild, severe) ~ let,
-           cumulative(parallel=FALSE, reverse=TRUE), pneumo))
+(fit2 <- vglm(cbind(normal, mild, severe) ~ let,
+              cumulative(parallel=FALSE, reverse=TRUE), pneumo))
 coef(fit2, matrix=TRUE)
 AIC(fit2)
 }

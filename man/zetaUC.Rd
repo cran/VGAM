@@ -31,6 +31,7 @@ dzeta(x, p, log=FALSE)
 }
 \value{
   Returns the density evaluated at \code{x}.
+
 }
 \references{
 
@@ -57,11 +58,13 @@ New York: Wiley.
 
 \section{Warning}{
     This function has not been fully tested.
+
 }
 
 \seealso{
     \code{\link{zeta}},
     \code{\link{zetaff}}.
+
 }
 
 \examples{
@@ -69,8 +72,7 @@ dzeta(1:20, p=2)
 \dontrun{
 plot(1:6, dzeta(1:6, p=4), type="h", las=1, ylab="Probability",
      main="zeta probability function; black: p = 4; blue: p = 2")
-points(0.10+1:6, dzeta(1:6, p=2), type="h", col="blue")
-}
+points(0.10+1:6, dzeta(1:6, p=2), type="h", col="blue") }
 }
 \keyword{distribution}
 

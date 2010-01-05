@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2009 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2010 T.W. Yee, University of Auckland. All rights reserved.
 
 
 
@@ -9,9 +9,9 @@
 coefvlm <- function(object, matrix.out=FALSE, label=TRUE) {
 
     ans <- object@coefficients
-    if(!label)
+    if (!label)
         names(ans) <- NULL
-    if(!matrix.out)
+    if (!matrix.out)
         return(ans)
 
  
@@ -19,12 +19,12 @@ coefvlm <- function(object, matrix.out=FALSE, label=TRUE) {
     M <- object@misc$M
 
     Blist <- object@constraints
-    if(all(trivial.constraints(Blist) == 1)) {
+    if (all(trivial.constraints(Blist) == 1)) {
         Bmat <- matrix(ans, nrow=ncolx, ncol=M, byrow=TRUE)
     } else {
         Bmat <- matrix(as.numeric(NA), nrow=ncolx, ncol=M)
 
-        if(!matrix.out)
+        if (!matrix.out)
             return(ans) 
 
         ncolBlist <- unlist(lapply(Blist, ncol)) 
@@ -37,7 +37,7 @@ coefvlm <- function(object, matrix.out=FALSE, label=TRUE) {
         }
     }
 
-    if(label) {
+    if (label) {
         d1 <- object@misc$colnames.x
         d2 = object@misc$predictors.names # Could be NULL
         dimnames(Bmat) <- list(d1, d2)
@@ -60,18 +60,28 @@ setMethod("coef", "vglm", function(object, ...)
 
 
 
+  
+setMethod("coefficients", "summary.vglm", function(object, ...) object@coef3)
+setMethod("coef",         "summary.vglm", function(object, ...) object@coef3)
+
+
+
+
+
+
+
 
 
 Coef.vlm <- function(object, ...) {
     LL <- length(object@family@vfamily)
     funname = paste("Coef.", object@family@vfamily[LL], sep="")
-    if(exists(funname)) {
+    if (exists(funname)) {
         newcall = paste("Coef.", object@family@vfamily[LL],
                         "(object, ...)", sep="")
         newcall = parse(text=newcall)[[1]]
         eval(newcall)
     } else
-    if(length(tmp2 <- object@misc$link) &&
+    if (length(tmp2 <- object@misc$link) &&
        object@misc$intercept.only &&
        trivial.constraints(object@constraints)) {
 
@@ -79,7 +89,7 @@ Coef.vlm <- function(object, ...) {
                            link = object@misc$link,
                            earg = object@misc$earg)
         answer = c(answer)
-        if(length(ntmp2 <- names(tmp2)) == object@misc$M)
+        if (length(ntmp2 <- names(tmp2)) == object@misc$M)
             names(answer) = ntmp2
         answer
     } else {

@@ -8,8 +8,7 @@
 
 }
 \usage{
-zibinomial(lphi="logit", lmu="logit",
-           ephi=list(), emu=list(),
+zibinomial(lphi="logit", lmu="logit", ephi=list(), emu=list(),
            iphi=NULL, zero=1, mv=FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -27,8 +26,9 @@ zibinomial(lphi="logit", lmu="logit",
   }
 
   \item{iphi}{
-  Optional initial value for \eqn{\phi}{phi}, whose value must lie
-  between 0 and 1.  The default is to compute an initial value internally.
+  Optional initial values for \eqn{\phi}{phi}, whose values must lie
+  between 0 and 1. The default is to compute an initial value internally.
+  If a vector then recyling is used.
 
   }
   \item{zero}{ 

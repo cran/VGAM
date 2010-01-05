@@ -33,7 +33,7 @@ cenpoisson(link = "loge", earg = list(), imu = NULL)
   Often a table of Poisson counts has an entry \emph{J+} meaning
   \eqn{\ge J}.
   This family function is similar to \code{\link{poissonff}} but handles
-  such censored data. The input requires \code{\link{Surv}}.
+  such censored data. The input requires \code{\link{SurvS4}}.
   Only a univariate response is allowed.
   The Newton-Raphson algorithm is used.
 
@@ -55,7 +55,7 @@ cenpoisson(link = "loge", earg = list(), imu = NULL)
 \note{
   The function \code{\link{poissonff}} should be used
   when there are no censored observations.
-  Also, \code{NA}s are not permitted with \code{\link{Surv}},
+  Also, \code{NA}s are not permitted with \code{\link{SurvS4}},
   nor is \code{type="counting"}.
 
 }
@@ -76,23 +76,22 @@ cenpoisson(link = "loge", earg = list(), imu = NULL)
 }
 
 \seealso{
-    \code{\link{Surv}},
+    \code{\link{SurvS4}},
     \code{\link{poissonff}},
     \code{\link{Links}}.
 
 }
 \examples{
 # Example 1: right censored data
-set.seed(123)
+set.seed(123); U = 20
 y = rpois(n <- 100, exp(3))
-U = 20
 cy = pmin(U, y)
-rcensored = y >= U
+rcensored = (y >= U)
 table(cy)
 table(rcensored)
 status = ifelse(rcensored, 0, 1)
-table(i <- print(Surv(cy, status)))  # Check; U+ means >= U
-fit = vglm(Surv(cy, status) ~ 1, cenpoisson, trace=TRUE)
+table(ii <- print(SurvS4(cy, status)))  # Check; U+ means >= U
+fit = vglm(SurvS4(cy, status) ~ 1, cenpoisson, trace=TRUE)
 coef(fit, mat=TRUE)
 table(print(fit@y))  # Another check; U+ means >= U
 
@@ -100,18 +99,17 @@ table(print(fit@y))  # Another check; U+ means >= U
 # Example 2: left censored data
 L = 15
 cy = pmax(L, y)
-lcensored = y <  L   # Note y < L, not cy == L or y <= L
+lcensored = (y <  L)   # Note y < L, not cy == L or y <= L
 table(cy)
 table(lcensored)
 status = ifelse(lcensored, 0, 1)
-table(i <- print(Surv(cy, status, type="left")))  # Check
-fit = vglm(Surv(cy, status, type="left") ~ 1, cenpoisson, trace=TRUE)
+table(ii <- print(SurvS4(cy, status, type="left")))  # Check
+fit = vglm(SurvS4(cy, status, type="left") ~ 1, cenpoisson, trace=TRUE)
 coef(fit, mat=TRUE)
 
 
 # Example 3: interval censored data
-Lvec = rep(L, len=n)
-Uvec = rep(U, len=n)
+Lvec = rep(L, len=n); Uvec = rep(U, len=n)
 icensored = Lvec <= y & y < Uvec  # Neither lcensored or rcensored
 table(icensored)
 status = rep(3, n)                    # 3 means interval censored
@@ -122,9 +120,9 @@ Lvec[icensored] = Lvec[icensored] - 1
 Uvec[icensored] = Uvec[icensored] - 1
 Lvec[lcensored] = Lvec[lcensored]  # Remains unchanged
 Lvec[rcensored] = Uvec[rcensored]  # Remains unchanged
-table(i <- print(Surv(Lvec, Uvec, status, type="interval")))  # Check
+table(ii <- print(SurvS4(Lvec, Uvec, status, type="interval")))  # Check
 
-fit = vglm(Surv(Lvec, Uvec, status, type="interval") ~ 1,
+fit = vglm(SurvS4(Lvec, Uvec, status, type="interval") ~ 1,
            cenpoisson, trace=TRUE)
 coef(fit, mat=TRUE)
 table(print(fit@y))  # Another check
@@ -135,9 +133,9 @@ index = (1:n)[icensored]
 index = head(index, 4)
 status[index] = 1 # actual or uncensored value
 Lvec[index] = y[index]
-table(i <- print(Surv(Lvec, Uvec, status, type="interval")))  # Check
+table(ii <- print(SurvS4(Lvec, Uvec, status, type="interval")))  # Check
 
-fit = vglm(Surv(Lvec, Uvec, status, type="interval") ~ 1,
+fit = vglm(SurvS4(Lvec, Uvec, status, type="interval") ~ 1,
            cenpoisson, trace=TRUE, crit="c")
 coef(fit, mat=TRUE)
 table(print(fit@y))  # Another check

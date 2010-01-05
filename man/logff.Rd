@@ -4,6 +4,7 @@
 \title{ Logarithmic Distribution  }
 \description{
  Estimating the (single) parameter of the logarithmic distribution.
+
 }
 \usage{
 logff(link = "logit", earg=list(), init.c = NULL)
@@ -47,6 +48,7 @@ logff(link = "logit", earg=list(), init.c = NULL)
 }
 \references{ 
 
+
 Chapter 7 of
     Johnson N. L., Kemp, A. W. and Kotz S. (2005)
     \emph{Univariate Discrete Distributions},
@@ -58,9 +60,7 @@ Evans, M., Hastings, N. and Peacock, B. (2000)
 \emph{Statistical Distributions},
 New York: Wiley-Interscience, Third edition.
 
-Documentation accompanying the \pkg{VGAM} package at
-\url{http://www.stat.auckland.ac.nz/~yee}
-contains further information and examples.
+
 }
 \author{ T. W. Yee }
 \note{
@@ -79,16 +79,28 @@ contains further information and examples.
   \code{\link[base:Log]{log}},
   \code{\link{loge}},
   \code{\link{logoff}}.
+
 }
 \examples{
-y = rlog(n=1000, prob=logit(0.2, inverse=TRUE))
-fit = vglm(y ~ 1, logff, trace=TRUE, crit="c")
+ldat = data.frame(y = rlog(n=1000, prob=logit(0.2, inverse=TRUE)))
+fit = vglm(y ~ 1, logff, ldat, trace=TRUE, crit="c")
 coef(fit, matrix=TRUE)
 Coef(fit)
-\dontrun{hist(y, prob=TRUE, breaks=seq(0.5, max(y)+0.5, by=1), border="blue")
-x = seq(1, max(y), by=1)
-lines(x, dlog(x, Coef(fit)[1]), col="red", type="h", lwd=2)
-}
+\dontrun{with(ldat,
+    hist(y, prob=TRUE, breaks=seq(0.5, max(y)+0.5, by=1), border="blue"))
+x = seq(1, with(ldat, max(y)), by=1)
+with(ldat, lines(x, dlog(x, Coef(fit)[1]), col="red", type="h", lwd=2)) }
+
+
+# Example: Corbet (1943) butterfly Malaya data
+corbet = data.frame(nindiv = 1:24,
+                    ofreq = c(118, 74, 44, 24, 29, 22, 20, 19, 20, 15, 12,
+                              14, 6, 12, 6, 9, 9, 6, 10, 10, 11, 5, 3, 3))
+fit = vglm(nindiv ~ 1, logff, data=corbet, weights=ofreq)
+coef(fit, matrix=TRUE)
+chat = Coef(fit)["c"]
+pdf2 = dlog(x=with(corbet, nindiv), prob=chat)
+print(with(corbet, cbind(nindiv, ofreq, fitted=pdf2*sum(ofreq))), dig=1)
 }
 \keyword{models}
 \keyword{regression}

@@ -4,21 +4,18 @@
 \title{Common VGAM family function Arguments }
 \description{
   Here is a description of some common and typical arguments found
-  in \pkg{VGAM} family functions, e.g.,
+  in many \pkg{VGAM} family functions, e.g.,
   \code{lsigma}, 
   \code{isigma}, \code{nsimEI}, \code{parallel} and \code{zero}.
 
 }
 \usage{
-TypicalVGAMfamilyFunction(lsigma="loge", esigma=list(),
-                          isigma=NULL, parallel = TRUE,
-                          shrinkage.init = 0.95,
-                          method.init=1, nsimEIM=100, zero=NULL)
+TypicalVGAMfamilyFunction(lsigma = "loge", esigma = list(), isigma = NULL,
+                          parallel = TRUE, shrinkage.init = 0.95,
+                          nointercept = NULL, method.init = 1,
+                          nsimEIM = 100, zero = NULL)
 }
 \arguments{
-  Almost every \pkg{VGAM} family function has an argument list similar to
-  the one given above.  Below, \eqn{M} is the number of linear/additive
-  predictors.
 
   \item{lsigma}{
   Character.
@@ -106,6 +103,8 @@ TypicalVGAMfamilyFunction(lsigma="loge", esigma=list(),
   set \eqn{\{1,2,\ldots,M\}}.
   The value \code{zero=NULL} means model all linear/additive predictors
   as functions of the explanatory variables.
+  Here, \eqn{M} is the number of linear/additive predictors.
+
 
   Some \pkg{VGAM} family functions allow the \code{zero} argument to
   accept negative values; if so then its absolute value is recycled
@@ -131,6 +130,13 @@ TypicalVGAMfamilyFunction(lsigma="loge", esigma=list(),
   the argument \code{method.init} is assigned a certain value.
 
   }
+  \item{nointercept}{
+  An integer-valued vector specifying which
+  linear/additive predictors have no intercepts.
+  Any values must be from the set \{1,2,\ldots,\eqn{M}\}.
+  A value of \code{NULL} means no such constraints.
+
+  }
 
 }
 \value{
@@ -146,6 +152,20 @@ TypicalVGAMfamilyFunction(lsigma="loge", esigma=list(),
   See Example 5 below for an example.
   If not sure, use, e.g., \code{constraints(fit)} and
   \code{coef(fit, matrix=TRUE)} to check the result of a fit \code{fit}.
+
+
+  The arguments \code{zero} and \code{nointercept} can be inputted
+  with values that fail. For example,
+  \code{multinomial(zero = 2, nointercept = 1:3)} means the
+  second linear/additive predictor is identically zero,
+  which will cause a failure.
+
+
+  Be careful about the use of other potentially contradictory constraints,
+  e.g., \code{multinomial(zero = 2, parallel = TRUE ~ x3)}. If in doubt,
+  apply \code{constraints()} to the fitted object to check.
+
+
 
   \pkg{VGAM} family functions with the \code{nsimEIM} may have inaccurate
   working weight matrices. If so, then the standard errors of the

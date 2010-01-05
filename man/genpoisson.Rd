@@ -109,12 +109,14 @@ New York: Marcel Dekker.
 
 }
 \examples{
-n = 200
-x = runif(n)
-y = rpois(n, lam=exp(2-x))
-fit  = vglm(y ~ x, genpoisson(zero=1), trace=TRUE)
+gdata = data.frame(x = runif(nn <- 200))
+gdata = transform(gdata, y = rpois(nn, exp(2-x))) # Ordinary Poisson data
+fit  = vglm(y ~ x, genpoisson(zero=1), gdata, trace=TRUE)
 coef(fit, matrix=TRUE)
 summary(fit)
 }
 \keyword{models}
 \keyword{regression}
+
+% yettodo: see csda 2009, 53(9): 3478--3489.
+

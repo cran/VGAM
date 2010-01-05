@@ -96,8 +96,7 @@ rpolono(n, meanlog=0, sdlog=1)
 
 }
 \examples{
-meanlog = 0.5; sdlog = 0.5
-y = 0:19
+meanlog = 0.5; sdlog = 0.5; y = 0:19
 proby = dpolono(y, m=meanlog, sd=sdlog)
 sum(proby)  # Should be 1
 \dontrun{
@@ -118,8 +117,7 @@ plot(y, proby, type="h", col="blue", ylab="P[Y=y]", log="y",
 # Random number generation
 table(y <- rpolono(n=1000, m=meanlog, sd=sdlog))
 hist(y, breaks=((-1):max(y))+0.5, prob=TRUE, border="blue")
-par(opar)
-}
+par(opar) }
 }
 \keyword{distribution}
 

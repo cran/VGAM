@@ -227,7 +227,7 @@ p1 = cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,
          WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
          ITolerances = TRUE, fam = poissonff, data = hspider, 
          Crow1positive=TRUE, Bestof=3, trace=FALSE)
-if(deviance(p1) > 1589.0) stop("suboptimal fit obtained")
+if (deviance(p1) > 1589.0) stop("suboptimal fit obtained")
 
 set.seed(111)
 up1 = uqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,
@@ -236,7 +236,7 @@ up1 = uqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,
           family = poissonff, data = hspider,
           ITolerances = TRUE,
           Crow1positive = TRUE, lvstart = -lv(p1))
-if(deviance(up1) > 1310.0) stop("suboptimal fit obtained")
+if (deviance(up1) > 1310.0) stop("suboptimal fit obtained")
 
 nos = ncol(up1@y) # Number of species
 clr = (1:(nos+1))[-7]  # to omit yellow
@@ -256,7 +256,7 @@ par(mfrow=c(2,1))
 persp(up1, main="Red/Blue are the constrained/unconstrained models",
       label=TRUE, col="blue", las=1)
 persp(p1, add=FALSE, col="red")
-1-pchisq(deviance(p1) - deviance(up1), df=52-30)
+pchisq(deviance(p1) - deviance(up1), df=52-30, lower.tail=FALSE)
 }
 }
 \keyword{models}

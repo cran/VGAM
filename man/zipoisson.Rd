@@ -8,8 +8,7 @@
 
 }
 \usage{
-zipoisson(lphi="logit", llambda = "loge", 
-          ephi=list(), elambda =list(),
+zipoisson(lphi="logit", llambda = "loge", ephi=list(), elambda =list(),
           iphi = NULL, method.init=1, shrinkage.init=0.8, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -31,8 +30,9 @@ zipoisson(lphi="logit", llambda = "loge",
   }
 
   \item{iphi}{
-  Optional initial value for \eqn{\phi}{phi}, whose value must lie
-  between 0 and 1.  The default is to compute an initial value internally.
+  Optional initial values for \eqn{\phi}{phi}, whose values must lie
+  between 0 and 1. The default is to compute an initial value internally.
+  If a vector then recycling is used.
 
   }
   \item{method.init}{
@@ -139,39 +139,33 @@ zipoisson(lphi="logit", llambda = "loge",
 
 }
 \examples{
-x = runif(n <- 2000)
-phi = logit(-0.5 + 1*x, inverse=TRUE)
-lambda = loge(0.5 + 2*x, inverse=TRUE)
-y = rzipois(n, lambda, phi)
-table(y)
-fit = vglm(y ~ x, zipoisson, trace=TRUE)
+zipdat = data.frame(x = runif(nn <- 2000))
+zipdat = transform(zipdat, phi = logit(-0.5 + 1*x, inverse=TRUE),
+                           lambda = loge(0.5 + 2*x, inverse=TRUE))
+zipdat = transform(zipdat, y = rzipois(nn, lambda, phi))
+with(zipdat, table(y))
+fit = vglm(y ~ x, zipoisson, zipdat, trace=TRUE)
 coef(fit, matrix=TRUE)  # These should agree with the above values
 
 
-# Another example: data from McKendrick (1926).
-y = 0:4  # Number of cholera cases per household in an Indian village
-w = c(168, 32, 16, 6, 1)  # Frequencies; there are 223=sum(w) households
-fit = vglm(y ~ 1, zipoisson, wei=w, trace=TRUE)
+# Another example: McKendrick (1926). Data from 223 Indian village households
+cholera = data.frame(ncases = 0:4, # Number of cholera cases,
+                     wfreq = c(168, 32, 16, 6, 1)) # Frequencies
+fit = vglm(ncases ~ 1, zipoisson, wei=wfreq, data=cholera, trace=TRUE)
 coef(fit, matrix=TRUE)
-cbind(actual=w, fitted= round(
-      dzipois(y, lambda=Coef(fit)[2], phi=Coef(fit)[1]) * sum(w), dig=2))
+with(cholera, cbind(actual=wfreq, fitted= round(
+      dzipois(ncases, lambda=Coef(fit)[2], phi=Coef(fit)[1]) * sum(wfreq), dig=2)))
 
 
 # Another example: data from Angers and Biswas (2003)
-y = 0:7
-w = c(182, 41, 12, 2, 2, 0, 0, 1)
-y = y[w>0]
-w = w[w>0]
-\dontrun{
-# The zero is deflated, not inflated, giving convergence problems
-w[1] = 1
-}
-fit = vglm(y ~ 1, zipoisson(lphi=probit, iphi=0.3), wei=w, tra=TRUE)
+abdat = data.frame(y = 0:7, w = c(182, 41, 12, 2, 2, 0, 0, 1))
+abdat = subset(abdat, w>0)
+fit = vglm(y ~ 1, zipoisson(lphi=probit, iphi=0.3), abdat, wei=w, trace=TRUE)
 fit@misc$prob0  # Estimate of P(Y=0)
 coef(fit, matrix=TRUE)
 Coef(fit)  # Estimate of phi and lambda
 fitted(fit)
-weighted.mean(y,w) # Compare this with fitted(fit)
+with(abdat, weighted.mean(y, w)) # Compare this with fitted(fit)
 summary(fit)
 }
 \keyword{models}

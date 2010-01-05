@@ -33,7 +33,7 @@ lerch(x, s, v, tolerance=1.0e-10, iter=100)
   \deqn{\Phi(x,s,v) = \sum_{n=0}^{\infty}  \frac{x^n}{(n+v)^s}}{%
     Phi(x,s,v) = sum_{n=0}^{infty} x^n / (n+v)^s}
   where \eqn{|x|<1} and
-  \eqn{v \neq 0, -1, -2, \ldots}{v != 0, -1, -2, \ldots}.
+  \eqn{v \neq 0, -1, -2, \ldots}{v != 0, -1, -2, ...}.
   Actually, \eqn{x} may be complex but this function only works
   for real \eqn{x}.
   The algorithm used is based on the relation
@@ -92,8 +92,7 @@ lerch(x, s, v, tolerance=1.0e-10, iter=100)
 }
 \examples{
 \dontrun{
-x = seq(-1.1, 1.1, len=201)
-s=2; v=1
+s=2; v=1; x = seq(-1.1, 1.1, len=201)
 plot(x, lerch(x, s=s, v=v), type="l", col="red", las=1,
      main=paste("lerch(x, s=",s,", v=",v,")",sep=""))
 abline(v=0, h=1, lty="dashed")

@@ -80,13 +80,13 @@ Hoboken, N.J.: Wiley-Interscience.
 
 \seealso{
   \code{\link{morgenstern}}.
+
 }
 \examples{
-n = 1000
-ymat = cbind(rexp(n), rexp(n))
-\dontrun{plot(ymat)}
-fit = vglm(ymat ~ 1, fam=gumbelIbiv, trace=TRUE)
-fit = vglm(ymat ~ 1, fam=gumbelIbiv, trace=TRUE, crit="coef")
+nn = 1000
+gdata = data.frame(y1 = rexp(nn), y2 = rexp(nn))
+\dontrun{with(gdata, plot(cbind(y1,y2)))}
+fit = vglm(cbind(y1,y2) ~ 1, fam=gumbelIbiv, gdata, trace=TRUE)
 coef(fit, matrix=TRUE)
 Coef(fit)
 head(fitted(fit))

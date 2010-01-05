@@ -71,6 +71,14 @@ Maintainer: Thomas Yee <t.yee@auckland.ac.nz>
 }
 \references{
 
+
+Yee, T. W. (2010)
+The \pkg{VGAM} package for categorical data analysis.
+\emph{Journal of Statistical Software},
+\bold{32}, 1--34.
+\url{http://www.jstatsoft.org/v32/i10/}.
+
+
 Yee, T. W. and Hastie, T. J. (2003)
 Reduced-rank vector generalized linear models.
 \emph{Statistical Modelling},
@@ -116,19 +124,16 @@ contains further information and examples.
 %~~ \code{\link[<pkg>:<pkg>-package]{<pkg>}} ~~
 }
 \examples{
-# Example 1
-# Fit the proportional odds model, p.179, in McCullagh and Nelder (1989)
-pneumo = transform(pneumo, let=log(exposure.time))
-(fit = vglm(cbind(normal, mild, severe) ~ let,
-            cumulative(parallel=TRUE, reverse=TRUE), pneumo))
+# Example 1; proportional odds model
+pneumo = transform(pneumo, let = log(exposure.time))
+(fit = vglm(cbind(normal, mild, severe) ~ let, propodds, pneumo))
 fit@y   # Sample proportions
-weights(fit, type="prior")   # Number of observations
-coef(fit, matrix=TRUE)
-constraints(fit)   # Constraint matrices
+weights(fit, type = "prior") # Number of observations
+coef(fit, matrix = TRUE)     # p.179, in McCullagh and Nelder (1989)
+constraints(fit)             # Constraint matrices
 
 
-# Example 2
-# Zero-inflated Poisson model
+# Example 2; zero-inflated Poisson model
 x = runif(n <- 2000)
 phi = logit(-0.5 + 1*x, inverse=TRUE)
 lambda = loge(0.5 + 2*x, inverse=TRUE)
@@ -138,24 +143,22 @@ fit = vglm(y ~ x, zipoisson, trace=TRUE)
 coef(fit, matrix=TRUE)  # These should agree with the above values
 
 
-# Example 3
-# Fit a two species GAM simultaneously
+# Example 3; fit a two species GAM simultaneously
 fit2 = vgam(cbind(agaaus, kniexc) ~ s(altitude, df=c(2,3)),
             binomialff(mv=TRUE), hunua)
 coef(fit2, mat=TRUE)   # Not really interpretable
 \dontrun{
 plot(fit2, se=TRUE, overlay=TRUE, lcol=1:2, scol=1:2)
 
-o = with(hunua, order(altitude))
-with(hunua,  matplot(altitude[o], fitted(fit2)[o,], type="l", lwd=2,
+ooo = with(hunua, order(altitude))
+with(hunua,  matplot(altitude[ooo], fitted(fit2)[ooo,], type="l", lwd=2,
      xlab="Altitude (m)", ylab="Probability of presence", las=1,
      main="Two plant species' response curves", ylim=c(0,.8)))
 with(hunua, rug(altitude))
 }
 
 
-# Example 4
-# LMS quantile regression
+# Example 4; LMS quantile regression
 fit = vgam(BMI ~ s(age, df=c(4,2)), lms.bcn(zero=1), dat=bminz, trac=TRUE)
 head(predict(fit))
 head(fitted(fit))
@@ -180,14 +183,13 @@ a@post$deplot  # Contains density function values
 }
 
 
-# Example 5
-# GEV distribution for extremes
+# Example 5; GEV distribution for extremes
 (fit = vglm(maxtemp ~ 1, egev, data=oxtemp, trace=TRUE))
 head(fitted(fit))
-coef(fit, mat=TRUE)
+coef(fit, mat = TRUE)
 Coef(fit)
 vcov(fit)
-vcov(fit, untransform=TRUE)
+vcov(fit, untransform = TRUE)
 sqrt(diag(vcov(fit)))   # Approximate standard errors
 \dontrun{ rlplot(fit) }
 }

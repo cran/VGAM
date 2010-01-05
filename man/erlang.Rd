@@ -83,13 +83,14 @@ New York: Wiley-Interscience, Third edition.
 \seealso{
   \code{\link{gamma2.ab}},
   \code{\link{exponential}}.
+
 }
 \examples{
-n = 200; rate = 8
-y = rep(0, n)
-for(i in 1:3)
-    y = y + rexp(n, rate=rate)
-fit = vglm(y ~ 1, erlang(shape=3), trace=TRUE) 
+rate = exp(2); myshape = 3
+edata = data.frame(y = rep(0, nn <- 1000))
+for(ii in 1:myshape)
+    edata = transform(edata, y = y + rexp(nn, rate=rate))
+fit = vglm(y ~ 1, erlang(shape=myshape), edata, trace=TRUE) 
 coef(fit, matrix=TRUE)
 Coef(fit) # Answer = 1/rate
 1/rate

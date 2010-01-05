@@ -8,7 +8,7 @@
 }
 \usage{
 cardioid(lmu="elogit", lrho="elogit",
-         emu=if(lmu=="elogit") list(min=0, max=2*pi) else list(),
+         emu =if(lmu=="elogit") list(min=0, max=2*pi) else list(),
          erho=if(lmu=="elogit") list(min=-0.5, max=0.5) else list(),
          imu=NULL, irho=0.3, nsimEIM=100, zero=NULL)
 }
@@ -95,11 +95,11 @@ Singapore: World Scientific.
 
 }
 \examples{
-y = rcard(n=1000, mu=4, rho=0.45)
-fit = vglm(y ~ 1, cardioid, trace=TRUE) 
+carddata = data.frame(y = rcard(n=1000, mu=4, rho=0.45))
+fit = vglm(y ~ 1, cardioid, carddata, trace=TRUE) 
 coef(fit, matrix=TRUE)
 Coef(fit)
-c(mean(y), fitted(fit)[1,])
+c(with(carddata, mean(y)), head(fitted(fit),1))
 summary(fit)
 }
 \keyword{models}

@@ -1,0 +1,151 @@
+Here is a list of known bugs.
+
+
+
+2009/07/13
+cqo() fails... I think it is due to initial values being faulty.
+Hope to look into it soon.
+
+
+
+
+
+
+
+
+2009/06/18
+
+For a given VGAM family function,
+arguments such as parallel, exchangeable etc. 
+will not work if the RHS of the formula is an intercept only.
+For example,
+parallel = FALSE ~ 1
+and
+exchangeable = TRUE ~ 1
+will fail.
+Instead, try something like
+parallel = TRUE ~ x2 + x3 + x4 -1
+and
+exchangeable = FAlSE ~ x2 + x3 + x4 + x5 -1
+respectively.
+
+
+2009/01/01
+
+prediction with vgam( ~ offset(myoffsetmatrix) + ... ) 
+fails inside a function because myoffsetmatrix cannot be found.
+
+
+
+2008/08/12
+
+Under Windows, the vgam() example involving the Hunua data seems
+to fail. It is under investigation.
+
+
+
+2008/08/04
+
+VGAM interferes with other packages, e.g., predict() and summary().
+This is due to S3 and S4 interference, and currently I haven't sussed out
+the full details (e.g., NAMESPACES). For now it is best to attach VGAM
+only when needed and detach it when other packages are to be used. This
+can be done with
+
+library(VGAM)
+
+and
+
+detach("package:VGAM")
+
+
+
+2008/05/16
+
+zipf() did not handle 0 < s < 1.
+The prerelease version fixes this.
+
+
+
+2008/03/12
+
+A call such as
+
+mydof = 4
+Fit = vgam(y ~ s(x, df=mydof), fam=poissonff)
+
+will result in failure when
+
+plot(Fit)
+
+Instead, one needs
+
+Fit = vgam(y ~ s(x, df=4), fam=poissonff)
+
+
+
+2008/02/16
+
+The VGAM package interferes with other functions, for example, if VGAM
+is loaded and lmobject is an "lm" object then
+
+fitted(lmobject)
+predict(lmobject)
+resid(lmobject)
+residuals(lmobject)
+
+will fail.
+
+
+
+2006/05/18
+
+dirmul() is not working yet.
+
+
+
+
+2005/11/16
+
+cao() now works in Windows.
+The argument xij does not work properly.
+
+
+
+2005/8/31
+
+The windows version of cao() seems to hang.
+It does not hang in Linux.
+
+
+2005/6/10
+
+cao() works in Linux but seems to hang in Windows.
+The latter (distributed in a .zip file format) is made from a R Cross
+Build process which may be a reason for the bug. I'm slowly looking
+into the bug.
+
+
+2005/5/6
+
+The VGAM package interferes with other code, including glm().  This may
+be due to the smart prediction code, or be due to the NAMESPACE facility.
+In order to use other functions outside the VGAM package you may need
+to type "detach()".
+
+
+2003/7/14
+
+vgam(y ~ s(x, df=2), subset= x > 2)
+
+will fail in R because the subset argument has the effect that the
+"df" and "spar" attributes are removed from the data frame containing
+the smoothing variables.
+
+Current fix: create a separate data frame satisfying the subset=
+condition, and then run vgam() on this smaller data frame.
+
+Thanks for Eugene Zwane for finding this bug. 
+
+
+

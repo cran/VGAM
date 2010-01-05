@@ -10,10 +10,8 @@ It is only applicable for rank-1 models with argument
 \code{Norrr = ~ 1}.
 }
 \usage{
-trplot.qrrvglm(object, whichSpecies = NULL,
-               add=FALSE, plot.it=TRUE,
-               label.sites = FALSE, 
-               sitenames = rownames(object@y), 
+trplot.qrrvglm(object, whichSpecies = NULL, add=FALSE, plot.it=TRUE,
+               label.sites = FALSE, sitenames = rownames(object@y), 
                axes.equal = TRUE, cex = par()$cex, 
                col = 1:(nos * (nos - 1)/2), log = "", 
                lty = rep(par()$lty, len = nos * (nos - 1)/2), 
@@ -163,4 +161,4 @@ abline(a=0, b=1, lty="dashed")  # Useful reference line
 }
 \keyword{models}
 \keyword{regression}
-\keyword{hplot}
+\keyword{graphs}

@@ -116,20 +116,20 @@ betaff(A=0, B=1,
 
 }
 \examples{
-y = rbeta(n <- 1000, shape1=exp(0), shape2=exp(1))
-fit = vglm(y ~ 1, betaff, trace = TRUE)
+betadat = data.frame(y = rbeta(nn <- 1000, shape1=exp(0), shape2=exp(1)))
+fit = vglm(y ~ 1, betaff, betadat, trace=TRUE)
 coef(fit, matrix=TRUE)
 Coef(fit)  # Useful for intercept-only models
 
 # General A and B, and with a covariate
-x = runif(n <- 1000)
-mu = logit(0.5-x, inverse=TRUE)
-prec = exp(3+x)  # phi
-shape2 = prec * (1-mu)
-shape1 = mu * prec
-y = rbeta(n, shape1=shape1, shape2=shape2)
-Y = 5 + 8 * y    # From 5 to 13, not 0 to 1
-fit = vglm(Y ~ x, betaff(A=5,B=13), trace=TRUE)
+betadat = transform(betadat, x = runif(nn))
+betadat = transform(betadat, mu = logit(0.5-x, inverse=TRUE),
+                             prec = exp(3+x))  # prec == phi
+betadat = transform(betadat, shape2 = prec * (1-mu),
+                             shape1 = mu * prec)
+betadat = transform(betadat, y = rbeta(nn, shape1=shape1, shape2=shape2))
+betadat = transform(betadat, Y = 5 + 8 * y)   # From 5 to 13, not 0 to 1
+fit = vglm(Y ~ x, betaff(A=5, B=13), betadat, trace=TRUE)
 coef(fit, mat=TRUE)
 }
 \keyword{models}

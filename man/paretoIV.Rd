@@ -148,9 +148,9 @@ Fairland, Maryland: International Cooperative Publishing House.
   \code{\link{gpd}}.
 }
 \examples{
-y = rparetoIV(n <- 2000, scale=exp(1), ineq=exp(-0.3), shape=exp(1))
-\dontrun{par(mfrow=c(2,1)); hist(y); hist(log(y)); }
-fit = vglm(y ~ 1, paretoIV, trace=TRUE)
+pdat = data.frame(y=rparetoIV(2000, scal=exp(1), ineq=exp(-0.3), shap=exp(1)))
+\dontrun{par(mfrow=c(2,1)); with(pdat, hist(y)); with(pdat, hist(log(y))) }
+fit = vglm(y ~ 1, paretoIV, pdat, trace=TRUE)
 coef(fit, matrix=TRUE)
 Coef(fit)
 summary(fit)

@@ -8,8 +8,7 @@
 }
 \usage{
 plotdeplot.lmscreg(answer, y.arg, add.arg = FALSE, 
-    xlab = "", ylab = "density", 
-    xlim = NULL, ylim = NULL, 
+    xlab = "", ylab = "density", xlim = NULL, ylim = NULL, 
     llty.arg = par()$lty, col.arg = par()$col, 
     llwd.arg = par()$lwd, ...)
 }

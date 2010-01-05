@@ -59,10 +59,11 @@ maxwell(link = "loge", earg=list())
 \seealso{ 
   \code{\link{Maxwell}},
   \code{\link{rayleigh}}.
+
 }
 \examples{
-y = rmaxwell(n <- 1000, a=exp(2))
-fit = vglm(y ~ 1, maxwell, trace=TRUE, crit="c")
+mdata = data.frame(y = rmaxwell(1000, a=exp(2)))
+fit = vglm(y ~ 1, maxwell, mdata, trace=TRUE, crit="c")
 coef(fit, matrix=TRUE)
 Coef(fit)
 }

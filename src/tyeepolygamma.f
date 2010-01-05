@@ -3,12 +3,11 @@
       double precision x, ghry8z
       integer c4uxow
       double precision w, sqap4b, temp
+      c4uxow = 1
       if(.not.(x .le. 0.0d0))goto 23000
       c4uxow = 0
       return
 23000 continue
-      c4uxow = 1
-23001 continue
       if(.not.(x .lt. 6.0d0))goto 23002
       call vdgam2(x + 6.0d0, temp, c4uxow)
       ghry8z = temp - 1.0d0/x - 1.0d0/(x + 1.0d0) - 1.0d0/(x + 2.0d0) - 
@@ -28,12 +27,11 @@
       double precision x, ghry8z
       integer c4uxow
       double precision w, sqap4b, temp
+      c4uxow = 1
       if(.not.(x .le. 0.0d0))goto 23004
       c4uxow = 0
       return
 23004 continue
-      c4uxow = 1
-23005 continue
       if(.not.(x .lt. 6.0d0))goto 23006
       call vdgam1(x + 6.0d0, temp, c4uxow)
       ghry8z = temp - 1.0d0/x - 1.0d0/(x + 1.0d0) - 1.0d0/(x + 2.0d0) - 
@@ -53,12 +51,11 @@
       double precision x, ghry8z
       integer c4uxow
       double precision w, sqap4b, temp
+      c4uxow = 1
       if(.not.(x .le. 0.0d0))goto 23008
       c4uxow = 0
       return
 23008 continue
-      c4uxow = 1
-23009 continue
       if(.not.(x .lt. 6.0d0))goto 23010
       call vtgam2(x + 6.0d0, temp, c4uxow)
       ghry8z = temp + 1.0d0/x**2 + 1.0d0/(x + 1.0d0)**2 + 1.0d0/(x + 2.
@@ -79,12 +76,11 @@
       double precision x, ghry8z
       integer c4uxow
       double precision w, sqap4b, temp
+      c4uxow = 1
       if(.not.(x .le. 0.0d0))goto 23012
       c4uxow = 0
       return
 23012 continue
-      c4uxow = 1
-23013 continue
       if(.not.(x .lt. 6.0d0))goto 23014
       call vtgam1(x + 6.0d0, temp, c4uxow)
       ghry8z = temp + 1.0d0/x**2 + 1.0d0/(x + 1.0d0)**2 + 1.0d0/(x + 2.

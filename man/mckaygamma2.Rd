@@ -61,14 +61,16 @@ mckaygamma2(la = "loge", lp = "loge", lq = "loge",
 %% improve the references
 \references{
 
+
 McKay, A. T. (1934)
 Sampling from batches.
 \emph{Journal of the Royal Statistical Society---Supplement},
 \bold{1}, 207--216.
 
+
 Kotz, S. and Balakrishnan, N. and Johnson, N. L. (2000)
-\emph{Continuous Multivariate Distributions Volume 1: Models
-and Applications},
+\emph{Continuous Multivariate Distributions Volume 1:
+Models and Applications},
 2nd edition,
 New York: Wiley.
 

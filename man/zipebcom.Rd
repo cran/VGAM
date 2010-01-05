@@ -164,7 +164,7 @@ zipebcom(lmu12="cloglog", lphi12="logit", loratio="loge",
   Journal of Theoretical Biology, \bold{259}. In press.
 
 }
-\author{ Thomas W. Yee }
+%\author{ Thomas W. Yee }
 \note{
   The \code{"12"} in the argument names reinforce the user about the
   exchangeability assumption.
@@ -202,22 +202,20 @@ with(mydat, table(ybin1,ybin2)) / nsites  # For interest only
 \dontrun{
 # Various plots of the data, for interest only
 par(mfrow=c(2,2))
-with(mydat, plot(jitter(ybin1) ~ x, col="blue"))
+plot(jitter(ybin1) ~ x, data = mydat, col="blue")
 
-with(mydat, plot(jitter(ybin2) ~ jitter(ybin1), col="blue"))
+plot(jitter(ybin2) ~ jitter(ybin1), data = mydat, col="blue")
 
-with(mydat, plot(x, mu12, col="blue", type="l", ylim=0:1,
-     ylab="Probability", main="Marginal probability and phi"))
+plot(mu12 ~ x, data = mydat, col="blue", type="l", ylim=0:1,
+     ylab="Probability", main="Marginal probability and phi")
 with(mydat, abline(h=phi1[1], col="red", lty="dashed"))
 
 tmat2 = with(mydat, dbinom2.or(mu1=mu12, oratio=oratio, exch=TRUE))
 with(mydat, matplot(x, tmat2, col=1:4, type="l", ylim=0:1,
-     ylab="Probability", main="Joint probabilities"))
-}
+     ylab="Probability", main="Joint probabilities")) }
 
 # Now fit the model to the data.
 fit = vglm(cbind(ybin1,ybin2) ~ x, fam=zipebcom, dat=mydat, trace=TRUE)
-
 coef(fit, matrix=TRUE)
 summary(fit)
 vcov(fit)

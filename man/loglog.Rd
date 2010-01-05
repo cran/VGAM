@@ -87,6 +87,7 @@ loglog(theta, earg = list(), inverse = FALSE, deriv = 0,
     \code{\link{Links}},
     \code{\link{loge}},
     \code{\link{logoff}}.
+
 }
 \examples{
 x = seq(0.8, 1.5, by=0.1)

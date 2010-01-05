@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2009 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2010 T.W. Yee, University of Auckland. All rights reserved.
 
 
 
@@ -9,7 +9,7 @@
 
 
 is.Numeric <- function(x, allowable.length=Inf, integer.valued=FALSE, positive=FALSE)
-    if(all(is.numeric(x)) && all(is.finite(x)) &&
+    if (all(is.numeric(x)) && all(is.finite(x)) &&
     (if(is.finite(allowable.length)) length(x)==allowable.length else TRUE) &&
     (if(integer.valued) all(x==round(x)) else TRUE) &&
     (if(positive) all(x>0) else TRUE)) TRUE else FALSE
@@ -18,15 +18,18 @@ is.Numeric <- function(x, allowable.length=Inf, integer.valued=FALSE, positive=F
 VGAMenv = new.env()
 
 
+
+
+
 .onLoad <- function(lib, pkg) require(methods)  # 25/1/05
  
  
  
-if(!any(search()=="package:methods"))
+if (!any(search()=="package:methods"))
     library(methods)
 
 
-if(!any(search()=="package:splines"))
+if (!any(search()=="package:splines"))
     require(splines)
 
 
@@ -66,22 +69,22 @@ prototype = .VGAM.prototype.list)
 valid.vglmff = function(object) {
     compulsory = c("initialize", "weight", "deriv", "inverse")
     for(ii in compulsory) {
-        if(!length(slot(object, ii)))
+        if (!length(slot(object, ii)))
             stop("slot ", ii, " is empty")
     }
 
-    if(length(as.list(object@inverse)) != 3)
+    if (length(as.list(object@inverse)) != 3)
         stop("wrong number of arguments in object@inverse")
 }
 
-if(FALSE) 
+if (FALSE) 
     setValidity("vglmff", valid.vglmff)
 
 
 
 
 
-if(!isGeneric("print"))
+if (!isGeneric("print"))
     setGeneric("print", function(x, ...) standardGeneric("print"),
                package="VGAM")
 
@@ -89,15 +92,15 @@ if(!isGeneric("print"))
 
 print.vglmff <- function(x, ...) {
     f <- x@vfamily
-    if(is.null(f))
+    if (is.null(f))
         stop("not a VGAM family function")
 
     nn <- x@blurb
-    if(!length(nn))
+    if (!length(nn))
         invisible(return(x))
 
     cat("Family: ", f[1], "\n")
-    if(length(f)>1) cat("Informal classes:", paste(f, collapse=", "), "\n")
+    if (length(f)>1) cat("Informal classes:", paste(f, collapse=", "), "\n")
     cat("\n")
 
     for(ii in 1:length(nn))
@@ -225,7 +228,7 @@ setClass("summary.vlm", representation(
 
 
 
-if(FALSE)
+if (FALSE)
  setClass("qrrvglm", representation(
       "assign"       = "list",
       "call"         = "call",
@@ -271,7 +274,7 @@ if(FALSE)
 
 
 
-if(FALSE)
+if (FALSE)
 setAs("qrrvglm", "vglm", function(from)
 new("vglm", "extra"=from@extra,
  "family"=from@family,
@@ -319,17 +322,17 @@ setMethod("summary", "grc",
           summary.grc(object, ...))
 
 
-if(FALSE) {
+if (FALSE) {
     setClass("vfamily",
         representation("list"))
 }
 
 
 
-if(!isGeneric("Coef"))
+if (!isGeneric("Coef"))
 setGeneric("Coef", function(object, ...) standardGeneric("Coef"),
            package="VGAM")
-if(!isGeneric("Coefficients"))
+if (!isGeneric("Coefficients"))
 setGeneric("Coefficients", function(object, ...)
             standardGeneric("Coefficients"),
            package="VGAM")
@@ -341,15 +344,15 @@ setGeneric("Coefficients", function(object, ...)
 
 
 
-if(!isGeneric("logLik"))
+if (!isGeneric("logLik"))
     setGeneric("logLik", function(object, ...) standardGeneric("logLik"),
            package="VGAM")
 
-if(!isGeneric("plot"))
+if (!isGeneric("plot"))
     setGeneric("plot", function(x, y, ...) standardGeneric("plot"),
            package="VGAM")
 
-if(!isGeneric("vcov"))
+if (!isGeneric("vcov"))
     setGeneric("vcov", function(object, ...) standardGeneric("vcov"),
            package="VGAM")
 
@@ -373,11 +376,11 @@ setClass(Class="cao",
          contains="vgam")
 
 
-if(!isGeneric("lvplot"))
+if (!isGeneric("lvplot"))
 setGeneric("lvplot", function(object, ...) standardGeneric("lvplot"),
            package="VGAM")
 
-if(!isGeneric("ccoef"))
+if (!isGeneric("ccoef"))
     setGeneric("ccoef", function(object, ...) standardGeneric("ccoef"),
            package="VGAM")
 
@@ -385,34 +388,34 @@ if(!isGeneric("ccoef"))
 
 
 
-if(!isGeneric("coef"))
+if (!isGeneric("coef"))
     setGeneric("coef", function(object, ...) standardGeneric("coef"),
            package="VGAM")
 
-if(!isGeneric("coefficients"))
+if (!isGeneric("coefficients"))
     setGeneric("coefficients", function(object, ...)
                                standardGeneric("coefficients"),
                package="VGAM")
 
-if(!isGeneric("df.residual"))
+if (!isGeneric("df.residual"))
     setGeneric("df.residual", function(object, ...)
                               standardGeneric("df.residual"),
            package="VGAM")
 
-if(!isGeneric("fitted"))
+if (!isGeneric("fitted"))
     setGeneric("fitted", function(object, ...) standardGeneric("fitted"),
            package="VGAM")
 
- if(!isGeneric("fitted.values"))
+ if (!isGeneric("fitted.values"))
      setGeneric("fitted.values", function(object, ...)
                                  standardGeneric("fitted.values"),
            package="VGAM")
 
-if(!isGeneric("model.matrix"))
+if (!isGeneric("model.matrix"))
     setGeneric("model.matrix", function(object, ...)
                                standardGeneric("model.matrix"))
 
-if(!isGeneric("model.frame"))
+if (!isGeneric("model.frame"))
     setGeneric("model.frame", function(formula, ...)
                               standardGeneric("model.frame"))
 
@@ -420,19 +423,19 @@ if(!isGeneric("model.frame"))
 
 
 
-if(!isGeneric("predict"))
+if (!isGeneric("predict"))
      setGeneric("predict", function(object, ...) standardGeneric("predict"))
 
 
 
-if(!isGeneric("resid"))
+if (!isGeneric("resid"))
     setGeneric("resid", function(object, ...) standardGeneric("resid"))
 
-if(!isGeneric("residuals"))
+if (!isGeneric("residuals"))
     setGeneric("residuals", function(object, ...) standardGeneric("residuals"),
            package="VGAM")
 
-if(!isGeneric("weights"))
+if (!isGeneric("weights"))
     setGeneric("weights", function(object, ...) standardGeneric("weights"),
            package="VGAM")
 
@@ -440,23 +443,23 @@ if(!isGeneric("weights"))
 
 
 
-if(!isGeneric("AIC"))
+if (!isGeneric("AIC"))
     setGeneric("AIC", function(object, ..., k=2) standardGeneric("AIC"),
            package="VGAM")
 
 
 
-  if(!isGeneric("formula"))
+  if (!isGeneric("formula"))
       setGeneric("formula", function(x, ...) standardGeneric("formula"),
            package="VGAM")
 
 
-  if(!isGeneric("case.names"))
+  if (!isGeneric("case.names"))
       setGeneric("case.names", function(object, ...)
            standardGeneric("case.names"),
            package="VGAM")
 
-  if(!isGeneric("variable.names"))
+  if (!isGeneric("variable.names"))
       setGeneric("variable.names", function(object, ...)
            standardGeneric("variable.names"),
            package="VGAM")

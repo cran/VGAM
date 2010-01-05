@@ -88,7 +88,6 @@ prob = 0.8; x = 1:10
 plot(x, dlog(x, prob=prob), type="h", ylim=0:1,
      sub="prob=0.8", las=1, col="blue", ylab="Probability",
      main="Logarithmic distribution: blue=density; red=distribution function")
-lines(x+0.1, plog(x, prob=prob), col="red", lty=3, type="h")
-}
+lines(x+0.1, plog(x, prob=prob), col="red", lty=3, type="h") }
 }
 \keyword{distribution}

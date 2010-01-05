@@ -8,14 +8,11 @@
 
 }
 \usage{
-amlexponential(w.aml=1, parallel=FALSE, method.init=1, digw=4,
-               link="loge", earg=list())
+amlexponential(w.aml = 1, parallel = FALSE, method.init = 1, digw = 4,
+               link = "loge", earg = list())
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  In this documentation the word \emph{quantile} can often be
-  interchangeably replaced by \emph{expectile}
-  (things are informal here).
 
   \item{w.aml}{
   Numeric, a vector of positive constants controlling the expectiles.
@@ -87,11 +84,19 @@ amlexponential(w.aml=1, parallel=FALSE, method.init=1, digw=4,
   Also, the individual deviance values corresponding to each element of
   the argument \code{w.aml} is stored in the \code{extra} slot.
 
+
   For \code{amlexponential} objects, methods functions for the generic functions
   \code{qtplot} and \code{cdf} have not been written yet.
 
+
   See \code{\link{amlpoisson}} about comments on the jargon, e.g.,
   \emph{expectiles} etc.
+
+
+  In this documentation the word \emph{quantile} can often be
+  interchangeably replaced by \emph{expectile}
+  (things are informal here).
+
 
 }
 
@@ -116,13 +121,13 @@ amlexponential(w.aml=1, parallel=FALSE, method.init=1, digw=4,
 }
 
 \examples{
-n = 2000
-mydat = data.frame(x = seq(0, 1, length=n))
+nn = 2000
+mydat = data.frame(x = seq(0, 1, length=nn))
 mydat = transform(mydat, mu = loge(-0+1.5*x+0.2*x^2, inverse=TRUE))
 mydat = transform(mydat, mu = loge(0-sin(8*x), inverse=TRUE))
-mydat = transform(mydat, y = rexp(n, rate=1/mu))
+mydat = transform(mydat,  y = rexp(nn, rate=1/mu))
 (fit  = vgam(y ~ s(x,df=5), amlexponential(w=c(0.001,0.1,0.5,5,60)),
-             data=mydat, trace=TRUE))
+             mydat, trace=TRUE))
 fit@extra
 
 \dontrun{

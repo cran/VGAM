@@ -94,24 +94,26 @@ contains further information and examples.
 
 \seealso{ 
   \code{\link{betaff}}.
+
 }
 \examples{
-yb = rbeta(n <- 1000, shape1=exp(1), shape2=exp(3))
-y1 = (1-yb)/yb
-y2 = yb/(1-yb)
-y3 = rgamma(n, exp(3)) / rgamma(n, exp(2))
+nn = 1000
+betadat = data.frame(shape1 = exp(1), shape2 = exp(3))
+betadat = transform(betadat, yb = rbeta(nn, shape1, shape2))
+betadat = transform(betadat, y1 = (1-yb)/yb, y2 = yb/(1-yb),
+                             y3 = rgamma(nn, exp(3)) / rgamma(nn, exp(2)))
 
-fit1 = vglm(y1 ~ 1, betaprime, trace=TRUE)
+fit1 = vglm(y1 ~ 1, betaprime, betadat, trace=TRUE)
 coef(fit1, matrix=TRUE)
 
-fit2 = vglm(y2 ~ 1, betaprime, trace=TRUE)
+fit2 = vglm(y2 ~ 1, betaprime, betadat, trace=TRUE)
 coef(fit2, matrix=TRUE)
 
-fit3 = vglm(y3 ~ 1, betaprime, trace=TRUE)
+fit3 = vglm(y3 ~ 1, betaprime, betadat, trace=TRUE)
 coef(fit3, matrix=TRUE)
 
 # Compare the fitted values
-mean(y3)
+with(betadat, mean(y3))
 head(fitted(fit3))
 Coef(fit3)  # Useful for intercept-only models
 }

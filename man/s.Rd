@@ -11,19 +11,15 @@ s(x, df = 4, spar = 0, ...)
 }
 %- maybe also `usage' for other objects documented here.
 \arguments{
-  In the following, \eqn{M} is the number of additive predictors
-  and \eqn{r} is the number of component functions to be
-  estimated (so that \eqn{r} is an element from the set
-  \{1,2,\ldots,\eqn{M}\}).
-  Also, if \eqn{n} is the number of \emph{distinct} abscissae, then 
-  \code{s} will fail if \eqn{n < 7}.
 
   \item{x}{
   covariate (abscissae) to be smoothed.
-  Note that \code{x} must be a single variable
+  Note that \code{x} must be a \emph{single} variable
   and not a function of a variable.
   For example, \code{s(x)} is fine but \code{s(log(x))} will fail. 
-  In this case, let \code{logx <- log(x)}, say, and use \code{s(logx)}.
+  In this case, let \code{logx <- log(x)}, say, and then use \code{s(logx)}.
+  At this stage bivariate smoothers (\code{x} would be a two-column matrix)
+  are not implemented.
 
   }
   \item{df}{
@@ -47,17 +43,33 @@ s(x, df = 4, spar = 0, ...)
   \item{\dots}{ Ignored for now. }
 }
 \details{
+  In this help file \eqn{M} is the number of additive predictors
+  and \eqn{r} is the number of component functions to be
+  estimated (so that \eqn{r} is an element from the set
+  \{1,2,\ldots,\eqn{M}\}).
+  Also, if \eqn{n} is the number of \emph{distinct} abscissae, then 
+  \code{s} will fail if \eqn{n < 7}.
+
+
   \code{s}, which is symbolic and does not perform any smoothing itself,
   only handles a single covariate.
-  It differs from the S-PLUS \code{s} and also the one from
-  the \code{mgcv} library. They should not be mixed together. 
+  Note that \code{s} works in \code{\link{vgam}} only.
+  It has no effect in \code{\link{vglm}}
+  (actually, it is similar to the identity function \code{\link[base:AsIs]{I}}
+  so that \code{s(x2)} is the same as \code{x2} in the LM model matrix).
+  It differs from the \code{s} of the \pkg{gam} and \pkg{mgcv} packages;
+  they should not be mixed together. 
+  Also, terms involving \code{s} should be simple additive terms, and not
+  involving interactions and nesting etc.
+  For example, \code{myfactor:s(x2)} is not a good idea.
 
-  S-PLUS's \code{s} allowed \code{spar} to be negative;
+  It also differs from the S-PLUS \code{s} which
+  allows \code{spar} to be negative;
   \pkg{VGAM} does not allow this. 
 
 }
 \value{
-  A vector with attributes that are used by \code{vgam}. 
+  A vector with attributes that are (only) used by \code{vgam}. 
 
 }
 \references{
@@ -71,8 +83,16 @@ Vector generalized additive models.
 \note{
 
   The vector cubic smoothing spline which \code{s()} represents is
-  computationally demanding for large \eqn{M}. The cost is approximately
-  \eqn{O(M^3)}.
+  computationally demanding for large \eqn{M}.
+  The cost is approximately \eqn{O(M^3)}.
+
+  An alternative to using
+  \code{s} with \code{\link{vgam}} is
+  \code{\link[splines]{bs}}
+  and/or \code{\link[splines]{ns}}
+  with \code{\link{vglm}}.
+  The latter implements half-stepping, which is helpful if
+  convergence is difficult.
 
 }
 
@@ -81,6 +101,7 @@ Vector generalized additive models.
 \seealso{
   \code{\link{vgam}},
   \code{\link{vsmooth.spline}}.
+
 }
 
 \examples{
@@ -89,16 +110,15 @@ fit = vgam(agaaus ~ s(altitude, df=2), binomialff, hunua)
 \dontrun{
 plot(fit, se=TRUE)}
 
-
 # Bivariate logistic model with artificial data
-n = 300 
-mydf = data.frame(x1=runif(n), x2=runif(n))
+nn = 300
+mydf = data.frame(x1=runif(nn), x2=runif(nn))
 mydf = transform(mydf, 
-    y1 = ifelse(runif(n) < 1/(1+exp(-sin(2*x2))), 1, 0),
-    y2 = ifelse(runif(n) < 1/(1+exp(-sin(2*x2))), 1, 0))
+    y1 = rbinom(nn, size=1, prob=logit(sin(2*x2), inv=TRUE)),
+    y2 = rbinom(nn, size=1, prob=logit(sin(2*x2), inv=TRUE)))
 fit = vgam(cbind(y1,y2) ~ x1 + s(x2, 3), trace=TRUE,
            binom2.or(exchangeable = TRUE ~ s(x2,3)), data=mydf)
-coef(fit, matrix=TRUE)
+coef(fit, matrix=TRUE) # Hard to interpret
 \dontrun{
 plot(fit, se=TRUE, which.term= 2, scol="blue")}
 }

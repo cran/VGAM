@@ -86,6 +86,7 @@ close to 0.
 \seealso{ 
     \code{\link{identity}},
     \code{\link{powl}}.
+
 }
 \examples{
 reciprocal(1:5)

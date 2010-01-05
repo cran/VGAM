@@ -18,8 +18,7 @@ rbinom2.or(n, mu1,
 dbinom2.or(mu1,
            mu2=if(exchangeable) mu1 else stop("'mu2' not specified"),
            oratio=1, exchangeable=FALSE, tol=0.001,
-           colnames=c("00", "01", "10", "11"),
-           ErrorCheck=TRUE)
+           colnames=c("00", "01", "10", "11"), ErrorCheck=TRUE)
 
 }
 %- maybe also 'usage' for other objects documented here.
@@ -100,7 +99,7 @@ dbinom2.or(mu1,
 # Example 1
 nn = 2000
 ymat = rbinom2.or(n=nn, mu1=0.8, oratio=exp(2), exch=TRUE)
-(mytab = table(ymat[,1], ymat[,2]))
+(mytab = table(ymat[,1], ymat[,2], dnn=c("Y1","Y2")))
 (myor = mytab["0","0"] * mytab["1","1"] / (mytab["1","0"] * mytab["0","1"]))
 fit = vglm(ymat ~ 1, binom2.or(exch=TRUE))
 coef(fit, matrix=TRUE)

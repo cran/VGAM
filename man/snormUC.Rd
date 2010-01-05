@@ -79,7 +79,7 @@ x = seq(-4, 4, len=n)
 plot(x, dsnorm(x, shape=shape), type="l", col="blue", las=1, ylab="")
 abline(v=0, h=0, lty="dashed", col="darkgreen")
 lines(x, dnorm(x), col="red")
-legend(-3.5, 0.6, leg=c(paste("Blue=dsnorm(x, ", shape,")", sep=""),
+legend(-3.5, 0.6, leg=c(paste("Blue = dsnorm(x, ", shape,")", sep=""),
        "standard normal density"), lty=1, col=c("blue","red"))
 }
 }

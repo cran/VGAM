@@ -156,13 +156,13 @@ for(d in 0:1) {
     matplot(p, cbind(logit(p, deriv=d), probit(p, deriv=d)),
             type="n", col="purple", ylab="transformation",
             lwd=2, las=1,
-            main=if(d==0) "Some probability link functions"
+            main = if (d == 0) "Some probability link functions"
             else "First derivative")
     lines(p, logit(p, deriv=d), col="limegreen", lwd=2)
     lines(p, probit(p, deriv=d), col="purple", lwd=2)
     lines(p, cloglog(p, deriv=d), col="chocolate", lwd=2)
     lines(p, cauchit(p, deriv=d), col="tan", lwd=2)
-    if(d==0) {
+    if (d == 0) {
         abline(v=0.5, h=0, lty="dashed")
         legend(0, 4.5, c("logit", "probit", "cloglog", "cauchit"),
                col=c("limegreen","purple","chocolate", "tan"), lwd=2)
@@ -175,13 +175,13 @@ for(d in 0) {
                      probit(y, deriv=d, inverse=TRUE)),
             type="n", col="purple", xlab="transformation", ylab="p",
             lwd=2, las=1,
-            main=if(d==0) "Some inverse probability link functions"
+            main = if (d == 0) "Some inverse probability link functions"
             else "First derivative")
     lines(y, logit(y, deriv=d, inverse=TRUE), col="limegreen", lwd=2)
     lines(y, probit(y, deriv=d, inverse=TRUE), col="purple", lwd=2)
     lines(y, cloglog(y, deriv=d, inverse=TRUE), col="chocolate", lwd=2)
     lines(y, cauchit(y, deriv=d, inverse=TRUE), col="tan", lwd=2)
-    if(d==0) {
+    if (d == 0) {
         abline(h=0.5, v=0, lty="dashed")
         legend(-4, 1, c("logit", "probit", "cloglog", "cauchit"),
                col=c("limegreen","purple","chocolate", "tan"), lwd=2)

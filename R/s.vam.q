@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2009 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2010 T.W. Yee, University of Auckland. All rights reserved.
 
 
 
@@ -18,7 +18,7 @@ s.vam <- function(x, z, wz, s, which, smooth.frame, bf.maxit=10,
     pbig <- dX_vlm[2]
 
 
-    if(!length(smooth.frame$first)) {
+    if (!length(smooth.frame$first)) {
         data <- smooth.frame[, nwhich, drop=FALSE]
         smooth.frame <- vgam.match(data, all.knots=all.knots, nk=nk)
         smooth.frame$first <- FALSE  # No longer first for next time
@@ -36,24 +36,24 @@ s.vam <- function(x, z, wz, s, which, smooth.frame, bf.maxit=10,
             i <- nwhich[k]
 
             temp <- spar[[i]]
-            if(!is.numeric(temp) || any(temp<0))
+            if (!is.numeric(temp) || any(temp<0))
                 stop("spar cannot be negative or non-numeric")
-            if(length(temp) > ncolBlist[i])
+            if (length(temp) > ncolBlist[i])
                 warning("only the first ", ncolBlist[i], " values of 'spar' ",
                         " are used for variable '", s.xargument, "'")
             spar[[i]] <- rep(temp, length=ncolBlist[i])   # recycle
     
             temp <- df[[i]]
-            if(!is.numeric(temp) || any(temp<1))
+            if (!is.numeric(temp) || any(temp<1))
                 stop("df is non-numeric or less than 1")
-            if(length(temp) > ncolBlist[i])
+            if (length(temp) > ncolBlist[i])
                 warning("only the first", ncolBlist[i], "values of 'df' ",
                         "are used for variable '", s.xargument, "'")
             df[[i]] <- rep(temp, length=ncolBlist[i])    # recycle
-            if(max(temp) > smooth.frame$nef[k]-1)
+            if (max(temp) > smooth.frame$nef[k]-1)
                 stop("'df' value too high for variable '", s.xargument, "'")
     
-            if(any(spar[[i]]!=0) && any(df[[i]]!=4))
+            if (any(spar[[i]]!=0) && any(df[[i]]!=4))
                 stop("cannot specify both 'spar' and 'df'")
         }
 
@@ -62,7 +62,7 @@ s.vam <- function(x, z, wz, s, which, smooth.frame, bf.maxit=10,
         smooth.frame$spar <- spar     # original
         smooth.frame$df <- df         # original
     
-        if(sum(smooth.frame$df[smooth.frame$spar==0]) + pbig > 
+        if (sum(smooth.frame$df[smooth.frame$spar==0]) + pbig > 
             smooth.frame$n * sum(ncolBlist[nwhich]))
             stop("too many parameters/dof for data on hand")
     
@@ -87,7 +87,7 @@ s.vam <- function(x, z, wz, s, which, smooth.frame, bf.maxit=10,
             smooth.frame$nknots*ncolBlist[nwhich])))
         smooth.frame$kindex = as.integer(cumsum(c(1, 4+smooth.frame$nknots)))
     }
-    if(sf.only)
+    if (sf.only)
         return(smooth.frame)
 
     ldk <- 4 * max(ncolBlist[nwhich])   # was M;     # Prior to 11/7/02
@@ -97,15 +97,15 @@ s.vam <- function(x, z, wz, s, which, smooth.frame, bf.maxit=10,
     which <- unlist(which)
     p <- smooth.frame$p
     n <- smooth.frame$n
-    dimw <- if(is.matrix(wz)) ncol(wz) else 1
+    dimw <- if (is.matrix(wz)) ncol(wz) else 1
 
-    dimu <- if(is.matrix(U)) nrow(U) else 1
+    dimu <- if (is.matrix(U)) nrow(U) else 1
 
     index <- iam(NA, NA, M, both=TRUE)
 
     nBlist <- names(Blist)
     for(i in length(nBlist):1) {
-        if(!any(nBlist[i] == nwhich))
+        if (!any(nBlist[i] == nwhich))
             Blist[[i]] <- NULL
     }
     trivc <- trivial.constraints(Blist)
@@ -132,7 +132,7 @@ s.vam <- function(x, z, wz, s, which, smooth.frame, bf.maxit=10,
       as.integer(smooth.frame$o),as.integer(smooth.frame$nef),as.integer(which),
         etal = double(M*n), smooth = as.double(s), eta = double(M*n),
             s0 = double((2*M)*(2*M)*2),
-        beta = double(pbig), var = if(se.fit) as.double(s) else double(1),
+        beta = double(pbig), var = if (se.fit) as.double(s) else double(1),
             as.double(bf.epsilon),
         qr = as.double(X_vlm_save), qraux = double(pbig),
         qpivot = as.integer(1:pbig),
@@ -166,7 +166,7 @@ s.vam <- function(x, z, wz, s, which, smooth.frame, bf.maxit=10,
     dimnames(fit$y) = dimnames(z)
     dim(fit$smooth) = dim(s)
     dimnames(fit$smooth) = dimnames(s)   # Needed for vgam.nlchisq
-    if(se.fit) {
+    if (se.fit) {
         dim(fit$var) = dim(s)
         dimnames(fit$var) = dimnames(s)
     }
@@ -176,10 +176,10 @@ s.vam <- function(x, z, wz, s, which, smooth.frame, bf.maxit=10,
 
 
 
-    if(fit$npetc[14] != 0)
+    if (fit$npetc[14] != 0)
         stop("something went wrong in the Fortran subroutine vbfa()")
 
-    fit$eta <- if(M>1) matrix(fit$eta,n,M,byrow=TRUE) else c(fit$eta)
+    fit$eta <- if (M>1) matrix(fit$eta,n,M,byrow=TRUE) else c(fit$eta)
 
     nit <- fit$npetc[5]
     qrank <- fit$npetc[7]
@@ -191,7 +191,7 @@ s.vam <- function(x, z, wz, s, which, smooth.frame, bf.maxit=10,
     smooth.frame$try.spar[change] <- 0         # For next time
     smooth.frame$prev.dof <- fit$df
 
-    if((nit == bf.maxit) & bf.maxit > 1)
+    if ((nit == bf.maxit) & bf.maxit > 1)
         warning("'s.vam' convergence not obtained in ", bf.maxit, " iterations")
 
     R <- fit$qr[1:pbig, 1:pbig]
@@ -232,7 +232,7 @@ s.vam <- function(x, z, wz, s, which, smooth.frame, bf.maxit=10,
     names(rl$spar) <- smooth.frame$ndfspar
     names(rl$nl.df) <- smooth.frame$ndfspar
 
-    if(se.fit)
+    if (se.fit)
         rl <- c(rl, list(var=fit$var))
     c(list(smooth.frame=smooth.frame), rl)
 }

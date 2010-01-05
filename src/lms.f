@@ -8,6 +8,8 @@
       uxzze7 = 1
       oht3ga = 0
       fiumb4 = 1.0d-04
+      sfnva0 = 0.0d0
+      fpqrt7 = 1.0d0
       cc = (psi .ge. 0.0d0)
       if(.not.(cc))goto 23000
       bb = dwgkz6

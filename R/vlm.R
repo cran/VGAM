@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2009 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2010 T.W. Yee, University of Auckland. All rights reserved.
 
 
 
@@ -21,7 +21,7 @@ vlm <- function(formula,
 
     ocall <- match.call()
 
-    if(smart)
+    if (smart)
         setup.smart("write")
 
     mt <- terms(formula, data = data)  # attr(m, "terms")
@@ -35,9 +35,9 @@ vlm <- function(formula,
     mf$drop.unused.levels <- TRUE
     mf[[1]] <- as.name("model.frame")
     mf <- eval(mf, parent.frame()) 
-    if(method == "model.frame")
+    if (method == "model.frame")
         return(mf)
-    if(method != "qr")
+    if (method != "qr")
         stop("only method=\"qr\" is implemented")
 
     na.act <- attr(mf, "na.action")
@@ -54,9 +54,9 @@ vlm <- function(formula,
     x <- model.matrix(mt, mf, contrasts)
     attr(x, "assign") <- attrassigndefault(x, mt) # So as to make it like Splus
     offset <- model.offset(mf)
-    if(is.null(offset))
+    if (is.null(offset))
         offset <- 0 # yyy ???
-    if(length(offset) && any(offset!=0))
+    if (length(offset) && any(offset!=0))
         stop("offsets are redundant for (vector) linear models")
     wz <- model.weights(mf)
 
@@ -64,24 +64,24 @@ vlm <- function(formula,
     M <- ncol(as.matrix(y))
     n <- nrow(x)
     dy <- dimnames(y)
-    dy1 <- if(length(dy[[1]])) dy[[1]] else dimnames(mf)[[1]]
-    dy2 <- if(length(dy[[2]])) dy[[2]] else paste("Y", 1:M, sep="")
+    dy1 <- if (length(dy[[1]])) dy[[1]] else dimnames(mf)[[1]]
+    dy2 <- if (length(dy[[2]])) dy[[2]] else paste("Y", 1:M, sep="")
     dimnames(y) <- list(dy1, dy2)
     predictors.names = dy2
 
-    if(!length(prior.weights)) {
+    if (!length(prior.weights)) {
         prior.weights = rep(1, len=n)
         names(prior.weights) = dy1
     }
-    if(any(prior.weights <= 0))
+    if (any(prior.weights <= 0))
         stop("only positive weights allowed")
-    if(!length(wz)) {
+    if (!length(wz)) {
         wz <- matrix(prior.weights, n, M)
         identity.wts <- TRUE
     } else {
         identity.wts <- FALSE
         temp = ncol(as.matrix(wz))
-        if(temp < M || temp > M*(M+1)/2)
+        if (temp < M || temp > M*(M+1)/2)
             stop("input 'w' must have between ", M, " and ", M*(M+1)/2, 
                  " columns")
         wz <- prior.weights * wz
@@ -132,7 +132,7 @@ vlm <- function(formula,
     
 
     
-    if(smart) {
+    if (smart) {
         fit$smart.prediction <- get.smart.prediction()
         wrapup.smart()
     }
@@ -151,7 +151,7 @@ vlm <- function(formula,
       "effects"      = fit$effects,
       "fitted.values"= as.matrix(fit$fitted.values),
       "misc"         = fit$misc,
-      "model"        = if(model) mf else data.frame(),
+      "model"        = if (model) mf else data.frame(),
       "R"            = fit$R,
       "rank"         = fit$rank,
       "residuals"    = as.matrix(fit$residuals),
@@ -159,26 +159,26 @@ vlm <- function(formula,
       "smart.prediction" = as.list(fit$smart.prediction),
       "terms"        = list(terms=mt))
 
-    if(!smart) answer@smart.prediction <- list(smart.arg=FALSE)
+    if (!smart) answer@smart.prediction <- list(smart.arg=FALSE)
 
     slot(answer, "prior.weights") = prior.weights
 
-    if(length(attr(x, "contrasts")))
+    if (length(attr(x, "contrasts")))
         slot(answer, "contrasts") = attr(x, "contrasts")
-    slot(answer, "na.action") = if(length(na.act)) list(na.act) else list()
-    if(length(offset))
+    slot(answer, "na.action") = if (length(na.act)) list(na.act) else list()
+    if (length(offset))
         slot(answer, "offset") = as.matrix(offset)
-    if(qr.arg) {
+    if (qr.arg) {
         class(fit$qr) = "list"
         slot(answer, "qr") = fit$qr
     }
-    if(x.arg)
+    if (x.arg)
         slot(answer, "x") = x # The 'small' design matrix
-    if(control$save.weight)
+    if (control$save.weight)
         slot(answer, "weights") = wz
-    if(length(xlev))
+    if (length(xlev))
         slot(answer, "xlevels") = xlev
-    if(y.arg)
+    if (y.arg)
         slot(answer, "y") = as.matrix(y)
 
     answer

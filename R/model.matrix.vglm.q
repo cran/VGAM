@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2009 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2010 T.W. Yee, University of Auckland. All rights reserved.
 
 
 
@@ -12,13 +12,13 @@
 
 
  attrassigndefault = function(mmat, tt) {
-    if(!inherits(tt, "terms"))
+    if (!inherits(tt, "terms"))
         stop("need terms object")
     aa = attr(mmat, "assign")
-    if(is.null(aa))
+    if (is.null(aa))
         stop("argument is not really a model matrix")
     ll = attr(tt, "term.labels")
-    if(attr(tt, "intercept") > 0)
+    if (attr(tt, "intercept") > 0)
         ll = c("(Intercept)", ll)
     aaa = factor(aa, labels = ll)
     split(order(aa), aaa)
@@ -32,11 +32,11 @@
 
  vlabel = function(xn, ncolBlist, M, separator=":") {
 
-    if(length(xn) != length(ncolBlist))
+    if (length(xn) != length(ncolBlist))
         stop("length of first two arguments not equal")
 
     n1 = rep(xn, ncolBlist)
-    if(M == 1)
+    if (M == 1)
         return(n1)
     n2 = as.list(ncolBlist)
     n2 = lapply(n2, seq)
@@ -56,32 +56,32 @@
 
 
 
-    if(length(Blist) != ncol(x))
+    if (length(Blist) != ncol(x))
         stop("length(Blist) != ncol(x)")
 
-    if(length(xij)) {
-        if(inherits(xij, "formula"))
+    if (length(xij)) {
+        if (inherits(xij, "formula"))
             xij = list(xij)
-        if(!is.list(xij))
+        if (!is.list(xij))
             stop("'xij' is not a list of formulae")
     }
 
-    if(!is.numeric(M))
+    if (!is.numeric(M))
         M = nrow(Blist[[1]])
 
     nrow_X_lm = nrow(x)
-    if(all(trivial.constraints(Blist) == 1)) {
-        X_vlm = if(M > 1) kronecker(x, diag(M)) else x
+    if (all(trivial.constraints(Blist) == 1)) {
+        X_vlm = if (M > 1) kronecker(x, diag(M)) else x
         ncolBlist = rep(M, ncol(x))
     } else {
         allB = matrix(unlist(Blist), nrow=M)
         ncolBlist = unlist(lapply(Blist, ncol))
         Rsum = sum(ncolBlist)
 
-        X1 = rep(c(t(x)), rep(ncolBlist,nrow_X_lm))
+        X1 = rep(c(t(x)), rep(ncolBlist, nrow_X_lm))
         dim(X1) = c(Rsum, nrow_X_lm)
-        X_vlm = kronecker(t(X1), matrix(1,M,1)) *
-                kronecker(matrix(1,nrow_X_lm,1), allB)
+        X_vlm = kronecker(t(X1), matrix(1, M, 1)) *
+                kronecker(matrix(1, nrow_X_lm, 1), allB)
         rm(X1)
     }
 
@@ -91,7 +91,7 @@
     dimnames(X_vlm) = list(vlabel(yn, rep(M, nrow_X_lm), M), 
                            vlabel(xn, ncolBlist, M))
 
-    if(assign.attributes) {
+    if (assign.attributes) {
         attr(X_vlm, "contrasts")   = attr(x, "contrasts")
         attr(X_vlm, "factors")     = attr(x, "factors")
         attr(X_vlm, "formula")     = attr(x, "formula")
@@ -106,7 +106,7 @@
             nasgn[[ii]] = (lowind+1):(lowind+mylen)
             lowind = lowind + mylen
         } # End of ii
-        if(lowind != ncol(X_vlm))
+        if (lowind != ncol(X_vlm))
             stop("something gone wrong")
         attr(X_vlm, "assign") = nasgn
     
@@ -125,10 +125,10 @@
         attr(X_vlm, "vassign") = vasgn
 
         attr(X_vlm, "constraints") = Blist
-    } # End of if(assign.attributes)
+    } # End of if (assign.attributes)
 
 
-    if(!length(xij)) return(X_vlm)
+    if (!length(xij)) return(X_vlm)
 
 
 
@@ -142,11 +142,11 @@
 
     for(ii in 1:length(xij)) {
         form.xij = xij[[ii]]
-        if(length(form.xij) != 3) 
+        if (length(form.xij) != 3) 
             stop("xij[[", ii, "]] is not a formula with a response")
         tform.xij = terms(form.xij)
         aterm.form = attr(tform.xij, "term.labels") # Does not include response
-        if(length(aterm.form) != M)
+        if (length(aterm.form) != M)
             stop("xij[[", ii, "]] does not contain ", M, " terms")
 
         name.term.y = as.character(form.xij)[2]
@@ -176,7 +176,7 @@
         } # End of bbb
     } # End of for(ii in 1:length(xij))
 
-    if(assign.attributes) {
+    if (assign.attributes) {
         attr(X_vlm, "vassign") = vasgn
         attr(X_vlm, "assign") = nasgn
         attr(X_vlm, "xij") = xij
@@ -194,7 +194,7 @@
 
 
 
-    if(mode(type) != "character" && mode(type) != "name")
+    if (mode(type) != "character" && mode(type) != "name")
     type = as.character(substitute(type))
     type = match.arg(type, c("vlm","lm","lm2","bothlmlm2"))[1]
 
@@ -203,10 +203,10 @@
     x = slot(object, "x")
     Xm2 = slot(object, "Xm2")
 
-    if(!length(x)) {
+    if (!length(x)) {
         data = model.frame(object, xlev=object@xlevels, ...) 
 
-        kill.con = if(length(object@contrasts)) object@contrasts else NULL
+        kill.con = if (length(object@contrasts)) object@contrasts else NULL
 
         x = vmodel.matrix.default(object, data=data,
                                   contrasts.arg = kill.con)
@@ -214,11 +214,11 @@
         attr(x, "assign") = attrassigndefault(x, tt)
     }
 
-    if((type == "lm2" || type == "bothlmlm2") && !length(Xm2)) {
+    if ((type == "lm2" || type == "bothlmlm2") && !length(Xm2)) {
         object.copy2 = object
         data = model.frame(object.copy2, xlev=object.copy2@xlevels, ...) 
 
-        kill.con = if(length(object.copy2@contrasts))
+        kill.con = if (length(object.copy2@contrasts))
                    object.copy2@contrasts else NULL
 
         Xm2 = vmodel.matrix.default(object.copy2, data=data,
@@ -229,11 +229,11 @@
 
 
 
-    if(type == "lm") {
+    if (type == "lm") {
         return(x)
-    } else if(type == "lm2") {
+    } else if (type == "lm2") {
         return(Xm2)
-    } else if(type == "bothlmlm2") {
+    } else if (type == "bothlmlm2") {
         return(list(X=x, Xm2=Xm2))
     } else {
         M = object@misc$M  
@@ -259,13 +259,13 @@ setMethod("model.matrix",  "vlm", function(object, ...)
 
     dots = list(...)
     nargs = dots[match(c("data", "na.action", "subset"), names(dots), 0)]
-    if(length(nargs) || !length(object@model)) {
+    if (length(nargs) || !length(object@model)) {
         fcall = object@call
         fcall$method = "model.frame"
         fcall[[1]] = as.name("vlm")
 
         fcall$smart = FALSE
-        if(setupsmart && length(object@smart.prediction)) {
+        if (setupsmart && length(object@smart.prediction)) {
             setup.smart("read", smart.prediction=object@smart.prediction)
         }
 
@@ -275,7 +275,7 @@ setMethod("model.matrix",  "vlm", function(object, ...)
             env = parent.frame()
         ans = eval(fcall, env, parent.frame())
 
-        if(wrapupsmart && length(object@smart.prediction)) {
+        if (wrapupsmart && length(object@smart.prediction)) {
             wrapup.smart()
         }
         ans
@@ -283,7 +283,7 @@ setMethod("model.matrix",  "vlm", function(object, ...)
 }
 
 
-if(!isGeneric("model.frame"))
+if (!isGeneric("model.frame"))
     setGeneric("model.frame", function(formula, ...)
         standardGeneric("model.frame"))
 

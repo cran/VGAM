@@ -73,7 +73,7 @@ Coef(fit)
 %# Keep only the records
 %delete = c(FALSE, rep(TRUE, len=n-1))
 %for(i in 2:length(rawy))
-%    if(rawy[i] > max(rawy[1:(i-1)])) delete[i] = FALSE
+%    if (rawy[i] > max(rawy[1:(i-1)])) delete[i] = FALSE
 %(y = rawy[!delete])
 
 

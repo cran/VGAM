@@ -36,13 +36,17 @@
 %  \url{http://www.2008worldflyfishingchamps.com/}.
 %}
 \references{
-  Yee, T. W. (2009)
+  Yee, T. W. (2010)
   VGLMs and VGAMs: an overview for applications in fisheries research.
-  In preparation.
+  \emph{Fisheries Research},
+  \bold{101}, 116--126.
 
 }
 
-\seealso{ \code{\link{DeLury}}. }
+\seealso{
+\code{\link{DeLury}}.
+
+}
 
 \examples{
 xtabs( ~ sector + session, wffc.nc)

@@ -8,13 +8,13 @@
 }
 \usage{
 plotvgam.control(which.cf = NULL,
-                  xlim = NULL, ylim = NULL, llty = par()$lty,
-                  slty = "dashed", pcex = par()$cex,
-                  pch = par()$pch, pcol = par()$col,
-                  lcol = par()$col, rcol = par()$col,
-                  scol = par()$col, llwd = par()$lwd, slwd = par()$lwd,
-                  add.arg = FALSE, one.at.a.time = FALSE,
-                  .include.dots = TRUE, noxmean= FALSE, ...)
+                 xlim = NULL, ylim = NULL, llty = par()$lty,
+                 slty = "dashed", pcex = par()$cex,
+                 pch = par()$pch, pcol = par()$col,
+                 lcol = par()$col, rcol = par()$col,
+                 scol = par()$col, llwd = par()$lwd, slwd = par()$lwd,
+                 add.arg = FALSE, one.at.a.time = FALSE,
+                 .include.dots = TRUE, noxmean= FALSE, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

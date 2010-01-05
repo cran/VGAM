@@ -8,14 +8,11 @@
 
 }
 \usage{
-amlpoisson(w.aml=1, parallel=FALSE, method.init=1, digw=4,
-           link="loge", earg=list())
+amlpoisson(w.aml = 1, parallel = FALSE, method.init = 1, digw = 4,
+           link = "loge", earg = list())
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  In this documentation the word \emph{quantile} can often be
-  interchangeably replaced by \emph{expectile}
-  (things are informal here).
 
   \item{w.aml}{
   Numeric, a vector of positive constants controlling the percentiles.
@@ -102,8 +99,10 @@ amlpoisson(w.aml=1, parallel=FALSE, method.init=1, digw=4,
   the individual deviance values corresponding to each element of the
   argument \code{w.aml} is stored in the \code{extra} slot.
 
+
   For \code{amlpoisson} objects, methods functions for the generic
   functions \code{qtplot} and \code{cdf} have not been written yet.
+
 
   About the jargon, Newey and Powell (1987) used the name
   \emph{expectiles} for regression surfaces obtained by asymmetric
@@ -117,6 +116,12 @@ amlpoisson(w.aml=1, parallel=FALSE, method.init=1, digw=4,
   regression percentiles in the strictest sense for the normal and
   Poisson cases, the phrase \emph{quantile regression} is used loosely
   in this \pkg{VGAM} documentation.
+
+
+  In this documentation the word \emph{quantile} can often be
+  interchangeably replaced by \emph{expectile}
+  (things are informal here).
+
 
 }
 
@@ -136,10 +141,10 @@ amlpoisson(w.aml=1, parallel=FALSE, method.init=1, digw=4,
 
 \examples{
 set.seed(1234)
-mydat = data.frame(x = sort(runif(n <- 200)))
-mydat = transform(mydat, y = rpois(n, exp(0-sin(8*x))))
+mydat = data.frame(x = sort(runif(nn <- 200)))
+mydat = transform(mydat, y = rpois(nn, exp(0-sin(8*x))))
 (fit = vgam(y ~ s(x), fam=amlpoisson(w.aml=c(0.02, 0.2, 1, 5, 50)),
-           data=mydat, trace=TRUE))
+            mydat, trace=TRUE))
 fit@extra
 
 \dontrun{
@@ -147,8 +152,7 @@ fit@extra
 with(mydat, plot(x, jitter(y), col="blue", las=1, main=
      paste(paste(round(fit@extra$percentile, dig=1), collapse=", "),
            "percentile-expectile curves")))
-with(mydat, matlines(x, fitted(fit), lwd=2))
-}
+with(mydat, matlines(x, fitted(fit), lwd=2)) }
 }
 \keyword{models}
 \keyword{regression}

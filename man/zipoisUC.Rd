@@ -60,11 +60,9 @@ rzipois(n, lambda, phi = 0)
 
 }
 \examples{
-lambda = 3
-phi = 0.2
-x <- (-1):7
-(i = dzipois(x, lambda, phi))
-max(abs(cumsum(i) - pzipois(x, lambda, phi))) # Should be 0
+lambda = 3; phi = 0.2; x = (-1):7
+(ii = dzipois(x, lambda, phi))
+max(abs(cumsum(ii) - pzipois(x, lambda, phi))) # Should be 0
 table(rzipois(100, lambda, phi))
 
 table(qzipois(runif(100), lambda, phi))
@@ -76,7 +74,6 @@ barplot(rbind(dzipois(x, lambda, phi), dpois(x, lambda)),
         beside = TRUE, col = c("blue","green"),
         main=paste("ZIP(", lambda, ", phi=", phi, ") (blue) vs",
                         " Poisson(", lambda, ") (green)", sep=""),
-        names.arg = as.character(x))
-}
+        names.arg = as.character(x)) }
 }
 \keyword{distribution}

@@ -68,11 +68,9 @@ Constrained additive ordination.
 hspider[,1:6] = scale(hspider[,1:6]) # Standardized environmental vars
 set.seed(123)
 p1 = cao(cbind(Pardlugu, Pardmont, Pardnigr, Pardpull, Zoraspin) ~
-         WaterCon + BareSand + FallTwig +
-         CoveMoss + CoveHerb + ReflLux,
-         family = poissonff, data = hspider,
-         Rank = 1, df1.nl = c(Zoraspin=2.5, 3),
-         Bestof = 3, Crow1positive = TRUE)
+         WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
+         family = poissonff, data = hspider, Rank = 1, df1.nl =
+         c(Zoraspin=2.5, 3), Bestof = 3, Crow1positive = TRUE)
 
 var(lv(p1))  # Scaled to unit variance  # Scaled to unit variance
 c(lv(p1))    # Estimated site scores

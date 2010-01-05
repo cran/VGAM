@@ -108,8 +108,7 @@ lines(p, cloglog(p), col="chocolate", lwd=2)
 lines(p, cauchit(p), col="tan", lwd=2)
 abline(v=0.5, h=0, lty="dashed")
 legend(0.1, 4.0, c("logit", "probit", "cloglog", "cauchit"), 
-       col=c("limegreen","purple","chocolate","tan"), lwd=2)
-}
+       col=c("limegreen","purple","chocolate","tan"), lwd=2) }
 }
 \keyword{math}
 \keyword{models}

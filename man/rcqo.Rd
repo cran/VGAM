@@ -354,45 +354,6 @@ n = 100; p = 5; S = 5
 mydata = rcqo(n, p, S, ESOpt=TRUE, EqualMax=TRUE)
 names(mydata)
 myform = attr(mydata, "formula")
-fit = cqo(myform, fam=poissonff, ITol=TRUE, data=mydata,
-          Bestof=3)  # Fit a CQO model to the data
-\dontrun{
-matplot(attr(mydata, "lv"), mydata[,-(1:(p-1))], col=1:S)
-persp(fit, col=1:S, add=TRUE)
-lvplot(fit, lcol=1:S, y=TRUE, pcol=1:S)  # The same plot as above
-}
-
-# Compare the fitted model with the 'truth'
-ccoef(fit)  # The fitted model
-attr(mydata, "ccoefficients") # The 'truth'
-
-c(sd(attr(mydata, "lv")), sd(lv(fit))) # Both values should be approx equal
-
-
-# Example 2: negative binomial data fitted using a Poisson model:
-n = 200; p = 5; S = 5
-mydata = rcqo(n, p, S, fam="negbin", sqrt=TRUE)
-myform = attr(mydata, "formula")
-fit = cqo(myform, fam=poissonff, ITol=TRUE, dat=mydata)
-\dontrun{
-lvplot(fit, lcol=1:S, y=TRUE, pcol=1:S)
-}
-# Compare the fitted model with the 'truth'
-ccoef(fit)  # The fitted model
-attr(mydata, "ccoefficients") # The 'truth'
-
-
-# Example 3: gamma2 data fitted using a Gaussian model:
-n = 200; p = 5; S = 3
-mydata = rcqo(n, p, S, fam="gamma2", Log=TRUE)
-fit = cqo(attr(mydata, "formula"), fam=gaussianff, ITol=TRUE, dat=mydata)
-\dontrun{
-matplot(attr(mydata, "lv"), exp(mydata[,-(1:(p-1))]), col=1:S) # 'raw' data
-lvplot(fit, lcol=1:S, y=TRUE, pcol=1:S)  # Fitted model to transformed data
-}
-# Compare the fitted model with the 'truth'
-ccoef(fit)  # The fitted model
-attr(mydata, "ccoefficients") # The 'truth'
 }
 \keyword{distribution}
 

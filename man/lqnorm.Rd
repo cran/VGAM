@@ -105,12 +105,12 @@ lqnorm(qpower=2, link="identity", earg=list(),
 
 \examples{
 set.seed(123)
-d = data.frame(x = sort(runif(n <- 10 )))
+ldat = data.frame(x = sort(runif(nn <- 10 )))
 realfun = function(x) 4 + 5*x
-d = transform(d, y = realfun(x) + rnorm(n, sd=exp(1)))
+ldat = transform(ldat, y = realfun(x) + rnorm(nn, sd=exp(1)))
 # Make the first observation an outlier
-d = transform(d, y = c(4*y[1], y[-1]), x=c(-1, x[-1]))
-fit = vglm(y ~ x, fam = lqnorm(qpower=1.2), data=d)
+ldat = transform(ldat, y = c(4*y[1], y[-1]), x=c(-1, x[-1]))
+fit = vglm(y ~ x, fam = lqnorm(qpower=1.2), data=ldat)
 coef(fit, matrix=TRUE)
 head(fitted(fit))
 fit@misc$qpower 
@@ -118,13 +118,12 @@ fit@misc$objectiveFunction
 
 \dontrun{
 # Graphical check
-with(d, plot(x, y, main=paste("LS=red, lqnorm=blue (qpower = ",
+with(ldat, plot(x, y, main=paste("LS=red, lqnorm=blue (qpower = ",
              fit@misc$qpower, "), truth=black", sep=""), col="blue"))
-it = lm(y ~ x, data=d)
-with(d, lines(x, fitted(fit), col="blue"))
-with(d, lines(x,   it$fitted, col="red"))
-with(d, lines(x, realfun(x),  col="black"))
-}
+lmfit = lm(y ~ x, data=ldat)
+with(ldat, lines(x,  fitted(fit), col="blue"))
+with(ldat, lines(x, lmfit$fitted, col="red"))
+with(ldat, lines(x,  realfun(x),  col="black")) }
 }
 \keyword{models}
 \keyword{regression}

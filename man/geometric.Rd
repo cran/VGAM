@@ -6,7 +6,7 @@
   Maximum likelihood estimation for the geometric distribution.
 }
 \usage{
-geometric(link = "logit", earg=list(), expected = TRUE)
+geometric(link = "logit", earg=list(), expected = TRUE, method.init = 1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -26,6 +26,13 @@ geometric(link = "logit", earg=list(), expected = TRUE)
   Fisher scoring is used if \code{expected = TRUE}, else Newton-Raphson.
 
   }
+  \item{method.init}{
+  An integer with value \code{1} or \code{2} or \code{3} which
+  specifies the initialization method for the probability.
+  If failure to converge occurs try another value.
+
+  }
+
 }
 \details{
   A random variable \eqn{Y} has a 1-parameter geometric distribution
@@ -63,17 +70,17 @@ geometric(link = "logit", earg=list(), expected = TRUE)
   \code{\link[stats]{Geometric}},
   \code{\link{betageometric}},
   \code{\link{rbetageom}}.
+
 }
 \examples{
-x1 = runif(n <- 1000) - 0.5
-x2 = runif(n) - 0.5
-x3 = runif(n) - 0.5
-eta = 0.2 - 0.7 * x1 + 1.9 * x2
-prob = logit(eta, inverse=TRUE)
-y = rgeom(n, prob)
-table(y)
-fit = vglm(y ~ x1 + x2 + x3, geometric, trace=TRUE, crit="coef")
-coef(fit)
+gdata = data.frame(x2 = runif(nn <- 1000) - 0.5)
+gdata = transform(gdata, x3 = runif(nn) - 0.5,
+                         x4 = runif(nn) - 0.5)
+gdata = transform(gdata, eta = 1.0 - 1.0 * x2 + 2.0 * x3)
+gdata = transform(gdata, prob = logit(eta, inverse=TRUE))
+gdata = transform(gdata, y = rgeom(nn, prob))
+with(gdata, table(y))
+fit = vglm(y ~ x2 + x3 + x4, geometric, gdata, trace=TRUE)
 coef(fit, mat=TRUE)
 summary(fit)
 }
