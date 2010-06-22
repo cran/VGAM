@@ -68,11 +68,11 @@ vgam <- function(formula,
         spars2 =  lapply(mf2, attr, "spar") 
         dfs2 =  lapply(mf2, attr, "df") 
         sx2 =  lapply(mf2, attr, "s.xargument") 
-        for(i in 1:length(mf)) {
-            if (length(sx2[[i]])) {
-                attr(mf[[i]], "spar") = spars2[[i]]
-                attr(mf[[i]], "dfs2") = dfs2[[i]]
-                attr(mf[[i]], "s.xargument") = sx2[[i]]
+        for (ii in 1:length(mf)) {
+            if (length(sx2[[ii]])) {
+                attr(mf[[ii]], "spar") = spars2[[ii]]
+                attr(mf[[ii]], "dfs2") = dfs2[[ii]]
+                attr(mf[[ii]], "s.xargument") = sx2[[ii]]
             }
         }
         rm(mf2) 
@@ -105,8 +105,8 @@ vgam <- function(formula,
         family@inverse <- eval(family@inverse)
         family@link <- eval(family@link)
 
-        for(i in names(.min.criterion.VGAM)) 
-            if (length(family[[i]])) family[[i]] <- eval(family[[i]])
+        for (ii in names(.min.criterion.VGAM)) 
+            if (length(family[[ii]])) family[[ii]] <- eval(family[[ii]])
     }
 
     if (length(slot(family, "first")))
@@ -126,8 +126,8 @@ vgam <- function(formula,
     if (nonparametric) {
 
         ff <- apply(aa$factors[smoothers[["s"]],,drop=FALSE], 2, any)
-        smoothers[["s"]] <- if (any(ff)) seq(along=ff)[aa$order==1 & ff] else
-            NULL
+        smoothers[["s"]] <- if (any(ff))
+            seq(along=ff)[aa$order==1 & ff] else NULL
 
         smooth.labels <- aa$term.labels[unlist(smoothers)]
     } else 
@@ -156,7 +156,7 @@ vgam <- function(formula,
     } else {
     }
 
-    fit$smooth <- NULL          # Not needed
+    fit$smomat <- NULL          # Not needed
 
     fit$call <- ocall 
     if (model)
@@ -244,8 +244,8 @@ vgam <- function(formula,
             slot(answer, "nl.df") = fit$nl.df
         slot(answer, "spar") = fit$spar
         slot(answer, "s.xargument") = fit$s.xargument
-        if (length(fit$var)) {
-            slot(answer, "var") = fit$var
+        if (length(fit$varmat)) {
+            slot(answer, "var") = fit$varmat
         }
 
 
@@ -266,8 +266,8 @@ attr(vgam, "smart") <- TRUE
 
 
 care.exp <- function(x, thresh = -log(.Machine$double.eps)) {
-    x[x > thresh] <- thresh
-    x[x < (-thresh)] <-  -thresh
+    x[x >   thresh]  <-  thresh
+    x[x < (-thresh)] <- -thresh
     exp(x)
 }
 

@@ -122,9 +122,9 @@ TypicalVGAMfamilyFunction(lsigma = "loge", esigma = list(), isigma = NULL,
   \eqn{s \mu + (1-s) y}{s*mu + (1-s)*y}
   where \eqn{\mu}{mu} is a measure of central tendency such as a weighted
   mean or median, and \eqn{y} is the response vector.
-  The the initial values are slight perturbations of the mean towards the
-  actual data.
-  For many type of models this method seems to work well and is often
+  For example, the initial values are slight perturbations of
+  the mean towards the actual data.
+  For many types of models this method seems to work well and is often
   reasonably robust to outliers in the response.
   Often this argument is only used if
   the argument \code{method.init} is assigned a certain value.

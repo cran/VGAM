@@ -1,5 +1,5 @@
-\name{ggamma}
-\alias{ggamma}
+\name{gengamma}
+\alias{gengamma}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Generalized Gamma distribution family function }
 \description{
@@ -8,7 +8,7 @@
 
 }
 \usage{
-ggamma(lscale="loge", ld="loge", lk="loge",
+gengamma(lscale="loge", ld="loge", lk="loge",
        escale=list(), ed=list(), ek=list(),
        iscale=NULL, id=NULL, ik=NULL, zero=NULL)
 }
@@ -46,6 +46,7 @@ ggamma(lscale="loge", ld="loge", lk="loge",
   and \eqn{y > 0}.
   The mean of \eqn{Y} is \eqn{bk}{b*k} (returned as the fitted values).
 
+
 There are many special cases, as given in Table 1 of Stacey and Mihram (1965).
 In the following, the parameters are in the order \eqn{b,d,k}.
 The special cases are:
@@ -58,6 +59,7 @@ Half-normal       \eqn{f(y;\sqrt{2},2,1/2)}{f(y;sqrt(2),2,1/2)},
 Circular normal   \eqn{f(y;\sqrt{2},2,1)}{f(y;sqrt(2),2,1)},
 Spherical normal  \eqn{f(y;\sqrt{2},2,3/2)}{f(y;sqrt(2),2,3/2)},
 Rayleigh          \eqn{f(y;c\sqrt{2},2,1)}{f(y;c sqrt(2),2,1)} where \eqn{c>0}.
+
 
 }
 
@@ -72,13 +74,16 @@ Rayleigh          \eqn{f(y;c\sqrt{2},2,1)}{f(y;c sqrt(2),2,1)} where \eqn{c>0}.
   A generalization of the gamma distribution.
   \emph{Annals of Mathematical Statistics}, \bold{33}, 1187--1192.
 
+
   Stacy, E. W. and Mihram, G. A. (1965)
   Parameter estimation for a generalized gamma distribution.
   \emph{Technometrics}, \bold{7}, 349--358.
 
+
   Prentice, R. L. (1974)
   A log gamma model and its maximum likelihood estimation.
   \emph{Biometrika}, \bold{61}, 539--544.
+
 
 }
 \section{Warning }{
@@ -95,6 +100,7 @@ Rayleigh          \eqn{f(y;c\sqrt{2},2,1)}{f(y;c sqrt(2),2,1)} where \eqn{c>0}.
   With covariates, even more observations are needed to increase the
   chances of convergence.
 
+
 }
 \author{ T. W. Yee }
 \note{ 
@@ -104,9 +110,10 @@ Rayleigh          \eqn{f(y;c\sqrt{2},2,1)}{f(y;c sqrt(2),2,1)} where \eqn{c>0}.
   try using the \code{zero} argument (e.g., \code{zero=2:3})
   or the \code{ik} argument. 
 
+
 }
 \seealso{
-  \code{\link{rggamma}},
+  \code{\link{rgengamma}},
   \code{\link{gamma1}},
   \code{\link{gamma2}},
   \code{\link{prentice74}}.
@@ -114,17 +121,18 @@ Rayleigh          \eqn{f(y;c\sqrt{2},2,1)}{f(y;c sqrt(2),2,1)} where \eqn{c>0}.
 }
 \examples{
 k = exp(-1); Scale = exp(1)
-gdata = data.frame(y = rgamma(n=1000, shape=k, scale=Scale))
-fit = vglm(y ~ 1, ggamma, gdata, trace=TRUE)
-coef(fit, matrix=TRUE)
+gdata = data.frame(y = rgamma(1000, shape = k, scale = Scale))
+fit = vglm(y ~ 1, gengamma, gdata, trace = TRUE)
+coef(fit, matrix = TRUE)
 
 # Another example
 gdata = data.frame(x = runif(nn <- 5000))
-gdata = transform(gdata, Scale = exp(1), d = exp(0 + 1.2*x), k = exp(-1 + 2*x))
-gdata = transform(gdata, y = rggamma(nn, scale=Scale, d=d, k=k))
-fit = vglm(y ~ x, ggamma(zero=1, iscal=6), gdata, trace=TRUE)
-fit = vglm(y ~ x, ggamma(zero=1), gdata, trace=TRUE, maxit=50)
-coef(fit, matrix=TRUE)
+gdata = transform(gdata, Scale = exp(1), d = exp(0 + 1.2*x),
+                         k = exp(-1 + 2*x))
+gdata = transform(gdata, y = rgengamma(nn, scale = Scale, d = d, k = k))
+fit = vglm(y ~ x, gengamma(zero = 1, iscal = 6), gdata, trace = TRUE)
+fit = vglm(y ~ x, gengamma(zero = 1), gdata, trace = TRUE, maxit = 50)
+coef(fit, matrix = TRUE)
 }
 \keyword{models}
 \keyword{regression}

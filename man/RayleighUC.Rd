@@ -55,18 +55,16 @@ New York: Wiley-Interscience, Third edition.
 \seealso{
   \code{\link{rayleigh}},
   \code{\link{maxwell}}.
+
 }
 \examples{
-\dontrun{
-a = 2
-x = seq(-1, 8, by=0.1)
+\dontrun{ a = 2; x = seq(-1, 8, by=0.1)
 plot(x, drayleigh(x, a=a), type="l", ylim=c(0,1), las=1, ylab="",
      main="Rayleigh density divided into 10 equal areas; red=cdf")
 abline(h=0, col="blue", lty=2)
 qq = qrayleigh(seq(0.1,0.9,by=0.1),a=a)
 lines(qq, drayleigh(qq, a=a), col="purple", lty=3, type="h")
-lines(x, prayleigh(x, a=a), col="red")
-}
+lines(x, prayleigh(x, a=a), col="red") }
 }
 \keyword{distribution}
 

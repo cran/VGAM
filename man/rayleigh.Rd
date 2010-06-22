@@ -82,6 +82,7 @@ A related distribution is the Maxwell distribution.
     \code{\link{Rayleigh}},
     \code{\link{riceff}},
     \code{\link{maxwell}}.
+
 }
 \examples{
 n = 1000; a = exp(2)

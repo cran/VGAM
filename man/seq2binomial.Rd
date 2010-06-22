@@ -58,6 +58,7 @@ seq2binomial(lprob1 = "logit", lprob2 = "logit", eprob1 = list(),
   Here, \eqn{p} is \code{prob1},
   \eqn{q} is \code{prob2}.
 
+
   Although the Authors refer to this as the \emph{bivariate binomial} model,
   I have named it the \emph{(two-stage) sequential binomial} model.
   Fisher scoring is used.
@@ -86,6 +87,9 @@ seq2binomial(lprob1 = "logit", lprob2 = "logit", eprob1 = list(),
   and \code{\link{vgam}}.
   The fitted value is a two-column matrix of estimated probabilities
   \eqn{p} and \eqn{q}.
+  A common form of error is when there are no trials
+  for \eqn{y_1}{y1}, e.g., if \code{mvector} below has some values
+  which are zero.
 
 }
 
@@ -94,17 +98,18 @@ seq2binomial(lprob1 = "logit", lprob2 = "logit", eprob1 = list(),
 
 }
 \examples{
-mvector = round(rnorm(n <- 100, m=10, sd=2))
-x = runif(n)
-prob1 = logit(+2-x, inverse=TRUE)
-prob2 = logit(-2+x, inverse=TRUE)
-successes1 = rbinom(n=n, size=mvector, prob=prob1)
-successes2 = rbinom(n=n, size=successes1, prob=prob2)
-y1 = successes1 / mvector
-y2 = successes2 / successes1
-fit = vglm(cbind(y1,y2) ~ x, seq2binomial, trace=TRUE, weight=mvector)
+sdata = data.frame(mvector = round(rnorm(nn <- 100, m = 10, sd = 2)),
+                   x = runif(nn))
+sdata = transform(sdata, prob1 = logit(+2 - x, inverse = TRUE),
+                         prob2 = logit(-2 + x, inverse = TRUE))
+sdata = transform(sdata, successes1 = rbinom(nn, size=mvector, prob=prob1))
+sdata = transform(sdata, successes2 = rbinom(nn, size=successes1, prob=prob2))
+sdata = transform(sdata, y1 = successes1 / mvector)
+sdata = transform(sdata, y2 = successes2 / successes1)
+fit = vglm(cbind(y1,y2) ~ x, seq2binomial,  weight=mvector,
+           data = sdata, trace=TRUE)
 coef(fit)
-coef(fit, mat=TRUE)
+coef(fit, matrix = TRUE)
 head(fitted(fit))
 }
 \keyword{models}

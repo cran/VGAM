@@ -7,10 +7,10 @@
   cardioid distribution by maximum likelihood estimation.
 }
 \usage{
-cardioid(lmu="elogit", lrho="elogit",
-         emu =if(lmu=="elogit") list(min=0, max=2*pi) else list(),
-         erho=if(lmu=="elogit") list(min=-0.5, max=0.5) else list(),
-         imu=NULL, irho=0.3, nsimEIM=100, zero=NULL)
+cardioid(lmu = "elogit", lrho = "elogit",
+         emu = if(lmu == "elogit") list(min = 0, max = 2*pi) else list(),
+         erho = if(lmu == "elogit") list(min = -0.5, max = 0.5) else list(),
+         imu = NULL, irho = 0.3, nsimEIM = 100, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -48,6 +48,7 @@ cardioid(lmu="elogit", lrho="elogit",
   \eqn{-0.5 < \rho < 0.5}{-0.5 < rho < 0.5} is the concentration parameter.
  The default link functions enforce the range constraints
  of the parameters.
+
 
   For positive \eqn{\rho} the distribution is unimodal and symmetric about
   \eqn{\mu}{mu}.
@@ -95,11 +96,11 @@ Singapore: World Scientific.
 
 }
 \examples{
-carddata = data.frame(y = rcard(n=1000, mu=4, rho=0.45))
-fit = vglm(y ~ 1, cardioid, carddata, trace=TRUE) 
+cdata = data.frame(y = rcard(n = 1000, mu = 4, rho = 0.45))
+fit = vglm(y ~ 1, cardioid, cdata, trace=TRUE) 
 coef(fit, matrix=TRUE)
 Coef(fit)
-c(with(carddata, mean(y)), head(fitted(fit),1))
+c(with(cdata, mean(y)), head(fitted(fit), 1))
 summary(fit)
 }
 \keyword{models}

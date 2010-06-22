@@ -286,6 +286,7 @@
 \alias{qtplot.default}
 \alias{qtplot.lms.bcg}
 \alias{qtplot.lms.bcn}
+\alias{explot.lms.bcn}
 \alias{qtplot.lms.yjn}
 \alias{qtplot.lms.yjn2}
 \alias{qtplot.vextremes}

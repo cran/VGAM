@@ -96,7 +96,7 @@ gamma2.ab(lrate = "loge", lshape = "loge", erate=list(), eshape=list(),
   \code{\link{gamma1}} for the 1-parameter gamma distribution,
   \code{\link{gamma2}} for another parameterization of
   the 2-parameter gamma distribution,
-  \code{\link{mckaygamma2}} for \emph{a} bivariate gamma distribution,
+  \code{\link{bivgamma.mckay}} for \emph{a} bivariate gamma distribution,
   \code{\link{expexp}}.
 
 }

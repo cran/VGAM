@@ -5,9 +5,9 @@
 
 
 
-s.vam <- function(x, z, wz, s, which, smooth.frame, bf.maxit=10,
-                  bf.epsilon=0.001, trace=FALSE, se.fit=TRUE, 
-                  X_vlm_save, Blist, ncolBlist, M, qbig, U,
+s.vam <- function(x, zedd, wz, smomat, which, smooth.frame, bf.maxit = 10,
+                  bf.epsilon=0.001, trace=FALSE, se.fit = TRUE,
+                  X_vlm_save, Blist, ncolBlist, M, qbig, Umat,
                   all.knots=FALSE, nk=NULL,
                   sf.only=FALSE)
 {
@@ -24,151 +24,162 @@ s.vam <- function(x, z, wz, s, which, smooth.frame, bf.maxit=10,
         smooth.frame$first <- FALSE  # No longer first for next time
 
         dx <- as.integer(dim(x))
-        smooth.frame$n <- dx[1]
-        smooth.frame$p <- dx[2]
+        smooth.frame$n_lm <- dx[1]
+        smooth.frame$p_lm <- dx[2]
         attr(data, "class") <- NULL
 
-        spar <- lapply(data, attr, "spar")
-        df <- lapply(data, attr, "df")
+        sparv <- lapply(data, attr, "spar")
+        dfvec <- lapply(data, attr, "df")
         s.xargument <- lapply(data, attr, "s.xargument")
     
-        for(k in 1:length(nwhich)) {
-            i <- nwhich[k]
+        for(kk in 1:length(nwhich)) {
+            ii <- nwhich[kk]
 
-            temp <- spar[[i]]
-            if (!is.numeric(temp) || any(temp<0))
+            temp <- sparv[[ii]]
+            if (!is.numeric(temp) || any(temp < 0)) {
                 stop("spar cannot be negative or non-numeric")
-            if (length(temp) > ncolBlist[i])
-                warning("only the first ", ncolBlist[i], " values of 'spar' ",
-                        " are used for variable '", s.xargument, "'")
-            spar[[i]] <- rep(temp, length=ncolBlist[i])   # recycle
+            }
+            if (length(temp) > ncolBlist[ii]) {
+                warning("only the first ", ncolBlist[ii], " values of ",
+                        "'spar' are used for variable '", s.xargument, "'")
+            }
+            sparv[[ii]] <- rep(temp, length=ncolBlist[ii])   # recycle
     
-            temp <- df[[i]]
-            if (!is.numeric(temp) || any(temp<1))
+            temp <- dfvec[[ii]]
+            if (!is.numeric(temp) || any(temp < 1)) {
                 stop("df is non-numeric or less than 1")
-            if (length(temp) > ncolBlist[i])
-                warning("only the first", ncolBlist[i], "values of 'df' ",
+            }
+            if (length(temp) > ncolBlist[ii]) {
+                warning("only the first", ncolBlist[ii], "values of 'df' ",
                         "are used for variable '", s.xargument, "'")
-            df[[i]] <- rep(temp, length=ncolBlist[i])    # recycle
-            if (max(temp) > smooth.frame$nef[k]-1)
+            }
+            dfvec[[ii]] <- rep(temp, length=ncolBlist[ii])    # recycle
+            if (max(temp) > smooth.frame$nef[kk]-1) {
                 stop("'df' value too high for variable '", s.xargument, "'")
+            }
     
-            if (any(spar[[i]]!=0) && any(df[[i]]!=4))
+            if (any(sparv[[ii]] != 0) && any(dfvec[[ii]] != 4)) {
                 stop("cannot specify both 'spar' and 'df'")
-        }
+            }
+        } # End of kk loop
 
-        spar <- unlist(spar)
-        df <- unlist(df)
-        smooth.frame$spar <- spar     # original
-        smooth.frame$df <- df         # original
+        sparv <- unlist(sparv)
+        dfvec <- unlist(dfvec)
+        smooth.frame$sparv <- sparv     # original
+        smooth.frame$dfvec <- dfvec         # original
     
-        if (sum(smooth.frame$df[smooth.frame$spar==0]) + pbig > 
-            smooth.frame$n * sum(ncolBlist[nwhich]))
+        if (sum(smooth.frame$dfvec[smooth.frame$sparv == 0]) + pbig >
+            smooth.frame$n_lm * sum(ncolBlist[nwhich])) {
             stop("too many parameters/dof for data on hand")
+        }
     
         xnrow_X_vlm <- labels(X_vlm_save)[[2]]
         asgn <- attr(X_vlm_save, "assign")
         aa <- NULL
-        for(i in nwhich) {
-            aa <- c(aa, xnrow_X_vlm[asgn[[i]]])
+        for(ii in nwhich) {
+            aa <- c(aa, xnrow_X_vlm[asgn[[ii]]])
         }
-        smooth.frame$ndfspar <- aa             # Stored here
-        smooth.frame$xnrow_X_vlm <- xnrow_X_vlm          # Stored here
+        smooth.frame$ndfsparv <- aa                # Stored here
+        smooth.frame$xnrow_X_vlm <- xnrow_X_vlm    # Stored here
         smooth.frame$s.xargument <- s.xargument    # Stored here
     
         smooth.frame$smap=as.vector(cumsum(
-            c(1,ncolBlist[nwhich]))[1:length(nwhich)])
+            c(1, ncolBlist[nwhich]))[1:length(nwhich)])
     
-        smooth.frame$try.spar <- spar
-        smooth.frame$prev.dof <- df
+        smooth.frame$try.sparv <- sparv
+        smooth.frame$prev.dof <- dfvec
 
 
         smooth.frame$bindex <- as.integer(cumsum(c(1,
             smooth.frame$nknots*ncolBlist[nwhich])))
-        smooth.frame$kindex = as.integer(cumsum(c(1, 4+smooth.frame$nknots)))
-    }
-    if (sf.only)
+        smooth.frame$kindex = as.integer(
+            cumsum(c(1, 4 + smooth.frame$nknots)))
+    } # End of first
+    if (sf.only) {
         return(smooth.frame)
+    }
 
-    ldk <- 4 * max(ncolBlist[nwhich])   # was M;     # Prior to 11/7/02
     ldk <- 3 * max(ncolBlist[nwhich]) + 1   # 11/7/02
 
 
     which <- unlist(which)
-    p <- smooth.frame$p
-    n <- smooth.frame$n
-    dimw <- if (is.matrix(wz)) ncol(wz) else 1
+    p_lm <- smooth.frame$p_lm
+    n_lm <- smooth.frame$n_lm
+    dim2wz <- if (is.matrix(wz)) ncol(wz) else 1
 
-    dimu <- if (is.matrix(U)) nrow(U) else 1
-
-    index <- iam(NA, NA, M, both=TRUE)
+    dim1U <- if (is.matrix(Umat)) nrow(Umat) else 1
 
     nBlist <- names(Blist)
-    for(i in length(nBlist):1) {
-        if (!any(nBlist[i] == nwhich))
-            Blist[[i]] <- NULL
+    for(ii in length(nBlist):1) {
+        if (!any(nBlist[ii] == nwhich)) {
+            Blist[[ii]] <- NULL
+        }
     }
     trivc <- trivial.constraints(Blist)
 
     ncbvec <- ncolBlist[nwhich]
-    ncolb <- max(ncbvec)
+    ncolbmax <- max(ncbvec)
 
-    pmax.mwk <- rep(dimw, length(trivc))
-    pmax.mwk <- pmax(ncbvec*(ncbvec+1)/2, dimw)
 
-    size.twk <- max((4+4*smooth.frame$nef)*ncbvec + dimu*smooth.frame$nef)
 
-    size.twk <- max(size.twk, M*smooth.frame$n)
 
-    fit <- dotFortran(name="vbfa", 
-        n = as.integer(n), M = as.integer(M),
-            npetc = as.integer(c(n, p, length(which), se.fit, 0, 
-                                 bf.maxit, 0, M, n*M, pbig, 
-                                 qbig, dimw, dimu, ier=0, ldk=ldk)),
-        as.double(x), 
-            y = as.double(z), w = as.double(wz),
-            spar = as.double(smooth.frame$try.spar), 
-            df = as.double(smooth.frame$df),
-      as.integer(smooth.frame$o),as.integer(smooth.frame$nef),as.integer(which),
-        etal = double(M*n), smooth = as.double(s), eta = double(M*n),
-            s0 = double((2*M)*(2*M)*2),
-        beta = double(pbig), var = if (se.fit) as.double(s) else double(1),
-            as.double(bf.epsilon),
-        qr = as.double(X_vlm_save), qraux = double(pbig),
-        qpivot = as.integer(1:pbig),
-        X_vlm = double(1),
-            U = as.double(U),
-            as.double(unlist(Blist)),
-        as.integer(ncbvec), as.integer(smooth.frame$smap),
-            rcind = integer(M*(M+1)), trivc = as.integer(trivc),
-        work1 = double(3*qbig + (9+2*4+max(smooth.frame$nknots))*
-                     max(smooth.frame$nknots)),
-            wk2 = double(n*M*3),
-            wkmm = double(M*M*16 + M*pbig),
-            work3 = double(max(max(2 * smooth.frame$nef * ncbvec^2), 
-                           max(smooth.frame$nknots * ncbvec * (4*ncbvec+1)))),
-        sgdub = double(max(smooth.frame$nknots) * max(4,ncolb)),
-            bmb = double(M*M),
-            lev = double(max(smooth.frame$nef * ncbvec)),
-        mwk = double(max(smooth.frame$nef * (1 + 2*M + pmax.mwk)) ),
-            twk = double(size.twk), 
-        bcoefficients = double(sum(smooth.frame$nknots*ncbvec)),
-            knots = as.double(unlist(smooth.frame$knots)),
-            resss = double(1),
-        bindex = as.integer(smooth.frame$bindex),
-            nknots = as.integer(smooth.frame$nknots),
-            itwk = integer(2*M),
-            kindex = as.integer(smooth.frame$kindex))
+    contr.sp <- list(low = -1.5,## low = 0.      was default till R 1.3.x
+                     high = 1.5,
+                     tol = 1e-4,## tol = 0.001   was default till R 1.3.x
+                     eps = 2e-8,## eps = 0.00244 was default till R 1.3.x
+                     maxit = 500 )
+
+  if (FALSE)
+    contr.sp <- list(low = -1.5,## low = 0.      was default till R 1.3.x
+                     high = 1.5,
+                     tol = 0.001,     # was default till R 1.3.x
+                     eps = 0.00244,   # was default till R 1.3.x
+                     maxit = 500 )
+
+    fit <- dotC(name="Yee_vbfa",  # ---------------------------------
+         npetc = as.integer(c(n_lm, p_lm, length(which), se.fit, 0,
+               bf.maxit, qrank = 0, M, nbig = n_lm * M, pbig,
+               qbig, dim2wz, dim1U, ier=0, ldk=ldk, # ldk may be unused
+               contr.sp$maxit, iinfo = 0
+               )),
+         doubvec = as.double(c(bf.epsilon, resSS=0, unlist(contr.sp[1:4]))),
+     as.double(x),
+         y = as.double(zedd), wz = as.double(wz),
+         dfvec  = as.double(smooth.frame$dfvec),
+         lamvec = as.double(smooth.frame$try.sparv),
+         sparv  = as.double(smooth.frame$try.sparv),
+   as.integer(smooth.frame$o), as.integer(smooth.frame$nef),
+         as.integer(which),
+   smomat = as.double(smomat), etamat = double(M * n_lm),
+   beta = double(pbig),
+       varmat = if (se.fit) as.double(smomat) else double(1),
+     qr = as.double(X_vlm_save), qraux = double(pbig),
+     qpivot = as.integer(1:pbig),
+         as.double(Umat),
+         as.double(unlist(Blist)),
+     as.integer(ncbvec), as.integer(smooth.frame$smap),
+      trivc = as.integer(trivc),
+
+         levmat = if (se.fit) as.double(smomat) else double(1), # 20100227
+
+     bcoefficients = double(sum(smooth.frame$nknots * ncbvec)),
+         knots = as.double(unlist(smooth.frame$knots)),
+     bindex = as.integer(smooth.frame$bindex),
+         nknots = as.integer(smooth.frame$nknots),
+         kindex = as.integer(smooth.frame$kindex)) # End of dotC
 
     dim(fit$qr) = dim(X_vlm_save)
     dimnames(fit$qr) = dimnames(X_vlm_save)
-    dim(fit$y) = dim(z)
-    dimnames(fit$y) = dimnames(z)
-    dim(fit$smooth) = dim(s)
-    dimnames(fit$smooth) = dimnames(s)   # Needed for vgam.nlchisq
+    dim(fit$y) = dim(zedd)
+    dimnames(fit$y) = dimnames(zedd)
+    dim(fit$smomat) = dim(smomat)
+    dimnames(fit$smomat) = dimnames(smomat)   # Needed for vgam.nlchisq
     if (se.fit) {
-        dim(fit$var) = dim(s)
-        dimnames(fit$var) = dimnames(s)
+        dim(fit$varmat) = dim(smomat)
+        dimnames(fit$varmat) = dimnames(smomat)
+        dim(fit$levmat) = dim(smomat)
+        dimnames(fit$levmat) = dimnames(smomat)
+
     }
 
 
@@ -176,23 +187,29 @@ s.vam <- function(x, z, wz, s, which, smooth.frame, bf.maxit=10,
 
 
 
-    if (fit$npetc[14] != 0)
-        stop("something went wrong in the Fortran subroutine vbfa()")
+    if (fit$npetc[14] != 0 || fit$npetc[17] != 0) {
+        stop("something went wrong in the C function 'vbfa'")
+    }
 
-    fit$eta <- if (M>1) matrix(fit$eta,n,M,byrow=TRUE) else c(fit$eta)
-
-    nit <- fit$npetc[5]
+    fit$etamat = if (M > 1) matrix(fit$etamat, n_lm, M, byrow=TRUE) else
+                 c(fit$etamat)  # May no longer be a matrix
+    nits <- fit$npetc[5]
     qrank <- fit$npetc[7]
 
 
-    smooth.frame$try.spar <- fit$spar
-    change <- abs(smooth.frame$prev.dof-fit$df)/fit$df > 0.05 &
-                  smooth.frame$spar==0
-    smooth.frame$try.spar[change] <- 0         # For next time
-    smooth.frame$prev.dof <- fit$df
+    smooth.frame$try.sparv <- fit$sparv
 
-    if ((nit == bf.maxit) & bf.maxit > 1)
-        warning("'s.vam' convergence not obtained in ", bf.maxit, " iterations")
+    change <- abs(smooth.frame$prev.dof - fit$dfvec)/(1+fit$dfvec) > 0.00 &
+                  smooth.frame$sparv == 0
+
+
+    smooth.frame$try.sparv[change] <- 0         # For next time
+    smooth.frame$prev.dof <- fit$dfvec
+
+    if ((nits == bf.maxit) & bf.maxit > 1) {
+        warning("'s.vam' convergence not obtained in ", bf.maxit,
+                " iterations")
+    }
 
     R <- fit$qr[1:pbig, 1:pbig]
     R[lower.tri(R)] <- 0
@@ -201,40 +218,43 @@ s.vam <- function(x, z, wz, s, which, smooth.frame, bf.maxit=10,
 
     Bspline <- vector("list", length(nwhich))
     names(Bspline) <- nwhich
-    for(i in 1:length(nwhich)) {
-        ans = fit$bcoeff[(smooth.frame$bindex[i]):(smooth.frame$bindex[i+1]-1)]
-        ans = matrix(ans, ncol=ncolBlist[nwhich[i]])
-        Bspline[[i]] = new("vsmooth.spline.fit",
-                           "Bcoefficients" = ans,
-                           "xmax"          = smooth.frame$xmax[i],
-                           "xmin"          = smooth.frame$xmin[i],
-                           "knots"         = as.vector(smooth.frame$knots[[i]]))
+    for(ii in 1:length(nwhich)) {
+        ans = fit$bcoeff[(smooth.frame$bindex[ii]):
+                         (smooth.frame$bindex[ii+1]-1)]
+        ans = matrix(ans, ncol=ncolBlist[nwhich[ii]])
+        Bspline[[ii]] =
+            new("vsmooth.spline.fit",
+                "Bcoefficients" = ans,
+                "xmax"          = smooth.frame$xmax[ii],
+                "xmin"          = smooth.frame$xmin[ii],
+                "knots"         = as.vector(smooth.frame$knots[[ii]]))
     }
 
 
     rl <- list(
-        Bspline = Bspline,
-        coefficients = fit$beta,
-        df.residual = n*M - qrank - sum(fit$df - 1),
-        fitted.values = fit$eta, 
-        nl.df = fit$df - 1,
-        qr = list(qr=fit$qr, rank=qrank, qraux=fit$qraux, pivot=fit$qpivot),
-        R = R, 
-        rank = qrank, 
-        residuals = fit$y - fit$eta, 
-        rss = fit$resss,
-        smooth = fit$smooth,
-        spar = fit$spar,
-        s.xargument = unlist(smooth.frame$s.xargument))
+      Bspline = Bspline,
+      coefficients = fit$beta,
+      df.residual = n_lm * M - qrank - sum(fit$dfvec - 1),
+      fitted.values = fit$etamat,
+      nl.df = fit$dfvec - 1,
+      qr = list(qr=fit$qr, rank=qrank, qraux=fit$qraux, pivot=fit$qpivot),
+      R = R, 
+      rank = qrank, 
+      residuals = fit$y - fit$etamat,
+      rss = fit$doubvec[2],
+      smomat = fit$smomat,
+      sparv = fit$sparv,
+      s.xargument = unlist(smooth.frame$s.xargument))
 
 
     names(rl$coefficients) <- smooth.frame$xnrow_X_vlm
-    names(rl$spar) <- smooth.frame$ndfspar
+    names(rl$sparv) <- smooth.frame$ndfspar
     names(rl$nl.df) <- smooth.frame$ndfspar
 
-    if (se.fit)
-        rl <- c(rl, list(var=fit$var))
-    c(list(smooth.frame=smooth.frame), rl)
+    if (se.fit) {
+        rl <- c(rl, list(varmat = fit$varmat))
+    }
+    c(list(smooth.frame = smooth.frame), rl)
 }
 
 

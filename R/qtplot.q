@@ -17,11 +17,12 @@ qtplot.lms.bcn <- function(percentiles=c(25,50,75),
 {
 
     lp = length(percentiles)
-    answer <- matrix(as.numeric(NA), nrow(eta), lp, dimnames=list(dimnames(eta)[[1]],
+    answer <- matrix(as.numeric(NA), nrow(eta), lp,
+                     dimnames=list(dimnames(eta)[[1]],
                      paste(as.character(percentiles), "%", sep="")))
-    for(i in 1:lp) {
-        answer[,i] <- eta[,2] * (1+eta[,1] * eta[,3] *
-                        qnorm(percentiles[i]/100))^(1/eta[,1])
+    for(ii in 1:lp) {
+        answer[,ii] <- eta[,2] * (1+eta[,1] * eta[,3] *
+                        qnorm(percentiles[ii]/100))^(1/eta[,1])
     }
     answer 
 }
@@ -32,15 +33,16 @@ qtplot.lms.bcg <- function(percentiles=c(25,50,75),
 
     cc <- percentiles
     lp = length(percentiles)
-    answer <- matrix(as.numeric(NA), nrow(eta), lp, dimnames=list(dimnames(eta)[[1]],
+    answer <- matrix(as.numeric(NA), nrow(eta), lp,
+                     dimnames=list(dimnames(eta)[[1]],
                      paste(as.character(percentiles), "%", sep="")))
     lambda <- eta[,1]
     sigma <- eta[,3]
     shape <- 1 / (lambda * sigma)^2
-    for(i in 1:lp) {
-        ccc <- rep(cc[i]/100, len=nrow(eta))
-        ccc <- ifelse(lambda>0, ccc, 1-ccc)
-        answer[,i] <- eta[,2] * (qgamma(ccc, sh=shape)/shape)^(1/lambda)
+    for(ii in 1:lp) {
+        ccc <- rep(cc[ii]/100, len=nrow(eta))
+        ccc <- ifelse(lambda > 0, ccc, 1-ccc)
+        answer[,ii] <- eta[,2] * (qgamma(ccc, sh=shape)/shape)^(1/lambda)
     }
     answer 
 }
@@ -52,14 +54,15 @@ qtplot.lms.yjn <- function(percentiles=c(25,50,75),
 
     cc <- percentiles
     lp = length(percentiles)
-    answer <- matrix(as.numeric(NA), nrow(eta), lp, dimnames=list(dimnames(eta)[[1]],
+    answer <- matrix(as.numeric(NA), nrow(eta), lp,
+                     dimnames=list(dimnames(eta)[[1]],
                      paste(as.character(percentiles), "%", sep="")))
     lambda <- eta[,1]
     mu <- eta[,2]
     sigma <- eta[,3]  # Link function already taken care of above
-    for(i in 1:lp) {
-        ccc <- mu + sigma * qnorm(cc[i]/100)
-        answer[,i] <- yeo.johnson(ccc, lambda, inverse= TRUE) - yoffset
+    for(ii in 1:lp) {
+        ccc <- mu + sigma * qnorm(cc[ii]/100)
+        answer[,ii] <- yeo.johnson(ccc, lambda, inverse= TRUE) - yoffset
     }
     answer 
 }
@@ -88,9 +91,9 @@ qtplot.default <- function(object, ...) {
 
 
 qtplot.lmscreg <- function(object,
-                       newdata=NULL,
-                       percentiles=object@misc$percentiles, 
-                       plot.it= TRUE, ...) {
+                           newdata=NULL,
+                           percentiles=object@misc$percentiles,
+                           plot.it= TRUE, ...) {
 
     same <- length(percentiles) == length(object@misc$percentiles) &&
             all(percentiles==object@misc$percentiles)
@@ -109,8 +112,13 @@ qtplot.lmscreg <- function(object,
                object@predictors
         eta <- eta2theta(eta, object@misc$link) # Now lambda, mu, sigma
 
-        newcall = paste("qtplot.", object@family@vfamily[1], 
-        "(percentiles=percentiles, eta=eta, yoffset=object@misc$yoffset)", sep="")
+        if (!is.logical(expectiles <- object@misc$expectiles)) {
+            expectiles <- FALSE
+        }
+
+        newcall = paste(if (expectiles) "explot." else "qtplot.",
+                        object@family@vfamily[1], "(percentiles=percentiles",
+                        ", eta=eta, yoffset=object@misc$yoffset)", sep="")
         newcall = parse(text=newcall)[[1]]
         fitted.values = as.matrix( eval(newcall) )
         dimnames(fitted.values) <- list(dimnames(eta)[[1]],
@@ -119,9 +127,9 @@ qtplot.lmscreg <- function(object,
 
     if (plot.it) {
         plotqtplot.lmscreg(fit=fitted.values, obj=object,
-                            newdata=newdata,
-                            lp=lp,
-                            percentiles=percentiles, ...)
+                           newdata=newdata,
+                           lp=lp,
+                           percentiles=percentiles, ...)
     }
 
     list(fitted.values = fitted.values, percentiles = percentiles)
@@ -130,21 +138,21 @@ qtplot.lmscreg <- function(object,
  
 
 plotqtplot.lmscreg <- function(fitted.values, object,
-                           newdata=NULL,
-                           percentiles=object@misc$percentiles, 
-                           lp=NULL,
-                           add.arg=FALSE,
-                           y = if (length(newdata)) FALSE else TRUE,
-                           spline.fit=FALSE,
-                           label=TRUE,
-                           size.label=0.06,
-                           xlab=NULL, ylab="",
-                           pch=par()$pch, pcex=par()$cex, pcol.arg=par()$col,
-                           xlim=NULL, ylim=NULL,
-                           llty.arg=par()$lty,
-                           lcol.arg=par()$col, llwd.arg=par()$lwd,
-                           tcol.arg=par()$col, 
-                           tadj=1, ...)
+                          newdata=NULL,
+                          percentiles=object@misc$percentiles, 
+                          lp=NULL,
+                          add.arg=FALSE,
+                          y = if (length(newdata)) FALSE else TRUE,
+                          spline.fit=FALSE,
+                          label=TRUE,
+                          size.label=0.06,
+                          xlab=NULL, ylab="",
+                          pch=par()$pch, pcex=par()$cex, pcol.arg=par()$col,
+                          xlim=NULL, ylim=NULL,
+                          llty.arg=par()$lty,
+                          lcol.arg=par()$col, llwd.arg=par()$lwd,
+                          tcol.arg=par()$col, 
+                          tadj=1, ...)
 {
 
 
@@ -217,21 +225,21 @@ plotqtplot.lmscreg <- function(fitted.values, object,
     lcol.arg = rep(lcol.arg, length=lp)
     llwd.arg  = rep(llwd.arg,  length=lp)
     llty.arg  = rep(llty.arg,  length=lp)
-    for(i in 1:lp) {
-        temp <- cbind(xx, fitted.values[,i])
+    for(ii in 1:lp) {
+        temp <- cbind(xx, fitted.values[,ii])
         temp <- temp[sort.list(temp[,1]),]
         index <- !duplicated(temp[,1])
         if (spline.fit) {
             lines(spline(temp[index,1], temp[index,2]),
-                  lty=llty.arg[i], col=lcol.arg[i], err=-1, lwd=llwd.arg[i])
+                  lty=llty.arg[ii], col=lcol.arg[ii], err=-1, lwd=llwd.arg[ii])
         } else {
             lines(temp[index,1], temp[index,2],
-                  lty=llty.arg[i], col=lcol.arg[i], err=-1, lwd=llwd.arg[i])
+                  lty=llty.arg[ii], col=lcol.arg[ii], err=-1, lwd=llwd.arg[ii])
         }
         if (label)
             text(par()$usr[2], temp[nrow(temp),2],
-                 paste( percentiles[i], "%", sep=""),
-                 adj=tadj, col=tcol.arg[i], err=-1)
+                 paste( percentiles[ii], "%", sep=""),
+                 adj=tadj, col=tcol.arg[ii], err=-1)
     }
 
     invisible(fitted.values)
@@ -335,22 +343,22 @@ qtplot.gumbel <-
         return(answer)
     }
 
-    for(i in 1:(lp+mpv))
+    for(ii in 1:(lp+mpv))
     {
-        temp <- cbind(xx, fitted.values[,i])
+        temp <- cbind(xx, fitted.values[,ii])
         temp <- temp[sort.list(temp[,1]),]
         index <- !duplicated(temp[,1])
         if (spline.fit) {
             lines(spline(temp[index,1], temp[index,2]),
-                  lty=llty.arg[i], col=lcol.arg[i], lwd=llwd.arg[i])
+                  lty=llty.arg[ii], col=lcol.arg[ii], lwd=llwd.arg[ii])
         } else {
             lines(temp[index,1], temp[index,2],
-                  lty=llty.arg[i], col=lcol.arg[i], lwd=llwd.arg[i])
+                  lty=llty.arg[ii], col=lcol.arg[ii], lwd=llwd.arg[ii])
         }
         if (label) {
-            mylabel = (dimnames(answer$fitted)[[2]])[i]
+            mylabel = (dimnames(answer$fitted)[[2]])[ii]
             text(par()$usr[2], temp[nrow(temp),2],
-                 mylabel, adj=tadj, col=tcol.arg[i], err=-1)
+                 mylabel, adj=tadj, col=tcol.arg[ii], err=-1)
         }
     }
 
@@ -763,6 +771,24 @@ setMethod("rlplot",  "vglm", function(object, ...)
 
 
 
+
+
+
+
+explot.lms.bcn <- function(percentiles=c(25,50,75),
+                           eta=NULL, yoffset=0)
+{
+
+    lp = length(percentiles)
+    answer <- matrix(as.numeric(NA), nrow(eta), lp, dimnames=list(dimnames(eta)[[1]],
+                     paste(as.character(percentiles), "%", sep="")))
+    for(ii in 1:lp) {
+        answer[,ii] <- eta[,2] * (1+eta[,1] * eta[,3] *
+                        qenorm(percentiles[ii]/100))^(1/eta[,1])
+    }
+    answer 
+}
+ 
 
 
 

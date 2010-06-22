@@ -81,6 +81,7 @@ fit@y   # Sample proportions
 weights(fit, type="prior")   # Number of observations
 coef(fit, matrix=TRUE)
 constraints(fit)   # Constraint matrices
+summary(fit)
 
 # Check that the model is linear in let ----------------------
 fit2 = vgam(cbind(normal, mild, severe) ~ s(let, df=2), propodds, pneumo)

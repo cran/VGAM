@@ -40,12 +40,12 @@ cqo(formula, family, data = list(), weights = NULL, subset = NULL,
   \code{\link{gamma2}},
   \code{\link{gaussianff}}.
   Sometimes special arguments are required for \code{cqo()}, e.g.,
-  \code{binomialff(mv=TRUE)}.
+  \code{binomialff(mv = TRUE)}.
   Also, \code{\link{quasipoissonff}} and \code{\link{quasibinomialff}}
   may or may not work.
 
-% \code{negbinomial(deviance=TRUE)},
-% \code{gamma2(deviance=TRUE)}.
+% \code{negbinomial(deviance = TRUE)},
+% \code{gamma2(deviance = TRUE)}.
 
   }
   \item{data}{
@@ -99,7 +99,7 @@ cqo(formula, family, data = list(), weights = NULL, subset = NULL,
   \item{offset}{ 
   This argument must not be used.
 
-%   especially when \code{ITolerances=TRUE}.
+%   especially when \code{ITolerances = TRUE}.
 %   a vector or \eqn{M}-column matrix of offset values.
 %   These are \emph{a priori} known and are
 %   added to the linear predictors during fitting.
@@ -224,7 +224,9 @@ cqo(formula, family, data = list(), weights = NULL, subset = NULL,
   tolerances.  It can be quite good on binary data too.  Otherwise the
   \code{Cinit} argument in \code{\link{qrrvglm.control}} can be used.
 
+
   %(and negative binomial)
+
 
   It is possible to relax the quadratic form to an additive model.  The
   result is a data-driven approach rather than a model-driven approach,
@@ -236,7 +238,6 @@ cqo(formula, family, data = list(), weights = NULL, subset = NULL,
   \eqn{S} is the number of responses (species). Then
   \eqn{M=S} for Poisson and binomial species data,
   and \eqn{M=2S} for negative binomial and gamma distributed species data.
-
 
 }
 \value{
@@ -254,15 +255,18 @@ canonical Gaussian ordination.
 \emph{Ecological Monographs},
 \bold{74}, 685--701.
 
+
 ter Braak, C. J. F. and Prentice, I. C. (1988)
 A theory of gradient analysis.
 \emph{Advances in Ecological Research},
 \bold{18}, 271--317.
 
+
 %Yee, T. W. (2005)
 %On constrained and unconstrained 
 %quadratic ordination.
 %\emph{Manuscript in preparation}.
+
 
 Yee, T. W. (2006)
 Constrained additive ordination.
@@ -272,6 +276,7 @@ Constrained additive ordination.
 \author{Thomas W. Yee} 
 
 \note{
+
   By default, a rank-1 equal-tolerances QRR-VGLM model is fitted
   (see \code{\link{qrrvglm.control}} for the default control
   parameters).
@@ -280,7 +285,8 @@ Constrained additive ordination.
   By default, the argument \code{trace} is \code{TRUE} meaning a running
   log is printed out while the computations are taking place.  This is
   because the algorithm is computationally expensive, therefore users
-  might think that their computers have frozen if \code{trace=FALSE}!
+  might think that their computers have frozen if \code{trace = FALSE}!
+
 
   The argument \code{Bestof} in \code{\link{qrrvglm.control}} controls
   the number of models fitted (each uses different starting values) to
@@ -292,15 +298,17 @@ Constrained additive ordination.
   arise because the optimization problem is highly nonlinear, and this is
   particularly true for CAO.
 
+
   %Convergence of QRR-VGLMs can be difficult, especially for binary
-  %data. If this is so, then setting \code{ITolerances=TRUE} or
-  %\code{EqualTolerances=TRUE} may help, especially when the number of sites,
+  %data. If this is so, then setting \code{ITolerances = TRUE} or
+  %\code{EqualTolerances = TRUE} may help, especially when the number of sites,
   %\eqn{n}, is small.
 
   %If the negative binomial family function \code{\link{negbinomial}} is 
-  %used for \code{cqo} then set \code{negbinomial(deviance=TRUE)}
+  %used for \code{cqo} then set \code{negbinomial(deviance = TRUE)}
   %is necessary. This means to minimize the deviance, which the fast
   %algorithm can handle. 
+
 
   Many of the arguments applicable to \code{cqo} are common to
   \code{\link{vglm}} and \code{\link{rrvglm.control}}.
@@ -313,30 +321,35 @@ Constrained additive ordination.
   \code{isdlv}, and
   \code{MUXfactor}.
 
+
   When fitting a 2-parameter model such as the negative binomial
-  or gamma, it pays to set \code{EqualTolerances=TRUE} and
-  \code{ITolerances=FALSE}. This is because numerical problems can
+  or gamma, it pays to have \code{EqualTolerances = TRUE} and
+  \code{ITolerances = FALSE}. This is because numerical problems can
   occur when fitting the model far away from the global solution when
-  \code{ITolerances=TRUE}. Setting the two arguments as described will
+  \code{ITolerances = TRUE}. Setting the two arguments as described will
   slow down the computation considerably, however it is numerically
   more stable.
 
+
   In Example 1 below, an unequal-tolerances rank-1 QRR-VGLM is fitted to the
-  hunting spiders dataset.
-  In Example 2 below, an equal-tolerances rank-2 QRR-VGLM is fitted to the
+  hunting spiders dataset, and
+  Example 2 is the equal-tolerances version. The latter is less likely to
+  have convergence problems compared to the unequal-tolerances model.
+  In Example 3 below, an equal-tolerances rank-2 QRR-VGLM is fitted to the
   hunting spiders dataset.
   The numerical difficulties encountered in fitting the rank-2 model
   suggests a rank-1 model is probably preferable.
-  In Example 3 below, constrained binary quadratic ordination (in old
+  In Example 4 below, constrained binary quadratic ordination (in old
   nomenclature, constrained Gaussian logit ordination) is fitted to some
   simulated data coming from a species packing model.
-  With multivariate binary responses, one must use \code{mv=TRUE} to
+  With multivariate binary responses, one must use \code{mv = TRUE} to
   indicate that the response (matrix) is multivariate. Otherwise, it is
   interpreted as a single binary response variable.
-  In Example 4 below, the deviance residuals are plotted for each species.
+  In Example 5 below, the deviance residuals are plotted for each species.
   This is useful as a diagnostic plot.
   This is done by (re)regressing each species separately against the latent
   variable.
+
 
   Sometime in the future, this function might handle input of the form
   \code{cqo(x, y)}, where \code{x} and \code{y} are matrices containing
@@ -351,11 +364,12 @@ Constrained additive ordination.
   random number seed before calling \code{cqo} (the function
   \code{\link[base:Random]{set.seed}} does this).  The function \code{cqo}
   chooses initial values for \bold{C} using \code{.Init.Poisson.QO()}
-  if \code{Use.Init.Poisson.QO=TRUE}, else random numbers.
+  if \code{Use.Init.Poisson.QO = TRUE}, else random numbers.
 
-  Unless \code{ITolerances=TRUE} or \code{EqualTolerances=FALSE},
+
+  Unless \code{ITolerances = TRUE} or \code{EqualTolerances = FALSE},
   CQO is computationally expensive. It pays to keep the rank down to 1
-  or 2.  If \code{EqualTolerances=TRUE} and \code{ITolerances=FALSE} then
+  or 2.  If \code{EqualTolerances = TRUE} and \code{ITolerances = FALSE} then
   the cost grows quickly with the number of species and sites (in terms of
   memory requirements and time).  The data needs to conform quite closely
   to the statistical model, and the environmental range of the data should
@@ -363,6 +377,7 @@ Constrained additive ordination.
   response surfaces).  If not, RR-VGLMs will be more appropriate because
   the response is linear on the transformed scale (e.g., log or logit)
   and the ordination is called \emph{constrained linear ordination} or CLO.
+
 
   Like many regression models, CQO is sensitive to outliers (in the
   environmental and species data), sparse data, high leverage points,
@@ -374,15 +389,17 @@ Constrained additive ordination.
   be trusted.  Fitting a CAO is recommended first, then upon transformations
   etc., possibly a CQO can be fitted.
 
+
   For binary data, it is necessary to have `enough' data.  In general,
   the number of sites \eqn{n} ought to be much larger than the number of
   species \emph{S}, e.g., at least 100 sites for two species. Compared
   to count (Poisson) data, numerical problems occur more frequently
-  with presence/absence (binary) data.  For example, if \code{Rank=1}
+  with presence/absence (binary) data.  For example, if \code{Rank = 1}
   and if the response data for each species is a string of all absences,
   then all presences, then all absences (when enumerated along the latent
   variable) then infinite parameter estimates will occur.  In general,
-  setting \code{ITolerances=TRUE} may help.
+  setting \code{ITolerances = TRUE} may help.
+
 
   This function was formerly called \code{cgo}. It has been renamed to
   reinforce a new nomenclature described in Yee (2006).
@@ -410,6 +427,7 @@ Constrained additive ordination.
   \code{\link[base:Random]{set.seed}},
   \code{\link{hspider}}.
 
+
 Documentation accompanying the \pkg{VGAM} package at
 \url{http://www.stat.auckland.ac.nz/~yee}
 contains further information and examples.
@@ -418,10 +436,127 @@ contains further information and examples.
 \examples{
 # Example 1; Fit an unequal tolerances model to the hunting spiders data
 hspider[,1:6]=scale(hspider[,1:6]) # Standardize the environmental variables
+set.seed(1234) # For reproducibility of the results
+p1ut = cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,
+                 Auloalbi, Pardlugu, Pardmont, Pardnigr, Pardpull,
+                 Trocterr, Zoraspin) ~
+           WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
+           fam = poissonff, data = hspider, Crow1positive = FALSE,
+           EqualTol = FALSE)
+sort(p1ut@misc$deviance.Bestof) # A history of all the iterations
+if(deviance(p1ut) > 1177) stop("suboptimal fit obtained")
+
+\dontrun{
+S = ncol(p1ut@y) # Number of species
+clr = (1:(S+1))[-7] # Omits yellow
+lvplot(p1ut, y = TRUE, lcol=clr, pch=1:S, pcol=clr, las=1) # ordination diagram
+legend("topright", leg=colnames(p1ut@y), col=clr,
+       pch=1:S, merge = TRUE, bty="n", lty=1:S, lwd=2) }
+(cp = Coef(p1ut))
+
+(a = cp@lv[cp@lvOrder])  # The ordered site scores along the gradient
+# Names of the ordered sites along the gradient:
+rownames(cp@lv)[cp@lvOrder]
+(a = (cp@Optimum)[,cp@OptimumOrder]) # The ordered optima along the gradient
+a = a[!is.na(a)] # Delete the species that is not unimodal
+names(a)         # Names of the ordered optima along the gradient
+
+\dontrun{
+trplot(p1ut, whichSpecies=1:3, log="xy", type="b", lty=1, lwd=2,
+       col=c("blue","red","green"), label = TRUE) -> ii # trajectory plot
+legend(0.00005, 0.3, paste(ii$species[,1], ii$species[,2], sep=" and "),
+       lwd=2, lty=1, col=c("blue","red","green"))
+abline(a=0, b=1, lty="dashed")
+
+S = ncol(p1ut@y) # Number of species
+clr = (1:(S+1))[-7] # Omits yellow
+persp(p1ut, col=clr, label = TRUE, las=1) # perspective plot
+}
+
+
+# Example 2; Fit an equal tolerances model. Less numerically fraught.
 set.seed(1234)
+p1et = cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,
+                 Auloalbi, Pardlugu, Pardmont, Pardnigr, Pardpull,
+                 Trocterr, Zoraspin) ~
+           WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
+           fam = poissonff, data = hspider, Crow1positive = FALSE)
+sort(p1et@misc$deviance.Bestof) # A history of all the iterations
+if(deviance(p1et) > 1586) stop("suboptimal fit obtained")
+\dontrun{
+S = ncol(p1et@y) # Number of species
+clr = (1:(S+1))[-7] # Omits yellow
+persp(p1et, col=clr, label = TRUE, las=1) }
+
+
+# Example 3: A rank-2 equal tolerances CQO model with Poisson data
+# This example is numerically fraught... need IToler = TRUE too.
+set.seed(555)
+p2 = cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,
+               Auloalbi, Pardlugu, Pardmont, Pardnigr, Pardpull,
+               Trocterr, Zoraspin) ~
+         WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
+         fam = poissonff, data = hspider, Crow1positive = FALSE,
+         IToler = TRUE, Rank = 2, Bestof = 1, isdlv = c(2.1, 0.9))
+sort(p2@misc$deviance.Bestof) # A history of all the iterations
+if(deviance(p2) > 1127) stop("suboptimal fit obtained")
+\dontrun{
+lvplot(p2, ellips = FALSE, label = TRUE, xlim=c(-3,4),
+       C = TRUE, Ccol="brown", sites = TRUE, scol="grey", 
+       pcol="blue", pch="+", chull = TRUE, ccol="grey") }
+
+
+# Example 4: species packing model with presence/absence data
+set.seed(2345)
+n = 200; p = 5; S = 5
+mydata = rcqo(n, p, S, fam="binomial", hiabundance=4,
+              EqualTol = TRUE, ESOpt = TRUE, EqualMax = TRUE)
+myform = attr(mydata, "formula")
+set.seed(1234)
+b1et = cqo(myform, binomialff(mv = TRUE, link="cloglog"), data = mydata)
+sort(b1et@misc$deviance.Bestof) # A history of all the iterations
+\dontrun{ lvplot(b1et, y = TRUE, lcol=1:S, pch=1:S, pcol=1:S, las=1) }
+Coef(b1et)
+
+# Compare the fitted model with the 'truth'
+cbind(truth=attr(mydata, "ccoefficients"), fitted=ccoef(b1et))
+
+
+# Example 5: Plot the deviance residuals for diagnostic purposes
+set.seed(1234)
+p1et = cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,
+                 Auloalbi, Pardlugu, Pardmont, Pardnigr, Pardpull,
+                 Trocterr, Zoraspin) ~
+           WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
+           fam=poissonff, data=hspider, EqualTol = TRUE, trace = FALSE)
+sort(p1et@misc$deviance.Bestof) # A history of all the iterations
+if(deviance(p1et) > 1586) stop("suboptimal fit obtained")
+S = ncol(p1et@y)
+par(mfrow=c(3,4))
+for(ii in 1:S) {
+    tempdata = data.frame(lv1 = c(lv(p1et)), sppCounts = p1et@y[,ii])
+    tempdata = transform(tempdata, myOffset = -0.5 * lv1^2)
+
+# For species ii, refit the model to get the deviance residuals
+    fit1 = vglm(sppCounts ~ offset(myOffset) + lv1, fam=poissonff,
+                data=tempdata, trace = FALSE)
+
+# For checking: this should be 0
+    print("max(abs(c(Coef(p1et)@B1[1,ii], Coef(p1et)@A[ii,1]) - coef(fit1)))")
+    print( max(abs(c(Coef(p1et)@B1[1,ii], Coef(p1et)@A[ii,1]) - coef(fit1))) )
+
+#   # Plot the deviance residuals
+    devresid = resid(fit1, type = "deviance")
+    predvalues = predict(fit1) + fit1@offset
+    ooo = with(tempdata, order(lv1))
+\dontrun{
+    with(tempdata, plot(lv1, predvalues + devresid, col="darkgreen",
+                        xlab="lv1", ylab="", main=colnames(p1et@y)[ii]))
+    with(tempdata, lines(lv1[ooo], predvalues[ooo], col="blue")) }
+}
 }
 \keyword{models}
 \keyword{regression}
 
 %legend("topright", x=1, y=135, leg=colnames(p1ut@y), col=clr,
-%       pch=1:S, merge=TRUE, bty="n", lty=1:S, lwd=2)
+%       pch=1:S, merge = TRUE, bty="n", lty=1:S, lwd=2)

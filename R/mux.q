@@ -7,6 +7,25 @@
 mux34 <- function(xmat, cc, symmetric=FALSE)
 {
 
+
+    if (!is.matrix(xmat))
+        xmat <- as.matrix(xmat)
+    d <- dim(xmat)
+    nnn <- d[1]
+    RRR <- d[2]
+    if (length(cc) == 1) cc = matrix(cc, 1, 1)
+    if (!is.matrix(cc)) stop("'cc' is not a matrix")
+    c(dotC(name="VGAM_C_mux34", as.double(xmat), as.double(cc),
+               as.integer(nnn), as.integer(RRR),
+               as.integer(symmetric), ans=as.double(rep(0.0, nnn)),
+               NAOK=TRUE)$ans)
+}
+
+
+if(FALSE)
+mux34 <- function(xmat, cc, symmetric=FALSE)
+{
+
     if (!is.matrix(xmat))
         xmat <- as.matrix(xmat)
     d <- dim(xmat)
@@ -19,6 +38,9 @@ mux34 <- function(xmat, cc, symmetric=FALSE)
                as.integer(symmetric), ans=as.double(rep(0.0, n)),
                NAOK=TRUE)$ans)
 }
+
+
+
 
 
 mux2 <- function(cc, xmat)

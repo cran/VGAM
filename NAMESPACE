@@ -49,6 +49,7 @@ export( bs, ns, scale.default, poly )
 export(iam,
 fill, fill1, fill2, fill3,
 amh, damh, pamh, ramh, 
+bivgamma.mckay,
 freund61,
 frechet2, frechet3, dfrechet, pfrechet, qfrechet, rfrechet,
 frank, dfrank, pfrank, rfrank, 
@@ -155,6 +156,7 @@ process.binomial2.data.vgam, process.categorical.data.vgam,
 qtplot,
 qtplot.default, qtplot.gumbel, qtplot.lms.bcg,
 qtplot.lms.bcn, qtplot.lms.yjn, qtplot.lms.yjn2, qtplot.vextremes, qtplot.vglm,
+explot.lms.bcn,
 rlplot,
 rlplot.egev, rlplot.gev,
 rlplot.vextremes, rlplot.vglm,
@@ -292,10 +294,10 @@ exponential, G1G2G3)
 export(
 lgammaff, lgamma3ff)
 export(
-mckaygamma2, gammahyp,
-ggamma, gamma1, gamma2, gamma2.ab, gammaff)
+gammahyp,
+gengamma, gamma1, gamma2, gamma2.ab, gammaff)
 export(dlgamma, plgamma, qlgamma, rlgamma)
-export(dggamma, pggamma, qggamma, rggamma)
+export(dgengamma, pgengamma, qgengamma, rgengamma)
 
 
 export(
@@ -318,6 +320,13 @@ dmultinomial, multinomial, margeff)
 export(
 slash, dslash, pslash, rslash)
 
+
+export(
+deunif, peunif, qeunif, reunif,
+denorm, penorm, qenorm, renorm,
+deexp, peexp, qeexp, reexp)
+
+
 export(
 meplot, meplot.default, meplot.vlm,
 guplot, guplot.default, guplot.vlm,
@@ -335,7 +344,8 @@ rrar, rrvglm.control,
 rrvglm.optim.control)
 
 export(eta2theta, 
-rrvglm, simplex, 
+rrvglm,
+simplex, dsimplex, rsimplex, 
 sratio, s, studentt, Tol, trplot.qrrvglm,
 trplot,
 rcqo,

@@ -60,6 +60,7 @@ freund61(la="loge", lap="loge", lb="loge", lbp="loge", ia=NULL, iap=NULL,
   of the \eqn{B}  component from \eqn{\beta}{beta} to
   \eqn{\beta'}{beta'}.
   
+  
   The joint probability density function is given by
   \deqn{f(y_1,y_2) = \alpha \beta' \exp(-\beta' y_2 - 
                       (\alpha+\beta-\beta')y_1) }{%
@@ -87,6 +88,7 @@ freund61(la="loge", lap="loge", lb="loge", lbp="loge", ia=NULL, iap=NULL,
   and \eqn{\alpha/(\alpha+\beta)}{alpha/(alpha+beta)}
   respectively.
 
+  
   The marginal distributions are, in general, not exponential.
   By default, the linear/additive predictors are
   \eqn{\eta_1=\log(\alpha)}{eta1=log(alpha)},
@@ -94,6 +96,7 @@ freund61(la="loge", lap="loge", lb="loge", lbp="loge", ia=NULL, iap=NULL,
   \eqn{\eta_3=\log(\beta)}{eta3=log(beta)},
   \eqn{\eta_4=\log(\beta')}{eta4=log(beta')}.
 
+  
   A special case is when \eqn{\alpha=\alpha'}{alpha=alpha'}
   and \eqn{\beta=\beta'}{beta'=beta'}, which means that
   \eqn{y_1}{y1} and \eqn{y_2}{y2} are independent, and
@@ -101,6 +104,7 @@ freund61(la="loge", lap="loge", lb="loge", lbp="loge", ia=NULL, iap=NULL,
   \eqn{1 / \alpha}{1/alpha} and \eqn{1 / \beta}{1/beta}
   respectively.
 
+  
   Fisher scoring is used,
   and the initial values correspond to the MLEs of an intercept model.
   Consequently, convergence may take only one iteration.

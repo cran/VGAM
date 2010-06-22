@@ -11,9 +11,9 @@ rrvglm.control(Rank = 1, Algorithm = c("alternating", "derivative"),
     Corner = TRUE, Uncorrelated.lv = FALSE, Wmat = NULL, Svd.arg = FALSE, 
     Index.corner = if (length(Structural.zero)) 
     head((1:1000)[-Structural.zero], Rank) else 1:Rank,
-    Alpha = 0.5, Bestof = 1, Cinit = NULL,
+    Ainit = NULL, Alpha = 0.5, Bestof = 1, Cinit = NULL,
     Etamat.colmax = 10,
-    SD.Cinit = 0.02, Structural.zero = NULL,
+    SD.Ainit = 0.02, SD.Cinit = 0.02, Structural.zero = NULL,
     Norrr = ~1, trace = FALSE, Use.Init.Poisson.QO = FALSE, 
     checkwz = TRUE, wzepsilon = .Machine$double.eps^0.75, ...)
 }
@@ -83,9 +83,9 @@ rrvglm.control(Rank = 1, Algorithm = c("alternating", "derivative"),
     i.e., when \bold{C} is \emph{not} passed in as initial values.
 
   }
-  \item{Cinit}{
-    Initial \bold{C} matrix which may speed up convergence.
-    It must be of the correct dimension.
+  \item{Ainit, Cinit}{
+    Initial \bold{A} and \bold{C} matrices which may speed up convergence.
+    They must be of the correct dimension.
 
   }
   \item{Etamat.colmax}{
@@ -106,19 +106,23 @@ rrvglm.control(Rank = 1, Algorithm = c("alternating", "derivative"),
       Integer vector specifying which rows
       of the constraint matrices are to be all zeros.
   }
-  \item{SD.Cinit}{
+  \item{SD.Ainit, SD.Cinit}{
       Standard deviation of the initial values for the elements
-      of \bold{C}.
+      of \bold{A} and \bold{C}.
       These are normally distributed with mean zero.  
       This argument is used only if \code{Use.Init.Poisson.QO = FALSE}.
+
   }
 % \item{ppar}{ Ignore this. }
   \item{Norrr}{
-    Formula giving terms that are not to be included in the reduced-rank
-    regression. These variables constitute the \eqn{\bold{B}_1}{\bold{B}1}
-    matrix in the Yee and Hastie paper.  Those variables which
-    are subject to the reduced-rank regression correspond to the
-    \eqn{\bold{B}_2}{\bold{B}2} matrix.
+    Formula giving terms that are \emph{not} to be included
+    in the reduced-rank regression. These variables constitute
+    the \eqn{\bold{B}_1}{\bold{B}1} matrix in the Yee and Hastie
+    paper.  Those variables which are subject to the reduced-rank
+    regression correspond to the \eqn{\bold{B}_2}{\bold{B}2}
+    matrix.
+    Set \code{Norrr = NULL} for the reduced-rank regression to
+    be applied to every explanatory variable including the intercept.
 
   }
   \item{trace}{

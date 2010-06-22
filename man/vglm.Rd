@@ -68,17 +68,25 @@ vglm(formula, family, data = list(), weights = NULL, subset = NULL,
   }
   \item{etastart}{
   starting values for the linear predictors.
-  It is a \eqn{M}-column matrix. If \eqn{M=1} then it may be a vector.
+  It is a \eqn{M}-column matrix with the same number of rows as the response.
+  If \eqn{M=1} then it may be a vector.
+  Note that \code{etastart} and the output of \code{predict(fit)}
+  should be comparable.
+  Here, \code{fit} is the fitted object.
 
   }
   \item{mustart}{
-  starting values for the 
-  fitted values. It can be a vector or a matrix. 
+  starting values for the fitted values.
+  It can be a vector or a matrix;
+  if a matrix, then it has the same number of rows as the response.
+  Usually \code{mustart} and the output of \code{fitted(fit)}
+  should be comparable.
   Some family functions do not make use of this argument.
 
   }
   \item{coefstart}{
   starting values for the coefficient vector.
+  The length and order must match that of \code{coef(fit)}.
 
   }
   \item{control}{
@@ -87,8 +95,9 @@ vglm(formula, family, data = list(), weights = NULL, subset = NULL,
 
   }
   \item{offset}{
-   a vector or \eqn{M}-column matrix of offset values.  These are \emph{a
-   priori} known and are added to the linear predictors during fitting.
+   a vector or \eqn{M}-column matrix of offset values.
+   These are \emph{a priori} known and are added to the linear predictors
+   during fitting.
 
   }
   \item{method}{
@@ -178,9 +187,10 @@ vglm(formula, family, data = list(), weights = NULL, subset = NULL,
   \eqn{\eta=(\eta_1,\ldots,\eta_M)^T}{eta=(eta_1,\ldots,\eta_M)^T}
   as a vector of linear predictors.
 
+
   Most users will find \code{vglm} similar in flavour to
-  \code{\link[stats]{glm}}.  The function \code{vglm.fit} actually does
-  the work.
+  \code{\link[stats]{glm}}.
+  The function \code{vglm.fit} actually does the work.
 
 % If more than one of \code{etastart}, \code{start} and \code{mustart}
 % is specified, the first in the list will be used.
@@ -285,6 +295,7 @@ The \code{VGAM} Package.
   A third step is to make use of arguments such as \code{etastart},
   \code{coefstart} and \code{mustart}.
 
+
   Some \pkg{VGAM} family functions end in \code{"ff"} to avoid
   interference with other functions, e.g., \code{\link{binomialff}},
   \code{\link{poissonff}}, \code{\link{gaussianff}},
@@ -293,12 +304,15 @@ The \code{VGAM} Package.
   (and also \code{\link[gam]{gam}} in the \pkg{gam} library and
   \code{\link[mgcv]{gam}} in the \pkg{mgcv} library).
 
+
   The smart prediction (\code{\link{smartpred}}) library is incorporated
   within the \pkg{VGAM} library.
+
 
   The theory behind the scaling parameter is currently being made more
   rigorous, but it it should give the same value as the scale parameter
   for GLMs.
+
 
   In Example 5 below, the \code{xij} argument to illustrate covariates
   that are specific to a linear predictor. Here, \code{lop}/\code{rop} are
@@ -310,6 +324,7 @@ The \code{VGAM} Package.
   and
   \code{\link{fill}}
   for more details and examples.
+
 
 }
 
@@ -330,6 +345,7 @@ The \code{VGAM} Package.
   \code{summary.vglm},
   \code{AIC.vglm},
   etc.
+
 }
 
 \examples{

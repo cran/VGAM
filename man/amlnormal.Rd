@@ -131,6 +131,7 @@ amlnormal(w.aml = 1, parallel = FALSE, lexpectile = "identity",
   \code{\link{amlexponential}},
   \code{\link{bminz}},
   \code{\link{alaplace1}},
+  \code{\link{denorm}},
   \code{\link{lms.bcn}} and similar variants are alternative
   methods for quantile regression.
 

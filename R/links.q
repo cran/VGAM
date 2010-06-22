@@ -147,7 +147,7 @@ loglog <- function(theta, earg=list(), inverse=FALSE, deriv=0,
     if (!inverse && is.list(earg) && length(earg$bval))
         theta[theta <= 1.0] <- earg$bval
     if (inverse) {
-        if (deriv>0) {
+        if (deriv > 0) {
             1 / Recall(theta=theta, earg=earg, inverse=FALSE, deriv=deriv)
         } else {
             exp(exp(theta))
@@ -182,7 +182,7 @@ cloglog <- function(theta, earg=list(), inverse=FALSE, deriv=0,
         theta[theta >= 1.0] <- 1.0 - earg$bval
     }
     if (inverse) {
-        if (deriv>0) {
+        if (deriv > 0) {
             1 / Recall(theta=theta, earg=earg, inverse=FALSE, deriv=deriv)
         } else {
             junk <- exp(theta)
@@ -218,7 +218,7 @@ probit <- function(theta, earg=list(), inverse=FALSE, deriv=0,
         theta[theta >= 1.0] <- 1-earg$bval
     }
     if (inverse) {
-        if (deriv>0) {
+        if (deriv > 0) {
             1/Recall(theta=theta, earg=earg, inverse=FALSE, deriv=deriv)
         } else {
             ans <- pnorm(theta)
@@ -227,7 +227,7 @@ probit <- function(theta, earg=list(), inverse=FALSE, deriv=0,
             ans
         }
     } else {
-        switch(deriv+1,{
+        switch(deriv+1, {
             ans <- qnorm(theta)
             if (is.matrix(theta))
                 dim(ans) <- dim(theta)
@@ -276,7 +276,7 @@ loge <- function(theta, earg=list(), inverse=FALSE, deriv=0,
     if (!inverse && is.list(earg) && length(earg$bval))
         theta[theta <= 0.0] <- earg$bval
     if (inverse) {
-        if (deriv>0) {
+        if (deriv > 0) {
             1/Recall(theta=theta, earg=earg, inverse=FALSE, deriv=deriv)
         } else {
             exp(theta)
@@ -302,7 +302,7 @@ identity <- function(theta, earg=list(), inverse=FALSE, deriv=0,
         return(string)
     }
     if (inverse) {
-        if (deriv>0) {
+        if (deriv > 0) {
             1 / Recall(theta=theta, earg=earg, inverse=FALSE, deriv=deriv)
         } else {
             theta
@@ -325,7 +325,7 @@ nidentity <- function(theta, earg=list(), inverse=FALSE, deriv=0,
         return(string)
     }
     if (inverse) {
-        if (deriv>0) {
+        if (deriv > 0) {
             1 / Recall(theta=theta, earg=earg, inverse=FALSE, deriv=deriv)
         } else {
             -theta
@@ -351,13 +351,13 @@ reciprocal <- function(theta, earg=list(), inverse.arg=FALSE, deriv=0,
     if (!inverse.arg && is.list(earg) && length(earg$bval))
         theta[theta == 0.0] <- earg$bval
     if (inverse.arg) {
-        if (deriv>0) {
+        if (deriv > 0) {
             1 / Recall(theta=theta, earg=earg, inverse.arg=FALSE, deriv=deriv)
         } else {
             1/theta
         }
     } else {
-        switch(deriv+1,{
+        switch(deriv+1, {
            1/theta},
            -theta^2,
            2*theta^3)
@@ -379,7 +379,7 @@ nloge <- function(theta, earg=list(), inverse=FALSE, deriv=0,
     if (!inverse && is.list(earg) && length(earg$bval))
         theta[theta <= 0.0] <- earg$bval
     if (inverse) {
-        if (deriv>0) {
+        if (deriv > 0) {
             1/Recall(theta=theta, earg=earg, inverse=FALSE, deriv=deriv)
         } else {
             exp(-theta)
@@ -406,7 +406,7 @@ nreciprocal <- function(theta, earg=list(), inverse.arg=FALSE, deriv=0,
     if (!inverse.arg && is.list(earg) && length(earg$bval))
         theta[theta == 0.0] <- earg$bval
     if (inverse.arg) {
-        if (deriv>0) {
+        if (deriv > 0) {
             1 / nreciprocal(theta, earg=earg, inverse.arg=FALSE, deriv)
         } else {
             -1/theta
@@ -431,7 +431,7 @@ natural.ig <- function(theta, earg=list(), inverse=FALSE, deriv=0,
         return(string)
     }
     if (inverse) {
-        if (deriv>0) {
+        if (deriv > 0) {
             1 / nreciprocal(theta, earg=earg, inverse=FALSE, deriv)
         } else {
             1/ sqrt(-2*theta)
@@ -468,14 +468,14 @@ rhobit <- function(theta, earg=list(), inverse=FALSE, deriv=0,
     }
 
     if (inverse) {
-        if (deriv>0) {
+        if (deriv > 0) {
             1/Recall(theta=theta, earg=earg, inverse=FALSE, deriv=deriv)
         } else {
             junk <- exp(theta)
             expm1(theta) / (junk+1.0)
         }
     } else {
-        switch(deriv+1,{
+        switch(deriv+1, {
             log1p(theta) - log1p(-theta)},
             (1 - theta^2) / 2,
             (1 - theta^2)^2 / (4*theta))
@@ -504,7 +504,7 @@ fisherz <- function(theta, earg=list(), inverse=FALSE, deriv=0,
     }
 
     if (inverse) {
-        if (deriv>0) {
+        if (deriv > 0) {
             1/Recall(theta=theta, earg=earg, inverse=FALSE, deriv=deriv)
         } else {
             junk <- exp(2*theta)
@@ -548,7 +548,7 @@ fsqrt <- function(theta, earg=list(min=0, max=1, mux=sqrt(2)),
     }
 
     if (inverse) {
-        if (deriv>0) {
+        if (deriv > 0) {
             1/Recall(theta=theta, earg=earg, inverse=FALSE, deriv=deriv)
         } else {
             mid = (min + max) / 2
@@ -595,7 +595,7 @@ powl <- function(theta, earg=list(power=1), inverse=FALSE, deriv=0,
         return(string)
     }
     if (inverse) {
-        if (deriv>0) {
+        if (deriv > 0) {
             1/Recall(theta=theta, earg=earg, inverse=FALSE, deriv=deriv)
         } else {
             theta^(1/exponent)
@@ -641,7 +641,7 @@ elogit <- function(theta, earg=list(min=0, max=1), inverse=FALSE, deriv=0,
         return(string)
     }
     if (inverse) {
-        if (deriv>0) {
+        if (deriv > 0) {
             1/Recall(theta=theta, earg=earg, inverse=FALSE, deriv=deriv)
         } else {
             junk <- if (is.R()) care.exp(theta) else care.exp(theta)
@@ -675,7 +675,7 @@ elogit <- function(theta, earg=list(min=0, max=1), inverse=FALSE, deriv=0,
         theta[theta >= 1.0] <- 1.0 - earg$bval;
     }
     if (inverse) {
-        if (deriv>0) {
+        if (deriv > 0) {
             1/Recall(theta=theta, earg=earg, inverse=FALSE, deriv=deriv)
         } else {
             eta <- care.exp(theta)
@@ -711,13 +711,13 @@ logc <- function(theta, earg=list(), inverse=FALSE, deriv=0,
         theta[theta >= 1.0] <- earg$bval;
     }
     if (inverse) {
-        if (deriv>0) {
+        if (deriv > 0) {
             1 / Recall(theta=theta, earg=earg, inverse=FALSE, deriv=deriv)
         } else {
             -expm1(theta)
         }
     } else {
-        switch(deriv+1,{
+        switch(deriv+1, {
             log1p(-theta)},
            -(1.0 - theta),
            -(1.0 - theta)^2)
@@ -748,7 +748,7 @@ logoff <- function(theta, earg=list(offset=0), inverse=FALSE, deriv=0,
         return(string)
     }
     if (inverse) {
-        if (deriv>0) {
+        if (deriv > 0) {
             1/Recall(theta=theta, earg=earg, inverse=FALSE, deriv=deriv)
         } else {
             exp(theta) - offset
@@ -778,7 +778,7 @@ nlogoff <- function(theta, earg=0, inverse=FALSE, deriv=0,
         return(string)
     }
     if (inverse) {
-        if (deriv>0) {
+        if (deriv > 0) {
             1/Recall(theta=theta, earg=earg, inverse=FALSE, deriv=deriv)
         } else {
             offset - exp(theta)
@@ -810,7 +810,7 @@ cauchit <- function(theta, earg=list(bvalue= .Machine$double.eps),
         theta[theta >= 1.0] <- 1.0 - earg$bval
     }
     if (inverse) {
-        if (deriv>0) {
+        if (deriv > 0) {
             1/Recall(theta=theta, earg=earg, inverse=FALSE, deriv=deriv)
         } else {
             0.5 + atan(theta)/pi 
@@ -887,7 +887,7 @@ golf <- function(theta, earg=list(lambda=1), inverse=FALSE, deriv=0,
 
     answer =
     if (inverse) {
-        if (deriv>0) {
+        if (deriv > 0) {
             1 / Recall(theta=theta, earg=earg, inverse=FALSE, deriv=deriv)
         } else {
             if (is.Numeric(cutpoint)) {
@@ -905,7 +905,7 @@ golf <- function(theta, earg=list(lambda=1), inverse=FALSE, deriv=0,
         switch(deriv+1, {
             temp = Ql / (3*sqrt(lambda))
             temp = pmin(temp, 1.0 - smallno)  # 100 / .Machine$double.eps
-            -3*log(1-temp) + if (is.Numeric(cutpoint)) log(cutpoint) else 0},
+            -3*log1p(-temp) + if (is.Numeric(cutpoint)) log(cutpoint) else 0},
             (1 - Ql / (3*sqrt(lambda))) * sqrt(lambda) * dnorm(Ql),
             {  stop('cannot handle deriv=2') },
             stop("'deriv' unmatched"))
@@ -955,7 +955,7 @@ polf <- function(theta, earg=stop("'earg' must be given"),
 
     answer =
     if (inverse) {
-        if (deriv>0) {
+        if (deriv > 0) {
             1 / Recall(theta=theta, earg=earg, inverse=FALSE, deriv=deriv)
         } else {
             if (cutpoint == 0) {
@@ -1039,7 +1039,7 @@ nbolf <- function(theta, earg=stop("'earg' must be given"),
 
     answer =
     if (inverse) {
-        if (deriv>0) {
+        if (deriv > 0) {
             1 / Recall(theta=theta, earg=earg, inverse=FALSE, deriv=deriv)
         } else {
             if (cutpoint == 0) {
@@ -1133,7 +1133,7 @@ nbolf2 <- function(theta, earg=stop("'earg' must be given"),
 
     answer =
     if (inverse) {
-        if (deriv>0) {
+        if (deriv > 0) {
             1 / Recall(theta=theta, earg=earg, inverse=FALSE, deriv=deriv)
         } else {
             if (cutpoint == 0) {

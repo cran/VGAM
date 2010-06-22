@@ -6,10 +6,11 @@
   Fits a vector cubic smoothing spline.
 }
 \usage{
-vsmooth.spline(x, y, w, df = rep(5, M), spar = NULL, all.knots = FALSE,
+vsmooth.spline(x, y, w = NULL, df = rep(5, M), spar = NULL, all.knots = FALSE,
                iconstraint = diag(M), xconstraint = diag(M), 
                constraints = list("(Intercepts)" = diag(M), x = diag(M)), 
-               tol.nl = 0.01, var.arg = FALSE, scale.w = TRUE, nk = NULL)
+               var.arg = FALSE, scale.w = TRUE, nk = NULL,
+               control.spar = list())
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -94,11 +95,6 @@ intercept and \code{x} respectively. They must both be a
 \code{M}-row constraint matrix with full column rank.
 
 }
-  \item{tol.nl}{ Tolerance for testing nonlinearity for the
-component functions. If \code{df} is within \code{tol.nl} of
-2 then the function is treated as linear.
-
-}
   \item{var.arg}{ Logical: return the pointwise variances 
 of the fit?
 Currently, this corresponds only to the nonlinear part of the
@@ -116,6 +112,10 @@ If used, this argument overrides \code{all.knots}, and
 must lie between 6 and \code{n}+2 inclusive.
 
 }
+  \item{control.spar}{
+See \code{\link[stats]{smooth.spline}}.
+
+}
 }
 \details{
   The algorithm implemented is detailed in Yee (2000). 
@@ -129,6 +129,7 @@ must lie between 6 and \code{n}+2 inclusive.
 \value{
   An object of class \code{"vsmooth.spline"} (see
 \code{vsmooth.spline-class}).
+
 }
 \references{
 Yee, T. W. (2000)
@@ -141,13 +142,15 @@ Heidelberg: Physica-Verlag.
 }
 \author{ Thomas W. Yee }
 \note{
-  This function is quite similar to \code{\link[stats]{smooth.spline}}.
-  For \code{M=1}, the results will be generally different, mainly due to
-  the different way the knots are selected.
+  This function is quite similar to \code{\link[stats]{smooth.spline}}
+  but offers less functionality.
+  For example, cross validation is not implemented here.
+  For \code{M = 1}, the results will be generally different,
+  mainly due to the different way the knots are selected.
 
   The vector cubic smoothing spline which \code{s()} represents is
-  computationally demanding for large \eqn{M}. The cost is approximately
-  \eqn{O(M^3)}.
+  computationally demanding for large \eqn{M}.
+  The cost is approximately \eqn{O(M^3)}.
 
   Yet to be done: return the \emph{unscaled} smoothing parameters.
 
@@ -160,18 +163,18 @@ Heidelberg: Physica-Verlag.
 \code{iam},
 \code{\link[VGAM]{s}},
 \code{\link[stats]{smooth.spline}}.
+
 }
 \examples{
-n = 20
-x = 2 + 5*(n:1)/n
+nn = 20; x = 2 + 5*(nn:1)/nn
 x[2:4] = x[5:7]      # Allow duplication
-y1 = sin(x) + rnorm(n, sd=0.13)
-y2 = cos(x) + rnorm(n, sd=0.13)
-y3 = 1 + sin(x) + rnorm(n, sd=0.13)  # Run this for constraints
+y1 = sin(x) + rnorm(nn, sd=0.13)
+y2 = cos(x) + rnorm(nn, sd=0.13)
+y3 = 1 + sin(x) + rnorm(nn, sd=0.13) # Run this for constraints
 y = cbind(y1, y2, y3)
-ww = cbind(rep(3,n), 4, (1:n)/n)
+ww = cbind(rep(3,nn), 4, (1:nn)/nn)
 
-(fit = vsmooth.spline(x, y, w=ww, df=5))
+(fit = vsmooth.spline(x, y, w = ww, df = 5))
 \dontrun{
 plot(fit) # The 1st and 3rd functions do not differ by a constant
 }
@@ -180,20 +183,17 @@ mat = matrix(c(1,0,1, 0,1,0), 3, 2)
 (fit2 = vsmooth.spline(x, y, w=ww, df=5, iconstr=mat, xconstr=mat))
 # The 1st and 3rd functions do differ by a constant:
 mycols = c("red","blue","red")
-\dontrun{
-plot(fit2, lcol=mycols, pcol=mycols, las=1)
-}
+\dontrun{ plot(fit2, lcol=mycols, pcol=mycols, las=1) }
 
 p = predict(fit, x=fit@x, deriv=0)
 max(abs(fit@y - with(p, y))) # Should be zero
 
 par(mfrow=c(3,1))
-ux = seq(1, 8, len=100)
+ux = seq(1, 8, len = 100)
 for(d in 1:3) {
-    p = predict(fit, x=ux, deriv=d)
-\dontrun{
-    with(p, matplot(x, y, type="l", main=paste("deriv =", d), lwd=2))
-}
+    p = predict(fit, x=ux, deriv = d)
+\dontrun{with(p, matplot(x, y, type="l", main=paste("deriv =", d), lwd=2,
+                         ylab="", cex.axis=1.5, cex.lab=1.5, cex.main=1.5))}
 }
 }
 \keyword{regression}

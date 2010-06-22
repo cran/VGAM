@@ -4,18 +4,20 @@
 
 
 
-rrvglm.control = function(Rank=1, 
-                          Algorithm=c("alternating", "derivative"),
+rrvglm.control = function(Rank = 1,
+                          Algorithm = c("alternating", "derivative"),
                           Corner=TRUE,
                           Uncorrelated.lv=FALSE,
                           Wmat=NULL,
                           Svd.arg=FALSE,
                           Index.corner = if (length(Structural.zero)) 
                           head((1:1000)[-Structural.zero], Rank) else 1:Rank,
+                          Ainit=NULL,
                           Alpha=0.5, 
                           Bestof = 1,
                           Cinit=NULL,
                           Etamat.colmax = 10,
+                          SD.Ainit = 0.02,
                           SD.Cinit = 0.02,
                           Structural.zero = NULL,
                           Norrr = ~ 1, 
@@ -41,6 +43,8 @@ rrvglm.control = function(Rank=1,
         stop("bad input for 'Alpha'")
     if (!is.Numeric(Bestof, posit=TRUE, allow=1, integer=TRUE))
         stop("bad input for 'Bestof'")
+    if (!is.Numeric(SD.Ainit, posit=TRUE, allow=1))
+        stop("bad input for 'SD.Ainit'")
     if (!is.Numeric(SD.Cinit, posit=TRUE, allow=1))
         stop("bad input for 'SD.Cinit'")
     if (!is.Numeric(Etamat.colmax, posit=TRUE, allow=1) || Etamat.colmax < Rank)
@@ -76,6 +80,9 @@ rrvglm.control = function(Rank=1,
     if (!is.Numeric(wzepsilon, allow=1, positive=TRUE))
         stop("bad input for 'wzepsilon'")
 
+    if (class(Norrr) != "formula" && !is.null(Norrr))
+        stop("argument 'Norrr' should be a formula or a NULL")
+
     ans =
     c(vglm.control(trace = trace, ...),
       switch(Algorithm,
@@ -83,6 +90,7 @@ rrvglm.control = function(Rank=1,
              "derivative" = if (is.R()) rrvglm.optim.control(...) else
                                 nlminbcontrol(...)),
       list(Rank=Rank,
+           Ainit=Ainit,
            Algorithm=Algorithm,
            Alpha=Alpha,
            Bestof = Bestof,
@@ -92,6 +100,7 @@ rrvglm.control = function(Rank=1,
            Corner=Corner, Uncorrelated.lv=Uncorrelated.lv, Wmat=Wmat,
            OptimizeWrtC = TRUE, # OptimizeWrtC,
            Quadratic = FALSE,   # A constant now, here.
+           SD.Ainit = SD.Ainit,
            SD.Cinit = SD.Cinit,
            Etamat.colmax = Etamat.colmax,
            Structural.zero = Structural.zero,

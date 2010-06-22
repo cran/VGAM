@@ -70,19 +70,8 @@ vgam(formula, family, data = list(), weights = NULL, subset = NULL,
   The ``factory-fresh'' default is \code{na.omit}.
 
   }
-  \item{etastart}{
-  starting values for the linear/additive predictors.
-  It is a \eqn{M}-column matrix. If \eqn{M=1} then it may be a vector.
-
-  }
-  \item{mustart}{
-  starting values for the
-  fitted values. It can be a vector or a matrix.
-  Some family functions do not make use of this argument.
-
-  }
-  \item{coefstart}{
-  starting values for the coefficient vector.
+  \item{etastart, mustart, coefstart}{
+  Same as for \code{\link{vglm}}.
 
   }
   \item{control}{

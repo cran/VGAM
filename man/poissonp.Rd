@@ -59,6 +59,7 @@ poissonp(ostatistic, dimension=2, link="loge", earg=list(),
   \eqn{u=1,2,\ldots}{u=1,2,...}.  Here, \eqn{u} corresponds to the
   argument \code{ostatistic}.
 
+
   Similarly, suppose the number of points in any volume \eqn{V} is a
   Poisson random variable with mean
   \eqn{\lambda V}{lambda*V} where, once again, \eqn{\lambda}{lambda}
@@ -66,6 +67,7 @@ poissonp(ostatistic, dimension=2, link="loge", earg=list(),
   This \pkg{VGAM} family function estimates \eqn{\lambda}{lambda} by
   specifying the argument \code{ostatistic} and using
   \code{dimension=3}.
+
 
   The mean of \eqn{D_u} is returned as the fitted values.
   Newton-Raphson is the same as Fisher-scoring.

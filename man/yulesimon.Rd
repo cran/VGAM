@@ -32,7 +32,8 @@ yulesimon(link="loge", earg=list(), irho=NULL, nsimEIM=200)
     The probability function is
     \deqn{f(y;\rho) = rho*beta(y,rho+1),}{%
           f(y;rho) = rho*beta(y,rho+1),}
-    where the parameter \eqn{\rho>0}{rho>0}
+    where the parameter \eqn{\rho>0}{rho>0},
+    \eqn{beta} is the \code{\link[base]{beta}} function,
     and \eqn{y=1,2,\ldots}{y=1,2,...}.
     The function \code{\link{dyules}} computes this probability function.
     The mean of \eqn{Y}, which is returned as fitted values, is

@@ -1,576 +1,597 @@
-      subroutine qh4ulb(zqve1l, vvl1li, lku8xq)
+      subroutine qpsedg8xf(tgiyxdw1, dufozmt7, wy1vqfzu)
       implicit logical (a-z)
-      integer lku8xq, zqve1l(1), vvl1li(1)
-      integer xi1mqb, i1nkrb, w3gohz
-      w3gohz = 1
-      xi1mqb = lku8xq
-23000 if(.not.(xi1mqb.ge.1))goto 23002
-      do 23003 i1nkrb=1,xi1mqb 
-      zqve1l(w3gohz) = i1nkrb
-      w3gohz = w3gohz+1
+      integer wy1vqfzu, tgiyxdw1(1), dufozmt7(1)
+      integer urohxe6t, bpvaqm5z, ayfnwr1v
+      ayfnwr1v = 1
+      urohxe6t = wy1vqfzu
+23000 if(.not.(urohxe6t.ge.1))goto 23002
+      do 23003 bpvaqm5z=1,urohxe6t 
+      tgiyxdw1(ayfnwr1v) = bpvaqm5z
+      ayfnwr1v = ayfnwr1v+1
 23003 continue
-       xi1mqb=xi1mqb-1
+       urohxe6t=urohxe6t-1
       goto 23000
 23002 continue
-      w3gohz = 1
-      do 23005 xi1mqb=1,lku8xq 
-      do 23007 i1nkrb=xi1mqb,lku8xq 
-      vvl1li(w3gohz) = i1nkrb
-      w3gohz = w3gohz+1
+      ayfnwr1v = 1
+      do 23005 urohxe6t=1,wy1vqfzu 
+      do 23007 bpvaqm5z=urohxe6t,wy1vqfzu 
+      dufozmt7(ayfnwr1v) = bpvaqm5z
+      ayfnwr1v = ayfnwr1v+1
 23007 continue
 23005 continue
       return
       end
-      integer function viamf(s17te9, xl6qgm, lku8xq, zqve1l, vvl1li)
-      integer s17te9, xl6qgm, lku8xq, zqve1l(1), vvl1li(1)
-      integer xi1mqb, j0qwtz
-      j0qwtz = lku8xq*(lku8xq+1)/2
-      do 23009 xi1mqb=1,j0qwtz 
-      if(.not.((zqve1l(xi1mqb).eq.s17te9 .and. vvl1li(xi1mqb).eq.xl6qgm)
-     & .or.(zqve1l(xi1mqb).eq.xl6qgm .and. vvl1li(xi1mqb).eq.s17te9)))
-     &goto 23011
-      viamf = xi1mqb
+      integer function viamf(cz8qdfyj, rvy1fpli, wy1vqfzu, tgiyxdw1, 
+     &dufozmt7)
+      integer cz8qdfyj, rvy1fpli, wy1vqfzu, tgiyxdw1(1), dufozmt7(1)
+      integer urohxe6t, imk5wjxg
+      imk5wjxg = wy1vqfzu*(wy1vqfzu+1)/2
+      do 23009 urohxe6t=1,imk5wjxg 
+      if(.not.((tgiyxdw1(urohxe6t).eq.cz8qdfyj .and. dufozmt7(urohxe6t)
+     &.eq.rvy1fpli) .or.(tgiyxdw1(urohxe6t).eq.rvy1fpli .and. dufozmt7(
+     &urohxe6t).eq.cz8qdfyj)))goto 23011
+      viamf = urohxe6t
       return
 23011 continue
 23009 continue
       viamf = 0
       return
       end
-      subroutine vm2af(mat, a, p1yjqz, zqve1l, vvl1li, nfiumb4, lku8xq, 
-     &teola6)
+      subroutine vm2af(mat, a, dimm, tgiyxdw1, dufozmt7, kuzxj1lo, 
+     &wy1vqfzu, upper)
       implicit logical (a-z)
-      integer p1yjqz, zqve1l(p1yjqz), vvl1li(p1yjqz), nfiumb4, lku8xq, 
-     &teola6
-      double precision mat(p1yjqz,nfiumb4), a(lku8xq,lku8xq,nfiumb4)
-      integer w3gohz, d9rjek, nd6mep, j0qwtz
-      j0qwtz = lku8xq * (lku8xq + 1) / 2
-      if(.not.(teola6 .eq. 1 .or. p1yjqz .ne. j0qwtz))goto 23013
-      w3gohz = 1
-23015 if(.not.(w3gohz.le.nfiumb4))goto 23017
-      d9rjek = 1
-23018 if(.not.(d9rjek.le.lku8xq))goto 23020
-      nd6mep = 1
-23021 if(.not.(nd6mep.le.lku8xq))goto 23023
-      a(nd6mep,d9rjek,w3gohz) = 0.0d0
-       nd6mep=nd6mep+1
+      integer dimm, tgiyxdw1(dimm), dufozmt7(dimm), kuzxj1lo, wy1vqfzu, 
+     &upper
+      double precision mat(dimm,kuzxj1lo), a(wy1vqfzu,wy1vqfzu,kuzxj1lo)
+      integer ayfnwr1v, yq6lorbx, gp1jxzuh, imk5wjxg
+      imk5wjxg = wy1vqfzu * (wy1vqfzu + 1) / 2
+      if(.not.(upper .eq. 1 .or. dimm .ne. imk5wjxg))goto 23013
+      ayfnwr1v = 1
+23015 if(.not.(ayfnwr1v.le.kuzxj1lo))goto 23017
+      yq6lorbx = 1
+23018 if(.not.(yq6lorbx.le.wy1vqfzu))goto 23020
+      gp1jxzuh = 1
+23021 if(.not.(gp1jxzuh.le.wy1vqfzu))goto 23023
+      a(gp1jxzuh,yq6lorbx,ayfnwr1v) = 0.0d0
+       gp1jxzuh=gp1jxzuh+1
       goto 23021
 23023 continue
-       d9rjek=d9rjek+1
+       yq6lorbx=yq6lorbx+1
       goto 23018
 23020 continue
-       w3gohz=w3gohz+1
+       ayfnwr1v=ayfnwr1v+1
       goto 23015
 23017 continue
 23013 continue
-      do 23024 w3gohz=1,nfiumb4 
-      do 23026 d9rjek=1,p1yjqz 
-      a(zqve1l(d9rjek),vvl1li(d9rjek),w3gohz) = mat(d9rjek,w3gohz)
-      if(.not.(teola6 .eq. 0))goto 23028
-      a(vvl1li(d9rjek),zqve1l(d9rjek),w3gohz) = mat(d9rjek,w3gohz)
+      do 23024 ayfnwr1v=1,kuzxj1lo 
+      do 23026 yq6lorbx=1,dimm 
+      a(tgiyxdw1(yq6lorbx),dufozmt7(yq6lorbx),ayfnwr1v) = mat(yq6lorbx,
+     &ayfnwr1v)
+      if(.not.(upper .eq. 0))goto 23028
+      a(dufozmt7(yq6lorbx),tgiyxdw1(yq6lorbx),ayfnwr1v) = mat(yq6lorbx,
+     &ayfnwr1v)
 23028 continue
 23026 continue
 23024 continue
       return
       end
-      subroutine mux22f(jrxg6l, jmwo0z, ghry8z, zkjqhi, zqve1l, vvl1li, 
-     &nfiumb4, lku8xq, mbd8lk)
+      subroutine nudh6szqf(wpuarq2m, tlgduey8, lfu2qhid, dimu, tgiyxdw1,
+     & dufozmt7, kuzxj1lo, wy1vqfzu, wk1200)
       implicit logical (a-z)
-      integer zkjqhi, zqve1l(1), vvl1li(1), nfiumb4, lku8xq
-      double precision jrxg6l(zkjqhi,nfiumb4), jmwo0z(nfiumb4,lku8xq), 
-     &ghry8z(lku8xq,nfiumb4), mbd8lk(lku8xq,lku8xq)
-      double precision qnk4zf
-      integer w3gohz, d9rjek, i1nkrb, one, teola6
+      integer dimu, tgiyxdw1(1), dufozmt7(1), kuzxj1lo, wy1vqfzu
+      double precision wpuarq2m(dimu,kuzxj1lo), tlgduey8(kuzxj1lo,
+     &wy1vqfzu), lfu2qhid(wy1vqfzu,kuzxj1lo), wk1200(wy1vqfzu,wy1vqfzu)
+      double precision q6zdcwxk
+      integer ayfnwr1v, yq6lorbx, bpvaqm5z, one, upper
       one = 1
-      teola6 = 1
-      w3gohz = 1
-23030 if(.not.(w3gohz.le.nfiumb4))goto 23032
-      call vm2af(jrxg6l(1,w3gohz), mbd8lk, zkjqhi, zqve1l, vvl1li, one, 
-     &lku8xq, teola6)
-      d9rjek = 1
-23033 if(.not.(d9rjek.le.lku8xq))goto 23035
-      qnk4zf = 0.0d0
-      i1nkrb = d9rjek
-23036 if(.not.(i1nkrb.le.lku8xq))goto 23038
-      qnk4zf = qnk4zf + mbd8lk(d9rjek,i1nkrb) * jmwo0z(w3gohz,i1nkrb)
-       i1nkrb=i1nkrb+1
+      upper = 1
+      ayfnwr1v = 1
+23030 if(.not.(ayfnwr1v.le.kuzxj1lo))goto 23032
+      call vm2af(wpuarq2m(1,ayfnwr1v), wk1200, dimu, tgiyxdw1, dufozmt7,
+     & one, wy1vqfzu, upper)
+      yq6lorbx = 1
+23033 if(.not.(yq6lorbx.le.wy1vqfzu))goto 23035
+      q6zdcwxk = 0.0d0
+      bpvaqm5z = yq6lorbx
+23036 if(.not.(bpvaqm5z.le.wy1vqfzu))goto 23038
+      q6zdcwxk = q6zdcwxk + wk1200(yq6lorbx,bpvaqm5z) * tlgduey8(
+     &ayfnwr1v,bpvaqm5z)
+       bpvaqm5z=bpvaqm5z+1
       goto 23036
 23038 continue
-      ghry8z(d9rjek,w3gohz) = qnk4zf
-       d9rjek=d9rjek+1
+      lfu2qhid(yq6lorbx,ayfnwr1v) = q6zdcwxk
+       yq6lorbx=yq6lorbx+1
       goto 23033
 23035 continue
-       w3gohz=w3gohz+1
+       ayfnwr1v=ayfnwr1v+1
       goto 23030
 23032 continue
       return
       end
-      subroutine vbksf(jrxg6l, yg1jzv, lku8xq, nfiumb4, mbd8lk, zqve1l, 
-     &vvl1li, zkjqhi)
+      subroutine vbksf(wpuarq2m, bvecto, wy1vqfzu, kuzxj1lo, wk1200, 
+     &tgiyxdw1, dufozmt7, dimu)
       implicit logical (a-z)
-      integer lku8xq, nfiumb4, zqve1l, vvl1li, zkjqhi
-      double precision jrxg6l(zkjqhi,nfiumb4), yg1jzv(lku8xq,nfiumb4), 
-     &mbd8lk(lku8xq,lku8xq)
-      double precision qnk4zf
-      integer w3gohz, d9rjek, nd6mep, teola6, one
-      teola6 = 1
+      integer wy1vqfzu, kuzxj1lo, tgiyxdw1(1), dufozmt7(1), dimu
+      double precision wpuarq2m(dimu,kuzxj1lo), bvecto(wy1vqfzu,
+     &kuzxj1lo), wk1200(wy1vqfzu,wy1vqfzu)
+      double precision q6zdcwxk
+      integer ayfnwr1v, yq6lorbx, gp1jxzuh, upper, one
+      upper = 1
       one = 1
-      w3gohz = 1
-23039 if(.not.(w3gohz.le.nfiumb4))goto 23041
-      call vm2af(jrxg6l(1,w3gohz), mbd8lk, zkjqhi, zqve1l, vvl1li, one, 
-     &lku8xq, teola6)
-      d9rjek = lku8xq
-23042 if(.not.(d9rjek.ge.1))goto 23044
-      qnk4zf = yg1jzv(d9rjek,w3gohz)
-      nd6mep = d9rjek+1
-23045 if(.not.(nd6mep.le.lku8xq))goto 23047
-      qnk4zf = qnk4zf - mbd8lk(d9rjek,nd6mep) * yg1jzv(nd6mep,w3gohz)
-       nd6mep=nd6mep+1
+      ayfnwr1v = 1
+23039 if(.not.(ayfnwr1v.le.kuzxj1lo))goto 23041
+      call vm2af(wpuarq2m(1,ayfnwr1v), wk1200, dimu, tgiyxdw1, dufozmt7,
+     & one, wy1vqfzu, upper)
+      yq6lorbx = wy1vqfzu
+23042 if(.not.(yq6lorbx.ge.1))goto 23044
+      q6zdcwxk = bvecto(yq6lorbx,ayfnwr1v)
+      gp1jxzuh = yq6lorbx+1
+23045 if(.not.(gp1jxzuh.le.wy1vqfzu))goto 23047
+      q6zdcwxk = q6zdcwxk - wk1200(yq6lorbx,gp1jxzuh) * bvecto(gp1jxzuh,
+     &ayfnwr1v)
+       gp1jxzuh=gp1jxzuh+1
       goto 23045
 23047 continue
-      yg1jzv(d9rjek,w3gohz) = qnk4zf / mbd8lk(d9rjek,d9rjek)
-       d9rjek=d9rjek-1
+      bvecto(yq6lorbx,ayfnwr1v) = q6zdcwxk / wk1200(yq6lorbx,yq6lorbx)
+       yq6lorbx=yq6lorbx-1
       goto 23042
 23044 continue
-       w3gohz=w3gohz+1
+       ayfnwr1v=ayfnwr1v+1
       goto 23039
 23041 continue
       return
       end
-      subroutine vcholf(w8xfic, yg1jzv, lku8xq, c4uxow, ex7hfo)
+      subroutine vcholf(wmat, bvecto, wy1vqfzu, dvhw1ulq, isolve)
       implicit logical (a-z)
-      integer ex7hfo
-      integer lku8xq, c4uxow
-      double precision w8xfic(lku8xq,lku8xq), yg1jzv(lku8xq)
-      double precision qnk4zf, dsqrt
-      integer w3gohz, d9rjek, nd6mep
-      c4uxow=1
-      do 23048 w3gohz=1,lku8xq
-      qnk4zf = 0d0
-      do 23050 nd6mep=1,w3gohz-1 
-      qnk4zf = qnk4zf + w8xfic(nd6mep,w3gohz) * w8xfic(nd6mep,w3gohz)
+      integer isolve
+      integer wy1vqfzu, dvhw1ulq
+      double precision wmat(wy1vqfzu,wy1vqfzu), bvecto(wy1vqfzu)
+      double precision q6zdcwxk, dsqrt
+      integer ayfnwr1v, yq6lorbx, gp1jxzuh
+      dvhw1ulq=1
+      do 23048 ayfnwr1v=1,wy1vqfzu
+      q6zdcwxk = 0d0
+      do 23050 gp1jxzuh=1,ayfnwr1v-1 
+      q6zdcwxk = q6zdcwxk + wmat(gp1jxzuh,ayfnwr1v) * wmat(gp1jxzuh,
+     &ayfnwr1v)
 23050 continue
-      w8xfic(w3gohz,w3gohz) = w8xfic(w3gohz,w3gohz) - qnk4zf
-      if(.not.(w8xfic(w3gohz,w3gohz) .le. 0d0))goto 23052
-      c4uxow = 0
+      wmat(ayfnwr1v,ayfnwr1v) = wmat(ayfnwr1v,ayfnwr1v) - q6zdcwxk
+      if(.not.(wmat(ayfnwr1v,ayfnwr1v) .le. 0d0))goto 23052
+      dvhw1ulq = 0
       return
 23052 continue
-      w8xfic(w3gohz,w3gohz) = dsqrt(w8xfic(w3gohz,w3gohz))
-      do 23054 d9rjek=w3gohz+1,lku8xq
-      qnk4zf = 0d0
-      do 23056 nd6mep=1,w3gohz-1 
-      qnk4zf = qnk4zf + w8xfic(nd6mep,w3gohz) * w8xfic(nd6mep,d9rjek)
+      wmat(ayfnwr1v,ayfnwr1v) = dsqrt(wmat(ayfnwr1v,ayfnwr1v))
+      do 23054 yq6lorbx=ayfnwr1v+1,wy1vqfzu
+      q6zdcwxk = 0d0
+      do 23056 gp1jxzuh=1,ayfnwr1v-1 
+      q6zdcwxk = q6zdcwxk + wmat(gp1jxzuh,ayfnwr1v) * wmat(gp1jxzuh,
+     &yq6lorbx)
 23056 continue
-      w8xfic(w3gohz,d9rjek) = (w8xfic(w3gohz,d9rjek) - qnk4zf) / w8xfic(
-     &w3gohz,w3gohz)
+      wmat(ayfnwr1v,yq6lorbx) = (wmat(ayfnwr1v,yq6lorbx) - q6zdcwxk) / 
+     &wmat(ayfnwr1v,ayfnwr1v)
 23054 continue
 23048 continue
-      if(.not.(ex7hfo .eq. 0))goto 23058
-      do 23060 w3gohz=2,lku8xq 
-      do 23062 d9rjek=1,w3gohz-1 
-      w8xfic(w3gohz,d9rjek) = 0.0d0
+      if(.not.(isolve .eq. 0))goto 23058
+      do 23060 ayfnwr1v=2,wy1vqfzu 
+      do 23062 yq6lorbx=1,ayfnwr1v-1 
+      wmat(ayfnwr1v,yq6lorbx) = 0.0d0
 23062 continue
       return
 23060 continue
 23058 continue
-      do 23064 d9rjek=1,lku8xq 
-      qnk4zf = yg1jzv(d9rjek)
-      do 23066 nd6mep=1,d9rjek-1 
-      qnk4zf = qnk4zf - w8xfic(nd6mep,d9rjek) * yg1jzv(nd6mep)
+      do 23064 yq6lorbx=1,wy1vqfzu 
+      q6zdcwxk = bvecto(yq6lorbx)
+      do 23066 gp1jxzuh=1,yq6lorbx-1 
+      q6zdcwxk = q6zdcwxk - wmat(gp1jxzuh,yq6lorbx) * bvecto(gp1jxzuh)
 23066 continue
-      yg1jzv(d9rjek) = qnk4zf / w8xfic(d9rjek,d9rjek)
+      bvecto(yq6lorbx) = q6zdcwxk / wmat(yq6lorbx,yq6lorbx)
 23064 continue
-      d9rjek = lku8xq
-23068 if(.not.(d9rjek.ge.1))goto 23070
-      qnk4zf = yg1jzv(d9rjek)
-      nd6mep = d9rjek+1
-23071 if(.not.(nd6mep.le.lku8xq))goto 23073
-      qnk4zf = qnk4zf - w8xfic(d9rjek,nd6mep) * yg1jzv(nd6mep)
-       nd6mep=nd6mep+1
+      yq6lorbx = wy1vqfzu
+23068 if(.not.(yq6lorbx.ge.1))goto 23070
+      q6zdcwxk = bvecto(yq6lorbx)
+      gp1jxzuh = yq6lorbx+1
+23071 if(.not.(gp1jxzuh.le.wy1vqfzu))goto 23073
+      q6zdcwxk = q6zdcwxk - wmat(yq6lorbx,gp1jxzuh) * bvecto(gp1jxzuh)
+       gp1jxzuh=gp1jxzuh+1
       goto 23071
 23073 continue
-      yg1jzv(d9rjek) = qnk4zf / w8xfic(d9rjek,d9rjek)
-       d9rjek=d9rjek-1
+      bvecto(yq6lorbx) = q6zdcwxk / wmat(yq6lorbx,yq6lorbx)
+       yq6lorbx=yq6lorbx-1
       goto 23068
 23070 continue
       return
       end
-      subroutine mux17f(jrxg6l, p3vlea, lku8xq, o9ljyn, nfiumb4, mbd8lk,
-     & cm6nof, zqve1l, vvl1li, zkjqhi, c4bdmu)
+      subroutine mxrbkut0f(wpuarq2m, he7mqnvy, wy1vqfzu, xjc4ywlh, 
+     &kuzxj1lo, wk1200, wk3400, tgiyxdw1, dufozmt7, dimu, rutyk8mg)
       implicit logical (a-z)
-      integer zkjqhi, lku8xq, o9ljyn, nfiumb4, zqve1l(1), vvl1li(1), 
-     &c4bdmu
-      double precision jrxg6l(zkjqhi,nfiumb4), p3vlea(c4bdmu,o9ljyn), 
-     &mbd8lk(lku8xq,lku8xq), cm6nof(lku8xq,o9ljyn)
-      double precision qnk4zf
-      integer w3gohz, d9rjek, nd6mep, i1nkrb
-      do 23074 d9rjek=1,lku8xq 
-      do 23076 w3gohz=1,lku8xq 
-      mbd8lk(w3gohz,d9rjek) = 0.0d0
+      integer dimu, wy1vqfzu, xjc4ywlh, kuzxj1lo, tgiyxdw1(1), dufozmt7(
+     &1), rutyk8mg
+      double precision wpuarq2m(dimu,kuzxj1lo), he7mqnvy(rutyk8mg,
+     &xjc4ywlh), wk1200(wy1vqfzu,wy1vqfzu), wk3400(wy1vqfzu,xjc4ywlh)
+      double precision q6zdcwxk
+      integer ayfnwr1v, yq6lorbx, gp1jxzuh, bpvaqm5z
+      do 23074 yq6lorbx=1,wy1vqfzu 
+      do 23076 ayfnwr1v=1,wy1vqfzu 
+      wk1200(ayfnwr1v,yq6lorbx) = 0.0d0
 23076 continue
 23074 continue
-      do 23078 w3gohz=1,nfiumb4 
-      do 23080 i1nkrb=1,zkjqhi 
-      mbd8lk(zqve1l(i1nkrb), vvl1li(i1nkrb)) = jrxg6l(i1nkrb,w3gohz)
+      do 23078 ayfnwr1v=1,kuzxj1lo 
+      do 23080 bpvaqm5z=1,dimu 
+      wk1200(tgiyxdw1(bpvaqm5z), dufozmt7(bpvaqm5z)) = wpuarq2m(
+     &bpvaqm5z,ayfnwr1v)
 23080 continue
-      do 23082 nd6mep=1,o9ljyn 
-      do 23084 d9rjek=1,lku8xq 
-      cm6nof(d9rjek,nd6mep) = p3vlea((w3gohz-1)*lku8xq+d9rjek,nd6mep)
+      do 23082 gp1jxzuh=1,xjc4ywlh 
+      do 23084 yq6lorbx=1,wy1vqfzu 
+      wk3400(yq6lorbx,gp1jxzuh) = he7mqnvy((ayfnwr1v-1)*wy1vqfzu+
+     &yq6lorbx,gp1jxzuh)
 23084 continue
 23082 continue
-      do 23086 nd6mep=1,o9ljyn 
-      do 23088 d9rjek=1,lku8xq 
-      qnk4zf = 0d0
-      do 23090 i1nkrb=d9rjek,lku8xq 
-      qnk4zf = qnk4zf + mbd8lk(d9rjek,i1nkrb) * cm6nof(i1nkrb,nd6mep)
+      do 23086 gp1jxzuh=1,xjc4ywlh 
+      do 23088 yq6lorbx=1,wy1vqfzu 
+      q6zdcwxk = 0d0
+      do 23090 bpvaqm5z=yq6lorbx,wy1vqfzu 
+      q6zdcwxk = q6zdcwxk + wk1200(yq6lorbx,bpvaqm5z) * wk3400(bpvaqm5z,
+     &gp1jxzuh)
 23090 continue
-      p3vlea((w3gohz-1)*lku8xq+d9rjek,nd6mep) = qnk4zf
+      he7mqnvy((ayfnwr1v-1)*wy1vqfzu+yq6lorbx,gp1jxzuh) = q6zdcwxk
 23088 continue
 23086 continue
 23078 continue
       return
       end
-      subroutine vrinvf9(jrxg6l, ldr, lku8xq, c4uxow, ku0goz, bgu6fw)
+      subroutine vrinvf9(wpuarq2m, ldr, wy1vqfzu, dvhw1ulq, ks3wejcv, 
+     &work)
       implicit logical (a-z)
-      integer ldr, lku8xq, c4uxow
-      double precision jrxg6l(ldr,lku8xq), ku0goz(lku8xq,lku8xq), 
-     &bgu6fw(lku8xq,lku8xq)
-      double precision qnk4zf
-      integer d9rjek, nd6mep, col, mavy5hmod
-      c4uxow = 1
-      d9rjek = 1
-23092 if(.not.(d9rjek.le.lku8xq))goto 23094
+      integer ldr, wy1vqfzu, dvhw1ulq
+      double precision wpuarq2m(ldr,wy1vqfzu), ks3wejcv(wy1vqfzu,
+     &wy1vqfzu), work(wy1vqfzu,wy1vqfzu)
+      double precision q6zdcwxk
+      integer yq6lorbx, gp1jxzuh, col, uaoynef0
+      dvhw1ulq = 1
+      yq6lorbx = 1
+23092 if(.not.(yq6lorbx.le.wy1vqfzu))goto 23094
       col = 1
-23095 if(.not.(col.le.lku8xq))goto 23097
-      bgu6fw(d9rjek,col) = 0.0d0
+23095 if(.not.(col.le.wy1vqfzu))goto 23097
+      work(yq6lorbx,col) = 0.0d0
        col=col+1
       goto 23095
 23097 continue
-       d9rjek=d9rjek+1
+       yq6lorbx=yq6lorbx+1
       goto 23092
 23094 continue
       col = 1
-23098 if(.not.(col.le.lku8xq))goto 23100
-      d9rjek = col
-23101 if(.not.(d9rjek.ge.1))goto 23103
-      if(.not.(d9rjek .eq. col))goto 23104
-      qnk4zf = 1.0d0
+23098 if(.not.(col.le.wy1vqfzu))goto 23100
+      yq6lorbx = col
+23101 if(.not.(yq6lorbx.ge.1))goto 23103
+      if(.not.(yq6lorbx .eq. col))goto 23104
+      q6zdcwxk = 1.0d0
       goto 23105
 23104 continue
-      qnk4zf = 0.0d0
+      q6zdcwxk = 0.0d0
 23105 continue
-      nd6mep = d9rjek+1
-23106 if(.not.(nd6mep.le.col))goto 23108
-      qnk4zf = qnk4zf - jrxg6l(d9rjek,nd6mep) * bgu6fw(nd6mep,col)
-       nd6mep=nd6mep+1
+      gp1jxzuh = yq6lorbx+1
+23106 if(.not.(gp1jxzuh.le.col))goto 23108
+      q6zdcwxk = q6zdcwxk - wpuarq2m(yq6lorbx,gp1jxzuh) * work(gp1jxzuh,
+     &col)
+       gp1jxzuh=gp1jxzuh+1
       goto 23106
 23108 continue
-      if(.not.(jrxg6l(d9rjek,d9rjek) .eq. 0.0d0))goto 23109
-      c4uxow = 0
+      if(.not.(wpuarq2m(yq6lorbx,yq6lorbx) .eq. 0.0d0))goto 23109
+      dvhw1ulq = 0
       goto 23110
 23109 continue
-      bgu6fw(d9rjek,col) = qnk4zf / jrxg6l(d9rjek,d9rjek)
+      work(yq6lorbx,col) = q6zdcwxk / wpuarq2m(yq6lorbx,yq6lorbx)
 23110 continue
-       d9rjek=d9rjek-1
+       yq6lorbx=yq6lorbx-1
       goto 23101
 23103 continue
        col=col+1
       goto 23098
 23100 continue
-      d9rjek = 1
-23111 if(.not.(d9rjek.le.lku8xq))goto 23113
-      col = d9rjek
-23114 if(.not.(col.le.lku8xq))goto 23116
-      if(.not.(d9rjek .lt. col))goto 23117
-      mavy5hmod = col
+      yq6lorbx = 1
+23111 if(.not.(yq6lorbx.le.wy1vqfzu))goto 23113
+      col = yq6lorbx
+23114 if(.not.(col.le.wy1vqfzu))goto 23116
+      if(.not.(yq6lorbx .lt. col))goto 23117
+      uaoynef0 = col
       goto 23118
 23117 continue
-      mavy5hmod = d9rjek
+      uaoynef0 = yq6lorbx
 23118 continue
-      qnk4zf = 0.0d0
-      nd6mep = mavy5hmod
-23119 if(.not.(nd6mep.le.lku8xq))goto 23121
-      qnk4zf = qnk4zf + bgu6fw(d9rjek,nd6mep) * bgu6fw(col,nd6mep)
-       nd6mep=nd6mep+1
+      q6zdcwxk = 0.0d0
+      gp1jxzuh = uaoynef0
+23119 if(.not.(gp1jxzuh.le.wy1vqfzu))goto 23121
+      q6zdcwxk = q6zdcwxk + work(yq6lorbx,gp1jxzuh) * work(col,gp1jxzuh)
+       gp1jxzuh=gp1jxzuh+1
       goto 23119
 23121 continue
-      ku0goz(d9rjek,col) = qnk4zf
-      ku0goz(col,d9rjek) = qnk4zf
+      ks3wejcv(yq6lorbx,col) = q6zdcwxk
+      ks3wejcv(col,yq6lorbx) = q6zdcwxk
        col=col+1
       goto 23114
 23116 continue
-       d9rjek=d9rjek+1
+       yq6lorbx=yq6lorbx+1
       goto 23111
 23113 continue
       return
       end
-      subroutine atez9d(xx, ghry8z)
+      subroutine tldz5ion(xx, lfu2qhid)
       implicit logical (a-z)
-      double precision xx, ghry8z
-      double precision x, y, j0izmn, qnk4zf, mu4ygk(6)
-      integer d9rjek
-      mu4ygk(1)= 76.18009172947146d0
-      mu4ygk(2)= -86.50532032941677d0
-      mu4ygk(3)= 24.01409824083091d0
-      mu4ygk(4)= -1.231739572450155d0
-      mu4ygk(5)= 0.1208650973866179d-2
-      mu4ygk(6)= -0.5395239384953d-5
+      double precision xx, lfu2qhid
+      double precision x, y, hofjnx2e, q6zdcwxk, xd4mybgj(6)
+      integer yq6lorbx
+      xd4mybgj(1)= 76.18009172947146d0
+      xd4mybgj(2)= -86.50532032941677d0
+      xd4mybgj(3)= 24.01409824083091d0
+      xd4mybgj(4)= -1.231739572450155d0
+      xd4mybgj(5)= 0.1208650973866179d-2
+      xd4mybgj(6)= -0.5395239384953d-5
       x = xx
       y = xx
-      j0izmn = x+5.50d0
-      j0izmn = j0izmn - (x+0.50d0) * dlog(j0izmn)
-      qnk4zf=1.000000000190015d0
-      d9rjek=1
-23122 if(.not.(d9rjek.le.6))goto 23124
+      hofjnx2e = x+5.50d0
+      hofjnx2e = hofjnx2e - (x+0.50d0) * dlog(hofjnx2e)
+      q6zdcwxk=1.000000000190015d0
+      yq6lorbx=1
+23122 if(.not.(yq6lorbx.le.6))goto 23124
       y = y + 1.0d0
-      qnk4zf = qnk4zf + mu4ygk(d9rjek)/y
-       d9rjek=d9rjek+1
+      q6zdcwxk = q6zdcwxk + xd4mybgj(yq6lorbx)/y
+       yq6lorbx=yq6lorbx+1
       goto 23122
 23124 continue
-      ghry8z = -j0izmn + dlog(2.5066282746310005d0 * qnk4zf / x)
+      lfu2qhid = -hofjnx2e + dlog(2.5066282746310005d0 * q6zdcwxk / x)
       return
       end
-      subroutine enbin9(qe3jcd, gq815b, xkcm3b, ogq67o, n, c4uxow, 
-     &lzgs0f, hmr3dx, jftq1, nh2qxl)
+      subroutine enbin9(bzmd6ftv, hdqsx7bk, nm0eljqk, n2kersmx, n, 
+     &dvhw1ulq, zy1mchbf, ux3nadiw, rsynp1go, sguwj9ty)
       implicit logical (a-z)
-      integer n, c4uxow, lzgs0f, nh2qxl
-      double precision qe3jcd(n, lzgs0f), gq815b(n, lzgs0f), xkcm3b(n, 
-     &lzgs0f), ogq67o, hmr3dx, jftq1
-      integer w3gohz, myx3od
-      double precision nh5zwa, pohw8d, ydb, dyb3po1, qbca1x, pvl5mc, 
-     &pdjzm4, rxe0so, epx9jf, qnk4zf, scnrp6
-      real yogfz6
-      if(.not.(ogq67o .le. 0.80d0 .or. ogq67o .ge. 1.0d0))goto 23125
-      c4uxow = 0
+      integer n, dvhw1ulq, zy1mchbf, sguwj9ty
+      double precision bzmd6ftv(n, zy1mchbf), hdqsx7bk(n, zy1mchbf), 
+     &nm0eljqk(n, zy1mchbf), n2kersmx, ux3nadiw, rsynp1go
+      integer ayfnwr1v, kij0gwer
+      double precision oxjgzv0e, btiehdm2, ydb, vjz5sxty, esql7umk, 
+     &pvcjl2na, mwuvskg1, ft3ijqmy, hmayv1xt, q6zdcwxk, plo6hkdr
+      real csi9ydge
+      if(.not.(n2kersmx .le. 0.80d0 .or. n2kersmx .ge. 1.0d0))goto 23125
+      dvhw1ulq = 0
       return
 23125 continue
-      pohw8d = 100.0d0 * jftq1
-      nh5zwa = 0.001d0
-      c4uxow = 1
-      myx3od=1
-23127 if(.not.(myx3od.le.lzgs0f))goto 23129
-      w3gohz=1
-23130 if(.not.(w3gohz.le.n))goto 23132
-      dyb3po1 = xkcm3b(w3gohz,myx3od) / gq815b(w3gohz,myx3od)
-      if(.not.((dyb3po1 .lt. nh5zwa) .or. (xkcm3b(w3gohz,myx3od) .gt. 1.
-     &0d5)))goto 23133
-      qe3jcd(w3gohz,myx3od) = -xkcm3b(w3gohz,myx3od) * (1.0d0 + gq815b(
-     &w3gohz,myx3od)/(gq815b(w3gohz,myx3od) + xkcm3b(w3gohz,myx3od))) / 
-     &gq815b(w3gohz,myx3od)**2
-      if(.not.(qe3jcd(w3gohz,myx3od) .gt. -pohw8d))goto 23135
-      qe3jcd(w3gohz,myx3od) = -pohw8d
+      btiehdm2 = 100.0d0 * rsynp1go
+      oxjgzv0e = 0.001d0
+      dvhw1ulq = 1
+      kij0gwer=1
+23127 if(.not.(kij0gwer.le.zy1mchbf))goto 23129
+      ayfnwr1v=1
+23130 if(.not.(ayfnwr1v.le.n))goto 23132
+      vjz5sxty = nm0eljqk(ayfnwr1v,kij0gwer) / hdqsx7bk(ayfnwr1v,
+     &kij0gwer)
+      if(.not.((vjz5sxty .lt. oxjgzv0e) .or. (nm0eljqk(ayfnwr1v,
+     &kij0gwer) .gt. 1.0d5)))goto 23133
+      bzmd6ftv(ayfnwr1v,kij0gwer) = -nm0eljqk(ayfnwr1v,kij0gwer) * (1.
+     &0d0 + hdqsx7bk(ayfnwr1v,kij0gwer)/(hdqsx7bk(ayfnwr1v,kij0gwer) + 
+     &nm0eljqk(ayfnwr1v,kij0gwer))) / hdqsx7bk(ayfnwr1v,kij0gwer)**2
+      if(.not.(bzmd6ftv(ayfnwr1v,kij0gwer) .gt. -btiehdm2))goto 23135
+      bzmd6ftv(ayfnwr1v,kij0gwer) = -btiehdm2
 23135 continue
       goto 20
 23133 continue
-      qnk4zf = 0.0d0
-      pvl5mc = gq815b(w3gohz,myx3od) / (gq815b(w3gohz,myx3od) + xkcm3b(
-     &w3gohz,myx3od))
-      pdjzm4 = 1.0d0 - pvl5mc
-      yogfz6 = gq815b(w3gohz,myx3od)
-      if(.not.(pvl5mc .lt. pohw8d))goto 23137
-      pvl5mc = pohw8d
+      q6zdcwxk = 0.0d0
+      pvcjl2na = hdqsx7bk(ayfnwr1v,kij0gwer) / (hdqsx7bk(ayfnwr1v,
+     &kij0gwer) + nm0eljqk(ayfnwr1v,kij0gwer))
+      mwuvskg1 = 1.0d0 - pvcjl2na
+      csi9ydge = hdqsx7bk(ayfnwr1v,kij0gwer)
+      if(.not.(pvcjl2na .lt. btiehdm2))goto 23137
+      pvcjl2na = btiehdm2
 23137 continue
-      if(.not.(pdjzm4 .lt. pohw8d))goto 23139
-      pdjzm4 = pohw8d
+      if(.not.(mwuvskg1 .lt. btiehdm2))goto 23139
+      mwuvskg1 = btiehdm2
 23139 continue
-      qbca1x = 100.0d0 + 15.0d0 * xkcm3b(w3gohz,myx3od)
-      if(.not.(qbca1x .lt. nh2qxl))goto 23141
-      qbca1x = nh2qxl
+      esql7umk = 100.0d0 + 15.0d0 * nm0eljqk(ayfnwr1v,kij0gwer)
+      if(.not.(esql7umk .lt. sguwj9ty))goto 23141
+      esql7umk = sguwj9ty
 23141 continue
-      rxe0so = pvl5mc ** yogfz6
-      hmr3dx = rxe0so
-      scnrp6 = (1.0d0 - hmr3dx) / gq815b(w3gohz,myx3od)**2
-      qnk4zf = qnk4zf + scnrp6
+      ft3ijqmy = pvcjl2na ** csi9ydge
+      ux3nadiw = ft3ijqmy
+      plo6hkdr = (1.0d0 - ux3nadiw) / hdqsx7bk(ayfnwr1v,kij0gwer)**2
+      q6zdcwxk = q6zdcwxk + plo6hkdr
       ydb = 1.0d0
-      rxe0so = gq815b(w3gohz,myx3od) * pdjzm4 * rxe0so
-      hmr3dx = hmr3dx + rxe0so
-      scnrp6 = (1.0d0 - hmr3dx) / (gq815b(w3gohz,myx3od) + ydb)**2
-      qnk4zf = qnk4zf + scnrp6
+      ft3ijqmy = hdqsx7bk(ayfnwr1v,kij0gwer) * mwuvskg1 * ft3ijqmy
+      ux3nadiw = ux3nadiw + ft3ijqmy
+      plo6hkdr = (1.0d0 - ux3nadiw) / (hdqsx7bk(ayfnwr1v,kij0gwer) + 
+     &ydb)**2
+      q6zdcwxk = q6zdcwxk + plo6hkdr
       ydb = 2.0d0
-23143 if(.not.(((hmr3dx .le. ogq67o) .or. (scnrp6 .gt. 1.0d-4)) .and.(
-     &ydb .lt. qbca1x)))goto 23144
-      rxe0so = (gq815b(w3gohz,myx3od) - 1.0d0 + ydb) * pdjzm4 * rxe0so /
-     & ydb
-      hmr3dx = hmr3dx + rxe0so
-      scnrp6 = (1.0d0 - hmr3dx) / (gq815b(w3gohz,myx3od) + ydb)**2
-      qnk4zf = qnk4zf + scnrp6
+23143 if(.not.(((ux3nadiw .le. n2kersmx) .or. (plo6hkdr .gt. 1.0d-4)) .
+     &and.(ydb .lt. esql7umk)))goto 23144
+      ft3ijqmy = (hdqsx7bk(ayfnwr1v,kij0gwer) - 1.0d0 + ydb) * mwuvskg1 
+     &* ft3ijqmy / ydb
+      ux3nadiw = ux3nadiw + ft3ijqmy
+      plo6hkdr = (1.0d0 - ux3nadiw) / (hdqsx7bk(ayfnwr1v,kij0gwer) + 
+     &ydb)**2
+      q6zdcwxk = q6zdcwxk + plo6hkdr
       ydb = ydb + 1.0d0
       goto 23143
 23144 continue
-      qe3jcd(w3gohz,myx3od) = -qnk4zf
-20    epx9jf = 0.0d0
-       w3gohz=w3gohz+1
+      bzmd6ftv(ayfnwr1v,kij0gwer) = -q6zdcwxk
+20    hmayv1xt = 0.0d0
+       ayfnwr1v=ayfnwr1v+1
       goto 23130
 23132 continue
-       myx3od=myx3od+1
+       kij0gwer=kij0gwer+1
       goto 23127
 23129 continue
       return
       end
-      subroutine enbin8(qe3jcd, gq815b, ncrb2f, ogq67o, nfiumb4, c4uxow,
-     & lzgs0f, hmr3dx, jftq1)
+      subroutine enbin8(bzmd6ftv, hdqsx7bk, hsj9bzaq, n2kersmx, 
+     &kuzxj1lo, dvhw1ulq, zy1mchbf, ux3nadiw, rsynp1go)
       implicit logical (a-z)
-      integer nfiumb4, c4uxow, lzgs0f
-      double precision qe3jcd(nfiumb4, lzgs0f), gq815b(nfiumb4, lzgs0f),
-     & ncrb2f(nfiumb4, lzgs0f), ogq67o, hmr3dx, jftq1
-      integer w3gohz, myx3od, qbca1x
-      double precision rxe0so, mw6reg, xkwp2m, xndw5e, qnk4zf, d1, d2, 
-     &scnrp6, onemeps
+      integer kuzxj1lo, dvhw1ulq, zy1mchbf
+      double precision bzmd6ftv(kuzxj1lo, zy1mchbf), hdqsx7bk(kuzxj1lo, 
+     &zy1mchbf), hsj9bzaq(kuzxj1lo, zy1mchbf), n2kersmx, ux3nadiw, 
+     &rsynp1go
+      integer ayfnwr1v, kij0gwer, esql7umk
+      double precision ft3ijqmy, tad5vhsu, o3jyipdf, pq0hfucn, q6zdcwxk,
+     & d1, d2, plo6hkdr, hnu1vjyw
       logical pok1, pok2, pok12
-      double precision nh5zwa, hntu8v, xkcm3b, pohw8d, ydb, kbig
+      double precision oxjgzv0e, onemse, nm0eljqk, btiehdm2, ydb, kbig
       d1 = 0.0d0
       d2 = 0.0d0
-      pohw8d = -100.0d0 * jftq1
-      qbca1x = 3000
-      if(.not.(ogq67o .le. 0.80d0 .or. ogq67o .ge. 1.0d0))goto 23145
-      c4uxow = 0
+      btiehdm2 = -100.0d0 * rsynp1go
+      esql7umk = 3000
+      if(.not.(n2kersmx .le. 0.80d0 .or. n2kersmx .ge. 1.0d0))goto 23145
+      dvhw1ulq = 0
       return
 23145 continue
       kbig = 1.0d4
-      nh5zwa = 0.001d0
-      onemeps = 1.0d0 - jftq1
-      hntu8v = 1.0d0 / (1.0d0 + nh5zwa)
-      c4uxow = 1
-      myx3od=1
-23147 if(.not.(myx3od.le.lzgs0f))goto 23149
-      w3gohz=1
-23150 if(.not.(w3gohz.le.nfiumb4))goto 23152
-      if(.not.(gq815b(w3gohz,myx3od) .gt. kbig))goto 23153
-      gq815b(w3gohz,myx3od) = kbig
+      oxjgzv0e = 0.001d0
+      hnu1vjyw = 1.0d0 - rsynp1go
+      onemse = 1.0d0 / (1.0d0 + oxjgzv0e)
+      dvhw1ulq = 1
+      kij0gwer=1
+23147 if(.not.(kij0gwer.le.zy1mchbf))goto 23149
+      ayfnwr1v=1
+23150 if(.not.(ayfnwr1v.le.kuzxj1lo))goto 23152
+      if(.not.(hdqsx7bk(ayfnwr1v,kij0gwer) .gt. kbig))goto 23153
+      hdqsx7bk(ayfnwr1v,kij0gwer) = kbig
 23153 continue
-      if(.not.(ncrb2f(w3gohz,myx3od) .lt. nh5zwa))goto 23155
-      ncrb2f(w3gohz,myx3od) = nh5zwa
+      if(.not.(hsj9bzaq(ayfnwr1v,kij0gwer) .lt. oxjgzv0e))goto 23155
+      hsj9bzaq(ayfnwr1v,kij0gwer) = oxjgzv0e
 23155 continue
-      if(.not.((ncrb2f(w3gohz,myx3od) .gt. hntu8v)))goto 23157
-      xkcm3b = gq815b(w3gohz,myx3od) * (1.0d0/ncrb2f(w3gohz,myx3od) - 1.
-     &0d0)
-      qe3jcd(w3gohz,myx3od) = -xkcm3b * (1.0d0 + gq815b(w3gohz,myx3od)/(
-     &gq815b(w3gohz,myx3od) + xkcm3b)) / gq815b(w3gohz,myx3od)**2
-      if(.not.(qe3jcd(w3gohz,myx3od) .gt. pohw8d))goto 23159
-      qe3jcd(w3gohz,myx3od) = pohw8d
+      if(.not.((hsj9bzaq(ayfnwr1v,kij0gwer) .gt. onemse)))goto 23157
+      nm0eljqk = hdqsx7bk(ayfnwr1v,kij0gwer) * (1.0d0/hsj9bzaq(ayfnwr1v,
+     &kij0gwer) - 1.0d0)
+      bzmd6ftv(ayfnwr1v,kij0gwer) = -nm0eljqk * (1.0d0 + hdqsx7bk(
+     &ayfnwr1v,kij0gwer)/(hdqsx7bk(ayfnwr1v,kij0gwer) + nm0eljqk)) / 
+     &hdqsx7bk(ayfnwr1v,kij0gwer)**2
+      if(.not.(bzmd6ftv(ayfnwr1v,kij0gwer) .gt. btiehdm2))goto 23159
+      bzmd6ftv(ayfnwr1v,kij0gwer) = btiehdm2
 23159 continue
       goto 20
 23157 continue
-      qnk4zf = 0.0d0
+      q6zdcwxk = 0.0d0
       pok1 = .true.
-      pok2 = ncrb2f(w3gohz,myx3od) .lt. (1.0d0-jftq1)
+      pok2 = hsj9bzaq(ayfnwr1v,kij0gwer) .lt. (1.0d0-rsynp1go)
       pok12 = pok1 .and. pok2
       if(.not.(pok12))goto 23161
-      d2 = gq815b(w3gohz,myx3od) * dlog(ncrb2f(w3gohz,myx3od))
-      hmr3dx = dexp(d2)
+      d2 = hdqsx7bk(ayfnwr1v,kij0gwer) * dlog(hsj9bzaq(ayfnwr1v,
+     &kij0gwer))
+      ux3nadiw = dexp(d2)
       goto 23162
 23161 continue
-      hmr3dx = 0.0d0
+      ux3nadiw = 0.0d0
 23162 continue
-      scnrp6 = (1.0d0 - hmr3dx) / gq815b(w3gohz,myx3od)**2
-      qnk4zf = qnk4zf + scnrp6
-      call atez9d(gq815b(w3gohz,myx3od), xkwp2m)
+      plo6hkdr = (1.0d0 - ux3nadiw) / hdqsx7bk(ayfnwr1v,kij0gwer)**2
+      q6zdcwxk = q6zdcwxk + plo6hkdr
+      call tldz5ion(hdqsx7bk(ayfnwr1v,kij0gwer), o3jyipdf)
       ydb = 1.0d0
-      call atez9d(ydb + gq815b(w3gohz,myx3od), mw6reg)
-      xndw5e = 0.0d0
+      call tldz5ion(ydb + hdqsx7bk(ayfnwr1v,kij0gwer), tad5vhsu)
+      pq0hfucn = 0.0d0
       if(.not.(pok12))goto 23163
-      d1 = dlog(1.0d0 - ncrb2f(w3gohz,myx3od))
-      rxe0so = dexp(ydb * d1 + d2 + mw6reg - xkwp2m - xndw5e)
+      d1 = dlog(1.0d0 - hsj9bzaq(ayfnwr1v,kij0gwer))
+      ft3ijqmy = dexp(ydb * d1 + d2 + tad5vhsu - o3jyipdf - pq0hfucn)
       goto 23164
 23163 continue
-      rxe0so = 0.0d0
+      ft3ijqmy = 0.0d0
 23164 continue
-      hmr3dx = hmr3dx + rxe0so
-      scnrp6 = (1.0d0 - hmr3dx) / (gq815b(w3gohz,myx3od) + ydb)**2
-      qnk4zf = qnk4zf + scnrp6
+      ux3nadiw = ux3nadiw + ft3ijqmy
+      plo6hkdr = (1.0d0 - ux3nadiw) / (hdqsx7bk(ayfnwr1v,kij0gwer) + 
+     &ydb)**2
+      q6zdcwxk = q6zdcwxk + plo6hkdr
       ydb = 2.0d0
-23165 if(.not.((hmr3dx .le. ogq67o) .or. (scnrp6 .gt. 1.0d-4)))goto 2316
-     &6
-      mw6reg = mw6reg + dlog(ydb + gq815b(w3gohz,myx3od) - 1.0d0)
-      xndw5e = xndw5e + dlog(ydb)
+23165 if(.not.((ux3nadiw .le. n2kersmx) .or. (plo6hkdr .gt. 1.0d-4)))
+     &goto 23166
+      tad5vhsu = tad5vhsu + dlog(ydb + hdqsx7bk(ayfnwr1v,kij0gwer) - 1.
+     &0d0)
+      pq0hfucn = pq0hfucn + dlog(ydb)
       if(.not.(pok12))goto 23167
-      rxe0so = dexp(ydb * d1 + d2 + mw6reg - xkwp2m - xndw5e)
+      ft3ijqmy = dexp(ydb * d1 + d2 + tad5vhsu - o3jyipdf - pq0hfucn)
       goto 23168
 23167 continue
-      rxe0so = 0.0d0
+      ft3ijqmy = 0.0d0
 23168 continue
-      hmr3dx = hmr3dx + rxe0so
-      scnrp6 = (1.0d0 - hmr3dx) / (gq815b(w3gohz,myx3od) + ydb)**2
-      qnk4zf = qnk4zf + scnrp6
+      ux3nadiw = ux3nadiw + ft3ijqmy
+      plo6hkdr = (1.0d0 - ux3nadiw) / (hdqsx7bk(ayfnwr1v,kij0gwer) + 
+     &ydb)**2
+      q6zdcwxk = q6zdcwxk + plo6hkdr
       ydb = ydb + 1.0d0
       if(.not.(ydb .gt. 1.0d3))goto 23169
       goto 21
 23169 continue
       goto 23165
 23166 continue
-21    qe3jcd(w3gohz,myx3od) = -qnk4zf
-20    mw6reg = 0.0d0
-       w3gohz=w3gohz+1
+21    bzmd6ftv(ayfnwr1v,kij0gwer) = -q6zdcwxk
+20    tad5vhsu = 0.0d0
+       ayfnwr1v=ayfnwr1v+1
       goto 23150
 23152 continue
-       myx3od=myx3od+1
+       kij0gwer=kij0gwer+1
       goto 23147
 23149 continue
       return
       end
-      subroutine mbessi0(yg1jzv, nfiumb4, xt3fko, d0, d1, d2, gqxvz8, 
-     &kqoy6w)
+      subroutine mbessi0(bvecto, kuzxj1lo, kpzavbj3, d0, d1, d2, 
+     &zjkrtol8, qaltf0nz)
       implicit logical (a-z)
-      integer nfiumb4, xt3fko, gqxvz8, pga6nus
-      double precision yg1jzv(nfiumb4), d0(nfiumb4), d1(nfiumb4), d2(
-     &nfiumb4), kqoy6w
-      integer w3gohz, nd6mep
+      integer kuzxj1lo, kpzavbj3, zjkrtol8, c5aesxkus
+      double precision bvecto(kuzxj1lo), d0(kuzxj1lo), d1(kuzxj1lo), d2(
+     &kuzxj1lo), qaltf0nz
+      integer ayfnwr1v, gp1jxzuh
       double precision f0, t0, m0, f1, t1, m1, f2, t2, m2
       double precision toobig
       toobig = 20.0d0
-      gqxvz8 = 0
-      if(.not.(.not.(xt3fko .eq. 0 .or. xt3fko .eq. 1 .or. xt3fko .eq. 
-     &2)))goto 23171
-      gqxvz8 = 1
+      zjkrtol8 = 0
+      if(.not.(.not.(kpzavbj3 .eq. 0 .or. kpzavbj3 .eq. 1 .or. kpzavbj3 
+     &.eq. 2)))goto 23171
+      zjkrtol8 = 1
       return
 23171 continue
-      do 23173 nd6mep=1,nfiumb4 
-      if(.not.(dabs(yg1jzv(nd6mep)) .gt. toobig))goto 23175
-      gqxvz8 = 1
+      do 23173 gp1jxzuh=1,kuzxj1lo 
+      if(.not.(dabs(bvecto(gp1jxzuh)) .gt. toobig))goto 23175
+      zjkrtol8 = 1
       return
 23175 continue
-      t1 = yg1jzv(nd6mep) / 2.0d0
+      t1 = bvecto(gp1jxzuh) / 2.0d0
       f1 = t1
       t0 = t1 * t1
       f0 = 1.0d0 + t0
       t2 = 0.50d0
       f2 = t2
-      pga6nus = 15
-      if(.not.(dabs(yg1jzv(nd6mep)) .gt. 10))goto 23177
-      pga6nus = 25
+      c5aesxkus = 15
+      if(.not.(dabs(bvecto(gp1jxzuh)) .gt. 10))goto 23177
+      c5aesxkus = 25
 23177 continue
-      if(.not.(dabs(yg1jzv(nd6mep)) .gt. 15))goto 23179
-      pga6nus = 35
+      if(.not.(dabs(bvecto(gp1jxzuh)) .gt. 15))goto 23179
+      c5aesxkus = 35
 23179 continue
-      if(.not.(dabs(yg1jzv(nd6mep)) .gt. 20))goto 23181
-      pga6nus = 40
+      if(.not.(dabs(bvecto(gp1jxzuh)) .gt. 20))goto 23181
+      c5aesxkus = 40
 23181 continue
-      if(.not.(dabs(yg1jzv(nd6mep)) .gt. 30))goto 23183
-      pga6nus = 55
+      if(.not.(dabs(bvecto(gp1jxzuh)) .gt. 30))goto 23183
+      c5aesxkus = 55
 23183 continue
-      do 23185 w3gohz=1,pga6nus 
-      m0 = (yg1jzv(nd6mep) / (2.0d0*(w3gohz+1.0d0))) ** 2.0
-      m1 = m0 * (1.0d0 + 1.0d0/w3gohz)
-      m2 = m1 * (2.0d0*w3gohz + 1.0d0) / (2.0d0*w3gohz - 1.0d0)
+      do 23185 ayfnwr1v=1,c5aesxkus 
+      m0 = (bvecto(gp1jxzuh) / (2.0d0*(ayfnwr1v+1.0d0))) ** 2.0
+      m1 = m0 * (1.0d0 + 1.0d0/ayfnwr1v)
+      m2 = m1 * (2.0d0*ayfnwr1v + 1.0d0) / (2.0d0*ayfnwr1v - 1.0d0)
       t0 = t0 * m0
       t1 = t1 * m1
       t2 = t2 * m2
       f0 = f0 + t0
       f1 = f1 + t1
       f2 = f2 + t2
-      if(.not.((dabs(t0) .lt. kqoy6w) .and. (dabs(t1) .lt. kqoy6w) 
-     &.and. (dabs(t2) .lt. kqoy6w)))goto 23187
+      if(.not.((dabs(t0) .lt. qaltf0nz) .and. (dabs(t1) .lt. qaltf0nz) 
+     &.and. (dabs(t2) .lt. qaltf0nz)))goto 23187
       goto 23186
 23187 continue
 23185 continue
 23186 continue
-      if(.not.(0 .le. xt3fko))goto 23189
-      d0(nd6mep) = f0
+      if(.not.(0 .le. kpzavbj3))goto 23189
+      d0(gp1jxzuh) = f0
 23189 continue
-      if(.not.(1 .le. xt3fko))goto 23191
-      d1(nd6mep) = f1
+      if(.not.(1 .le. kpzavbj3))goto 23191
+      d1(gp1jxzuh) = f1
 23191 continue
-      if(.not.(2 .le. xt3fko))goto 23193
-      d2(nd6mep) = f2
+      if(.not.(2 .le. kpzavbj3))goto 23193
+      d2(gp1jxzuh) = f2
 23193 continue
 23173 continue
       return

@@ -44,6 +44,7 @@ It is probably more widely known as the Pareto (II) distribution.
   beta distribution of the second kind with \eqn{p=1}.
   More details can be found in Kleiber and Kotz (2003).
 
+
 The Lomax distribution has density
   \deqn{f(y) = q / [b \{1 + y/b\}^{1+q}]}{%
         f(y) = q / [b (1 + y/b)^(1+q)]}
@@ -58,11 +59,13 @@ The mean is
         E(Y) = b/(q-1)}
 provided \eqn{q > 1}.
 
+
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}},
   and \code{\link{vgam}}.
+
 }
 \references{
 Kleiber, C. and Kotz, S. (2003)

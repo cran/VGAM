@@ -105,7 +105,8 @@ amlbinomial(w.aml = 1, parallel = FALSE, digw = 4, link = "logit", earg = list()
   \code{\link{amlpoisson}},
   \code{\link{amlexponential}},
   \code{\link{amlnormal}},
-  \code{\link{alaplace1}}.
+  \code{\link{alaplace1}},
+  \code{\link{denorm}}.
 
 }
 

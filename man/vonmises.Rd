@@ -96,6 +96,7 @@ vonmises(llocation="elogit", lscale="loge",
 Evans, M., Hastings, N. and Peacock, B. (2000)
 \emph{Statistical Distributions},
 New York: Wiley-Interscience, Third edition.
+
 }
 \author{ T. W. Yee }
 \note{
@@ -123,7 +124,7 @@ New York: Wiley-Interscience, Third edition.
 }
 \examples{
 vdata = data.frame(x = runif(nn <- 1000))
-vdata = transform(vdata, y = rnorm(nn, m=2+x, sd=exp(0.2))) # Not good data!!
+vdata = transform(vdata, y = rnorm(nn, m=2+x, sd=exp(0.2))) # Bad data!!
 fit = vglm(y  ~ x, vonmises(zero=2), vdata, trace=TRUE)
 coef(fit, matrix=TRUE)
 Coef(fit)

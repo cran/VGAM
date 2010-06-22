@@ -55,6 +55,7 @@ borel.tanner(Qsize=1, link="logit", earg=list(), method.init=1)
   The Borel-Tanner distribution is an \eqn{Q}-fold convolution of the
   Borel distribution.
 
+
   The mean is \eqn{Q/(1-a)} (returned as the fitted values) and the
   variance is \eqn{Q a / (1-a)^3}{Q*a/(1-a)^3}.
   The distribution has a very long tail unless \eqn{a} is small.

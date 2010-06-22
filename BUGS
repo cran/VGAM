@@ -2,6 +2,16 @@ Here is a list of known bugs.
 
 
 
+2010-04-12
+cqo() should be working now. It uses new C code.
+Also, vgam() and vsmooth.spline() should not be noticeably different
+from before. But cao() is still working... getting it going soon hopefully.
+
+
+
+
+
+
 2009/07/13
 cqo() fails... I think it is due to initial values being faulty.
 Hope to look into it soon.

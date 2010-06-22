@@ -935,7 +935,8 @@ and reference value.
 
 
 Other \R{}~packages for the Bradley-Terry model
-include \pkg{BradleyTerry}
+include \pkg{BradleyTerry2}
+by H.~Turner and D.~Firth
 \citep[with and without ties;][]{firth:2005,firth:2008}
 and \pkg{prefmod} \citep{Hatzinger:2009}.
 

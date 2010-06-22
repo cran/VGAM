@@ -7,6 +7,7 @@
 
 
 
+
 cao  <- function(formula,
                  family, data=list(), 
                  weights=NULL, subset=NULL, na.action=na.fail,
@@ -33,7 +34,8 @@ cao  <- function(formula,
         data <- environment(formula)
 
     mf <- match.call(expand=FALSE)
-    mf$family <- mf$method <- mf$model <- mf$x.arg <- mf$y.arg <- mf$control <-
+    mf$family <- mf$method <- mf$model <- mf$x.arg <- mf$y.arg <-
+        mf$control <-
         mf$contrasts <- mf$constraints <- mf$extra <- mf$qr.arg <- NULL
     mf$coefstart <- mf$etastart <- mf$... <- NULL
     mf$smart <- NULL
@@ -81,7 +83,7 @@ cao  <- function(formula,
     cao.fitter <- get(method)
 
 
-    deviance.Bestof = rep(as.numeric(NA), len=control$Bestof)
+    deviance.Bestof = rep(as.numeric(NA), len = control$Bestof)
     for(tries in 1:control$Bestof) {
          if (control$trace && (control$Bestof>1)) {
              cat(paste("\n========================= Fitting model",
@@ -89,7 +91,7 @@ cao  <- function(formula,
              if (exists("flush.console"))
                 flush.console()
          }
-         it <- cao.fitter(x=x, y=y, w=w, offset=offset,
+         onefit <- cao.fitter(x=x, y=y, w=w, offset=offset,
                    etastart=etastart, mustart=mustart, coefstart=coefstart,
                    family=family,
                    control=control,
@@ -98,9 +100,10 @@ cao  <- function(formula,
                    extra=extra,
                    qr.arg = qr.arg,
                    Terms=mt, function.name=function.name, ...)
-        deviance.Bestof[tries] = it$crit.list$deviance
-       if (tries==1 || min(deviance.Bestof[1:(tries-1)])>deviance.Bestof[tries])
-            fit = it
+        deviance.Bestof[tries] = onefit$crit.list$deviance
+       if (tries == 1 ||
+           min(deviance.Bestof[1:(tries-1)]) > deviance.Bestof[tries])
+            fit = onefit
     }
     fit$misc$deviance.Bestof = deviance.Bestof
 

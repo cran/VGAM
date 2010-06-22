@@ -44,8 +44,8 @@ pposnegbin = function(q, size, prob=NULL, munb=NULL) {
     L = max(length(q), length(prob), length(size))
     q = rep(q, len=L); prob = rep(prob, len=L); size = rep(size, len=L);
 
-    ifelse(q<1, 0, (pnbinom(q,   size=size, prob=prob) -
-                    dnbinom(q*0, size=size, prob=prob)) / pnbinom(q*0,
+    ifelse(q < 1, 0, (pnbinom(q,   size=size, prob=prob) -
+                      dnbinom(q*0, size=size, prob=prob)) / pnbinom(q*0,
                             size=size, prob=prob, lower.tail = FALSE))
 }
 
@@ -275,9 +275,10 @@ dpospois = function(x, lambda, log=FALSE) {
     L = max(length(x), length(lambda))
     x = rep(x, len=L); lambda = rep(lambda, len=L); 
     ans = if (log.arg) {
-        ifelse(x==0, log(0.0), dpois(x, lambda, log=TRUE) - log1p(-exp(-lambda)))
+        ifelse(x == 0, log(0.0), dpois(x, lambda, log=TRUE) -
+               log1p(-exp(-lambda)))
     } else {
-        ifelse(x==0, 0, -dpois(x, lambda) / expm1(-lambda))
+        ifelse(x == 0, 0, -dpois(x, lambda) / expm1(-lambda))
     }
     ans
 }
@@ -288,7 +289,7 @@ ppospois = function(q, lambda) {
         stop("bad input for argument 'lambda'")
     L = max(length(q), length(lambda))
     q = rep(q, len=L); lambda = rep(lambda, len=L); 
-    ifelse(q<1, 0, (ppois(q, lambda) - exp(-lambda)) / (-expm1(-lambda)))
+    ifelse(q < 1, 0, (ppois(q, lambda) - exp(-lambda)) / (-expm1(-lambda)))
 }
 
 qpospois = function(p, lambda) {
@@ -346,7 +347,7 @@ rpospois = function(n, lambda) {
         if (any(y != round(y )))
             stop("the response must be integer-valued")
 
-        predictors.names = namesof(if(ncol(y)==1) "lambda"
+        predictors.names = namesof(if(ncol(y) == 1) "lambda"
             else paste("lambda", 1:ncol(y), sep=""), .link,
             earg= .earg, tag=FALSE)
         if ( .method.init == 1) {
@@ -359,19 +360,19 @@ rpospois = function(n, lambda) {
             lambda.init = -y / expm1(-y)
         }
         if (length( .ilambda))
-            lambda.init = lambda.init*0 + .ilambda
+            lambda.init = lambda.init * 0 + .ilambda
         if (!length(etastart))
             etastart = theta2eta(lambda.init, .link, earg= .earg)
-    }), list( .link=link, .earg= earg,
-              .ilambda=ilambda, .method.init=method.init ))),
+    }), list( .link = link, .earg = earg,
+              .ilambda = ilambda, .method.init = method.init ))),
     inverse=eval(substitute(function(eta, extra=NULL) {
-        lambda = eta2theta(eta, .link, earg= .earg )
+        lambda = eta2theta(eta, .link, earg = .earg )
         -lambda / expm1(-lambda)
     }, list( .link=link, .earg= earg ))),
     last=eval(substitute(expression({
         misc$expected = .expected
         misc$link = rep( .link, len=M)
-        names(misc$link) = if (M==1) "lambda" else paste("lambda", 1:M, sep="")
+        names(misc$link) = if (M == 1) "lambda" else paste("lambda", 1:M, sep="")
         misc$earg = vector("list", M)
         names(misc$earg) = names(misc$link)
         for(ii in 1:M)
@@ -381,28 +382,28 @@ rpospois = function(n, lambda) {
         function(mu,y,w,residuals=FALSE, eta,extra=NULL) {
         lambda = eta2theta(eta, .link, earg= .earg ) 
         if (residuals) stop("loglikelihood residuals not implemented yet") else {
-            sum(w * dpospois(x=y, lambda=lambda, log=TRUE))
+            sum(w * dpospois(x = y, lambda = lambda, log = TRUE))
         }
-    }, list( .link=link, .earg= earg ))),
+    }, list( .link = link, .earg = earg ))),
     vfamily=c("pospoisson"),
     deriv=eval(substitute(expression({
         lambda = eta2theta(eta, .link, earg= .earg ) 
-        temp = exp(lambda)
-        dl.dlambda = y/lambda - 1 - 1/(temp-1)
-        dlambda.deta = dtheta.deta(lambda, .link, earg= .earg )
+        temp6 = expm1(lambda)
+        dl.dlambda = y/lambda - 1 - 1 / temp6
+        dlambda.deta = dtheta.deta(lambda, .link, earg = .earg )
         w * dl.dlambda * dlambda.deta
-    }), list( .link=link, .earg= earg ))),
+    }), list( .link = link, .earg = earg ))),
     weight=eval(substitute(expression({
         if ( .expected ) {
-            ed2l.dlambda2 = temp * (1/lambda - 1/(temp-1)) / (temp-1)
+            ed2l.dlambda2 = (temp6 + 1) * (1/lambda - 1/temp6) / temp6
             wz = (dlambda.deta^2) * ed2l.dlambda2
         } else {
-            d2l.dlambda2 = y/lambda^2 - temp/(temp-1)^2
-            d2lambda.deta2 = d2theta.deta2(lambda, .link, earg=.earg)
+            d2l.dlambda2 = y / lambda^2 - (temp6 + 1) / temp6^2
+            d2lambda.deta2 = d2theta.deta2(lambda, .link, earg = .earg)
             wz = (dlambda.deta^2) * d2l.dlambda2 - dl.dlambda * d2lambda.deta2
         }
         w * wz
-    }), list( .link=link, .earg= earg, .expected=expected ))))
+    }), list( .link = link, .earg = earg, .expected = expected ))))
 }
 
 
@@ -442,7 +443,7 @@ rpospois = function(n, lambda) {
     }), list( .link=link, .earg=earg ))),
     loglikelihood=eval(substitute(
         function(mu,y,w,residuals=FALSE,eta,extra=NULL) {
-        yint = round(y*w)
+        yint = round(y * w)
         mymu = eta2theta(eta, .link, earg= .earg )
         if (max(abs(w - round(w))) > 0.0001) {
             warning("rounding w to an integer")
@@ -454,10 +455,10 @@ rpospois = function(n, lambda) {
     }, list( .link=link, .earg=earg ))),
     vfamily=c("posbinomial"),
     deriv=eval(substitute(expression({
-        yint = round(y*w)     
+        yint = round(y * w)
         mymu = eta2theta(eta, .link, earg= .earg )
-        dl.dmymu = yint/mymu - (w-yint)/(1-mymu) -
-                   w*(1-mymu)^(w-1) / (1-(1-mymu)^w)
+        dl.dmymu = yint / mymu - (w-yint) / (1-mymu) -
+                   w * (1-mymu)^(w-1) / (1-(1-mymu)^w)
         dmymu.deta = dtheta.deta(mymu, .link, earg= .earg )
         dl.dmymu * dmymu.deta
     }), list( .link=link, .earg=earg ))),
@@ -500,7 +501,7 @@ pposbinom = function(q, size, prob, lower.tail = TRUE, log.p = FALSE) {
         stop("no zero or non-numeric values allowed for argument 'prob'")
     L = max(length(q), length(size), length(prob))
     q = rep(q, len=L); size = rep(size, len=L); prob = rep(prob, len=L);
-    ifelse(q<1, 0, (pbinom(q=q, size=size, prob=prob, lower.tail=lower.tail,
+    ifelse(q < 1, 0, (pbinom(q=q, size=size, prob=prob, lower.tail=lower.tail,
          log.p=log.p) - (1-prob)^size) / (1 - (1-prob)^size))
 }
 

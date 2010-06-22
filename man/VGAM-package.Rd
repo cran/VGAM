@@ -18,7 +18,7 @@ quadratic ordination (CQO).
 }
 \details{
 
-This package centers on the iteratively reweighted least squares (IRLS)
+This package centers on the \emph{iteratively reweighted least squares} (IRLS)
 algorithm.
 Other key words include Fisher scoring, additive models, penalized
 likelihood, reduced-rank regression and constrained ordination.
@@ -33,6 +33,7 @@ each of these has its own control function, e.g.,
 \code{\link{vglm.control}}.
 The package uses S4 (see \code{\link[methods]{methods-package}}).
 
+
 The classes of GLMs and GAMs are special cases of VGLMs and VGAMs.
 The VGLM/VGAM framework is intended to be very general
 so that it encompasses as many distributions and models as
@@ -46,12 +47,14 @@ extreme values,
 correlated binary data, bioassay data and nonlinear least-squares
 problems.
 
+
 VGAMs are to VGLMs what GAMs are to GLMs.
 Vector smoothing (see \code{\link{vsmooth.spline}}) allows several
 additive predictors to be estimated as a sum of smooth functions of
 the covariates.
 
-For a complete list of this package, use \code{library(help="VGAM")}.
+
+For a complete list of this package, use \code{library(help = "VGAM")}.
 New \pkg{VGAM} family functions are continually being written and
 added to the package.
 A monograph about VGLM and VGAMs etc. is in the making but unfortunately
@@ -134,28 +137,27 @@ constraints(fit)             # Constraint matrices
 
 
 # Example 2; zero-inflated Poisson model
-x = runif(n <- 2000)
-phi = logit(-0.5 + 1*x, inverse=TRUE)
-lambda = loge(0.5 + 2*x, inverse=TRUE)
-y = rzipois(n, lambda, phi)
-table(y)
-fit = vglm(y ~ x, zipoisson, trace=TRUE)
+zipdat = data.frame(x = runif(nn <- 2000))
+zipdat = transform(zipdat, phi    = logit(-0.5 + 1*x, inverse=TRUE),
+                           lambda =  loge( 0.5 + 2*x, inverse=TRUE))
+zipdat = transform(zipdat, y = rzipois(nn, lambda, phi))
+with(zipdat, table(y))
+fit = vglm(y ~ x, zipoisson, zipdat, trace=TRUE)
 coef(fit, matrix=TRUE)  # These should agree with the above values
 
 
 # Example 3; fit a two species GAM simultaneously
-fit2 = vgam(cbind(agaaus, kniexc) ~ s(altitude, df=c(2,3)),
-            binomialff(mv=TRUE), hunua)
+fit2 = vgam(cbind(agaaus, kniexc) ~ s(altitude, df = c(2,3)),
+            binomialff(mv = TRUE), hunua)
 coef(fit2, mat=TRUE)   # Not really interpretable
 \dontrun{
-plot(fit2, se=TRUE, overlay=TRUE, lcol=1:2, scol=1:2)
+plot(fit2, se = TRUE, overlay = TRUE, lcol = 1:2, scol = 1:2)
 
 ooo = with(hunua, order(altitude))
-with(hunua,  matplot(altitude[ooo], fitted(fit2)[ooo,], type="l", lwd=2,
-     xlab="Altitude (m)", ylab="Probability of presence", las=1,
-     main="Two plant species' response curves", ylim=c(0,.8)))
-with(hunua, rug(altitude))
-}
+with(hunua,  matplot(altitude[ooo], fitted(fit2)[ooo,], type = "l", lwd = 2,
+     xlab = "Altitude (m)", ylab = "Probability of presence", las = 1,
+     main = "Two plant species' response curves", ylim = c(0,.8)))
+with(hunua, rug(altitude)) }
 
 
 # Example 4; LMS quantile regression
@@ -166,20 +168,18 @@ head(bminz) # Person 1 is near the lower quartile among people his age
 head(cdf(fit))
 
 \dontrun{
-# Quantile plot
 par(mfrow=c(1,1), bty="l", mar=c(5,4,4,3)+0.1, xpd=TRUE)
 qtplot(fit, percentiles=c(5,50,90,99), main="Quantiles",
-       xlim=c(15,90), las=1, ylab="BMI", lwd=2, lcol=4)
+       xlim=c(15,90), las=1, ylab="BMI", lwd=2, lcol=4) # Quantile plot
 
-# Density plot
 ygrid = seq(15, 43, len=100)  # BMI ranges
-par(mfrow=c(1,1), lwd=2)
-a = deplot(fit, x0=20, y=ygrid, xlab="BMI", col="black",
+par(mfrow=c(1,1), lwd=2) # Density plot
+aa = deplot(fit, x0=20, y=ygrid, xlab="BMI", col="black",
     main="Density functions at Age = 20 (black), 42 (red) and 55 (blue)")
-a
-a = deplot(fit, x0=42, y=ygrid, add=TRUE, llty=2, col="red")
-a = deplot(fit, x0=55, y=ygrid, add=TRUE, llty=4, col="blue", Attach=TRUE)
-a@post$deplot  # Contains density function values
+aa
+aa = deplot(fit, x0=42, y=ygrid, add=TRUE, llty=2, col="red")
+aa = deplot(fit, x0=55, y=ygrid, add=TRUE, llty=4, col="blue", Attach=TRUE)
+aa@post$deplot  # Contains density function values
 }
 
 

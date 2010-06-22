@@ -10,7 +10,7 @@
 predict.vglm(object, newdata = NULL, 
              type = c("link", "response", "terms"), 
              se.fit = FALSE, deriv = 0, dispersion = NULL,
-             untransform=FALSE, extra = object@extra, ...)
+             untransform = FALSE, extra = object@extra, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -56,7 +56,7 @@ predict.vglm(object, newdata = NULL,
   }
   \item{untransform}{
   Logical. Reverses any parameter link function.
-  This argument only works if \code{type="link", se.fit=FALSE, deriv=0}.
+  This argument only works if \code{type = "link", se.fit = FALSE, deriv = 0}.
 
   }
   \item{\dots}{Arguments passed into \code{predict.vlm}.
@@ -91,7 +91,7 @@ Reduced-rank vector generalized linear models.
 \author{ Thomas W. Yee }
 
 \note{
-  Setting \code{se.fit=TRUE} and \code{type="response"}
+  Setting \code{se.fit = TRUE} and \code{type = "response"}
   will generate an error.
 
 }
@@ -111,29 +111,29 @@ Reduced-rank vector generalized linear models.
 
 \examples{
 # Illustrates smart prediction
-pneumo = transform(pneumo, let=log(exposure.time))
+pneumo = transform(pneumo, let = log(exposure.time))
 fit = vglm(cbind(normal,mild, severe) ~ poly(c(scale(let)), 2),
-           propodds, data=pneumo, trace=TRUE, x=FALSE)
+           propodds, data = pneumo, trace = TRUE, x = FALSE)
 class(fit)
 
 (q0 = head(predict(fit)))
-(q1 = predict(fit, newdata=head(pneumo)))
-(q2 = predict(fit, newdata=head(pneumo)))
+(q1 = predict(fit, newdata = head(pneumo)))
+(q2 = predict(fit, newdata = head(pneumo)))
 all.equal(q0, q1)  # Should be TRUE
 all.equal(q1, q2)  # Should be TRUE
 
 head(predict(fit))
-head(predict(fit, untransform=TRUE))
+head(predict(fit, untransform = TRUE))
 
-p0 = head(predict(fit, type="res"))
-p1 = head(predict(fit, type="res", newdata=pneumo))
-p2 = head(predict(fit, type="res", newdata=pneumo))
+p0 = head(predict(fit, type = "res"))
+p1 = head(predict(fit, type = "res", newdata = pneumo))
+p2 = head(predict(fit, type = "res", newdata = pneumo))
 p3 = head(fitted(fit))
 all.equal(p0, p1)  # Should be TRUE
 all.equal(p1, p2)  # Should be TRUE
 all.equal(p2, p3)  # Should be TRUE
 
-predict(fit, type="terms", se=TRUE)
+predict(fit, type = "terms", se = TRUE)
 }
 \keyword{models}
 \keyword{regression}

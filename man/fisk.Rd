@@ -5,6 +5,7 @@
 \description{
   Maximum likelihood estimation of the 2-parameter 
   Fisk distribution.
+
 }
 \usage{
 fisk(link.a = "loge", link.scale = "loge", earg.a=list(),
@@ -43,6 +44,7 @@ fisk(link.a = "loge", link.scale = "loge", earg.a=list(),
   Dagum distribution with \eqn{p=1}.
   More details can be found in Kleiber and Kotz (2003).
 
+
 The Fisk distribution has density
   \deqn{f(y) = a y^{a-1} / [b^a \{1 + (y/b)^a\}^2]}{%
         f(y) = a y^(a-1) / [b^a (1 + (y/b)^a)^2]}
@@ -57,11 +59,13 @@ The mean is
         E(Y) = b  gamma(1 + 1/a)  gamma(1 - 1/a)}
 provided \eqn{a > 1}.
 
+
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}},
   and \code{\link{vgam}}.
+
 }
 \references{
 Kleiber, C. and Kotz, S. (2003)
@@ -89,6 +93,7 @@ Hoboken, NJ: Wiley-Interscience.
     \code{\link{lomax}},
     \code{\link{paralogistic}},
     \code{\link{invparalogistic}}.
+
 }
 
 \examples{

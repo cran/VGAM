@@ -10,8 +10,7 @@
 \usage{
 weibull(lshape = "loge", lscale = "loge", 
         eshape = list(), escale = list(),
-        ishape = NULL,   iscale = NULL,
-        nrfs = 1, imethod=1, zero = 2)
+        ishape = NULL,   iscale = NULL, nrfs = 1, imethod=1, zero = 2)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -70,6 +69,7 @@ weibull(lshape = "loge", lscale = "loge",
   \eqn{E(Y^k) = b^k \, \Gamma(1+ k/a)}{E(Y^k) = b^k * gamma(1+ k/a)}.
   The hazard function is \eqn{a t^{a-1} / b^a}{a * t^(a-1) / b^a}.
 
+
   This \pkg{VGAM} family function currently does not handle 
   censored data.
   Fisher scoring is used to estimate the two parameters.
@@ -81,6 +81,7 @@ weibull(lshape = "loge", lscale = "loge",
   If this is violated then a warning message is issued.
   One can enforce \eqn{a>2} by choosing \code{lshape = "logoff"}
   and \code{eshape=list(offset=-2)}.
+
 
 }
 \value{
@@ -94,9 +95,11 @@ Kleiber, C. and Kotz, S. (2003)
 \emph{Statistical Size Distributions in Economics and Actuarial Sciences},
 Hoboken, NJ: Wiley-Interscience.
 
+
 Johnson, N. L. and Kotz, S. and Balakrishnan, N. (1994)
 \emph{Continuous Univariate Distributions},
 2nd edition, Volume 1, New York: Wiley.
+
 
 Gupta, R. D. and Kundu, D. (2006)
 On the comparison of Fisher information of the
@@ -105,12 +108,14 @@ Weibull and GE distributions,
 \bold{136},
 3130--3144.
 
+
 }
 \author{ T. W. Yee }
 \note{
   Successful convergence depends on having reasonably good initial
   values. If the initial values chosen by this function are not good,
   make use the two initial value arguments.
+
 
   The Weibull distribution is often an alternative to the lognormal
   distribution.  The inverse Weibull distribution, which is that of
@@ -125,6 +130,7 @@ Weibull and GE distributions,
   \code{\link{SurvS4}} as input. 
   It should be released in later versions of \pkg{VGAM}.
 
+
   If the shape parameter is less than two then misleading inference may
   result, e.g., in the \code{summary} and \code{vcov} of the object.
 
@@ -138,10 +144,10 @@ Weibull and GE distributions,
 }
 \examples{
 # Complete data
-x = runif(n <- 1000)
-y = rweibull(n, shape=exp(1+x), scale = exp(-0.5))
-fit = vglm(y ~ x, weibull, trace=TRUE)
-coef(fit, mat=TRUE)
+wdata = data.frame(x = runif(nn <- 1000))
+wdata = transform(wdata, y = rweibull(nn, shape = exp(1+x), scale = exp(-2)))
+fit = vglm(y ~ x, weibull, wdata, trace = TRUE)
+coef(fit, mat = TRUE)
 vcov(fit)
 summary(fit)
 }

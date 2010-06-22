@@ -14,10 +14,10 @@
 
 }
 \usage{
-dlgamma(x, location=0, scale=1, k=1, log=FALSE)
-plgamma(q, location=0, scale=1, k=1)
-qlgamma(p, location=0, scale=1, k=1)
-rlgamma(n, location=0, scale=1, k=1)
+dlgamma(x, location = 0, scale = 1, k = 1, log = FALSE)
+plgamma(q, location = 0, scale = 1, k = 1)
+qlgamma(p, location = 0, scale = 1, k = 1)
+rlgamma(n, location = 0, scale = 1, k = 1)
 }
 \arguments{
   \item{x, q}{vector of quantiles.}
@@ -28,7 +28,7 @@ rlgamma(n, location=0, scale=1, k=1)
   \item{k}{the (positive) shape parameter \eqn{k}.}
   \item{log}{
   Logical.
-  If \code{log=TRUE} then the logarithm of the density is returned.
+  If \code{log = TRUE} then the logarithm of the density is returned.
 
   }
 
@@ -38,6 +38,7 @@ rlgamma(n, location=0, scale=1, k=1)
   \code{plgamma} gives the distribution function,
   \code{qlgamma} gives the quantile function, and
   \code{rlgamma} generates random deviates.
+
 }
 \references{
 Kotz, S. and Nadarajah, S. (2000)
@@ -58,25 +59,24 @@ London: Imperial College Press.
 \note{
   The \pkg{VGAM} family function \code{\link{lgamma3ff}} is
   for the three parameter (nonstandard) log-gamma distribution.
+
 }
 \seealso{
   \code{\link{lgammaff}},
   \code{\link{prentice74}}.
 }
 \examples{
-\dontrun{
-loc = 1; Scale = 1.5; k = 1.4
-x = seq(-3.2, 5, by=0.01)
-plot(x, dlgamma(x, loc, Scale, k), type="l", col="blue", ylim=c(0,1),
-     main="Blue is density, red is cumulative distribution function",
-     sub="Purple are 5,10,...,95 percentiles", las=1, ylab="")
-abline(h=0, col="blue", lty=2)
-lines(qlgamma(seq(0.05,0.95,by=0.05), loc, Scale, k), 
-      dlgamma(qlgamma(seq(0.05,0.95,by=0.05), loc, Scale, k), loc, Scale, k),
-      col="purple", lty=3, type="h")
-lines(x, plgamma(x, loc, Scale, k), type="l", col="red")
-abline(h=0, lty=2)
-}
+\dontrun{ loc = 1; Scale = 1.5; k = 1.4
+x = seq(-3.2, 5, by = 0.01)
+plot(x, dlgamma(x, loc, Scale, k), type = "l", col = "blue", ylim = 0:1,
+     main = "Blue is density, red is cumulative distribution function",
+     sub = "Purple are 5,10,...,95 percentiles", las = 1, ylab = "")
+abline(h = 0, col = "blue", lty = 2)
+lines(qlgamma(seq(0.05, 0.95, by = 0.05), loc, Scale, k),
+      dlgamma(qlgamma(seq(0.05, 0.95, by = 0.05), loc, Scale, k),
+              loc, Scale, k), col = "purple", lty = 3, type = "h")
+lines(x, plgamma(x, loc, Scale, k), type = "l", col = "red")
+abline(h = 0, lty = 2) }
 }
 \keyword{distribution}
 

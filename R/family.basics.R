@@ -14,7 +14,7 @@ getind <- function(constraints, M, ncolx) {
     if (!length(constraints)) {
 
         constraints = vector("list", ncolx)
-        for(ii in 1:ncolx)
+        for (ii in 1:ncolx)
             constraints[[ii]] <- diag(M)
     }
 
@@ -22,9 +22,9 @@ getind <- function(constraints, M, ncolx) {
     names(ans) <- c(paste("eta", 1:M, sep=""), "ncolX_vlm")
 
     temp2 <- matrix(unlist(constraints), nrow=M)
-    for(kk in 1:M) {
+    for (kk in 1:M) {
         ansx <- NULL
-        for(ii in 1:length(constraints)) {
+        for (ii in 1:length(constraints)) {
             temp <- constraints[[ii]]
             isfox <- any(temp[kk,] != 0)
             if (isfox) {
@@ -41,20 +41,25 @@ getind <- function(constraints, M, ncolx) {
 
 
 
-cm.vgam <- function(cm, x, bool, constraints,
-                    intercept.apply=FALSE, overwrite=FALSE)
+ cm.vgam <- function(cm, x, bool, constraints,
+                     intercept.apply=FALSE, overwrite=FALSE)
 {
 
 
 
+    if (is.null(bool)) return(NULL)
+
     M <- nrow(cm)
     asgn <- attr(x, "assign")
+    if(is.null(asgn))
+        stop("the 'assign' attribute is missing from 'x'; this ",
+             "may be due to some missing values") # 20100306
     nasgn <- names(asgn)
     ninasgn <- nasgn[nasgn != "(Intercept)"]
 
     if (!length(constraints)) {
         constraints <- vector("list", length(nasgn))
-        for(ii in 1:length(nasgn)) {
+        for (ii in 1:length(nasgn)) {
             constraints[[ii]] <- diag(M)
         }
         names(constraints) <- nasgn
@@ -64,9 +69,11 @@ cm.vgam <- function(cm, x, bool, constraints,
 
     if (length(constraints) != length(nasgn) ||
         any(sort(names(constraints)) != sort(nasgn))) {
-        cat("names(constraints)\n")
-        cat("The above don't match;\n")
-        stop("'constraints' is half-pie")
+        cat("\nnames(constraints)\n")
+       print(names(constraints) )
+        cat("\nnames(attr(x, 'assign'))\n")
+       print( nasgn )
+        stop("The above don't match; 'constraints' is half-pie")
     }
 
     if (is.logical(bool)) {
@@ -74,7 +81,7 @@ cm.vgam <- function(cm, x, bool, constraints,
             if (intercept.apply && any(nasgn=="(Intercept)"))
                 constraints[["(Intercept)"]] <- cm
             if (length(ninasgn))
-                for(ii in ninasgn)
+                for (ii in ninasgn)
                     constraints[[ii]] <- cm
         } else {
             return(constraints)
@@ -100,7 +107,7 @@ cm.vgam <- function(cm, x, bool, constraints,
         if (attr(tbool, "intercept"))
             tl <- c("(Intercept)", tl)
 
-        for(ii in nasgn) {
+        for (ii in nasgn) {
             if (default && any(tl == ii))
                 constraints[[ii]] <- cm
             if (!default && !any(tl == ii))
@@ -124,7 +131,7 @@ cm.nointercept.vgam <- function(constraints, x, nointercept, M)
     }
     if (!is.list(constraints))
         stop("'constraints' must be a list")
-    for(ii in 1:length(asgn))
+    for (ii in 1:length(asgn))
         constraints[[nasgn[ii]]] <- if (is.null(constraints[[nasgn[ii]]]))
             diag(M) else eval(constraints[[nasgn[ii]]])
 
@@ -162,7 +169,7 @@ cm.zero.vgam <- function(constraints, x, zero, M)
         names(constraints) <- nasgn
     }
     if (!is.list(constraints)) stop("'constraints' must be a list")
-    for(ii in 1:length(asgn))
+    for (ii in 1:length(asgn))
         constraints[[nasgn[ii]]] <- if (is.null(constraints[[nasgn[ii]]]))
             diag(M) else eval(constraints[[nasgn[ii]]])
 
@@ -175,11 +182,11 @@ cm.zero.vgam <- function(constraints, x, zero, M)
         stop("cannot fit an intercept to a no-intercept model")
 
     if (2 <= length(constraints))
-    for(ii in 2:length(constraints)) {
+    for (ii in 2:length(constraints)) {
         temp <- constraints[[nasgn[ii]]]
         temp[zero,] <- 0
         index <- NULL
-        for(kk in 1:ncol(temp))
+        for (kk in 1:ncol(temp))
             if (all(temp[,kk] == 0)) index <- c(index,kk)
         if (length(index) == ncol(temp)) 
             stop("constraint matrix has no columns!")
@@ -202,7 +209,7 @@ process.constraints <- function(constraints, x, M, by.col=TRUE, specialCM=NULL)
 
     if (is.null(constraints)) {
         constraints <- vector("list", length(nasgn))
-        for(ii in 1:length(nasgn))
+        for (ii in 1:length(nasgn))
             constraints[[ii]] <- diag(M)
         names(constraints) <- nasgn
     }
@@ -215,7 +222,7 @@ process.constraints <- function(constraints, x, M, by.col=TRUE, specialCM=NULL)
 
     lenconstraints <- length(constraints)
     if (lenconstraints > 0)
-    for(i in 1:lenconstraints) {
+    for (i in 1:lenconstraints) {
         constraints[[i]] <- eval(constraints[[i]])
         if (!is.null(constraints[[i]]) && !is.matrix(constraints[[i]]))
             stop("'constraints[[",i,"]]' is not a matrix")
@@ -229,12 +236,12 @@ process.constraints <- function(constraints, x, M, by.col=TRUE, specialCM=NULL)
         names(junk) <- nasgn
         junk
     }
-    for(i in 1:length(nasgn))
+    for (i in 1:length(nasgn))
         temp[[nasgn[i]]] <-
             if (is.null(constraints[[nasgn[i]]])) diag(M) else
             eval(constraints[[nasgn[i]]])
 
-    for(i in 1:length(asgn)) {
+    for (i in 1:length(asgn)) {
         if (!is.matrix(temp[[i]])) {
             stop("not a constraint matrix")
         }
@@ -247,10 +254,10 @@ process.constraints <- function(constraints, x, M, by.col=TRUE, specialCM=NULL)
 
     constraints <- temp
     Blist <- vector("list", ncol(x))
-    for(ii in 1:length(asgn)) {
+    for (ii in 1:length(asgn)) {
         cols <- asgn[[ii]]
         ictr = 0
-        for(jay in cols) {
+        for (jay in cols) {
             ictr = ictr + 1
             cm = if (is.list(specialCM) && any(nasgn[ii] == names(specialCM))) {
                     slist = specialCM[[(nasgn[ii])]]
@@ -266,7 +273,7 @@ process.constraints <- function(constraints, x, M, by.col=TRUE, specialCM=NULL)
 
 
 
-trivial.constraints <- function(Blist, target=diag(M))
+ trivial.constraints <- function(Blist, target = diag(M))
 {
 
     if (is.null(Blist))
@@ -282,7 +289,7 @@ trivial.constraints <- function(Blist, target=diag(M))
 
     trivc <- rep(1, length(Blist))
     names(trivc) <- names(Blist)
-    for(ii in 1:length(Blist)) {
+    for (ii in 1:length(Blist)) {
         d <- dim(Blist[[ii]])
         if (d[1] != dimtar[1]) trivc[ii] <- 0
         if (d[2] != dimtar[2]) trivc[ii] <- 0
@@ -320,7 +327,7 @@ add.constraints <- function(constraints, new.constraints,
         stop("lists must have names")
 
     if (!empty.list(constraints) && !empty.list(new.constraints)) {
-        for(i in nn) {
+        for (i in nn) {
             if (any(i==nc)) {
                 if (check  &&
                     (!(all(dim(constraints[[i]])==dim(new.constraints[[i]])) &&
@@ -532,12 +539,12 @@ wweights = function(object, matrix.arg=TRUE, deriv.arg=FALSE,
     y <- object@y
 
     if (any(slotNames(object)=="control"))
-    for(i in names(object@control)) {
+    for (i in names(object@control)) {
         assign(i, object@control[[i]]) 
     } 
 
     if (length(object@misc))
-    for(i in names(object@misc)) {
+    for (i in names(object@misc)) {
         assign(i, object@misc[[i]]) 
     } 
 
@@ -756,7 +763,7 @@ VGAM.matrix.norm = function(A, power=2, suppressWarning=FALSE) {
 rmfromVGAMenv = function(varnames, prefix="") {
     evarnames = paste(prefix, varnames, sep="")
     if (is.R()) {
-        for(i in evarnames) {
+        for (i in evarnames) {
             mytext1 = "exists(x=i, envir = VGAMenv)"
             myexp1 = parse(text=mytext1)
             is.there = eval(myexp1)
@@ -766,7 +773,7 @@ rmfromVGAMenv = function(varnames, prefix="") {
         }
     } else {
         warning("this code needs checking 9")
-        for(i in evarnames)
+        for (i in evarnames)
             while(exists(i, inherits=TRUE))
                 rm(i, inherits=TRUE)
  
@@ -777,7 +784,7 @@ existsinVGAMenv = function(varnames, prefix="") {
     evarnames = paste(prefix, varnames, sep="")
     ans = NULL
     if (is.R()) {
-        for(i in evarnames) {
+        for (i in evarnames) {
             mytext1 = "exists(x=i, envir = VGAMenv)"
             myexp1 = parse(text=mytext1)
             is.there = eval(myexp1)
@@ -785,7 +792,7 @@ existsinVGAMenv = function(varnames, prefix="") {
         }
     } else {
  warning("this code needs checking 8")
-        for(i in evarnames) {
+        for (i in evarnames) {
             is.there = exists(i, inherits=TRUE)
             ans = c(ans, is.there)
         }
@@ -796,7 +803,7 @@ existsinVGAMenv = function(varnames, prefix="") {
 assign2VGAMenv = function(varnames, mylist, prefix="") {
     evarnames = paste(prefix, varnames, sep="")
     if (is.R()) {
-        for(i in 1:length(varnames)) {
+        for (i in 1:length(varnames)) {
             assign(evarnames[i], mylist[[(varnames[i])]], envir = VGAMenv)
         }
     } else {

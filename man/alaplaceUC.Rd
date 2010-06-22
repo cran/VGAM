@@ -84,8 +84,8 @@ Boston: Birkhauser.
 
 }
 \examples{
-x = seq(-5, 5, by=0.01)
-loc = 0; sigma = 1.5; kappa = 2
+x <- seq(-5, 5, by=0.01)
+loc <- 0; sigma <- 1.5; kappa <- 2
 \dontrun{
 plot(x, dalap(x, loc, sigma, kappa=kappa), type="l", col="blue",
      main="Blue is density, red is cumulative distribution function",

@@ -139,7 +139,7 @@ McCullagh, P. and Nelder, J. A. (1989)
   \code{\link{gamma1}} for the 1-parameter gamma distribution,
   \code{\link{gamma2.ab}} for another parameterization of
   the 2-parameter gamma distribution,
-  \code{\link{mckaygamma2}} for \emph{a} bivariate gamma distribution,
+  \code{\link{bivgamma.mckay}} for \emph{a} bivariate gamma distribution,
   \code{\link{expexp}},
   \code{\link[stats]{GammaDist}},
   \code{\link{golf}}.

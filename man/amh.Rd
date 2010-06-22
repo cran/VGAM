@@ -91,8 +91,8 @@ Adelaide, South Australia: Rumsby Scientific Publishing.
 
 }
 \examples{
-ymat = ramh(1000, alpha=rhobit(2, inverse=TRUE))
-fit = vglm(ymat ~ 1, amh, trace = TRUE)
+ymat <- ramh(1000, alpha=rhobit(2, inverse=TRUE))
+fit <- vglm(ymat ~ 1, amh, trace = TRUE)
 coef(fit, mat=TRUE)
 Coef(fit)
 }
