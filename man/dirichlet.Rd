@@ -108,7 +108,8 @@ New York: Wiley-Interscience, Third edition.
 \seealso{
   \code{\link{rdiric}},
   \code{\link{dirmultinomial}},
-  \code{\link{multinomial}}.
+  \code{\link{multinomial}},
+  \code{\link{simplex}}.
 
 }
 \examples{

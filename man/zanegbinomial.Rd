@@ -9,10 +9,10 @@
 
 }
 \usage{
-zanegbinomial(lp0="logit", lmunb = "loge", lk = "loge",
-              ep0=list(), emunb =list(), ek = list(), ipnb0 = NULL,
-              ik = NULL, zero = -3, cutoff = 0.995, method.init=1,
-              shrinkage.init=0.95)
+zanegbinomial(lp0 = "logit", lmunb = "loge", lk = "loge",
+              ep0 = list(), emunb =list(), ek = list(), ipnb0 = NULL,
+              ik = NULL, zero = -3, cutoff = 0.995, method.init = 1,
+              shrinkage.init = 0.95)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -153,16 +153,16 @@ for counts with extra zeros.
 }
 
 \examples{
-zdata = data.frame(x = runif(nn <- 2000))
-zdata = transform(zdata, p0 = logit(-1 + 2*x, inverse=TRUE),
-                         y1 = rposnegbin(nn, munb=exp(0+2*x), size=exp(1)),
-                         y2 = rposnegbin(nn, munb=exp(1+2*x), size=exp(1)))
-zdata = transform(zdata, y1 = ifelse(runif(nn) < p0, 0, y1),
-                         y2 = ifelse(runif(nn) < p0, 0, y2))
+zdata <- data.frame(x = runif(nn <- 2000))
+zdata <- transform(zdata, p0 = logit(-1 + 2*x, inverse=TRUE),
+                          y1 = rposnegbin(nn, munb=exp(0+2*x), size=exp(1)),
+                          y2 = rposnegbin(nn, munb=exp(1+2*x), size=exp(1)))
+zdata <- transform(zdata, y1 = ifelse(runif(nn) < p0, 0, y1),
+                          y2 = ifelse(runif(nn) < p0, 0, y2))
 with(zdata, table(y1))
 with(zdata, table(y2))
 
-fit = vglm(cbind(y1,y2) ~ x, zanegbinomial, zdata, trace=TRUE)
+fit <- vglm(cbind(y1,y2) ~ x, zanegbinomial, zdata, trace=TRUE)
 coef(fit, matrix=TRUE)
 head(fitted(fit))
 head(predict(fit))

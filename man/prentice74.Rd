@@ -7,27 +7,17 @@
   Prentice (1974).
 }
 \usage{
-prentice74(llocation="identity", lscale="loge", lshape="identity",
-           elocation=list(), escale=list(), eshape=list(),
-           ilocation=NULL, iscale=NULL, ishape=NULL, zero=NULL)
+prentice74(llocation = "identity", lscale = "loge", lshape = "identity",
+           elocation = list(), escale = list(), eshape = list(),
+           ilocation = NULL, iscale = NULL, ishape = NULL, zero = 2:3)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{llocation}{
+  \item{llocation, lscale, lshape}{
   Parameter link function applied to the
-  location parameter \eqn{a}.
-  See \code{\link{Links}} for more choices.
-
-  }
-  \item{lscale}{
-  Parameter link function applied to the
-  positive scale parameter \eqn{b}.
-  See \code{\link{Links}} for more choices.
-
-  }
-  \item{lshape}{
-  Parameter link function applied to 
-  the shape parameter \eqn{q}. 
+  location parameter \eqn{a},
+  positive scale parameter \eqn{b}
+  and the shape parameter \eqn{q}, respectively.
   See \code{\link{Links}} for more choices.
 
   }
@@ -49,31 +39,34 @@ prentice74(llocation="identity", lscale="loge", lshape="identity",
   }
   \item{zero}{
   An integer-valued vector specifying which
-  linear/additive predictors are modelled as intercepts only.
+  linear/additive predictors are modelled as intercepts-only.
   The values must be from the set \{1,2,3\}.
-  The default value means none are modelled as intercept-only terms.
+  See \code{\link{CommonVGAMffArguments}} for more information.
 
   }
 }
 \details{
   The probability density function is given by
-  \deqn{f(y;a,b,q) = |q| \exp(w/q^2 - e^w) / (b \Gamma(1/q^2)),}{%
+  \deqn{f(y;a,b,q) = |q|\,\exp(w/q^2 - e^w) / (b \, \Gamma(1/q^2)),}{%
         f(y;a,b,q) = |q| * exp(w/q^2 - e^w) / (b*gamma(1/q^2)),}
 for shape parameter \eqn{q \ne 0}{q != 0},
 positive scale parameter \eqn{b > 0},
 location parameter \eqn{a},
 and all real \eqn{y}.
 Here, \eqn{w = (y-a)q/b+\psi(1/q^2)}{w = (y-a)*q/b+psi(1/q^2)}
-where \eqn{\psi}{psi} is the digamma function.
+where \eqn{\psi}{psi} is the digamma function,
+\code{\link[base:Special]{digamma}}.
 The mean of \eqn{Y} is \eqn{a} (returned as the fitted values).
 This is a different parameterization compared to \code{\link{lgamma3ff}}.
 
+
 Special cases: 
-\eqn{q=0} is the normal distribution with standard deviation \eqn{b},
-\eqn{q=-1} is the extreme value distribution for maxima,
-\eqn{q=1} is the extreme value distribution for minima (Weibull).
-If \eqn{q>0} then the distribution is left skew,
-else \eqn{q<0} is right skew.
+\eqn{q = 0} is the normal distribution with standard deviation \eqn{b},
+\eqn{q = -1} is the extreme value distribution for maxima,
+\eqn{q = 1} is the extreme value distribution for minima (Weibull).
+If \eqn{q > 0} then the distribution is left skew,
+else \eqn{q < 0} is right skew.
+
 
 }
 
@@ -90,15 +83,15 @@ else \eqn{q<0} is right skew.
 
 }
 \section{Warning }{
-  The special case \eqn{q=0} is not handled, therefore
+  The special case \eqn{q = 0} is not handled, therefore
   estimates of \eqn{q} too close to zero may cause numerical problems.
 
 }
 \author{ T. W. Yee }
 \note{ 
   The notation used here differs from Prentice (1974):
-  \eqn{\alpha=a}{alpha=a},
-  \eqn{\sigma=b}{sigma=b}.
+  \eqn{\alpha = a}{alpha = a},
+  \eqn{\sigma = b}{sigma = b}.
   Fisher scoring is used. 
 
 }
@@ -108,11 +101,11 @@ else \eqn{q<0} is right skew.
 
 }
 \examples{
-pdat = data.frame(x = runif(nn <- 5000))
-pdat = transform(pdat, loc = -1 + 2*x, Scale = exp(1+x))
-pdat = transform(pdat, y = rlgamma(nn, loc=loc, scale=Scale, k=1))
-fit = vglm(y ~ x, prentice74(zero=3), pdat, trace=TRUE)
-coef(fit, matrix=TRUE)  # Note the coefficients for location
+pdat = data.frame(x = runif(nn <- 1000))
+pdat = transform(pdat, loc = -1 + 2*x, Scale = exp(1))
+pdat = transform(pdat, y = rlgamma(nn, loc = loc, scale = Scale, k = 1))
+fit = vglm(y ~ x, prentice74(zero = 2:3), pdat, trace = TRUE)
+coef(fit, matrix = TRUE)  # Note the coefficients for location
 }
 \keyword{models}
 \keyword{regression}

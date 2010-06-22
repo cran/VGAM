@@ -44,6 +44,7 @@ invparalogistic(link.a = "loge", link.scale = "loge",
 It is the 3-parameter Dagum distribution with \eqn{a=p}.
   More details can be found in Kleiber and Kotz (2003).
 
+
 The inverse paralogistic distribution has density
   \deqn{f(y) = a^2 y^{a^2-1} / [b^{a^2} \{1 + (y/b)^a\}^{a+1}]}{%
         f(y) = a^2 y^(a^2-1) / [b^(a^2) (1 + (y/b)^a)^(a+1)]}
@@ -55,11 +56,13 @@ The mean is
         E(Y) = b  gamma(a + 1/a)  gamma(1 - 1/a) /  gamma(a)}
 provided \eqn{a > 1}.
 
+
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}},
   and \code{\link{vgam}}.
+
 }
 \references{
 Kleiber, C. and Kotz, S. (2003)

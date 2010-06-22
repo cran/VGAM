@@ -8,7 +8,7 @@ qrrvglm.control = function(Rank=1,
           Cinit = NULL,
           Crow1positive=TRUE,
           epsilon = 1.0e-06,
-          EqualTolerances = ITolerances,
+          EqualTolerances = TRUE,
           Etamat.colmax = 10,
           FastAlgorithm = TRUE,
           GradientFunction=TRUE,
@@ -16,7 +16,7 @@ qrrvglm.control = function(Rank=1,
           isdlv = rep(c(2, 1, rep(0.5, len=Rank)), len=Rank),
           iKvector = 0.1,
           iShape = 0.1,
-          ITolerances = TRUE,
+          ITolerances = FALSE,
           maxitl = 40,
           method.init = 1,
           Maxit.optim = 250,
@@ -64,7 +64,7 @@ qrrvglm.control = function(Rank=1,
     if (!is.Numeric(SD.Cinit, posit=TRUE, allow=1)) 
         stop("bad input for 'SD.Cinit'")
     if (ITolerances && !EqualTolerances)
-        stop("EqualTolerances must be TRUE if ITolerances is TRUE")
+        stop("'EqualTolerances' must be TRUE if 'ITolerances' is TRUE")
     if (!is.Numeric(Bestof, posit=TRUE, allow=1, integer=TRUE)) 
         stop("bad input for 'Bestof'")
 

@@ -13,10 +13,10 @@
 
 }
 \usage{
-dbenf(x, ndigits=1, log=FALSE)
-pbenf(q, ndigits=1, log.p=FALSE)
-qbenf(p, ndigits=1)
-rbenf(n, ndigits=1)
+dbenf(x, ndigits = 1, log = FALSE)
+pbenf(q, ndigits = 1, log.p = FALSE)
+qbenf(p, ndigits = 1)
+rbenf(n, ndigits = 1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -59,6 +59,7 @@ This means
 the probability the first\ significant\ digit is 1 is
 approximately \eqn{0.301}, etc.
 
+
 Benford's Law was apparently first discovered in 1881
 by astronomer/mathematician
 S. Newcombe. It started by the observation
@@ -71,9 +72,11 @@ as different as atomic weights, baseball statistics,
 numerical data from \emph{Reader's Digest},
 and drainage areas of rivers.
 
+
 Applications of Benford's Law has been as diverse as
 to the area of
 fraud detection in accounting  and the design computers.
+
 
 }
 \value{

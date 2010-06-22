@@ -52,6 +52,7 @@ brat(refgp = "last", refvalue = 1, init.alpha = 1)
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}}.
+
 }
 \references{ 
 Agresti, A. (2002)
@@ -63,8 +64,10 @@ Citation patterns in the journals of statistics and probability.
 \emph{Statistical Science},
 \bold{9}, 94--108.
 
-The \pkg{BradleyTerry} package has more comprehensive capabilities
+The \pkg{BradleyTerry2} package has more comprehensive capabilities
 than this function.
+
+
 }
 \author{ T. W. Yee }
 \note{ 

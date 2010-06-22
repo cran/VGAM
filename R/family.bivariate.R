@@ -309,106 +309,154 @@ dbilogis4 = function(x1, x2, loc1=0, scale1=1, loc2=0, scale2=1, log=FALSE) {
 
 
 
- mckaygamma2 = function(la="loge",
-                        lp="loge",
-                        lq="loge",
-                        ia=NULL,
-                        ip=1,
-                        iq=1,
-                        zero=NULL) {
-    if (mode(la) != "character" && mode(la) != "name")
-        la = as.character(substitute(la))
-    if (mode(lp) != "character" && mode(lp) != "name")
-        lp = as.character(substitute(lp))
-    if (mode(lq) != "character" && mode(lq) != "name")
-        lq = as.character(substitute(lq))
-    if (!is.Numeric(ip, positive = TRUE) || !is.Numeric(iq, positive = TRUE))
-        stop("initial values for 'ip' and 'iq' must be positive")
-    if (is.Numeric(ia) && any(ia <= 0))
-        stop("'ia' must be positive or NULL")
+
+
+
+ bivgamma.mckay = function(lscale="loge",
+                        lshape1="loge",
+                        lshape2="loge",
+                        iscale=NULL,
+                        ishape1=NULL,
+                        ishape2=NULL,
+                        method.init=1,
+                        zero=1) {
+    if (mode(lscale) != "character" && mode(lscale) != "name")
+        lscale = as.character(substitute(lscale))
+    if (mode(lshape1) != "character" && mode(lshape1) != "name")
+        lshape1 = as.character(substitute(lshape1))
+    if (mode(lshape2) != "character" && mode(lshape2) != "name")
+        lshape2 = as.character(substitute(lshape2))
+    if (!is.null(iscale))
+        if (!is.Numeric(iscale, positive = TRUE))
+            stop("'iscale' must be positive or NULL")
+    if (!is.null(ishape1))
+        if (!is.Numeric(ishape1, positive = TRUE))
+            stop("'ishape1' must be positive or NULL")
+    if (!is.null(ishape2))
+        if (!is.Numeric(ishape2, positive = TRUE))
+            stop("'ishape2' must be positive or NULL")
+    if (!is.Numeric(method.init, allow=1, integ=TRUE, positi=TRUE) ||
+       method.init > 2.5)
+        stop("argument 'method.init' must be 1 or 2")
 
     new("vglmff",
-    blurb=c("McKay's Bivariate Gamma Distribution\n",
+    blurb=c("Bivariate Gamma: McKay's Distribution\n",
            "Links:    ",
-           namesof("a", la), ", ",
-           namesof("p", lp), ", ",
-           namesof("q", lq)),
+           namesof("scale", lscale), ", ",
+           namesof("shape1", lshape1), ", ",
+           namesof("shape2", lshape2)),
     constraints=eval(substitute(expression({
         constraints = cm.zero.vgam(constraints, x, .zero, M)
-    }), list(.zero=zero))),
+    }), list( .zero=zero ))),
     initialize=eval(substitute(expression({
         if (!is.matrix(y) || ncol(y) != 2)
-            stop("the response must be a 2 column matrix") 
-        sorty1 = pmin(y[,1], y[,2])
-        sorty2 = pmax(y[,1], y[,2])
-        if (any(sorty2 - sorty1 <= 0))
-            stop("Delete those observations that are identical")
-        predictors.names = c(namesof("a", .la, short=TRUE), 
-                      namesof("p", .lp, short=TRUE), 
-                      namesof("q", .lq, short=TRUE))
+            stop("the response must be a 2 column matrix")
+        if (any(y[,1] >= y[,2]))
+            stop("the second column minus the first column must be a vector ",
+                  "of positive values")
+        predictors.names = c(namesof("scale", .lscale, short=TRUE), 
+                             namesof("shape1", .lshape1, short=TRUE), 
+                             namesof("shape2", .lshape2, short=TRUE))
         if (!length(etastart)) {
-            pinit = rep(.ip, len=n)
-            qinit = rep(.iq, len=n)
-            ainit = if (length(.ia)) {
-                      rep(.ia, len=n) 
-                    } else (pinit+qinit)/(sorty1+0.1)
-            etastart = cbind(theta2eta(ainit, .la),
-                             theta2eta(pinit, .lp),
-                             theta2eta(qinit, .lq))
+            momentsY = if ( .method.init == 1) {
+                cbind(median(y[,1]),  # This may not be monotonic
+                      median(y[,2])) + 0.01
+            } else {
+                cbind(weighted.mean(y[,1], w),
+                      weighted.mean(y[,2], w))
+            }
+
+            mcg2.loglik = function(thetaval, y, x, w, extraargs) {
+                ainit = a = thetaval
+                momentsY = extraargs$momentsY
+                p = (1/a) * abs(momentsY[1]) + 0.01
+                q = (1/a) * abs(momentsY[2] - momentsY[1]) + 0.01
+                sum(w * (-(p+q)*log(a) - lgamma(p) - lgamma(q) +
+                     (p-1)*log(y[,1]) + (q-1)*log(y[,2]-y[,1]) - y[,2] / a ))
+            }
+
+            a.grid = if (length( .iscale )) c( .iscale ) else
+               c(0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1, 2, 5, 10, 20, 50, 100)
+            extraargs = list(momentsY = momentsY)
+            ainit = getMaxMin(a.grid, objfun=mcg2.loglik,
+                              y=y,  x=x, w=w, maximize=TRUE,
+                              extraargs = extraargs)
+            ainit = rep(if(is.Numeric( .iscale )) .iscale else ainit, len=n)
+            pinit = (1/ainit) * abs(momentsY[1]) + 0.01
+            qinit = (1/ainit) * abs(momentsY[2] - momentsY[1]) + 0.01
+
+            pinit = rep(if(is.Numeric( .ishape1 )) .ishape1 else pinit, len=n)
+            qinit = rep(if(is.Numeric( .ishape2 )) .ishape2 else qinit, len=n)
+
+            etastart = cbind(theta2eta(ainit, .lscale),
+                             theta2eta(pinit, .lshape1),
+                             theta2eta(qinit, .lshape2))
         }
-    }), list(.la=la, .lp=lp, .lq=lq, .ia=ia, .ip=ip, .iq=iq))),
+    }), list( .lscale=lscale, .lshape1=lshape1, .lshape2=lshape2,
+              .iscale=iscale, .ishape1=ishape1, .ishape2=ishape2,
+              .method.init=method.init ))),
     inverse=eval(substitute(function(eta, extra=NULL) {
-        a = eta2theta(eta[,1], .la)
-        p = eta2theta(eta[,2], .lp)
-        q = eta2theta(eta[,3], .lq)
-        cbind("pmin(y1,y2)"=(p+q)/a, "pmax(y1,y2)"=NA)
-    }, list(.la=la, .lp=lp, .lq=lq))),
+        a = eta2theta(eta[,1], .lscale)
+        p = eta2theta(eta[,2], .lshape1)
+        q = eta2theta(eta[,3], .lshape2)
+        cbind("y1"=p*a, "y2"=(p+q)*a)
+    }, list( .lscale=lscale, .lshape1=lshape1, .lshape2=lshape2 ))),
     last=eval(substitute(expression({
-        misc$link = c("a"= .la, "p"= .lp, "q"= .lq)
-    }), list(.la=la, .lp=lp, .lq=lq))),
+        misc$link = c("scale"= .lscale, "shape1"= .lshape1, "shape2"= .lshape2)
+        misc$ishape1 = .ishape1
+        misc$ishape2 = .ishape2
+        misc$iscale = .iscale
+        misc$expected = TRUE
+    }), list( .lscale=lscale, .lshape1=lshape1, .lshape2=lshape2,
+              .iscale=iscale, .ishape1=ishape1, .ishape2=ishape2 ))),
     loglikelihood= eval(substitute(
             function(mu, y, w, residuals = FALSE, eta, extra=NULL) {
-        a = eta2theta(eta[,1], .la)
-        p = eta2theta(eta[,2], .lp)
-        q = eta2theta(eta[,3], .lq)
-        y = cbind(pmin(y[,1], y[,2]), pmax(y[,1], y[,2])) # Sort so y[,1]<y[,2]
-        # Note that, after sorting, y[,1] < y[,2] is needed:
+        a = eta2theta(eta[,1], .lscale)
+        p = eta2theta(eta[,2], .lshape1)
+        q = eta2theta(eta[,3], .lshape2)
         if (residuals) stop("loglikelihood residuals not implemented yet") else
-        sum(w * ((p+q)*log(a) - lgamma(p) - lgamma(q) +
-                 (p-1)*log(y[,1]) + (q-1)*log(y[,2]-y[,1]) - a*y[,2] ))
-    }, list(.la=la, .lp=lp, .lq=lq))),
-    vfamily=c("mckaygamma2"),
+        sum(w * (-(p+q)*log(a) - lgamma(p) - lgamma(q) +
+                  (p-1)*log(y[,1]) + (q-1)*log(y[,2]-y[,1]) - y[,2] / a))
+    }, list( .lscale=lscale, .lshape1=lshape1, .lshape2=lshape2 ))),
+    vfamily=c("bivgamma.mckay"),
     deriv=eval(substitute(expression({
-        a = eta2theta(eta[,1], .la)
-        p = eta2theta(eta[,2], .lp)
-        q = eta2theta(eta[,3], .lq)
-        sorty = y
-        sorty[,1] = pmin(y[,1], y[,2])
-        sorty[,2] = pmax(y[,1], y[,2])
-        d1 = (p+q)/a - sorty[,2]
-        d2 = log(a) - digamma(p) + log(sorty[,1])
-        d3 = log(a) - digamma(q) + log(sorty[,2]-sorty[,1])
-        w * cbind(d1 * dtheta.deta(a, .la),
-                  d2 * dtheta.deta(p, .lp),
-                  d3 * dtheta.deta(q, .lq))
-    }), list(.la=la, .lp=lp, .lq=lq))),
+        aparam = eta2theta(eta[,1], .lscale)
+        shape1 = eta2theta(eta[,2], .lshape1)
+        shape2 = eta2theta(eta[,3], .lshape2)
+        dl.da = (-(shape1+shape2) + y[,2] / aparam) / aparam
+        dl.dshape1 = -log(aparam) - digamma(shape1) + log(y[,1])
+        dl.dshape2 = -log(aparam) - digamma(shape2) + log(y[,2]-y[,1])
+        w * cbind(dl.da      * dtheta.deta(aparam, .lscale),
+                  dl.dshape1 * dtheta.deta(shape1, .lshape1),
+                  dl.dshape2 * dtheta.deta(shape2, .lshape2))
+    }), list( .lscale=lscale, .lshape1=lshape1, .lshape2=lshape2 ))),
     weight=eval(substitute(expression({
-        d11 = (p+q)/a^2
-        d22 = trigamma(p)
-        d33 = trigamma(q)
-        d12 = -1/a
-        d13 = -1/a
+        d11 = (shape1+shape2) / aparam^2
+        d22 = trigamma(shape1)
+        d33 = trigamma(shape2)
+        d12 = 1 / aparam
+        d13 = 1 / aparam
         d23 = 0
         wz = matrix(0, n, dimm(M))
-        wz[,iam(1,1,M)] = dtheta.deta(a, .la)^2 * d11
-        wz[,iam(2,2,M)] = dtheta.deta(p, .lp)^2 * d22
-        wz[,iam(3,3,M)] = dtheta.deta(q, .lq)^2 * d33
-        wz[,iam(1,2,M)] = dtheta.deta(a, .la) * dtheta.deta(p, .lp) * d12
-        wz[,iam(1,3,M)] = dtheta.deta(a, .la) * dtheta.deta(q, .lq) * d13
-        wz[,iam(2,3,M)] = dtheta.deta(p, .lp) * dtheta.deta(q, .lq) * d23
+        wz[,iam(1,1,M)] = dtheta.deta(aparam, .lscale)^2 * d11
+        wz[,iam(2,2,M)] = dtheta.deta(shape1, .lshape1)^2 * d22
+        wz[,iam(3,3,M)] = dtheta.deta(shape2, .lshape2)^2 * d33
+        wz[,iam(1,2,M)] = dtheta.deta(aparam, .lscale) *
+                          dtheta.deta(shape1, .lshape1) * d12
+        wz[,iam(1,3,M)] = dtheta.deta(aparam, .lscale) *
+                          dtheta.deta(shape2, .lshape2) * d13
+        wz[,iam(2,3,M)] = dtheta.deta(shape1, .lshape1) *
+                          dtheta.deta(shape2, .lshape2) * d23
         w * wz
-    }), list(.la=la, .lp=lp, .lq=lq))))
+    }), list( .lscale=lscale, .lshape1=lshape1, .lshape2=lshape2 ))))
 }
+
+
+
+
+
+
+
 
 
 

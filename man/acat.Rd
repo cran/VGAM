@@ -117,7 +117,7 @@ contains further information and examples.
     \code{\link{pneumo}}.
 }
 \examples{
-pneumo = transform(pneumo, let=log(exposure.time))
+pneumo <- transform(pneumo, let=log(exposure.time))
 (fit <- vglm(cbind(normal,mild,severe) ~ let, acat, pneumo))
 coef(fit, matrix=TRUE)
 constraints(fit)
@@ -126,4 +126,4 @@ model.matrix(fit)
 \keyword{models}
 \keyword{regression}
 
-%pneumo$let = log(pneumo$exposure.time)
+%pneumo$let <- log(pneumo$exposure.time)

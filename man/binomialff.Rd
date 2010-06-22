@@ -70,17 +70,21 @@ binomialff(link = "logit", earg = list(), dispersion = 1, mv = FALSE,
   is not fully a maximum likelihood estimate (see pp.124--8 of McCullagh
   and Nelder, 1989).
 
+
   A dispersion parameter that is less/greater than unity corresponds to
   under-/over-dispersion relative to the binomial model.  Over-dispersion
   is more common in practice.
 
-  Setting \code{mv=TRUE} is necessary when fitting a Quadratic RR-VGLM
+
+  Setting \code{mv = TRUE} is necessary when fitting a Quadratic RR-VGLM
   (see \code{\link{cqo}}) because the response is a matrix of \eqn{M}
   columns (e.g., one column per species). Then there will be \eqn{M}
   dispersion parameters (one per column of the response matrix).
 
+
   When used with \code{\link{cqo}} and \code{\link{cao}}, it may be
   preferable to use the \code{\link{cloglog}} link.
+
 
 }
 \value{
@@ -109,34 +113,46 @@ binomialff(link = "logit", earg = list(), dispersion = 1, mv = FALSE,
 \author{ Thomas W. Yee }
 
 \note{
-  If \code{mv} is \code{FALSE} (default), then the response can be of one
+  If \code{mv} is \code{FALSE} (default) then the response can be of one
   of three formats: a factor (first level taken as success), a vector of
   proportions of success, or a 2-column matrix (first column = successes)
   of counts.  The argument \code{weights} in the modelling function can
   also be specified. In particular, for a general vector of proportions,
   you will need to specify \code{weights} because the number of trials
   is needed.
+  In general, 1 means success and 0 means failure
+  (to check, see the \code{y} slot of the fitted object).
+  To input general positive values into the \code{weights} argument of
+  \code{\link{vglm}}/\code{\link{vgam}} one needs to input a 2-column
+  response.
+
 
   The notation \eqn{M} is used to denote the number of linear/additive
   predictors.
 
+
   If \code{mv} is \code{TRUE}, then the matrix response can only be of
-  one format: a matrix of 1's and 0's (1=success).
+  one format: a matrix of 1's and 0's (1 = success).
+
 
   The call \code{binomialff(dispersion=0, ...)} is equivalent to
   \code{quasibinomialff(...)}.  The latter was written so that R users
   of \code{quasibinomial()} would only need to add a  ``\code{ff}''
   to the end of the family function name.
 
+
   Regardless of whether the dispersion parameter is to be estimated or
   not, its value can be seen from the output from the \code{summary()}
   of the object.
 
+
 % With the introduction of name spaces for the \pkg{VGAM} package,
 % \code{"ff"} can be dropped for this family function.
 
+
   Fisher scoring is used. This can sometimes fail to converge by oscillating between
   successive iterations (Ridout, 1990). See the example below.
+
 
 }
 \seealso{
@@ -151,6 +167,7 @@ binomialff(link = "logit", earg = list(), dispersion = 1, mv = FALSE,
     \code{\link{mbinomial}},
     \code{\link{seq2binomial}},
     \code{\link{amlbinomial}},
+    \code{\link{simplex}},
     \code{\link[stats:Binomial]{binomial}},
     \pkg{safeBinaryRegression}.
 

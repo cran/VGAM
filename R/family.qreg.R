@@ -11,6 +11,10 @@
 
 
 
+
+
+
+
 lms.bcn.control <-
 lms.bcg.control <-
 lms.yjn.control <- function(trace=TRUE, ...)
@@ -20,7 +24,7 @@ lms.yjn.control <- function(trace=TRUE, ...)
 
 
 
-lms.bcn <- function(percentiles=c(25,50,75),
+ lms.bcn <- function(percentiles=c(25,50,75),
                     zero=c(1,3),
                     llambda="identity",
                     lmu="identity",
@@ -29,7 +33,7 @@ lms.bcn <- function(percentiles=c(25,50,75),
                     dfmu.init=4,
                     dfsigma.init=2,
                     ilambda=1,
-                    isigma=NULL)
+                    isigma=NULL, expectiles = FALSE)
 {
     if (mode(llambda) != "character" && mode(llambda) != "name")
         llambda = as.character(substitute(llambda))
@@ -44,14 +48,16 @@ lms.bcn <- function(percentiles=c(25,50,75),
         stop("bad input for argument 'ilambda'")
     if (length(isigma) && !is.Numeric(isigma, posit=TRUE))
         stop("bad input for argument 'isigma'")
+    if (length(expectiles) != 1 || !is.logical(expectiles))
+        stop("bad input for argument 'expectiles'")
 
     new("vglmff",
-        blurb=c("LMS Quantile Regression ",
-                "(Box-Cox transformation to normality)\n",
+        blurb=c("LMS ", if (expectiles) "Expectile" else "Quantile",
+                " Regression (Box-Cox transformation to normality)\n",
             "Links:    ",
             namesof("lambda", link=llambda, earg= elambda), ", ",
-            namesof("mu", link=lmu, earg= emu), ", ",
-            namesof("sigma", link=lsigma, earg= esigma)),
+            namesof("mu",     link=lmu,     earg= emu), ", ",
+            namesof("sigma",  link=lsigma,  earg= esigma)),
     constraints=eval(substitute(expression({
         constraints = cm.zero.vgam(constraints, x, .zero, M)
     }), list(.zero=zero))),
@@ -95,30 +101,40 @@ lms.bcn <- function(percentiles=c(25,50,75),
         eta[,1] = eta2theta(eta[,1], .llambda, earg= .elambda)
         eta[,2] = eta2theta(eta[,2], .lmu, earg= .emu)
         eta[,3] = eta2theta(eta[,3], .lsigma, earg= .esigma)
-        qtplot.lms.bcn(percentiles= .percentiles, eta=eta)
+        if ( .expectiles ) {
+          explot.lms.bcn(percentiles= .percentiles, eta=eta)
+        } else {
+          qtplot.lms.bcn(percentiles= .percentiles, eta=eta)
+        }
     }, list( .llambda=llambda, .lmu=lmu, .lsigma=lsigma,
              .elambda=elambda, .emu=emu, .esigma=esigma, 
-             .percentiles=percentiles ))),
+             .percentiles=percentiles, .expectiles = expectiles ))),
     last=eval(substitute(expression({
         misc$percentiles = .percentiles
         misc$links = c(lambda = .llambda, mu = .lmu, sigma = .lsigma)
         misc$earg = list(lambda = .elambda, mu = .emu, sigma = .esigma)
         misc$true.mu = FALSE    # $fitted is not a true mu
+        misc$expectiles = .expectiles
         if (control$cdf) {
             post$cdf = cdf.lms.bcn(y, eta0=matrix(c(lambda,mymu,sigma), 
                 ncol=3, dimnames=list(dimnames(x)[[1]], NULL)))
         }
     }), list( .llambda=llambda, .lmu=lmu, .lsigma=lsigma,
               .elambda=elambda, .emu=emu, .esigma=esigma, 
-              .percentiles=percentiles ))),
+              .percentiles=percentiles, .expectiles = expectiles ))),
     loglikelihood=eval(substitute(
         function(mu,y,w, residuals= FALSE, eta, extra=NULL) {
             lambda = eta2theta(eta[,1], .llambda, earg= .elambda)
             mu = eta2theta(eta[,2], .lmu, earg= .emu)
             sigma = eta2theta(eta[,3], .lsigma, earg= .esigma)
-            z = ((y/mu)^lambda - 1) / (lambda * sigma)
-         if (residuals) stop("loglikelihood residuals not implemented yet") else
-            sum(w * (lambda * log(y/mu) - log(sigma) - 0.5*z^2))
+            zedd = ((y/mu)^lambda - 1) / (lambda * sigma)
+        if (residuals) stop("loglikelihood residuals not implemented") else {
+            use.this = (lambda * log(y / mu) - log(sigma) - log(y) +
+                     dnorm(zedd, log = TRUE))
+            use.this[abs(lambda) < 0.001]  = (-log(y / mu) - log(sigma) +
+                     dnorm(zedd, log = TRUE))[abs(lambda) < 0.001]
+            sum(w * use.this)
+        }
         }, list( .llambda=llambda, .lmu=lmu, .lsigma=lsigma,
                  .elambda=elambda, .emu=emu, .esigma=esigma ))),
     vfamily=c("lms.bcn", "lmscreg"),
@@ -126,10 +142,11 @@ lms.bcn <- function(percentiles=c(25,50,75),
         lambda = eta2theta(eta[,1], .llambda, earg= .elambda)
         mymu   = eta2theta(eta[,2], .lmu, earg= .emu)
         sigma  = eta2theta(eta[,3], .lsigma, earg= .esigma)
-        z = ((y/mymu)^lambda - 1) / (lambda * sigma)
-        z2m1 = z * z - 1
-        dl.dlambda = z*(z - log(y/mymu) / sigma) / lambda - z2m1 * log(y/mymu)
-        dl.dmu = z / (mymu * sigma) + z2m1 * lambda / mymu
+        zedd = ((y/mymu)^lambda - 1) / (lambda * sigma)
+        z2m1 = zedd * zedd - 1
+        dl.dlambda = zedd*(zedd - log(y/mymu) / sigma) / lambda -
+                     z2m1 * log(y/mymu)
+        dl.dmu = zedd / (mymu * sigma) + z2m1 * lambda / mymu
         dl.dsigma = z2m1 / sigma
         dlambda.deta  = dtheta.deta(lambda, .llambda, earg= .elambda)
         dmu.deta  = dtheta.deta(mymu, .lmu, earg= .emu)
@@ -154,7 +171,7 @@ lms.bcn <- function(percentiles=c(25,50,75),
 
 
 
-lms.bcg = function(percentiles=c(25,50,75),
+ lms.bcg = function(percentiles=c(25,50,75),
                    zero=c(1,3),
                    llambda="identity",
                    lmu="identity",
@@ -252,26 +269,27 @@ lms.bcg = function(percentiles=c(25,50,75),
             lambda = eta2theta(eta[,1], .llambda, earg= .elambda)
             mu = eta2theta(eta[,2], .lmu, earg= .emu)
             sigma = eta2theta(eta[,3], .lsigma, earg= .esigma)
-            g = (y/mu)^lambda
+            Gee = (y / mu)^lambda
             theta = 1 / (sigma * lambda)^2
          if (residuals) stop("loglikelihood residuals not implemented yet") else
-            sum(w * (log(abs(lambda)) + theta*(log(theta)+log(g)-g) - 
-                     lgamma(theta) - log(y)))
+            sum(w * (log(abs(lambda)) + theta * (log(theta) +
+                     log(Gee)-Gee) - lgamma(theta) - log(y)))
         }, list( .llambda=llambda, .lmu=lmu, .lsigma=lsigma,
                  .elambda=elambda, .emu=emu, .esigma=esigma ))),
     vfamily=c("lms.bcg", "lmscreg"),
     deriv=eval(substitute(expression({
         lambda = eta2theta(eta[,1], .llambda, earg= .elambda)
-        mymu = eta2theta(eta[,2], .lmu, earg= .emu)
-        sigma = eta2theta(eta[,3], .lsigma, earg= .esigma)
+        mymu   = eta2theta(eta[,2], .lmu, earg= .emu)
+        sigma  = eta2theta(eta[,3], .lsigma, earg= .esigma)
 
-        g = (y/mymu)^lambda
+        Gee = (y / mymu)^lambda
         theta = 1 / (sigma * lambda)^2
         dd = digamma(theta)
 
-        dl.dlambda = (1 + 2*theta*(dd+g-1-log(theta)-0.5*(g+1)*log(g)))/lambda
-        dl.dmu = lambda * theta * (g-1) / mymu
-        dl.dsigma = 2*theta*(dd+g-log(theta * g)-1) / sigma
+        dl.dlambda = (1 + 2 * theta * (dd + Gee -1 -log(theta) -
+                     0.5 * (Gee + 1) * log(Gee))) / lambda
+        dl.dmu = lambda * theta * (Gee-1) / mymu
+        dl.dsigma = 2*theta*(dd + Gee - log(theta * Gee)-1) / sigma
         dlambda.deta = dtheta.deta(lambda, link=.llambda, earg= .elambda)
         dmu.deta = dtheta.deta(mymu, link=.lmu, earg= .emu)
         dsigma.deta = dtheta.deta(sigma, link=.lsigma, earg= .esigma)
@@ -290,20 +308,20 @@ lms.bcg = function(percentiles=c(25,50,75),
             wz[,iam(1,1,M)] = ((1 + theta*(tritheta*(1+4*theta) -
                                4*(1+1/theta) - log(theta)*(2/theta -
                                log(theta)) + dd*part2)) / lambda^2) *
-                              dlambda.deta^2
+                               dlambda.deta^2
         } else {
-            temp = mean( g*(log(g))^2 )
-            wz[,iam(1,1,M)] = ((4*theta*(theta*tritheta-1) -1 +
-                               theta*temp)/lambda^2) *
-                              dlambda.deta^2
+            temp = mean( Gee*(log(Gee))^2 )
+            wz[,iam(1,1,M)] = ((4 * theta * (theta * tritheta-1) - 1 +
+                              theta*temp) / lambda^2) * dlambda.deta^2
         }
 
-        wz[,iam(2,2,M)] = dmu.deta^2 / (mymu*sigma)^2
-        wz[,iam(3,3,M)] = (4*theta*(theta*tritheta-1)/sigma^2) * dsigma.deta^2
-        wz[,iam(1,2,M)] = (-theta * (dd + 1/theta - log(theta)) / mymu) *
+        wz[,iam(2,2,M)] = dmu.deta^2 / (mymu * sigma)^2
+        wz[,iam(3,3,M)] = (4 * theta * (theta * tritheta - 1) / sigma^2) *
+                          dsigma.deta^2
+        wz[,iam(1,2,M)] = (-theta * (dd + 1 / theta - log(theta)) / mymu) *
                           dlambda.deta * dmu.deta
         wz[,iam(1,3,M)] = 2 * theta^1.5 * (2 * theta * tritheta - 2 -
-                           1/theta) * dlambda.deta * dsigma.deta
+                          1 / theta) * dlambda.deta * dsigma.deta
         wz * w
     }), list( .llambda=llambda, .lmu=lmu, .lsigma=lsigma,
               .elambda=elambda, .emu=emu, .esigma=esigma ))))
@@ -324,7 +342,7 @@ dyj.dy.yeojohnson = function(y, lambda) {
     ifelse(y>0, (1 + y)^(lambda - 1), (1 - y)^(1 - lambda))
 }
 
-yeo.johnson = function(y, lambda, derivative=0,
+ yeo.johnson = function(y, lambda, derivative=0,
                         epsilon=sqrt(.Machine$double.eps), inverse= FALSE)
 {
 
@@ -536,7 +554,7 @@ lms.yjn2.control <- function(save.weight=TRUE, ...)
     list(save.weight=save.weight)
 }
 
-lms.yjn2 = function(percentiles=c(25,50,75),
+ lms.yjn2 = function(percentiles=c(25,50,75),
                     zero=c(1,3),
                     llambda="identity",
                     lmu="identity",
@@ -722,7 +740,7 @@ lms.yjn2 = function(percentiles=c(25,50,75),
 }
 
 
-lms.yjn <- function(percentiles=c(25,50,75),
+ lms.yjn <- function(percentiles=c(25,50,75),
                     zero=c(1,3),
                     llambda="identity",
                     lsigma="loge",
@@ -1033,7 +1051,7 @@ amlnormal.deviance = function(mu, y, w, residuals = FALSE, eta, extra=NULL) {
 
     M <- length(extra$w.aml)
 
-    if (M > 1) y = matrix(y,extra$n,extra$M)
+    if (M > 1) y = matrix(y, extra$n, extra$M)
 
     devi =  cbind((y - mu)^2)
     if (residuals) {
@@ -1043,8 +1061,9 @@ amlnormal.deviance = function(mu, y, w, residuals = FALSE, eta, extra=NULL) {
     } else {
         all.deviances = numeric(M)
         myresid = matrix(y,extra$n,extra$M) - cbind(mu)
-        for(ii in 1:M) all.deviances[ii] = sum(w * devi[,ii] *
-                               Wr1(myresid[,ii], w=extra$w.aml[ii]))
+        for(ii in 1:M)
+            all.deviances[ii] = sum(w * devi[,ii] *
+                                    Wr1(myresid[,ii], w=extra$w.aml[ii]))
     }
     if (is.logical(extra$individual) && extra$individual)
         all.deviances else sum(all.deviances)
@@ -1052,10 +1071,10 @@ amlnormal.deviance = function(mu, y, w, residuals = FALSE, eta, extra=NULL) {
 
 
 
- amlnormal <- function(w.aml=1, parallel=FALSE,
+ amlnormal <- function(w.aml = 1, parallel = FALSE,
                        lexpectile = "identity", eexpectile = list(),
                        iexpectile = NULL,
-                       method.init=1, digw=4)
+                       method.init = 1, digw = 4)
 {
 
 
@@ -1124,14 +1143,18 @@ amlnormal.deviance = function(mu, y, w, residuals = FALSE, eta, extra=NULL) {
         misc$parallel = .parallel
         misc$expected = TRUE
         extra$percentile = numeric(M)
-        for(ii in 1:M)
-            extra$percentile[ii] = 100 * weighted.mean(myresid[,ii] <= 0, w)
+        for(ii in 1:M) {
+            use.w = if (M > 1 && ncol(cbind(w)) == M) w[, ii] else w
+            extra$percentile[ii] = 100 * weighted.mean(myresid[,ii] <= 0, use.w)
+        }
         names(extra$percentile) = names(misc$link)
 
         extra$individual = TRUE
-        extra$deviance = amlnormal.deviance(mu=mu, y=y, w=w, residuals=FALSE,
-                                            eta=eta, extra=extra)
-        names(extra$deviance) = extra$y.names
+        if (!(M > 1 && ncol(cbind(w)) == M)) {
+            extra$deviance = amlnormal.deviance(mu=mu, y=y, w=w,
+                                    residuals=FALSE, eta=eta, extra=extra)
+            names(extra$deviance) = extra$y.names
+        }
     }), list( .lexpectile=lexpectile, .eexpectile=eexpectile,
               .parallel=parallel ))),
     vfamily=c("amlnormal"),
@@ -1182,8 +1205,8 @@ amlpoisson.deviance = function(mu, y, w, residuals = FALSE, eta, extra=NULL) {
 }
 
 
-amlpoisson <- function(w.aml=1, parallel=FALSE, method.init=1, digw=4,
-                       link="loge", earg=list())
+ amlpoisson <- function(w.aml = 1, parallel = FALSE, method.init = 1,
+                        digw = 4, link = "loge", earg = list())
 {
     if (!is.Numeric(w.aml, posit=TRUE))
         stop("'w.aml' must be a vector of positive values")
@@ -1313,8 +1336,8 @@ amlbinomial.deviance = function(mu, y, w, residuals = FALSE, eta, extra=NULL) {
 }
 
 
-amlbinomial <- function(w.aml=1, parallel=FALSE, digw=4,
-                       link="logit", earg=list())
+ amlbinomial <- function(w.aml = 1, parallel= FALSE, digw = 4,
+                       link = "logit", earg = list())
 {
     if (!is.Numeric(w.aml, posit=TRUE))
         stop("'w.aml' must be a vector of positive values")
@@ -1451,8 +1474,8 @@ amlexponential.deviance = function(mu, y, w, residuals = FALSE, eta, extra=NULL)
 }
 
 
-amlexponential <- function(w.aml=1, parallel=FALSE, method.init=1, digw=4,
-                           link="loge", earg=list())
+ amlexponential <- function(w.aml = 1, parallel = FALSE, method.init = 1,
+                            digw = 4, link = "loge", earg = list())
 {
     if (!is.Numeric(w.aml, posit=TRUE))
         stop("'w.aml' must be a vector of positive values")

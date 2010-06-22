@@ -140,8 +140,8 @@ zipoisson(lphi="logit", llambda = "loge", ephi=list(), elambda =list(),
 }
 \examples{
 zipdat = data.frame(x = runif(nn <- 2000))
-zipdat = transform(zipdat, phi = logit(-0.5 + 1*x, inverse=TRUE),
-                           lambda = loge(0.5 + 2*x, inverse=TRUE))
+zipdat = transform(zipdat, phi    = logit(-0.5 + 1*x, inverse=TRUE),
+                           lambda =  loge( 0.5 + 2*x, inverse=TRUE))
 zipdat = transform(zipdat, y = rzipois(nn, lambda, phi))
 with(zipdat, table(y))
 fit = vglm(y ~ x, zipoisson, zipdat, trace=TRUE)

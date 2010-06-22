@@ -59,13 +59,15 @@ New York: Wiley-Interscience, Third edition.
 
 \author{ T. W. Yee }
 \note{
-    The response should be univariate. Multivariate responses are more
-    generally handled using \code{gaussianff}, however this only handles
-    the mean and the variance-covariance matrices are assumed known.
+    The response should be univariate. Multivariate
+    responses are more generally handled using
+    \code{\link{gaussianff}}, however this only handles
+    the mean and the variance-covariance matrices are
+    assumed known.
 
 }
 \seealso{
-    \code{gaussianff},
+    \code{\link{gaussianff}},
     \code{\link{posnormal1}},
     \code{\link{mix2normal1}},
     \code{\link{tobit}},
@@ -79,17 +81,16 @@ New York: Wiley-Interscience, Third edition.
 }
 \examples{
 ndata = data.frame(x = rnorm(nn <- 200))
-ndata = transform(ndata, y = rnorm(nn, mean=1-3*x, sd=exp(1+0.2*x)))
-fit = vglm(y ~ x, normal1, ndata, trace=TRUE)
-coef(fit, matrix=TRUE)
+ndata = transform(ndata, y = rnorm(nn, mean = 1-3*x, sd = exp(1+0.2*x)))
+fit = vglm(y ~ x, normal1, ndata, trace = TRUE)
+coef(fit, matrix = TRUE)
 
-# Generate a random sample from a N(mu=theta, sigma=theta)
-# distribution with theta=10. Then estimate theta.
+# Generate data from N(mu = theta = 10, sigma = theta) and estimate theta.
 theta = 10
-ndata = data.frame(y = rnorm(100, m=theta, sd=theta))
-fit = vglm(y ~ 1, normal1(lsd="identity"), ndata,
-           constraints = list("(Intercept)"=rbind(1,1)))
-coef(fit, matrix=TRUE)
+ndata = data.frame(y = rnorm(100, m = theta, sd = theta))
+fit = vglm(y ~ 1, normal1(lsd = "identity"), ndata,
+           constraints = list("(Intercept)" = rbind(1, 1)))
+coef(fit, matrix = TRUE)
 }
 \keyword{models}
 \keyword{regression}

@@ -16,7 +16,7 @@ rcqo(n, p, S, Rank = 1,
      sdOptima = ifelse(ESOptima, 1.5/Rank, 1) * ifelse(scalelv, sdlv, 1),
      sdTolerances = 0.25, Kvector = 1, Shape = 1,
      sqrt = FALSE, Log = FALSE, rhox = 0.5, breaks = 4,
-     seed = NULL, Crow1positive=TRUE, xmat = NULL, scalelv = TRUE)
+     seed = NULL, Crow1positive = TRUE, xmat = NULL, scalelv = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -109,18 +109,18 @@ rcqo(n, p, S, Rank = 1,
   }
   \item{sdOptima}{
     Numeric, of length \eqn{R} (recycled if necessary).
-    If \code{ESOptima=FALSE} then,
+    If \code{ESOptima = FALSE} then,
     for the \eqn{r}th latent variable axis,
     the optima of the species are generated from a
     normal distribution centered about 0.
-    If \code{ESOptima=TRUE} then the \eqn{S} optima
+    If \code{ESOptima = TRUE} then the \eqn{S} optima
     are equally spaced about 0 along every latent variable axis.
     Regardless of the value of \code{ESOptima}, the optima
     are then scaled to give standard deviation \code{sdOptima[r]}.
     
   }
   \item{sdTolerances}{
-    Logical. If \code{EqualTolerances=FALSE} then, for the
+    Logical. If \code{EqualTolerances = FALSE} then, for the
     \eqn{r}th latent variable, the
     species' tolerances are
     chosen from a normal distribution with mean 1 and
@@ -153,7 +153,7 @@ rcqo(n, p, S, Rank = 1,
   }
   \item{sqrt}{
     Logical. Take the square-root of the negative binomial counts?
-    Assigning \code{sqrt=TRUE} when \code{family="negbinomial"} means
+    Assigning \code{sqrt = TRUE} when \code{family="negbinomial"} means
     that the resulting species data can be considered very crudely to be
     approximately Poisson distributed.
     They will not integers in general but much easier (less numerical
@@ -162,7 +162,7 @@ rcqo(n, p, S, Rank = 1,
   }
   \item{Log}{
     Logical. Take the logarithm of the gamma random variates?
-    Assigning \code{Log=TRUE} when \code{family="gamma2"} means
+    Assigning \code{Log = TRUE} when \code{family="gamma2"} means
     that the resulting species data can be considered very crudely to be
     approximately Gaussian distributed about its (quadratic) mean.
     The result is that it is much easier (less numerical
@@ -201,7 +201,7 @@ rcqo(n, p, S, Rank = 1,
   }
   \item{xmat}{
    The
-   \eqn{n \times (p-1)}{n * (p-1)}
+   \eqn{n} by  \eqn{p-1}
    environmental matrix can be inputted.
     
   }
@@ -228,8 +228,7 @@ rcqo(n, p, S, Rank = 1,
   and if \code{family} is binomial or ordinal then it is converted into
   these forms.
 
-  In CQO theory the \eqn{n \times p}{n * p}
-  matrix \eqn{X} is partitioned
+  In CQO theory the \eqn{n} by \eqn{p} matrix \eqn{X} is partitioned
   into two parts \eqn{X_1} and \eqn{X_2}. The matrix
   \eqn{X_2} contains the `real' environmental variables whereas
   the variables in \eqn{X_1} are just for adjustment purposes;
@@ -241,13 +240,13 @@ rcqo(n, p, S, Rank = 1,
   
 }
 \value{
-  A \eqn{n \times (p-1+S)}{n * (p-1+S)} data frame with
+  A \eqn{n} by \eqn{p-1+S} data frame with
   components and attributes.
   In the following the attributes are labelled with double
   quotes.
   \item{x2, x3, x4, \ldots, xp}{
     The environmental variables. This makes up the
-    \eqn{n \times (p-1)}{n * (p-1)} \eqn{X_2} matrix.
+    \eqn{n} by \eqn{p-1} \eqn{X_2} matrix.
     Note that \code{x1} is not present; it is effectively a vector
     of ones since it corresponds to an intercept term when
     \code{\link{cqo}} is applied to the data.
@@ -255,13 +254,13 @@ rcqo(n, p, S, Rank = 1,
   }
   \item{y1, y2, x3, \ldots, yS}{
     The species data. This makes up the
-    \eqn{n \times S}{n * S} matrix \eqn{Y}.
+    \eqn{n} by \eqn{S} matrix \eqn{Y}.
     This will be of the form described by the argument
     \code{family}.
     
   }
   \item{"ccoefficients"}{
-    The \eqn{(p-1) \times R}{(p-1) * R} matrix of
+    The \eqn{p-1} by \eqn{R} matrix of
     constrained coefficients
     (or canonical coefficients).
     These are also known as weights or loadings.
@@ -281,7 +280,7 @@ rcqo(n, p, S, Rank = 1,
 
   }
   \item{"lv"}{
-    The \eqn{n \times R}{n * R} matrix of site scores.
+    The \eqn{n} by \eqn{R} matrix of site scores.
     Each successive column (latent variable) has
     sample standard deviation
     equal to successive values of \code{sdlv}.
@@ -292,11 +291,11 @@ rcqo(n, p, S, Rank = 1,
     
   }
   \item{"optima"}{
-    The \eqn{S \times R}{S * R} matrix of species' optima.
+    The \eqn{S} by \eqn{R} matrix of species' optima.
 
   }
   \item{"tolerances"}{
-    The \eqn{S \times R}{S * R} matrix of species' tolerances.
+    The \eqn{S} by \eqn{R} matrix of species' tolerances.
     These are the
     square root of the diagonal elements of the tolerance matrices
     (recall that all tolerance matrices are restricted to being
@@ -318,9 +317,11 @@ canonical Gaussian ordination.
 \emph{Ecological Monographs},
 \bold{74}, 685--701.
 
+
 Yee, T. W. (2006)
 Constrained additive ordination.
 \emph{Ecology}, \bold{87}, 203--213.
+
 
 ter Braak, C. J. F. and Prentice, I. C. (1988)
 A theory of gradient analysis.
@@ -332,6 +333,7 @@ A theory of gradient analysis.
 \note{
   This function is under development and is not finished yet.
   There may be a few bugs.
+
 
   Yet to do: add an argument that allows absences to be equal
   to the first level if ordinal data is requested.
@@ -345,15 +347,53 @@ A theory of gradient analysis.
   \code{\link{poissonff}},
   \code{\link{negbinomial}},
   \code{\link{gamma2}},
-  \code{gaussianff}.
-}
-\examples{
+  \code{\link{gaussianff}}.
 
+}
+
+\examples{
 # Example 1: Species packing model:
 n = 100; p = 5; S = 5
-mydata = rcqo(n, p, S, ESOpt=TRUE, EqualMax=TRUE)
+mydata = rcqo(n, p, S, ESOpt = TRUE, EqualMax = TRUE)
 names(mydata)
+(myform = attr(mydata, "formula"))
+fit = cqo(myform, poissonff, mydata, Bestof = 3) # EqualTol = TRUE 
+\dontrun{
+matplot(attr(mydata, "lv"), mydata[,-(1:(p-1))], col=1:S)
+persp(fit, col=1:S, add = TRUE)
+lvplot(fit, lcol=1:S, y = TRUE, pcol=1:S)  # The same plot as above
+}
+
+# Compare the fitted model with the 'truth'
+ccoef(fit)  # The fitted model
+attr(mydata, "ccoefficients") # The 'truth'
+
+c(sd(attr(mydata, "lv")), sd(lv(fit))) # Both values should be approx equal
+
+
+# Example 2: negative binomial data fitted using a Poisson model:
+n = 200; p = 5; S = 5
+mydata = rcqo(n, p, S, fam="negbin", sqrt = TRUE)
 myform = attr(mydata, "formula")
+fit = cqo(myform, fam=poissonff, dat=mydata) # ITol = TRUE,
+\dontrun{
+lvplot(fit, lcol=1:S, y = TRUE, pcol=1:S) }
+# Compare the fitted model with the 'truth'
+ccoef(fit)  # The fitted model
+attr(mydata, "ccoefficients") # The 'truth'
+
+
+# Example 3: gamma2 data fitted using a Gaussian model:
+n = 200; p = 5; S = 3
+mydata = rcqo(n, p, S, fam="gamma2", Log = TRUE)
+fit = cqo(attr(mydata, "formula"), fam=gaussianff, dat=mydata) # ITol=TRUE,
+\dontrun{
+matplot(attr(mydata, "lv"), exp(mydata[,-(1:(p-1))]), col=1:S) # 'raw' data
+lvplot(fit, lcol=1:S, y=TRUE, pcol=1:S)  # Fitted model to transformed data
+}
+# Compare the fitted model with the 'truth'
+ccoef(fit)  # The fitted model
+attr(mydata, "ccoefficients") # The 'truth'
 }
 \keyword{distribution}
 

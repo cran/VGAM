@@ -9,10 +9,10 @@
 
 }
 \usage{
-hypersecant(link.theta="elogit", earg=if(link.theta=="elogit")
-    list(min=-pi/2, max=pi/2) else list(), init.theta=NULL)
-hypersecant.1(link.theta="elogit", earg=if(link.theta=="elogit")
-    list(min=-pi/2, max=pi/2) else list(), init.theta=NULL)
+hypersecant(link.theta = "elogit", earg = if(link.theta == "elogit")
+    list(min = -pi/2, max = pi/2) else list(), init.theta = NULL)
+hypersecant.1(link.theta = "elogit", earg = if(link.theta == "elogit")
+    list(min = -pi/2, max = pi/2) else list(), init.theta = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -80,15 +80,15 @@ hypersecant.1(link.theta="elogit", earg=if(link.theta=="elogit")
   \code{\link{elogit}}.
 }
 \examples{
-x = rnorm(n <- 200)
-y = rnorm(n)  # Not very good data!
-fit = vglm(y ~ x, hypersecant, trace=TRUE, crit="c")
-coef(fit, matrix=TRUE)
+hdata = data.frame(x = rnorm(nn <- 200))
+hdata = transform(hdata, y = rnorm(nn))  # Not very good data!
+fit = vglm(y ~ x, hypersecant, hdata, trace = TRUE, crit = "coef")
+coef(fit, matrix = TRUE)
 fit@misc$earg
 
-# Not recommended
-fit = vglm(y ~ x, hypersecant(link="identity"), trace=TRUE, crit="c")
-coef(fit, matrix=TRUE)
+# Not recommended:
+fit = vglm(y ~ x, hypersecant(link = "identity"), hdata, trace = TRUE)
+coef(fit, matrix = TRUE)
 fit@misc$earg
 }
 \keyword{models}

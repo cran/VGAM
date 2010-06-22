@@ -8,8 +8,8 @@
 
 }
 \usage{
-benini(y0=stop("argument 'y0' must be specified"),
-       lshape="loge", earg=list(), ishape=NULL, method.init=1)
+benini(y0 = stop("argument 'y0' must be specified"),
+       lshape = "loge", earg = list(), ishape = NULL, method.init = 1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -52,6 +52,7 @@ benini(y0=stop("argument 'y0' must be specified"),
         F(y) = 1 - exp(-b * [(log(y/y0))^2]). }
   Here, Newton-Raphson and Fisher scoring coincide.
 
+
   On fitting, the \code{extra}  slot has a component called \code{y0} which 
   contains the value of the \code{y0} argument.
 
@@ -64,13 +65,12 @@ benini(y0=stop("argument 'y0' must be specified"),
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}},
-  \code{\link{rrvglm}}
   and \code{\link{vgam}}.
+
 }
 \references{ 
 Kleiber, C. and Kotz, S. (2003)
-\emph{Statistical Size Distributions in Economics and
-             Actuarial Sciences},
+\emph{Statistical Size Distributions in Economics and Actuarial Sciences},
 Hoboken, NJ: Wiley-Interscience.
 
 }
@@ -83,15 +83,15 @@ Hoboken, NJ: Wiley-Interscience.
 }
 \seealso{
      \code{\link{Benini}}.
+
 }
 \examples{
 y0 = 1
-bdata = data.frame(y  = rbenini(n=3000, y0=y0, shape=exp(2)))
-fit = vglm(y ~ 1, benini(y0=y0), bdata, trace=TRUE, crit="c")
-coef(fit, matrix=TRUE)
+bdata = data.frame(y  = rbenini(n = 3000, y0 = y0, shape = exp(2)))
+fit = vglm(y ~ 1, benini(y0 = y0), bdata, trace = TRUE, crit = "coef")
+coef(fit, matrix = TRUE)
 Coef(fit)
 fit@extra$y0
-
 head(fitted(fit), 1)   # Apparent discrepancy:
 with(bdata, mean(y))
 }

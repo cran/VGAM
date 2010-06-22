@@ -10,30 +10,48 @@
 
 }
 \usage{
-qrrvglm.control(Rank = 1, Bestof = if (length(Cinit)) 1 else 10,
-                checkwz=TRUE, Cinit = NULL, Crow1positive = TRUE,
-                epsilon = 1.0e-06, EqualTolerances = ITolerances,
-                Etamat.colmax = 10, FastAlgorithm = TRUE,
-                GradientFunction=TRUE, Hstep = 0.001,
+qrrvglm.control(Rank = 1,
+                Bestof = if(length(Cinit)) 1 else 10,
+                checkwz = TRUE,
+                Cinit = NULL,
+                Crow1positive = TRUE,
+                epsilon = 1.0e-06,
+                EqualTolerances = TRUE,
+                Etamat.colmax = 10,
+                FastAlgorithm = TRUE,
+                GradientFunction = TRUE,
+                Hstep = 0.001,
                 isdlv = rep(c(2, 1, rep(0.5, len=Rank)), len=Rank),
-                iKvector = 0.1, iShape = 0.1, ITolerances = TRUE,
-                maxitl = 40, method.init = 1, Maxit.optim = 250,
-                MUXfactor = rep(7, length=Rank), Norrr = ~ 1,
+                iKvector = 0.1,
+                iShape = 0.1,
+                ITolerances = FALSE,
+                maxitl = 40,
+                method.init = 1,
+                Maxit.optim = 250,
+                MUXfactor = rep(7, length=Rank),
+                Norrr = ~ 1,
                 optim.maxit = 20,
-                Parscale = if (ITolerances) 0.001 else 1.0,
-                SD.Cinit = 0.02, SmallNo = 5.0e-13, trace = TRUE,
-                Use.Init.Poisson.QO=TRUE, 
+                Parscale = if(ITolerances) 0.001 else 1.0,
+                SD.Cinit = 0.02,
+                SmallNo = 5.0e-13, 
+                trace = TRUE,
+                Use.Init.Poisson.QO = TRUE, 
                 wzepsilon = .Machine$double.eps^0.75, ...)
 }
 %- maybe also `usage' for other objects documented here.
 \arguments{
+    In the following, \eqn{R} is the \code{Rank}, \eqn{M} is the number
+    of linear predictors, and \eqn{S} is the number of responses
+    (species).
+    Thus \eqn{M=S} for binomial and Poisson responses, and
+    \eqn{M=2S} for the negative binomial and 2-parameter gamma distributions.
 
   \item{Rank}{
     The numerical rank \eqn{R} of the model, i.e., the
-    number of ordination axes.  Must be an element from the set
+    number of ordination axes. Must be an element from the set
     \{1,2,\ldots,min(\eqn{M},\eqn{p_2}{p2})\} where the vector of explanatory
     variables \eqn{x} is partitioned into (\eqn{x_1},\eqn{x_2}), which is
-    of dimension \eqn{p_1+p_2}{p1+p2}.  The variables making up \eqn{x_1}
+    of dimension \eqn{p_1+p_2}{p1+p2}. The variables making up \eqn{x_1}
     are given by the terms in the \code{Norrr} argument, and the rest
     of the terms comprise \eqn{x_2}.
 
@@ -41,7 +59,7 @@ qrrvglm.control(Rank = 1, Bestof = if (length(Cinit)) 1 else 10,
   \item{Bestof}{
     Integer. The best of \code{Bestof} models fitted is returned.
     This argument helps guard against local solutions by (hopefully)
-    finding the global solution from many fits.  The argument has value
+    finding the global solution from many fits. The argument has value
     1 if an initial value for \eqn{C} is inputted using \code{Cinit}.
 
     }
@@ -53,68 +71,70 @@ qrrvglm.control(Rank = 1, Bestof = if (length(Cinit)) 1 else 10,
   }
   \item{Cinit}{
     Optional initial \eqn{C} matrix, which must be a \eqn{p_2}{p2} by \eqn{R}
-    matrix.  The default is to apply \code{.Init.Poisson.QO()} to obtain
+    matrix. The default is to apply \code{.Init.Poisson.QO()} to obtain
     initial values.
 
   }
   \item{Crow1positive}{ 
       Logical vector of length \code{Rank} (recycled if necessary): are
-      the elements of the first row of \eqn{C} positive?  For example,
+      the elements of the first row of \eqn{C} positive? For example,
       if \code{Rank} is 4, then specifying \code{Crow1positive=c(FALSE,
       TRUE)} will force \eqn{C[1,1]} and \eqn{C[1,3]} to be negative,
-      and \eqn{C[1,2]} and \eqn{C[1,4]} to be positive.  This argument
+      and \eqn{C[1,2]} and \eqn{C[1,4]} to be positive. This argument
       allows for a reflection in the ordination axes because the
       coefficients of the latent variables are unique up to a sign.
 
   }
     \item{epsilon}{
-      Positive numeric. Used to test for convergence for GLMs fitted
-      in FORTRAN.  Larger values mean a loosening of the convergence
-      criterion.
+      Positive numeric. Used to test for convergence for GLMs fitted in C.
+      Larger values mean a loosening of the convergence criterion.
       If an error code of 3 is reported, try increasing this value.
 
     }
     \item{EqualTolerances}{
       Logical indicating whether each (quadratic) predictor will
-      have equal tolerances.  Setting \code{EqualTolerances=TRUE}
+      have equal tolerances. Having \code{EqualTolerances = TRUE}
       can help avoid numerical problems, especially with binary data.
       Note that the estimated (common) tolerance matrix may or may
-      not be positive-definite. If it is, then it can be scaled to
+      not be positive-definite. If it is  then it can be scaled to
       the \eqn{R} by \eqn{R} identity matrix, i.e., made equivalent
-      to \code{ITolerances=TRUE}.  Setting \code{ITolerances=TRUE}
+      to \code{ITolerances = TRUE}. Setting \code{ITolerances = TRUE}
       will \emph{force} a common \eqn{R} by \eqn{R} identity matrix as
       the tolerance matrix to the data even if it is not appropriate.
-      In general, setting \code{ITolerances=TRUE} is preferred over
-      \code{EqualTolerances=TRUE} because, if it works, it is much faster
-      and uses less memory.  See \bold{Details} for more details.
+      In general, setting \code{ITolerances = TRUE} is
+      preferred over \code{EqualTolerances = TRUE} because,
+      if it works, it is much faster and uses less memory.
+      However, \code{ITolerances = TRUE} requires the
+      environmental variables to be scaled appropriately.
+      See \bold{Details} for more details.
 
     }
 % \item{Eta.range}{ Numerical vector of length 2 or \code{NULL}.
 %   Gives the lower and upper bounds on the values that can be taken
 %   by the quadratic predictor (i.e., on the eta-scale).
-%   Since \code{FastAlgorithm=TRUE}, this argument should be ignored.
+%   Since \code{FastAlgorithm = TRUE}, this argument should be ignored.
 % }
   \item{Etamat.colmax}{
-    Positive integer, no smaller than \code{Rank}.  Controls the amount
-    of memory used by \code{.Init.Poisson.QO()}.  It is the maximum
+    Positive integer, no smaller than \code{Rank}. Controls the amount
+    of memory used by \code{.Init.Poisson.QO()}. It is the maximum
     number of columns allowed for the pseudo-response and its weights.
     In general, the larger the value, the better the initial value.
-    Used only if \code{Use.Init.Poisson.QO=TRUE}.
+    Used only if \code{Use.Init.Poisson.QO = TRUE}.
 
   }
 
   \item{FastAlgorithm}{ 
-   Logical. Whether a new fast algorithm is to be used.  The fast
+   Logical. Whether a new fast algorithm is to be used. The fast
    algorithm results in a large speed increases compared to Yee
-   (2004).  Some details of the fast algorithm are found in 
-   Appendix A of Yee (2006).
-   Setting \code{FastAlgorithm=FALSE} will give an error.
+   (2004).
+   Some details of the fast algorithm are found in Appendix A of Yee (2006).
+   Setting \code{FastAlgorithm = FALSE} will give an error.
 
   }
   \item{GradientFunction}{ 
    Logical. Whether \code{\link[stats]{optim}}'s argument \code{gr}
-   is used or not, i.e., to compute gradient values.  Used only if
-   \code{FastAlgorithm} is \code{TRUE}.  The default value is usually
+   is used or not, i.e., to compute gradient values. Used only if
+   \code{FastAlgorithm} is \code{TRUE}. The default value is usually
    faster on most problems.
 
   } 
@@ -127,13 +147,13 @@ qrrvglm.control(Rank = 1, Bestof = if (length(Cinit)) 1 else 10,
   \item{isdlv}{
    Initial standard deviations for the latent variables (site scores).
    Numeric, positive and of length \eqn{R} (recycled if necessary).
-   This argument is used only if \code{ITolerances=TRUE}.  Used by
+   This argument is used only if \code{ITolerances = TRUE}. Used by
    \code{.Init.Poisson.QO()} to obtain initial values for the constrained
    coefficients \eqn{C} adjusted to a reasonable value. It adjusts the
    spread of the site scores relative to a common species tolerance of 1
-   for each ordination axis.  A value between 0.5 and 10 is recommended;
+   for each ordination axis. A value between 0.5 and 10 is recommended;
    a value such as 10 means that the range of the environmental space is
-   very large relative to the niche width of the species.  The successive
+   very large relative to the niche width of the species. The successive
    values should decrease because the first ordination axis should have
    the most spread of site scores, followed by the second ordination
    axis, etc.
@@ -151,14 +171,16 @@ qrrvglm.control(Rank = 1, Bestof = if (length(Cinit)) 1 else 10,
   } 
   \item{ITolerances}{ 
    Logical. If \code{TRUE} then the (common) tolerance matrix is the
-   \eqn{R} by \eqn{R} identity matrix by definition.  Note that having
-   \code{ITolerances=TRUE} implies \code{EqualTolerances=TRUE}, but
-   not vice versa.  Internally, the quadratic terms will be treated as
+   \eqn{R} by \eqn{R} identity matrix by definition. Note that having
+   \code{ITolerances = TRUE} implies \code{EqualTolerances = TRUE}, but
+   not vice versa. Internally, the quadratic terms will be treated as
    offsets (in GLM jargon) and so the models can potentially be fitted
-   very efficiently. \emph{However, it is a very good idea to center all
-   numerical variables in the \eqn{x_2} vector}.  See \bold{Details}
-   for more details.  The success of \code{ITolerances=TRUE} often
-   depends on suitable values for \code{isdlv} and/or \code{MUXfactor}.
+   very efficiently. \emph{However, it is a very good idea to center 
+   and scale all numerical variables in the \eqn{x_2} vector}.
+   See \bold{Details} for more details.
+   The success of \code{ITolerances = TRUE} often
+   depends on suitable values for \code{isdlv} and/or
+   \code{MUXfactor}.
 
  }
  \item{maxitl}{
@@ -170,33 +192,33 @@ qrrvglm.control(Rank = 1, Bestof = if (length(Cinit)) 1 else 10,
     Method of initialization. A positive integer 1 or 2 or 3 etc.
     depending on the \pkg{VGAM} family function.
     Currently it is used for \code{\link{negbinomial}} and 
-    \code{\link{gamma2}} only, and used within the FORTRAN.
+    \code{\link{gamma2}} only, and used within the C.
 
   } 
   \item{Maxit.optim}{
-    Positive integer.  Number of iterations given to the function
+    Positive integer. Number of iterations given to the function
     \code{\link[stats]{optim}} at each of the \code{optim.maxit}
     iterations.
 
   }
 
   \item{MUXfactor}{ 
-   Multiplication factor for detecting large offset values.  Numeric,
-   positive and of length \eqn{R} (recycled if necessary).  This argument
-   is used only if \code{ITolerances=TRUE}. Offsets are \eqn{-0.5}
+   Multiplication factor for detecting large offset values. Numeric,
+   positive and of length \eqn{R} (recycled if necessary). This argument
+   is used only if \code{ITolerances = TRUE}. Offsets are \eqn{-0.5}
    multiplied by the sum of the squares of all \eqn{R} latent variable
    values. If the latent variable values are too large then this will
    result in numerical problems. By too large, it is meant that the
    standard deviation of the latent variable values are greater than
    \code{MUXfactor[r] * isdlv[r]} for \code{r=1:Rank} (this is why
    centering and scaling all the numerical predictor variables in
-   \eqn{x_2} is recommended).  A value about 3 or 4 is recommended.
+   \eqn{x_2} is recommended). A value about 3 or 4 is recommended.
    If failure to converge occurs, try a slightly lower value.
 
 } 
   \item{optim.maxit}{
-    Positive integer.  Number of times \code{\link[stats]{optim}}
-    is invoked.  At iteration \code{i}, the \code{i}th value of
+    Positive integer. Number of times \code{\link[stats]{optim}}
+    is invoked. At iteration \code{i}, the \code{i}th value of
     \code{Maxit.optim} is fed into \code{\link[stats]{optim}}.
 
   }
@@ -215,7 +237,7 @@ qrrvglm.control(Rank = 1, Bestof = if (length(Cinit)) 1 else 10,
    (recycled if necessary).
    Passed into \code{optim(..., control=list(parscale=Parscale))};
    the elements of \eqn{C} become \eqn{C} / \code{Parscale}.
-   Setting \code{ITolerances=TRUE} results in line searches that
+   Setting \code{ITolerances = TRUE} results in line searches that
    are very large, therefore \eqn{C} has to be scaled accordingly
    to avoid large step sizes. 
    See \bold{Details} for more information.
@@ -234,7 +256,7 @@ qrrvglm.control(Rank = 1, Bestof = if (length(Cinit)) 1 else 10,
     each iteration. The default is \code{TRUE} because the
     calculations are numerically intensive, meaning it may take
     a long time, so that the user might think the computer has
-    locked up if \code{trace=FALSE}.
+    locked up if \code{trace = FALSE}.
 
 }
 
@@ -249,7 +271,7 @@ qrrvglm.control(Rank = 1, Bestof = if (length(Cinit)) 1 else 10,
 %      are to be zeroed. These linear predictors will correspond to
 %      a RR-VGLM.
 %      The values must be elements from the set \{1,2,\ldots,\eqn{M}\}.
-%      Used only if \code{Quadratic=TRUE} and \code{FastAlgorithm=FALSE}.
+%      Used only if \code{Quadratic = TRUE} and \code{FastAlgorithm = FALSE}.
 %  }
 \item{SmallNo}{
   Positive numeric between \code{.Machine$double.eps} and \code{0.0001}. 
@@ -266,15 +288,9 @@ qrrvglm.control(Rank = 1, Bestof = if (length(Cinit)) 1 else 10,
   weight matrices are sufficiently positive.
 
   }
-\item{\dots}{ Ignored at present.  }
+\item{\dots}{ Ignored at present. }
 }
 \details{
-  In this help file \eqn{R} is the \code{Rank}, \eqn{M} is the number
-  of linear predictors, and \eqn{S} is the number of responses (species).
-  Thus \eqn{M=S} for binomial and Poisson responses, and
-  \eqn{M=2S} for the negative binomial and 2-parameter gamma distributions.
-
-
   Recall that the central formula for CQO is
   \deqn{\eta = B_1^T x_1 + A \nu +
                \sum_{m=1}^M (\nu^T D_m \nu) e_m}{%
@@ -287,6 +303,7 @@ qrrvglm.control(Rank = 1, Bestof = if (length(Cinit)) 1 else 10,
     QRR-VGLMs are an extension of RR-VGLMs and allow for maximum
     likelihood solutions to constrained quadratic ordination (CQO) models.
 
+
 %    For the fitting of QRR-VGLMs, the default is that the \eqn{C} matrix
 %    (containing the \emph{canonical} or \emph{constrained coefficients}
 %    corresponding to \eqn{x_2})
@@ -295,49 +312,54 @@ qrrvglm.control(Rank = 1, Bestof = if (length(Cinit)) 1 else 10,
 %    unit variance and uncorrelated. The tolerance matrices are, in
 %    general, diagonal under such a constraint.
 
-   Having \code{ITolerances=TRUE} means all the tolerance matrices
+
+   Having \code{ITolerances = TRUE} means all the tolerance matrices
    are the order-\eqn{R} identity matrix, i.e., it \emph{forces}
    bell-shaped curves/surfaces on all species. This results in a
    more difficult optimization problem (especially for 2-parameter
    models such as the negative binomial and gamma) because of overflow
-   errors and it appears there are more local solutions.  To help avoid
+   errors and it appears there are more local solutions. To help avoid
    the overflow errors, scaling \eqn{C} by the factor \code{Parscale}
-   can help enormously.  Even better, scaling \eqn{C} by specifying
-   \code{isdlv} is more understandable to humans.  If failure to
+   can help enormously. Even better, scaling \eqn{C} by specifying
+   \code{isdlv} is more understandable to humans. If failure to
    converge occurs, try adjusting \code{Parscale}, or better, setting
-   \code{EqualTolerances=TRUE} (and hope that the estimated tolerance
-   matrix is positive-definite).  To fit an equal-tolerances model, it
-   is firstly best to try setting \code{ITolerances=TRUE} and varying
+   \code{EqualTolerances = TRUE} (and hope that the estimated tolerance
+   matrix is positive-definite). To fit an equal-tolerances model, it
+   is firstly best to try setting \code{ITolerances = TRUE} and varying
    \code{isdlv} and/or \code{MUXfactor} if it fails to converge.
    If it still fails to converge after many attempts, try setting
-   \code{EqualTolerances=TRUE}, however this will usually be a lot slower
+   \code{EqualTolerances = TRUE}, however this will usually be a lot slower
    because it requires a lot more memory.
 
-   With a \eqn{R>1} model, the latent variables are always uncorrelated,
+
+   With a \eqn{R > 1} model, the latent variables are always uncorrelated,
    i.e., the variance-covariance matrix of the site scores is a diagonal
    matrix.
 
-   If setting \code{EqualTolerances=TRUE} is used and the common
+
+   If setting \code{EqualTolerances = TRUE} is used and the common
    estimated tolerance matrix is positive-definite then that model is
-   effectively the same as the \code{ITolerances=TRUE} model (the two are
-   transformations of each other). In general, \code{ITolerances=TRUE}
+   effectively the same as the \code{ITolerances = TRUE} model (the two are
+   transformations of each other). In general, \code{ITolerances = TRUE}
    is numerically more unstable and presents a more difficult problem
    to optimize; the arguments \code{isdlv} and/or \code{MUXfactor} often
    must be assigned some good value(s) (possibly found by trial and error)
-   in order for convergence to occur.  Setting \code{ITolerances=TRUE}
+   in order for convergence to occur. Setting \code{ITolerances = TRUE}
    \emph{forces} a bell-shaped curve or surface onto all the species data,
-   therefore this option should be used with deliberation.  If unsuitable,
-   the resulting fit may be very misleading.  Usually it is a good idea
-   for the user to set \code{EqualTolerances=FALSE} to see which species
+   therefore this option should be used with deliberation. If unsuitable,
+   the resulting fit may be very misleading. Usually it is a good idea
+   for the user to set \code{EqualTolerances = FALSE} to see which species
    appear to have a bell-shaped curve or surface. Improvements to the
    fit can often be achieved using transformations, e.g., nitrogen
    concentration to log nitrogen concentration.
+
 
    Fitting a CAO model (see \code{\link{cao}}) first is a good idea for
    pre-examining the data and checking whether it is appropriate to fit
    a CQO model.
 
-%Suppose \code{FastAlgorithm = FALSE}.  In theory (if
+
+%Suppose \code{FastAlgorithm = FALSE}. In theory (if
 %\code{Eta.range=NULL}), for QRR-VGLMs, the predictors have the values of
 %a quadratic form. However, when \code{Eta.range} is assigned a numerical
 %vector of length 2 (giving the endpoints of an interval), then those
@@ -370,28 +392,32 @@ Constrained additive ordination.
 }
 \author{ Thomas W. Yee }
 \note{
-  When \code{ITolerances=TRUE} it is a good idea to apply
+  When \code{ITolerances = TRUE} it is a good idea to apply
   \code{\link[base]{scale}} to all the numerical variables that make up
   the latent variable, i.e., those of \eqn{x_2}{x_2}. This is to make
   them have mean 0, and hence avoid large offset values which cause
   numerical problems.
 
+
   This function has many arguments that are common with
   \code{\link{rrvglm.control}} and \code{\link{vglm.control}}.
 
+
   It is usually a good idea to try fitting a model with
-  \code{ITolerances=TRUE} first, and if convergence is unsuccessful,
-  then try \code{EqualTolerances=TRUE} and \code{ITolerances=FALSE}.
+  \code{ITolerances = TRUE} first, and if convergence is unsuccessful,
+  then try \code{EqualTolerances = TRUE} and \code{ITolerances = FALSE}.
   Ordination diagrams with
-  \code{EqualTolerances=TRUE} have a natural interpretation, but
-  with \code{EqualTolerances=FALSE} they are more complicated and
+  \code{EqualTolerances = TRUE} have a natural interpretation, but
+  with \code{EqualTolerances = FALSE} they are more complicated and
   requires, e.g., contours to be overlaid on the ordination diagram
   (see \code{\link{lvplot.qrrvglm}}).
 
+
 % and/or use the \code{Eta.range} argument.
 
+
   In the example below, an equal-tolerances CQO model is fitted to the
-  hunting spiders data. Because \code{ITolerances=TRUE}, it is a good idea
+  hunting spiders data. Because \code{ITolerances = TRUE}, it is a good idea
   to center all the \eqn{x_2} variables first. Upon fitting the model,
   the actual standard deviation of the site scores are computed. Ideally,
   the \code{isdlv} argument should have had this value for the best
@@ -401,9 +427,10 @@ Constrained additive ordination.
 
 \section{Warning }{
 
-The default value of \code{Bestof} is a bare minimum for many datasets,
-therefore it will be necessary to increase its value to increase the
-chances of obtaining the global solution.
+  The default value of \code{Bestof} is a bare minimum for many datasets,
+  therefore it will be necessary to increase its value to increase the
+  chances of obtaining the global solution.
+
 
 %Suppose \code{FastAlgorithm = FALSE}.
 %The fitted values of QRR-VGLMs can be restricted to lie between two values
@@ -434,7 +461,34 @@ chances of obtaining the global solution.
 \examples{
 # Poisson CQO with equal tolerances
 set.seed(111)  # This leads to the global solution
-hspider[,1:6]=scale(hspider[,1:6]) # Good idea when ITolerances = TRUE
+hspider[,1:6] = scale(hspider[,1:6]) # Good idea when ITolerances = TRUE
+p1 = cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi, Auloalbi,
+               Pardlugu, Pardmont, Pardnigr, Pardpull, Trocterr, Zoraspin) ~
+         WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
+         quasipoissonff, data = hspider, EqualTolerances = TRUE)
+sort(p1@misc$deviance.Bestof) # A history of all the iterations
+
+(isdlv = sd(lv(p1))) # Should be approx isdlv
+ 
+# Refit the model with better initial values
+set.seed(111)  # This leads to the global solution
+p1 = cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi, Auloalbi, 
+               Pardlugu, Pardmont, Pardnigr, Pardpull, Trocterr, Zoraspin) ~
+         WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
+         ITolerances = TRUE, isdlv = isdlv,   # Note the use of isdlv here
+         fam = quasipoissonff, data = hspider)
+sort(p1@misc$deviance.Bestof) # A history of all the iterations
+
+# Negative binomial CQO; smallest deviance is about 275.389
+set.seed(1234) # This leads to a reasonable (but not the global) solution?
+nb1 = cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi, Auloalbi, 
+                Pardlugu, Pardmont, Pardnigr, Pardpull, Trocterr, Zoraspin) ~
+          WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
+          ITol = FALSE, EqualTol = TRUE, # A good idea for negbinomial
+          fam = negbinomial, data = hspider)
+sort(nb1@misc$deviance.Bestof) # A history of all the iterations
+summary(nb1)
+\dontrun{ lvplot(nb1, lcol=1:12, y = TRUE, pcol=1:12) }
 }
 \keyword{models}
 \keyword{regression}

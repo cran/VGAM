@@ -4,11 +4,12 @@
 \title{ Michaelis-Menten Model }
 \description{
   Fits a Michaelis-Menten nonlinear regression model. 
+
 }
 \usage{
 micmen(rpar = 0.001, divisor = 10, init1 = NULL, init2 = NULL,
-       link1 = "identity", link2 = "identity", earg1=list(),
-       earg2=list(), dispersion = 0, zero = NULL)
+       link1 = "identity", link2 = "identity", earg1 = list(),
+       earg2 = list(), dispersion = 0, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -48,15 +49,17 @@ micmen(rpar = 0.001, divisor = 10, init1 = NULL, init2 = NULL,
   linear/additive predictors are modelled as intercepts only.
   The values must be from the set \{1,2\}.
   A \code{NULL} means none.
+  See \code{\link{CommonVGAMffArguments}} for more information.
 
   }
 }
 \details{
-  The Michaelis-Menten Model is given by
+  The Michaelis-Menten model is given by
   \deqn{E(Y_i) = (\theta_1 u_i) / (\theta_2 + u_i)}{%
-      E(Y_i) = theta1 * u_i / (theta2 + u_i)}
+        E(Y_i) = theta1 * u_i / (theta2 + u_i)}
   where \eqn{\theta_1}{theta1} and \eqn{\theta_2}{theta2}
   are the two parameters.
+
 
   The relationship between iteratively reweighted least squares
   and the Gauss-Newton algorithm is given in Wedderburn (1974).
@@ -68,6 +71,7 @@ micmen(rpar = 0.001, divisor = 10, init1 = NULL, init2 = NULL,
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}},
   and \code{\link{vgam}}.
+
 }
 \references{
   Seber, G. A. F. and Wild, C. J. (1989)
@@ -94,12 +98,12 @@ micmen(rpar = 0.001, divisor = 10, init1 = NULL, init2 = NULL,
   The regressor values \eqn{u_i}{u_i} are inputted as the RHS of
   the \code{form2} argument.
   It should just be a simple term; no smart prediction is used.
-  It should just a single vector so omit the intercept term.
-  The LHS is ignored.
+  It should just a single vector, therefore omit the intercept term.
+  The LHS of the formula \code{form2} is ignored.
 
-% To predict the response at new values of \eqn{u_i}{u_i} one must assign
-% the \code{@extra$uvec} slot in the fitted object these values, e.g.,
-% see the example below.
+  To predict the response at new values of \eqn{u_i}{u_i} one must assign
+  the \code{@extra$Xm2} slot in the fitted object these values, e.g.,
+  see the example below.
 
   Numerical problems may occur. If so, try setting some initial values
   for the parameters. In the future, several self-starting initial values
@@ -110,22 +114,23 @@ micmen(rpar = 0.001, divisor = 10, init1 = NULL, init2 = NULL,
 \seealso{
   \code{\link{enzyme}}.
 % \code{skira}.
+
 }
 \examples{
-fit = vglm(velocity ~ 1, micmen, enzyme, trace=TRUE, crit="c",
+fit = vglm(velocity ~ 1, micmen, enzyme, trace = TRUE, crit = "coef",
            form2 = ~ conc - 1)
-\dontrun{
-with(enzyme, plot(conc, velocity, xlab="concentration", las=1,
-                  main="Enzyme data", ylim=c(0,max(velocity)),
-                  xlim=c(0,max(conc))))
-with(enzyme, points(conc, fitted(fit), col="blue", pch="+"))
+summary(fit)
+
+\dontrun{ plot(velocity ~ conc, enzyme, xlab = "concentration", las = 1,
+     col = "blue", main = "Michaelis-Menten equation for the enzyme data",
+     ylim = c(0, max(velocity)), xlim = c(0, max(conc)))
+points(fitted(fit) ~ conc, enzyme, col = "red", pch = "+", cex = 1.5)
 
 # This predicts the response at a finer grid:
-newenzyme = data.frame(conc = with(enzyme, seq(0, max(conc),len=200)))
-with(newenzyme, lines(conc, predict(fit, newenzyme, type="response"),
-                      col="red"))
-}
-summary(fit)
+newenzyme = data.frame(conc = seq(0, max(with(enzyme, conc)), len = 200))
+fit@extra$Xm2 = newenzyme$conc   # This assignment is needed for prediction
+lines(predict(fit, newenzyme, "response") ~ conc, newenzyme, col = "red") }
 }
 \keyword{models}
 \keyword{regression}
+

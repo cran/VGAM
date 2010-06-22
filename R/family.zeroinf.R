@@ -338,9 +338,7 @@ rzipois = function(n, lambda, phi=0) {
 
 
  zapoisson = function(lp0="logit", llambda="loge",
-                      ep0=list(), elambda=list(),
-                      zero=NULL)
-{
+                      ep0=list(), elambda=list(), zero=NULL) {
     if (mode(lp0) != "character" && mode(lp0) != "name")
         lp0 = as.character(substitute(lp0))
     if (mode(llambda) != "character" && mode(llambda) != "name")
@@ -349,8 +347,8 @@ rzipois = function(n, lambda, phi=0) {
     if (!is.list(elambda)) elambda = list()
 
     new("vglmff",
-    blurb=c(
-  "Zero-altered Poisson (binomial and positive-Poisson conditional model)\n\n",
+    blurb=c("Zero-altered Poisson ",
+            "(binomial and positive-Poisson conditional model)\n\n",
            "Links:    ",
            namesof("p0", lp0, earg=ep0, tag=FALSE), ", ",
            namesof("lambda", llambda, earg= elambda, tag=FALSE),
@@ -368,95 +366,101 @@ rzipois = function(n, lambda, phi=0) {
         if (any(y < 0))
             stop("the response must not have negative values")
 
-        extra$y0 = y0 = ifelse(y==0, 1, 0)
+        extra$y0 = y0 = ifelse(y == 0, 1, 0)
         extra$NOS = NOS = ncoly = ncol(y)  # Number of species
         extra$skip.these = skip.these = matrix(as.logical(y0), n, NOS)
 
-        mynames1 = if (ncoly==1) "p0" else paste("p0", 1:ncoly, sep="")
-        mynames2 = if (ncoly==1) "lambda" else paste("lambda", 1:ncoly, sep="")
+        mynames1 = if (ncoly == 1) "p0" else paste("p0", 1:ncoly, sep = "")
+        mynames2 = if (ncoly == 1) "lambda" else
+                   paste("lambda", 1:ncoly, sep = "")
         predictors.names = 
-            c(namesof(mynames1, .lp0, earg= .ep0, tag=FALSE),
-              namesof(mynames2, .llambda, earg= .elambda, tag=FALSE))
+            c(namesof(mynames1, .lp0, earg = .ep0, tag = FALSE),
+              namesof(mynames2, .llambda, earg = .elambda, tag = FALSE))
         if (!length(etastart)) {
             etastart = cbind(theta2eta((0.5+w*y0)/(1+w), .lp0, earg= .ep0 ),
                              matrix(1, n, NOS))  # 1 here is any old value
-            for(spp. in 1:NOS)
-                etastart[!skip.these[,spp.],NOS+spp.] =
-                    theta2eta(y[!skip.these[,spp.],spp.] /
-                              (1-exp(-y[!skip.these[,spp.],spp.])), .llambda,
-                              earg= .elambda )
+            for(spp. in 1:NOS) {
+                sthese = skip.these[, spp.]
+                etastart[!sthese, NOS+spp.] = theta2eta(
+                       y[!sthese, spp.] / (-expm1(-y[!sthese, spp.])),
+                              .llambda, earg = .elambda )
+            }
         }
-    }), list( .lp0=lp0, .llambda=llambda, .ep0= ep0, .elambda= elambda ))), 
+    }), list( .lp0 = lp0, .llambda = llambda,
+              .ep0 = ep0, .elambda = elambda ))), 
     inverse=eval(substitute(function(eta, extra=NULL) {
         NOS = extra$NOS
-        p0 = eta2theta(eta[,1:NOS], .lp0, earg= .ep0)
-        lambda = eta2theta(eta[,NOS+(1:NOS)], .llambda, earg= .elambda)
-        (1-p0) * (lambda / (1-exp(-lambda)))
+        p0 = eta2theta(eta[, 1:NOS], .lp0, earg = .ep0)
+        lambda = eta2theta(eta[, NOS+(1:NOS)], .llambda, earg= .elambda)
+        (1-p0) * lambda / (-expm1(-lambda))
     }, list( .lp0=lp0, .llambda=llambda, .ep0= ep0, .elambda= elambda ))),
     last=eval(substitute(expression({
-        misc$link = c(rep( .lp0, len=NOS), rep( .llambda, len=NOS))
+        misc$link = c(rep( .lp0, len = NOS), rep( .llambda, len = NOS))
         names(misc$link) = c(mynames1, mynames2)
-        misc$earg = vector("list", 2*NOS)
+        misc$earg = vector("list", 2 * NOS)
         names(misc$earg) = c(mynames1, mynames2)
         for(ii in 1:NOS) {
             misc$earg[[      ii]] = .ep0
             misc$earg[[NOS + ii]] = .elambda
         }
-    }), list( .lp0=lp0, .llambda=llambda, .ep0= ep0, .elambda= elambda ))),
+    }), list( .lp0 = lp0, .llambda = llambda,
+              .ep0 = ep0, .elambda = elambda ))),
     loglikelihood=eval(substitute(
         function(mu,y,w,residuals=FALSE, eta,extra=NULL) {
         NOS = extra$NOS
-        p0 = cbind(eta2theta(eta[,1:NOS], .lp0, earg= .ep0))
-        lambda = cbind(eta2theta(eta[,NOS+(1:NOS)], .llambda, earg= .elambda ))
-        if (residuals) stop("loglikelihood residuals not implemented yet") else {
-            sum(w * dzapois(x=y, p0=p0, lambda=lambda, log=TRUE))
+        p0 = cbind(eta2theta(eta[, 1:NOS], .lp0, earg = .ep0))
+        lambda = cbind(eta2theta(eta[, NOS+(1:NOS)], .llambda, earg = .elambda ))
+        if (residuals)
+            stop("loglikelihood residuals not implemented yet") else {
+            sum(w * dzapois(x = y, p0 = p0, lambda = lambda, log = TRUE))
         }
-    }, list( .lp0=lp0, .llambda=llambda, .ep0= ep0, .elambda= elambda ))),
+    }, list( .lp0 = lp0, .llambda = llambda,
+             .ep0 = ep0, .elambda = elambda ))),
     vfamily=c("zapoisson"),
     deriv=eval(substitute(expression({
         NOS = extra$NOS
         y0 = extra$y0
         skip = extra$skip.these
-        p0 = cbind(eta2theta(eta[,1:NOS], .lp0, earg= .ep0))
-        lambda = cbind(eta2theta(eta[,NOS+(1:NOS)], .llambda, earg= .ep0))
-        dl.dlambda = y/lambda - 1 - 1/(exp(lambda)-1)
+        p0 = cbind(eta2theta(eta[, 1:NOS], .lp0, earg = .ep0))
+        lambda = cbind(eta2theta(eta[, NOS+(1:NOS)], .llambda, earg = .elambda))
+        dl.dlambda = y/lambda - 1 - 1 / expm1(lambda)
         for(spp. in 1:NOS)
-            dl.dlambda[skip[,spp.],spp.] = 0
-        dlambda.deta = dtheta.deta(lambda, .llambda, earg= .ep0)
+            dl.dlambda[skip[, spp.], spp.] = 0
+        dlambda.deta = dtheta.deta(lambda, .llambda, earg = .elambda)
         mup0 = p0
         temp3 = if (.lp0 == "logit") {
             w * (y0 - mup0)
         } else
-            w * dtheta.deta(mup0, link=.lp0, earg= .ep0) * (y0/mup0 - 1) / (1-mup0)
-        ans = cbind(temp3, w * dl.dlambda * dlambda.deta)
-        ans
-    }), list( .lp0=lp0, .llambda=llambda, .ep0= ep0, .elambda= elambda ))),
+            w * dtheta.deta(mup0, link = .lp0, earg = .ep0) *
+                (y0 / mup0 - 1) / (1 - mup0)
+        cbind(temp3, w * dl.dlambda * dlambda.deta)
+    }), list( .lp0 = lp0, .llambda = llambda, .ep0 = ep0, .elambda = elambda ))),
     weight=eval(substitute(expression({
         wz = matrix( 10 * .Machine$double.eps^(3/4), n, 2*NOS)
         for(spp. in 1:NOS) {
-            temp4 = exp(lambda[!skip[,spp.], spp.])
-            ed2l.dlambda2 = -temp4 * (1/lambda[!skip[,spp.],spp.] -
-                            1/(temp4-1)) / (temp4-1)
-            wz[!skip[,spp.],NOS+spp.] = -w[!skip[,spp.]] *
-                                      (dlambda.deta[!skip[,spp.],spp.]^2) *
-                                      ed2l.dlambda2
+            sthese = skip[, spp.]
+            temp5 = expm1(lambda[!sthese, spp.])
+            ed2l.dlambda2 = -(temp5 + 1) * (1 / lambda[!sthese, spp.] -
+                            1 / temp5) / temp5
+            wz[!sthese, NOS+spp.] = -w[!sthese] * ed2l.dlambda2 *
+                                      (dlambda.deta[!sthese, spp.]^2)
         }
 
-        tmp100 = mup0*(1-mup0)
+        tmp100 = mup0 * (1.0 - mup0)
         tmp200 = if ( .lp0 == "logit") {
             cbind(w * tmp100)
         } else {
             cbind(w * dtheta.deta(mup0, link= .lp0, earg= .ep0)^2 / tmp100)
         }
         for(ii in 1:NOS) {
-            index200 = abs(tmp200[,ii]) < .Machine$double.eps
+            index200 = abs(tmp200[, ii]) < .Machine$double.eps
             if (any(index200)) {
-                tmp200[index200,ii] = 10.0 * .Machine$double.eps^(3/4)
+                tmp200[index200, ii] = 10.0 * .Machine$double.eps^(3/4)
             }
         }
-        wz[,1:NOS] =  tmp200
+        wz[, 1:NOS] =  tmp200
         wz
-    }), list( .lp0=lp0, .llambda=llambda, .ep0= ep0, .elambda= elambda ))))
+    }), list( .lp0 = lp0, .ep0 = ep0 ))))
 }
 
 
@@ -792,41 +796,40 @@ dposnegbin = function(x, munb, k, log=FALSE) {
             namesof("lambda", .llambda, earg= .ephi, tag=FALSE))
         if (!length(etastart)) {
             phi.init = if (length( .iphi)) .iphi else {
-                sum(w[y==0]) / sum(w)
+                sum(w[y == 0]) / sum(w)
             }
             phi.init[phi.init <= 0.02] = 0.02  # Last resort
             phi.init[phi.init >= 0.98] = 0.98  # Last resort
             if ( .method.init == 2) {
                 mymean = weighted.mean(y[y>0], w[y>0]) + 1/16
-                lambda.init = (1- .sinit) * (y+1/8) + .sinit * mymean
+                lambda.init = (1 - .sinit) * (y + 1/8) + .sinit * mymean
             } else {
-                use.this = median(y[y>0]) + 1/16
-                lambda.init = (1- .sinit) * (y+1/8) + .sinit * use.this
+                use.this = median(y[y > 0]) + 1 / 16
+                lambda.init = (1 - .sinit) * (y + 1/8) + .sinit * use.this
             }
-            etastart = cbind(theta2eta(rep(phi.init, len=n), .lphi, earg= .ephi ),
-                             theta2eta(lambda.init, .llambda, earg= .ephi ))
+            etastart = cbind(theta2eta(rep(phi.init, len=n), .lphi, .ephi ),
+                             theta2eta(lambda.init, .llambda, .ephi ))
         }
-    }), list( .lphi=lphi, .llambda=llambda,
-              .ephi=ephi, .elambda=elambda,
-              .iphi=iphi,
-              .method.init=method.init,
-              .sinit=shrinkage.init ))),
+    }), list( .lphi = lphi, .llambda = llambda,
+              .ephi = ephi, .elambda = elambda,
+              .iphi = iphi,
+              .method.init = method.init, .sinit = shrinkage.init ))),
     inverse=eval(substitute(function(eta, extra=NULL) {
         phi = eta2theta(eta[,1], .lphi, earg= .ephi )
         lambda = eta2theta(eta[,2], .llambda, earg= .elambda )
         (1-phi) * lambda
-    }, list( .lphi=lphi, .llambda=llambda,
-             .ephi=ephi, .elambda=elambda ))),
+    }, list( .lphi = lphi, .llambda = llambda,
+             .ephi = ephi, .elambda = elambda ))),
     last=eval(substitute(expression({
-        misc$link <- c("phi" = .lphi, "lambda" = .llambda)
+        misc$link <-    c("phi" = .lphi, "lambda" = .llambda)
         misc$earg <- list("phi" = .ephi, "lambda" = .elambda)
         if (intercept.only) {
-            phi = eta2theta(eta[1,1], .lphi, earg= .ephi )
+            phi    = eta2theta(eta[1,1], .lphi,    earg= .ephi )
             lambda = eta2theta(eta[1,2], .llambda, earg= .elambda )
             misc$prob0 = phi + (1-phi) * exp(-lambda) # P(Y=0)
         }
-    }), list( .lphi=lphi, .llambda=llambda,
-              .ephi=ephi, .elambda=elambda ))),
+    }), list( .lphi = lphi, .llambda = llambda,
+              .ephi = ephi, .elambda = elambda ))),
     loglikelihood=eval(substitute( 
         function(mu,y,w,residuals=FALSE, eta, extra=NULL) {
         smallno = 100 * .Machine$double.eps
@@ -847,8 +850,8 @@ dposnegbin = function(x, munb, k, log=FALSE) {
         phi = pmin(phi, 1.0-smallno)
         lambda = eta2theta(eta[,2], .llambda, earg= .elambda )
         tmp8 = phi + (1-phi)*exp(-lambda)
-        index0 = (y==0)
-        dl.dphi = (1-exp(-lambda)) / tmp8
+        index0 = (y == 0)
+        dl.dphi = -expm1(-lambda) / tmp8
         dl.dphi[!index0] = -1 / (1-phi[!index0])
         dl.dlambda = -(1-phi) * exp(-lambda) / tmp8
         dl.dlambda[!index0] = (y[!index0] - lambda[!index0]) / lambda[!index0]
@@ -863,20 +866,19 @@ dposnegbin = function(x, munb, k, log=FALSE) {
               .ephi=ephi, .elambda=elambda ))),
     weight=eval(substitute(expression({
         wz = matrix(as.numeric(NA), nrow=n, ncol=dimm(M))
-        d2l.dphi2 = (1-exp(-lambda)) / ((1-phi)*tmp8)
+        d2l.dphi2 = -expm1(-lambda) / ((1-phi)*tmp8)
         d2l.dlambda2 = (1-phi)/lambda - phi*(1-phi)*exp(-lambda) / tmp8
         d2l.dphilambda = -exp(-lambda) / tmp8
-        wz[,iam(1,1,M)] = d2l.dphi2 * dphi.deta^2
-        wz[,iam(2,2,M)] = d2l.dlambda2 * dlambda.deta^2
-        wz[,iam(1,2,M)] = d2l.dphilambda * dphi.deta * dlambda.deta
+        wz[, iam(1,1,M)] = d2l.dphi2 * dphi.deta^2
+        wz[, iam(2,2,M)] = d2l.dlambda2 * dlambda.deta^2
+        wz[, iam(1,2,M)] = d2l.dphilambda * dphi.deta * dlambda.deta
         if (.llambda == "loge" && (any(lambda[!index0] < .Machine$double.eps))) {
             ind5 = !index0 & (lambda < .Machine$double.eps)
             if (any(ind5))
                 wz[ind5,iam(2,2,M)] = (1-phi[ind5]) * .Machine$double.eps
         }
         w * wz
-    }), list( .lphi=lphi, .llambda=llambda,
-              .ephi=ephi, .elambda=elambda ))))
+    }), list( .llambda = llambda ))))
 }
 
 
@@ -1263,8 +1265,8 @@ zinegbinomial.control <- function(save.weight=TRUE, ...)
                 kay.init
             }
 
-            etastart = cbind(theta2eta(phi.init,  .lphi,  earg= .ephi),
-                             theta2eta(mu.init,   .lmunb, earg= .emunb),
+            etastart = cbind(theta2eta(phi.init, .lphi,  earg= .ephi),
+                             theta2eta(mu.init,  .lmunb, earg= .emunb),
                              theta2eta(kay.init, .lk,    earg= .ek))
             etastart = etastart[,interleave.VGAM(ncol(etastart),M=3)]
         }

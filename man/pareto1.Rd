@@ -64,6 +64,7 @@ tpareto1(lower, upper, lshape = "loge", earg=list(), ishape=NULL,
   This model is important in many applications due to the power
   law probability tail, especially for large values of \eqn{y}.
 
+
   The Pareto distribution, which is used a lot in economics,
   has a probability density function that can be written
   \deqn{f(y) = k \alpha^k / y^{k+1}}{%
@@ -76,6 +77,7 @@ tpareto1(lower, upper, lshape = "loge", earg=list(), ishape=NULL,
   Its variance is
   \eqn{\alpha^2 k /((k-1)^2 (k-2))}{alpha^2 k /((k-1)^2 (k-2))}
   provided \eqn{k>2}.
+
 
   The upper truncated Pareto distribution
   has a probability density function that can be written
@@ -115,6 +117,7 @@ tpareto1(lower, upper, lshape = "loge", earg=list(), ishape=NULL,
   Outside of economics, the Pareto distribution is known as the Bradford
   distribution.
 
+
   For \code{pareto1},
   if the estimate of \eqn{k} is less than or equal to unity
   then the fitted values will be \code{NA}s.
@@ -122,6 +125,7 @@ tpareto1(lower, upper, lshape = "loge", earg=list(), ishape=NULL,
   See \code{\link{paretoIV}} for the more general Pareto(IV/III/II)
   distributions, but there is a slight change in notation: \eqn{s=k}
   and \eqn{b=\alpha}{b=alpha}.
+
 
   In some applications the Pareto law is truncated by a 
   natural upper bound on the probability tail.
@@ -152,6 +156,7 @@ tpareto1(lower, upper, lshape = "loge", earg=list(), ishape=NULL,
   \code{\link{Tpareto}},
   \code{\link{paretoIV}},
   \code{\link{gpd}}.
+
 }
 \examples{
 alpha = 2; k = exp(3)

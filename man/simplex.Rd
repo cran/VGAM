@@ -1,26 +1,24 @@
 \name{simplex}
 \alias{simplex}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{ Simplex distribution }
+\title{ Simplex Distribution Family Function }
 \description{
-  The two parameters of the univariate simplex distribution are estimated.
+  The two parameters of the univariate standard simplex
+  distribution are estimated by full maximum likelihood
+  estimation.
+
 }
 \usage{
 simplex(lmu = "logit", lsigma = "loge", emu=list(), esigma=list(),
-        imu = NULL, isigma = NULL)
+        imu = NULL, isigma = NULL,
+        method.init = 1, shrinkage.init = 0.95, zero = 2)
+
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{lmu}{
-  Link function for \code{mu}. 
+  \item{lmu, lsigma}{
+  Link function for \code{mu} and \code{sigma}. 
   See \code{\link{Links}} for more choices.
-  The parameter lies in the unit interval.
-
-  }
-  \item{lsigma}{
-  Link function for \code{sigma}. 
-  See \code{\link{Links}} for more choices.
-  The parameter is positive, therefore the log link is the default.
 
   }
   \item{emu, esigma}{
@@ -33,46 +31,87 @@ simplex(lmu = "logit", lsigma = "loge", emu=list(), esigma=list(),
   A \code{NULL} means a value is obtained internally.
 
   }
+  \item{method.init, shrinkage.init, zero}{
+  See \code{\link{CommonVGAMffArguments}} for more information.
+
+  }
 }
 \details{
-  See Jorgensen (1997) for details. 
+  The probability density function can be written
+  \deqn{f(y; \mu, \sigma) = [2 \pi \sigma^2 (y (1-y))^3]^{-0.5}
+  \exp[-0.5 (y-\mu)^2 / (\sigma^2 y (1-y) \mu^2 (1-\mu)^2)]
+  }{%
+  f(y; mu, sigma) = [2* pi * sigma^2 * (y*(1-y))^3]^(-0.5) *
+   exp[-0.5 * (y-mu)^2 / (sigma^2 * y * (1-y) * mu^2 * (1-mu)^2)] }
+  for \eqn{0 < y < 1},
+      \eqn{0 < \mu < 1}{0 < mu < 1},
+  and \eqn{\sigma > 0}{sigma > 0}.
+  The mean of \eqn{Y} is \eqn{\mu}{mu} (called \code{mu}, and
+  returned as the fitted values).
+
+
+% This comes from Jorgensen but it is not confirmed by simulations:
+% The variance of \eqn{Y} is \eqn{\mu (1 - \mu) - \sqrt{ \lambda / 2}
+% \exp\{ \lambda / (\mu^2 (1 - \mu)^2) \}
+% \Gamma(\lambda / (2 \mu^2 (1 - \mu)^2), 0.5)}{
+% mu * (1 - mu) - sqrt(lambda / 2) *
+% exp(lambda / (mu^2 * (1 - mu)^2)) *
+% Gamma(lambda / (2 * mu^2 * (1 - mu)^2), 0.5)}.
+% Here, \eqn{\Gamma(x, a)}{Gamma(x, a)} is the
+% `upper' normalized incomplete gamma function given by
+% \code{pgamma(x, a, lower = FALSE) * gamma(a)}.
+
+
+  The second parameter, \code{sigma}, of this standard simplex
+  distribution is known as the dispersion parameter.
+  The unit variance function is
+  \eqn{V(\mu) = \mu^3 (1-\mu)^3}{V(mu) = mu^3 (1-mu)^3}.
+  Fisher scoring is applied to both parameters.
 
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}},
   and \code{\link{vgam}}.
+
 }
 \references{
-Jorgensen, B. (1997)
-\emph{The Theory of Dispersion Models}.
-London: Chapman & Hall
+  Jorgensen, B. (1997)
+  \emph{The Theory of Dispersion Models}.
+  London: Chapman & Hall
+
+  Song, P. X.-K. (2007)
+  \emph{Correlated Data Analysis: Modeling, Analytics, and Applications}.
+  Springer.
+
 }
 \author{ T. W. Yee }
 \note{ 
   This distribution is potentially useful for dispersion modelling.
-  This family function only works for intercept-only models, i.e.,
-  the formula should have \code{~ 1}.
+  Numerical problems may occur when \code{mu} is very close to 0 or 1.
 
 }
 
 \seealso{ 
-  \code{\link{rig}}.
+  \code{\link{dsimplex}},
+  \code{\link{dirichlet}},
+  \code{\link{rig}},
+  \code{\link{binomialff}}.
+
 }
 \examples{
-x = runif(n <- 100)
-y = rbeta(n, shape1=3+x, shape2=4-x)
-(fit = vglm(y ~ 1, simplex, trace=TRUE, cri="coef"))
-coef(fit, matrix=TRUE)
-Coef(fit)
+nn = 1000
+sdata = data.frame(x = runif(nn))
+sdata = transform(sdata, y = rsimplex(nn, mu = logit(1+2*x, inverse = TRUE),
+                                      dispersion = exp(1 - 2*x)))
+(fit = vglm(y ~ x, simplex(zero = NULL), sdata, trace = TRUE))
+coef(fit, matrix = TRUE)
 summary(fit)
 }
 \keyword{models}
 \keyword{regression}
 
 
-
-% zz fitted values and formulas needed here
 
 
 

@@ -86,6 +86,7 @@ intercept-only models.
 Good initial values are needed; if convergence failure occurs use
 \code{irho} and/or \code{ilambda}.
 
+
 Some elements of the working weight matrices use the expected
 information matrix while other elements use the observed
 information matrix.
@@ -100,9 +101,9 @@ results in a EIM that is diagonal.
 
 }
 \examples{
-y <- rnbinom(n <- 1000, mu=exp(3), size=exp(1))
-fit  <- vglm(y ~ 1, invbinomial, trace=TRUE)
-c(mean(y), head(fitted(fit)))
+idata = data.frame(y = rnbinom(n <- 1000, mu=exp(3), size=exp(1)))
+fit  <- vglm(y ~ 1, invbinomial, idata, trace=TRUE)
+with(idata, c(mean(y), head(fitted(fit), 1)))
 summary(fit)
 coef(fit, matrix=TRUE)
 Coef(fit)

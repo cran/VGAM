@@ -116,7 +116,9 @@ amlexponential(w.aml = 1, parallel = FALSE, method.init = 1, digw = 4,
   \code{\link{amlbinomial}},
   \code{\link{amlpoisson}},
   \code{\link{amlnormal}},
-  \code{\link{alaplace1}}.
+  \code{\link{alaplace1}},
+  \code{\link{lms.bcg}},
+  \code{\link{deexp}}.
 
 }
 

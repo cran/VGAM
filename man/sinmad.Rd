@@ -8,7 +8,7 @@
 }
 \usage{
 sinmad(link.a = "loge", link.scale = "loge", link.q = "loge",
-       earg.a=list(), earg.scale=list(), earg.q=list(),
+       earg.a = list(), earg.scale = list(), earg.q = list(),
        init.a = NULL, init.scale = NULL, init.q = 1, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -44,9 +44,11 @@ just the Burr distribution), Pareto IV,
 beta-P, and generalized log-logistic distribution.
   More details can be found in Kleiber and Kotz (2003).
 
+
 Some distributions which are special cases of the 3-parameter Singh-Maddala
 are the Lomax (\eqn{a=1}), Fisk (\eqn{q=1}), and
 paralogistic (\eqn{a=q}).
+
 
 The Singh-Maddala distribution has density
   \deqn{f(y) = aq y^{a-1} / [b^a \{1 + (y/b)^a\}^{1+q}]}{%
@@ -61,6 +63,7 @@ The mean is
   \deqn{E(Y) = b \, \Gamma(1 + 1/a) \, \Gamma(q - 1/a) / \Gamma(q)}{%
         E(Y) = b  gamma(1 + 1/a)  gamma(q - 1/a) /  gamma(q)}
 provided \eqn{-a < 1 < aq}.
+
 
 }
 \value{
@@ -94,6 +97,7 @@ default value is not \code{NULL}.
     \code{\link{lomax}},
     \code{\link{paralogistic}},
     \code{\link{invparalogistic}}.
+
 }
 
 \examples{

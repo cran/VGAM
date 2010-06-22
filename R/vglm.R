@@ -54,7 +54,7 @@ vglm <- function(formula,
 
 if (!is.null(form2)) {
     if (!is.null(subset))
-        stop("argument 'subset' cannot be used when argument 'form2' is used")
+      stop("argument 'subset' cannot be used when argument 'form2' is used")
     retlist = shadowvglm(formula=
                  form2,
                  family=family, data=data,
@@ -71,11 +71,11 @@ if (!is.null(form2)) {
 
     if (length(Ym2)) {
         if (nrow(as.matrix(Ym2)) != nrow(as.matrix(y)))
-            stop("number of rows of y and Ym2 are unequal")
+            stop("number of rows of 'y' and 'Ym2' are unequal")
     }
     if (length(Xm2)) {
         if (nrow(as.matrix(Xm2)) != nrow(as.matrix(x)))
-            stop("number of rows of y and Ym2 are unequal")
+            stop("number of rows of 'y' and 'Ym2' are unequal")
     }
 } else {
     Xm2 = Ym2 = NULL
@@ -96,7 +96,7 @@ if (!is.null(form2)) {
     if (is.function(family))
         family <- family()
     if (!inherits(family, "vglmff")) {
-        stop("'family=", family, "' is not a VGAM family function")
+        stop("'family = ", family, "' is not a VGAM family function")
     }
 
     eval(vcontrol.expression)
@@ -108,15 +108,15 @@ if (!is.null(form2)) {
     vglm.fitter <- get(method)
 
     fit <- vglm.fitter(x=x, y=y, w=w, offset=offset, 
-                       Xm2=Xm2, Ym2=Ym2,
-                       etastart=etastart, mustart=mustart, coefstart=coefstart,
-                       family=family, 
-                       control=control,
-                       constraints=constraints,
-                       criterion=control$criterion,
-                       extra=extra,
-                       qr.arg = qr.arg,
-                       Terms=mt, function.name=function.name, ...)
+                Xm2=Xm2, Ym2=Ym2,
+                etastart=etastart, mustart=mustart, coefstart=coefstart,
+                family=family, 
+                control=control,
+                constraints=constraints,
+                criterion=control$criterion,
+                extra=extra,
+                qr.arg = qr.arg,
+                Terms=mt, function.name=function.name, ...)
 
     fit$misc$dataname <- dataname
 
@@ -184,7 +184,8 @@ if (!is.null(form2)) {
     slot(answer, "control") = fit$control
     slot(answer, "extra") = if (length(fit$extra)) {
         if (is.list(fit$extra)) fit$extra else {
-            warning("\"extra\" is not a list, therefore placing \"extra\" into a list")
+            warning("'extra' is not a list, therefore placing ",
+                    "'extra' into a list")
             list(fit$extra)
         }
     } else list() # R-1.5.0

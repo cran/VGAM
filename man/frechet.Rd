@@ -93,6 +93,7 @@ frechet3(anchor=NULL, ldifference="loge", lscale="loge", lshape="loglog",
   \eqn{b^2 [ \Gamma(1-2/s) - \Gamma^2(1-1/s)]}{b^2 * [gamma(1-2/s) - gamma(1-1/s)^2]}
   for \eqn{s>2}.
 
+
   \code{frechet2} has \eqn{a} known whereas \code{frechet3}
   estimates it.  Estimating \eqn{a} well requires a lot of data and
   a good choice of \code{ilocation} will help speed up convergence.
@@ -109,6 +110,7 @@ frechet3(anchor=NULL, ldifference="loge", lscale="loge", lshape="loglog",
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}}
   and \code{\link{vgam}}.
+
 }
 \references{
 Castillo, E., Hadi, A. S., Balakrishnan, N. Sarabia, J. S. (2005)
@@ -131,13 +133,16 @@ Hoboken, N.J.: Wiley-Interscience.
   therefore treated with caution; these are computed in functions such
   as \code{vcov()} and \code{summary()}.
 
+
   If \code{fit} is a \code{frechet3} fit then \code{fit@extra$location}
   is the final estimate of the location parameter, and
   \code{fit@extra$LHSanchor} is the anchor point.
 
+
 }
 \seealso{
   \code{\link{rfrechet}}.
+
 }
 \examples{
 y = rfrechet(n <- 1000, shape=exp(exp(0)))

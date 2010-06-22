@@ -43,6 +43,7 @@ paralogistic(link.a = "loge", link.scale = "loge", earg.a=list(),
 It is the 3-parameter Singh-Maddala distribution with \eqn{a=q}.
   More details can be found in Kleiber and Kotz (2003).
 
+
 The 2-parameter paralogistic has density
   \deqn{f(y) = a^2 y^{a-1} / [b^a \{1 + (y/b)^a\}^{1+a}]}{%
         f(y) = a^2 y^(a-1) / [b^a (1 + (y/b)^a)^(1+a)]}
@@ -54,11 +55,13 @@ The mean is
         E(Y) = b  gamma(1 + 1/a)  gamma(a - 1/a) /  gamma(a)}
 provided \eqn{a > 1}.
 
+
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}},
   and \code{\link{vgam}}.
+
 }
 \references{
 Kleiber, C. and Kotz, S. (2003)

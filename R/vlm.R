@@ -6,7 +6,7 @@
 
 vlm <- function(formula,
                 data=list(), 
-                weights=NULL, subset, na.action,
+                weights=NULL, subset = NULL, na.action=na.fail,
                 prior.weights=NULL, 
                 control=vlm.control(...), 
                 method="qr",
@@ -24,35 +24,36 @@ vlm <- function(formula,
     if (smart)
         setup.smart("write")
 
-    mt <- terms(formula, data = data)  # attr(m, "terms")
     if (missing(data))
-        data <- sys.frame(sys.parent())
+        data <- environment(formula)
 
-    mf <- match.call(expand=FALSE)
-    mf$method <- mf$model <- mf$x.arg <- mf$y.arg <- mf$control <- 
-        mf$contrasts <- mf$constraints <- mf$extra <- 
-        mf$qr.arg <- mf$smart <- mf$... <- NULL
+
+    mf <- match.call(expand.dots = FALSE)
+    m <- match(c("formula", "data", "subset", "weights", "na.action",
+        "offset"), names(mf), 0)
+    mf <- mf[c(1, m)]
     mf$drop.unused.levels <- TRUE
     mf[[1]] <- as.name("model.frame")
-    mf <- eval(mf, parent.frame()) 
-    if (method == "model.frame")
-        return(mf)
+    mf <- eval(mf, parent.frame())
+    switch(method, model.frame = return(mf), qr = 1,
+           stop("invalid 'method': ", method))
+    mt <- attr(mf, "terms")
+
+
+
+
     if (method != "qr")
-        stop("only method=\"qr\" is implemented")
+        stop("only method = 'qr' is implemented")
 
-    na.act <- attr(mf, "na.action")
 
-    xvars <- as.character(attr(mt, "variables"))[-1]
-    if ((yvar <- attr(mt, "response")) > 0)
-        xvars <- xvars[-yvar]
-    xlev <- if (length(xvars) > 0) {
-        xlev <- lapply(mf[xvars], levels)
-        xlev[!sapply(xlev, is.null)]
-    }
 
-    y <- model.response(mf, "numeric") # model.extract(mf, "response")
-    x <- model.matrix(mt, mf, contrasts)
-    attr(x, "assign") <- attrassigndefault(x, mt) # So as to make it like Splus
+    xlev = .getXlevels(mt, mf)
+    y <- model.response(mf, "any") # model.extract(mf, "response")
+    x <- if (!is.empty.model(mt)) model.matrix(mt, mf, contrasts) else
+         matrix(, NROW(y), 0)
+    attr(x, "assign") = attrassigndefault(x, mt)
+
+
     offset <- model.offset(mf)
     if (is.null(offset))
         offset <- 0 # yyy ???
@@ -165,7 +166,9 @@ vlm <- function(formula,
 
     if (length(attr(x, "contrasts")))
         slot(answer, "contrasts") = attr(x, "contrasts")
-    slot(answer, "na.action") = if (length(na.act)) list(na.act) else list()
+    slot(answer, "na.action") = if (length(aaa <- attr(mf, "na.action")))
+        list(aaa) else list()
+
     if (length(offset))
         slot(answer, "offset") = as.matrix(offset)
     if (qr.arg) {

@@ -8,9 +8,10 @@
 }
 \usage{
 negbinomial(lmu = "loge", lk = "loge", emu = list(), ek = list(),
-            ik = NULL, nsimEIM = 100, cutoff = 0.995, Maxiter=5000,
-            deviance.arg = FALSE, method.init=1,
-            shrinkage.init=0.95, zero = -2)
+            imu = NULL, ik = NULL, quantile.probs = 0.75,
+            nsimEIM = 100, cutoff = 0.995,
+            Maxiter = 5000, deviance.arg = FALSE, method.init = 1,
+            shrinkage.init = 0.95, zero = -2)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -26,17 +27,24 @@ negbinomial(lmu = "loge", lk = "loge", emu = list(), ek = list(),
   See \code{earg} in \code{\link{Links}} for general information.
 
   }
-  \item{ik}{
-  Optional initial values for \eqn{k}.
-  If failure to converge occurs try different values (and/or use
-  \code{method.init}).
+  \item{imu, ik}{
+  Optional initial values for the mean and \eqn{k}.
+  For the latter, if failure to converge occurs then try different values
+  (and/or use \code{method.init}).
   For a \eqn{S}-column response, \code{ik} can be of length \eqn{S}.
   A value \code{NULL} means an initial value for each response is
   computed internally using a range of values.
-  This argument is ignored if used within \code{\link{cqo}}; see 
+  The last argument is ignored if used within \code{\link{cqo}}; see
   the \code{iKvector} argument of \code{\link{qrrvglm.control}} instead.
 
   }
+  \item{quantile.probs}{
+  Passed into the \code{probs} argument
+  of \code{\link[stats:quantile]{quantile}}
+  when \code{method.init = 3} to obtain an initial value for the mean.
+
+  }
+
   \item{nsimEIM}{
   This argument is used
   for computing the diagonal element of the
@@ -129,6 +137,7 @@ negbinomial(lmu = "loge", lk = "loge", emu = list(), ek = list(),
   the estimated value of the \eqn{\mu}{mu} parameter, i.e., of the mean
   \eqn{E(Y)}.
 
+
   The negative binomial distribution can be coerced into the classical
   GLM framework, with one of the parameters being of interest and the
   other treated as a nuisance/scale parameter (and implemented in the
@@ -138,15 +147,18 @@ negbinomial(lmu = "loge", lk = "loge", emu = list(), ek = list(),
   Simulated Fisher scoring is employed as the default
   (see the \code{nsimEIM} argument).
 
+
   The parameters \eqn{\mu}{mu} and \eqn{k} are independent (diagonal EIM),
   and the confidence region for \eqn{k} is extremely skewed so that its
   standard error is often of no practical use. The parameter \eqn{1/k}
   has been used as a measure of aggregation.
 
+
   This \pkg{VGAM} function handles \emph{multivariate} responses, so
   that a matrix can be used as the response. The number of columns is the
   number of species, say, and setting \code{zero=-2} means that \emph{all}
   species have a \eqn{k} equalling a (different) intercept only.
+
 
 }
 \section{Warning}{
@@ -155,14 +167,17 @@ negbinomial(lmu = "loge", lk = "loge", emu = list(), ek = list(),
   occur. Possibly choosing a log-log link may help in such cases,
   otherwise use \code{\link{poissonff}}.
 
+
   This function is fragile; the maximum likelihood estimate of the
   index parameter is fraught (see Lawless, 1987). In general, the
   \code{\link{quasipoissonff}} is more robust than this function.
   Assigning values to the \code{ik} argument may lead to a local solution,
   and smaller values are preferred over large values when using this argument.
 
+
   Yet to do: write a family function which uses the methods of moments
   estimator for \eqn{k}.
+
 
 }
 \value{
@@ -177,14 +192,17 @@ Negative binomial and mixed Poisson regression.
 \emph{The Canadian Journal of Statistics}
 \bold{15}, 209--225.
 
+
 Hilbe, J. M. (2007)
 \emph{Negative Binomial Regression}.
 Cambridge: Cambridge University Press.
+
 
 Bliss, C. and Fisher, R. A. (1953)
 Fitting the negative binomial distribution to biological data.
 \emph{Biometrics}
 \bold{9}, 174--200.
+
 
 }
 \author{ Thomas W. Yee }
@@ -206,6 +224,7 @@ Fitting the negative binomial distribution to biological data.
   \code{Maxiter} and
   \code{cutoff} are pertinent.
 
+
   Regardless of the algorithm used,
   convergence problems may occur, especially when the response has large
   outliers or is large in magnitude.
@@ -219,23 +238,28 @@ Fitting the negative binomial distribution to biological data.
   \code{ik},
   \code{zero}.
 
+
   This function can be used by the fast algorithm in
   \code{\link{cqo}}, however, setting \code{EqualTolerances=TRUE} and
   \code{ITolerances=FALSE} is recommended.
 
+
 % For \code{\link{cqo}} and \code{\link{cao}}, taking the square-root
 % of the response means (approximately) a \code{\link{poissonff}} family
 % may be used on the transformed data.
+
 
 % If the negative binomial family function \code{\link{negbinomial}}
 % is used for \code{cqo} then set \code{negbinomial(deviance=TRUE)}
 % is necessary. This means to minimize the deviance, which the fast
 % algorithm can handle.
 
+
   In the first example below (Bliss and Fisher, 1953), from each of 6
   McIntosh apple trees in an orchard that had been sprayed, 25 leaves
   were randomly selected. On each of the leaves, the number of adult
   female European red mites were counted.
+
 
 }
 
@@ -255,23 +279,23 @@ Fitting the negative binomial distribution to biological data.
 \examples{
 # Example 1: apple tree data
 appletree = data.frame(y = 0:7, w = c(70, 38, 17, 10, 9, 3, 2, 1))
-fit = vglm(y ~ 1, negbinomial, appletree, weights=w)
+fit = vglm(y ~ 1, negbinomial, appletree, weights = w)
 summary(fit)
-coef(fit, matrix=TRUE)
+coef(fit, matrix = TRUE)
 Coef(fit)
 
 # Example 2: simulated data with multivariate response
 ndata = data.frame(x = runif(nn <- 500))
-ndata = transform(ndata, y1 = rnbinom(nn, mu=exp(3+x), size=exp(1)),
-                         y2 = rnbinom(nn, mu=exp(2-x), size=exp(0)))
-fit1 = vglm(cbind(y1,y2) ~ x, negbinomial, ndata, trace=TRUE)
-coef(fit1, matrix=TRUE)
+ndata = transform(ndata, y1 = rnbinom(nn, mu=exp(3+x), size = exp(1)),
+                         y2 = rnbinom(nn, mu=exp(2-x), size = exp(0)))
+fit1 = vglm(cbind(y1,y2) ~ x, negbinomial, ndata, trace = TRUE)
+coef(fit1, matrix = TRUE)
 
 # Example 3: large counts so definitely use the nsimEIM argument
-ndata = transform(ndata, y3 = rnbinom(nn, mu=exp(12+x), size=exp(1)))
+ndata = transform(ndata, y3 = rnbinom(nn, mu=exp(12+x), size = exp(1)))
 with(ndata, range(y3))  # Large counts
-fit2 = vglm(y3 ~ x, negbinomial(nsimEIM=100), ndata, trace=TRUE)
-coef(fit2, matrix=TRUE)
+fit2 = vglm(y3 ~ x, negbinomial(nsimEIM=100), ndata, trace = TRUE)
+coef(fit2, matrix = TRUE)
 }
 \keyword{models}
 \keyword{regression}

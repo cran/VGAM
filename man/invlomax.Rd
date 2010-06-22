@@ -45,6 +45,7 @@ invlomax(link.scale = "loge", link.p = "loge",
   beta distribution of the second kind with \eqn{q=1}.
   More details can be found in Kleiber and Kotz (2003).
 
+
 The inverse Lomax distribution has density
   \deqn{f(y) = p y^{p-1} / [b^p \{1 + y/b\}^{p+1}]}{%
         f(y) = p y^(p-1) / [b^p (1 + y/b)^(p+1)]}
@@ -53,11 +54,13 @@ Here, \eqn{b} is the scale parameter \code{scale},
 and \code{p} is a shape parameter.
 The mean does not seem to exist. 
 
+
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}},
   and \code{\link{vgam}}.
+
 }
 \references{
 Kleiber, C. and Kotz, S. (2003)

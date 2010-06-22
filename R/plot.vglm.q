@@ -45,7 +45,7 @@ plotvgam = function(x, newdata=NULL, y=NULL, residuals=NULL, rugplot=TRUE,
     if (!is.Numeric(deriv.arg, integ=TRUE, allow=1) || deriv.arg<0)
         stop("bad input for the 'deriv' argument")
 
-    if (se && deriv.arg>0) {
+    if (se && deriv.arg > 0) {
         warning("standard errors not available with derivatives. ",
                 "Setting 'se=FALSE'")
         se = FALSE

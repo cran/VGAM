@@ -9,10 +9,10 @@
 }
 \usage{
 gpd(threshold = 0, lscale = "loge", lshape = "logoff", escale = list(),
-    eshape = if (lshape == "logoff") list(offset=0.5) else
-             if (lshape == "elogit") list(min=-0.5, max=0.5) else NULL,
+    eshape = if (lshape == "logoff") list(offset = 0.5) else
+             if (lshape == "elogit") list(min = -0.5, max = 0.5) else NULL,
     percentiles = c(90, 95), iscale = NULL, ishape = NULL,
-    tolshape0=0.001, giveWarning=TRUE, method.init=1, zero=2)
+    tolshape0 = 0.001, giveWarning = TRUE, method.init = 1, zero = 2)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -61,7 +61,7 @@ gpd(threshold = 0, lscale = "loge", lshape = "logoff", escale = list(),
   Numeric vector of percentiles used
   for the fitted values. Values should be between 0 and 100.
   See the example below for illustration.
-  However, if \code{percentiles=NULL} then the mean
+  However, if \code{percentiles = NULL} then the mean
   \eqn{\mu + \sigma / (1-\xi)}{mu + sigma / (1-xi)} is returned;
   this is only defined if \eqn{\xi<1}{xi<1}.
 
@@ -135,11 +135,14 @@ gpd(threshold = 0, lscale = "loge", lshape = "logoff", escale = list(),
   and
   \eqn{\mu < y <\mu-\sigma / \xi}{mu < y <mu-sigma / xi} for \eqn{\xi<0}{xi<0}.
 
-  Smith (1985) showed that if \eqn{\xi <= -0.5}{xi <= -0.5} then this
-  is known as the nonregular case and problems/difficulties can arise
-  both theoretically and numerically. For the (regular) case \eqn{\xi >
-  -0.5}{xi > -0.5} the classical asymptotic theory of maximum likelihood
-  estimators is applicable; this is the default.
+
+  Smith (1985) showed that if \eqn{\xi <= -0.5}{xi <= -0.5} then
+  this is known as the nonregular case and problems/difficulties
+  can arise both theoretically and numerically. For the (regular)
+  case \eqn{\xi > -0.5}{xi > -0.5} the classical asymptotic
+  theory of maximum likelihood estimators is applicable; this is
+  the default.
+
 
   Although for \eqn{\xi < -0.5}{xi < -0.5} the usual asymptotic properties
   do not apply, the maximum likelihood estimator generally exists and
@@ -149,9 +152,11 @@ gpd(threshold = 0, lscale = "loge", lshape = "logoff", escale = list(),
   likelihood estimator generally does not exist as it effectively becomes
   a two parameter problem.
 
+
   The mean of \eqn{Y} does not exist unless \eqn{\xi < 1}{xi < 1}, and
   the variance does not exist unless \eqn{\xi < 0.5}{xi < 0.5}.  So if
-  you want to fit a model with finite variance use \code{lshape="elogit"}.
+  you want to fit a model with finite variance use \code{lshape = "elogit"}.
+
 
 }
 \note{
@@ -159,9 +164,11 @@ gpd(threshold = 0, lscale = "loge", lshape = "logoff", escale = list(),
   and \code{\link{vgam}} is \eqn{y}.
   Internally, \eqn{y-\mu}{y-mu} is computed.
 
+
   With functions \code{\link{rgpd}}, \code{\link{dgpd}}, etc., the
   argument \code{location} matches with the argument \code{threshold}
   here.
+
 
 }
 \section{Warning}{
@@ -189,13 +196,16 @@ gpd(threshold = 0, lscale = "loge", lshape = "logoff", escale = list(),
   Vector generalized linear and additive extreme value models.
   \emph{Extremes}, \bold{10}, 1--19.
 
+
   Coles, S. (2001)
   \emph{An Introduction to Statistical Modeling of Extreme Values}.
   London: Springer-Verlag.
 
+
   Smith, R. L. (1985)
   Maximum likelihood estimation in a class of nonregular cases.
   \emph{Biometrika}, \bold{72}, 67--90.
+
 
 }
 \author{ T. W. Yee }

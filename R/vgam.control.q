@@ -16,8 +16,7 @@ vgam.control <- function(all.knots=FALSE,
                          se.fit=TRUE,
                          trace=FALSE,
                          wzepsilon = .Machine$double.eps^0.75,
-                         ...)
-{
+                         ...) {
 
 
 
@@ -76,30 +75,28 @@ vgam.control <- function(all.knots=FALSE,
 }
 
 
-vgam.nlchisq <- function(qr, resid, wz, s, deriv, U, smooth.labels,
-                         assign, M, n, constraints)
-{
-
+vgam.nlchisq <- function(qr, resid, wz, smomat, deriv, U, smooth.labels,
+                         assign, M, n, constraints) {
         attr(qr, "class") = "qr" 
         class(qr) <- "qr"
 
-    if (!is.matrix(s)) s <- as.matrix(s)
+    if (!is.matrix(smomat)) smomat <- as.matrix(smomat)
     if (!is.matrix(wz)) wz <- as.matrix(wz)
     if (!is.matrix(deriv)) deriv <- as.matrix(deriv)
     if (!is.matrix(resid)) resid <- as.matrix(resid)
 
     trivc <- trivial.constraints(constraints)
 
-    ans <- rep(as.numeric(NA), length=ncol(s))
-    Uderiv <- vbacksub(U, t(deriv), M=M, n=n)    # \bU_i^{-1} \biu_i
+    ans <- rep(as.numeric(NA), length = ncol(smomat))
+    Uderiv <- vbacksub(U, t(deriv), M = M, n = n)    # \bU_i^{-1} \biu_i
     ptr <- 0
-    for(i in 1:length(smooth.labels)) {
-        cmat <- constraints[[ smooth.labels[i] ]]
+    for(ii in 1:length(smooth.labels)) {
+        cmat <- constraints[[ smooth.labels[ii] ]]
         index <- (ptr+1):(ptr+ncol(cmat))
 
-        for(j in index) {
-            yy <- t(cmat[,j-ptr,drop=FALSE])
-            yy <- kronecker(s[,j,drop=FALSE], yy)  # n x M
+        for(jay in index) {
+            yy <- t(cmat[,jay-ptr,drop=FALSE])
+            yy <- kronecker(smomat[,jay,drop=FALSE], yy)  # n x M
             Us <- mux22(U, yy, M=M, upper=TRUE, as.matrix=TRUE)  # n * M
 
             Uss <- matrix(c(t(Us)), nrow=n*M, ncol=1)
@@ -109,13 +106,13 @@ vgam.nlchisq <- function(qr, resid, wz, s, deriv, U, smooth.labels,
             vRsw <- matrix(Rsw, nrow=n, ncol=M, byrow=TRUE)
             newans <- vbacksub(U, t(vRsw), M=M, n=n)
 
-            ans[j] <- sum(vRsw^2 + 2 * newans * deriv)
+            ans[jay] <- sum(vRsw^2 + 2 * newans * deriv)
 
         }
         ptr <- ptr + ncol(cmat)
     }
 
-    names(ans) <- dimnames(s)[[2]]
+    names(ans) <- dimnames(smomat)[[2]]
     ans
 }
     

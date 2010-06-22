@@ -42,14 +42,17 @@ riceff(lvee="loge", lsigma="loge", evee=list(), esigma=list(),
   }{%
   f(y;v,sigma) = 
   (y/sigma^2) * exp(-(y^2+v^2) / (2*sigma^2)) * I_0(y*v/sigma^2)}
-  where \eqn{y>0},
+  where \eqn{y > 0},
   \eqn{v > 0},
   \eqn{\sigma > 0} and \eqn{I_0} is the modified Bessel function of the
   first kind with order zero.
-  When \eqn{v=0} the Rice distribution reduces to a Rayleigh distribution.
+  When \eqn{v = 0} the Rice distribution reduces to a Rayleigh distribution.
   The mean is
-  \eqn{\sigma \sqrt{\pi/2} \exp(z/2) ((1-z) I_0(-z/2)-z I_1(-z/2))}{sigma*sqrt(pi/2)*exp(z/2)*((1-z)*I_0(-z/2)-z*I_1(-z/2))}
-  (returned as the fitted values) where \eqn{z=-v^2/(2 \sigma^2)}{z=-v^2/(2*sigma^2)}.
+  \eqn{\sigma \sqrt{\pi/2} \exp(z/2)
+       ((1-z) I_0(-z/2)-z I_1(-z/2))}{sigma*sqrt(pi/2) *
+       exp(z/2)*((1-z) * I_0(-z/2)-z*I_1(-z/2))}
+  (returned as the fitted values) where
+  \eqn{z=-v^2/(2 \sigma^2)}{z=-v^2/(2*sigma^2)}.
   Simulated Fisher scoring is implemented.
 
 }

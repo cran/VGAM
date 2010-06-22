@@ -35,6 +35,7 @@ rbenini(n, shape, y0)
   \code{pbenini} gives the distribution function,
   \code{qbenini} gives the quantile function, and
   \code{rbenini} generates random deviates.
+
 }
 \references{
 Kleiber, C. and Kotz, S. (2003)
@@ -48,12 +49,14 @@ Hoboken, NJ: Wiley-Interscience.
   See \code{\link{benini}}, the \pkg{VGAM} family function
   for estimating the parameter \eqn{b} by maximum likelihood estimation,
   for the formula of the probability density function and other details.
+
 }
 %\note{
 %  
 %}
 \seealso{
   \code{\link{benini}}.
+
 }
 \examples{
 \dontrun{

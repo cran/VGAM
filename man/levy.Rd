@@ -78,10 +78,6 @@ levy(delta = NULL, link.gamma = "loge", earg=list(),
   The Nolan article is at
   \url{http://academic2.american.edu/~jpnolan/stable/chap1.pdf}.
 
-  Documentation accompanying the \pkg{VGAM} package at
-  \url{http://www.stat.auckland.ac.nz/~yee} contains further information
-  and examples.
-
 }
 \examples{
 nn = 1000; delta = 0
