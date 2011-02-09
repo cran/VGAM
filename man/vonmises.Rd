@@ -107,7 +107,7 @@ New York: Wiley-Interscience, Third edition.
 
 }
 \section{Warning }{
-  Numerically, the von~Mises can be difficult to fit because of a
+  Numerically, the von Mises can be difficult to fit because of a
   log-likelihood having multiple maxima.
   The user is therefore encouraged to try different starting values,
   i.e., make use of \code{ilocation} and \code{iscale}.

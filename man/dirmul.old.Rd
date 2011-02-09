@@ -70,6 +70,7 @@ The (posterior) mean is
 %   allele i appears y_j times, then the maximum likelihood estimate of
 %   the ith allele frequency is y_j / (2y_*).
 
+
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
@@ -77,23 +78,34 @@ The (posterior) mean is
   \code{\link{rrvglm}}
   and \code{\link{vgam}}.
 
+
 }
 \references{
 Lange, K. (2002)
 \emph{Mathematical and Statistical Methods for Genetic Analysis},
 2nd ed.  New York: Springer-Verlag.
 
+
 Evans, M., Hastings, N. and Peacock, B. (2000)
 \emph{Statistical Distributions},
 New York: Wiley-Interscience, Third edition.
+
 
 Paul, S. R., Balasooriya, U. and Banerjee, T. (2005)
 Fisher information matrix of the Dirichlet-multinomial distribution.
 \emph{Biometrical Journal}, \bold{47}, 230--236.
 
+
+Tvedebrink, T. (2010)
+Overdispersion in allelic counts and \eqn{\theta}-correction in forensic genetics.
+\emph{Theoretical Population Biology}, \bold{78}, 200--210.
+
+
+
 Documentation accompanying the \pkg{VGAM} package at
 \url{http://www.stat.auckland.ac.nz/~yee}
 contains further information and examples.
+
 
 }
 \author{ Thomas W. Yee }
@@ -103,8 +115,10 @@ contains further information and examples.
   Convergence seems to slow down if there are zero values.
   Currently, initial values can be improved upon.
 
+
   This function is almost defunct and may be withdrawn soon.
   Use \code{\link{dirmultinomial}} instead.
+
 
 }
 
@@ -113,38 +127,40 @@ contains further information and examples.
   \code{\link{dirichlet}},
   \code{\link{betabin.ab}},
   \code{\link{multinomial}}.
+
+
 }
 
 \examples{
 # Data from p.50 of Lange (2002)
-alleleCounts = c(2, 84, 59, 41, 53, 131, 2, 0,
+alleleCounts <- c(2, 84, 59, 41, 53, 131, 2, 0,
        0, 50, 137, 78, 54, 51, 0, 0,
        0, 80, 128, 26, 55, 95, 0, 0,
        0, 16, 40, 8, 68, 14, 7, 1)
-dim(alleleCounts) = c(8, 4)
-alleleCounts = data.frame(t(alleleCounts))
-dimnames(alleleCounts) = list(c("White","Black","Chicano","Asian"),
-                    paste("Allele", 5:12, sep=""))
+dim(alleleCounts) <- c(8, 4)
+alleleCounts <- data.frame(t(alleleCounts))
+dimnames(alleleCounts) <- list(c("White","Black","Chicano","Asian"),
+                    paste("Allele", 5:12, sep = ""))
 
 set.seed(123)  # @initialize uses random numbers
-fit = vglm(cbind(Allele5,Allele6,Allele7,Allele8,Allele9,
-                 Allele10,Allele11,Allele12) ~ 1, dirmul.old,
-            trace=TRUE, crit="c", data=alleleCounts)
+fit <- vglm(cbind(Allele5,Allele6,Allele7,Allele8,Allele9,
+                  Allele10,Allele11,Allele12) ~ 1, dirmul.old,
+             trace = TRUE, crit = "c", data = alleleCounts)
 
-(sfit = summary(fit))
+(sfit <- summary(fit))
 vcov(sfit)
-round(eta2theta(coef(fit), fit@misc$link), dig=2)  # not preferred
-round(Coef(fit), dig=2) # preferred  # preferred
-round(t(fitted(fit)), dig=4) # 2nd row of Table 3.5 of Lange (2002)
-coef(fit, matrix=TRUE)
+round(eta2theta(coef(fit), fit@misc$link), dig = 2)  # not preferred
+round(Coef(fit), dig = 2) # preferred  # preferred
+round(t(fitted(fit)), dig = 4) # 2nd row of Table 3.5 of Lange (2002)
+coef(fit, matrix = TRUE)
 
 
-pfit = vglm(cbind(Allele5,Allele6,Allele7,Allele8,Allele9,
-                  Allele10,Allele11,Allele12) ~ 1,
-             dirmul.old(parallel=TRUE), trace=TRUE,
-             data=alleleCounts)
-round(eta2theta(coef(pfit), pfit@misc$link), dig=2) # not preferred
-round(Coef(pfit), dig=2)   # preferred
+pfit <- vglm(cbind(Allele5,Allele6,Allele7,Allele8,Allele9,
+                   Allele10,Allele11,Allele12) ~ 1,
+             dirmul.old(parallel = TRUE), trace = TRUE,
+             data = alleleCounts)
+round(eta2theta(coef(pfit), pfit@misc$link), dig = 2) # not preferred
+round(Coef(pfit), dig = 2)   # preferred
 }
 \keyword{models}
 \keyword{regression}

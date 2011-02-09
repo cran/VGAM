@@ -61,9 +61,10 @@ gamma2(lmu = "loge", lshape = "loge", emu = list(), eshape = list(),
     are modelled as an intercept only. By default, the shape parameter
     (after \code{lshape} is applied) is modelled as a single unknown
     number that is estimated.  It can be modelled as a function of
-    the explanatory variables by setting \code{zero=NULL}.  A negative
+    the explanatory variables by setting \code{zero = NULL}.  A negative
     value means that the value is recycled, so setting \eqn{-2} means
     all shape parameters are intercept only.
+    See \code{\link{CommonVGAMffArguments}} for more information.
 
   }
 }
@@ -92,16 +93,19 @@ gamma2(lmu = "loge", lshape = "loge", emu = list(), eshape = list(),
   origin and is unimodal with mode at \eqn{y = \mu - \mu / \lambda}{y =
   mu - mu / shape}; this can be achieved with \code{lshape="loglog"}.
 
+
   By default, the two linear/additive predictors are
   \eqn{\eta_1=\log(\mu)}{eta1=log(mu)} and
   \eqn{\eta_2=\log(\lambda)}{eta2=log(shape)}.
   This family function implements Fisher scoring and the working
   weight matrices are diagonal.
 
+
   This \pkg{VGAM} family function handles \emph{multivariate} responses,
   so that a matrix can be used as the response. The number of columns is
   the number of species, say, and \code{zero=-2} means that \emph{all}
   species have a shape parameter equalling a (different) intercept only.
+
 
 }
 \value{
@@ -142,22 +146,23 @@ McCullagh, P. and Nelder, J. A. (1989)
   \code{\link{bivgamma.mckay}} for \emph{a} bivariate gamma distribution,
   \code{\link{expexp}},
   \code{\link[stats]{GammaDist}},
-  \code{\link{golf}}.
+  \code{\link{golf}},
+  \code{\link{CommonVGAMffArguments}}.
 
 }
 \examples{
 # Essentially a 1-parameter gamma
-gdata = data.frame(y = rgamma(n=100, shape= exp(1)))
-fit1 = vglm(y ~ 1, gamma1, gdata)
-fit2 = vglm(y ~ 1, gamma2, gdata, trace=TRUE, crit="c")
-coef(fit2, matrix=TRUE)
+gdata <- data.frame(y = rgamma(n = 100, shape = exp(1)))
+fit1 <- vglm(y ~ 1, gamma1, gdata)
+fit2 <- vglm(y ~ 1, gamma2, gdata, trace = TRUE, crit = "coef")
+coef(fit2, matrix = TRUE)
 Coef(fit2)
 
 
 # Essentially a 2-parameter gamma
-gdata = data.frame(y = rgamma(n=500, rate=exp(1), shape=exp(2)))
-fit2 = vglm(y ~ 1, gamma2, gdata, trace=TRUE, crit="c")
-coef(fit2, matrix=TRUE)
+gdata <- data.frame(y = rgamma(n = 500, rate = exp(1), shape = exp(2)))
+fit2 <- vglm(y ~ 1, gamma2, gdata, trace = TRUE, crit = "coef")
+coef(fit2, matrix = TRUE)
 Coef(fit2)
 summary(fit2)
 }

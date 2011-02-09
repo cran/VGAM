@@ -73,9 +73,10 @@ tikuv(d, lmean="identity", lsigma="loge", emean=list(), esigma=list(),
 }
 \references{
 
-  Akkaya, A. D. and Tiku, M. L. (2006)
+  Akkaya, A. D. and Tiku, M. L. (2008)
   Short-tailed distributions and inliers.
-  \emph{Test}, \bold{15}(2), in press.
+  \emph{Test}, \bold{17}, 282--296.
+
 
   Tiku, M. L. and Vaughan, D. C. (1999)
   A family of short-tailed symmetric distributions.

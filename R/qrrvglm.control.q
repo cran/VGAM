@@ -1,5 +1,6 @@
 # These functions are
-# Copyright (C) 1998-2010 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2011 T.W. Yee, University of Auckland.
+# All rights reserved.
 
 
 qrrvglm.control = function(Rank=1,
@@ -115,7 +116,7 @@ qrrvglm.control = function(Rank=1,
            save.weight = FALSE,
            SD.Cinit = SD.Cinit,
            SmallNo = SmallNo,
-           Structural.zero = NULL,
+           szero = NULL,
            Svd.arg = TRUE, Alpha=0.5, Uncorrelated.lv = TRUE,
            trace = trace,
            Use.Init.Poisson.QO=as.logical(Use.Init.Poisson.QO)[1],

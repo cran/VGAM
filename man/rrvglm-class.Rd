@@ -225,12 +225,15 @@ Reduced-rank vector generalized linear models.
 \emph{Statistical Modelling},
 \bold{3}, 15--41.
 
+
 Yee, T. W. and Wild, C. J. (1996)
 Vector generalized additive models.
 \emph{Journal of the Royal Statistical Society, Series B, Methodological},
 \bold{58}, 481--493.
 
+
 \url{http://www.stat.auckland.ac.nz/~yee}
+
 
 }
 \author{ Thomas W. Yee }
@@ -238,6 +241,8 @@ Vector generalized additive models.
 \note{
   The slots of \code{"rrvglm"} objects are currently identical to \code{"vglm"}
   objects.
+
+
 }
 
 % ~Make other sections like Warning with \section{Warning }{....} ~
@@ -248,15 +253,17 @@ Vector generalized additive models.
   \code{\link{rrvglm}},
   \code{\link{lvplot.rrvglm}},
   \code{\link{vglmff-class}}.
+
 }
 
 \examples{
 # Rank-1 stereotype model of Anderson (1984)
-set.seed(111)
-pneumo = transform(pneumo, let=log(exposure.time),
-             x1=runif(nrow(pneumo))) # x1 is some unrelated covariate
-fit = rrvglm(cbind(normal, mild, severe) ~ let + x1,
-             multinomial, pneumo, Rank=1)
+pneumo <- transform(pneumo,
+             let = log(exposure.time),
+             x3  = runif(nrow(pneumo))) # x3 is some unrelated covariate
+fit <- rrvglm(cbind(normal, mild, severe) ~ let + x3,
+              multinomial, pneumo, Rank = 1)
 Coef(fit)
 }
 \keyword{classes}
+% set.seed(111)

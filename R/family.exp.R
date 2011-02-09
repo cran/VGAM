@@ -1,36 +1,18 @@
-# These functions are Copyright (C) 1998-2010 T. W. Yee  All rights reserved.
+# These functions are
+# Copyright (C) 1998-2011 T.W. Yee, University of Auckland.
+# All rights reserved.
 
-# Families for expectile regression are put in this file 
-# 20100324;
-# Last modified: 20100324, 20100326, 20100329, 20100331,
 
-# Yet to do:
-# 1. lms.bcn(expectiles = FALSE). If lms.bcn(expectiles = TRUE) then
-#    expectiles, and not quantiles, are the fitted values.
-#    This is LMS-BCN expectile regression, a new method.
-# 2. Improve the approximations (initial values) for each of the
-#    three distributions. See the zzs below.
-# 3. For peunif(q) etc.: use e or q as first argument??
-#    For deunif(x) etc.: use e or x as first argument??
-#    For qeunif(x) etc.: rename to eeunif(x)?
 
-# Done:
-# 1. For norm, exp and unif distributions:
-#    qenorm(0.25) returns the 0.25-expectile of a standard normal,
-#    penorm(1.25) returns the tau (in (0,1)) for an expectile of 1.25.
-#    This is based on the paper by M C Jones (1994) in Stat Prob Letters.
 
-# Notes:
-# 1. 
 
-# ======================================================================
-# Expectiles for uniform distribution ----------------------------------
-# 20100324
-# The [et]norm() here were adapted from MC Jones paper.
+
+
+
+
+
 
 qeunif <- function(p, min = 0, max = 1, Maxit_nr = 10, Tol_nr = 1.0e-6) {
-# Using Newton-Raphson may be a problem at the boundaries.
-# The secant method may be better.
 
   ppp = p
   vsmallno = sqrt(.Machine$double.eps)
@@ -41,39 +23,21 @@ qeunif <- function(p, min = 0, max = 1, Maxit_nr = 10, Tol_nr = 1.0e-6) {
     stop("argument 'Tol_nr' is not a single positive value, or is too large")
   nrok = ppp >= vsmallno & ppp <= 1.0 - vsmallno & is.finite(ppp)
 
-# A beta function seems to approximate it ok near the middle.
-# This can be improved zz.
   eee = qbeta(ppp, shape1 = 3, shape2 = 3)
-# A different quadratic fits each boundary well (asymptotic expansion).
   eee[ppp <        smallno] = sqrt(ppp[ppp <  smallno])
   eee[ppp > 1.0 -  smallno] = 1.0 - sqrt(1.0 - ppp[ppp > 1.0 -  smallno])
 
-#lines(ppp, eee, col="purple", type="b")
-#print("initial eee")
-#isample = sample(length(eee))
-#isample = 1:length(eee)
-#print( head(eee[isample]) )
-#print(     (eee[isample]) )
-#cat("\n")
 
   for(iii in 1:Maxit_nr) {
     realdiff <- (peunif(eee[nrok]) - ppp[nrok]) / deunif(eee[nrok])
-#  #print("max(abs(realdiff))")
-#  #print( max(abs(realdiff)) )
     eee[nrok] = eee[nrok] - realdiff
-#   cat("Iteration ", iii, "\n")
-#  #print( head(eee[isample]) )
-#  #print(     (eee[isample]) )
-#   cat("\n")
     if (all(abs(realdiff) / (1.0 + abs(realdiff)) < Tol_nr )) break
     if (iii == Maxit_nr) warning("did not converge")
   }
 
-# Check again (on the standard uniform distribution);
   if (max(abs(peunif(eee[nrok]) - ppp[nrok])) > Tol_nr)
     warning("did not converge on the second check")
 
-# zz; Needs checking, esp. near the boundary of 1.0:
   eee[ppp <       vsmallno] =       sqrt(      ppp[ppp <       vsmallno])
   eee[ppp > 1.0 - vsmallno] = 1.0 - sqrt(1.0 - ppp[ppp > 1.0 - vsmallno])
   eee[ppp == 0] = 0
@@ -85,8 +49,6 @@ qeunif <- function(p, min = 0, max = 1, Maxit_nr = 10, Tol_nr = 1.0e-6) {
 
 
 peunif <- function(q, min = 0, max = 1, log = FALSE) {
-# zz use e or x ??
-# This is G(y).
   if (!is.logical(log.arg <- log)) stop("bad input for argument 'log'")
   rm(log)
   if (any(min >= max))
@@ -109,7 +71,6 @@ peunif <- function(q, min = 0, max = 1, log = FALSE) {
 
 
 deunif <- function(x, min = 0, max = 1, log = FALSE) {
-# This is g(x).
   if (!is.logical(log.arg <- log)) stop("bad input for argument 'log'")
   rm(log)
   if (any(min >= max))
@@ -126,8 +87,6 @@ deunif <- function(x, min = 0, max = 1, log = FALSE) {
     gunif <- function(y)
         as.numeric(y >= 0 & y <= 1) * 2*y*(1-y) / (2*y*(1-y) - 1)^2
     ans = gunif(eee) / (max - min)
-#   ans[eee <  0.0] = 0.0
-#   ans[eee >  1.0] = 0.0
   }
   ans
 }
@@ -145,50 +104,29 @@ reunif <- function(n, min = 0, max = 1) {
 
 
 
-# ======================================================================
-# Expectiles for normal distribution -----------------------------------
-# 20100324
-# The [et]norm() here were adapted from MC Jones paper.
 
 qenorm <- function(p, mean = 0, sd = 1, Maxit_nr = 10, Tol_nr = 1.0e-6) {
   ppp = p
   if (!is.Numeric( Tol_nr, allow = 1, posit = TRUE) || Tol_nr > 0.10)
-    stop("argument 'Tol_nr' is not a single positive value, or is too large")
-# if (!is.Numeric( sd, posit = TRUE))
-#   stop("argument 'sd' must contain positive values")
+    stop("argument 'Tol_nr' is not a single ",
+         "positive value, or is too large")
   nrok = is.finite(ppp)
 
-# A N(0, sd = 2/3) approximation is good according to the paper.
   eee =  qnorm(ppp, sd = 2/3)
 
-# lines(ppp, eee, col="purple", type="b")
-##print("initial eee")
-#isample = sample(length(eee))
-#isample = 1:length(eee)
-##print( head(eee[isample]) )
-##print(     (eee[isample]) )
-# cat("\n")
 
   gnorm = function(y) dnorm(y) / (y * (1-2*pnorm(y)) - 2*dnorm(y))^2
 
   for(iii in 1:Maxit_nr) {
     realdiff <- (penorm(eee[nrok]) - ppp[nrok]) / gnorm(eee[nrok])
-#  #print("max(abs(realdiff))")
-#  #print( max(abs(realdiff)) )
     eee[nrok] = eee[nrok] - realdiff
-#   cat("Iteration ", iii, "\n")
-#  #print( head(eee[isample]) )
-#  #print(     (eee[isample]) )
-#   cat("\n")
     if (all(abs(realdiff) / (1.0 + abs(realdiff)) < Tol_nr )) break
     if (iii == Maxit_nr) warning("did not converge")
   }
 
-# Check again (on the standard normal distribution);
   if (max(abs(penorm(eee[nrok]) - ppp[nrok])) > Tol_nr)
     warning("did not converge on the second check")
 
-# zz; Needs checking, esp. near the boundary of 1.0:
   eee[ppp == 0] = -Inf
   eee[ppp == 1] =  Inf
   eee[ppp <  0] = NA
@@ -218,7 +156,6 @@ penorm <- function(q, mean = 0, sd = 1, log = FALSE) {
 
 
 denorm <- function(x, mean = 0, sd = 1, log = FALSE) {
-# This is g(x).
   if (!is.logical(log.arg <- log)) stop("bad input for argument 'log'")
   rm(log)
 
@@ -248,10 +185,6 @@ renorm <- function(n, mean = 0, sd = 1) {
 
 
 
-# ======================================================================
-# Expectiles for exponential distribution ------------------------------
-# 20100324
-# The [et]exp() here were adapted from MC Jones paper.
 
 
 qeexp <- function(p, rate = 1, Maxit_nr = 10, Tol_nr = 1.0e-6) {
@@ -261,44 +194,25 @@ qeexp <- function(p, rate = 1, Maxit_nr = 10, Tol_nr = 1.0e-6) {
     stop("argument 'Tol_nr' is not a single positive value, or is too large")
   nrok = ppp >= vsmallno & is.finite(ppp)
 
-# 20100401; An approximation: (zz improve this!!)
-# eee =  qf(0.8 * ppp, df1 =  4.0, df2 = 44) * 1.5
 
-# 20100408; This is a piecewise approximation, and looks ok.
   eee = qf(1.0 * ppp, df1 =  4.0, df2 = 44)
   if ( any(rangex <- ppp < 0.8) )
-      eee[rangex] = qrayleigh(ppp[rangex], a =  0.8)
+      eee[rangex] = qrayleigh(ppp[rangex], scale =  0.8)
 
 
-# A different quadratic fits each boundary well (asymptotic expansion). zz
   eee[ppp <       vsmallno] = sqrt(ppp[ppp < vsmallno])
 
-#lines(ppp,eee,col="purple",type="b") # See what the initial values were like
-##print("initial eee")
-#isample = sample(length(eee))
-#isample = 1:length(eee)
-##print( head(eee[isample]) )
-##print(     (eee[isample]) )
-##cat("\n")
 
   for(iii in 1:Maxit_nr) {
     realdiff <- (peexp(eee[nrok]) - ppp[nrok]) / deexp(eee[nrok])
-#  #print("max(abs(realdiff))")
-#  #print( max(abs(realdiff)) )
     eee[nrok] = eee[nrok] - realdiff
-#   cat("Iteration ", iii, "\n")
-#  #print( head(eee[isample]) )
-#  #print(     (eee[isample]) )
-#   cat("\n")
     if (all(abs(realdiff) / (1.0 + abs(realdiff)) < Tol_nr )) break
     if (iii == Maxit_nr) warning("did not converge")
   }
 
-# Check again (on the standard exponential distribution);
   if (max(abs(peexp(eee[nrok]) - ppp[nrok])) > Tol_nr)
     warning("did not converge on the second check")
 
-# zz; Needs checking, esp. near the boundary of 1.0:
   eee[ppp < vsmallno] = sqrt(ppp[ppp < vsmallno])
   eee[ppp == 0] = 0
   eee[ppp == 1] = Inf
@@ -315,13 +229,11 @@ peexp <- function(q, rate = 1, log = FALSE) {
   eee = q * rate
   if (log.arg) {
     tmp1 = -expm1(-eee) - eee
-#   logGofy = log(tmp1) - log(2 * tmp1 + eee - 1.0)
     logGofy = log1p(- eee - exp(-eee)) - log(2 * tmp1 + eee - 1.0)
     logGofy[eee <    0] = log(0.0)
     logGofy[eee >= Inf] = log(1.0)
     logGofy
   } else {
-#   tmp1 = 1 - eee - exp(-eee)
     tmp1 = -expm1(-eee) - eee
     Gofy = tmp1 / (2 * tmp1 + eee - 1.0)
     Gofy[eee <    0] = 0.0
@@ -333,7 +245,6 @@ peexp <- function(q, rate = 1, log = FALSE) {
 
 
 deexp <- function(x, rate = 1, log = FALSE) {
-# This is g(x).
   if (!is.logical(log.arg <- log)) stop("bad input for argument 'log'")
   rm(log)
   if (any(rate <= 0))
@@ -362,8 +273,223 @@ reexp <- function(n, rate = 1) {
 }
 
 
-# ======================================================================
 
-# ======================================================================
+
+dkoenker <- function(x, location = 0, scale = 1, log = FALSE) {
+  if (!is.logical(log.arg <- log))
+    stop("bad input for argument 'log'")
+  rm(log)
+
+  zedd <- (x - location) / scale
+  zedd[scale <= 0] <- NaN
+
+  if (log.arg) {
+    log(0.25) - 1.5 * log1p((zedd / 2)^2) - log(scale)
+  } else {
+    2 / (scale * (4 + zedd^2)^1.5)
+  }
+}
+
+
+pkoenker <- function(q, location = 0, scale = 1, log = FALSE) {
+  if (!is.logical(log.arg <- log))
+    stop("bad input for argument 'log'")
+  rm(log)
+
+  zedd <- (q - location) / scale
+  zedd[scale <= 0] <- NaN
+
+  if (log.arg) {
+    -log(2) + log1p(zedd / sqrt(4 + zedd^2))
+  } else {
+    0.5 * (1 + zedd / sqrt(4 + zedd^2))
+  }
+}
+
+
+
+
+qkoenker <- function(p, location = 0, scale = 1) {
+
+  answer <- -2 * (1 - 2*p) / sqrt(1 - (1 - 2*p)^2)
+  answer[p  < 0] <- NaN
+  answer[p  > 1] <- NaN
+  answer[p == 0] <- -Inf
+  answer[p == 1] <- +Inf
+
+  answer <- answer * scale + location
+  answer[scale <= 0] <- NaN
+  answer
+}
+
+
+
+rkoenker <- function(n, location = 0, scale = 1) {
+  answer <- qkoenker(runif(n)) * scale + location
+  answer[scale <= 0] <- NaN
+  answer
+}
+
+
+
+
+ koenker <- function(percentile = 50,
+                     llocation = "identity", lscale = "loge",
+                     elocation = list(), escale = list(),
+                     ilocation = NULL,   iscale = NULL,
+                     method.init = 1,
+                     zero = 2)
+{
+
+ 
+
+
+
+  llocat = llocation
+  elocat = elocation
+  ilocat = ilocation
+
+  if (mode(llocat) != "character" && mode(llocat) != "name")
+    llocat <- as.character(substitute(llocat))
+  if (mode(lscale) != "character" && mode(lscale) != "name")
+    lscale <- as.character(substitute(lscale))
+  if (length(ilocat) &&
+     (!is.Numeric(ilocat, allow = 1, positive = TRUE)))
+      stop("bad input for argument 'ilocation'")
+  if (length(iscale) && !is.Numeric(iscale))
+    stop("bad input for argument 'iscale'")
+
+  if (!is.list(elocat)) elocat = list()
+  if (!is.list(escale)) escale = list()
+
+  if (!is.Numeric(percentile, posit = TRUE) ||
+      any(percentile >= 100))
+    stop("bad input for argument 'percentile'")
+  if (!is.Numeric(method.init, allow = 1, integ = TRUE, posit = TRUE) ||
+     method.init > 2)
+      stop("'method.init' must be 1 or 2")
+
+  new("vglmff",
+  blurb = c("Koenker distribution\n\n",
+            "Links:    ",
+            namesof("location", llocat, earg = elocat, tag = FALSE), ", ",
+            namesof("scale",    lscale, earg = escale, tag = FALSE), "\n\n",
+            "Mean:     location\n",
+            "Variance: infinite"),
+  constraints = eval(substitute(expression({
+    constraints <- cm.zero.vgam(constraints, x, .zero, M)
+  }), list( .zero = zero ))),
+  initialize = eval(substitute(expression({
+    if (ncol(y <- cbind(y)) != 1)
+      stop("the response must be a vector or one-column matrix")
+
+    predictors.names <- c(
+        namesof("location", .llocat, earg = .elocat, tag = FALSE),
+        namesof("scale",    .lscale, earg = .escale, tag = FALSE))
+    if (!length(etastart)) {
+
+      locat.init <- if ( .method.init == 2) {
+        weighted.mean(y, w)
+      } else {
+        median(y)
+      }
+      Scale.init <- if (length( .iscale )) .iscale else
+          diff(quantile(y, prob = c(0.25, 0.75))) / (2 * 1.155) + 1.0e-5
+      locat.init <- rep(locat.init, length = length(y))
+      Scale.init <- rep(Scale.init, length = length(y))
+      etastart <- cbind(theta2eta(locat.init, .llocat, earg = .elocat),
+                        theta2eta(Scale.init, .lscale, earg = .escale))
+    }
+  }), list( .llocat = llocat, .lscale = lscale,
+            .ilocat = ilocat, .iscale = iscale,
+            .elocat = elocat, .escale = escale,
+            .method.init = method.init ))),
+  inverse = eval(substitute(function(eta, extra = NULL){
+    Perce <- .percentile
+    locat <- eta2theta(eta[, 1], link = .llocat, earg = .elocat)
+    Scale <- eta2theta(eta[, 2], link = .lscale, earg = .escale)
+    answer <- matrix(locat, nrow(eta), length(Perce))
+    for (ii in 1:length(Perce))
+      answer[, ii] <- qkoenker(Perce[ii] / 100, loc = locat, sc = Scale)
+    dimnames(answer) <- list(dimnames(eta)[[1]],
+                             paste(as.character(Perce), "%", sep = ""))
+    answer
+  }, list( .llocat = llocat, .lscale = lscale,
+           .elocat = elocat, .escale = escale,
+           .percentile = percentile ))),
+  last = eval(substitute(expression({
+    misc$link <-    c("location" = .llocat, "scale" = .lscale)
+    misc$earg <- list("location" = .elocat, "scale" = .escale)
+    misc$expected <- TRUE
+    misc$percentile <- .percentile
+    misc$method.init <- .method.init
+
+      ncoly <- ncol(y)
+      for(ii in 1:length( .percentile )) {
+        y.use <- if (ncoly > 1) y[, ii] else y
+        mu <- cbind(mu)
+        extra$percentile[ii] = 100 * weighted.mean(y.use <= mu[, ii], w)
+      }
+      names(extra$percentile) = colnames(mu)
+  }), list( .llocat = llocat, .lscale = lscale,
+            .elocat = elocat, .escale = escale,
+            .method.init = method.init, .percentile = percentile ))),
+  loglikelihood = eval(substitute(
+          function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
+    locat <- eta2theta(eta[, 1], link = .llocat, earg = .elocat)
+    Scale <- eta2theta(eta[, 2], link = .lscale, earg = .escale)
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
+      sum(w * dkoenker(x = y, location = locat, scale = Scale, log = TRUE))
+    }
+  }, list( .llocat = llocat, .lscale = lscale,
+           .elocat = elocat, .escale = escale ))),
+  vfamily = c("koenker"),
+  deriv = eval(substitute(expression({
+    locat <- eta2theta(eta[, 1], link = .llocat, earg = .elocat)
+    Scale <- eta2theta(eta[, 2], link = .lscale, earg = .escale)
+    dlocat.deta <- dtheta.deta(locat, link = .llocat, earg = .elocat)
+    dscale.deta <- dtheta.deta(Scale, link = .lscale, earg = .escale)
+
+    zedd <- (y - locat) / Scale
+
+    dl.dlocat <- 3 * zedd   / (Scale * (4 + zedd^2))
+    dl.dscale <- 3 * zedd^2 / (Scale * (4 + zedd^2)) - 1 / Scale
+
+    w * cbind(dl.dlocat * dlocat.deta,
+              dl.dscale * dscale.deta)
+  }), list( .llocat = llocat, .lscale = lscale,
+            .elocat = elocat, .escale = escale ))),
+  weight = eval(substitute(expression({
+    ed2l.dlocat2 <- 0.3 / Scale^2
+    ed2l.dscale2 <- 2.0 / (3 * Scale^2)
+
+    wz <- matrix(-10, n, M)  # Diagonal EIM
+    wz[, iam(1, 1, M = M)] <- ed2l.dlocat2 * dlocat.deta^2
+    wz[, iam(2, 2, M = M)] <- ed2l.dscale2 * dscale.deta^2
+
+    w * wz
+  }), list( .llocat = llocat, .lscale = lscale,
+            .elocat = elocat, .escale = escale ))))
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

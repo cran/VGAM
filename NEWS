@@ -4,6 +4,65 @@
 	*						 *
 	**************************************************
 
+                CHANGES IN VGAM VERSION 0.8-2
+
+NEW FEATURES
+
+    o	Objects of class "vglmff" have a "infos" slot to give
+        information about the family.
+    o   New functions: lambertW(), rcam(), wffc.P3(), wffc.P3star(),
+        confint_rrnb(), confint_nb1().
+    o   New VGAM family functions:
+        binom2.Rho(), [dpqr]expgeometric(),
+        [dpqr]genrayleigh(), [dpqr]huber(),
+        [dpqr]koenker(), studentt[23](), zipoissonff().
+    o   Argument 'imethod' changed to 'method.init' for some
+        families, e.g., cnormal1(), tobit(), weibull().
+    o   Improvements have been made to binom2.rho().
+    o   Improved family functions:
+        negbinomial() has a new argument 'parallel',
+        micmen() has more initial value choices and fitting algorithms,
+        kumar(), studentt() and studentt2() now implement the EIM,
+        normal1() can handle multiple responses.
+    o   Argument names changed:
+        'init.rho' renamed to 'irho' in binom2.rho(),
+        'a' renamed to 'scale' in rayleigh(),
+        'Structural.zero' renamed to 'szero' thoughout.
+    o   zapoisson() permutes the linear/additive predictors.
+    o   Several families such as negbinomial(), z[ai]negbinomial(),
+        zapoisson(), gamma2(), handle zero = c(-2, 3), say,
+        i.e., negative and positive values.
+    o   New data sets: about half a dozen road crash data frames of
+        2009 NZ data.
+    o   constraints(vglmfit) now has a 'type' argument that can be fed
+        into the original fit (type = "lm") as the constraints argument.
+    o	vchol() takes drastic action to avoid infinite looping: it sets
+        the working weights to be proportional to the order-M diagonal
+        matrix.
+    o	lognormal() and lognormal3() now have zero = 2 as the default
+        (was zero = NULL).
+    o	Some variable names within grc() changed, e.g., Row. and not Row.
+    o   The smartpred package within VGAM has updated poly(), ns(),
+        bs() and scale() for R version 2.12.0 (2010-10-15).
+        Calls to smartpredenv are now VGAM:::smartpredenv.
+
+
+BUG FIXES
+
+    o   VGAM:::VGAMenv is used now to avoid problems locating
+        this environment.
+    o   Input of the mustart, etastart and coefstart arguments at
+        the solution should results in only one iteration being needed.
+    o   binomialff() and categorical familes (e.g., multinomial) only
+        accept a factor or non-negative counts as the response.
+        This allows the 'weights' vector to have any value really.
+        In the past the denominator of a sample proportion was allowed
+        via the 'weights' argument.
+    o   wffc.P1() had some rounding problems, e.g., with 0.280 m.
+
+
+
+
                 CHANGES IN VGAM VERSION 0.8-1
 
 NEW FEATURES

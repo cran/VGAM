@@ -6,8 +6,8 @@
   Fits a Tobit model to a univariate response. 
 }
 \usage{
-tobit(Lower = 0, Upper = Inf, lmu="identity", lsd="loge",
-      emu=list(), esd=list(), imethod=1, zero=2)
+tobit(Lower = 0, Upper = Inf, lmu = "identity", lsd = "loge",
+      emu = list(), esd = list(), method.init = 1, zero = 2)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -40,7 +40,7 @@ tobit(Lower = 0, Upper = Inf, lmu="identity", lsd="loge",
   See \code{earg} in \code{\link{Links}} for general information.
 
   }
-  \item{imethod}{
+  \item{method.init}{
   Initialization method. Either 1 or 2, this specifies
   two methods for obtaining initial values for the parameters.
 
@@ -48,7 +48,7 @@ tobit(Lower = 0, Upper = Inf, lmu="identity", lsd="loge",
   \item{zero}{
   An integer vector, containing the value 1 or 2. If so,
   the mean or standard deviation respectively are modelled as an intercept only.
-  Setting \code{zero=NULL} means both linear/additive predictors
+  Setting \code{zero = NULL} means both linear/additive predictors
   are modelled as functions of the explanatory variables.
 
   }
@@ -108,21 +108,21 @@ Estimation of relationships for limited dependent variables.
     \code{\link{dcnormal1}}.
 }
 \examples{
-tdata = data.frame(x = seq(-1, 1, len=(nn <- 1000)))
+tdata = data.frame(x = seq(-1, 1, len = (nn <- 1000)))
 foo = function(x) 1 + 4*x
 tdata = transform(tdata, ystar = foo(x) + rnorm(nn))
 Lower = 1; Upper = 4
-tdata = transform(tdata, y  = pmax(ystar, Lower))
-tdata = transform(tdata, y  = pmin(y, Upper))
-with(tdata, table(y==Lower | y==Upper))   # How many censored values?
+tdata = transform(tdata, y = pmax(ystar, Lower))
+tdata = transform(tdata, y = pmin(y, Upper))
+with(tdata, table(y == Lower | y == Upper)) # How many censored values?
 
-fit = vglm(y ~ x, tobit(Lower=Lower, Upper=Upper), tdata, trace=TRUE)
+fit = vglm(y ~ x, tobit(Lower = Lower, Upper = Upper), tdata, trace = TRUE)
 table(fit@extra$censoredL)
 table(fit@extra$censoredU)
-coef(fit, matrix=TRUE)
+coef(fit, matrix = TRUE)
 summary(fit)
 \dontrun{
-with(tdata, plot(x, y, main="Tobit model", las=1))
+with(tdata, plot(x, y, main = "Tobit model", las=1))
 legend(-0.9, 3, c("Truth", "Estimate"), col=c("blue", "red"), lwd=2)
 with(tdata, lines(x, foo(x), col="blue", lwd=2))
 with(tdata, lines(x, fitted(fit), col="red", lwd=2, lty="dashed")) }

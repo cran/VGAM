@@ -92,14 +92,16 @@ nloge(theta, earg = list(), inverse = FALSE, deriv = 0,
     \code{\link{logc}},
     \code{\link{loglog}},
     \code{\link[base:Log]{log}},
-    \code{\link{logoff}}.
+    \code{\link{logoff}},
+    \code{\link{lambertW}}.
+
 }
 \examples{
 \dontrun{
-loge(seq(-0.2, 0.5, by=0.1))
-loge(seq(-0.2, 0.5, by=0.1), earg=list(bvalue= .Machine$double.xmin))
-nloge(seq(-0.2, 0.5, by=0.1))
-nloge(seq(-0.2, 0.5, by=0.1), earg=list(bvalue= .Machine$double.xmin))
+loge(seq(-0.2, 0.5, by = 0.1))
+loge(seq(-0.2, 0.5, by = 0.1), earg = list(bvalue = .Machine$double.xmin))
+nloge(seq(-0.2, 0.5, by = 0.1))
+nloge(seq(-0.2, 0.5, by = 0.1), earg = list(bvalue = .Machine$double.xmin))
 }
 }
 \keyword{math}

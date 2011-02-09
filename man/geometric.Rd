@@ -69,6 +69,7 @@ geometric(link = "logit", earg=list(), expected = TRUE, method.init = 1)
   \code{\link{negbinomial}},
   \code{\link[stats]{Geometric}},
   \code{\link{betageometric}},
+  \code{\link{expgeometric}},
   \code{\link{rbetageom}}.
 
 }

@@ -2,6 +2,34 @@
 \alias{notdocumentedyet}
 %
 %
+%
+%
+%
+% 20110202; James Lauder work
+\alias{dexpgeom}
+\alias{pexpgeom}
+\alias{qexpgeom}
+\alias{rexpgeom}
+%
+%
+%
+% 20110202; for Melbourne; these include datasets.
+\alias{azprocedure}
+\alias{confint_rrnb}
+\alias{confint_nb1}
+\alias{gala}
+\alias{mmt}
+%
+%
+%
+%20101222; Alfian work
+%\alias{Rcam}        % Has been written
+%\alias{plotrcam0}   % Has been written
+%\alias{moffset}     % Has been written
+%
+%
+%
+%
 %20090330
 \alias{dclogloglap}
 \alias{dlogitlap}
@@ -54,6 +82,8 @@
 \alias{add1.vglm}
 % \alias{adjust.Dmat.expression}
 \alias{alaplace1.control}
+\alias{alaplace2.control}
+\alias{alaplace3.control}
 % \alias{alias.vgam}
 % \alias{alias.vglm}
 \alias{anova.vgam}
@@ -180,6 +210,7 @@
 \alias{is.bell.qrrvglm}
 \alias{is.bell.rrvglm}
 \alias{is.bell.vlm}
+\alias{Kayfun.studentt}
 % \alias{is.linear.term}
 % \alias{jitteruqo}
 \alias{lm}
@@ -275,6 +306,7 @@
 % \alias{printuqo}
 % \alias{printvsmooth.spline}
 \alias{procVec}
+\alias{negzero.expression}
 \alias{process.binomial2.data.vgam}
 \alias{process.categorical.data.vgam}
 % \alias{process.constraints}
@@ -341,6 +373,7 @@
 \alias{summary.lms}
 \alias{summary.qrrvglm}
 \alias{summary.rc.exponential}
+\alias{summaryrcam}
 \alias{summary.rrvglm}
 \alias{summary.uqo}
 \alias{summaryvgam}
@@ -366,7 +399,7 @@
 \alias{vcontrol.expression}
 % \alias{vcovdefault}
 % \alias{vcovqrrvglm}
-% \alias{vcovrrvglm}
+\alias{vcovrrvglm}
 % \alias{vcovvlm}
 % \alias{veigen}
 % \alias{vellipse}
@@ -406,6 +439,7 @@
 %
 \alias{Coef.uqo-class}
 \alias{cao-class}
+\alias{rcam-class}
 \alias{grc-class}
 \alias{qrrvglm-class}
 \alias{summary.qrrvglm-class}
@@ -413,6 +447,9 @@
 \alias{summary.vgam-class}
 \alias{summary.vglm-class}
 \alias{summary.vlm-class}
+%%% 20101216 \alias{summary.rcam-class}
+%\alias{summary.rcam-class}
+%\alias{summaryrcam-class}
 \alias{uqo-class}
 \alias{vcov.qrrvglm-class}
 \alias{vlm-class}

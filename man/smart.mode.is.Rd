@@ -12,15 +12,19 @@ smart.mode.is(mode.arg=NULL)
   a character string, either \code{"read"}, \code{"write"} or \code{"neutral"}.
 }}
 \value{
-If \code{mode.arg} is given, then either \code{TRUE} or \code{FALSE} is returned.
-If \code{mode.arg} is not given, then the mode (\code{"neutral"},
+  If \code{mode.arg} is given, then either \code{TRUE} or \code{FALSE} is returned.
+  If \code{mode.arg} is not given, then the mode (\code{"neutral"},
   \code{"read"} or \code{"write"})
-is returned.  Usually, the mode is \code{"neutral"}.
+  is returned.  Usually, the mode is \code{"neutral"}.
+
+
 }
 \seealso{
   \code{\link{put.smart}},
   \code{\link[splines]{bs}},
   \code{\link[stats]{poly}}.
+
+
 }
 \details{
   Smart functions such as

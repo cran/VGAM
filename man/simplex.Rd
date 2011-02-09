@@ -74,21 +74,25 @@ simplex(lmu = "logit", lsigma = "loge", emu=list(), esigma=list(),
   The object is used by modelling functions such as \code{\link{vglm}},
   and \code{\link{vgam}}.
 
+
 }
 \references{
   Jorgensen, B. (1997)
   \emph{The Theory of Dispersion Models}.
   London: Chapman & Hall
 
+
   Song, P. X.-K. (2007)
   \emph{Correlated Data Analysis: Modeling, Analytics, and Applications}.
   Springer.
+
 
 }
 \author{ T. W. Yee }
 \note{ 
   This distribution is potentially useful for dispersion modelling.
   Numerical problems may occur when \code{mu} is very close to 0 or 1.
+
 
 }
 
@@ -98,13 +102,15 @@ simplex(lmu = "logit", lsigma = "loge", emu=list(), esigma=list(),
   \code{\link{rig}},
   \code{\link{binomialff}}.
 
+
 }
 \examples{
-nn = 1000
-sdata = data.frame(x = runif(nn))
-sdata = transform(sdata, y = rsimplex(nn, mu = logit(1+2*x, inverse = TRUE),
-                                      dispersion = exp(1 - 2*x)))
-(fit = vglm(y ~ x, simplex(zero = NULL), sdata, trace = TRUE))
+sdata <- data.frame(x2 = runif(nn <- 1000))
+sdata <- transform(sdata, eta1 = 1 + 2 * x2,
+                          eta2 = 1 - 2 * x2)
+sdata <- transform(sdata, y = rsimplex(nn, mu = logit(eta1, inverse = TRUE),
+                                       dispersion = exp(eta2)))
+(fit <- vglm(y ~ x2, simplex(zero = NULL), sdata, trace = TRUE))
 coef(fit, matrix = TRUE)
 summary(fit)
 }

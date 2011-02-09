@@ -81,6 +81,13 @@ else \eqn{q < 0} is right skew.
   A log gamma model and its maximum likelihood estimation.
   \emph{Biometrika}, \bold{61}, 539--544.
 
+
+%On Maximisation of the Likelihood for the Generalised Gamma Distribution.
+%Angela Noufaily & M.C. Jones,
+%29-Oct-2009,
+%\url{http://stats-www.open.ac.uk/TechnicalReports/}
+
+
 }
 \section{Warning }{
   The special case \eqn{q = 0} is not handled, therefore
@@ -97,7 +104,8 @@ else \eqn{q < 0} is right skew.
 }
 \seealso{
   \code{\link{lgamma3ff}},
-  \code{\link[base:Special]{lgamma}}.
+  \code{\link[base:Special]{lgamma}},
+  \code{\link{gengamma}}.
 
 }
 \examples{

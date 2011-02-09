@@ -6,8 +6,9 @@
   by maximum likelihood estimation.
 }
 \usage{
-gamma2.ab(lrate = "loge", lshape = "loge", erate=list(), eshape=list(),
-          irate=NULL, ishape=NULL, expected = TRUE, zero = 2)
+gamma2.ab(lrate = "loge", lshape = "loge",
+          erate = list(), eshape = list(),
+          irate = NULL,   ishape = NULL, expected = TRUE, zero = 2)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -44,19 +45,20 @@ gamma2.ab(lrate = "loge", lshape = "loge", erate=list(), eshape=list(),
 }
 \details{
   The density function is given by
-  \deqn{f(y) = \exp(-rate \times y) \times y^{shape-1} \times rate^{shape} /
-               \Gamma(shape)}{%
+  \deqn{f(y) = \exp(-rate \times y) \times y^{shape-1} \times rate^{shape}
+               / \Gamma(shape)}{%
    f(y) = exp(-rate * y) y^(shape-1) rate^(shape) / gamma(shape)}
   for \eqn{shape > 0}, \eqn{rate > 0} and \eqn{y > 0}.
   Here, \eqn{\Gamma(shape)}{gamma(shape)} is the gamma
   function, as in \code{\link[base:Special]{gamma}}.
-  The mean of \emph{Y} is \eqn{\mu=shape/rate}{mu=shape/rate} 
+  The mean of \emph{Y} is \eqn{\mu = shape/rate}{mu = shape/rate} 
   (returned as the fitted values) with variance
-  \eqn{\sigma^2 = \mu^2 /shape = shape/rate^2}{sigma^2 =
+  \eqn{\sigma^2 = \mu^2 /shape = shape/rate^2}{sigma^2 = 
        mu^2 /shape = shape/rate^2}.
   By default, the two linear/additive predictors are
-  \eqn{\eta_1=\log(rate)}{eta1=log(rate)} and
-  \eqn{\eta_2=\log(shape)}{eta2=log(shape)}.
+  \eqn{\eta_1 = \log(rate)}{eta1 = log(rate)} and
+  \eqn{\eta_2 = \log(shape)}{eta2 = log(shape)}.
+
 
   The argument \code{expected} refers to the type of information
   matrix. The expected information matrix corresponds to Fisher scoring
@@ -65,30 +67,36 @@ gamma2.ab(lrate = "loge", lshape = "loge", erate=list(), eshape=list(),
   from the family function in the future.  If both algorithms work then
   the differences in the results are often not huge.
 
+
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}}
   and \code{\link{vgam}}.
 
+
 }
 \references{
   Most standard texts on statistical distributions describe
   the 2-parameter gamma distribution, e.g.,
   
+
   Evans, M., Hastings, N. and Peacock, B. (2000)
   \emph{Statistical Distributions},
   New York: Wiley-Interscience, Third edition.
+
 
 }
 \author{ T. W. Yee }
 \note{
   The parameters \eqn{rate} and \eqn{shape} match with the arguments
   \code{rate} and \code{shape} of \code{\link[stats]{rgamma}}.  Often,
-  \eqn{scale=1/rate} is used.
+  \eqn{scale = 1/rate} is used.
 
-  If \eqn{rate=1} use the family function \code{\link{gamma1}} to
+
+  If \eqn{rate = 1} use the family function \code{\link{gamma1}} to
   estimate \eqn{shape}.
+
 
 }
 
@@ -99,20 +107,21 @@ gamma2.ab(lrate = "loge", lshape = "loge", erate=list(), eshape=list(),
   \code{\link{bivgamma.mckay}} for \emph{a} bivariate gamma distribution,
   \code{\link{expexp}}.
 
+
 }
 \examples{
 # Essentially a 1-parameter gamma
-gdata = data.frame(y = rgamma(n <- 100, shape= exp(1)))
-fit1 = vglm(y ~ 1, gamma1, gdata, trace=TRUE)
-fit2 = vglm(y ~ 1, gamma2.ab, gdata, trace=TRUE, crit="c")
-coef(fit2, matrix=TRUE)
+gdata <- data.frame(y = rgamma(n <- 100, shape =  exp(1)))
+fit1 <- vglm(y ~ 1, gamma1, gdata, trace = TRUE)
+fit2 <- vglm(y ~ 1, gamma2.ab, gdata, trace = TRUE, crit = "c")
+coef(fit2, matrix = TRUE)
 Coef(fit2)
 
 
 # Essentially a 2-parameter gamma
-gdata = data.frame(y = rgamma(n=500, rate=exp(1), shape=exp(2)))
-fit2 = vglm(y ~ 1, gamma2.ab, gdata, trace=TRUE, crit="c")
-coef(fit2, matrix=TRUE)
+gdata <- data.frame(y = rgamma(n = 500, rate = exp(1), shape = exp(2)))
+fit2 <- vglm(y ~ 1, gamma2.ab, gdata, trace = TRUE, crit = "c")
+coef(fit2, matrix = TRUE)
 Coef(fit2)
 summary(fit2)
 }

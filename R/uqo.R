@@ -1,5 +1,6 @@
 # These functions are
-# Copyright (C) 1998-2010 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2011 T.W. Yee, University of Auckland.
+# All rights reserved.
 
 
 
@@ -315,7 +316,7 @@ callduqof = function(sitescores, etamat, ymat, wvec, modelno, nice31, xmat,
     control = Control
     itol = othint[14]
     inited = if (is.R()) {
-        if (exists(".VGAM.UQO.etamat", envir = VGAMenv)) 1 else 0
+        if (exists(".VGAM.UQO.etamat", envir = VGAM:::VGAMenv)) 1 else 0
     } else 0 # 0 means fortran initializes the etamat
     othint[5] = inited  # Replacement
     usethiseta = if (inited==1)
@@ -497,11 +498,11 @@ uqo.fit <- function(x, y, w=rep(1, len=nrow(x)),
               "gamma2"=5,
               0)  # stop("can't fit this model using fast algorithm")
     if (!modelno) stop("the family function does not work with uqo()")
-    if (modelno == 1) modelno = get("modelno", envir = VGAMenv)
+    if (modelno == 1) modelno = get("modelno", envir = VGAM:::VGAMenv)
     rmfromVGAMenv(c("etamat", "beta"), prefix=".VGAM.UQO.")
 
-    cqofastok = if (is.R()) (exists("CQO.FastAlgorithm", envir = VGAMenv) &&
-                  get("CQO.FastAlgorithm", envir = VGAMenv)) else
+    cqofastok = if (is.R()) (exists("CQO.FastAlgorithm", envir = VGAM:::VGAMenv) &&
+                  get("CQO.FastAlgorithm", envir = VGAM:::VGAMenv)) else
               (exists("CQO.FastAlgorithm", inherits=TRUE) && CQO.FastAlgorithm)
     if (!cqofastok)
         stop("can't fit this model using fast algorithm")

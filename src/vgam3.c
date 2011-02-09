@@ -74,7 +74,7 @@ void fapc0tnbewg7qruh(double ci1oyxas[], double tlgduey8[], double rbne6ouj[],
          double  tdcb8ilk[]   // Added 20100313
                    );
 void Yee_vbfa(
-       int psdvgce3[], double *doubvec, double he7mqnvy[], double tlgduey8[],
+       int psdvgce3[], double *fjcasv7g, double he7mqnvy[], double tlgduey8[],
        double rbne6ouj[], double hdnw2fts[], double lamvec[], double wbkq9zyi[],
        int ezlgm2up[], int lqsahu0r[], int which[],
        double kispwgx3[], double m0ibglfx[],
@@ -651,6 +651,7 @@ void Free_fapc0tnbvsuff9(double *wkumc9idwk1a,    double *wkumc9idwk1b,
 }
 
 
+
 void vsuff9(int *ftnjamu2, int *lqsahu0r, int ezlgm2up[],
                    double sjwyig9t[], double tlgduey8[], double rbne6ouj[],
                    double pygsw6ko[], double pasjmo8g[], double eshvo2ic[],
@@ -679,6 +680,7 @@ void vsuff9(int *ftnjamu2, int *lqsahu0r, int ezlgm2up[],
          imk5wjxg   = *wy1vqfzu   * (*wy1vqfzu   + 1) / 2,
          n2colb = *kgwmz4ip *  *kgwmz4ip,
          n3colb = *kgwmz4ip * (*kgwmz4ip + 1) / 2;
+  wkumc9ideshvo2ic   = conmat;   wkumc9idonxjvw8u = conmat;
 
   wkumc9idwk1a    = Calloc(zyojx5hw          , double);
   wkumc9idwk1b    = Calloc(*wy1vqfzu         , double);
@@ -1419,7 +1421,7 @@ void fapc0tnbewg7qruh(double ci1oyxas[], double tlgduey8[], double rbne6ouj[],
 }
 
 
-void Yee_vbfa(int psdvgce3[], double *doubvec, double he7mqnvy[], double tlgduey8[],
+void Yee_vbfa(int psdvgce3[], double *fjcasv7g, double he7mqnvy[], double tlgduey8[],
        double rbne6ouj[], double hdnw2fts[], double lamvec[], double wbkq9zyi[],
        int ezlgm2up[], int lqsahu0r[], int which[],
        double kispwgx3[], double m0ibglfx[],
@@ -1449,10 +1451,10 @@ void Yee_vbfa(int psdvgce3[], double *doubvec, double he7mqnvy[], double tlgduey
     double   tdcb8ilk[4];
 
   itdcb8ilk[0] = psdvgce3[15];
-   tdcb8ilk[0] = doubvec[2];
-   tdcb8ilk[1] = doubvec[3];
-   tdcb8ilk[2] = doubvec[4];
-   tdcb8ilk[3] = doubvec[5];
+   tdcb8ilk[0] = fjcasv7g[2];
+   tdcb8ilk[1] = fjcasv7g[3];
+   tdcb8ilk[2] = fjcasv7g[4];
+   tdcb8ilk[3] = fjcasv7g[5];
 
   wy1vqfzu         = psdvgce3 + 7;
   ftnjamu2        = psdvgce3;
@@ -1468,8 +1470,8 @@ void Yee_vbfa(int psdvgce3[], double *doubvec, double he7mqnvy[], double tlgduey
   npjlv3mr  = psdvgce3[12];
   ldk         = psdvgce3[14];
 
-  zpcqv3uj = doubvec + 0;;
-  ghdetj8v = doubvec + 1;
+  zpcqv3uj = fjcasv7g + 0;;
+  ghdetj8v = fjcasv7g + 1;
 
   fapc0tnbvbfa1(ftnjamu2, wy1vqfzu, ezlgm2up, lqsahu0r, which,
                he7mqnvy, tlgduey8, rbne6ouj,

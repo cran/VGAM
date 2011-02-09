@@ -251,30 +251,31 @@ The \code{VGAM} Package.
 \code{\link{cao}}.
 }
 
-\examples{
-# Nonparametric proportional odds model 
-pneumo = transform(pneumo, let=log(exposure.time))
-vgam(cbind(normal,mild,severe) ~ s(let), cumulative(par=TRUE), pneumo)
+\examples{ # Nonparametric proportional odds model 
+pneumo = transform(pneumo, let = log(exposure.time))
+vgam(cbind(normal, mild, severe) ~ s(let), cumulative(par = TRUE), pneumo)
 
 # Nonparametric logistic regression 
-fit = vgam(agaaus ~ s(altitude, df=2), binomialff, hunua)
-\dontrun{
-plot(fit, se=TRUE)
-}
+fit = vgam(agaaus ~ s(altitude, df = 2), binomialff, hunua)
+\dontrun{ plot(fit, se = TRUE) }
+pfit = predict(fit, type = "terms", raw = TRUE, se = TRUE)
+names(pfit)
+head(pfit$fitted)
+head(pfit$se.fit)
+pfit$df
+pfit$sigma
 
 # Fit two species simultaneously 
-fit2 = vgam(cbind(agaaus, kniexc) ~ s(altitude, df=c(2,3)),
-            binomialff(mv=TRUE), hunua)
-coef(fit2, mat=TRUE)   # Not really interpretable 
-\dontrun{
-plot(fit2, se=TRUE, overlay=TRUE, lcol=1:2, scol=1:2)
+fit2 = vgam(cbind(agaaus, kniexc) ~ s(altitude, df = c(2, 3)),
+            binomialff(mv = TRUE), hunua)
+coef(fit2, mat = TRUE)   # Not really interpretable 
+\dontrun{ plot(fit2, se = TRUE, overlay = TRUE, lcol = 1:2, scol = 1:2)
 
 ooo = with(hunua, order(altitude))
-with(hunua, matplot(altitude[ooo], fitted(fit2)[ooo,], type="l", lwd=2,
-     xlab="Altitude (m)", ylab="Probability of presence", las=1,
-     main="Two plant species' response curves", ylim=c(0,.8)))
-with(hunua, rug(altitude))
-}
+with(hunua, matplot(altitude[ooo], fitted(fit2)[ooo,], ylim = c(0, .8),
+     xlab = "Altitude (m)", ylab = "Probability of presence", las = 1,
+     main = "Two plant species' response curves", type = "l", lwd = 2))
+with(hunua, rug(altitude)) }
 }
 \keyword{models}
 \keyword{regression}

@@ -6,10 +6,11 @@
   Estimation of the two parameters of a generalized Poisson distribution.
 }
 \usage{
-genpoisson(llambda="elogit", ltheta="loge",
-           elambda=if(llambda=="elogit") list(min=-1,max=1) else list(),
-           etheta=list(), ilambda=NULL, itheta=NULL,
-           use.approx=TRUE, method.init=1, zero=1)
+genpoisson(llambda = "elogit", ltheta = "loge",
+           elambda = if (llambda == "elogit") list(min = -1, max = 1)
+                     else list(),
+           etheta = list(), ilambda = NULL, itheta = NULL,
+           use.approx = TRUE, method.init = 1, zero = 1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -55,26 +56,29 @@ genpoisson(llambda="elogit", ltheta="loge",
 }
 \details{
 The generalized Poisson distribution has density
-  \deqn{f(y) = \theta(\theta+\lambda y)^{y-1} \exp(-\theta-\lambda y) / y!}
-
-%{% f(y) = theta*(theta+lambda*y)^(y-1) exp(-theta-lambda*y) / y!}
+  \deqn{f(y) = \theta(\theta+\lambda   y)^{y-1}  \exp(-\theta-\lambda   y) / y!}{
+        f(y) = \theta(\theta+\lambda * y)^(y-1) * exp(-\theta-\lambda * y) / y!}
 for \eqn{\theta > 0} and \eqn{y = 0,1,2,\ldots}.
-Now \eqn{\max(-1,-\theta/m) \leq \lambda \leq 1}{\max(-1,-\theta/m) \le \lambda \le 1}
+Now \eqn{\max(-1,-\theta/m) \leq \lambda \leq 1}{
+          max(-1,-\theta/m) \le   lambda \le  1}
 where \eqn{m (\geq 4)}{m (\ge 4)} is the greatest positive
 integer satisfying \eqn{\theta + m\lambda > 0}
 when \eqn{\lambda < 0}
-[and then \eqn{P(Y=y)=0} for \eqn{y > m}].
+[and then \eqn{P(Y=y) = 0} for \eqn{y > m}].
 Note the complicated support for this distribution means,
 for some data sets,
 the default link for \code{llambda} is not always appropriate.
+
 
 An ordinary Poisson distribution corresponds to \eqn{\lambda=0}{lambda=0}.
 The mean (returned as the fitted values) is 
 \eqn{E(Y) = \theta / (1 - \lambda)}
 and the variance is \eqn{\theta / (1 - \lambda)^3}.
 
+
   For more information see Consul and Famoye (2006) for a summary and
   Consul (1989) for full details.
+
 
 }
 \value{
@@ -82,26 +86,30 @@ and the variance is \eqn{\theta / (1 - \lambda)^3}.
   The object is used by modelling functions such as \code{\link{vglm}},
   and \code{\link{vgam}}.
 
+
 }
 \references{
 Consul, P. C. and Famoye, F. (2006)
 \emph{Lagrangian Probability Distributions},
 Boston: Birkhauser.
 
+
 Jorgensen, B. (1997)
 \emph{The Theory of Dispersion Models}.
 London: Chapman & Hall
+
 
 Consul, P. C. (1989)
 \emph{Generalized Poisson Distributions: Properties and Applications}.
 New York: Marcel Dekker.
 
+
 }
 \author{ T. W. Yee }
 \note{
   This distribution is useful for dispersion modelling.
-  Convergence problems may occur when \code{lambda} is very close to 0
-  or 1.
+  Convergence problems may occur when \code{lambda} is very close
+  to 0 or 1.
 
 }
 \seealso{
@@ -111,8 +119,8 @@ New York: Marcel Dekker.
 \examples{
 gdata = data.frame(x = runif(nn <- 200))
 gdata = transform(gdata, y = rpois(nn, exp(2-x))) # Ordinary Poisson data
-fit  = vglm(y ~ x, genpoisson(zero=1), gdata, trace=TRUE)
-coef(fit, matrix=TRUE)
+fit  = vglm(y ~ x, genpoisson(zero = 1), gdata, trace = TRUE)
+coef(fit, matrix = TRUE)
 summary(fit)
 }
 \keyword{models}
@@ -120,3 +128,4 @@ summary(fit)
 
 % yettodo: see csda 2009, 53(9): 3478--3489.
 
+%{% f(y) = theta*(theta+lambda*y)^(y-1) exp(-theta-lambda*y) / y!}

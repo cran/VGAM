@@ -1,5 +1,6 @@
 # These functions are
-# Copyright (C) 1998-2010 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2011 T.W. Yee, University of Auckland.
+# All rights reserved.
 
 
 
@@ -10,8 +11,8 @@ rrvglm.control = function(Rank = 1,
                           Uncorrelated.lv=FALSE,
                           Wmat=NULL,
                           Svd.arg=FALSE,
-                          Index.corner = if (length(Structural.zero)) 
-                          head((1:1000)[-Structural.zero], Rank) else 1:Rank,
+                          Index.corner = if (length(szero)) 
+                          head((1:1000)[-szero], Rank) else 1:Rank,
                           Ainit=NULL,
                           Alpha=0.5, 
                           Bestof = 1,
@@ -19,7 +20,7 @@ rrvglm.control = function(Rank = 1,
                           Etamat.colmax = 10,
                           SD.Ainit = 0.02,
                           SD.Cinit = 0.02,
-                          Structural.zero = NULL,
+                          szero = NULL,
                           Norrr = ~ 1, 
                           trace = FALSE,
                           Use.Init.Poisson.QO=FALSE,
@@ -47,12 +48,13 @@ rrvglm.control = function(Rank = 1,
         stop("bad input for 'SD.Ainit'")
     if (!is.Numeric(SD.Cinit, posit=TRUE, allow=1))
         stop("bad input for 'SD.Cinit'")
-    if (!is.Numeric(Etamat.colmax, posit=TRUE, allow=1) || Etamat.colmax < Rank)
+    if (!is.Numeric(Etamat.colmax, posit=TRUE, allow=1) ||
+        Etamat.colmax < Rank)
         stop("bad input for 'Etamat.colmax'")
 
-    if (length(Structural.zero) && (any(round(Structural.zero) != Structural.zero)
-       || any(Structural.zero<1)))
-        stop("bad input for the argument 'Structural.zero'")
+    if (length(szero) && (any(round(szero) != szero)
+       || any(szero<1)))
+        stop("bad input for the argument 'szero'")
 
 
     Quadratic = FALSE
@@ -69,8 +71,8 @@ rrvglm.control = function(Rank = 1,
     if (Corner && (Svd.arg || Uncorrelated.lv || length(Wmat)))
         stop("cannot have Corner=TRUE and either Svd=TRUE or Uncorrelated.lv=TRUE or Wmat")
 
-    if (Corner && length(intersect(Structural.zero, Index.corner)))
-    stop("cannot have Structural.zero and Index.corner having common values")
+    if (Corner && length(intersect(szero, Index.corner)))
+    stop("cannot have szero and Index.corner having common values")
 
     if (length(Index.corner) != Rank)
         stop("length(Index.corner) != Rank")
@@ -103,7 +105,7 @@ rrvglm.control = function(Rank = 1,
            SD.Ainit = SD.Ainit,
            SD.Cinit = SD.Cinit,
            Etamat.colmax = Etamat.colmax,
-           Structural.zero = Structural.zero,
+           szero = szero,
            Svd.arg=Svd.arg,
            Use.Init.Poisson.QO=Use.Init.Poisson.QO),
            checkwz=checkwz,

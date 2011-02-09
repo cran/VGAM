@@ -1,44 +1,6 @@
 # These functions are
-# Copyright (C) 1998-2010 T.W. Yee, University of Auckland. All rights reserved.
-
-
-
-
-
-
-
-dmultinomial = function(x, size = NULL, prob, log = FALSE,
-                        dochecking=TRUE, smallno = 1.0e-7) {
-    if (!is.logical(log.arg <- log))
-        stop("bad input for argument 'log'")
-    rm(log)
-
-    x = as.matrix(x)
-    prob = as.matrix(prob)
-    if (((K <- ncol(x)) <= 1) || ncol(prob) != K)
-        stop("'x' and 'prob' must be matrices with two or more columns")
-    if (dochecking) {
-        if (min(prob) < 0)
-            stop("'prob' contains some negative values")
-        if (any(abs((rsprob <- rowSums(prob)) - 1) > smallno))
-            stop("some rows of 'prob' do not add to unity")
-        if (any(abs(x - round(x)) > smallno))
-            stop("'x' should be integer valued")
-        if (length(size)) {
-            if (any(abs(size - rowSums(x)) > smallno))
-                stop("rowSums(x) does not agree with 'size'")
-        } else {
-            size = round(rowSums(x))
-        }
-    } else {
-        if (!length(size))
-            size = round(rowSums(prob))
-    }
-    logdensity = lgamma(size + 1) + rowSums(x * log(prob) - lgamma(x + 1))
-    if (log.arg) logdensity else exp(logdensity)
-}
-
-
+# Copyright (C) 1998-2011 T.W. Yee, University of Auckland.
+# All rights reserved.
 
 
 
@@ -54,8 +16,6 @@ process.categorical.data.vgam = expression({
 
     if (!all(w == 1))
         extra$orig.w = w
- print("head(extra$orig.w)")
- print( head(extra$orig.w) )
 
     if (!is.matrix(y)) {
         yf = as.factor(y)
@@ -67,12 +27,15 @@ process.categorical.data.vgam = expression({
         dimnames(y) = list(names(yf), lev)
 
         if (llev <= 1)
-            stop("the response matrix does not have 2 or more columns")
+          stop("the response matrix does not have 2 or more columns")
     } else {
         nn = nrow(y)
     }
 
     nvec = rowSums(y)
+
+    if (min(y) < 0 || any(round(y) != y))
+      stop("the response must be non-negative counts (integers)")
 
     if (!exists("delete.zero.colns") ||
        (exists("delete.zero.colns") && delete.zero.colns)) {
@@ -80,7 +43,8 @@ process.categorical.data.vgam = expression({
         if (any(index <- sumy2==0)) {
             y = y[,!index, drop = FALSE]
             sumy2 = sumy2[!index]
-            if (all(index) || ncol(y)<=1) stop("'y' matrix has 0 or 1 columns")
+            if (all(index) || ncol(y)<=1)
+              stop("'y' matrix has 0 or 1 columns")
             warning("Deleted ", sum(!index),
                     " columns of the response matrix due to zero counts")
         }
@@ -91,20 +55,22 @@ process.categorical.data.vgam = expression({
         smiss <- sum(miss)
         warning("Deleted ", smiss,
                 " rows of the response matrix due to zero counts")
-        x = x[!miss,,drop = FALSE]
-        y = y[!miss,,drop = FALSE]
+        x = x[!miss,, drop = FALSE]
+        y = y[!miss,, drop = FALSE]
         w = cbind(w)
-        w = w[!miss,,drop = FALSE]
+        w = w[!miss,, drop = FALSE]
 
         nvec = nvec[!miss]
         nn = nn - smiss
     }
 
     w = w * nvec
+
     nvec[nvec == 0] = 1
     y = prop.table(y, 1)   # Convert to proportions
 
-    if (!length(mustart)) {
+
+    if (length(mustart) + length(etastart) == 0) {
         mustart = y + (1 / ncol(y) - y) / nvec
     }
 })
@@ -154,6 +120,45 @@ Deviance.categorical.data.vgam <-
 
 
 
+dmultinomial = function(x, size = NULL, prob, log = FALSE,
+                        dochecking=TRUE, smallno = 1.0e-7) {
+    if (!is.logical(log.arg <- log))
+        stop("bad input for argument 'log'")
+    rm(log)
+
+    x = as.matrix(x)
+    prob = as.matrix(prob)
+    if (((K <- ncol(x)) <= 1) || ncol(prob) != K)
+        stop("'x' and 'prob' must be matrices with two or more columns")
+    if (dochecking) {
+        if (min(prob) < 0)
+            stop("'prob' contains some negative values")
+        if (any(abs((rsprob <- rowSums(prob)) - 1) > smallno))
+            stop("some rows of 'prob' do not add to unity")
+        if (any(abs(x - round(x)) > smallno))
+            stop("'x' should be integer valued")
+        if (length(size)) {
+            if (any(abs(size - rowSums(x)) > smallno))
+                stop("rowSums(x) does not agree with 'size'")
+        } else {
+            size = round(rowSums(x))
+        }
+    } else {
+        if (!length(size))
+            size = round(rowSums(prob))
+    }
+    logdensity = lgamma(size + 1) + rowSums(x * log(prob) - lgamma(x + 1))
+    if (log.arg) logdensity else exp(logdensity)
+}
+
+
+
+
+
+
+
+
+
  sratio = function(link = "logit", earg = list(),
                    parallel = FALSE, reverse = FALSE, zero = NULL)
 {
@@ -182,7 +187,7 @@ Deviance.categorical.data.vgam <-
         mynames = if ( .reverse)
                  paste("P[Y=", 2:(M+1),"|Y<=", 2:(M+1),"]", sep="") else
                  paste("P[Y=", 1:M,    "|Y>=", 1:M,    "]", sep="")
-        predictors.names = namesof(mynames, .link, short=TRUE, earg = .earg)
+        predictors.names = namesof(mynames, .link, short = TRUE, earg = .earg)
         y.names = paste("mu", 1:(M+1), sep="")
         extra$mymat = if ( .reverse ) tapplymat1(y, "cumsum") else
                       tapplymat1(y[,ncol(y):1], "cumsum")[,ncol(y):1]
@@ -310,7 +315,7 @@ Deviance.categorical.data.vgam <-
         mynames = if ( .reverse )
             paste("P[Y<",2:(M+1),"|Y<=",2:(M+1),"]", sep="") else
             paste("P[Y>",1:M,"|Y>=",1:M,"]", sep="")
-        predictors.names = namesof(mynames, .link, short=TRUE, earg = .earg)
+        predictors.names = namesof(mynames, .link, short = TRUE, earg = .earg)
         y.names = paste("mu", 1:(M+1), sep="")
         extra$mymat = if ( .reverse ) tapplymat1(y, "cumsum") else
                       tapplymat1(y[,ncol(y):1], "cumsum")[,ncol(y):1]
@@ -446,8 +451,8 @@ vglm.vcategorical.control = function(maxit=30, trace=FALSE, panic=TRUE, ...)
 
 
 
- multinomial = function(zero = NULL, parallel = FALSE, nointercept=NULL,
-                        refLevel="last")
+ multinomial = function(zero = NULL, parallel = FALSE, nointercept = NULL,
+                        refLevel = "last")
 {
     if (length(refLevel) != 1) stop("the length of 'refLevel' must be one")
     if (is.character(refLevel)) {
@@ -644,9 +649,9 @@ vglm.vcategorical.control = function(maxit=30, trace=FALSE, panic=TRUE, ...)
                 cindex = (iii-1)*(Llevels-1) + 1:(Llevels-1)
                 aindex = (iii-1)*(Llevels) + 1:(Llevels)
                 totdev = totdev + Deviance.categorical.data.vgam(
-                         mu=mu[,aindex,drop=FALSE],
-                         y=y[,aindex,drop=FALSE], w=w, residuals=residuals,
-                         eta=eta[,cindex,drop=FALSE], extra=extra)
+                         mu=mu[,aindex, drop = FALSE],
+                         y=y[,aindex, drop = FALSE], w=w, residuals=residuals,
+                         eta=eta[,cindex, drop = FALSE], extra=extra)
             }
             totdev
         } else {
@@ -688,20 +693,23 @@ vglm.vcategorical.control = function(maxit=30, trace=FALSE, panic=TRUE, ...)
                     paste("P[",Y.names,"<=",1:(Llevels-1),"]", sep=""))
                 y.names = c(y.names, paste(mu.names, 1:Llevels, sep=""))
             }
-            predictors.names = namesof(mynames, .link, short=TRUE, earg = .earg)
+            predictors.names = namesof(mynames, .link, short = TRUE, earg = .earg)
             extra$NOS = NOS
             extra$Llevels = Llevels
         } else {
             delete.zero.colns=TRUE # Cannot have FALSE since then prob(Y=jay)=0
             eval(process.categorical.data.vgam)
             M = ncol(y)-1
-            mynames = if ( .reverse ) paste("P[Y>=",2:(1+M),"]", sep="") else
-                paste("P[Y<=",1:M,"]", sep="")
-            predictors.names = namesof(mynames, .link, short=TRUE, earg = .earg)
-            y.names = paste("mu", 1:(M+1), sep="")
+            mynames = if ( .reverse )
+                      paste("P[Y>=", 2:(1+M), "]", sep = "") else
+                      paste("P[Y<=", 1:M, "]", sep = "")
+            predictors.names =
+              namesof(mynames, .link, short = TRUE, earg = .earg)
+            y.names = paste("mu", 1:(M+1), sep = "")
             if (ncol(cbind(w)) == 1) {
-                for(iii in 1:ncol(y))
-                    mustart[,iii] = weighted.mean(y[,iii], w)
+                if (length(mustart) && all(c(y) %in% c(0, 1)))
+                  for(iii in 1:ncol(y))
+                      mustart[,iii] = weighted.mean(y[,iii], w)
             }
 
             if (length(dimnames(y)))
@@ -718,12 +726,12 @@ vglm.vcategorical.control = function(maxit=30, trace=FALSE, panic=TRUE, ...)
                 cindex = (iii-1)*(Llevels-1) + 1:(Llevels-1)
                 aindex = (iii-1)*(Llevels) + 1:(Llevels)
                 if ( .reverse ) {
-                    ccump = cbind(1,eta2theta(eta[,cindex,drop=FALSE], .link,
+                    ccump = cbind(1,eta2theta(eta[,cindex, drop = FALSE], .link,
                                               earg= .earg))
                     fv.matrix[,aindex] =
                         cbind(-tapplymat1(ccump, "diff"), ccump[,ncol(ccump)])
                 } else {
-                    cump = cbind(eta2theta(eta[,cindex,drop=FALSE], .link,
+                    cump = cbind(eta2theta(eta[,cindex, drop = FALSE], .link,
                                            earg= .earg), 1)
                     fv.matrix[,aindex] =
                         cbind(cump[,1], tapplymat1(cump, "diff"))
@@ -744,7 +752,7 @@ vglm.vcategorical.control = function(maxit=30, trace=FALSE, panic=TRUE, ...)
             fv.matrix
         }
         answer
-    }, list( .link = link, .reverse = reverse, .earg= earg, .mv = mv ))),
+    }, list( .link = link, .reverse = reverse, .earg = earg, .mv = mv ))),
     last = eval(substitute(expression({
         if ( .mv ) {
             misc$link = .link
@@ -762,7 +770,7 @@ vglm.vcategorical.control = function(maxit=30, trace=FALSE, panic=TRUE, ...)
         misc$parallel = .parallel
         misc$mv = .mv
     }), list( .link = link, .reverse = reverse, .parallel = parallel,
-              .mv = mv, .earg= earg ))),
+              .mv = mv, .earg = earg ))),
     link = eval(substitute( function(mu, extra = NULL) {
         answer = 
         if ( .mv ) {
@@ -814,11 +822,11 @@ vglm.vcategorical.control = function(maxit=30, trace=FALSE, panic=TRUE, ...)
             for(iii in 1:NOS) {
                 cindex = (iii-1)*(Llevels-1) + 1:(Llevels-1)
                 aindex = (iii-1)*(Llevels)   + 1:(Llevels-1)
-                cump = eta2theta(eta[,cindex,drop=FALSE], .link, earg = .earg)
+                cump = eta2theta(eta[,cindex, drop = FALSE], .link, earg = .earg)
                 dcump.deta[,cindex] = dtheta.deta(cump, .link, earg = .earg)
                 resmat[,cindex] =
-                    (y[,aindex,drop=FALSE]/mu.use[,aindex,drop=FALSE] -
-                     y[,1+aindex,drop=FALSE]/mu.use[,1+aindex,drop=FALSE])
+                    (y[,aindex, drop = FALSE]/mu.use[,aindex, drop = FALSE] -
+                     y[,1+aindex, drop = FALSE]/mu.use[,1+aindex, drop = FALSE])
             }
             (if ( .reverse) -w  else w) * dcump.deta * resmat 
         } else {
@@ -828,7 +836,7 @@ vglm.vcategorical.control = function(maxit=30, trace=FALSE, panic=TRUE, ...)
                 (y[,-(M+1)]/mu.use[,-(M+1)] - y[,-1]/mu.use[,-1])
         }
         deriv.answer
-    }), list( .link = link, .reverse = reverse, .earg= earg, .mv=mv ))),
+    }), list( .link = link, .reverse = reverse, .earg = earg, .mv=mv ))),
     weight = eval(substitute(expression({
         if ( .mv ) {
             NOS = extra$NOS
@@ -837,8 +845,8 @@ vglm.vcategorical.control = function(maxit=30, trace=FALSE, panic=TRUE, ...)
             for(iii in 1:NOS) {
                 cindex = (iii-1)*(Llevels-1) + 1:(Llevels-1)
                 aindex = (iii-1)*(Llevels)   + 1:(Llevels-1)
-                wz[,cindex] = w * dcump.deta[,cindex,drop=FALSE]^2 *
-                (1/mu.use[,aindex,drop=FALSE] + 1/mu.use[,1+aindex,drop=FALSE])
+                wz[,cindex] = w * dcump.deta[,cindex, drop = FALSE]^2 *
+                (1/mu.use[,aindex, drop = FALSE] + 1/mu.use[,1+aindex, drop = FALSE])
             }
             if (Llevels-1 > 1) {
                 iii = 1
@@ -910,13 +918,11 @@ vglm.vcategorical.control = function(maxit=30, trace=FALSE, panic=TRUE, ...)
         delete.zero.colns = TRUE 
         eval(process.categorical.data.vgam)
         M = ncol(y) - 1
- print("y 20100607")
- print( y )
         mynames = if ( .reverse )
             paste("P[Y=", 1:M,     "]/P[Y=", 2:(M+1), "]", sep="") else
             paste("P[Y=", 2:(M+1), "]/P[Y=", 1:M,     "]", sep="")
 
-        predictors.names = namesof(mynames, .link, short=TRUE, earg = .earg)
+        predictors.names = namesof(mynames, .link, short = TRUE, earg = .earg)
         y.names = paste("mu", 1:(M+1), sep="")
         if (length(dimnames(y)))
             extra$dimnamesy2 = dimnames(y)[[2]]
@@ -927,7 +933,7 @@ vglm.vcategorical.control = function(maxit=30, trace=FALSE, panic=TRUE, ...)
         M = ncol(eta)
         fv.matrix = if ( .reverse ) {
             zetar = eta2theta(eta, .link, earg = .earg )
-            temp = tapplymat1(zetar[,M:1], "cumprod")[,M:1,drop=FALSE]
+            temp = tapplymat1(zetar[,M:1], "cumprod")[,M:1, drop = FALSE]
             cbind(temp,1) / drop(1 + temp %*% rep(1,ncol(temp)))
         } else {
             zeta = eta2theta(eta, .link, earg = .earg )
@@ -1067,7 +1073,7 @@ acat.deriv = function(zeta, reverse, M, n)
         extra$ybrat.indices = .brat.indices(NCo=M+1, are.ties=FALSE)
         uindex = if ( .refgp =="last") 1:M else (1:(M+1))[-( .refgp ) ]
 
-        predictors.names=namesof(paste("alpha",uindex,sep=""),"loge",short=TRUE)
+        predictors.names=namesof(paste("alpha",uindex,sep=""),"loge",short = TRUE)
     }), list( .refgp = refgp, .init.alpha=init.alpha ))),
     inverse = eval(substitute( function(eta, extra = NULL) {
         probs = NULL
@@ -1202,8 +1208,8 @@ bratt = function(refgp="last",
         uindex = if (refgp=="last") 1:(NCo-1) else (1:(NCo))[-refgp ]
 
         predictors.names=c(
-            namesof(paste("alpha",uindex,sep=""),"loge",short=TRUE),
-            namesof("alpha0", "loge", short=TRUE))
+            namesof(paste("alpha",uindex,sep=""),"loge",short = TRUE),
+            namesof("alpha0", "loge", short = TRUE))
     }), list( .refgp = refgp,
              .i0 = i0,
              .init.alpha=init.alpha ))),
@@ -1232,7 +1238,8 @@ bratt = function(refgp="last",
         misc$alpha0 = alpha0
     }), list( .refgp = refgp, .refvalue = refvalue ))),
     loglikelihood = function(mu, y, w, residuals = FALSE, eta, extra = NULL)
-        if (residuals) stop("loglikelihood residuals not implemented yet") else {
+        if (residuals) stop("loglikelihood residuals not ",
+                            "implemented yet") else {
             sum(w * (y * log(mu) + 0.5 * extra$ties * log(attr(mu, "probtie"))))
         },
     vfamily = c("bratt"),
@@ -1427,7 +1434,7 @@ tapplymat1 = function(mat, function.arg=c("cumsum", "diff", "cumprod"))
     dimnames(fred$mat) = dimnames(mat)
     switch(function.arg,
            cumsum =fred$mat,
-           diff   =fred$mat[,-1,drop=FALSE],
+           diff   =fred$mat[,-1, drop = FALSE],
            cumprod=fred$mat)
 }
 
@@ -1515,7 +1522,7 @@ tapplymat1 = function(mat, function.arg=c("cumsum", "diff", "cumprod"))
         extra$cutpoints = cp.vector
         extra$n = n
         mynames = if (M > 1) paste("mu",1:M,sep="") else "mu"
-        predictors.names = namesof(mynames, .link, short=TRUE, earg = .earg)
+        predictors.names = namesof(mynames, .link, short = TRUE, earg = .earg)
     }), list( .link = link, .countdata = countdata, .earg = earg,
               .cutpoints=cutpoints, .NOS=NOS, .Levels=Levels,
               .init.mu = init.mu
@@ -1524,7 +1531,7 @@ tapplymat1 = function(mat, function.arg=c("cumsum", "diff", "cumprod"))
         mu = eta2theta(eta, link= .link, earg = .earg) # Poisson means
         mu = cbind(mu)
         mu
-    }, list( .link = link, .earg= earg, .countdata = countdata ))),
+    }, list( .link = link, .earg = earg, .countdata = countdata ))),
     last = eval(substitute(expression({
         if ( .countdata ) {
             misc$link = .link
@@ -1539,9 +1546,10 @@ tapplymat1 = function(mat, function.arg=c("cumsum", "diff", "cumprod"))
         misc$parameters = mynames
         misc$countdata = .countdata
         misc$true.mu = FALSE    # $fitted is not a true mu
-    }), list( .link = link, .countdata = countdata, .earg= earg ))),
+    }), list( .link = link, .countdata = countdata, .earg = earg ))),
     loglikelihood = function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
-        if (residuals) stop("loglikelihood residuals not implemented yet") else {
+        if (residuals) stop("loglikelihood residuals not ",
+                            "implemented yet") else {
             probs = ordpoissonProbs(extra, mu)
             index0 = y == 0
             probs[index0] = 1
@@ -1571,7 +1579,7 @@ tapplymat1 = function(mat, function.arg=c("cumsum", "diff", "cumprod"))
         }
         resmat = w * resmat * dmu.deta
         resmat
-    }), list( .link = link, .earg= earg, .countdata=countdata ))),
+    }), list( .link = link, .earg = earg, .countdata=countdata ))),
     weight = eval(substitute(expression({
         d2l.dmu2 = matrix(0, n, M)  # Diagonal matrix
         cptr = 1
@@ -1674,7 +1682,7 @@ ordpoissonProbs = function(extra, mu, deriv=0) {
 
         for(ii in 1:length(constraints))
             constraints[[ii]] =
-                (constraints[[ii]])[interleave.VGAM(M, M=2),,drop=FALSE]
+                (constraints[[ii]])[interleave.VGAM(M, M=2),, drop = FALSE]
     }), list( .parallel = parallel, .sparallel=sparallel ))),
     deviance=eval(substitute(
         function(mu, y, w, residuals=FALSE, eta, extra = NULL) {
@@ -1694,9 +1702,9 @@ ordpoissonProbs = function(extra, mu, deriv=0) {
         mynames = if ( .reverse ) paste("P[Y>=",2:(1+J),"]", sep="") else
             paste("P[Y<=",1:J,"]", sep="")
         predictors.names = c(
-            namesof(mynames, .link, short=TRUE, earg = .earg),
+            namesof(mynames, .link, short = TRUE, earg = .earg),
             namesof(paste("scale_", 1:J, sep=""),
-                    .lscale, short=TRUE, earg = .escale))
+                    .lscale, short = TRUE, earg = .escale))
         y.names = paste("mu", 1:(J+1), sep="")
 
         if (length(dimnames(y)))
@@ -1704,13 +1712,13 @@ ordpoissonProbs = function(extra, mu, deriv=0) {
 
         predictors.names = predictors.names[interleave.VGAM(M, M=2)]
 
-    }), list( .link = link, .lscale=lscale, .reverse = reverse,
-              .earg= earg, .escale=escale ))),
+    }), list( .link = link, .lscale = lscale, .reverse = reverse,
+              .earg = earg, .escale = escale ))),
     inverse = eval(substitute( function(eta, extra = NULL) {
         J = extra$J
         M = 2*J
-        etamat1 = eta[,2*(1:J)-1,drop=FALSE]
-        etamat2 = eta[,2*(1:J),  drop=FALSE]
+        etamat1 = eta[,2*(1:J)-1, drop = FALSE]
+        etamat2 = eta[,2*(1:J),  drop = FALSE]
         scalemat = eta2theta(etamat2, .lscale, earg = .escale)
         fv.matrix =
         if ( .reverse ) {
@@ -1723,8 +1731,8 @@ ordpoissonProbs = function(extra, mu, deriv=0) {
         if (length(extra$dimnamesy2))
             dimnames(fv.matrix) = list(dimnames(eta)[[1]], extra$dimnamesy2)
         fv.matrix
-    }, list( .link = link, .lscale=lscale, .reverse = reverse,
-             .earg= earg, .escale=escale ))),
+    }, list( .link = link, .lscale = lscale, .reverse = reverse,
+             .earg = earg, .escale = escale ))),
     last = eval(substitute(expression({
         J = extra$J
         misc$link = c(rep( .link, length=J),
@@ -1738,9 +1746,9 @@ ordpoissonProbs = function(extra, mu, deriv=0) {
         misc$reverse = .reverse
         misc$parallel = .parallel
         misc$sparallel = .sparallel
-    }), list( .link = link, .lscale=lscale,
+    }), list( .link = link, .lscale = lscale,
               .reverse = reverse, .parallel = parallel, .sparallel=sparallel,
-              .earg = earg, .escale=escale ))),
+              .earg = earg, .escale = escale ))),
     link = eval(substitute( function(mu, extra = NULL) {
         cump = tapplymat1(as.matrix(mu), "cumsum")
         J = ncol(as.matrix(mu)) - 1
@@ -1752,8 +1760,8 @@ ordpoissonProbs = function(extra, mu, deriv=0) {
                    nrow(as.matrix(mu)), J, byrow=TRUE))
         answer = answer[,interleave.VGAM(M, M=2)]
         answer
-    }, list( .link = link, .lscale=lscale, .reverse = reverse,
-             .iscale=iscale, .earg = earg, .escale=escale ))),
+    }, list( .link = link, .lscale = lscale, .reverse = reverse,
+             .iscale=iscale, .earg = earg, .escale = escale ))),
     loglikelihood = function(mu, y, w, residuals = FALSE, eta, extra = NULL)
         if (residuals) stop("loglikelihood residuals ",
                             "not implemented yet") else {
@@ -1778,8 +1786,8 @@ ordpoissonProbs = function(extra, mu, deriv=0) {
         J = extra$J
         mu.use = pmax(mu, .Machine$double.eps * 1.0e-0)
 
-        etamat1 = eta[,2*(1:J)-1,drop=FALSE]
-        etamat2 = eta[,2*(1:J),  drop=FALSE]
+        etamat1 = eta[,2*(1:J)-1, drop = FALSE]
+        etamat2 = eta[,2*(1:J),  drop = FALSE]
         scalemat = eta2theta(etamat2, .lscale, earg = .escale)
 
         cump = eta2theta(etamat1 / scalemat, .link, earg = .earg)
@@ -1793,8 +1801,8 @@ ordpoissonProbs = function(extra, mu, deriv=0) {
         ans = ans[,interleave.VGAM(M, M=2)]
         if (ooz) ans[,c(TRUE,FALSE)] = 0 else ans[,c(FALSE,TRUE)] = 0
         ans
-    }), list( .link = link, .lscale=lscale, .reverse = reverse,
-              .earg= earg, .escale=escale ))),
+    }), list( .link = link, .lscale = lscale, .reverse = reverse,
+              .earg = earg, .escale = escale ))),
     weight = eval(substitute(expression({
 
         wz = matrix(0, n, 2*(2*M-3))
@@ -1836,7 +1844,8 @@ ordpoissonProbs = function(extra, mu, deriv=0) {
                 wz[,iam(2*ii,2*ii+1,M=M)] = if (ooz) wz0[,ii] else 0
         }
         wz
-    }), list( .link = link, .lscale=lscale, .earg = earg, .escale=escale ))))
+    }), list( .link = link, .lscale = lscale, .earg = earg,
+              .escale = escale ))))
 }
 
 
@@ -2004,7 +2013,7 @@ prplot = function(object,
     use.y[,ii] = eta2theta(use.y[,ii], link=object@misc$link[[ii]], 
                            earg=object@misc$earg[[ii]])
   }
-  if (ncol(use.y) != MM) use.y = use.y[,1:MM,drop=FALSE]
+  if (ncol(use.y) != MM) use.y = use.y[,1:MM, drop = FALSE]
 
   use.x = (object@preplot[[1]])$x
   myxlab = if (length(control$xlab)) control$xlab else (object@preplot[[1]])$xlab

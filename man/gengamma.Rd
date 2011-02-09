@@ -8,9 +8,9 @@
 
 }
 \usage{
-gengamma(lscale="loge", ld="loge", lk="loge",
-       escale=list(), ed=list(), ek=list(),
-       iscale=NULL, id=NULL, ik=NULL, zero=NULL)
+gengamma(lscale  =  "loge", ld = "loge", lk = "loge",
+         escale = list(), ed = list(), ek = list(),
+         iscale = NULL, id = NULL, ik = NULL, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -35,6 +35,7 @@ gengamma(lscale="loge", ld="loge", lk="loge",
   linear/additive predictors are modelled as intercepts only.
   The values must be from the set \{1,2,3\}.
   The default value means none are modelled as intercept-only terms.
+  See \code{\link{CommonVGAMffArguments}} for more information.
 
   }
 }
@@ -107,7 +108,7 @@ Rayleigh          \eqn{f(y;c\sqrt{2},2,1)}{f(y;c sqrt(2),2,1)} where \eqn{c>0}.
   The notation used here differs from Stacy (1962) and Prentice (1974).
   Poor initial values may result in failure to converge so 
   if there are covariates and there are convergence problems,
-  try using the \code{zero} argument (e.g., \code{zero=2:3})
+  try using the \code{zero} argument (e.g., \code{zero = 2:3})
   or the \code{ik} argument. 
 
 

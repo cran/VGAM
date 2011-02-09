@@ -1,5 +1,6 @@
 # These functions are
-# Copyright (C) 1998-2010 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2011 T.W. Yee, University of Auckland.
+# All rights reserved.
 
 
 
@@ -190,11 +191,20 @@ vglm.fit <- function(x, y, w=rep(1, length(x[, 1])),
     if (length(etastart)) {
         eta <- etastart
         mu <- if (length(mustart)) mustart else
-              slot(family, "inverse")(eta, extra)
-    } else {
-        if (length(mustart))
-            mu <- mustart
-        eta <- slot(family, "link")(mu, extra)
+              if (length(body(slot(family, "inverse"))))
+                slot(family, "inverse")(eta, extra) else
+                warning("argument 'etastart' assigned a value ",
+                        "but there is no 'inverse' slot to use it")
+    }
+
+    if (length(mustart)) {
+        mu <- mustart
+        if (length(body(slot(family, "link")))) {
+          eta <- slot(family, "link")(mu, extra)
+        } else {
+          warning("argument 'mustart' assigned a value ",
+                  "but there is no 'link' slot to use it")
+        }
     }
 
 
@@ -206,7 +216,7 @@ vglm.fit <- function(x, y, w=rep(1, length(x[, 1])),
         eval(slot(family, "constraints"))
 
 
-    Blist <- process.constraints(constraints, x, M, specialCM=specialCM)
+    Blist <- process.constraints(constraints, x, M, specialCM = specialCM)
 
 
     ncolBlist <- unlist(lapply(Blist, ncol))

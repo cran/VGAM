@@ -1,5 +1,6 @@
 # These functions are
-# Copyright (C) 1998-2010 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2011 T.W. Yee, University of Auckland.
+# All rights reserved.
 
 
 
@@ -160,7 +161,8 @@ cardioid.control <- function(save.weight=TRUE, ...)
             function(mu,y,w,residuals=FALSE,eta,extra=NULL) {
         mu = eta2theta(eta[,1], link= .lmu, earg= .emu)
         rho = eta2theta(eta[,2], link= .lrho, earg= .erho)
-        if (residuals) stop("loglikelihood residuals not implemented yet") else {
+        if (residuals) stop("loglikelihood residuals not ",
+                            "implemented yet") else {
             sum(w * dcard(x=y, mu=mu, rho=rho, log=TRUE))
         }
     }, list( .lmu=lmu, .lrho=lrho,
@@ -269,7 +271,8 @@ cardioid.control <- function(save.weight=TRUE, ...)
         function(mu,y,w,residuals= FALSE,eta, extra=NULL) {
         location = eta2theta(eta[,1], .llocation, earg= .elocation)
         Scale = eta2theta(eta[,2], .lscale, earg= .escale)
-        if (residuals) stop("loglikelihood residuals not implemented yet") else
+        if (residuals) stop("loglikelihood residuals not ",
+                            "implemented yet") else
         sum(w * (Scale * cos(y - location) -
                  log(mbesselI0(x=Scale ))))
     }, list( .escale=escale, .lscale=lscale,

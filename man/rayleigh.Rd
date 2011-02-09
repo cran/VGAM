@@ -9,20 +9,21 @@
 
 }
 \usage{
-rayleigh(link = "loge", earg=list(), nrfs=1/3+0.01)
-crayleigh(link ="loge", earg=list(), expected=FALSE)
+ rayleigh(lscale = "loge", escale = list(), nrfs = 1/3 + 0.01)
+crayleigh(lscale = "loge", escale = list(), oim = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{link}{
-  Parameter link function applied to the parameter \eqn{a}.
+  \item{lscale}{
+  Parameter link function applied to the scale parameter \eqn{b}.
   See \code{\link{Links}} for more choices.
-  A log link is the default because \eqn{a} is positive.
+  A log link is the default because \eqn{b} is positive.
 
   }
-  \item{earg}{
+  \item{escale}{
   List. Extra argument for the link.
-  See \code{earg} in \code{\link{Links}} for general information.
+  See \code{earg} in \code{\link{Links}} for general information, as well
+  as \code{\link{CommonVGAMffArguments}}.
 
   }
   \item{nrfs}{
@@ -33,22 +34,25 @@ crayleigh(link ="loge", earg=list(), expected=FALSE)
   positive-definite working weights.
 
   }
-  \item{expected}{
-  Logical. For censored data only, \code{FALSE} 
-  means the Newton-Raphson algorithm, and \code{TRUE} means Fisher scoring.
+  \item{oim}{
+  Logical.
+  For censored data only,
+  \code{TRUE} means the Newton-Raphson algorithm, and 
+  \code{FALSE} means Fisher scoring.
 
   }
 }
 \details{
   The Rayleigh distribution, which is used in physics,
   has a probability density function that can be written
-  \deqn{f(y) = y \exp(-0.5 (y/a)^2)/a^2}{%
-        f(y) = y*exp(-0.5*(y/a)^2)/a^2}
-  for \eqn{y>0} and \eqn{a>0}.
+  \deqn{f(y) = y \exp(-0.5 (y/b)^2)/b^2}{%
+        f(y) = y*exp(-0.5*(y/b)^2)/b^2}
+  for \eqn{y > 0} and \eqn{b > 0}.
   The mean of \eqn{Y} is
-  \eqn{a \sqrt{\pi / 2}}{a * sqrt(pi / 2)}
+  \eqn{b \sqrt{\pi / 2}}{b * sqrt(pi / 2)}
   and its variance is
-  \eqn{a^2 (4-\pi)/2}{a^2 (4-pi)/2}.
+  \eqn{b^2 (4-\pi)/2}{b^2 (4-pi)/2}.
+
 
   The \pkg{VGAM} family function \code{crayleigh} handles right-censored
   data (the true value is greater than the observed value). To indicate
@@ -58,9 +62,10 @@ crayleigh(link ="loge", earg=list(), expected=FALSE)
   taken to be \code{FALSE}.  The fitted object has this component stored
   in the \code{extra} slot.
 
+
 }
 \section{Warning}{
-  The theory behind the argument \code{expected} is not fully complete.
+  The theory behind the argument \code{oim} is not fully complete.
 
 }
 \value{
@@ -68,41 +73,45 @@ crayleigh(link ="loge", earg=list(), expected=FALSE)
   The object is used by modelling functions such as \code{\link{vglm}},
   \code{\link{rrvglm}}
   and \code{\link{vgam}}.
+
+
 }
 \references{
 Evans, M., Hastings, N. and Peacock, B. (2000)
 \emph{Statistical Distributions},
 New York: Wiley-Interscience, Third edition.
+
+
 }
 \author{ T. W. Yee }
 \note{
 A related distribution is the Maxwell distribution.
+
 }
 \seealso{
     \code{\link{Rayleigh}},
+    \code{\link{genrayleigh}},
     \code{\link{riceff}},
     \code{\link{maxwell}}.
 
 }
 \examples{
-n = 1000; a = exp(2)
-ystar = rrayleigh(n, a=a)
-fit = vglm(ystar ~ 1, rayleigh, trace=TRUE, crit="c")
+nn <- 1000; Scale <- exp(2)
+rdata <- data.frame(ystar = rrayleigh(nn, scale = Scale))
+fit <- vglm(ystar ~ 1, rayleigh, rdata, trace = TRUE, crit = "c")
 head(fitted(fit))
-mean(ystar)
-coef(fit, matrix=TRUE)
+with(rdata, mean(ystar))
+coef(fit, matrix = TRUE)
 Coef(fit)
 
 # Censored data
-U = runif(n, 5, 15)
-y = pmin(U, ystar)
-\dontrun{
-par(mfrow=c(1,2)); hist(ystar); hist(y)
-}
-extra = list(rightcensored = ystar > U)
-fit = vglm(y ~ 1, crayleigh, trace=TRUE, extra=extra)
+rdata <- transform(rdata, U = runif(nn, 5, 15))
+rdata <- transform(rdata, y = pmin(U, ystar))
+\dontrun{ par(mfrow = c(1,2)); hist(with(rdata, ystar)); hist(with(rdata, y)) }
+extra <- with(rdata, list(rightcensored = ystar > U))
+fit <- vglm(y ~ 1, crayleigh, rdata, trace = TRUE, extra = extra)
 table(fit@extra$rightcen)
-coef(fit, matrix=TRUE)
+coef(fit, matrix = TRUE)
 head(fitted(fit))
 }
 \keyword{models}

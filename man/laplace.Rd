@@ -8,8 +8,9 @@
 
 }
 \usage{
-laplace(llocation="identity", lscale="loge", elocation=list(),
-        escale=list(), ilocation=NULL, iscale=NULL, method.init=1, zero=2)
+laplace(llocation = "identity", lscale = "loge", elocation = list(),
+        escale = list(), ilocation = NULL, iscale = NULL,
+        method.init = 1, zero = 2)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -100,16 +101,16 @@ Boston: Birkhauser.
 }
 
 \examples{
-lddat = data.frame(y = rlaplace(nn <- 100, loc=2, scale=exp(1)))
-fit = vglm(y  ~ 1, laplace, lddat, trace=TRUE, crit="l")
-coef(fit, matrix=TRUE)
+lddat = data.frame(y = rlaplace(nn <- 100, loc = 2, scale = exp(1)))
+fit = vglm(y  ~ 1, laplace, lddat, trace = TRUE, crit = "l")
+coef(fit, matrix = TRUE)
 Coef(fit)
 with(lddat, median(y))
 
 lddat = data.frame(x = runif(nn <- 1001))
-lddat = transform(lddat, y = rlaplace(nn, loc=2, scale=exp(-1+1*x)))
-fit = vglm(y  ~ x, laplace(iloc=0.2, meth=2, zero=1), lddat, trace=TRUE)
-coef(fit, matrix=TRUE)
+lddat = transform(lddat, y = rlaplace(nn, loc = 2, scale = exp(-1+1*x)))
+coef(vglm(y ~ x, laplace(iloc = .2, meth = 2, zero = 1), lddat,
+          trace = TRUE), matrix = TRUE)
 }
 \keyword{models}
 \keyword{regression}

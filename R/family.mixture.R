@@ -1,5 +1,6 @@
 # These functions are
-# Copyright (C) 1998-2010 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2011 T.W. Yee, University of Auckland.
+# All rights reserved.
 
 
 
@@ -130,7 +131,8 @@ mix2normal1 = function(lphi="logit",
         sd2 = eta2theta(eta[,5], link= .lsd,  earg= .esd2)
         f1 = dnorm(y, mean=mu1, sd=sd1)
         f2 = dnorm(y, mean=mu2, sd=sd2)
-        if (residuals) stop("loglikelihood residuals not implemented yet") else
+        if (residuals) stop("loglikelihood residuals not ",
+                            "implemented yet") else
         sum(w * log(phi*f1 + (1-phi)*f2))
     }, list(.lphi=lphi, .lmu=lmu,
             .ephi=ephi, .emu1=emu1, .emu2=emu2, .esd1=esd1, .esd2=esd2,
@@ -282,7 +284,8 @@ mix2poisson = function(lphi="logit", llambda="loge",
         lambda2 = eta2theta(eta[,3], link= .llambda, earg= .el2)
         f1 = dpois(y, lam=lambda1)
         f2 = dpois(y, lam=lambda2)
-        if (residuals) stop("loglikelihood residuals not implemented yet") else
+        if (residuals) stop("loglikelihood residuals not ",
+                            "implemented yet") else
         sum(w * log(phi*f1 + (1-phi)*f2))
     }, list(.lphi=lphi, .llambda=llambda,
              .ephi=ephi, .el1=el1, .el2=el2 ))),
@@ -436,7 +439,8 @@ mix2exp = function(lphi="logit", llambda="loge",
         lambda2 = eta2theta(eta[,3], link= .llambda, earg= .el2)
         f1 = dexp(y, rate=lambda1)
         f2 = dexp(y, rate=lambda2)
-        if (residuals) stop("loglikelihood residuals not implemented yet") else
+        if (residuals) stop("loglikelihood residuals not ",
+                            "implemented yet") else
         sum(w * log(phi*f1 + (1-phi)*f2))
     }, list(.lphi=lphi, .llambda=llambda,
              .ephi=ephi, .el1=el1, .el2=el2 ))),

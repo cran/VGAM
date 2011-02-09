@@ -105,18 +105,20 @@ zibinomial(lphi="logit", lmu="logit", ephi=list(), emu=list(),
   \code{\link{binomialff}},
   \code{\link{posbinomial}},
   \code{\link[stats:Binomial]{rbinom}}.
+
 }
 \examples{
 size = 10  # number of trials; N in the notation above
 nn = 200
-zibdata = data.frame(phi = logit(0, inv=TRUE), # 0.50
-                     mubin = logit(-1, inv=TRUE), # Mean of usual binomial
-                     sv = rep(size, len=nn))
+zibdata = data.frame(phi   = logit( 0, inv = TRUE), # 0.50
+                     mubin = logit(-1, inv = TRUE), # Mean of usual binomial
+                     sv    = rep(size, len = nn))
 zibdata = transform(zibdata, 
-                    y = rzibinom(n=nn, size=sv, prob=mubin, phi=phi)/sv)
+                    y = rzibinom(nn, size = sv, prob = mubin, phi = phi))
 with(zibdata, table(y))
-fit = vglm(y ~ 1, zibinomial, weight=sv, data=zibdata, trace=TRUE)
-coef(fit, matrix=TRUE)
+fit = vglm(cbind(y, sv - y) ~ 1, zibinomial, zibdata, trace = TRUE)
+
+coef(fit, matrix = TRUE)
 Coef(fit) # Useful for intercept-only models
 fit@misc$p0  # Estimate of P(Y=0)
 head(fitted(fit))

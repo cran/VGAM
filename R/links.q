@@ -1,5 +1,6 @@
 # These functions are
-# Copyright (C) 1998-2010 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2011 T.W. Yee, University of Auckland.
+# All rights reserved.
 
 
 
@@ -16,16 +17,18 @@
 
 
 
-TypicalVGAMfamilyFunction <- function(lsigma="loge", esigma=list(),
-                                      isigma=NULL, parallel=TRUE,
+TypicalVGAMfamilyFunction <- function(lsigma = "loge", esigma = list(),
+                                      isigma = NULL, parallel = TRUE,
                                       shrinkage.init = 0.95,
-                                      nointercept = NULL, method.init=1,
-                                      nsimEIM=100, zero=NULL) {
+                                      nointercept = NULL, method.init = 1,
+                                      prob.x = c(0.15, 0.85),
+                                      oim = FALSE,
+                                      nsimEIM = 100, zero = NULL) {
     NULL
 }
 
 TypicalVGAMlinkFunction <- function(theta,
-    earg=list(), inverse=FALSE, deriv=0, short=TRUE, tag=FALSE) {
+    earg = list(), inverse=FALSE, deriv=0, short=TRUE, tag=FALSE) {
     NULL
 }
 
@@ -33,21 +36,21 @@ TypicalVGAMlinkFunction <- function(theta,
 
 namesof <- function(theta,
                     link,
-                    earg=list(),
+                    earg = list(),
                     tag=FALSE,
                     short=TRUE)
 {
 
 
         string <- paste(link,
-            "(theta=theta, earg=earg, short=short, tag=tag)", sep="")
+            "(theta=theta, earg=earg, short=short, tag=tag)", sep = "")
         calls <- parse(text=string)[[1]]
         ans <- eval(calls) 
         return(ans)
 }
 
-theta2eta <- function(theta, link, earg=list()) {
-    string <- paste(link, "(theta=theta, earg=earg)", sep="")
+theta2eta <- function(theta, link, earg = list()) {
+    string <- paste(link, "(theta=theta, earg=earg)", sep = "")
     calls <- parse(text=string)[[1]]
     eval(calls) 
 }
@@ -55,7 +58,7 @@ theta2eta <- function(theta, link, earg=list()) {
 
 
 
-eta2theta <- function(theta, link="identity", earg=list()) {
+eta2theta <- function(theta, link = "identity", earg = list()) {
     if (is.null(link))
         link <- "identity"
 
@@ -63,7 +66,7 @@ eta2theta <- function(theta, link="identity", earg=list()) {
 
     llink <- length(link)
     if (llink == 1) {
-        string <- paste(link, "(theta=theta, earg=earg, inverse=TRUE)", sep="")
+        string <- paste(link, "(theta=theta, earg=earg, inverse=TRUE)", sep = "")
         calls <- parse(text=string)[[1]]
         return(eval(calls))
     } else 
@@ -78,7 +81,7 @@ eta2theta <- function(theta, link="identity", earg=list()) {
                               is.list(earg[[iii]])) earg[[iii]] else earg
                 string = paste(link[iii],
                            "(theta=theta[,iii], earg=use.earg, inverse=TRUE)",
-                           sep="")
+                           sep = "")
                 calls <- parse(text=string)[[1]]
                 ans <- cbind(ans, eval(calls))
             }
@@ -93,7 +96,7 @@ eta2theta <- function(theta, link="identity", earg=list()) {
             for(iii in 1:llink) {
                 string = paste(link[iii],
                                "(theta=theta[iii], earg=earg, inverse=TRUE)",
-                               sep="")
+                               sep = "")
                 calls <- parse(text=string)[[1]]
                 ans <- c(ans, eval(calls))
             }
@@ -105,18 +108,18 @@ eta2theta <- function(theta, link="identity", earg=list()) {
 
 
 
-dtheta.deta <- function(theta, link, earg=list()) {
+dtheta.deta <- function(theta, link, earg = list()) {
 
-    string <- paste(link, "(theta=theta, earg=earg, deriv=1)", sep="")
+    string <- paste(link, "(theta=theta, earg=earg, deriv=1)", sep = "")
     calls <- parse(text=string)[[1]]
     eval(calls) 
 }
 
 
-d2theta.deta2 <- function(theta, link, earg=list())
+d2theta.deta2 <- function(theta, link, earg = list())
 {
 
-    string <- paste(link, "(theta=theta, earg=earg, deriv=2)", sep="")
+    string <- paste(link, "(theta=theta, earg=earg, deriv=2)", sep = "")
     calls <- parse(text=string)[[1]]
     eval(calls) 
 }
@@ -133,13 +136,13 @@ d2theta.deta2 <- function(theta, link, earg=list())
                "golf", "polf", "nbolf", "nbolf2")
 
 
-loglog <- function(theta, earg=list(), inverse=FALSE, deriv=0,
+loglog <- function(theta, earg = list(), inverse=FALSE, deriv=0,
                    short=TRUE, tag=FALSE)
 {
     if (is.character(theta)) {
         string <- if (short) 
-            paste("loglog(",theta,")", sep="") else
-            paste("log(log(",theta,"))", sep="")
+            paste("loglog(",theta,")", sep = "") else
+            paste("log(log(",theta,"))", sep = "")
         if (tag) 
             string <- paste("Log-Log:", string) 
         return(string)
@@ -166,13 +169,13 @@ loglog <- function(theta, earg=list(), inverse=FALSE, deriv=0,
 
 
 
-cloglog <- function(theta, earg=list(), inverse=FALSE, deriv=0,
+cloglog <- function(theta, earg = list(), inverse=FALSE, deriv=0,
                     short=TRUE, tag=FALSE)
 {
     if (is.character(theta)) {
         string <- if (short) 
-            paste("cloglog(",theta,")", sep="") else
-            paste("log(-log(1-",theta,"))", sep="")
+            paste("cloglog(",theta,")", sep = "") else
+            paste("log(-log(1-",theta,"))", sep = "")
         if (tag) 
             string <- paste("Complementary log-log:", string) 
         return(string)
@@ -202,13 +205,13 @@ cloglog <- function(theta, earg=list(), inverse=FALSE, deriv=0,
 
 
 
-probit <- function(theta, earg=list(), inverse=FALSE, deriv=0,
+probit <- function(theta, earg = list(), inverse=FALSE, deriv=0,
                    short=TRUE, tag=FALSE)
 {
     if (is.character(theta)) {
         string <- if (short) 
-            paste("probit(",theta,")", sep="") else
-            paste("qnorm(", theta, ")", sep="")
+            paste("probit(",theta,")", sep = "") else
+            paste("qnorm(", theta, ")", sep = "")
         if (tag) 
             string <- paste("Probit:", string) 
         return(string)
@@ -262,13 +265,13 @@ probit <- function(theta, earg=list(), inverse=FALSE, deriv=0,
 
 
 
-loge <- function(theta, earg=list(), inverse=FALSE, deriv=0,
+loge <- function(theta, earg = list(), inverse=FALSE, deriv=0,
                  short=TRUE, tag=FALSE)
 {
     if (is.character(theta)) {
         string <- if (short) 
-            paste("log(",theta,")", sep="") else
-            paste("log(", theta, ")", sep="")
+            paste("log(",theta,")", sep = "") else
+            paste("log(", theta, ")", sep = "")
         if (tag) 
             string <- paste("Log:", string) 
         return(string)
@@ -292,7 +295,7 @@ loge <- function(theta, earg=list(), inverse=FALSE, deriv=0,
 
 
 
-identity <- function(theta, earg=list(), inverse=FALSE, deriv=0,
+identity <- function(theta, earg = list(), inverse=FALSE, deriv=0,
                      short=TRUE, tag=FALSE)
 {
     if (is.character(theta)) {
@@ -315,11 +318,11 @@ identity <- function(theta, earg=list(), inverse=FALSE, deriv=0,
     }
 }
 
-nidentity <- function(theta, earg=list(), inverse=FALSE, deriv=0,
+nidentity <- function(theta, earg = list(), inverse=FALSE, deriv=0,
                      short=TRUE, tag=FALSE)
 {
     if (is.character(theta)) {
-        string <- paste("-", theta, sep="")
+        string <- paste("-", theta, sep = "")
         if (tag) 
             string <- paste("Negative-Identity:", string) 
         return(string)
@@ -339,11 +342,11 @@ nidentity <- function(theta, earg=list(), inverse=FALSE, deriv=0,
 }
 
 
-reciprocal <- function(theta, earg=list(), inverse.arg=FALSE, deriv=0,
+reciprocal <- function(theta, earg = list(), inverse.arg=FALSE, deriv=0,
                      short=TRUE, tag=FALSE)
 {
     if (is.character(theta)) {
-        string <- paste("1/",theta, sep="")
+        string <- paste("1/",theta, sep = "")
         if (tag) 
             string <- paste("Reciprocal:", string) 
         return(string)
@@ -365,13 +368,13 @@ reciprocal <- function(theta, earg=list(), inverse.arg=FALSE, deriv=0,
 }
 
 
-nloge <- function(theta, earg=list(), inverse=FALSE, deriv=0,
+nloge <- function(theta, earg = list(), inverse=FALSE, deriv=0,
                  short=TRUE, tag=FALSE)
 {
     if (is.character(theta)) {
         string <- if (short) 
-            paste("-log(",theta,")", sep="") else
-            paste("-log(", theta, ")", sep="")
+            paste("-log(",theta,")", sep = "") else
+            paste("-log(", theta, ")", sep = "")
         if (tag) 
             string <- paste("Negative log:", string) 
         return(string)
@@ -394,11 +397,11 @@ nloge <- function(theta, earg=list(), inverse=FALSE, deriv=0,
 
 
 
-nreciprocal <- function(theta, earg=list(), inverse.arg=FALSE, deriv=0,
+nreciprocal <- function(theta, earg = list(), inverse.arg=FALSE, deriv=0,
                      short=TRUE, tag=FALSE)
 {
     if (is.character(theta)) {
-        string <- paste("-1/",theta, sep="")
+        string <- paste("-1/",theta, sep = "")
         if (tag) 
             string <- paste("Negative reciprocal:", string) 
         return(string)
@@ -420,12 +423,12 @@ nreciprocal <- function(theta, earg=list(), inverse.arg=FALSE, deriv=0,
 }
 
 
-natural.ig <- function(theta, earg=list(), inverse=FALSE, deriv=0,
+natural.ig <- function(theta, earg = list(), inverse=FALSE, deriv=0,
                        short=TRUE, tag=FALSE)
 {
 
     if (is.character(theta)) {
-        string <- paste("-1/",theta, sep="")
+        string <- paste("-1/",theta, sep = "")
         if (tag) 
             string <- paste("Negative inverse:", string) 
         return(string)
@@ -448,13 +451,13 @@ natural.ig <- function(theta, earg=list(), inverse=FALSE, deriv=0,
 
 
 
-rhobit <- function(theta, earg=list(), inverse=FALSE, deriv=0,
+rhobit <- function(theta, earg = list(), inverse=FALSE, deriv=0,
                    short=TRUE, tag=FALSE)
 {
     if (is.character(theta)) {
         string <- if (short) 
-            paste("rhobit(",theta,")", sep="") else
-            paste("log((1+", theta, ")/(1-", theta, "))", sep="")
+            paste("rhobit(",theta,")", sep = "") else
+            paste("log((1+", theta, ")/(1-", theta, "))", sep = "")
         if (tag) 
             string <- paste("Rhobit:", string) 
         return(string)
@@ -484,13 +487,13 @@ rhobit <- function(theta, earg=list(), inverse=FALSE, deriv=0,
 
 
 
-fisherz <- function(theta, earg=list(), inverse=FALSE, deriv=0,
+fisherz <- function(theta, earg = list(), inverse=FALSE, deriv=0,
                    short=TRUE, tag=FALSE)
 {
     if (is.character(theta)) {
         string <- if (short) 
-            paste("fisherz(",theta,")", sep="") else
-            paste("(1/2)log((1+", theta, ")/(1-", theta, "))", sep="")
+            paste("fisherz(",theta,")", sep = "") else
+            paste("(1/2)log((1+", theta, ")/(1-", theta, "))", sep = "")
         if (tag) 
             string <- paste("Fisher's Z transformation:", string) 
         return(string)
@@ -521,7 +524,7 @@ fisherz <- function(theta, earg=list(), inverse=FALSE, deriv=0,
 
 
 
-fsqrt <- function(theta, earg=list(min=0, max=1, mux=sqrt(2)),
+fsqrt <- function(theta, earg = list(min=0, max=1, mux=sqrt(2)),
                   inverse=FALSE, deriv=0, short=TRUE, tag=FALSE)
 {
     min=0; max=1; mux=sqrt(2)
@@ -536,11 +539,11 @@ fsqrt <- function(theta, earg=list(min=0, max=1, mux=sqrt(2)),
 
     if (is.character(theta)) {
         string <- if (short) 
-            paste("fsqrt(",theta,")", sep="") else {
+            paste("fsqrt(",theta,")", sep = "") else {
             if (abs(mux-sqrt(2)) < 1.0e-10)
-                paste("sqrt(2*",theta,") - sqrt(2*(1-",theta,"))", sep="") else
+                paste("sqrt(2*",theta,") - sqrt(2*(1-",theta,"))", sep = "") else
             paste(as.character(mux),
-            " * (sqrt(",theta,"-",min,") - sqrt(",max,"-",theta,"))", sep="")
+            " * (sqrt(",theta,"-",min,") - sqrt(",max,"-",theta,"))", sep = "")
         }
         if (tag) 
             string <- paste("Folded Square Root:", string) 
@@ -573,7 +576,7 @@ fsqrt <- function(theta, earg=list(min=0, max=1, mux=sqrt(2)),
 
 
 
-powl <- function(theta, earg=list(power=1), inverse=FALSE, deriv=0,
+powl <- function(theta, earg = list(power=1), inverse=FALSE, deriv=0,
                  short=TRUE, tag=FALSE)
 {
 
@@ -587,9 +590,9 @@ powl <- function(theta, earg=list(power=1), inverse=FALSE, deriv=0,
 
     if (is.character(theta)) {
         string <- if (short) 
-            paste("powl(",theta,", earg=list(power=", as.character(exponent),
-                  "))", sep="") else
-            paste(theta, "^(", as.character(exponent), ")", sep="")
+            paste("powl(",theta,", earg = list(power = ", as.character(exponent),
+                  "))", sep = "") else
+            paste(theta, "^(", as.character(exponent), ")", sep = "")
         if (tag) 
             string <- paste("Power:", string) 
         return(string)
@@ -615,7 +618,7 @@ powl <- function(theta, earg=list(power=1), inverse=FALSE, deriv=0,
 }
 
 
-elogit <- function(theta, earg=list(min=0, max=1), inverse=FALSE, deriv=0,
+elogit <- function(theta, earg = list(min=0, max=1), inverse=FALSE, deriv=0,
                    short=TRUE, tag=FALSE)
 {
     if (!length(earg) || is.list(earg)) {
@@ -631,11 +634,11 @@ elogit <- function(theta, earg=list(min=0, max=1), inverse=FALSE, deriv=0,
     if (is.character(theta)) {
         string <- if (short) {
             if (A != 0 || B != 1)
-            paste("elogit(",theta,", earg=list(min=",A,
-                  ", max=",B,"))",sep="") else
-            paste("elogit(",theta,")",sep="")
+            paste("elogit(",theta,", earg = list(min = ",A,
+                  ", max = ",B,"))",sep = "") else
+            paste("elogit(",theta,")",sep = "")
             } else
-            paste("log((",theta,"-min)/(max-",theta,"))", sep="")
+            paste("log((",theta,"-min)/(max-",theta,"))", sep = "")
         if (tag) 
             string <- paste("Extended logit:", string) 
         return(string)
@@ -659,13 +662,13 @@ elogit <- function(theta, earg=list(min=0, max=1), inverse=FALSE, deriv=0,
 
 
 
- logit <- function(theta, earg=list(), inverse=FALSE, deriv=0,
+ logit <- function(theta, earg = list(), inverse=FALSE, deriv=0,
                    short=TRUE, tag=FALSE)
 {
     if (is.character(theta)) {
         string <- if (short) 
-            paste("logit(",theta,")", sep="") else
-            paste("log(",theta,"/(1-",theta,"))", sep="")
+            paste("logit(",theta,")", sep = "") else
+            paste("log(",theta,"/(1-",theta,"))", sep = "")
         if (tag) 
             string <- paste("Logit:", string) 
         return(string)
@@ -694,13 +697,13 @@ elogit <- function(theta, earg=list(min=0, max=1), inverse=FALSE, deriv=0,
 }
 
 
-logc <- function(theta, earg=list(), inverse=FALSE, deriv=0,
+logc <- function(theta, earg = list(), inverse=FALSE, deriv=0,
                  short=TRUE, tag=FALSE)
 {
     if (is.character(theta)) {
         string <- if (short) 
-            paste("logc(",theta,")", sep="") else
-            paste("log(1-",theta,")", sep="")
+            paste("logc(",theta,")", sep = "") else
+            paste("log(1-",theta,")", sep = "")
         if (tag) 
             string <- paste("Log Complementary:", string) 
         return(string)
@@ -726,7 +729,7 @@ logc <- function(theta, earg=list(), inverse=FALSE, deriv=0,
 
 
 
-logoff <- function(theta, earg=list(offset=0), inverse=FALSE, deriv=0,
+logoff <- function(theta, earg = list(offset=0), inverse=FALSE, deriv=0,
                    short=TRUE, tag=FALSE)
 {
     if (!length(earg) || is.list(earg)) {
@@ -741,8 +744,8 @@ logoff <- function(theta, earg=list(offset=0), inverse=FALSE, deriv=0,
     if (is.character(theta)) {
         string <- if (short) 
             paste("logoff(",theta,
-                  ", list(offset=",as.character(offset),"))", sep="") else
-            paste("log(", as.character(offset), "+", theta, ")", sep="")
+                  ", list(offset = ",as.character(offset),"))", sep = "") else
+            paste("log(", as.character(offset), "+", theta, ")", sep = "")
         if (tag) 
             string <- paste("Log with offset:", string) 
         return(string)
@@ -771,8 +774,8 @@ nlogoff <- function(theta, earg=0, inverse=FALSE, deriv=0,
         stop("bad input for argument earg")
     if (is.character(theta)) {
         string <- if (short) 
-            paste("nlogoff(",theta,",",as.character(offset),")", sep="") else
-            paste("log(", as.character(offset), "-", theta, ")", sep="")
+            paste("nlogoff(",theta,",",as.character(offset),")", sep = "") else
+            paste("log(", as.character(offset), "-", theta, ")", sep = "")
         if (tag) 
             string <- paste("Negative-log with offset:", string) 
         return(string)
@@ -793,14 +796,14 @@ nlogoff <- function(theta, earg=0, inverse=FALSE, deriv=0,
 
 
 
-cauchit <- function(theta, earg=list(bvalue= .Machine$double.eps),
+cauchit <- function(theta, earg = list(bvalue= .Machine$double.eps),
                     inverse=FALSE, deriv=0,
                     short=TRUE, tag=FALSE)
 {
     if (is.character(theta)) {
         string <- if (short) 
-            paste("cauchit(",theta,")", sep="") else
-            paste("tan(pi*(",theta,"-0.5))", sep="")
+            paste("cauchit(",theta,")", sep = "") else
+            paste("tan(pi*(",theta,"-0.5))", sep = "")
         if (tag) 
             string <- paste("Cauchit:", string) 
         return(string)
@@ -825,7 +828,7 @@ cauchit <- function(theta, earg=list(bvalue= .Machine$double.eps),
 
 
 
-golf <- function(theta, earg=list(lambda=1), inverse=FALSE, deriv=0,
+golf <- function(theta, earg = list(lambda=1), inverse=FALSE, deriv=0,
                  short=TRUE, tag=FALSE)
 {
 
@@ -849,22 +852,22 @@ golf <- function(theta, earg=list(lambda=1), inverse=FALSE, deriv=0,
         string <- if (short) {
             lenl = length(lambda) > 1
             lenc = length(cutpoint) > 1
-            paste("golf(",theta,", earg=list(lambda=",
+            paste("golf(",theta,", earg = list(lambda = ",
                   if (lenl) "c(" else "",
                   ToString(lambda),
                   if (lenl) ")" else "",
                   if (is.Numeric(cutpoint))
-            paste(", cutpoint=",
+            paste(", cutpoint = ",
                   if (lenc) "c(" else "",
             ToString(cutpoint),
                   if (lenc) ")" else "",
-            sep="") else "",
-                        "))", sep="") } else {
+            sep = "") else "",
+                        "))", sep = "") } else {
             if (is.Numeric(cutpoint)) {
                 paste("-3*log(1-qnorm(",theta,")/(3*sqrt(lambda)))",
-                      " + log(cutpoint)", sep="")
+                      " + log(cutpoint)", sep = "")
             } else {
-                paste("-3*log(1-qnorm(",theta,")/(3*sqrt(lambda)))", sep="")
+                paste("-3*log(1-qnorm(",theta,")/(3*sqrt(lambda)))", sep = "")
             }
         }
         if (tag) 
@@ -879,7 +882,7 @@ golf <- function(theta, earg=list(lambda=1), inverse=FALSE, deriv=0,
         answer = thmat
         for(ii in 1:ncol(thmat))
             answer[,ii] = Recall(theta=thmat[,ii],
-                   earg=list(lambda=lambda[ii],
+                   earg = list(lambda=lambda[ii],
                    cutpoint = if (is.Numeric(cutpoint)) cutpoint[ii] else NULL),
                    inverse=inverse, deriv=deriv)
         return(answer)
@@ -899,7 +902,7 @@ golf <- function(theta, earg=list(lambda=1), inverse=FALSE, deriv=0,
     } else {
         smallno = 1 * .Machine$double.eps
         Theta = theta
-        Theta = pmin(Theta, 1 - smallno)  # Since theta==1 is a possibility
+        Theta = pmin(Theta, 1 - smallno)  # Since theta == 1 is a possibility
         Theta = pmax(Theta, smallno) # Since theta==0 is a possibility
         Ql = qnorm(Theta)
         switch(deriv+1, {
@@ -930,13 +933,13 @@ polf <- function(theta, earg=stop("'earg' must be given"),
     if (is.character(theta)) {
         string <- if (short) {
             lenc = length(cutpoint) > 1
-            paste("polf(",theta,", earg=list(cutpoint=",
+            paste("polf(",theta,", earg = list(cutpoint = ",
                   if (lenc) "c(" else "",
                   ToString(cutpoint),
                   if (lenc) ")" else "",
-                  "))", sep="") 
+                  "))", sep = "") 
         } else
-            paste("2*log(0.5*qnorm(",theta,") + sqrt(cutpoint+7/8))", sep="")
+            paste("2*log(0.5*qnorm(",theta,") + sqrt(cutpoint+7/8))", sep = "")
         if (tag) 
             string <- paste("Poisson-ordinal link function:", string) 
         return(string)
@@ -971,7 +974,7 @@ polf <- function(theta, earg=stop("'earg' must be given"),
             smallno = 1 * .Machine$double.eps
             SMALLNO = 1 * .Machine$double.xmin
             Theta = theta
-            Theta = pmin(Theta, 1 - smallno)  # Since theta==1 is a possibility
+            Theta = pmin(Theta, 1 - smallno)  # Since theta == 1 is a possibility
             Theta = pmax(Theta, smallno) # Since theta==0 is a possibility
             Ql = qnorm(Theta)
             switch(deriv+1, {
@@ -1008,18 +1011,18 @@ nbolf <- function(theta, earg=stop("'earg' must be given"),
         string <- if (short) {
             lenc = length(cutpoint) > 1
             lenk = length(kay) > 1
-            paste("nbolf(",theta,", earg=list(cutpoint=",
+            paste("nbolf(",theta,", earg = list(cutpoint = ",
                   if (lenc) "c(" else "",
                   ToString(cutpoint),
                   if (lenc) ")" else "",
-                  ", k=",
+                  ", k = ",
                   if (lenk) "c(" else "",
                   ToString(kay),
                   if (lenk) ")" else "",
-                  "))", sep="")
+                  "))", sep = "")
         } else
             paste("2*log(sqrt(k) * sinh(qnorm(",theta,")/(2*sqrt(k)) + ",
-                  "asinh(sqrt(cutpoint/k))))", sep="")
+                  "asinh(sqrt(cutpoint/k))))", sep = "")
         if (tag) 
             string <- paste("Negative binomial-ordinal link function:", string)
         return(string)
@@ -1032,7 +1035,7 @@ nbolf <- function(theta, earg=stop("'earg' must be given"),
         answer = thmat
         for(ii in 1:ncol(thmat))
             answer[,ii] = Recall(theta=thmat[,ii],
-                                 earg=list(cutpoint=cutpoint[ii], k=kay[ii]),
+                                 earg = list(cutpoint=cutpoint[ii], k=kay[ii]),
                                  inverse=inverse, deriv=deriv)
         return(answer)
     }
@@ -1053,7 +1056,7 @@ nbolf <- function(theta, earg=stop("'earg' must be given"),
         smallno = 1 * .Machine$double.eps
         SMALLNO = 1 * .Machine$double.xmin
         Theta = theta
-        Theta = pmin(Theta, 1 - smallno)  # Since theta==1 is a possibility
+        Theta = pmin(Theta, 1 - smallno)  # Since theta == 1 is a possibility
         Theta = pmax(Theta, smallno) # Since theta==0 is a possibility
         if (cutpoint == 0) {
             switch(deriv+1, {
@@ -1104,17 +1107,17 @@ nbolf2 <- function(theta, earg=stop("'earg' must be given"),
         string <- if (short) {
             lenc = length(cutpoint) > 1
             lenk = length(kay) > 1
-            paste("nbolf2(",theta,", earg=list(cutpoint=",
+            paste("nbolf2(",theta,", earg = list(cutpoint = ",
                   if (lenc) "c(" else "",
                   ToString(cutpoint),
                   if (lenc) ")" else "",
-                  ", k=",
+                  ", k = ",
                   if (lenk) "c(" else "",
                   ToString(kay),
                   if (lenk) ")" else "",
-                  "))", sep="")
+                  "))", sep = "")
        } else
-            paste("3*log(<a complicated expression>)", sep="")
+            paste("3*log(<a complicated expression>)", sep = "")
         if (tag) 
             string = paste("Negative binomial-ordinal link function 2:", string)
         return(string)
@@ -1126,7 +1129,7 @@ nbolf2 <- function(theta, earg=stop("'earg' must be given"),
         answer = thmat
         for(ii in 1:ncol(thmat))
             answer[,ii] = Recall(theta=thmat[,ii],
-                                 earg=list(cutpoint=cutpoint[ii], k=kay[ii]),
+                                 earg = list(cutpoint=cutpoint[ii], k=kay[ii]),
                                  inverse=inverse, deriv=deriv)
         return(answer)
     }
@@ -1152,7 +1155,7 @@ nbolf2 <- function(theta, earg=stop("'earg' must be given"),
             theta2 = invfun = pnorm(-ans)  # pnorm(-x) = 1-pnorm(x)
             for(ii in 1:4) {
                 theta2[,ii] = Recall(theta=theta2[,ii],
-                                     earg=list(cutpoint=cutpoint, k=kay),
+                                     earg = list(cutpoint=cutpoint, k=kay),
                                      inverse=FALSE, deriv=deriv)
             }
             rankmat = t(apply(abs(theta2 - theta), 1, rank))
@@ -1168,7 +1171,7 @@ nbolf2 <- function(theta, earg=stop("'earg' must be given"),
         smallno = 1 * .Machine$double.eps
         SMALLNO = 1 * .Machine$double.xmin
         Theta = theta
-        Theta = pmin(Theta, 1 - smallno)  # Since theta==1 is a possibility
+        Theta = pmin(Theta, 1 - smallno)  # Since theta == 1 is a possibility
         Theta = pmax(Theta, smallno) # Since theta==0 is a possibility
         if (cutpoint == 0) {
             switch(deriv+1, {
@@ -1218,7 +1221,7 @@ Cut = function(y, breaks=c(-Inf, quantile(c(y), prob = (1:4)/4))) {
     answer = if (ncol(y) > 1) matrix(temp, nrow(y), ncol(y)) else temp
     if (ncol(y) > 1) {
         ynames = dimnames(y)[[2]]
-        if (!length(ynames)) ynames = paste("Y", 1:ncol(y), sep="")
+        if (!length(ynames)) ynames = paste("Y", 1:ncol(y), sep = "")
         xnames = dimnames(y)[[1]]
         if (!length(xnames)) xnames = as.character(1:nrow(y))
         dimnames(answer) = list(xnames, ynames)

@@ -8,9 +8,9 @@
 
 }
 \usage{
-zinegbinomial(lphi="logit", lmunb = "loge", lk = "loge", ephi=list(),
-              emunb =list(), ek = list(), iphi = NULL, ik = NULL,
-              zero = -3, method.init=1, shrinkage.init=0.95, nsimEIM=200)
+zinegbinomial(lphi = "logit", lmunb = "loge", lk = "loge", ephi = list(),
+      emunb = list(), ek = list(), iphi = NULL, ik = NULL, zero = -3,
+      method.init = 1, shrinkage.init = 0.95, nsimEIM = 200)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -96,15 +96,18 @@ zinegbinomial(lphi="logit", lmunb = "loge", lk = "loge", ephi=list(),
   \code{p0} which is the estimate of \eqn{P(Y=0)}. Note that \eqn{P(Y=0)}
   is not the parameter \eqn{\phi}{phi}.
 
+
   If \eqn{k} is large then the use of \pkg{VGAM} family function
   \code{\link{zipoisson}} is probably preferable.
   This follows because the Poisson is the limiting distribution of a
   negative binomial as \eqn{k} tends to infinity.
 
+
   The zero-\emph{deflated} negative binomial distribution cannot
   be handled with this family function. It can be handled
   with the zero-altered negative binomial distribution; see
   \code{\link{zanegbinomial}}.
+
 
 }
 
@@ -125,22 +128,39 @@ zinegbinomial(lphi="logit", lmunb = "loge", lk = "loge", ephi=list(),
 \seealso{
   \code{\link{Zinegbin}},
   \code{\link{negbinomial}},
-  \code{\link[stats:Poisson]{rpois}}.
+  \code{\link[stats:Poisson]{rpois}},
+  \code{\link{CommonVGAMffArguments}}.
 
 }
 \examples{
-nbdat = data.frame(x = runif(nn <- 1000))
-nbdat = transform(nbdat, phi = logit(-0.5+1*x, inverse=TRUE),
-                         munb = exp(3+x),
-                         k = exp(0+2*x))
-nbdat = transform(nbdat, y1 = rzinegbin(nn, phi, mu=munb, size=k),
-                         y2 = rzinegbin(nn, phi, mu=munb, size=k))
+# Example 1
+nbdat <- data.frame(x2 = runif(nn <- 1000))
+nbdat <- transform(nbdat, phi  = logit(-0.5 + 1 * x2, inverse = TRUE),
+                          munb = exp(3 + x2),
+                          k    = exp(0 + 2*x2))
+nbdat <- transform(nbdat, y1 = rzinegbin(nn, phi, mu = munb, size = k),
+                          y2 = rzinegbin(nn, phi, mu = munb, size = k))
 with(nbdat, table(y1)["0"] / sum(table(y1)))
-fit = vglm(cbind(y1,y2) ~ x, zinegbinomial(zero=NULL), nbdat, trace=TRUE)
-coef(fit, matrix=TRUE)
+fit <- vglm(cbind(y1, y2) ~ x2, zinegbinomial(zero = NULL), nbdat)
+coef(fit, matrix = TRUE)
 summary(fit)
 head(cbind(fitted(fit), with(nbdat, (1-phi) * munb)))
 round(vcov(fit), 3)
+
+
+# Example 2: RR-ZINB could also be called a COZIVGLM-ZINB-2
+nbdat <- data.frame(x2 = runif(nn <- 2000))
+nbdat <- transform(nbdat, x3 = runif(nn))
+nbdat <- transform(nbdat, eta1 = 3 + 1 * x2 + 2 * x3)
+nbdat <- transform(nbdat, phi  = logit(-1.5 + 0.5 * eta1, inverse = TRUE),
+                          munb = exp(eta1),
+                          k    = exp(4))
+nbdat <- transform(nbdat, y1 = rzinegbin(nn, phi, mu = munb, size = k))
+with(nbdat, table(y1)["0"] / sum(table(y1)))
+rrzinb <- rrvglm(y1 ~ x2 + x3, zinegbinomial(zero = NULL), nbdat,
+                 Index.corner = 2, szero = 3, trace = TRUE)
+coef(rrzinb, matrix = TRUE)
+Coef(rrzinb)
 }
 \keyword{models}
 \keyword{regression}

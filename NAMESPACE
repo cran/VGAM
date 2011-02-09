@@ -1,5 +1,6 @@
 # These functions are
-# Copyright (C) 1998-2010 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2011 T.W. Yee, University of Auckland.
+# All rights reserved.
 
 
 
@@ -8,6 +9,13 @@ useDynLib(VGAM)
 
 
 
+
+
+
+
+
+export(confint_rrnb, confint_nb1)
+export(vcovrrvglm)
 
 
 
@@ -23,6 +31,22 @@ export(
 case.namesvlm,
 variable.namesvlm
 )
+
+
+
+export(expgeometric, dexpgeom, pexpgeom, qexpgeom, rexpgeom,
+genrayleigh, dgenray, pgenray, qgenray, rgenray)
+
+
+
+
+export(Rcam, plotrcam0,
+rcam, summaryrcam)
+export(moffset)
+
+
+
+
 
 
 export(
@@ -59,7 +83,7 @@ maxwell, dmaxwell, pmaxwell, qmaxwell, rmaxwell,
 morgenstern,
 dfgm, pfgm, rfgm, fgm,
 gumbelIbiv,
-erf, erfc, lerch,
+erf, erfc, lerch, lambertW,
 tpareto1, dtpareto, qtpareto, rtpareto, ptpareto,
 pareto1, dpareto, qpareto, rpareto, ppareto,
 paretoIV, dparetoIV, qparetoIV, rparetoIV, pparetoIV,
@@ -74,7 +98,8 @@ recnormal1, recexp1,
 crayleigh, rayleigh, drayleigh, prayleigh, qrayleigh, rrayleigh, 
 drice, rrice, riceff,
 dskellam, rskellam, skellam,
-dinv.gaussian, pinv.gaussian, rinv.gaussian, wald, expexp1, expexp)
+inv.gaussianff, dinv.gaussian, pinv.gaussian, rinv.gaussian, wald,
+expexp1, expexp)
 
 
 export(A1A2A3, a2m, AAaa.nohw,
@@ -119,7 +144,7 @@ formulavlm, formulaNA.VGAM,
 garma, gaussianff,
 hypersecant, hypersecant.1, 
 hyperg,
-invbinomial, InverseBrat, inverse.gaussianff, inv.gaussianff,
+invbinomial, InverseBrat, inverse.gaussianff,
 is.Numeric,
 mccullagh89, leipnik, levy,
 lms.bcg.control, lms.bcn.control, lmscreg.control,
@@ -153,6 +178,7 @@ predict.qrrvglm, predict.rrvglm, predict.uqo, predict.vgam,
 predict.vglm, predict.vlm, predictvsmooth.spline,
 predictvsmooth.spline.fit,
 process.binomial2.data.vgam, process.categorical.data.vgam,
+negzero.expression,
 qtplot,
 qtplot.default, qtplot.gumbel, qtplot.lms.bcg,
 qtplot.lms.bcn, qtplot.lms.yjn, qtplot.lms.yjn2, qtplot.vextremes, qtplot.vglm,
@@ -256,7 +282,7 @@ export(dgpd, pgpd, qgpd, rgpd, gpd)
 export(dgev, pgev, qgev, rgev, gev, egev)
 export(dlaplace, plaplace, qlaplace, rlaplace, laplace)
 export(dalap, palap, qalap, ralap,
-       alaplace1.control,
+       alaplace1.control, alaplace2.control, alaplace3.control,
        alaplace1, alaplace2, alaplace3)
 export(dloglap, ploglap, qloglap, rloglap)
 export(loglaplace1.control, loglaplace1)
@@ -279,7 +305,7 @@ betaprime,
 betaII,
 zipebcom,
 binom2.or,  dbinom2.or,  rbinom2.or,
-binom2.rho, dbinom2.rho, rbinom2.rho,
+binom2.rho, dbinom2.rho, rbinom2.rho, binom2.Rho,
 binomialff, biplot.rrvglm, brat,
 bratt, Brat, calibrate.qrrvglm.control, calibrate.qrrvglm,
 calibrate, cao.control,
@@ -304,7 +330,7 @@ export(
 dbenf, pbenf, qbenf, rbenf,
 genbetaII, genpoisson, geometric,
 dlino, plino, qlino, rlino, lino, 
-grc, 
+grc,
 dhzeta, phzeta, qhzeta, rhzeta, hzeta, 
 nidentity, identity,
 prentice74,
@@ -318,12 +344,17 @@ lvplot, lvplot.rrvglm, lv, Max, MNSs,
 dmultinomial, multinomial, margeff)
 
 export(
+huber, dhuber, edhuber, phuber, qhuber, rhuber)
+
+
+export(
 slash, dslash, pslash, rslash)
 
 
 export(
 deunif, peunif, qeunif, reunif,
 denorm, penorm, qenorm, renorm,
+koenker, dkoenker, pkoenker, qkoenker, rkoenker,
 deexp, peexp, qeexp, reexp)
 
 
@@ -346,7 +377,9 @@ rrvglm.optim.control)
 export(eta2theta, 
 rrvglm,
 simplex, dsimplex, rsimplex, 
-sratio, s, studentt, Tol, trplot.qrrvglm,
+sratio, s,
+studentt, studentt2, studentt3, Kayfun.studentt,
+Tol, trplot.qrrvglm,
 trplot,
 rcqo,
 cqo,
@@ -359,7 +392,8 @@ dzanegbin, pzanegbin, qzanegbin, rzanegbin, zanegbinomial,
 dzapois, pzapois, qzapois, rzapois, zapoisson,
 dzibinom, pzibinom, qzibinom, rzibinom, zibinomial,
 dzinegbin, pzinegbin, qzinegbin, rzinegbin, zinegbinomial,
-dzipois, pzipois, qzipois, rzipois, zipoisson,
+dzipois, pzipois, qzipois, rzipois,
+zipoisson, zipoissonff,
 mix2exp, mix2normal1, mix2poisson,
 mix2exp.control, mix2normal1.control, mix2poisson.control,
 skewnormal1, dsnorm, rsnorm,
@@ -369,12 +403,12 @@ tikuv, dtikuv, ptikuv, qtikuv, rtikuv)
 
 
 export(DeLury,
-       wffc.P1, wffc.P1star, wffc.P2, wffc.P2star
+       wffc.P1, wffc.P1star, wffc.P2, wffc.P2star, wffc.P3, wffc.P3star
 )
 
 
 exportClasses("vglmff", "vlm", "vglm", "vgam",
-"rrvglm", "qrrvglm", "grc", 
+"rrvglm", "qrrvglm", "grc",  "rcam", 
 "vlmsmall", "uqo", "cao",
 "summary.vgam", "summary.vglm","summary.vlm",
   "summary.qrrvglm",

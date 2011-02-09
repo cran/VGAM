@@ -22,10 +22,17 @@ rpospois(n, lambda)
   \item{x, q}{vector of quantiles.}
   \item{p}{vector of probabilities.}
   \item{n}{number of observations. 
-  If \code{length(n) > 1} then the length is taken to be the number required. }
-  \item{lambda}{ vector of positive means (of an ordinary Poisson distribution). 
-  Short vectors are recycled. }
-  \item{log}{ logical.
+  If \code{length(n) > 1} then the length is taken to be the number required.
+
+  }
+  \item{lambda}{
+  vector of positive means (of an ordinary Poisson distribution).
+  Short vectors are recycled.
+
+  }
+  \item{log}{
+  logical.
+
   }
 }
 \details{
@@ -40,12 +47,15 @@ rpospois(n, lambda)
   Unlike similar functions for the Poisson distribution, a zero value
   of \code{lambda} is not permitted here.
 
+
 }
 \value{
   \code{dpospois} gives the density,
   \code{ppospois} gives the distribution function,
   \code{qpospois} gives the quantile function, and
   \code{rpospois} generates random deviates.
+
+
 }
 %\references{ 
 %None.
@@ -53,13 +63,15 @@ rpospois(n, lambda)
 
 \author{ T. W. Yee }
 \note{
-  For \code{rpospois}, the arguments of the function are fed into
-  \code{\link[stats:Poisson]{rpois}} until \eqn{n} positive values
-  are obtained.  This may take a long time if \code{lambda} has values
-  close to 0.
+  For \code{rpospois}, the arguments of the function are fed
+  into \code{\link[stats:Poisson]{rpois}} until \eqn{n} positive
+  values are obtained.  This may take a long time if \code{lambda}
+  has values close to 0.
+
 
   The family function \code{\link{pospoisson}} estimates
   \eqn{\lambda}{lambda} by maximum likelihood estimation.
+
 
 }
 
@@ -67,14 +79,16 @@ rpospois(n, lambda)
   \code{\link{pospoisson}},
   \code{\link{zapoisson}},
   \code{\link[stats:Poisson]{rpois}}.
+
+
 }
 \examples{
-lambda = 2; y = rpospois(n=1000, lambda)
+lambda <- 2; y = rpospois(n = 1000, lambda)
 table(y)
 mean(y)  # Sample mean
 lambda / (1-exp(-lambda)) # Population mean
 
-(ii = dpospois(0:7, lambda))
+(ii <- dpospois(0:7, lambda))
 cumsum(ii) - ppospois(0:7, lambda)  # Should be 0s
 table(rpospois(100, lambda))
 
@@ -82,12 +96,12 @@ table(qpospois(runif(1000), lambda))
 round(dpospois(1:10, lambda) * 1000) # Should be similar
 
 \dontrun{
-x = 0:7
+x <- 0:7
 barplot(rbind(dpospois(x, lambda), dpois(x, lambda)),
-        beside = TRUE, col = c("blue","green"),
-        main=paste("Positive Poisson(", lambda, ") (blue) vs",
-        " Poisson(", lambda, ") (green)", sep=""),
-        names.arg = as.character(x), las=1, lwd=2) }
+        beside = TRUE, col = c("blue", "orange"),
+        main = paste("Positive Poisson(", lambda, ") (blue) vs",
+        " Poisson(", lambda, ") (orange)", sep = ""),
+        names.arg = as.character(x), las = 1, lwd = 2) }
 }
 \keyword{distribution}
 

@@ -129,7 +129,8 @@ quantile and expectile regression.
 \seealso{
   \code{\link{deexp}},
   \code{\link{denorm}},
-  \code{\link{dunif}}.
+  \code{\link{dunif}},
+  \code{\link{dkoenker}}.
 
 }
 

@@ -1,5 +1,7 @@
 \name{weibull}
 \alias{weibull}
+%\alias{weibullff}
+%\alias{weibull.lsh}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Weibull Distribution Family Function }
 \description{
@@ -10,7 +12,7 @@
 \usage{
 weibull(lshape = "loge", lscale = "loge", 
         eshape = list(), escale = list(),
-        ishape = NULL,   iscale = NULL, nrfs = 1, imethod=1, zero = 2)
+        ishape = NULL,   iscale = NULL, nrfs = 1, method.init = 1, zero = 2)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -40,7 +42,7 @@ weibull(lshape = "loge", lscale = "loge",
   positive-definite working weights.
 
   }
-  \item{imethod}{
+  \item{method.init}{
   Initialization method used if there are censored observations.
   Currently only the values 1 and 2 are allowed.
   }
@@ -48,7 +50,7 @@ weibull(lshape = "loge", lscale = "loge",
   An integer specifying which linear/additive predictor is to be modelled
   as an intercept only.  The value must be from the set \{1,2\},
   which correspond to the shape and scale parameters respectively.
-  Setting \code{zero=NULL} means none of them.
+  Setting \code{zero = NULL} means none of them.
 
   }
 }
@@ -80,7 +82,7 @@ weibull(lshape = "loge", lscale = "loge",
   (according to Kleiber and Kotz (2003)).
   If this is violated then a warning message is issued.
   One can enforce \eqn{a>2} by choosing \code{lshape = "logoff"}
-  and \code{eshape=list(offset=-2)}.
+  and \code{eshape = list(offset = -2)}.
 
 
 }

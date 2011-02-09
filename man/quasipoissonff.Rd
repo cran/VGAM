@@ -41,16 +41,20 @@ quasipoissonff(link = "loge", onedpar = FALSE,
 \details{
   \eqn{M} defined above is the number of linear/additive predictors.
 
+
   If the dispersion parameter is unknown, then the resulting estimate
   is not fully a maximum likelihood estimate.
+
 
   A dispersion parameter that is less/greater than unity corresponds to
   under-/over-dispersion relative to the Poisson model.  Over-dispersion
   is more common in practice.
 
+
   When fitting a Quadratic RR-VGLM, the response is a matrix of \eqn{M},
   say, columns (e.g., one column per species). Then there will be \eqn{M}
   dispersion parameters (one per column of the response matrix).
+
 
 }
 \value{
@@ -73,14 +77,17 @@ quasipoissonff(link = "loge", onedpar = FALSE,
 \note{
   This function will handle a matrix response automatically.
 
-  The call \code{poissonff(dispersion=0, ...)} is equivalent to
+
+  The call \code{poissonff(dispersion = 0, ...)} is equivalent to
   \code{quasipoissonff(...)}.  The latter was written so that R users
   of \code{quasipoisson()} would only need to add a  ``\code{ff}''
   to the end of the family function name.
 
+
   Regardless of whether the dispersion parameter is to be estimated or
   not, its value can be seen from the output from the \code{summary()}
   of the object.
+
 
 % With the introduction of name spaces for the \pkg{VGAM} package,
 % \code{"ff"} can be dropped for this family function.
@@ -89,6 +96,7 @@ quasipoissonff(link = "loge", onedpar = FALSE,
 
 \seealso{
     \code{\link{poissonff}},
+    \code{\link{negbinomial}},
     \code{\link{loge}},
     \code{\link{rrvglm}},
     \code{\link{cqo}},
@@ -96,6 +104,7 @@ quasipoissonff(link = "loge", onedpar = FALSE,
     \code{\link{binomialff}},
     \code{\link{quasibinomialff}},
     \code{\link[stats]{quasipoisson}}.
+
 }
 \examples{
 quasipoissonff()

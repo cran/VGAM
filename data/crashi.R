@@ -1,0 +1,21 @@
+crashi <-
+structure(list(Monday = c(16L, 13L, 5L, 6L, 7L, 12L, 37L, 66L, 
+117L, 67L, 67L, 80L, 75L, 77L, 84L, 112L, 115L, 127L, 63L, 47L, 
+25L, 34L, 24L, 28L), Tuesday = c(10L, 11L, 8L, 4L, 6L, 14L, 37L, 
+79L, 138L, 81L, 70L, 80L, 85L, 69L, 87L, 136L, 110L, 130L, 69L, 
+63L, 46L, 42L, 26L, 23L), Wednesday = c(22L, 15L, 16L, 8L, 11L, 
+14L, 32L, 92L, 132L, 68L, 62L, 50L, 86L, 84L, 98L, 134L, 138L, 
+140L, 91L, 53L, 62L, 49L, 35L, 20L), Thursday = c(12L, 23L, 13L, 
+12L, 16L, 18L, 45L, 75L, 138L, 75L, 76L, 80L, 87L, 90L, 85L, 
+156L, 144L, 149L, 97L, 57L, 55L, 53L, 52L, 49L), Friday = c(29L, 
+23L, 24L, 19L, 11L, 19L, 32L, 73L, 122L, 72L, 72L, 74L, 94L, 
+90L, 104L, 158L, 146L, 155L, 142L, 67L, 68L, 85L, 67L, 61L), 
+    Saturday = c(55L, 42L, 37L, 31L, 35L, 27L, 21L, 40L, 59L, 
+    59L, 84L, 114L, 101L, 105L, 103L, 120L, 106L, 104L, 83L, 
+    69L, 70L, 62L, 54L, 69L), Sunday = c(55L, 64L, 64L, 45L, 
+    35L, 35L, 36L, 33L, 36L, 45L, 57L, 86L, 93L, 80L, 96L, 103L, 
+    90L, 97L, 64L, 52L, 44L, 33L, 18L, 29L)), .Names = c("Monday", 
+"Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"
+), class = "data.frame", row.names = c("0", "1", "2", "3", "4", 
+"5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", 
+"16", "17", "18", "19", "20", "21", "22", "23"))

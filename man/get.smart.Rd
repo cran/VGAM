@@ -5,6 +5,7 @@
 Retrieve one component of the list \code{.smart.prediction} from
 \code{smartpredenv} (\R) or 
 frame 1 (S-PLUS).
+
 }
 \usage{
 get.smart()
@@ -17,6 +18,7 @@ frame 1 (S-PLUS),
 in fact, \code{.smart.prediction[[.smart.prediction.counter]]}.
 The whole procedure mimics a first-in first-out stack (better known
 as a \emph{queue}).
+
 }
 \section{Side Effects}{
 The variable \code{.smart.prediction.counter} in
@@ -27,6 +29,7 @@ is incremented beforehand, and then written back to
 \code{smartpredenv} (\R)
 or
 frame 1 (S-PLUS).
+
 }
 \details{
   \code{get.smart} is used in \code{"read"} mode within a smart function:
@@ -39,19 +42,21 @@ frame 1 (S-PLUS).
   The function
   \code{\link{get.smart}} gets only a part of \code{.smart.prediction} whereas
   \code{\link{get.smart.prediction}} gets the entire \code{.smart.prediction}.
+
+
 }
 \seealso{
-\code{\link{get.smart.prediction}}.
+  \code{\link{get.smart.prediction}}.
 }
 \examples{
-"my1" <- function(x, minx=min(x)) { # Here is a smart function
+"my1" <- function(x, minx = min(x)) { # Here is a smart function
     x <- x  # Needed for nested calls, e.g., bs(scale(x))
     if(smart.mode.is("read")) {
         smart  <- get.smart()
         minx <- smart$minx          # Overwrite its value
     } else
     if(smart.mode.is("write"))
-        put.smart(list(minx=minx))
+        put.smart(list(minx = minx))
     sqrt(x-minx)
 }
 attr(my1, "smart") <- TRUE 

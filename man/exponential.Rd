@@ -40,16 +40,22 @@ exponential(link = "loge", earg = list(), location = 0, expected = TRUE)
   By default, \eqn{A=0}.
   Then \eqn{E(Y) = A + 1/ \lambda}{E(Y) = A + 1/rate} and
   \eqn{Var(Y) = 1/ \lambda^2}{Var(Y) = 1/rate^2}.
+
+
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}},
   and \code{\link{vgam}}.
+
+
 }
 \references{
 Evans, M., Hastings, N. and Peacock, B. (2000)
 \emph{Statistical Distributions},
 New York: Wiley-Interscience, Third edition.
+
+
 }
 
 \author{ T. W. Yee }
@@ -64,11 +70,13 @@ New York: Wiley-Interscience, Third edition.
   The argument \code{lambda} in \code{\link{rpois}} is somewhat
   the same as \code{rate} here.
 
+
 }
 \seealso{
 %   \code{\link{cexpon}},
     \code{\link{amlexponential}},
     \code{\link{laplace}},
+    \code{\link{expgeometric}},
     \code{\link{poissonff}},
     \code{\link{mix2exp}},
     \code{\link{freund61}}.
@@ -76,15 +84,17 @@ New York: Wiley-Interscience, Third edition.
 }
 
 \examples{
-edata = data.frame(x2 = runif(nn <- 100) - 0.5)
-edata = transform(edata, x3 = runif(nn) - 0.5)
-edata = transform(edata, eta = 0.2 - 0.7 * x2 + 1.9 * x3)
-edata = transform(edata, rate = exp(eta))
-edata = transform(edata, y = rexp(nn, rate=rate))
+edata <- data.frame(x2 = runif(nn <- 100) - 0.5)
+edata <- transform(edata, x3 = runif(nn) - 0.5)
+edata <- transform(edata, eta = 0.2 - 0.7 * x2 + 1.9 * x3)
+edata <- transform(edata, rate = exp(eta))
+edata <- transform(edata, y = rexp(nn, rate = rate))
 with(edata, stem(y))
-fit.slow = vglm(y ~ x2 + x3, exponential, edata, trace=TRUE, crit="c")
-fit.fast = vglm(y ~ x2 + x3, exponential(exp=FALSE), edata, trace=TRUE, crit="c")
-coef(fit.slow, mat=TRUE)
+
+fit.slow <- vglm(y ~ x2 + x3, exponential, edata, trace = TRUE, crit = "c")
+fit.fast <- vglm(y ~ x2 + x3, exponential(exp = FALSE), edata,
+                 trace = TRUE, crit = "c")
+coef(fit.slow, mat = TRUE)
 summary(fit.slow)
 }
 \keyword{models}

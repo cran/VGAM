@@ -1,5 +1,6 @@
 # These functions are
-# Copyright (C) 1998-2010 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2011 T.W. Yee, University of Auckland.
+# All rights reserved.
 
 
 
@@ -51,18 +52,29 @@ cao.fit <- function(x, y, w=rep(1, length(x[, 1])),
               "gamma2"=5, "gaussianff"=8,
               0)  # stop("cannot fit this model using fast algorithm")
     if (!modelno) stop("the family function does not work with cao()")
-    if (modelno == 1) modelno = get("modelno", envir = VGAMenv)
+    if (modelno == 1) modelno = get("modelno", envir = VGAM:::VGAMenv)
 
     eval(rrr.init.expression)
 
     if (length(etastart)) {
         eta <- etastart
-        mu <- if (length(mustart)) mustart else family@inverse(eta, extra)
-    } else {
-        if (length(mustart))
-            mu <- mustart
-        eta <- family@link(mu, extra)
+        mu <- if (length(mustart)) mustart else
+              if (length(body(slot(family, "inverse"))))
+                slot(family, "inverse")(eta, extra) else
+                warning("argument 'etastart' assigned a value ",
+                        "but there is no 'inverse' slot to use it")
     }
+
+    if (length(mustart)) {
+        mu <- mustart
+        if (length(body(slot(family, "link")))) {
+          eta <- slot(family, "link")(mu, extra)
+        } else {
+          warning("argument 'mustart' assigned a value ",
+                  "but there is no 'link' slot to use it")
+        }
+    }
+
 
     M <- if (is.matrix(eta)) ncol(eta) else 1
 
@@ -510,7 +522,7 @@ callcaoc = function(cmatrix,
     nstar = if (Nice21) ifelse(modelno %in% c(3, 5), n * 2, n) else n * M
     lenbeta = pstar. * ifelse(Nice21, NOS, 1) # Holds the linear coeffs
 
-    inited = if (exists(".VGAM.CAO.etamat", envir=VGAMenv)) 1 else 0
+    inited = if (exists(".VGAM.CAO.etamat", envir=VGAM:::VGAMenv)) 1 else 0
     usethiseta = if (inited == 1)
         getfromVGAMenv("etamat", prefix = ".VGAM.CAO.") else t(etamat)
 
@@ -630,7 +642,7 @@ flush.console()
 
     if (ans1$errcode == 0) {
         assign2VGAMenv(c("etamat", "beta"), ans1, prefix=".VGAM.CAO.")
-        assign(".VGAM.CAO.cmatrix", matrix(cmatrix,p2,Rank), envir=VGAMenv)
+        assign(".VGAM.CAO.cmatrix", matrix(cmatrix,p2,Rank), envir=VGAM:::VGAMenv)
     } else {
         cat("warning in callcaoc: error code =", ans1$errcode, "\n")
         cat("warning in callcaoc: npetc[14] =", ans1$npetc[14], "\n")
@@ -747,12 +759,12 @@ calldcaoc = function(cmatrix,
     lenbeta = pstar. * ifelse(Nice21, NOS, 1)
 
     if (TRUE) {
-        inited = if (exists(".VGAM.CAO.etamat", envir = VGAMenv)) 1 else 0
+        inited = if (exists(".VGAM.CAO.etamat", envir = VGAM:::VGAMenv)) 1 else 0
         usethiseta = if (inited == 1) get(".VGAM.CAO.etamat",
-            envir = VGAMenv) else t(etamat)
+            envir = VGAM:::VGAMenv) else t(etamat)
     }
     usethisbeta = if (inited == 2) get(".VGAM.CAO.beta",
-        envir = VGAMenv) else double(lenbeta)
+        envir = VGAM:::VGAMenv) else double(lenbeta)
 
 
 
@@ -897,9 +909,9 @@ warning("20100405; this is new:")
     kindex = as.integer(smooth.frame$kindex))
         flush.console()
 
-         assign(".VGAM.CAO.etamat", ans1$etamat, envir = VGAMenv)
-         assign(".VGAM.CAO.z", ans1$zedd, envir=VGAMenv) # z; minus any offset
-         assign(".VGAM.CAO.U", ans1$U, envir=VGAMenv)  # U
+         assign(".VGAM.CAO.etamat", ans1$etamat, envir = VGAM:::VGAMenv)
+         assign(".VGAM.CAO.z", ans1$zedd, envir=VGAM:::VGAMenv) # z; minus any offset
+         assign(".VGAM.CAO.U", ans1$U, envir=VGAM:::VGAMenv)  # U
        if (ans1$errcode == 0) {
        } else {
            cat("warning in calldcaoc: error code =", ans1$errcode, "\n")

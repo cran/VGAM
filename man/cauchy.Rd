@@ -69,6 +69,7 @@ cauchy1(scale.arg=1, llocation="identity",
   Fisher scoring is the default but if \code{nsimEIM} is specified then
   Fisher scoring with simulation is used.
 
+
   If the scale parameter is known (\code{cauchy1}) then there
   may be multiple local maximum likelihood solutions for the location
   parameter. However, if both location and scale parameters are to
@@ -76,11 +77,13 @@ cauchy1(scale.arg=1, llocation="identity",
   likelihood solution provided \eqn{n > 2} and less than half the data
   are located at any one point.
 
+
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}},
   and \code{\link{vgam}}.
+
 
 }
 \section{Warning }{
@@ -97,22 +100,26 @@ Evans, M., Hastings, N. and Peacock, B. (2000)
 \emph{Statistical Distributions},
 New York: Wiley-Interscience, Third edition.
 
+
 Barnett, V. D. (1966)
 Evaluation of the maximum-likehood estimator where the
 likelihood equation has multiple roots.
 \emph{Biometrika},
 \bold{53}, 151--165.
 
+
 Copas, J. B. (1975)
 On the unimodality of the likelihood for the Cauchy distribution.
 \emph{Biometrika},
 \bold{62}, 701--704.
+
 
 Efron, B. and Hinkley, D. V. (1978)
 Assessing the accuracy of the maximum likelihood estimator:
 Observed versus expected Fisher information.
 \emph{Biometrika},
 \bold{65}, 457--481.
+
 
 }
 \author{ T. W. Yee }
@@ -124,31 +131,32 @@ Observed versus expected Fisher information.
   of initial values via the \code{ilocation} and/or \code{iscale}
   and/or \code{method.init} arguments.
 
+
 }
 
 \seealso{ 
   \code{\link[stats:Cauchy]{Cauchy}},
-  \code{\link{cauchit}}.
+  \code{\link{cauchit}},
+  \code{\link{studentt}}.
 
 }
 \examples{
 # Both location and scale parameters unknown
-nn <- 1000
-cdata1 = data.frame(x = runif(nn))
-cdata1 = transform(cdata1, loc=exp(1+0.5*x), scale=exp(1))
-cdata1 = transform(cdata1, y = rcauchy(nn, loc, scale))
-fit = vglm(y ~ x, cauchy(lloc="loge"), cdata1, trace=TRUE)
-coef(fit, matrix=TRUE)
+cdata1 <- data.frame(x = runif(nn <- 1000))
+cdata1 <- transform(cdata1, loc = exp(1+0.5*x), scale = exp(1))
+cdata1 <- transform(cdata1, y = rcauchy(nn, loc, scale))
+fit <- vglm(y ~ x, cauchy(lloc="loge"), cdata1, trace = TRUE)
+coef(fit, matrix = TRUE)
 head(fitted(fit))  # Location estimates
 summary(fit)
 
 # Location parameter unknown
 set.seed(123)
-cdata2 = data.frame(x = runif(nn <- 500))
-cdata2 = transform(cdata2, loc=1+0.5*x, scale=0.4)
-cdata2 = transform(cdata2, y = rcauchy(nn, loc, scale))
-fit = vglm(y ~ x, cauchy1(scale=0.4), cdata2, trace=TRUE, crit="c")
-coef(fit, matrix=TRUE)
+cdata2 <- data.frame(x = runif(nn <- 500))
+cdata2 <- transform(cdata2, loc = 1+0.5*x, scale = 0.4)
+cdata2 <- transform(cdata2, y = rcauchy(nn, loc, scale))
+fit <- vglm(y ~ x, cauchy1(scale = 0.4), cdata2, trace = TRUE, crit = "c")
+coef(fit, matrix = TRUE)
 }
 \keyword{models}
 \keyword{regression}

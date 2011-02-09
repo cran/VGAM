@@ -8,9 +8,9 @@
 
 }
 \usage{
-posnegbinomial(lmunb = "loge", lk = "loge", emunb =list(), ek = list(),
-               ik = NULL, zero = -2, cutoff = 0.995, shrinkage.init=0.95,
-               method.init=1)
+posnegbinomial(lmunb = "loge", lk = "loge", emunb = list(), ek = list(),
+               ik = NULL, zero = -2, cutoff = 0.995, shrinkage.init = 0.95,
+               method.init = 1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -48,9 +48,10 @@ posnegbinomial(lmunb = "loge", lk = "loge", emunb =list(), ek = list(),
   modelled as an intercept only. By default, the \code{k} parameter
   (after \code{lk} is applied) is modelled as a single unknown
   number that is estimated.  It can be modelled as a function of
-  the explanatory variables by setting \code{zero=NULL}.  A negative
+  the explanatory variables by setting \code{zero = NULL}.  A negative
   value means that the value is recycled, so setting \eqn{-2} means
   all \code{k} are intercept only.
+  See \code{\link{CommonVGAMffArguments}} for more information.
 
   }
   \item{cutoff}{ 
@@ -71,6 +72,7 @@ posnegbinomial(lmunb = "loge", lk = "loge", emunb =list(), ek = list(),
   binomial distribution but with the probability of a zero response
   being zero. The other probabilities are scaled to sum to unity.
 
+
   This family function is based on \code{\link{negbinomial}} and most
   details can be found there. To avoid confusion, the parameter
   \code{munb} here corresponds to the mean of an ordinary negative
@@ -81,14 +83,17 @@ posnegbinomial(lmunb = "loge", lk = "loge", emunb =list(), ek = list(),
   where \eqn{p(0) = (k/(k + \mu_{nb}))^k}{p(0) = (k/(k + munb))^k} is the
   probability an ordinary negative binomial distribution has a zero value.
 
+
   The parameters \code{munb} and \code{k} are not independent in the
   positive negative binomial distribution, whereas they are in the
   ordinary negative binomial distribution.
 
+
   This function handles \emph{multivariate} responses, so that a matrix
   can be used as the response. The number of columns is the number
-  of species, say, and setting \code{zero=-2} means that \emph{all}
+  of species, say, and setting \code{zero = -2} means that \emph{all}
   species have a \code{k} equalling a (different) intercept only.
+
 
 }
 \section{Warning}{
@@ -111,11 +116,13 @@ Generalized additive modelling and zero inflated count data.
 \bold{157},
 179--188.
 
+
 Williamson, E. and Bretherton, M. H. (1964)
 Tables of the logarithmic series distribution.
 \emph{Annals of Mathematical Statistics},
 \bold{35},
 284--297.
+
 
 }
 \author{ Thomas W. Yee }
@@ -130,24 +137,26 @@ Tables of the logarithmic series distribution.
   \code{\link{negbinomial}},
   \code{\link{zanegbinomial}},
 % \code{\link[MASS]{rnegbin}}.
-  \code{\link[stats:NegBinomial]{rnbinom}}.
+  \code{\link[stats:NegBinomial]{rnbinom}},
+  \code{\link{CommonVGAMffArguments}}.
+
 }
 
 \examples{
-pndat = data.frame(x = runif(nn <- 2000))
-pndat = transform(pndat, y1 = rposnegbin(nn, munb=exp(0+2*x), size=exp(1)),
-                         y2 = rposnegbin(nn, munb=exp(1+2*x), size=exp(3)))
-fit = vglm(cbind(y1,y2) ~ x, posnegbinomial, pndat, trace=TRUE)
-coef(fit, matrix=TRUE)
+pndat <- data.frame(x = runif(nn <- 2000))
+pndat <- transform(pndat, y1 = rposnegbin(nn, munb = exp(0+2*x), size = exp(1)),
+                          y2 = rposnegbin(nn, munb = exp(1+2*x), size = exp(3)))
+fit <- vglm(cbind(y1, y2) ~ x, posnegbinomial, pndat, trace = TRUE)
+coef(fit, matrix = TRUE)
 dim(fit@y)
 
 
 # Another artificial data example
-pndat2 = data.frame(munb = exp(2), size = exp(3)); nn = 1000
-pndat2 = transform(pndat2, y = rposnegbin(nn, munb=munb, size=size))
+pndat2 <- data.frame(munb = exp(2), size = exp(3)); nn <- 1000
+pndat2 <- transform(pndat2, y = rposnegbin(nn, munb = munb, size = size))
 with(pndat2, table(y))
-fit = vglm(y ~ 1, posnegbinomial, pndat2, trace=TRUE)
-coef(fit, matrix=TRUE)
+fit <- vglm(y ~ 1, posnegbinomial, pndat2, trace = TRUE)
+coef(fit, matrix = TRUE)
 with(pndat2, mean(y))    # Sample mean
 head(with(pndat2, munb/(1-(size/(size+munb))^size)), 1) # Population mean
 head(fitted(fit), 3)
@@ -155,15 +164,15 @@ head(predict(fit), 3)
 
 
 # Example: Corbet (1943) butterfly Malaya data
-corbet = data.frame(nindiv = 1:24,
-                    ofreq = c(118, 74, 44, 24, 29, 22, 20, 19, 20, 15, 12,
-                              14, 6, 12, 6, 9, 9, 6, 10, 10, 11, 5, 3, 3))
-fit = vglm(nindiv ~ 1, posnegbinomial, weights=ofreq, data=corbet)
-coef(fit, matrix=TRUE)
+corbet <- data.frame(nindiv = 1:24,
+                     ofreq = c(118, 74, 44, 24, 29, 22, 20, 19, 20, 15, 12,
+                               14, 6, 12, 6, 9, 9, 6, 10, 10, 11, 5, 3, 3))
+fit <- vglm(nindiv ~ 1, posnegbinomial, weights = ofreq, data = corbet)
+coef(fit, matrix = TRUE)
 Coef(fit)
-(khat = Coef(fit)['k'])
-pdf2 = dposnegbin(x=with(corbet, nindiv), mu=fitted(fit), size=khat)
-print( with(corbet, cbind(nindiv, ofreq, fitted=pdf2*sum(ofreq))), dig=1)
+(khat <- Coef(fit)["k"])
+pdf2 <- dposnegbin(x = with(corbet, nindiv), mu = fitted(fit), size = khat)
+print( with(corbet, cbind(nindiv, ofreq, fitted = pdf2*sum(ofreq))), dig = 1)
 }
 \keyword{models}
 \keyword{regression}

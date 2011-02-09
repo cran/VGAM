@@ -146,7 +146,7 @@ Log-Laplace distributions.
 \emph{International Mathematical Journal},
 \bold{3}, 467--495.
 
-  Yee, T. W. (2009)
+  Yee, T. W. (2011)
   Quantile regression for counts and proportions.
   In preparation.
 

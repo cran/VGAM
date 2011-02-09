@@ -68,12 +68,13 @@ parameter.
 \examples{
 # Number of albinotic children in families with 5 kids (from Patil, 1962)
 akids = data.frame(y = c(rep(1,25), rep(2,23), rep(3,10), 4,5), n=rep(5,60))
-akids = transform(akids, yprop = y / 5)
-fit1 = vglm(yprop~1, posbinomial, akids, trace=TRUE, weights=n)
-fit2 = vglm(cbind(y,n-y)~1, posbinomial, akids, trace=TRUE) # Same model
+fit1 = vglm(cbind(y, n-y) ~ 1, posbinomial, akids, trace = TRUE)
 summary(fit1)
-Coef(fit2)   # = MLE of p = 0.3088
-head(fitted(fit2))
+Coef(fit1)   # = MLE of p = 0.3088
+head(fitted(fit1))
 }
 \keyword{models}
 \keyword{regression}
+
+% akids = transform(akids, yprop = y / 5)
+

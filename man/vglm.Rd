@@ -4,7 +4,7 @@
 \title{Fitting Vector Generalized Linear Models }
 \description{
   \code{vglm} is used to fit vector generalized linear models (VGLMs).
-  This is a large class of models that includes
+  This is a very large class of models that includes
   generalized linear models (GLMs) as a special case.
 
 }
@@ -128,15 +128,27 @@ vglm(formula, family, data = list(), weights = NULL, subset = NULL,
   }
   \item{constraints}{
   an optional list  of constraint matrices.
-  The components of the list must be named with the term it corresponds
-  to (and it must match in character format exactly). 
-  Each constraint matrix must have \eqn{M} rows, and be of full-column
-  rank. By default, constraint matrices are the \eqn{M} by \eqn{M}
-  identity
+  The components of the list must be named with the term it corresponds to
+  (and it must match in character format exactly).
+  There are two types of input: \code{"lm"}-type and \code{"vlm"}-type.
+  The former is a subset of the latter.
+  The former has a matrix for each term of the LM matrix.
+  The latter has a matrix for each column of the VLM matrix.
+  After fitting, the \code{\link{constraints}} extractor function may be applied;
+  it returns
+  the \code{"vlm"}-type list of constraint matrices by default.
+  If \code{"lm"}-type are returned by \code{\link{constraints}} then
+  these can be fed into this argument and it should give the
+  same model as before.
+
+
+  Each constraint matrix must have \eqn{M} rows, and be of full-column rank.
+  By default, constraint matrices are the \eqn{M} by \eqn{M} identity
   matrix unless arguments in the family function itself override
-  these values. 
+  these values, e.g., \code{parallel} (see  \code{\link{CommonVGAMffArguments}}).
   If \code{constraints} is used it must contain \emph{all} the
   terms; an incomplete list is not accepted.
+
 
   }
   \item{extra}{
@@ -364,8 +376,8 @@ vglm(cbind(normal, mild, severe) ~ let, multinomial, pneumo)
 
 
 # Example 3. Proportional odds model
-fit3 = vglm(cbind(normal,mild,severe) ~ let, propodds, pneumo, trace=TRUE)
-coef(fit3, matrix=TRUE) 
+fit3 = vglm(cbind(normal,mild,severe) ~ let, propodds, pneumo, trace = TRUE)
+coef(fit3, matrix = TRUE) 
 constraints(fit3)
 model.matrix(fit3, type="lm") # LM model matrix
 model.matrix(fit3)            # Larger VGLM (or VLM) model matrix
@@ -373,7 +385,7 @@ model.matrix(fit3)            # Larger VGLM (or VLM) model matrix
 
 # Example 4. Bivariate logistic model 
 fit4 = vglm(cbind(nBnW, nBW, BnW, BW) ~ age, binom2.or, coalminers)
-coef(fit4, matrix=TRUE)
+coef(fit4, matrix = TRUE)
 fit4@y  # Response are proportions
 weights(fit4, type="prior")
 
@@ -387,16 +399,16 @@ eyesdat = round(data.frame(lop = runif(nn),
 eyesdat = transform(eyesdat, eta1 = -1+2*lop,
                              eta2 = -1+2*lop)
 eyesdat = transform(eyesdat,
-                    leye = rbinom(nn, size=1, prob=logit(eta1, inv=TRUE)),
-                    reye = rbinom(nn, size=1, prob=logit(eta2, inv=TRUE)))
+                    leye = rbinom(nn, size=1, prob=logit(eta1, inv = TRUE)),
+                    reye = rbinom(nn, size=1, prob=logit(eta2, inv = TRUE)))
 head(eyesdat)
 fit5 = vglm(cbind(leye,reye) ~ op,
-            binom2.or(exchangeable=TRUE, zero=3),
-            data=eyesdat, trace=TRUE,
+            binom2.or(exchangeable = TRUE, zero=3),
+            data=eyesdat, trace = TRUE,
             xij = list(op ~ lop + rop + fill(lop)),
             form2 = ~  op + lop + rop + fill(lop))
 coef(fit5)
-coef(fit5, matrix=TRUE)
+coef(fit5, matrix = TRUE)
 constraints(fit5)
 } 
 \keyword{models}
@@ -404,7 +416,7 @@ constraints(fit5)
 
 %eyesdat$leye = ifelse(runif(n) < 1/(1+exp(-1+2*eyesdat$lop)), 1, 0)
 %eyesdat$reye = ifelse(runif(n) < 1/(1+exp(-1+2*eyesdat$rop)), 1, 0)
-%coef(fit, matrix=TRUE, compress=FALSE)
+%coef(fit, matrix = TRUE, compress = FALSE)
 
 
 
@@ -417,20 +429,20 @@ constraints(fit5)
 %POLY3 = function(x, ...) {
 %    # A cubic; ensures that the basis functions are the same.
 %    poly(c(x,...), 3)[1:length(x),]
-%    head(poly(c(x,...), 3), length(x), drop=FALSE)
+%    head(poly(c(x,...), 3), length(x), drop = FALSE)
 %}
 %
-%fit6 = vglm(cbind(leye,reye) ~ POLY3(op), trace=TRUE,
-%            fam = binom2.or(exchangeable=TRUE, zero=3),  data=eyesdat,
+%fit6 = vglm(cbind(leye,reye) ~ POLY3(op), trace = TRUE,
+%            fam = binom2.or(exchangeable = TRUE, zero=3),  data=eyesdat,
 %            xij = list(POLY3(op) ~ POLY3(lop,rop) + POLY3(rop,lop) +
 %                                   fill(POLY3(lop,rop))),
 %            form2 = ~  POLY3(op) + POLY3(lop,rop) + POLY3(rop,lop) +
 %                       fill(POLY3(lop,rop)))
 %coef(fit6)
-%coef(fit6, matrix=TRUE)
+%coef(fit6, matrix = TRUE)
 %head(predict(fit6))
 %\dontrun{
-%plotvgam(fit6, se=TRUE) # Wrong since it plots against op, not lop.
+%plotvgam(fit6, se = TRUE) # Wrong since it plots against op, not lop.
 %}
 %
 %
@@ -442,7 +454,7 @@ constraints(fit5)
 %                   X2=runif(n), Z2=runif(n))
 %mydat = round(mydat, dig=2)
 %fit7 = vglm(ymat ~ X2 + Z2, data=mydat, crit="c",
-%           fam = dirichlet(parallel=TRUE), # Intercept is also parallel.
+%           fam = dirichlet(parallel = TRUE), # Intercept is also parallel.
 %           xij = list(Z2 ~ z1 + z2 + z3 + z4,
 %                      X2 ~ x1 + x2 + x3 + x4),
 %           form2 =  ~ Z2 + z1 + z2 + z3 + z4 +
@@ -450,7 +462,7 @@ constraints(fit5)
 %head(model.matrix(fit7, type="lm"))   # LM model matrix
 %head(model.matrix(fit7, type="vlm"))  # Big VLM model matrix
 %coef(fit7)
-%coef(fit7, matrix=TRUE)
+%coef(fit7, matrix = TRUE)
 %max(abs(predict(fit7)-predict(fit7, new=mydat))) # Predicts correctly
 %summary(fit7)
 

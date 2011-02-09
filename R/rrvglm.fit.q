@@ -1,5 +1,6 @@
 # These functions are
-# Copyright (C) 1998-2010 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2011 T.W. Yee, University of Auckland.
+# All rights reserved.
 
 
 
@@ -201,15 +202,26 @@ rrvglm.fit <- function(x, y, w=rep(1, length(x[, 1])),
 
     eval(rrr.init.expression)  
 
+
     if (length(etastart)) {
         eta <- etastart
         mu <- if (length(mustart)) mustart else
-              slot(family, "inverse")(eta, extra)
-    } else {
-        if (length(mustart))
-            mu <- mustart
-        eta <- slot(family, "link")(mu, extra)
+              if (length(body(slot(family, "inverse"))))
+                slot(family, "inverse")(eta, extra) else
+                warning("argument 'etastart' assigned a value ",
+                        "but there is no 'inverse' slot to use it")
     }
+
+    if (length(mustart)) {
+        mu <- mustart
+        if (length(body(slot(family, "link")))) {
+          eta <- slot(family, "link")(mu, extra)
+        } else {
+          warning("argument 'mustart' assigned a value ",
+                  "but there is no 'link' slot to use it")
+        }
+    }
+
 
     M <- if (is.matrix(eta)) ncol(eta) else 1
 
@@ -294,8 +306,8 @@ rrvglm.fit <- function(x, y, w=rep(1, length(x[, 1])),
 
     if (control$Corner)
         Amat[control$Index.corner,] = diag(Rank)
-    if (length(control$Structural.zero))
-        Amat[control$Structural.zero,] = 0
+    if (length(control$szero))
+        Amat[control$szero,] = 0
 
     rrcontrol$Ainit = control$Ainit = Amat   # Good for valt()
     rrcontrol$Cinit = control$Cinit = Cmat   # Good for valt()
@@ -507,7 +519,14 @@ rrvglm.fit <- function(x, y, w=rep(1, length(x[, 1])),
 
 
 
-    df.residual <- nrow_X_vlm - rank - (if(control$Quadratic) Rank*p2 else 0)
+
+    elts.tildeA = (M - Rank - length(control$szero)) * Rank
+    no.dpar = 0
+    df.residual <- nrow_X_vlm - rank -
+                   (if(control$Quadratic) Rank*p2 else 0) -
+                   no.dpar - elts.tildeA
+
+
     fit <- list(assign=asgn,
                 coefficients=coefs,
                 constraints = if (control$Quadratic) B.list else Blist,

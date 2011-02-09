@@ -88,9 +88,10 @@ binom2.or(lmu = "logit", lmu1 = lmu, lmu2 = lmu, loratio = "loge",
   is unity, or equivalently, the log odds ratio is zero.  Fisher scoring
   is implemented.
 
+
   The default models \eqn{\eta_3}{eta3} as a single parameter only,
   i.e., an intercept-only model, but this can be circumvented by setting
-  \code{zero=NULL} in order to model the odds ratio as a function of all the
+  \code{zero = NULL} in order to model the odds ratio as a function of all the
   explanatory variables.
   The function \code{binom2.or} can handle other probability link
   functions such as \code{\link{probit}},
@@ -101,8 +102,10 @@ binom2.or(lmu = "logit", lmu1 = lmu, lmu2 = lmu, loratio = "loge",
   bivariate normal distribution, but the bivariate probit model is less
   interpretable and flexible.
 
+
   The \code{exchangeable} argument should be used when the error structure
   is exchangeable, e.g., with eyes or ears data.
+
 
 }
 \value{
@@ -110,35 +113,42 @@ binom2.or(lmu = "logit", lmu1 = lmu, lmu2 = lmu, loratio = "loge",
   The object is used by modelling functions such as \code{\link{vglm}}
   and \code{\link{vgam}}.
 
+
   When fitted, the \code{fitted.values} slot of the object contains the
   four joint probabilities, labelled as \eqn{(Y_1,Y_2)}{(Y1,Y2)} = (0,0),
   (0,1), (1,0), (1,1), respectively.
   These estimated probabilities should be extracted with the \code{fitted}
   generic function.
 
+
 } 
 \references{
   McCullagh, P. and Nelder, J. A. (1989)
   \emph{Generalized Linear Models}, 2nd ed. London: Chapman & Hall.
+
 
   le Cessie, S. and van Houwelingen, J. C. (1994)
   Logistic regression for correlated binary data.
   \emph{Applied Statistics},
   \bold{43}, 95--108.
 
+
   Palmgren, J. (1989)
   \emph{Regression Models for Bivariate Binary Responses}. 
   Technical Report no. 101, Department of Biostatistics, 
   University of Washington, Seattle.
+
 
   Yee, T. W. and Dirnbock, T. (2009)
   Models for analysing species' presence/absence data
   at two time points.
   Journal of Theoretical Biology, \bold{259}. In press.
 
+
   Documentation accompanying the \pkg{VGAM} package at
   \url{http://www.stat.auckland.ac.nz/~yee}
   contains further information and examples.
+
 
 }
 \author{ Thomas W. Yee }
@@ -146,15 +156,17 @@ binom2.or(lmu = "logit", lmu1 = lmu, lmu2 = lmu, loratio = "loge",
   The response should be either a 4-column matrix of counts
   (whose columns correspond to \eqn{(Y_1,Y_2)}{(Y1,Y2)} = (0,0), (0,1), (1,0),
   (1,1) respectively), or a two-column matrix where each column has two
-  distinct values.
+  distinct values, or a factor with four levels.
   The function \code{\link{rbinom2.or}} may be used to generate such data.
   Successful convergence requires at least one case of each of the four
   possible outcomes.
+
 
   By default, a constant odds ratio is fitted because \code{zero=3}.
   Set \code{zero=NULL} if you want the odds ratio to be modelled as a
   function of the explanatory variables; however, numerical problems
   are more likely to occur.
+
 
   The argument \code{lmu}, which is actually redundant, is used for
   convenience and for upward compatibility: specifying \code{lmu} only
@@ -164,6 +176,7 @@ binom2.or(lmu = "logit", lmu1 = lmu, lmu2 = lmu, loratio = "loge",
   and the argument \code{lmu} is then ignored.  It doesn't make sense
   to specify \code{exchangeable=TRUE} and have different link functions
   for the two marginal probabilities.
+
 
   Regarding Yee and Dirnbock (2009),
   the \code{xij} (see \code{\link{vglm.control}}) argument enables
@@ -183,6 +196,7 @@ binom2.or(lmu = "logit", lmu1 = lmu, lmu2 = lmu, loratio = "loge",
   \code{\link{probit}},
   \code{\link{cloglog}},
   \code{\link{cauchit}}.
+
 }
 \examples{
 # Fit the model in Table 6.7 in McCullagh and Nelder (1989)

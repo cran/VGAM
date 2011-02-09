@@ -11,7 +11,7 @@ negbinomial(lmu = "loge", lk = "loge", emu = list(), ek = list(),
             imu = NULL, ik = NULL, quantile.probs = 0.75,
             nsimEIM = 100, cutoff = 0.995,
             Maxiter = 5000, deviance.arg = FALSE, method.init = 1,
-            shrinkage.init = 0.95, zero = -2)
+            parallel = FALSE, shrinkage.init = 0.95, zero = -2)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -19,7 +19,10 @@ negbinomial(lmu = "loge", lk = "loge", emu = list(), ek = list(),
   Link functions applied to the \eqn{\mu}{mu} and \eqn{k} parameters.
   See \code{\link{Links}} for more choices.
   Note that the \eqn{k} parameter is the \code{size} argument of 
-  \code{\link[stats:NegBinomial]{rnbinom}} etc.
+  \code{\link[stats:NegBinomial]{rnbinom}}.
+  Common alternatives for \code{lk} are
+  \code{\link{nloge}} and
+  \code{\link{reciprocal}}.
 
   }
   \item{emu, ek}{
@@ -91,6 +94,16 @@ negbinomial(lmu = "loge", lk = "loge", emu = list(), ek = list(),
   and/or else specify a value for \code{ik}.
 
   }
+  \item{parallel}{
+  See \code{\link{CommonVGAMffArguments}} for more information.
+  Setting \code{parallel = TRUE} is useful in order to get
+  something similar to \code{\link{quasipoissonff}} or
+  what is known as NB-1.
+  The parallelism constraint does not apply to any intercept term.
+  You should set \code{zero = NULL} too if \code{parallel = TRUE} to
+  avoid a conflict.
+
+  }
   \item{shrinkage.init}{
   How much shrinkage is used when initializing \eqn{\mu}{mu}.
   The value must be between 0 and 1 inclusive, and
@@ -109,6 +122,7 @@ negbinomial(lmu = "loge", lk = "loge", emu = list(), ek = list(),
   explanatory variables by setting \code{zero=NULL}. A negative value
   means that the value is recycled, so setting \eqn{-2} means all \eqn{k}
   are intercept-only.
+  See \code{\link{CommonVGAMffArguments}} for more information.
 
   }
 
@@ -129,23 +143,28 @@ negbinomial(lmu = "loge", lk = "loge", emu = list(), ek = list(),
     [mu/(mu+k)]^y [k/(k+mu)]^k}
   where \eqn{y=0,1,2,\ldots},
   and \eqn{\mu > 0}{mu > 0} and \eqn{k > 0}.
-  Note that the dispersion parameter is 
+  Note that the \emph{dispersion} parameter is 
   \eqn{1/k}, so that as \eqn{k} approaches infinity the negative
   binomial distribution approaches a Poisson distribution.
   The response has variance \eqn{Var(Y)=\mu+\mu^2/k}{Var(Y)=mu*(1+mu/k)}.
   When fitted, the \code{fitted.values} slot of the object contains
   the estimated value of the \eqn{\mu}{mu} parameter, i.e., of the mean
   \eqn{E(Y)}.
+  It is common for some to use \eqn{\alpha=1/k}{alpha=1/k} as the
+  ancillary or heterogeneity parameter;
+  so common alternatives for \code{lk} are
+  \code{\link{nloge}} and
+  \code{\link{reciprocal}}.
 
 
-  The negative binomial distribution can be coerced into the classical
-  GLM framework, with one of the parameters being of interest and the
-  other treated as a nuisance/scale parameter (and implemented in the
-  MASS library). This \pkg{VGAM} family function \code{negbinomial} treats
-  both parameters on the same footing, and estimates them both by full
-  maximum likelihood estimation.
-  Simulated Fisher scoring is employed as the default
-  (see the \code{nsimEIM} argument).
+  The negative binomial distribution can be coerced into the
+  classical GLM framework with one of the parameters being of
+  interest and the other treated as a nuisance/scale parameter
+  (this is implemented in the MASS library). This \pkg{VGAM}
+  family function \code{negbinomial} treats both parameters
+  on the same footing, and estimates them both by full maximum
+  likelihood estimation.  Simulated Fisher scoring is employed
+  as the default (see the \code{nsimEIM} argument).
 
 
   The parameters \eqn{\mu}{mu} and \eqn{k} are independent (diagonal EIM),
@@ -163,14 +182,16 @@ negbinomial(lmu = "loge", lk = "loge", emu = list(), ek = list(),
 }
 \section{Warning}{
   The Poisson model corresponds to \eqn{k} equalling infinity.
-  If the data is Poisson or close to Poisson, numerical problems will
-  occur. Possibly choosing a log-log link may help in such cases,
-  otherwise use \code{\link{poissonff}}.
+  If the data is Poisson or close to Poisson, numerical
+  problems will occur. Possibly choosing a log-log link may
+  help in such cases, otherwise use \code{\link{poissonff}}
+  or \code{\link{quasipoissonff}}.
 
 
   This function is fragile; the maximum likelihood estimate of the
   index parameter is fraught (see Lawless, 1987). In general, the
   \code{\link{quasipoissonff}} is more robust than this function.
+  Other alternatives are to fit a NB-1 or RR-NB model; see Yee (2010).
   Assigning values to the \code{ik} argument may lead to a local solution,
   and smaller values are preferred over large values when using this argument.
 
@@ -182,7 +203,8 @@ negbinomial(lmu = "loge", lk = "loge", emu = list(), ek = list(),
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
-  The object is used by modelling functions such as \code{\link{vglm}}
+  The object is used by modelling functions such as \code{\link{vglm}},
+  \code{\link{rrvglm}}
   and \code{\link{vgam}}.
 
 }
@@ -202,6 +224,12 @@ Bliss, C. and Fisher, R. A. (1953)
 Fitting the negative binomial distribution to biological data.
 \emph{Biometrics}
 \bold{9}, 174--200.
+
+
+  Yee, T. W. (2010)
+  Two-parameter reduced-rank vector generalized linear models.
+  \emph{In preparation}.
+
 
 
 }
@@ -261,41 +289,106 @@ Fitting the negative binomial distribution to biological data.
   female European red mites were counted.
 
 
+
+  There are two special uses of this \pkg{VGAM} family function
+  for handling count data.
+  Firstly,
+  when used by \code{\link{rrvglm}}  this 
+  results in a continuum of models in between and
+  inclusive of quasi-Poisson and negative binomial regression.
+  This is known as a reduced-rank negative binomial model \emph{(RR-NB)}.
+  It fits a negative binomial log-linear regression with variance function
+  \eqn{Var(Y) = \mu + \delta_1   \mu^{\delta_2}}{Var(Y) = mu + delta1 * mu^delta2}
+  where \eqn{\delta_1}{delta1}
+  and   \eqn{\delta_2}{delta2}
+  are parameters to be estimated by MLE.
+  Confidence intervals are available for \eqn{\delta_2}{delta2},
+  therefore it can be decided upon whether the
+  data are quasi-Poisson or negative binomial, if any.
+
+
+  Secondly,
+  the use of this \pkg{VGAM} family function with \code{parallel = TRUE}
+  and by \code{\link{vglm}}
+  can result in a model similar to \code{\link{quasipoissonff}}.
+  This is named the \emph{NB-1} model.
+  The dispersion parameter is estimated by MLE whereas
+  \code{\link[stats:glm]{glm}} uses the method of moments.
+  In particular, it fits a negative binomial log-linear regression
+  with variance function
+  \eqn{Var(Y) = \phi_0   \mu}{Var(Y) = phi0 * mu}
+  where \eqn{\phi_0}{phi0}
+  is a parameter to be estimated by MLE.
+  Confidence intervals are available for \eqn{\phi_0}{phi0}.
+
+
 }
 
 \seealso{ 
   \code{\link{quasipoissonff}},
   \code{\link{poissonff}},
-  \code{\link{cao}},
-  \code{\link{cqo}},
   \code{\link{zinegbinomial}},
   \code{\link{posnegbinomial}},
   \code{\link{invbinomial}},
 % \code{\link[MASS]{rnegbin}}.
   \code{\link[stats:NegBinomial]{rnbinom}},
-  \code{\link{nbolf}}.
+  \code{\link{nbolf}},
+  \code{\link{rrvglm}},
+  \code{\link{cao}},
+  \code{\link{cqo}},
+  \code{\link{CommonVGAMffArguments}}.
+
 
 }
 \examples{
 # Example 1: apple tree data
-appletree = data.frame(y = 0:7, w = c(70, 38, 17, 10, 9, 3, 2, 1))
-fit = vglm(y ~ 1, negbinomial, appletree, weights = w)
+appletree <- data.frame(y = 0:7, w = c(70, 38, 17, 10, 9, 3, 2, 1))
+fit <- vglm(y ~ 1, negbinomial, appletree, weights = w)
 summary(fit)
 coef(fit, matrix = TRUE)
 Coef(fit)
 
 # Example 2: simulated data with multivariate response
-ndata = data.frame(x = runif(nn <- 500))
-ndata = transform(ndata, y1 = rnbinom(nn, mu=exp(3+x), size = exp(1)),
-                         y2 = rnbinom(nn, mu=exp(2-x), size = exp(0)))
-fit1 = vglm(cbind(y1,y2) ~ x, negbinomial, ndata, trace = TRUE)
+ndata <- data.frame(x = runif(nn <- 500))
+ndata <- transform(ndata, y1 = rnbinom(nn, mu = exp(3+x), size = exp(1)),
+                          y2 = rnbinom(nn, mu = exp(2-x), size = exp(0)))
+fit1 <- vglm(cbind(y1, y2) ~ x, negbinomial, ndata, trace = TRUE)
 coef(fit1, matrix = TRUE)
 
 # Example 3: large counts so definitely use the nsimEIM argument
-ndata = transform(ndata, y3 = rnbinom(nn, mu=exp(12+x), size = exp(1)))
+ndata <- transform(ndata, y3 = rnbinom(nn, mu = exp(12+x), size = exp(1)))
 with(ndata, range(y3))  # Large counts
-fit2 = vglm(y3 ~ x, negbinomial(nsimEIM=100), ndata, trace = TRUE)
+fit2 <- vglm(y3 ~ x, negbinomial(nsimEIM = 100), ndata, trace = TRUE)
 coef(fit2, matrix = TRUE)
+
+# Example 4: a NB-1 to estimate a negative binomial with Var(Y) = phi0 * mu
+nn <- 1000        # Number of observations
+phi0 <- 10        # Specify this; should be greater than unity
+delta0 <- 1 / (phi0 - 1)
+mydata <- data.frame(x2 = runif(nn), x3 = runif(nn))
+mydata <- transform(mydata, mu = exp(2 + 3 * x2 + 0 * x3))
+mydata <- transform(mydata, y3 = rnbinom(nn, mu = mu, size = delta0 * mu))
+\dontrun{
+plot(y3 ~ x2, data = mydata, pch = "+", col = 'blue',
+     main = paste("Var(Y) = ", phi0, " * mu", sep = ""), las = 1) }
+nb1 <- vglm(y3 ~ x2 + x3, negbinomial(parallel = TRUE, zero = NULL),
+            mydata, trace = TRUE)
+# Extracting out some quantities:
+cnb1 <- coef(nb1, matrix = TRUE)
+mydiff <- (cnb1["(Intercept)", "log(k)"] - cnb1["(Intercept)", "log(mu)"])
+delta0.hat <- exp(mydiff)
+(phi.hat <- 1 + 1 / delta0.hat)  # MLE of phi
+summary(nb1)
+# Obtain a 95 percent confidence interval for phi0:
+myvec <- rbind(-1, 1, 0, 0)
+(se.mydiff <- sqrt(t(myvec) \%*\%  vcov(nb1) \%*\%  myvec))
+ci.mydiff <- mydiff + c(-1.96, 1.96) * se.mydiff
+ci.delta0 <- ci.exp.mydiff <- exp(ci.mydiff)
+(ci.phi0 <- 1 + 1 / rev(ci.delta0)) # The 95 percent conf. interval for phi0
+
+confint_nb1(nb1) # Quick way to get it
+
+summary(glm(y3 ~ x2 + x3, quasipoisson, mydata))$disper # cf. moment estimator
 }
 \keyword{models}
 \keyword{regression}

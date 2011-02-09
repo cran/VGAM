@@ -24,6 +24,7 @@
   \code{object} has the logical attribute \code{"smart"}. If so then
   this is returned, else \code{FALSE}.
 
+
   If \code{object} is a fitted model then this function looks to see whether
   \code{object@smart.prediction} or
   \code{object\$smart.prediction} exists.
@@ -32,24 +33,26 @@
   The reason for this is because, e.g., \code{lm(...,smart=FALSE)} 
   and \code{vglm(...,smart=FALSE)}, will return such a specific list.
 
+
   Writers of smart functions manually have to assign this attribute to
   their smart function after it has been written.
+
 
 }
 \examples{
 is.smart(my1)  # TRUE
 is.smart(poly) # TRUE
-if(is.R()) library(splines)
+library(splines)
 is.smart(bs)   # TRUE
 is.smart(ns)   # TRUE
 is.smart(tan)  # FALSE
 if(!is.R()) is.smart(lm)   # TRUE
 \dontrun{
 library(VGAM)
-x = rnorm(9)
-fit1 = vglm(rnorm(9) ~ x, normal1)
+x <- rnorm(9)
+fit1 <- vglm(rnorm(9) ~ x, normal1)
 is.smart(fit1)   # TRUE
-fit2 = vglm(rnorm(9) ~ x, normal1, smart=FALSE)
+fit2 <- vglm(rnorm(9) ~ x, normal1, smart = FALSE)
 is.smart(fit2)   # FALSE
 fit2@smart.prediction
 }

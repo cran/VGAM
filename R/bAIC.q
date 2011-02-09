@@ -1,5 +1,6 @@
 # These functions are
-# Copyright (C) 1998-2010 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2011 T.W. Yee, University of Auckland.
+# All rights reserved.
 
 
 
@@ -32,10 +33,10 @@ AICrrvglm = function(object, ..., k=2) {
     estdisp = object@misc$estimated.dispersion
     no.dpar = if (length(estdisp) && is.logical(estdisp) && estdisp)
         length(object@misc$dispersion) else 0 
-    Structural.zero = object@control$Structural.zero
+    szero = object@control$szero
     MMM = object@misc$M
     Rank = object@control$Rank
-    elts.tildeA = (MMM - Rank - length(Structural.zero)) * Rank
+    elts.tildeA = (MMM - Rank - length(szero)) * Rank
     -2 * logLik.vlm(object, ...) +
     k * (length(coefvlm(object)) + no.dpar + elts.tildeA)
 }
@@ -46,10 +47,10 @@ AICqrrvglm = function(object, ..., k=2) {
     estdisp = object@misc$estimated.dispersion
     no.dpar = if (length(estdisp) && is.logical(estdisp) && estdisp)
         length(object@misc$dispersion) else 0 
-    Structural.zero = object@control$Structural.zero
+    szero = object@control$szero
     MMM = object@misc$M
     Rank = object@control$Rank
-    elts.tildeA = (MMM - Rank - length(Structural.zero)) * Rank
+    elts.tildeA = (MMM - Rank - length(szero)) * Rank
 
     EqualTolerances = object@control$EqualTolerances
     ITolerances = object@control$ITolerances

@@ -209,6 +209,7 @@
 \alias{summary,grc-method}
 \alias{summary,cao-method}
 \alias{summary,qrrvglm-method}
+\alias{summary,rcam-method}
 \alias{summary,rrvglm-method}
 \alias{summary,vgam-method}
 \alias{summary,vglm-method}

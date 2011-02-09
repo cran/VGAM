@@ -8,12 +8,17 @@
   It requires the primary argument of the smart function to be called
   \code{"x"}.
 
+
   The list component \code{match.call} must be assigned the 
   value of \code{match.call()} in the smart function; this is so
   that the smart function can call itself later.
+
+
 }
 \seealso{
   \code{\link[base]{match.call}}.
+
+
 }
 \examples{
 "my2" <- function(x, minx=min(x)) { # Here is a smart function

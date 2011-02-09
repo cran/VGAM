@@ -11,20 +11,21 @@
   \code{a}.
 }
 \usage{
-drayleigh(x, a, log=FALSE)
-prayleigh(q, a)
-qrayleigh(p, a)
-rrayleigh(n, a)
+drayleigh(x, scale = 1, log = FALSE)
+prayleigh(q, scale = 1)
+qrayleigh(p, scale = 1)
+rrayleigh(n, scale = 1)
 }
 \arguments{
   \item{x, q}{vector of quantiles.}
   \item{p}{vector of probabilities.}
   \item{n}{number of observations.
-    Must be a positive integer of length 1.}
-  \item{a}{the parameter \eqn{a}.}
+    Fed into \code{\link[stats]{runif}}.
+  }
+  \item{scale}{the scale parameter \eqn{b}.}
   \item{log}{
   Logical.
-  If \code{log=TRUE} then the logarithm of the density is returned.
+  If \code{log = TRUE} then the logarithm of the density is returned.
 
   }
 
@@ -34,18 +35,22 @@ rrayleigh(n, a)
   \code{prayleigh} gives the distribution function,
   \code{qrayleigh} gives the quantile function, and
   \code{rrayleigh} generates random deviates.
+
 }
 \references{
+
 Evans, M., Hastings, N. and Peacock, B. (2000)
 \emph{Statistical Distributions},
 New York: Wiley-Interscience, Third edition.
+
 }
 \author{ T. W. Yee }
 \details{
-  See \code{\link{rayleigh}}, the \pkg{VGAM} family function
-  for estimating the parameter \eqn{a} by maximum likelihood estimation,
-  for the formula of the probability density function and range restrictions
-  on the parameter \eqn{a}.
+  See \code{\link{rayleigh}}, the \pkg{VGAM} family
+  function for estimating the scale parameter \eqn{b} by
+  maximum likelihood estimation, for the formula of the
+  probability density function and range restrictions on
+  the parameter \eqn{b}.
 
 }
 \note{
@@ -58,13 +63,14 @@ New York: Wiley-Interscience, Third edition.
 
 }
 \examples{
-\dontrun{ a = 2; x = seq(-1, 8, by=0.1)
-plot(x, drayleigh(x, a=a), type="l", ylim=c(0,1), las=1, ylab="",
-     main="Rayleigh density divided into 10 equal areas; red=cdf")
-abline(h=0, col="blue", lty=2)
-qq = qrayleigh(seq(0.1,0.9,by=0.1),a=a)
-lines(qq, drayleigh(qq, a=a), col="purple", lty=3, type="h")
-lines(x, prayleigh(x, a=a), col="red") }
+\dontrun{ Scale = 2; x = seq(-1, 8, by = 0.1)
+plot(x, drayleigh(x, scale = Scale), type = "l", ylim = c(0,1),
+     las = 1, ylab = "",
+     main = "Rayleigh density divided into 10 equal areas; orange = cdf")
+abline(h = 0, col = "blue", lty = 2)
+qq = qrayleigh(seq(0.1, 0.9, by = 0.1), scale = Scale)
+lines(qq, drayleigh(qq, scale = Scale), col = "purple", lty = 3, type = "h")
+lines(x, prayleigh(x, scale = Scale), col = "orange") }
 }
 \keyword{distribution}
 

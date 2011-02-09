@@ -61,12 +61,14 @@ cumulative(link = "logit", earg = list(), parallel = FALSE,
   \eqn{P(Y\geq 2)}{P(Y>=2)}, \eqn{P(Y\geq 3)}{P(Y>=3)}, \dots,
   \eqn{P(Y\geq J+1)}{P(Y>=J+1)} are used.
 
+
   This should be set to \code{TRUE} for \code{link=}
   \code{\link{golf}},
   \code{\link{polf}},
   \code{\link{nbolf}}.
   For these links the cutpoints must be an increasing sequence;
-  if \code{reverse=FALSE} for then the cutpoints must be an decreasing sequence.
+  if \code{reverse = FALSE} for then the cutpoints must be an
+  decreasing sequence.
 
   }
   \item{mv}{
@@ -113,9 +115,10 @@ cumulative(link = "logit", earg = list(), parallel = FALSE,
   (\code{\link{cloglog}}) then
   this is known as the \emph{proportional-hazards model}.
 
+
   In almost all the literature, the constraint matrices associated
   with this family of models are known. For example, setting
-  \code{parallel=TRUE} will make all constraint matrices
+  \code{parallel = TRUE} will make all constraint matrices
   (except for the intercept) equal to a vector of \eqn{M} 1's.
   If the constraint matrices are equal, unknown and to be estimated, then
   this can be achieved by fitting the model as a
@@ -141,6 +144,12 @@ cumulative(link = "logit", earg = list(), parallel = FALSE,
 Agresti, A. (2002)
 \emph{Categorical Data Analysis},
 2nd ed. New York: Wiley.
+
+
+Agresti, A. (2010)
+\emph{Analysis of Ordinal Categorical Data},
+2nd ed. New York: Wiley.
+
 
 Dobson, A. J. and Barnett, A. (2008)
 \emph{An Introduction to Generalized Linear Models},
@@ -188,7 +197,8 @@ by the \pkg{VGAM} package can be found at
   For a nominal (unordered) factor response, the multinomial
   logit model (\code{\link{multinomial}}) is more appropriate.
 
-  With the logit link, setting \code{parallel=TRUE} will fit a
+
+  With the logit link, setting \code{parallel = TRUE} will fit a
   proportional odds model. Note that the \code{TRUE} here does
   not apply to the intercept term. 
   In practice, the validity of the proportional odds assumption
@@ -200,12 +210,14 @@ by the \pkg{VGAM} package can be found at
   outside of \eqn{(0,1)}; setting \code{parallel=TRUE} will help avoid
   this problem.
 
+
   Here is an example of the usage of the \code{parallel} argument.
   If there are covariates \code{x2}, \code{x3} and \code{x4}, then
   \code{parallel = TRUE ~ x2 + x3 -1} and
   \code{parallel = FALSE ~ x4} are equivalent. This would constrain
   the regression coefficients for \code{x2} and \code{x3} to be
   equal; those of the intercepts and \code{x4} would be different.
+
 
   If the data is inputted in \emph{long} format
   (not \emph{wide} format, as in \code{\link{pneumo}} below)
@@ -215,6 +227,7 @@ by the \pkg{VGAM} package can be found at
   \code{coefstart} and/or 
   \code{etatstart}.
   See the example below.
+
 
   To fit the proportional odds model one can use the
   \pkg{VGAM} family function \code{\link{propodds}}.
@@ -261,50 +274,49 @@ by the \pkg{VGAM} package can be found at
 }
 \examples{
 # Fit the proportional odds model, p.179, in McCullagh and Nelder (1989)
-pneumo = transform(pneumo, let=log(exposure.time))
+pneumo = transform(pneumo, let = log(exposure.time))
 (fit = vglm(cbind(normal, mild, severe) ~ let,
-            cumulative(parallel=TRUE, reverse=TRUE), pneumo))
+            cumulative(parallel = TRUE, reverse = TRUE), pneumo))
 fit@y   # Sample proportions
-weights(fit, type="prior")   # Number of observations
-coef(fit, matrix=TRUE)
+weights(fit, type = "prior")   # Number of observations
+coef(fit, matrix = TRUE)
 constraints(fit)   # Constraint matrices
 
 # Check that the model is linear in let ----------------------
-fit2 = vgam(cbind(normal, mild, severe) ~ s(let, df=2),
-            cumulative(reverse=TRUE), pneumo)
-\dontrun{
-plot(fit2, se=TRUE, overlay=TRUE, lcol=1:2, scol=1:2) }
+fit2 = vgam(cbind(normal, mild, severe) ~ s(let, df = 2),
+            cumulative(reverse = TRUE), pneumo)
+\dontrun{ plot(fit2, se = TRUE, overlay = TRUE, lcol = 1:2, scol = 1:2) }
 
 # Check the proportional odds assumption with a LRT ----------
 (fit3 = vglm(cbind(normal, mild, severe) ~ let,
              cumulative(parallel=FALSE, reverse=TRUE), pneumo))
 pchisq(2*(logLik(fit3)-logLik(fit)),
-       df=length(coef(fit3))-length(coef(fit)), lower.tail=FALSE)
+       df = length(coef(fit3))-length(coef(fit)), lower.tail = FALSE)
 
 # A factor() version of fit ----------------------------------
 # This is in long format (cf. wide format above)
-nobs = round(fit@y * c(weights(fit, type="prior")))
+nobs = round(fit@y * c(weights(fit, type = "prior")))
 sumnobs = colSums(nobs) # apply(nobs, 2, sum)
 
-pneumo.long = data.frame(symptoms=ordered(rep(rep(colnames(nobs),
+pneumo.long = data.frame(symptoms = ordered(rep(rep(colnames(nobs),
                                   nrow(nobs)),
-                                  times=c(t(nobs))),
+                                  times = c(t(nobs))),
                                   levels = colnames(nobs)),
-                         let = rep(rep(with(pneumo, let), each=ncol(nobs)),
-                                   times=c(t(nobs))))
+                         let = rep(rep(with(pneumo, let), each = ncol(nobs)),
+                                   times = c(t(nobs))))
 with(pneumo.long, table(let, symptoms)) # check it; should be same as pneumo
 
 
-(fit.long1 = vglm(symptoms ~ let, data=pneumo.long,
+(fit.long1 = vglm(symptoms ~ let, data = pneumo.long,
              cumulative(parallel=TRUE, reverse=TRUE), trace=TRUE))
 coef(fit.long1, matrix=TRUE) # Should be same as coef(fit, matrix=TRUE)
 # Could try using mustart if fit.long1 failed to converge.
 mymustart = matrix(sumnobs / sum(sumnobs),
-                   nrow(pneumo.long), ncol(nobs), byrow=TRUE)
+                   nrow(pneumo.long), ncol(nobs), byrow = TRUE)
 fit.long2 = vglm(symptoms ~ let,
-                fam = cumulative(parallel=TRUE, reverse=TRUE),
-                mustart=mymustart, data = pneumo.long, trace=TRUE)
-coef(fit.long2, matrix=TRUE) # Should be same as coef(fit, matrix=TRUE)
+                fam = cumulative(parallel = TRUE, reverse = TRUE),
+                mustart = mymustart, data = pneumo.long, trace = TRUE)
+coef(fit.long2, matrix = TRUE) # Should be same as coef(fit, matrix = TRUE)
 }
 \keyword{models}
 \keyword{regression}

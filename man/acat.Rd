@@ -21,7 +21,7 @@ acat(link = "loge", earg = list(),
   }
   \item{earg}{
   List. Extra argument for the link function.
-  See \code{earg} in \code{\link{Links}} for general information.
+  See \code{\link{CommonVGAMffArguments}} for more information.
 
   }
   \item{parallel}{
@@ -55,6 +55,7 @@ acat(link = "loge", earg = list(),
 
   By default, the log link is used because the ratio of two probabilities
   is positive.
+
 
 }
 \value{
@@ -93,8 +94,10 @@ contains further information and examples.
   all positive), or a factor. In both cases, the \code{y} slot returned
   by \code{vglm}/\code{vgam}/\code{rrvglm} is the matrix of counts.
 
+
   For a nominal (unordered) factor response, the multinomial logit model
   (\code{\link{multinomial}}) is more appropriate.
+
 
   Here is an example of the usage of the \code{parallel} argument.
   If there are covariates \code{x1}, \code{x2} and \code{x3}, then
@@ -103,10 +106,12 @@ contains further information and examples.
   for \code{x1} and \code{x2} to be equal; those of the intercepts and
   \code{x3} would be different.
 
+
 }
 \section{Warning }{
   No check is made to verify that the response is ordinal;
   see \code{\link[base:factor]{ordered}}.
+
 }
 
 \seealso{
@@ -115,11 +120,12 @@ contains further information and examples.
     \code{\link{sratio}},
     \code{\link{multinomial}},
     \code{\link{pneumo}}.
+
 }
 \examples{
-pneumo <- transform(pneumo, let=log(exposure.time))
+pneumo <- transform(pneumo, let = log(exposure.time))
 (fit <- vglm(cbind(normal,mild,severe) ~ let, acat, pneumo))
-coef(fit, matrix=TRUE)
+coef(fit, matrix = TRUE)
 constraints(fit)
 model.matrix(fit)
 }

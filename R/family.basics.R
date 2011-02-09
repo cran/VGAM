@@ -1,5 +1,6 @@
 # These functions are
-# Copyright (C) 1998-2010 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2011 T.W. Yee, University of Auckland.
+# All rights reserved.
 
 
 
@@ -31,8 +32,8 @@ getind <- function(constraints, M, ncolx) {
                 ansx <- c(ansx, ii)
             }
         }
-        ans[[kk]] <- list(xindex=ansx,
-                          X_vlmindex=(1:ncol(temp2))[temp2[kk,] != 0])
+        ans[[kk]] <- list(xindex = ansx,
+                          X_vlmindex = (1:ncol(temp2))[temp2[kk,] != 0])
     }
     ans[[M+1]] <- ncol(temp2)
 
@@ -42,7 +43,7 @@ getind <- function(constraints, M, ncolx) {
 
 
  cm.vgam <- function(cm, x, bool, constraints,
-                     intercept.apply=FALSE, overwrite=FALSE)
+                     intercept.apply = FALSE, overwrite = FALSE)
 {
 
 
@@ -65,7 +66,7 @@ getind <- function(constraints, M, ncolx) {
         names(constraints) <- nasgn
     } 
     if (!is.list(constraints))
-        stop("'constraints' must be a list")
+        stop("argument 'constraints' must be a list")
 
     if (length(constraints) != length(nasgn) ||
         any(sort(names(constraints)) != sort(nasgn))) {
@@ -78,7 +79,7 @@ getind <- function(constraints, M, ncolx) {
 
     if (is.logical(bool)) {
         if (bool) {
-            if (intercept.apply && any(nasgn=="(Intercept)"))
+            if (intercept.apply && any(nasgn == "(Intercept)"))
                 constraints[["(Intercept)"]] <- cm
             if (length(ninasgn))
                 for (ii in ninasgn)
@@ -87,18 +88,12 @@ getind <- function(constraints, M, ncolx) {
             return(constraints)
         }
     } else {
-        if (!is.R()) {
-            warn.save <- options()$warn
-            options(warn=-1)
-            tbool <- terms(bool)  # Sqawks if FALSE or TRUE is response
-            options(warn=warn.save)  # Restore the warnings
-        } else
-            tbool <- terms(bool)
+        tbool <- terms(bool)
         if (attr(tbool, "response")) {
-            i <- attr(tbool, "factors")
-            default <- dimnames(i)[[1]]
+            ii <- attr(tbool, "factors")
+            default <- dimnames(ii)[[1]]
             default <- default[1]
-            default <- parse(text=default[1])[[1]]
+            default <- parse(text = default[1])[[1]]
             default <- as.logical(eval(default))
         } else {
             default <- TRUE
@@ -152,7 +147,7 @@ cm.nointercept.vgam <- function(constraints, x, nointercept, M)
         warning("Constraint matrix of (Intercept) not diagonal")
 
     temp <- constraints[["(Intercept)"]]
-    temp <- temp[,-nointercept,drop=FALSE]  # Will have M rows & at least 1 coln
+    temp <- temp[,-nointercept,drop = FALSE]  # Will have M rows & at least 1 coln
     constraints[["(Intercept)"]] <- temp 
     constraints
 }
@@ -168,14 +163,16 @@ cm.zero.vgam <- function(constraints, x, zero, M)
         constraints <- vector("list", length(nasgn))  # list()
         names(constraints) <- nasgn
     }
-    if (!is.list(constraints)) stop("'constraints' must be a list")
+    if (!is.list(constraints))
+        stop("'constraints' must be a list")
     for (ii in 1:length(asgn))
         constraints[[nasgn[ii]]] <- if (is.null(constraints[[nasgn[ii]]]))
             diag(M) else eval(constraints[[nasgn[ii]]])
 
     if (is.null(zero))
         return(constraints)
-    if (!is.numeric(zero)) stop("'zero' must be numeric")
+    if (!is.numeric(zero))
+        stop("'zero' must be numeric")
     if (any(zero < 1 | zero > M))
         stop("'zero' out of range")
     if (nasgn[1] != "(Intercept)")
@@ -183,22 +180,23 @@ cm.zero.vgam <- function(constraints, x, zero, M)
 
     if (2 <= length(constraints))
     for (ii in 2:length(constraints)) {
-        temp <- constraints[[nasgn[ii]]]
-        temp[zero,] <- 0
+        Hmatk <- constraints[[nasgn[ii]]]
+        Hmatk[zero, ] <- 0
         index <- NULL
-        for (kk in 1:ncol(temp))
-            if (all(temp[,kk] == 0)) index <- c(index,kk)
-        if (length(index) == ncol(temp)) 
+        for (kk in 1:ncol(Hmatk))
+            if (all(Hmatk[,kk] == 0)) index <- c(index, kk)
+        if (length(index) == ncol(Hmatk)) 
             stop("constraint matrix has no columns!")
         if (!is.null(index))
-            temp <- temp[,-index,drop=FALSE]
-        constraints[[nasgn[ii]]] <- temp 
+            Hmatk <- Hmatk[, -index, drop = FALSE]
+        constraints[[nasgn[ii]]] <- Hmatk 
     }
     constraints
 }
 
 
-process.constraints <- function(constraints, x, M, by.col=TRUE, specialCM=NULL)
+process.constraints <- function(constraints, x, M,
+                                by.col = TRUE, specialCM = NULL)
 {
 
 
@@ -222,30 +220,31 @@ process.constraints <- function(constraints, x, M, by.col=TRUE, specialCM=NULL)
 
     lenconstraints <- length(constraints)
     if (lenconstraints > 0)
-    for (i in 1:lenconstraints) {
-        constraints[[i]] <- eval(constraints[[i]])
-        if (!is.null(constraints[[i]]) && !is.matrix(constraints[[i]]))
-            stop("'constraints[[",i,"]]' is not a matrix")
+    for (ii in 1:lenconstraints) {
+        constraints[[ii]] <- eval(constraints[[ii]])
+        if (!is.null  (constraints[[ii]]) &&
+            !is.matrix(constraints[[ii]]))
+            stop("'constraints[[", ii, "]]' is not a matrix")
     }
 
     if (is.null(names(constraints))) 
         names(constraints) <- rep(nasgn, length=lenconstraints) 
 
-    temp <- if (!is.R()) list() else { 
+    temp <- if (!is.R()) list() else {
         junk <- vector("list", length(nasgn))
         names(junk) <- nasgn
         junk
     }
-    for (i in 1:length(nasgn))
-        temp[[nasgn[i]]] <-
-            if (is.null(constraints[[nasgn[i]]])) diag(M) else
-            eval(constraints[[nasgn[i]]])
+    for (ii in 1:length(nasgn))
+        temp[[nasgn[ii]]] <-
+            if (is.null(constraints[[nasgn[ii]]])) diag(M) else
+                   eval(constraints[[nasgn[ii]]])
 
-    for (i in 1:length(asgn)) {
-        if (!is.matrix(temp[[i]])) {
+    for (ii in 1:length(asgn)) {
+        if (!is.matrix(temp[[ii]])) {
             stop("not a constraint matrix")
         }
-        if (ncol(temp[[i]]) > M)
+        if (ncol(temp[[ii]]) > M)
             stop("constraint matrix has too many columns")
     }
 
@@ -259,7 +258,8 @@ process.constraints <- function(constraints, x, M, by.col=TRUE, specialCM=NULL)
         ictr = 0
         for (jay in cols) {
             ictr = ictr + 1
-            cm = if (is.list(specialCM) && any(nasgn[ii] == names(specialCM))) {
+            cm = if (is.list(specialCM) &&
+                     any(nasgn[ii] == names(specialCM))) {
                     slist = specialCM[[(nasgn[ii])]]
                     slist[[ictr]]
                 } else constraints[[ii]]
@@ -305,11 +305,11 @@ process.constraints <- function(constraints, x, M, by.col=TRUE, specialCM=NULL)
 
 
 add.constraints <- function(constraints, new.constraints,
-                            overwrite=FALSE, check=FALSE)
+                            overwrite = FALSE, check = FALSE)
 {
 
     empty.list <- function(l)
-        (is.null(l) || (is.list(l) && length(l)==0))
+        (is.null(l) || (is.list(l) && length(l) == 0))
 
     if (empty.list(constraints))
         if (is.list(new.constraints))
@@ -323,21 +323,21 @@ add.constraints <- function(constraints, new.constraints,
 
     if (is.null(nc) || is.null(nn))
         stop("lists must have names")
-    if (any(nc=="") || any(nn==""))
+    if (any(nc == "") || any(nn == ""))
         stop("lists must have names")
 
     if (!empty.list(constraints) && !empty.list(new.constraints)) {
-        for (i in nn) {
-            if (any(i==nc)) {
+        for (ii in nn) {
+            if (any(ii == nc)) {
                 if (check  &&
-                    (!(all(dim(constraints[[i]])==dim(new.constraints[[i]])) &&
-                       all(constraints[[i]]==new.constraints[[i]]))))
+                (!(all(dim(constraints[[ii]]) == dim(new.constraints[[ii]])) &&
+                   all(    constraints[[ii]]  ==     new.constraints[[ii]]))))
                     stop("apparent contradiction in the specification ",
                          "of the constraints")
                 if (overwrite)
-                    constraints[[i]] <- new.constraints[[i]]
+                    constraints[[ii]] <- new.constraints[[ii]]
             } else 
-                constraints[[i]] <- new.constraints[[i]]
+                constraints[[ii]] <- new.constraints[[ii]]
         }
     } else {
         if (!empty.list(constraints))
@@ -355,14 +355,16 @@ add.constraints <- function(constraints, new.constraints,
 
 
 
-iam <- function(j, k, M, hbw=M, both=FALSE, diagonal=TRUE)
+iam <- function(j, k, M, hbw = M, both = FALSE, diagonal = TRUE)
 {
+    jay <- j 
+    kay <- k
 
-    if (M==1)
+    if (M == 1)
         if (!diagonal) stop("cannot handle this") 
 
-    if (M==1)
-        if (both) return(list(row.index=1, col.index=1)) else return(1)
+    if (M == 1)
+        if (both) return(list(row.index = 1, col.index = 1)) else return(1)
 
     upper <- if (diagonal) M else M-1
     i2 <- as.list(upper:1)
@@ -371,20 +373,22 @@ iam <- function(j, k, M, hbw=M, both=FALSE, diagonal=TRUE)
 
 
     i1 <- matrix(1:M, M, M) 
-    i1 <- if (diagonal) c(i1[row(i1)>=col(i1)]) else c(i1[row(i1)>col(i1)])
+    i1 <- if (diagonal) c(i1[row(i1) >= col(i1)]) else
+                        c(i1[row(i1) >  col(i1)])
 
 
-    if (both) list(row.index=i2, col.index=i1) else {
-        if (j > M || k > M || j < 1 || k < 1)
+    if (both) list(row.index = i2, col.index = i1) else {
+        if (jay > M || kay > M || jay < 1 || kay < 1)
             stop("range error in j or k")
-        both <- (i1==j & i2==k) | (i1==k & i2==j)
+        both <- (i1 == jay & i2 == kay) |
+                (i1 == kay & i2 == jay)
         (1:length(i2))[both]
     }
 }
 
 
 
-dimm <- function(M, hbw=M)
+dimm <- function(M, hbw = M)
 {
 
 
@@ -401,13 +405,13 @@ dimm <- function(M, hbw=M)
 
 
 
-m2avglm <- function(object, upper=FALSE, allow.vector=FALSE)  {
+m2avglm <- function(object, upper = FALSE, allow.vector = FALSE)  {
     m2adefault(wweights(object), M=object@misc$M,
                 upper=upper, allow.vector=allow.vector)
 }
 
 
-m2adefault <- function(m, M, upper=FALSE, allow.vector=FALSE)
+m2adefault <- function(m, M, upper = FALSE, allow.vector = FALSE)
 {
     if (!is.numeric(m))
         stop("argument 'm' is not numeric")
@@ -416,7 +420,7 @@ m2adefault <- function(m, M, upper=FALSE, allow.vector=FALSE)
         m <- cbind(m)
     n <- nrow(m)
     dimm <- ncol(m)
-    index <- iam(NA, NA, M=M, both=TRUE, diag=TRUE)
+    index <- iam(NA, NA, M=M, both = TRUE, diag = TRUE)
     if (dimm > length(index$row.index))
         stop("bad value for M; it is too small") 
     if (dimm < M) {
@@ -428,7 +432,7 @@ m2adefault <- function(m, M, upper=FALSE, allow.vector=FALSE)
         as.integer(index$row-1),  
         as.integer(index$col-1),  
         as.integer(n),  as.integer(M),  
-        as.integer(as.numeric(upper)), NAOK=TRUE)
+        as.integer(as.numeric(upper)), NAOK = TRUE)
     dim(fred$ans) <- c(M,M,n)
     alpn <- NULL
     dimnames(fred$ans) <- list(alpn, alpn, dimnames(m)[[1]])
@@ -436,12 +440,12 @@ m2adefault <- function(m, M, upper=FALSE, allow.vector=FALSE)
 }
 
 
-a2m <- function(a, hbw=M)
+a2m <- function(a, hbw = M)
 {
 
 
 
-    if (is.matrix(a) && ncol(a)==nrow(a))
+    if (is.matrix(a) && ncol(a) == nrow(a))
         a <- array(a, c(nrow(a), ncol(a), 1))
     if (!is.array(a))
         dim(a) <- c(1,1,length(a))
@@ -449,14 +453,14 @@ a2m <- function(a, hbw=M)
     M <- dim(a)[1]
     n <- dim(a)[3]
     dimm.value <- dimm(M, hbw)
-    index <- iam(NA, NA, M, both=TRUE, diag=TRUE)
+    index <- iam(NA, NA, M, both = TRUE, diag = TRUE)
 
 
     fred <- dotC(name="a2m", as.double(a), m=double(dimm.value*n),
         as.integer(dimm.value),
         as.integer(index$row-1),  
         as.integer(index$col-1),  
-        as.integer(n),  as.integer(M), NAOK=TRUE)
+        as.integer(n),  as.integer(M), NAOK = TRUE)
     dim(fred$m) <- c(dimm.value,n)
     fred$m <- t(fred$m)
 
@@ -468,22 +472,23 @@ a2m <- function(a, hbw=M)
 }
 
 
-vindex <- function(M, row.arg=FALSE, col.arg=FALSE, length.arg=M*(M+1)/2)
+vindex <- function(M, row.arg = FALSE, col.arg = FALSE,
+                   length.arg = M*(M+1)/2)
 {
 
 
 
     if ((row.arg + col.arg) != 1)
         stop("only one of row and col must be TRUE") 
-    if (M==1) {
+    if (M == 1) {
         ans <- 1
     } else {
         if (row.arg) {
             i1 <- matrix(1:M, M, M)
-            ans <- c(i1[row(i1)+col(i1)<=(M+1)])
+            ans <- c(i1[row(i1)+col(i1) <= (M+1)])
         } else {
             i1 <- matrix(1:M, M, M) 
-            ans <- c(i1[row(i1)>=col(i1)])
+            ans <- c(i1[row(i1) >= col(i1)])
         }
     }
     if (length.arg>length(ans))
@@ -494,11 +499,11 @@ vindex <- function(M, row.arg=FALSE, col.arg=FALSE, length.arg=M*(M+1)/2)
 
 
 if(!exists("is.R")) is.R <- function()
-    exists("version") && !is.null(version$language) && version$language=="R"
+    exists("version") && !is.null(version$language) && version$language == "R"
 
 
-wweights = function(object, matrix.arg=TRUE, deriv.arg=FALSE,
-                    ignore.slot=FALSE, checkwz=TRUE) {
+wweights <- function(object, matrix.arg = TRUE, deriv.arg = FALSE,
+                     ignore.slot = FALSE, checkwz = TRUE) {
 
 
 
@@ -510,25 +515,25 @@ wweights = function(object, matrix.arg=TRUE, deriv.arg=FALSE,
     M <- object@misc$M  # Done below
     n <- object@misc$n  # Done below
 
-    if (any(slotNames(object)=="extra")) {
+    if (any(slotNames(object) == "extra")) {
         extra <- object@extra
-        if (length(extra)==1 && !length(names(extra))) {
+        if (length(extra) == 1 && !length(names(extra))) {
             # Usage was something like vglm(..., extra = 5) 
             # so, internally, extra == 5 and not a list
             extra <- extra[[1]]
         }
     }
     mu <- object@fitted.values
-    if (any(slotNames(object)=="predictors"))
+    if (any(slotNames(object) == "predictors"))
         eta <- object@predictors
     mt <- terms(object) # object@terms$terms; 11/8/03 
     Blist <- constraints <- object@constraints 
     new.coeffs <- object@coefficients
-    if (any(slotNames(object)=="iter"))
+    if (any(slotNames(object) == "iter"))
         iter <- object@iter
 
     w <- rep(1, n)
-    if (any(slotNames(object)=="prior.weights"))
+    if (any(slotNames(object) == "prior.weights"))
         w <- object@prior.weights
     if (!length(w))
         w <- rep(1, n)
@@ -538,17 +543,17 @@ wweights = function(object, matrix.arg=TRUE, deriv.arg=FALSE,
         x <- model.matrixvlm(object, type="lm")
     y <- object@y
 
-    if (any(slotNames(object)=="control"))
-    for (i in names(object@control)) {
-        assign(i, object@control[[i]]) 
+    if (any(slotNames(object) == "control"))
+    for (ii in names(object@control)) {
+        assign(ii, object@control[[ii]]) 
     } 
 
     if (length(object@misc))
-    for (i in names(object@misc)) {
-        assign(i, object@misc[[i]]) 
+    for (ii in names(object@misc)) {
+        assign(ii, object@misc[[ii]]) 
     } 
 
-    if (any(slotNames(object)=="family")) {
+    if (any(slotNames(object) == "family")) {
         expr <- object@family@deriv
         deriv.mu <- eval(expr)
         # Need to compute wz only if it couldn't be extracted from the object
@@ -566,7 +571,7 @@ wweights = function(object, matrix.arg=TRUE, deriv.arg=FALSE,
 }
 
 
-pweights = function(object, ...) {
+pweights <- function(object, ...) {
     ans = object@prior.weights
     if (length(ans)) {
         ans 
@@ -579,7 +584,7 @@ pweights = function(object, ...) {
 }
 
 
-procVec = function(vec, yn, Default) {
+procVec <- function(vec, yn, Default) {
 
 
 
@@ -590,7 +595,7 @@ procVec = function(vec, yn, Default) {
     nvec <- names(vec)     # vec[""] undefined
     named = length(nvec)   # FALSE for c(1,3)
     if (named) {
-        index = (1:L)[nvec==""]
+        index = (1:L)[nvec == ""]
         default = if (length(index)) vec[index] else Default
     } else {
         default = vec
@@ -625,17 +630,19 @@ setMethod("m2a", "vglm",
 }
 
 
-weightsvglm = function(object, type = c("prior", "working"),
-                        matrix.arg=TRUE, ignore.slot=FALSE,
-                        deriv.arg=FALSE, ...) {
+weightsvglm <- function(object, type = c("prior", "working"),
+                        matrix.arg = TRUE, ignore.slot = FALSE,
+                        deriv.arg = FALSE, ...) {
     weightsvlm(object, type = type, matrix.arg=matrix.arg,
                 ignore.slot=ignore.slot,
                 deriv.arg=deriv.arg, ...)
 }
 
-weightsvlm = function(object, type = c("prior", "working"),
-                      matrix.arg=TRUE, ignore.slot=FALSE,
-                      deriv.arg=FALSE, ...) {
+
+
+weightsvlm <- function(object, type = c("prior", "working"),
+                       matrix.arg = TRUE, ignore.slot = FALSE,
+                       deriv.arg = FALSE, ...) {
     if (mode(type) != "character" && mode(type) != "name")
         type = as.character(substitute(type))
     type = match.arg(type, c("prior", "working"))[1]
@@ -645,7 +652,7 @@ weightsvlm = function(object, type = c("prior", "working"),
                  matrix.arg=matrix.arg, deriv.arg=deriv.arg,
                  ignore.slot=ignore.slot, ...)
     } else {
-        if (deriv.arg) stop("cannot set 'deriv=TRUE' when 'type=\"prior\"'")
+        if (deriv.arg) stop("cannot set 'deriv = TRUE' when 'type=\"prior\"'")
         ans = pweights(object)
         if (matrix.arg) as.matrix(ans) else c(ans)
     }
@@ -664,38 +671,35 @@ setMethod("weights", "vglm",
 
 
 
-dotFortran = function(name, ..., NAOK = FALSE, DUP = TRUE,
-                      PACKAGE="VGAM") {
+dotFortran <- function(name, ..., NAOK = FALSE, DUP = TRUE,
+                       PACKAGE = "VGAM") {
     if (is.R()) {
-        .Fortran(name=name, ..., NAOK = NAOK, DUP = DUP, PACKAGE=PACKAGE)
+      .Fortran(name=name, ..., NAOK = NAOK, DUP = DUP, PACKAGE = PACKAGE)
     } else {
-        stop()
+      stop()
     }
 }
 
-dotC = function(name, ..., NAOK = FALSE, DUP = TRUE, PACKAGE="VGAM") {
-    if (is.R()) {
-        .C(name=name, ..., NAOK = NAOK, DUP = DUP, PACKAGE=PACKAGE)
-    } else {
-        stop()
-    }
+dotC <- function(name, ..., NAOK = FALSE, DUP = TRUE, PACKAGE="VGAM") {
+      .C(name=name, ..., NAOK = NAOK, DUP = DUP, PACKAGE = PACKAGE)
 }
 
 
 
-qnupdate = function(w, wzold, dderiv, deta, M, keeppd=TRUE, 
-                    trace=FALSE, reset=FALSE, effpos=.Machine$double.eps^0.75) {
+qnupdate <- function(w, wzold, dderiv, deta, M, keeppd = TRUE, 
+                    trace = FALSE, reset = FALSE,
+                    effpos=.Machine$double.eps^0.75) {
 
 
-    if (M ==1) {
+    if (M == 1) {
         dderiv = cbind(dderiv)
         deta = cbind(deta)
     }
-    Bs = mux22(t(wzold), deta, M=M, upper=FALSE, as.mat=TRUE) # n x M
+    Bs = mux22(t(wzold), deta, M=M, upper = FALSE, as.mat = TRUE) # n x M
     sBs = c( (deta * Bs) %*% rep(1, M) )   # should have positive values
     sy = c( (dderiv * deta) %*% rep(1, M) )
     wznew = wzold
-    index = iam(NA, NA, M=M, both=TRUE)
+    index = iam(NA, NA, M=M, both = TRUE)
     index$row.index = rep(index$row.index, len=ncol(wzold))
     index$col.index = rep(index$col.index, len=ncol(wzold))
     updateThese = if (keeppd) (sy > effpos) else rep(TRUE, len=length(sy))
@@ -720,20 +724,21 @@ qnupdate = function(w, wzold, dderiv, deta, M, keeppd=TRUE,
 
 
 
-mbesselI0 = function(x, deriv.arg=0) {
-    if (!is.Numeric(deriv.arg, allow=1, integer=TRUE, positi=TRUE) && deriv.arg!=0)
-        stop("deriv.arg must be a single non-negative integer")
-    if (!(deriv.arg==0 || deriv.arg==1 || deriv.arg==2))
-        stop("deriv must be 0, 1, or 2")
+mbesselI0 <- function(x, deriv.arg = 0) {
+    if (!is.Numeric(deriv.arg, allow = 1, integer = TRUE, posit = TRUE) &&
+        deriv.arg != 0)
+        stop("argument 'deriv.arg' must be a single non-negative integer")
+    if (!(deriv.arg == 0 || deriv.arg == 1 || deriv.arg == 2))
+        stop("argument 'deriv' must be 0, 1, or 2")
     if (!is.Numeric(x))
-        stop("bad input for x")
-    n = length(x)
+        stop("bad input for argument 'x'")
+    nn = length(x)
     if (FALSE) {
     }
 
     # Use finite differences 
-    ans = matrix(as.numeric(NA), nrow=n, ncol=deriv.arg+1)
-    ans[,1] = besselI(x, nu=0)
+    ans = matrix(as.numeric(NA), nrow=nn, ncol=deriv.arg+1)
+    ans[, 1] = besselI(x, nu=0)
     if (deriv.arg>=1) ans[,2] = besselI(x, nu=1) 
     if (deriv.arg>=2) ans[,3] = ans[,1] - ans[,2] / x
     ans
@@ -741,14 +746,14 @@ mbesselI0 = function(x, deriv.arg=0) {
 
 
 
-VGAM.matrix.norm = function(A, power=2, suppressWarning=FALSE) {
+VGAM.matrix.norm <- function(A, power=2, suppressWarning = FALSE) {
     if ((nrow(A) != ncol(A)) && !suppressWarning)
     warning("norms should be calculated for square matrices; A is not square")
-    if (power=="F") {
+    if (power == "F") {
         sqrt(sum(A^2)) 
-    } else if (power==1) {
+    } else if (power == 1) {
         max(colSums(abs(A)))
-    } else if (power==2) {
+    } else if (power == 2) {
         sqrt(max(eigen(t(A) %*% A)$value))
     } else if (!is.finite(power)) {
         max(colSums(abs(A)))
@@ -760,51 +765,52 @@ VGAM.matrix.norm = function(A, power=2, suppressWarning=FALSE) {
 
 
 
-rmfromVGAMenv = function(varnames, prefix="") {
-    evarnames = paste(prefix, varnames, sep="")
+rmfromVGAMenv <- function(varnames, prefix = "") {
+    evarnames = paste(prefix, varnames, sep = "")
     if (is.R()) {
-        for (i in evarnames) {
-            mytext1 = "exists(x=i, envir = VGAMenv)"
-            myexp1 = parse(text=mytext1)
+        for (ii in evarnames) {
+            mytext1 = "exists(x = ii, envir = VGAM:::VGAMenv)"
+            myexp1 = parse(text = mytext1)
             is.there = eval(myexp1)
             if (is.there) {
-                rm(list=i, envir = VGAMenv)
+                rm(list = ii, envir = VGAM:::VGAMenv)
             }
         }
     } else {
         warning("this code needs checking 9")
-        for (i in evarnames)
-            while(exists(i, inherits=TRUE))
-                rm(i, inherits=TRUE)
+        for (ii in evarnames)
+            while(exists(ii, inherits = TRUE))
+                rm(ii, inherits = TRUE)
  
     }
 }
 
-existsinVGAMenv = function(varnames, prefix="") {
+existsinVGAMenv <- function(varnames, prefix="") {
     evarnames = paste(prefix, varnames, sep="")
     ans = NULL
     if (is.R()) {
-        for (i in evarnames) {
-            mytext1 = "exists(x=i, envir = VGAMenv)"
-            myexp1 = parse(text=mytext1)
+        for (ii in evarnames) {
+            mytext1 = "exists(x = ii, envir = VGAM:::VGAMenv)"
+            myexp1 = parse(text = mytext1)
             is.there = eval(myexp1)
             ans = c(ans, is.there)
         }
     } else {
  warning("this code needs checking 8")
-        for (i in evarnames) {
-            is.there = exists(i, inherits=TRUE)
+        for (ii in evarnames) {
+            is.there = exists(ii, inherits = TRUE)
             ans = c(ans, is.there)
         }
     }
     ans
 }
 
-assign2VGAMenv = function(varnames, mylist, prefix="") {
+assign2VGAMenv <- function(varnames, mylist, prefix="") {
     evarnames = paste(prefix, varnames, sep="")
     if (is.R()) {
-        for (i in 1:length(varnames)) {
-            assign(evarnames[i], mylist[[(varnames[i])]], envir = VGAMenv)
+        for (ii in 1:length(varnames)) {
+            assign(evarnames[ii], mylist[[(varnames[ii])]],
+                   envir = VGAM:::VGAMenv)
         }
     } else {
         stop("uncomment the lines below")
@@ -815,14 +821,10 @@ assign2VGAMenv = function(varnames, mylist, prefix="") {
 
 
 
-getfromVGAMenv = function(varname, prefix="") {
+getfromVGAMenv <- function(varname, prefix="") {
     varname = paste(prefix, varname, sep="")
     if (length(varname) > 1) stop("'varname' must be of length 1")
-    if (is.R()) {
-        get(varname, envir = VGAMenv)
-    } else {
-        get(varname)
-    }
+        get(varname, envir = VGAM:::VGAMenv)
 }
 
  
@@ -831,13 +833,13 @@ lerch <- function(x, s, v, tolerance=1.0e-10, iter=100) {
         stop("bad input in x, s, and/or v")
     if (is.complex(c(x,s,v)))
         stop("complex arguments not allowed in x, s and v")
-    if (!is.Numeric(tolerance, allow=1, posi=TRUE) || tolerance > 0.01)
+    if (!is.Numeric(tolerance, allow=1, posi = TRUE) || tolerance > 0.01)
         stop("bad input for argument 'tolerance'")
-    if (!is.Numeric(iter, allow=1, integ=TRUE, posi=TRUE))
+    if (!is.Numeric(iter, allow=1, integ = TRUE, posi = TRUE))
         stop("bad input for argument 'iter'")
     L = max(length(x), length(s), length(v))
     x = rep(x, length=L); s = rep(s, length=L); v = rep(v, length=L);
-    xok = abs(x) < 1 & !(v <= 0 & v==round(v))
+    xok = abs(x) < 1 & !(v <= 0 & v == round(v))
     x[!xok] = 0  # Fix this later
     ans = dotC(name="lerchphi123", err=integer(L), as.integer(L),
              as.double(x), as.double(s), as.double(v),
@@ -848,10 +850,42 @@ lerch <- function(x, s, v, tolerance=1.0e-10, iter=100) {
 
 
 
+negzero.expression <- expression({
 
 
 
 
- 
+
+
+
+  posdotzero <-  dotzero[dotzero > 0]
+  negdotzero <-  dotzero[dotzero < 0]
+
+  bigUniqInt <- 1080
+  zneg_index <- if (length(negdotzero)) {
+
+    if (!is.Numeric(-negdotzero, posit = TRUE, integ = TRUE) ||
+        max(-negdotzero) > Musual)
+        stop("bad input for argument 'zero'")
+
+    zneg_index <- rep(0:bigUniqInt, rep(length(negdotzero),
+                      1 + bigUniqInt)) * Musual + abs(negdotzero)
+    sort(intersect(zneg_index, 1:M))
+  } else {
+    NULL
+  }
+
+  zpos_index <- if (length(posdotzero)) posdotzero else NULL
+  z_Index <- if (!length(dotzero)) NULL else
+                   unique(sort(c(zneg_index, zpos_index)))
+
+  constraints <- cm.zero.vgam(constraints, x, z_Index, M)
+})
+
+
+
+
+
+
 
 
