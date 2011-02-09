@@ -9,8 +9,8 @@
 
 }
 \usage{
-TypicalVGAMlinkFunction(theta, earg=list(), inverse=FALSE,
-                        deriv=0, short=TRUE, tag=FALSE)
+TypicalVGAMlinkFunction(theta, earg = list(), inverse = FALSE,
+                        deriv = 0, short = TRUE, tag = FALSE)
 }
 \arguments{
   \item{theta}{
@@ -28,6 +28,7 @@ TypicalVGAMlinkFunction(theta, earg=list(), inverse=FALSE,
   contain the offset value.  The argument \code{earg} is
   always a list with \emph{named} components. See each specific link
   function to find the component names for the list.
+
 
   Almost all \pkg{VGAM} family functions with a single link
   function have an argument (often called \code{earg}) which will
@@ -56,7 +57,7 @@ TypicalVGAMlinkFunction(theta, earg=list(), inverse=FALSE,
   \code{\link{vglmff-class}} object.
   Used only if \code{theta} is character, and gives the formula
   for the link in character form.
-  If \code{tag=TRUE} then the result contains a little more information.
+  If \code{tag = TRUE} then the result contains a little more information.
 
   }
 }
@@ -66,24 +67,27 @@ TypicalVGAMlinkFunction(theta, earg=list(), inverse=FALSE,
   the inverse link or its first or second derivative,
   or a character description of the link.
 
+
   Here are the general details.
-  If \code{inverse=FALSE} and \code{deriv=0} (default) then the
+  If \code{inverse = FALSE} and \code{deriv = 0} (default) then the
   ordinary link
-  function \eqn{\eta=g(\theta)}{eta=g(theta)} is returned.
-  If \code{inverse=FALSE} and \code{deriv=1} then it is
+  function \eqn{\eta = g(\theta)}{eta = g(theta)} is returned.
+  If \code{inverse = FALSE} and \code{deriv = 1} then it is
   \eqn{d\theta / d\eta}{d theta / d eta} 
   \emph{as a function of} \eqn{\theta}{theta}.
-  If \code{inverse=FALSE} and \code{deriv=2} then it is
+  If \code{inverse = FALSE} and \code{deriv = 2} then it is
   \eqn{d^2\theta / d\eta^2}{d^2 theta / d eta^2}
   \emph{as a function of} \eqn{\theta}{theta}.
 
-  If \code{inverse=TRUE} and \code{deriv=0} then the inverse
+
+  If \code{inverse = TRUE} and \code{deriv = 0} then the inverse
   link function is returned, hence \code{theta} is really
   \eqn{\eta}{eta}.
-  If \code{inverse=TRUE} and \code{deriv} is positive then the 
+  If \code{inverse = TRUE} and \code{deriv} is positive then the 
   \emph{reciprocal} of the same link function with
-  \code{(theta=theta, earg=earg, inverse=TRUE, deriv=deriv)}
+  \code{(theta = theta, earg = earg, inverse = TRUE, deriv = deriv)}
   is returned.
+
 
 }
 \details{
@@ -91,7 +95,7 @@ TypicalVGAMlinkFunction(theta, earg=list(), inverse=FALSE,
   the argument list as given above.
   That is, there is a matching \code{earg} for each \code{link} argument.
   In this help file
-  we have \eqn{\eta=g(\theta)}{eta=g(theta)}
+  we have \eqn{\eta = g(\theta)}{eta = g(theta)}
   where \eqn{g} is the link function, \eqn{\theta}{theta} is the parameter
   and \eqn{\eta}{eta} is the linear/additive predictor.
 
@@ -106,34 +110,39 @@ TypicalVGAMlinkFunction(theta, earg=list(), inverse=FALSE,
   \code{\link{probit}},
   \code{\link{cloglog}},
   \code{\link{cauchit}},
-  \code{\link{loglog}},
   \code{\link{fsqrt}},
   \code{\link{logc}},
   \code{\link{golf}},
   \code{\link{polf}},
   \code{\link{nbolf}}.
 
+
   For positive parameters (i.e., greater than 0):
   \code{\link{loge}},
   \code{\link{nloge}},
   \code{\link{powl}}.
 
+
   For parameters greater than 1:
   \code{\link{loglog}}.
+
 
   For parameters between \eqn{-1} and \eqn{1}:
   \code{\link{fisherz}},
   \code{\link{rhobit}}.
 
+
   For parameters between \eqn{A} and \eqn{B}:
   \code{\link{elogit}},
-  \code{\link{logoff}} (\eqn{B=\infty}{B=Inf}).
+  \code{\link{logoff}} (\eqn{B = \infty}{B = Inf}).
+
 
   For unrestricted parameters (i.e., any value):
   \code{\link{identity}},
   \code{\link{nidentity}},
   \code{\link{reciprocal}},
   \code{\link{nreciprocal}}.
+
 
 % Other links:
 
@@ -152,6 +161,7 @@ TypicalVGAMlinkFunction(theta, earg=list(), inverse=FALSE,
   \code{\link{cao}},
   \code{\link{uqo}}.
 
+
 }
 \author{T. W. Yee}
 \note{
@@ -160,15 +170,16 @@ TypicalVGAMlinkFunction(theta, earg=list(), inverse=FALSE,
   In particular, they won't work with
   \code{\link[stats]{glm}} or any other package for fitting GAMs.
 
+
   From October 2006 onwards,
   all \pkg{VGAM} family functions will only
   contain one default value for each link argument rather than giving a
   vector of choices.
   For example, rather than 
-  \code{binomialff(link=c("logit", "probit", "cloglog",
+  \code{binomialff(link = c("logit", "probit", "cloglog",
   "cauchit", "identity"), ...)}
   it is now
-  \code{binomialff(link="logit", ...)}
+  \code{binomialff(link = "logit", ...)}
   No checking will be done to see if the user's choice is reasonable.
   This means that the user can write his/her own \pkg{VGAM} link function
   and use it within any \pkg{VGAM} family function.
@@ -177,43 +188,44 @@ TypicalVGAMlinkFunction(theta, earg=list(), inverse=FALSE,
   link function, by either assigning the link argument the full name as
   a character string, or just the name itself.  See the examples below.
 
+
 }
 \examples{
 logit("a")
-logit("a", short=FALSE)
-logit("a", short=FALSE, tag=TRUE)
+logit("a", short = FALSE)
+logit("a", short = FALSE, tag = TRUE)
 
-logoff(1:5, earg=list(offset=1))  # Same as log(1:5 + 1)
-powl(1:5, earg=list(power=2))     # Same as (1:5)^2
+logoff(1:5, earg = list(offset = 1))  # Same as log(1:5 + 1)
+powl(1:5, earg = list(power = 2))     # Same as (1:5)^2
 
-fit1 = vgam(agaaus ~ altitude, binomialff(link=cloglog), hunua)    # ok
-fit2 = vgam(agaaus ~ altitude, binomialff(link="cloglog"), hunua)  # ok
+fit1 <- vgam(agaaus ~ altitude, binomialff(link = cloglog), hunua)    # ok
+fit2 <- vgam(agaaus ~ altitude, binomialff(link = "cloglog"), hunua)  # ok
 
 \dontrun{
 # This no longer works since "clog" is not a valid VGAM link function:
-fit3 = vgam(agaaus ~ altitude, binomialff(link="clog"), hunua) # not ok
+fit3 <- vgam(agaaus ~ altitude, binomialff(link = "clog"), hunua) # not ok
 
 
 # No matter what the link, the estimated var-cov matrix is the same
-y = rbeta(n=1000, shape1=exp(0), shape2=exp(1))
-fit1 = vglm(y ~ 1, beta.ab(lshape1="identity", lshape2="identity"),
-            trace = TRUE, crit="c")
-fit2 = vglm(y ~ 1, beta.ab(lshape1=logoff, eshape1=list(offset=1.1),
-                           lshape2=logoff, eshape2=list(offset=1.1)),
-            trace = TRUE, crit="c")
-vcov(fit1, untran=TRUE)
-vcov(fit1, untran=TRUE)-vcov(fit2, untran=TRUE)  # Should be all 0s
+y <- rbeta(n = 1000, shape1 = exp(0), shape2 = exp(1))
+fit1 <- vglm(y ~ 1, beta.ab(lshape1 = "identity", lshape2 = "identity"),
+             trace = TRUE, crit = "c")
+fit2 <- vglm(y ~ 1, beta.ab(lshape1 = logoff, eshape1 = list(offset = 1.1),
+                            lshape2 = logoff, eshape2 = list(offset = 1.1)),
+            trace = TRUE, crit = "c")
+vcov(fit1, untran = TRUE)
+vcov(fit1, untran = TRUE) - vcov(fit2, untran = TRUE)  # Should be all 0s
 fit1@misc$earg   # No 'special' parameters
 fit2@misc$earg   # Some 'special' parameters are here
 
 
-par(mfrow=c(2,2))
-p = seq(0.01, 0.99, len=200)
-x = seq(-4, 4, len=200)
-plot(p, logit(p), type="l", col="blue")
-plot(x, logit(x, inverse=TRUE), type="l", col="blue")
-plot(p, logit(p, deriv=1), type="l", col="blue") # reciprocal!
-plot(p, logit(p, deriv=2), type="l", col="blue") # reciprocal!
+par(mfrow = c(2,2))
+p <- seq(0.01, 0.99, len = 200)
+x <- seq(-4, 4, len = 200)
+plot(p, logit(p), type = "l", col = "blue")
+plot(x, logit(x, inverse = TRUE), type = "l", col = "blue")
+plot(p, logit(p, deriv = 1), type = "l", col = "blue") # reciprocal!
+plot(p, logit(p, deriv = 2), type = "l", col = "blue") # reciprocal!
 }
 }
 \keyword{models}

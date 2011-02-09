@@ -1,5 +1,6 @@
 # These functions are
-# Copyright (C) 1998-2010 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2011 T.W. Yee, University of Auckland.
+# All rights reserved.
 
 
 
@@ -11,7 +12,7 @@
 
 
 
-cenpoisson = function(link = "loge", earg = list(), imu = NULL) {
+ cenpoisson = function(link = "loge", earg = list(), imu = NULL) {
     if (mode(link) != "character" && mode(link) != "name")
         link = as.character(substitute(link))
     if (!is.list(earg))
@@ -28,7 +29,7 @@ cenpoisson = function(link = "loge", earg = list(), imu = NULL) {
         if (any(y != round(y)))
             warning("the response should be integer-valued")
         centype = attr(y, "type")
-        if (centype=="right") {
+        if (centype == "right") {
             temp = y[, 2]
             extra$uncensored = ifelse(temp == 1, TRUE, FALSE)
             extra$rightcensored = ifelse(temp == 0, TRUE, FALSE)
@@ -36,7 +37,7 @@ cenpoisson = function(link = "loge", earg = list(), imu = NULL) {
             extra$interval = rep(FALSE, len=n)
             init.mu = pmax(y[,1], 1/8)
         } else
-        if (centype=="left") {
+        if (centype == "left") {
             temp = y[, 2]
             extra$uncensored = ifelse(temp == 1, TRUE, FALSE)
             extra$rightcensored = rep(FALSE, len=n)
@@ -44,7 +45,7 @@ cenpoisson = function(link = "loge", earg = list(), imu = NULL) {
             extra$interval = rep(FALSE, len=n)
             init.mu = pmax(y[,1], 1/8)
         } else
-        if (centype=="interval" || centype=="interval2") {
+        if (centype == "interval" || centype == "interval2") {
             temp = y[, 3]
             extra$uncensored = ifelse(temp == 1, TRUE, FALSE)
             extra$rightcensored = ifelse(temp == 0, TRUE, FALSE)
@@ -54,12 +55,12 @@ cenpoisson = function(link = "loge", earg = list(), imu = NULL) {
             if (any(extra$uncensored))
             init.mu[extra$uncensored] = pmax(y[extra$uncensored,1], 1/8)
             if (any(extra$rightcensored))
-            init.mu[extra$rightcensored] = pmax(y[extra$rightcensored,1], 1/8)
+         init.mu[extra$rightcensored] = pmax(y[extra$rightcensored,1], 1/8)
             if (any(extra$leftcensored))
-            init.mu[extra$leftcensored] = pmax(y[extra$leftcensored,1], 1/8)
+           init.mu[extra$leftcensored] = pmax(y[extra$leftcensored,1], 1/8)
         } else
-        if (centype=="counting") {
-            stop("type=='counting' not compatible with cenpoisson()")
+        if (centype == "counting") {
+            stop("type == 'counting' not compatible with cenpoisson()")
             init.mu = pmax(y[,1], 1/8)
             stop("currently not working")
         } else
@@ -67,7 +68,7 @@ cenpoisson = function(link = "loge", earg = list(), imu = NULL) {
 
         if (length( .imu )) init.mu = 0 * y[,1] + .imu
     
-        predictors.names = namesof("mu", .link, earg= .earg, short=TRUE)
+        predictors.names = namesof("mu", .link, earg = .earg, short=TRUE)
         if (!length(etastart))
             etastart = theta2eta(init.mu, link = .link, earg = .earg)
     }), list( .link = link, .earg = earg, .imu = imu))),
@@ -83,7 +84,8 @@ cenpoisson = function(link = "loge", earg = list(), imu = NULL) {
     link = eval(substitute(function(mu, extra = NULL) {
         theta2eta(mu, link = .link, earg = .earg)
     }, list( .link = link, .earg = earg ))),
-    loglikelihood = function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
+    loglikelihood = function(mu, y, w, residuals = FALSE, eta,
+                             extra = NULL) {
         cen0 = extra$uncensored
         cenL = extra$leftcensored
         cenU = extra$rightcensored
@@ -129,11 +131,11 @@ cenpoisson = function(link = "loge", earg = list(), imu = NULL) {
             dl.dlambda[cenI] =
                 (-densm02[cenI]+densm12[cenI]) / (Queue2[cenI]-Queue1[cenI])
         }
-        dlambda.deta = dtheta.deta(theta=lambda, link= .link, earg= .earg)
+        dlambda.deta = dtheta.deta(theta=lambda, link= .link, earg = .earg)
         w * dl.dlambda * dlambda.deta
     }), list( .link = link, .earg = earg ))),
     weight = eval(substitute(expression({
-        d2lambda.deta2 = d2theta.deta2(theta=lambda, link= .link, earg= .earg)
+        d2lambda.deta2 = d2theta.deta2(theta=lambda, link= .link, earg = .earg)
         d2l.dlambda2 = 1 / lambda # uncensored; Fisher scoring
         if (any(cenU)) {
             densm2 = dpois(yllim-2, lambda)
@@ -161,8 +163,8 @@ cenpoisson = function(link = "loge", earg = list(), imu = NULL) {
 
 
 if (FALSE)
-cexpon = 
-ecexpon = function(link="loge", location=0)
+ cexpon = 
+ ecexpon = function(link="loge", location=0)
 {
     if (!is.Numeric(location, allow=1))
         stop("bad input for 'location'")
@@ -170,53 +172,54 @@ ecexpon = function(link="loge", location=0)
         link = as.character(substitute(link))
 
     new("vglmff",
-    blurb=c("Censored exponential distribution\n\n",
-            "Link:     ", namesof("rate", link, tag= TRUE), "\n",
-            "Mean:     ", "mu = ", location, " + 1 / ",
-            namesof("rate", link, tag= FALSE), "\n",
-            "Variance: ",
-            if (location==0) "Exponential: mu^2" else
-            paste("(mu-", location, ")^2", sep="")),
-    initialize=eval(substitute(expression({
+    blurb = c("Censored exponential distribution\n\n",
+              "Link:     ", namesof("rate", link, tag = TRUE), "\n",
+              "Mean:     ", "mu = ", location, " + 1 / ",
+              namesof("rate", link, tag = FALSE), "\n",
+              "Variance: ",
+              if (location == 0) "Exponential: mu^2" else
+              paste("(mu-",  location, ")^2", sep="")),
+    initialize = eval(substitute(expression({
         extra$location = .location # This is passed into, e.g., link, deriv etc.
         if (any(y[,1] <= extra$location))
             stop("all responses must be greater than ", extra$location)
-        predictors.names = namesof("rate", .link, tag= FALSE)
+        predictors.names = namesof("rate", .link, tag = FALSE)
         type <- attr(y, "type")
-        if (type=="right" || type=="left"){
+        if (type == "right" || type == "left"){
           mu = y[,1] + (abs(y[,1] - extra$location) < 0.001) / 8
         }else
-        if (type=="interval"){
+        if (type == "interval"){
           temp <- y[,3]
-          mu = ifelse(temp==3, y[,2] + (abs(y[,2] - extra$location) < 0.001)/8,
+          mu = ifelse(temp == 3, y[,2] + (abs(y[,2] - extra$location)
+                      < 0.001)/8,
                       y[,1] + (abs(y[,1] - extra$location) < 0.001) / 8)
         }
         if (!length(etastart))
             etastart = theta2eta(1/(mu-extra$location), .link)
 
-        if (type=="right") {
+        if (type == "right") {
           temp <- y[, 2]
           extra$uncensored = ifelse(temp == 1, TRUE, FALSE)
           extra$rightcensored = ifelse(temp == 0, TRUE, FALSE)
           extra$leftcensored = rep(FALSE, len=n)
           extra$interval = rep(FALSE, len=n)
         } else
-        if (type=="left") {
+        if (type == "left") {
           temp <- y[, 2]
           extra$uncensored = ifelse(temp == 1, TRUE, FALSE)
           extra$rightcensored = rep(FALSE, len=n)
           extra$leftcensored = ifelse(temp == 0, TRUE, FALSE)
           extra$interval = rep(FALSE, len=n)
         } else
-        if (type=="counting") {
-          stop("type=='counting' not recognized")
+        if (type == "counting") {
+          stop("type == 'counting' not recognized")
           extra$uncensored = rep(temp == 1, TRUE, FALSE)
           extra$interval = rep(FALSE, len=n)
           extra$leftcensored = rep(FALSE, len=n)
           extra$rightcensored = rep(FALSE, len=n)
           extra$counting = ifelse(temp == 0, TRUE, FALSE)
         } else
-        if (type=="interval") {
+        if (type == "interval") {
           temp <- y[, 3]
           extra$uncensored = ifelse(temp == 1, TRUE, FALSE)
           extra$rightcensored = ifelse(temp == 0, TRUE, FALSE)
@@ -228,33 +231,34 @@ ecexpon = function(link="loge", location=0)
         #if(!length(extra$rightcensored)) extra$rightcensored = rep(FALSE, len=n)
         #if(any(extra$rightcensored & extra$leftcensored))
         #    stop("some observations are both right and left censored!")
-    }), list( .location=location, .link=link ))),
-    inverse=eval(substitute(function(eta, extra=NULL)
+    }), list( .location=location, .link = link ))),
+    inverse = eval(substitute(function(eta, extra = NULL)
         extra$location + 1 / eta2theta(eta, .link),
-    list( .link=link ) )),
-    last=eval(substitute(expression({
+    list( .link = link ) )),
+    last = eval(substitute(expression({
         misc$location = extra$location
         misc$link = c("rate" = .link)
-    }), list( .link=link ))),
-    link=eval(substitute(function(mu, extra=NULL)
+    }), list( .link = link ))),
+    link=eval(substitute(function(mu, extra = NULL)
         theta2eta(1/(mu-extra$location), .link),
-    list( .link=link ) )),
-    loglikelihood=eval(substitute(
-        function(mu,y,w,residuals= FALSE,eta, extra=NULL) {
+    list( .link = link ) )),
+    loglikelihood = eval(substitute(
+        function(mu,y,w,residuals = FALSE,eta, extra = NULL) {
         rate = 1 / (mu - extra$location)
         cen0 = extra$uncensored
         cenL = extra$leftcensored
         cenU = extra$rightcensored
         cenI = extra$interval
-        if (residuals) stop("loglikelihood residuals not implemented yet") else
+        if (residuals) stop("loglikelihood residuals not ",
+                            "implemented yet") else
         sum(w[cenL] * log1p(-exp(-rate[cenL]*(y[cenL,1]-extra$location)))) +
         sum(w[cenU] * (-rate[cenU]*(y[cenU,1]-extra$location))) +
         sum(w[cen0] * (log(rate[cen0]) - rate[cen0]*(y[cen0,1]-extra$location)))+
         sum(w[cenI] * log(-exp(-rate[cenI]*(y[cenI,2]-extra$location))+
         exp(-rate[cenI]*(y[cenI,1]-extra$location))))
-    }, list( .link=link ))),
-    vfamily=c("ecexpon"),
-    deriv=eval(substitute(expression({
+    }, list( .link = link ))),
+    vfamily = c("ecexpon"),
+    deriv = eval(substitute(expression({
         rate = 1 / (mu - extra$location)
         cen0 = extra$uncensored
         cenL = extra$leftcensored
@@ -274,8 +278,8 @@ ecexpon = function(link="loge", location=0)
             (-tmp200b[cenI]+tmp200[cenI])
         drate.deta = dtheta.deta(rate, .link)
         w * dl.drate * drate.deta
-    }), list( .link=link ) )),
-    weight=eval(substitute(expression({
+    }), list( .link = link ) )),
+    weight = eval(substitute(expression({
         A123 = ((mu-extra$location)^2) # uncensored d2l.drate2
         Lowpt = ifelse(cenL, y[,1], extra$location)
         Lowpt = ifelse(cenI, y[,1], Lowpt) #interval censored
@@ -290,59 +294,63 @@ ecexpon = function(link="loge", location=0)
                                    exp(-rate*(Upppt-extra$location))) * A123
         wz = w * (drate.deta^2) * d2l.drate2
         wz
-    }), list( .link=link ))))
+    }), list( .link = link ))))
 }
 
 
 
-cnormal1 = function(lmu="identity", lsd="loge", imethod=1, zero=2)
+
+
+ cnormal1 = function(lmu="identity", lsd="loge", method.init=1, zero=2)
 {
     if (mode(lmu) != "character" && mode(lmu) != "name")
         lmu = as.character(substitute(lmu))
     if (mode(lsd) != "character" && mode(lsd) != "name")
         lsd = as.character(substitute(lsd))
-    if (!is.Numeric(imethod, allow=1, integer=TRUE, positi=TRUE) || imethod > 2)
-        stop("imethod must be 1 or 2")
+    if (!is.Numeric(method.init, allow=1, integer=TRUE, positi=TRUE) ||
+        method.init > 2)
+        stop("'method.init' must be 1 or 2")
 
     new("vglmff",
-    blurb=c("Censored univariate normal\n\n",
-            "Links:    ", namesof("mu", lmu, tag= TRUE), "; ",
-                          namesof("sd", lsd, tag= TRUE), "\n",
-            "Conditional variance: sd^2"),
-    constraints=eval(substitute(expression({
+    blurb = c("Censored univariate normal\n\n",
+              "Links:    ", namesof("mu", lmu, tag = TRUE), "; ",
+                            namesof("sd", lsd, tag = TRUE), "\n",
+              "Conditional variance: sd^2"),
+    constraints = eval(substitute(expression({
         constraints = cm.zero.vgam(constraints, x, .zero, M)
     }), list( .zero=zero ))),
-    initialize=eval(substitute(expression({
+    initialize = eval(substitute(expression({
         y = cbind(y)
-        if (ncol(y)>1) stop("the response must be a vector or a 1-column matrix")
+        if (ncol(y) > 1)
+          stop("the response must be a vector or a 1-column matrix")
 
-        if (!length(extra$leftcensored)) extra$leftcensored = rep(FALSE, len=n)
-        if (!length(extra$rightcensored)) extra$rightcensored = rep(FALSE, len=n)
+        if (!length(extra$leftcensored))
+          extra$leftcensored = rep(FALSE, len=n)
+        if (!length(extra$rightcensored))
+          extra$rightcensored = rep(FALSE, len=n)
         if (any(extra$rightcensored & extra$leftcensored))
             stop("some observations are both right and left censored!")
 
-        predictors.names = 
-        c(namesof("mu", .lmu, tag= FALSE),
-          namesof("sd", .lsd, tag= FALSE))
+        predictors.names = c(namesof("mu", .lmu, tag = FALSE),
+                             namesof("sd", .lsd, tag = FALSE))
         if (!length(etastart)) {
             anyc = extra$leftcensored | extra$rightcensored
-            i11 = if ( .imethod == 1) anyc else FALSE  # can be all data
-            junk=if(is.R()) lm.wfit(x=cbind(x[!i11,]),y=y[!i11],w=w[!i11]) else
-                   lm.wfit(x=cbind(x[!i11,]), y=y[!i11], w=w[!i11],method="qr")
+            i11 = if ( .method.init == 1) anyc else FALSE  # can be all data
+            junk = lm.wfit(x=cbind(x[!i11,]),y=y[!i11],w=w[!i11])
             sd.y.est = sqrt( sum(w[!i11] * junk$resid^2) / junk$df.residual )
             etastart = cbind(mu=y, rep(theta2eta(sd.y.est, .lsd), length=n))
             if (any(anyc)) etastart[anyc,1] = x[anyc,,drop=FALSE] %*% junk$coeff
         }
-   }), list( .lmu=lmu, .lsd=lsd, .imethod=imethod ))),
-    inverse=eval(substitute( function(eta, extra=NULL) {
+   }), list( .lmu = lmu, .lsd = lsd, .method.init = method.init ))),
+    inverse = eval(substitute( function(eta, extra = NULL) {
         eta2theta(eta[,1], .lmu)
-    }, list( .lmu=lmu ))),
-    last=eval(substitute(expression({
+    }, list( .lmu = lmu ))),
+    last = eval(substitute(expression({
         misc$link = c("mu"= .lmu, "sd"= .lsd)
         misc$expected = TRUE
-    }), list( .lmu=lmu, .lsd=lsd ))),
-    loglikelihood=eval(substitute(
-        function(mu,y,w,residuals= FALSE,eta, extra=NULL) {
+    }), list( .lmu = lmu, .lsd = lsd ))),
+    loglikelihood = eval(substitute(
+        function(mu,y,w,residuals = FALSE,eta, extra = NULL) {
         cenL = extra$leftcensored
         cenU = extra$rightcensored
         cen0 = !cenL & !cenU   # uncensored obsns
@@ -353,11 +361,12 @@ cnormal1 = function(lmu="identity", lsd="loge", imethod=1, zero=2)
         ell1 = -log(sd[cen0]) - 0.5 * ((y[cen0] - mum[cen0])/sd[cen0])^2
         ell2 = log1p(-pnorm((mum[cenL] - Lower[cenL])/sd[cenL]))
         ell3 = log1p(-pnorm(( Upper[cenU] -  mum[cenU])/sd[cenU]))
-        if (residuals) stop("loglikelihood residuals not implemented yet") else
+        if (residuals) stop("loglikelihood residuals not ",
+                            "implemented yet") else
         sum(w[cen0] * ell1) + sum(w[cenL] * ell2) + sum(w[cenU] * ell3)
-    }, list( .lmu=lmu, .lsd=lsd ))),
-    vfamily=c("tobit"),
-    deriv=eval(substitute(expression({
+    }, list( .lmu = lmu, .lsd = lsd ))),
+    vfamily = c("cnormal1"),
+    deriv = eval(substitute(expression({
         cenL = extra$leftcensored
         cenU = extra$rightcensored
         cen0 = !cenL & !cenU   # uncensored obsns
@@ -390,11 +399,11 @@ cnormal1 = function(lmu="identity", lsd="loge", imethod=1, zero=2)
             rm(fred21)
         }
         w * cbind(dl.dmu * dmu.deta, dl.dsd * dsd.deta)
-    }), list( .lmu=lmu, .lsd=lsd ))),
-    weight=eval(substitute(expression({
+    }), list( .lmu = lmu, .lsd = lsd ))),
+    weight = eval(substitute(expression({
         A1 = 1 - pnorm((mum - Lower) / sd)   # Lower
         A3 = 1 - pnorm(( Upper - mum) / sd)  # Upper
-        A2 = 1 - A1 - A3                      # Middle; uncensored
+        A2 = 1 - A1 - A3                     # Middle; uncensored
         wz = matrix(0, n, 3)
         wz[,iam(1,1,M)] = A2 * 1 / sd^2  # ed2l.dmu2
         wz[,iam(2,2,M)] = A2 * 2 / sd^2  # ed2l.dsd2
@@ -406,7 +415,8 @@ cnormal1 = function(lmu="identity", lsd="loge", imethod=1, zero=2)
         wz.cenL11 = phiL * (phiL - (1-PhiL)*temp21L) / temp31L
         wz.cenL22 = mumL * phiL * ((1-PhiL) * (2 - temp21L^2) +
                     mumL * phiL / sd) / (sd * temp31L)
-        wz.cenL12 = phiL * ((1-PhiL)*(temp21L^2 - 1) - temp21L*phiL) / temp31L
+        wz.cenL12 = phiL * ((1-PhiL)*(temp21L^2 - 1) -
+                    temp21L*phiL) / temp31L
         wz.cenL11[!is.finite(wz.cenL11)] = 0
         wz.cenL22[!is.finite(wz.cenL22)] = 0
         wz.cenL12[!is.finite(wz.cenL12)] = 0
@@ -422,7 +432,8 @@ cnormal1 = function(lmu="identity", lsd="loge", imethod=1, zero=2)
         wzcenU11 = phiU * (phiU - tmp8) / temp31U
         tmp9 = (1-PhiU) * (2 - temp21U^2)
         wzcenU22 = mumU * phiU * (tmp9 + mumU * phiU / sd) / (sd * temp31U)
-        wzcenU12 = -phiU * ((1-PhiU)*(temp21U^2 - 1) - temp21U*phiU) / temp31U
+        wzcenU12 = -phiU * ((1-PhiU)*(temp21U^2 - 1) -
+                    temp21U*phiU) / temp31U
         wzcenU11[!is.finite(wzcenU11)] = 0  # Needed when Upper==Inf
         wzcenU22[!is.finite(wzcenU22)] = 0  # Needed when Upper==Inf
         wzcenU12[!is.finite(wzcenU12)] = 0  # Needed when Upper==Inf
@@ -433,190 +444,220 @@ cnormal1 = function(lmu="identity", lsd="loge", imethod=1, zero=2)
         wz[,iam(2,2,M)] = w * wz[,iam(2,2,M)] * dsd.deta^2
         wz[,iam(1,2,M)] = w * wz[,iam(1,2,M)] * dmu.deta * dsd.deta
         wz
-    }), list( .lmu=lmu, .lsd=lsd ))))
+    }), list( .lmu = lmu, .lsd = lsd ))))
 }
 
 
 
-crayleigh = function(link="loge", earg = list(), expected=FALSE) {
-    if (mode(link) != "character" && mode(link) != "name")
-        link = as.character(substitute(link))
-    if (!is.logical(expected) || length(expected) != 1)
-        stop("bad input for argument 'expected'")
-    if (!is.list(earg)) earg = list()
 
-    new("vglmff",
-    blurb=c("Censored Rayleigh distribution",
-            "f(y) = y*exp(-0.5*(y/a)^2)/a^2, y>0, a>0\n",
-            "Link:    ",
-            namesof("a", link, earg= earg ), "\n", "\n",
-            "Mean:    a * sqrt(pi / 2)"),
-    initialize=eval(substitute(expression({
-        if (ncol(cbind(y)) != 1)
-            stop("response must be a vector or a one-column matrix")
-        if (length(extra$leftcensored)) stop("cannot handle left-censored data")
-        if (!length(extra$rightcensored)) extra$rightcensored = rep(FALSE, len=n)
-        predictors.names = namesof("a", .link, earg= .earg, tag= FALSE) 
-        if (!length(etastart)) {
-            a.init = (y+1/8) / sqrt(pi/2)
-            etastart = theta2eta(a.init, .link, earg= .earg )
-        }
-    }), list( .link=link, .earg=earg ))),
-    inverse=eval(substitute(function(eta, extra=NULL) {
-        a = eta2theta(eta, .link, earg= .earg )
-        a * sqrt(pi/2)
-    }, list( .link=link, .earg=earg ))),
-    last=eval(substitute(expression({
-        misc$link = c("a"= .link)
-        misc$earg = list(a= .earg)
-        misc$expected = .expected
-    }), list( .link=link, .earg=earg, .expected=expected ))),
-    loglikelihood=eval(substitute(
-        function(mu,y,w,residuals= FALSE,eta, extra=NULL) {
-        a = eta2theta(eta, .link, earg= .earg )
-        cen0 = !extra$rightcensored   # uncensored obsns
-        cenU = extra$rightcensored
-        if (residuals) stop("loglikelihood residuals not implemented yet") else
-        sum(w[cen0]*(log(y[cen0]) - 2*log(a[cen0]) - 0.5*(y[cen0]/a[cen0])^2)) -
-        0.5 * sum(w[cenU] * (y[cenU]/a[cenU])^2)
-    }, list( .link=link, .earg=earg ))),
-    vfamily=c("crayleigh"),
-    deriv=eval(substitute(expression({
-        cen0 = !extra$rightcensored   # uncensored obsns
-        cenU = extra$rightcensored
-        a = eta2theta(eta, .link, earg= .earg )
-        dl.da = ((y/a)^2 - 2) / a
-        da.deta = dtheta.deta(a, .link, earg= .earg )
-        dl.da[cenU] = y[cenU]^2 / a[cenU]^3
-        w * dl.da * da.deta
-    }), list( .link=link, .earg=earg ))),
-    weight=eval(substitute(expression({
-        ed2l.da2 = 4 / a^2
-        wz = da.deta^2 * ed2l.da2
-        if ( .expected) {
-            ed2l.da2[cenU] = 6 / (a[cenU])^2
-            wz[cenU] = (da.deta[cenU])^2 * ed2l.da2[cenU]
-        } else {
-            d2l.da2 = 3 * (y[cenU])^2 / (a[cenU])^4
-            d2a.deta2 = d2theta.deta2(a[cenU], .link, earg= .earg )
-            wz[cenU] = (da.deta[cenU])^2 * d2l.da2 - dl.da[cenU] * d2a.deta2
-        }
-        w * wz
-    }), list( .link=link, .earg=earg, .expected=expected ))))
-}
-
-
-weibull = 
-weibull.sev = function(lshape="loge", lscale="loge",
-                       eshape=list(), escale=list(),
-                       ishape=NULL, iscale=NULL,
-                       nrfs = 1,
-                       imethod=1, zero=2)
-{
-
-    if (mode(lshape) != "character" && mode(lshape) != "name")
-        lshape = as.character(substitute(lshape))
+ crayleigh = function(lscale = "loge", escale = list(),
+                      oim  = TRUE) {
     if (mode(lscale) != "character" && mode(lscale) != "name")
         lscale = as.character(substitute(lscale))
-    if (length(zero) && !is.Numeric(zero, integer=TRUE, posit=TRUE))
-        stop("bad input for argument 'zero'")
-    if (!is.Numeric(imethod, allow=1, integer=TRUE, positi=TRUE) || imethod > 2)
-        stop("argument 'imethod' must be 1 or 2")
-    if (!is.list(eshape)) eshape = list()
+    if (!is.logical(oim) || length(oim) != 1)
+        stop("bad input for argument 'oim'")
     if (!is.list(escale)) escale = list()
-    if (!is.Numeric(nrfs, allow=1) || nrfs<0 || nrfs > 1)
-        stop("bad input for 'nrfs'")
 
     new("vglmff",
-    blurb=c("Weibull distribution\n\n",
-            "Links:    ",
-            namesof("shape", lshape, earg= eshape), ", ", 
-            namesof("scale", lscale, earg= escale), "\n", 
-            "Mean:     scale * gamma(1 + 1/shape)\n",
-            "Variance: scale^2 * (gamma(1 + 2/shape) - gamma(1 + 1/shape)^2)"),
-    constraints=eval(substitute(expression({
-        constraints = cm.zero.vgam(constraints, x, .zero, M)
-    }), list( .zero=zero ))),
-    initialize=eval(substitute(expression({
-        y = cbind(y)
-        if (ncol(y)>1) stop("the response must be a vector or a 1-column matrix")
+    blurb = c("Censored Rayleigh distribution\n\n",
+              "f(y) = y*exp(-0.5*(y/scale)^2)/scale^2, y>0, scale>0\n",
+              "Link:    ",
+              namesof("scale", lscale, earg = escale ), "\n", "\n",
+              "Mean:    scale * sqrt(pi / 2)"),
+    initialize = eval(substitute(expression({
+        if (ncol(cbind(y)) != 1)
+            stop("response must be a vector or a one-column matrix")
 
-        if (is.SurvS4(y))
-            stop("only uncensored observations are allowed; don't use SurvS4()")
+        if (length(extra$leftcensored))
+          stop("cannot handle left-censored data")
+        if (!length(extra$rightcensored))
+          extra$rightcensored = rep(FALSE, len=n)
 
         predictors.names =
-        c(namesof("shape", .lshape, earg= .eshape, tag=FALSE),
-          namesof("scale", .lscale, earg= .escale, tag=FALSE))
-        if (!length(.ishape) || !length(.iscale)) {
-            anyc = FALSE  # extra$leftcensored | extra$rightcensored
-            i11 = if ( .imethod == 1) anyc else FALSE  # can be all data
-            qvec = c(.25, .5, .75)   # Arbitrary; could be made an argument
-            init.shape = if (length( .ishape)) .ishape else 1
-            xvec = log(-log1p(-qvec))
-            fit0 = lsfit(x=xvec, y=log(quantile(y[!i11], qvec)))
-        }
-
+          namesof("scale", .lscale, earg = .escale, tag = FALSE)
         if (!length(etastart)) {
-            shape = rep(if(length(.ishape)) .ishape else 1/fit0$coef["X"],len=n)
-            scale = rep(if(length(.iscale)) .iscale else
-                        exp(fit0$coef["Intercept"]), len=n)
-            etastart =
-            cbind(theta2eta(shape, .lshape, earg= .eshape ),
-                  theta2eta(scale, .lscale, earg= .escale ))
+            a.init = (y+1/8) / sqrt(pi/2)
+            etastart = theta2eta(a.init, .lscale, earg = .escale )
         }
-    }), list( .lscale=lscale, .lshape=lshape,
-              .escale=escale, .eshape=eshape,
-              .iscale=iscale, .ishape=ishape, .imethod=imethod ) )),
-    inverse=eval(substitute(function(eta, extra=NULL) {
-        shape = eta2theta(eta[,1], .lshape, earg= .eshape )
-        scale = eta2theta(eta[,2], .lscale, earg= .escale )
-        scale * gamma(1+1/shape)
-    }, list( .lscale=lscale, .lshape=lshape,
-             .escale=escale, .eshape=eshape ) )),
-    last=eval(substitute(expression({
-        if (regnotok <- any(shape <= 2))
-            warning(paste("MLE regularity conditions are violated",
-                          "(shape <= 2) at the final iteration"))
-        misc$link = c(shape= .lshape, scale= .lscale)
-        misc$earg= list(shape= .eshape, scale= .escale)
-        misc$nrfs = .nrfs
-        misc$RegCondOK = !regnotok   # Save this for later
-    }), list( .lscale=lscale, .lshape=lshape,
-              .escale=escale, .eshape=eshape, .nrfs=nrfs ) )),
-    loglikelihood=eval(substitute(
-            function(mu, y, w, residuals= FALSE,eta, extra=NULL) {
-        shape = eta2theta(eta[,1], .lshape, earg= .eshape )
-        scale = eta2theta(eta[,2], .lscale, earg= .escale )
-        ell1 = (log(shape) - log(scale) + (shape-1) *
-               log(y/scale) - (y / scale)^shape)
-        if (residuals) stop("loglikelihood residuals not implemented yet") else
-            sum(w * ell1)
-    }, list( .lscale=lscale, .lshape=lshape,
-             .escale=escale, .eshape=eshape ) )),
-    vfamily=c("weibull.sev"),
-    deriv=eval(substitute(expression({
-        shape = eta2theta(eta[,1], .lshape, earg= .eshape )
-        scale = eta2theta(eta[,2], .lscale, earg= .escale )
-        dl.dshape = 1/shape + log(y/scale) - log(y/scale) * (y/scale)^shape
-        dl.dscale = (shape/scale) * (-1 + (y/scale)^shape)
-        dshape.deta = dtheta.deta(shape, .lshape, earg= .eshape )
-        dscale.deta = dtheta.deta(scale, .lscale, earg= .escale )
-        w * cbind( dl.dshape * dshape.deta, dl.dscale * dscale.deta )
-    }), list( .lscale=lscale, .lshape=lshape,
-              .escale=escale, .eshape=eshape ) )),
-    weight=eval(substitute(expression({
-        EulerM = -digamma(1.0)
-        wz = matrix(as.numeric(NA), n, dimm(M))  #3=dimm(M)
-        ed2l.dshape = (6*(EulerM-1)^2 +pi^2)/(6*shape^2) # Kleiber & Kotz (2003)
-        ed2l.dscale = (shape/scale)^2
-        ed2l.dshapescale = (EulerM-1)/scale
-        wz[,iam(1,1,M)] = ed2l.dshape * dshape.deta^2
-        wz[,iam(2,2,M)] = ed2l.dscale * dscale.deta^2
-        wz[,iam(1,2,M)] = ed2l.dshapescale * dscale.deta * dshape.deta
-        wz = w * wz
-        wz
-    }), list( .eshape=eshape, .nrfs=nrfs ))))
+    }), list( .lscale = lscale, .escale = escale ))),
+    inverse = eval(substitute(function(eta, extra = NULL) {
+        Scale = eta2theta(eta, .lscale, earg = .escale )
+        Scale * sqrt(pi/2)
+    }, list( .lscale = lscale, .escale = escale ))),
+    last = eval(substitute(expression({
+        misc$link =    c("scale" = .lscale)
+        misc$earg = list("scale" = .escale)
+        misc$oim = .oim
+    }), list( .lscale = lscale, .escale = escale,
+              .oim = oim ))),
+    loglikelihood = eval(substitute(
+        function(mu,y,w,residuals = FALSE,eta, extra = NULL) {
+        Scale = eta2theta(eta, .lscale, earg = .escale )
+        cen0 = !extra$rightcensored   # uncensored obsns
+        cenU = extra$rightcensored
+        if (residuals) stop("loglikelihood residuals not ",
+                            "implemented yet") else
+          sum(w[cen0] * (log(y[cen0]) - 2*log(Scale[cen0]) -
+                         0.5*(y[cen0]/Scale[cen0])^2)) -
+          sum(w[cenU] * (y[cenU]/Scale[cenU])^2) * 0.5
+    }, list( .lscale = lscale, .escale = escale ))),
+    vfamily = c("crayleigh"),
+    deriv = eval(substitute(expression({
+        cen0 = !extra$rightcensored   # uncensored obsns
+        cenU = extra$rightcensored
+        Scale = eta2theta(eta, .lscale, earg = .escale )
+        dl.dScale = ((y/Scale)^2 - 2) / Scale
+        dScale.deta = dtheta.deta(Scale, .lscale, earg = .escale )
+        dl.dScale[cenU] = y[cenU]^2 / Scale[cenU]^3
+        w * dl.dScale * dScale.deta
+    }), list( .lscale = lscale, .escale = escale ))),
+    weight = eval(substitute(expression({
+        ed2l.dScale2 = 4 / Scale^2
+        wz = dScale.deta^2 * ed2l.dScale2
+        if ( .oim ) {
+            d2l.dScale2 = 3 * (y[cenU])^2 / (Scale[cenU])^4
+            d2Scale.deta2 = d2theta.deta2(Scale[cenU], .lscale, earg = .escale )
+            wz[cenU] = (dScale.deta[cenU])^2 * d2l.dScale2 - dl.dScale[cenU] * d2Scale.deta2
+        } else {
+            ed2l.dScale2[cenU] = 6 / (Scale[cenU])^2
+            wz[cenU] = (dScale.deta[cenU])^2 * ed2l.dScale2[cenU]
+        }
+        w * wz
+    }), list( .lscale = lscale, .escale = escale,
+              .oim = oim ))))
 }
+
+
+
+
+
+
+
+
+ weibull = 
+ weibull.sev = function(lshape = "loge", lscale = "loge",
+                       eshape = list(), escale = list(),
+                       ishape = NULL, iscale = NULL,
+                       nrfs = 1,
+                       method.init = 1, zero = 2)
+{
+
+  if (mode(lshape) != "character" && mode(lshape) != "name")
+    lshape = as.character(substitute(lshape))
+  if (mode(lscale) != "character" && mode(lscale) != "name")
+    lscale = as.character(substitute(lscale))
+  if (length(zero) && !is.Numeric(zero, integer=TRUE, posit=TRUE))
+    stop("bad input for argument 'zero'")
+  if (!is.Numeric(method.init, allow=1, integer=TRUE, positi=TRUE) ||
+      method.init > 2)
+      stop("argument 'method.init' must be 1 or 2")
+  if (!is.list(eshape)) eshape = list()
+  if (!is.list(escale)) escale = list()
+  if (!is.Numeric(nrfs, allow=1) || nrfs < 0 || nrfs > 1)
+      stop("bad input for 'nrfs'")
+
+  new("vglmff",
+  blurb = c("Weibull distribution\n\n",
+            "Links:    ",
+            namesof("shape", lshape, earg = eshape), ", ", 
+            namesof("scale", lscale, earg = escale), "\n", 
+            "Mean:     scale * gamma(1 + 1/shape)\n",
+            "Variance: scale^2 * (gamma(1 + 2/shape) - ",
+                      "gamma(1 + 1/shape)^2)"),
+  constraints = eval(substitute(expression({
+    constraints = cm.zero.vgam(constraints, x, .zero, M)
+  }), list( .zero = zero ))),
+  initialize = eval(substitute(expression({
+    y = cbind(y)
+    if (ncol(y)>1)
+      stop("the response must be a vector or a 1-column matrix")
+
+    if (is.SurvS4(y))
+      stop("only uncensored observations are allowed; don't use SurvS4()")
+
+    predictors.names =
+      c(namesof("shape", .lshape, earg = .eshape, tag = FALSE),
+        namesof("scale", .lscale, earg = .escale, tag = FALSE))
+
+    if (!length(.ishape) || !length(.iscale)) {
+        anyc = FALSE  # extra$leftcensored | extra$rightcensored
+        i11 = if ( .method.init == 1) anyc else FALSE # can be all data
+        qvec = c(.25, .5, .75)   # Arbitrary; could be made an argument
+        init.shape = if (length( .ishape)) .ishape else 1
+        xvec = log(-log1p(-qvec))
+        fit0 = lsfit(x=xvec, y=log(quantile(y[!i11], qvec)))
+    }
+
+    if (!length(etastart)) {
+        shape = rep(if(length(.ishape)) .ishape else 1/fit0$coef["X"],len=n)
+        scale = rep(if(length(.iscale)) .iscale else
+                    exp(fit0$coef["Intercept"]), len=n)
+        etastart =
+        cbind(theta2eta(shape, .lshape, earg = .eshape ),
+              theta2eta(scale, .lscale, earg = .escale ))
+    }
+  }), list( .lscale = lscale, .lshape = lshape,
+            .escale = escale, .eshape = eshape,
+            .iscale = iscale, .ishape = ishape,
+            .method.init = method.init ) )),
+  inverse = eval(substitute(function(eta, extra = NULL) {
+    shape = eta2theta(eta[,1], .lshape, earg = .eshape )
+    scale = eta2theta(eta[,2], .lscale, earg = .escale )
+    scale * gamma(1+1/shape)
+  }, list( .lscale = lscale, .lshape = lshape,
+           .escale = escale, .eshape = eshape ) )),
+  last = eval(substitute(expression({
+    if (regnotok <- any(shape <= 2))
+      warning("MLE regularity conditions are violated",
+              "(shape <= 2) at the final iteration")
+
+
+    misc$link =    c(shape =  .lshape, scale =  .lscale)
+    misc$earg = list(shape =  .eshape, scale =  .escale)
+    misc$nrfs = .nrfs
+    misc$RegCondOK = !regnotok   # Save this for later
+  }), list( .lscale = lscale, .lshape = lshape,
+            .escale = escale, .eshape = eshape, .nrfs = nrfs ) )),
+  loglikelihood = eval(substitute(
+          function(mu, y, w, residuals = FALSE,eta, extra = NULL) {
+    shape = eta2theta(eta[,1], .lshape, earg = .eshape )
+    scale = eta2theta(eta[,2], .lscale, earg = .escale )
+    ell1 = (log(shape) - log(scale) + (shape-1) *
+           log(y/scale) - (y / scale)^shape)
+    if (residuals) stop("loglikelihood residuals not ",
+                        "implemented yet") else
+        sum(w * ell1)
+  }, list( .lscale = lscale, .lshape = lshape,
+           .escale = escale, .eshape = eshape ) )),
+  vfamily = c("weibull.sev"),
+  deriv = eval(substitute(expression({
+    shape = eta2theta(eta[,1], .lshape, earg = .eshape )
+    scale = eta2theta(eta[,2], .lscale, earg = .escale )
+    dl.dshape = 1/shape + log(y/scale) - log(y/scale) * (y/scale)^shape
+    dl.dscale = (shape/scale) * (-1 + (y/scale)^shape)
+    dshape.deta = dtheta.deta(shape, .lshape, earg = .eshape )
+    dscale.deta = dtheta.deta(scale, .lscale, earg = .escale )
+    w * cbind( dl.dshape * dshape.deta, dl.dscale * dscale.deta )
+  }), list( .lscale = lscale, .lshape = lshape,
+            .escale = escale, .eshape = eshape ) )),
+  weight = eval(substitute(expression({
+    EulerM = -digamma(1.0)
+    wz = matrix(as.numeric(NA), n, dimm(M))  #3=dimm(M)
+
+
+    ed2l.dshape = (6*(EulerM-1)^2 +pi^2)/(6*shape^2) # Kleiber&Kotz (2003)
+    ed2l.dscale = (shape/scale)^2
+    ed2l.dshapescale = (EulerM-1)/scale
+    wz[,iam(1,1,M)] = ed2l.dshape * dshape.deta^2
+    wz[,iam(2,2,M)] = ed2l.dscale * dscale.deta^2
+    wz[,iam(1,2,M)] = ed2l.dshapescale * dscale.deta * dshape.deta
+
+    wz = w * wz
+    wz
+  }), list( .eshape = eshape, .nrfs = nrfs ))))
+}
+
+
 
 
 
@@ -785,6 +826,153 @@ setMethod("print", "SurvS4",
 setMethod("show", "SurvS4",
          function(object)
          invisible(print.SurvS4(object)))
+
+
+
+
+
+
+
+
+if (FALSE)
+ weibullff = function(lscale = "loge", lshape = "loge",
+                      escale = list(), eshape = list(),
+                      iscale = NULL, ishape = NULL,
+                      nrfs = 1,
+                      method.init = 1, zero = 1)
+{
+
+  if (mode(lscale) != "character" && mode(lscale) != "name")
+    lscale = as.character(substitute(lscale))
+  if (mode(lshape) != "character" && mode(lshape) != "name")
+    lshape = as.character(substitute(lshape))
+
+  if (length(zero) && !is.Numeric(zero, integer=TRUE, posit=TRUE))
+    stop("bad input for argument 'zero'")
+
+  if (!is.Numeric(method.init, allow=1, integer=TRUE, positi=TRUE) ||
+      method.init > 2)
+      stop("argument 'method.init' must be 1 or 2")
+
+  if (!is.list(eshape)) eshape = list()
+  if (!is.list(escale)) escale = list()
+  if (!is.Numeric(nrfs, allow=1) || nrfs < 0 || nrfs > 1)
+      stop("bad input for 'nrfs'")
+
+  new("vglmff",
+  blurb = c("Weibull distribution\n\n",
+            "Links:    ",
+            namesof("scale", lscale, earg = escale), ", ",
+            namesof("shape", lshape, earg = eshape), "\n",
+            "Mean:     scale * gamma(1 + 1/shape)\n",
+            "Variance: scale^2 * (gamma(1 + 2/shape) - ",
+                      "gamma(1 + 1/shape)^2)"),
+  constraints = eval(substitute(expression({
+    constraints = cm.zero.vgam(constraints, x, .zero, M)
+  }), list( .zero = zero ))),
+  initialize = eval(substitute(expression({
+    y = cbind(y)
+    if (ncol(y)>1)
+      stop("the response must be a vector or a 1-column matrix")
+
+    if (is.SurvS4(y))
+      stop("only uncensored observations are allowed; don't use SurvS4()")
+
+    predictors.names =
+      c(namesof("scale", .lscale, earg = .escale, tag = FALSE),
+        namesof("shape", .lshape, earg = .eshape, tag = FALSE))
+
+    if (!length(.ishape) || !length(.iscale)) {
+        anyc = FALSE  # extra$leftcensored | extra$rightcensored
+        i11 = if ( .method.init == 1) anyc else FALSE # can be all data
+        qvec = c(.25, .5, .75)   # Arbitrary; could be made an argument
+        init.shape = if (length( .ishape)) .ishape else 1
+        xvec = log(-log1p(-qvec))
+        fit0 = lsfit(x=xvec, y=log(quantile(y[!i11], qvec)))
+    }
+
+    if (!length(etastart)) {
+        shape = rep(if(length(.ishape)) .ishape else 1/fit0$coef["X"],len=n)
+        scale = rep(if(length(.iscale)) .iscale else
+                    exp(fit0$coef["Intercept"]), len=n)
+        etastart =
+        cbind(theta2eta(scale, .lscale, earg = .escale ),
+              theta2eta(shape, .lshape, earg = .eshape ))
+    }
+  }), list( .lscale = lscale, .lshape = lshape,
+            .escale = escale, .eshape = eshape,
+            .iscale = iscale, .ishape = ishape,
+            .method.init = method.init ) )),
+  inverse = eval(substitute(function(eta, extra = NULL) {
+    scale = eta2theta(eta[,1], .lshape, earg = .escale )
+    shape = eta2theta(eta[,2], .lscale, earg = .eshape )
+    scale * gamma(1+1/shape)
+  }, list( .lscale = lscale, .lshape = lshape,
+           .escale = escale, .eshape = eshape ) )),
+  last = eval(substitute(expression({
+    if (regnotok <- any(shape <= 2))
+      warning("MLE regularity conditions are violated",
+              "(shape <= 2) at the final iteration")
+
+
+    misc$link =    c(scale =  .lscale, shape =  .lshape)
+    misc$earg = list(scale =  .escale, shape =  .eshape)
+    misc$nrfs = .nrfs
+    misc$RegCondOK = !regnotok   # Save this for later
+  }), list( .lscale = lscale, .lshape = lshape,
+            .escale = escale, .eshape = eshape, .nrfs = nrfs ) )),
+  loglikelihood = eval(substitute(
+          function(mu, y, w, residuals = FALSE,eta, extra = NULL) {
+    scale = eta2theta(eta[,1], .lscale, earg = .escale )
+    shape = eta2theta(eta[,2], .lshape, earg = .eshape )
+    ell2 = dweibull()
+
+
+    ell1 = (log(shape) - log(scale) + (shape-1) *
+           log(y/scale) - (y / scale)^shape)
+
+ print("max(abs(ell1 - ell2))")
+ print( max(abs(ell1 - ell2)) )
+
+
+    if (residuals) stop("loglikelihood residuals not ",
+                        "implemented yet") else
+        sum(w * ell1)
+  }, list( .lscale = lscale, .lshape = lshape,
+           .escale = escale, .eshape = eshape ) )),
+  vfamily = c("weibullff"),
+  deriv = eval(substitute(expression({
+    scale = eta2theta(eta[,1], .lscale, earg = .escale )
+    shape = eta2theta(eta[,2], .lshape, earg = .eshape )
+
+    dl.dshape = 1/shape + log(y/scale) - log(y/scale) * (y/scale)^shape
+    dl.dscale = (shape/scale) * (-1 + (y/scale)^shape)
+
+    dshape.deta = dtheta.deta(shape, .lshape, earg = .eshape )
+    dscale.deta = dtheta.deta(scale, .lscale, earg = .escale )
+
+    w * cbind( dl.dscale * dscale.deta,
+               dl.dshape * dshape.deta)
+  }), list( .lscale = lscale, .lshape = lshape,
+            .escale = escale, .eshape = eshape ) )),
+  weight = eval(substitute(expression({
+    EulerM = -digamma(1.0)
+    wz = matrix(as.numeric(NA), n, dimm(M))  #3=dimm(M)
+
+
+    ed2l.dshape = (6*(EulerM-1)^2 +pi^2)/(6*shape^2) # Kleiber&Kotz (2003)
+    ed2l.dscale = (shape/scale)^2
+    ed2l.dshapescale = (EulerM-1)/scale
+    wz[,iam(1,1,M)] = ed2l.dscale * dscale.deta^2
+    wz[,iam(2,2,M)] = ed2l.dshape * dshape.deta^2
+    wz[,iam(1,2,M)] = ed2l.dshapescale * dscale.deta * dshape.deta
+
+    wz = w * wz
+    wz
+  }), list( .eshape = eshape, .nrfs = nrfs ))))
+}
+
+
 
 
 

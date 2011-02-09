@@ -16,13 +16,10 @@ binomialff(link = "logit", earg = list(), dispersion = 1, mv = FALSE,
 %- maybe also 'usage' for other objects documented here.
 \arguments{
 
-  \item{link}{ 
-  Link function. See \code{\link{Links}} for more choices.
-
-  }
-  \item{earg}{ 
-  Extra argument optionally used by the link function.
-  See \code{\link{Links}} for more information.
+  \item{link, earg}{
+  Link function and extra argument optionally used by the link function.
+  See \code{\link{Links}} for more choices, and also
+  \code{\link{CommonVGAMffArguments}} for more information.
 
   }
   \item{dispersion}{ 
@@ -66,6 +63,10 @@ binomialff(link = "logit", earg = list(), dispersion = 1, mv = FALSE,
   }
 }
 \details{
+  This function is largely to mimic \code{\link[stats:Binomial]{binomial}},
+  however there are some differences.
+
+
   If the dispersion parameter is unknown, then the resulting estimate
   is not fully a maximum likelihood estimate (see pp.124--8 of McCullagh
   and Nelder, 1989).
@@ -114,17 +115,15 @@ binomialff(link = "logit", earg = list(), dispersion = 1, mv = FALSE,
 
 \note{
   If \code{mv} is \code{FALSE} (default) then the response can be of one
-  of three formats: a factor (first level taken as success), a vector of
-  proportions of success, or a 2-column matrix (first column = successes)
-  of counts.  The argument \code{weights} in the modelling function can
-  also be specified. In particular, for a general vector of proportions,
-  you will need to specify \code{weights} because the number of trials
-  is needed.
+  of two formats:
+  a factor (first level taken as failure),
+  or a 2-column matrix (first column = successes) of counts.
+  The argument \code{weights} in the modelling function can
+  also be specified as any vector of positive values.
   In general, 1 means success and 0 means failure
   (to check, see the \code{y} slot of the fitted object).
-  To input general positive values into the \code{weights} argument of
-  \code{\link{vglm}}/\code{\link{vgam}} one needs to input a 2-column
-  response.
+  Note that a general vector of proportions of success is no
+  longer accepted.
 
 
   The notation \eqn{M} is used to denote the number of linear/additive
@@ -135,7 +134,7 @@ binomialff(link = "logit", earg = list(), dispersion = 1, mv = FALSE,
   one format: a matrix of 1's and 0's (1 = success).
 
 
-  The call \code{binomialff(dispersion=0, ...)} is equivalent to
+  The call \code{binomialff(dispersion = 0, ...)} is equivalent to
   \code{quasibinomialff(...)}.  The latter was written so that R users
   of \code{quasibinomial()} would only need to add a  ``\code{ff}''
   to the end of the family function name.
@@ -150,8 +149,9 @@ binomialff(link = "logit", earg = list(), dispersion = 1, mv = FALSE,
 % \code{"ff"} can be dropped for this family function.
 
 
-  Fisher scoring is used. This can sometimes fail to converge by oscillating between
-  successive iterations (Ridout, 1990). See the example below.
+  Fisher scoring is used. This can sometimes fail to converge by
+  oscillating between successive iterations (Ridout, 1990).
+  See the example below.
 
 
 }
@@ -177,6 +177,7 @@ binomialff(link = "logit", earg = list(), dispersion = 1, mv = FALSE,
     for \emph{each} response is not handled well yet.
     Currently, only a single known dispersion parameter is handled well.
 
+
   The maximum likelihood estimate will not exist if the data is
   \emph{completely separable} or \emph{quasi-completely separable}.
   See Chapter 10 of Altman et al. (2004) for more details,
@@ -184,18 +185,19 @@ binomialff(link = "logit", earg = list(), dispersion = 1, mv = FALSE,
   Yet to do: add a \code{sepcheck=TRUE}, say, argument to detect this
   problem and give an appropriate warning.
 
+
 }
 
 \examples{
 quasibinomialff()
-quasibinomialff(link="probit")
+quasibinomialff(link = "probit")
 
-fit = vgam(agaaus ~ poly(altitude, 2), binomialff(link=cloglog), hunua)
+fit = vgam(agaaus ~ poly(altitude, 2), binomialff(link = cloglog), hunua)
 \dontrun{
 with(hunua, plot(altitude, agaaus, col="blue", ylab="P(agaaus=1)",
-                 main="Presence/absence of Agathis australis", las=1))
+                 main = "Presence/absence of Agathis australis", las = 1))
 ooo = with(hunua, order(altitude))
-with(hunua, lines(altitude[ooo], fitted(fit)[ooo], col="red", lwd=2)) }
+with(hunua, lines(altitude[ooo], fitted(fit)[ooo], col="red", lwd = 2)) }
 
 
 # Shows that Fisher scoring can sometime fail. See Ridout (1990).
@@ -203,14 +205,24 @@ ridout = data.frame(v = c(1000, 100, 10), r = c(4, 3, 3), n = c(5, 5, 5))
 (ridout = transform(ridout, logv = log(v)))
 # The iterations oscillates between two local solutions:
 glm.fail = glm(r/n ~ offset(logv) + 1, weight=n,
-               binomial(link=cloglog), ridout, trace=TRUE)
+               binomial(link = cloglog), ridout, trace = TRUE)
 coef(glm.fail)
 # vglm()'s half-stepping ensures the MLE of -5.4007 is obtained:
-vglm.ok = vglm(r/n ~ offset(logv) + 1, weight=n,
-               binomialff(link=cloglog), ridout, trace=TRUE)
+vglm.ok = vglm(cbind(r, n-r) ~ offset(logv) + 1,
+               binomialff(link = cloglog), ridout, trace = TRUE)
 coef(vglm.ok)
 }
 \keyword{models}
 \keyword{regression}
+
+
+% a vector of proportions of success,
+% In particular, for a general vector of proportions,
+% you will need to specify \code{weights} because the number of trials
+% is needed.
+% To input general positive values into the \code{weights} argument of
+% \code{\link{vglm}}/\code{\link{vgam}} one needs to input a 2-column
+% response.
+
 
 

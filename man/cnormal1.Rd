@@ -7,7 +7,7 @@
   left and right censoring.
 }
 \usage{
-cnormal1(lmu="identity", lsd="loge", imethod=1, zero=2)
+cnormal1(lmu = "identity", lsd = "loge", method.init = 1, zero = 2)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -19,7 +19,7 @@ cnormal1(lmu="identity", lsd="loge", imethod=1, zero=2)
   is the default.
 
   }
-  \item{imethod}{
+  \item{method.init}{
   Initialization method. Either 1 or 2, this specifies
   two methods for obtaining initial values for the parameters.
 
@@ -28,7 +28,7 @@ cnormal1(lmu="identity", lsd="loge", imethod=1, zero=2)
   An integer vector, containing the value 1 or 2. If so,
   the mean or standard deviation respectively are modelled
   as an intercept only.
-  Setting \code{zero=NULL} means both linear/additive predictors
+  Setting \code{zero = NULL} means both linear/additive predictors
   are modelled as functions of the explanatory variables.
 
   }
@@ -70,11 +70,12 @@ cnormal1(lmu="identity", lsd="loge", imethod=1, zero=2)
     \code{\link{tobit}},
     \code{\link{normal1}},
     \code{\link{dcnormal1}}.
+
 }
 
 \examples{
 cdata = data.frame(x = runif(nn <- 1000)) # ystar are true values
-cdata = transform(cdata, ystar  = rnorm(nn, mean=100 + 15 * x, sd=exp(3)))
+cdata = transform(cdata, ystar = rnorm(nn, m = 100 + 15 * x, sd = exp(3)))
 \dontrun{hist(ystar)}
 L = runif(nn,  80,  90) # Lower censoring points
 U = runif(nn, 130, 140) # Upper censoring points
@@ -83,8 +84,8 @@ cdata = transform(cdata, y = pmin(U, y))     # Right censored
 \dontrun{hist(y)}
 extra = list(leftcensored = with(cdata, ystar < L),
             rightcensored = with(cdata, ystar > U))
-fit = vglm(y ~ x, cnormal1(zero=2), cdata, trace=TRUE, extra=extra)
-coef(fit, matrix=TRUE)
+fit = vglm(y ~ x, cnormal1(zero = 2), cdata, trace = TRUE, extra = extra)
+coef(fit, matrix = TRUE)
 Coef(fit)
 names(fit@extra)
 }

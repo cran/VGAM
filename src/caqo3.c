@@ -133,7 +133,7 @@ void fvlmz9iyC_enbin9(double lfu2qhid[], double hdqsx7bk[], double nm0eljqk[],
                    double *n2kersmx, int *f8yswcat, int *dvhw1ulq, int *zy1mchbf,
                    double *ux3nadiw, double *rsynp1go, int *sguwj9ty);
 
-void Yee_vbfa(int psdvgce3[], double *doubvec, double he7mqnvy[], double tlgduey8[],
+void Yee_vbfa(int psdvgce3[], double *fjcasv7g, double he7mqnvy[], double tlgduey8[],
        double rbne6ouj[], double hdnw2fts[], double lamvec[], double wbkq9zyi[],
        int ezlgm2up[], int lqsahu0r[], int which[],
        double kispwgx3[], double m0ibglfx[],
@@ -2149,7 +2149,7 @@ void vcao6(double lncwkfq7[], double tlgduey8[], double ufgqj9ck[],
          f7svlajr, qfx3vhct, c5aesxkul, wr0lbopv, vtsou9pz, zaupqv9b, xlpjcg3s,
          sedf7mxb, kcm6jfob, lensmo = (xwdf5ltg == 1 ? 2 : 4) * *afpc0kns;
   double rpto5qwb, dn3iasxug, wiptsjx8, bh2vgiay, uaf2xgqy, vsoihn1r,
-         rsynp1go, doubvec[6], zpcqv3uj, ghdetj8v;
+         rsynp1go, fjcasv7g[6], zpcqv3uj, ghdetj8v = 0.0;
   double *fpdlcqk9kispwgx3;
 
   double hmayv1xt = 0.0, Totdev = 0.0e0;
@@ -2167,12 +2167,12 @@ void vcao6(double lncwkfq7[], double tlgduey8[], double ufgqj9ck[],
   double *wkumc9idhdnw2fts,  *wkumc9idwbkq9zyi;
 
 
-  doubvec[0] =  0.001;   // bf.qaltf0nz
-  doubvec[1] =  0.0;     // ghdetj8v
-  doubvec[2] = -1.5;     // low
-  doubvec[3] =  1.5;     // high
-  doubvec[4] =  1.0e-4;  // tol
-  doubvec[5] =  2.0e-8;  // eps
+  fjcasv7g[0] =  0.001;
+  fjcasv7g[1] =  0.0;
+  fjcasv7g[2] = -1.5;
+  fjcasv7g[3] =  1.5;
+  fjcasv7g[4] =  1.0e-4;
+  fjcasv7g[5] =  2.0e-8;
 
   wkumc9idui8ysltq  = Calloc((*ftnjamu2 * *wy1vqfzu) * (*afpc0kns * *wy1vqfzu), double);
   wkumc9idlxyst1eb = Calloc( *qfozcl5b * *ftnjamu2                , double);
@@ -2295,7 +2295,7 @@ void vcao6(double lncwkfq7[], double tlgduey8[], double ufgqj9ck[],
               }
           }
 
-          Yee_vbfa(psdvgce3, doubvec,
+          Yee_vbfa(psdvgce3, fjcasv7g,
                           mbvnaor6, ghz9vuba + (qes4mujl-1) * *ftnjamu2,
                    rbne6ouj + (qes4mujl-1) * *ftnjamu2,
                           hdnw2fts + sedf7mxb + ehtjigf4 + hnpt1zym[0] - 1,
@@ -2310,6 +2310,7 @@ void vcao6(double lncwkfq7[], double tlgduey8[], double ufgqj9ck[],
                    ifys6woa + (ehtjigf4 + hnpt1zym[0] - 1) * *ftnjamu2,
                    rpyis2kc + (hj3ftvzu-1) * (nbzjkpi3[xwdf5ltg] - 1), gkdx5jals,
                    nbzjkpi3, acpios9q, jwbkl9fp);
+
 
 
           y7sdgtqi[3 + *afpc0kns + *afpc0kns] = ghdetj8v;

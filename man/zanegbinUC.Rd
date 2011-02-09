@@ -12,10 +12,10 @@
 
 }
 \usage{
-dzanegbin(x, p0, size, prob=NULL, munb=NULL, log = FALSE)
-pzanegbin(q, p0, size, prob=NULL, munb=NULL)
-qzanegbin(p, p0, size, prob=NULL, munb=NULL)
-rzanegbin(n, p0, size, prob=NULL, munb=NULL)
+dzanegbin(x, p0, size, prob = NULL, munb = NULL, log = FALSE)
+pzanegbin(q, p0, size, prob = NULL, munb = NULL)
+qzanegbin(p, p0, size, prob = NULL, munb = NULL)
+rzanegbin(n, p0, size, prob = NULL, munb = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -48,6 +48,7 @@ rzanegbin(n, p0, size, prob=NULL, munb=NULL)
   \code{pzanegbin} gives the distribution function,
   \code{qzanegbin} gives the quantile function, and
   \code{rzanegbin} generates random deviates.
+
 }
 %\references{ }
 \author{ Thomas W. Yee }
@@ -63,18 +64,18 @@ rzanegbin(n, p0, size, prob=NULL, munb=NULL)
 
 }
 \examples{
-munb = 3; size = 4; p0 = 0.3; x = (-1):7
-(ii = dzanegbin(x, p0=p0, munb=munb, size=size))
-table(rzanegbin(100, p0=p0, munb=munb, size=size))
+munb <- 3; size <- 4; p0 <- 0.3; x <- (-1):7
+(ii <- dzanegbin(x,   p0 = p0, munb = munb, size = size))
+ table(rzanegbin(100, p0 = p0, munb = munb, size = size))
 
 \dontrun{
 x = 0:10
-barplot(rbind(dzanegbin(x, p0=p0, munb=munb, size=size),
-              dnbinom(x, mu=munb, size=size)),
+barplot(rbind(dzanegbin(x, p0 = p0, munb = munb, size = size),
+                dnbinom(x, mu = munb, size = size)),
         beside = TRUE, col = c("blue","green"), cex.main=0.7, las=1,
         ylab = "Probability",names.arg = as.character(x),
         main=paste("ZANB(p0=", p0, ", munb=", munb, ", size=", size,
-                   ") [blue] vs", " NB(mu=", munb, ", size=", size,
+                   ") [blue] vs",  " NB(mu=", munb, ", size=", size,
                    ") [green] densities", sep="")) }
 }
 \keyword{distribution}

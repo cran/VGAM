@@ -12,10 +12,10 @@
 
 }
 \usage{
-dlaplace(x, location=0, scale=1, log=FALSE)
-plaplace(q, location=0, scale=1)
-qlaplace(p, location=0, scale=1)
-rlaplace(n, location=0, scale=1)
+dlaplace(x, location = 0, scale = 1, log = FALSE)
+plaplace(q, location = 0, scale = 1)
+qlaplace(p, location = 0, scale = 1)
+rlaplace(n, location = 0, scale = 1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -31,7 +31,7 @@ rlaplace(n, location=0, scale=1)
   }
   \item{log}{
   Logical.
-  If \code{log=TRUE} then the logarithm of the density is returned.
+  If \code{log = TRUE} then the logarithm of the density is returned.
 
   }
 
@@ -78,25 +78,24 @@ New York: Wiley-Interscience, Third edition.
 }
 \examples{
 loc = 1; b = 2
-y = rlaplace(n=100, loc=loc, scale=b)
-mean(y)
+y = rlaplace(n = 100, loc = loc, scale = b)
+mean(y)  # sample mean
 loc      # population mean
-var(y)
+var(y)   # sample variance
 2 * b^2  # population variance
 
-\dontrun{
-loc = 0; b = 1.5; x = seq(-5, 5, by=0.01)
-plot(x, dlaplace(x, loc, b), type="l", col="blue", ylim=c(0,1),
-     main="Blue is density, red is cumulative distribution function",
-     sub="Purple are 5,10,...,95 percentiles", las=1, ylab="")
-abline(h=0, col="blue", lty=2)
-lines(qlaplace(seq(0.05,0.95,by=0.05), loc, b),
-      dlaplace(qlaplace(seq(0.05,0.95,by=0.05), loc, b), loc, b),
-      col="purple", lty=3, type="h")
-lines(x, plaplace(x, loc, b), type="l", col="red")
-abline(h=0, lty=2) }
+\dontrun{ loc = 0; b = 1.5; x = seq(-5, 5, by = 0.01)
+plot(x, dlaplace(x, loc, b), type = "l", col = "blue", ylim = c(0,1),
+     main = "Blue is density, red is cumulative distribution function",
+     sub = "Purple are 5,10,...,95 percentiles", las = 1, ylab = "")
+abline(h = 0, col = "blue", lty = 2)
+lines(qlaplace(seq(0.05,0.95,by = 0.05), loc, b),
+      dlaplace(qlaplace(seq(0.05,0.95,by = 0.05), loc, b), loc, b),
+      col = "purple", lty = 3, type = "h")
+lines(x, plaplace(x, loc, b), type = "l", col = "red")
+abline(h = 0, lty = 2) }
 
-plaplace(qlaplace(seq(0.05,0.95,by=0.05), loc, b), loc, b)
+plaplace(qlaplace(seq(0.05,0.95,by = 0.05), loc, b), loc, b)
 }
 \keyword{distribution}
 

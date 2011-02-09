@@ -1,5 +1,6 @@
 # These functions are
-# Copyright (C) 1998-2010 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2011 T.W. Yee, University of Auckland.
+# All rights reserved.
 
 
 
@@ -15,7 +16,7 @@ is.Numeric <- function(x, allowable.length=Inf, integer.valued=FALSE, positive=F
     (if(positive) all(x>0) else TRUE)) TRUE else FALSE
 
 
-VGAMenv = new.env()
+VGAMenv <- new.env()
 
 
 
@@ -52,6 +53,7 @@ setClass("vglmff", representation(
       "deviance"     = "function",
       "fini"         = "expression",
       "first"        = "expression",
+      "infos"        = "function",  # Added 20101203
       "initialize"   = "expression",
       "inverse"      = "function",
       "last"         = "expression",
@@ -313,9 +315,15 @@ new("vglm", "extra"=from@extra,
 
 
 
- setClass("grc", representation(not.needed="numeric"),
+ setClass("rcam", representation(not.needed="numeric"),
+          contains = "rrvglm")
+ setClass("grc",  representation(not.needed="numeric"),
           contains = "rrvglm")
 
+
+setMethod("summary", "rcam",
+          function(object, ...)
+          summary.rcam(object, ...))
 
 setMethod("summary", "grc",
           function(object, ...)

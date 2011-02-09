@@ -1,5 +1,6 @@
 # These functions are
-# Copyright (C) 1998-2010 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2011 T.W. Yee, University of Auckland.
+# All rights reserved.
 
 
 
@@ -42,7 +43,7 @@ callcqoc = function(cmatrix, etamat, xmat, ymat, wvec,
                     flush.console()
                 }
                 rmfromVGAMenv(c("etamat", "z", "U", "beta", "deviance",
-                                "cmatrix", "ocmatrix"), prefix=".VGAM.CQO.")
+                                "cmatrix", "ocmatrix"), prefix = ".VGAM.CQO.")
             }
     } else {
         numat = xmat[, control$colx2.index, drop = FALSE] %*% cmatrix
@@ -55,7 +56,7 @@ callcqoc = function(cmatrix, etamat, xmat, ymat, wvec,
     }
 
     inited = if (is.R()) {
-        if (exists(".VGAM.CQO.etamat", envir = VGAMenv)) 1 else 0
+        if (exists(".VGAM.CQO.etamat", envir = VGAM:::VGAMenv)) 1 else 0
     } else 0
 
 
@@ -97,10 +98,10 @@ callcqoc = function(cmatrix, etamat, xmat, ymat, wvec,
 
     if (ans1$errcode[1] == 0) {
         assign2VGAMenv(c("etamat", "z", "U", "beta", "deviance"),
-                            ans1, prefix=".VGAM.CQO.")
+                            ans1, prefix = ".VGAM.CQO.")
         if (is.R()) {
-            assign(".VGAM.CQO.cmatrix",   cmatrix, envir = VGAMenv)
-            assign(".VGAM.CQO.ocmatrix", ocmatrix, envir = VGAMenv)
+            assign(".VGAM.CQO.cmatrix",   cmatrix, envir = VGAM:::VGAMenv)
+            assign(".VGAM.CQO.ocmatrix", ocmatrix, envir = VGAM:::VGAMenv)
         } else {
             .VGAM.CQO.cmatrix  <<-  cmatrix
             .VGAM.CQO.ocmatrix <<- ocmatrix
@@ -113,7 +114,7 @@ callcqoc = function(cmatrix, etamat, xmat, ymat, wvec,
  print( ans1$errcode[-1] )
     }
         rmfromVGAMenv(c("etamat", "z", "U", "beta", "deviance",
-                        "cmatrix", "ocmatrix"), prefix=".VGAM.CQO.")
+                        "cmatrix", "ocmatrix"), prefix = ".VGAM.CQO.")
     }
     if (control$trace)
         flush.console()
@@ -162,7 +163,7 @@ calldcqo = function(cmatrix, etamat, xmat, ymat, wvec,
                     flush.console()
                 }
                 rmfromVGAMenv(c("etamat", "z", "U", "beta", "deviance",
-                                "cmatrix", "ocmatrix"), prefix=".VGAM.CQO.")
+                                "cmatrix", "ocmatrix"), prefix = ".VGAM.CQO.")
           }
     } else {
         numat = xmat[,control$colx2.index,drop=FALSE] %*% cmatrix
@@ -175,7 +176,7 @@ calldcqo = function(cmatrix, etamat, xmat, ymat, wvec,
     }
 
     inited = if (is.R()) {
-        if (exists(".VGAM.CQO.etamat", envir = VGAMenv)) 1 else 0
+        if (exists(".VGAM.CQO.etamat", envir = VGAM:::VGAMenv)) 1 else 0
     } else 0
 
 
@@ -309,14 +310,26 @@ cqo.fit <- function(x, y, w=rep(1, length(x[, 1])),
 
     eval(rrr.init.expression)
 
+
     if (length(etastart)) {
         eta <- etastart
-        mu <- if (length(mustart)) mustart else family@inverse(eta, extra)
-    } else {
-        if (length(mustart))
-            mu <- mustart
-        eta <- family@link(mu, extra)
+        mu <- if (length(mustart)) mustart else
+              if (length(body(slot(family, "inverse"))))
+                slot(family, "inverse")(eta, extra) else
+                warning("argument 'etastart' assigned a value ",
+                        "but there is no 'inverse' slot to use it")
     }
+
+    if (length(mustart)) {
+        mu <- mustart
+        if (length(body(slot(family, "link")))) {
+          eta <- slot(family, "link")(mu, extra)
+        } else {
+          warning("argument 'mustart' assigned a value ",
+                  "but there is no 'link' slot to use it")
+        }
+    }
+
 
     M <- if (is.matrix(eta)) ncol(eta) else 1
 
@@ -400,8 +413,8 @@ cqo.fit <- function(x, y, w=rep(1, length(x[, 1])),
     if (modelno == 3 || modelno == 5) 
         Amat[c(FALSE,TRUE),] <- 0  # Intercept only for log(k)
 
-    if (length(control$Structural.zero))
-        Amat[control$Structural.zero,] = 0
+    if (length(control$szero))
+        Amat[control$szero,] = 0
 
     rrcontrol$Ainit = control$Ainit = Amat   # Good for valt()
     rrcontrol$Cinit = control$Cinit = Cmat   # Good for valt()
@@ -433,7 +446,7 @@ cqo.fit <- function(x, y, w=rep(1, length(x[, 1])),
     }
 
     rmfromVGAMenv(c("etamat", "z", "U", "beta", "deviance",
-                    "cmatrix", "ocmatrix"), prefix=".VGAM.CQO.")
+                    "cmatrix", "ocmatrix"), prefix = ".VGAM.CQO.")
 
     eval(cqo.init.derivative.expression)
     for(iter in 1:control$optim.maxit) {
@@ -682,8 +695,8 @@ cqo.init.derivative.expression <- expression({
 
     NOS = ifelse(modelno == 3 || modelno == 5, M/2, M)
     canfitok = if (is.R()) 
-        (exists("CQO.FastAlgorithm", envir=VGAMenv) &&
-        get("CQO.FastAlgorithm", envir = VGAMenv)) else
+        (exists("CQO.FastAlgorithm", envir=VGAM:::VGAMenv) &&
+        get("CQO.FastAlgorithm", envir = VGAM:::VGAMenv)) else
     (exists("CQO.FastAlgorithm",inherits=TRUE) && CQO.FastAlgorithm)
     if (!canfitok)
         stop("cannot fit this model using fast algorithm")
@@ -714,8 +727,8 @@ cqo.derivative.expression <- expression({
                 modelno=modelno, Control=control,
                 n=n, M=M, p1star=p1star, p2star=p2star, nice31=nice31)
 
-        z = matrix(getfromVGAMenv("z", prefix=".VGAM.CQO."), n, M)
-        U = matrix(getfromVGAMenv("U", prefix=".VGAM.CQO."), M, n)
+        z = matrix(getfromVGAMenv("z", prefix = ".VGAM.CQO."), n, M)
+        U = matrix(getfromVGAMenv("U", prefix = ".VGAM.CQO."), M, n)
     }
 
 
@@ -771,7 +784,7 @@ cqo.derivative.expression <- expression({
 
 cqo.end.expression = expression({
 
-    rmfromVGAMenv(c("etamat"), prefix=".VGAM.CQO.")
+    rmfromVGAMenv(c("etamat"), prefix = ".VGAM.CQO.")
 
 
     if (control$Quadratic) {

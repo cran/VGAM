@@ -110,6 +110,7 @@ cauchit(p)  # Has no NAs
 \dontrun{
 par(mfrow=c(2,2))
 y = seq(-4, 4, length=100)
+p = seq(0.01, 0.99, by=0.01)
 
 for(d in 0:1) {
     matplot(p, cbind(logit(p, deriv=d), probit(p, deriv=d)),

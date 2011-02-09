@@ -9,7 +9,8 @@
 
 }
 \usage{
-amh(lalpha="rhobit", ealpha=list(), ialpha=NULL, method.init=1, nsimEIM=250)
+amh(lalpha = "rhobit", ealpha = list(), ialpha = NULL,
+    method.init = 1, nsimEIM = 250)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -47,17 +48,17 @@ amh(lalpha="rhobit", ealpha=list(), ialpha=NULL, method.init=1, nsimEIM=250)
   The cumulative distribution function is
   \deqn{P(Y_1 \leq y_1, Y_2 \leq y_2) = y_1 y_2
           / ( 1 - \alpha (1 - y_1) (1 - y_2) ) }{%
-        P(Y1 <= y1, Y2 <= y2) =
+        P(Y1 < =  y1, Y2 < =  y2)  = 
         y1 * y2 / ( 1 - alpha * (1 - y1) * (1 - y2) ) }
   for \eqn{-1 < \alpha < 1}{-1 < alpha < 1}.
   The support of the function is the unit square.
   The marginal distributions are the standard uniform distributions.
-  When \eqn{\alpha = 0}{alpha=0} the random variables are
+  When \eqn{\alpha = 0}{alpha = 0} the random variables are
   independent.
 
 % A variant of Newton-Raphson is used, which only seems to work for an
 % intercept model.
-% It is a very good idea to set \code{trace=TRUE}.
+% It is a very good idea to set \code{trace = TRUE}.
 % This \pkg{VGAM} family function is prone to numerical difficulties.
 
 }
@@ -69,9 +70,15 @@ amh(lalpha="rhobit", ealpha=list(), ialpha=NULL, method.init=1, nsimEIM=250)
 
 \references{
 
-Hutchinson, T. P. and Lai, C. D. (1990)
-\emph{Continuous Bivariate Distributions, Emphasising Applications},
-Adelaide, South Australia: Rumsby Scientific Publishing.
+%Hutchinson, T. P. and Lai, C. D. (1990)
+%\emph{Continuous Bivariate Distributions, Emphasising Applications},
+%Adelaide, South Australia: Rumsby Scientific Publishing.
+
+Balakrishnan, N. and Lai, C.-D. (2009)
+\emph{Continuous Bivariate Distributions},
+2nd ed.
+New York: Springer.
+
 
 }
 \author{ T. W. Yee and C. S. Chee }
@@ -91,9 +98,9 @@ Adelaide, South Australia: Rumsby Scientific Publishing.
 
 }
 \examples{
-ymat <- ramh(1000, alpha=rhobit(2, inverse=TRUE))
+ymat <- ramh(1000, alpha = rhobit(2, inverse = TRUE))
 fit <- vglm(ymat ~ 1, amh, trace = TRUE)
-coef(fit, mat=TRUE)
+coef(fit, matrix = TRUE)
 Coef(fit)
 }
 \keyword{models}

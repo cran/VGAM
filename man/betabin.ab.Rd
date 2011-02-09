@@ -68,6 +68,7 @@ betabin.ab(lshape12 = "loge", earg = list(), i1 = 1, i2 = NULL,
   and the prior weights \eqn{N} are attached separately on the
   object in a slot.
 
+
   The probability function is
   \deqn{P(T=t) = {N \choose t} \frac{B(\alpha+t, \beta+N-t)}
                   {B(\alpha, \beta)}}{%
@@ -75,6 +76,7 @@ betabin.ab(lshape12 = "loge", earg = list(), i1 = 1, i2 = NULL,
    where \eqn{t=0,1,\ldots,N}, and \eqn{B} is the beta function
    with shape parameters \eqn{\alpha}{alpha} and \eqn{\beta}{beta}.
    Recall \eqn{Y = T/N} is the real response being modelled.
+
    
   The default model is \eqn{\eta_1 = \log(\alpha)}{eta1 = log(alpha)}
   and \eqn{\eta_2 = \log(\beta)}{eta2 = log(beta)} because both
@@ -90,6 +92,7 @@ betabin.ab(lshape12 = "loge", earg = list(), i1 = 1, i2 = NULL,
   positive value of \eqn{\rho}{rho}. It is known as the
   \emph{over-dispersion parameter}.
 
+
   This family function uses Fisher scoring. The two diagonal
   elements of the second-order expected
   derivatives with respect to \eqn{\alpha}{alpha} and 
@@ -97,16 +100,19 @@ betabin.ab(lshape12 = "loge", earg = list(), i1 = 1, i2 = NULL,
   fail for large \eqn{\alpha}{alpha}, \eqn{\beta}{beta}, 
   \eqn{N} or else take a long time.
 
+
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}}.
+
 
   Suppose \code{fit} is a fitted beta-binomial model. Then
   \code{fit@y} contains the sample proportions \eqn{y},
   \code{fitted(fit)} returns estimates of \eqn{E(Y)}, and
   \code{weights(fit, type="prior")} returns the number
   of trials \eqn{N}.
+
 
 }
 \references{
@@ -116,12 +122,15 @@ betabin.ab(lshape12 = "loge", earg = list(), i1 = 1, i2 = NULL,
   \emph{Biometrics},
   \bold{47}, 383--401.
 
+
   Prentice, R. L. (1986)
     Binary regression using an extended beta-binomial distribution,
     with discussion of correlation induced by
     covariate measurement errors.
     \emph{Journal of the American Statistical Association},
     \bold{81}, 321--327.
+
+
 }
 
 \author{ T. W. Yee }
@@ -133,6 +142,7 @@ betabin.ab(lshape12 = "loge", earg = list(), i1 = 1, i2 = NULL,
   Cases where \eqn{N=1} can be omitted via the 
   \code{subset} argument of \code{\link{vglm}}.
 
+
   Although the two linear/additive predictors given
   above are in terms of \eqn{\alpha}{alpha} and \eqn{\beta}{beta},
   basic algebra shows that the default amounts to
@@ -142,11 +152,13 @@ betabin.ab(lshape12 = "loge", earg = list(), i1 = 1, i2 = NULL,
   That is, \eqn{logit(p) = \eta_1 - \eta_2}{logit(p) = eta1 - eta2}.
   This is illustated in one of the examples below.
 
+
   The \emph{extended} beta-binomial distribution of Prentice (1986)
   is currently not implemented in the \pkg{VGAM} package as it has
   range-restrictions for the correlation parameter that are currently
   too difficult to handle in this package.
   
+
 }
 \section{Warning }{
   This family function is prone to numerical difficulties
@@ -155,8 +167,10 @@ betabin.ab(lshape12 = "loge", earg = list(), i1 = 1, i2 = NULL,
   If problems occur try setting \code{i1} to be some other
   positive value, using \code{i2} and/or setting \code{zero=2}.
 
+
   This family function may be renamed in the future.
   See the warnings in \code{\link{betabinomial}}.
+
 
 }
 \seealso{
@@ -195,18 +209,16 @@ all.equal(c(fitted(fit)),
 # Example 3, which is more complicated
 lirat = transform(lirat, fgrp = factor(grp))
 summary(lirat)   # Only 5 litters in group 3
-fit2 = vglm(cbind(R,N-R) ~ fgrp + hb, betabin.ab(zero=2),
-           data=lirat, trace=TRUE, subset=N>1)
+fit2 = vglm(cbind(R,N-R) ~ fgrp + hb, betabin.ab(zero = 2),
+           data = lirat, trace = TRUE, subset = N>1)
 coef(fit2, matrix=TRUE)
 Coef(fit2)
 coef(fit2, matrix=TRUE)[,1] - coef(fit2, matrix=TRUE)[,2] # logit(p)
-\dontrun{
-with(lirat, plot(hb[N>1], fit2@misc$rho,
-                 xlab="Hemoglobin", ylab="Estimated rho",
-                 pch=as.character(grp[N>1]), col=grp[N>1]))
+\dontrun{ with(lirat, plot(hb[N>1], fit2@misc$rho,
+                 xlab = "Hemoglobin", ylab="Estimated rho",
+                 pch = as.character(grp[N>1]), col = grp[N>1]))
 }
-\dontrun{
-# cf. Figure 3 of Moore and Tsiatis (1991)
+\dontrun{ # cf. Figure 3 of Moore and Tsiatis (1991)
 with(lirat, plot(hb, R/N, pch=as.character(grp), col=grp, las=1,
             xlab="Hemoglobin level", ylab="Proportion Dead",
             main="Fitted values (lines)"))
@@ -216,9 +228,7 @@ for(gp in 1:4) {
     xx = with(smalldf, hb[grp==gp])
     yy = with(smalldf, fitted(fit2)[grp==gp])
     ooo = order(xx)
-    lines(xx[ooo], yy[ooo], col=gp)
-}
-}
+    lines(xx[ooo], yy[ooo], col=gp) } }
 }
 \keyword{models}
 \keyword{regression}

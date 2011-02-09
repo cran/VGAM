@@ -60,12 +60,14 @@ cratio(link = "logit", earg = list(),
   Stopping ratios deal with quantities such as
   \code{logit(P[Y=j|Y>=j])}.
 
+
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}},
   \code{\link{rrvglm}}
   and \code{\link{vgam}}.
+
 
 }
 \references{
@@ -100,8 +102,10 @@ contains further information and examples.
   returned by \code{vglm}/\code{vgam}/\code{rrvglm} is the matrix
   of counts.
 
+
   For a nominal (unordered) factor response, the multinomial
   logit model (\code{\link{multinomial}}) is more appropriate.
+
 
   Here is an example of the usage of the \code{parallel} argument.
   If there are covariates \code{x1}, \code{x2} and \code{x3}, then
@@ -109,6 +113,7 @@ contains further information and examples.
   \code{parallel = FALSE ~ x3} are equivalent. This would constrain
   the regression coefficients for \code{x1} and \code{x2} to be
   equal; those of the intercepts and \code{x3} would be different.
+
 
 }
 \section{Warning }{
@@ -131,12 +136,12 @@ contains further information and examples.
 }
 
 \examples{
-pneumo = transform(pneumo, let=log(exposure.time))
-(fit = vglm(cbind(normal,mild,severe) ~ let, cratio(parallel=TRUE), pneumo))
-coef(fit, matrix=TRUE)
+pneumo = transform(pneumo, let = log(exposure.time))
+(fit = vglm(cbind(normal,mild,severe) ~ let, cratio(parallel = TRUE), pneumo))
+coef(fit, matrix = TRUE)
 constraints(fit)
 predict(fit)
-predict(fit, untransform=TRUE)
+predict(fit, untransform = TRUE)
 }
 \keyword{models}
 \keyword{regression}

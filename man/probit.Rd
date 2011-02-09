@@ -101,6 +101,7 @@ probit(p)  # Has NAs
 probit(p, earg=list(bvalue= .Machine$double.eps))  # Has no NAs
 
 \dontrun{
+p = seq(0.01, 0.99, by=0.01)
 plot(p, logit(p), type="l", col="limegreen", ylab="transformation",
      lwd=2, las=1, main="Some probability link functions")
 lines(p, probit(p), col="purple", lwd=2)

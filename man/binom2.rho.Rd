@@ -1,5 +1,6 @@
 \name{binom2.rho}
 \alias{binom2.rho}
+\alias{binom2.Rho}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Bivariate Probit Model (Family Function) }
 \description{
@@ -9,7 +10,10 @@
 }
 \usage{
 binom2.rho(lrho = "rhobit", erho=list(), imu1 = NULL, imu2 = NULL,
-           init.rho = NULL, zero = 3, exchangeable = FALSE, nsimEIM=NULL)
+           irho = NULL, method.init = 1,
+           zero = 3, exchangeable = FALSE, nsimEIM = NULL)
+binom2.Rho(rho = 0, imu1 = NULL, imu2 = NULL,
+           exchangeable = FALSE, nsimEIM = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -23,7 +27,7 @@ binom2.rho(lrho = "rhobit", erho=list(), imu1 = NULL, imu2 = NULL,
   See \code{earg} in \code{\link{Links}} for general information.
 
   }
-  \item{init.rho}{
+  \item{irho}{
   Optional initial value for \eqn{\rho}{rho}.
   If given, this should lie between \eqn{-1} and \eqn{1}.
   See below for more comments.
@@ -47,10 +51,16 @@ binom2.rho(lrho = "rhobit", erho=list(), imu1 = NULL, imu2 = NULL,
   be equal.
 
   }
-  \item{nsimEIM}{
+  \item{method.init, nsimEIM}{
   See \code{\link{CommonVGAMffArguments}} for more information.
   A value of at least 100 is recommended;
   the larger the value the better.
+
+  }
+  \item{rho}{
+  Numeric vector.
+  Values are recycled to the needed length,
+  and ought to be in range.
 
   }
 
@@ -64,8 +74,28 @@ binom2.rho(lrho = "rhobit", erho=list(), imu1 = NULL, imu2 = NULL,
   unit variances). One can think of the joint probabilities being
   \eqn{\Phi(\eta_1,\eta_2;\rho)}{Phi(eta1,eta2;rho)} where \eqn{\Phi}{Phi}
   is the cumulative distribution function of a standard bivariate normal
-  distribution (i.e., \code{\link[stats:Normal]{pnorm}})
-  with correlation parameter \eqn{\rho}{rho}.
+  distribution.
+
+
+  Explicitly, the default model is
+  \deqn{probit[P(Y_j=1)] = \eta_j,\ \ \ j=1,2}{%
+        probit[P(Y_j=1)] =  eta_j,\ \ \ j=1,2}
+  for the marginals, and
+  \deqn{rhobit[rho] = \eta_3.}{%
+        rhobit[rho] =  eta_3.}
+  The joint probability
+  \eqn{P(Y_1=1,Y_2=1)=\Phi(\eta_1,\eta_2;\rho)}{P(Y_1=1,Y_2=1)=Phi(eta1,eta2;rho)},
+  and from these the other three joint probabilities are easily computed.
+  The model is fitted by maximum likelihood estimation since the full
+  likelihood is specified.
+  Fisher scoring is implemented.
+
+
+  The default models \eqn{\eta_3}{eta3} as a single parameter only,
+  i.e., an intercept-only model for rho, but this can be circumvented by setting
+  \code{zero = NULL} in order to model rho as a function of all the
+  explanatory variables.
+
 
   The bivariate probit model should not be confused with a \emph{bivariate
   logit model} with a probit link (see \code{\link{binom2.or}}).
@@ -74,15 +104,18 @@ binom2.rho(lrho = "rhobit", erho=list(), imu1 = NULL, imu2 = NULL,
   model because the odds ratio is a more natural way of measuring the
   association between two binary responses.
 
+
   }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}},
   and \code{\link{vgam}}.
 
+
   When fitted, the \code{fitted.values} slot of the object contains the
   four joint probabilities, labelled as
   \eqn{(Y_1,Y_2)}{(Y1,Y2)} = (0,0), (0,1), (1,0), (1,1), respectively.
+
 
 }
 
@@ -91,35 +124,48 @@ Ashford, J. R. and Sowden, R. R. (1970)
     Multi-variate probit analysis.
     \emph{Biometrics}, \bold{26}, 535--546.
 
-Documentation accompanying the \pkg{VGAM} package at
-\url{http://www.stat.auckland.ac.nz/~yee}
-contains further information and examples.
+
+Freedman, D. A. (2010)
+\emph{Statistical Models and Causal Inference: a Dialogue with
+      the Social Sciences}, Cambridge: Cambridge University Press.
+
 
 }
 \author{ Thomas W. Yee }
 \note{
-  The response should be either a 4-column matrix of counts (whose
-  columns correspond to \eqn{(Y_1,Y_2)}{(Y1,Y2)} = (0,0), (0,1), (1,0),
-  (1,1) respectively), or a two-column matrix where each column has two
-  distinct values.
+  See \code{\link{binom2.or}} about the form of input the response
+  should have.
 
-  By default, a constant \eqn{\rho}{rho} is fitted because \code{zero=3}.
-  Set \code{zero=NULL} if you want the \eqn{\rho}{rho} parameter to
+
+  By default, a constant \eqn{\rho}{rho} is fitted because \code{zero = 3}.
+  Set \code{zero = NULL} if you want the \eqn{\rho}{rho} parameter to
   be modelled as a function of the explanatory variables.  The value
   \eqn{\rho}{rho} lies in the interval \eqn{(-1,1)}{(-1,1)}, therefore
   a \code{\link{rhobit}} link is default.
 
+
   Converge problems can occur.
-  If so, assign \code{init.rho} a range of
-  values and monitor convergence (e.g., set \code{trace=TRUE}).
+  If so, assign \code{irho} a range of
+  values and monitor convergence (e.g., set \code{trace = TRUE}).
+  Else try \code{method.init}.
   Practical experience shows that local solutions can occur,
-  and that \code{init.rho} needs to be quite close to the (global)
+  and that \code{irho} needs to be quite close to the (global)
   solution.
   Also, \code{imu1} and \code{imu2} may be used.
+
+
+
+  This help file is mainly about \code{binom2.rho()}.
+  \code{binom2.Rho()} fits a bivariate probit model with
+  \emph{known} \eqn{\rho}{rho}.
+  The inputted \code{rho} is saved in the \code{misc} slot of
+  the fitted object, with \code{rho} as the component name.
+
 
 }
 \seealso{
   \code{\link{rbinom2.rho}},
+  \code{\link{rhobit}},
   \code{\link{binom2.or}},
   \code{\link{loglinb2}},
   \code{\link{coalminers}},
@@ -130,9 +176,13 @@ contains further information and examples.
 }
 \examples{
 coalminers = transform(coalminers, Age = (age - 42) / 5)
-fit = vglm(cbind(nBnW,nBW,BnW,BW) ~ Age, binom2.rho, coalminers, trace=TRUE)
+fit = vglm(cbind(nBnW,nBW,BnW,BW) ~ Age, binom2.rho, coalminers, trace = TRUE)
 summary(fit)
-coef(fit, matrix=TRUE)
+coef(fit, matrix = TRUE)
 }
 \keyword{models}
 \keyword{regression}
+
+
+% (i.e., \code{\link[stats:Normal]{pnorm}})
+% with correlation parameter \eqn{\rho}{rho}.

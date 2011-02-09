@@ -2,8 +2,10 @@
 \alias{wrapup.smart}
 \title{ Cleans Up After Smart Prediction }
 \description{
-\code{wrapup.smart} deletes any variables used by smart prediction.
-Needed by both the modelling function and the prediction function. 
+  \code{wrapup.smart} deletes any variables used by smart prediction.
+  Needed by both the modelling function and the prediction function. 
+
+
 }
 \usage{
 wrapup.smart()
@@ -12,9 +14,11 @@ wrapup.smart()
   The variables to be deleted are \code{.smart.prediction},
   \code{.smart.prediction.counter}, and \code{.smart.prediction.mode}.
   The function  \code{wrapup.smart} is useful in \R because
-  these variables are held in \code{smartpredenv}. In S-PLUS,
+  these variables are held in \code{smartpredenv}.
+  In S-PLUS,
   \code{wrapup.smart} is not really necessary because the variables are
   placed in frame 1, which disappears when finished anyway.
+
 
 }
 \references{
@@ -23,7 +27,7 @@ wrapup.smart()
 
 }
 \seealso{
-\code{\link{setup.smart}}. 
+  \code{\link{setup.smart}}. 
 }
 \examples{
 \dontrun{# Place this inside modelling functions such as lm, glm, vglm.

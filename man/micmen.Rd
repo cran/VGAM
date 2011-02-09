@@ -8,8 +8,12 @@
 }
 \usage{
 micmen(rpar = 0.001, divisor = 10, init1 = NULL, init2 = NULL,
-       link1 = "identity", link2 = "identity", earg1 = list(),
-       earg2 = list(), dispersion = 0, zero = NULL)
+       method.init = 1, oim = TRUE,
+       link1 = "identity", link2 = "identity",
+       firstDeriv = c("nsimEIM", "rpar"),
+       earg1 = list(), earg2 = list(), prob.x = c(0.15, 0.85),
+       nsimEIM = 500,
+       dispersion = 0, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -25,7 +29,8 @@ micmen(rpar = 0.001, divisor = 10, init1 = NULL, init2 = NULL,
 
   }
   \item{init1, init2}{
-  Numerical. Initial value for the first and second parameters,
+  Numerical.
+  Optional initial value for the first and second parameters,
   respectively.  The default is to use a self-starting value.
 
   }
@@ -42,6 +47,25 @@ micmen(rpar = 0.001, divisor = 10, init1 = NULL, init2 = NULL,
   }
   \item{dispersion}{
   Numerical. Dispersion parameter.
+
+  }
+  \item{firstDeriv}{
+  Character. Algorithm for computing the first derivatives and
+  working weights.
+  The first is the default.
+
+  }
+  \item{method.init, prob.x}{
+  See \code{\link{CommonVGAMffArguments}} for more information.
+
+  }
+  \item{nsimEIM}{
+  See \code{\link{CommonVGAMffArguments}} for more information.
+
+  }
+  \item{oim}{
+  Use the OIM?
+  See \code{\link{CommonVGAMffArguments}} for more information.
 
   }
   \item{zero}{
@@ -78,19 +102,23 @@ micmen(rpar = 0.001, divisor = 10, init1 = NULL, init2 = NULL,
   \emph{Nonlinear Regression},
   New York: Wiley.
 
+
   Wedderburn, R. W. M. (1974)
   Quasi-likelihood functions, generalized linear models,
   and the Gauss-Newton method.
   \emph{Biometrika},
   \bold{61}, 439--447.
 
+
   Bates, D. M. and Watts, D. G. (1988)
   \emph{Nonlinear Regression Analysis and Its Applications},
   New York: Wiley.
 
+
   Documentation accompanying the \pkg{VGAM} package at
   \url{http://www.stat.auckland.ac.nz/~yee}
   contains further information and examples.
+
 
 }
 \author{ T. W. Yee }
@@ -101,19 +129,28 @@ micmen(rpar = 0.001, divisor = 10, init1 = NULL, init2 = NULL,
   It should just a single vector, therefore omit the intercept term.
   The LHS of the formula \code{form2} is ignored.
 
+
   To predict the response at new values of \eqn{u_i}{u_i} one must assign
   the \code{@extra$Xm2} slot in the fitted object these values, e.g.,
   see the example below.
 
+
   Numerical problems may occur. If so, try setting some initial values
   for the parameters. In the future, several self-starting initial values
   will be implemented.
+
 
 }
 
 \seealso{
   \code{\link{enzyme}}.
 % \code{skira}.
+
+}
+\section{Warning }{
+  This function is not (nor could ever be) entirely reliable.
+  Plotting the fitted function and monitoring convergence is recommended.
+
 
 }
 \examples{

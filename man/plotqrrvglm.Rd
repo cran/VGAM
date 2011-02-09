@@ -30,11 +30,14 @@ plotqrrvglm(object,
 \details{
   Plotting the residuals can be potentially very useful for checking
   that the model fit is adequate.  
+
 }
 \value{
   The original object. 
+
 }
 \references{
+
 
 Yee, T. W. (2004)
 A new technique for maximum-likelihood
@@ -42,17 +45,20 @@ canonical Gaussian ordination.
 \emph{Ecological Monographs},
 \bold{74}, 685--701.
 
+
 }
 \author{Thomas W. Yee}
 
 \note{
-An ordination plot of a QRR-VGLM can be obtained
-by \code{\link{lvplot.qrrvglm}}. 
+  An ordination plot of a QRR-VGLM can be obtained
+  by \code{\link{lvplot.qrrvglm}}. 
+
 }
 
 \seealso{
   \code{\link{lvplot.qrrvglm}},
   \code{\link{cqo}}.
+
 }
 
 \examples{\dontrun{
@@ -72,3 +78,5 @@ plot(p1, rtype="d", col="blue", pch=4, las=1)
 \keyword{dplot}
 \keyword{models}
 \keyword{regression}
+
+

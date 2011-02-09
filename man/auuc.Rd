@@ -18,10 +18,10 @@ at the University of Auckland in 1990.
   }
 }
 \details{
-Each student is cross-classified by their
-colleges (Science and Engineering have been combined) and
-the socio-economic status (SES) of their fathers (1 = highest, 
-down to 4 = lowest).
+Each student is cross-classified by their colleges (Science
+and Engineering have been combined) and the socio-economic
+status (SES) of their fathers
+(1 = highest, down to 4 = lowest).
 
 }
 \source{
@@ -35,6 +35,6 @@ down to 4 = lowest).
 }
 \examples{
 round(fitted(grc(auuc)))
-round(fitted(grc(auuc, Rank=2)))
+round(fitted(grc(auuc, Rank = 2)))
 }
 \keyword{datasets}

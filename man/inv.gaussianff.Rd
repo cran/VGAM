@@ -8,8 +8,10 @@
 
 }
 \usage{
-inv.gaussianff(lmu="loge", llambda="loge", emu=list(), elambda=list(),
-               ilambda=1, zero=NULL)
+inv.gaussianff(lmu = "loge", llambda = "loge",
+               emu = list(), elambda = list(), 
+               method.init = 1, ilambda = 1,
+               shrinkage.init = 0.99, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -28,16 +30,14 @@ inv.gaussianff(lmu="loge", llambda="loge", emu=list(), elambda=list(),
   Initial value for the \eqn{\lambda}{lambda} parameter. 
 
   }
-  \item{zero}{ 
-  An integer-valued vector specifying which
-  linear/additive predictors \eqn{\eta_j}{eta_j}
-  are modelled as intercepts only.
-  The values must be from the set \{1,2\}.
+  \item{method.init, shrinkage.init, zero}{ 
+  See \code{\link{CommonVGAMffArguments}} for more information.
 
   }
 }
 \details{
-  The inverse Gaussian distribution has a density
+  The standard (``canonical'') form of the
+  inverse Gaussian distribution has a density
   that can be written as
   \deqn{f(y;\mu,\lambda) = \sqrt{\lambda/(2\pi y^3)}
        \exp\left(-\lambda (y-\mu)^2/(2 \mu^2 y)\right)}{%
@@ -51,6 +51,7 @@ inv.gaussianff(lmu="loge", llambda="loge", emu=list(), elambda=list(),
   \eqn{\mu^3/\lambda}{mu^3/lambda}.
   By default, \eqn{\eta_1=\log(\mu)}{eta1=log(mu)} and
   \eqn{\eta_2=\log(\lambda)}{eta2=log(lambda)}.
+  The mean is returned as the fitted values.
 
 }
 \value{
@@ -89,13 +90,16 @@ New York: Wiley-Interscience, Third edition.
 
 }
 \examples{
-n = 1000
-shape = exp(3)
-y = rinv.gaussian(n=n, mu=exp(2), lambda=shape)
-fit = vglm(y ~ 1, inv.gaussianff(ilam=shape), trace=TRUE)
-coef(fit, matrix=TRUE)
-Coef(fit)
-summary(fit)
+idat <- data.frame(x2 = runif(nn <- 1000))
+idat <- transform(idat, mymu   = exp(2 + 1 * x2),
+                        Lambda = exp(2 + 1 * x2))
+idat <- transform(idat, y = rinv.gaussian(nn, mu = mymu, lambda = Lambda))
+fit1 <-   vglm(y ~ x2, inv.gaussianff, idat, trace = TRUE)
+rrig <- rrvglm(y ~ x2, inv.gaussianff, idat, trace = TRUE)
+coef(fit1, matrix = TRUE)
+coef(rrig, matrix = TRUE)
+Coef(rrig)
+summary(fit1)
 }
 \keyword{models}
 \keyword{regression}

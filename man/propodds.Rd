@@ -44,6 +44,11 @@ Agresti, A. (2002)
 2nd ed. New York: Wiley.
 
 
+Agresti, A. (2010)
+\emph{Analysis of Ordinal Categorical Data},
+2nd ed. New York: Wiley.
+
+
 Yee, T. W. (2010)
 The \pkg{VGAM} package for categorical data analysis.
 \emph{Journal of Statistical Software},
@@ -75,24 +80,23 @@ contains further information and examples.
 }
 \examples{
 # Fit the proportional odds model, p.179, in McCullagh and Nelder (1989)
-pneumo = transform(pneumo, let=log(exposure.time))
+pneumo = transform(pneumo, let = log(exposure.time))
 (fit = vglm(cbind(normal, mild, severe) ~ let, propodds, pneumo))
 fit@y   # Sample proportions
-weights(fit, type="prior")   # Number of observations
-coef(fit, matrix=TRUE)
+weights(fit, type = "prior")   # Number of observations
+coef(fit, matrix = TRUE)
 constraints(fit)   # Constraint matrices
 summary(fit)
 
 # Check that the model is linear in let ----------------------
-fit2 = vgam(cbind(normal, mild, severe) ~ s(let, df=2), propodds, pneumo)
-\dontrun{
-plot(fit2, se=TRUE, lcol=2, scol=2) }
+fit2 = vgam(cbind(normal, mild, severe) ~ s(let, df = 2), propodds, pneumo)
+\dontrun{ plot(fit2, se = TRUE, lcol = 2, scol = 2) }
 
 # Check the proportional odds assumption with a LRT ----------
 (fit3 = vglm(cbind(normal, mild, severe) ~ let,
-             cumulative(parallel=FALSE, reverse=TRUE), pneumo))
+             cumulative(parallel = FALSE, reverse = TRUE), pneumo))
 pchisq(2*(logLik(fit3)-logLik(fit)),
-       df=length(coef(fit3))-length(coef(fit)), lower.tail=FALSE)
+       df = length(coef(fit3))-length(coef(fit)), lower.tail = FALSE)
 }
 \keyword{models}
 \keyword{regression}

@@ -23,8 +23,8 @@ chisq(link = "loge", earg=list())
   }
 }
 \details{
-  The degrees of freedom is treated as a parameter to be estimated.
-  It is treated as real and not integer.
+  The degrees of freedom is treated as a parameter to be estimated,
+  and as real (not integer).
   Being positive, a log link is used by default.
   Fisher scoring is used.
 
@@ -43,6 +43,7 @@ New York: Wiley-Interscience, Third edition.
 
 \author{ T. W. Yee }
 \note{ 
+  Multiple responses are permitted.
   There may be convergence problems if the degrees of freedom
   is very large.
 
@@ -53,10 +54,12 @@ New York: Wiley-Interscience, Third edition.
   \code{\link{normal1}}.
 }
 \examples{
-cdata = data.frame(x = runif(nn <- 1000))
-cdata = transform(cdata, y = rchisq(nn, df=exp(2 - x)))
-fit = vglm(y ~ x, chisq, cdata, trace=TRUE)
-coef(fit, matrix=TRUE)
+cdata <- data.frame(x2 = runif(nn <- 1000))
+cdata <- transform(cdata,
+                   y1 = rchisq(nn, df = exp(1 - 1 * x2)),
+                   y2 = rchisq(nn, df = exp(2 - 2 * x2)))
+fit <- vglm(cbind(y1, y2) ~ x2, chisq, cdata, trace = TRUE)
+coef(fit, matrix = TRUE)
 }
 \keyword{models}
 \keyword{regression}

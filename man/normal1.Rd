@@ -8,19 +8,16 @@
 
 }
 \usage{
-normal1(lmean="identity", lsd="loge", emean=list(), esd=list(), zero=NULL)
+normal1(lmean = "identity", lsd = "loge",
+        emean = list(), esd = list(), method.init = 1, zero = -2)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{lmean}{
-  Link function applied to the mean.
+  \item{lmean, lsd}{
+  Link functions applied to the mean and standard deviation.
   See \code{\link{Links}} for more choices.
-
-  }
-  \item{lsd}{
-  Parameter link function applied to the standard deviation.
-  See \code{\link{Links}} for more choices.
-  Being a positive quantity, a log link is the default.
+  Being a positive quantity, a log link is the default for the
+  standard deviation.
 
   }
   \item{emean, esd}{
@@ -28,26 +25,27 @@ normal1(lmean="identity", lsd="loge", emean=list(), esd=list(), zero=NULL)
   See \code{earg} in \code{\link{Links}} for general information.
 
   }
-  \item{zero}{ 
-  An integer vector, containing the value 1 or 2. If so, the mean or
-  standard deviation respectively are modelled as an intercept only.
-  Usually, setting \code{zero=2} will be used, if used at all.
-  The default value \code{NULL} means both linear/additive predictors
-  are modelled as functions of the explanatory variables.
+  \item{method.init, zero}{ 
+  See \code{\link{CommonVGAMffArguments}} for more information.
 
   }
 
 }
 \details{
-  By default, the mean is the first linear/additive predictor and 
+  This fits a linear model (LM) as the first linear/additive predictor.
+  So, by default, this is just the mean.
+  By default,
   the log of the standard deviation is the second linear/additive predictor.
   The Fisher information matrix is diagonal.
+  This \pkg{VGAM} family function can handle multiple responses.
+
 
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}},
   and \code{\link{vgam}}.
+
 
 }
 \references{
@@ -59,11 +57,9 @@ New York: Wiley-Interscience, Third edition.
 
 \author{ T. W. Yee }
 \note{
-    The response should be univariate. Multivariate
-    responses are more generally handled using
-    \code{\link{gaussianff}}, however this only handles
-    the mean and the variance-covariance matrices are
-    assumed known.
+    Yet to do: allow an argument such as \code{sameSD} that enables the
+    standard devations to be the same.
+    And a \code{parallel} argument.
 
 }
 \seealso{
@@ -75,21 +71,22 @@ New York: Wiley-Interscience, Third edition.
     \code{\link{fnormal1}},
     \code{\link{skewnormal1}},
     \code{\link{dcnormal1}},
+    \code{\link{huber}},
     \code{\link{studentt}},
     \code{\link[stats:Normal]{dnorm}}.
 
 }
 \examples{
-ndata = data.frame(x = rnorm(nn <- 200))
-ndata = transform(ndata, y = rnorm(nn, mean = 1-3*x, sd = exp(1+0.2*x)))
-fit = vglm(y ~ x, normal1, ndata, trace = TRUE)
+ndata <- data.frame(x2 = rnorm(nn <- 200))
+ndata <- transform(ndata, y = rnorm(nn, mean = 1-3*x2, sd = exp(1+0.2*x2)))
+fit <- vglm(y ~ x2, normal1(zero = NULL), ndata, trace = TRUE)
 coef(fit, matrix = TRUE)
 
 # Generate data from N(mu = theta = 10, sigma = theta) and estimate theta.
-theta = 10
-ndata = data.frame(y = rnorm(100, m = theta, sd = theta))
-fit = vglm(y ~ 1, normal1(lsd = "identity"), ndata,
-           constraints = list("(Intercept)" = rbind(1, 1)))
+theta <- 10
+ndata <- data.frame(y = rnorm(100, m = theta, sd = theta))
+fit <- vglm(y ~ 1, normal1(lsd = "identity"), ndata,
+            constraints = list("(Intercept)" = rbind(1, 1)))
 coef(fit, matrix = TRUE)
 }
 \keyword{models}

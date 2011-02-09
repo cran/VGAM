@@ -77,6 +77,7 @@ betabinomial(lmu="logit", lrho="logit", emu=list(), erho=list(), irho=NULL,
   and the prior weights \eqn{N} are attached separately on the
   object in a slot.
 
+
   The probability function is
   \deqn{P(T=t) = {N \choose t} \frac{B(\alpha+t, \beta+N-t)}
                   {B(\alpha, \beta)}}{%
@@ -86,6 +87,7 @@ betabinomial(lmu="logit", lrho="logit", emu=list(), erho=list(), irho=NULL,
    with shape parameters \eqn{\alpha}{alpha} and \eqn{\beta}{beta}.
    Recall \eqn{Y = T/N} is the real response being modelled.
    
+
   The default model is \eqn{\eta_1 = logit(\mu)}{eta1 =logit(mu)}
   and \eqn{\eta_2 = logit(\rho)}{eta2 = logit(rho)} because both
   parameters lie between 0 and 1.
@@ -100,6 +102,7 @@ betabinomial(lmu="logit", lrho="logit", emu=list(), erho=list(), irho=NULL,
   positive value of \eqn{\rho}{rho}. It is known as the
   \emph{over-dispersion parameter}.
 
+
   This family function uses Fisher scoring.
   Elements of the second-order expected
   derivatives with respect to \eqn{\alpha}{alpha} and 
@@ -107,10 +110,12 @@ betabinomial(lmu="logit", lrho="logit", emu=list(), erho=list(), irho=NULL,
   fail for large \eqn{\alpha}{alpha}, \eqn{\beta}{beta}, 
   \eqn{N} or else take a long time.
 
+
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}}.
+
 
   Suppose \code{fit} is a fitted beta-binomial model. Then
   \code{fit@y} contains the sample proportions \eqn{y},
@@ -126,12 +131,14 @@ betabinomial(lmu="logit", lrho="logit", emu=list(), erho=list(), irho=NULL,
   \emph{Biometrics},
   \bold{47}, 383--401.
 
+
   Prentice, R. L. (1986)
     Binary regression using an extended beta-binomial distribution,
     with discussion of correlation induced by
     covariate measurement errors.
     \emph{Journal of the American Statistical Association},
     \bold{81}, 321--327.
+
 
 }
 
@@ -144,17 +151,20 @@ betabinomial(lmu="logit", lrho="logit", emu=list(), erho=list(), irho=NULL,
   Cases where \eqn{N=1} can be omitted via the 
   \code{subset} argument of \code{\link{vglm}}.
 
+
   The \emph{extended} beta-binomial distribution of Prentice (1986)
   is currently not implemented in the \pkg{VGAM} package as it has
   range-restrictions for the correlation parameter that are currently
   too difficult to handle in this package.
   However, try \code{lrho="rhobit"}.
 
+
 }
 \section{Warning }{
 
   If the estimated rho parameter is close to zero then it pays to try
   \code{lrho="rhobit"}. One day this may become the default link function.
+
 
   This family function is prone to numerical difficulties
   due to the expected information matrices not being positive-definite
@@ -173,40 +183,39 @@ betabinomial(lmu="logit", lrho="logit", emu=list(), erho=list(), irho=NULL,
   \code{\link{dirmultinomial}},
   \code{\link{lirat}}.
 
+
 }
 \examples{
 # Example 1
-betabindat = data.frame(N = 10, mu = 0.5, rho = 0.8)
-betabindat = transform(betabindat,
-                       y = rbetabin(n=100, size=N, prob=mu, rho=rho))
-fit = vglm(cbind(y,N-y) ~ 1, betabinomial, betabindat, trace=TRUE)
+bbdat = data.frame(N = 10, mu = 0.5, rho = 0.8)
+bbdat = transform(bbdat,
+                  y = rbetabin(n=100, size=N, prob=mu, rho=rho))
+fit = vglm(cbind(y,N-y) ~ 1, betabinomial, bbdat, trace=TRUE)
 coef(fit, matrix=TRUE)
 Coef(fit)
 head(cbind(fit@y, weights(fit, type="prior")))
 
 
 # Example 2
-fit = vglm(cbind(R,N-R)~1, betabinomial, lirat, trace=TRUE, subset=N>1)
-coef(fit, matrix=TRUE)
+fit = vglm(cbind(R, N-R) ~ 1, betabinomial, lirat,
+           trace = TRUE, subset = N > 1)
+coef(fit, matrix = TRUE)
 Coef(fit)
 t(fitted(fit))
 t(fit@y)
-t(weights(fit, type="prior"))
+t(weights(fit, type = "prior"))
 
 
 # Example 3, which is more complicated
 lirat = transform(lirat, fgrp = factor(grp))
 summary(lirat)   # Only 5 litters in group 3
-fit2 = vglm(cbind(R,N-R) ~ fgrp + hb, betabinomial(zero=2),
-           data=lirat, trace=TRUE, subset=N>1)
+fit2 = vglm(cbind(R, N-R) ~ fgrp + hb, betabinomial(zero = 2),
+           data = lirat, trace = TRUE, subset = N > 1)
 coef(fit2, matrix=TRUE)
-\dontrun{
-with(lirat, plot(hb[N>1], fit2@misc$rho,
+\dontrun{ with(lirat, plot(hb[N>1], fit2@misc$rho,
                  xlab="Hemoglobin", ylab="Estimated rho",
-                 pch=as.character(grp[N>1]), col=grp[N>1]))
-}
-\dontrun{
-# cf. Figure 3 of Moore and Tsiatis (1991)
+                 pch=as.character(grp[N>1]), col=grp[N>1])) }
+\dontrun{ # cf. Figure 3 of Moore and Tsiatis (1991)
 with(lirat, plot(hb, R/N, pch=as.character(grp), col=grp, las=1,
                  xlab="Hemoglobin level", ylab="Proportion Dead",
                  main="Fitted values (lines)"))
@@ -215,9 +224,7 @@ for(gp in 1:4) {
     xx = with(smalldf, hb[grp==gp])
     yy = with(smalldf, fitted(fit2)[grp==gp])
     ooo = order(xx)
-    lines(xx[ooo], yy[ooo], col=gp)
-}
-}
+    lines(xx[ooo], yy[ooo], col=gp) } }
 }
 \keyword{models}
 \keyword{regression}

@@ -1,14 +1,15 @@
 # These functions are
-# Copyright (C) 1998-2010 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2011 T.W. Yee, University of Auckland.
+# All rights reserved.
 
 
 
 
 fill = 
-fill1 = fill2 = fill3 =
-function(x, values=0, ncolx=ncol(x)) {
+fill1 = fill2 = fill3 = 
+function(x, values = 0, ncolx = ncol(x)) {
     x = as.matrix(x)
-    matrix(values, nrow=nrow(x), ncol=ncolx, byrow=TRUE)
+    matrix(values, nrow = nrow(x), ncol = ncolx, byrow = TRUE)
 }
 
 
@@ -24,11 +25,11 @@ remove.arg <- function(string)
 
     nc <- nchar(string)
     bits <- substring(string, 1:nc, 1:nc)
-    b1 <- (1:nc)[bits=="("]
+    b1 <- (1:nc)[bits == "("]
     b1 <- if (length(b1)) b1[1]-1 else nc
-    if (b1==0)
+    if (b1 == 0)
         return("")
-    string <- paste(bits[1:b1], collapse="")
+    string <- paste(bits[1:b1], collapse = "")
     string
 }
 
@@ -36,7 +37,7 @@ remove.arg <- function(string)
 add.arg <- function(string, arg.string)
 {
 
-    if (arg.string=="")
+    if (arg.string == "")
         return(string) 
     nc <- nchar(string)
     lastc <- substring(string, nc, nc)
@@ -44,11 +45,11 @@ add.arg <- function(string, arg.string)
     {
         if (substring(string, nc-1, nc-1) == "(")
         {
-            paste(substring(string, 1, nc-2), "(", arg.string, ")", sep="")
+            paste(substring(string, 1, nc-2), "(", arg.string, ")", sep = "")
         } else
-            paste(substring(string, 1, nc-1), ", ", arg.string, ")", sep="")
+            paste(substring(string, 1, nc-1), ", ", arg.string, ")", sep = "")
     } else
-        paste(string, "(", arg.string, ")", sep="")
+        paste(string, "(", arg.string, ")", sep = "")
 }
 
 
@@ -57,21 +58,21 @@ get.arg <- function(string)
 
     nc <- nchar(string)
     bits <- substring(string, 1:nc, 1:nc)
-    b1 <- (1:nc)[bits=="("]
-    b2 <- (1:nc)[bits==")"]
-    b1 <- if (length(b1)) min(b1) else return("") # stop("no \"(\" in string")
-    b2 <- if (length(b2)) max(b2) else return("") # stop("no \")\" in string")
-    if (b2-b1==1) "" else paste(bits[(1+b1):(b2-1)], collapse="")
+    b1 <- (1:nc)[bits == "("]
+    b2 <- (1:nc)[bits == ")"]
+    b1 <- if (length(b1)) min(b1) else return("") # stop('no "(" in string')
+    b2 <- if (length(b2)) max(b2) else return("") # stop('no ")" in string')
+    if (b2-b1 == 1) "" else paste(bits[(1+b1):(b2-1)], collapse = "")
 }
 
 
 
 
 ei <- function(i,n)
-    cbind(as.numeric((1:n)==i))
+    cbind(as.numeric((1:n) == i))
 
 ei = function(i, n)
-    diag(n)[,i,drop=FALSE] 
+    diag(n)[,i,drop = FALSE] 
 
 eij = function(i, n) {
     temp = matrix(0, n, 1)
@@ -89,7 +90,7 @@ dneg.binomial <- function(x, k, prob)
 }
 
 
-tapplymat1 <- function(mat, function.arg=c("cumsum", "diff", "cumprod"))
+tapplymat1 <- function(mat, function.arg = c("cumsum", "diff", "cumprod"))
 {
 
 
@@ -98,56 +99,56 @@ tapplymat1 <- function(mat, function.arg=c("cumsum", "diff", "cumprod"))
     function.arg <- match.arg(function.arg, c("cumsum", "diff", "cumprod"))[1]
 
     type <- switch(function.arg,
-        cumsum=1,
-        diff=2,
-        cumprod=3,
+        cumsum = 1,
+        diff = 2,
+        cumprod = 3,
         stop("function.arg not matched"))
 
     if (!is.matrix(mat))
         mat <- as.matrix(mat)
     nr <- nrow(mat)
     nc <- ncol(mat)
-    fred <- dotC(name="tapplymat1", mat=as.double(mat),
+    fred <- dotC(name = "tapplymat1", mat = as.double(mat),
         as.integer(nr), as.integer(nc), as.integer(type))
 
     dim(fred$mat) <- c(nr, nc)
     dimnames(fred$mat) <- dimnames(mat)
     switch(function.arg,
-        cumsum=fred$mat,
-        diff=fred$mat[,-1,drop=FALSE],
-        cumprod=fred$mat)
+        cumsum = fred$mat,
+        diff = fred$mat[,-1,drop = FALSE],
+        cumprod = fred$mat)
 }
 
 
 
-matrix.power <- function(wz, M, power, fast=TRUE)
+matrix.power <- function(wz, M, power, fast = TRUE)
 {
 
 
 
 
     n <- nrow(wz)
-    index <- iam(NA, NA, M, both=TRUE, diag=TRUE)
+    index <- iam(NA, NA, M, both = TRUE, diag = TRUE)
     dimm.value <- if (is.matrix(wz)) ncol(wz) else 1
     if (dimm.value > M*(M+1)/2)
         stop("too many columns")
 
 
-    if (M == 1 || dimm.value==M) {
+    if (M == 1 || dimm.value == M) {
         WW <- wz^power          # May contain NAs
         return(t(WW))
     }
 
     if (fast) {
-        k <- veigen(t(wz), M=M) # matrix.arg)
+        k <- veigen(t(wz), M = M) # matrix.arg)
         evals <- k$values           # M x n
         evects <- k$vectors         # M x M x n
     } else {
         stop("sorry, cannot handle matrix-band form yet")
-        k <- unlist(apply(wz,3,eigen), use.names=FALSE)
+        k <- unlist(apply(wz,3,eigen), use.names = FALSE)
         dim(k) <- c(M,M+1,n)
-        evals <- k[,1,,drop=TRUE]      # M x n
-        evects <- k[,-1,,drop=TRUE]    # M x M x n
+        evals <- k[,1,,drop = TRUE]      # M x n
+        evects <- k[,-1,,drop = TRUE]    # M x M x n
     }
 
     temp <- evals^power    # Some values may be NAs
@@ -156,14 +157,14 @@ matrix.power <- function(wz, M, power, fast=TRUE)
     index <- as.vector( matrix(1, 1, M) %*% is.na(temp) )
 
 
-    index <- index == 0
+    index <- (index == 0)
     if (!all(index)) {
         warning(paste("Some weight matrices have negative",
                       "eigenvalues. They\nwill be assigned NAs"))
         temp[,!index] <- 1
     }
 
-    WW <- mux55(evects, temp, M=M)
+    WW <- mux55(evects, temp, M = M)
     WW[,!index] <- NA
     WW
 }
@@ -174,30 +175,30 @@ rss.vgam <- function(z, wz, M)
 {
 
 
-    if (M==1)
+    if (M == 1)
         return(sum(c(wz) * c(z^2)))
-    wz.z <- mux22(t(wz), z, M, as.mat=TRUE) # else mux2(wz, z)
+    wz.z <- mux22(t(wz), z, M, as.mat = TRUE) # else mux2(wz, z)
     ans <- sum(wz.z * z)
     ans
 }
 
-wweighted.mean <- function(y, w = NULL, matrix.arg=TRUE)
+wweighted.mean <- function(y, w = NULL, matrix.arg = TRUE)
 {
     if (!matrix.arg)
         stop("currently, matrix.arg must be TRUE")
     y <- as.matrix(y)
     M <- ncol(y)
     n <- nrow(y)
-    if (M==1) {
+    if (M == 1) {
         if (missing(w)) mean(y) else sum(w * y)/sum(w)
     } else {
         if (missing(w)) y %*% rep(1, n) else {
-            numer <- mux22(t(w), y, M, as.matrix=TRUE) # matrix.arg=matrix.arg, 
+            numer <- mux22(t(w), y, M, as.matrix = TRUE) # matrix.arg = matrix.arg, 
             numer <- t(numer) %*% rep(1, n)
             denom <- t(w) %*% rep(1, n)
             denom <- matrix(denom, 1, length(denom))
             if (matrix.arg)
-                denom <- m2adefault(denom, M=M)[,,1]
+                denom <- m2adefault(denom, M = M)[,,1]
             c(solve(denom, numer))
         }
     }
@@ -211,10 +212,10 @@ veigen <- function(x, M)
 
 
     n <- ncol(x)
-    index <- iam(NA, NA, M, both=TRUE, diag=TRUE)
+    index <- iam(NA, NA, M = M, both = TRUE, diag = TRUE)
     dimm.value <- nrow(x)  # usually M or M(M+1)/2
 
-    z <- dotFortran(name="veigen",
+    z <- dotFortran(name = "veigen",
         as.integer(M),
         as.integer(n),
         as.double(x),
@@ -223,7 +224,7 @@ veigen <- function(x, M)
         vectors = double(M*M*n),
         double(M),
         double(M),
-        wk=double(M*M),
+        wk = double(M*M),
         as.integer(index$row), as.integer(index$col),
         as.integer(dimm.value),
         error.code = integer(1))
@@ -231,32 +232,34 @@ veigen <- function(x, M)
     if (z$error.code)
         stop("eigen algorithm (rs) returned error code ", z$error.code)
     ord <- M:1
-    dim(z$values) <- c(M,n)
-    z$values <- z$values[ord,,drop=FALSE]
-    dim(z$vectors) <- c(M,M,n)
-    z$vectors <- z$vectors[,ord,,drop=FALSE]
-    return(list(values = z$values, vectors = z$vectors))
+    dim(z$values) <- c(M, n)
+    z$values <- z$values[ord,,drop = FALSE]
+    dim(z$vectors) <- c(M, M, n)
+    z$vectors <- z$vectors[, ord, , drop = FALSE]
+    return(list(values  = z$values,
+                vectors = z$vectors))
 }
 
 
 
 
 
-ima <- function(j,k,M)
+ima <- function(j, k, M)
 {
-    if (length(M)>1 || M<=0 || j<=0 || k<=0 || j>M || k>M)
+    if (length(M) > 1 || M <= 0 || j <= 0 || k <= 0 ||
+        j > M || k > M)
         stop("input wrong")
     m <- diag(M)
-    m[col(m)<=row(m)] <- 1:(M*(M+1)/2)
-    if (j>=k) m[j,k] else m[k,j]
+    m[col(m) <= row(m)] <- 1:(M*(M+1)/2)
+    if (j >= k) m[j,k] else m[k,j]
 }
 
 
 
-checkwz <- function(wz, M, trace=FALSE, wzepsilon=.Machine$double.eps^0.75) {
+checkwz <- function(wz, M, trace = FALSE, wzepsilon = .Machine$double.eps^0.75) {
     if (wzepsilon > 0.5) warning("'wzepsilon' is probably too large")
     if (!is.matrix(wz)) wz = as.matrix(wz)
-    if ((temp <- sum(wz[,1:M,drop=FALSE] < wzepsilon)))
+    if ((temp <- sum(wz[,1:M,drop = FALSE] < wzepsilon)))
         warning(paste(temp, "elements replaced by", signif(wzepsilon, 5)))
     wz[,1:M] = pmax(wzepsilon, wz[,1:M])
     wz

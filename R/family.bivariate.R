@@ -1,5 +1,6 @@
 # These functions are
-# Copyright (C) 1998-2010 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2011 T.W. Yee, University of Auckland.
+# All rights reserved.
 
 
 
@@ -94,7 +95,8 @@ bilogistic4.control <- function(save.weight=TRUE, ...)
         Scale2 = eta2theta(eta[,4], .lscale)
         zedd1 = (y[,1]-loc1) / Scale1
         zedd2 = (y[,2]-loc2) / Scale2
-        if (residuals) stop("loglikelihood residuals not implemented yet") else
+        if (residuals) stop("loglikelihood residuals not ",
+                            "implemented yet") else
         sum(w * (-zedd1 - zedd2 - 3 * log1p(exp(-zedd1)+exp(-zedd2)) -
                  log(Scale1) - log(Scale2)))
     }, list(.lscale=lscale, .llocation=llocation))),
@@ -260,7 +262,8 @@ dbilogis4 = function(x1, x2, loc1=0, scale1=1, loc2=0, scale2=1, log=FALSE) {
         alphap = eta2theta(eta[,2], .lap)
         beta   = eta2theta(eta[,3], .lb)
         betap  = eta2theta(eta[,4], .lbp)
-        if (residuals) stop("loglikelihood residuals not implemented yet") else {
+        if (residuals) stop("loglikelihood residuals not ",
+                            "implemented yet") else {
             tmp88 = extra$y1.lt.y2
             ell1 = log(alpha[tmp88]) + log(betap[tmp88]) -
                    betap[tmp88] * y[tmp88,2] -
@@ -414,7 +417,8 @@ dbilogis4 = function(x1, x2, loc1=0, scale1=1, loc2=0, scale2=1, log=FALSE) {
         a = eta2theta(eta[,1], .lscale)
         p = eta2theta(eta[,2], .lshape1)
         q = eta2theta(eta[,3], .lshape2)
-        if (residuals) stop("loglikelihood residuals not implemented yet") else
+        if (residuals) stop("loglikelihood residuals not ",
+                            "implemented yet") else
         sum(w * (-(p+q)*log(a) - lgamma(p) - lgamma(q) +
                   (p-1)*log(y[,1]) + (q-1)*log(y[,2]-y[,1]) - y[,2] / a))
     }, list( .lscale=lscale, .lshape1=lshape1, .lshape2=lshape2 ))),
@@ -593,7 +597,8 @@ frank.control <- function(save.weight=TRUE, ...)
     loglikelihood= eval(substitute(
             function(mu, y, w, residuals = FALSE, eta, extra=NULL) {
         apar = eta2theta(eta, .lapar, earg= .eapar )
-        if (residuals) stop("loglikelihood residuals not implemented yet") else {
+        if (residuals) stop("loglikelihood residuals not ",
+                            "implemented yet") else {
             sum(w * dfrank(x1=y[,1], x2=y[,2], alpha=apar, log = TRUE))
         }
     }, list(.lapar=lapar, .eapar=eapar ))),
@@ -695,7 +700,8 @@ frank.control <- function(save.weight=TRUE, ...)
     loglikelihood= eval(substitute(
             function(mu, y, w, residuals = FALSE, eta, extra=NULL) {
         theta = eta2theta(eta, .ltheta)
-        if (residuals) stop("loglikelihood residuals not implemented yet") else {
+        if (residuals) stop("loglikelihood residuals not ",
+                            "implemented yet") else {
             sum(w * (-exp(-theta)*y[,1]/theta - theta*y[,2]))
         }
     }, list(.ltheta=ltheta))),
@@ -778,7 +784,8 @@ frank.control <- function(save.weight=TRUE, ...)
             function(mu, y, w, residuals = FALSE, eta, extra=NULL) {
         alpha  = eta2theta(eta, .lapar, earg= .earg )
         alpha[abs(alpha) < .tola0 ] = .tola0
-        if (residuals) stop("loglikelihood residuals not implemented yet") else {
+        if (residuals) stop("loglikelihood residuals not ",
+                            "implemented yet") else {
         denom = (1 + alpha - 2*alpha*(exp(-y[,1]) + exp(-y[,2])) +
                 4*alpha*exp(-y[,1] - y[,2]))
         sum(w * (-y[,1] - y[,2] + log(denom)))
@@ -952,7 +959,8 @@ fgm.control <- function(save.weight=TRUE, ...)
     loglikelihood= eval(substitute(
             function(mu, y, w, residuals = FALSE, eta, extra=NULL) {
         alpha = eta2theta(eta, .lapar, earg= .earg )
-        if (residuals) stop("loglikelihood residuals not implemented yet") else {
+        if (residuals) stop("loglikelihood residuals not ",
+                            "implemented yet") else {
             sum(w * dfgm(x1=y[,1], x2=y[,2], alpha=alpha, log=TRUE))
         }
     }, list( .lapar=lapar, .earg=earg ))),
@@ -1040,7 +1048,8 @@ fgm.control <- function(save.weight=TRUE, ...)
     loglikelihood= eval(substitute(
             function(mu, y, w, residuals = FALSE, eta, extra=NULL) {
         alpha  = eta2theta(eta, .lapar, earg= .earg )
-        if (residuals) stop("loglikelihood residuals not implemented yet") else {
+        if (residuals) stop("loglikelihood residuals not ",
+                            "implemented yet") else {
             denom = (alpha*y[,1] - 1) * (alpha*y[,2] - 1) + alpha
             mytolerance = .Machine$double.xmin
             bad <- (denom <= mytolerance)   # Range violation
@@ -1229,7 +1238,8 @@ plackett.control <- function(save.weight=TRUE, ...)
     loglikelihood= eval(substitute(
             function(mu, y, w, residuals = FALSE, eta, extra=NULL) {
         oratio = eta2theta(eta, .link, earg= .earg )
-        if (residuals) stop("loglikelihood residuals not implemented yet") else {
+        if (residuals) stop("loglikelihood residuals not ",
+                            "implemented yet") else {
             sum(w * dplack(x1= y[,1], x2= y[,2], oratio=oratio, log=TRUE))
         }
     }, list( .link=link, .earg=earg ))),
@@ -1398,7 +1408,8 @@ amh.control <- function(save.weight=TRUE, ...)
     loglikelihood= eval(substitute(
             function(mu, y, w, residuals = FALSE, eta, extra=NULL) {
         alpha = eta2theta(eta, .lalpha, earg= .ealpha )
-        if (residuals) stop("loglikelihood residuals not implemented yet") else {
+        if (residuals) stop("loglikelihood residuals not ",
+                            "implemented yet") else {
             sum(w * damh(x1=y[,1], x2=y[,2], alpha=alpha, log=TRUE))
         }
     }, list( .lalpha=lalpha, .earg=ealpha ))),

@@ -38,8 +38,8 @@ multinomial(zero = NULL, parallel = FALSE, nointercept = NULL,
   If used, this argument will be often assigned the value \code{1}.
   If inputted as a value of a factor then beware of missing values
   of certain levels of the factor
-  (\code{drop.unused.levels=TRUE} or
-   \code{drop.unused.levels=FALSE}).
+  (\code{drop.unused.levels = TRUE} or
+   \code{drop.unused.levels = FALSE}).
   See the example below.
 
   }
@@ -61,15 +61,17 @@ multinomial(zero = NULL, parallel = FALSE, nointercept = NULL,
   The reference or baseline level can be changed with the
   \code{refLevel} argument.
 
+
   In almost all the literature, the constraint matrices associated
   with this family of models are known. For example, setting
-  \code{parallel=TRUE} will make all constraint matrices (except for
+  \code{parallel = TRUE} will make all constraint matrices (except for
   the intercept) equal to a vector of \eqn{M} 1's.  If the constraint
   matrices are unknown and to be estimated, then this can be achieved
   by fitting the model as a reduced-rank vector generalized linear model
   (RR-VGLM; see \code{\link{rrvglm}}).  In particular, a multinomial logit
   model with unknown constraint matrices is known as a \emph{stereotype} model
   (Anderson, 1984), and can be fitted with \code{\link{rrvglm}}.
+
 
 }
 \value{
@@ -81,10 +83,10 @@ multinomial(zero = NULL, parallel = FALSE, nointercept = NULL,
 }
 \references{
 
-Yee, T. W. (2009)
+Yee, T. W. (2010)
 The \pkg{VGAM} package for categorical data analysis.
 \emph{Journal of Statistical Software},
-\bold{32}, % zzz--zzz.
+\bold{32}, 1--34.
 \url{http://www.jstatsoft.org/v32/i10/}.
 
 
@@ -135,11 +137,13 @@ by the \pkg{VGAM} package can be found at
   by \code{\link{vglm}}/\code{\link{vgam}}/\code{\link{rrvglm}} is the
   matrix of sample proportions.
 
+
   The multinomial logit model is more appropriate for a nominal
   (unordered) factor response than for an ordinal (ordered) factor
   response.
   Models more suited for the latter include those based on cumulative
   probabilities, e.g., \code{\link{cumulative}}.
+
 
   \code{multinomial} is prone to numerical difficulties if the groups
   are separable and/or the fitted probabilities are close to 0 or 1.
@@ -147,12 +151,14 @@ by the \pkg{VGAM} package can be found at
   \eqn{P[Y=j]} for \eqn{j=1,\ldots,M+1}.
   See \pkg{safeBinaryRegression} for the logistic regression case.
 
+
   Here is an example of the usage of the \code{parallel} argument.
   If there are covariates \code{x2}, \code{x3} and \code{x4}, then
   \code{parallel = TRUE ~ x2 + x3 - 1} and
   \code{parallel = FALSE ~ x4} are equivalent. This would constrain
   the regression coefficients for \code{x2} and \code{x3} to be equal;
   those of the intercepts and \code{x4} would be different.
+
 
   In Example 4 below, a conditional logit model is fitted to an artificial
   data set that explores how cost and travel time affect people's
@@ -163,10 +169,12 @@ by the \pkg{VGAM} package can be found at
   walking, etc. For other details about the \code{xij} argument see
   \code{\link{vglm.control}} and \code{\link{fill}}.
 
+
   The \code{\link[nnet]{multinom}} function in the \pkg{nnet} package
   uses the first level of the factor as baseline, whereas the last
   level of the factor is used here. Consequently the estimated 
   regression coefficients differ.
+
 
 }
 
@@ -203,33 +211,24 @@ by the \pkg{VGAM} package can be found at
 \examples{
 # Example 1: fit a multinomial logit model to Edgar Anderson's iris data
 data(iris)
-\dontrun{
-fit = vglm(Species ~ ., multinomial, iris)
-coef(fit, matrix=TRUE) 
-}
+\dontrun{ fit = vglm(Species ~ ., multinomial, iris)
+coef(fit, matrix = TRUE) }
 
 
 # Example 2a: a simple example 
-ymat = t(rmultinom(10, size = 20, prob=c(0.1,0.2,0.8))) # Counts
-fit = vglm(ymat ~ 1, multinomial)
+ycounts = t(rmultinom(10, size = 20, prob = c(0.1, 0.2, 0.8))) # Counts
+fit = vglm(ycounts ~ 1, multinomial)
 head(fitted(fit))   # Proportions
 fit@prior.weights # Not recommended for extraction of prior weights
-weights(fit, type="prior", matrix=FALSE) # The better method
+weights(fit, type = "prior", matrix = FALSE) # The better method
 fit@y   # Sample proportions
 constraints(fit)   # Constraint matrices
 
 # Example 2b: Different reference level used as the baseline 
-fit2 = vglm(ymat ~ 1, multinomial(refLevel=2))
-coef(fit2, matrix=TRUE)
-coef(fit , matrix=TRUE) # Easy to reconcile this output with fit2
+fit2 = vglm(ycounts ~ 1, multinomial(refLevel = 2))
+coef(fit2, matrix = TRUE)
+coef(fit , matrix = TRUE) # Easy to reconcile this output with fit2
 
-# Example 2c: Different input to Example 2a but same result
-w = apply(ymat, 1, sum) # Prior weights
-yprop = ymat / w    # Sample proportions
-fitprop = vglm(yprop ~ 1, multinomial, weights=w)
-head(fitted(fitprop))   # Proportions
-weights(fitprop, type="prior", matrix=FALSE)
-fitprop@y # Same as the input
 
 
 # Example 3: The response is a factor.
@@ -237,37 +236,37 @@ nn = 10
 dframe3 = data.frame(yfactor = gl(3, nn, labels=c("Control","Trt1","Trt2")),
                      x = runif(3 * nn))
 myrefLevel = with(dframe3, yfactor[12])
-fit3a = vglm(yfactor ~ x, multinomial(refLevel=myrefLevel), data=dframe3)
-fit3b = vglm(yfactor ~ x, multinomial(refLevel=2), data=dframe3)
-coef(fit3a, matrix=TRUE)  # "Treatment1" is the reference level
-coef(fit3b, matrix=TRUE)  # "Treatment1" is the reference level
+fit3a = vglm(yfactor ~ x, multinomial(refLevel = myrefLevel), dframe3)
+fit3b = vglm(yfactor ~ x, multinomial(refLevel = 2), dframe3)
+coef(fit3a, matrix = TRUE)  # "Treatment1" is the reference level
+coef(fit3b, matrix = TRUE)  # "Treatment1" is the reference level
 margeff(fit3b)
 
 
 # Example 4: Fit a rank-1 stereotype model 
 data(car.all)
-fit4 = rrvglm(Country ~ Width + Height + HP, multinomial, car.all, Rank=1)
+fit4 = rrvglm(Country ~ Width + Height + HP, multinomial, car.all)
 coef(fit4)   # Contains the C matrix
-constraints(fit4)$HP     # The A matrix 
-coef(fit4, matrix=TRUE)  # The B matrix
-Coef(fit4)@C             # The C matrix 
-ccoef(fit4)              # Better to get the C matrix this way
-Coef(fit4)@A             # The A matrix 
-svd(coef(fit4, matrix=TRUE)[-1,])$d    # This has rank 1; = C %*% t(A) 
+constraints(fit4)$HP       # The A matrix 
+coef(fit4, matrix = TRUE)  # The B matrix
+Coef(fit4)@C               # The C matrix 
+ccoef(fit4)                # Better to get the C matrix this way
+Coef(fit4)@A               # The A matrix 
+svd(coef(fit4, matrix = TRUE)[-1, ])$d    # This has rank 1; = C %*% t(A) 
 
 
 # Example 5: The use of the xij argument (aka conditional logit model)
 set.seed(111)
 nn = 100  # Number of people who travel to work
 M = 3  # There are M+1 models of transport to go to work
-ymat = matrix(0, nn, M+1)
-ymat[cbind(1:nn, sample(x=M+1, size=nn, replace=TRUE))] = 1
-dimnames(ymat) = list(NULL, c("bus","train","car","walk"))
+ycounts = matrix(0, nn, M+1)
+ycounts[cbind(1:nn, sample(x = M+1, size = nn, replace = TRUE))] = 1
+dimnames(ycounts) = list(NULL, c("bus","train","car","walk"))
 gotowork = data.frame(cost.bus  = runif(nn), time.bus  = runif(nn), 
                       cost.train= runif(nn), time.train= runif(nn),
                       cost.car  = runif(nn), time.car  = runif(nn),
                       cost.walk = runif(nn), time.walk = runif(nn))
-gotowork = round(gotowork, dig=2) # For convenience
+gotowork = round(gotowork, dig = 2) # For convenience
 gotowork = transform(gotowork,
                      Cost.bus   = cost.bus   - cost.walk,
                      Cost.car   = cost.car   - cost.walk,
@@ -277,21 +276,34 @@ gotowork = transform(gotowork,
                      Time.car   = time.car   - time.walk,
                      Time.train = time.train - time.walk,
                      Time       = time.train - time.walk) # for labelling
-fit = vglm(ymat ~ Cost + Time,
-           multinomial(parall=TRUE ~ Cost + Time - 1),
+fit = vglm(ycounts ~ Cost + Time,
+           multinomial(parall = TRUE ~ Cost + Time - 1),
            xij = list(Cost ~ Cost.bus + Cost.train + Cost.car,
                       Time ~ Time.bus + Time.train + Time.car),
            form2 =  ~ Cost + Cost.bus + Cost.train + Cost.car +
                       Time + Time.bus + Time.train + Time.car,
-           data=gotowork, trace=TRUE)
-head(model.matrix(fit, type="lm"))   # LM model matrix
-head(model.matrix(fit, type="vlm"))  # Big VLM model matrix
+           data=gotowork, trace = TRUE)
+head(model.matrix(fit, type = "lm"))   # LM model matrix
+head(model.matrix(fit, type = "vlm"))  # Big VLM model matrix
 coef(fit)
-coef(fit, matrix=TRUE)
+coef(fit, matrix = TRUE)
 constraints(fit)
 summary(fit)
-max(abs(predict(fit)-predict(fit, new=gotowork))) # Should be 0
+max(abs(predict(fit) - predict(fit, new = gotowork))) # Should be 0
 }
 \keyword{models}
 \keyword{regression}
+
+
+
+% 20100915; this no longer works:
+% # Example 2c: Different input to Example 2a but same result
+% w = apply(ycounts, 1, sum) # Prior weights
+% yprop = ycounts / w    # Sample proportions
+% fitprop = vglm(yprop ~ 1, multinomial, weights=w)
+% head(fitted(fitprop))   # Proportions
+% weights(fitprop, type="prior", matrix=FALSE)
+% fitprop@y # Same as the input
+
+
 

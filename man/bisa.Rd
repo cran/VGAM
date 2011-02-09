@@ -63,13 +63,15 @@ bisa(lshape = "loge", lscale = "loge",
   \eqn{b(1 + a^2/2)}{b*(1 + a*a/2)}.
   and the variance is
   \eqn{a^2 b^2 (1 + \frac{5}{4}a^2)}{a^2 b^2 (1 + (5/4)*a^2)}.
-  By default, \eqn{\eta_1=\log(a)}{eta1=log(a)} and
-  \eqn{\eta_2=\log(b)}{eta2=log(b)} for this family function.
+  By default, \eqn{\eta_1 = \log(a)}{eta1 = log(a)} and
+  \eqn{\eta_2 = \log(b)}{eta2 = log(b)} for this family function.
+
 
   Note that \eqn{a} and \eqn{b} are orthogonal,
   i.e., the Fisher information matrix is diagonal.
   This family function implements Fisher scoring, and
   it is unnecessary to compute any integrals numerically.
+
 
 }
 \value{
@@ -77,32 +79,39 @@ bisa(lshape = "loge", lscale = "loge",
   The object is used by modelling functions such as \code{\link{vglm}},
   and \code{\link{vgam}}.
 
+
 }
 \references{
+
 
 Lemonte, A. J. and Cribari-Neto, F. and Vasconcellos, K. L. P. (2007)
 Improved statistical inference for the two-parameter
 Birnbaum-Saunders distribution.
 \emph{Computational Statistics \& Data Analysis}, \bold{51}, 4656--4681.
 
+
 Birnbaum, Z. W. and Saunders, S. C. (1969)
 A new family of life distributions.
 \emph{Journal of Applied Probability}, \bold{6}, 319--327.
 
+
 Birnbaum, Z. W. and Saunders, S. C. (1969)
 Estimation for a family of life distributions with applications to fatigue.
 \emph{Journal of Applied Probability}, \bold{6}, 328--347.
+
 
 Engelhardt, M. and Bain, L. J. and Wright, F. T. (1981)
 Inferences on the parameters of the Birnbaum-Saunders fatigue
 life distribution based on maximum likelihood estimation.
 \emph{Technometrics}, \bold{23}, 251--256.
 
+
 Johnson, N. L. and Kotz, S. and Balakrishnan, N. (1995)
 \emph{Continuous Univariate Distributions},
 2nd edition,
 Volume 2,
 New York: Wiley.
+
 
 }
 \author{ T. W. Yee }
@@ -118,24 +127,22 @@ New York: Wiley.
 
 }
 \examples{
-nn <- 1000
-bisa1dat = data.frame(x = runif(nn))
-bisa1dat = transform(bisa1dat, shape=exp(-0.5+x), scale=exp(1.5))
-bisa1dat = transform(bisa1dat, y = rbisa(nn, shape, scale))
-fit = vglm(y ~ x, bisa(zero=2), bisa1dat, trace=TRUE)
-coef(fit, matrix=TRUE)
+bdat1 <- data.frame(x2 = runif(nn <- 1000))
+bdat1 <- transform(bdat1, shape = exp(-0.5 + x2), scale = exp(1.5))
+bdat1 <- transform(bdat1, y = rbisa(nn, shape, scale))
+fit1 <- vglm(y ~ x2, bisa(zero = 2), bdat1, trace = TRUE)
+coef(fit1, matrix = TRUE)
 
 \dontrun{
-bisa2dat = data.frame(shape=exp(-0.5), scale=exp(0.5))
-bisa2dat = transform(bisa2dat, y = rbisa(nn, shape, scale))
-fit = vglm(y ~ 1, bisa, bisa2dat, trace=TRUE)
-with(bisa2dat, hist(y, prob=TRUE, ylim=c(0,0.5), col="lightblue"))
-coef(fit, matrix=TRUE)
-with(bisa2dat, mean(y))
+bdat2 <- data.frame(shape = exp(-0.5), scale = exp(0.5))
+bdat2 <- transform(bdat2, y = rbisa(nn, shape, scale))
+fit <- vglm(y ~ 1, bisa, bdat2, trace = TRUE)
+with(bdat2, hist(y, prob = TRUE, ylim = c(0, 0.5), col = "lightblue"))
+coef(fit, matrix = TRUE)
+with(bdat2, mean(y))
 head(fitted(fit))
-x = with(bisa2dat, seq(0, max(y), len=200))
-with(bisa2dat, lines(x, dbisa(x, Coef(fit)[1], Coef(fit)[2]), col="red", lwd=2))
-}
+x <- with(bdat2, seq(0, max(y), len = 200))
+lines(dbisa(x, Coef(fit)[1], Coef(fit)[2]) ~ x, bdat2, col = "orange", lwd = 2) }
 }
 \keyword{models}
 \keyword{regression}

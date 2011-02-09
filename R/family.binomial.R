@@ -1,5 +1,6 @@
 # These functions are
-# Copyright (C) 1998-2010 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2011 T.W. Yee, University of Auckland.
+# All rights reserved.
 
 
 
@@ -28,8 +29,8 @@ process.binomial2.data.vgam <- expression({
             stop("response must have 4 levels")
         nn <- length(yf)
         y <- matrix(0, nn, llev)
-        y[cbind(1:nn,as.vector(unclass(yf)))] <- 1
-        colnamesy <- paste(lev, ":", c("00","01","10","11"), sep="")
+        y[cbind(1:nn, as.vector(unclass(yf)))] <- 1
+        colnamesy <- paste(lev, ":", c("00", "01", "10", "11"), sep = "")
         dimnames(y) <- list(names(yf), colnamesy)
         input.type <- 1
     } else if (ncol(y) == 2) {
@@ -38,8 +39,8 @@ process.binomial2.data.vgam <- expression({
         col.index <- y[,2] + 2*y[,1] + 1    # 1:4
         nn <- nrow(y)
         y <- matrix(0, nn, 4)
-        y[cbind(1:nn,col.index)] <- 1
-        dimnames(y) <- list(dimnames(y)[[1]], c("00","01","10","11"))
+        y[cbind(1:nn, col.index)] <- 1
+        dimnames(y) <- list(dimnames(y)[[1]], c("00", "01", "10", "11"))
         input.type <- 2
     } else if (ncol(y) == 4) {
         input.type <- 3
@@ -47,13 +48,17 @@ process.binomial2.data.vgam <- expression({
         stop("response unrecognized")
 
 
-    nvec <- drop(y %*% rep(1, ncol(y)))
+
+    nvec <- rowSums(y)
 
     w <- w * nvec
     y <- y / nvec             # Convert to proportions
 
-    mu <- y + (1/ncol(y) - y)/nvec
-    dimnames(mu) <- dimnames(y)
+    if (length(mustart) + length(etastart) == 0) {
+      mu <- y + (1 / ncol(y) - y) / nvec
+      dimnames(mu) <- dimnames(y)
+      mustart <- mu
+    }
 })
 
 
@@ -68,220 +73,240 @@ betabinomial.control <- function(save.weight=TRUE, ...)
 
 
 
- betabinomial = function(lmu="logit", lrho="logit",
-                         emu=list(),  erho=list(), irho=NULL,
-                         method.init=1, shrinkage.init=0.95,
-                         nsimEIM=NULL, zero=2)
+ betabinomial <- function(lmu = "logit", lrho = "logit",
+                          emu = list(),  erho = list(), irho = NULL,
+                          method.init = 1, shrinkage.init = 0.95,
+                          nsimEIM = NULL, zero = 2)
 {
-    if (mode(lmu) != "character" && mode(lmu) != "name")
-        lmu = as.character(substitute(lmu))
-    if (mode(lrho) != "character" && mode(lrho) != "name")
-        lrho = as.character(substitute(lrho))
-    if (!is.list(emu )) emu  = list()
-    if (!is.list(erho)) erho = list()
-    if (!is.Numeric(method.init, allow=1, integ=TRUE, posit=TRUE) ||
-       method.init > 4) stop("argument 'method.init' must be 1, 2, 3 or 4")
-    if (!is.Numeric(shrinkage.init, allow=1) || shrinkage.init < 0 ||
-       shrinkage.init > 1) stop("bad input for argument 'shrinkage.init'")
-    if (!is.null(nsimEIM)) {
-        if (!is.Numeric(nsimEIM, allow=1, integ=TRUE))
-            stop("bad input for argument 'nsimEIM'")
-        if (nsimEIM <= 10)
-            warning("'nsimEIM' should be an integer greater than 10, say")
-    }
+  if (mode(lmu) != "character" && mode(lmu) != "name")
+    lmu <- as.character(substitute(lmu))
+  if (mode(lrho) != "character" && mode(lrho) != "name")
+    lrho <- as.character(substitute(lrho))
 
-    new("vglmff",
-    blurb = c("Beta-binomial model\n",
+  if (!is.list(emu )) emu  <- list()
+  if (!is.list(erho)) erho <- list()
+
+  if (!is.Numeric(method.init, allow=1, integ=TRUE, posit=TRUE) ||
+     method.init > 4) stop("argument 'method.init' must be 1, 2, 3 or 4")
+
+  if (!is.Numeric(shrinkage.init, allow=1) || shrinkage.init < 0 ||
+     shrinkage.init > 1) stop("bad input for argument 'shrinkage.init'")
+  if (!is.null(nsimEIM)) {
+    if (!is.Numeric(nsimEIM, allow=1, integ=TRUE))
+      stop("bad input for argument 'nsimEIM'")
+    if (nsimEIM <= 10)
+      warning("'nsimEIM' should be an integer greater than 10, say")
+  }
+
+  new("vglmff",
+  blurb = c("Beta-binomial model\n",
             "Links:      ",
             namesof("mu",  lmu,  earg = emu), ", ",
             namesof("rho", lrho, earg = erho), "\n",
             "Mean:       mu", "\n",
             "Variance:   mu*(1-mu)*(1+(w-1)*rho)/w"),
-    constraints = eval(substitute(expression({
-        constraints <- cm.zero.vgam(constraints, x, .zero, M)
-    }), list( .zero = zero ))),
-    initialize = eval(substitute(expression({
-        if (!all(w == 1))
-            extra$orig.w = w
+  constraints = eval(substitute(expression({
+    constraints <- cm.zero.vgam(constraints, x, .zero, M)
+  }), list( .zero = zero ))),
+  initialize = eval(substitute(expression({
+    if (!all(w == 1))
+      extra$orig.w <- w
 
-        if (is.null( .nsimEIM)) {
-             save.weight <- control$save.weight <- FALSE
-        }
+    if (is.null( .nsimEIM)) {
+      save.weight <- control$save.weight <- FALSE
+    }
 
-        eval(binomialff()@initialize)   # Note: n,w,y,mustart is changed 
+    mustart.orig <- mustart
+    eval(binomialff()@initialize)   # Note: n,w,y,mustart is changed 
+    if (length(mustart.orig))
+      mustart <- mustart.orig  # Retain it if inputted
 
 
-        ycounts = if (is.numeric(extra$orig.w)) y * w / extra$orig.w else
-                  y * w # Convert proportions to counts
-        if (max(abs(ycounts - round(ycounts))) > 1.0e-6)
-           warning("the response (as counts) does not appear to ",
-                   "be integer-valued. Am rounding to integer values.")
-        ycounts = round(ycounts) # Make sure it is an integer
-        predictors.names = c(namesof("mu",  .lmu,  earg = .emu,  tag=FALSE),
-                             namesof("rho", .lrho, earg = .erho, tag=FALSE))
-        if (!length(etastart)) {
-            betabinomial.Loglikfun = function(rhoval, y, x, w, extraargs) {
-                shape1 =    extraargs$mustart  * (1-rhoval) / rhoval
-                shape2 = (1-extraargs$mustart) * (1-rhoval) / rhoval
-                ycounts = extraargs$ycounts   # Ought to be integer-valued
-                nvec = extraargs$nvec
-                sum(dbetabin.ab(x=ycounts, size=nvec, shape1=shape1,
-                                shape2=shape2, log=TRUE))
-            }
-            rho.grid = rvar = seq(0.05, 0.95, len=21)  # 
-            mustart.use = if ( .method.init == 1) {
-                rep(weighted.mean(y, w), len=n)
-            } else if ( .method.init == 2) {
-                .sinit * weighted.mean(y, w) + (1- .sinit) * y
-            } else if ( .method.init == 3) {
-                y.matrix = cbind(y)
-                mat.temp = matrix(colMeans(y.matrix), nrow(y.matrix),
-                                  ncol(y.matrix), byrow = TRUE)
-                0.5 * mustart + 0.5 * mat.temp
-            } else {
-                mustart
-            }
-            try.this = getMaxMin(rho.grid, objfun=betabinomial.Loglikfun,
-                                 y=y,  x=x, w=w, extraargs=list(
-                                 ycounts=ycounts,
-                                 nvec = if (is.numeric(extra$orig.w))
-                                        round(w / extra$orig.w) else round(w),
-                                 mustart=mustart.use))
-            init.rho = if (is.Numeric( .irho )) rep( .irho, length=n) else
-                       rep(try.this, len=n)
-        }
-        etastart = cbind(theta2eta(mustart.use,  .lmu, earg = .emu),
-                         theta2eta(init.rho,     .lrho, earg = .erho))
-    }), list( .lmu = lmu, .lrho = lrho,
-              .emu = emu, .erho = erho,
-              .method.init = method.init, .sinit = shrinkage.init,
-              .nsimEIM = nsimEIM, .irho=irho ))),
-    inverse = eval(substitute(function(eta, extra = NULL)
-        eta2theta(eta[,1], .lmu, earg = .emu), 
-    list( .lmu = lmu, .emu = emu ))),
-    last = eval(substitute(expression({
-        misc$link <- c(mu = .lmu, rho = .lrho)
-        misc$earg <- list(mu = .emu, rho = .erho)
-        misc$zero <- .zero
-        misc$expected <- TRUE
-        misc$nsimEIM = .nsimEIM
-    }), list( .lmu = lmu, .lrho = lrho,
-              .emu = emu, .erho = erho,
-              .nsimEIM = nsimEIM, .zero = zero ))),
-    loglikelihood = eval(substitute(
-        function(mu,y,w,residuals=FALSE, eta, extra = NULL) {
-        ycounts = if (is.numeric(extra$orig.w)) y * w / extra$orig.w else
-                  y * w # Convert proportions to counts
+    ycounts <- if (is.numeric(extra$orig.w)) y * w / extra$orig.w else
+              y * w # Convert proportions to counts
+    if (max(abs(ycounts - round(ycounts))) > 1.0e-6)
+      warning("the response (as counts) does not appear to ",
+              "be integer-valued. Am rounding to integer values.")
+    ycounts <- round(ycounts) # Make sure it is an integer
+    predictors.names <- c(namesof("mu",  .lmu,  earg = .emu,  tag=FALSE),
+                          namesof("rho", .lrho, earg = .erho, tag=FALSE))
+    if (!length(etastart)) {
+      betabinomial.Loglikfun = function(rhoval, y, x, w, extraargs) {
+        shape1 <-    extraargs$mustart  * (1-rhoval) / rhoval
+        shape2 <- (1-extraargs$mustart) * (1-rhoval) / rhoval
+        ycounts <- extraargs$ycounts   # Ought to be integer-valued
+        nvec <- extraargs$nvec
+        sum(dbetabin.ab(x = ycounts, size=nvec, shape1=shape1,
+                        shape2=shape2, log=TRUE))
+      }
+      rho.grid <- seq(0.05, 0.95, len=21)  # rvar = 
+      mustart.use =
+      if (length(mustart.orig)) {
+        mustart.orig
+      } else if ( .method.init == 1) {
+        rep(weighted.mean(y, w), len = n)
+      } else if ( .method.init == 2) {
+        .sinit * weighted.mean(y, w) + (1 - .sinit) * y
+      } else if ( .method.init == 3) {
+        y.matrix <- cbind(y)
+        mat.temp <- matrix(colMeans(y.matrix), nrow(y.matrix),
+                           ncol(y.matrix), byrow = TRUE)
+        0.5 * mustart + 0.5 * mat.temp
+      } else {
+        mustart
+      }
+      try.this <- getMaxMin(rho.grid, objfun=betabinomial.Loglikfun,
+                        y = y,  x = x, w = w, extraargs = list(
+                        ycounts=ycounts,
+                        nvec = if (is.numeric(extra$orig.w))
+                               round(w / extra$orig.w) else round(w),
+                        mustart = mustart.use))
+      init.rho <- if (is.Numeric( .irho )) rep( .irho, length=n) else
+                  rep(try.this, len=n)
+      etastart <- cbind(theta2eta(mustart.use,  .lmu,  earg = .emu),
+                        theta2eta(init.rho,     .lrho, earg = .erho))
+      mustart <- NULL  # Since etastart has been computed.
+    }
+  }), list( .lmu = lmu, .lrho = lrho,
+            .emu = emu, .erho = erho,
+            .method.init = method.init, .sinit = shrinkage.init,
+            .nsimEIM = nsimEIM, .irho = irho ))),
+  inverse = eval(substitute(function(eta, extra = NULL)
+    eta2theta(eta[,1], .lmu, earg = .emu), 
+  list( .lmu = lmu, .emu = emu ))),
+  last = eval(substitute(expression({
+    misc$link <- c(mu = .lmu, rho = .lrho)
+    misc$earg <- list(mu = .emu, rho = .erho)
+    misc$zero <- .zero
+    misc$expected <- TRUE
+    misc$nsimEIM = .nsimEIM
+  }), list( .lmu = lmu, .lrho = lrho,
+            .emu = emu, .erho = erho,
+            .nsimEIM = nsimEIM, .zero = zero ))),
+  loglikelihood = eval(substitute(
+    function(mu,y,w,residuals=FALSE, eta, extra = NULL) {
+    ycounts <- if (is.numeric(extra$orig.w)) y * w / extra$orig.w else
+               y * w # Convert proportions to counts
 
-        mymu = eta2theta(eta[,1], .lmu,  earg = .emu)
-        rho  = eta2theta(eta[,2], .lrho, earg = .erho)
-        smallno = 1.0e4 * .Machine$double.eps
+    mymu <- eta2theta(eta[,1], .lmu,  earg = .emu)
+    rho  <- eta2theta(eta[,2], .lrho, earg = .erho)
+    smallno <- 1.0e4 * .Machine$double.eps
 
-        if (max(abs(ycounts - round(ycounts))) > smallno)
-            warning("converting 'ycounts' to integer in @loglikelihood")
-        ycounts = round(ycounts)
+    if (max(abs(ycounts - round(ycounts))) > smallno)
+        warning("converting 'ycounts' to integer in @loglikelihood")
+    ycounts <- round(ycounts)
 
-        rho  = pmax(rho, smallno)
-        rho  = pmin(rho, 1-smallno)
-        shape1 = mymu * (1 - rho) / rho
-        shape2 = (1-mymu) * (1 - rho) / rho
+    rho  <- pmax(rho,     smallno)
+    rho  <- pmin(rho, 1 - smallno)
+    shape1 <-      mymu  * (1 - rho) / rho
+    shape2 <- (1 - mymu) * (1 - rho) / rho
 
-        nvec = if (is.numeric(extra$orig.w)) round(w / extra$orig.w) else
-                  round(w)
+    nvec <- if (is.numeric(extra$orig.w)) round(w / extra$orig.w) else
+            round(w)
 
-        if (residuals)
-            stop("loglikelihood residuals not implemented yet") else {
-              sum((if (is.numeric(extra$orig.w)) extra$orig.w else 1) *
-                  dbetabin.ab(x = ycounts, size = nvec, shape1 = shape1,
-                              shape2 = shape2, log = TRUE ))
-        }
-    }, list( .lmu = lmu, .lrho = lrho,
-             .emu = emu, .erho = erho  ))),
-    vfamily = c("betabinomial"),
-    deriv = eval(substitute(expression({
-        nvec = if (is.numeric(extra$orig.w)) round(w / extra$orig.w) else
-                  round(w)
-        ycounts = if (is.numeric(extra$orig.w)) y * w / extra$orig.w else
-                  y * w # Convert proportions to counts
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
+      sum((if (is.numeric(extra$orig.w)) extra$orig.w else 1) *
+          dbetabin.ab(x = ycounts, size = nvec, shape1 = shape1,
+                      shape2 = shape2, log = TRUE ))
+    }
+  }, list( .lmu = lmu, .lrho = lrho,
+           .emu = emu, .erho = erho  ))),
+  vfamily = c("betabinomial"),
+  deriv = eval(substitute(expression({
+    nvec <- if (is.numeric(extra$orig.w)) round(w / extra$orig.w) else
+              round(w)
+    ycounts <- if (is.numeric(extra$orig.w)) y * w / extra$orig.w else
+              y * w # Convert proportions to counts
 
-        ycounts = round(ycounts)
-        mymu = eta2theta(eta[,1], .lmu, earg = .emu)
-        rho  = eta2theta(eta[,2], .lrho, earg = .erho)
-        smallno = 100 * .Machine$double.eps
-        rho  = pmax(rho, smallno)
-        rho  = pmin(rho, 1-smallno)
-        shape1 = mymu * (1 - rho) / rho
-        shape2 = (1-mymu) * (1 - rho) / rho
-        dshape1.dmu =  (1 - rho) / rho
-        dshape2.dmu = -(1 - rho) / rho
-        dshape1.drho = -mymu / rho^2
-        dshape2.drho =  -(1 - mymu) / rho^2
-        dmu.deta  = dtheta.deta(mymu, .lmu, earg = .emu)
-        drho.deta = dtheta.deta(rho,  .lrho, earg = .erho)
-        dl.dmu = dshape1.dmu * (digamma(shape1+ycounts) -
-                 digamma(shape2+nvec-ycounts) -
-                 digamma(shape1) + digamma(shape2))
-        dl.drho = (-1/rho^2) * (mymu * digamma(shape1+ycounts) +
-                  (1-mymu) * digamma(shape2+nvec-ycounts) -
-                  digamma(shape1+shape2+nvec) - 
-                  mymu * digamma(shape1) -
-                  (1-mymu)*digamma(shape2) + digamma(shape1+shape2))
-        (if (is.numeric(extra$orig.w)) extra$orig.w else 1) *
-        cbind(dl.dmu * dmu.deta, dl.drho * drho.deta)
-    }), list( .lmu = lmu, .lrho = lrho,
-              .emu = emu, .erho = erho  ))),
-    weight = eval(substitute(expression({
-        if (is.null( .nsimEIM)) {
-            wz = matrix(as.numeric(NA), n, dimm(M))  #3=dimm(2)
-            wz11 = -(expected.betabin.ab(nvec, shape1, shape2, TRUE) -
-                     trigamma(shape1+shape2+nvec) -
-                     trigamma(shape1) + trigamma(shape1+shape2))
-            wz22 = -(expected.betabin.ab(nvec, shape1, shape2, FALSE) -
-                     trigamma(shape1+shape2+nvec) -
-                     trigamma(shape2) + trigamma(shape1+shape2))
-            wz21 = -(trigamma(shape1+shape2) - trigamma(shape1+shape2+nvec))
-            wz[,iam(1,1,M)] = dmu.deta^2 * (wz11 * dshape1.dmu^2 +
-                                            wz22 * dshape2.dmu^2 +
-                               2 * wz21 * dshape1.dmu * dshape2.dmu)
-            wz[,iam(2,2,M)] = drho.deta^2 * (wz11 * dshape1.drho^2 +
-                                             wz22 * dshape2.drho^2 +
-                               2 * wz21 * dshape1.drho * dshape2.drho)
-            wz[,iam(2,1,M)] = dmu.deta * drho.deta *
-                        (dshape1.dmu*(wz11*dshape1.drho + wz21*dshape2.drho) +
-                        dshape2.dmu*(wz21*dshape1.drho + wz22*dshape2.drho))
-            wz * (if (is.numeric(extra$orig.w)) extra$orig.w else 1)
-        } else {
-            run.varcov = 0
-            ind1 = iam(NA, NA, M=M, both=TRUE, diag=TRUE)
-            dthetas.detas = cbind(dmu.deta, drho.deta)
+    ycounts <- round(ycounts)
+    mymu <- eta2theta(eta[,1], .lmu, earg = .emu)
+    rho  <- eta2theta(eta[,2], .lrho, earg = .erho)
+    smallno <- 100 * .Machine$double.eps
+    rho  <- pmax(rho, smallno)
+    rho  <- pmin(rho, 1-smallno)
 
-            for (ii in 1:( .nsimEIM )) {
-                ysim = rbetabin.ab(n=n, size=nvec, shape1=shape1,
-                                   shape2=shape2)
-                dl.dmu = dshape1.dmu * (digamma(shape1+ysim) -
-                         digamma(shape2+nvec-ysim) -
-                         digamma(shape1) + digamma(shape2))
-                dl.drho = (-1/rho^2) * (mymu * digamma(shape1+ysim) +
-                          (1-mymu) * digamma(shape2+nvec-ysim) -
-                          digamma(shape1+shape2+nvec) - 
-                          mymu * digamma(shape1) -
-                          (1-mymu)*digamma(shape2) + digamma(shape1+shape2))
+    shape1 <-      mymu  * (1 - rho) / rho
+    shape2 <- (1 - mymu) * (1 - rho) / rho
+    dshape1.dmu <-  (1 - rho) / rho
+    dshape2.dmu <- -(1 - rho) / rho
+    dshape1.drho <-       -mymu  / rho^2
+    dshape2.drho <-  -(1 - mymu) / rho^2
 
-                rm(ysim)
-                temp3 = cbind(dl.dmu, dl.drho)  # n x M matrix
-                run.varcov = ((ii-1) * run.varcov +
-                           temp3[,ind1$row.index]*temp3[,ind1$col.index]) / ii
-            }
-            wz = if (intercept.only)
-                matrix(colMeans(run.varcov),
-                       n, ncol(run.varcov), byrow = TRUE) else run.varcov
+    dmu.deta  <- dtheta.deta(mymu, .lmu,  earg = .emu)
+    drho.deta <- dtheta.deta(rho,  .lrho, earg = .erho)
 
-            wz = wz * dthetas.detas[,ind1$row] * dthetas.detas[,ind1$col]
-            wz * (if (is.numeric(extra$orig.w)) extra$orig.w else 1)
-        }
-    }), list( .lmu = lmu, .lrho = lrho,
-              .emu = emu, .erho = erho, 
-              .nsimEIM = nsimEIM ))))
+    dl.dmu <- dshape1.dmu * (digamma(shape1+ycounts) -
+              digamma(shape2+nvec-ycounts) -
+              digamma(shape1) + digamma(shape2))
+    dl.drho <- (-1/rho^2) * (mymu * digamma(shape1 + ycounts) +
+               (1 - mymu) * digamma(shape2 + nvec - ycounts) -
+               digamma(shape1 + shape2 + nvec) -
+               mymu * digamma(shape1) -
+               (1 - mymu)*digamma(shape2) + digamma(shape1+shape2))
+
+    (if (is.numeric(extra$orig.w)) extra$orig.w else 1) *
+    cbind(dl.dmu * dmu.deta, dl.drho * drho.deta)
+  }), list( .lmu = lmu, .lrho = lrho,
+            .emu = emu, .erho = erho  ))),
+  weight = eval(substitute(expression({
+    if (is.null( .nsimEIM )) {
+      wz = matrix(as.numeric(NA), n, dimm(M))  #3=dimm(2)
+      wz11 <- -(expected.betabin.ab(nvec, shape1, shape2, TRUE) -
+               trigamma(shape1+shape2+nvec) -
+               trigamma(shape1) + trigamma(shape1+shape2))
+      wz22 <- -(expected.betabin.ab(nvec, shape1, shape2, FALSE) -
+               trigamma(shape1+shape2+nvec) -
+               trigamma(shape2) + trigamma(shape1+shape2))
+      wz21 <- -(trigamma(shape1+shape2) - trigamma(shape1+shape2+nvec))
+
+      wz[,iam(1, 1, M)] <- dmu.deta^2 * (wz11 * dshape1.dmu^2 +
+                                      wz22 * dshape2.dmu^2 +
+                         2 * wz21 * dshape1.dmu * dshape2.dmu)
+      wz[,iam(2, 2, M)] <- drho.deta^2 * (wz11 * dshape1.drho^2 +
+                                       wz22 * dshape2.drho^2 +
+                         2 * wz21 * dshape1.drho * dshape2.drho)
+      wz[,iam(2, 1, M)] <- dmu.deta * drho.deta *
+                  (dshape1.dmu*(wz11*dshape1.drho + wz21*dshape2.drho) +
+                  dshape2.dmu*(wz21*dshape1.drho + wz22*dshape2.drho))
+
+      wz * (if (is.numeric(extra$orig.w)) extra$orig.w else 1)
+    } else {
+      run.varcov <- 0
+      ind1 <- iam(NA, NA, M=M, both=TRUE, diag=TRUE)
+      dthetas.detas <- cbind(dmu.deta, drho.deta)
+
+      for (ii in 1:( .nsimEIM )) {
+          ysim <- rbetabin.ab(n=n, size=nvec, shape1=shape1,
+                             shape2=shape2)
+          dl.dmu <- dshape1.dmu * (digamma(shape1+ysim) -
+                   digamma(shape2+nvec-ysim) -
+                   digamma(shape1) + digamma(shape2))
+          dl.drho <- (-1/rho^2) * (mymu * digamma(shape1+ysim) +
+                    (1-mymu) * digamma(shape2+nvec-ysim) -
+                    digamma(shape1+shape2+nvec) - 
+                    mymu * digamma(shape1) -
+                    (1-mymu)*digamma(shape2) + digamma(shape1+shape2))
+
+
+          temp3 <- cbind(dl.dmu, dl.drho)  # n x M matrix
+          run.varcov <- run.varcov +
+                        temp3[,ind1$row.index] * temp3[,ind1$col.index]
+      }
+      run.varcov <- run.varcov / .nsimEIM
+
+
+      wz <- if (intercept.only)
+          matrix(colMeans(run.varcov),
+                 n, ncol(run.varcov), byrow = TRUE) else run.varcov
+
+      wz <- wz * dthetas.detas[,ind1$row] * dthetas.detas[,ind1$col]
+      wz * (if (is.numeric(extra$orig.w)) extra$orig.w else 1)
+    }
+  }), list( .lmu = lmu, .lrho = lrho,
+            .emu = emu, .erho = erho, 
+            .nsimEIM = nsimEIM ))))
 }
 
 
@@ -376,11 +401,12 @@ rbinom2.or = function(n, mu1,
 
 
 
- binom2.or = function(lmu = "logit", lmu1 = lmu, lmu2 = lmu, loratio = "loge",
-                      emu = list(), emu1 = emu, emu2 = emu, eoratio = list(),
-                      imu1 = NULL, imu2 = NULL, ioratio = NULL,
-                      zero = 3, exchangeable = FALSE, tol = 0.001,
-                      morerobust = FALSE)
+ binom2.or = function(lmu = "logit", lmu1 = lmu, lmu2 = lmu,
+                      loratio = "loge",
+                emu = list(), emu1 = emu, emu2 = emu, eoratio = list(),
+                imu1 = NULL, imu2 = NULL, ioratio = NULL,
+                zero = 3, exchangeable = FALSE, tol = 0.001,
+                morerobust = FALSE)
 {
     if (mode(lmu) != "character" && mode(lmu) != "name")
         lmu = as.character(substitute(lmu))
@@ -413,19 +439,26 @@ rbinom2.or = function(n, mu1,
     }), list( .exchangeable = exchangeable, .zero = zero ))),
     deviance = Deviance.categorical.data.vgam,
     initialize = eval(substitute(expression({
+        mustart.orig = mustart
         eval(process.binomial2.data.vgam)
-        predictors.names = c(namesof("mu1", .lmu1, earg = .emu1, short=TRUE), 
-                 namesof("mu2", .lmu2, earg = .emu2, short=TRUE), 
-                 namesof("oratio",  .loratio, earg = .eoratio, short=TRUE))
+        if (length(mustart.orig))
+          mustart = mustart.orig  # Retain it if inputted
+
+        predictors.names =
+           c(namesof("mu1",     .lmu1,    earg = .emu1,    short = TRUE),
+             namesof("mu2",     .lmu2,    earg = .emu2,    short = TRUE),
+             namesof("oratio",  .loratio, earg = .eoratio, short = TRUE))
 
         if (!length(etastart)) {
-            pmargin = cbind(mu[,3]+mu[,4], mu[,2]+mu[,4])
-            ioratio = if (length( .ioratio)) rep( .ioratio, len=n) else
-                      mu[,4]*mu[,1]/(mu[,2]*mu[,3])
-            if (length( .imu1)) pmargin[,1] = .imu1
-            if (length( .imu2)) pmargin[,2] = .imu2
+            pmargin = cbind(mustart[, 3] + mustart[, 4],
+                            mustart[, 2] + mustart[, 4])
+            ioratio = if (length( .ioratio)) rep( .ioratio, len = n) else
+                      mustart[, 4] * mustart[, 1] / (mustart[, 2] *
+                                                     mustart[, 3])
+            if (length( .imu1 )) pmargin[, 1] = .imu1
+            if (length( .imu2 )) pmargin[, 2] = .imu2
             etastart = cbind(theta2eta(pmargin[,1], .lmu1, earg = .emu1),
-                             theta2eta(pmargin[,2], .lmu2, earg = .emu2), 
+                             theta2eta(pmargin[,2], .lmu2, earg = .emu2),
                              theta2eta(ioratio, .loratio, earg = .eoratio))
         }
     }), list( .lmu1 = lmu1, .lmu2 = lmu2, .loratio = loratio,
@@ -442,7 +475,10 @@ rbinom2.or = function(n, mu1,
                      (a.temp-temp)/(2*(oratio-1)))
         pj2 = pmargin[,2] - pj4
         pj3 = pmargin[,1] - pj4
-        cbind("00" = 1-pj4-pj2-pj3, "01" = pj2, "10" = pj3, "11" = pj4)
+        cbind("00" = 1-pj4-pj2-pj3,
+              "01" = pj2,
+              "10" = pj3,
+               "11" = pj4)
     }, list( .lmu1 = lmu1, .lmu2 = lmu2, .loratio = loratio,
              .emu1 = emu1, .emu2 = emu2, .eoratio = eoratio,
              .tol = tol ))),
@@ -457,9 +493,9 @@ rbinom2.or = function(n, mu1,
     link = eval(substitute(function(mu, extra = NULL) {
         pmargin = cbind(mu[,3]+mu[,4], mu[,2]+mu[,4])
         oratio = mu[,4]*mu[,1] / (mu[,2]*mu[,3])
-        cbind(theta2eta(pmargin[,1], .lmu1, earg = .emu1),
-              theta2eta(pmargin[,2], .lmu2, earg = .emu2), 
-              theta2eta(oratio, .loratio, earg = .eoratio))
+        cbind(theta2eta(pmargin[,1], .lmu1,    earg = .emu1),
+              theta2eta(pmargin[,2], .lmu2,    earg = .emu2), 
+              theta2eta(oratio,      .loratio, earg = .eoratio))
     }, list( .lmu1 = lmu1, .lmu2 = lmu2, .loratio = loratio,
              .emu1 = emu1, .emu2 = emu2, .eoratio = eoratio ))),
     loglikelihood = eval(substitute(
@@ -491,13 +527,14 @@ rbinom2.or = function(n, mu1,
     deriv = eval(substitute(expression({
         smallno = 1.0e4 * .Machine$double.eps
         mu.use = mu
-        mu.use[mu.use < smallno] = smallno
-        mu.use[mu.use > 1-smallno] = 1-smallno
-        pmargin = cbind(mu.use[,3]+mu.use[,4], mu.use[,2]+mu.use[,4])
-        pmargin[,1] = pmax(smallno,   pmargin[,1])
-        pmargin[,1] = pmin(1-smallno, pmargin[,1])
-        pmargin[,2] = pmax(smallno,   pmargin[,2])
-        pmargin[,2] = pmin(1-smallno, pmargin[,2])
+        mu.use[mu.use <     smallno] =     smallno
+        mu.use[mu.use > 1 - smallno] = 1 - smallno
+        pmargin = cbind(mu.use[, 3] + mu.use[, 4],
+                        mu.use[, 2] + mu.use[, 4])
+        pmargin[, 1] = pmax(    smallno, pmargin[, 1])
+        pmargin[, 1] = pmin(1 - smallno, pmargin[, 1])
+        pmargin[, 2] = pmax(    smallno, pmargin[, 2])
+        pmargin[, 2] = pmin(1 - smallno, pmargin[, 2])
 
         oratio = mu.use[,4]*mu.use[,1] / (mu.use[,2]*mu.use[,3])
         use.oratio = pmax(smallno, oratio)
@@ -521,7 +558,7 @@ rbinom2.or = function(n, mu1,
 
         w * cbind(dl.dmu1 * dtheta.deta(pmargin[,1], .lmu1, earg = .emu1),
                   dl.dmu2 * dtheta.deta(pmargin[,2], .lmu2, earg = .emu2),
-                  dl.doratio * dtheta.deta(oratio, .loratio, earg = .eoratio))
+               dl.doratio * dtheta.deta(oratio, .loratio, earg = .eoratio))
     }), list( .lmu1 = lmu1, .lmu2 = lmu2, .loratio = loratio,
               .emu1 = emu1, .emu2 = emu2, .eoratio = eoratio ))),
     weight = eval(substitute(expression({
@@ -537,7 +574,7 @@ rbinom2.or = function(n, mu1,
         wz[,iam(2,2,M)] = (pqmargin[,1] * Vab / myDelta) *
                           dtheta.deta(pmargin[,2], .lmu2, earg = .emu2)^2
         wz[,iam(3,3,M)] = (Vab / use.oratio^2) *
-                         dtheta.deta(use.oratio, .loratio, earg = .eoratio)^2
+                     dtheta.deta(use.oratio, .loratio, earg = .eoratio)^2
         wz[,iam(1,2,M)] = (Vab * Deltapi / myDelta) *
                           dtheta.deta(pmargin[,1], .lmu1, earg = .emu1) *
                           dtheta.deta(pmargin[,2], .lmu2, earg = .emu2)
@@ -565,17 +602,17 @@ dbinom2.rho = function(mu1,
             stop("argument 'exchangeable' is TRUE but 'mu1' and 'mu2' differ") 
     }
 
-    n = max(length(mu1), length(mu2), length(rho))
-    rho = rep(rho, len=n)
-    mu1 = rep(mu1, len=n)
-    mu2 = rep(mu2, len=n)
+    nn = max(length(mu1), length(mu2), length(rho))
+    rho = rep(rho, len = nn)
+    mu1 = rep(mu1, len = nn)
+    mu2 = rep(mu2, len = nn)
     eta1 = qnorm(mu1)
     eta2 = qnorm(mu2)
     p11 = pnorm2(eta1, eta2, rho)
     p01 = mu2 - p11
     p10 = mu1 - p11
-    p00 = 1 - p01 - p10 - p11
-    matrix(c(p00,p01,p10,p11), n, 4, dimnames=list(NULL,colnames))
+    p00 = 1.0 - p01 - p10 - p11
+    matrix(c(p00, p01, p10, p11), nn, 4, dimnames = list(NULL, colnames))
 }
 
 
@@ -624,6 +661,8 @@ rbinom2.rho = function(n, mu1,
 
 
 
+
+
 binom2.rho.control <- function(save.weight=TRUE, ...)
 {
     list(save.weight=save.weight)
@@ -631,11 +670,12 @@ binom2.rho.control <- function(save.weight=TRUE, ...)
 
 
 
- binom2.rho = function(lrho="rhobit", erho=list(),
-                       imu1=NULL, imu2=NULL, 
-                       init.rho=NULL,
-                       zero=3, exchangeable=FALSE, nsimEIM=NULL)
+ binom2.rho = function(lrho = "rhobit", erho = list(),
+                       imu1 = NULL, imu2 = NULL, irho = NULL,
+                       method.init = 1,
+                       zero = 3, exchangeable = FALSE, nsimEIM = NULL)
 {
+
 
     if (mode(lrho) != "character" && mode(lrho) != "name")
         lrho = as.character(substitute(lrho))
@@ -643,11 +683,13 @@ binom2.rho.control <- function(save.weight=TRUE, ...)
     lmu12 = "probit"
     emu12 = list()
     if (is.Numeric(nsimEIM)) {
-        if (!is.Numeric(nsimEIM, allow=1, integ=TRUE))
+        if (!is.Numeric(nsimEIM, allow = 1, integ = TRUE))
             stop("bad input for argument 'nsimEIM'")
         if (nsimEIM <= 100)
             warning("'nsimEIM' should be an integer greater than 100")
     }
+    if (!is.Numeric(method.init, allow = 1, integ = TRUE, posit = TRUE) ||
+       method.init > 2) stop("argument 'method.init' must be 1 or 2")
 
     new("vglmff",
     blurb = c("Bivariate probit model\n",
@@ -662,39 +704,98 @@ binom2.rho.control <- function(save.weight=TRUE, ...)
     }), list( .exchangeable = exchangeable, .zero = zero ))),
     deviance = Deviance.categorical.data.vgam,
     initialize = eval(substitute(expression({
+        mustart.orig = mustart
         eval(process.binomial2.data.vgam)
+        if (length(mustart.orig))
+          mustart = mustart.orig  # Retain it if inputted
+
         predictors.names = c(
-                      namesof("mu1", .lmu12, earg = .emu12, short=TRUE),
-                      namesof("mu2", .lmu12, earg = .emu12, short=TRUE),
-                      namesof("rho", .lrho,  earg = .erho,  short=TRUE))
+            namesof("mu1", .lmu12, earg = .emu12, short = TRUE),
+            namesof("mu2", .lmu12, earg = .emu12, short = TRUE),
+            namesof("rho", .lrho,  earg = .erho,  short = TRUE))
 
         if (is.null( .nsimEIM)) {
              save.weight <- control$save.weight <- FALSE
         }
+
+
+        ycounts = if (is.numeric(extra$orig.w)) y * w / extra$orig.w else
+                  y * w # Convert proportions to counts
+        if (max(abs(ycounts - round(ycounts))) > 1.0e-6)
+           warning("the response (as counts) does not appear to ",
+                   "be integer-valued. Am rounding to integer values.")
+        ycounts = round(ycounts) # Make sure it is an integer
+        nvec = if (is.numeric(extra$orig.w)) round(w / extra$orig.w) else
+                                             round(w)
+
+
         if (is.null(etastart)) {
-            mu1.init= if (is.Numeric(.imu1)) rep(.imu1, len=n) else
-                      mu[,3] + mu[,4]
-            mu2.init= if (is.Numeric(.imu2)) rep(.imu2, len=n) else
-                      mu[,2] + mu[,4]
-            rho.init = if (is.Numeric(.init.rho)) rep( .init.rho, len=n) else {
-                temp4 = oratio = mu[,1] * mu[,4] / (mu[,2] * mu[,3])
-                temp4[oratio <= 0.1] = -0.6
-                temp4[oratio >  0.1] = -0.4
-                temp4[oratio >  0.5] = -0.2
-                temp4[oratio >  0.9] = -0.1
-                temp4[oratio >  1.1] =  0.1
-                temp4[oratio >  2.0] =  0.3
-                temp4[oratio >  6.0] =  0.6
-                temp4[oratio > 15.0] =  0.8
-                temp4
+          if (length(mustart.orig)) {
+              mu1.init = mustart.orig[,3] + mustart.orig[,4]
+              mu2.init = mustart.orig[,2] + mustart.orig[,4]
+          } else if ( .method.init == 1) {
+              glm1.fit = glm(cbind(ycounts[,3] + ycounts[,4],
+                                   ycounts[,1] + ycounts[,2]) ~ x - 1,
+                             fam = binomial("probit"))
+              glm2.fit = glm(cbind(ycounts[,2] + ycounts[,4],
+                                   ycounts[,1] + ycounts[,3]) ~ x - 1,
+                             fam = binomial("probit"))
+              mu1.init = fitted(glm1.fit)
+              mu2.init = fitted(glm2.fit)
+          } else if ( .method.init == 2) {
+              mu1.init = if (is.Numeric( .imu1 )) rep( .imu1, len=n) else
+                         mu[,3] + mu[,4]
+              mu2.init = if (is.Numeric( .imu2 )) rep( .imu2, len=n) else
+                         mu[,2] + mu[,4]
+          } else {
+            stop("bad value for 'method.init'")
+          }
+
+
+
+            binom2.rho.Loglikfun = function(rhoval, y, x, w, extraargs) {
+                init.mu1 =    extraargs$initmu1
+                init.mu2 =    extraargs$initmu2
+                ycounts  =    extraargs$ycounts
+                nvec     =    extraargs$nvec
+                eta1 = qnorm(init.mu1)
+                eta2 = qnorm(init.mu2)
+                p11 = pnorm2(eta1, eta2, rhoval)
+                p01 = pmin(init.mu2 - p11, init.mu2)
+                p10 = pmin(init.mu1 - p11, init.mu1)
+                p00 = 1.0 - p01 - p10 - p11
+                mumat = abs(cbind("00" = p00, "01" = p01, "10" = p10, "11" = p11))
+                mumat = mumat / rowSums(mumat)
+                mumat[mumat < 1.0e-100] = 1.0e-100
+
+          sum((if (is.numeric(extraargs$orig.w)) extraargs$orig.w else 1) *
+              dmultinomial(x = ycounts, size = nvec, prob = mumat,
+                           log = TRUE, docheck = FALSE))
             }
-            etastart = cbind(theta2eta(mu1.init, .lmu12, earg = .emu12),
-                             theta2eta(mu2.init, .lmu12, earg = .emu12),
-                             theta2eta(rho.init, .lrho, earg = .erho))
+            rho.grid = seq(-0.95, 0.95, len=31)
+            try.this = getMaxMin(rho.grid, objfun=binom2.rho.Loglikfun,
+                                 y=y, x=x, w=w, extraargs=list(
+                                 orig.w = extra$orig.w,
+                                 ycounts = ycounts,
+                                 initmu1 = mu1.init,
+                                 initmu2 = mu2.init,
+                                 nvec = nvec 
+                                 ))
+
+
+          rho.init = if (is.Numeric( .irho ))
+                       rep( .irho, len = n) else {
+              try.this
+          }
+          etastart = cbind(theta2eta(mu1.init, .lmu12, earg = .emu12),
+                           theta2eta(mu2.init, .lmu12, earg = .emu12),
+                           theta2eta(rho.init, .lrho,  earg = .erho))
+          mustart <- NULL  # Since etastart has been computed.
         }
     }), list( .lmu12 = lmu12, .emu12 = emu12, .nsimEIM = nsimEIM,
               .lrho = lrho, .erho = erho, 
-              .imu1 = imu1, .imu2 = imu2, .init.rho = init.rho ))),
+              .method.init = method.init,
+              .imu1 = imu1, .imu2 = imu2, .irho = irho ))),
     inverse = eval(substitute(function(eta, extra = NULL) {
         pmargin = cbind(eta2theta(eta[,1], .lmu12, earg = .emu12),
                         eta2theta(eta[,2], .lmu12, earg = .emu12))
@@ -702,8 +803,8 @@ binom2.rho.control <- function(save.weight=TRUE, ...)
         p11 = pnorm2(eta[,1], eta[,2], rho)
         p01 = pmin(pmargin[,2] - p11, pmargin[,2])
         p10 = pmin(pmargin[,1] - p11, pmargin[,1])
-        p00 = 1 - p01 - p10 - p11
-        ansmat = abs(cbind("00"=p00, "01"=p01, "10"=p10, "11"=p11))
+        p00 = 1.0 - p01 - p10 - p11
+        ansmat = abs(cbind("00" = p00, "01" = p01, "10" = p10, "11" = p11))
         ansmat / rowSums(ansmat)
     }, list( .lmu12 = lmu12, .emu12 = emu12, .lrho = lrho, .erho = erho ))),
     last = eval(substitute(expression({
@@ -711,25 +812,24 @@ binom2.rho.control <- function(save.weight=TRUE, ...)
         misc$earg = list(mu1 = .emu12, mu2 = .emu12, rho = .erho)
         misc$nsimEIM = .nsimEIM
         misc$expected = TRUE
-    }), list( .lmu12 = lmu12, .lrho = lrho,
-              .emu12 = emu12, .erho = erho,
-              .nsimEIM = nsimEIM ))),
-
+    }), list( .lmu12 = lmu12, .lrho = lrho, .nsimEIM = nsimEIM,
+              .emu12 = emu12, .erho = erho ))),
 
     loglikelihood = eval(substitute(
         function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
         if (residuals)
-            stop("loglikelihood residuals not implemented yet") else {
+          stop("loglikelihood residuals not implemented yet") else {
 
           ycounts = if (is.numeric(extra$orig.w)) y * w / extra$orig.w else
                     y * w # Convert proportions to counts
+
+        smallno = 1.0e4 * .Machine$double.eps
+        if (max(abs(ycounts - round(ycounts))) > smallno)
+            warning("converting 'ycounts' to integer in @loglikelihood")
+        ycounts = round(ycounts)
+
           nvec = if (is.numeric(extra$orig.w)) round(w / extra$orig.w) else
                     round(w)
-
-          smallno = 1.0e4 * .Machine$double.eps
-          if (max(abs(ycounts - round(ycounts))) > smallno)
-              warning("converting 'ycounts' to integer in @loglikelihood")
-          ycounts = round(ycounts)
 
           sum((if (is.numeric(extra$orig.w)) extra$orig.w else 1) *
               dmultinomial(x = ycounts, size = nvec, prob = mu,
@@ -738,6 +838,11 @@ binom2.rho.control <- function(save.weight=TRUE, ...)
     }, list( .erho = erho ))),
     vfamily = c("binom2.rho", "binom2"),
     deriv = eval(substitute(expression({
+        nvec = if (is.numeric(extra$orig.w)) round(w / extra$orig.w) else
+                  round(w)
+        ycounts = if (is.numeric(extra$orig.w)) y * w / extra$orig.w else
+                  y * w # Convert proportions to counts
+
         pmargin = cbind(eta2theta(eta[,1], .lmu12, earg = .emu12),
                         eta2theta(eta[,2], .lmu12, earg = .emu12))
         rhovec = eta2theta(eta[,3], .lrho, earg = .erho)
@@ -746,11 +851,11 @@ binom2.rho.control <- function(save.weight=TRUE, ...)
         p10 = pmargin[,1]-p11
         p00 = 1-p01-p10-p11
 
-        ABmat = (eta[,1:2] - rhovec*eta[,2:1]) / sqrt(1-rhovec^2)
+        ABmat = (eta[,1:2] - rhovec * eta[,2:1]) / sqrt(1.0 - rhovec^2)
         PhiA = pnorm(ABmat[,1])
         PhiB = pnorm(ABmat[,2])
-        onemPhiA = pnorm(ABmat[,1], lower.tail=FALSE)
-        onemPhiB = pnorm(ABmat[,2], lower.tail=FALSE)
+        onemPhiA = pnorm(ABmat[,1], lower.tail = FALSE)
+        onemPhiB = pnorm(ABmat[,2], lower.tail = FALSE)
 
         smallno = 1000 * .Machine$double.eps
         p00[p00 < smallno] = smallno
@@ -759,27 +864,33 @@ binom2.rho.control <- function(save.weight=TRUE, ...)
         p11[p11 < smallno] = smallno
 
         dprob00 = dnorm2(eta[,1], eta[,2], rhovec)
-        dl.dprob1 = PhiB*(y[,4]/p11-y[,2]/p01) + onemPhiB*(y[,3]/p10-y[,1]/p00)
-        dl.dprob2 = PhiA*(y[,4]/p11-y[,3]/p10) + onemPhiA*(y[,2]/p01-y[,1]/p00)
-        dl.drho = (y[,4]/p11-y[,3]/p10-y[,2]/p01+y[,1]/p00) * dprob00
+        dl.dprob1 =     PhiB * (ycounts[,4]/p11 - ycounts[,2]/p01) +
+                    onemPhiB * (ycounts[,3]/p10 - ycounts[,1]/p00)
+        dl.dprob2 =     PhiA * (ycounts[,4]/p11 - ycounts[,3]/p10) +
+                    onemPhiA * (ycounts[,2]/p01 - ycounts[,1]/p00)
+        dl.drho = (ycounts[,4]/p11 - ycounts[,3]/p10 -
+                   ycounts[,2]/p01 + ycounts[,1]/p00) * dprob00
         dprob1.deta = dtheta.deta(pmargin[,1], .lmu12, earg = .emu12)
         dprob2.deta = dtheta.deta(pmargin[,2], .lmu12, earg = .emu12)
         drho.deta = dtheta.deta(rhovec, .lrho, earg = .erho)
         dthetas.detas = cbind(dprob1.deta, dprob2.deta, drho.deta)
 
-        w * cbind(dl.dprob1, dl.dprob2, dl.drho) * dthetas.detas
+        (if (is.numeric(extra$orig.w)) extra$orig.w else 1) *
+        cbind(dl.dprob1, dl.dprob2, dl.drho) * dthetas.detas
     }), list( .lmu12 = lmu12, .emu12 = emu12, .lrho = lrho, .erho = erho ))),
     weight = eval(substitute(expression({
-        if (is.null( .nsimEIM)) {
-            d2l.dprob1prob1 = PhiB^2 *(1/p11+1/p01) + onemPhiB^2 *(1/p10+1/p00)
-            d2l.dprob2prob2 = PhiA^2 *(1/p11+1/p10) + onemPhiA^2 *(1/p01+1/p00)
-            d2l.dprob1prob2 = PhiA * (PhiB/p11 - onemPhiB/p10) +
-                              onemPhiA * (onemPhiB/p00 - PhiB/p01)
-            d2l.dprob1rho = (PhiB*(1/p11+1/p01) -
-                             onemPhiB*(1/p10+1/p00)) * dprob00
-            d2l.dprob2rho = (PhiA*(1/p11+1/p10) -
-                             onemPhiA*(1/p01+1/p00)) * dprob00
-            d2l.drho2 = (1/p11+1/p01+1/p10+1/p00) * dprob00^2
+        if (is.null( .nsimEIM )) {
+            d2l.dprob1prob1 =      PhiB^2 * (1/p11 + 1/p01) +
+                               onemPhiB^2 * (1/p10 + 1/p00)
+            d2l.dprob2prob2 =      PhiA^2 * (1/p11 + 1/p10) +
+                               onemPhiA^2 * (1/p01 + 1/p00)
+            d2l.dprob1prob2 =      PhiA * (    PhiB/p11 - onemPhiB/p10) +
+                               onemPhiA * (onemPhiB/p00 -     PhiB/p01)
+            d2l.dprob1rho =     (PhiB * (1/p11 + 1/p01) -
+                             onemPhiB * (1/p10 + 1/p00)) * dprob00
+            d2l.dprob2rho =     (PhiA * (1/p11 + 1/p10) -
+                             onemPhiA * (1/p01 + 1/p00)) * dprob00
+            d2l.drho2 = (1/p11 + 1/p01 + 1/p10 + 1/p00) * dprob00^2
             wz = matrix(0, n, dimm(M))  # 6=dimm(M)
             wz[,iam(1,1,M)] = d2l.dprob1prob1 * dprob1.deta^2
             wz[,iam(2,2,M)] = d2l.dprob2prob2 * dprob2.deta^2
@@ -789,16 +900,16 @@ binom2.rho.control <- function(save.weight=TRUE, ...)
             wz[,iam(3,3,M)] = d2l.drho2 * drho.deta^2
         } else {
             run.varcov = 0
-            ind1 = iam(NA, NA, M=M, both=TRUE, diag=TRUE)
+            ind1 = iam(NA, NA, M = M, both = TRUE, diag = TRUE)
             for (ii in 1:( .nsimEIM )) {
-                ysim = rbinom2.rho(n=n, mu1=pmargin[,1], mu2=pmargin[,2],
-                                   twoCols=FALSE, rho=rhovec)
-                dl.dprob1 = PhiB * (ysim[,4]/p11-ysim[,2]/p01) +
-                            onemPhiB * (ysim[,3]/p10-ysim[,1]/p00)
-                dl.dprob2 = PhiA * (ysim[,4]/p11-ysim[,3]/p10) +
-                            onemPhiA * (ysim[,2]/p01-ysim[,1]/p00)
-                dl.drho = (ysim[,4]/p11-ysim[,3]/p10 -
-                           ysim[,2]/p01+ysim[,1]/p00) * dprob00
+                ysim = rbinom2.rho(n, mu1 = pmargin[,1], mu2 = pmargin[,2],
+                                   twoCols = FALSE, rho = rhovec)
+                dl.dprob1 =     PhiB * (ysim[,4]/p11 - ysim[,2]/p01) +
+                            onemPhiB * (ysim[,3]/p10 - ysim[,1]/p00)
+                dl.dprob2 =     PhiA * (ysim[,4]/p11 - ysim[,3]/p10) +
+                            onemPhiA * (ysim[,2]/p01 - ysim[,1]/p00)
+                dl.drho = (ysim[,4]/p11 - ysim[,3]/p10 -
+                           ysim[,2]/p01 + ysim[,1]/p00) * dprob00
 
                 rm(ysim)
                 temp3 = cbind(dl.dprob1, dl.dprob2, dl.drho)
@@ -812,14 +923,23 @@ binom2.rho.control <- function(save.weight=TRUE, ...)
             wz = wz * dthetas.detas[,ind1$row] * dthetas.detas[,ind1$col]
         }
         w * wz
-    }), list( .nsimEIM = nsimEIM, .lmu12 = lmu12, .emu12 = emu12,
-              .lrho = lrho, .erho = erho ))))
+    }), list( .nsimEIM = nsimEIM ))))
 }
 
 
 
-dnorm2 <- function(x, y, r) 
-    exp(-0.5*(x^2+y^2-2*x*y*r)/(1-r^2)) / (2*pi*sqrt(1-r^2))
+dnorm2 <- function(x, y, rho = 0, log = FALSE) {
+  log.arg = log
+  rm(log)
+  if (log.arg) {
+    (-0.5*(x^2 + y^2 - 2*x*y*rho)/(1.0-rho^2)) - log(2) - log(pi) -
+      0.5 * log1p(-rho^2)
+  } else {
+    exp(-0.5*(x^2 + y^2 - 2*x*y*rho)/(1.0-rho^2)) / (2*pi*sqrt(1.0-rho^2))
+  }
+}
+
+
 
 
 pnorm2 <- function(ah, ak, r) { 
@@ -1080,23 +1200,32 @@ betabin.ab.control <- function(save.weight=TRUE, ...)
         }
 
         # Compute initial values for mustart -------
+        mustart.orig = mustart
         eval(binomialff()@initialize)   # Note: n,w,y,mustart is changed 
+        if (length(mustart.orig))
+          mustart = mustart.orig  # Retain it if inputted
         predictors.names =
              c(namesof("shape1", .lshape12, earg = .earg, tag=FALSE),
                namesof("shape2", .lshape12, earg = .earg, tag=FALSE))
 
         if (!length(etastart)) {
+
+            mustart.use = if (length(mustart.orig)) mustart.orig else
+                          mustart
+
             shape1 = rep( .i1, len = n)
-            shape2 = if (length( .i2 )) rep( .i2, len = n) else {
-                if ( .method.init == 1) {
-                    shape1 * (1 / weighted.mean(y, w)  - 1)
-                } else if ( .method.init == 2) {
-                    temp777 = .sinit * weighted.mean(y, w) + (1- .sinit) * y
-                    shape1 * (1 / temp777 - 1)
-                } else {
-                    shape1 * (1 / weighted.mean(mustart, w) - 1)
-                }
-            }
+            shape2 = if (length( .i2 )) {
+                       rep( .i2, len = n)
+                     } else if (length(mustart.orig)) {
+                         shape1 * (1 / mustart.use - 1)
+                     } else if ( .method.init == 1) {
+                         shape1 * (1 / weighted.mean(y, w)  - 1)
+                     } else if ( .method.init == 2) {
+                         temp777 = .sinit * weighted.mean(y, w) + (1- .sinit) * y
+                         shape1 * (1 / temp777 - 1)
+                     } else {
+                         shape1 * (1 / weighted.mean(mustart.use, w) - 1)
+                     }
             ycounts = if (is.numeric(extra$orig.w)) y * w / extra$orig.w else
                       y * w # Convert proportions to counts
             if (max(abs(ycounts - round(ycounts))) > 1.0e-6)
@@ -1105,6 +1234,7 @@ betabin.ab.control <- function(save.weight=TRUE, ...)
             ycounts = round(ycounts) # Make sure it is an integer
             etastart = cbind(theta2eta(shape1, .lshape12, earg = .earg),
                              theta2eta(shape2, .lshape12, earg = .earg))
+            mustart <- NULL  # Since etastart has been computed.
         }
     }), list( .lshape12 = lshape12, .earg = earg, .i1 = i1, .i2 = i2,
               .nsimEIM = nsimEIM,
@@ -1503,9 +1633,9 @@ zipebcom   = function(lmu12 = "cloglog", lphi12 = "logit", loratio = "loge",
     initialize = eval(substitute(expression({
         eval(process.binomial2.data.vgam)
         predictors.names = c(
-                 namesof("mu12",   .lmu12,   earg = .emu12,   short=TRUE), 
-                 namesof("phi12",  .lphi12,  earg = .ephi12,  short=TRUE),
-                 namesof("oratio", .loratio, earg = .eoratio, short=TRUE))
+                 namesof("mu12",   .lmu12,   earg = .emu12,   short = TRUE), 
+                 namesof("phi12",  .lphi12,  earg = .ephi12,  short = TRUE),
+                 namesof("oratio", .loratio, earg = .eoratio, short = TRUE))
 
         propY1.eq.0 = weighted.mean(y[,'00'], w) + weighted.mean(y[,'01'], w)
         propY2.eq.0 = weighted.mean(y[,'00'], w) + weighted.mean(y[,'10'], w)
@@ -1632,10 +1762,12 @@ zipebcom   = function(lmu12 = "cloglog", lphi12 = "logit", loratio = "loge",
 
 
 
- lusted68 = function(lrhopos = "loge", lrhoneg = "loge",
-                     erhopos = list(), erhoneg = list(),
-                     irhopos = NULL,   irhoneg = NULL,
-                     iprob1  = NULL,   iprob2  = NULL, zero = NULL)
+
+if (FALSE)
+ lusted68 <- function(lrhopos = "loge", lrhoneg = "loge",
+                      erhopos = list(), erhoneg = list(),
+                      irhopos = NULL,   irhoneg = NULL,
+                      iprob1  = NULL,   iprob2  = NULL, zero = NULL)
 {
  print("hi 20100603")
     if (mode(lrhopos) != "character" && mode(lrhopos) != "name")
@@ -1826,6 +1958,156 @@ zipebcom   = function(lmu12 = "cloglog", lphi12 = "logit", loratio = "loge",
               .irhopos = irhopos, .irhoneg = irhoneg ))))
 }
 
+
+
+
+
+
+ binom2.Rho = function(rho = 0, imu1 = NULL, imu2 = NULL, 
+                       exchangeable=FALSE, nsimEIM = NULL)
+{
+    lmu12 = "probit"
+    emu12 = list()
+    if (is.Numeric(nsimEIM)) {
+        if (!is.Numeric(nsimEIM, allow=1, integ=TRUE))
+            stop("bad input for argument 'nsimEIM'")
+        if (nsimEIM <= 100)
+            warning("'nsimEIM' should be an integer greater than 100")
+    }
+
+    new("vglmff",
+    blurb = c("Bivariate probit model with rho = ", format(rho), "\n",
+              "Links:    ",
+              namesof("mu1", lmu12, earg = emu12), ", ",
+              namesof("mu2", lmu12, earg = emu12)),
+    constraints = eval(substitute(expression({
+        constraints = cm.vgam(matrix(c(1, 1), 2, 1), x,
+                    .exchangeable, constraints, intercept.apply = TRUE)
+    }), list( .exchangeable = exchangeable ))),
+    deviance = Deviance.categorical.data.vgam,
+    initialize = eval(substitute(expression({
+        eval(process.binomial2.data.vgam)
+        predictors.names = c(
+                      namesof("mu1", .lmu12, earg = .emu12, short = TRUE),
+                      namesof("mu2", .lmu12, earg = .emu12, short = TRUE))
+
+        if (is.null( .nsimEIM)) {
+             save.weight <- control$save.weight <- FALSE
+        }
+        if (is.null(etastart)) {
+            mu1.init= if (is.Numeric(.imu1)) rep(.imu1, len=n) else
+                      mu[,3] + mu[,4]
+            mu2.init= if (is.Numeric(.imu2)) rep(.imu2, len=n) else
+                      mu[,2] + mu[,4]
+            etastart = cbind(theta2eta(mu1.init, .lmu12, earg = .emu12),
+                             theta2eta(mu2.init, .lmu12, earg = .emu12))
+        }
+    }), list( .lmu12 = lmu12, .emu12 = emu12, .nsimEIM = nsimEIM,
+              .imu1 = imu1, .imu2 = imu2 ))),
+    inverse = eval(substitute(function(eta, extra = NULL) {
+        pmargin = cbind(eta2theta(eta[,1], .lmu12, earg = .emu12),
+                        eta2theta(eta[,2], .lmu12, earg = .emu12))
+        rhovec = rep( .rho, len = nrow(eta))
+        p11 = pnorm2(eta[,1], eta[,2], rhovec)
+        p01 = pmin(pmargin[,2] - p11, pmargin[,2])
+        p10 = pmin(pmargin[,1] - p11, pmargin[,1])
+        p00 = 1 - p01 - p10 - p11
+        ansmat = abs(cbind("00"=p00, "01"=p01, "10"=p10, "11"=p11))
+        ansmat / rowSums(ansmat)
+    }, list( .lmu12 = lmu12, .emu12 = emu12, .rho = rho ))),
+    last = eval(substitute(expression({
+        misc$link = c(mu1 = .lmu12, mu2 = .lmu12)
+        misc$earg = list(mu1 = .emu12, mu2 = .emu12)
+        misc$nsimEIM = .nsimEIM
+        misc$expected = TRUE
+        misc$rho = .rho
+    }), list( .lmu12 = lmu12, .emu12 = emu12, .rho = rho,
+              .nsimEIM = nsimEIM ))),
+    loglikelihood = eval(substitute(
+        function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
+        if (residuals)
+            stop("loglikelihood residuals not implemented yet") else {
+          ycounts = if (is.numeric(extra$orig.w)) y * w / extra$orig.w else
+                    y * w # Convert proportions to counts
+          nvec = if (is.numeric(extra$orig.w)) round(w / extra$orig.w) else
+                    round(w)
+
+          smallno = 1.0e4 * .Machine$double.eps
+          if (max(abs(ycounts - round(ycounts))) > smallno)
+              warning("converting 'ycounts' to integer in @loglikelihood")
+          ycounts = round(ycounts)
+
+          sum((if (is.numeric(extra$orig.w)) extra$orig.w else 1) *
+              dmultinomial(x = ycounts, size = nvec, prob = mu,
+                           log = TRUE, docheck = FALSE))
+        }
+    }, list( .rho = rho ))),
+    vfamily = c("binom2.Rho", "binom2"),
+    deriv = eval(substitute(expression({
+        pmargin = cbind(eta2theta(eta[,1], .lmu12, earg = .emu12),
+                        eta2theta(eta[,2], .lmu12, earg = .emu12))
+        rhovec = rep( .rho, len = nrow(eta))
+        p11 = pnorm2(eta[,1], eta[,2], rhovec)
+        p01 = pmargin[,2]-p11
+        p10 = pmargin[,1]-p11
+        p00 = 1-p01-p10-p11
+
+        ABmat = (eta[,1:2] - rhovec*eta[,2:1]) / sqrt(1-rhovec^2)
+        PhiA = pnorm(ABmat[,1])
+        PhiB = pnorm(ABmat[,2])
+        onemPhiA = pnorm(ABmat[,1], lower.tail=FALSE)
+        onemPhiB = pnorm(ABmat[,2], lower.tail=FALSE)
+
+        smallno = 1000 * .Machine$double.eps
+        p00[p00 < smallno] = smallno
+        p01[p01 < smallno] = smallno
+        p10[p10 < smallno] = smallno
+        p11[p11 < smallno] = smallno
+
+        dprob00 = dnorm2(eta[,1], eta[,2], rhovec)
+        dl.dprob1 = PhiB*(y[,4]/p11-y[,2]/p01) + onemPhiB*(y[,3]/p10-y[,1]/p00)
+        dl.dprob2 = PhiA*(y[,4]/p11-y[,3]/p10) + onemPhiA*(y[,2]/p01-y[,1]/p00)
+        dprob1.deta = dtheta.deta(pmargin[,1], .lmu12, earg = .emu12)
+        dprob2.deta = dtheta.deta(pmargin[,2], .lmu12, earg = .emu12)
+        dthetas.detas = cbind(dprob1.deta, dprob2.deta)
+
+        w * cbind(dl.dprob1, dl.dprob2) * dthetas.detas
+    }), list( .lmu12 = lmu12, .emu12 = emu12, .rho = rho ))),
+    weight = eval(substitute(expression({
+        if (is.null( .nsimEIM)) {
+            d2l.dprob1prob1 = PhiB^2 *(1/p11+1/p01) + onemPhiB^2 *(1/p10+1/p00)
+            d2l.dprob2prob2 = PhiA^2 *(1/p11+1/p10) + onemPhiA^2 *(1/p01+1/p00)
+            d2l.dprob1prob2 = PhiA * (PhiB/p11 - onemPhiB/p10) +
+                              onemPhiA * (onemPhiB/p00 - PhiB/p01)
+            wz = matrix(0, n, dimm(M))  # 6=dimm(M)
+            wz[,iam(1,1,M)] = d2l.dprob1prob1 * dprob1.deta^2
+            wz[,iam(2,2,M)] = d2l.dprob2prob2 * dprob2.deta^2
+            wz[,iam(1,2,M)] = d2l.dprob1prob2 * dprob1.deta * dprob2.deta
+        } else {
+            run.varcov = 0
+            ind1 = iam(NA, NA, M=M, both=TRUE, diag=TRUE)
+            for (ii in 1:( .nsimEIM )) {
+                ysim = rbinom2.rho(n=n, mu1=pmargin[,1], mu2=pmargin[,2],
+                                   twoCols=FALSE, rho=rhovec)
+                dl.dprob1 = PhiB * (ysim[,4]/p11-ysim[,2]/p01) +
+                            onemPhiB * (ysim[,3]/p10-ysim[,1]/p00)
+                dl.dprob2 = PhiA * (ysim[,4]/p11-ysim[,3]/p10) +
+                            onemPhiA * (ysim[,2]/p01-ysim[,1]/p00)
+
+                rm(ysim)
+                temp3 = cbind(dl.dprob1, dl.dprob2)
+                run.varcov = ((ii-1) * run.varcov +
+                       temp3[,ind1$row.index] * temp3[,ind1$col.index]) / ii
+            }
+            wz = if (intercept.only)
+                matrix(colMeans(run.varcov),
+                       n, ncol(run.varcov), byrow = TRUE) else run.varcov
+    
+            wz = wz * dthetas.detas[,ind1$row] * dthetas.detas[,ind1$col]
+        }
+        w * wz
+    }), list( .nsimEIM = nsimEIM ))))
+}
 
 
 

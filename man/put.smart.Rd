@@ -7,6 +7,7 @@ in
 \code{smartpredenv} (\R)
 or
 frame 1 (S-PLUS).
+
 }
 \usage{
 put.smart(smart)
@@ -14,10 +15,13 @@ put.smart(smart)
 \arguments{
   \item{smart}{
   a list containing parameters needed later for smart prediction.
+
   }
 }
 \value{
 Nothing is returned.
+
+
 }
 \section{Side Effects}{
   The variable \code{.smart.prediction.counter} in
@@ -38,6 +42,8 @@ Nothing is returned.
   or
   frame 1 (S-PLUS)
   is adjusted accordingly.
+
+
 }
 \details{
   \code{put.smart} is used in \code{"write"} mode within a smart function.
@@ -46,9 +52,12 @@ Nothing is returned.
   The function \code{put.smart} is the opposite of
   \code{\link{get.smart}}, and both deal with the same contents.
 
+
 }
 \seealso{
   \code{\link{get.smart}}.
+
+
 }
 \examples{
 "my1" <- function(x, minx=min(x)) { # Here is a smart function

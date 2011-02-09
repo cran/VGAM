@@ -53,13 +53,14 @@ zanegbinomial(lp0 = "logit", lmunb = "loge", lk = "loge",
   }
   \item{zero}{ 
     Integer valued vector, usually assigned \eqn{-3} or \eqn{3} if
-    used at all.  Specifies which of the three linear predictors are
+    used at all. Specifies which of the three linear predictors are
     modelled as an intercept only. By default, the \code{k} parameter
     (after \code{lk} is applied) for each response is modelled as
-    a single unknown number that is estimated.  It can be modelled as a
-    function of the explanatory variables by setting \code{zero=NULL}.
+    a single unknown number that is estimated. It can be modelled as a
+    function of the explanatory variables by setting \code{zero = NULL}.
     A negative value means that the value is recycled, so setting \eqn{-3}
-    means all \code{k} are intercept only.
+    means all \code{k} are intercept-only.
+    See \code{\link{CommonVGAMffArguments}} for more information.
 
   }
   \item{cutoff}{ 
@@ -71,7 +72,8 @@ zanegbinomial(lp0 = "logit", lmunb = "loge", lk = "loge",
 
   }
   \item{method.init, shrinkage.init}{
-  See \code{\link{negbinomial}}.
+  See \code{\link{negbinomial}}
+  and \code{\link{CommonVGAMffArguments}}.
 
   }
 }
@@ -88,15 +90,18 @@ zanegbinomial(lp0 = "logit", lmunb = "loge", lk = "loge",
   is implemented in the \pkg{VGAM} package.  Some people
   call the zero-altered negative binomial a \emph{hurdle} model.
 
+
   For one response/species, by default, the three linear/additive
   predictors are \eqn{(logit(p_0), \log(\mu_{nb}), \log(k))^T}{(logit(p0),
   log(munb), log(k))^T}.  This vector is recycled for multiple species.
+
 
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}},
   and \code{\link{vgam}}.
+
 
   The \code{fitted.values} slot of the fitted object,
   which should be extracted by the generic function \code{fitted}, returns
@@ -114,15 +119,18 @@ for counts with extra zeros.
 \bold{88},
 297--308.
 
+
 }
 \section{Warning }{
   Convergence for this \pkg{VGAM} family function seems to depend quite
   strongly on providing good initial values.
 
+
   Inference obtained from \code{summary.vglm} and \code{summary.vgam}
   may or may not be correct.  In particular, the p-values, standard errors
   and degrees of freedom may need adjustment. Use simulation on artificial
   data to check that these are reasonable.
+
 
 }
 
@@ -133,12 +141,16 @@ for counts with extra zeros.
   functions of the covariates. It is a conditional model, not a mixture
   model.
 
+
   This family function effectively combines
   \code{\link{posnegbinomial}} and \code{\link{binomialff}} into
   one family function.
 
+
   This family function can handle a multivariate response, e.g., more
   than one species.
+
+
 }
 
 \seealso{
@@ -149,21 +161,23 @@ for counts with extra zeros.
   \code{\link{rposnegbin}},
   \code{\link{zinegbinomial}},
   \code{\link{zipoisson}},
-  \code{\link[stats:NegBinomial]{dnbinom}}.
+  \code{\link[stats:NegBinomial]{dnbinom}},
+  \code{\link{CommonVGAMffArguments}}.
+
 }
 
 \examples{
 zdata <- data.frame(x = runif(nn <- 2000))
-zdata <- transform(zdata, p0 = logit(-1 + 2*x, inverse=TRUE),
-                          y1 = rposnegbin(nn, munb=exp(0+2*x), size=exp(1)),
-                          y2 = rposnegbin(nn, munb=exp(1+2*x), size=exp(1)))
+zdata <- transform(zdata, p0 = logit(-1 + 2*x, inverse = TRUE),
+                          y1 = rposnegbin(nn, munb = exp(0+2*x), size = exp(1)),
+                          y2 = rposnegbin(nn, munb = exp(1+2*x), size = exp(1)))
 zdata <- transform(zdata, y1 = ifelse(runif(nn) < p0, 0, y1),
                           y2 = ifelse(runif(nn) < p0, 0, y2))
 with(zdata, table(y1))
 with(zdata, table(y2))
 
-fit <- vglm(cbind(y1,y2) ~ x, zanegbinomial, zdata, trace=TRUE)
-coef(fit, matrix=TRUE)
+fit <- vglm(cbind(y1, y2) ~ x, zanegbinomial, zdata, trace = TRUE)
+coef(fit, matrix = TRUE)
 head(fitted(fit))
 head(predict(fit))
 }

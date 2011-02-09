@@ -28,6 +28,8 @@
 \value{
   Returns the usual object, but with one list/slot component called
   \code{smart.prediction} containing any data-dependent parameters.
+
+
 }
 \section{Side Effects}{
   The variables
@@ -44,6 +46,7 @@
   be left in \code{smartpredenv}.  At the beginning of model fitting,
   these variables are deleted if present in \code{smartpredenv}.
 
+
   During prediction, the variables
   \code{.smart.prediction} and 
   \code{.smart.prediction.counter}
@@ -51,10 +54,12 @@
   frame is re-evaluated. 
   After prediction, these variables are deleted. 
 
-  If the modelling function is used with argument \code{smart=FALSE}
-  (e.g., \code{vglm(..., smart=FALSE)}) then smart prediction will not
+
+  If the modelling function is used with argument \code{smart = FALSE}
+  (e.g., \code{vglm(..., smart = FALSE)}) then smart prediction will not
   be used, and the results should match with the original \R or S-PLUS
   functions.
+
 
 }
 \details{
@@ -80,8 +85,8 @@
 \author{T. W. Yee and T. J. Hastie}
 \note{
   In S-PLUS you will need to load in the \pkg{smartpred} library with
-  the argument \code{first=T}, e.g.,
-  \code{library(smartpred, lib="./mys8libs", first=T)}.
+  the argument \code{first = T}, e.g.,
+  \code{library(smartpred, lib = "./mys8libs", first = T)}.
   Here, \code{mys8libs} is the name of a directory of installed packages.
   To install the smartpred package in Linux/Unix, type something like
   \code{Splus8 INSTALL -l ./mys8libs ./smartpred_0.8-2.tar.gz}.
@@ -153,39 +158,39 @@
 
 \examples{
 # Create some data first
-n = 20
+n <- 20
 set.seed(86) # For reproducibility of the random numbers
-x = sort(runif(n)) 
-y = sort(runif(n))
+x <- sort(runif(n)) 
+y <- sort(runif(n))
 \dontrun{if(is.R()) library(splines)   # To get ns() in R
 }
 
 # This will work for R 1.6.0 and later, but fail for S-PLUS
-fit = lm(y ~ ns(x, df=5))
-\dontrun{plot(x, y)
+fit <- lm(y ~ ns(x, df = 5))
+\dontrun{ plot(x, y)
 lines(x, fitted(fit))
-newx = seq(0, 1, len=n)
-points(newx, predict(fit, data.frame(x=newx)), type="b", col=2, err=-1)
-}
+newx <- seq(0, 1, len = n)
+points(newx, predict(fit, data.frame(x = newx)), type = "b",
+       col = 2, err = -1) }
 
 # The following fails for R 1.6.x and later but works with smart prediction
-\dontrun{fit = lm(y ~ ns(scale(x), df=5))
-fit$smart.prediction
+fit <- lm(y ~ ns(scale(x), df = 5))
+\dontrun{ fit$smart.prediction
 plot(x, y)
 lines(x, fitted(fit))
-newx = seq(0, 1, len=n)
-points(newx, predict(fit, data.frame(x=newx)), type="b", col=2, err=-1)
-}
+newx <- seq(0, 1, len = n)
+points(newx, predict(fit, data.frame(x = newx)), type = "b",
+       col = 2, err = -1) }
 
 # The following requires the VGAM package to be loaded 
-\dontrun{library(VGAM)
-fit = vlm(y ~ ns(scale(x), df=5))
+\dontrun{ library(VGAM)
+fit <- vlm(y ~ ns(scale(x), df = 5))
 fit@smart.prediction
 plot(x, y)
 lines(x, fitted(fit))
-newx = seq(0, 1, len=n)
-points(newx, predict(fit, data.frame(x=newx)), type="b", col=2, err=-1)
-}
+newx <- seq(0, 1, len = n)
+points(newx, predict(fit, data.frame(x = newx)), type = "b",
+       col = 2, err = -1) }
 }
 %\keyword{smart}
 \keyword{models}
@@ -194,20 +199,20 @@ points(newx, predict(fit, data.frame(x=newx)), type="b", col=2, err=-1)
 
 
 
-%lm(..., smart=TRUE)
-%glm(..., smart=TRUE)
+%lm(..., smart = TRUE)
+%glm(..., smart = TRUE)
 %ns()
 %bs()
 %poly()
 %scale()
-%vglm(..., smart=TRUE)
-%rrvglm(..., smart=TRUE)
-%vgam(..., smart=TRUE)
-%cao(..., smart=TRUE)
-%cqo(..., smart=TRUE)
-%uqo(..., smart=TRUE)
+%vglm(..., smart = TRUE)
+%rrvglm(..., smart = TRUE)
+%vgam(..., smart = TRUE)
+%cao(..., smart = TRUE)
+%cqo(..., smart = TRUE)
+%uqo(..., smart = TRUE)
 
-%library(smartpred, lib="./mys8libs", first=T)
+%library(smartpred, lib = "./mys8libs", first = T)
 
 
 

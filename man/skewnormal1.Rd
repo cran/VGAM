@@ -8,28 +8,14 @@
 
 }
 \usage{
-skewnormal1(lshape = "identity", earg = list(), ishape = NULL, nsimEIM=NULL)
+skewnormal1(lshape = "identity", earg = list(), ishape = NULL,
+            nsimEIM = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{lshape}{
-  Link function applied to the shape parameter.
-  See \code{\link{Links}} for more choices.
-
-  }
-  \item{earg}{
-  List. Extra argument for the link.
-  See \code{earg} in \code{\link{Links}} for general information.
-
-  }
-  \item{ishape}{
-  Optional inital value for the shape parameter.
-  The default is to choose one internally.
-  See the note below.
-
-  }
-  \item{nsimEIM}{
-  See \code{\link{CommonVGAMffArguments}}.
+  \item{lshape, earg, ishape, nsimEIM}{
+  See \code{\link{Links}} and
+  \code{\link{CommonVGAMffArguments}}.
 
   }
 }
@@ -51,12 +37,14 @@ skewnormal1(lshape = "identity", earg = list(), ishape = NULL, nsimEIM=NULL)
    When the shape parameter changes its sign, the density is reflected
    about \eqn{y=0}.
 
+
    The mean of the distribution is
    \eqn{\mu=\alpha \sqrt{2/(\pi (1+\alpha^2))}}{mu=alpha*sqrt(2/(pi*(1+alpha^2)))}
    and these are returned as the fitted values.
    The variance of the distribution is \eqn{1-\mu^2}{1-mu^2}.
    The Newton-Raphson algorithm is used unless the \code{nsimEIM}
    argument is used.
+
 
 }
 \value{
@@ -72,11 +60,13 @@ A class of distributions which include the normal.
 \emph{Scandinavian Journal of Statistics},
 \bold{12}, 171--178.
 
+
 Azzalini, A. and Capitanio, A. (1999)
 Statistical applications of the multivariate skew-normal
 distribution.
 \emph{Journal of the Royal Statistical Society, Series B, Methodological},
 \bold{61}, 579--602.
+
 
 }
 
@@ -85,13 +75,19 @@ distribution.
   It is a good idea to use several different initial values to ensure
   that the global solution is obtained.
 
+
   This family function will be modified (hopefully soon) to handle a
   location and scale parameter too.
 
+
 }
-%\section{Warning }{
-%  Numerical problems may occur.
-%}  
+\section{Warning }{
+  It is well known that the EIM of Azzalini's skew-normal distribution
+  is singular for skewness parameter tending to zero, and thus produces
+  influential problems.
+
+
+}  
 \seealso{
   \code{\link{snorm}},
   \code{\link{normal1}},
@@ -100,19 +96,18 @@ distribution.
 }
 
 \examples{
-sdata = data.frame(y = rsnorm(nn <- 1000, shape=5))
-fit = vglm(y ~ 1, skewnormal1, sdata, trace=TRUE)
-coef(fit, matrix=TRUE)
+sdata <- data.frame(y = rsnorm(nn <- 1000, shape = 5))
+fit <- vglm(y ~ 1, skewnormal1, sdata, trace = TRUE)
+coef(fit, matrix = TRUE)
 head(fitted(fit), 1)
 with(sdata, mean(y))
-\dontrun{
-with(sdata, hist(y, prob=TRUE))
-x = with(sdata, seq(min(y), max(y), len=200))
-with(sdata, lines(x, dsnorm(x, shape=Coef(fit)), col="blue")) }
+\dontrun{ with(sdata, hist(y, prob = TRUE))
+x <- with(sdata, seq(min(y), max(y), len = 200))
+with(sdata, lines(x, dsnorm(x, shape = Coef(fit)), col = "blue")) }
 
-sdata = data.frame(x = runif(nn))
-sdata = transform(sdata, y = rsnorm(nn, shape=1 + 2*x))
-fit = vglm(y ~ x, skewnormal1, sdata, trace=TRUE, crit="coef")
+sdata <- data.frame(x = runif(nn))
+sdata <- transform(sdata, y = rsnorm(nn, shape = 1 + 2*x))
+fit <- vglm(y ~ x, skewnormal1, sdata, trace = TRUE, crit = "coef")
 summary(fit)
 }
 \keyword{models}

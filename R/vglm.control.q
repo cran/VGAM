@@ -1,15 +1,21 @@
 # These functions are
-# Copyright (C) 1998-2010 T.W. Yee, University of Auckland. All rights reserved.
+# Copyright (C) 1998-2011 T.W. Yee, University of Auckland.
+# All rights reserved.
 
 
 
-.min.criterion.VGAM <- c("deviance"=TRUE, "loglikelihood"=FALSE, "AIC"=TRUE, 
-                         "Likelihood"=FALSE, "rss"=TRUE, "coefficients"=TRUE)
+.min.criterion.VGAM <-
+  c("deviance" = TRUE,
+    "loglikelihood" = FALSE,
+    "AIC" = TRUE, 
+    "Likelihood" = FALSE,
+    "rss" = TRUE,
+    "coefficients" = TRUE)
 
 
 
-vlm.control <- function(save.weight=TRUE, tol=1e-7, method="qr", 
-                        checkwz=TRUE, wzepsilon = .Machine$double.eps^0.75,
+vlm.control <- function(save.weight = TRUE, tol=1e-7, method="qr", 
+                        checkwz = TRUE, wzepsilon = .Machine$double.eps^0.75,
                         ...) {
     if (tol <= 0) {
         warning("tol not positive; using 1e-7 instead")
@@ -17,7 +23,7 @@ vlm.control <- function(save.weight=TRUE, tol=1e-7, method="qr",
     }
     if (!is.logical(checkwz) || length(checkwz) != 1)
         stop("bad input for 'checkwz'")
-    if (!is.Numeric(wzepsilon, allow=1, positive=TRUE))
+    if (!is.Numeric(wzepsilon, allow=1, positive = TRUE))
         stop("bad input for 'wzepsilon'")
 
     list(save.weight=save.weight, tol=tol, method=method,
@@ -26,14 +32,14 @@ vlm.control <- function(save.weight=TRUE, tol=1e-7, method="qr",
 }
 
 
-vglm.control <- function(checkwz=TRUE,
+vglm.control <- function(checkwz = TRUE,
                          criterion = names(.min.criterion.VGAM), 
                          epsilon=1e-7,
-                         half.stepsizing=TRUE,
+                         half.stepsizing = TRUE,
                          maxit=30, 
                          stepsize=1, 
-                         save.weight=FALSE,
-                         trace=FALSE,
+                         save.weight = FALSE,
+                         trace = FALSE,
                          wzepsilon = .Machine$double.eps^0.75,
                          xij=NULL,
                          ...)
@@ -50,7 +56,7 @@ vglm.control <- function(checkwz=TRUE,
 
     if (!is.logical(checkwz) || length(checkwz) != 1)
         stop("bad input for 'checkwz'")
-    if (!is.Numeric(wzepsilon, allow=1, positive=TRUE))
+    if (!is.Numeric(wzepsilon, allow=1, positive = TRUE))
         stop("bad input for 'wzepsilon'")
 
     convergence <- expression({
@@ -62,15 +68,15 @@ vglm.control <- function(checkwz=TRUE,
         abs(old.crit-new.crit)/(abs(old.crit)+epsilon) > epsilon && iter<maxit)
     })
 
-    if (!is.Numeric(epsilon, allow=1, posit=TRUE)) {
+    if (!is.Numeric(epsilon, allow=1, posit = TRUE)) {
         warning("bad input for 'epsilon'; using 0.00001 instead")
         epsilon <- 0.00001
     }
-    if (!is.Numeric(maxit, allow=1, posit=TRUE, integ=TRUE)) {
+    if (!is.Numeric(maxit, allow=1, posit = TRUE, integ = TRUE)) {
         warning("bad input for 'maxit'; using 20 instead")
         maxit <- 20
     }
-    if (!is.Numeric(stepsize, allow=1, posit=TRUE)) {
+    if (!is.Numeric(stepsize, allow=1, posit = TRUE)) {
         warning("bad input for 'stepsize'; using 1 instead")
         stepsize <- 1
     }
@@ -98,10 +104,10 @@ vcontrol.expression <- expression({
     mylist <- family@vfamily
     for(i in length(mylist):1) {
         for(ii in 1:2) {
-            temp <- paste(if(ii==1) "" else paste(function.name, ".", sep=""),
+            temp <- paste(if(ii == 1) "" else paste(function.name, ".", sep=""),
                           mylist[i], ".control", sep="")
-            tempexists = if (is.R()) exists(temp, envir = VGAMenv) else 
-                         exists(temp, inherit=TRUE)
+            tempexists = if (is.R()) exists(temp, envir = VGAM:::VGAMenv) else 
+                         exists(temp, inherit = TRUE)
             if (tempexists) {
                 temp <- get(temp)
                 temp <- temp(...)
@@ -132,7 +138,7 @@ vcontrol.expression <- expression({
 
 
         for(ii in 1:2) {
-            temp <- paste(if(ii==1) "" else paste(function.name, ".", sep=""),
+            temp <- paste(if(ii == 1) "" else paste(function.name, ".", sep=""),
                           family@vfamily[1], 
                           ".", control$criterion, ".control", sep="")
             if (exists(temp, inherit=T)) {

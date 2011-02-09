@@ -90,10 +90,12 @@ dirmultinomial(lphi="logit", ephi = list(), iphi = 0.10,
   The \eqn{M}th linear/additive predictor corresponds to \code{lphi}
   applied to \eqn{\phi}{phi}.
 
+
   Note that \eqn{E(Y_j) = N_* \pi_j}{E(Y_j) = N_* pi_j} but 
   the probabilities (returned as the fitted values)
   \eqn{\pi_j}{pi_j} are bundled together as a \eqn{M}-column matrix.
   The quantities \eqn{N_*} are returned as the prior weights. 
+
 
   The beta-binomial distribution is a special case of
   the Dirichlet-multinomial distribution when \eqn{M=2};
@@ -104,6 +106,7 @@ dirmultinomial(lphi="logit", ephi = list(), iphi = 0.10,
   Also, \eqn{\phi=1/(1+shape1+shape2)}{phi=1/(1+shape1+shape2)}, which
   is known as the \emph{intra-cluster correlation} coefficient.
 
+
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
@@ -111,19 +114,30 @@ dirmultinomial(lphi="logit", ephi = list(), iphi = 0.10,
   \code{\link{rrvglm}}
   and \code{\link{vgam}}.
 
+
   If the model is an intercept-only model then \code{@misc} (which is a
   list) has a component called \code{shape} which is a vector with the
   \eqn{M} values \eqn{\pi_j(1/\phi-1)}{pi_j * (1/phi-1)}.
 
+
 % zz not sure: These are the shape parameters of the underlying
 % Dirichlet distribution.
+
 
 }
 \references{
 
+
 Paul, S. R., Balasooriya, U. and Banerjee, T. (2005)
 Fisher information matrix of the Dirichlet-multinomial distribution.
 \emph{Biometrical Journal}, \bold{47}, 230--236.
+
+
+
+Tvedebrink, T. (2010)
+Overdispersion in allelic counts and \eqn{\theta}-correction in forensic genetics.
+\emph{Theoretical Population Biology}, \bold{78}, 200--210.
+
 
 }
 \author{ Thomas W. Yee }
@@ -132,6 +146,7 @@ Fisher information matrix of the Dirichlet-multinomial distribution.
   This \pkg{VGAM} family function is prone to numerical problems,
   especially when there are covariates.
 
+
 }
 \note{
   The response can be a matrix of non-negative integers, or else
@@ -139,15 +154,18 @@ Fisher information matrix of the Dirichlet-multinomial distribution.
   each row specified using the \code{weights} argument.
   This dual input option is similar to \code{\link{multinomial}}.
 
+
   To fit a `parallel' model with the \eqn{\phi}{phi} parameter
   being an intercept-only you will need to use the \code{constraints}
   argument.
+
 
   Currently, Fisher scoring is implemented. To compute the expected
   information matrix a \code{for} loop is used; this may be very slow
   when the counts are large.
   Additionally, convergence may be slower than usual due to round-off
   error when computing the expected information matrices.
+
 
 }
 
@@ -157,24 +175,24 @@ Fisher information matrix of the Dirichlet-multinomial distribution.
   \code{\link{betabin.ab}},
   \code{\link{dirichlet}},
   \code{\link{multinomial}}.
+
 }
 
 \examples{
-n = 10
-M = 5
-y = round(matrix(runif(n*M)*10, n, M))  # Integer counts
-fit = vglm(y ~ 1, dirmultinomial, trace=TRUE)
+n <- 10; M <- 5
+y <- round(matrix(runif(n*M)*10, n, M))  # Integer counts
+fit <- vglm(y ~ 1, dirmultinomial, trace = TRUE)
 head(fitted(fit))
 fit@y  # Sample proportions
-weights(fit, type="prior", matrix=FALSE) # Total counts per row
+weights(fit, type = "prior", matrix = FALSE) # Total counts per row
 
-x = runif(n)
-fit = vglm(y ~ x, dirmultinomial, trace=TRUE)
+x <- runif(n)
+fit <- vglm(y ~ x, dirmultinomial, trace = TRUE)
 \dontrun{
 Coef(fit)   # This does not work
 }
-coef(fit, matrix=TRUE)
-(sfit = summary(fit))
+coef(fit, matrix = TRUE)
+(sfit <- summary(fit))
 vcov(sfit)
 }
 \keyword{models}

@@ -19,65 +19,23 @@ rrvglm(formula, family, data = list(), weights = NULL, subset = NULL,
 %- maybe also `usage' for other objects documented here.
 \arguments{
 
-  \item{formula}{
-  a symbolic description of the model to be fit.
-  The RHS of the formula is applied to each linear predictor. Different
-  variables in each linear predictor can be chosen by specifying
-  constraint matrices. 
+  \item{formula, family, weights}{
+  See \code{\link{vglm}}.
 
   }
-  \item{family}{
-  a function of class \code{"vglmff"} (see \code{\link{vglmff-class}})
-  describing what statistical model is to be fitted. This is called a
-  ``\pkg{VGAM} family function''.  See \code{\link{CommonVGAMffArguments}}
-  for general information about many types of arguments found in this
-  type of function.
 
-  }
   \item{data}{
   an optional data frame containing the variables in the model.
   By default the variables are taken from \code{environment(formula)},
   typically the environment from which \code{rrvglm} is called.
 
   }
-  \item{weights}{
-  an optional vector or matrix of (prior) weights 
-  to be used in the fitting process.
-  If \code{weights} is a matrix, then it must be in
-  \emph{matrix-band} form, whereby the first \eqn{M} 
-  columns of the matrix are the
-  diagonals, followed by the upper-diagonal band, followed by the
-  band above that, etc. In this case, there can be up to \eqn{M(M+1)}
-  columns, with the last column corresponding to the
-  (1,\eqn{M}) elements of the weight matrices.
+  \item{subset, na.action}{
+  See \code{\link{vglm}}.
 
   }
-  \item{subset}{
-  an optional logical vector specifying a subset of observations to be
-  used in the fitting process.
-
-  }
-  \item{na.action}{
-  a function which indicates what should happen when the data contain
-  \code{NA}s.
-  The default is set by the \code{na.action} setting
-  of \code{\link[base]{options}}, and is \code{na.fail} if that is unset.
-  The ``factory-fresh'' default is \code{na.omit}.
-
-  }
-  \item{etastart}{
-  starting values for the linear predictors.
-  It is a \eqn{M}-column matrix.
-  If \eqn{M=1} then it may be a vector.
-
-  }
-  \item{mustart}{
-  starting values for the fitted values. It can be a vector or a matrix.
-  Some family functions do not make use of this argument.
-
-  }
-  \item{coefstart}{
-  starting values for the coefficient vector.
+  \item{etastart, mustart, coefstart}{
+  See \code{\link{vglm}}.
 
   }
   \item{control}{
@@ -85,21 +43,14 @@ rrvglm(formula, family, data = list(), weights = NULL, subset = NULL,
   See \code{\link{rrvglm.control}} for details.
 
   }
-  \item{offset}{
-  a vector or \eqn{M}-column matrix of offset values.
-  These are \emph{a priori} known and are
-  added to the linear predictors during fitting.
+  \item{offset, model, contrasts}{
+  See \code{\link{vglm}}.
 
   }
   \item{method}{
   the method to be used in fitting the model.
   The default (and presently only) method \code{rrvglm.fit}
   uses iteratively reweighted least squares (IRLS).
-
-  }
-  \item{model}{
-  a logical value indicating whether the \emph{model frame}
-  should be assigned in the \code{model} slot.
 
   }
   \item{x.arg, y.arg}{
@@ -111,39 +62,12 @@ rrvglm(formula, family, data = list(), weights = NULL, subset = NULL,
   \code{vglmfit} is a \code{vglm} object. 
 
   }
-  \item{contrasts}{
-  an optional list. See the \code{contrasts.arg}
-  of \code{\link{model.matrix.default}}.
-
-  }
   \item{constraints}{
-  an optional list  of constraint matrices.
-  The components of the list must be named with the term it
-  corresponds to (and it must match in character format). 
-  Each constraint matrix must have \eqn{M} rows, and be of
-  full-column rank.
-  By default, constraint matrices are the \eqn{M} by \eqn{M}
-  identity
-  matrix unless arguments in the family function itself override
-  these values. 
-  If \code{constraints} is used it must contain \emph{all} the
-  terms; an incomplete list is not accepted.
+  See \code{\link{vglm}}.
 
   }
-  \item{extra}{
-  an optional list with any extra information that might be needed
-  by the family function.
-
-  }
-  \item{qr.arg}{
-  logical value indicating whether
-  the slot \code{qr}, which returns the QR decomposition of the
-  VLM model matrix, is returned on the object.
-
-  }
-  \item{smart}{
-  logical value indicating whether smart prediction
-  (\code{\link{smartpred}}) will be used.
+  \item{extra, smart, qr.arg}{
+  See \code{\link{vglm}}.
 
   }
   \item{\dots}{
@@ -170,6 +94,12 @@ rrvglm(formula, family, data = list(), weights = NULL, subset = NULL,
   means that the response is a monotonically increasing or
   decreasing function of the latent variables.
 
+  For identifiability
+  it is common to enforce \emph{corner constraints} on \eqn{A}:
+  by default, the top \eqn{R} by \eqn{R} submatrix is fixed to
+  be the order-\eqn{R} identity matrix and the remainder of \eqn{A}
+  is estimated.
+
 
   The underlying algorithm of RR-VGLMs is iteratively
   reweighted least squares (IRLS) with an optimizing
@@ -180,10 +110,8 @@ rrvglm(formula, family, data = list(), weights = NULL, subset = NULL,
   In theory, any \pkg{VGAM} family function that works for
   \code{\link{vglm}} and \code{\link{vgam}} should work
   for \code{rrvglm} too.
-
-
-  \code{rrvglm.fit} is the function that actually does the work.
-  It is \code{vglm.fit} with some extra code.
+  The function that actually does the work is \code{rrvglm.fit};
+  it is \code{vglm.fit} with some extra code.
 
 
 }
@@ -217,6 +145,12 @@ Regression and ordered categorical variables.
 \bold{46}, 1--30.
 
 
+  Yee, T. W. (2010)
+  Two-parameter reduced-rank vector generalized linear models.
+  \emph{In preparation}.
+
+
+
   Documentation accompanying the \pkg{VGAM} package at
   \url{http://www.stat.auckland.ac.nz/~yee}
   contains further information and examples.
@@ -225,16 +159,16 @@ Regression and ordered categorical variables.
 
 \author{ Thomas W. Yee }
 \note{
-  The smart prediction (\code{\link{smartpred}}) library
-  is packed with the \pkg{VGAM} library.
-
-
-  The arguments of \code{rrvglm} are the same as
+  The arguments of \code{rrvglm} are in general the same as
   those of \code{\link{vglm}} but with some extras in
   \code{\link{rrvglm.control}}.
 
 
-  In the example below, a rank-1 \emph{stereotype}
+  The smart prediction (\code{\link{smartpred}}) library
+  is packed with the \pkg{VGAM} library.
+
+
+  In an example below, a rank-1 \emph{stereotype}
   model of Anderson (1984) is fitted to some car data.
   The reduced-rank regression is performed, adjusting for
   two covariates. Setting a trivial constraint matrix for
@@ -245,7 +179,7 @@ Regression and ordered categorical variables.
   car of fixed weight and width.
 
 
-  If \code{fit <- rrvglm(..., data=mydata)} then
+  If \code{fit <- rrvglm(..., data = mydata)} then
   \code{summary(fit)} requires corner constraints and no
   missing values in \code{mydata}.  Often the estimated
   variance-covariance matrix of the parameters is not
@@ -258,7 +192,7 @@ Regression and ordered categorical variables.
 
 
   With multivariate binary responses, one must use
-  \code{binomialff(mv=TRUE)} to indicate that the response
+  \code{binomialff(mv = TRUE)} to indicate that the response
   (matrix) is multivariate. Otherwise, it is interpreted
   as a single binary response variable.
 
@@ -281,45 +215,71 @@ Regression and ordered categorical variables.
     \code{\link{vglm-class}},
     \code{\link{smartpred}},
     \code{rrvglm.fit}.
+    Special family functions include
+    \code{\link{negbinomial}}
+    \code{\link{zipoisson}}
+    and \code{\link{zinegbinomial}}.
+    (see Yee (2010) and \pkg{COZIGAM}).
     Methods functions include
     \code{\link{Coef.rrvglm}},
     \code{summary.rrvglm},
     etc.
+    Data include
+    \code{\link{crashi}}.
 
 }
 
 \examples{
-# Example 1: negative binomial with Var(Y) = mu + mu^s2, s2 unknown
-nn = 500
-s2 = 1.5    # Specify this
-c2 = 2 - s2
-ndata = data.frame(x2 = runif(nn), x3 = runif(nn))
-ndata = transform(ndata, mu = exp(2 + 1 * x2 + 0 * x3))
-ndata = transform(ndata, y2 = rnbinom(nn, mu=mu, size=mu^c2))
-\dontrun{plot(y2 ~ x2, data = ndata, pch = "+", col = 'blue',
-     main=paste("Var(Y) = mu + mu^", s2, sep="")) }
-Fit2 = rrvglm(y2 ~ x2 + x3, negbinomial(zero = NULL),
-              data = ndata, Norrr = NULL)
-c2hat = (Coef(Fit2)@A)["log(k)", 1]
-s2hat = 2 - c2hat
-s2hat # Estimate of s2
+# Example 1: RR negative binomial (RR-NB) with Var(Y) = mu + delta1 * mu^delta2
+nn <- 1000       # Number of observations
+delta1 <- 3.0    # Specify this
+delta2 <- 1.5    # Specify this; should be greater than unity
+a21 <- 2 - delta2
+mydata <- data.frame(x2 = runif(nn), x3 = runif(nn))
+mydata <- transform(mydata, mu = exp(2 + 3 * x2 + 0 * x3))
+mydata <- transform(mydata, y2 = rnbinom(nn, mu=mu, size=(1/delta1)*mu^a21))
+\dontrun{
+plot(y2 ~ x2, data = mydata, pch = "+", col = 'blue', las = 1,
+     main = paste("Var(Y) = mu + ", delta1, " * mu^", delta2, sep = "")) }
+rrnb2 <- rrvglm(y2 ~ x2 + x3, negbinomial(zero = NULL), mydata, trace = TRUE)
 
+a21.hat <- (Coef(rrnb2)@A)["log(k)", 1]
+beta11.hat <- Coef(rrnb2)@B1["(Intercept)", "log(mu)"]
+beta21.hat <- Coef(rrnb2)@B1["(Intercept)", "log(k)"]
+(delta1.hat <- exp(a21.hat * beta11.hat - beta21.hat))
+(delta2.hat <- 2 - a21.hat)
+# exp(a21.hat * predict(rrnb2)[1,1] - predict(rrnb2)[1,2]) # delta1.hat
+summary(rrnb2)
 
-# Example 2
+# Obtain a 95 percent confidence interval for delta2:
+se.a21.hat <- sqrt(vcov(rrnb2)["I(lv.mat)", "I(lv.mat)"])
+ci.a21 <- a21.hat +  c(-1, 1) * 1.96 * se.a21.hat
+(ci.delta2 <- 2 - rev(ci.a21))  # The 95 percent confidence interval
+
+confint_rrnb(rrnb2)  # Quick way to get it
+
+# Plot the abundances and fitted values against the latent variable
+\dontrun{
+plot(y2 ~ lv(rrnb2), data = mydata, col = "blue",
+          xlab = "Latent variable", las = 1) 
+ooo <- order(lv(rrnb2))
+lines(fitted(rrnb2)[ooo] ~ lv(rrnb2)[ooo], col = "red") }
+
+# Example 2: stereotype model (reduced-rank multinomial logit model)
 data(car.all)
 index = with(car.all, Country == "Germany" | Country == "USA" |
                       Country == "Japan"   | Country == "Korea")
 scar = car.all[index, ]  # standardized car data
 fcols = c(13,14,18:20,22:26,29:31,33,34,36)  # These are factors
-scar[,-fcols] = scale(scar[,-fcols]) # Standardize all numerical vars
+scar[,-fcols] = scale(scar[, -fcols]) # Standardize all numerical vars
 ones = matrix(1, 3, 1)
-cms = list("(Intercept)" = diag(3), Width = ones, Weight = ones,
-           Disp. = diag(3), Tank = diag(3), Price = diag(3), 
-           Frt.Leg.Room = diag(3))
+clist = list("(Intercept)" = diag(3), Width = ones, Weight = ones,
+             Disp. = diag(3), Tank = diag(3), Price = diag(3),
+             Frt.Leg.Room = diag(3))
 set.seed(111)
 fit = rrvglm(Country ~ Width + Weight + Disp. + Tank + Price + Frt.Leg.Room,
              multinomial, data =  scar, Rank = 2, trace = TRUE,
-             constraints = cms, Norrr = ~ 1 + Width + Weight,
+             constraints = clist, Norrr = ~ 1 + Width + Weight,
              Uncor = TRUE, Corner = FALSE, Bestof = 2)
 fit@misc$deviance  # A history of the fits
 Coef(fit)

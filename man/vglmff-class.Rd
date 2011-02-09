@@ -30,7 +30,7 @@ Objects can be created by calls of the form \code{new("vglmff", ...)}.
   Object of class \code{"function"}
   returning the deviance of the model. This slot is optional.
   If present, the function must have arguments
-  \code{function(mu, y, w, residuals = FALSE, eta, extra=NULL)}.
+  \code{function(mu, y, w, residuals = FALSE, eta, extra = NULL)}.
   Deviance residuals are returned if \code{residuals = TRUE}.
 
   }
@@ -47,6 +47,16 @@ Objects can be created by calls of the form \code{new("vglmff", ...)}.
   \code{vgam}.
 
   }
+  \item{\code{infos}:}{
+  Object of class \code{"function"} which
+  returns a list with components such as \code{Musual}.
+  At present only a very few \pkg{VGAM} family functions have this
+  feature implemented.
+  Those that do do not require specifying the \code{Musual}
+  argument when used with \code{\link{rcam}}.
+
+
+  }
   \item{\code{initialize}:}{
   Object of class \code{"expression"} used
   to perform error checking (especially for the variable \code{y})
@@ -60,7 +70,7 @@ Objects can be created by calls of the form \code{new("vglmff", ...)}.
   Object of class \code{"function"} which
   returns the fitted values, given the linear/additive predictors.
   The function must have arguments
-  \code{function(eta, extra=NULL)}.
+  \code{function(eta, extra = NULL)}.
 
   }
   \item{\code{last}:}{
@@ -76,16 +86,17 @@ Objects can be created by calls of the form \code{new("vglmff", ...)}.
   Object of class \code{"function"} which,
   given the fitted values, returns the linear/additive predictors.
   If present, the function must have arguments
-  \code{function(mu, extra=NULL)}.
+  \code{function(mu, extra = NULL)}.
 
   }
   \item{\code{loglikelihood}:}{
   Object of class \code{"function"}
   returning the log-likelihood of the model. This slot is optional.
   If present, the function must have arguments
-  \code{function(mu, y, w, residuals = FALSE, eta, extra=NULL)}.
+  \code{function(mu, y, w, residuals = FALSE, eta, extra = NULL)}.
   The argument \code{residuals} can be ignored because
   log-likelihood residuals aren't defined.
+
 
   }
   \item{\code{middle}:}{
@@ -99,6 +110,7 @@ Objects can be created by calls of the form \code{new("vglmff", ...)}.
   code at a special position in \code{vglm.fit} or
   \code{vgam.fit}.
 
+
   }
   \item{\code{summary.dispersion}:}{
   Object of class \code{"logical"}
@@ -106,6 +118,7 @@ Objects can be created by calls of the form \code{new("vglmff", ...)}.
   sum of squares) can be used for computing the scaling/dispersion
   parameter. It is \code{TRUE} for most models except for nonlinear
   regression models.
+
 
   }
   \item{\code{vfamily}:}{
@@ -120,6 +133,7 @@ Objects can be created by calls of the form \code{new("vglmff", ...)}.
   out the \code{vglm} coefficients plus \code{"VGAMcat"}
   information as well.
 
+
   }
   \item{\code{deriv}:}{
   Object of class \code{"expression"} which
@@ -129,6 +143,7 @@ Objects can be created by calls of the form \code{new("vglmff", ...)}.
   score vector. In Yee and Wild (1996) this is the
   \eqn{\bold{d}_i}{\bold{d}i} vector. Thus each row of the
   matrix returned by this slot is such a vector.
+
 
   }
   \item{\code{weight}:}{
@@ -166,10 +181,12 @@ Yee, T. W. and Wild, C. J. (1996)
 Vector generalized additive models.
 \emph{Journal of the Royal Statistical Society, Series B, Methodological},
 \bold{58}, 481--493.
-  
+
+
 \url{http://www.stat.auckland.ac.nz/~yee} contains further
 information on how to write \pkg{VGAM} family functions.
 The file is amongst other \pkg{VGAM} PDF documentation.
+
 
 }
 \author{ Thomas W. Yee }
@@ -181,6 +198,7 @@ The file is amongst other \pkg{VGAM} PDF documentation.
   \code{eval(substitute( function(...) { ... }, list(...) )) }
   for functions.
 
+
   A unified method of handling arguments is to use
   \code{match.arg}. This allows, for example,
   \code{vglm(..., family = cratio(link=logit))}
@@ -188,16 +206,20 @@ The file is amongst other \pkg{VGAM} PDF documentation.
   \code{vglm(..., family = cratio(link="logi"))}
   to be equivalent (Nb. there is a \code{logit} function).
 
+
   The \code{extra} argument in
   \code{inverse}, \code{link}, \code{deviance}, \code{loglikelihood}, etc. 
   matches with the argument \code{extra}
   in \code{vglm}, \code{vgam} and \code{rrvglm}. This allows input
   to be fed into all slots of a \pkg{VGAM} family function.
 
-  The expression \code{derivative} is evaluated immediately prior to
-  \code{weight}, so there is provision for re-use of variables etc.
-  Programmers must be careful to choose  variable names that do not
-  interfere with \code{vglm.fit}, \code{vgam.fit} etc.
+
+  The expression \code{derivative} is evaluated immediately
+  prior to \code{weight}, so there is provision for re-use
+  of variables etc.  Programmers must be careful to choose
+  variable names that do not interfere with \code{vglm.fit},
+  \code{vgam.fit} etc.
+
 
   Programmers of \pkg{VGAM} family functions are encouraged
   to keep to previous conventions regarding the naming of arguments,
@@ -206,11 +228,13 @@ The file is amongst other \pkg{VGAM} PDF documentation.
   \code{zero} for allowing some of the
   linear/additive predictors to be an intercept term only, etc.
 
-  In general, Fisher-scoring is recommended over Newton-Raphson where
-  tractable. Although usually slightly slower in convergence,
-  the weight matrices from
-  using the expected information are positive-definite over a larger
+
+  In general, Fisher-scoring is recommended over
+  Newton-Raphson where tractable. Although usually slightly
+  slower in convergence, the weight matrices from using the
+  expected information are positive-definite over a larger
   parameter space.
+
   
   }
 
@@ -221,13 +245,15 @@ The file is amongst other \pkg{VGAM} PDF documentation.
 } 
 
 \seealso{
-\code{\link{vglm}},
-\code{\link{vgam}},
-\code{\link{rrvglm}}.
+  \code{\link{vglm}},
+  \code{\link{vgam}},
+  \code{\link{rrvglm}},
+  \code{\link{rcam}}.
+
 }
 \examples{
 cratio()
-cratio(link="cloglog")
-cratio(link=cloglog, reverse=TRUE)
+cratio(link = "cloglog")
+cratio(link = cloglog, reverse = TRUE)
 }
 \keyword{classes}

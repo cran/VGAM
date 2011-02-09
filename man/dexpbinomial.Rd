@@ -9,8 +9,8 @@
 
 }
 \usage{
-dexpbinomial(lmean="logit", ldispersion="logit", emean=list(),
-             edispersion=list(), idispersion=0.25, zero=2)
+dexpbinomial(lmean = "logit", ldispersion = "logit", emean = list(),
+             edispersion = list(), idispersion = 0.25, zero = 2)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -38,7 +38,7 @@ dexpbinomial(lmean="logit", ldispersion="logit", emean=list(),
   If assigned, the single value should be either \code{1} or \code{2}.
   The default is to have a single dispersion parameter value.
   To model both parameters as functions of the covariates assign
-  \code{zero=NULL}.
+  \code{zero = NULL}.
 
   }
 }
@@ -98,7 +98,7 @@ dexpbinomial(lmean="logit", ldispersion="logit", emean=list(),
 \note{
   This function processes the input in the same way
   as \code{\link{binomialff}}, however multivariate responses are
-  not allowed (\code{binomialff(mv=FALSE)}).
+  not allowed (\code{binomialff(mv = FALSE)}).
 
 }
 \section{Warning }{
@@ -122,22 +122,22 @@ toxop = transform(toxop,
 
 # A fit similar (should be identical) to Section 6 of Efron (1986).
 # But does not use poly(), and M=1.25 here, as in (5.3)
-cmlist = list("(Intercept)"=diag(2),
-              "I(srainfall)"=rbind(1,0),
-              "I(srainfall^2)"=rbind(1,0),
-              "I(srainfall^3)"=rbind(1,0),
-              "I(sN)"=rbind(0,1),
-              "I(sN^2)"=rbind(0,1))
-dlist = list(min=0, max=1.25)
-fit = vglm(phat ~ I(srainfall) + I(srainfall^2) + I(srainfall^3) +
-                  I(sN) + I(sN^2),
-           fam = dexpbinomial(ldisp="elogit", idisp=0.2,
-                              edisp=dlist, zero=NULL),
-           data=toxop, weight=ssize, trace=TRUE, constraints=cmlist)
+cmlist = list("(Intercept)" = diag(2),
+              "I(srainfall)" = rbind(1,0),
+              "I(srainfall^2)" = rbind(1,0),
+              "I(srainfall^3)" = rbind(1,0),
+              "I(sN)" = rbind(0,1),
+              "I(sN^2)" = rbind(0,1))
+dlist = list(min = 0, max = 1.25)
+fit = vglm(cbind(phat, 1 - phat) * ssize ~
+               I(srainfall) + I(srainfall^2) + I(srainfall^3) +
+               I(sN) + I(sN^2),
+           dexpbinomial(ldisp = "elogit", idisp = 0.2,
+                        edisp = dlist, zero = NULL),
+           toxop, trace = TRUE, constraints = cmlist)
 
 # Now look at the results
-coef(fit)
-coef(fit, matrix=TRUE)
+coef(fit, matrix = TRUE)
 head(fitted(fit))
 summary(fit)
 vcov(fit)
@@ -145,41 +145,40 @@ sqrt(diag(vcov(fit)))   # Standard errors
 
 # Effective sample size (not quite the last column of Table 1)
 head(predict(fit))
-Dispersion = elogit(predict(fit)[,2], earg=dlist, inverse=TRUE)
-c(round(weights(fit, type="prior") * Dispersion, dig=1))
+Dispersion = elogit(predict(fit)[,2], earg = dlist, inverse = TRUE)
+c(round(weights(fit, type = "prior") * Dispersion, dig = 1))
 
 
 # Ordinary logistic regression (gives same results as (6.5))
-ofit = vglm(phat ~ I(srainfall) + I(srainfall^2) + I(srainfall^3),
-            fam = binomialff, data=toxop, weight=ssize, trace=TRUE)
+ofit = vglm(cbind(phat, 1 - phat) * ssize ~
+            I(srainfall) + I(srainfall^2) + I(srainfall^3),
+            binomialff, toxop, trace = TRUE)
 
 
 # Same as fit but it uses poly(), and can be plotted (cf. Figure 1)
-cmlist2 = list("(Intercept)"=diag(2),
-               "poly(srainfall, 3)"=rbind(1,0),
-               "poly(sN, 2)"=rbind(0,1))
-fit2 = vglm(phat ~ poly(srainfall, 3) + poly(sN, 2),
-            fam = dexpbinomial(ldisp="elogit", idisp=0.2,
-                               edisp=dlist, zero=NULL),
-            data=toxop, weight=ssize, trace=TRUE, constraints=cmlist2)
-\dontrun{
-par(mfrow=c(1,2))
-plotvgam(fit2, se=TRUE, lcol="blue", scol="red")  # Cf. Figure 1
-
+cmlist2 = list("(Intercept)"                 = diag(2),
+               "poly(srainfall, degree = 3)" = rbind(1, 0),
+               "poly(sN, degree = 2)"        = rbind(0, 1))
+fit2 = vglm(cbind(phat, 1 - phat) * ssize ~
+            poly(srainfall, degree = 3) + poly(sN, degree = 2),
+            dexpbinomial(ldisp = "elogit", idisp = 0.2,
+                         edisp = dlist, zero = NULL),
+            toxop, trace = TRUE, constraints = cmlist2)
+\dontrun{ par(mfrow = c(1, 2))
+plotvgam(fit2, se = TRUE, lcol = "blue", scol = "red")  # Cf. Figure 1
 
 # Cf. Figure 1(a)
-par(mfrow=c(1,2))
-o = with(toxop, sort.list(rainfall))
-with(toxop, plot(rainfall[o], fitted(fit2)[o], type="l", col="blue",
-                 las=1, ylim=c(0.3, 0.65)))
-with(toxop, points(rainfall[o], fitted(ofit)[o], col="red", type="b",
-                   pch=19))
+par(mfrow = c(1,2))
+ooo = with(toxop, sort.list(rainfall))
+with(toxop, plot(rainfall[ooo], fitted(fit2)[ooo], type = "l",
+                 col = "blue", las = 1, ylim = c(0.3, 0.65)))
+with(toxop, points(rainfall[ooo], fitted(ofit)[ooo], col = "red",
+                   type = "b", pch = 19))
 
 # Cf. Figure 1(b)
-o = with(toxop, sort.list(ssize))
-with(toxop, plot(ssize[o], Dispersion[o], type="l", col="blue", las=1,
-                 xlim=c(0, 100)))
-}
+ooo = with(toxop, sort.list(ssize))
+with(toxop, plot(ssize[ooo], Dispersion[ooo], type = "l", col = "blue",
+                 las = 1, xlim = c(0, 100))) }
 }
 \keyword{models}
 \keyword{regression}

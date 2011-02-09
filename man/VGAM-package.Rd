@@ -142,14 +142,14 @@ zipdat = transform(zipdat, phi    = logit(-0.5 + 1*x, inverse=TRUE),
                            lambda =  loge( 0.5 + 2*x, inverse=TRUE))
 zipdat = transform(zipdat, y = rzipois(nn, lambda, phi))
 with(zipdat, table(y))
-fit = vglm(y ~ x, zipoisson, zipdat, trace=TRUE)
-coef(fit, matrix=TRUE)  # These should agree with the above values
+fit = vglm(y ~ x, zipoisson, zipdat, trace = TRUE)
+coef(fit, matrix = TRUE)  # These should agree with the above values
 
 
 # Example 3; fit a two species GAM simultaneously
 fit2 = vgam(cbind(agaaus, kniexc) ~ s(altitude, df = c(2,3)),
             binomialff(mv = TRUE), hunua)
-coef(fit2, mat=TRUE)   # Not really interpretable
+coef(fit2, matrix = TRUE)   # Not really interpretable
 \dontrun{
 plot(fit2, se = TRUE, overlay = TRUE, lcol = 1:2, scol = 1:2)
 

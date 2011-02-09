@@ -1,16 +1,14 @@
-# "family.fishing.q"
-# Last modified: 01/12/08, 02/12/08
+# These functions are
+# Copyright (C) 1998-2011 T.W. Yee, University of Auckland.
+# All rights reserved.
 
-# These functions are Copyright (C) 2009-2010 T. W. Yee   All rights reserved.
 
 
-# ====================================================================
-# 20081201
+
 
 DeLury = function(catch, effort,
                   type=c("DeLury","Leslie"),
                   ricker=FALSE) {
-# 20081202; this function has been checked not ok
     type = match.arg(type, c("DeLury","Leslie"))[1]
     if (!is.logical(ricker)) stop("bad input for 'ricker'")
     if ((LLL <- Lcatch <- length(catch)) != (Leffort <- length(effort)))
@@ -47,33 +45,77 @@ DeLury = function(catch, effort,
 
 
 
-# ======================================================================
-# 20081201
-# Transferred over from my own files and then modified here.
 
-# length is in metres
-wffc.P1     = function(length, min.eligible=0.18)
-    ifelse(length >= min.eligible, 100 + 20 * ceiling(100*length), 0)
-wffc.P1star = function(length, min.eligible=0.18)
-    ifelse(length >= min.eligible, 100 + 2000 * length, 0)
 
-# This was in the original mss. but problem is P2 does not return an integer
-#wffc.P2     = function(y, min.eligible=0.18)
-#    P1(y) + ifelse(y >= min.eligible, 0.7*ceiling(100*(y-min.eligible))^2, 0)
-#wffc.P2star = function(y, min.eligible=0.18)
-#    P1star(y) + ifelse(y >= min.eligible, 7000 * (y-min.eligible)^2, 0)
 
-# 7/6/08; This returns an integer
-wffc.P2     = function(length, min.eligible=0.18)
-    wffc.P1(length) +
+wffc.P1     = function(length, c1 = 100, min.eligible = 0.18, ppm = 2000)
+    ifelse(length >= min.eligible, c1 + (ppm/100) *
+           ceiling(  signif(100*length, dig = 8)  ), 0)
+wffc.P1star = function(length, c1 = 100, min.eligible = 0.18, ppm = 2000)
+    ifelse(length >= min.eligible, c1 + ppm * length, 0)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+wffc.P2     = function(length, c1 = 100, min.eligible = 0.18, ppm = 2000)
+    wffc.P1(length, c1 = c1, min.eligible = min.eligible, ppm = ppm) +
     ifelse(length >= min.eligible,
            ceiling(100*(length-min.eligible))^2, 0)
-wffc.P2star = function(length, min.eligible=0.18)
-    wffc.P1star(length) +
+wffc.P2star = function(length, c1 = 100, min.eligible = 0.18, ppm = 2000)
+    wffc.P1star(length, c1 = c1, min.eligible = min.eligible, ppm = ppm) +
     ifelse(length >= min.eligible, 10000 * (length-min.eligible)^2, 0)
 
 
-# ======================================================================
+
+
+
+wffc.P3     = function(length, c1 = 100, min.eligible = 0.18, ppm = 2000) {
+
+  temp1 = floor((ceiling(100*length)/100) / min.eligible) # zz not sure
+  temp1 = floor(length / min.eligible)
+  ans = ifelse(temp1 >= 1, c1, length * 0) # Handles NAs
+  ans = ans + ifelse(temp1 >= 1, ppm * (ceiling(100*length)/100), 0)
+  maxtemp1 = max(temp1, na.rm = TRUE)
+  if (maxtemp1 > 1)
+    for (ii in 2:maxtemp1) {
+      ans = ans +
+            ifelse(ii <  temp1,         min.eligible  * (ii-1) * ppm, 0) +
+            ifelse(ii == temp1, (ceiling(100*length)/100 -
+                   ii*min.eligible) * (ii-1) * ppm, 0)
+    }
+  ans
+}
+
+
+
+wffc.P3star = function(length, c1 = 100, min.eligible = 0.18, ppm = 2000) {
+  temp1 = floor(length / min.eligible)
+  ans = ifelse(temp1 >= 1, c1, length * 0) # Handles NAs
+  ans = ans + ifelse(temp1 >= 1, length * ppm, 0)
+  maxtemp1 = max(temp1, na.rm = TRUE)
+  if (maxtemp1 > 1)
+    for (ii in 2:maxtemp1) {
+      ans = ans + ifelse(ii <  temp1,  min.eligible  * (ii-1) * ppm, 0) +
+                  ifelse(ii == temp1, (length - ii*min.eligible) *
+                                      (ii-1) * ppm, 0)
+    }
+  ans
+}
+
+
+
+
 
 
 

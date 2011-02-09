@@ -6,8 +6,8 @@
   Fits a positive Poisson distribution.
 }
 \usage{
-pospoisson(link = "loge", earg=list(),
-           expected=TRUE, ilambda=NULL, method.init=1)
+pospoisson(link = "loge", earg = list(),
+           expected = TRUE, ilambda = NULL, method.init = 1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

@@ -10,10 +10,10 @@
 }
 \usage{
 lognormal(lmeanlog = "identity", lsdlog = "loge",
-          emeanlog=list(), esdlog=list(), zero = NULL)
+          emeanlog = list(), esdlog = list(), zero = 2)
 lognormal3(lmeanlog = "identity", lsdlog = "loge",
-           emeanlog=list(), esdlog=list(),
-           powers.try = (-3):3, delta = NULL, zero = NULL)
+           emeanlog = list(), esdlog = list(),
+           powers.try = (-3):3, delta = NULL, zero = 2)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -38,6 +38,8 @@ lognormal3(lmeanlog = "identity", lsdlog = "loge",
   For \code{lognormal3()},
   the values must be from the set \{1,2,3\} where 3 is for
   \eqn{\lambda}{\lambda}.
+  See \code{\link{CommonVGAMffArguments}} for more information.
+
 
   }
   \item{powers.try}{
@@ -63,6 +65,7 @@ lognormal3(lmeanlog = "identity", lsdlog = "loge",
         E(Y) = exp(mu + 0.5 sigma^2)}
   and not \eqn{\mu}{mu}, make up the fitted values.
 
+
   A random variable \eqn{Y} has a 3-parameter lognormal distribution
   if \eqn{\log(Y-\lambda)}{log(Y-lambda)}
   is distributed \eqn{N(\mu, \sigma^2)}{N(mu, sigma^2)}. Here,
@@ -72,9 +75,11 @@ lognormal3(lmeanlog = "identity", lsdlog = "loge",
         E(Y) =  lambda + exp(mu + 0.5 sigma^2)}
   and not \eqn{\mu}{mu}, make up the fitted values.
 
+
   \code{lognormal()} and \code{lognormal3()} fit the 2- and 3-parameter
   lognormal distribution respectively. Clearly, if the location
   parameter \eqn{\lambda=0}{lambda=0} then both distributions coincide.
+
 
 }
 \value{
@@ -82,12 +87,14 @@ lognormal3(lmeanlog = "identity", lsdlog = "loge",
   The object is used by modelling functions such as \code{\link{vglm}},
   and \code{\link{vgam}}.
 
+
 }
 \references{
 Kleiber, C. and Kotz, S. (2003)
 \emph{Statistical Size Distributions in Economics and
              Actuarial Sciences},
 Hoboken, NJ: Wiley-Interscience.
+
 
 }
 \author{ T. W. Yee }
@@ -99,27 +106,30 @@ Hoboken, NJ: Wiley-Interscience.
 %}
 
 \seealso{
-%    \code{\link{lognormal3}},
-    \code{\link[stats]{rlnorm}},
-    \code{\link{normal1}}.
+% \code{\link{lognormal3}},
+  \code{\link[stats]{rlnorm}},
+  \code{\link{normal1}},
+  \code{\link{CommonVGAMffArguments}}.
+
+
 }
 
 \examples{
-lndat = data.frame(y = rlnorm(nn <- 1000, meanlog=1.5, sdlog=exp(-0.8)))
-fit = vglm(y ~ 1, lognormal, lndat, trace=TRUE)
-coef(fit, mat=TRUE)
+ldat <- data.frame(y = rlnorm(nn <- 1000, meanlog = 1.5, sdlog = exp(-0.8)))
+fit <- vglm(y ~ 1, lognormal, ldat, trace = TRUE)
+coef(fit, mat = TRUE)
 Coef(fit)
 
-lndat2 = data.frame(x = runif(nn <- 1000))
-lndat2 = transform(lndat2, y = rlnorm(nn, mean=0.5, sd=exp(x)))
-fit = vglm(y ~ x, lognormal(zero=1), lndat2, trace=TRUE, crit="c")
-coef(fit, mat=TRUE)
+ldat2 <- data.frame(x2 = runif(nn <- 1000))
+ldat2 <- transform(ldat2, y = rlnorm(nn, mean = 0.5, sd = exp(x2)))
+fit <- vglm(y ~ x2, lognormal(zero = 1), ldat2, trace = TRUE, crit = "c")
+coef(fit, mat = TRUE)
 Coef(fit)
 
-lambda = 4
-lndat3 = data.frame(y = lambda + rlnorm(n=1000, mean=1.5, sd=exp(-0.8)))
-fit = vglm(y ~ 1, lognormal3, lndat3, trace=TRUE, crit="c")
-coef(fit, mat=TRUE)
+lambda <- 4
+ldat3 <- data.frame(y = lambda + rlnorm(n = 1000, mean = 1.5, sd = exp(-0.8)))
+fit <- vglm(y ~ 1, lognormal3, ldat3, trace = TRUE, crit = "c")
+coef(fit, mat = TRUE)
 summary(fit)
 }
 \keyword{models}

@@ -186,3 +186,46 @@ void vbecoef(double kxae8glp[]) {
 }
 
 
+
+
+void conmax_Z(double *lamvec, double *nuvec, double *bqelz3cy,
+              int    *nlength, int   *kpzavbj3,
+              double *qaltf0nz) {
+
+
+    double *pq6zdcwxk, ssum = 0.0, denom = 0.0, yq6lorbx, prevterm;
+    int    ayfnwr1v;
+
+    *qaltf0nz = 1.0e-6;
+
+    if (*kpzavbj3 == 0) {
+      pq6zdcwxk = bqelz3cy;
+      for (ayfnwr1v = 0; ayfnwr1v < *nlength; ayfnwr1v++) {
+        prevterm = 1.0 + *lamvec;
+        denom = 1.0;
+        *pq6zdcwxk = prevterm;
+        yq6lorbx = 2.0;
+
+        if (*nuvec == 0.0 && *lamvec >= 1.0) {
+          Rprintf("Error: series will not converge. Returning 0.0\n");
+          *pq6zdcwxk = 0.0;
+        } else {
+          while (prevterm > *qaltf0nz) {
+              denom = denom * pow(yq6lorbx, *lamvec);
+              prevterm = prevterm * *lamvec / denom;
+              *pq6zdcwxk += prevterm;
+              yq6lorbx += 1.0;
+          }
+        }
+        lamvec++;
+        nuvec++;
+        pq6zdcwxk++;
+      }
+    } else if (*kpzavbj3 == 1) {
+
+    } else if (*kpzavbj3 == 2) {
+
+    }
+}
+
+
