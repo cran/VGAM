@@ -6,7 +6,7 @@
   Maximum likelihood estimation for the geometric distribution.
 }
 \usage{
-geometric(link = "logit", earg=list(), expected = TRUE, method.init = 1)
+geometric(link = "logit", earg=list(), expected = TRUE, imethod = 1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -26,7 +26,7 @@ geometric(link = "logit", earg=list(), expected = TRUE, method.init = 1)
   Fisher scoring is used if \code{expected = TRUE}, else Newton-Raphson.
 
   }
-  \item{method.init}{
+  \item{imethod}{
   An integer with value \code{1} or \code{2} or \code{3} which
   specifies the initialization method for the probability.
   If failure to converge occurs try another value.

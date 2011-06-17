@@ -159,7 +159,7 @@ cao.fit <- function(x, y, w=rep(1, length(x[, 1])),
                    dim2wz=1, inited=0, # w(,dimw) cols
             modelno, maxitl=control$maxitl, actnits=0, twice=0, p1star. ,
             p2star. , Nice21, lenbeta, controlITolerances=0, control$trace,
-            p1, p2=p2, imethod=control$method.init, bchat=0)
+            p1, p2=p2, imethod=control$imethod, bchat=0)
     othdbl = c(small=control$SmallNo, fseps=control$epsilon,
                .Machine$double.eps,
                iKvector=rep(control$iKvector, len=NOS),
@@ -332,7 +332,7 @@ cao.control = function(Rank=1,
 
           Bestof = if (length(Cinit)) 1 else 10,
           maxitl = 10,   # was 40 prior to 20100420
-          method.init = 1,
+          imethod = 1,
           bf.epsilon = 1.0e-7,
           bf.maxit = 10,  # was 40 prior to 20100420
           Maxit.optim = 250,
@@ -350,8 +350,8 @@ cao.control = function(Rank=1,
         stop("bad input for 'iShape'")
     if (!is.Numeric(iKvector, posit=TRUE))
         stop("bad input for 'iKvector'")
-    if (!is.Numeric(method.init, posit=TRUE, allow=1, integer=TRUE))
-        stop("bad input for 'method.init'")
+    if (!is.Numeric(imethod, posit=TRUE, allow=1, integer=TRUE))
+        stop("bad input for 'imethod'")
     if (criterion != "deviance") stop("'criterion' must be 'deviance'")
     if (GradientFunction)
         stop("14/1/05; GradientFunction = TRUE not working yet")
@@ -421,7 +421,7 @@ cao.control = function(Rank=1,
         maxitl = maxitl,
         bf.epsilon = bf.epsilon,
         bf.maxit = bf.maxit,
-        method.init = method.init,
+        imethod = imethod,
         Maxit.optim = Maxit.optim,
         optim.maxit = optim.maxit,
         Norrr=Norrr,

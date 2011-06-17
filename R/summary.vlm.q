@@ -7,7 +7,7 @@
 
 
 
-summaryvlm <- function(object, correlation=FALSE, dispersion=NULL)
+summaryvlm <- function(object, correlation = FALSE, dispersion = NULL)
 {
 
 
@@ -23,7 +23,7 @@ summaryvlm <- function(object, correlation=FALSE, dispersion=NULL)
 
     coef <- object@coefficients
     cnames <- names(coef)
-    presid = residualsvlm(object, type="pearson") # NULL if pooled.weight
+    presid = residualsvlm(object, type = "pearson") # NULL if pooled.weight
 
     if (any(is.na(coef))) {
         warning(paste("Some NAs in the coefficients---no summary",
@@ -107,7 +107,7 @@ summaryvlm <- function(object, correlation=FALSE, dispersion=NULL)
 
 
 
-printsummary.vlm <- function(x, digits=NULL, quote=TRUE, prefix="")
+printsummary.vlm <- function(x, digits = NULL, quote = TRUE, prefix = "")
 {
 
 
@@ -151,12 +151,12 @@ printsummary.vlm <- function(x, digits=NULL, quote=TRUE, prefix="")
     if (length(x@misc$predictors.names))
     if (M==1) {
         cat("\nName of response:",
-            paste(x@misc$predictors.names, collapse=", "), "\n") 
+            paste(x@misc$predictors.names, collapse = ", "), "\n") 
     } else {
-        uuu = paste(x@misc$predictors.names, collapse=", ")
-        uuu = x@misc$predictors.names
+        UUU = paste(x@misc$predictors.names, collapse = ", ")
+        UUU = x@misc$predictors.names
         cat("\nNames of responses:\n") 
-        cat(uuu, fill=TRUE, sep=", ")
+        cat(UUU, fill = TRUE, sep = ", ")
     }
 
     if (!is.null(x@rss))
@@ -170,7 +170,7 @@ printsummary.vlm <- function(x, digits=NULL, quote=TRUE, prefix="")
             ll <- lower.tri(correl)
             correl[ll] <- format(round(correl[ll], digits))
             correl[!ll] <- ""
-            print(correl[-1, -ncol_X_vlm, drop=FALSE], quote=FALSE, digits=digits)
+            print(correl[-1, -ncol_X_vlm, drop = FALSE], quote = FALSE, digits=digits)
         }
     }
     invisible(NULL)

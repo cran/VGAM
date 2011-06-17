@@ -9,7 +9,7 @@
 }
 \usage{
 huber(llocation = "identity", lscale = "loge", elocation = list(),
-      escale = list(), k = 0.862, method.init = 1, zero = 2)
+      escale = list(), k = 0.862, imethod = 1, zero = 2)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -28,7 +28,7 @@ huber(llocation = "identity", lscale = "loge", elocation = list(),
   See \code{\link{rhuber}} for more information.
 
   }
-  \item{method.init, zero}{ 
+  \item{imethod, zero}{ 
   See \code{\link{CommonVGAMffArguments}} for information.
   The default value of \code{zero} means the scale parameter is
   modelled as an intercept-only.
@@ -84,7 +84,7 @@ hdata = transform(hdata, y  = rhuber(NN, mu = coef1 + coef2 * x2))
 hdata$x2[1] = 0.0 # Add an outlier
 hdata$y[1] = 10  
 
-fit.huber <- vglm(y ~ x2, huber(meth = 3), hdata, trace = TRUE)
+fit.huber <- vglm(y ~ x2, huber(imethod = 3), hdata, trace = TRUE)
 
 coef(fit.huber, matrix = TRUE)
 summary(fit.huber)

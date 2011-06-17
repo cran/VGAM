@@ -6,18 +6,18 @@
 
 
 vglm <- function(formula,
-                 family, data=list(), 
-                 weights=NULL, subset=NULL, na.action=na.fail,
-                 etastart=NULL, mustart=NULL, coefstart=NULL,
+                 family, data = list(), 
+                 weights = NULL, subset = NULL, na.action = na.fail,
+                 etastart = NULL, mustart = NULL, coefstart = NULL,
                  control=vglm.control(...), 
-                 offset=NULL, 
-                 method="vglm.fit",
-                 model=FALSE, x.arg=TRUE, y.arg=TRUE,
-                 contrasts=NULL, 
-                 constraints=NULL,
-                 extra=list(), 
-                 form2=NULL, 
-                 qr.arg=FALSE, smart=TRUE, ...)
+                 offset = NULL, 
+                 method = "vglm.fit",
+                 model = FALSE, x.arg = TRUE, y.arg = TRUE,
+                 contrasts = NULL, 
+                 constraints = NULL,
+                 extra = list(), 
+                 form2 = NULL, 
+                 qr.arg = FALSE, smart = TRUE, ...)
 {
     dataname <- as.character(substitute(data))  # "list" if no data=
     function.name <- "vglm"
@@ -56,17 +56,17 @@ vglm <- function(formula,
 if (!is.null(form2)) {
     if (!is.null(subset))
       stop("argument 'subset' cannot be used when argument 'form2' is used")
-    retlist = shadowvglm(formula=
+    retlist = shadowvglm(formula =
                  form2,
-                 family=family, data=data,
-                 na.action=na.action,
-                 control=vglm.control(...), 
-                 method=method,
-                 model=model, x.arg=x.arg, y.arg=y.arg,
-                 contrasts=contrasts, 
-                 constraints=constraints,
-                 extra=extra, 
-                 qr.arg=qr.arg)
+                 family = family, data = data,
+                 na.action = na.action,
+                 control = vglm.control(...),
+                 method = method,
+                 model = model, x.arg = x.arg, y.arg = y.arg,
+                 contrasts = contrasts,
+                 constraints = constraints,
+                 extra = extra,
+                 qr.arg = qr.arg)
     Ym2 <- retlist$Ym2
     Xm2 <- retlist$Xm2
 
@@ -87,9 +87,10 @@ if (!is.null(form2)) {
     if (is.null(offset)) 
         offset <- 0 # yyy ???
     w <- model.weights(mf)
-    if (!length(w))
+    if (!length(w)) {
         w <- rep(1, nrow(mf))
-    else if (ncol(as.matrix(w))==1 && any(w < 0))
+    } else
+    if (ncol(as.matrix(w)) == 1 && any(w < 0))
         stop("negative weights not allowed")
 
     if (is.character(family))
@@ -108,16 +109,16 @@ if (!is.null(form2)) {
 
     vglm.fitter <- get(method)
 
-    fit <- vglm.fitter(x=x, y=y, w=w, offset=offset, 
-                Xm2=Xm2, Ym2=Ym2,
-                etastart=etastart, mustart=mustart, coefstart=coefstart,
-                family=family, 
-                control=control,
-                constraints=constraints,
-                criterion=control$criterion,
-                extra=extra,
+    fit <- vglm.fitter(x = x, y = y, w = w, offset = offset,
+                Xm2 = Xm2, Ym2 = Ym2,
+                etastart = etastart, mustart = mustart, coefstart = coefstart,
+                family = family, 
+                control = control,
+                constraints = constraints,
+                criterion = control$criterion,
+                extra = extra,
                 qr.arg = qr.arg,
-                Terms=mt, function.name=function.name, ...)
+                Terms = mt, function.name = function.name, ...)
 
     fit$misc$dataname <- dataname
 
@@ -127,7 +128,7 @@ if (!is.null(form2)) {
     }
 
     answer <-
-    new(Class="vglm", 
+    new(Class = "vglm", 
       "assign"       = attr(x, "assign"),
       "call"         = ocall,
       "coefficients" = fit$coefficients,
@@ -145,9 +146,9 @@ if (!is.null(form2)) {
       "residuals"    = as.matrix(fit$residuals),
       "rss"          = fit$rss,
       "smart.prediction" = as.list(fit$smart.prediction),
-      "terms"        = list(terms=mt))
+      "terms"        = list(terms = mt))
 
-    if (!smart) answer@smart.prediction <- list(smart.arg=FALSE)
+    if (!smart) answer@smart.prediction <- list(smart.arg = FALSE)
 
     if (qr.arg) {
         class(fit$qr) = "list"
@@ -197,7 +198,7 @@ if (!is.null(form2)) {
                                     fit$misc$predictors.names)
     slot(answer, "predictors") = fit$predictors
     if (length(fit$prior.weights))
-        slot(answer, "prior.weights") = fit$prior.weights
+        slot(answer, "prior.weights") = as.matrix(fit$prior.weights)
 
 
     answer
@@ -211,17 +212,17 @@ attr(vglm, "smart") <- TRUE
 
 shadowvglm <-
         function(formula,
-                 family, data=list(), 
-                 weights=NULL, subset=NULL, na.action=na.fail,
-                 etastart=NULL, mustart=NULL, coefstart=NULL,
+                 family, data = list(), 
+                 weights = NULL, subset = NULL, na.action=na.fail,
+                 etastart = NULL, mustart = NULL, coefstart = NULL,
                  control=vglm.control(...), 
-                 offset=NULL, 
-                 method="vglm.fit",
-                 model=FALSE, x.arg=TRUE, y.arg=TRUE,
-                 contrasts=NULL, 
-                 constraints=NULL,
-                 extra=list(), 
-                 qr.arg=FALSE, ...)
+                 offset = NULL, 
+                 method = "vglm.fit",
+                 model = FALSE, x.arg = TRUE, y.arg = TRUE,
+                 contrasts = NULL, 
+                 constraints = NULL,
+                 extra = list(), 
+                 qr.arg = FALSE, ...)
 {
     dataname <- as.character(substitute(data))  # "list" if no data=
     function.name <- "shadowvglm"

@@ -26,7 +26,7 @@ rzapois(n, lambda, p0 = 0)
   \item{lambda}{ Vector of positive means. }
   \item{p0}{
   Probability of zero, called \eqn{p0}.
-  The default value of \code{p0=0} corresponds
+  The default value of \code{p0 = 0} corresponds
   to the response having a positive Poisson distribution.
 
   }
@@ -47,7 +47,7 @@ rzapois(n, lambda, p0 = 0)
 \author{ Thomas W. Yee }
 \note{ 
     The argument \code{p0} is recycled to the required length, and
-    must have values which lie in the interval [0,1].
+    must have values which lie in the interval \eqn{[0,1]}.
 
 }
 
@@ -63,12 +63,11 @@ table(rzapois(100, lambda, p0))
 table(qzapois(runif(100), lambda, p0))
 round(dzapois(0:10, lambda, p0) * 100) # Should be similar
 
-\dontrun{
-x = 0:10
+\dontrun{ x = 0:10
 barplot(rbind(dzapois(x, lambda, p0), dpois(x, lambda)),
-        beside = TRUE, col = c("blue","green"),
-        main=paste("ZAP(", lambda, ", p0=", p0, ") [blue] vs",
-                   " Poisson(", lambda, ") [green] densities", sep=""),
-        names.arg = as.character(x), ylab="Probability") }
+        beside = TRUE, col = c("blue", "green"), las = 1,
+        main = paste("ZAP(", lambda, ", p0 = ", p0, ") [blue] vs",
+                   " Poisson(", lambda, ") [green] densities", sep = ""),
+        names.arg = as.character(x), ylab = "Probability") }
 }
 \keyword{distribution}

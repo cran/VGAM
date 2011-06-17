@@ -26,7 +26,7 @@
     if (!is.list(earg)) earg = list()
 
     new("vglmff",
-    blurb = if (mv) c("Multivariate Binomial model\n\n", 
+    blurb = if (mv) c("Multivariate binomial model\n\n", 
            "Link:     ", namesof("mu[,j]", link, earg = earg), "\n",
            "Variance: mu[,j]*(1-mu[,j])") else
            c("Binomial model\n\n", 
@@ -131,8 +131,8 @@
                 nrow.mu = if (is.matrix(mu)) nrow(mu) else length(mu)
                 for(ii in 1:M)
                     dpar[ii] = sum(temp87[,ii]) / (nrow.mu - ncol(x))
-                if (is.matrix(y) && length(dimnames(y)[[2]]) == length(dpar))
-                    names(dpar) = dimnames(y)[[2]]
+              if (is.matrix(y) && length(dimnames(y)[[2]]) == length(dpar))
+                  names(dpar) = dimnames(y)[[2]]
             } else 
                 dpar = sum(temp87) / (length(mu) - ncol(x))
         }
@@ -140,7 +140,7 @@
         misc$dispersion <- dpar
         misc$default.dispersion <- 1
         misc$estimated.dispersion <- .estimated.dispersion
-        misc$link = rep( .link, length=M)
+        misc$link = rep( .link, length = M)
         names(misc$link) = if (M > 1) dn2 else "mu"
 
         misc$earg = vector("list", M)
@@ -150,11 +150,13 @@
         misc$expected = TRUE
     }), list( .dispersion = dispersion,
               .estimated.dispersion = estimated.dispersion,
-              .onedpar = onedpar, .link = link, .mv = mv, .earg = earg ))),
+              .onedpar = onedpar, .mv = mv,
+              .link = link, .earg = earg ))),
     link = eval(substitute(function(mu, extra = NULL)
         theta2eta(mu, .link, earg = .earg )
     , list( .link = link, .earg = earg ))),
-    loglikelihood = function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
+    loglikelihood =
+      function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
         if (residuals) w * (y / mu - (1-y) / (1-mu)) else {
 
           ycounts = if (is.numeric(extra$orig.w)) y * w / extra$orig.w else
@@ -166,7 +168,7 @@
           smallno = 1.0e6 * .Machine$double.eps
           smallno = sqrt(.Machine$double.eps)
           if (max(abs(ycounts - round(ycounts))) > smallno)
-              warning("converting 'ycounts' to integer in @loglikelihood")
+            warning("converting 'ycounts' to integer in @loglikelihood")
           ycounts = round(ycounts)
 
           sum((if (is.numeric(extra$orig.w)) extra$orig.w else 1) *
@@ -199,10 +201,10 @@
             cbind(w * dtheta.deta(mu, link = .link, earg = .earg)^2 / tmp100)
         }
         for(ii in 1:M) {
-            index200 = !is.finite(tmp200[,ii]) |
-                       (abs(tmp200[,ii]) < .Machine$double.eps)
-            if (any(index200)) { # Diagonal 0's are bad
-                tmp200[index200,ii] = .Machine$double.eps
+            index500 = !is.finite(tmp200[, ii]) |
+                       (abs(tmp200[, ii]) < .Machine$double.eps)
+            if (any(index500)) { # Diagonal 0's are bad
+                tmp200[index500, ii] = .Machine$double.eps
             }
         }
         tmp200
@@ -263,7 +265,7 @@
         misc$dispersion <- dpar
         misc$default.dispersion <- 0
         misc$estimated.dispersion <- .estimated.dispersion
-        misc$link = rep( .link, length=M)
+        misc$link = rep( .link, length = M)
         names(misc$link) = if (M > 1) paste("mu", 1:M, sep = "") else "mu"
 
         misc$earg = vector("list", M)
@@ -331,7 +333,7 @@
         misc$dispersion <- dpar
         misc$default.dispersion <- 0
         misc$estimated.dispersion <- .estimated.dispersion
-        misc$link = rep( .link, length=M)
+        misc$link = rep( .link, length = M)
         names(misc$link) = if (M > 1) paste("mu", 1:M, sep = "") else "mu"
     }), list( .dispersion = dispersion,
               .estimated.dispersion = estimated.dispersion,
@@ -373,17 +375,23 @@ dinv.gaussian = function(x, mu, lambda, log = FALSE) {
 
 
 pinv.gaussian = function(q, mu, lambda) {
-    if (any(mu  <= 0)) stop("mu must be positive")
-    if (any(lambda  <= 0)) stop("lambda must be positive")
-    ans = q
-    mu = rep(mu, len = length(q))
-    lambda = rep(lambda, len = length(q))
-    ans[q <= 0] = 0
-    bb = q > 0
-    ans[bb] = pnorm(sqrt(lambda[bb]/q[bb])*(q[bb]/mu[bb]-1)) +
-              exp(2*lambda[bb]/mu[bb]) *
-              pnorm(-sqrt(lambda[bb]/q[bb])*(q[bb]/mu[bb]+1))
-    ans
+  if (any(mu  <= 0))
+    stop("mu must be positive")
+  if (any(lambda  <= 0))
+    stop("lambda must be positive")
+
+  LLL = max(length(q), length(mu), length(lambda))
+  q      = rep(q,      len = LLL)
+  mu     = rep(mu,     len = LLL)
+  lambda = rep(lambda, len = LLL)
+  ans = q
+
+  ans[q <= 0] = 0
+  bb = q > 0
+  ans[bb] = pnorm( sqrt(lambda[bb]/q[bb]) * (q[bb]/mu[bb] - 1)) +
+            exp(2*lambda[bb]/mu[bb]) *
+            pnorm(-sqrt(lambda[bb]/q[bb]) * (q[bb]/mu[bb] + 1))
+  ans
 }
 
 
@@ -391,7 +399,9 @@ rinv.gaussian = function(n, mu, lambda) {
     use.n = if ((length.n <- length(n)) > 1) length.n else
             if (!is.Numeric(n, integ=TRUE, allow = 1, posit = TRUE))
                 stop("bad input for argument 'n'") else n
+
     mu = rep(mu, len = use.n); lambda = rep(lambda, len = use.n)
+
     u = runif(use.n)
     Z = rnorm(use.n)^2 # rchisq(use.n, df = 1)
     phi = lambda / mu
@@ -414,7 +424,7 @@ rinv.gaussian = function(n, mu, lambda) {
 
  inv.gaussianff = function(lmu = "loge", llambda = "loge",
                            emu = list(), elambda = list(),
-                           method.init = 1,
+                           imethod = 1,
                            ilambda = 1,
                            shrinkage.init = 0.99,
                            zero = NULL)
@@ -429,9 +439,9 @@ rinv.gaussian = function(n, mu, lambda) {
     if (!is.list(emu)) emu = list()
     if (!is.list(elambda)) elambda = list()
 
-    if (!is.Numeric(method.init, allow = 1, integ = TRUE, posit = TRUE) ||
-       method.init > 3)
-        stop("argument 'method.init' must be 1 or 2 or 3")
+    if (!is.Numeric(imethod, allow = 1, integ = TRUE, posit = TRUE) ||
+       imethod > 3)
+        stop("argument 'imethod' must be 1 or 2 or 3")
     if (!is.Numeric(shrinkage.init, allow = 1) || shrinkage.init < 0 ||
        shrinkage.init > 1) stop("bad input for argument 'shrinkage.init'")
 
@@ -459,9 +469,9 @@ rinv.gaussian = function(n, mu, lambda) {
 
         if (!length(etastart)) {
           init.mu =
-                if ( .method.init == 3) {
+                if ( .imethod == 3) {
                   0 * y + 1.1 * median(y) + 1/8
-                } else if ( .method.init == 2) {
+                } else if ( .imethod == 2) {
                   use.this = weighted.mean(y, w)
                   (1 - .sinit) * y  + .sinit * use.this
                 } else {
@@ -478,19 +488,19 @@ rinv.gaussian = function(n, mu, lambda) {
     }), list( .lmu = lmu, .llambda = llambda,
               .emu = emu, .elambda = elambda,
               .sinit = shrinkage.init,
-              .method.init = method.init, .ilambda = ilambda ))),
+              .imethod = imethod, .ilambda = ilambda ))),
     inverse = eval(substitute(function(eta, extra = NULL) {
         eta2theta(eta[,1], link = .lmu, earg = .emu)
     }, list( .lmu = lmu, .emu = emu, .elambda = elambda ))),
     last = eval(substitute(expression({
         misc$link =    c(mu = .lmu, lambda = .llambda)
         misc$earg = list(mu = .emu, lambda = .elambda)
-        misc$method.init = .method.init
+        misc$imethod = .imethod
         misc$shrinkage.init = .sinit 
     }), list( .lmu = lmu, .llambda = llambda,
               .emu = emu, .elambda = elambda,
               .sinit = shrinkage.init,
-              .method.init = method.init ))),
+              .imethod = imethod ))),
     loglikelihood = eval(substitute(
              function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
       lambda <- eta2theta(eta[,2], link = .llambda, earg = .elambda)
@@ -510,8 +520,8 @@ rinv.gaussian = function(n, mu, lambda) {
 
         dl.dmu = lambda * (y - mymu) / mymu^3
         dl.dlambda <- 0.5 / lambda - (y-mymu)^2 / (2 * mymu^2 * y)
-        w * cbind(dl.dmu * dmu.deta,
-                  dl.dlambda * dlambda.deta)
+        c(w) * cbind(dl.dmu * dmu.deta,
+                     dl.dlambda * dlambda.deta)
     }), list( .lmu = lmu, .llambda = llambda,
               .emu = emu, .elambda = elambda ))),
     weight = eval(substitute(expression({
@@ -519,7 +529,7 @@ rinv.gaussian = function(n, mu, lambda) {
         d2l.dlambda2 = 0.5 / (lambda^2)
         wz <- cbind(dmu.deta^2 * d2l.dmu2,
                     dlambda.deta^2 * d2l.dlambda2)
-        w * wz
+        c(w) * wz
     }), list( .lmu = lmu, .llambda = llambda,
               .emu = emu, .elambda = elambda ))))
 }
@@ -529,7 +539,7 @@ rinv.gaussian = function(n, mu, lambda) {
 
  poissonff <- function(link = "loge", earg = list(),
                       dispersion = 1, onedpar = FALSE,
-                      imu=NULL, method.init = 1,
+                      imu = NULL, imethod = 1,
                       parallel = FALSE, zero = NULL)
 {
 
@@ -537,9 +547,9 @@ rinv.gaussian = function(n, mu, lambda) {
     if (mode(link )!= "character" && mode(link )!= "name")
         link <- as.character(substitute(link))
     if (!is.list(earg)) earg = list()
-    if (!is.Numeric(method.init, allow = 1, integ=TRUE, posit = TRUE) ||
-       method.init > 3)
-        stop("argument 'method.init' must be 1 or 2 or 3")
+    if (!is.Numeric(imethod, allow = 1, integ=TRUE, posit = TRUE) ||
+       imethod > 3)
+        stop("argument 'imethod' must be 1 or 2 or 3")
     if (length(imu) && !is.Numeric(imu, posit = TRUE))
         stop("bad input for argument 'imu'")
 
@@ -579,9 +589,9 @@ rinv.gaussian = function(n, mu, lambda) {
         if (!length(etastart)) {
             mu.init = pmax(y, 1/8)
             for(iii in 1:ncol(y)) {
-                if ( .method.init == 2) {
+                if ( .imethod == 2) {
                     mu.init[,iii] = weighted.mean(y[,iii], w) + 1/8
-                } else if ( .method.init == 3) {
+                } else if ( .imethod == 3) {
                     mu.init[,iii] = median(y[,iii]) + 1/8
                 }
             }
@@ -590,7 +600,7 @@ rinv.gaussian = function(n, mu, lambda) {
             etastart <- theta2eta(mu.init, link = .link, earg = .earg)
         }
     }), list( .link = link, .estimated.dispersion = estimated.dispersion,
-              .method.init=method.init, .imu=imu, .earg = earg ))),
+              .imethod = imethod, .imu = imu, .earg = earg ))),
     inverse = eval(substitute(function(eta, extra = NULL) {
         mu = eta2theta(eta, link = .link, earg = .earg)
         mu
@@ -617,14 +627,14 @@ rinv.gaussian = function(n, mu, lambda) {
         misc$default.dispersion <- 1
         misc$estimated.dispersion <- .estimated.dispersion
         misc$expected = TRUE
-        misc$link = rep( .link, length=M)
+        misc$link = rep( .link, length = M)
         names(misc$link) = if (M > 1) dn2 else "mu"
-        misc$method.init = .method.init
+        misc$imethod = .imethod
 
         misc$earg = vector("list", M)
         names(misc$earg) = names(misc$link)
         for(ii in 1:M) misc$earg[[ii]] = .earg
-    }), list( .dispersion = dispersion, .method.init=method.init,
+    }), list( .dispersion = dispersion, .imethod=imethod,
               .estimated.dispersion = estimated.dispersion,
               .onedpar = onedpar, .link = link, .earg = earg ))),
     link = eval(substitute( function(mu, extra = NULL) {
@@ -756,7 +766,7 @@ poissonqn.control <- function(save.weight=TRUE, ...)
         misc$default.dispersion <- 1
         misc$estimated.dispersion <- .estimated.dispersion
         misc$expected = FALSE
-        misc$link = rep( .link, length=M)
+        misc$link = rep( .link, length = M)
         names(misc$link) = if (M > 1) dn2 else "mu"
 
         misc$earg = vector("list", M)
@@ -908,8 +918,8 @@ poissonqn.control <- function(save.weight=TRUE, ...)
         dlambda.deta = dtheta.deta(theta = lambda, link = .lmean, earg = .emean)
         dDisper.deta = dtheta.deta(theta = Disper, link = .ldispersion,
                                    earg = .edispersion)
-        w * cbind(dl.dlambda * dlambda.deta,
-                  dl.dDisper * dDisper.deta)
+        c(w) * cbind(dl.dlambda * dlambda.deta,
+                     dl.dDisper * dDisper.deta)
     }), list( .lmean = lmean, .emean = emean,
               .ldispersion = ldispersion, .edispersion = edispersion ))),
     weight = eval(substitute(expression({
@@ -917,7 +927,7 @@ poissonqn.control <- function(save.weight=TRUE, ...)
         usethis.lambda = pmax(lambda, .Machine$double.eps / 10000)
         wz[,iam(1,1,M)] = (Disper / usethis.lambda) * dlambda.deta^2
         wz[,iam(2,2,M)] = (0.5 / Disper^2) * dDisper.deta^2
-        w * wz
+        c(w) * wz
     }), list( .lmean = lmean, .emean = emean,
               .ldispersion = ldispersion, .edispersion = edispersion ))))
 }
@@ -1150,7 +1160,7 @@ poissonqn.control <- function(save.weight=TRUE, ...)
         mu[cbind(1:extra$n, extra$index9)]
     }, list( .link = link, .earg = earg  ))),
     last = eval(substitute(expression({
-        misc$link = rep( .link, length=M)
+        misc$link = rep( .link, length = M)
         names(misc$link) = if (M > 1) paste("mu(matched set ",
             1:M, ")", sep = "") else "mu"
         misc$earg = vector("list", M)
@@ -1332,6 +1342,228 @@ mypool = function(x, index) {
     }), list( .link = link, .earg = earg, .smallno = smallno ))))
 }
 
+
+
+
+
+
+
+
+
+
+
+ augbinomial = function(link = "logit", earg = list(),
+                        mv = FALSE,
+                        parallel = TRUE)
+
+{
+ print("hi 20110222")
+
+    if (!is.logical(parallel) ||
+        length(parallel) != 1 ||
+        !parallel)
+      warning("Argument 'parallel' should be assigned 'TRUE' only")
+
+    if (mode(link )!= "character" && mode(link )!= "name")
+        link <- as.character(substitute(link))
+    if (!is.list(earg)) earg = list()
+
+    new("vglmff",
+    blurb = if (mv) c("Augmented multivariate binomial model\n\n", 
+           "Link:     ",
+           namesof("mu.1[,j]", link, earg = earg), ", ",
+           namesof("mu.2[,j]", link, earg = earg),
+           "\n",
+           "Variance: mu[,j]*(1-mu[,j])") else
+           c("Augmented binomial model\n\n", 
+           "Link:     ",
+           namesof("mu.1[,j]", link, earg = earg), ", ",
+           namesof("mu.2[,j]", link, earg = earg),
+           "\n",
+           "Variance: mu*(1-mu)"),
+    deviance = function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
+        Deviance.categorical.data.vgam(mu=cbind(mu, 1-mu), y=cbind(y, 1-y),
+                                       w=w, residuals = residuals,
+                                       eta=eta, extra=extra)
+    },
+    infos = eval(substitute(function(...) {
+      list(Musual = 2,
+           parallel = .parallel)
+    }, list( .parallel = parallel ))),
+    initialize = eval(substitute(expression({
+
+        Musual = 2
+
+        if ( .mv ) {
+            y = as.matrix(y)
+            M = Musual * ncol(y)
+            if (!all(y == 0 | y == 1))
+                stop("response must contain 0's and 1's only")
+            dn2 = if (is.matrix(y)) dimnames(y)[[2]] else NULL
+            dn2 = if (length(dn2)) {
+                paste("E[", dn2, "]", sep = "") 
+            } else {
+                paste("mu", 1:M, sep = "") 
+            }
+            predictors.names =
+              c(namesof(if (M > 1) dn2 else
+                        "mu.1", .link, earg = .earg, short = TRUE),
+                namesof(if (M > 1) dn2 else
+                        "mu.2", .link, earg = .earg, short = TRUE))
+            NOS = M / Musual
+            predictors.names =
+            predictors.names[interleave.VGAM(Musual * NOS, M = Musual)]
+
+
+            if (!length(mustart) && !length(etastart))
+              mustart = (0.5 + w * y) / (1 + w)
+        } else {
+
+            dn2 = c("mu1.", "mu2.")
+            M = Musual
+
+
+
+            if (!all(w == 1))
+              extra$orig.w = w
+
+
+            NCOL = function (x) if (is.array(x) && length(dim(x)) > 1 ||
+                              is.data.frame(x)) ncol(x) else as.integer(1)
+            if (NCOL(y) == 1) {
+                if (is.factor(y)) y = (y != levels(y)[1])
+                nvec = rep(1, n)
+                y[w == 0] <- 0
+                if (!all(y == 0 || y == 1))
+                    stop("response values 'y' must be 0 or 1")
+                if (!length(mustart) && !length(etastart))
+                  mustart = (0.5 + w * y) / (1 + w)
+
+
+                no.successes = y
+                if (min(y) < 0)
+                    stop("Negative data not allowed!")
+                if (any(abs(no.successes - round(no.successes)) > 1.0e-8))
+                    stop("Number of successes must be integer-valued")
+            } else if (NCOL(y) == 2) {
+                if (min(y) < 0)
+                    stop("Negative data not allowed!")
+                if (any(abs(y - round(y)) > 1.0e-8))
+                    stop("Count data must be integer-valued")
+                y = round(y)
+                nvec = y[,1] + y[,2]
+                y = ifelse(nvec > 0, y[,1] / nvec, 0)
+                w = w * nvec
+                if (!length(mustart) && !length(etastart))
+                  mustart = (0.5 + nvec * y) / (1 + nvec)
+            } else {
+                stop("for the binomialff family, response 'y' must be a ",
+                     "vector of 0 and 1's\n",
+                     "or a factor (first level = fail, ",
+                                   "other levels = success),\n",
+                     "or a 2-column matrix where col 1 is the no. of ",
+                     "successes and col 2 is the no. of failures")
+            }
+            predictors.names =
+              c(namesof("mu.1", .link, earg = .earg, short = TRUE),
+                namesof("mu.2", .link, earg = .earg, short = TRUE))
+        }
+ print("head(etastart) b 20110221")
+ print( head(etastart)          )
+    }), list( .link = link, .mv = mv, .earg = earg ))),
+    inverse = eval(substitute(function(eta, extra = NULL) {
+        Mdiv2  =  ncol(eta) / 2
+        index1 =  2*(1:Mdiv2) - 1
+        mu =  eta2theta(eta[, index1],
+                        link = .link, earg = .earg)
+        mu
+    }, list( .link = link, .earg = earg  ))),
+    last = eval(substitute(expression({
+        misc$mv = .mv
+        misc$link = rep( .link, length = M)
+        names(misc$link) = if (M > 1) dn2 else "mu"
+
+        misc$earg = vector("list", M)
+        names(misc$earg) = names(misc$link)
+        for(ii in 1:M) misc$earg[[ii]] = .earg
+
+        misc$parallel = .parallel
+        misc$expected = TRUE
+    }), list( .link = link, .mv = mv, .earg = earg,
+              .parallel = parallel ))),
+    link = eval(substitute(function(mu, extra = NULL) {
+        usualanswer = theta2eta(mu, .link, earg = .earg )
+        kronecker(usualanswer, matrix(1, 1, 2))
+    }, list( .link = link, .earg = earg ))),
+    loglikelihood =
+      function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
+        if (residuals) w * (y / mu - (1-y) / (1-mu)) else {
+
+          ycounts = if (is.numeric(extra$orig.w)) y * w / extra$orig.w else
+                    y * w # Convert proportions to counts
+          nvec = if (is.numeric(extra$orig.w)) round(w / extra$orig.w) else
+                    round(w)
+
+          smallno = 1.0e6 * .Machine$double.eps
+          smallno = sqrt(.Machine$double.eps)
+          if (max(abs(ycounts - round(ycounts))) > smallno)
+              warning("converting 'ycounts' to integer in @loglikelihood")
+          ycounts = round(ycounts)
+
+          sum((if (is.numeric(extra$orig.w)) extra$orig.w else 1) *
+              dbinom(x = ycounts, size = nvec, prob = mu,
+                           log = TRUE))
+        }
+    },
+    vfamily = c("augbinomial", "vcategorical"),
+    deriv = eval(substitute(expression({
+      Musual = 2
+      Mdiv2 =  M / 2
+
+      NOS = M / Musual
+
+      Konst1 = 1  # Works with this
+      deriv1 = Konst1 * w *
+        if ( .link == "logit") {
+            y * (1 - mu)
+        } else  {
+            stop("this is not programmed in yet")
+            dtheta.deta(mu, link = .link, earg = .earg ) *
+            (y / mu - 1.0) / (1.0 - mu)
+        }
+      deriv2 = Konst1 * w *
+        if ( .link == "logit") {
+           -(1 - y) * mu
+        } else  {
+            stop("this is not programmed in yet")
+            dtheta.deta(mu, link = .link, earg = .earg ) *
+            (y / mu - 1.0) / (1.0 - mu)
+        }
+
+      myderiv = (cbind(deriv1,
+                       deriv2))[, interleave.VGAM(Musual * NOS, M = Musual)]
+      myderiv
+    }), list( .link = link, .earg = earg ))),
+    weight = eval(substitute(expression({
+        tmp100 = mu * (1.0 - mu)
+
+        tmp200 = if ( .link == "logit") {
+          cbind(w * tmp100)
+        } else {
+          cbind(w * dtheta.deta(mu, link = .link, earg = .earg)^2 / tmp100)
+        }
+
+        wk_wt1 = (Konst1^2) * tmp200 * (1 - mu)
+        wk_wt2 = (Konst1^2) * tmp200 *      mu
+
+
+
+
+        my_wk_wt = cbind(wk_wt1, wk_wt2)
+        my_wk_wt = my_wk_wt[, interleave.VGAM(Musual * NOS, M = Musual)]
+        my_wk_wt
+    }), list( .link = link, .earg = earg ))))
+}
 
 
 

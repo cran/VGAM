@@ -7,7 +7,7 @@
   by maximum likelihood estimation.
 }
 \usage{
-erlang(shape.arg, link = "loge", earg=list(), method.init = 1)
+erlang(shape.arg, link = "loge", earg=list(), imethod = 1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -26,7 +26,7 @@ erlang(shape.arg, link = "loge", earg=list(), method.init = 1)
   See \code{earg} in \code{\link{Links}} for general information.
 
   }
-  \item{method.init}{
+  \item{imethod}{
   An integer with value \code{1} or \code{2} which
   specifies the initialization method. If failure to converge occurs
   try the other value.

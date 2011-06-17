@@ -1,7 +1,7 @@
 \name{normal1}
 \alias{normal1}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{ Univariate normal distribution }
+\title{ Univariate Normal Distribution }
 \description{
   Maximum likelihood estimation of the two parameters of a univariate
   normal distribution.
@@ -9,7 +9,7 @@
 }
 \usage{
 normal1(lmean = "identity", lsd = "loge",
-        emean = list(), esd = list(), method.init = 1, zero = -2)
+        emean = list(), esd = list(), imethod = 1, zero = -2)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -25,8 +25,9 @@ normal1(lmean = "identity", lsd = "loge",
   See \code{earg} in \code{\link{Links}} for general information.
 
   }
-  \item{method.init, zero}{ 
+  \item{imethod, zero}{ 
   See \code{\link{CommonVGAMffArguments}} for more information.
+  If \code{lmean = loge} then try \code{imethod = 2}.
 
   }
 
@@ -67,12 +68,13 @@ New York: Wiley-Interscience, Third edition.
     \code{\link{posnormal1}},
     \code{\link{mix2normal1}},
     \code{\link{tobit}},
-    \code{\link{cnormal1}},
+    \code{\link{cennormal1}},
     \code{\link{fnormal1}},
     \code{\link{skewnormal1}},
-    \code{\link{dcnormal1}},
+    \code{\link{dcennormal1}},
     \code{\link{huber}},
     \code{\link{studentt}},
+    \code{\link{binormal}},
     \code{\link[stats:Normal]{dnorm}}.
 
 }

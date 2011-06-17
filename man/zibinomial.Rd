@@ -8,8 +8,8 @@
 
 }
 \usage{
-zibinomial(lphi="logit", lmu="logit", ephi=list(), emu=list(),
-           iphi=NULL, zero=1, mv=FALSE)
+zibinomial(lphi = "logit", lmu = "logit", ephi = list(), emu = list(),
+           iphi = NULL, zero = 1, mv = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -34,9 +34,10 @@ zibinomial(lphi="logit", lmu="logit", ephi=list(), emu=list(),
   \item{zero}{ 
   An integer specifying which linear/additive predictor is modelled
   as intercepts only.  If given, the value must be either 1 or 2,
-  and the default is the first. Setting \code{zero=NULL} enables both
+  and the default is the first. Setting \code{zero = NULL} enables both
   \eqn{\phi}{phi} and \eqn{\mu}{mu} to be modelled as a function of
   the explanatory variables.
+  See \code{\link{CommonVGAMffArguments}} for more information.
 
   }
   \item{mv}{ 
@@ -62,16 +63,19 @@ zibinomial(lphi="logit", lmu="logit", ephi=list(), emu=list(),
   By default, the two linear/additive predictors are \eqn{(logit(\phi),
   logit(\mu))^T}{(logit(phi), logit(mu))^T}.
 
+
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}}
   and \code{\link{vgam}}.
 
+
 }
 %\references{
 
 %}
+
 \author{ T. W. Yee }
 \note{
   The response variable must have one of the formats described by
@@ -79,17 +83,21 @@ zibinomial(lphi="logit", lmu="logit", ephi=list(), emu=list(),
   vector of sample proportions with the \code{weights} argument 
   specifying the values of \eqn{N}.
 
+
   To work well, one needs \eqn{N>1} and \eqn{\mu>0}{mu>0}, i.e.,
   the larger \eqn{N} and \eqn{\mu}{mu} are, the better.
+
 
   For intercept-models and constant \eqn{N} over the \eqn{n} observations,
   the \code{misc} slot has a component called \code{p0} which is the
   estimate of \eqn{P(Y=0)}.  This family function currently cannot handle
-  a multivariate response (only \code{mv=FALSE} can be handled).
+  a multivariate response (only \code{mv = FALSE} can be handled).
+
 
 % The zero-\emph{deflated} binomial distribution cannot be handled with
 % this family function.  It can be handled with the zero-altered binomial
 % distribution; see \code{\link{zabinomial}}.
+
 
 }
 
@@ -108,11 +116,11 @@ zibinomial(lphi="logit", lmu="logit", ephi=list(), emu=list(),
 
 }
 \examples{
-size = 10  # number of trials; N in the notation above
+size = 10  # Number of trials; N in the notation above
 nn = 200
-zibdata = data.frame(phi   = logit( 0, inv = TRUE), # 0.50
-                     mubin = logit(-1, inv = TRUE), # Mean of usual binomial
-                     sv    = rep(size, len = nn))
+zibdata = data.frame(phi   = logit( 0, inverse = TRUE), # 0.50
+                     mubin = logit(-1, inverse = TRUE), # Mean of usual binomial
+                     sv    = rep(size, length = nn))
 zibdata = transform(zibdata, 
                     y = rzibinom(nn, size = sv, prob = mubin, phi = phi))
 with(zibdata, table(y))
@@ -120,7 +128,7 @@ fit = vglm(cbind(y, sv - y) ~ 1, zibinomial, zibdata, trace = TRUE)
 
 coef(fit, matrix = TRUE)
 Coef(fit) # Useful for intercept-only models
-fit@misc$p0  # Estimate of P(Y=0)
+fit@misc$p0  # Estimate of P(Y = 0)
 head(fitted(fit))
 with(zibdata, mean(y)) # Compare this with fitted(fit)
 summary(fit)

@@ -5,6 +5,7 @@
 \title{ Return Level Plot for GEV Fits }
 \description{
   A return level plot is constructed for a GEV-type model.
+
 }
 \usage{
 rlplot.egev(object, plot.it = TRUE,
@@ -14,7 +15,7 @@ rlplot.egev(object, plot.it = TRUE,
     pch = par()$pch, pcol.arg = par()$col, pcex = par()$cex,
     llty.arg = par()$lty, lcol.arg = par()$col, llwd.arg = par()$lwd,
     slty.arg = par()$lty, scol.arg = par()$col, slwd.arg = par()$lwd,
-    ylim = NULL, Log = TRUE, CI = TRUE, epsilon = 1e-05, ...)
+    ylim = NULL, log = TRUE, CI = TRUE, epsilon = 1e-05, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -32,6 +33,7 @@ rlplot.egev(object, plot.it = TRUE,
 
   \item{probability}{
     Numeric vector of probabilities used.
+
 
   }
   \item{add.arg}{ Logical. Add the plot to an existing plot? }
@@ -54,10 +56,12 @@ rlplot.egev(object, plot.it = TRUE,
   \item{slty.arg, scol.arg, slwd.arg}{
     Correponding arguments for the lines used for the
     confidence intervals. Used only if \code{CI=TRUE}.
+
   }
   \item{ylim}{ Limits for the y-axis. Numeric of length 2. }
-  \item{Log}{ Logical. If \code{TRUE} then \code{log=""} otherwise
+  \item{log}{ Logical. If \code{TRUE} then \code{log=""} otherwise
     \code{log="x"}. This changes the labelling of the x-axis only.
+
   }
   \item{CI}{ Logical. Add in a 95 percent confidence interval? }
   \item{epsilon}{
@@ -65,21 +69,25 @@ rlplot.egev(object, plot.it = TRUE,
     approximation to the first derivatives with respect to
     each parameter. If too small, numerical problems will occur.
 
+
   }
   \item{\dots}{
     Arguments passed into the \code{plot} function
     when setting up the entire plot. Useful arguments here include
     \code{sub} and \code{las}.
+
     
   }
 }
 \details{
   A return level plot plots \eqn{z_p}{zp} versus
-  \eqn{\log(y_p)}{log(yp)}. It is linear if the shape parameter
-  \eqn{\xi=0}{xi=0}. If \eqn{\xi<0}{xi<0} then the plot is convex
+  \eqn{\log(y_p)}{log(yp)}.
+  It is linear if the shape parameter \eqn{\xi=0}{xi=0}.
+  If \eqn{\xi<0}{xi<0} then the plot is convex
   with asymptotic limit as \eqn{p} approaches zero at
-  \eqn{\mu-\sigma / \xi}{mu-sigma/xi}. And if
-  \eqn{\xi>0}{xi>0} then the plot is concave and has no finite bound.
+  \eqn{\mu-\sigma / \xi}{mu-sigma/xi}.
+  And if \eqn{\xi>0}{xi>0} then the plot is concave and has
+  no finite bound.
   Here, \eqn{G(z_p) = 1-p}{G(zp) = 1-p} where \eqn{0<p<1}
   (\eqn{p} corresponds to the argument \code{probability})
   and \eqn{G} is the cumulative distribution function of the
@@ -88,6 +96,7 @@ rlplot.egev(object, plot.it = TRUE,
   \eqn{1/p}. For many applications, this means \eqn{z_p}{zp}
   is exceeded by the annual
   maximum in any particular year with probability \eqn{p}.
+
 
   The points in the plot are the actual data.
   
@@ -104,9 +113,12 @@ rlplot.egev(object, plot.it = TRUE,
 }
 \references{
 
+
 Coles, S. (2001)
 \emph{An Introduction to Statistical Modeling of Extreme Values}.
 London: Springer-Verlag.
+
+
 }
 
 \author{ T. W. Yee }
@@ -118,19 +130,23 @@ London: Springer-Verlag.
 
 \seealso{
   \code{\link{egev}}.
+
+
 }
 
 \examples{
-y = rgev(n <- 100, scale=exp(1), shape = -0.1)
-fit = vglm(y ~ 1, egev, trace=TRUE)
+gdata = data.frame(y = rgev(n <- 100, scale = 2, shape = -0.1))
+fit = vglm(y ~ 1, egev, gdata, trace = TRUE)
 
 # Identity link for all parameters:
-fit2 = vglm(y ~ 1, egev(lsh=identity, lsc=identity, isc=10), trace=TRUE)
+fit2 = vglm(y ~ 1, egev(lshape = identity, lscale = identity,
+                        iscale = 10), gdata, trace = TRUE)
+coef(fit2, matrix = TRUE)
 \dontrun{
-par(mfrow=c(1,2))
+par(mfrow = c(1, 2))
 rlplot(fit) -> i1
-rlplot(fit2, pcol="darkorange", lcol="blue", Log=FALSE,
-       scol="darkgreen", slty="dashed") -> i2
+rlplot(fit2, pcol = "darkorange", lcol = "blue", log = FALSE,
+       scol = "darkgreen", slty = "dashed", las = 1) -> i2
 range(i2@post$rlplot$upper - i1@post$rlplot$upper) # Should be near 0
 range(i2@post$rlplot$lower - i1@post$rlplot$lower) # Should be near 0
 }

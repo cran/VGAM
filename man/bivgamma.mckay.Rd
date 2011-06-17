@@ -10,7 +10,7 @@
 \usage{
 bivgamma.mckay(lscale = "loge", lshape1 = "loge", lshape2 = "loge",
                iscale = NULL, ishape1 = NULL, ishape2 = NULL,
-               method.init=1, zero = 1)
+               imethod=1, zero = 1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -25,7 +25,7 @@ bivgamma.mckay(lscale = "loge", lshape1 = "loge", lshape2 = "loge",
   The default is to compute them internally.
 
   }
-  \item{method.init, zero}{
+  \item{imethod, zero}{
   See \code{\link{CommonVGAMffArguments}}.
 
   }

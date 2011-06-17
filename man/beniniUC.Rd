@@ -11,7 +11,7 @@
   \code{shape}.
 }
 \usage{
-dbenini(x, shape, y0, log=FALSE)
+dbenini(x, shape, y0, log = FALSE)
 pbenini(q, shape, y0)
 qbenini(p, shape, y0)
 rbenini(n, shape, y0)
@@ -25,7 +25,7 @@ rbenini(n, shape, y0)
   \item{y0}{the scale parameter \eqn{y_0}{y0}.}
   \item{log}{
   Logical.
-  If \code{log=TRUE} then the logarithm of the density is returned.
+  If \code{log = TRUE} then the logarithm of the density is returned.
 
   }
 
@@ -61,17 +61,18 @@ Hoboken, NJ: Wiley-Interscience.
 \examples{
 \dontrun{
 y0 = 1; shape = exp(1)
-xx = seq(0.0, 4, len=101)
-plot(xx, dbenini(xx, y0=y0,shape=shape), type="l", col="blue", las=1,
-     main="Blue is density, red is cumulative distribution function",
-     sub="Purple lines are the 10,20,...,90 percentiles", ylim=0:1,
-     ylab="", xlab="x")
-abline(h=0, col="blue", lty=2)
-lines(xx, pbenini(xx, y0=y0,shape=shape), col="red")
-probs = seq(0.1, 0.9, by=0.1)
-Q = qbenini(probs, y0=y0,shape=shape)
-lines(Q, dbenini(Q, y0=y0,shape=shape), col="purple", lty=3, type="h")
-pbenini(Q, y0=y0,shape=shape) - probs    # Should be all zero
+xx = seq(0.0, 4, len = 101)
+plot(xx, dbenini(xx, y0 = y0,shape = shape), type = "l", col = "blue",
+     main = "Blue is density, orange is cumulative distribution function",
+     sub = "Purple lines are the 10,20,...,90 percentiles", ylim = 0:1,
+     las = 1, ylab = "", xlab = "x")
+abline(h = 0, col = "blue", lty = 2)
+lines(xx, pbenini(xx, y0 = y0, shape = shape), col = "orange")
+probs = seq(0.1, 0.9, by = 0.1)
+Q = qbenini(probs, y0 = y0, shape = shape)
+lines(Q, dbenini(Q, y0 = y0, shape = shape),
+      col = "purple", lty = 3, type = "h")
+pbenini(Q, y0 = y0, shape = shape) - probs    # Should be all zero
 }
 }
 \keyword{distribution}

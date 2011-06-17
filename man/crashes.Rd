@@ -13,7 +13,7 @@
   A variety of reported crash data cross-classified  by time (hour
   of the day) and day of the week, accumulated over 2009. These
   include fatalities and injuries (by car), trucks, motor cycles,
-  bicycles  and pedestrians.  There is some alcohol-related
+  bicycles  and pedestrians.  There are some alcohol-related
   data too.
 
    }
@@ -53,8 +53,8 @@ data(alclevels)
     Each cell is the aggregate number of crashes reported at each
     hour-day combination, over the 2009 calendar year.
     The \code{rownames} of each data frame is the
-    start time (hourly from midnight onwards) on a 24 hour clock.
-    For example, 21 means 9.00pm to 9.59pm.
+    start time (hourly from midnight onwards) on a 24 hour clock,
+    e.g., 21 means 9.00pm to 9.59pm.
      
      
   For crashes,
@@ -105,14 +105,13 @@ axis(3:4, labels = FALSE, tick = FALSE)
 abline(v = sort(1 + c((0:7) * 24, (0:6) * 24 + 12)), lty = "dashed",
        col = c("purple", "orange")) }
 
-
-# Goodmans RC model
-fitgrc1 <- grc(alcoff)
-
+# Goodmans RC models
+fitgrc1 <- grc(alcoff) # Rank-1 model
 fitgrc2 <- grc(alcoff, Rank = 2, Corner = FALSE, Uncor = TRUE)
 print(Coef(fitgrc2), dig = 2)
-\dontrun{ biplot(fitgrc2, scaleA = 2.3, Ccol = "blue", Acol = "red",
-       Clabels = as.character(1:23)) }
+\dontrun{ biplot(fitgrc2, scaleA = 2.3, Ccol = "blue", Acol = "orange",
+       Clabels = as.character(1:23), xlim = c(-1.3, 2.3),
+       ylim = c(-1.2, 1)) }
 }
 \keyword{datasets}
 

@@ -8,9 +8,8 @@
 
 }
 \usage{
-genrayleigh(lshape = "loge", lscale = "loge",
-            eshape = list(), escale = list(),
-            ishape = NULL,   iscale = NULL,
+genrayleigh(lshape = "loge", lscale = "loge", eshape = list(),
+            escale = list(), ishape = NULL,   iscale = NULL,
             tol12 = 1e-05, nsimEIM = 300, zero = 1)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -52,12 +51,15 @@ genrayleigh(lshape = "loge", lscale = "loge",
   the fitted values.
   Applications of the generalized Rayleigh distribution include modeling
   strength data and general lifetime data.
+  Simulated Fisher scoring is implemented.
+
 
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}}
   and \code{\link{vgam}}.
+
 
 }
 \references{
@@ -67,11 +69,13 @@ genrayleigh(lshape = "loge", lscale = "loge",
   \emph{Computational Statistics and Data Analysis},
   \bold{49}, 187--200.
 
+
 }
 \author{ J. G. Lauder and T. W. Yee }
 \note{
   We define \code{scale} as the reciprocal of the scale parameter 
   used by Kundu and Raqab (2005).
+
 
 }
 
@@ -79,12 +83,13 @@ genrayleigh(lshape = "loge", lscale = "loge",
   \code{\link{dgenray}},
   \code{\link{rayleigh}}.
 
+
 }
 \examples{
-shape = exp(1); scale = exp(2); 
+shape = exp(1); scale = exp(1);
 rdata = data.frame(y = rgenray(n = 1000, shape, scale))
 fit = vglm(y ~ 1, genrayleigh, rdata, trace = TRUE)
-c(with(rdata, mean(y)), head(fitted(fit),1))
+c(with(rdata, mean(y)), head(fitted(fit), 1))
 coef(fit, matrix = TRUE)
 Coef(fit)
 summary(fit)

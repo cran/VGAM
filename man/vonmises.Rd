@@ -10,7 +10,7 @@
 vonmises(llocation="elogit", lscale="loge",
          elocation=if(llocation=="elogit") list(min=0, max=2*pi)
          else list(), escale=list(), ilocation=NULL,
-         iscale=NULL, method.init=1, zero=NULL)
+         iscale=NULL, imethod=1, zero=NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -29,18 +29,18 @@ vonmises(llocation="elogit", lscale="loge",
   \item{ilocation}{
   Initial value for the location \eqn{a} parameter.
   By default, an initial value is chosen internally using
-  \code{method.init}. Assigning a value will override
-  the argument \code{method.init}.
+  \code{imethod}. Assigning a value will override
+  the argument \code{imethod}.
 
   }
   \item{iscale}{
   Initial value for the scale \eqn{k} parameter.
   By default, an initial value is chosen internally using
-  \code{method.init}. Assigning a value will override
-  the argument \code{method.init}.
+  \code{imethod}. Assigning a value will override
+  the argument \code{imethod}.
 
   }
-  \item{method.init}{
+  \item{imethod}{
   An integer with value \code{1} or \code{2} which
   specifies the initialization method. If failure to converge occurs
   try the other value, or else specify a value for 

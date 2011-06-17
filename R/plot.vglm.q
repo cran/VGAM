@@ -14,12 +14,12 @@
 
 
 
-plotvgam = function(x, newdata=NULL, y=NULL, residuals=NULL, rugplot=TRUE,
-                    se=FALSE, scale=0, 
-                    raw=TRUE, offset.arg=0, deriv.arg=0, overlay=FALSE,
-                    type.residuals=c("deviance","working","pearson","response"),
-                    plot.arg=TRUE, which.term=NULL, which.cf=NULL, 
-                    control=plotvgam.control(...), 
+plotvgam = function(x, newdata = NULL, y = NULL, residuals = NULL, rugplot = TRUE,
+                    se = FALSE, scale = 0, 
+                    raw = TRUE, offset.arg = 0, deriv.arg = 0, overlay = FALSE,
+                    type.residuals = c("deviance", "working", "pearson", "response"),
+                    plot.arg = TRUE, which.term = NULL, which.cf = NULL, 
+                    control = plotvgam.control(...), 
                     varxij = 1, ...)
 {
 
@@ -28,7 +28,7 @@ plotvgam = function(x, newdata=NULL, y=NULL, residuals=NULL, rugplot=TRUE,
     na.act = x@na.action
     x@na.action = list() # Don't want NAs returned from predict() or resid()
 
-    if (!is.Numeric(varxij, integ=TRUE, allow=1, posit=TRUE))
+    if (!is.Numeric(varxij, integ = TRUE, allow=1, posit = TRUE))
         stop("bad input for the 'varxij' argument")
     if (any(slotNames(x) == "control")) {
         x@control$varxij = varxij
@@ -43,19 +43,19 @@ plotvgam = function(x, newdata=NULL, y=NULL, residuals=NULL, rugplot=TRUE,
             c("deviance","working","pearson","response"))[1]
 
 
-    if (!is.Numeric(deriv.arg, integ=TRUE, allow=1) || deriv.arg<0)
+    if (!is.Numeric(deriv.arg, integ = TRUE, allow=1) || deriv.arg<0)
         stop("bad input for the 'deriv' argument")
 
     if (se && deriv.arg > 0) {
         warning("standard errors not available with derivatives. ",
-                "Setting 'se=FALSE'")
+                "Setting 'se = FALSE'")
         se = FALSE
     }
 
     preplot.object <- x@preplot
     if (!length(preplot.object)) {
         preplot.object <- preplotvgam(x, newdata=newdata,
-                                      raw=raw, deriv=deriv.arg, se=se,
+                                      raw=raw, deriv = deriv.arg, se=se,
                                       varxij=varxij)
     }
 
@@ -70,7 +70,7 @@ plotvgam = function(x, newdata=NULL, y=NULL, residuals=NULL, rugplot=TRUE,
             } else {
              residuals=resid(x,typ=type.residuals) #Get the prespecified type
                 if (!length(residuals))
-                    warning("residuals are NULL. Ignoring 'residuals=TRUE'")
+                    warning("residuals are NULL. Ignoring 'residuals = TRUE'")
             }
         } else {
             residuals <- NULL
@@ -87,7 +87,7 @@ plotvgam = function(x, newdata=NULL, y=NULL, residuals=NULL, rugplot=TRUE,
     if (plot.arg)
         plotpreplotvgam(preplot.object, residuals=residuals, 
                         rugplot=rugplot, scale=scale, se=se,
-                        offset.arg=offset.arg, deriv.arg=deriv.arg,
+                        offset.arg = offset.arg, deriv.arg = deriv.arg,
                         overlay=overlay, 
                         which.term=which.term, which.cf=which.cf, 
                         control=control)
@@ -99,7 +99,7 @@ plotvgam = function(x, newdata=NULL, y=NULL, residuals=NULL, rugplot=TRUE,
 
 
 
-ylim.scale <- function(ylim, scale=0) {
+ylim.scale <- function(ylim, scale = 0) {
     if (length(ylim) != 2 || ylim[2] < ylim[1])
         stop("error in 'ylim'")
     try <- ylim[2] - ylim[1]
@@ -122,9 +122,9 @@ getallresponses = function(xij) {
 
 
 
-headpreplotvgam = function(object, newdata=NULL,
-                           terms=attr((object@terms)$terms, "term.labels"),
-                           raw=TRUE, deriv.arg=deriv.arg, se=FALSE,
+headpreplotvgam = function(object, newdata = NULL,
+                           terms = attr((object@terms)$terms, "term.labels"),
+                           raw = TRUE, deriv.arg = deriv.arg, se = FALSE,
                            varxij = 1) {
     Terms <- terms(object)  # 11/8/03; object@terms$terms 
     aa <- attributes(Terms)
@@ -190,7 +190,7 @@ headpreplotvgam = function(object, newdata=NULL,
                 stop("need to have names for fitted.values ",
                      "when call has a 'subset' or 'na.action' argument")
 
-            form <- paste("~", unlist(xnames), collapse="+")
+            form <- paste("~", unlist(xnames), collapse = "+")
             Mcall <- c(as.name("model.frame"), list(formula =
                        terms(as.formula(form)),
                        subset = Rownames, na.action = function(x) x))
@@ -213,13 +213,13 @@ headpreplotvgam = function(object, newdata=NULL,
 
 
 
-preplotvgam = function(object, newdata=NULL,
+preplotvgam = function(object, newdata = NULL,
                        terms=attr((object@terms)$terms, "term.labels"),
-                       raw=TRUE, deriv.arg=deriv.arg, se=FALSE,
+                       raw = TRUE, deriv.arg = deriv.arg, se = FALSE,
                        varxij=1) {
 
     result1 = headpreplotvgam(object, newdata=newdata, terms=terms,
-                              raw=raw, deriv.arg=deriv.arg, se=se,
+                              raw=raw, deriv.arg = deriv.arg, se=se,
                               varxij=varxij)
 
     xvars  = result1$xvars
@@ -239,11 +239,11 @@ preplotvgam = function(object, newdata=NULL,
     }
 
     pred <- if (length(newdata)) {
-        predict(object, newdata, type="terms",
-                raw=raw, se.fit=se, deriv.arg=deriv.arg)
+        predict(object, newdata, type = "terms",
+                raw=raw, se.fit=se, deriv.arg = deriv.arg)
     } else {
-        predict(object, type="terms",
-                raw=raw, se.fit=se, deriv.arg=deriv.arg)
+        predict(object, type = "terms",
+                raw=raw, se.fit=se, deriv.arg = deriv.arg)
     }
 
     fits <- if (is.atomic(pred)) NULL else pred$fit
@@ -251,7 +251,7 @@ preplotvgam = function(object, newdata=NULL,
     if (is.null(fits))
         fits <- pred
     fred <- attr(fits, "vterm.assign")   # NULL for M==1
-    Constant = attr(fits, "constant")  # NULL if se=TRUE
+    Constant = attr(fits, "constant")  # NULL if se = TRUE
 
     gamplot <- xnames
 
@@ -276,12 +276,12 @@ preplotvgam = function(object, newdata=NULL,
 }
 
 
-plotvlm <- function(object, residuals=NULL, rugplot= FALSE, ...) {
+plotvlm <- function(object, residuals = NULL, rugplot= FALSE, ...) {
     stop("sorry, this function hasn't been written yet")
 }
 
 
-plotvglm <- function(x, residuals=NULL, smooths= FALSE,
+plotvglm <- function(x, residuals = NULL, smooths= FALSE,
                      rugplot= FALSE, id.n= FALSE, ...) {
     stop("this function hasn't been written yet")
 }
@@ -289,11 +289,11 @@ plotvglm <- function(x, residuals=NULL, smooths= FALSE,
 
 
 
-plotpreplotvgam <- function(x, y=NULL, residuals=NULL,
-                              rugplot= TRUE, se= FALSE, scale=0,
-                              offset.arg=0, deriv.arg=0, overlay= FALSE,
-                              which.term=NULL, which.cf=NULL,
-                              control=NULL)
+plotpreplotvgam <- function(x, y = NULL, residuals = NULL,
+                              rugplot= TRUE, se= FALSE, scale = 0,
+                              offset.arg = 0, deriv.arg = 0, overlay= FALSE,
+                              which.term = NULL, which.cf = NULL,
+                              control = NULL)
 {
     listof <- inherits(x[[1]], "preplotvgam")
     if (listof) {
@@ -305,23 +305,23 @@ plotpreplotvgam <- function(x, y=NULL, residuals=NULL,
             plot.no = plot.no + 1
             if ((is.character(which.term) && any(which.term == ii)) ||
                (is.numeric(which.term) && any(which.term == plot.no)))
-                plotpreplotvgam(x[[ii]], y=NULL,
+                plotpreplotvgam(x[[ii]], y = NULL,
                                 residuals, rugplot=rugplot, se=se, scale=scale,
-                                offset.arg=offset.arg,
-                                deriv.arg=deriv.arg, overlay=overlay,
+                                offset.arg = offset.arg,
+                                deriv.arg = deriv.arg, overlay=overlay,
                                 which.cf=which.cf,
                                 control=control)
         }
     } else {
-        dummy <- function(residuals=NULL, rugplot= TRUE, se= FALSE, scale=0, 
-                          offset.arg=0, deriv.arg=0, overlay= FALSE, 
-                          which.cf=NULL, control=plotvgam.control())
+        dummy <- function(residuals = NULL, rugplot= TRUE, se= FALSE, scale = 0, 
+                          offset.arg = 0, deriv.arg = 0, overlay= FALSE, 
+                          which.cf = NULL, control=plotvgam.control())
             c(list(residuals=residuals, rugplot=rugplot, se=se, scale=scale,
-                   offset.arg=offset.arg, deriv.arg=deriv.arg, overlay=overlay,
+                   offset.arg = offset.arg, deriv.arg = deriv.arg, overlay=overlay,
                    which.cf=which.cf), control)
 
         d <- dummy(residuals=residuals, rugplot=rugplot, se=se, scale=scale,
-                   offset.arg=offset.arg, deriv.arg=deriv.arg,
+                   offset.arg = offset.arg, deriv.arg = deriv.arg,
                    overlay=overlay,
                    which.cf=which.cf, 
                    control=control)
@@ -334,19 +334,19 @@ plotpreplotvgam <- function(x, y=NULL, residuals=NULL,
 }
 
 
-vplot.default <- function(x, y, se.y=NULL, xlab="", ylab="",
-                          residuals=NULL, rugplot= FALSE,
-                          scale=0, se= FALSE, 
-                          offset.arg=0, deriv.arg=0, overlay= FALSE, 
-                          which.cf=NULL, ...) {
+vplot.default <- function(x, y, se.y = NULL, xlab = "", ylab = "",
+                          residuals = NULL, rugplot= FALSE,
+                          scale = 0, se= FALSE, 
+                          offset.arg = 0, deriv.arg = 0, overlay= FALSE, 
+                          which.cf = NULL, ...) {
     switch(data.class(x)[1],
            logical=vplot.factor(factor(x), y, se.y, xlab, ylab, residuals, 
                                 rugplot, scale, se,
-                                offset.arg=offset.arg, overlay=overlay, ...),
+                                offset.arg = offset.arg, overlay=overlay, ...),
            if (is.numeric(x)) {
                vplot.numeric(as.vector(x), y, se.y, xlab, ylab, 
                              residuals, rugplot, scale, se,
-                             offset.arg=offset.arg, overlay=overlay, ...)
+                             offset.arg = offset.arg, overlay=overlay, ...)
            } else {
                    warning("The \"x\" component of \"", ylab, "\" has class \"",
                            class(x), "\"; no vplot() methods available")
@@ -356,16 +356,16 @@ vplot.default <- function(x, y, se.y=NULL, xlab="", ylab="",
 
 
 
-vplot.list <- function(x, y, se.y=NULL, xlab, ylab, 
-                       residuals=NULL, rugplot= FALSE, scale=0, se= FALSE, 
-                       offset.arg=0, deriv.arg=0, overlay= FALSE, 
-                       which.cf=NULL, ...)
+vplot.list <- function(x, y, se.y = NULL, xlab, ylab, 
+                       residuals = NULL, rugplot = FALSE, scale = 0, se = FALSE, 
+                       offset.arg = 0, deriv.arg = 0, overlay = FALSE, 
+                       which.cf = NULL, ...)
 {
 
     if (is.numeric(x[[1]])) {
         vplot.numeric(x[[1]], y, se.y, xlab, ylab, 
                       residuals, rugplot, scale, se, 
-                      offset.arg=offset.arg, deriv.arg=deriv.arg,
+                      offset.arg = offset.arg, deriv.arg = deriv.arg,
                       overlay=overlay, ...)
     } else 
         stop("this function hasn't been written yet") 
@@ -375,18 +375,18 @@ vplot.list <- function(x, y, se.y=NULL, xlab, ylab,
 
 
  plotvgam.control = function(
-                          which.cf=NULL,
-                          xlim=NULL, ylim=NULL,
-                          llty=par()$lty,
-                          slty="dashed",
-                          pcex=par()$cex,
-                          pch=par()$pch,
-                          pcol=par()$col,
-                          lcol=par()$col,
-                          rcol=par()$col,
-                          scol=par()$col,
-                          llwd=par()$lwd,
-                          slwd=par()$lwd,
+                          which.cf = NULL,
+                          xlim = NULL, ylim = NULL,
+                          llty = par()$lty,
+                          slty = "dashed",
+                          pcex = par()$cex,
+                          pch = par()$pch,
+                          pcol = par()$col,
+                          lcol = par()$col,
+                          rcol = par()$col,
+                          scol = par()$col,
+                          llwd = par()$lwd,
+                          slwd = par()$lwd,
                           add.arg= FALSE,
                           one.at.a.time= FALSE, 
                           .include.dots= TRUE,
@@ -431,21 +431,21 @@ vplot.list <- function(x, y, se.y=NULL, xlab, ylab,
 
 
 
-vplot.numeric <- function(x, y, se.y=NULL, xlab, ylab,
-                          residuals=NULL, rugplot= FALSE, se= FALSE, scale=0,
-                          offset.arg=0, deriv.arg=0, overlay= FALSE,
-                          which.cf=NULL,
-                          xlim=NULL, ylim=NULL,
-                          llty=par()$lty,
-                          slty="dashed",
-                          pcex=par()$cex,
-                          pch=par()$pch,
-                          pcol=par()$col,
-                          lcol=par()$col,
-                          rcol=par()$col,
-                          scol=par()$col,
-                          llwd=par()$lwd,
-                          slwd=par()$lwd,
+vplot.numeric <- function(x, y, se.y = NULL, xlab, ylab,
+                          residuals = NULL, rugplot= FALSE, se= FALSE, scale = 0,
+                          offset.arg = 0, deriv.arg = 0, overlay= FALSE,
+                          which.cf = NULL,
+                          xlim = NULL, ylim = NULL,
+                          llty = par()$lty,
+                          slty = "dashed",
+                          pcex = par()$cex,
+                          pch = par()$pch,
+                          pcol = par()$col,
+                          lcol = par()$col,
+                          rcol = par()$col,
+                          scol = par()$col,
+                          llwd = par()$lwd,
+                          slwd = par()$lwd,
                           add.arg= FALSE,
                           one.at.a.time= FALSE, 
                           noxmean = FALSE, 
@@ -531,7 +531,7 @@ vplot.numeric <- function(x, y, se.y=NULL, xlab, ylab,
     if (overlay) {
         if (!length(which.cf)) which.cf = 1:ncol(uy)  # Added 7/8/04
         if (!add.arg) {
-            matplot(ux, uy[,which.cf], type="n", 
+            matplot(ux, uy[,which.cf], type = "n", 
                     xlim=xlim, ylim=ylim, 
                     xlab=xlab, ylab=ylab, ...) 
         }
@@ -542,7 +542,7 @@ vplot.numeric <- function(x, y, se.y=NULL, xlab, ylab,
                 points(x, residuals, pch=pch, col=pcol, cex=pcex) 
             } else {
                 matpoints(x, residuals[,which.cf],
-                          pch=pch, col=pcol, cex=pcex) # add.arg=TRUE,
+                          pch=pch, col=pcol, cex=pcex) # add.arg = TRUE,
             }
         if (rugplot)
             rug(jx, col=rcol)
@@ -574,18 +574,18 @@ vplot.numeric <- function(x, y, se.y=NULL, xlab, ylab,
                     ylim <- range(ylim0, uy[,ii], na.rm= TRUE)
                     if (se && !is.null(se.y))
                         ylim <- range(ylim0, se.lower[,ii], se.upper[,ii],
-                                      na.rm=TRUE)
+                                      na.rm = TRUE)
                     if (!is.null(residuals))
                         ylim <- range(c(ylim, residuals[,ii]), na.rm= TRUE)
                     ylim <- ylim.scale(ylim, scale)
                 }
                 if (ncol(uy)>1 && length(separator))
-                    YLAB <- paste(ylab, separator, ii, sep="")  
+                    YLAB <- paste(ylab, separator, ii, sep = "")  
                 if (!add.arg) {
                     if (one.at.a.time) {
                         readline("Hit return for the next plot ")
                     }
-                    plot(ux, uy[,ii], type="n", 
+                    plot(ux, uy[,ii], type = "n", 
                          xlim=xlim, ylim=ylim, 
                          xlab=xlab, ylab=YLAB, ...)
                 }
@@ -610,17 +610,17 @@ vplot.numeric <- function(x, y, se.y=NULL, xlab, ylab,
 
 
 
-vplot.matrix <- function(x, y, se.y=NULL, xlab, ylab,
-                         residuals=NULL, rugplot= FALSE, scale=0, se= FALSE, 
-                         offset.arg=0, deriv.arg=0, overlay= FALSE, 
-                         which.cf=NULL, ...) {
+vplot.matrix <- function(x, y, se.y = NULL, xlab, ylab,
+                         residuals = NULL, rugplot= FALSE, scale = 0, se= FALSE, 
+                         offset.arg = 0, deriv.arg = 0, overlay= FALSE, 
+                         which.cf = NULL, ...) {
     stop("You shouldn't ever call this function!") 
 }
 
 
-add.hookey <- function(ch, deriv.arg=0) {
+add.hookey <- function(ch, deriv.arg = 0) {
 
-    if (!is.Numeric(deriv.arg, integ=TRUE, allow=1) || deriv.arg<0)
+    if (!is.Numeric(deriv.arg, integ = TRUE, allow=1) || deriv.arg<0)
         stop("bad input for the 'deriv' argument")
 
     if (deriv.arg == 0)
@@ -631,19 +631,19 @@ add.hookey <- function(ch, deriv.arg=0) {
     nc <- nchar(ch)
     sub <- substring(ch, 1:nc, 1:nc)
     if (nc >= 2 && sub[1] == "s" && sub[2] == "(") {
-        paste("s", hookey, substring(ch, 2, nc), sep="", coll="")
+        paste("s", hookey, substring(ch, 2, nc), sep = "", coll = "")
     } else {
-        paste(ch, hookey, sep="", collapse="")
+        paste(ch, hookey, sep = "", collapse = "")
     }
 }
 
 
 
-vplot.factor <- function(x, y, se.y=NULL, xlab, ylab, 
-                         residuals=NULL, rugplot= FALSE, scale=0, 
-                         se= FALSE, xlim=NULL, ylim=NULL, 
-                         offset.arg=0, deriv.arg=0, overlay= FALSE, 
-                         which.cf=NULL, ...)
+vplot.factor <- function(x, y, se.y = NULL, xlab, ylab, 
+                         residuals = NULL, rugplot= FALSE, scale = 0, 
+                         se= FALSE, xlim = NULL, ylim = NULL, 
+                         offset.arg = 0, deriv.arg = 0, overlay= FALSE, 
+                         which.cf = NULL, ...)
 {
     if (deriv.arg>0)
         return(NULL)
@@ -693,9 +693,9 @@ vplot.factor <- function(x, y, se.y=NULL, xlab, ylab,
 
 
 
-vvplot.factor <- function(x, y, se.y=NULL, xlab, ylab,
-                          residuals=NULL, rugplot= FALSE, scale=0,
-                          se= FALSE, xlim=NULL, ylim=NULL, 
+vvplot.factor <- function(x, y, se.y = NULL, xlab, ylab,
+                          residuals = NULL, rugplot= FALSE, scale = 0,
+                          se= FALSE, xlim = NULL, ylim = NULL, 
                           ...)
 {
 
@@ -759,12 +759,12 @@ vvplot.factor <- function(x, y, se.y=NULL, xlab, ylab,
     uxx <- about(ux, M, Delta=min(delta))
     xlim <- range(c(xlim, uxx))
 
-    matplot(ux, uy, ylim=ylim, xlim=xlim, xlab="", type="n", 
-            ylab=ylab, axes= FALSE, frame.plot=TRUE, ...)
-    mtext(xlab, 1, 2, adj=0.5)
+    matplot(ux, uy, ylim=ylim, xlim=xlim, xlab = "", type = "n", 
+            ylab=ylab, axes= FALSE, frame.plot = TRUE, ...)
+    mtext(xlab, 1, 2, adj = 0.5)
     axis(side=2)
     lpos <- par("mar")[3]
-    mtext(Levels, side=3, line=lpos/2, at=ux, adj=0.5, srt=45)
+    mtext(Levels, side=3, line=lpos/2, at=ux, adj = 0.5, srt=45)
 
     for(ii in 1:M)
         segments(uxx[,ii] - 1.0 * delta, uy[,ii],
@@ -827,7 +827,7 @@ plotqrrvglm = function(object,
                rtype = c("pearson", "response", "deviance", "working"), 
                ask = FALSE,
                main = paste(Rtype, "residuals vs latent variable(s)"),
-               xlab="Latent Variable",
+               xlab = "Latent Variable",
                ITolerances = object@control$EqualTolerances,
                ...) {
     M = object@misc$M
@@ -839,14 +839,14 @@ plotqrrvglm = function(object,
 
     my.ylab = if (length(object@misc$ynames)) object@misc$ynames else 
               rep(" ", len=M)
-    Rtype = switch(rtype, pearson="Pearson", response="Response",
-                   deviance="Deviance", working="Working")
+    Rtype = switch(rtype, pearson = "Pearson", response = "Response",
+                   deviance = "Deviance", working = "Working")
 
     done = 0
     for(rr in 1:Rank)
         for(ii in 1:M) {
             plot(Coef.object@lv[,rr], res[,ii],
-                 xlab=paste(xlab, if (Rank == 1) "" else rr, sep=""),
+                 xlab=paste(xlab, if (Rank == 1) "" else rr, sep = ""),
                  ylab=my.ylab[ii],
                  main = main, ...)
             done = done + 1

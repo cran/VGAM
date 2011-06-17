@@ -261,11 +261,11 @@ dmultinomial = function(x, size = NULL, prob, log = FALSE,
         if ( .reverse ) {
             djr = eta2theta(eta, .link, earg = .earg )
             Mp1 = ncol(extra$mymat)
-            w * (y[,-1]/djr - extra$mymat[,-Mp1]/(1-djr)) *
+            c(w) * (y[,-1]/djr - extra$mymat[,-Mp1]/(1-djr)) *
               dtheta.deta(djr, .link, earg = .earg )
         } else {
             dj = eta2theta(eta, .link, earg = .earg )
-            w * (y[,-ncol(y)]/dj - extra$mymat[,-1]/(1-dj)) *
+            c(w) * (y[,-ncol(y)]/dj - extra$mymat[,-1]/(1-dj)) *
               dtheta.deta(dj, .link, earg = .earg )
         }
     }), list( .earg = earg, .link = link, .reverse = reverse) )),
@@ -273,11 +273,13 @@ dmultinomial = function(x, size = NULL, prob, log = FALSE,
         if ( .reverse ) {
             cump = tapplymat1(mu, "cumsum")
             ddjr.deta = dtheta.deta(djr, .link, earg = .earg )
-            wz = w * ddjr.deta^2 * (mu[,-1]/djr^2 + cump[,1:M]/(1-djr)^2)
+            wz = c(w) * ddjr.deta^2 *
+                 (mu[,-1] / djr^2 + cump[,1:M] / (1-djr)^2)
         } else {
             ccump = tapplymat1(mu[,ncol(mu):1], "cumsum")[,ncol(mu):1]
             ddj.deta = dtheta.deta(dj, .link, earg = .earg )
-            wz = w * ddj.deta^2 * (mu[,1:M]/dj^2 + ccump[,-1]/(1-dj)^2)
+            wz = c(w) * ddj.deta^2 *
+                 (mu[,1:M] / dj^2 + ccump[,-1] / (1-dj)^2)
         }
 
         wz
@@ -387,11 +389,11 @@ dmultinomial = function(x, size = NULL, prob, log = FALSE,
         if ( .reverse ) {
             djrs = eta2theta(eta, .link, earg = .earg )
             Mp1 = ncol(extra$mymat)
-            -w * (y[,-1]/(1-djrs) - extra$mymat[,-Mp1]/djrs) *
+            -c(w) * (y[,-1]/(1-djrs) - extra$mymat[,-Mp1]/djrs) *
               dtheta.deta(djrs, .link, earg = .earg )
         } else {
             djs = eta2theta(eta, .link, earg = .earg )
-            -w * (y[,-ncol(y)]/(1-djs) - extra$mymat[,-1]/djs) *
+            -c(w) * (y[,-ncol(y)]/(1-djs) - extra$mymat[,-1]/djs) *
               dtheta.deta(djs, .link, earg = .earg )
         }
     }), list( .earg = earg, .link = link, .reverse = reverse) )),
@@ -399,11 +401,13 @@ dmultinomial = function(x, size = NULL, prob, log = FALSE,
         if ( .reverse ) {
             cump = tapplymat1(mu, "cumsum")
             ddjrs.deta = dtheta.deta(djrs, .link, earg = .earg )
-            wz = w * ddjrs.deta^2 * (mu[,-1]/(1-djrs)^2 + cump[,1:M]/djrs^2)
+            wz = c(w) * ddjrs.deta^2 *
+                 (mu[, -1] / (1-djrs)^2 + cump[, 1:M] / djrs^2)
         } else {
-            ccump = tapplymat1(mu[,ncol(mu):1], "cumsum")[,ncol(mu):1]
+            ccump = tapplymat1(mu[, ncol(mu):1], "cumsum")[, ncol(mu):1]
             ddjs.deta = dtheta.deta(djs, .link, earg = .earg )
-            wz = w * ddjs.deta^2 * (mu[,1:M]/(1-djs)^2 + ccump[,-1]/djs^2)
+            wz = c(w) * ddjs.deta^2 *
+                 (mu[, 1:M] / (1 - djs)^2 + ccump[, -1] / djs^2)
         }
 
         wz
@@ -563,10 +567,10 @@ vglm.vcategorical.control = function(maxit=30, trace=FALSE, panic=TRUE, ...)
     vfamily = c("multinomial", "vcategorical"),
     deriv = eval(substitute(expression({
         if ( .refLevel < 0) {
-            w * (y[,-ncol(y)] - mu[,-ncol(y)])
+            c(w) * (y[,-ncol(y)] - mu[,-ncol(y)])
         } else {
             use.refLevel = if ( .refLevel < 0) M+1 else .refLevel
-            w * (y[,-use.refLevel] - mu[,-use.refLevel])
+            c(w) * (y[,-use.refLevel] - mu[,-use.refLevel])
         }
     }), list( .refLevel = refLevel ))),
     weight = eval(substitute(expression({
@@ -575,7 +579,9 @@ vglm.vcategorical.control = function(maxit=30, trace=FALSE, panic=TRUE, ...)
 
         use.refLevel = if ( .refLevel < 0) M+1 else .refLevel
 
-        if (M == 1) wz = mu[,3-use.refLevel] * (1-mu[,3-use.refLevel]) else {
+        if (M == 1) {
+            wz = mu[,3-use.refLevel] * (1-mu[,3-use.refLevel])
+        } else {
             index = iam(NA, NA, M, both=TRUE, diag=TRUE)
             myinc = (index$row.index >= use.refLevel)
             index$row.index[myinc] = index$row.index[myinc] + 1
@@ -594,7 +600,7 @@ vglm.vcategorical.control = function(maxit=30, trace=FALSE, panic=TRUE, ...)
             wz[atiny,1:M] = wz[atiny,1:M] * (1 + .Machine$double.eps^0.5) +
                             .Machine$double.eps
         }
-        w * wz
+        c(w) * wz
     }), list( .refLevel = refLevel ))))
 }
 
@@ -636,7 +642,7 @@ vglm.vcategorical.control = function(maxit=30, trace=FALSE, panic=TRUE, ...)
             constraints = cm.vgam(matrix(1,M,1), x, .parallel, constraints,
                                   intercept.apply = .intercept.apply)
         }
-    }), list( .parallel = parallel, .mv=mv, .intercept.apply=intercept.apply ))),
+    }), list( .parallel = parallel, .mv = mv, .intercept.apply=intercept.apply ))),
     deviance=eval(substitute(
         function(mu, y, w, residuals=FALSE, eta, extra = NULL) {
 
@@ -793,7 +799,7 @@ vglm.vcategorical.control = function(maxit=30, trace=FALSE, panic=TRUE, ...)
                       earg= .earg)
         }
         answer
-    }, list( .link = link, .reverse = reverse, .earg = earg, .mv=mv ))),
+    }, list( .link = link, .reverse = reverse, .earg = earg, .mv = mv ))),
     loglikelihood = function(mu, y, w, residuals = FALSE, eta, extra = NULL)
         if (residuals) stop("loglikelihood residuals ",
                             "not implemented yet") else {
@@ -828,15 +834,15 @@ vglm.vcategorical.control = function(maxit=30, trace=FALSE, panic=TRUE, ...)
                     (y[,aindex, drop = FALSE]/mu.use[,aindex, drop = FALSE] -
                      y[,1+aindex, drop = FALSE]/mu.use[,1+aindex, drop = FALSE])
             }
-            (if ( .reverse) -w  else w) * dcump.deta * resmat 
+            (if ( .reverse) -c(w)  else c(w)) * dcump.deta * resmat 
         } else {
             cump = eta2theta(eta, .link, earg = .earg)
             dcump.deta = dtheta.deta(cump, .link, earg = .earg)
-            (if ( .reverse) -w  else w) * dcump.deta *
+            c(if ( .reverse) -c(w)  else c(w)) * dcump.deta *
                 (y[,-(M+1)]/mu.use[,-(M+1)] - y[,-1]/mu.use[,-1])
         }
         deriv.answer
-    }), list( .link = link, .reverse = reverse, .earg = earg, .mv=mv ))),
+    }), list( .link = link, .reverse = reverse, .earg = earg, .mv = mv ))),
     weight = eval(substitute(expression({
         if ( .mv ) {
             NOS = extra$NOS
@@ -845,13 +851,15 @@ vglm.vcategorical.control = function(maxit=30, trace=FALSE, panic=TRUE, ...)
             for(iii in 1:NOS) {
                 cindex = (iii-1)*(Llevels-1) + 1:(Llevels-1)
                 aindex = (iii-1)*(Llevels)   + 1:(Llevels-1)
-                wz[,cindex] = w * dcump.deta[,cindex, drop = FALSE]^2 *
-                (1/mu.use[,aindex, drop = FALSE] + 1/mu.use[,1+aindex, drop = FALSE])
+                wz[,cindex] = c(w) * dcump.deta[,cindex, drop = FALSE]^2 *
+                              (1 / mu.use[,   aindex, drop = FALSE] +
+                               1 / mu.use[, 1+aindex, drop = FALSE])
             }
             if (Llevels-1 > 1) {
                 iii = 1
-                oindex = (iii-1)*(Llevels-1) + 1:(Llevels-2)
-                wz = cbind(wz, -w * dcump.deta[,oindex] * dcump.deta[,1+oindex])
+                oindex = (iii-1) * (Llevels-1) + 1:(Llevels-2)
+                wz = cbind(wz, -c(w) *
+                     dcump.deta[, oindex] * dcump.deta[, 1+oindex])
 
 
                 if (NOS > 1) {
@@ -860,7 +868,7 @@ vglm.vcategorical.control = function(maxit=30, trace=FALSE, panic=TRUE, ...)
                     for(iii in 2:NOS) {
                         oindex = (iii-1)*(Llevels-1) + 1:(Llevels-2)
                         wz[,cptrwz + 1 + (1:(Llevels-2))] =
-                              -w * dcump.deta[,oindex] *
+                              -c(w) * dcump.deta[,oindex] *
                                    dcump.deta[,1+oindex]
                         cptrwz = cptrwz + Llevels - 1 # Move it along a bit
                     }
@@ -870,13 +878,13 @@ vglm.vcategorical.control = function(maxit=30, trace=FALSE, panic=TRUE, ...)
 
             }
         } else {
-            wz = w * dcump.deta^2 * (1/mu.use[,1:M] + 1/mu.use[,-1])
+            wz = c(w) * dcump.deta^2 * (1/mu.use[,1:M] + 1/mu.use[,-1])
             if (M > 1)
-                wz = cbind(wz, -w * dcump.deta[,-M] *
+                wz = cbind(wz, -c(w) * dcump.deta[,-M] *
                             dcump.deta[,2:M] / mu.use[,2:M])
         }
         wz
-    }), list( .earg = earg, .link = link, .mv=mv ))))
+    }), list( .earg = earg, .link = link, .mv = mv ))))
 }
 
 
@@ -985,10 +993,10 @@ vglm.vcategorical.control = function(maxit=30, trace=FALSE, panic=TRUE, ...)
         dzeta.deta = dtheta.deta(zeta, .link, earg = .earg )
         if ( .reverse ) {
             cumy = tapplymat1(y, "cumsum")
-            w * dzeta.deta * (cumy[,1:M] / zeta - score)
+            c(w) * dzeta.deta * (cumy[,1:M] / zeta - score)
         } else {
             ccumy = tapplymat1(y[,ncol(y):1], "cumsum")[,ncol(y):1]
-            w * dzeta.deta * (ccumy[,-1] / zeta - score)
+            c(w) * dzeta.deta * (ccumy[,-1] / zeta - score)
         }
     }), list( .earg = earg, .link = link, .reverse = reverse) )),
     weight = eval(substitute(expression({
@@ -1008,7 +1016,7 @@ vglm.vcategorical.control = function(maxit=30, trace=FALSE, panic=TRUE, ...)
             ccump = tapplymat1(mu[,ncol(mu):1], "cumsum")[, ncol(mu):1]
             wz[,1:M] = (ccump[,-1] / zeta^2 - score^2) * dzeta.deta^2
         }
-        w * wz
+        c(w) * wz
     }), list( .earg = earg, .link = link, .reverse = reverse ))))
 }
 
@@ -1151,7 +1159,7 @@ acat.deriv = function(zeta, reverse, M, n)
                     (alpha[uindex[ind5$row]] + alpha[uindex[ind5$col]])^2
             }
         }
-        wz = wz * w
+        wz = c(w) * wz
         wz
     }), list( .refvalue = refvalue, .refgp = refgp ))))
 }
@@ -1240,7 +1248,8 @@ bratt = function(refgp="last",
     loglikelihood = function(mu, y, w, residuals = FALSE, eta, extra = NULL)
         if (residuals) stop("loglikelihood residuals not ",
                             "implemented yet") else {
-            sum(w * (y * log(mu) + 0.5 * extra$ties * log(attr(mu, "probtie"))))
+          sum(c(w) * (y * log(mu) +
+                      0.5 * extra$ties * log(attr(mu, "probtie"))))
         },
     vfamily = c("bratt"),
     deriv = eval(substitute(expression({
@@ -1315,7 +1324,7 @@ bratt = function(refgp="last",
                     -alpha[jay] * alpha0 * sum(naj / Daj^2)
             }
         }
-        wz = wz * w
+        wz = c(w) * wz
         wz
     }), list( .refvalue = refvalue, .refgp = refgp ))))
 }
@@ -1577,7 +1586,7 @@ tapplymat1 = function(mat, function.arg=c("cumsum", "diff", "cumprod"))
                cptr = cptr + 1
             }
         }
-        resmat = w * resmat * dmu.deta
+        resmat = c(w) * resmat * dmu.deta
         resmat
     }), list( .link = link, .earg = earg, .countdata=countdata ))),
     weight = eval(substitute(expression({
@@ -1590,7 +1599,7 @@ tapplymat1 = function(mat, function.arg=c("cumsum", "diff", "cumprod"))
                 cptr = cptr + 1
             }
         }
-        wz = w * d2l.dmu2 * dmu.deta^2
+        wz = c(w) * d2l.dmu2 * dmu.deta^2
         wz
     }), list( .earg = earg, .link = link, .countdata=countdata ))))
 }
@@ -1807,11 +1816,11 @@ ordpoissonProbs = function(extra, mu, deriv=0) {
 
         wz = matrix(0, n, 2*(2*M-3))
 
-        wz[,2*(1:J)-1] = if (ooz) w * (dcump.deta / scalemat)^2 *
+        wz[,2*(1:J)-1] = if (ooz) c(w) * (dcump.deta / scalemat)^2 *
                          (1/mu.use[,1:J] + 1/mu.use[,-1]) else 1
-        wz[,2*(1:J)] = if (ooz) 1 else w * (dcump.dscale * dscale.deta)^2 *
+        wz[,2*(1:J)] = if (ooz) 1 else c(w) * (dcump.dscale * dscale.deta)^2 *
                        (1/mu.use[,1:J] + 1/mu.use[,-1])
-        wz0 = w * (dcump.deta / scalemat) * 
+        wz0 = c(w) * (dcump.deta / scalemat) * 
                   (dcump.dscale * dscale.deta) *
                   (1/mu.use[,1:J] + 1/mu.use[,-1])
         wz0 = as.matrix(wz0)
@@ -1819,12 +1828,12 @@ ordpoissonProbs = function(extra, mu, deriv=0) {
             wz[,iam(2*ii-1,2*ii,M=M)] = if (ooz) wz0[,ii] else 0
 
         if (J > 1) {
-            wz0 = -w * (dcump.deta[,-J] / scalemat[,-J]) *
+            wz0 = -c(w) * (dcump.deta[,-J] / scalemat[,-J]) *
                        (dcump.deta[,-1]  / scalemat[,-1]) / mu.use[,2:J]
             wz0 = as.matrix(wz0) # Just in case J=2
             for(ii in 1:(J-1))
                 wz[,iam(2*ii-1,2*ii+1,M=M)] = if (ooz) wz0[,ii] else 0
-            wz0 = -w * (dcump.dscale[,-1] * dscale.deta[,-1]) *
+            wz0 = -c(w) * (dcump.dscale[,-1] * dscale.deta[,-1]) *
                        (dcump.dscale[,-J] * dscale.deta[,-J]) / mu.use[,2:J]
             wz0 = as.matrix(wz0)
             for(ii in 1:(J-1))
@@ -1832,12 +1841,12 @@ ordpoissonProbs = function(extra, mu, deriv=0) {
 
 
 
-            wz0 = -w * (dcump.deta[,-J] / scalemat[,-J]) *
+            wz0 = -c(w) * (dcump.deta[,-J] / scalemat[,-J]) *
                        (dcump.dscale[,-1] * dscale.deta[,-1]) / mu.use[,2:J]
             wz0 = as.matrix(wz0)
             for(ii in 1:(J-1))
                 wz[,iam(2*ii-1,2*ii+2,M=M)] = if (ooz) wz0[,ii] else 0
-            wz0 = -w * (dcump.deta[,-1] / scalemat[,-1]) *
+            wz0 = -c(w) * (dcump.deta[,-1] / scalemat[,-1]) *
                        (dcump.dscale[,-J] * dscale.deta[,-J]) / mu.use[,2:J]
             wz0 = as.matrix(wz0)
             for(ii in 1:(J-1))

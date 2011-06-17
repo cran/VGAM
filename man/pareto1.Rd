@@ -10,9 +10,9 @@
 
 }
 \usage{
-pareto1(lshape = "loge", earg=list(), location=NULL)
-tpareto1(lower, upper, lshape = "loge", earg=list(), ishape=NULL,
-         method.init=1)
+pareto1(lshape = "loge", earg = list(), location = NULL)
+tpareto1(lower, upper, lshape = "loge", earg = list(), ishape = NULL,
+         imethod = 1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -21,10 +21,12 @@ tpareto1(lower, upper, lshape = "loge", earg=list(), ishape=NULL,
   See \code{\link{Links}} for more choices.
   A log link is the default because \eqn{k} is positive.
 
+
   }
   \item{earg}{
   List. Extra argument for the link.
   See \code{earg} in \code{\link{Links}} for general information.
+
 
   }
   \item{lower, upper}{
@@ -40,6 +42,7 @@ tpareto1(lower, upper, lshape = "loge", earg=list(), ishape=NULL,
   A \code{NULL} means a value is obtained internally.
   If failure to converge occurs try specifying a value, e.g., 1 or 2.
 
+
   }
   \item{location}{
   Numeric. The parameter \eqn{\alpha}{alpha} below.
@@ -48,11 +51,13 @@ tpareto1(lower, upper, lshape = "loge", earg=list(), ishape=NULL,
   estimation, which means \code{min(y)} where \code{y} is the response
   vector.
 
+
   }
-  \item{method.init}{
+  \item{imethod}{
   An integer with value \code{1} or \code{2} which
   specifies the initialization method. If failure to converge occurs
   try the other value, or else specify a value for \code{ishape}.
+
 
   }
 }
@@ -67,16 +72,16 @@ tpareto1(lower, upper, lshape = "loge", earg=list(), ishape=NULL,
 
   The Pareto distribution, which is used a lot in economics,
   has a probability density function that can be written
-  \deqn{f(y) = k \alpha^k / y^{k+1}}{%
+  \deqn{f(y) = k  \alpha^k / y^{k+1}}{%
         f(y) = k * alpha^k / y^(k+1)}
   for \eqn{0 < \alpha < y}{0< alpha < y} and \eqn{k>0}.
   The \eqn{\alpha}{alpha} is known as the location parameter, and 
   \eqn{k} is known as the shape parameter.
   The mean of \eqn{Y} is
-  \eqn{\alpha k/(k-1)}{alpha*k/(k-1)} provided \eqn{k>1}.
+  \eqn{\alpha k/(k-1)}{alpha*k/(k-1)} provided \eqn{k > 1}.
   Its variance is
   \eqn{\alpha^2 k /((k-1)^2 (k-2))}{alpha^2 k /((k-1)^2 (k-2))}
-  provided \eqn{k>2}.
+  provided \eqn{k > 2}.
 
 
   The upper truncated Pareto distribution
@@ -99,11 +104,13 @@ tpareto1(lower, upper, lshape = "loge", earg=list(), ishape=NULL,
   The object is used by modelling functions such as \code{\link{vglm}},
   and \code{\link{vgam}}.
 
+
 }
 \references{ 
   Evans, M., Hastings, N. and Peacock, B. (2000)
   \emph{Statistical Distributions},
   New York: Wiley-Interscience, Third edition.
+
 
   Aban, I. B., Meerschaert, M. M. and Panorska, A. K. (2006)
   Parameter estimation for the truncated Pareto distribution,
@@ -111,11 +118,12 @@ tpareto1(lower, upper, lshape = "loge", earg=list(), ishape=NULL,
   \bold{101}(473),
   270--277.
 
+
 }
 \author{ T. W. Yee }
 \note{
-  Outside of economics, the Pareto distribution is known as the Bradford
-  distribution.
+  Outside of economics, the Pareto distribution is known as the
+  Bradford distribution.
 
 
   For \code{pareto1},
@@ -123,8 +131,8 @@ tpareto1(lower, upper, lshape = "loge", earg=list(), ishape=NULL,
   then the fitted values will be \code{NA}s.
   Also, \code{pareto1} fits the Pareto(I) distribution.
   See \code{\link{paretoIV}} for the more general Pareto(IV/III/II)
-  distributions, but there is a slight change in notation: \eqn{s=k}
-  and \eqn{b=\alpha}{b=alpha}.
+  distributions, but there is a slight change in notation: \eqn{s = k}
+  and \eqn{b=\alpha}{b = alpha}.
 
 
   In some applications the Pareto law is truncated by a 
@@ -135,6 +143,7 @@ tpareto1(lower, upper, lshape = "loge", earg=list(), ishape=NULL,
   With known lower and upper limits, the ML estimator of \eqn{k} has
   the usual properties of MLEs. 
   Aban (2006) discusses other inferential details.
+
 
 }
 \section{Warning }{
@@ -157,29 +166,30 @@ tpareto1(lower, upper, lshape = "loge", earg=list(), ishape=NULL,
   \code{\link{paretoIV}},
   \code{\link{gpd}}.
 
+
 }
 \examples{
-alpha = 2; k = exp(3)
-pdat = data.frame(y = rpareto(n=1000, location=alpha, shape=k))
-fit = vglm(y ~ 1, pareto1, pdat, trace=TRUE)
+alpha = 2; kay = exp(3)
+pdat = data.frame(y = rpareto(n = 1000, location = alpha, shape = kay))
+fit = vglm(y ~ 1, pareto1, pdat, trace = TRUE)
 fit@extra   # The estimate of alpha is here
 head(fitted(fit))
 with(pdat, mean(y))
-coef(fit, matrix=TRUE)
+coef(fit, matrix = TRUE)
 summary(fit)     # Standard errors are incorrect!!
 
 # Here, alpha is assumed known
-fit2 = vglm(y ~ 1, pareto1(location=alpha), pdat, trace=TRUE, crit="c")
+fit2 = vglm(y ~ 1, pareto1(location = alpha), pdat, trace = TRUE, crit = "c")
 fit2@extra   # alpha stored here
 head(fitted(fit2))
-coef(fit2, matrix=TRUE)
-summary(fit2)    # Standard errors are ok
+coef(fit2, matrix = TRUE)
+summary(fit2)    # Standard errors are okay
 
 # Upper truncated Pareto distribution
-lower = 2; upper = 8; k = exp(2)
-pdat3 = data.frame(y = rtpareto(n=100, lower=lower, upper=upper, shape=k))
-fit3 = vglm(y ~ 1, tpareto1(lower, upper), pdat3, trace=TRUE, cri="c")
-coef(fit3, matrix=TRUE)
+lower = 2; upper = 8; kay = exp(2)
+pdat3 = data.frame(y = rtpareto(n = 100, lower = lower, upper = upper, shape = kay))
+fit3 = vglm(y ~ 1, tpareto1(lower, upper), pdat3, trace = TRUE, cri = "c")
+coef(fit3, matrix = TRUE)
 c(fit3@misc$lower, fit3@misc$upper)
 }
 \keyword{models}

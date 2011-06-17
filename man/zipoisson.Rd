@@ -11,11 +11,11 @@
 \usage{
 zipoissonff(llambda = "loge", lprobp = "logit",
             elambda = list(), eprobp = list(),
-            ilambda = NULL, iprobp = NULL, method.init = 1,
+            ilambda = NULL, iprobp = NULL, imethod = 1,
             shrinkage.init = 0.8, zero = -2)
-zipoisson(lphi ="logit", llambda = "loge",
+zipoisson(lphi = "logit", llambda = "loge",
           ephi = list(), elambda = list(),
-          iphi = NULL,   ilambda = NULL, method.init = 1,
+          iphi = NULL,   ilambda = NULL, imethod = 1,
           shrinkage.init = 0.8, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -48,7 +48,7 @@ zipoisson(lphi ="logit", llambda = "loge",
 
   }
 
-  \item{method.init}{
+  \item{imethod}{
   An integer with value \code{1} or \code{2} which
   specifies the initialization method for \eqn{\lambda}{lambda}.
   If failure to converge occurs try another value
@@ -62,7 +62,7 @@ zipoisson(lphi ="logit", llambda = "loge",
   The value must be between 0 and 1 inclusive, and 
   a value of 0 means the individual response values are used,
   and a value of 1 means the median or mean is used.
-  This argument is used in conjunction with \code{method.init}.
+  This argument is used in conjunction with \code{imethod}.
   See \code{\link{CommonVGAMffArguments}} for more information.
 
   }
@@ -178,7 +178,7 @@ zipoisson(lphi ="logit", llambda = "loge",
   replacing 182 by 1 results in nonconvergence.
   Half-stepping is not uncommon.
   If failure to converge occurs, try using combinations of
-  \code{method.init},
+  \code{imethod},
   \code{shrinkage.init},
   \code{iphi}, and/or
   \code{zipoisson(zero = 1)} if there are explanatory variables.
@@ -195,6 +195,7 @@ zipoisson(lphi ="logit", llambda = "loge",
   \code{\link{zipebcom}},
   \code{\link[stats:Poisson]{rpois}}.
 
+
 }
 \examples{
 # Example 1: simulated ZIP data
@@ -210,13 +211,13 @@ zdata <- transform(zdata, y1 = rzipois(nn, lambda1, Phi1),
 
 with(zdata, table(y1)) # Eyeball the data
 with(zdata, table(y2))
-fit1 <- vglm(y1 ~ x2, zipoisson(zero = 1), zdata, crit = "c")
-fit2 <- vglm(y2 ~ x2, zipoisson(zero = 1), zdata, crit = "c")
+fit1 <- vglm(y1 ~ x2, zipoisson(zero = 1), zdata, crit = "coef")
+fit2 <- vglm(y2 ~ x2, zipoisson(zero = 1), zdata, crit = "coef")
 coef(fit1, matrix = TRUE)  # These should agree with the above values
 coef(fit2, matrix = TRUE)  # These should agree with the above values
 
 # Fit all two simultaneously, using a different parameterization:
-fit12 <- vglm(cbind(y1, y2) ~ x2, zipoissonff, zdata, crit = "c")
+fit12 <- vglm(cbind(y1, y2) ~ x2, zipoissonff, zdata, crit = "coef")
 coef(fit12, matrix = TRUE)  # These should agree with the above values
 
 

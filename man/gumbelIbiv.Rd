@@ -8,7 +8,7 @@
 
 }
 \usage{
-gumbelIbiv(lapar="identity", earg=list(), iapar=NULL, method.init=1)
+gumbelIbiv(lapar="identity", earg=list(), iapar=NULL, imethod=1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -27,10 +27,10 @@ gumbelIbiv(lapar="identity", earg=list(), iapar=NULL, method.init=1)
   Numeric. Optional initial value for \eqn{\alpha}{alpha}.
   By default, an initial value is chosen internally.
   If a convergence failure occurs try assigning a different value.
-  Assigning a value will override the argument \code{method.init}.
+  Assigning a value will override the argument \code{imethod}.
 
   }
-  \item{method.init}{
+  \item{imethod}{
   An integer with value \code{1} or \code{2} which
   specifies the initialization method. If failure to converge occurs
   try the other value, or else specify a value for \code{ia}.

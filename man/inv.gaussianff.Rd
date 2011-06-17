@@ -3,14 +3,14 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Inverse Gaussian Distribution Family Function }
 \description{
-  Estimates the two parameters of the inverse Gaussian distribution by
-  maximum likelihood estimation.
+  Estimates the two parameters of the inverse Gaussian distribution
+  by maximum likelihood estimation.
 
 }
 \usage{
 inv.gaussianff(lmu = "loge", llambda = "loge",
                emu = list(), elambda = list(), 
-               method.init = 1, ilambda = 1,
+               imethod = 1, ilambda = 1,
                shrinkage.init = 0.99, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -30,7 +30,7 @@ inv.gaussianff(lmu = "loge", llambda = "loge",
   Initial value for the \eqn{\lambda}{lambda} parameter. 
 
   }
-  \item{method.init, shrinkage.init, zero}{ 
+  \item{imethod, shrinkage.init, zero}{ 
   See \code{\link{CommonVGAMffArguments}} for more information.
 
   }
@@ -66,9 +66,12 @@ Johnson, N. L. and Kotz, S. and Balakrishnan, N. (1994)
 \emph{Continuous Univariate Distributions},
 2nd edition, Volume 1, New York: Wiley.
 
+
 Evans, M., Hastings, N. and Peacock, B. (2000)
 \emph{Statistical Distributions},
 New York: Wiley-Interscience, Third edition.
+
+
 }
 \author{ T. W. Yee }
 \note{

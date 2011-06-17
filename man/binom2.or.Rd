@@ -142,7 +142,7 @@ binom2.or(lmu = "logit", lmu1 = lmu, lmu2 = lmu, loratio = "loge",
   Yee, T. W. and Dirnbock, T. (2009)
   Models for analysing species' presence/absence data
   at two time points.
-  Journal of Theoretical Biology, \bold{259}. In press.
+  Journal of Theoretical Biology, \bold{259}(4), 684--694.
 
 
   Documentation accompanying the \pkg{VGAM} package at
@@ -207,16 +207,14 @@ summary(fit)
 coef(fit, matrix=TRUE)
 c(weights(fit, type="prior")) * fitted(fit)  # Table 6.8
 
-\dontrun{
-with(coalminers, matplot(Age, fitted(fit), type="l", las=1,
+\dontrun{ with(coalminers, matplot(Age, fitted(fit), type="l", las=1,
                          xlab="(age - 42) / 5", lwd=2))
 with(coalminers, matpoints(Age, fit@y, col=1:4))
 legend(x=-4, y=0.5, lty=1:4, col=1:4, lwd=2,
        legend=c("1 = (Breathlessness=0, Wheeze=0)",
                 "2 = (Breathlessness=0, Wheeze=1)",
                 "3 = (Breathlessness=1, Wheeze=0)",
-                "4 = (Breathlessness=1, Wheeze=1)"))
-}
+                "4 = (Breathlessness=1, Wheeze=1)")) }
 }
 \keyword{models}
 \keyword{regression}

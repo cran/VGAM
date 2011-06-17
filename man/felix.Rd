@@ -9,7 +9,7 @@
 }
 \usage{
 felix(link = "elogit", earg = if (link == "elogit") list(min
-      = 0, max = 0.5) else list(), method.init=1)
+      = 0, max = 0.5) else list(), imethod=1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -18,7 +18,7 @@ felix(link = "elogit", earg = if (link == "elogit") list(min
   See \code{\link{Links}} for more choices and for general information.
 
   }
-  \item{method.init}{
+  \item{imethod}{
   See \code{\link{CommonVGAMffArguments}}.
   Valid values are 1, 2, 3 or 4.
 

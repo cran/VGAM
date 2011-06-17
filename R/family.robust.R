@@ -123,14 +123,14 @@ phuber <- function(q, k = 0.862, mu = 0, sigma = 1)
  huber <- function(llocation = "identity", lscale = "loge",
                    elocation = list(), escale = list(),
                    k = 0.862,
-                   method.init = 1,
+                   imethod = 1,
                    zero = 2) {
   A1 <- (2 * dnorm(k) / k - 2 * pnorm(-k))
   eps <- A1 / (1 + A1)
 
-  if (!is.Numeric(method.init, allow = 1, integ = TRUE, posit = TRUE) ||
-      method.init > 4)
-       stop("'method.init' must be 1 or 2 or 3 or 4")
+  if (!is.Numeric(imethod, allow = 1, integ = TRUE, posit = TRUE) ||
+      imethod > 4)
+       stop("'imethod' must be 1 or 2 or 3 or 4")
 
   if (!is.Numeric(k, allow = 1, posit = TRUE))
       stop("bad input for argument 'k'")
@@ -163,11 +163,11 @@ phuber <- function(q, k = 0.862, mu = 0, sigma = 1)
           junk = lm.wfit(x = x, y = y, w = w)
           scale.y.est <- sqrt( sum(w * junk$resid^2) / junk$df.residual )
           location.init <- if ( .llocat == "loge") pmax(1/1024, y) else {
-            if ( .method.init == 3) {
+            if ( .imethod == 3) {
               rep(weighted.mean(y, w), len = n)
-            } else if ( .method.init == 2) {
+            } else if ( .imethod == 2) {
               rep(median(rep(y, w)), len = n)
-            } else if ( .method.init == 1) {
+            } else if ( .imethod == 1) {
               junk$fitted
             } else {
               y
@@ -179,7 +179,7 @@ phuber <- function(q, k = 0.862, mu = 0, sigma = 1)
       }
     }), list( .llocat = llocation, .lscale = lscale,
               .elocat = elocation, .escale = escale,
-              .method.init=method.init ))),
+              .imethod=imethod ))),
     inverse = eval(substitute(function(eta, extra = NULL) {
       eta2theta(eta[,1], .llocat, earg = .elocat)
     }, list( .llocat = llocation,
@@ -189,10 +189,10 @@ phuber <- function(q, k = 0.862, mu = 0, sigma = 1)
       misc$earg <- list("location" = .elocat, "scale" = .escale)
       misc$expected <- TRUE
       misc$k.huber <- .k
-      misc$method.init <- .method.init
+      misc$imethod <- .imethod
     }), list( .llocat = llocation, .lscale = lscale,
               .elocat = elocation, .escale = escale,
-              .k      = k,         .method.init = method.init ))),
+              .k      = k,         .imethod = imethod ))),
    loglikelihood = eval(substitute(
      function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
      location <- eta2theta(eta[,1], .llocat, earg = .elocat)
@@ -230,8 +230,8 @@ phuber <- function(q, k = 0.862, mu = 0, sigma = 1)
       dlocat.deta <- dtheta.deta(mylocat, .llocat, earg = .elocat)
       dscale.deta <- dtheta.deta(myscale, .lscale, earg = .escale)
       ans <-
-      w * cbind(dl.dlocat * dlocat.deta,
-                dl.dscale * dscale.deta)
+      c(w) * cbind(dl.dlocat * dlocat.deta,
+                   dl.dscale * dscale.deta)
       ans
     }), list( .llocat = llocation, .lscale = lscale,
               .elocat = elocation, .escale = escale,
@@ -251,7 +251,7 @@ phuber <- function(q, k = 0.862, mu = 0, sigma = 1)
       wz[, iam(1,1,M)] <- ed2l.dlocat2 * dlocat.deta^2
       wz[, iam(2,2,M)] <- ed2l.dscale2 * dscale.deta^2
       ans
-      w * wz
+      c(w) * wz
     }), list( .eps = eps ))))
 }
 

@@ -26,11 +26,11 @@ VGAMenv <- new.env()
  
  
  
-if (!any(search()=="package:methods"))
+if (!any(search() == "package:methods"))
     library(methods)
 
 
-if (!any(search()=="package:splines"))
+if (!any(search() == "package:splines"))
     require(splines)
 
 
@@ -88,7 +88,7 @@ if (FALSE)
 
 if (!isGeneric("print"))
     setGeneric("print", function(x, ...) standardGeneric("print"),
-               package="VGAM")
+               package = "VGAM")
 
 
 
@@ -102,7 +102,7 @@ print.vglmff <- function(x, ...) {
         invisible(return(x))
 
     cat("Family: ", f[1], "\n")
-    if (length(f)>1) cat("Informal classes:", paste(f, collapse=", "), "\n")
+    if (length(f)>1) cat("Informal classes:", paste(f, collapse = ", "), "\n")
     cat("\n")
 
     for(ii in 1:length(nn))
@@ -141,7 +141,7 @@ setClass("vlmsmall", representation(
       "na.action"    = "list",
       "post"         = "list",
       "preplot"      = "list",
-      "prior.weights"= "numeric",
+      "prior.weights"= "matrix",
       "residuals"    = "matrix",
       "weights"      = "matrix",
       "x"            = "matrix",
@@ -194,39 +194,39 @@ setClass("vgam", representation(
 
 
 setClass("summary.vgam", representation(
-        anova="data.frame",
-        cov.unscaled="matrix",
-        correlation="matrix",
-        df="numeric",
-        pearson.resid="matrix",
-        sigma="numeric"),
+        anova = "data.frame",
+        cov.unscaled = "matrix",
+        correlation = "matrix",
+        df = "numeric",
+        pearson.resid = "matrix",
+        sigma = "numeric"),
     prototype(anova=data.frame()),
     contains = "vgam")
 
 
 setClass("summary.vglm", representation(
-        coef3="matrix",
-        cov.unscaled="matrix",
-        correlation="matrix",
-        df="numeric",
-        pearson.resid="matrix",
-        sigma="numeric"),
+        coef3 = "matrix",
+        cov.unscaled = "matrix",
+        correlation = "matrix",
+        df = "numeric",
+        pearson.resid = "matrix",
+        sigma = "numeric"),
     contains = "vglm")
 
 
 setClass("summary.vlm", representation(
-        coef3="matrix",
-        cov.unscaled="matrix",
-        correlation="matrix",
-        df="numeric",
-        pearson.resid="matrix",
-        sigma="numeric"),
+        coef3 = "matrix",
+        cov.unscaled = "matrix",
+        correlation = "matrix",
+        df = "numeric",
+        pearson.resid = "matrix",
+        sigma = "numeric"),
     contains = "vlm")
 
 
 
- setClass(Class="rrvglm",
-          contains="vglm")
+ setClass(Class = "rrvglm",
+          contains = "vglm")
 
 
 
@@ -253,7 +253,7 @@ if (FALSE)
       "post"         = "list",
       "predictors"   = "matrix",
       "preplot"      = "list",
-      "prior.weights"= "numeric",
+      "prior.weights"= "matrix",
       "residuals"    = "matrix",
       "smart.prediction" = "list",
       "terms"        = "list",
@@ -268,7 +268,7 @@ if (FALSE)
 
 
 
- setClass(Class="qrrvglm",
+ setClass(Class = "qrrvglm",
           contains = "rrvglm")
 
 
@@ -315,9 +315,11 @@ new("vglm", "extra"=from@extra,
 
 
 
- setClass("rcam", representation(not.needed="numeric"),
+ setClass("rcam0", representation(not.needed = "numeric"),
+          contains = "vglm")  # Added 20110506
+ setClass("rcam", representation(not.needed = "numeric"),
           contains = "rrvglm")
- setClass("grc",  representation(not.needed="numeric"),
+ setClass("grc",  representation(not.needed = "numeric"),
           contains = "rrvglm")
 
 
@@ -339,11 +341,11 @@ if (FALSE) {
 
 if (!isGeneric("Coef"))
 setGeneric("Coef", function(object, ...) standardGeneric("Coef"),
-           package="VGAM")
+           package = "VGAM")
 if (!isGeneric("Coefficients"))
 setGeneric("Coefficients", function(object, ...)
             standardGeneric("Coefficients"),
-           package="VGAM")
+           package = "VGAM")
 
 
 
@@ -354,15 +356,15 @@ setGeneric("Coefficients", function(object, ...)
 
 if (!isGeneric("logLik"))
     setGeneric("logLik", function(object, ...) standardGeneric("logLik"),
-           package="VGAM")
+           package = "VGAM")
 
 if (!isGeneric("plot"))
     setGeneric("plot", function(x, y, ...) standardGeneric("plot"),
-           package="VGAM")
+           package = "VGAM")
 
 if (!isGeneric("vcov"))
     setGeneric("vcov", function(object, ...) standardGeneric("vcov"),
-           package="VGAM")
+           package = "VGAM")
 
 
 
@@ -380,17 +382,17 @@ setClass("uqo", representation(
     contains = "vlmsmall")
 
 
-setClass(Class="cao",
-         contains="vgam")
+setClass(Class = "cao",
+         contains = "vgam")
 
 
 if (!isGeneric("lvplot"))
 setGeneric("lvplot", function(object, ...) standardGeneric("lvplot"),
-           package="VGAM")
+           package = "VGAM")
 
 if (!isGeneric("ccoef"))
     setGeneric("ccoef", function(object, ...) standardGeneric("ccoef"),
-           package="VGAM")
+           package = "VGAM")
 
 
 
@@ -398,26 +400,26 @@ if (!isGeneric("ccoef"))
 
 if (!isGeneric("coef"))
     setGeneric("coef", function(object, ...) standardGeneric("coef"),
-           package="VGAM")
+           package = "VGAM")
 
 if (!isGeneric("coefficients"))
     setGeneric("coefficients", function(object, ...)
                                standardGeneric("coefficients"),
-               package="VGAM")
+               package = "VGAM")
 
 if (!isGeneric("df.residual"))
     setGeneric("df.residual", function(object, ...)
                               standardGeneric("df.residual"),
-           package="VGAM")
+           package = "VGAM")
 
 if (!isGeneric("fitted"))
     setGeneric("fitted", function(object, ...) standardGeneric("fitted"),
-           package="VGAM")
+           package = "VGAM")
 
  if (!isGeneric("fitted.values"))
      setGeneric("fitted.values", function(object, ...)
                                  standardGeneric("fitted.values"),
-           package="VGAM")
+           package = "VGAM")
 
 if (!isGeneric("model.matrix"))
     setGeneric("model.matrix", function(object, ...)
@@ -441,11 +443,11 @@ if (!isGeneric("resid"))
 
 if (!isGeneric("residuals"))
     setGeneric("residuals", function(object, ...) standardGeneric("residuals"),
-           package="VGAM")
+           package = "VGAM")
 
 if (!isGeneric("weights"))
     setGeneric("weights", function(object, ...) standardGeneric("weights"),
-           package="VGAM")
+           package = "VGAM")
 
 
 
@@ -453,24 +455,24 @@ if (!isGeneric("weights"))
 
 if (!isGeneric("AIC"))
     setGeneric("AIC", function(object, ..., k=2) standardGeneric("AIC"),
-           package="VGAM")
+           package = "VGAM")
 
 
 
   if (!isGeneric("formula"))
       setGeneric("formula", function(x, ...) standardGeneric("formula"),
-           package="VGAM")
+           package = "VGAM")
 
 
   if (!isGeneric("case.names"))
       setGeneric("case.names", function(object, ...)
            standardGeneric("case.names"),
-           package="VGAM")
+           package = "VGAM")
 
   if (!isGeneric("variable.names"))
       setGeneric("variable.names", function(object, ...)
            standardGeneric("variable.names"),
-           package="VGAM")
+           package = "VGAM")
 
 
 

@@ -18,11 +18,11 @@ loglaplace1(tau = NULL, llocation = "loge", elocation = list(),
     ilocation = NULL, kappa = sqrt(tau/(1 - tau)), Scale.arg = 1,
     shrinkage.init = 0.95, parallelLocation = FALSE, digt = 4,
     dfmu.init = 3, rep0 = 0.5, minquantile = 0, maxquantile = Inf,
-    method.init = 1, zero = NULL)
+    imethod = 1, zero = NULL)
 logitlaplace1(tau = NULL, llocation = "logit", elocation = list(),
     ilocation = NULL, kappa = sqrt(tau/(1 - tau)),
     Scale.arg = 1, shrinkage.init = 0.95, parallelLocation = FALSE,
-    digt = 4, dfmu.init = 3, rep01 = 0.5, method.init = 1, zero = NULL)
+    digt = 4, dfmu.init = 3, rep01 = 0.5, imethod = 1, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -68,7 +68,7 @@ logitlaplace1(tau = NULL, llocation = "logit", elocation = list(),
 %   have different values for each \code{tau} value.
 % }
 
-  \item{method.init}{
+  \item{imethod}{
   Initialization method.
   Either the value 1, 2, or \ldots.
 

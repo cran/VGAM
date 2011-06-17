@@ -5,19 +5,19 @@
 
 
 vglm.fit <- function(x, y, w=rep(1, length(x[, 1])),
-    Xm2=NULL, Ym2=NULL,
-    etastart=NULL, mustart=NULL, coefstart=NULL,
-    offset=0, family,
+    Xm2 = NULL, Ym2 = NULL,
+    etastart = NULL, mustart = NULL, coefstart = NULL,
+    offset = 0, family,
     control=vglm.control(),
-    criterion="coefficients",
-    qr.arg=FALSE,
-    constraints=NULL,
-    extra=NULL,
-    Terms=Terms, function.name="vglm", ...)
+    criterion = "coefficients",
+    qr.arg = FALSE,
+    constraints = NULL,
+    extra = NULL,
+    Terms=Terms, function.name = "vglm", ...)
 {
     specialCM = NULL
     post = list()
-    check.rank <- TRUE # Set this to false for family functions vppr() etc.
+    check.rank <- TRUE  # Set this to false for family functions vppr() etc.
     nonparametric <- FALSE
     epsilon <- control$epsilon
     maxit <- control$maxit
@@ -47,29 +47,29 @@ vglm.fit <- function(x, y, w=rep(1, length(x[, 1])),
             old.crit <- new.crit
             new.crit <- 
                 switch(criterion,
-                    coefficients=new.coeffs,
-                    tfun(mu=mu, y=y, w=w, res=FALSE, eta=eta, extra))
+                    coefficients = new.coeffs,
+                    tfun(mu = mu, y = y, w = w, res = FALSE, eta = eta, extra))
 
 
-            if (trace && orig.stepsize==1) {
+            if (trace && orig.stepsize == 1) {
                 cat("VGLM    linear loop ", iter, ": ", criterion, "= ")
-                uuuu = 
+                UUUU = 
                 switch(criterion,
-                coefficients=format(new.crit, dig=round(2-log10(epsilon))),
+                coefficients = format(new.crit, dig = round(2-log10(epsilon))),
                 format(round(new.crit, 4)))
 
                     switch(criterion,
-                    coefficients={if(length(new.crit) > 2) cat("\n"); 
-                       cat(uuuu, fill=TRUE, sep=", ")}, 
-                    cat(uuuu, fill=TRUE, sep=", "))
+                    coefficients = {if(length(new.crit) > 2) cat("\n"); 
+                       cat(UUUU, fill = TRUE, sep = ", ")}, 
+                    cat(UUUU, fill = TRUE, sep = ", "))
            }
 
 
             {
-                take.half.step=(control$half.stepsizing &&
+                take.half.step = (control$half.stepsizing &&
                                 length(old.coeffs)) &&
-                             ((orig.stepsize!=1) ||
-                              (criterion!="coefficients" &&
+                             ((orig.stepsize != 1) ||
+                              (criterion != "coefficients" &&
                             (if(minimize.criterion) new.crit > old.crit else
                              new.crit < old.crit)))
                 if (!is.logical(take.half.step))
@@ -95,7 +95,7 @@ vglm.fit <- function(x, y, w=rep(1, length(x[, 1])),
 
                         fv <- X_vlm_save %*% new.coeffs
                         if (M > 1)
-                            fv <- matrix(fv, n, M, byrow=TRUE)
+                            fv <- matrix(fv, n, M, byrow = TRUE)
 
                         eta <- fv + offset
                         mu <- slot(family, "inverse")(eta, extra)
@@ -106,10 +106,10 @@ vglm.fit <- function(x, y, w=rep(1, length(x[, 1])),
 
                         new.crit <- 
                             switch(criterion,
-                                coefficients=new.coeffs,
-                                tfun(mu=mu,y=y,w=w,res=FALSE,eta=eta,extra))
+                                coefficients = new.coeffs,
+                                tfun(mu = mu,y = y,w = w,res = FALSE,eta = eta,extra))
 
-                        if ((criterion=="coefficients") || 
+                        if ((criterion == "coefficients") || 
                            ( minimize.criterion && new.crit < old.crit) ||
                            (!minimize.criterion && new.crit > old.crit))
                             break
@@ -126,16 +126,16 @@ vglm.fit <- function(x, y, w=rep(1, length(x[, 1])),
                             cat("VGLM    linear loop ",
                                 iter, ": ", criterion, "= ")
 
-                            uuuu = switch(criterion,
+                            UUUU = switch(criterion,
                             coefficients = format(new.crit,
-                                dig=round(2-log10(epsilon))),
+                                dig = round(2-log10(epsilon))),
                             format(round(new.crit, 4)))
 
                             switch(criterion,
-                            coefficients={
+                            coefficients = {
                                if(length(new.crit) > 2) cat("\n");
-                               cat(uuuu, fill=TRUE, sep=", ")}, 
-                            cat(uuuu, fill=TRUE, sep=", "))
+                               cat(UUUU, fill = TRUE, sep = ", ")}, 
+                            cat(UUUU, fill = TRUE, sep = ", "))
                         }
 
                         one.more <- eval(control$convergence)
@@ -152,11 +152,11 @@ vglm.fit <- function(x, y, w=rep(1, length(x[, 1])),
                 deriv.mu <- eval(slot(family, "deriv"))
                 wz <- eval(slot(family, "weight"))
                 if (control$checkwz)
-                  wz= checkwz(wz, M=M, trace=trace, wzeps=control$wzepsilon)
+                  wz = checkwz(wz, M = M, trace = trace, wzeps = control$wzepsilon)
 
-                U <- vchol(wz, M=M, n=n, silent=!trace)
-                tvfor <- vforsub(U, as.matrix(deriv.mu), M=M, n=n)
-                z <- eta + vbacksub(U, tvfor, M=M, n=n) - offset
+                U <- vchol(wz, M = M, n = n, silent=!trace)
+                tvfor <- vforsub(U, as.matrix(deriv.mu), M = M, n = n)
+                z <- eta + vbacksub(U, tvfor, M = M, n = n) - offset
 
                 c.list$z <- z
                 c.list$U <- U
@@ -229,7 +229,7 @@ vglm.fit <- function(x, y, w=rep(1, length(x[, 1])),
     if (length(coefstart)) {
         eta <- if (ncol(X_vlm_save)>1) X_vlm_save %*% coefstart +
                    offset else X_vlm_save * coefstart + offset
-        eta <- if (M > 1) matrix(eta, ncol=M, byrow=TRUE) else c(eta) 
+        eta <- if (M > 1) matrix(eta, ncol = M, byrow = TRUE) else c(eta) 
         mu <- slot(family, "inverse")(eta, extra)
     }
 
@@ -240,20 +240,20 @@ vglm.fit <- function(x, y, w=rep(1, length(x[, 1])),
 
     iter <- 1
     new.crit <- switch(criterion,
-                      coefficients=1,
-                      tfun(mu=mu, y=y, w=w, res=FALSE, eta=eta, extra))
+                      coefficients = 1,
+                      tfun(mu = mu, y = y, w = w, res = FALSE, eta = eta, extra))
     old.crit <- if (minimize.criterion) 10*new.crit+10 else -10*new.crit-10
 
     deriv.mu <- eval(slot(family, "deriv"))
     wz <- eval(slot(family, "weight"))
     if (control$checkwz)
-        wz = checkwz(wz, M=M, trace=trace, wzeps=control$wzepsilon)
+        wz = checkwz(wz, M = M, trace = trace, wzeps = control$wzepsilon)
 
-    U <- vchol(wz, M=M, n=n, silent=!trace)
-    tvfor <- vforsub(U, as.matrix(deriv.mu), M=M, n=n)
-    z <- eta + vbacksub(U, tvfor, M=M, n=n) - offset
+    U <- vchol(wz, M = M, n = n, silent=!trace)
+    tvfor <- vforsub(U, as.matrix(deriv.mu), M = M, n = n)
+    z <- eta + vbacksub(U, tvfor, M = M, n = n) - offset
 
-    c.list <- list(z=as.double(z), fit=as.double(t(eta)), one.more=TRUE,
+    c.list <- list(z=as.double(z), fit=as.double(t(eta)), one.more = TRUE,
                    coeff=as.double(rep(1,ncol(X_vlm_save))), U=as.double(U),
                    copy_X_vlm=copy_X_vlm,
                    X_vlm = if (copy_X_vlm) as.double(X_vlm_save) else
@@ -269,9 +269,9 @@ vglm.fit <- function(x, y, w=rep(1, length(x[, 1])),
 
 
 
-    bf.call <- expression(vlm.wfit(xmat=X_vlm_save, z, Blist=NULL, U=U,
-                                   matrix.out=FALSE, is.vlmX=TRUE,
-                                   qr=qr.arg, xij=NULL))
+    bf.call <- expression(vlm.wfit(xmat = X_vlm_save, z, Blist = NULL, U = U,
+                                   matrix.out = FALSE, is.vlmX = TRUE,
+                                   qr = qr.arg, xij = NULL))
 
     while(c.list$one.more) {
         tfit <- eval(bf.call)   # fit$smooth.frame is new
@@ -285,7 +285,7 @@ vglm.fit <- function(x, y, w=rep(1, length(x[, 1])),
         NULL
     }
 
-    if (maxit>1 && iter>=maxit)
+    if (maxit > 1 && iter >= maxit)
         warning("convergence not obtained in ", maxit, " iterations")
 
 
@@ -297,7 +297,7 @@ vglm.fit <- function(x, y, w=rep(1, length(x[, 1])),
     if (length(slot(family, "fini")))
         eval(slot(family, "fini"))
 
-    if (M>1) 
+    if (M > 1)
         tfit$predictors <- matrix(tfit$predictors, n, M)
 
     coefs <- tfit$coefficients
@@ -311,7 +311,7 @@ vglm.fit <- function(x, y, w=rep(1, length(x[, 1])),
     if (check.rank && rank < ncol_X_vlm)
         stop("vglm only handles full-rank models (currently)")
 
-    R <- tfit$qr$qr[1:ncol_X_vlm, 1:ncol_X_vlm, drop=FALSE]
+    R <- tfit$qr$qr[1:ncol_X_vlm, 1:ncol_X_vlm, drop = FALSE]
     R[lower.tri(R)] <- 0
     attributes(R) <- list(dim=c(ncol_X_vlm, ncol_X_vlm),
                           dimnames=list(cnames, cnames), rank=rank)
@@ -328,7 +328,7 @@ vglm.fit <- function(x, y, w=rep(1, length(x[, 1])),
 
 
     residuals <- z - tfit$predictors
-    if (M==1) {
+    if (M == 1) {
         tfit$predictors <- as.vector(tfit$predictors)
         residuals <- as.vector(residuals)
         names(residuals) <- names(tfit$predictors) <- yn
@@ -351,25 +351,25 @@ vglm.fit <- function(x, y, w=rep(1, length(x[, 1])),
 
 
     df.residual <- nrow_X_vlm - rank
-    fit <- list(assign=asgn,
-                coefficients=coefs,
-                constraints=Blist, 
-                df.residual=df.residual,
-                df.total=n*M,
-                effects=effects, 
-                fitted.values=mu,
-                offset=offset, 
-                rank=rank,
-                residuals=residuals,
-                R=R,
-                terms=Terms) # terms: This used to be done in vglm() 
+    fit <- list(assign = asgn,
+                coefficients = coefs,
+                constraints = Blist, 
+                df.residual = df.residual,
+                df.total = n*M,
+                effects = effects, 
+                fitted.values = mu,
+                offset = offset, 
+                rank = rank,
+                residuals = residuals,
+                R = R,
+                terms = Terms) # terms: This used to be done in vglm() 
 
     if (qr.arg) {
         fit$qr <- tfit$qr
         dimnames(fit$qr$qr) <- dnrow_X_vlm
     }
 
-    if (M==1) {
+    if (M == 1) {
         wz <- as.vector(wz)  # Convert wz into a vector
     } # else
     fit$weights <- if (save.weight) wz else NULL
@@ -400,8 +400,8 @@ vglm.fit <- function(x, y, w=rep(1, length(x[, 1])),
         if (ii != criterion &&
             any(slotNames(family) == ii) &&
             length(body(slot(family, ii)))) {
-                fit[[ii]] <- crit.list[[ii]] <- (slot(family, ii))(mu=mu,
-                             y=y, w=w, res=FALSE, eta=eta, extra)
+                fit[[ii]] <- crit.list[[ii]] <- (slot(family, ii))(mu = mu,
+                             y = y, w = w, res = FALSE, eta = eta, extra)
         }
     }
 
@@ -413,18 +413,18 @@ vglm.fit <- function(x, y, w=rep(1, length(x[, 1])),
     if (length(slot(family, "last")))
         eval(slot(family, "last"))
 
-    structure(c(fit, list(predictors=tfit$predictors,
-        contrasts=attr(x, "contrasts"),
-        control=control,
-        crit.list=crit.list,
-        extra=extra,
-        family=family,
-        iter=iter,
-        misc=misc,
-        post=post,
-        rss=tfit$rss,
-        x=x,
-        y=y)),
-        vclass=slot(family, "vfamily"))
+    structure(c(fit, list(predictors = tfit$predictors,
+        contrasts = attr(x, "contrasts"),
+        control = control,
+        crit.list = crit.list,
+        extra = extra,
+        family = family,
+        iter = iter,
+        misc = misc,
+        post = post,
+        rss = tfit$rss,
+        x = x,
+        y = y)),
+        vclass = slot(family, "vfamily"))
 }
 

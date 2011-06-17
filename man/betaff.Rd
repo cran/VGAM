@@ -7,10 +7,10 @@
 
 }
 \usage{
-betaff(A=0, B=1,
-       lmu=if(A==0 & B==1) "logit" else "elogit", lphi="loge",
-       emu=if(lmu=="elogit") list(min=A,max=B) else list(),
-       ephi=list(), imu=NULL, iphi=NULL, method.init=1, zero=NULL)
+betaff(A = 0, B = 1,
+       lmu = if (A == 0 & B == 1) "logit" else "elogit", lphi = "loge",
+       emu = if (lmu == "elogit") list(min = A, max = B) else list(),
+       ephi = list(), imu = NULL, iphi = NULL, imethod = 1, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -37,7 +37,7 @@ betaff(A=0, B=1,
   \code{initialize} slot.
 
   }
-  \item{method.init, zero}{
+  \item{imethod, zero}{
   See \code{\link{CommonVGAMffArguments}} for more information.
 
   }
@@ -116,21 +116,21 @@ betaff(A=0, B=1,
 
 }
 \examples{
-betadat = data.frame(y = rbeta(nn <- 1000, shape1=exp(0), shape2=exp(1)))
-fit = vglm(y ~ 1, betaff, betadat, trace=TRUE)
-coef(fit, matrix=TRUE)
+bdata = data.frame(y = rbeta(nn <- 1000, shape1 = exp(0), shape2 = exp(1)))
+fit = vglm(y ~ 1, betaff, bdata, trace = TRUE)
+coef(fit, matrix = TRUE)
 Coef(fit)  # Useful for intercept-only models
 
 # General A and B, and with a covariate
-betadat = transform(betadat, x = runif(nn))
-betadat = transform(betadat, mu = logit(0.5-x, inverse=TRUE),
-                             prec = exp(3+x))  # prec == phi
-betadat = transform(betadat, shape2 = prec * (1-mu),
-                             shape1 = mu * prec)
-betadat = transform(betadat, y = rbeta(nn, shape1=shape1, shape2=shape2))
-betadat = transform(betadat, Y = 5 + 8 * y)   # From 5 to 13, not 0 to 1
-fit = vglm(Y ~ x, betaff(A=5, B=13), betadat, trace=TRUE)
-coef(fit, mat=TRUE)
+bdata = transform(bdata, x2 = runif(nn))
+bdata = transform(bdata, mu = logit(0.5 - x2, inverse = TRUE),
+                         prec = exp(3   + x2))  # prec == phi
+bdata = transform(bdata, shape2 = prec * (1-mu),
+                         shape1 = mu * prec)
+bdata = transform(bdata, y = rbeta(nn, shape1 = shape1, shape2 = shape2))
+bdata = transform(bdata, Y = 5 + 8 * y)   # From 5 to 13, not 0 to 1
+fit = vglm(Y ~ x2, betaff(A = 5, B = 13), bdata, trace = TRUE)
+coef(fit, matrix = TRUE)
 }
 \keyword{models}
 \keyword{regression}

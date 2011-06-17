@@ -233,11 +233,11 @@ coef(fit , matrix = TRUE) # Easy to reconcile this output with fit2
 
 # Example 3: The response is a factor.
 nn = 10
-dframe3 = data.frame(yfactor = gl(3, nn, labels=c("Control","Trt1","Trt2")),
-                     x = runif(3 * nn))
+dframe3 = data.frame(yfactor = gl(3, nn, labels = c("Control", "Trt1", "Trt2")),
+                     x2 = runif(3 * nn))
 myrefLevel = with(dframe3, yfactor[12])
-fit3a = vglm(yfactor ~ x, multinomial(refLevel = myrefLevel), dframe3)
-fit3b = vglm(yfactor ~ x, multinomial(refLevel = 2), dframe3)
+fit3a = vglm(yfactor ~ x2, multinomial(refLevel = myrefLevel), dframe3)
+fit3b = vglm(yfactor ~ x2, multinomial(refLevel = 2), dframe3)
 coef(fit3a, matrix = TRUE)  # "Treatment1" is the reference level
 coef(fit3b, matrix = TRUE)  # "Treatment1" is the reference level
 margeff(fit3b)

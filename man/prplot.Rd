@@ -4,10 +4,12 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
 Probability Plots for Categorical Data Analysis
+
 }
 \description{
 Plots the fitted probabilities for some very simplified special
 cases of categorical data analysis models.
+
 }
 \usage{
 prplot(object, control = prplot.control(...), ...)
@@ -26,7 +28,7 @@ prplot.control(xlab = NULL, ylab = "Probability", main = NULL, xlim = NULL,
 
 }
   \item{control}{
-List containing some basic graphical parameters.
+  List containing some basic graphical parameters.
 
 }
   \item{xlab, ylab, main, xlim, ylim, lty }{
@@ -39,11 +41,13 @@ List containing some basic graphical parameters.
   Argument \code{rug.arg} is logical: add a rug for the distinct values of the
   explanatory variable?
 
+
 }
   \item{\dots}{
   Arguments such as \code{xlab} which are fed into \code{prplot.control()}.
   Only a small selection of graphical arguments from
   \code{\link[graphics]{par}} are offered.
+
 
 }
 }
@@ -51,10 +55,12 @@ List containing some basic graphical parameters.
   For models involving one term in the RHS of the formula this function
   plots the fitted probabilities against the single explanatory variable.
 
+
 }
 \value{
   The object is returned invisibly with the \code{preplot} slot assigned.
   This is obtained by a call to \code{plotvgam()}.
+
 
 }
 %\references{
@@ -65,6 +71,8 @@ List containing some basic graphical parameters.
 %}
 \note{
   This function is rudimentary.
+
+
 }
 
 %% ~Make other sections like Warning with \section{Warning }{....} ~
@@ -72,14 +80,15 @@ List containing some basic graphical parameters.
 \seealso{
   \code{\link{cumulative}}.
 
+
 }
 \examples{
-pneumo = transform(pneumo, let=log(exposure.time))
+pneumo = transform(pneumo, let = log(exposure.time))
 fit = vglm(cbind(normal, mild, severe) ~ let, propodds, pneumo)
 M = fit@misc$M
-\dontrun{
-prplot(fit)
-prplot(fit, lty=1:M, col=(1:M)+2, rug=TRUE, las=1, ylim=c(0,1), rlwd=2) }
+\dontrun{ prplot(fit)
+prplot(fit, lty = 1:M, col = (1:M)+2, rug = TRUE, las = 1,
+       ylim = c(0,1), rlwd = 2) }
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

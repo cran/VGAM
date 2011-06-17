@@ -101,7 +101,7 @@ used by \code{\link{plotvgam}}; the plotting parameters
         may be put here.
  }
     \item{\code{prior.weights}:}{Object of class
-\code{"numeric"}, from class \code{ "vlm"} 
+\code{"matrix"}, from class \code{ "vlm"} 
 holding the initially supplied weights.
  }
     \item{\code{qr}:}{Object of class \code{"list"},

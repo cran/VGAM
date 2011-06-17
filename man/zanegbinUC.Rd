@@ -31,7 +31,7 @@ rzanegbin(n, p0, size, prob = NULL, munb = NULL)
   }
   \item{p0}{
   Probability of zero, called \eqn{p0}.
-  The default value of \code{p0=0} corresponds
+  The default value of \code{p0 = 0} corresponds
   to the response having a positive negative binomial distribution.
 
   }
@@ -39,7 +39,7 @@ rzanegbin(n, p0, size, prob = NULL, munb = NULL)
 \details{
   The probability function of \eqn{Y} is 0 with probability \code{p0},
   else a positive
-  \eqn{negative binomial(\mu_{nb}, size)}{negative binomial(munb, size)}
+  negative binomial(\eqn{\mu_{nb}}{munb}, size)
   distribution.
 
 }
@@ -54,7 +54,7 @@ rzanegbin(n, p0, size, prob = NULL, munb = NULL)
 \author{ Thomas W. Yee }
 \note{ 
     The argument \code{p0} is recycled to the required length, and
-    must have values which lie in the interval [0,1].
+    must have values which lie in the interval \eqn{[0,1]}.
 
 }
 
@@ -65,17 +65,16 @@ rzanegbin(n, p0, size, prob = NULL, munb = NULL)
 }
 \examples{
 munb <- 3; size <- 4; p0 <- 0.3; x <- (-1):7
-(ii <- dzanegbin(x,   p0 = p0, munb = munb, size = size))
- table(rzanegbin(100, p0 = p0, munb = munb, size = size))
+dzanegbin(x,   p0 = p0, munb = munb, size = size)
+table(rzanegbin(100, p0 = p0, munb = munb, size = size))
 
-\dontrun{
-x = 0:10
+\dontrun{ x = 0:10
 barplot(rbind(dzanegbin(x, p0 = p0, munb = munb, size = size),
                 dnbinom(x, mu = munb, size = size)),
-        beside = TRUE, col = c("blue","green"), cex.main=0.7, las=1,
+        beside = TRUE, col = c("blue","green"), cex.main = 0.7, las = 1,
         ylab = "Probability",names.arg = as.character(x),
-        main=paste("ZANB(p0=", p0, ", munb=", munb, ", size=", size,
-                   ") [blue] vs",  " NB(mu=", munb, ", size=", size,
+        main = paste("ZANB(p0 =", p0, ", munb =", munb, ", size =", size,
+                   ") [blue] vs",  " NB(mu =", munb, ", size =", size,
                    ") [green] densities", sep="")) }
 }
 \keyword{distribution}

@@ -8,9 +8,9 @@
 
 }
 \usage{
-posnegbinomial(lmunb = "loge", lk = "loge", emunb = list(), ek = list(),
-               ik = NULL, zero = -2, cutoff = 0.995, shrinkage.init = 0.95,
-               method.init = 1)
+posnegbinomial(lmunb = "loge", lsize = "loge", emunb = list(), esize = list(),
+               isize = NULL, zero = -2, cutoff = 0.995, shrinkage.init = 0.95,
+               imethod = 1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -20,22 +20,22 @@ posnegbinomial(lmunb = "loge", lk = "loge", emunb = list(), ek = list(),
   See \code{\link{Links}} for more choices.
 
   }
-  \item{lk}{ 
+  \item{lsize}{ 
   Parameter link function applied to the dispersion parameter,
   called \code{k}.
   See \code{\link{Links}} for more choices.
 
   }
-  \item{emunb, ek}{
+  \item{emunb, esize}{
   List. Extra argument for the respective links.
   See \code{earg} in \code{\link{Links}} for general information.
 
   }
-  \item{ik}{ 
+  \item{isize}{ 
   Optional initial value for \code{k}, an index parameter.
   The value \code{1/k} is known as a dispersion parameter.
   If failure to converge occurs try different values (and/or use
-  \code{method.init}).
+  \code{imethod}).
   If necessary this vector is recycled to length equal to the number
   of responses. 
   A value \code{NULL} means an initial value for each response is
@@ -46,12 +46,13 @@ posnegbinomial(lmunb = "loge", lk = "loge", emunb = list(), ek = list(),
   Integer valued vector, usually assigned \eqn{-2} or \eqn{2} if used
   at all.  Specifies which of the two linear/additive predictors are
   modelled as an intercept only. By default, the \code{k} parameter
-  (after \code{lk} is applied) is modelled as a single unknown
+  (after \code{lsize} is applied) is modelled as a single unknown
   number that is estimated.  It can be modelled as a function of
   the explanatory variables by setting \code{zero = NULL}.  A negative
   value means that the value is recycled, so setting \eqn{-2} means
   all \code{k} are intercept only.
   See \code{\link{CommonVGAMffArguments}} for more information.
+
 
   }
   \item{cutoff}{ 
@@ -62,7 +63,7 @@ posnegbinomial(lmunb = "loge", lk = "loge", emunb = list(), ek = list(),
   \code{qnegbin(p)}.
 
   }
-  \item{shrinkage.init, method.init}{
+  \item{shrinkage.init, imethod}{
   See \code{\link{negbinomial}}.
 
   }
@@ -170,7 +171,7 @@ corbet <- data.frame(nindiv = 1:24,
 fit <- vglm(nindiv ~ 1, posnegbinomial, weights = ofreq, data = corbet)
 coef(fit, matrix = TRUE)
 Coef(fit)
-(khat <- Coef(fit)["k"])
+(khat <- Coef(fit)["size"])
 pdf2 <- dposnegbin(x = with(corbet, nindiv), mu = fitted(fit), size = khat)
 print( with(corbet, cbind(nindiv, ofreq, fitted = pdf2*sum(ofreq))), dig = 1)
 }

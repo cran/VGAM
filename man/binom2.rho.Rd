@@ -10,7 +10,7 @@
 }
 \usage{
 binom2.rho(lrho = "rhobit", erho=list(), imu1 = NULL, imu2 = NULL,
-           irho = NULL, method.init = 1,
+           irho = NULL, imethod = 1,
            zero = 3, exchangeable = FALSE, nsimEIM = NULL)
 binom2.Rho(rho = 0, imu1 = NULL, imu2 = NULL,
            exchangeable = FALSE, nsimEIM = NULL)
@@ -51,7 +51,7 @@ binom2.Rho(rho = 0, imu1 = NULL, imu2 = NULL,
   be equal.
 
   }
-  \item{method.init, nsimEIM}{
+  \item{imethod, nsimEIM}{
   See \code{\link{CommonVGAMffArguments}} for more information.
   A value of at least 100 is recommended;
   the larger the value the better.
@@ -147,7 +147,7 @@ Freedman, D. A. (2010)
   Converge problems can occur.
   If so, assign \code{irho} a range of
   values and monitor convergence (e.g., set \code{trace = TRUE}).
-  Else try \code{method.init}.
+  Else try \code{imethod}.
   Practical experience shows that local solutions can occur,
   and that \code{irho} needs to be quite close to the (global)
   solution.

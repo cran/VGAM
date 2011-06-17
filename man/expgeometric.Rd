@@ -1,7 +1,7 @@
 \name{expgeometric}
 \alias{expgeometric}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{Exponential geometric Distribution Family Function}
+\title{Exponential Geometric Distribution Family Function}
 \description{
   Estimates the two parameters of the exponential geometric distribution
   by maximum likelihood estimation.
@@ -11,7 +11,7 @@
 expgeometric(lscale = "loge", lshape = "logit",
              escale = list(), eshape = list(),
              iscale = NULL,   ishape = NULL,
-             zero = 1, nsimEIM = 400)
+             tol12 = 1e-05, zero = 1, nsimEIM = 400)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -30,22 +30,29 @@ expgeometric(lscale = "loge", lshape = "logit",
   Optional initial values for the scale and shape parameters.
 
   }
+  \item{tol12}{
+  Numeric.
+  Tolerance for testing whether a parameter has value 1 or 2.
+
+  }
   \item{zero, nsimEIM}{
   See \code{\link{CommonVGAMffArguments}}.
 
   }
 
-
 }
 \details{
   The exponential geometric distribution has density function
   \deqn{f(y; c = scale, s = shape)  = 
-   c (1 - s) e^{-c y} (1 - s e^{-c y})^{-2}}{%
-   c*(1-s)*e^(-c*y)*(1-s*e^(-c*y))^(-2)}
+   (1/c) (1 - s) e^{-y/c} (1 - s e^{-y/c})^{-2}}{%
+   (1/c) * (1 - s) * e^(-y/c) * (1 - s * e^(-y/c))^(-2)}
   where \eqn{y > 0}, \eqn{c > 0} and \eqn{s \in (0, 1)}{0 < s < 1}.
-  The mean is \eqn{((s-1)/(sc)) \log(1-s)}{((s-1)/(sc)) * log(1-s)}
+  The mean, \eqn{(c (s - 1)/ s) \log(1 - s)}{(c *
+    (s - 1)/ s) * log(1 - s)}
   is returned as the fitted values.
-  Note the median is \eqn{(1/c) \log(2-s)}{(1/c) * log(2-s)}.
+  Note the median is \eqn{c \log(2 - s)}{c * log(2 - s)}.
+  Simulated Fisher scoring is implemented.
+
 
 }
 \value{
@@ -61,24 +68,24 @@ expgeometric(lscale = "loge", lshape = "logit",
   \bold{39}, 35--42.
 
 }
-\author{ J. G. Lauder and T. W .Yee }
+\author{ J. G. Lauder and T. W. Yee }
 \note{
-  Soon the scale term will be redefinined as the reciprocal of
-  the scale parameter used by Adamidis and Loukas (1998).
-  That is, division by the scale parameter will be used later.
+  We define \code{scale} as the reciprocal of the scale parameter
+  used by Adamidis and Loukas (1998).
 
 
 }
 
 \seealso{ 
-  \code{dexpgeom},
+  \code{\link{dexpgeom}},
   \code{\link{exponential}},
   \code{\link{geometric}}.
+
 
 }
 \examples{
 scale = exp(2); shape = logit(-1, inverse = TRUE);
-edata = data.frame(y = rexpgeom(n = 2000, scale=scale, shape=shape))
+edata = data.frame(y = rexpgeom(n = 2000, scale = scale, shape = shape))
 fit = vglm(y ~ 1, expgeometric, edata, trace = TRUE)
 c(with(edata, mean(y)), head(fitted(fit), 1))
 coef(fit, matrix = TRUE)

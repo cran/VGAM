@@ -11,7 +11,7 @@
 }
 \usage{
 poissonff(link = "loge", earg=list(), dispersion = 1, onedpar = FALSE,
-          imu=NULL, method.init=1, parallel = FALSE, zero = NULL)
+          imu=NULL, imethod=1, parallel = FALSE, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -46,7 +46,7 @@ poissonff(link = "loge", earg=list(), dispersion = 1, onedpar = FALSE,
   A logical or formula. Used only if the response is a matrix.
 
   }
-  \item{imu, method.init}{
+  \item{imu, imethod}{
   See \code{\link{CommonVGAMffArguments}} for more information.
 
   }

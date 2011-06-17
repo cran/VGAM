@@ -228,7 +228,7 @@ uqo  <- function(formula,
         }
     } else list() # R-1.5.0
     if (length(fit$prior.weights))
-        slot(answer, "prior.weights") = fit$prior.weights
+        slot(answer, "prior.weights") = as.matrix(fit$prior.weights)
 
     answer
 }
@@ -532,7 +532,7 @@ uqo.fit <- function(x, y, w=rep(1, len=nrow(x)),
     othint = c(Rank, control$EqualTol, pstar, dimw=1, inited=290, # other ints
                modelno, maxitl=control$maxitl, actnits=0, twice=0, p1star,
                p2star, nice31, lenbeta, control$ITolerances, control$trace,
-               p1, p2, control$method.init)
+               p1, p2, control$imethod)
     othdbl = c(small=control$SmallNo, fseps=control$epsilon,
                .Machine$double.eps,
                kinit=rep(control$Kinit, len=NOS),

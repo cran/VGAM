@@ -8,7 +8,7 @@
 
 }
 \usage{
-borel.tanner(Qsize=1, link="logit", earg=list(), method.init=1)
+borel.tanner(Qsize=1, link="logit", earg=list(), imethod=1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -22,7 +22,7 @@ borel.tanner(Qsize=1, link="logit", earg=list(), method.init=1)
   See \code{\link{Links}} for more choices and for general information.
 
   }
-  \item{method.init}{
+  \item{imethod}{
   See \code{\link{CommonVGAMffArguments}}.
   Valid values are 1, 2, 3 or 4.
 

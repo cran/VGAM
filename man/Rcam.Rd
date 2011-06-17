@@ -2,13 +2,14 @@
 \alias{Rcam}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-  Mark the baseline of row and column on a matrix data 
+  Mark the Baseline of Row and Column on a Matrix data 
 
 }
 \description{
-  This function will grab the baseline of row and column for
-  the rank-zero model of row-column association models or main
-  effects models.
+  Rearrange the rows and columns of the input so
+  that the first row and first column are baseline.
+  This function is for rank-zero row-column association models
+  (RCAMs; i.e., general main effects models).
 
 }
 \usage{
@@ -18,44 +19,51 @@
 %- maybe also 'usage' for other objects documented here.
 \arguments{
 \item{mat}{
-  Matrix of \eqn{r} by \eqn{c}.
-  The matrix is better labeled with row and column names.
+  Matrix, of dimension \eqn{r} by \eqn{c}.
+  It is best that it is labelled with row and column names.
 
 }
-\item{rbaseline}{
-  Numeric (row number of the matrix y) or can be 
-  character of row names of the matrix \code{y} that user
-  wants it as row baseline or reference. 
-  Similarly \code{cbaseline} for the column
-
-}
-\item{cbaseline}{
- Numeric of column number of the matrix \code{mat}, or can be 
- Character of column names of the matrix \code{mat} that user
- wants it as column baseline or reference.
+\item{rbaseline, cbaseline}{
+  Numeric (row number of the matrix \code{mat}) or
+  character (matching a row name of \code{mat}) that the user
+  wants as the row baseline or reference level. 
+  Similarly \code{cbaseline} for the column.
 
 }
 }
 \details{
-  In some regression analysis, it is necessary to put the baseline
-  (or reference) of the factor, and as well in rank-zero of
-  row-column association model. It should be done by marking
-  a baseline on a level of row and column.  This is a data
-  preprocessing function for \code{\link{rcam}}.
+  This is a data preprocessing function for \code{\link{rcam}}.
+  For rank-zero row-column association models this function
+  establishes the baseline (or reference) levels of the matrix
+  response with respect to the row and columns---these become
+  the new first row and column.
 
 }
 
 \value{
-  Matrix of the same dimension as the input, rearranged the first
-  row or column.
+  Matrix of the same dimension as the input,
+  with \code{rbaseline} and \code{cbaseline} specifying the 
+  first rows and columns.
+  The default is no change in \code{mat}.
 
 }
 \author{
-Alfian F. Hadi.
+Alfian F. Hadi and T. W. Yee.
 
 }
 \note{
-This is a data preprocessing function for \code{\link{rcam}}.
+  This function is similar to \code{\link{moffset}}; see
+  \code{\link{moffset}} for information about the differences.
+  If numeric, the arguments
+  \code{rbaseline}
+  and
+  \code{cbaseline}
+  differ from arguments 
+  \code{roffset} 
+  and 
+  \code{coffset}
+  in \code{\link{moffset}}
+  by 1 (when elements of the matrix agree).
 
 }
 
@@ -67,6 +75,8 @@ This is a data preprocessing function for \code{\link{rcam}}.
 
 }
 \examples{
-(alcoff.e <- moffset(alcoff, roffset = "6"))
-Rcam(alcoff.e, rbaseline = "11", cbaseline = "Monday")
+(alcoff.e <- moffset(alcoff, roffset = "6", postfix = "*"))
+(aa = Rcam(alcoff,    rbaseline = "11", cbaseline = "Sunday"))
+(bb = moffset(alcoff,             "11",             "Sunday", postfix = "*"))
+aa - bb   # Notice the difference!
 }

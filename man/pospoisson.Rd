@@ -7,7 +7,7 @@
 }
 \usage{
 pospoisson(link = "loge", earg = list(),
-           expected = TRUE, ilambda = NULL, method.init = 1)
+           expected = TRUE, ilambda = NULL, imethod = 1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -32,7 +32,7 @@ pospoisson(link = "loge", earg = list(),
   A \code{NULL} means a value is computed internally.
 
   }
-  \item{method.init}{
+  \item{imethod}{
   An integer with value \code{1} or \code{2} or \code{3} which 
   specifies the initialization method for \eqn{\lambda}{lambda}.
   If failure to converge occurs try another value

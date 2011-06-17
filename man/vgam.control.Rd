@@ -173,9 +173,9 @@ Vector generalized additive models.
 
 \examples{
 data(pneumo)
-pneumo = transform(pneumo, let=log(exposure.time))
-vgam(cbind(normal, mild, severe) ~ s(let, df=3), multinomial,
-     pneumo, trace=TRUE, eps=1e-4, maxit=10)
+pneumo = transform(pneumo, let = log(exposure.time))
+vgam(cbind(normal, mild, severe) ~ s(let, df = 3), multinomial,
+     pneumo, trace = TRUE, eps = 1e-4, maxit = 10)
 }
 \keyword{models}
 \keyword{regression}

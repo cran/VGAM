@@ -3,11 +3,15 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Tobit Model }
 \description{
-  Fits a Tobit model to a univariate response. 
+  Fits a Tobit model.
+
 }
 \usage{
 tobit(Lower = 0, Upper = Inf, lmu = "identity", lsd = "loge",
-      emu = list(), esd = list(), method.init = 1, zero = 2)
+      emu = list(), esd = list(), nsimEIM = 250,
+      imu = NULL, isd = NULL, 
+      type.fitted = c("uncensored", "censored", "mean.obs"),
+      imethod = 1, zero = -2)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -15,39 +19,58 @@ tobit(Lower = 0, Upper = Inf, lmu = "identity", lsd = "loge",
   Numeric of length 1, it is the value \eqn{L} described below.
   Any value of the linear model 
   \eqn{x_i^T \beta}{x_i^T beta} that
-  is less than this value is assigned this value.
-  Hence this should be the smallest possible value in the response variable.
+  is less than this lowerbound is assigned this value.
+  Hence this should be the smallest possible value in the response
+  variable.
 
   }
   \item{Upper}{
   Numeric of length 1, it is the value \eqn{U} described below. 
   Any value of the linear model 
   \eqn{x_i^T \beta}{x_i^T beta} that
-  is greater than this value is assigned this value.
-  Hence this should be the largest possible value in the response variable.
+  is greater than this upperbound is assigned this value.
+  Hence this should be the largest possible value in the response
+  variable.
 
   }
-  \item{lmu, lsd}{
-  Parameter link functions applied to the mean and
+  \item{lmu, lsd, emu, esd}{
+  Parameter link functions and extra arguments for the mean and
   standard deviation parameters.
   See \code{\link{Links}} for more choices.
   The standard deviation is a positive quantity, therefore a log link 
   is its default.
 
   }
-  \item{emu, esd}{
-  List. Extra argument for each of the links.
-  See \code{earg} in \code{\link{Links}} for general information.
+  \item{imu, isd}{
+  See \code{\link{CommonVGAMffArguments}} for information.
 
   }
-  \item{method.init}{
+  \item{type.fitted}{
+  Type of fitted value returned.
+  The first choice is default and is the ordinary uncensored or
+  unbounded linear model.
+  If \code{"censored"} then the fitted values in the interval \eqn{[L, U]}.
+  If \code{"mean.obs"} then the mean of the observations is returned;
+  this is a doubly truncated normal distribution
+  augmented by point masses at the truncation points
+  (see \code{\link{dtobit}}).
+
+
+  }
+  \item{imethod}{
   Initialization method. Either 1 or 2, this specifies
   two methods for obtaining initial values for the parameters.
 
   }
+  \item{nsimEIM}{
+  Used if nonstandard Tobit model.
+  See \code{\link{CommonVGAMffArguments}} for information.
+
+  }
   \item{zero}{
   An integer vector, containing the value 1 or 2. If so,
-  the mean or standard deviation respectively are modelled as an intercept only.
+  the mean or standard deviation respectively are modelled
+  as an intercept-only.
   Setting \code{zero = NULL} means both linear/additive predictors
   are modelled as functions of the explanatory variables.
 
@@ -57,8 +80,8 @@ tobit(Lower = 0, Upper = Inf, lmu = "identity", lsd = "loge",
   The Tobit model can be written
   \deqn{y_i^* = x_i^T \beta + \varepsilon_i}{%
         y_i^* = x_i^T  beta +  e_i}
-  where the \eqn{e_i \sim N(0,\sigma^2)}{e_i ~ N(0,sigma^2)} independently and
-  \eqn{i=1,\ldots,n}{i=1,...,n}.
+  where the \eqn{e_i \sim N(0,\sigma^2)}{e_i ~ N(0,sigma^2)}
+  independently and \eqn{i=1,\ldots,n}{i=1,...,n}.
   However, we measure \eqn{y_i = y_i^*} only if \eqn{y_i^* > L} and
   \eqn{y_i^* < U} for some
   cutpoints \eqn{L} and \eqn{U}. Otherwise we let \eqn{y_i=L} or
@@ -66,66 +89,130 @@ tobit(Lower = 0, Upper = Inf, lmu = "identity", lsd = "loge",
   The Tobit model is thus a multiple linear regression but with censored
   responses if it is below or above certain cutpoints.
 
-  The defaults for \code{Lower} and \code{Upper} correspond to the
-  classical Tobit model.  By default, the mean \eqn{x_i^T \beta}{x_i^T
-  beta} is the first linear/additive predictor, and the log of the
-  standard deviation is the second linear/additive predictor.  The Fisher
-  information matrix for uncensored data is diagonal.
-  The fitted values are the estimates of \eqn{x_i^T \beta}{x_i^T beta}.
+
+  The defaults for \code{Lower} and \code{Upper} and
+  \code{lmu} correspond to the \emph{standard} Tobit model.
+  Then Fisher scoring is used, else simulated Fisher scoring.
+  By default, the mean \eqn{x_i^T \beta}{x_i^T beta} is
+  the first linear/additive predictor, and the log of
+  the standard deviation is the second linear/additive
+  predictor. The Fisher information matrix for uncensored
+  data is diagonal. The fitted values are the estimates
+  of \eqn{x_i^T \beta}{x_i^T beta}.
+
 
 }
-%\section{Warning }{
+\section{Warning }{
+  Convergence is often slow. Setting \code{crit = "coeff"}
+  is recommended since premature convergence of the log-likelihood
+  is common.
+  Simulated Fisher scoring is implemented for the nonstandard
+  Tobit model. For this, the working weight matrices for
+  some observations are prone to not being positive-definite;
+  if so then some checking of the final model is recommended
+  and/or try inputting some initial values.
+
+
 %  The working weight matrices for most observations 
 %  are not positive-definite. These responses would otherwise have a
 %  fitted value much less than the cutpoint.
-%}
+}
+
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}},
   and \code{\link{vgam}}.
+
+
 }
 \references{
-Tobin, J. (1958)
-Estimation of relationships for limited dependent variables.
-\emph{Econometrica} \bold{26}, 24--36.
+  Tobin, J. (1958)
+  Estimation of relationships for limited dependent variables.
+  \emph{Econometrica} \bold{26}, 24--36.
+
+
 }
 
 \author{ Thomas W. Yee }
 \note{
-    The response must be univariate.  If there is no censoring then
-    \code{\link{normal1}} is recommended instead.  Any value of the
-    response less than \code{Lower} or greater than \code{Upper} will
-    be assigned the value \code{Lower} and \code{Upper} respectively,
-    and a warning will be issued.
-    The fitted object has components \code{censoredL} and \code{censoredU}
-    in the \code{extra} slot which specifies whether observations
-    are censored in that direction.
+  The response can be a matrix. Then \code{Lower} and \code{Upper}
+  are recycled to the number of columns.
+  If there is no censoring then
+  \code{\link{normal1}} is recommended instead. Any value of the
+  response less than \code{Lower} or greater than \code{Upper} will
+  be assigned the value \code{Lower} and \code{Upper} respectively,
+  and a warning will be issued.
+  The fitted object has components \code{censoredL} and \code{censoredU}
+  in the \code{extra} slot which specifies whether observations
+  are censored in that direction.
+  The function \code{\link{cennormal1}} is an alternative
+  to \code{tobit()}.
+
 
 }
 \seealso{
-    \code{\link{normal1}},
-    \code{\link{cnormal1}}.
-    \code{\link{dcnormal1}}.
+  \code{\link{rtobit}},
+  \code{\link{cennormal1}},
+  \code{\link{normal1}},
+  \code{\link{dcennormal1}},
+  \code{\link{posnormal1}},
+  \code{\link[stats:Normal]{rnorm}}.
+
+
 }
 \examples{
-tdata = data.frame(x = seq(-1, 1, len = (nn <- 1000)))
-foo = function(x) 1 + 4*x
-tdata = transform(tdata, ystar = foo(x) + rnorm(nn))
-Lower = 1; Upper = 4
-tdata = transform(tdata, y = pmax(ystar, Lower))
-tdata = transform(tdata, y = pmin(y, Upper))
-with(tdata, table(y == Lower | y == Upper)) # How many censored values?
+# Here, fit1 is a standard Tobit model and fit2 is a nonstandard Tobit model
+Lower = 1; Upper = 4; set.seed(1)  # For the nonstandard Tobit model
+tdata = data.frame(x2 = seq(-1, 1, len = (nn <- 100)))
+meanfun1 = function(x) 0 + 2*x
+meanfun2 = function(x) 2 + 2*x
+tdata = transform(tdata,
+  y1 = rtobit(nn, mean = meanfun1(x2)),  # Standard Tobit model 
+  y2 = rtobit(nn, mean = meanfun2(x2), Lower = Lower, Upper = Upper))
+with(tdata, table(y1 == 0)) # How many censored values?
+with(tdata, table(y2 == Lower | y2 == Upper)) # How many censored values?
+with(tdata, table(attr(y2, "cenL")))
+with(tdata, table(attr(y2, "cenU")))
 
-fit = vglm(y ~ x, tobit(Lower = Lower, Upper = Upper), tdata, trace = TRUE)
-table(fit@extra$censoredL)
-table(fit@extra$censoredU)
-coef(fit, matrix = TRUE)
-summary(fit)
-\dontrun{
-with(tdata, plot(x, y, main = "Tobit model", las=1))
-legend(-0.9, 3, c("Truth", "Estimate"), col=c("blue", "red"), lwd=2)
-with(tdata, lines(x, foo(x), col="blue", lwd=2))
-with(tdata, lines(x, fitted(fit), col="red", lwd=2, lty="dashed")) }
+fit1 = vglm(y1 ~ x2, tobit, tdata, trace = TRUE,
+            crit = "coeff")  # crit = "coeff" is recommended
+coef(fit1, matrix = TRUE)
+summary(fit1)
+
+fit2 = vglm(y2 ~ x2, tobit(Lower = Lower, Upper = Upper, type.f = "cens"),
+            tdata, crit = "coeff", trace = TRUE) # ditto
+table(fit2@extra$censoredL)
+table(fit2@extra$censoredU)
+coef(fit2, matrix = TRUE)
+
+\dontrun{ # Plot the results
+par(mfrow = c(2, 1))
+plot(y1 ~ x2, tdata, las = 1, main = "Standard Tobit model",
+     col = as.numeric(attr(y1, "cenL")) + 3,
+     pch = as.numeric(attr(y1, "cenL")) + 1)
+legend(x = "topleft", leg = c("censored", "uncensored"),
+       pch = c(2, 1), col = c("blue", "green"))
+legend(-1.0, 2.5, c("Truth", "Estimate", "Naive"),
+       col = c("purple", "orange", "black"), lwd = 2, lty = c(1, 2, 2))
+lines(meanfun1(x2) ~ x2, tdata, col = "purple", lwd = 2)
+lines(fitted(fit1) ~ x2, tdata, col = "orange", lwd = 2, lty = 2)
+lines(fitted(lm(y1 ~ x2, tdata)) ~ x2, tdata, col = "black",
+      lty = 2, lwd = 2) # This is simplest but wrong!
+
+plot(y2 ~ x2, tdata, las = 1, main = "Tobit model",
+     col = as.numeric(attr(y2, "cenL")) + 3 +
+           as.numeric(attr(y2, "cenU")),
+     pch = as.numeric(attr(y2, "cenL")) + 1 +
+           as.numeric(attr(y2, "cenU")))
+legend(x = "topleft", leg = c("censored", "uncensored"),
+       pch = c(2, 1), col = c("blue", "green"))
+legend(-1.0, 3.5, c("Truth", "Estimate", "Naive"),
+       col = c("purple", "orange", "black"), lwd = 2, lty = c(1, 2, 2))
+lines(meanfun2(x2) ~ x2, tdata, col = "purple", lwd = 2)
+lines(fitted(fit2) ~ x2, tdata, col = "orange", lwd = 2, lty = 2)
+lines(fitted(lm(y2 ~ x2, tdata)) ~ x2, tdata, col = "black",
+      lty = 2, lwd = 2) # This is simplest but wrong!
+}
 }
 \keyword{models}
 \keyword{regression}

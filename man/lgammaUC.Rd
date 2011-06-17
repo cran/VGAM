@@ -46,6 +46,7 @@ Kotz, S. and Nadarajah, S. (2000)
 pages 48--49,
 London: Imperial College Press.
 
+
 }
 \author{ T. W. Yee }
 \details{
@@ -64,18 +65,20 @@ London: Imperial College Press.
 \seealso{
   \code{\link{lgammaff}},
   \code{\link{prentice74}}.
+
+
 }
 \examples{
 \dontrun{ loc = 1; Scale = 1.5; k = 1.4
 x = seq(-3.2, 5, by = 0.01)
 plot(x, dlgamma(x, loc, Scale, k), type = "l", col = "blue", ylim = 0:1,
-     main = "Blue is density, red is cumulative distribution function",
+     main = "Blue is density, orange is cumulative distribution function",
      sub = "Purple are 5,10,...,95 percentiles", las = 1, ylab = "")
 abline(h = 0, col = "blue", lty = 2)
 lines(qlgamma(seq(0.05, 0.95, by = 0.05), loc, Scale, k),
       dlgamma(qlgamma(seq(0.05, 0.95, by = 0.05), loc, Scale, k),
               loc, Scale, k), col = "purple", lty = 3, type = "h")
-lines(x, plgamma(x, loc, Scale, k), type = "l", col = "red")
+lines(x, plgamma(x, loc, Scale, k), type = "l", col = "orange")
 abline(h = 0, lty = 2) }
 }
 \keyword{distribution}

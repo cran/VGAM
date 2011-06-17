@@ -337,7 +337,7 @@ rkoenker <- function(n, location = 0, scale = 1) {
                      llocation = "identity", lscale = "loge",
                      elocation = list(), escale = list(),
                      ilocation = NULL,   iscale = NULL,
-                     method.init = 1,
+                     imethod = 1,
                      zero = 2)
 {
 
@@ -365,9 +365,9 @@ rkoenker <- function(n, location = 0, scale = 1) {
   if (!is.Numeric(percentile, posit = TRUE) ||
       any(percentile >= 100))
     stop("bad input for argument 'percentile'")
-  if (!is.Numeric(method.init, allow = 1, integ = TRUE, posit = TRUE) ||
-     method.init > 2)
-      stop("'method.init' must be 1 or 2")
+  if (!is.Numeric(imethod, allow = 1, integ = TRUE, posit = TRUE) ||
+     imethod > 2)
+      stop("'imethod' must be 1 or 2")
 
   new("vglmff",
   blurb = c("Koenker distribution\n\n",
@@ -388,7 +388,7 @@ rkoenker <- function(n, location = 0, scale = 1) {
         namesof("scale",    .lscale, earg = .escale, tag = FALSE))
     if (!length(etastart)) {
 
-      locat.init <- if ( .method.init == 2) {
+      locat.init <- if ( .imethod == 2) {
         weighted.mean(y, w)
       } else {
         median(y)
@@ -403,7 +403,7 @@ rkoenker <- function(n, location = 0, scale = 1) {
   }), list( .llocat = llocat, .lscale = lscale,
             .ilocat = ilocat, .iscale = iscale,
             .elocat = elocat, .escale = escale,
-            .method.init = method.init ))),
+            .imethod = imethod ))),
   inverse = eval(substitute(function(eta, extra = NULL){
     Perce <- .percentile
     locat <- eta2theta(eta[, 1], link = .llocat, earg = .elocat)
@@ -422,7 +422,7 @@ rkoenker <- function(n, location = 0, scale = 1) {
     misc$earg <- list("location" = .elocat, "scale" = .escale)
     misc$expected <- TRUE
     misc$percentile <- .percentile
-    misc$method.init <- .method.init
+    misc$imethod <- .imethod
 
       ncoly <- ncol(y)
       for(ii in 1:length( .percentile )) {
@@ -433,7 +433,7 @@ rkoenker <- function(n, location = 0, scale = 1) {
       names(extra$percentile) = colnames(mu)
   }), list( .llocat = llocat, .lscale = lscale,
             .elocat = elocat, .escale = escale,
-            .method.init = method.init, .percentile = percentile ))),
+            .imethod = imethod, .percentile = percentile ))),
   loglikelihood = eval(substitute(
           function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
     locat <- eta2theta(eta[, 1], link = .llocat, earg = .elocat)
@@ -457,8 +457,8 @@ rkoenker <- function(n, location = 0, scale = 1) {
     dl.dlocat <- 3 * zedd   / (Scale * (4 + zedd^2))
     dl.dscale <- 3 * zedd^2 / (Scale * (4 + zedd^2)) - 1 / Scale
 
-    w * cbind(dl.dlocat * dlocat.deta,
-              dl.dscale * dscale.deta)
+    c(w) * cbind(dl.dlocat * dlocat.deta,
+                 dl.dscale * dscale.deta)
   }), list( .llocat = llocat, .lscale = lscale,
             .elocat = elocat, .escale = escale ))),
   weight = eval(substitute(expression({
@@ -469,7 +469,7 @@ rkoenker <- function(n, location = 0, scale = 1) {
     wz[, iam(1, 1, M = M)] <- ed2l.dlocat2 * dlocat.deta^2
     wz[, iam(2, 2, M = M)] <- ed2l.dscale2 * dscale.deta^2
 
-    w * wz
+    c(w) * wz
   }), list( .llocat = llocat, .lscale = lscale,
             .elocat = elocat, .escale = escale ))))
 }

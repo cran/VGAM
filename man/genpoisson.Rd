@@ -10,7 +10,7 @@ genpoisson(llambda = "elogit", ltheta = "loge",
            elambda = if (llambda == "elogit") list(min = -1, max = 1)
                      else list(),
            etheta = list(), ilambda = NULL, itheta = NULL,
-           use.approx = TRUE, method.init = 1, zero = 1)
+           use.approx = TRUE, imethod = 1, zero = 1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -38,7 +38,7 @@ genpoisson(llambda = "elogit", ltheta = "loge",
   information matrix is used, otherwise Newton-Raphson is used.
 
   }
-  \item{method.init}{
+  \item{imethod}{
   An integer with value \code{1} or \code{2} which
   specifies the initialization method for the parameters.
   If failure to converge occurs try another value
@@ -117,9 +117,9 @@ New York: Marcel Dekker.
 
 }
 \examples{
-gdata = data.frame(x = runif(nn <- 200))
-gdata = transform(gdata, y = rpois(nn, exp(2-x))) # Ordinary Poisson data
-fit  = vglm(y ~ x, genpoisson(zero = 1), gdata, trace = TRUE)
+gdata = data.frame(x2 = runif(nn <- 200))
+gdata = transform(gdata, y = rpois(nn, exp(2-x2))) # Ordinary Poisson data
+fit  = vglm(y ~ x2, genpoisson(zero = 1), gdata, trace = TRUE)
 coef(fit, matrix = TRUE)
 summary(fit)
 }

@@ -8,10 +8,10 @@
 
 }
 \usage{
-beta.ab(lshape1="loge", lshape2="loge",
-        eshape1=list(), eshape2=list(),
+beta.ab(lshape1 = "loge", lshape2 = "loge",
+        eshape1 = list(), eshape2 = list(),
         i1 = NULL, i2 = NULL, trim = 0.05,
-        A = 0, B = 1, parallel=FALSE, zero=NULL)
+        A = 0, B = 1, parallel = FALSE, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -64,6 +64,7 @@ beta.ab(lshape1="loge", lshape2="loge",
   (shape1 + shape2)}{E(Y) = A + (B-A) * shape1 /
   (shape1 + shape2)}, and these are the fitted values of the object.
 
+
   For the standard beta distribution the variance of \eqn{Y} is
   \eqn{shape1 \times shape2 / [(1+shape1+shape2) \times (shape1+shape2)^2]}{
        shape1 * shape2 / ((1+shape1+shape2) * (shape1+shape2)^2)}.
@@ -73,11 +74,14 @@ beta.ab(lshape1="loge", lshape2="loge",
   \eqn{\mu=shape1 / (shape1 + shape2)}{mu=shape1 / (shape1 + shape2)}
   is the mean of \eqn{Y}.
 
+
   Another parameterization of the beta distribution involving the mean
   and a precision parameter is implemented in \code{\link{betaff}}.
 
+
   If \eqn{A} and \eqn{B} are unknown, then the \pkg{VGAM} family function
   \code{beta4()} can be used to estimate these too.
+
 
 }
 \value{
@@ -86,6 +90,7 @@ beta.ab(lshape1="loge", lshape2="loge",
   \code{\link{rrvglm}}
   and \code{\link{vgam}}.
 
+
 }
 \references{ 
   Johnson, N. L. and Kotz, S. and Balakrishnan, N. (1995) 
@@ -93,13 +98,16 @@ beta.ab(lshape1="loge", lshape2="loge",
   \emph{Continuous Univariate Distributions},
   2nd edition, Volume 2, New York: Wiley.
 
+
   Gupta, A. K. and Nadarajah, S. (2004)
   \emph{Handbook of Beta Distribution and Its Applications},
   New York: Marcel Dekker.
 
+
 %Evans, M., Hastings, N. and Peacock, B. (2000)
 %\emph{Statistical Distributions},
 %New York: Wiley-Interscience, Third edition.
+
 
   Documentation accompanying the \pkg{VGAM} package at
   \url{http://www.stat.auckland.ac.nz/~yee}

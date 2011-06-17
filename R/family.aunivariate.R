@@ -171,8 +171,8 @@ pkumar = function(q, shape1, shape2) {
                   (y^shape1) / (1-y^shape1)
     dl.dshape2 <- 1 / shape2 + log1p(-y^shape1)
 
-    w * cbind(dl.dshape1 * dshape1.deta,
-              dl.dshape2 * dshape2.deta)
+    c(w) * cbind(dl.dshape1 * dshape1.deta,
+                 dl.dshape2 * dshape2.deta)
   }), list( .lshape1 = lshape1, .lshape2 = lshape2,
             .eshape1 = eshape1, .eshape2 = eshape2 ))),
   weight = eval(substitute(expression({
@@ -197,9 +197,10 @@ pkumar = function(q, shape1, shape2) {
     wz[, iam(2, 2, M = M)] <- ed2l.dshape22 * dshape2.deta^2
     wz[, iam(1, 2, M = M)] <- ed2l.dshape12 * dshape1.deta * dshape2.deta
 
-    w * wz
+    c(w) * wz
   }), list( .lshape1 = lshape1, .lshape2 = lshape2,
-            .eshape1 = eshape1, .eshape2 = eshape2, .tol12 = tol12 ))))
+            .eshape1 = eshape1, .eshape2 = eshape2,
+            .tol12 = tol12 ))))
 }
 
 
@@ -340,8 +341,8 @@ riceff.control <- function(save.weight = TRUE, ...)
                   besselI(temp8, nu=1) / besselI(temp8, nu=0)
         dl.dsigma = -2/sigma + (y^2 + vee^2)/(sigma^3) - (2 * temp8 / sigma) *
                     besselI(temp8, nu=1) / besselI(temp8, nu=0)
-        w * cbind(dl.dvee * dvee.deta,
-                  dl.dsigma * dsigma.deta)
+        c(w) * cbind(dl.dvee * dvee.deta,
+                     dl.dsigma * dsigma.deta)
     }), list( .lvee = lvee, .lsigma = lsigma,
               .evee = evee, .esigma = esigma, .nsimEIM = nsimEIM ))),
     weight = eval(substitute(expression({
@@ -366,7 +367,7 @@ riceff.control <- function(save.weight = TRUE, ...)
         dtheta.detas = cbind(dvee.deta, dsigma.deta)
         index0 = iam(NA, NA, M = M, both = TRUE, diag = TRUE)
         wz = wz * dtheta.detas[,index0$row] * dtheta.detas[,index0$col]
-        w * wz
+        c(w) * wz
     }), list( .lvee = lvee, .lsigma = lsigma,
               .evee = evee, .esigma = esigma, .nsimEIM = nsimEIM ))))
 }
@@ -523,8 +524,8 @@ skellam.control <- function(save.weight = TRUE, ...)
         temp6 = temp7 / temp9
         dl.dmu1 = -1 + 0.5 * y / mu1 + sqrt(mu2/mu1) * temp6
         dl.dmu2 = -1 - 0.5 * y / mu2 + sqrt(mu1/mu2) * temp6
-        w * cbind(dl.dmu1 * dmu1.deta,
-                  dl.dmu2 * dmu2.deta)
+        c(w) * cbind(dl.dmu1 * dmu1.deta,
+                     dl.dmu2 * dmu2.deta)
     }), list( .lmu1 = lmu1, .lmu2 = lmu2,
               .emu1 = emu1, .emu2 = emu2, .nsimEIM = nsimEIM ))),
     weight = eval(substitute(expression({
@@ -549,7 +550,7 @@ skellam.control <- function(save.weight = TRUE, ...)
         dtheta.detas = cbind(dmu1.deta, dmu2.deta)
         index0 = iam(NA, NA, M = M, both = TRUE, diag = TRUE)
         wz = wz * dtheta.detas[,index0$row] * dtheta.detas[,index0$col]
-        w * wz
+        c(w) * wz
     }), list( .lmu1 = lmu1, .lmu2 = lmu2,
               .emu1 = emu1, .emu2 = emu2, .nsimEIM = nsimEIM ))))
 }
@@ -675,7 +676,7 @@ yulesimon.control <- function(save.weight = TRUE, ...)
         wz = wz * drho.deta^2
 
 
-        w * wz
+        c(w) * wz
     }), list( .nsimEIM = nsimEIM ))))
 }
 
@@ -840,8 +841,8 @@ slash.control <- function(save.weight = TRUE, ...)
         ind0 = (abs(zedd) < .smallno)
         dl.dmu[ind0] = 0
         dl.dsigma[ind0] = -1/sigma[ind0]
-        ans =  w * cbind(dl.dmu * dmu.deta,
-                         dl.dsigma * dsigma.deta)
+        ans =  c(w) * cbind(dl.dmu    * dmu.deta,
+                            dl.dsigma * dsigma.deta)
         ans
     }), list( .lmu = lmu, .lsigma = lsigma,
               .emu = emu, .esigma = esigma, .smallno = smallno ))),
@@ -870,7 +871,7 @@ slash.control <- function(save.weight = TRUE, ...)
                    n, ncol(run.varcov), byrow = TRUE) else run.varcov
         dthetas.detas = cbind(dmu.deta, dsigma.deta)
         wz = wz * dthetas.detas[,ind1$row] * dthetas.detas[,ind1$col]
-        w * wz
+        c(w) * wz
     }), list( .lmu = lmu, .lsigma = lsigma,
               .emu = emu, .esigma = esigma,
               .nsimEIM = nsimEIM, .smallno = smallno ))))
@@ -896,16 +897,16 @@ dnefghs = function(x, tau, log = FALSE) {
 
 
  nefghs <- function(link = "logit", earg = list(), itau = NULL,
-                    method.init = 1)
+                    imethod = 1)
 {
     if (length(itau) && !is.Numeric(itau, positi = TRUE) || any(itau >= 1))
         stop("argument 'itau' must be in (0,1)")
     if (mode(link) != "character" && mode(link) != "name")
         link = as.character(substitute(link))
     if (!is.list(earg)) earg = list()
-    if (!is.Numeric(method.init, allow = 1, integ = TRUE, posit = TRUE) ||
-       method.init > 2)
-        stop("'method.init' must be 1 or 2")
+    if (!is.Numeric(imethod, allow = 1, integ = TRUE, posit = TRUE) ||
+       imethod > 2)
+        stop("'imethod' must be 1 or 2")
 
     new("vglmff",
     blurb = c("Natural exponential family generalized hyperbolic ",
@@ -920,7 +921,7 @@ dnefghs = function(x, tau, log = FALSE) {
         predictors.names = namesof("tau", .link, earg =.earg, tag = FALSE) 
 
         if (!length(etastart)) {
-            wmeany = if ( .method.init == 1) weighted.mean(y,w) else
+            wmeany = if ( .imethod == 1) weighted.mean(y,w) else
                      median(rep(y,w))
             if (abs(wmeany) < 0.01) wmeany = 0.01
             tau.init = atan(pi / wmeany) / pi + 0.5
@@ -930,7 +931,7 @@ dnefghs = function(x, tau, log = FALSE) {
             etastart = theta2eta(tau.init, .link, earg =.earg)
         }
     }), list( .link = link, .earg = earg, .itau = itau,
-              .method.init = method.init ))),
+              .imethod = imethod ))),
     inverse = eval(substitute(function(eta, extra = NULL) {
         tau = eta2theta(eta, .link, earg =.earg)
         pi / tan(pi * tau)
@@ -939,8 +940,8 @@ dnefghs = function(x, tau, log = FALSE) {
         misc$link <-    c(tau = .link)
         misc$earg <- list(tau = .earg)
         misc$expected = TRUE
-        misc$method.init= .method.init
-    }), list( .link=link, .earg =earg, .method.init = method.init ))),
+        misc$imethod= .imethod
+    }), list( .link=link, .earg =earg, .imethod = imethod ))),
     loglikelihood = eval(substitute(
         function(mu,y,w,residuals= FALSE,eta, extra = NULL) {
         tau = eta2theta(eta, .link, earg =.earg)
@@ -959,7 +960,7 @@ dnefghs = function(x, tau, log = FALSE) {
     weight = eval(substitute(expression({
         d2l.dtau2 = (pi / sin(pi * tau))^2
         wz = d2l.dtau2 * dtau.deta^2
-        w * wz
+        c(w) * wz
     }), list( .link = link ))))
 }
 
@@ -982,7 +983,7 @@ dlogF = function(x, shape1, shape2, log = FALSE) {
  logF = function(lshape1 = "loge", lshape2 = "loge",
                  eshape1 = list(), eshape2 = list(),
                  ishape1 = NULL, ishape2 = 1,
-                 method.init = 1)
+                 imethod = 1)
 {
     if (length(ishape1) && !is.Numeric(ishape1, positi = TRUE))
         stop("argument 'ishape1' must be positive")
@@ -995,9 +996,9 @@ dlogF = function(x, shape1, shape2, log = FALSE) {
         lshape2 = as.character(substitute(lshape2))
     if (!is.list(eshape1)) eshape1 = list()
     if (!is.list(eshape2)) eshape2 = list()
-    if (!is.Numeric(method.init, allow = 1, integ = TRUE, posit = TRUE) ||
-       method.init > 2)
-        stop("'method.init' must be 1 or 2")
+    if (!is.Numeric(imethod, allow = 1, integ = TRUE, posit = TRUE) ||
+       imethod > 2)
+        stop("'imethod' must be 1 or 2")
 
     new("vglmff",
     blurb = c("log F distribution\n",
@@ -1017,7 +1018,7 @@ dlogF = function(x, shape1, shape2, log = FALSE) {
             namesof("shape2", .lshape2, earg = .eshape2, tag = FALSE))
 
         if (!length(etastart)) {
-            wmeany = if ( .method.init == 1) weighted.mean(y,w) else
+            wmeany = if ( .imethod == 1) weighted.mean(y,w) else
                      median(rep(y,w))
 
 
@@ -1037,7 +1038,7 @@ dlogF = function(x, shape1, shape2, log = FALSE) {
     }), list( .lshape1 = lshape1, .lshape2 = lshape2,
               .eshape1 = eshape1, .eshape2 = eshape2,
               .ishape1=ishape1, .ishape2=ishape2,
-              .method.init = method.init ))),
+              .imethod = imethod ))),
     inverse = eval(substitute(function(eta, extra = NULL) {
         shape1 = eta2theta(eta[,1], .lshape1, earg = .eshape1)
         shape2 = eta2theta(eta[,2], .lshape2, earg = .eshape2)
@@ -1048,10 +1049,10 @@ dlogF = function(x, shape1, shape2, log = FALSE) {
         misc$link <-    c(shape1 = .lshape1, shape2 = .lshape2)
         misc$earg <- list(shape1 = .eshape1, shape2 = .eshape2)
         misc$expected = TRUE
-        misc$method.init= .method.init
+        misc$imethod= .imethod
     }), list( .lshape1 = lshape1, .lshape2 = lshape2,
               .eshape1 = eshape1, .eshape2 = eshape2,
-              .method.init = method.init ))),
+              .imethod = imethod ))),
     loglikelihood = eval(substitute(
         function(mu,y,w,residuals= FALSE,eta, extra = NULL) {
         shape1 = eta2theta(eta[,1], .lshape1, earg = .eshape1)
@@ -1071,7 +1072,8 @@ dlogF = function(x, shape1, shape2, log = FALSE) {
         dl.dshape2 = tmp888 - digamma(shape2) - y
         dshape1.deta = dtheta.deta(shape1, .lshape1, earg = .eshape1)
         dshape2.deta = dtheta.deta(shape2, .lshape2, earg = .eshape2)
-        w * cbind(dl.dshape1 * dshape1.deta, dl.dshape2 * dshape2.deta)
+        c(w) * cbind(dl.dshape1 * dshape1.deta,
+                     dl.dshape2 * dshape2.deta)
     }), list( .lshape1 = lshape1, .lshape2 = lshape2,
               .eshape1 = eshape1, .eshape2 = eshape2 ))),
     weight = eval(substitute(expression({
@@ -1084,7 +1086,7 @@ dlogF = function(x, shape1, shape2, log = FALSE) {
         wz[,iam(2,2,M = M)] = d2l.dshape22 * dshape2.deta^2
         wz[,iam(1,2,M = M)] = d2l.dshape1shape2 * dshape1.deta *
                                                 dshape2.deta
-        w * wz
+        c(w) * wz
     }), list( .lshape1 = lshape1, .lshape2 = lshape2,
               .eshape1 = eshape1, .eshape2 = eshape2 ))))
 }

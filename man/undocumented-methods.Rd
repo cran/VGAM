@@ -91,6 +91,8 @@
 \alias{guplot,vlm-method}
 %\alias{model.frame,ANY-method}
 \alias{model.frame,vlm-method}
+\alias{plot,rcam0,ANY-method}
+\alias{plot,rcam,ANY-method}
 \alias{plot,cao,ANY-method}
 \alias{plot,vlm,ANY-method}
 \alias{plot,vglm,ANY-method}
@@ -210,6 +212,7 @@
 \alias{summary,cao-method}
 \alias{summary,qrrvglm-method}
 \alias{summary,rcam-method}
+\alias{summary,rcam0-method}
 \alias{summary,rrvglm-method}
 \alias{summary,vgam-method}
 \alias{summary,vglm-method}

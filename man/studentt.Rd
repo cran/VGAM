@@ -10,17 +10,17 @@
 }
 \usage{
 studentt(ldf = "loglog", edf = list(), idf = NULL, tol1 = 0.1,
-         method.init = 1)
+         imethod = 1)
 studentt2(df = Inf,
           llocation = "identity", elocation = list(),
           lscale = "loge", escale = list(),
           ilocation = NULL, iscale = NULL,
-          method.init = 1, zero = -2)
+          imethod = 1, zero = -2)
 studentt3(llocation = "identity", elocation = list(),
           lscale = "loge", escale = list(),
           ldf = "loglog", edf = list(),
           ilocation = NULL, iscale = NULL, idf = NULL,
-          method.init = 1, zero = -(2:3))
+          imethod = 1, zero = -(2:3))
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -58,7 +58,7 @@ studentt3(llocation = "identity", elocation = list(),
   matrix.
 
   }
-  \item{method.init, zero}{
+  \item{imethod, zero}{
   See \code{\link{CommonVGAMffArguments}}.
 
   }

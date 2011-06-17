@@ -7,8 +7,9 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Zero-Inflated Binomial Distribution }
 \description{
-  Density, distribution function, quantile function and random generation
-  for the zero-inflated binomial distribution with parameter \code{phi}.
+  Density, distribution function, quantile function and random
+  generation for the zero-inflated binomial distribution with
+  parameter \code{phi}.
 
 }
 \usage{
@@ -29,8 +30,9 @@ rzibinom(n, size, prob, phi = 0)
       \code{\link[stats:Binomial]{pbinom}}.}
   \item{phi}{ 
   Probability of zero (ignoring the binomial distribution), called
-  \eqn{\phi}{phi}.  The default value of \eqn{\phi=0}{phi=0} corresponds
-  to the response having an ordinary binomial distribution.
+  \eqn{\phi}{phi}.  The default value of \eqn{\phi=0}{phi=0}
+  corresponds to the response having an ordinary binomial
+  distribution.
 
   }
 }
@@ -40,42 +42,46 @@ rzibinom(n, size, prob, phi = 0)
   probability \eqn{1-\phi}{1-phi}. Thus 
   \deqn{P(Y=0) =\phi + (1-\phi) P(W=0)}{%
         P(Y=0) = phi + (1-phi) * P(W=0)}
-  where \eqn{W} is distributed \eqn{Binomial(size, prob)}{Binomial(size, prob)}.
+  where \eqn{W} is
+  distributed \eqn{Binomial(size, prob)}{Binomial(size, prob)}.
+
+
 }
 \value{
   \code{dzibinom} gives the density,
   \code{pzibinom} gives the distribution function,
   \code{qzibinom} gives the quantile function, and
   \code{rzibinom} generates random deviates.
+
 }
 %\references{ }
 \author{ Thomas W. Yee }
 \note{ 
-    The argument \code{phi} is recycled to the required length, and
-    must have values which lie in the interval [0,1].
+    The argument \code{phi} is recycled to the required length,
+    and must have values which lie in the interval \eqn{[0,1]}.
 
 }
 
 \seealso{ 
     \code{\link{zibinomial}},
     \code{\link[stats:Binomial]{dbinom}}.
+
 }
 \examples{
 prob = 0.2; size = 10; phi = 0.5
-(ii = dzibinom(0:size, size, prob, phi=phi))
-max(abs(cumsum(ii) - pzibinom(0:size, size, prob, phi=phi)))  # Should be 0
-table(rzibinom(100, size, prob, phi=phi))
+(ii = dzibinom(0:size, size, prob, phi = phi))
+max(abs(cumsum(ii) - pzibinom(0:size, size, prob, phi = phi)))  # Should be 0
+table(rzibinom(100, size, prob, phi = phi))
 
-table(qzibinom(runif(100), size, prob, phi=phi))
-round(dzibinom(0:10, size, prob, phi=phi) * 100) # Should be similar
+table(qzibinom(runif(100), size, prob, phi = phi))
+round(dzibinom(0:10, size, prob, phi = phi) * 100) # Should be similar
 
-\dontrun{
-x = 0:size
-barplot(rbind(dzibinom(x, size, prob, phi=phi),
-              dbinom(x, size, prob)),
-        beside = TRUE, col = c("blue","green"),
-        main=paste("ZIB(", size, ", ", prob, ", phi=", phi, ") (blue) vs",
-                   " Binomial(", size, ", ", prob, ") (green)", sep=""),
-        names.arg = as.character(x), las=1, lwd=2) }
+\dontrun{ x = 0:size
+barplot(rbind(dzibinom(x, size, prob, phi = phi),
+                dbinom(x, size, prob)),
+        beside = TRUE, col = c("blue", "green"), ylab = "Probability",
+        main = paste("ZIB(", size, ", ", prob, ", phi = ", phi, ") (blue) vs",
+                     " Binomial(", size, ", ", prob, ") (green)", sep=""),
+        names.arg = as.character(x), las = 1, lwd = 2) }
 }
 \keyword{distribution}

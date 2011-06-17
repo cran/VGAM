@@ -7,7 +7,7 @@
 
 }
 \usage{
-propodds(reverse=TRUE)
+propodds(reverse = TRUE)
 }
 \arguments{
 
@@ -28,7 +28,7 @@ propodds(reverse=TRUE)
   the \emph{parallelism} assumption ought to be checked,
   e.g., via a likelihood ratio test.
   This \pkg{VGAM} family function is merely a shortcut for
-  \code{cumulative(reverse=reverse, link="logit", parallel = TRUE)}.
+  \code{cumulative(reverse = reverse, link = "logit", parallel = TRUE)}.
   Please see \code{\link{cumulative}} for more details on this model.
 
 }
@@ -39,10 +39,6 @@ propodds(reverse=TRUE)
 
 }
 \references{
-Agresti, A. (2002)
-\emph{Categorical Data Analysis},
-2nd ed. New York: Wiley.
-
 
 Agresti, A. (2010)
 \emph{Analysis of Ordinal Categorical Data},
@@ -61,9 +57,11 @@ Vector generalized additive models.
 \emph{Journal of the Royal Statistical Society, Series B, Methodological},
 \bold{58}, 481--493.
 
+
 Documentation accompanying the \pkg{VGAM} package at
 \url{http://www.stat.auckland.ac.nz/~yee}
 contains further information and examples.
+
 
 }
 \author{ Thomas W. Yee }
@@ -95,8 +93,8 @@ fit2 = vgam(cbind(normal, mild, severe) ~ s(let, df = 2), propodds, pneumo)
 # Check the proportional odds assumption with a LRT ----------
 (fit3 = vglm(cbind(normal, mild, severe) ~ let,
              cumulative(parallel = FALSE, reverse = TRUE), pneumo))
-pchisq(2*(logLik(fit3)-logLik(fit)),
-       df = length(coef(fit3))-length(coef(fit)), lower.tail = FALSE)
+pchisq(deviance(fit) - deviance(fit3),
+       df = df.residual(fit) - df.residual(fit3), lower.tail = FALSE)
 }
 \keyword{models}
 \keyword{regression}

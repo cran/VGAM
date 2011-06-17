@@ -39,11 +39,13 @@ logff(link = "logit", earg=list(), init.c = NULL)
   The mean is \eqn{a c/(1-c)}{a*c/(1-c)} (returned as the fitted values)
   and variance is \eqn{a c (1-ac) /(1-c)^2}{a*c*(1-a*c)/(1-c)^2}.
 
+
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}},
   and \code{\link{vgam}}.
+
 
 }
 \references{ 
@@ -68,9 +70,11 @@ New York: Wiley-Interscience, Third edition.
   In the \pkg{VGAM} library, a link function with option
   \code{\link{loge}} corresponds to this.
 
+
   The logarithmic distribution is sometimes confused with the log-series
   distribution. The latter was used by Fisher et al. for species abundance
   data, and has two parameters.
+
 
 }
 
@@ -78,29 +82,32 @@ New York: Wiley-Interscience, Third edition.
   \code{\link{rlog}},
   \code{\link[base:Log]{log}},
   \code{\link{loge}},
-  \code{\link{logoff}}.
+  \code{\link{logoff}},
+  \code{\link{explogarithmic}}.
+
 
 }
 \examples{
-ldat = data.frame(y = rlog(n=1000, prob=logit(0.2, inverse=TRUE)))
-fit = vglm(y ~ 1, logff, ldat, trace=TRUE, crit="c")
-coef(fit, matrix=TRUE)
+ldata = data.frame(y = rlog(n = 1000, prob = logit(0.2, inverse = TRUE)))
+fit = vglm(y ~ 1, logff, ldata, trace = TRUE, crit = "c")
+coef(fit, matrix = TRUE)
 Coef(fit)
-\dontrun{with(ldat,
-    hist(y, prob=TRUE, breaks=seq(0.5, max(y)+0.5, by=1), border="blue"))
-x = seq(1, with(ldat, max(y)), by=1)
-with(ldat, lines(x, dlog(x, Coef(fit)[1]), col="red", type="h", lwd=2)) }
+\dontrun{with(ldata,
+    hist(y, prob = TRUE, breaks = seq(0.5, max(y) + 0.5, by = 1),
+         border = "blue"))
+x = seq(1, with(ldata, max(y)), by=1)
+with(ldata, lines(x, dlog(x, Coef(fit)[1]), col = "orange", type = "h", lwd = 2)) }
 
 
 # Example: Corbet (1943) butterfly Malaya data
 corbet = data.frame(nindiv = 1:24,
                     ofreq = c(118, 74, 44, 24, 29, 22, 20, 19, 20, 15, 12,
                               14, 6, 12, 6, 9, 9, 6, 10, 10, 11, 5, 3, 3))
-fit = vglm(nindiv ~ 1, logff, data=corbet, weights=ofreq)
-coef(fit, matrix=TRUE)
+fit = vglm(nindiv ~ 1, logff, data = corbet, weights = ofreq)
+coef(fit, matrix = TRUE)
 chat = Coef(fit)["c"]
-pdf2 = dlog(x=with(corbet, nindiv), prob=chat)
-print(with(corbet, cbind(nindiv, ofreq, fitted=pdf2*sum(ofreq))), dig=1)
+pdf2 = dlog(x = with(corbet, nindiv), prob = chat)
+print(with(corbet, cbind(nindiv, ofreq, fitted = pdf2 * sum(ofreq))), dig = 1)
 }
 \keyword{models}
 \keyword{regression}

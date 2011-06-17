@@ -26,7 +26,7 @@ qrrvglm.control(Rank = 1,
                 iShape = 0.1,
                 ITolerances = FALSE,
                 maxitl = 40,
-                method.init = 1,
+                imethod = 1,
                 Maxit.optim = 250,
                 MUXfactor = rep(7, length=Rank),
                 Norrr = ~ 1,
@@ -188,7 +188,7 @@ qrrvglm.control(Rank = 1,
     Most users should ignore this argument.
 
   } 
-  \item{method.init}{
+  \item{imethod}{
     Method of initialization. A positive integer 1 or 2 or 3 etc.
     depending on the \pkg{VGAM} family function.
     Currently it is used for \code{\link{negbinomial}} and 

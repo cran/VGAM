@@ -8,9 +8,9 @@
 
 }
 \usage{
-bilogistic4(llocation="identity", lscale="loge",
-            iloc1=NULL, iscale1=NULL, iloc2=NULL, iscale2=NULL,
-            method.init=1, zero=NULL)
+bilogistic4(llocation = "identity", lscale = "loge",
+            iloc1 = NULL, iscale1 = NULL, iloc2 = NULL, iscale2 = NULL,
+            imethod = 1, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -28,13 +28,13 @@ bilogistic4(llocation="identity", lscale="loge",
   }
   \item{iloc1, iloc2}{ Initial values for the location parameters.
     By default, initial values are chosen internally using
-    \code{method.init}. Assigning values here will override
-    the argument \code{method.init}. }
+    \code{imethod}. Assigning values here will override
+    the argument \code{imethod}. }
   \item{iscale1, iscale2}{ Initial values for the scale parameters.
     By default, initial values are chosen internally using
-    \code{method.init}. Assigning values here will override
-    the argument \code{method.init}. }
-  \item{method.init}{ An integer with value \code{1} or \code{2} which
+    \code{imethod}. Assigning values here will override
+    the argument \code{imethod}. }
+  \item{imethod}{ An integer with value \code{1} or \code{2} which
     specifies the initialization method. If failure to converge occurs
     try the other value. }
   \item{zero}{ An integer-valued vector specifying which
@@ -113,14 +113,14 @@ Hoboken, N.J.: Wiley-Interscience.
   \code{\link{rbilogis4}}.
 }
 \examples{
-ymat = rbilogis4(n <- 1000, loc1=5, loc2=7, scale2=exp(1))
+ymat = rbilogis4(n <- 1000, loc1 = 5, loc2 = 7, scale2 = exp(1))
 \dontrun{plot(ymat)}
-fit = vglm(ymat ~ 1, fam=bilogistic4, trace=TRUE)
-coef(fit, matrix=TRUE)
+fit = vglm(ymat ~ 1, fam = bilogistic4, trace = TRUE)
+coef(fit, matrix = TRUE)
 Coef(fit)
 head(fitted(fit))
 vcov(fit)
-head(weights(fit, type="w"))
+head(weights(fit, type = "w"))
 summary(fit)
 }
 \keyword{models}

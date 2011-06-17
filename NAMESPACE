@@ -14,8 +14,15 @@ useDynLib(VGAM)
 
 
 
+
 export(confint_rrnb, confint_nb1)
 export(vcovrrvglm)
+
+
+export(huggins91, dhuggins91, rhuggins91)
+
+
+
 
 
 
@@ -35,7 +42,9 @@ variable.namesvlm
 
 
 export(expgeometric, dexpgeom, pexpgeom, qexpgeom, rexpgeom,
-genrayleigh, dgenray, pgenray, qgenray, rgenray)
+genrayleigh, dgenray, pgenray, qgenray, rgenray,
+exppoisson, dexppois, pexppois, qexppois, rexppois,
+explogarithmic, dexplog, pexplog, qexplog, rexplog)
 
 
 
@@ -66,6 +75,12 @@ get.smart, get.smart.prediction,
 put.smart)
 
 
+
+export(
+dbinorm, binormal)
+
+
+
 export( bs, ns, scale.default, poly ) 
 
 
@@ -75,7 +90,7 @@ fill, fill1, fill2, fill3,
 amh, damh, pamh, ramh, 
 bivgamma.mckay,
 freund61,
-frechet2, frechet3, dfrechet, pfrechet, qfrechet, rfrechet,
+frechet2, dfrechet, pfrechet, qfrechet, rfrechet,
 frank, dfrank, pfrank, rfrank, 
 plackett, dplack, pplack, rplack, 
 benini, dbenini, pbenini, qbenini, rbenini, 
@@ -93,9 +108,9 @@ dparetoI, qparetoI, rparetoI, pparetoI,
 cgumbel, egumbel, gumbel,
 dgumbel, pgumbel, qgumbel, rgumbel, 
 fnormal1, dfnorm, pfnorm, qfnorm, rfnorm,
-cnormal1, dcnormal1,
+cennormal1, dcennormal1,
 recnormal1, recexp1,
-crayleigh, rayleigh, drayleigh, prayleigh, qrayleigh, rrayleigh, 
+cenrayleigh, rayleigh, drayleigh, prayleigh, qrayleigh, rrayleigh, 
 drice, rrice, riceff,
 dskellam, rskellam, skellam,
 inv.gaussianff, dinv.gaussian, pinv.gaussian, rinv.gaussian, wald,
@@ -201,6 +216,7 @@ summary.rrvglm, summary.uqo, summaryvgam,
 summaryvglm, summaryvlm, s.vam, terms.vlm, 
 theta2eta, Tol.Coef.qrrvglm, Tol.Coef.uqo, Tol.qrrvglm, Tol.uqo,
 triangle, dtriangle, ptriangle, qtriangle, rtriangle, 
+vglm.fit,
 vglm.garma.control, vglm.multinomial.control,
 vglm.multinomial.deviance.control, vglm.vcategorical.control,
 vlm, vlm.control,
@@ -361,7 +377,9 @@ deexp, peexp, qeexp, reexp)
 export(
 meplot, meplot.default, meplot.vlm,
 guplot, guplot.default, guplot.vlm,
-negbinomial, normal1, tobit, Opt, 
+negbinomial, polya, normal1,
+tobit, dtobit, ptobit, qtobit, rtobit,
+Opt, 
 persp.qrrvglm, plotdeplot.lmscreg, plotqrrvglm, plotqtplot.lmscreg,
 plotvgam.control, plotvgam, 
 cenpoisson,

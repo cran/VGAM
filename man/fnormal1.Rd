@@ -7,7 +7,7 @@
 }
 \usage{
 fnormal1(lmean="identity", lsd="loge", emean=list(), esd=list(), imean=NULL,
-         isd=NULL, a1=1, a2=1, nsimEIM=500, method.init=1, zero=NULL)
+         isd=NULL, a1=1, a2=1, nsimEIM=500, imethod=1, zero=NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -34,7 +34,7 @@ fnormal1(lmean="identity", lsd="loge", emean=list(), esd=list(), imean=NULL,
   Each must be of length 1.
 
   }
-  \item{nsimEIM, method.init, zero}{
+  \item{nsimEIM, imethod, zero}{
   See \code{\link{CommonVGAMffArguments}}.
 
   }

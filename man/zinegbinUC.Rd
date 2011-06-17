@@ -12,10 +12,10 @@
 
 }
 \usage{
-dzinegbin(x, phi, size, prob=NULL, munb=NULL, log=FALSE)
-pzinegbin(q, phi, size, prob=NULL, munb=NULL)
-qzinegbin(p, phi, size, prob=NULL, munb=NULL)
-rzinegbin(n, phi, size, prob=NULL, munb=NULL)
+dzinegbin(x, phi, size, prob = NULL, munb = NULL, log = FALSE)
+pzinegbin(q, phi, size, prob = NULL, munb = NULL)
+qzinegbin(p, phi, size, prob = NULL, munb = NULL)
+rzinegbin(n, phi, size, prob = NULL, munb = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -48,18 +48,21 @@ rzinegbin(n, phi, size, prob=NULL, munb=NULL)
   for the formula of the probability density function and other details
   of the negative binomial distribution.
 
+
 }
 \value{
   \code{dzinegbin} gives the density,
   \code{pzinegbin} gives the distribution function,
   \code{qzinegbin} gives the quantile function, and
   \code{rzinegbin} generates random deviates.
+
+
 }
 %\references{ }
 \author{ Thomas W. Yee }
 \note{ 
     The argument \code{phi} is recycled to the required length, and
-    must have values which lie in the interval [0,1].
+    must have values which lie in the interval \eqn{[0,1]}.
 
 }
 
@@ -68,24 +71,24 @@ rzinegbin(n, phi, size, prob=NULL, munb=NULL)
     \code{\link[stats:NegBinomial]{rnbinom}},
     \code{\link{rzipois}}.
 
+
 }
 \examples{
 munb = 3; phi = 0.2; size = k = 10
 x = 0:10
-(ii = dzinegbin(x, phi=phi, mu=munb, size=k))
-max(abs(cumsum(ii) - pzinegbin(x, phi=phi, mu=munb, size=k))) # Should be 0
-table(rzinegbin(100, phi=phi, mu=munb, size=k))
+(ii = dzinegbin(x, phi = phi, mu = munb, size = k))
+max(abs(cumsum(ii) - pzinegbin(x, phi = phi, mu = munb, size = k))) # Should be 0
+table(rzinegbin(100, phi = phi, mu = munb, size = k))
 
-table(qzinegbin(runif(1000), phi=phi, mu=munb, size=k))
-round(dzinegbin(x, phi=phi, mu=munb, size=k) * 1000) # Should be similar
+table(qzinegbin(runif(1000), phi = phi, mu = munb, size = k))
+round(dzinegbin(x, phi = phi, mu = munb, size = k) * 1000) # Should be similar
 
-\dontrun{
-barplot(rbind(dzinegbin(x, phi=phi, mu=munb, size=k),
-              dnbinom(x, mu=munb, size=k)),
-        beside = TRUE, col = c("blue","green"),
-        main=paste("ZINB(mu=", munb, ", k=", k, ", phi=", phi,
-                   ") (blue) vs negative binomial(mu=", munb,
-                   ", size=", k, ") (green)", sep=""),
+\dontrun{barplot(rbind(dzinegbin(x, phi = phi, mu = munb, size = k),
+                dnbinom(x, mu = munb, size = k)),
+        beside = TRUE, col = c("blue", "green"),
+        main = paste("ZINB(mu = ", munb, ", k = ", k, ", phi = ", phi,
+                   ") (blue) vs negative binomial(mu = ", munb,
+                   ", size = ", k, ") (green)", sep = ""),
         names.arg = as.character(x)) }
 }
 \keyword{distribution}

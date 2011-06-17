@@ -70,7 +70,7 @@ callcqoc = function(cmatrix, etamat, xmat, ymat, wvec,
                maxitl = control$maxitl, actnits = 0, twice = 0,
                p1star = p1star, p2star = p2star, nice31 = nice31,
                lenbeta = lenbeta, itol = itol, control$trace,
-               p1 = p1, p2 = p2, control$method.init)
+               p1 = p1, p2 = p2, control$imethod)
     bnumat = if (nice31) matrix(0,nstar,pstar) else
              cbind(matrix(0,nstar,p2star), X_vlm_1save)
 
@@ -189,7 +189,7 @@ calldcqo = function(cmatrix, etamat, xmat, ymat, wvec,
                modelno, maxitl = control$maxitl, actnits = 0, twice = 0, 
                p1star = p1star, p2star = p2star, nice31 = nice31, lenbeta,
                itol = itol, control$trace,
-               p1, p2, control$method.init) # other ints
+               p1, p2, control$imethod) # other ints
     bnumat = if (nice31) matrix(0,nstar,pstar) else
              cbind(matrix(0,nstar,p2star), X_vlm_1save)
     flush.console()

@@ -6,8 +6,8 @@
   Fits a positive (univariate) normal distribution.
 }
 \usage{
-posnormal1(lmean="identity", lsd="loge", emean=list(), esd=list(),
-           imean=NULL, isd=NULL, nsimEIM = 100, zero=NULL)
+posnormal1(lmean = "identity", lsd = "loge", emean = list(), esd = list(),
+           imean = NULL, isd = NULL, nsimEIM = 100, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -37,9 +37,9 @@ posnormal1(lmean="identity", lsd="loge", emean=list(), esd=list(),
   linear/additive predictors are modelled as intercepts only.
   The values must be from the set \{1,2\} corresponding
   respectively to \eqn{\mu}{mu}, \eqn{\sigma}{sigma}.
-  If \code{zero=NULL} then all linear/additive predictors are modelled as
+  If \code{zero = NULL} then all linear/additive predictors are modelled as
   a linear combination of the explanatory variables.
-  For many data sets having \code{zero=2} is a good idea.
+  For many data sets having \code{zero = 2} is a good idea.
 
   }
 }
@@ -97,20 +97,23 @@ posnormal1(lmean="identity", lsd="loge", emean=list(), esd=list(),
 
 }
 \seealso{ 
-    \code{\link{normal1}}.
+    \code{\link{normal1}},
+    \code{\link{tobit}}.
+
+
 }
 
 \examples{
-pndat = data.frame(m =  1.0, SD = exp(1.0))
-pndat = transform(pndat, y = rposnorm(n <- 1000, m=m, sd=SD))
+pdata = data.frame(m = 1.0, SD = exp(1.0))
+pdata = transform(pdata, y = rposnorm(n <- 1000, m = m, sd = SD))
 
-\dontrun{with(pndat, hist(y, prob=TRUE, border="blue",
-         main=paste("posnorm(m=",m[1],", sd=",round(SD[1],2),")"))) }
-fit = vglm(y ~ 1, fam=posnormal1, pndat, trace=TRUE)
-coef(fit, mat=TRUE)
+\dontrun{with(pdata, hist(y, prob = TRUE, border = "blue",
+         main = paste("posnorm(m =", m[1], ", sd =", round(SD[1], 2),")"))) }
+fit = vglm(y ~ 1, fam = posnormal1, pdata, trace = TRUE)
+coef(fit, matrix = TRUE)
 (Cfit = Coef(fit))
-mygrid = with(pndat, seq(min(y), max(y), len=200)) # Add the fit to the histogram
-\dontrun{lines(mygrid, dposnorm(mygrid, Cfit[1], Cfit[2]), col="red")}
+mygrid = with(pdata, seq(min(y), max(y), len = 200)) # Add the fit to the histogram
+\dontrun{lines(mygrid, dposnorm(mygrid, Cfit[1], Cfit[2]), col = "red")}
 }
 \keyword{models}
 \keyword{regression}

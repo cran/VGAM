@@ -13,7 +13,7 @@
 \usage{
 paretoIV(location=0, lscale="loge", linequality="loge", lshape="loge",
          escale=list(), einequality=list(), eshape=list(),
-         iscale=1, iinequality=1, ishape=NULL, method.init=1)
+         iscale=1, iinequality=1, ishape=NULL, imethod=1)
 paretoIII(location=0, lscale="loge", linequality="loge",
           escale=list(), einequality=list(),
           iscale=NULL, iinequality=NULL)
@@ -50,7 +50,7 @@ paretoII(location=0, lscale="loge", lshape="loge",
   some alternative initial values.
 
   }
-  \item{method.init}{
+  \item{imethod}{
   Method of initialization for the shape parameter.
   Currently only values 1 and 2 are available.
   Try the other value if convergence failure occurs.
@@ -69,19 +69,23 @@ paretoII(location=0, lscale="loge", lshape="loge",
   \eqn{g} the \emph{inequality} parameter, and 
   \eqn{s} the \emph{shape} parameter.
 
+
   The location parameter is assumed known otherwise the Pareto(IV)
   distribution will not be a regular family.  This assumption is not too
   restrictive in modelling because in typical applications this parameter
   is known, e.g., in insurance and  reinsurance it is pre-defined by a
   contract and can be represented as a deductible or a retention level.
 
+
   The inequality parameter is so-called because of its interpretation
   in the economics context. If we choose a unit shape parameter value
   and a zero location parameter value then the inequality parameter
   is the Gini index of inequality, provided \eqn{g \leq 1}{g<=1}.
 
+
   The fitted values are currently \code{NA} because I haven't worked
   out what the mean of \eqn{Y} is yet.
+
 
 % The mean of \eqn{Y} is
 % \eqn{\alpha k/(k-1)}{alpha*k/(k-1)} provided \eqn{k>1}.
@@ -89,8 +93,10 @@ paretoII(location=0, lscale="loge", lshape="loge",
 % \eqn{\alpha^2 k /((k-1)^2 (k-2))}{alpha^2 k /((k-1)^2 (k-2))}
 % provided \eqn{k>2}.
 
+
 % The maximum likelihood estimator for the location parameter is
 % \code{min(y)}, i.e., the smallest response value. 
+
 
   There are a number of special cases of the Pareto(IV) distribution.
   These include the Pareto(I), Pareto(II), Pareto(III), and Burr family
@@ -108,11 +114,13 @@ paretoII(location=0, lscale="loge", lshape="loge",
   but there is a slight change in notation: \eqn{s=k} and
   \eqn{b=\alpha}{b=alpha}.
 
+
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}},
   and \code{\link{vgam}}.
+
 
 }
 \references{ 
@@ -121,15 +129,18 @@ Information matrix for Pareto(IV), Burr, and related distributions.
 \emph{Comm.\ Statist.\ Theory and Methods}
 \bold{32}, 315--325.
 
+
 Arnold, B. C. (1983)
 \emph{Pareto Distributions}.
 Fairland, Maryland: International Cooperative Publishing House.
+
 
 }
 \author{ T. W. Yee }
 \note{ 
   The \code{extra} slot of the fitted object has a component called
   \code{"location"} which stores the location parameter value(s).
+
 
 }
 %\section{Warning }{
@@ -146,6 +157,8 @@ Fairland, Maryland: International Cooperative Publishing House.
   \code{\link{ParetoIV}},
   \code{\link{pareto1}},
   \code{\link{gpd}}.
+
+
 }
 \examples{
 pdat = data.frame(y=rparetoIV(2000, scal=exp(1), ineq=exp(-0.3), shap=exp(1)))

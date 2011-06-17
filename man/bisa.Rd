@@ -10,7 +10,7 @@
 \usage{
 bisa(lshape = "loge", lscale = "loge",
      eshape = list(), escale = list(),
-     ishape = NULL, iscale = 1, method.init = 1, zero = NULL)
+     ishape = NULL, iscale = 1, imethod = 1, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -29,10 +29,10 @@ bisa(lshape = "loge", lscale = "loge",
   \item{iscale, ishape}{
   Initial values for \eqn{a} and \eqn{b}.
   A \code{NULL} means an initial value is chosen internally using
-  \code{method.init}.
+  \code{imethod}.
 
   }
-  \item{method.init}{
+  \item{imethod}{
   An integer with value \code{1} or \code{2} or \code{3} which
   specifies the initialization method. If failure to converge occurs
   try the other value, or else specify a value for 

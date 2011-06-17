@@ -25,7 +25,7 @@ rzipois(n, lambda, phi = 0)
   \item{lambda}{ Vector of positive means. }
   \item{phi}{ 
   Probability of zero (ignoring the Poisson distribution), called
-  \eqn{\phi}{phi}.  The default value of \eqn{\phi=0}{phi=0} corresponds
+  \eqn{\phi}{phi}.  The default value of \eqn{\phi = 0}{phi = 0} corresponds
   to the response having an ordinary Poisson distribution.
 
   }
@@ -38,25 +38,30 @@ rzipois(n, lambda, phi = 0)
   \deqn{P(Y=0) =\phi + (1-\phi) P(W=0)}{%
         P(Y=0) = phi + (1-phi) * P(W=0)}
   where \eqn{W} is distributed \eqn{Poisson(\lambda)}{Poisson(lambda)}.
+
+
 }
 \value{
   \code{dzipois} gives the density,
   \code{pzipois} gives the distribution function,
   \code{qzipois} gives the quantile function, and
   \code{rzipois} generates random deviates.
+
+
 }
 %\references{ }
 \author{ Thomas W. Yee }
 \note{ 
     The argument \code{phi} is recycled to the required length, and
-    must have values which lie in the interval [0,1].
+    must have values which lie in the interval \eqn{[0,1]}.
 
 }
 
 \seealso{ 
-    \code{\link[stats:Poisson]{dpois}},
     \code{\link{zipoisson}},
+    \code{\link[stats:Poisson]{dpois}},
     \code{\link{rzinegbin}}.
+
 
 }
 \examples{
@@ -68,12 +73,11 @@ table(rzipois(100, lambda, phi))
 table(qzipois(runif(100), lambda, phi))
 round(dzipois(0:10, lambda, phi) * 100) # Should be similar
 
-\dontrun{
-x = 0:10
+\dontrun{ x = 0:10
 barplot(rbind(dzipois(x, lambda, phi), dpois(x, lambda)),
         beside = TRUE, col = c("blue","green"),
-        main=paste("ZIP(", lambda, ", phi=", phi, ") (blue) vs",
-                        " Poisson(", lambda, ") (green)", sep=""),
+        main = paste("ZIP(", lambda, ", phi = ", phi, ") (blue) vs",
+                     " Poisson(", lambda, ") (green)", sep = ""),
         names.arg = as.character(x)) }
 }
 \keyword{distribution}

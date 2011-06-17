@@ -9,7 +9,7 @@
 }
 \usage{
 lqnorm(qpower=2, link="identity", earg=list(),
-       method.init=1, imu=NULL, shrinkage.init=0.95)
+       imethod=1, imu=NULL, shrinkage.init=0.95)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -26,7 +26,7 @@ lqnorm(qpower=2, link="identity", earg=list(),
   See \code{\link{Links}} for more details.
 
   }
-  \item{method.init}{
+  \item{imethod}{
   Must be 1, 2 or 3.
   See \code{\link{CommonVGAMffArguments}} for more information.
   Ignored if \code{imu} is specified.
@@ -34,7 +34,7 @@ lqnorm(qpower=2, link="identity", earg=list(),
   }
   \item{imu}{
   Numeric, optional initial values used for the fitted values.
-  The default is to use \code{method.init=1}.
+  The default is to use \code{imethod=1}.
 
   }
   \item{shrinkage.init}{
@@ -42,7 +42,7 @@ lqnorm(qpower=2, link="identity", earg=list(),
   The value must be between 0 and 1 inclusive, and
   a value of 0 means the individual response values are used,
   and a value of 1 means the median or mean is used.
-  This argument is used in conjunction with \code{method.init=3}.
+  This argument is used in conjunction with \code{imethod=3}.
 
   }
 }

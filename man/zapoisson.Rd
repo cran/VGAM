@@ -145,14 +145,14 @@ contains further information and examples.
 }
 
 \examples{
-zapdata <- data.frame(x = runif(nn <- 1000))
-zapdata <- transform(zapdata, p0     = logit( -1 + 1*x, inverse = TRUE),
-                              lambda = loge(-0.5 + 2*x, inverse = TRUE))
+zapdata <- data.frame(x2 = runif(nn <- 1000))
+zapdata <- transform(zapdata, p0     = logit( -1 + 1*x2, inverse = TRUE),
+                              lambda = loge(-0.5 + 2*x2, inverse = TRUE))
 zapdata <- transform(zapdata, y = rzapois(nn, lambda, p0 = p0))
 
 with(zapdata, table(y))
-fit <- vglm(y ~ x, zapoisson, zapdata, trace = TRUE)
-fit <- vglm(y ~ x, zapoisson, zapdata, trace = TRUE, crit = "c")
+fit <- vglm(y ~ x2, zapoisson, zapdata, trace = TRUE)
+fit <- vglm(y ~ x2, zapoisson, zapdata, trace = TRUE, crit = "c")
 head(fitted(fit))
 head(predict(fit))
 head(predict(fit, untransform = TRUE))

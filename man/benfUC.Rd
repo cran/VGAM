@@ -56,7 +56,7 @@ obeys the law
         P(D=d) =  log10(1 + 1/d)}
 for \eqn{d=1,\ldots,9}.
 This means
-the probability the first\ significant\ digit is 1 is
+the probability the first significant digit is 1 is
 approximately \eqn{0.301}, etc.
 
 
