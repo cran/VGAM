@@ -27,7 +27,7 @@ pzipf(q, N, s)
   }
   \item{log}{
   Logical.
-  If \code{log=TRUE} then the logarithm of the density is returned.
+  If \code{log = TRUE} then the logarithm of the density is returned.
 
   }
 
@@ -52,13 +52,13 @@ pzipf(q, N, s)
 
 }
 \examples{
-N = 10; s=0.5; y = 1:N
-proby = dzipf(y, N=N, s=s)
-\dontrun{
-plot(proby ~ y, type="h", col="blue", ylab="P[Y=y]", ylim=c(0,0.2),
-     main=paste("Zipf(N=",N,", s=",s,")", sep=""), lwd=2, las = 1) }
+N = 10; s = 0.5; y = 1:N
+proby = dzipf(y, N = N, s = s)
+\dontrun{ plot(proby ~ y, type = "h", col = "blue", ylab = "Probability",
+     ylim = c(0, 0.2), main = paste("Zipf(N = ",N,", s = ",s,")", sep = ""),
+     lwd = 2, las = 1) }
 sum(proby)  # Should be 1
-max(abs(cumsum(proby) - pzipf(y, N=N, s=s))) # Should be 0
+max(abs(cumsum(proby) - pzipf(y, N = N, s = s))) # Should be 0
 }
 \keyword{distribution}
 

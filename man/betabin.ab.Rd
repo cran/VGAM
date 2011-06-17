@@ -10,7 +10,7 @@
 }
 \usage{
 betabin.ab(lshape12 = "loge", earg = list(), i1 = 1, i2 = NULL,
-           method.init=1, shrinkage.init=0.95, nsimEIM=NULL, zero=NULL)
+           imethod = 1, shrinkage.init = 0.95, nsimEIM = NULL, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -38,12 +38,12 @@ betabin.ab(lshape12 = "loge", earg = list(), i1 = 1, i2 = NULL,
   as an intercept only.  If assigned, the single value should be either
   \code{1} or \code{2}.  The default is to model both shape parameters
   as functions of the covariates.  If a failure to converge occurs,
-  try \code{zero=2}.
+  try \code{zero = 2}.
 
   }
-  \item{shrinkage.init, nsimEIM, method.init}{
+  \item{shrinkage.init, nsimEIM, imethod}{
   See \code{\link{CommonVGAMffArguments}} for more information.
-  The argument \code{shrinkage.init} is used only if \code{method.init=2}.
+  The argument \code{shrinkage.init} is used only if \code{imethod = 2}.
   Using the argument \code{nsimEIM} may offer large advantages for large
   values of \eqn{N} and/or large data sets.
 
@@ -110,7 +110,7 @@ betabin.ab(lshape12 = "loge", earg = list(), i1 = 1, i2 = NULL,
   Suppose \code{fit} is a fitted beta-binomial model. Then
   \code{fit@y} contains the sample proportions \eqn{y},
   \code{fitted(fit)} returns estimates of \eqn{E(Y)}, and
-  \code{weights(fit, type="prior")} returns the number
+  \code{weights(fit, type = "prior")} returns the number
   of trials \eqn{N}.
 
 
@@ -165,7 +165,7 @@ betabin.ab(lshape12 = "loge", earg = list(), i1 = 1, i2 = NULL,
   due to the expected information matrices not being positive-definite
   or ill-conditioned over some regions of the parameter space.
   If problems occur try setting \code{i1} to be some other
-  positive value, using \code{i2} and/or setting \code{zero=2}.
+  positive value, using \code{i2} and/or setting \code{zero = 2}.
 
 
   This family function may be renamed in the future.
@@ -184,51 +184,52 @@ betabin.ab(lshape12 = "loge", earg = list(), i1 = 1, i2 = NULL,
 }
 \examples{
 # Example 1
-N = 10; s1=exp(1); s2=exp(2)
-y = rbetabin.ab(n=100, size=N, shape1=s1, shape2=s2)
-fit = vglm(cbind(y,N-y) ~ 1, betabin.ab, trace=TRUE)
-coef(fit, matrix=TRUE)
+N = 10; s1 = exp(1); s2 = exp(2)
+y = rbetabin.ab(n = 100, size = N, shape1 = s1, shape2 = s2)
+fit = vglm(cbind(y, N-y) ~ 1, betabin.ab, trace = TRUE)
+coef(fit, matrix = TRUE)
 Coef(fit)
 head(fit@misc$rho) # The correlation parameter
-head(cbind(fit@y, weights(fit, type="prior")))
+head(cbind(fit@y, weights(fit, type = "prior")))
 
 
 # Example 2
-fit = vglm(cbind(R,N-R) ~ 1, betabin.ab, data=lirat, tra=TRUE, subset=N>1)
-coef(fit, matrix=TRUE)
+fit = vglm(cbind(R, N-R) ~ 1, betabin.ab, data = lirat,
+           trace = TRUE, subset = N > 1)
+coef(fit, matrix = TRUE)
 Coef(fit)
 fit@misc$rho      # The correlation parameter
 t(fitted(fit))
 t(fit@y)
-t(weights(fit, type="prior"))
+t(weights(fit, type = "prior"))
 # A "loge" link for the 2 shape parameters is a logistic regression:
 all.equal(c(fitted(fit)),
-          c(logit(predict(fit)[,1] - predict(fit)[,2], inverse=TRUE)))
+          c(logit(predict(fit)[, 1] - predict(fit)[, 2], inverse = TRUE)))
 
 
 # Example 3, which is more complicated
 lirat = transform(lirat, fgrp = factor(grp))
 summary(lirat)   # Only 5 litters in group 3
-fit2 = vglm(cbind(R,N-R) ~ fgrp + hb, betabin.ab(zero = 2),
-           data = lirat, trace = TRUE, subset = N>1)
-coef(fit2, matrix=TRUE)
+fit2 = vglm(cbind(R, N-R) ~ fgrp + hb, betabin.ab(zero = 2),
+           data = lirat, trace = TRUE, subset = N > 1)
+coef(fit2, matrix = TRUE)
 Coef(fit2)
-coef(fit2, matrix=TRUE)[,1] - coef(fit2, matrix=TRUE)[,2] # logit(p)
+coef(fit2, matrix = TRUE)[, 1] - coef(fit2, matrix = TRUE)[, 2] # logit(p)
 \dontrun{ with(lirat, plot(hb[N>1], fit2@misc$rho,
-                 xlab = "Hemoglobin", ylab="Estimated rho",
+                 xlab = "Hemoglobin", ylab = "Estimated rho",
                  pch = as.character(grp[N>1]), col = grp[N>1]))
 }
 \dontrun{ # cf. Figure 3 of Moore and Tsiatis (1991)
-with(lirat, plot(hb, R/N, pch=as.character(grp), col=grp, las=1,
-            xlab="Hemoglobin level", ylab="Proportion Dead",
-            main="Fitted values (lines)"))
+with(lirat, plot(hb, R/N, pch = as.character(grp), col = grp, las = 1,
+            xlab = "Hemoglobin level", ylab = "Proportion Dead",
+            main = "Fitted values (lines)"))
 
 smalldf = with(lirat, lirat[N>1,])
 for(gp in 1:4) {
-    xx = with(smalldf, hb[grp==gp])
-    yy = with(smalldf, fitted(fit2)[grp==gp])
+    xx = with(smalldf, hb[grp == gp])
+    yy = with(smalldf, fitted(fit2)[grp == gp])
     ooo = order(xx)
-    lines(xx[ooo], yy[ooo], col=gp) } }
+    lines(xx[ooo], yy[ooo], col = gp) } }
 }
 \keyword{models}
 \keyword{regression}

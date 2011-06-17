@@ -163,7 +163,7 @@ vlm <- function(formula,
 
     if (!smart) answer@smart.prediction <- list(smart.arg=FALSE)
 
-    slot(answer, "prior.weights") = prior.weights
+    slot(answer, "prior.weights") = as.matrix(prior.weights)
 
     if (length(attr(x, "contrasts")))
         slot(answer, "contrasts") = attr(x, "contrasts")

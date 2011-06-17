@@ -76,9 +76,9 @@ loglinb2 <- function(exchangeable = FALSE, zero = NULL)
         du0.du1 <- -(exp(u1) + exp(u1 + u2 + u12)) / denom 
         du0.du2 <- -(exp(u2) + exp(u1 + u2 + u12)) / denom 
         du0.du12 <- -exp(u1 + u2 + u12) / denom 
-        w * cbind(du0.du1 + y[,1], 
-                  du0.du2 + y[,2],
-                  du0.du12 + y[,1]*y[,2]) 
+        c(w) * cbind(du0.du1  + y[,1], 
+                     du0.du2  + y[,2],
+                     du0.du12 + y[,1] * y[,2]) 
     }),
     weight = expression({
         d2u0.du1.2 <- -(exp(u1) + exp(u1 + u2 + u12)) * (1+exp(u2)) / denom^2 
@@ -95,7 +95,7 @@ loglinb2 <- function(exchangeable = FALSE, zero = NULL)
         wz[,iam(1,2,M)] <- -d2u0.du1u2
         wz[,iam(1,3,M)] <- -d2u0.du1u3
         wz[,iam(2,3,M)] <- -d2u0.du2u3
-        w * wz
+        c(w) * wz
     }))
 }
 
@@ -195,12 +195,12 @@ loglinb3 <- function(exchangeable = FALSE, zero = NULL)
     deriv = expression({
         eval(extra$my.expression)
         eval(extra$deriv.expression)
-        w * cbind(-A1/denom + y[,1], 
-                  -A2/denom + y[,2],
-                  -A3/denom + y[,3],
-                  -A12/denom + y[,1]*y[,2],
-                  -A13/denom + y[,1]*y[,3],
-                  -A23/denom + y[,2]*y[,3])
+        c(w) * cbind(-A1/denom + y[,1], 
+                     -A2/denom + y[,2],
+                     -A3/denom + y[,3],
+                     -A12/denom + y[,1]*y[,2],
+                     -A13/denom + y[,1]*y[,3],
+                     -A23/denom + y[,2]*y[,3])
     }),
     weight = expression({
         u0 <- -log(denom)
@@ -230,8 +230,8 @@ loglinb3 <- function(exchangeable = FALSE, zero = NULL)
         wz[,iam(3,4,M)] <- (allterms - expu0 * A3 * A12)
         wz[,iam(3,5,M)] <- A13 * (1 - expu0 * A3)
         wz[,iam(3,6,M)] <- A23 * (1 - expu0 * A3)
-        wz <- w * expu0 * wz 
-        wz
+        wz <- expu0 * wz 
+        c(w) * wz
     }))
 }
 

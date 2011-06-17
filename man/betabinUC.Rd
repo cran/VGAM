@@ -15,11 +15,11 @@
 
 }
 \usage{
-dbetabin(x, size, prob, rho, log=FALSE)
-pbetabin(q, size, prob, rho, log.p=FALSE)
+dbetabin(x, size, prob, rho, log = FALSE)
+pbetabin(q, size, prob, rho, log.p = FALSE)
 rbetabin(n, size, prob, rho)
-dbetabin.ab(x, size, shape1, shape2, log=FALSE)
-pbetabin.ab(q, size, shape1, shape2, log.p=FALSE)
+dbetabin.ab(x, size, shape1, shape2, log = FALSE)
+pbetabin.ab(q, size, shape1, shape2, log.p = FALSE)
 rbetabin.ab(n, size, shape1, shape2)
 }
 \arguments{
@@ -63,7 +63,7 @@ rbetabin.ab(n, size, shape1, shape2)
   probability of success is not a constant but it is generated from a
   beta distribution with parameters \code{shape1} and \code{shape2}.
   Note that the mean of this beta distribution is
-  \code{mu=shape1/(shape1+shape2)}, which therefore is the
+  \code{mu = shape1/(shape1+shape2)}, which therefore is the
   mean or the probability of success.
 
   See \code{\link{betabinomial}} and \code{\link{betabin.ab}},
@@ -90,26 +90,26 @@ rbetabin.ab(n, size, shape1, shape2)
 }
 \examples{
 \dontrun{
-N = 9; xx = 0:N; s1=2; s2=3
-dy = dbetabin.ab(xx, size=N, shape1=s1, shape2=s2)
-barplot(rbind(dy, dbinom(xx, size=N, prob=s1/(s1+s2))),
-        beside = TRUE, col = c("blue","green"), las=1,
-        main=paste("Beta-binomial (size=",N,", shape1=",s1,
+N = 9; xx = 0:N; s1 = 2; s2 = 3
+dy = dbetabin.ab(xx, size = N, shape1 = s1, shape2 = s2)
+barplot(rbind(dy, dbinom(xx, size = N, prob = s1/(s1+s2))),
+        beside = TRUE, col = c("blue","green"), las = 1,
+        main = paste("Beta-binomial (size=",N,", shape1=",s1,
                    ", shape2=",s2,") (blue) vs\n",
-        " Binomial(size=", N, ", prob=", s1/(s1+s2), ") (green)", sep=""),
-        names.arg = as.character(xx), cex.main=0.8)
+        " Binomial(size=", N, ", prob=", s1/(s1+s2), ") (green)", sep = ""),
+        names.arg = as.character(xx), cex.main = 0.8)
 sum(dy*xx) # Check expected values are equal
-sum(dbinom(xx, size=N, prob=s1/(s1+s2))*xx)
-cumsum(dy) -  pbetabin.ab(xx, N, shape1=s1, shape2=s2)
+sum(dbinom(xx, size = N, prob = s1/(s1+s2))*xx)
+cumsum(dy) -  pbetabin.ab(xx, N, shape1 = s1, shape2 = s2)
 
-y = rbetabin.ab(n=10000, size=N, shape1=s1, shape2=s2)
+y = rbetabin.ab(n = 10000, size = N, shape1 = s1, shape2 = s2)
 ty = table(y)
 barplot(rbind(dy, ty/sum(ty)),
-        beside = TRUE, col = c("blue","red"), las=1,
-        main=paste("Beta-binomial (size=",N,", shape1=",s1,
+        beside = TRUE, col = c("blue","red"), las = 1,
+        main = paste("Beta-binomial (size=",N,", shape1=",s1,
                    ", shape2=",s2,") (blue) vs\n",
         " Random generated beta-binomial(size=", N, ", prob=", s1/(s1+s2),
-        ") (red)", sep=""), cex.main=0.8,
+        ") (red)", sep = ""), cex.main = 0.8,
         names.arg = as.character(xx))
 }
 }

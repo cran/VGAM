@@ -124,7 +124,7 @@ Objects can be created by calls to \code{\link{rrvglm}}.
   }
   \item{\code{prior.weights}:}{
   Object of class
-  \code{"numeric"}, from class \code{ "vlm"} 
+  \code{"matrix"}, from class \code{ "vlm"} 
   holding the initially supplied weights.
   }
   \item{\code{qr}:}{

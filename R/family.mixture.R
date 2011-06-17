@@ -163,11 +163,11 @@ mix2normal1 = function(lphi="logit",
         dl.dmu2 = (1-phi) * df2.dmu2 / pdf
         dl.dsd1 = phi * df1.dsd1 / pdf
         dl.dsd2 = (1-phi) * df2.dsd2 / pdf
-        w * cbind(dl.dphi * dphi.deta,
-                  dl.dmu1 * dmu1.deta,
-                  dl.dsd1 * dsd1.deta,
-                  dl.dmu2 * dmu2.deta,
-                  dl.dsd2 * dsd2.deta)
+        c(w) * cbind(dl.dphi * dphi.deta,
+                     dl.dmu1 * dmu1.deta,
+                     dl.dsd1 * dsd1.deta,
+                     dl.dmu2 * dmu2.deta,
+                     dl.dsd2 * dsd2.deta)
     }), list(.lphi=lphi, .lmu=lmu, .lsd=lsd,
              .ephi=ephi, .emu1=emu1, .emu2=emu2, .esd1=esd1, .esd2=esd2,
              .nsimEIM=nsimEIM ))),
@@ -195,10 +195,14 @@ mix2normal1 = function(lphi="logit",
         wz = if (intercept.only)
             matrix(colMeans(run.mean), n, dimm(M), byrow=TRUE) else run.mean
 
-        dtheta.detas = cbind(dphi.deta,dmu1.deta,dsd1.deta,dmu2.deta,dsd2.deta)
+        dtheta.detas = cbind(dphi.deta,
+                             dmu1.deta,
+                             dsd1.deta,
+                             dmu2.deta,
+                             dsd2.deta)
         index0 = iam(NA, NA, M=M, both=TRUE, diag=TRUE)
         wz = wz * dtheta.detas[,index0$row] * dtheta.detas[,index0$col]
-        w * wz
+        c(w) * wz
     }), list(.lphi=lphi, .lmu=lmu, .nsimEIM=nsimEIM ))))
 }
 
@@ -305,9 +309,9 @@ mix2poisson = function(lphi="logit", llambda="loge",
         dl.dphi = (f1-f2) / pdf
         dl.dlambda1 = phi * df1.dlambda1 / pdf
         dl.dlambda2 = (1-phi) * df2.dlambda2 / pdf
-        w * cbind(dl.dphi * dphi.deta,
-                  dl.dlambda1 * dlambda1.deta,
-                  dl.dlambda2 * dlambda2.deta)
+        c(w) * cbind(dl.dphi * dphi.deta,
+                     dl.dlambda1 * dlambda1.deta,
+                     dl.dlambda2 * dlambda2.deta)
     }), list(.lphi=lphi, .llambda=llambda,
              .ephi=ephi, .el1=el1, .el2=el2, .nsimEIM=nsimEIM ))),
     weight = eval(substitute(expression({
@@ -352,7 +356,7 @@ mix2poisson = function(lphi="logit", llambda="loge",
         dtheta.detas = cbind(dphi.deta, dlambda1.deta, dlambda2.deta)
         index0 = iam(NA, NA, M=M, both=TRUE, diag=TRUE)
         wz = wz * dtheta.detas[,index0$row] * dtheta.detas[,index0$col]
-        w * wz
+        c(w) * wz
     }), list(.lphi=lphi, .llambda=llambda,
              .ephi=ephi, .el1=el1, .el2=el2, .nsimEIM=nsimEIM ))))
 }
@@ -460,9 +464,9 @@ mix2exp = function(lphi="logit", llambda="loge",
         dl.dphi = (f1-f2) / pdf
         dl.dlambda1 = phi * df1.dlambda1 / pdf
         dl.dlambda2 = (1-phi) * df2.dlambda2 / pdf
-        w * cbind(dl.dphi * dphi.deta,
-                  dl.dlambda1 * dlambda1.deta,
-                  dl.dlambda2 * dlambda2.deta)
+        c(w) * cbind(dl.dphi * dphi.deta,
+                     dl.dlambda1 * dlambda1.deta,
+                     dl.dlambda2 * dlambda2.deta)
     }), list(.lphi=lphi, .llambda=llambda,
              .ephi=ephi, .el1=el1, .el2=el2 ))),
     weight = eval(substitute(expression({
@@ -504,7 +508,7 @@ mix2exp = function(lphi="logit", llambda="loge",
         dtheta.detas = cbind(dphi.deta, dlambda1.deta, dlambda2.deta)
         index0 = iam(NA, NA, M=M, both=TRUE, diag=TRUE)
         wz = wz * dtheta.detas[,index0$row] * dtheta.detas[,index0$col]
-        w * wz
+        c(w) * wz
     }), list(.lphi=lphi, .llambda=llambda,
              .ephi=ephi, .el1=el1, .el2=el2, .nsimEIM=nsimEIM ))))
 }

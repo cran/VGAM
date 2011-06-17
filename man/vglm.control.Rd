@@ -8,7 +8,7 @@
 
 }
 \usage{
-vglm.control(checkwz=TRUE, criterion = names(.min.criterion.VGAM),
+vglm.control(checkwz = TRUE, criterion = names(.min.criterion.VGAM),
              epsilon = 1e-07, half.stepsizing = TRUE,
              maxit = 30, stepsize = 1, save.weight = FALSE,
              trace = FALSE, wzepsilon = .Machine$double.eps^0.75, 
@@ -178,9 +178,9 @@ These are handled using the \code{xij} argument.
 
 \examples{
 # Example 1.
-pneumo = transform(pneumo, let=log(exposure.time))
-vglm(cbind(normal,mild,severe) ~ let, multinomial, data=pneumo,
-     crit="coef", step=0.5, trace=TRUE, eps=1e-8, maxit=40)
+pneumo = transform(pneumo, let = log(exposure.time))
+vglm(cbind(normal, mild, severe) ~ let, multinomial, data = pneumo,
+     crit = "coef", step = 0.5, trace = TRUE, eps = 1e-8, maxit = 40)
 
 
 # Example 2. The use of the xij argument (simple case).

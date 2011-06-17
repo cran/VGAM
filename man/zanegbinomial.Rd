@@ -9,9 +9,9 @@
 
 }
 \usage{
-zanegbinomial(lp0 = "logit", lmunb = "loge", lk = "loge",
-              ep0 = list(), emunb =list(), ek = list(), ipnb0 = NULL,
-              ik = NULL, zero = -3, cutoff = 0.995, method.init = 1,
+zanegbinomial(lp0 = "logit", lmunb = "loge", lsize = "loge",
+              ep0 = list(), emunb = list(), esize = list(), ipnb0 = NULL,
+              isize = NULL, zero = -3, cutoff = 0.995, imethod = 1,
               shrinkage.init = 0.95)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -27,14 +27,14 @@ zanegbinomial(lp0 = "logit", lmunb = "loge", lk = "loge",
     See \code{\link{Links}} for more choices.
 
   }
-  \item{lk}{ 
+  \item{lsize}{ 
     Parameter link function applied to the reciprocal of the dispersion
     parameter, called \code{k}. That is, as \code{k} increases, the
     variance of the response decreases.
     See \code{\link{Links}} for more choices.
 
   }
-  \item{ep0, emunb, ek}{
+  \item{ep0, emunb, esize}{
   List. Extra argument for the respective links.
   See \code{earg} in \code{\link{Links}} for general information.
 
@@ -45,7 +45,7 @@ zanegbinomial(lp0 = "logit", lmunb = "loge", lk = "loge",
     and it is ok to give one value each for each response/species.
 
   }
-  \item{ik}{ 
+  \item{isize}{ 
     Optional initial values for \code{k}.
     If given, they must be positive, and give one value
     for each response/species.
@@ -55,7 +55,7 @@ zanegbinomial(lp0 = "logit", lmunb = "loge", lk = "loge",
     Integer valued vector, usually assigned \eqn{-3} or \eqn{3} if
     used at all. Specifies which of the three linear predictors are
     modelled as an intercept only. By default, the \code{k} parameter
-    (after \code{lk} is applied) for each response is modelled as
+    (after \code{lsize} is applied) for each response is modelled as
     a single unknown number that is estimated. It can be modelled as a
     function of the explanatory variables by setting \code{zero = NULL}.
     A negative value means that the value is recycled, so setting \eqn{-3}
@@ -71,7 +71,7 @@ zanegbinomial(lp0 = "logit", lmunb = "loge", lk = "loge",
     \code{qnegbin(p)}.
 
   }
-  \item{method.init, shrinkage.init}{
+  \item{imethod, shrinkage.init}{
   See \code{\link{negbinomial}}
   and \code{\link{CommonVGAMffArguments}}.
 
@@ -168,9 +168,10 @@ for counts with extra zeros.
 
 \examples{
 zdata <- data.frame(x = runif(nn <- 2000))
-zdata <- transform(zdata, p0 = logit(-1 + 2*x, inverse = TRUE),
-                          y1 = rposnegbin(nn, munb = exp(0+2*x), size = exp(1)),
-                          y2 = rposnegbin(nn, munb = exp(1+2*x), size = exp(1)))
+zdata <- transform(zdata,
+                   p0 = logit(-1 + 2*x, inverse = TRUE),
+                   y1 = rposnegbin(nn, munb = exp(0+2*x), size = exp(1)),
+                   y2 = rposnegbin(nn, munb = exp(1+2*x), size = exp(1)))
 zdata <- transform(zdata, y1 = ifelse(runif(nn) < p0, 0, y1),
                           y2 = ifelse(runif(nn) < p0, 0, y2))
 with(zdata, table(y1))

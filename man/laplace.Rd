@@ -10,7 +10,7 @@
 \usage{
 laplace(llocation = "identity", lscale = "loge", elocation = list(),
         escale = list(), ilocation = NULL, iscale = NULL,
-        method.init = 1, zero = 2)
+        imethod = 1, zero = 2)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -31,7 +31,7 @@ laplace(llocation = "identity", lscale = "loge", elocation = list(),
   appropriate length.
   The default is to choose the value internally.
   }
-  \item{method.init}{
+  \item{imethod}{
   Initialization method.
   Either the value 1 or 2.
 
@@ -109,7 +109,7 @@ with(lddat, median(y))
 
 lddat = data.frame(x = runif(nn <- 1001))
 lddat = transform(lddat, y = rlaplace(nn, loc = 2, scale = exp(-1+1*x)))
-coef(vglm(y ~ x, laplace(iloc = .2, meth = 2, zero = 1), lddat,
+coef(vglm(y ~ x, laplace(iloc = .2, imethod = 2, zero = 1), lddat,
           trace = TRUE), matrix = TRUE)
 }
 \keyword{models}

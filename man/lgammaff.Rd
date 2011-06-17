@@ -57,8 +57,8 @@ lgamma3ff(llocation = "identity", lscale = "loge", lshape = "loge",
 \details{
   The probability density function of the standard log-gamma distribution
   is given by
-  \deqn{f(y)=\exp[ky - \exp(y)] / \Gamma(k),}{%
-        f(y) = exp[ky - exp(y)]/gamma(k),}
+  \deqn{f(y;k)=\exp[ky - \exp(y)] / \Gamma(k),}{%
+        f(y;k) = exp[ky - exp(y)]/gamma(k),}
   for parameter \eqn{k>0}{k>0} and all real \eqn{y}.
   The mean of \eqn{Y} is \code{digamma(k)} (returned as
   the fitted values) and its variance is \code{trigamma(k)}.
@@ -112,25 +112,25 @@ New York: Wiley.
 
 }
 \seealso{
-\code{\link{rlgamma}},
-\code{\link{gengamma}},
-\code{\link{prentice74}},
-\code{\link{gamma1}},
-\code{\link[base:Special]{lgamma}}.
+  \code{\link{rlgamma}},
+  \code{\link{gengamma}},
+  \code{\link{prentice74}},
+  \code{\link{gamma1}},
+  \code{\link[base:Special]{lgamma}}.
 
 }
 \examples{
-ldat = data.frame(y = rlgamma(100, k = exp(1)))
-fit = vglm(y ~ 1, lgammaff, ldat, trace = TRUE, crit = "coef")
+ldata = data.frame(y = rlgamma(100, k = exp(1)))
+fit = vglm(y ~ 1, lgammaff, ldata, trace = TRUE, crit = "coef")
 summary(fit)
 coef(fit, matrix = TRUE)
 Coef(fit)
 
-ldat = data.frame(x = runif(nn <- 5000))     # Another example
-ldat = transform(ldat, loc = -1 + 2*x, Scale = exp(1))
-ldat = transform(ldat, y = rlgamma(nn, loc, scale = Scale, k = exp(0)))
-fit = vglm(y ~ x, lgamma3ff(zero = 2:3), ldat, trace = TRUE, crit = "c")
-coef(fit, matrix = TRUE)
+ldata = data.frame(x = runif(nn <- 5000))     # Another example
+ldata = transform(ldata, loc = -1 + 2 * x, Scale = exp(1))
+ldata = transform(ldata, y = rlgamma(nn, loc, scale = Scale, k = exp(0)))
+fit2 = vglm(y ~ x, lgamma3ff(zero = 2:3), ldata, trace = TRUE, crit = "c")
+coef(fit2, matrix = TRUE)
 }
 \keyword{models}
 \keyword{regression}

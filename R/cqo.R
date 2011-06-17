@@ -154,7 +154,7 @@ cqo <- function(formula,
                                     fit$misc$predictors.names)
     slot(answer, "predictors") = fit$predictors
     if (length(fit$prior.weights))
-        slot(answer, "prior.weights") = fit$prior.weights
+        slot(answer, "prior.weights") = as.matrix(fit$prior.weights)
     answer
 }
 attr(cqo, "smart") <- TRUE

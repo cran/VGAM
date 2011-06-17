@@ -101,7 +101,7 @@
         dl2 = rowSums(y * dP2 / mu)
         dl3 = rowSums(y * dP3 / mu)
         dPP.deta = dtheta.deta(cbind(p1, p2, f), link = .link, earg = .earg)
-        w * cbind(dPP.deta[,1] * dl1,
+        c(w) * cbind(dPP.deta[,1] * dl1,
                   dPP.deta[,2] * dl2, 
                   dPP.deta[,3] * dl3)
     }), list( .link = link, .earg = earg ))),
@@ -116,7 +116,7 @@
                                      dPP[, , i2, drop = TRUE] / mu) *
                                      dPP.deta[, i1] * dPP.deta[, i2]
         }
-        w * wz
+        c(w) * wz
     }), list( .link = link, .earg = earg ))))
 }
 
@@ -197,7 +197,7 @@
         dl1 = rowSums(y * dP1 / mu)
         dl2 = rowSums(y * dP2 / mu)
         dPP.deta = dtheta.deta(pA, link = .link, earg = .earg)
-        w * cbind(dPP.deta * dl1,
+        c(w) * cbind(dPP.deta * dl1,
                   dl2)
     }), list( .link = link, .earg = earg ))),
     weight = eval(substitute(expression({
@@ -212,7 +212,7 @@
                                      dPP[,,i2,drop = TRUE] / mu) *
                                      dPP.deta[,i1] * dPP.deta[,i2]
         }
-        w * wz
+        c(w) * wz
     }), list( .link = link, .earg = earg ))))
 }
 
@@ -279,11 +279,11 @@
                     -0.5*(1-pp))
         dl1 = rowSums(y * dP1 / mu)
         dPP.deta = dtheta.deta(pp, link = .link, earg = .earg)
-        w * dPP.deta * dl1
+        c(w) * dPP.deta * dl1
         }), list( .link = link, .earg = earg ) )),
     weight = eval(substitute(expression({
         wz = rowSums(dP1 * dP1 / mu) * dPP.deta^2
-        w * wz
+        c(w) * wz
     }), list( .link = link, .earg = earg ) )))
 }
 
@@ -363,7 +363,7 @@
         dl.dp2 = (2*y[,3]+y[,2]+y[,5])/p2 - (2*y[,6]+y[,4]+y[,5])/(1-p1-p2)
         dp1.deta = dtheta.deta(p1, link = .link, earg = .earg)
         dp2.deta = dtheta.deta(p2, link = .link, earg = .earg)
-        w * cbind(dl.dp1 * dp1.deta,
+        c(w) * cbind(dl.dp1 * dp1.deta,
                   dl.dp2 * dp2.deta)
     }), list( .link = link, .earg = earg ))),
     weight = eval(substitute(expression({
@@ -375,7 +375,7 @@
         wz[,iam(1,1,M)] = dp1.deta^2 * ed2l.dp12
         wz[,iam(2,2,M)] = dp2.deta^2 * ed2l.dp22
         wz[,iam(1,2,M)] = ed2l.dp1dp2 * dp1.deta * dp2.deta
-        w * wz
+        c(w) * wz
     }), list( .link = link, .earg = earg ))))
 }
 
@@ -469,7 +469,7 @@
         dl2 = rowSums(y * dP2 / mu)
         dl3 = rowSums(y * dP3 / mu)
         dPP.deta = dtheta.deta(cbind(mS, ms, nS), link = .link, earg = .earg)
-        w * dPP.deta * cbind(dl1, dl2, dl3)
+        c(w) * dPP.deta * cbind(dl1, dl2, dl3)
     }), list( .link = link, .earg = earg ))),
     weight = eval(substitute(expression({
         dPP = array(c(dP1,dP2,dP3), c(n,6,3))
@@ -481,7 +481,7 @@
                                      dPP[,,i2,drop = TRUE] / mu) *
                                      dPP.deta[,i1] * dPP.deta[,i2]
         }
-        w * wz
+        c(w) * wz
     }), list( .link = link, .earg = earg ))))
 }
 
@@ -523,7 +523,7 @@
                  c(sqrt(mustart[,4]))
             pA = if (is.Numeric( .ipA )) rep( .ipA , len = n) else
                 c(1 - sqrt(mustart[,2] + mustart[,4]))
-            pB = 1 - pA - pO
+            pB = abs(1 - pA - pO)
             etastart = cbind(theta2eta(pA, .link, earg = .earg),
                              theta2eta(pB, .link, earg = .earg))
         }
@@ -531,7 +531,7 @@
     inverse = eval(substitute(function(eta, extra = NULL) {
         pA = eta2theta(eta[,1], link = .link, earg = .earg)
         pB = eta2theta(eta[,2], link = .link, earg = .earg)
-        pO = 1 - pA - pB
+        pO = abs(1 - pA - pB)
         cbind(A  = pA*(pA+2*pO),
               B  = pB*(pB+2*pO),
               AB = 2*pA*pB,
@@ -548,7 +548,7 @@
          index = (p2 >= 0) & (p2 <= 1)
          pA = p1
          pA[index] = p2[index]
-         pB = abs(1-pA-pO)
+         pB = abs(1 - pA - pO)
          cbind(theta2eta(pA, .link, earg = .earg),
                theta2eta(pB, .link, earg = .earg))
     }, list( .link = link, .earg = earg ))),
@@ -562,7 +562,7 @@
     deriv = eval(substitute(expression({
         ppp = eta2theta(eta[,1], link = .link, earg = .earg)
         qqq = eta2theta(eta[,2], link = .link, earg = .earg)
-        rrr = 1-ppp-qqq
+        rrr = abs(1 - ppp - qqq)
 
 
         pbar = 2*rrr+ppp
@@ -577,7 +577,7 @@
         dp.deta = dtheta.deta(ppp, link = .link, earg = .earg)
         dq.deta = dtheta.deta(qqq, link = .link, earg = .earg)
 
-        w * cbind(dl.dp * dp.deta,
+        c(w) * cbind(dl.dp * dp.deta,
                   dl.dq * dq.deta)
     }), list( .link = link, .earg = earg ))),
     weight = eval(substitute(expression({
@@ -588,7 +588,7 @@
         wz[,iam(1,1,M)] = dp.deta^2 * ed2l.dp2
         wz[,iam(2,2,M)] = dq.deta^2 * ed2l.dq2
         wz[,iam(1,2,M)] = ed2l.dpdq * dp.deta * dq.deta
-        w * wz
+        c(w) * wz
     }), list( .link = link, .earg = earg ))))
 }
 
@@ -658,9 +658,9 @@
         dl.dp * dp.deta
     }), list( .link = link, .earg = earg ))),
     weight = eval(substitute(expression({
-        ed2l.dp2 = 4 * w * p2 * (1/(2+p2) + 2/(1-p2) + 1/p2)
+        ed2l.dp2 = 4 * p2 * (1/(2+p2) + 2/(1-p2) + 1/p2)
         wz = cbind((dp.deta^2) * ed2l.dp2)
-        wz
+        c(w) * wz
     }), list( .link = link, .earg = earg ))))
 }
 
@@ -718,10 +718,10 @@
         },
     vfamily = c("AA.Aa.aa", "vgenetic"),
     deriv = eval(substitute(expression({
-        pA = eta2theta(eta, link = .link, earg = .earg)
-        nAA = w*y[,1]
-        nAa = w*y[,2]
-        naa = w*y[,3]
+        pA  = eta2theta(eta, link = .link, earg = .earg)
+        nAA = w * y[,1]
+        nAa = w * y[,2]
+        naa = w * y[,3]
         dl.dpA = (2*nAA+nAa)/pA - (nAa+2*naa)/(1-pA)
         dpA.deta = dtheta.deta(pA, link = .link, earg = .earg)
         dl.dpA * dpA.deta

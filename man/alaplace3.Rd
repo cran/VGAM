@@ -14,7 +14,7 @@
 alaplace1(tau = NULL, llocation = "identity", elocation = list(),
           ilocation = NULL, kappa = sqrt(tau/(1 - tau)), Scale.arg = 1,
           shrinkage.init = 0.95, parallelLocation = FALSE, digt = 4,
-          dfmu.init = 3, intparloc = FALSE, method.init = 1)
+          dfmu.init = 3, intparloc = FALSE, imethod = 1)
 
 alaplace2(tau = NULL,  llocation = "identity", lscale = "loge",
           elocation = list(), escale = list(),
@@ -22,12 +22,12 @@ alaplace2(tau = NULL,  llocation = "identity", lscale = "loge",
           shrinkage.init = 0.95,
           parallelLocation = FALSE, digt = 4, sameScale = TRUE,
           dfmu.init = 3, intparloc = FALSE, 
-          method.init = 1, zero = -2)
+          imethod = 1, zero = -2)
 
 alaplace3(llocation = "identity", lscale = "loge", lkappa = "loge",
           elocation = list(), escale = list(), ekappa = list(),
           ilocation = NULL, iscale = NULL, ikappa = 1,
-          method.init = 1, zero = 2:3)
+          imethod = 1, zero = 2:3)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -80,7 +80,7 @@ alaplace3(llocation = "identity", lscale = "loge", lkappa = "loge",
 
 
   }
-  \item{method.init}{
+  \item{imethod}{
   Initialization method.
   Either the value 1, 2, 3 or 4.
 
@@ -89,7 +89,7 @@ alaplace3(llocation = "identity", lscale = "loge", lkappa = "loge",
   Degrees of freedom for the cubic smoothing spline fit applied to
   get an initial estimate of the location parameter.
   See \code{\link{vsmooth.spline}}.
-  Used only when \code{method.init = 3}.
+  Used only when \code{imethod = 3}.
 
   }
   \item{shrinkage.init}{
@@ -97,7 +97,7 @@ alaplace3(llocation = "identity", lscale = "loge", lkappa = "loge",
   The value must be between 0 and 1 inclusive, and
   a value of 0 means the individual response values are used,
   and a value of 1 means the median or mean is used.
-  This argument is used only when \code{method.init = 4}.
+  This argument is used only when \code{imethod = 4}.
   See \code{\link{CommonVGAMffArguments}} for more information.
 
   }

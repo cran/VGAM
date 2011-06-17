@@ -9,8 +9,9 @@
 
 }
 \usage{
-freund61(la="loge", lap="loge", lb="loge", lbp="loge", ia=NULL, iap=NULL,
-         ib=NULL, ibp=NULL, independent=FALSE, zero=NULL)
+freund61(la = "loge", lap = "loge", lb = "loge", lbp = "loge",
+         ia = NULL, iap = NULL, ib = NULL, ibp = NULL,
+         independent = FALSE, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -21,10 +22,12 @@ freund61(la="loge", lap="loge", lb="loge", lbp="loge", ia=NULL, iap=NULL,
   (the ``\code{p}'' stands for ``prime'').
   See \code{\link{Links}} for more choices.
 
+
   }
   \item{ia,iap,ib,ibp}{
   Initial value for the four parameters respectively.
   The default is to estimate them all internally.
+
 
   }
   \item{independent}{
@@ -33,12 +36,14 @@ freund61(la="loge", lap="loge", lb="loge", lbp="loge", ia=NULL, iap=NULL,
   which implies that \eqn{y_1}{y1} and \eqn{y_2}{y2} are independent
   and each have an ordinary exponential distribution.
 
+
   }
   \item{zero}{
   An integer-valued vector specifying which
   linear/additive predictors are modelled as intercepts only.
   The values must be from the set \{1,2,3,4\}.
   The default is none of them.
+
 
   }
 }
@@ -124,11 +129,13 @@ A bivariate extension of the exponential distribution.
 \emph{Journal of the American Statistical Association},
 \bold{56}, 971--977.
 
+
 }
 \author{ T. W. Yee }
 \note{
   To estimate all four parameters, it is necessary to have some
   data where \eqn{y_1<y_2}{y1<y2} and \eqn{y_2<y_1}{y2<y1}.
+
 
   The response must be a two-column matrix, with columns
   \eqn{y_1}{y1} and \eqn{y_2}{y2}.
@@ -161,23 +168,25 @@ A bivariate extension of the exponential distribution.
 
 \seealso{
   \code{\link{exponential}}.
+
+
 }
 \examples{
-y1 = rexp(n <- 200, rate=4)
-y2 = rexp(n, rate=8)
+y1 = rexp(n <- 200, rate = 4)
+y2 = rexp(n, rate = 8)
 ymat = cbind(y1,y2)
-fit =  vglm(ymat ~ 1, fam=freund61, trace=TRUE)
-coef(fit, matrix=TRUE)
+fit =  vglm(ymat ~ 1, fam = freund61, trace = TRUE)
+coef(fit, matrix = TRUE)
 Coef(fit)
 vcov(fit)
 head(fitted(fit))
 summary(fit)
 
 # y1 and y2 are independent, so fit an independence model
-fit2 = vglm(ymat ~ 1, fam=freund61(indep=TRUE), trace=TRUE)
-coef(fit2, matrix=TRUE)
+fit2 = vglm(ymat ~ 1, fam = freund61(indep = TRUE), trace = TRUE)
+coef(fit2, matrix = TRUE)
 constraints(fit2)
-pchisq(2*(logLik(fit)-logLik(fit2)), df=2, lower.tail=FALSE) # p-value
+pchisq(2*(logLik(fit)-logLik(fit2)), df = 2, lower.tail = FALSE) # p-value
 }
 \keyword{models}
 \keyword{regression}

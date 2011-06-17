@@ -1,40 +1,48 @@
 \name{negbinomial}
 \alias{negbinomial}
+\alias{polya}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Negative Binomial Distribution Family Function }
 \description{
-  Maximum likelihood estimation of the two parameters of a negative binomial
-  distribution.
+  Maximum likelihood estimation of the two parameters of a negative
+  binomial distribution.
+
 }
 \usage{
-negbinomial(lmu = "loge", lk = "loge", emu = list(), ek = list(),
-            imu = NULL, ik = NULL, quantile.probs = 0.75,
+negbinomial(lmu = "loge", lsize = "loge", emu = list(), esize = list(),
+            imu = NULL, isize = NULL, quantile.probs = 0.75,
             nsimEIM = 100, cutoff = 0.995,
-            Maxiter = 5000, deviance.arg = FALSE, method.init = 1,
+            Maxiter = 5000, deviance.arg = FALSE, imethod = 1,
             parallel = FALSE, shrinkage.init = 0.95, zero = -2)
+polya(lprob = "logit", lsize = "loge", eprob = list(), esize = list(),
+    iprob = NULL, isize = NULL, quantile.probs = 0.75, nsimEIM = 100,
+    deviance.arg = FALSE, imethod = 1, shrinkage.init = 0.95, zero = -2)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{lmu, lk}{
-  Link functions applied to the \eqn{\mu}{mu} and \eqn{k} parameters.
+  \item{lmu, lsize, lprob}{
+  Link functions applied to the \eqn{\mu}{mu}, \eqn{k}
+  and \eqn{p}  parameters.
   See \code{\link{Links}} for more choices.
-  Note that the \eqn{k} parameter is the \code{size} argument of 
-  \code{\link[stats:NegBinomial]{rnbinom}}.
-  Common alternatives for \code{lk} are
+  Note that the \eqn{\mu}{mu}, \eqn{k}
+  and \eqn{p}  parameters are the \code{mu},
+  \code{size} and \code{prob} arguments of 
+  \code{\link[stats:NegBinomial]{rnbinom}} respectively.
+  Common alternatives for \code{lsize} are
   \code{\link{nloge}} and
   \code{\link{reciprocal}}.
 
   }
-  \item{emu, ek}{
+  \item{emu, esize, eprob}{
   List. Extra argument for each of the links.
   See \code{earg} in \code{\link{Links}} for general information.
 
   }
-  \item{imu, ik}{
-  Optional initial values for the mean and \eqn{k}.
-  For the latter, if failure to converge occurs then try different values
-  (and/or use \code{method.init}).
-  For a \eqn{S}-column response, \code{ik} can be of length \eqn{S}.
+  \item{imu, isize, iprob}{
+  Optional initial values for the mean and \eqn{k} and \eqn{p}.
+  For \eqn{k}, if failure to converge occurs then try different values
+  (and/or use \code{imethod}).
+  For a \eqn{S}-column response, \code{isize} can be of length \eqn{S}.
   A value \code{NULL} means an initial value for each response is
   computed internally using a range of values.
   The last argument is ignored if used within \code{\link{cqo}}; see
@@ -44,7 +52,7 @@ negbinomial(lmu = "loge", lk = "loge", emu = list(), ek = list(),
   \item{quantile.probs}{
   Passed into the \code{probs} argument
   of \code{\link[stats:quantile]{quantile}}
-  when \code{method.init = 3} to obtain an initial value for the mean.
+  when \code{imethod = 3} to obtain an initial value for the mean.
 
   }
 
@@ -86,12 +94,12 @@ negbinomial(lmu = "loge", lk = "loge", emu = list(), ek = list(),
   under the fast algorithm.
 
   }
-  \item{method.init}{
+  \item{imethod}{
   An integer with value \code{1} or \code{2} or \code{3} which
   specifies the initialization method for the \eqn{\mu}{mu} parameter.
   If failure to converge occurs try another value
   and/or else specify a value for \code{shrinkage.init}
-  and/or else specify a value for \code{ik}.
+  and/or else specify a value for \code{isize}.
 
   }
   \item{parallel}{
@@ -109,7 +117,7 @@ negbinomial(lmu = "loge", lk = "loge", emu = list(), ek = list(),
   The value must be between 0 and 1 inclusive, and
   a value of 0 means the individual response values are used,
   and a value of 1 means the median or mean is used.
-  This argument is used in conjunction with \code{method.init}.
+  This argument is used in conjunction with \code{imethod}.
   If convergence failure occurs try setting this argument to 1.
 
   }
@@ -117,9 +125,9 @@ negbinomial(lmu = "loge", lk = "loge", emu = list(), ek = list(),
   Integer valued vector, usually assigned \eqn{-2} or \eqn{2} if used
   at all.  Specifies which of the two linear/additive predictors are
   modelled as an intercept only. By default, the \eqn{k} parameter
-  (after \code{lk} is applied) is modelled as a single unknown
+  (after \code{lsize} is applied) is modelled as a single unknown
   number that is estimated.  It can be modelled as a function of the
-  explanatory variables by setting \code{zero=NULL}. A negative value
+  explanatory variables by setting \code{zero = NULL}. A negative value
   means that the value is recycled, so setting \eqn{-2} means all \eqn{k}
   are intercept-only.
   See \code{\link{CommonVGAMffArguments}} for more information.
@@ -133,7 +141,8 @@ negbinomial(lmu = "loge", lk = "loge", emu = list(), ek = list(),
   distributed.
   There are several common parametrizations of the negative binomial
   distribution.
-  The one used here uses the mean \eqn{\mu}{mu} and an \emph{index} parameter
+  The one used by \code{negbinomial()} uses the
+  mean \eqn{\mu}{mu} and an \emph{index} parameter
   \eqn{k}, both which are positive.
   Specifically, the density of a random variable \eqn{Y} is 
   \deqn{f(y;\mu,k) ~=~ {y + k - 1 \choose y} \,
@@ -152,48 +161,64 @@ negbinomial(lmu = "loge", lk = "loge", emu = list(), ek = list(),
   \eqn{E(Y)}.
   It is common for some to use \eqn{\alpha=1/k}{alpha=1/k} as the
   ancillary or heterogeneity parameter;
-  so common alternatives for \code{lk} are
+  so common alternatives for \code{lsize} are
   \code{\link{nloge}} and
   \code{\link{reciprocal}}.
 
 
+  For \code{polya} the density is
+  \deqn{f(y;p,k) ~=~ {y + k - 1 \choose y} \,
+    \left( 1 - p \right)^y\,
+    p^k }{%
+    f(y;p,k) = C_{y}^{y + k - 1}
+    [1 - p]^y p^k}
+  where \eqn{y=0,1,2,\ldots},
+  and \eqn{0 < p < 1}{0 < p < 1} and \eqn{k > 0}.
+
+
   The negative binomial distribution can be coerced into the
-  classical GLM framework with one of the parameters being of
-  interest and the other treated as a nuisance/scale parameter
-  (this is implemented in the MASS library). This \pkg{VGAM}
-  family function \code{negbinomial} treats both parameters
-  on the same footing, and estimates them both by full maximum
-  likelihood estimation.  Simulated Fisher scoring is employed
-  as the default (see the \code{nsimEIM} argument).
+  classical GLM framework with one of the parameters being
+  of interest and the other treated as a nuisance/scale
+  parameter (this is implemented in the MASS library). The
+  \pkg{VGAM} family function \code{negbinomial} treats both
+  parameters on the same footing, and estimates them both
+  by full maximum likelihood estimation.  Simulated Fisher
+  scoring is employed as the default (see the \code{nsimEIM}
+  argument).
 
 
-  The parameters \eqn{\mu}{mu} and \eqn{k} are independent (diagonal EIM),
-  and the confidence region for \eqn{k} is extremely skewed so that its
-  standard error is often of no practical use. The parameter \eqn{1/k}
-  has been used as a measure of aggregation.
+  The parameters \eqn{\mu}{mu} and \eqn{k} are independent
+  (diagonal EIM), and the confidence region for \eqn{k}
+  is extremely skewed so that its standard error is often
+  of no practical use. The parameter \eqn{1/k} has been
+  used as a measure of aggregation.
 
 
-  This \pkg{VGAM} function handles \emph{multivariate} responses, so
-  that a matrix can be used as the response. The number of columns is the
-  number of species, say, and setting \code{zero=-2} means that \emph{all}
-  species have a \eqn{k} equalling a (different) intercept only.
+  These \pkg{VGAM} family functions handle
+  \emph{multivariate} responses, so that a matrix can be
+  used as the response. The number of columns is the number
+  of species, say, and setting \code{zero = -2} means that
+  \emph{all} species have a \eqn{k} equalling a (different)
+  intercept only.
 
 
 }
 \section{Warning}{
-  The Poisson model corresponds to \eqn{k} equalling infinity.
-  If the data is Poisson or close to Poisson, numerical
-  problems will occur. Possibly choosing a log-log link may
-  help in such cases, otherwise use \code{\link{poissonff}}
-  or \code{\link{quasipoissonff}}.
+  The Poisson model corresponds to \eqn{k} equalling
+  infinity.  If the data is Poisson or close to Poisson,
+  numerical problems will occur. Possibly choosing a
+  log-log link may help in such cases, otherwise use
+  \code{\link{poissonff}} or \code{\link{quasipoissonff}}.
 
 
-  This function is fragile; the maximum likelihood estimate of the
-  index parameter is fraught (see Lawless, 1987). In general, the
-  \code{\link{quasipoissonff}} is more robust than this function.
-  Other alternatives are to fit a NB-1 or RR-NB model; see Yee (2010).
-  Assigning values to the \code{ik} argument may lead to a local solution,
-  and smaller values are preferred over large values when using this argument.
+  These functions are fragile; the maximum likelihood
+  estimate of the index parameter is fraught (see Lawless,
+  1987). In general, the \code{\link{quasipoissonff}} is
+  more robust.  Other alternatives to \code{negbinomial} are
+  to fit a NB-1 or RR-NB model; see Yee (2011). Assigning
+  values to the \code{isize} argument may lead to a local
+  solution, and smaller values are preferred over large
+  values when using this argument.
 
 
   Yet to do: write a family function which uses the methods of moments
@@ -226,7 +251,7 @@ Fitting the negative binomial distribution to biological data.
 \bold{9}, 174--200.
 
 
-  Yee, T. W. (2010)
+  Yee, T. W. (2011)
   Two-parameter reduced-rank vector generalized linear models.
   \emph{In preparation}.
 
@@ -239,8 +264,24 @@ Fitting the negative binomial distribution to biological data.
 % negative binomial distribution. Currently, none of these others work
 % very well.
 
+
+  These two functions implement two common parameterizations
+  of the negative binomial (NB). Some people called the
+  NB with integer \eqn{k} the \emph{Pascal} distribution,
+  whereas if \eqn{k} is real then this is the \emph{Polya}
+  distribution. I don't. The one matching the details of
+  \code{\link[stats:NegBinomial]{rnbinom}} in terms of \eqn{p}
+  and \eqn{k} is \code{polya()}.
+
+
+  For \code{polya()} the code may fail when \eqn{p} is close
+  to 0 or 1. It is not yet compatible with \code{\link{cqo}}
+  or \code{\link{cao}}.
+
+
   Suppose the response is called \code{ymat}.
-  The diagonal element of the \emph{expected information matrix}
+  For \code{negbinomial()}
+  the diagonal element of the \emph{expected information matrix}
   (EIM) for parameter \eqn{k}
   involves an infinite series; consequently simulated Fisher scoring
   (see \code{nsimEIM}) is the default. This algorithm should definitely be
@@ -260,16 +301,16 @@ Fitting the negative binomial distribution to biological data.
   (in recommended decreasing order)
   \code{nsimEIM},
   \code{shrinkage.init},
-  \code{method.init},
+  \code{imethod},
   \code{Maxiter}, 
   \code{cutoff},
-  \code{ik},
+  \code{isize},
   \code{zero}.
 
 
-  This function can be used by the fast algorithm in
-  \code{\link{cqo}}, however, setting \code{EqualTolerances=TRUE} and
-  \code{ITolerances=FALSE} is recommended.
+  The function \code{negbinomial} can be used by the fast algorithm in
+  \code{\link{cqo}}, however, setting \code{EqualTolerances = TRUE} and
+  \code{ITolerances = FALSE} is recommended.
 
 
 % For \code{\link{cqo}} and \code{\link{cao}}, taking the square-root
@@ -278,7 +319,7 @@ Fitting the negative binomial distribution to biological data.
 
 
 % If the negative binomial family function \code{\link{negbinomial}}
-% is used for \code{cqo} then set \code{negbinomial(deviance=TRUE)}
+% is used for \code{cqo} then set \code{negbinomial(deviance = TRUE)}
 % is necessary. This means to minimize the deviance, which the fast
 % algorithm can handle.
 
@@ -290,8 +331,7 @@ Fitting the negative binomial distribution to biological data.
 
 
 
-  There are two special uses of this \pkg{VGAM} family function
-  for handling count data.
+  There are two special uses of \code{negbinomial} for handling count data.
   Firstly,
   when used by \code{\link{rrvglm}}  this 
   results in a continuum of models in between and
@@ -308,8 +348,8 @@ Fitting the negative binomial distribution to biological data.
 
 
   Secondly,
-  the use of this \pkg{VGAM} family function with \code{parallel = TRUE}
-  and by \code{\link{vglm}}
+  the use of \code{negbinomial} with \code{parallel = TRUE}
+  inside \code{\link{vglm}}
   can result in a model similar to \code{\link{quasipoissonff}}.
   This is named the \emph{NB-1} model.
   The dispersion parameter is estimated by MLE whereas
@@ -349,16 +389,16 @@ coef(fit, matrix = TRUE)
 Coef(fit)
 
 # Example 2: simulated data with multivariate response
-ndata <- data.frame(x = runif(nn <- 500))
-ndata <- transform(ndata, y1 = rnbinom(nn, mu = exp(3+x), size = exp(1)),
-                          y2 = rnbinom(nn, mu = exp(2-x), size = exp(0)))
-fit1 <- vglm(cbind(y1, y2) ~ x, negbinomial, ndata, trace = TRUE)
+ndata <- data.frame(x2 = runif(nn <- 500))
+ndata <- transform(ndata, y1 = rnbinom(nn, mu = exp(3+x2), size = exp(1)),
+                          y2 = rnbinom(nn, mu = exp(2-x2), size = exp(0)))
+fit1 <- vglm(cbind(y1, y2) ~ x2, negbinomial, ndata, trace = TRUE)
 coef(fit1, matrix = TRUE)
 
 # Example 3: large counts so definitely use the nsimEIM argument
-ndata <- transform(ndata, y3 = rnbinom(nn, mu = exp(12+x), size = exp(1)))
+ndata <- transform(ndata, y3 = rnbinom(nn, mu = exp(12+x2), size = exp(1)))
 with(ndata, range(y3))  # Large counts
-fit2 <- vglm(y3 ~ x, negbinomial(nsimEIM = 100), ndata, trace = TRUE)
+fit2 <- vglm(y3 ~ x2, negbinomial(nsimEIM = 100), ndata, trace = TRUE)
 coef(fit2, matrix = TRUE)
 
 # Example 4: a NB-1 to estimate a negative binomial with Var(Y) = phi0 * mu
@@ -375,7 +415,7 @@ nb1 <- vglm(y3 ~ x2 + x3, negbinomial(parallel = TRUE, zero = NULL),
             mydata, trace = TRUE)
 # Extracting out some quantities:
 cnb1 <- coef(nb1, matrix = TRUE)
-mydiff <- (cnb1["(Intercept)", "log(k)"] - cnb1["(Intercept)", "log(mu)"])
+mydiff <- (cnb1["(Intercept)", "log(size)"] - cnb1["(Intercept)", "log(mu)"])
 delta0.hat <- exp(mydiff)
 (phi.hat <- 1 + 1 / delta0.hat)  # MLE of phi
 summary(nb1)

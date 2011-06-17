@@ -19,7 +19,7 @@ qrrvglm.control = function(Rank=1,
           iShape = 0.1,
           ITolerances = FALSE,
           maxitl = 40,
-          method.init = 1,
+          imethod = 1,
           Maxit.optim = 250,
           MUXfactor = rep(7, length=Rank),
           Norrr = ~ 1,
@@ -50,8 +50,8 @@ qrrvglm.control = function(Rank=1,
         stop("bad input for 'Hstep'")
     if (!is.Numeric(maxitl, posit=TRUE, allow=1, integer=TRUE)) 
         stop("bad input for 'maxitl'")
-    if (!is.Numeric(method.init, posit=TRUE, allow=1, integer=TRUE)) 
-        stop("bad input for 'method.init'")
+    if (!is.Numeric(imethod, posit=TRUE, allow=1, integer=TRUE)) 
+        stop("bad input for 'imethod'")
     if (!is.Numeric(Maxit.optim, integ=TRUE, posit=TRUE))
         stop("Bad input for 'Maxit.optim'")
     if (!is.Numeric(MUXfactor, posit=TRUE)) 
@@ -103,7 +103,7 @@ qrrvglm.control = function(Rank=1,
            iShape = as.numeric(iShape),
            ITolerances = ITolerances,
            maxitl = maxitl,
-           method.init = method.init,
+           imethod = imethod,
            Maxit.optim = Maxit.optim,
            min.criterion = TRUE, # needed for calibrate 
            MUXfactor = rep(MUXfactor, length=Rank),

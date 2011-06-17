@@ -113,6 +113,7 @@ gaussianff(dispersion = 0, parallel = FALSE, zero = NULL)
   \code{\link{normal1}},
   \code{\link{huber}},
   \code{\link{lqnorm}},
+  \code{\link{binormal}},
   \code{vlm},
   \code{\link{vglm}},
   \code{\link{vgam}},

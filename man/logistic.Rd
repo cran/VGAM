@@ -11,10 +11,10 @@
 }
 \usage{
 logistic1(llocation = "identity", elocation = list(),
-          scale.arg = 1, method.init = 1)
+          scale.arg = 1, imethod = 1)
 logistic2(llocation = "identity", lscale = "loge",
           elocation = list(), escale = list(),
-          ilocation = NULL, iscale = NULL, method.init = 1, zero = NULL)
+          ilocation = NULL, iscale = NULL, imethod = 1, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -38,7 +38,7 @@ logistic2(llocation = "identity", lscale = "loge",
   See \code{\link{CommonVGAMffArguments}} for more information.
 
   }
-  \item{method.init, zero}{
+  \item{imethod, zero}{
   See \code{\link{CommonVGAMffArguments}} for more information.
 
   }

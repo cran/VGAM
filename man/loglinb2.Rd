@@ -14,9 +14,11 @@ loglinb2(exchangeable = FALSE, zero = NULL)
 \arguments{
   \item{exchangeable}{ Logical.
     If \code{TRUE}, the two marginal probabilities are constrained to
-    be equal. Should be set \code{TRUE} for ears, eyes, etc. data. }
+    be equal. Should be set \code{TRUE} for ears, eyes, etc. data.
+  }
   \item{zero}{ Which linear/additive predictor is modelled as an
-    intercept only? A \code{NULL} means none of them. }
+    intercept only? A \code{NULL} means none of them.
+  }
 
 }
 \details{
@@ -41,9 +43,12 @@ loglinb2(exchangeable = FALSE, zero = NULL)
   \code{\link{rrvglm}}
   and \code{\link{vgam}}.
 
+
   When fitted, the \code{fitted.values} slot of the object contains the
   four joint probabilities, labelled as
   \eqn{(Y_1,Y_2)}{(Y1,Y2)} = (0,0), (0,1), (1,0), (1,1), respectively.
+
+
 }
 
 \references{
@@ -55,21 +60,20 @@ by Gao, F., Wahba, G., Klein, R., Klein, B.
 \emph{Journal of the American Statistical Association},
 \bold{96}, 127--160.
 
+
 McCullagh, P. and Nelder, J. A. (1989)
   \emph{Generalized Linear Models}, 2nd ed. London: Chapman & Hall.
 
-Documentation accompanying the \pkg{VGAM} package at
-\url{http://www.stat.auckland.ac.nz/~yee}
-contains further information and examples.
 
 }
 \author{ Thomas W. Yee }
 \note{
   The response must be a two-column matrix of ones and zeros only.
-  This is more restrictive than \code{\link{binom2.or}}, which can handle
-  more types of input formats.
+  This is more restrictive than \code{\link{binom2.or}},
+  which can handle more types of input formats.
   Note that each of the 4 combinations of the multivariate response
   need to appear in the data set.
+
 
 }
 
@@ -77,13 +81,14 @@ contains further information and examples.
   \code{\link{binom2.or}},
   \code{\link{binom2.rho}},
   \code{\link{loglinb3}}.
+
 }
 \examples{
-coalminers = transform(coalminers, Age=(age-42)/5)
+coalminers = transform(coalminers, Age = (age - 42) / 5)
 
 # Get the n x 4 matrix of counts 
 temp = vglm(cbind(nBnW,nBW,BnW,BW) ~ Age, binom2.or, coalminers)
-counts = round(c(weights(temp, type="prior")) * temp@y)
+counts = round(c(weights(temp, type = "prior")) * temp@y)
 
 # Create a n x 2 matrix response for loglinb2()
 # bwmat = matrix(c(0,0, 0,1, 1,0, 1,1), 4, 2, byrow=TRUE)
@@ -95,8 +100,8 @@ newminers = data.frame(bln = kronecker(matof1, bwmat[,1]),
                        Age = with(coalminers, rep(age, rep(4, length(age)))))
 newminers = newminers[with(newminers, wt) > 0,]
 
-fit = vglm(cbind(bln,wheeze) ~ Age, loglinb2, wei=wt, data=newminers)
-coef(fit, mat=TRUE)    # Same! (at least for the log odds-ratio) 
+fit = vglm(cbind(bln,wheeze) ~ Age, loglinb2, weight = wt, data = newminers)
+coef(fit, matrix = TRUE)    # Same! (at least for the log odds-ratio) 
 summary(fit)
 
 # Try reconcile this with McCullagh and Nelder (1989), p.234 

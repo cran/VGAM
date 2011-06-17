@@ -12,7 +12,7 @@ gpd(threshold = 0, lscale = "loge", lshape = "logoff", escale = list(),
     eshape = if (lshape == "logoff") list(offset = 0.5) else
              if (lshape == "elogit") list(min = -0.5, max = 0.5) else NULL,
     percentiles = c(90, 95), iscale = NULL, ishape = NULL,
-    tolshape0 = 0.001, giveWarning = TRUE, method.init = 1, zero = 2)
+    tolshape0 = 0.001, giveWarning = TRUE, imethod = 1, zero = 2)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -43,18 +43,18 @@ gpd(threshold = 0, lscale = "loge", lshape = "logoff", escale = list(),
   called \eqn{A} below; and then the second linear/additive predictor is
   \eqn{\log(\xi+A)}{log(xi+A)} which means that
   \eqn{\xi > -A}{xi > -A}.
-  The working weight matrices are positive definite if \eqn{A=0.5}.
+  The working weight matrices are positive definite if \eqn{A = 0.5}.
 
   }
 
 % \item{Offset}{
 % Numeric, of length 1.
 % Called \eqn{A} below.
-% Offset value if \code{lshape="logoff"}.
+% Offset value if \code{lshape = "logoff"}.
 % Then the second linear/additive predictor is
 % \eqn{\log(\xi+A)}{log(xi+A)} which means that
 % \eqn{\xi > -A}{xi > -A}.
-% The working weight matrices are positive definite if \code{Offset=0.5}.
+% The working weight matrices are positive definite if \code{Offset = 0.5}.
 
 % }
   \item{percentiles}{
@@ -69,7 +69,7 @@ gpd(threshold = 0, lscale = "loge", lshape = "logoff", escale = list(),
   \item{iscale, ishape}{
   Numeric. Optional initial values for \eqn{\sigma}{sigma}
   and \eqn{\xi}{xi}.
-  The default is to use \code{method.init} and compute a value internally for
+  The default is to use \code{imethod} and compute a value internally for
   each parameter.
   Values of \code{ishape} should be between \eqn{-0.5} and \eqn{1}.
   Values of \code{iscale} should be positive.
@@ -77,7 +77,7 @@ gpd(threshold = 0, lscale = "loge", lshape = "logoff", escale = list(),
   }
 % \item{rshape}{ 
 % Numeric, of length 2.
-% Range of \eqn{\xi}{xi} if \code{lshape="elogit"} is chosen.
+% Range of \eqn{\xi}{xi} if \code{lshape = "elogit"} is chosen.
 % The default values ensures the algorithm works (\eqn{\xi > -0.5}{xi > -0.5})
 % and the variance exists (\eqn{\xi < 0.5}{xi < 0.5}).
 
@@ -95,7 +95,7 @@ gpd(threshold = 0, lscale = "loge", lshape = "logoff", escale = list(),
 % derivatives etc. will be used.
 
 % }
-  \item{method.init}{
+  \item{imethod}{
    Method of initialization, either 1 or 2. The first is the method of
    moments, and the second is a variant of this.  If neither work, try
    assigning values to arguments \code{ishape} and/or \code{iscale}.
@@ -110,7 +110,7 @@ gpd(threshold = 0, lscale = "loge", lshape = "logoff", escale = list(),
   to be modelled through
   a linear combination of the explanatory variables because the
   shape parameter is probably best left as an intercept only:
-  \code{zero=2}.
+  \code{zero = 2}.
   Setting \code{zero=NULL} means both parameters are modelled with
   explanatory variables.
 
@@ -222,12 +222,12 @@ gpd(threshold = 0, lscale = "loge", lshape = "logoff", escale = list(),
 }
 
 \examples{
-# Simulated data from an exponential distribution (xi=0)
+# Simulated data from an exponential distribution (xi = 0)
 threshold = 0.5
-gdata = data.frame(y = threshold + rexp(n=3000, rate=2))
-fit = vglm(y ~ 1, gpd(threshold=threshold), gdata, trace=TRUE)
+gdata = data.frame(y = threshold + rexp(n = 3000, rate = 2))
+fit = vglm(y ~ 1, gpd(threshold = threshold), gdata, trace = TRUE)
 head(fitted(fit))
-coef(fit, matrix=TRUE)   # xi should be close to 0
+coef(fit, matrix = TRUE)   # xi should be close to 0
 Coef(fit)
 summary(fit)
 
@@ -241,27 +241,29 @@ ii = fit@y < fitted(fit)[1,"90\%"]
 ii = fit@y < fitted(fit)[1,"95\%"]
 100*table(ii)/sum(table(ii))   # Should be 95%
 
-\dontrun{
-plot(fit@y, col="blue", las=1, main="Fitted 90\% and 95\% quantiles")
-matlines(1:length(fit@y), fitted(fit), lty=2:3, lwd=2) }
+\dontrun{ plot(fit@y, col = "blue", las = 1,
+               main = "Fitted 90\% and 95\% quantiles")
+matlines(1:length(fit@y), fitted(fit), lty = 2:3, lwd = 2) }
 
 
 # Another example
 threshold = 0
-gdata = data.frame(x = runif(nn <- 2000))
-xi = exp(-0.8)-0.5
-gdata = transform(gdata, y = rgpd(nn, scale=exp(1+0.1*x), shape=xi))
-fit = vglm(y ~ x, gpd(threshold), gdata, trace=TRUE)
-coef(fit, matrix=TRUE)
+gdata = data.frame(x2 = runif(nn <- 2000))
+xi = exp(-0.8) - 0.5
+gdata = transform(gdata, y = rgpd(nn, scale = exp(1+0.1*x2), shape = xi))
+fit = vglm(y ~ x2, gpd(threshold), gdata, trace = TRUE)
+coef(fit, matrix = TRUE)
 
 
 \dontrun{ # Nonparametric fits
-gdata = transform(gdata, yy = y + rnorm(nn, sd=0.1))
-fit1 = vgam(yy ~ s(x), gpd(threshold), gdata, trace=TRUE) # Not so recommended
-par(mfrow=c(2,1))
-plotvgam(fit1, se=TRUE, scol="blue")
-fit2 = vglm(yy ~ bs(x), gpd(threshold), gdata, trace=TRUE) # More recommended
-plotvgam(fit2, se=TRUE, scol="blue") }
+gdata = transform(gdata, yy = y + rnorm(nn, sd = 0.1))
+# Not so recommended:
+fit1 = vgam(yy ~ s(x2), gpd(threshold), gdata, trace = TRUE)
+par(mfrow = c(2,1))
+plotvgam(fit1, se = TRUE, scol = "blue")
+# More recommended:
+fit2 = vglm(yy ~ bs(x2), gpd(threshold), gdata, trace = TRUE)
+plotvgam(fit2, se = TRUE, scol = "blue") }
 }
 \keyword{models}
 \keyword{regression}

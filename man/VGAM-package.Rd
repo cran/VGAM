@@ -87,14 +87,17 @@ Reduced-rank vector generalized linear models.
 \emph{Statistical Modelling},
 \bold{3}, 15--41.
 
+
 Yee, T. W. and Stephenson, A. G. (2007)
 Vector generalized linear and additive extreme value models.
 \emph{Extremes}, \bold{10}, 1--19.
+
 
 Yee, T. W. and Wild, C. J. (1996)
 Vector generalized additive models.
 \emph{Journal of the Royal Statistical Society, Series B, Methodological},
 \bold{58}, 481--493.
+
 
 Yee, T. W. (2004)
 A new technique for maximum-likelihood
@@ -102,17 +105,21 @@ canonical Gaussian ordination.
 \emph{Ecological Monographs},
 \bold{74}, 685--701.
 
+
 Yee, T. W. (2006)
 Constrained additive ordination.
 \emph{Ecology}, \bold{87}, 203--213.
+
 
 Yee, T. W. (2008)
 The \code{VGAM} Package.
 \emph{R News}, \bold{8}, 28--39.
 
+
 Documentation accompanying the \pkg{VGAM} package at
 \url{http://www.stat.auckland.ac.nz/~yee/VGAM}
 contains further information and examples.
+
 
 }
 
@@ -134,6 +141,7 @@ fit@y   # Sample proportions
 weights(fit, type = "prior") # Number of observations
 coef(fit, matrix = TRUE)     # p.179, in McCullagh and Nelder (1989)
 constraints(fit)             # Constraint matrices
+summary(fit)
 
 
 # Example 2; zero-inflated Poisson model

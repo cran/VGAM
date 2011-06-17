@@ -14,7 +14,7 @@
 
 
 
-vlm.control <- function(save.weight = TRUE, tol=1e-7, method="qr", 
+vlm.control <- function(save.weight = TRUE, tol = 1e-7, method="qr", 
                         checkwz = TRUE, wzepsilon = .Machine$double.eps^0.75,
                         ...) {
     if (tol <= 0) {
@@ -22,26 +22,26 @@ vlm.control <- function(save.weight = TRUE, tol=1e-7, method="qr",
         tol <- 1e-7
     }
     if (!is.logical(checkwz) || length(checkwz) != 1)
-        stop("bad input for 'checkwz'")
-    if (!is.Numeric(wzepsilon, allow=1, positive = TRUE))
-        stop("bad input for 'wzepsilon'")
+        stop("bad input for argument 'checkwz'")
+    if (!is.Numeric(wzepsilon, allow = 1, positive = TRUE))
+        stop("bad input for argument 'wzepsilon'")
 
     list(save.weight=save.weight, tol=tol, method=method,
-         checkwz=checkwz,
+         checkwz = checkwz,
          wzepsilon = wzepsilon)
 }
 
 
 vglm.control <- function(checkwz = TRUE,
                          criterion = names(.min.criterion.VGAM), 
-                         epsilon=1e-7,
+                         epsilon = 1e-7,
                          half.stepsizing = TRUE,
-                         maxit=30, 
-                         stepsize=1, 
+                         maxit = 30, 
+                         stepsize = 1, 
                          save.weight = FALSE,
                          trace = FALSE,
                          wzepsilon = .Machine$double.eps^0.75,
-                         xij=NULL,
+                         xij = NULL,
                          ...)
 {
 
@@ -49,48 +49,50 @@ vglm.control <- function(checkwz = TRUE,
 
     if (mode(criterion) != "character" && mode(criterion) != "name")
         criterion <- as.character(substitute(criterion))
-    criterion <- pmatch(criterion[1], names(.min.criterion.VGAM), nomatch=1)
+    criterion <- pmatch(criterion[1], names(.min.criterion.VGAM), nomatch = 1)
     criterion <- names(.min.criterion.VGAM)[criterion]
 
 
 
     if (!is.logical(checkwz) || length(checkwz) != 1)
-        stop("bad input for 'checkwz'")
-    if (!is.Numeric(wzepsilon, allow=1, positive = TRUE))
-        stop("bad input for 'wzepsilon'")
+        stop("bad input for argument 'checkwz'")
+    if (!is.Numeric(wzepsilon, allow = 1, positive = TRUE))
+        stop("bad input for argument 'wzepsilon'")
 
     convergence <- expression({
 
 
         switch(criterion,
-        coefficients = if (iter == 1) iter<maxit else (iter<maxit &&
-        max(abs(new.crit - old.crit)/(abs(old.crit)+epsilon)) > epsilon),
-        abs(old.crit-new.crit)/(abs(old.crit)+epsilon) > epsilon && iter<maxit)
+        coefficients = if (iter == 1) iter < maxit else
+          (iter < maxit &&
+           max(abs(new.crit - old.crit) / (abs(old.crit) + epsilon)) > epsilon),
+           abs(old.crit-new.crit) / (abs(old.crit)+epsilon) > epsilon &&
+           iter < maxit)
     })
 
-    if (!is.Numeric(epsilon, allow=1, posit = TRUE)) {
-        warning("bad input for 'epsilon'; using 0.00001 instead")
+    if (!is.Numeric(epsilon, allow = 1, posit = TRUE)) {
+        warning("bad input for argument 'epsilon'; using 0.00001 instead")
         epsilon <- 0.00001
     }
-    if (!is.Numeric(maxit, allow=1, posit = TRUE, integ = TRUE)) {
-        warning("bad input for 'maxit'; using 20 instead")
-        maxit <- 20
+    if (!is.Numeric(maxit, allow = 1, posit = TRUE, integ = TRUE)) {
+        warning("bad input for argument 'maxit'; using 30 instead")
+        maxit <- 30
     }
-    if (!is.Numeric(stepsize, allow=1, posit = TRUE)) {
-        warning("bad input for 'stepsize'; using 1 instead")
+    if (!is.Numeric(stepsize, allow = 1, posit = TRUE)) {
+        warning("bad input for argument 'stepsize'; using 1 instead")
         stepsize <- 1
     }
 
-    list(checkwz=checkwz,
-         convergence=convergence, 
-         criterion=criterion,
-         epsilon=epsilon,
-         half.stepsizing=as.logical(half.stepsizing)[1],
-         maxit=maxit,
+    list(checkwz = checkwz,
+         convergence = convergence, 
+         criterion = criterion,
+         epsilon = epsilon,
+         half.stepsizing = as.logical(half.stepsizing)[1],
+         maxit = maxit,
          min.criterion = .min.criterion.VGAM,
-         save.weight=as.logical(save.weight)[1],
-         stepsize=stepsize,
-         trace=as.logical(trace)[1],
+         save.weight = as.logical(save.weight)[1],
+         stepsize = stepsize,
+         trace = as.logical(trace)[1],
          wzepsilon = wzepsilon,
          xij = if (is(xij, "formula")) list(xij) else xij)
 }

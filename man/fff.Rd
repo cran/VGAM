@@ -7,7 +7,7 @@
 }
 \usage{
 fff(link="loge", earg=list(), idf1=NULL, idf2=NULL, nsimEIM=100,
-    method.init=1, zero=NULL)
+    imethod=1, zero=NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -32,7 +32,7 @@ fff(link="loge", earg=list(), idf1=NULL, idf2=NULL, nsimEIM=100,
   See \code{\link{CommonVGAMffArguments}} for more information.
 
   }
-  \item{method.init}{
+  \item{imethod}{
   Initialization method. Either the value 1 or 2.
   If both fail try setting values for \code{idf1} and \code{idf2}.
 

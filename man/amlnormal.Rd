@@ -12,7 +12,7 @@
 }
 \usage{
 amlnormal(w.aml = 1, parallel = FALSE, lexpectile = "identity",
-          eexpectile = list(), iexpectile = NULL, method.init = 1, digw = 4)
+          eexpectile = list(), iexpectile = NULL, imethod = 1, digw = 4)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -38,7 +38,7 @@ amlnormal(w.aml = 1, parallel = FALSE, lexpectile = "identity",
   See \code{\link{CommonVGAMffArguments}} for more information.
 
   }
-  \item{method.init}{
+  \item{imethod}{
   Integer, either 1 or 2 or 3. Initialization method.
   Choose another value if convergence fails.
 

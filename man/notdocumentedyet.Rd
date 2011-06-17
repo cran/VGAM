@@ -5,12 +5,24 @@
 %
 %
 %
-% 20110202; James Lauder work
-\alias{dexpgeom}
-\alias{pexpgeom}
-\alias{qexpgeom}
-\alias{rexpgeom}
+% 20110202; 20110317; James Lauder work
+%\alias{dexpgeom}
+%\alias{pexpgeom}
+%\alias{qexpgeom}
+%\alias{rexpgeom}
+%\alias{expgeometric}
 %
+%\alias{dweibull3}
+%\alias{pweibull3}
+%\alias{qweibull3}
+%\alias{rweibull3}
+%\alias{weibull3}
+%
+%
+%
+% 20110321; misc. datasets.
+\alias{fibre1.5}
+\alias{fibre15}
 %
 %
 % 20110202; for Melbourne; these include datasets.
@@ -29,6 +41,9 @@
 %
 %
 %
+%
+%20110411
+\alias{dbinorm}
 %
 %20090330
 \alias{dclogloglap}
@@ -408,7 +423,7 @@
 % \alias{vgam.match}
 % \alias{vgam.nlchisq}
 % \alias{vgety}
-% \alias{vglm.fit}
+\alias{vglm.fit}
 \alias{vglm.garma.control}
 \alias{vglm.multinomial.control}
 \alias{vglm.multinomial.deviance.control}
@@ -439,6 +454,7 @@
 %
 \alias{Coef.uqo-class}
 \alias{cao-class}
+\alias{rcam0-class}
 \alias{rcam-class}
 \alias{grc-class}
 \alias{qrrvglm-class}

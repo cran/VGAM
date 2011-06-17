@@ -155,20 +155,20 @@ lms.yjn.control <- function(trace = TRUE, ...)
         dlambda.deta  = dtheta.deta(lambda, .llambda, earg = .elambda)
         dmu.deta  = dtheta.deta(mymu, .lmu, earg = .emu)
         dsigma.deta = dtheta.deta(sigma, .lsigma, earg = .esigma)
-        w * cbind(dl.dlambda * dlambda.deta,
-                  dl.dmu * dmu.deta,
-                  dl.dsigma * dsigma.deta)
+        c(w) * cbind(dl.dlambda  * dlambda.deta,
+                     dl.dmu    * dmu.deta,
+                     dl.dsigma * dsigma.deta)
     }), list( .llambda = llambda, .lmu = lmu, .lsigma = lsigma,
               .elambda = elambda, .emu = emu, .esigma = esigma ))),
     weight = eval(substitute(expression({
-        wz = matrix(as.numeric(NA), n, 6)
-        wz[,iam(1,1,M)] = (7 * sigma^2 / 4) * dlambda.deta^2
-        wz[,iam(2,2,M)] = (1 + 2*(lambda*sigma)^2)/(mymu*sigma)^2 * dmu.deta^2
-        wz[,iam(3,3,M)] = (2 / sigma^2) * dsigma.deta^2
-        wz[,iam(1,2,M)] = (-1 / (2 * mymu)) * dlambda.deta * dmu.deta
-        wz[,iam(1,3,M)] = (lambda * sigma) * dlambda.deta * dsigma.deta
-        wz[,iam(2,3,M)] = (2*lambda/(mymu * sigma)) * dmu.deta * dsigma.deta
-        wz * w
+      wz = matrix(as.numeric(NA), n, 6)
+      wz[,iam(1,1,M)] = (7 * sigma^2 / 4) * dlambda.deta^2
+      wz[,iam(2,2,M)] = (1 + 2*(lambda*sigma)^2)/(mymu*sigma)^2 * dmu.deta^2
+      wz[,iam(3,3,M)] = (2 / sigma^2) * dsigma.deta^2
+      wz[,iam(1,2,M)] = (-1 / (2 * mymu)) * dlambda.deta * dmu.deta
+      wz[,iam(1,3,M)] = (lambda * sigma) * dlambda.deta * dsigma.deta
+      wz[,iam(2,3,M)] = (2*lambda/(mymu * sigma)) * dmu.deta * dsigma.deta
+      c(w) * wz
     }), list( .llambda = llambda, .lmu = lmu, .lsigma = lsigma,
               .elambda = elambda, .emu = emu, .esigma = esigma ))))
 }
@@ -328,7 +328,7 @@ lms.yjn.control <- function(trace = TRUE, ...)
                           dlambda.deta * dmu.deta
         wz[,iam(1,3,M)] = 2 * theta^1.5 * (2 * theta * tritheta - 2 -
                           1 / theta) * dlambda.deta * dsigma.deta
-        wz * w
+        c(w) * wz
     }), list( .llambda = llambda, .lmu = lmu, .lsigma = lsigma,
               .elambda = elambda, .emu = emu, .esigma = esigma ))))
 }
@@ -709,7 +709,7 @@ lms.yjn2.control <- function(save.weight=TRUE, ...)
         dl.dmu = AA / sigma 
         dl.dsigma = (AA^2 -1) / sigma
         dthetas.detas = cbind(dlambda.deta, dmu.deta, dsigma.deta)
-        w * cbind(dl.dlambda, dl.dmu, dl.dsigma) * dthetas.detas
+        c(w) * cbind(dl.dlambda, dl.dmu, dl.dsigma) * dthetas.detas
     }), list( .elambda = elambda, .emu = emu, .esigma = esigma, 
               .llambda = llambda, .lmu = lmu,
                  .lsigma = lsigma ))),
@@ -739,7 +739,7 @@ lms.yjn2.control <- function(save.weight=TRUE, ...)
 
         wz = run.varcov * dthetas.detas[,ind1$row] * dthetas.detas[,ind1$col]
         dimnames(wz) = list(rownames(wz), NULL)  # Remove the colnames
-        wz * w
+        c(w) * wz
     }), list(.lsigma = lsigma,
              .esigma = esigma, .elambda = elambda,
              .nsimEIM=nsimEIM,
@@ -1023,8 +1023,7 @@ lms.yjn2.control <- function(save.weight=TRUE, ...)
         wz[,iam(2,3,M)] = wz[,iam(2,3,M)] * dsigma.deta
         wz[,iam(3,3,M)] = wz[,iam(3,3,M)] * dsigma.deta^2
 
-        wz = wz * w
-        wz
+        c(w) * wz
     }), list(.lsigma = lsigma,
              .esigma = esigma, .elambda = elambda,
              .rule=rule,
@@ -1082,14 +1081,14 @@ amlnormal.deviance = function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
  amlnormal <- function(w.aml = 1, parallel = FALSE,
                        lexpectile = "identity", eexpectile = list(),
                        iexpectile = NULL,
-                       method.init = 1, digw = 4)
+                       imethod = 1, digw = 4)
 {
 
 
     if (!is.Numeric(w.aml, posit=TRUE))
         stop("'w.aml' must be a vector of positive values")
-    if (!is.Numeric(method.init, allow=1, integ=TRUE, posit=TRUE) ||
-       method.init > 3) stop("argument 'method.init' must be 1, 2 or 3")
+    if (!is.Numeric(imethod, allow=1, integ=TRUE, posit=TRUE) ||
+       imethod > 3) stop("argument 'imethod' must be 1, 2 or 3")
     if (mode(lexpectile) != "character" && mode(lexpectile) != "name")
         lexpectile = as.character(substitute(lexpectile))
     if (!is.list(eexpectile)) eexpectile = list()
@@ -1120,9 +1119,9 @@ amlnormal.deviance = function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
                    earg = .eexpectile, tag = FALSE))
 
         if (!length(etastart)) {
-            mean.init = if ( .method.init == 1)
+            mean.init = if ( .imethod == 1)
                     rep(median(y), length=n) else
-                if ( .method.init == 2)
+                if ( .imethod == 2)
                     rep(weighted.mean(y, w), length=n) else {
                         junk = if (is.R()) lm.wfit(x=x, y = y, w=w) else
                                lm.wfit(x=x, y = y, w = w, method = "qr")
@@ -1135,7 +1134,7 @@ amlnormal.deviance = function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
         }
     }), list( .lexpectile=lexpectile, .eexpectile=eexpectile,
               .iexpectile=iexpectile,
-              .method.init = method.init, .digw = digw, .w.aml = w.aml ))),
+              .imethod = imethod, .digw = digw, .w.aml = w.aml ))),
     inverse = eval(substitute(function(eta, extra = NULL) {
         ans = eta = as.matrix(eta)
         for(ii in 1:ncol(eta))
@@ -1213,7 +1212,7 @@ amlpoisson.deviance = function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
 }
 
 
- amlpoisson <- function(w.aml = 1, parallel = FALSE, method.init = 1,
+ amlpoisson <- function(w.aml = 1, parallel = FALSE, imethod = 1,
                         digw = 4, link = "loge", earg = list())
 {
     if (!is.Numeric(w.aml, posit=TRUE))
@@ -1246,9 +1245,9 @@ amlpoisson.deviance = function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
                                      .link, earg = .earg, tag = FALSE))
 
         if (!length(etastart)) {
-            mean.init = if ( .method.init == 2)
+            mean.init = if ( .imethod == 2)
                     rep(median(y), length=n) else
-                if ( .method.init == 1)
+                if ( .imethod == 1)
                     rep(weighted.mean(y, w), length=n) else {
                         junk = if (is.R()) lm.wfit(x=x, y = y, w=w) else
                                lm.wfit(x=x, y = y, w = w, method = "qr")
@@ -1256,7 +1255,7 @@ amlpoisson.deviance = function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
                     }
             etastart = matrix(theta2eta(mean.init, .link, earg = .earg), n, M)
         }
-    }), list( .link = link, .earg = earg, .method.init = method.init,
+    }), list( .link = link, .earg = earg, .imethod = imethod,
               .digw = digw, .w.aml = w.aml ))),
     inverse = eval(substitute(function(eta, extra = NULL) {
         mu.ans = eta = as.matrix(eta)
@@ -1492,7 +1491,7 @@ amlexponential.deviance = function(mu, y, w, residuals = FALSE, eta, extra = NUL
 }
 
 
- amlexponential <- function(w.aml = 1, parallel = FALSE, method.init = 1,
+ amlexponential <- function(w.aml = 1, parallel = FALSE, imethod = 1,
                             digw = 4, link = "loge", earg = list())
 {
     if (!is.Numeric(w.aml, posit=TRUE))
@@ -1500,8 +1499,8 @@ amlexponential.deviance = function(mu, y, w, residuals = FALSE, eta, extra = NUL
     if (mode(link)!= "character" && mode(link)!= "name")
         link = as.character(substitute(link))
     if (!is.list(earg)) earg = list()
-    if (!is.Numeric(method.init, allow=1, integ=TRUE, posit=TRUE) ||
-       method.init > 3) stop("argument 'method.init' must be 1, 2 or 3")
+    if (!is.Numeric(imethod, allow=1, integ=TRUE, posit=TRUE) ||
+       imethod > 3) stop("argument 'imethod' must be 1, 2 or 3")
 
     y.names = paste("w.aml = ", round(w.aml, dig=digw), sep = "")
     predictors.names = c(namesof(
@@ -1534,16 +1533,16 @@ amlexponential.deviance = function(mu, y, w, residuals = FALSE, eta, extra = NUL
             paste("expectile(",y.names,")", sep = ""), .link, earg = .earg, tag = FALSE))
 
         if (!length(etastart)) {
-            mean.init = if ( .method.init == 1)
+            mean.init = if ( .imethod == 1)
                     rep(median(y), length=n) else
-                if ( .method.init == 2)
+                if ( .imethod == 2)
                     rep(weighted.mean(y, w), length=n) else {
                         1 / (y + 1)
                     }
             etastart = matrix(theta2eta(mean.init, .link, earg = .earg),
                               n, M)
         }
-    }), list( .link = link, .earg = earg, .method.init = method.init,
+    }), list( .link = link, .earg = earg, .imethod = imethod,
               .digw = digw, .w.aml = w.aml ))),
     inverse = eval(substitute(function(eta, extra = NULL) {
         mu.ans = eta = as.matrix(eta)
@@ -1730,11 +1729,11 @@ qregal = function(tau = c(0.25, 0.5, 0.75),
                   elocation=list(),
                   lscale = "loge", escale=list(),
                   ilocation=NULL,
-                  parallel=FALSE, method.init=1, digt = 4) {
+                  parallel=FALSE, imethod=1, digt = 4) {
     if (mode(llocation) != "character" && mode(llocation) != "name")
         llocation = as.character(substitute(llocation))
-    if (!is.Numeric(method.init, allow=1, integ=TRUE, posit=TRUE) ||
-       method.init > 2) stop("argument 'method.init' must be 1 or 2")
+    if (!is.Numeric(imethod, allow=1, integ=TRUE, posit=TRUE) ||
+       imethod > 2) stop("argument 'imethod' must be 1 or 2")
     if (!is.Numeric(tau, posit=TRUE) || max(tau) >= 1)
         stop("bad input for argument 'tau'")
     if (!is.list(elocation)) elocation = list()
@@ -1765,7 +1764,7 @@ qregal = function(tau = c(0.25, 0.5, 0.75),
                     link = .llocat, earg = .elocat, tag = FALSE))
 
         if (!length(etastart)) {
-            if ( .method.init == 1) {
+            if ( .imethod == 1) {
                 locat.init = median(y)
             } else {
                 locat.init = y
@@ -1781,7 +1780,7 @@ qregal = function(tau = c(0.25, 0.5, 0.75),
                 matrix(
                 theta2eta(locat.init, .llocat, earg = .elocat), n, M-1))
         }
-    }), list( .method.init = method.init, .tau = tau, .digt = digt,
+    }), list( .imethod = imethod, .tau = tau, .digt = digt,
               .elocat = elocation, .escale = escale,
               .llocat = llocation, .lscale = lscale,
               .ilocat = ilocation ))),
@@ -1838,7 +1837,7 @@ qregal = function(tau = c(0.25, 0.5, 0.75),
         dl.dlocation[index1] = ((taumat - 1)/scalemat)[index1]
         dlocation.deta = dtheta.deta(locmat, .llocat, earg = .elocat)
         dscale.deta = dtheta.deta(scalemat, .lscale, earg = .escale)
-        w * cbind(dl.dlocation * dlocation.deta)
+        c(w) * cbind(dl.dlocation * dlocation.deta)
     }), list( .tau = tau, .elocat = elocation, .llocat = llocation,
              .escale = escale, .lscale = lscale ))),
     weight = eval(substitute(expression({
@@ -1848,7 +1847,7 @@ qregal = function(tau = c(0.25, 0.5, 0.75),
                        taumat * (1-taumat))
         wz[,iam(1,1,M)] = ed2l.dscale2 * dscale.deta^2
         wz[,-1] = ed2l.dlocation2 * dlocation.deta^2
-        w * wz
+        c(w) * wz
     }), list( .tau = tau, .elocat = elocation, .llocat = llocation,
              .escale = escale, .lscale = lscale ))))
 }
@@ -2214,7 +2213,7 @@ alaplace2.control <- function(maxit = 100, ...)
               sameScale = TRUE,
               dfmu.init = 3,
               intparloc = FALSE,
-              method.init = 1,
+              imethod = 1,
               zero = -2) {
 
   llocat <- llocation
@@ -2223,9 +2222,9 @@ alaplace2.control <- function(maxit = 100, ...)
 
   if (!is.Numeric(kappa, posit = TRUE))
     stop("bad input for argument 'kappa'")
-  if (!is.Numeric(method.init, allow = 1, integ = TRUE, posit = TRUE) ||
-   method.init > 4)
-    stop("argument 'method.init' must be 1, 2 or ... 4")
+  if (!is.Numeric(imethod, allow = 1, integ = TRUE, posit = TRUE) ||
+   imethod > 4)
+    stop("argument 'imethod' must be 1, 2 or ... 4")
   if (length(iscale) && !is.Numeric(iscale, posit = TRUE))
     stop("bad input for argument 'iscale'")
   if (!is.Numeric(shrinkage.init, allow = 1) || shrinkage.init < 0 ||
@@ -2365,14 +2364,14 @@ alaplace2.control <- function(maxit = 100, ...)
     if (!length(etastart)) {
       for(jay in 1:Mdiv2) {
         y.use <- if (ncoly > 1) y[, jay] else y
-        if ( .method.init == 1) {
+        if ( .imethod == 1) {
           locat.init[, jay] = weighted.mean(y.use, w)
           scale.init[, jay] = sqrt(var(y.use) / 2)
-        } else if ( .method.init == 2) {
+        } else if ( .imethod == 2) {
           locat.init[, jay] = median(y.use)
           scale.init[, jay] =
             sqrt(sum(w * abs(y - median(y.use))) / (sum(w) * 2))
-        } else if ( .method.init == 3) {
+        } else if ( .imethod == 3) {
           Fit5 = vsmooth.spline(x = x[, min(ncol(x), 2)],
                                 y = y.use, w = w, df = .dfmu.init)
           locat.init[, jay] = predict(Fit5, x = x[, min(ncol(x), 2)])$y
@@ -2400,7 +2399,7 @@ alaplace2.control <- function(maxit = 100, ...)
                 theta2eta(scale.init, .lscale, earg = .escale))
       etastart = etastart[, interleave.VGAM(M, M = Musual), drop = FALSE]
     }
-  }), list( .method.init = method.init,
+  }), list( .imethod = imethod,
             .dfmu.init = dfmu.init,
             .sinit = shrinkage.init, .digt = digt,
             .elocat = elocat, .escale = escale,
@@ -2502,8 +2501,8 @@ alaplace2.control <- function(maxit = 100, ...)
     dlocat.deta = dtheta.deta(locat, .llocat, earg = .elocat)
     dscale.deta = dtheta.deta(Scale, .lscale, earg = .escale)
 
-    ans <- w * cbind(dl.dlocat * dlocat.deta,
-                     dl.dscale * dscale.deta)
+    ans <- c(w) * cbind(dl.dlocat * dlocat.deta,
+                        dl.dscale * dscale.deta)
     ans <- ans[, interleave.VGAM(ncol(ans), M = Musual)]
     ans
   }), list( .escale = escale, .lscale = lscale,
@@ -2517,7 +2516,7 @@ alaplace2.control <- function(maxit = 100, ...)
     wz[, 2*(1:Mdiv2) - 1] <- d2l.dlocat2 * dlocat.deta^2
     wz[, 2*(1:Mdiv2)    ] <- d2l.dscale2 * dscale.deta^2
 
-    w * wz
+    c(w) * wz
   }), list( .escale = escale, .lscale = lscale,
             .elocat = elocat, .llocat = llocat ))))
 }
@@ -2547,7 +2546,7 @@ alaplace1.control <- function(maxit = 100, ...)
                      shrinkage.init = 0.95, parallelLocation = FALSE, digt = 4,
                      dfmu.init = 3,
                      intparloc = FALSE,
-                     method.init = 1) {
+                     imethod = 1) {
 
 
 
@@ -2557,9 +2556,9 @@ alaplace1.control <- function(maxit = 100, ...)
         stop("arguments 'kappa' and 'tau' do not match")
     if (mode(llocation) != "character" && mode(llocation) != "name")
         llocation = as.character(substitute(llocation))
-    if (!is.Numeric(method.init, allow = 1, integ = TRUE, posit = TRUE) ||
-       method.init > 4)
-        stop("argument 'method.init' must be 1, 2 or ... 4")
+    if (!is.Numeric(imethod, allow = 1, integ = TRUE, posit = TRUE) ||
+       imethod > 4)
+        stop("argument 'imethod' must be 1, 2 or ... 4")
 
     if (!is.list(elocation)) elocation = list()
 
@@ -2665,11 +2664,11 @@ alaplace1.control <- function(maxit = 100, ...)
 
       for(jay in 1:M) {
         y.use <- if (ncoly > 1) y[, jay] else y
-        if ( .method.init == 1) {
+        if ( .imethod == 1) {
           locat.init[, jay] = weighted.mean(y.use, w)
-        } else if ( .method.init == 2) {
+        } else if ( .imethod == 2) {
           locat.init[, jay] = median(y.use)
-        } else if ( .method.init == 3) {
+        } else if ( .imethod == 3) {
             Fit5 = vsmooth.spline(x = x[, min(ncol(x), 2)],
                                   y = y.use, w = w, df = .dfmu.init)
             locat.init[, jay] = c(predict(Fit5, x = x[, min(ncol(x), 2)])$y)
@@ -2687,7 +2686,7 @@ alaplace1.control <- function(maxit = 100, ...)
         etastart = cbind(theta2eta(locat.init, .llocat, earg = .elocat))
       }
     }
-    }), list( .method.init = method.init,
+    }), list( .imethod = imethod,
               .dfmu.init = dfmu.init,
               .sinit = shrinkage.init, .digt = digt,
               .elocat = elocation, .Scale.arg = Scale.arg,
@@ -2766,14 +2765,14 @@ alaplace1.control <- function(maxit = 100, ...)
         dl.dlocation = ifelse(ymat >= location, kappamat, 1/kappamat) *
                        sqrt(2) * sign(ymat - location) / Scale
         dlocation.deta = dtheta.deta(location, .llocat, earg = .elocat)
-        w * cbind(dl.dlocation * dlocation.deta)
+        c(w) * cbind(dl.dlocation * dlocation.deta)
     }), list( .Scale.arg = Scale.arg, .elocat = elocation,
               .llocat = llocation, .kappa = kappa ))),
     weight = eval(substitute(expression({
         d2l.dlocation2 = 2 / Scale^2
         wz = cbind(d2l.dlocation2 * dlocation.deta^2)
 
-        w * wz
+        c(w) * wz
     }), list( .Scale.arg = Scale.arg,
               .elocat = elocation, .llocat = llocation ))))
 }
@@ -2798,7 +2797,7 @@ alaplace3.control <- function(maxit = 100, ...)
           llocation = "identity", lscale = "loge", lkappa = "loge",
           elocation = list(),     escale = list(), ekappa = list(),
           ilocation = NULL,       iscale = NULL,   ikappa = 1.0,
-          method.init = 1, zero = 2:3) {
+          imethod = 1, zero = 2:3) {
     if (mode(llocation) != "character" && mode(llocation) != "name")
         llocation = as.character(substitute(llocation))
     if (mode(lscale) != "character" && mode(lscale) != "name")
@@ -2806,9 +2805,9 @@ alaplace3.control <- function(maxit = 100, ...)
     if (mode(lkappa) != "character" && mode(lkappa) != "name")
         lkappa = as.character(substitute(lkappa))
 
-    if (!is.Numeric(method.init, allow = 1, integ = TRUE, posit = TRUE) ||
-       method.init > 2)
-        stop("argument 'method.init' must be 1 or 2")
+    if (!is.Numeric(imethod, allow = 1, integ = TRUE, posit = TRUE) ||
+       imethod > 2)
+        stop("argument 'imethod' must be 1 or 2")
     if (length(zero) && !is.Numeric(zero, integer = TRUE, posit = TRUE))
         stop("bad input for argument 'zero'")
     if (length(iscale) && !is.Numeric(iscale, posit = TRUE))
@@ -2841,7 +2840,7 @@ alaplace3.control <- function(maxit = 100, ...)
         if (!length(etastart)) {
             kappa.init = if (length( .ikappa)) rep( .ikappa, len = n) else
                          rep( 1.0, len = n)
-            if ( .method.init == 1) {
+            if ( .imethod == 1) {
                 locat.init = median(y)
                 scale.init = sqrt(var(y) / 2)
             } else {
@@ -2857,7 +2856,7 @@ alaplace3.control <- function(maxit = 100, ...)
                       theta2eta(scale.init, .lscale, earg = .escale),
                       theta2eta(kappa.init, .lkappa, earg = .ekappa))
         }
-    }), list( .method.init = method.init,
+    }), list( .imethod = imethod,
               .elocat = elocation, .escale = escale, .ekappa = ekappa,
               .llocat = llocation, .lscale = lscale, .lkappa = lkappa,
               .ilocat = ilocation, .iscale = iscale, .ikappa = ikappa ))),
@@ -2910,9 +2909,9 @@ alaplace3.control <- function(maxit = 100, ...)
         dlocation.deta = dtheta.deta(location, .llocat, earg = .elocat)
         dscale.deta = dtheta.deta(Scale, .lscale, earg = .escale)
         dkappa.deta = dtheta.deta(kappa, .lkappa, earg = .ekappa)
-        w * cbind(dl.dlocation * dlocation.deta,
-                  dl.dscale * dscale.deta,
-                  dl.dkappa * dkappa.deta)
+        c(w) * cbind(dl.dlocation * dlocation.deta,
+                     dl.dscale * dscale.deta,
+                     dl.dkappa * dkappa.deta)
     }), list( .escale = escale, .lscale = lscale,
               .elocat = elocation, .llocat = llocation,
               .ekappa = ekappa, .lkappa = lkappa ))),
@@ -2928,7 +2927,7 @@ alaplace3.control <- function(maxit = 100, ...)
         wz[,iam(3,3,M)] = d2l.dkappa2 * dkappa.deta^2
         wz[,iam(1,3,M)] = d2l.dkappadloc * dkappa.deta * dlocation.deta
         wz[,iam(2,3,M)] = d2l.dkappadscale  * dkappa.deta * dscale.deta
-        w * wz
+        c(w) * wz
     }), list( .escale = escale, .lscale = lscale,
               .elocat = elocation, .llocat = llocation ))))
 }
@@ -2978,13 +2977,13 @@ rlaplace = function(n, location=0, scale=1) {
  laplace = function(llocation = "identity", lscale = "loge",
                    elocation = list(), escale = list(),
                    ilocation = NULL, iscale = NULL,
-                   method.init = 1, zero = 2) {
+                   imethod = 1, zero = 2) {
     if (mode(llocation) != "character" && mode(llocation) != "name")
         llocation = as.character(substitute(llocation))
     if (mode(lscale) != "character" && mode(lscale) != "name")
         lscale = as.character(substitute(lscale))
-    if (!is.Numeric(method.init, allow = 1, integ = TRUE, posit = TRUE) ||
-       method.init > 3) stop("argument 'method.init' must be 1 or 2 or 3")
+    if (!is.Numeric(imethod, allow = 1, integ = TRUE, posit = TRUE) ||
+       imethod > 3) stop("argument 'imethod' must be 1 or 2 or 3")
     if (length(zero) && !is.Numeric(zero, integer = TRUE, posit = TRUE))
         stop("bad input for argument 'zero'")
     if (!is.list(elocation)) elocation = list()
@@ -3010,10 +3009,10 @@ rlaplace = function(n, location=0, scale=1) {
         c(namesof("location", .llocat, earg = .elocat, tag = FALSE),
           namesof("scale",    .lscale,    earg = .escale,    tag = FALSE))
         if (!length(etastart)) {
-            if ( .method.init == 1) {
+            if ( .imethod == 1) {
                 locat.init = median(y)
                 scale.init = sqrt(var(y) / 2)
-            } else if ( .method.init == 2) {
+            } else if ( .imethod == 2) {
                 locat.init = weighted.mean(y, w)
                 scale.init = sqrt(var(y) / 2)
             } else {
@@ -3028,7 +3027,7 @@ rlaplace = function(n, location=0, scale=1) {
                 cbind(theta2eta(locat.init, .llocat, earg = .elocat),
                       theta2eta(scale.init, .lscale, earg = .escale))
         }
-    }), list( .method.init = method.init,
+    }), list( .imethod = imethod,
              .elocat = elocation, .escale = escale,
              .llocat = llocation, .lscale = lscale,
              .ilocat = ilocation, .iscale = iscale ))),
@@ -3062,7 +3061,8 @@ rlaplace = function(n, location=0, scale=1) {
         dl.dscale =  zedd / Scale - 1/Scale
         dlocation.deta = dtheta.deta(location, .llocat, earg = .elocat)
         dscale.deta = dtheta.deta(Scale, .lscale, earg = .escale)
-        w * cbind(dl.dlocation * dlocation.deta, dl.dscale * dscale.deta)
+        c(w) * cbind(dl.dlocation * dlocation.deta,
+                     dl.dscale    * dscale.deta)
     }), list( .escale = escale, .lscale = lscale,
               .elocat = elocation, .llocat = llocation ))),
     weight = eval(substitute(expression({
@@ -3070,7 +3070,7 @@ rlaplace = function(n, location=0, scale=1) {
         wz = matrix(0, nrow=n, ncol=M) # diagonal
         wz[,iam(1,1,M)] = d2l.dlocation2 * dlocation.deta^2
         wz[,iam(2,2,M)] = d2l.dscale2 * dscale.deta^2
-        w * wz
+        c(w) * wz
     }), list( .escale = escale, .lscale = lscale,
               .elocat = elocation, .llocat = llocation ))))
 }
@@ -3084,11 +3084,11 @@ fff.control <- function(save.weight = TRUE, ...)
 
  fff = function(link = "loge", earg = list(),
                 idf1 = NULL, idf2 = NULL, nsimEIM = 100, # ncp=0,
-                method.init = 1, zero = NULL) {
+                imethod = 1, zero = NULL) {
     if (mode(link) != "character" && mode(link) != "name")
         link = as.character(substitute(link))
-    if (!is.Numeric(method.init, allow = 1, integ = TRUE, posit = TRUE) ||
-       method.init > 2) stop("argument 'method.init' must be 1 or 2")
+    if (!is.Numeric(imethod, allow = 1, integ = TRUE, posit = TRUE) ||
+       imethod > 2) stop("argument 'imethod' must be 1 or 2")
     if (length(zero) && !is.Numeric(zero, integer = TRUE, posit = TRUE))
         stop("bad input for argument 'zero'")
     if (!is.list(earg)) earg = list()
@@ -3116,7 +3116,7 @@ fff.control <- function(save.weight = TRUE, ...)
         predictors.names = c(namesof("df1", .link, earg = .earg, tag = FALSE),
                              namesof("df2", .link, earg = .earg, tag = FALSE))
         if (!length(etastart)) {
-            if ( .method.init == 1) {
+            if ( .imethod == 1) {
                 df2.init = b = 2*mean(y) / (mean(y)-1)
                 df1.init = 2*b^2*(b-2)/(var(y)*(b-2)^2 * (b-4) - 2*b^2)
                 if (df2.init < 4) df2.init = 5
@@ -3133,7 +3133,7 @@ fff.control <- function(save.weight = TRUE, ...)
             etastart = cbind(theta2eta(df1.init, .link, earg = .earg),
                              theta2eta(df2.init, .link, earg = .earg))
         }
-    }), list( .method.init = method.init, .idf1=idf1, .earg = earg,
+    }), list( .imethod = imethod, .idf1=idf1, .earg = earg,
              .idf2=idf2, .link = link ))),
     inverse = eval(substitute(function(eta, extra = NULL) {
         df2 = eta2theta(eta[,2], .link, earg = .earg)
@@ -3198,7 +3198,7 @@ fff.control <- function(save.weight = TRUE, ...)
             matrix(colMeans(run.varcov),
                    n, ncol(run.varcov), byrow = TRUE) else run.varcov
 
-        wz = w * wz * dthetas.detas[,ind1$row] * dthetas.detas[,ind1$col]
+        wz = c(w) * wz * dthetas.detas[,ind1$row] * dthetas.detas[,ind1$col]
         wz
     }), list( .link = link, .earg = earg, .nsimEIM = nsimEIM,
               .ncp = ncp ))))
@@ -3336,7 +3336,7 @@ fff.control <- function(save.weight = TRUE, ...)
         d2prob.deta2 = d2theta.deta2(prob, .lprob, earg = .earg)
 
         wz = -(dprob.deta^2) * d2l.dprob2
-        wz = w * wz
+        wz = c(w) * wz
         wz[wz < .Machine$double.eps] = .Machine$double.eps
         wz
     }), list( .lprob = lprob, .earg = earg ))))
@@ -3390,11 +3390,11 @@ rbenini = function(n, shape, y0) {
 
  benini = function(y0=stop("argument 'y0' must be specified"),
                    lshape = "loge", earg = list(),
-                   ishape = NULL, method.init = 1) {
+                   ishape = NULL, imethod = 1) {
     if (mode(lshape) != "character" && mode(lshape) != "name")
         lshape = as.character(substitute(lshape))
-    if (!is.Numeric(method.init, allow = 1, integ = TRUE, posit = TRUE) ||
-       method.init > 2) stop("argument 'method.init' must be 1 or 2")
+    if (!is.Numeric(imethod, allow = 1, integ = TRUE, posit = TRUE) ||
+       imethod > 2) stop("argument 'imethod' must be 1 or 2")
     if (!is.Numeric(y0, allow = 1, posit = TRUE))
        stop("bad input for argument 'y0'")
     if (!is.list(earg)) earg = list()
@@ -3414,7 +3414,7 @@ rbenini = function(n, shape, y0) {
         if (!length(etastart)) {
             probs = (1:3) / 4
             qofy= quantile(rep(y, times=w), probs=probs) # fails if w != integer
-            if ( .method.init == 1) {
+            if ( .imethod == 1) {
                 shape.init = mean(-log1p(-probs) / (log(qofy))^2)
             } else {
                 shape.init = median(-log1p(-probs) / (log(qofy))^2)
@@ -3423,7 +3423,7 @@ rbenini = function(n, shape, y0) {
                          rep(shape.init, len = n)
             etastart = cbind(theta2eta(shape.init, .lshape, earg = .earg))
         }
-    }), list( .method.init = method.init, .ishape=ishape, .lshape = lshape, .earg = earg,
+    }), list( .imethod = imethod, .ishape=ishape, .lshape = lshape, .earg = earg,
              .y0=y0 ))),
     inverse = eval(substitute(function(eta, extra = NULL) {
         shape = eta2theta(eta, .lshape, earg = .earg)
@@ -3457,7 +3457,7 @@ rbenini = function(n, shape, y0) {
     weight = eval(substitute(expression({
         d2l.dshape2 = 1 / shape^2
         wz = d2l.dshape2 * dshape.deta^2
-        w * wz
+        c(w) * wz
     }), list( .lshape = lshape, .earg = earg ))))
 }
 
@@ -3700,7 +3700,7 @@ ptriangle = function(q, theta, lower=0, upper=1) {
     weight = eval(substitute(expression({
         d2l.dTheta2 =  1 / ((Theta-lower)*(upper-Theta))
         wz = dTheta.deta^2 * d2l.dTheta2
-        w * wz
+        c(w) * wz
     }), list( .link = link, .earg = earg ))))
 }
 
@@ -3732,7 +3732,7 @@ loglaplace1.control <- function(maxit = 300, ...)
                      dfmu.init = 3,
                      rep0 = 0.5, # 0.0001,
                      minquantile = 0, maxquantile = Inf,
-                     method.init = 1, zero = NULL) {
+                     imethod = 1, zero = NULL) {
 
     if (length(minquantile) != 1)
         stop("bad input for argument 'minquantile'")
@@ -3746,8 +3746,8 @@ loglaplace1.control <- function(maxit = 300, ...)
         stop("arguments 'kappa' and 'tau' do not match")
     if (mode(llocation) != "character" && mode(llocation) != "name")
         llocation = as.character(substitute(llocation))
-    if (!is.Numeric(method.init, allow = 1, integ = TRUE, posit = TRUE) ||
-       method.init > 4) stop("argument 'method.init' must be 1, 2 or ... 4")
+    if (!is.Numeric(imethod, allow = 1, integ = TRUE, posit = TRUE) ||
+       imethod > 4) stop("argument 'imethod' must be 1, 2 or ... 4")
     if (!is.list(elocation)) elocation = list()
     if (!is.Numeric(shrinkage.init, allow = 1) || shrinkage.init < 0 ||
        shrinkage.init > 1) stop("bad input for argument 'shrinkage.init'")
@@ -3808,13 +3808,13 @@ loglaplace1.control <- function(maxit = 300, ...)
         }
 
         if (!length(etastart)) {
-            if ( .method.init == 1) {
+            if ( .imethod == 1) {
                 locat.init = quantile(rep(y, w), probs= extra$tau) + 1/16
-            } else if ( .method.init == 2) {
+            } else if ( .imethod == 2) {
                 locat.init = weighted.mean(y, w)
-            } else if ( .method.init == 3) {
+            } else if ( .imethod == 3) {
                 locat.init = median(y)
-            } else if ( .method.init == 4) {
+            } else if ( .imethod == 4) {
                 Fit5 = vsmooth.spline(x = x[, min(ncol(x), 2)], y = y, w = w,
                                         df = .dfmu.init)
                 locat.init = c(predict(Fit5, x = x[, min(ncol(x), 2)])$y)
@@ -3830,7 +3830,7 @@ loglaplace1.control <- function(maxit = 300, ...)
             etastart =
                 cbind(theta2eta(locat.init, .llocat, earg = .elocat))
         }
-    }), list( .method.init = method.init,
+    }), list( .imethod = imethod,
               .dfmu.init = dfmu.init, .rep0 = rep0,
               .sinit = shrinkage.init, .digt = digt,
               .elocat = elocation, .Scale.arg = Scale.arg,
@@ -3909,14 +3909,14 @@ loglaplace1.control <- function(maxit = 300, ...)
         dl.dlocation = ifelse(w.mat >= location.w, kappamat, 1/kappamat) *
                        sqrt(2) * sign(w.mat-location.w) / Scale.w
         dlocation.deta = dtheta.deta(location.w, "identity", earg = .elocat)
-        w * cbind(dl.dlocation * dlocation.deta)
+        c(w) * cbind(dl.dlocation * dlocation.deta)
     }), list( .Scale.arg = Scale.arg, .elocat = elocation,
               .rep0 = rep0,
               .llocat = llocation, .kappa = kappa ))),
     weight = eval(substitute(expression({
         d2l.dlocation2 = 2 / Scale.w^2
         wz = cbind(d2l.dlocation2 * dlocation.deta^2)
-        w * wz
+        c(w) * wz
     }), list( .Scale.arg = Scale.arg,
               .elocat = elocation, .llocat = llocation ))))
 }
@@ -3939,7 +3939,7 @@ loglaplace2.control <- function(save.weight = TRUE, ...)
                      sameScale = TRUE,
                      dfmu.init = 3,
                      rep0 = 0.5, nsimEIM = NULL,
-                     method.init = 1, zero = "(1 + M/2):M") {
+                     imethod = 1, zero = "(1 + M/2):M") {
  warning("it is best to use loglaplace1()")
 
     if (length(nsimEIM) &&
@@ -3955,8 +3955,8 @@ loglaplace2.control <- function(save.weight = TRUE, ...)
         llocation = as.character(substitute(llocation))
     if (mode(lscale) != "character" && mode(lscale) != "name")
         lscale = as.character(substitute(lscale))
-    if (!is.Numeric(method.init, allow = 1, integ = TRUE, posit = TRUE) ||
-       method.init > 4) stop("argument 'method.init' must be 1, 2 or ... 4")
+    if (!is.Numeric(imethod, allow = 1, integ = TRUE, posit = TRUE) ||
+       imethod > 4) stop("argument 'imethod' must be 1, 2 or ... 4")
     if (length(iscale) && !is.Numeric(iscale, posit = TRUE))
         stop("bad input for argument 'iscale'")
     if (!is.list(elocation)) elocation = list()
@@ -4033,13 +4033,13 @@ loglaplace2.control <- function(save.weight = TRUE, ...)
                  "Choose larger values for 'tau'.")
 
         if (!length(etastart)) {
-            if ( .method.init == 1) {
+            if ( .imethod == 1) {
                 locat.init.y = weighted.mean(y, w)
                 scale.init = sqrt(var(y) / 2)
-            } else if ( .method.init == 2) {
+            } else if ( .imethod == 2) {
                 locat.init.y = median(y)
                 scale.init = sqrt(sum(w*abs(y-median(y))) / (sum(w) *2))
-            } else if ( .method.init == 3) {
+            } else if ( .imethod == 3) {
                 Fit5 = vsmooth.spline(x = x[, min(ncol(x), 2)], y = y, w = w,
                                         df = .dfmu.init)
                 locat.init.y = c(predict(Fit5, x = x[, min(ncol(x), 2)])$y)
@@ -4059,7 +4059,7 @@ loglaplace2.control <- function(save.weight = TRUE, ...)
                 cbind(theta2eta(locat.init.y, .llocat, earg = .elocat),
                       theta2eta(scale.init, .lscale, earg = .escale))
         }
-    }), list( .method.init = method.init,
+    }), list( .imethod = imethod,
               .dfmu.init = dfmu.init,
               .sinit = shrinkage.init, .digt = digt,
               .elocat = elocation, .escale = escale,
@@ -4135,8 +4135,8 @@ loglaplace2.control <- function(save.weight = TRUE, ...)
                      zedd / Scale.w - 1 / Scale.w
         dlocation.deta = dtheta.deta(location.w, .llocat, earg = .elocat)
         dscale.deta = dtheta.deta(Scale.w, .lscale, earg = .escale)
-        w * cbind(dl.dlocation * dlocation.deta,
-                  dl.dscale * dscale.deta)
+        c(w) * cbind(dl.dlocation * dlocation.deta,
+                     dl.dscale * dscale.deta)
     }), list( .escale = escale, .lscale = lscale,
               .elocat = elocation, .llocat = llocation,
               .rep0 = rep0, .kappa = kappa ))),
@@ -4167,14 +4167,14 @@ loglaplace2.control <- function(save.weight = TRUE, ...)
                        n, ncol(run.varcov), byrow = TRUE) else run.varcov
 
             wz = wz * dthetas.detas[,ind1$row] * dthetas.detas[,ind1$col]
-            wz = w * matrix(wz, n, dimm(M))
+            wz = c(w) * matrix(wz, n, dimm(M))
             wz
         } else {
             d2l.dlocation2 = 2 / (Scale.w * location.w)^2
             d2l.dscale2 = 1 / Scale.w^2
             wz = cbind(d2l.dlocation2 * dlocation.deta^2,
                        d2l.dscale2 * dscale.deta^2)
-            w * wz
+            c(w) * wz
         }
     }), list( .elocat = elocation, .escale = escale,
               .llocat = llocation, .lscale = lscale,
@@ -4206,7 +4206,7 @@ adjust01.logitlaplace1 = function(ymat, y, w, rep01) {
         shrinkage.init = 0.95, parallelLocation = FALSE, digt = 4,
         dfmu.init = 3,
         rep01 = 0.5,
-        method.init = 1, zero = NULL) {
+        imethod = 1, zero = NULL) {
 
     if (!is.Numeric(rep01, posit = TRUE, allow = 1) || rep01 > 0.5)
         stop("bad input for argument 'rep01'")
@@ -4216,8 +4216,8 @@ adjust01.logitlaplace1 = function(ymat, y, w, rep01) {
         stop("arguments 'kappa' and 'tau' do not match")
     if (mode(llocation) != "character" && mode(llocation) != "name")
         llocation = as.character(substitute(llocation))
-    if (!is.Numeric(method.init, allow = 1, integ = TRUE, posit = TRUE) ||
-       method.init > 4) stop("argument 'method.init' must be 1, 2 or ... 4")
+    if (!is.Numeric(imethod, allow = 1, integ = TRUE, posit = TRUE) ||
+       imethod > 4) stop("argument 'imethod' must be 1, 2 or ... 4")
     if (!is.list(elocation)) elocation = list()
     if (!is.Numeric(shrinkage.init, allow = 1) || shrinkage.init < 0 ||
        shrinkage.init > 1) stop("bad input for argument 'shrinkage.init'")
@@ -4274,12 +4274,12 @@ adjust01.logitlaplace1 = function(ymat, y, w, rep01) {
             stop("sample proportion of 1s == ", round(prop.1., dig=4),
                  " < maximum 'tau' value. Choose smaller values for 'tau'.")
         if (!length(etastart)) {
-            if ( .method.init == 1) {
+            if ( .imethod == 1) {
                 locat.init = quantile(rep(y, w), probs= extra$tau)
-            } else if ( .method.init == 2) {
+            } else if ( .imethod == 2) {
                 locat.init = weighted.mean(y, w)
                 locat.init = median(rep(y, w))
-            } else if ( .method.init == 3) {
+            } else if ( .imethod == 3) {
                 use.this = weighted.mean(y, w)
                 locat.init = (1- .sinit)*y + use.this * .sinit
             } else {
@@ -4294,7 +4294,7 @@ adjust01.logitlaplace1 = function(ymat, y, w, rep01) {
             etastart =
                 cbind(theta2eta(locat.init, .llocat, earg = .elocat))
         }
-    }), list( .method.init = method.init,
+    }), list( .imethod = imethod,
               .dfmu.init = dfmu.init,
               .sinit = shrinkage.init, .digt = digt,
               .elocat = elocation, .Scale.arg = Scale.arg,
@@ -4366,21 +4366,17 @@ adjust01.logitlaplace1 = function(ymat, y, w, rep01) {
         dl.dlocation = ifelse(w.mat >= location.w, kappamat, 1/kappamat) *
                        sqrt(2) * sign(w.mat-location.w) / Scale.w
         dlocation.deta = dtheta.deta(location.w, "identity", earg = .elocat)
-        w * cbind(dl.dlocation * dlocation.deta)
+        c(w) * cbind(dl.dlocation * dlocation.deta)
     }), list( .Scale.arg = Scale.arg, .elocat = elocation,
               .rep01 = rep01,
               .llocat = llocation, .kappa = kappa ))),
     weight = eval(substitute(expression({
         d2l.dlocation2 = 2 / Scale.w^2
         wz = cbind(d2l.dlocation2 * dlocation.deta^2)
-        w * wz
+        c(w) * wz
     }), list( .Scale.arg = Scale.arg,
               .elocat = elocation, .llocat = llocation ))))
 }
-
-
-
-
 
 
 

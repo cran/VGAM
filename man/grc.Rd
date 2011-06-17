@@ -11,7 +11,7 @@
 \usage{
 grc(y, Rank = 1, Index.corner = 2:(1 + Rank),
     szero = 1, summary.arg = FALSE, h.step = 1e-04, ...)
-rcam(y, Rank = 0, family = poissonff, Musual = NULL,
+rcam(y, family = poissonff, Rank = 0, Musual = NULL,
      Index.corner = if (!Rank) NULL else 1 + Musual * (1:Rank),
      rprefix = "Row.", cprefix = "Col.",
      szero = if (!Rank) NULL else {
@@ -27,16 +27,7 @@ rcam(y, Rank = 0, family = poissonff, Musual = NULL,
   For \code{grc} a matrix of counts.
   For \code{rcam} a general matrix response depending on \code{family}.
   Output from \code{table()} is acceptable; it is converted into a matrix.
-  Note that \code{y} must be at least 3 by 3. 
-
-  }
-  \item{Rank}{
-  An integer from the set
-  \{0,\ldots,\code{min(nrow(y), ncol(y))}\}.
-  This is the dimension of the fit in terms of the interaction.
-  For \code{grc()} this argument must be positive.
-  A value of 0 means no interactions (i.e., main effects only);
-  each row and column is represented by an indicator variable.
+  Note that \code{y} should be at least 3 by 3 in dimension.
 
   }
   \item{family}{
@@ -51,10 +42,21 @@ rcam(y, Rank = 0, family = poissonff, Musual = NULL,
   \code{\link{zipoisson}} because of the ordering of the
   linear/additive predictors.
   If the \pkg{VGAM} family function does not have an \code{infos}
-  slot then \code{Musual} needs to be inputted.
+  slot then \code{Musual} needs to be inputted (the number of
+  linear predictors for an ordinary (usually univariate) response,
+  aka \eqn{M}).
   The \pkg{VGAM} family function also needs to be able to
   handle multiple responses; and not all of them can do this.
 
+
+  }
+  \item{Rank}{
+  An integer from the set
+  \{0,\ldots,\code{min(nrow(y), ncol(y))}\}.
+  This is the dimension of the fit in terms of the interaction.
+  For \code{grc()} this argument must be positive.
+  A value of 0 means no interactions (i.e., main effects only);
+  each row and column is represented by an indicator variable.
 
   }
   \item{Index.corner}{
@@ -126,8 +128,6 @@ These are called \code{Row.} and \code{Col.} (by default) followed
 by the row or column number.
 
 
-
-
 The function \code{rcam()} is more general than \code{grc()}.
 Its default is a no-interaction model of \code{grc()}, i.e.,
 rank-0 and a Poisson distribution. This means that each
@@ -143,9 +143,9 @@ ANOVA with and without interactions,
 Others include
 \code{\link{zipoissonff}},
 \code{\link{negbinomial}}.
-Hopefully one day \emph{all} \pkg{VGAM} family functions will work when
-assigned to the \code{family} argument
-although the result may not have meaning.
+Hopefully one day \emph{all} \pkg{VGAM} family functions will
+work when assigned to the \code{family} argument, although the
+result may not have meaning.
 
 
 }
@@ -153,8 +153,12 @@ although the result may not have meaning.
   An object of class \code{"grc"}, which currently is the same as
   an \code{"rrvglm"} object.
   Currently,
-  a rank-0 \code{rcam()} object is of class \code{\link{vglm-class}},
-  but it may become of class \code{"rcam"} one day.
+  a rank-0 \code{rcam()} object is of class \code{\link{rcam0-class}},
+  else of class \code{"rcam"} (this may change in the future).
+
+% Currently,
+% a rank-0 \code{rcam()} object is of class \code{\link{vglm-class}},
+% but it may become of class \code{"rcam"} one day.
 
 
 }
@@ -180,7 +184,7 @@ indicator variables.
  
 }
 \author{
-Thomas W. Yee, with some
+Thomas W. Yee, with
 assistance from Alfian F. Hadi.
 
 
@@ -212,7 +216,7 @@ assistance from Alfian F. Hadi.
 
 \section{Warning}{
   The function \code{rcam()} is experimental at this stage and
-  may have some bugs.
+  may have bugs.
   Quite a lot of expertise is needed when fitting and in its
   interpretion thereof. For example, the constraint
   matrices applies the reduced-rank regression to the first linear
@@ -242,8 +246,11 @@ assistance from Alfian F. Hadi.
   \code{\link{rrvglm.control}},
   \code{\link{rrvglm-class}},
   \code{summary.grc},
+  \code{\link{moffset}},
   \code{\link{Rcam}},
   \code{\link{plotrcam0}},
+  \code{\link{alcoff}},
+  \code{\link{crashi}},
   \code{\link{auuc}},
   \code{\link{olympic}},
   \code{\link{poissonff}}.
@@ -273,11 +280,17 @@ Coef(oly1)
 # Roughly median polish
 rcam0 <- rcam(auuc, fam = alaplace2(tau = 0.5, intparloc = TRUE), trace = TRUE)
 round(fitted(rcam0), dig = 0)
+round(100 * (fitted(rcam0) - auuc) / auuc, dig = 0)   # Discrepancy
 rcam0@y
 round(coef(rcam0, matrix = TRUE), dig = 2)
 print(Coef(rcam0, matrix = TRUE), dig = 3)
 # constraints(rcam0)
 names(constraints(rcam0))
+
+# Compare with medpolish():
+(med.a <- medpolish(auuc))
+fv <- med.a$overall + outer(med.a$row, med.a$col, "+")
+round(100 * (fitted(rcam0) - fv) / fv)   # Hopefully should be all 0s
 }
 \keyword{models}
 \keyword{regression}

@@ -8,7 +8,7 @@
 
 }
 \usage{
-amlexponential(w.aml = 1, parallel = FALSE, method.init = 1, digw = 4,
+amlexponential(w.aml = 1, parallel = FALSE, imethod = 1, digw = 4,
                link = "loge", earg = list())
 }
 %- maybe also 'usage' for other objects documented here.
@@ -31,7 +31,7 @@ amlexponential(w.aml = 1, parallel = FALSE, method.init = 1, digw = 4,
   See \code{\link{CommonVGAMffArguments}} for more information.
 
   }
-  \item{method.init}{
+  \item{imethod}{
   Integer, either 1 or 2 or 3. Initialization method.
   Choose another value if convergence fails.
 

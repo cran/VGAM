@@ -8,7 +8,7 @@
   record values.
 }
 \usage{
-recexp1(lrate="loge", irate=NULL, method.init=1)
+recexp1(lrate="loge", irate=NULL, imethod=1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -20,10 +20,10 @@ recexp1(lrate="loge", irate=NULL, method.init=1)
   \item{irate}{
   Numeric. Optional initial values for the rate.
   The default value \code{NULL} means they are computed internally,
-  with the help of \code{method.init}.
+  with the help of \code{imethod}.
 
   }
-  \item{method.init}{
+  \item{imethod}{
   Integer, either 1 or 2 or 3. Initial method, three algorithms are
   implemented. Choose the another value if convergence fails, or use
   \code{irate}.

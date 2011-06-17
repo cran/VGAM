@@ -15,8 +15,8 @@
 \usage{
 TypicalVGAMfamilyFunction(lsigma = "loge", esigma = list(), isigma = NULL,
                           parallel = TRUE, shrinkage.init = 0.95,
-                          nointercept = NULL, method.init = 1,
-                          prob.x = c(0.15, 0.85),
+                          nointercept = NULL, imethod = 1,
+                          prob.x = c(0.15, 0.85), mv = FALSE,
                           oim = FALSE, nsimEIM = 100, zero = NULL)
 }
 \arguments{
@@ -81,15 +81,15 @@ TypicalVGAMfamilyFunction(lsigma = "loge", esigma = list(), isigma = NULL,
 
 
   }
-  \item{method.init}{
+  \item{imethod}{
   An integer with value \code{1} or \code{2} or \code{3} or ... which
   specifies the initialization method for some parameters or a specific
   parameter.
   If failure to converge occurs try the next higher value, and
   continue until success.
-  For example, \code{method.init = 1} might be the method of moments,
-  and \code{method.init = 2} might be another method.
-  If no value of \code{method.init} works then it will be necessary
+  For example, \code{imethod = 1} might be the method of moments,
+  and \code{imethod = 2} might be another method.
+  If no value of \code{imethod} works then it will be necessary
   to use arguments such as \code{isigma}.
   For many \pkg{VGAM} family functions it is advisable to try
   this argument with all possible values to safeguard against
@@ -178,7 +178,7 @@ TypicalVGAMfamilyFunction(lsigma = "loge", esigma = list(), isigma = NULL,
   For many types of models this method seems to work well and is often
   reasonably robust to outliers in the response.
   Often this argument is only used if
-  the argument \code{method.init} is assigned a certain value.
+  the argument \code{imethod} is assigned a certain value.
 
   }
   \item{nointercept}{
@@ -186,6 +186,24 @@ TypicalVGAMfamilyFunction(lsigma = "loge", esigma = list(), isigma = NULL,
   linear/additive predictors have no intercepts.
   Any values must be from the set \{1,2,\ldots,\eqn{M}\}.
   A value of \code{NULL} means no such constraints.
+
+  }
+
+  \item{mv}{
+  Logical.
+  Some \pkg{VGAM} family functions allow a multivariate or vector response.
+  If so, then usually the response is a matrix with columns
+  corresponding to the individual response variables.
+  They are all fitted simultaneously.
+  Arguments such as \code{parallel} may then be useful to allow
+  for relationships between the regressions of each response variable.
+  If \code{mv = TRUE} then sometimes the response is interpreted
+  differently, e.g., \code{\link{posbinomial}} chooses the first
+  column of a matrix response as success and combines the other
+  columns as failure, but when \code{mv = TRUE} then each column
+  of the response matrix is the number of successes and the
+  \code{weights} argument is of the same dimension as the
+  response and contains the number of trials.
 
   }
 

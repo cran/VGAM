@@ -11,7 +11,7 @@
 \usage{
 simplex(lmu = "logit", lsigma = "loge", emu=list(), esigma=list(),
         imu = NULL, isigma = NULL,
-        method.init = 1, shrinkage.init = 0.95, zero = 2)
+        imethod = 1, shrinkage.init = 0.95, zero = 2)
 
 }
 %- maybe also 'usage' for other objects documented here.
@@ -31,7 +31,7 @@ simplex(lmu = "logit", lsigma = "loge", emu=list(), esigma=list(),
   A \code{NULL} means a value is obtained internally.
 
   }
-  \item{method.init, shrinkage.init, zero}{
+  \item{imethod, shrinkage.init, zero}{
   See \code{\link{CommonVGAMffArguments}} for more information.
 
   }

@@ -8,7 +8,7 @@
   only.
 }
 % \usage{
-% VGAMfamilyFunction(zero=3)
+% VGAMfamilyFunction(zero = 3)
 % }
 \value{
   Nothing is returned.
@@ -26,13 +26,17 @@
   there is potential conflict of definition.
   Currently no checking for consistency is made. 
 
+
   The argument \code{zero} may be renamed in the future to
   something better.
+
 
 }
 \section{Side Effects}{
   The argument creates the appropriate constraint matrices
   internally.
+
+
 }
 \details{
   Often a certain parameter needs to be modelled simply while other
@@ -44,38 +48,47 @@
   Using the \code{zero} argument allows this to be fitted conveniently
   without having to input all the constraint matrices explicitly.
 
+
   The \code{zero} argument should be assigned an integer vector from the
   set \{\code{1:M}\} where \code{M} is the number of linear/additive
-  predictors.  Full details about constraint matrices can be found in
+  predictors. Full details about constraint matrices can be found in
   the references.
+
 
 }
 
 \author{T. W. Yee }
 \note{
-  In all \pkg{VGAM} family functions \code{zero=NULL} means
+  In all \pkg{VGAM} family functions \code{zero = NULL} means
   none of the linear/additive predictors are modelled as
   intercepts-only.
-  Almost all \pkg{VGAM} family function have \code{zero=NULL}
+  Almost all \pkg{VGAM} family function have \code{zero = NULL}
   as the default, but there are some exceptions, e.g.,
   \code{\link{binom2.or}}.
 
-  Typing something like \code{coef(fit, matrix=TRUE)} is a useful
+
+  Typing something like \code{coef(fit, matrix = TRUE)} is a useful
   way to ensure that the \code{zero} argument has worked as expected.
+
 
 }
 \references{
+
 Yee, T. W. and Wild, C. J. (1996)
 Vector generalized additive models.
 \emph{Journal of the Royal Statistical Society, Series B, Methodological},
 \bold{58}, 481--493.
+
 
 Yee, T. W. and Hastie, T. J. (2003)
 Reduced-rank vector generalized linear models.
 \emph{Statistical Modelling},
 \bold{3}, 15--41.
 
+
 \url{http://www.stat.auckland.ac.nz/~yee}
+
+
 }
 
 \seealso{
@@ -88,8 +101,8 @@ args(binom2.or)
 args(gpd)
 
 #LMS quantile regression example
-fit = vglm(BMI ~ bs(age, df=4), lms.bcg(zero=c(1,3)), bminz, trace=TRUE)
-coef(fit, matrix=TRUE)
+fit = vglm(BMI ~ bs(age, df = 4), lms.bcg(zero = c(1,3)), bminz, trace = TRUE)
+coef(fit, matrix = TRUE)
 }
 \keyword{models}
 \keyword{regression}

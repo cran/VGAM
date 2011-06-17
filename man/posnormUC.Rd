@@ -11,23 +11,29 @@
 
 }
 \usage{
-dposnorm(x, mean=0, sd=1, log=FALSE)
-pposnorm(q, mean=0, sd=1)
-qposnorm(p, mean=0, sd=1)
-rposnorm(n, mean=0, sd=1)
+dposnorm(x, mean = 0, sd = 1, log = FALSE)
+pposnorm(q, mean = 0, sd = 1)
+qposnorm(p, mean = 0, sd = 1)
+rposnorm(n, mean = 0, sd = 1)
 }
 \arguments{
   \item{x, q}{vector of quantiles.}
   \item{p}{vector of probabilities.}
   \item{n}{number of observations.
-  If \code{length(n) > 1} then the length is taken to be the number required. }
-  \item{mean, sd, log}{ see \code{\link[stats:Normal]{rnorm}}. }
+  If \code{length(n) > 1} then the length is taken to be the number required.
+
+  }
+  \item{mean, sd, log}{ see \code{\link[stats:Normal]{rnorm}}.
+
+  }
+
 }
 \value{
   \code{dposnorm} gives the density,
   \code{pposnorm} gives the distribution function,
   \code{qposnorm} gives the quantile function, and
   \code{rposnorm} generates random deviates.
+
 }
 \author{ T. W. Yee }
 \details{
@@ -44,20 +50,19 @@ rposnorm(n, mean=0, sd=1)
 
 }
 \examples{
-\dontrun{
-m =  0.8; x = seq(-1, 4, len=501)
-plot(x, dposnorm(x, m=m), type="l", ylim=0:1, las=1,
-     ylab=paste("posnorm(m=",m,", sd=1)"), col="blue",
-     main="Blue is density, red is cumulative distribution function",
-     sub="Purple lines are the 10,20,...,90 percentiles")
-lines(x, pposnorm(x, m=m), col="red")
-abline(h=0)
-probs = seq(0.1, 0.9, by=0.1)
-Q = qposnorm(probs, m=m)
-lines(Q, dposnorm(Q, m=m), col="purple", lty=3, type="h")
-lines(Q, pposnorm(Q, m=m), col="purple", lty=3, type="h")
-abline(h=probs, col="purple", lty=3)
-max(abs(pposnorm(Q, m=m) - probs)) # Should be 0
+\dontrun{ m =  0.8; x = seq(-1, 4, len = 501)
+plot(x, dposnorm(x, m = m), type = "l", ylim = 0:1, las = 1,
+     ylab = paste("posnorm(m = ", m, ", sd = 1)"), col = "blue",
+     main = "Blue is density, red is cumulative distribution function",
+     sub = "Purple lines are the 10,20,...,90 percentiles")
+lines(x, pposnorm(x, m = m), col = "red")
+abline(h = 0)
+probs = seq(0.1, 0.9, by = 0.1)
+Q = qposnorm(probs, m = m)
+lines(Q, dposnorm(Q, m = m), col = "purple", lty = 3, type = "h")
+lines(Q, pposnorm(Q, m = m), col = "purple", lty = 3, type = "h")
+abline(h = probs, col = "purple", lty = 3)
+max(abs(pposnorm(Q, m = m) - probs)) # Should be 0
 }
 }
 \keyword{distribution}

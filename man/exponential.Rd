@@ -77,6 +77,7 @@ New York: Wiley-Interscience, Third edition.
     \code{\link{amlexponential}},
     \code{\link{laplace}},
     \code{\link{expgeometric}},
+    \code{\link{explogarithmic}},
     \code{\link{poissonff}},
     \code{\link{mix2exp}},
     \code{\link{freund61}}.

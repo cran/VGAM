@@ -1,6 +1,6 @@
 \name{rayleigh}
 \alias{rayleigh}
-\alias{crayleigh}
+\alias{cenrayleigh}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{Rayleigh Distribution Family Function }
 \description{
@@ -9,8 +9,8 @@
 
 }
 \usage{
- rayleigh(lscale = "loge", escale = list(), nrfs = 1/3 + 0.01)
-crayleigh(lscale = "loge", escale = list(), oim = TRUE)
+   rayleigh(lscale = "loge", escale = list(), nrfs = 1/3 + 0.01)
+cenrayleigh(lscale = "loge", escale = list(), oim = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -54,7 +54,7 @@ crayleigh(lscale = "loge", escale = list(), oim = TRUE)
   \eqn{b^2 (4-\pi)/2}{b^2 (4-pi)/2}.
 
 
-  The \pkg{VGAM} family function \code{crayleigh} handles right-censored
+  The \pkg{VGAM} family function \code{cenrayleigh} handles right-censored
   data (the true value is greater than the observed value). To indicate
   which type of censoring, input \code{extra = list(rightcensored = vec2)}
   where \code{vec2} is a logical vector the same length as the response.
@@ -109,7 +109,7 @@ rdata <- transform(rdata, U = runif(nn, 5, 15))
 rdata <- transform(rdata, y = pmin(U, ystar))
 \dontrun{ par(mfrow = c(1,2)); hist(with(rdata, ystar)); hist(with(rdata, y)) }
 extra <- with(rdata, list(rightcensored = ystar > U))
-fit <- vglm(y ~ 1, crayleigh, rdata, trace = TRUE, extra = extra)
+fit <- vglm(y ~ 1, cenrayleigh, rdata, trace = TRUE, extra = extra)
 table(fit@extra$rightcen)
 coef(fit, matrix = TRUE)
 head(fitted(fit))

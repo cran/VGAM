@@ -12,10 +12,10 @@
   scale parameter \code{scale}.
 }
 \usage{
-dgumbel(x, location=0, scale=1, log=FALSE)
-pgumbel(q, location=0, scale=1)
-qgumbel(p, location=0, scale=1)
-rgumbel(n, location=0, scale=1)
+dgumbel(x, location = 0, scale = 1, log = FALSE)
+pgumbel(q, location = 0, scale = 1)
+qgumbel(p, location = 0, scale = 1)
+rgumbel(n, location = 0, scale = 1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -88,9 +88,8 @@ rgumbel(n, location=0, scale=1)
   \code{\link{gev}}.
 }
 \examples{
-mu = 1
-sigma = 2
-y = rgumbel(n=100, loc=mu, scale=sigma)
+mu = 1; sigma = 2
+y = rgumbel(n = 100, loc=mu, scale=sigma)
 mean(y)
 mu - sigma * digamma(1)  # population mean
 var(y)
@@ -98,17 +97,17 @@ sigma^2 * pi^2 / 6       # population variance
 
 
 \dontrun{
-x = seq(-2.5, 3.5, by=0.01)
+x = seq(-2.5, 3.5, by = 0.01)
 loc = 0; sigma = 1
-plot(x, dgumbel(x, loc, sigma), type="l", col="blue", ylim=c(0,1),
-     main="Blue is density, red is cumulative distribution function",
-     sub="Purple are 5,10,...,95 percentiles", ylab="", las=1)
-abline(h=0, col="blue", lty=2)
-lines(qgumbel(seq(0.05,0.95,by=0.05), loc, sigma),
-      dgumbel(qgumbel(seq(0.05,0.95,by=0.05), loc, sigma), loc, sigma),
-      col="purple", lty=3, type="h")
-lines(x, pgumbel(x, loc, sigma), type="l", col="red")
-abline(h=0, lty=2)
+plot(x, dgumbel(x, loc, sigma), type = "l", col = "blue", ylim=c(0,1),
+     main = "Blue is density, red is cumulative distribution function",
+     sub = "Purple are 5,10,...,95 percentiles", ylab = "", las = 1)
+abline(h = 0, col = "blue", lty = 2)
+lines(qgumbel(seq(0.05, 0.95, by = 0.05), loc, sigma),
+      dgumbel(qgumbel(seq(0.05, 0.95, by = 0.05), loc, sigma), loc, sigma),
+      col = "purple", lty = 3, type = "h")
+lines(x, pgumbel(x, loc, sigma), type = "l", col = "red")
+abline(h = 0, lty = 2)
 }
 }
 \keyword{distribution}

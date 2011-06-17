@@ -2,6 +2,7 @@
 \alias{weibull}
 %\alias{weibullff}
 %\alias{weibull.lsh}
+%\alias{weibull3}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Weibull Distribution Family Function }
 \description{
@@ -12,7 +13,7 @@
 \usage{
 weibull(lshape = "loge", lscale = "loge", 
         eshape = list(), escale = list(),
-        ishape = NULL,   iscale = NULL, nrfs = 1, method.init = 1, zero = 2)
+        ishape = NULL,   iscale = NULL, nrfs = 1, imethod = 1, zero = 2)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -42,9 +43,11 @@ weibull(lshape = "loge", lscale = "loge",
   positive-definite working weights.
 
   }
-  \item{method.init}{
+  \item{imethod}{
   Initialization method used if there are censored observations.
   Currently only the values 1 and 2 are allowed.
+
+
   }
   \item{zero}{
   An integer specifying which linear/additive predictor is to be modelled
@@ -91,6 +94,7 @@ weibull(lshape = "loge", lscale = "loge",
   The object is used by modelling functions such as \code{\link{vglm}},
   and \code{\link{vgam}}.
 
+
 }
 \references{
 Kleiber, C. and Kotz, S. (2003)
@@ -103,12 +107,31 @@ Johnson, N. L. and Kotz, S. and Balakrishnan, N. (1994)
 2nd edition, Volume 1, New York: Wiley.
 
 
+Rinne, Horst. (2009)
+\emph{The Weibull Distribution: A Handbook}.
+Boca Raton, FL, USA: CRC Press.
+
+
+
 Gupta, R. D. and Kundu, D. (2006)
 On the comparison of Fisher information of the
 Weibull and GE distributions,
 \emph{Journal of Statistical Planning and Inference},
 \bold{136},
 3130--3144.
+
+
+  Smith, R. L. (1985)
+  Maximum likelihood estimation in a class of nonregular cases.
+  \emph{Biometrika}, \bold{72}, 67--90.
+
+
+  Smith, R. L. and Naylor, J. C. (1987)
+  A comparison of maximum likelihood and Bayesian estimators
+  for the three-parameter Weibull distribution.
+  \emph{Applied Statistics}, \bold{36}, 358--369.
+
+
 
 
 }
@@ -123,6 +146,15 @@ Weibull and GE distributions,
   distribution.  The inverse Weibull distribution, which is that of
   \eqn{1/Y} where \eqn{Y} has a Weibull(\eqn{a,b}) distribution, is
   known as the log-Gompertz distribution.
+
+
+  There are problems implementing the three-parameter Weibull
+  distribution. These are because
+  the classical regularity conditions for the
+  asymptotic properties of the MLEs are not satisfied because the
+  support of the distribution depends on one of the parameters.
+
+
 
 }
 \section{Warning}{
@@ -143,6 +175,8 @@ Weibull and GE distributions,
     \code{\link{gev}},
     \code{\link{lognormal}},
     \code{\link{expexp}}.
+
+
 }
 \examples{
 # Complete data

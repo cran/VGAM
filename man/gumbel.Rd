@@ -46,19 +46,19 @@ egumbel(llocation = "identity", lscale = "loge", elocation = list(),
   Numeric vector of percentiles used
   for the fitted values. Values should be between 0 and 100.
   This argument uses the argument \code{R} if assigned.
-  If \code{percentiles=NULL} then the mean will be returned as the
+  If \code{percentiles = NULL} then the mean will be returned as the
   fitted values.
 
-% This argument is ignored if \code{mean=TRUE}.
+% This argument is ignored if \code{mean = TRUE}.
 
   }
   \item{mpv}{ 
-  Logical. If \code{mpv=TRUE} then the \emph{median predicted value} (MPV)
+  Logical. If \code{mpv = TRUE} then the \emph{median predicted value} (MPV)
   is computed and returned as the (last) column of the fitted values.
-  This argument is ignored if \code{percentiles=NULL}.
+  This argument is ignored if \code{percentiles = NULL}.
   See \bold{Details} for more details. 
 
-% This argument is ignored if \code{mean=TRUE}.
+% This argument is ignored if \code{mean = TRUE}.
 
   }
 % \item{mean}{ 
@@ -79,13 +79,14 @@ egumbel(llocation = "identity", lscale = "loge", elocation = list(),
 }
 \details{
   The Gumbel distribution is a generalized extreme value (GEV) 
-  distribution with \emph{shape} parameter \eqn{\xi=0}{xi=0}.
+  distribution with \emph{shape} parameter \eqn{\xi = 0}{xi = 0}.
   Consequently it is more easily estimated than the GEV.
   See \code{\link{gev}} for more details.
 
+
   The quantity \eqn{R} is the maximum number of observations possible,
   for example, in the Venice data below, the top 10 daily values
-  are recorded for each year, therefore  \eqn{R=365} because there are
+  are recorded for each year, therefore  \eqn{R = 365} because there are
   about 365 days per year.
   The MPV is the value of the response such that the probability
   of obtaining a value greater than the MPV is 0.5 out of
@@ -93,8 +94,9 @@ egumbel(llocation = "identity", lscale = "loge", elocation = list(),
   For  the Venice data, the MPV is the sea level such that there
   is an even chance that the highest level for a particular year
   exceeds the MPV.
-  When \code{mpv=TRUE}, the column labelled  \code{"MPV"} contains
+  When \code{mpv = TRUE}, the column labelled  \code{"MPV"} contains
   the MPVs when \code{fitted()} is applied to the fitted object.
+
 
   The formula for the mean of a response \eqn{Y} is
   \eqn{\mu+\sigma \times Euler} where \eqn{Euler} is a constant
@@ -107,21 +109,26 @@ egumbel(llocation = "identity", lscale = "loge", elocation = list(),
   \eqn{\mu-\sigma \times \log[R(1-P/100)]}{location-
     scale*log[-log(R*(1-P/100))]}.
 
+
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}},
   and \code{\link{vgam}}.
+
+
 }
 \references{
   Yee, T. W. and Stephenson, A. G. (2007)
   Vector generalized linear and additive extreme value models.
   \emph{Extremes}, \bold{10}, 1--19.
 
+
   Smith, R. L. (1986)
   Extreme value theory based on the \emph{r} largest annual events.
   \emph{Journal of Hydrology},
   \bold{86}, 27--43.
+
 
   Rosen, O. and Cohen, A. (1996)
   Extreme percentile regression.
@@ -131,9 +138,11 @@ egumbel(llocation = "identity", lscale = "loge", elocation = list(),
   Semmering, Austria, 27--28 August 1994}, pp.200--214,
   Heidelberg: Physica-Verlag.
 
+
   Coles, S. (2001)
   \emph{An Introduction to Statistical Modeling of Extreme Values}.
   London: Springer-Verlag.
+
 
 }
 \author{ T. W. Yee }
@@ -152,11 +161,12 @@ egumbel(llocation = "identity", lscale = "loge", elocation = list(),
   \code{egumbel()} only handles a univariate response, and is
   preferred to \code{gumbel()} because it is faster.
 
+
   \code{gumbel()} can handle a multivariate response, i.e., a
   matrix with more than one column. Each row of the matrix is
   sorted into descending order.
   Missing values in the response are allowed but require
-  \code{na.action=na.pass}. The response matrix needs to be
+  \code{na.action = na.pass}. The response matrix needs to be
   padded with any missing values. With a multivariate response
   one has a matrix \code{y}, say, where
   \code{y[,2]} contains the second order statistics etc. 
@@ -177,61 +187,62 @@ egumbel(llocation = "identity", lscale = "loge", elocation = list(),
   \code{\link{egev}},
 %\code{\link{ogev}},
   \code{\link{venice}}.
+
+
 }
 
 \examples{
 # Example 1: Simulated data
-gdata = data.frame(y = rgumbel(n=1000, loc = 100, scale=exp(1)))
-fit = vglm(y ~ 1, egumbel(perc=NULL), gdata, trace=TRUE)
-coef(fit, matrix=TRUE)
+gdata = data.frame(y = rgumbel(n = 1000, loc = 100, scale = exp(1)))
+fit = vglm(y ~ 1, egumbel(perc = NULL), gdata, trace = TRUE)
+coef(fit, matrix = TRUE)
 Coef(fit)
 head(fitted(fit))
 with(gdata, mean(y))
 
-
 # Example 2: Venice data
-(fit = vglm(cbind(r1,r2,r3,r4,r5) ~ year, data=venice,
-            gumbel(R=365, mpv=TRUE), trace=TRUE))
+(fit = vglm(cbind(r1,r2,r3,r4,r5) ~ year, data = venice,
+            gumbel(R = 365, mpv = TRUE), trace = TRUE))
 head(fitted(fit))
-coef(fit, mat=TRUE)
+coef(fit, mat = TRUE)
 vcov(summary(fit))  
 sqrt(diag(vcov(summary(fit))))   # Standard errors
 
 
 # Example 3: Try a nonparametric fit ---------------------
 # Use the entire data set, including missing values
-y = as.matrix(venice[,paste("r",1:10,sep="")])
-fit1 = vgam(y ~ s(year, df=3), gumbel(R=365, mpv=TRUE),
-            data=venice, trace=TRUE, na.action=na.pass)
+y = as.matrix(venice[,paste("r",1:10,sep = "")])
+fit1 = vgam(y ~ s(year, df = 3), gumbel(R = 365, mpv = TRUE),
+            data = venice, trace = TRUE, na.action = na.pass)
 fit1@y[4:5,]  # NAs used to pad the matrix
 
 \dontrun{
 # Plot the component functions
-par(mfrow=c(2,1), mar=c(5,4,.2,1)+0.1, xpd=TRUE)
-plot(fit1, se=TRUE, lcol="blue", scol="green", lty=1,
-     lwd=2, slwd=2, slty="dashed")
+par(mfrow = c(2,1), mar = c(5,4,.2,1)+0.1, xpd = TRUE)
+plot(fit1, se = TRUE, lcol = "blue", scol = "green", lty = 1,
+     lwd = 2, slwd = 2, slty = "dashed")
 
 # Quantile plot --- plots all the fitted values
-par(mfrow=c(1,1), bty="l", mar=c(4,4,.2,3)+0.1, xpd=TRUE, las=1)
-qtplot(fit1, mpv=TRUE, lcol=c(1,2,5), tcol=c(1,2,5), lwd=2,
-       pcol="blue", tadj=0.1, ylab="Sea level (cm)")
+par(mfrow = c(1,1), bty = "l", mar = c(4,4,.2,3)+0.1, xpd = TRUE, las = 1)
+qtplot(fit1, mpv = TRUE, lcol = c(1,2,5), tcol = c(1,2,5), lwd = 2,
+       pcol = "blue", tadj = 0.1, ylab = "Sea level (cm)")
 
 # Plot the 99 percentile only
-par(mfrow=c(1,1), mar=c(3,4,.2,1)+0.1, xpd=TRUE)
+par(mfrow = c(1,1), mar = c(3,4,.2,1)+0.1, xpd = TRUE)
 year = venice[["year"]]
-matplot(year, y, ylab="Sea level (cm)", type="n")
-matpoints(year, y, pch="*", col="blue")
-lines(year, fitted(fit1)[,"99\%"], lwd=2, col="red")
+matplot(year, y, ylab = "Sea level (cm)", type = "n")
+matpoints(year, y, pch = "*", col = "blue")
+lines(year, fitted(fit1)[,"99\%"], lwd = 2, col = "red")
 
 # Check the 99 percentiles with a smoothing spline.
 # Nb. (1-0.99) * 365 = 3.65 is approx. 4, meaning the 4th order 
 # statistic is approximately the 99 percentile.
-par(mfrow=c(1,1), mar=c(3,4,2,1)+0.1, xpd=TRUE, lwd=2)
-plot(year, y[,4], ylab="Sea level (cm)", type="n",
-     main="Red is 99 percentile, Green is a smoothing spline")
-points(year, y[,4], pch="4", col="blue")
-lines(year, fitted(fit1)[,"99\%"], lty=1, col="red")
-lines(smooth.spline(year, y[,4], df=4), col="darkgreen", lty=2)
+par(mfrow = c(1,1), mar = c(3,4,2,1)+0.1, xpd = TRUE, lwd = 2)
+plot(year, y[,4], ylab = "Sea level (cm)", type = "n",
+     main = "Red is 99 percentile, Green is a smoothing spline")
+points(year, y[,4], pch = "4", col = "blue")
+lines(year, fitted(fit1)[,"99\%"], lty = 1, col = "red")
+lines(smooth.spline(year, y[,4], df = 4), col = "darkgreen", lty = 2)
 }
 }
 \keyword{models}

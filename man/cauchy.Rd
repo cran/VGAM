@@ -12,9 +12,9 @@
 cauchy(llocation="identity", lscale="loge", elocation=list(),
        escale=list(), ilocation=NULL, iscale=NULL,
        iprobs = seq(0.2, 0.8, by=0.2),
-       method.init=1, nsimEIM=NULL, zero=2)
+       imethod=1, nsimEIM=NULL, zero=2)
 cauchy1(scale.arg=1, llocation="identity",
-        elocation=list(), ilocation=NULL, method.init=1)
+        elocation=list(), ilocation=NULL, imethod=1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -34,7 +34,7 @@ cauchy1(scale.arg=1, llocation="identity",
   By default, an initial value is chosen internally for each.
 
   }
-  \item{method.init}{ 
+  \item{imethod}{ 
   Integer, either 1 or 2 or 3.
   Initial method, three algorithms are implemented.
   The user should try all possible values to help avoid converging
@@ -89,7 +89,7 @@ cauchy1(scale.arg=1, llocation="identity",
 \section{Warning }{
   It is well-known that the Cauchy distribution may have local
   maxima in its likelihood function;
-  make full use of \code{method.init}, \code{ilocation}, \code{iscale}
+  make full use of \code{imethod}, \code{ilocation}, \code{iscale}
   etc.
 
 }
@@ -129,7 +129,7 @@ Observed versus expected Fisher information.
   value for \eqn{a}{a} on a grid.
   It also pays to select a wide range
   of initial values via the \code{ilocation} and/or \code{iscale}
-  and/or \code{method.init} arguments.
+  and/or \code{imethod} arguments.
 
 
 }

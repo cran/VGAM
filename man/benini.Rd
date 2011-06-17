@@ -9,7 +9,7 @@
 }
 \usage{
 benini(y0 = stop("argument 'y0' must be specified"),
-       lshape = "loge", earg = list(), ishape = NULL, method.init = 1)
+       lshape = "loge", earg = list(), ishape = NULL, imethod = 1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -34,7 +34,7 @@ benini(y0 = stop("argument 'y0' must be specified"),
   The default is to compute the value internally.
 
   }
-  \item{method.init}{
+  \item{imethod}{
   An integer with value \code{1} or \code{2} which
   specifies the initialization method. If failure to converge occurs
   try the other value, or else specify a value for \code{ishape}.

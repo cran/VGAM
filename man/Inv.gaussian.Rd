@@ -37,6 +37,7 @@ rinv.gaussian(n, mu, lambda)
 % \code{qinv.gaussian} gives the quantile function, and
   \code{rinv.gaussian} generates random deviates.
 
+
 }
 \references{
 Johnson, N. L. and Kotz, S. and Balakrishnan, N. (1994)
@@ -64,9 +65,11 @@ New York: Wiley.
 }
 \note{
   Currently \code{qinv.gaussian} is unavailable.
+
 }
 \seealso{
-  \code{\link{inv.gaussianff}}.
+  \code{\link{inv.gaussianff}},
+  \code{\link{wald}}.
 
 
 }

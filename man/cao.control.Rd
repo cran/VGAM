@@ -10,12 +10,12 @@
 
 }
 \usage{
-cao.control(Rank=1, all.knots = FALSE, criterion="deviance", Cinit=NULL,
+cao.control(Rank = 1, all.knots = FALSE, criterion = "deviance", Cinit=NULL,
             Crow1positive=TRUE, epsilon = 1.0e-05, Etamat.colmax = 10,
             GradientFunction=FALSE, iKvector = 0.1, iShape = 0.1,
             Norrr = ~ 1, SmallNo = 5.0e-13, Use.Init.Poisson.QO=TRUE,
             Bestof = if (length(Cinit)) 1 else 10, maxitl = 10,
-            method.init = 1, bf.epsilon = 1.0e-7, bf.maxit = 10,
+            imethod = 1, bf.epsilon = 1.0e-7, bf.maxit = 10,
             Maxit.optim = 250, optim.maxit = 20, SD.sitescores = 1.0,
             SD.Cinit = 0.02, trace = TRUE, df1.nl = 2.5, df2.nl = 2.5,
             spar1 = 0, spar2 = 0, ...)
@@ -149,7 +149,7 @@ cao.control(Rank=1, all.knots = FALSE, criterion="deviance", Cinit=NULL,
     Newton-Raphson/Fisher-scoring/local-scoring iterations allowed.
 
   }
-  \item{method.init}{
+  \item{imethod}{
   See \code{\link{qrrvglm.control}}.
 
   }
@@ -293,14 +293,14 @@ sort(ap1@misc$deviance.Bestof) # A history of all the iterations
 Coef(ap1)
 
 par(mfrow=c(2,3)) # All or most of the curves are unimodal; some are
-plot(ap1, lcol="blue") # quite symmetric. Hence a CQO model should be ok
+plot(ap1, lcol = "blue") # quite symmetric. Hence a CQO model should be ok
 
 par(mfrow=c(1,1), las=1)
 index = 1:ncol(ap1@y)  # lvplot is jagged because only 28 sites
-lvplot(ap1, lcol=index, pcol=index, y=TRUE)
+lvplot(ap1, lcol = index, pcol = index, y=TRUE)
 
 trplot(ap1, label=TRUE, col=index)
-abline(a=0, b=1, lty=2)
+abline(a = 0, b = 1, lty = 2)
 
 persp(ap1, label=TRUE, col=1:4)
 }

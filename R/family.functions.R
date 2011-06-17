@@ -177,10 +177,13 @@ rss.vgam <- function(z, wz, M)
 
     if (M == 1)
         return(sum(c(wz) * c(z^2)))
-    wz.z <- mux22(t(wz), z, M, as.mat = TRUE) # else mux2(wz, z)
+
+    wz.z <- mux22(t(wz), z, M = M, as.matrix = TRUE) # else mux2(wz, z)
     ans <- sum(wz.z * z)
     ans
 }
+
+
 
 wweighted.mean <- function(y, w = NULL, matrix.arg = TRUE)
 {

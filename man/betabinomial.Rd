@@ -8,8 +8,9 @@
 
 }
 \usage{
-betabinomial(lmu="logit", lrho="logit", emu=list(), erho=list(), irho=NULL,
-             method.init=1, shrinkage.init=0.95, nsimEIM=NULL, zero=2)
+betabinomial(lmu = "logit", lrho = "logit", emu = list(), erho = list(),
+             irho = NULL, imethod = 1, shrinkage.init = 0.95,
+             nsimEIM = NULL, zero = 2)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -29,11 +30,11 @@ betabinomial(lmu="logit", lrho="logit", emu=list(), erho=list(), irho=NULL,
   Optional initial value for the correlation parameter.
   If given, it must be in \eqn{(0,1)}, and is recyled to the necessary
   length. Assign this argument a value if a convergence failure occurs.
-  Having \code{irho=NULL} means an initial value is obtained internally,
+  Having \code{irho = NULL} means an initial value is obtained internally,
   though this can give unsatisfactory results.
 
   }
-  \item{method.init}{
+  \item{imethod}{
   An integer with value \code{1} or \code{2} or \ldots,
   which specifies the initialization method for \eqn{\mu}{mu}.
   If failure to converge occurs try the another value
@@ -46,13 +47,13 @@ betabinomial(lmu="logit", lrho="logit", emu=list(), erho=list(), irho=NULL,
   If assigned, the single value should be either \code{1} or \code{2}.
   The default is to have a single correlation parameter.
   To model both parameters as functions of the covariates assign
-  \code{zero=NULL}.
+  \code{zero = NULL}.
   See \code{\link{CommonVGAMffArguments}} for more information.
 
   }
   \item{shrinkage.init, nsimEIM}{ 
   See \code{\link{CommonVGAMffArguments}} for more information.
-  The argument \code{shrinkage.init} is used only if \code{method.init=2}.
+  The argument \code{shrinkage.init} is used only if \code{imethod = 2}.
   Using the argument \code{nsimEIM} may offer large advantages for large
   values of \eqn{N} and/or large data sets.
 
@@ -156,21 +157,21 @@ betabinomial(lmu="logit", lrho="logit", emu=list(), erho=list(), irho=NULL,
   is currently not implemented in the \pkg{VGAM} package as it has
   range-restrictions for the correlation parameter that are currently
   too difficult to handle in this package.
-  However, try \code{lrho="rhobit"}.
+  However, try \code{lrho = "rhobit"}.
 
 
 }
 \section{Warning }{
 
   If the estimated rho parameter is close to zero then it pays to try
-  \code{lrho="rhobit"}. One day this may become the default link function.
+  \code{lrho = "rhobit"}. One day this may become the default link function.
 
 
   This family function is prone to numerical difficulties
   due to the expected information matrices not being positive-definite
   or ill-conditioned over some regions of the parameter space.
   If problems occur try setting \code{irho} to some numerical value,
-  \code{nsimEIM=100}, say,
+  \code{nsimEIM = 100}, say,
   or else use \code{etastart} argument of
   \code{\link{vglm}}, etc.
 
@@ -189,11 +190,11 @@ betabinomial(lmu="logit", lrho="logit", emu=list(), erho=list(), irho=NULL,
 # Example 1
 bbdat = data.frame(N = 10, mu = 0.5, rho = 0.8)
 bbdat = transform(bbdat,
-                  y = rbetabin(n=100, size=N, prob=mu, rho=rho))
-fit = vglm(cbind(y,N-y) ~ 1, betabinomial, bbdat, trace=TRUE)
-coef(fit, matrix=TRUE)
+                  y = rbetabin(n=100, size = N, prob = mu, rho = rho))
+fit = vglm(cbind(y, N-y) ~ 1, betabinomial, bbdat, trace = TRUE)
+coef(fit, matrix = TRUE)
 Coef(fit)
-head(cbind(fit@y, weights(fit, type="prior")))
+head(cbind(fit@y, weights(fit, type = "prior")))
 
 
 # Example 2
@@ -211,20 +212,20 @@ lirat = transform(lirat, fgrp = factor(grp))
 summary(lirat)   # Only 5 litters in group 3
 fit2 = vglm(cbind(R, N-R) ~ fgrp + hb, betabinomial(zero = 2),
            data = lirat, trace = TRUE, subset = N > 1)
-coef(fit2, matrix=TRUE)
+coef(fit2, matrix = TRUE)
 \dontrun{ with(lirat, plot(hb[N>1], fit2@misc$rho,
-                 xlab="Hemoglobin", ylab="Estimated rho",
-                 pch=as.character(grp[N>1]), col=grp[N>1])) }
+                 xlab = "Hemoglobin", ylab = "Estimated rho",
+                 pch = as.character(grp[N>1]), col = grp[N>1])) }
 \dontrun{ # cf. Figure 3 of Moore and Tsiatis (1991)
-with(lirat, plot(hb, R/N, pch=as.character(grp), col=grp, las=1,
-                 xlab="Hemoglobin level", ylab="Proportion Dead",
-                 main="Fitted values (lines)"))
+with(lirat, plot(hb, R/N, pch = as.character(grp), col = grp, las = 1,
+                 xlab = "Hemoglobin level", ylab = "Proportion Dead",
+                 main = "Fitted values (lines)"))
 smalldf = with(lirat, lirat[N>1,])
 for(gp in 1:4) {
-    xx = with(smalldf, hb[grp==gp])
-    yy = with(smalldf, fitted(fit2)[grp==gp])
+    xx = with(smalldf, hb[grp == gp])
+    yy = with(smalldf, fitted(fit2)[grp == gp])
     ooo = order(xx)
-    lines(xx[ooo], yy[ooo], col=gp) } }
+    lines(xx[ooo], yy[ooo], col = gp) } }
 }
 \keyword{models}
 \keyword{regression}

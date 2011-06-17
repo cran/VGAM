@@ -42,6 +42,7 @@ Stacy, E. W. and Mihram, G. A. (1965)
 Parameter estimation for a generalized gamma distribution.
 \emph{Technometrics}, \bold{7}, 349--358.
 
+
 }
 \author{ T. W. Yee }
 \details{
@@ -52,11 +53,13 @@ Parameter estimation for a generalized gamma distribution.
   Apart from \code{n}, all the above arguments may be vectors and
   are recyled to the appropriate length if necessary.
 
+
 }
 % \note{
 % }
 \seealso{
   \code{\link{gengamma}}.
+
 
 }
 \examples{

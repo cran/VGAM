@@ -175,8 +175,8 @@ cardioid.control <- function(save.weight=TRUE, ...)
         drho.deta = dtheta.deta(rho, link= .lrho, earg= .erho)
         dl.dmu =  2 * rho * sin(y-mu) / (1 + 2 * rho * cos(y-mu))
         dl.drho = 2 * cos(y-mu) / (1 + 2 * rho * cos(y-mu))
-        w * cbind(dl.dmu * dmu.deta,
-                  dl.drho * drho.deta)
+        c(w) * cbind(dl.dmu * dmu.deta,
+                     dl.drho * drho.deta)
     }), list( .lmu=lmu, .lrho=lrho,
               .emu=emu, .erho=erho, .nsimEIM=nsimEIM ))),
     weight = eval(substitute(expression({
@@ -198,7 +198,7 @@ cardioid.control <- function(save.weight=TRUE, ...)
 
         dtheta.detas = cbind(dmu.deta, drho.deta)
         wz = wz * dtheta.detas[,index0$row] * dtheta.detas[,index0$col]
-        w * wz
+        c(w) * wz
     }), list( .lmu=lmu, .lrho=lrho,
               .emu=emu, .erho=erho, .nsimEIM=nsimEIM ))))
 }
@@ -211,13 +211,13 @@ cardioid.control <- function(save.weight=TRUE, ...)
                                else list(),
                      escale=list(),
                      ilocation=NULL, iscale=NULL,
-                     method.init=1, zero=NULL) {
+                     imethod=1, zero=NULL) {
     if (mode(llocation) != "character" && mode(llocation) != "name")
         llocation = as.character(substitute(llocation))
     if (mode(lscale) != "character" && mode(lscale) != "name")
         lscale = as.character(substitute(lscale))
-    if (!is.Numeric(method.init, allow=1, integ=TRUE, posit=TRUE) ||
-       method.init > 2) stop("argument 'method.init' must be 1 or 2")
+    if (!is.Numeric(imethod, allow=1, integ=TRUE, posit=TRUE) ||
+       imethod > 2) stop("argument 'imethod' must be 1 or 2")
     if (length(zero) && !is.Numeric(zero, integer=TRUE, posit=TRUE))
         stop("bad input for argument 'zero'")
     if (!is.list(escale)) escale = list()
@@ -239,7 +239,7 @@ cardioid.control <- function(save.weight=TRUE, ...)
         c(namesof("location", .llocation, earg= .elocation, tag=FALSE),
           namesof("scale", .lscale, earg=.escale, tag=FALSE))
         if (!length(etastart)) {
-            if ( .method.init == 1) {
+            if ( .imethod == 1) {
                 location.init = mean(y)
                 rat10 = sqrt((sum(w*cos(y )))^2 + sum(w*sin(y))^2) / sum(w)
                 scale.init = sqrt(1 - rat10)
@@ -255,7 +255,7 @@ cardioid.control <- function(save.weight=TRUE, ...)
                 theta2eta(scale.init, .lscale, earg= .escale))
         }
         y = y %% (2*pi) # Coerce after initial values have been computed
-    }), list( .method.init=method.init, .ilocation=ilocation,
+    }), list( .imethod=imethod, .ilocation=ilocation,
               .escale=escale, .iscale=iscale,
               .lscale=lscale, .llocation=llocation, .elocation=elocation ))),
     inverse=eval(substitute(function(eta, extra=NULL) {
@@ -286,8 +286,8 @@ cardioid.control <- function(save.weight=TRUE, ...)
         dlocation.deta = dtheta.deta(location, .llocation, earg= .elocation)
         dl.dscale = cos(y - location) - tmp6[,2] / tmp6[,1]
         dscale.deta = dtheta.deta(Scale, .lscale, earg= .escale)
-        w * cbind(dl.dlocation * dlocation.deta,
-                  dl.dscale * dscale.deta)
+        c(w) * cbind(dl.dlocation * dlocation.deta,
+                     dl.dscale    * dscale.deta)
     }), list( .escale=escale, .lscale=lscale,
               .llocation=llocation, .elocation=elocation ))),
     weight=eval(substitute(expression({
@@ -296,7 +296,7 @@ cardioid.control <- function(save.weight=TRUE, ...)
         wz = matrix(as.numeric(NA), nrow=n, ncol=2) # diagonal
         wz[,iam(1,1,M)] = d2l.location2 * dlocation.deta^2
         wz[,iam(2,2,M)] = d2l.dscale2 * dscale.deta^2
-        w * wz
+        c(w) * wz
     }), list( .escale=escale, .lscale=lscale,
               .llocation=llocation, .elocation=elocation ))))
 }

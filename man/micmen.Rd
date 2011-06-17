@@ -8,7 +8,7 @@
 }
 \usage{
 micmen(rpar = 0.001, divisor = 10, init1 = NULL, init2 = NULL,
-       method.init = 1, oim = TRUE,
+       imethod = 1, oim = TRUE,
        link1 = "identity", link2 = "identity",
        firstDeriv = c("nsimEIM", "rpar"),
        earg1 = list(), earg2 = list(), prob.x = c(0.15, 0.85),
@@ -55,7 +55,7 @@ micmen(rpar = 0.001, divisor = 10, init1 = NULL, init2 = NULL,
   The first is the default.
 
   }
-  \item{method.init, prob.x}{
+  \item{imethod, prob.x}{
   See \code{\link{CommonVGAMffArguments}} for more information.
 
   }

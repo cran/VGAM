@@ -8,43 +8,35 @@
 
 }
 \usage{
-zinegbinomial(lphi = "logit", lmunb = "loge", lk = "loge", ephi = list(),
-      emunb = list(), ek = list(), iphi = NULL, ik = NULL, zero = -3,
-      method.init = 1, shrinkage.init = 0.95, nsimEIM = 200)
+zinegbinomial(lphi = "logit", lmunb = "loge", lsize = "loge", ephi = list(),
+      emunb = list(), esize = list(), iphi = NULL, isize = NULL, zero = -3,
+      imethod = 1, shrinkage.init = 0.95, nsimEIM = 200)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{lphi, lmunb, lk}{ 
+  \item{lphi, lmunb, lsize}{ 
   Link functions for the parameters \eqn{\phi}{phi},
   the mean and \eqn{k}; see \code{\link{negbinomial}} for details,
   and \code{\link{Links}} for more choices.
 
   }
-  \item{ephi, emunb, ek}{
+  \item{ephi, emunb, esize}{
   List. Extra arguments for the respective links.
   See \code{earg} in \code{\link{Links}} for general information.
 
   }
 
-  \item{iphi, ik}{
+  \item{iphi, isize}{
   Optional initial values for \eqn{\phi}{phi} and \eqn{k}{k}.
   The default is to compute an initial value internally for both.
   If a vector then recycling is used.
 
   }
-  \item{method.init}{
+  \item{imethod}{
   An integer with value \code{1} or \code{2} or \code{3} which
   specifies the initialization method for the mean parameter.
   If failure to converge occurs try another value
   and/or else specify a value for \code{shrinkage.init}.
-
-  }
-  \item{shrinkage.init}{
-  How much shrinkage is used when initializing the mean.
-  The value must be between 0 and 1 inclusive, and 
-  a value of 0 means the individual response values are used,
-  and a value of 1 means the median or mean is used.
-  This argument is used in conjunction with \code{method.init}.
 
   }
   \item{zero}{ 
@@ -55,8 +47,8 @@ zinegbinomial(lphi = "logit", lmunb = "loge", lk = "loge", ephi = list(),
   See \code{\link{CommonVGAMffArguments}} for more information.
 
   }
-  \item{nsimEIM}{ 
-  See \code{\link{CommonVGAMffArguments}} for more information.
+  \item{shrinkage.init, nsimEIM}{ 
+  See \code{\link{CommonVGAMffArguments}} for information.
 
   }
 }
@@ -76,15 +68,18 @@ zinegbinomial(lphi = "logit", lmunb = "loge", lk = "loge", ephi = list(),
   for the formula of the probability density function and other details
   of the negative binomial distribution.
 
+
   Independent multivariate responses are handled.
-  If so then arguments \code{iphi} and \code{ik} may be vectors with
-  length equal to the number of responses.
+  If so then arguments \code{iphi} and \code{isize} may be vectors
+  with length equal to the number of responses.
+
 
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}},
   and \code{\link{vgam}}.
+
 
 }
 %\references{
@@ -117,10 +112,10 @@ zinegbinomial(lphi = "logit", lmunb = "loge", lk = "loge", ephi = list(),
   probability of zero.
   Half-stepping is not uncommon.
   If failure to converge occurs, try using combinations of
-  \code{method.init},
+  \code{imethod},
   \code{shrinkage.init},
   \code{iphi},
-  \code{ik}, and/or
+  \code{isize}, and/or
   \code{zero} if there are explanatory variables.
 
 } 
@@ -137,9 +132,9 @@ zinegbinomial(lphi = "logit", lmunb = "loge", lk = "loge", ephi = list(),
 nbdat <- data.frame(x2 = runif(nn <- 1000))
 nbdat <- transform(nbdat, phi  = logit(-0.5 + 1 * x2, inverse = TRUE),
                           munb = exp(3 + x2),
-                          k    = exp(0 + 2*x2))
-nbdat <- transform(nbdat, y1 = rzinegbin(nn, phi, mu = munb, size = k),
-                          y2 = rzinegbin(nn, phi, mu = munb, size = k))
+                          size = exp(0 + 2*x2))
+nbdat <- transform(nbdat, y1 = rzinegbin(nn, phi, mu = munb, size = size),
+                          y2 = rzinegbin(nn, phi, mu = munb, size = size))
 with(nbdat, table(y1)["0"] / sum(table(y1)))
 fit <- vglm(cbind(y1, y2) ~ x2, zinegbinomial(zero = NULL), nbdat)
 coef(fit, matrix = TRUE)
@@ -154,8 +149,8 @@ nbdat <- transform(nbdat, x3 = runif(nn))
 nbdat <- transform(nbdat, eta1 = 3 + 1 * x2 + 2 * x3)
 nbdat <- transform(nbdat, phi  = logit(-1.5 + 0.5 * eta1, inverse = TRUE),
                           munb = exp(eta1),
-                          k    = exp(4))
-nbdat <- transform(nbdat, y1 = rzinegbin(nn, phi, mu = munb, size = k))
+                          size = exp(4))
+nbdat <- transform(nbdat, y1 = rzinegbin(nn, phi, mu = munb, size = size))
 with(nbdat, table(y1)["0"] / sum(table(y1)))
 rrzinb <- rrvglm(y1 ~ x2 + x3, zinegbinomial(zero = NULL), nbdat,
                  Index.corner = 2, szero = 3, trace = TRUE)

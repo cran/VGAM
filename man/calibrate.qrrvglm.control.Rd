@@ -54,12 +54,14 @@ calibrate.qrrvglm.control(object, trace = FALSE, Method.optim = "BFGS",
   and \code{gridSize}. These arguments should be used inside their
   call to \code{\link{calibrate.qrrvglm}}, not this function
   directly.
+
   }
 \value{
   A list which with the following components.
   \item{trace }{Numeric (even though the input can be logical). }
   \item{gridSize }{Positive integer. }
   \item{varlvI }{Logical.}
+
 }
 \references{
 Yee, T. W. (2005)
@@ -77,10 +79,10 @@ On constrained and unconstrained quadratic ordination.
 \seealso{
   \code{\link{calibrate.qrrvglm}},
   \code{\link{Coef.qrrvglm}}.
+
 }
 \examples{
-\dontrun{
-hspider[,1:6] = scale(hspider[,1:6]) # Needed when ITol = TRUE
+\dontrun{ hspider[,1:6] = scale(hspider[,1:6]) # Needed when ITol = TRUE
 set.seed(123)
 p1 = cqo(cbind(Alopacce, Alopcune, Pardlugu, Pardnigr, 
                Pardpull, Trocterr, Zoraspin) ~
@@ -90,15 +92,15 @@ p1 = cqo(cbind(Alopacce, Alopcune, Pardlugu, Pardnigr,
 sort(p1@misc$deviance.Bestof) # A history of all the iterations
 
 siteNos = 1:2  # Calibrate these sites
-cp1 = calibrate(p1, new=data.frame(p1@y[siteNos,]), trace=TRUE)
+cp1 = calibrate(p1, new = data.frame(p1@y[siteNos,]), trace = TRUE)
 }
 
 \dontrun{
 # Graphically compare the actual site scores with their calibrated values
-persp(p1, main="Site scores: solid=actual, dashed=calibrated",
-      label=TRUE, col="blue", las=1)
-abline(v=lv(p1)[siteNos], lty=1, col=1:length(siteNos)) # actual site scores
-abline(v=cp1, lty=2, col=1:length(siteNos)) # calibrated values
+persp(p1, main = "Site scores: solid=actual, dashed=calibrated",
+      label = TRUE, col = "blue", las = 1)
+abline(v = lv(p1)[siteNos], lty = 1, col = 1:length(siteNos)) # actual site scores
+abline(v = cp1, lty = 2, col = 1:length(siteNos)) # calibrated values
 }
 }
 \keyword{models}

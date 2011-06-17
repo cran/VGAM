@@ -10,7 +10,7 @@
 \usage{
 koenker(percentile = 50, llocation = "identity", lscale = "loge",
         elocation = list(), escale = list(), ilocation = NULL,
-        iscale = NULL, method.init = 1, zero = 2)
+        iscale = NULL, imethod = 1, zero = 2)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -25,7 +25,7 @@ koenker(percentile = 50, llocation = "identity", lscale = "loge",
   and \code{\link{CommonVGAMffArguments}}.
 
   }
-  \item{ilocation, iscale, method.init, zero}{ 
+  \item{ilocation, iscale, imethod, zero}{ 
   See \code{\link{CommonVGAMffArguments}} for details.
 
   }

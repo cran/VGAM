@@ -8,7 +8,7 @@
 
 }
 \usage{
-plackett(link="loge", earg=list(), ioratio=NULL, method.init=1, nsimEIM=200)
+plackett(link="loge", earg=list(), ioratio=NULL, imethod=1, nsimEIM=200)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -28,7 +28,7 @@ plackett(link="loge", earg=list(), ioratio=NULL, method.init=1, nsimEIM=200)
   If a convergence failure occurs try assigning a value or a different value.
 
   }
-  \item{method.init}{
+  \item{imethod}{
   An integer with value \code{1} or \code{2} which
   specifies the initialization method for the parameter.
   If failure to converge occurs try another value

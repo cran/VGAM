@@ -243,9 +243,9 @@ plot(y2 ~ x2, data = mydata, pch = "+", col = 'blue', las = 1,
      main = paste("Var(Y) = mu + ", delta1, " * mu^", delta2, sep = "")) }
 rrnb2 <- rrvglm(y2 ~ x2 + x3, negbinomial(zero = NULL), mydata, trace = TRUE)
 
-a21.hat <- (Coef(rrnb2)@A)["log(k)", 1]
+a21.hat <- (Coef(rrnb2)@A)["log(size)", 1]
 beta11.hat <- Coef(rrnb2)@B1["(Intercept)", "log(mu)"]
-beta21.hat <- Coef(rrnb2)@B1["(Intercept)", "log(k)"]
+beta21.hat <- Coef(rrnb2)@B1["(Intercept)", "log(size)"]
 (delta1.hat <- exp(a21.hat * beta11.hat - beta21.hat))
 (delta2.hat <- 2 - a21.hat)
 # exp(a21.hat * predict(rrnb2)[1,1] - predict(rrnb2)[1,2]) # delta1.hat

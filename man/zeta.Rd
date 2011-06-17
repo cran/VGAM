@@ -26,16 +26,18 @@ zeta(x, deriv = 0)
 }
 \details{
   While the usual definition involves an infinite series, more efficient
-  methods have been devised to compute the value.  In particular,
-  this function uses Euler-Maclaurin summation.  Theoretically, the
+  methods have been devised to compute the value. In particular,
+  this function uses Euler-Maclaurin summation. Theoretically, the
   zeta function can be computed over the whole complex plane because of
   analytic continuation.
+
 
   The formula used here for analytic continuation is
   \deqn{\zeta(s) = 2^s \pi^{s-1} \sin(\pi s/2) \Gamma(1-s) \zeta(1-s).}{%
         zeta(s)  = 2^s * pi^(s-1) * sin(pi*s/2) * gamma(1-s) *  zeta(1-s).}
   This is actually one of several formulas, but this one was discovered
   by Riemann himself and is called the \emph{functional equation}.
+
 
 }
 
@@ -46,14 +48,17 @@ zeta(x, deriv = 0)
   \code{\link[base:Special]{gamma}} function does not handle complex
   arguments.
 
+
 }
 
 \value{
   A vector/matrix of computed values.
 
+
 %  The derivative is attached as an attribute zz.
 }
 \references{ 
+
 
 Riemann, B. (1859)
 Ueber die Anzahl der Primzahlen unter einer gegebenen Grosse.
@@ -79,10 +84,11 @@ New York: Dover Publications Inc.
 
 
 }
-\author{ T. W. Yee, with the help of G. J. Tee. }
+\author{ T. W. Yee, with the help of Garry J. Tee. }
 \note{ 
-  Estimation of the parameter of the zeta distribution can be achieved
-  with \code{\link{zetaff}}.
+  Estimation of the parameter of the zeta distribution can
+  be achieved with \code{\link{zetaff}}.
+
 
 }
 
@@ -91,38 +97,37 @@ New York: Dover Publications Inc.
   \code{\link{lerch}},
   \code{\link[base:Special]{gamma}}.
 
+
 }
 \examples{
 zeta(2:10)
 
 \dontrun{
-curve(zeta, -13, 0.8, xlim=c(-12,10), ylim=c(-1,4), col="red")
-curve(zeta, 1.2,  12, add = TRUE, col="red")
-abline(v=0, h=c(0,1), lty="dashed")
+curve(zeta, -13, 0.8, xlim = c(-12, 10), ylim = c(-1, 4), col = "orange")
+curve(zeta, 1.2,  12, add = TRUE, col = "orange")
+abline(v = 0, h = c(0, 1), lty = "dashed")
 
-# Close up plot
-curve(zeta, -14, -0.4, col="red")
-abline(v=0, h=0, lty="dashed")
+curve(zeta, -14, -0.4, col = "orange")   # Close up plot
+abline(v = 0, h = 0, lty = "dashed")
 
-# Plot of the first derivative
-x = seq(0.04, 0.8, len=100)
-plot(x, zeta(x, deriv=1), type="l", las=1, col="blue",
-     xlim=c(0.04,3), ylim=c(-6,0), main="zeta'(x)")
-x = seq(1.2, 3, len=100)
-lines(x, zeta(x, deriv=1), col="blue")
-abline(v=0, h=0, lty="dashed") }
+x = seq(0.04, 0.8, len = 100)   # Plot of the first derivative
+plot(x, zeta(x, deriv = 1), type = "l", las = 1, col = "blue",
+     xlim = c(0.04, 3), ylim = c(-6, 0), main = "zeta'(x)")
+x = seq(1.2, 3, len = 100)
+lines(x, zeta(x, deriv = 1), col = "blue")
+abline(v = 0, h = 0, lty = "dashed") }
 
 zeta(2) - pi^2 / 6      # Should be zero
 zeta(4) - pi^4 / 90     # Should be zero
 zeta(6) - pi^6 / 945    # Should be 0
 zeta(8) - pi^8 / 9450   # Should be 0
-# zeta(0, deriv=1) + 0.5 * log(2*pi) # Should be 0
+# zeta(0, deriv = 1) + 0.5 * log(2*pi) # Should be 0
 }
 \keyword{math}
 
-% curve(zeta, -13, 0.8, xlim=c(-12,10), ylim=c(-1,4), col="red")
-% curve(zeta, 1.2,  12, add = TRUE, col="red")
-% abline(v=0, h=c(0,1), lty="dashed")
+% curve(zeta, -13, 0.8, xlim = c(-12, 10), ylim = c(-1, 4), col = "orange")
+% curve(zeta, 1.2,  12, add = TRUE, col = "orange")
+% abline(v = 0, h = c(0,1), lty = "dashed")
 
 
 

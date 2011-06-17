@@ -7,7 +7,7 @@
 
 }
 \usage{
-zipf(N=NULL, link="loge", earg=list(), init.s=NULL)
+zipf(N = NULL, link = "loge", earg = list(), init.s = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -15,7 +15,7 @@ zipf(N=NULL, link="loge", earg=list(), init.s=NULL)
   Number of elements, an integer satisfying \code{1 < N < Inf}.
   The default is to use the maximum value of the response.
   If given, \code{N} must be no less that the largest response value.
-  If \code{N=Inf} and \eqn{s>1} then this is the zeta distribution 
+  If \code{N = Inf} and \eqn{s>1} then this is the zeta distribution 
   (use \code{\link{zetaff}} instead).
 
   }
@@ -83,13 +83,14 @@ pp.526-- of Chapter 11 of
 
 }
 \examples{
-zdat = data.frame(y = 1:5, w = c(63, 14, 5, 1, 2))
-fit = vglm(y ~ 1, zipf, zdat, trace=TRUE, weight=w, cri="c")
-fit = vglm(y ~ 1, zipf(link=identity, init=3.4), zdat, tra=TRUE, weight=w)
+zdata = data.frame(y = 1:5, w = c(63, 14, 5, 1, 2))
+fit = vglm(y ~ 1, zipf, zdata, trace = TRUE, weight = w, crit = "c")
+fit = vglm(y ~ 1, zipf(link = identity, init = 3.4), zdata,
+           trace = TRUE, weight = w)
 fit@misc$N
 (shat = Coef(fit))
-with(zdat, weighted.mean(y, w))
-fitted(fit, mat=FALSE)
+with(zdata, weighted.mean(y, w))
+fitted(fit, matrix = FALSE)
 }
 \keyword{models}
 \keyword{regression}

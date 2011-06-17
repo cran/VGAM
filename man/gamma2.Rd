@@ -9,7 +9,7 @@
 }
 \usage{
 gamma2(lmu = "loge", lshape = "loge", emu = list(), eshape = list(),
-       method.init = 1, deviance.arg = FALSE, ishape = NULL, zero = -2)
+       imethod = 1, deviance.arg = FALSE, ishape = NULL, zero = -2)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -32,7 +32,7 @@ gamma2(lmu = "loge", lshape = "loge", emu = list(), eshape = list(),
   \code{iShape} argument of \code{\link{qrrvglm.control}} instead.
 
   }
-  \item{method.init}{
+  \item{imethod}{
   An integer with value \code{1} or \code{2} which
   specifies the initialization method for the \eqn{\mu}{mu} parameter.
   If failure to converge occurs

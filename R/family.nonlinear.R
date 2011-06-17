@@ -83,7 +83,7 @@ micmen.control <- function(save.weight = TRUE, ...)
 
 micmen <- function(rpar = 0.001, divisor = 10,
                    init1 = NULL, init2 = NULL,
-                   method.init = 1,
+                   imethod = 1,
                    oim = TRUE,
                    link1 = "identity", link2 = "identity",
                    firstDeriv = c("nsimEIM", "rpar"),
@@ -100,10 +100,10 @@ micmen <- function(rpar = 0.001, divisor = 10,
 
   firstDeriv <- match.arg(firstDeriv, c("nsimEIM", "rpar"))[1]
 
-  if (!is.Numeric(method.init, allow = 1, integ = TRUE, posit = TRUE))
-    stop("argument 'method.init' must be integer")
-  if (method.init > 3)
-    stop("argument 'method.init' must be 1, 2, or 3")
+  if (!is.Numeric(imethod, allow = 1, integ = TRUE, posit = TRUE))
+    stop("argument 'imethod' must be integer")
+  if (imethod > 3)
+    stop("argument 'imethod' must be 1, 2, or 3")
   if (!is.Numeric(prob.x, allow = 2))
     stop("argument 'prob.x' must be numeric and of length two")
   if (!is.logical(oim) || length(oim) != 1)
@@ -111,9 +111,9 @@ micmen <- function(rpar = 0.001, divisor = 10,
 
     stopifnot(nsimEIM > 10, length(nsimEIM)==1, nsimEIM==round(nsimEIM))
 
-  if (!is.Numeric(method.init, allow = 1, integ = TRUE, posit = TRUE) ||
-     method.init > 3)
-      stop("'method.init' must be 1 or 2 or 3")
+  if (!is.Numeric(imethod, allow = 1, integ = TRUE, posit = TRUE) ||
+     imethod > 3)
+      stop("'imethod' must be 1 or 2 or 3")
 
 
   estimated.dispersion <- (dispersion == 0)
@@ -163,14 +163,14 @@ micmen <- function(rpar = 0.001, divisor = 10,
         stop("cannot handle 'mustart' or 'coefstart'")
 
       if (!length(etastart)) {
-        if ( .method.init == 3 ) {
+        if ( .imethod == 3 ) {
           index0 <- (1:n)[Xm2 <= quantile(Xm2, prob = .prob.x[2] )]
           init1 <- median(y[index0])
           init2 <- median(init1 * Xm2 / y - Xm2)
         }
-        if ( .method.init == 1 || .method.init == 2) {
+        if ( .imethod == 1 || .imethod == 2) {
           mysubset <- subset_lohi(Xm2, y, prob.x = .prob.x,
-                    type = ifelse( .method.init == 1, "median", "wtmean"),
+                    type = ifelse( .imethod == 1, "median", "wtmean"),
                     wtvec = w)
 
           mat.x <- with(mysubset, cbind(c(x1bar, x2bar), -c(y1bar, y2bar)))
@@ -196,7 +196,7 @@ micmen <- function(rpar = 0.001, divisor = 10,
 
   }), list( .init1 = init1, .link1 = link1, .earg1 = earg1,
             .init2 = init2, .link2 = link2, .earg2 = earg2,
-            .method.init = method.init,
+            .imethod = imethod,
             .prob.x = prob.x ))),
   inverse = eval(substitute(function(eta, extra = NULL) {
       theta1 <- eta2theta(eta[,1], .link1, earg = .earg1)
@@ -219,7 +219,7 @@ micmen <- function(rpar = 0.001, divisor = 10,
     misc$dispersion <- dpar
     misc$default.dispersion <- 0
     misc$estimated.dispersion <- .estimated.dispersion
-    misc$method.init <- .method.init
+    misc$imethod <- .imethod
     misc$nsimEIM <- .nsimEIM
     misc$firstDeriv <- .firstDeriv
     misc$oim <- .oim
@@ -228,7 +228,7 @@ micmen <- function(rpar = 0.001, divisor = 10,
   }), list( .link1 = link1, .earg1 = earg1,
             .link2 = link2, .earg2 = earg2,
             .dispersion = dispersion,
-            .method.init = method.init,
+            .imethod = imethod,
             .firstDeriv = firstDeriv,
             .oim = oim, .rpar = rpar,
             .nsimEIM = nsimEIM,
@@ -325,7 +325,7 @@ micmen <- function(rpar = 0.001, divisor = 10,
 
     }
 
-    w * wz
+    c(w) * wz
   }), list( .link1 = link1, .link2 = link2,
             .firstDeriv = firstDeriv,
             .nsimEIM = nsimEIM, .oim = oim ))))
@@ -350,7 +350,7 @@ skira.control <- function(save.weight = TRUE, ...)
            link1 = "identity", link2 = "identity",
            earg1 = list(),
            earg2 = list(),
-           method.init = 1,
+           imethod = 1,
            oim = TRUE,
            prob.x = c(0.15, 0.85),
            smallno = 1.0e-3,
@@ -370,10 +370,10 @@ skira.control <- function(save.weight = TRUE, ...)
   if (mode(link2) != "character" && mode(link2) != "name")
     link2 <- as.character(substitute(link2))
 
-  if (!is.Numeric(method.init, allow = 1, integ = TRUE, posit = TRUE))
-    stop("argument 'method.init' must be integer")
-  if (method.init > 5)
-    stop("argument 'method.init' must be 1, 2, 3, 4 or 5")
+  if (!is.Numeric(imethod, allow = 1, integ = TRUE, posit = TRUE))
+    stop("argument 'imethod' must be integer")
+  if (imethod > 5)
+    stop("argument 'imethod' must be 1, 2, 3, 4 or 5")
   if (!is.list(earg1))
     earg1 = list()
   if (!is.list(earg2))
@@ -422,10 +422,10 @@ skira.control <- function(save.weight = TRUE, ...)
 
         min.q <- quantile(Xm2, probs = .prob.x[1] )
         max.q <- quantile(Xm2, probs = .prob.x[2] )
-      if ( .method.init == 3 || .method.init == 2 ) {
+      if ( .imethod == 3 || .imethod == 2 ) {
 
         mysubset <- subset_lohi(Xm2, y, prob.x = .prob.x,
-                  type = ifelse( .method.init == 2, "median", "wtmean"),
+                  type = ifelse( .imethod == 2, "median", "wtmean"),
                   wtvec = w)
 
         mat.x <- with(mysubset, cbind(c(1, 1),
@@ -433,7 +433,7 @@ skira.control <- function(save.weight = TRUE, ...)
         theta.temp <- solve(mat.x, c(1, 1))
         init1 <- theta.temp[1]
         init2 <- theta.temp[2]
-    } else if ( .method.init == 1 ) {
+    } else if ( .imethod == 1 ) {
         yy <- as.vector(  y[(Xm2 > min.q) & (Xm2 < max.q)])
         xx <- as.vector(Xm2[(Xm2 > min.q) & (Xm2 < max.q)])
         ww <- as.vector(  w[(Xm2 > min.q) & (Xm2 < max.q)])
@@ -447,9 +447,9 @@ skira.control <- function(save.weight = TRUE, ...)
         mylm.wfit <- lm.wfit(x = cbind(1, xx), y = 1 / yy, w = wt.temp)
         init1 <- mylm.wfit$coef[1]
         init2 <- mylm.wfit$coef[2]
-    } else if (( .method.init == 4) || ( .method.init == 5)) {
+    } else if (( .imethod == 4) || ( .imethod == 5)) {
 
-      tempfit <- if ( .method.init == 4 ) {
+      tempfit <- if ( .imethod == 4 ) {
         fitted(loess(y ~ Xm2))
       } else {
         fitted(smooth.spline(Xm2, y, w = w, df = 2.0))
@@ -465,7 +465,7 @@ skira.control <- function(save.weight = TRUE, ...)
       init1 <- theta.temp[1]
       init2 <- theta.temp[2]
     } else {
-      stop("argument 'method.init' unmatched")
+      stop("argument 'imethod' unmatched")
     }
 
     mu <- 1 / (init1 + init2 * Xm2)
@@ -474,7 +474,7 @@ skira.control <- function(save.weight = TRUE, ...)
 
  matplot(Xm2, cbind(y, mu), col = c("blue", "green"),
          main = "Initial values in green")
- if ( .method.init == 1 ) {
+ if ( .imethod == 1 ) {
  points(Xm2, 1 / (init1 + init2 * Xm2), col = "green")
  } else {
  with(mysubset,
@@ -494,7 +494,7 @@ skira.control <- function(save.weight = TRUE, ...)
             .init2 = init2, .link2 = link2, .earg2 = earg2,
             .smallno = smallno, .prob.x = prob.x,
             .nsimEIM = nsimEIM,
-            .method.init = method.init ))),
+            .imethod = imethod ))),
   inverse = eval(substitute(function(eta, extra = NULL) {
     theta1 <- eta2theta(eta[, 1], .link1, earg = .earg1)
     theta2 <- eta2theta(eta[, 2], .link2, earg = .earg2)
@@ -515,14 +515,14 @@ skira.control <- function(save.weight = TRUE, ...)
     misc$dispersion <- dpar
     misc$default.dispersion <- 0
     misc$estimated.dispersion <- .estimated.dispersion
-    misc$method.init <- .method.init
+    misc$imethod <- .imethod
     misc$nsimEIM <- .nsimEIM
     misc$firstDeriv <- .firstDeriv
     misc$oim <- .oim
   }), list( .link1 = link1, .earg1 = earg1,
             .link2 = link2, .earg2 = earg2,
             .dispersion = dispersion, .rpar = rpar,
-            .method.init = method.init, .nsimEIM = nsimEIM,
+            .imethod = imethod, .nsimEIM = nsimEIM,
             .firstDeriv = firstDeriv, .oim = oim,
             .estimated.dispersion = estimated.dispersion ))),
   summary.dispersion = FALSE,
@@ -603,7 +603,7 @@ skira.control <- function(save.weight = TRUE, ...)
     }
 
 
-      w * wz
+      c(w) * wz
   }), list( .link1 = link1, .link2 = link2,
             .firstDeriv = firstDeriv,
             .nsimEIM = nsimEIM, .oim = oim ))))
