@@ -26,13 +26,16 @@ ralap(n, location = 0, scale = 1, tau = 0.5, kappa = sqrt(tau/(1-tau)))
   \item{n}{
   number of observations.
   If \code{length(n) > 1} then the length is taken to be the number required.
+
   }
   \item{location}{
     the location parameter \eqn{\xi}{xi}.
+
   }
   \item{scale}{
   the scale parameter \eqn{\sigma}{sigma}.
   Must consist of positive values.
+
   }
   \item{tau}{
   the quantile parameter \eqn{\tau}{tau}.
@@ -44,9 +47,11 @@ ralap(n, location = 0, scale = 1, tau = 0.5, kappa = sqrt(tau/(1-tau)))
   \item{kappa}{
   the asymmetry parameter \eqn{\kappa}{kappa}.
   Must consist of positive values.
+
   }
   \item{log}{
   if \code{TRUE}, probabilities \code{p} are given as \code{log(p)}.
+
   }
 
 }
@@ -57,19 +62,24 @@ ralap(n, location = 0, scale = 1, tau = 0.5, kappa = sqrt(tau/(1-tau)))
   for estimating the three parameters by maximum likelihood estimation,
   for formulae and details.
 
+
 }
 \value{
   \code{dalap} gives the density,
   \code{palap} gives the distribution function,
   \code{qalap} gives the quantile function, and
   \code{ralap} generates random deviates.
+
+
 }
 \references{
+
 Kotz, S., Kozubowski, T. J. and Podgorski, K. (2001)
 \emph{The Laplace distribution and generalizations:
 a revisit with applications to communications,
 economics, engineering, and finance},
 Boston: Birkhauser.
+
 
 }
 \author{ T. W. Yee }
@@ -81,6 +91,8 @@ Boston: Birkhauser.
 \seealso{
   \code{\link{alaplace3}}.
 % \code{\link{dloglap}}.
+
+
 
 }
 \examples{
@@ -96,8 +108,10 @@ lines(qalap(seq(0.05, 0.95, by = 0.05), loc, sigma, kappa = kappa),
             loc, sigma, kappa = kappa), col = "purple", lty = 3, type = "h")
 lines(x, palap(x, loc, sigma, kappa = kappa), type = "l", col = "red")
 abline(h = 0, lty = 2) }
-palap(qalap(seq(0.05, 0.95, by = 0.05), loc, sigma, kappa = kappa),
-          loc, sigma, kappa = kappa)
+
+pp = seq(0.05, 0.95, by = 0.05)  # Test two functions
+max(abs(palap(qalap(pp, loc, sigma, kappa = kappa),
+              loc, sigma, kappa = kappa) - pp))  # Should be 0
 }
 \keyword{distribution}
 

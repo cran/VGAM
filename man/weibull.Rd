@@ -180,10 +180,10 @@ Weibull and GE distributions,
 }
 \examples{
 # Complete data
-wdata = data.frame(x = runif(nn <- 1000))
-wdata = transform(wdata, y = rweibull(nn, shape = exp(1+x), scale = exp(-2)))
-fit = vglm(y ~ x, weibull, wdata, trace = TRUE)
-coef(fit, mat = TRUE)
+wdata = data.frame(x2 = runif(nn <- 1000))
+wdata = transform(wdata, y = rweibull(nn, shape = exp(1 + x2), scale = exp(-2)))
+fit = vglm(y ~ x2, weibull, wdata, trace = TRUE)
+coef(fit, matrix = TRUE)
 vcov(fit)
 summary(fit)
 }

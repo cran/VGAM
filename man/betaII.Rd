@@ -74,6 +74,7 @@ Hoboken, NJ: Wiley-Interscience.
     the initial value arguments, especially those whose default value
     is not \code{NULL}.
 
+
 }
 
 \seealso{
@@ -86,6 +87,7 @@ Hoboken, NJ: Wiley-Interscience.
     \code{\link{lomax}},
     \code{\link{paralogistic}},
     \code{\link{invparalogistic}}.
+
 }
 
 \examples{

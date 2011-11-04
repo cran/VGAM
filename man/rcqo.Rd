@@ -368,7 +368,7 @@ lvplot(fit, lcol=1:S, y = TRUE, pcol=1:S)  # The same plot as above
 ccoef(fit)  # The fitted model
 attr(mydata, "ccoefficients") # The 'truth'
 
-c(sd(attr(mydata, "lv")), sd(lv(fit))) # Both values should be approx equal
+c(apply(attr(mydata, "lv"), 2, sd), apply(lv(fit), 2, sd)) # Both values should be approx equal
 
 
 # Example 2: negative binomial data fitted using a Poisson model:

@@ -9,14 +9,15 @@
 
 }
 \usage{
-freund61(la = "loge", lap = "loge", lb = "loge", lbp = "loge",
+freund61(la = "loge",  lap = "loge",  lb = "loge", lbp = "loge",
+         ea  = list(), eap = list(), eb  = list(), ebp = list(),
          ia = NULL, iap = NULL, ib = NULL, ibp = NULL,
          independent = FALSE, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{la,lap,lb,lbp}{
-  Link function applied to the (positive)
+  \item{la,lap,lb,lbp,ea,eap,eb,ebp}{
+  Link functions and extra arguments applied to the (positive)
   parameters \eqn{\alpha}{alpha}, \eqn{\alpha'}{alpha'},
   \eqn{\beta}{beta} and \eqn{\beta'}{beta'}, respectively
   (the ``\code{p}'' stands for ``prime'').
@@ -172,10 +173,9 @@ A bivariate extension of the exponential distribution.
 
 }
 \examples{
-y1 = rexp(n <- 200, rate = 4)
-y2 = rexp(n, rate = 8)
-ymat = cbind(y1,y2)
-fit =  vglm(ymat ~ 1, fam = freund61, trace = TRUE)
+fdata = data.frame(y1 = rexp(nn <- 200, rate = 4))
+fdata = transform(fdata, y2 = rexp(nn, rate = 8))
+fit =  vglm(cbind(y1, y2) ~ 1, fam = freund61, fdata, trace = TRUE)
 coef(fit, matrix = TRUE)
 Coef(fit)
 vcov(fit)
@@ -183,10 +183,12 @@ head(fitted(fit))
 summary(fit)
 
 # y1 and y2 are independent, so fit an independence model
-fit2 = vglm(ymat ~ 1, fam = freund61(indep = TRUE), trace = TRUE)
+fit2 = vglm(cbind(y1, y2) ~ 1, fam = freund61(indep = TRUE),
+            fdata, trace = TRUE)
 coef(fit2, matrix = TRUE)
 constraints(fit2)
-pchisq(2*(logLik(fit)-logLik(fit2)), df = 2, lower.tail = FALSE) # p-value
+pchisq(2 * (logLik(fit)-logLik(fit2)),    # p-value
+       df = df.residual(fit2) - df.residual(fit), lower.tail = FALSE)
 }
 \keyword{models}
 \keyword{regression}

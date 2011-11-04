@@ -10,7 +10,7 @@
 
 }
 \usage{
-dplack(x1, x2, oratio, log=FALSE)
+dplack(x1, x2, oratio, log = FALSE)
 pplack(q1, q2, oratio)
 rplack(n, oratio)
 }
@@ -29,13 +29,17 @@ rplack(n, oratio)
   \code{dplack} gives the density,
   \code{pplack} gives the distribution function, and
   \code{rplack} generates random deviates (a two-column matrix).
+
+
 }
 \references{
+
 
 Mardia, K. V. (1967)
 Some contributions to contingency-type distributions.
 \emph{Biometrika},
 \bold{54}, 235--249.
+
 
 }
 \author{ T. W. Yee }
@@ -45,6 +49,7 @@ Some contributions to contingency-type distributions.
   parameter by maximum likelihood estimation, for the formula of the
   cumulative distribution function and other details.
 
+
 }
 %\note{
 %}
@@ -52,19 +57,19 @@ Some contributions to contingency-type distributions.
   \code{\link{plackett}},
   \code{\link{frank}}.
 
+
 }
 \examples{
-\dontrun{
-N = 101; oratio = exp(1)
-x = seq(0.0, 1.0, len=N)
+\dontrun{ N = 101; oratio = exp(1)
+x = seq(0.0, 1.0, len = N)
 ox = expand.grid(x, x)
-z = dplack(ox[,1], ox[,2], oratio=oratio)
-contour(x, x, matrix(z, N, N), col="blue")
-z = pplack(ox[,1], ox[,2], oratio=oratio)
-contour(x, x, matrix(z, N, N), col="blue")
+z = dplack(ox[,1], ox[,2], oratio = oratio)
+contour(x, x, matrix(z, N, N), col = "blue")
+z = pplack(ox[,1], ox[,2], oratio = oratio)
+contour(x, x, matrix(z, N, N), col = "blue")
 
-plot(rr <- rplack(n=3000, oratio=oratio))
-par(mfrow=c(1,2))
+plot(rr <- rplack(n = 3000, oratio = oratio))
+par(mfrow = c(1,2))
 hist(rr[,1]) # Should be uniform
 hist(rr[,2]) # Should be uniform
 }

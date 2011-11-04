@@ -70,7 +70,7 @@
              .emu = emu, .esd = esd,
              .imu = imu, .isd = isd,
              .r1 = r1, .r2 = r2 ))),
-  inverse = function(eta, extra = NULL) eta[,1], 
+  linkinv = function(eta, extra = NULL) eta[,1], 
   last = eval(substitute(expression({
     misc$link =    c(mu = .lmu , sd = .lsd )
     misc$earg = list(mu = .emu , sd = .esd )
@@ -80,7 +80,7 @@
   }) , list( .lmu = lmu, .lsd = lsd,
              .emu = emu, .esd = esd,
              .r1 = r1, .r2 = r2 ))),
-  loglikelihood=eval(substitute(
+  loglikelihood = eval(substitute(
     function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
     sd = eta2theta(eta[, 2], .lsd, earg = .esd )
     if (residuals) stop("loglikelihood residuals not ",
@@ -218,25 +218,27 @@ rbisa = function(n, shape, scale=1) {
         lshape = as.character(substitute(lshape))
     if (mode(lscale) != "character" && mode(lscale) != "name")
         lscale = as.character(substitute(lscale))
+
     if (length(ishape) && !is.Numeric(ishape, posit = TRUE))
         stop("bad input for argument 'ishape'")
     if (!is.Numeric(iscale, posit = TRUE))
         stop("bad input for argument 'iscale'")
     if (!is.Numeric(imethod, allow = 1, integ = TRUE, posit = TRUE) ||
        imethod > 3)
-        stop("imethod must be 1 or 2 or 3")
+        stop("argument 'imethod' must be 1 or 2 or 3")
+
     if (!is.list(eshape)) eshape = list()
     if (!is.list(escale)) escale = list()
 
     new("vglmff",
-    blurb=c("Birnbaum-Saunders distribution\n\n",
-            "Links:    ",
-            namesof("shape", lshape, earg = eshape, tag = TRUE), "; ",
-            namesof("scale", lscale, earg = escale, tag = TRUE)),
-    constraints=eval(substitute(expression({
+    blurb = c("Birnbaum-Saunders distribution\n\n",
+              "Links:    ",
+              namesof("shape", lshape, earg = eshape, tag = TRUE), "; ",
+              namesof("scale", lscale, earg = escale, tag = TRUE)),
+    constraints = eval(substitute(expression({
         constraints = cm.zero.vgam(constraints, x, .zero, M)
     }) , list( .zero = zero))),
-    initialize=eval(substitute(expression({
+    initialize = eval(substitute(expression({
         if (ncol(y <- cbind(y)) != 1)
             stop("the response must be a vector or a one-column matrix")
         predictors.names =
@@ -260,22 +262,22 @@ rbisa = function(n, shape, scale=1) {
                              theta2eta(scale.init, .lscale, earg = .escale))
         }
     }) , list( .lshape = lshape, .lscale = lscale,
-               .ishape=ishape, .iscale=iscale,
+               .ishape = ishape, .iscale = iscale,
                .eshape = eshape, .escale = escale,
                .imethod=imethod ))),
-    inverse=eval(substitute(function(eta, extra = NULL) {
+    linkinv = eval(substitute(function(eta, extra = NULL) {
         sh = eta2theta(eta[,1], .lshape, earg = .eshape)
         sc = eta2theta(eta[,2], .lscale, earg = .escale)
         sc * (1 + sh^2 / 2)
     }, list( .lshape = lshape, .lscale = lscale,
              .eshape = eshape, .escale = escale ))),
-    last=eval(substitute(expression({
+    last = eval(substitute(expression({
         misc$link = c(shape= .lshape, scale= .lscale)
         misc$earg = list(shape= .eshape, scale= .escale)
         misc$expected = TRUE
     }) , list( .lshape = lshape, .lscale = lscale,
                .eshape = eshape, .escale = escale ))),
-    loglikelihood=eval(substitute(
+    loglikelihood = eval(substitute(
         function(mu,y,w,residuals= FALSE,eta, extra = NULL) {
         sh = eta2theta(eta[,1], .lshape, earg = .eshape)
         sc = eta2theta(eta[,2], .lscale, earg = .escale)
@@ -286,7 +288,7 @@ rbisa = function(n, shape, scale=1) {
     } , list( .lshape = lshape, .lscale = lscale,
               .eshape = eshape, .escale = escale ))),
     vfamily=c("bisa"),
-    deriv=eval(substitute(expression({
+    deriv = eval(substitute(expression({
         sh = eta2theta(eta[,1], .lshape, earg = .eshape)
         sc = eta2theta(eta[,2], .lscale, earg = .escale)
         dl.dsh = ((y/sc - 2 + sc/y) / sh^2 - 1) / sh 
@@ -298,7 +300,7 @@ rbisa = function(n, shape, scale=1) {
                      dl.dsc * dsc.deta)
     }) , list( .lshape = lshape, .lscale = lscale,
                .eshape = eshape, .escale = escale ))),
-    weight=eval(substitute(expression({
+    weight = eval(substitute(expression({
         wz = matrix(as.numeric(NA), n, M)  # Diagonal!!
         wz[,iam(1,1,M)] = 2 * dsh.deta^2 / sh^2
         hfunction = function(alpha)

@@ -7,8 +7,8 @@
   paralogistic distribution.
 }
 \usage{
-paralogistic(link.a = "loge", link.scale = "loge", earg.a=list(),
-             earg.scale=list(), init.a = 1, init.scale = NULL, zero = NULL)
+paralogistic(link.a = "loge", link.scale = "loge", earg.a = list(),
+             earg.scale = list(), init.a = 1, init.scale = NULL, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -62,12 +62,14 @@ provided \eqn{a > 1}.
   The object is used by modelling functions such as \code{\link{vglm}},
   and \code{\link{vgam}}.
 
+
 }
 \references{
+
 Kleiber, C. and Kotz, S. (2003)
-\emph{Statistical Size Distributions in Economics and
-             Actuarial Sciences},
+\emph{Statistical Size Distributions in Economics and Actuarial Sciences},
 Hoboken, NJ: Wiley-Interscience.
+
 
 }
 
@@ -76,6 +78,7 @@ Hoboken, NJ: Wiley-Interscience.
 If the self-starting initial values fail, try experimenting
 with the initial value arguments, especially those whose
 default value is not \code{NULL}.
+
 
 }
 
@@ -92,11 +95,11 @@ default value is not \code{NULL}.
 }
 
 \examples{
-pdat = data.frame(y = rparalogistic(n=3000, 4, 6))
-fit = vglm(y ~ 1, paralogistic, pdat, trace=TRUE)
-fit = vglm(y ~ 1, paralogistic(init.a=2.3, init.sc=5),
-           pdat, trace=TRUE, crit="c")
-coef(fit, mat=TRUE)
+pdat = data.frame(y = rparalogistic(n = 3000, 4, 6))
+fit = vglm(y ~ 1, paralogistic, pdat, trace = TRUE)
+fit = vglm(y ~ 1, paralogistic(init.a = 2.3, init.sc = 5),
+           pdat, trace = TRUE, crit = "c")
+coef(fit, matrix = TRUE)
 Coef(fit)
 summary(fit)
 }

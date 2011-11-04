@@ -121,7 +121,7 @@ Deviance.categorical.data.vgam <-
 
 
 dmultinomial = function(x, size = NULL, prob, log = FALSE,
-                        dochecking=TRUE, smallno = 1.0e-7) {
+                        dochecking = TRUE, smallno = 1.0e-7) {
     if (!is.logical(log.arg <- log))
         stop("bad input for argument 'log'")
     rm(log)
@@ -185,16 +185,16 @@ dmultinomial = function(x, size = NULL, prob, log = FALSE,
         eval(process.categorical.data.vgam)
         M = ncol(y) - 1 
         mynames = if ( .reverse)
-                 paste("P[Y=", 2:(M+1),"|Y<=", 2:(M+1),"]", sep="") else
-                 paste("P[Y=", 1:M,    "|Y>=", 1:M,    "]", sep="")
+                 paste("P[Y=", 2:(M+1),"|Y<=", 2:(M+1),"]", sep = "") else
+                 paste("P[Y=", 1:M,    "|Y>=", 1:M,    "]", sep = "")
         predictors.names = namesof(mynames, .link, short = TRUE, earg = .earg)
-        y.names = paste("mu", 1:(M+1), sep="")
+        y.names = paste("mu", 1:(M+1), sep = "")
         extra$mymat = if ( .reverse ) tapplymat1(y, "cumsum") else
                       tapplymat1(y[,ncol(y):1], "cumsum")[,ncol(y):1]
         if (length(dimnames(y)))
             extra$dimnamesy2 = dimnames(y)[[2]]
     }), list( .earg = earg, .link = link, .reverse = reverse ))),
-    inverse = eval(substitute( function(eta, extra = NULL) {
+    linkinv = eval(substitute( function(eta, extra = NULL) {
         if (!is.matrix(eta))
             eta = as.matrix(eta)
         fv.matrix =
@@ -218,13 +218,13 @@ dmultinomial = function(x, size = NULL, prob, log = FALSE,
 
         misc$earg = vector("list", M)
         names(misc$earg) = names(misc$link)
-        for(ii in 1:M) misc$earg[[ii]] = .earg
+        for (ii in 1:M) misc$earg[[ii]] = .earg
 
         misc$parameters = mynames
         misc$reverse = .reverse
         extra = list()   # kill what was used 
     }), list( .earg = earg, .link = link, .reverse = reverse ))),
-    link = eval(substitute( function(mu, extra = NULL) {
+    linkfun = eval(substitute( function(mu, extra = NULL) {
         cump = tapplymat1(mu, "cumsum")
         if ( .reverse ) {
             djr = mu[,-1] / cump[,-1]
@@ -315,16 +315,16 @@ dmultinomial = function(x, size = NULL, prob, log = FALSE,
         eval(process.categorical.data.vgam)
         M = ncol(y) - 1 
         mynames = if ( .reverse )
-            paste("P[Y<",2:(M+1),"|Y<=",2:(M+1),"]", sep="") else
-            paste("P[Y>",1:M,"|Y>=",1:M,"]", sep="")
+            paste("P[Y<",2:(M+1),"|Y<=",2:(M+1),"]", sep = "") else
+            paste("P[Y>",1:M,"|Y>=",1:M,"]", sep = "")
         predictors.names = namesof(mynames, .link, short = TRUE, earg = .earg)
-        y.names = paste("mu", 1:(M+1), sep="")
+        y.names = paste("mu", 1:(M+1), sep = "")
         extra$mymat = if ( .reverse ) tapplymat1(y, "cumsum") else
                       tapplymat1(y[,ncol(y):1], "cumsum")[,ncol(y):1]
         if (length(dimnames(y)))
             extra$dimnamesy2 = dimnames(y)[[2]]
     }), list( .earg = earg, .link = link, .reverse = reverse ))),
-    inverse = eval(substitute( function(eta, extra = NULL) {
+    linkinv = eval(substitute( function(eta, extra = NULL) {
         if (!is.matrix(eta))
             eta = as.matrix(eta)
         fv.matrix =
@@ -347,12 +347,12 @@ dmultinomial = function(x, size = NULL, prob, log = FALSE,
         names(misc$link) = mynames
         misc$earg = vector("list", M)
         names(misc$earg) = names(misc$link)
-        for(ii in 1:M) misc$earg[[ii]] = .earg
+        for (ii in 1:M) misc$earg[[ii]] = .earg
         misc$parameters = mynames
         misc$reverse = .reverse
         extra = list()   # kill what was used 
     }), list( .earg = earg, .link = link, .reverse = reverse ))),
-    link = eval(substitute( function(mu, extra = NULL) {
+    linkfun = eval(substitute( function(mu, extra = NULL) {
         cump = tapplymat1(mu, "cumsum")
         if ( .reverse ) {
             djrs = 1 - mu[,-1] / cump[,-1]
@@ -440,11 +440,11 @@ vglm.multinomial.control = function(maxit=21, panic=FALSE,
     }
     list(maxit=maxit, panic=as.logical(panic)[1],
          criterion=criterion,
-         min.criterion=c("aic1"=FALSE, "aic2"=TRUE, .min.criterion.VGAM))
+         min.criterion=c("aic1"=FALSE, "aic2" = TRUE, .min.criterion.VGAM))
 }
 
 
-vglm.vcategorical.control = function(maxit=30, trace=FALSE, panic=TRUE, ...)
+vglm.vcategorical.control = function(maxit=30, trace=FALSE, panic = TRUE, ...)
 {
     if (maxit < 1) {
         warning("bad value of maxit; using 200 instead")
@@ -468,9 +468,9 @@ vglm.vcategorical.control = function(maxit=30, trace=FALSE, panic=TRUE, ...)
           warning("'refLevel' is from an ordered factor")
         refLevel = as.character(refLevel) == levels(refLevel)
         refLevel = (1:length(refLevel))[refLevel]
-        if (!is.Numeric(refLevel, allow=1, integer=TRUE, posit=TRUE))
+        if (!is.Numeric(refLevel, allow=1, integer = TRUE, posit = TRUE))
           stop("could not coerce 'refLevel' into a single positive integer")
-    } else if (!is.Numeric(refLevel, allow=1, integer=TRUE, posit=TRUE))
+    } else if (!is.Numeric(refLevel, allow=1, integer = TRUE, posit = TRUE))
             stop("'refLevel' must be a single positive integer")
 
     new("vglmff",
@@ -479,11 +479,11 @@ vglm.vcategorical.control = function(maxit=30, trace=FALSE, panic=TRUE, ...)
            "Links:    log(mu[,j]/mu[,M+1]), j=1:M,\n" else {
                if (refLevel==1)
                    paste("Links:    log(mu[,j]/mu[,", refLevel,
-                         "]), j=2:(M+1),\n", sep="") else
+                         "]), j=2:(M+1),\n", sep = "") else
                    paste("Links:    log(mu[,j]/mu[,", refLevel,
                          "]), j=c(1:", refLevel-1,
                          ",", refLevel+1, ":(M+1)),\n",
-                     sep="")
+                     sep = "")
            },
            "Variance: mu[,j]*(1-mu[,j]); -mu[,j]*mu[,k]"),
     constraints = eval(substitute(expression({
@@ -508,10 +508,10 @@ vglm.vcategorical.control = function(maxit=30, trace=FALSE, panic=TRUE, ...)
             stop("argument 'refLevel' has a value that is too high")
         allbut.refLevel = (1:(M+1))[-use.refLevel]
         predictors.names = paste("log(mu[,", allbut.refLevel,
-                                 "]/mu[,", use.refLevel, "])", sep="")
-        y.names = paste("mu", 1:(M+1), sep="")
+                                 "]/mu[,", use.refLevel, "])", sep = "")
+        y.names = paste("mu", 1:(M+1), sep = "")
     }), list( .refLevel = refLevel ))),
-    inverse = eval(substitute( function(eta, extra = NULL) {
+    linkinv = eval(substitute( function(eta, extra = NULL) {
         if (any(is.na(eta)))
             warning("there are NAs in eta in slot inverse")
         M = ncol(cbind(eta))
@@ -538,8 +538,11 @@ vglm.vcategorical.control = function(maxit=30, trace=FALSE, panic=TRUE, ...)
         dy = dimnames(y)
         if (!is.null(dy[[2]]))
             dimnames(fit$fitted.values) = dy
-    }), list( .refLevel = refLevel ))),
-    link = eval(substitute( function(mu, extra = NULL) {
+
+        misc$nointercept = .nointercept
+    }), list( .refLevel = refLevel,
+              .nointercept = nointercept ))),
+    linkfun = eval(substitute( function(mu, extra = NULL) {
         if ( .refLevel < 0) {
             log(mu[,-ncol(mu)] / mu[,ncol(mu)])
         } else {
@@ -582,7 +585,7 @@ vglm.vcategorical.control = function(maxit=30, trace=FALSE, panic=TRUE, ...)
         if (M == 1) {
             wz = mu[,3-use.refLevel] * (1-mu[,3-use.refLevel])
         } else {
-            index = iam(NA, NA, M, both=TRUE, diag=TRUE)
+            index = iam(NA, NA, M, both = TRUE, diag = TRUE)
             myinc = (index$row.index >= use.refLevel)
             index$row.index[myinc] = index$row.index[myinc] + 1
             myinc = (index$col.index >= use.refLevel)
@@ -651,7 +654,7 @@ vglm.vcategorical.control = function(maxit=30, trace=FALSE, panic=TRUE, ...)
             totdev = 0
             NOS = extra$NOS
             Llevels = extra$Llevels
-            for(iii in 1:NOS) {
+            for (iii in 1:NOS) {
                 cindex = (iii-1)*(Llevels-1) + 1:(Llevels-1)
                 aindex = (iii-1)*(Llevels) + 1:(Llevels)
                 totdev = totdev + Deviance.categorical.data.vgam(
@@ -681,7 +684,7 @@ vglm.vcategorical.control = function(maxit=30, trace=FALSE, panic=TRUE, ...)
             orig.y = cbind(y) # Convert y into a matrix if necessary
             NOS = ncol(cbind(orig.y))
             use.y = use.mustart = NULL
-            for(iii in 1:NOS) {
+            for (iii in 1:NOS) {
                 y = as.factor(orig.y[,iii])
                 eval(process.categorical.data.vgam)
                 use.y = cbind(use.y, y)
@@ -691,19 +694,19 @@ vglm.vcategorical.control = function(maxit=30, trace=FALSE, panic=TRUE, ...)
             y = use.y  # n x (Llevels*NOS)
             M = NOS * (Llevels-1)
             mynames = y.names = NULL
-            for(iii in 1:NOS) {
-                Y.names = paste("Y", iii, sep="")
-                mu.names = paste("mu", iii, ".", sep="")
+            for (iii in 1:NOS) {
+                Y.names = paste("Y", iii, sep = "")
+                mu.names = paste("mu", iii, ".", sep = "")
                 mynames = c(mynames, if ( .reverse )
-                    paste("P[",Y.names,">=",2:Llevels,"]", sep="") else
-                    paste("P[",Y.names,"<=",1:(Llevels-1),"]", sep=""))
-                y.names = c(y.names, paste(mu.names, 1:Llevels, sep=""))
+                    paste("P[",Y.names,">=",2:Llevels,"]", sep = "") else
+                    paste("P[",Y.names,"<=",1:(Llevels-1),"]", sep = ""))
+                y.names = c(y.names, paste(mu.names, 1:Llevels, sep = ""))
             }
             predictors.names = namesof(mynames, .link, short = TRUE, earg = .earg)
             extra$NOS = NOS
             extra$Llevels = Llevels
         } else {
-            delete.zero.colns=TRUE # Cannot have FALSE since then prob(Y=jay)=0
+            delete.zero.colns = TRUE # Cannot have FALSE since then prob(Y=jay)=0
             eval(process.categorical.data.vgam)
             M = ncol(y)-1
             mynames = if ( .reverse )
@@ -714,7 +717,7 @@ vglm.vcategorical.control = function(maxit=30, trace=FALSE, panic=TRUE, ...)
             y.names = paste("mu", 1:(M+1), sep = "")
             if (ncol(cbind(w)) == 1) {
                 if (length(mustart) && all(c(y) %in% c(0, 1)))
-                  for(iii in 1:ncol(y))
+                  for (iii in 1:ncol(y))
                       mustart[,iii] = weighted.mean(y[,iii], w)
             }
 
@@ -722,13 +725,13 @@ vglm.vcategorical.control = function(maxit=30, trace=FALSE, panic=TRUE, ...)
                 extra$dimnamesy2 = dimnames(y)[[2]]
         }
     }), list( .link = link, .reverse = reverse, .mv = mv, .earg = earg ))),
-    inverse = eval(substitute( function(eta, extra = NULL) {
+    linkinv = eval(substitute( function(eta, extra = NULL) {
         answer =
         if ( .mv ) {
             NOS = extra$NOS
             Llevels = extra$Llevels
             fv.matrix = matrix(0, nrow(eta), NOS*Llevels)
-            for(iii in 1:NOS) {
+            for (iii in 1:NOS) {
                 cindex = (iii-1)*(Llevels-1) + 1:(Llevels-1)
                 aindex = (iii-1)*(Llevels) + 1:(Llevels)
                 if ( .reverse ) {
@@ -768,7 +771,7 @@ vglm.vcategorical.control = function(maxit=30, trace=FALSE, panic=TRUE, ...)
             names(misc$link) = mynames
             misc$earg = vector("list", M)
             names(misc$earg) = names(misc$link)
-            for(ii in 1:M) misc$earg[[ii]] = .earg
+            for (ii in 1:M) misc$earg[[ii]] = .earg
         }
 
         misc$parameters = mynames
@@ -777,13 +780,13 @@ vglm.vcategorical.control = function(maxit=30, trace=FALSE, panic=TRUE, ...)
         misc$mv = .mv
     }), list( .link = link, .reverse = reverse, .parallel = parallel,
               .mv = mv, .earg = earg ))),
-    link = eval(substitute( function(mu, extra = NULL) {
+    linkfun = eval(substitute( function(mu, extra = NULL) {
         answer = 
         if ( .mv ) {
             NOS = extra$NOS
             Llevels = extra$Llevels
             eta.matrix = matrix(0, nrow(mu), NOS*(Llevels-1))
-            for(iii in 1:NOS) {
+            for (iii in 1:NOS) {
                 cindex = (iii-1)*(Llevels-1) + 1:(Llevels-1)
                 aindex = (iii-1)*(Llevels) + 1:(Llevels)
                 cump = tapplymat1(as.matrix(mu[,aindex]), "cumsum")
@@ -825,7 +828,7 @@ vglm.vcategorical.control = function(maxit=30, trace=FALSE, panic=TRUE, ...)
             NOS = extra$NOS
             Llevels = extra$Llevels
             dcump.deta = resmat = matrix(0, n, NOS * (Llevels-1))
-            for(iii in 1:NOS) {
+            for (iii in 1:NOS) {
                 cindex = (iii-1)*(Llevels-1) + 1:(Llevels-1)
                 aindex = (iii-1)*(Llevels)   + 1:(Llevels-1)
                 cump = eta2theta(eta[,cindex, drop = FALSE], .link, earg = .earg)
@@ -848,7 +851,7 @@ vglm.vcategorical.control = function(maxit=30, trace=FALSE, panic=TRUE, ...)
             NOS = extra$NOS
             Llevels = extra$Llevels
             wz = matrix(0, n, NOS*(Llevels-1)) # Diagonal elts only for a start
-            for(iii in 1:NOS) {
+            for (iii in 1:NOS) {
                 cindex = (iii-1)*(Llevels-1) + 1:(Llevels-1)
                 aindex = (iii-1)*(Llevels)   + 1:(Llevels-1)
                 wz[,cindex] = c(w) * dcump.deta[,cindex, drop = FALSE]^2 *
@@ -865,7 +868,7 @@ vglm.vcategorical.control = function(maxit=30, trace=FALSE, panic=TRUE, ...)
                 if (NOS > 1) {
                     cptrwz = ncol(wz)  # Like a pointer
                     wz = cbind(wz, matrix(0, nrow(wz), (NOS-1) * (Llevels-1)))
-                    for(iii in 2:NOS) {
+                    for (iii in 2:NOS) {
                         oindex = (iii-1)*(Llevels-1) + 1:(Llevels-2)
                         wz[,cptrwz + 1 + (1:(Llevels-2))] =
                               -c(w) * dcump.deta[,oindex] *
@@ -927,15 +930,15 @@ vglm.vcategorical.control = function(maxit=30, trace=FALSE, panic=TRUE, ...)
         eval(process.categorical.data.vgam)
         M = ncol(y) - 1
         mynames = if ( .reverse )
-            paste("P[Y=", 1:M,     "]/P[Y=", 2:(M+1), "]", sep="") else
-            paste("P[Y=", 2:(M+1), "]/P[Y=", 1:M,     "]", sep="")
+            paste("P[Y=", 1:M,     "]/P[Y=", 2:(M+1), "]", sep = "") else
+            paste("P[Y=", 2:(M+1), "]/P[Y=", 1:M,     "]", sep = "")
 
         predictors.names = namesof(mynames, .link, short = TRUE, earg = .earg)
-        y.names = paste("mu", 1:(M+1), sep="")
+        y.names = paste("mu", 1:(M+1), sep = "")
         if (length(dimnames(y)))
             extra$dimnamesy2 = dimnames(y)[[2]]
     }), list( .earg = earg, .link = link, .reverse = reverse ))),
-    inverse = eval(substitute( function(eta, extra = NULL) {
+    linkinv = eval(substitute( function(eta, extra = NULL) {
         if (!is.matrix(eta))
             eta = as.matrix(eta)
         M = ncol(eta)
@@ -958,12 +961,12 @@ vglm.vcategorical.control = function(maxit=30, trace=FALSE, panic=TRUE, ...)
 
         misc$earg = vector("list", M)
         names(misc$earg) = names(misc$link)
-        for(ii in 1:M) misc$earg[[ii]] = .earg
+        for (ii in 1:M) misc$earg[[ii]] = .earg
 
         misc$parameters = mynames
         misc$reverse = .reverse
     }), list( .earg = earg, .link = link, .reverse = reverse ))),
-    link = eval(substitute( function(mu, extra = NULL) {
+    linkfun = eval(substitute( function(mu, extra = NULL) {
         M = ncol(mu) - 1
         theta2eta(if ( .reverse ) mu[,1:M] / mu[,-1] else
                                   mu[,-1]  / mu[,1:M], .link, earg = .earg )
@@ -1005,8 +1008,8 @@ vglm.vcategorical.control = function(maxit=30, trace=FALSE, panic=TRUE, ...)
         hess = attr(d1, "hessian") / d1
 
         if (M > 1)
-            for(jay in 1:(M-1))
-                for(kay in (jay+1):M)
+            for (jay in 1:(M-1))
+                for (kay in (jay+1):M)
                     wz[,iam(jay,kay,M)] = (hess[,jay,kay] - score[,jay] *
                         score[,kay]) * dzeta.deta[,jay] * dzeta.deta[,kay]
         if ( .reverse ) {
@@ -1025,7 +1028,7 @@ acat.deriv = function(zeta, reverse, M, n)
 {
 
     alltxt = NULL
-    for(ii in 1:M) {
+    for (ii in 1:M) {
         index = if (reverse) ii:M else 1:ii
         vars = paste("zeta", index, sep = "")
         txt = paste(vars, collapse = "*")
@@ -1035,12 +1038,12 @@ acat.deriv = function(zeta, reverse, M, n)
     alltxt = paste(" ~ 1 +", alltxt)
     txt = as.formula(alltxt) 
 
-    allvars = paste("zeta", 1:M, sep="")
-    d1 = deriv3(txt, allvars, hessian=TRUE)  # deriv3() computes the Hessian
+    allvars = paste("zeta", 1:M, sep = "")
+    d1 = deriv3(txt, allvars, hessian = TRUE)  # deriv3() computes the Hessian
 
     zeta = as.matrix(zeta)
-    for(ii in 1:M)
-        assign(paste("zeta", ii, sep=""), zeta[,ii])
+    for (ii in 1:M)
+        assign(paste("zeta", ii, sep = ""), zeta[,ii])
 
     ans = eval(d1)
     ans
@@ -1053,12 +1056,12 @@ acat.deriv = function(zeta, reverse, M, n)
                  refvalue = 1,
                  init.alpha = 1)
 {
-    if (!is.Numeric(init.alpha, posit=TRUE))
+    if (!is.Numeric(init.alpha, posit = TRUE))
         stop("'init.alpha' must contain positive values only")
-    if (!is.Numeric(refvalue, allow=1, posit=TRUE))
+    if (!is.Numeric(refvalue, allow=1, posit = TRUE))
         stop("'refvalue' must be a single positive value")
     if (!is.character(refgp) &&
-       !is.Numeric(refgp, allow=1, integer=TRUE, posit=TRUE))
+       !is.Numeric(refgp, allow=1, integer = TRUE, posit = TRUE))
         stop("'refgp' must be a single positive integer")
 
     new("vglmff",
@@ -1073,20 +1076,20 @@ acat.deriv = function(zeta, reverse, M, n)
         try.index = 1:400
         M = (1:length(try.index))[(try.index+1)*(try.index) == ncol(y)]
         if (!is.finite(M)) stop("cannot determine 'M'")
-        init.alpha = matrix( rep( .init.alpha, len=M), n, M, byrow=TRUE)
-        etastart = matrix(theta2eta(init.alpha, "loge", earg = list()), n, M, byrow=TRUE)
+        init.alpha = matrix( rep( .init.alpha, len=M), n, M, byrow = TRUE)
+        etastart = matrix(theta2eta(init.alpha, "loge", earg = list()), n, M, byrow = TRUE)
         refgp = .refgp
         if (!intercept.only)
             warning("this function only works with intercept-only models")
         extra$ybrat.indices = .brat.indices(NCo=M+1, are.ties=FALSE)
         uindex = if ( .refgp =="last") 1:M else (1:(M+1))[-( .refgp ) ]
 
-        predictors.names=namesof(paste("alpha",uindex,sep=""),"loge",short = TRUE)
+        predictors.names=namesof(paste("alpha",uindex,sep = ""),"loge",short = TRUE)
     }), list( .refgp = refgp, .init.alpha=init.alpha ))),
-    inverse = eval(substitute( function(eta, extra = NULL) {
+    linkinv = eval(substitute( function(eta, extra = NULL) {
         probs = NULL
         eta = as.matrix(eta)   # in case M=1
-        for(ii in 1:nrow(eta)) {
+        for (ii in 1:nrow(eta)) {
             alpha = .brat.alpha(eta2theta(eta[ii,], "loge", earg = list()),
                                 .refvalue, .refgp)
             alpha1 = alpha[extra$ybrat.indices[,"rindex"]]
@@ -1098,7 +1101,7 @@ acat.deriv = function(zeta, reverse, M, n)
     }, list( .refgp = refgp, .refvalue = refvalue) )),
     last = eval(substitute(expression({
         misc$link = rep( "loge", length=M)
-        names(misc$link) = paste("alpha",uindex,sep="")
+        names(misc$link) = paste("alpha",uindex,sep = "")
         misc$refgp = .refgp
         misc$refvalue = .refvalue
     }), list( .refgp = refgp, .refvalue = refvalue ))),
@@ -1124,12 +1127,12 @@ acat.deriv = function(zeta, reverse, M, n)
         ans = NULL
         uindex = if ( .refgp =="last") 1:M else (1:(M+1))[-( .refgp ) ]
         eta = as.matrix(eta)   # in case M=1
-        for(ii in 1:nrow(eta)) {
+        for (ii in 1:nrow(eta)) {
             alpha = .brat.alpha(eta2theta(eta[ii,], "loge", earg = list()),
                                 .refvalue, .refgp)
             ymat = InverseBrat(y[ii,], NCo=M+1, diag=0)
             answer = rep(0, len=M)
-            for(aa in 1:(M+1)) {
+            for (aa in 1:(M+1)) {
                 answer = answer + (1-(aa==uindex)) *
                 (ymat[uindex,aa] * alpha[aa] - ymat[aa,uindex] *
                 alpha[uindex]) / (alpha[aa] + alpha[uindex])
@@ -1141,17 +1144,17 @@ acat.deriv = function(zeta, reverse, M, n)
     }), list( .refvalue = refvalue, .refgp = refgp) )),
     weight = eval(substitute(expression({
         wz = matrix(0, n, dimm(M))
-        for(ii in 1:nrow(eta)) {
+        for (ii in 1:nrow(eta)) {
             alpha = .brat.alpha(eta2theta(eta[ii,], "loge", earg = list()),
                                 .refvalue, .refgp)
             ymat = InverseBrat(y[ii,], NCo=M+1, diag=0)
-            for(aa in 1:(M+1)) {
+            for (aa in 1:(M+1)) {
                 wz[ii,1:M] = wz[ii,1:M] + (1-(aa==uindex)) *
                 (ymat[aa,uindex] + ymat[uindex,aa]) * alpha[aa] *
                 alpha[uindex] / (alpha[aa] + alpha[uindex])^2
             }
             if (M > 1) {
-                ind5 = iam(1,1,M, both=TRUE, diag=FALSE)
+                ind5 = iam(1,1,M, both = TRUE, diag=FALSE)
                 wz[ii,(M+1):ncol(wz)] =
                   -(ymat[cbind(uindex[ind5$row],uindex[ind5$col])] +
                     ymat[cbind(uindex[ind5$col],uindex[ind5$row])]) *
@@ -1172,14 +1175,14 @@ bratt = function(refgp="last",
                   init.alpha = 1,
                   i0 = 0.01)
 {
-    if (!is.Numeric(i0, allow=1, positi=TRUE))
+    if (!is.Numeric(i0, allow=1, positi = TRUE))
         stop("'i0' must be a single positive value")
-    if (!is.Numeric(init.alpha, positi=TRUE))
+    if (!is.Numeric(init.alpha, positi = TRUE))
         stop("'init.alpha' must contain positive values only")
-    if (!is.Numeric(refvalue, allow=1, positi=TRUE))
+    if (!is.Numeric(refvalue, allow=1, positi = TRUE))
         stop("'refvalue' must be a single positive value")
     if (!is.character(refgp) && 
-       !is.Numeric(refgp, allow=1, integer=TRUE, positi=TRUE))
+       !is.Numeric(refgp, allow=1, integer = TRUE, positi = TRUE))
         stop("'refgp' must be a single positive integer")
     new("vglmff",
     blurb = c(paste("Bradley-Terry model (with ties)\n\n"), 
@@ -1188,7 +1191,7 @@ bratt = function(refgp="last",
     initialize = eval(substitute(expression({
         try.index = 1:400
         M = (1:length(try.index))[(try.index*(try.index-1)) == ncol(y)]
-        if (!is.Numeric(M, allow=1, integ=TRUE)) stop("cannot determine 'M'")
+        if (!is.Numeric(M, allow=1, integ = TRUE)) stop("cannot determine 'M'")
         NCo = M  # number of contestants
 
         are.ties = attr(y, "are.ties")  # If Brat() was used
@@ -1204,27 +1207,27 @@ bratt = function(refgp="last",
         init.alpha = rep( .init.alpha, len=NCo-1)
         ialpha0 = .i0
         etastart = cbind(matrix(theta2eta(init.alpha, "loge"),
-                                n, NCo-1, byrow=TRUE),
+                                n, NCo-1, byrow = TRUE),
                          theta2eta( rep(ialpha0, len=n), "loge"))
         refgp = .refgp
         if (!intercept.only)
             warning("this function only works with intercept-only models")
         extra$ties = ties  # Flat (1-row) matrix
         extra$ybrat.indices = .brat.indices(NCo=NCo, are.ties=FALSE)
-        extra$tbrat.indices = .brat.indices(NCo=NCo, are.ties=TRUE) # unused
+        extra$tbrat.indices = .brat.indices(NCo=NCo, are.ties = TRUE) # unused
         extra$dnties = dimnames(ties)
         uindex = if (refgp=="last") 1:(NCo-1) else (1:(NCo))[-refgp ]
 
         predictors.names=c(
-            namesof(paste("alpha",uindex,sep=""),"loge",short = TRUE),
+            namesof(paste("alpha",uindex,sep = ""),"loge",short = TRUE),
             namesof("alpha0", "loge", short = TRUE))
     }), list( .refgp = refgp,
              .i0 = i0,
              .init.alpha=init.alpha ))),
-    inverse = eval(substitute( function(eta, extra = NULL) {
+    linkinv = eval(substitute( function(eta, extra = NULL) {
         probs = qprobs = NULL
         M = ncol(eta)
-        for(ii in 1:nrow(eta)) {
+        for (ii in 1:nrow(eta)) {
             alpha = .brat.alpha(eta2theta(eta[ii,-M],"loge"), .refvalue, .refgp)
             alpha0 = eta2theta(eta[ii,M], "loge")
             alpha1 = alpha[extra$ybrat.indices[,"rindex"]]
@@ -1239,7 +1242,7 @@ bratt = function(refgp="last",
     }, list( .refgp = refgp, .refvalue = refvalue) )),
     last = eval(substitute(expression({
         misc$link = rep( "loge", length=M)
-        names(misc$link) = c(paste("alpha",uindex,sep=""), "alpha0")
+        names(misc$link) = c(paste("alpha",uindex,sep = ""), "alpha0")
         misc$refgp = .refgp
         misc$refvalue = .refvalue
         misc$alpha  = alpha
@@ -1258,13 +1261,13 @@ bratt = function(refgp="last",
         NCo = M
         uindex = if ( .refgp =="last") 1:(M-1) else (1:(M))[-( .refgp )]
         eta = as.matrix(eta)
-        for(ii in 1:nrow(eta)) {
+        for (ii in 1:nrow(eta)) {
             alpha = .brat.alpha(eta2theta(eta[ii,-M],"loge"), .refvalue, .refgp)
             alpha0 = eta2theta(eta[ii,M], "loge") # M == ncol(eta)
             ymat = InverseBrat(y[ii,], NCo=M, diag=0)
             tmat = InverseBrat(ties[ii,], NCo=M, diag=0)
             answer = rep(0, len=NCo-1) # deriv wrt eta[-M]
-            for(aa in 1:NCo) {
+            for (aa in 1:NCo) {
                 Daj = alpha[aa] + alpha[uindex] + alpha0
                 pja = alpha[uindex] / Daj
                 answer = answer + alpha[uindex] *
@@ -1272,8 +1275,8 @@ bratt = function(refgp="last",
                          tmat[uindex,aa]) / Daj
             }
             deriv0 = 0 # deriv wrt eta[M]
-            for(aa in 1:(NCo-1)) 
-                for(bb in (aa+1):NCo) {
+            for (aa in 1:(NCo-1)) 
+                for (bb in (aa+1):NCo) {
                         Dab = alpha[aa] + alpha[bb] + alpha0
                         qab = alpha0 / Dab
                         deriv0 = deriv0 + alpha0 *
@@ -1287,19 +1290,19 @@ bratt = function(refgp="last",
     }), list( .refvalue = refvalue, .refgp = refgp) )),
     weight = eval(substitute(expression({
         wz = matrix(0, n, dimm(M))   # includes diagonal
-        for(ii in 1:nrow(eta)) {
+        for (ii in 1:nrow(eta)) {
             alpha = .brat.alpha(eta2theta(eta[ii,-M],"loge"), .refvalue, .refgp)
             alpha0 = eta2theta(eta[ii,M], "loge") # M == ncol(eta)
             ymat = InverseBrat(y[ii,], NCo=M, diag=0)
             tmat = InverseBrat(ties[ii,], NCo=M, diag=0)
-            for(aa in 1:(NCo)) {
+            for (aa in 1:(NCo)) {
                 Daj = alpha[aa] + alpha[uindex] + alpha0
                 pja = alpha[uindex] / Daj
                 nja = ymat[aa,uindex] + ymat[uindex,aa] + tmat[uindex,aa]
                 wz[ii,1:(NCo-1)] = wz[ii,1:(NCo-1)] +
                     alpha[uindex]^2 * nja * (1-pja)/(pja * Daj^2)
                 if (aa < NCo)
-                    for(bb in (aa+1):(NCo)) {
+                    for (bb in (aa+1):(NCo)) {
                         nab = ymat[aa,bb] + ymat[bb,aa] + tmat[bb,aa]
                         Dab = alpha[aa] + alpha[bb] + alpha0
                         qab = alpha0 / Dab
@@ -1308,7 +1311,7 @@ bratt = function(refgp="last",
                     }
             }
             if (NCo > 2) {
-                ind5 = iam(1,1, M=NCo, both=TRUE, diag=FALSE)
+                ind5 = iam(1,1, M=NCo, both = TRUE, diag=FALSE)
                 alphajunk = c(alpha, junk=NA)
                 mat4 = cbind(uindex[ind5$row],uindex[ind5$col])
                 wz[ii,(M+1):ncol(wz)] = -(ymat[mat4] + ymat[mat4[,2:1]] +
@@ -1316,11 +1319,11 @@ bratt = function(refgp="last",
                    alphajunk[uindex[ind5$row]] / (alpha0 +
                    alphajunk[uindex[ind5$row]] + alphajunk[uindex[ind5$col]])^2
             }
-            for(sss in 1:length(uindex)) {
+            for (sss in 1:length(uindex)) {
                 jay = uindex[sss]
                 naj = ymat[,jay] + ymat[jay,] + tmat[,jay]
                 Daj = alpha[jay] + alpha + alpha0
-                wz[ii,iam(sss, NCo, M=NCo, diag=TRUE)] = 
+                wz[ii,iam(sss, NCo, M=NCo, diag = TRUE)] = 
                     -alpha[jay] * alpha0 * sum(naj / Daj^2)
             }
         }
@@ -1339,7 +1342,7 @@ bratt = function(refgp="last",
 }
 
 .brat.indices = function(NCo, are.ties=FALSE) {
-    if (!is.Numeric(NCo, allow=1, integ=TRUE) || NCo < 2)
+    if (!is.Numeric(NCo, allow=1, integ = TRUE) || NCo < 2)
         stop("bad input for 'NCo'")
     m = diag(NCo)
     if (are.ties) {
@@ -1354,7 +1357,7 @@ Brat = function(mat, ties=0*mat, string=c(" > "," == ")) {
     callit = if (length(names(allargs))) names(allargs) else
         as.character(1:length(allargs))
     ans = ans.ties = NULL
-    for(ii in 1:length(allargs)) {
+    for (ii in 1:length(allargs)) {
         m = allargs[[ii]]
         if (!is.matrix(m) || dim(m)[1] != dim(m)[2]) 
             stop("m must be a square matrix")
@@ -1374,8 +1377,8 @@ Brat = function(mat, ties=0*mat, string=c(" > "," == ")) {
         dt = as.data.frame.table(ties)
         dm = dm[!is.na(dm$Freq),]
         dt = dt[!is.na(dt$Freq),]
-        usethis1 = paste(dm[,1], string[1], dm[,2], sep="")
-        usethis2 = paste(dm[,1], string[2], dm[,2], sep="")
+        usethis1 = paste(dm[,1], string[1], dm[,2], sep = "")
+        usethis2 = paste(dm[,1], string[2], dm[,2], sep = "")
         ans = rbind(ans, matrix(dm$Freq, nrow=1))
         ans.ties = rbind(ans.ties, matrix(dt$Freq, nrow=1))
     }
@@ -1395,9 +1398,9 @@ InverseBrat = function(yvec, NCo =
     yvec.orig = yvec
     yvec = c(yvec)
     ptr = 1
-    for(mul in 1:multiplicity)
-        for(i1 in 1:(NCo))
-            for(i2 in 1:(NCo))
+    for (mul in 1:multiplicity)
+        for (i1 in 1:(NCo))
+            for (i2 in 1:(NCo))
                 if (i1 != i2) {
                     ans[i2,i1,mul] = yvec[ptr]
                     ptr = ptr + 1
@@ -1408,7 +1411,7 @@ InverseBrat = function(yvec, NCo =
         names.yvec = dimnames(yvec.orig)[[2]]
         ii = strsplit(names.yvec, string[1])
         cal = NULL
-        for(kk in c(NCo, 1:(NCo-1)))
+        for (kk in c(NCo, 1:(NCo-1)))
             cal = c(cal, (ii[[kk]])[1])
         if (multiplicity>1) {
             dimnames(ans) = list(cal, cal, dimnames(yvec.orig)[[1]])
@@ -1451,14 +1454,14 @@ tapplymat1 = function(mat, function.arg=c("cumsum", "diff", "cumprod"))
 
 
  ordpoisson = function(cutpoints,
-                       countdata=FALSE, NOS=NULL, Levels=NULL,
+                       countdata=FALSE, NOS = NULL, Levels = NULL,
                        init.mu = NULL, parallel = FALSE, zero = NULL,
                        link = "loge", earg = list()) {
     if (mode(link) != "character" && mode(link) != "name")
         link = as.character(substitute(link))
     if (!is.list(earg)) earg = list()
     fcutpoints = cutpoints[is.finite(cutpoints)]
-    if (!is.Numeric(fcutpoints, integ=TRUE) || any(fcutpoints < 0))
+    if (!is.Numeric(fcutpoints, integ = TRUE) || any(fcutpoints < 0))
         stop("'cutpoints' must have non-negative integer or Inf values only")
     if (is.finite(cutpoints[length(cutpoints)]))
         cutpoints = c(cutpoints, Inf)
@@ -1466,9 +1469,9 @@ tapplymat1 = function(mat, function.arg=c("cumsum", "diff", "cumprod"))
     if (!is.logical(countdata) || length(countdata) != 1)
         stop("argument 'countdata' must be a single logical")
     if (countdata) {
-        if (!is.Numeric(NOS, integ=TRUE, posit=TRUE))
+        if (!is.Numeric(NOS, integ = TRUE, posit = TRUE))
             stop("'NOS' must have integer values only")
-        if (!is.Numeric(Levels, integ=TRUE, posit=TRUE)  || any(Levels < 2))
+        if (!is.Numeric(Levels, integ = TRUE, posit = TRUE)  || any(Levels < 2))
             stop("'Levels' must have integer values (>= 2) only")
         Levels = rep(Levels, length=NOS)
     }
@@ -1478,7 +1481,7 @@ tapplymat1 = function(mat, function.arg=c("cumsum", "diff", "cumprod"))
            "Link:     ", namesof("mu", link, earg = earg)),
     constraints = eval(substitute(expression({
         constraints = cm.vgam(matrix(1,M,1), x, .parallel, constraints,
-                              intercept.apply=TRUE)
+                              intercept.apply = TRUE)
         constraints = cm.zero.vgam(constraints, x, .zero, M)
     }), list( .parallel = parallel, .zero = zero ))),
     initialize = eval(substitute(expression({
@@ -1494,7 +1497,7 @@ tapplymat1 = function(mat, function.arg=c("cumsum", "diff", "cumprod"))
                 ncol(orig.y)
             Levels = rep( if (is.Numeric( .Levels )) .Levels else 0, len=NOS)
             if (!is.Numeric( .Levels ))
-                for(iii in 1:NOS) {
+                for (iii in 1:NOS) {
                     Levels[iii] = length(unique(sort(orig.y[,iii])))
                 }
             extra$Levels = Levels
@@ -1507,7 +1510,7 @@ tapplymat1 = function(mat, function.arg=c("cumsum", "diff", "cumprod"))
         use.y = if ( .countdata ) y else matrix(0, n, sum(Levels))
         use.etastart = matrix(0, n, M)
         cptr = 1
-        for(iii in 1:NOS) {
+        for (iii in 1:NOS) {
             y = factor(orig.y[,iii], levels=(1:Levels[iii]))
             if ( !( .countdata )) {
                 eval(process.categorical.data.vgam)  # Creates mustart and y
@@ -1521,8 +1524,8 @@ tapplymat1 = function(mat, function.arg=c("cumsum", "diff", "cumprod"))
         etastart = theta2eta(use.etastart, .link, earg = .earg)
         y = use.y  # n x sum(Levels)
         M = NOS
-        for(iii in 1:NOS) {
-            mu.names = paste("mu", iii, ".", sep="")
+        for (iii in 1:NOS) {
+            mu.names = paste("mu", iii, ".", sep = "")
         }
 
         ncoly = extra$ncoly = sum(Levels)
@@ -1530,13 +1533,13 @@ tapplymat1 = function(mat, function.arg=c("cumsum", "diff", "cumprod"))
         extra$countdata = .countdata
         extra$cutpoints = cp.vector
         extra$n = n
-        mynames = if (M > 1) paste("mu",1:M,sep="") else "mu"
+        mynames = if (M > 1) paste("mu",1:M,sep = "") else "mu"
         predictors.names = namesof(mynames, .link, short = TRUE, earg = .earg)
     }), list( .link = link, .countdata = countdata, .earg = earg,
               .cutpoints=cutpoints, .NOS=NOS, .Levels=Levels,
               .init.mu = init.mu
             ))),
-    inverse = eval(substitute( function(eta, extra = NULL) {
+    linkinv = eval(substitute( function(eta, extra = NULL) {
         mu = eta2theta(eta, link= .link, earg = .earg) # Poisson means
         mu = cbind(mu)
         mu
@@ -1550,7 +1553,7 @@ tapplymat1 = function(mat, function.arg=c("cumsum", "diff", "cumprod"))
             names(misc$link) = mynames
             misc$earg = vector("list", M)
             names(misc$earg) = names(misc$link)
-            for(ii in 1:M) misc$earg[[ii]] = .earg
+            for (ii in 1:M) misc$earg[[ii]] = .earg
         }
         misc$parameters = mynames
         misc$countdata = .countdata
@@ -1580,8 +1583,8 @@ tapplymat1 = function(mat, function.arg=c("cumsum", "diff", "cumprod"))
         dmu.deta = dtheta.deta(mu, .link, earg=.earg)
         dprob.dmu = ordpoissonProbs(extra, mu, deriv=1)
         cptr = 1
-        for(iii in 1:NOS) {
-            for(kkk in 1:Levels[iii]) {
+        for (iii in 1:NOS) {
+            for (kkk in 1:Levels[iii]) {
                resmat[,iii] = resmat[,iii] + dl.dprob[,cptr] * dprob.dmu[,cptr]
                cptr = cptr + 1
             }
@@ -1592,8 +1595,8 @@ tapplymat1 = function(mat, function.arg=c("cumsum", "diff", "cumprod"))
     weight = eval(substitute(expression({
         d2l.dmu2 = matrix(0, n, M)  # Diagonal matrix
         cptr = 1
-        for(iii in 1:NOS) {
-            for(kkk in 1:Levels[iii]) {
+        for (iii in 1:NOS) {
+            for (kkk in 1:Levels[iii]) {
                 d2l.dmu2[,iii] = d2l.dmu2[,iii] + 
                     dprob.dmu[,cptr]^2 / probs.use[,cptr]
                 cptr = cptr + 1
@@ -1614,7 +1617,7 @@ ordpoissonProbs = function(extra, mu, deriv=0) {
     }
     mu = cbind(mu)
     cptr = 1
-    for(iii in 1:NOS) {
+    for (iii in 1:NOS) {
         if (deriv == 1) {
             dprob.dmu[,cptr] = -dpois(x=cp.vector[cptr], lamb=mu[,iii])
         } else {
@@ -1661,7 +1664,7 @@ ordpoissonProbs = function(extra, mu, deriv=0) {
     if (mode(lscale) != "character" && mode(lscale) != "name")
         lscale = as.character(substitute(lscale))
     if (!is.list(escale)) escale = list()
-    if (!is.Numeric(iscale, posit=TRUE))
+    if (!is.Numeric(iscale, posit = TRUE))
         stop("bad input for argument 'iscale'")
     if (!is.logical(reverse) || length(reverse) != 1)
         stop("argument 'reverse' must be a single logical")
@@ -1680,16 +1683,16 @@ ordpoissonProbs = function(extra, mu, deriv=0) {
         constraints[["(Intercept)"]] = rbind(constraints[["(Intercept)"]],
             matrix(0, J, ncol(constraints[["(Intercept)"]])))
 
-        cm2 = cm.vgam(matrix(1,J,1), x, .sparallel, constraints=NULL,
+        cm2 = cm.vgam(matrix(1,J,1), x, .sparallel, constraints = NULL,
                       intercept.apply = FALSE)
 
-        for(ii in 2:length(constraints))
+        for (ii in 2:length(constraints))
             constraints[[ii]] =
                 cbind(rbind(constraints[[ii]],
                             matrix(0, J, ncol(constraints[[ii]]))),
                       rbind(matrix(0, J, ncol(cm2[[ii]])), cm2[[ii]]))
 
-        for(ii in 1:length(constraints))
+        for (ii in 1:length(constraints))
             constraints[[ii]] =
                 (constraints[[ii]])[interleave.VGAM(M, M=2),, drop = FALSE]
     }), list( .parallel = parallel, .sparallel=sparallel ))),
@@ -1708,13 +1711,13 @@ ordpoissonProbs = function(extra, mu, deriv=0) {
         M = 2*(ncol(y)-1)
         J = M / 2
         extra$J = J
-        mynames = if ( .reverse ) paste("P[Y>=",2:(1+J),"]", sep="") else
-            paste("P[Y<=",1:J,"]", sep="")
+        mynames = if ( .reverse ) paste("P[Y>=",2:(1+J),"]", sep = "") else
+            paste("P[Y<=",1:J,"]", sep = "")
         predictors.names = c(
             namesof(mynames, .link, short = TRUE, earg = .earg),
-            namesof(paste("scale_", 1:J, sep=""),
+            namesof(paste("scale_", 1:J, sep = ""),
                     .lscale, short = TRUE, earg = .escale))
-        y.names = paste("mu", 1:(J+1), sep="")
+        y.names = paste("mu", 1:(J+1), sep = "")
 
         if (length(dimnames(y)))
             extra$dimnamesy2 = dimnames(y)[[2]]
@@ -1723,7 +1726,7 @@ ordpoissonProbs = function(extra, mu, deriv=0) {
 
     }), list( .link = link, .lscale = lscale, .reverse = reverse,
               .earg = earg, .escale = escale ))),
-    inverse = eval(substitute( function(eta, extra = NULL) {
+    linkinv = eval(substitute( function(eta, extra = NULL) {
         J = extra$J
         M = 2*J
         etamat1 = eta[,2*(1:J)-1, drop = FALSE]
@@ -1749,8 +1752,8 @@ ordpoissonProbs = function(extra, mu, deriv=0) {
         names(misc$link) = predictors.names
         misc$earg = vector("list", M)
         names(misc$earg) = names(misc$link)
-        for(ii in 1:J) misc$earg[[2*ii-1]] = .earg
-        for(ii in 1:J) misc$earg[[2*ii  ]] = .escale
+        for (ii in 1:J) misc$earg[[2*ii-1]] = .earg
+        for (ii in 1:J) misc$earg[[2*ii  ]] = .escale
         misc$parameters = mynames
         misc$reverse = .reverse
         misc$parallel = .parallel
@@ -1758,7 +1761,7 @@ ordpoissonProbs = function(extra, mu, deriv=0) {
     }), list( .link = link, .lscale = lscale,
               .reverse = reverse, .parallel = parallel, .sparallel=sparallel,
               .earg = earg, .escale = escale ))),
-    link = eval(substitute( function(mu, extra = NULL) {
+    linkfun = eval(substitute( function(mu, extra = NULL) {
         cump = tapplymat1(as.matrix(mu), "cumsum")
         J = ncol(as.matrix(mu)) - 1
         M = 2 * J
@@ -1766,7 +1769,7 @@ ordpoissonProbs = function(extra, mu, deriv=0) {
             theta2eta(if ( .reverse ) 1-cump[,1:J] else cump[,1:J], .link,
                       earg= .earg),
             matrix(theta2eta( .iscale, .lscale, earg = .escale),
-                   nrow(as.matrix(mu)), J, byrow=TRUE))
+                   nrow(as.matrix(mu)), J, byrow = TRUE))
         answer = answer[,interleave.VGAM(M, M=2)]
         answer
     }, list( .link = link, .lscale = lscale, .reverse = reverse,
@@ -1824,19 +1827,19 @@ ordpoissonProbs = function(extra, mu, deriv=0) {
                   (dcump.dscale * dscale.deta) *
                   (1/mu.use[,1:J] + 1/mu.use[,-1])
         wz0 = as.matrix(wz0)
-        for(ii in 1:J)
+        for (ii in 1:J)
             wz[,iam(2*ii-1,2*ii,M=M)] = if (ooz) wz0[,ii] else 0
 
         if (J > 1) {
             wz0 = -c(w) * (dcump.deta[,-J] / scalemat[,-J]) *
                        (dcump.deta[,-1]  / scalemat[,-1]) / mu.use[,2:J]
             wz0 = as.matrix(wz0) # Just in case J=2
-            for(ii in 1:(J-1))
+            for (ii in 1:(J-1))
                 wz[,iam(2*ii-1,2*ii+1,M=M)] = if (ooz) wz0[,ii] else 0
             wz0 = -c(w) * (dcump.dscale[,-1] * dscale.deta[,-1]) *
                        (dcump.dscale[,-J] * dscale.deta[,-J]) / mu.use[,2:J]
             wz0 = as.matrix(wz0)
-            for(ii in 1:(J-1))
+            for (ii in 1:(J-1))
                 wz[,iam(2*ii,2*ii+2,M=M)] = if (ooz) wz0[,ii] else 0
 
 
@@ -1844,12 +1847,12 @@ ordpoissonProbs = function(extra, mu, deriv=0) {
             wz0 = -c(w) * (dcump.deta[,-J] / scalemat[,-J]) *
                        (dcump.dscale[,-1] * dscale.deta[,-1]) / mu.use[,2:J]
             wz0 = as.matrix(wz0)
-            for(ii in 1:(J-1))
+            for (ii in 1:(J-1))
                 wz[,iam(2*ii-1,2*ii+2,M=M)] = if (ooz) wz0[,ii] else 0
             wz0 = -c(w) * (dcump.deta[,-1] / scalemat[,-1]) *
                        (dcump.dscale[,-J] * dscale.deta[,-J]) / mu.use[,2:J]
             wz0 = as.matrix(wz0)
-            for(ii in 1:(J-1))
+            for (ii in 1:(J-1))
                 wz[,iam(2*ii,2*ii+1,M=M)] = if (ooz) wz0[,ii] else 0
         }
         wz
@@ -1861,34 +1864,35 @@ ordpoissonProbs = function(extra, mu, deriv=0) {
 
 
 
-margeff = function(object, subset=NULL) {
+margeff = function(object, subset = NULL) {
 
-    ii = ii.save = subset
-    if (!is(object, "vglm"))
-        stop("'object' is not a vglm() object")
-    if (!any(temp.logical <- is.element(c("multinomial","cumulative"),
-                                       object@family@vfamily)))
-        stop("'object' is not a 'multinomial' or 'cumulative' VGLM!")
-    model.multinomial = temp.logical[1]
-    if (is(object, "vgam"))
-        stop("'object' is a vgam() object")
-    if (length(object@control$xij))
-        stop("'object' contains 'xij' terms")
-    if (length(object@misc$form2))
-        stop("'object' contains 'form2' terms")
 
-    oassign = object@misc$orig.assign
-    if (any(unlist(lapply(oassign, length)) > 1))
-        warning("some terms in 'object' create more than one column of ",
-                "the LM design matrix")
+  ii = ii.save = subset
+  if (!is(object, "vglm"))
+    stop("'object' is not a vglm() object")
+  if (!any(temp.logical <- is.element(c("multinomial","cumulative"),
+                                     object@family@vfamily)))
+    stop("'object' is not a 'multinomial' or 'cumulative' VGLM!")
+  model.multinomial = temp.logical[1]
+  if (is(object, "vgam"))
+    stop("'object' is a vgam() object")
+  if (length(object@control$xij))
+    stop("'object' contains 'xij' terms")
+  if (length(object@misc$form2))
+    stop("'object' contains 'form2' terms")
 
-    nnn = object@misc$n
-    M = object@misc$M # ncol(B) # length(pvec) - 1
+  oassign = object@misc$orig.assign
+  if (any(unlist(lapply(oassign, length)) > 1))
+    warning("some terms in 'object' create more than one column of ",
+            "the LM design matrix")
+
+  nnn = object@misc$n
+  M = object@misc$M # ncol(B) # length(pvec) - 1
 
 
     if (model.multinomial) {
     rlev = object@misc$refLevel
-    cfit = coefvlm(object, matrix=TRUE)
+    cfit = coefvlm(object, matrix = TRUE)
     B = if (!length(rlev)) {
         cbind(cfit, 0)
     } else {
@@ -1903,7 +1907,7 @@ margeff = function(object, subset=NULL) {
     ppp   = nrow(B)
     pvec1 = fitted(object)[ 1,]
     colnames(B) = if (length(names(pvec1))) names(pvec1) else
-                  paste("mu", 1:(M+1), sep="")
+                  paste("mu", 1:(M+1), sep = "")
 
     if (is.null(ii)) {
         BB = array(B, c(ppp, M+1, nnn))
@@ -1922,21 +1926,23 @@ margeff = function(object, subset=NULL) {
     } else
     if (is.numeric(ii) && (length(ii) == 1)) {
         pvec  = fitted(object)[ii,]
-        temp1 = B * matrix(pvec, ppp, M+1, byrow=TRUE)
+        temp1 = B * matrix(pvec, ppp, M+1, byrow = TRUE)
         temp2 = matrix(rowSums(temp1), ppp, M+1)
-        temp3 = matrix(pvec, nrow(B), M+1, byrow=TRUE)
+        temp3 = matrix(pvec, nrow(B), M+1, byrow = TRUE)
         (B - temp2) * temp3
     } else {
         if (is.logical(ii))
             ii = (1:nnn)[ii]
 
-        ans = array(0, c(ppp, M+1, length(ii)), dimnames=list(dimnames(B)[[1]],
-                    dimnames(B)[[2]], dimnames(fitted(object)[ii,])[[1]]))
-        for(ilocal in 1:length(ii)) {
+        ans = array(0, c(ppp, M+1, length(ii)),
+                    dimnames = list(dimnames(B)[[1]],
+                                    dimnames(B)[[2]],
+                                    dimnames(fitted(object)[ii,])[[1]]))
+        for (ilocal in 1:length(ii)) {
             pvec  = fitted(object)[ii[ilocal],]
-            temp1 = B * matrix(pvec, ppp, M+1, byrow=TRUE)
+            temp1 = B * matrix(pvec, ppp, M+1, byrow = TRUE)
             temp2 = matrix(rowSums(temp1), ppp, M+1)
-            temp3 = matrix(pvec, nrow(B), M+1, byrow=TRUE)
+            temp3 = matrix(pvec, nrow(B), M+1, byrow = TRUE)
             ans[,,ilocal] = (B - temp2) * temp3
         }
         ans
@@ -1948,40 +1954,45 @@ margeff = function(object, subset=NULL) {
     reverse = object@misc$reverse
     linkfunctions = object@misc$link
     all.eargs  = object@misc$earg
-    B = cfit = coefvlm(object, matrix=TRUE)
+    B = cfit = coefvlm(object, matrix = TRUE)
     ppp   = nrow(B)
 
     hdot = lpmat = kronecker(predict(object), matrix(1, ppp, 1))
     resmat = cbind(hdot, 1)
-    for(jlocal in 1:M) {
-        Cump = eta2theta(lpmat[,jlocal], link = linkfunctions[jlocal],
-                         earg = all.eargs[[jlocal]])
-        hdot[,jlocal] = dtheta.deta(Cump, link = linkfunctions[jlocal],
-                                    earg = all.eargs[[jlocal]])
+    for (jlocal in 1:M) {
+      Cump = eta2theta(lpmat[,jlocal],
+                       link = linkfunctions[jlocal],
+                       earg = all.eargs[[jlocal]])
+      hdot[, jlocal] = dtheta.deta(Cump,
+                                   link = linkfunctions[jlocal],
+                                   earg = all.eargs[[jlocal]])
     }
 
-    resmat[,1] = ifelse(reverse, -1, 1) * hdot[,1] * cfit[,1]
+    resmat[, 1] = ifelse(reverse, -1, 1) * hdot[, 1] * cfit[, 1]
 
     if (M > 1) {
-        resmat[,2:M] = ifelse(reverse, -1, 1) *
-                          (hdot[,(2:M)  ] * cfit[,(2:M)  ] -
-                           hdot[,(2:M)-1] * cfit[,(2:M)-1])
+      for (jlocal in 2:M)
+        resmat[, jlocal] = ifelse(reverse, -1, 1) *
+          (hdot[, jlocal    ] * cfit[, jlocal    ] -
+           hdot[, jlocal - 1] * cfit[, jlocal - 1])
+
     }
 
-    resmat[,M+1] = ifelse(reverse, 1, -1) * hdot[,M] * cfit[,M]
+    resmat[, M+1] = ifelse(reverse, 1, -1) * hdot[, M] * cfit[, M]
 
     temp1 = array(resmat, c(ppp, nnn, M+1),
-                  dimnames=list(dimnames(B)[[1]], dimnames(fitted(object))[[1]],
-                                dimnames(fitted(object))[[2]]))
-    temp1 = aperm(temp1, c(1,3,2)) # ppp x (M+1) x nnn
+                  dimnames = list(dimnames(B)[[1]],
+                                  dimnames(fitted(object))[[1]],
+                                  dimnames(fitted(object))[[2]]))
+    temp1 = aperm(temp1, c(1, 3, 2)) # ppp x (M+1) x nnn
 
     if (is.null(ii)) {
-        return(temp1)
+      return(temp1)
     } else
     if (is.numeric(ii) && (length(ii) == 1)) {
-        return(temp1[,,ii])
+      return(temp1[,,ii])
     } else {
-        return(temp1[,,ii])
+      return(temp1[,,ii])
     }
     }
 }
@@ -2017,8 +2028,8 @@ prplot = function(object,
   use.y = cbind((object@preplot[[1]])$y)
   Constant = attr(object@preplot, "Constant")
   if (is.numeric(Constant) && length(Constant) == ncol(use.y))
-      use.y = use.y + matrix(Constant, nrow(use.y), ncol(use.y), byrow=TRUE)
-  for(ii in 1:MM) {
+      use.y = use.y + matrix(Constant, nrow(use.y), ncol(use.y), byrow = TRUE)
+  for (ii in 1:MM) {
     use.y[,ii] = eta2theta(use.y[,ii], link=object@misc$link[[ii]], 
                            earg=object@misc$earg[[ii]])
   }
@@ -2045,8 +2056,8 @@ prplot = function(object,
 
 
 
- prplot.control = function(xlab=NULL, ylab="Probability", main=NULL,
-                           xlim=NULL, ylim=NULL,
+ prplot.control = function(xlab = NULL, ylab="Probability", main = NULL,
+                           xlim = NULL, ylim = NULL,
                            lty=par()$lty,
                            col=par()$col,
                            rcol=par()$col,

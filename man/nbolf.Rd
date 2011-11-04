@@ -8,8 +8,8 @@
 
 }
 \usage{
-nbolf(theta, earg = stop("'earg' must be given"), inverse = FALSE,
-      deriv = 0, short = TRUE, tag = FALSE)
+nbolf(theta, earg = stop("argument 'earg' must be given"),
+      inverse = FALSE, deriv = 0, short = TRUE, tag = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -27,7 +27,7 @@ nbolf(theta, earg = stop("'earg' must be given"), inverse = FALSE,
   The cutpoints should be non-negative integers.
   If \code{nbolf()} is used as the link function in
   \code{\link{cumulative}} then one should choose
-  \code{reverse=TRUE, parallel=TRUE, intercept.apply=TRUE}.
+  \code{reverse = TRUE, parallel = TRUE, intercept.apply = TRUE}.
 
   }
   \item{inverse}{
@@ -57,21 +57,26 @@ nbolf(theta, earg = stop("'earg' must be given"), inverse = FALSE,
   an ordinal response coming from an underlying negative binomial
   distribution.
 
+
   The arguments \code{short} and \code{tag} are used only if
   \code{theta} is character.
+
 
   See \code{\link{Links}} for general information about \pkg{VGAM}
   link functions.
 
+
 }
 \value{
-  See Yee (2007) for details.
+  See Yee (2011) for details.
+
 
 }
 \references{
-  Yee, T. W. (2007)
+  Yee, T. W. (2011)
   \emph{Ordinal ordination with normalizing link functions for count data}, 
   (in preparation).
+
 
 }
 \author{ Thomas W. Yee }
@@ -84,15 +89,18 @@ nbolf(theta, earg = stop("'earg' must be given"), inverse = FALSE,
   \code{theta} is too close to 1 or 0,
   numerical instabilities may still arise.
 
+
   In terms of the threshold approach with cumulative probabilities for
   an ordinal response this link function corresponds to the negative
   binomial distribution (see \code{\link{negbinomial}}) that has been
   recorded as an ordinal response using known cutpoints.
 
+
 }
 \section{Warning }{
   Prediction may not work on \code{\link{vglm}} or
   \code{\link{vgam}} etc. objects if this link function is used.
+
 
 }
 
@@ -104,25 +112,24 @@ nbolf(theta, earg = stop("'earg' must be given"), inverse = FALSE,
   \code{nbolf2},
   \code{\link{cumulative}}.
 
+
 }
 \examples{
-earg = list(cutpoint=2, k=1)
-nbolf("p", earg=earg, short=FALSE)
-nbolf("p", earg=earg, tag=TRUE)
+earg = list(cutpoint = 2, k = 1)
+nbolf("p", earg = earg, short = FALSE)
+nbolf("p", earg = earg, tag = TRUE)
 
-p = seq(0.02, 0.98, by=0.01)
-y = nbolf(p, earg=earg)
-y. = nbolf(p, earg=earg, deriv=1)
-max(abs(nbolf(y, earg=earg, inv=TRUE) - p)) # Should be 0
+p = seq(0.02, 0.98, by = 0.01)
+y = nbolf(p, earg = earg)
+y. = nbolf(p, earg = earg, deriv = 1)
+max(abs(nbolf(y, earg = earg, inv = TRUE) - p)) # Should be 0
 
-\dontrun{
-par(mfrow=c(2,1), las=1)
-plot(p, y, type="l", col="blue", main="nbolf()")
-abline(h=0, v=0.5, col="red", lty="dashed")
+\dontrun{ par(mfrow = c(2, 1), las = 1)
+plot(p, y, type = "l", col = "blue", main = "nbolf()")
+abline(h = 0, v = 0.5, col = "red", lty = "dashed")
 
-plot(p, y., type="l", col="blue",
-     main="(Reciprocal of) first NBOLF derivative")
-}
+plot(p, y., type = "l", col = "blue",
+     main = "(Reciprocal of) first NBOLF derivative") }
 
 # Another example
 nn = 1000
@@ -130,22 +137,20 @@ x2 = sort(runif(nn))
 x3 = runif(nn)
 mymu = exp( 3 + 1 * x2 - 2 * x3)
 k = 4
-y1 = rnbinom(nn, mu=mymu, size=k)
+y1 = rnbinom(nn, mu = mymu, size = k)
 cutpoints = c(-Inf, 10, 20, Inf)
-cuty = Cut(y1, breaks=cutpoints)
-\dontrun{
-plot(x2, x3, col=cuty, pch=as.character(cuty))
-}
+cuty = Cut(y1, breaks = cutpoints)
+\dontrun{ plot(x2, x3, col = cuty, pch = as.character(cuty)) }
 table(cuty) / sum(table(cuty))
-fit = vglm(cuty ~ x2 + x3, fam = cumulative(link="nbolf",
-           reverse=TRUE, parallel=TRUE, intercept.apply=TRUE,
-           mv=TRUE, earg=list(cutpoint=cutpoints[2:3], k=k)),
-           trace=TRUE)
+fit = vglm(cuty ~ x2 + x3, fam = cumulative(link = "nbolf",
+           reverse = TRUE, parallel = TRUE, intercept.apply = TRUE,
+           mv = TRUE, earg = list(cutpoint = cutpoints[2:3], k = k)),
+           trace = TRUE)
 head(fit@y)
 head(fitted(fit))
 head(predict(fit))
 coef(fit)
-coef(fit, matrix=TRUE)
+coef(fit, matrix = TRUE)
 constraints(fit)
 fit@misc$earg
 }

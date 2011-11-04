@@ -8,20 +8,18 @@
 
 }
 \usage{
-morgenstern(lapar="rhobit", earg=list(), iapar=NULL, tola0=0.01,
-            imethod=1)
+morgenstern(lapar = "rhobit", earg = list(), iapar = NULL, tola0 = 0.01,
+            imethod = 1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{lapar}{
-  Link function applied to the association parameter
+  \item{lapar, earg}{
+  Link function
+  and extra argument for the
+  association parameter
   \eqn{\alpha}{alpha}, which lies between \eqn{-1} and \eqn{1}.
-  See \code{\link{Links}} for more choices.
-
-  }
-  \item{earg}{
-  List. Extra argument for the link.
-  See \code{earg} in \code{\link{Links}} for general information.
+  See \code{\link{Links}} for more choices
+  and other information.
 
   }
   \item{iapar}{
@@ -64,22 +62,28 @@ morgenstern(lapar="rhobit", earg=list(), iapar=NULL, tola0=0.01,
   process since the distribution no longer depends on the
   parameter.
 
+
   A variant of Newton-Raphson is used, which only seems to work for an
   intercept model.
-  It is a very good idea to set \code{trace=TRUE}.
+  It is a very good idea to set \code{trace = TRUE}.
+
 
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}}
   and \code{\link{vgam}}.
+
+
 }
 
 \references{
 
+
 Castillo, E., Hadi, A. S., Balakrishnan, N. Sarabia, J. S. (2005)
 \emph{Extreme Value and Related Models with Applications in Engineering and Science},
 Hoboken, N.J.: Wiley-Interscience.
+
 
 }
 \author{ T. W. Yee }
@@ -89,21 +93,24 @@ Hoboken, N.J.: Wiley-Interscience.
   This is because each marginal distribution corresponds to a
   exponential distribution with unit mean.
 
+
   This \pkg{VGAM} family function should be used with caution.
+
 
 }
 
 \seealso{
   \code{\link{fgm}},
   \code{\link{gumbelIbiv}}.
+
+
 }
 \examples{
-n = 1000
-ymat = cbind(rexp(n), rexp(n))
+n = 1000; ymat = cbind(rexp(n), rexp(n))
 \dontrun{plot(ymat)}
-fit = vglm(ymat ~ 1, fam=morgenstern, trace=TRUE)
-fit = vglm(ymat ~ 1, fam=morgenstern, trace=TRUE, crit="coef")
-coef(fit, matrix=TRUE)
+fit = vglm(ymat ~ 1, fam = morgenstern, trace = TRUE)
+fit = vglm(ymat ~ 1, fam = morgenstern, trace = TRUE, crit = "coef")
+coef(fit, matrix = TRUE)
 Coef(fit)
 head(fitted(fit))
 }

@@ -111,18 +111,19 @@ betageometric(lprob = "logit", lshape = "loge",
   \code{\link{betaff}},
   \code{\link{rbetageom}}.
 
+
 }
 \examples{
 bg.data = data.frame(y = 0:11, wts = c(227,123,72,42,21,31,11,14,6,4,7,28))
-fit  = vglm(y ~ 1, fam=betageometric, bg.data, weight=wts, trace=TRUE)
-fitg = vglm(y ~ 1, fam=    geometric, bg.data, weight=wts, trace=TRUE)
-coef(fit, matrix=TRUE)
+fit  = vglm(y ~ 1, betageometric, bg.data, weight = wts, trace = TRUE)
+fitg = vglm(y ~ 1,     geometric, bg.data, weight = wts, trace = TRUE)
+coef(fit, matrix = TRUE)
 Coef(fit)
-diag(vcov(fit, untrans=TRUE))^0.5
+sqrt(diag(vcov(fit, untransform = TRUE)))
 fit@misc$shape1
 fit@misc$shape2
 # Very strong evidence of a beta-geometric:
-pchisq(2*(logLik(fit)-logLik(fitg)), df=1, lower.tail=FALSE)
+pchisq(2*(logLik(fit) - logLik(fitg)), df = 1, lower.tail = FALSE)
 }
 \keyword{models}
 \keyword{regression}

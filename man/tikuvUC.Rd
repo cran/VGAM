@@ -12,10 +12,10 @@
 
 }
 \usage{
-dtikuv(x, d, mean=0, sigma=1, log=FALSE)
-ptikuv(q, d, mean=0, sigma=1)
-qtikuv(p, d, mean=0, sigma=1, ...)
-rtikuv(n, d, mean=0, sigma=1, Smallno=1.0e-6)
+dtikuv(x, d, mean = 0, sigma = 1, log = FALSE)
+ptikuv(q, d, mean = 0, sigma = 1)
+qtikuv(p, d, mean = 0, sigma = 1, ...)
+rtikuv(n, d, mean = 0, sigma = 1, Smallno = 1.0e-6)
 }
 \arguments{
   \item{x, q}{vector of quantiles.}
@@ -42,7 +42,7 @@ rtikuv(n, d, mean=0, sigma=1, Smallno=1.0e-6)
   }
   \item{log}{
   Logical.
-  If \code{log=TRUE} then the logarithm of the density is returned.
+  If \code{log = TRUE} then the logarithm of the density is returned.
 
   }
 
@@ -52,10 +52,13 @@ rtikuv(n, d, mean=0, sigma=1, Smallno=1.0e-6)
   \code{ptikuv} gives the cumulative distribution function,
   \code{qtikuv} gives the quantile function, and
   \code{rtikuv} generates random deviates.
+
+
 }
 \author{ T. W. Yee }
 \details{
   See \code{\link{tikuv}} for more details.
+
 
 }
 %\note{
@@ -66,26 +69,26 @@ rtikuv(n, d, mean=0, sigma=1, Smallno=1.0e-6)
 
 }
 \examples{
-\dontrun{
-x = seq(-5, 5, len=401)
-plot(x, dnorm(x), type="l", col="black", ylab="",
-     main="Black is standard normal, others are dtikuv(x, d)")
-lines(x, dtikuv(x, d=-10), col="red")
-lines(x, dtikuv(x, d=-1 ), col="blue")
-lines(x, dtikuv(x, d= 1 ), col="green")
-legend(2, 0.35, col=c("red","blue","green"), lty=rep(1, len=3),
-       legend=paste("d =", c(-10, -1, 1)))
+\dontrun{ par(mfrow = c(2, 1))
+x = seq(-5, 5, len = 401)
+plot(x, dnorm(x), type = "l", col = "black", ylab = "", las = 1,
+     main = "Black is standard normal, others are dtikuv(x, d)")
+lines(x, dtikuv(x, d = -10), col = "orange")
+lines(x, dtikuv(x, d = -1 ), col = "blue")
+lines(x, dtikuv(x, d =  1 ), col = "green")
+legend("topleft", col = c("orange","blue","green"), lty = rep(1, len = 3),
+       legend = paste("d =", c(-10, -1, 1)))
 
-plot(x, pnorm(x), type="l", col="black", ylab="",
-     main="Black is standard normal, others are ptikuv(x, d)")
-lines(x, ptikuv(x, d=-10), col="red")
-lines(x, ptikuv(x, d=-1 ), col="blue")
-lines(x, ptikuv(x, d= 1 ), col="green")
-legend(2, 0.35, col=c("red","blue","green"), lty=rep(1, len=3),
-       legend=paste("d =", c(-10, -1, 1)))
+plot(x, pnorm(x), type = "l", col = "black", ylab = "", las = 1,
+     main = "Black is standard normal, others are ptikuv(x, d)")
+lines(x, ptikuv(x, d = -10), col = "orange")
+lines(x, ptikuv(x, d = -1 ), col = "blue")
+lines(x, ptikuv(x, d =  1 ), col = "green")
+legend("topleft", col = c("orange","blue","green"), lty = rep(1, len = 3),
+       legend = paste("d =", c(-10, -1, 1)))
 
-probs = seq(0.1, 0.9, by=0.1)
-ptikuv(qtikuv(p=probs, d= 1), d=1) - probs  # Should be all 0
+probs = seq(0.1, 0.9, by = 0.1)
+ptikuv(qtikuv(p = probs, d =  1), d = 1) - probs  # Should be all 0
 }
 }
 \keyword{distribution}

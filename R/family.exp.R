@@ -404,7 +404,7 @@ rkoenker <- function(n, location = 0, scale = 1) {
             .ilocat = ilocat, .iscale = iscale,
             .elocat = elocat, .escale = escale,
             .imethod = imethod ))),
-  inverse = eval(substitute(function(eta, extra = NULL){
+  linkinv = eval(substitute(function(eta, extra = NULL){
     Perce <- .percentile
     locat <- eta2theta(eta[, 1], link = .llocat, earg = .elocat)
     Scale <- eta2theta(eta[, 2], link = .lscale, earg = .escale)

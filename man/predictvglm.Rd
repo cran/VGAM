@@ -1,5 +1,5 @@
-\name{predict.vglm}
-\alias{predict.vglm}
+\name{predictvglm}
+\alias{predictvglm}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{Predict Method for a VGLM fit}
 \description{
@@ -7,10 +7,10 @@
   object.
 }
 \usage{
-predict.vglm(object, newdata = NULL, 
-             type = c("link", "response", "terms"), 
-             se.fit = FALSE, deriv = 0, dispersion = NULL,
-             untransform = FALSE, extra = object@extra, ...)
+predictvglm(object, newdata = NULL, 
+            type = c("link", "response", "terms"), 
+            se.fit = FALSE, deriv = 0, dispersion = NULL,
+            untransform = FALSE, extra = object@extra, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -59,7 +59,7 @@ predict.vglm(object, newdata = NULL,
   This argument only works if \code{type = "link", se.fit = FALSE, deriv = 0}.
 
   }
-  \item{\dots}{Arguments passed into \code{predict.vlm}.
+  \item{\dots}{Arguments passed into \code{predictvlm}.
   }
 }
 \details{
@@ -104,7 +104,7 @@ Reduced-rank vector generalized linear models.
 \seealso{ 
   \code{\link[stats]{predict}},
   \code{\link{vglm}},
-  \code{predict.vlm},
+  \code{predictvlm},
   \code{\link{smartpred}}.
 
 }

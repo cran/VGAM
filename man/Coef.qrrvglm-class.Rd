@@ -84,11 +84,15 @@ The tolerance matrices satisfy
 %No methods defined with class "Coef.qrrvglm" in the signature.
 %}
 \references{ 
+
+
 Yee, T. W. (2004)
 A new technique for maximum-likelihood
 canonical Gaussian ordination.
 \emph{Ecological Monographs},
 \bold{74}, 685--701.
+
+
 }
 \author{ Thomas W. Yee }
 %\note{ ~~further notes~~ }
@@ -100,6 +104,8 @@ canonical Gaussian ordination.
     \code{\link{cqo}},
 % \code{qrrvglm-class},
     \code{print.Coef.qrrvglm}.
+
+
 }
 
 \examples{
@@ -116,7 +122,7 @@ y3 = rpois(n, lambda3)
 yy = cbind(y1,y2,y3)
 # vvv p1 = cqo(yy ~ x2 + x3 + x4, fam=poissonff, trace=FALSE)
 \dontrun{
-lvplot(p1, y=TRUE, lcol=1:3, pch=1:3, pcol=1:3)
+lvplot(p1, y = TRUE, lcol = 1:3, pch = 1:3, pcol = 1:3)
 }
 # vvv print(Coef(p1), digits=3)
 }

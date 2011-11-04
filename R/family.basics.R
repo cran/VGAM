@@ -33,7 +33,7 @@ getind <- function(constraints, M, ncolx) {
             }
         }
         ans[[kk]] <- list(xindex = ansx,
-                          X_vlmindex = (1:ncol(temp2))[temp2[kk,] != 0])
+                     X_vlmindex = (1:ncol(temp2))[temp2[kk,] != 0])
     }
     ans[[M+1]] <- ncol(temp2)
 
@@ -147,7 +147,7 @@ cm.nointercept.vgam <- function(constraints, x, nointercept, M)
         warning("Constraint matrix of (Intercept) not diagonal")
 
     temp <- constraints[["(Intercept)"]]
-    temp <- temp[,-nointercept,drop = FALSE]  # Will have M rows & at least 1 coln
+    temp <- temp[, -nointercept, drop = FALSE]
     constraints[["(Intercept)"]] <- temp 
     constraints
 }
@@ -499,7 +499,9 @@ vindex <- function(M, row.arg = FALSE, col.arg = FALSE,
 
 
 if(!exists("is.R")) is.R <- function()
-    exists("version") && !is.null(version$language) && version$language == "R"
+  exists("version") &&
+  !is.null(version$language) &&
+  version$language == "R"
 
 
 wweights <- function(object, matrix.arg = TRUE, deriv.arg = FALSE,
@@ -556,14 +558,13 @@ wweights <- function(object, matrix.arg = TRUE, deriv.arg = FALSE,
     if (any(slotNames(object) == "family")) {
         expr <- object@family@deriv
         deriv.mu <- eval(expr)
-        # Need to compute wz only if it couldn't be extracted from the object
         if (!length(wz)) {
             expr <- object@family@weight
             wz <- eval(expr)
 
 
             if (M > 1) 
-                dimnames(wz) = list(dimnames(wz)[[1]], NULL) # Remove colnames
+              dimnames(wz) = list(dimnames(wz)[[1]], NULL) # Remove colnames
             wz = if (matrix.arg) as.matrix(wz) else c(wz) 
         }
         if (deriv.arg) list(deriv=deriv.mu, weights=wz) else wz
@@ -601,7 +602,7 @@ procVec <- function(vec, yn, Default) {
         default = vec
     }
 
-    answer = rep(default, len=length(yn))  # Recycling may be premature if named
+    answer = rep(default, len = length(yn))
     names(answer) = yn
     if (named) {
         nvec2 = nvec[nvec != ""]
@@ -652,7 +653,8 @@ weightsvlm <- function(object, type = c("prior", "working"),
                  matrix.arg=matrix.arg, deriv.arg=deriv.arg,
                  ignore.slot=ignore.slot, ...)
     } else {
-        if (deriv.arg) stop("cannot set 'deriv = TRUE' when 'type=\"prior\"'")
+        if (deriv.arg)
+          stop("cannot set 'deriv = TRUE' when 'type=\"prior\"'")
         ans = pweights(object)
         if (matrix.arg) as.matrix(ans) else c(ans)
     }
@@ -704,17 +706,19 @@ qnupdate <- function(w, wzold, dderiv, deta, M, keeppd = TRUE,
     index$col.index = rep(index$col.index, len=ncol(wzold))
     updateThese = if (keeppd) (sy > effpos) else rep(TRUE, len=length(sy))
     if (!keeppd || any(updateThese)) {
-        wznew[updateThese,] = wznew[updateThese,] - Bs[updateThese,index$row] *
+        wznew[updateThese,] = wznew[updateThese,] -
+            Bs[updateThese,index$row] *
             Bs[updateThese,index$col] / sBs[updateThese] +
-            dderiv[updateThese,index$row] * dderiv[updateThese,index$col] /
-            sy[updateThese]
+            dderiv[updateThese,index$row] *
+            dderiv[updateThese,index$col] / sy[updateThese]
         notupdated = sum(!updateThese)
         if (notupdated && trace)
-            cat(notupdated,"weight matrices not updated out of",length(sy),"\n")
+          cat(notupdated,
+              "weight matrices not updated out of", length(sy), "\n")
     } else {
-        warning("no BFGS quasi-Newton update made at all")
-        cat("no BFGS quasi-Newton update made at all\n")
-        flush.console()
+      warning("no BFGS quasi-Newton update made at all")
+      cat("no BFGS quasi-Newton update made at all\n")
+      flush.console()
     }
     wznew
 }
@@ -725,15 +729,16 @@ qnupdate <- function(w, wzold, dderiv, deta, M, keeppd = TRUE,
 
 
 mbesselI0 <- function(x, deriv.arg = 0) {
-    if (!is.Numeric(deriv.arg, allow = 1, integer = TRUE, posit = TRUE) &&
-        deriv.arg != 0)
-        stop("argument 'deriv.arg' must be a single non-negative integer")
-    if (!(deriv.arg == 0 || deriv.arg == 1 || deriv.arg == 2))
-        stop("argument 'deriv' must be 0, 1, or 2")
-    if (!is.Numeric(x))
-        stop("bad input for argument 'x'")
-    nn = length(x)
-    if (FALSE) {
+  if (!is.Numeric(deriv.arg, allow = 1, integer = TRUE, posit = TRUE) &&
+      deriv.arg != 0)
+      stop("argument 'deriv.arg' must be a single non-negative integer")
+  if (!(deriv.arg == 0 || deriv.arg == 1 || deriv.arg == 2))
+      stop("argument 'deriv' must be 0, 1, or 2")
+  if (!is.Numeric(x))
+      stop("bad input for argument 'x'")
+  nn = length(x)
+
+  if (FALSE) {
     }
 
     # Use finite differences 
@@ -843,7 +848,8 @@ lerch <- function(x, s, v, tolerance=1.0e-10, iter=100) {
     x[!xok] = 0  # Fix this later
     ans = dotC(name="lerchphi123", err=integer(L), as.integer(L),
              as.double(x), as.double(s), as.double(v),
-             acc=as.double(tolerance), result=double(L), as.integer(iter))
+             acc=as.double(tolerance), result=double(L),
+             as.integer(iter))
     ifelse(ans$err == 0 & xok , ans$result, NA)
 }
 

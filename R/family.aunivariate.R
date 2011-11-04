@@ -105,16 +105,20 @@ pkumar = function(q, shape1, shape2) {
       stop("the response must be in (0,1)")
 
     predictors.names <- c(
-        namesof("shape1", .lshape1, earg = .eshape1, tag = FALSE),
-        namesof("shape2", .lshape2, earg = .eshape2, tag = FALSE))
+        namesof("shape1", .lshape1 , earg = .eshape1 , tag = FALSE),
+        namesof("shape2", .lshape2 , earg = .eshape2 , tag = FALSE))
     if (!length(etastart)) {
 
 
 
       kumar.Loglikfun <- function(shape1, y, x, w, extraargs) {
-          if (any(round(w) != w))
-            warning("assuming w is integer-valued")
-          medy <- median(rep(y, w))
+
+
+
+
+           medy <- weighted.mean(y, w)
+
+
           shape2 <- log(0.5) / log1p(-(medy^shape1))
           sum(w * (log(shape1) + log(shape2) + (shape1-1)*log(y) +
                   (shape2-1)*log1p(-y^shape1)))
@@ -122,24 +126,27 @@ pkumar = function(q, shape1, shape2) {
 
       shape1.grid <- seq( .grid.shape1[1], .grid.shape1[2], len = 19)
       shape1.init <- if (length( .ishape1 )) .ishape1 else
-      getMaxMin(shape1.grid, objfun=kumar.Loglikfun, y=y,  x=x, w=w)
+      getMaxMin(shape1.grid, objfun = kumar.Loglikfun, y = y,  x = x, w = w)
       shape1.init <- rep(shape1.init, length = length(y))
 
-      medy <- median(rep(y, w))
+       medy <- weighted.mean(y, w)
+
+
+
       shape2.init <- if (length( .ishape2 )) .ishape2 else
-          log(0.5) / log1p(-(medy^shape1.init))
+        log(0.5) / log1p(-(medy^shape1.init))
       shape2.init <- rep(shape2.init, length = length(y))
       etastart <- cbind(
-            theta2eta(shape1.init, .lshape1, earg = .eshape1),
-            theta2eta(shape2.init, .lshape2, earg = .eshape2))
+            theta2eta(shape1.init, .lshape1 , earg = .eshape1 ),
+            theta2eta(shape2.init, .lshape2 , earg = .eshape2 ))
     }
   }), list( .lshape1 = lshape1, .lshape2 = lshape2,
             .ishape1 = ishape1, .ishape2 = ishape2,
             .eshape1 = eshape1, .eshape2 = eshape2,
             .grid.shape1 = grid.shape1 ))),
-  inverse = eval(substitute(function(eta, extra = NULL){
-    shape1 <- eta2theta(eta[,1], link = .lshape1, earg = .eshape1)
-    shape2 <- eta2theta(eta[,2], link = .lshape2, earg = .eshape2)
+  linkinv = eval(substitute(function(eta, extra = NULL){
+    shape1 <- eta2theta(eta[,1], link = .lshape1 , earg = .eshape1 )
+    shape2 <- eta2theta(eta[,2], link = .lshape2 , earg = .eshape2 )
     shape2 * (base::beta(1 + 1/shape1, shape2))
   }, list( .lshape1 = lshape1, .lshape2 = lshape2,
            .eshape1 = eshape1, .eshape2 = eshape2 ))),
@@ -167,8 +174,8 @@ pkumar = function(q, shape1, shape2) {
     dshape1.deta <- dtheta.deta(shape1, link = .lshape1, earg = .eshape1)
     dshape2.deta <- dtheta.deta(shape2, link = .lshape2, earg = .eshape2)
 
-    dl.dshape1 <- 1 / shape1 + log(y) - (shape2-1) * log(y) *
-                  (y^shape1) / (1-y^shape1)
+    dl.dshape1 <- 1 / shape1 + log(y) - (shape2 - 1) * log(y) *
+                  (y^shape1) / (1 - y^shape1)
     dl.dshape2 <- 1 / shape2 + log1p(-y^shape1)
 
     c(w) * cbind(dl.dshape1 * dshape1.deta,
@@ -239,8 +246,7 @@ rrice <- function(n, vee, sigma) {
 
 
 
-riceff.control <- function(save.weight = TRUE, ...)
-{
+riceff.control <- function(save.weight = TRUE, ...) {
     list(save.weight = save.weight)
 }
 
@@ -250,126 +256,127 @@ riceff.control <- function(save.weight = TRUE, ...)
                    ivee = NULL, isigma = NULL,
                    nsimEIM = 100, zero = NULL)
 {
-    if (mode(lvee) != "character" && mode(lvee) != "name")
-        lvee = as.character(substitute(lvee))
-    if (mode(lsigma) != "character" && mode(lsigma) != "name")
-        lsigma = as.character(substitute(lsigma))
-    if (length(ivee) && !is.Numeric(ivee, positive = TRUE))
-        stop("bad input for argument 'ivee'")
-    if (length(isigma) && !is.Numeric(isigma, positive = TRUE))
-        stop("bad input for argument 'isigma'")
-    if (!is.list(evee)) evee = list()
-    if (!is.list(esigma)) esigma = list()
-    if (!is.Numeric(nsimEIM, allow = 1, integ = TRUE) || nsimEIM <= 50)
-        stop("'nsimEIM' should be an integer greater than 50")
+  if (mode(lvee) != "character" && mode(lvee) != "name")
+    lvee = as.character(substitute(lvee))
+  if (mode(lsigma) != "character" && mode(lsigma) != "name")
+    lsigma = as.character(substitute(lsigma))
+  if (length(ivee) && !is.Numeric(ivee, positive = TRUE))
+    stop("bad input for argument 'ivee'")
+  if (length(isigma) && !is.Numeric(isigma, positive = TRUE))
+    stop("bad input for argument 'isigma'")
+  if (!is.list(evee)) evee = list()
+  if (!is.list(esigma)) esigma = list()
+  if (!is.Numeric(nsimEIM, allow = 1, integ = TRUE) || nsimEIM <= 50)
+    stop("'nsimEIM' should be an integer greater than 50")
 
-    new("vglmff",
-    blurb = c("Rice distribution\n\n",
-           "Links:    ",
-           namesof("vee", lvee, earg = evee, tag = FALSE), ", ", 
-           namesof("sigma", lsigma, earg = esigma, tag = FALSE), "\n",
-           "Mean:     ",
-           "sigma*sqrt(pi/2)*exp(z/2)*((1-z)*",
-        "besselI(-z/2,nu=0)-z*besselI(-z/2,nu=1)) where z=-vee^2/(2*sigma^2)"),
-    constraints = eval(substitute(expression({
-        constraints = cm.zero.vgam(constraints, x, .zero, M)
-    }), list( .zero = zero ))),
-    initialize = eval(substitute(expression({
-        if (ncol(y <- cbind(y)) != 1)
-            stop("the response must be a vector or one-column matrix")
-        if (any((y <= 0)))
-            stop("the response must be in (0,Inf)")
-        predictors.names = c(
-                       namesof("vee", .lvee, earg = .evee, tag = FALSE),
-                       namesof("sigma", .lsigma, earg = .esigma, tag = FALSE))
-        if (!length(etastart)) {
-            riceff.Loglikfun = function(vee, y, x, w, extraargs) {
-                sigma.init = sd(rep(y, w))
-                sum(w * (log(y) - 2*log(sigma.init) +
-                         log(besselI(y*vee/sigma.init^2, nu=0)) -
-                         (y^2 + vee^2)/(2*sigma.init^2)))
-            }
-            vee.grid = seq(quantile(rep(y,w), probs = seq(0, 1, 0.2))["20%"],
-                           quantile(rep(y,w), probs = seq(0, 1, 0.2))["80%"], len=11)
-            vee.init = if (length( .ivee )) .ivee else
-                getMaxMin(vee.grid, objfun=riceff.Loglikfun, y=y,  x=x, w=w)
-            vee.init = rep(vee.init, length = length(y))
-            sigma.init = if (length( .isigma )) .isigma else
-                sqrt(max((weighted.mean(y^2, w) - vee.init^2)/2, 0.001))
-            sigma.init = rep(sigma.init, length = length(y))
-            etastart = cbind(theta2eta(vee.init, .lvee, earg = .evee),
-                             theta2eta(sigma.init, .lsigma, earg = .esigma))
+  new("vglmff",
+  blurb = c("Rice distribution\n\n",
+            "Links:    ",
+            namesof("vee",   lvee,   earg = evee,   tag = FALSE), ", ", 
+            namesof("sigma", lsigma, earg = esigma, tag = FALSE), "\n",
+            "Mean:     ",
+            "sigma*sqrt(pi/2)*exp(z/2)*((1-z)*",
+            "besselI(-z/2,nu=0)-z*besselI(-z/2,nu=1)) where z=-vee^2/(2*sigma^2)"),
+  constraints = eval(substitute(expression({
+    constraints = cm.zero.vgam(constraints, x, .zero, M)
+  }), list( .zero = zero ))),
+  initialize = eval(substitute(expression({
+    if (ncol(y <- cbind(y)) != 1)
+      stop("the response must be a vector or one-column matrix")
+    if (any((y <= 0)))
+      stop("the response must be in (0,Inf)")
+    predictors.names = c(
+                     namesof("vee", .lvee, earg = .evee, tag = FALSE),
+                     namesof("sigma", .lsigma, earg = .esigma, tag = FALSE))
+    if (!length(etastart)) {
+        riceff.Loglikfun = function(vee, y, x, w, extraargs) {
+            sigma.init = sd(rep(y, w))
+            sum(w * (log(y) - 2*log(sigma.init) +
+                     log(besselI(y*vee/sigma.init^2, nu=0)) -
+                     (y^2 + vee^2)/(2*sigma.init^2)))
         }
-    }), list( .lvee = lvee, .lsigma = lsigma,
-              .ivee = ivee, .isigma=isigma,
-              .evee = evee, .esigma = esigma ))),
-    inverse = eval(substitute(function(eta, extra = NULL){
-        vee = eta2theta(eta[,1], link = .lvee, earg = .evee)
-        sigma = eta2theta(eta[,2], link = .lsigma, earg = .esigma)
-        temp9 = -vee^2 / (2*sigma^2)
+        vee.grid = seq(quantile(rep(y, w), probs = seq(0, 1, 0.2))["20%"],
+                       quantile(rep(y, w), probs = seq(0, 1, 0.2))["80%"], len=11)
+        vee.init = if (length( .ivee )) .ivee else
+            getMaxMin(vee.grid, objfun = riceff.Loglikfun, y = y,  x = x, w = w)
+        vee.init = rep(vee.init, length = length(y))
+        sigma.init = if (length( .isigma )) .isigma else
+            sqrt(max((weighted.mean(y^2, w) - vee.init^2)/2, 0.001))
+        sigma.init = rep(sigma.init, length = length(y))
+        etastart = cbind(theta2eta(vee.init,   .lvee,   earg = .evee),
+                         theta2eta(sigma.init, .lsigma, earg = .esigma))
+    }
+  }), list( .lvee = lvee, .lsigma = lsigma,
+            .ivee = ivee, .isigma = isigma,
+            .evee = evee, .esigma = esigma ))),
+  linkinv = eval(substitute(function(eta, extra = NULL){
+    vee   = eta2theta(eta[, 1], link = .lvee,   earg = .evee)
+    sigma = eta2theta(eta[, 2], link = .lsigma, earg = .esigma)
+    temp9 = -vee^2 / (2*sigma^2)
 
 
-        sigma * sqrt(pi/2) * ((1-temp9) * besselI(-temp9/2,nu=0,expon = TRUE) -
-                                 temp9 * besselI(-temp9/2,nu=1,expon = TRUE))
-    }, list( .lvee = lvee, .lsigma = lsigma,
-             .evee = evee, .esigma = esigma ))),
-    last = eval(substitute(expression({
-        misc$link <-    c("vee" = .lvee, "sigma" = .lsigma)
-        misc$earg <- list("vee" = .evee, "sigma" = .esigma)
-        misc$expected = TRUE
-        misc$nsimEIM = .nsimEIM
-    }), list( .lvee = lvee, .lsigma = lsigma,
-              .evee = evee, .esigma = esigma, .nsimEIM = nsimEIM ))),
-    loglikelihood = eval(substitute(
-            function(mu,y,w,residuals = FALSE,eta,extra = NULL) {
-        vee = eta2theta(eta[,1], link = .lvee, earg = .evee)
-        sigma = eta2theta(eta[,2], link = .lsigma, earg = .esigma)
-        if (residuals)
-          stop("loglikelihood residuals not implemented yet") else {
-            sum(w * drice(x=y, vee = vee, sigma=sigma, log = TRUE))
-        }
-    }, list( .lvee = lvee, .lsigma = lsigma,
-             .evee = evee, .esigma = esigma ))),
-    vfamily = c("riceff"),
-    deriv = eval(substitute(expression({
-        vee = eta2theta(eta[,1], link = .lvee, earg = .evee)
-        sigma = eta2theta(eta[,2], link = .lsigma, earg = .esigma)
-        dvee.deta = dtheta.deta(vee, link = .lvee, earg = .evee)
-        dsigma.deta = dtheta.deta(sigma, link = .lsigma, earg = .esigma)
-        temp8 = y * vee / sigma^2
-        dl.dvee = -vee/sigma^2 + (y/sigma^2) *
+      sigma * sqrt(pi/2) * ((1-temp9) * besselI(-temp9/2,nu=0,expon = TRUE) -
+                               temp9 * besselI(-temp9/2,nu=1,expon = TRUE))
+  }, list( .lvee = lvee, .lsigma = lsigma,
+           .evee = evee, .esigma = esigma ))),
+  last = eval(substitute(expression({
+    misc$link <-    c("vee" = .lvee, "sigma" = .lsigma)
+    misc$earg <- list("vee" = .evee, "sigma" = .esigma)
+    misc$expected = TRUE
+    misc$nsimEIM = .nsimEIM
+  }), list( .lvee = lvee, .lsigma = lsigma,
+            .evee = evee, .esigma = esigma, .nsimEIM = nsimEIM ))),
+  loglikelihood = eval(substitute(
+          function(mu,y, w,residuals = FALSE,eta,extra = NULL) {
+      vee = eta2theta(eta[,1], link = .lvee, earg = .evee)
+      sigma = eta2theta(eta[,2], link = .lsigma, earg = .esigma)
+      if (residuals)
+        stop("loglikelihood residuals not implemented yet") else {
+          sum(w * drice(x=y, vee = vee, sigma = sigma, log = TRUE))
+      }
+  }, list( .lvee = lvee, .lsigma = lsigma,
+           .evee = evee, .esigma = esigma ))),
+  vfamily = c("riceff"),
+  deriv = eval(substitute(expression({
+    vee = eta2theta(eta[,1], link = .lvee, earg = .evee)
+    sigma = eta2theta(eta[,2], link = .lsigma, earg = .esigma)
+    dvee.deta = dtheta.deta(vee, link = .lvee, earg = .evee)
+    dsigma.deta = dtheta.deta(sigma, link = .lsigma, earg = .esigma)
+    temp8 = y * vee / sigma^2
+    dl.dvee = -vee/sigma^2 + (y/sigma^2) *
+              besselI(temp8, nu=1) / besselI(temp8, nu=0)
+    dl.dsigma = -2/sigma + (y^2 + vee^2)/(sigma^3) - (2 * temp8 / sigma) *
+                besselI(temp8, nu=1) / besselI(temp8, nu=0)
+    c(w) * cbind(dl.dvee * dvee.deta,
+                 dl.dsigma * dsigma.deta)
+  }), list( .lvee = lvee, .lsigma = lsigma,
+            .evee = evee, .esigma = esigma, .nsimEIM = nsimEIM ))),
+  weight = eval(substitute(expression({
+    run.var = run.cov = 0
+    for(ii in 1:( .nsimEIM )) {
+      ysim = rrice(n, vee = vee, sigma = sigma)
+      temp8 = ysim * vee / sigma^2
+      dl.dvee = -vee/sigma^2 + (ysim/sigma^2) *
+                besselI(temp8, nu=1) / besselI(temp8, nu=0)
+      dl.dsigma = -2/sigma + (ysim^2 + vee^2)/(sigma^3) -
+                  (2 * temp8 / sigma) *
                   besselI(temp8, nu=1) / besselI(temp8, nu=0)
-        dl.dsigma = -2/sigma + (y^2 + vee^2)/(sigma^3) - (2 * temp8 / sigma) *
-                    besselI(temp8, nu=1) / besselI(temp8, nu=0)
-        c(w) * cbind(dl.dvee * dvee.deta,
-                     dl.dsigma * dsigma.deta)
-    }), list( .lvee = lvee, .lsigma = lsigma,
-              .evee = evee, .esigma = esigma, .nsimEIM = nsimEIM ))),
-    weight = eval(substitute(expression({
-        run.var = run.cov = 0
-        for(ii in 1:( .nsimEIM )) {
-            ysim = rrice(n, vee = vee, sigma=sigma)
-            temp8 = ysim * vee / sigma^2
-            dl.dvee = -vee/sigma^2 + (ysim/sigma^2) *
-                      besselI(temp8, nu=1) / besselI(temp8, nu=0)
-            dl.dsigma = -2/sigma + (ysim^2 + vee^2)/(sigma^3) -
-                        (2 * temp8 / sigma) *
-                        besselI(temp8, nu=1) / besselI(temp8, nu=0)
-            rm(ysim)
-            temp3 = cbind(dl.dvee, dl.dsigma)
-            run.var = ((ii-1) * run.var + temp3^2) / ii
-            run.cov = ((ii-1) * run.cov + temp3[,1] * temp3[,2]) / ii
-        }
-        wz = if (intercept.only)
-            matrix(colMeans(cbind(run.var, run.cov)),
-                   n, dimm(M), byrow = TRUE) else cbind(run.var, run.cov)
 
-        dtheta.detas = cbind(dvee.deta, dsigma.deta)
-        index0 = iam(NA, NA, M = M, both = TRUE, diag = TRUE)
-        wz = wz * dtheta.detas[,index0$row] * dtheta.detas[,index0$col]
-        c(w) * wz
-    }), list( .lvee = lvee, .lsigma = lsigma,
-              .evee = evee, .esigma = esigma, .nsimEIM = nsimEIM ))))
+      rm(ysim)
+      temp3 = cbind(dl.dvee, dl.dsigma)
+      run.var = ((ii-1) * run.var + temp3^2) / ii
+      run.cov = ((ii-1) * run.cov + temp3[,1] * temp3[,2]) / ii
+    }
+    wz = if (intercept.only)
+        matrix(colMeans(cbind(run.var, run.cov)),
+               n, dimm(M), byrow = TRUE) else cbind(run.var, run.cov)
+
+    dtheta.detas = cbind(dvee.deta, dsigma.deta)
+    index0 = iam(NA, NA, M = M, both = TRUE, diag = TRUE)
+    wz = wz * dtheta.detas[,index0$row] * dtheta.detas[,index0$col]
+    c(w) * wz
+  }), list( .lvee = lvee, .lsigma = lsigma,
+            .evee = evee, .esigma = esigma, .nsimEIM = nsimEIM ))))
 }
 
 
@@ -381,7 +388,7 @@ dskellam = function(x, mu1, mu2, log = FALSE) {
         stop("bad input for 'log.arg'")
 
     L = max(length(x), length(mu1), length(mu2))
-    x = rep(x, len=L); mu1 = rep(mu1, len=L); mu2 = rep(mu2, len=L);
+    x = rep(x, len = L); mu1 = rep(mu1, len = L); mu2 = rep(mu2, len = L);
     ok2 <- is.finite(mu1) && is.finite(mu2) & (mu1 >= 0) & (mu2 >= 0)
     ok3 <- (mu1 == 0) & (mu2 >  0)
     ok4 <- (mu1 >  0) & (mu2 == 0)
@@ -389,17 +396,17 @@ dskellam = function(x, mu1, mu2, log = FALSE) {
     if (log.arg) {
         ans = -mu1 - mu2 + 2 * sqrt(mu1*mu2) +
               0.5 * x * log(mu1) - 0.5 * x * log(mu2) +
-              log(besselI(2 * sqrt(mu1*mu2), nu=x, expon = TRUE))
+              log(besselI(2 * sqrt(mu1*mu2), nu = x, expon = TRUE))
         ans[ok3] = dpois(x = -x[ok3], lambda = mu2[ok3], log = TRUE)
         ans[ok4] = dpois(x = -x[ok4], lambda = mu1[ok4], log = TRUE)
         ans[ok5] = dpois(x =  x[ok5], lambda = 0.0,      log = TRUE)
         ans[x != round(x)] = log(0.0)
     } else {
         ans = (mu1/mu2)^(x/2) * exp(-mu1-mu2 + 2 * sqrt(mu1*mu2)) *
-              besselI(2 * sqrt(mu1*mu2), nu=x, expon = TRUE)
-        ans[ok3] = dpois(x=-x[ok3], lambda=mu2[ok3])
-        ans[ok4] = dpois(x=-x[ok4], lambda=mu1[ok4])
-        ans[ok5] = dpois(x= x[ok5], lambda=0.0)
+              besselI(2 * sqrt(mu1*mu2), nu = x, expon = TRUE)
+        ans[ok3] = dpois(x = -x[ok3], lambda = mu2[ok3])
+        ans[ok4] = dpois(x = -x[ok4], lambda = mu1[ok4])
+        ans[ok5] = dpois(x =  x[ok5], lambda = 0.0)
         ans[x != round(x)] = 0.0
     }
     ans[!ok2] = NaN
@@ -417,9 +424,8 @@ rskellam = function(n, mu1, mu2) {
 
 
 
-skellam.control <- function(save.weight = TRUE, ...)
-{
-    list(save.weight = save.weight)
+skellam.control <- function(save.weight = TRUE, ...) {
+  list(save.weight = save.weight)
 }
 
 
@@ -463,7 +469,7 @@ skellam.control <- function(save.weight = TRUE, ...)
                        namesof("mu1", .lmu1, earg = .emu1, tag = FALSE),
                        namesof("mu2", .lmu2, earg = .emu2, tag = FALSE))
         if (!length(etastart)) {
-            junk = lm.wfit(x=x, y=y, w=w)
+            junk = lm.wfit(x = x, y = y, w = w)
             var.y.est = sum(w * junk$resid^2) / junk$df.residual
             mean.init = weighted.mean(y, w)
             mu1.init = max((var.y.est + mean.init)/2, 0.01)
@@ -476,7 +482,7 @@ skellam.control <- function(save.weight = TRUE, ...)
     }), list( .lmu1 = lmu1, .lmu2 = lmu2,
               .imu1=imu1, .imu2=imu2,
               .emu1 = emu1, .emu2 = emu2 ))),
-    inverse = eval(substitute(function(eta, extra = NULL){
+    linkinv = eval(substitute(function(eta, extra = NULL){
         mu1 = eta2theta(eta[,1], link = .lmu1, earg = .emu1)
         mu2 = eta2theta(eta[,2], link = .lmu2, earg = .emu2)
         mu1 - mu2
@@ -490,7 +496,7 @@ skellam.control <- function(save.weight = TRUE, ...)
     }), list( .lmu1 = lmu1, .lmu2 = lmu2,
               .emu1 = emu1, .emu2 = emu2, .nsimEIM = nsimEIM ))),
     loglikelihood = eval(substitute(
-            function(mu,y,w,residuals = FALSE,eta,extra = NULL) {
+            function(mu,y, w,residuals = FALSE,eta,extra = NULL) {
         mu1 = eta2theta(eta[,1], link = .lmu1, earg = .emu1)
         mu2 = eta2theta(eta[,2], link = .lmu2, earg = .emu2)
         if (residuals)
@@ -559,43 +565,42 @@ skellam.control <- function(save.weight = TRUE, ...)
 
 
 dyules = function(x, rho, log = FALSE) {
-    log.arg = log
-    rm(log)
-    if ( !is.logical( log.arg ) || length( log.arg )!=1 )
-        stop("bad input for 'log.arg'")
-    if ( log.arg ) {
-        ans = log(rho) + lbeta(abs(x), rho+1)
-        ans[(x != round(x)) | (x < 1)] = log(0)
-    } else {
-        ans = rho * beta(x, rho+1)
-        ans[(x != round(x)) | (x < 1)] = 0
-    }
-    ans[!is.finite(rho) | (rho <= 0) | (rho <= 0)] = NA
-    ans
+  log.arg = log
+  rm(log)
+  if ( !is.logical( log.arg ) || length( log.arg )!=1 )
+    stop("bad input for 'log.arg'")
+  if ( log.arg ) {
+    ans = log(rho) + lbeta(abs(x), rho+1)
+    ans[(x != round(x)) | (x < 1)] = log(0)
+  } else {
+    ans = rho * beta(x, rho+1)
+    ans[(x != round(x)) | (x < 1)] = 0
+  }
+  ans[!is.finite(rho) | (rho <= 0) | (rho <= 0)] = NA
+  ans
 }
 
 
 ryules = function(n, rho) {
-    if (!is.Numeric(n, integ = TRUE, allow = 1))
-      stop("bad input for argument 'n'")
-    rgeom(n, prob=exp(-rexp(n, rate=rho))) + 1
+  if (!is.Numeric(n, integ = TRUE, allow = 1))
+    stop("bad input for argument 'n'")
+  rgeom(n, prob = exp(-rexp(n, rate=rho))) + 1
 }
 
 
 pyules = function(q, rho) {
-    tq = trunc(q)
-    ans = 1 - tq * beta(abs(tq), rho+1)
-    ans[q<1] = 0
-    ans[(rho <= 0) | (rho <= 0)] = NA
-    ans
+  tq = trunc(q)
+  ans = 1 - tq * beta(abs(tq), rho+1)
+  ans[q<1] = 0
+  ans[(rho <= 0) | (rho <= 0)] = NA
+  ans
 }
 
 
 
 
-yulesimon.control <- function(save.weight = TRUE, ...)
-{
-    list(save.weight = save.weight)
+yulesimon.control <- function(save.weight = TRUE, ...) {
+  list(save.weight = save.weight)
 }
 
 
@@ -627,13 +632,13 @@ yulesimon.control <- function(save.weight = TRUE, ...)
         predictors.names = namesof("rho", .link, earg =.earg, tag = FALSE) 
 
         if (!length(etastart)) {
-            wmeany = weighted.mean(y,w) + 1/8
+            wmeany = weighted.mean(y, w) + 1/8
             rho.init = wmeany / (wmeany - 1)
             rho.init = rep( if (length( .irho )) .irho else rho.init, len = n)
             etastart = theta2eta(rho.init, .link, earg =.earg)
         }
     }), list( .link=link, .earg =earg, .irho=irho ))),
-    inverse = eval(substitute(function(eta, extra = NULL) {
+    linkinv = eval(substitute(function(eta, extra = NULL) {
         ans = rho = eta2theta(eta, .link, earg =.earg)
         ans[rho>1] = rho / (rho - 1)
         ans[rho<=1] = NA
@@ -646,7 +651,7 @@ yulesimon.control <- function(save.weight = TRUE, ...)
         misc$nsimEIM = .nsimEIM
     }), list( .link=link, .earg =earg, .nsimEIM = nsimEIM ))),
     loglikelihood = eval(substitute(
-        function(mu,y,w,residuals= FALSE,eta, extra = NULL) {
+        function(mu,y, w,residuals= FALSE,eta, extra = NULL) {
         rho = eta2theta(eta, .link, earg =.earg)
         if (residuals)
           stop("loglikelihood residuals not implemented yet") else {
@@ -684,23 +689,23 @@ yulesimon.control <- function(save.weight = TRUE, ...)
 
 
 
-dslash <- function(x, mu=0, sigma=1, log = FALSE,
-                   smallno=.Machine$double.eps*1000){
-    log.arg = log
-    rm(log)
-    if (!is.Numeric(sigma) || any(sigma <= 0))
-      stop("'sigma' must be positive")
-    L = max(length(x), length(mu), length(sigma))
-    x = rep(x, len = L); mu = rep(mu, len = L); sigma = rep(sigma, len = L)
-    zedd = (x-mu)/sigma
-    if (log.arg)
-      ifelse(abs(zedd)<smallno, -log(2*sigma*sqrt(2*pi)),
-      log1p(-exp(-zedd^2/2)) - log(sqrt(2*pi)*sigma*zedd^2)) else
-      ifelse(abs(zedd)<smallno, 1/(2*sigma*sqrt(2*pi)),
-      -expm1(-zedd^2/2)/(sqrt(2*pi)*sigma*zedd^2))
+dslash <- function(x, mu = 0, sigma = 1, log = FALSE,
+                   smallno =.Machine$double.eps*1000){
+  log.arg = log
+  rm(log)
+  if (!is.Numeric(sigma) || any(sigma <= 0))
+    stop("'sigma' must be positive")
+  L = max(length(x), length(mu), length(sigma))
+  x = rep(x, len = L); mu = rep(mu, len = L); sigma = rep(sigma, len = L)
+  zedd = (x-mu)/sigma
+  if (log.arg)
+    ifelse(abs(zedd)<smallno, -log(2*sigma*sqrt(2*pi)),
+    log1p(-exp(-zedd^2/2)) - log(sqrt(2*pi)*sigma*zedd^2)) else
+    ifelse(abs(zedd)<smallno, 1/(2*sigma*sqrt(2*pi)),
+    -expm1(-zedd^2/2)/(sqrt(2*pi)*sigma*zedd^2))
 }
 
-pslash <- function(q, mu=0, sigma=1){
+pslash <- function(q, mu = 0, sigma = 1){
     if (!is.Numeric(sigma) || any(sigma <= 0))
       stop("'sigma' must be positive")
     L = max(length(q), length(mu), length(sigma))
@@ -716,7 +721,7 @@ pslash <- function(q, mu=0, sigma=1){
     ans
 }
 
-rslash <- function (n, mu=0, sigma=1){
+rslash <- function (n, mu = 0, sigma = 1){
     if (!is.Numeric(n, posit = TRUE, integ = TRUE, allow = 1))
       stop("bad input for argument 'n'")
     if (any(sigma <= 0))
@@ -757,7 +762,7 @@ slash.control <- function(save.weight = TRUE, ...)
     new("vglmff",
     blurb = c("Slash distribution\n\n",
            "Links:    ",
-           namesof("mu", lmu, earg = emu), ", ",
+           namesof("mu",    lmu,    earg = emu,    tag = FALSE), ", ",
            namesof("sigma", lsigma, earg = esigma, tag = FALSE), "\n",
            paste(
            "1-exp(-(((y-mu)/sigma)^2)/2))/(sqrt(2*pi)*sigma*((y-mu)/sigma)^2)",
@@ -771,14 +776,14 @@ slash.control <- function(save.weight = TRUE, ...)
         if (ncol(y <- cbind(y)) != 1)
             stop("the response must be a vector or one-column matrix")
         predictors.names = c(
-            namesof("mu",    .lmu,    earg = .emu, tag = FALSE),
+            namesof("mu",    .lmu,    earg = .emu,    tag = FALSE),
             namesof("sigma", .lsigma, earg = .esigma, tag = FALSE))
         if (!length(etastart)) {
 
             slash.Loglikfun = function(mu, y, x, w, extraargs) {
                 sigma = if (is.Numeric(.isigma)) .isigma else
                   max(0.01,
-                     ((quantile(rep(y,w), prob=0.75)/2)-mu)/qnorm(0.75))
+                     ((quantile(rep(y, w), prob = 0.75)/2)-mu)/qnorm(0.75))
                 zedd = (y-mu)/sigma
                 sum(w * ifelse(abs(zedd)<.smallno,
                                -log(2*sigma*sqrt(2*pi)),
@@ -786,13 +791,13 @@ slash.control <- function(save.weight = TRUE, ...)
                                log(sqrt(2*pi) * sigma * zedd^2)))
             }
             iprobs = .iprobs
-            mu.grid = quantile(rep(y,w), probs=iprobs)
+            mu.grid = quantile(rep(y, w), probs=iprobs)
             mu.grid = seq(mu.grid[1], mu.grid[2], length=100)
             mu.init = if (length( .imu )) .imu else
-                      getMaxMin(mu.grid, objfun=slash.Loglikfun,
-                                y=y,  x=x, w=w)
+                      getMaxMin(mu.grid, objfun = slash.Loglikfun,
+                                y = y,  x = x, w = w)
             sigma.init = if (is.Numeric(.isigma)) .isigma else
-              max(0.01, ((quantile(rep(y,w), prob=0.75)/2)-mu.init)/qnorm(0.75))
+              max(0.01, ((quantile(rep(y, w), prob = 0.75)/2)-mu.init)/qnorm(0.75))
             mu.init = rep(mu.init, length = length(y))
             etastart = matrix(0, n, 2)
             etastart[,1] = theta2eta(mu.init, .lmu, earg =.emu)
@@ -802,7 +807,7 @@ slash.control <- function(save.weight = TRUE, ...)
               .imu = imu, .isigma = isigma,
               .emu = emu, .esigma = esigma,
               .iprobs=iprobs, .smallno = smallno))),
-    inverse = eval(substitute(function(eta, extra = NULL){
+    linkinv = eval(substitute(function(eta, extra = NULL){
         NA * eta2theta(eta[,1], link = .lmu, earg = .emu)
     }, list( .lmu = lmu, .emu = emu ))),
     last = eval(substitute(expression({
@@ -813,14 +818,14 @@ slash.control <- function(save.weight = TRUE, ...)
     }), list( .lmu = lmu, .lsigma = lsigma,
               .emu = emu, .esigma = esigma, .nsimEIM = nsimEIM ))),
     loglikelihood = eval(substitute(
-            function(mu,y,w,residuals = FALSE,eta,extra = NULL) {
+            function(mu,y, w,residuals = FALSE,eta,extra = NULL) {
         mu = eta2theta(eta[,1], link = .lmu, earg = .emu)
         sigma = eta2theta(eta[,2], link = .lsigma, earg = .esigma)
         zedd = (y - mu) / sigma
         if (residuals)
           stop("loglikelihood residuals not implemented yet") else {
-            sum(w * dslash(x=y, mu=mu, sigma=sigma, log = TRUE,
-                           smallno= .smallno))
+            sum(w * dslash(x=y, mu = mu, sigma = sigma, log = TRUE,
+                           smallno = .smallno))
         }
     }, list( .lmu = lmu, .lsigma = lsigma,
              .emu = emu, .esigma = esigma, .smallno = smallno ))),
@@ -853,7 +858,7 @@ slash.control <- function(save.weight = TRUE, ...)
                      log(sqrt(2*pi)*sigma*((ysim-mu)/sigma)^2),
                      c("mu", "sigma"))
         for(ii in 1:( .nsimEIM )) {
-            ysim = rslash(n, mu=mu, sigma=sigma)
+            ysim = rslash(n, mu = mu, sigma = sigma)
             seval.d3 = eval(sd3)
 
             dl.dthetas =  attr(seval.d3, "gradient")
@@ -906,7 +911,7 @@ dnefghs = function(x, tau, log = FALSE) {
     if (!is.list(earg)) earg = list()
     if (!is.Numeric(imethod, allow = 1, integ = TRUE, posit = TRUE) ||
        imethod > 2)
-        stop("'imethod' must be 1 or 2")
+        stop("argument 'imethod' must be 1 or 2")
 
     new("vglmff",
     blurb = c("Natural exponential family generalized hyperbolic ",
@@ -921,8 +926,8 @@ dnefghs = function(x, tau, log = FALSE) {
         predictors.names = namesof("tau", .link, earg =.earg, tag = FALSE) 
 
         if (!length(etastart)) {
-            wmeany = if ( .imethod == 1) weighted.mean(y,w) else
-                     median(rep(y,w))
+            wmeany = if ( .imethod == 1) weighted.mean(y, w) else
+                     median(rep(y, w))
             if (abs(wmeany) < 0.01) wmeany = 0.01
             tau.init = atan(pi / wmeany) / pi + 0.5
             tau.init[tau.init < 0.03] = 0.03
@@ -932,7 +937,7 @@ dnefghs = function(x, tau, log = FALSE) {
         }
     }), list( .link = link, .earg = earg, .itau = itau,
               .imethod = imethod ))),
-    inverse = eval(substitute(function(eta, extra = NULL) {
+    linkinv = eval(substitute(function(eta, extra = NULL) {
         tau = eta2theta(eta, .link, earg =.earg)
         pi / tan(pi * tau)
     }, list( .link=link, .earg =earg ))),
@@ -943,7 +948,7 @@ dnefghs = function(x, tau, log = FALSE) {
         misc$imethod= .imethod
     }), list( .link=link, .earg =earg, .imethod = imethod ))),
     loglikelihood = eval(substitute(
-        function(mu,y,w,residuals= FALSE,eta, extra = NULL) {
+        function(mu,y, w,residuals= FALSE,eta, extra = NULL) {
         tau = eta2theta(eta, .link, earg =.earg)
         if (residuals)
           stop("loglikelihood residuals not implemented yet") else {
@@ -985,110 +990,110 @@ dlogF = function(x, shape1, shape2, log = FALSE) {
                  ishape1 = NULL, ishape2 = 1,
                  imethod = 1)
 {
-    if (length(ishape1) && !is.Numeric(ishape1, positi = TRUE))
-        stop("argument 'ishape1' must be positive")
-    if ( # length(ishape2) &&
-       !is.Numeric(ishape2, positi = TRUE))
-        stop("argument 'ishape2' must be positive")
-    if (mode(lshape1) != "character" && mode(lshape1) != "name")
-        lshape1 = as.character(substitute(lshape1))
-    if (mode(lshape2) != "character" && mode(lshape2) != "name")
-        lshape2 = as.character(substitute(lshape2))
-    if (!is.list(eshape1)) eshape1 = list()
-    if (!is.list(eshape2)) eshape2 = list()
-    if (!is.Numeric(imethod, allow = 1, integ = TRUE, posit = TRUE) ||
-       imethod > 2)
-        stop("'imethod' must be 1 or 2")
+  if (length(ishape1) && !is.Numeric(ishape1, positi = TRUE))
+    stop("argument 'ishape1' must be positive")
+  if ( # length(ishape2) &&
+   !is.Numeric(ishape2, positi = TRUE))
+    stop("argument 'ishape2' must be positive")
+  if (mode(lshape1) != "character" && mode(lshape1) != "name")
+    lshape1 = as.character(substitute(lshape1))
+  if (mode(lshape2) != "character" && mode(lshape2) != "name")
+    lshape2 = as.character(substitute(lshape2))
+  if (!is.list(eshape1)) eshape1 = list()
+  if (!is.list(eshape2)) eshape2 = list()
+  if (!is.Numeric(imethod, allow = 1, integ = TRUE, posit = TRUE) ||
+     imethod > 2)
+      stop("argument 'imethod' must be 1 or 2")
 
-    new("vglmff",
-    blurb = c("log F distribution\n",
-            "f(y) = exp(-shape2*y)/(beta(shape1,shape2)*",
-            "(1+exp(-y))^(shape1+shape2))\n\n",
-            "Link:    ",
-            namesof("shape1", lshape1, earg =eshape1),
-            ", ",
-            namesof("shape2", lshape2, earg =eshape2),
-            "\n\n",
-            "Mean:     digamma(shape1) - digamma(shape2)"),
-    initialize = eval(substitute(expression({
-        if (ncol(cbind(y)) != 1)
-            stop("response must be a vector or a one-column matrix")
-        predictors.names = c(
-            namesof("shape1", .lshape1, earg = .eshape1, tag = FALSE),
-            namesof("shape2", .lshape2, earg = .eshape2, tag = FALSE))
+  new("vglmff",
+  blurb = c("log F distribution\n",
+          "f(y) = exp(-shape2*y)/(beta(shape1,shape2)*",
+          "(1+exp(-y))^(shape1+shape2))\n\n",
+          "Link:    ",
+          namesof("shape1", lshape1, earg =eshape1),
+          ", ",
+          namesof("shape2", lshape2, earg =eshape2),
+          "\n\n",
+          "Mean:     digamma(shape1) - digamma(shape2)"),
+  initialize = eval(substitute(expression({
+    if (ncol(cbind(y)) != 1)
+      stop("response must be a vector or a one-column matrix")
+    predictors.names = c(
+      namesof("shape1", .lshape1, earg = .eshape1, tag = FALSE),
+      namesof("shape2", .lshape2, earg = .eshape2, tag = FALSE))
 
-        if (!length(etastart)) {
-            wmeany = if ( .imethod == 1) weighted.mean(y,w) else
-                     median(rep(y,w))
+    if (!length(etastart)) {
+      wmeany = if ( .imethod == 1) weighted.mean(y, w) else
+               median(rep(y, w))
 
 
-            shape1.init = shape2.init = rep( .ishape2, len = n)
-            shape1.init = if (length( .ishape1))
+      shape1.init = shape2.init = rep( .ishape2, len = n)
+      shape1.init = if (length( .ishape1))
                             rep( .ishape1, len = n) else {
                 index1 = (y > wmeany)
                 shape1.init[index1] = shape2.init[index1] + 1/1
                 shape1.init[!index1] = shape2.init[!index1] - 1/1
                 shape1.init = pmax(shape1.init, 1/8)
                 shape1.init
-            }
-            etastart =
-                cbind(theta2eta(shape1.init, .lshape1, earg = .eshape1),
-                      theta2eta(shape2.init, .lshape2, earg = .eshape2))
-        }
-    }), list( .lshape1 = lshape1, .lshape2 = lshape2,
-              .eshape1 = eshape1, .eshape2 = eshape2,
-              .ishape1=ishape1, .ishape2=ishape2,
-              .imethod = imethod ))),
-    inverse = eval(substitute(function(eta, extra = NULL) {
-        shape1 = eta2theta(eta[,1], .lshape1, earg = .eshape1)
-        shape2 = eta2theta(eta[,2], .lshape2, earg = .eshape2)
-        digamma(shape1) - digamma(shape2)
-    }, list( .lshape1 = lshape1, .lshape2 = lshape2,
-             .eshape1 = eshape1, .eshape2 = eshape2 ))),
-    last = eval(substitute(expression({
-        misc$link <-    c(shape1 = .lshape1, shape2 = .lshape2)
-        misc$earg <- list(shape1 = .eshape1, shape2 = .eshape2)
-        misc$expected = TRUE
-        misc$imethod= .imethod
-    }), list( .lshape1 = lshape1, .lshape2 = lshape2,
-              .eshape1 = eshape1, .eshape2 = eshape2,
-              .imethod = imethod ))),
-    loglikelihood = eval(substitute(
-        function(mu,y,w,residuals= FALSE,eta, extra = NULL) {
-        shape1 = eta2theta(eta[,1], .lshape1, earg = .eshape1)
-        shape2 = eta2theta(eta[,2], .lshape2, earg = .eshape2)
-        if (residuals)
-          stop("loglikelihood residuals not implemented yet") else {
-            sum(w * dlogF(x=y, shape1 = shape1, shape2 = shape2, log = TRUE))
-        }
-    }, list( .lshape1 = lshape1, .lshape2 = lshape2,
-             .eshape1 = eshape1, .eshape2 = eshape2 ))),
-    vfamily = c("logF"),
-    deriv = eval(substitute(expression({
-        shape1 = eta2theta(eta[,1], .lshape1, earg = .eshape1)
-        shape2 = eta2theta(eta[,2], .lshape2, earg = .eshape2)
-        tmp888 = digamma(shape1 + shape2) - log1p(exp(-y))
-        dl.dshape1 = tmp888 - digamma(shape1)
-        dl.dshape2 = tmp888 - digamma(shape2) - y
-        dshape1.deta = dtheta.deta(shape1, .lshape1, earg = .eshape1)
-        dshape2.deta = dtheta.deta(shape2, .lshape2, earg = .eshape2)
-        c(w) * cbind(dl.dshape1 * dshape1.deta,
-                     dl.dshape2 * dshape2.deta)
-    }), list( .lshape1 = lshape1, .lshape2 = lshape2,
-              .eshape1 = eshape1, .eshape2 = eshape2 ))),
-    weight = eval(substitute(expression({
-        tmp888 = trigamma(shape1 + shape2)
-        d2l.dshape12 = trigamma(shape1) - tmp888
-        d2l.dshape22 = trigamma(shape2) - tmp888
-        d2l.dshape1shape2 = -tmp888
-        wz = matrix(0, n, dimm(M))
-        wz[,iam(1,1,M = M)] = d2l.dshape12 * dshape1.deta^2
-        wz[,iam(2,2,M = M)] = d2l.dshape22 * dshape2.deta^2
-        wz[,iam(1,2,M = M)] = d2l.dshape1shape2 * dshape1.deta *
+              }
+      etastart =
+          cbind(theta2eta(shape1.init, .lshape1, earg = .eshape1),
+                theta2eta(shape2.init, .lshape2, earg = .eshape2))
+    }
+  }), list( .lshape1 = lshape1, .lshape2 = lshape2,
+            .eshape1 = eshape1, .eshape2 = eshape2,
+            .ishape1 = ishape1, .ishape2 = ishape2,
+            .imethod = imethod ))),
+  linkinv = eval(substitute(function(eta, extra = NULL) {
+    shape1 = eta2theta(eta[,1], .lshape1, earg = .eshape1)
+    shape2 = eta2theta(eta[,2], .lshape2, earg = .eshape2)
+    digamma(shape1) - digamma(shape2)
+  }, list( .lshape1 = lshape1, .lshape2 = lshape2,
+           .eshape1 = eshape1, .eshape2 = eshape2 ))),
+  last = eval(substitute(expression({
+    misc$link <-    c(shape1 = .lshape1, shape2 = .lshape2)
+    misc$earg <- list(shape1 = .eshape1, shape2 = .eshape2)
+    misc$expected = TRUE
+    misc$imethod= .imethod
+  }), list( .lshape1 = lshape1, .lshape2 = lshape2,
+            .eshape1 = eshape1, .eshape2 = eshape2,
+            .imethod = imethod ))),
+  loglikelihood = eval(substitute(
+    function(mu,y, w,residuals= FALSE,eta, extra = NULL) {
+    shape1 = eta2theta(eta[,1], .lshape1, earg = .eshape1)
+    shape2 = eta2theta(eta[,2], .lshape2, earg = .eshape2)
+    if (residuals)
+      stop("loglikelihood residuals not implemented yet") else {
+        sum(w * dlogF(x=y, shape1 = shape1, shape2 = shape2, log = TRUE))
+    }
+  }, list( .lshape1 = lshape1, .lshape2 = lshape2,
+           .eshape1 = eshape1, .eshape2 = eshape2 ))),
+  vfamily = c("logF"),
+  deriv = eval(substitute(expression({
+    shape1 = eta2theta(eta[,1], .lshape1, earg = .eshape1)
+    shape2 = eta2theta(eta[,2], .lshape2, earg = .eshape2)
+    tmp888 = digamma(shape1 + shape2) - log1p(exp(-y))
+    dl.dshape1 = tmp888 - digamma(shape1)
+    dl.dshape2 = tmp888 - digamma(shape2) - y
+    dshape1.deta = dtheta.deta(shape1, .lshape1, earg = .eshape1)
+    dshape2.deta = dtheta.deta(shape2, .lshape2, earg = .eshape2)
+    c(w) * cbind(dl.dshape1 * dshape1.deta,
+                 dl.dshape2 * dshape2.deta)
+  }), list( .lshape1 = lshape1, .lshape2 = lshape2,
+            .eshape1 = eshape1, .eshape2 = eshape2 ))),
+  weight = eval(substitute(expression({
+    tmp888 = trigamma(shape1 + shape2)
+    d2l.dshape12 = trigamma(shape1) - tmp888
+    d2l.dshape22 = trigamma(shape2) - tmp888
+    d2l.dshape1shape2 = -tmp888
+    wz = matrix(0, n, dimm(M))
+    wz[,iam(1,1,M = M)] = d2l.dshape12 * dshape1.deta^2
+    wz[,iam(2,2,M = M)] = d2l.dshape22 * dshape2.deta^2
+    wz[,iam(1,2,M = M)] = d2l.dshape1shape2 * dshape1.deta *
                                                 dshape2.deta
-        c(w) * wz
-    }), list( .lshape1 = lshape1, .lshape2 = lshape2,
-              .eshape1 = eshape1, .eshape2 = eshape2 ))))
+    c(w) * wz
+  }), list( .lshape1 = lshape1, .lshape2 = lshape2,
+            .eshape1 = eshape1, .eshape2 = eshape2 ))))
 }
 
 
@@ -1128,7 +1133,7 @@ rbenf <- function(n, ndigits = 1) {
   ans <- rep(lowerlimit, length = use.n)
   for(ii in (lowerlimit+1):upperlimit) {
       indexTF <- (pbenf(ii-1, ndigits = ndigits) < myrunif) &
-                 (myrunif <= pbenf(ii, ndigits=ndigits))
+                 (myrunif <= pbenf(ii, ndigits = ndigits))
       ans[indexTF] <- ii
   }
   ans
@@ -1167,8 +1172,8 @@ qbenf <- function(p, ndigits = 1) {
   ans <- rep(lowerlimit, length = length(p))
   for(ii in (lowerlimit+1):upperlimit) {
     indexTF <- is.finite(p) &
-              (pbenf(ii-1, ndigits=ndigits) < p) &
-              (p <= pbenf(ii, ndigits=ndigits))
+              (pbenf(ii-1, ndigits = ndigits) < p) &
+              (p <= pbenf(ii, ndigits = ndigits))
     ans[indexTF] <- ii
   }
 

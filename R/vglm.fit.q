@@ -39,7 +39,7 @@ vglm.fit <- function(x, y, w=rep(1, length(x[, 1])),
                 eval(slot(family, "middle"))
 
             eta <- fv + offset
-            mu <- slot(family, "inverse")(eta, extra)
+            mu <- slot(family, "linkinv")(eta, extra)
 
             if (length(slot(family, "middle2")))
                 eval(slot(family, "middle2"))
@@ -98,7 +98,7 @@ vglm.fit <- function(x, y, w=rep(1, length(x[, 1])),
                             fv <- matrix(fv, n, M, byrow = TRUE)
 
                         eta <- fv + offset
-                        mu <- slot(family, "inverse")(eta, extra)
+                        mu <- slot(family, "linkinv")(eta, extra)
 
                         if (length(slot(family, "middle2")))
                             eval(slot(family, "middle2"))
@@ -191,16 +191,16 @@ vglm.fit <- function(x, y, w=rep(1, length(x[, 1])),
     if (length(etastart)) {
         eta <- etastart
         mu <- if (length(mustart)) mustart else
-              if (length(body(slot(family, "inverse"))))
-                slot(family, "inverse")(eta, extra) else
+              if (length(body(slot(family, "linkinv"))))
+                slot(family, "linkinv")(eta, extra) else
                 warning("argument 'etastart' assigned a value ",
-                        "but there is no 'inverse' slot to use it")
+                        "but there is no 'linkinv' slot to use it")
     }
 
     if (length(mustart)) {
         mu <- mustart
-        if (length(body(slot(family, "link")))) {
-          eta <- slot(family, "link")(mu, extra)
+        if (length(body(slot(family, "linkfun")))) {
+          eta <- slot(family, "linkfun")(mu, extra)
         } else {
           warning("argument 'mustart' assigned a value ",
                   "but there is no 'link' slot to use it")
@@ -230,7 +230,7 @@ vglm.fit <- function(x, y, w=rep(1, length(x[, 1])),
         eta <- if (ncol(X_vlm_save)>1) X_vlm_save %*% coefstart +
                    offset else X_vlm_save * coefstart + offset
         eta <- if (M > 1) matrix(eta, ncol = M, byrow = TRUE) else c(eta) 
-        mu <- slot(family, "inverse")(eta, extra)
+        mu <- slot(family, "linkinv")(eta, extra)
     }
 
 

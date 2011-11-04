@@ -18,16 +18,22 @@ Coef.rrvglm(object, ...)
   The \bold{A}, \bold{B1}, \bold{C} matrices are returned,
   along with other slots.
   See \code{\link{rrvglm}} for details about RR-VGLMs.
+
+
 }
 \value{
   An object of class \code{"Coef.rrvglm"} 
 (see \code{\link{Coef.rrvglm-class}}).
+
+
 }
 \references{ 
 Yee, T. W. and Hastie, T. J. (2003)
 Reduced-rank vector generalized linear models.
 \emph{Statistical Modelling},
 \bold{3}, 15--41.
+
+
 }
 \author{ Thomas W. Yee }
 \note{ This function is an alternative to \code{coef.rrvglm}. }
@@ -37,16 +43,17 @@ Reduced-rank vector generalized linear models.
   \code{\link{Coef.rrvglm-class}},
   \code{print.Coef.rrvglm},
   \code{\link{rrvglm}}.
+
+
 }
 
 \examples{
 # Rank-1 stereotype model of Anderson (1984)
-n = nrow(pneumo)
-pneumo = transform(pneumo, let=log(exposure.time), x1=runif(n), x2=runif(n))
-fit = rrvglm(cbind(normal,mild,severe) ~ let + x1 + x2, multinomial, pneumo)
-coef(fit, matrix=TRUE)
+pneumo = transform(pneumo, let = log(exposure.time), x3 = runif(nrow(pneumo)))
+fit = rrvglm(cbind(normal, mild, severe) ~ let + x3, multinomial, pneumo)
+coef(fit, matrix = TRUE)
 Coef(fit)
-print(Coef(fit), digits=3)
+print(Coef(fit), digits = 3)
 }
 \keyword{models}
 \keyword{regression}

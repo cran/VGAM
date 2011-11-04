@@ -12,8 +12,8 @@
 grc(y, Rank = 1, Index.corner = 2:(1 + Rank),
     szero = 1, summary.arg = FALSE, h.step = 1e-04, ...)
 rcam(y, family = poissonff, Rank = 0, Musual = NULL,
-     Index.corner = if (!Rank) NULL else 1 + Musual * (1:Rank),
-     rprefix = "Row.", cprefix = "Col.",
+     weights = NULL, Index.corner = if (!Rank) NULL else
+     1 + Musual * (1:Rank), rprefix = "Row.", cprefix = "Col.",
      szero = if (!Rank) NULL else {
        if (Musual == 1) 1 else setdiff(1:(Musual * ncol(y)),
                     c(1 + (1:ncol(y)) * Musual, Index.corner))
@@ -57,6 +57,14 @@ rcam(y, family = poissonff, Rank = 0, Musual = NULL,
   For \code{grc()} this argument must be positive.
   A value of 0 means no interactions (i.e., main effects only);
   each row and column is represented by an indicator variable.
+
+  }
+  \item{weights}{
+  Prior weights. Fed into 
+  \code{\link{rrvglm}}
+  or
+  \code{\link{vglm}}.
+
 
   }
   \item{Index.corner}{
@@ -248,6 +256,7 @@ assistance from Alfian F. Hadi.
   \code{summary.grc},
   \code{\link{moffset}},
   \code{\link{Rcam}},
+  \code{\link{Qvar}},
   \code{\link{plotrcam0}},
   \code{\link{alcoff}},
   \code{\link{crashi}},

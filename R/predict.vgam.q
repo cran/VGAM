@@ -4,11 +4,13 @@
 
 
 
+
+
 predict.vgam <- function(object, newdata=NULL,
                          type=c("link", "response", "terms"),
-                         se.fit=FALSE, deriv.arg=0, terms.arg=NULL,
-                         raw=FALSE,
-                         all=TRUE, offset=0, 
+                         se.fit = FALSE, deriv.arg=0, terms.arg=NULL,
+                         raw = FALSE,
+                         all = TRUE, offset=0, 
                          untransform = FALSE,
                          dispersion=NULL, ...)
 {
@@ -29,7 +31,7 @@ predict.vgam <- function(object, newdata=NULL,
 
     if (untransform &&
        (type != "link" || se.fit || deriv.arg != 0 || offset != 0))
-        stop("argument 'untransform=TRUE' only if type='link', ",
+        stop("argument 'untransform = TRUE' only if type='link', ",
              "se.fit = FALSE, deriv = 0")
 
     if (raw && type!="terms")
@@ -43,10 +45,10 @@ predict.vgam <- function(object, newdata=NULL,
         stop("'deriv>0' can only be specified if 'type=\"terms\"'")
 
     if (deriv.arg != 0 && !(type!="response" && !se.fit))
-        stop("'deriv=' only works with type!='response' and se.fit=FALSE")
+        stop("'deriv=' only works with type!='response' and se.fit = FALSE")
 
     if (se.fit && length(newdata))
-        stop("cannot specify 'se.fit=TRUE' when 'newdata' is assigned")
+        stop("cannot specify 'se.fit = TRUE' when 'newdata' is assigned")
 
 
     tt <- terms(object) # 11/8/03; object@terms$terms
@@ -70,7 +72,7 @@ predict.vgam <- function(object, newdata=NULL,
     if (!length(newdata)) {
         if (type=="link") {
             if (se.fit) {
-                stop("cannot handle this option (se.fit=TRUE) currently")
+                stop("cannot handle this option (se.fit = TRUE) currently")
             } else {
                 if (length(na.act)) {
                     answer = napredict(na.act[[1]], object@predictors)
@@ -83,7 +85,7 @@ predict.vgam <- function(object, newdata=NULL,
         } else 
         if (type=="response") {
             if (se.fit) {
-                stop("cannot handle this option (se.fit=TRUE) currently")
+                stop("cannot handle this option (se.fit = TRUE) currently")
             } else {
                 if (length(na.act)) {
                     return(napredict(na.act[[1]], object@fitted.values))
@@ -134,8 +136,8 @@ predict.vgam <- function(object, newdata=NULL,
 
 
         dnames2 <- dimnames(newdata)[[2]]
-        index1 <- match(s.xargument, dnames2, nomatch=FALSE)
-        index2 <- match(names(s.xargument), dnames2, nomatch=FALSE)
+        index1 <- match(s.xargument, dnames2, nomatch = FALSE)
+        index2 <- match(names(s.xargument), dnames2, nomatch = FALSE)
         index <- index1 | index2
         if (!length(index) || any(!index))
             stop("required variables not found in newdata")
@@ -189,7 +191,7 @@ predict.vgam <- function(object, newdata=NULL,
                         temp.var <- if (raw) {
                                         tmp7 <- object@misc$varassign
                                         tmp7 <- tmp7[[ii]]
-                                        object@var[, tmp7, drop=FALSE]
+                                        object@var[, tmp7, drop = FALSE]
                                     } else
                                    stop("cannot handle se's with raw = FALSE")
 
@@ -225,7 +227,7 @@ predict.vgam <- function(object, newdata=NULL,
         }
     } else
     if (type=="response") {
-        fv <- object@family@inverse(if(se.fit) predictor$fitted.values else
+        fv <- object@family@linkinv(if(se.fit) predictor$fitted.values else
                                     predictor, object@extra)
         if (is.matrix(fv) && is.matrix(object@fitted.values))
             dimnames(fv) <- list(dimnames(fv)[[1]],
@@ -256,7 +258,7 @@ predict.vgam <- function(object, newdata=NULL,
             v = attr(if(se.fit) predictor$fitted.values else 
                 predictor, "vterm.assign")
             is.lin <- is.linear.term(names(v))
-            coefmat <- coefvlm(object, matrix=TRUE)
+            coefmat <- coefvlm(object, matrix = TRUE)
             ord <- 0
             for(ii in names(v)) {
                 ord <- ord + 1
@@ -273,11 +275,12 @@ predict.vgam <- function(object, newdata=NULL,
                     } else {
                         ans <- coefmat[ii, 1:lindex]
                         if (se.fit) {
-                            predictor$fitted.values[,index] = if (deriv.arg==1)
-                                matrix(ans, ncol=lindex, byrow=TRUE) else 0
+                            predictor$fitted.values[,index] =
+                                if (deriv.arg == 1)
+                                matrix(ans, ncol = lindex, byrow = TRUE) else 0
                         } else {
                             predictor[,index] <- if (deriv.arg==1)
-                                matrix(ans, ncol=lindex, byrow=TRUE) else 0
+                                matrix(ans, ncol=lindex, byrow = TRUE) else 0
                         }
                     }
                 } else
@@ -288,15 +291,15 @@ predict.vgam <- function(object, newdata=NULL,
                         predictor$fitted.values[,index] + 
                              (if(deriv.arg == 1)
                               matrix(ans, nrow=nrow(predictor$fitted.values),
-                               ncol=lindex, byrow=TRUE) else 0)
+                               ncol=lindex, byrow = TRUE) else 0)
                     } else {
                         predictor[, index] <- predictor[, index] +
                              (if(deriv.arg == 1)
                               matrix(ans, nrow=nrow(predictor), 
-                               ncol=lindex, byrow=TRUE) else 0)
+                               ncol=lindex, byrow = TRUE) else 0)
                     }
                 } else {
-                    cat("Derivatives of term ", i, "are unknown\n")
+                    cat("Derivatives of term ", ii, "are unknown\n")
                     if (se.fit) {
                         predictor$fitted.values[,index] <- NA
                     } else {

@@ -7,10 +7,10 @@
   von Mises distribution by maximum likelihood estimation.
 }
 \usage{
-vonmises(llocation="elogit", lscale="loge",
-         elocation=if(llocation=="elogit") list(min=0, max=2*pi)
-         else list(), escale=list(), ilocation=NULL,
-         iscale=NULL, imethod=1, zero=NULL)
+vonmises(llocation = "elogit", lscale = "loge",
+         elocation = if(llocation == "elogit") list(min = 0, max = 2*pi)
+         else list(), escale = list(), ilocation = NULL,
+         iscale = NULL, imethod = 1, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -123,10 +123,10 @@ New York: Wiley-Interscience, Third edition.
 
 }
 \examples{
-vdata = data.frame(x = runif(nn <- 1000))
-vdata = transform(vdata, y = rnorm(nn, m=2+x, sd=exp(0.2))) # Bad data!!
-fit = vglm(y  ~ x, vonmises(zero=2), vdata, trace=TRUE)
-coef(fit, matrix=TRUE)
+vdata = data.frame(x2 = runif(nn <- 1000))
+vdata = transform(vdata, y = rnorm(nn, m = 2+x2, sd = exp(0.2))) # Bad data!!
+fit = vglm(y  ~ x2, vonmises(zero = 2), vdata, trace = TRUE)
+coef(fit, matrix = TRUE)
 Coef(fit)
 with(vdata, range(y))   # original data
 range(fit@y)            # processed data is in [0,2*pi)

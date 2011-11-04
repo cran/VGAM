@@ -8,8 +8,8 @@
 
 }
 \usage{
-polf(theta, earg = stop("'earg' must be given"), inverse = FALSE,
-     deriv = 0, short = TRUE, tag = FALSE)
+polf(theta, earg = stop("argument 'earg' must be given"),
+     inverse = FALSE, deriv = 0, short = TRUE, tag = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

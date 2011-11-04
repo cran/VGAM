@@ -55,9 +55,9 @@ setClass("vglmff", representation(
       "first"        = "expression",
       "infos"        = "function",  # Added 20101203
       "initialize"   = "expression",
-      "inverse"      = "function",
       "last"         = "expression",
-      "link"         = "function",
+      "linkfun"      = "function",
+      "linkinv"      = "function",
       "loglikelihood"= "function",
       "middle"       = "expression",
       "middle2"      = "expression",
@@ -69,14 +69,14 @@ prototype = .VGAM.prototype.list)
 
 
 valid.vglmff = function(object) {
-    compulsory = c("initialize", "weight", "deriv", "inverse")
+    compulsory = c("initialize", "weight", "deriv", "linkinv")
     for(ii in compulsory) {
         if (!length(slot(object, ii)))
             stop("slot ", ii, " is empty")
     }
 
-    if (length(as.list(object@inverse)) != 3)
-        stop("wrong number of arguments in object@inverse")
+    if (length(as.list(object@linkinv)) != 3)
+        stop("wrong number of arguments in object@linkinv")
 }
 
 if (FALSE) 
@@ -477,6 +477,10 @@ if (!isGeneric("AIC"))
 
 
 
+
+setMethod("nobs", "vlm",
+         function(object, ...)
+         nobs.vlm(object, ...))
 
 
 

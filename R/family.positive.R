@@ -224,7 +224,7 @@ dhuggins91 = function(x, prob, prob0 = prob, log = FALSE) {
     mustart = NULL
   }), list( .link = link, .earg = earg, .iprob = iprob ))),
 
-  inverse = eval(substitute(function(eta, extra = NULL) {
+  linkinv = eval(substitute(function(eta, extra = NULL) {
     Musual = 2
     Mdiv2  =  ncol(eta) / Musual
     index1 =  Musual * (1:Mdiv2) - 1
@@ -559,7 +559,7 @@ rposnegbin = function(n, size, prob = NULL, munb = NULL) {
               .emunb = emunb, .esize = esize,
               .sinit = shrinkage.init,
               .imethod = imethod ))),
-    inverse = eval(substitute(function(eta, extra = NULL) {
+    linkinv = eval(substitute(function(eta, extra = NULL) {
         NOS = ncol(eta) / 2
         munb = eta2theta(eta[,2*(1:NOS)-1, drop = FALSE],
                          .lmunb, earg = .emunb )
@@ -768,7 +768,7 @@ rpospois = function(n, lambda) {
         etastart <- theta2eta(lambda.init, .link, earg = .earg)
   }), list( .link = link, .earg = earg,
             .ilambda = ilambda, .imethod = imethod ))),
-  inverse = eval(substitute(function(eta, extra = NULL) {
+  linkinv = eval(substitute(function(eta, extra = NULL) {
     lambda <- eta2theta(eta, .link, earg = .earg )
     -lambda / expm1(-lambda)
   }, list( .link = link, .earg = earg ))),
@@ -958,7 +958,7 @@ dposbinom = function(x, size, prob, log = FALSE) {
     }
     mustart = NULL
   }), list( .link = link, .earg = earg, .mv = mv ))),
-  inverse = eval(substitute(function(eta, extra = NULL) {
+  linkinv = eval(substitute(function(eta, extra = NULL) {
     w = extra$w
     mymu = eta2theta(eta, .link, earg = .earg )
     nvec = if ( .mv ) {
@@ -1042,6 +1042,184 @@ dposbinom = function(x, size, prob, log = FALSE) {
     wz
   }), list( .link = link, .earg = earg, .mv = mv ))))
 }
+
+
+
+
+
+
+
+ rasch = function(lability = "identity",    eability = list(),
+                  ldifficulty = "identity", edifficulty = list(),
+                  iability = NULL,
+                  idifficulty = NULL,
+                  parallel = TRUE) {
+
+
+
+  labil = lability
+  eabil = eability
+  ldiff = ldifficulty
+  ediff = edifficulty
+
+
+  if (mode(labil) != "character" && mode(labil) != "name")
+    labil = as.character(substitute(labil))
+  if (!is.list(eabil)) eabil = list()
+  if (!is.list(ediff)) ediff = list()
+
+
+  if (length(iability))
+    if (!is.Numeric(iability))
+      stop("bad input in argument 'iability'")
+  if (length(idifficulty))
+    if (!is.Numeric(idifficulty))
+      stop("bad input in argument 'idifficulty'")
+
+
+  new("vglmff",
+  blurb = c("Rasch model\n\n",
+            "Links:    ",
+            namesof("ability",    labil, earg = eabil, tag = FALSE), ", ",
+            namesof("difficulty", ldiff, earg = ediff, tag = FALSE),
+            "\n"),
+
+  initialize = eval(substitute(expression({
+    mustart.orig = mustart
+    y = as.matrix(y)
+    extra$ncoly = ncoly = ncol(y)
+    M = n + ncoly  # number of ability and number of item parameters
+
+
+    mustart = matrix(apply(y, 2, weighted.mean, w = w),
+                     n, ncol(y), byrow = TRUE)
+    mustart[mustart == 0] = 0.05
+    mustart[mustart == 1] = 0.95
+
+    if (ncoly == 1)
+      stop("the response is univariate, therefore use binomialff()")
+
+
+    if (!all(y == 0 | y == 1))
+      stop("response must contain 0s and 1s only")
+    if (any(w <= 0))
+      stop("argument 'weights' must contain positive values only")
+
+
+    dn2 = if (is.matrix(y)) dimnames(y)[[2]] else NULL
+    dn2 = as.character(1:ncoly)
+    dn2 = as.character(1:nrow(y))
+    dn2 = if (length(dn2)) {
+      paste("ability", dn2, sep = "")
+    } else {
+      paste("zz", 1:Mdiv2, sep = "")
+    }
+    dn2 = c(dn2, paste("item", as.character(1:nrow(y)), sep = ""))
+    predictors.names =
+      namesof(dn2, .labil, earg = .eability, short = TRUE)
+
+
+
+
+    if (!length(etastart)) {
+
+      init.abil = runif(n) / (1 + colSums(y) - (1:n))
+      init.diff = -logit(apply(y, 2, weighted.mean, w = w), inverse = TRUE)
+
+      etastart =
+        cbind(matrix(init.abil, n, n), #   byrow = TRUE ,
+              matrix(init.diff, n, ncoly, byrow = TRUE))
+
+    }
+  }), list( .labil = labil, .eabil = eabil,
+            .ldiff = ldiff, .ediff = ediff,
+            .iability = iability,
+            .idifficulty = idifficulty ))),
+
+  linkinv = eval(substitute(function(eta, extra = NULL) {
+    myprobs = eta2theta(eta, "logit", earg = list())
+ print("head(myprobs)")
+ print( head(myprobs) )
+    myprobs
+  }, list( .labil = labil, .eabil = eabil,
+           .ldiff = ldiff, .ediff = ediff ))),
+  last = eval(substitute(expression({
+
+    misc$link = c(rep( .labil, length = n),
+                  rep( .ldiff, length = ncoly))
+
+    names(misc$link) = dn2
+
+    misc$earg = vector("list", M)
+    names(misc$earg) = names(misc$link)
+    for(ii in 1:n)
+      misc$earg[[ii]] = .eabil
+    for(ii in 1:ncoly)
+      misc$earg[[n + ii]] = .ediff
+
+    misc$expected = TRUE
+    misc$iability    = .iability
+    misc$idifficulty = .idifficulty
+
+  }), list( .labil = labil, .eabil = eabil,
+            .ldiff = ldiff, .ediff = ediff,
+            .iability = iability,
+            .idifficulty = idifficulty ))),
+  loglikelihood = eval(substitute(
+    function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
+      if (residuals) stop("loglikelihood residuals ",
+                          "not implemented yet") else {
+        sum(w * (y * log(mu) + (1 - y) * log1p(-mu)))
+      }
+  }, list( .labil = labil, .eabil = eabil,
+           .ldiff = ldiff, .ediff = ediff ))),
+  vfamily = c("rasch"),
+  deriv = eval(substitute(expression({
+ print("head(mu)")
+ print( head(mu) )
+    dabil.deta = 1
+    ddiff.deta = 1
+
+    dl.dabil =   matrix(colSums(y - mu), n, n)
+    dl.ddiff =  -cbind(y - mu)
+
+    deriv.ans = cbind(dl.dabil * dabil.deta,
+                      dl.ddiff * ddiff.deta)
+ print("head(deriv.ans)")
+ print( head(deriv.ans) )
+
+    deriv.ans
+  }), list( .labil = labil, .eabil = eabil,
+            .ldiff = ldiff, .ediff = ediff ))),
+
+  weight = eval(substitute(expression({
+
+    wz = matrix(0, n, dimm(M))
+    wz[, 1:M] = sqrt( .Machine$double.eps )
+
+
+    tmp1 = colSums(mu * (1 - mu))
+    for (ii in 1:n)
+      wz[ii, ii] = tmp1[ii]
+
+
+
+    wz[, n + (1:ncoly)] = mu * (1 - mu)
+
+
+    for (ii in 1:n)
+      for (jay in 1:ncoly)
+        wz[ii, iam(ii, jay, M = M)] = -mu[ii, jay] * (1 - mu[ii, jay])
+
+ print("head(wz)")
+ print( head(wz) )
+
+    wz = wz * w
+    wz
+  }), list( .labil = labil, .eabil = eabil ))))
+}
+
+
 
 
 

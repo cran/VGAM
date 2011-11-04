@@ -8,7 +8,7 @@
 }
 \usage{
 dagum(link.a = "loge", link.scale = "loge", link.p = "loge",
-      earg.a=list(), earg.scale=list(), earg.p=list(),
+      earg.a = list(), earg.scale = list(), earg.p = list(),
       init.a = NULL, init.scale = NULL, init.p = 1, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -68,12 +68,15 @@ provided \eqn{-ap < 1 < a}.
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}},
   and \code{\link{vgam}}.
+
 }
 \references{
+
 Kleiber, C. and Kotz, S. (2003)
 \emph{Statistical Size Distributions in Economics and
              Actuarial Sciences},
 Hoboken, NJ: Wiley-Interscience.
+
 
 }
 
@@ -83,11 +86,13 @@ If the self-starting initial values fail, try experimenting
 with the initial value arguments, especially those whose
 default value is not \code{NULL}.
 
+
 From Kleiber and Kotz (2003), the MLE is rather sensitive to isolated
 observations located sufficiently far from the majority of the data.
 Reliable estimation of the scale parameter require \eqn{n>7000},
 while estimates for \eqn{a} and \eqn{p} can be considered unbiased for
 \eqn{n>2000} or 3000.
+
 
 }
 
@@ -101,13 +106,14 @@ while estimates for \eqn{a} and \eqn{p} can be considered unbiased for
     \code{\link{lomax}},
     \code{\link{paralogistic}},
     \code{\link{invparalogistic}}.
+
 }
 
 \examples{
-ddata = data.frame(y = rdagum(n=3000, 4, 6, 2))
-fit = vglm(y ~ 1, dagum, ddata, trace=TRUE)
-fit = vglm(y ~ 1, dagum(init.a=2.1), ddata, trace=TRUE, crit="c")
-coef(fit, mat=TRUE)
+ddata = data.frame(y = rdagum(n = 3000, 4, 6, 2))
+fit = vglm(y ~ 1, dagum, ddata, trace = TRUE)
+fit = vglm(y ~ 1, dagum(init.a = 2.1), ddata, trace = TRUE, crit = "c")
+coef(fit, matrix = TRUE)
 Coef(fit)
 summary(fit)
 }

@@ -50,9 +50,11 @@ normal1(lmean = "identity", lsd = "loge",
 
 }
 \references{
-Evans, M., Hastings, N. and Peacock, B. (2000)
-\emph{Statistical Distributions},
-New York: Wiley-Interscience, Third edition.
+
+  Evans, M., Hastings, N. and Peacock, B. (2000)
+  \emph{Statistical Distributions},
+  New York: Wiley-Interscience, Third edition.
+
 
 }
 
@@ -62,11 +64,13 @@ New York: Wiley-Interscience, Third edition.
     standard devations to be the same.
     And a \code{parallel} argument.
 
+
 }
 \seealso{
     \code{\link{gaussianff}},
     \code{\link{posnormal1}},
     \code{\link{mix2normal1}},
+    \code{\link{Qvar}},
     \code{\link{tobit}},
     \code{\link{cennormal1}},
     \code{\link{fnormal1}},
@@ -76,6 +80,7 @@ New York: Wiley-Interscience, Third edition.
     \code{\link{studentt}},
     \code{\link{binormal}},
     \code{\link[stats:Normal]{dnorm}}.
+
 
 }
 \examples{

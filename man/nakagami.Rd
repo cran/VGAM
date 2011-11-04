@@ -9,20 +9,18 @@
 }
 \usage{
 nakagami(lshape = "loge", lscale = "loge",
-         eshape=list(), escale=list(), ishape = NULL, iscale = 1)
+         eshape = list(), escale = list(),
+         ishape = NULL, iscale = 1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{lshape, lscale}{
-  Parameter link function applied to the
+  \item{lshape, lscale, eshape, escale}{
+  Parameter link functions and extra arguments
+  applied to the
   \emph{shape} and \emph{scale} parameters.
   Log links ensure they are positive.
-  See \code{\link{Links}} for more choices.
-
-  }
-  \item{eshape, escale}{
-  List. Extra argument for each of the links.
-  See \code{earg} in \code{\link{Links}} for general information.
+  See \code{\link{Links}} for more choices
+  and information.
 
   }
   \item{ishape, iscale}{
@@ -53,20 +51,24 @@ nakagami(lshape = "loge", lscale = "loge",
   \eqn{\eta_2=\log(scale)}{eta2=log(scale)}.  
   Fisher scoring is implemented.
 
+
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}},
   and \code{\link{vgam}}.
 
+
 }
 \references{
+
   Nakagami, M. (1960)
   The  \emph{m}-distribution: a general  formula  of
   intensity  distribution  of  rapid  fading,
   pp.3--36 in:
   \emph{Statistical Methods in Radio Wave Propagation}.
   W. C. Hoffman, Ed., New York: Pergamon.
+
 
 }
 \author{ T. W. Yee }
@@ -77,9 +79,11 @@ nakagami(lshape = "loge", lscale = "loge",
   distribution and \eqn{m=1} is a Rayleigh distribution.
   The second moment is \eqn{E(Y^2)=m}.
 
+
   If \eqn{Y} has a Nakagami distribution with parameters \emph{shape}
   and \emph{scale} then \eqn{Y^2} has a gamma distribution with shape
   parameter \emph{shape} and scale parameter \emph{scale/shape}.
+
 
 }
 
@@ -87,21 +91,22 @@ nakagami(lshape = "loge", lscale = "loge",
   \code{\link{rnaka}},
   \code{\link{gamma2}},
   \code{\link{rayleigh}}.
+
+
 }
 \examples{
-n = 1000; shape = exp(0); Scale = exp(1)
-y = sqrt(rgamma(n, shape=shape, scale=Scale/shape))
-fit = vglm(y ~ 1, nakagami, trace=TRUE, crit="c")
-y = rnaka(n, shape=shape, scale=Scale)
-fit = vglm(y ~ 1, nakagami(iscale=3), trace=TRUE)
+nn = 1000; shape = exp(0); Scale = exp(1)
+ndata = data.frame(y1 = sqrt(rgamma(nn, shape = shape, scale = Scale/shape)))
+fit = vglm(y1 ~ 1, nakagami, ndata, trace = TRUE, crit = "c")
+ndata = transform(ndata, y2 = rnaka(nn, shape = shape, scale = Scale))
+fit = vglm(y2 ~ 1, nakagami(iscale = 3), ndata, trace = TRUE)
 head(fitted(fit))
-mean(y)
-coef(fit, matrix=TRUE)
+with(ndata, mean(y2))
+coef(fit, matrix = TRUE)
 (Cfit = Coef(fit))
-\dontrun{
-hist(sy <- sort(y), prob=TRUE, main="", xlab="y", ylim=c(0,0.6))
-lines(sy, dnaka(sy, shape=Cfit[1], scale=Cfit[2]), col="red")
-}
+\dontrun{ with(ndata,
+hist(sy <- sort(y2), prob = TRUE, main = "", xlab = "y", ylim = c(0, 0.6)))
+lines(dnaka(sy, shape = Cfit[1], scale = Cfit[2]) ~ sy, ndata, col = "orange") }
 }
 \keyword{models}
 \keyword{regression}

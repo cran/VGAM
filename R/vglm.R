@@ -193,9 +193,13 @@ if (!is.null(form2)) {
     } else list() # R-1.5.0
     slot(answer, "iter") = fit$iter
     slot(answer, "post") = fit$post
+
+
     fit$predictors = as.matrix(fit$predictors)  # Must be a matrix
-    dimnames(fit$predictors) = list(dimnames(fit$predictors)[[1]],
-                                    fit$misc$predictors.names)
+
+    if (length(fit$misc$predictors.names) == ncol(fit$predictors))
+      dimnames(fit$predictors) = list(dimnames(fit$predictors)[[1]],
+                                      fit$misc$predictors.names)
     slot(answer, "predictors") = fit$predictors
     if (length(fit$prior.weights))
         slot(answer, "prior.weights") = as.matrix(fit$prior.weights)

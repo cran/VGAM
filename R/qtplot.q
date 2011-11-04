@@ -310,7 +310,7 @@ qtplot.gumbel <-
     extra$mpv = mpv  # Overwrite if necessary
     extra$R = R
     extra$percentiles = percentiles
-    fitted.values = object@family@inverse(eta = eta, extra = extra) 
+    fitted.values = object@family@linkinv(eta = eta, extra = extra) 
 
     answer = list(fitted.values = fitted.values,
                   percentiles = percentiles)
@@ -704,7 +704,7 @@ rlplot.gev <-
 
     extra2 = object@extra
     extra2$percentiles = 100 * probability  # Overwrite
-    zp = object@family@inverse(eta = predict(object)[1:2,],
+    zp = object@family@linkinv(eta = predict(object)[1:2,],
                                extra = extra2)[1,]
     yp = -log(probability)
     ydata = sort(object@y[, 1])
@@ -751,7 +751,7 @@ rlplot.gev <-
             teta = eval(newcall) # The transformed parameter
             peta = eta
             peta[, ii] = teta
-            zpp[, ii] = object@family@inverse(eta = peta,
+            zpp[, ii] = object@family@linkinv(eta = peta,
                                               extra = extra2)[1,]
             zpp[, ii] = (zpp[, ii] - zp) / epsilon # On the transformed scale
         }

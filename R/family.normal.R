@@ -80,7 +80,7 @@ VGAM.weights.function = function(w, M, n) {
         if (!length(etastart)) 
             etastart = 0 * y
     }), list( .parallel = parallel, .zero = zero ))),
-    inverse = function(eta, extra = NULL) eta, 
+    linkinv = function(eta, extra = NULL) eta, 
     last = eval(substitute(expression({
         dy = dimnames(y)
         if (!is.null(dy[[2]]))
@@ -142,7 +142,7 @@ VGAM.weights.function = function(w, M, n) {
           }
         }
     },
-    link = function(mu, extra = NULL) mu,
+    linkfun = function(mu, extra = NULL) mu,
     vfamily = "gaussianff",
     deriv=expression({
         wz = VGAM.weights.function(w = w, M = M, n = n)
@@ -178,6 +178,7 @@ dposnorm = function(x, mean = 0, sd = 1, log = FALSE) {
   }
 }
 
+
 pposnorm = function(q, mean = 0, sd = 1) {
   L = max(length(q), length(mean), length(sd))
   q = rep(q, len = L); mean = rep(mean, len = L); sd = rep(sd, len = L);
@@ -185,12 +186,14 @@ pposnorm = function(q, mean = 0, sd = 1) {
                     pnorm(0, mean = mean, sd = sd)) / pnorm(q = mean/sd))
 }
 
+
 qposnorm = function(p, mean = 0, sd = 1) {
   if (!is.Numeric(p, posit = TRUE) || max(p) >= 1)
       stop("bad input for argument 'p'")
   qnorm(p = p + (1-p) * pnorm(0, mean = mean, sd = sd),
         mean = mean, sd = sd)
 }
+
 
 rposnorm = function(n, mean = 0, sd = 1) {
   if (!is.Numeric(n, integ = TRUE, posit = TRUE))
@@ -245,22 +248,27 @@ rposnorm = function(n, mean = 0, sd = 1) {
     initialize = eval(substitute(expression({
         if (ncol(y <- cbind(y)) != 1)
             stop("response must be a vector or a one-column matrix")
+
         if (min(y) <= 0)
             stop("response must be positive")
+
         predictors.names =
             c(namesof("mean", .lmean, earg = .emean, tag = FALSE),
               namesof("sd",   .lsd,   earg = .esd,   tag = FALSE))
+
         if (!length(etastart)) {
             init.me = if (length( .imean)) rep( .imean, len = n) else NULL
             init.sd = if (length( .isd  )) rep( .isd  , len = n) else NULL
-            if (!length(init.me)) init.me = rep(quantile(y, probs=0.40), len = n)
-            if (!length(init.sd)) init.sd = rep(sd(y)*1.2, len = n)
+            if (!length(init.me))
+              init.me = rep(quantile(y, probs=0.40), len = n)
+            if (!length(init.sd))
+              init.sd = rep(sd(c(y)) * 1.2, len = n)
             etastart = cbind(theta2eta(init.me, .lmean, earg = .emean),
                              theta2eta(init.sd, .lsd,   earg = .esd))
         }
     }), list( .lmean = lmean, .lsd = lsd, .imean = imean, .isd = isd,
               .emean = emean, .esd = esd ))),
-    inverse = eval(substitute(function(eta, extra = NULL) {
+    linkinv = eval(substitute(function(eta, extra = NULL) {
         mymu = eta2theta(eta[,1], .lmean, earg = .emean)
         mysd = eta2theta(eta[,2], .lsd, earg = .esd)
         mymu + mysd * dnorm(-mymu/mysd) / pnorm(mymu/mysd)
@@ -549,7 +557,7 @@ rtikuv = function(n, d, mean = 0, sigma = 1, Smallno=1.0e-6) {
         }
     }),list( .lmean = lmean, .lsigma=lsigma, .isigma=isigma, .d=d,
              .emean = emean, .esigma=esigma ))),
-    inverse = eval(substitute(function(eta, extra = NULL) {
+    linkinv = eval(substitute(function(eta, extra = NULL) {
         eta2theta(eta[,1], .lmean, earg = .emean)
     }, list( .lmean = lmean,
              .emean = emean, .esigma=esigma ))),
@@ -744,7 +752,7 @@ rfnorm = function(n, mean = 0, sd = 1, a1 = 1, a2=1) {
     }), list( .lmean = lmean, .lsd = lsd, .emean = emean, .esd = esd,
               .imean = imean, .isd = isd, .a1 = a1, .a2 = a2,
               .imethod = imethod ))),
-    inverse = eval(substitute(function(eta, extra = NULL) {
+    linkinv = eval(substitute(function(eta, extra = NULL) {
         mymu = eta2theta(eta[,1], .lmean, earg = .emean)
         mysd = eta2theta(eta[,2], .lsd, earg = .esd)
         mytheta = mymu/mysd
@@ -876,7 +884,7 @@ lqnorm = function(qpower = 2, link = "identity", earg = list(),
         }
     }), list( .imethod = imethod, .imu = imu,
               .sinit = shrinkage.init, .link = link, .earg = earg ))),
-    inverse = eval(substitute(function(eta, extra = NULL) {
+    linkinv = eval(substitute(function(eta, extra = NULL) {
         mu = eta2theta(eta, link = .link, earg = .earg)
         mu
     }, list( .link = link, .earg = earg ))),
@@ -893,7 +901,7 @@ lqnorm = function(qpower = 2, link = "identity", earg = list(),
     }), list( .qpower = qpower,
               .link = link, .earg = earg,
               .imethod = imethod ))),
-    link = eval(substitute(function(mu, extra = NULL) {
+    linkfun = eval(substitute(function(mu, extra = NULL) {
         theta2eta(mu, link = .link, earg = .earg)
     }, list( .link = link, .earg = earg ))),
     vfamily = "lqnorm",
@@ -1175,7 +1183,7 @@ tobit.control <- function(save.weight = TRUE, ...)
            .emu = emu, .esd = esd,
            .imu = imu, .isd = isd,
            .imethod = imethod ))),
-  inverse = eval(substitute( function(eta, extra = NULL) {
+  linkinv = eval(substitute( function(eta, extra = NULL) {
     Musual = 2
     ncoly = ncol(eta) / Musual
     mum = eta2theta(eta[,Musual*(1:ncoly)-1, drop=FALSE], .lmu, earg = .emu)
@@ -1451,13 +1459,14 @@ tobit.control <- function(save.weight = TRUE, ...)
                      zero = -2)
 {
 
+
   lsdev <- lsd
   esdev <- esd
 
   if (mode(lmean) != "character" && mode(lmean) != "name")
-      lmean <- as.character(substitute(lmean))
+    lmean <- as.character(substitute(lmean))
   if (mode(lsdev) != "character" && mode(lsdev) != "name")
-      lsdev <- as.character(substitute(lsdev))
+    lsdev <- as.character(substitute(lsdev))
   if (length(zero) &&
       !is.Numeric(zero, integer = TRUE))
       stop("bad input for argument 'zero'")
@@ -1484,7 +1493,9 @@ tobit.control <- function(save.weight = TRUE, ...)
            zero = .zero)
     }, list( .zero = zero ))),
   initialize = eval(substitute(expression({
+    orig.y <- y
     y <- cbind(y)
+
 
     ncoly <- ncol(y)
     Musual <- 2
@@ -1493,42 +1504,73 @@ tobit.control <- function(save.weight = TRUE, ...)
     M <- Musual * ncoly
 
 
+
+    if (length(attr(orig.y, "Prior.Weights"))) {
+      if (any(c(w) != 1))
+        warning("replacing the 'weights' argument by the 'Prior.Weights'",
+                "attribute of the response (probably due to Qvar()")
+
+
+      w = attr(orig.y, "Prior.Weights")
+
+
+      extra$attributes.y = attributes(orig.y)
+
+    } else {
+      w <- cbind(w)
+      if (ncol(w) <  ncoly)
+        w <- matrix(w, n, ncoly)
+      if (ncol(w) >  ncoly)
+        stop("currently the 'weights' argument must have no more ",
+             "than the number of columns of the response")
+    }
+
+
+
     mynames1 <- paste("mean", if (ncoly > 1) 1:ncoly else "", sep = "")
     mynames2 <- paste("sd",   if (ncoly > 1) 1:ncoly else "", sep = "")
     predictors.names <-
         c(namesof(mynames1, .lmean, earg = .emean, tag = FALSE),
           namesof(mynames2, .lsdev, earg = .esdev, tag = FALSE))
-    predictors.names <- predictors.names[interleave.VGAM(M, M = ncoly)]
+    predictors.names <- predictors.names[interleave.VGAM(M, M = Musual)]
+    extra$predictors.names <- predictors.names
+
 
     if (!length(etastart)) {
       sdev.init <- mean.init <- matrix(0, n, ncoly)
       for (jay in 1:ncoly) {
-        jfit <- lm.wfit(x = x,  y = y[, jay], w = w)
+        jfit <- lm.wfit(x = x,  y = y[, jay], w = w[, jay])
         mean.init[, jay] <- if ( .lmean == "loge")
                             pmax(1/1024, y[, jay]) else
           if( .imethod == 1) median(y[, jay]) else
-          if( .imethod == 2) weighted.mean(y[, jay], w = w) else
+          if( .imethod == 2) weighted.mean(y[, jay], w = w[, jay]) else
                                  mean(jfit$fitted)
         sdev.init[, jay] <-
           if( .imethod == 1)
-            sqrt( sum(w * (y[, jay] - mean.init[, jay])^2) / sum(w) ) else
+            sqrt( sum(w * (y[, jay] - mean.init[, jay])^2) / sum(w[, jay]) ) else
           if( .imethod == 2) {
             if (jfit$df.resid > 0)
-              sqrt( sum(w * jfit$resid^2) / jfit$df.resid ) else
-              sqrt( sum(w * jfit$resid^2) / sum(w) )
+              sqrt( sum(w[, jay] * jfit$resid^2) / jfit$df.resid ) else
+              sqrt( sum(w[, jay] * jfit$resid^2) / sum(w[, jay]) )
           } else {
-            sqrt( sum(w * abs(y[, jay] - mean.init[, jay])) / sum(w) )
+            sqrt( sum(w[, jay] * abs(y[, jay] -
+                                     mean.init[, jay])) / sum(w[, jay]) )
           }
+
+        if (any(sdev.init[, jay] <= sqrt(.Machine$double.eps) ))
+          sdev.init[, jay] <- 1.01
 
       }
       etastart <- cbind(theta2eta(mean.init, .lmean, earg = .emean),
                         theta2eta(sdev.init, .lsdev, earg = .esdev))
       etastart <- etastart[, interleave.VGAM(ncol(etastart), M = Musual)]
+
+      colnames(etastart) <- predictors.names
     }
   }), list( .lmean = lmean, .lsdev = lsdev,
             .emean = emean, .esdev = esdev,
             .imethod = imethod ))),
-  inverse = eval(substitute(function(eta, extra = NULL) {
+  linkinv = eval(substitute(function(eta, extra = NULL) {
     ncoly <- extra$ncoly
     eta2theta(eta[, 2*(1:ncoly) - 1], .lmean, earg = .emean)
   }, list( .lmean = lmean, .emean = emean, .esdev = esdev ))),
@@ -1536,15 +1578,19 @@ tobit.control <- function(save.weight = TRUE, ...)
     Musual <- extra$Musual
     misc$link <- c(rep( .lmean, length = ncoly),
                    rep( .lsdev, length = ncoly))
+    misc$link <- misc$link[interleave.VGAM(Musual * ncoly, M = Musual)]
     temp.names <- c(mynames1, mynames2)
     temp.names <- temp.names[interleave.VGAM(Musual * ncoly, M = Musual)]
     names(misc$link) <- temp.names
+
+
     misc$earg <- vector("list", Musual * ncoly)
     names(misc$earg) <- temp.names
     for(ii in 1:ncoly) {
         misc$earg[[Musual*ii-1]] <- .emean
         misc$earg[[Musual*ii  ]] <- .esdev
     }
+    names(misc$earg) <- temp.names
 
     misc$Musual <- Musual
     misc$expected <- TRUE
@@ -1637,7 +1683,7 @@ tobit.control <- function(save.weight = TRUE, ...)
         }
     }), list( .lmeanlog = lmeanlog, .lsdlog = lsdlog,
               .emeanlog = emeanlog, .esdlog = esdlog ))),
-    inverse = eval(substitute(function(eta, extra = NULL) {
+    linkinv = eval(substitute(function(eta, extra = NULL) {
         mulog = eta2theta(eta[,1], .lmeanlog, earg = .emeanlog)
         sdlog = eta2theta(eta[,2], .lsdlog, earg = .esdlog)
         exp(mulog + 0.5 * sdlog^2)
@@ -1753,7 +1799,7 @@ tobit.control <- function(save.weight = TRUE, ...)
     }), list( .lmeanlog = lmeanlog, .lsdlog = lsdlog,
               .emeanlog = emeanlog, .esdlog = esdlog,
               .delta = delta, .powers.try = powers.try ))),
-    inverse = eval(substitute(function(eta, extra = NULL) {
+    linkinv = eval(substitute(function(eta, extra = NULL) {
         mymu = eta2theta(eta[,1], .lmeanlog, earg = .emeanlog)
         sdlog = eta2theta(eta[,2], .lsdlog, earg = .esdlog)
         lambda = eta2theta(eta[,3], "identity", earg = list())
@@ -1894,7 +1940,7 @@ rsnorm = function(n, location = 0, scale = 1, shape=0) {
             etastart = matrix(init.shape, n, ncol(y))
         }
     }), list( .lshape = lshape, .earg = earg, .ishape = ishape ))), 
-    inverse = eval(substitute(function(eta, extra = NULL) {
+    linkinv = eval(substitute(function(eta, extra = NULL) {
         alpha = eta2theta(eta, .lshape, earg = .earg)
         alpha * sqrt(2/(pi * (1+alpha^2 )))
     }, list( .earg = earg, .lshape = lshape ))),
@@ -1904,7 +1950,7 @@ rsnorm = function(n, location = 0, scale = 1, shape=0) {
         misc$nsimEIM = .nsimEIM
         misc$expected = (length( .nsimEIM ) > 0)
     }), list( .earg = earg, .lshape = lshape, .nsimEIM = nsimEIM ))),
-    link = eval(substitute(function(mu, extra = NULL) {
+    linkfun = eval(substitute(function(mu, extra = NULL) {
         alpha = mu / sqrt(2/pi - mu^2)
         theta2eta(alpha, .lshape, earg = .earg)
     }, list( .earg = earg, .lshape = lshape ))),

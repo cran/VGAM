@@ -9,7 +9,7 @@
 }
 \usage{
 zibinomial(lphi = "logit", lmu = "logit", ephi = list(), emu = list(),
-           iphi = NULL, zero = 1, mv = FALSE)
+           iphi = NULL, zero = 1, mv = FALSE, imethod = 1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -31,19 +31,23 @@ zibinomial(lphi = "logit", lmu = "logit", ephi = list(), emu = list(),
   If a vector then recyling is used.
 
   }
-  \item{zero}{ 
-  An integer specifying which linear/additive predictor is modelled
-  as intercepts only.  If given, the value must be either 1 or 2,
-  and the default is the first. Setting \code{zero = NULL} enables both
-  \eqn{\phi}{phi} and \eqn{\mu}{mu} to be modelled as a function of
-  the explanatory variables.
-  See \code{\link{CommonVGAMffArguments}} for more information.
+% \item{zero}{ 
+% An integer specifying which linear/additive predictor is modelled
+% as intercepts only.  If given, the value must be either 1 or 2,
+% and the default is the first. Setting \code{zero = NULL} enables both
+% \eqn{\phi}{phi} and \eqn{\mu}{mu} to be modelled as a function of
+% the explanatory variables.
+% See \code{\link{CommonVGAMffArguments}} for more information.
 
-  }
+% }
   \item{mv}{ 
   Logical. Currently it must be \code{FALSE} to mean the function does
   not handle multivariate responses. This is to remain compatible with
   the same argument in \code{\link{binomialff}}.
+
+  }
+  \item{zero, imethod}{ 
+  See \code{\link{CommonVGAMffArguments}} for information.
 
   }
 }

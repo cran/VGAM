@@ -8,19 +8,16 @@
 
 }
 \usage{
-plackett(link="loge", earg=list(), ioratio=NULL, imethod=1, nsimEIM=200)
+plackett(link = "loge", earg = list(), ioratio = NULL,
+         imethod = 1, nsimEIM = 200)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{link}{
-  Link function applied to the (positive) odds ratio
+  \item{link, earg}{
+  Link function and extra argument applied to the (positive) odds ratio
   \eqn{\psi}{psi}.
-  See \code{\link{Links}} for more choices.
-
-  }
-  \item{earg}{
-  List. Extra argument for the link.
-  See \code{earg} in \code{\link{Links}} for general information.
+  See \code{\link{Links}} for more choices
+  and information.
 
   }
   \item{ioratio}{
@@ -28,14 +25,7 @@ plackett(link="loge", earg=list(), ioratio=NULL, imethod=1, nsimEIM=200)
   If a convergence failure occurs try assigning a value or a different value.
 
   }
-  \item{imethod}{
-  An integer with value \code{1} or \code{2} which
-  specifies the initialization method for the parameter.
-  If failure to converge occurs try another value
-  and/or else specify a value for \code{ioratio}.
-
-  }
-  \item{nsimEIM}{
+  \item{imethod, nsimEIM}{
   See \code{\link{CommonVGAMffArguments}}.
 
   }
@@ -62,28 +52,35 @@ plackett(link="loge", earg=list(), ioratio=NULL, imethod=1, nsimEIM=200)
   The marginal distributions here are the standard uniform although
   it is commonly generalized to other distributions.
 
+
   If \eqn{\psi = 1}{psi=1} then
   \eqn{h_{\psi}(y_1,y_2) = y_1 y_2}{h(y1,y2) = y1*y2},
   i.e., independence.
   As the odds ratio tends to infinity one has \eqn{y_1=y_2}{y1=y2}.
   As the odds ratio tends to 0 one has \eqn{y_2=1-y_1}{y2=1-y1}.
 
+
   Fisher scoring is implemented using \code{\link{rplack}}.
   Convergence is often quite slow.
+
 
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}}
   and \code{\link{vgam}}.
+
+
 }
 
 \references{
+
 
 Plackett, R. L. (1965)
 A class of bivariate distributions.
 \emph{Journal of the American Statistical Association},
 \bold{60}, 516--522.
+
 
 }
 \author{ T. W. Yee }
@@ -93,18 +90,20 @@ A class of bivariate distributions.
   because the marginal distributions correspond to a standard
   uniform distribution.
 
+
 }
 
 \seealso{
   \code{\link{rplack}},
   \code{\link{frank}}.
 
+
 }
 \examples{
-ymat = rplack(n=2000, oratio=exp(2))
-\dontrun{plot(ymat, col="blue")}
-fit = vglm(ymat ~ 1, fam=plackett, trace=TRUE)
-coef(fit, matrix=TRUE)
+ymat = rplack(n = 2000, oratio = exp(2))
+\dontrun{plot(ymat, col = "blue")}
+fit = vglm(ymat ~ 1, fam = plackett, trace = TRUE)
+coef(fit, matrix = TRUE)
 Coef(fit)
 vcov(fit)
 head(fitted(fit))

@@ -2,7 +2,7 @@
 \alias{model.matrixvlm}
 \title{Construct the Design Matrix of a VLM Object}
 \usage{
-model.matrixvlm(object, type=c("vlm","lm","lm2","bothlmlm2"), \dots)
+model.matrixvlm(object, type = c("vlm","lm","lm2","bothlmlm2"), \dots)
 }
 \arguments{
   \item{object}{an object of a class that inherits from the
@@ -31,6 +31,8 @@ model.matrixvlm(object, type=c("vlm","lm","lm2","bothlmlm2"), \dots)
   returned: a large one (class \code{"vlm"} or one that inherits
   from this such as \code{"vglm"}) or a small one
   (such as returned if it were of class \code{"lm"}).
+
+
 }
 \details{
   This function creates a design matrix from \code{object}.
@@ -38,53 +40,62 @@ model.matrixvlm(object, type=c("vlm","lm","lm2","bothlmlm2"), \dots)
   The latter is constructed from the former and the constraint
   matrices.
   
+
   This code implements \emph{smart prediction}
   (see \code{\link{smartpred}}).
+
+
 }
 \value{
   The design matrix for a regression model with the specified formula
   and data. 
-  If \code{type="bothlmlm2"} then a list is returned with components
+  If \code{type = "bothlmlm2"} then a list is returned with components
   \code{"X"} and \code{"Xm2"}.
+
 
 }
 \references{
+
 Yee, T. W. and Hastie, T. J. (2003)
 Reduced-rank vector generalized linear models.
 \emph{Statistical Modelling},
 \bold{3}, 15--41.
+
 
   Chambers, J. M. (1992)
   \emph{Data for models.}
   Chapter 3 of \emph{Statistical Models in S}
   eds J. M. Chambers and T. J. Hastie, Wadsworth & Brooks/Cole.
 
+
 }
 \seealso{
   \code{\link[stats]{model.matrix}},
   \code{\link{model.framevlm}},
-  \code{\link{predict.vglm}},
+  \code{\link{predictvglm}},
   \code{\link{smartpred}}.
+
+
 }
 \examples{
 # Illustrates smart prediction
-pneumo = transform(pneumo, let=log(exposure.time))
-fit = vglm(cbind(normal,mild, severe) ~ poly(c(scale(let)), 2),
-           fam=multinomial,
-           data=pneumo, trace=TRUE, x=FALSE)
+pneumo = transform(pneumo, let = log(exposure.time))
+fit = vglm(cbind(normal, mild, severe) ~ poly(c(scale(let)), 2),
+           fam = multinomial,
+           data = pneumo, trace = TRUE, x = FALSE)
 class(fit)
 fit@x
 model.matrix(fit)
 
-Check1 = head(model.matrix(fit, type="lm"))
+Check1 = head(model.matrix(fit, type = "lm"))
 Check1
-Check2 = model.matrix(fit, data=head(pneumo), type="lm")
+Check2 = model.matrix(fit, data = head(pneumo), type = "lm")
 Check2
 all.equal(c(Check1), c(Check2))
 
 q0 = head(predict(fit))
-q1 = head(predict(fit, newdata=pneumo))
-q2 = predict(fit, newdata=head(pneumo))
+q1 = head(predict(fit, newdata = pneumo))
+q2 = predict(fit, newdata = head(pneumo))
 all.equal(q0, q1)  # Should be TRUE
 all.equal(q1, q2)  # Should be TRUE
 }

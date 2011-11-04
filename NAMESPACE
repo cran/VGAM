@@ -15,6 +15,11 @@ useDynLib(VGAM)
 
 
 
+export(nvar, nvar.vlm, nvar.vgam, nvar.rrvglm, nvar.qrrvglm, nvar.cao, nvar.rcam)
+export(      nobs.vlm)
+
+
+
 export(confint_rrnb, confint_nb1)
 export(vcovrrvglm)
 
@@ -52,7 +57,14 @@ explogarithmic, dexplog, pexplog, qexplog, rexplog)
 export(Rcam, plotrcam0,
 rcam, summaryrcam)
 export(moffset)
+export(plotqvar,Qvar)
+export(depvar,depvar.vlm)
 
+
+
+
+
+export(put.caption)
 
 
 
@@ -87,6 +99,7 @@ export( bs, ns, scale.default, poly )
 
 export(iam,
 fill, fill1, fill2, fill3,
+abbott,
 amh, damh, pamh, ramh, 
 bivgamma.mckay,
 freund61,
@@ -124,9 +137,9 @@ anova.vgam,
 anova.vglm, 
 beta4,
 bisa, dbisa, pbisa, qbisa, rbisa,
-betabin.ab, betabinomial,
+betabinomial.ab, betabinomial,
 dexpbinomial,
-dbetabin, pbetabin, rbetabin, dbetabin.ab, pbetabin.ab, rbetabin.ab,
+dbetabinom, pbetabinom, rbetabinom, dbetabinom.ab, pbetabinom.ab, rbetabinom.ab,
 biplot.qrrvglm,
 dbort, rbort, borel.tanner,
 cauchy, cauchy1, ccoef.cao, ccoef.Coef.cao,
@@ -144,7 +157,8 @@ dirmultinomial, dirmul.old,
 dnorm2,
 dtheta.deta)
 
-export(cloglog,cauchit,elogit,fisherz,logc,loge,logit,logoff,nreciprocal,
+export(cloglog,cauchit,elogit,explink,fisherz,logc,loge,logit,
+       logoff,nreciprocal,
        probit,reciprocal,rhobit,
        golf,polf,nbolf,nbolf2,Cut)
 export(ordpoisson, poissonp)
@@ -154,7 +168,7 @@ export(m2adefault,
 erlang,
 family.vglm, 
 dfelix, felix,
-fitted.values.uqo, fitted.vlm, fittedvsmooth.spline, fsqrt,
+fitted.values.uqo, fittedvlm, fittedvsmooth.spline, fsqrt,
 formulavlm, formulaNA.VGAM,
 garma, gaussianff,
 hypersecant, hypersecant.1, 
@@ -189,8 +203,8 @@ plotvglm, plotvlm,
 plotvsmooth.spline, pnorm2, powl,
 predict.cao, predictcao,
 predictors, predictors.vglm,
-predict.qrrvglm, predict.rrvglm, predict.uqo, predict.vgam,
-predict.vglm, predict.vlm, predictvsmooth.spline,
+predictqrrvglm, predict.rrvglm, predict.uqo, predict.vgam,
+predictvglm, predict.vlm, predictvsmooth.spline,
 predictvsmooth.spline.fit,
 process.binomial2.data.vgam, process.categorical.data.vgam,
 negzero.expression,
@@ -293,7 +307,7 @@ export(dinvparalogistic, pinvparalogistic, qinvparalogistic, rinvparalogistic,
        invparalogistic)
 export(dsinmad, psinmad, qsinmad, rsinmad, sinmad)
 export(lognormal)
-export(dpolono, rpolono)
+export(dpolono, ppolono, rpolono)
 export(dgpd, pgpd, qgpd, rgpd, gpd)
 export(dgev, pgev, qgev, rgev, gev, egev)
 export(dlaplace, plaplace, qlaplace, rlaplace, laplace)
@@ -327,7 +341,7 @@ bratt, Brat, calibrate.qrrvglm.control, calibrate.qrrvglm,
 calibrate, cao.control,
 cao, ccoef, cdf.lmscreg, cgo, chisq, clo, 
 Coef.qrrvglm, Coef, Coef.rrvglm, Coef.vlm,
-predict.qrrvglm,
+predictqrrvglm,
 cratio, cumulative, propodds, prplot, prplot.control)
 export(
 deplot.lmscreg, dirichlet,
@@ -360,7 +374,7 @@ lvplot, lvplot.rrvglm, lv, Max, MNSs,
 dmultinomial, multinomial, margeff)
 
 export(
-huber, dhuber, edhuber, phuber, qhuber, rhuber)
+huber, huber1, dhuber, edhuber, phuber, qhuber, rhuber)
 
 
 export(
@@ -380,7 +394,7 @@ guplot, guplot.default, guplot.vlm,
 negbinomial, polya, normal1,
 tobit, dtobit, ptobit, qtobit, rtobit,
 Opt, 
-persp.qrrvglm, plotdeplot.lmscreg, plotqrrvglm, plotqtplot.lmscreg,
+perspqrrvglm, plotdeplot.lmscreg, plotqrrvglm, plotqtplot.lmscreg,
 plotvgam.control, plotvgam, 
 cenpoisson,
 poissonff,
@@ -410,6 +424,7 @@ dzanegbin, pzanegbin, qzanegbin, rzanegbin, zanegbinomial,
 dzapois, pzapois, qzapois, rzapois, zapoisson,
 dzibinom, pzibinom, qzibinom, rzibinom, zibinomial,
 dzinegbin, pzinegbin, qzinegbin, rzinegbin, zinegbinomial,
+dzigeom, pzigeom, qzigeom, rzigeom, zigeometric,
 dzipois, pzipois, qzipois, rzipois,
 zipoisson, zipoissonff,
 mix2exp, mix2normal1, mix2poisson,
@@ -458,6 +473,7 @@ exportMethods(
 "biplot", "deplot", "lvplot", "qtplot", "rlplot", "meplot",
 "plot", "trplot", "vplot",
 "formula", "case.names", "variable.names",
+"nobs", # "nvar",
 "weights",
 "persp")
 

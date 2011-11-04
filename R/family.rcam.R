@@ -15,11 +15,11 @@
 
 
 
-
  rcam <- function(y,
          family = poissonff,
          Rank = 0,
          Musual = NULL,
+         weights = NULL,
          Index.corner = if (!Rank) NULL else 1 + Musual * (1:Rank),
          rprefix = "Row.",
          cprefix = "Col.",
@@ -220,12 +220,16 @@
       rrvglm(as.formula(str2),
              family = family,
              constraints = Hlist,
+             weights = if (length(weights)) weights else rep(1, length = nrow(y)),
+             ...,
              control = mycontrol, data = .rcam.df)
   } else {
     if (is(object.save, "vglm")) object.save else 
         vglm(as.formula(str2),
              family = family,
              constraints = Hlist,
+             weights = if (length(weights)) weights else rep(1, length = nrow(y)),
+             ...,
              control = mycontrol, data = .rcam.df)
   }
 
@@ -570,7 +574,7 @@ moffset <- function (mat, roffset = 0, coffset = 0, postfix = "") {
 
 
 
-confint_rrnb <- function(rrnb2) {
+confint_rrnb <- function(rrnb2, level = 0.95) {
 
   if (class(rrnb2) != "rrvglm")
     stop("argument 'rrnb2' does not appear to be a rrvglm() object")
@@ -596,12 +600,13 @@ confint_rrnb <- function(rrnb2) {
   se.a21.hat <- sqrt(vcovrrvglm(rrnb2)["I(lv.mat)", "I(lv.mat)"])
 
 
-  ci.a21 <- a21.hat +  c(-1, 1) * 1.96 * se.a21.hat
-  (ci.delta2 <- 2 - rev(ci.a21))  # The 95 percent confidence interval
+  ci.a21 <- a21.hat +  c(-1, 1) * qnorm(1 - (1 - level)/2) * se.a21.hat
+  (ci.delta2 <- 2 - rev(ci.a21)) # e.g., the 95 percent CI
 
   list(a21.hat    = a21.hat,
        beta11.hat = beta11.hat,
        beta21.hat = beta21.hat,
+       CI.a21     = ci.a21,
        ci.delta2  = ci.delta2,
        delta1     = delta1.hat,
        delta2     = delta2.hat,
@@ -610,7 +615,12 @@ confint_rrnb <- function(rrnb2) {
 
 
 
-confint_nb1 <- function(nb1) {
+
+
+confint_nb1 <- function(nb1, level = 0.95) {
+
+
+
 
   if (class(nb1) != "vglm")
     stop("argument 'nb1' does not appear to be a vglm() object")
@@ -638,15 +648,507 @@ confint_nb1 <- function(nb1) {
   myvcov <- vcovvlm(as(nb1, "vglm"))  # Not great; improve this!
   myvec <- cbind(c(-1, 1, rep(0, len = nrow(myvcov) - 2)))
   (se.mydiff <- sqrt(t(myvec) %*%  myvcov %*%  myvec))
-  ci.mydiff <- mydiff + c(-1.96, 1.96) * se.mydiff
+
+  ci.mydiff <- mydiff + c(-1, 1) * qnorm(1 - (1 - level)/2) * se.mydiff
+
   ci.delta0 <- ci.exp.mydiff <- exp(ci.mydiff)
-  (ci.phi0 <- 1 + 1 / rev(ci.delta0)) # The 95 percent conf int. for phi0
+  (ci.phi0 <- 1 + 1 / rev(ci.delta0)) # e.g., the 95 percent CI for phi0
 
   list(ci.phi0    = ci.phi0,
+       CI.delta0  = ci.delta0,
        delta0     = delta0.hat,
        phi0       = phi0.hat)
 }
 
+
+
+
+
+
+
+
+
+
+
+
+if (FALSE)
+Qvar <- function(object, factor.name = NULL,
+                 level1.name = "level1",
+                 ...) {
+
+
+
+
+  object.xlevels = if (is(object, "vglm")) {
+    object@xlevels
+  } else {
+    factor(rownames(object))
+  }
+
+  myvcov = if (is(object, "vglm")) {
+    if (length(object.xlevels) == 0)
+      stop("no factors amongst the model.matrix of 'object'")
+
+    if (is.null(factor.name)) {
+      if (length(object.xlevels) > 1)
+        stop("more than one factor in the model.matrix of 'object'")
+
+      factor.name = names(object.xlevels)
+      object.xlevels = object@xlevels[[1]]
+    } else {
+      object.xlevels = object.xlevels[[factor.name]]
+    }
+
+
+
+
+
+    colptr = attr(model.matrix(object), "vassign")
+    colptr = colptr[[factor.name]]
+    vcov(object)[colptr, colptr, drop = FALSE]
+  } else if (is.matrix(object)) {
+    object
+  } else {
+    stop("argument 'object' is not a vglm() object or a matrix")
+  }
+
+
+
+
+  myvcov = rbind(0, cbind(0, myvcov))
+
+  LL = nrow(myvcov)
+  if (LL <= 3)
+    stop("the factor must have at least three levels")
+
+
+  vcov0 = myvcov
+  for (ilocal in 1:LL)
+    for (jlocal in ilocal:LL)
+      myvcov[ilocal, jlocal] =
+      myvcov[jlocal, ilocal] = vcov0[ilocal, ilocal] + vcov0[jlocal, jlocal] -
+                               2 * vcov0[ilocal, jlocal]
+
+  allvcov = myvcov
+  rownames(allvcov) =
+    c(paste(if (is.matrix(object)) level1.name else factor.name,
+            if (is.matrix(object)) NULL else object.xlevels[1], sep = ""),
+            rownames(vcov0)[-1])
+  colnames(allvcov) = rownames(allvcov)
+
+
+
+
+
+
+
+
+
+  diag(allvcov) = rep(1,             len = LL) # Any positive value should do
+
+
+
+
+
+  Allvcov = allvcov
+
+
+
+
+  wmat   = matrix(1, LL, LL)
+  diag(wmat) = sqrt( .Machine$double.eps )
+
+
+  logAllvcov = log(Allvcov)
+  attr(logAllvcov, "Prior.Weights") = wmat
+  logAllvcov
+}
+
+
+
+
+
+
+
+
+
+
+
+
+Qvar <- function(object, factorname = NULL, coef.indices = NULL,
+                 labels = NULL, dispersion = NULL,
+                 reference.name = "(reference)",
+                 estimates = NULL
+                ) {
+
+
+
+
+  coef.indices.saved <- coef.indices
+  if (!is.matrix(object)) {
+      model <- object
+      if (is.null(factorname) && is.null(coef.indices)) {
+        stop("arguments \"factorname\" and \"coef.indices\" are both NULL")
+      }
+
+      if (is.null(coef.indices)) {
+          tmodel <- terms(model)
+          modelmat <- if (is.matrix(model@x)) model@x else
+                         model.matrix(tmodel,
+                                      data = model@model)
+
+
+
+
+          colptr = attr(model.matrix(object), "vassign")
+          colptr = colptr[[factorname]]
+          coef.indices <- colptr
+
+
+          contmat <- if (length(model@xlevels[[factorname]]) ==
+                         length(coef.indices)) {
+              diag(length(coef.indices))
+          } else {
+              eval(call(model@contrasts[[factorname]],
+                        model@xlevels[[factorname]]))
+          }
+          rownames(contmat) <- model@xlevels[[factorname]]
+
+          if (is.null(estimates))
+            estimates <- contmat %*% coefvlm(model)[coef.indices]
+
+          covmat <- vcovvlm(model, dispersion = dispersion)
+          covmat <- covmat[coef.indices, coef.indices, drop = FALSE]
+          covmat <- contmat %*% covmat %*% t(contmat)
+      } else {
+          k <- length(coef.indices)
+          refPos <- numeric(0)
+          if (0 %in% coef.indices) {
+              refPos <- which(coef.indices == 0)
+              coef.indices <- coef.indices[-refPos]
+          }
+          covmat <- vcovvlm(model, dispersion = dispersion)
+          covmat <- covmat[coef.indices, coef.indices, drop = FALSE]
+
+          if (is.null(estimates))
+            estimates <- coefvlm(model)[coef.indices]
+
+          if (length(refPos) == 1) {
+              if (length(estimates) != k)
+                estimates <- c(0, estimates)
+              covmat <- rbind(0, cbind(0, covmat))
+              names(estimates)[1] <-
+              rownames(covmat)[1] <-
+              colnames(covmat)[1] <- reference.name
+              if (refPos != 1) {
+                perm <- if (refPos == k) c(2:k, 1) else
+                        c(2:refPos, 1, (refPos + 1):k)
+                  estimates <- estimates[perm]
+                  covmat <- covmat[perm, perm, drop = FALSE]
+              }
+          }
+      }
+
+
+      return(Recall(covmat,
+                    factorname = factorname,
+                    coef.indices = coef.indices.saved,
+                    labels = labels,
+                    dispersion = dispersion,
+                    estimates = estimates
+                    )
+             )
+  } else {
+
+      covmat <- object
+      if (length(labels))
+        rownames(covmat) <- colnames(covmat) <- labels
+      if ((LL <- dim(covmat)[1]) <= 2)
+        stop("This function works only for factors with 3 or more levels")
+  }
+
+
+
+
+  allvcov = covmat
+  for (ilocal in 1:LL)
+    for (jlocal in ilocal:LL)
+      allvcov[ilocal, jlocal] =
+      allvcov[jlocal, ilocal] = covmat[ilocal, ilocal] +
+                                covmat[jlocal, jlocal] -
+                                covmat[ilocal, jlocal] * 2
+
+  diag(allvcov) = rep(1.0, len = LL) # Any positive value should do
+
+
+  wmat   = matrix(1.0, LL, LL)
+  diag(wmat) = sqrt( .Machine$double.eps )
+
+  logAllvcov = log(allvcov)
+  attr(logAllvcov, "Prior.Weights") = wmat
+  attr(logAllvcov, "estimates") = estimates
+  attr(logAllvcov, "coef.indices") = coef.indices
+  attr(logAllvcov, "factorname") = factorname
+  attr(logAllvcov, "regularVar") = diag(covmat)
+
+  logAllvcov
+}
+
+
+
+
+
+
+WorstErrors <- function(qv.object) {
+  stop("20110729; does not work")
+
+    reducedForm <- function(covmat, qvmat){
+        nlevels <- dim(covmat)[1]
+     firstRow <- covmat[1, ]
+     ones <- rep(1, nlevels)
+     J <- outer(ones, ones)
+     notzero <- 2:nlevels
+     r.covmat <- covmat + (firstRow[1]*J) -
+                      outer(firstRow, ones) -
+                     outer(ones, firstRow)
+     r.covmat <- r.covmat[notzero, notzero]
+     qv1 <- qvmat[1, 1]
+     r.qvmat <- (qvmat + qv1*J)[notzero, notzero]
+     list(r.covmat, r.qvmat)}
+    covmat <- qv.object$covmat
+    qvmat <- diag(qv.object$qvframe$quasiVar)
+    r.form <- reducedForm(covmat, qvmat)
+    r.covmat <- r.form[[1]]
+    r.qvmat <- r.form[[2]]
+    inverse.sqrt <- solve(chol(r.covmat))
+    evalues <- eigen(t(inverse.sqrt) %*% r.qvmat %*% inverse.sqrt,
+                    symmetric = TRUE)$values
+    sqrt(c(min(evalues), max(evalues))) - 1
+}
+
+
+
+
+IndentPrint <- function(object, indent = 4, ...){
+  stop("20110729; does not work")
+
+    zz <- ""
+    tc <- textConnection("zz", "w", local = TRUE)
+    sink(tc)
+    try(print(object, ...))
+    sink()
+    close(tc)
+    indent <- paste(rep(" ", indent), sep = "", collapse = "")
+    cat(paste(indent, zz, sep = ""), sep = "\n")}
+
+
+
+Print.qv <- function(x, ...){
+  stop("20110729; does not work")
+
+}
+
+
+
+summary.qvar <- function(object, ...) {
+
+
+  relerrs = 1 - sqrt(exp(residuals(object, type = "response")))
+  diag(relerrs) = NA
+
+    minErrSimple <- round(100 * min(relerrs, na.rm = TRUE), 1)
+    maxErrSimple <- round(100 * max(relerrs, na.rm = TRUE), 1)
+
+
+
+  estimates = c(object@extra$attributes.y$estimates)
+  if (!length(names(estimates)) &&
+      is.matrix(object@extra$attributes.y$estimates))
+    names( estimates) = rownames(object@extra$attributes.y$estimates)
+  if (!length(names(estimates)))
+    names( estimates) = paste("Level", 1:length(estimates), sep = "")
+
+
+  regularVar = c(object@extra$attributes.y$regularVar)
+  QuasiVar <- exp(diag(fitted(object))) / 2
+  QuasiSE  <- sqrt(quasiVar)
+
+
+  structure(list(estimate = estimates,
+                 SE            = sqrt(regularVar),  # zz dispersion parameter??
+                 minErrSimple  = minErrSimple,
+                 maxErrSimple  = maxErrSimple,
+                 quasiSE  = QuasiSE,
+                 object   = object,
+                 quasiVar = QuasiVar),
+            class = "summary.qvar")
+}
+
+
+
+print.summary.qvar <- function(x, ...) {
+
+  object = x$object
+  minErrSimple  = x$minErrSimple
+  maxErrSimple  = x$maxErrSimple
+
+  x$minErrSimple = NULL
+  x$maxErrSimple = NULL
+  x$object = NULL
+
+
+    if (length(cl <- object@call)) {
+        cat("Call:\n")
+        dput(cl)
+    }
+
+
+    facname = c(object@extra$attributes.y$factorname)
+    if (length(facname))
+      cat("Factor name: ", facname, "\n")
+
+
+    if (length(object@dispersion))
+        cat("\nDispersion: ", object@dispersion, "\n\n")
+
+  x = as.data.frame(c(x))
+  print.data.frame(x)
+
+
+        cat("\nWorst relative errors in SEs of simple contrasts (%): ",
+            minErrSimple, ", ", maxErrSimple, "\n")
+
+  invisible(x)
+}
+
+
+
+plotqvar <- function(object,
+                     intervalWidth = 2,
+                     ylab = "Estimate",
+                     xlab = NULL, # x$factorname,
+                     ylim = NULL,
+                     main = "",
+                     levelNames = NULL,
+                     conf.level = 0.95,
+                     warn.ratio = 10,
+                     border = "transparent",  # None
+                     points.arg = TRUE,
+                     length.arrows = 0.25, angle = 30,
+                     scol = par()$col,
+                     slwd = par()$lwd,
+                     slty = par()$lty,
+                     ...) {
+
+
+
+
+    if (!is.numeric(intervalWidth) &&
+        !is.numeric(conf.level))
+      stop("at least one of arguments 'intervalWidth' and 'conf.level' ",
+            "should be numeric")
+
+
+
+
+
+  if (!any("normal1" %in% object@family@vfamily))
+    stop("argument 'object' dos not appear to be a ",
+         "rcam(, normal1) object")
+
+  estimates = c(object@extra$attributes.y$estimates)
+  if (!length(names(estimates)) &&
+      is.matrix(object@extra$attributes.y$estimates))
+    names( estimates) = rownames(object@extra$attributes.y$estimates)
+  if (!length(names(estimates)))
+    names( estimates) = paste("Level", 1:length(estimates), sep = "")
+
+
+
+
+  QuasiVar <- exp(diag(fitted(object))) / 2
+  QuasiSE  <- sqrt(quasiVar)
+
+    if (!is.numeric(estimates))
+      stop("Cannot plot, because there are no 'proper' parameter estimates")
+    if (!is.numeric(quasiSE))
+      stop("Cannot plot, because there are no quasi standard errors")
+
+
+
+    faclevels <- factor(names(estimates), levels = names(estimates))
+
+
+    xvalues <- seq(along = faclevels)
+    tops  <- estimates + intervalWidth * QuasiSE
+    tails <- estimates - intervalWidth * QuasiSE
+
+
+
+
+    if (is.numeric(conf.level)) {
+      zedd = abs(qnorm((1 - conf.level) / 2))
+      lsd.tops  <- estimates + zedd * QuasiSE / sqrt(2)
+      lsd.tails <- estimates - zedd * QuasiSE / sqrt(2)
+      if (max(quasiSE) / min(quasiSE) > warn.ratio)
+        warning("Quasi SEs appear to be quite different... the ",
+                "LSD intervals may not be very accurate")
+    } else {
+      lsd.tops  <- NULL
+      lsd.tails <- NULL
+    }
+
+
+
+
+    if (is.null(ylim))
+      ylim <- range(c(tails, tops, lsd.tails, lsd.tops), na.rm = TRUE)
+
+    if (is.null(xlab))
+      xlab <- "Factor level"
+
+    plot(faclevels, estimates,
+         border = border,
+         ylim = ylim, xlab = xlab, ylab = ylab,
+         main = main, ...)
+
+
+    if (points.arg)
+      points(estimates, ...)
+
+
+    if (is.numeric(intervalWidth)) {
+      segments(xvalues, tails, xvalues, tops,
+               col = scol, lty = slty, lwd = slwd)
+    }
+
+
+    if (is.numeric(conf.level)) {
+      arrows(xvalues, lsd.tails, xvalues, lsd.tops,
+             col = scol, lty = slty, lwd = slwd, code = 3,
+             length = length.arrows, angle = angle)
+
+    }
+
+
+
+
+  if (any(slotNames(object) == "post")) {
+    object@post$estimates  = estimates 
+    object@post$xvalues    = xvalues  
+    if (is.numeric(intervalWidth)) {
+      object@post$tails = tails
+      object@post$tops  = tops
+    }
+    if (is.numeric(conf.level)) {
+      object@post$lsd.tails = lsd.tails
+      object@post$lsd.tops  = lsd.tops
+    }
+  }
+
+
+    invisible(object)
+}
 
 
 

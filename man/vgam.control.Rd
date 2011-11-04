@@ -125,10 +125,12 @@ vgam.control(all.knots = FALSE, bf.epsilon = 1e-07, bf.maxit = 30,
 }
 \details{
 
+
   Most of the control parameters are used within \code{vgam.fit} and
   you will have to look at that to understand the full details.  Many of
   the control parameters are used in a similar manner by \code{vglm.fit}
   (\code{\link{vglm}}) because the algorithm (IRLS) is very similar.
+
 
   Setting \code{save.weight=FALSE} is useful for some models because the
   \code{weights} slot of the object is often the largest and so less
@@ -136,11 +138,13 @@ vgam.control(all.knots = FALSE, bf.epsilon = 1e-07, bf.maxit = 30,
   family function, it is necessary to set \code{save.weight=TRUE} because
   the \code{weights} slot cannot be reconstructed later.
 
+
 }
 \value{
   A list with components matching the input names. A little error
   checking is done, but not much.
   The list is assigned to the \code{control} slot of \code{\link{vgam}} objects.
+
 
 }
 \references{ 
@@ -149,15 +153,17 @@ Vector generalized additive models.
 \emph{Journal of the Royal Statistical Society, Series B, Methodological},
 \bold{58}, 481--493.
 
-\url{http://www.stat.auckland.ac.nz/~yee}
+
+% \url{http://www.stat.auckland.ac.nz/~yee}
+
 
 }
 \author{ Thomas W. Yee}
 
 \note{
-  \code{\link{vgam}} does not implement half-stepsizing, therefore parametric
-  models should be fitted with \code{\link{vglm}}. Also, \code{\link{vgam}} is
-  slower than  \code{\link{vglm}} too.
+  \code{\link{vgam}} does not implement half-stepsizing, therefore
+  parametric models should be fitted with \code{\link{vglm}}. Also,
+  \code{\link{vgam}} is slower than  \code{\link{vglm}} too.
 
 }
 
@@ -169,13 +175,13 @@ Vector generalized additive models.
   \code{\link{vsmooth.spline}},
   \code{\link{vglm}}. 
 
+
 }
 
 \examples{
-data(pneumo)
 pneumo = transform(pneumo, let = log(exposure.time))
-vgam(cbind(normal, mild, severe) ~ s(let, df = 3), multinomial,
-     pneumo, trace = TRUE, eps = 1e-4, maxit = 10)
+vgam(cbind(normal, mild, severe) ~ s(let, df = 2), multinomial,
+     data = pneumo, trace = TRUE, eps = 1e-4, maxit = 10)
 }
 \keyword{models}
 \keyword{regression}

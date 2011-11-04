@@ -50,22 +50,27 @@ weightsvglm(object, type = c("prior", "working"),
   }
 }
 \details{
-  Prior weights are usually inputted with the \code{weights} argument in
-  functions such as \code{\link{vglm}} and \code{\link{vgam}}.  It may
-  refer to frequencies of the individual data or be weight matrices
-  specified beforehand.
+  Prior weights are usually inputted with the \code{weights}
+  argument in functions such as \code{\link{vglm}} and
+  \code{\link{vgam}}.  It may refer to frequencies of the
+  individual data or be weight matrices specified beforehand.
 
-  Working weights are used by the IRLS algorithm. They correspond to the
-  second derivatives of the log-likelihood function with respect to the
-  linear predictors.  The working weights correspond to positive-definite
-  weight matrices and are returned in \emph{matrix-band} form, e.g.,
-  the first \eqn{M} columns correspond to the diagonals, etc.
+
+  Working weights are used by the IRLS algorithm. They correspond
+  to the second derivatives of the log-likelihood function
+  with respect to the linear predictors.  The working weights
+  correspond to positive-definite weight matrices and are returned
+  in \emph{matrix-band} form, e.g., the first \eqn{M} columns
+  correspond to the diagonals, etc.
+
 
 }
 \value{
-  If \code{type="working"} and \code{deriv=TRUE} then a list is returned
-  with the two components described below.  Otherwise the prior or
-  working weights are returned depending on the value of \code{type}.
+  If \code{type = "working"} and \code{deriv = TRUE} then a
+  list is returned with the two components described below.
+  Otherwise the prior or working weights are returned depending
+  on the value of \code{type}.
+
 
   \item{deriv}{
   Typically the first derivative of the
@@ -86,9 +91,12 @@ weightsvglm(object, type = c("prior", "working"),
   \emph{Statistical Modelling},
   \bold{3}, 15--41.
 
+
   Chambers, J. M. and T. J. Hastie (eds) (1992)
   \emph{Statistical Models in S}.
   Wadsworth & Brooks/Cole.
+
+
 }
 
 \author{ Thomas W. Yee }
@@ -96,6 +104,7 @@ weightsvglm(object, type = c("prior", "working"),
 \note{
   This function is intended to be similar to
   \code{weights.glm} (see \code{\link[stats]{glm}}).
+
 
 }
 
@@ -105,6 +114,7 @@ weightsvglm(object, type = c("prior", "working"),
   \code{\link[stats]{glm}},
   \code{\link{vglmff-class}},
   \code{\link{vglm}}.
+
 }
 \examples{
 pneumo = transform(pneumo, let = log(exposure.time))
@@ -117,12 +127,12 @@ weights(fit, type = "prior", matrix = FALSE) # Number of observations
 nn = nrow(model.matrix(fit, type = "lm"))
 M = ncol(predict(fit))
 
-temp = weights(fit, type="working", deriv=TRUE)
-wz = m2adefault(temp$weights, M=M)  # In array format
+temp = weights(fit, type = "working", deriv = TRUE)
+wz = m2adefault(temp$weights, M = M)  # In array format
 wzinv = array(apply(wz, 3, solve), c(M, M, nn))
 wresid = matrix(NA, nn, M)  # Working residuals 
 for(ii in 1:nn)
-    wresid[ii,] = wzinv[,,ii, drop = TRUE] \%*\% temp$deriv[ii,]
+    wresid[ii,] = wzinv[, , ii, drop = TRUE] \%*\% temp$deriv[ii, ]
 max(abs(c(resid(fit, type = "w")) - c(wresid))) # Should be 0
 
 (z <- predict(fit) + wresid)  # Adjusted dependent vector

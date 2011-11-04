@@ -113,8 +113,8 @@ is rather poor and furthermore they were not recorded electronically.
   these data do not represent individual fish but rather recorded captures.
 
 
-  Note also that a few internal discrepancies may be found within and between
-  the data frames
+  Note also that a few internal discrepancies may be found within
+  and between the data frames
   \code{\link{wffc}},
   \code{\link{wffc.nc}},
   \code{\link{wffc.indiv}},
@@ -147,10 +147,12 @@ is rather poor and furthermore they were not recorded electronically.
   The assistance and feedback of Colin Shepherd is gratefully
   acknowledged.
 
+
 }
 \references{
 %  \url{http://www.2008worldflyfishingchamps.com}
 %  is the official website.
+
 
   Yee, T. W. (2010)
   VGLMs and VGAMs: an overview for applications in fisheries research.
@@ -158,7 +160,7 @@ is rather poor and furthermore they were not recorded electronically.
   \bold{101}, 116--126.
 
 
-  Yee, T. W. (2010b)
+  Yee, T. W. (2011)
   On strategies and issues raised by an analysis of
   the 2008 World Fly Fishing Championships data.
   \emph{In preparation}.
@@ -177,36 +179,36 @@ otam   = subset(wffc, water == "Otamangakau")
 roto   = subset(wffc, water == "Rotoaira")
 minlength = min(wffc[,"length"])
 maxlength = max(wffc[,"length"])
-nwater = c("Waihou"=nrow(waihou), "Waimakariri"=nrow(waimak),
-           "Whanganui"=nrow(whang), "Otamangakau"=nrow(otam),
-           "Rotoaira"=nrow(roto))
+nwater = c("Waihou" = nrow(waihou), "Waimakariri" = nrow(waimak),
+           "Whanganui" = nrow(whang), "Otamangakau" = nrow(otam),
+           "Rotoaira" = nrow(roto))
 \dontrun{
-par(mfrow=c(2,3), las=1)
+par(mfrow = c(2,3), las = 1)
 # Overall distribution of length
-with(wffc, boxplot(length/10 ~ water, ylim=c(minlength, maxlength)/10,
-                   border="blue", main="Length (cm)", cex.axis=0.5))
+with(wffc, boxplot(length/10 ~ water, ylim = c(minlength, maxlength)/10,
+                   border = "blue", main = "Length (cm)", cex.axis = 0.5))
 
 # Overall distribution of LOG length
-with(wffc, boxplot(length/10 ~ water, ylim=c(minlength, maxlength)/10,
-                   border="blue", log="y", cex.axis=0.5,
-                   main="Length (cm) on a log scale"))
+with(wffc, boxplot(length/10 ~ water, ylim = c(minlength, maxlength)/10,
+                   border = "blue", log = "y", cex.axis = 0.5,
+                   main = "Length (cm) on a log scale"))
 
 # Overall distribution of number of captures
-pie(nwater, border="blue", main="Proportion of captures",
-    labels=names(nwater), density=10, col=1:length(nwater),
-    angle=85+30* 1:length(nwater))
+pie(nwater, border = "blue", main = "Proportion of captures",
+    labels = names(nwater), density = 10, col = 1:length(nwater),
+    angle = 85+30* 1:length(nwater))
 
 # Overall distribution of number of captures
-with(wffc, barplot(nwater, main="Number of captures", cex.names=0.5,
-                   col="lightblue"))
+with(wffc, barplot(nwater, main = "Number of captures", cex.names = 0.5,
+                   col = "lightblue"))
 
 # Overall distribution of proportion of number of captures
-with(wffc, barplot(nwater / sum(nwater), cex.names=0.5, col="lightblue",
-                   main="Proportion of captures"))
+with(wffc, barplot(nwater / sum(nwater), cex.names = 0.5, col = "lightblue",
+                   main = "Proportion of captures"))
 # An interesting lake
-with(roto, hist(length/10, xlab="Fish length (cm)", col="lightblue",
-                breaks=seq(18, 70, by=3), prob=TRUE, ylim=c(0, 0.08),
-                border="blue", ylab="", main="Lake Rotoaira", lwd=2))
+with(roto, hist(length/10, xlab = "Fish length (cm)", col = "lightblue",
+                breaks = seq(18, 70, by = 3), prob = TRUE, ylim = c(0, 0.08),
+                border = "blue", ylab = "", main = "Lake Rotoaira", lwd = 2))
 }
 }
 \keyword{datasets}

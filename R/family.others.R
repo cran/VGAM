@@ -178,7 +178,7 @@ rexppois <- function(n, lambda, betave = 1) {
              .ilambda = ilambda, .ibetave = ibetave, 
              .elambda = elambda, .ebetave = ebetave))), 
 
-  inverse = eval(substitute(function(eta, extra = NULL) {
+  linkinv = eval(substitute(function(eta, extra = NULL) {
     lambda = eta2theta(eta[, 1], .llambda , earg = .elambda )
     betave = eta2theta(eta[, 2], .lbetave , earg = .ebetave )
 
@@ -430,7 +430,7 @@ genrayleigh.control <- function(save.weight = TRUE, ...)
               .iscale = iscale, .ishape = ishape,
               .escale = escale, .eshape = eshape))), 
 
-  inverse = eval(substitute(function(eta, extra = NULL) {
+  linkinv = eval(substitute(function(eta, extra = NULL) {
     shape = eta2theta(eta[, 1], .lshape , earg = .eshape )
     Scale = eta2theta(eta[, 2], .lscale , earg = .escale )
 # zz yet to do: Find expression for mean
@@ -729,7 +729,7 @@ expgeometric.control <- function(save.weight = TRUE, ...)
              .iscale = iscale, .ishape = ishape, 
              .escale = escale, .eshape = eshape))), 
 
-  inverse = eval(substitute(function(eta, extra = NULL) {
+  linkinv = eval(substitute(function(eta, extra = NULL) {
     Scale = eta2theta(eta[, 1], .lscale , earg = .escale )
     shape = eta2theta(eta[, 2], .lshape , earg = .eshape )
     
@@ -1050,7 +1050,7 @@ explogarithmic.control <- function(save.weight = TRUE, ...)
              .iscale = iscale, .ishape = ishape,
              .escale = escale, .eshape = eshape))),
 
-  inverse = eval(substitute(function(eta, extra = NULL) {
+  linkinv = eval(substitute(function(eta, extra = NULL) {
     Scale = eta2theta(eta[, 1], .lscale , earg = .escale )
     shape = eta2theta(eta[, 2], .lshape , earg = .eshape )
 
@@ -1376,7 +1376,7 @@ if (FALSE)
               .ilocat = ilocat, .iscale = iscale, .ishape = ishape,
               .imethod = imethod) )),
 
-  inverse = eval(substitute(function(eta, extra = NULL) {
+  linkinv = eval(substitute(function(eta, extra = NULL) {
     locat = eta2theta(eta[, 1], .llocat, earg = .elocat )
     scale = eta2theta(eta[, 2], .lscale, earg = .escale )
     shape = eta2theta(eta[, 3], .lshape, earg = .eshape )
@@ -1701,7 +1701,7 @@ tpnff <- function(llocation = "identity", lscale = "loge",
     }), list( .llocat = llocation, .lscale = lscale,
               .elocat = elocation, .escale = escale,
               .method.init=method.init ))),
-    inverse = eval(substitute(function(eta, extra = NULL) {
+    linkinv = eval(substitute(function(eta, extra = NULL) {
       eta2theta(eta[,1], .llocat, earg = .elocat)
     }, list( .llocat = llocation,
              .elocat = elocation, .escale = escale ))),
@@ -1849,7 +1849,7 @@ tpnff3 <- function(llocation = "identity", elocation = list(),
               .elocat = elocation, .escale = escale, .eskewpar = eskewpar,
               
               .method.init=method.init ))),
-    inverse = eval(substitute(function(eta, extra = NULL) {
+    linkinv = eval(substitute(function(eta, extra = NULL) {
       eta2theta(eta[,1], .llocat, earg = .elocat)
     }, list( .llocat = llocation,
              .elocat = elocation, .escale = escale ))),

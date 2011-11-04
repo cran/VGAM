@@ -564,7 +564,7 @@ rrr.end.expression = expression({
     if (FALSE && control$Rank == 1) {
         ooo = order(lv.mat[,1])
     }
-    mu <- family@inverse(eta, extra)
+    mu <- family@linkinv(eta, extra)
 
     if (any(is.na(mu)))
         warning("there are NAs in mu") 
@@ -958,7 +958,7 @@ Coef.qrrvglm <- function(object, varlvI = FALSE, reference = NULL, ...) {
     if (varlvI) {
         if (!length(xmat <- object@x)) stop("cannot obtain the model matrix")
         numat = xmat[,ocontrol$colx2.index,drop = FALSE] %*% Cmat
-        sdnumat = sd(numat)
+        sdnumat = apply(cbind(numat), 2, sd)
         Mmat = if (Rank > 1) diag(sdnumat) else matrix(sdnumat, 1, 1)
         Cmat = Cmat %*% solve(t(Mmat))
         Amat = Amat %*% Mmat
@@ -978,7 +978,7 @@ Coef.qrrvglm <- function(object, varlvI = FALSE, reference = NULL, ...) {
                 Amat[ii,,drop = FALSE] %*% optimum[,ii,drop = FALSE] +
                 t(optimum[,ii,drop = FALSE]) %*%
                 Darray[,,ii,drop= TRUE] %*% optimum[,ii,drop = FALSE]
-        mymax = object@family@inverse(rbind(eta.temp), extra=object@extra)  
+        mymax = object@family@linkinv(rbind(eta.temp), extra=object@extra)  
         c(mymax)  # Convert from matrix to vector 
     } else {
         5 * rep(as.numeric(NA), len = M)  # Make "numeric"
@@ -1133,7 +1133,7 @@ printCoef.qrrvglm = function(x, ...) {
     print(mymat, ...)
 
     cat("\nStandard deviation of the latent variables (site scores)\n")
-    print(sd(object@lv))
+    print(apply(cbind(object@lv), 2, sd))
     invisible(object)
 }
 
@@ -1146,7 +1146,7 @@ setMethod("summary", "qrrvglm", function(object, ...)
     summary.qrrvglm(object, ...))
 
 
-predict.qrrvglm <- function(object,
+predictqrrvglm <- function(object,
                          newdata = NULL,
                          type=c("link", "response", "lv", "terms"),
                          se.fit = FALSE,
@@ -1252,7 +1252,7 @@ predict.qrrvglm <- function(object,
 
     pred = switch(type,
     response={
-        fv = if (length(newdata)) object@family@inverse(etamat, extra) else
+        fv = if (length(newdata)) object@family@linkinv(etamat, extra) else
                     fitted(object)
         if (M > 1 && is.matrix(fv)) {
             dimnames(fv) <- list(dimnames(fv)[[1]],
@@ -1276,7 +1276,7 @@ predict.qrrvglm <- function(object,
 }
 
 setMethod("predict", "qrrvglm", function(object, ...)
-    predict.qrrvglm(object, ...))
+    predictqrrvglm(object, ...))
 
 coefqrrvglm = function(object, matrix.out = FALSE,
                         label = TRUE) {
@@ -1688,7 +1688,7 @@ num.deriv.rrr <- function(fit, M, r, x1mat, x2mat,
             fit@predictors = neweta
 
 
-            newmu <- fit@family@inverse(neweta, fit@extra) 
+            newmu <- fit@family@linkinv(neweta, fit@extra) 
             fit@fitted.values = as.matrix(newmu)  # 20100909
 
             fred = weights(fit, type = "w", deriv= TRUE, ignore.slot= TRUE)
@@ -2180,13 +2180,13 @@ lvplot.qrrvglm = function(object, varlvI = FALSE, reference = NULL,
                      stop("can only plot ellipses for intercept models only")
             }
             for(i in 1:ncol(r.curves)) {
-                cutpoint = object@family@link( if (Absolute) ellipse.temp
+                cutpoint = object@family@linkfun( if (Absolute) ellipse.temp
                                 else Coef.list@Maximum[i] * ellipse.temp,
                                 extra=object@extra)
                 if (MSratio > 1) 
                     cutpoint = cutpoint[1,1]
 
-                cutpoint = object@family@link(Coef.list@Maximum[i],
+                cutpoint = object@family@linkfun(Coef.list@Maximum[i],
                                extra=object@extra) - cutpoint
                 if (is.finite(cutpoint) && cutpoint > 0) {
                     Mmat = diag(rep(ifelse(object@control$Crow1positive, 1, -1),
@@ -2841,7 +2841,7 @@ setMethod("model.matrix",  "qrrvglm", function(object, ...)
 
 
 
-persp.qrrvglm = function(x, varlvI = FALSE, reference = NULL,
+perspqrrvglm = function(x, varlvI = FALSE, reference = NULL,
                   plot.it = TRUE,
                   xlim = NULL, ylim = NULL, zlim = NULL, # zlim ignored if Rank == 1
                   gridlength = if (Rank == 1) 301 else c(51,51),
@@ -2898,7 +2898,7 @@ persp.qrrvglm = function(x, varlvI = FALSE, reference = NULL,
     LP = t(LP)   # n by M
 
 
-    fitvals = object@family@inverse(LP)   # n by NOS
+    fitvals = object@family@linkinv(LP)   # n by NOS
     dimnames(fitvals) = list(NULL, dimnames(fv)[[2]])
     sppNames = dimnames(object@y)[[2]]
     if (!length(whichSpecies)) {
@@ -2956,9 +2956,17 @@ persp.qrrvglm = function(x, varlvI = FALSE, reference = NULL,
                    maxfitted = if (Rank == 2) maxfitted else NULL))
 }
 
+
+
  if (!isGeneric("persp"))
-    setGeneric("persp", function(x, ...) standardGeneric("persp")) 
-setMethod("persp", "qrrvglm", function(x, ...) persp.qrrvglm(x=x, ...))
+   setGeneric("persp", function(x, ...) standardGeneric("persp"),
+              package = "VGAM")
+
+setMethod("persp", "qrrvglm", function(x, ...) perspqrrvglm(x=x, ...))
+
+
+
+
 
 
 

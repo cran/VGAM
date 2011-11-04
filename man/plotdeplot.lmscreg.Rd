@@ -107,9 +107,9 @@ contains further information and examples.
 fit = vgam(BMI ~ s(age, df = c(4,2)), fam = lms.bcn(zero = 1), data = bminz)
 \dontrun{ y = seq(15, 43, by = 0.25)
 deplot(fit, x0 = 20, y = y, xlab = "BMI", col = "green", llwd = 2,
-       main = "BMI distribution at ages 20 (green), 40 (blue), 60 (red)")
+       main = "BMI distribution at ages 20 (green), 40 (blue), 60 (orange)")
 deplot(fit, x0 = 40, y = y, add = TRUE, col = "blue", llwd = 2)
-deplot(fit, x0 = 60, y = y, add = TRUE, col = "red", llwd = 2) -> aa
+deplot(fit, x0 = 60, y = y, add = TRUE, col = "orange", llwd = 2) -> aa
 
 names(aa@post$deplot)
 aa@post$deplot$newdata

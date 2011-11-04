@@ -66,7 +66,7 @@ Objects can be created by calls of the form \code{new("vglmff", ...)}.
   \code{x} and \code{w}. 
 
   }
-  \item{\code{inverse}:}{
+  \item{\code{linkinv}:}{
   Object of class \code{"function"} which
   returns the fitted values, given the linear/additive predictors.
   The function must have arguments
@@ -82,7 +82,7 @@ Objects can be created by calls of the form \code{new("vglmff", ...)}.
   which becomes the \code{misc} slot on the fitted object.
 
   }
-  \item{\code{link}:}{
+  \item{\code{linkfun}:}{
   Object of class \code{"function"} which,
   given the fitted values, returns the linear/additive predictors.
   If present, the function must have arguments
@@ -201,14 +201,14 @@ The file is amongst other \pkg{VGAM} PDF documentation.
 
   A unified method of handling arguments is to use
   \code{match.arg}. This allows, for example,
-  \code{vglm(..., family = cratio(link=logit))}
+  \code{vglm(..., family = cratio(link = logit))}
   and 
-  \code{vglm(..., family = cratio(link="logi"))}
+  \code{vglm(..., family = cratio(link = "logi"))}
   to be equivalent (Nb. there is a \code{logit} function).
 
 
   The \code{extra} argument in
-  \code{inverse}, \code{link}, \code{deviance}, \code{loglikelihood}, etc. 
+  \code{linkinv}, \code{linkfun}, \code{deviance}, \code{loglikelihood}, etc. 
   matches with the argument \code{extra}
   in \code{vglm}, \code{vgam} and \code{rrvglm}. This allows input
   to be fed into all slots of a \pkg{VGAM} family function.
@@ -242,6 +242,8 @@ The file is amongst other \pkg{VGAM} PDF documentation.
   \pkg{VGAM} family functions are not compatible with
   \code{\link[stats]{glm}}, nor \code{gam} (from either
   \pkg{gam} or \pkg{mgcv} packages).
+
+
 } 
 
 \seealso{
@@ -249,6 +251,7 @@ The file is amongst other \pkg{VGAM} PDF documentation.
   \code{\link{vgam}},
   \code{\link{rrvglm}},
   \code{\link{rcam}}.
+
 
 }
 \examples{

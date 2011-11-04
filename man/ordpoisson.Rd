@@ -8,9 +8,9 @@
 
 }
 \usage{
-ordpoisson(cutpoints, countdata=FALSE, NOS=NULL,
-           Levels=NULL, init.mu=NULL, parallel=FALSE,
-           zero=NULL, link="loge", earg = list())
+ordpoisson(cutpoints, countdata = FALSE, NOS = NULL,
+           Levels = NULL, init.mu = NULL, parallel = FALSE,
+           zero = NULL, link = "loge", earg = list())
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -30,21 +30,21 @@ ordpoisson(cutpoints, countdata=FALSE, NOS=NULL,
     the response is expected to be in the same format as \code{fit@y}
     where \code{fit} is a fitted model with \code{ordpoisson} as the
     \pkg{VGAM} family function. That is, the response is matrix of counts
-    with \code{L} columns (if \code{NOS=1}).
+    with \code{L} columns (if \code{NOS = 1}).
 
   }
   \item{NOS}{
     Integer. The number of species, or more generally, the number of
     response random variates.
-    This argument must be specified when \code{countdata=TRUE}.
-    Usually \code{NOS=1}.
+    This argument must be specified when \code{countdata = TRUE}.
+    Usually \code{NOS = 1}.
 
   }
   \item{Levels}{
     Integer vector, recycled to length \code{NOS} if necessary.
     The number of levels for each response random variate.
     This argument should agree with \code{cutpoints}.
-    This argument must be specified when \code{countdata=TRUE}.
+    This argument must be specified when \code{countdata = TRUE}.
 
   }
   \item{init.mu}{
@@ -75,6 +75,7 @@ ordpoisson(cutpoints, countdata=FALSE, NOS=NULL,
   The response for this family function corresponds to \eqn{Y^*} but
   we are really interested in the Poisson regression of \eqn{Y}.
 
+
   If \code{NOS=1} then
   the argument \code{cutpoints} is a vector \eqn{(K_1,K_2,\ldots,K_L)}
   where the last value (\code{Inf}) is optional. If \code{NOS>1} then
@@ -84,17 +85,22 @@ ordpoisson(cutpoints, countdata=FALSE, NOS=NULL,
   \code{ordpoisson(cut = c(0, 5, 10, Inf, 20, 30, Inf, 0, 10, 40, Inf))}
   is valid.
 
+
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}}
   and \code{\link{vgam}}.
 
+
 }
 \references{
-  Yee, T. W. (2007)
+
+
+  Yee, T. W. (2011)
   \emph{Ordinal ordination with normalizing link functions for count data}, 
   (in preparation).
+
 
 }
 \author{ Thomas W. Yee }
@@ -104,12 +110,14 @@ ordpoisson(cutpoints, countdata=FALSE, NOS=NULL,
   the arguments \code{Levels} and \code{NOS} need to be specified too.
   See below for an example.
 
+
 }
 \section{Warning }{
   The input requires care as little to no checking is done.
   If \code{fit} is the fitted object, have a look at \code{fit@extra} and
   \code{fit@y} to check.
   
+
 }
 
 \seealso{ 
@@ -117,38 +125,38 @@ ordpoisson(cutpoints, countdata=FALSE, NOS=NULL,
   \code{\link{polf}},
   \code{\link[base:factor]{ordered}}.
 
+
 }
 \examples{
-# Example 1
-set.seed(123)
+set.seed(123)     # Example 1
 x2 = runif(n <- 1000); x3 = runif(n)
 mymu = exp(3 - 1 * x2 + 2 * x3)
-y1 = rpois(n, lambda=mymu)
+y1 = rpois(n, lambda = mymu)
 cutpts = c(-Inf, 20, 30, Inf)
 fcutpts = cutpts[is.finite(cutpts)]  # finite cutpoints
-ystar = cut(y1, breaks=cutpts, labels=FALSE)
+ystar = cut(y1, breaks = cutpts, labels = FALSE)
 \dontrun{
-plot(x2, x3, col=ystar, pch=as.character(ystar))
+plot(x2, x3, col = ystar, pch = as.character(ystar))
 }
 table(ystar) / sum(table(ystar))
-fit = vglm(ystar ~ x2 + x3, fam = ordpoisson(cutpoi=fcutpts))
-head(fit@y)        # This can be input if countdata=TRUE
+fit = vglm(ystar ~ x2 + x3, fam = ordpoisson(cutpoi = fcutpts))
+head(fit@y)        # This can be input if countdata = TRUE
 head(fitted(fit))
 head(predict(fit))
-coef(fit, matrix=TRUE)
+coef(fit, matrix = TRUE)
 fit@extra
 
 # Example 2: multivariate and there are no obsns between some cutpoints
 cutpts2 = c(-Inf, 0, 9, 10, 20, 70, 200, 201, Inf)
 fcutpts2 = cutpts2[is.finite(cutpts2)]  # finite cutpoints
-y2 = rpois(n, lambda=mymu)   # Same model as y1
-ystar2 = cut(y2, breaks=cutpts2, labels=FALSE)
+y2 = rpois(n, lambda = mymu)   # Same model as y1
+ystar2 = cut(y2, breaks = cutpts2, labels = FALSE)
 table(ystar2) / sum(table(ystar2))
 fit = vglm(cbind(ystar,ystar2) ~ x2 + x3, fam =
-           ordpoisson(cutpoi=c(fcutpts,Inf,fcutpts2,Inf),
-                      Levels=c(length(fcutpts)+1,length(fcutpts2)+1),
-                      parallel=TRUE), trace=TRUE)
-coef(fit, matrix=TRUE)
+           ordpoisson(cutpoi = c(fcutpts,Inf,fcutpts2,Inf),
+                      Levels = c(length(fcutpts)+1,length(fcutpts2)+1),
+                      parallel = TRUE), trace = TRUE)
+coef(fit, matrix = TRUE)
 fit@extra
 constraints(fit)
 summary(fit@y)  # Some columns have all zeros

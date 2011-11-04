@@ -5,20 +5,17 @@
 \description{
 Estimates the parameter of the standard Wald distribution
 by maximum likelihood estimation.
+
 }
 \usage{
 wald(link.lambda = "loge", earg = list(), init.lambda = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{link.lambda}{
-  Parameter link function for the \eqn{\lambda}{lambda} parameter. 
-  See \code{\link{Links}} for more choices.
-
-  }
-  \item{earg}{
-  List. Extra argument for the link.
-  See \code{earg} in \code{\link{Links}} for general information.
+  \item{link.lambda, earg}{
+  Parameter link function and its extra argument for
+  the \eqn{\lambda}{lambda} parameter. 
+  See \code{\link{Links}} for more choices and general information.
 
   }
   \item{init.lambda}{

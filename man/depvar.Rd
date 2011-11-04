@@ -1,0 +1,67 @@
+\name{depvar}
+\alias{depvar}
+%- Also NEED an '\alias' for EACH other topic documented here.
+\title{ Response variable extracted }
+\description{
+  A generic function that extracts the response/dependent
+  variable from objects.
+
+}
+\usage{
+depvar(object, ...)
+}
+%- maybe also 'usage' for other objects documented here.
+\arguments{
+\item{object}{
+  An object that has some response/dependent variable.
+
+
+}
+\item{\dots}{
+  Other arguments fed into the specific methods function of
+  the model.
+
+
+}
+}
+\details{
+  This function is preferred to calling \code{fit@y}, say.
+
+
+}
+\value{
+  The response/dependent variable,
+  usually as a matrix or vector.
+
+
+}
+%\references{
+%
+%}
+\author{ Thomas W. Yee }
+
+%\note{
+%}
+
+%\section{Warning }{
+%  This 
+
+
+%}
+
+\seealso{
+  \code{\link[stats]{model.matrix}},
+  \code{\link{vglm}}.
+
+
+}
+\examples{
+pneumo = transform(pneumo, let = log(exposure.time))
+(fit = vglm(cbind(normal, mild, severe) ~ let, propodds, pneumo))
+fit@y        # Sample proportions (not recommended)
+depvar(fit)  # Better than using fit@y; dependent variable (response)
+weights(fit, type = "prior") # Number of observations
+}
+\keyword{models}
+\keyword{regression}
+

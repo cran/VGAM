@@ -23,21 +23,28 @@ trplot(object, ...)
   models.
   Many models have no such notion or definition. 
 
+
   For quadratic and additive ordination models they plot the
   fitted values of two species against each other (more than
   two is theoretically possible, but not implemented in this software
   yet).
+
+
 }
 \value{
   The value returned depends specifically on the methods
   function invoked.
+
+
 }
 \references{
 
-Yee, T. W. (2005)
+
+Yee, T. W. (2011)
 On constrained and unconstrained
 quadratic ordination.
 \emph{Manuscript in preparation}.
+
 
 }
 \author{ Thomas W. Yee }
@@ -48,32 +55,30 @@ quadratic ordination.
 
 \seealso{
   \code{\link{trplot.qrrvglm}},
-  \code{\link{persp.qrrvglm}},
+  \code{\link{perspqrrvglm}},
   \code{\link{lvplot}}.
+
+
 }
 
 \examples{
-\dontrun{
+\dontrun{ set.seed(123)
 hspider[,1:6] = scale(hspider[,1:6]) # Standardized environmental vars
-set.seed(123)
 
-p1 = cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,
-               Auloalbi, Pardlugu, Pardmont, Pardnigr, Pardpull,
-               Trocterr, Zoraspin) ~
-         WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
-         fam = quasipoissonff, data = hspider, Crow1positive=FALSE)
+p1cqo = cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,
+                  Auloalbi, Pardlugu, Pardmont, Pardnigr, Pardpull,
+                  Trocterr, Zoraspin) ~
+            WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
+            fam = quasipoissonff, data = hspider, Crow1positive = FALSE)
 
-nos = ncol(p1@y)
+nos = ncol(p1cqo@y)
 clr = 1:nos   # OR (1:(nos+1))[-7]  to omit yellow
 
-trplot(p1, whichSpecies=1:3, log="xy",
-       col=c("blue","red","green"), lwd=2, label=TRUE) -> ii
-legend(0.00005, 0.3, paste(ii$species[,1], ii$species[,2], sep=" and "),
-       lwd=2, lty=1, col=c("blue","red","green"))
-abline(a=0, b=1, lty="dashed")
-
-
-}
+trplot(p1cqo, whichSpecies = 1:3, log = "xy",
+       col = c("blue","orange","green"), lwd = 2, label = TRUE) -> ii
+legend(0.00005, 0.3, paste(ii$species[,1], ii$species[,2], sep = " and "),
+       lwd = 2, lty = 1, col = c("blue","orange","green"))
+abline(a = 0, b = 1, lty = "dashed") }
 }
 \keyword{models}
 \keyword{regression}

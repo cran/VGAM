@@ -8,7 +8,7 @@
 
 }
 \usage{
-mbinomial(mvar=NULL, link="logit", earg=list(),
+mbinomial(mvar = NULL, link = "logit", earg = list(),
           parallel = TRUE, smallno = .Machine$double.eps^(3/4))
 }
 %- maybe also 'usage' for other objects documented here.
@@ -47,13 +47,13 @@ mbinomial(mvar=NULL, link="logit", earg=list(),
 \details{
   By default, this \pkg{VGAM} family function fits a logistic regression
   model to a binary response from a matched case-control study. Here,
-  each case \eqn{(Y=1}) is matched with one or more controls \eqn{(Y=0})
+  each case \eqn{(Y = 1}) is matched with one or more controls \eqn{(Y = 0})
   with respect to some matching variables (confounders). For example,
   the first matched set is all women aged from 20 to 25, the second
   matched set is women aged between 26 to 30, etc. The logistic
   regression has a different intercept for each matched set but the other
   regression coefficients are assumed to be the same across matched sets
-  (\code{parallel=TRUE}).
+  (\code{parallel = TRUE}).
 
   Let \eqn{C} be the number of matched sets.
   This \pkg{VGAM} family function uses a trick by allowing \eqn{M},
@@ -114,8 +114,8 @@ mbinomial(mvar=NULL, link="logit", earg=list(),
   per matched set, the memory requirements are \eqn{O(C^3)} and the
   the computational time is \eqn{O(C^4)} flops.
 
-  The example below has been run successfully with \code{n=700} (this
-  corresponds to \eqn{C=350}) but only on a big machine and it took over
+  The example below has been run successfully with \code{n = 700} (this
+  corresponds to \eqn{C = 350}) but only on a big machine and it took over
   10 minutes. The large model matrix was 670Mb.
 
 }
@@ -131,8 +131,8 @@ mbinomial(mvar=NULL, link="logit", earg=list(),
 # the confounder or matching variable.
 n = 700 # Requires a big machine with lots of memory. Expensive wrt time
 n = 100 # This requires a reasonably big machine.
-mydat = data.frame(x2 = rnorm(n), x3 = rep(rnorm(n/2), each=2))
-xmat = with(mydat, cbind(x2,x3))
+mydat = data.frame(x2 = rnorm(n), x3 = rep(rnorm(n/2), each = 2))
+xmat = with(mydat, cbind(x2, x3))
 mydat = transform(mydat, eta = -0.1 + 0.2 * x2 + 0.3 * x3)
 etamat = with(mydat, matrix(eta, n/2, 2))
 condmu = exp(etamat[,1]) / (exp(etamat[,1]) + exp(etamat[,2]))
@@ -140,16 +140,16 @@ y1 = ifelse(runif(n/2) < condmu, 1, 0)
 y = cbind(y1, 1-y1)
 mydat = transform(mydat, y = c(y1, 1-y1),
                          ID = factor(c(row(etamat))))
-fit = vglm(y ~ 1 + ID + x2, trace=TRUE,
-           fam = mbinomial(mvar = ~ ID - 1), data=mydat)
-dimnames(coef(fit, mat=TRUE))
-coef(fit, mat=TRUE)
+fit = vglm(y ~ 1 + ID + x2, trace = TRUE,
+           fam = mbinomial(mvar = ~ ID - 1), data = mydat)
+dimnames(coef(fit, matrix = TRUE))
+coef(fit, matrix = TRUE)
 summary(fit)
 head(fitted(fit))
-objsizemb = function(object) round(object.size(object) / 2^20, dig=2)
+objsizemb = function(object) round(object.size(object) / 2^20, dig = 2)
 objsizemb(fit) # in Mb
 
-VLMX = model.matrix(fit, type="vlm")  # The big model matrix
+VLMX = model.matrix(fit, type = "vlm")  # The big model matrix
 dim(VLMX)
 objsizemb(VLMX) # in Mb
 rm(VLMX)

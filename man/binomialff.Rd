@@ -21,12 +21,14 @@ binomialff(link = "logit", earg = list(), dispersion = 1, mv = FALSE,
   See \code{\link{Links}} for more choices, and also
   \code{\link{CommonVGAMffArguments}} for more information.
 
+
   }
   \item{dispersion}{ 
   Dispersion parameter. By default, maximum likelihood is used to
   estimate the model because it is known.  However, the user can specify
   \code{dispersion = 0} to have it estimated, or else specify a known
   positive value (or values if \code{mv} is \code{TRUE}).
+
 
   }
   \item{mv}{ 
@@ -35,16 +37,19 @@ binomialff(link = "logit", earg = list(), dispersion = 1, mv = FALSE,
   of columns of the response matrix. In this case, the response matrix
   should have zero/one values only.
 
+
   If \code{FALSE} and the response is a (2-column) matrix, then the number
   of successes is given in the first column, and the second column is
   the number of failures.
+
 
   }
   \item{onedpar}{ 
   One dispersion parameter? If \code{mv}, then a separate dispersion
   parameter will be computed for each response (column), by default.
-  Setting \code{onedpar=TRUE} will pool them so that there is only one
+  Setting \code{onedpar = TRUE} will pool them so that there is only one
   dispersion parameter to be estimated.
+
 
   }
   \item{parallel}{ 
@@ -53,12 +58,14 @@ binomialff(link = "logit", earg = list(), dispersion = 1, mv = FALSE,
   coefficients for a variable is constrained to be equal over the \eqn{M}
   linear/additive predictors.
 
+
   }
   \item{zero}{ 
   An integer-valued vector specifying which linear/additive predictors
   are modelled as intercepts only.  The values must be from the set
   \{1,2,\ldots,\eqn{M}\}, where \eqn{M} is the number of columns of the
   matrix response.
+
 
   }
 }
@@ -97,18 +104,22 @@ binomialff(link = "logit", earg = list(), dispersion = 1, mv = FALSE,
   \code{\link{cqo}},
   and \code{\link{cao}}.
 
+
 }
 \references{
   McCullagh, P. and Nelder, J. A. (1989)
   \emph{Generalized Linear Models}, 2nd ed. London: Chapman & Hall.
 
+
   Altman, M. and Gill, J. and McDonald, M. P. (2004)
   \emph{Numerical Issues in Statistical Computing for the Social
         Scientist}, Hoboken, NJ: Wiley-Interscience.
 
+
   Ridout, M. S. (1990)
   Non-convergence of Fisher's method of scoring---a simple example.
   \emph{GLIM Newsletter}, 20(6).
+
 
 }
 \author{ Thomas W. Yee }
@@ -172,6 +183,7 @@ binomialff(link = "logit", earg = list(), dispersion = 1, mv = FALSE,
     \code{\link[stats:Binomial]{binomial}},
     \pkg{safeBinaryRegression}.
 
+
 }
 \section{Warning }{
     With a multivariate response, assigning a known dispersion parameter
@@ -183,7 +195,7 @@ binomialff(link = "logit", earg = list(), dispersion = 1, mv = FALSE,
   \emph{completely separable} or \emph{quasi-completely separable}.
   See Chapter 10 of Altman et al. (2004) for more details,
   and \pkg{safeBinaryRegression}.
-  Yet to do: add a \code{sepcheck=TRUE}, say, argument to detect this
+  Yet to do: add a \code{sepcheck = TRUE}, say, argument to detect this
   problem and give an appropriate warning.
 
 
@@ -193,19 +205,25 @@ binomialff(link = "logit", earg = list(), dispersion = 1, mv = FALSE,
 quasibinomialff()
 quasibinomialff(link = "probit")
 
-fit = vgam(agaaus ~ poly(altitude, 2), binomialff(link = cloglog), hunua)
+shunua = hunua[sort.list(with(hunua, altitude)), ]  # Sort by altitude
+fit = vglm(agaaus ~ poly(altitude, 2), binomialff(link = cloglog), shunua)
 \dontrun{
-with(hunua, plot(altitude, agaaus, col="blue", ylab="P(agaaus=1)",
-                 main = "Presence/absence of Agathis australis", las = 1))
-ooo = with(hunua, order(altitude))
-with(hunua, lines(altitude[ooo], fitted(fit)[ooo], col="red", lwd = 2)) }
+plot(agaaus ~ jitter(altitude), shunua, col = "blue", ylab = "P(Agaaus = 1)",
+     main = "Presence/absence of Agathis australis", las = 1)
+with(shunua, lines(altitude, fitted(fit), col = "orange", lwd = 2)) }
+
+
+# Fit two species simultaneously
+fit2 = vgam(cbind(agaaus, kniexc) ~ s(altitude), binomialff(mv = TRUE), shunua)
+with(shunua, matplot(altitude, fitted(fit2), type = "l",
+     main = "Two species response curves", las = 1))
 
 
 # Shows that Fisher scoring can sometime fail. See Ridout (1990).
 ridout = data.frame(v = c(1000, 100, 10), r = c(4, 3, 3), n = c(5, 5, 5))
 (ridout = transform(ridout, logv = log(v)))
 # The iterations oscillates between two local solutions:
-glm.fail = glm(r/n ~ offset(logv) + 1, weight=n,
+glm.fail = glm(r/n ~ offset(logv) + 1, weight = n,
                binomial(link = cloglog), ridout, trace = TRUE)
 coef(glm.fail)
 # vglm()'s half-stepping ensures the MLE of -5.4007 is obtained:

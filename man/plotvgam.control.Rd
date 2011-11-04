@@ -14,7 +14,7 @@ plotvgam.control(which.cf = NULL,
                  lcol = par()$col, rcol = par()$col,
                  scol = par()$col, llwd = par()$lwd, slwd = par()$lwd,
                  add.arg = FALSE, one.at.a.time = FALSE,
-                 .include.dots = TRUE, noxmean= FALSE, ...)
+                 .include.dots = TRUE, noxmean = FALSE, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -65,20 +65,22 @@ plotvgam.control(which.cf = NULL,
 \details{
   The most obvious features of \code{\link{plotvgam}} can be
   controlled by the above arguments. 
+
+
 }
 \value{
   A list with values matching the arguments.
+
+
 }
 \references{
+
 
 Yee, T. W. and Wild, C. J. (1996)
 Vector generalized additive models.
 \emph{Journal of the Royal Statistical Society, Series B, Methodological},
 \bold{58}, 481--493.
 
-Documentation accompanying the \pkg{VGAM} package at
-\url{http://www.stat.auckland.ac.nz/~yee}
-contains further information and examples.
 
 }
 \author{ Thomas W. Yee }
@@ -92,9 +94,11 @@ contains further information and examples.
 
 \seealso{
   \code{\link{plotvgam}}.
+
+
 }
 \examples{
-plotvgam.control(lcol=c("red", "blue"), scol="darkgreen", se=TRUE)
+plotvgam.control(lcol = c("red", "blue"), scol = "darkgreen", se = TRUE)
 }
 \keyword{models}
 \keyword{regression}

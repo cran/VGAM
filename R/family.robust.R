@@ -10,6 +10,8 @@
 
 
 
+
+
 edhuber <- function(x, k = 0.862, mu = 0, sigma = 1, log = FALSE) {
   if (!is.logical(log.arg <- log)) stop("bad input for argument 'log'")
   rm(log)
@@ -130,7 +132,7 @@ phuber <- function(q, k = 0.862, mu = 0, sigma = 1)
 
   if (!is.Numeric(imethod, allow = 1, integ = TRUE, posit = TRUE) ||
       imethod > 4)
-       stop("'imethod' must be 1 or 2 or 3 or 4")
+       stop("argument 'imethod' must be 1 or 2 or 3 or 4")
 
   if (!is.Numeric(k, allow = 1, posit = TRUE))
       stop("bad input for argument 'k'")
@@ -179,8 +181,8 @@ phuber <- function(q, k = 0.862, mu = 0, sigma = 1)
       }
     }), list( .llocat = llocation, .lscale = lscale,
               .elocat = elocation, .escale = escale,
-              .imethod=imethod ))),
-    inverse = eval(substitute(function(eta, extra = NULL) {
+              .imethod = imethod ))),
+    linkinv = eval(substitute(function(eta, extra = NULL) {
       eta2theta(eta[,1], .llocat, earg = .elocat)
     }, list( .llocat = llocation,
              .elocat = elocation, .escale = escale ))),
@@ -250,6 +252,131 @@ phuber <- function(q, k = 0.862, mu = 0, sigma = 1)
 
       wz[, iam(1,1,M)] <- ed2l.dlocat2 * dlocat.deta^2
       wz[, iam(2,2,M)] <- ed2l.dscale2 * dscale.deta^2
+      ans
+      c(w) * wz
+    }), list( .eps = eps ))))
+}
+
+
+
+
+ huber1 <- function(llocation = "identity",
+                    elocation = list(),
+                    k = 0.862,
+                    imethod = 1) {
+
+
+ print("hi 20110802")
+  A1 <- (2 * dnorm(k) / k - 2 * pnorm(-k))
+  eps <- A1 / (1 + A1)
+
+  if (!is.Numeric(imethod, allow = 1, integ = TRUE, posit = TRUE) ||
+      imethod > 4)
+       stop("argument 'imethod' must be 1 or 2 or 3 or 4")
+
+  if (!is.Numeric(k, allow = 1, posit = TRUE))
+      stop("bad input for argument 'k'")
+
+  if (mode(llocation)  !=  "character" && mode(llocation) != "name")
+       llocation = as.character(substitute(llocation))
+  if (!is.list(elocation)) elocation = list()
+
+  new("vglmff",
+    blurb = c("Huber least favorable distribution\n\n",
+              "Links: ",
+              namesof("location",  llocation,  earg = elocation), "\n\n",
+              "Mean: location"),
+    initialize = eval(substitute(expression({
+      predictors.names <-
+         c(namesof("location", .llocat, earg = .elocat, tag = FALSE))
+
+      if (ncol(y <- cbind(y)) != 1)
+           stop("response must be a vector or a one-column matrix")
+
+      if (!length(etastart)) {
+          junk = lm.wfit(x = x, y = y, w = w)
+          location.init <- if ( .llocat == "loge") pmax(1/1024, y) else {
+            if ( .imethod == 3) {
+              rep(weighted.mean(y, w), len = n)
+            } else if ( .imethod == 2) {
+              rep(median(rep(y, w)), len = n)
+            } else if ( .imethod == 1) {
+              junk$fitted
+            } else {
+              y
+            }
+          }
+          etastart <- cbind(
+               theta2eta(location.init,  .llocat, earg = .elocat))
+      }
+    }), list( .llocat = llocation,
+              .elocat = elocation,
+              .imethod = imethod ))),
+    linkinv = eval(substitute(function(eta, extra = NULL) {
+      eta2theta(eta, .llocat, earg = .elocat)
+    }, list( .llocat = llocation,
+             .elocat = elocation ))),
+    last = eval(substitute(expression({
+      misc$link <-    c("location" = .llocat )
+      misc$earg <- list("location" = .elocat )
+      misc$expected <- TRUE
+      misc$k.huber <- .k
+      misc$imethod <- .imethod
+    }), list( .llocat = llocation,
+              .elocat = elocation,
+              .k      = k,         .imethod = imethod ))),
+   loglikelihood = eval(substitute(
+     function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
+     location <- eta2theta(eta, .llocat, earg = .elocat)
+     kay      <- .k
+     if (residuals) stop("loglikelihood residuals not ",
+                         "implemented yet") else {
+       sum(w * dhuber(y, k = kay, mu = location,  sigma = 1,
+                      log = TRUE))
+     }
+   }, list( .llocat = llocation,
+            .elocat = elocation,
+            .k      = k ))),
+    vfamily = c("huber1"),
+    deriv = eval(substitute(expression({
+      mylocat <- eta2theta(eta, .llocat,  earg = .elocat)
+      myk     <- .k
+
+      zedd <- (y - mylocat) # / myscale
+      cond2 <- (abs(zedd) <=  myk)
+      cond3 <-     (zedd  >   myk)
+
+      dl.dlocat        <- -myk + 0 * zedd # cond1
+      dl.dlocat[cond2] <- zedd[cond2]
+      dl.dlocat[cond3] <-  myk  # myk is a scalar
+      dl.dlocat <- dl.dlocat # / myscale
+
+
+    if (FALSE) {
+      dl.dscale        <- (-myk * zedd)
+      dl.dscale[cond2] <-      (zedd^2)[cond2]
+      dl.dscale[cond3] <- ( myk * zedd)[cond3]
+      dl.dscale <- (-1 + dl.dscale) / myscale
+    }
+
+      dlocat.deta <- dtheta.deta(mylocat, .llocat, earg = .elocat)
+      ans <-
+      c(w) * cbind(dl.dlocat * dlocat.deta)
+      ans
+    }), list( .llocat = llocation,
+              .elocat = elocation,
+              .eps    = eps,       .k      = k ))),
+    weight = eval(substitute(expression({
+      wz   <- matrix(as.numeric(NA), n, 1) # diag matrix; y is one-col too
+
+
+
+
+      temp4 <- erf(myk / sqrt(2))
+      ed2l.dlocat2 <- temp4 * (1 - .eps) # / myscale^2
+
+
+      wz[, iam(1,1,M)] <- ed2l.dlocat2 * dlocat.deta^2
       ans
       c(w) * wz
     }), list( .eps = eps ))))

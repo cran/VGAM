@@ -38,6 +38,9 @@
 %\alias{Rcam}        % Has been written
 %\alias{plotrcam0}   % Has been written
 %\alias{moffset}     % Has been written
+% \alias{Qvar}
+\alias{plotqvar}
+\alias{depvar.vlm}
 %
 %
 %
@@ -88,6 +91,7 @@
 \alias{Tol.qrrvglm}
 \alias{Tol.uqo}
 \alias{a2m}
+\alias{abbott}
 % \alias{acat.deriv}
 % \alias{add.arg}
 % \alias{add.constraints}
@@ -177,6 +181,7 @@
 % \alias{eij}
 \alias{erfc}
 \alias{eta2theta}
+%\alias{explink}
 % \alias{extract.arg}
 \alias{family.vglm}
 %\alias{felix}
@@ -269,6 +274,14 @@
 % \alias{new.assign}
 \alias{nlminbcontrol}
 \alias{nbolf2}
+\alias{nobs.vlm}
+\alias{nvar}
+\alias{nvar.vlm}
+\alias{nvar.vgam}
+\alias{nvar.rrvglm}
+\alias{nvar.qrrvglm}
+\alias{nvar.cao}
+\alias{nvar.rcam}
 \alias{ns}
 % \alias{num.deriv.rrr}
 \alias{persp}
@@ -286,7 +299,7 @@
 \alias{predict.glm}
 \alias{predict.lm}
 \alias{predict.mlm}
-% \alias{predict.qrrvglm}
+% \alias{predictqrrvglm}
 \alias{predict.rrvglm}
 \alias{predict.uqo}
 \alias{predict.vgam}
@@ -327,6 +340,7 @@
 % \alias{process.constraints}
 % \alias{proj.vgam}
 % \alias{proj.vglm}
+\alias{put.caption}
 % \alias{pweights}
 % \alias{qrrvglm.xprod}
 \alias{qtplot}
@@ -485,7 +499,7 @@
 
 }
 %\usage{
-%normal1(lmean="identity", lsd="loge", zero=NULL)
+%normal1(lmean = "identity", lsd = "loge", zero = NULL)
 %}
 %- maybe also 'usage' for other objects documented here.
 %\arguments{

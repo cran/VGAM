@@ -7,14 +7,14 @@
 
 }
 \usage{
-tikuv(d, lmean="identity", lsigma="loge", emean=list(), esigma=list(),
-      isigma=NULL, zero=2)
+tikuv(d, lmean = "identity", lsigma = "loge", emean = list(), esigma = list(),
+      isigma = NULL, zero = 2)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{d}{
   The \eqn{d} parameter. It must be a single numeric value less than 2.
-  Then \eqn{h=2-d>0} is another parameter.
+  Then \eqn{h = 2-d>0} is another parameter.
 
   }
   \item{lmean, lsigma}{
@@ -40,9 +40,9 @@ tikuv(d, lmean="identity", lsigma="loge", emean=list(), esigma=list(),
   linear/additive predictors are modelled as intercepts only.
   The values must be from the set \{1,2\} corresponding
   respectively to \eqn{\mu}{mu}, \eqn{\sigma}{sigma}.
-  If \code{zero=NULL} then all linear/additive predictors are modelled as
+  If \code{zero = NULL} then all linear/additive predictors are modelled as
   a linear combination of the explanatory variables.
-  For many data sets having \code{zero=2} is a good idea.
+  For many data sets having \code{zero = 2} is a good idea.
 
   }
 }
@@ -65,11 +65,14 @@ tikuv(d, lmean="identity", lsigma="loge", emean=list(), esigma=list(),
   The mean of \eqn{Y} is
   \eqn{E(Y) = \mu}{E(Y) = mu} and this is returned as the fitted values.
 
+
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}},
   and \code{\link{vgam}}.
+
+
 }
 \references{
 
@@ -81,6 +84,7 @@ tikuv(d, lmean="identity", lsigma="loge", emean=list(), esigma=list(),
   Tiku, M. L. and Vaughan, D. C. (1999)
   A family of short-tailed symmetric distributions.
   \emph{Technical report, McMaster University, Canada}.
+
 
 }
 \author{ Thomas W. Yee }
@@ -94,29 +98,32 @@ tikuv(d, lmean="identity", lsigma="loge", emean=list(), esigma=list(),
   After fitting the value of \code{d} is stored in \code{@misc} with
   component name \code{d}.
 
+
 }
 
 \section{Warning }{
   Under- or over-flow may occur if the data is ill-conditioned,
   e.g., when \eqn{d} is very close to 2 or approaches \code{-Inf}.
 
+
 }
 \seealso{ 
-    \code{\link{dtikuv}},
-    \code{\link{normal1}}.
+  \code{\link{dtikuv}},
+  \code{\link{normal1}}.
+
+
 }
 
 \examples{
 m = 1.0; sigma = exp(0.5)
-sy = sort(y <- rtikuv(n=1000, d=1, m=m, s=sigma))
-fit = vglm(y ~ 1, fam=tikuv(d=1), trace=TRUE)
-coef(fit, mat=TRUE)
+tdata = data.frame(y = rtikuv(n = 1000, d = 1, m = m, s = sigma))
+tdata = transform(tdata, sy = sort(y))
+fit = vglm(y ~ 1, fam = tikuv(d = 1), tdata, trace = TRUE)
+coef(fit, matrix = TRUE)
 (Cfit = Coef(fit))
-mean(y)
-\dontrun{
-hist(y, prob=TRUE)
-lines(sy, dtikuv(sy, d=1, m=Cfit[1], s=Cfit[2]), col="red")
-}
+with(tdata, mean(y))
+\dontrun{ with(tdata, hist(y, prob = TRUE))
+lines(dtikuv(sy, d = 1, m = Cfit[1], s = Cfit[2]) ~ sy, tdata, col = "orange") }
 }
 \keyword{models}
 \keyword{regression}

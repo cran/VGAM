@@ -1,5 +1,5 @@
-\name{predict.qrrvglm}
-\alias{predict.qrrvglm}
+\name{predictqrrvglm}
+\alias{predictqrrvglm}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Predict Method for a CQO fit }
 \description{
@@ -8,10 +8,10 @@
 
 }
 \usage{
-predict.qrrvglm(object, newdata=NULL,
-                type=c("link", "response", "lv", "terms"),
-                se.fit=FALSE, deriv=0, dispersion=NULL,
-                extra=object@extra, varlvI = FALSE, reference = NULL, ...)
+predictqrrvglm(object, newdata=NULL,
+               type = c("link", "response", "lv", "terms"),
+               se.fit = FALSE, deriv = 0, dispersion = NULL,
+               extra = object@extra, varlvI = FALSE, reference = NULL, ...)
 
 }
 %- maybe also 'usage' for other objects documented here.
@@ -23,7 +23,7 @@ predict.qrrvglm(object, newdata=NULL,
 
   }
   \item{type, se.fit, dispersion, extra}{
-  See \code{\link{predict.vglm}}.
+  See \code{\link{predictvglm}}.
 
   }
   \item{deriv}{ Derivative. Currently only 0 is handled. }
@@ -42,7 +42,9 @@ predict.qrrvglm(object, newdata=NULL,
 
 }
 \value{
-  See \code{\link{predict.vglm}}.
+  See \code{\link{predictvglm}}.
+
+
 }
 \references{ 
 Yee, T. W. (2004)

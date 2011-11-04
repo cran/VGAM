@@ -60,19 +60,23 @@ amlexponential(w.aml = 1, parallel = FALSE, imethod = 1, digw = 4,
   the \code{weights} argument (so that it can contain frequencies).
   Newton-Raphson estimation is used here.
 
+
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}}
   and \code{\link{vgam}}.
 
+
 }
 \references{
+
   Efron, B. (1992)
   Poisson overdispersion estimates based on the method of
   asymmetric maximum likelihood.
   \emph{Journal of the American Statistical Association},
   \bold{87}, 98--107.
+
 
 }
 
@@ -101,14 +105,17 @@ amlexponential(w.aml = 1, parallel = FALSE, imethod = 1, digw = 4,
 }
 
 \section{Warning }{
+
   Note that the \code{link} argument of \code{\link{exponential}} and
   \code{\link{amlexponential}} are currently different: one is the
   rate parameter and the other is the mean (expectile) parameter.
+
 
   If \code{w.aml} has more than one value then the value returned by
   \code{deviance} is the sum of all the (weighted) deviances taken over
   all the \code{w.aml} values.
   See Equation (1.6) of Efron (1992).
+
 
 } 
 \seealso{
@@ -120,36 +127,35 @@ amlexponential(w.aml = 1, parallel = FALSE, imethod = 1, digw = 4,
   \code{\link{lms.bcg}},
   \code{\link{deexp}}.
 
+
 }
 
 \examples{
 nn = 2000
-mydat = data.frame(x = seq(0, 1, length=nn))
-mydat = transform(mydat, mu = loge(-0+1.5*x+0.2*x^2, inverse=TRUE))
-mydat = transform(mydat, mu = loge(0-sin(8*x), inverse=TRUE))
-mydat = transform(mydat,  y = rexp(nn, rate=1/mu))
-(fit  = vgam(y ~ s(x,df=5), amlexponential(w=c(0.001,0.1,0.5,5,60)),
-             mydat, trace=TRUE))
+mydat = data.frame(x = seq(0, 1, length = nn))
+mydat = transform(mydat, mu = loge(-0+1.5*x+0.2*x^2, inverse = TRUE))
+mydat = transform(mydat, mu = loge(0-sin(8*x), inverse = TRUE))
+mydat = transform(mydat,  y = rexp(nn, rate = 1/mu))
+(fit  = vgam(y ~ s(x,df = 5), amlexponential(w = c(0.001,0.1,0.5,5,60)),
+             mydat, trace = TRUE))
 fit@extra
 
-\dontrun{
-# These plots are against the sqrt scale (to increase clarity)
-par(mfrow=c(1,2))
+\dontrun{ # These plots are against the sqrt scale (to increase clarity)
+par(mfrow = c(1,2))
 # Quantile plot
-with(mydat, plot(x, sqrt(y), col="blue", las=1, main=
-     paste(paste(round(fit@extra$percentile, dig=1), collapse=", "),
+with(mydat, plot(x, sqrt(y), col = "blue", las = 1, main =
+     paste(paste(round(fit@extra$percentile, dig = 1), collapse = ", "),
            "percentile-expectile curves")))
-with(mydat, matlines(x, sqrt(fitted(fit)), lwd=2, col="blue", lty=1))
+with(mydat, matlines(x, sqrt(fitted(fit)), lwd = 2, col = "blue", lty = 1))
 
 # Compare the fitted expectiles with the quantiles
-with(mydat, plot(x, sqrt(y), col="blue", las=1, main=
-     paste(paste(round(fit@extra$percentile, dig=1), collapse=", "),
-           "percentile curves are red")))
-with(mydat, matlines(x, sqrt(fitted(fit)), lwd=2, col="blue", lty=1))
+with(mydat, plot(x, sqrt(y), col = "blue", las = 1, main =
+     paste(paste(round(fit@extra$percentile, dig = 1), collapse = ", "),
+           "percentile curves are orange")))
+with(mydat, matlines(x, sqrt(fitted(fit)), lwd = 2, col = "blue", lty = 1))
 
 for(ii in fit@extra$percentile)
-    with(mydat, matlines(x, sqrt(qexp(p=ii/100, rate=1/mu)), col="red"))
-}
+  with(mydat, matlines(x, sqrt(qexp(p = ii/100, rate = 1/mu)), col = "orange")) }
 }
 \keyword{models}
 \keyword{regression}

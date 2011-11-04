@@ -70,9 +70,9 @@ p1 = cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,
                Auloalbi, Pardlugu, Pardmont, Pardnigr, Pardpull,
                Trocterr, Zoraspin) ~
          WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
-         fam = quasipoissonff, data = hspider, Crow1positive=FALSE)
-par(mfrow=c(3,4)) 
-plot(p1, rtype="d", col="blue", pch=4, las=1)
+         fam = quasipoissonff, data = hspider, Crow1positive = FALSE)
+par(mfrow = c(3, 4)) 
+plot(p1, rtype = "d", col = "blue", pch = 4, las = 1)
 }
 }
 \keyword{dplot}

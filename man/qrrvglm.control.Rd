@@ -468,7 +468,7 @@ p1 = cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi, Auloalbi,
          quasipoissonff, data = hspider, EqualTolerances = TRUE)
 sort(p1@misc$deviance.Bestof) # A history of all the iterations
 
-(isdlv = sd(lv(p1))) # Should be approx isdlv
+(isdlv = apply(lv(p1), 2, sd)) # Should be approx isdlv
  
 # Refit the model with better initial values
 set.seed(111)  # This leads to the global solution

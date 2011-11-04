@@ -219,10 +219,10 @@ coef(fit, matrix = TRUE) }
 ycounts = t(rmultinom(10, size = 20, prob = c(0.1, 0.2, 0.8))) # Counts
 fit = vglm(ycounts ~ 1, multinomial)
 head(fitted(fit))   # Proportions
-fit@prior.weights # Not recommended for extraction of prior weights
+fit@prior.weights   # NOT recommended for extraction of prior weights
 weights(fit, type = "prior", matrix = FALSE) # The better method
-fit@y   # Sample proportions
-constraints(fit)   # Constraint matrices
+depvar(fit)         # Sample proportions; same as fit@y
+constraints(fit)    # Constraint matrices
 
 # Example 2b: Different reference level used as the baseline 
 fit2 = vglm(ycounts ~ 1, multinomial(refLevel = 2))

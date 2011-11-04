@@ -125,7 +125,7 @@ contains further information and examples.
 \seealso{
   \code{\link{dirmultinomial}},
   \code{\link{dirichlet}},
-  \code{\link{betabin.ab}},
+  \code{\link{betabinomial.ab}},
   \code{\link{multinomial}}.
 
 

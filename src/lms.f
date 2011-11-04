@@ -81,7 +81,7 @@
       double precision ghz9vuba, i9mwnvqt, mymu, sigma, kpzavbj3mat(4), 
      &lfu2qhid
       integer hbsl0gto, itwo2
-      double precision psi, pim12, tad5vhsu(2), two12
+      double precision psi, pim12, tad5vhsu(3), two12
       itwo2 = 2
       hbsl0gto = 1
       if(.not.(lenkpzavbj3mat .gt. 0))goto 23016
@@ -104,7 +104,7 @@
       double precision ghz9vuba, i9mwnvqt, mymu, sigma, kpzavbj3mat(4), 
      &lfu2qhid
       integer hbsl0gto, itwo2
-      double precision psi, mtpim12, tad5vhsu(2), two12
+      double precision psi, mtpim12, tad5vhsu(3), two12
       itwo2 = 2
       hbsl0gto = 1
       if(.not.(lenkpzavbj3mat .gt. 0))goto 23018

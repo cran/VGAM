@@ -69,7 +69,7 @@ vglm(formula, family, data = list(), weights = NULL, subset = NULL,
   \item{etastart}{
   starting values for the linear predictors.
   It is a \eqn{M}-column matrix with the same number of rows as the response.
-  If \eqn{M=1} then it may be a vector.
+  If \eqn{M = 1} then it may be a vector.
   Note that \code{etastart} and the output of \code{predict(fit)}
   should be comparable.
   Here, \code{fit} is the fitted object.
@@ -353,7 +353,7 @@ The \code{VGAM} Package.
   \code{\link{vgam}}.
   Methods functions include 
   \code{coef.vlm},
-  \code{\link{predict.vglm}},
+  \code{\link{predictvglm}},
   \code{summary.vglm},
   \code{AIC.vglm},
   etc.
@@ -362,16 +362,16 @@ The \code{VGAM} Package.
 
 \examples{
 # Example 1. See help(glm)
-counts = c(18,17,15,20,10,20,25,13,12)
-outcome = gl(3,1,9)
-treatment = gl(3,3)
-print(d.AD <- data.frame(treatment, outcome, counts))
-vglm.D93 = vglm(counts ~ outcome + treatment, family=poissonff)
+print(d.AD <- data.frame(treatment = gl(3, 3),
+                         outcome = gl(3, 1, 9),
+                         counts = c(18,17,15,20,10,20,25,13,12)))
+vglm.D93 = vglm(counts ~ outcome + treatment, family=poissonff,
+                data = d.AD, trace = TRUE)
 summary(vglm.D93)
 
 
 # Example 2. Multinomial logit model
-pneumo = transform(pneumo, let=log(exposure.time))
+pneumo = transform(pneumo, let = log(exposure.time))
 vglm(cbind(normal, mild, severe) ~ let, multinomial, pneumo)
 
 
@@ -379,15 +379,15 @@ vglm(cbind(normal, mild, severe) ~ let, multinomial, pneumo)
 fit3 = vglm(cbind(normal,mild,severe) ~ let, propodds, pneumo, trace = TRUE)
 coef(fit3, matrix = TRUE) 
 constraints(fit3)
-model.matrix(fit3, type="lm") # LM model matrix
-model.matrix(fit3)            # Larger VGLM (or VLM) model matrix
+model.matrix(fit3, type = "lm") # LM model matrix
+model.matrix(fit3)              # Larger VGLM (or VLM) model matrix
 
 
 # Example 4. Bivariate logistic model 
 fit4 = vglm(cbind(nBnW, nBW, BnW, BW) ~ age, binom2.or, coalminers)
 coef(fit4, matrix = TRUE)
 fit4@y  # Response are proportions
-weights(fit4, type="prior")
+weights(fit4, type = "prior")
 
 
 # Example 5. The use of the xij argument (simple case).
@@ -395,16 +395,16 @@ weights(fit4, type="prior")
 nn = 1000
 eyesdat = round(data.frame(lop = runif(nn),
                            rop = runif(nn),
-                            op = runif(nn)), dig=2)
+                            op = runif(nn)), dig = 2)
 eyesdat = transform(eyesdat, eta1 = -1+2*lop,
                              eta2 = -1+2*lop)
 eyesdat = transform(eyesdat,
-                    leye = rbinom(nn, size=1, prob=logit(eta1, inv = TRUE)),
-                    reye = rbinom(nn, size=1, prob=logit(eta2, inv = TRUE)))
+                    leye = rbinom(nn, size = 1, prob = logit(eta1, inv = TRUE)),
+                    reye = rbinom(nn, size = 1, prob = logit(eta2, inv = TRUE)))
 head(eyesdat)
 fit5 = vglm(cbind(leye,reye) ~ op,
-            binom2.or(exchangeable = TRUE, zero=3),
-            data=eyesdat, trace = TRUE,
+            binom2.or(exchangeable = TRUE, zero = 3),
+            data = eyesdat, trace = TRUE,
             xij = list(op ~ lop + rop + fill(lop)),
             form2 = ~  op + lop + rop + fill(lop))
 coef(fit5)

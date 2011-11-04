@@ -54,7 +54,7 @@
     \item{\code{smokes}}{Smokes? a factor, (Yes or No) }
     \item{\code{alcohol}}{Average amount spent on alcohol per week,
                           a numeric vector }
-    \item{\code{purchase.alcohol}}{Purchases alcohol? a factor, (Yes or No) }
+    \item{\code{buy.alcohol}}{Buys (purchases) alcohol? a factor, (Yes or No) }
     \item{\code{sendtxt}}{Average number text messages sent per day,
                           a numeric vector.}
     \item{\code{receivetxt}}{Average number text messages received per day,

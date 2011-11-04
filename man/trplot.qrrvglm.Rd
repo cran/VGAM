@@ -8,6 +8,7 @@ Produces a trajectory plot for
 (QRR-VGLMs).
 It is only applicable for rank-1 models with argument
 \code{Norrr = ~ 1}.
+
 }
 \usage{
 trplot.qrrvglm(object, whichSpecies = NULL, add=FALSE, plot.it=TRUE,
@@ -18,7 +19,7 @@ trplot.qrrvglm(object, whichSpecies = NULL, add=FALSE, plot.it=TRUE,
                lwd = rep(par()$lwd, len = nos * (nos - 1)/2), 
                tcol = rep(par()$col, len = nos * (nos - 1)/2), 
                xlab = NULL, ylab = NULL,
-               main = "", type = "b", check.ok=TRUE, ...)
+               main = "", type = "b", check.ok = TRUE, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -96,12 +97,15 @@ trplot.qrrvglm(object, whichSpecies = NULL, add=FALSE, plot.it=TRUE,
  the resulting plot will be very congested, and so it is recommended 
  that only a few species be selected for plotting.
 
+
 In the above, \eqn{M} is the number of species selected for plotting,
 so there will be \eqn{M(M-1)/2}{M*(M-1)/2} curves/trajectories in total.
+
 
 A trajectory plot will be fitted only if \code{Norrr = ~ 1} because
 otherwise the trajectory will not be a smooth function of the latent
 variables.
+
 
 }
 \value{
@@ -118,10 +122,11 @@ variables.
 }
 \references{
 
-Yee, T. W. (2005)
+Yee, T. W. (2011)
 On constrained and unconstrained
 quadratic ordination.
 \emph{Manuscript in preparation}.
+
 
 }
 
@@ -138,25 +143,25 @@ quadratic ordination.
 }
 
 \seealso{
-\code{\link{cqo}},
-\code{\link[graphics]{par}},
-\code{\link[graphics]{title}}.
+  \code{\link{cqo}},
+  \code{\link[graphics]{par}},
+  \code{\link[graphics]{title}}.
+
 }
 
-\examples{\dontrun{
-set.seed(111)  # This leads to the global solution
-# hspider[,1:6]=scale(hspider[,1:6]) # Standardize the environmental variables
+\examples{\dontrun{ set.seed(111)  # This leads to the global solution
+# hspider[,1:6] = scale(hspider[,1:6]) # Standardize the environmental variables
 p1 = cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi, Auloalbi,
                Pardlugu, Pardmont, Pardnigr, Pardpull, Trocterr, Zoraspin) ~
          WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
-         fam = poissonff, data = hspider, trace=FALSE)
+         fam = poissonff, data = hspider, trace = FALSE)
 
-trplot(p1, whichSpecies=1:3, log="xy", type="b", lty=1,
-       main="Trajectory plot of three hunting spiders species",
-       col=c("blue","red","green"), lwd=2, label=TRUE) -> ii
-legend(0.00005, 0.3, lwd=2, lty=1, col=c("blue","red","green"),
-       with(ii, paste(species.names[,1], species.names[,2], sep=" and ")))
-abline(a=0, b=1, lty="dashed")  # Useful reference line
+trplot(p1, whichSpecies = 1:3, log = "xy", type = "b", lty = 1,
+       main = "Trajectory plot of three hunting spiders species",
+       col = c("blue","red","green"), lwd = 2, label = TRUE) -> ii
+legend(0.00005, 0.3, lwd = 2, lty = 1, col = c("blue","red","green"),
+       with(ii, paste(species.names[,1], species.names[,2], sep = " and ")))
+abline(a = 0, b = 1, lty = "dashed")  # Useful reference line
 }
 }
 \keyword{models}

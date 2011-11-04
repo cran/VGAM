@@ -11,18 +11,18 @@
 vgam <- function(formula, 
                  family, 
                  data=list(), 
-                 weights=NULL,
-                 subset=NULL,
+                 weights = NULL,
+                 subset = NULL,
                  na.action=na.fail,
-                 etastart=NULL, mustart=NULL, coefstart=NULL,
+                 etastart = NULL, mustart = NULL, coefstart = NULL,
                  control=vgam.control(...),
-                 offset=NULL, 
-                 method="vgam.fit",
-                 model=FALSE, x.arg=TRUE, y.arg=TRUE,
-                 contrasts=NULL,
-                 constraints=NULL,
+                 offset = NULL, 
+                 method = "vgam.fit",
+                 model = FALSE, x.arg = TRUE, y.arg = TRUE,
+                 contrasts = NULL,
+                 constraints = NULL,
                  extra=list(),
-                 qr.arg=FALSE, smart=TRUE,
+                 qr.arg = FALSE, smart = TRUE,
                  ...)
 {
     dataname <- as.character(substitute(data))  # "list" if no data= 
@@ -95,7 +95,7 @@ vgam <- function(formula,
     if (is.function(family))
         family <- family()
     if (!inherits(family, "vglmff")) {
-        stop("'family=", family, "' is not a VGAM family function")
+        stop("'family = ", family, "' is not a VGAM family function")
     }
 
     eval(vcontrol.expression)
@@ -103,7 +103,7 @@ vgam <- function(formula,
     n <- dim(x)[1]
 
     if (FALSE && is.R()) {
-        family@inverse <- eval(family@inverse)
+        family@linkinv <- eval(family@linkinv)
         family@link <- eval(family@link)
 
         for (ii in names(.min.criterion.VGAM)) 
@@ -126,7 +126,7 @@ vgam <- function(formula,
     nonparametric <- length(smoothers$s) > 0
     if (nonparametric) {
 
-        ff <- apply(aa$factors[smoothers[["s"]],,drop=FALSE], 2, any)
+        ff <- apply(aa$factors[smoothers[["s"]],,drop = FALSE], 2, any)
         smoothers[["s"]] <- if (any(ff))
             seq(along=ff)[aa$order==1 & ff] else NULL
 
@@ -197,7 +197,7 @@ vgam <- function(formula,
       "smart.prediction" = as.list(fit$smart.prediction),
       "terms"        = list(terms=fit$terms))
 
-    if (!smart) answer@smart.prediction <- list(smart.arg=FALSE)
+    if (!smart) answer@smart.prediction <- list(smart.arg = FALSE)
 
     if (qr.arg) {
         class(fit$qr) = "list"

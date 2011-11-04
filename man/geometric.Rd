@@ -70,6 +70,7 @@ geometric(link = "logit", earg=list(), expected = TRUE, imethod = 1)
   \code{\link[stats]{Geometric}},
   \code{\link{betageometric}},
   \code{\link{expgeometric}},
+  \code{\link{zigeometric}},
   \code{\link{rbetageom}}.
 
 }
@@ -78,11 +79,11 @@ gdata = data.frame(x2 = runif(nn <- 1000) - 0.5)
 gdata = transform(gdata, x3 = runif(nn) - 0.5,
                          x4 = runif(nn) - 0.5)
 gdata = transform(gdata, eta = 1.0 - 1.0 * x2 + 2.0 * x3)
-gdata = transform(gdata, prob = logit(eta, inverse=TRUE))
+gdata = transform(gdata, prob = logit(eta, inverse = TRUE))
 gdata = transform(gdata, y = rgeom(nn, prob))
 with(gdata, table(y))
-fit = vglm(y ~ x2 + x3 + x4, geometric, gdata, trace=TRUE)
-coef(fit, mat=TRUE)
+fit = vglm(y ~ x2 + x3 + x4, geometric, gdata, trace = TRUE)
+coef(fit, matrix = TRUE)
 summary(fit)
 }
 \keyword{models}

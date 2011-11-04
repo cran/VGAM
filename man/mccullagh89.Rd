@@ -8,28 +8,22 @@
 
 }
 \usage{
-mccullagh89(ltheta="rhobit", lnu="logoff", itheta=NULL, inu=NULL,
-            etheta=list(), enu=if(lnu == "logoff") list(offset=0.5)
-            else list(), zero=NULL)
+mccullagh89(ltheta = "rhobit", lnu = "logoff", itheta = NULL, inu = NULL,
+            etheta = list(), enu = if(lnu == "logoff") list(offset = 0.5)
+            else list(), zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{ltheta, lnu}{
-  Link functions for the \eqn{\theta}{theta} and \eqn{\nu}{nu} parameters.
-  See \code{\link{Links}} for more choices.
+  \item{ltheta, lnu, etheta, enu}{
+  Link functions and their extra arguments
+  for the \eqn{\theta}{theta} and \eqn{\nu}{nu} parameters.
+  See \code{\link{Links}} for general information.
 
   }
   \item{itheta, inu}{
   Numeric.
   Optional initial values for \eqn{\theta}{theta} and \eqn{\nu}{nu}.
   The default is to internally compute them.
-
-  }
-  \item{etheta, enu}{
-  List. Extra argument associated with \code{ltheta} and \code{lnu}
-  containing any extra information.
-  See \code{\link{Links}} for general information about \pkg{VGAM} link
-  functions.
 
   }
   \item{zero}{
@@ -41,7 +35,7 @@ mccullagh89(ltheta="rhobit", lnu="logoff", itheta=NULL, inu=NULL,
   }
 }
 \details{
-  The McCullagh (1989) distribution has density function
+The McCullagh (1989) distribution has density function
  \deqn{f(y;\theta,\nu) = 
 \frac{ \{ 1-y^2 \}^{\nu-\frac12}}
 { (1-2\theta y + \theta^2)^{\nu} \mbox{Beta}(\nu+\frac12, \frac12)}}{%
@@ -56,6 +50,7 @@ with offset equal to 0.5, i.e.,
 The mean is of \eqn{Y} is \eqn{\nu \theta / (1+\nu)}{nu*theta/(1+nu)},
 and these are returned as the fitted values.
 
+
 This distribution is related to the Leipnik distribution (see Johnson
 et al. (1995)), is related to ultraspherical functions, and under
 certain conditions, arises as exit distributions for Brownian motion.
@@ -65,19 +60,24 @@ McCullagh (1989) also states that, to some extent, \eqn{\theta}{theta}
 and \eqn{\nu}{nu} have the properties of a location parameter and a
 precision parameter, respectively.
 
+
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}},
   \code{\link{rrvglm}}
   and \code{\link{vgam}}.
+
+
 }
 \references{
+
 
 McCullagh, P. (1989)
 Some statistical properties of a family of continuous univariate distributions.
 \emph{Journal of the American Statistical Association},
 \bold{84}, 125--129.
+
 
 Johnson, N. L. and Kotz, S. and Balakrishnan, N. (1995)
 \emph{Continuous Univariate Distributions},
@@ -85,6 +85,7 @@ Johnson, N. L. and Kotz, S. and Balakrishnan, N. (1995)
 Volume 2,
 New York: Wiley.
 (pages 612--617).
+
 
 }
 \author{ T. W. Yee }
@@ -96,24 +97,26 @@ densities for different values of \eqn{\theta}{theta} and \eqn{\nu}{nu},
 and this could be consulted for obtaining reasonable initial values if
 all else fails.
 
+
 }
 \seealso{
-    \code{\link{leipnik}},
-    \code{\link{rhobit}},
-    \code{\link{logoff}}.
+  \code{\link{leipnik}},
+  \code{\link{rhobit}},
+  \code{\link{logoff}}.
+
+
 }
 
 %\section{Warning }{
 %}
 
 \examples{
-n = 1000
-y = rnorm(n, mean=0.0, sd=0.2)  # Limit as theta is 0, nu is infinity
-fit = vglm(y ~ 1, mccullagh89, trace=TRUE)
+mdata = data.frame(y = rnorm(n = 1000, sd = 0.2)) # Limit as theta = 0, nu is Inf
+fit = vglm(y ~ 1, mccullagh89, mdata, trace = TRUE)
 head(fitted(fit))
-mean(y)
+with(mdata, mean(y))
 summary(fit)
-coef(fit, matrix=TRUE)
+coef(fit, matrix = TRUE)
 Coef(fit)
 }
 \keyword{models}
