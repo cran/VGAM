@@ -262,7 +262,7 @@ calluqof = function(sitescores, etamat, ymat, wvec, modelno, nice31, xmat,
 
 
 
-        sdnumat = sd(numat)
+        sdnumat = apply(numat, 2, sd)
         for(lookat in 1:Rank)
             if (sdnumat[lookat]>control$MUXfactor[lookat]*control$isdlv[lookat]){
                 muxer = control$isdlv[lookat] * control$MUXfactor[lookat] / 
@@ -336,7 +336,7 @@ callduqof = function(sitescores, etamat, ymat, wvec, modelno, nice31, xmat,
             numat = numat %*% evnu$vector
         }
 
-        sdnumat = sd(numat)
+        sdnumat = apply(numat, 2, sd)
         for(lookat in 1:Rank)
             if (sdnumat[lookat]>control$MUXfactor[lookat]*control$isdlv[lookat]){
                 muxer = control$isdlv[lookat] * control$MUXfactor[lookat] / 
@@ -426,7 +426,7 @@ uqo.fit <- function(x, y, w=rep(1, len=nrow(x)),
 
     if (length(etastart)) {
         eta <- etastart
-        mu <- if (length(mustart)) mustart else family@inverse(eta, extra)
+        mu <- if (length(mustart)) mustart else family@linkinv(eta, extra)
     } else {
         if (length(mustart))
             mu <- mustart
@@ -756,7 +756,7 @@ setMethod("predict", "uqo", function(object, ...)
 
 
 setMethod("persp", "uqo", function(x, ...) 
-          persp.qrrvglm(x, ...))
+          perspqrrvglm(x, ...))
 
 setMethod("trplot", "uqo", function(object, ...) 
           trplot.qrrvglm(object, check.ok=FALSE, ...))

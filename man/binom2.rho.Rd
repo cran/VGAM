@@ -79,7 +79,7 @@ binom2.Rho(rho = 0, imu1 = NULL, imu2 = NULL,
 
   Explicitly, the default model is
   \deqn{probit[P(Y_j=1)] = \eta_j,\ \ \ j=1,2}{%
-        probit[P(Y_j=1)] =  eta_j,\ \ \ j=1,2}
+        probit[P(Y_j=1)] =  eta_j,      j=1,2}
   for the marginals, and
   \deqn{rhobit[rho] = \eta_3.}{%
         rhobit[rho] =  eta_3.}

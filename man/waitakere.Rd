@@ -38,20 +38,22 @@
   of 17 plant species was recorded, as well as the altitude. 
   Each site was of area size 200\eqn{m^2}{m^2}.
 
+
 }
 \source{
   Dr Neil Mitchell, University of Auckland. 
+
 }
 %\references{
 %None. 
 %}
 \seealso{
     \code{\link{hunua}}.
+
 }
 \examples{
-fit = vgam(agaaus ~ s(altitude, df=2), binomialff, waitakere)
-\dontrun{
-plot(fit, se=TRUE, lcol="red", scol="blue") }
-head(predict(fit, waitakere, type="response"))
+fit = vgam(agaaus ~ s(altitude, df = 2), binomialff, waitakere)
+head(predict(fit, waitakere, type = "response"))
+\dontrun{ plot(fit, se = TRUE, lcol = "red", scol = "blue") }
 }
 \keyword{datasets}

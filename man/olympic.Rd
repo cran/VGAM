@@ -6,6 +6,7 @@
   Final count of medal winners by country for the 2008 Summer Olympic
   games in Beijing.
 
+
 }
 \usage{data(olympic)}
 \format{
@@ -22,11 +23,12 @@
 \details{
   The event was held during August 8--24, 2008, in Beijing.
 
+
 % This is a simple two-way contingency table of counts.
 
 }
 \source{
-  \url{http://www.associatedcontent.com/article/979484/2008_summer_olympic_medal_count_total.html}.
+\url{http://www.associatedcontent.com/article/979484/2008_summer_olympic_medal_count_total.html}.
 
 }
 \references{
@@ -37,19 +39,18 @@
 \seealso{
   \code{\link{grc}}.
 
+
 }
 
 \examples{
 summary(olympic)
 ## maybe str(olympic) ; plot(olympic) ...
-\dontrun{
-with(head(olympic, n=8),
-     barplot(rbind(gold,silver,bronze),
-             col=c("gold","grey","brown"),  # No "silver" or "bronze"!
-             names.arg=country, cex.names=0.5,
-             beside=TRUE, main="2008 Summer Olympic Final Medal Count",
-             ylab="Medal count", las=1,
-             sub="Top 8 countries; 'gold'=gold, 'grey'=silver, 'brown'=bronze"))
-}
+\dontrun{ with(head(olympic, n = 8),
+barplot(rbind(gold,silver,bronze),
+        col = c("gold","grey","brown"),  # No "silver" or "bronze"!
+        names.arg = country, cex.names = 0.5,
+        beside = TRUE, main = "2008 Summer Olympic Final Medal Count",
+        ylab = "Medal count", las = 1,
+        sub = "Top 8 countries; 'gold'=gold, 'grey'=silver, 'brown'=bronze")) }
 }
 \keyword{datasets}

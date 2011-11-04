@@ -18,13 +18,16 @@
 }
 \details{
   See the references for details.
+
 }
 \source{
   See the references for details.
+
 }
 
 \seealso{
     \code{\link{dexpbinomial}}.
+
 }
 
 \references{
@@ -34,16 +37,16 @@
   \emph{Journal of the American Statistical Association},
   \bold{73}, 113--121.
 
+
   Efron, B. (1986)
   Double exponential families and their use in generalized linear regression.
   \emph{Journal of the American Statistical Association},
   \bold{81}, 709--721.
 
+
 }
 \examples{
-\dontrun{
-with(toxop, plot(rainfall, positive/ssize, col="blue"))
-plot(toxop, col="blue")
-}
+\dontrun{ with(toxop, plot(rainfall, positive/ssize, col = "blue"))
+plot(toxop, col = "blue") }
 }
 \keyword{datasets}

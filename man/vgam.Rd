@@ -159,6 +159,7 @@ vgam(formula, family, data = list(), weights = NULL, subset = NULL,
   model is a vector generalized linear model (VGLM).
   VGLMs are best fitted with \code{\link{vglm}}.
 
+
   Vector (cubic smoothing spline) smoothers are represented
   by \code{s()} (see \code{\link[VGAM]{s}}).
   Local regression via \code{lo()} is \emph{not}
@@ -168,6 +169,7 @@ vgam(formula, family, data = list(), weights = NULL, subset = NULL,
   are chosen because the computation becomes expensive when the number
   of additive predictors \eqn{M} is large.
 
+
   The underlying algorithm of VGAMs is iteratively
   reweighted least squares (IRLS) and modified vector backfitting
   using vector splines. B-splines are used as the basis functions
@@ -175,8 +177,10 @@ vgam(formula, family, data = list(), weights = NULL, subset = NULL,
   \code{vgam.fit} is the function that actually does the work.
   The smoothing code is based on F. O'Sullivan's BART code. 
 
+
 %  If more than one of \code{etastart}, \code{start} and \code{mustart}
 %  is specified, the first in the list will be used.
+
 
   A closely related methodology based on VGAMs called
   \emph{constrained additive ordination} (CAO)
@@ -185,10 +189,13 @@ vgam(formula, family, data = list(), weights = NULL, subset = NULL,
   This is implemented in the function \code{\link{cao}} for a very
   limited choice of family functions.
 
+
 }
 \value{
   An object of class \code{"vgam"}
   (see \code{\link{vgam-class}} for further information). 
+
+
 }
 \references{ 
 Yee, T. W. and Wild, C. J. (1996)
@@ -196,13 +203,16 @@ Vector generalized additive models.
 \emph{Journal of the Royal Statistical Society, Series B, Methodological},
 \bold{58}, 481--493.
 
+
 Yee, T. W. (2008)
 The \code{VGAM} Package.
 \emph{R News}, \bold{8}, 28--39.
 
+
   Documentation accompanying the \pkg{VGAM} package at
   \url{http://www.stat.auckland.ac.nz/~yee}
   contains further information and examples.
+
 
 }
 
@@ -219,6 +229,7 @@ The \code{VGAM} Package.
   A third step is to make use of arguments such as \code{etastart},
   \code{coefstart} and \code{mustart}.
 
+
   Some \pkg{VGAM} family functions end in \code{"ff"} to avoid
   interference with other functions, e.g., \code{\link{binomialff}},
   \code{\link{poissonff}}, \code{\link{gaussianff}},
@@ -227,12 +238,15 @@ The \code{VGAM} Package.
   (and also \code{\link[gam]{gam}} in the \pkg{gam} library and
   \code{\link[mgcv]{gam}} in the \pkg{mgcv} library).
 
+
   The smart prediction (\code{\link{smartpred}}) library is packed with
   the \pkg{VGAM} library.
+
 
   The theory behind the scaling parameter is currently being made more
   rigorous, but it it should give the same value as the scale parameter
   for GLMs.
+
 
 }
 
@@ -241,19 +255,22 @@ The \code{VGAM} Package.
 %~Make other sections like WARNING with \section{WARNING }{....} ~
 
 \seealso{
-\code{\link{vgam.control}},
-\code{\link{vgam-class}},
-\code{\link{vglmff-class}},
-\code{\link{plotvgam}},
-\code{\link{vglm}},
-\code{\link[VGAM]{s}},
-\code{\link{vsmooth.spline}},
-\code{\link{cao}}.
+  \code{\link{vgam.control}},
+  \code{\link{vgam-class}},
+  \code{\link{vglmff-class}},
+  \code{\link{plotvgam}},
+  \code{\link{vglm}},
+  \code{\link[VGAM]{s}},
+  \code{\link{vsmooth.spline}},
+  \code{\link{cao}}.
+
+
 }
 
 \examples{ # Nonparametric proportional odds model 
 pneumo = transform(pneumo, let = log(exposure.time))
-vgam(cbind(normal, mild, severe) ~ s(let), cumulative(par = TRUE), pneumo)
+vgam(cbind(normal, mild, severe) ~ s(let),
+     cumulative(parallel = TRUE), pneumo)
 
 # Nonparametric logistic regression 
 fit = vgam(agaaus ~ s(altitude, df = 2), binomialff, hunua)
@@ -268,7 +285,7 @@ pfit$sigma
 # Fit two species simultaneously 
 fit2 = vgam(cbind(agaaus, kniexc) ~ s(altitude, df = c(2, 3)),
             binomialff(mv = TRUE), hunua)
-coef(fit2, mat = TRUE)   # Not really interpretable 
+coef(fit2, matrix = TRUE) # Not really interpretable 
 \dontrun{ plot(fit2, se = TRUE, overlay = TRUE, lcol = 1:2, scol = 1:2)
 
 ooo = with(hunua, order(altitude))

@@ -63,7 +63,7 @@ wffc.P3star(length, c1 = 100, min.eligible = 0.18, ppm = 2000)
 %  \url{http://www.http://san2010.pl}
 %  was the official 2010 website.
 
-  Yee, T. W. (2010)
+  Yee, T. W. (2011)
   On strategies and issues raised by an analysis of
   the 2008 World Fly Fishing Championships data.
   \emph{In preparation}.

@@ -7,7 +7,7 @@
 
 }
 \usage{
-yulesimon(link="loge", earg=list(), irho=NULL, nsimEIM=200)
+yulesimon(link = "loge", earg = list(), irho = NULL, nsimEIM = 200)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -68,11 +68,11 @@ yulesimon(link="loge", earg=list(), irho=NULL, nsimEIM=200)
 
 }
 \examples{
-ydata = data.frame(x = runif(nn <- 1000))
-ydata = transform(ydata, y = ryules(nn, rho=exp(1.5-x)))
+ydata = data.frame(x2 = runif(nn <- 1000))
+ydata = transform(ydata, y = ryules(nn, rho = exp(1.5-x2)))
 with(ydata, table(y))
-fit = vglm(y ~ x, yulesimon, ydata, trace=TRUE)
-coef(fit, matrix=TRUE)
+fit = vglm(y ~ x2, yulesimon, ydata, trace = TRUE)
+coef(fit, matrix = TRUE)
 summary(fit)
 }
 \keyword{models}

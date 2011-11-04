@@ -409,7 +409,7 @@ Constrained additive ordination.
 \seealso{
   \code{\link{qrrvglm.control}},
   \code{\link{Coef.qrrvglm}},
-  \code{\link{predict.qrrvglm}},
+  \code{\link{predictqrrvglm}},
   \code{\link{rcqo}},
   \code{\link{cao}},
   \code{\link{uqo}},
@@ -420,7 +420,7 @@ Constrained additive ordination.
   \code{\link{negbinomial}},
   \code{\link{gamma2}},
   \code{\link{lvplot.qrrvglm}},
-  \code{\link{persp.qrrvglm}},
+  \code{\link{perspqrrvglm}},
   \code{\link{trplot.qrrvglm}},
 % \code{\link{vcovqrrvglm}},
   \code{\link{vglm}},

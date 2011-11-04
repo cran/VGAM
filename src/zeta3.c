@@ -193,7 +193,7 @@ void conmax_Z(double *lamvec, double *nuvec, double *bqelz3cy,
               double *qaltf0nz) {
 
 
-    double *pq6zdcwxk, ssum = 0.0, denom = 0.0, yq6lorbx, prevterm;
+    double *pq6zdcwxk, denom = 0.0, yq6lorbx, prevterm;
     int    ayfnwr1v;
 
     *qaltf0nz = 1.0e-6;

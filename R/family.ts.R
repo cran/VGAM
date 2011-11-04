@@ -14,11 +14,11 @@
         rrar.Ak1 <- function(MM, coeffs, Ranks., aa) {
             ptr <- 0
             Ak1 <- diag(MM)
-            for(j in 1:MM) {
+            for(jay in 1:MM) {
                 for(i in 1:MM) {
-                    if (i > j && (MM+1)-(Ranks.[j]-1) <= i) {
+                    if (i > jay && (MM+1)-(Ranks.[jay]-1) <= i) {
                         ptr <- ptr + 1
-                        Ak1[i,j] <- coeffs[ptr]
+                        Ak1[i,jay] <- coeffs[ptr]
                     }
                 }
             }
@@ -26,11 +26,11 @@
             Ak1
         }
         rrar.Di <- function(i, Ranks.) {
-            if (Ranks.[1]==Ranks.[i]) diag(Ranks.[i]) else 
+            if (Ranks.[1] == Ranks.[i]) diag(Ranks.[i]) else 
             rbind(diag(Ranks.[i]), matrix(0, Ranks.[1]-Ranks.[i], Ranks.[i]))
         }
         rrar.Mi <- function(i, MM, Ranks., ki) {
-            if (Ranks.[ki[i]]==MM)
+            if (Ranks.[ki[i]] == MM)
                 return(NULL)
             hi <- Ranks.[ki[i]] - Ranks.[ki[i+1]]
             Ji <- matrix(0, hi, Ranks.[1])
@@ -120,14 +120,15 @@ rrar.control <- function(stepsize=0.5, save.weight=TRUE, ...)
 rrar <- function(Ranks=1, coefstart=NULL)
 {
     lag.p <- length(Ranks)
+
     new("vglmff",
-    blurb=c("Nested reduced-rank vector autoregressive model AR(", lag.p,
+    blurb = c("Nested reduced-rank vector autoregressive model AR(", lag.p,
            ")\n\n",
            "Link:     ",
            namesof("mu_t", "identity"),
            ", t = ", paste(paste(1:lag.p, coll=",", sep="")) ,
            ""),
-    initialize=eval(substitute(expression({
+    initialize = eval(substitute(expression({
         Ranks. <- .Ranks
         plag <- length(Ranks.)
         nn <- nrow(x)   # original n
@@ -146,7 +147,7 @@ rrar <- function(Ranks=1, coefstart=NULL)
             ki <- udsrank <- unique(dsrank)
             uu <- length(udsrank)
             for(i in 1:uu)
-               ki[i] <- max((1:plag)[dsrank==udsrank[i]])
+               ki[i] <- max((1:plag)[dsrank == udsrank[i]])
             ki <- c(ki, plag+1)  # For computing a
             Ranks. <- c(Ranks., 0) # For computing a
             aa <- sum( (MM-Ranks.[ki[1:uu]]) * (Ranks.[ki[1:uu]]-Ranks.[ki[-1]]) )
@@ -162,7 +163,7 @@ rrar <- function(Ranks=1, coefstart=NULL)
 
         new.coeffs <- .coefstart  # Needed for iter=1 of $weight
         new.coeffs <- if (length(new.coeffs))
-                          rep(new.coeffs, len=aa+sum(Ranks.)*MM) else
+                          rep(new.coeffs, len = aa+sum(Ranks.)*MM) else
                           runif(aa+sum(Ranks.)*MM)
         temp8 <- rrar.Wmat(y.save,Ranks.,MM,ki,plag,aa,uu,nn,new.coeffs)
         X_vlm_save <- temp8$UU %*% temp8$Ht 
@@ -185,7 +186,7 @@ rrar <- function(Ranks=1, coefstart=NULL)
         w <- w[-indices]
         n.save <- n <- nn - plag
     }), list( .Ranks=Ranks, .coefstart=coefstart ))), 
-    inverse=function(eta, extra=NULL) {
+    linkinv=function(eta, extra=NULL) {
         aa <- extra$aa
         coeffs <- extra$coeffs
         MM <- extra$MM
@@ -262,7 +263,7 @@ vglm.garma.control <- function(save.weight=TRUE, ...)
 
 
 garma <- function(link="identity",
-                  earg=list(),
+                  earg =list(),
                   p.ar.lag=1, q.lag.ma=0,
                   coefstart=NULL,
                   step=1.0)
@@ -278,13 +279,13 @@ garma <- function(link="identity",
     if (!is.list(earg)) earg = list()
 
     new("vglmff",
-    blurb=c("GARMA(", p.ar.lag, ",", q.lag.ma, ")\n\n",
+    blurb = c("GARMA(", p.ar.lag, ",", q.lag.ma, ")\n\n",
            "Link:     ",
-           namesof("mu_t", link, earg= earg),
+           namesof("mu_t", link, earg = earg),
            ", t = ", paste(paste(1:p.ar.lag, coll=",", sep=""))),
-    initialize=eval(substitute(expression({
+    initialize = eval(substitute(expression({
         plag <- .p.ar.lag
-        predictors.names = namesof("mu", .link, earg= .earg, tag=FALSE)
+        predictors.names = namesof("mu", .link, earg = .earg, tag=FALSE)
         indices <- 1:plag
         tt <- (1+plag):nrow(x) 
         pp <- ncol(x)
@@ -304,8 +305,9 @@ garma <- function(link="identity",
         w.save <- w  # Save the original
 
         new.coeffs <- .coefstart  # Needed for iter=1 of @weight
-        new.coeffs <- if (length(new.coeffs)) rep(new.coeffs, len=pp+plag) else 
-                      c(runif(pp), rep(0, plag)) 
+        new.coeffs <- if (length(new.coeffs))
+                        rep(new.coeffs, len = pp+plag) else
+                        c(runif(pp), rep(0, plag)) 
         if (!length(etastart)) {
             etastart <- x[-indices,,drop=FALSE] %*% new.coeffs[1:pp]
         }
@@ -324,16 +326,17 @@ garma <- function(link="identity",
         for(i in 1:plag)
             more[[i]] <- i + max(unlist(attr(x.save, "assign")))
         attr(x, "assign") <- c(attr(x.save, "assign"), more)
-    }), list( .link=link, .p.ar.lag=p.ar.lag, .coefstart=coefstart, .earg=earg ))), 
-    inverse=eval(substitute(function(eta, extra=NULL) {
-        eta2theta(eta, link= .link, earg= .earg)
-    }, list( .link=link, .earg=earg ))),
-    last=eval(substitute(expression({
+    }), list( .link=link, .p.ar.lag=p.ar.lag,
+              .coefstart=coefstart, .earg = earg ))), 
+    linkinv = eval(substitute(function(eta, extra=NULL) {
+        eta2theta(eta, link= .link, earg = .earg)
+    }, list( .link=link, .earg = earg ))),
+    last = eval(substitute(expression({
         misc$link <- c(mu = .link)
         misc$earg <- list(mu = .earg)
         misc$plag <- plag
-    }), list( .link=link, .earg=earg ))),
-    loglikelihood=eval(substitute(
+    }), list( .link=link, .earg = earg ))),
+    loglikelihood = eval(substitute(
         function(mu, y, w, residuals = FALSE, eta, extra=NULL) {
         if (residuals) switch( .link,
             identity=y-mu,
@@ -345,8 +348,8 @@ garma <- function(link="identity",
             loge=sum(w*(-mu + y*log(mu))),
             inverse=sum(w*(-mu + y*log(mu))),
             sum(w*(y*log(mu) + (1-y)*log1p(-mu))))
-    }, list( .link=link, .earg=earg ))),
-    middle2=eval(substitute(expression({
+    }, list( .link=link, .earg = earg ))),
+    middle2 = eval(substitute(expression({
         realfv <- fv
         for(i in 1:plag) {
             realfv <- realfv + old.coeffs[i+pp] *
@@ -354,30 +357,30 @@ garma <- function(link="identity",
         }
 
         true.eta <- realfv + offset  
-        mu <- family@inverse(true.eta, extra)  # overwrite mu with correct one
-    }), list( .link=link, .earg=earg ))),
-    vfamily=c("garma", "vglmgam"),
-    deriv=eval(substitute(expression({
+        mu <- family@linkinv(true.eta, extra)  # overwrite mu with correct one
+    }), list( .link=link, .earg = earg ))),
+    vfamily = c("garma", "vglmgam"),
+    deriv = eval(substitute(expression({
         dl.dmu <- switch( .link,
                       identity=y-mu,
                       loge=(y-mu)/mu,
                       inverse=(y-mu)/mu,
                       (y-mu) / (mu*(1-mu)))
-        dmu.deta <- dtheta.deta(mu, .link, earg= .earg)
+        dmu.deta <- dtheta.deta(mu, .link, earg = .earg)
         step <- .step      # This is another method of adjusting step lengths
         step * w * dl.dmu * dmu.deta
-    }), list( .link=link, .step=step, .earg=earg ))),
-    weight=eval(substitute(expression({
+    }), list( .link=link, .step=step, .earg = earg ))),
+    weight = eval(substitute(expression({
         x[,1:pp] <- x.save[tt,1:pp] # Reinstate 
 
         for(i in 1:plag) {
-            temp = theta2eta(y.save[tt-i], .link, earg= .earg)
+            temp = theta2eta(y.save[tt-i], .link, earg = .earg)
             x[,1:pp] <- x[,1:pp] - x.save[tt-i,1:pp] * new.coeffs[i+pp] 
             x[,pp+i] <- temp - x.save[tt-i,1:pp,drop=FALSE] %*% new.coeffs[1:pp]
         }
         class(x)=if(is.R()) "matrix" else "model.matrix" # Added 27/2/02; 26/2/04
 
-        if (iter==1)
+        if (iter == 1)
             old.coeffs <- new.coeffs 
 
         X_vlm_save <- lm2vlm.model.matrix(x, Blist, xij=control$xij)
@@ -387,9 +390,9 @@ garma <- function(link="identity",
                        loge=mu,
                        inverse=mu^2,
                        mu*(1-mu))
-        w * dtheta.deta(mu, link= .link, earg= .earg)^2 / vary
+        w * dtheta.deta(mu, link= .link, earg = .earg)^2 / vary
     }), list( .link=link,
-              .earg=earg ))))
+              .earg = earg ))))
 }
 
 

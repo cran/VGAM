@@ -4,7 +4,16 @@
 
 
 
-fitted.vlm <- function(object, matrix.arg=TRUE, ...)
+
+
+
+
+
+
+
+
+
+fittedvlm <- function(object, matrix.arg=TRUE, ...)
 {
 
     answer = 
@@ -27,21 +36,31 @@ fitted.vlm <- function(object, matrix.arg=TRUE, ...)
     }
 }
 
+
+
+if(!isGeneric("fitted")) 
+    setGeneric("fitted", function(object, ...) standardGeneric("fitted"))
+
+
+
+
+
+
 setMethod("fitted.values",  "vlm",
     function(object, ...)
-    fitted.vlm(object, ...))
+    fittedvlm(object, ...))
 
 setMethod("fitted",  "vlm",
     function(object, ...)
-    fitted.vlm(object, ...))
+    fittedvlm(object, ...))
 
 setMethod("fitted.values",  "vglm",
     function(object, ...)
-    fitted.vlm(object, ...))
+    fittedvlm(object, ...))
 
 setMethod("fitted",  "vglm",
     function(object, ...)
-    fitted.vlm(object, ...))
+    fittedvlm(object, ...))
 
 
 predictors.vglm <- function(object, matrix=TRUE, ...)

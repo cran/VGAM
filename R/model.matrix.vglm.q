@@ -352,5 +352,30 @@ setMethod("model.frame",  "vlm", function(formula, ...)
 
 
 
+depvar.vlm <- function(object, ...) {
+  object@y
+}
+
+
+
+if (!isGeneric("depvar"))
+    setGeneric("depvar", function(object, ...) standardGeneric("depvar"),
+               package = "VGAM")
+
+
+setMethod("depvar",  "vlm", function(object, ...)
+           depvar.vlm(object, ...))
+setMethod("depvar",  "rrvglm", function(object, ...)
+           depvar.vlm(object, ...))
+setMethod("depvar",  "qrrvglm", function(object, ...)
+           depvar.vlm(object, ...))
+setMethod("depvar",  "cao", function(object, ...)
+           depvar.vlm(object, ...))
+setMethod("depvar",  "rcam", function(object, ...)
+           depvar.vlm(object, ...))
+
+
+
+
 
 

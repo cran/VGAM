@@ -1,5 +1,5 @@
-\name{persp.qrrvglm}
-\alias{persp.qrrvglm}
+\name{perspqrrvglm}
+\alias{perspqrrvglm}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Perspective plot for QRR-VGLMs }
 \description{
@@ -8,16 +8,16 @@ applicable for rank-1 or rank-2 models with argument \code{Norrr = ~ 1}.
 
 }
 \usage{
-persp.qrrvglm(x, varlvI = FALSE, reference = NULL, plot.it = TRUE, 
-              xlim=NULL, ylim=NULL, zlim=NULL,
-              gridlength = if (Rank==1) 301 else c(51,51),
+perspqrrvglm(x, varlvI = FALSE, reference = NULL, plot.it = TRUE, 
+              xlim = NULL, ylim = NULL, zlim = NULL,
+              gridlength = if (Rank == 1) 301 else c(51,51),
               whichSpecies = NULL,
-              xlab = if (Rank==1) "Latent Variable" else "Latent Variable 1",
-              ylab = if (Rank==1) "Expected Value" else "Latent Variable 2",
+              xlab = if (Rank == 1) "Latent Variable" else "Latent Variable 1",
+              ylab = if (Rank == 1) "Expected Value" else "Latent Variable 2",
               zlab = "Expected value", labelSpecies = FALSE,
-              stretch = 1.05, main="", ticktype = "detailed",
-              col = if (Rank==1) par()$col else "white",
-              llty=par()$lty, llwd=par()$lwd,
+              stretch = 1.05, main = "", ticktype = "detailed",
+              col = if (Rank == 1) par()$col else "white",
+              llty = par()$lty, llwd = par()$lwd,
               add1 = FALSE, ...)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -49,7 +49,7 @@ persp.qrrvglm(x, varlvI = FALSE, reference = NULL, plot.it = TRUE,
   }
   \item{gridlength}{ 
   Numeric. The fitted values are evaluated on a grid, and this
-  argument regulates the fineness of the grid.  If \code{Rank=2}
+  argument regulates the fineness of the grid.  If \code{Rank = 2}
   then the argument is recycled to length 2, and the two numbers
   are the number of grid points on the  x- and y-axes respectively.
 
@@ -68,7 +68,7 @@ persp.qrrvglm(x, varlvI = FALSE, reference = NULL, plot.it = TRUE,
 
   }
   \item{zlab}{Character caption for the z-axis.
-  Used only if \code{Rank=2}.
+  Used only if \code{Rank = 2}.
   By default, a suitable caption is found.
   See the \code{xlab} argument in \code{\link[graphics]{plot}} 
   or \code{\link[graphics]{title}}.
@@ -76,13 +76,13 @@ persp.qrrvglm(x, varlvI = FALSE, reference = NULL, plot.it = TRUE,
   }
   \item{labelSpecies}{Logical.
   Whether the species should be labelled with their names.
-  Used for \code{Rank=1} only.
+  Used for \code{Rank = 1} only.
   The position of the label is just above the species' maximum.
 
   }
   \item{stretch}{
   Numeric. A value slightly more than 1, this argument
-  adjusts the height of the y-axis. Used for \code{Rank=1} only.
+  adjusts the height of the y-axis. Used for \code{Rank = 1} only.
 
   }
   \item{main}{
@@ -91,7 +91,7 @@ persp.qrrvglm(x, varlvI = FALSE, reference = NULL, plot.it = TRUE,
   or \code{\link[graphics]{title}}.
 
   }
-  \item{ticktype}{ Tick type. Used only if \code{Rank=2}.
+  \item{ticktype}{ Tick type. Used only if \code{Rank = 2}.
   See \code{\link[graphics]{persp}} for more information.
 
   }
@@ -208,13 +208,13 @@ sort(r1@misc$deviance.Bestof)  # A history of the fits
 sort(r2@misc$deviance.Bestof)  # A history of the fits
 if (deviance(r2) > 857) stop("suboptimal fit obtained")
 
-persp(r1, xlim=c(-6,5), col=1:4, label=TRUE)
+persp(r1, xlim = c(-6,5), col = 1:4, label = TRUE)
 
 # Involves all species 
-persp(r2, xlim=c(-6,5), ylim=c(-4,5), theta=10, phi=20, zlim=c(0,220))
+persp(r2, xlim = c(-6,5), ylim = c(-4,5), theta = 10, phi = 20, zlim = c(0,220))
 # Omit the two dominant species to see what's behind them
-persp(r2, xlim=c(-6,5), ylim=c(-4,5), theta=10, phi=20, zlim=c(0,220), 
-      which=(1:10)[-c(8,10)]) # Use zlim to retain the original z-scale
+persp(r2, xlim = c(-6,5), ylim = c(-4,5), theta = 10, phi = 20, zlim = c(0,220), 
+      which = (1:10)[-c(8,10)]) # Use zlim to retain the original z-scale
 }
 }
 \keyword{models}

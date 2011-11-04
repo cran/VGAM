@@ -72,7 +72,7 @@
         if (!length(etastart))
             etastart = theta2eta(init.mu, link = .link, earg = .earg)
     }), list( .link = link, .earg = earg, .imu = imu))),
-    inverse = eval(substitute(function(eta, extra = NULL) {
+    linkinv = eval(substitute(function(eta, extra = NULL) {
         mu = eta2theta(eta, link = .link, earg = .earg)
         mu
     }, list( .link = link, .earg = earg ))),
@@ -81,7 +81,7 @@
         misc$link = c("mu" = .link)
         misc$earg = list("mu" = .earg)
     }), list( .link = link, .earg = earg ))),
-    link = eval(substitute(function(mu, extra = NULL) {
+    linkfun = eval(substitute(function(mu, extra = NULL) {
         theta2eta(mu, link = .link, earg = .earg)
     }, list( .link = link, .earg = earg ))),
     loglikelihood = function(mu, y, w, residuals = FALSE, eta,
@@ -232,7 +232,7 @@ if (FALSE)
         #if(any(extra$rightcensored & extra$leftcensored))
         #    stop("some observations are both right and left censored!")
     }), list( .location=location, .link = link ))),
-    inverse = eval(substitute(function(eta, extra = NULL)
+    linkinv = eval(substitute(function(eta, extra = NULL)
         extra$location + 1 / eta2theta(eta, .link),
     list( .link = link ) )),
     last = eval(substitute(expression({
@@ -356,7 +356,7 @@ if (FALSE)
  }), list( .lmu = lmu, .lsd = lsd,
            .emu = emu, .esd = esd,
            .imethod = imethod ))),
-  inverse = eval(substitute( function(eta, extra = NULL) {
+  linkinv = eval(substitute( function(eta, extra = NULL) {
     eta2theta(eta[, 1], .lmu, earg = .emu)
   }, list( .lmu = lmu, .emu = emu ))),
   last = eval(substitute(expression({
@@ -506,7 +506,7 @@ if (FALSE)
             etastart = theta2eta(a.init, .lscale, earg = .escale )
         }
     }), list( .lscale = lscale, .escale = escale ))),
-    inverse = eval(substitute(function(eta, extra = NULL) {
+    linkinv = eval(substitute(function(eta, extra = NULL) {
         Scale = eta2theta(eta, .lscale, earg = .escale )
         Scale * sqrt(pi/2)
     }, list( .lscale = lscale, .escale = escale ))),
@@ -627,7 +627,7 @@ if (FALSE)
             .escale = escale, .eshape = eshape,
             .iscale = iscale, .ishape = ishape,
             .imethod = imethod ) )),
-  inverse = eval(substitute(function(eta, extra = NULL) {
+  linkinv = eval(substitute(function(eta, extra = NULL) {
     shape = eta2theta(eta[,1], .lshape, earg = .eshape )
     Scale = eta2theta(eta[,2], .lscale, earg = .escale )
     Scale * gamma(1 + 1 / shape)

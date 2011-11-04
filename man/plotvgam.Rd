@@ -109,6 +109,8 @@ plotvgam(x, newdata = NULL, y = NULL, residuals = NULL,
   Many of \code{plotvgam()}'s options can be found in  
   \code{\link{plotvgam.control}}, e.g., line types, line widths,
   colors.
+
+
 }
 \value{
   The original object, but with the \code{preplot} slot of the object
@@ -116,14 +118,17 @@ plotvgam(x, newdata = NULL, y = NULL, residuals = NULL,
 }
 \references{
 
+
 Yee, T. W. and Wild, C. J. (1996)
 Vector generalized additive models.
 \emph{Journal of the Royal Statistical Society, Series B, Methodological},
 \bold{58}, 481--493.
 
+
 Documentation accompanying the \pkg{VGAM} package at
 \url{http://www.stat.auckland.ac.nz/~yee}
 contains further information and examples.
+
 
 }
 \author{ Thomas W. Yee }
@@ -133,12 +138,15 @@ contains further information and examples.
   is \code{"vgam"}, it is necessary to use \code{plotvgam(fit)} 
   explicitly otherwise.
   
+  
   \code{plotvgam()} is quite buggy at the moment.
 
+  
 % \code{plotvgam()} works in a similar
 % manner to S-PLUS's \code{plot.gam()}, however, there is no
 % options for interactive construction of the plots yet. 
 
+  
 }
 
 \seealso{
@@ -146,16 +154,16 @@ contains further information and examples.
   \code{\link{plotvgam.control}},
   \code{predict.vgam},
   \code{\link{vglm}}.
+  
+  
 }
 \examples{
 coalminers = transform(coalminers, Age = (age - 42) / 5)
-fit = vgam(cbind(nBnW,nBW,BnW,BW) ~ s(Age), binom2.or(zero=NULL), coalminers)
-\dontrun{
-par(mfrow=c(1,3))
-plot(fit, se=TRUE, ylim=c(-3,2), las=1)
-plot(fit, se=TRUE, which.cf=1:2, lcol="blue", scol="red", ylim=c(-3,2))
-plot(fit, se=TRUE, which.cf=1:2, lcol="blue", scol="red", overlay=TRUE)
-}
+fit = vgam(cbind(nBnW,nBW,BnW,BW) ~ s(Age), binom2.or(zero = NULL), coalminers)
+\dontrun{ par(mfrow = c(1,3))
+plot(fit, se = TRUE, ylim = c(-3,2), las = 1)
+plot(fit, se = TRUE, which.cf = 1:2, lcol = "blue", scol = "orange", ylim = c(-3,2))
+plot(fit, se = TRUE, which.cf = 1:2, lcol = "blue", scol = "orange", overlay = TRUE) }
 }
 \keyword{models}
 \keyword{regression}

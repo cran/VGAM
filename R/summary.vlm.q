@@ -7,8 +7,10 @@
 
 
 
-summaryvlm <- function(object, correlation = FALSE, dispersion = NULL)
-{
+
+
+
+summaryvlm <- function(object, correlation = FALSE, dispersion = NULL) {
 
 
     if (is.logical(object@misc$BFGS) && object@misc$BFGS)
@@ -72,12 +74,12 @@ summaryvlm <- function(object, correlation = FALSE, dispersion = NULL)
     dimnames(coef) <- list(cnames, c("Value", "Std. Error", "t value"))
     if (length(sigma) == 1 && is.Numeric(ncol_X_vlm)) {
         coef[, 2] <- rowlen %o% sigma      # Fails here when sigma is a vector 
-        coef[, 3] <- coef[, 1]/coef[, 2]
+        coef[, 3] <- coef[, 1] / coef[, 2]
     } else {
         coef[,1] = coef[,2] = coef[,3] = NA
     }
     if (correlation) {
-        correl <- covun * outer(1/rowlen, 1/rowlen)
+        correl <- covun * outer(1 / rowlen, 1 / rowlen)
         dimnames(correl) <- list(cnames, cnames)
     } else {
         correl <- matrix(0, 0, 0)  # was NULL, but now a special matrix
@@ -89,10 +91,10 @@ summaryvlm <- function(object, correlation = FALSE, dispersion = NULL)
     answer <-
     new("summary.vlm",
         object,
-        coef3=coef, 
-        correlation=correl,
-        df=c(ncol_X_vlm, rdf),
-        sigma=sigma)
+        coef3 = coef, 
+        correlation = correl,
+        df = c(ncol_X_vlm, rdf),
+        sigma = sigma)
 
     if (is.Numeric(ncol_X_vlm)) answer@cov.unscaled = covun
     answer@dispersion = dispersion        # Overwrite this 
@@ -107,8 +109,8 @@ summaryvlm <- function(object, correlation = FALSE, dispersion = NULL)
 
 
 
-printsummary.vlm <- function(x, digits = NULL, quote = TRUE, prefix = "")
-{
+printsummary.vlm <- function(x, digits = NULL, quote = TRUE,
+                             prefix = "") {
 
 
     M <- x@misc$M 
@@ -127,8 +129,7 @@ printsummary.vlm <- function(x, digits = NULL, quote = TRUE, prefix = "")
 
     presid <- x@pearson.resid
     rdf <- x@df[2]
-    if (length(presid) && all(!is.na(presid)))
-    {
+    if (length(presid) && all(!is.na(presid))) {
         cat("\nPearson residuals:\n")
         if (rdf/M > 5) {
             rq <-  apply(as.matrix(presid), 2, quantile) # 5 x M
@@ -148,8 +149,9 @@ printsummary.vlm <- function(x, digits = NULL, quote = TRUE, prefix = "")
 
     cat("\nNumber of responses: ", M, "\n")
 
+
     if (length(x@misc$predictors.names))
-    if (M==1) {
+    if (M == 1) {
         cat("\nName of response:",
             paste(x@misc$predictors.names, collapse = ", "), "\n") 
     } else {
@@ -159,9 +161,11 @@ printsummary.vlm <- function(x, digits = NULL, quote = TRUE, prefix = "")
         cat(UUU, fill = TRUE, sep = ", ")
     }
 
+
     if (!is.null(x@rss))
         cat("\nResidual Sum of Squares:", format(round(x@rss, digits)),
             "on", round(rdf, digits), "degrees of freedom\n")
+
 
     if (length(correl)) {
         ncol_X_vlm <- dim(correl)[2]
@@ -173,6 +177,8 @@ printsummary.vlm <- function(x, digits = NULL, quote = TRUE, prefix = "")
             print(correl[-1, -ncol_X_vlm, drop = FALSE], quote = FALSE, digits=digits)
         }
     }
+
+
     invisible(NULL)
 }
 

@@ -20,6 +20,7 @@ nloge(theta, earg = list(), inverse = FALSE, deriv = 0,
   Numeric or character.
   See below for further details.
 
+
   }
   \item{earg}{
   Optional list. Extra argument for passing in additional information.
@@ -28,6 +29,7 @@ nloge(theta, earg = list(), inverse = FALSE, deriv = 0,
   before computing the link function value.
   The component name \code{bvalue} stands for ``boundary value''.
   See \code{\link{Links}} for general information about \code{earg}.
+
 
   }
   \item{inverse}{ Logical. If \code{TRUE} the inverse function is computed. }
@@ -42,6 +44,7 @@ nloge(theta, earg = list(), inverse = FALSE, deriv = 0,
   \code{initialize} slot of a \code{\link{vglmff-class}} object.
   Contains a little more information if \code{TRUE}.
 
+
   }
 }
 \details{
@@ -53,9 +56,11 @@ nloge(theta, earg = list(), inverse = FALSE, deriv = 0,
   The arguments \code{short} and \code{tag} are used only if
   \code{theta} is character.
 
+
   The function \code{loge} computes
   \eqn{\log(\theta)}{log(theta)} whereas \code{nloge} computes
   \eqn{-\log(\theta)=\log(1/\theta)}{-log(theta)=log(1/theta)}.
+
 
 }
 \value{
@@ -68,12 +73,16 @@ nloge(theta, earg = list(), inverse = FALSE, deriv = 0,
   if \code{inverse = FALSE},
   else if \code{inverse = TRUE} then it returns the reciprocal.
 
+
   Here, all logarithms are natural logarithms, i.e., to base \eqn{e}.
+
 
 }
 \references{
     McCullagh, P. and Nelder, J. A. (1989)
     \emph{Generalized Linear Models}, 2nd ed. London: Chapman & Hall.
+
+
 }
 \author{ Thomas W. Yee }
 
@@ -81,13 +90,16 @@ nloge(theta, earg = list(), inverse = FALSE, deriv = 0,
   This function is called \code{loge} to avoid conflict with the
   \code{\link[base:Log]{log}} function.
 
+
   Numerical instability may occur when \code{theta} is close to 0 unless
   \code{earg} is used.
+
 
 }
 
 \seealso{ 
     \code{\link{Links}},
+    \code{\link{explink}},
     \code{\link{logit}},
     \code{\link{logc}},
     \code{\link{loglog}},
@@ -95,14 +107,13 @@ nloge(theta, earg = list(), inverse = FALSE, deriv = 0,
     \code{\link{logoff}},
     \code{\link{lambertW}}.
 
+
 }
 \examples{
-\dontrun{
-loge(seq(-0.2, 0.5, by = 0.1))
+\dontrun{ loge(seq(-0.2, 0.5, by = 0.1))
 loge(seq(-0.2, 0.5, by = 0.1), earg = list(bvalue = .Machine$double.xmin))
 nloge(seq(-0.2, 0.5, by = 0.1))
-nloge(seq(-0.2, 0.5, by = 0.1), earg = list(bvalue = .Machine$double.xmin))
-}
+nloge(seq(-0.2, 0.5, by = 0.1), earg = list(bvalue = .Machine$double.xmin)) }
 }
 \keyword{math}
 \keyword{models}

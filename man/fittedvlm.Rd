@@ -1,5 +1,5 @@
-\name{fitted.vlm}
-\alias{fitted.vlm}
+\name{fittedvlm}
+\alias{fittedvlm}
 \alias{fitted.values.vlm}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{Fitted Values of a VLM object}
@@ -10,7 +10,7 @@
 
 }
 \usage{
-fitted.vlm(object, matrix.arg = TRUE, ...)
+fittedvlm(object, matrix.arg = TRUE, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -19,6 +19,7 @@ fitted.vlm(object, matrix.arg = TRUE, ...)
   \item{matrix.arg}{ Logical. Return the answer as a matrix?
   If \code{FALSE} then it will be a vector. }
   \item{\dots}{ Currently unused. }
+
 }
 \details{
   The ``fitted values'' usually corresponds to the mean response,
@@ -26,16 +27,21 @@ fitted.vlm(object, matrix.arg = TRUE, ...)
   this sometimes refers to quantities such as quantiles.
   The mean may even not exist, e.g., for a Cauchy distribution.
 
+
 }
 \value{
   The fitted values as returned by the
   \code{inverse} slot of the \pkg{VGAM} family function,
   evaluated at the final IRLS iteration.
+
+
 }
 \references{
 Chambers, J. M. and T. J. Hastie (eds) (1992)
   \emph{Statistical Models in S}.
   Wadsworth & Brooks/Cole.
+
+
 }
 \author{ Thomas W. Yee }
 \note{
@@ -45,17 +51,22 @@ Chambers, J. M. and T. J. Hastie (eds) (1992)
   This function is equivalent to the methods function for the
   generic function \code{fitted.values}.
   
+
   If \code{fit} is a VLM or VGLM then \code{fitted(fit)} and
   \code{predict(fit, type="response")} should be equivalent.
   The latter has the advantage in that it handles a \code{newdata}
   argument so that the fitted values can be computed for a
   different data set.
+
+
 }
 
 \seealso{
   \code{\link[stats]{fitted}},
-  \code{\link{predict.vglm}},
+  \code{\link{predictvglm}},
   \code{\link{vglmff-class}}.
+
+
 }
 \examples{
 # Categorical regression example 1

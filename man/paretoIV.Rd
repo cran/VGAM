@@ -11,15 +11,15 @@
 
 }
 \usage{
-paretoIV(location=0, lscale="loge", linequality="loge", lshape="loge",
-         escale=list(), einequality=list(), eshape=list(),
-         iscale=1, iinequality=1, ishape=NULL, imethod=1)
-paretoIII(location=0, lscale="loge", linequality="loge",
-          escale=list(), einequality=list(),
-          iscale=NULL, iinequality=NULL)
-paretoII(location=0, lscale="loge", lshape="loge",
-         escale=list(), eshape=list(),
-         iscale=NULL, ishape=NULL)
+paretoIV(location = 0, lscale = "loge", linequality = "loge", lshape = "loge",
+         escale = list(), einequality = list(), eshape = list(),
+         iscale = 1, iinequality = 1, ishape = NULL, imethod = 1)
+paretoIII(location = 0, lscale = "loge", linequality = "loge",
+          escale = list(), einequality = list(),
+          iscale = NULL, iinequality = NULL)
+paretoII(location = 0, lscale = "loge", lshape = "loge",
+         escale = list(), eshape = list(),
+         iscale = NULL, ishape = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -124,6 +124,7 @@ paretoII(location=0, lscale="loge", lshape="loge",
 
 }
 \references{ 
+
 Brazauskas, V. (2003)
 Information matrix for Pareto(IV), Burr, and related distributions.
 \emph{Comm.\ Statist.\ Theory and Methods}
@@ -161,10 +162,10 @@ Fairland, Maryland: International Cooperative Publishing House.
 
 }
 \examples{
-pdat = data.frame(y=rparetoIV(2000, scal=exp(1), ineq=exp(-0.3), shap=exp(1)))
-\dontrun{par(mfrow=c(2,1)); with(pdat, hist(y)); with(pdat, hist(log(y))) }
-fit = vglm(y ~ 1, paretoIV, pdat, trace=TRUE)
-coef(fit, matrix=TRUE)
+pdat = data.frame(y = rparetoIV(2000, scal = exp(1), ineq = exp(-0.3), shap = exp(1)))
+\dontrun{par(mfrow = c(2,1)); with(pdat, hist(y)); with(pdat, hist(log(y))) }
+fit = vglm(y ~ 1, paretoIV, pdat, trace = TRUE)
+coef(fit, matrix = TRUE)
 Coef(fit)
 summary(fit)
 }

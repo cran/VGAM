@@ -6,14 +6,13 @@
 Vector Generalized Linear and Additive Models
 }
 \description{
-\pkg{VGAM} provides functions for fitting 
-vector generalized linear and additive models (VGLMs and VGAMs),
-and associated models
-(Reduced-Rank VGLMs, Quadratic RR-VGLMs, Reduced-Rank VGAMs).
-This package fits many models and distributions by maximum likelihood
-estimation (MLE) or penalized MLE.
-Also fits constrained ordination models in ecology such as constrained
-quadratic ordination (CQO).
+  \pkg{VGAM} provides functions for fitting vector generalized
+  linear and additive models (VGLMs and VGAMs), and associated
+  models (Reduced-Rank VGLMs, Quadratic RR-VGLMs, Reduced-Rank
+  VGAMs).  This package fits many models and distributions by
+  maximum likelihood estimation (MLE) or penalized MLE.  Also fits
+  constrained ordination models in ecology such as constrained
+  quadratic ordination (CQO).
 
 }
 \details{
@@ -67,12 +66,19 @@ will not be finished for a while.
 
 }
 \author{
-Thomas W. Yee <t.yee@auckland.ac.nz>
+Thomas W. Yee, \email{t.yee@auckland.ac.nz}.
 
-Maintainer: Thomas Yee <t.yee@auckland.ac.nz>
+
+Maintainer: Thomas Yee \email{t.yee@auckland.ac.nz}.
 
 }
 \references{
+
+
+Yee, T. W.
+Vector Generalized Linear and Additive Models.
+\emph{Monograph in preparation}.
+
 
 
 Yee, T. W. (2010)
@@ -127,8 +133,12 @@ contains further information and examples.
 \keyword{models}
 \keyword{regression}
 \seealso{
-    \code{\link{TypicalVGAMfamilyFunction}},
-    \code{\link{CommonVGAMffArguments}}.
+  \code{\link{vglm}},
+  \code{\link{vgam}},
+  \code{\link{rrvglm}},
+  \code{\link{TypicalVGAMfamilyFunction}},
+  \code{\link{CommonVGAMffArguments}}.
+
 
 %~~ Optional links to other man pages, e.g. ~~
 %~~ \code{\link[<pkg>:<pkg>-package]{<pkg>}} ~~
@@ -137,7 +147,8 @@ contains further information and examples.
 # Example 1; proportional odds model
 pneumo = transform(pneumo, let = log(exposure.time))
 (fit = vglm(cbind(normal, mild, severe) ~ let, propodds, pneumo))
-fit@y   # Sample proportions
+fit@y        # Sample proportions
+depvar(fit)  # Better than using fit@y; dependent variable (response)
 weights(fit, type = "prior") # Number of observations
 coef(fit, matrix = TRUE)     # p.179, in McCullagh and Nelder (1989)
 constraints(fit)             # Constraint matrices
@@ -146,8 +157,8 @@ summary(fit)
 
 # Example 2; zero-inflated Poisson model
 zipdat = data.frame(x = runif(nn <- 2000))
-zipdat = transform(zipdat, phi    = logit(-0.5 + 1*x, inverse=TRUE),
-                           lambda =  loge( 0.5 + 2*x, inverse=TRUE))
+zipdat = transform(zipdat, phi    = logit(-0.5 + 1*x, inverse = TRUE),
+                           lambda =  loge( 0.5 + 2*x, inverse = TRUE))
 zipdat = transform(zipdat, y = rzipois(nn, lambda, phi))
 with(zipdat, table(y))
 fit = vglm(y ~ x, zipoisson, zipdat, trace = TRUE)
@@ -155,46 +166,46 @@ coef(fit, matrix = TRUE)  # These should agree with the above values
 
 
 # Example 3; fit a two species GAM simultaneously
-fit2 = vgam(cbind(agaaus, kniexc) ~ s(altitude, df = c(2,3)),
+fit2 = vgam(cbind(agaaus, kniexc) ~ s(altitude, df = c(2, 3)),
             binomialff(mv = TRUE), hunua)
 coef(fit2, matrix = TRUE)   # Not really interpretable
-\dontrun{
-plot(fit2, se = TRUE, overlay = TRUE, lcol = 1:2, scol = 1:2)
+\dontrun{ plot(fit2, se = TRUE, overlay = TRUE, lcol = 1:2, scol = 1:2)
 
 ooo = with(hunua, order(altitude))
 with(hunua,  matplot(altitude[ooo], fitted(fit2)[ooo,], type = "l", lwd = 2,
      xlab = "Altitude (m)", ylab = "Probability of presence", las = 1,
-     main = "Two plant species' response curves", ylim = c(0,.8)))
+     main = "Two plant species' response curves", ylim = c(0, 0.8)))
 with(hunua, rug(altitude)) }
 
 
 # Example 4; LMS quantile regression
-fit = vgam(BMI ~ s(age, df=c(4,2)), lms.bcn(zero=1), dat=bminz, trac=TRUE)
+fit = vgam(BMI ~ s(age, df = c(4, 2)), lms.bcn(zero = 1), dat = bminz,
+           trace = TRUE)
 head(predict(fit))
 head(fitted(fit))
 head(bminz) # Person 1 is near the lower quartile among people his age
 head(cdf(fit))
 
-\dontrun{
-par(mfrow=c(1,1), bty="l", mar=c(5,4,4,3)+0.1, xpd=TRUE)
-qtplot(fit, percentiles=c(5,50,90,99), main="Quantiles",
-       xlim=c(15,90), las=1, ylab="BMI", lwd=2, lcol=4) # Quantile plot
+\dontrun{ par(mfrow = c(1, 1), bty = "l", mar = c(5,4,4,3)+0.1, xpd = TRUE)
+qtplot(fit, percentiles = c(5,50,90,99), main = "Quantiles", las = 1,
+       xlim = c(15, 90), ylab = "BMI", lwd = 2, lcol = 4) # Quantile plot
 
-ygrid = seq(15, 43, len=100)  # BMI ranges
-par(mfrow=c(1,1), lwd=2) # Density plot
-aa = deplot(fit, x0=20, y=ygrid, xlab="BMI", col="black",
-    main="Density functions at Age = 20 (black), 42 (red) and 55 (blue)")
+ygrid = seq(15, 43, len = 100)  # BMI ranges
+par(mfrow = c(1, 1), lwd = 2) # Density plot
+aa = deplot(fit, x0 = 20, y = ygrid, xlab = "BMI", col = "black",
+    main = "Density functions at Age = 20 (black), 42 (red) and 55 (blue)")
 aa
-aa = deplot(fit, x0=42, y=ygrid, add=TRUE, llty=2, col="red")
-aa = deplot(fit, x0=55, y=ygrid, add=TRUE, llty=4, col="blue", Attach=TRUE)
+aa = deplot(fit, x0 = 42, y = ygrid, add = TRUE, llty = 2, col = "red")
+aa = deplot(fit, x0 = 55, y = ygrid, add = TRUE, llty = 4, col = "blue",
+            Attach = TRUE)
 aa@post$deplot  # Contains density function values
 }
 
 
 # Example 5; GEV distribution for extremes
-(fit = vglm(maxtemp ~ 1, egev, data=oxtemp, trace=TRUE))
+(fit = vglm(maxtemp ~ 1, egev, data = oxtemp, trace = TRUE))
 head(fitted(fit))
-coef(fit, mat = TRUE)
+coef(fit, matrix = TRUE)
 Coef(fit)
 vcov(fit)
 vcov(fit, untransform = TRUE)

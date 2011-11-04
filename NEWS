@@ -6,6 +6,52 @@
 
 
 
+                CHANGES IN VGAM VERSION 0.8-4
+
+NEW FEATURES
+
+    o   VGAM family functions renamed (Ouch!):
+        1.  'betabinom.ab' renamed to 'betabinomial.ab'.
+    o   Other functions renamed (Ouch!):
+        1.  '[dpr]betabin' renamed to '[dpr]betabinom' etc.;
+        2.  '[dpr]betabin.ab' renamed to '[dpr]betabinom.ab' etc.;
+    o   Slot names changed (Ouch!):
+        1. 'link'    renamed to 'linkfun' for class "vglmff";
+        2. 'inverse' renamed to 'linkinv' for class "vglmff".
+    o   Extra arguments added to freund61().
+    o   New VGAM family functions:
+        abbott(), zigeometric(dpqr), huber1().
+    o   New functions: [p]polono(),
+        depvar() generic for the dependent (response) variable,
+        Qvar() and explink() for quasi-variances.
+    o   Improved functions: [d]polono(), [dr]betabin() handles rho = 0
+        (suggested by Peng Yu).
+    o   Improved family functions: normal1() handles matrix 'weights'.
+    o   Defaults changed: [dr]betabin(rho = 0).
+    o   New methods functions: nobs(), nvar(), depvar().
+    o   Renaming: fitted.vlm() is now fittedvlm(),
+                  persp.qrrvglm() is now perspqrrvglm(),
+                  predict.qrrvglm() is now predictqrrvglm(),
+                  predict.vglm() is now predictvglm().
+    o   New data sets: finney44.
+    o   VGAM now depends on R >= 2.11.1.
+    o   Tested okay on R 2.14.0.
+
+
+BUG FIXES
+
+    o   zibinomial() had 2 wrong elements in the EIM,
+        thanks to Alan Welsh for picking this up.
+    o   margeff() for cumulative() was faulty.
+    o   blurb slot of binormal() was faulty.
+    o   betabinomial() did not return the estimated rho in @misc$rho as
+        did betabinomial.ab().
+    o   kumar() did not initialize well with non-integer prior weights.
+    o   rdagum() did not handle the 'scale' argument correctly.
+    o   codes() in s() is defunct so it has been replaced.
+
+
+
                 CHANGES IN VGAM VERSION 0.8-3
 
 NEW FEATURES

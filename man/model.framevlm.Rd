@@ -36,40 +36,48 @@ model.framevlm(object, setupsmart = TRUE, wrapupsmart = TRUE, \dots)
 
   This code implements \emph{smart prediction}
   (see \code{\link{smartpred}}).
+
+
 }
 \value{
   A \code{\link{data.frame}} containing the variables used in
   the \code{object} plus those specified in \code{\dots}.
+
 }
 \seealso{
   \code{\link[stats]{model.frame}},
   \code{\link{model.matrixvlm}},
-  \code{\link{predict.vglm}},
+  \code{\link{predictvglm}},
   \code{\link{smartpred}}.
+
+
 }
 \references{
+
   Chambers, J. M. (1992)
   \emph{Data for models.}
   Chapter 3 of \emph{Statistical Models in S}
   eds J. M. Chambers and T. J. Hastie, Wadsworth & Brooks/Cole.
+
+
 }
 \examples{
 # Illustrates smart prediction
-pneumo = transform(pneumo, let=log(exposure.time))
+pneumo = transform(pneumo, let = log(exposure.time))
 fit = vglm(cbind(normal,mild, severe) ~ poly(c(scale(let)), 2),
-           fam=multinomial,
-           data=pneumo, trace=TRUE, x=FALSE)
+           fam = multinomial,
+           data = pneumo, trace = TRUE, x = FALSE)
 class(fit)
 
 check1 = head(model.frame(fit))
 check1
-check2 = model.frame(fit, data=head(pneumo))
+check2 = model.frame(fit, data = head(pneumo))
 check2
 all.equal(unlist(check1), unlist(check2)) # Should be TRUE
 
 q0 = head(predict(fit))
-q1 = head(predict(fit, newdata=pneumo))
-q2 = predict(fit, newdata=head(pneumo))
+q1 = head(predict(fit, newdata = pneumo))
+q2 = predict(fit, newdata = head(pneumo))
 all.equal(q0, q1)   # Should be TRUE
 all.equal(q1, q2)   # Should be TRUE
 }

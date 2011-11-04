@@ -123,7 +123,9 @@ See \code{\link[stats]{smooth.spline}}.
   nonlinear part, and using B-splines.
   The cost of the computation is \code{O(n M^3)}.
 
+
   The argument \code{spar} contains \emph{scaled} smoothing parameters.
+
 
 }
 \value{
@@ -139,6 +141,7 @@ In: Bethlehem, J. G. and van der Heijde, P. G. M.
 \emph{Proceedings in Computational Statistics COMPSTAT 2000}.
 Heidelberg: Physica-Verlag.
 
+
 }
 \author{ Thomas W. Yee }
 \note{
@@ -148,11 +151,14 @@ Heidelberg: Physica-Verlag.
   For \code{M = 1}, the results will be generally different,
   mainly due to the different way the knots are selected.
 
+
   The vector cubic smoothing spline which \code{s()} represents is
   computationally demanding for large \eqn{M}.
   The cost is approximately \eqn{O(M^3)}.
 
+
   Yet to be done: return the \emph{unscaled} smoothing parameters.
+
 
 }
 
@@ -168,9 +174,9 @@ Heidelberg: Physica-Verlag.
 \examples{
 nn = 20; x = 2 + 5*(nn:1)/nn
 x[2:4] = x[5:7]      # Allow duplication
-y1 = sin(x) + rnorm(nn, sd=0.13)
-y2 = cos(x) + rnorm(nn, sd=0.13)
-y3 = 1 + sin(x) + rnorm(nn, sd=0.13) # Run this for constraints
+y1 = sin(x) + rnorm(nn, sd = 0.13)
+y2 = cos(x) + rnorm(nn, sd = 0.13)
+y3 = 1 + sin(x) + rnorm(nn, sd = 0.13) # Run this for constraints
 y = cbind(y1, y2, y3)
 ww = cbind(rep(3,nn), 4, (1:nn)/nn)
 
@@ -180,20 +186,21 @@ plot(fit) # The 1st and 3rd functions do not differ by a constant
 }
 
 mat = matrix(c(1,0,1, 0,1,0), 3, 2)
-(fit2 = vsmooth.spline(x, y, w=ww, df=5, iconstr=mat, xconstr=mat))
+(fit2 = vsmooth.spline(x, y, w = ww, df = 5, iconstr = mat, xconstr = mat))
 # The 1st and 3rd functions do differ by a constant:
-mycols = c("red","blue","red")
-\dontrun{ plot(fit2, lcol=mycols, pcol=mycols, las=1) }
+mycols = c("orange", "blue", "orange")
+\dontrun{ plot(fit2, lcol = mycols, pcol = mycols, las = 1) }
 
-p = predict(fit, x=fit@x, deriv=0)
+p = predict(fit, x = fit@x, deriv = 0)
 max(abs(fit@y - with(p, y))) # Should be zero
 
-par(mfrow=c(3,1))
+par(mfrow = c(3, 1))
 ux = seq(1, 8, len = 100)
 for(d in 1:3) {
-    p = predict(fit, x=ux, deriv = d)
-\dontrun{with(p, matplot(x, y, type="l", main=paste("deriv =", d), lwd=2,
-                         ylab="", cex.axis=1.5, cex.lab=1.5, cex.main=1.5))}
+    p = predict(fit, x = ux, deriv = d)
+\dontrun{with(p, matplot(x, y, type = "l", main = paste("deriv =", d),
+                         lwd = 2, ylab = "", cex.axis = 1.5,
+                         cex.lab = 1.5, cex.main = 1.5)) }
 }
 }
 \keyword{regression}

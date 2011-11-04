@@ -151,7 +151,8 @@ TypicalVGAMlinkFunction <- function(theta,
         theta[theta <= 1.0] <- earg$bval
     if (inverse) {
         if (deriv > 0) {
-            1 / Recall(theta = theta, earg = earg, inverse = FALSE, deriv = deriv)
+            1 / Recall(theta = theta, earg = earg,
+                       inverse = FALSE, deriv = deriv)
         } else {
             exp(exp(theta))
         }
@@ -162,7 +163,7 @@ TypicalVGAMlinkFunction <- function(theta,
             {  junk <- log(theta)
                -junk^2 / (1 + junk)
             },
-            stop("'deriv' unmatched"))
+            stop("argument 'deriv' unmatched"))
     }
 }
 
@@ -186,19 +187,20 @@ TypicalVGAMlinkFunction <- function(theta,
     }
     if (inverse) {
         if (deriv > 0) {
-            1 / Recall(theta = theta, earg = earg, inverse = FALSE, deriv = deriv)
+            1 / Recall(theta = theta, earg = earg,
+                       inverse = FALSE, deriv = deriv)
         } else {
             junk <- exp(theta)
             -expm1(-junk)
         }
     } else {
         switch(deriv+1, {
-            log(-log1p(-theta))},
-            -(1-theta) * log1p(-theta),
+            log(-log1p(-theta)) },
+            -(1 - theta) * log1p(-theta),
             {  junk <- log1p(-theta)
-               -(1-theta) * (1 + junk) * junk
+               -(1 - theta) * (1 + junk) * junk
             },
-            stop("'deriv' unmatched"))
+            stop("argument 'deriv' unmatched"))
     }
 }
 
@@ -222,7 +224,8 @@ TypicalVGAMlinkFunction <- function(theta,
     }
     if (inverse) {
         if (deriv > 0) {
-            1/Recall(theta = theta, earg = earg, inverse = FALSE, deriv = deriv)
+            1 / Recall(theta = theta, earg = earg,
+                       inverse = FALSE, deriv = deriv)
         } else {
             ans <- pnorm(theta)
             if (is.matrix(theta))
@@ -266,6 +269,39 @@ TypicalVGAMlinkFunction <- function(theta,
 
 
 
+ explink <- function(theta, earg = list(), inverse = FALSE, deriv = 0,
+                     short = TRUE, tag = FALSE)
+{
+    if (is.character(theta)) {
+        string <- if (short) 
+            paste("exp(", theta, ")", sep = "") else
+            paste("exp(", theta, ")", sep = "")
+        if (tag) 
+            string <- paste("Exp:", string) 
+        return(string)
+    }
+    if (!inverse && is.list(earg) && length(earg$bval))
+        theta[theta <= 0.0] <- earg$bval
+    if (inverse) {
+        if (deriv > 0) {
+            1 / Recall(theta = theta, earg = earg,
+                       inverse = FALSE, deriv = deriv)
+        } else {
+            log(theta)
+        }
+    } else {
+        switch(deriv+1, {
+           exp(theta)},
+            1 / exp(theta),
+           -1 / exp(theta * 2))
+    }
+}
+
+
+
+
+
+
  loge <- function(theta, earg = list(), inverse = FALSE, deriv = 0,
                   short = TRUE, tag = FALSE)
 {
@@ -281,7 +317,8 @@ TypicalVGAMlinkFunction <- function(theta,
         theta[theta <= 0.0] <- earg$bval
     if (inverse) {
         if (deriv > 0) {
-            1/Recall(theta = theta, earg = earg, inverse = FALSE, deriv = deriv)
+            1 / Recall(theta = theta, earg = earg,
+                       inverse = FALSE, deriv = deriv)
         } else {
             exp(theta)
         }
@@ -296,6 +333,8 @@ TypicalVGAMlinkFunction <- function(theta,
 
 
 
+
+
  identity <- function(theta, earg = list(), inverse = FALSE, deriv = 0,
                       short = TRUE, tag = FALSE) {
     if (is.character(theta)) {
@@ -306,7 +345,8 @@ TypicalVGAMlinkFunction <- function(theta,
     }
     if (inverse) {
         if (deriv > 0) {
-            1 / Recall(theta = theta, earg = earg, inverse = FALSE, deriv = deriv)
+            1 / Recall(theta = theta, earg = earg,
+                       inverse = FALSE, deriv = deriv)
         } else {
             theta
         }
@@ -329,7 +369,8 @@ TypicalVGAMlinkFunction <- function(theta,
     }
     if (inverse) {
         if (deriv > 0) {
-            1 / Recall(theta = theta, earg = earg, inverse = FALSE, deriv = deriv)
+            1 / Recall(theta = theta, earg = earg,
+                       inverse = FALSE, deriv = deriv)
         } else {
             -theta
         }
@@ -355,7 +396,8 @@ TypicalVGAMlinkFunction <- function(theta,
         theta[theta == 0.0] <- earg$bval
     if (inverse.arg) {
         if (deriv > 0) {
-            1 / Recall(theta = theta, earg = earg, inverse.arg = FALSE, deriv = deriv)
+            1 / Recall(theta = theta, earg = earg,
+                       inverse.arg = FALSE, deriv = deriv)
         } else {
             1/theta
         }
@@ -382,7 +424,8 @@ TypicalVGAMlinkFunction <- function(theta,
         theta[theta <= 0.0] <- earg$bval
     if (inverse) {
         if (deriv > 0) {
-            1/Recall(theta = theta, earg = earg, inverse = FALSE, deriv = deriv)
+            1 / Recall(theta = theta, earg = earg,
+                       inverse = FALSE, deriv = deriv)
         } else {
             exp(-theta)
         }
@@ -396,8 +439,8 @@ TypicalVGAMlinkFunction <- function(theta,
 
 
 
- nreciprocal <- function(theta, earg = list(), inverse.arg = FALSE, deriv = 0,
-                         short = TRUE, tag = FALSE)
+ nreciprocal <- function(theta, earg = list(), inverse.arg = FALSE,
+                         deriv = 0, short = TRUE, tag = FALSE)
 {
     if (is.character(theta)) {
         string <- paste("-1/", theta, sep = "")
@@ -436,13 +479,13 @@ TypicalVGAMlinkFunction <- function(theta,
         if (deriv > 0) {
             1 / nreciprocal(theta, earg = earg, inverse = FALSE, deriv)
         } else {
-            1/ sqrt(-2*theta)
+            1 / sqrt(-2*theta)
         }
     } else {
         switch(deriv+1,
-           -1/(2*theta^2),
+           -1 / (2 * theta^2),
            theta^3,
-           3*theta^5)
+           3 * theta^5)
     }
 }
 
@@ -471,7 +514,8 @@ TypicalVGAMlinkFunction <- function(theta,
 
     if (inverse) {
         if (deriv > 0) {
-            1/Recall(theta = theta, earg = earg, inverse = FALSE, deriv = deriv)
+            1 / Recall(theta = theta, earg = earg,
+                       inverse = FALSE, deriv = deriv)
         } else {
             junk <- exp(theta)
             expm1(theta) / (junk+1.0)
@@ -507,7 +551,8 @@ TypicalVGAMlinkFunction <- function(theta,
 
     if (inverse) {
         if (deriv > 0) {
-            1/Recall(theta = theta, earg = earg, inverse = FALSE, deriv = deriv)
+            1 / Recall(theta = theta, earg = earg,
+                       inverse = FALSE, deriv = deriv)
         } else {
             junk <- exp(2*theta)
             expm1(2*theta) / (junk+1.0)
@@ -550,7 +595,8 @@ fsqrt <- function(theta, earg = list(min = 0, max = 1, mux=sqrt(2)),
 
     if (inverse) {
         if (deriv > 0) {
-            1/Recall(theta = theta, earg = earg, inverse = FALSE, deriv = deriv)
+            1 / Recall(theta = theta, earg = earg,
+                       inverse = FALSE, deriv = deriv)
         } else {
             mid = (min + max) / 2
             boundary = mux * sqrt(max - min)
@@ -582,7 +628,7 @@ fsqrt <- function(theta, earg = list(min = 0, max = 1, mux=sqrt(2)),
         if (exponent == 0)
             stop("use the 'loge' link")
     } else {
-        stop("'earg' must be a list or NULL")
+        stop("argument 'earg' must be a list or NULL")
     }
 
     if (is.character(theta)) {
@@ -596,7 +642,8 @@ fsqrt <- function(theta, earg = list(min = 0, max = 1, mux=sqrt(2)),
     }
     if (inverse) {
         if (deriv > 0) {
-            1/Recall(theta = theta, earg = earg, inverse = FALSE, deriv = deriv)
+            1 / Recall(theta = theta, earg = earg,
+                       inverse = FALSE, deriv = deriv)
         } else {
             theta^(1/exponent)
         }
@@ -625,7 +672,7 @@ fsqrt <- function(theta, earg = list(min = 0, max = 1, mux=sqrt(2)),
        if (!inverse && length(bminvalue)) theta[theta <= A] <- bminvalue
        if (!inverse && length(bmaxvalue)) theta[theta >= B] <- bmaxvalue
     } else {
-        stop("'earg' must be a list or NULL")
+        stop("argument 'earg' must be a list or NULL")
     }
     if (is.character(theta)) {
         string <- if (short) {
@@ -641,7 +688,8 @@ fsqrt <- function(theta, earg = list(min = 0, max = 1, mux=sqrt(2)),
     }
     if (inverse) {
         if (deriv > 0) {
-            1/Recall(theta = theta, earg = earg, inverse = FALSE, deriv = deriv)
+            1 / Recall(theta = theta, earg = earg,
+                       inverse = FALSE, deriv = deriv)
         } else {
             junk <- if (is.R()) care.exp(theta) else care.exp(theta)
             (A + B*junk) / (1.0 + junk)
@@ -674,7 +722,8 @@ fsqrt <- function(theta, earg = list(min = 0, max = 1, mux=sqrt(2)),
     }
     if (inverse) {
         if (deriv > 0) {
-            1/Recall(theta = theta, earg = earg, inverse = FALSE, deriv = deriv)
+            1 / Recall(theta = theta, earg = earg,
+                       inverse = FALSE, deriv = deriv)
         } else {
             eta <- care.exp(theta)
             eta / (1.0 + eta)
@@ -709,7 +758,8 @@ fsqrt <- function(theta, earg = list(min = 0, max = 1, mux=sqrt(2)),
     }
     if (inverse) {
         if (deriv > 0) {
-            1 / Recall(theta = theta, earg = earg, inverse = FALSE, deriv = deriv)
+            1 / Recall(theta = theta, earg = earg,
+                       inverse = FALSE, deriv = deriv)
         } else {
             -expm1(theta)
         }
@@ -728,7 +778,7 @@ fsqrt <- function(theta, earg = list(min = 0, max = 1, mux=sqrt(2)),
     if (!length(earg) || is.list(earg)) {
         offset = if (length(earg$offset)) earg$offset else 0
     } else {
-        stop("'earg' must be a list or NULL")
+        stop("argument 'earg' must be a list or NULL")
     }
 
     if (!is.Numeric(offset))
@@ -745,7 +795,8 @@ fsqrt <- function(theta, earg = list(min = 0, max = 1, mux=sqrt(2)),
     }
     if (inverse) {
         if (deriv > 0) {
-            1/Recall(theta = theta, earg = earg, inverse = FALSE, deriv = deriv)
+            1 / Recall(theta = theta, earg = earg,
+                       inverse = FALSE, deriv = deriv)
         } else {
             exp(theta) - offset
         }
@@ -764,7 +815,7 @@ nlogoff <- function(theta, earg = 0, inverse = FALSE, deriv = 0,
 {
     offset = earg
     if (!is.Numeric(offset))
-        stop("bad input for argument earg")
+        stop("bad input for argument 'earg'")
     if (is.character(theta)) {
         string <- if (short) 
             paste("nlogoff(", theta, ", ",as.character(offset), ")", sep = "") else
@@ -775,7 +826,8 @@ nlogoff <- function(theta, earg = 0, inverse = FALSE, deriv = 0,
     }
     if (inverse) {
         if (deriv > 0) {
-            1/Recall(theta = theta, earg = earg, inverse = FALSE, deriv = deriv)
+            1 / Recall(theta = theta, earg = earg,
+                       inverse = FALSE, deriv = deriv)
         } else {
             offset - exp(theta)
         }
@@ -807,7 +859,8 @@ nlogoff <- function(theta, earg = 0, inverse = FALSE, deriv = 0,
     }
     if (inverse) {
         if (deriv > 0) {
-            1/Recall(theta = theta, earg = earg, inverse = FALSE, deriv = deriv)
+            1 / Recall(theta = theta, earg = earg,
+                       inverse = FALSE, deriv = deriv)
         } else {
             0.5 + atan(theta)/pi 
         }
@@ -834,7 +887,7 @@ nlogoff <- function(theta, earg = 0, inverse = FALSE, deriv = 0,
         lambda = earg$lambda
         cutpoint = earg$cutpoint # Optional; if so then is a NULL
     } else
-        stop("'earg' must be a list")
+        stop("argument 'earg' must be a list")
     if (!is.Numeric(lambda, posit = TRUE))
         stop('could not determine lambda or lambda has negative values')
     if (is.Numeric(cutpoint))
@@ -885,7 +938,8 @@ nlogoff <- function(theta, earg = 0, inverse = FALSE, deriv = 0,
     answer =
     if (inverse) {
         if (deriv > 0) {
-            1 / Recall(theta = theta, earg = earg, inverse = FALSE, deriv = deriv)
+            1 / Recall(theta = theta, earg = earg,
+                       inverse = FALSE, deriv = deriv)
         } else {
             if (is.Numeric(cutpoint)) {
                 pnorm((1-care.exp(-(theta-log(cutpoint))/3)) * 3 * sqrt(lambda))
@@ -905,22 +959,23 @@ nlogoff <- function(theta, earg = 0, inverse = FALSE, deriv = 0,
             -3*log1p(-temp) + if (is.Numeric(cutpoint)) log(cutpoint) else 0},
             (1 - Ql / (3*sqrt(lambda))) * sqrt(lambda) * dnorm(Ql),
             {  stop('cannot handle deriv = 2') },
-            stop("'deriv' unmatched"))
+            stop("argument 'deriv' unmatched"))
     }
     if (!is.Numeric(answer)) stop("the answer contains some NAs")
     answer
 }
 
 
- polf <- function(theta, earg=stop("'earg' must be given"), 
+ polf <- function(theta, earg = stop("argument 'earg' must be given"),
                   inverse = FALSE, deriv = 0, short = TRUE, tag = FALSE)
 {
     cutpoint = NULL
     if (is.Numeric(earg)) cutpoint = earg
     if (is.list(earg)) cutpoint = earg$cutpoint
     if (!is.Numeric(cutpoint))
-      stop('could not determine the cutpoint')
-    if (any(cutpoint < 0) || !is.Numeric(cutpoint, integer = TRUE))
+      stop("could not determine the cutpoint")
+    if (any(cutpoint < 0) ||
+        !is.Numeric(cutpoint, integer = TRUE))
       warning("argument 'cutpoint' should",
               " contain non-negative integer values")
 
@@ -947,24 +1002,27 @@ nlogoff <- function(theta, earg = 0, inverse = FALSE, deriv = 0,
         cutpoint = rep(cutpoint, len=ncol(thmat)) # Reqd for the for loop
         for(ii in 1:ncol(thmat))
             answer[,ii] = Recall(theta = thmat[,ii], earg=cutpoint[ii],
-                                 inverse=inverse, deriv = deriv)
+                                 inverse = inverse, deriv = deriv)
         return(answer)
     }
 
     answer =
     if (inverse) {
         if (deriv > 0) {
-            1 / Recall(theta = theta, earg = earg, inverse = FALSE, deriv = deriv)
+            1 / Recall(theta = theta, earg = earg,
+                       inverse = FALSE, deriv = deriv)
         } else {
             if (cutpoint == 0) {
-                cloglog(theta = theta, earg = earg, inverse=inverse, deriv = deriv)
+                cloglog(theta = theta, earg = earg,
+                        inverse = inverse, deriv = deriv)
             } else {
                 pnorm(2 * exp(theta/2) - 2 * sqrt(cutpoint + 7/8))
             }
         }
     } else {
         if (cutpoint == 0) {
-            cloglog(theta = theta, earg = earg, inverse=inverse, deriv = deriv)
+            cloglog(theta = theta, earg = earg,
+                    inverse = inverse, deriv = deriv)
         } else {
             smallno = 1 * .Machine$double.eps
             SMALLNO = 1 * .Machine$double.xmin
@@ -978,7 +1036,7 @@ nlogoff <- function(theta, earg = 0, inverse = FALSE, deriv = 0,
             2 * log(temp)},
             (Ql/2 + sqrt(cutpoint + 7/8)) * dnorm(Ql),
             {  stop('cannot handle deriv = 2') },
-            stop("'deriv' unmatched"))
+            stop("argument 'deriv' unmatched"))
         }
     }
     if (!is.Numeric(answer)) stop("the answer contains some NAs")
@@ -986,7 +1044,7 @@ nlogoff <- function(theta, earg = 0, inverse = FALSE, deriv = 0,
 }
 
 
- nbolf <- function(theta, earg=stop("'earg' must be given"), 
+ nbolf <- function(theta, earg = stop("argument 'earg' must be given"), 
                   inverse = FALSE, deriv = 0, short = TRUE, tag = FALSE) {
 
     cutpoint = kay = NULL
@@ -1038,7 +1096,8 @@ nlogoff <- function(theta, earg = 0, inverse = FALSE, deriv = 0,
     answer =
     if (inverse) {
         if (deriv > 0) {
-            1 / Recall(theta = theta, earg = earg, inverse = FALSE, deriv = deriv)
+            1 / Recall(theta = theta, earg = earg,
+                       inverse = FALSE, deriv = deriv)
         } else {
             if (cutpoint == 0) {
                 1.0 - (kay / (kay + care.exp(theta)))^kay
@@ -1060,7 +1119,7 @@ nlogoff <- function(theta, earg = 0, inverse = FALSE, deriv = 0,
             log(kay) + log(temp)},
             (kay / (1 - Theta)^(1/kay) - kay) * (1 - Theta)^(kay+1/kay),
             {  stop('cannot handle deriv = 2') },
-            stop("'deriv' unmatched"))
+            stop("argument 'deriv' unmatched"))
         } else {
             Ql = qnorm(Theta)
             switch(deriv+1, {
@@ -1071,7 +1130,7 @@ nlogoff <- function(theta, earg = 0, inverse = FALSE, deriv = 0,
                 arg1 = (Ql/(2*sqrt(kay)) + asinh(sqrt(cutpoint/kay)))
                 sqrt(kay) * tanh(arg1) * dnorm(Ql) },
                 {  stop('cannot handle deriv = 2') },
-                stop("'deriv' unmatched"))
+                stop("argument 'deriv' unmatched"))
         }
     }
     if (!is.Numeric(answer)) stop("the answer contains some NAs")
@@ -1082,7 +1141,7 @@ nlogoff <- function(theta, earg = 0, inverse = FALSE, deriv = 0,
 
 
 
- nbolf2 <- function(theta, earg=stop("'earg' must be given"), 
+ nbolf2 <- function(theta, earg = stop("argument 'earg' must be given"), 
                     inverse = FALSE, deriv = 0, short = TRUE, tag = FALSE) {
 
     cutpoint = kay = NULL
@@ -1091,7 +1150,7 @@ nlogoff <- function(theta, earg = 0, inverse = FALSE, deriv = 0,
         kay = earg$k
     }
     if (!is.Numeric(kay, positive = TRUE))
-    stop("could not determine 'k' or it is not positive-valued")
+    stop("could not determine argument 'k' or it is not positive-valued")
     if (!is.Numeric(cutpoint))
     stop("could not determine the cutpoint")
     if (any(cutpoint < 0) || !is.Numeric(cutpoint, integer = TRUE))
@@ -1132,7 +1191,8 @@ nlogoff <- function(theta, earg = 0, inverse = FALSE, deriv = 0,
     answer =
     if (inverse) {
         if (deriv > 0) {
-            1 / Recall(theta = theta, earg = earg, inverse = FALSE, deriv = deriv)
+            1 / Recall(theta = theta, earg = earg,
+                       inverse = FALSE, deriv = deriv)
         } else {
             if (cutpoint == 0) {
                 1.0 - (kay / (kay + care.exp(theta)))^kay
@@ -1229,7 +1289,7 @@ nlogoff <- function(theta, earg = 0, inverse = FALSE, deriv = 0,
 
  checkCut = function(y) {
     if (!is.Numeric(y, posi = TRUE, integ = TRUE))
-        stop("'y' must contain positive integers only")
+        stop("argument 'y' must contain positive integers only")
     uy = unique(y)
     L = max(uy)
     oklevels = 1:L

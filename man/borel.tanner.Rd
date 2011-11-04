@@ -8,7 +8,7 @@
 
 }
 \usage{
-borel.tanner(Qsize=1, link="logit", earg=list(), imethod=1)
+borel.tanner(Qsize = 1, link = "logit", earg = list(), imethod = 1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -67,11 +67,13 @@ borel.tanner(Qsize=1, link="logit", earg=list(), imethod=1)
   The object is used by modelling functions such as \code{\link{vglm}}
   and \code{\link{vgam}}.
 
+
 }
 \references{
 Tanner, J. C. (1953)
 A problem of interference between two queues.
 \emph{Biometrika}, \bold{40}, 58--69.
+
 
 Borel, E. (1942)
 Sur l'emploi du theoreme de Bernoulli pour faciliter le
@@ -80,15 +82,18 @@ Application au probleme de l'attente a un guichet.
 \emph{Comptes Rendus, Academie des Sciences, Paris, Series A},
 \bold{214}, 452--456.
 
+
     Page 328 of
     Johnson N. L., Kemp, A. W. and Kotz S. (2005)
     \emph{Univariate Discrete Distributions},
     3rd edition,
     Hoboken, New Jersey: Wiley.
 
+
 Consul, P. C. and Famoye, F. (2006)
 \emph{Lagrangian Probability Distributions},
 Boston: Birkhauser.
+
 
 }
 \author{ T. W. Yee }
@@ -101,11 +106,12 @@ Boston: Birkhauser.
   \code{\link{poissonff}},
   \code{\link{felix}}.
 
+
 }
 \examples{
-bortdata = data.frame(y = rbort(n <- 200))
-fit = vglm(y ~ 1, borel.tanner, bortdata, trace=TRUE, crit="c")
-coef(fit, matrix=TRUE)
+bdata = data.frame(y = rbort(n <- 200))
+fit = vglm(y ~ 1, borel.tanner, bdata, trace = TRUE, crit = "c")
+coef(fit, matrix = TRUE)
 Coef(fit)
 summary(fit)
 }

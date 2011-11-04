@@ -223,7 +223,7 @@ Vector generalized additive models.
 
 \examples{
 # Multinomial logit model 
-pneumo = transform(pneumo, let=log(exposure.time))
-vglm(cbind(normal,mild,severe) ~ let, multinomial, pneumo)
+pneumo = transform(pneumo, let = log(exposure.time))
+vglm(cbind(normal, mild, severe) ~ let, multinomial, pneumo)
 }
 \keyword{classes}

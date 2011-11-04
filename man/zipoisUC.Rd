@@ -19,8 +19,8 @@ rzipois(n, lambda, phi = 0)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{x, q}{vector of quantiles.}
-  \item{p}{vector of probabilities.}
+  \item{x, q}{vector of quantiles. }
+  \item{p}{vector of probabilities. }
   \item{n}{number of observations. Must be a single positive integer. }
   \item{lambda}{ Vector of positive means. }
   \item{phi}{ 
@@ -75,9 +75,9 @@ round(dzipois(0:10, lambda, phi) * 100) # Should be similar
 
 \dontrun{ x = 0:10
 barplot(rbind(dzipois(x, lambda, phi), dpois(x, lambda)),
-        beside = TRUE, col = c("blue","green"),
+        beside = TRUE, col = c("blue","orange"),
         main = paste("ZIP(", lambda, ", phi = ", phi, ") (blue) vs",
-                     " Poisson(", lambda, ") (green)", sep = ""),
+                     " Poisson(", lambda, ") (orange)", sep = ""),
         names.arg = as.character(x)) }
 }
 \keyword{distribution}

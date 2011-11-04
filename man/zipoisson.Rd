@@ -20,15 +20,11 @@ zipoisson(lphi = "logit", llambda = "loge",
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{lphi, llambda}{
-  Link function for the parameter \eqn{\phi}{phi}
+  \item{lphi, llambda, ephi, elambda}{
+  Link function and extra argument for the parameter \eqn{\phi}{phi}
   and the usual \eqn{\lambda}{lambda} parameter.
-  See \code{\link{Links}} for more choices.
-
-  }
-  \item{ephi, elambda}{
-  List. Extra argument for the respective links.
-  See \code{earg} in \code{\link{Links}} for general information.
+  See \code{\link{Links}} for more choices,
+  and \code{earg} in \code{\link{Links}} for general information.
   See \code{\link{CommonVGAMffArguments}} for more information.
 
   }
@@ -91,6 +87,8 @@ zipoisson(lphi = "logit", llambda = "loge",
   \eqn{0 < \phi < 1}{0 < phi < 1}.
   The mean of \eqn{Y} is \eqn{(1-\phi) \lambda}{(1-phi)*lambda} and these
   are returned as the fitted values.
+  The variance of \eqn{Y} is \eqn{(1-\phi) \lambda (1 + \phi \lambda)}{
+  (1-phi)*lambda*(1 + phi lambda)}.
   By default, the two linear/additive predictors are
   \eqn{(logit(\phi), \log(\lambda))^T}{(logit(phi), log(lambda))^T}.
   This function implements Fisher scoring.
@@ -164,7 +162,7 @@ zipoisson(lphi = "logit", llambda = "loge",
   See \pkg{COZIGAM}.
   A RR-ZINB model can also be fitted easily;
   see \code{\link{zinegbinomial}}.
-  Jargon-wies, a COZIGLM might be better described as a
+  Jargon-wise, a COZIGLM might be better described as a
   COZIVGLM-ZIP.
 
 

@@ -8,9 +8,9 @@
 
 }
 \usage{
-triangle(lower=0, upper=1, link="elogit",
-         earg=if(link=="elogit") list(min = lower, max = upper) else
-         list(), itheta=NULL)
+triangle(lower = 0, upper = 1, link = "elogit",
+         earg = if(link == "elogit") list(min = lower, max = upper) else
+         list(), itheta = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -41,7 +41,7 @@ triangle(lower=0, upper=1, link="elogit",
   The triangle distribution
   has a probability density function that consists of two lines
   joined at \eqn{\theta}{theta}. The lines intersect the
-  \eqn{y=0} axis at \eqn{A} and \eqn{B}.
+  \eqn{y = 0} axis at \eqn{A} and \eqn{B}.
   Here, Fisher scoring is used.
 
   On fitting, the \code{extra} slot has components called \code{lower}
@@ -69,13 +69,13 @@ triangle(lower=0, upper=1, link="elogit",
      \code{\link{Triangle}}.
 }
 \examples{
-y  = rtriangle(n <- 3000, theta=3/4)
-fit = vglm(y ~ 1, triangle(link="identity"), trace=TRUE)
-coef(fit, matrix=TRUE)
+tdata = data.frame(y  = rtriangle(n <- 3000, theta = 3/4))
+fit = vglm(y ~ 1, triangle(link = "identity"), tdata, trace = TRUE)
+coef(fit, matrix = TRUE)
 Coef(fit)
 head(fit@extra$lower)
 head(fitted(fit))
-mean(y)
+with(tdata, mean(y))
 }
 \keyword{models}
 \keyword{regression}

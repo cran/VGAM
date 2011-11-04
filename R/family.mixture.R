@@ -8,22 +8,22 @@
 
 
 
-mix2normal1.control <- function(trace=TRUE, ...)
+mix2normal1.control <- function(trace = TRUE, ...)
 {
     list(trace=trace)
 }
 
 
-mix2normal1 = function(lphi="logit",
-                       lmu="identity",
-                       lsd="loge",
-                       ephi=list(), emu1=list(), emu2=list(),
-                       esd1=list(), esd2=list(),
-                       iphi=0.5, imu1=NULL, imu2=NULL, isd1=NULL, isd2=NULL,
+mix2normal1 = function(lphi = "logit",
+                       lmu = "identity",
+                       lsd = "loge",
+                       ephi = list(), emu1 = list(), emu2 = list(),
+                       esd1 = list(), esd2 = list(),
+                       iphi=0.5, imu1 = NULL, imu2 = NULL, isd1 = NULL, isd2 = NULL,
                        qmu=c(0.2, 0.8),
-                       equalsd=TRUE,
-                       nsimEIM=100,
-                       zero=1)
+                       equalsd = TRUE,
+                       nsimEIM = 100,
+                       zero = 1)
 {
     if (mode(lphi) != "character" && mode(lphi) != "name")
         lphi = as.character(substitute(lphi))
@@ -31,17 +31,17 @@ mix2normal1 = function(lphi="logit",
         lmu = as.character(substitute(lmu))
     if (mode(lsd) != "character" && mode(lsd) != "name")
         lsd = as.character(substitute(lsd))
-    if (!is.Numeric(qmu, allow=2, positive=TRUE) || any(qmu >= 1))
+    if (!is.Numeric(qmu, allow=2, positive = TRUE) || any(qmu >= 1))
         stop("bad input for argument 'qmu'")
-    if (length(iphi) && (!is.Numeric(iphi, allow=1, positive=TRUE) || iphi>= 1))
+    if (length(iphi) && (!is.Numeric(iphi, allow = 1, positive = TRUE) || iphi>= 1))
         stop("bad input for argument 'iphi'")
     if (length(imu1) && !is.Numeric(imu1))
         stop("bad input for argument 'imu1'")
     if (length(imu2) && !is.Numeric(imu2))
         stop("bad input for argument 'imu2'")
-    if (length(isd1) && !is.Numeric(isd1, positive=TRUE))
+    if (length(isd1) && !is.Numeric(isd1, positive = TRUE))
         stop("bad input for argument 'isd1'")
-    if (length(isd2) && !is.Numeric(isd2, positive=TRUE))
+    if (length(isd2) && !is.Numeric(isd2, positive = TRUE))
         stop("bad input for argument 'isd2'")
     if (!is.list(ephi)) ephi = list()
     if (!is.list(emu1)) emu1 = list()
@@ -50,33 +50,33 @@ mix2normal1 = function(lphi="logit",
     if (!is.list(esd2)) esd2 = list()
     if (!is.logical(equalsd) || length(equalsd) != 1)
         stop("bad input for argument 'equalsd'")
-    if (!is.Numeric(nsimEIM, allow=1, integ=TRUE) || nsimEIM <= 10)
+    if (!is.Numeric(nsimEIM, allow = 1, integ = TRUE) || nsimEIM <= 10)
         stop("'nsimEIM' should be an integer greater than 10")
 
     new("vglmff",
-    blurb=c("Mixture of two univariate normals\n\n",
+    blurb = c("Mixture of two univariate normals\n\n",
            "Links:    ",
-           namesof("phi", lphi, earg= ephi, tag=FALSE), ", ", 
-           namesof("mu1",  lmu, earg= emu1, tag=FALSE), ", ",
-           namesof("sd1",  lsd, earg= esd1, tag=FALSE), ", ",
-           namesof("mu2",  lmu, earg= emu2, tag=FALSE), ", ",
-           namesof("sd2",  lsd, earg= esd2, tag=FALSE), "\n",
+           namesof("phi", lphi, earg = ephi, tag = FALSE), ", ", 
+           namesof("mu1",  lmu, earg = emu1, tag = FALSE), ", ",
+           namesof("sd1",  lsd, earg = esd1, tag = FALSE), ", ",
+           namesof("mu2",  lmu, earg = emu2, tag = FALSE), ", ",
+           namesof("sd2",  lsd, earg = esd2, tag = FALSE), "\n",
            "Mean:     phi*mu1 + (1-phi)*mu2\n",
            "Variance: phi*sd1^2 + (1-phi)*sd2^2 + phi*(1-phi)*(mu1-mu2)^2"),
-    constraints=eval(substitute(expression({
+    constraints = eval(substitute(expression({
         constraints = cm.vgam(rbind(diag(4), c(0,0,1,0)), x, .equalsd,
-                              constraints, int=TRUE)
+                              constraints, int = TRUE)
         constraints = cm.zero.vgam(constraints, x, .zero, M)
     }), list(.zero=zero, .equalsd=equalsd))),
-    initialize=eval(substitute(expression({
+    initialize = eval(substitute(expression({
         if (ncol(y <- cbind(y)) != 1)
             stop("the response must be a vector or one-column matrix")
         predictors.names = c(
-            namesof("phi", .lphi, tag=FALSE),
-            namesof("mu1", .lmu, earg= .emu1, tag=FALSE),
-            namesof("sd1", .lsd, earg= .esd1, tag=FALSE),
-            namesof("mu2", .lmu, earg= .emu2, tag=FALSE),
-            namesof("sd2", .lsd, earg= .esd2, tag=FALSE))
+            namesof("phi", .lphi, tag = FALSE),
+            namesof("mu1", .lmu, earg = .emu1, tag = FALSE),
+            namesof("sd1", .lsd, earg = .esd1, tag = FALSE),
+            namesof("mu2", .lmu, earg = .emu2, tag = FALSE),
+            namesof("sd2", .lsd, earg = .esd2, tag = FALSE))
         if (!length(etastart)) {
             qy = quantile(y, prob= .qmu)
             init.phi = rep(if(length(.iphi)) .iphi else 0.5, length=n)
@@ -92,26 +92,26 @@ mix2normal1 = function(lphi="logit",
             if ( .equalsd ) {
                 init.sd1 = init.sd2 = (init.sd1 + init.sd2)/2
                 if (!all.equal( .esd1, .esd2 ))
-                    stop("'esd1' and 'esd2' must be equal if equalsd=TRUE")
+                    stop("'esd1' and 'esd2' must be equal if equalsd = TRUE")
             }
-            etastart = cbind(theta2eta(init.phi, .lphi, earg= .ephi),
-                             theta2eta(init.mu1,  .lmu, earg= .emu1),
-                             theta2eta(init.sd1,  .lsd, earg= .esd1),
-                             theta2eta(init.mu2,  .lmu, earg= .emu2),
-                             theta2eta(init.sd2,  .lsd, earg= .esd2))
+            etastart = cbind(theta2eta(init.phi, .lphi, earg = .ephi),
+                             theta2eta(init.mu1,  .lmu, earg = .emu1),
+                             theta2eta(init.sd1,  .lsd, earg = .esd1),
+                             theta2eta(init.mu2,  .lmu, earg = .emu2),
+                             theta2eta(init.sd2,  .lsd, earg = .esd2))
         }
     }), list(.lphi=lphi, .lmu=lmu, .iphi=iphi, .imu1=imu1, .imu2=imu2,
              .ephi=ephi, .emu1=emu1, .emu2=emu2, .esd1=esd1, .esd2=esd2,
              .equalsd=equalsd,
              .lsd=lsd, .isd1=isd1, .isd2=isd2, .qmu=qmu))),
-    inverse=eval(substitute(function(eta, extra=NULL){
-        phi = eta2theta(eta[,1], link= .lphi, earg= .ephi)
-        mu1 = eta2theta(eta[,2], link=  .lmu, earg= .emu1)
-        mu2 = eta2theta(eta[,4], link=  .lmu, earg= .emu2)
+    linkinv = eval(substitute(function(eta, extra = NULL){
+        phi = eta2theta(eta[,1], link = .lphi, earg = .ephi)
+        mu1 = eta2theta(eta[,2], link =  .lmu, earg = .emu1)
+        mu2 = eta2theta(eta[,4], link =  .lmu, earg = .emu2)
         phi*mu1 + (1-phi)*mu2
     }, list(.lphi=lphi, .lmu=lmu,
              .ephi=ephi, .emu1=emu1, .emu2=emu2, .esd1=esd1, .esd2=esd2 ))),
-    last=eval(substitute(expression({
+    last = eval(substitute(expression({
         misc$link = c("phi"= .lphi, "mu1"= .lmu,
                       "sd1"= .lsd, "mu2"= .lmu, "sd2"= .lsd)
         misc$earg = list("phi"= .ephi, "mu1"= .emu1,
@@ -122,13 +122,13 @@ mix2normal1 = function(lphi="logit",
     }), list(.lphi=lphi, .lmu=lmu, .lsd=lsd, .equalsd=equalsd,
              .ephi=ephi, .emu1=emu1, .emu2=emu2, .esd1=esd1, .esd2=esd2,
              .nsimEIM=nsimEIM ))),
-    loglikelihood=eval(substitute(
-            function(mu,y,w,residuals=FALSE,eta,extra=NULL) {
-        phi = eta2theta(eta[,1], link= .lphi, earg= .ephi)
-        mu1 = eta2theta(eta[,2], link= .lmu,  earg= .emu1)
-        sd1 = eta2theta(eta[,3], link= .lsd,  earg= .esd1)
-        mu2 = eta2theta(eta[,4], link= .lmu,  earg= .emu2)
-        sd2 = eta2theta(eta[,5], link= .lsd,  earg= .esd2)
+    loglikelihood = eval(substitute(
+            function(mu,y,w,residuals = FALSE,eta,extra = NULL) {
+        phi = eta2theta(eta[,1], link = .lphi, earg = .ephi)
+        mu1 = eta2theta(eta[,2], link = .lmu,  earg = .emu1)
+        sd1 = eta2theta(eta[,3], link = .lsd,  earg = .esd1)
+        mu2 = eta2theta(eta[,4], link = .lmu,  earg = .emu2)
+        sd2 = eta2theta(eta[,5], link = .lsd,  earg = .esd2)
         f1 = dnorm(y, mean=mu1, sd=sd1)
         f2 = dnorm(y, mean=mu2, sd=sd2)
         if (residuals) stop("loglikelihood residuals not ",
@@ -137,18 +137,18 @@ mix2normal1 = function(lphi="logit",
     }, list(.lphi=lphi, .lmu=lmu,
             .ephi=ephi, .emu1=emu1, .emu2=emu2, .esd1=esd1, .esd2=esd2,
             .lsd=lsd ))),
-    vfamily=c("mix2normal1"),
-    deriv=eval(substitute(expression({
-        phi = eta2theta(eta[,1], link= .lphi, earg= .ephi)
-        mu1 = eta2theta(eta[,2], link= .lmu,  earg= .emu1)
-        sd1 = eta2theta(eta[,3], link= .lsd,  earg= .esd1)
-        mu2 = eta2theta(eta[,4], link= .lmu,  earg= .emu2)
-        sd2 = eta2theta(eta[,5], link= .lsd,  earg= .esd2)
-        dphi.deta = dtheta.deta(phi, link= .lphi, earg= .ephi)
-        dmu1.deta = dtheta.deta(mu1, link= .lmu, earg= .emu1)
-        dmu2.deta = dtheta.deta(mu2, link= .lmu, earg= .emu2)
-        dsd1.deta = dtheta.deta(sd1, link= .lsd, earg= .esd1)
-        dsd2.deta = dtheta.deta(sd2, link= .lsd, earg= .esd2)
+    vfamily = c("mix2normal1"),
+    deriv = eval(substitute(expression({
+        phi = eta2theta(eta[,1], link = .lphi, earg = .ephi)
+        mu1 = eta2theta(eta[,2], link = .lmu,  earg = .emu1)
+        sd1 = eta2theta(eta[,3], link = .lsd,  earg = .esd1)
+        mu2 = eta2theta(eta[,4], link = .lmu,  earg = .emu2)
+        sd2 = eta2theta(eta[,5], link = .lsd,  earg = .esd2)
+        dphi.deta = dtheta.deta(phi, link = .lphi, earg = .ephi)
+        dmu1.deta = dtheta.deta(mu1, link = .lmu, earg = .emu1)
+        dmu2.deta = dtheta.deta(mu2, link = .lmu, earg = .emu2)
+        dsd1.deta = dtheta.deta(sd1, link = .lsd, earg = .esd1)
+        dsd2.deta = dtheta.deta(sd2, link = .lsd, earg = .esd2)
         f1 = dnorm(y, mean=mu1, sd=sd1)
         f2 = dnorm(y, mean=mu2, sd=sd2)
         pdf = phi*f1 + (1-phi)*f2
@@ -193,14 +193,14 @@ mix2normal1 = function(lphi="logit",
             run.mean = ((ii-1) * run.mean + temp3) / ii
         }
         wz = if (intercept.only)
-            matrix(colMeans(run.mean), n, dimm(M), byrow=TRUE) else run.mean
+            matrix(colMeans(run.mean), n, dimm(M), byrow = TRUE) else run.mean
 
         dtheta.detas = cbind(dphi.deta,
                              dmu1.deta,
                              dsd1.deta,
                              dmu2.deta,
                              dsd2.deta)
-        index0 = iam(NA, NA, M=M, both=TRUE, diag=TRUE)
+        index0 = iam(NA, NA, M = M, both = TRUE, diag = TRUE)
         wz = wz * dtheta.detas[,index0$row] * dtheta.detas[,index0$col]
         c(w) * wz
     }), list(.lphi=lphi, .lmu=lmu, .nsimEIM=nsimEIM ))))
@@ -209,24 +209,24 @@ mix2normal1 = function(lphi="logit",
 
 
 
-mix2poisson.control <- function(trace=TRUE, ...)
+mix2poisson.control <- function(trace = TRUE, ...)
 {
     list(trace=trace)
 }
 
 
-mix2poisson = function(lphi="logit", llambda="loge",
-                       ephi=list(), el1=list(), el2=list(),
-                       iphi=0.5, il1=NULL, il2=NULL,
-                       qmu=c(0.2, 0.8), nsimEIM=100, zero=1)
+mix2poisson = function(lphi = "logit", llambda = "loge",
+                       ephi = list(), el1 = list(), el2 = list(),
+                       iphi=0.5, il1 = NULL, il2 = NULL,
+                       qmu=c(0.2, 0.8), nsimEIM = 100, zero = 1)
 {
     if (mode(lphi) != "character" && mode(lphi) != "name")
         lphi = as.character(substitute(lphi))
     if (mode(llambda) != "character" && mode(llambda) != "name")
         llambda = as.character(substitute(llambda))
-    if (!is.Numeric(qmu, allow=2, positive=TRUE) || any(qmu >= 1))
+    if (!is.Numeric(qmu, allow=2, positive = TRUE) || any(qmu >= 1))
         stop("bad input for argument 'qmu'")
-    if (length(iphi) && (!is.Numeric(iphi, allow=1, positive=TRUE) || iphi>= 1))
+    if (length(iphi) && (!is.Numeric(iphi, allow = 1, positive = TRUE) || iphi>= 1))
         stop("bad input for argument 'iphi'")
     if (length(il1) && !is.Numeric(il1))
         stop("bad input for argument 'il1'")
@@ -235,57 +235,57 @@ mix2poisson = function(lphi="logit", llambda="loge",
     if (!is.list(ephi)) ephi = list()
     if (!is.list(el1)) el1 = list()
     if (!is.list(el2)) el2 = list()
-    if (!is.Numeric(nsimEIM, allow=1, integ=TRUE) || nsimEIM <= 10)
+    if (!is.Numeric(nsimEIM, allow = 1, integ = TRUE) || nsimEIM <= 10)
         stop("'nsimEIM' should be an integer greater than 10")
 
     new("vglmff",
-    blurb=c("Mixture of two Poisson distributions\n\n",
+    blurb = c("Mixture of two Poisson distributions\n\n",
            "Links:    ",
-           namesof("phi",lphi, earg= ephi), ", ", 
-           namesof("lambda1", llambda, earg= el1, tag=FALSE), ", ",
-           namesof("lambda2", llambda, earg= el2, tag=FALSE), "\n",
+           namesof("phi",lphi, earg = ephi), ", ", 
+           namesof("lambda1", llambda, earg = el1, tag = FALSE), ", ",
+           namesof("lambda2", llambda, earg = el2, tag = FALSE), "\n",
            "Mean:     phi*lambda1 + (1-phi)*lambda2"),
-    constraints=eval(substitute(expression({
+    constraints = eval(substitute(expression({
         constraints = cm.zero.vgam(constraints, x, .zero, M)
     }), list(.zero=zero ))),
-    initialize=eval(substitute(expression({
+    initialize = eval(substitute(expression({
         if (ncol(y <- cbind(y)) != 1)
             stop("the response must be a vector or one-column matrix")
-        predictors.names = c(namesof("phi", .lphi, earg= .ephi, tag=FALSE),
-                           namesof("lambda1", .llambda, earg= .el1, tag=FALSE),
-                           namesof("lambda2", .llambda, earg= .el2, tag=FALSE))
+        predictors.names = c(namesof("phi", .lphi, earg = .ephi, tag = FALSE),
+                           namesof("lambda1", .llambda, earg = .el1, tag = FALSE),
+                           namesof("lambda2", .llambda, earg = .el2, tag = FALSE))
         if (!length(etastart)) {
             qy = quantile(y, prob= .qmu)
             init.phi =     rep(if(length(.iphi)) .iphi else 0.5, length=n)
             init.lambda1 = rep(if(length(.il1)) .il1 else qy[1], length=n)
             init.lambda2 = rep(if(length(.il2)) .il2 else qy[2], length=n)
             if (!length(etastart))  
-            etastart = cbind(theta2eta(init.phi, .lphi, earg= .ephi),
-                             theta2eta(init.lambda1, .llambda, earg= .el1),
-                             theta2eta(init.lambda2, .llambda, earg= .el2))
+            etastart = cbind(theta2eta(init.phi, .lphi, earg = .ephi),
+                             theta2eta(init.lambda1, .llambda, earg = .el1),
+                             theta2eta(init.lambda2, .llambda, earg = .el2))
         }
     }), list(.lphi=lphi, .llambda=llambda, .iphi=iphi, .il1=il1, .il2=il2,
              .ephi=ephi, .el1=el1, .el2=el2,
              .qmu=qmu))),
-    inverse=eval(substitute(function(eta, extra=NULL){
-        phi = eta2theta(eta[,1], link= .lphi, earg= .ephi)
-        lambda1 = eta2theta(eta[,2], link= .llambda, earg= .el1)
-        lambda2 = eta2theta(eta[,3], link= .llambda, earg= .el2)
+    linkinv = eval(substitute(function(eta, extra = NULL){
+        phi = eta2theta(eta[,1], link = .lphi, earg = .ephi)
+        lambda1 = eta2theta(eta[,2], link = .llambda, earg = .el1)
+        lambda2 = eta2theta(eta[,3], link = .llambda, earg = .el2)
         phi*lambda1 + (1-phi)*lambda2
     }, list(.lphi=lphi, .llambda=llambda,
             .ephi=ephi, .el1=el1, .el2=el2 ))),
-    last=eval(substitute(expression({
+    last = eval(substitute(expression({
         misc$link = c("phi"= .lphi, "lambda1"= .llambda, "lambda2"= .llambda)
         misc$earg = list("phi"= .ephi, "lambda1"= .el1, "lambda2"= .el2)
         misc$expected = TRUE
         misc$nsimEIM = .nsimEIM
     }), list(.lphi=lphi, .llambda=llambda,
              .ephi=ephi, .el1=el1, .el2=el2, .nsimEIM=nsimEIM ))),
-    loglikelihood=eval(substitute(
-            function(mu,y,w,residuals=FALSE,eta,extra=NULL) {
-        phi = eta2theta(eta[,1], link= .lphi, earg= .ephi)
-        lambda1 = eta2theta(eta[,2], link= .llambda, earg= .el1)
-        lambda2 = eta2theta(eta[,3], link= .llambda, earg= .el2)
+    loglikelihood = eval(substitute(
+            function(mu,y,w,residuals = FALSE,eta,extra = NULL) {
+        phi = eta2theta(eta[,1], link = .lphi, earg = .ephi)
+        lambda1 = eta2theta(eta[,2], link = .llambda, earg = .el1)
+        lambda2 = eta2theta(eta[,3], link = .llambda, earg = .el2)
         f1 = dpois(y, lam=lambda1)
         f2 = dpois(y, lam=lambda2)
         if (residuals) stop("loglikelihood residuals not ",
@@ -293,14 +293,14 @@ mix2poisson = function(lphi="logit", llambda="loge",
         sum(w * log(phi*f1 + (1-phi)*f2))
     }, list(.lphi=lphi, .llambda=llambda,
              .ephi=ephi, .el1=el1, .el2=el2 ))),
-    vfamily=c("mix2poisson"),
-    deriv=eval(substitute(expression({
-        phi = eta2theta(eta[,1], link= .lphi, earg= .ephi)
-        lambda1 = eta2theta(eta[,2], link= .llambda, earg= .el1)
-        lambda2 = eta2theta(eta[,3], link= .llambda, earg= .el2)
-        dphi.deta = dtheta.deta(phi, link= .lphi, earg= .ephi)
-        dlambda1.deta = dtheta.deta(lambda1, link= .llambda, earg= .el1)
-        dlambda2.deta = dtheta.deta(lambda2, link= .llambda, earg= .el2)
+    vfamily = c("mix2poisson"),
+    deriv = eval(substitute(expression({
+        phi = eta2theta(eta[,1], link = .lphi, earg = .ephi)
+        lambda1 = eta2theta(eta[,2], link = .llambda, earg = .el1)
+        lambda2 = eta2theta(eta[,3], link = .llambda, earg = .el2)
+        dphi.deta = dtheta.deta(phi, link = .lphi, earg = .ephi)
+        dlambda1.deta = dtheta.deta(lambda1, link = .llambda, earg = .el1)
+        dlambda2.deta = dtheta.deta(lambda2, link = .llambda, earg = .el2)
         f1 = dpois(x=y, lam=lambda1)
         f2 = dpois(x=y, lam=lambda2)
         pdf = phi*f1 + (1-phi)*f2
@@ -351,10 +351,10 @@ mix2poisson = function(lphi="logit", llambda="loge",
             run.mean = ((ii-1) * run.mean + temp3) / ii
         }
         wz = if (intercept.only)
-            matrix(colMeans(run.mean), n, dimm(M), byrow=TRUE) else run.mean
+            matrix(colMeans(run.mean), n, dimm(M), byrow = TRUE) else run.mean
 
         dtheta.detas = cbind(dphi.deta, dlambda1.deta, dlambda2.deta)
-        index0 = iam(NA, NA, M=M, both=TRUE, diag=TRUE)
+        index0 = iam(NA, NA, M = M, both = TRUE, diag = TRUE)
         wz = wz * dtheta.detas[,index0$row] * dtheta.detas[,index0$col]
         c(w) * wz
     }), list(.lphi=lphi, .llambda=llambda,
@@ -365,97 +365,101 @@ mix2poisson = function(lphi="logit", llambda="loge",
 
 
 
-mix2exp.control <- function(trace=TRUE, ...)
-{
-    list(trace=trace)
+mix2exp.control <- function(trace = TRUE, ...) {
+    list(trace = trace)
 }
 
-mix2exp = function(lphi="logit", llambda="loge",
-                   ephi=list(), el1=list(), el2=list(),
-                   iphi=0.5, il1=NULL, il2=NULL,
-                   qmu=c(0.8, 0.2), nsimEIM=100, zero=1)
+mix2exp = function(lphi = "logit", llambda = "loge",
+                   ephi = list(), el1 = list(), el2 = list(),
+                   iphi=0.5, il1 = NULL, il2 = NULL,
+                   qmu=c(0.8, 0.2), nsimEIM = 100, zero = 1)
 {
     if (mode(lphi) != "character" && mode(lphi) != "name")
         lphi = as.character(substitute(lphi))
     if (mode(llambda) != "character" && mode(llambda) != "name")
         llambda = as.character(substitute(llambda))
-    if (!is.Numeric(qmu, allow=2, positive=TRUE) || any(qmu >= 1))
+    if (!is.Numeric(qmu, allow=2, positive = TRUE) || any(qmu >= 1))
         stop("bad input for argument 'qmu'")
-    if (length(iphi) && (!is.Numeric(iphi, allow=1, positive=TRUE) || iphi>= 1))
+    if (length(iphi) && (!is.Numeric(iphi, allow = 1, positive = TRUE) ||
+        iphi >= 1))
         stop("bad input for argument 'iphi'")
     if (length(il1) && !is.Numeric(il1))
         stop("bad input for argument 'il1'")
     if (length(il2) && !is.Numeric(il2))
         stop("bad input for argument 'il2'")
+
     if (!is.list(ephi)) ephi = list()
     if (!is.list(el1)) el1 = list()
     if (!is.list(el2)) el2 = list()
-    if (!is.Numeric(nsimEIM, allow=1, integ=TRUE) || nsimEIM <= 10)
+
+    if (!is.Numeric(nsimEIM, allow = 1, integ = TRUE) || nsimEIM <= 10)
         stop("'nsimEIM' should be an integer greater than 10")
 
     new("vglmff",
-    blurb=c("Mixture of two univariate exponentials\n\n",
+    blurb = c("Mixture of two univariate exponentials\n\n",
            "Links:    ",
-           namesof("phi", lphi, earg= ephi), ", ", 
-           namesof("lambda1", llambda, earg= el1, tag=FALSE), ", ",
-           namesof("lambda2", llambda, earg= el2, tag=FALSE), "\n",
+           namesof("phi", lphi, earg = ephi), ", ", 
+           namesof("lambda1", llambda, earg = el1, tag = FALSE), ", ",
+           namesof("lambda2", llambda, earg = el2, tag = FALSE), "\n",
            "Mean:     phi/lambda1 + (1-phi)/lambda2\n"),
-    constraints=eval(substitute(expression({
+    constraints = eval(substitute(expression({
         constraints = cm.zero.vgam(constraints, x, .zero, M)
     }), list(.zero=zero ))),
-    initialize=eval(substitute(expression({
+    initialize = eval(substitute(expression({
         if (ncol(y <- cbind(y)) != 1)
             stop("the response must be a vector or one-column matrix")
-        predictors.names = c(namesof("phi", .lphi, earg= .ephi, tag=FALSE),
-                             namesof("lambda1", .llambda, earg= .el1,tag=FALSE),
-                             namesof("lambda2", .llambda, earg= .el2,tag=FALSE))
+        predictors.names = c(namesof("phi", .lphi, earg = .ephi, tag = FALSE),
+                             namesof("lambda1", .llambda, earg = .el1,tag = FALSE),
+                             namesof("lambda2", .llambda, earg = .el2,tag = FALSE))
         if (!length(etastart)) {
             qy = quantile(y, prob= .qmu)
             init.phi =     rep(if(length(.iphi)) .iphi else 0.5, length=n)
             init.lambda1 = rep(if(length(.il1)) .il1 else 1/qy[1], length=n)
             init.lambda2 = rep(if(length(.il2)) .il2 else 1/qy[2], length=n)
             if (!length(etastart))  
-            etastart = cbind(theta2eta(init.phi, .lphi, earg= .ephi),
-                             theta2eta(init.lambda1, .llambda, earg= .el1),
-                             theta2eta(init.lambda2, .llambda, earg= .el2))
+            etastart = cbind(theta2eta(init.phi, .lphi, earg = .ephi),
+                             theta2eta(init.lambda1, .llambda, earg = .el1),
+                             theta2eta(init.lambda2, .llambda, earg = .el2))
         }
     }), list(.lphi=lphi, .llambda=llambda, .iphi=iphi, .il1=il1, .il2=il2,
              .ephi=ephi, .el1=el1, .el2=el2,
              .qmu=qmu))),
-    inverse=eval(substitute(function(eta, extra=NULL){
-        phi = eta2theta(eta[,1], link= .lphi, earg= .ephi)
-        lambda1 = eta2theta(eta[,2], link= .llambda, earg= .el1)
-        lambda2 = eta2theta(eta[,3], link= .llambda, earg= .el2)
+    linkinv = eval(substitute(function(eta, extra = NULL){
+        phi = eta2theta(eta[,1], link = .lphi, earg = .ephi)
+        lambda1 = eta2theta(eta[,2], link = .llambda, earg = .el1)
+        lambda2 = eta2theta(eta[,3], link = .llambda, earg = .el2)
         phi/lambda1 + (1-phi)/lambda2
     }, list(.lphi=lphi, .llambda=llambda,
             .ephi=ephi, .el1=el1, .el2=el2 ))),
-    last=eval(substitute(expression({
-        misc$link = c("phi"= .lphi, "lambda1"= .llambda, "lambda2"= .llambda)
-        misc$earg = list("phi"= .ephi, "lambda1"= .el1, "lambda2"= .el2)
+    last = eval(substitute(expression({
+        misc$link =
+             c("phi" = .lphi, "lambda1" = .llambda, "lambda2" = .llambda)
+        misc$earg =
+          list("phi" = .ephi, "lambda1" = .el1,     "lambda2" = .el2)
         misc$expected = TRUE
         misc$nsimEIM = .nsimEIM
     }), list(.lphi=lphi, .llambda=llambda, .nsimEIM=nsimEIM,
              .ephi=ephi, .el1=el1, .el2=el2 ))),
-    loglikelihood=eval(substitute(
-            function(mu,y,w,residuals=FALSE,eta,extra=NULL) {
-        phi = eta2theta(eta[,1], link= .lphi, earg= .ephi)
-        lambda1 = eta2theta(eta[,2], link= .llambda, earg= .el1)
-        lambda2 = eta2theta(eta[,3], link= .llambda, earg= .el2)
+    loglikelihood = eval(substitute(
+            function(mu,y,w,residuals = FALSE,eta,extra = NULL) {
+        phi = eta2theta(eta[,1], link = .lphi, earg = .ephi)
+        lambda1 = eta2theta(eta[,2], link = .llambda, earg = .el1)
+        lambda2 = eta2theta(eta[,3], link = .llambda, earg = .el2)
         f1 = dexp(y, rate=lambda1)
         f2 = dexp(y, rate=lambda2)
         if (residuals) stop("loglikelihood residuals not ",
                             "implemented yet") else
         sum(w * log(phi*f1 + (1-phi)*f2))
-    }, list(.lphi=lphi, .llambda=llambda,
-             .ephi=ephi, .el1=el1, .el2=el2 ))),
-    vfamily=c("mix2exp"),
-    deriv=eval(substitute(expression({
-        phi = eta2theta(eta[,1], link= .lphi, earg= .ephi)
-        lambda1 = eta2theta(eta[,2], link= .llambda, earg= .el1)
-        lambda2 = eta2theta(eta[,3], link= .llambda, earg= .el2)
-        dphi.deta = dtheta.deta(phi, link= .lphi, earg= .ephi)
-        dlambda1.deta = dtheta.deta(lambda1, link= .llambda, earg= .el1)
-        dlambda2.deta = dtheta.deta(lambda2, link= .llambda, earg= .el2)
+    }, list(.lphi = lphi, .llambda = llambda,
+            .ephi = ephi, .el1 = el1, .el2 = el2 ))),
+    vfamily = c("mix2exp"),
+    deriv = eval(substitute(expression({
+        phi     = eta2theta(eta[,1], link = .lphi,    earg = .ephi)
+        lambda1 = eta2theta(eta[,2], link = .llambda, earg = .el1)
+        lambda2 = eta2theta(eta[,3], link = .llambda, earg = .el2)
+        dphi.deta = dtheta.deta(phi, link = .lphi,    earg = .ephi)
+        dlambda1.deta = dtheta.deta(lambda1, link = .llambda, earg = .el1)
+        dlambda2.deta = dtheta.deta(lambda2, link = .llambda, earg = .el2)
         f1 = dexp(x=y, rate=lambda1)
         f2 = dexp(x=y, rate=lambda2)
         pdf = phi*f1 + (1-phi)*f2
@@ -503,10 +507,10 @@ mix2exp = function(lphi="logit", llambda="loge",
             run.mean = ((ii-1) * run.mean + temp3) / ii
         }
         wz = if (intercept.only)
-            matrix(colMeans(run.mean), n, dimm(M), byrow=TRUE) else run.mean
+            matrix(colMeans(run.mean), n, dimm(M), byrow = TRUE) else run.mean
 
         dtheta.detas = cbind(dphi.deta, dlambda1.deta, dlambda2.deta)
-        index0 = iam(NA, NA, M=M, both=TRUE, diag=TRUE)
+        index0 = iam(NA, NA, M = M, both = TRUE, diag = TRUE)
         wz = wz * dtheta.detas[,index0$row] * dtheta.detas[,index0$col]
         c(w) * wz
     }), list(.lphi=lphi, .llambda=llambda,

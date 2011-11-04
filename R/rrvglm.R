@@ -10,16 +10,16 @@
 
 rrvglm <- function(formula,
                  family, data=list(), 
-                 weights=NULL, subset=NULL, na.action=na.fail,
-                 etastart=NULL, mustart=NULL, coefstart=NULL,
+                 weights = NULL, subset = NULL, na.action=na.fail,
+                 etastart = NULL, mustart = NULL, coefstart = NULL,
                  control=rrvglm.control(...), 
-                 offset=NULL, 
+                 offset = NULL, 
                  method="rrvglm.fit",
-                 model=FALSE, x.arg=TRUE, y.arg=TRUE,
-                 contrasts=NULL, 
-                 constraints=NULL,
-                 extra=NULL, 
-                 qr.arg=FALSE, smart=TRUE, ...)
+                 model = FALSE, x.arg = TRUE, y.arg = TRUE,
+                 contrasts = NULL, 
+                 constraints = NULL,
+                 extra = NULL, 
+                 qr.arg = FALSE, smart = TRUE, ...)
 {
     dataname <- as.character(substitute(data))  # "list" if no data=
     function.name <- "rrvglm"
@@ -33,7 +33,7 @@ rrvglm <- function(formula,
     if (missing(data)) 
         data <- environment(formula)
 
-    mf <- match.call(expand=FALSE)
+    mf <- match.call(expand = FALSE)
     mf$family <- mf$method <- mf$model <- mf$x.arg <- mf$y.arg <- mf$control <-
         mf$contrasts <- mf$constraints <- mf$extra <- mf$qr.arg <- NULL
     mf$coefstart <- mf$etastart <- mf$... <- NULL
@@ -150,7 +150,7 @@ rrvglm <- function(formula,
       "smart.prediction" = as.list(fit$smart.prediction),
       "terms"        = list(terms=mt))
 
-    if (!smart) answer@smart.prediction <- list(smart.arg=FALSE)
+    if (!smart) answer@smart.prediction <- list(smart.arg = FALSE)
 
     if (qr.arg) {
         class(fit$qr) = "list"

@@ -28,8 +28,10 @@
   The key variable is \code{numbers}, which is
   sector-session-beat specific.
 
+
   Note that some fish may have been caught more than once, hence
   these data do not represent individual fish.
+
 
 }
 %\source{
@@ -40,6 +42,7 @@
   VGLMs and VGAMs: an overview for applications in fisheries research.
   \emph{Fisheries Research},
   \bold{101}, 116--126.
+
 
 }
 

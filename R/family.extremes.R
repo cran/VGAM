@@ -273,7 +273,7 @@ qgev <- function(p, location = 0, scale = 1, shape = 0) {
               .percentiles = percentiles,
               .tolshape0 = tolshape0,
               .imethod = imethod, .giveWarning= giveWarning ))),
-    inverse = eval(substitute(function(eta, extra = NULL) {
+    linkinv = eval(substitute(function(eta, extra = NULL) {
         loc = eta2theta(eta[, 1], .llocation, earg = .elocation)
         sigma = eta2theta(eta[, 2], .lscale, earg = .escale)
         xi = eta2theta(eta[,3], .lshape, earg = .eshape)
@@ -609,7 +609,7 @@ dgammadx <- function(x, deriv.arg=1) {
               .imethod = imethod,
               .giveWarning= giveWarning,
               .iscale = iscale, .ishape = ishape, .gshape = gshape ))),
-    inverse = eval(substitute(function(eta, extra = NULL) {
+    linkinv = eval(substitute(function(eta, extra = NULL) {
         loc <- eta2theta(eta[, 1], .llocation, earg = .elocation)
         sigma <- eta2theta(eta[, 2], .lscale, earg = .escale)
         xi <- eta2theta(eta[,3], .lshape, earg = .eshape)
@@ -848,7 +848,7 @@ pgumbel <- function(q, location = 0, scale = 1) {
     }), list( .llocation = llocation, .lscale = lscale, .iscale = iscale,
               .elocation = elocation, .escale = escale,
               .R=R, .mpv=mpv, .percentiles = percentiles ))),
-    inverse = eval(substitute(function(eta, extra = NULL) {
+    linkinv = eval(substitute(function(eta, extra = NULL) {
         loc = eta2theta(eta[, 1], .llocation, earg = .elocation)
         sigma = eta2theta(eta[, 2], .lscale, earg = .escale )  # sigma
         Percentiles = extra$percentiles
@@ -1167,7 +1167,7 @@ qgpd <- function(p, location = 0, scale = 1, shape = 0) {
               .iscale = iscale, .ishape = ishape,
               .escale = escale, .eshape = eshape,
               .imethod = imethod ))),
-    inverse = eval(substitute(function(eta, extra = NULL) {
+    linkinv = eval(substitute(function(eta, extra = NULL) {
         sigma = eta2theta(eta[, 1], .lscale, earg = .escale )
         Shape = eta2theta(eta[, 2], .lshape, earg = .eshape )
         cent = .percentiles
@@ -1435,7 +1435,7 @@ setMethod("guplot", "vlm",
     }), list( .llocation = llocation, .lscale = lscale, .iscale = iscale, 
               .elocation=elocation, .escale = escale,
               .R=R, .mpv=mpv, .percentiles = percentiles ))),
-    inverse = eval(substitute( function(eta, extra = NULL) {
+    linkinv = eval(substitute( function(eta, extra = NULL) {
         loc = eta2theta(eta[, 1], .llocation, earg = .elocation)
         sigma = eta2theta(eta[, 2], .lscale, earg = .escale )
         EulerM = -digamma(1)
@@ -1570,7 +1570,7 @@ setMethod("guplot", "vlm",
     }), list( .lscale = lscale, .iscale = iscale,
               .llocation = llocation,
               .elocation = elocation, .escale = escale ))), 
-    inverse = eval(substitute( function(eta, extra = NULL) {
+    linkinv = eval(substitute( function(eta, extra = NULL) {
         loc  = eta2theta(eta[, 1], .llocation)
         sc   = eta2theta(eta[, 2], .lscale)
         EulerM = -digamma(1)
@@ -1838,7 +1838,7 @@ frechet2.control <- function(save.weight = TRUE, ...)
             .escale = escale, .eshape = eshape,
             .iscale = iscale, .ishape = ishape,
             .location = location ))),
-  inverse = eval(substitute(function(eta, extra = NULL) {
+  linkinv = eval(substitute(function(eta, extra = NULL) {
     loc = extra$location
     Scale = eta2theta(eta[, 1], .lscale, earg = .escale )
     shape = eta2theta(eta[, 2], .lshape, earg = .eshape )
@@ -2067,7 +2067,7 @@ if (FALSE)
             .ediffr = ediffr, .escale = escale, .eshape = eshape, 
             .iscale = iscale, .ishape = ishape,
             .ilocation = ilocation, .anchor = anchor ))),
-  inverse = eval(substitute(function(eta, extra = NULL) {
+  linkinv = eval(substitute(function(eta, extra = NULL) {
     loctn = extra$LHSanchor -
             eta2theta(eta[, 1], .ldiffr, earg = .ediffr)
     Scale = eta2theta(eta[, 2], .lscale, earg = .escale )
@@ -2194,7 +2194,7 @@ recnormal1.control <- function(save.weight = TRUE, ...)
 }
 
  recnormal1 <- function(lmean = "identity", lsd = "loge",
-                       imean = NULL, isd = NULL, imethod = 1, zero = NULL)
+                        imean = NULL, isd = NULL, imethod = 1, zero = NULL)
 {
 
     if (mode(lmean) != "character" && mode(lmean) != "name")
@@ -2217,9 +2217,11 @@ recnormal1.control <- function(save.weight = TRUE, ...)
     }), list( .zero = zero ))),
     initialize = eval(substitute(expression({
         predictors.names = c(namesof("mean", .lmean, tag = FALSE),
-                             namesof("sd",   .lsd, tag = FALSE))
+                             namesof("sd",   .lsd,   tag = FALSE))
+
         if (ncol(y <- cbind(y)) != 1)
             stop("response must be a vector or a one-column matrix")
+
         if (any(diff(y) <= 0))
             stop("response must have increasingly larger and larger values")
         if (any(w != 1))
@@ -2228,16 +2230,16 @@ recnormal1.control <- function(save.weight = TRUE, ...)
             mean.init = if (length( .imean)) rep( .imean, len = n) else {
                 if (.lmean == "loge") pmax(1/1024, min(y)) else min(y)}
             sd.init = if (length( .isd)) rep( .isd, len = n) else {
-                if (.imethod == 1)  1*(sd(y)) else
-                if (.imethod == 2)  5*(sd(y)) else
-                                      .5*(sd(y))
+                if (.imethod == 1)  1*(sd(c(y))) else
+                if (.imethod == 2)  5*(sd(c(y))) else
+                                      .5*(sd(c(y)))
                 }
             etastart = cbind(theta2eta(rep(mean.init, len = n), .lmean),
                              theta2eta(rep(sd.init,   len = n), .lsd))
         }
     }), list( .lmean = lmean, .lsd = lsd, .imean = imean, .isd = isd,
              .imethod = imethod ))),
-    inverse = eval(substitute(function(eta, extra = NULL) {
+    linkinv = eval(substitute(function(eta, extra = NULL) {
         eta2theta(eta[, 1], .lmean)
     }, list( .lmean = lmean ))),
     last = eval(substitute(expression({
@@ -2332,7 +2334,7 @@ recexp1.control <- function(save.weight = TRUE, ...)
             etastart = cbind(theta2eta(rep(rate.init, len = n), .lrate))
         }
     }), list( .lrate = lrate, .irate = irate, .imethod = imethod ))),
-    inverse = eval(substitute(function(eta, extra = NULL) {
+    linkinv = eval(substitute(function(eta, extra = NULL) {
         eta2theta(eta, .lrate)
     }, list( .lrate = lrate ))),
     last = eval(substitute(expression({
@@ -2425,7 +2427,7 @@ recexp1.control <- function(save.weight = TRUE, ...)
     }), list( .link = link, .earg = earg, .ostatistic = ostatistic,
               .dimension = dimension, .imethod = imethod,
               .idensity = idensity ))),
-    inverse = eval(substitute(function(eta, extra = NULL) {
+    linkinv = eval(substitute(function(eta, extra = NULL) {
         density = eta2theta(eta, .link, earg = .earg)
         if ( .dimension == 2) {
             myratio = exp(lgamma( .ostatistic +0.5) - lgamma( .ostatistic ))

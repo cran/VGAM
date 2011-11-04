@@ -59,16 +59,16 @@ cao.fit <- function(x, y, w=rep(1, length(x[, 1])),
     if (length(etastart)) {
         eta <- etastart
         mu <- if (length(mustart)) mustart else
-              if (length(body(slot(family, "inverse"))))
-                slot(family, "inverse")(eta, extra) else
+              if (length(body(slot(family, "linkinv"))))
+                slot(family, "linkinv")(eta, extra) else
                 warning("argument 'etastart' assigned a value ",
-                        "but there is no 'inverse' slot to use it")
+                        "but there is no 'linkinv' slot to use it")
     }
 
     if (length(mustart)) {
         mu <- mustart
-        if (length(body(slot(family, "link")))) {
-          eta <- slot(family, "link")(mu, extra)
+        if (length(body(slot(family, "linkfun")))) {
+          eta <- slot(family, "linkfun")(mu, extra)
         } else {
           warning("argument 'mustart' assigned a value ",
                   "but there is no 'link' slot to use it")
@@ -1139,7 +1139,7 @@ Coef.cao = function(object,
     } # end of sppno 
     myetamat = rbind(maximum)
     if (MSratio == 2) myetamat = kronecker(myetamat, matrix(1:0, 1, 2))
-    maximum = object@family@inverse(eta=myetamat, extra=object@extra)
+    maximum = object@family@linkinv(eta=myetamat, extra=object@extra)
     maximum = c(maximum)  # Convert from matrix to vector 
     names(maximum) = ynames
 
@@ -1479,7 +1479,7 @@ predict.cao <- function (object, newdata=NULL,
                                 object@misc$predictors.names else NULL)
         return(etamat)
     } else if (type == "response") {
-        fv <- object@family@inverse(etamat, extra=object@extra)
+        fv <- object@family@linkinv(etamat, extra=object@extra)
         dimnames(fv) = list(dimnames(fv)[[1]],
                             dimnames(object@fitted.values)[[2]])
         return(fv)
@@ -1711,7 +1711,7 @@ persp.cao = function(x,
     if (MSratio == 2) {
         LP = kronecker(LP, matrix(1:0, 1, 2))  # n x M
     }
-    fitvals = object@family@inverse(LP, extra=object@extra)   # n by NOS
+    fitvals = object@family@linkinv(LP, extra=object@extra)   # n by NOS
     dimnames(fitvals) = list(NULL, dimnames(fvmat)[[2]])
 
     if (Rank == 1) {

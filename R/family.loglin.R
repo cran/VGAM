@@ -36,7 +36,7 @@ loglinb2 <- function(exchangeable = FALSE, zero = NULL)
                 stop("some combinations of the response not realized") 
         }
     }),
-    inverse = function(eta, extra = NULL) {
+    linkinv = function(eta, extra = NULL) {
         u1 <-  eta[,1]
         u2 <-  eta[,2]
         u12 <- eta[,3]
@@ -48,9 +48,9 @@ loglinb2 <- function(exchangeable = FALSE, zero = NULL)
     },
     last = expression({
         misc$link = c("u1" = "identity", "u2" = "identity", "u12" = "identity")
-        misc$earg = list(u1=list(), u2=list(), u12=list())
+        misc$earg = list(u1 = list(), u2 = list(), u12 = list())
     }),
-    link = function(mu, extra = NULL)  {
+    linkfun = function(mu, extra = NULL)  {
         u0 <-  log(mu[,1]) 
         u2 <-  log(mu[,2]) - u0
         u1 <-  log(mu[,3]) - u0
@@ -67,7 +67,7 @@ loglinb2 <- function(exchangeable = FALSE, zero = NULL)
           stop("loglikelihood residuals not implemented yet") else
         sum(w*(u0 + u1*y[,1] + u2*y[,2] + u12*y[,1]*y[,2]))
     },
-    vfamily=c("loglinb2"),
+    vfamily = c("loglinb2"),
     deriv = expression({
         u1 <-  eta[,1]
         u2 <-  eta[,2]
@@ -156,7 +156,7 @@ loglinb3 <- function(exchangeable = FALSE, zero = NULL)
                 stop("some combinations of the response not realized") 
         }
     }),
-    inverse= function(eta, extra = NULL) {
+    linkinv= function(eta, extra = NULL) {
         eval(extra$my.expression)
         cbind("000" = 1,
               "001" = exp(u3),
@@ -168,12 +168,12 @@ loglinb3 <- function(exchangeable = FALSE, zero = NULL)
               "111" = exp(u1+u2+u3+u12+u13+u23)) / denom
     },
     last = expression({
-        misc$link = rep("identity", length=M)
+        misc$link = rep("identity", length = M)
         names(misc$link) = predictors.names
-        misc$earg = list(u1=list(), u2=list(), u3=list(),
-                         u12=list(), u13=list(), u23=list())
+        misc$earg = list(u1  = list(), u2  = list(), u3  = list(),
+                         u12 = list(), u13 = list(), u23 = list())
     }),
-    link = function(mu, extra = NULL)  {
+    linkfun = function(mu, extra = NULL)  {
         u0  <- log(mu[,1])
         u3  <- log(mu[,2]) - u0
         u2  <- log(mu[,3]) - u0
@@ -191,7 +191,7 @@ loglinb3 <- function(exchangeable = FALSE, zero = NULL)
         sum(w*(u0 + u1*y[,1] + u2*y[,2] + u3*y[,3] +u12*y[,1]*y[,2] +
                u13*y[,1]*y[,3] + u23*y[,2]*y[,3]))
     },
-    vfamily=c("loglinb3"),
+    vfamily = c("loglinb3"),
     deriv = expression({
         eval(extra$my.expression)
         eval(extra$deriv.expression)

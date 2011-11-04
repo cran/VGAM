@@ -6,12 +6,12 @@
 \alias{ryules}
 \title{ Yule-Simon Distribution }
 \description{
-  Density, distribution function, quantile function and random generation
-  for the Yule-Simon distribution.
+  Density, distribution function, quantile function and random
+  generation for the Yule-Simon distribution.
 
 }
 \usage{
-dyules(x, rho, log=FALSE)
+dyules(x, rho, log = FALSE)
 pyules(q, rho)
 %qyules(p, rho)
 ryules(n, rho)
@@ -19,8 +19,10 @@ ryules(n, rho)
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{x, q}{
-   Vector of quantiles. For the density, it should be a vector with
-   positive integer values in order for the probabilities to be positive.
+   Vector of quantiles. For the density, it should be a vector
+   with positive integer values in order for the probabilities
+   to be positive.
+
 
   }
 % \item{p}{vector of probabilities.}
@@ -28,13 +30,15 @@ ryules(n, rho)
   \item{rho}{ 
    See \code{\link{yulesimon}}.
 
+
   }
   \item{log}{logical; if TRUE, the logarithm is returned. }
 }
 \details{
-   See \code{\link{yulesimon}}, the \pkg{VGAM} family function
+  See \code{\link{yulesimon}}, the \pkg{VGAM} family function
   for estimating the parameter,
   for the formula of the probability density function and other details.
+
 
 }
 \value{
@@ -62,9 +66,7 @@ ryules(20, 2.1)
 round(1000 * dyules(1:8, 2))
 table(ryules(1000, 2))
 
-\dontrun{
-x = 0:6
-plot(x, dyules(x, rho=2.2), type="h", las=1, col="blue")
-}
+\dontrun{ x = 0:6
+plot(x, dyules(x, rho = 2.2), type = "h", las = 1, col = "blue") }
 }
 \keyword{distribution}

@@ -172,7 +172,7 @@ Overdispersion in allelic counts and \eqn{\theta}-correction in forensic genetic
 \seealso{
   \code{\link{dirmul.old}},
   \code{\link{betabinomial}},
-  \code{\link{betabin.ab}},
+  \code{\link{betabinomial.ab}},
   \code{\link{dirichlet}},
   \code{\link{multinomial}}.
 

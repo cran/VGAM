@@ -11,8 +11,8 @@
 
 }
 \usage{
-dbetageom(x, shape1, shape2, log=FALSE)
-pbetageom(q, shape1, shape2, log.p=FALSE)
+dbetageom(x, shape1, shape2, log = FALSE)
+pbetageom(q, shape1, shape2, log.p = FALSE)
 rbetageom(n, shape1, shape2)
 }
 \arguments{
@@ -55,18 +55,20 @@ rbetageom(n, shape1, shape2)
 }
 \note{
   \code{pbetageom} can be particularly slow.
+
 }
 \seealso{
   \code{\link{geometric}},
   \code{\link{betaff}},
   \code{\link[stats:Beta]{Beta}}.
+
 }
 \examples{
 \dontrun{
 shape1 = 1; shape2 = 2; y = 0:30
-proby = dbetageom(y, shape1, shape2, log=FALSE)
-plot(y, proby, type="h", col="blue", ylab="P[Y=y]", main=paste(
-     "Y ~ Beta-geometric(shape1=",shape1,", shape2=",shape2,")", sep=""))
+proby = dbetageom(y, shape1, shape2, log = FALSE)
+plot(y, proby, type = "h", col = "blue", ylab = "P[Y=y]", main = paste(
+     "Y ~ Beta-geometric(shape1=", shape1,", shape2=", shape2,")", sep=""))
 sum(proby)
 }
 }

@@ -251,7 +251,7 @@ canonical Gaussian ordination.
   in the future by \code{llty}, \code{lcol} and \code{llwd}, respectively.
 
   For rank-1 models, a similar function to this one is
-  \code{\link{persp.qrrvglm}}.  It plots the fitted values on a more
+  \code{\link{perspqrrvglm}}.  It plots the fitted values on a more
   fine grid rather than at the actual site scores here.  The result is a
   collection of smooth bell-shaped curves. However, it has the weakness
   that the plot is more divorced from the data; the user thinks it is
@@ -278,7 +278,7 @@ canonical Gaussian ordination.
 
 \seealso{
 \code{\link{lvplot}},
-\code{\link{persp.qrrvglm}},
+\code{\link{perspqrrvglm}},
 \code{\link{Coef.qrrvglm}},
 \code{\link[graphics]{par}},
 \code{\link{cqo}}.

@@ -109,7 +109,7 @@ micmen <- function(rpar = 0.001, divisor = 10,
   if (!is.logical(oim) || length(oim) != 1)
     stop("argument 'oim' must be single logical")
 
-    stopifnot(nsimEIM > 10, length(nsimEIM)==1, nsimEIM==round(nsimEIM))
+    stopifnot(nsimEIM > 10, length(nsimEIM) == 1, nsimEIM==round(nsimEIM))
 
   if (!is.Numeric(imethod, allow = 1, integ = TRUE, posit = TRUE) ||
      imethod > 3)
@@ -153,7 +153,7 @@ micmen <- function(rpar = 0.001, divisor = 10,
         stop("regressor not found or is not a vector. Use the ",
              "'form2' argument without an intercept")
       Xm2 <- as.vector(Xm2) # Make sure
-      extra$Xm2 <- Xm2          # Needed for @inverse
+      extra$Xm2 <- Xm2          # Needed for @linkinv
 
       predictors.names <-
         c(namesof("theta1", .link1, earg = .earg1, tag = FALSE),
@@ -198,7 +198,7 @@ micmen <- function(rpar = 0.001, divisor = 10,
             .init2 = init2, .link2 = link2, .earg2 = earg2,
             .imethod = imethod,
             .prob.x = prob.x ))),
-  inverse = eval(substitute(function(eta, extra = NULL) {
+  linkinv = eval(substitute(function(eta, extra = NULL) {
       theta1 <- eta2theta(eta[,1], .link1, earg = .earg1)
       theta2 <- eta2theta(eta[,2], .link2, earg = .earg2)
       theta1 * extra$Xm2 / (theta2 + extra$Xm2)
@@ -379,7 +379,7 @@ skira.control <- function(save.weight = TRUE, ...)
   if (!is.list(earg2))
     earg2 = list()
 
-    stopifnot(nsimEIM > 10, length(nsimEIM)==1, nsimEIM==round(nsimEIM))
+    stopifnot(nsimEIM > 10, length(nsimEIM) == 1, nsimEIM == round(nsimEIM))
 
   new("vglmff",
   blurb = c("Shinozaki-Kira regression model\n",
@@ -495,7 +495,7 @@ skira.control <- function(save.weight = TRUE, ...)
             .smallno = smallno, .prob.x = prob.x,
             .nsimEIM = nsimEIM,
             .imethod = imethod ))),
-  inverse = eval(substitute(function(eta, extra = NULL) {
+  linkinv = eval(substitute(function(eta, extra = NULL) {
     theta1 <- eta2theta(eta[, 1], .link1, earg = .earg1)
     theta2 <- eta2theta(eta[, 2], .link2, earg = .earg2)
     1 / (theta1 + theta2 * extra$Xm2)

@@ -20,19 +20,27 @@ Exposure time is explanatory, and there are 3 ordinal response variables.
 \details{
 These were collected from coalface workers. In the original
 data set, the two most severe categories were combined. 
+
+
 }
 \source{
+
  Ashford, J.R., 1959. An approach to the analysis of data for
  semi-quantal responses in biological assay.
  \emph{Biometrics}, \bold{15}, 573--581.
+
+
 }
 \references{
+
   McCullagh, P. and Nelder, J. A. (1989)
   \emph{Generalized Linear Models}, 2nd ed. London: Chapman & Hall.
+
+
 }
 \examples{
 # Fit the proportional odds model, p.179, in McCullagh and Nelder (1989) 
-pneumo = transform(pneumo, let=log(exposure.time))
-vglm(cbind(normal,mild,severe) ~ let, propodds,  pneumo)
+pneumo = transform(pneumo, let = log(exposure.time))
+vglm(cbind(normal, mild, severe) ~ let, propodds, pneumo)
 }
 \keyword{datasets}

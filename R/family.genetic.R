@@ -64,7 +64,7 @@
         }
     }), list( .link = link, .ip1 = ip1, .ip2 = ip2, .iF = iF,
               .earg = earg ))),
-    inverse = eval(substitute(function(eta, extra = NULL) {
+    linkinv = eval(substitute(function(eta, extra = NULL) {
         p1 = eta2theta(eta[,1], link = .link, earg = .earg)
         p2 = eta2theta(eta[,2], link = .link, earg = .earg)
         f  = eta2theta(eta[,3], link = .link, earg = .earg)
@@ -162,7 +162,7 @@
             mustart <- NULL  # Since etastart has been computed.
         }
     }), list( .link = link, .ipA=ipA, .iF = iF, .earg = earg ))),
-    inverse = eval(substitute(function(eta, extra = NULL) {
+    linkinv = eval(substitute(function(eta, extra = NULL) {
         pA = eta2theta(eta[,1], link = .link, earg = .earg)
         f  = eta2theta(eta[,2], link = "identity", earg = list())
         cbind(AA = pA^2+pA*(1-pA)*f,
@@ -173,7 +173,7 @@
         misc$link =    c(pA = .link, f = "identity")
         misc$earg = list(pA = .earg, f = list() )
     }), list( .link = link, .earg = earg ))),
-    link = eval(substitute(function(mu, extra = NULL) {
+    linkfun = eval(substitute(function(mu, extra = NULL) {
         pA = sqrt(mu[,1] - mu[,2]/2)
         f = 1 - mu[,2] / (2*pA*(1-pA))
         cbind(theta2eta(pA, .link, earg = .earg),
@@ -249,7 +249,7 @@
             etastart = theta2eta(p.init, .link, earg = .earg)
         }
     }), list( .link = link, .init.p=init.p, .earg = earg ))),
-    inverse = eval(substitute(function(eta,extra = NULL) {
+    linkinv = eval(substitute(function(eta,extra = NULL) {
         p = eta2theta(eta, link = .link, earg = .earg)
         cbind("AB" = (2+(1-p)^2),
               "Ab" = (1-(1-p)^2),
@@ -260,7 +260,7 @@
         misc$link = c(p = .link)
         misc$earg = list(p= .earg )
     }), list( .link = link, .earg = earg ) )),
-    link = eval(substitute(function(mu, extra = NULL) {
+    linkfun = eval(substitute(function(mu, extra = NULL) {
         p = 1 - 2 * sqrt(mu[,4])
         theta2eta(p, .link, earg = .earg)
     }, list( .link = link, .earg = earg ) )),
@@ -327,7 +327,7 @@
                              theta2eta(p2, .link, earg = .earg))
         }
     }), list( .link = link, .ip1 = ip1, .ip2 = ip2, .earg = earg ))),
-    inverse = eval(substitute(function(eta, extra = NULL) {
+    linkinv = eval(substitute(function(eta, extra = NULL) {
         p1 = eta2theta(eta[,1], link = .link, earg = .earg)
         p2 = eta2theta(eta[,2], link = .link, earg = .earg)
         qq = 1-p1-p2
@@ -342,7 +342,7 @@
         misc$link = c(p1= .link, p2= .link)
         misc$earg = list(p1= .earg, p2= .earg )
     }), list( .link = link, .earg = earg ))),
-    link = eval(substitute(function(mu, extra = NULL) {
+    linkfun = eval(substitute(function(mu, extra = NULL) {
         p1 = sqrt(mu[,1])
         p2 = sqrt(mu[,3])
         qq = 1 - p1 - p2
@@ -426,7 +426,7 @@
                              theta2eta(nS, .link, earg = .earg))
         }
     }), list( .link = link, .imS = imS, .ims = ims, .inS = inS, .earg = earg ))),
-    inverse = eval(substitute(function(eta, extra = NULL) {
+    linkinv = eval(substitute(function(eta, extra = NULL) {
         mS = eta2theta(eta[,1], link = .link, earg = .earg)
         ms = eta2theta(eta[,2], link = .link, earg = .earg)
         nS = eta2theta(eta[,3], link = .link, earg = .earg)
@@ -442,7 +442,7 @@
         misc$link =    c(mS = .link, ms = .link, nS = .link)
         misc$earg = list(mS = .earg, ms = .earg, nS = .earg )
     }), list( .link = link, .earg = earg ))),
-    link = eval(substitute(function(mu, extra = NULL) {
+    linkfun = eval(substitute(function(mu, extra = NULL) {
         ms = sqrt(mu[,2])
         ns = sqrt(mu[,6])
         nS = c(-ns + sqrt(ns^2 + mu[,5]))
@@ -528,7 +528,7 @@
                              theta2eta(pB, .link, earg = .earg))
         }
     }), list( .link = link, .ipO = ipO, .ipA = ipA, .earg = earg ))),
-    inverse = eval(substitute(function(eta, extra = NULL) {
+    linkinv = eval(substitute(function(eta, extra = NULL) {
         pA = eta2theta(eta[,1], link = .link, earg = .earg)
         pB = eta2theta(eta[,2], link = .link, earg = .earg)
         pO = abs(1 - pA - pB)
@@ -541,7 +541,7 @@
         misc$link =    c(pA = .link, pB = .link)
         misc$earg = list(pA = .earg, pB = .earg )
     }), list( .link = link, .earg = earg ))),
-    link = eval(substitute(function(mu, extra = NULL) {
+    linkfun = eval(substitute(function(mu, extra = NULL) {
          pO = sqrt(mu[,4])
          p1 = ( (1-pO)+sqrt((1-pO)^2 + 2*mu[,3]) )/2
          p2 = ( (1-pO)-sqrt((1-pO)^2 + 2*mu[,3]) )/2
@@ -624,7 +624,7 @@
             etastart = cbind(theta2eta(p, .link, earg = .earg))
         }
     }), list( .link = link, .init.p=init.p, .earg = earg ))),
-    inverse = eval(substitute(function(eta,extra = NULL) {
+    linkinv = eval(substitute(function(eta,extra = NULL) {
         p = eta2theta(eta, link = .link, earg = .earg)
         pp4 = p * p / 4
         cbind(AB = 0.5 + pp4,
@@ -636,7 +636,7 @@
         misc$link = c(p = .link)
         misc$earg = list(p= .earg )
     }), list( .link = link, .earg = earg ))),
-    link = eval(substitute(function(mu, extra = NULL) {
+    linkfun = eval(substitute(function(mu, extra = NULL) {
         p = sqrt(4* mu[,4])
         theta2eta(p, .link, earg = .earg)
     }, list( .link = link, .earg = earg ))),
@@ -695,7 +695,7 @@
             etastart = cbind(theta2eta(pA, .link, earg = .earg))
         }
     }), list( .link = link, .init.pA=init.pA, .earg = earg ))),
-    inverse = eval(substitute(function(eta,extra = NULL) {
+    linkinv = eval(substitute(function(eta,extra = NULL) {
         pA = eta2theta(eta, link = .link, earg = .earg)
         pp = pA*pA
         cbind(AA = pp,
@@ -706,7 +706,7 @@
         misc$link = c("pA" = .link)
         misc$earg = list("pA" = .earg )
     }), list( .link = link, .earg = earg ))),
-    link = eval(substitute(function(mu, extra = NULL) {
+    linkfun = eval(substitute(function(mu, extra = NULL) {
         pA = sqrt(mu[,1])
         theta2eta(pA, .link, earg = .earg)
     }, list( .link = link, .earg = earg ))),

@@ -7,7 +7,7 @@
  maximum likelihood estimation.
 }
 \usage{
-maxwell(link = "loge", earg=list())
+maxwell(link = "loge", earg = list())
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -27,13 +27,14 @@ maxwell(link = "loge", earg=list())
   The Maxwell distribution, which is used in the area of
   thermodynamics,
   has a probability density function that can be written
-  \deqn{f(y) = \sqrt{2/\pi} a^{3/2} y^2 \exp(-0.5 a y^2)}{%
-    f(y) = sqrt(2/pi) * a^(3/2) * y^2 * exp(-0.5*a*y^2)}
+  \deqn{f(y;a) = \sqrt{2/\pi} a^{3/2} y^2 \exp(-0.5 a y^2)}{%
+    f(y;a) = sqrt(2/pi) * a^(3/2) * y^2 * exp(-0.5*a*y^2)}
   for \eqn{y>0} and \eqn{a>0}. 
   The mean of \eqn{Y} is
   \eqn{\sqrt{8 / (a \pi)}}{sqrt(8 / (a * pi))}
   (returned as the fitted values), and its variance is
   \eqn{(3\pi - 8)/(\pi a)}{(3*pi - 8)/(pi*a)}.
+
 
 }
 \value{
@@ -42,11 +43,14 @@ maxwell(link = "loge", earg=list())
   \code{\link{rrvglm}}
   and \code{\link{vgam}}.
 
+
 }
 \references{ 
+
   von Seggern, D. H. (1993)
   \emph{CRC Standard Curves and Surfaces},
   Boca Raton, FL.: CRC Press.
+
 
 }
 \author{ T. W. Yee }
@@ -62,9 +66,9 @@ maxwell(link = "loge", earg=list())
 
 }
 \examples{
-mdata = data.frame(y = rmaxwell(1000, a=exp(2)))
-fit = vglm(y ~ 1, maxwell, mdata, trace=TRUE, crit="c")
-coef(fit, matrix=TRUE)
+mdata = data.frame(y = rmaxwell(1000, a = exp(2)))
+fit = vglm(y ~ 1, maxwell, mdata, trace = TRUE, crit = "c")
+coef(fit, matrix = TRUE)
 Coef(fit)
 }
 \keyword{models}

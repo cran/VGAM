@@ -32,13 +32,18 @@ study consisting of retirees. The data can be considered a reasonable
 representation of the white male New Zealand population in the early
 1990s.
 
+
 }
 \source{
   Clinical Trials Research Unit, University of Auckland, New Zealand.
+
+
 }
 
 \references{
   See \code{\link{bminz}} and \code{\link{chestnz}}.
+
+
 }
 \examples{
 summary(nzmarital)

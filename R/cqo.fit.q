@@ -29,7 +29,7 @@ callcqoc = function(cmatrix, etamat, xmat, ymat, wvec,
 
         cmatrix = crow1C(cmatrix, control$Crow1positive)
         numat = xmat[, control$colx2.index, drop = FALSE] %*% cmatrix
-        sdnumat = sd(numat)
+        sdnumat = apply(numat, 2, sd)
         for(lookat in 1:Rank)
             if (sdnumat[lookat] >
                 control$MUXfactor[lookat] * control$isdlv[lookat]) {
@@ -150,7 +150,7 @@ calldcqo = function(cmatrix, etamat, xmat, ymat, wvec,
 
         cmatrix = crow1C(cmatrix, control$Crow1positive)
         numat = xmat[,control$colx2.index,drop=FALSE] %*% cmatrix
-        sdnumat = sd(numat)
+        sdnumat = apply(numat, 2, sd)
         for(lookat in 1:Rank)
           if (sdnumat[lookat] > control$MUXfactor[lookat] *
                                 control$isdlv[lookat]) {
@@ -314,16 +314,16 @@ cqo.fit <- function(x, y, w=rep(1, length(x[, 1])),
     if (length(etastart)) {
         eta <- etastart
         mu <- if (length(mustart)) mustart else
-              if (length(body(slot(family, "inverse"))))
-                slot(family, "inverse")(eta, extra) else
+              if (length(body(slot(family, "linkinv"))))
+                slot(family, "linkinv")(eta, extra) else
                 warning("argument 'etastart' assigned a value ",
-                        "but there is no 'inverse' slot to use it")
+                        "but there is no 'linkinv' slot to use it")
     }
 
     if (length(mustart)) {
         mu <- mustart
-        if (length(body(slot(family, "link")))) {
-          eta <- slot(family, "link")(mu, extra)
+        if (length(body(slot(family, "linkfun")))) {
+          eta <- slot(family, "linkfun")(mu, extra)
         } else {
           warning("argument 'mustart' assigned a value ",
                   "but there is no 'link' slot to use it")
@@ -442,7 +442,7 @@ cqo.fit <- function(x, y, w=rep(1, length(x[, 1])),
         eta <- if (ncol(X_vlm_save) > 1) X_vlm_save %*% coefstart +
                    offset else X_vlm_save * coefstart + offset
         eta <- if (M > 1) matrix(eta, ncol=M, byrow=TRUE) else c(eta) 
-        mu <- family@inverse(eta, extra)
+        mu <- family@linkinv(eta, extra)
     }
 
     rmfromVGAMenv(c("etamat", "z", "U", "beta", "deviance",
@@ -654,7 +654,7 @@ cqo.fit <- function(x, y, w=rep(1, length(x[, 1])),
         }
 
         if (length(isdlv)) {
-            actualSD = sd(ans)
+            actualSD = apply(cbind(ans), 2, sd)
             for(ii in 1:Rank)
                 ans[,ii] = ans[,ii] * isdlv[ii] / actualSD[ii]
         }
@@ -800,7 +800,7 @@ cqo.end.expression = expression({
 
     fv <- tmp.fitted            # Contains \bI \bnu
     eta <- fv + offset
-    mu <- family@inverse(eta, extra)
+    mu <- family@linkinv(eta, extra)
 
     if (any(is.na(mu)))
         warning("there are NAs in mu") 
@@ -882,9 +882,9 @@ setMethod("deviance", "qrrvglm", function(object,...)
           object@criterion$deviance)
 
 setMethod("fitted",        "qrrvglm", function(object, ...)
-          fitted.vlm(object))
+          fittedvlm(object))
 setMethod("fitted.values", "qrrvglm", function(object, ...)
-          fitted.vlm(object))
+          fittedvlm(object))
 
 
 

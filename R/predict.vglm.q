@@ -6,7 +6,7 @@
 
 
 
-predict.vglm = function(object,
+predictvglm = function(object,
                         newdata=NULL,
                         type=c("link", "response", "terms"),
                         se.fit=FALSE,
@@ -21,7 +21,7 @@ predict.vglm = function(object,
     }
 
     if (deriv != 0)
-        stop("'deriv' must be 0 for predict.vglm()")
+        stop("'deriv' must be 0 for predictvglm()")
 
     if (mode(type) != "character" && mode(type) != "name")
         type = as.character(substitute(type))
@@ -44,7 +44,7 @@ predict.vglm = function(object,
                                            type=type, se.fit=se.fit,
                                            deriv=deriv, 
                                            dispersion=dispersion, ...) 
-                   fv = object@family@inverse(predictor, extra)
+                   fv = object@family@linkinv(predictor, extra)
                    dimnames(fv) = list(dimnames(fv)[[1]],
                                        dimnames(object@fitted.values)[[2]])
                    fv
@@ -87,7 +87,7 @@ predict.vglm = function(object,
 
                        M = object@misc$M
 
-                       fv = object@family@inverse(predictor, extra)
+                       fv = object@family@linkinv(predictor, extra)
                        if (M > 1 && is.matrix(fv)) {
                            dimnames(fv) = list(dimnames(fv)[[1]],
                                           dimnames(object@fitted.values)[[2]])
@@ -128,7 +128,7 @@ predict.vglm = function(object,
 
 
 setMethod("predict", "vglm", function(object, ...) 
-    predict.vglm(object, ...))
+    predictvglm(object, ...))
 
 
 
@@ -155,7 +155,7 @@ predict.rrvglm = function(object,
                                              type=type, se.fit=se.fit,
                                              deriv=deriv, 
                                              dispersion=dispersion, ...) 
-                  fv = object@family@inverse(predictor, extra)
+                  fv = object@family@linkinv(predictor, extra)
                   dimnames(fv) = list(dimnames(fv)[[1]],
                                        dimnames(object@fitted.values)[[2]])
                   fv
@@ -173,7 +173,7 @@ predict.rrvglm = function(object,
                 }
               )
     } else {
-        return(predict.vglm(object, newdata=newdata,
+        return(predictvglm(object, newdata=newdata,
                             type=type, se.fit=se.fit,
                             deriv=deriv, 
                             dispersion=dispersion, ...))

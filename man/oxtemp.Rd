@@ -15,15 +15,19 @@
 }
 \details{
   The data were collected from 1901 to 1980.
+
+
 }
 % zz:
 \source{
   Unknown.
+
+
 }
 % \references{
 % }
 \examples{
-fit = vglm(maxtemp ~ 1, egev, trace=TRUE, data=oxtemp)
+fit = vglm(maxtemp ~ 1, egev, data = oxtemp, trace = TRUE)
 }
 \keyword{datasets}
 

@@ -865,3 +865,20 @@ setMethod("plot", "qrrvglm", function(x, y, ...)
 
 
 
+
+
+put.caption = function(text.arg = "(a)",
+                       w.x = c(0.50, 0.50),
+                       w.y = c(0.07, 0.93), ...) {
+  text(text.arg,
+       x = weighted.mean(par()$usr[1:2], w = w.x),
+       y = weighted.mean(par()$usr[3:4], w = w.y), ...)
+}
+
+
+
+
+
+
+
+

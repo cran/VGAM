@@ -1,13 +1,13 @@
-\name{Betabin}
-\alias{Betabin}
-\alias{dbetabin}
-\alias{pbetabin}
-%\alias{qbetabin}
-\alias{rbetabin}
-\alias{dbetabin.ab}
-\alias{pbetabin.ab}
-%\alias{qbetabin.ab}
-\alias{rbetabin.ab}
+\name{Betabinom}
+\alias{Betabinom}
+\alias{dbetabinom}
+\alias{pbetabinom}
+%\alias{qbetabinom}
+\alias{rbetabinom}
+\alias{dbetabinom.ab}
+\alias{pbetabinom.ab}
+%\alias{qbetabinom.ab}
+\alias{rbetabinom.ab}
 \title{The Beta-Binomial Distribution}
 \description{
   Density, distribution function, and random
@@ -15,12 +15,12 @@
 
 }
 \usage{
-dbetabin(x, size, prob, rho, log = FALSE)
-pbetabin(q, size, prob, rho, log.p = FALSE)
-rbetabin(n, size, prob, rho)
-dbetabin.ab(x, size, shape1, shape2, log = FALSE)
-pbetabin.ab(q, size, shape1, shape2, log.p = FALSE)
-rbetabin.ab(n, size, shape1, shape2)
+dbetabinom(x, size, prob, rho = 0, log = FALSE)
+pbetabinom(q, size, prob, rho, log.p = FALSE)
+rbetabinom(n, size, prob, rho = 0)
+dbetabinom.ab(x, size, shape1, shape2, log = FALSE, .dontuse.prob = NULL)
+pbetabinom.ab(q, size, shape1, shape2, log.p = FALSE)
+rbetabinom.ab(n, size, shape1, shape2, .dontuse.prob = NULL)
 }
 \arguments{
   \item{x, q}{vector of quantiles.}
@@ -30,12 +30,14 @@ rbetabin.ab(n, size, shape1, shape2)
   Must be a positive integer of length 1.}
   \item{prob}{
   the probability of success \eqn{\mu}{mu}.
-  Must be in the unit open interval \eqn{(0,1)}.
+  Must be in the unit closed interval \eqn{[0,1]}.
 
   }
   \item{rho}{
   the correlation parameter \eqn{\rho}{rho}.
-  Must be in the unit open interval \eqn{(0,1)}.
+  Usually must be in the unit open interval \eqn{(0,1)},
+  however, the value 0 is sometimes supported
+  (if so then it corresponds to the usual binomial distribution).
 
   }
   \item{shape1, shape2}{
@@ -49,12 +51,20 @@ rbetabin.ab(n, size, shape1, shape2)
   If \code{TRUE} then all probabilities \code{p} are given as \code{log(p)}.
 
   }
+
+  \item{.dontuse.prob}{
+  An argument that should be ignored and unused.
+
+  }
+
+
 }
 \value{
-  \code{dbetabin} and \code{dbetabin.ab} give the density,
-  \code{pbetabin} and \code{pbetabin.ab} give the distribution function, and
-% \code{qbetabin} and \code{qbetabin.ab} gives the quantile function, and
-  \code{rbetabin} and \code{rbetabin.ab} generate random deviates.
+  \code{dbetabinom} and \code{dbetabinom.ab} give the density,
+  \code{pbetabinom} and \code{pbetabinom.ab} give the distribution function, and
+% \code{qbetabinom} and \code{qbetabinom.ab} gives the quantile function, and
+  \code{rbetabinom} and \code{rbetabinom.ab} generate random deviates.
+
 
 }
 \author{ T. W. Yee }
@@ -66,14 +76,16 @@ rbetabin.ab(n, size, shape1, shape2)
   \code{mu = shape1/(shape1+shape2)}, which therefore is the
   mean or the probability of success.
 
-  See \code{\link{betabinomial}} and \code{\link{betabin.ab}},
+
+  See \code{\link{betabinomial}} and \code{\link{betabinomial.ab}},
   the \pkg{VGAM} family functions for
   estimating the parameters, for the formula of the probability density
   function and other details.
 
+
 }
 \note{
-  \code{pbetabin} and \code{pbetabin.ab} can be particularly slow.
+  \code{pbetabinom} and \code{pbetabinom.ab} can be particularly slow.
   The functions here ending in \code{.ab} are called from those
   functions which don't.
   The simple transformations
@@ -82,36 +94,41 @@ rbetabin.ab(n, size, shape1, shape2)
   where \eqn{\alpha}{alpha} and \eqn{\beta}{beta} are the two
   shape parameters.
 
+
 }
 \seealso{
   \code{\link{betabinomial}},
-  \code{\link{betabin.ab}}.
+  \code{\link{betabinomial.ab}}.
+
 
 }
 \examples{
-\dontrun{
-N = 9; xx = 0:N; s1 = 2; s2 = 3
-dy = dbetabin.ab(xx, size = N, shape1 = s1, shape2 = s2)
-barplot(rbind(dy, dbinom(xx, size = N, prob = s1/(s1+s2))),
+set.seed(1)
+rbetabinom(10, 100, prob = 0.5)
+set.seed(1)
+rbinom(10, 100, prob = 0.5)  # The same since rho = 0
+
+\dontrun{ N = 9; xx = 0:N; s1 = 2; s2 = 3
+dy = dbetabinom.ab(xx, size = N, shape1 = s1, shape2 = s2)
+barplot(rbind(dy, dbinom(xx, size = N, prob = s1 / (s1+s2))),
         beside = TRUE, col = c("blue","green"), las = 1,
         main = paste("Beta-binomial (size=",N,", shape1=",s1,
                    ", shape2=",s2,") (blue) vs\n",
-        " Binomial(size=", N, ", prob=", s1/(s1+s2), ") (green)", sep = ""),
+        " Binomial(size=", N, ", prob=", s1 / (s1+s2), ") (green)", sep = ""),
         names.arg = as.character(xx), cex.main = 0.8)
 sum(dy*xx) # Check expected values are equal
-sum(dbinom(xx, size = N, prob = s1/(s1+s2))*xx)
-cumsum(dy) -  pbetabin.ab(xx, N, shape1 = s1, shape2 = s2)
+sum(dbinom(xx, size = N, prob = s1 / (s1+s2))*xx)
+cumsum(dy) -  pbetabinom.ab(xx, N, shape1 = s1, shape2 = s2)
 
-y = rbetabin.ab(n = 10000, size = N, shape1 = s1, shape2 = s2)
+y = rbetabinom.ab(n = 10000, size = N, shape1 = s1, shape2 = s2)
 ty = table(y)
-barplot(rbind(dy, ty/sum(ty)),
+barplot(rbind(dy, ty / sum(ty)),
         beside = TRUE, col = c("blue","red"), las = 1,
         main = paste("Beta-binomial (size=",N,", shape1=",s1,
                    ", shape2=",s2,") (blue) vs\n",
         " Random generated beta-binomial(size=", N, ", prob=", s1/(s1+s2),
         ") (red)", sep = ""), cex.main = 0.8,
-        names.arg = as.character(xx))
-}
+        names.arg = as.character(xx)) }
 }
 \keyword{distribution}
 

@@ -10,7 +10,7 @@
 
 }
 \usage{
-margeff(object, subset=NULL)
+margeff(object, subset = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -97,22 +97,22 @@ ii = 3; hh = 1/100
 pneumo = transform(pneumo, let = log(exposure.time))
 fit = vglm(cbind(normal, mild, severe) ~ let, multinomial, pneumo)
 fit = vglm(cbind(normal, mild, severe) ~ let,
-           cumulative(reverse=TRUE,  parallel=TRUE),
+           cumulative(reverse = TRUE,  parallel = TRUE),
            data = pneumo)
 fitted(fit)[ii,]
 
 mynewdata = with(pneumo, data.frame(let = let[ii]+hh))
-(newp <- predict(fit, newdata=mynewdata, type="response"))
+(newp <- predict(fit, newdata = mynewdata, type = "response"))
 
 # Compare the difference. Should be the same as hh --> 0.
-round(dig=3, (newp-fitted(fit)[ii,])/hh) # Finite-difference approximation
-round(dig=3, margeff(fit, subset=ii)["let",])
+round(dig = 3, (newp-fitted(fit)[ii,])/hh) # Finite-difference approximation
+round(dig = 3, margeff(fit, subset = ii)["let",])
 
 # Other examples
-round(dig=3, margeff(fit))
-round(dig=3, margeff(fit, subset=2)["let",])
-round(dig=3, margeff(fit, subset=c(FALSE,TRUE))["let",,]) # recycling
-round(dig=3, margeff(fit, subset=c(2,4,6,8))["let",,])
+round(dig = 3, margeff(fit))
+round(dig = 3, margeff(fit, subset = 2)["let",])
+round(dig = 3, margeff(fit, subset = c(FALSE,TRUE))["let",,]) # recycling
+round(dig = 3, margeff(fit, subset = c(2,4,6,8))["let",,])
 }
 
 

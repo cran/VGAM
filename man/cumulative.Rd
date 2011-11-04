@@ -277,7 +277,8 @@ by the \pkg{VGAM} package can be found at
 pneumo = transform(pneumo, let = log(exposure.time))
 (fit = vglm(cbind(normal, mild, severe) ~ let,
             cumulative(parallel = TRUE, reverse = TRUE), pneumo))
-fit@y   # Sample proportions
+depvar(fit)   # Sample proportions (good technique)
+fit@y         # Sample proportions (bad technique)
 weights(fit, type = "prior")   # Number of observations
 coef(fit, matrix = TRUE)
 constraints(fit)   # Constraint matrices
