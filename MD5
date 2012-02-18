@@ -1,7 +1,7 @@
 a044e2c802f4451fee8abdf55163e99b *BUGS
-cef871dd6555952f7c56e4befa1b1fc1 *DESCRIPTION
+e0bbad1676ccba6c6186c90c98a43835 *DESCRIPTION
 dd959d3a0cd680792122813a7d58d506 *DISCLAIMER
-ffc4775ec72cd9429aa3ba1e1c7b6a4b *NAMESPACE
+a169353321a984a73d65d7657dfadf7a *NAMESPACE
 f0acc91eb36c7d77927c063d896e2177 *NEWS
 689d9e2adac8be393f6c99ceb231c574 *R/aamethods.q
 6e33af4dffcedfb8f5f8731c8af9a09b *R/add1.vglm.q
@@ -145,8 +145,6 @@ a3d2728927fc5a3090f8f4ae9af19e1a *demo/vgam.R
 466027c0c99178bb6e695d9439fd6829 *inst/doc/categoricalVGAM.Rnw
 32351bc765fab29b9018c69d9dca22b8 *inst/doc/categoricalVGAM.pdf
 e4c5415e487f533b70695b17e40d97bc *inst/doc/categoricalVGAMbib.bib
-92e903f33d4067a7fbc89fa4e7571c92 *inst/doc/jss.bst
-c98d257f9bdb7cca3a1dc6306ede5d77 *inst/doc/jss.cls
 ae4c252ab1ff7ea5097b50925524c6c8 *man/AA.Aa.aa.Rd
 6e6488fe17bda74157417f38f7d63df1 *man/AB.Ab.aB.ab.Rd
 426224676fcf86a274ee40a1e897ff51 *man/AB.Ab.aB.ab2.Rd

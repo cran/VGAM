@@ -2,6 +2,7 @@
 # Copyright (C) 1998-2011 T.W. Yee, University of Auckland.
 # All rights reserved.
 
+import(stats4)
 
 
 
@@ -250,15 +251,6 @@ export(lm2vlm.model.matrix)
  importFrom("stats", model.matrix)
  importFrom("stats", model.frame)
  importFrom("stats", terms)
-
-
-  importFrom("stats", "coef")
-  importFrom("stats", "coefficients")
-  importFrom("stats", "logLik")
-  importFrom("graphics", "plot")
-  importFrom("stats", "vcov")
-
-  importFrom("stats", "AIC")
 
 
 
