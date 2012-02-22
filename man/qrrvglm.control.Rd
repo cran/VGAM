@@ -21,7 +21,7 @@ qrrvglm.control(Rank = 1,
                 FastAlgorithm = TRUE,
                 GradientFunction = TRUE,
                 Hstep = 0.001,
-                isdlv = rep(c(2, 1, rep(0.5, len=Rank)), len=Rank),
+                isdlv = rep(c(2, 1, rep(0.5, length = Rank)), length = Rank),
                 iKvector = 0.1,
                 iShape = 0.1,
                 ITolerances = FALSE,
@@ -478,18 +478,25 @@ p1 = cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi, Auloalbi,
          ITolerances = TRUE, isdlv = isdlv,   # Note the use of isdlv here
          fam = quasipoissonff, data = hspider)
 sort(p1@misc$deviance.Bestof) # A history of all the iterations
-
-# Negative binomial CQO; smallest deviance is about 275.389
-set.seed(1234) # This leads to a reasonable (but not the global) solution?
-nb1 = cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi, Auloalbi, 
-                Pardlugu, Pardmont, Pardnigr, Pardpull, Trocterr, Zoraspin) ~
-          WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
-          ITol = FALSE, EqualTol = TRUE, # A good idea for negbinomial
-          fam = negbinomial, data = hspider)
-sort(nb1@misc$deviance.Bestof) # A history of all the iterations
-summary(nb1)
-\dontrun{ lvplot(nb1, lcol=1:12, y = TRUE, pcol=1:12) }
 }
 \keyword{models}
 \keyword{regression}
+
+
+
+%\dontrun{
+%# 20120221; withdrawn for a while coz it creates a lot of error messages.
+%# Negative binomial CQO; smallest deviance is about 275.389
+%set.seed(1234) # This leads to a reasonable (but not the global) solution?
+%nb1 = cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi, Auloalbi, 
+%                Pardlugu, Pardmont, Pardnigr, Pardpull, Trocterr, Zoraspin) ~
+%          WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
+%          ITol = FALSE, EqualTol = TRUE, # A good idea for negbinomial
+%          fam = negbinomial, data = hspider)
+%sort(nb1@misc$deviance.Bestof) # A history of all the iterations
+%summary(nb1)
+%}
+%\dontrun{ lvplot(nb1, lcol=1:12, y = TRUE, pcol=1:12) }
+
+
 

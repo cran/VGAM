@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2011 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2012 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -299,6 +299,7 @@ setMethod("model.frame",  "vlm", function(formula, ...)
 
  vmodel.matrix.default = function(object, data = environment(object),
                                   contrasts.arg = NULL, xlev = NULL, ...) {
+ print("20120221; in vmodel.matrix.default")
     t <- if (missing(data)) terms(object) else terms(object, data = data)
     if (is.null(attr(data, "terms")))
         data <- model.frame(object, data, xlev = xlev) else {
@@ -342,7 +343,13 @@ setMethod("model.frame",  "vlm", function(formula, ...)
         isF <- FALSE
         data <- list(x = rep(0, nrow(data)))
     }
-    ans <- .Internal(model.matrix(t, data))
+
+
+    ans  <-          (model.matrix(t, data))
+
+
+
+
     cons <- if (any(isF))
         lapply(data[isF], function(x) attr(x, "contrasts")) else NULL
     attr(ans, "contrasts") <- cons

@@ -69,9 +69,10 @@ benini(y0 = stop("argument 'y0' must be specified"),
 
 }
 \references{ 
+
 Kleiber, C. and Kotz, S. (2003)
 \emph{Statistical Size Distributions in Economics and Actuarial Sciences},
-Hoboken, NJ: Wiley-Interscience.
+Hoboken, NJ, USA: Wiley-Interscience.
 
 }
 \author{ T. W. Yee }

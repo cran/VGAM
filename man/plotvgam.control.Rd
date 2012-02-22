@@ -44,8 +44,12 @@ plotvgam.control(which.cf = NULL,
     Fed into \code{par(lwd)}. }
   \item{slwd}{ Line width of the standard error bands.
     Fed into \code{par(lwd)}. }
-  \item{add.arg}{ Logical. If \code{TRUE} then the plot will be added
-    to an existing plot, otherwise a new plot will be made. }
+  \item{add.arg}{ Logical.
+  If \code{TRUE} then the plot will be added to an existing
+  plot, otherwise a new plot will be made.
+
+  }
+
   \item{one.at.a.time}{ Logical. If \code{TRUE} then the plots are done
     one at a time, with the user having to hit the return key
     between the plots. }

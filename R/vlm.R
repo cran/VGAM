@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2011 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2012 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -93,9 +93,10 @@ vlm <- function(formula,
     Blist <- process.constraints(constraints, x, M)
     intercept.only <- ncol(x) == 1 && dimnames(x)[[2]] == "(Intercept)"
 
-    fit = vlm.wfit(xmat=x, z=y, Blist=Blist, wz=wz, U=NULL,
-                   matrix.out=FALSE, is.vlmX=FALSE, rss=TRUE, qr=qr.arg,
-                   x.ret=TRUE, offset = offset)
+    fit = vlm.wfit(xmat=x, zmat = y, Blist = Blist, wz = wz, U = NULL,
+                   matrix.out = FALSE, is.vlmX = FALSE,
+                   rss = TRUE, qr = qr.arg,
+                   x.ret = TRUE, offset = offset)
 
     ncol_X_vlm <- fit$rank
     fit$R <- fit$qr$qr[1:ncol_X_vlm, 1:ncol_X_vlm, drop=FALSE]

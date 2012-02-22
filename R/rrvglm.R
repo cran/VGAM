@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2011 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2012 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -33,7 +33,7 @@ rrvglm <- function(formula,
     if (missing(data)) 
         data <- environment(formula)
 
-    mf <- match.call(expand = FALSE)
+    mf <- match.call(expand.dots = FALSE)
     mf$family <- mf$method <- mf$model <- mf$x.arg <- mf$y.arg <- mf$control <-
         mf$contrasts <- mf$constraints <- mf$extra <- mf$qr.arg <- NULL
     mf$coefstart <- mf$etastart <- mf$... <- NULL

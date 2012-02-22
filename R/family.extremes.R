@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2011 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2012 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -14,13 +14,14 @@
 
 rgev <- function(n, location = 0, scale = 1, shape = 0) {
     use.n = if ((length.n <- length(n)) > 1) length.n else
-            if (!is.Numeric(n, integ = TRUE, allow = 1, posit = TRUE))
-                stop("bad input for argument 'n'") else n
+            if (!is.Numeric(n, integer.valued = TRUE,
+                            allowable.length = 1, positive = TRUE))
+              stop("bad input for argument 'n'") else n
 
     if (!is.Numeric(location)) 
-        stop("bad input for argument argument 'location'")
+      stop("bad input for argument argument 'location'")
     if (!is.Numeric(shape))
-        stop("bad input for argument argument 'shape'")
+      stop("bad input for argument argument 'shape'")
 
     ans = numeric(use.n)
     shape = rep(shape, len = use.n); location = rep(location, len = use.n);
@@ -47,7 +48,7 @@ dgev <- function(x, location = 0, scale = 1, shape = 0, log = FALSE,
     if (oobounds.log > 0)
         stop("bad input for argument 'oobounds.log'")
 
-    if (!is.Numeric(tolshape0, allow = 1, posit = TRUE))
+    if (!is.Numeric(tolshape0, allowable.length = 1, positive = TRUE))
         stop("bad input for argument 'tolshape0'")
     use.n = max(length(x), length(location), length(scale), length(shape))
     shape = rep(shape, len = use.n); location = rep(location, len = use.n); 
@@ -72,8 +73,8 @@ dgev <- function(x, location = 0, scale = 1, shape = 0, log = FALSE,
         }
     }
     if (nscase) {
-        logdensity[scase] = dgumbel(x[scase], loc=location[scase],
-                                    sc=scale[scase], log = TRUE)
+        logdensity[scase] = dgumbel(x[scase], location = location[scase],
+                                    scale = scale[scase], log = TRUE)
     }
 
     logdensity[scale <= 0] = NaN
@@ -109,7 +110,7 @@ pgev <- function(q, location = 0, scale = 1, shape = 0) {
 
 
 qgev <- function(p, location = 0, scale = 1, shape = 0) {
-    if (!is.Numeric(p, posit = TRUE) || any(p >= 1))
+    if (!is.Numeric(p, positive = TRUE) || any(p >= 1))
         stop("0 < p < 1 is required")
     if (!is.Numeric(location))
         stop("bad input for argument 'location'")
@@ -155,7 +156,7 @@ qgev <- function(p, location = 0, scale = 1, shape = 0) {
         stop("bad input for argument 'giveWarning'")
 
     mean = FALSE
-    if (length(iscale) && !is.Numeric(iscale, posit = TRUE))
+    if (length(iscale) && !is.Numeric(iscale, positive = TRUE))
         stop("bad input for argument 'iscale'")
     if (mode(lscale) != "character" && mode(lscale) != "name")
         lscale = as.character(substitute(lscale))
@@ -165,18 +166,18 @@ qgev <- function(p, location = 0, scale = 1, shape = 0) {
         lshape = as.character(substitute(lshape))
 
     if (!mean &&  length(percentiles) &&
-       (!is.Numeric(percentiles, posit = TRUE) || max(percentiles) >= 100))
+       (!is.Numeric(percentiles, positive = TRUE) || max(percentiles) >= 100))
         stop("bad input for argument 'percentiles'")
-    if (!is.Numeric(imethod, allow = 1, posit = TRUE, integer = TRUE) ||
+    if (!is.Numeric(imethod, allowable.length = 1, positive = TRUE, integer.valued = TRUE) ||
        imethod > 2.5)
         stop("argument 'imethod' must be 1 or 2")
     if (length(ishape) && !is.Numeric(ishape))
         stop("bad input for argument 'ishape'")
-    if (!is.Numeric(tolshape0, allow = 1, posit = TRUE) || tolshape0 > 0.1)
+    if (!is.Numeric(tolshape0, allowable.length = 1, positive = TRUE) || tolshape0 > 0.1)
         stop("bad input for argument 'tolshape0'")
-    if (!is.Numeric(gshape, allow = 2) || gshape[1] >= gshape[2])
+    if (!is.Numeric(gshape, allowable.length = 2) || gshape[1] >= gshape[2])
         stop("bad input for argument 'gshape'")
-    if (length(zero) && !is.Numeric(zero, integer = TRUE, posit = TRUE))
+    if (length(zero) && !is.Numeric(zero, integer.valued = TRUE, positive = TRUE))
         stop("bad input for argument 'zero'")
 
     if (!is.list(elocation)) elocation = list()
@@ -444,8 +445,8 @@ qgev <- function(p, location = 0, scale = 1, shape = 0) {
             if (FALSE ) {
             wz[, iam(1, 2, M)] = 2 * r.vec / sigma^2
             wz[, iam(2, 2, M)] = -4 * r.vec * digamma(r.vec+1) + 2 * r.vec +
-                (4 * dgammadx(r.vec+1, der=1) - 
-                 3 * dgammadx(r.vec+1, der = 2)) / gamma(r.vec) # Not checked
+      (4 * dgammadx(r.vec+1, deriv.arg = 1) - 
+       3 * dgammadx(r.vec+1, deriv.arg = 2)) / gamma(r.vec) # Not checked
             }
         }
         wz[, iam(1, 1, M)] = wz[, iam(1, 1, M)] * dmu.deta^2
@@ -461,7 +462,7 @@ qgev <- function(p, location = 0, scale = 1, shape = 0) {
 
 
 
-dgammadx <- function(x, deriv.arg=1) {
+dgammadx <- function(x, deriv.arg = 1) {
     if (deriv.arg == 0) {
         gamma(x)
     } else if (deriv.arg == 1) {
@@ -469,14 +470,18 @@ dgammadx <- function(x, deriv.arg=1) {
     } else if (deriv.arg == 2) {
         gamma(x) * (trigamma(x) + digamma(x)^2)
     } else if (deriv.arg == 3) {
-        gamma(x) * (psigamma(x, der = 2) + 2 * digamma(x) * trigamma(x)) +
-        dgammadx(x, der=1) * (trigamma(x) + digamma(x)^2)
+        gamma(x) * (psigamma(x, deriv = 2) +
+        2 * digamma(x) * trigamma(x)) +
+        Recall(x, deriv.arg = 1) * (trigamma(x) + digamma(x)^2)
     } else if (deriv.arg == 4) {
-        dgammadx(x, der = 2) * (trigamma(x) + digamma(x)^2) +
-    2 * dgammadx(x, der=1) * (psigamma(x, der = 2) + 2*digamma(x) * trigamma(x)) +
-        gamma(x) * (psigamma(x, der=3) + 2*trigamma(x)^2 +
-                    2 * digamma(x) * psigamma(x, der = 2))
-    } else stop("cannot handle deriv > 4")
+        Recall(x, deriv.arg = 2) * (trigamma(x) + digamma(x)^2) +
+    2 * Recall(x, deriv.arg = 1) * (psigamma(x, deriv = 2) +
+        2*digamma(x) * trigamma(x)) +
+        gamma(x) * (psigamma(x, deriv = 3) + 2*trigamma(x)^2 +
+                 2 * digamma(x) * psigamma(x, deriv = 2))
+    } else {
+      stop("cannot handle 'deriv' > 4")
+    }
 }
 
 
@@ -497,7 +502,7 @@ dgammadx <- function(x, deriv.arg=1) {
 {
   if (!is.logical(giveWarning) || length(giveWarning) != 1)
     stop("bad input for argument 'giveWarning'")
-  if (length(iscale) && !is.Numeric(iscale, posit = TRUE))
+  if (length(iscale) && !is.Numeric(iscale, positive = TRUE))
     stop("bad input for argument 'iscale'")
   if (mode(lscale) != "character" && mode(lscale) != "name")
       lscale <- as.character(substitute(lscale))
@@ -505,19 +510,19 @@ dgammadx <- function(x, deriv.arg=1) {
       llocation <- as.character(substitute(llocation))
   if (mode(lshape) != "character" && mode(lshape) != "name")
       lshape <- as.character(substitute(lshape))
-  if (!is.Numeric(gshape, allow = 2) || gshape[1] >= gshape[2])
+  if (!is.Numeric(gshape, allowable.length = 2) || gshape[1] >= gshape[2])
       stop("bad input for argument 'gshape'")
     if (length(percentiles) && 
-      (!is.Numeric(percentiles, posit = TRUE) || max(percentiles) >= 100))
+      (!is.Numeric(percentiles, positive = TRUE) || max(percentiles) >= 100))
         stop("bad input for argument 'percentiles'")
-    if (!is.Numeric(imethod, allow = 1, posit = TRUE, integer = TRUE) ||
+    if (!is.Numeric(imethod, allowable.length = 1, positive = TRUE, integer.valued = TRUE) ||
        imethod > 2.5)
         stop("argument 'imethod' must be 1 or 2")
     if (length(ishape) && !is.Numeric(ishape))
         stop("bad input for argument 'ishape'")
-    if (!is.Numeric(tolshape0, allow = 1, posit = TRUE) || tolshape0 > 0.1)
+    if (!is.Numeric(tolshape0, allowable.length = 1, positive = TRUE) || tolshape0 > 0.1)
         stop("bad input for argument 'tolshape0'")
-    if (length(zero) && !is.Numeric(zero, integer = TRUE, posit = TRUE))
+    if (length(zero) && !is.Numeric(zero, integer.valued = TRUE, positive = TRUE))
         stop("bad input for argument 'zero'")
     if (!is.list(elocation)) elocation = list()
     if (!is.list(escale)) escale = list()
@@ -727,7 +732,8 @@ dgammadx <- function(x, deriv.arg=1) {
             wz[is.zero, iam(1,3, M)] <- -(trigamma(1)/2 + digamma(1)*
                                        (digamma(1)/2+1))/sigma
             wz[is.zero, iam(2,3, M)] <- (-dgammadx(2,3)/6 + dgammadx(1, 1) +
-                                    2*dgammadx(1, 2) + 2*dgammadx(1,3)/3)/sigma
+                                    2*dgammadx(1, 2) +
+                                    2*dgammadx(1,3)/3)/sigma
         }
         wz[, iam(1, 1, M)] <- wz[, iam(1, 1, M)] * dmu.deta^2
         wz[, iam(2, 2, M)] <- wz[, iam(2, 2, M)] * dsi.deta^2
@@ -745,7 +751,7 @@ dgammadx <- function(x, deriv.arg=1) {
 
 rgumbel <- function(n, location = 0, scale = 1) {
     use.n = if ((length.n <- length(n)) > 1) length.n else
-            if (!is.Numeric(n, integ = TRUE, allow = 1, posit = TRUE))
+            if (!is.Numeric(n, integer.valued = TRUE, allowable.length = 1, positive = TRUE))
                 stop("bad input for argument 'n'") else n
 
     answer = location - scale * log(-log(runif(use.n)))
@@ -795,11 +801,11 @@ pgumbel <- function(q, location = 0, scale = 1) {
     if (!is.logical(mpv) || length(mpv) != 1)
         stop("bad input for argument 'mpv'")
     if (length(percentiles) &&
-       (!is.Numeric(percentiles, posit = TRUE) || max(percentiles) >= 100))
+       (!is.Numeric(percentiles, positive = TRUE) || max(percentiles) >= 100))
         stop("bad input for argument 'percentiles'")
-    if (length(zero) && !is.Numeric(zero, integer = TRUE, posit = TRUE))
+    if (length(zero) && !is.Numeric(zero, integer.valued = TRUE, positive = TRUE))
         stop("bad input for argument 'zero'")
-    if (length(iscale) && !is.Numeric(iscale, posit = TRUE))
+    if (length(iscale) && !is.Numeric(iscale, positive = TRUE))
         stop("bad input for argument 'iscale'")
     if (!is.list(elocation)) elocation = list()
     if (!is.list(escale)) escale = list()
@@ -824,13 +830,13 @@ pgumbel <- function(q, location = 0, scale = 1) {
             stop("There is at least one row of the response containing all NAs")
         if (ncol(y) > 1) {
             yiri = y[cbind(1:nrow(y), r.vec)]
-            sc.init = if (is.Numeric( .iscale, posit = TRUE))
+            sc.init = if (is.Numeric( .iscale, positive = TRUE))
                         .iscale else {3 * (rowMeans(y, na.rm = TRUE) - yiri)}
             sc.init = rep(sc.init, length=nrow(y))
             sc.init[sc.init <= 0.0001] = 1 # Used to be .iscale
             loc.init = yiri + sc.init * log(r.vec)
         } else {
-            sc.init =  if (is.Numeric( .iscale, posit = TRUE))
+            sc.init =  if (is.Numeric( .iscale, positive = TRUE))
                            .iscale else 1.1 * (0.01+sqrt(var(y)*6)) / pi
             sc.init = rep(sc.init, len = n)
             EulerM = -digamma(1)
@@ -946,7 +952,7 @@ pgumbel <- function(q, location = 0, scale = 1) {
 
 rgpd <- function(n, location = 0, scale = 1, shape = 0) {
     use.n = if ((length.n <- length(n)) > 1) length.n else
-            if (!is.Numeric(n, integ = TRUE, allow = 1, posit = TRUE))
+            if (!is.Numeric(n, integer.valued = TRUE, allowable.length = 1, positive = TRUE))
                 stop("bad input for argument 'n'") else n
 
     if (!is.Numeric(location))
@@ -978,7 +984,7 @@ dgpd <- function(x, location = 0, scale = 1, shape = 0, log = FALSE,
     if (oobounds.log > 0)
         stop("bad input for argument 'oobounds.log'")
 
-    if (!is.Numeric(tolshape0, allow = 1, posit = TRUE))
+    if (!is.Numeric(tolshape0, allowable.length = 1, positive = TRUE))
         stop("bad input for argument 'tolshape0'")
     L = max(length(x), length(location), length(scale), length(shape))
     shape = rep(shape, len = L); location = rep(location, len = L); 
@@ -1101,7 +1107,7 @@ qgpd <- function(p, location = 0, scale = 1, shape = 0) {
         stop("bad input for argument 'giveWarning'")
     if (!is.Numeric(threshold)) 
         stop("bad input for argument 'threshold'")
-    if (!is.Numeric(imethod, allow = 1, posit = TRUE, integer = TRUE) ||
+    if (!is.Numeric(imethod, allowable.length = 1, positive = TRUE, integer.valued = TRUE) ||
        imethod > 2.5)
         stop("argument 'imethod' must be 1 or 2")
 
@@ -1111,12 +1117,12 @@ qgpd <- function(p, location = 0, scale = 1, shape = 0) {
         lshape = as.character(substitute(lshape))
 
     if (length(percentiles) && 
-      (!is.Numeric(percentiles, posit = TRUE) ||
+      (!is.Numeric(percentiles, positive = TRUE) ||
        max(percentiles) >= 100))
         stop("bad input for argument 'percentiles'")
-    if (!is.Numeric(tolshape0, allow = 1, posit = TRUE) || tolshape0 > 0.1)
+    if (!is.Numeric(tolshape0, allowable.length = 1, positive = TRUE) || tolshape0 > 0.1)
         stop("bad input for argument 'tolshape0'")
-    if (length(zero) && !is.Numeric(zero, integer = TRUE, posit = TRUE))
+    if (length(zero) && !is.Numeric(zero, integer.valued = TRUE, positive = TRUE))
         stop("bad input for argument 'zero'")
 
     if (!is.list(escale)) escale = list()
@@ -1390,11 +1396,11 @@ setMethod("guplot", "vlm",
     if (!is.logical(mpv) || length(mpv) != 1)
         stop("bad input for argument 'mpv'")
     if (length(percentiles) &&
-       (!is.Numeric(percentiles, posit = TRUE) || max(percentiles) >= 100))
+       (!is.Numeric(percentiles, positive = TRUE) || max(percentiles) >= 100))
         stop("bad input for argument 'percentiles'")
-    if (length(zero) && !is.Numeric(zero, integer = TRUE, posit = TRUE))
+    if (length(zero) && !is.Numeric(zero, integer.valued = TRUE, positive = TRUE))
         stop("bad input for argument 'zero'")
-    if (length(iscale) && !is.Numeric(iscale, posit = TRUE))
+    if (length(iscale) && !is.Numeric(iscale, positive = TRUE))
         stop("bad input for argument 'iscale'")
     if (!is.list(elocation)) elocation = list()
     if (!is.list(escale)) escale = list()
@@ -1424,7 +1430,7 @@ setMethod("guplot", "vlm",
         extra$percentiles = .percentiles
 
         if (!length(etastart)) {
-            sc.init =  if (is.Numeric( .iscale, posit = TRUE)) 
+            sc.init =  if (is.Numeric( .iscale, positive = TRUE)) 
                            .iscale else 1.5 * (0.01+sqrt(var(y)*6)) / pi
             sc.init = rep(sc.init, len = n)
             EulerM = -digamma(1)
@@ -1523,10 +1529,10 @@ setMethod("guplot", "vlm",
         lscale = as.character(substitute(lscale))
     if (!is.logical(mean) || length(mean) != 1)
         stop("mean must be a single logical value")
-    if (!mean && (!is.Numeric(percentiles, posit = TRUE) ||
+    if (!mean && (!is.Numeric(percentiles, positive = TRUE) ||
                  any(percentiles>=100)))
         stop("valid percentiles values must be given when mean = FALSE")
-    if (length(zero) && !is.Numeric(zero, integer = TRUE, posit = TRUE))
+    if (length(zero) && !is.Numeric(zero, integer.valued = TRUE, positive = TRUE))
         stop("bad input for argument 'zero'")
     if (!is.list(elocation)) elocation = list()
     if (!is.list(escale)) escale = list()
@@ -1558,7 +1564,7 @@ setMethod("guplot", "vlm",
         c(namesof("location", .llocation, earg = .elocation, tag = FALSE),
           namesof("scale", .lscale, earg = .escale , tag = FALSE))
         if (!length(etastart)) {
-            sc.init =  if (is.Numeric( .iscale, posit = TRUE)) 
+            sc.init =  if (is.Numeric( .iscale, positive = TRUE)) 
                            .iscale else 1.1 * sqrt(var(y) * 6 ) / pi
             sc.init = rep(sc.init, len = n)
             EulerM = -digamma(1)
@@ -1706,9 +1712,9 @@ dfrechet <- function(x, location = 0, scale = 1, shape, log = FALSE) {
 
 
 pfrechet <- function(q, location = 0, scale = 1, shape) {
-  if (!is.Numeric(scale, posit = TRUE))
+  if (!is.Numeric(scale, positive = TRUE))
     stop("scale must be positive")
-  if (!is.Numeric(shape, posit = TRUE))
+  if (!is.Numeric(shape, positive = TRUE))
     stop("shape must be positive")
   rzedd = scale / (q - location)
   ans = exp(-(rzedd^shape))
@@ -1718,20 +1724,20 @@ pfrechet <- function(q, location = 0, scale = 1, shape) {
 
 
 qfrechet <- function(p, location = 0, scale = 1, shape) {
-  if (!is.Numeric(p, posit = TRUE) || any(p >= 1))
+  if (!is.Numeric(p, positive = TRUE) || any(p >= 1))
     stop("0 < p < 1 is required")
-  if (!is.Numeric(scale, posit = TRUE))
+  if (!is.Numeric(scale, positive = TRUE))
     stop("scale must be positive")
-  if (!is.Numeric(shape, posit = TRUE))
+  if (!is.Numeric(shape, positive = TRUE))
     stop("shape must be positive")
   location + scale * (-log(p))^(-1/shape)
 }
 
 
 rfrechet <- function(n, location = 0, scale = 1, shape) {
-  if (!is.Numeric(scale, posit = TRUE))
+  if (!is.Numeric(scale, positive = TRUE))
     stop("scale must be positive")
-  if (!is.Numeric(shape, posit = TRUE))
+  if (!is.Numeric(shape, positive = TRUE))
     stop("shape must be positive")
 
   location + scale * (-log(runif(n)))^(-1/shape)
@@ -1986,7 +1992,7 @@ if (FALSE)
       namesof("scale",      .lscale, earg = .escale, short = TRUE),
       namesof("shape",      .lshape, earg = .eshape, short = TRUE))
 
-    anchorpt = if (is.Numeric( .anchor, allow = 1)) .anchor else min(y)
+    anchorpt = if (is.Numeric( .anchor, allowable.length = 1)) .anchor else min(y)
     if (min(y) < anchorpt)
       stop("anchor point is too large")
     extra$LHSanchor = anchorpt
@@ -2201,7 +2207,7 @@ recnormal1.control <- function(save.weight = TRUE, ...)
         lmean = as.character(substitute(lmean))
     if (mode(lsd) != "character" && mode(lsd) != "name")
         lsd = as.character(substitute(lsd))
-    if (!is.Numeric(imethod, allow = 1, integ = TRUE, positi = TRUE) ||
+    if (!is.Numeric(imethod, allowable.length = 1, integer.valued = TRUE, positive = TRUE) ||
        imethod > 3.5)
         stop("argument 'imethod' must be 1 or 2 or 3")
 
@@ -2306,7 +2312,8 @@ recexp1.control <- function(save.weight = TRUE, ...)
 
     if (mode(lrate) != "character" && mode(lrate) != "name")
         lrate = as.character(substitute(lrate))
-    if (!is.Numeric(imethod, allow = 1, integ = TRUE, positi = TRUE) ||
+    if (!is.Numeric(imethod, allowable.length = 1,
+                    integer.valued = TRUE, positive = TRUE) ||
        imethod > 3.5)
         stop("argument 'imethod' must be 1 or 2 or 3")
 
@@ -2378,18 +2385,18 @@ recexp1.control <- function(save.weight = TRUE, ...)
  poissonp <- function(ostatistic, dimension = 2,
                      link = "loge", earg = list(),
                      idensity = NULL, imethod = 1) {
-    if (!is.Numeric(ostatistic, posit = TRUE, allow = 1, integ = TRUE))
+    if (!is.Numeric(ostatistic, positive = TRUE, allowable.length = 1, integer.valued = TRUE))
         stop("argument 'ostatistic' must be a single positive integer")
-    if (!is.Numeric(dimension, posit = TRUE, allow = 1, integ = TRUE) ||
+    if (!is.Numeric(dimension, positive = TRUE, allowable.length = 1, integer.valued = TRUE) ||
        dimension > 3)
         stop("argument 'dimension' must be 2 or 3")
     if (mode(link) != "character" && mode(link) != "name")
         link = as.character(substitute(link))
     if (!is.list(earg)) earg = list()
-    if (!is.Numeric(imethod, allow = 1, posit = TRUE, integer = TRUE) ||
+    if (!is.Numeric(imethod, allowable.length = 1, positive = TRUE, integer.valued = TRUE) ||
        imethod > 2.5)
         stop("argument 'imethod' must be 1 or 2")
-    if (length(idensity) && !is.Numeric(idensity, posit = TRUE))
+    if (length(idensity) && !is.Numeric(idensity, positive = TRUE))
         stop("bad input for argument 'idensity'")
 
     new("vglmff",

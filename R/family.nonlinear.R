@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2011 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2012 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -29,7 +29,7 @@ subset_lohi <- function(xvec, yvec,
                         wtvec = rep(1, len = length(xvec))) {
 
 
-  if (!is.Numeric(prob.x, allow = 2))
+  if (!is.Numeric(prob.x, allowable.length = 2))
     stop("argument 'prob.x' must be numeric and of length two")
 
   min.q <- quantile(xvec, probs = prob.x[1] )
@@ -81,39 +81,34 @@ micmen.control <- function(save.weight = TRUE, ...)
 
 
 
-micmen <- function(rpar = 0.001, divisor = 10,
-                   init1 = NULL, init2 = NULL,
-                   imethod = 1,
-                   oim = TRUE,
-                   link1 = "identity", link2 = "identity",
-                   firstDeriv = c("nsimEIM", "rpar"),
-                   earg1 = list(), earg2 = list(), 
-                   prob.x = c(0.15, 0.85),
-                   nsimEIM = 500,
-                   dispersion = 0, zero = NULL)
+ micmen <- function(rpar = 0.001, divisor = 10,
+                    init1 = NULL, init2 = NULL,
+                    imethod = 1,
+                    oim = TRUE,
+                    link1 = "identity", link2 = "identity",
+                    firstDeriv = c("nsimEIM", "rpar"),
+                    earg1 = list(), earg2 = list(), 
+                    prob.x = c(0.15, 0.85),
+                    nsimEIM = 500,
+                    dispersion = 0, zero = NULL)
 {
-
-
-
 
 
 
   firstDeriv <- match.arg(firstDeriv, c("nsimEIM", "rpar"))[1]
 
-  if (!is.Numeric(imethod, allow = 1, integ = TRUE, posit = TRUE))
+  if (!is.Numeric(imethod, allowable.length = 1, integer.valued = TRUE, positive = TRUE))
     stop("argument 'imethod' must be integer")
-  if (imethod > 3)
-    stop("argument 'imethod' must be 1, 2, or 3")
-  if (!is.Numeric(prob.x, allow = 2))
+  if (!is.Numeric(prob.x, allowable.length = 2))
     stop("argument 'prob.x' must be numeric and of length two")
   if (!is.logical(oim) || length(oim) != 1)
     stop("argument 'oim' must be single logical")
 
     stopifnot(nsimEIM > 10, length(nsimEIM) == 1, nsimEIM==round(nsimEIM))
 
-  if (!is.Numeric(imethod, allow = 1, integ = TRUE, posit = TRUE) ||
+  if (!is.Numeric(imethod, allowable.length = 1, integer.valued = TRUE, positive = TRUE) ||
      imethod > 3)
-      stop("'imethod' must be 1 or 2 or 3")
+    stop("'imethod' must be 1 or 2 or 3")
 
 
   estimated.dispersion <- (dispersion == 0)
@@ -122,6 +117,7 @@ micmen <- function(rpar = 0.001, divisor = 10,
     link1 <- as.character(substitute(link1))
   if (mode(link2) != "character" && mode(link2) != "name")
     link2 <- as.character(substitute(link2))
+
   if (!is.list(earg1)) earg1 = list()
   if (!is.list(earg2)) earg2 = list()
 
@@ -133,77 +129,82 @@ micmen <- function(rpar = 0.001, divisor = 10,
          namesof("theta2", link2, earg = earg2),
          "\n",
          "Variance: constant"),
+
   constraints = eval(substitute(expression({
       constraints <- cm.zero.vgam(constraints, x, .zero, M = 2)
   }), list( .zero = zero))),
+
   deviance = function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
       M <- if (is.matrix(y)) ncol(y) else 1
       if (residuals) {
         if (M > 1) NULL else (y - mu) * sqrt(w)
-      } else
-        rss.vgam(y - mu, w, M = M)
-  },
-  initialize = eval(substitute(expression({
-      if (ncol(cbind(y)) != 1)
-        stop("response must be a vector or a one-column matrix")
-
-      if (!length(Xm2))
-        stop("regressor not found")
-      if (ncol(as.matrix(Xm2)) != 1)
-        stop("regressor not found or is not a vector. Use the ",
-             "'form2' argument without an intercept")
-      Xm2 <- as.vector(Xm2) # Make sure
-      extra$Xm2 <- Xm2          # Needed for @linkinv
-
-      predictors.names <-
-        c(namesof("theta1", .link1, earg = .earg1, tag = FALSE),
-          namesof("theta2", .link2, earg = .earg2, tag = FALSE))
-
-      if (length(mustart) || length(coefstart))
-        stop("cannot handle 'mustart' or 'coefstart'")
-
-      if (!length(etastart)) {
-        if ( .imethod == 3 ) {
-          index0 <- (1:n)[Xm2 <= quantile(Xm2, prob = .prob.x[2] )]
-          init1 <- median(y[index0])
-          init2 <- median(init1 * Xm2 / y - Xm2)
-        }
-        if ( .imethod == 1 || .imethod == 2) {
-          mysubset <- subset_lohi(Xm2, y, prob.x = .prob.x,
-                    type = ifelse( .imethod == 1, "median", "wtmean"),
-                    wtvec = w)
-
-          mat.x <- with(mysubset, cbind(c(x1bar, x2bar), -c(y1bar, y2bar)))
-          theta.temp <- with(mysubset,
-                             solve(mat.x, c(x1bar * y1bar, x2bar * y2bar)))
-          init1 <- theta.temp[1]
-          init2 <- theta.temp[2]
-
-
-
-        }
-
-
-        if (length( .init1 )) init1 <- .init1
-        if (length( .init2 )) init2 <- .init2
-
-        etastart <- cbind(
-            rep(theta2eta(init1, .link1, earg = .earg1), len = n),
-            rep(theta2eta(init2, .link2, earg = .earg2), len = n))
       } else {
-        stop("cannot handle 'etastart' or 'mustart'")
+        rss.vgam(y - mu, w, M = M)
+      }
+  },
+
+  initialize = eval(substitute(expression({
+    if (ncol(cbind(y)) != 1)
+      stop("response must be a vector or a one-column matrix")
+
+    if (!length(Xm2))
+      stop("regressor not found")
+    if (ncol(as.matrix(Xm2)) != 1)
+      stop("regressor not found or is not a vector. Use the ",
+           "'form2' argument without an intercept")
+    Xm2 <- as.vector(Xm2) # Make sure
+    extra$Xm2 <- Xm2          # Needed for @linkinv
+
+    predictors.names <-
+      c(namesof("theta1", .link1, earg = .earg1, tag = FALSE),
+        namesof("theta2", .link2, earg = .earg2, tag = FALSE))
+
+    if (length(mustart) || length(coefstart))
+      stop("cannot handle 'mustart' or 'coefstart'")
+
+    if (!length(etastart)) {
+      if ( .imethod == 3 ) {
+        index0 <- (1:n)[Xm2 <= quantile(Xm2, prob = .prob.x[2] )]
+        init1 <- median(y[index0])
+        init2 <- median(init1 * Xm2 / y - Xm2)
+      }
+      if ( .imethod == 1 || .imethod == 2) {
+        mysubset <- subset_lohi(Xm2, y, prob.x = .prob.x,
+                  type = ifelse( .imethod == 1, "median", "wtmean"),
+                  wtvec = w)
+
+        mat.x <- with(mysubset, cbind(c(x1bar, x2bar), -c(y1bar, y2bar)))
+        theta.temp <- with(mysubset,
+                           solve(mat.x, c(x1bar * y1bar, x2bar * y2bar)))
+        init1 <- theta.temp[1]
+        init2 <- theta.temp[2]
+
+
+
       }
 
+
+      if (length( .init1 )) init1 <- .init1
+      if (length( .init2 )) init2 <- .init2
+
+      etastart <- cbind(
+          rep(theta2eta(init1, .link1, earg = .earg1), len = n),
+          rep(theta2eta(init2, .link2, earg = .earg2), len = n))
+    } else {
+      stop("cannot handle 'etastart' or 'mustart'")
+    }
   }), list( .init1 = init1, .link1 = link1, .earg1 = earg1,
             .init2 = init2, .link2 = link2, .earg2 = earg2,
             .imethod = imethod,
             .prob.x = prob.x ))),
+
   linkinv = eval(substitute(function(eta, extra = NULL) {
-      theta1 <- eta2theta(eta[,1], .link1, earg = .earg1)
-      theta2 <- eta2theta(eta[,2], .link2, earg = .earg2)
-      theta1 * extra$Xm2 / (theta2 + extra$Xm2)
+    theta1 <- eta2theta(eta[, 1], .link1, earg = .earg1)
+    theta2 <- eta2theta(eta[, 2], .link2, earg = .earg2)
+    theta1 * extra$Xm2 / (theta2 + extra$Xm2)
   }, list( .link1 = link1, .earg1 = earg1,
            .link2 = link2, .earg2 = earg2))),
+
   last = eval(substitute(expression({
     misc$link <-    c(theta1 = .link1, theta2 = .link2)
     misc$earg <- list(theta1 = .earg1, theta2 = .earg2 )
@@ -217,8 +218,10 @@ micmen <- function(rpar = 0.001, divisor = 10,
       dpar <- sum(w * (y - mu)^2) / (n - ncol_X_vlm)
     }
     misc$dispersion <- dpar
+
     misc$default.dispersion <- 0
     misc$estimated.dispersion <- .estimated.dispersion
+
     misc$imethod <- .imethod
     misc$nsimEIM <- .nsimEIM
     misc$firstDeriv <- .firstDeriv
@@ -233,56 +236,60 @@ micmen <- function(rpar = 0.001, divisor = 10,
             .oim = oim, .rpar = rpar,
             .nsimEIM = nsimEIM,
             .estimated.dispersion = estimated.dispersion ))),
-  summary.dispersion = FALSE,
-  vfamily = c("micmen", "vnonlinear"),
-  deriv = eval(substitute(expression({
-      theta1 <- eta2theta(eta[,1], .link1, earg = .earg1)
-      theta2 <- eta2theta(eta[,2], .link2, earg = .earg2)
-      dthetas.detas <- cbind(dtheta.deta(theta1, .link1, earg = .earg1),
-                             dtheta.deta(theta2, .link2, earg = .earg2))
 
-      rpar <- if ( .firstDeriv == "rpar") {
-        if (iter > 1) {
-          max(rpar / .divisor, 1000 * .Machine$double.eps)
-        } else {
-          d3 <- deriv3(~ theta1 * Xm2 / (theta2 + Xm2),
-                       c("theta1", "theta2"), hessian = FALSE)
-          .rpar
-        }
+  summary.dispersion = FALSE,
+
+  vfamily = c("micmen", "vnonlinear"),
+
+  deriv = eval(substitute(expression({
+    theta1 <- eta2theta(eta[, 1], .link1, earg = .earg1)
+    theta2 <- eta2theta(eta[, 2], .link2, earg = .earg2)
+    dthetas.detas <- cbind(dtheta.deta(theta1, .link1, earg = .earg1),
+                           dtheta.deta(theta2, .link2, earg = .earg2))
+
+    rpar <- if ( .firstDeriv == "rpar") {
+      if (iter > 1) {
+        max(rpar / .divisor, 1000 * .Machine$double.eps)
       } else {
+        d3 <- deriv3(~ theta1 * Xm2 / (theta2 + Xm2),
+                     c("theta1", "theta2"), hessian = FALSE)
         .rpar
       }
+    } else {
+      .rpar
+    }
 
-      dmus.dthetas <- if (FALSE) {
-        attr(eval(d3), "gradient")
+    dmus.dthetas <- if (FALSE) {
+      attr(eval(d3), "gradient")
+    } else {
+      dmu.dtheta1 <-           Xm2 / (theta2 + Xm2)
+      dmu.dtheta2 <- -theta1 * Xm2 / (Xm2 + theta2)^2
+      cbind(dmu.dtheta1, dmu.dtheta2)
+    }
+
+    myderiv <- if ( .firstDeriv == "rpar") {
+      if (TRUE) {
+        index <- iam(NA, NA, M = M, both = TRUE)
+        temp200809 <- dmus.dthetas * dthetas.detas
+        if (M > 1)
+          temp200809[, 2:M] <- temp200809[, 2:M] + sqrt(rpar)
+        w * (y - mu) * temp200809
       } else {
-        dmu.dtheta1 <-           Xm2 / (theta2 + Xm2)
-        dmu.dtheta2 <- -theta1 * Xm2 / (Xm2 + theta2)^2
-        cbind(dmu.dtheta1, dmu.dtheta2)
+        w * (y - mu) *
+          cbind(dmus.dthetas[, 1] * dthetas.detas[, 1],
+                dmus.dthetas[, 2] * dthetas.detas[, 2] + sqrt(rpar))
       }
+    } else {
+      temp20101111 <- dmus.dthetas * dthetas.detas
+      w * (y - mu) * temp20101111
+    }
 
-      myderiv <- if ( .firstDeriv == "rpar") {
-        if (TRUE) {
-          index <- iam(NA, NA, M = M, both = TRUE)
-          temp200809 <- dmus.dthetas * dthetas.detas
-          if (M > 1)
-              temp200809[, 2:M] <- temp200809[, 2:M] + sqrt(rpar)
-          w * (y - mu) * temp200809
-        } else {
-          w * (y - mu) *
-            cbind(dmus.dthetas[,1] * dthetas.detas[,1],
-                  dmus.dthetas[,2] * dthetas.detas[,2] + sqrt(rpar))
-        }
-      } else {
-        temp20101111 <- dmus.dthetas * dthetas.detas
-        w * (y - mu) * temp20101111
-      }
-
-      myderiv
+    myderiv
   }), list( .link1 = link1, .earg1 = earg1,
             .link2 = link2, .earg2 = earg2,
             .firstDeriv = firstDeriv,
             .rpar = rpar, .divisor = divisor ))),
+
   weight = eval(substitute(expression({
     if ( .oim ) {
       wz <- matrix(0, n, dimm(M))
@@ -300,10 +307,10 @@ micmen <- function(rpar = 0.001, divisor = 10,
         if (M > 1)
           wz[, 2:M] <- wz[, 2:M] + rpar
       } else {
-        wz <- cbind(( dmus.dthetas[,1] * dthetas.detas[,1])^2,
-                    ( dmus.dthetas[,2] * dthetas.detas[,2])^2 + rpar,
-                      dmus.dthetas[,1] *  dmus.dthetas[,2] * 
-                     dthetas.detas[,1] * dthetas.detas[,2])
+        wz <- cbind(( dmus.dthetas[, 1] * dthetas.detas[, 1])^2,
+                    ( dmus.dthetas[, 2] * dthetas.detas[, 2])^2 + rpar,
+                      dmus.dthetas[, 1] *  dmus.dthetas[, 2] * 
+                     dthetas.detas[, 1] * dthetas.detas[, 2])
       }
     } else {
       run.varcov <- 0
@@ -315,7 +322,8 @@ micmen <- function(rpar = 0.001, divisor = 10,
         ysim <- theta1 * Xm2 / (theta2 + Xm2) + rnorm(n, sd = mysigma)
         temp3 <- (ysim - mu) * dmus.dthetas * dthetas.detas
         run.varcov <- run.varcov +
-                      temp3[, index0$row.index] * temp3[, index0$col.index]
+                      temp3[, index0$row.index] *
+                      temp3[, index0$col.index]
       }
       run.varcov <- run.varcov / .nsimEIM
 
@@ -361,7 +369,7 @@ skira.control <- function(save.weight = TRUE, ...)
 
   firstDeriv <- match.arg(firstDeriv, c("nsimEIM", "rpar"))[1]
 
-  if (!is.Numeric(prob.x, allow = 2))
+  if (!is.Numeric(prob.x, allowable.length = 2))
     stop("argument 'prob.x' must be numeric and of length two")
 
   estimated.dispersion <- dispersion == 0
@@ -370,7 +378,7 @@ skira.control <- function(save.weight = TRUE, ...)
   if (mode(link2) != "character" && mode(link2) != "name")
     link2 <- as.character(substitute(link2))
 
-  if (!is.Numeric(imethod, allow = 1, integ = TRUE, posit = TRUE))
+  if (!is.Numeric(imethod, allowable.length = 1, integer.valued = TRUE, positive = TRUE))
     stop("argument 'imethod' must be integer")
   if (imethod > 5)
     stop("argument 'imethod' must be 1, 2, 3, 4 or 5")

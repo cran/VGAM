@@ -14,7 +14,7 @@ cumulative(link = "logit", earg = list(), parallel = FALSE,
 }
 %scumulative(link="logit", earg = list(),
 %            lscale="loge", escale = list(),
-%            parallel=FALSE, sparallel=TRUE, reverse=FALSE, iscale = 1)
+%            parallel = FALSE, sparallel = TRUE, reverse = FALSE, iscale = 1)
 %- maybe also 'usage' for other objects documented here.
 \arguments{
 
@@ -36,11 +36,13 @@ cumulative(link = "logit", earg = list(), parallel = FALSE,
   List. Extra argument for the link function.
   See \code{earg} in \code{\link{Links}} for general information.
 
+
   }
   \item{parallel}{
   A logical  or formula specifying which terms have
   equal/unequal coefficients.
   See below for more information about the parallelism assumption.
+
 
   }
 % \item{sparallel}{
@@ -70,6 +72,7 @@ cumulative(link = "logit", earg = list(), parallel = FALSE,
   if \code{reverse = FALSE} for then the cutpoints must be an
   decreasing sequence.
 
+
   }
   \item{mv}{
   Logical.
@@ -79,6 +82,7 @@ cumulative(link = "logit", earg = list(), parallel = FALSE,
   Each column of the matrix is a response, i.e., multivariate response.
   A suitable matrix can be obtained from \code{Cut}.
 
+
   }
   \item{intercept.apply}{
   Logical.
@@ -87,6 +91,7 @@ cumulative(link = "logit", earg = list(), parallel = FALSE,
   \code{\link{golf}},
   \code{\link{polf}},
   \code{\link{nbolf}}.
+
 
   }
 % \item{iscale}{
@@ -127,11 +132,13 @@ cumulative(link = "logit", earg = list(), parallel = FALSE,
   Currently, reduced-rank vector generalized additive models
   (RR-VGAMs) have not been implemented here.
 
+
 % The scaled version of \code{cumulative()}, called \code{scumulative()},
 % has \eqn{J} positive scaling factors.
 % They are described in pages 154 and 177 of McCullagh and Nelder (1989);
 % see their equation (5.4) in particular,
 % which they call the \emph{generalized rational model}.
+
 
 }
 \value{
@@ -139,8 +146,10 @@ cumulative(link = "logit", earg = list(), parallel = FALSE,
   The object is used by modelling functions such as \code{\link{vglm}},
   and \code{\link{vgam}}.
 
+
 }
 \references{
+
 Agresti, A. (2002)
 \emph{Categorical Data Analysis},
 2nd ed. New York: Wiley.
@@ -207,7 +216,7 @@ by the \pkg{VGAM} package can be found at
   then numerical problems are less likely to occur during the fitting,
   and there are less parameters. Numerical problems occur when
   the linear/additive predictors cross, which results in probabilities
-  outside of \eqn{(0,1)}; setting \code{parallel=TRUE} will help avoid
+  outside of \eqn{(0,1)}; setting \code{parallel = TRUE} will help avoid
   this problem.
 
 
@@ -232,11 +241,13 @@ by the \pkg{VGAM} package can be found at
   To fit the proportional odds model one can use the
   \pkg{VGAM} family function \code{\link{propodds}}.
   Note that \code{propodds(reverse)} is equivalent to 
-  \code{cumulative(parallel=TRUE, reverse=reverse)} (which is equivalent to 
-  \code{cumulative(parallel=TRUE, reverse=reverse, link="logit")}).
-  It is for convenience only. A call to \code{cumulative()} is preferred
-  since it reminds the user that a parallelism assumption is made, as
-  well as being a lot more flexible.
+  \code{cumulative(parallel = TRUE, reverse = reverse)} (which is
+  equivalent to
+  \code{cumulative(parallel = TRUE, reverse = reverse, link = "logit")}).
+  It is for convenience only. A call to
+  \code{cumulative()} is preferred since it reminds the user
+  that a parallelism assumption is made, as well as being a lot
+  more flexible.
 
 
 % In the future, this family function may be renamed to
@@ -249,6 +260,7 @@ by the \pkg{VGAM} package can be found at
 \section{Warning }{
   No check is made to verify that the response is ordinal;
   see \code{\link[base:factor]{ordered}}.
+
 
 }
 
@@ -290,30 +302,31 @@ fit2 = vgam(cbind(normal, mild, severe) ~ s(let, df = 2),
 
 # Check the proportional odds assumption with a LRT ----------
 (fit3 = vglm(cbind(normal, mild, severe) ~ let,
-             cumulative(parallel=FALSE, reverse=TRUE), pneumo))
-pchisq(2*(logLik(fit3)-logLik(fit)),
-       df = length(coef(fit3))-length(coef(fit)), lower.tail = FALSE)
+             cumulative(parallel = FALSE, reverse = TRUE), pneumo))
+pchisq(2 * (logLik(fit3) - logLik(fit)),
+       df = length(coef(fit3)) - length(coef(fit)), lower.tail = FALSE)
+lrtest(fit3, fit)  # More elegant
 
 # A factor() version of fit ----------------------------------
 # This is in long format (cf. wide format above)
-nobs = round(fit@y * c(weights(fit, type = "prior")))
-sumnobs = colSums(nobs) # apply(nobs, 2, sum)
+Nobs = round(depvar(fit) * c(weights(fit, type = "prior")))
+sumNobs = colSums(Nobs) # apply(Nobs, 2, sum)
 
-pneumo.long = data.frame(symptoms = ordered(rep(rep(colnames(nobs),
-                                  nrow(nobs)),
-                                  times = c(t(nobs))),
-                                  levels = colnames(nobs)),
-                         let = rep(rep(with(pneumo, let), each = ncol(nobs)),
-                                   times = c(t(nobs))))
-with(pneumo.long, table(let, symptoms)) # check it; should be same as pneumo
+pneumo.long =
+  data.frame(symptoms = ordered(rep(rep(colnames(Nobs), nrow(Nobs)),
+                                        times = c(t(Nobs))),
+                                levels = colnames(Nobs)),
+             let = rep(rep(with(pneumo, let), each = ncol(Nobs)),
+                       times = c(t(Nobs))))
+with(pneumo.long, table(let, symptoms)) # Check it; should be same as pneumo
 
 
 (fit.long1 = vglm(symptoms ~ let, data = pneumo.long,
-             cumulative(parallel=TRUE, reverse=TRUE), trace=TRUE))
-coef(fit.long1, matrix=TRUE) # Should be same as coef(fit, matrix=TRUE)
+             cumulative(parallel = TRUE, reverse = TRUE), trace = TRUE))
+coef(fit.long1, matrix = TRUE) # Should be same as coef(fit, matrix = TRUE)
 # Could try using mustart if fit.long1 failed to converge.
-mymustart = matrix(sumnobs / sum(sumnobs),
-                   nrow(pneumo.long), ncol(nobs), byrow = TRUE)
+mymustart = matrix(sumNobs / sum(sumNobs),
+                   nrow(pneumo.long), ncol(Nobs), byrow = TRUE)
 fit.long2 = vglm(symptoms ~ let,
                 fam = cumulative(parallel = TRUE, reverse = TRUE),
                 mustart = mymustart, data = pneumo.long, trace = TRUE)

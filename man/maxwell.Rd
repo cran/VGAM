@@ -5,21 +5,20 @@
 \description{
  Estimating the parameter of the Maxwell  distribution by
  maximum likelihood estimation.
+
 }
 \usage{
 maxwell(link = "loge", earg = list())
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{link}{
-  Parameter link function applied to the parameter \eqn{a}. 
-  See \code{\link{Links}} for more choices.
-  A log link is the default because the parameter is positive.
+  \item{link, earg}{
+  Parameter link function and extra argument
+  applied to the parameter \eqn{a}. 
+  See \code{\link{Links}} for more choices and information;
+  a log link is the default because the parameter is positive.
+  More information is at \code{\link{CommonVGAMffArguments}}.
 
-  }
-  \item{earg}{
-  List. Extra argument for the link.
-  See \code{earg} in \code{\link{Links}} for general information.
 
   }
 }
@@ -58,6 +57,7 @@ maxwell(link = "loge", earg = list())
   A related distribution is the Rayleigh distribution.
   Fisher-scoring and Newton-Raphson are the same here.
 
+
 }
 
 \seealso{ 
@@ -67,7 +67,7 @@ maxwell(link = "loge", earg = list())
 }
 \examples{
 mdata = data.frame(y = rmaxwell(1000, a = exp(2)))
-fit = vglm(y ~ 1, maxwell, mdata, trace = TRUE, crit = "c")
+fit = vglm(y ~ 1, maxwell, mdata, trace = TRUE, crit = "coef")
 coef(fit, matrix = TRUE)
 Coef(fit)
 }

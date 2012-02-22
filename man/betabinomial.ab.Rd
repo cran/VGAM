@@ -109,10 +109,10 @@ betabinomial.ab(lshape12 = "loge", earg = list(), i1 = 1, i2 = NULL,
 
 
   Suppose \code{fit} is a fitted beta-binomial model. Then
-  \code{fit@y} contains the sample proportions \eqn{y},
-  \code{fitted(fit)} returns estimates of \eqn{E(Y)}, and
-  \code{weights(fit, type = "prior")} returns the number
-  of trials \eqn{N}.
+  \code{fit@y} (better: \code{depvar(fit)}) contains the sample
+  proportions \eqn{y}, \code{fitted(fit)} returns estimates of
+  \eqn{E(Y)}, and \code{weights(fit, type = "prior")} returns
+  the number of trials \eqn{N}.
 
 
 }
@@ -192,7 +192,7 @@ fit = vglm(cbind(y, N-y) ~ 1, betabinomial.ab, trace = TRUE)
 coef(fit, matrix = TRUE)
 Coef(fit)
 head(fit@misc$rho) # The correlation parameter
-head(cbind(fit@y, weights(fit, type = "prior")))
+head(cbind(depvar(fit), weights(fit, type = "prior")))
 
 
 # Example 2
@@ -202,7 +202,7 @@ coef(fit, matrix = TRUE)
 Coef(fit)
 fit@misc$rho      # The correlation parameter
 t(fitted(fit))
-t(fit@y)
+t(depvar(fit))
 t(weights(fit, type = "prior"))
 # A "loge" link for the 2 shape parameters is a logistic regression:
 all.equal(c(fitted(fit)),

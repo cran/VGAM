@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2011 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2012 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -17,10 +17,12 @@
                       esd = list(), 
                       imu = NULL, isd = NULL, zero = 2)
 {
-  if (!is.Numeric(r1, allow = 1, integ = TRUE) || r1 < 0)
-    stop("bad input for r1")
-  if (!is.Numeric(r2, allow = 1, integ = TRUE) || r2 < 0)
-    stop("bad input for r2")
+  if (!is.Numeric(r1, allowable.length = 1, integer.valued = TRUE) ||
+      r1 < 0)
+    stop("bad input for 'r1'")
+  if (!is.Numeric(r2, allowable.length = 1, integer.valued = TRUE) ||
+      r2 < 0)
+    stop("bad input for 'r2'")
   if (mode(lmu) != "character" && mode(lmu) != "name")
     lmu = as.character(substitute(lmu))
   if (mode(lsd) != "character" && mode(lsd) != "name")
@@ -48,7 +50,8 @@
     if (ncol(y <- cbind(y)) != 1)
         stop("the response must be a vector or a one-column matrix")
 
-    if (length(w) != n || !is.Numeric(w, integ = TRUE, posit = TRUE))
+    if (length(w) != n ||
+        !is.Numeric(w, integer.valued = TRUE, positive = TRUE))
         stop("the argument 'weights' must be a vector ",
              "of positive integers")
 
@@ -70,7 +73,7 @@
              .emu = emu, .esd = esd,
              .imu = imu, .isd = isd,
              .r1 = r1, .r2 = r2 ))),
-  linkinv = function(eta, extra = NULL) eta[,1], 
+  linkinv = function(eta, extra = NULL) eta[, 1], 
   last = eval(substitute(expression({
     misc$link =    c(mu = .lmu , sd = .lsd )
     misc$earg = list(mu = .emu , sd = .esd )
@@ -144,6 +147,7 @@
 
 
 
+
 dbisa = function(x, shape, scale = 1, log = FALSE) {
     if (!is.logical(log.arg <- log))
         stop("bad input for argument 'log'")
@@ -162,21 +166,28 @@ dbisa = function(x, shape, scale = 1, log = FALSE) {
     if (log.arg) logdensity else exp(logdensity)
 }
 
+
 pbisa = function(q, shape, scale=1) {
-    if (!is.Numeric(q)) stop("bad input for argument 'q'")
-    if (!is.Numeric(shape, pos = TRUE)) stop("bad input for argument 'shape'")
-    if (!is.Numeric(scale, pos = TRUE)) stop("bad input for argument 'scale'")
+    if (!is.Numeric(q))
+      stop("bad input for argument 'q'")
+    if (!is.Numeric(shape, positive = TRUE))
+      stop("bad input for argument 'shape'")
+    if (!is.Numeric(scale, positive = TRUE))
+      stop("bad input for argument 'scale'")
     ans = pnorm(((temp <- sqrt(q/scale)) - 1/temp) / shape)
     ans[scale < 0 | shape < 0] = NA
     ans[q <= 0] = 0
     ans
 }
 
+
 qbisa = function(p, shape, scale=1) {
-    if (!is.Numeric(p, posit = TRUE) || any(p >= 1))
+    if (!is.Numeric(p, positive = TRUE) || any(p >= 1))
         stop("argument 'p' must have values inside the interval (0,1)")
-    if (!is.Numeric(shape, pos = TRUE)) stop("bad input for argument 'shape'")
-    if (!is.Numeric(scale, pos = TRUE)) stop("bad input for argument 'scale'")
+    if (!is.Numeric(shape, positive = TRUE))
+      stop("bad input for argument 'shape'")
+    if (!is.Numeric(scale, positive = TRUE))
+      stop("bad input for argument 'scale'")
     A = qnorm(p)
     temp1 = A * shape * sqrt(4 + A^2 * shape^2)
     ans1 = (2 + A^2 * shape^2 + temp1) * scale / 2
@@ -184,9 +195,11 @@ qbisa = function(p, shape, scale=1) {
     ifelse(p < 0.5, pmin(ans1, ans2), pmax(ans1, ans2))
 }
 
+
 rbisa = function(n, shape, scale=1) {
     use.n = if ((length.n <- length(n)) > 1) length.n else
-            if (!is.Numeric(n, integ = TRUE, allow = 1, posit = TRUE))
+            if (!is.Numeric(n, integer.valued = TRUE,
+                            allowable.length = 1, positive = TRUE))
                 stop("bad input for argument 'n'") else n
 
     A = rnorm(use.n)
@@ -219,11 +232,12 @@ rbisa = function(n, shape, scale=1) {
     if (mode(lscale) != "character" && mode(lscale) != "name")
         lscale = as.character(substitute(lscale))
 
-    if (length(ishape) && !is.Numeric(ishape, posit = TRUE))
+    if (length(ishape) && !is.Numeric(ishape, positive = TRUE))
         stop("bad input for argument 'ishape'")
-    if (!is.Numeric(iscale, posit = TRUE))
+    if (!is.Numeric(iscale, positive = TRUE))
         stop("bad input for argument 'iscale'")
-    if (!is.Numeric(imethod, allow = 1, integ = TRUE, posit = TRUE) ||
+    if (!is.Numeric(imethod, allowable.length = 1,
+                    integer.valued = TRUE, positive = TRUE) ||
        imethod > 3)
         stop("argument 'imethod' must be 1 or 2 or 3")
 
@@ -240,7 +254,7 @@ rbisa = function(n, shape, scale=1) {
     }) , list( .zero = zero))),
     initialize = eval(substitute(expression({
         if (ncol(y <- cbind(y)) != 1)
-            stop("the response must be a vector or a one-column matrix")
+          stop("the response must be a vector or a one-column matrix")
         predictors.names =
           c(namesof("shape", .lshape, earg = .eshape, tag = FALSE),
             namesof("scale", .lscale, tag = FALSE))
@@ -266,21 +280,21 @@ rbisa = function(n, shape, scale=1) {
                .eshape = eshape, .escale = escale,
                .imethod=imethod ))),
     linkinv = eval(substitute(function(eta, extra = NULL) {
-        sh = eta2theta(eta[,1], .lshape, earg = .eshape)
-        sc = eta2theta(eta[,2], .lscale, earg = .escale)
+        sh = eta2theta(eta[, 1], .lshape, earg = .eshape)
+        sc = eta2theta(eta[, 2], .lscale, earg = .escale)
         sc * (1 + sh^2 / 2)
     }, list( .lshape = lshape, .lscale = lscale,
              .eshape = eshape, .escale = escale ))),
     last = eval(substitute(expression({
-        misc$link = c(shape= .lshape, scale= .lscale)
-        misc$earg = list(shape= .eshape, scale= .escale)
+        misc$link =    c(shape = .lshape, scale = .lscale)
+        misc$earg = list(shape = .eshape, scale = .escale)
         misc$expected = TRUE
     }) , list( .lshape = lshape, .lscale = lscale,
                .eshape = eshape, .escale = escale ))),
     loglikelihood = eval(substitute(
         function(mu,y,w,residuals= FALSE,eta, extra = NULL) {
-        sh = eta2theta(eta[,1], .lshape, earg = .eshape)
-        sc = eta2theta(eta[,2], .lscale, earg = .escale)
+        sh = eta2theta(eta[, 1], .lshape, earg = .eshape)
+        sc = eta2theta(eta[, 2], .lscale, earg = .escale)
         if (residuals) stop("loglikelihood residuals not ",
                             "implemented yet") else {
             sum(w * dbisa(x=y, shape=sh, scale=sc, log = TRUE))
@@ -289,8 +303,8 @@ rbisa = function(n, shape, scale=1) {
               .eshape = eshape, .escale = escale ))),
     vfamily=c("bisa"),
     deriv = eval(substitute(expression({
-        sh = eta2theta(eta[,1], .lshape, earg = .eshape)
-        sc = eta2theta(eta[,2], .lscale, earg = .escale)
+        sh = eta2theta(eta[, 1], .lshape, earg = .eshape)
+        sc = eta2theta(eta[, 2], .lscale, earg = .escale)
         dl.dsh = ((y/sc - 2 + sc/y) / sh^2 - 1) / sh 
         dl.dsc = -0.5 / sc + 1/(y+sc) + sqrt(y) * ((y+sc)/y) *
                  (sqrt(y/sc) - sqrt(sc/y)) / (2 * sh^2 * sc^1.5)

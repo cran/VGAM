@@ -232,23 +232,29 @@ uqo.control(Rank=1, Bestof = if (length(lvstart) &&
 }
 \references{
 
-Yee, T. W. (2005)
-On constrained and unconstrained
-quadratic ordination.
-\emph{Manuscript in preparation}.
 
 Yee, T. W. (2006)
 Constrained additive ordination.
 \emph{Ecology}, \bold{87}, 203--213.
+
+
+%Yee, T. W. (2012)
+%On constrained and unconstrained quadratic ordination.
+%\emph{Manuscript in preparation}.
+
 
 }
 \author{T. W. Yee}
 \note{
   This is a difficult optimization problem, and the current
   algorithm needs to be improved.
+
+
 }
 \seealso{
   \code{\link{uqo}}.
+
+
 }
 
 \section{Warning }{

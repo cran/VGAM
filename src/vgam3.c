@@ -1435,8 +1435,9 @@ void Yee_vbfa(int psdvgce3[], double *fjcasv7g, double he7mqnvy[], double tlgdue
 
 
   double *ghdetj8v, *zpcqv3uj;
-  int    nhja0izq, rutyk8mg, xjc4ywlh, lyma1kwc, lyzoe1rsp, ueb8hndv, gtrlbz3e, algpft4y = 0,
+  int    nhja0izq, rutyk8mg, xjc4ywlh, lyzoe1rsp, ueb8hndv, gtrlbz3e, algpft4y = 0,
          qemj9asg, npjlv3mr, kvowz9ht, ldk, fbd5yktj = 0;
+
 
 
 
@@ -1465,7 +1466,6 @@ void Yee_vbfa(int psdvgce3[], double *fjcasv7g, double he7mqnvy[], double tlgdue
 
   rutyk8mg   = psdvgce3[8];
   xjc4ywlh   = psdvgce3[9];
-  lyma1kwc   = psdvgce3[10];
   kvowz9ht = psdvgce3[11];
   npjlv3mr  = psdvgce3[12];
   ldk         = psdvgce3[14];

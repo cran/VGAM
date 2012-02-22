@@ -6,19 +6,16 @@
   Maximum likelihood estimation for the geometric distribution.
 }
 \usage{
-geometric(link = "logit", earg=list(), expected = TRUE, imethod = 1)
+geometric(link = "logit", earg = list(), expected = TRUE, imethod = 1,
+          iprob = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{link}{ 
-  Parameter link function applied to the
+  \item{link, earg}{ 
+  Parameter link function and extra argument applied to the
   parameter \eqn{p}{prob}, which lies in the unit interval.
-  See \code{\link{Links}} for more choices.
-
-  }
-  \item{earg}{
-  List. Extra argument for the link.
-  See \code{earg} in \code{\link{Links}} for general information.
+  See \code{\link{Links}} for more choices,
+  and \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{expected}{ 
@@ -30,6 +27,11 @@ geometric(link = "logit", earg=list(), expected = TRUE, imethod = 1)
   An integer with value \code{1} or \code{2} or \code{3} which
   specifies the initialization method for the probability.
   If failure to converge occurs try another value.
+
+  }
+  \item{iprob}{
+  Optional initial value.
+  See \code{\link{CommonVGAMffArguments}} for more details.
 
   }
 
@@ -46,6 +48,9 @@ geometric(link = "logit", earg=list(), expected = TRUE, imethod = 1)
   and its variance is \eqn{Var(Y) = (1-p)/p^2}{Var(Y) = (1-prob)/prob^2}.
   The geometric distribution is a special case of the 
   negative binomial distribution (see \code{\link{negbinomial}}).
+  If \eqn{Y} has a geometric distribution with parameter \eqn{p}{prob} then
+  \eqn{Y+1} has a positive-geometric distribution with the same parameter.
+
 
 }
 \value{
@@ -53,11 +58,14 @@ geometric(link = "logit", earg=list(), expected = TRUE, imethod = 1)
   The object is used by modelling functions such as \code{\link{vglm}},
   and \code{\link{vgam}}.
 
+
 }
 \references{
   Evans, M., Hastings, N. and Peacock, B. (2000)
   \emph{Statistical Distributions},
   New York: Wiley-Interscience, Third edition.
+
+
 }
 
 \author{ T. W. Yee }
@@ -70,8 +78,10 @@ geometric(link = "logit", earg=list(), expected = TRUE, imethod = 1)
   \code{\link[stats]{Geometric}},
   \code{\link{betageometric}},
   \code{\link{expgeometric}},
+  \code{\link{zageometric}},
   \code{\link{zigeometric}},
   \code{\link{rbetageom}}.
+
 
 }
 \examples{

@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2011 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2012 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -13,7 +13,7 @@
 
 
 
-fittedvlm <- function(object, matrix.arg=TRUE, ...)
+fittedvlm <- function(object, matrix.arg = TRUE, ...)
 {
 
     answer = 
@@ -63,7 +63,7 @@ setMethod("fitted",  "vglm",
     fittedvlm(object, ...))
 
 
-predictors.vglm <- function(object, matrix=TRUE, ...)
+predictors.vglm <- function(object, matrix = TRUE, ...)
 {
     answer = 
     if (matrix)

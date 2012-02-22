@@ -15,8 +15,8 @@ negbinomial(lmu = "loge", lsize = "loge", emu = list(), esize = list(),
             Maxiter = 5000, deviance.arg = FALSE, imethod = 1,
             parallel = FALSE, shrinkage.init = 0.95, zero = -2)
 polya(lprob = "logit", lsize = "loge", eprob = list(), esize = list(),
-    iprob = NULL, isize = NULL, quantile.probs = 0.75, nsimEIM = 100,
-    deviance.arg = FALSE, imethod = 1, shrinkage.init = 0.95, zero = -2)
+      iprob = NULL, isize = NULL, quantile.probs = 0.75, nsimEIM = 100,
+      deviance.arg = FALSE, imethod = 1, shrinkage.init = 0.95, zero = -2)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -70,8 +70,9 @@ polya(lprob = "logit", lsize = "loge", eprob = list(), esize = list(),
   Used to specify how many terms of the infinite series
   for computing the second diagonal element of the
   EIM are actually used.
-  The sum of the probabilites are added until they reach this value or more
-  (but no more than \code{Maxiter} terms allowed).
+  The sum of the probabilites are added until they reach
+  this value or more (but no more than \code{Maxiter}
+  terms allowed).
   It is like specifying \code{p} in an imaginary function
   \code{qnegbin(p)}.
 
@@ -85,13 +86,13 @@ polya(lprob = "logit", lsize = "loge", eprob = list(), esize = list(),
 
   }
   \item{deviance.arg}{
-  Logical. If \code{TRUE}, the deviance function
-  is attached to the object. Under ordinary circumstances, it should
-  be left alone because it really assumes the index parameter is at
-  the maximum likelihood estimate. Consequently, one cannot use that
-  criterion to minimize within the IRLS algorithm.
-  It should be set \code{TRUE} only when used with \code{\link{cqo}} 
-  under the fast algorithm.
+  Logical. If \code{TRUE}, the deviance function is attached
+  to the object. Under ordinary circumstances, it should be
+  left alone because it really assumes the index parameter
+  is at the maximum likelihood estimate. Consequently,
+  one cannot use that criterion to minimize within the
+  IRLS algorithm. It should be set \code{TRUE} only when
+  used with \code{\link{cqo}} under the fast algorithm.
 
   }
   \item{imethod}{
@@ -123,11 +124,12 @@ polya(lprob = "logit", lsize = "loge", eprob = list(), esize = list(),
   }
   \item{zero}{
   Integer valued vector, usually assigned \eqn{-2} or \eqn{2} if used
-  at all.  Specifies which of the two linear/additive predictors are
+  at all. Specifies which of the two linear/additive predictors are
   modelled as an intercept only. By default, the \eqn{k} parameter
   (after \code{lsize} is applied) is modelled as a single unknown
-  number that is estimated.  It can be modelled as a function of the
-  explanatory variables by setting \code{zero = NULL}. A negative value
+  number that is estimated. It can be modelled as a function of the
+  explanatory variables by setting \code{zero = NULL}; this has been
+  called a NB-H model by Hilbe (2011). A negative value
   means that the value is recycled, so setting \eqn{-2} means all \eqn{k}
   are intercept-only.
   See \code{\link{CommonVGAMffArguments}} for more information.
@@ -179,10 +181,10 @@ polya(lprob = "logit", lsize = "loge", eprob = list(), esize = list(),
   The negative binomial distribution can be coerced into the
   classical GLM framework with one of the parameters being
   of interest and the other treated as a nuisance/scale
-  parameter (this is implemented in the MASS library). The
+  parameter (this is implemented in the \pkg{MASS} library). The
   \pkg{VGAM} family function \code{negbinomial} treats both
   parameters on the same footing, and estimates them both
-  by full maximum likelihood estimation.  Simulated Fisher
+  by full maximum likelihood estimation. Simulated Fisher
   scoring is employed as the default (see the \code{nsimEIM}
   argument).
 
@@ -215,14 +217,15 @@ polya(lprob = "logit", lsize = "loge", eprob = list(), esize = list(),
   estimate of the index parameter is fraught (see Lawless,
   1987). In general, the \code{\link{quasipoissonff}} is
   more robust.  Other alternatives to \code{negbinomial} are
-  to fit a NB-1 or RR-NB model; see Yee (2011). Assigning
-  values to the \code{isize} argument may lead to a local
-  solution, and smaller values are preferred over large
-  values when using this argument.
+  to fit a NB-1 or RR-NB (aka NB-P) model; see Yee (2012).
+  Also available are the NB-C, NB-H and NB-G.
+  Assigning values to the \code{isize} argument may lead
+  to a local solution, and smaller values are preferred
+  over large values when using this argument.
 
 
-  Yet to do: write a family function which uses the methods of moments
-  estimator for \eqn{k}.
+  Yet to do: write a family function which uses the methods
+  of moments estimator for \eqn{k}.
 
 
 }
@@ -240,8 +243,9 @@ Negative binomial and mixed Poisson regression.
 \bold{15}, 209--225.
 
 
-Hilbe, J. M. (2007)
-\emph{Negative Binomial Regression}.
+Hilbe, J. M. (2011)
+\emph{Negative Binomial Regression},
+2nd Edition.
 Cambridge: Cambridge University Press.
 
 
@@ -251,7 +255,7 @@ Fitting the negative binomial distribution to biological data.
 \bold{9}, 174--200.
 
 
-  Yee, T. W. (2011)
+  Yee, T. W. (2012)
   Two-parameter reduced-rank vector generalized linear models.
   \emph{In preparation}.
 
@@ -338,7 +342,7 @@ Fitting the negative binomial distribution to biological data.
   inclusive of quasi-Poisson and negative binomial regression.
   This is known as a reduced-rank negative binomial model \emph{(RR-NB)}.
   It fits a negative binomial log-linear regression with variance function
-  \eqn{Var(Y) = \mu + \delta_1   \mu^{\delta_2}}{Var(Y) = mu + delta1 * mu^delta2}
+  \eqn{Var(Y)=\mu+\delta_1 \mu^{\delta_2}}{Var(Y) = mu + delta1 * mu^delta2}
   where \eqn{\delta_1}{delta1}
   and   \eqn{\delta_2}{delta2}
   are parameters to be estimated by MLE.
@@ -368,6 +372,8 @@ Fitting the negative binomial distribution to biological data.
   \code{\link{quasipoissonff}},
   \code{\link{poissonff}},
   \code{\link{zinegbinomial}},
+  \code{\link{negbinomial.size}} (e.g., NB-G),
+  \code{\link{nbcanlink}} (NB-C),
   \code{\link{posnegbinomial}},
   \code{\link{invbinomial}},
 % \code{\link[MASS]{rnegbin}}.

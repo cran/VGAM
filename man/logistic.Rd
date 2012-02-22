@@ -94,7 +94,7 @@ New York: Wiley-Interscience, Third edition.
 Castillo, E., Hadi, A. S., Balakrishnan, N. Sarabia, J. S. (2005)
 \emph{Extreme Value and Related Models with Applications in
       Engineering and Science},
-Hoboken, N.J.: Wiley-Interscience, p.130.
+Hoboken, NJ, USA: Wiley-Interscience, p.130.
 
 
 deCani, J. S. and Stine, R. A. (1986)

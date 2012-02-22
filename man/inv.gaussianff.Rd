@@ -53,12 +53,14 @@ inv.gaussianff(lmu = "loge", llambda = "loge",
   \eqn{\eta_2=\log(\lambda)}{eta2=log(lambda)}.
   The mean is returned as the fitted values.
 
+
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}},
   \code{\link{rrvglm}}
   and \code{\link{vgam}}.
+
 
 }
 \references{ 
@@ -80,6 +82,7 @@ New York: Wiley-Interscience, Third edition.
   function is different from that approach in that it estimates both
   parameters by full maximum likelihood estimation.
 
+
 }
 
 \seealso{ 
@@ -87,18 +90,20 @@ New York: Wiley-Interscience, Third edition.
   \code{\link{wald}},
   \code{\link{bisa}}.
 
+
   The \R{} package \pkg{SuppDists} has several functions for evaluating
   the density, distribution function, quantile function and generating
   random numbers from the inverse Gaussian distribution.
 
+
 }
 \examples{
-idat <- data.frame(x2 = runif(nn <- 1000))
-idat <- transform(idat, mymu   = exp(2 + 1 * x2),
-                        Lambda = exp(2 + 1 * x2))
-idat <- transform(idat, y = rinv.gaussian(nn, mu = mymu, lambda = Lambda))
-fit1 <-   vglm(y ~ x2, inv.gaussianff, idat, trace = TRUE)
-rrig <- rrvglm(y ~ x2, inv.gaussianff, idat, trace = TRUE)
+idata <- data.frame(x2 = runif(nn <- 1000))
+idata <- transform(idata, mymu   = exp(2 + 1 * x2),
+                          Lambda = exp(2 + 1 * x2))
+idata <- transform(idata, y = rinv.gaussian(nn, mu = mymu, lambda = Lambda))
+fit1 <-   vglm(y ~ x2, inv.gaussianff, idata, trace = TRUE)
+rrig <- rrvglm(y ~ x2, inv.gaussianff, idata, trace = TRUE)
 coef(fit1, matrix = TRUE)
 coef(rrig, matrix = TRUE)
 Coef(rrig)

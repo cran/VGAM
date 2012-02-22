@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2011 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2012 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -76,7 +76,7 @@ rcard = function(n, mu, rho, ...) {
         stop("'mu' must be between 0 and 2*pi inclusive")
     if (!is.Numeric(rho) || max(abs(rho) > 0.5))
         stop("'rho' must be between -0.5 and 0.5 inclusive")
-    if (!is.Numeric(n, positive = TRUE, integer = TRUE, allow=1))
+    if (!is.Numeric(n, positive = TRUE, integer.valued = TRUE, allowable.length = 1))
         stop("'n' must be a single positive integer")
     mu = rep(mu, len=n)
     rho = rep(rho, len=n)
@@ -108,7 +108,7 @@ cardioid.control <- function(save.weight = TRUE, ...)
         stop("bad input for argument 'irho'")
     if (!is.list(emu)) emu = list()
     if (!is.list(erho)) erho = list()
-    if (!is.Numeric(nsimEIM, allow=1, integ = TRUE) || nsimEIM <= 50)
+    if (!is.Numeric(nsimEIM, allowable.length = 1, integer.valued = TRUE) || nsimEIM <= 50)
         stop("'nsimEIM' should be an integer greater than 50")
 
     new("vglmff",
@@ -221,9 +221,9 @@ cardioid.control <- function(save.weight = TRUE, ...)
         llocation = as.character(substitute(llocation))
     if (mode(lscale) != "character" && mode(lscale) != "name")
         lscale = as.character(substitute(lscale))
-    if (!is.Numeric(imethod, allow=1, integ = TRUE, posit = TRUE) ||
+    if (!is.Numeric(imethod, allowable.length = 1, integer.valued = TRUE, positive = TRUE) ||
        imethod > 2) stop("argument 'imethod' must be 1 or 2")
-    if (length(zero) && !is.Numeric(zero, integer = TRUE, posit = TRUE))
+    if (length(zero) && !is.Numeric(zero, integer.valued = TRUE, positive = TRUE))
         stop("bad input for argument 'zero'")
     if (!is.list(escale)) escale = list()
 

@@ -45,32 +45,36 @@ multinomial(zero = NULL, parallel = FALSE, nointercept = NULL,
   }
 }
 \details{
-  In this help file the response \eqn{Y} is assumed to be a factor with
-  unordered values \eqn{1,2,\dots,M+1}, so that \eqn{M} is the number
-  of linear/additive predictors \eqn{\eta_j}{eta_j}.
+  In this help file the response \eqn{Y} is assumed to be
+  a factor with unordered values \eqn{1,2,\dots,M+1}, so
+  that \eqn{M} is the number of linear/additive predictors
+  \eqn{\eta_j}{eta_j}.
 
 
   The default model can be written
   \deqn{\eta_j = \log(P[Y=j]/ P[Y=M+1])}{%
          eta_j =  log(P[Y=j]/ P[Y=M+1])}
   where \eqn{\eta_j}{eta_j} is the \eqn{j}th linear/additive predictor.
-  Here, \eqn{j=1,\ldots,M}, and \eqn{\eta_{M+1}}{eta_{M+1}} is 0 by
-  definition.  That is, the last level of the factor, or last column of
-  the response matrix, is taken as the reference level or baseline---this
-  is for identifiability of the parameters.
-  The reference or baseline level can be changed with the
-  \code{refLevel} argument.
+  Here, \eqn{j=1,\ldots,M}, and \eqn{\eta_{M+1}}{eta_{M+1}}
+  is 0 by definition. That is, the last level of the factor,
+  or last column of the response matrix, is taken as the
+  reference level or baseline---this is for identifiability
+  of the parameters. The reference or baseline level can
+  be changed with the \code{refLevel} argument.
 
 
-  In almost all the literature, the constraint matrices associated
-  with this family of models are known. For example, setting
-  \code{parallel = TRUE} will make all constraint matrices (except for
-  the intercept) equal to a vector of \eqn{M} 1's.  If the constraint
-  matrices are unknown and to be estimated, then this can be achieved
-  by fitting the model as a reduced-rank vector generalized linear model
-  (RR-VGLM; see \code{\link{rrvglm}}).  In particular, a multinomial logit
-  model with unknown constraint matrices is known as a \emph{stereotype} model
-  (Anderson, 1984), and can be fitted with \code{\link{rrvglm}}.
+  In almost all the literature, the constraint matrices
+  associated with this family of models are known. For
+  example, setting \code{parallel = TRUE} will make all
+  constraint matrices (except for the intercept) equal to
+  a vector of \eqn{M} 1's. If the constraint matrices are
+  unknown and to be estimated, then this can be achieved by
+  fitting the model as a reduced-rank vector generalized
+  linear model (RR-VGLM; see \code{\link{rrvglm}}).
+  In particular, a multinomial logit model with unknown
+  constraint matrices is known as a \emph{stereotype}
+  model (Anderson, 1984), and can be fitted with
+  \code{\link{rrvglm}}.
 
 
 }
@@ -107,7 +111,8 @@ Agresti, A. (2002)
 
 
 Hastie, T. J., Tibshirani, R. J. and Friedman, J. H. (2009)
-\emph{The Elements of Statistical Learning: Data Mining, Inference and Prediction},
+\emph{The Elements of Statistical Learning: Data Mining,
+      Inference and Prediction},
 2nd ed.
 New York: Springer-Verlag.
 
@@ -132,48 +137,54 @@ by the \pkg{VGAM} package can be found at
 \author{ Thomas W. Yee }
 
 \note{
-  The response should be either a matrix of counts (with row sums that are
-  all positive), or a factor. In both cases, the \code{y} slot returned
-  by \code{\link{vglm}}/\code{\link{vgam}}/\code{\link{rrvglm}} is the
-  matrix of sample proportions.
+  The response should be either a matrix of counts
+  (with row sums that are all positive), or a
+  factor. In both cases, the \code{y} slot returned by
+  \code{\link{vglm}}/\code{\link{vgam}}/\code{\link{rrvglm}}
+  is the matrix of sample proportions.
 
 
   The multinomial logit model is more appropriate for a nominal
   (unordered) factor response than for an ordinal (ordered) factor
   response.
-  Models more suited for the latter include those based on cumulative
-  probabilities, e.g., \code{\link{cumulative}}.
+  Models more suited for the latter include those based on
+  cumulative probabilities, e.g., \code{\link{cumulative}}.
 
 
-  \code{multinomial} is prone to numerical difficulties if the groups
-  are separable and/or the fitted probabilities are close to 0 or 1.
-  The fitted values returned are estimates of the probabilities
-  \eqn{P[Y=j]} for \eqn{j=1,\ldots,M+1}.
-  See \pkg{safeBinaryRegression} for the logistic regression case.
+  \code{multinomial} is prone to numerical difficulties if
+  the groups are separable and/or the fitted probabilities
+  are close to 0 or 1. The fitted values returned
+  are estimates of the probabilities \eqn{P[Y=j]} for
+  \eqn{j=1,\ldots,M+1}. See \pkg{safeBinaryRegression}
+  for the logistic regression case.
 
 
-  Here is an example of the usage of the \code{parallel} argument.
-  If there are covariates \code{x2}, \code{x3} and \code{x4}, then
-  \code{parallel = TRUE ~ x2 + x3 - 1} and
-  \code{parallel = FALSE ~ x4} are equivalent. This would constrain
-  the regression coefficients for \code{x2} and \code{x3} to be equal;
-  those of the intercepts and \code{x4} would be different.
+  Here is an example of the usage of the \code{parallel}
+  argument. If there are covariates \code{x2}, \code{x3}
+  and \code{x4}, then \code{parallel = TRUE ~ x2 + x3 -
+  1} and \code{parallel = FALSE ~ x4} are equivalent. This
+  would constrain the regression coefficients for \code{x2}
+  and \code{x3} to be equal; those of the intercepts and
+  \code{x4} would be different.
 
 
-  In Example 4 below, a conditional logit model is fitted to an artificial
-  data set that explores how cost and travel time affect people's
-  decision about how to travel to work.  Walking is the baseline group.
-  The variable \code{Cost.car} is the difference between the cost of
-  travel to work by car and walking, etc.  The variable \code{Time.car}
-  is the difference between the travel duration/time to work by car and
-  walking, etc. For other details about the \code{xij} argument see
+  In Example 4 below, a conditional logit model is
+  fitted to an artificial data set that explores how
+  cost and travel time affect people's decision about
+  how to travel to work. Walking is the baseline group.
+  The variable \code{Cost.car} is the difference between
+  the cost of travel to work by car and walking, etc. The
+  variable \code{Time.car} is the difference between
+  the travel duration/time to work by car and walking,
+  etc. For other details about the \code{xij} argument see
   \code{\link{vglm.control}} and \code{\link{fill}}.
 
 
-  The \code{\link[nnet]{multinom}} function in the \pkg{nnet} package
-  uses the first level of the factor as baseline, whereas the last
-  level of the factor is used here. Consequently the estimated 
-  regression coefficients differ.
+  The \code{\link[nnet]{multinom}} function in the
+  \pkg{nnet} package uses the first level of the factor as
+  baseline, whereas the last level of the factor is used
+  here. Consequently the estimated regression coefficients
+  differ.
 
 
 }

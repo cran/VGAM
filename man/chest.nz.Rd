@@ -1,11 +1,11 @@
-\name{chestnz}
-\alias{chestnz}
+\name{chest.nz}
+\alias{chest.nz}
 \docType{data}
 \title{ Chest Pain in NZ Adults Data}
 \description{
   Presence/absence of chest pain in 10186 New Zealand adults.
 }
-\usage{data(chestnz)}
+\usage{data(chest.nz)}
 \format{
   A data frame with 73 rows and the following 5 variables.
   \describe{
@@ -22,6 +22,7 @@
   If yes, they indicated whether it
   was on their LHS and/or RHS of their chest.
 
+
 }
 \source{
   MacMahon, S., Norton, R., Jackson, R., Mackie, M. J.,
@@ -30,14 +31,14 @@
   Health Study: design and baseline findings.
   \emph{New Zealand Medical Journal},
   \bold{108}, 499--502.
+
+
 }
 \examples{
-fit = vgam(cbind(nolnor, nolr,lnor,lr) ~ s(age, c(4,3)), 
-           binom2.or(exchan=TRUE, zero=NULL), data = chestnz)
-coef(fit, matrix=TRUE)
-\dontrun{
-plot(fit, which.cf=2, se=TRUE)
-}
+fit = vgam(cbind(nolnor, nolr, lnor, lr) ~ s(age, c(4, 3)), 
+           binom2.or(exchan = TRUE, zero = NULL), data = chest.nz)
+coef(fit, matrix = TRUE)
+\dontrun{ plot(fit, which.cf = 2, se = TRUE) }
 }
 \keyword{datasets}
 

@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2011 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2012 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -469,24 +469,24 @@ TypicalVGAMlinkFunction <- function(theta,
                         short = TRUE, tag = FALSE)
 {
 
-    if (is.character(theta)) {
-        string <- paste("-1/", theta, sep = "")
-        if (tag) 
-            string <- paste("Negative inverse:", string) 
-        return(string)
-    }
-    if (inverse) {
-        if (deriv > 0) {
-            1 / nreciprocal(theta, earg = earg, inverse = FALSE, deriv)
-        } else {
-            1 / sqrt(-2*theta)
-        }
+  if (is.character(theta)) {
+    string <- paste("-1/", theta, sep = "")
+    if (tag) 
+      string <- paste("Negative inverse:", string) 
+    return(string)
+  }
+  if (inverse) {
+    if (deriv > 0) {
+      1 / nreciprocal(theta, earg = earg, inverse.arg = FALSE, deriv)
     } else {
-        switch(deriv+1,
-           -1 / (2 * theta^2),
-           theta^3,
-           3 * theta^5)
+      1 / sqrt(-2*theta)
     }
+  } else {
+    switch(deriv+1,
+       -1 / (2 * theta^2),
+       theta^3,
+       3 * theta^5)
+  }
 }
 
 
@@ -575,10 +575,14 @@ fsqrt <- function(theta, earg = list(min = 0, max = 1, mux=sqrt(2)),
     if (is.Numeric(earg$min)) min = earg$min
     if (is.Numeric(earg$max)) max = earg$max
     if (is.Numeric(earg$mux)) mux = earg$mux
-    if (!is.Numeric(min,allow = 1)) stop("bad input for 'min' component")
-    if (!is.Numeric(max,allow = 1)) stop("bad input for 'max' component")
-    if (!is.Numeric(mux,allow = 1,posit = TRUE)) stop("bad input for 'mux' component")
-    if (min >= max) stop("'min' >= 'max' is not allowed")
+    if (!is.Numeric(min, allowable.length = 1))
+      stop("bad input for 'min' component")
+    if (!is.Numeric(max, allowable.length = 1))
+      stop("bad input for 'max' component")
+    if (!is.Numeric(mux, allowable.length = 1, positive = TRUE))
+      stop("bad input for 'mux' component")
+    if (min >= max)
+      stop("'min' >= 'max' is not allowed")
 
     if (is.character(theta)) {
         string <- if (short) 
@@ -888,12 +892,13 @@ nlogoff <- function(theta, earg = 0, inverse = FALSE, deriv = 0,
         cutpoint = earg$cutpoint # Optional; if so then is a NULL
     } else
         stop("argument 'earg' must be a list")
-    if (!is.Numeric(lambda, posit = TRUE))
+    if (!is.Numeric(lambda, positive = TRUE))
         stop('could not determine lambda or lambda has negative values')
     if (is.Numeric(cutpoint))
-      if (any(cutpoint < 0) || !is.Numeric(cutpoint, integer = TRUE))
-        warning("argument 'cutpoint' should contain ",
-                "non-negative integer values")
+      if (any(cutpoint < 0) ||
+          !is.Numeric(cutpoint, integer.valued = TRUE))
+      warning("argument 'cutpoint' should contain ",
+              "non-negative integer values")
 
     if (is.character(theta)) {
         string <- if (short) {
@@ -924,14 +929,16 @@ nlogoff <- function(theta, earg = 0, inverse = FALSE, deriv = 0,
 
     thmat = cbind(theta)
     lambda = rep(lambda, len=ncol(thmat)) # Allow recycling for lambda
-    if (is.Numeric(cutpoint)) cutpoint = rep(cutpoint, len=ncol(thmat))
+    if (is.Numeric(cutpoint))
+      cutpoint = rep(cutpoint, len=ncol(thmat))
     if (ncol(thmat) > 1) {
         answer = thmat
         for(ii in 1:ncol(thmat))
             answer[,ii] = Recall(theta = thmat[,ii],
                    earg = list(lambda=lambda[ii],
-                   cutpoint = if (is.Numeric(cutpoint)) cutpoint[ii] else NULL),
-                   inverse=inverse, deriv = deriv)
+                   cutpoint =
+                     if (is.Numeric(cutpoint)) cutpoint[ii] else NULL),
+                   inverse = inverse, deriv = deriv)
         return(answer)
     }
 
@@ -941,11 +948,11 @@ nlogoff <- function(theta, earg = 0, inverse = FALSE, deriv = 0,
             1 / Recall(theta = theta, earg = earg,
                        inverse = FALSE, deriv = deriv)
         } else {
-            if (is.Numeric(cutpoint)) {
-                pnorm((1-care.exp(-(theta-log(cutpoint))/3)) * 3 * sqrt(lambda))
-            } else {
-                pnorm((1-care.exp(-theta/3)) * 3 * sqrt(lambda))
-            }
+          if (is.Numeric(cutpoint)) {
+            pnorm((1-care.exp(-(theta-log(cutpoint))/3)) * 3 * sqrt(lambda))
+          } else {
+            pnorm((1-care.exp(-theta/3)) * 3 * sqrt(lambda))
+          }
         }
     } else {
         smallno = 1 * .Machine$double.eps
@@ -956,7 +963,8 @@ nlogoff <- function(theta, earg = 0, inverse = FALSE, deriv = 0,
         switch(deriv+1, {
             temp = Ql / (3*sqrt(lambda))
             temp = pmin(temp, 1.0 - smallno)  # 100 / .Machine$double.eps
-            -3*log1p(-temp) + if (is.Numeric(cutpoint)) log(cutpoint) else 0},
+            -3*log1p(-temp) +
+            if (is.Numeric(cutpoint)) log(cutpoint) else 0},
             (1 - Ql / (3*sqrt(lambda))) * sqrt(lambda) * dnorm(Ql),
             {  stop('cannot handle deriv = 2') },
             stop("argument 'deriv' unmatched"))
@@ -975,7 +983,7 @@ nlogoff <- function(theta, earg = 0, inverse = FALSE, deriv = 0,
     if (!is.Numeric(cutpoint))
       stop("could not determine the cutpoint")
     if (any(cutpoint < 0) ||
-        !is.Numeric(cutpoint, integer = TRUE))
+        !is.Numeric(cutpoint, integer.valued = TRUE))
       warning("argument 'cutpoint' should",
               " contain non-negative integer values")
 
@@ -1056,7 +1064,8 @@ nlogoff <- function(theta, earg = 0, inverse = FALSE, deriv = 0,
       stop("could not determine 'k' or it is not positive-valued")
     if (!is.Numeric(cutpoint))
       stop("could not determine the cutpoint")
-    if (any(cutpoint < 0) || !is.Numeric(cutpoint, integer = TRUE))
+    if (any(cutpoint < 0) ||
+        !is.Numeric(cutpoint, integer.valued = TRUE))
       warning("argument 'cutpoint' should",
               " contain non-negative integer values")
 
@@ -1153,7 +1162,8 @@ nlogoff <- function(theta, earg = 0, inverse = FALSE, deriv = 0,
     stop("could not determine argument 'k' or it is not positive-valued")
     if (!is.Numeric(cutpoint))
     stop("could not determine the cutpoint")
-    if (any(cutpoint < 0) || !is.Numeric(cutpoint, integer = TRUE))
+    if (any(cutpoint < 0) ||
+        !is.Numeric(cutpoint, integer.valued = TRUE))
       warning("argument 'cutpoint' should",
               " contain non-negative integer values")
 
@@ -1288,7 +1298,7 @@ nlogoff <- function(theta, earg = 0, inverse = FALSE, deriv = 0,
 
 
  checkCut = function(y) {
-    if (!is.Numeric(y, posi = TRUE, integ = TRUE))
+    if (!is.Numeric(y, positive = TRUE, integer.valued = TRUE))
         stop("argument 'y' must contain positive integers only")
     uy = unique(y)
     L = max(uy)
@@ -1302,6 +1312,77 @@ nlogoff <- function(theta, earg = 0, inverse = FALSE, deriv = 0,
     TRUE
 }
 
+
+
+
+
+
+
+
+
+ nbcanlink <- function(theta, earg = list(), inverse = FALSE, deriv = 0,
+                       short = TRUE, tag = FALSE)
+{
+  if (is.character(theta)) {
+    string <- if (short)
+      paste("nbcanlink(", theta, ")", sep = "") else
+      paste("log(", theta, " / (", theta, " + size))", sep = "")
+    if (tag)
+      string <- paste("Nbcanlink:", string)
+    return(string)
+  }
+
+
+  if (!length(earg))
+    stop("argument 'earg' should have the eta matrix")
+  kmatrix = earg$size
+  if (!length(kmatrix))
+    stop("argument 'earg' should have a 'size' component")
+  theta = cbind(theta)
+  kmatrix = cbind(kmatrix)
+  if (ncol(kmatrix) != ncol(theta))
+    stop("arguments 'theta' and 'earg$size' do not have ",
+         "an equal number of cols")
+  if (nrow(kmatrix) != nrow(theta))
+    stop("arguments 'theta' and 'earg$size' do not have ",
+         "an equal number of rows")
+
+
+  if (deriv > 0) {
+    wrt.eta = earg$wrt.eta
+    if (!length(wrt.eta))
+      stop("argument 'earg' should have a 'wrt.eta' component")
+    if (!(wrt.eta %in% 1:2))
+      stop("argument 'earg' should be 1 or 2")
+  }
+
+
+  if (!inverse && is.list(earg) && length(earg$bval))
+    theta[theta <= 0.0] <- earg$bval
+
+
+  if (inverse) {
+    if (deriv > 0) {
+      1 / Recall(theta = theta, earg = earg,
+                 inverse = FALSE, deriv = deriv)
+    } else {
+       ans = (kmatrix / expm1(-theta))
+       if (is.matrix(ans)) dimnames(ans) = NULL else names(ans) = NULL
+       ans
+    }
+  } else {
+    ans = 
+    switch(deriv+1,
+        (log(theta / (theta + kmatrix))),
+       if (wrt.eta == 1) theta * (theta + kmatrix) / kmatrix else
+       -(theta + kmatrix),
+       if (wrt.eta == 1) 
+       -(theta * (theta + kmatrix))^2 / ((2 * theta + kmatrix) * kmatrix) else
+       (theta + kmatrix)^2)
+     if (is.matrix(ans)) dimnames(ans) = NULL else names(ans) = NULL
+     ans
+  }
+}
 
 
 

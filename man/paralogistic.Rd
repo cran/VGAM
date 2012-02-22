@@ -7,24 +7,24 @@
   paralogistic distribution.
 }
 \usage{
-paralogistic(link.a = "loge", link.scale = "loge", earg.a = list(),
-             earg.scale = list(), init.a = 1, init.scale = NULL, zero = NULL)
+paralogistic(lshape1.a = "loge", lscale = "loge", eshape1.a = list(),
+             escale = list(), ishape1.a = 2, iscale = NULL, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{link.a, link.scale}{
+  \item{lshape1.a, lscale}{
   Parameter link functions applied to the
   (positive) shape parameter \code{a} and
   (positive) scale parameter \code{scale}.
   See \code{\link{Links}} for more choices.
 
   }
-  \item{earg.a, earg.scale}{
+  \item{eshape1.a, escale}{
   List. Extra argument for each of the links.
   See \code{earg} in \code{\link{Links}} for general information.
 
   }
-  \item{init.a, init.scale}{
+  \item{ishape1.a, iscale}{
   Optional initial values for \code{a} and \code{scale}.
 
   }
@@ -53,7 +53,7 @@ and \eqn{a} is the shape parameter.
 The mean is
   \deqn{E(Y) = b \, \Gamma(1 + 1/a) \, \Gamma(a - 1/a) / \Gamma(a)}{%
         E(Y) = b  gamma(1 + 1/a)  gamma(a - 1/a) /  gamma(a)}
-provided \eqn{a > 1}.
+provided \eqn{a > 1}; these are returned as the fitted values.
 
 
 }
@@ -68,7 +68,7 @@ provided \eqn{a > 1}.
 
 Kleiber, C. and Kotz, S. (2003)
 \emph{Statistical Size Distributions in Economics and Actuarial Sciences},
-Hoboken, NJ: Wiley-Interscience.
+Hoboken, NJ, USA: Wiley-Interscience.
 
 
 }
@@ -95,10 +95,10 @@ default value is not \code{NULL}.
 }
 
 \examples{
-pdat = data.frame(y = rparalogistic(n = 3000, 4, 6))
-fit = vglm(y ~ 1, paralogistic, pdat, trace = TRUE)
-fit = vglm(y ~ 1, paralogistic(init.a = 2.3, init.sc = 5),
-           pdat, trace = TRUE, crit = "c")
+pdata = data.frame(y = rparalogistic(n = 3000, 4, 6))
+fit = vglm(y ~ 1, paralogistic, pdata, trace = TRUE)
+fit = vglm(y ~ 1, paralogistic(ishape1.a = 2.3, iscale = 5),
+           pdata, trace = TRUE, crit = "coef")
 coef(fit, matrix = TRUE)
 Coef(fit)
 summary(fit)

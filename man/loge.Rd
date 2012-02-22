@@ -111,7 +111,7 @@ nloge(theta, earg = list(), inverse = FALSE, deriv = 0,
 }
 \examples{
 \dontrun{ loge(seq(-0.2, 0.5, by = 0.1))
-loge(seq(-0.2, 0.5, by = 0.1), earg = list(bvalue = .Machine$double.xmin))
+ loge(seq(-0.2, 0.5, by = 0.1), earg = list(bvalue = .Machine$double.xmin))
 nloge(seq(-0.2, 0.5, by = 0.1))
 nloge(seq(-0.2, 0.5, by = 0.1), earg = list(bvalue = .Machine$double.xmin)) }
 }

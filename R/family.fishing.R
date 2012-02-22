@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2011 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2012 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -18,12 +18,12 @@ DeLury = function(catch, effort,
     if (type == "DeLury") {
         Et = cumsum(effort) - ifelse(ricker, 0.5, 1) * effort
         logCPUE = log(CPUE)
-        lmfit = lm(logCPUE ~ Et, x=TRUE)
+        lmfit = lm(logCPUE ~ Et, x = TRUE)
         myq = catchabilityCoefficient = -coef(lmfit)[2]
         N0 = exp(coef(lmfit)["(Intercept)"]) / myq
     } else {
         Kt = cumsum(catch) - ifelse(ricker, 0.5, 1) * catch
-        lmfit = lm(CPUE ~ Kt, x=TRUE)
+        lmfit = lm(CPUE ~ Kt, x = TRUE)
         myq = catchabilityCoefficient = -coef(lmfit)[2]
         N0 = coef(lmfit)["(Intercept)"] / myq
     }
@@ -50,7 +50,9 @@ DeLury = function(catch, effort,
 
 wffc.P1     = function(length, c1 = 100, min.eligible = 0.18, ppm = 2000)
     ifelse(length >= min.eligible, c1 + (ppm/100) *
-           ceiling(  signif(100*length, dig = 8)  ), 0)
+           ceiling(  signif(100*length, digits = 8)  ), 0)
+
+
 wffc.P1star = function(length, c1 = 100, min.eligible = 0.18, ppm = 2000)
     ifelse(length >= min.eligible, c1 + ppm * length, 0)
 

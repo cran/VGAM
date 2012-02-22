@@ -13,23 +13,25 @@ zipoissonff(llambda = "loge", lprobp = "logit",
             elambda = list(), eprobp = list(),
             ilambda = NULL, iprobp = NULL, imethod = 1,
             shrinkage.init = 0.8, zero = -2)
-zipoisson(lphi = "logit", llambda = "loge",
-          ephi = list(), elambda = list(),
-          iphi = NULL,   ilambda = NULL, imethod = 1,
+zipoisson(lpstr0 = "logit", llambda = "loge",
+          epstr0 = list(), elambda = list(),
+          ipstr0 = NULL,   ilambda = NULL, imethod = 1,
           shrinkage.init = 0.8, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{lphi, llambda, ephi, elambda}{
+  \item{lpstr0, llambda, epstr0, elambda}{
   Link function and extra argument for the parameter \eqn{\phi}{phi}
   and the usual \eqn{\lambda}{lambda} parameter.
   See \code{\link{Links}} for more choices,
   and \code{earg} in \code{\link{Links}} for general information.
   See \code{\link{CommonVGAMffArguments}} for more information.
+  For the zero-\emph{deflated} model see below.
+
 
   }
 
-  \item{iphi, ilambda}{
+  \item{ipstr0, ilambda}{
   Optional initial values for \eqn{\phi}{phi}, whose values must lie
   between 0 and 1.
   Optional initial values for \eqn{\lambda}{lambda}, whose values must
@@ -49,7 +51,7 @@ zipoisson(lphi = "logit", llambda = "loge",
   specifies the initialization method for \eqn{\lambda}{lambda}.
   If failure to converge occurs try another value
   and/or else specify a value for \code{shrinkage.init}
-  and/or else specify a value for \code{iphi}.
+  and/or else specify a value for \code{ipstr0}.
   See \code{\link{CommonVGAMffArguments}} for more information.
 
   }
@@ -100,7 +102,7 @@ zipoisson(lphi = "logit", llambda = "loge",
   (i)   the order of the linear/additive predictors is switched so the
         Poisson mean comes first;
   (ii)  \code{probp} is now the probability of the Poisson component,
-        i.e., \code{probp} is \code{1-phi};
+        i.e., \code{probp} is \code{1-pstr0};
   (iii) it can handle multiple responses;
   (iv)  argument \code{zero} has a new default so that the \code{probp}
         is an intercept-only  by default.
@@ -136,7 +138,7 @@ zipoisson(lphi = "logit", llambda = "loge",
   Cambridge University Press: Cambridge.
 
 
-  Yee, T. W. (2010)
+  Yee, T. W. (2012)
   Two-parameter reduced-rank vector generalized linear models.
   \emph{In preparation}.
 
@@ -150,9 +152,21 @@ zipoisson(lphi = "logit", llambda = "loge",
   function currently cannot handle a multivariate response.
 
 
-  The zero-\emph{deflated} Poisson distribution cannot be handled with
-  this family function. It can be handled with the zero-altered Poisson
-  distribution; see \code{\link{zapoisson}}.
+  Although the functions in \code{\link{Zipois}}
+  can handle the zero-\emph{deflated} Poisson distribution,
+  this family function cannot estimate this very well in general.
+  One sets \code{lpstr0 = identity}, however, the iterations
+  might fall outside the parameter space.
+  Practically, it is restricted to intercept-models only
+  (see example below).
+  Also, one might need inputting good initial values
+  or using a simpler model to obtain initial values.
+% If there is a covariate then it is best to
+% constrain \code{pstr0} to be intercept-only, e.g.,
+% by \code{zipoisson(lpstr0 = identity, zero = -1)}.
+  A (somewhat) similar and more reliable method for
+  zero-deflation is to try the zero-altered Poisson model
+  (see \code{\link{zapoisson}}).
 
 
   The use of this \pkg{VGAM} family function with \code{\link{rrvglm}}
@@ -178,7 +192,7 @@ zipoisson(lphi = "logit", llambda = "loge",
   If failure to converge occurs, try using combinations of
   \code{imethod},
   \code{shrinkage.init},
-  \code{iphi}, and/or
+  \code{ipstr0}, and/or
   \code{zipoisson(zero = 1)} if there are explanatory variables.
   The default for \code{zipoissonff()} is to model the
   structural zero probability as an intercept-only.
@@ -198,14 +212,14 @@ zipoisson(lphi = "logit", llambda = "loge",
 \examples{
 # Example 1: simulated ZIP data
 zdata <- data.frame(x2 = runif(nn <- 2000))
-zdata <- transform(zdata, phi1    = logit(-0.5 + 1*x2, inverse = TRUE),
-                          phi2    = logit( 0.5 - 1*x2, inverse = TRUE),
-                          Phi1    = logit(-0.5       , inverse = TRUE),
-                          Phi2    = logit( 0.5       , inverse = TRUE),
-                          lambda1 =  loge( 0.5 + 2*x2, inverse = TRUE),
+zdata <- transform(zdata, pstr01  = logit(-0.5 + 1*x2, inverse = TRUE),
+                          pstr02  = logit( 0.5 - 1*x2, inverse = TRUE),
+                          Ps01    = logit(-0.5       , inverse = TRUE),
+                          Ps02    = logit( 0.5       , inverse = TRUE),
+                          lambda1 =  loge(-0.5 + 2*x2, inverse = TRUE),
                           lambda2 =  loge( 0.5 + 2*x2, inverse = TRUE))
-zdata <- transform(zdata, y1 = rzipois(nn, lambda1, Phi1),
-                          y2 = rzipois(nn, lambda2, Phi2))
+zdata <- transform(zdata, y1 = rzipois(nn, lambda = lambda1, pstr0 = Ps01),
+                          y2 = rzipois(nn, lambda = lambda2, pstr0 = Ps02))
 
 with(zdata, table(y1)) # Eyeball the data
 with(zdata, table(y2))
@@ -218,7 +232,6 @@ coef(fit2, matrix = TRUE)  # These should agree with the above values
 fit12 <- vglm(cbind(y1, y2) ~ x2, zipoissonff, zdata, crit = "coef")
 coef(fit12, matrix = TRUE)  # These should agree with the above values
 
-
 # Example 2: McKendrick (1926). Data from 223 Indian village households
 cholera <- data.frame(ncases = 0:4, # Number of cholera cases,
                       wfreq = c(168, 32, 16, 6, 1)) # Frequencies
@@ -226,25 +239,41 @@ fit <- vglm(ncases ~ 1, zipoisson, wei = wfreq, cholera, trace = TRUE)
 coef(fit, matrix = TRUE)
 with(cholera, cbind(actual = wfreq,
                     fitted = round(dzipois(ncases, lambda = Coef(fit)[2],
-                                           phi = Coef(fit)[1]) *
+                                           pstr0 = Coef(fit)[1]) *
                                    sum(wfreq), dig = 2)))
 
 # Example 3: data from Angers and Biswas (2003)
 abdata <- data.frame(y = 0:7, w = c(182, 41, 12, 2, 2, 0, 0, 1))
 abdata <- subset(abdata, w > 0)
-fit <- vglm(y ~ 1, zipoisson(lphi = probit, iphi = 0.3),
+fit <- vglm(y ~ 1, zipoisson(lpstr0 = probit, ipstr0 = 0.8),
             abdata, weight = w, trace = TRUE)
-fit@misc$prob0  # Estimate of P(Y = 0)
+fit@misc$pobs0  # Estimate of P(Y = 0)
 coef(fit, matrix = TRUE)
-Coef(fit)  # Estimate of phi and lambda
+Coef(fit)  # Estimate of pstr0 and lambda
 fitted(fit)
 with(abdata, weighted.mean(y, w)) # Compare this with fitted(fit)
 summary(fit)
 
+# Example 4: zero-deflated model for an intercept-only data
+zdata <- transform(zdata, lambda3 = loge( 0.0       , inverse = TRUE))
+zdata <- transform(zdata, deflat_limit = -1 / expm1(lambda3)) # Boundary
+# The 'pstr0' parameter is negative and in parameter space:
+zdata <- transform(zdata, usepstr0 = deflat_limit / 1.5)
+zdata <- transform(zdata, y3 = rzipois(nn, lambda3, pstr0 = usepstr0))
+head(zdata)
+with(zdata, table(y3)) # A lot of deflation
+fit3 <- vglm(y3 ~ 1, zipoisson(zero = -1, lpstr0 = identity),
+             zdata, trace = TRUE, crit = "coef")
+coef(fit3, matrix = TRUE)
+# Check how accurate it was:
+zdata[1, 'usepstr0']      # Answer
+coef(fit3)[1]             # Estimate
+Coef(fit3)
 
-# Example 4: This RR-ZIP is known as a COZIGAM or COZIVGLM-ZIP
-rrzip <- rrvglm(Alopacce ~ bs(WaterCon), zipoissonff(zero = NULL),
-                hspider, trace = TRUE)
+# Example 5: This RR-ZIP is known as a COZIGAM or COZIVGLM-ZIP
+set.seed(123)
+rrzip <- rrvglm(Alopacce ~ bs(WaterCon, df = 3), zipoisson(zero = NULL),
+                hspider, trace = TRUE, Index.corner = 2)
 coef(rrzip, matrix = TRUE)
 Coef(rrzip)
 summary(rrzip)
@@ -253,7 +282,7 @@ summary(rrzip)
 \keyword{models}
 \keyword{regression}
 
-% Yee, T. W. (2010)
+% Yee, T. W. (2012)
 % An alternative to quasi-Poisson vs. negative binomial
 % regression: the reduced-rank negative binomial model.
 % \emph{In preparation}.

@@ -11,7 +11,7 @@
 
 }
 \usage{
-dfgm(x1, x2, alpha, log=FALSE)
+dfgm(x1, x2, alpha, log = FALSE)
 pfgm(q1, q2, alpha)
 rfgm(n, alpha)
 }
@@ -30,6 +30,7 @@ rfgm(n, alpha)
   \code{dfgm} gives the density,
   \code{pfgm} gives the distribution function, and
   \code{rfgm} generates random deviates (a two-column matrix).
+
 }
 %\references{
 %
@@ -41,6 +42,7 @@ rfgm(n, alpha)
   parameter by maximum likelihood estimation, for the formula of the
   cumulative distribution function and other details.
 
+
 }
 %\note{
 %}
@@ -50,19 +52,17 @@ rfgm(n, alpha)
 }
 \examples{
 \dontrun{
-N = 101
-x = seq(0.0, 1.0, len=N)
-alpha = 0.7
+N = 101; x = seq(0.0, 1.0, len = N); alpha = 0.7
 ox = expand.grid(x, x)
 z = dfgm(ox[,1], ox[,2], alpha=alpha)
 contour(x, x, matrix(z, N, N), col="blue")
 z = pfgm(ox[,1], ox[,2], alpha=alpha)
 contour(x, x, matrix(z, N, N), col="blue")
 
-plot(r <- rfgm(n=3000, alpha=alpha), col="blue")
-par(mfrow=c(1,2))
-hist(r[,1]) # Should be uniform
-hist(r[,2]) # Should be uniform
+plot(r <- rfgm(n = 3000, alpha = alpha), col = "blue")
+par(mfrow = c(1, 2))
+hist(r[, 1]) # Should be uniform
+hist(r[, 2]) # Should be uniform
 }
 }
 \keyword{distribution}

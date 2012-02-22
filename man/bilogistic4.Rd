@@ -71,11 +71,12 @@ bilogistic4(llocation = "identity", lscale = "loge",
         P(Y1 <= y1) = F(y1;l1,s1) = 1 / (1 + exp[-(y1-l1)/s1]).
  }
 
+
  By default, \eqn{\eta_1=l_1}{eta1=l1},
  \eqn{\eta_2=\log(s_1)}{eta2=log(s1)},
  \eqn{\eta_3=l_2}{eta3=l2},
- \eqn{\eta_4=\log(s_2)}{eta4=log(s2)} are the linear/additive
- predictors.
+ \eqn{\eta_4=\log(s_2)}{eta4=log(s2)} are the linear/additive predictors.
+
  
 }
 \value{
@@ -83,17 +84,21 @@ bilogistic4(llocation = "identity", lscale = "loge",
   The object is used by modelling functions such as \code{\link{vglm}},
   \code{\link{rrvglm}} and \code{\link{vgam}}.
 
+
 }
 \references{
+
 Gumbel, E. J. (1961)
 Bivariate logistic distributions.
 \emph{Journal of the American Statistical Association},
 \bold{56}, 335--349.
 
+
 Castillo, E., Hadi, A. S., Balakrishnan, N. Sarabia, J. S. (2005)
 \emph{Extreme Value and Related Models with Applications in
       Engineering and Science},
-Hoboken, N.J.: Wiley-Interscience.
+Hoboken, NJ, USA: Wiley-Interscience.
+
 
 }
 \author{ T. W. Yee }
@@ -104,6 +109,7 @@ Hoboken, N.J.: Wiley-Interscience.
   therefore treated with caution; these are computed in functions such
   as \code{vcov()} and \code{summary()}.
 
+
 }
 %\section{Warning }{
 %}
@@ -111,6 +117,8 @@ Hoboken, N.J.: Wiley-Interscience.
 \seealso{
   \code{\link{logistic}},
   \code{\link{rbilogis4}}.
+
+
 }
 \examples{
 ymat = rbilogis4(n <- 1000, loc1 = 5, loc2 = 7, scale2 = exp(1))
@@ -120,7 +128,7 @@ coef(fit, matrix = TRUE)
 Coef(fit)
 head(fitted(fit))
 vcov(fit)
-head(weights(fit, type = "w"))
+head(weights(fit, type = "work"))
 summary(fit)
 }
 \keyword{models}

@@ -58,6 +58,7 @@ rmaxwell(n, a)
 \note{
   The Maxwell distribution is related to the Rayleigh distribution.
 
+
 }
 \seealso{
   \code{\link{maxwell}},
@@ -67,7 +68,7 @@ rmaxwell(n, a)
 
 }
 \examples{
-\dontrun{ a <- 3; x <- seq(-0.5, 3, len = 100)
+\dontrun{ a <- 3; x <- seq(-0.5, 3, length = 100)
 plot(x, dmaxwell(x, a = a), type = "l", col = "blue", las = 1, ylab = "",
      main = "Blue is density, orange is cumulative distribution function",
      sub = "Purple lines are the 10,20,...,90 percentiles")

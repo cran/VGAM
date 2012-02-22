@@ -8,26 +8,29 @@
 
 }
 \usage{
-zinegbinomial(lphi = "logit", lmunb = "loge", lsize = "loge", ephi = list(),
-      emunb = list(), esize = list(), iphi = NULL, isize = NULL, zero = -3,
-      imethod = 1, shrinkage.init = 0.95, nsimEIM = 200)
+zinegbinomial(lpstr0 = "logit", lmunb = "loge", lsize = "loge",
+              epstr0 = list(),  emunb = list(), esize = list(),
+              ipstr0 = NULL, isize = NULL, zero = c(-1, -3),
+              imethod = 1, shrinkage.init = 0.95, nsimEIM = 250)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{lphi, lmunb, lsize}{ 
-  Link functions for the parameters \eqn{\phi}{phi},
+  \item{lpstr0, lmunb, lsize}{ 
+  Link functions for the parameters \eqn{\phi}{pstr0},
   the mean and \eqn{k}; see \code{\link{negbinomial}} for details,
   and \code{\link{Links}} for more choices.
+  For the zero-\emph{deflated} model see below.
+
 
   }
-  \item{ephi, emunb, esize}{
+  \item{epstr0, emunb, esize}{
   List. Extra arguments for the respective links.
   See \code{earg} in \code{\link{Links}} for general information.
 
   }
 
-  \item{iphi, isize}{
-  Optional initial values for \eqn{\phi}{phi} and \eqn{k}{k}.
+  \item{ipstr0, isize}{
+  Optional initial values for \eqn{\phi}{pstr0} and \eqn{k}{k}.
   The default is to compute an initial value internally for both.
   If a vector then recycling is used.
 
@@ -42,8 +45,9 @@ zinegbinomial(lphi = "logit", lmunb = "loge", lsize = "loge", ephi = list(),
   \item{zero}{ 
   Integers specifying which linear/additive predictor is modelled
   as intercepts only.  If given, their absolute values must be
-  either 1 or 2 or 3, and the default is only the \eqn{k} parameters
-  (one for each response).
+  either 1 or 2 or 3.
+  The default is the \eqn{\phi}{pstr0} and \eqn{k} parameters
+  (both for each response).
   See \code{\link{CommonVGAMffArguments}} for more information.
 
   }
@@ -70,7 +74,7 @@ zinegbinomial(lphi = "logit", lmunb = "loge", lsize = "loge", ephi = list(),
 
 
   Independent multivariate responses are handled.
-  If so then arguments \code{iphi} and \code{isize} may be vectors
+  If so then arguments \code{ipstr0} and \code{isize} may be vectors
   with length equal to the number of responses.
 
 
@@ -88,8 +92,8 @@ zinegbinomial(lphi = "logit", lmunb = "loge", lsize = "loge", ephi = list(),
 \author{ T. W. Yee }
 \note{
   For intercept-models, the \code{misc} slot has a component called
-  \code{p0} which is the estimate of \eqn{P(Y=0)}. Note that \eqn{P(Y=0)}
-  is not the parameter \eqn{\phi}{phi}.
+  \code{pobs0} which is the estimate of \eqn{P(Y=0)}.
+  Note that \eqn{P(Y=0)} is not the parameter \eqn{\phi}{phi}.
 
 
   If \eqn{k} is large then the use of \pkg{VGAM} family function
@@ -98,10 +102,13 @@ zinegbinomial(lphi = "logit", lmunb = "loge", lsize = "loge", ephi = list(),
   negative binomial as \eqn{k} tends to infinity.
 
 
-  The zero-\emph{deflated} negative binomial distribution cannot
-  be handled with this family function. It can be handled
-  with the zero-altered negative binomial distribution; see
-  \code{\link{zanegbinomial}}.
+  The zero-\emph{deflated} negative binomial distribution
+  might be fitted by setting \code{lpstr0 = identity},
+  albeit, not entirely reliably. See \code{\link{zipoisson}}
+  for information that can be applied here. Else try
+  the zero-altered negative binomial distribution (see
+  \code{\link{zanegbinomial}}).
+
 
 
 }
@@ -114,7 +121,7 @@ zinegbinomial(lphi = "logit", lmunb = "loge", lsize = "loge", ephi = list(),
   If failure to converge occurs, try using combinations of
   \code{imethod},
   \code{shrinkage.init},
-  \code{iphi},
+  \code{ipstr0},
   \code{isize}, and/or
   \code{zero} if there are explanatory variables.
 
@@ -129,30 +136,32 @@ zinegbinomial(lphi = "logit", lmunb = "loge", lsize = "loge", ephi = list(),
 }
 \examples{
 # Example 1
-nbdat <- data.frame(x2 = runif(nn <- 1000))
-nbdat <- transform(nbdat, phi  = logit(-0.5 + 1 * x2, inverse = TRUE),
-                          munb = exp(3 + x2),
-                          size = exp(0 + 2*x2))
-nbdat <- transform(nbdat, y1 = rzinegbin(nn, phi, mu = munb, size = size),
-                          y2 = rzinegbin(nn, phi, mu = munb, size = size))
-with(nbdat, table(y1)["0"] / sum(table(y1)))
-fit <- vglm(cbind(y1, y2) ~ x2, zinegbinomial(zero = NULL), nbdat)
+ndata <- data.frame(x2 = runif(nn <- 1000))
+ndata <- transform(ndata, pstr0 = logit(-0.5 + 1 * x2, inverse = TRUE),
+                          munb  =   exp( 3   + 1 * x2),
+                          size  =   exp( 0   + 2 * x2))
+ndata <- transform(ndata,
+                   y1 = rzinegbin(nn, mu = munb, size = size, pstr0 = pstr0),
+                   y2 = rzinegbin(nn, mu = munb, size = size, pstr0 = pstr0))
+with(ndata, table(y1)["0"] / sum(table(y1)))
+fit <- vglm(cbind(y1, y2) ~ x2, zinegbinomial(zero = NULL), ndata)
 coef(fit, matrix = TRUE)
 summary(fit)
-head(cbind(fitted(fit), with(nbdat, (1-phi) * munb)))
+head(cbind(fitted(fit), with(ndata, (1 - pstr0) * munb)))
 round(vcov(fit), 3)
 
 
 # Example 2: RR-ZINB could also be called a COZIVGLM-ZINB-2
-nbdat <- data.frame(x2 = runif(nn <- 2000))
-nbdat <- transform(nbdat, x3 = runif(nn))
-nbdat <- transform(nbdat, eta1 = 3 + 1 * x2 + 2 * x3)
-nbdat <- transform(nbdat, phi  = logit(-1.5 + 0.5 * eta1, inverse = TRUE),
+ndata <- data.frame(x2 = runif(nn <- 2000))
+ndata <- transform(ndata, x3 = runif(nn))
+ndata <- transform(ndata, eta1 =          3   + 1   * x2 + 2 * x3)
+ndata <- transform(ndata, pstr0  = logit(-1.5 + 0.5 * eta1, inverse = TRUE),
                           munb = exp(eta1),
                           size = exp(4))
-nbdat <- transform(nbdat, y1 = rzinegbin(nn, phi, mu = munb, size = size))
-with(nbdat, table(y1)["0"] / sum(table(y1)))
-rrzinb <- rrvglm(y1 ~ x2 + x3, zinegbinomial(zero = NULL), nbdat,
+ndata <- transform(ndata,
+                   y1 = rzinegbin(nn, pstr0 = pstr0, mu = munb, size = size))
+with(ndata, table(y1)["0"] / sum(table(y1)))
+rrzinb <- rrvglm(y1 ~ x2 + x3, zinegbinomial(zero = NULL), ndata,
                  Index.corner = 2, szero = 3, trace = TRUE)
 coef(rrzinb, matrix = TRUE)
 Coef(rrzinb)

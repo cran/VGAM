@@ -214,7 +214,7 @@ economics, engineering, and finance},
 Boston: Birkhauser.
 
 
-  Yee, T. W. (2011)
+  Yee, T. W. (2012)
   Quantile regression for counts and proportions.
   In preparation.
 
@@ -264,7 +264,7 @@ Boston: Birkhauser.
   A second method for solving the noncrossing quantile problem is
   illustrated below in Example 3.
   This is called the \emph{accumulative quantile method} (AQM)
-  and details are in Yee (2011).
+  and details are in Yee (2012).
   It does not make the strong parallelism assumption.
 
 

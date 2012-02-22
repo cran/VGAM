@@ -8,23 +8,23 @@
 
 }
 \usage{
-fisk(link.a = "loge", link.scale = "loge", earg.a=list(),
-     earg.scale=list(), init.a = NULL, init.scale = NULL, zero = NULL)
+fisk(lshape1.a = "loge", lscale = "loge", eshape1.a = list(),
+     escale = list(), ishape1.a = NULL, iscale = NULL, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{link.a, link.scale}{
+  \item{lshape1.a, lscale}{
   Parameter link functions applied to the
   (positive) parameters \code{a} and \code{scale}.
   See \code{\link{Links}} for more choices.
 
   }
-  \item{earg.a, earg.scale}{
+  \item{eshape1.a, escale}{
   List. Extra argument for each of the links.
   See \code{earg} in \code{\link{Links}} for general information.
 
   }
-  \item{init.a, init.scale}{
+  \item{ishape1.a, iscale}{
   Optional initial values for \code{a} and \code{scale}.
 
   }
@@ -57,7 +57,7 @@ The cumulative distribution function is
 The mean is
   \deqn{E(Y) = b \, \Gamma(1 + 1/a) \, \Gamma(1 - 1/a)}{%
         E(Y) = b  gamma(1 + 1/a)  gamma(1 - 1/a)}
-provided \eqn{a > 1}.
+provided \eqn{a > 1}; these are returned as the fitted values.
 
 
 }
@@ -97,10 +97,10 @@ Hoboken, NJ: Wiley-Interscience.
 }
 
 \examples{
-y = rfisk(n=200, 4, 6)
-fit = vglm(y ~ 1, fisk, trace=TRUE)
-fit = vglm(y ~ 1, fisk(init.a=3.3), trace=TRUE, crit="c")
-coef(fit, mat=TRUE)
+fdata = data.frame(y = rfisk(n = 200, 4, 6))
+fit = vglm(y ~ 1, fisk, fdata, trace = TRUE)
+fit = vglm(y ~ 1, fisk(ishape1.a = 3.3), fdata, trace = TRUE, crit = "coef")
+coef(fit, matrix = TRUE)
 Coef(fit)
 summary(fit)
 }

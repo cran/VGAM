@@ -1,5 +1,5 @@
-\name{uscrime}
-\alias{uscrime}
+\name{crime.us}
+\alias{crime.us}
 \docType{data}
 \title{
 Estimated Crime in 2009 in USA
@@ -9,7 +9,7 @@ Estimated Crime in 2009 in USA
 Crime totals and rates, cross-classified by US state, during 2009.
 
 }
-\usage{data(uscrime)}
+\usage{data(crime.us)}
 \format{
   A data frame with 50 observations on the following 22 variables.
   \describe{
@@ -69,13 +69,13 @@ Crime totals and rates, cross-classified by US state, during 2009.
 %%}
 \examples{
 \dontrun{  # Louisiana is the one outlier
-plot(MurderRate ~ stateNumber, uscrime,
+plot(MurderRate ~ stateNumber, crime.us,
      axes = FALSE, type = "h", col = 1:6,
      main = "USA murder rates in 2009 (per 100,000 population)")
-axis(1, with(uscrime, abbrev), at = with(uscrime, stateNumber),
+axis(1, with(crime.us, abbrev), at = with(crime.us, stateNumber),
      col = 1:6, col.tick = 1:6, cex.lab = 0.5)
 axis(2) }
-tail(uscrime[ sort.list(with(uscrime, MurderRate)), ])
+tail(crime.us[ sort.list(with(crime.us, MurderRate)), ])
 }
 \keyword{datasets}
-% data(uscrime)
+% data(crime.us)

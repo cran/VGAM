@@ -5,6 +5,7 @@
 \description{
  Algorithmic constants and parameters for running \code{\link{vgam}}
  are set using this function. 
+
 }
 \usage{
 vgam.control(all.knots = FALSE, bf.epsilon = 1e-07, bf.maxit = 30, 
@@ -98,7 +99,7 @@ vgam.control(all.knots = FALSE, bf.epsilon = 1e-07, bf.maxit = 30,
   \item{se.fit}{
   logical indicating whether approximate
   pointwise standard errors are to be saved on the object.
-  If \code{TRUE}, then these can be plotted with \code{plot(..., se=TRUE)}. 
+  If \code{TRUE}, then these can be plotted with \code{plot(..., se = TRUE)}.
 
   }
   \item{trace}{
@@ -126,24 +127,27 @@ vgam.control(all.knots = FALSE, bf.epsilon = 1e-07, bf.maxit = 30,
 \details{
 
 
-  Most of the control parameters are used within \code{vgam.fit} and
-  you will have to look at that to understand the full details.  Many of
-  the control parameters are used in a similar manner by \code{vglm.fit}
-  (\code{\link{vglm}}) because the algorithm (IRLS) is very similar.
+  Most of the control parameters are used within
+  \code{vgam.fit} and you will have to look at that
+  to understand the full details.  Many of the control
+  parameters are used in a similar manner by \code{vglm.fit}
+  (\code{\link{vglm}}) because the algorithm (IRLS) is
+  very similar.
 
 
-  Setting \code{save.weight=FALSE} is useful for some models because the
-  \code{weights} slot of the object is often the largest and so less
-  memory is used to store the object. However, for some \pkg{VGAM}
-  family function, it is necessary to set \code{save.weight=TRUE} because
+  Setting \code{save.weight=FALSE} is useful for some
+  models because the \code{weights} slot of the object is
+  often the largest and so less memory is used to store the
+  object. However, for some \pkg{VGAM} family function,
+  it is necessary to set \code{save.weight=TRUE} because
   the \code{weights} slot cannot be reconstructed later.
 
 
 }
 \value{
-  A list with components matching the input names. A little error
-  checking is done, but not much.
-  The list is assigned to the \code{control} slot of \code{\link{vgam}} objects.
+  A list with components matching the input names. A little
+  error checking is done, but not much.  The list is assigned
+  to the \code{control} slot of \code{\link{vgam}} objects.
 
 
 }
@@ -161,9 +165,10 @@ Vector generalized additive models.
 \author{ Thomas W. Yee}
 
 \note{
-  \code{\link{vgam}} does not implement half-stepsizing, therefore
-  parametric models should be fitted with \code{\link{vglm}}. Also,
-  \code{\link{vgam}} is slower than  \code{\link{vglm}} too.
+  \code{\link{vgam}} does not implement half-stepsizing,
+  therefore parametric models should be fitted with
+  \code{\link{vglm}}. Also, \code{\link{vgam}} is slower
+  than  \code{\link{vglm}} too.
 
 }
 

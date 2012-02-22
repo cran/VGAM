@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2011 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2012 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -39,8 +39,9 @@ residualsvlm  <- function(object,
                 names(ans) <- names(object@residuals)
                 ans 
             } else {
-                wz.sqrt <- matrix.power(wz, M=M, power=0.5, fast=TRUE)
-                ans <- mux22(wz.sqrt, object@residuals, M=M, upper=FALSE)
+                wz.sqrt <- matrix.power(wz, M = M, power = 0.5, fast = TRUE)
+                ans <- mux22(wz.sqrt, object@residuals,
+                             M = M, upper = FALSE)
                 dim(ans) <- c(M, n) 
                 ans <- t(ans) 
                 dimnames(ans) <- dimnames(object@residuals)   # n x M
@@ -102,7 +103,8 @@ residualsvglm  <- function(object,
                 ans 
             } else {
                 wz.sqrt <- matrix.power(wz, M=M, power=0.5, fast=TRUE)
-                ans <- mux22(wz.sqrt, object@residuals, M=M, upper=FALSE)
+                ans <- mux22(wz.sqrt, object@residuals,
+                             M = M, upper = FALSE)
                 dim(ans) <- c(M,n) 
                 ans <- t(ans) 
                 dimnames(ans) <- dimnames(object@residuals)   # n x M

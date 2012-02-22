@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2011 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2012 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -258,7 +258,7 @@ predict.vgam <- function(object, newdata=NULL,
             v = attr(if(se.fit) predictor$fitted.values else 
                 predictor, "vterm.assign")
             is.lin <- is.linear.term(names(v))
-            coefmat <- coefvlm(object, matrix = TRUE)
+            coefmat <- coefvlm(object, matrix.out = TRUE)
             ord <- 0
             for(ii in names(v)) {
                 ord <- ord + 1

@@ -1,12 +1,13 @@
-\name{bminz}
-\alias{bminz}
+\name{bmi.nz}
+\alias{bmi.nz}
 \docType{data}
 \title{ Body Mass Index of New Zealand Adults Data}
 \description{
   The body mass indexes and ages from an approximate random 
   sample of 700 New Zealand adults.
+
 }
-\usage{data(bminz)}
+\usage{data(bmi.nz)}
 \format{
   A data frame with 700 observations on the following 2 variables.
   \describe{
@@ -20,14 +21,22 @@
   They are a random sample from the Fletcher Challenge/Auckland Heart and
   Health survey conducted in the early 1990s. 
 
+
   There are some outliers in the data set. 
 
+
   A variable \code{gender} would be useful, and may be added later.
+
+
 }
 \source{
-  Clinical Trials Research Unit, University of Auckland, New Zealand.
+  Clinical Trials Research Unit, University of Auckland, New Zealand,
+  \url{http://www.ctru.auckland.ac.nz}.
+
+
 }
 \references{
+
 MacMahon, S., Norton, R., Jackson, R., Mackie, M. J.,
 Cheng, A., Vander Hoorn, S., Milne, A., McCulloch, A. (1995)
 Fletcher Challenge-University of Auckland Heart &
@@ -35,12 +44,11 @@ Health Study: design and baseline findings.
 \emph{New Zealand Medical Journal},
 \bold{108}, 499--502.
 
+
 }
 \examples{
-\dontrun{
-with(bminz, plot(age, BMI, col="blue"))
-fit = vgam(BMI ~ s(age, df=c(2,4,2)), fam=lms.yjn, bminz, tr=TRUE)
-qtplot(fit, pcol="blue", tcol="brown", lcol="brown")
-}
+\dontrun{ with(bmi.nz, plot(age, BMI, col = "blue"))
+fit = vgam(BMI ~ s(age, df = c(2, 4, 2)), fam = lms.yjn, bmi.nz, trace = TRUE)
+qtplot(fit, pcol = "blue", tcol = "brown", lcol = "brown") }
 }
 \keyword{datasets}

@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2011 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2012 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -29,27 +29,29 @@ vgam.control <- function(all.knots = FALSE,
     criterion <- names(.min.criterion.VGAM)[criterion]
 
     if (!is.logical(checkwz) || length(checkwz) != 1)
-        stop("bad input for argument 'checkwz'")
-    if (!is.Numeric(wzepsilon, allow = 1, positive = TRUE))
-        stop("bad input for argument 'wzepsilon'")
+      stop("bad input for argument 'checkwz'")
+    if (!is.Numeric(wzepsilon, allowable.length = 1, positive = TRUE))
+      stop("bad input for argument 'wzepsilon'")
 
     if (length(all.knots) > 1)
-        warning("all.knots should be of length 1; using first value only")
-    if (!is.Numeric(bf.epsilon, allow = 1, posit = TRUE)) {
-        warning("bad input for argument 'bf.epsilon'; using 0.00001 instead")
-        bf.epsilon <- 0.00001
+      warning("all.knots should be of length 1; using first value only")
+    if (!is.Numeric(bf.epsilon, allowable.length = 1, positive = TRUE)) {
+      warning("bad input for argument 'bf.epsilon'; using 0.00001 instead")
+      bf.epsilon <- 0.00001
     }
-    if (!is.Numeric(bf.maxit, allow = 1, posit = TRUE, integ = TRUE)) {
-        warning("bad input for argument 'bf.maxit'; using 20 instead")
-        bf.maxit <- 20
+    if (!is.Numeric(bf.maxit, allowable.length = 1,
+                    positive = TRUE, integer.valued = TRUE)) {
+      warning("bad input for argument 'bf.maxit'; using 20 instead")
+      bf.maxit <- 20
     }
-    if (!is.Numeric(epsilon, allow = 1, posit = TRUE)) {
-        warning("bad input for argument 'epsilon'; using 0.0001 instead")
-        epsilon <- 0.0001
+    if (!is.Numeric(epsilon, allowable.length = 1, positive = TRUE)) {
+      warning("bad input for argument 'epsilon'; using 0.0001 instead")
+      epsilon <- 0.0001
     }
-    if (!is.Numeric(maxit, allow = 1, posit = TRUE, integ = TRUE)) {
-        warning("bad input for argument 'maxit'; using 30 instead")
-        maxit <- 30
+    if (!is.Numeric(maxit, allowable.length = 1,
+                    positive = TRUE, integer.valued = TRUE)) {
+      warning("bad input for argument 'maxit'; using 30 instead")
+      maxit <- 30
     }
 
     convergence <- expression({
@@ -98,7 +100,8 @@ vgam.nlchisq <- function(qr, resid, wz, smomat, deriv, U, smooth.labels,
         for(jay in index) {
             yy <- t(cmat[,jay-ptr,drop = FALSE])
             yy <- kronecker(smomat[,jay,drop = FALSE], yy)  # n x M
-            Us <- mux22(U, yy, M = M, upper = TRUE, as.matrix = TRUE)  # n * M
+            Us <- mux22(U, yy, M = M, upper = TRUE,
+                        as.matrix = TRUE)  # n * M
 
             Uss <- matrix(c(t(Us)), nrow=n*M, ncol = 1)
 

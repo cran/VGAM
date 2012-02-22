@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2011 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2012 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -19,7 +19,8 @@ qeunif <- function(p, min = 0, max = 1, Maxit_nr = 10, Tol_nr = 1.0e-6) {
    smallno = 0.10
   if (any(min >= max))
     stop("argument 'min' has values greater or equal to argument 'max'")
-  if (!is.Numeric( Tol_nr, allow = 1, posit = TRUE) || Tol_nr > 0.10)
+  if (!is.Numeric( Tol_nr, allowable.length = 1, positive = TRUE) ||
+      Tol_nr > 0.10)
     stop("argument 'Tol_nr' is not a single positive value, or is too large")
   nrok = ppp >= vsmallno & ppp <= 1.0 - vsmallno & is.finite(ppp)
 
@@ -96,7 +97,7 @@ deunif <- function(x, min = 0, max = 1, log = FALSE) {
 
 reunif <- function(n, min = 0, max = 1) {
     use.n = if ((length.n <- length(n)) > 1) length.n else
-            if (!is.Numeric(n, integ=TRUE, allow=1, posit=TRUE))
+            if (!is.Numeric(n, integer.valued = TRUE, allowable.length = 1, positive = TRUE))
                 stop("bad input for argument 'n'") else n
     qeunif(runif(use.n), min = min, max = max)
 }
@@ -107,7 +108,8 @@ reunif <- function(n, min = 0, max = 1) {
 
 qenorm <- function(p, mean = 0, sd = 1, Maxit_nr = 10, Tol_nr = 1.0e-6) {
   ppp = p
-  if (!is.Numeric( Tol_nr, allow = 1, posit = TRUE) || Tol_nr > 0.10)
+  if (!is.Numeric( Tol_nr, allowable.length = 1, positive = TRUE) ||
+      Tol_nr > 0.10)
     stop("argument 'Tol_nr' is not a single ",
          "positive value, or is too large")
   nrok = is.finite(ppp)
@@ -176,7 +178,7 @@ denorm <- function(x, mean = 0, sd = 1, log = FALSE) {
 
 renorm <- function(n, mean = 0, sd = 1) {
     use.n = if ((length.n <- length(n)) > 1) length.n else
-            if (!is.Numeric(n, integ=TRUE, allow=1, posit=TRUE))
+            if (!is.Numeric(n, integer.valued = TRUE, allowable.length = 1, positive = TRUE))
                 stop("bad input for argument 'n'") else n
     qenorm(runif(use.n), mean = mean, sd = sd)
 }
@@ -190,8 +192,10 @@ renorm <- function(n, mean = 0, sd = 1) {
 qeexp <- function(p, rate = 1, Maxit_nr = 10, Tol_nr = 1.0e-6) {
   ppp = p
   vsmallno = sqrt(.Machine$double.eps)
-  if (!is.Numeric( Tol_nr, allow = 1, posit = TRUE) || Tol_nr > 0.10)
-    stop("argument 'Tol_nr' is not a single positive value, or is too large")
+  if (!is.Numeric( Tol_nr, allowable.length = 1, positive = TRUE) ||
+      Tol_nr > 0.10)
+    stop("argument 'Tol_nr' is not a single positive value, or ",
+         "is too large")
   nrok = ppp >= vsmallno & is.finite(ppp)
 
 
@@ -253,7 +257,7 @@ deexp <- function(x, rate = 1, log = FALSE) {
   eee = x * rate
 
   if (log.arg) {
-    ans = log(eee) - eee + 2.0 * log((1-y) - 2 * exp(-y)) + log(rate)
+    ans = log(eee) - eee + 2.0 * log((1-x) - 2 * exp(-x)) + log(rate)
   } else {
     gexp = function(y)
       as.numeric(y >= 0) * y * exp(-y) / ((1-y) - 2 * exp(-y))^2
@@ -266,10 +270,11 @@ deexp <- function(x, rate = 1, log = FALSE) {
 
 
 reexp <- function(n, rate = 1) {
-    use.n = if ((length.n <- length(n)) > 1) length.n else
-            if (!is.Numeric(n, integ=TRUE, allow=1, posit=TRUE))
-                stop("bad input for argument 'n'") else n
-    qeexp(runif(use.n), rate = rate)
+  use.n = if ((length.n <- length(n)) > 1) length.n else
+          if (!is.Numeric(n, integer.valued = TRUE,
+                          allowable.length = 1, positive = TRUE))
+              stop("bad input for argument 'n'") else n
+  qeexp(runif(use.n), rate = rate)
 }
 
 
@@ -354,7 +359,7 @@ rkoenker <- function(n, location = 0, scale = 1) {
   if (mode(lscale) != "character" && mode(lscale) != "name")
     lscale <- as.character(substitute(lscale))
   if (length(ilocat) &&
-     (!is.Numeric(ilocat, allow = 1, positive = TRUE)))
+     (!is.Numeric(ilocat, allowable.length = 1, positive = TRUE)))
       stop("bad input for argument 'ilocation'")
   if (length(iscale) && !is.Numeric(iscale))
     stop("bad input for argument 'iscale'")
@@ -362,10 +367,11 @@ rkoenker <- function(n, location = 0, scale = 1) {
   if (!is.list(elocat)) elocat = list()
   if (!is.list(escale)) escale = list()
 
-  if (!is.Numeric(percentile, posit = TRUE) ||
+  if (!is.Numeric(percentile, positive = TRUE) ||
       any(percentile >= 100))
     stop("bad input for argument 'percentile'")
-  if (!is.Numeric(imethod, allow = 1, integ = TRUE, posit = TRUE) ||
+  if (!is.Numeric(imethod, allowable.length = 1,
+                  integer.valued = TRUE, positive = TRUE) ||
      imethod > 2)
       stop("'imethod' must be 1 or 2")
 

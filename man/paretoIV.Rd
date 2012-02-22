@@ -70,21 +70,24 @@ paretoII(location = 0, lscale = "loge", lshape = "loge",
   \eqn{s} the \emph{shape} parameter.
 
 
-  The location parameter is assumed known otherwise the Pareto(IV)
-  distribution will not be a regular family.  This assumption is not too
-  restrictive in modelling because in typical applications this parameter
-  is known, e.g., in insurance and  reinsurance it is pre-defined by a
-  contract and can be represented as a deductible or a retention level.
+  The location parameter is assumed known otherwise the
+  Pareto(IV) distribution will not be a regular family.
+  This assumption is not too restrictive in modelling
+  because in typical applications this parameter is known,
+  e.g., in insurance and reinsurance it is pre-defined by
+  a contract and can be represented as a deductible or a
+  retention level.
 
 
-  The inequality parameter is so-called because of its interpretation
-  in the economics context. If we choose a unit shape parameter value
-  and a zero location parameter value then the inequality parameter
-  is the Gini index of inequality, provided \eqn{g \leq 1}{g<=1}.
+  The inequality parameter is so-called because of its
+  interpretation in the economics context. If we choose a
+  unit shape parameter value and a zero location parameter
+  value then the inequality parameter is the Gini index of
+  inequality, provided \eqn{g \leq 1}{g<=1}.
 
 
-  The fitted values are currently \code{NA} because I haven't worked
-  out what the mean of \eqn{Y} is yet.
+  The fitted values are currently \code{NA} because I
+  haven't worked out what the mean of \eqn{Y} is yet.
 
 
 % The mean of \eqn{Y} is
@@ -147,13 +150,13 @@ Fairland, Maryland: International Cooperative Publishing House.
 %\section{Warning }{
 %  The Pareto(IV) distribution is very general,
 %  for example, special cases include the Pareto(I), Pareto(II),
-%  Pareto(III), and Burr family of distributions.  Consequently, reasonably
+%  Pareto(III), and Burr family of distributions. Consequently, reasonably
 %  good initial values are recommended, and convergence to a local solution
 %  may occur. For this reason setting \code{trace=TRUE} is a good idea
 %  for monitoring the convergence.
 %  Large samples are ideally required to get reasonable results.
 %
-%}  
+%}
 \seealso{
   \code{\link{ParetoIV}},
   \code{\link{pareto1}},
@@ -162,9 +165,10 @@ Fairland, Maryland: International Cooperative Publishing House.
 
 }
 \examples{
-pdat = data.frame(y = rparetoIV(2000, scal = exp(1), ineq = exp(-0.3), shap = exp(1)))
-\dontrun{par(mfrow = c(2,1)); with(pdat, hist(y)); with(pdat, hist(log(y))) }
-fit = vglm(y ~ 1, paretoIV, pdat, trace = TRUE)
+pdata = data.frame(y = rparetoIV(2000, scal = exp(1),
+                                 ineq = exp(-0.3), shape = exp(1)))
+\dontrun{par(mfrow = c(2,1)); with(pdata, hist(y)); with(pdata, hist(log(y))) }
+fit = vglm(y ~ 1, paretoIV, pdata, trace = TRUE)
 coef(fit, matrix = TRUE)
 Coef(fit)
 summary(fit)

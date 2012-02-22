@@ -5,6 +5,33 @@
 %
 %
 %
+%
+% 20120215
+%\alias{print,vglmff-method}
+\alias{show,vglmff-method}
+%
+%
+%
+% 20120112
+\alias{AIC,ANY-method}
+\alias{coef,ANY-method}
+\alias{logLik,ANY-method}
+\alias{plot,ANY-method}
+\alias{vcov,ANY-method}
+\alias{plot,cao,ANY-method}
+\alias{plot,qrrvglm,ANY-method}
+\alias{plot,rcam,ANY-method}
+\alias{plot,rcam0,ANY-method}
+\alias{plot,uqo,ANY-method}
+\alias{plot,vgam,ANY-method}
+\alias{plot,vglm,ANY-method}
+\alias{plot,vlm,ANY-method}
+\alias{plot,vsmooth.spline,ANY-method}
+%
+%
+%
+%
+%
 \alias{AIC,vlm-method}
 \alias{AIC,vglm-method}
 \alias{AIC,vgam-method}
@@ -99,13 +126,15 @@
 \alias{guplot,vlm-method}
 %\alias{model.frame,ANY-method}
 \alias{model.frame,vlm-method}
-\alias{plot,rcam0,ANY-method}
-\alias{plot,rcam,ANY-method}
-\alias{plot,cao,ANY-method}
-\alias{plot,vlm,ANY-method}
-\alias{plot,vglm,ANY-method}
-\alias{plot,vgam,ANY-method}
-\alias{plot,qrrvglm,ANY-method}
+%\alias{plot,rcam0,ANY-method}
+%\alias{plot,rcam,ANY-method}
+%\alias{plot,cao,ANY-method}
+%\alias{plot,vlm,ANY-method}
+%\alias{plot,vglm,ANY-method}
+%\alias{plot,vgam,ANY-method}
+%\alias{plot,qrrvglm,ANY-method}
+%\alias{plot,uqo,ANY-method}
+%\alias{plot,vsmooth.spline,ANY-method}
 \alias{predictors,vglm-method}
 \alias{rlplot,vglm-method}
 \alias{terms,vlm-method}
@@ -154,8 +183,6 @@
 \alias{persp,cao-method}
 \alias{persp,qrrvglm-method}
 \alias{persp,uqo-method}
-\alias{plot,uqo,ANY-method}
-\alias{plot,vsmooth.spline,ANY-method}
 \alias{predict,cao-method}
 \alias{predict,qrrvglm-method}
 \alias{predict,vgam-method}
@@ -170,7 +197,16 @@
 % Added 20090505:
 %\alias{print,ANY-method}
 %
-\alias{print,vglmff-method}
+%
+% Added 20111224:
+\alias{lrtest,ANY-method}
+\alias{lrtest,vglm-method}
+%\alias{waldtest,ANY-method}
+\alias{print,VGAManova-method}
+\alias{show,VGAManova-method}
+%
+%
+%
 \alias{print,Coef.cao-method}
 \alias{print,summary.cao-method}
 \alias{print,qrrvglm-method}
@@ -205,7 +241,6 @@
 \alias{resid,vgam-method}
 \alias{resid,uqo-method}
 \alias{resid,vsmooth.spline-method}
-\alias{show,vglmff-method}
 \alias{show,Coef.cao-method}
 \alias{show,summary.cao-method}
 \alias{show,qrrvglm-method}
@@ -270,7 +305,8 @@
 
 }
 %\usage{
-%  \S4method{ccoef}{cao,Coef.cao,rrvglm,qrrvglm,Coef.rrvglm,Coef.qrrvglm}(object, ...)
+%  \S4method{ccoef}{cao,Coef.cao,rrvglm,qrrvglm,
+%                   Coef.rrvglm,Coef.qrrvglm}(object, ...)
 %}
 
 \section{Methods}{

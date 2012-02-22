@@ -84,7 +84,7 @@ model.
 
 
   The estimate of \eqn{\phi}{phi} is placed in the \code{misc} slot as
-  \code{@misc$phi}. However, this estimate is computed only for intercept
+  \code{@misc$pstr0}. However, this estimate is computed only for intercept
   models, i.e., the formula is of the form \code{y ~ 1}.
 
 

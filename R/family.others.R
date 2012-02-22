@@ -1,4 +1,4 @@
-# These functions are Copyright (C) 1998-2011 T. W. Yee   All rights reserved.
+# These functions are Copyright (C) 1998-2012 T. W. Yee   All rights reserved.
 
 
 # family.others.R
@@ -111,11 +111,11 @@ rexppois <- function(n, lambda, betave = 1) {
   if (mode(lbetave) != "character" && mode(lbetave) != "name")
     lbetave = as.character(substitute(lbetave))
 
-  if (length(zero) && !is.Numeric(zero, integer = TRUE, posit = TRUE))
+  if (length(zero) && !is.Numeric(zero, integer.valued = TRUE, positive = TRUE))
     stop("bad input for argument 'zero'")
-  if (length(ilambda) && !is.Numeric(ilambda, posit = TRUE))
+  if (length(ilambda) && !is.Numeric(ilambda, positive = TRUE))
     stop("bad input for argument 'ilambda'")
-  if (length(ibetave) && !is.Numeric(ibetave, posit = TRUE))
+  if (length(ibetave) && !is.Numeric(ibetave, positive = TRUE))
     stop("bad input for argument 'ibetave'")
 
   ilambda[abs(ilambda - 1) < 0.01] = 1.1
@@ -359,14 +359,14 @@ genrayleigh.control <- function(save.weight = TRUE, ...)
   if (mode(lscale) != "character" && mode(lscale) != "name")
     lscale = as.character(substitute(lscale))
 
-  if (length(ishape) && !is.Numeric(ishape, posit = TRUE))
+  if (length(ishape) && !is.Numeric(ishape, positive = TRUE))
     stop("bad input for argument 'ishape'")
-  if (length(iscale) && !is.Numeric(iscale, posit = TRUE)) 
+  if (length(iscale) && !is.Numeric(iscale, positive = TRUE)) 
     stop("bad input for argument 'iscale'")
 
-  if (length(zero) && !is.Numeric(zero, integer = TRUE, posit = TRUE))
+  if (length(zero) && !is.Numeric(zero, integer.valued = TRUE, positive = TRUE))
     stop("bad input for argument 'zero'")
-  if (!is.Numeric(nsimEIM, allow = 1, integ = TRUE) || nsimEIM <= 50)
+  if (!is.Numeric(nsimEIM, allowable.length = 1, integer.valued = TRUE) || nsimEIM <= 50)
       stop("'nsimEIM' should be an integer greater than 50")
 
   if (!is.list(escale))
@@ -407,7 +407,7 @@ genrayleigh.control <- function(save.weight = TRUE, ...)
         ans
       }
 # Note: problems occur if scale values too close to zero:
-      scale.grid = seq(0.2 * stats:::sd(y), 5 * stats:::sd(y), len = 29)
+      scale.grid = seq(0.2 * stats::sd(y), 5 * stats::sd(y), len = 29)
       scale.init = if (length( .iscale )) .iscale else
                      getMaxMin(scale.grid, objfun = genrayleigh.Loglikfun,
                                y = y, x = x, w = w)
@@ -651,14 +651,14 @@ expgeometric.control <- function(save.weight = TRUE, ...)
     lscale = as.character(substitute(lscale))
 
   if (length(ishape))
-    if (!is.Numeric(ishape, posit = TRUE) || any(ishape >= 1))
+    if (!is.Numeric(ishape, positive = TRUE) || any(ishape >= 1))
       stop("bad input for argument 'ishape'")
 
   if (length(iscale))
-    if (!is.Numeric(iscale, posit = TRUE))
+    if (!is.Numeric(iscale, positive = TRUE))
     stop("bad input for argument 'iscale'")
 
-  if (length(zero) && !is.Numeric(zero, integer = TRUE, posit = TRUE))
+  if (length(zero) && !is.Numeric(zero, integer.valued = TRUE, positive = TRUE))
     stop("bad input for argument 'zero'")
 
   if (!is.list(escale))
@@ -666,7 +666,7 @@ expgeometric.control <- function(save.weight = TRUE, ...)
   if (!is.list(eshape))
     eshape = list()
 
-  if (!is.Numeric(nsimEIM, allow = 1, integ = TRUE))
+  if (!is.Numeric(nsimEIM, allowable.length = 1, integer.valued = TRUE))
       stop("bad input for argument 'nsimEIM'")
   if (nsimEIM <= 50)
       stop("'nsimEIM' should be an integer greater than 50")
@@ -696,17 +696,17 @@ expgeometric.control <- function(save.weight = TRUE, ...)
 
     if (!length(etastart)) {
 
-      scale.init = if (is.Numeric( .iscale , posit = TRUE)) {
+      scale.init = if (is.Numeric( .iscale , positive = TRUE)) {
                      rep( .iscale , len = n)
                    } else {
 # The scale parameter should be 
 # the standard deviation of y.
-                      stats:::sd(y)  # The papers scale parameter beta
+                      stats::sd(y)  # The papers scale parameter beta
                    }
 #print("head(scale.init)")
 #print( head(scale.init) )
 
-      shape.init = if (is.Numeric( .ishape , posit = TRUE)) {
+      shape.init = if (is.Numeric( .ishape , positive = TRUE)) {
                      rep( .ishape , len = n)
                    } else {
 # Use the formula for the median:
@@ -802,7 +802,7 @@ expgeometric.control <- function(save.weight = TRUE, ...)
 # if (FALSE) {
 
 #   ed2l.dscale2 = (3 * shape - 2 * (shape - (1 - shape) *
-#                   (gsl:::dilog(shape,2)$val))) / (3 * Scale^2 * shape)
+#                   (gsl::dilog(shape,2)$val))) / (3 * Scale^2 * shape)
 
 #   ed2l.dshape2 = (1 - shape)^(-2) / 3
 
@@ -975,14 +975,14 @@ explogarithmic.control <- function(save.weight = TRUE, ...)
     lscale = as.character(substitute(lscale))
 
   if (length(ishape))
-    if (!is.Numeric(ishape, posit = TRUE) || any(ishape >= 1))
+    if (!is.Numeric(ishape, positive = TRUE) || any(ishape >= 1))
       stop("bad input for argument 'ishape'")
 
   if (length(iscale))
-    if (!is.Numeric(iscale, posit = TRUE))
+    if (!is.Numeric(iscale, positive = TRUE))
     stop("bad input for argument 'iscale'")
 
-  if (length(zero) && !is.Numeric(zero, integer = TRUE, posit = TRUE))
+  if (length(zero) && !is.Numeric(zero, integer.valued = TRUE, positive = TRUE))
     stop("bad input for argument 'zero'")
 
   if (!is.list(escale))
@@ -990,7 +990,7 @@ explogarithmic.control <- function(save.weight = TRUE, ...)
   if (!is.list(eshape))
     eshape = list()
 
-  if (!is.Numeric(nsimEIM, allow = 1, integ = TRUE))
+  if (!is.Numeric(nsimEIM, allowable.length = 1, integer.valued = TRUE))
       stop("bad input for argument 'nsimEIM'")
   if (nsimEIM <= 50)
       stop("'nsimEIM' should be an integer greater than 50")
@@ -1017,15 +1017,15 @@ explogarithmic.control <- function(save.weight = TRUE, ...)
 
     if (!length(etastart)) {
 
-      scale.init = if (is.Numeric( .iscale , posit = TRUE)) {
+      scale.init = if (is.Numeric( .iscale , positive = TRUE)) {
                      rep( .iscale , len = n)
                    } else {
 # The scale parameter should be
 # the standard deviation of y.
-                     stats:::sd(y)  
+                     stats::sd(y)  
                    }
 
-      shape.init = if (is.Numeric( .ishape , posit = TRUE)) {
+      shape.init = if (is.Numeric( .ishape , positive = TRUE)) {
                      rep( .ishape , len = n)
                    } else {
 # Use the formula for the median (Tahmasabi pg. 3891):
@@ -1245,10 +1245,11 @@ if (FALSE)
   if (mode(lshape) != "character" && mode(lshape) != "name")
     lshape = as.character(substitute(lshape))
    
-  if (length(zero) && !is.Numeric(zero, integer = TRUE, posit = TRUE))
+  if (length(zero) && !is.Numeric(zero, integer.valued = TRUE, positive = TRUE))
     stop("bad input for argument 'zero'")
 
-  if (!is.Numeric(imethod, allow = 1, integer = TRUE, positi = TRUE) ||
+  if (!is.Numeric(imethod, allowable.length = 1,
+                  integer.valued = TRUE, positive = TRUE) ||
       imethod > 3)
       stop("argument 'imethod' must be 1, 2 or 3")
 
@@ -1310,7 +1311,7 @@ if (FALSE)
           scale.init = if(length( .iscale )) {
                          rep( .iscale , len = n )
                        } else {
-                         rep(stats:::sd(y) / sqrt(gamma(1 + 2/shape.init) - 
+                         rep(stats::sd(y) / sqrt(gamma(1 + 2/shape.init) - 
                              gamma(1 + 1/shape.init)^2) , len = n)
                        } 
                                                            
@@ -1583,8 +1584,8 @@ ptpn <- function(q, location = 0, scale = 1, skewpar = 0.5) {
 
  zedd <- (q - location) / scale
 
- s1 <- 2 * skewpar * pnorm(zedd, sd = 2 * skewpar) #/ scale
-  s2 <- skewpar + (1 - skewpar) * pgamma(zedd^2 / (8 * (1-skewpar)^2), 0.5) 
+  s1 <- 2 * skewpar * pnorm(zedd, sd = 2 * skewpar) #/ scale
+  s2 <- skewpar + (1 - skewpar) * pgamma(zedd^2 / (8 * (1-skewpar)^2), 0.5)
  
 ans <- rep(0.0, length(zedd))
 ans[zedd <= 0] <- s1[zedd <= 0]
@@ -1649,18 +1650,18 @@ tpnff <- function(llocation = "identity", lscale = "loge",
 # parameters of the TPN distribution, I am not worry about the skew 
 #  parameter p.     
 # Note :  pp = Skewparameter
-  if (!is.Numeric(method.init, allow = 1, integ = TRUE, posit = TRUE) ||
+  if (!is.Numeric(method.init, allowable.length = 1, integer.valued = TRUE, positive = TRUE) ||
       method.init > 4)
        stop("'imethod' must be 1 or 2 or 3 or 4")
 
-  if (!is.Numeric(pp, allow = 1, posit = TRUE))
+  if (!is.Numeric(pp, allowable.length = 1, positive = TRUE))
       stop("bad input for argument 'pp'")
 
   if (mode(llocation)  !=  "character" && mode(llocation) != "name")
        llocation = as.character(substitute(llocation))
   if (mode(lscale)  !=  "character" && mode(lscale) != "name")
        lscale = as.character(substitute(lscale))
-  if (length(zero) && !is.Numeric(zero, integer = TRUE, posit = TRUE))
+  if (length(zero) && !is.Numeric(zero, integer.valued = TRUE, positive = TRUE))
        stop("bad input for argument 'zero'")
   if (!is.list(elocation)) elocation = list()
   if (!is.list(escale)) escale = list()
@@ -1787,23 +1788,26 @@ tpnff <- function(llocation = "identity", lscale = "loge",
 tpnff3 <- function(llocation = "identity", elocation = list(),
                     lscale   = "loge",     escale    = list(),
                     lskewpar = "identity", eskewpar  = list(),
-                         method.init = 1,  zero = 2)
+                    method.init = 1,  zero = 2)
 {
-  if (!is.Numeric(method.init, allow = 1, integ = TRUE, posit = TRUE) ||
+  if (!is.Numeric(method.init, allowable.length = 1,
+                  integer.valued = TRUE, positive = TRUE) ||
       method.init > 4)
-       stop("'imethod' must be 1 or 2 or 3 or 4")
+    stop("'imethod' must be 1 or 2 or 3 or 4")
 
- # if (!is.Numeric(pp, allow = 1, posit = TRUE))
+ # if (!is.Numeric(pp, allowable.length = 1, positive = TRUE))
   #    stop("bad input for argument 'pp'")
 
   if (mode(llocation)  !=  "character" && mode(llocation) != "name")
-       llocation = as.character(substitute(llocation))
+     llocation = as.character(substitute(llocation))
   if (mode(lscale)  !=  "character" && mode(lscale) != "name")
-       lscale = as.character(substitute(lscale))
+     lscale = as.character(substitute(lscale))
   if (mode(lskewpar)  !=  "character" && mode(lskewpar) != "name")
-       lscale = as.character(substitute(lscale))
-  if (length(zero) && !is.Numeric(zero, integer = TRUE, posit = TRUE))
-       stop("bad input for argument 'zero'")
+     lscale = as.character(substitute(lscale))
+  if (length(zero) &&
+      !is.Numeric(zero, integer.valued = TRUE, positive = TRUE))
+     stop("bad input for argument 'zero'")
+
   if (!is.list(elocation)) elocation = list()
   if (!is.list(escale))    escale    = list()
   if (!is.list(eskewpar))  eskewpar = list()
@@ -1811,9 +1815,9 @@ tpnff3 <- function(llocation = "identity", elocation = list(),
   new("vglmff",
     blurb = c("Two-piece normal distribution \n\n",
               "Links: ",
-              namesof("location",  llocation,  earg = elocation), ", ",
-              namesof("scale",     lscale,     earg = escale),  ", ",
-              namesof("skewpar",    lscale,     earg = epp),  "\n\n",
+              namesof("location", llocation,  earg = elocation), ", ",
+              namesof("scale",    lscale,     earg = escale),  ", ",
+              namesof("skewpar",  lscale,     earg = eskewpar),  "\n\n",
               "Mean: "),
     constraints = eval(substitute(expression({
             constraints <- cm.zero.vgam(constraints, x, .zero, M)

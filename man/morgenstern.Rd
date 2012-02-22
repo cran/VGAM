@@ -81,8 +81,9 @@ morgenstern(lapar = "rhobit", earg = list(), iapar = NULL, tola0 = 0.01,
 
 
 Castillo, E., Hadi, A. S., Balakrishnan, N. Sarabia, J. S. (2005)
-\emph{Extreme Value and Related Models with Applications in Engineering and Science},
-Hoboken, N.J.: Wiley-Interscience.
+\emph{Extreme Value and Related Models with Applications in
+      Engineering and Science},
+Hoboken, NJ, USA: Wiley-Interscience.
 
 
 }
@@ -106,10 +107,11 @@ Hoboken, N.J.: Wiley-Interscience.
 
 }
 \examples{
-n = 1000; ymat = cbind(rexp(n), rexp(n))
+N = 1000; mdata = data.frame(y1 = rexp(N), y2 = rexp(N))
 \dontrun{plot(ymat)}
-fit = vglm(ymat ~ 1, fam = morgenstern, trace = TRUE)
-fit = vglm(ymat ~ 1, fam = morgenstern, trace = TRUE, crit = "coef")
+fit = vglm(cbind(y1, y2) ~ 1, morgenstern, mdata, trace = TRUE)
+# This may fail:
+fit = vglm(cbind(y1, y2) ~ 1, morgenstern, mdata, trace = TRUE, crit = "coef")
 coef(fit, matrix = TRUE)
 Coef(fit)
 head(fitted(fit))

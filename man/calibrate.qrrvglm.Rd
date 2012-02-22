@@ -10,7 +10,7 @@
 }
 \usage{
 calibrate.qrrvglm(object, newdata = NULL,
-        type=c("lv","predictors","response","vcov","all3or4"),
+        type = c("lv", "predictors", "response", "vcov", "all3or4"),
         initial.vals = NULL, ...)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -48,26 +48,34 @@ calibrate.qrrvglm(object, newdata = NULL,
     The default is a grid defined by arguments in
     \code{\link{calibrate.qrrvglm.control}}.
   }
-  \item{\dots}{ Arguments that are fed into
-    \code{\link{calibrate.qrrvglm.control}}. }
+  \item{\dots}{
+  Arguments that are fed into
+  \code{\link{calibrate.qrrvglm.control}}.
+
+
+}
 }
 \details{
   Given a fitted regression CQO/CAO model,
   maximum likelihood calibration is theoretically easy and elegant.
   However, the method assumes that all species are
   independent, which is not really true in practice.
-  More details and references are given in Yee (2005).
+  More details and references are given in Yee (2012).
+
 
   The function \code{\link[stats]{optim}} is used to search for
   the maximum likelihood solution. Good initial values are
   needed, and \code{\link{calibrate.qrrvglm.control}}
   allows the user some control over the choice of these.
+
+
 }
 \value{
   The argument \code{type} determines what is returned.
-  If \code{type="all3or4"} then all the \code{type} values are returned
+  If \code{type = "all3or4"} then all the \code{type} values are returned
   in a list, with the following components.
   Each component has length \code{nrow(newdata)}.
+  
   
   \item{lv}{Calibrated latent variables or site scores. }
   \item{predictors }{linear/quadratic or additive predictors.
@@ -82,10 +90,12 @@ calibrate.qrrvglm(object, newdata = NULL,
   }
 }
 \references{
-Yee, T. W. (2005)
+
+Yee, T. W. (2012)
 On constrained and unconstrained
 quadratic ordination.
 \emph{Manuscript in preparation}.
+
 
 ter Braak, C. J. F. 1995.
 Calibration. In:
@@ -95,15 +105,20 @@ van Tongeren, O. F. R. (Eds.)
 Cambridge University Press,
 Cambridge.
 
+
 }
 \author{T. W. Yee}
 \note{
   Despite the name of this function, UQO and CAO models are handled 
   as well.
+
+
 }
 \section{Warning }{
   This function is computationally expensive.
-  Setting \code{trace=TRUE} to get a running log is a good idea.
+  Setting \code{trace = TRUE} to get a running log is a good idea.
+
+
 }
 
 \seealso{
@@ -112,6 +127,8 @@ Cambridge.
   \code{\link{cqo}},
   \code{\link{uqo}},
   \code{\link{cao}}.
+
+
 }
 \examples{
 \dontrun{
@@ -124,15 +141,15 @@ p1 = cqo(cbind(Pardlugu, Pardmont, Pardnigr, Pardpull, Zoraspin) ~
          IToler = TRUE, Crow1positive = TRUE)
 
 siteNos = 1:2  # Calibrate these sites
-cp1 = calibrate(p1, new=data.frame(p1@y[siteNos,]), trace=TRUE)
+cp1 = calibrate(p1, new=data.frame(p1@y[siteNos,]), trace = TRUE)
 }
 
 \dontrun{
 # Graphically compare the actual site scores with their calibrated values
-persp(p1, main="Site scores: solid=actual, dashed=calibrated",
-      label=TRUE, col="blue", las=1)
-abline(v=lv(p1)[siteNos], lty=1, col=1:length(siteNos)) # actual site scores
-abline(v=cp1, lty=2, col=1:length(siteNos)) # calibrated values
+persp(p1, main = "Site scores: solid=actual, dashed=calibrated",
+      label = TRUE, col = "blue", las = 1)
+abline(v = lv(p1)[siteNos], lty = 1, col = 1:length(siteNos)) # actual site scores
+abline(v = cp1, lty = 2, col = 1:length(siteNos)) # calibrated values
 }
 }
 \keyword{models}

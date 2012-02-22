@@ -54,7 +54,7 @@ uqo(formula, family, data = list(), weights = NULL, subset = NULL,
       The ``factory-fresh'' default is \code{na.omit}.
     }
   \item{etastart}{ starting values for the linear predictors.
-    It is a \eqn{M}-column matrix. If \eqn{M=1} then it may be a vector.
+    It is a \eqn{M}-column matrix. If \eqn{M = 1} then it may be a vector.
     }
   \item{mustart}{ starting values for the 
     fitted values. It can be a vector or a matrix. 
@@ -105,14 +105,14 @@ uqo(formula, family, data = list(), weights = NULL, subset = NULL,
   are largely free parameters and are not constrained to be linear
   combinations of the environmental variables.  This poses a
   difficult optimization problem.  The current algorithm is very simple
-  and will often fail (even for \code{Rank=1}) but hopefully this will
+  and will often fail (even for \code{Rank = 1}) but hopefully this will
   be improved in the future.
 
   The central formula is given by
   \deqn{\eta = B_1^T x_1 + A \nu +
-               \sum_{m=1}^M (\nu^T D_m \nu) e_m}{%
+               \sum_{m = 1}^M (\nu^T D_m \nu) e_m}{%
          eta = B_1^T x_1 + A nu +
-         sum_{m=1}^M (nu^T D_m nu) e_m}
+         sum_{m = 1}^M (nu^T D_m nu) e_m}
   where \eqn{x_1}{x_1} is a vector (usually just a 1 for an intercept),
   \eqn{\nu}{nu} is a \eqn{R}-vector of latent variables, \eqn{e_m} is
   a vector of 0s but with a 1 in the \eqn{m}th position.
@@ -141,20 +141,23 @@ estimated for each species, hence will give an error message here.
 }
 \references{
 
+
 Yee, T. W. (2004)
 A new technique for maximum-likelihood
 canonical Gaussian ordination.
 \emph{Ecological Monographs},
 \bold{74}, 685--701.
 
-Yee, T. W. (2005)
-On constrained and unconstrained
-quadratic ordination.
-\emph{Manuscript in preparation}.
+
+%Yee, T. W. (2005)
+%On constrained and unconstrained quadratic ordination.
+%\emph{Manuscript in preparation}.
+
 
 Yee, T. W. (2006)
 Constrained additive ordination.
 \emph{Ecology}, \bold{87}, 203--213.
+
 
 }
 \author{Thomas W. Yee} 
@@ -165,6 +168,7 @@ Constrained additive ordination.
   When \eqn{R>1}, they are uncorrelated and should be unique up
   to a rotation.
 
+
 The argument \code{Bestof} in \code{\link{uqo.control}} controls
 the number of models fitted (each uses different starting values) to
 the data. This argument is important because convergence may be to a
@@ -173,31 +177,37 @@ starting values increases the chances of finding the global solution.
 Local solutions arise because the optimization problem is highly
 nonlinear.
 
+
 In the example below, a CQO model is fitted and used for providing
 initial values for a UQO model.
+
 
 }
 \section{Warning }{
 
   Local solutions are not uncommon when fitting UQO models.  To increase
   the chances of obtaining the global solution, set
-  \code{ITolerances=TRUE} or \code{EqualTolerances=TRUE} and increase
+  \code{ITolerances = TRUE} or \code{EqualTolerances = TRUE} and increase
   the value of the argument \code{Bestof} in \code{\link{uqo.control}}.
   For reproducibility of the results, it pays to set a different random
   number seed before calling \code{uqo} (the function
   \code{\link[base:Random]{set.seed}} does this).
 
+
 The function \code{uqo} is very sensitive to initial values, and there
 is a lot of room for improvement here.
+
 
 UQO is computationally expensive.  It pays to keep the rank to no more
 than 2, and 1 is much preferred over 2.
 The data needs to conform closely to the statistical model.
 
+
 Currently there is a bug with the argument \code{Crow1positive}
 in \code{\link{uqo.control}}. This argument might be interpreted
 as controlling the sign of the first site score, but currently
 this is not done.
+
 
 }
 
@@ -216,9 +226,10 @@ this is not done.
   \code{vcov.uqo},
   \code{\link[base:Random]{set.seed}},
   \code{\link{hspider}}.
+
+
 }
-\examples{
-\dontrun{
+\examples{ \dontrun{
 set.seed(123)  # This leads to the global solution
 hspider[,1:6] = scale(hspider[,1:6]) # Standardized environmental vars
 p1 = cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,
@@ -226,7 +237,7 @@ p1 = cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,
                Trocterr, Zoraspin) ~
          WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
          ITolerances = TRUE, fam = poissonff, data = hspider, 
-         Crow1positive=TRUE, Bestof=3, trace=FALSE)
+         Crow1positive = TRUE, Bestof=3, trace = FALSE)
 if (deviance(p1) > 1589.0) stop("suboptimal fit obtained")
 
 set.seed(111)
@@ -240,29 +251,28 @@ if (deviance(up1) > 1310.0) stop("suboptimal fit obtained")
 
 nos = ncol(up1@y) # Number of species
 clr = (1:(nos+1))[-7]  # to omit yellow
-lvplot(up1, las=1, y=TRUE, pch=1:nos, scol=clr, lcol=clr, 
-       pcol=clr, llty=1:nos, llwd=2)
-legend(x=2, y=135, colnames(up1@y), col=clr, lty=1:nos,
-       lwd=2, merge=FALSE, ncol=1, x.inter=4.0, bty="l", cex=0.9)
+lvplot(up1, las = 1, y = TRUE, pch = 1:nos, scol = clr, lcol = clr, 
+       pcol = clr, llty = 1:nos, llwd=2)
+legend(x=2, y = 135, colnames(up1@y), col = clr, lty = 1:nos,
+       lwd=2, merge = FALSE, ncol = 1, x.inter=4.0, bty = "l", cex = 0.9)
 
 # Compare the site scores between the two models
-plot(lv(p1), lv(up1), xlim=c(-3,4), ylim=c(-3,4), las=1)
-abline(a=0, b=-1, lty=2, col="blue", xpd=FALSE)
-cor(lv(p1, ITol=TRUE), lv(up1))
+plot(lv(p1), lv(up1), xlim = c(-3,4), ylim = c(-3,4), las = 1)
+abline(a = 0, b=-1, lty=2, col = "blue", xpd = FALSE)
+cor(lv(p1, ITol = TRUE), lv(up1))
 
 # Another comparison between the constrained and unconstrained models
 # The signs are not right so they are similar when reflected about 0 
-par(mfrow=c(2,1))
-persp(up1, main="Red/Blue are the constrained/unconstrained models",
-      label=TRUE, col="blue", las=1)
-persp(p1, add=FALSE, col="red")
-pchisq(deviance(p1) - deviance(up1), df=52-30, lower.tail=FALSE)
-}
-}
+par(mfrow = c(2,1))
+persp(up1, main = "Red/Blue are the constrained/unconstrained models",
+      label = TRUE, col = "blue", las = 1)
+persp(p1, add = FALSE, col = "red")
+pchisq(deviance(p1) - deviance(up1), df=52-30, lower.tail = FALSE)
+}}
 \keyword{models}
 \keyword{regression}
 
 % 6/10/06; when the bug is fixed:
-%persp(p1, add=TRUE, col="red")
+%persp(p1, add = TRUE, col = "red")
 
 

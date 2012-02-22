@@ -8,24 +8,26 @@
 
 }
 \usage{
-zibinomial(lphi = "logit", lmu = "logit", ephi = list(), emu = list(),
-           iphi = NULL, zero = 1, mv = FALSE, imethod = 1)
+zibinomial(lpstr0 = "logit", lprob = "logit",
+           epstr0 = list(),  eprob = list(),
+           ipstr0 = NULL, zero = 1, mv = FALSE, imethod = 1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{lphi, lmu}{ 
+  \item{lpstr0, lprob}{ 
   Link functions for the parameter \eqn{\phi}{phi}
-  and the usual binomial probability \eqn{\mu}{mu} parameter.
+  and the usual binomial probability \eqn{\mu}{prob} parameter.
   See \code{\link{Links}} for more choices.
+  For the zero-\emph{deflated} model see below.
 
   }
-  \item{ephi, emu}{
+  \item{epstr0, eprob}{
   List. Extra argument for the respective links.
   See \code{earg} in \code{\link{Links}} for general information.
 
   }
 
-  \item{iphi}{
+  \item{ipstr0}{
   Optional initial values for \eqn{\phi}{phi}, whose values must lie
   between 0 and 1. The default is to compute an initial value internally.
   If a vector then recyling is used.
@@ -35,7 +37,7 @@ zibinomial(lphi = "logit", lmu = "logit", ephi = list(), emu = list(),
 % An integer specifying which linear/additive predictor is modelled
 % as intercepts only.  If given, the value must be either 1 or 2,
 % and the default is the first. Setting \code{zero = NULL} enables both
-% \eqn{\phi}{phi} and \eqn{\mu}{mu} to be modelled as a function of
+% \eqn{\phi}{phi} and \eqn{\mu}{prob} to be modelled as a function of
 % the explanatory variables.
 % See \code{\link{CommonVGAMffArguments}} for more information.
 
@@ -54,18 +56,19 @@ zibinomial(lphi = "logit", lmu = "logit", ephi = list(), emu = list(),
 \details{
   This function uses Fisher scoring and is based on
   \deqn{P(Y=0) =  \phi + (1-\phi) (1-\mu)^N,}{%
-        P(Y=0) =  phi + (1-phi) * (1-mu)^N,}
+        P(Y=0) =   phi + (1- phi) * (1-prob)^N,}
   for \eqn{y=0}, and 
   \deqn{P(Y=y) = (1-\phi) {N \choose Ny} \mu^{Ny} (1-\mu)^{N(1-y)}.}{%
-        P(Y=y) = (1-phi) * choose(N,Ny) * mu^(N*y) * (1-mu)^(N*(1-y)).}
+        P(Y=y) = (1-phi) * choose(N,Ny) * prob^(N*y) * (1-prob)^(N*(1-y)).}
   for \eqn{y=1/N,2/N,\ldots,1}. That is, the response is a sample
   proportion out of \eqn{N} trials, and the argument \code{size} in
   \code{\link{rzibinom}} is \eqn{N} here.
-  The parameter \eqn{\phi}{phi} satisfies \eqn{0 < \phi < 1}{0 <
-  phi < 1}.  The mean of \eqn{Y} is \eqn{E(Y)=(1-\phi) \mu}{E(Y)
-  = (1-phi) * mu} and these are returned as the fitted values.
-  By default, the two linear/additive predictors are \eqn{(logit(\phi),
-  logit(\mu))^T}{(logit(phi), logit(mu))^T}.
+  The parameter \eqn{\phi}{phi} is the probability of a structural zero,
+  and it satisfies \eqn{0 < \phi < 1}{0 < phi < 1}.
+  The mean of \eqn{Y} is \eqn{E(Y)=(1-\phi) \mu}{E(Y) = (1-phi) * prob}
+  and these are returned as the fitted values.
+  By default, the two linear/additive predictors
+  are \eqn{(logit(\phi), logit(\mu))^T}{(logit(phi), logit(prob))^T}.
 
 
 }
@@ -88,19 +91,23 @@ zibinomial(lphi = "logit", lmu = "logit", ephi = list(), emu = list(),
   specifying the values of \eqn{N}.
 
 
-  To work well, one needs \eqn{N>1} and \eqn{\mu>0}{mu>0}, i.e.,
-  the larger \eqn{N} and \eqn{\mu}{mu} are, the better.
+  To work well, one needs \eqn{N>1} and \eqn{\mu>0}{prob>0}, i.e.,
+  the larger \eqn{N} and \eqn{\mu}{prob} are, the better.
 
 
   For intercept-models and constant \eqn{N} over the \eqn{n} observations,
-  the \code{misc} slot has a component called \code{p0} which is the
-  estimate of \eqn{P(Y=0)}.  This family function currently cannot handle
-  a multivariate response (only \code{mv = FALSE} can be handled).
+  the \code{misc} slot has a component called \code{pobs0} which is the
+  estimate of the probability of an observed 0, i.e., \eqn{P(Y=0)}.
+  This family function currently cannot handle a multivariate
+  response (only \code{mv = FALSE} can be handled).
 
 
-% The zero-\emph{deflated} binomial distribution cannot be handled with
-% this family function.  It can be handled with the zero-altered binomial
-% distribution; see \code{\link{zabinomial}}.
+  The zero-\emph{deflated} binomial distribution might
+  be fitted by setting \code{lpstr0 = identity}, albeit,
+  not entirely reliably. See \code{\link{zipoisson}}
+  for information that can be applied here. Else
+  try the zero-altered binomial distribution (see
+  \code{\link{zabinomial}}).
 
 
 }
@@ -108,7 +115,7 @@ zibinomial(lphi = "logit", lmu = "logit", ephi = list(), emu = list(),
 \section{Warning }{
   Numerical problems can occur.
   Half-stepping is not uncommon.
-  If failure to converge occurs, make use of the argument \code{iphi}.
+  If failure to converge occurs, make use of the argument \code{ipstr0}.
 
 } 
 
@@ -122,17 +129,17 @@ zibinomial(lphi = "logit", lmu = "logit", ephi = list(), emu = list(),
 \examples{
 size = 10  # Number of trials; N in the notation above
 nn = 200
-zibdata = data.frame(phi   = logit( 0, inverse = TRUE), # 0.50
+zibdata = data.frame(pstr0 = logit( 0, inverse = TRUE), # 0.50
                      mubin = logit(-1, inverse = TRUE), # Mean of usual binomial
                      sv    = rep(size, length = nn))
 zibdata = transform(zibdata, 
-                    y = rzibinom(nn, size = sv, prob = mubin, phi = phi))
+                    y = rzibinom(nn, size = sv, prob = mubin, pstr0 = pstr0))
 with(zibdata, table(y))
 fit = vglm(cbind(y, sv - y) ~ 1, zibinomial, zibdata, trace = TRUE)
 
 coef(fit, matrix = TRUE)
 Coef(fit) # Useful for intercept-only models
-fit@misc$p0  # Estimate of P(Y = 0)
+fit@misc$pobs0  # Estimate of P(Y = 0)
 head(fitted(fit))
 with(zibdata, mean(y)) # Compare this with fitted(fit)
 summary(fit)

@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2011 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2012 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -166,21 +166,21 @@ predict.vlm = function(object,
         fit.summary = summaryvlm(object, dispersion=dispersion)
         sigma = if (is.numeric(fit.summary@sigma)) fit.summary@sigma else
                 sqrt(deviance(object) / object@df.residual) # was @rss
-        pred = Build.terms.vlm(x=X_vlm, coefs=coefs,
-                               cov=sigma^2 * fit.summary@cov.unscaled,
-                               assign=vasgn,
-                               collapse=type!="terms", M=M,
+        pred = Build.terms.vlm(x = X_vlm, coefs = coefs,
+                               cov = sigma^2 * fit.summary@cov.unscaled,
+                               assign = vasgn,
+                               collapse = type!="terms", M=M,
                                dimname=list(dx1, dname2),
-                               coefmat=coefvlm(object, matrix=TRUE))
+                               coefmat = coefvlm(object, matrix.out = TRUE))
         pred$df = object@df.residual
         pred$sigma = sigma
     } else {
-        pred = Build.terms.vlm(x=X_vlm, coefs=coefs,
-                               cov=NULL,
-                               assign=vasgn,
-                               collapse=type!="terms", M=M,
-                               dimname=list(dx1, dname2),
-                               coefmat=coefvlm(object, matrix=TRUE))
+        pred = Build.terms.vlm(x = X_vlm, coefs = coefs,
+                               cov = NULL,
+                               assign = vasgn,
+                               collapse = type!="terms", M=M,
+                               dimname = list(dx1, dname2),
+                               coefmat = coefvlm(object, matrix.out = TRUE))
     }
 
     constant  = attr(pred, "constant")

@@ -9,7 +9,7 @@
 
 }
 \usage{
-iam(j, k, M, hbw = M, both = FALSE, diagonal = TRUE)
+iam(j, k, M, hbw = M, both = FALSE, diag = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -37,7 +37,7 @@ iam(j, k, M, hbw = M, both = FALSE, diagonal = TRUE)
   See below for more details.
 
   }
-  \item{diagonal}{
+  \item{diag}{
   Logical. Return the indices for the diagonal elements? 
   If \code{FALSE} then only the strictly upper triangular part of the matrix 
   elements are used.
@@ -66,13 +66,15 @@ iam(j, k, M, hbw = M, both = FALSE, diagonal = TRUE)
   This function has a dual purpose depending on the value of \code{both}.
   If \code{both=FALSE} then the column number corresponding
   to the \code{j}-\code{k} element of the matrix is returned.
-  If \code{both=TRUE} then \code{j} and \code{k} are ignored and a list
+  If \code{both = TRUE} then \code{j} and \code{k} are ignored and a list
   with the following components are returned.
+
 
   \item{row.index}{
   The row indices of the upper triangular part of the
   matrix (This may or may not include the diagonal elements, depending
   on the argument \code{diagonal}).
+
 
   }
   \item{col.index}{
@@ -80,11 +82,13 @@ iam(j, k, M, hbw = M, both = FALSE, diagonal = TRUE)
   matrix (This may or may not include the diagonal elements, depending
   on the argument \code{diagonal}). 
 
+
   }
 }
 \references{ 
   The website \url{http://www.stat.auckland.ac.nz/~yee} contains
   some additional information.
+
 
 }
 \author{ T. W. Yee }
@@ -94,25 +98,28 @@ iam(j, k, M, hbw = M, both = FALSE, diagonal = TRUE)
   whose \eqn{M} is determined by the data, e.g., \code{\link{dirichlet}},
   \code{\link{multinomial}}.
 
+
 }
 
 \seealso{ 
 \code{\link{vglmff-class}}.
 %\code{ima}.
+
+
 }
 \examples{
-iam(1, 2, M=3) # The 4th column represents element (1,2) of a 3x3 matrix
-iam(NULL, NULL, M=3, both=TRUE) # Return the row and column indices
+iam(1, 2, M = 3) # The 4th column represents element (1,2) of a 3x3 matrix
+iam(NULL, NULL, M = 3, both = TRUE) # Return the row and column indices
 
 dirichlet()@weight
 
 M = 4
-temp1 = iam(NA, NA, M=M, both=TRUE)
+temp1 = iam(NA, NA, M = M, both = TRUE)
 mat1 = matrix(NA, M, M)
 mat1[cbind(temp1$row, temp1$col)] = 1:length(temp1$row)
 mat1 # More commonly used
 
-temp2 = iam(NA, NA, M=M, both=TRUE, diagonal=FALSE)
+temp2 = iam(NA, NA, M = M, both = TRUE, diag = FALSE)
 mat2 = matrix(NA, M, M)
 mat2[cbind(temp2$row, temp2$col)] = 1:length(temp2$row)
 mat2 # Rarely used

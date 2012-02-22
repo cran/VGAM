@@ -1,4 +1,4 @@
-# These functions are Copyright (C) 1998-2011 T. W. Yee    All rights reserved.
+# These functions are Copyright (C) 1998-2012 T. W. Yee    All rights reserved.
 
 # nobs.R 
 
@@ -29,9 +29,29 @@ nobs.vlm <- function(object, type = c("lm", "vlm"), ...) {
 }
 
 
+
+# 20120216; if I have the if() commented out then
+# Error in loadNamespace(package, c(which.lib.loc, lib.loc)) : 
+# cyclic namespace dependency detected when loading ‘VGAM’, already loading ‘VGAM’
+if (!isGeneric("nobs"))
+  setGeneric("nobs", function(object, ...)
+             standardGeneric("nobs"),
+             package = "VGAM")
+
+
 setMethod("nobs", "vlm",
          function(object, ...)
          nobs.vlm(object, ...))
+
+
+# setMethod("nobs", "vglm",
+#          function(object, ...)
+#          nobs.vlm(object, ...))
+
+
+# setMethod("nobs", "vgam",
+#          function(object, ...)
+#          nobs.vlm(object, ...))
 
 
 
@@ -162,9 +182,9 @@ nvar.rcam <- function(object, type = c("rcam", "zz"), ...) {
 
 
 if (!isGeneric("nvar"))
-setGeneric("nvar", function(object, ...)
-            standardGeneric("nvar"),
-           package = "VGAM")
+  setGeneric("nvar", function(object, ...)
+             standardGeneric("nvar"),
+             package = "VGAM")
 
 
 setMethod("nvar", "vlm",

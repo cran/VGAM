@@ -156,12 +156,12 @@ summary(fit)
 
 
 # Example 2; zero-inflated Poisson model
-zipdat = data.frame(x = runif(nn <- 2000))
-zipdat = transform(zipdat, phi    = logit(-0.5 + 1*x, inverse = TRUE),
-                           lambda =  loge( 0.5 + 2*x, inverse = TRUE))
-zipdat = transform(zipdat, y = rzipois(nn, lambda, phi))
-with(zipdat, table(y))
-fit = vglm(y ~ x, zipoisson, zipdat, trace = TRUE)
+zdata = data.frame(x2 = runif(nn <- 2000))
+zdata = transform(zdata, pstr0  = logit(-0.5 + 1*x2, inverse = TRUE),
+                         lambda = loge(  0.5 + 2*x2, inverse = TRUE))
+zdata = transform(zdata, y = rzipois(nn, lambda, pstr0 = pstr0))
+with(zdata, table(y))
+fit = vglm(y ~ x2, zipoisson, zdata, trace = TRUE)
 coef(fit, matrix = TRUE)  # These should agree with the above values
 
 
@@ -179,11 +179,11 @@ with(hunua, rug(altitude)) }
 
 
 # Example 4; LMS quantile regression
-fit = vgam(BMI ~ s(age, df = c(4, 2)), lms.bcn(zero = 1), dat = bminz,
+fit = vgam(BMI ~ s(age, df = c(4, 2)), lms.bcn(zero = 1), dat = bmi.nz,
            trace = TRUE)
 head(predict(fit))
 head(fitted(fit))
-head(bminz) # Person 1 is near the lower quartile among people his age
+head(bmi.nz) # Person 1 is near the lower quartile among people his age
 head(cdf(fit))
 
 \dontrun{ par(mfrow = c(1, 1), bty = "l", mar = c(5,4,4,3)+0.1, xpd = TRUE)

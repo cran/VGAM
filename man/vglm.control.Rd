@@ -17,37 +17,38 @@ vglm.control(checkwz = TRUE, criterion = names(.min.criterion.VGAM),
 %- maybe also `usage' for other objects documented here.
 \arguments{
   \item{checkwz}{
-  logical indicating whether the diagonal elements of
-  the working weight matrices should be checked whether they are
-  sufficiently positive, i.e., greater than \code{wzepsilon}. If not,
-  any values less than \code{wzepsilon} are replaced with this value.
+  logical indicating whether the diagonal elements
+  of the working weight matrices should be checked
+  whether they are sufficiently positive, i.e., greater
+  than \code{wzepsilon}. If not, any values less than
+  \code{wzepsilon} are replaced with this value.
 
   }
   \item{criterion}{
-  character variable describing what criterion is to
-  be used to test for convergence. 
-  The possibilities are listed in \code{.min.criterion.VGAM}, but
-  most family functions only implement a few of these.
+  character variable describing what criterion is to be
+  used to test for convergence. The possibilities are
+  listed in \code{.min.criterion.VGAM}, but most family
+  functions only implement a few of these.
 
   }
   \item{epsilon}{
-  positive convergence tolerance epsilon. Roughly
-  speaking, the Newton-Raphson/Fisher-scoring iterations 
-  are assumed to have   
-  converged when two successive \code{criterion} values are within
-  \code{epsilon} of each other.
+  positive convergence tolerance epsilon. Roughly speaking,
+  the Newton-Raphson/Fisher-scoring iterations are assumed
+  to have converged when two successive \code{criterion}
+  values are within \code{epsilon} of each other.
 
   }
   \item{half.stepsizing}{
-  logical indicating if half-stepsizing is
-  allowed. For example, in maximizing a log-likelihood, if the
-  next iteration has a log-likelihood that is less than the current
-  value of the log-likelihood, then a half step will be taken.
-  If the log-likelihood is still less than at the current position,
-  a quarter-step will be taken etc. Eventually a step will be taken
-  so that an improvement is made to the convergence criterion. 
-  \code{half.stepsizing} is ignored if
-  \code{criterion=="coefficients"}.
+  logical indicating if half-stepsizing is allowed. For
+  example, in maximizing a log-likelihood, if the next
+  iteration has a log-likelihood that is less than
+  the current value of the log-likelihood, then a half
+  step will be taken.  If the log-likelihood is still
+  less than at the current position, a quarter-step
+  will be taken etc. Eventually a step will be taken
+  so that an improvement is made to the convergence
+  criterion.  \code{half.stepsizing} is ignored if
+  \code{criterion == "coefficients"}.
 
   }
   \item{maxit}{
@@ -56,38 +57,38 @@ vglm.control(checkwz = TRUE, criterion = names(.min.criterion.VGAM),
   }
   \item{stepsize}{
   usual step size to be taken between each
-  Newton-Raphson/Fisher-scoring iteration. It should be a value
-  between 0 and 1, where 
-  a value of unity corresponds to an ordinary step. 
-  A value of 0.5 means half-steps are taken.
-  Setting a value near zero will cause convergence to be generally slow
-  but may help increase the chances of successful convergence for some
-  family functions.
+  Newton-Raphson/Fisher-scoring iteration. It should be a
+  value between 0 and 1, where a value of unity corresponds
+  to an ordinary step.  A value of 0.5 means half-steps are
+  taken.  Setting a value near zero will cause convergence
+  to be generally slow but may help increase the chances
+  of successful convergence for some family functions.
 
   }
   \item{save.weight}{
-  logical indicating whether the \code{weights} slot
-  of a \code{"vglm"} object will be saved on the object. If not, it will
-  be reconstructed when needed, e.g., \code{summary}.
-  Some family functions have \code{save.weight=TRUE} and others have 
-  \code{save.weight=FALSE} in their control functions.
+  logical indicating whether the \code{weights} slot of a
+  \code{"vglm"} object will be saved on the object. If not,
+  it will be reconstructed when needed, e.g., \code{summary}.
+  Some family functions have \code{save.weight = TRUE} and
+  others have \code{save.weight = FALSE} in their control
+  functions.
 
   }
   \item{trace}{
-  logical indicating if output should be produced for each iteration.
-  Setting \code{trace=TRUE} is recommended in general because
-  \pkg{VGAM} fits a very broad variety of models and distributions, and
-  for some of them, convergence is intrinsically more difficult.
-  Monitoring convergence can help check that the solution is reasonable
-  or that a problem has occurred.
-  It may suggest better initial values are needed,
-  the making of invalid assumptions, or that
-  the model is inappropriate for the data, etc.
+  logical indicating if output should be produced for each
+  iteration.  Setting \code{trace = TRUE} is recommended in
+  general because \pkg{VGAM} fits a very broad variety of
+  models and distributions, and for some of them, convergence
+  is intrinsically more difficult. Monitoring convergence
+  can help check that the solution is reasonable or that
+  a problem has occurred.  It may suggest better initial
+  values are needed, the making of invalid assumptions,
+  or that the model is inappropriate for the data, etc.
 
   }
   \item{wzepsilon}{
-  small positive number used to test whether the diagonals of the working
-  weight matrices are sufficiently positive.
+  small positive number used to test whether the diagonals
+  of the working weight matrices are sufficiently positive.
 
   }
   \item{xij}{
@@ -131,38 +132,43 @@ vglm.control(checkwz = TRUE, criterion = names(.min.criterion.VGAM),
   }
 }
 \details{
-  Most of the control parameters are used within \code{vglm.fit} and
-  you will have to look at that to understand the full details.
+  Most of the control parameters are used within
+  \code{vglm.fit} and you will have to look at that to
+  understand the full details.
 
-  Setting \code{save.weight=FALSE} is useful for some models because
+
+  Setting \code{save.weight = FALSE} is useful for some models because
   the \code{weights} slot of the object is the largest and so less
   memory is used to store the object. However, for some \pkg{VGAM}
-  family function, it is necessary to set \code{save.weight=TRUE}
+  family function, it is necessary to set \code{save.weight = TRUE}
   because the \code{weights} slot cannot be reconstructed later.
+
 
   }
 \value{
   A list with components matching the input names. A little error
   checking is done, but not much.
-  The list is assigned to the \code{control} slot of \code{vglm} objects.
+  The list is assigned to the \code{control} slot of
+  \code{vglm} objects.
+
 
 }
 \references{
-Yee, T. W. and Hastie, T. J. (2003)
-Reduced-rank vector generalized linear models.
-\emph{Statistical Modelling},
-\bold{3}, 15--41.
+  Yee, T. W. and Hastie, T. J. (2003)
+  Reduced-rank vector generalized linear models.
+  \emph{Statistical Modelling},
+  \bold{3}, 15--41.
 
 }
 \author{ Thomas W. Yee}
 \note{ 
   Reiterating from above,
-  setting \code{trace=TRUE} is recommended in general.
+  setting \code{trace = TRUE} is recommended in general.
 
 
-In Example 2 below there are two covariates that have linear/additive
-predictor specific values.
-These are handled using the \code{xij} argument.
+  In Example 2 below there are two covariates that have linear/additive
+  predictor specific values.
+  These are handled using the \code{xij} argument.
 
 }
 
@@ -171,8 +177,8 @@ These are handled using the \code{xij} argument.
 \seealso{
   \code{\link{vglm}},
   \code{\link{fill}}.
-  The author's homepage has further documentation about the
-  \code{xij} argument.
+  The author's homepage has further documentation about
+  the \code{xij} argument.
 
 }
 
@@ -209,8 +215,6 @@ plotvgam(fit2, xlab = "z1") # Correct
 }
 
 
-
-
 # Example 3. The use of the xij argument (complex case).
 set.seed(123)
 coalminers = transform(coalminers,
@@ -226,12 +230,12 @@ NS = function(x, ..., df = 3) ns(c(x,...), df = df)[1:length(x),,drop = FALSE]
 BS = function(x, ..., df = 3) head(bs(c(x,...), df = df), length(x), drop = FALSE)
 NS = function(x, ..., df = 3) head(ns(c(x,...), df = df), length(x), drop = FALSE)
 
-fit3 = vglm(cbind(nBnW,nBW,BnW,BW) ~ Age + NS(dum1,dum2),
-            fam = binom2.or(exchang = TRUE, zero = 3),
-            xij = list(NS(dum1,dum2) ~ NS(dum1,dum2) +
-                                       NS(dum2,dum1) +
-                                       fill(NS(dum1))),
-            form2 = ~  NS(dum1,dum2) + NS(dum2,dum1) + fill(NS(dum1)) +
+fit3 = vglm(cbind(nBnW,nBW,BnW,BW) ~ Age + NS(dum1, dum2),
+            fam = binom2.or(exchangeable = TRUE, zero = 3),
+            xij = list(NS(dum1, dum2) ~ NS(dum1, dum2) +
+                                        NS(dum2, dum1) +
+                                        fill(NS( dum1))),
+            form2 = ~  NS(dum1, dum2) + NS(dum2, dum1) + fill(NS(dum1)) +
                        dum1 + dum2 + dum3 + Age + age + dumm,
             data = coalminers, trace = TRUE)
 head(model.matrix(fit3, type = "lm"))   # LM model matrix

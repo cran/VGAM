@@ -32,6 +32,7 @@ cenpoisson(link = "loge", earg = list(), imu = NULL)
   Only a univariate response is allowed.
   The Newton-Raphson algorithm is used.
 
+
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
@@ -80,16 +81,16 @@ cenpoisson(link = "loge", earg = list(), imu = NULL)
 \examples{
 # Example 1: right censored data
 set.seed(123); U = 20
-cdata = data.frame(y = rpois(n <- 100, exp(3)))
+cdata = data.frame(y = rpois(N <- 100, exp(3)))
 cdata = transform(cdata, cy = pmin(U, y),
                          rcensored = (y >= U))
 cdata = transform(cdata, status = ifelse(rcensored, 0, 1))
 with(cdata, table(cy))
 with(cdata, table(rcensored))
-with(cdata, table(ii <- print(SurvS4(cy, status))))  # Check; U+ means >= U
+with(cdata, table(ii <- print(SurvS4(cy, status)))) # Check; U+ means >= U
 fit = vglm(SurvS4(cy, status) ~ 1, cenpoisson, cdata, trace = TRUE)
 coef(fit, matrix = TRUE)
-table(print(fit@y))  # Another check; U+ means >= U
+table(print(depvar(fit))) # Another check; U+ means >= U
 
 
 # Example 2: left censored data
@@ -105,37 +106,38 @@ coef(fit, matrix = TRUE)
 
 
 # Example 3: interval censored data
-cdata = transform(cdata, Lvec = rep(L, len = n),
-                         Uvec = rep(U, len = n))
-cdata = transform(cdata, icensored = Lvec <= y & y < Uvec) # Neither lcensored or rcensored
+cdata = transform(cdata, Lvec = rep(L, len = N),
+                         Uvec = rep(U, len = N))
+cdata = transform(cdata, icensored = Lvec <= y & y < Uvec) # Not lcensored or rcensored
 with(cdata, table(icensored))
-cdata = transform(cdata, status = rep(3, n))       # 3 means interval censored
+cdata = transform(cdata, status = rep(3, N))       # 3 means interval censored
 cdata = transform(cdata, status = ifelse(rcensored, 0, status)) # 0 means right censored
 cdata = transform(cdata, status = ifelse(lcensored, 2, status)) # 2 means left  censored
 # Have to adjust Lvec and Uvec because of the (start, end] format:
 cdata$Lvec[with(cdata, icensored)] = cdata$Lvec[with(cdata, icensored)] - 1
 cdata$Uvec[with(cdata, icensored)] = cdata$Uvec[with(cdata, icensored)] - 1
-cdata$Lvec[with(cdata, lcensored)] = cdata$Lvec[with(cdata, lcensored)]  # Remains unchanged
-cdata$Lvec[with(cdata, rcensored)] = cdata$Uvec[with(cdata, rcensored)]  # Remains unchanged
+cdata$Lvec[with(cdata, lcensored)] = cdata$Lvec[with(cdata, lcensored)] # Unchanged
+cdata$Lvec[with(cdata, rcensored)] = cdata$Uvec[with(cdata, rcensored)] # Unchanged
 with(cdata, table(ii <- print(SurvS4(Lvec, Uvec, status, type = "interval")))) # Check
 
 fit = vglm(SurvS4(Lvec, Uvec, status, type = "interval") ~ 1,
            cenpoisson, cdata, trace = TRUE)
 coef(fit, matrix = TRUE)
-table(print(fit@y))  # Another check
+table(print(depvar(fit)))  # Another check
 
 
 # Example 4: Add in some uncensored observations
-index = (1:n)[with(cdata, icensored)]
+index = (1:N)[with(cdata, icensored)]
 index = head(index, 4)
 cdata$status[index] = 1 # actual or uncensored value
 cdata$Lvec[index] = cdata$y[index]
-with(cdata, table(ii <- print(SurvS4(Lvec, Uvec, status, type = "interval")))) # Check
+with(cdata, table(ii <- print(SurvS4(Lvec, Uvec, status,
+                                     type = "interval")))) # Check
 
 fit = vglm(SurvS4(Lvec, Uvec, status, type = "interval") ~ 1,
            cenpoisson, cdata, trace = TRUE, crit = "c")
 coef(fit, matrix = TRUE)
-table(print(fit@y))  # Another check
+table(print(depvar(fit)))  # Another check
 }
 \keyword{models}
 \keyword{regression}

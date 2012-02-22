@@ -99,7 +99,7 @@ weibull(lshape = "loge", lscale = "loge",
 \references{
 Kleiber, C. and Kotz, S. (2003)
 \emph{Statistical Size Distributions in Economics and Actuarial Sciences},
-Hoboken, NJ: Wiley-Interscience.
+Hoboken, NJ, USA: Wiley-Interscience.
 
 
 Johnson, N. L. and Kotz, S. and Balakrishnan, N. (1994)

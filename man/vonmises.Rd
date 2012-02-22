@@ -8,8 +8,8 @@
 }
 \usage{
 vonmises(llocation = "elogit", lscale = "loge",
-         elocation = if(llocation == "elogit") list(min = 0, max = 2*pi)
-         else list(), escale = list(), ilocation = NULL,
+         elocation = if (llocation == "elogit") list(min = 0, max = 2 * pi) else
+         list(), escale = list(), ilocation = NULL,
          iscale = NULL, imethod = 1, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -97,6 +97,7 @@ Evans, M., Hastings, N. and Peacock, B. (2000)
 \emph{Statistical Distributions},
 New York: Wiley-Interscience, Third edition.
 
+
 }
 \author{ T. W. Yee }
 \note{
@@ -105,12 +106,14 @@ New York: Wiley-Interscience, Third edition.
  The linear/additive predictors are left alone.
  Fisher scoring is used.
 
+
 }
 \section{Warning }{
   Numerically, the von Mises can be difficult to fit because of a
   log-likelihood having multiple maxima.
   The user is therefore encouraged to try different starting values,
   i.e., make use of \code{ilocation} and \code{iscale}.
+
 
 }
 
@@ -128,8 +131,8 @@ vdata = transform(vdata, y = rnorm(nn, m = 2+x2, sd = exp(0.2))) # Bad data!!
 fit = vglm(y  ~ x2, vonmises(zero = 2), vdata, trace = TRUE)
 coef(fit, matrix = TRUE)
 Coef(fit)
-with(vdata, range(y))   # original data
-range(fit@y)            # processed data is in [0,2*pi)
+with(vdata, range(y))   # Original data
+range(depvar(fit))      # Processed data is in [0,2*pi)
 }
 \keyword{models}
 \keyword{regression}

@@ -64,7 +64,7 @@ gumbelIbiv(lapar="identity", earg=list(), iapar=NULL, imethod=1)
 
 Castillo, E., Hadi, A. S., Balakrishnan, N. Sarabia, J. S. (2005)
 \emph{Extreme Value and Related Models with Applications in Engineering and Science},
-Hoboken, N.J.: Wiley-Interscience.
+Hoboken, NJ, USA: Wiley-Interscience.
 
 }
 \author{ T. W. Yee }
@@ -85,9 +85,9 @@ Hoboken, N.J.: Wiley-Interscience.
 \examples{
 nn = 1000
 gdata = data.frame(y1 = rexp(nn), y2 = rexp(nn))
-\dontrun{with(gdata, plot(cbind(y1,y2)))}
-fit = vglm(cbind(y1,y2) ~ 1, fam=gumbelIbiv, gdata, trace=TRUE)
-coef(fit, matrix=TRUE)
+\dontrun{ with(gdata, plot(cbind(y1,y2))) }
+fit = vglm(cbind(y1, y2) ~ 1, fam = gumbelIbiv, gdata, trace = TRUE)
+coef(fit, matrix = TRUE)
 Coef(fit)
 head(fitted(fit))
 }

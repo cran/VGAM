@@ -136,24 +136,24 @@ beta.ab(lshape1 = "loge", lshape2 = "loge",
 
 }
 \examples{
-betadat = data.frame(y = rbeta(n=1000, shape1=exp(0), shape2=exp(1)))
-fit = vglm(y ~ 1, beta.ab(lshape1="identity", lshape2="identity"),
-           data=betadat, trace=TRUE, crit="c")
-fit = vglm(y ~ 1, beta.ab, data=betadat, trace=TRUE, crit="c")
-coef(fit, matrix=TRUE)
+bdata = data.frame(y = rbeta(n = 1000, shape1 = exp(0), shape2 = exp(1)))
+fit = vglm(y ~ 1, beta.ab(lshape1 = "identity", lshape2 = "identity"),
+           data = bdata, trace = TRUE, crit = "coef")
+fit = vglm(y ~ 1, beta.ab, bdata, trace = TRUE, crit = "coef")
+coef(fit, matrix = TRUE)
 Coef(fit)  # Useful for intercept-only models
 
-betadat = transform(betadat, Y = 5 + 8 * y)   # From 5 to 13, not 0 to 1
-fit = vglm(Y ~ 1, beta.ab(A=5, B=13), data=betadat, trace=TRUE)
+bdata = transform(bdata, Y = 5 + 8 * y)   # From 5 to 13, not 0 to 1
+fit = vglm(Y ~ 1, beta.ab(A = 5, B = 13), bdata, trace = TRUE)
 Coef(fit)
-c(meanY=with(betadat, mean(Y)), head(fitted(fit),2))
+c(meanY = with(bdata, mean(Y)), head(fitted(fit),2))
 }
 \keyword{models}
 \keyword{regression}
 
 % 3/1/06; this works well:
-% fit=vglm(y~1, beta.abqn(link=logoff,earg=list(offset=1)), tr=TRUE, cri="c")
+% fit = vglm(y~1, beta.abqn(link = logoff,earg = list(offset = 1)), tr = TRUE, cri = "c")
 % 3/1/06; this does not work so well:
-%  it=vglm(y~1, beta.abqn(link=logoff,earg=list(offset=0)), tr=TRUE, cri="c")
+%  it = vglm(y~1, beta.abqn(link = logoff,earg = list(offset = 0)), tr = TRUE, cri = "c")
 % Interesting!!
 

@@ -141,6 +141,7 @@ viz. \code{zero = c(1,3)}.
   \code{\link{rrvglm}}
   and \code{\link{vgam}}.
 
+
 }
 \references{
 Cole, T. J. and Green, P. J. (1992)
@@ -202,9 +203,11 @@ contains further information and examples.
   stopping the iterations by assigning \code{maxits} to be the iteration
   number corresponding to the highest likelihood value. 
 
+
   One trick is to fit a simple model and use it to provide
   initial values for a more complex model; see in the
   examples below.
+
 
 } 
 \seealso{
@@ -213,7 +216,7 @@ contains further information and examples.
   \code{\link{qtplot.lmscreg}},
   \code{\link{deplot.lmscreg}},
   \code{\link{cdf.lmscreg}},
-  \code{\link{bminz}},
+% \code{\link{bmi.nz}},
   \code{\link{alaplace1}},
   \code{\link{amlnormal}},
   \code{\link{denorm}},
@@ -222,23 +225,31 @@ contains further information and examples.
 }
 
 \examples{
-fit = vgam(BMI ~ s(age, df = c(4,2)), lms.bcn(zero = 1), bminz, trace = TRUE)
+mysubset = subset(xs.nz, sex == "M" & ethnic == "1" & Study1)
+mysubset = transform(mysubset, BMI = weight / height^2)
+BMIdata = mysubset[, c("age", "BMI")]
+BMIdata = na.omit(BMIdata)
+BMIdata = subset(BMIdata, BMI < 80 & age < 65) # Delete an outlier
+summary(BMIdata)
+
+fit = vgam(BMI ~ s(age, df = c(4, 2)), lms.bcn(zero = 1), BMIdata, trace = TRUE)
+
 head(predict(fit))
 head(fitted(fit))
-head(bminz)
-head(cdf(fit)) # Person 1 is near lower BMI quartile amongst his age group
-colMeans(c(fit@y) < fitted(fit)) # Sample proportions below the quantiles
+head(BMIdata)
+head(cdf(fit)) # Person 56 is probably overweight, given his age
+colMeans(c(depvar(fit)) < fitted(fit)) # Sample proportions below the quantiles
 
 # Convergence problems? Try this trick: fit0 is a simpler model used for fit1
-fit0 = vgam(BMI ~ s(age, df = 4), lms.bcn(zero = c(1,3)), bminz, trace = TRUE)
-fit1 = vgam(BMI ~ s(age, df = c(4, 2)), lms.bcn(zero = 1), bminz, 
+fit0 = vgam(BMI ~ s(age, df = 4), lms.bcn(zero = c(1,3)), BMIdata, trace = TRUE)
+fit1 = vgam(BMI ~ s(age, df = c(4, 2)), lms.bcn(zero = 1), BMIdata, 
             etastart = predict(fit0), trace = TRUE)
 
 \dontrun{
 # Quantile plot
 par(bty = "l", mar = c(5, 4, 4, 3) + 0.1, xpd = TRUE)
 qtplot(fit, percentiles = c(5, 50, 90, 99), main = "Quantiles",
-       xlim = c(15, 90), las = 1, ylab = "BMI", lwd = 2, lcol = 4)
+       xlim = c(15, 66), las = 1, ylab = "BMI", lwd = 2, lcol = 4)
 
 # Density plot
 ygrid = seq(15, 43, len = 100)  # BMI ranges

@@ -9,14 +9,14 @@
 \description{
   Density, distribution function, quantile function and random
   generation for the zero-inflated binomial distribution with
-  parameter \code{phi}.
+  parameter \code{pstr0}.
 
 }
 \usage{
-dzibinom(x, size, prob, log = FALSE, phi = 0)
-pzibinom(q, size, prob, lower.tail = TRUE, log.p = FALSE, phi = 0)
-qzibinom(p, size, prob, lower.tail = TRUE, log.p = FALSE, phi = 0)
-rzibinom(n, size, prob, phi = 0)
+dzibinom(x, size, prob, pstr0 = 0, log = FALSE)
+pzibinom(q, size, prob, pstr0 = 0, lower.tail = TRUE, log.p = FALSE)
+qzibinom(p, size, prob, pstr0 = 0, lower.tail = TRUE, log.p = FALSE)
+rzibinom(n, size, prob, pstr0 = 0)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -28,11 +28,11 @@ rzibinom(n, size, prob, phi = 0)
   \item{n}{number of observations. Must be a single positive integer. }
   \item{log, log.p, lower.tail}{ Arguments that are passed on to 
       \code{\link[stats:Binomial]{pbinom}}.}
-  \item{phi}{ 
-  Probability of zero (ignoring the binomial distribution), called
-  \eqn{\phi}{phi}.  The default value of \eqn{\phi=0}{phi=0}
-  corresponds to the response having an ordinary binomial
-  distribution.
+  \item{pstr0}{ 
+  Probability of a structural zero (i.e., ignoring the binomial distribution),
+  called \eqn{\phi}{phi}.
+  The default value of \eqn{\phi=0}{phi=0} corresponds to
+  the response having an ordinary binomial distribution.
 
   }
 }
@@ -57,8 +57,16 @@ rzibinom(n, size, prob, phi = 0)
 %\references{ }
 \author{ Thomas W. Yee }
 \note{ 
-    The argument \code{phi} is recycled to the required length,
-    and must have values which lie in the interval \eqn{[0,1]}.
+  The argument \code{pstr0} is recycled to the required length,
+  and must have values which lie in the interval \eqn{[0,1]}.
+
+
+  These functions actually allow for \emph{zero-deflation}.
+  That is, the resulting probability of a zero count
+  is \emph{less than} the nominal value of the parent
+  distribution.
+  See \code{\link{Zipois}} for more information.
+
 
 }
 
@@ -68,19 +76,19 @@ rzibinom(n, size, prob, phi = 0)
 
 }
 \examples{
-prob = 0.2; size = 10; phi = 0.5
-(ii = dzibinom(0:size, size, prob, phi = phi))
-max(abs(cumsum(ii) - pzibinom(0:size, size, prob, phi = phi)))  # Should be 0
-table(rzibinom(100, size, prob, phi = phi))
+prob = 0.2; size = 10; pstr0 = 0.5
+(ii = dzibinom(0:size, size, prob, pstr0 = pstr0))
+max(abs(cumsum(ii) - pzibinom(0:size, size, prob, pstr0 = pstr0)))  # Should be 0
+table(rzibinom(100, size, prob, pstr0 = pstr0))
 
-table(qzibinom(runif(100), size, prob, phi = phi))
-round(dzibinom(0:10, size, prob, phi = phi) * 100) # Should be similar
+table(qzibinom(runif(100), size, prob, pstr0 = pstr0))
+round(dzibinom(0:10, size, prob, pstr0 = pstr0) * 100) # Should be similar
 
 \dontrun{ x = 0:size
-barplot(rbind(dzibinom(x, size, prob, phi = phi),
+barplot(rbind(dzibinom(x, size, prob, pstr0 = pstr0),
                 dbinom(x, size, prob)),
         beside = TRUE, col = c("blue", "green"), ylab = "Probability",
-        main = paste("ZIB(", size, ", ", prob, ", phi = ", phi, ") (blue) vs",
+        main = paste("ZIB(", size, ", ", prob, ", pstr0 = ", pstr0, ") (blue) vs",
                      " Binomial(", size, ", ", prob, ") (green)", sep=""),
         names.arg = as.character(x), las = 1, lwd = 2) }
 }

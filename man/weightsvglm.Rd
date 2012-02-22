@@ -120,7 +120,7 @@ weightsvglm(object, type = c("prior", "working"),
 pneumo = transform(pneumo, let = log(exposure.time))
 (fit = vglm(cbind(normal, mild, severe) ~ let,
             cumulative(parallel = TRUE, reverse = TRUE), pneumo))
-fit@y                      # These are sample proportions 
+depvar(fit)       # These are sample proportions 
 weights(fit, type = "prior", matrix = FALSE) # Number of observations
 
 # Look at the working residuals

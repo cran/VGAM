@@ -9,8 +9,9 @@
 }
 \usage{
 posnegbinomial(lmunb = "loge", lsize = "loge", emunb = list(), esize = list(),
-               isize = NULL, zero = -2, cutoff = 0.995, shrinkage.init = 0.95,
-               imethod = 1)
+               isize = NULL, zero = -2, nsimEIM = 250,
+               shrinkage.init = 0.95, imethod = 1)
+
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -42,25 +43,9 @@ posnegbinomial(lmunb = "loge", lsize = "loge", emunb = list(), esize = list(),
   computed internally using a range of values.
 
   }
-  \item{zero}{ 
-  Integer valued vector, usually assigned \eqn{-2} or \eqn{2} if used
-  at all.  Specifies which of the two linear/additive predictors are
-  modelled as an intercept only. By default, the \code{k} parameter
-  (after \code{lsize} is applied) is modelled as a single unknown
-  number that is estimated.  It can be modelled as a function of
-  the explanatory variables by setting \code{zero = NULL}.  A negative
-  value means that the value is recycled, so setting \eqn{-2} means
-  all \code{k} are intercept only.
-  See \code{\link{CommonVGAMffArguments}} for more information.
+  \item{nsimEIM, zero}{ 
+  See \code{\link{CommonVGAMffArguments}}.
 
-
-  }
-  \item{cutoff}{ 
-  A numeric which is close to 1 but never exactly 1.  Used to
-  specify how many terms of the infinite series are actually used.
-  The sum of the probabilites are added until they reach this value
-  or more.  It is like specifying \code{p} in an imaginary function
-  \code{qnegbin(p)}.
 
   }
   \item{shrinkage.init, imethod}{
@@ -111,18 +96,18 @@ posnegbinomial(lmunb = "loge", lsize = "loge", emunb = list(), esize = list(),
 
 }
 \references{
-Barry, S. C. and Welsh, A. H. (2002)
-Generalized additive modelling and zero inflated count data. 
-\emph{Ecological Modelling},
-\bold{157},
-179--188.
+  Barry, S. C. and Welsh, A. H. (2002)
+  Generalized additive modelling and zero inflated count data. 
+  \emph{Ecological Modelling},
+  \bold{157},
+  179--188.
 
 
-Williamson, E. and Bretherton, M. H. (1964)
-Tables of the logarithmic series distribution.
-\emph{Annals of Mathematical Statistics},
-\bold{35},
-284--297.
+  Williamson, E. and Bretherton, M. H. (1964)
+  Tables of the logarithmic series distribution.
+  \emph{Annals of Mathematical Statistics},
+  \bold{35},
+  284--297.
 
 
 }
@@ -144,22 +129,22 @@ Tables of the logarithmic series distribution.
 }
 
 \examples{
-pndat <- data.frame(x = runif(nn <- 2000))
-pndat <- transform(pndat, y1 = rposnegbin(nn, munb = exp(0+2*x), size = exp(1)),
+pdata <- data.frame(x = runif(nn <- 1000))
+pdata <- transform(pdata, y1 = rposnegbin(nn, munb = exp(0+2*x), size = exp(1)),
                           y2 = rposnegbin(nn, munb = exp(1+2*x), size = exp(3)))
-fit <- vglm(cbind(y1, y2) ~ x, posnegbinomial, pndat, trace = TRUE)
+fit <- vglm(cbind(y1, y2) ~ x, posnegbinomial, pdata, trace = TRUE)
 coef(fit, matrix = TRUE)
-dim(fit@y)
+dim(depvar(fit)) # dim(fit@y) is not as good
 
 
 # Another artificial data example
-pndat2 <- data.frame(munb = exp(2), size = exp(3)); nn <- 1000
-pndat2 <- transform(pndat2, y = rposnegbin(nn, munb = munb, size = size))
-with(pndat2, table(y))
-fit <- vglm(y ~ 1, posnegbinomial, pndat2, trace = TRUE)
+pdata2 <- data.frame(munb = exp(2), size = exp(3)); nn <- 1000
+pdata2 <- transform(pdata2, y3 = rposnegbin(nn, munb = munb, size = size))
+with(pdata2, table(y3))
+fit <- vglm(y3 ~ 1, posnegbinomial, pdata2, trace = TRUE)
 coef(fit, matrix = TRUE)
-with(pndat2, mean(y))    # Sample mean
-head(with(pndat2, munb/(1-(size/(size+munb))^size)), 1) # Population mean
+with(pdata2, mean(y3))    # Sample mean
+head(with(pdata2, munb/(1-(size/(size+munb))^size)), 1) # Population mean
 head(fitted(fit), 3)
 head(predict(fit), 3)
 
@@ -174,6 +159,10 @@ Coef(fit)
 (khat <- Coef(fit)["size"])
 pdf2 <- dposnegbin(x = with(corbet, nindiv), mu = fitted(fit), size = khat)
 print( with(corbet, cbind(nindiv, ofreq, fitted = pdf2*sum(ofreq))), dig = 1)
+\dontrun{ with(corbet,
+matplot(nindiv, cbind(ofreq, fitted = pdf2*sum(ofreq)), las = 1,
+        type = "b", ylab = "Frequency", col = c("blue", "orange"),
+        main = "blue 1s = observe; orange 2s = fitted")) }
 }
 \keyword{models}
 \keyword{regression}

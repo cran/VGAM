@@ -11,13 +11,13 @@ It is only applicable for rank-1 models with argument
 
 }
 \usage{
-trplot.qrrvglm(object, whichSpecies = NULL, add=FALSE, plot.it=TRUE,
+trplot.qrrvglm(object, whichSpecies = NULL, add=FALSE, plot.it = TRUE,
                label.sites = FALSE, sitenames = rownames(object@y), 
                axes.equal = TRUE, cex = par()$cex, 
                col = 1:(nos * (nos - 1)/2), log = "", 
-               lty = rep(par()$lty, len = nos * (nos - 1)/2), 
-               lwd = rep(par()$lwd, len = nos * (nos - 1)/2), 
-               tcol = rep(par()$col, len = nos * (nos - 1)/2), 
+               lty = rep(par()$lty, length.out = nos * (nos - 1)/2), 
+               lwd = rep(par()$lwd, length.out = nos * (nos - 1)/2), 
+               tcol = rep(par()$col, length.out = nos * (nos - 1)/2), 
                xlab = NULL, ylab = NULL,
                main = "", type = "b", check.ok = TRUE, ...)
 }
@@ -122,10 +122,12 @@ variables.
 }
 \references{
 
-Yee, T. W. (2011)
+
+Yee, T. W. (2012)
 On constrained and unconstrained
 quadratic ordination.
 \emph{Manuscript in preparation}.
+
 
 
 }
@@ -137,8 +139,9 @@ quadratic ordination.
    The use of \code{xlim} and \code{ylim} to control the axis limits
    is also a good idea, so as to limit the extent of the curves at low
    abundances or probabilities.
-   Setting \code{label.sites=TRUE} is a good idea only if the number of
+   Setting \code{label.sites = TRUE} is a good idea only if the number of
    sites is small, otherwise there is too much clutter.
+
 
 }
 
@@ -146,6 +149,7 @@ quadratic ordination.
   \code{\link{cqo}},
   \code{\link[graphics]{par}},
   \code{\link[graphics]{title}}.
+
 
 }
 

@@ -3,6 +3,71 @@
 %
 %
 %
+% 20120215
+% \alias{print.vglmff}
+\alias{show.vglmff}
+% \alias{print.vfamily}
+% \alias{show.Coef.rrar}
+% \alias{family.vglm}
+\alias{show.vgam}
+\alias{show.vglm}
+\alias{show.vlm}
+% \alias{print.vgam}
+% \alias{print.vglm}
+% \alias{print.vlm}
+% \alias{print.vlm.wfit}
+%
+%
+%
+%
+% 20120112
+\alias{AIC}
+\alias{coef}
+\alias{logLik}
+\alias{plot}
+\alias{show.summary.vglm}
+\alias{vcov}
+\alias{vcovvlm}
+\alias{VGAMenv}
+\alias{nobs}
+\alias{show.Coef.cao}
+\alias{show.Coef.qrrvglm}
+\alias{show.Coef.rrvglm}
+\alias{show.rrvglm}
+\alias{show.summary.cao}
+% \alias{show.summary.lms}
+\alias{show.summary.qrrvglm}
+% \alias{show.summary.rc.exponential}
+\alias{show.summary.rrvglm}
+\alias{show.summary.uqo}
+\alias{show.summary.vgam}
+\alias{show.summary.vglm}
+\alias{show.summary.vlm}
+\alias{show.uqo}
+\alias{show.vanova}
+\alias{show.vsmooth.spline}
+%
+%
+%
+%
+%
+%
+%
+%
+%
+% 20111224; lrtest and waldtest stuff
+%\alias{lrtest}
+%\alias{lrtest_vglm}
+%\alias{print_anova}
+\alias{update_default}
+\alias{update_formula}
+%
+%\alias{waldtest}
+%\alias{waldtest_vglm}
+%\alias{waldtest_default}
+%\alias{waldtest_formula}
+%
+%
 %
 %
 % 20110202; 20110317; James Lauder work
@@ -25,12 +90,22 @@
 \alias{fibre15}
 %
 %
+% 20120206; for RR-NB, or rrn.tex.
+\alias{plota21}
+%
+%
 % 20110202; for Melbourne; these include datasets.
 \alias{azprocedure}
 \alias{confint_rrnb}
 \alias{confint_nb1}
 \alias{gala}
 \alias{mmt}
+%
+%
+%
+%20111128; basics
+\alias{is.empty.list}
+%
 %
 %
 %
@@ -183,7 +258,6 @@
 \alias{eta2theta}
 %\alias{explink}
 % \alias{extract.arg}
-\alias{family.vglm}
 %\alias{felix}
 %\alias{dfelix}
 \alias{fff.control}
@@ -311,28 +385,6 @@
 \alias{predictvsmooth.spline.fit}
 % \alias{preplotvgam}
 \alias{print}
-% \alias{print.vanova}
-% \alias{print.vfamily}
-% \alias{print.vgam}
-% \alias{print.vglm}
-% \alias{print.vglmff}
-% \alias{print.vlm}
-% \alias{print.vlm.wfit}
-% \alias{printCoef.cao}
-% \alias{printCoef.qrrvglm}
-% \alias{printCoef.rrvglm}
-% \alias{printrrvglm}
-% \alias{printsummary.cao}
-% \alias{printsummary.lms}
-% \alias{printsummary.qrrvglm}
-% \alias{printsummary.rc.exponential}
-% \alias{printsummary.rrvglm}
-% \alias{printsummary.uqo}
-% \alias{printsummary.vgam}
-% \alias{printsummary.vglm}
-% \alias{printsummary.vlm}
-% \alias{printuqo}
-% \alias{printvsmooth.spline}
 \alias{procVec}
 \alias{negzero.expression}
 \alias{process.binomial2.data.vgam}

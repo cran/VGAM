@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2011 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2012 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -136,14 +136,14 @@ vgam <- function(formula,
 
 
 
-    fit <- vgam.fit(x=x, y=y, w=w, m=mf,
-        etastart=etastart, mustart=mustart, coefstart=coefstart,
-        offset=offset, family=family, control=control,
-        criterion=control$criterion,
-        constraints=constraints, extra=extra, qr.arg=qr.arg,
-        Terms=mtsave,
-        nonparametric=nonparametric, smooth.labels=smooth.labels,
-        function.name=function.name, ...)
+    fit <- vgam.fit(x = x, y = y, w = w, mf = mf,
+        etastart = etastart, mustart = mustart, coefstart = coefstart,
+        offset = offset, family = family, control = control,
+        criterion = control$criterion,
+        constraints = constraints, extra = extra, qr.arg = qr.arg,
+        Terms = mtsave,
+        nonparametric = nonparametric, smooth.labels = smooth.labels,
+        function.name = function.name, ...)
 
 
     if (is.Numeric(fit$nl.df) && any(fit$nl.df < 0)) {

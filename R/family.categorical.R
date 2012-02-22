@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2011 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2012 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -250,7 +250,7 @@ dmultinomial = function(x, size = NULL, prob, log = FALSE,
 
           sum((if (is.numeric(extra$orig.w)) extra$orig.w else 1) *
               dmultinomial(x = ycounts, size = nvec, prob = mu,
-                           log = TRUE, docheck = FALSE))
+                           log = TRUE, dochecking = FALSE))
         },
     vfamily = c("sratio", "vcategorical"),
     deriv = eval(substitute(expression({
@@ -359,7 +359,8 @@ dmultinomial = function(x, size = NULL, prob, log = FALSE,
             theta2eta(djrs, .link, earg = .earg )
         } else {
             M = ncol(mu) - 1
-            djs = if (M==1) 1-mu[,1] else 1-mu[,1:M]/(1-cbind(0,cump[,1:(M-1)]))
+            djs = if (M == 1) 1 - mu[,1] else
+                  1 - mu[, 1:M] / (1 - cbind(0, cump[, 1:(M-1)]))
             theta2eta(djs, .link, earg = .earg )
         }
     }, list( .earg = earg, .link = link, .reverse = reverse) )),
@@ -378,7 +379,7 @@ dmultinomial = function(x, size = NULL, prob, log = FALSE,
 
           sum((if (is.numeric(extra$orig.w)) extra$orig.w else 1) *
               dmultinomial(x = ycounts, size = nvec, prob = mu,
-                           log = TRUE, docheck = FALSE))
+                           log = TRUE, dochecking = FALSE))
         },
     vfamily = c("cratio", "vcategorical"),
     deriv = eval(substitute(expression({
@@ -417,7 +418,7 @@ dmultinomial = function(x, size = NULL, prob, log = FALSE,
 
 
 
-vglm.multinomial.deviance.control = function(maxit=21, panic=FALSE, ...)
+vglm.multinomial.deviance.control = function(maxit=21, panic = FALSE, ...)
 {
     if (maxit < 1) {
         warning("bad value of maxit; using 21 instead")
@@ -426,7 +427,7 @@ vglm.multinomial.deviance.control = function(maxit=21, panic=FALSE, ...)
     list(maxit=maxit, panic=as.logical(panic)[1])
 }
 
-vglm.multinomial.control = function(maxit=21, panic=FALSE, 
+vglm.multinomial.control = function(maxit=21, panic = FALSE, 
       criterion=c("aic1", "aic2", names( .min.criterion.VGAM )), ...)
 {
     if (mode(criterion) != "character" && mode(criterion) != "name")
@@ -440,11 +441,11 @@ vglm.multinomial.control = function(maxit=21, panic=FALSE,
     }
     list(maxit=maxit, panic=as.logical(panic)[1],
          criterion=criterion,
-         min.criterion=c("aic1"=FALSE, "aic2" = TRUE, .min.criterion.VGAM))
+         min.criterion=c("aic1" = FALSE, "aic2" = TRUE, .min.criterion.VGAM))
 }
 
 
-vglm.vcategorical.control = function(maxit=30, trace=FALSE, panic = TRUE, ...)
+vglm.vcategorical.control = function(maxit=30, trace = FALSE, panic = TRUE, ...)
 {
     if (maxit < 1) {
         warning("bad value of maxit; using 200 instead")
@@ -468,9 +469,9 @@ vglm.vcategorical.control = function(maxit=30, trace=FALSE, panic = TRUE, ...)
           warning("'refLevel' is from an ordered factor")
         refLevel = as.character(refLevel) == levels(refLevel)
         refLevel = (1:length(refLevel))[refLevel]
-        if (!is.Numeric(refLevel, allow=1, integer = TRUE, posit = TRUE))
+        if (!is.Numeric(refLevel, allowable.length = 1, integer.valued = TRUE, positive = TRUE))
           stop("could not coerce 'refLevel' into a single positive integer")
-    } else if (!is.Numeric(refLevel, allow=1, integer = TRUE, posit = TRUE))
+    } else if (!is.Numeric(refLevel, allowable.length = 1, integer.valued = TRUE, positive = TRUE))
             stop("'refLevel' must be a single positive integer")
 
     new("vglmff",
@@ -493,7 +494,7 @@ vglm.vcategorical.control = function(maxit=30, trace=FALSE, panic = TRUE, ...)
 
 
         constraints = cm.vgam(matrix(1,M,1), x, .parallel, constraints,
-                               intercept.apply=FALSE)
+                               intercept.apply = FALSE)
         constraints = cm.zero.vgam(constraints, x, .zero, M)
         constraints = cm.nointercept.vgam(constraints, x, .nointercept, M)
     }), list( .parallel = parallel, .zero = zero, .nointercept=nointercept,
@@ -565,7 +566,7 @@ vglm.vcategorical.control = function(maxit=30, trace=FALSE, panic = TRUE, ...)
 
           sum((if (is.numeric(extra$orig.w)) extra$orig.w else 1) *
               dmultinomial(x = ycounts, size = nvec, prob = mu,
-                           log = TRUE, docheck = FALSE))
+                           log = TRUE, dochecking = FALSE))
         },
     vfamily = c("multinomial", "vcategorical"),
     deriv = eval(substitute(expression({
@@ -647,7 +648,7 @@ vglm.vcategorical.control = function(maxit=30, trace=FALSE, panic = TRUE, ...)
         }
     }), list( .parallel = parallel, .mv = mv, .intercept.apply=intercept.apply ))),
     deviance=eval(substitute(
-        function(mu, y, w, residuals=FALSE, eta, extra = NULL) {
+        function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
 
         answer =
         if ( .mv ) {
@@ -818,7 +819,7 @@ vglm.vcategorical.control = function(maxit=30, trace=FALSE, panic = TRUE, ...)
 
           sum((if (is.numeric(extra$orig.w)) extra$orig.w else 1) *
               dmultinomial(x = ycounts, size = nvec, prob = mu,
-                           log = TRUE, docheck = FALSE))
+                           log = TRUE, dochecking = FALSE))
         },
     vfamily = c("cumulative", "vcategorical"),
     deriv = eval(substitute(expression({
@@ -986,7 +987,7 @@ vglm.vcategorical.control = function(maxit=30, trace=FALSE, panic = TRUE, ...)
 
           sum((if (is.numeric(extra$orig.w)) extra$orig.w else 1) *
               dmultinomial(x = ycounts, size = nvec, prob = mu,
-                           log = TRUE, docheck = FALSE))
+                           log = TRUE, dochecking = FALSE))
         },
     vfamily = c("acat", "vcategorical"),
     deriv = eval(substitute(expression({
@@ -1056,12 +1057,12 @@ acat.deriv = function(zeta, reverse, M, n)
                  refvalue = 1,
                  init.alpha = 1)
 {
-    if (!is.Numeric(init.alpha, posit = TRUE))
+    if (!is.Numeric(init.alpha, positive = TRUE))
         stop("'init.alpha' must contain positive values only")
-    if (!is.Numeric(refvalue, allow=1, posit = TRUE))
+    if (!is.Numeric(refvalue, allowable.length = 1, positive = TRUE))
         stop("'refvalue' must be a single positive value")
     if (!is.character(refgp) &&
-       !is.Numeric(refgp, allow=1, integer = TRUE, posit = TRUE))
+       !is.Numeric(refgp, allowable.length = 1, integer.valued = TRUE, positive = TRUE))
         stop("'refgp' must be a single positive integer")
 
     new("vglmff",
@@ -1081,7 +1082,7 @@ acat.deriv = function(zeta, reverse, M, n)
         refgp = .refgp
         if (!intercept.only)
             warning("this function only works with intercept-only models")
-        extra$ybrat.indices = .brat.indices(NCo=M+1, are.ties=FALSE)
+        extra$ybrat.indices = .brat.indices(NCo=M+1, are.ties = FALSE)
         uindex = if ( .refgp =="last") 1:M else (1:(M+1))[-( .refgp ) ]
 
         predictors.names=namesof(paste("alpha",uindex,sep = ""),"loge",short = TRUE)
@@ -1120,7 +1121,7 @@ acat.deriv = function(zeta, reverse, M, n)
 
           sum((if (is.numeric(extra$orig.w)) extra$orig.w else 1) *
               dmultinomial(x = ycounts, size = nvec, prob = mu,
-                           log = TRUE, docheck = FALSE))
+                           log = TRUE, dochecking = FALSE))
         },
     vfamily = c("brat"),
     deriv = eval(substitute(expression({
@@ -1154,7 +1155,7 @@ acat.deriv = function(zeta, reverse, M, n)
                 alpha[uindex] / (alpha[aa] + alpha[uindex])^2
             }
             if (M > 1) {
-                ind5 = iam(1,1,M, both = TRUE, diag=FALSE)
+                ind5 = iam(1,1,M, both = TRUE, diag = FALSE)
                 wz[ii,(M+1):ncol(wz)] =
                   -(ymat[cbind(uindex[ind5$row],uindex[ind5$col])] +
                     ymat[cbind(uindex[ind5$col],uindex[ind5$row])]) *
@@ -1175,15 +1176,18 @@ bratt = function(refgp="last",
                   init.alpha = 1,
                   i0 = 0.01)
 {
-    if (!is.Numeric(i0, allow=1, positi = TRUE))
-        stop("'i0' must be a single positive value")
-    if (!is.Numeric(init.alpha, positi = TRUE))
-        stop("'init.alpha' must contain positive values only")
-    if (!is.Numeric(refvalue, allow=1, positi = TRUE))
-        stop("'refvalue' must be a single positive value")
+    if (!is.Numeric(i0, allowable.length = 1, positive = TRUE))
+      stop("'i0' must be a single positive value")
+    if (!is.Numeric(init.alpha, positive = TRUE))
+      stop("'init.alpha' must contain positive values only")
+    if (!is.Numeric(refvalue, allowable.length = 1, positive = TRUE))
+      stop("'refvalue' must be a single positive value")
     if (!is.character(refgp) && 
-       !is.Numeric(refgp, allow=1, integer = TRUE, positi = TRUE))
-        stop("'refgp' must be a single positive integer")
+       !is.Numeric(refgp, allowable.length = 1,
+                   integer.valued = TRUE, positive = TRUE))
+    stop("'refgp' must be a single positive integer")
+
+
     new("vglmff",
     blurb = c(paste("Bradley-Terry model (with ties)\n\n"), 
            "Links:   ",
@@ -1191,7 +1195,8 @@ bratt = function(refgp="last",
     initialize = eval(substitute(expression({
         try.index = 1:400
         M = (1:length(try.index))[(try.index*(try.index-1)) == ncol(y)]
-        if (!is.Numeric(M, allow=1, integ = TRUE)) stop("cannot determine 'M'")
+        if (!is.Numeric(M, allowable.length = 1, integer.valued = TRUE))
+          stop("cannot determine 'M'")
         NCo = M  # number of contestants
 
         are.ties = attr(y, "are.ties")  # If Brat() was used
@@ -1213,7 +1218,7 @@ bratt = function(refgp="last",
         if (!intercept.only)
             warning("this function only works with intercept-only models")
         extra$ties = ties  # Flat (1-row) matrix
-        extra$ybrat.indices = .brat.indices(NCo=NCo, are.ties=FALSE)
+        extra$ybrat.indices = .brat.indices(NCo=NCo, are.ties = FALSE)
         extra$tbrat.indices = .brat.indices(NCo=NCo, are.ties = TRUE) # unused
         extra$dnties = dimnames(ties)
         uindex = if (refgp=="last") 1:(NCo-1) else (1:(NCo))[-refgp ]
@@ -1311,7 +1316,7 @@ bratt = function(refgp="last",
                     }
             }
             if (NCo > 2) {
-                ind5 = iam(1,1, M=NCo, both = TRUE, diag=FALSE)
+                ind5 = iam(1,1, M=NCo, both = TRUE, diag = FALSE)
                 alphajunk = c(alpha, junk=NA)
                 mat4 = cbind(uindex[ind5$row],uindex[ind5$col])
                 wz[ii,(M+1):ncol(wz)] = -(ymat[mat4] + ymat[mat4[,2:1]] +
@@ -1341,8 +1346,8 @@ bratt = function(refgp="last",
       if (posn==length(vec)+1) NULL else vec[posn:length(vec)])
 }
 
-.brat.indices = function(NCo, are.ties=FALSE) {
-    if (!is.Numeric(NCo, allow=1, integ = TRUE) || NCo < 2)
+.brat.indices = function(NCo, are.ties = FALSE) {
+    if (!is.Numeric(NCo, allowable.length = 1, integer.valued = TRUE) || NCo < 2)
         stop("bad input for 'NCo'")
     m = diag(NCo)
     if (are.ties) {
@@ -1424,44 +1429,44 @@ InverseBrat = function(yvec, NCo =
 
 
 
-tapplymat1 = function(mat, function.arg=c("cumsum", "diff", "cumprod"))
+tapplymat1 = function(mat, function.arg = c("cumsum", "diff", "cumprod"))
 {
 
 
-    if (!missing(function.arg))
-        function.arg = as.character(substitute(function.arg))
-    function.arg = match.arg(function.arg, c("cumsum", "diff", "cumprod"))[1]
+  if (!missing(function.arg))
+    function.arg = as.character(substitute(function.arg))
+  function.arg = match.arg(function.arg, c("cumsum", "diff", "cumprod"))[1]
 
-    type = switch(function.arg, cumsum=1, diff=2, cumprod=3,
-                  stop("function.arg not matched"))
+  type = switch(function.arg, cumsum = 1, diff = 2, cumprod = 3,
+                stop("function.arg not matched"))
 
-    if (!is.matrix(mat))
-        mat = as.matrix(mat)
-    nr = nrow(mat)
-    nc = ncol(mat)
-    fred = dotC(name="tapplymat1", mat=as.double(mat),
-                as.integer(nr), as.integer(nc), as.integer(type))
+  if (!is.matrix(mat))
+    mat = as.matrix(mat)
+  NR = nrow(mat)
+  NC = ncol(mat)
+  fred = dotC(name="tapplymat1", mat=as.double(mat),
+              as.integer(NR), as.integer(NC), as.integer(type))
 
-    dim(fred$mat) = c(nr, nc)
-    dimnames(fred$mat) = dimnames(mat)
-    switch(function.arg,
-           cumsum =fred$mat,
-           diff   =fred$mat[,-1, drop = FALSE],
-           cumprod=fred$mat)
+  dim(fred$mat) = c(NR, NC)
+  dimnames(fred$mat) = dimnames(mat)
+  switch(function.arg,
+         cumsum =fred$mat,
+         diff   =fred$mat[,-1, drop = FALSE],
+         cumprod=fred$mat)
 }
 
 
 
 
  ordpoisson = function(cutpoints,
-                       countdata=FALSE, NOS = NULL, Levels = NULL,
+                       countdata = FALSE, NOS = NULL, Levels = NULL,
                        init.mu = NULL, parallel = FALSE, zero = NULL,
                        link = "loge", earg = list()) {
     if (mode(link) != "character" && mode(link) != "name")
         link = as.character(substitute(link))
     if (!is.list(earg)) earg = list()
     fcutpoints = cutpoints[is.finite(cutpoints)]
-    if (!is.Numeric(fcutpoints, integ = TRUE) || any(fcutpoints < 0))
+    if (!is.Numeric(fcutpoints, integer.valued = TRUE) || any(fcutpoints < 0))
         stop("'cutpoints' must have non-negative integer or Inf values only")
     if (is.finite(cutpoints[length(cutpoints)]))
         cutpoints = c(cutpoints, Inf)
@@ -1469,9 +1474,9 @@ tapplymat1 = function(mat, function.arg=c("cumsum", "diff", "cumprod"))
     if (!is.logical(countdata) || length(countdata) != 1)
         stop("argument 'countdata' must be a single logical")
     if (countdata) {
-        if (!is.Numeric(NOS, integ = TRUE, posit = TRUE))
+        if (!is.Numeric(NOS, integer.valued = TRUE, positive = TRUE))
             stop("'NOS' must have integer values only")
-        if (!is.Numeric(Levels, integ = TRUE, posit = TRUE)  || any(Levels < 2))
+        if (!is.Numeric(Levels, integer.valued = TRUE, positive = TRUE)  || any(Levels < 2))
             stop("'Levels' must have integer values (>= 2) only")
         Levels = rep(Levels, length=NOS)
     }
@@ -1581,7 +1586,7 @@ tapplymat1 = function(mat, function.arg=c("cumsum", "diff", "cumprod"))
         resmat = matrix(0, n, M)
         dl.dprob = y / probs.use
         dmu.deta = dtheta.deta(mu, .link, earg=.earg)
-        dprob.dmu = ordpoissonProbs(extra, mu, deriv=1)
+        dprob.dmu = ordpoissonProbs(extra, mu, deriv = 1)
         cptr = 1
         for (iii in 1:NOS) {
             for (kkk in 1:Levels[iii]) {
@@ -1604,46 +1609,48 @@ tapplymat1 = function(mat, function.arg=c("cumsum", "diff", "cumprod"))
         }
         wz = c(w) * d2l.dmu2 * dmu.deta^2
         wz
-    }), list( .earg = earg, .link = link, .countdata=countdata ))))
+    }), list( .earg = earg, .link = link, .countdata = countdata ))))
 }
 
-ordpoissonProbs = function(extra, mu, deriv=0) {
-    cp.vector = extra$cutpoints
-    NOS = extra$NOS
+
+
+ordpoissonProbs = function(extra, mu, deriv = 0) {
+  cp.vector = extra$cutpoints
+  NOS = extra$NOS
+  if (deriv == 1) {
+    dprob.dmu = matrix(0, extra$n, extra$ncoly)
+  } else {
+    probs = matrix(0, extra$n, extra$ncoly)
+  }
+  mu = cbind(mu)
+  cptr = 1
+  for (iii in 1:NOS) {
     if (deriv == 1) {
-        dprob.dmu = matrix(0, extra$n, extra$ncoly)
+      dprob.dmu[,cptr] = -dpois(x = cp.vector[cptr], lambda = mu[,iii])
     } else {
-        probs = matrix(0, extra$n, extra$ncoly)
+      probs[,cptr] = ppois(q = cp.vector[cptr], lambda = mu[,iii])
     }
-    mu = cbind(mu)
-    cptr = 1
-    for (iii in 1:NOS) {
-        if (deriv == 1) {
-            dprob.dmu[,cptr] = -dpois(x=cp.vector[cptr], lamb=mu[,iii])
-        } else {
-            probs[,cptr] = ppois(q=cp.vector[cptr], lambda=mu[,iii])
-        }
-        cptr = cptr + 1
-        while(is.finite(cp.vector[cptr])) {
-            if (deriv == 1) {
-                dprob.dmu[,cptr] = dpois(x=cp.vector[cptr-1], lamb=mu[,iii]) -
-                        dpois(x=cp.vector[cptr], lambda=mu[,iii])
-            } else {
-                probs[,cptr] = ppois(q=cp.vector[cptr], lambda=mu[,iii]) -
-                        ppois(q=cp.vector[cptr-1], lambda=mu[,iii])
-            }
-            cptr = cptr + 1
-        }
-        if (deriv == 1) {
-            dprob.dmu[,cptr] = dpois(x=cp.vector[cptr-1], lamb=mu[,iii]) -
-                    dpois(x=cp.vector[cptr], lambda=mu[,iii])
-        } else {
-            probs[,cptr] = ppois(q=cp.vector[cptr], lamb=mu[,iii]) -
-                    ppois(q=cp.vector[cptr-1], lambda=mu[,iii])
-        }
-        cptr = cptr + 1
+    cptr = cptr + 1
+    while(is.finite(cp.vector[cptr])) {
+      if (deriv == 1) {
+        dprob.dmu[,cptr] = dpois(x = cp.vector[cptr-1], lambda = mu[,iii]) -
+                dpois(x = cp.vector[cptr], lambda = mu[,iii])
+      } else {
+        probs[,cptr] = ppois(q = cp.vector[cptr], lambda = mu[,iii]) -
+                ppois(q = cp.vector[cptr-1], lambda = mu[,iii])
+      }
+      cptr = cptr + 1
     }
-    if (deriv == 1) dprob.dmu else probs
+    if (deriv == 1) {
+        dprob.dmu[,cptr] = dpois(x = cp.vector[cptr-1], lambda = mu[,iii]) -
+                dpois(x = cp.vector[cptr], lambda = mu[,iii])
+    } else {
+        probs[,cptr] = ppois(q = cp.vector[cptr], lambda = mu[,iii]) -
+                ppois(q = cp.vector[cptr-1], lambda = mu[,iii])
+    }
+    cptr = cptr + 1
+  }
+  if (deriv == 1) dprob.dmu else probs
 }
 
 
@@ -1664,7 +1671,7 @@ ordpoissonProbs = function(extra, mu, deriv=0) {
     if (mode(lscale) != "character" && mode(lscale) != "name")
         lscale = as.character(substitute(lscale))
     if (!is.list(escale)) escale = list()
-    if (!is.Numeric(iscale, posit = TRUE))
+    if (!is.Numeric(iscale, positive = TRUE))
         stop("bad input for argument 'iscale'")
     if (!is.logical(reverse) || length(reverse) != 1)
         stop("argument 'reverse' must be a single logical")
@@ -1697,7 +1704,7 @@ ordpoissonProbs = function(extra, mu, deriv=0) {
                 (constraints[[ii]])[interleave.VGAM(M, M=2),, drop = FALSE]
     }), list( .parallel = parallel, .sparallel=sparallel ))),
     deviance=eval(substitute(
-        function(mu, y, w, residuals=FALSE, eta, extra = NULL) {
+        function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
         answer =
             Deviance.categorical.data.vgam(mu=mu, y=y, w=w, residuals=residuals,
                                            eta=eta, extra=extra)
@@ -1789,7 +1796,7 @@ ordpoissonProbs = function(extra, mu, deriv=0) {
 
           sum((if (is.numeric(extra$orig.w)) extra$orig.w else 1) *
               dmultinomial(x = ycounts, size = nvec, prob = mu,
-                           log = TRUE, docheck = FALSE))
+                           log = TRUE, dochecking = FALSE))
         },
     vfamily = c("scumulative", "vcategorical"),
     deriv = eval(substitute(expression({
@@ -1892,7 +1899,7 @@ margeff = function(object, subset = NULL) {
 
     if (model.multinomial) {
     rlev = object@misc$refLevel
-    cfit = coefvlm(object, matrix = TRUE)
+    cfit = coefvlm(object, matrix.out = TRUE)
     B = if (!length(rlev)) {
         cbind(cfit, 0)
     } else {
@@ -1954,7 +1961,7 @@ margeff = function(object, subset = NULL) {
     reverse = object@misc$reverse
     linkfunctions = object@misc$link
     all.eargs  = object@misc$earg
-    B = cfit = coefvlm(object, matrix = TRUE)
+    B = cfit = coefvlm(object, matrix.out = TRUE)
     ppp   = nrow(B)
 
     hdot = lpmat = kronecker(predict(object), matrix(1, ppp, 1))
@@ -2018,7 +2025,7 @@ prplot = function(object,
     control = prplot.control(...)
 
 
-  object = plotvgam(object, plot.arg=FALSE, raw=FALSE) # , ...
+  object = plotvgam(object, plot.arg = FALSE, raw = FALSE) # , ...
 
   if (length(names(object@preplot)) != 1)
       stop("object needs to have only one term")
@@ -2064,7 +2071,7 @@ prplot = function(object,
                            lwd=par()$lwd,
                            rlwd=par()$lwd,
                            las=par()$las,
-                           rug.arg =FALSE, 
+                           rug.arg  = FALSE, 
                            ...) {
 
     list(xlab=xlab, ylab=ylab,

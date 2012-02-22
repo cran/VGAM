@@ -6,6 +6,68 @@
 
 
 
+                CHANGES IN VGAM VERSION 0.8-5
+
+NEW FEATURES
+
+    o   New VGAM family functions:
+        negbinomial.size(), zabinomial(dpqr),
+        zageometric(dpqr), [dpqr]posgeom().
+    o   New link functions: nbcanlink().
+    o   Modified VGAM family functions:
+        posnegbinomial(), zanegbinomial() and zinegbinomial()
+        use the nsimEIM argument;
+        zipoisson() handles a matrix response;
+        all [dpqr]zi-type functions handle zero-deflation,
+        normal1() can model the variance too as the 2nd parameter.
+    o   Rudimentary methods functions for lrtest() and
+        update(), based on packages lmtest and base.
+    o   The VGAM family functions for genetic models have been improved
+        wrt initial values.
+    o   New data sets: xs.nz.
+
+
+BUG FIXES and CHANGES
+
+    o   In anticipation for R version 2.15.0, VGAM imports
+        from stats4 'coef', 'plot', 'summary', 'vcov'.
+        Calls to 'print' have been replaced by 'show'
+        since VGAM uses S4 methods.
+        Numerous NAMESPACE changes have been made.
+        No more warnings during checking and installation!
+    o   Labelling in summary() of vglm() objects changed. It
+        now closely follows glm(). In particular, it has
+        changed from c("Value", "Std. Error", "t value") to
+        c("Estimate", "Std. Error", "z value").
+        Note that "z value" might change later to, e.g., "Wald".
+    o   Zero-inflated and zero-altered functions have renamed and
+        reordered arguments. Ouch!
+        These include 'pstr0' for probability of a structural 0 [zero-inflated],
+        and 'pobs0' for probability of an observed 0 [zero-altered].
+        For example, argument lpstr0 replaces lphi in zipoisson().
+        The order of these arguments, including the respective
+        dpqr-type functions, may have changed too.
+    o   zapoisson() now implements Fisher scoring.
+    o   zipoissonff() had the wrong sign for the non-diagonal EIM element.
+    o   nobs() is now defined as a generic function (needed
+        for older versions of R---versions 2-12.2 or earlier, actually).
+    o   Data sets renamed:
+        uscrime and usgrain renamed to crime.us and grain.us;
+        bminz renamed to bmi.nz,
+        nzc renamed to chinese.nz,
+        nzmarital renamed to marital.nz.
+    o   Improved family functions: genbetaII(), betaII(), sinmad(), dagum(), 
+        lomax(), invlomax(), fisk(), invparalogistic(), paralogistic();
+        wrt fitted values (range checks in place now).
+        These functions have many argument names changed, e.g.,
+        link.a is now lshape1.a, init.a is now ishape1.a.
+        Also, some default initial values have changed from 1 to 2.
+    o   Argument names changed (Ouch!):
+        q.lag.ma changed to q.ma.lag in garma().
+
+
+
+
                 CHANGES IN VGAM VERSION 0.8-4
 
 NEW FEATURES

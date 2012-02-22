@@ -153,15 +153,15 @@ The generic function \code{predict}, when applied to a
 \code{\link{qtplot.lmscreg}},
 \code{\link{deplot.lmscreg}},
 \code{\link{cdf.lmscreg}},
-\code{\link{bminz}},
+\code{\link{bmi.nz}},
 \code{\link{amlnormal}}.
 
 }
 \examples{
-fit = vgam(BMI ~ s(age, df = 4), lms.yjn, bminz, trace = TRUE)
+fit = vgam(BMI ~ s(age, df = 4), lms.yjn, bmi.nz, trace = TRUE)
 head(predict(fit))
 head(fitted(fit))
-head(bminz)
+head(bmi.nz)
 # Person 1 is near the lower quartile of BMI amongst people his age
 head(cdf(fit))
 

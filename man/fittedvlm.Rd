@@ -76,10 +76,10 @@ fitted(fit)
 
 # LMS quantile regression example 2
 fit = vgam(BMI ~ s(age, df = c(4,2)), 
-           fam = lms.bcn(zero = 1), data = bminz, trace = TRUE)
+           fam = lms.bcn(zero = 1), data = bmi.nz, trace = TRUE)
 head(predict(fit, type = "r"))  # The following three are equal
 head(fitted(fit))
-predict(fit, type = "r", newdata = head(bminz))
+predict(fit, type = "r", newdata = head(bmi.nz))
 }
 \keyword{models}
 \keyword{regression}

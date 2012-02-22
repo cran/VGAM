@@ -41,20 +41,24 @@ margeff(object, subset = NULL)
   of explanatory variables and the (hopefully) nominal response has
   \eqn{M+1} levels, and there are \eqn{n} observations.
 
+
   If
   \code{is.numeric(subset)}
   and
   \code{length(subset) == 1} then a
   \eqn{p} by \eqn{M+1} matrix is returned. 
 
+
 }
 % \references{ ~put references to the literature/web site here ~ }
 \author{ T. W. Yee }
 \section{Warning }{
-  Care is needed in interpretation, e.g., the change is not universally
-  accurate for a unit change in each explanatory variable because
-  eventually the `new' probabilities may become negative or greater
-  than unity. Also, the `new' probabilities will not sum to one.
+  Care is needed in interpretation, e.g., the change is not
+  universally accurate for a unit change in each explanatory
+  variable because eventually the `new' probabilities may become
+  negative or greater than unity. Also, the `new' probabilities
+  will not sum to one.
+
 
   This function is not applicable for models with
   data-dependent terms such as \code{\link{bs}} and
@@ -66,6 +70,7 @@ margeff(object, subset = NULL)
   The \code{formula} in \code{object} should comprise of simple terms
   of the form \code{ ~ x2 + x3 + x4}, etc.
 
+
 }
 
 \note{
@@ -75,6 +80,7 @@ margeff(object, subset = NULL)
   However, it does not currently handle
   the \code{xij} or \code{form2} arguments,
   nor \code{\link{vgam}} objects.
+
 
   For \code{\link{multinomial}}
   if \code{subset} is numeric then the function uses a \code{for} loop over

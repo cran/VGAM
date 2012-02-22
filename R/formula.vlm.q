@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2011 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2012 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -9,14 +9,15 @@
 
 
 formulavlm = function(x, fnumber=1, ...) {
-    if (!is.Numeric(fnumber, integ=TRUE, allow=1, posit=TRUE) ||
-       fnumber > 2)
-        stop("argument 'fnumber' must be 1 or 2")
+  if (!is.Numeric(fnumber, integer.valued = TRUE,
+                  allowable.length = 1, positive = TRUE) ||
+      fnumber > 2)
+    stop("argument 'fnumber' must be 1 or 2")
 
-    if (!any(slotNames(x) == "misc"))
-        stop("cannot find slot 'misc'")
+  if (!any(slotNames(x) == "misc"))
+    stop("cannot find slot 'misc'")
 
-    if (fnumber == 1) x@misc$formula else x@misc$form2
+  if (fnumber == 1) x@misc$formula else x@misc$form2
 }
 
 
@@ -31,29 +32,29 @@ formulaNA.VGAM = function(x, ...) {
 
 setMethod("formula", "vlm",
           function(x, ...)
-              formulavlm(x=x, ...))
+              formulavlm(x = x, ...))
 
 setMethod("formula", "vglm",
           function(x, ...)
-              formulavlm(x=x, ...))
+              formulavlm(x = x, ...))
 
 
 
 setMethod("formula", "vgam",
           function(x, ...)
-              formulavlm(x=x, ...))
+              formulavlm(x = x, ...))
 
 setMethod("formula", "rrvglm",
           function(x, ...)
-              formulavlm(x=x, ...))
+              formulavlm(x = x, ...))
 
 setMethod("formula", "qrrvglm",
           function(x, ...)
-              formulavlm(x=x, ...))
+              formulavlm(x = x, ...))
 
 setMethod("formula", "grc",
           function(x, ...)
-              formulavlm(x=x, ...))
+              formulavlm(x = x, ...))
 
 
 
@@ -67,11 +68,11 @@ setMethod("formula", "grc",
 variable.namesvlm <- function(object, full = FALSE, ...) {
     qrslot <- object@qr
     if (!length(qrslot$qr)) {
-        use.this <- object@x
-        if (!length(use.this))
-            stop("argument 'object' has empty 'qr' and 'x' slots.")
+      use.this <- object@x
+      if (!length(use.this))
+        stop("argument 'object' has empty 'qr' and 'x' slots.")
     } else {
-        use.this = qrslot$qr
+      use.this = qrslot$qr
     }
     if (full) dimnames(use.this)[[2]] else
     if (object@rank) dimnames(use.this)[[2]][seq_len(object@rank)] else

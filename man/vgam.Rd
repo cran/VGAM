@@ -110,13 +110,15 @@ vgam(formula, family, data = list(), weights = NULL, subset = NULL,
 
   }
   \item{constraints}{
-  an optional list  of constraint matrices.  The components of the list
-  must be named with the term it corresponds to (and it must match in
-  character format exactly).  Each constraint matrix must have \eqn{M} rows, and
-  be of full-column rank. By default, constraint matrices are the \eqn{M}
-  by \eqn{M} identity matrix unless arguments in the family function
-  itself override these values.  If \code{constraints} is used it must
-  contain \emph{all} the terms; an incomplete list is not accepted.
+  an optional list  of constraint matrices.  The components
+  of the list must be named with the term it corresponds
+  to (and it must match in character format exactly).
+  Each constraint matrix must have \eqn{M} rows, and be
+  of full-column rank. By default, constraint matrices are
+  the \eqn{M} by \eqn{M} identity matrix unless arguments
+  in the family function itself override these values.
+  If \code{constraints} is used it must contain \emph{all}
+  the terms; an incomplete list is not accepted.
 
   }
   \item{extra}{
@@ -155,27 +157,28 @@ vgam(formula, family, data = list(), weights = NULL, subset = NULL,
   implemented and this is called a \emph{vector (cubic smoothing spline)
   smoother}.
   Here, \eqn{j=1,\ldots,M} where \eqn{M} is finite.
-  If all the functions are constrained to be linear then the resulting
-  model is a vector generalized linear model (VGLM).
-  VGLMs are best fitted with \code{\link{vglm}}.
+  If all the functions are constrained to be linear then
+  the resulting model is a vector generalized linear model
+  (VGLM).  VGLMs are best fitted with \code{\link{vglm}}.
 
 
   Vector (cubic smoothing spline) smoothers are represented
-  by \code{s()} (see \code{\link[VGAM]{s}}).
-  Local regression via \code{lo()} is \emph{not}
-  supported. The results of \code{vgam} will differ from the S-PLUS and \R
-  \code{gam} function (in the \pkg{gam} \R package) because \code{vgam}
-  uses a different knot selection algorithm. In general, fewer knots
-  are chosen because the computation becomes expensive when the number
-  of additive predictors \eqn{M} is large.
+  by \code{s()} (see \code{\link[VGAM]{s}}). Local
+  regression via \code{lo()} is \emph{not} supported. The
+  results of \code{vgam} will differ from the \code{gam()}
+  (in the \pkg{gam}) because \code{vgam()} uses a different
+  knot selection algorithm. In general, fewer knots are
+  chosen because the computation becomes expensive when
+  the number of additive predictors \eqn{M} is large.
 
 
   The underlying algorithm of VGAMs is iteratively
   reweighted least squares (IRLS) and modified vector backfitting
   using vector splines. B-splines are used as the basis functions
   for the vector (smoothing) splines. 
-  \code{vgam.fit} is the function that actually does the work.
-  The smoothing code is based on F. O'Sullivan's BART code. 
+  \code{vgam.fit()} is the function that actually does the
+  work.  The smoothing code is based on F. O'Sullivan's
+  BART code.
 
 
 %  If more than one of \code{etastart}, \code{start} and \code{mustart}
@@ -183,11 +186,11 @@ vgam(formula, family, data = list(), weights = NULL, subset = NULL,
 
 
   A closely related methodology based on VGAMs called
-  \emph{constrained additive ordination} (CAO)
-  first forms a linear combination of the explanatory variables 
-  (called \emph{latent variables}) and then fits a GAM to these.
-  This is implemented in the function \code{\link{cao}} for a very
-  limited choice of family functions.
+  \emph{constrained additive ordination} (CAO) first forms
+  a linear combination of the explanatory variables (called
+  \emph{latent variables}) and then fits a GAM to these.
+  This is implemented in the function \code{\link{cao}}
+  for a very limited choice of family functions.
 
 
 }
@@ -230,22 +233,23 @@ The \code{VGAM} Package.
   \code{coefstart} and \code{mustart}.
 
 
-  Some \pkg{VGAM} family functions end in \code{"ff"} to avoid
-  interference with other functions, e.g., \code{\link{binomialff}},
-  \code{\link{poissonff}}, \code{\link{gaussianff}},
-  \code{gammaff}. This is because \pkg{VGAM} family
-  functions are incompatible with \code{\link[stats]{glm}}
-  (and also \code{\link[gam]{gam}} in the \pkg{gam} library and
-  \code{\link[mgcv]{gam}} in the \pkg{mgcv} library).
+  Some \pkg{VGAM} family functions end in \code{"ff"}
+  to avoid interference with other functions, e.g.,
+  \code{\link{binomialff}}, \code{\link{poissonff}},
+  \code{\link{gaussianff}}, \code{gammaff}. This is
+  because \pkg{VGAM} family functions are incompatible with
+  \code{\link[stats]{glm}} (and also \code{\link[gam]{gam}}
+  in the \pkg{gam} library and \code{\link[mgcv]{gam}}
+  in the \pkg{mgcv} library).
 
 
-  The smart prediction (\code{\link{smartpred}}) library is packed with
-  the \pkg{VGAM} library.
+  The smart prediction (\code{\link{smartpred}}) library
+  is packed with the \pkg{VGAM} library.
 
 
-  The theory behind the scaling parameter is currently being made more
-  rigorous, but it it should give the same value as the scale parameter
-  for GLMs.
+  The theory behind the scaling parameter is currently being
+  made more rigorous, but it it should give the same value
+  as the scale parameter for GLMs.
 
 
 }

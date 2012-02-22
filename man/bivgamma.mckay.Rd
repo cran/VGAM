@@ -124,7 +124,7 @@ coef(fit, matrix = TRUE)
 Coef(fit)
 vcov(fit)
 
-colMeans(fit@y)    # Check moments
+colMeans(depvar(fit))    # Check moments
 head(fitted(fit), 1)
 }
 \keyword{models}

@@ -1,5 +1,5 @@
-\name{nzc}
-\alias{nzc}
+\name{chinese.nz}
+\alias{chinese.nz}
 \docType{data}
 \title{ Chinese Population in New Zealand 1867--2001 Data}
 \description{
@@ -7,7 +7,7 @@
   along with the whole of the New Zealand population.
 
 }
-\usage{data(nzc)}
+\usage{data(chinese.nz)}
 \format{
   A data frame with 26 observations on the following 4 variables.
   \describe{
@@ -34,12 +34,12 @@
 
 }
 \examples{
-\dontrun{ plot(female/(male+female) ~ year, nzc, type = "b",
+\dontrun{ plot(female/(male+female) ~ year, chinese.nz, type = "b",
      ylab = "Proportion", col = "blue", las = 1,
      main = "Proportion of NZ Chinese that are female")
 abline(h = 0.5, lty = "dashed")
 
-plot(100*(male+female)/nz ~ year, nzc, type = "b", ylab = "Percent",
+plot(100*(male+female)/nz ~ year, chinese.nz, type = "b", ylab = "Percent",
      ylim = c(0, max(100*(male+female)/nz)), col = "blue", las = 1,
      main = "Percent of NZers that are Chinese")
 abline(h = 0, lty = "dashed") }

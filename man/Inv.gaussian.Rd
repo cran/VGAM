@@ -78,7 +78,7 @@ New York: Wiley.
 plot(x, dinv.gaussian(x, mu = 1, lambda = 1), type = "l",
      col = "blue",las = 1, main =
      "blue is density, orange is cumulative distribution function")
-abline(h = 0, col = "black", lty = 2)
+abline(h = 0, col = "gray", lty = 2)
 lines(x, pinv.gaussian(x, mu = 1, lambda = 1), type = "l", col = "orange") }
 }
 \keyword{distribution}

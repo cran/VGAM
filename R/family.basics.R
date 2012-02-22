@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2011 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2012 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -228,7 +228,7 @@ process.constraints <- function(constraints, x, M,
     }
 
     if (is.null(names(constraints))) 
-        names(constraints) <- rep(nasgn, length=lenconstraints) 
+        names(constraints) <- rep(nasgn, length.out = lenconstraints) 
 
     temp <- if (!is.R()) list() else {
         junk <- vector("list", length(nasgn))
@@ -355,25 +355,27 @@ add.constraints <- function(constraints, new.constraints,
 
 
 
-iam <- function(j, k, M, hbw = M, both = FALSE, diagonal = TRUE)
+iam <- function(j, k, M, hbw = M, both = FALSE, diag = TRUE)
 {
+
+
     jay <- j 
     kay <- k
 
     if (M == 1)
-        if (!diagonal) stop("cannot handle this") 
+        if (!diag) stop("cannot handle this") 
 
     if (M == 1)
         if (both) return(list(row.index = 1, col.index = 1)) else return(1)
 
-    upper <- if (diagonal) M else M-1
+    upper <- if (diag) M else M-1
     i2 <- as.list(upper:1)
     i2 <- lapply(i2, seq)
     i2 <- unlist(i2)
 
 
     i1 <- matrix(1:M, M, M) 
-    i1 <- if (diagonal) c(i1[row(i1) >= col(i1)]) else
+    i1 <- if (diag) c(i1[row(i1) >= col(i1)]) else
                         c(i1[row(i1) >  col(i1)])
 
 
@@ -602,7 +604,7 @@ procVec <- function(vec, yn, Default) {
         default = vec
     }
 
-    answer = rep(default, len = length(yn))
+    answer = rep(default, length.out = length(yn))
     names(answer) = yn
     if (named) {
         nvec2 = nvec[nvec != ""]
@@ -697,7 +699,7 @@ qnupdate <- function(w, wzold, dderiv, deta, M, keeppd = TRUE,
         dderiv = cbind(dderiv)
         deta = cbind(deta)
     }
-    Bs = mux22(t(wzold), deta, M=M, upper = FALSE, as.mat = TRUE) # n x M
+    Bs = mux22(t(wzold), deta, M=M, upper = FALSE, as.matrix = TRUE) # n x M
     sBs = c( (deta * Bs) %*% rep(1, M) )   # should have positive values
     sy = c( (dderiv * deta) %*% rep(1, M) )
     wznew = wzold
@@ -729,7 +731,7 @@ qnupdate <- function(w, wzold, dderiv, deta, M, keeppd = TRUE,
 
 
 mbesselI0 <- function(x, deriv.arg = 0) {
-  if (!is.Numeric(deriv.arg, allow = 1, integer = TRUE, posit = TRUE) &&
+  if (!is.Numeric(deriv.arg, allowable.length = 1, integer.valued = TRUE, positive = TRUE) &&
       deriv.arg != 0)
       stop("argument 'deriv.arg' must be a single non-negative integer")
   if (!(deriv.arg == 0 || deriv.arg == 1 || deriv.arg == 2))
@@ -833,20 +835,25 @@ getfromVGAMenv <- function(varname, prefix="") {
 }
 
  
-lerch <- function(x, s, v, tolerance=1.0e-10, iter=100) {
+lerch <- function(x, s, v, tolerance = 1.0e-10, iter = 100) {
     if (!is.Numeric(x) || !is.Numeric(s) || !is.Numeric(v))
-        stop("bad input in x, s, and/or v")
+      stop("bad input in x, s, and/or v")
     if (is.complex(c(x,s,v)))
-        stop("complex arguments not allowed in x, s and v")
-    if (!is.Numeric(tolerance, allow=1, posi = TRUE) || tolerance > 0.01)
-        stop("bad input for argument 'tolerance'")
-    if (!is.Numeric(iter, allow=1, integ = TRUE, posi = TRUE))
-        stop("bad input for argument 'iter'")
+      stop("complex arguments not allowed in x, s and v")
+    if (!is.Numeric(tolerance, allowable.length = 1, positive = TRUE) ||
+        tolerance > 0.01)
+      stop("bad input for argument 'tolerance'")
+    if (!is.Numeric(iter, allowable.length = 1,
+                    integer.valued = TRUE, positive = TRUE))
+      stop("bad input for argument 'iter'")
+
     L = max(length(x), length(s), length(v))
-    x = rep(x, length=L); s = rep(s, length=L); v = rep(v, length=L);
+    x = rep(x, length.out = L);
+    s = rep(s, length.out = L);
+    v = rep(v, length.out = L);
     xok = abs(x) < 1 & !(v <= 0 & v == round(v))
     x[!xok] = 0  # Fix this later
-    ans = dotC(name="lerchphi123", err=integer(L), as.integer(L),
+    ans = dotC(name = "lerchphi123", err = integer(L), as.integer(L),
              as.double(x), as.double(s), as.double(v),
              acc=as.double(tolerance), result=double(L),
              as.integer(iter))
@@ -870,7 +877,7 @@ negzero.expression <- expression({
   bigUniqInt <- 1080
   zneg_index <- if (length(negdotzero)) {
 
-    if (!is.Numeric(-negdotzero, posit = TRUE, integ = TRUE) ||
+    if (!is.Numeric(-negdotzero, positive = TRUE, integer.valued = TRUE) ||
         max(-negdotzero) > Musual)
         stop("bad input for argument 'zero'")
 
@@ -887,6 +894,19 @@ negzero.expression <- expression({
 
   constraints <- cm.zero.vgam(constraints, x, z_Index, M)
 })
+
+
+
+
+
+
+    is.empty.list = function(mylist) {
+      is.list(mylist) &&
+      length(unlist(mylist)) == 0
+    }
+
+
+
 
 
 

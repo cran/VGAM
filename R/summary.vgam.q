@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2011 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2012 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -53,8 +53,9 @@ summaryvgam <- function(object, dispersion = NULL,
       snames <- names(nldf)
       aod[snames, 2] <- round(nldf, 1)
       aod[snames, 3] <- if (useF) nl.chisq/nldf  else nl.chisq
-      aod[snames, 4] <- if (useF) pf(nl.chisq/nldf, nldf, rdf, lower.tail=FALSE) else 
-          pchisq(nl.chisq, nldf, lower.tail=FALSE)
+      aod[snames, 4] <- if (useF)
+          pf(nl.chisq / nldf, nldf, rdf, lower.tail = FALSE) else 
+          pchisq(nl.chisq, nldf, lower.tail = FALSE)
 
       if (any(special)) {
           aod[snames[special], 2:4] = NA 
@@ -102,7 +103,7 @@ summaryvgam <- function(object, dispersion = NULL,
 
 
 
-printsummary.vgam <- function(x, quote = TRUE, prefix = "",
+show.summary.vgam <- function(x, quote = TRUE, prefix = "",
                               digits = options()$digits-2) {
 
   M <- x@misc$M
@@ -113,16 +114,17 @@ printsummary.vgam <- function(x, quote = TRUE, prefix = "",
 
   presid <- x@pearson.resid
   rdf <- x@df[2]
-  if (FALSE && !is.null(presid) && all(!is.na(presid))) {
+  if (FALSE &&
+     !is.null(presid) && all(!is.na(presid))) {
     cat("\nPearson Residuals:\n")
     if (rdf/M > 5) {
       rq <-  apply(as.matrix(presid), 2, quantile) # 5 x M
       dimnames(rq) <- list(c("Min", "1Q", "Median", "3Q", "Max"),
                            x@misc$predictors.names)
-      print(t(rq), digits=digits)
+      print(t(rq), digits = digits)
     } else
     if (rdf > 0) {
-      print(presid, digits=digits)
+      print(presid, digits = digits)
     }
   }
 
@@ -132,7 +134,7 @@ printsummary.vgam <- function(x, quote = TRUE, prefix = "",
   if (M == 1)
     cat("\nName of linear predictor:",
         paste(x@misc$predictors.names, collapse = ", "), "\n") else
-  if (M<=5)
+  if (M <= 5)
     cat("\nNames of linear predictors:",
         paste(x@misc$predictors.names, collapse = ", "), "\n")
 
@@ -157,7 +159,7 @@ printsummary.vgam <- function(x, quote = TRUE, prefix = "",
   }
 
     if (length(deviance(x)))
-      cat("\nResidual Deviance: ", format(round(deviance(x), digits)),
+      cat("\nResidual deviance: ", format(round(deviance(x), digits)),
           "on", format(round(rdf, 3)), "degrees of freedom\n")
 
   if (length(logLik.vlm(x)))
@@ -172,10 +174,10 @@ printsummary.vgam <- function(x, quote = TRUE, prefix = "",
   }
 
 
-  cat("\nNumber of Iterations: ", x@iter, "\n")
+  cat("\nNumber of iterations: ", x@iter, "\n")
 
   if (length(x@anova)) {
-      printvanova(x@anova, dig = digits)   # ".vanova" for Splus6
+      show.vanova(x@anova, digits = digits)   # ".vanova" for Splus6
   }
 
   invisible(NULL)
@@ -188,20 +190,17 @@ printsummary.vgam <- function(x, quote = TRUE, prefix = "",
              function(object, ...)
              summaryvgam(object, ...))
 
-    setMethod("print", "summary.vgam",
-             function(x, ...)
-             printsummary.vgam(x, ...))
 
 
     setMethod("show", "summary.vgam",
              function(object)
-             printsummary.vgam(object))
+             show.summary.vgam(object))
 
 
 
  
  
-printvanova <- function(x, digits=.Options$digits, ...) {
+show.vanova <- function(x, digits = .Options$digits, ...) {
   rrr <- row.names(x) 
   heading <- attr(x, "heading")
   if (!is.null(heading))

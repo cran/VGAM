@@ -64,13 +64,14 @@ fgm(lapar="rhobit", earg=list(), iapar=NULL, imethod=1, nsimEIM=200)
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}}
   and \code{\link{vgam}}.
+
 }
 
 \references{
 
 Castillo, E., Hadi, A. S., Balakrishnan, N. Sarabia, J. S. (2005)
 \emph{Extreme Value and Related Models with Applications in Engineering and Science},
-Hoboken, N.J.: Wiley-Interscience.
+Hoboken, NJ, USA: Wiley-Interscience.
 
 }
 \author{ T. W. Yee }
@@ -91,10 +92,10 @@ Hoboken, N.J.: Wiley-Interscience.
 
 }
 \examples{
-ymat = rfgm(n = 1000, alpha=rhobit(3, inverse=TRUE))
-\dontrun{plot(ymat, col="blue")}
-fit = vglm(ymat ~ 1, fam=fgm, trace=TRUE)
-coef(fit, matrix=TRUE)
+ymat = rfgm(n = 1000, alpha = rhobit(3, inverse = TRUE))
+\dontrun{plot(ymat, col = "blue")}
+fit = vglm(ymat ~ 1, fam = fgm, trace = TRUE)
+coef(fit, matrix = TRUE)
 Coef(fit)
 head(fitted(fit))
 }

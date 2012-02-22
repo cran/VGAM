@@ -1,5 +1,5 @@
-\name{nzmarital}
-\alias{nzmarital}
+\name{marital.nz}
+\alias{marital.nz}
 \docType{data}
 \title{
   New Zealand Marital Data.
@@ -9,7 +9,7 @@
   early 1990s.
 
 }
-\usage{data(nzmarital)}
+\usage{data(marital.nz)}
 \format{
   A data frame with 6053 observations on the following 3 variables.
   \describe{
@@ -20,17 +20,19 @@
   }
 
     \item{\code{mstatus}}{a factor with levels
-   \code{Divorced/Separated} \code{Married/Partnered} \code{Single} \code{Widowed}.
-  }
-  }
+   \code{Divorced/Separated}, \code{Married/Partnered},
+   \code{Single}, \code{Widowed}.
+  } }
 }
+
 \details{
-This is a subset of a data set collected from a self-administered
-questionnaire administered in a large New Zealand workforce observational
-study conducted during 1992--3. The data were augmented by a second
-study consisting of retirees. The data can be considered a reasonable
-representation of the white male New Zealand population in the early
-1990s.
+This is a subset of a data set collected from a
+self-administered questionnaire administered in a large
+New Zealand workforce observational study conducted
+during 1992--3. The data were augmented by a second study
+consisting of retirees. The data can be considered a
+reasonable representation of the white male New Zealand
+population in the early 1990s.
 
 
 }
@@ -41,12 +43,12 @@ representation of the white male New Zealand population in the early
 }
 
 \references{
-  See \code{\link{bminz}} and \code{\link{chestnz}}.
+  See \code{\link{bmi.nz}} and \code{\link{chest.nz}}.
 
 
 }
 \examples{
-summary(nzmarital)
+summary(marital.nz)
 }
 \keyword{datasets}
 

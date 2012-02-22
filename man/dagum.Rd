@@ -7,24 +7,24 @@
   Dagum distribution.
 }
 \usage{
-dagum(link.a = "loge", link.scale = "loge", link.p = "loge",
-      earg.a = list(), earg.scale = list(), earg.p = list(),
-      init.a = NULL, init.scale = NULL, init.p = 1, zero = NULL)
+dagum(lshape1.a = "loge", lscale = "loge", lshape2.p = "loge",
+      eshape1.a = list(), escale = list(), eshape2.p = list(),
+      ishape1.a = NULL, iscale = NULL, ishape2.p = 1, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{link.a, link.scale, link.p}{
+  \item{lshape1.a, lscale, lshape2.p}{
   Parameter link functions applied to the
   (positive) parameters \code{a}, \code{scale}, and \code{p}.
   See \code{\link{Links}} for more choices.
 
   }
-  \item{earg.a, earg.scale, earg.p}{
+  \item{eshape1.a, escale, eshape2.p}{
   List. Extra argument for each of the links.
   See \code{earg} in \code{\link{Links}} for general information.
 
   }
-  \item{init.a, init.scale, init.p}{
+  \item{ishape1.a, iscale, ishape2.p}{
   Optional initial values for \code{a}, \code{scale}, and \code{p}.
 
   }
@@ -60,7 +60,7 @@ and the others are shape parameters.
 The mean is
   \deqn{E(Y) = b \, \Gamma(p + 1/a) \, \Gamma(1 - 1/a) / \Gamma(p)}{%
         E(Y) = b  gamma(p + 1/a)  gamma(1 - 1/a) /  gamma(p)}
-provided \eqn{-ap < 1 < a}.
+provided \eqn{-ap < 1 < a}; these are returned as the fitted values.
 
 
 }
@@ -75,7 +75,7 @@ provided \eqn{-ap < 1 < a}.
 Kleiber, C. and Kotz, S. (2003)
 \emph{Statistical Size Distributions in Economics and
              Actuarial Sciences},
-Hoboken, NJ: Wiley-Interscience.
+Hoboken, NJ, USA: Wiley-Interscience.
 
 
 }
@@ -112,7 +112,7 @@ while estimates for \eqn{a} and \eqn{p} can be considered unbiased for
 \examples{
 ddata = data.frame(y = rdagum(n = 3000, 4, 6, 2))
 fit = vglm(y ~ 1, dagum, ddata, trace = TRUE)
-fit = vglm(y ~ 1, dagum(init.a = 2.1), ddata, trace = TRUE, crit = "c")
+fit = vglm(y ~ 1, dagum(ishape1.a = 2.1), ddata, trace = TRUE, crit = "c")
 coef(fit, matrix = TRUE)
 Coef(fit)
 summary(fit)

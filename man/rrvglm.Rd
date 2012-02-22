@@ -145,7 +145,7 @@ Regression and ordered categorical variables.
 \bold{46}, 1--30.
 
 
-  Yee, T. W. (2010)
+  Yee, T. W. (2012)
   Two-parameter reduced-rank vector generalized linear models.
   \emph{In preparation}.
 
@@ -219,7 +219,7 @@ Regression and ordered categorical variables.
     \code{\link{negbinomial}}
     \code{\link{zipoisson}}
     and \code{\link{zinegbinomial}}.
-    (see Yee (2010) and \pkg{COZIGAM}).
+    (see Yee (2012) and \pkg{COZIGAM}).
     Methods functions include
     \code{\link{Coef.rrvglm}},
     \code{summary.rrvglm},

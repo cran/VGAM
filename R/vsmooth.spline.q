@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2011 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2012 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -62,12 +62,16 @@ setMethod("resid", signature(object="vsmooth.spline"),
 setMethod("predict", signature(object="vsmooth.spline"),
           function(object, ...)
           predictvsmooth.spline(object, ...))
-setMethod("print", "vsmooth.spline",
-         function(x, ...)
-         invisible(printvsmooth.spline(x, ...)))
+
+
+
 setMethod("show",  "vsmooth.spline",
           function(object)
-          printvsmooth.spline(object))
+          show.vsmooth.spline(object))
+
+
+
+
 setMethod("plot", "vsmooth.spline",
           function(x, y, ...) {
           if (!missing(y)) stop("cannot process the 'y' argument")
@@ -222,9 +226,10 @@ vsmooth.spline <- function(x, y, w = NULL, df = rep(5, M),
 
         lfit = vlm(yinyin ~ 1 + x,    # xxx
                    constraints = constraints,
-                   save.weight = FALSE, qr = FALSE, x = FALSE, y = FALSE,
+                   save.weight = FALSE,
+                   qr.arg = FALSE, x.arg = FALSE, y.arg = FALSE,
                    smart = FALSE,
-                   weight = matrix(collaps$wzbar, neff, dim2wz))
+                   weights = matrix(collaps$wzbar, neff, dim2wz))
     }
 
     ncb0  <- ncol(constraints[[2]])   # Of xxx and not of the intercept
@@ -422,27 +427,27 @@ vsmooth.spline <- function(x, y, w = NULL, df = rep(5, M),
 }
 
 
-printvsmooth.spline <- function(x, ...) {
-    if (!is.null(cl <- x@call)) {
-        cat("Call:\n")
-        dput(cl)
-    }
+show.vsmooth.spline <- function(x, ...) {
+  if (!is.null(cl <- x@call)) {
+    cat("Call:\n")
+    dput(cl)
+  }
 
-    ncb <- if (length(x@nlfit)) ncol(x@nlfit@Bcoefficients) else NULL
-    cat("\nSmoothing Parameter (Spar):", 
-        if (length(ncb) && ncb == 1) format(x@spar) else
-            paste(format(x@spar), collapse=", "), "\n")
+  ncb <- if (length(x@nlfit)) ncol(x@nlfit@Bcoefficients) else NULL
+  cat("\nSmoothing Parameter (Spar):", 
+    if (length(ncb) && ncb == 1) format(x@spar) else
+        paste(format(x@spar), collapse=", "), "\n")
 
-    cat("\nEquivalent Degrees of Freedom (Df):", 
-        if (length(ncb) && ncb == 1) format(x@df) else
-            paste(format(x@df), collapse=", "), "\n")
+  cat("\nEquivalent Degrees of Freedom (Df):", 
+    if (length(ncb) && ncb == 1) format(x@df) else
+        paste(format(x@df), collapse=", "), "\n")
 
-    if (!all(trivial.constraints(x@constraints) == 1)) {
-        cat("\nConstraint matrices:\n")
-        print(x@constraints)
-    }
+  if (!all(trivial.constraints(x@constraints) == 1)) {
+    cat("\nConstraint matrices:\n")
+    print(x@constraints)
+  }
 
-    invisible(x)
+  invisible(x)
 }
 
 
@@ -451,9 +456,9 @@ coefvsmooth.spline.fit = function(object, ...) {
 }
 
 
-coefvsmooth.spline = function(object, matrix=FALSE, ...) {
+coefvsmooth.spline = function(object, matrix = FALSE, ...) {
 
-        list(lfit=coefvlm(object@lfit, matrix=matrix),
+        list(lfit = coefvlm(object@lfit, matrix.out = matrix),
              nlfit=coefvsmooth.spline.fit(object@nlfit))
 }
 
@@ -511,13 +516,15 @@ predictvsmooth.spline <- function(object, x, deriv = 0, se.fit = FALSE) {
 
     }
 
-    mat.coef = coefvlm(lfit, matrix=TRUE)
+    mat.coef = coefvlm(lfit, matrix.out = TRUE)
     coeflfit <- t(mat.coef)   # M x p now
     M <- nrow(coeflfit) # if (is.matrix(object@y)) ncol(object@y) else 1
 
-    pred = if (deriv == 0) predict(lfit, data.frame(x = x)) else
-           if (deriv == 1) matrix(coeflfit[,2], length(x), M, byr=TRUE) else
-                           matrix(0, length(x), M)
+    pred = if (deriv == 0)
+             predict(lfit, data.frame(x = x)) else
+           if (deriv == 1)
+             matrix(coeflfit[,2], length(x), M, byrow = TRUE) else
+             matrix(0, length(x), M)
     if (!length(nlfit@knots)) {
         return(list(x = x, y = pred))
     }
@@ -526,17 +533,17 @@ predictvsmooth.spline <- function(object, x, deriv = 0, se.fit = FALSE) {
 
     conmat = if (!length(lfit@constraints)) diag(M) else
                 lfit@constraints[[2]]
-    conmat = conmat[, nonlin, drop=FALSE] # Of nonlinear functions
+    conmat = conmat[, nonlin, drop = FALSE] # Of nonlinear functions
 
     list(x = x, y=pred + predict(nlfit, x, deriv)$y %*% t(conmat))
 }
 
 
-predictvsmooth.spline.fit <- function(object, x, deriv=0) {
+predictvsmooth.spline.fit <- function(object, x, deriv = 0) {
     nknots = nrow(object@Bcoefficients)
     drangex <- object@xmax - object@xmin
     if (missing(x))
-        x <- seq(from=object@xmin, to=object@xmax, length=nknots-4)
+      x <- seq(from = object@xmin, to = object@xmax, length.out = nknots-4)
 
     xs <- as.double((x - object@xmin) / drangex)
 

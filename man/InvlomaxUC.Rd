@@ -12,21 +12,21 @@
 
 }
 \usage{
-dinvlomax(x, scale=1, p.arg, log = FALSE)
-pinvlomax(q, scale=1, p.arg)
-qinvlomax(p, scale=1, p.arg)
-rinvlomax(n, scale=1, p.arg)
+dinvlomax(x, scale = 1, shape2.p, log = FALSE)
+pinvlomax(q, scale = 1, shape2.p)
+qinvlomax(p, scale = 1, shape2.p)
+rinvlomax(n, scale = 1, shape2.p)
 }
 \arguments{
   \item{x, q}{vector of quantiles.}
   \item{p}{vector of probabilities.}
   \item{n}{number of observations. If \code{length(n) > 1}, the length
     is taken to be the number required.}
-  \item{p.arg}{shape parameter.}
+  \item{shape2.p}{shape parameter.}
   \item{scale}{scale parameter.}
   \item{log}{
   Logical.
-  If \code{log=TRUE} then the logarithm of the density is returned.
+  If \code{log = TRUE} then the logarithm of the density is returned.
 
   }
 
@@ -36,30 +36,39 @@ rinvlomax(n, scale=1, p.arg)
   \code{pinvlomax} gives the distribution function,
   \code{qinvlomax} gives the quantile function, and
   \code{rinvlomax} generates random deviates.
+
 }
 \references{
+
 Kleiber, C. and Kotz, S. (2003)
 \emph{Statistical Size Distributions in Economics and
              Actuarial Sciences},
-Hoboken, NJ: Wiley-Interscience.
+Hoboken, NJ, USA: Wiley-Interscience.
+
 }
 \author{ T. W. Yee }
 \details{
   See \code{\link{invlomax}}, which is the \pkg{VGAM} family function
   for estimating the parameters by maximum likelihood estimation.
+
+
 }
 \note{
   The inverse Lomax distribution is a special case of the 4-parameter
   generalized beta II distribution.
+
+
 }
 \seealso{
   \code{\link{invlomax}},
   \code{\link{genbetaII}}.
+
+
 }
 \examples{
-y = rinvlomax(n=1000, 6, 2)
-fit = vglm(y ~ 1, invlomax, trace=TRUE, crit="c")
-coef(fit, mat=TRUE)
+idata = data.frame(y = rinvlomax(n = 1000, 6, 2))
+fit = vglm(y ~ 1, invlomax, idata, trace = TRUE, crit = "coef")
+coef(fit, matrix = TRUE)
 Coef(fit)
 }
 \keyword{distribution}

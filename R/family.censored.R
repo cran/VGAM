@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2011 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2012 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -95,7 +95,7 @@
         } else {
           sum(w[cen0] * dpois(y[cen0,1], mu[cen0], log = TRUE)) +
           sum(w[cenU] * log1p(-ppois(y[cenU,1] - 1, mu[cenU]))) +
-          sum(w[cenL] * ppois(y[cenL,1] - 1, mu[cenL], log = TRUE)) +
+          sum(w[cenL] * ppois(y[cenL,1] - 1, mu[cenL], log.p = TRUE)) +
           sum(w[cenI] * log(ppois(y[cenI,2], mu[cenI]) -
                             ppois(y[cenI,1], mu[cenI])))
         }
@@ -110,19 +110,19 @@
         dl.dlambda = (y[,1] - lambda)/lambda   # uncensored
         yllim = yulim = y[,1]   # uncensored
         if (any(cenU)) {
-            yllim[cenU] = y[cenU,1]
-            densm1 = dpois(yllim-1, lambda)
-            queue = ppois(yllim-1, lambda, lower = FALSE) # Right tail probability
-            dl.dlambda[cenU] = densm1[cenU] / queue[cenU]
+          yllim[cenU] = y[cenU,1]
+          densm1 = dpois(yllim-1, lambda)
+          queue = ppois(yllim-1, lambda, lower.tail = FALSE)
+          dl.dlambda[cenU] = densm1[cenU] / queue[cenU]
         }
         if (any(cenL)) {
-            yulim[cenL] = y[cenL,1]-1
+            yulim[cenL] = y[cenL,1] - 1
             densm0 = dpois(yulim, lambda)
             Queue = ppois(yulim, lambda)    # Left tail probability
             dl.dlambda[cenL] = -densm0[cenL] / Queue[cenL]
         }
         if (any(cenI)) {
-            yllim[cenI] = y[cenI,1]+1
+            yllim[cenI] = y[cenI,1] + 1
             yulim[cenI] = y[cenI,2]
             Queue1 = ppois(yllim-1, lambda)
             Queue2 = ppois(yulim, lambda)
@@ -166,7 +166,7 @@ if (FALSE)
  cexpon = 
  ecexpon = function(link = "loge", location = 0)
 {
-    if (!is.Numeric(location, allow = 1))
+    if (!is.Numeric(location, allowable.length = 1))
         stop("bad input for 'location'")
     if (mode(link) != "character" && mode(link) != "name")
         link = as.character(substitute(link))
@@ -313,7 +313,7 @@ if (FALSE)
     lmu = as.character(substitute(lmu))
   if (mode(lsd) != "character" && mode(lsd) != "name")
     lsd = as.character(substitute(lsd))
-  if (!is.Numeric(imethod, allow = 1, integer = TRUE, positi = TRUE) ||
+  if (!is.Numeric(imethod, allowable.length = 1, integer.valued = TRUE, positive = TRUE) ||
     imethod > 2)
     stop("argument 'imethod' must be 1 or 2")
   if (!is.list(emu)) emu = list()
@@ -572,15 +572,16 @@ if (FALSE)
   if (mode(lscale) != "character" && mode(lscale) != "name")
     lscale = as.character(substitute(lscale))
 
-  if (length(zero) && !is.Numeric(zero, integer = TRUE, posit = TRUE))
+  if (length(zero) && !is.Numeric(zero, integer.valued = TRUE, positive = TRUE))
     stop("bad input for argument 'zero'")
-  if (!is.Numeric(imethod, allow = 1, integer = TRUE, positi = TRUE) ||
+  if (!is.Numeric(imethod, allowable.length = 1,
+                  integer.valued = TRUE, positive = TRUE) ||
       imethod > 2)
       stop("argument 'imethod' must be 1 or 2")
 
   if (!is.list(eshape)) eshape = list()
   if (!is.list(escale)) escale = list()
-  if (!is.Numeric(nrfs, allow = 1) || nrfs < 0 || nrfs > 1)
+  if (!is.Numeric(nrfs, allowable.length = 1) || nrfs < 0 || nrfs > 1)
       stop("bad input for argument 'nrfs'")
 
   new("vglmff",
@@ -849,18 +850,17 @@ is.na.SurvS4 <- function(x) {
 
 
 
-print.SurvS4 <-
-function (x, quote = FALSE, ...)
-invisible(print(as.character.SurvS4(x), quote = quote, ...))
 
 
-setMethod("print", "SurvS4",
-         function(x, ...)
-         invisible(print.SurvS4(x, ...)))
+show.SurvS4 <- function (object)
+  print(as.character.SurvS4(object), quote = FALSE)
+
+
+
 
 setMethod("show", "SurvS4",
          function(object)
-         invisible(print.SurvS4(object)))
+         show.SurvS4(object))
 
 
 

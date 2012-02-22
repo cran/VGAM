@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2011 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2012 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -13,7 +13,11 @@ logLik.vlm <- function(object, ...)
 
 
 if (!isGeneric("logLik"))
-    setGeneric("logLik", function(object, ...) standardGeneric("logLik"))
+  setGeneric("logLik", function(object, ...)
+             standardGeneric("logLik"),
+             package = "VGAM")
+
+
 
 setMethod("logLik",  "vlm", function(object, ...)
     logLik.vlm(object, ...))
