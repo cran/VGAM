@@ -7,15 +7,14 @@
   generalized beta II distribution.
 }
 \usage{
-genbetaII(link.a = "loge", link.scale = "loge",
-          link.p = "loge", link.q = "loge",
-          earg.a=list(), earg.scale=list(), earg.p=list(), earg.q=list(),
-          init.a = NULL, init.scale = NULL, init.p = 1, init.q = 1,
+genbetaII(lshape1.a = "loge", lscale = "loge", lshape2.p = "loge", lshape3.q = "loge",
+          eshape1.a = list(), escale = list(), eshape2.p = list(), eshape3.q = list(),
+          ishape1.a = NULL, iscale = NULL, ishape2.p = 1, ishape3.q = 1,
           zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{link.a, link.scale, link.p, link.q}{
+  \item{lshape1.a, lscale, lshape2.p, lshape3.q}{
   Parameter link functions applied to the
   shape parameter \code{a},
   scale parameter \code{scale},
@@ -25,17 +24,17 @@ genbetaII(link.a = "loge", link.scale = "loge",
   See \code{\link{Links}} for more choices.
 
   }
-  \item{earg.a, earg.scale, earg.p, earg.q}{
+  \item{eshape1.a, escale, eshape2.p, eshape3.q}{
   List. Extra argument for each of the links.
   See \code{earg} in \code{\link{Links}} for general information.
 
   }
-  \item{init.a, init.scale}{
+  \item{ishape1.a, iscale}{
   Optional initial values for \code{a} and \code{scale}.
   A \code{NULL} means a value is computed internally.
 
   }
-  \item{init.p, init.q}{
+  \item{ishape2.p, ishape3.q}{
   Optional initial values for \code{p} and \code{q}.
 
   }
@@ -55,6 +54,9 @@ genbetaII(link.a = "loge", link.scale = "loge",
   distributions are all special cases.
   Full details can be found in Kleiber and Kotz (2003), and
   Brazauskas (2002).
+  The argument names given here are used by other families that
+  are special cases of this family.
+
 
 The 4-parameter generalized beta II distribution has density
   \deqn{f(y) = a y^{ap-1} / [b^{ap} B(p,q) \{1 + (y/b)^a\}^{p+q}]}{%
@@ -66,28 +68,35 @@ while the others are shape parameters.
 The mean is 
   \deqn{E(Y) = b \, \Gamma(p + 1/a) \, \Gamma(q - 1/a) / (\Gamma(p) \, \Gamma(q))}{%
         E(Y) = b  gamma(p + 1/a)  gamma(q - 1/a) / ( gamma(p)  gamma(q))}
-provided \eqn{-ap < 1 < aq}.
+provided \eqn{-ap < 1 < aq}; these are returned as the fitted values.
+
 
 %The distribution is motivated by the incomplete beta function
 %\eqn{B_y(p,q)} which is the integral from 0 to \eqn{y} of the integrand
 %\eqn{u^{p-1} (1-u)^{q-1}}{u^(p-1) (1-u)^(q-1)} where \eqn{y>0}.
+
 
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}},
   and \code{\link{vgam}}.
+
+
 }
 \references{
+
 Kleiber, C. and Kotz, S. (2003)
 \emph{Statistical Size Distributions in Economics and
              Actuarial Sciences},
-Hoboken, NJ: Wiley-Interscience.
+Hoboken, NJ, USA: Wiley-Interscience.
+
 
 Brazauskas, V. (2002)
 Fisher information matrix for the Feller-Pareto distribution.
 \emph{Statistics & Probability Letters},
 \bold{59}, 159--167.
+
 
 }
 
@@ -97,14 +106,15 @@ If the self-starting initial values fail, try experimenting
 with the initial value arguments, especially those whose
 default value is not \code{NULL}.
 
+
 Successful convergence depends on having very
 good initial values. This is rather difficult for this distribution!
 More improvements could be made here.
 
+
 }
 
 \seealso{
-    \code{\link{lino}},
     \code{\link{betaff}},
     \code{\link{betaII}},
     \code{\link{dagum}},
@@ -113,15 +123,17 @@ More improvements could be made here.
     \code{\link{lomax}},
     \code{\link{invlomax}},
     \code{\link{paralogistic}},
-    \code{\link{invparalogistic}}.
+    \code{\link{invparalogistic}},
+    \code{\link{lino}}.
+
 }
 
 \examples{
-gdata = data.frame(y = rsinmad(n=3000, 4, 6, 2)) # Not very good data!
-fit = vglm(y ~ 1, genbetaII, gdata, trace=TRUE)
-fit = vglm(y ~ 1, genbetaII(init.p=1.0, init.a=4, init.sc=7, init.q=2.3),
-           gdata, trace=TRUE, crit="c")
-coef(fit, mat=TRUE)
+gdata = data.frame(y = rsinmad(n = 3000, 4, 6, 2)) # Not very good data!
+fit = vglm(y ~ 1, genbetaII, gdata, trace = TRUE)
+fit = vglm(y ~ 1, data = gdata, trace = TRUE, crit = "coef",
+           genbetaII(ishape2.p = 1, ishape1.a = 4, iscale = 7, ishape3.q = 2.3))
+coef(fit, matrix = TRUE)
 Coef(fit)
 summary(fit)
 }

@@ -7,25 +7,25 @@
   inverse Lomax distribution.
 }
 \usage{
-invlomax(link.scale = "loge", link.p = "loge",
-         earg.scale=list(), earg.p=list(),
-         init.scale = NULL, init.p = 1, zero = NULL)
+invlomax(lscale = "loge", lshape2.p = "loge",
+         escale = list(), eshape2.p = list(),
+         iscale = NULL, ishape2.p = 1, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{link.scale, link.p}{
+  \item{lscale, lshape2.p}{
   Parameter link functions applied to the
   (positive) scale parameter \code{scale} and
   (positive) shape parameter \code{p}.
   See \code{\link{Links}} for more choices.
 
   }
-  \item{earg.scale, earg.p}{
+  \item{escale, eshape2.p}{
   List. Extra argument for each of the links.
   See \code{earg} in \code{\link{Links}} for general information.
 
   }
-  \item{init.scale, init.p}{
+  \item{iscale, ishape2.p}{
   Optional initial values for \code{scale} and \code{p}.
 
   }
@@ -52,7 +52,9 @@ The inverse Lomax distribution has density
   for \eqn{b > 0}, \eqn{p > 0}, \eqn{y > 0}.
 Here, \eqn{b} is the scale parameter \code{scale},
 and \code{p} is a shape parameter.
-The mean does not seem to exist. 
+The mean does not exist; \code{NA}s are returned as the fitted values.
+
+
 
 
 }
@@ -61,12 +63,15 @@ The mean does not seem to exist.
   The object is used by modelling functions such as \code{\link{vglm}},
   and \code{\link{vgam}}.
 
+
 }
 \references{
+
 Kleiber, C. and Kotz, S. (2003)
 \emph{Statistical Size Distributions in Economics and
              Actuarial Sciences},
-Hoboken, NJ: Wiley-Interscience.
+Hoboken, NJ, USA: Wiley-Interscience.
+
 
 }
 
@@ -75,6 +80,7 @@ Hoboken, NJ: Wiley-Interscience.
 If the self-starting initial values fail, try experimenting
 with the initial value arguments, especially those whose
 default value is not \code{NULL}.
+
 
 }
 
@@ -88,15 +94,19 @@ default value is not \code{NULL}.
     \code{\link{lomax}},
     \code{\link{paralogistic}},
     \code{\link{invparalogistic}}.
+
+
 }
 
 \examples{
-y = rinvlomax(n=2000, 6, 2)
-fit = vglm(y ~ 1, invlomax, trace=TRUE)
-fit = vglm(y ~ 1, invlomax, trace=TRUE, crit="c")
-coef(fit, mat=TRUE)
+idata = data.frame(y = rinvlomax(n = 2000, 6, 2))
+fit = vglm(y ~ 1, invlomax, idata, trace = TRUE)
+fit = vglm(y ~ 1, invlomax, idata, trace = TRUE, crit = "coef")
+coef(fit, matrix = TRUE)
 Coef(fit)
 summary(fit)
 }
 \keyword{models}
 \keyword{regression}
+
+

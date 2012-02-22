@@ -32,7 +32,7 @@ rhzeta(n, alpha)
   }
   \item{log}{
   Logical.
-  If \code{log=TRUE} then the logarithm of the density is returned.
+  If \code{log = TRUE} then the logarithm of the density is returned.
 
   }
 }

@@ -54,8 +54,10 @@ mix2exp(lphi = "logit", llambda = "loge", ephi = list(),
 }
 \details{
   The probability function can be loosely written as 
-  \deqn{P(Y=y) = \phi\,Exponential(\lambda_1) + (1-\phi)\,Exponential(\lambda_2)}{%
-        P(Y=y) = phi * Exponential(lambda1) + (1-phi) * Exponential(lambda2)}
+  \deqn{P(Y=y) = \phi\,Exponential(\lambda_1) +
+              (1-\phi)\,Exponential(\lambda_2)}{%
+        P(Y=y) = phi * Exponential(lambda1) +
+                (1-phi) * Exponential(lambda2)}
   where \eqn{\phi}{phi} is the probability an observation belongs
   to the first group, and \eqn{y>0}.
   The parameter \eqn{\phi}{phi} satisfies \eqn{0 < \phi < 1}{0 < phi < 1}.
@@ -79,10 +81,11 @@ mix2exp(lphi = "logit", llambda = "loge", ephi = list(),
 \section{Warning }{
   This \pkg{VGAM} family function requires care for a successful
   application.
-  In particular, good initial values are required because of the presence
-  of local solutions. Therefore running this function with several
-  different combinations of arguments such as \code{iphi}, \code{il1},
-  \code{il2}, \code{qmu} is highly recommended. Graphical methods such
+  In particular, good initial values are required because
+  of the presence of local solutions. Therefore running
+  this function with several different combinations of
+  arguments such as \code{iphi}, \code{il1}, \code{il2},
+  \code{qmu} is highly recommended. Graphical methods such
   as \code{\link[graphics]{hist}} can be used as an aid.
 
 
@@ -90,14 +93,15 @@ mix2exp(lphi = "logit", llambda = "loge", ephi = list(),
 
 \author{ T. W. Yee }
 \note{
-  Fitting this model successfully to data can be difficult due to
-  local solutions, uniqueness problems and ill-conditioned data. It
-  pays to fit the model several times with different initial values
-  and check that the best fit looks reasonable. Plotting the results is
-  recommended. This function works better as \eqn{\lambda_1}{lambda1}
-  and \eqn{\lambda_2}{lambda2} become more different.
-  The default control argument \code{trace = TRUE} is to encourage
-  monitoring convergence.
+  Fitting this model successfully to data can be
+  difficult due to local solutions, uniqueness problems
+  and ill-conditioned data. It pays to fit the model
+  several times with different initial values and check
+  that the best fit looks reasonable. Plotting the
+  results is recommended. This function works better as
+  \eqn{\lambda_1}{lambda1} and \eqn{\lambda_2}{lambda2}
+  become more different. The default control argument
+  \code{trace = TRUE} is to encourage monitoring convergence.
 
 }
 
@@ -114,8 +118,8 @@ lambda1 = exp(1); lambda2 = exp(3)
 (phi = logit(-1, inverse = TRUE))
 mdata = data.frame(y1 = rexp(nn <- 1000, lambda1))
 mdata = transform(mdata, y2 = rexp(nn, lambda2))
-mdata = transform(mdata, y  = ifelse(runif(nn) < phi, y1, y2))
-fit = vglm(y ~ 1, mix2exp, mdata, trace = TRUE)
+mdata = transform(mdata, Y  = ifelse(runif(nn) < phi, y1, y2))
+fit = vglm(Y ~ 1, mix2exp, mdata, trace = TRUE)
 coef(fit, matrix = TRUE)
 
 # Compare the results with the truth
@@ -123,9 +127,9 @@ round(rbind('Estimated' = Coef(fit),
             'Truth' = c(phi, lambda1, lambda2)), dig = 2)
 
 \dontrun{# Plot the results
-with(mdata, hist(y, prob = TRUE, main = "Orange=estimate, blue=truth"))
-abline(v = 1/Coef(fit)[c(2,3)], lty = 2, col = "orange", lwd = 2)
-abline(v = 1/c(lambda1, lambda2), lty = 2, col = "blue", lwd = 2) }
+with(mdata, hist(Y, prob = TRUE, main = "Orange = estimate, blue = truth"))
+abline(v = 1 / Coef(fit)[c(2, 3)],  lty = 2, col = "orange", lwd = 2)
+abline(v = 1 / c(lambda1, lambda2), lty = 2, col = "blue", lwd = 2) }
 }
 \keyword{models}
 \keyword{regression}

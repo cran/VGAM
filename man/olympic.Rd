@@ -47,7 +47,7 @@ summary(olympic)
 ## maybe str(olympic) ; plot(olympic) ...
 \dontrun{ with(head(olympic, n = 8),
 barplot(rbind(gold,silver,bronze),
-        col = c("gold","grey","brown"),  # No "silver" or "bronze"!
+        col = c("gold","grey","brown"), # No "silver" or "bronze"!
         names.arg = country, cex.names = 0.5,
         beside = TRUE, main = "2008 Summer Olympic Final Medal Count",
         ylab = "Medal count", las = 1,

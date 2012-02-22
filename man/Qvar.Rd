@@ -15,9 +15,8 @@ Quasi-variances Preprocessing Function
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~
 }
 \usage{
-Qvar(object, factorname = NULL, coef.indices = NULL,
-     labels = NULL, dispersion = NULL, reference.name = "(reference)",
-     estimates = NULL)
+Qvar(object, factorname = NULL, coef.indices = NULL, labels = NULL,
+     dispersion = NULL, reference.name = "(reference)", estimates = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -37,7 +36,7 @@ Qvar(object, factorname = NULL, coef.indices = NULL,
   If the \code{\link{vglm}} object contains more than one
   factor as explanatory variable then this argument should
   be the name of the factor of interest.
-  If \code{object} is a variance-covariance matrix  then
+  If \code{object} is a variance-covariance matrix then
   this argument should also be specified.
 
 
@@ -84,19 +83,19 @@ Qvar(object, factorname = NULL, coef.indices = NULL,
   conventional output. From the complete variance-covariance matrix one
   can compute \eqn{L} quasi-variances based on all pairwise difference
   of the coefficients. They are based on an approximation, and can be
-  treated as uncorrelated.  In minimizing the relative (not absolute)
+  treated as uncorrelated. In minimizing the relative (not absolute)
   errors it is not hard to see that the estimation involves a RCAM
   (\code{\link{rcam}}) with an exponential link function
   (\code{\link{explink}}).
 
 
   If \code{object} is a model, then at least one of \code{factorname} or
-  \code{coef.indices} must be non-\code{NULL}.  The value of
+  \code{coef.indices} must be non-\code{NULL}. The value of
   \code{coef.indices}, if non-\code{NULL}, determines which rows and
-  columns of the model's variance-covariance matrix to use.  If
+  columns of the model's variance-covariance matrix to use. If
   \code{coef.indices} contains a zero, an extra row and column are
   included at the indicated position, to represent the zero variances
-  and covariances associated with a reference level.  If
+  and covariances associated with a reference level. If
   \code{coef.indices} is \code{NULL}, then \code{factorname} should be
   the name of a factor effect in the model, and is used in order to
   extract the necessary variance-covariance estimates.
@@ -135,7 +134,7 @@ Qvar(object, factorname = NULL, coef.indices = NULL,
   \emph{Sociological Methodology} \bold{33}, 1--18.
 
 
-  Firth, D. and Menezes, R. X. de (2004)
+  Firth, D. and de Menezes, R. X. (2004)
   Quasi-variances.
   \emph{Biometrika} \bold{91}, 65--80.
 
@@ -160,9 +159,9 @@ Qvar(object, factorname = NULL, coef.indices = NULL,
 
 
   It is important to set \code{maxit} to be larger than usual for
-  \code{\link{rcam}} since convergence is slow.  Upon successful
+  \code{\link{rcam}} since convergence is slow. Upon successful
   convergence the \eqn{i}th row effect and the \eqn{i}th column effect
-  should be equal.  A simple computation involving the fitted and
+  should be equal. A simple computation involving the fitted and
   predicted values allows the quasi-variances to be extracted (see
   example below).
 
@@ -175,12 +174,12 @@ Qvar(object, factorname = NULL, coef.indices = NULL,
 \section{Warning }{
   Negative quasi-variances may occur (one of them and
   only one), though they are rare in practice. If
-  so then numerical problems may occur.  See
+  so then numerical problems may occur. See
   \code{qvcalc()} for more information.
 
 
 
-}  
+}
 
 
 \seealso{
@@ -195,10 +194,7 @@ Qvar(object, factorname = NULL, coef.indices = NULL,
 %% ~~objects to See Also as \code{\link{help}}, ~~~
 }
 \examples{
-library(MASS)  # Get the "ships" data frame
-data(ships)
-ships = ships
-detach("package:MASS")
+data("ships", package = "MASS")
 
 Shipmodel <- vglm(incidents ~ type + year + period,
                   quasipoissonff, offset = log(service),
@@ -214,7 +210,7 @@ fit1 <- rcam(Qvar(Shipmodel, "type"), normal1("explink"), maxit = 99)
 # Another form of input
 fit2 <- rcam(Qvar(Shipmodel, coef.ind = c(0,2:5), reference.name = "typeA"),
              normal1("explink"), maxit = 99)
-\dontrun{ plotqvar(fit2, lcol = "blue", llwd = 2, las = 1) }
+\dontrun{ plotqvar(fit2, col = "orange", lwd = 3, scol = "blue", slwd = 2, las = 1) }
 
 # The variance-covariance matrix is another form of input (not recommended)
 fit3 <- rcam(Qvar(cbind(0, rbind(0, vcov(Shipmodel)[2:5, 2:5])),

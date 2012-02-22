@@ -63,23 +63,29 @@ loglog(theta, earg = list(), inverse = FALSE, deriv = 0,
   and if \code{inverse = TRUE} then
   \code{exp(exp(theta))}.
 
+
   For \code{deriv = 1}, then the function returns
   \emph{d} \code{theta} / \emph{d} \code{eta} as a function of \code{theta}
   if \code{inverse = FALSE},
   else if \code{inverse = TRUE} then it returns the reciprocal.
 
+
   Here, all logarithms are natural logarithms, i.e., to base \emph{e}.
+
 
 }
 \references{
-    McCullagh, P. and Nelder, J. A. (1989)
-    \emph{Generalized Linear Models}, 2nd ed. London: Chapman & Hall.
+  McCullagh, P. and Nelder, J. A. (1989)
+  \emph{Generalized Linear Models}, 2nd ed. London: Chapman & Hall.
+
+
 }
 \author{ Thomas W. Yee }
 
 \note{
   Numerical instability may occur when \code{theta} is
   close to 1 unless \code{earg} is used.
+
 
 }
 
@@ -92,11 +98,11 @@ loglog(theta, earg = list(), inverse = FALSE, deriv = 0,
 \examples{
 x = seq(0.8, 1.5, by=0.1)
 loglog(x)  # Has NAs
-loglog(x, earg=list(bvalue=1.0 + .Machine$double.eps))  # Has no NAs
+loglog(x, earg = list(bvalue = 1.0 + .Machine$double.eps))  # Has no NAs
 
-x = seq(1.01, 10, len=100)
+x = seq(1.01, 10, len = 100)
 loglog(x)
-max(abs(loglog(loglog(x), inverse=TRUE) - x)) # Should be 0
+max(abs(loglog(loglog(x), inverse = TRUE) - x)) # Should be 0
 }
 \keyword{math}
 \keyword{models}

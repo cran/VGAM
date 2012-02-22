@@ -41,7 +41,7 @@ rbenini(n, shape, y0)
 Kleiber, C. and Kotz, S. (2003)
 \emph{Statistical Size Distributions in Economics and
              Actuarial Sciences},
-Hoboken, NJ: Wiley-Interscience.
+Hoboken, NJ, USA: Wiley-Interscience.
 
 }
 \author{ T. W. Yee }

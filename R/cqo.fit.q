@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2011 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2012 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -584,7 +584,8 @@ cqo.fit <- function(x, y, w=rep(1, length(x[, 1])),
     NOS = ncol(ymat)
     p2 = ncol(X2)
     if (NOS < 2*Rank) {
-        ans=crow1C(matrix(rnorm(p2*Rank, sd=0.02), p2, Rank), Crow1positive)
+        ans=crow1C(matrix(rnorm(p2 * Rank, sd = 0.02), p2, Rank),
+                   Crow1positive)
         eval(sd.scale.X2.expression)
         if (NOS == 1) {
             eval(print.CQO.expression) 
@@ -626,7 +627,7 @@ cqo.fit <- function(x, y, w=rep(1, length(x[, 1])),
         ans2 = if (Rank > 1)
                rrr.normalize(rrcontrol=temp.control, A=alt$A, 
                              C=alt$C, x=cbind(X1, X2)) else alt
-        ans = crow1C(ans2$C, rep(Crow1positive, len=effrank))
+        ans = crow1C(ans2$C, rep(Crow1positive, length.out = effrank))
 
         Rank.save = Rank
         Rank = effrank
@@ -643,7 +644,8 @@ cqo.fit <- function(x, y, w=rep(1, length(x[, 1])),
         tmp = vlm.wfit(xmat=X1, zmat=etamat, Blist=NULL, U=U,
                        matrix.out=TRUE,
                        is.vlmX=FALSE, rss=TRUE, qr=FALSE, xij=xij)
-        ans = crow1C(as.matrix(tmp$resid), rep(Crow1positive, len=effrank))
+        ans = crow1C(as.matrix(tmp$resid),
+                     rep(Crow1positive, length.out = effrank))
         if (effrank < Rank) {
             ans = cbind(ans, ans.save[,-(1:effrank)]) # ans is better
         }
@@ -658,7 +660,7 @@ cqo.fit <- function(x, y, w=rep(1, length(x[, 1])),
             for(ii in 1:Rank)
                 ans[,ii] = ans[,ii] * isdlv[ii] / actualSD[ii]
         }
-        ans = crow1C(ans, rep(Crow1positive, len=Rank))
+        ans = crow1C(ans, rep(Crow1positive, length.out = Rank))
         dimnames(ans) = list(dimnames(X1)[[1]],
                        if (Rank == 1) "lv" else paste("lv", 1:Rank, sep=""))
         if (trace) {
@@ -818,17 +820,19 @@ cqo.end.expression = expression({
 
 })
 
-crow1C = function(cmat, crow1positive=rep(TRUE, len=ncol(cmat)),
-                  amat=NULL) {
-    if (!is.logical(crow1positive) || length(crow1positive) != ncol(cmat))
-        stop("bad input in crow1C")
-    for(LV in 1:ncol(cmat))
-        if (( crow1positive[LV] && cmat[1,LV] < 0) ||
-           (!crow1positive[LV] && cmat[1,LV] > 0)) {
-                cmat[,LV] = -cmat[,LV]
-                if (length(amat)) amat[,LV] = -amat[,LV]
-        }
-    if (length(amat)) list(cmat=cmat, amat=amat) else cmat
+crow1C = function(cmat,
+                  crow1positive = rep(TRUE, length.out = ncol(cmat)),
+                  amat = NULL) {
+  if (!is.logical(crow1positive) || length(crow1positive) != ncol(cmat))
+    stop("bad input in crow1C")
+
+  for(LV in 1:ncol(cmat))
+    if (( crow1positive[LV] && cmat[1,LV] < 0) ||
+       (!crow1positive[LV] && cmat[1,LV] > 0)) {
+          cmat[,LV] = -cmat[,LV]
+          if (length(amat)) amat[,LV] = -amat[,LV]
+    }
+  if (length(amat)) list(cmat=cmat, amat=amat) else cmat
 }
 
 
@@ -854,7 +858,7 @@ printqrrvglm <- function(x, ...)
     cat("\n")
 
     if (length(deviance(x)))
-        cat("Residual Deviance:", format(deviance(x)), "\n")
+        cat("Residual deviance:", format(deviance(x)), "\n")
 
     if (FALSE && length(x@criterion)) {
         ncrit <- names(x@criterion)
@@ -870,16 +874,19 @@ printqrrvglm <- function(x, ...)
 setMethod("Coef", "qrrvglm", function(object, ...)
           Coef.qrrvglm(object, ...))
 
+
 setMethod("coef",         "qrrvglm", function(object, ...)
           Coef.qrrvglm(object, ...))
 setMethod("coefficients", "qrrvglm", function(object, ...)
           Coef.qrrvglm(object, ...))
+
 
 if (!isGeneric("deviance"))
     setGeneric("deviance", function(object, ...)
     standardGeneric("deviance"))
 setMethod("deviance", "qrrvglm", function(object,...)
           object@criterion$deviance)
+
 
 setMethod("fitted",        "qrrvglm", function(object, ...)
           fittedvlm(object))
@@ -888,9 +895,14 @@ setMethod("fitted.values", "qrrvglm", function(object, ...)
 
 
 
-setMethod("print", "qrrvglm", function(x, ...) printqrrvglm(x, ...))
+
+
+
+
+
 
 setMethod("show",  "qrrvglm", function(object) printqrrvglm(object))
+
 
 
 

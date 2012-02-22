@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2011 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2012 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -148,19 +148,20 @@ vglm.fit <- function(x, y, w=rep(1, length(x[, 1])),
 
             if (!is.logical(one.more)) one.more = FALSE
             if (one.more) {
-                iter <- iter + 1
-                deriv.mu <- eval(slot(family, "deriv"))
-                wz <- eval(slot(family, "weight"))
-                if (control$checkwz)
-                  wz = checkwz(wz, M = M, trace = trace, wzeps = control$wzepsilon)
+              iter <- iter + 1
+              deriv.mu <- eval(slot(family, "deriv"))
+              wz <- eval(slot(family, "weight"))
+              if (control$checkwz)
+                wz = checkwz(wz, M = M, trace = trace,
+                             wzepsilon = control$wzepsilon)
 
-                U <- vchol(wz, M = M, n = n, silent=!trace)
-                tvfor <- vforsub(U, as.matrix(deriv.mu), M = M, n = n)
-                z <- eta + vbacksub(U, tvfor, M = M, n = n) - offset
+              U <- vchol(wz, M = M, n = n, silent=!trace)
+              tvfor <- vforsub(U, as.matrix(deriv.mu), M = M, n = n)
+              z <- eta + vbacksub(U, tvfor, M = M, n = n) - offset
 
-                c.list$z <- z
-                c.list$U <- U
-                if (copy_X_vlm) c.list$X_vlm <- X_vlm_save
+              c.list$z <- z
+              c.list$U <- U
+              if (copy_X_vlm) c.list$X_vlm <- X_vlm_save
             }
 
            c.list$one.more <- one.more
@@ -247,7 +248,8 @@ vglm.fit <- function(x, y, w=rep(1, length(x[, 1])),
     deriv.mu <- eval(slot(family, "deriv"))
     wz <- eval(slot(family, "weight"))
     if (control$checkwz)
-        wz = checkwz(wz, M = M, trace = trace, wzeps = control$wzepsilon)
+      wz = checkwz(wz, M = M, trace = trace,
+                   wzepsilon = control$wzepsilon)
 
     U <- vchol(wz, M = M, n = n, silent=!trace)
     tvfor <- vforsub(U, as.matrix(deriv.mu), M = M, n = n)

@@ -112,7 +112,7 @@ frechet2(location = 0, lscale = "loge", lshape = "logoff",
 Castillo, E., Hadi, A. S., Balakrishnan, N. Sarabia, J. S. (2005)
 \emph{Extreme Value and Related Models with Applications
       in Engineering and Science},
-Hoboken, N.J.: Wiley-Interscience.
+Hoboken, NJ, USA: Wiley-Interscience.
 
 }
 \author{ T. W. Yee }

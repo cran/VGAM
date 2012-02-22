@@ -64,9 +64,11 @@ calibrate.qrrvglm.control(object, trace = FALSE, Method.optim = "BFGS",
 
 }
 \references{
-Yee, T. W. (2005)
+
+Yee, T. W. (2012)
 On constrained and unconstrained quadratic ordination.
 \emph{Manuscript in preparation}.
+
 
 }
 \author{T. W. Yee}
@@ -79,6 +81,7 @@ On constrained and unconstrained quadratic ordination.
 \seealso{
   \code{\link{calibrate.qrrvglm}},
   \code{\link{Coef.qrrvglm}}.
+
 
 }
 \examples{

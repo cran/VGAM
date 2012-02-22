@@ -62,7 +62,7 @@ The CDF values of the model have been placed in
 \code{\link{lms.yjn}}.
 }
 \examples{
-fit = vgam(BMI ~ s(age, df=c(4,2)), fam=lms.bcn(zero=1), data=bminz)
+fit = vgam(BMI ~ s(age, df=c(4,2)), fam=lms.bcn(zero=1), data=bmi.nz)
 head(fit@post$cdf)
 head(cdf(fit))   # Same 
 head(fit@y)

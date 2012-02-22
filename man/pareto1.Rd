@@ -147,19 +147,22 @@ tpareto1(lower, upper, lshape = "loge", earg = list(), ishape = NULL,
 
 }
 \section{Warning }{
-  The usual or unbounded Pareto distribution has two parameters
-  (called \eqn{\alpha}{alpha} and \eqn{k} here) but the family
-  function \code{pareto1} estimates only \eqn{k} using iteratively
-  reweighted least squares. The MLE of the \eqn{\alpha}{alpha}
-  parameter lies on the boundary and is \code{min(y)} where \code{y}
-  is the response. Consequently, using the default argument values,
-  the standard errors are incorrect when one does a \code{summary}
-  on the fitted object.  If the user inputs a value for \code{alpha}
-  then it is assumed known with this value and then \code{summary} on
-  the fitted object should be correct.  Numerical problems may occur
-  for small \eqn{k}, e.g., \eqn{k < 1}.
+  The usual or unbounded Pareto distribution has two
+  parameters (called \eqn{\alpha}{alpha} and \eqn{k} here)
+  but the family function \code{pareto1} estimates only
+  \eqn{k} using iteratively reweighted least squares. The
+  MLE of the \eqn{\alpha}{alpha} parameter lies on the
+  boundary and is \code{min(y)} where \code{y} is the
+  response. Consequently, using the default argument
+  values, the standard errors are incorrect when one does a
+  \code{summary} on the fitted object. If the user inputs
+  a value for \code{alpha} then it is assumed known with
+  this value and then \code{summary} on the fitted object
+  should be correct. Numerical problems may occur for small
+  \eqn{k}, e.g., \eqn{k < 1}.
 
-}  
+
+}
 \seealso{
   \code{\link{Pareto}},
   \code{\link{Tpareto}},
@@ -179,7 +182,7 @@ coef(fit, matrix = TRUE)
 summary(fit)     # Standard errors are incorrect!!
 
 # Here, alpha is assumed known
-fit2 = vglm(y ~ 1, pareto1(location = alpha), pdat, trace = TRUE, crit = "c")
+fit2 = vglm(y ~ 1, pareto1(location = alpha), pdat, trace = TRUE, crit = "coef")
 fit2@extra   # alpha stored here
 head(fitted(fit2))
 coef(fit2, matrix = TRUE)
@@ -187,13 +190,15 @@ summary(fit2)    # Standard errors are okay
 
 # Upper truncated Pareto distribution
 lower = 2; upper = 8; kay = exp(2)
-pdat3 = data.frame(y = rtpareto(n = 100, lower = lower, upper = upper, shape = kay))
-fit3 = vglm(y ~ 1, tpareto1(lower, upper), pdat3, trace = TRUE, cri = "c")
+pdat3 = data.frame(y = rtpareto(n = 100, lower = lower,
+                                upper = upper, shape = kay))
+fit3 = vglm(y ~ 1, tpareto1(lower, upper), pdat3, trace = TRUE, cri = "coef")
 coef(fit3, matrix = TRUE)
 c(fit3@misc$lower, fit3@misc$upper)
 }
 \keyword{models}
 \keyword{regression}
 
-% Package lmomco fits generalized pareto (three parameter) using method of L-moments.
+% Package lmomco fits generalized pareto (three parameter) using
+% method of L-moments.
 

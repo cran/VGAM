@@ -137,7 +137,7 @@ void fvlmz9iyC_nudh6szq(double wpuarq2m[], double tlgduey8[], double bzmd6ftvmat
   int    *wkumc9idtgiyxdw1, *wkumc9iddufozmt7;
   double q6zdcwxk;
 
-  double *wkumc9idwk12, *qnwamo0e;
+  double *wkumc9idwk12;
   wkumc9idwk12 = Calloc(zyojx5hw, double);
 
   wkumc9idtgiyxdw1  = Calloc(imk5wjxg, int);
@@ -174,7 +174,7 @@ void fvlmz9iyC_vbks(double wpuarq2m[], double unvxka0m[],
          zyojx5hw = *wy1vqfzu * *wy1vqfzu,
          imk5wjxg = *wy1vqfzu * (*wy1vqfzu + 1) / 2;
   int    *wkumc9idtgiyxdw1, *wkumc9iddufozmt7;
-  double q6zdcwxk, *qnwamo0e;
+  double q6zdcwxk;
 
   double *wkumc9idwk12;
   wkumc9idwk12 = Calloc(zyojx5hw , double);
@@ -278,7 +278,7 @@ void fvlmz9iyC_mxrbkut0(double wpuarq2m[], double he7mqnvy[],
   double q6zdcwxk;
   int    ayfnwr1v, yq6lorbx, gp1jxzuh, bpvaqm5z;
 
-  double *wkumc9idwk12, *wkumc9idwk34, *qnwamo0e;
+  double *wkumc9idwk12, *wkumc9idwk34;
   int    *wkumc9idtgiyxdw1, *wkumc9iddufozmt7,
          imk5wjxg = *wy1vqfzu * (*wy1vqfzu + 1) / 2,
          zyojx5hw  = *wy1vqfzu *  *wy1vqfzu,
@@ -331,7 +331,7 @@ void fvlmz9iyC_lkhnw9yq(double wpuarq2m[], double ks3wejcv[],
 
   int     ayfnwr1v, yq6lorbx, gp1jxzuh, uaoynef0,
           zyojx5hw = *wy1vqfzu * *wy1vqfzu;
-  double  q6zdcwxk, *qnwamo0e, vn3iasxugno = 1.0e-14;
+  double  q6zdcwxk, vn3iasxugno = 1.0e-14;
   double  *wkumc9idwrk;
   wkumc9idwrk = Calloc(zyojx5hw, double);
 
@@ -402,7 +402,20 @@ void fvlmz9iyC_enbin9(double bzmd6ftvmat[], double hdqsx7bk[], double nm0eljqk[]
 
   int    ayfnwr1v, kij0gwer, esql7umk;
   double vjz5sxty, pvcjl2na, mwuvskg1, btiehdm2 = 100.0e0 * *rsynp1go,
-         ydb, ft3ijqmy, bk3ymcih, q6zdcwxk, plo6hkdr, csi9ydge, oxjgzv0e = 0.001e0;
+         ydb, ft3ijqmy, q6zdcwxk, plo6hkdr, csi9ydge, oxjgzv0e = 0.001e0;
+  double bk3ymcih = -1.0;
+
+
+
+
+  csi9ydge   = bk3ymcih;
+  bk3ymcih += bk3ymcih;
+  bk3ymcih += csi9ydge;
+
+
+
+
+
 
   if (*n2kersmx <= 0.80e0 || *n2kersmx >= 1.0e0) {
       Rprintf("Error in fvlmz9iyC_enbin9: bad n2kersmx value.\n");
@@ -484,10 +497,9 @@ void fvlmz9iyC_enbin8(double bzmd6ftvmat[], double hdqsx7bk[], double hsj9bzaq[]
 
 
 
-  int    ayfnwr1v, kij0gwer, esql7umk = 3000;
+  int    ayfnwr1v, kij0gwer;
   double ft3ijqmy, tad5vhsu, o3jyipdf, pq0hfucn, q6zdcwxk,
-         plo6hkdr, qtce8hzo1 = 0.0e0, qtce8hzo2 = 0.0e0,
-         hnu1vjyw = 1.0e0 - *rsynp1go;
+         plo6hkdr, qtce8hzo1 = 0.0e0, qtce8hzo2 = 0.0e0;
   int    fw2rodat, rx8qfndg, mqudbv4y;
   double onemse, nm0eljqk, ydb, btiehdm2 = -100.0 * *rsynp1go,
          kbig = 1.0e4, oxjgzv0e = 0.0010;
@@ -652,7 +664,7 @@ void VGAM_C_mux34(double he7mqnvy[], double Dmat[], int *vnc1izfy, int *e0nmabdk
 
 
   int    ayfnwr1v, yq6lorbx, gp1jxzuh;
-  double *qnwamo0e1, *qnwamo0e2, *qnwamo0e3;
+  double *qnwamo0e1, *qnwamo0e2;
 
   if (*e0nmabdk == 1) {
       qnwamo0e1 = bqelz3cy;  qnwamo0e2 = he7mqnvy;

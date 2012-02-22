@@ -9,30 +9,32 @@
 }
 \usage{
 zigeometric(lprob = "logit", eprob = list(),
-            lpszero  = "logit", epszero  = list(),
-            iprob = NULL, ipszero  = NULL,
+            lpstr0  = "logit", epstr0  = list(),
+            iprob = NULL, ipstr0  = NULL,
             imethod = 1, bias.red = 0.5, zero = 2)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{lprob, lpszero}{ 
-  Link functions for the parameters \code{prob} and \eqn{\phi}{phi}.
+  \item{lprob, lpstr0}{ 
+  Link functions for the parameters \eqn{p}{prob} (\code{prob})
+  and \eqn{\phi}{phi}.
   The usual geometric probability parameter is the former.
   The probability of a structural zero is the latter.
   See \code{\link{Links}} for more choices.
+  For the zero-\emph{deflated} model see below.
 
   }
-  \item{eprob, epszero}{
+  \item{eprob, epstr0}{
   List. Extra argument for the respective links.
   See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{bias.red}{
-  A constant used in the initialization process of \code{pszero}.
+  A constant used in the initialization process of \code{pstr0}.
   It should lie between 0 and 1, with 1 having no effect.
 
   }
-  \item{iprob, ipszero}{
+  \item{iprob, ipstr0}{
   See \code{\link{CommonVGAMffArguments}} for information.
 
   }
@@ -43,16 +45,16 @@ zigeometric(lprob = "logit", eprob = list(),
 }
 \details{
   This function uses Fisher scoring and is based on
-  \deqn{P(Y=0) =  \phi + (1-\phi) prob,}{%
+  \deqn{P(Y=0) =  \phi + (1-\phi) p,}{%
         P(Y=0) =  phi + (1-phi) * prob,}
   for \eqn{y=0}, and 
-  \deqn{P(Y=y) = (1-\phi) prob (1 - prob)^{y}.}{%
+  \deqn{P(Y=y) = (1-\phi) p (1 - p)^{y}.}{%
         P(Y=y) = (1-phi) * prob * (1 - prob)^y.}
   for \eqn{y=1,2,\ldots}.
   The parameter \eqn{\phi}{phi} satisfies \eqn{0 < \phi < 1}{0 <
-  phi < 1}.  The mean of \eqn{Y} is \eqn{E(Y)=(1-\phi) prob / (1-prob)}{E(Y)
+  phi < 1}.  The mean of \eqn{Y} is \eqn{E(Y)=(1-\phi) p / (1-p)}{E(Y)
   = (1-phi) * prob / (1-prob)} and these are returned as the fitted values.
-  By default, the two linear/additive predictors are \eqn{(logit(prob),
+  By default, the two linear/additive predictors are \eqn{(logit(p),
   logit(\phi))^T}{(logit(prob), logit(phi))^T}.
 
 
@@ -70,21 +72,30 @@ zigeometric(lprob = "logit", eprob = list(),
 
 \author{ T. W. Yee }
 \note{
-  Numerical problems may occur since the initial values are currently
-  not very good.
+%  Numerical problems may occur since the initial values are currently
+%  not very good.
+
+
+  The zero-\emph{deflated} geometric distribution might
+  be fitted by setting \code{lpstr0 = identity}, albeit,
+  not entirely reliably. See \code{\link{zipoisson}}
+  for information that can be applied here. Else
+  try the zero-altered geometric distribution (see
+  \code{\link{zageometric}}).
 
 }
 
-\section{Warning }{
-  Numerical problems can occur.
-  Half-stepping is not uncommon.
-  If failure to converge occurs, make use of the argument \code{ipszero}.
-
-} 
+%\section{Warning }{
+%  Numerical problems can occur.
+%  Half-stepping is not uncommon.
+%  If failure to converge occurs, make use of the argument \code{ipstr0}.
+%
+%} 
 
 \seealso{
   \code{\link{rzigeom}},
   \code{\link{geometric}},
+  \code{\link{zageometric}},
   \code{\link[stats]{rgeom}}.
 
 }
@@ -98,9 +109,9 @@ gdata = transform(gdata, eta1 =  1.0 - 1.0 * x2 + 2.0 * x3,
 gdata = transform(gdata, prob1 = logit(eta1, inverse = TRUE),
                          prob2 = logit(eta2, inverse = TRUE),
                          prob3 = logit(eta3, inverse = TRUE))
-gdata = transform(gdata, y1 = rzigeom(nn, prob1, pszero = prob3),
-                         y2 = rzigeom(nn, prob2, pszero = prob3),
-                         y3 = rzigeom(nn, prob2, pszero = prob3))
+gdata = transform(gdata, y1 = rzigeom(nn, prob1, pstr0 = prob3),
+                         y2 = rzigeom(nn, prob2, pstr0 = prob3),
+                         y3 = rzigeom(nn, prob2, pstr0 = prob3))
 with(gdata, table(y1))
 with(gdata, table(y2))
 with(gdata, table(y3))

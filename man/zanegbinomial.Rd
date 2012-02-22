@@ -9,15 +9,16 @@
 
 }
 \usage{
-zanegbinomial(lp0 = "logit", lmunb = "loge", lsize = "loge",
-              ep0 = list(), emunb = list(), esize = list(), ipnb0 = NULL,
-              isize = NULL, zero = -3, cutoff = 0.995, imethod = 1,
-              shrinkage.init = 0.95)
+zanegbinomial(lpobs0 = "logit", lmunb = "loge", lsize = "loge",
+              epobs0 = list(),  emunb = list(), esize = list(),
+              ipobs0 = NULL,                    isize = NULL,
+              zero = c(-1, -3), imethod = 1,
+              nsimEIM = 250, shrinkage.init = 0.95)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{lp0}{ 
-    Link function for the parameter \eqn{p_0}{p0}, called \code{p0} here.
+  \item{lpobs0}{ 
+    Link function for the parameter \eqn{p_0}{pobs0}, called \code{pobs0} here.
     See \code{\link{Links}} for more choices.
 
   }
@@ -34,44 +35,38 @@ zanegbinomial(lp0 = "logit", lmunb = "loge", lsize = "loge",
     See \code{\link{Links}} for more choices.
 
   }
-  \item{ep0, emunb, esize}{
+  \item{epobs0, emunb, esize}{
   List. Extra argument for the respective links.
   See \code{earg} in \code{\link{Links}} for general information.
 
   }
-  \item{ipnb0}{ 
-    Optional initial values for the probability \eqn{p_0}{p0}.
-    If given, they must be in \eqn{(0,1)},
-    and it is ok to give one value each for each response/species.
-
-  }
-  \item{isize}{ 
-    Optional initial values for \code{k}.
-    If given, they must be positive, and give one value
-    for each response/species.
+  \item{ipobs0, isize}{ 
+    Optional initial values for \eqn{p_0}{pobs0} and \code{k}.
+    If given, it is okay to give one value
+    for each response/species by inputting a vector whose length
+    is the number of columns of the response matrix.
 
   }
   \item{zero}{ 
-    Integer valued vector, usually assigned \eqn{-3} or \eqn{3} if
-    used at all. Specifies which of the three linear predictors are
-    modelled as an intercept only. By default, the \code{k} parameter
-    (after \code{lsize} is applied) for each response is modelled as
-    a single unknown number that is estimated. It can be modelled as a
+    Integer valued vector, may be assigned, e.g., \eqn{-3} or \eqn{3} if
+    the probability of an observed value is to be modelled with the
+    covariates.
+    Specifies which of the three linear predictors are
+    modelled as an intercept only. By default, the \code{k} and \eqn{p_0}{pobs0}
+    parameters for each response are modelled as
+    single unknown numbers that are estimated.
+    All parameters can be modelled as a
     function of the explanatory variables by setting \code{zero = NULL}.
     A negative value means that the value is recycled, so setting \eqn{-3}
     means all \code{k} are intercept-only.
     See \code{\link{CommonVGAMffArguments}} for more information.
 
   }
-  \item{cutoff}{ 
-    A numeric which is close to 1 but never exactly 1.  Used to
-    specify how many terms of the infinite series are actually used.
-    The sum of the probabilites are added until they reach this value
-    or more.  It is like specifying \code{p} in an imaginary function
-    \code{qnegbin(p)}.
+  \item{nsimEIM, imethod}{
+  See \code{\link{CommonVGAMffArguments}}.
 
   }
-  \item{imethod, shrinkage.init}{
+  \item{shrinkage.init}{
   See \code{\link{negbinomial}}
   and \code{\link{CommonVGAMffArguments}}.
 
@@ -79,9 +74,9 @@ zanegbinomial(lp0 = "logit", lmunb = "loge", lsize = "loge",
 }
 
 \details{
-  The response \eqn{Y} is zero with probability \eqn{p_0}{p0},
+  The response \eqn{Y} is zero with probability \eqn{p_0}{pobs0},
   or \eqn{Y} has a positive-negative binomial distribution with
-  probability \eqn{1-p_0}{1-p0}.  Thus \eqn{0 < p_0 < 1}{0 < p0 < 1},
+  probability \eqn{1-p_0}{1-pobs0}.  Thus \eqn{0 < p_0 < 1}{0 < pobs0 < 1},
   which is modelled as a function of the covariates.  The zero-altered
   negative binomial distribution differs from the zero-inflated negative
   binomial distribution in that the former has zeros coming from one
@@ -92,7 +87,7 @@ zanegbinomial(lp0 = "logit", lmunb = "loge", lsize = "loge",
 
 
   For one response/species, by default, the three linear/additive
-  predictors are \eqn{(logit(p_0), \log(\mu_{nb}), \log(k))^T}{(logit(p0),
+  predictors are \eqn{(logit(p_0), \log(\mu_{nb}), \log(k))^T}{(logit(pobs0),
   log(munb), log(k))^T}.  This vector is recycled for multiple species.
 
 
@@ -107,7 +102,7 @@ zanegbinomial(lp0 = "logit", lmunb = "loge", lsize = "loge",
   which should be extracted by the generic function \code{fitted}, returns
   the mean \eqn{\mu}{mu} which is given by 
   \deqn{\mu = (1-p_0) \mu_{nb} / [1 - (k/(k+\mu_{nb}))^k].}{%
-         mu = (1-p0) * munb / [1 - (k/(k+munb))^k].}
+         mu = (1-pobs0) * munb / [1 - (k/(k+munb))^k].}
 
 }
 \references{
@@ -137,9 +132,10 @@ for counts with extra zeros.
 \author{ T. W. Yee }
 \note{
 
-  Note this family function allows \eqn{p_0}{p0} to be modelled as
-  functions of the covariates. It is a conditional model, not a mixture
-  model.
+  Note this family function allows \eqn{p_0}{pobs0} to be modelled as
+  functions of the covariates provided \code{zero} is set correctly.
+  It is a conditional model, not a mixture model.
+  Simulated Fisher scoring is the algorithm.
 
 
   This family function effectively combines
@@ -167,17 +163,15 @@ for counts with extra zeros.
 }
 
 \examples{
-zdata <- data.frame(x = runif(nn <- 2000))
+zdata <- data.frame(x2 = runif(nn <- 2000))
+zdata <- transform(zdata, pobs0 = logit(-1 + 2*x2, inverse = TRUE))
 zdata <- transform(zdata,
-                   p0 = logit(-1 + 2*x, inverse = TRUE),
-                   y1 = rposnegbin(nn, munb = exp(0+2*x), size = exp(1)),
-                   y2 = rposnegbin(nn, munb = exp(1+2*x), size = exp(1)))
-zdata <- transform(zdata, y1 = ifelse(runif(nn) < p0, 0, y1),
-                          y2 = ifelse(runif(nn) < p0, 0, y2))
+         y1 = rzanegbin(nn, munb = exp(0+2*x2), size = exp(1), pobs0 = pobs0),
+         y2 = rzanegbin(nn, munb = exp(1+2*x2), size = exp(1), pobs0 = pobs0))
 with(zdata, table(y1))
 with(zdata, table(y2))
 
-fit <- vglm(cbind(y1, y2) ~ x, zanegbinomial, zdata, trace = TRUE)
+fit <- vglm(cbind(y1, y2) ~ x2, zanegbinomial, zdata, trace = TRUE)
 coef(fit, matrix = TRUE)
 head(fitted(fit))
 head(predict(fit))

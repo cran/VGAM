@@ -113,7 +113,7 @@ binomialff(link = "logit", earg = list(), dispersion = 1, mv = FALSE,
 
   Altman, M. and Gill, J. and McDonald, M. P. (2004)
   \emph{Numerical Issues in Statistical Computing for the Social
-        Scientist}, Hoboken, NJ: Wiley-Interscience.
+        Scientist}, Hoboken, NJ, USA: Wiley-Interscience.
 
 
   Ridout, M. S. (1990)
@@ -223,7 +223,7 @@ with(shunua, matplot(altitude, fitted(fit2), type = "l",
 ridout = data.frame(v = c(1000, 100, 10), r = c(4, 3, 3), n = c(5, 5, 5))
 (ridout = transform(ridout, logv = log(v)))
 # The iterations oscillates between two local solutions:
-glm.fail = glm(r/n ~ offset(logv) + 1, weight = n,
+glm.fail = glm(r / n ~ offset(logv) + 1, weight = n,
                binomial(link = cloglog), ridout, trace = TRUE)
 coef(glm.fail)
 # vglm()'s half-stepping ensures the MLE of -5.4007 is obtained:

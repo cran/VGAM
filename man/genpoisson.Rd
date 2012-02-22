@@ -70,7 +70,7 @@ for some data sets,
 the default link for \code{llambda} is not always appropriate.
 
 
-An ordinary Poisson distribution corresponds to \eqn{\lambda=0}{lambda=0}.
+An ordinary Poisson distribution corresponds to \eqn{\lambda = 0}{lambda = 0}.
 The mean (returned as the fitted values) is 
 \eqn{E(Y) = \theta / (1 - \lambda)}
 and the variance is \eqn{\theta / (1 - \lambda)^3}.
@@ -118,7 +118,7 @@ New York: Marcel Dekker.
 }
 \examples{
 gdata = data.frame(x2 = runif(nn <- 200))
-gdata = transform(gdata, y = rpois(nn, exp(2-x2))) # Ordinary Poisson data
+gdata = transform(gdata, y = rpois(nn, exp(2 - x2))) # Ordinary Poisson data
 fit  = vglm(y ~ x2, genpoisson(zero = 1), gdata, trace = TRUE)
 coef(fit, matrix = TRUE)
 summary(fit)

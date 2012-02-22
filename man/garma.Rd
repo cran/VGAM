@@ -4,9 +4,10 @@
 \title{GARMA (Generalized Autoregressive Moving-Average) Models}
 \description{
   Fits GARMA models to time series data.
+
 }
 \usage{
-garma(link = "identity", earg=list(), p.ar.lag = 1, q.lag.ma = 0,
+garma(link = "identity", earg=list(), p.ar.lag = 1, q.ma.lag = 0,
       coefstart = NULL, step = 1)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -38,10 +39,11 @@ garma(link = "identity", earg=list(), p.ar.lag = 1, q.lag.ma = 0,
   Called \eqn{p} below.
 
   }
-\item{q.lag.ma}{
+  \item{q.ma.lag}{
   A non-negative integer,
   the lag for the moving-average component.
   Called \eqn{q} below.
+
 
   }
   \item{coefstart}{
@@ -49,9 +51,11 @@ garma(link = "identity", earg=list(), p.ar.lag = 1, q.lag.ma = 0,
   For technical reasons, the
   argument \code{coefstart} in \code{\link{vglm}} cannot be used.
 
+
   }
   \item{step}{
   Numeric. Step length, e.g., \code{0.5} means half-stepsizing.
+
 
   }
 % \item{constant}{
@@ -72,7 +76,8 @@ garma(link = "identity", earg=list(), p.ar.lag = 1, q.lag.ma = 0,
   given in the \code{link} argument reflect this, and the user
   must choose an appropriate link.
 
-  The GARMA(\eqn{p,q}) model is defined by firstly
+
+  The GARMA(\eqn{p, q}) model is defined by firstly
   having a response belonging to the exponential family
   \deqn{f(y_t|D_t) = \exp
         \left\{ \frac{y_t \theta_t - b(\theta_t)}{\phi / A_t} +
@@ -95,7 +100,7 @@ garma(link = "identity", earg=list(), p.ar.lag = 1, q.lag.ma = 0,
   \eqn{D_t=\{x_t,\ldots,x_1,y_{t-1},\ldots,y_1,\mu_{t-1},\ldots,\mu_1\}}{
        D_t={x_t,\ldots,x_1,y_(t-1),\ldots,y_1,mu_(t-1),\ldots,mu_1}}
   is the previous information set. 
-  Secondly, the GARMA(\eqn{p,q}) model is defined by
+  Secondly, the GARMA(\eqn{p, q}) model is defined by
   \deqn{g(\mu_t) = \eta_t = x_t^T \beta +
     \sum_{k=1}^p \phi_k (g(y_{t-k}) - x_{t-k}^T \beta) +
     \sum_{k=1}^q \theta_k (g(y_{t-k}) - \eta_{t-k}).}{%
@@ -105,10 +110,12 @@ garma(link = "identity", earg=list(), p.ar.lag = 1, q.lag.ma = 0,
   Parameter vectors \eqn{\beta}{beta}, \eqn{\phi}{phi} and \eqn{\theta}{theta}
   are estimated by maximum likelihood.
 
+
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}}.
+
 
 }
 \references{
@@ -117,15 +124,18 @@ garma(link = "identity", earg=list(), p.ar.lag = 1, q.lag.ma = 0,
   \emph{Proceedings in Computational Statistics COMPSTAT 1998} by
   Payne, R. and P. J. Green. Physica-Verlag.
 
+
   Benjamin, M. A., Rigby, R. A. and Stasinopoulos, M. D. (2003)
   Generalized Autoregressive Moving Average Models.
   \emph{Journal of the American Statistical Association},
   \bold{98}: 214--223.
+
   
   Zeger, S. L. and Qaqish, B. (1988)
   Markov regression models for time series: a quasi-likelihood approach.
   \emph{Biometrics},
   \bold{44}: 1019--1031.
+
 
 }
 
@@ -133,20 +143,23 @@ garma(link = "identity", earg=list(), p.ar.lag = 1, q.lag.ma = 0,
 \note{
   This function is unpolished and is requires lots
   of improvements. In particular, initialization is quite poor,
-  and could be improved.
+  and ought to be improved.
   A limited amount of experience has shown that half-stepsizing is
-  often needed for convergence, therefore choosing \code{crit="coef"}
+  often needed for convergence, therefore choosing \code{crit = "coef"}
   is not recommended.
+
 
   Overdispersion is not handled.
 
+
 }
 \section{Warning}{
-  This \pkg{VGAM} family function is `non-standard' in that the model does need
-  some coercing to get it into the VGLM framework.
-  Special code is required to get it running.
-  A consequence is that some methods functions may give wrong results
-  when applied to the fitted object.
+  This \pkg{VGAM} family function is 'non-standard' in that the
+  model does need some coercing to get it into the VGLM framework.
+  Special code is required to get it running. A consequence is
+  that some methods functions may give wrong results when applied
+  to the fitted object.
+
 
 }
 \seealso{
@@ -156,11 +169,11 @@ garma(link = "identity", earg=list(), p.ar.lag = 1, q.lag.ma = 0,
   The site \url{http://www.stat.auckland.ac.nz/~yee} contains
   more documentation about this family function.
 
+
 }
 
 \examples{
-# See Zeger and Qaqish (1988)
-interspike = c(68, 41, 82, 66, 101, 66, 57,  41,  27, 78,
+gdata = data.frame(interspike = c(68, 41, 82, 66, 101, 66, 57,  41,  27, 78,
 59, 73,  6, 44,  72, 66, 59,  60,  39, 52,
 50, 29, 30, 56,  76, 55, 73, 104, 104, 52,
 25, 33, 20, 60,  47,  6, 47,  22,  35, 30,
@@ -169,20 +182,19 @@ interspike = c(68, 41, 82, 66, 101, 66, 57,  41,  27, 78,
  2, 30, 18, 17,  28,  9, 28,  20,  17, 12,
 19, 18, 14, 23,  18, 22, 18,  19,  26, 27,
 23, 24, 35, 22,  29, 28, 17,  30,  34, 17,
-20, 49, 29, 35,  49, 25, 55,  42,  29, 16)
-spikenum = seq(interspike)
+20, 49, 29, 35,  49, 25, 55,  42,  29, 16)) # See Zeger and Qaqish (1988)
+gdata = transform(gdata, spikenum = seq(interspike))
 bvalue = 0.1  # .Machine$double.xmin # Boundary value
-fit = vglm(interspike ~ 1, trace=TRUE,
-           garma("loge", earg=list(bvalue=bvalue), p=2, coef=c(4,.3,.4)))
+fit = vglm(interspike ~ 1, trace = TRUE, data = gdata,
+           garma("loge", earg = list(bvalue = bvalue),
+                 p = 2, coef = c(4, 0.3, 0.4)))
 summary(fit)
-coef(fit, matrix=TRUE)
+coef(fit, matrix = TRUE)
 Coef(fit)  # A bug here
-\dontrun{
-plot(interspike, ylim=c(0,120), las=1, font=1, xlab="Spike Number",
-     ylab="Inter-Spike Time (ms)", col="blue")
-lines(spikenum[-(1:fit@misc$plag)], fitted(fit), col="green")
-abline(h=mean(interspike), lty=2)
-}
+\dontrun{ with(gdata, plot(interspike, ylim = c(0, 120), las = 1,
+     xlab = "Spike Number", ylab = "Inter-Spike Time (ms)", col = "blue"))
+with(gdata, lines(spikenum[-(1:fit@misc$plag)], fitted(fit), col = "orange"))
+abline(h = mean(with(gdata, interspike)), lty = "dashed", col = "gray") }
 }
 \keyword{models}
 \keyword{regression}

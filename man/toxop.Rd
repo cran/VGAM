@@ -9,11 +9,15 @@
 \format{
   A data frame with 34 observations on the following 4 variables.
   \describe{
-    \item{\code{rainfall}}{a numeric vector; the amount of rainfall in each city.}
+    \item{\code{rainfall}}{
+  a numeric vector; the amount of rainfall
+  in each city.
+
+  }
     \item{\code{ssize}}{a numeric vector; sample size.}
     \item{\code{cityNo}}{a numeric vector; the city number.}
-    \item{\code{positive}}{a numeric vector; the number of subjects testing positive
-    for the disease. }
+    \item{\code{positive}}{a numeric vector; the number of subjects
+          testing positive for the disease. }
   }
 }
 \details{

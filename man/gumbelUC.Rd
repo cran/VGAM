@@ -31,7 +31,7 @@ rgumbel(n, location = 0, scale = 1)
     of the Gumbel distribution (see \bold{Details} below). }
   \item{log}{
   Logical.
-  If \code{log=TRUE} then the logarithm of the density is returned.
+  If \code{log = TRUE} then the logarithm of the density is returned.
 
   }
 

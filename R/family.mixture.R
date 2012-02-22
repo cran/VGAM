@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2011 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2012 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -20,7 +20,7 @@ mix2normal1 = function(lphi = "logit",
                        ephi = list(), emu1 = list(), emu2 = list(),
                        esd1 = list(), esd2 = list(),
                        iphi=0.5, imu1 = NULL, imu2 = NULL, isd1 = NULL, isd2 = NULL,
-                       qmu=c(0.2, 0.8),
+                       qmu = c(0.2, 0.8),
                        equalsd = TRUE,
                        nsimEIM = 100,
                        zero = 1)
@@ -31,18 +31,23 @@ mix2normal1 = function(lphi = "logit",
         lmu = as.character(substitute(lmu))
     if (mode(lsd) != "character" && mode(lsd) != "name")
         lsd = as.character(substitute(lsd))
-    if (!is.Numeric(qmu, allow=2, positive = TRUE) || any(qmu >= 1))
-        stop("bad input for argument 'qmu'")
-    if (length(iphi) && (!is.Numeric(iphi, allow = 1, positive = TRUE) || iphi>= 1))
+    if (!is.Numeric(qmu, allowable.length = 2,
+                    positive = TRUE) ||
+        any(qmu >= 1))
+      stop("bad input for argument 'qmu'")
+    if (length(iphi) &&
+       (!is.Numeric(iphi, allowable.length = 1,
+                    positive = TRUE) ||
+        iphi>= 1))
         stop("bad input for argument 'iphi'")
     if (length(imu1) && !is.Numeric(imu1))
-        stop("bad input for argument 'imu1'")
+      stop("bad input for argument 'imu1'")
     if (length(imu2) && !is.Numeric(imu2))
-        stop("bad input for argument 'imu2'")
+      stop("bad input for argument 'imu2'")
     if (length(isd1) && !is.Numeric(isd1, positive = TRUE))
-        stop("bad input for argument 'isd1'")
+      stop("bad input for argument 'isd1'")
     if (length(isd2) && !is.Numeric(isd2, positive = TRUE))
-        stop("bad input for argument 'isd2'")
+      stop("bad input for argument 'isd2'")
     if (!is.list(ephi)) ephi = list()
     if (!is.list(emu1)) emu1 = list()
     if (!is.list(emu2)) emu2 = list()
@@ -50,8 +55,10 @@ mix2normal1 = function(lphi = "logit",
     if (!is.list(esd2)) esd2 = list()
     if (!is.logical(equalsd) || length(equalsd) != 1)
         stop("bad input for argument 'equalsd'")
-    if (!is.Numeric(nsimEIM, allow = 1, integ = TRUE) || nsimEIM <= 10)
-        stop("'nsimEIM' should be an integer greater than 10")
+    if (!is.Numeric(nsimEIM, allowable.length = 1,
+                    integer.valued = TRUE) ||
+        nsimEIM <= 10)
+      stop("'nsimEIM' should be an integer greater than 10")
 
     new("vglmff",
     blurb = c("Mixture of two univariate normals\n\n",
@@ -65,9 +72,9 @@ mix2normal1 = function(lphi = "logit",
            "Variance: phi*sd1^2 + (1-phi)*sd2^2 + phi*(1-phi)*(mu1-mu2)^2"),
     constraints = eval(substitute(expression({
         constraints = cm.vgam(rbind(diag(4), c(0,0,1,0)), x, .equalsd,
-                              constraints, int = TRUE)
+                              constraints, intercept.apply = TRUE)
         constraints = cm.zero.vgam(constraints, x, .zero, M)
-    }), list(.zero=zero, .equalsd=equalsd))),
+    }), list( .zero=zero, .equalsd = equalsd ))),
     initialize = eval(substitute(expression({
         if (ncol(y <- cbind(y)) != 1)
             stop("the response must be a vector or one-column matrix")
@@ -78,10 +85,10 @@ mix2normal1 = function(lphi = "logit",
             namesof("mu2", .lmu, earg = .emu2, tag = FALSE),
             namesof("sd2", .lsd, earg = .esd2, tag = FALSE))
         if (!length(etastart)) {
-            qy = quantile(y, prob= .qmu)
-            init.phi = rep(if(length(.iphi)) .iphi else 0.5, length=n)
-            init.mu1 = rep(if(length(.imu1)) .imu1 else qy[1], length=n)
-            init.mu2 = rep(if(length(.imu2)) .imu2 else qy[2], length=n)
+            qy = quantile(y, prob = .qmu)
+            init.phi = rep(if(length(.iphi)) .iphi else 0.5, length = n)
+            init.mu1 = rep(if(length(.imu1)) .imu1 else qy[1], length = n)
+            init.mu2 = rep(if(length(.imu2)) .imu2 else qy[2], length = n)
             ind.1 = if (init.mu1[1] < init.mu2[1]) 1:round(n* init.phi[1]) else
                 round(n* init.phi[1]):n
             ind.2 = if (init.mu1[1] < init.mu2[1]) round(n* init.phi[1]):n else
@@ -217,25 +224,32 @@ mix2poisson.control <- function(trace = TRUE, ...)
 
 mix2poisson = function(lphi = "logit", llambda = "loge",
                        ephi = list(), el1 = list(), el2 = list(),
-                       iphi=0.5, il1 = NULL, il2 = NULL,
-                       qmu=c(0.2, 0.8), nsimEIM = 100, zero = 1)
+                       iphi = 0.5, il1 = NULL, il2 = NULL,
+                       qmu = c(0.2, 0.8), nsimEIM = 100, zero = 1)
 {
     if (mode(lphi) != "character" && mode(lphi) != "name")
         lphi = as.character(substitute(lphi))
     if (mode(llambda) != "character" && mode(llambda) != "name")
         llambda = as.character(substitute(llambda))
-    if (!is.Numeric(qmu, allow=2, positive = TRUE) || any(qmu >= 1))
+
+    if (!is.Numeric(qmu, allowable.length = 2, positive = TRUE) ||
+        any(qmu >= 1))
         stop("bad input for argument 'qmu'")
-    if (length(iphi) && (!is.Numeric(iphi, allow = 1, positive = TRUE) || iphi>= 1))
-        stop("bad input for argument 'iphi'")
+    if (length(iphi) &&
+       (!is.Numeric(iphi, allowable.length = 1, positive = TRUE) ||
+       iphi >= 1))
+      stop("bad input for argument 'iphi'")
     if (length(il1) && !is.Numeric(il1))
-        stop("bad input for argument 'il1'")
+      stop("bad input for argument 'il1'")
     if (length(il2) && !is.Numeric(il2))
-        stop("bad input for argument 'il2'")
+      stop("bad input for argument 'il2'")
+
     if (!is.list(ephi)) ephi = list()
     if (!is.list(el1)) el1 = list()
     if (!is.list(el2)) el2 = list()
-    if (!is.Numeric(nsimEIM, allow = 1, integ = TRUE) || nsimEIM <= 10)
+    if (!is.Numeric(nsimEIM, allowable.length = 1,
+                    integer.valued = TRUE) ||
+        nsimEIM <= 10)
         stop("'nsimEIM' should be an integer greater than 10")
 
     new("vglmff",
@@ -256,9 +270,9 @@ mix2poisson = function(lphi = "logit", llambda = "loge",
                            namesof("lambda2", .llambda, earg = .el2, tag = FALSE))
         if (!length(etastart)) {
             qy = quantile(y, prob= .qmu)
-            init.phi =     rep(if(length(.iphi)) .iphi else 0.5, length=n)
-            init.lambda1 = rep(if(length(.il1)) .il1 else qy[1], length=n)
-            init.lambda2 = rep(if(length(.il2)) .il2 else qy[2], length=n)
+            init.phi =     rep(if(length(.iphi)) .iphi else 0.5, length = n)
+            init.lambda1 = rep(if(length(.il1)) .il1 else qy[1], length = n)
+            init.lambda2 = rep(if(length(.il2)) .il2 else qy[2], length = n)
             if (!length(etastart))  
             etastart = cbind(theta2eta(init.phi, .lphi, earg = .ephi),
                              theta2eta(init.lambda1, .llambda, earg = .el1),
@@ -372,28 +386,33 @@ mix2exp.control <- function(trace = TRUE, ...) {
 mix2exp = function(lphi = "logit", llambda = "loge",
                    ephi = list(), el1 = list(), el2 = list(),
                    iphi=0.5, il1 = NULL, il2 = NULL,
-                   qmu=c(0.8, 0.2), nsimEIM = 100, zero = 1)
+                   qmu = c(0.8, 0.2), nsimEIM = 100, zero = 1)
 {
     if (mode(lphi) != "character" && mode(lphi) != "name")
         lphi = as.character(substitute(lphi))
     if (mode(llambda) != "character" && mode(llambda) != "name")
         llambda = as.character(substitute(llambda))
-    if (!is.Numeric(qmu, allow=2, positive = TRUE) || any(qmu >= 1))
-        stop("bad input for argument 'qmu'")
-    if (length(iphi) && (!is.Numeric(iphi, allow = 1, positive = TRUE) ||
+
+    if (!is.Numeric(qmu, allowable.length = 2, positive = TRUE) ||
+        any(qmu >= 1))
+      stop("bad input for argument 'qmu'")
+    if (length(iphi) &&
+       (!is.Numeric(iphi, allowable.length = 1, positive = TRUE) ||
         iphi >= 1))
-        stop("bad input for argument 'iphi'")
+      stop("bad input for argument 'iphi'")
     if (length(il1) && !is.Numeric(il1))
-        stop("bad input for argument 'il1'")
+      stop("bad input for argument 'il1'")
     if (length(il2) && !is.Numeric(il2))
-        stop("bad input for argument 'il2'")
+      stop("bad input for argument 'il2'")
 
     if (!is.list(ephi)) ephi = list()
-    if (!is.list(el1)) el1 = list()
-    if (!is.list(el2)) el2 = list()
+    if (!is.list(el1))  el1  = list()
+    if (!is.list(el2))  el2  = list()
 
-    if (!is.Numeric(nsimEIM, allow = 1, integ = TRUE) || nsimEIM <= 10)
-        stop("'nsimEIM' should be an integer greater than 10")
+    if (!is.Numeric(nsimEIM, allowable.length = 1, integer.valued = TRUE) ||
+        nsimEIM <= 10)
+      stop("'nsimEIM' should be an integer greater than 10")
+
 
     new("vglmff",
     blurb = c("Mixture of two univariate exponentials\n\n",
@@ -402,9 +421,11 @@ mix2exp = function(lphi = "logit", llambda = "loge",
            namesof("lambda1", llambda, earg = el1, tag = FALSE), ", ",
            namesof("lambda2", llambda, earg = el2, tag = FALSE), "\n",
            "Mean:     phi/lambda1 + (1-phi)/lambda2\n"),
+
     constraints = eval(substitute(expression({
         constraints = cm.zero.vgam(constraints, x, .zero, M)
     }), list(.zero=zero ))),
+
     initialize = eval(substitute(expression({
         if (ncol(y <- cbind(y)) != 1)
             stop("the response must be a vector or one-column matrix")
@@ -413,9 +434,9 @@ mix2exp = function(lphi = "logit", llambda = "loge",
                              namesof("lambda2", .llambda, earg = .el2,tag = FALSE))
         if (!length(etastart)) {
             qy = quantile(y, prob= .qmu)
-            init.phi =     rep(if(length(.iphi)) .iphi else 0.5, length=n)
-            init.lambda1 = rep(if(length(.il1)) .il1 else 1/qy[1], length=n)
-            init.lambda2 = rep(if(length(.il2)) .il2 else 1/qy[2], length=n)
+            init.phi =     rep(if(length(.iphi)) .iphi else 0.5, length = n)
+            init.lambda1 = rep(if(length(.il1)) .il1 else 1/qy[1], length = n)
+            init.lambda2 = rep(if(length(.il2)) .il2 else 1/qy[2], length = n)
             if (!length(etastart))  
             etastart = cbind(theta2eta(init.phi, .lphi, earg = .ephi),
                              theta2eta(init.lambda1, .llambda, earg = .el1),

@@ -39,17 +39,20 @@ ABO(link = "logit", earg=list(), ipA = NULL, ipO = NULL)
   \code{pB=q},
   \code{pO=r}.
 
+
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}}
   and \code{\link{vgam}}.
 
+
 }
 \references{
   Lange, K. (2002)
   \emph{Mathematical and Statistical Methods for Genetic Analysis},
   2nd ed. New York: Springer-Verlag.
+
 
 }
 \author{ T. W. Yee }
@@ -60,6 +63,7 @@ ABO(link = "logit", earg=list(), ipA = NULL, ipO = NULL)
   proportions (so each row adds to 1) and the \code{weights}
   argument is used to specify the total number of counts for each row.
 
+
 }
 
 \seealso{
@@ -69,13 +73,14 @@ ABO(link = "logit", earg=list(), ipA = NULL, ipO = NULL)
   \code{\link{G1G2G3}},
   \code{\link{MNSs}}.
 
+
 }
 \examples{
-y = cbind(A=725, B=258, AB=72, O=1073) # Order matters, not the name
-fit = vglm(y ~ 1, ABO(link=identity), trace=TRUE, cri="coef")
-coef(fit, matrix=TRUE)
+ymatrix = cbind(A = 725, B = 258, AB = 72, O = 1073) # Order matters, not the name
+fit = vglm(ymatrix ~ 1, ABO(link = identity), trace = TRUE, cri = "coef")
+coef(fit, matrix = TRUE)
 Coef(fit) # Estimated pA and pB
-rbind(y, sum(y)*fitted(fit))
+rbind(ymatrix, sum(ymatrix) * fitted(fit))
 sqrt(diag(vcov(fit)))
 }
 \keyword{models}

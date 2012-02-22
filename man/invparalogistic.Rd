@@ -7,25 +7,25 @@
   inverse paralogistic distribution.
 }
 \usage{
-invparalogistic(link.a = "loge", link.scale = "loge",
-                earg.a=list(),   earg.scale=list(),
-                init.a = 1, init.scale = NULL, zero = NULL)
+invparalogistic(lshape1.a = "loge", lscale = "loge",
+                eshape1.a = list(),   escale = list(),
+                ishape1.a = 2, iscale = NULL, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{link.a, link.scale}{ 
+  \item{lshape1.a, lscale}{ 
   Parameter link functions applied to the
   (positive) shape parameter \code{a} and
   (positive) scale parameter \code{scale}.
   See \code{\link{Links}} for more choices.
 
   }
-  \item{earg.a, earg.scale}{
+  \item{eshape1.a, escale}{
   List. Extra argument for each of the links.
   See \code{earg} in \code{\link{Links}} for general information.
 
   }
-  \item{init.a, init.scale}{
+  \item{ishape1.a, iscale}{
   Optional initial values for \code{a} and \code{scale}.
 
   }
@@ -54,7 +54,7 @@ and \eqn{a} is the shape parameter.
 The mean is
   \deqn{E(Y) = b \, \Gamma(a + 1/a) \, \Gamma(1 - 1/a) / \Gamma(a)}{%
         E(Y) = b  gamma(a + 1/a)  gamma(1 - 1/a) /  gamma(a)}
-provided \eqn{a > 1}.
+provided \eqn{a > 1}; these are returned as the fitted values.
 
 
 }
@@ -63,12 +63,15 @@ provided \eqn{a > 1}.
   The object is used by modelling functions such as \code{\link{vglm}},
   and \code{\link{vgam}}.
 
+
 }
 \references{
+
 Kleiber, C. and Kotz, S. (2003)
 \emph{Statistical Size Distributions in Economics and
              Actuarial Sciences},
-Hoboken, NJ: Wiley-Interscience.
+Hoboken, NJ, USA: Wiley-Interscience.
+
 
 }
 
@@ -77,6 +80,7 @@ Hoboken, NJ: Wiley-Interscience.
 If the self-starting initial values fail, try experimenting
 with the initial value arguments, especially those whose
 default value is not \code{NULL}.
+
 
 }
 
@@ -90,14 +94,16 @@ default value is not \code{NULL}.
     \code{\link{invlomax}},
     \code{\link{lomax}},
     \code{\link{paralogistic}}.
+
+
 }
 
 \examples{
-y = rinvparalogistic(n=3000, 4, 6)
-fit = vglm(y ~ 1, invparalogistic, trace=TRUE)
-fit = vglm(y ~ 1, invparalogistic(init.a=2.7, init.sc=3.3),
-           trace=TRUE, crit="c")
-coef(fit, mat=TRUE)
+idata = data.frame(y = rinvparalogistic(n = 3000, 4, 6))
+fit = vglm(y ~ 1, invparalogistic, idata, trace = TRUE)
+fit = vglm(y ~ 1, invparalogistic(ishape1.a = 2.7, iscale = 3.3),
+           idata, trace = TRUE, crit = "coef")
+coef(fit, matrix = TRUE)
 Coef(fit)
 summary(fit)
 }

@@ -101,7 +101,7 @@ args(binom2.or)
 args(gpd)
 
 #LMS quantile regression example
-fit = vglm(BMI ~ bs(age, df = 4), lms.bcg(zero = c(1,3)), bminz, trace = TRUE)
+fit = vglm(BMI ~ bs(age, df = 4), lms.bcg(zero = c(1,3)), bmi.nz, trace = TRUE)
 coef(fit, matrix = TRUE)
 }
 \keyword{models}

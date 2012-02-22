@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2011 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2012 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -59,12 +59,15 @@ summaryvglm <- function(object, correlation = FALSE,
 
 
 
+
 setMethod("logLik",  "summary.vglm", function(object, ...)
     logLik.vlm(object, ...))
 
 
-printsummary.vglm <- function(x, digits = NULL, quote = TRUE, prefix = "",
-                              presid = TRUE) {
+show.summary.vglm <- function(x, digits = NULL, quote = TRUE,
+                              prefix = "",
+                              presid = TRUE,
+                              nopredictors = FALSE) {
 
   M <- x@misc$M
   coef <- x@coef3   # icients
@@ -98,13 +101,16 @@ printsummary.vglm <- function(x, digits = NULL, quote = TRUE, prefix = "",
 
   cat("\nNumber of linear predictors: ", M, "\n")
 
-  if (!is.null(x@misc$predictors.names))
-  if (M == 1)
-    cat("\nName of linear predictor:",
-        paste(x@misc$predictors.names, collapse = ", "), "\n") else
-  if (M <= 5)
-    cat("\nNames of linear predictors:",
-        paste(x@misc$predictors.names, collapse = ", "), fill = TRUE)
+  if (!is.null(x@misc$predictors.names) && !nopredictors) {
+    if (M == 1) {
+      cat("\nName of linear predictor:",
+          paste(x@misc$predictors.names, collapse = ", "), "\n") 
+    } else
+    if (M <= 5) {
+      cat("\nNames of linear predictors:",
+          paste(x@misc$predictors.names, collapse = ", "), fill = TRUE)
+    }
+  }
 
   prose <- ""
   if (length(x@dispersion)) {
@@ -127,7 +133,7 @@ printsummary.vglm <- function(x, digits = NULL, quote = TRUE, prefix = "",
 
 
   if (length(deviance(x))) {
-    cat("\nResidual Deviance:", yformat(deviance(x), digits))
+    cat("\nResidual deviance:", yformat(deviance(x), digits))
     if (is.finite(rdf))
         cat(" on", round(rdf, digits), "degrees of freedom\n") else
         cat("\n")
@@ -151,7 +157,7 @@ printsummary.vglm <- function(x, digits = NULL, quote = TRUE, prefix = "",
   }
 
 
-  cat("\nNumber of Iterations:", format(trunc(x@iter)), "\n")
+  cat("\nNumber of iterations:", format(trunc(x@iter)), "\n")
 
   if (!is.null(correl)) {
     ncol_X_vlm <- dim(correl)[2]
@@ -173,13 +179,15 @@ printsummary.vglm <- function(x, digits = NULL, quote = TRUE, prefix = "",
              function(object, ...)
              summaryvglm(object, ...))
 
-    setMethod("print", "summary.vglm",
-             function(x, ...)
-             invisible(printsummary.vglm(x, ...)))
+
+
+
 
     setMethod("show", "summary.vglm",
              function(object)
-             invisible(printsummary.vglm(object)))
+             show.summary.vglm(object))
+
+
 
 
 
@@ -197,7 +205,7 @@ vcovdefault <- function(object, ...) {
 
 
  vcovvlm <- function(object, dispersion = NULL, untransform = FALSE) {
-    so <- summaryvlm(object, corr = FALSE, dispersion = dispersion)
+    so <- summaryvlm(object, correlation = FALSE, dispersion = dispersion)
     d = if (any(slotNames(so) == "dispersion") && 
            is.Numeric(so@dispersion)) so@dispersion else 1
     answer = d * so@cov.unscaled
@@ -256,13 +264,18 @@ vcovdefault <- function(object, ...) {
 
 
 
+
+
 setMethod("vcov", "vlm",
          function(object, ...)
          vcovvlm(object, ...))
 
+
 setMethod("vcov", "vglm",
          function(object, ...)
          vcovvlm(object, ...))
+
+
 
 
 

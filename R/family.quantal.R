@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2011 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2012 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -24,7 +24,7 @@
 
   fitted.type <- match.arg(fitted.type,
                            c("observed", "treatment", "control"),
-                           several.ok =TRUE)
+                           several.ok = TRUE)
 
 
   if (mode(link0) !=  "character" && mode(link0) !=  "name")
@@ -35,7 +35,7 @@
     link1 <- as.character(substitute(link1))
   if (!is.list(earg1)) earg1 = list()
 
-  if (!is.Numeric(mux.offdiagonal, allow = 1) ||
+  if (!is.Numeric(mux.offdiagonal, allowable.length = 1) ||
       mux.offdiagonal >= 1 ||
       mux.offdiagonal < 0)
     stop("argument 'mux.offdiagonal' must be in the interval [0, 1)")

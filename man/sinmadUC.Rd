@@ -12,17 +12,17 @@
 
 }
 \usage{
-dsinmad(x, a, scale = 1, q.arg, log = FALSE)
-psinmad(q, a, scale = 1, q.arg)
-qsinmad(p, a, scale = 1, q.arg)
-rsinmad(n, a, scale = 1, q.arg)
+dsinmad(x, shape1.a, scale = 1, shape3.q, log = FALSE)
+psinmad(q, shape1.a, scale = 1, shape3.q)
+qsinmad(p, shape1.a, scale = 1, shape3.q)
+rsinmad(n, shape1.a, scale = 1, shape3.q)
 }
 \arguments{
   \item{x, q}{vector of quantiles.}
   \item{p}{vector of probabilities.}
   \item{n}{number of observations. If \code{length(n) > 1}, the length
     is taken to be the number required.}
-  \item{a, q.arg}{shape parameters.}
+  \item{shape1.a, shape3.q}{shape parameters.}
   \item{scale}{scale parameter.}
   \item{log}{
   Logical.
@@ -39,6 +39,7 @@ rsinmad(n, a, scale = 1, q.arg)
 
 }
 \references{
+
 Kleiber, C. and Kotz, S. (2003)
 \emph{Statistical Size Distributions in Economics and
              Actuarial Sciences},
@@ -50,19 +51,22 @@ Hoboken, NJ: Wiley-Interscience.
   See \code{\link{sinmad}}, which is the \pkg{VGAM} family function
   for estimating the parameters by maximum likelihood estimation.
 
+
 }
 \note{
   The Singh-Maddala distribution is a special case of the 4-parameter
   generalized beta II distribution.
 
+
 }
 \seealso{
   \code{\link{sinmad}},
   \code{\link{genbetaII}}.
+
 }
 \examples{
-y = rsinmad(n = 3000, 4, 6, 2)
-fit = vglm(y ~ 1, sinmad(init.a = 2.1), trace = TRUE, crit = "c")
+sdata = data.frame(y = rsinmad(n = 3000, 4, 6, 2))
+fit = vglm(y ~ 1, sinmad(ishape1.a = 2.1), sdata, trace = TRUE, crit = "coef")
 coef(fit, matrix = TRUE)
 Coef(fit)
 }

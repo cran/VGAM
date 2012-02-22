@@ -19,16 +19,15 @@ mbinomial(mvar = NULL, link = "logit", earg = list(),
   The intercept should be suppressed from the formula, and 
   the term must be a \code{\link[base]{factor}}.
 
-  }
-  \item{link}{ 
-  Parameter link function applied to the probability.
-% called \eqn{p} below.
-  See \code{\link{Links}} for more choices.
 
   }
-  \item{earg}{
-  List. Extra arguments for the links.
-  See \code{earg} in \code{\link{Links}} for general information.
+  \item{link, earg}{ 
+  Parameter link function and extra argument for the probability
+  parameter.
+% called \eqn{p} below.
+  Information for these are at \code{\link{Links}}
+  and \code{\link{CommonVGAMffArguments}}.
+
 
   }
   \item{parallel}{ 
@@ -45,15 +44,17 @@ mbinomial(mvar = NULL, link = "logit", earg = list(),
   }
 }
 \details{
-  By default, this \pkg{VGAM} family function fits a logistic regression
-  model to a binary response from a matched case-control study. Here,
-  each case \eqn{(Y = 1}) is matched with one or more controls \eqn{(Y = 0})
-  with respect to some matching variables (confounders). For example,
-  the first matched set is all women aged from 20 to 25, the second
-  matched set is women aged between 26 to 30, etc. The logistic
-  regression has a different intercept for each matched set but the other
-  regression coefficients are assumed to be the same across matched sets
+  By default, this \pkg{VGAM} family function fits a logistic
+  regression model to a binary response from a matched case-control
+  study. Here, each case \eqn{(Y = 1}) is matched with one or more
+  controls \eqn{(Y = 0}) with respect to some matching variables
+  (confounders). For example, the first matched set is all women
+  aged from 20 to 25, the second matched set is women aged between
+  26 to 30, etc. The logistic regression has a different intercept
+  for each matched set but the other regression coefficients
+  are assumed to be the same across matched sets
   (\code{parallel = TRUE}).
+
 
   Let \eqn{C} be the number of matched sets.
   This \pkg{VGAM} family function uses a trick by allowing \eqn{M},
@@ -68,11 +69,13 @@ mbinomial(mvar = NULL, link = "logit", earg = list(),
   The algorithm here constructs a different constraint matrix for
   each of the \eqn{C} columns.
 
+
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}}
   and \code{\link{vgam}}.
+
 
 }
 \references{ 
@@ -80,11 +83,13 @@ mbinomial(mvar = NULL, link = "logit", earg = list(),
   Hastie, T. J. and Tibshirani, R. J. (1990)
   \emph{Generalized Additive Models}, London: Chapman & Hall.
 
+
   Pregibon, D. (1984)
   Data analytic methods for matched case-control studies.
   \emph{Biometrics},
   \bold{40},
   639--651.
+
 
   Chapter 7 of 
   Breslow, N. E. and Day, N. E. (1980)
@@ -92,36 +97,43 @@ mbinomial(mvar = NULL, link = "logit", earg = list(),
         of Case-Control Studies}.
   Lyon: International Agency for Research on Cancer.
 
+
   Holford, T. R. and White, C. and Kelsey, J. L. (1978)
   Multivariate analysis for matched case-control studies.
   \emph{American Journal of Epidemiology},
   \bold{107}, 245--256.
 
+
 }
 
 \author{ Thomas W. Yee }
 \note{
-  The response is assumed to be in a format that can also be inputted
-  into \code{\link{binomialff}}.
+  The response is assumed to be in a format that can also be
+  inputted into \code{\link{binomialff}}.
+
 
 }
 \section{Warning }{
-  Both the memory requirements and computational time of this \pkg{VGAM}
-  family function grows very quickly with respect to the number of
-  matched sets. For example, the large model matrix of a data set with 100
-  matched sets consisting of one case and one control per set will take
-  up at least (about) 20Mb of memory. For a constant number of cases and controls
-  per matched set, the memory requirements are \eqn{O(C^3)} and the
-  the computational time is \eqn{O(C^4)} flops.
+  Both the memory requirements and computational time of this
+  \pkg{VGAM} family function grows very quickly with respect
+  to the number of matched sets. For example, the large model
+  matrix of a data set with 100 matched sets consisting of one
+  case and one control per set will take up at least (about)
+  20Mb of memory. For a constant number of cases and controls
+  per matched set, the memory requirements are \eqn{O(C^3)}
+  and the the computational time is \eqn{O(C^4)} flops.
 
-  The example below has been run successfully with \code{n = 700} (this
-  corresponds to \eqn{C = 350}) but only on a big machine and it took over
-  10 minutes. The large model matrix was 670Mb.
+
+  The example below has been run successfully with \code{n = 700}
+  (this corresponds to \eqn{C = 350}) but only on a big machine
+  and it took over 10 minutes. The large model matrix was 670Mb.
+
 
 }
 
 \seealso{ 
   \code{\link{binomialff}}.
+
 
 }
 \examples{
@@ -135,9 +147,9 @@ mydat = data.frame(x2 = rnorm(n), x3 = rep(rnorm(n/2), each = 2))
 xmat = with(mydat, cbind(x2, x3))
 mydat = transform(mydat, eta = -0.1 + 0.2 * x2 + 0.3 * x3)
 etamat = with(mydat, matrix(eta, n/2, 2))
-condmu = exp(etamat[,1]) / (exp(etamat[,1]) + exp(etamat[,2]))
+condmu = exp(etamat[, 1]) / (exp(etamat[, 1]) + exp(etamat[, 2]))
 y1 = ifelse(runif(n/2) < condmu, 1, 0)
-y = cbind(y1, 1-y1)
+y = cbind(y1, 1 - y1)
 mydat = transform(mydat, y = c(y1, 1-y1),
                          ID = factor(c(row(etamat))))
 fit = vglm(y ~ 1 + ID + x2, trace = TRUE,
@@ -152,8 +164,7 @@ objsizemb(fit) # in Mb
 VLMX = model.matrix(fit, type = "vlm")  # The big model matrix
 dim(VLMX)
 objsizemb(VLMX) # in Mb
-rm(VLMX)
-}
+rm(VLMX) }
 }
 \keyword{models}
 \keyword{regression}

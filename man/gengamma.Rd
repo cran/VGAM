@@ -131,7 +131,7 @@ gdata = data.frame(x = runif(nn <- 5000))
 gdata = transform(gdata, Scale = exp(1), d = exp(0 + 1.2*x),
                          k = exp(-1 + 2*x))
 gdata = transform(gdata, y = rgengamma(nn, scale = Scale, d = d, k = k))
-fit = vglm(y ~ x, gengamma(zero = 1, iscal = 6), gdata, trace = TRUE)
+fit = vglm(y ~ x, gengamma(zero = 1, iscale = 6), gdata, trace = TRUE)
 fit = vglm(y ~ x, gengamma(zero = 1), gdata, trace = TRUE, maxit = 50)
 coef(fit, matrix = TRUE)
 }

@@ -21,9 +21,9 @@ vglm(formula, family, data = list(), weights = NULL, subset = NULL,
 
   \item{formula}{
   a symbolic description of the model to be fit.
-  The RHS of the formula is applied to each linear predictor. Different
-  variables in each linear predictor can be chosen by specifying
-  constraint matrices. 
+  The RHS of the formula is applied to each linear
+  predictor. Different variables in each linear predictor
+  can be chosen by specifying constraint matrices.
 
   }
   \item{family}{
@@ -37,26 +37,26 @@ vglm(formula, family, data = list(), weights = NULL, subset = NULL,
   \item{data}{
   an optional data frame containing the variables in the model.
   By default the variables are taken from
-  \code{environment(formula)}, typically the environment from which
-  \code{vglm} is called.
+  \code{environment(formula)}, typically the environment
+  from which \code{vglm} is called.
 
   }
   \item{weights}{
-  an optional vector or matrix of (prior) weights 
-  to be used in the fitting process.
-  If \code{weights} is a matrix, then it must be in
-  \emph{matrix-band} form, whereby the first \eqn{M} 
-  columns of the matrix are the
-  diagonals, followed by the upper-diagonal band, followed by the
-  band above that, etc. In this case, there can be up to \eqn{M(M+1)}
-  columns, with the last column corresponding to the (1,\eqn{M}) elements
-  of the weight matrices.
+  an optional vector or matrix of (prior) weights to be used
+  in the fitting process. If \code{weights} is a matrix,
+  then it must be in \emph{matrix-band} form, whereby the
+  first \eqn{M} columns of the matrix are the diagonals,
+  followed by the upper-diagonal band, followed by the
+  band above that, etc. In this case, there can be up to
+  \eqn{M(M+1)} columns, with the last column corresponding
+  to the (1,\eqn{M}) elements of the weight matrices.
 
   }
   \item{subset}{
   an optional logical vector specifying a subset of
   observations to 
   be used in the fitting process.
+
   }
   \item{na.action}{
   a function which indicates what should happen when
@@ -96,14 +96,14 @@ vglm(formula, family, data = list(), weights = NULL, subset = NULL,
   }
   \item{offset}{
    a vector or \eqn{M}-column matrix of offset values.
-   These are \emph{a priori} known and are added to the linear predictors
-   during fitting.
+   These are \emph{a priori} known and are added to the
+   linear predictors during fitting.
 
   }
   \item{method}{
   the method to be used in fitting the model.  The default (and
-  presently only) method \code{vglm.fit} uses iteratively reweighted
-  least squares (IRLS).
+  presently only) method \code{vglm.fit()} uses iteratively
+  reweighted least squares (IRLS).
 
   }
   \item{model}{
@@ -134,20 +134,21 @@ vglm(formula, family, data = list(), weights = NULL, subset = NULL,
   The former is a subset of the latter.
   The former has a matrix for each term of the LM matrix.
   The latter has a matrix for each column of the VLM matrix.
-  After fitting, the \code{\link{constraints}} extractor function may be applied;
-  it returns
-  the \code{"vlm"}-type list of constraint matrices by default.
-  If \code{"lm"}-type are returned by \code{\link{constraints}} then
-  these can be fed into this argument and it should give the
-  same model as before.
+  After fitting, the \code{\link{constraints}}
+  extractor function may be applied; it returns
+  the \code{"vlm"}-type list of constraint matrices
+  by default.  If \code{"lm"}-type are returned by
+  \code{\link{constraints}} then these can be fed into this
+  argument and it should give the same model as before.
 
 
-  Each constraint matrix must have \eqn{M} rows, and be of full-column rank.
-  By default, constraint matrices are the \eqn{M} by \eqn{M} identity
-  matrix unless arguments in the family function itself override
-  these values, e.g., \code{parallel} (see  \code{\link{CommonVGAMffArguments}}).
-  If \code{constraints} is used it must contain \emph{all} the
-  terms; an incomplete list is not accepted.
+  Each constraint matrix must have \eqn{M} rows, and be of
+  full-column rank.  By default, constraint matrices are
+  the \eqn{M} by \eqn{M} identity matrix unless arguments
+  in the family function itself override these values, e.g.,
+  \code{parallel} (see  \code{\link{CommonVGAMffArguments}}).
+  If \code{constraints} is used it must contain \emph{all}
+  the terms; an incomplete list is not accepted.
 
 
   }
@@ -167,9 +168,9 @@ vglm(formula, family, data = list(), weights = NULL, subset = NULL,
 
   }
   \item{qr.arg}{
-  logical value indicating whether
-  the slot \code{qr}, which returns the QR decomposition of the
-  VLM model matrix, is returned on the object.
+  logical value indicating whether the slot \code{qr}, which
+  returns the QR decomposition of the VLM model matrix,
+  is returned on the object.
 
   }
   \item{smart}{
@@ -179,6 +180,7 @@ vglm(formula, family, data = list(), weights = NULL, subset = NULL,
   }
   \item{\dots}{
   further arguments passed into \code{\link{vglm.control}}.
+
   }
 
 }
@@ -277,14 +279,17 @@ Reduced-rank vector generalized linear models.
 \emph{Statistical Modelling},
 \bold{3}, 15--41.
 
+
 Yee, T. W. and Wild, C. J. (1996)
 Vector generalized additive models.
 \emph{Journal of the Royal Statistical Society, Series B, Methodological},
 \bold{58}, 481--493.
 
+
 Yee, T. W. (2008)
 The \code{VGAM} Package.
 \emph{R News}, \bold{8}, 28--39.
+
 
   Documentation accompanying the \pkg{VGAM} package at
   \url{http://www.stat.auckland.ac.nz/~yee}
@@ -356,6 +361,7 @@ The \code{VGAM} Package.
   \code{\link{predictvglm}},
   \code{summary.vglm},
   \code{AIC.vglm},
+  \code{\link{lrtest_vglm}},
   etc.
 
 }
@@ -365,7 +371,7 @@ The \code{VGAM} Package.
 print(d.AD <- data.frame(treatment = gl(3, 3),
                          outcome = gl(3, 1, 9),
                          counts = c(18,17,15,20,10,20,25,13,12)))
-vglm.D93 = vglm(counts ~ outcome + treatment, family=poissonff,
+vglm.D93 = vglm(counts ~ outcome + treatment, family = poissonff,
                 data = d.AD, trace = TRUE)
 summary(vglm.D93)
 
@@ -386,7 +392,7 @@ model.matrix(fit3)              # Larger VGLM (or VLM) model matrix
 # Example 4. Bivariate logistic model 
 fit4 = vglm(cbind(nBnW, nBW, BnW, BW) ~ age, binom2.or, coalminers)
 coef(fit4, matrix = TRUE)
-fit4@y  # Response are proportions
+depvar(fit4)  # Response are proportions
 weights(fit4, type = "prior")
 
 

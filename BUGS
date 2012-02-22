@@ -1,5 +1,14 @@
 Here is a list of known bugs.
 
+2011-12
+
+VGAM version 0.8-4 said it needed R version 2-11.1 or later.
+But really, R version 2-13.0 or later is needed.
+This is because the generic nobs() was not defined properly.
+Another fix is to install the (latest) prerelease version
+at http://www.stat.auckland.ac.nz/~yee/VGAM/prerelease
+
+
 
 
 2010-04-12

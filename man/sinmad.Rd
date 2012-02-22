@@ -7,24 +7,24 @@
   Singh-Maddala distribution.
 }
 \usage{
-sinmad(link.a = "loge", link.scale = "loge", link.q = "loge",
-       earg.a = list(), earg.scale = list(), earg.q = list(),
-       init.a = NULL, init.scale = NULL, init.q = 1, zero = NULL)
+sinmad(lshape1.a = "loge", lscale = "loge", lshape3.q = "loge",
+       eshape1.a = list(), escale = list(), eshape3.q = list(),
+       ishape1.a = NULL, iscale = NULL, ishape3.q = 1, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{link.a, link.scale, link.q}{
+  \item{lshape1.a, lscale, lshape3.q}{
   Parameter link functions applied to the
   (positive) parameters \code{a}, \code{scale}, and \code{q}.
   See \code{\link{Links}} for more choices.
 
   }
-  \item{earg.a, earg.scale, earg.q}{
+  \item{eshape1.a, escale, eshape3.q}{
   List. Extra argument for each of the links.
   See \code{earg} in \code{\link{Links}} for general information.
 
   }
-  \item{init.a, init.scale, init.q}{
+  \item{ishape1.a, iscale, ishape3.q}{
   Optional initial values for \code{a}, \code{scale}, and \code{q}.
 
   }
@@ -62,7 +62,7 @@ The cumulative distribution function is
 The mean is
   \deqn{E(Y) = b \, \Gamma(1 + 1/a) \, \Gamma(q - 1/a) / \Gamma(q)}{%
         E(Y) = b  gamma(1 + 1/a)  gamma(q - 1/a) /  gamma(q)}
-provided \eqn{-a < 1 < aq}.
+provided \eqn{-a < 1 < aq}; these are returned as the fitted values.
 
 
 }
@@ -70,12 +70,15 @@ provided \eqn{-a < 1 < aq}.
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}},
   and \code{\link{vgam}}.
+
 }
 \references{
+
 Kleiber, C. and Kotz, S. (2003)
 \emph{Statistical Size Distributions in Economics and
              Actuarial Sciences},
-Hoboken, NJ: Wiley-Interscience.
+Hoboken, NJ, USA: Wiley-Interscience.
+
 
 }
 
@@ -84,6 +87,7 @@ Hoboken, NJ: Wiley-Interscience.
 If the self-starting initial values fail, try experimenting
 with the initial value arguments, especially those whose
 default value is not \code{NULL}.
+
 
 }
 
@@ -101,10 +105,10 @@ default value is not \code{NULL}.
 }
 
 \examples{
-sdata = data.frame(y = rsinmad(n=3000, 3, 5, 2))
-fit = vglm(y ~ 1, sinmad, sdata, trace=TRUE)
-fit = vglm(y ~ 1, sinmad, sdata, trace=TRUE, crit="c")
-coef(fit, mat=TRUE)
+sdata = data.frame(y = rsinmad(n = 3000, 3, 5, 2))
+fit = vglm(y ~ 1, sinmad, sdata, trace = TRUE)
+fit = vglm(y ~ 1, sinmad, sdata, trace = TRUE, crit = "coef")
+coef(fit, matrix = TRUE)
 Coef(fit)
 summary(fit)
 }

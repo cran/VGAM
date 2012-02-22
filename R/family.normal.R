@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2011 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2012 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -12,19 +12,19 @@
 VGAM.weights.function = function(w, M, n) {
 
 
-    ncolw = ncol(as.matrix(w))
-    if (ncolw == 1) {
-        wz = matrix(w, nrow=n, ncol=M) # w_i * diag(M)
-    } else if (ncolw == M) {
-        wz = as.matrix(w)
-    } else if (ncolw < M && M > 1) {
-        stop("ambiguous input for 'weights'")
-    } else if (ncolw > M*(M+1)/2) {
-        stop("too many columns")
-    } else {
-        wz = as.matrix(w)
-    }
-    wz
+  ncolw = ncol(as.matrix(w))
+  if (ncolw == 1) {
+    wz = matrix(w, nrow=n, ncol=M) # w_i * diag(M)
+  } else if (ncolw == M) {
+    wz = as.matrix(w)
+  } else if (ncolw < M && M > 1) {
+    stop("ambiguous input for 'weights'")
+  } else if (ncolw > M*(M+1)/2) {
+    stop("too many columns")
+  } else {
+    wz = as.matrix(w)
+  }
+  wz
 }
 
 
@@ -40,7 +40,7 @@ VGAM.weights.function = function(w, M, n) {
  gaussianff = function(dispersion = 0, parallel = FALSE, zero = NULL)
 {
 
-    if (!is.Numeric(dispersion, allow = 1) || dispersion < 0)
+    if (!is.Numeric(dispersion, allowable.length = 1) || dispersion < 0)
         stop("bad input for argument 'dispersion'")
     estimated.dispersion = dispersion == 0
 
@@ -48,7 +48,7 @@ VGAM.weights.function = function(w, M, n) {
     blurb = c("Vector linear/additive model\n",
             "Links:    identity for Y1,...,YM"),
     constraints = eval(substitute(expression({
-        constraints = cm.vgam(matrix(1, M, 1), x, .parallel, constraints)
+        constraints = cm.vgam(matrix(1, M, 1), x, .parallel , constraints)
         constraints = cm.zero.vgam(constraints, x, .zero, M)
     }), list( .parallel = parallel, .zero = zero ))),
     deviance = function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
@@ -67,7 +67,7 @@ VGAM.weights.function = function(w, M, n) {
     },
     initialize = eval(substitute(expression({
         if (is.R())
-            assign("CQO.FastAlgorithm", TRUE, envir = VGAM:::VGAMenv) else
+            assign("CQO.FastAlgorithm", TRUE, envir = VGAM::VGAMenv) else
             CQO.FastAlgorithm <<- TRUE
         if (any(function.name == c("cqo","cao")) &&
            (length( .zero ) || (is.logical( .parallel ) && .parallel )))
@@ -99,8 +99,8 @@ VGAM.weights.function = function(w, M, n) {
         names(misc$link) = predictors.names
 
         if (is.R()) {
-            if (exists("CQO.FastAlgorithm", envir = VGAM:::VGAMenv))
-                rm("CQO.FastAlgorithm", envir = VGAM:::VGAMenv)
+            if (exists("CQO.FastAlgorithm", envir = VGAM::VGAMenv))
+                rm("CQO.FastAlgorithm", envir = VGAM::VGAMenv)
         } else {
             while (exists("CQO.FastAlgorithm"))
                 remove("CQO.FastAlgorithm")
@@ -165,16 +165,16 @@ VGAM.weights.function = function(w, M, n) {
 dposnorm = function(x, mean = 0, sd = 1, log = FALSE) {
   log.arg = log
   rm(log)
-  if (!is.logical(log.arg) || length(log.arg)!=1)
+  if (!is.logical(log.arg) || length(log.arg) != 1)
     stop("bad input for argument 'log'")
   L = max(length(x), length(mean), length(sd))
   x = rep(x, len = L); mean = rep(mean, len = L); sd = rep(sd, len = L);
 
   if (log.arg) {
-    ifelse(x < 0, log(0), dnorm(x, m=mean, sd = sd, log = TRUE) -
-           pnorm(mean/sd, log = TRUE))
+    ifelse(x < 0, log(0), dnorm(x, mean = mean, sd = sd, log = TRUE) -
+           pnorm(mean / sd, log.p = TRUE))
   } else {
-    ifelse(x < 0, 0, dnorm(x = x, me=mean, sd = sd) / pnorm(mean/sd))
+    ifelse(x < 0, 0, dnorm(x = x, mean = mean, sd = sd) / pnorm(mean / sd))
   }
 }
 
@@ -188,20 +188,20 @@ pposnorm = function(q, mean = 0, sd = 1) {
 
 
 qposnorm = function(p, mean = 0, sd = 1) {
-  if (!is.Numeric(p, posit = TRUE) || max(p) >= 1)
-      stop("bad input for argument 'p'")
+  if (!is.Numeric(p, positive = TRUE) || max(p) >= 1)
+    stop("bad input for argument 'p'")
   qnorm(p = p + (1-p) * pnorm(0, mean = mean, sd = sd),
         mean = mean, sd = sd)
 }
 
 
 rposnorm = function(n, mean = 0, sd = 1) {
-  if (!is.Numeric(n, integ = TRUE, posit = TRUE))
-      stop("bad input for argument 'n'")
+  if (!is.Numeric(n, integer.valued = TRUE, positive = TRUE))
+    stop("bad input for argument 'n'")
   mean = rep(mean, length = n)
   sd = rep(sd, length = n)
-  qnorm(p = runif(n, min = pnorm(0, m = mean, sd = sd)),
-        m = mean, sd = sd)
+  qnorm(p = runif(n, min = pnorm(0, mean = mean, sd = sd)),
+        mean = mean, sd = sd)
 }
 
 
@@ -225,16 +225,16 @@ rposnorm = function(n, mean = 0, sd = 1) {
     if (mode(lsd) != "character" && mode(lsd) != "name")
         lsd = as.character(substitute(lsd))
 
-    if (length(zero) && !is.Numeric(zero, integer = TRUE, posit = TRUE))
+    if (length(zero) && !is.Numeric(zero, integer.valued = TRUE, positive = TRUE))
         stop("bad input for argument 'zero'")
-    if (length(isd) && !is.Numeric(isd, posit = TRUE))
+    if (length(isd) && !is.Numeric(isd, positive = TRUE))
         stop("bad input for argument 'isd'")
 
     if (!is.list(emean)) emean = list()
     if (!is.list(esd)) esd = list()
 
     if (length(nsimEIM))
-      if (!is.Numeric(nsimEIM, allow = 1, integ = TRUE) || nsimEIM <= 10)
+      if (!is.Numeric(nsimEIM, allowable.length = 1, integer.valued = TRUE) || nsimEIM <= 10)
         stop("argument 'nsimEIM' should be an integer greater than 10")
 
     new("vglmff",
@@ -348,26 +348,30 @@ rposnorm = function(n, mean = 0, sd = 1) {
 
 
 dbetanorm = function(x, shape1, shape2, mean = 0, sd = 1, log = FALSE) {
-    log.arg = log
-    rm(log)
-    if (!is.logical(log.arg) || length(log.arg)!=1)
-        stop("bad input for argument 'log'")
-    ans =
-    if (is.R() && log.arg) {
-        dnorm(x = x, mean = mean, sd = sd, log = TRUE) +
-        (shape1-1) * pnorm(q = x, mean = mean, sd = sd, log = TRUE) +
-        (shape2-1) * pnorm(q = x, mean = mean, sd = sd, log = TRUE,
-                           lower = FALSE) -
-        lbeta(shape1, shape2)
-    } else {
-        dnorm(x = x, mean = mean, sd = sd) *
-        pnorm(q = x, mean = mean, sd = sd)^(shape1-1) *
-        pnorm(q = x, mean = mean, sd = sd,
-              lower = FALSE)^(shape2-1) / beta(shape1, shape2)
-    }
-    if (!is.R() && log.arg) ans = log(ans)
-    ans
+  log.arg = log
+  rm(log)
+  if (!is.logical(log.arg) ||
+      length(log.arg) != 1)
+    stop("bad input for argument 'log'")
+
+  ans =
+  if (log.arg) {
+    dnorm(x = x, mean = mean, sd = sd, log = TRUE) +
+    (shape1-1) * pnorm(q = x, mean = mean, sd = sd, log.p = TRUE) +
+    (shape2-1) * pnorm(q = x, mean = mean, sd = sd, log.p = TRUE,
+                       lower.tail = FALSE) -
+    lbeta(shape1, shape2)
+  } else {
+    dnorm(x = x, mean = mean, sd = sd) *
+    pnorm(q = x, mean = mean, sd = sd)^(shape1-1) *
+    pnorm(q = x, mean = mean, sd = sd,
+          lower.tail = FALSE)^(shape2-1) / beta(shape1, shape2)
+  }
+
+  ans
 }
+
+
 
 
 pbetanorm = function(q, shape1, shape2, mean = 0, sd = 1,
@@ -379,17 +383,17 @@ pbetanorm = function(q, shape1, shape2, mean = 0, sd = 1,
 
 
 qbetanorm = function(p, shape1, shape2, mean = 0, sd = 1) {
-    if (!is.Numeric(p, posit = TRUE) || max(p) >= 1)
+    if (!is.Numeric(p, positive = TRUE) || max(p) >= 1)
         stop("bad input for argument 'p'")
     qnorm(p=qbeta(p=p, shape1=shape1, shape2=shape2), mean = mean, sd = sd)
 }
 
 
 rbetanorm = function(n, shape1, shape2, mean = 0, sd = 1) {
-    if (!is.Numeric(n, integ = TRUE, posit = TRUE))
-        stop("bad input for argument 'n'")
-    qnorm(p=qbeta(p=runif(n), shape1=shape1, shape2=shape2),
-          mean = mean, sd = sd)
+  if (!is.Numeric(n, integer.valued = TRUE, positive = TRUE))
+    stop("bad input for argument 'n'")
+  qnorm(p = qbeta(p = runif(n), shape1 = shape1, shape2 = shape2),
+        mean = mean, sd = sd)
 }
 
 
@@ -400,10 +404,13 @@ dtikuv = function(x, d, mean = 0, sigma = 1, log = FALSE) {
         stop("bad input for argument 'log'")
     rm(log)
 
-    if (!is.Numeric(d, allow = 1) || max(d) >= 2)
-        stop("bad input for argument 'd'")
+    if (!is.Numeric(d, allowable.length = 1) ||
+        max(d) >= 2)
+      stop("bad input for argument 'd'")
+
     L = max(length(x), length(mean), length(sigma))
-    x = rep(x, len = L); mean = rep(mean, len = L); sigma = rep(sigma, len = L);
+    x = rep(x, len = L); mean = rep(mean, len = L);
+    sigma = rep(sigma, len = L);
     hh = 2 - d
     KK = 1 / (1 + 1/hh + 0.75/hh^2)
     if (log.arg) {
@@ -417,10 +424,13 @@ dtikuv = function(x, d, mean = 0, sigma = 1, log = FALSE) {
 
 
 ptikuv = function(q, d, mean = 0, sigma=1) {
-    if (!is.Numeric(d, allow = 1) || max(d) >= 2)
-        stop("bad input for argument 'd'")
+    if (!is.Numeric(d, allowable.length = 1) ||
+        max(d) >= 2)
+      stop("bad input for argument 'd'")
+
     L = max(length(q), length(mean), length(sigma))
-    q = rep(q, len = L); mean = rep(mean, len = L); sigma = rep(sigma, len = L);
+    q = rep(q, len = L); mean = rep(mean, len = L);
+    sigma = rep(sigma, len = L);
     zedd1 = 0.5 * ((q - mean) / sigma)^2
     ans = q*0 + 0.5
     hh = 2 - d
@@ -432,17 +442,17 @@ ptikuv = function(q, d, mean = 0, sigma=1) {
         gamma(2.5) * (1 - pgamma(zedd1[lhs], 2.5)) / hh^2)
     }
     if (any(rhs <- q > mean)) {
-        ans[rhs] = 1.0 - Recall(q=(2*mean[rhs]-q[rhs]), d=d,
-                   mean = mean[rhs], sigma=sigma[rhs])
+        ans[rhs] = 1.0 - Recall(q = (2*mean[rhs] - q[rhs]), d = d,
+                   mean = mean[rhs], sigma = sigma[rhs])
     }
     ans
 }
 
 
 qtikuv = function(p, d, mean = 0, sigma = 1, ...) {
-    if (!is.Numeric(p, posit = TRUE) || max(p) >= 1)
+    if (!is.Numeric(p, positive = TRUE) || max(p) >= 1)
         stop("bad input for argument 'p'")
-    if (!is.Numeric(d, allow = 1) || max(d) >= 2)
+    if (!is.Numeric(d, allowable.length = 1) || max(d) >= 2)
         stop("bad input for argument 'd'")
     if (!is.Numeric(mean))
         stop("bad input for argument 'mean'")
@@ -452,60 +462,61 @@ qtikuv = function(p, d, mean = 0, sigma = 1, ...) {
     p = rep(p, len = L); mean = rep(mean, len = L); sigma = rep(sigma, len = L);
     ans = rep(0.0, len = L)
     myfun = function(x, d, mean = 0, sigma = 1, p)
-        ptikuv(q = x, d=d, mean = mean, sigma=sigma) - p
+        ptikuv(q = x, d = d, mean = mean, sigma = sigma) - p
     for(i in 1:L) {
         Lower = ifelse(p[i] <= 0.5, mean[i] - 3 * sigma[i], mean[i])
-        while (ptikuv(q = Lower, d=d, mean = mean[i], sigma=sigma[i]) > p[i])
+        while (ptikuv(q = Lower, d = d, mean = mean[i], sigma = sigma[i]) > p[i])
             Lower = Lower - sigma[i]
         Upper = ifelse(p[i] >= 0.5, mean[i] + 3 * sigma[i], mean[i])
-        while (ptikuv(q = Upper, d=d, mean = mean[i], sigma=sigma[i]) < p[i])
+        while (ptikuv(q = Upper, d = d, mean = mean[i], sigma = sigma[i]) < p[i])
             Upper = Upper + sigma[i]
-        ans[i] = uniroot(f=myfun, lower = Lower, upper = Upper, d=d, p=p[i],
-                         mean = mean[i], sigma=sigma[i], ...)$root
+        ans[i] = uniroot(f=myfun, lower = Lower, upper = Upper, d = d, p=p[i],
+                         mean = mean[i], sigma = sigma[i], ...)$root
     }
     ans
 }
 
 
-rtikuv = function(n, d, mean = 0, sigma = 1, Smallno=1.0e-6) {
-    if (!is.Numeric(n, posit = TRUE, integ = TRUE))
-        stop("bad input for argument 'n'")
-    if (!is.Numeric(d, allow = 1) || max(d) >= 2)
-        stop("bad input for argument 'd'")
-    if (!is.Numeric(mean, allow = 1))
-        stop("bad input for argument 'mean'")
-    if (!is.Numeric(sigma, allow = 1))
-        stop("bad input for argument 'sigma'")
-    if (!is.Numeric(Smallno, posit = TRUE, allow = 1) ||
-        Smallno > 0.01 ||
-        Smallno < 2 * .Machine$double.eps)
-        stop("bad input for argument 'Smallno'")
-    ans = rep(0.0, len = n)
+rtikuv = function(n, d, mean = 0, sigma = 1, Smallno = 1.0e-6) {
+  if (!is.Numeric(n, positive = TRUE, integer.valued = TRUE))
+    stop("bad input for argument 'n'")
+  if (!is.Numeric(d, allowable.length = 1) || max(d) >= 2)
+    stop("bad input for argument 'd'")
+  if (!is.Numeric(mean, allowable.length = 1))
+    stop("bad input for argument 'mean'")
+  if (!is.Numeric(sigma, allowable.length = 1))
+    stop("bad input for argument 'sigma'")
+  if (!is.Numeric(Smallno, positive = TRUE, allowable.length = 1) ||
+      Smallno > 0.01 ||
+      Smallno < 2 * .Machine$double.eps)
+      stop("bad input for argument 'Smallno'")
+  ans = rep(0.0, len = n)
 
-    ptr1 = 1; ptr2 = 0
-    hh = 2 - d
-    KK = 1 / (1 + 1/hh + 0.75/hh^2)
-    ymax = ifelse(hh < 2,
-                  dtikuv(x=mean + sigma*sqrt(4 - 2*hh),
-                         d=d, m=mean, s=sigma),
-                  KK / (sqrt(2 * pi) * sigma))
-    while (ptr2 < n) {
-        Lower = mean - 5 * sigma
-        while (ptikuv(q = Lower, d=d, mean = mean, sigma=sigma) > Smallno)
-            Lower = Lower - sigma
-        Upper = mean + 5 * sigma
-        while (ptikuv(q = Upper, d=d, mean = mean, sigma=sigma) < 1-Smallno)
-            Upper = Upper + sigma
-        x = runif(2*n, min = Lower, max = Upper)
-        index = runif(2*n, max=ymax) < dtikuv(x,d=d,m=mean,s=sigma)
-        sindex = sum(index)
-        if (sindex) {
-            ptr2 = min(n, ptr1 + sindex - 1)
-            ans[ptr1:ptr2] = (x[index])[1:(1+ptr2-ptr1)]
-            ptr1 = ptr2 + 1
-        }
+  ptr1 = 1; ptr2 = 0
+  hh = 2 - d
+  KK = 1 / (1 + 1/hh + 0.75/hh^2)
+  ymax = ifelse(hh < 2,
+                dtikuv(x = mean + sigma*sqrt(4 - 2*hh),
+                       d = d, mean = mean, sigma = sigma),
+                KK / (sqrt(2 * pi) * sigma))
+  while (ptr2 < n) {
+    Lower = mean - 5 * sigma
+    while (ptikuv(q = Lower, d = d, mean = mean, sigma = sigma) > Smallno)
+      Lower = Lower - sigma
+    Upper = mean + 5 * sigma
+    while (ptikuv(q = Upper, d = d, mean = mean, sigma = sigma) < 1-Smallno)
+      Upper = Upper + sigma
+    x = runif(2*n, min = Lower, max = Upper)
+    index = runif(2*n, max = ymax) <
+            dtikuv(x, d = d, mean = mean, sigma = sigma)
+    sindex = sum(index)
+    if (sindex) {
+      ptr2 = min(n, ptr1 + sindex - 1)
+      ans[ptr1:ptr2] = (x[index])[1:(1+ptr2-ptr1)]
+      ptr1 = ptr2 + 1
     }
-    ans
+  }
+  ans
 }
 
 
@@ -519,10 +530,10 @@ rtikuv = function(n, d, mean = 0, sigma = 1, Smallno=1.0e-6) {
         lmean = as.character(substitute(lmean))
     if (mode(lsigma) != "character" && mode(lsigma) != "name")
         lsigma = as.character(substitute(lsigma))
-    if (length(zero) && (!is.Numeric(zero, integer = TRUE, posit = TRUE) ||
+    if (length(zero) && (!is.Numeric(zero, integer.valued = TRUE, positive = TRUE) ||
        max(zero) > 2))
         stop("bad input for argument 'zero'")
-    if (!is.Numeric(d, allow = 1) || max(d) >= 2)
+    if (!is.Numeric(d, allowable.length = 1) || max(d) >= 2)
         stop("bad input for argument 'd'")
     if (!is.list(emean)) emean = list()
     if (!is.list(esigma)) esigma = list()
@@ -555,7 +566,7 @@ rtikuv = function(n, d, mean = 0, sigma = 1, Smallno=1.0e-6) {
             etastart = cbind(theta2eta(mean.init,  .lmean,  earg = .emean),
                              theta2eta(sigma.init, .lsigma, earg = .esigma))
         }
-    }),list( .lmean = lmean, .lsigma=lsigma, .isigma=isigma, .d=d,
+    }),list( .lmean = lmean, .lsigma=lsigma, .isigma=isigma, .d = d,
              .emean = emean, .esigma=esigma ))),
     linkinv = eval(substitute(function(eta, extra = NULL) {
         eta2theta(eta[,1], .lmean, earg = .emean)
@@ -566,7 +577,7 @@ rtikuv = function(n, d, mean = 0, sigma = 1, Smallno=1.0e-6) {
         misc$earg = list("mean"= .emean, "sigma"= .esigma )
         misc$expected = TRUE
         misc$d = .d 
-    }), list( .lmean = lmean, .lsigma=lsigma, .d=d,
+    }), list( .lmean = lmean, .lsigma=lsigma, .d = d,
              .emean = emean, .esigma=esigma ))),
     loglikelihood=eval(substitute(
         function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
@@ -574,10 +585,11 @@ rtikuv = function(n, d, mean = 0, sigma = 1, Smallno=1.0e-6) {
         sigma = eta2theta(eta[,2], .lsigma, earg = .esigma)
         if (residuals) stop("loglikelihood residuals ",
                             "not implemented yet") else {
-            sum(w * dtikuv(x=y, d= .d, mean = mymu, sigma=sigma, log = TRUE))
+            sum(w * dtikuv(x=y, d = .d , mean = mymu,
+                           sigma = sigma, log = TRUE))
         }
-    }, list( .lmean = lmean, .lsigma=lsigma, .d=d,
-             .emean = emean, .esigma=esigma ))),
+    }, list( .lmean = lmean, .lsigma = lsigma, .d = d,
+             .emean = emean, .esigma = esigma ))),
     vfamily=c("tikuv"),
     deriv = eval(substitute(expression({
         mymu = eta2theta(eta[,1], .lmean, earg = .emean)
@@ -591,7 +603,7 @@ rtikuv = function(n, d, mean = 0, sigma = 1, Smallno=1.0e-6) {
         dl.dsigma = (zedd^2 - 1 - 2 * zedd * gzedd / hh) / sigma
         c(w) * cbind(dl.dmu    * dmu.deta,
                      dl.dsigma * dsigma.deta)
-    }), list( .lmean = lmean, .lsigma=lsigma, .d=d,
+    }), list( .lmean = lmean, .lsigma=lsigma, .d = d,
              .emean = emean, .esigma=esigma ))),
     weight = eval(substitute(expression({
         ayy = 1 / (2*hh)
@@ -610,7 +622,7 @@ rtikuv = function(n, d, mean = 0, sigma = 1, Smallno=1.0e-6) {
 
 
 dfnorm = function(x, mean = 0, sd = 1, a1 = 1, a2=1) {
-    if (!is.Numeric(a1, posit = TRUE) || !is.Numeric(a2, posit = TRUE))
+    if (!is.Numeric(a1, positive = TRUE) || !is.Numeric(a2, positive = TRUE))
         stop("bad input for arguments 'a1' and 'a2'")
     if (any(a1 <= 0 | a2 <= 0))
         stop("arguments 'a1' and 'a2' must have positive values only")
@@ -622,20 +634,21 @@ dfnorm = function(x, mean = 0, sd = 1, a1 = 1, a2=1) {
 }
 
 pfnorm = function(q, mean = 0, sd = 1, a1 = 1, a2=1) {
-    if (!is.Numeric(a1, posit = TRUE) || !is.Numeric(a2, posit = TRUE))
+    if (!is.Numeric(a1, positive = TRUE) || !is.Numeric(a2, positive = TRUE))
         stop("bad input for arguments 'a1' and 'a2'")
     if (any(a1 <= 0 | a2 <= 0))
         stop("arguments 'a1' and 'a2' must have positive values only")
     L = max(length(q), length(mean), length(sd))
     q = rep(q, len = L); mean = rep(mean, len = L); sd = rep(sd, len = L);
     ifelse(q < 0, 0,
-           pnorm(q = q/(a1*sd) - mean/sd) - pnorm(q=-q/(a2*sd) - mean/sd))
+           pnorm(q =  q/(a1*sd) - mean/sd) -
+           pnorm(q = -q/(a2*sd) - mean/sd))
 }
 
 qfnorm = function(p, mean = 0, sd = 1, a1 = 1, a2 = 1, ...) {
-    if (!is.Numeric(p, posit = TRUE) || max(p) >= 1)
+    if (!is.Numeric(p, positive = TRUE) || max(p) >= 1)
         stop("bad input for argument 'p'")
-    if (!is.Numeric(a1, posit = TRUE) || !is.Numeric(a2, posit = TRUE))
+    if (!is.Numeric(a1, positive = TRUE) || !is.Numeric(a2, positive = TRUE))
         stop("bad input for arguments 'a1' and 'a2'")
     if (any(a1 <= 0 | a2 <= 0))
         stop("arguments 'a1' and 'a2' must have positive values only")
@@ -648,7 +661,8 @@ qfnorm = function(p, mean = 0, sd = 1, a1 = 1, a2 = 1, ...) {
         pfnorm(q = x, mean = mean, sd = sd, a1 = a1, a2 = a2) - p
     for(i in 1:L) {
         mytheta = mean[i]/sd[i]
-        EY = sd[i] * ((a1[i]+a2[i]) * (mytheta * pnorm(mytheta) + dnorm(mytheta)) -
+        EY = sd[i] * ((a1[i]+a2[i]) *
+             (mytheta * pnorm(mytheta) + dnorm(mytheta)) -
              a2[i] * mytheta)
         Upper = 2 * EY
         while (pfnorm(q = Upper, mean = mean[i], sd = sd[i],
@@ -662,9 +676,9 @@ qfnorm = function(p, mean = 0, sd = 1, a1 = 1, a2 = 1, ...) {
 }
 
 rfnorm = function(n, mean = 0, sd = 1, a1 = 1, a2=1) {
-    if (!is.Numeric(n, integ = TRUE, posit = TRUE))
+    if (!is.Numeric(n, integer.valued = TRUE, positive = TRUE))
         stop("bad input for argument 'n'")
-    if (!is.Numeric(a1, posit = TRUE) || !is.Numeric(a2, posit = TRUE))
+    if (!is.Numeric(a1, positive = TRUE) || !is.Numeric(a2, positive = TRUE))
         stop("bad input for arguments 'a1' and 'a2'")
     if (any(a1 <= 0 | a2 <= 0))
         stop("arguments 'a1' and 'a2' must have positive values only")
@@ -681,12 +695,12 @@ rfnorm = function(n, mean = 0, sd = 1, a1 = 1, a2=1) {
                       a1 = 1, a2 = 1,
                       nsimEIM = 500, imethod = 1, zero = NULL)
 {
-    if (!is.Numeric(a1, posit = TRUE, allow = 1) ||
-       !is.Numeric(a2, posit = TRUE, allow = 1))
+    if (!is.Numeric(a1, positive = TRUE, allowable.length = 1) ||
+       !is.Numeric(a2, positive = TRUE, allowable.length = 1))
         stop("bad input for arguments 'a1' and 'a2'")
     if (any(a1 <= 0 | a2 <= 0))
         stop("arguments 'a1' and 'a2' must each be a positive value")
-    if (!is.Numeric(imethod, allow = 1, integ = TRUE, posit = TRUE) ||
+    if (!is.Numeric(imethod, allowable.length = 1, integer.valued = TRUE, positive = TRUE) ||
        imethod > 2)
         stop("argument 'imethod' must be 1 or 2")
 
@@ -694,17 +708,17 @@ rfnorm = function(n, mean = 0, sd = 1, a1 = 1, a2=1) {
         lmean = as.character(substitute(lmean))
     if (mode(lsd) != "character" && mode(lsd) != "name")
         lsd = as.character(substitute(lsd))
-    if (length(zero) && !is.Numeric(zero, integer = TRUE, posit = TRUE))
+    if (length(zero) && !is.Numeric(zero, integer.valued = TRUE, positive = TRUE))
         stop("bad input for argument 'zero'")
 
     if (!is.list(emean)) emean = list()
     if (!is.list(esd)) esd = list()
 
-    if (!is.Numeric(nsimEIM, allow = 1, integ = TRUE) || nsimEIM <= 10)
+    if (!is.Numeric(nsimEIM, allowable.length = 1, integer.valued = TRUE) || nsimEIM <= 10)
         stop("argument 'nsimEIM' should be an integer greater than 10")
     if (length(imean) && !is.Numeric(imean))
         stop("bad input for 'imean'")
-    if (length(isd) && !is.Numeric(isd, posit = TRUE))
+    if (length(isd) && !is.Numeric(isd, positive = TRUE))
         stop("bad input for 'isd'")
 
     new("vglmff",
@@ -852,12 +866,12 @@ lqnorm = function(qpower = 2, link = "identity", earg = list(),
     if (mode(link) != "character" && mode(link) != "name")
         link = as.character(substitute(link))
     if (!is.list(earg)) eerg = list()
-    if (!is.Numeric(qpower, allow = 1) || qpower <= 1)
+    if (!is.Numeric(qpower, allowable.length = 1) || qpower <= 1)
         stop("bad input for argument 'qpower'")
-    if (!is.Numeric(imethod, allow = 1, integ = TRUE, posit = TRUE) ||
+    if (!is.Numeric(imethod, allowable.length = 1, integer.valued = TRUE, positive = TRUE) ||
         imethod > 3)
         stop("argument 'imethod' must be 1 or 2 or 3")
-    if (!is.Numeric(shrinkage.init, allow = 1) || shrinkage.init < 0 ||
+    if (!is.Numeric(shrinkage.init, allowable.length = 1) || shrinkage.init < 0 ||
        shrinkage.init > 1) stop("bad input for argument 'shrinkage.init'")
 
     new("vglmff",
@@ -946,7 +960,7 @@ dtobit = function(x, mean = 0, sd = 1,
   ind3 <- x == Lower
   ans[ind3] = if (log.arg) {
                 log(exp(ans[ind3]) +
-                    pnorm(q = Lower[ind3], me = mean[ind3], sd = sd[ind3]))
+                    pnorm(q = Lower[ind3], mean = mean[ind3], sd = sd[ind3]))
               } else {
                 ans[ind3] +
                 pnorm(q = Lower[ind3], mean = mean[ind3], sd = sd[ind3])
@@ -1025,7 +1039,7 @@ rtobit = function(n, mean = 0, sd = 1,
                   Lower = 0, Upper = Inf) {
 
   use.n = if ((length.n <- length(n)) > 1) length.n else
-          if (!is.Numeric(n, integ = TRUE, allow = 1, posit = TRUE))
+          if (!is.Numeric(n, integer.valued = TRUE, allowable.length = 1, positive = TRUE))
               stop("bad input for argument 'n'") else n
   L = max(use.n, length(mean), length(sd), length(Lower),
           length(Upper))
@@ -1072,7 +1086,8 @@ tobit.control <- function(save.weight = TRUE, ...)
   if (mode(lsd) != "character" && mode(lsd) != "name")
     lsd = as.character(substitute(lsd))
 
-  if (!is.Numeric(imethod, allow = 1, integer = TRUE, posi = TRUE) ||
+  if (!is.Numeric(imethod, allowable.length = 1,
+                  integer.valued = TRUE, positive = TRUE) ||
     imethod > 2)
     stop("argument 'imethod' must be 1 or 2")
   if ( # length(Lower) != 1 || length(Upper) != 1 ||
@@ -1081,9 +1096,9 @@ tobit.control <- function(save.weight = TRUE, ...)
     stop("Lower and Upper must ",
          "be numeric with Lower < Upper")
   if (length(zero) &&
-    !is.Numeric(zero, integer = TRUE))
+    !is.Numeric(zero, integer.valued = TRUE))
     stop("bad input for argument 'zero'")
-  if (!is.Numeric(nsimEIM, allow = 1, integ = TRUE) ||
+  if (!is.Numeric(nsimEIM, allowable.length = 1, integer.valued = TRUE) ||
       nsimEIM <= 10)
       stop("argument 'nsimEIM' should be an integer greater than 10")
 
@@ -1269,9 +1284,9 @@ tobit.control <- function(save.weight = TRUE, ...)
     ell0 = dnorm(  y[cen0], mean = mum[cen0], sd = sdm[cen0],
                  log = TRUE)
     ellL = pnorm(Lowmat[cenL], mean = mum[cenL], sd = sdm[cenL],
-                 log = TRUE, lower.tail = TRUE)
+                 log.p = TRUE, lower.tail = TRUE)
     ellU = pnorm(Uppmat[cenU], mean = mum[cenU], sd = sdm[cenU],
-                 log = TRUE, lower.tail = FALSE)
+                 log.p = TRUE, lower.tail = FALSE)
 
     wmat = matrix(w, nrow = nrow(eta), ncol = ncoly)
     if (residuals) {
@@ -1453,45 +1468,68 @@ tobit.control <- function(save.weight = TRUE, ...)
 
 
 
- normal1 <- function(lmean = "identity", lsd = "loge",
-                     emean = list(),     esd = list(),
+ normal1 <- function(lmean = "identity", lsd = "loge", lvar = "loge",
+                     emean = list(),     esd = list(), evar = list(),
+                     var.arg = FALSE,
                      imethod = 1,
+                     isd = NULL,
+                     parallel = FALSE,
+                     intercept.apply = FALSE,
                      zero = -2)
 {
 
 
-  lsdev <- lsd
-  esdev <- esd
 
   if (mode(lmean) != "character" && mode(lmean) != "name")
     lmean <- as.character(substitute(lmean))
-  if (mode(lsdev) != "character" && mode(lsdev) != "name")
-    lsdev <- as.character(substitute(lsdev))
+  if (mode(lsd) != "character" && mode(lsd) != "name")
+    lsd <- as.character(substitute(lsd))
   if (length(zero) &&
-      !is.Numeric(zero, integer = TRUE))
+      !is.Numeric(zero, integer.valued = TRUE))
       stop("bad input for argument 'zero'")
+
   if (!is.list(emean)) emean <- list()
-  if (!is.list(esdev)) esdev <- list()
-  if (!is.Numeric(imethod, allow = 1, integ = TRUE, posit = TRUE) ||
+  if (!is.list(esd))   esd   <- list()
+  if (!is.list(evar))  evar  <- list()
+
+  if (!is.Numeric(imethod, allowable.length = 1, integer.valued = TRUE, positive = TRUE) ||
      imethod > 3)
       stop("argument 'imethod' must be 1 or 2 or 3")
+  if (!is.logical(var.arg) || length(var.arg) != 1)
+    stop("argument 'var.arg' must be a single logical")
+  if (!is.logical(intercept.apply) || length(intercept.apply) != 1)
+    stop("argument 'intercept.apply' must be a single logical")
 
 
   new("vglmff",
   blurb = c("Univariate normal distribution\n\n",
             "Links:    ",
             namesof("mean", lmean, earg = emean, tag = TRUE), "; ",
-            namesof("sd",   lsdev, earg = esdev, tag = TRUE), "\n",
-            "Variance: sd^2"),
+            if (var.arg)
+            namesof("var",  lvar, earg = evar, tag = TRUE) else
+            namesof("sd" ,  lsd,  earg = esd,  tag = TRUE),
+            "\n",
+            if (var.arg) "Variance: var" else "Variance: sd^2"),
+
+
+
   constraints = eval(substitute(expression({
+
+    constraints = cm.vgam(matrix(1, M, 1), x, .parallel , constraints,
+                          intercept.apply = .intercept.apply )
+
     dotzero <- .zero
     Musual <- 2
     eval(negzero.expression)
-  }), list( .zero = zero ))),
-    infos = eval(substitute(function(...) {
-      list(Musual = 2,
-           zero = .zero)
-    }, list( .zero = zero ))),
+  }), list( .zero = zero,
+            .parallel = parallel, .intercept.apply = intercept.apply ))),
+
+
+  infos = eval(substitute(function(...) {
+    list(Musual = 2,
+         zero = .zero)
+  }, list( .zero = zero ))),
+
   initialize = eval(substitute(expression({
     orig.y <- y
     y <- cbind(y)
@@ -1502,6 +1540,7 @@ tobit.control <- function(save.weight = TRUE, ...)
     extra$ncoly <- ncoly
     extra$Musual <- Musual
     M <- Musual * ncoly
+
 
 
 
@@ -1526,12 +1565,15 @@ tobit.control <- function(save.weight = TRUE, ...)
     }
 
 
-
-    mynames1 <- paste("mean", if (ncoly > 1) 1:ncoly else "", sep = "")
-    mynames2 <- paste("sd",   if (ncoly > 1) 1:ncoly else "", sep = "")
+    mynames1 <- paste("mean",
+                      if (ncoly > 1) 1:ncoly else "", sep = "")
+    mynames2 <- paste(if ( .var.arg ) "var" else "sd",
+                      if (ncoly > 1) 1:ncoly else "", sep = "")
     predictors.names <-
         c(namesof(mynames1, .lmean, earg = .emean, tag = FALSE),
-          namesof(mynames2, .lsdev, earg = .esdev, tag = FALSE))
+          if ( .var.arg ) 
+          namesof(mynames2, .lvar , earg = .evar , tag = FALSE) else
+          namesof(mynames2, .lsd  , earg = .esd  , tag = FALSE))
     predictors.names <- predictors.names[interleave.VGAM(M, M = Musual)]
     extra$predictors.names <- predictors.names
 
@@ -1545,10 +1587,11 @@ tobit.control <- function(save.weight = TRUE, ...)
           if( .imethod == 1) median(y[, jay]) else
           if( .imethod == 2) weighted.mean(y[, jay], w = w[, jay]) else
                                  mean(jfit$fitted)
+
         sdev.init[, jay] <-
-          if( .imethod == 1)
-            sqrt( sum(w * (y[, jay] - mean.init[, jay])^2) / sum(w[, jay]) ) else
-          if( .imethod == 2) {
+          if( .imethod == 1) {
+            sqrt( sum(w * (y[, jay] - mean.init[, jay])^2) / sum(w[, jay]) )
+          } else if( .imethod == 2) {
             if (jfit$df.resid > 0)
               sqrt( sum(w[, jay] * jfit$resid^2) / jfit$df.resid ) else
               sqrt( sum(w[, jay] * jfit$resid^2) / sum(w[, jay]) )
@@ -1561,23 +1604,37 @@ tobit.control <- function(save.weight = TRUE, ...)
           sdev.init[, jay] <- 1.01
 
       }
-      etastart <- cbind(theta2eta(mean.init, .lmean, earg = .emean),
-                        theta2eta(sdev.init, .lsdev, earg = .esdev))
+
+
+      if (length( .isd )) {
+          sdev.init <- matrix( .isd , n, ncoly, byrow = TRUE)
+      }
+
+
+      etastart <- cbind(theta2eta(mean.init, .lmean , earg = .emean ),
+                        if ( .var.arg )
+                        theta2eta(sdev.init^2, .lvar , earg = .evar ) else
+                        theta2eta(sdev.init  , .lsd  , earg = .esd  ))
       etastart <- etastart[, interleave.VGAM(ncol(etastart), M = Musual)]
 
       colnames(etastart) <- predictors.names
     }
-  }), list( .lmean = lmean, .lsdev = lsdev,
-            .emean = emean, .esdev = esdev,
-            .imethod = imethod ))),
+  }), list( .lmean = lmean, .lsd = lsd, .lvar = lvar,
+            .emean = emean, .esd = esd, .evar = evar,
+            .isd = isd,
+            .var.arg = var.arg, .imethod = imethod ))),
+
   linkinv = eval(substitute(function(eta, extra = NULL) {
+    Musual <- extra$Musual
     ncoly <- extra$ncoly
-    eta2theta(eta[, 2*(1:ncoly) - 1], .lmean, earg = .emean)
-  }, list( .lmean = lmean, .emean = emean, .esdev = esdev ))),
+    eta2theta(eta[, Musual*(1:ncoly) - 1], .lmean , earg = .emean )
+  }, list( .lmean = lmean,
+           .emean = emean, .esd = esd , .evar = evar ))),
+
   last = eval(substitute(expression({
     Musual <- extra$Musual
-    misc$link <- c(rep( .lmean, length = ncoly),
-                   rep( .lsdev, length = ncoly))
+    misc$link <- c(rep( .lmean , length = ncoly),
+                   rep( .lsd , length = ncoly))
     misc$link <- misc$link[interleave.VGAM(Musual * ncoly, M = Musual)]
     temp.names <- c(mynames1, mynames2)
     temp.names <- temp.names[interleave.VGAM(Musual * ncoly, M = Musual)]
@@ -1588,51 +1645,88 @@ tobit.control <- function(save.weight = TRUE, ...)
     names(misc$earg) <- temp.names
     for(ii in 1:ncoly) {
         misc$earg[[Musual*ii-1]] <- .emean
-        misc$earg[[Musual*ii  ]] <- .esdev
+        misc$earg[[Musual*ii  ]] <- if ( .var.arg) .evar else .esd
     }
     names(misc$earg) <- temp.names
 
+    misc$var.arg <- .var.arg
     misc$Musual <- Musual
     misc$expected <- TRUE
     misc$imethod <- .imethod
-  }), list( .lmean = lmean, .lsdev = lsdev,
-            .emean = emean, .esdev = esdev,
-            .imethod = imethod ))),
+  }), list( .lmean = lmean, .lsd = lsd, .lvar = lvar,
+            .emean = emean, .esd = esd, .evar = evar,
+            .var.arg = var.arg, .imethod = imethod ))),
+
   loglikelihood = eval(substitute(
     function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
     ncoly <- extra$ncoly
-    sdev <- eta2theta(eta[, 2*(1:ncoly)    ], .lsdev, earg = .esdev)
+    Musual <- extra$Musual
+    if ( .var.arg ) {
+      Varm <- eta2theta(eta[, Musual*(1:ncoly)    ], .lvar , earg = .evar )
+      sdev <- sqrt(Varm)
+    } else {
+      sdev <- eta2theta(eta[, Musual*(1:ncoly)    ], .lsd  , earg = .esd  )
+    }
     if (residuals) stop("loglikelihood residuals not ",
                         "implemented yet") else {
       sum(w * dnorm(y, m = mu, sd = sdev, log = TRUE))
     }
-  }, list( .lsdev = lsdev, 
-           .esdev = esdev ))),
+  }, list( .lsd = lsd, .lvar = lvar,
+           .esd = esd, .evar = evar,
+           .var.arg = var.arg ))),
   vfamily = c("normal1"),
   deriv = eval(substitute(expression({
     ncoly <- extra$ncoly
+    Musual <- extra$Musual
 
-    mymu <- eta2theta(eta[, 2*(1:ncoly) - 1], .lmean, earg = .emean)
-    sdev <- eta2theta(eta[, 2*(1:ncoly)    ], .lsdev, earg = .esdev)
+    mymu <- eta2theta(eta[, Musual*(1:ncoly) - 1], .lmean , earg = .emean )
+    if ( .var.arg ) {
+      Varm <- eta2theta(eta[, Musual*(1:ncoly)    ], .lvar , earg = .evar )
+      sdev <- sqrt(Varm)
+    } else {
+      sdev <- eta2theta(eta[, Musual*(1:ncoly)    ], .lsd  , earg = .esd  )
+    }
+
     dl.dmu <- (y - mymu) / sdev^2
-    dl.dsd <- -1 / sdev + (y - mymu)^2 / sdev^3
-    dmu.deta <- dtheta.deta(mymu, .lmean, earg = .emean)
-    dsd.deta <- dtheta.deta(sdev, .lsdev, earg = .esdev)
+    if ( .var.arg ) {
+      dl.dva <- -0.5 / Varm + 0.5 * (y - mymu)^2 / sdev^4
+    } else {
+      dl.dsd <- -1.0 / sdev +       (y - mymu)^2 / sdev^3
+    }
+
+    dmu.deta <- dtheta.deta(mymu, .lmean , earg = .emean )
+    if ( .var.arg ) {
+      dva.deta <- dtheta.deta(Varm, .lvar , earg = .evar )
+    } else {
+      dsd.deta <- dtheta.deta(sdev, .lsd  , earg = .esd )
+    }
 
     ans <- c(w) * cbind(dl.dmu * dmu.deta,
-                        dl.dsd * dsd.deta)
+                        if ( .var.arg ) dl.dva * dva.deta else dl.dsd * dsd.deta)
     ans <- ans[, interleave.VGAM(ncol(ans), M = Musual)]
     ans
-  }), list( .lmean = lmean, .lsdev = lsdev,
-            .emean = emean, .esdev = esdev ))),
-  weight = expression({
-      wz <- matrix(as.numeric(NA), n, M) # diag matrix; y is one-column too
-      ed2l.dmu2 <- -1 / sdev^2
+  }), list( .lmean = lmean, .lsd = lsd, .lvar = lvar,
+            .emean = emean, .esd = esd, .evar = evar,
+            .var.arg = var.arg ))),
+  weight = eval(substitute(expression({
+    wz <- matrix(as.numeric(NA), n, M) # diag matrix; y is one-column too
+
+    ed2l.dmu2 <- -1 / sdev^2
+    if ( .var.arg ) {
+      ed2l.dva2 <- -0.5 / Varm^2
+    } else {
       ed2l.dsd2 <- -2 / sdev^2
-      wz[, 2*(1:ncoly) - 1] <- -ed2l.dmu2 * dmu.deta^2
-      wz[, 2*(1:ncoly)    ] <- -ed2l.dsd2 * dsd.deta^2
-      c(w) * wz
-  }))
+    }
+
+    wz[, Musual*(1:ncoly) - 1] <- -ed2l.dmu2 * dmu.deta^2
+    if ( .var.arg ) {
+      wz[, Musual*(1:ncoly)    ] <- -ed2l.dva2 * dva.deta^2
+    } else {
+      wz[, Musual*(1:ncoly)    ] <- -ed2l.dsd2 * dsd.deta^2
+    }
+
+    c(w) * wz
+  }), list( .var.arg = var.arg ))))
 }
 
 
@@ -1649,7 +1743,7 @@ tobit.control <- function(save.weight = TRUE, ...)
       lmeanlog = as.character(substitute(lmeanlog))
     if (mode(lsdlog) != "character" && mode(lsdlog) != "name")
       lsdlog = as.character(substitute(lsdlog))
-    if (length(zero) && (!is.Numeric(zero, integer = TRUE, posit = TRUE) ||
+    if (length(zero) && (!is.Numeric(zero, integer.valued = TRUE, positive = TRUE) ||
                         zero > 2))
       stop("bad input for argument argument 'zero'")
     if (!is.list(emeanlog)) emeanlog = list()
@@ -1750,7 +1844,7 @@ tobit.control <- function(save.weight = TRUE, ...)
         lmeanlog = as.character(substitute(lmeanlog))
     if (mode(lsdlog) != "character" && mode(lsdlog) != "name")
         lsdlog = as.character(substitute(lsdlog))
-    if (length(zero) && (!is.Numeric(zero, integer = TRUE, posit = TRUE) ||
+    if (length(zero) && (!is.Numeric(zero, integer.valued = TRUE, positive = TRUE) ||
                         zero > 3))
         stop("bad input for argument argument 'zero'")
     if (!is.list(emeanlog)) emeanlog = list()
@@ -1873,10 +1967,11 @@ dsnorm = function(x, location = 0, scale = 1, shape = 0, log = FALSE) {
         stop("bad input for argument 'log'")
     rm(log)
 
-    if (!is.Numeric(scale, posit = TRUE))
+    if (!is.Numeric(scale, positive = TRUE))
         stop("bad input for argument 'scale'")
     zedd = (x - location) / scale
-    loglik = log(2) + dnorm(zedd, log = TRUE) + pnorm(shape * zedd, log.p = TRUE) -
+    loglik = log(2) + dnorm(zedd, log = TRUE) +
+             pnorm(shape * zedd, log.p = TRUE) -
              log(scale)
     if (log.arg) {
         loglik
@@ -1888,11 +1983,14 @@ dsnorm = function(x, location = 0, scale = 1, shape = 0, log = FALSE) {
 
 
 rsnorm = function(n, location = 0, scale = 1, shape=0) {
-    if (!is.Numeric(n, posit = TRUE, integ = TRUE, allow = 1))
-        stop("bad input for argument 'n'")
-    if (!is.Numeric(scale, posit = TRUE))
-        stop("bad input for argument 'scale'")
-    if (!is.Numeric(shape)) stop("bad input for argument 'shape'")
+    if (!is.Numeric(n, positive = TRUE,
+                    integer.valued = TRUE, allowable.length = 1))
+      stop("bad input for argument 'n'")
+    if (!is.Numeric(scale, positive = TRUE))
+      stop("bad input for argument 'scale'")
+    if (!is.Numeric(shape))
+      stop("bad input for argument 'shape'")
+
     rho = shape / sqrt(1 + shape^2)
     u0 = rnorm(n)
     v = rnorm(n)
@@ -1910,7 +2008,7 @@ rsnorm = function(n, location = 0, scale = 1, shape=0) {
         lshape = as.character(substitute(lshape))
     if (!is.list(earg)) earg = list()
     if (length(nsimEIM) &&
-       (!is.Numeric(nsimEIM, allow = 1, integ = TRUE) || nsimEIM <= 10))
+       (!is.Numeric(nsimEIM, allowable.length = 1, integer.valued = TRUE) || nsimEIM <= 10))
         stop("argument 'nsimEIM' should be an integer greater than 10")
 
     new("vglmff",

@@ -93,7 +93,7 @@ lognormal3(lmeanlog = "identity", lsdlog = "loge",
 Kleiber, C. and Kotz, S. (2003)
 \emph{Statistical Size Distributions in Economics and
              Actuarial Sciences},
-Hoboken, NJ: Wiley-Interscience.
+Hoboken, NJ, USA: Wiley-Interscience.
 
 
 }

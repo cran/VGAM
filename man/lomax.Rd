@@ -7,23 +7,23 @@
   Lomax distribution.
 }
 \usage{
-lomax(link.scale = "loge", link.q = "loge", earg.scale=list(),
-      earg.q=list(), init.scale = NULL, init.q = 1, zero = NULL)
+lomax(lscale = "loge", lshape3.q = "loge", escale = list(),
+      eshape3.q = list(), iscale = NULL, ishape3.q = 2, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{link.scale, link.q}{
+  \item{lscale, lshape3.q}{
   Parameter link function applied to the
   (positive) parameters \code{scale} and \code{q}.
   See \code{\link{Links}} for more choices.
 
   }
-  \item{earg.scale, earg.q}{
+  \item{escale, eshape3.q}{
   List. Extra argument for each of the links.
   See \code{earg} in \code{\link{Links}} for general information.
 
   }
-  \item{init.scale, init.q}{
+  \item{iscale, ishape3.q}{
   Optional initial values for \code{scale} and \code{q}.
 
   }
@@ -57,7 +57,7 @@ The cumulative distribution function is
 The mean is
   \deqn{E(Y) = b/(q-1)}{%
         E(Y) = b/(q-1)}
-provided \eqn{q > 1}.
+provided \eqn{q > 1}; these are returned as the fitted values.
 
 
 }
@@ -66,12 +66,15 @@ provided \eqn{q > 1}.
   The object is used by modelling functions such as \code{\link{vglm}},
   and \code{\link{vgam}}.
 
+
 }
 \references{
+
 Kleiber, C. and Kotz, S. (2003)
 \emph{Statistical Size Distributions in Economics and
              Actuarial Sciences},
-Hoboken, NJ: Wiley-Interscience.
+Hoboken, NJ, USA: Wiley-Interscience.
+
 
 }
 
@@ -80,6 +83,7 @@ Hoboken, NJ: Wiley-Interscience.
 If the self-starting initial values fail, try experimenting
 with the initial value arguments, especially those whose
 default value is not \code{NULL}.
+
 
 }
 
@@ -93,12 +97,14 @@ default value is not \code{NULL}.
     \code{\link{invlomax}},
     \code{\link{paralogistic}},
     \code{\link{invparalogistic}}.
+
 }
 
 \examples{
-lodat = data.frame(y = rlomax(n=2000, 6, 2))
-fit = vglm(y ~ 1, lomax, lodat, trace=TRUE, crit="c")
-coef(fit, mat=TRUE)
+ldata = data.frame(y = rlomax(n = 1000, exp(1), exp(1)))
+fit = vglm(y ~ 1, lomax, ldata, trace = TRUE)
+fit = vglm(y ~ 1, lomax(iscale = exp(1), ishape3.q = 2), ldata, trace = TRUE)
+coef(fit, matrix = TRUE)
 Coef(fit)
 summary(fit)
 }

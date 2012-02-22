@@ -12,8 +12,9 @@
 grc(y, Rank = 1, Index.corner = 2:(1 + Rank),
     szero = 1, summary.arg = FALSE, h.step = 1e-04, ...)
 rcam(y, family = poissonff, Rank = 0, Musual = NULL,
-     weights = NULL, Index.corner = if (!Rank) NULL else
-     1 + Musual * (1:Rank), rprefix = "Row.", cprefix = "Col.",
+     weights = NULL, which.lp = 1,
+     Index.corner = if (!Rank) NULL else 1 + Musual * (1:Rank),
+     rprefix = "Row.", cprefix = "Col.", offset = 0,
      szero = if (!Rank) NULL else {
        if (Musual == 1) 1 else setdiff(1:(Musual * ncol(y)),
                     c(1 + (1:ncol(y)) * Musual, Index.corner))
@@ -32,8 +33,9 @@ rcam(y, family = poissonff, Rank = 0, Musual = NULL,
   }
   \item{family}{
   A \pkg{VGAM} family function.
-  The first linear/additive predictor is fitted using main effects plus
-  an optional rank-\code{Rank} interaction term.
+  By default, the first linear/additive predictor is fitted
+  using main effects plus an optional rank-\code{Rank}
+  interaction term.
   Not all family functions are suitable or make sense.
   All other linear/additive predictors are fitted using an intercept-only,
   so it has a common value over all rows and columns.
@@ -67,6 +69,14 @@ rcam(y, family = poissonff, Rank = 0, Musual = NULL,
 
 
   }
+  \item{which.lp}{
+  Single integer.
+  Specifies which linear predictor is modelled as the sum of
+  an intercept, row effect, column effect plus an optional interaction term.
+  It should be one value from the set \code{1:Musual}.
+
+
+  }
   \item{Index.corner}{
   A vector of \code{Rank} integers.
   These are used to store the \code{Rank} by \code{Rank}
@@ -78,6 +88,11 @@ rcam(y, family = poissonff, Rank = 0, Musual = NULL,
   \item{rprefix, cprefix}{ 
   Character, for rows and columns resp.
   For labelling the indicator variables.
+
+  }
+  \item{offset}{ 
+  Numeric. Either a matrix of the right dimension, else
+  a single numeric expanded into such a matrix.
 
   }
   \item{szero}{ 
@@ -118,7 +133,7 @@ rcam(y, family = poissonff, Rank = 0, Musual = NULL,
 }
 \details{
   Goodman's RC association model fits a reduced-rank approximation
-  to a table of counts.  The log of each cell mean is decomposed as an
+  to a table of counts. The log of each cell mean is decomposed as an
   intercept plus a row effect plus a column effect plus a reduced-rank
   component. The latter can be collectively written \code{A \%*\% t(C)},
   the product of two `thin' matrices.
@@ -126,7 +141,7 @@ rcam(y, family = poissonff, Rank = 0, Musual = NULL,
 By default, the first column and row of the interaction matrix
 \code{A \%*\% t(C)} is chosen 
 to be structural zeros, because \code{szero = 1}.
-This means the first row of \code{A} are all zeros.   
+This means the first row of \code{A} are all zeros. 
 
 
 This function uses \code{options()$contrasts} to set up the row and 
@@ -175,6 +190,11 @@ Yee, T. W. and Hastie, T. J. (2003)
 Reduced-rank vector generalized linear models.
 \emph{Statistical Modelling},
 \bold{3}, 15--41.
+
+
+Yee, T. W. and Hadi, A. F. (2012)
+Row-column association models
+\emph{In preparation}.
 
 
 Goodman, L. A. (1981)
@@ -227,20 +247,22 @@ assistance from Alfian F. Hadi.
   may have bugs.
   Quite a lot of expertise is needed when fitting and in its
   interpretion thereof. For example, the constraint
-  matrices applies the reduced-rank regression to the first linear
-  predictor and the other linear predictors are intercept-only and
+  matrices applies the reduced-rank regression to the first
+  (see \code{which.lp})
+  linear predictor and the other linear predictors are intercept-only and
   have a common value throughout the entire data set.
-  This means that \code{family =} \code{\link{zipoissonff}} is
+  This means that, by default, \code{family =} \code{\link{zipoissonff}} is
   appropriate but not
   \code{family =} \code{\link{zipoisson}}.
+  Else set \code{family =} \code{\link{zipoisson}} and \code{which.lp = 2}.
   To understand what is going on, do examine the constraint
-  matrices of the fitted object, and reconcile this with Equations
-  (4.3) to (4.5) of Yee and Hastie (2003).
+  matrices of the fitted object, and reconcile this with
+  Equations (4.3) to (4.5) of Yee and Hastie (2003).
 
 
   The functions temporarily create a permanent data frame
   called \code{.grc.df} or \code{.rcam.df}, which used
-  to be needed by \code{summary.rrvglm()}.  Then these
+  to be needed by \code{summary.rrvglm()}. Then these
   data frames are deleted before exiting the function.
   If an error occurs, then the data frames may be present
   in the workspace.
@@ -264,11 +286,11 @@ assistance from Alfian F. Hadi.
   \code{\link{olympic}},
   \code{\link{poissonff}}.
 
+
 }
 
 \examples{
-# Some undergraduate student enrolments at the University of Auckland in 1990
-grc1 <- grc(auuc)
+grc1 <- grc(auuc) # Undergraduate enrolments at Auckland University in 1990
 fitted(grc1)
 summary(grc1)
 
@@ -281,7 +303,7 @@ summary(grc2)
 top10 <- head(olympic, n = 10)
 oly1 <- with(top10, grc(cbind(gold, silver, bronze)))
 round(fitted(oly1))
-round(resid(oly1, type = "response"), dig = 1)  # Response residuals
+round(resid(oly1, type = "response"), dig = 1) # Response residuals
 summary(oly1)
 Coef(oly1)
 
@@ -289,7 +311,7 @@ Coef(oly1)
 # Roughly median polish
 rcam0 <- rcam(auuc, fam = alaplace2(tau = 0.5, intparloc = TRUE), trace = TRUE)
 round(fitted(rcam0), dig = 0)
-round(100 * (fitted(rcam0) - auuc) / auuc, dig = 0)   # Discrepancy
+round(100 * (fitted(rcam0) - auuc) / auuc, dig = 0) # Discrepancy
 rcam0@y
 round(coef(rcam0, matrix = TRUE), dig = 2)
 print(Coef(rcam0, matrix = TRUE), dig = 3)
@@ -299,7 +321,7 @@ names(constraints(rcam0))
 # Compare with medpolish():
 (med.a <- medpolish(auuc))
 fv <- med.a$overall + outer(med.a$row, med.a$col, "+")
-round(100 * (fitted(rcam0) - fv) / fv)   # Hopefully should be all 0s
+round(100 * (fitted(rcam0) - fv) / fv) # Hopefully should be all 0s
 }
 \keyword{models}
 \keyword{regression}

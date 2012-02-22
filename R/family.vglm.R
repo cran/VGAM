@@ -1,12 +1,16 @@
 # These functions are
-# Copyright (C) 1998-2011 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2012 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
 
+
+if (FALSE)
 family.vglm <- function(object, ...) 
     object$vfamily
 
+
+if (FALSE)
 print.vfamily <- function(x, ...)
 {
     f <- x$vfamily

@@ -322,7 +322,7 @@ main()
     for(i = -9; i<=9; i++)
     {
         r = i / 10.0;
-        printf("%10.2f   %10.6f  \n",r,bivnor(x,y,r));
+        Rprintf("%10.2f   %10.6f  \n",r,bivnor(x,y,r));
 
     }
 

@@ -8,26 +8,42 @@
 
 }
 \usage{
-normal1(lmean = "identity", lsd = "loge",
-        emean = list(), esd = list(), imethod = 1, zero = -2)
+normal1(lmean = "identity", lsd = "loge", lvar = "loge",
+        emean = list(), esd = list(), evar = list(),
+        var.arg = FALSE, imethod = 1, isd = NULL, parallel = FALSE,
+        intercept.apply = FALSE, zero = -2)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{lmean, lsd}{
-  Link functions applied to the mean and standard deviation.
+  \item{lmean, lsd, lvar}{
+  Link functions applied to the mean and standard deviation/variance.
   See \code{\link{Links}} for more choices.
-  Being a positive quantity, a log link is the default for the
-  standard deviation.
+  Being positive quantities, a log link is the default for the
+  standard deviation and variance (see \code{var.arg}).
+
 
   }
-  \item{emean, esd}{
+  \item{emean, esd, evar}{
   List. Extra argument for the links.
   See \code{earg} in \code{\link{Links}} for general information.
 
+
   }
-  \item{imethod, zero}{ 
+  \item{var.arg}{
+  Logical.
+  If \code{TRUE} then the second parameter is the variance and
+  \code{lsd} and \code{esd} are ignored,
+  else the standard deviation is used
+  and \code{lvar} and \code{evar} are ignored.
+
+
+  }
+  \item{imethod, parallel, isd, intercept.apply, zero}{
   See \code{\link{CommonVGAMffArguments}} for more information.
   If \code{lmean = loge} then try \code{imethod = 2}.
+  Argument \code{intercept.apply} refers to whether the parallelism
+  constraint is applied to the intercept too.
+
 
   }
 
@@ -62,7 +78,6 @@ normal1(lmean = "identity", lsd = "loge",
 \note{
     Yet to do: allow an argument such as \code{sameSD} that enables the
     standard devations to be the same.
-    And a \code{parallel} argument.
 
 
 }
@@ -85,9 +100,16 @@ normal1(lmean = "identity", lsd = "loge",
 }
 \examples{
 ndata <- data.frame(x2 = rnorm(nn <- 200))
-ndata <- transform(ndata, y = rnorm(nn, mean = 1-3*x2, sd = exp(1+0.2*x2)))
-fit <- vglm(y ~ x2, normal1(zero = NULL), ndata, trace = TRUE)
-coef(fit, matrix = TRUE)
+ndata <- transform(ndata,
+                   y1 = rnorm(nn, mean = 1-3*x2, sd = exp(1+0.2*x2)),
+                   y2 = rnorm(nn, mean = 1+2*x2, sd = exp(1+  2*x2)^0.5),
+                   y3 = rnorm(nn, mean = 1+2*x2, sd = exp(1+  2*x2)^0.5))
+fit1 <- vglm(y1 ~ x2, normal1(zero = NULL), ndata, trace = TRUE)
+coef(fit1, matrix = TRUE)
+fit2 <- vglm(cbind(y2, y3) ~ x2, data = ndata, trace = TRUE,
+             normal1(var = TRUE, parallel = TRUE,
+                     intercept.apply = TRUE, zero = NULL))
+coef(fit2, matrix = TRUE)
 
 # Generate data from N(mu = theta = 10, sigma = theta) and estimate theta.
 theta <- 10

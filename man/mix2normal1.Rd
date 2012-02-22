@@ -91,9 +91,10 @@ mix2normal1(lphi = "logit", lmu = "identity", lsd = "loge",
   \eqn{\phi \mu_1 + (1-\phi) \mu_2}{phi*mu1 + (1-phi)*mu2}
   and this is returned as the fitted values.
   By default, the five linear/additive predictors are
-  \eqn{(logit(\phi), \mu_1, \log(\sigma_1), \mu_2, \log(\sigma_2))^T}{(logit(phi),
-  mu1, log(sd1), mu2, log(sd2))^T}.
-  If \code{equalsd = TRUE} then \eqn{\sigma_1 = \sigma_2}{sd1=sd2} is enforced.
+  \eqn{(logit(\phi), \mu_1, \log(\sigma_1), \mu_2, \log(\sigma_2))^T}{
+       (logit(phi),   mu1,   log(sd1), mu2, log(sd2))^T}.
+  If \code{equalsd = TRUE} then \eqn{\sigma_1 = \sigma_2}{sd1=sd2}
+  is enforced.
 
 
 }

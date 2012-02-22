@@ -102,13 +102,14 @@ very close to 0 or 1.
 }
 \references{ 
 
+
 Jones, M. C. (1994)
 Expectiles and M-quantiles are quantiles.
 \emph{Statistics and Probability Letters},
 \bold{20}, 149--153.
 
 
-Yee, T. W. (2010)
+Yee, T. W. (2012)
 Vector generalized linear and additive
 quantile and expectile regression.
 \emph{In preparation}.
@@ -165,11 +166,11 @@ par(mfrow=c(2,1))
 yy = seq(0.0, 1.0, len=nn)
 plot(yy, deunif(yy), type="l", col="blue", ylim = c(0, 2),
      xlab = "y", ylab = "g(y)", main = "g(y) for Uniform(0,1)")
-lines(yy, dunif(yy), col="darkgreen", lty="dotted", lwd=2) # 'original'
+lines(yy, dunif(yy), col="darkgreen", lty="dotted", lwd = 2) # 'original'
 
 plot(yy, peunif(yy), type="l", col="blue", ylim = 0:1,
      xlab = "y", ylab = "G(y)", main = "G(y) for Uniform(0,1)")
-abline(a=0.0, b=1.0, col="darkgreen", lty="dotted", lwd=2)
+abline(a=0.0, b=1.0, col="darkgreen", lty="dotted", lwd = 2)
 abline(v=0.5, h=0.5, col="red", lty="dashed") }
 }
 \keyword{distribution}

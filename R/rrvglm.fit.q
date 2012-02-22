@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2011 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2012 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -152,12 +152,13 @@ rrvglm.fit <- function(x, y, w=rep(1, length(x[, 1])),
                 deriv.mu <- eval(family@deriv)
                 wz <- eval(family@weight)
                 if (control$checkwz)
-                    wz = checkwz(wz, M=M, trace=trace, wzeps=control$wzepsilon)
+                    wz = checkwz(wz, M = M, trace = trace,
+                                 wzepsilon = control$wzepsilon)
 
 
-                wz = matrix(wz, nrow=n)
-                U <- vchol(wz, M=M, n=n, silent=!trace)
-                tvfor <- vforsub(U, as.matrix(deriv.mu), M=M, n=n)
+                wz = matrix(wz, nrow = n)
+                U <- vchol(wz, M = M, n = n, silent=!trace)
+                tvfor <- vforsub(U, as.matrix(deriv.mu), M = M, n = n)
                 z = eta + vbacksub(U, tvfor, M, n) - offset # Contains \bI \bnu
 
                 rrr.expression = paste("rrr", control$Algorithm,
@@ -371,11 +372,12 @@ rrvglm.fit <- function(x, y, w=rep(1, length(x[, 1])),
 
     wz <- eval(family@weight)
     if (control$checkwz)
-        wz = checkwz(wz, M=M, trace=trace, wzeps=control$wzepsilon)
+      wz = checkwz(wz, M = M, trace = trace,
+                   wzepsilon = control$wzepsilon)
 
-    U <- vchol(wz, M=M, n=n, silent=!trace)
-    tvfor <- vforsub(U, as.matrix(deriv.mu), M=M, n=n)
-    z <- eta + vbacksub(U, tvfor, M=M, n=n) - offset
+    U <- vchol(wz, M = M, n = n, silent = !trace)
+    tvfor <- vforsub(U, as.matrix(deriv.mu), M = M, n = n)
+    z <- eta + vbacksub(U, tvfor, M = M, n = n) - offset
 
     c.list <- list(z=as.double(z), fit=as.double(t(eta)), one.more = TRUE,
                    coeff=as.double(rep(1,ncol(X_vlm_save))), U=as.double(U),

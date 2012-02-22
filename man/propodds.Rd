@@ -80,7 +80,7 @@ contains further information and examples.
 # Fit the proportional odds model, p.179, in McCullagh and Nelder (1989)
 pneumo = transform(pneumo, let = log(exposure.time))
 (fit = vglm(cbind(normal, mild, severe) ~ let, propodds, pneumo))
-fit@y   # Sample proportions
+depvar(fit)   # Sample proportions
 weights(fit, type = "prior")   # Number of observations
 coef(fit, matrix = TRUE)
 constraints(fit)   # Constraint matrices

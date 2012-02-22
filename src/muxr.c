@@ -1,11 +1,67 @@
 /*
 This code is
-Copyright (C) 1998-2005 T. W. Yee, University of Auckland. All rights reserved.
+Copyright (C) 1998-2012 T. W. Yee, University of Auckland. All rights reserved.
 */
 
 
-#include <stdio.h>
-#include <math.h>
+#include<math.h>
+#include<stdio.h>
+#include<stdlib.h>
+#include<R.h>
+#include<Rmath.h>
+
+
+void vdec(int *row_index, int *col_index, int *dimm);
+void m2a(double *m, double *a, int *dimm, int *row_index,
+       int *col_index, int *n, int *M, int *upper);
+void a2m(double *a, double *m, int *dimm, int *row_index,
+       int *col_index, int *n, int *M);
+void mux2(double *cc, double *ymat,
+          double *ans, int *p, int *n, int *M);
+void mux22(double *cc, double *ymat, double *ans, int *dimm,
+       int *row_index, int *col_index, 
+       int *n, int *M, double *wk, int *upper);
+void mux5(double *cc, double *x,
+          double *ans, int *M, int *n, int *r,
+          int *dimm,
+          int *dimr,
+          int *matrix,
+          double *wk, double *wk2,
+          int *row_index_M, int *col_index_M,
+          int *row_index_r, int *col_index_r);
+void mux55(double *evects, double *evals, double *ans, double *wk, 
+           double *wk2, int *row_index, int *col_index,
+           int *M, int *n);
+void mux7(double *cc, double *x,
+          double *ans, int *M, int *q, int *n, int *r);
+void mux111(double *cc, double *txmat, int *M, int *R, int *n,
+        double *wk, double *wk2, int *row_index, int *col_index,
+	    int *dimm, int *upper);
+void mux15(double *cc, double *x,
+           double *ans, int *M, int *n);
+void vchol(double *cc, int *M, int *n, int *ok, double *wk,
+           int *row_index, int *col_index, int *dimm);
+void vforsub(double *cc, double *b, int *M, int *n,
+             double *wk, int *row_index,
+             int *col_index, int *dimm);
+void vbacksub(double *cc, double *b, int *M, int *n,
+              double *wk, int *row_index,
+              int *col_index, int *dimm);
+void tapplymat1(double *mat, int *nr, int *nc, int *type);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 void vdec(int *row_index, int *col_index, int *dimm)
@@ -128,7 +184,7 @@ void mux5(double *cc, double *x,
         pd2 = wk2;
     } else {
 /* Commented out on 2/5/06. Need to fix this up more cleanly.
-        printf("Error: can only handle matrix.arg == 1\n");
+        Rprintf("Error: can only handle matrix.arg == 1\n");
         exit(-1); 
 */
 
@@ -435,12 +491,12 @@ void tapplymat1(double *mat, int *nr, int *nc, int *type)
     double *pd = mat, *pd2 = mat + *nr;
     int i, j;
 
-    if(*type==1) 
+    if(*type == 1)
         for(j = 2; j <= *nc; j++)
             for(i = 0; i < *nr; i++, pd2++)
                 *pd2 += *pd++;
 
-    if(*type==2) 
+    if(*type == 2)
     {
         pd2 = mat + *nr * *nc - 1;
         pd = pd2 - *nr;
@@ -449,12 +505,12 @@ void tapplymat1(double *mat, int *nr, int *nc, int *type)
                 *pd2 -= *pd--;
     }
 
-    if(*type==3) 
+    if(*type == 3)
         for(j = 2; j <= *nc; j++)
             for(i = 0; i < *nr; i++, pd2++)
                 *pd2 *= *pd++;
 
     if(*type < 1 || *type > 3)
-        printf("Error: *type not matched\n");
+        Rprintf("Error: *type not matched\n");
 }
 

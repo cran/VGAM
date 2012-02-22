@@ -1,6 +1,7 @@
 # These functions are
-# Copyright (C) 1998-2011 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2012 T.W. Yee, University of Auckland.
 # All rights reserved.
+
 
 
 
@@ -20,23 +21,30 @@
          Rank = 0,
          Musual = NULL,
          weights = NULL,
+         which.lp = 1,
          Index.corner = if (!Rank) NULL else 1 + Musual * (1:Rank),
          rprefix = "Row.",
          cprefix = "Col.",
+         offset = 0,
          szero = if (!Rank) NULL else
                            { if (Musual == 1) 1 else
                                   setdiff(1:(Musual*ncol(y)),
                                           c( # 1:Musual,
                                             1 + (1:ncol(y)) * Musual,
                                             Index.corner))},
-                  summary.arg = FALSE, h.step = 0.0001,
-                  rbaseline = 1, cbaseline = 1, ...) {
+         summary.arg = FALSE, h.step = 0.0001,
+         rbaseline = 1, cbaseline = 1,
+         ...) {
                            
 
 
 
 
+  noroweffects = FALSE
+  nocoleffects = FALSE
 
+  if (!is.Numeric(which.lp, allowable.length = 1, integer.valued = TRUE, positive = TRUE))
+    stop("bad input for argument 'which.lp'")
 
   if (!is.character(rprefix))
     stop("argument 'rprefix' must be character")
@@ -44,11 +52,11 @@
     stop("argument 'cprefix' must be character")
 
   if (is.character(family))
-      family <- get(family)
+    family <- get(family)
   if (is.function(family))
-      family <- ((family)())
+    family <- ((family)())
   if (!inherits(family, "vglmff")) {
-      stop("'family = ", family, "' is not a VGAM family function")
+    stop("'family = ", family, "' is not a VGAM family function")
   }
   efamily = family
 
@@ -79,8 +87,11 @@
 
   eifun <- function(i, n) diag(n)[, i, drop = FALSE]
 
-  .rcam.df <- data.frame("Row.2" = eifun(2, nrow(y)))
-  colnames( .rcam.df )<- paste(rprefix, "2", sep = "")  # Overwrite "Row.2"
+  .rcam.df <-
+    if (!noroweffects) data.frame("Row.2" = eifun(2, nrow(y))) else
+    if (!nocoleffects) data.frame("Col.2" = eifun(2, nrow(y))) else
+    stop("at least one of 'noroweffects' and 'nocoleffects' must be FALSE")
+  colnames( .rcam.df ) <- paste(rprefix, "2", sep = "") # Overwrite "Row.2"
 
 
 
@@ -89,7 +100,7 @@
   warn.save = options()$warn
   options(warn = -3)    # Suppress the warnings (hopefully, temporarily)
   if (any(!is.na(as.numeric(substring(yn1, 1, 1)))))
-      yn1 <- paste("X2.", 1:nrow(y), sep = "")
+    yn1 <- paste("X2.", 1:nrow(y), sep = "")
   options(warn = warn.save)
 
 
@@ -115,6 +126,7 @@
 
   Hlist <- list("(Intercept)" = matrix(1, ncol(y), 1))
 
+  if (!noroweffects)
   for(ii in 2:nrow(y)) {
     Hlist[[   paste(rprefix, ii, sep = "")]] <- matrix(1, ncol(y), 1)
 
@@ -123,6 +135,7 @@
   }
 
 
+  if (!nocoleffects)
   for(ii in 2:ncol(y)) {
 
 
@@ -139,9 +152,9 @@
 
 
   dimnames(.rcam.df) <- list(if (length(dimnames(y)[[1]]))
-                           dimnames(y)[[1]] else
-                           as.character(1:nrow(y)),
-                           dimnames(.rcam.df)[[2]])
+                             dimnames(y)[[1]] else
+                             as.character(1:nrow(y)),
+                             dimnames(.rcam.df)[[2]])
 
   str1 <- paste("~ ", rprefix, "2", sep = "")
 
@@ -165,7 +178,7 @@
 
 
   controlfun <- if (Rank == 0) rrvglm.control else rrvglm.control
-  controlfun <- if (Rank == 0)   vglm.control else rrvglm.control  # orig.
+  controlfun <- if (Rank == 0)   vglm.control else rrvglm.control # orig.
 
 
   mycontrol <- controlfun(Rank = Rank,
@@ -187,7 +200,7 @@
   if (Rank > 0)
     mycontrol$Norrr <- as.formula(str1)  # Overwrite this
 
-  assign(".rcam.df", .rcam.df, envir = VGAM:::VGAMenv)
+  assign(".rcam.df", .rcam.df, envir = VGAM::VGAMenv)
 
   warn.save <- options()$warn
   options(warn = -3)  # Suppress the warnings (hopefully, temporarily)
@@ -198,11 +211,22 @@
 
   if (Musual > 1) {
     orig.Hlist <- Hlist
-    for (ii in 1:length(Hlist))
-      Hlist[[ii]] <- kronecker(Hlist[[ii]], rbind(1, 0))
+    kmat1 = rbind(1, 0)
+    kmat0 = rbind(0, 1)
+
+    kmat1 = matrix(0, nrow = Musual, ncol = 1)
+    kmat1[which.lp, 1] = 1
+    kmat0 = matrix(1, nrow = Musual, ncol = 1)
+    kmat0[which.lp, 1] = 0
+
+    for (ii in 1:length(Hlist)) {
+      Hlist[[ii]] <- kronecker(Hlist[[ii]],
+                               kmat1)
+    }
     Hlist[["(Intercept)"]] <-
       cbind(Hlist[["(Intercept)"]],
-            kronecker(matrix(1, nrow(orig.Hlist[[1]]), 1), rbind(0, 1)))
+            kronecker(matrix(1, nrow(orig.Hlist[[1]]), 1),
+                      kmat0))
 
 
 
@@ -213,21 +237,24 @@
 
 
 
-
+  offset.matrix = matrix(offset, nrow = nrow(y),
+                                 ncol = ncol(y) * Musual) # byrow = TRUE
 
   answer <- if (Rank > 0) {
-    if (is(object.save, "rrvglm")) object.save else 
+    if (is(object.save, "rrvglm")) object.save else
       rrvglm(as.formula(str2),
              family = family,
              constraints = Hlist,
+             offset = offset.matrix,
              weights = if (length(weights)) weights else rep(1, length = nrow(y)),
              ...,
              control = mycontrol, data = .rcam.df)
   } else {
-    if (is(object.save, "vglm")) object.save else 
+    if (is(object.save, "vglm")) object.save else
         vglm(as.formula(str2),
              family = family,
              constraints = Hlist,
+             offset = offset.matrix,
              weights = if (length(weights)) weights else rep(1, length = nrow(y)),
              ...,
              control = mycontrol, data = .rcam.df)
@@ -242,13 +269,15 @@
     } else { 
       summary(answer)
     }
-  } else { 
+  } else {
     as(answer, ifelse(Rank > 0, "rcam", "rcam0"))
   }
 
 
   answer@misc$rbaseline <- rbaseline
   answer@misc$cbaseline <- cbaseline
+  answer@misc$which.lp  <- which.lp
+  answer@misc$offset    <- offset.matrix
 
   answer
 }
@@ -402,6 +431,10 @@ setMethod("summary", "rcam",
 
   orig.raxisl  <- rownames(object@y)
   orig.caxisl  <- colnames(object@y) 
+  if (is.null(orig.raxisl))
+    orig.raxisl = as.character(1:nrow(object@y))
+  if (is.null(orig.caxisl))
+    orig.caxisl = as.character(1:ncol(object@y))
     
   roweff.orig <- 
   roweff <- orig.roweff[c(rfirst:last.r,
@@ -430,7 +463,7 @@ setMethod("summary", "rcam",
     axis(1, at = 1:length(raxisl),
          cex.lab = rcex.lab,  
          cex.axis = rcex.axis,
-         label = raxisl)
+         labels = raxisl)
     axis(2, cex.lab = rcex.lab, ...)  # las = rlas)
 
     if (hline0)
@@ -446,7 +479,7 @@ setMethod("summary", "rcam",
     axis(1, at = 1:length(caxisl),
          cex.lab = ccex.lab,
          cex.axis = ccex.axis,
-         label = caxisl)
+         labels = caxisl)
     axis(2, cex.lab = ccex.lab, ...)  # las = clas)
     
     if (hline0)
@@ -518,8 +551,8 @@ moffset <- function (mat, roffset = 0, coffset = 0, postfix = "") {
                                  "else character and match the ",
                                  "column names of the response")
 
-  if (!is.Numeric(ind1, positive = TRUE, integ = TRUE, allow = 1) ||
-      !is.Numeric(ind2, positive = TRUE, integ = TRUE, allow = 1))
+  if (!is.Numeric(ind1, positive = TRUE, integer.valued = TRUE, allowable.length = 1) ||
+      !is.Numeric(ind2, positive = TRUE, integer.valued = TRUE, allowable.length = 1))
     stop("bad input for arguments 'roffset' and/or 'coffset'")
   if (ind1 > nrow(mat))
     stop("too large a value for argument 'roffset'")
@@ -660,6 +693,104 @@ confint_nb1 <- function(nb1, level = 0.95) {
        phi0       = phi0.hat)
 }
 
+
+
+
+plota21 <- function(rrvglm2, plot.it = TRUE, nseq.a21 = 31,
+                    se.eachway = c(5, 5), # == c(LHS, RHS),
+                    trace.arg = TRUE, ...) {
+
+
+
+
+
+  if (class(rrvglm2) != "rrvglm")
+    stop("argument 'rrvglm2' does not appear to be a rrvglm() object")
+
+  if (rrvglm2@control$Rank != 1)
+    stop("argument 'rrvglm2' is not Rank-1")
+
+  if (rrvglm2@misc$M != 2)
+    stop("argument 'rrvglm2' does not have M = 2")
+
+
+  loglik.orig <- logLik(rrvglm2)
+  temp1 <- confint_rrnb(rrvglm2) # zz
+
+  a21.hat <- (Coef(rrvglm2)@A)[2, 1]
+  se.a21.hat <- temp1$se.a21.hat
+
+
+  se.a21.hat <- sqrt(vcov(rrvglm2)["I(lv.mat)", "I(lv.mat)"])
+
+
+  big.ci.a21 <- a21.hat +  c(-1, 1) * se.eachway * se.a21.hat
+  seq.a21 <- seq(big.ci.a21[1], big.ci.a21[2], length = nseq.a21)
+  Hlist.orig <- constraints.vlm(rrvglm2, type = "lm")
+
+
+  alreadyComputed <- !is.null(rrvglm2@post$a21.matrix)
+
+
+  a21.matrix <- if (alreadyComputed) rrvglm2@post$a21.matrix else
+                cbind(a21 = seq.a21, loglikelihood = 0)
+  prev.etastart <- predict(rrvglm2) # Halves the computing time
+  funname <- "vglm"
+  listcall <- as.list(rrvglm2@call)
+
+
+  if (!alreadyComputed)
+  for (ii in 1:nseq.a21) {
+    if (trace.arg)
+      print(ii)
+
+       argslist <- vector("list", length(listcall) - 1)
+       for (kay in 2:(length(listcall)))
+         argslist[[kay - 1]] <- listcall[[kay]]
+
+       names(argslist) <- c(names(listcall)[-1])
+
+       argslist$trace       = trace.arg
+       argslist$etastart    = prev.etastart
+       argslist$constraints = Hlist.orig
+
+
+       for (kay in 2:length(argslist[["constraints"]])) {
+         argslist[["constraints"]][[kay]] <- rbind(1, a21.matrix[ii, 1])
+       }
+
+
+       fitnew = do.call(what = funname, args = argslist)
+
+       a21.matrix[ii, 2] <- logLik(fitnew)
+
+       prev.etastart <- predict(fitnew)
+  }
+
+
+
+  if (plot.it) {
+    plot(a21.matrix[ ,1], a21.matrix[ ,2], type = "l",
+            col = "blue",
+            xlab = expression(a[21]), ylab = "Log-likelihood") # ...
+
+    abline(v = (Hlist.orig[[length(Hlist.orig)]])[2, 1],
+           col = "darkorange", lty = "dashed")
+
+    abline(h = loglik.orig,
+           col = "darkorange", lty = "dashed")
+
+    abline(h = loglik.orig - qchisq(0.95, df = 1),
+           col = "darkorange", lty = "dashed")
+
+    abline(v = a21.hat +  c(-1, 1) * 1.96 * se.a21.hat,
+           col = "gray50", lty = "dashed", lwd = 2.0)
+
+  } # End of (plot.it)
+
+  rrvglm2@post <- list(a21.matrix = a21.matrix)
+  invisible(rrvglm2)
+}
 
 
 
@@ -971,7 +1102,7 @@ summary.qvar <- function(object, ...) {
 
   regularVar = c(object@extra$attributes.y$regularVar)
   QuasiVar <- exp(diag(fitted(object))) / 2
-  QuasiSE  <- sqrt(quasiVar)
+  QuasiSE  <- sqrt(QuasiVar)
 
 
   structure(list(estimate = estimates,
@@ -1067,11 +1198,11 @@ plotqvar <- function(object,
 
 
   QuasiVar <- exp(diag(fitted(object))) / 2
-  QuasiSE  <- sqrt(quasiVar)
+  QuasiSE  <- sqrt(QuasiVar)
 
     if (!is.numeric(estimates))
       stop("Cannot plot, because there are no 'proper' parameter estimates")
-    if (!is.numeric(quasiSE))
+    if (!is.numeric(QuasiSE))
       stop("Cannot plot, because there are no quasi standard errors")
 
 
@@ -1090,7 +1221,7 @@ plotqvar <- function(object,
       zedd = abs(qnorm((1 - conf.level) / 2))
       lsd.tops  <- estimates + zedd * QuasiSE / sqrt(2)
       lsd.tails <- estimates - zedd * QuasiSE / sqrt(2)
-      if (max(quasiSE) / min(quasiSE) > warn.ratio)
+      if (max(QuasiSE) / min(QuasiSE) > warn.ratio)
         warning("Quasi SEs appear to be quite different... the ",
                 "LSD intervals may not be very accurate")
     } else {

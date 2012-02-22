@@ -11,21 +11,21 @@
   and scale parameter \code{scale}.
 }
 \usage{
-dfisk(x, a, scale=1, log=FALSE)
-pfisk(q, a, scale=1)
-qfisk(p, a, scale=1)
-rfisk(n, a, scale=1)
+dfisk(x, shape1.a, scale = 1, log = FALSE)
+pfisk(q, shape1.a, scale = 1)
+qfisk(p, shape1.a, scale = 1)
+rfisk(n, shape1.a, scale = 1)
 }
 \arguments{
   \item{x, q}{vector of quantiles.}
   \item{p}{vector of probabilities.}
   \item{n}{number of observations.
   If \code{length(n) > 1} then the length is taken to be the number required.}
-  \item{a}{shape parameter.}
+  \item{shape1.a}{shape parameter.}
   \item{scale}{scale parameter.}
   \item{log}{
   Logical.
-  If \code{log=TRUE} then the logarithm of the density is returned.
+  If \code{log = TRUE} then the logarithm of the density is returned.
 
   }
 
@@ -35,30 +35,39 @@ rfisk(n, a, scale=1)
   \code{pfisk} gives the distribution function,
   \code{qfisk} gives the quantile function, and
   \code{rfisk} generates random deviates.
+
 }
 \references{
+
 Kleiber, C. and Kotz, S. (2003)
 \emph{Statistical Size Distributions in Economics and
              Actuarial Sciences},
-Hoboken, NJ: Wiley-Interscience.
+Hoboken, NJ, USA: Wiley-Interscience.
+
+
 }
 \author{ T. W. Yee }
 \details{
   See \code{\link{fisk}}, which is the \pkg{VGAM} family function
   for estimating the parameters by maximum likelihood estimation.
+
+
 }
 \note{
   The Fisk distribution is a special case of the 4-parameter
   generalized beta II distribution.
+
+
 }
 \seealso{
   \code{\link{fisk}},
   \code{\link{genbetaII}}.
+
 }
 \examples{
-y = rfisk(n=1000, 4, 6)
-fit = vglm(y ~ 1, fisk, trace=TRUE, crit="c")
-coef(fit, mat=TRUE)
+fdata = data.frame(y = rfisk(n = 1000, 4, 6))
+fit = vglm(y ~ 1, fisk, data = fdata, trace = TRUE, crit = "coef")
+coef(fit, matrix = TRUE)
 Coef(fit)
 }
 \keyword{distribution}

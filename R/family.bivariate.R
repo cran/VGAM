@@ -1,6 +1,7 @@
 # These functions are
-# Copyright (C) 1998-2011 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2012 T.W. Yee, University of Auckland.
 # All rights reserved.
+
 
 
 
@@ -17,6 +18,7 @@ bilogistic4.control <- function(save.weight = TRUE, ...)
     list(save.weight=save.weight)
 }
 
+
  bilogistic4 = function(llocation = "identity",
                         lscale = "loge",
                         iloc1 = NULL, iscale1 = NULL,
@@ -26,7 +28,8 @@ bilogistic4.control <- function(save.weight = TRUE, ...)
         llocation = as.character(substitute(llocation))
     if (mode(lscale) != "character" && mode(lscale) != "name")
         lscale = as.character(substitute(lscale))
-    if (!is.Numeric(imethod, allow = 1, integ = TRUE, posit = TRUE) ||
+    if (!is.Numeric(imethod, allowable.length = 1,
+                    integer.valued = TRUE, positive = TRUE) ||
        imethod > 2) stop("imethod must be 1 or 2")
 
     new("vglmff",
@@ -62,14 +65,14 @@ bilogistic4.control <- function(save.weight = TRUE, ...)
                 scale.init1=sqrt(3)*sum(w*(y[, 1]-location.init1)^2)/(sum(w)*pi)
                 scale.init2=sqrt(3)*sum(w*(y[, 2]-location.init2)^2)/(sum(w)*pi)
             }
-            loc1.init = if (length(.iloc1)) rep(.iloc1, len = n) else
-                             rep(location.init1, len = n)
-            loc2.init = if (length(.iloc2)) rep(.iloc2, len = n) else
-                             rep(location.init2, len = n)
-            scale1.init = if (length(.iscale1)) rep(.iscale1, len = n) else
-                             rep(1, len = n)
-            scale2.init = if (length(.iscale2)) rep(.iscale2, len = n) else
-                             rep(1, len = n)
+            loc1.init = if (length(.iloc1)) rep(.iloc1, length.out = n) else
+                             rep(location.init1, length.out = n)
+            loc2.init = if (length(.iloc2)) rep(.iloc2, length.out = n) else
+                             rep(location.init2, length.out = n)
+            scale1.init = if (length(.iscale1)) rep(.iscale1, length.out = n) else
+                             rep(1, length.out = n)
+            scale2.init = if (length(.iscale2)) rep(.iscale2, length.out = n) else
+                             rep(1, length.out = n)
             if (.llocation == "loge") location.init1 = abs(location.init1) + 0.001
             if (.llocation == "loge") location.init2 = abs(location.init2) + 0.001
             etastart = cbind(theta2eta(location.init1, .llocation),
@@ -161,9 +164,9 @@ dbilogis4 = function(x1, x2, loc1 = 0, scale1 = 1,
 
     L = max(length(x1), length(x2), length(loc1), length(loc2),
             length(scale1), length(scale2))
-    x1 = rep(x1, len = L); x2 = rep(x2, len = L);
-    loc1 = rep(loc1, len = L); loc2 = rep(loc2, len = L);
-    scale1 = rep(scale1, len = L); scale2 = rep(scale2, len = L);
+    x1 = rep(x1, length.out = L); x2 = rep(x2, length.out = L);
+    loc1 = rep(loc1, length.out = L); loc2 = rep(loc2, length.out = L);
+    scale1 = rep(scale1, length.out = L); scale2 = rep(scale2, length.out = L);
     zedd1 = (-(x1-loc1)/scale1)
     zedd2 = (-(x2-loc2)/scale2)
     logdensity = log(2) + log(zedd1) + log(zedd2) - log(scale1) - 
@@ -174,22 +177,26 @@ dbilogis4 = function(x1, x2, loc1 = 0, scale1 = 1,
 
 
 pbilogis4 = function(q1, q2, loc1 = 0, scale1 = 1, loc2 = 0, scale2 = 1) {
-    if (!is.Numeric(q1)) stop("bad input for 'q1'")
-    if (!is.Numeric(q2)) stop("bad input for 'q2'")
-    if (!is.Numeric(scale1, posit = TRUE)) stop("bad input for 'scale1'")
-    if (!is.Numeric(scale2, posit = TRUE)) stop("bad input for 'scale2'")
+  if (!is.Numeric(q1)) stop("bad input for 'q1'")
+  if (!is.Numeric(q2)) stop("bad input for 'q2'")
+  if (!is.Numeric(scale1, positive = TRUE)) stop("bad input for 'scale1'")
+  if (!is.Numeric(scale2, positive = TRUE)) stop("bad input for 'scale2'")
 
 
-    1 / (1 + exp(-(q1-loc1)/scale1) + exp(-(q2-loc2)/scale2))
+  1 / (1 + exp(-(q1-loc1)/scale1) + exp(-(q2-loc2)/scale2))
 }
 
 
 
 rbilogis4 = function(n, loc1 = 0, scale1 = 1, loc2 = 0, scale2 = 1) {
-    if (!is.Numeric(n, posit = TRUE,allow = 1,integ = TRUE)) stop("bad input for 'n'")
-    if (!is.Numeric(scale1, posit = TRUE)) stop("bad input for 'scale1'")
-    if (!is.Numeric(scale2, posit = TRUE)) stop("bad input for 'scale2'")
-    y1 = rlogis(n, loc=loc1, scale=scale1)
+    if (!is.Numeric(n, positive = TRUE,
+                    allowable.length = 1,integer.valued = TRUE))
+      stop("bad input for 'n'")
+    if (!is.Numeric(scale1, positive = TRUE))
+      stop("bad input for 'scale1'")
+    if (!is.Numeric(scale2, positive = TRUE))
+      stop("bad input for 'scale2'")
+    y1 = rlogis(n, location = loc1, scale = scale1)
     ezedd1 = exp(-(y1-loc1)/scale1)
     y2 = loc2 - scale2 * log(1/sqrt(runif(n) / (1 + ezedd1)^2) - 1 - ezedd1)
     cbind(y1, y2)
@@ -257,20 +264,20 @@ rbilogis4 = function(n, loc1 = 0, scale1 = 1, loc2 = 0, scale2 = 1) {
             sumx = sumx * 1.1; sumxp = sumxp * 1.2;
             sumy = sumy * 1.2; sumyp = sumyp * 1.3;
         }
-        ainit  = if (length(.ia))  rep(.ia, len = n) else
+        ainit  = if (length(.ia))  rep(.ia, length.out = n) else
            arr / (sumx + sumyp)
-        apinit = if (length(.iap)) rep(.iap,len = n) else
+        apinit = if (length(.iap)) rep(.iap,length.out = n) else
            (n-arr)/(sumxp-sumyp)
-        binit  = if (length(.ib))  rep(.ib, len = n) else
+        binit  = if (length(.ib))  rep(.ib, length.out = n) else
            (n-arr)/(sumx +sumyp)
-        bpinit = if (length(.ib))  rep(.ibp,len = n) else
+        bpinit = if (length(.ib))  rep(.ibp,length.out = n) else
            arr / (sumy - sumx)
 
         etastart =
-          cbind(theta2eta(rep(ainit,  len = n), .la,  earg = .ea  ),
-                theta2eta(rep(apinit, len = n), .lap, earg = .eap ),
-                theta2eta(rep(binit,  len = n), .lb,  earg = .eb  ),
-                theta2eta(rep(bpinit, len = n), .lbp, earg = .ebp ))
+          cbind(theta2eta(rep(ainit,  length.out = n), .la,  earg = .ea  ),
+                theta2eta(rep(apinit, length.out = n), .lap, earg = .eap ),
+                theta2eta(rep(binit,  length.out = n), .lb,  earg = .eb  ),
+                theta2eta(rep(bpinit, length.out = n), .lbp, earg = .ebp ))
     }
   }), list(.la = la, .lap = lap, .lb = lb, .lbp = lbp,
            .ea = ea, .eap = eap, .eb = eb, .ebp = ebp,
@@ -379,7 +386,8 @@ rbilogis4 = function(n, loc1 = 0, scale1 = 1, loc2 = 0, scale2 = 1) {
     if (!is.null(ishape2))
         if (!is.Numeric(ishape2, positive = TRUE))
             stop("'ishape2' must be positive or NULL")
-    if (!is.Numeric(imethod, allow = 1, integ = TRUE, positi = TRUE) ||
+    if (!is.Numeric(imethod, allowable.length = 1,
+                    integer.valued = TRUE, positive = TRUE) ||
        imethod > 2.5)
         stop("argument 'imethod' must be 1 or 2")
 
@@ -425,12 +433,12 @@ rbilogis4 = function(n, loc1 = 0, scale1 = 1, loc2 = 0, scale2 = 1) {
             ainit = getMaxMin(a.grid, objfun=mcg2.loglik,
                               y=y,  x=x, w=w, maximize = TRUE,
                               extraargs = extraargs)
-            ainit = rep(if(is.Numeric( .iscale )) .iscale else ainit, len = n)
+            ainit = rep(if(is.Numeric( .iscale )) .iscale else ainit, length.out = n)
             pinit = (1/ainit) * abs(momentsY[1]) + 0.01
             qinit = (1/ainit) * abs(momentsY[2] - momentsY[1]) + 0.01
 
-            pinit = rep(if(is.Numeric( .ishape1 )) .ishape1 else pinit, len = n)
-            qinit = rep(if(is.Numeric( .ishape2 )) .ishape2 else qinit, len = n)
+            pinit = rep(if(is.Numeric( .ishape1 )) .ishape1 else pinit, length.out = n)
+            qinit = rep(if(is.Numeric( .ishape2 )) .ishape2 else qinit, length.out = n)
 
             etastart = cbind(theta2eta(ainit, .lscale),
                              theta2eta(pinit, .lshape1),
@@ -506,9 +514,12 @@ rbilogis4 = function(n, loc1 = 0, scale1 = 1, loc2 = 0, scale2 = 1) {
 
 
 rfrank = function(n, alpha) {
-    if (!is.Numeric(n, posit = TRUE, allow = 1, integ = TRUE)) stop("bad input for 'n'")
-    if (!is.Numeric(alpha, posit = TRUE)) stop("bad input for 'alpha'")
-    alpha = rep(alpha, len = n)
+    if (!is.Numeric(n, positive = TRUE,
+                    allowable.length = 1, integer.valued = TRUE))
+      stop("bad input for argument 'n'")
+    if (!is.Numeric(alpha, positive = TRUE))
+      stop("bad input for argument 'alpha'")
+    alpha = rep(alpha, length.out = n)
     U = runif(n)
     V = runif(n)
     T = alpha^U + (alpha - alpha^U) * V
@@ -529,12 +540,12 @@ rfrank = function(n, alpha) {
 pfrank = function(q1, q2, alpha) {
     if (!is.Numeric(q1)) stop("bad input for 'q1'")
     if (!is.Numeric(q2)) stop("bad input for 'q2'")
-    if (!is.Numeric(alpha, posit = TRUE)) stop("bad input for 'alpha'")
+    if (!is.Numeric(alpha, positive = TRUE)) stop("bad input for 'alpha'")
 
     L = max(length(q1), length(q2), length(alpha))
-    alpha = rep(alpha, len = L)
-    q1 = rep(q1, len = L)
-    q2 = rep(q2, len = L)
+    alpha = rep(alpha, length.out = L)
+    q1 = rep(q1, length.out = L)
+    q2 = rep(q2, length.out = L)
 
     x=q1; y=q2
     index = (x >= 1 & y <  1) | (y >= 1 & x <  1) |
@@ -561,12 +572,12 @@ dfrank = function(x1, x2, alpha, log = FALSE) {
 
     if (!is.Numeric(x1)) stop("bad input for 'x1'")
     if (!is.Numeric(x2)) stop("bad input for 'x2'")
-    if (!is.Numeric(alpha, posit = TRUE)) stop("bad input for 'alpha'")
+    if (!is.Numeric(alpha, positive = TRUE)) stop("bad input for 'alpha'")
 
     L = max(length(x1), length(x2), length(alpha))
-    alpha = rep(alpha, len = L)
-    x1 = rep(x1, len = L)
-    x2 = rep(x2, len = L)
+    alpha = rep(alpha, length.out = L)
+    x1 = rep(x1, length.out = L)
+    x2 = rep(x2, length.out = L)
 
     if (log.arg) {
         denom = alpha-1 + (alpha^x1  - 1) * (alpha^x2  - 1)
@@ -595,15 +606,18 @@ frank.control <- function(save.weight = TRUE, ...)
 
 
 
- frank = function(lapar = "loge", eapar=list(), iapar = 2, nsimEIM = 250) {
+ frank = function(lapar = "loge", eapar = list(), iapar = 2, nsimEIM = 250) {
     if (mode(lapar) != "character" && mode(lapar) != "name")
-        lapar = as.character(substitute(lapar))
+      lapar = as.character(substitute(lapar))
     if (!is.Numeric(iapar, positive = TRUE))
-        stop("'iapar' must be positive")
+      stop("'iapar' must be positive")
+
     if (!is.list(eapar)) eapar = list()
     if (length(nsimEIM) &&
-       (!is.Numeric(nsimEIM, allow = 1, integ = TRUE) || nsimEIM <= 50))
-        stop("'nsimEIM' should be an integer greater than 50")
+       (!is.Numeric(nsimEIM, allowable.length = 1,
+                    integer.valued = TRUE) ||
+        nsimEIM <= 50))
+      stop("'nsimEIM' should be an integer greater than 50")
 
     new("vglmff",
     blurb = c("Frank's bivariate distribution\n",
@@ -619,7 +633,7 @@ frank.control <- function(save.weight = TRUE, ...)
         if (length(dimnames(y)))
             extra$dimnamesy2 = dimnames(y)[[2]]
         if (!length(etastart)) {
-            apar.init = rep(.iapar, len = n)
+            apar.init = rep(.iapar, length.out = n)
             etastart = cbind(theta2eta(apar.init, .lapar, earg = .eapar ))
         }
     }), list( .lapar = lapar, .eapar=eapar, .iapar=iapar))),
@@ -726,7 +740,7 @@ frank.control <- function(save.weight = TRUE, ...)
             stop("the response has values that are out of range") 
         predictors.names = c(namesof("theta", .ltheta, short = TRUE))
         if (!length(etastart)) {
-            theta.init = if (length( .itheta)) rep(.itheta, len = n) else {
+            theta.init = if (length( .itheta)) rep(.itheta, length.out = n) else {
                 1 / (y[, 2] - 1 + 0.01)
             }
             etastart = cbind(theta2eta(theta.init, .ltheta))
@@ -771,18 +785,23 @@ frank.control <- function(save.weight = TRUE, ...)
 
 
 
- morgenstern = function(lapar = "rhobit", earg =list(), iapar = NULL, tola0 = 0.01,
+ morgenstern = function(lapar = "rhobit", earg  = list(), iapar = NULL, tola0 = 0.01,
                         imethod = 1) {
     if (mode(lapar) != "character" && mode(lapar) != "name")
         lapar = as.character(substitute(lapar))
     if (!is.list(earg)) earg = list()
-    if (length(iapar) && (!is.Numeric(iapar, allow = 1) || abs(iapar) >= 1))
-        stop("'iapar' must be a single number between -1 and 1") 
-    if (!is.Numeric(tola0, allow = 1, posit = TRUE))
-        stop("'tola0' must be a single positive number") 
+
+    if (length(iapar) &&
+       (!is.Numeric(iapar, allowable.length = 1) ||
+        abs(iapar) >= 1))
+        stop("argument 'iapar' must be a single number between -1 and 1")
+
+    if (!is.Numeric(tola0, allowable.length = 1, positive = TRUE))
+        stop("argument 'tola0' must be a single positive number")
     if (length(iapar) && abs(iapar) <= tola0)
-        stop("'iapar' must not be between -tola0 and tola0") 
-    if (!is.Numeric(imethod, allow = 1, integ = TRUE, positi = TRUE) ||
+        stop("argument 'iapar' must not be between -tola0 and tola0")
+    if (!is.Numeric(imethod, allowable.length = 1,
+                    integer.valued = TRUE, positive = TRUE) ||
        imethod > 2.5)
         stop("argument 'imethod' must be 1 or 2")
 
@@ -799,14 +818,14 @@ frank.control <- function(save.weight = TRUE, ...)
         if (length(dimnames(y)))
             extra$dimnamesy2 = dimnames(y)[[2]]
         if (!length(etastart)) {
-            ainit  = if (length(.iapar))  rep(.iapar, len = n) else {
+            ainit  = if (length(.iapar))  rep(.iapar, length.out = n) else {
                 mean1 = if ( .imethod == 1) median(y[, 1]) else mean(y[, 1])
                 mean2 = if ( .imethod == 1) median(y[, 2]) else mean(y[, 2])
                 Finit = 0.01 + mean(y[, 1] <= mean1 & y[, 2] <= mean2)
                 ((Finit+expm1(-mean1)+exp(-mean2)) / exp(-mean1-mean2) - 1)/(
                  expm1(-mean1) * expm1(-mean2))
               }
-            etastart = theta2eta(rep(ainit, len = n), .lapar, earg = .earg )
+            etastart = theta2eta(rep(ainit, length.out = n), .lapar, earg = .earg )
         }
     }), list( .iapar=iapar, .lapar = lapar, .earg = earg,
               .imethod = imethod ))),
@@ -867,17 +886,21 @@ frank.control <- function(save.weight = TRUE, ...)
 
 
 rfgm = function(n, alpha) {
-    if (!is.Numeric(n, posit = TRUE, allow = 1, integ = TRUE)) stop("bad input for 'n'")
-    if (!is.Numeric(alpha)) stop("bad input for 'alpha'")
-    if (any(abs(alpha) > 1)) stop("'alpha' values out of range")
+  if (!is.Numeric(n, positive = TRUE,
+                  allowable.length = 1, integer.valued = TRUE))
+    stop("bad input for argument 'n'")
+  if (!is.Numeric(alpha))
+    stop("bad input for argument 'alpha'")
+  if (any(abs(alpha) > 1))
+    stop("argument 'alpha' has values out of range")
 
-    y1 = V1 = runif(n)
-    V2 = runif(n)
-    temp = 2*y1 - 1
-    A = alpha * temp - 1
-    B = sqrt(1 - 2 * alpha * temp + (alpha*temp)^2 + 4 * alpha * V2 * temp)
-    y2 = 2 * V2 / (B - A)
-    matrix(c(y1,y2), nrow=n, ncol = 2)
+  y1 = V1 = runif(n)
+  V2 = runif(n)
+  temp = 2*y1 - 1
+  A = alpha * temp - 1
+  B = sqrt(1 - 2 * alpha * temp + (alpha*temp)^2 + 4 * alpha * V2 * temp)
+  y2 = 2 * V2 / (B - A)
+  matrix(c(y1, y2), nrow = n, ncol = 2)
 }
 
 
@@ -891,9 +914,9 @@ dfgm = function(x1, x2, alpha, log = FALSE) {
         stop("bad input for argument 'log'")
 
     L = max(length(x1), length(x2), length(alpha))
-    if (length(x1) != L)  x1 = rep(x1, len = L)
-    if (length(x2) != L)  x2 = rep(x2, len = L)
-    if (length(alpha) != L)  alpha = rep(alpha, len = L)
+    if (length(x1) != L)  x1 = rep(x1, length.out = L)
+    if (length(x2) != L)  x2 = rep(x2, length.out = L)
+    if (length(alpha) != L)  alpha = rep(alpha, length.out = L)
     ans = 0 * x1
     xnok = (x1 <= 0) | (x1 >= 1) | (x2 <= 0) | (x2 >= 1)
     if ( log.arg ) {
@@ -916,9 +939,9 @@ pfgm = function(q1, q2, alpha) {
     if (any(abs(alpha) > 1)) stop("'alpha' values out of range")
 
     L = max(length(q1), length(q2), length(alpha))
-    if (length(q1) != L)  q1 = rep(q1, len = L)
-    if (length(q2) != L)  q2 = rep(q2, len = L)
-    if (length(alpha) != L)  alpha = rep(alpha, len = L)
+    if (length(q1) != L)  q1 = rep(q1, length.out = L)
+    if (length(q2) != L)  q2 = rep(q2, length.out = L)
+    if (length(alpha) != L)  alpha = rep(alpha, length.out = L)
 
     x=q1; y=q2
     index = (x >= 1 & y<1) | (y >= 1 & x<1) | (x <= 0 | y <= 0) | (x >= 1 & y >= 1)
@@ -943,20 +966,25 @@ fgm.control <- function(save.weight = TRUE, ...)
 
 
 
- fgm = function(lapar = "rhobit", earg =list(), iapar = NULL,
+ fgm = function(lapar = "rhobit", earg  = list(), iapar = NULL,
                 imethod = 1, nsimEIM = 200) {
     if (mode(lapar) != "character" && mode(lapar) != "name")
         lapar = as.character(substitute(lapar))
     if (!is.list(earg)) earg = list()
-    if (!is.Numeric(imethod, allow = 1, integ = TRUE, positi = TRUE) ||
+
+    if (!is.Numeric(imethod, allowable.length = 1,
+                    integer.valued = TRUE, positive = TRUE) ||
        imethod > 2.5)
         stop("argument 'imethod' must be 1 or 2")
     if (!length(nsimEIM) ||
-       (!is.Numeric(nsimEIM, allow = 1, integ = TRUE) || nsimEIM <= 50))
-        stop("'nsimEIM' should be an integer greater than 50")
+       (!is.Numeric(nsimEIM, allowable.length = 1,
+                    integer.valued = TRUE) ||
+        nsimEIM <= 50))
+      stop("'nsimEIM' should be an integer greater than 50")
     if (length(iapar) &&
        (abs(iapar) >= 1))
-        stop("'iapar' should be less than 1 in absolute value")
+      stop("'iapar' should be less than 1 in absolute value")
+
 
     new("vglmff",
     blurb = c("Farlie-Gumbel-Morgenstern distribution\n",
@@ -982,7 +1010,7 @@ fgm.control <- function(save.weight = TRUE, ...)
 
             ainit = min(0.95, max(ainit, -0.95))
 
-            etastart = theta2eta(rep(ainit, len = n), .lapar, earg = .earg )
+            etastart = theta2eta(rep(ainit, length.out = n), .lapar, earg = .earg )
         }
     }), list( .iapar=iapar, .lapar = lapar, .earg = earg,
               .imethod = imethod ))),
@@ -1045,16 +1073,19 @@ fgm.control <- function(save.weight = TRUE, ...)
 
 
 
- gumbelIbiv = function(lapar = "identity", earg =list(),
+ gumbelIbiv = function(lapar = "identity", earg  = list(),
                        iapar = NULL, imethod = 1) {
     if (mode(lapar) != "character" && mode(lapar) != "name")
         lapar = as.character(substitute(lapar))
     if (!is.list(earg)) earg = list()
-    if (length(iapar) && !is.Numeric(iapar, allow = 1))
-        stop("'iapar' must be a single number")
-    if (!is.Numeric(imethod, allow = 1, integ = TRUE, positi = TRUE) ||
+
+    if (length(iapar) &&
+        !is.Numeric(iapar, allowable.length = 1))
+      stop("'iapar' must be a single number")
+    if (!is.Numeric(imethod, allowable.length = 1,
+                    integer.valued = TRUE, positive = TRUE) ||
        imethod > 2.5)
-        stop("argument 'imethod' must be 1 or 2")
+      stop("argument 'imethod' must be 1 or 2")
 
     new("vglmff",
     blurb = c("Gumbel's Type I bivariate distribution\n",
@@ -1067,13 +1098,13 @@ fgm.control <- function(save.weight = TRUE, ...)
             stop("the response must have non-negative values only")
         predictors.names = c(namesof("apar", .lapar, earg = .earg , short = TRUE))
         if (!length(etastart)) {
-            ainit  = if (length( .iapar ))  rep( .iapar, len = n) else {
+            ainit  = if (length( .iapar ))  rep( .iapar, length.out = n) else {
                 mean1 = if ( .imethod == 1) median(y[, 1]) else mean(y[, 1])
                 mean2 = if ( .imethod == 1) median(y[, 2]) else mean(y[, 2])
                 Finit = 0.01 + mean(y[, 1] <= mean1 & y[, 2] <= mean2)
                 (log(Finit+expm1(-mean1)+exp(-mean2))+mean1+mean2)/(mean1*mean2)
             }
-            etastart = theta2eta(rep(ainit,  len = n), .lapar, earg = .earg )
+            etastart = theta2eta(rep(ainit,  length.out = n), .lapar, earg = .earg )
         }
     }), list( .iapar=iapar, .lapar = lapar, .earg = earg,
               .imethod = imethod ))),
@@ -1142,12 +1173,12 @@ fgm.control <- function(save.weight = TRUE, ...)
 pplack = function(q1, q2, oratio) {
     if (!is.Numeric(q1)) stop("bad input for 'q1'")
     if (!is.Numeric(q2)) stop("bad input for 'q2'")
-    if (!is.Numeric(oratio, posit = TRUE)) stop("bad input for 'oratio'")
+    if (!is.Numeric(oratio, positive = TRUE)) stop("bad input for 'oratio'")
 
     L = max(length(q1), length(q2), length(oratio))
-    if (length(q1) != L)  q1 = rep(q1, len = L)
-    if (length(q2) != L)  q2 = rep(q2, len = L)
-    if (length(oratio) != L)  oratio = rep(oratio, len = L)
+    if (length(q1) != L)  q1 = rep(q1, length.out = L)
+    if (length(q2) != L)  q2 = rep(q2, length.out = L)
+    if (length(oratio) != L)  oratio = rep(oratio, length.out = L)
 
     x=q1; y=q2
     index = (x >= 1 & y <  1) | (y >= 1 & x <  1) |
@@ -1173,9 +1204,12 @@ pplack = function(q1, q2, oratio) {
 
 
 rplack = function(n, oratio) {
-    if (!is.Numeric(n, posit = TRUE, allow = 1, integ = TRUE)) stop("bad input for 'n'")
-    if (!is.Numeric(oratio, posit = TRUE)) stop("bad input for 'oratio'")
-    if (length(oratio) != n)  oratio = rep(oratio, len = n)
+    if (!is.Numeric(n, positive = TRUE,
+                    allowable.length = 1, integer.valued = TRUE))
+      stop("bad input for 'n'")
+    if (!is.Numeric(oratio, positive = TRUE))
+      stop("bad input for 'oratio'")
+    if (length(oratio) != n)  oratio = rep(oratio, length.out = n)
 
     y1 = U = runif(n)
     V = runif(n)
@@ -1193,12 +1227,12 @@ dplack = function(x1, x2, oratio, log = FALSE) {
     log.arg = log
     rm(log)
 
-    if (!is.Numeric(oratio, posit = TRUE))
+    if (!is.Numeric(oratio, positive = TRUE))
       stop("bad input for 'oratio'")
     L = max(length(x1), length(x2), length(oratio))
-    if (length(x1) != L)  x1 = rep(x1, len = L)
-    if (length(x2) != L)  x2 = rep(x2, len = L)
-    if (length(oratio) != L)  oratio = rep(oratio, len = L)
+    if (length(x1) != L)  x1 = rep(x1, length.out = L)
+    if (length(x2) != L)  x2 = rep(x2, length.out = L)
+    if (length(oratio) != L)  oratio = rep(oratio, length.out = L)
     if ( !is.logical( log.arg ) || length( log.arg ) != 1 )
         stop("bad input for argument 'log'")
 
@@ -1224,14 +1258,15 @@ plackett.control <- function(save.weight = TRUE, ...)
 
 
 
- plackett = function(link = "loge", earg =list(),
+ plackett = function(link = "loge", earg  = list(),
                      ioratio = NULL, imethod = 1, nsimEIM = 200) {
     if (mode(link) != "character" && mode(link) != "name")
         link = as.character(substitute(link))
     if (!is.list(earg)) earg = list()
-    if (length(ioratio) && (!is.Numeric(ioratio, posit = TRUE)))
+    if (length(ioratio) && (!is.Numeric(ioratio, positive = TRUE)))
         stop("'ioratio' must be positive")
-    if (!is.Numeric(imethod, allow = 1, integ = TRUE, posit = TRUE) ||
+    if (!is.Numeric(imethod, allowable.length = 1,
+                    integer.valued = TRUE, positive = TRUE) ||
        imethod > 2) stop("imethod must be 1 or 2")
 
     new("vglmff",
@@ -1263,7 +1298,7 @@ plackett.control <- function(save.weight = TRUE, ...)
                      (0.5 + sum(w[(y[, 1] >= y10) & (y[, 2] <  y20)]))))
                 }
             }
-            etastart = theta2eta(rep(orinit, len = n), .link, earg = .earg)
+            etastart = theta2eta(rep(orinit, length.out = n), .link, earg = .earg)
         }
     }), list( .ioratio=ioratio, .link = link, .earg = earg,
               .imethod = imethod ))),
@@ -1340,9 +1375,9 @@ damh = function(x1, x2, alpha, log = FALSE) {
     if (!is.Numeric(alpha)) stop("bad input for 'alpha'")
     if (any(abs(alpha) > 1)) stop("'alpha' values out of range")
     L = max(length(x1), length(x2), length(alpha))
-    alpha = rep(alpha, len = L)
-    x1 = rep(x1, len = L)
-    x2 = rep(x2, len = L)
+    alpha = rep(alpha, length.out = L)
+    x1 = rep(x1, length.out = L)
+    x2 = rep(x2, length.out = L)
     temp = 1-alpha*(1-x1)*(1-x2)
     if (log.arg) {
         ans = log1p(-alpha+2*alpha*x1*x2/temp) - 2*log(temp)
@@ -1361,9 +1396,9 @@ pamh = function(q1, q2, alpha) {
     if (any(abs(alpha) > 1)) stop("'alpha' values out of range")
 
     L = max(length(q1), length(q2), length(alpha))
-    if (length(q1) != L)  q1 = rep(q1, len = L)
-    if (length(q2) != L)  q2 = rep(q2, len = L)
-    if (length(alpha) != L)  alpha = rep(alpha, len = L)
+    if (length(q1) != L)  q1 = rep(q1, length.out = L)
+    if (length(q2) != L)  q2 = rep(q2, length.out = L)
+    if (length(alpha) != L)  alpha = rep(alpha, length.out = L)
 
     x=q1; y=q2
     index = (x >= 1 & y < 1) | (y >= 1 & x <  1) |
@@ -1381,9 +1416,13 @@ pamh = function(q1, q2, alpha) {
 }
 
 ramh = function(n, alpha) {
-    if (!is.Numeric(n, posit = TRUE, allow = 1, integ = TRUE)) stop("bad input for 'n'")
-    if (!is.Numeric(alpha)) stop("bad input for 'alpha'")
-    if (any(abs(alpha) > 1)) stop("'alpha' values out of range")
+    if (!is.Numeric(n, positive = TRUE, allowable.length = 1,
+                    integer.valued = TRUE))
+      stop("bad input for 'n'")
+    if (!is.Numeric(alpha))
+      stop("bad input for 'alpha'")
+    if (any(abs(alpha) > 1))
+      stop("'alpha' values out of range")
 
     U1 = V1 = runif(n)
     V2 = runif(n)
@@ -1394,24 +1433,32 @@ ramh = function(n, alpha) {
     matrix(c(U1,U2), nrow=n, ncol = 2)
 }
 
+
 amh.control <- function(save.weight = TRUE, ...)
 {
     list(save.weight=save.weight)
 }
 
- amh = function(lalpha = "rhobit", ealpha=list(), ialpha = NULL,
+
+ amh = function(lalpha = "rhobit", ealpha = list(), ialpha = NULL,
                 imethod = 1, nsimEIM = 250)
 {
     if (mode(lalpha) != "character" && mode(lalpha) != "name")
       lalpha = as.character(substitute(lalpha))
     if (!is.list(ealpha)) ealpha = list()
+
     if (length(ialpha) && (abs(ialpha) > 1))
       stop("'ialpha' should be less than or equal to 1 in absolute value")
-    if (!is.Numeric(imethod, allow = 1, integ = TRUE, posit = TRUE) ||
-      imethod > 2) stop("imethod must be 1 or 2")
+    if (!is.Numeric(imethod, allowable.length = 1,
+                    integer.valued = TRUE, positive = TRUE) ||
+      imethod > 2)
+      stop("imethod must be 1 or 2")
     if (length(nsimEIM) &&
-      (!is.Numeric(nsimEIM, allow = 1, integ = TRUE) || nsimEIM <= 50))
-      stop("'nsimEIM' should be an integer greater than 50")
+      (!is.Numeric(nsimEIM, allowable.length = 1,
+                    integer.valued = TRUE) ||
+       nsimEIM <= 50))
+    stop("'nsimEIM' should be an integer greater than 50")
+
 
     new("vglmff",
     blurb = c("Ali-Mikhail-Haq distribution\n",
@@ -1435,7 +1482,7 @@ amh.control <- function(save.weight = TRUE, ...)
                 (1 - (mean1 * mean2 / Finit)) / ((1-mean1) * (1-mean2))
             }
             ainit = min(0.95, max(ainit, -0.95))
-            etastart = theta2eta(rep(ainit, len = n), .lalpha, earg = .ealpha )
+            etastart = theta2eta(rep(ainit, length.out = n), .lalpha, earg = .ealpha )
         }
     }), list( .lalpha = lalpha, .ealpha = ealpha, .ialpha=ialpha,
               .imethod = imethod))),
@@ -1560,7 +1607,8 @@ dbinorm = function(x1, x2, mean1 = 0, mean2 = 0, sd1 = 1, sd2 = 1,
   if(!trivial1 && !trivial2)
     stop("only one of 'equalmean' and 'equalsd' can be assigned a value")
 
-  if (!is.Numeric(imethod, allow = 1, integ = TRUE, posit = TRUE) ||
+  if (!is.Numeric(imethod, allowable.length = 1,
+                    integer.valued = TRUE, positive = TRUE) ||
      imethod > 2) stop("argument 'imethod' must be 1 or 2")
 
   new("vglmff",
@@ -1600,13 +1648,13 @@ dbinorm = function(x1, x2, mean1 = 0, mean2 = 0, sd1 = 1, sd2 = 1,
 
     if (!length(etastart)) {
       imean1 = rep(if (length( .imean1 )) .imean1 else
-                   weighted.mean(y[, 1], w = w), len = n)
+                   weighted.mean(y[, 1], w = w), length.out = n)
       imean2 = rep(if (length( .imean2 )) .imean2 else
-                   weighted.mean(y[, 2], w = w), len = n)
-      isd1   = rep(if (length( .isd1 )) .isd1 else  sd(y[, 1]), len = n)
-      isd2   = rep(if (length( .isd2 )) .isd2 else  sd(y[, 2]), len = n)
+                   weighted.mean(y[, 2], w = w), length.out = n)
+      isd1   = rep(if (length( .isd1 )) .isd1 else  sd(y[, 1]), length.out = n)
+      isd2   = rep(if (length( .isd2 )) .isd2 else  sd(y[, 2]), length.out = n)
       irho   = rep(if (length( .irho )) .irho else cor(y[, 1], y[, 2]),
-                   len = n)
+                   length.out = n)
 
       if ( .imethod == 2) {
         imean1 = abs(imean1) + 0.01

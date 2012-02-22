@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2011 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2012 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -42,6 +42,7 @@
     list(Musual = 1,
          zero = .zero)
   }, list( .zero = zero ))),
+
   initialize = eval(substitute(expression({
     assign("CQO.FastAlgorithm",
            ( .link == "logit" || .link == "cloglog"),
@@ -105,8 +106,8 @@
             if (any(abs(y - round(y)) > 1.0e-8))
                 stop("Count data must be integer-valued")
             y = round(y)
-            nvec = y[,1] + y[,2]
-            y = ifelse(nvec > 0, y[,1] / nvec, 0)
+            nvec = y[, 1] + y[, 2]
+            y = ifelse(nvec > 0, y[, 1] / nvec, 0)
             w = w * nvec
             if (!length(mustart) && !length(etastart))
               mustart = (0.5 + nvec * y) / (1 + nvec)
@@ -164,9 +165,9 @@
             .onedpar = onedpar, .mv = mv,
             .link = link, .earg = earg ))),
 
-  linkfun = eval(substitute(function(mu, extra = NULL)
-      theta2eta(mu, .link, earg = .earg )
-  , list( .link = link, .earg = earg ))),
+  linkfun = eval(substitute(function(mu, extra = NULL) {
+    theta2eta(mu, .link, earg = .earg )
+  }, list( .link = link, .earg = earg ))),
 
   loglikelihood = eval(substitute(
     function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
@@ -256,7 +257,7 @@
 
     new("vglmff",
     blurb = c("Gamma distribution\n\n",
-           "Link:     ", namesof("mu", link, earg=earg), "\n",
+           "Link:     ", namesof("mu", link, earg =earg), "\n",
            "Variance: mu^2 / k"),
     deviance= function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
         devi <- -2 * w * (log(ifelse(y == 0, 1, y/mu)) - (y - mu)/mu)
@@ -274,12 +275,12 @@
                 paste("mu", 1:M, sep = "") 
             }
             predictors.names = namesof(if (M > 1) dn2 else "mu", .link,
-                 earg=.earg, short = TRUE)
+                 earg =.earg, short = TRUE)
         if (!length(etastart))
-            etastart <- theta2eta(mustart, link = .link, earg=.earg)
+            etastart <- theta2eta(mustart, link = .link, earg =.earg)
     }), list( .link = link, .earg = earg ))),
     linkinv = eval(substitute(function(eta, extra = NULL) {
-        eta2theta(eta, link = .link, earg=.earg)
+        eta2theta(eta, link = .link, earg =.earg)
     }, list( .link = link, .earg = earg ))),
     last = eval(substitute(expression({
         dpar <- .dispersion
@@ -311,12 +312,12 @@
               .estimated.dispersion = estimated.dispersion,
               .link = link ))),
     linkfun = eval(substitute(function(mu, extra = NULL) {
-        theta2eta(mu, link = .link, earg=.earg)
+        theta2eta(mu, link = .link, earg =.earg)
     }, list( .link = link, .earg = earg ))),
     vfamily = "gammaff",
     deriv = eval(substitute(expression({
         dl.dmu = (y-mu) / mu^2
-        dmu.deta = dtheta.deta(theta = mu, link = .link, earg=.earg)
+        dmu.deta = dtheta.deta(theta = mu, link = .link, earg =.earg)
         w * dl.dmu * dmu.deta
     }), list( .link = link, .earg = earg ))),
     weight = eval(substitute(expression({
@@ -431,7 +432,8 @@ pinv.gaussian = function(q, mu, lambda) {
 
 rinv.gaussian = function(n, mu, lambda) {
     use.n = if ((length.n <- length(n)) > 1) length.n else
-            if (!is.Numeric(n, integ=TRUE, allow = 1, posit = TRUE))
+            if (!is.Numeric(n, integer.valued = TRUE,
+                            allowable.length = 1, positive = TRUE))
                 stop("bad input for argument 'n'") else n
 
     mu = rep(mu, len = use.n); lambda = rep(lambda, len = use.n)
@@ -466,106 +468,121 @@ rinv.gaussian = function(n, mu, lambda) {
 
 
 
-    if (mode(lmu) != "character" && mode(lmu) != "name")
-        lmu <- as.character(substitute(lmu))
-    if (mode(llambda) != "character" && mode(llambda) != "name")
-        llambda <- as.character(substitute(llambda))
-    if (!is.list(emu)) emu = list()
-    if (!is.list(elambda)) elambda = list()
+  if (mode(lmu) != "character" && mode(lmu) != "name")
+    lmu <- as.character(substitute(lmu))
+  if (mode(llambda) != "character" && mode(llambda) != "name")
+    llambda <- as.character(substitute(llambda))
 
-    if (!is.Numeric(imethod, allow = 1, integ = TRUE, posit = TRUE) ||
-       imethod > 3)
-        stop("argument 'imethod' must be 1 or 2 or 3")
-    if (!is.Numeric(shrinkage.init, allow = 1) || shrinkage.init < 0 ||
-       shrinkage.init > 1) stop("bad input for argument 'shrinkage.init'")
+  if (!is.list(emu)) emu = list()
+  if (!is.list(elambda)) elambda = list()
+
+  if (!is.Numeric(imethod, allowable.length = 1, integer.valued = TRUE, positive = TRUE) ||
+     imethod > 3)
+    stop("argument 'imethod' must be 1 or 2 or 3")
+  if (!is.Numeric(shrinkage.init, allowable.length = 1) ||
+     shrinkage.init < 0 ||
+     shrinkage.init > 1)
+    stop("bad input for argument 'shrinkage.init'")
 
 
-    new("vglmff",
-    blurb = c("Inverse Gaussian distribution\n\n",
-           "f(y) = sqrt(lambda/(2*pi*y^3)) * ",
-           "exp(-lambda*(y-mu)^2/(2*mu^2*y)); y, mu and lambda > 0",
-           "Link:     ", namesof("mu", lmu, earg= emu), ", ",
-                         namesof("lambda", llambda, earg= elambda), "\n",
-           "Mean:     ", "mu\n",
-           "Variance: mu^3 / lambda"),
-    constraints = eval(substitute(expression({
-        constraints <- cm.zero.vgam(constraints, x, .zero, M)
-    }), list( .zero = zero ))),
-    initialize = eval(substitute(expression({
-        if (ncol(cbind(y)) != 1)
-            stop("response must be a vector or a one-column matrix")
+  new("vglmff",
+  blurb = c("Inverse Gaussian distribution\n\n",
+         "f(y) = sqrt(lambda/(2*pi*y^3)) * ",
+         "exp(-lambda * (y - mu)^2 / (2 * mu^2 * y)); y, mu and lambda > 0",
+         "Link:     ", namesof("mu",     lmu,     earg = emu), ", ",
+                       namesof("lambda", llambda, earg = elambda), "\n",
+         "Mean:     ", "mu\n",
+         "Variance: mu^3 / lambda"),
+  constraints = eval(substitute(expression({
+      constraints <- cm.zero.vgam(constraints, x, .zero, M)
+  }), list( .zero = zero ))),
 
-        if (any(y <= 0)) stop("Require the response to have positive values")
+  initialize = eval(substitute(expression({
+    if (ncol(cbind(y)) != 1)
+      stop("response must be a vector or a one-column matrix")
 
-        predictors.names =
-          c(namesof("mu", .lmu, earg = .emu, short= TRUE),
-            namesof("lambda", .llambda, earg = .elambda, short= TRUE))
+    if (any(y <= 0))
+      stop("Require the response to have positive values")
 
-        if (!length(etastart)) {
-          init.mu =
-                if ( .imethod == 3) {
-                  0 * y + 1.1 * median(y) + 1/8
-                } else if ( .imethod == 2) {
-                  use.this = weighted.mean(y, w)
-                  (1 - .sinit) * y  + .sinit * use.this
-                } else {
-                  0 * y + weighted.mean(y, w) + 1/8
-                }
+    predictors.names =
+      c(namesof("mu",    .lmu,      earg = .emu,     short = TRUE),
+        namesof("lambda", .llambda, earg = .elambda, short = TRUE))
 
-            init.lambda = rep(if (length( .ilambda )) .ilambda else 1.0,
-                              len = n)
-
-            etastart = cbind(
-                theta2eta(init.mu, link = .lmu, earg = .emu),
-                theta2eta(init.lambda, link = .llambda, earg = .elambda))
+    if (!length(etastart)) {
+      init.mu =
+        if ( .imethod == 3) {
+          0 * y + 1.1 * median(y) + 1/8
+        } else if ( .imethod == 2) {
+          use.this = weighted.mean(y, w)
+          (1 - .sinit) * y  + .sinit * use.this
+        } else {
+          0 * y + weighted.mean(y, w) + 1/8
         }
-    }), list( .lmu = lmu, .llambda = llambda,
-              .emu = emu, .elambda = elambda,
-              .sinit = shrinkage.init,
-              .imethod = imethod, .ilambda = ilambda ))),
-    linkinv = eval(substitute(function(eta, extra = NULL) {
-        eta2theta(eta[,1], link = .lmu, earg = .emu)
-    }, list( .lmu = lmu, .emu = emu, .elambda = elambda ))),
-    last = eval(substitute(expression({
-        misc$link =    c(mu = .lmu, lambda = .llambda)
-        misc$earg = list(mu = .emu, lambda = .elambda)
-        misc$imethod = .imethod
-        misc$shrinkage.init = .sinit 
-    }), list( .lmu = lmu, .llambda = llambda,
-              .emu = emu, .elambda = elambda,
-              .sinit = shrinkage.init,
-              .imethod = imethod ))),
-    loglikelihood = eval(substitute(
-             function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
-      lambda <- eta2theta(eta[,2], link = .llambda, earg = .elambda)
-      if (residuals) stop("loglikelihood residuals ",
-                          "not implemented yet") else {
-        sum(w * dinv.gaussian(x=y, mu = mu, lambda = lambda, log = TRUE))
-      }
-    }, list( .llambda = llambda, .emu = emu,
-             .elambda = elambda ))),
-    vfamily = "inv.gaussianff",
-    deriv = eval(substitute(expression({
-        mymu   <- eta2theta(eta[,1], link = .lmu,     earg = .emu)
-        lambda <- eta2theta(eta[,2], link = .llambda, earg = .elambda)
-        dmu.deta <- dtheta.deta(theta = mymu, link = .lmu, earg = .emu)
-        dlambda.deta <- dtheta.deta(theta = lambda, link = .llambda,
-                                    earg = .elambda)
 
-        dl.dmu = lambda * (y - mymu) / mymu^3
-        dl.dlambda <- 0.5 / lambda - (y-mymu)^2 / (2 * mymu^2 * y)
-        c(w) * cbind(dl.dmu * dmu.deta,
-                     dl.dlambda * dlambda.deta)
-    }), list( .lmu = lmu, .llambda = llambda,
-              .emu = emu, .elambda = elambda ))),
-    weight = eval(substitute(expression({
-        d2l.dmu2 = lambda / mymu^3
-        d2l.dlambda2 = 0.5 / (lambda^2)
-        wz <- cbind(dmu.deta^2 * d2l.dmu2,
-                    dlambda.deta^2 * d2l.dlambda2)
-        c(w) * wz
-    }), list( .lmu = lmu, .llambda = llambda,
-              .emu = emu, .elambda = elambda ))))
+      init.lambda = rep(if (length( .ilambda )) .ilambda else 1.0,
+                        len = n)
+
+      etastart = cbind(
+          theta2eta(init.mu, link = .lmu, earg = .emu),
+          theta2eta(init.lambda, link = .llambda, earg = .elambda))
+    }
+  }), list( .lmu = lmu, .llambda = llambda,
+            .emu = emu, .elambda = elambda,
+            .sinit = shrinkage.init,
+            .imethod = imethod, .ilambda = ilambda ))),
+
+  linkinv = eval(substitute(function(eta, extra = NULL) {
+    eta2theta(eta[, 1], link = .lmu, earg = .emu)
+  }, list( .lmu = lmu, .emu = emu, .elambda = elambda ))),
+
+  last = eval(substitute(expression({
+    misc$link =    c(mu = .lmu, lambda = .llambda)
+    misc$earg = list(mu = .emu, lambda = .elambda)
+    misc$imethod = .imethod
+    misc$shrinkage.init = .sinit 
+    misc$expected = TRUE
+  }), list( .lmu = lmu, .llambda = llambda,
+            .emu = emu, .elambda = elambda,
+            .sinit = shrinkage.init,
+            .imethod = imethod ))),
+
+  loglikelihood = eval(substitute(
+       function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
+    lambda <- eta2theta(eta[, 2], link = .llambda, earg = .elambda)
+    if (residuals) stop("loglikelihood residuals ",
+                        "not implemented yet") else {
+      sum(w * dinv.gaussian(x=y, mu = mu, lambda = lambda, log = TRUE))
+    }
+  }, list( .llambda = llambda, .emu = emu,
+           .elambda = elambda ))),
+
+  vfamily = "inv.gaussianff",
+
+  deriv = eval(substitute(expression({
+    mymu   <- eta2theta(eta[, 1], link = .lmu,     earg = .emu)
+    lambda <- eta2theta(eta[, 2], link = .llambda, earg = .elambda)
+
+    dmu.deta <- dtheta.deta(theta = mymu, link = .lmu, earg = .emu)
+    dlambda.deta <- dtheta.deta(theta = lambda, link = .llambda,
+                                earg = .elambda)
+
+    dl.dmu = lambda * (y - mymu) / mymu^3
+    dl.dlambda <- 0.5 / lambda - (y-mymu)^2 / (2 * mymu^2 * y)
+    c(w) * cbind(dl.dmu * dmu.deta,
+                 dl.dlambda * dlambda.deta)
+  }), list( .lmu = lmu, .llambda = llambda,
+            .emu = emu, .elambda = elambda ))),
+
+  weight = eval(substitute(expression({
+
+    d2l.dmu2 = lambda / mymu^3
+
+    d2l.dlambda2 = 0.5 / (lambda^2)
+    wz <- cbind(dmu.deta^2 * d2l.dmu2,
+                dlambda.deta^2 * d2l.dlambda2)
+    c(w) * wz
+  }), list( .lmu = lmu, .llambda = llambda,
+            .emu = emu, .elambda = elambda ))))
 }
 
 
@@ -577,131 +594,141 @@ rinv.gaussian = function(n, mu, lambda) {
                       parallel = FALSE, zero = NULL)
 {
 
-    estimated.dispersion <- dispersion==0
-    if (mode(link )!= "character" && mode(link )!= "name")
-        link <- as.character(substitute(link))
-    if (!is.list(earg)) earg = list()
-    if (!is.Numeric(imethod, allow = 1, integ=TRUE, posit = TRUE) ||
-       imethod > 3)
-        stop("argument 'imethod' must be 1 or 2 or 3")
-    if (length(imu) && !is.Numeric(imu, posit = TRUE))
-        stop("bad input for argument 'imu'")
+  estimated.dispersion <- dispersion==0
+  if (mode(link )!= "character" && mode(link )!= "name")
+      link <- as.character(substitute(link))
+  if (!is.list(earg)) earg = list()
 
-    new("vglmff",
-    blurb = c("Poisson distribution\n\n",
-           "Link:     ", namesof("mu", link, earg = earg), "\n",
-           "Variance: mu"),
-    constraints = eval(substitute(expression({
-        constraints <- cm.vgam(matrix(1,M,1), x, .parallel, constraints)
-        constraints <- cm.zero.vgam(constraints, x, .zero, M)
-    }), list( .parallel = parallel, .zero = zero ))),
-    deviance= function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
-        nz = y > 0
-        devi =  -(y - mu)
-        devi[nz] = devi[nz] + y[nz] * log(y[nz]/mu[nz])
-        if (residuals) sign(y - mu) * sqrt(2 * abs(devi) * w) else
-            2 * sum(w * devi)
-    },
-    infos = eval(substitute(function(...) {
-      list(Musual = 1,
-           zero = .zero)
-    }, list( .zero = zero ))),
-    initialize = eval(substitute(expression({
-        y = as.matrix(y)
-        M = ncoly = ncol(y)
+  if (!is.Numeric(imethod, allowable.length = 1, integer.valued = TRUE, positive = TRUE) ||
+     imethod > 3)
+    stop("argument 'imethod' must be 1 or 2 or 3")
+  if (length(imu) && !is.Numeric(imu, positive = TRUE))
+    stop("bad input for argument 'imu'")
 
-        assign("CQO.FastAlgorithm", ( .link == "loge"), envir = VGAM:::VGAMenv)
-        dn2 = if (is.matrix(y)) dimnames(y)[[2]] else NULL
-        dn2 = if (length(dn2)) {
-            paste("E[", dn2, "]", sep = "") 
-        } else {
-            paste("mu", 1:M, sep = "") 
-        }
-        predictors.names = namesof(if (M > 1) dn2 else "mu", .link,
-            earg = .earg, short = TRUE)
+  new("vglmff",
+  blurb = c("Poisson distribution\n\n",
+            "Link:     ", namesof("mu", link, earg = earg), "\n",
+            "Variance: mu"),
+  constraints = eval(substitute(expression({
+    constraints <- cm.vgam(matrix(1,M, 1), x, .parallel, constraints)
+    constraints <- cm.zero.vgam(constraints, x, .zero, M)
+  }), list( .parallel = parallel, .zero = zero ))),
+  deviance= function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
+    nz = y > 0
+    devi =  -(y - mu)
+    devi[nz] = devi[nz] + y[nz] * log(y[nz]/mu[nz])
+    if (residuals) sign(y - mu) * sqrt(2 * abs(devi) * w) else
+        2 * sum(w * devi)
+  },
+  infos = eval(substitute(function(...) {
+    list(Musual = 1,
+         zero = .zero)
+  }, list( .zero = zero ))),
 
-        if (!length(etastart)) {
-            mu.init = pmax(y, 1/8)
-            for(iii in 1:ncol(y)) {
-                if ( .imethod == 2) {
-                    mu.init[,iii] = weighted.mean(y[,iii], w) + 1/8
-                } else if ( .imethod == 3) {
-                    mu.init[,iii] = median(y[,iii]) + 1/8
-                }
+  initialize = eval(substitute(expression({
+    y = as.matrix(y)
+    M = ncoly = ncol(y)
+
+    assign("CQO.FastAlgorithm", ( .link == "loge"), envir = VGAM:::VGAMenv)
+    dn2 = if (is.matrix(y)) dimnames(y)[[2]] else NULL
+    dn2 = if (length(dn2)) {
+        paste("E[", dn2, "]", sep = "") 
+    } else {
+        paste("mu", 1:M, sep = "") 
+    }
+    predictors.names =
+      namesof(if (M > 1) dn2 else "mu", .link, earg = .earg, short = TRUE)
+
+    if (!length(etastart)) {
+        mu.init = pmax(y, 1/8)
+        for(iii in 1:ncol(y)) {
+            if ( .imethod == 2) {
+              mu.init[,iii] = weighted.mean(y[,iii], w) + 1/8
+            } else if ( .imethod == 3) {
+              mu.init[,iii] = median(y[,iii]) + 1/8
             }
-            if (length( .imu ))
-                mu.init = matrix( .imu, n, ncoly, byrow=TRUE)
-            etastart <- theta2eta(mu.init, link = .link, earg = .earg)
         }
-    }), list( .link = link, .estimated.dispersion = estimated.dispersion,
-              .imethod = imethod, .imu = imu, .earg = earg ))),
-    linkinv = eval(substitute(function(eta, extra = NULL) {
+        if (length( .imu ))
+            mu.init = matrix( .imu, n, ncoly, byrow = TRUE)
+        etastart <- theta2eta(mu.init, link = .link, earg = .earg)
+    }
+  }), list( .link = link, .estimated.dispersion = estimated.dispersion,
+            .imethod = imethod, .imu = imu, .earg = earg ))),
+  linkinv = eval(substitute(function(eta, extra = NULL) {
         mu = eta2theta(eta, link = .link, earg = .earg)
-        mu
-    }, list( .link = link, .earg = earg ))),
-    last = eval(substitute(expression({
-        if (exists("CQO.FastAlgorithm", envir = VGAM:::VGAMenv))
-            rm("CQO.FastAlgorithm", envir = VGAM:::VGAMenv)
-        dpar <- .dispersion
-        if (!dpar) {
-            temp87 = (y-mu)^2 *
-                wz / (dtheta.deta(mu, link = .link, earg = .earg)^2) # w cancel
-            if (M > 1 && ! .onedpar) {
-                dpar = rep(as.numeric(NA), len = M)
-                temp87 = cbind(temp87)
-                nrow.mu = if (is.matrix(mu)) nrow(mu) else length(mu)
-                for(ii in 1:M)
-                    dpar[ii] = sum(temp87[,ii]) / (nrow.mu - ncol(x))
-                if (is.matrix(y) && length(dimnames(y)[[2]])==length(dpar))
-                    names(dpar) = dimnames(y)[[2]]
-            } else 
-                dpar = sum(temp87) / (length(mu) - ncol(x))
-        }
-        misc$dispersion <- dpar
-        misc$default.dispersion <- 1
-        misc$estimated.dispersion <- .estimated.dispersion
-        misc$expected = TRUE
-        misc$link = rep( .link, length = M)
-        names(misc$link) = if (M > 1) dn2 else "mu"
-        misc$imethod = .imethod
+      mu
+  }, list( .link = link, .earg = earg ))),
 
-        misc$earg = vector("list", M)
-        names(misc$earg) = names(misc$link)
-        for(ii in 1:M) misc$earg[[ii]] = .earg
-    }), list( .dispersion = dispersion, .imethod=imethod,
-              .estimated.dispersion = estimated.dispersion,
-              .onedpar = onedpar, .link = link, .earg = earg ))),
-    linkfun = eval(substitute( function(mu, extra = NULL) {
-        theta2eta(mu, link = .link, earg = .earg)
-    }, list( .link = link, .earg = earg ))),
-    loglikelihood = function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
-        if (residuals) w*(y/mu - 1) else {
-            sum(w * dpois(x=y, lambda=mu, log = TRUE))
-        }
-    },
-    vfamily = "poissonff",
-    deriv = eval(substitute(expression({
-        if ( .link == "loge" && (any(mu < .Machine$double.eps))) {
-            w * (y - mu)
-        } else {
-            lambda <- mu
-            dl.dlambda <- (y-lambda) / lambda
-            dlambda.deta <- dtheta.deta(theta = lambda, link = .link, earg = .earg)
-            w * dl.dlambda * dlambda.deta
-        }
-    }), list( .link = link, .earg = earg ))),
-    weight = eval(substitute(expression({
-        if ( .link == "loge" && (any(mu < .Machine$double.eps))) {
-            tmp600 = mu
-            tmp600[tmp600 < .Machine$double.eps] = .Machine$double.eps
-            w * tmp600
-        } else {
-            d2l.dlambda2 = 1 / lambda
-            d2lambda.deta2=d2theta.deta2(theta = lambda,link= .link,earg = .earg)
-            w * dlambda.deta^2 * d2l.dlambda2
-        }
-    }), list( .link = link, .earg = earg ))))
+  last = eval(substitute(expression({
+    if (exists("CQO.FastAlgorithm", envir = VGAM:::VGAMenv))
+        rm("CQO.FastAlgorithm", envir = VGAM:::VGAMenv)
+    dpar <- .dispersion
+    if (!dpar) {
+      temp87 = (y-mu)^2 *
+          wz / (dtheta.deta(mu, link = .link, earg = .earg)^2) # w cancel
+      if (M > 1 && ! .onedpar) {
+        dpar = rep(as.numeric(NA), len = M)
+        temp87 = cbind(temp87)
+        nrow.mu = if (is.matrix(mu)) nrow(mu) else length(mu)
+        for(ii in 1:M)
+            dpar[ii] = sum(temp87[,ii]) / (nrow.mu - ncol(x))
+        if (is.matrix(y) && length(dimnames(y)[[2]])==length(dpar))
+            names(dpar) = dimnames(y)[[2]]
+      } else {
+        dpar = sum(temp87) / (length(mu) - ncol(x))
+      }
+    }
+    misc$dispersion <- dpar
+    misc$default.dispersion <- 1
+    misc$estimated.dispersion <- .estimated.dispersion
+    misc$expected = TRUE
+    misc$link = rep( .link, length = M)
+    names(misc$link) = if (M > 1) dn2 else "mu"
+    misc$imethod = .imethod
+
+    misc$earg = vector("list", M)
+    names(misc$earg) = names(misc$link)
+    for(ii in 1:M)
+      misc$earg[[ii]] = .earg
+  }), list( .dispersion = dispersion, .imethod=imethod,
+            .estimated.dispersion = estimated.dispersion,
+            .onedpar = onedpar, .link = link, .earg = earg ))),
+
+  linkfun = eval(substitute( function(mu, extra = NULL) {
+    theta2eta(mu, link = .link, earg = .earg)
+  }, list( .link = link, .earg = earg ))),
+
+  loglikelihood = function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
+    if (residuals) w*(y/mu - 1) else {
+      sum(w * dpois(x=y, lambda=mu, log = TRUE))
+    }
+  },
+  vfamily = "poissonff",
+  deriv = eval(substitute(expression({
+    if ( .link == "loge" && (any(mu < .Machine$double.eps))) {
+      w * (y - mu)
+    } else {
+      lambda <- mu
+      dl.dlambda <- (y-lambda) / lambda
+      dlambda.deta <- dtheta.deta(theta = lambda,
+                                  link = .link, earg = .earg)
+      w * dl.dlambda * dlambda.deta
+    }
+  }), list( .link = link, .earg = earg ))),
+
+  weight = eval(substitute(expression({
+      if ( .link == "loge" && (any(mu < .Machine$double.eps))) {
+        tmp600 = mu
+        tmp600[tmp600 < .Machine$double.eps] = .Machine$double.eps
+        w * tmp600
+      } else {
+        d2l.dlambda2 = 1 / lambda
+        d2lambda.deta2=d2theta.deta2(theta = lambda,link= .link,earg = .earg)
+        w * dlambda.deta^2 * d2l.dlambda2
+    }
+  }), list( .link = link, .earg = earg ))))
 }
+
 
 
  quasibinomialff = function(link = "logit", mv = FALSE, onedpar = !mv, 
@@ -727,7 +754,7 @@ rinv.gaussian = function(n, mu, lambda) {
 
 
 
-poissonqn.control <- function(save.weight=TRUE, ...)
+poissonqn.control <- function(save.weight = TRUE, ...)
 {
     list(save.weight=save.weight)
 }
@@ -751,7 +778,7 @@ poissonqn.control <- function(save.weight=TRUE, ...)
            "Link:     ", namesof("mu", link, earg = earg), "\n",
            "Variance: mu"),
     constraints = eval(substitute(expression({
-        constraints <- cm.vgam(matrix(1,M,1), x, .parallel, constraints)
+        constraints <- cm.vgam(matrix(1,M, 1), x, .parallel, constraints)
         constraints <- cm.zero.vgam(constraints, x, .zero, M)
     }), list( .parallel = parallel, .zero = zero ))),
     deviance= function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
@@ -886,7 +913,7 @@ poissonqn.control <- function(save.weight=TRUE, ...)
         lmean = as.character(substitute(lmean))
     if (mode(ldispersion)!= "character" && mode(ldispersion)!= "name")
         ldispersion = as.character(substitute(ldispersion))
-    if (!is.Numeric(idispersion, posit = TRUE))
+    if (!is.Numeric(idispersion, positive = TRUE))
         stop("bad input for 'idispersion'")
     if (!is.list(emean)) emean = list()
     if (!is.list(edispersion)) edispersion = list()
@@ -894,8 +921,8 @@ poissonqn.control <- function(save.weight=TRUE, ...)
     new("vglmff",
     blurb = c("Double exponential Poisson distribution\n\n",
            "Link:     ",
-           namesof("mean", lmean, earg= emean), ", ",
-           namesof("dispersion", lmean, earg= edispersion), "\n",
+           namesof("mean", lmean, earg = emean), ", ",
+           namesof("dispersion", lmean, earg = edispersion), "\n",
            "Mean:     ", "mean\n",
            "Variance: mean / dispersion"),
     constraints = eval(substitute(expression({
@@ -917,14 +944,14 @@ poissonqn.control <- function(save.weight=TRUE, ...)
                                     earg = .edispersion, short = TRUE))
         init.mu = pmax(y, 1/8)
         if (!length(etastart))
-            etastart = cbind(theta2eta(init.mu, link = .lmean,earg= .emean),
+            etastart = cbind(theta2eta(init.mu, link = .lmean,earg = .emean),
                              theta2eta(rep( .idispersion, len = n),
                                        link = .ldispersion, earg = .edispersion))
     }), list( .lmean = lmean, .emean = emean,
               .ldispersion = ldispersion, .edispersion = edispersion,
               .idispersion = idispersion ))),
     linkinv = eval(substitute(function(eta, extra = NULL) {
-        eta2theta(eta[,1], link = .lmean, earg = .emean)
+        eta2theta(eta[, 1], link = .lmean, earg = .emean)
     }, list( .lmean = lmean, .emean = emean,
              .ldispersion = ldispersion, .edispersion = edispersion ))),
     last = eval(substitute(expression({
@@ -935,8 +962,8 @@ poissonqn.control <- function(save.weight=TRUE, ...)
               .ldispersion = ldispersion, .edispersion = edispersion ))),
     loglikelihood = eval(substitute(
                       function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
-        lambda = eta2theta(eta[,1], link = .lmean, earg = .emean)
-        Disper = eta2theta(eta[,2], link = .ldispersion, earg = .edispersion)
+        lambda = eta2theta(eta[, 1], link = .lmean, earg = .emean)
+        Disper = eta2theta(eta[, 2], link = .ldispersion, earg = .edispersion)
         if (residuals) stop("loglikelihood residuals ",
                             "not implemented yet") else {
             sum(w*(0.5*log(Disper) + Disper*(y-lambda) + Disper*y*log(lambda)))
@@ -945,8 +972,8 @@ poissonqn.control <- function(save.weight=TRUE, ...)
              .ldispersion = ldispersion, .edispersion = edispersion ))),
     vfamily = "dexppoisson",
     deriv = eval(substitute(expression({
-        lambda = eta2theta(eta[,1], link = .lmean, earg = .emean)
-        Disper = eta2theta(eta[,2], link = .ldispersion, earg = .edispersion)
+        lambda = eta2theta(eta[, 1], link = .lmean, earg = .emean)
+        Disper = eta2theta(eta[, 2], link = .ldispersion, earg = .edispersion)
         dl.dlambda = Disper * (y / lambda - 1)
         dl.dDisper = y * log(lambda) + y - lambda + 0.5 / Disper
         dlambda.deta = dtheta.deta(theta = lambda, link = .lmean, earg = .emean)
@@ -959,8 +986,8 @@ poissonqn.control <- function(save.weight=TRUE, ...)
     weight = eval(substitute(expression({
         wz = matrix(as.numeric(NA), nrow=n, ncol=2) # diagonal
         usethis.lambda = pmax(lambda, .Machine$double.eps / 10000)
-        wz[,iam(1,1,M)] = (Disper / usethis.lambda) * dlambda.deta^2
-        wz[,iam(2,2,M)] = (0.5 / Disper^2) * dDisper.deta^2
+        wz[,iam(1, 1,M)] = (Disper / usethis.lambda) * dlambda.deta^2
+        wz[,iam(2, 2,M)] = (0.5 / Disper^2) * dDisper.deta^2
         c(w) * wz
     }), list( .lmean = lmean, .emean = emean,
               .ldispersion = ldispersion, .edispersion = edispersion ))))
@@ -977,7 +1004,7 @@ poissonqn.control <- function(save.weight=TRUE, ...)
         lmean = as.character(substitute(lmean))
     if (mode(ldispersion)!= "character" && mode(ldispersion)!= "name")
         ldispersion = as.character(substitute(ldispersion))
-    if (!is.Numeric(idispersion, posit = TRUE))
+    if (!is.Numeric(idispersion, positive = TRUE))
         stop("bad input for 'idispersion'")
     if (!is.list(emean)) emean = list()
     if (!is.list(edispersion)) edispersion = list()
@@ -985,8 +1012,8 @@ poissonqn.control <- function(save.weight=TRUE, ...)
     new("vglmff",
     blurb = c("Double Exponential Binomial distribution\n\n",
            "Link:     ",
-           namesof("mean", lmean, earg= emean), ", ",
-           namesof("dispersion", lmean, earg= edispersion), "\n",
+           namesof("mean", lmean, earg = emean), ", ",
+           namesof("dispersion", lmean, earg = edispersion), "\n",
            "Mean:     ", "mean\n"),
     constraints = eval(substitute(expression({
         constraints = cm.zero.vgam(constraints, x, .zero, M)
@@ -1026,8 +1053,8 @@ poissonqn.control <- function(save.weight=TRUE, ...)
                 if (any(abs(y - round(y)) > 1.0e-8))
                     stop("Count data must be integer-valued")
                 y = round(y)
-                nvec = y[,1] + y[,2]
-                y = ifelse(nvec > 0, y[,1] / nvec, 0)
+                nvec = y[, 1] + y[, 2]
+                y = ifelse(nvec > 0, y[, 1] / nvec, 0)
                 w = w * nvec
                 init.mu =
                 mustart = (0.5 + nvec * y) / (1 + nvec)
@@ -1049,14 +1076,14 @@ poissonqn.control <- function(save.weight=TRUE, ...)
               namesof("dispersion", link = .ldispersion,
                                     earg = .edispersion, short = TRUE))
         if (!length(etastart))
-            etastart = cbind(theta2eta(init.mu, link = .lmean,earg= .emean),
+            etastart = cbind(theta2eta(init.mu, link = .lmean,earg = .emean),
                              theta2eta(rep( .idispersion, len = n),
                                        link = .ldispersion, earg = .edispersion))
     }), list( .lmean = lmean, .emean = emean,
               .ldispersion = ldispersion, .edispersion = edispersion,
               .idispersion = idispersion ))),
     linkinv = eval(substitute(function(eta, extra = NULL) {
-        eta2theta(eta[,1], link = .lmean, earg = .emean)
+        eta2theta(eta[, 1], link = .lmean, earg = .emean)
     }, list( .lmean = lmean, .emean = emean,
              .ldispersion = ldispersion, .edispersion = edispersion ))),
     last = eval(substitute(expression({
@@ -1067,8 +1094,8 @@ poissonqn.control <- function(save.weight=TRUE, ...)
               .ldispersion = ldispersion, .edispersion = edispersion ))),
     loglikelihood = eval(substitute(
       function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
-      prob = eta2theta(eta[,1], link = .lmean, earg = .emean)
-      Disper = eta2theta(eta[,2], link = .ldispersion, earg = .edispersion)
+      prob = eta2theta(eta[, 1], link = .lmean, earg = .emean)
+      Disper = eta2theta(eta[, 2], link = .ldispersion, earg = .edispersion)
       if (residuals) stop("loglikelihood residuals ",
                           "not implemented yet") else {
 
@@ -1084,8 +1111,8 @@ poissonqn.control <- function(save.weight=TRUE, ...)
              .ldispersion = ldispersion, .edispersion = edispersion ))),
     vfamily = "dexpbinomial",
     deriv = eval(substitute(expression({
-        prob = eta2theta(eta[,1], link = .lmean, earg = .emean)
-        Disper = eta2theta(eta[,2], link = .ldispersion, earg = .edispersion)
+        prob = eta2theta(eta[, 1], link = .lmean, earg = .emean)
+        Disper = eta2theta(eta[, 2], link = .ldispersion, earg = .edispersion)
         temp1 = y * log(ifelse(y > 0, y, 1)) # y*log(y)
         temp2 = (1.0-y) * log1p(ifelse(y < 1, -y, 0)) # (1-y)*log(1-y)
         temp3 = prob * (1.0-prob)
@@ -1102,8 +1129,8 @@ poissonqn.control <- function(save.weight=TRUE, ...)
               .ldispersion = ldispersion, .edispersion = edispersion ))),
     weight = eval(substitute(expression({
         wz = matrix(as.numeric(NA), nrow=n, ncol=2) # diagonal
-        wz[,iam(1,1,M)] = w * (Disper / temp3) * dprob.deta^2
-        wz[,iam(2,2,M)] = (0.5 / Disper^2) * dDisper.deta^2
+        wz[,iam(1, 1,M)] = w * (Disper / temp3) * dprob.deta^2
+        wz[,iam(2, 2,M)] = (0.5 / Disper^2) * dDisper.deta^2
         wz
     }), list( .lmean = lmean, .emean = emean,
               .ldispersion = ldispersion, .edispersion = edispersion ))))
@@ -1118,7 +1145,7 @@ poissonqn.control <- function(save.weight=TRUE, ...)
     if (mode(link )!= "character" && mode(link )!= "name")
         link <- as.character(substitute(link))
     if (!is.list(earg)) earg = list()
-    if (!is.Numeric(smallno, positive=TRUE, allow = 1) || smallno > 1e-4)
+    if (!is.Numeric(smallno, positive = TRUE, allowable.length = 1) || smallno > 1e-4)
         stop("bad input for 'smallno'")
     if (is.logical(parallel) && !parallel)
         stop("'parallel' must be TRUE")
@@ -1134,13 +1161,13 @@ poissonqn.control <- function(save.weight=TRUE, ...)
     blurb = c("Matched binomial model (intercepts fitted)\n\n", 
            "Link:     ", namesof("mu[,j]", link, earg = earg)),
     constraints = eval(substitute(expression({
-        constraints <- cm.vgam(matrix(1,M,1), x, .parallel, constraints,
-                               intercept.apply=TRUE)
+        constraints <- cm.vgam(matrix(1,M, 1), x, .parallel, constraints,
+                               intercept.apply = TRUE)
         constraints[[extra$mvar]] <- diag(M)
 
         specialCM = list(a = vector("list", M-1))
         for(ii in 1:(M-1)) {
-            specialCM[[1]][[ii]] = (constraints[[extra$mvar]])[,1+ii,drop = FALSE]
+            specialCM[[1]][[ii]] = (constraints[[extra$mvar]])[, 1+ii,drop = FALSE]
         }
         names(specialCM) = extra$mvar
     }), list( .parallel = parallel ))),
@@ -1166,8 +1193,8 @@ poissonqn.control <- function(save.weight=TRUE, ...)
         } else if (NCOL(y) == 2) {
             if (any(abs(y - round(y)) > 0.001))
                 stop("Count data must be integer-valued")
-            nvec = y[,1] + y[,2]
-            y = ifelse(nvec > 0, y[,1] / nvec, 0)
+            nvec = y[, 1] + y[, 2]
+            y = ifelse(nvec > 0, y[, 1] / nvec, 0)
             w = w * nvec
             mustart = (0.5 + nvec * y) / (1 + nvec)
         } else 
@@ -1177,7 +1204,7 @@ poissonqn.control <- function(save.weight=TRUE, ...)
         if (colnames(x)[1] != "(Intercept)") stop("x must have an intercept")
         M = CCC = length(temp1[[mvar]]) + (colnames(x)[1] == "(Intercept)")
         temp9 = x[,temp1[[mvar]],drop = FALSE]
-        temp9 = temp9 * matrix(2:CCC, n, CCC-1, byrow=TRUE)
+        temp9 = temp9 * matrix(2:CCC, n, CCC-1, byrow = TRUE)
         temp9 = apply(temp9, 1, max)
         temp9[temp9 == 0] = 1
         extra$NoMatchedSets = CCC
@@ -1290,7 +1317,7 @@ mypool = function(x, index) {
     blurb = c("Matched binomial model (intercepts not fitted)\n\n", 
               "Link:     ", namesof("mu[,j]", link, earg = earg)),
     constraints = eval(substitute(expression({
-        constraints <- cm.vgam(matrix(1,M,1), x, .parallel, constraints,
+        constraints <- cm.vgam(matrix(1,M, 1), x, .parallel, constraints,
                                intercept.apply = FALSE)
     }), list( .parallel = parallel ))),
     initialize = eval(substitute(expression({
@@ -1313,15 +1340,15 @@ mypool = function(x, index) {
         } else if (NCOL(y) == 2) {
             if (any(abs(y - round(y)) > 0.001))
                 stop("Count data must be integer-valued")
-            nvec = y[,1] + y[,2]
-            y = ifelse(nvec > 0, y[,1] / nvec, 0)
+            nvec = y[, 1] + y[, 2]
+            y = ifelse(nvec > 0, y[, 1] / nvec, 0)
             w = w * nvec
             mustart = (0.5 + nvec * y) / (1 + nvec)
         } else 
              stop("Response not of the right form")
 
         if (!length(etastart))
-            etastart <- theta2eta(mustart, link= "logit", earg= list())
+            etastart <- theta2eta(mustart, link= "logit", earg = list())
 
         temp1 = attr(x, "assign")
         mvar = extra$mvar
@@ -1484,8 +1511,8 @@ mypool = function(x, index) {
                 if (any(abs(y - round(y)) > 1.0e-8))
                     stop("Count data must be integer-valued")
                 y = round(y)
-                nvec = y[,1] + y[,2]
-                y = ifelse(nvec > 0, y[,1] / nvec, 0)
+                nvec = y[, 1] + y[, 2]
+                y = ifelse(nvec > 0, y[, 1] / nvec, 0)
                 w = w * nvec
                 if (!length(mustart) && !length(etastart))
                   mustart = (0.5 + nvec * y) / (1 + nvec)

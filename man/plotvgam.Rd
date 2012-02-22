@@ -11,7 +11,7 @@
 plotvgam(x, newdata = NULL, y = NULL, residuals = NULL,
          rugplot = TRUE, se = FALSE, scale = 0, raw = TRUE,
          offset.arg = 0, deriv.arg = 0, overlay = FALSE,
-         type.residuals = c("deviance","working","pearson","response"),
+         type.residuals = c("deviance", "working", "pearson", "response"),
          plot.arg = TRUE, which.term = NULL, which.cf = NULL,
          control = plotvgam.control(...), varxij = 1, ...)
 }
@@ -19,7 +19,8 @@ plotvgam(x, newdata = NULL, y = NULL, residuals = NULL,
 \arguments{
 
   \item{x}{ A fitted \pkg{VGAM} object, e.g., produced by
-    \code{vgam()}, \code{vglm()}, or \code{rrvglm()}. }
+    \code{\link{vgam}}, \code{\link{vglm}}, or \code{\link{rrvglm}}.
+  }
   \item{newdata}{ Data frame.
     May be used to reconstruct the original data set. }
   \item{y}{ Unused. }
@@ -49,51 +50,68 @@ plotvgam(x, newdata = NULL, y = NULL, residuals = NULL,
     The \code{raw} argument is directly fed into \code{predict.vgam()}.
 
   }
-  \item{offset.arg}{ Numerical vector of length \eqn{r}.
+  \item{offset.arg}{
+   Numerical vector of length \eqn{r}.
     These are added to the component functions. Useful for
     separating out the functions when \code{overlay} is \code{TRUE}.
     If \code{overlay} is \code{TRUE} and there is one covariate then
     using the intercept values as the offsets can be a good idea.
+
   }
-  \item{deriv.arg}{ Numerical. The order of the derivative.
+  \item{deriv.arg}{
+   Numerical. The order of the derivative.
     Should be assigned an small 
     integer such as 0, 1, 2. Only applying to \code{s()} terms,
     it plots the derivative.
+
   }
-  \item{overlay}{ Logical. If \code{TRUE} then component functions of the same
+  \item{overlay}{
+   Logical. If \code{TRUE} then component functions of the same
     covariate are overlaid on each other.
     The functions are centered, so \code{offset.arg} can be useful
     when \code{overlay} is \code{TRUE}.
+
     }
-    \item{type.residuals}{ if \code{residuals} is \code{TRUE} then the first
+    \item{type.residuals}{
+   if \code{residuals} is \code{TRUE} then the first
       possible value
       of this vector, is used to specify the type of
-      residual. }
-  \item{plot.arg}{ Logical. If \code{FALSE} then no plot is produced. }
-  \item{which.term}{ Character or integer vector containing all
-    terms to be
-    plotted, e.g., \code{which.term=c("s(age)", "s(height"))} or
-    \code{which.term=c(2,5,9)}.
-    By default, all are plotted. }
+      residual.
+  }
+
+  \item{plot.arg}{
+   Logical. If \code{FALSE} then no plot is produced. }
+  \item{which.term}{
+   Character or integer vector containing all terms to be
+    plotted, e.g., \code{which.term = c("s(age)", "s(height"))} or
+    \code{which.term = c(2, 5, 9)}.
+    By default, all are plotted.
+
+  }
   \item{which.cf}{ An integer-valued vector specifying which
   linear/additive predictors are to be plotted.
   The values must be from the set \{1,2,\ldots,\eqn{r}\}.
   By default, all are plotted.
+
   }
-  \item{control}{ Other control parameters. See
-    \code{\link{plotvgam.control}}. }
-  \item{\dots}{ Other arguments that can be fed into
-    \code{\link{plotvgam.control}}. This includes line colors,
-    line widths, line types, etc.
+  \item{control}{
+  Other control parameters. See \code{\link{plotvgam.control}}.
+
+  }
+  \item{\dots}{
+  Other arguments that can be fed into
+  \code{\link{plotvgam.control}}. This includes line colors,
+  line widths, line types, etc.
+
   }
 
   \item{varxij}{ Positive integer.
     Used if \code{xij} of \code{\link{vglm.control}} was used,
     this chooses which inner argument the component is plotted against.
-    This argument is related to \code{raw=TRUE} and terms such as
+    This argument is related to \code{raw = TRUE} and terms such as
     \code{NS(dum1,dum2)} and constraint matrices that have more than
     one column. The default would plot the smooth against \code{dum1}
-    but setting \code{varxij=2} could mean plotting the smooth against
+    but setting \code{varxij = 2} could mean plotting the smooth against
     \code{dum2}.
     See the \pkg{VGAM} website for further information.
 
@@ -159,11 +177,14 @@ contains further information and examples.
 }
 \examples{
 coalminers = transform(coalminers, Age = (age - 42) / 5)
-fit = vgam(cbind(nBnW,nBW,BnW,BW) ~ s(Age), binom2.or(zero = NULL), coalminers)
+fit = vgam(cbind(nBnW, nBW, BnW, BW) ~ s(Age),
+           binom2.or(zero = NULL), coalminers)
 \dontrun{ par(mfrow = c(1,3))
-plot(fit, se = TRUE, ylim = c(-3,2), las = 1)
-plot(fit, se = TRUE, which.cf = 1:2, lcol = "blue", scol = "orange", ylim = c(-3,2))
-plot(fit, se = TRUE, which.cf = 1:2, lcol = "blue", scol = "orange", overlay = TRUE) }
+plot(fit, se = TRUE, ylim = c(-3, 2), las = 1)
+plot(fit, se = TRUE, which.cf = 1:2, lcol = "blue", scol = "orange",
+     ylim = c(-3, 2))
+plot(fit, se = TRUE, which.cf = 1:2, lcol = "blue", scol = "orange",
+     overlay = TRUE) }
 }
 \keyword{models}
 \keyword{regression}

@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2011 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2012 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -75,7 +75,7 @@ pkumar = function(q, shape1, shape2) {
   if (mode(lshape2) != "character" && mode(lshape2) != "name")
     lshape2 <- as.character(substitute(lshape2))
   if (length(ishape1) &&
-     (!is.Numeric(ishape1, allow = 1, positive = TRUE)))
+     (!is.Numeric(ishape1, allowable.length = 1, positive = TRUE)))
       stop("bad input for argument 'ishape1'")
   if (length(ishape2) && !is.Numeric(ishape2))
     stop("bad input for argument 'ishape2'")
@@ -83,9 +83,9 @@ pkumar = function(q, shape1, shape2) {
   if (!is.list(eshape1)) eshape1 = list()
   if (!is.list(eshape2)) eshape2 = list()
 
-  if (!is.Numeric(tol12, allow = 1, posit = TRUE))
+  if (!is.Numeric(tol12, allowable.length = 1, positive = TRUE))
     stop("bad input for argument 'tol12'")
-  if (!is.Numeric(grid.shape1, allow = 2, posit = TRUE))
+  if (!is.Numeric(grid.shape1, allowable.length = 2, positive = TRUE))
     stop("bad input for argument 'grid.shape1'")
 
   new("vglmff",
@@ -236,7 +236,7 @@ drice <- function(x, vee, sigma, log = FALSE) {
 
 
 rrice <- function(n, vee, sigma) {
-  if (!is.Numeric(n, integ = TRUE, allow = 1))
+  if (!is.Numeric(n, integer.valued = TRUE, allowable.length = 1))
     stop("bad input for argument 'n'")
   theta <- 1 # any number
   X <- rnorm(n, mean = vee * cos(theta), sd = sigma)
@@ -266,7 +266,7 @@ riceff.control <- function(save.weight = TRUE, ...) {
     stop("bad input for argument 'isigma'")
   if (!is.list(evee)) evee = list()
   if (!is.list(esigma)) esigma = list()
-  if (!is.Numeric(nsimEIM, allow = 1, integ = TRUE) || nsimEIM <= 50)
+  if (!is.Numeric(nsimEIM, allowable.length = 1, integer.valued = TRUE) || nsimEIM <= 50)
     stop("'nsimEIM' should be an integer greater than 50")
 
   new("vglmff",
@@ -388,7 +388,9 @@ dskellam = function(x, mu1, mu2, log = FALSE) {
         stop("bad input for 'log.arg'")
 
     L = max(length(x), length(mu1), length(mu2))
-    x = rep(x, len = L); mu1 = rep(mu1, len = L); mu2 = rep(mu2, len = L);
+    x = rep(x, len = L);
+    mu1 = rep(mu1, len = L);
+    mu2 = rep(mu2, len = L);
     ok2 <- is.finite(mu1) && is.finite(mu2) & (mu1 >= 0) & (mu2 >= 0)
     ok3 <- (mu1 == 0) & (mu2 >  0)
     ok4 <- (mu1 >  0) & (mu2 == 0)
@@ -396,14 +398,14 @@ dskellam = function(x, mu1, mu2, log = FALSE) {
     if (log.arg) {
         ans = -mu1 - mu2 + 2 * sqrt(mu1*mu2) +
               0.5 * x * log(mu1) - 0.5 * x * log(mu2) +
-              log(besselI(2 * sqrt(mu1*mu2), nu = x, expon = TRUE))
+              log(besselI(2 * sqrt(mu1*mu2), nu = x, expon.scaled = TRUE))
         ans[ok3] = dpois(x = -x[ok3], lambda = mu2[ok3], log = TRUE)
         ans[ok4] = dpois(x = -x[ok4], lambda = mu1[ok4], log = TRUE)
         ans[ok5] = dpois(x =  x[ok5], lambda = 0.0,      log = TRUE)
         ans[x != round(x)] = log(0.0)
     } else {
         ans = (mu1/mu2)^(x/2) * exp(-mu1-mu2 + 2 * sqrt(mu1*mu2)) *
-              besselI(2 * sqrt(mu1*mu2), nu = x, expon = TRUE)
+              besselI(2 * sqrt(mu1*mu2), nu = x, expon.scaled = TRUE)
         ans[ok3] = dpois(x = -x[ok3], lambda = mu2[ok3])
         ans[ok4] = dpois(x = -x[ok4], lambda = mu1[ok4])
         ans[ok5] = dpois(x =  x[ok5], lambda = 0.0)
@@ -444,7 +446,7 @@ skellam.control <- function(save.weight = TRUE, ...) {
         stop("bad input for argument 'imu2'")
     if (!is.list(emu1)) emu1 = list()
     if (!is.list(emu2)) emu2 = list()
-    if (!is.Numeric(nsimEIM, allow = 1, integ = TRUE) ||
+    if (!is.Numeric(nsimEIM, allowable.length = 1, integer.valued = TRUE) ||
         nsimEIM <= 50)
         stop("'nsimEIM' should be an integer greater than 50")
 
@@ -457,7 +459,7 @@ skellam.control <- function(save.weight = TRUE, ...) {
            "Variance: mu1+mu2"),
     constraints = eval(substitute(expression({
         constraints = cm.vgam(matrix(1,M,1), x, .parallel, constraints,
-                              int = TRUE)
+                              intercept.apply = TRUE)
         constraints = cm.zero.vgam(constraints, x, .zero, M)
     }), list( .parallel=parallel, .zero = zero ))),
     initialize = eval(substitute(expression({
@@ -582,7 +584,7 @@ dyules = function(x, rho, log = FALSE) {
 
 
 ryules = function(n, rho) {
-  if (!is.Numeric(n, integ = TRUE, allow = 1))
+  if (!is.Numeric(n, integer.valued = TRUE, allowable.length = 1))
     stop("bad input for argument 'n'")
   rgeom(n, prob = exp(-rexp(n, rate=rho))) + 1
 }
@@ -606,12 +608,12 @@ yulesimon.control <- function(save.weight = TRUE, ...) {
 
  yulesimon = function(link = "loge", earg = list(), irho = NULL, nsimEIM = 200)
 {
-    if (length(irho) && !is.Numeric(irho, positi = TRUE))
+    if (length(irho) && !is.Numeric(irho, positive = TRUE))
         stop("argument 'irho' must be > 0")
     if (mode(link) != "character" && mode(link) != "name")
         link = as.character(substitute(link))
     if (!is.list(earg)) earg = list()
-    if (!is.Numeric(nsimEIM, allow = 1, integ = TRUE) ||
+    if (!is.Numeric(nsimEIM, allowable.length = 1, integer.valued = TRUE) ||
         nsimEIM <= 50)
         stop("'nsimEIM' should be an integer greater than 50")
 
@@ -722,7 +724,7 @@ pslash <- function(q, mu = 0, sigma = 1){
 }
 
 rslash <- function (n, mu = 0, sigma = 1){
-    if (!is.Numeric(n, posit = TRUE, integ = TRUE, allow = 1))
+    if (!is.Numeric(n, positive = TRUE, integer.valued = TRUE, allowable.length = 1))
       stop("bad input for argument 'n'")
     if (any(sigma <= 0))
       stop("argument 'sigma' must be positive")
@@ -745,18 +747,18 @@ slash.control <- function(save.weight = TRUE, ...)
         lmu = as.character(substitute(lmu))
     if (mode(lsigma) != "character" && mode(lsigma) != "name")
         lsigma = as.character(substitute(lsigma))
-    if (length(isigma) && !is.Numeric(isigma, posit = TRUE))
+    if (length(isigma) && !is.Numeric(isigma, positive = TRUE))
         stop("'isigma' must be > 0")
-    if (length(zero) && !is.Numeric(zero, integer = TRUE, posit = TRUE))
+    if (length(zero) && !is.Numeric(zero, integer.valued = TRUE, positive = TRUE))
         stop("bad input for argument 'zero'")
     if (!is.list(emu)) emu = list()
     if (!is.list(esigma)) esigma = list()
-    if (!is.Numeric(nsimEIM, allow = 1, integ = TRUE) || nsimEIM <= 50)
+    if (!is.Numeric(nsimEIM, allowable.length = 1, integer.valued = TRUE) || nsimEIM <= 50)
         stop("'nsimEIM' should be an integer greater than 50")
-    if (!is.Numeric(iprobs, posit = TRUE) || max(iprobs) >= 1 ||
+    if (!is.Numeric(iprobs, positive = TRUE) || max(iprobs) >= 1 ||
        length(iprobs)!=2)
         stop("bad input for argument 'iprobs'")
-    if (!is.Numeric(smallno, posit = TRUE) || smallno > 0.1)
+    if (!is.Numeric(smallno, positive = TRUE) || smallno > 0.1)
         stop("bad input for argument 'smallno'")
 
     new("vglmff",
@@ -904,12 +906,12 @@ dnefghs = function(x, tau, log = FALSE) {
  nefghs <- function(link = "logit", earg = list(), itau = NULL,
                     imethod = 1)
 {
-    if (length(itau) && !is.Numeric(itau, positi = TRUE) || any(itau >= 1))
+    if (length(itau) && !is.Numeric(itau, positive = TRUE) || any(itau >= 1))
         stop("argument 'itau' must be in (0,1)")
     if (mode(link) != "character" && mode(link) != "name")
         link = as.character(substitute(link))
     if (!is.list(earg)) earg = list()
-    if (!is.Numeric(imethod, allow = 1, integ = TRUE, posit = TRUE) ||
+    if (!is.Numeric(imethod, allowable.length = 1, integer.valued = TRUE, positive = TRUE) ||
        imethod > 2)
         stop("argument 'imethod' must be 1 or 2")
 
@@ -990,10 +992,10 @@ dlogF = function(x, shape1, shape2, log = FALSE) {
                  ishape1 = NULL, ishape2 = 1,
                  imethod = 1)
 {
-  if (length(ishape1) && !is.Numeric(ishape1, positi = TRUE))
+  if (length(ishape1) && !is.Numeric(ishape1, positive = TRUE))
     stop("argument 'ishape1' must be positive")
   if ( # length(ishape2) &&
-   !is.Numeric(ishape2, positi = TRUE))
+   !is.Numeric(ishape2, positive = TRUE))
     stop("argument 'ishape2' must be positive")
   if (mode(lshape1) != "character" && mode(lshape1) != "name")
     lshape1 = as.character(substitute(lshape1))
@@ -1001,7 +1003,8 @@ dlogF = function(x, shape1, shape2, log = FALSE) {
     lshape2 = as.character(substitute(lshape2))
   if (!is.list(eshape1)) eshape1 = list()
   if (!is.list(eshape2)) eshape2 = list()
-  if (!is.Numeric(imethod, allow = 1, integ = TRUE, posit = TRUE) ||
+  if (!is.Numeric(imethod, allowable.length = 1,
+                  integer.valued = TRUE, positive = TRUE) ||
      imethod > 2)
       stop("argument 'imethod' must be 1 or 2")
 
@@ -1101,7 +1104,7 @@ dlogF = function(x, shape1, shape2, log = FALSE) {
 
 
 dbenf <- function(x, ndigits = 1, log = FALSE) {
-  if (!is.Numeric(ndigits, allow = 1, posit = TRUE, integ = TRUE) ||
+  if (!is.Numeric(ndigits, allowable.length = 1, positive = TRUE, integer.valued = TRUE) ||
       ndigits > 2)
       stop("argument 'ndigits' must be 1 or 2")
   lowerlimit <- ifelse(ndigits == 1, 1, 10)
@@ -1120,13 +1123,13 @@ dbenf <- function(x, ndigits = 1, log = FALSE) {
 
 
 rbenf <- function(n, ndigits = 1) {
-  if (!is.Numeric(ndigits, allow = 1, posit = TRUE, integ = TRUE) ||
+  if (!is.Numeric(ndigits, allowable.length = 1, positive = TRUE, integer.valued = TRUE) ||
       ndigits > 2)
       stop("argument 'ndigits' must be 1 or 2")
   lowerlimit <- ifelse(ndigits == 1, 1, 10)
   upperlimit <- ifelse(ndigits == 1, 9, 99)
   use.n <- if ((length.n <- length(n)) > 1) length.n else
-           if (!is.Numeric(n, integ = TRUE, allow = 1, posit = TRUE)) 
+           if (!is.Numeric(n, integer.valued = TRUE, allowable.length = 1, positive = TRUE)) 
                stop("bad input for argument 'n'") else n
   myrunif <- runif(use.n)
 
@@ -1141,7 +1144,7 @@ rbenf <- function(n, ndigits = 1) {
 
 
 pbenf <- function(q, ndigits = 1, log.p = FALSE) {
-  if (!is.Numeric(ndigits, allow = 1, posit = TRUE, integ = TRUE) ||
+  if (!is.Numeric(ndigits, allowable.length = 1, positive = TRUE, integer.valued = TRUE) ||
       ndigits > 2)
       stop("argument 'ndigits' must be 1 or 2")
   lowerlimit <- ifelse(ndigits == 1, 1, 10)
@@ -1160,7 +1163,7 @@ pbenf <- function(q, ndigits = 1, log.p = FALSE) {
 
 
 qbenf <- function(p, ndigits = 1) {
-  if (!is.Numeric(ndigits, allow = 1, posit = TRUE, integ = TRUE) ||
+  if (!is.Numeric(ndigits, allowable.length = 1, positive = TRUE, integer.valued = TRUE) ||
       ndigits > 2)
       stop("argument 'ndigits' must be 1 or 2")
   lowerlimit <- ifelse(ndigits == 1, 1, 10)

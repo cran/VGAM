@@ -93,14 +93,14 @@ contains further information and examples.
   \code{\link{qtplot.lmscreg}},
   \code{\link{deplot.lmscreg}},
   \code{\link{cdf.lmscreg}},
-  \code{\link{bminz}},
+  \code{\link{bmi.nz}},
   \code{\link{amlexponential}}.
 
 }
 
 \examples{
 # This converges, but deplot(fit) and qtplot(fit) do not work
-fit0 = vglm(BMI ~ bs(age, df = 4), lms.bcg, bminz, trace = TRUE)
+fit0 = vglm(BMI ~ bs(age, df = 4), lms.bcg, bmi.nz, trace = TRUE)
 coef(fit0, matrix = TRUE)
 \dontrun{
 par(mfrow = c(1, 1))
@@ -109,16 +109,16 @@ plotvgam(fit0, se = TRUE) # Plot mu function (only)
 
 # Use a trick: fit0 is used for initial values for fit1.
 fit1 = vgam(BMI ~ s(age, df = c(4, 2)), etastart = predict(fit0),
-            lms.bcg(zero = 1), bminz, trace = TRUE)
+            lms.bcg(zero = 1), bmi.nz, trace = TRUE)
 
 # Difficult to get a model that converges.
 # Here, we prematurely stop iterations because it fails near the solution.
 fit2 = vgam(BMI ~ s(age, df = c(4, 2)), maxit = 4,
-            lms.bcg(zero = 1, ilam = 3), bminz, trace = TRUE)
+            lms.bcg(zero = 1, ilam = 3), bmi.nz, trace = TRUE)
 summary(fit1)
 head(predict(fit1))
 head(fitted(fit1))
-head(bminz)
+head(bmi.nz)
 # Person 1 is near the lower quartile of BMI amongst people his age
 head(cdf(fit1))
 

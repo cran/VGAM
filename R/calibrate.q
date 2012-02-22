@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2011 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2012 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -14,27 +14,32 @@ calibrate.qrrvglm.control = function(object,
         Method.optim="BFGS",   # passed into optim(method=Method)
         gridSize = if (Rank==1) 9 else 5,
         varlvI = FALSE, ...) {
+
     Rank = object@control$Rank
     EqualTolerances = object@control$EqualTolerances
-    if (!is.Numeric(gridSize, positive=TRUE, integer=TRUE, allow=1))
-        stop("bad input for 'gridSize'")
+    if (!is.Numeric(gridSize, positive = TRUE,
+                    integer.valued = TRUE, allowable.length = 1))
+      stop("bad input for 'gridSize'")
     if (gridSize < 2)
-        stop("gridSize must be >= 2")
+      stop("'gridSize' must be >= 2")
+
     list(# maxit=Maxit.optim,   # Note the name change
          trace=as.numeric(trace)[1],
          Method.optim=Method.optim,
          gridSize=gridSize,
          varlvI = as.logical(varlvI)[1])
-} 
+}
+
 
 if(!isGeneric("calibrate"))
-    setGeneric("calibrate", function(object, ...) standardGeneric("calibrate"))
+    setGeneric("calibrate",
+               function(object, ...) standardGeneric("calibrate"))
 
 
 calibrate.qrrvglm = function(object, 
-                             newdata=NULL,
-                        type=c("lv","predictors","response","vcov","all3or4"),
-                             initial.vals=NULL, ...) {
+                             newdata = NULL,
+                        type = c("lv","predictors","response","vcov","all3or4"),
+                             initial.vals = NULL, ...) {
 
     Quadratic = if (is.logical(object@control$Quadratic))
                 object@control$Quadratic else FALSE  # T if CQO, F if CAO
@@ -100,7 +105,7 @@ calibrate.qrrvglm = function(object,
                 optim(par=initial.vals[ii,],
                       fn=.my.calib.objfunction.qrrvglm,
                       method=optim.control$Method.optim,  # "BFGS", or "CG" or ...
-                      control=c(fnscale=ifelse(minimize.obfunct,1,-1),
+                      control = c(fnscale=ifelse(minimize.obfunct,1,-1),
                                 optim.control),
                       y=newdata[i1,],
                       extra=object@extra,
@@ -112,7 +117,7 @@ calibrate.qrrvglm = function(object,
                 optim(par=initial.vals[ii,],
                       fn=.my.calib.objfunction.cao,
                       method=optim.control$Method.optim,  # "BFGS", or "CG" or ...
-                      control=c(fnscale=ifelse(minimize.obfunct,1,-1),
+                      control = c(fnscale=ifelse(minimize.obfunct,1,-1),
                                 optim.control),
                       y=newdata[i1,],
                       extra=object@extra,
@@ -227,7 +232,7 @@ calibrate.qrrvglm = function(object,
     }
 }
        
-.my.calib.objfunction.qrrvglm = function(bnu, y, extra=NULL,
+.my.calib.objfunction.qrrvglm = function(bnu, y, extra = NULL,
                         objfun, Coefs,
                         misc.list,
                         everything=TRUE,
@@ -261,7 +266,7 @@ calibrate.qrrvglm = function(object,
 
 
 
-.my.calib.objfunction.cao = function(bnu, y, extra=NULL,
+.my.calib.objfunction.cao = function(bnu, y, extra = NULL,
                         objfun, object, Coefs,
                         misc.list,
                         everything=TRUE,

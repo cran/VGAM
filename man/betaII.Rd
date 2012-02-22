@@ -7,24 +7,24 @@
   beta II distribution.
 }
 \usage{
-betaII(link.scale = "loge", link.p = "loge", link.q = "loge",
-       earg.scale=list(), earg.p=list(), earg.q=list(),
-       init.scale = NULL, init.p = 1, init.q = 1, zero = NULL)
+betaII(lscale = "loge", lshape2.p = "loge", lshape3.q = "loge",
+       escale = list(), eshape2.p = list(), eshape3.q = list(),
+       iscale = NULL, ishape2.p = 2, ishape3.q = 2, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{link.scale, link.p, link.q}{
+  \item{lscale, lshape2.p, lshape3.q}{
   Parameter link functions applied to the
   (positive) parameters \code{scale}, \code{p} and \code{q}.
   See \code{\link{Links}} for more choices.
 
   }
-  \item{earg.scale, earg.p, earg.q}{
+  \item{escale, eshape2.p, eshape3.q}{
   List. Extra argument for each of the links.
   See \code{earg} in \code{\link{Links}} for general information.
 
   }
-  \item{init.scale, init.p, init.q}{
+  \item{iscale, ishape2.p, ishape3.q}{
   Optional initial values for \code{scale}, \code{p} and \code{q}.
 
   }
@@ -44,6 +44,7 @@ betaII(link.scale = "loge", link.p = "loge", link.q = "loge",
   the Lomax (\eqn{p=1}) and inverse Lomax (\eqn{q=1}).
   More details can be found in Kleiber and Kotz (2003).
 
+
 The beta II distribution has density
   \deqn{f(y) = y^{p-1} / [b^p B(p,q) \{1 + y/b\}^{p+q}]}{%
         f(y) = y^(p-1) / [b^p B(p,q) (1 + y/b)^(p+q)]}
@@ -53,18 +54,20 @@ and the others are shape parameters.
 The mean is 
   \deqn{E(Y) = b \, \Gamma(p + 1) \, \Gamma(q - 1) / (\Gamma(p) \, \Gamma(q))}{%
         E(Y) = b  gamma(p + 1)  gamma(q - 1) / ( gamma(p)  gamma(q))}
-provided \eqn{q > 1}.
+provided \eqn{q > 1}; these are returned as the fitted values.
+
 
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}},
   and \code{\link{vgam}}.
+
 }
 \references{
 Kleiber, C. and Kotz, S. (2003)
 \emph{Statistical Size Distributions in Economics and Actuarial Sciences},
-Hoboken, NJ: Wiley-Interscience.
+Hoboken, NJ, USA: Wiley-Interscience.
 
 }
 
@@ -91,10 +94,11 @@ Hoboken, NJ: Wiley-Interscience.
 }
 
 \examples{
-bdata = data.frame(y = rsinmad(n=2000, a=1, 6, 2))  # Not genuine data!
-fit = vglm(y ~ 1, betaII, bdata, trace=TRUE)
-fit = vglm(y ~ 1, betaII(init.p=0.7, init.q=0.7), bdata, trace=TRUE, crit="c")
-coef(fit, mat=TRUE)
+bdata = data.frame(y = rsinmad(2000, shape1.a = 1, 6, 2)) # Not genuine data!
+fit = vglm(y ~ 1, betaII, bdata, trace = TRUE)
+fit = vglm(y ~ 1, betaII(ishape2.p = 0.7, ishape3.q = 0.7),
+           bdata, trace = TRUE, crit = "coef")
+coef(fit, matrix = TRUE)
 Coef(fit)
 summary(fit)
 }

@@ -29,24 +29,29 @@ nbolf(theta, earg = stop("argument 'earg' must be given"),
   \code{\link{cumulative}} then one should choose
   \code{reverse = TRUE, parallel = TRUE, intercept.apply = TRUE}.
 
+
   }
   \item{inverse}{
   Logical. If \code{TRUE} the inverse function is computed.
 
+
   }
   \item{deriv}{
   Order of the derivative. Integer with value 0, 1 or 2.
+
 
   }
   \item{short}{
   Used for labelling the \code{blurb} slot of a
   \code{\link{vglmff-class}} object.
 
+
   }
   \item{tag}{
   Used for labelling the linear/additive predictor in the
   \code{initialize} slot of a \code{\link{vglmff-class}} object.
   Contains a little more information if \code{TRUE}.
+
 
   }
 }
@@ -68,12 +73,12 @@ nbolf(theta, earg = stop("argument 'earg' must be given"),
 
 }
 \value{
-  See Yee (2011) for details.
+  See Yee (2012) for details.
 
 
 }
 \references{
-  Yee, T. W. (2011)
+  Yee, T. W. (2012)
   \emph{Ordinal ordination with normalizing link functions for count data}, 
   (in preparation).
 

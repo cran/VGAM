@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2011 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2012 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -7,7 +7,7 @@
 
 
 
-coefvlm <- function(object, matrix.out=FALSE, label=TRUE) {
+coefvlm <- function(object, matrix.out = FALSE, label = TRUE) {
 
     ans <- object@coefficients
     if (!label)
@@ -21,9 +21,9 @@ coefvlm <- function(object, matrix.out=FALSE, label=TRUE) {
 
     Blist <- object@constraints
     if (all(trivial.constraints(Blist) == 1)) {
-        Bmat <- matrix(ans, nrow=ncolx, ncol=M, byrow=TRUE)
+        Bmat <- matrix(ans, nrow=ncolx, ncol = M, byrow = TRUE)
     } else {
-        Bmat <- matrix(as.numeric(NA), nrow=ncolx, ncol=M)
+        Bmat <- matrix(as.numeric(NA), nrow = ncolx, ncol = M)
 
         if (!matrix.out)
             return(ans) 

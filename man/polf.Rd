@@ -24,7 +24,7 @@ polf(theta, earg = stop("argument 'earg' must be given"),
   The cutpoints should be non-negative integers.
   If \code{polf()} is used as the link function in
   \code{\link{cumulative}} then one should choose
-  \code{reverse=TRUE, parallel=TRUE, intercept.apply=TRUE}.
+  \code{reverse = TRUE, parallel = TRUE, intercept.apply = TRUE}.
 
   }
   \item{inverse}{
@@ -54,21 +54,26 @@ polf(theta, earg = stop("argument 'earg' must be given"),
   an ordinal response coming from an underlying Poisson distribution. 
   If the cutpoint is zero then a complementary log-log link is used.
 
+
   The arguments \code{short} and \code{tag} are used only if
   \code{theta} is character.
+
 
   See \code{\link{Links}} for general information about \pkg{VGAM}
   link functions.
 
+
 }
 \value{
-  See Yee (2007) for details.
+  See Yee (2012) for details.
+
 
 }
 \references{
-  Yee, T. W. (2007)
+  Yee, T. W. (2012)
   \emph{Ordinal ordination with normalizing link functions for count data}, 
   (in preparation).
+
 
 }
 \author{ Thomas W. Yee }
@@ -81,15 +86,18 @@ polf(theta, earg = stop("argument 'earg' must be given"),
   \code{theta} is too close to 1 or 0,
   numerical instabilities may still arise.
 
+
   In terms of the threshold approach with cumulative probabilities for
   an ordinal response this link function corresponds to the
   Poisson distribution (see \code{\link{poissonff}}) that has been
   recorded as an ordinal response using known cutpoints.
 
+
 }
 \section{Warning }{
   Prediction may not work on \code{\link{vglm}} or
   \code{\link{vgam}} etc. objects if this link function is used.
+
 
 }
 
@@ -100,24 +108,26 @@ polf(theta, earg = stop("argument 'earg' must be given"),
   \code{\link{nbolf}},
   \code{\link{golf}},
   \code{\link{cumulative}}.
+
+
 }
 \examples{
-earg = list(cutpoint=2)
-polf("p", earg=earg, short=FALSE)
-polf("p", earg=earg, tag=TRUE)
+earg = list(cutpoint = 2)
+polf("p", earg = earg, short = FALSE)
+polf("p", earg = earg, tag = TRUE)
 
 p = seq(0.01, 0.99, by=0.01)
-y = polf(p, earg=earg)
-y. = polf(p, earg=earg, deriv=1)
-max(abs(polf(y, earg=earg, inv=TRUE) - p)) # Should be 0
+y = polf(p, earg = earg)
+y. = polf(p, earg = earg, deriv = 1)
+max(abs(polf(y, earg = earg, inv = TRUE) - p)) # Should be 0
 
 \dontrun{
-par(mfrow=c(2,1), las=1)
-plot(p, y, type="l", col="blue", main="polf()")
-abline(h=0, v=0.5, col="red", lty="dashed")
+par(mfrow=c(2,1), las = 1)
+plot(p, y, type = "l", col = "blue", main = "polf()")
+abline(h=0, v=0.5, col = "red", lty = "dashed")
 
-plot(p, y., type="l", col="blue",
-     main="(Reciprocal of) first POLF derivative") }
+plot(p, y., type = "l", col = "blue",
+     main = "(Reciprocal of) first POLF derivative") }
 
 
 # Rutherford and Geiger data
@@ -128,8 +138,8 @@ with(ruge, length(yy))  # 2608 1/8-minute intervals
 cutpoint = 5
 ruge = transform(ruge, yy01 = ifelse(yy <= cutpoint, 0, 1))
 earg = list(cutpoint=cutpoint)
-fit = vglm(yy01 ~ 1, binomialff(link="polf", earg=earg), ruge)
-coef(fit, matrix=TRUE)
+fit = vglm(yy01 ~ 1, binomialff(link = "polf", earg = earg), ruge)
+coef(fit, matrix = TRUE)
 exp(coef(fit))
 
 
@@ -143,15 +153,15 @@ pdat = transform(pdat, cuty = Cut(y1, breaks=cutpoints))
 \dontrun{
 with(pdat, plot(x2, x3, col=cuty, pch=as.character(cuty))) }
 with(pdat, table(cuty) / sum(table(cuty)))
-fit = vglm(cuty ~ x2 + x3, fam = cumulative(link="polf",
-           reverse=TRUE, parallel=TRUE, intercept.apply=TRUE,
-           mv=TRUE, earg=list(cutpoint=cutpoints[2:3])),
-           pdat, trace=TRUE)
+fit = vglm(cuty ~ x2 + x3, fam = cumulative(link = "polf",
+           reverse = TRUE, parallel = TRUE, intercept.apply = TRUE,
+           mv = TRUE, earg = list(cutpoint=cutpoints[2:3])),
+           pdat, trace = TRUE)
 head(fit@y)
 head(fitted(fit))
 head(predict(fit))
 coef(fit)
-coef(fit, matrix=TRUE)
+coef(fit, matrix = TRUE)
 constraints(fit)
 fit@misc$earg
 }

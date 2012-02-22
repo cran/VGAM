@@ -135,6 +135,19 @@ void n5aioudkhbzuprs6(double *qgnl3toc,
   double yjpnro8d = 8.0e88, bk3ymcih = 0.0e0,
          *qcpiaj7f,  qcpiaj7f0 = 0.0;
 
+
+
+  g2dnwteb  = bk3ymcih;
+  bk3ymcih += bk3ymcih;
+  bk3ymcih *= bk3ymcih;
+  bk3ymcih += g2dnwteb;
+
+
+
+
+
+
+
          qcpiaj7f = &qcpiaj7f0,
 
 

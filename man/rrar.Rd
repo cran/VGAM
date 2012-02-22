@@ -14,16 +14,19 @@ rrar(Ranks = 1, coefstart = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{Ranks}{ Vector of integers: the ranks of the model.
+  \item{Ranks}{
+  Vector of integers: the ranks of the model.
   Each value must be at least one and no more than \code{M},
   where \code{M} is the number of response variables in the time series. 
   The length of \code{Ranks} is the \emph{lag}, which is often denoted by
   the symbol \emph{L} in the literature.
 
+
   }
-  \item{coefstart}{ Optional numerical vector of initial values for the
-  coefficients. 
+  \item{coefstart}{
+  Optional numerical vector of initial values for the coefficients. 
   By default, the family function chooses these automatically.
+
 
   }
 }
@@ -58,42 +61,41 @@ time series.
 }
 \author{ T. W. Yee }
 \note{ 
-This family function should
-be used within \code{\link{vglm}} and
-not with \code{\link{rrvglm}} because
-it does not fit into the RR-VGLM framework exactly. Instead, the
-reduced-rank model is formulated as a VGLM!
+  This family function should be used within \code{\link{vglm}}
+  and not with \code{\link{rrvglm}} because it does not fit into
+  the RR-VGLM framework exactly. Instead, the reduced-rank model
+  is formulated as a VGLM!
 
 
-A methods function \code{Coef.rrar}, say, has yet to be written.
-It would return the quantities 
-\code{Ak1},
-\code{C},
-\code{D},
-\code{omegahat},
-\code{Phi},
-etc. as slots, and then \code{print.Coef.rrar} would also need to be
-written.
+  A methods function \code{Coef.rrar}, say, has yet to be written.
+  It would return the quantities 
+  \code{Ak1},
+  \code{C},
+  \code{D},
+  \code{omegahat},
+  \code{Phi},
+  etc. as slots, and then \code{show.Coef.rrar} would also need to be
+  written.
 
 
 }
 
 \seealso{
   \code{\link{vglm}},
-  \code{\link{usgrain}}.
+  \code{\link{grain.us}}.
+
 
 }
 \examples{
-\dontrun{
 year = seq(1961 + 1/12, 1972 + 10/12, by = 1/12)
-par(mar = c(4, 4, 2, 2) + 0.1, mfrow = c(2, 2))
+\dontrun{ par(mar = c(4, 4, 2, 2) + 0.1, mfrow = c(2, 2))
 for(ii in 1:4) {
-    plot(year, usgrain[, ii], main = names(usgrain)[ii],
-         type = "l", xlab = "", ylab = "")
-    points(year, usgrain[,ii], pch = "*")
-}
-apply(usgrain, 2, mean)     # mu vector
-cgrain = scale(usgrain, scale = FALSE) # Center the time series only
+    plot(year, grain.us[, ii], main = names(grain.us)[ii], las = 1,
+         type = "l", xlab = "", ylab = "", col = "blue")
+    points(year, grain.us[,ii], pch = "*", col = "blue")
+}}
+apply(grain.us, 2, mean)     # mu vector
+cgrain = scale(grain.us, scale = FALSE) # Center the time series only
 fit = vglm(cgrain ~ 1, rrar(Ranks = c(4, 1)), trace = TRUE)
 summary(fit)
 
@@ -103,13 +105,12 @@ print(fit@misc$Dmatrices, dig = 3)
 print(fit@misc$omegahat, dig = 3)
 print(fit@misc$Phimatrices, dig = 2)
 
-par(mar = c(4, 4, 2, 2) + 0.1, mfrow = c(4, 1))
+\dontrun{ par(mar = c(4, 4, 2, 2) + 0.1, mfrow = c(4, 1))
 for(ii in 1:4) {
   plot(year, fit@misc$Z[,ii], main = paste("Z", ii, sep = ""),
-       type = "l", xlab = "", ylab = "")
-  points(year, fit@misc$Z[,ii], pch = "*")
-}
-}
+       type = "l", xlab = "", ylab = "", las = 1, col = "blue")
+  points(year, fit@misc$Z[,ii], pch = "*", col = "blue")
+} }
 }
 \keyword{ts}
 \keyword{regression}

@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2011 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2012 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -23,7 +23,7 @@ vlm.control <- function(save.weight = TRUE, tol = 1e-7, method="qr",
     }
     if (!is.logical(checkwz) || length(checkwz) != 1)
         stop("bad input for argument 'checkwz'")
-    if (!is.Numeric(wzepsilon, allow = 1, positive = TRUE))
+    if (!is.Numeric(wzepsilon, allowable.length = 1, positive = TRUE))
         stop("bad input for argument 'wzepsilon'")
 
     list(save.weight=save.weight, tol=tol, method=method,
@@ -56,7 +56,7 @@ vglm.control <- function(checkwz = TRUE,
 
     if (!is.logical(checkwz) || length(checkwz) != 1)
         stop("bad input for argument 'checkwz'")
-    if (!is.Numeric(wzepsilon, allow = 1, positive = TRUE))
+    if (!is.Numeric(wzepsilon, allowable.length = 1, positive = TRUE))
         stop("bad input for argument 'wzepsilon'")
 
     convergence <- expression({
@@ -65,20 +65,22 @@ vglm.control <- function(checkwz = TRUE,
         switch(criterion,
         coefficients = if (iter == 1) iter < maxit else
           (iter < maxit &&
-           max(abs(new.crit - old.crit) / (abs(old.crit) + epsilon)) > epsilon),
+           max(abs(new.crit - old.crit) / (abs(old.crit) + epsilon))
+           > epsilon),
            abs(old.crit-new.crit) / (abs(old.crit)+epsilon) > epsilon &&
            iter < maxit)
     })
 
-    if (!is.Numeric(epsilon, allow = 1, posit = TRUE)) {
+    if (!is.Numeric(epsilon, allowable.length = 1, positive = TRUE)) {
         warning("bad input for argument 'epsilon'; using 0.00001 instead")
         epsilon <- 0.00001
     }
-    if (!is.Numeric(maxit, allow = 1, posit = TRUE, integ = TRUE)) {
+    if (!is.Numeric(maxit, allowable.length = 1,
+                    positive = TRUE, integer.valued = TRUE)) {
         warning("bad input for argument 'maxit'; using 30 instead")
         maxit <- 30
     }
-    if (!is.Numeric(stepsize, allow = 1, posit = TRUE)) {
+    if (!is.Numeric(stepsize, allowable.length = 1, positive = TRUE)) {
         warning("bad input for argument 'stepsize'; using 1 instead")
         stepsize <- 1
     }

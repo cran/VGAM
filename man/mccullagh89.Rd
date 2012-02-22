@@ -3,8 +3,8 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{McCullagh (1989) Distribution Family Function}
 \description{
-  Estimates the two parameters of the McCullagh (1989) distribution by
-  maximum likelihood estimation.
+  Estimates the two parameters of the McCullagh (1989)
+  distribution by maximum likelihood estimation.
 
 }
 \usage{
@@ -111,7 +111,7 @@ all else fails.
 %}
 
 \examples{
-mdata = data.frame(y = rnorm(n = 1000, sd = 0.2)) # Limit as theta = 0, nu is Inf
+mdata = data.frame(y = rnorm(n = 1000, sd = 0.2)) # Limit as theta = 0, nu = Inf
 fit = vglm(y ~ 1, mccullagh89, mdata, trace = TRUE)
 head(fitted(fit))
 with(mdata, mean(y))

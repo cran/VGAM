@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2011 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2012 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -28,44 +28,47 @@ qtplot.lms.bcn <- function(percentiles = c(25,50,75),
     answer 
 }
  
+ 
 qtplot.lms.bcg <- function(percentiles = c(25,50,75),
                            eta = NULL, yoffset = 0)
 {
 
-    cc <- percentiles
-    lp = length(percentiles)
-    answer <- matrix(as.numeric(NA), nrow(eta), lp,
-                     dimnames = list(dimnames(eta)[[1]],
-                     paste(as.character(percentiles), "%", sep = "")))
-    lambda <- eta[, 1]
-    sigma <- eta[, 3]
-    shape <- 1 / (lambda * sigma)^2
-    for(ii in 1:lp) {
-        ccc <- rep(cc[ii]/100, len=nrow(eta))
-        ccc <- ifelse(lambda > 0, ccc, 1-ccc)
-        answer[, ii] <- eta[, 2] * (qgamma(ccc, sh=shape)/shape)^(1/lambda)
-    }
-    answer 
+  cc <- percentiles
+  lp = length(percentiles)
+  answer <- matrix(as.numeric(NA), nrow(eta), lp,
+                   dimnames = list(dimnames(eta)[[1]],
+                   paste(as.character(percentiles), "%", sep = "")))
+  lambda <- eta[, 1]
+  sigma <- eta[, 3]
+  shape <- 1 / (lambda * sigma)^2
+  for(ii in 1:lp) {
+    ccc <- rep(cc[ii]/100, len=nrow(eta))
+    ccc <- ifelse(lambda > 0, ccc, 1-ccc)
+    answer[, ii] <- eta[, 2] *
+                    (qgamma(ccc, shape = shape)/shape)^(1/lambda)
+  }
+  answer 
 }
+ 
  
 qtplot.lms.yjn2 <- 
 qtplot.lms.yjn <- function(percentiles = c(25,50,75),
                            eta = NULL, yoffset = 0)
 {
 
-    cc <- percentiles
-    lp = length(percentiles)
-    answer <- matrix(as.numeric(NA), nrow(eta), lp,
-                     dimnames = list(dimnames(eta)[[1]],
-                     paste(as.character(percentiles), "%", sep = "")))
-    lambda <- eta[, 1]
-    mu <- eta[, 2]
-    sigma <- eta[, 3]  # Link function already taken care of above
-    for(ii in 1:lp) {
-        ccc <- mu + sigma * qnorm(cc[ii]/100)
-        answer[, ii] <- yeo.johnson(ccc, lambda, inverse= TRUE) - yoffset
-    }
-    answer 
+  cc <- percentiles
+  lp = length(percentiles)
+  answer <- matrix(as.numeric(NA), nrow(eta), lp,
+                   dimnames = list(dimnames(eta)[[1]],
+                   paste(as.character(percentiles), "%", sep = "")))
+  lambda <- eta[, 1]
+  mu <- eta[, 2]
+  sigma <- eta[, 3]  # Link function already taken care of above
+  for(ii in 1:lp) {
+    ccc <- mu + sigma * qnorm(cc[ii]/100)
+    answer[, ii] <- yeo.johnson(ccc, lambda, inverse= TRUE) - yoffset
+  }
+  answer 
 }
  
 qtplot.default <- function(object, ...) {
@@ -127,8 +130,8 @@ qtplot.lmscreg <- function(object,
     }
 
     if (plot.it) {
-        plotqtplot.lmscreg(fit=fitted.values, obj=object,
-                           newdata=newdata,
+        plotqtplot.lmscreg(fitted.values = fitted.values, object = object,
+                           newdata = newdata,
                            lp = lp,
                            percentiles = percentiles, ...)
     }
@@ -140,7 +143,7 @@ qtplot.lmscreg <- function(object,
 
 plotqtplot.lmscreg <- function(fitted.values, object,
                           newdata = NULL,
-                          percentiles=object@misc$percentiles, 
+                          percentiles = object@misc$percentiles, 
                           lp = NULL,
                           add.arg = FALSE,
                           y = if (length(newdata)) FALSE else TRUE,
@@ -148,7 +151,8 @@ plotqtplot.lmscreg <- function(fitted.values, object,
                           label = TRUE,
                           size.label = 0.06,
                           xlab = NULL, ylab = "",
-                          pch = par()$pch, pcex = par()$cex, pcol.arg = par()$col,
+                          pch = par()$pch, pcex = par()$cex,
+                          pcol.arg = par()$col,
                           xlim = NULL, ylim = NULL,
                           llty.arg = par()$lty,
                           lcol.arg = par()$col, llwd.arg = par()$lwd,
@@ -278,21 +282,24 @@ if (TRUE) {
  
 qtplot.egumbel <-
 qtplot.gumbel <-
-    function(object, plot.it = TRUE, y.arg = TRUE, spline.fit = FALSE, label = TRUE,
-             R=object@misc$R,
-             percentiles=object@misc$percentiles,
+    function(object, plot.it = TRUE, y.arg = TRUE,
+             spline.fit = FALSE, label = TRUE,
+             R = object@misc$R,
+             percentiles = object@misc$percentiles,
              add.arg = FALSE,
-             mpv=object@misc$mpv,
+             mpv = object@misc$mpv,
              xlab = NULL, ylab = "", main = "",
              pch = par()$pch, pcol.arg = par()$col,
-             llty.arg = par()$lty, lcol.arg = par()$col, llwd.arg = par()$lwd,
+             llty.arg = par()$lty, lcol.arg = par()$col,
+             llwd.arg = par()$lwd,
              tcol.arg = par()$col, tadj = 1, ...)
 {
     if (!is.logical(mpv) || length(mpv) != 1)
-        stop("bad input for 'mpv'")
+      stop("bad input for 'mpv'")
     if (!length(percentiles) ||
-       (!is.Numeric(percentiles, posit = TRUE) || max(percentiles) >= 100))
-        stop("bad input for 'percentiles'")
+       (!is.Numeric(percentiles, positive = TRUE) ||
+        max(percentiles) >= 100))
+      stop("bad input for 'percentiles'")
 
 
 
@@ -604,7 +611,7 @@ cdf.lms.bcg <- function(y, eta0)
 {
     shape = 1 / (eta0[, 1] * eta0[, 3])^2
     Gvec = shape * (y/eta0[, 2])^(eta0[, 1])
-    ans = c(pgamma(Gvec, sh=shape))
+    ans = c(pgamma(Gvec, shape = shape))
     ans[eta0[, 1] < 0] = 1-ans
     names(ans) = dimnames(eta0)[[1]]
     ans
@@ -686,12 +693,13 @@ rlplot.gev <-
 {
     log.arg = log
     rm(log)
-    if (!is.Numeric(epsilon, allow = 1) || abs(epsilon) > 0.10)
-        stop("bad input for 'epsilon'")
-    if (!is.Numeric(probability, posit = TRUE) ||
+    if (!is.Numeric(epsilon, allowable.length = 1) ||
+        abs(epsilon) > 0.10)
+      stop("bad input for 'epsilon'")
+    if (!is.Numeric(probability, positive = TRUE) ||
         max(probability) >= 1 ||
-       length(probability) < 5)
-        stop("bad input for 'probability'")
+        length(probability) < 5)
+      stop("bad input for 'probability'")
 
     if (!is.logical(log.arg) || length(log.arg) != 1)
         stop("bad input for argument 'log'")

@@ -31,8 +31,10 @@
                         a numeric vector}
     \item{\code{tv}}{Average number of hours watching TV per week,
                         a numeric vector}
-    \item{\code{movies}}{Number of movies seen at a cinema during the last 3 months,
-                         a numeric vector}
+    \item{\code{movies}}{
+  Number of movies seen at a cinema during the last 3 months,
+                         a numeric vector
+  }
     \item{\code{movies3m}}{Seen movies in last 3 months? 
                            a factor, (Yes or No)}
     \item{\code{sport}}{Favourite sport, a factor,

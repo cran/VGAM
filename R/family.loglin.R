@@ -1,11 +1,11 @@
 # These functions are
-# Copyright (C) 1998-2011 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2012 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
 
 
-loglinb2 <- function(exchangeable = FALSE, zero = NULL)
+ loglinb2 <- function(exchangeable = FALSE, zero = NULL)
 {
 
     new("vglmff",
@@ -100,7 +100,7 @@ loglinb2 <- function(exchangeable = FALSE, zero = NULL)
 }
 
 
-loglinb3 <- function(exchangeable = FALSE, zero = NULL)
+ loglinb3 <- function(exchangeable = FALSE, zero = NULL)
 {
 
     new("vglmff",
@@ -117,8 +117,10 @@ loglinb3 <- function(exchangeable = FALSE, zero = NULL)
     initialize = expression({
         y <- as.matrix(y)
         predictors.names <- c("u1", "u2", "u3", "u12", "u13", "u23")
+
         if (ncol(y) != 3)
             stop("ncol(y) must be = 3")
+
         extra$my.expression <- expression({
             u1 <-  eta[,1]
             u2 <-  eta[,2]
@@ -130,6 +132,8 @@ loglinb3 <- function(exchangeable = FALSE, zero = NULL)
                      exp(u1 + u3 + u13) + exp(u2 + u3 + u23) +
                      exp(u1 + u2 + u3 + u12 + u13 + u23)
         })
+
+
         extra$deriv.expression <- expression({
             allterms <- exp(u1+u2+u3+u12+u13+u23)
             A1 <- exp(u1) + exp(u1 + u2 + u12) + exp(u1 + u3 + u13) +
@@ -142,6 +146,8 @@ loglinb3 <- function(exchangeable = FALSE, zero = NULL)
             A13 <- exp(u1 + u3 + u13) + allterms
             A23 <- exp(u2 + u3 + u23) + allterms
         })
+
+
         if (length(mustart) + length(etastart) == 0) {
             mustart <- matrix(as.numeric(NA), nrow(y), 2^3)
             mustart[,1] <- weighted.mean((1-y[,1])*(1-y[,2])*(1-y[,3]), w)
@@ -156,7 +162,7 @@ loglinb3 <- function(exchangeable = FALSE, zero = NULL)
                 stop("some combinations of the response not realized") 
         }
     }),
-    linkinv= function(eta, extra = NULL) {
+    linkinv = function(eta, extra = NULL) {
         eval(extra$my.expression)
         cbind("000" = 1,
               "001" = exp(u3),

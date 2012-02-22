@@ -69,7 +69,7 @@ contains further information and examples.
 }
 
 \examples{\dontrun{
-fit = vgam(BMI ~ s(age, df=c(4,2)), fam=lms.bcn(zero=1), data=bminz)
+fit = vgam(BMI ~ s(age, df=c(4,2)), fam=lms.bcn(zero=1), data=bmi.nz)
 ygrid = seq(15, 43, by=0.25)
 deplot(fit, x0=20, y=ygrid, xlab="BMI", col="green", llwd=2,
        main="BMI distribution at ages 20 (green), 40 (blue), 60 (red)")
