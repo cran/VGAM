@@ -37,7 +37,7 @@
 
   if (!is.Numeric(mux.offdiagonal, allowable.length = 1) ||
       mux.offdiagonal >= 1 ||
-      mux.offdiagonal < 0)
+      mux.offdiagonal <  0)
     stop("argument 'mux.offdiagonal' must be in the interval [0, 1)")
 
 
@@ -51,11 +51,11 @@
             namesof("prob0", link0, earg = earg0), ",  ",
             namesof("prob1", link1, earg = earg1)),
   constraints = eval(substitute(expression({
-      constraints <- cm.zero.vgam(constraints, x, .zero, M)
+    constraints <- cm.zero.vgam(constraints, x, .zero, M)
   }), list( .zero = zero # ,
            ))),
-  initialize = eval(substitute(expression({
 
+  initialize = eval(substitute(expression({
     eval(binomialff(link = .link0)@initialize) # w, y, mustart are assigned
 
 
@@ -66,16 +66,16 @@
 
     if (is.null(etastart)) {
       prob0.init <- if (length( .iprob0 )) {
-          rep( .iprob0, len = n)
-        } else {
-          mustart / 2
-        }
+        rep( .iprob0, length.out = n)
+      } else {
+        mustart / 2
+      }
 
       prob1.init <- if (length( .iprob1 )) {
-          rep( .iprob1, len = n)
-        } else {
-          mustart / 2
-        }
+        rep( .iprob1, length.out = n)
+      } else {
+        mustart / 2
+      }
 
 
       mustart <- NULL
@@ -88,6 +88,7 @@
   }), list( .link0 = link0, .earg0 = earg0,
             .link1 = link1, .earg1 = earg1,
             .iprob0 = iprob0, .iprob1 = iprob1 ))),
+
   linkinv = eval(substitute(function(eta, extra = NULL) {
     prob0 <- eta2theta(eta[, 1], .link0 , earg = .earg0 )
     prob1 <- eta2theta(eta[, 2], .link1 , earg = .earg1 )
@@ -112,13 +113,13 @@
     function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
 
 
-      prob0 <- eta2theta(eta[, 1], .link0, earg = .earg0 )
-      prob1 <- eta2theta(eta[, 2], .link1, earg = .earg1 )
+      prob0 <- eta2theta(eta[, 1], .link0 , earg = .earg0 )
+      prob1 <- eta2theta(eta[, 2], .link1 , earg = .earg1 )
       mymu = prob0 + (1 - prob0) * prob1
 
 
       if (residuals) {
-        w * (y / mymu - (1-y) / (1 - mymu))
+        w * (y / mymu - (1 - y) / (1 - mymu))
       } else {
         ycounts = if (is.numeric(extra$orig.w)) y * w / extra$orig.w else
                     y * w # Convert proportions to counts
@@ -171,7 +172,7 @@
                  dl.dprob1 * dprob1.deta)
   }), list( .link0 = link0, .earg0 = earg0,
             .link1 = link1, .earg1 = earg1 ))),
-    weight = eval(substitute(expression({
+  weight = eval(substitute(expression({
 
 
     ed2l.dmu2 <- 1 / (mymu * (1-mymu))
@@ -195,10 +196,6 @@
                 ed2l.dprob1prob2 * dprob1.deta * dprob0.deta)
 
 
- if (FALSE)
-    wz <- cbind(od2l.dprob02 * dprob0.deta^2,
-                od2l.dprob12 * dprob1.deta^2,
-                od2l.dprob1prob2 * dprob1.deta * dprob0.deta)
 
 
     c(w) * wz

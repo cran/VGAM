@@ -3,7 +3,8 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Bivariate Binary Regression with an Odds Ratio (Family Function) }
 \description{
-  Fits a Palmgren (bivariate logistic regression) model to two binary
+  Fits a Palmgren (bivariate odds-ratio model, or
+  bivariate logistic regression) model to two binary
   responses. Actually, a bivariate logistic/probit/cloglog/cauchit
   model can be fitted.
   The odds ratio is used as a measure of dependency.
@@ -11,9 +12,9 @@
 }
 \usage{
 binom2.or(lmu = "logit", lmu1 = lmu, lmu2 = lmu, loratio = "loge",
-          emu=list(), emu1=emu, emu2=emu, eoratio=list(),
-          imu1=NULL, imu2=NULL, ioratio = NULL, zero = 3,
-          exchangeable = FALSE, tol = 0.001, morerobust=FALSE)
+          emu = list(), emu1 = emu, emu2 = emu, eoratio = list(),
+          imu1 = NULL, imu2 = NULL, ioratio = NULL, zero = 3,
+          exchangeable = FALSE, tol = 0.001, morerobust = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -93,7 +94,7 @@ binom2.or(lmu = "logit", lmu1 = lmu, lmu2 = lmu, loratio = "loge",
   i.e., an intercept-only model, but this can be circumvented by setting
   \code{zero = NULL} in order to model the odds ratio as a function of all the
   explanatory variables.
-  The function \code{binom2.or} can handle other probability link
+  The function \code{binom2.or()} can handle other probability link
   functions such as \code{\link{probit}},
   \code{\link{cloglog}} and \code{\link{cauchit}} links as well, so is
   quite general.  In fact, the two marginal probabilities can each have
@@ -153,6 +154,8 @@ binom2.or(lmu = "logit", lmu1 = lmu, lmu2 = lmu, loratio = "loge",
 }
 \author{ Thomas W. Yee }
 \note{
+  At present we call \code{\link{binom2.or}} families a
+  \emph{bivariate odds-ratio model}.
   The response should be either a 4-column matrix of counts
   (whose columns correspond to \eqn{(Y_1,Y_2)}{(Y1,Y2)} = (0,0), (0,1), (1,0),
   (1,1) respectively), or a two-column matrix where each column has two
@@ -162,8 +165,8 @@ binom2.or(lmu = "logit", lmu1 = lmu, lmu2 = lmu, loratio = "loge",
   possible outcomes.
 
 
-  By default, a constant odds ratio is fitted because \code{zero=3}.
-  Set \code{zero=NULL} if you want the odds ratio to be modelled as a
+  By default, a constant odds ratio is fitted because \code{zero = 3}.
+  Set \code{zero = NULL} if you want the odds ratio to be modelled as a
   function of the explanatory variables; however, numerical problems
   are more likely to occur.
 
@@ -174,7 +177,7 @@ binom2.or(lmu = "logit", lmu1 = lmu, lmu2 = lmu, loratio = "loge",
   Users who want a different link function for each of the two marginal
   probabilities should use the \code{lmu1} and \code{lmu2} arguments,
   and the argument \code{lmu} is then ignored.  It doesn't make sense
-  to specify \code{exchangeable=TRUE} and have different link functions
+  to specify \code{exchangeable = TRUE} and have different link functions
   for the two marginal probabilities.
 
 
@@ -183,6 +186,7 @@ binom2.or(lmu = "logit", lmu1 = lmu, lmu2 = lmu, loratio = "loge",
   environmental variables with different values at the two time points
   to be entered into an exchangeable \code{\link{binom2.or}} model.
   See the author's webpage for sample code.
+
 
 }
 \seealso{
@@ -196,6 +200,7 @@ binom2.or(lmu = "logit", lmu1 = lmu, lmu2 = lmu, loratio = "loge",
   \code{\link{probit}},
   \code{\link{cloglog}},
   \code{\link{cauchit}}.
+
 
 }
 \examples{

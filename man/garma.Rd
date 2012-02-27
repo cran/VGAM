@@ -20,6 +20,7 @@ garma(link = "identity", earg=list(), p.ar.lag = 1, q.ma.lag = 0,
   \code{\link{cloglog}},
   \code{\link{cauchit}} are suitable for binary responses.
 
+
   }
   \item{earg}{
   List. Extra argument for the link.
@@ -32,11 +33,13 @@ garma(link = "identity", earg=list(), p.ar.lag = 1, q.ma.lag = 0,
   See \code{\link{loge}} and \code{\link{logit}} etc. for specific
   information about each link function.
 
+
   }
-\item{p.ar.lag}{
+  \item{p.ar.lag}{
   A positive integer,
   the lag for the autoregressive component.
   Called \eqn{p} below.
+
 
   }
   \item{q.ma.lag}{
@@ -150,6 +153,10 @@ garma(link = "identity", earg=list(), p.ar.lag = 1, q.ma.lag = 0,
 
 
   Overdispersion is not handled.
+  For binomial responses it is currently best to input a vector
+  of 1s and 0s rather than the \code{cbind(successes, failures)}
+  because the initialize slot is rudimentary.
+
 
 
 }

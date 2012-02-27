@@ -74,7 +74,7 @@ cqo(formula, family, data = list(), weights = NULL, subset = NULL,
   \item{etastart}{
   starting values for the linear predictors.
   It is a \eqn{M}-column matrix.
-  If \eqn{M=1} then it may be a vector.
+  If \eqn{M = 1} then it may be a vector.
   Currently, this argument probably should not be used.
 
   }
@@ -457,7 +457,7 @@ S = ncol(p1ut@y) # Number of species
 clr = (1:(S+1))[-7] # Omits yellow
 lvplot(p1ut, y = TRUE, lcol = clr, pch = 1:S, pcol = clr, las = 1) # ordination diagram
 legend("topright", leg = colnames(p1ut@y), col = clr,
-       pch = 1:S, merge = TRUE, bty = "n", lty = 1:S, lwd=2) }
+       pch = 1:S, merge = TRUE, bty = "n", lty = 1:S, lwd = 2) }
 (cp = Coef(p1ut))
 
 (a = cp@lv[cp@lvOrder])  # The ordered site scores along the gradient
@@ -468,11 +468,11 @@ a = a[!is.na(a)] # Delete the species that is not unimodal
 names(a)         # Names of the ordered optima along the gradient
 
 \dontrun{
-trplot(p1ut, whichSpecies = 1:3, log = "xy", type = "b", lty=1, lwd=2,
+trplot(p1ut, whichSpecies = 1:3, log = "xy", type = "b", lty = 1, lwd = 2,
        col = c("blue","red","green"), label = TRUE) -> ii # trajectory plot
 legend(0.00005, 0.3, paste(ii$species[,1], ii$species[,2], sep = " and "),
-       lwd=2, lty=1, col = c("blue","red","green"))
-abline(a=0, b=1, lty = "dashed")
+       lwd = 2, lty = 1, col = c("blue","red","green"))
+abline(a = 0, b = 1, lty = "dashed")
 
 S = ncol(p1ut@y) # Number of species
 clr = (1:(S+1))[-7] # Omits yellow
@@ -534,7 +534,7 @@ p1et = cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,
                  Auloalbi, Pardlugu, Pardmont, Pardnigr, Pardpull,
                  Trocterr, Zoraspin) ~
            WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
-           fam = poissonff, data=hspider, EqualTol = TRUE, trace = FALSE)
+           fam = poissonff, data = hspider, EqualTol = TRUE, trace = FALSE)
 sort(p1et@misc$deviance.Bestof) # A history of all the iterations
 if(deviance(p1et) > 1586) warning("suboptimal fit obtained")
 S = ncol(p1et@y)
@@ -545,7 +545,7 @@ for(ii in 1:S) {
 
 # For species ii, refit the model to get the deviance residuals
     fit1 = vglm(sppCounts ~ offset(myOffset) + lv1, fam = poissonff,
-                data=tempdata, trace = FALSE)
+                data = tempdata, trace = FALSE)
 
 # For checking: this should be 0
     print("max(abs(c(Coef(p1et)@B1[1,ii], Coef(p1et)@A[ii,1]) - coef(fit1)))")
@@ -565,4 +565,4 @@ for(ii in 1:S) {
 \keyword{regression}
 
 %legend("topright", x=1, y=135, leg = colnames(p1ut@y), col = clr,
-%       pch = 1:S, merge = TRUE, bty = "n", lty = 1:S, lwd=2)
+%       pch = 1:S, merge = TRUE, bty = "n", lty = 1:S, lwd = 2)

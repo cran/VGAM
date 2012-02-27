@@ -58,7 +58,7 @@ pzanegbin = function(q, size, prob = NULL, munb = NULL, pobs0 = 0) {
   if (length(munb)) {
     if (length(prob))
       stop("arguments 'prob' and 'munb' both specified")
-    prob <- size/(size + munb)
+    prob <- size / (size + munb)
   }
 
   LLL = max(length(q), length(pobs0), length(prob), length(size))
@@ -72,7 +72,7 @@ pzanegbin = function(q, size, prob = NULL, munb = NULL, pobs0 = 0) {
     stop("argument 'pobs0' must be in [0,1]")
   qindex = (q >  0)
   ans[ qindex] = pobs0[qindex] + (1 - pobs0[qindex]) *
-                pposnegbin(q[qindex], size = size[qindex],
+                 pposnegbin(q[qindex], size = size[qindex],
                                       prob = prob[qindex])
   ans[q <  0] = 0
   ans[q == 0] = pobs0[q == 0]
@@ -88,10 +88,10 @@ qzanegbin = function(p, size, prob = NULL, munb = NULL, pobs0 = 0) {
   }
 
   LLL = max(length(p), length(pobs0), length(prob), length(size))
-  if (length(p)    != LLL) p    = rep(p,    len = LLL);
-  if (length(pobs0)  != LLL) pobs0  = rep(pobs0,  len = LLL);
-  if (length(prob) != LLL) prob = rep(prob, len = LLL);
-  if (length(size) != LLL) size = rep(size, len = LLL);
+  if (length(p)     != LLL) p      = rep(p,     len = LLL);
+  if (length(pobs0) != LLL) pobs0  = rep(pobs0, len = LLL);
+  if (length(prob)  != LLL) prob   = rep(prob,  len = LLL);
+  if (length(size)  != LLL) size   = rep(size,  len = LLL);
   ans = rep(0.0, len = LLL)
 
   if (!is.Numeric(pobs0) || any(pobs0 < 0) || any(pobs0 > 1))
@@ -101,8 +101,8 @@ qzanegbin = function(p, size, prob = NULL, munb = NULL, pobs0 = 0) {
   pindex = (p > pobs0)
   ans[pindex] = qposnegbin((p[pindex] -
                             pobs0[pindex]) / (1 - pobs0[pindex]),
-                           prob = prob[pindex],
-                           size = size[pindex])
+                            prob = prob[pindex],
+                            size = size[pindex])
   ans
 }
 
@@ -238,7 +238,7 @@ dzipois = function(x, lambda, pstr0 = 0, log = FALSE) {
     ans[!index0] = log1p(-pstr0[!index0]) +
                    dpois(x[!index0], lambda[!index0], log = TRUE)
   } else {
-    ans[ index0] =     pstr0[ index0] + (1 - pstr0[ index0]) *
+    ans[ index0] =      pstr0[ index0] + (1 - pstr0[ index0]) *
                        dpois(x[ index0], lambda[ index0])
     ans[!index0] = (1 - pstr0[!index0]) * dpois(x[!index0], lambda[!index0])
   }
@@ -247,7 +247,6 @@ dzipois = function(x, lambda, pstr0 = 0, log = FALSE) {
   deflat_limit = -1 / expm1(lambda)
   ans[pstr0 < deflat_limit] = NaN
   ans[pstr0 > 1] = NaN
-
 
   ans
 }
@@ -285,7 +284,6 @@ qzipois = function(p, lambda, pstr0 = 0) {
   pindex = (p > pstr0)
   ans[pindex] = qpois((p[pindex] - pstr0[pindex]) / (1 - pstr0[pindex]),
                       lambda = lambda[pindex])
-
 
 
   deflat_limit = -1 / expm1(lambda)
@@ -345,97 +343,102 @@ rzipois = function(n, lambda, pstr0 = 0) {
 
 
 
- yip88 = function(link.lambda = "loge", n.arg = NULL)
-{
+ yip88 = function(link.lambda = "loge", n.arg = NULL) {
 
 
 
 
+  if (mode(link.lambda) != "character" && mode(link.lambda) != "name")
+    link.lambda = as.character(substitute(link.lambda))
 
-    if (mode(link.lambda) != "character" && mode(link.lambda) != "name")
-        link.lambda = as.character(substitute(link.lambda))
+  new("vglmff",
+  blurb = c("Zero-inflated Poisson (based on Yip (1988))\n\n",
+            "Link:     ", namesof("lambda", link.lambda), "\n",
+            "Variance: (1 - pstr0) * lambda"),
+  first = eval(substitute(expression({
+    zero <- y == 0
+    if (any(zero)) {
+      if (length(extra)) extra$sumw = sum(w) else
+        extra = list(sumw=sum(w))
+      if (is.numeric(.n.arg) && extra$sumw != .n.arg) 
+        stop("value of 'n.arg' conflicts with data ",
+             "(it need not be specified anyway)")
+      warning("trimming out the zero observations")
 
-    new("vglmff",
-    blurb = c("Zero-inflated Poisson (based on Yip (1988))\n\n",
-              "Link:     ", namesof("lambda", link.lambda), "\n",
-              "Variance: (1 - pstr0) * lambda"),
-    first = eval(substitute(expression({
-        zero <- y == 0
-        if (any(zero)) {
-            if (length(extra)) extra$sumw = sum(w) else
-                extra = list(sumw=sum(w))
-            if (is.numeric(.n.arg) && extra$sumw != .n.arg) 
-                stop("value of 'n.arg' conflicts with data ",
-                     "(it need not be specified anyway)")
-            warning("trimming out the zero observations")
-
-            axa.save =  attr(x, "assign")
-            x = x[!zero,, drop = FALSE]
-            attr(x, "assign") = axa.save    # Don't lose these!!
-            w = w[!zero]
-            y = y[!zero]
-        } else 
-            if (!is.numeric(.n.arg)) 
-                stop("n.arg must be supplied")
+      axa.save =  attr(x, "assign")
+      x = x[!zero,, drop = FALSE]
+      attr(x, "assign") = axa.save    # Don't lose these!!
+      w = w[!zero]
+      y = y[!zero]
+    } else {
+      if (!is.numeric(.n.arg)) 
+        stop("n.arg must be supplied")
+    }
         
-    }), list( .n.arg = n.arg ))),
-    initialize = eval(substitute(expression({
-        narg = if (is.numeric(.n.arg)) .n.arg else extra$sumw
-        if (sum(w) > narg)
-            stop("sum(w) > narg")
+  }), list( .n.arg = n.arg ))),
 
-        predictors.names = namesof("lambda", .link.lambda, tag = FALSE)
-        if (!length(etastart)) {
-            lambda.init = rep(median(y), length = length(y))
-            etastart = theta2eta(lambda.init, .link.lambda)
-        }
-        if (length(extra)) {
-            extra$sumw = sum(w)
-            extra$narg = narg   # For @linkinv
-        } else 
-            extra = list(sumw=sum(w), narg = narg)
-    }), list( .link.lambda = link.lambda, .n.arg = n.arg ))),
-    linkinv = eval(substitute(function(eta, extra = NULL) {
-        lambda = eta2theta(eta, .link.lambda)
-        temp5 = exp(-lambda)
-        pstr0 = (1 - temp5 - extra$sumw/extra$narg) / (1 - temp5)
-        if (any(pstr0 <= 0))
-            stop("non-positive value(s) of pstr0")
-        (1-pstr0) * lambda
-    }, list( .link.lambda = link.lambda ))),
-    last = eval(substitute(expression({
-        misc$link = c(lambda = .link.lambda )
+  initialize = eval(substitute(expression({
+    narg = if (is.numeric(.n.arg)) .n.arg else extra$sumw
+    if (sum(w) > narg)
+      stop("sum(w) > narg")
 
-        if (intercept.only) {
-            suma = extra$sumw
-            pstr0 = (1 - temp5[1] - suma/narg) / (1 - temp5[1])
-            pstr0 = if (pstr0 < 0 || pstr0>1) NA else pstr0
-            misc$pstr0 = pstr0
-        }
-    }), list( .link.lambda = link.lambda ))),
-    loglikelihood = eval(substitute( 
-        function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
-        lambda = eta2theta(eta, .link.lambda)
-        temp5 = exp(-lambda)
-        pstr0 = (1 - temp5 - extra$sumw/extra$narg) / (1 - temp5)
-        if (residuals) stop("loglikelihood residuals not ",
-                            "implemented yet") else {
-            sum(w * dzipois(x = y, pstr0 = pstr0, lambda = lambda, log = TRUE))
-        }
-    }, list( .link.lambda = link.lambda ))),
-    vfamily = c("yip88"),
-    deriv = eval(substitute(expression({
-        lambda = eta2theta(eta, .link.lambda)
-        temp5 = exp(-lambda)
-        dl.dlambda = -1 + y/lambda - temp5/(1-temp5)
-        dlambda.deta = dtheta.deta(lambda, .link.lambda)
-        w * dl.dlambda * dlambda.deta
-    }), list( .link.lambda = link.lambda ))),
-    weight = eval(substitute(expression({
-        d2lambda.deta2 = d2theta.deta2(lambda, .link.lambda)
-        d2l.dlambda2 = -y / lambda^2 + temp5 / (1-temp5)^2
-        -w * (d2l.dlambda2*dlambda.deta^2 + dl.dlambda*d2lambda.deta2)
-    }), list( .link.lambda = link.lambda ))))
+    predictors.names = namesof("lambda", .link.lambda, tag = FALSE)
+    if (!length(etastart)) {
+      lambda.init = rep(median(y), length = length(y))
+      etastart = theta2eta(lambda.init, .link.lambda)
+    }
+    if (length(extra)) {
+      extra$sumw = sum(w)
+      extra$narg = narg   # For @linkinv
+    } else {
+      extra = list(sumw = sum(w), narg = narg)
+    }
+  }), list( .link.lambda = link.lambda, .n.arg = n.arg ))),
+
+  linkinv = eval(substitute(function(eta, extra = NULL) {
+    lambda = eta2theta(eta, .link.lambda)
+    temp5 = exp(-lambda)
+    pstr0 = (1 - temp5 - extra$sumw/extra$narg) / (1 - temp5)
+    if (any(pstr0 <= 0))
+      stop("non-positive value(s) of pstr0")
+    (1-pstr0) * lambda
+  }, list( .link.lambda = link.lambda ))),
+
+  last = eval(substitute(expression({
+    misc$link = c(lambda = .link.lambda )
+
+    if (intercept.only) {
+      suma = extra$sumw
+      pstr0 = (1 - temp5[1] - suma / narg) / (1 - temp5[1])
+      pstr0 = if (pstr0 < 0 || pstr0 > 1) NA else pstr0
+      misc$pstr0 = pstr0
+    }
+  }), list( .link.lambda = link.lambda ))),
+
+  loglikelihood = eval(substitute(function(mu, y, w, residuals = FALSE,
+                                           eta, extra = NULL) {
+    lambda = eta2theta(eta, .link.lambda)
+    temp5 = exp(-lambda)
+    pstr0 = (1 - temp5 - extra$sumw / extra$narg) / (1 - temp5)
+    if (residuals) stop("loglikelihood residuals not ",
+                        "implemented yet") else {
+      sum(w * dzipois(x = y, pstr0 = pstr0, lambda = lambda, log = TRUE))
+    }
+  }, list( .link.lambda = link.lambda ))),
+
+  vfamily = c("yip88"),
+  deriv = eval(substitute(expression({
+    lambda = eta2theta(eta, .link.lambda)
+    temp5 = exp(-lambda)
+    dl.dlambda = -1 + y/lambda - temp5/(1-temp5)
+    dlambda.deta = dtheta.deta(lambda, .link.lambda)
+    w * dl.dlambda * dlambda.deta
+  }), list( .link.lambda = link.lambda ))),
+  weight = eval(substitute(expression({
+    d2lambda.deta2 = d2theta.deta2(lambda, .link.lambda)
+    d2l.dlambda2 = -y / lambda^2 + temp5 / (1 - temp5)^2
+    -w * (d2l.dlambda2*dlambda.deta^2 + dl.dlambda*d2lambda.deta2)
+  }), list( .link.lambda = link.lambda ))))
 }
 
 

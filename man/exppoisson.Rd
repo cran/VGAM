@@ -48,8 +48,13 @@ exppoisson(llambda = "loge", lbetave = "loge", elambda = list(),
   and scale, \eqn{\beta}{b}, are positive.
   The distribution implies a population facing discrete
   hazard rates which are multiples of a base hazard.
-  This \pkg{VGAM} family function requires the \pkg{hypergeo} package
-  (to use their \code{\link[hypergeo]{genhypergeo}} function).
+  This \pkg{VGAM} family function requires the \code{hypergeo} package
+  (to use their \code{genhypergeo} function).
+
+
+% This \pkg{VGAM} family function requires the \pkg{hypergeo} package
+% (to use their \code{\link[hypergeo]{genhypergeo}} function).
+
 
 
 }

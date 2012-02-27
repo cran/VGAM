@@ -84,9 +84,10 @@ Hoboken, NJ, USA: Wiley-Interscience.
 
 \author{ T. W. Yee }
 \note{
-If the self-starting initial values fail, try experimenting
-with the initial value arguments, especially those whose
-default value is not \code{NULL}.
+  If the self-starting initial values fail, try experimenting with
+  the initial value arguments, especially those whose default
+  value is not \code{NULL}.  Also, the constraint \eqn{-a < 1 < aq}
+  may be violated as the iterations progress.
 
 
 }
@@ -105,7 +106,7 @@ default value is not \code{NULL}.
 }
 
 \examples{
-sdata = data.frame(y = rsinmad(n = 3000, 3, 5, 2))
+sdata = data.frame(y = rsinmad(n = 1000, exp(1), exp(2), exp(0)))
 fit = vglm(y ~ 1, sinmad, sdata, trace = TRUE)
 fit = vglm(y ~ 1, sinmad, sdata, trace = TRUE, crit = "coef")
 coef(fit, matrix = TRUE)
