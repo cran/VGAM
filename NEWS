@@ -6,6 +6,21 @@
 
 
 
+                CHANGES IN VGAM VERSION 0.8-6
+
+NEW FEATURES
+
+    o   Modified VGAM family functions:
+        sinmad()@initialize has been improved.
+
+
+BUG FIXES and CHANGES
+
+    o   VGAM now depends on R >= 2.14.0.
+    o   Trying to eliminate some residual errors with the NAMESPACE.
+
+
+
                 CHANGES IN VGAM VERSION 0.8-5
 
 NEW FEATURES

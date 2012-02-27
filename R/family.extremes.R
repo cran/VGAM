@@ -13,124 +13,135 @@
 
 
 rgev <- function(n, location = 0, scale = 1, shape = 0) {
-    use.n = if ((length.n <- length(n)) > 1) length.n else
-            if (!is.Numeric(n, integer.valued = TRUE,
-                            allowable.length = 1, positive = TRUE))
-              stop("bad input for argument 'n'") else n
+  use.n = if ((length.n <- length(n)) > 1) length.n else
+          if (!is.Numeric(n, integer.valued = TRUE,
+                          allowable.length = 1, positive = TRUE))
+            stop("bad input for argument 'n'") else n
 
-    if (!is.Numeric(location)) 
-      stop("bad input for argument argument 'location'")
-    if (!is.Numeric(shape))
-      stop("bad input for argument argument 'shape'")
+  if (!is.Numeric(location)) 
+    stop("bad input for argument argument 'location'")
+  if (!is.Numeric(shape))
+    stop("bad input for argument argument 'shape'")
 
-    ans = numeric(use.n)
-    shape = rep(shape, len = use.n); location = rep(location, len = use.n);
-    scale = rep(scale, len = use.n)
-    scase = abs(shape) < sqrt(.Machine$double.eps)
-    nscase = sum(scase)
-    if (use.n - nscase)
-        ans[!scase] = location[!scase] + scale[!scase] *
-        ((-log(runif(use.n - nscase)))^(-shape[!scase]) -1) / shape[!scase]
-    if (nscase)
-        ans[scase] = rgumbel(nscase, location[scase], scale[scase])
-    ans[scale <= 0] = NaN
-    ans
+  ans = numeric(use.n)
+  shape    = rep(shape,    length.out = use.n);
+  location = rep(location, length.out = use.n);
+  scale    = rep(scale,    length.out = use.n)
+
+  scase = abs(shape) < sqrt(.Machine$double.eps)
+  nscase = sum(scase)
+  if (use.n - nscase)
+    ans[!scase] = location[!scase] + scale[!scase] *
+    ((-log(runif(use.n - nscase)))^(-shape[!scase]) -1) / shape[!scase]
+  if (nscase)
+    ans[scase] = rgumbel(nscase, location[scase], scale[scase])
+  ans[scale <= 0] = NaN
+  ans
 }
 
 
 
-dgev <- function(x, location = 0, scale = 1, shape = 0, log = FALSE,
-                tolshape0 = sqrt(.Machine$double.eps),
-                oobounds.log = -Inf, giveWarning = FALSE) {
-    if (!is.logical(log.arg <- log))
-        stop("bad input for argument 'log'")
-    rm(log)
-    if (oobounds.log > 0)
-        stop("bad input for argument 'oobounds.log'")
+ dgev <- function(x, location = 0, scale = 1, shape = 0, log = FALSE,
+                  tolshape0 = sqrt(.Machine$double.eps),
+                  oobounds.log = -Inf, giveWarning = FALSE) {
+  if (!is.logical(log.arg <- log))
+      stop("bad input for argument 'log'")
+  rm(log)
+  if (oobounds.log > 0)
+    stop("bad input for argument 'oobounds.log'")
 
-    if (!is.Numeric(tolshape0, allowable.length = 1, positive = TRUE))
-        stop("bad input for argument 'tolshape0'")
-    use.n = max(length(x), length(location), length(scale), length(shape))
-    shape = rep(shape, len = use.n); location = rep(location, len = use.n); 
-    scale = rep(scale, len = use.n);
-    x = rep(x, len = use.n)
+  if (!is.Numeric(tolshape0, allowable.length = 1, positive = TRUE))
+    stop("bad input for argument 'tolshape0'")
 
-    logdensity = rep(log(0), len = use.n)
-    scase = abs(shape) < tolshape0
-    nscase = sum(scase)
-    if (use.n - nscase) {
-        zedd = 1+shape*(x-location)/scale # pmax(0, (1+shape*xc/scale))
-        xok = (!scase) & (zedd > 0)
-        logdensity[xok] = -log(scale[xok]) - zedd[xok]^(-1/shape[xok]) -
-                          (1 + 1/shape[xok]) * log(zedd[xok])
-        outofbounds = (!scase) & (zedd <= 0)
-        if (any(outofbounds)) {
-            logdensity[outofbounds] = oobounds.log
-            no.oob = sum(outofbounds)
-            if (giveWarning)
-                warning(no.oob, " observation",
-                        ifelse(no.oob > 1, "s are", " is"), " out of bounds")
-        }
+  use.n = max(length(x), length(location), length(scale), length(shape))
+  shape     = rep(shape,    length.out = use.n)
+  location  = rep(location, length.out = use.n); 
+  scale     = rep(scale,    length.out = use.n);
+  x         = rep(x,       length.out = use.n)
+
+  logdensity = rep(log(0), length.out = use.n)
+  scase = abs(shape) < tolshape0
+  nscase = sum(scase)
+  if (use.n - nscase) {
+    zedd = 1+shape*(x-location)/scale # pmax(0, (1+shape*xc/scale))
+    xok = (!scase) & (zedd > 0)
+    logdensity[xok] = -log(scale[xok]) - zedd[xok]^(-1/shape[xok]) -
+                      (1 + 1/shape[xok]) * log(zedd[xok])
+    outofbounds = (!scase) & (zedd <= 0)
+    if (any(outofbounds)) {
+      logdensity[outofbounds] = oobounds.log
+      no.oob = sum(outofbounds)
+      if (giveWarning)
+        warning(no.oob, " observation",
+                ifelse(no.oob > 1, "s are", " is"), " out of bounds")
     }
-    if (nscase) {
-        logdensity[scase] = dgumbel(x[scase], location = location[scase],
-                                    scale = scale[scase], log = TRUE)
-    }
+  }
+  if (nscase) {
+    logdensity[scase] = dgumbel(x[scase], location = location[scase],
+                                scale = scale[scase], log = TRUE)
+  }
 
-    logdensity[scale <= 0] = NaN
-    if (log.arg) logdensity else exp(logdensity)
+  logdensity[scale <= 0] = NaN
+  if (log.arg) logdensity else exp(logdensity)
 }
 
 
 
 pgev <- function(q, location = 0, scale = 1, shape = 0) {
-    if (!is.Numeric(q))
-        stop("bad input for argument 'q'")
-    if (!is.Numeric(location))
-        stop("bad input for argument 'location'")
-    if (!is.Numeric(shape))
-        stop("bad input for argument 'shape'")
+  if (!is.Numeric(q))
+    stop("bad input for argument 'q'")
+  if (!is.Numeric(location))
+    stop("bad input for argument 'location'")
+  if (!is.Numeric(shape))
+    stop("bad input for argument 'shape'")
 
-    use.n = max(length(q), length(location), length(scale), length(shape))
-    ans = numeric(use.n)
-    shape = rep(shape, len = use.n); location = rep(location, len = use.n); 
-    scale = rep(scale, len = use.n); q = rep(q-location, len = use.n)
-    scase = abs(shape) < sqrt(.Machine$double.eps)
-    nscase = sum(scase)
-    if (use.n - nscase) {
-        zedd = pmax(0,(1+shape*q/scale))
-        ans[!scase] = exp(-zedd[!scase]^(-1/shape[!scase]))
-    }
-    if (nscase)
-        ans[scase] = pgumbel(q[scase], location[scase], scale[scase])
-    ans[scale <= 0] = NaN
-    ans
+  use.n = max(length(q), length(location), length(scale), length(shape))
+  ans = numeric(use.n)
+  shape    = rep(shape,        length.out = use.n)
+  location = rep(location,     length.out = use.n); 
+  scale    = rep(scale,        length.out = use.n)
+  q        = rep(q - location, length.out = use.n)
+
+  scase = abs(shape) < sqrt(.Machine$double.eps)
+  nscase = sum(scase)
+  if (use.n - nscase) {
+    zedd = pmax(0, (1 + shape * q / scale))
+    ans[!scase] = exp(-zedd[!scase]^(-1 / shape[!scase]))
+  }
+  if (nscase) {
+    ans[scase] = pgumbel(q[scase], location[scase], scale[scase])
+  }
+  ans[scale <= 0] = NaN
+  ans
 }
 
 
 
 qgev <- function(p, location = 0, scale = 1, shape = 0) {
-    if (!is.Numeric(p, positive = TRUE) || any(p >= 1))
-        stop("0 < p < 1 is required")
-    if (!is.Numeric(location))
-        stop("bad input for argument 'location'")
-    if (!is.Numeric(shape))
-        stop("bad input for argument 'shape'")
+  if (!is.Numeric(p, positive = TRUE) || any(p >= 1))
+    stop("0 < p < 1 is required")
+  if (!is.Numeric(location))
+    stop("bad input for argument 'location'")
+  if (!is.Numeric(shape))
+    stop("bad input for argument 'shape'")
 
-    use.n = max(length(p), length(location), length(scale), length(shape))
-    ans = numeric(use.n)
-    shape = rep(shape, len = use.n); location = rep(location, len = use.n); 
-    scale = rep(scale, len = use.n); p = rep(p, len = use.n)
-    scase = abs(shape) < sqrt(.Machine$double.eps)
-    nscase = sum(scase)
-    if (use.n - nscase) {
-        ans[!scase] = location[!scase] + scale[!scase] *
-            ((-log(p[!scase]))^(-shape[!scase]) -1) / shape[!scase]
-    }
-    if (nscase)
-        ans[scase] = qgumbel(p[scase], location[scase], scale[scase])
-    ans[scale <= 0] = NaN
-    ans
+  use.n = max(length(p), length(location), length(scale), length(shape))
+  ans = numeric(use.n)
+  shape    = rep(shape,    length.out = use.n)
+  location = rep(location, length.out = use.n); 
+  scale    = rep(scale,    length.out = use.n);
+  p        = rep(p,        length.out = use.n)
+
+  scase = abs(shape) < sqrt(.Machine$double.eps)
+  nscase = sum(scase)
+  if (use.n - nscase) {
+    ans[!scase] = location[!scase] + scale[!scase] *
+        ((-log(p[!scase]))^(-shape[!scase]) - 1) / shape[!scase]
+  }
+  if (nscase)
+    ans[scase] = qgumbel(p[scase], location[scase], scale[scase])
+  ans[scale <= 0] = NaN
+  ans
 }
 
 
@@ -210,27 +221,32 @@ qgev <- function(p, location = 0, scale = 1, shape = 0) {
 
         extra$percentiles = .percentiles
         if (!length(etastart)) {
-            init.sig= if (length( .iscale)) rep( .iscale, len = nrow(y)) else NULL
-            init.xi = if (length( .ishape)) rep( .ishape, len = nrow(y)) else NULL
-            eshape = .eshape
-            if ( .lshape == "elogit" && length(init.xi) &&
-                (any(init.xi <= eshape$min | init.xi >= eshape$max)))
-                stop("bad input for argument 'eshape'")
-            if ( .imethod == 1) {
+          init.sig = if (length( .iscale))
+            rep( .iscale, length.out = nrow(y)) else NULL
+          init.xi = if (length( .ishape))
+            rep( .ishape, length.out = nrow(y)) else NULL
+          eshape = .eshape
+
+          if ( .lshape == "elogit" && length(init.xi) &&
+              (any(init.xi <= eshape$min |
+                   init.xi >= eshape$max)))
+              stop("bad input for argument 'eshape'")
+
+          if ( .imethod == 1) {
                 nvector = 4:10   # Arbitrary; could be made an argument
                 ynvector = quantile(y[, 1], probs = 1-1/nvector)
                 objecFunction = -Inf   # Actually the log-likelihood
                 est.sigma = !length(init.sig)
                 gshape = .gshape
                 temp234 = if (length(init.xi)) init.xi[1] else
-                          seq(gshape[1], gshape[2], len = 12)
+                          seq(gshape[1], gshape[2], length.out = 12)
                 for(xi.try in temp234) {
                     xvec = if (abs(xi.try) < .tolshape0) log(nvector) else
                            (nvector^xi.try - 1) / xi.try
                     fit0 = lsfit(x = xvec, y=ynvector, intercept = TRUE)
                     sigmaTry = if (est.sigma)
-                        rep(fit0$coef["X"], len = nrow(y)) else init.sig
-                    muTry = rep(fit0$coef["Intercept"], len = nrow(y))
+                        rep(fit0$coef["X"], length.out = nrow(y)) else init.sig
+                    muTry = rep(fit0$coef["Intercept"], length.out = nrow(y))
                     llTry = egev(giveWarning=
                      FALSE)@loglikelihood(mu = NULL, y=y[, 1], w=w,
                      residuals = FALSE,
@@ -240,19 +256,19 @@ qgev <- function(p, location = 0, scale = 1, shape = 0) {
                     if (llTry >= objecFunction) {
                         if (est.sigma)
                             init.sig = sigmaTry
-                        init.mu = rep(muTry, len = nrow(y))
+                        init.mu = rep(muTry, length.out = nrow(y))
                         objecFunction = llTry
                         bestxi = xi.try
                     }
                 }
                 if (!length(init.xi))
-                    init.xi = rep(bestxi, len = nrow(y))
+                    init.xi = rep(bestxi, length.out = nrow(y))
             } else {
-                init.xi = rep(0.05, len = nrow(y))
+                init.xi = rep(0.05, length.out = nrow(y))
                 if (!length(init.sig))
-                    init.sig = rep(sqrt(6 * var(y[, 1]))/pi, len = nrow(y))
+                    init.sig = rep(sqrt(6 * var(y[, 1]))/pi, length.out = nrow(y))
                 EulerM = -digamma(1)
-                init.mu = rep(median(y[, 1]) - EulerM*init.sig, len = nrow(y))
+                init.mu = rep(median(y[, 1]) - EulerM*init.sig, length.out = nrow(y))
             }
 
             bad = ((1 + init.xi*(y-init.mu)/init.sig) <= 0)
@@ -545,8 +561,8 @@ dgammadx <- function(x, deriv.arg = 1) {
         if (ncol(as.matrix(y)) != 1)
             stop("response must be a vector or one-column matrix")
         if (!length(etastart)) {
-            init.sig= if (length( .iscale)) rep( .iscale, len = length(y)) else NULL
-            init.xi = if (length( .ishape)) rep( .ishape, len = length(y)) else NULL
+            init.sig= if (length( .iscale)) rep( .iscale, length.out = length(y)) else NULL
+            init.xi = if (length( .ishape)) rep( .ishape, length.out = length(y)) else NULL
             eshape = .eshape
             if ( .lshape == "elogit" && length(init.xi) && 
                (any(init.xi <= eshape$min | init.xi >= eshape$max)))
@@ -558,17 +574,17 @@ dgammadx <- function(x, deriv.arg = 1) {
                 est.sigma = !length(init.sig)
                 gshape = .gshape
                 temp234 = if (length(init.xi)) init.xi[1] else
-                          seq(gshape[1], gshape[2], len = 12)
+                          seq(gshape[1], gshape[2], length.out = 12)
                 for(xi.try in temp234) {
                     xvec = if (abs(xi.try) < .tolshape0) log(nvector) else
                            (nvector^xi.try - 1) / xi.try
                     fit0 = lsfit(x = xvec, y=ynvector, intercept = TRUE)
                     if (est.sigma) {
-                        sigmaTry = rep(fit0$coef["X"], len = length(y))
+                        sigmaTry = rep(fit0$coef["X"], length.out = length(y))
                     } else { 
                         sigmaTry = init.sig
                     }
-                    muTry = rep(fit0$coef["Intercept"], len = length(y))
+                    muTry = rep(fit0$coef["Intercept"], length.out = length(y))
                     llTry = egev(giveWarning=
                       FALSE)@loglikelihood(mu = NULL, y=y, w=w,
                       residuals = FALSE,
@@ -578,21 +594,21 @@ dgammadx <- function(x, deriv.arg = 1) {
                     if (llTry >= objecFunction) {
                         if (est.sigma)
                             init.sig = sigmaTry
-                        init.mu = rep(muTry, len = length(y))
+                        init.mu = rep(muTry, length.out = length(y))
                         objecFunction = llTry
                         bestxi = xi.try
                     }
                 }
                 if (!length(init.xi))
-                    init.xi = rep(bestxi, len = length(y))
+                    init.xi = rep(bestxi, length.out = length(y))
 
             } else {
                 init.xi = rep(if (length(init.xi)) init.xi else 0.05,
-                              len = length(y))
+                              length.out = length(y))
                 if (!length(init.sig))
-                    init.sig = rep(sqrt(6*var(y))/pi, len = length(y))
+                    init.sig = rep(sqrt(6*var(y))/pi, length.out = length(y))
                 EulerM = -digamma(1)
-                init.mu = rep(median(y) - EulerM * init.sig, len = length(y))
+                init.mu = rep(median(y) - EulerM * init.sig, length.out = length(y))
             }
             bad <- (1 + init.xi*(y-init.mu)/init.sig <= 0)
             if (fred <- sum(bad, na.rm = TRUE)) {
@@ -838,7 +854,7 @@ pgumbel <- function(q, location = 0, scale = 1) {
         } else {
             sc.init =  if (is.Numeric( .iscale, positive = TRUE))
                            .iscale else 1.1 * (0.01+sqrt(var(y)*6)) / pi
-            sc.init = rep(sc.init, len = n)
+            sc.init = rep(sc.init, length.out = n)
             EulerM = -digamma(1)
             loc.init = (y - sc.init * EulerM)
             loc.init[loc.init <= 0] = min(y)
@@ -960,8 +976,8 @@ rgpd <- function(n, location = 0, scale = 1, shape = 0) {
     if (!is.Numeric(shape))
       stop("bad input for argument 'shape'")
     ans = numeric(use.n)
-    shape = rep(shape, len = use.n); location = rep(location, len = use.n); 
-    scale = rep(scale, len = use.n)
+    shape = rep(shape, length.out = use.n); location = rep(location, length.out = use.n); 
+    scale = rep(scale, length.out = use.n)
     scase = abs(shape) < sqrt(.Machine$double.eps)
     nscase = sum(scase)
     if (use.n - nscase)
@@ -987,11 +1003,11 @@ dgpd <- function(x, location = 0, scale = 1, shape = 0, log = FALSE,
     if (!is.Numeric(tolshape0, allowable.length = 1, positive = TRUE))
         stop("bad input for argument 'tolshape0'")
     L = max(length(x), length(location), length(scale), length(shape))
-    shape = rep(shape, len = L); location = rep(location, len = L); 
-    scale = rep(scale, len = L);
-    x = rep(x, len = L)
+    shape = rep(shape, length.out = L); location = rep(location, length.out = L); 
+    scale = rep(scale, length.out = L);
+    x = rep(x, length.out = L)
 
-    logdensity = rep(log(0), len = L)
+    logdensity = rep(log(0), length.out = L)
     scase = abs(shape) < tolshape0
     nscase = sum(scase)
     if (L - nscase) {
@@ -1038,10 +1054,10 @@ pgpd <- function(q, location = 0, scale = 1, shape = 0) {
 
     use.n = max(length(q), length(location), length(scale), length(shape))
     ans = numeric(use.n)
-    shape    = rep(shape,      len = use.n);
-    location = rep(location,   len = use.n); 
-    scale    = rep(scale,      len = use.n);
-    q        = rep(q-location, len = use.n)
+    shape    = rep(shape,      length.out = use.n);
+    location = rep(location,   length.out = use.n); 
+    scale    = rep(scale,      length.out = use.n);
+    q        = rep(q-location, length.out = use.n)
 
     scase = abs(shape) < sqrt(.Machine$double.eps)
     nscase = sum(scase)
@@ -1064,8 +1080,8 @@ qgpd <- function(p, location = 0, scale = 1, shape = 0) {
 
     use.n = max(length(p), length(location), length(scale), length(shape))
     ans = numeric(use.n)
-    shape = rep(shape, len = use.n); location = rep(location, len = use.n); 
-    scale = rep(scale, len = use.n); p = rep(p, len = use.n)
+    shape = rep(shape, length.out = use.n); location = rep(location, length.out = use.n); 
+    scale = rep(scale, length.out = use.n); p = rep(p, length.out = use.n)
     scase = abs(shape) < sqrt(.Machine$double.eps)
     nscase = sum(scase)
     if (use.n - nscase) {
@@ -1245,7 +1261,7 @@ qgpd <- function(p, location = 0, scale = 1, shape = 0) {
         }
         igpd = !is.zero &  !bad
         iexp =  is.zero &  !bad
-        dl.dShape = dl.dsigma = rep(0, len = length(y))
+        dl.dShape = dl.dsigma = rep(0, length.out = length(y))
         dl.dsigma[igpd] = ((1 + Shape[igpd]) * ystar[igpd] / (sigma[igpd] +
                           Shape[igpd]*ystar[igpd]) - 1) / sigma[igpd]
         dl.dShape[igpd] = log(A[igpd])/Shape[igpd]^2 - (1 + 1/Shape[igpd]) *
@@ -1432,7 +1448,7 @@ setMethod("guplot", "vlm",
         if (!length(etastart)) {
             sc.init =  if (is.Numeric( .iscale, positive = TRUE)) 
                            .iscale else 1.5 * (0.01+sqrt(var(y)*6)) / pi
-            sc.init = rep(sc.init, len = n)
+            sc.init = rep(sc.init, length.out = n)
             EulerM = -digamma(1)
             loc.init = (y - sc.init * EulerM)
             etastart = cbind(theta2eta(loc.init, .llocation, earg = .elocation),
@@ -1555,18 +1571,21 @@ setMethod("guplot", "vlm",
         if (any(y) <= 0)
             stop("all response values must be positive")
 
-        if (!length(extra$leftcensored)) extra$leftcensored = rep(FALSE, len = n)
-        if (!length(extra$rightcensored)) extra$rightcensored = rep(FALSE, len = n)
+        if (!length(extra$leftcensored))
+          extra$leftcensored = rep(FALSE, length.out = n)
+        if (!length(extra$rightcensored))
+          extra$rightcensored = rep(FALSE, length.out = n)
         if (any(extra$rightcensored & extra$leftcensored))
             stop("some observations are both right and left censored!")
 
         predictors.names =
         c(namesof("location", .llocation, earg = .elocation, tag = FALSE),
-          namesof("scale", .lscale, earg = .escale , tag = FALSE))
+          namesof("scale",    .lscale,    earg = .escale   , tag = FALSE))
+
         if (!length(etastart)) {
             sc.init =  if (is.Numeric( .iscale, positive = TRUE)) 
                            .iscale else 1.1 * sqrt(var(y) * 6 ) / pi
-            sc.init = rep(sc.init, len = n)
+            sc.init = rep(sc.init, length.out = n)
             EulerM = -digamma(1)
             loc.init = (y - sc.init * EulerM)
             loc.init[loc.init <= 0] = min(y)
@@ -1696,10 +1715,10 @@ dfrechet <- function(x, location = 0, scale = 1, shape, log = FALSE) {
   rm(log)
 
   L = max(length(x), length(scale), length(shape), length(location))
-  x = rep(x, len = L); scale = rep(scale, len = L);
-  shape = rep(shape, len = L); location = rep(location, len = L);
+  x = rep(x, length.out = L); scale = rep(scale, length.out = L);
+  shape = rep(shape, length.out = L); location = rep(location, length.out = L);
 
-  logdensity = rep(log(0), len = L)
+  logdensity = rep(log(0), length.out = L)
   xok = (x > location)
   rzedd = scale / (x - location)
   logdensity[xok] = log(shape[xok]) - (rzedd[xok]^shape[xok]) +
@@ -1797,7 +1816,7 @@ frechet2.control <- function(save.weight = TRUE, ...)
       c(namesof("scale", .lscale, earg = .escale, short = TRUE),
         namesof("shape", .lshape, earg = .eshape, short = TRUE))
 
-    extra$location = rep( .location, len = n) # stored here
+    extra$location = rep( .location, length.out = n) # stored here
 
     if (!length(etastart)) {
       locinit = extra$location
@@ -1819,8 +1838,8 @@ frechet2.control <- function(save.weight = TRUE, ...)
                            y = y,  x = x, w = w, maximize = FALSE,
                            abs.arg = TRUE)
 
-      shape.init = if (length( .ishape )) rep( .ishape, len = n) else {
-        rep(try.this, len = n)   # variance exists if shape > 2
+      shape.init = if (length( .ishape )) rep( .ishape, length.out = n) else {
+        rep(try.this, length.out = n)   # variance exists if shape > 2
       }
 
 
@@ -1829,11 +1848,11 @@ frechet2.control <- function(save.weight = TRUE, ...)
         myquant = (-log(myprobs))^(-1/shape.init[1])
         myfit = lsfit(x = myquant, y = myobsns)
 
-      Scale.init = if (length( .iscale)) rep( .iscale, len = n) else {
+      Scale.init = if (length( .iscale)) rep( .iscale, length.out = n) else {
         if (all(shape.init > 1)) {
           myfit$coef[2]
         } else {
-          rep( 1.0, len = n)
+          rep( 1.0, length.out = n)
         }
       }
 
@@ -1849,7 +1868,7 @@ frechet2.control <- function(save.weight = TRUE, ...)
     Scale = eta2theta(eta[, 1], .lscale, earg = .escale )
     shape = eta2theta(eta[, 2], .lshape, earg = .eshape )
 
-    ans = rep(as.numeric(NA), len = length(shape))
+    ans = rep(as.numeric(NA), length.out = length(shape))
     ok = shape > 1
     ans[ok] = loc[ok] + Scale[ok] * gamma(1 - 1/shape[ok])
     ans
@@ -2016,8 +2035,8 @@ if (FALSE)
  print("try.this")
  print( try.this )
 
-      shape.init = if (length( .ishape )) rep( .ishape, len = n) else {
-        rep(try.this, len = n)   # variance exists if shape > 2
+      shape.init = if (length( .ishape )) rep( .ishape, length.out = n) else {
+        rep(try.this, length.out = n)   # variance exists if shape > 2
       }
 
 
@@ -2032,25 +2051,27 @@ if (FALSE)
  plot(myobsns ~ myquant)
 
 
-      Scale.init = if (length( .iscale)) rep( .iscale, len = n) else {
+      Scale.init = if (length( .iscale )) {
+        rep( .iscale , length.out = n)
+      } else {
         if (all(shape.init > 1)) {
           myfit$coef[2]
         } else {
-          rep( 1.0, len = n)
+          rep( 1.0, length.out = n)
         }
       }
 
 
-      locinit = if (length( .ilocation)) rep( .ilocation, len = n) else {
+      locinit = if (length( .ilocation)) rep( .ilocation, length.out = n) else {
         if (myfit$coef[1] < min(y)) {
  print("using myfit$coef[1] for initial location")
  print(       myfit$coef[1] )
  print(       min(y)  )
  print(       anchorpt   )
-          rep(myfit$coef[1], len = n)
+          rep(myfit$coef[1], length.out = n)
         } else {
  print("using heuristic initial location")
-          rep(anchorpt - 0.01 * diff(range(y)), len = n)
+          rep(anchorpt - 0.01 * diff(range(y)), length.out = n)
         }
       }
       if (any(y <= locinit))
@@ -2078,7 +2099,7 @@ if (FALSE)
             eta2theta(eta[, 1], .ldiffr, earg = .ediffr)
     Scale = eta2theta(eta[, 2], .lscale, earg = .escale )
     shape = eta2theta(eta[, 3], .lshape, earg = .eshape )
-    ans = rep(as.numeric(NA), len = length(shape))
+    ans = rep(as.numeric(NA), length.out = length(shape))
     okay = shape > 1
     ans[okay] = loctn[okay] + Scale[okay] * gamma(1 - 1/shape[okay])
     ans
@@ -2233,9 +2254,9 @@ recnormal1.control <- function(save.weight = TRUE, ...)
         if (any(w != 1))
             warning("weights should have unit values only")
         if (!length(etastart)) {
-            mean.init = if (length( .imean)) rep( .imean, len = n) else {
+            mean.init = if (length( .imean)) rep( .imean, length.out = n) else {
                 if (.lmean == "loge") pmax(1/1024, min(y)) else min(y)}
-            sd.init = if (length( .isd)) rep( .isd, len = n) else {
+            sd.init = if (length( .isd)) rep( .isd, length.out = n) else {
                 if (.imethod == 1)  1*(sd(c(y))) else
                 if (.imethod == 2)  5*(sd(c(y))) else
                                       .5*(sd(c(y)))

@@ -4,14 +4,16 @@
 
 
 
-
 useDynLib(VGAM)
 
 
 
+importMethodsFrom("stats4")
 
 
 
+importFrom(stats4, AIC, coef, summary, plot, logLik, vcov)
+exportMethods(AIC, coef, summary, plot, logLik, vcov)
 
 
 
@@ -19,14 +21,8 @@ useDynLib(VGAM)
 export(VGAMenv)
 
 
-
-
 export(lrtest, lrtest_vglm) 
 export(update_default, update_formula)
-
-
-
-
 
 
 export(nvar, nvar.vlm, nvar.vgam, nvar.rrvglm, nvar.qrrvglm, nvar.cao, nvar.rcam)
@@ -98,9 +94,6 @@ lm2qrrvlm.model.matrix,
 m2avglm, 
 dotFortran, dotC,
 dimm)
-
-
-
 
 
 
@@ -296,14 +289,11 @@ export(lm2vlm.model.matrix)
 
 
 
+
+
  importFrom("stats", model.matrix)
  importFrom("stats", model.frame)
  importFrom("stats", terms)
-
-
-
-  importFrom("stats4", vcov)
-
 
 
 
@@ -337,11 +327,6 @@ export(lm2vlm.model.matrix)
 
 
   importFrom("graphics", persp)
-
-
- importFrom("stats4", plot)
- importFrom("stats4", summary)
-
 
 
 
@@ -555,40 +540,6 @@ weights,
 persp)
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
  exportMethods(AIC, coef, summary, plot, logLik, vcov)
-
-
-
-
-
-importMethodsFrom("stats4")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
