@@ -8,7 +8,8 @@
 }
 \usage{
 cratio(link = "logit", earg = list(),
-       parallel = FALSE, reverse = FALSE, zero = NULL)
+       parallel = FALSE, reverse = FALSE, zero = NULL,
+       whitespace = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -43,6 +44,10 @@ cratio(link = "logit", earg = list(),
   linear/additive predictors are modelled as intercepts only.
   The values must be from the set \{1,2,\ldots,\eqn{M}\}.
   The default value means none are modelled as intercept-only terms.
+
+  }
+  \item{whitespace}{
+  See \code{\link{CommonVGAMffArguments}} for information.
 
   }
 }
@@ -137,7 +142,8 @@ contains further information and examples.
 
 \examples{
 pneumo = transform(pneumo, let = log(exposure.time))
-(fit = vglm(cbind(normal,mild,severe) ~ let, cratio(parallel = TRUE), pneumo))
+(fit = vglm(cbind(normal, mild, severe) ~ let,
+            cratio(parallel = TRUE), pneumo))
 coef(fit, matrix = TRUE)
 constraints(fit)
 predict(fit)

@@ -5,6 +5,7 @@
 \description{
   Maximum likelihood estimation of the 4-parameter 
   generalized beta II distribution.
+
 }
 \usage{
 genbetaII(lshape1.a = "loge", lscale = "loge", lshape2.p = "loge", lshape3.q = "loge",
@@ -23,15 +24,18 @@ genbetaII(lshape1.a = "loge", lscale = "loge", lshape2.p = "loge", lshape3.q = "
   All four parameters are positive.
   See \code{\link{Links}} for more choices.
 
+
   }
   \item{eshape1.a, escale, eshape2.p, eshape3.q}{
   List. Extra argument for each of the links.
   See \code{earg} in \code{\link{Links}} for general information.
 
+
   }
   \item{ishape1.a, iscale}{
   Optional initial values for \code{a} and \code{scale}.
   A \code{NULL} means a value is computed internally.
+
 
   }
   \item{ishape2.p, ishape3.q}{
@@ -43,6 +47,7 @@ genbetaII(lshape1.a = "loge", lscale = "loge", lshape2.p = "loge", lshape3.q = "
   linear/additive predictors are modelled as intercepts only.
   Here, the values must be from the set \{1,2,3,4\} which correspond to
   \code{a}, \code{scale}, \code{p}, \code{q}, respectively.
+
 
   }
 }
@@ -56,6 +61,7 @@ genbetaII(lshape1.a = "loge", lscale = "loge", lshape2.p = "loge", lshape3.q = "
   Brazauskas (2002).
   The argument names given here are used by other families that
   are special cases of this family.
+  Fisher scoring is used here and for the special cases too.
 
 
 The 4-parameter generalized beta II distribution has density
@@ -74,6 +80,7 @@ provided \eqn{-ap < 1 < aq}; these are returned as the fitted values.
 %The distribution is motivated by the incomplete beta function
 %\eqn{B_y(p,q)} which is the integral from 0 to \eqn{y} of the integrand
 %\eqn{u^{p-1} (1-u)^{q-1}}{u^(p-1) (1-u)^(q-1)} where \eqn{y>0}.
+
 
 
 }
@@ -105,11 +112,13 @@ Fisher information matrix for the Feller-Pareto distribution.
 If the self-starting initial values fail, try experimenting
 with the initial value arguments, especially those whose
 default value is not \code{NULL}.
-
-
-Successful convergence depends on having very
-good initial values. This is rather difficult for this distribution!
+Also, the constraint \eqn{-ap < 1 < aq}
+may be violated as the iterations progress so it pays
+to monitor convergence, e.g., set \code{trace = TRUE}.
+Successful convergence depends on having very good initial
+values. This is rather difficult for this distribution!
 More improvements could be made here.
+
 
 
 }
@@ -126,13 +135,14 @@ More improvements could be made here.
     \code{\link{invparalogistic}},
     \code{\link{lino}}.
 
+
 }
 
 \examples{
-gdata = data.frame(y = rsinmad(n = 3000, 4, 6, 2)) # Not very good data!
+gdata = data.frame(y = rsinmad(3000, exp(2), exp(2), exp(1))) # A special case!
 fit = vglm(y ~ 1, genbetaII, gdata, trace = TRUE)
-fit = vglm(y ~ 1, data = gdata, trace = TRUE, crit = "coef",
-           genbetaII(ishape2.p = 1, ishape1.a = 4, iscale = 7, ishape3.q = 2.3))
+fit = vglm(y ~ 1, data = gdata, trace = TRUE,
+           genbetaII(ishape1.a = 4, ishape2.p = 2.2, iscale = 7, ishape3.q = 2.3))
 coef(fit, matrix = TRUE)
 Coef(fit)
 summary(fit)

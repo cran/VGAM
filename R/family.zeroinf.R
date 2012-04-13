@@ -62,10 +62,10 @@ pzanegbin = function(q, size, prob = NULL, munb = NULL, pobs0 = 0) {
   }
 
   LLL = max(length(q), length(pobs0), length(prob), length(size))
-  if (length(q)     != LLL) q     = rep(q,    len = LLL);
-  if (length(pobs0) != LLL) pobs0 = rep(pobs0,  len = LLL);
-  if (length(prob)  != LLL) prob  = rep(prob, len = LLL);
-  if (length(size)  != LLL) size  = rep(size, len = LLL);
+  if (length(q)     != LLL) q     = rep(q,     len = LLL);
+  if (length(pobs0) != LLL) pobs0 = rep(pobs0, len = LLL);
+  if (length(prob)  != LLL) prob  = rep(prob,  len = LLL);
+  if (length(size)  != LLL) size  = rep(size,  len = LLL);
   ans = rep(0.0, len = LLL)
 
   if (!is.Numeric(pobs0) || any(pobs0 < 0) || any(pobs0 > 1))
@@ -73,7 +73,7 @@ pzanegbin = function(q, size, prob = NULL, munb = NULL, pobs0 = 0) {
   qindex = (q >  0)
   ans[ qindex] = pobs0[qindex] + (1 - pobs0[qindex]) *
                  pposnegbin(q[qindex], size = size[qindex],
-                                      prob = prob[qindex])
+                                       prob = prob[qindex])
   ans[q <  0] = 0
   ans[q == 0] = pobs0[q == 0]
   ans
@@ -2790,9 +2790,9 @@ dzageom = function(x, prob, pobs0 = 0, log = FALSE) {
   rm(log)
 
   LLL = max(length(x), length(prob), length(pobs0))
-  if (length(x)      != LLL) x      = rep(x,      len = LLL);
-  if (length(prob)   != LLL) prob   = rep(prob,   len = LLL);
-  if (length(pobs0)    != LLL) pobs0    = rep(pobs0,    len = LLL);
+  if (length(x)      != LLL) x      = rep(x,       len = LLL);
+  if (length(prob)   != LLL) prob   = rep(prob,    len = LLL);
+  if (length(pobs0)  != LLL) pobs0    = rep(pobs0, len = LLL);
   ans = rep(0.0, len = LLL)
   if (!is.Numeric(pobs0) || any(pobs0 < 0) || any(pobs0 > 1))
     stop("argument 'pobs0' must be in [0,1]")
@@ -2819,7 +2819,7 @@ pzageom = function(q, prob, pobs0 = 0) {
   LLL = max(length(q), length(prob), length(pobs0))
   if (length(q)      != LLL) q      = rep(q,      len = LLL);
   if (length(prob)   != LLL) prob   = rep(prob,   len = LLL);
-  if (length(pobs0)    != LLL) pobs0    = rep(pobs0,    len = LLL);
+  if (length(pobs0)  != LLL) pobs0  = rep(pobs0,  len = LLL);
   ans = rep(0.0, len = LLL)
   if (!is.Numeric(pobs0) || any(pobs0 < 0) || any(pobs0 > 1))
     stop("argument 'pobs0' must be in [0,1]")
@@ -2854,7 +2854,8 @@ qzageom = function(p, prob, pobs0 = 0) {
 
 rzageom = function(n, prob, pobs0 = 0) {
   use.n = if ((length.n <- length(n)) > 1) length.n else
-          if (!is.Numeric(n, integer.valued = TRUE, allowable.length = 1, positive = TRUE))
+          if (!is.Numeric(n, integer.valued = TRUE,
+                          allowable.length = 1, positive = TRUE))
               stop("bad input for argument 'n'") else n
 
   ans = rposgeom(use.n, prob)
@@ -2882,7 +2883,7 @@ dzabinom = function(x, size, prob, pobs0 = 0, log = FALSE) {
   if (length(x)      != LLL) x      = rep(x,      len = LLL);
   if (length(size)   != LLL) size   = rep(size,   len = LLL);
   if (length(prob)   != LLL) prob   = rep(prob,   len = LLL);
-  if (length(pobs0)    != LLL) pobs0    = rep(pobs0,    len = LLL);
+  if (length(pobs0)  != LLL) pobs0  = rep(pobs0,  len = LLL);
   ans = rep(0.0, len = LLL)
   if (!is.Numeric(pobs0) || any(pobs0 < 0) || any(pobs0 > 1))
     stop("argument 'pobs0' must be in [0,1]")
@@ -2910,9 +2911,10 @@ pzabinom = function(q, size, prob, pobs0 = 0) {
   if (length(q)      != LLL) q      = rep(q,      len = LLL);
   if (length(size)   != LLL) size   = rep(size,   len = LLL);
   if (length(prob)   != LLL) prob   = rep(prob,   len = LLL);
-  if (length(pobs0)    != LLL) pobs0    = rep(pobs0,    len = LLL);
+  if (length(pobs0)  != LLL) pobs0  = rep(pobs0,  len = LLL);
   ans = rep(0.0, len = LLL)
-  if (!is.Numeric(pobs0) || any(pobs0 < 0) || any(pobs0 > 1))
+  if (!is.Numeric(pobs0) ||
+      any(pobs0 < 0) || any(pobs0 > 1))
     stop("argument 'pobs0' must be in [0,1]")
 
   ans[q >  0] = pobs0[q > 0] +

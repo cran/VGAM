@@ -149,50 +149,48 @@ elogit(p, earg = list(min = 1, max = 2,
                     bminvalue = 1 + .Machine$double.eps,
                     bmaxvalue = 2 - .Machine$double.eps))  # Has no NAs
 
-\dontrun{
-par(mfrow = c(2,2))
+\dontrun{ par(mfrow = c(2,2), lwd = (mylwd <- 2))
 y = seq(-4, 4, length = 100)
 p = seq(0.01, 0.99, by = 0.01)
 for(d in 0:1) {
-    matplot(p, cbind(logit(p, deriv = d), probit(p, deriv = d)),
-            type = "n", col = "purple", ylab = "transformation",
-            lwd = 2, las = 1,
-            main = if (d ==  0) "Some probability link functions"
-            else "First derivative")
-    lines(p,   logit(p, deriv = d), lwd = 2, col = "limegreen")
-    lines(p,  probit(p, deriv = d), lwd = 2, col = "purple")
-    lines(p, cloglog(p, deriv = d), lwd = 2, col = "chocolate")
-    lines(p, cauchit(p, deriv = d), lwd = 2, col = "tan")
-    if (d ==  0) {
-        abline(v = 0.5, h = 0, lty = "dashed")
-        legend(0, 4.5, c("logit", "probit", "cloglog", "cauchit"),
-               col = c("limegreen", "purple", "chocolate", "tan"), lwd = 2)
-    } else
-        abline(v = 0.5, lty = "dashed")
+  matplot(p, cbind(logit(p, deriv = d), probit(p, deriv = d)),
+          type = "n", col = "purple", ylab = "transformation", las = 1,
+          main = if (d ==  0) "Some probability link functions"
+          else "First derivative")
+  lines(p,   logit(p, deriv = d), col = "limegreen")
+  lines(p,  probit(p, deriv = d), col = "purple")
+  lines(p, cloglog(p, deriv = d), col = "chocolate")
+  lines(p, cauchit(p, deriv = d), col = "tan")
+  if (d ==  0) {
+    abline(v = 0.5, h = 0, lty = "dashed")
+    legend(0, 4.5, c("logit", "probit", "cloglog", "cauchit"),
+           col = c("limegreen", "purple", "chocolate", "tan"), lwd = mylwd)
+  } else
+    abline(v = 0.5, lty = "dashed")
 }
 
 for(d in 0) {
-    matplot(y, cbind(logit(y, deriv = d, inverse = TRUE),
-                     probit(y, deriv = d, inverse = TRUE)),
-            type = "n", col = "purple", xlab = "transformation", ylab = "p",
-            lwd = 2, las = 1,
-            main = if (d ==  0) "Some inverse probability link functions"
-            else "First derivative")
-    lines(y,   logit(y, deriv = d, inverse = TRUE), lwd = 2, col = "limegreen")
-    lines(y,  probit(y, deriv = d, inverse = TRUE), lwd = 2, col = "purple")
-    lines(y, cloglog(y, deriv = d, inverse = TRUE), lwd = 2, col = "chocolate")
-    lines(y, cauchit(y, deriv = d, inverse = TRUE), lwd = 2, col = "tan")
-    if (d ==  0) {
-        abline(h = 0.5, v = 0, lty = "dashed")
-        legend(-4, 1, c("logit", "probit", "cloglog", "cauchit"),
-               col = c("limegreen", "purple", "chocolate", "tan"), lwd = 2)
-    }
+  matplot(y, cbind(logit(y, deriv = d, inverse = TRUE),
+                   probit(y, deriv = d, inverse = TRUE)), las = 1,
+          type = "n", col = "purple", xlab = "transformation", ylab = "p",
+          main = if (d ==  0) "Some inverse probability link functions"
+          else "First derivative")
+  lines(y,   logit(y, deriv = d, inverse = TRUE), col = "limegreen")
+  lines(y,  probit(y, deriv = d, inverse = TRUE), col = "purple")
+  lines(y, cloglog(y, deriv = d, inverse = TRUE), col = "chocolate")
+  lines(y, cauchit(y, deriv = d, inverse = TRUE), col = "tan")
+  if (d ==  0) {
+    abline(h = 0.5, v = 0, lty = "dashed")
+    legend(-4, 1, c("logit", "probit", "cloglog", "cauchit"),
+           col = c("limegreen", "purple", "chocolate", "tan"), lwd = mylwd)
+  }
 }
 
 p = seq(0.21, 0.59, by = 0.01)
-plot(p, elogit(p, earg = list(min = 0.2, max = 0.6)), lwd = 2, 
+plot(p, elogit(p, earg = list(min = 0.2, max = 0.6)),
      type = "l", col = "black", ylab = "transformation", xlim = c(0,1),
      las = 1, main = "elogit(p, earg = list(min = 0.2, max = 0.6)")
+par(lwd = 1)
 }
 }
 \keyword{math}

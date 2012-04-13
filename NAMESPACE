@@ -8,6 +8,12 @@ useDynLib(VGAM)
 
 
 
+
+importFrom("stats4", nobs)
+exportMethods(nobs)
+
+
+
 importMethodsFrom("stats4")
 
 
@@ -16,6 +22,19 @@ importFrom(stats4, AIC, coef, summary, plot, logLik, vcov)
 exportMethods(AIC, coef, summary, plot, logLik, vcov)
 
 
+export(npred, npred.vlm)
+exportMethods(npred)
+export(hatvalues, hatvaluesvlm)
+exportMethods(hatvalues)
+importFrom("stats", hatvalues)
+
+
+export(dfbeta, dfbetavlm)
+exportMethods(dfbeta)
+
+
+export(hatplot, hatplot.vlm)
+exportMethods(hatplot)
 
 
 export(VGAMenv)
@@ -27,7 +46,6 @@ export(update_default, update_formula)
 
 export(nvar, nvar.vlm, nvar.vgam, nvar.rrvglm, nvar.qrrvglm, nvar.cao, nvar.rcam)
 export(      nobs.vlm)
-
 
 
 export(plota21)
@@ -173,7 +191,8 @@ coefvsmooth.spline, coefvsmooth.spline.fit,
 constraints, constraints.vlm, 
 deplot, deplot.default, deplot.lms.bcg, deplot.lms.bcn,
 deplot.lms.yjn, deplot.lms.yjn2, deplot.vglm, 
-deviance.uqo, deviance.vglm, deviance.vlm, df.residual.vlm,
+deviance.uqo, deviance.vglm, deviance.vlm,
+df.residual_vlm,
 dirmultinomial, dirmul.old,
 dnorm2,
 dtheta.deta)

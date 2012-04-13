@@ -74,9 +74,10 @@ alaplace3(llocation = "identity", lscale = "loge", lkappa = "loge",
 
   }
   \item{sameScale}{ Logical.
-    Should the scale parameters be equal? It is advised to keep
-    \code{sameScale = TRUE} unchanged because it does not make sense to
-    have different values for each \code{tau} value.
+    Should the scale parameters be equal? It is advised
+    to keep \code{sameScale = TRUE} unchanged because it
+    does not make sense to have different values for each
+    \code{tau} value.
 
 
   }
@@ -103,11 +104,12 @@ alaplace3(llocation = "identity", lscale = "loge", lkappa = "loge",
   }
   \item{Scale.arg}{
   The value of the scale parameter \eqn{\sigma}{sigma}.
-  This argument may be used to compute quantiles at different
-  \eqn{\tau}{tau} values from an existing fitted \code{alaplace2()} model
-  (practical only if it has a single value).
-  If the model has \code{parallelLocation = TRUE} then only the intercept
-  need be estimated; use an offset.
+  This argument may be used to compute quantiles at
+  different \eqn{\tau}{tau} values from an existing fitted
+  \code{alaplace2()} model (practical only if it has a
+  single value).
+  If the model has \code{parallelLocation = TRUE} then
+  only the intercept need be estimated; use an offset.
   See below for an example.
 
 % This is because the expected information matrix is diagonal,
@@ -123,8 +125,8 @@ alaplace3(llocation = "identity", lscale = "loge", lkappa = "loge",
   \item{zero}{
     See \code{\link{CommonVGAMffArguments}} for more information.
     Where possible,
-    the default is to model all the \eqn{\sigma}{sigma} and \eqn{\kappa}{kappa}
-    as an intercept-only term.
+    the default is to model all the \eqn{\sigma}{sigma}
+    and \eqn{\kappa}{kappa} as an intercept-only term.
 
   }
 }
@@ -148,8 +150,8 @@ alaplace3(llocation = "identity", lscale = "loge", lkappa = "loge",
      (sqrt(2) * kappa / sigma) * |y-xi| ) }
    for \eqn{y > \xi}{y > xi}.
    Here, the ranges are
-   for all real \eqn{y} and \eqn{\xi}{xi}, positive \eqn{\sigma}{sigma} and
-   positive \eqn{\kappa}{kappa}.
+   for all real \eqn{y} and \eqn{\xi}{xi}, positive \eqn{\sigma}{sigma}
+   and positive \eqn{\kappa}{kappa}.
    The special case \eqn{\kappa = 1}{kappa = 1} corresponds to the
    (symmetric) Laplace distribution of Kotz et al. (2001).
    The mean is \eqn{\xi + \sigma (1/\kappa - \kappa) / \sqrt{2}}{xi +
@@ -179,12 +181,12 @@ alaplace3(llocation = "identity", lscale = "loge", lkappa = "loge",
    in the \pkg{quantreg} package.
 
 
-   Both \code{alaplace1()} and \code{alaplace2()}
-   can handle multiple responses,
-   and the number of linear/additive predictors is dictated by the
-   length of \code{tau} or \code{kappa}.
-   The function \code{alaplace2()} can also handle a matrix
-   response with a single-valued \code{tau} or \code{kappa}.
+   Both \code{alaplace1()} and \code{alaplace2()} can handle
+   multiple responses, and the number of linear/additive
+   predictors is dictated by the length of \code{tau} or
+   \code{kappa}.  The function \code{alaplace2()} can also
+   handle a matrix response with a single-valued \code{tau}
+   or \code{kappa}.
 
 
 }
@@ -207,11 +209,11 @@ alaplace3(llocation = "identity", lscale = "loge", lkappa = "loge",
   \bold{46}, 33--50.
 
 
-Kotz, S., Kozubowski, T. J. and Podgorski, K. (2001)
-\emph{The Laplace distribution and generalizations:
-a revisit with applications to communications,
-economics, engineering, and finance},
-Boston: Birkhauser.
+  Kotz, S., Kozubowski, T. J. and Podgorski, K. (2001)
+  \emph{The Laplace distribution and generalizations:
+  a revisit with applications to communications,
+  economics, engineering, and finance},
+  Boston: Birkhauser.
 
 
   Yee, T. W. (2012)
@@ -290,17 +292,22 @@ mymu = function(x) exp(-2 + 6*sin(2*x-0.2) / (x+0.5)^2)
 adata = transform(adata, y = rpois(n, lambda = mymu(x)))
 mytau = c(0.25, 0.75); mydof = 4
 
-fit = vgam(y ~ s(x, df = mydof), alaplace1(tau = mytau, llocation = "loge",
-           parallelLoc = FALSE), adata, trace = TRUE)
-fitp = vgam(y ~ s(x, df = mydof), alaplace1(tau = mytau, llocation = "loge",
-            parallelLoc = TRUE), adata, trace = TRUE)
+fit = vgam(y ~ s(x, df = mydof),
+           alaplace1(tau = mytau, llocation = "loge",
+                     parallelLoc = FALSE),
+           adata, trace = TRUE)
+fitp = vgam(y ~ s(x, df = mydof),
+            alaplace1(tau = mytau, llocation = "loge", parallelLoc = TRUE),
+            adata, trace = TRUE)
  
 \dontrun{ par(las = 1); mylwd = 1.5
 with(adata, plot(x, jitter(y, factor = 0.5), col = "red",
                  main = "Example 1; green: parallelLoc = TRUE",
                  ylab = "y", pch = "o", cex = 0.75))
-with(adata, matlines(x, fitted(fit ), col = "blue",  lty = "solid", lwd = mylwd))
-with(adata, matlines(x, fitted(fitp), col = "green", lty = "solid", lwd = mylwd))
+with(adata, matlines(x, fitted(fit ), col = "blue",
+                     lty = "solid", lwd = mylwd))
+with(adata, matlines(x, fitted(fitp), col = "green",
+                     lty = "solid", lwd = mylwd))
 finexgrid = seq(0, 1, len = 1001)
 for(ii in 1:length(mytau))
     lines(finexgrid, qpois(p = mytau[ii], lambda = mymu(finexgrid)),
@@ -319,11 +326,13 @@ newtau = 0.5  # Want to refit the model with this tau value
 fitp3 = vglm(y ~ 1 + offset(predict(fitp2)[,1]),
             family = alaplace1(tau = newtau, llocation = "loge"),
              adata)
-\dontrun{ with(adata, plot(x, jitter(y, factor = 0.5), col = "red", ylab = "y",
-                  pch = "o", cex = 0.75,
+\dontrun{ with(adata, plot(x, jitter(y, factor = 0.5), col = "red",
+                  pch = "o", cex = 0.75, ylab = "y",
                   main = "Example 2; parallelLoc = TRUE"))
-with(adata, matlines(x, fitted(fitp2), col = "blue",  lty = 1, lwd = mylwd))
-with(adata, matlines(x, fitted(fitp3), col = "black", lty = 1, lwd = mylwd)) }
+with(adata, matlines(x, fitted(fitp2), col = "blue", 
+                     lty = 1, lwd = mylwd))
+with(adata, matlines(x, fitted(fitp3), col = "black",
+                     lty = 1, lwd = mylwd)) }
 
 
 
@@ -341,8 +350,8 @@ for(ii in 1:length(mytau)) {
     iloc = ifelse(ii == 1, with(adata, median(y)), 1.0) # Well-chosen!
     mydf = ifelse(ii == 1, 5, 3)  # Maybe less smoothing will help
     lloc = ifelse(ii == 1, "identity", "loge")  # 2nd value must be "loge"
-    fit3 = vglm(usey ~ ns(x, df = mydf), adata, trace = TRUE,
-                fam = alaplace1(tau = usetau[ii], lloc = lloc, iloc = iloc))
+    fit3 = vglm(usey ~ ns(x, df = mydf), data = adata, trace = TRUE,
+                alaplace1(tau = usetau[ii], lloc = lloc, iloc = iloc))
     answer[,ii] = (if(ii == 1) 0 else answer[,ii-1]) + fitted(fit3)
     adata = transform(adata, offsety = answer[,ii])
 }

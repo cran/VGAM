@@ -6,6 +6,39 @@
 
 
 
+                CHANGES IN VGAM VERSION 0.8-7
+
+NEW FEATURES
+
+    o   Modified VGAM family functions:
+        genbetaII()@initialize has been improved, as well as
+        those special cases of that distribution (such as sinmad,
+        lomax, paralogistic, dagum, etc.).
+    o   Argument 'lapred.index' added to model.matrix().
+    o   npred() is now defined as a generic function (returns M).
+    o   hatvalues() and hatplot() written for vglm() objects.
+    o   The argument 'qr.arg' is set TRUE now by default in vglm().
+    o   df.residual() supports the argument 'type = c("vlm", "lm")'.
+    o   Argument 'nowarning' added to vglm.control().
+    o   New data set: ucberk.
+    o   Improved functions: rposbinom(), rposgeom(), rposnegbin(),
+        rpospois().
+    o   Tested okay on R 2.15.0.
+
+
+BUG FIXES and CHANGES
+
+    o   Labelling of the linear predictors for sratio(), cratio()
+        etc. was faulty.
+    o   pbetabinom.ab() did not recycle shape1 correctly
+        [found by David Venet].
+    o   Arguments lower.tail and log.p not supported (temporarily) in
+        pposbinom() and qposbinom().
+
+
+
+
+
                 CHANGES IN VGAM VERSION 0.8-6
 
 NEW FEATURES

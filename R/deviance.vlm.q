@@ -4,50 +4,45 @@
 
 
 
+
+
 deviance.vlm <- function(object, ...)
     object@criterion$deviance
+
 
 deviance.vglm <- function(object, ...)
     object@criterion$deviance
 
 
 
-
 if(!isGeneric("deviance"))
-    setGeneric("deviance", function(object, ...) standardGeneric("deviance"))
+    setGeneric("deviance", function(object, ...)
+    standardGeneric("deviance"))
 
 
 setMethod("deviance", "vlm", function(object, ...)
            deviance.vlm(object, ...))
 
-if(is.R()) {
+
+setMethod("deviance", "vglm", function(object, ...)
+           deviance.vglm(object, ...))
 
 
-    setMethod("deviance", "vglm", function(object, ...)
-               deviance.vglm(object, ...))
-} else {
-    setMethod("deviance", "vglm", function(object, ...)
-               deviance.vglm(object, ...))
+
+
+df.residual_vlm <- function(object, type = c("vlm", "lm"), ...) {
+  type <- type[1]
+  switch(type,
+         vlm = object@df.residual,
+          lm = nobs(object, type = "lm") - nvar(object, type = "lm"),
+         stop("argument 'type' unmatched"))
 }
 
 
 
 
-df.residual.vlm <- function(object, ...)
-    object@df.residual
-
-if(is.R()) {
-
-
-    setMethod("df.residual", "vlm", function(object, ...)
-               df.residual.vlm(object, ...))
-} else {
-    if (!isGeneric("df.residual"))
-    setGeneric("df.residual", function(object, ...)
-               standardGeneric("df.residual"))
-    setMethod("df.residual", "vlm", function(object, ...)
-               df.residual.vlm(object, ...))
-}
+setMethod("df.residual", "vlm", function(object, ...)
+           df.residual_vlm(object, ...))
 
 
 

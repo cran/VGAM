@@ -31,7 +31,7 @@
 
 
 
- vlabel = function(xn, ncolBlist, M, separator=":") {
+ vlabel = function(xn, ncolBlist, M, separator = ":") {
 
     if (length(xn) != length(ncolBlist))
         stop("length of first two arguments not equal")
@@ -43,16 +43,16 @@
     n2 = lapply(n2, seq)
     n2 = unlist(n2)
     n2 = as.character(n2)
-    n2 = paste(separator, n2, sep="")
+    n2 = paste(separator, n2, sep = "")
     n3 = rep(ncolBlist, ncolBlist)
-    n2[n3==1] = ""
-    n1n2 = paste(n1, n2, sep="")
+    n2[n3 == 1] = ""
+    n1n2 = paste(n1, n2, sep = "")
     n1n2
 }
 
 
- lm2vlm.model.matrix = function(x, Blist=NULL, assign.attributes=TRUE,
-                                M=NULL, xij=NULL, Xm2=NULL) {
+ lm2vlm.model.matrix = function(x, Blist = NULL, assign.attributes = TRUE,
+                                M = NULL, xij = NULL, Xm2 = NULL) {
 
 
 
@@ -75,7 +75,7 @@
         X_vlm = if (M > 1) kronecker(x, diag(M)) else x
         ncolBlist = rep(M, ncol(x))
     } else {
-        allB = matrix(unlist(Blist), nrow=M)
+        allB = matrix(unlist(Blist), nrow = M)
         ncolBlist = unlist(lapply(Blist, ncol))
         Rsum = sum(ncolBlist)
 
@@ -116,7 +116,7 @@
         vasgn = vector("list", sum(fred))
         kk = 0
         for(ii in 1:length(oasgn)) {
-            temp = matrix(nasgn[[ii]], ncol=length(oasgn[[ii]]))
+            temp = matrix(nasgn[[ii]], ncol = length(oasgn[[ii]]))
             for(jloc in 1:nrow(temp)) {
                 kk = kk + 1
                 vasgn[[kk]] = temp[jloc,]
@@ -192,56 +192,93 @@
 
 
 
- model.matrixvlm = function(object, type=c("vlm","lm","lm2","bothlmlm2"),
+ model.matrixvlm = function(object,
+                            type = c("vlm", "lm", "lm2", "bothlmlm2"),
+                            lapred.index = NULL,
                             ...) {
 
 
 
     if (mode(type) != "character" && mode(type) != "name")
     type = as.character(substitute(type))
-    type = match.arg(type, c("vlm","lm","lm2","bothlmlm2"))[1]
+    type = match.arg(type, c("vlm", "lm", "lm2", "bothlmlm2"))[1]
+
+    if (length(lapred.index) &&
+        type != "lm")
+      stop("Must set 'type = \"lm\"' when 'lapred.index' is ",
+           "assigned a value")
+    if (length(lapred.index) &&
+        length(object@control$xij))
+      stop("Currently cannot handle 'xij' models when 'lapred.index' is ",
+           "assigned a value")
 
 
-
-    x = slot(object, "x")
+    x   = slot(object, "x")
     Xm2 = slot(object, "Xm2")
 
     if (!length(x)) {
-        data = model.frame(object, xlev=object@xlevels, ...) 
+        data = model.frame(object, xlev = object@xlevels, ...) 
 
         kill.con = if (length(object@contrasts)) object@contrasts else NULL
 
-        x = vmodel.matrix.default(object, data=data,
+        x = vmodel.matrix.default(object, data = data,
                                   contrasts.arg = kill.con)
         tt = terms(object)
         attr(x, "assign") = attrassigndefault(x, tt)
     }
 
-    if ((type == "lm2" || type == "bothlmlm2") && !length(Xm2)) {
-        object.copy2 = object
-        data = model.frame(object.copy2, xlev=object.copy2@xlevels, ...) 
+    if ((type == "lm2" || type == "bothlmlm2") &&
+        !length(Xm2)) {
+      object.copy2 = object
+      data = model.frame(object.copy2, xlev = object.copy2@xlevels, ...) 
 
-        kill.con = if (length(object.copy2@contrasts))
-                   object.copy2@contrasts else NULL
+      kill.con = if (length(object.copy2@contrasts))
+                 object.copy2@contrasts else NULL
 
-        Xm2 = vmodel.matrix.default(object.copy2, data=data,
-                                    contrasts.arg = kill.con)
-        ttXm2 = terms(object.copy2@misc$form2)
-        attr(Xm2, "assign") = attrassigndefault(Xm2, ttXm2)
+      Xm2 = vmodel.matrix.default(object.copy2, data = data,
+                                  contrasts.arg = kill.con)
+      ttXm2 = terms(object.copy2@misc$form2)
+      attr(Xm2, "assign") = attrassigndefault(Xm2, ttXm2)
     }
 
 
 
-    if (type == "lm") {
-        return(x)
+
+
+    if (type == "lm" && is.null(lapred.index)) {
+      return(x)
     } else if (type == "lm2") {
-        return(Xm2)
+      return(Xm2)
     } else if (type == "bothlmlm2") {
-        return(list(X=x, Xm2=Xm2))
+      return(list(X = x, Xm2 = Xm2))
+    }
+
+
+    M = object@misc$M  
+    Blist = object@constraints # == constraints(object, type = "vlm")
+    X_vlm <- lm2vlm.model.matrix(x = x, Blist = Blist,
+                                 xij = object@control$xij, Xm2 = Xm2)
+
+    if (type == "vlm") {
+      return(X_vlm)
+    } else if (type == "lm" && length(lapred.index)) {
+      if (!is.Numeric(lapred.index, integer.valued = TRUE, positive = TRUE,
+                      allowable.length = 1))
+        stop("bad input for argument 'lapred.index'")
+      if (!length(intersect(lapred.index, 1:M)))
+        stop("argument 'lapred.index' should have ",
+             "a single value from the set 1:", M)
+
+      Hlist = Blist
+      n_lm = nobs(object) # Number of rows of the LM matrix
+      M = object@misc$M      # Number of linear/additive predictors
+      Hmatrices = matrix(c(unlist(Hlist)), nrow = M)
+      jay = lapred.index
+      index0 = Hmatrices[jay, ] != 0
+      X_lm_jay = X_vlm[(0:(n_lm - 1)) * M + jay, index0, drop = FALSE]
+      X_lm_jay
     } else {
-        M = object@misc$M  
-        Blist = object@constraints # Is NULL if there were no constraints?
-        lm2vlm.model.matrix(x=x, Blist=Blist, xij=object@control$xij, Xm2=Xm2)
+      stop("am confused. Don't know what to return")
     }
 }
 
@@ -258,31 +295,31 @@ setMethod("model.matrix",  "vlm", function(object, ...)
 
 
  model.framevlm = function(object, 
-                           setupsmart=TRUE, wrapupsmart=TRUE, ...) {
+                           setupsmart = TRUE, wrapupsmart = TRUE, ...) {
 
-    dots = list(...)
-    nargs = dots[match(c("data", "na.action", "subset"), names(dots), 0)]
-    if (length(nargs) || !length(object@model)) {
-        fcall = object@call
-        fcall$method = "model.frame"
-        fcall[[1]] = as.name("vlm")
+  dots = list(...)
+  nargs = dots[match(c("data", "na.action", "subset"), names(dots), 0)]
+  if (length(nargs) || !length(object@model)) {
+    fcall = object@call
+    fcall$method = "model.frame"
+    fcall[[1]] = as.name("vlm")
 
-        fcall$smart = FALSE
-        if (setupsmart && length(object@smart.prediction)) {
-            setup.smart("read", smart.prediction=object@smart.prediction)
-        }
+    fcall$smart = FALSE
+    if (setupsmart && length(object@smart.prediction)) {
+      setup.smart("read", smart.prediction=object@smart.prediction)
+    }
 
-        fcall[names(nargs)] = nargs
-        env = environment(object@terms$terms) # @terms or @terms$terms ??
-        if (is.null(env)) 
-            env = parent.frame()
-        ans = eval(fcall, env, parent.frame())
+    fcall[names(nargs)] = nargs
+    env = environment(object@terms$terms) # @terms or @terms$terms ??
+    if (is.null(env)) 
+      env = parent.frame()
+    ans = eval(fcall, env, parent.frame())
 
-        if (wrapupsmart && length(object@smart.prediction)) {
-            wrapup.smart()
-        }
-        ans
-    } else object@model
+    if (wrapupsmart && length(object@smart.prediction)) {
+      wrapup.smart()
+    }
+    ans
+  } else object@model
 }
 
 
@@ -299,7 +336,7 @@ setMethod("model.frame",  "vlm", function(formula, ...)
 
  vmodel.matrix.default = function(object, data = environment(object),
                                   contrasts.arg = NULL, xlev = NULL, ...) {
- print("20120221; in vmodel.matrix.default")
+
     t <- if (missing(data)) terms(object) else terms(object, data = data)
     if (is.null(attr(data, "terms")))
         data <- model.frame(object, data, xlev = xlev) else {
@@ -380,6 +417,311 @@ setMethod("depvar",  "cao", function(object, ...)
            depvar.vlm(object, ...))
 setMethod("depvar",  "rcam", function(object, ...)
            depvar.vlm(object, ...))
+
+
+
+
+npred.vlm <- function(object, ...) {
+  if (length(object@misc$M))
+    object@misc$M else
+  if (ncol(as.matrix(predict(object))) > 0)
+    ncol(as.matrix(predict(object))) else
+  stop("cannot seem to obtain 'M'")
+}
+
+
+if (!isGeneric("npred"))
+    setGeneric("npred", function(object, ...) standardGeneric("npred"),
+               package = "VGAM")
+
+
+setMethod("npred",  "vlm", function(object, ...)
+           npred.vlm(object, ...))
+setMethod("npred",  "rrvglm", function(object, ...)
+           npred.vlm(object, ...))
+setMethod("npred",  "qrrvglm", function(object, ...)
+           npred.vlm(object, ...))
+setMethod("npred",  "cao", function(object, ...)
+           npred.vlm(object, ...))
+setMethod("npred",  "rcam", function(object, ...)
+           npred.vlm(object, ...))
+
+
+
+
+
+
+
+hatvaluesvlm <- function(model,
+                         type = c("diagonal", "matrix", "centralBlocks"), ...) {
+
+
+  if(!missing(type))
+    type <- as.character(substitute(type))
+  type.arg <- match.arg(type, c("diagonal", "matrix", "centralBlocks"))[1]
+
+
+  qrSlot <- model@qr
+
+  if (!is.list(qrSlot) && class(qrSlot) != "qr")
+    stop("slot 'qr' should be a list")
+
+  M  <- npred(model)
+  nn <- nobs(model, type = "lm")
+
+  if (is.empty.list(qrSlot)) {
+
+    wzedd <- weights(model, type = "working")
+    UU <- vchol(wzedd, M = M, n = nn, silent = TRUE) # Few rows, many cols
+    X.vlm <- model.matrix(model, type = "vlm")
+    UU.X.vlm <- mux111(cc = UU, xmat = X.vlm, M = M)
+    qrSlot <- qr(UU.X.vlm)
+  } else {
+    X.vlm <- NULL
+    class(qrSlot) <- "qr" # S3 class
+  }
+  Q.S3 <- qr.Q(qrSlot)
+
+
+
+  if (type.arg == "diagonal") {
+    Diag.Hat <- rowSums(Q.S3^2)
+    Diag.Elts <- matrix(Diag.Hat, nn, M, byrow = TRUE)
+
+    if (length(model@misc$predictors.names) == M)
+      colnames(Diag.Elts) <- model@misc$predictors.names
+    if (length(rownames(model.matrix(model, type = "lm"))))
+      rownames(Diag.Elts) <- rownames(model.matrix(model, type = "lm"))
+
+    attr(Diag.Elts, "predictors.names") <- model@misc$predictors.names
+    attr(Diag.Elts, "ncol_X_vlm") <- model@misc$ncol_X_vlm
+
+    Diag.Elts
+  } else if (type.arg == "matrix") {
+    all.mat <- Q.S3 %*% t(Q.S3)
+    if (!length(X.vlm))
+      X.vlm <- model.matrix(model, type = "vlm")
+    dimnames(all.mat) <- list(rownames(X.vlm), rownames(X.vlm))
+
+    attr(all.mat, "M") <- M
+    attr(all.mat, "predictors.names") <- model@misc$predictors.names
+    attr(all.mat, "ncol_X_vlm") <- model@misc$ncol_X_vlm
+
+    all.mat
+  } else {
+    ind1 <- iam(NA, NA, M = M, both = TRUE, diag = TRUE)
+    MM12 <- M * (M + 1) / 2
+    all.rows.index = rep((0:(nn-1)) * M, rep(MM12, nn)) + ind1$row.index
+    all.cols.index = rep((0:(nn-1)) * M, rep(MM12, nn)) + ind1$col.index
+
+    H_ss = rowSums(Q.S3[all.rows.index, ] *
+                   Q.S3[all.cols.index, ])
+
+    H_ss = matrix(H_ss, nn, MM12, byrow = TRUE)
+    H_ss
+  }
+}
+
+
+
+
+if (!isGeneric("hatvalues"))
+    setGeneric("hatvalues", function(model, ...)
+      standardGeneric("hatvalues"), package = "VGAM")
+
+
+setMethod("hatvalues",  "vlm", function(model, ...)
+           hatvaluesvlm(model, ...))
+setMethod("hatvalues",  "vglm", function(model, ...)
+           hatvaluesvlm(model, ...))
+setMethod("hatvalues",  "rrvglm", function(model, ...)
+           hatvaluesvlm(model, ...))
+setMethod("hatvalues",  "qrrvglm", function(model, ...)
+           hatvaluesvlm(model, ...))
+setMethod("hatvalues",  "cao", function(model, ...)
+           hatvaluesvlm(model, ...))
+setMethod("hatvalues",  "rcam", function(model, ...)
+           hatvaluesvlm(model, ...))
+
+
+
+
+
+
+
+
+hatplot.vlm <-
+  function(model, multiplier = c(2, 3),
+           lty = "dashed",
+           xlab = "Observation",
+           ylab = "Hat values",
+           ylim = NULL, ...) {
+
+  if (is(model, "vlm")) {
+    hatval <- hatvalues(model, diag = TRUE)
+  } else {
+    hatval <- model
+  }
+
+  if (!is.matrix(hatval))
+    stop("argument 'model' seems neither a vglm() object or a matrix")
+
+  ncol_X_vlm <- attr(hatval, "ncol_X_vlm")
+  M <- attr(hatval, "M")
+  predictors.names <- attr(hatval, "predictors.names")
+  if (!length(predictors.names)) {
+    predictors.names <- paste("Linear/additive predictor", 1:M)
+  }
+
+  if (length(M)) {
+    N <- nrow(hatval) / M
+    hatval <- matrix(hatval, N, M, byrow = TRUE)
+  } else {
+    M <- ncol(hatval)
+    N <- nrow(hatval)
+  }
+
+  if (is.null(ylim))
+    ylim = c(0, max(hatval))
+  for (jay in 1:M) {
+    plot(hatval[, jay], type = "n", main = predictors.names[jay],
+         ylim = ylim, xlab = xlab, ylab = ylab,
+         ...)
+    points(1:N, hatval[, jay], ...)
+    abline(h = multiplier * ncol_X_vlm / (N * M), lty = lty, ...)
+  }
+}
+
+
+
+
+if (!isGeneric("hatplot"))
+    setGeneric("hatplot", function(model, ...)
+      standardGeneric("hatplot"), package = "VGAM")
+
+
+setMethod("hatplot",  "matrix", function(model, ...)
+           hatplot.vlm(model, ...))
+
+setMethod("hatplot",  "vlm", function(model, ...)
+           hatplot.vlm(model, ...))
+setMethod("hatplot",  "vglm", function(model, ...)
+           hatplot.vlm(model, ...))
+
+setMethod("hatplot",  "rrvglm", function(model, ...)
+           hatplot.vlm(model, ...))
+setMethod("hatplot",  "qrrvglm", function(model, ...)
+           hatplot.vlm(model, ...))
+setMethod("hatplot",  "cao", function(model, ...)
+           hatplot.vlm(model, ...))
+setMethod("hatplot",  "rcam", function(model, ...)
+           hatplot.vlm(model, ...))
+
+
+
+
+
+
+
+
+dfbetavlm <-
+  function(model,
+           maxit.new = 1,
+           trace.new = FALSE,
+           smallno = 1.0e-8,
+           ...) {
+
+  if (!is(model, "vlm"))
+    stop("argument 'model' does not seem to be a vglm() object")
+
+  n_lm = nobs(model, type = "lm")
+  X_lm = model.matrix(model, type = "lm")
+  X_vlm = model.matrix(model, type = "vlm")
+  p_vlm = ncol(X_vlm) # nvar(model, type = "vlm")
+  M    = npred(model)
+  wz = weights(model, type = "work") # zz unused!!!!!!!
+  etastart = predict(model)
+  offset = matrix(model@offset, n_lm, M)
+  new.control = model@control
+  pweights <- weights(model, type = "prior")
+  orig.w <- if (is.numeric(model@extra$orig.w))
+              model@extra$orig.w else 1
+  y.integer <- if (is.logical(model@extra$y.integer))
+                 model@extra$y.integer else FALSE
+
+
+  new.control$trace = trace.new
+  new.control$maxit = maxit.new
+
+  dfbeta <- matrix(0, n_lm, p_vlm)
+
+  Terms.zz <- NULL
+
+
+
+
+
+  for (ii in 1:n_lm) {
+    if (trace.new) {
+      cat("\n", "Observation ", ii, "\n")
+      flush.console()
+    }
+
+    w.orig = if (length(orig.w) != n_lm)
+               rep(orig.w, length.out = n_lm) else
+               orig.w
+    w.orig[ii] = w.orig[ii] * smallno # Relative
+
+    fit <- vglm.fit(x = X_lm,
+                    X_vlm_arg = X_vlm, # Should be more efficient
+                    y = if (y.integer)
+                      round(depvar(model) * c(pweights) / c(orig.w)) else
+                           (depvar(model) * c(pweights) / c(orig.w)),
+                    w = w.orig, # Set to zero so that it is 'deleted'.
+                    Xm2 = NULL, Ym2 = NULL,
+                    etastart = etastart, # coefstart = NULL,
+                    offset = offset,
+                    family = model@family,
+                    control = new.control,
+                    criterion =  new.control$criterion, # "coefficients",
+                    qr.arg = FALSE,
+                    constraints = constraints(model, type = "lm"),
+                    extra = model@extra,
+                    Terms = Terms.zz,
+                    function.name = "vglm")
+
+    dfbeta[ii, ] <- fit$coeff
+  }
+
+
+  dimnames(dfbeta) <- list(rownames(X_lm), names(coef(model)))
+  dfbeta
+}
+
+
+
+
+if (!isGeneric("dfbeta"))
+    setGeneric("dfbeta", function(model, ...)
+      standardGeneric("dfbeta"), package = "VGAM")
+
+
+setMethod("dfbeta",  "matrix", function(model, ...)
+           dfbetavlm(model, ...))
+
+setMethod("dfbeta",  "vlm", function(model, ...)
+           dfbetavlm(model, ...))
+setMethod("dfbeta",  "vglm", function(model, ...)
+           dfbetavlm(model, ...))
+
+setMethod("dfbeta",  "rrvglm", function(model, ...)
+           dfbetavlm(model, ...))
+setMethod("dfbeta",  "qrrvglm", function(model, ...)
+           dfbetavlm(model, ...))
+setMethod("dfbeta",  "cao", function(model, ...)
+           dfbetavlm(model, ...))
+setMethod("dfbeta",  "rcam", function(model, ...)
+           dfbetavlm(model, ...))
 
 
 

@@ -8,7 +8,8 @@
 }
 \usage{
 acat(link = "loge", earg = list(),
-     parallel = FALSE, reverse = FALSE, zero = NULL)
+     parallel = FALSE, reverse = FALSE, zero = NULL,
+     whitespace = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -43,6 +44,10 @@ acat(link = "loge", earg = list(),
   An integer-valued vector specifying which
   linear/additive predictors are modelled as intercepts only.
   The values must be from the set \{1,2,\ldots,\eqn{M}\}.
+
+  }
+  \item{whitespace}{
+    See \code{\link{CommonVGAMffArguments}} for information.
 
   }
 }

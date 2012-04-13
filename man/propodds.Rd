@@ -7,13 +7,13 @@
 
 }
 \usage{
-propodds(reverse = TRUE)
+propodds(reverse = TRUE, whitespace = FALSE)
 }
 \arguments{
 
-  \item{reverse}{
+  \item{reverse, whitespace}{
   Logical.
-  Fed into the \code{reverse} argument of \code{\link{cumulative}}.
+  Fed into arguments of the same name in \code{\link{cumulative}}.
 
 }
 }
@@ -31,11 +31,13 @@ propodds(reverse = TRUE)
   \code{cumulative(reverse = reverse, link = "logit", parallel = TRUE)}.
   Please see \code{\link{cumulative}} for more details on this model.
 
+
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}},
   and \code{\link{vgam}}.
+
 
 }
 \references{
@@ -70,20 +72,22 @@ contains further information and examples.
   No check is made to verify that the response is ordinal;
   see \code{\link[base:factor]{ordered}}.
 
+
 }
 
 \seealso{
   \code{\link{cumulative}}.
+
 
 }
 \examples{
 # Fit the proportional odds model, p.179, in McCullagh and Nelder (1989)
 pneumo = transform(pneumo, let = log(exposure.time))
 (fit = vglm(cbind(normal, mild, severe) ~ let, propodds, pneumo))
-depvar(fit)   # Sample proportions
-weights(fit, type = "prior")   # Number of observations
+depvar(fit) # Sample proportions
+weights(fit, type = "prior") # Number of observations
 coef(fit, matrix = TRUE)
-constraints(fit)   # Constraint matrices
+constraints(fit) # Constraint matrices
 summary(fit)
 
 # Check that the model is linear in let ----------------------

@@ -43,7 +43,8 @@
   noroweffects = FALSE
   nocoleffects = FALSE
 
-  if (!is.Numeric(which.lp, allowable.length = 1, integer.valued = TRUE, positive = TRUE))
+  if (!is.Numeric(which.lp, allowable.length = 1,
+                  integer.valued = TRUE, positive = TRUE))
     stop("bad input for argument 'which.lp'")
 
   if (!is.character(rprefix))
@@ -246,7 +247,8 @@
              family = family,
              constraints = Hlist,
              offset = offset.matrix,
-             weights = if (length(weights)) weights else rep(1, length = nrow(y)),
+             weights = if (length(weights))
+                       weights else rep(1, length = nrow(y)),
              ...,
              control = mycontrol, data = .rcam.df)
   } else {
@@ -255,7 +257,8 @@
              family = family,
              constraints = Hlist,
              offset = offset.matrix,
-             weights = if (length(weights)) weights else rep(1, length = nrow(y)),
+             weights = if (length(weights))
+                       weights else rep(1, length = nrow(y)),
              ...,
              control = mycontrol, data = .rcam.df)
   }
@@ -362,7 +365,7 @@ setMethod("summary", "rcam",
   yswap <- rbind(mat[r.index:RRR, ],
                  if (r.index > 1) mat[1:(r.index - 1),] else NULL)
   yswap <- cbind(yswap[, c.index:CCC],
-                 if (c.index > 1) yswap[, 1:(c.index - 1)] else  NULL)
+                 if (c.index > 1) yswap[, 1:(c.index - 1)] else NULL)
 
   new.rnames <- rnames[c(r.index:RRR,
                          if (r.index > 1) 1:(r.index - 1) else NULL)]
@@ -537,22 +540,24 @@ moffset <- function (mat, roffset = 0, coffset = 0, postfix = "") {
 
   vecmat = c(unlist(mat))
   ind1 <- if (is.character(roffset))
-                 which(rownames(mat) == roffset) else
-                       if (is.numeric(roffset)) roffset + 1 else
-                           stop("argument 'roffset' not matched (character). ",
-                                 "It must be numeric, ",
-                                 "else character and match the ",
-                                 "row names of the response")
+             which(rownames(mat) == roffset) else
+                   if (is.numeric(roffset)) roffset + 1 else
+                     stop("argument 'roffset' not matched (character). ",
+                           "It must be numeric, ",
+                           "else character and match the ",
+                           "row names of the response")
   ind2 <- if (is.character(coffset))
-                 which(colnames(mat) == coffset) else
-                       if (is.numeric(coffset)) coffset + 1 else
-                           stop("argument 'coffset' not matched (character). ",
-                                 "It must be numeric, ",
-                                 "else character and match the ",
-                                 "column names of the response")
+             which(colnames(mat) == coffset) else
+                   if (is.numeric(coffset)) coffset + 1 else
+                     stop("argument 'coffset' not matched (character). ",
+                           "It must be numeric, ",
+                           "else character and match the ",
+                           "column names of the response")
 
-  if (!is.Numeric(ind1, positive = TRUE, integer.valued = TRUE, allowable.length = 1) ||
-      !is.Numeric(ind2, positive = TRUE, integer.valued = TRUE, allowable.length = 1))
+  if (!is.Numeric(ind1, positive = TRUE,
+                  integer.valued = TRUE, allowable.length = 1) ||
+      !is.Numeric(ind2, positive = TRUE,
+                  integer.valued = TRUE, allowable.length = 1))
     stop("bad input for arguments 'roffset' and/or 'coffset'")
   if (ind1 > nrow(mat))
     stop("too large a value for argument 'roffset'")
@@ -665,7 +670,8 @@ confint_nb1 <- function(nb1, level = 0.95) {
     stop("argument 'nb1' does not appear to have parallel = TRUE")
 
   if (!all(unlist(constraints(nb1)[1]) == c(diag(nb1@misc$M))))
-    stop("argument 'nb1' does not have parallel = FALSE for the intercept")
+    stop("argument 'nb1' does not have parallel = FALSE ",
+         "for the intercept")
 
   if (nb1@misc$M != 2)
     stop("argument 'nb1' does not have M = 2")
@@ -674,7 +680,8 @@ confint_nb1 <- function(nb1, level = 0.95) {
     stop("argument 'nb1' does not have log links for both parameters")
 
   cnb1 <- coefficients(as(nb1, "vglm"), matrix = TRUE)
-  mydiff <- (cnb1["(Intercept)", "log(size)"] - cnb1["(Intercept)", "log(mu)"])
+  mydiff <- (cnb1["(Intercept)", "log(size)"] -
+             cnb1["(Intercept)", "log(mu)"])
   delta0.hat <- exp(mydiff)
   (phi0.hat <- 1 + 1 / delta0.hat)  # MLE of phi0
 
@@ -857,13 +864,15 @@ Qvar <- function(object, factor.name = NULL,
   for (ilocal in 1:LL)
     for (jlocal in ilocal:LL)
       myvcov[ilocal, jlocal] =
-      myvcov[jlocal, ilocal] = vcov0[ilocal, ilocal] + vcov0[jlocal, jlocal] -
-                               2 * vcov0[ilocal, jlocal]
+      myvcov[jlocal, ilocal] = vcov0[ilocal, ilocal] +
+                               vcov0[jlocal, jlocal] -
+                               vcov0[ilocal, jlocal] * 2
 
   allvcov = myvcov
   rownames(allvcov) =
     c(paste(if (is.matrix(object)) level1.name else factor.name,
-            if (is.matrix(object)) NULL else object.xlevels[1], sep = ""),
+            if (is.matrix(object)) NULL else object.xlevels[1],
+            sep = ""),
             rownames(vcov0)[-1])
   colnames(allvcov) = rownames(allvcov)
 
@@ -919,7 +928,8 @@ Qvar <- function(object, factorname = NULL, coef.indices = NULL,
   if (!is.matrix(object)) {
       model <- object
       if (is.null(factorname) && is.null(coef.indices)) {
-        stop("arguments \"factorname\" and \"coef.indices\" are both NULL")
+        stop("arguments \"factorname\" and \"coef.indices\" are ",
+             "both NULL")
       }
 
       if (is.null(coef.indices)) {
@@ -995,7 +1005,8 @@ Qvar <- function(object, factorname = NULL, coef.indices = NULL,
       if (length(labels))
         rownames(covmat) <- colnames(covmat) <- labels
       if ((LL <- dim(covmat)[1]) <= 2)
-        stop("This function works only for factors with 3 or more levels")
+        stop("This function works only for factors with 3 ",
+             "or more levels")
   }
 
 
@@ -1106,7 +1117,7 @@ summary.qvar <- function(object, ...) {
 
 
   structure(list(estimate = estimates,
-                 SE            = sqrt(regularVar),  # zz dispersion parameter??
+                 SE            = sqrt(regularVar),
                  minErrSimple  = minErrSimple,
                  maxErrSimple  = maxErrSimple,
                  quasiSE  = QuasiSE,
@@ -1192,7 +1203,8 @@ plotqvar <- function(object,
       is.matrix(object@extra$attributes.y$estimates))
     names( estimates) = rownames(object@extra$attributes.y$estimates)
   if (!length(names(estimates)))
-    names( estimates) = paste("Level", 1:length(estimates), sep = "")
+    names( estimates) = paste("Level", 1:length(estimates),
+                              sep = "")
 
 
 
@@ -1201,9 +1213,11 @@ plotqvar <- function(object,
   QuasiSE  <- sqrt(QuasiVar)
 
     if (!is.numeric(estimates))
-      stop("Cannot plot, because there are no 'proper' parameter estimates")
+      stop("Cannot plot, because there are no 'proper' ",
+            "parameter estimates")
     if (!is.numeric(QuasiSE))
-      stop("Cannot plot, because there are no quasi standard errors")
+      stop("Cannot plot, because there are no ",
+           "quasi standard errors")
 
 
 
@@ -1233,7 +1247,8 @@ plotqvar <- function(object,
 
 
     if (is.null(ylim))
-      ylim <- range(c(tails, tops, lsd.tails, lsd.tops), na.rm = TRUE)
+      ylim <- range(c(tails, tops, lsd.tails, lsd.tops),
+                    na.rm = TRUE)
 
     if (is.null(xlab))
       xlab <- "Factor level"

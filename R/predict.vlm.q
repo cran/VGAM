@@ -301,6 +301,56 @@ setMethod("predict", "vlm",
 
 
 
+
+
+
+
+predict.vglm.se <- function(fit, ...) {
+
+
+  H_ss <- hatvalues(fit, type = "centralBlocks") # diag = FALSE
+
+  M = npred(fit)
+  nn = nobs(fit, type = "lm")
+  U <- vchol(weights(fit, type = "working"), M = M, n = nn)
+
+  Uarray = array(0, c(M, M, nn))
+  ind1 <- iam(NA, NA, M = M, both = TRUE, diag = TRUE)
+  MM12 = M * (M + 1) / 2
+    for (jay in 1:MM12)
+      Uarray[ind1$row.index[jay],
+             ind1$col.index[jay], ] <- U[jay,]
+
+  Uinv.array <- apply(Uarray, 3, backsolve, x = diag(M))
+  dim(Uinv.array) <- c(M, M, nn)
+
+  Utinv.array <- Uinv.array
+  if (M > 1)
+    for (jay in 1:(M-1)) {
+      for (kay in (jay+1):M) {
+        Utinv.array[kay, jay, ] <- Uinv.array[jay, kay, ]
+        Utinv.array[jay, kay, ] <- 0
+      }
+    }
+
+  var.boldeta_i <- mux5(H_ss, Utinv.array, M = M,
+                        matrix.arg = TRUE) # First M cols are SE^2
+
+  sqrt(var.boldeta_i[, 1:M]) # SE(linear.predictor)
+
+
+
+
+  sqrt(var.boldeta_i[, 1:M])
+}
+
+
+
+
+
+
+
+
 subconstraints = function(assign, constraints) {
 
 

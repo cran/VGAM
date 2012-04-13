@@ -80,9 +80,7 @@ Hoboken, NJ, USA: Wiley-Interscience.
 
 \author{ T. W. Yee }
 \note{
-If the self-starting initial values fail, try experimenting
-with the initial value arguments, especially those whose
-default value is not \code{NULL}.
+  See the note in \code{\link{genbetaII}}.
 
 
 }
@@ -101,9 +99,9 @@ default value is not \code{NULL}.
 }
 
 \examples{
-ldata = data.frame(y = rlomax(n = 1000, exp(1), exp(1)))
+ldata = data.frame(y = rlomax(n = 1000, exp(1), exp(2)))
 fit = vglm(y ~ 1, lomax, ldata, trace = TRUE)
-fit = vglm(y ~ 1, lomax(iscale = exp(1), ishape3.q = 2), ldata, trace = TRUE)
+fit = vglm(y ~ 1, lomax(iscale = exp(1), ishape3.q = exp(2)), ldata, trace = TRUE)
 coef(fit, matrix = TRUE)
 Coef(fit)
 summary(fit)

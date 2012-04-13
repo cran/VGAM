@@ -11,14 +11,14 @@
 }
 \usage{
 rbinom2.or(n, mu1,
-           mu2=if(exchangeable) mu1 else stop("'mu2' not specified"),
-           oratio=1, exchangeable=FALSE, tol=0.001, twoCols=TRUE,
-           colnames=if(twoCols) c("y1","y2") else c("00", "01", "10", "11"),
-           ErrorCheck=TRUE)
+           mu2 = if(exchangeable) mu1 else stop("argument 'mu2' not specified"),
+           oratio = 1, exchangeable = FALSE, tol = 0.001, twoCols = TRUE,
+           colnames = if(twoCols) c("y1","y2") else c("00", "01", "10", "11"),
+           ErrorCheck = TRUE)
 dbinom2.or(mu1,
-           mu2=if(exchangeable) mu1 else stop("'mu2' not specified"),
-           oratio=1, exchangeable=FALSE, tol=0.001,
-           colnames=c("00", "01", "10", "11"), ErrorCheck=TRUE)
+           mu2 = if(exchangeable) mu1 else stop("'mu2' not specified"),
+           oratio = 1, exchangeable = FALSE, tol = 0.001,
+           colnames = c("00", "01", "10", "11"), ErrorCheck = TRUE)
 
 }
 %- maybe also 'usage' for other objects documented here.
@@ -31,7 +31,7 @@ dbinom2.or(mu1,
   }
   \item{mu1, mu2}{
     The marginal probabilities.
-    Only \code{mu1} is needed if \code{exchangeable=TRUE}.
+    Only \code{mu1} is needed if \code{exchangeable = TRUE}.
     Values should be between 0 and 1.
 
   }
@@ -98,27 +98,27 @@ dbinom2.or(mu1,
 \examples{
 # Example 1
 nn = 2000
-ymat = rbinom2.or(n=nn, mu1=0.8, oratio=exp(2), exch=TRUE)
-(mytab = table(ymat[,1], ymat[,2], dnn=c("Y1","Y2")))
+ymat = rbinom2.or(n = nn, mu1 = 0.8, oratio = exp(2), exch = TRUE)
+(mytab = table(ymat[,1], ymat[,2], dnn=c("Y1", "Y2")))
 (myor = mytab["0","0"] * mytab["1","1"] / (mytab["1","0"] * mytab["0","1"]))
-fit = vglm(ymat ~ 1, binom2.or(exch=TRUE))
-coef(fit, matrix=TRUE)
+fit = vglm(ymat ~ 1, binom2.or(exch = TRUE))
+coef(fit, matrix = TRUE)
 
 
 # Example 2
 x = sort(runif(nn))
-mu1 = logit(-2+4*x, inv=TRUE)
-mu2 = logit(-1+3*x, inv=TRUE)
-dmat = dbinom2.or(mu1=mu1, mu2=mu2, oratio=exp(2))
-ymat = rbinom2.or(n=nn, mu1=mu1, mu2=mu2, oratio=exp(2))
+mu1 = logit(-2+4*x, inv = TRUE)
+mu2 = logit(-1+3*x, inv = TRUE)
+dmat = dbinom2.or(mu1 = mu1, mu2 = mu2, oratio = exp(2))
+ymat = rbinom2.or(n = nn, mu1 = mu1, mu2 = mu2, oratio = exp(2))
 fit2 = vglm(ymat ~ x, binom2.or)
-coef(fit2, matrix=TRUE)
+coef(fit2, matrix = TRUE)
 \dontrun{
-matplot(x, dmat, lty=1:4, col=1:4, type="l", main="Joint probabilities",
-        ylim=0:1, lwd=2)
-legend(x=0, y=0.5, lty=1:4, col=1:4, lwd=2,
-       legend=c("1 = (y1=0, y2=0)", "2 = (y1=0, y2=1)",
-                "3 = (y1=1, y2=0)", "4 = (y1=1, y2=1)"))
+matplot(x, dmat, lty = 1:4, col = 1:4, type = "l",
+        main = "Joint probabilities", ylim = 0:1, lwd = 2)
+legend(x = 0, y = 0.5, lty = 1:4, col = 1:4, lwd = 2,
+       legend = c("1 = (y1=0, y2=0)", "2 = (y1=0, y2=1)",
+                  "3 = (y1=1, y2=0)", "4 = (y1=1, y2=1)"))
 }
 }
 \keyword{distribution}

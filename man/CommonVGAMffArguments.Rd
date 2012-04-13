@@ -17,6 +17,7 @@ TypicalVGAMfamilyFunction(lsigma = "loge", esigma = list(), isigma = NULL,
                           parallel = TRUE, shrinkage.init = 0.95,
                           nointercept = NULL, imethod = 1,
                           prob.x = c(0.15, 0.85), mv = FALSE,
+                          whitespace = FALSE,
                           oim = FALSE, nsimEIM = 100, zero = NULL)
 }
 \arguments{
@@ -47,6 +48,7 @@ TypicalVGAMfamilyFunction(lsigma = "loge", esigma = list(), isigma = NULL,
   a \emph{self-starting} \pkg{VGAM} family function.
   If a failure to converge occurs make use of these types of arguments.
 
+
   }
   \item{parallel}{
   A logical, or formula specifying which terms have equal/unequal
@@ -59,6 +61,7 @@ TypicalVGAMfamilyFunction(lsigma = "loge", esigma = list(), isigma = NULL,
   the intercepts) means the fitted probabilities do not become negative
   or greater than 1. However this parallelism or proportional-odds
   assumption ought to be checked.
+
 
   }
   \item{nsimEIM}{
@@ -111,6 +114,15 @@ TypicalVGAMfamilyFunction(lsigma = "loge", esigma = list(), isigma = NULL,
   of \code{\link[stats:quantile]{quantile}}.
   If the data set size is small then it may be necessary to
   increase/decrease slightly the first/second values respectively.
+
+
+  }
+  \item{whitespace}{
+  Logical.
+  Should white spaces (\code{" "}) be used in the
+  labelling of the linear/additive predictors?
+  Setting \code{TRUE} usually results in more readability but
+  it occupies more columns of the output.
 
 
   }
@@ -310,6 +322,16 @@ fit3 <- vglm(y2 ~ x, normal1(zero = 2), gdata,
              constraints = clist) # Conflict!
 coef(fit3, matrix = TRUE)   # Shows that clist[["x"]] was overwritten,
 constraints(fit3) # i.e., 'zero' seems to override the 'constraints' arg
+
+# Example 6 ('whitespace' argument)
+pneumo = transform(pneumo, let = log(exposure.time))
+fit1 = vglm(cbind(normal, mild, severe) ~ let,
+            sratio(whitespace = FALSE, parallel = TRUE), pneumo)
+fit2 = vglm(cbind(normal, mild, severe) ~ let,
+            sratio(whitespace = TRUE,  parallel = TRUE), pneumo)
+head(predict(fit1), 2) # No white spaces
+head(predict(fit2), 2) # Uses white spaces
 }
+
 \keyword{models}
 

@@ -22,8 +22,9 @@
                                        shrinkage.init = 0.95,
                                        nointercept = NULL, imethod = 1,
                                        prob.x = c(0.15, 0.85),
-                                       mv = FALSE, oim = FALSE,
-                                       nsimEIM = 100, zero = NULL) {
+                                       mv = FALSE, whitespace = FALSE,
+                                       oim = FALSE, nsimEIM = 100,
+                                       zero = NULL) {
   NULL
 }
 

@@ -18,10 +18,12 @@ qeunif <- function(p, min = 0, max = 1, Maxit_nr = 10, Tol_nr = 1.0e-6) {
   vsmallno = sqrt(.Machine$double.eps)
    smallno = 0.10
   if (any(min >= max))
-    stop("argument 'min' has values greater or equal to argument 'max'")
+    stop("argument 'min' has values greater or equal ",
+         "to argument 'max'")
   if (!is.Numeric( Tol_nr, allowable.length = 1, positive = TRUE) ||
       Tol_nr > 0.10)
-    stop("argument 'Tol_nr' is not a single positive value, or is too large")
+    stop("argument 'Tol_nr' is not a single positive value, ",
+         "or is too large")
   nrok = ppp >= vsmallno & ppp <= 1.0 - vsmallno & is.finite(ppp)
 
   eee = qbeta(ppp, shape1 = 3, shape2 = 3)
@@ -50,7 +52,8 @@ qeunif <- function(p, min = 0, max = 1, Maxit_nr = 10, Tol_nr = 1.0e-6) {
 
 
 peunif <- function(q, min = 0, max = 1, log = FALSE) {
-  if (!is.logical(log.arg <- log)) stop("bad input for argument 'log'")
+  if (!is.logical(log.arg <- log))
+    stop("bad input for argument 'log'")
   rm(log)
   if (any(min >= max))
     stop("argument 'min' has values greater or equal to argument 'max'")
@@ -72,7 +75,8 @@ peunif <- function(q, min = 0, max = 1, log = FALSE) {
 
 
 deunif <- function(x, min = 0, max = 1, log = FALSE) {
-  if (!is.logical(log.arg <- log)) stop("bad input for argument 'log'")
+  if (!is.logical(log.arg <- log))
+    stop("bad input for argument 'log'")
   rm(log)
   if (any(min >= max))
     stop("argument 'min' has values greater or equal to argument 'max'")
@@ -96,17 +100,20 @@ deunif <- function(x, min = 0, max = 1, log = FALSE) {
 
 
 reunif <- function(n, min = 0, max = 1) {
-    use.n = if ((length.n <- length(n)) > 1) length.n else
-            if (!is.Numeric(n, integer.valued = TRUE, allowable.length = 1, positive = TRUE))
-                stop("bad input for argument 'n'") else n
-    qeunif(runif(use.n), min = min, max = max)
+  use.n = if ((length.n <- length(n)) > 1) length.n else
+          if (!is.Numeric(n, integer.valued = TRUE,
+                          allowable.length = 1, positive = TRUE))
+            stop("bad input for argument 'n'") else n
+
+  qeunif(runif(use.n), min = min, max = max)
 }
 
 
 
 
 
-qenorm <- function(p, mean = 0, sd = 1, Maxit_nr = 10, Tol_nr = 1.0e-6) {
+qenorm <- function(p, mean = 0, sd = 1, Maxit_nr = 10,
+                   Tol_nr = 1.0e-6) {
   ppp = p
   if (!is.Numeric( Tol_nr, allowable.length = 1, positive = TRUE) ||
       Tol_nr > 0.10)
@@ -138,7 +145,8 @@ qenorm <- function(p, mean = 0, sd = 1, Maxit_nr = 10, Tol_nr = 1.0e-6) {
 
 
 penorm <- function(q, mean = 0, sd = 1, log = FALSE) {
-  if (!is.logical(log.arg <- log)) stop("bad input for argument 'log'")
+  if (!is.logical(log.arg <- log))
+    stop("bad input for argument 'log'")
   rm(log)
 
   eee = (q - mean) / sd
@@ -158,7 +166,8 @@ penorm <- function(q, mean = 0, sd = 1, log = FALSE) {
 
 
 denorm <- function(x, mean = 0, sd = 1, log = FALSE) {
-  if (!is.logical(log.arg <- log)) stop("bad input for argument 'log'")
+  if (!is.logical(log.arg <- log))
+    stop("bad input for argument 'log'")
   rm(log)
 
   eee = (x - mean) / sd
@@ -177,10 +186,12 @@ denorm <- function(x, mean = 0, sd = 1, log = FALSE) {
 
 
 renorm <- function(n, mean = 0, sd = 1) {
-    use.n = if ((length.n <- length(n)) > 1) length.n else
-            if (!is.Numeric(n, integer.valued = TRUE, allowable.length = 1, positive = TRUE))
-                stop("bad input for argument 'n'") else n
-    qenorm(runif(use.n), mean = mean, sd = sd)
+  use.n = if ((length.n <- length(n)) > 1) length.n else
+          if (!is.Numeric(n, integer.valued = TRUE,
+                          allowable.length = 1, positive = TRUE))
+            stop("bad input for argument 'n'") else n
+
+  qenorm(runif(use.n), mean = mean, sd = sd)
 }
 
 
@@ -227,7 +238,8 @@ qeexp <- function(p, rate = 1, Maxit_nr = 10, Tol_nr = 1.0e-6) {
 
 
 peexp <- function(q, rate = 1, log = FALSE) {
-  if (!is.logical(log.arg <- log)) stop("bad input for argument 'log'")
+  if (!is.logical(log.arg <- log))
+    stop("bad input for argument 'log'")
   rm(log)
 
   eee = q * rate
@@ -249,7 +261,8 @@ peexp <- function(q, rate = 1, log = FALSE) {
 
 
 deexp <- function(x, rate = 1, log = FALSE) {
-  if (!is.logical(log.arg <- log)) stop("bad input for argument 'log'")
+  if (!is.logical(log.arg <- log))
+    stop("bad input for argument 'log'")
   rm(log)
   if (any(rate <= 0))
     stop("argument 'rate' must have positive values")
@@ -296,6 +309,7 @@ dkoenker <- function(x, location = 0, scale = 1, log = FALSE) {
 }
 
 
+
 pkoenker <- function(q, location = 0, scale = 1, log = FALSE) {
   if (!is.logical(log.arg <- log))
     stop("bad input for argument 'log'")
@@ -329,11 +343,13 @@ qkoenker <- function(p, location = 0, scale = 1) {
 
 
 
+
 rkoenker <- function(n, location = 0, scale = 1) {
   answer <- qkoenker(runif(n)) * scale + location
   answer[scale <= 0] <- NaN
   answer
 }
+
 
 
 
@@ -347,7 +363,6 @@ rkoenker <- function(n, location = 0, scale = 1) {
 {
 
  
-
 
 
   llocat = llocation
@@ -400,7 +415,7 @@ rkoenker <- function(n, location = 0, scale = 1) {
         median(y)
       }
       Scale.init <- if (length( .iscale )) .iscale else
-          diff(quantile(y, prob = c(0.25, 0.75))) / (2 * 1.155) + 1.0e-5
+        diff(quantile(y, prob = c(0.25, 0.75))) / (2 * 1.155) + 1.0e-5
       locat.init <- rep(locat.init, length = length(y))
       Scale.init <- rep(Scale.init, length = length(y))
       etastart <- cbind(theta2eta(locat.init, .llocat, earg = .elocat),
@@ -441,13 +456,14 @@ rkoenker <- function(n, location = 0, scale = 1) {
             .elocat = elocat, .escale = escale,
             .imethod = imethod, .percentile = percentile ))),
   loglikelihood = eval(substitute(
-          function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
+    function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
     locat <- eta2theta(eta[, 1], link = .llocat, earg = .elocat)
     Scale <- eta2theta(eta[, 2], link = .lscale, earg = .escale)
     if (residuals) {
       stop("loglikelihood residuals not implemented yet")
     } else {
-      sum(w * dkoenker(x = y, location = locat, scale = Scale, log = TRUE))
+      sum(w * dkoenker(x = y, location = locat, scale = Scale,
+                       log = TRUE))
     }
   }, list( .llocat = llocat, .lscale = lscale,
            .elocat = elocat, .escale = escale ))),
@@ -455,6 +471,7 @@ rkoenker <- function(n, location = 0, scale = 1) {
   deriv = eval(substitute(expression({
     locat <- eta2theta(eta[, 1], link = .llocat, earg = .elocat)
     Scale <- eta2theta(eta[, 2], link = .lscale, earg = .escale)
+
     dlocat.deta <- dtheta.deta(locat, link = .llocat, earg = .elocat)
     dscale.deta <- dtheta.deta(Scale, link = .lscale, earg = .escale)
 

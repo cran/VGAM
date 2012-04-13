@@ -37,32 +37,33 @@ remove.arg <- function(string)
 add.arg <- function(string, arg.string)
 {
 
-    if (arg.string == "")
-        return(string) 
-    nc <- nchar(string)
-    lastc <- substring(string, nc, nc)
-    if (lastc == ")")
-    {
-        if (substring(string, nc-1, nc-1) == "(")
-        {
-            paste(substring(string, 1, nc-2), "(", arg.string, ")", sep = "")
-        } else
-            paste(substring(string, 1, nc-1), ", ", arg.string, ")", sep = "")
+  if (arg.string == "")
+    return(string) 
+  nc <- nchar(string)
+  lastc <- substring(string, nc, nc)
+  if (lastc == ")") {
+    if (substring(string, nc-1, nc-1) == "(") {
+      paste(substring(string, 1, nc-2), "(", arg.string, ")",
+            sep = "")
     } else
-        paste(string, "(", arg.string, ")", sep = "")
+      paste(substring(string, 1, nc-1), ", ", arg.string, ")",
+            sep = "")
+  } else {
+    paste(string, "(", arg.string, ")", sep = "")
+  }
 }
 
 
 get.arg <- function(string)
 {
 
-    nc <- nchar(string)
-    bits <- substring(string, 1:nc, 1:nc)
-    b1 <- (1:nc)[bits == "("]
-    b2 <- (1:nc)[bits == ")"]
-    b1 <- if (length(b1)) min(b1) else return("") # stop('no "(" in string')
-    b2 <- if (length(b2)) max(b2) else return("") # stop('no ")" in string')
-    if (b2-b1 == 1) "" else paste(bits[(1+b1):(b2-1)], collapse = "")
+  nc <- nchar(string)
+  bits <- substring(string, 1:nc, 1:nc)
+  b1 <- (1:nc)[bits == "("]
+  b2 <- (1:nc)[bits == ")"]
+  b1 <- if (length(b1)) min(b1) else return("") # stop('no "(" in string')
+  b2 <- if (length(b2)) max(b2) else return("") # stop('no ")" in string')
+  if (b2-b1 == 1) "" else paste(bits[(1+b1):(b2-1)], collapse = "")
 }
 
 
@@ -85,18 +86,20 @@ eij = function(i, n) {
 dneg.binomial <- function(x, k, prob)
 {
 
-    care.exp(x * log1p(-prob) + k * log(prob) + lgamma(x+k) - lgamma(k) -
-                 lgamma(x+1))
+  care.exp(x * log1p(-prob) + k * log(prob) + lgamma(x+k) -
+           lgamma(k) - lgamma(x + 1))
 }
 
 
-tapplymat1 <- function(mat, function.arg = c("cumsum", "diff", "cumprod"))
+tapplymat1 <- function(mat,
+                       function.arg = c("cumsum", "diff", "cumprod"))
 {
 
 
     if (!missing(function.arg))
         function.arg <- as.character(substitute(function.arg))
-    function.arg <- match.arg(function.arg, c("cumsum", "diff", "cumprod"))[1]
+    function.arg <- match.arg(function.arg,
+                              c("cumsum", "diff", "cumprod"))[1]
 
     type <- switch(function.arg,
         cumsum = 1,
@@ -178,7 +181,7 @@ rss.vgam <- function(z, wz, M)
     if (M == 1)
         return(sum(c(wz) * c(z^2)))
 
-    wz.z <- mux22(t(wz), z, M = M, as.matrix = TRUE) # else mux2(wz, z)
+    wz.z <- mux22(t(wz), z, M = M, as.matrix = TRUE)
     ans <- sum(wz.z * z)
     ans
 }
@@ -196,7 +199,7 @@ wweighted.mean <- function(y, w = NULL, matrix.arg = TRUE)
         if (missing(w)) mean(y) else sum(w * y)/sum(w)
     } else {
         if (missing(w)) y %*% rep(1, n) else {
-            numer <- mux22(t(w), y, M, as.matrix = TRUE) # matrix.arg = matrix.arg, 
+            numer <- mux22(t(w), y, M, as.matrix = TRUE)
             numer <- t(numer) %*% rep(1, n)
             denom <- t(w) %*% rep(1, n)
             denom <- matrix(denom, 1, length(denom))
@@ -233,7 +236,8 @@ veigen <- function(x, M)
         error.code = integer(1))
 
     if (z$error.code)
-        stop("eigen algorithm (rs) returned error code ", z$error.code)
+      stop("eigen algorithm (rs) returned error code ",
+           z$error.code)
     ord <- M:1
     dim(z$values) <- c(M, n)
     z$values <- z$values[ord,,drop = FALSE]
@@ -259,12 +263,16 @@ ima <- function(j, k, M)
 
 
 
-checkwz <- function(wz, M, trace = FALSE, wzepsilon = .Machine$double.eps^0.75) {
-    if (wzepsilon > 0.5) warning("'wzepsilon' is probably too large")
-    if (!is.matrix(wz)) wz = as.matrix(wz)
-    if ((temp <- sum(wz[,1:M,drop = FALSE] < wzepsilon)))
-        warning(paste(temp, "elements replaced by", signif(wzepsilon, 5)))
-    wz[,1:M] = pmax(wzepsilon, wz[,1:M])
+checkwz <- function(wz, M, trace = FALSE,
+                    wzepsilon = .Machine$double.eps^0.75) {
+    if (wzepsilon > 0.5)
+      warning("'wzepsilon' is probably too large")
+    if (!is.matrix(wz))
+      wz = as.matrix(wz)
+    if ((temp <- sum(wz[, 1:M, drop = FALSE] < wzepsilon)))
+      warning(paste(temp, "elements replaced by",
+                    signif(wzepsilon, 5)))
+    wz[, 1:M] = pmax(wzepsilon, wz[, 1:M])
     wz
 }
 

@@ -10,7 +10,8 @@
 }
 \usage{
 cumulative(link = "logit", earg = list(), parallel = FALSE,
-           reverse = FALSE, mv = FALSE, intercept.apply = FALSE)
+           reverse = FALSE, mv = FALSE, intercept.apply = FALSE,
+           whitespace = FALSE)
 }
 %scumulative(link="logit", earg = list(),
 %            lscale="loge", escale = list(),
@@ -98,6 +99,11 @@ cumulative(link = "logit", earg = list(), parallel = FALSE,
 % Numeric. Initial values for the scale parameters.
 
 % }
+  \item{whitespace}{
+    See \code{\link{CommonVGAMffArguments}} for information.
+
+  }
+
 }
 \details{
   In this help file the response \eqn{Y} is assumed to be a factor
