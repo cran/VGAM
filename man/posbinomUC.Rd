@@ -13,21 +13,43 @@
 }
 \usage{
 dposbinom(x, size, prob, log = FALSE)
-pposbinom(q, size, prob, lower.tail = TRUE, log.p = FALSE)
-qposbinom(p, size, prob, lower.tail = TRUE, log.p = FALSE)
+pposbinom(q, size, prob)
+qposbinom(p, size, prob)
 rposbinom(n, size, prob)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{x, q}{vector of quantiles.}
   \item{p}{vector of probabilities.}
-  \item{n}{number of observations. 
-  If \code{length(n) > 1} then the length is taken to be the number required. }
-  \item{size}{number of trials. It is the \eqn{N} symbol in the formula
-   given in \code{\link{posbinomial}}. }
+  \item{n}{number of observations.
+  Fed into \code{\link[stats]{runif}}.
+
+
+  }
+  \item{size}{number of trials.
+   It is the \eqn{N} symbol in the formula
+   given in \code{\link{posbinomial}}.
+
+  }
   \item{prob}{probability of success on each trial. }
-  \item{log, log.p, lower.tail}{ Arguments that are passed on to
-      \code{\link[stats:Binomial]{pbinom}} etc.}
+
+
+% 20120407:
+% \item{log.p, lower.tail}{
+% Arguments that are passed on to
+% \code{\link[stats:Binomial]{pbinom}} etc.
+%
+% }
+
+
+
+  \item{log}{
+  See
+  \code{\link[stats:Binomial]{dbinom}}.
+
+  }
+
+
 }
 \details{
   The positive-binomial distribution is a binomial distribution but with
@@ -58,27 +80,33 @@ rposbinom(n, size, prob)
   For \code{dposbinom()}, if arguments \code{size} or \code{prob}
   equal 0 then a \code{NaN} is returned.
 
-  For \code{rposbinom()}, the arguments of the function are fed into
-  \code{\link[stats:Binomial]{rbinom}} until \eqn{n} positive values
-  are obtained. This may take a long time if \code{prob} has values
-  close to 0.
 
-  The family function \code{\link{posbinomial}} estimates the parameters
-  by maximum likelihood estimation.
+% 20120405; no longer true to a superior method:
+% For \code{rposbinom()}, the arguments of the function are fed into
+% \code{\link[stats:Binomial]{rbinom}} until \eqn{n} positive values
+% are obtained. This may take a long time if \code{prob} has values
+% close to 0.
+
+
+  The family function \code{\link{posbinomial}} estimates the
+  parameters by maximum likelihood estimation.
+
 
 }
 
 \seealso{ 
   \code{\link{posbinomial}},
+  \code{\link{zabinomial}},
+  \code{\link{zibinomial}},
   \code{\link[stats:Binomial]{rbinom}}.
+
+
 }
 \examples{
 prob = 0.2; size = 10
-y = rposbinom(n = 1000, size, prob)
-
-table(y)
+table(y <- rposbinom(n = 1000, size, prob))
 mean(y)  # Sample mean
-prob / (1-(1-prob)^size) # Population mean
+size * prob / (1-(1-prob)^size) # Population mean
 
 (ii = dposbinom(0:size, size, prob))
 cumsum(ii) - pposbinom(0:size, size, prob)  # Should be 0s
@@ -88,11 +116,11 @@ table(qposbinom(runif(1000), size, prob))
 round(dposbinom(1:10, size, prob) * 1000) # Should be similar
 
 \dontrun{ barplot(rbind(dposbinom(x = 0:size, size, prob),
-                        dbinom(x = 0:size, size, prob)),
-        beside = TRUE, col = c("blue","green"),
+                           dbinom(x = 0:size, size, prob)),
+        beside = TRUE, col = c("blue", "green"),
         main=paste("Positive-binomial(", size, ",", prob, ") (blue) vs",
-        " Binomial(", size, ",", prob, ") (green)", sep=""),
-        names.arg = as.character(0:size), las=1) }
+        " Binomial(", size, ",", prob, ") (green)", sep = ""),
+        names.arg = as.character(0:size), las = 1) }
 
 # Simulated data example
 nn = 1000; sizeval1 = 10; sizeval2 = 20

@@ -9,7 +9,7 @@
 
 }
 \usage{
-Brat(mat, ties = 0 * mat, string = c(" > "," == "))
+Brat(mat, ties = 0 * mat, string = c(">","=="), whitespace = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -22,7 +22,7 @@ Brat(mat, ties = 0 * mat, string = c(" > "," == "))
   are best labelled with the competitors' names.
 
 
-}
+  }
   \item{ties}{
   Matrix of counts.
   This should be the same dimension as \code{mat}. By
@@ -30,17 +30,25 @@ Brat(mat, ties = 0 * mat, string = c(" > "," == "))
   and the diagonal should contain \code{NA}s.
 
 
-}
+  }
   \item{string}{
   Character. 
   The matrices are labelled with the first value of the
   descriptor, e.g., \code{"NZ > Oz"} `means' NZ beats
-  Australia in rugby.  Suggested alternatives include \code{"
-  beats "} or \code{" wins against "}.  The second value
+  Australia in rugby.  Suggested alternatives include
+  \code{" beats "} or \code{" wins against "}.  The second value
   is used to handle ties.
 
 
-}
+  }
+  \item{whitespace}{
+    Logical. If \code{TRUE} then a white space is added before
+    and after \code{string}; it generally enhances readability.
+    See \code{\link{CommonVGAMffArguments}} for some similar-type
+    information.
+ 
+
+  }
 }
 \details{
   In the \pkg{VGAM} package it is necessary for each
@@ -92,8 +100,9 @@ journal = c("Biometrika", "Comm Statist", "JASA", "JRSS-B")
 mat = matrix(c( NA, 33, 320, 284,   730, NA, 813, 276,
              498, 68,  NA, 325,   221, 17, 142, NA), 4, 4)
 dimnames(mat) = list(winner = journal, loser = journal)
-Brat(mat)
-vglm(Brat(mat) ~ 1, brat, trace = TRUE)
+Brat(mat) # Less readable
+Brat(mat, whitespace = TRUE) # More readable
+vglm(Brat(mat, whitespace = TRUE) ~ 1, brat, trace = TRUE)
 }
 \keyword{models}
 \keyword{regression}

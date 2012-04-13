@@ -22,7 +22,7 @@ rposgeom(n, prob)
   \item{x, q}{vector of quantiles.}
   \item{p}{vector of probabilities.}
   \item{n}{number of observations. 
-  If \code{length(n) > 1} then the length is taken to be the number required.
+  Fed into \code{\link[stats]{runif}}.
 
   }
   \item{prob}{
@@ -61,11 +61,12 @@ rposgeom(n, prob)
 %}
 
 \author{ T. W. Yee }
-\note{
-  For \code{rposgeom()}, the arguments of the function are fed
-  into \code{\link[stats:Geometric]{rgeom}} until \eqn{n} positive
-  values are obtained.  This may take a long time if \code{prob}
-  has values close to 1.
+%\note{
+% 20120405; no longer true to a superior method:
+%  For \code{rposgeom()}, the arguments of the function are fed
+%  into \code{\link[stats:Geometric]{rgeom}} until \eqn{n} positive
+%  values are obtained.  This may take a long time if \code{prob}
+%  has values close to 1.
 
 
 % The family function \code{posgeometric} needs not be written.
@@ -73,11 +74,12 @@ rposgeom(n, prob)
 % \eqn{prob}{prob} by maximum likelihood estimation.
 
 
-}
+%}
 
 \seealso{ 
 % \code{posgeometric},
   \code{\link{zageometric}},
+  \code{\link{zigeometric}},
   \code{\link[stats:Geometric]{rgeom}}.
 
 
@@ -86,7 +88,7 @@ rposgeom(n, prob)
 prob <- 0.75; y = rposgeom(n = 1000, prob)
 table(y)
 mean(y) # Sample mean
-1/prob  # Population mean
+1 / prob  # Population mean
 
 (ii <- dposgeom(0:7, prob))
 cumsum(ii) - pposgeom(0:7, prob)  # Should be 0s

@@ -10,7 +10,8 @@
 \usage{
 vglm.control(checkwz = TRUE, criterion = names(.min.criterion.VGAM),
              epsilon = 1e-07, half.stepsizing = TRUE,
-             maxit = 30, stepsize = 1, save.weight = FALSE,
+             maxit = 30, nowarning = FALSE,
+             stepsize = 1, save.weight = FALSE,
              trace = FALSE, wzepsilon = .Machine$double.eps^0.75, 
              xij = NULL, ...)
 }
@@ -52,7 +53,16 @@ vglm.control(checkwz = TRUE, criterion = names(.min.criterion.VGAM),
 
   }
   \item{maxit}{
-  maximum number of Newton-Raphson/Fisher-scoring iterations allowed.
+  maximum number of (usually Fisher-scoring) iterations allowed.
+  Sometimes Newton-Raphson is used.
+
+
+  }
+  \item{nowarning}{
+  logical indicating whether to suppress a warning if
+  convergence is not obtained within \code{maxit} iterations.
+  This is ignored if \code{maxit = 1} is set.
+
 
   }
   \item{stepsize}{

@@ -8,7 +8,8 @@
 }
 \usage{
 sratio(link = "logit", earg = list(),
-       parallel = FALSE, reverse = FALSE, zero = NULL)
+       parallel = FALSE, reverse = FALSE, zero = NULL,
+       whitespace = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -44,6 +45,10 @@ sratio(link = "logit", earg = list(),
   linear/additive predictors are modelled as intercepts only.
   The values must be from the set \{1,2,\ldots,\eqn{M}\}.
   The default value means none are modelled as intercept-only terms.
+
+  }
+  \item{whitespace}{
+  See \code{\link{CommonVGAMffArguments}} for information.
 
   }
 }
@@ -119,6 +124,8 @@ contains further information and examples.
 \section{Warning }{
   No check is made to verify that the response is ordinal;
   see \code{\link[base:factor]{ordered}}.
+
+
 }
 
 \seealso{
@@ -131,11 +138,14 @@ contains further information and examples.
   \code{\link{probit}},
   \code{\link{cloglog}},
   \code{\link{cauchit}}.
+
+
 }
 
 \examples{
 pneumo = transform(pneumo, let = log(exposure.time))
-(fit = vglm(cbind(normal,mild,severe) ~ let, sratio(parallel = TRUE), pneumo))
+(fit = vglm(cbind(normal, mild, severe) ~ let,
+            sratio(parallel = TRUE), data = pneumo))
 coef(fit, matrix = TRUE)
 constraints(fit)
 predict(fit)

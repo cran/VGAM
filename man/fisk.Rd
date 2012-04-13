@@ -77,9 +77,8 @@ Hoboken, NJ: Wiley-Interscience.
 
 \author{ T. W. Yee }
 \note{
-  If the self-starting initial values fail, try experimenting
-  with the initial value arguments, especially those whose
-  default value is not \code{NULL}.
+  See the note in \code{\link{genbetaII}}.
+
 
 }
 
@@ -97,9 +96,9 @@ Hoboken, NJ: Wiley-Interscience.
 }
 
 \examples{
-fdata = data.frame(y = rfisk(n = 200, 4, 6))
+fdata = data.frame(y = rfisk(n = 200, exp(1), exp(2)))
 fit = vglm(y ~ 1, fisk, fdata, trace = TRUE)
-fit = vglm(y ~ 1, fisk(ishape1.a = 3.3), fdata, trace = TRUE, crit = "coef")
+fit = vglm(y ~ 1, fisk(ishape1.a = exp(1)), fdata, trace = TRUE)
 coef(fit, matrix = TRUE)
 Coef(fit)
 summary(fit)

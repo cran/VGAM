@@ -77,9 +77,7 @@ Hoboken, NJ, USA: Wiley-Interscience.
 
 \author{ T. W. Yee }
 \note{
-If the self-starting initial values fail, try experimenting
-with the initial value arguments, especially those whose
-default value is not \code{NULL}.
+  See the note in \code{\link{genbetaII}}.
 
 
 }
@@ -99,9 +97,10 @@ default value is not \code{NULL}.
 }
 
 \examples{
-idata = data.frame(y = rinvlomax(n = 2000, 6, 2))
+idata = data.frame(y = rinvlomax(n = 2000, exp(2), exp(1)))
 fit = vglm(y ~ 1, invlomax, idata, trace = TRUE)
-fit = vglm(y ~ 1, invlomax, idata, trace = TRUE, crit = "coef")
+fit = vglm(y ~ 1, invlomax(iscale = exp(2), ishape2.p = exp(1)), idata,
+           trace = TRUE, epsilon = 1e-8)
 coef(fit, matrix = TRUE)
 Coef(fit)
 summary(fit)

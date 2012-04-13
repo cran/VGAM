@@ -75,9 +75,7 @@ Hoboken, NJ, USA: Wiley-Interscience.
 
 \author{ T. W. Yee }
 \note{
-If the self-starting initial values fail, try experimenting
-with the initial value arguments, especially those whose
-default value is not \code{NULL}.
+  See the note in \code{\link{genbetaII}}.
 
 
 }
@@ -95,10 +93,10 @@ default value is not \code{NULL}.
 }
 
 \examples{
-pdata = data.frame(y = rparalogistic(n = 3000, 4, 6))
+pdata = data.frame(y = rparalogistic(n = 3000, exp(1), exp(2)))
 fit = vglm(y ~ 1, paralogistic, pdata, trace = TRUE)
-fit = vglm(y ~ 1, paralogistic(ishape1.a = 2.3, iscale = 5),
-           pdata, trace = TRUE, crit = "coef")
+fit = vglm(y ~ 1, paralogistic(ishape1.a = 2.3, iscale = 7),
+           pdata, trace = TRUE, epsilon = 1e-8)
 coef(fit, matrix = TRUE)
 Coef(fit)
 summary(fit)

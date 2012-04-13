@@ -21,10 +21,11 @@ rpospois(n, lambda)
 \arguments{
   \item{x, q}{vector of quantiles.}
   \item{p}{vector of probabilities.}
-  \item{n}{number of observations. 
-  If \code{length(n) > 1} then the length is taken to be the number required.
+  \item{n}{number of observations.
+  Fed into \code{\link[stats]{runif}}.
 
   }
+
   \item{lambda}{
   vector of positive means (of an ordinary Poisson distribution).
   Short vectors are recycled.
@@ -63,10 +64,11 @@ rpospois(n, lambda)
 
 \author{ T. W. Yee }
 \note{
-  For \code{rpospois}, the arguments of the function are fed
-  into \code{\link[stats:Poisson]{rpois}} until \eqn{n} positive
-  values are obtained.  This may take a long time if \code{lambda}
-  has values close to 0.
+% 20120405; no longer true to a superior method:
+% For \code{rpospois}, the arguments of the function are fed
+% into \code{\link[stats:Poisson]{rpois}} until \eqn{n} positive
+% values are obtained.  This may take a long time if \code{lambda}
+% has values close to 0.
 
 
   The family function \code{\link{pospoisson}} estimates
@@ -78,6 +80,7 @@ rpospois(n, lambda)
 \seealso{ 
   \code{\link{pospoisson}},
   \code{\link{zapoisson}},
+  \code{\link{zipoisson}},
   \code{\link[stats:Poisson]{rpois}}.
 
 

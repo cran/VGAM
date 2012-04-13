@@ -63,6 +63,7 @@ provided \eqn{q > 1}; these are returned as the fitted values.
   The object is used by modelling functions such as \code{\link{vglm}},
   and \code{\link{vgam}}.
 
+
 }
 \references{
 Kleiber, C. and Kotz, S. (2003)
@@ -73,9 +74,7 @@ Hoboken, NJ, USA: Wiley-Interscience.
 
 \author{ T. W. Yee }
 \note{
-    If the self-starting initial values fail, try experimenting with
-    the initial value arguments, especially those whose default value
-    is not \code{NULL}.
+  See the note in \code{\link{genbetaII}}.
 
 
 }
@@ -97,7 +96,7 @@ Hoboken, NJ, USA: Wiley-Interscience.
 bdata = data.frame(y = rsinmad(2000, shape1.a = 1, 6, 2)) # Not genuine data!
 fit = vglm(y ~ 1, betaII, bdata, trace = TRUE)
 fit = vglm(y ~ 1, betaII(ishape2.p = 0.7, ishape3.q = 0.7),
-           bdata, trace = TRUE, crit = "coef")
+           bdata, trace = TRUE)
 coef(fit, matrix = TRUE)
 Coef(fit)
 summary(fit)

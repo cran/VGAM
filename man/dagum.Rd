@@ -82,9 +82,7 @@ Hoboken, NJ, USA: Wiley-Interscience.
 
 \author{ T. W. Yee }
 \note{
-If the self-starting initial values fail, try experimenting
-with the initial value arguments, especially those whose
-default value is not \code{NULL}.
+  See the note in \code{\link{genbetaII}}.
 
 
 From Kleiber and Kotz (2003), the MLE is rather sensitive to isolated
@@ -110,9 +108,9 @@ while estimates for \eqn{a} and \eqn{p} can be considered unbiased for
 }
 
 \examples{
-ddata = data.frame(y = rdagum(n = 3000, 4, 6, 2))
+ddata = data.frame(y = rdagum(n = 3000, exp(1), exp(2), exp(1)))
 fit = vglm(y ~ 1, dagum, ddata, trace = TRUE)
-fit = vglm(y ~ 1, dagum(ishape1.a = 2.1), ddata, trace = TRUE, crit = "c")
+fit = vglm(y ~ 1, dagum(ishape1.a = exp(1)), ddata, trace = TRUE)
 coef(fit, matrix = TRUE)
 Coef(fit)
 summary(fit)

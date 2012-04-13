@@ -21,11 +21,11 @@ rposnegbin(n, size, prob = NULL, munb = NULL)
 \arguments{
   \item{x, q}{vector of quantiles.}
   \item{p}{vector of probabilities.}
-  \item{n}{
-  number of random values to return.
-  If \code{length(n) > 1} then the length is taken to be the number required.
+  \item{n}{number of observations.
+  Fed into \code{\link[stats]{runif}}.
 
   }
+
   \item{size, prob, munb, log}{
   Same arguments as that of an ordinary negative binomial distribution
   (see \code{\link[stats:NegBinomial]{dnbinom}}).
@@ -49,11 +49,18 @@ rposnegbin(n, size, prob = NULL, munb = NULL)
   \deqn{\mu / (1-p(0))}{%
     munb / (1-p(0))}
   where \eqn{\mu}{munb} the mean of an ordinary negative binomial distribution.
-  The arguments of
-  \code{rposnegbin()}
-  are fed into
-  \code{\link[stats:NegBinomial]{rnbinom}} until \eqn{n} positive values
-  are obtained.
+
+
+
+
+% 20120405; no longer true to a superior method:
+% The arguments of
+% \code{rposnegbin()}
+% are fed into
+% \code{\link[stats:NegBinomial]{rnbinom}} until \eqn{n} positive values
+% are obtained.
+
+
 
 }
 \value{
@@ -75,44 +82,49 @@ for counts with extra zeros.
 
 }
 \author{ T. W. Yee }
-\note{
-  The running time
-  of \code{rposnegbin()}
-  is slow when \code{munb} is very close to zero.
-
-}
+%\note{
+% 20120405; no longer true to a superior method:
+% The running time
+% of \code{rposnegbin()}
+% is slow when \code{munb} is very close to zero.
+%
+%}
 
 \seealso{ 
   \code{\link{posnegbinomial}},
-  \code{\link[stats:NegBinomial]{rnbinom}},
-  \code{\link{zanegbinomial}}.
+  \code{\link{zanegbinomial}},
+  \code{\link{zinegbinomial}},
+  \code{\link[stats:NegBinomial]{rnbinom}}.
+
 
 % \code{\link[MASS]{rnegbin}},
+
 
 }
 \examples{
 munb <- 5; size <- 4; n <- 1000
-table(y <- rposnegbin(n, munb=munb, size=size))
+table(y <- rposnegbin(n, munb = munb, size = size))
 mean(y)    # sample mean
-munb / (1 - (size/(size+munb))^size) # population mean
-munb / pnbinom(0, mu=munb, size=size, lower.tail = FALSE) # same as before
+munb / (1 - (size / (size + munb))^size) # population mean
+munb / pnbinom(0, mu = munb, size = size, lower.tail = FALSE) # same as before
 
 x <- (-1):17
-(ii <- dposnegbin(x, munb=munb, size=size))
-max(abs(cumsum(ii) - pposnegbin(x, munb=munb, size=size)))  # Should be 0
+(ii <- dposnegbin(x, munb = munb, size = size))
+max(abs(cumsum(ii) - pposnegbin(x, munb = munb, size = size)))  # Should be 0
 
 \dontrun{
 x <- 0:10
-barplot(rbind(dposnegbin(x, munb=munb, size=size), dnbinom(x, mu=munb, size=size)),
+barplot(rbind(dposnegbin(x, munb = munb, size = size),
+                 dnbinom(x, mu   = munb, size = size)),
         beside = TRUE, col = c("blue","green"),
-        main=paste("dposnegbin(munb=", munb, ", size=", size, ") (blue) vs",
-                        " dnbinom(mu=", munb, ", size=", size, ") (green)", sep=""),
+        main = paste("dposnegbin(munb = ", munb, ", size = ", size, ") (blue) vs",
+                     " dnbinom(mu = ", munb, ", size = ", size, ") (green)", sep = ""),
         names.arg = as.character(x)) }
 
 # Another test for pposnegbin()
 nn <- 5000
-mytab <- cumsum(table(rposnegbin(nn, munb=munb, size=size))) / nn
-myans <- pposnegbin(sort(as.numeric(names(mytab))), munb=munb, size=size)
+mytab <- cumsum(table(rposnegbin(nn, munb = munb, size = size))) / nn
+myans <- pposnegbin(sort(as.numeric(names(mytab))), munb = munb, size = size)
 max(abs(mytab - myans))  # Should be 0
 }
 \keyword{distribution}

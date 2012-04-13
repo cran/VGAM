@@ -2,7 +2,8 @@
 \alias{model.matrixvlm}
 \title{Construct the Design Matrix of a VLM Object}
 \usage{
-model.matrixvlm(object, type = c("vlm","lm","lm2","bothlmlm2"), \dots)
+model.matrixvlm(object, type = c("vlm", "lm", "lm2", "bothlmlm2"),
+                lapred.index = NULL, \dots)
 }
 \arguments{
   \item{object}{an object of a class that inherits from the
@@ -17,12 +18,25 @@ model.matrixvlm(object, type = c("vlm","lm","lm2","bothlmlm2"), \dots)
   to the \code{form2} argument.
   The value \code{"bothlmlm2"} means both LM and VLM model matrices.
 
+
   }
+  \item{lapred.index}{
+    Single integer. The index for a linear/additive predictor,
+    it must have a value from the set \code{1:M}, and
+    \code{type = "lm"}  must be assigned.
+    Then it returns a subset of the VLM matrix corresponding to
+    the \code{lapred.index}th linear/additive predictor; this
+    is a LM-type matrix.
+
+
+  }    
   \item{\dots}{further arguments passed to or from other methods.
     These include \code{data} (which
     is a data frame created with \code{\link{model.framevlm}}),
     \code{contrasts.arg}, and \code{xlev}.
     See \code{\link[stats]{model.matrix}} for more information.
+
+
   }    
 }
 
@@ -81,22 +95,22 @@ Reduced-rank vector generalized linear models.
 # Illustrates smart prediction
 pneumo = transform(pneumo, let = log(exposure.time))
 fit = vglm(cbind(normal, mild, severe) ~ poly(c(scale(let)), 2),
-           fam = multinomial,
+           family = multinomial,
            data = pneumo, trace = TRUE, x = FALSE)
 class(fit)
-fit@x
+fit@x # Not saved on the object
 model.matrix(fit)
+model.matrix(fit, lapred.index = 1, type = "lm")
+model.matrix(fit, lapred.index = 2, type = "lm")
 
-Check1 = head(model.matrix(fit, type = "lm"))
-Check1
-Check2 = model.matrix(fit, data = head(pneumo), type = "lm")
-Check2
+(Check1 = head(model.matrix(fit, type = "lm")))
+(Check2 = model.matrix(fit, data = head(pneumo), type = "lm"))
 all.equal(c(Check1), c(Check2))
 
 q0 = head(predict(fit))
 q1 = head(predict(fit, newdata = pneumo))
 q2 = predict(fit, newdata = head(pneumo))
-all.equal(q0, q1)  # Should be TRUE
-all.equal(q1, q2)  # Should be TRUE
+all.equal(q0, q1) # Should be TRUE
+all.equal(q1, q2) # Should be TRUE
 }
 \keyword{models}

@@ -266,7 +266,9 @@ riceff.control <- function(save.weight = TRUE, ...) {
     stop("bad input for argument 'isigma'")
   if (!is.list(evee)) evee = list()
   if (!is.list(esigma)) esigma = list()
-  if (!is.Numeric(nsimEIM, allowable.length = 1, integer.valued = TRUE) || nsimEIM <= 50)
+  if (!is.Numeric(nsimEIM, allowable.length = 1,
+                  integer.valued = TRUE) ||
+      nsimEIM <= 50)
     stop("'nsimEIM' should be an integer greater than 50")
 
   new("vglmff",
@@ -295,10 +297,12 @@ riceff.control <- function(save.weight = TRUE, ...) {
                      log(besselI(y*vee/sigma.init^2, nu=0)) -
                      (y^2 + vee^2)/(2*sigma.init^2)))
         }
-        vee.grid = seq(quantile(rep(y, w), probs = seq(0, 1, 0.2))["20%"],
-                       quantile(rep(y, w), probs = seq(0, 1, 0.2))["80%"], len=11)
+        vee.grid =
+          seq(quantile(rep(y, w), probs = seq(0, 1, 0.2))["20%"],
+              quantile(rep(y, w), probs = seq(0, 1, 0.2))["80%"], len=11)
         vee.init = if (length( .ivee )) .ivee else
-            getMaxMin(vee.grid, objfun = riceff.Loglikfun, y = y,  x = x, w = w)
+          getMaxMin(vee.grid, objfun = riceff.Loglikfun,
+                     y = y,  x = x, w = w)
         vee.init = rep(vee.init, length = length(y))
         sigma.init = if (length( .isigma )) .isigma else
             sqrt(max((weighted.mean(y^2, w) - vee.init^2)/2, 0.001))
@@ -437,18 +441,22 @@ skellam.control <- function(save.weight = TRUE, ...) {
                     nsimEIM = 100, parallel = FALSE, zero = NULL)
 {
     if (mode(lmu1) != "character" && mode(lmu1) != "name")
-        lmu1 = as.character(substitute(lmu1))
+      lmu1 = as.character(substitute(lmu1))
     if (mode(lmu2) != "character" && mode(lmu2) != "name")
-        lmu2 = as.character(substitute(lmu2))
-    if (length(imu1) && !is.Numeric(imu1, positive = TRUE))
-        stop("bad input for argument 'imu1'")
-    if (length(imu2) && !is.Numeric(imu2, positive = TRUE))
-        stop("bad input for argument 'imu2'")
+      lmu2 = as.character(substitute(lmu2))
+    if (length(imu1) &&
+        !is.Numeric(imu1, positive = TRUE))
+      stop("bad input for argument 'imu1'")
+    if (length(imu2) &&
+        !is.Numeric(imu2, positive = TRUE))
+      stop("bad input for argument 'imu2'")
+
     if (!is.list(emu1)) emu1 = list()
     if (!is.list(emu2)) emu2 = list()
-    if (!is.Numeric(nsimEIM, allowable.length = 1, integer.valued = TRUE) ||
+    if (!is.Numeric(nsimEIM, allowable.length = 1,
+                    integer.valued = TRUE) ||
         nsimEIM <= 50)
-        stop("'nsimEIM' should be an integer greater than 50")
+      stop("'nsimEIM' should be an integer greater than 50")
 
     new("vglmff",
     blurb = c("Skellam distribution\n\n",
@@ -476,8 +484,10 @@ skellam.control <- function(save.weight = TRUE, ...) {
             mean.init = weighted.mean(y, w)
             mu1.init = max((var.y.est + mean.init)/2, 0.01)
             mu2.init = max((var.y.est - mean.init)/2, 0.01)
-            mu1.init = rep(if(length( .imu1)) .imu1 else mu1.init, length=n)
-            mu2.init = rep(if(length( .imu2)) .imu2 else mu2.init, length=n)
+            mu1.init = rep(if(length( .imu1 )) .imu1 else mu1.init,
+                           length = n)
+            mu2.init = rep(if(length( .imu2 )) .imu2 else mu2.init,
+                           length = n)
             etastart = cbind(theta2eta(mu1.init, .lmu1, earg = .emu1),
                              theta2eta(mu2.init, .lmu2, earg = .emu2))
         }
@@ -608,17 +618,20 @@ yulesimon.control <- function(save.weight = TRUE, ...) {
 
  yulesimon = function(link = "loge", earg = list(), irho = NULL, nsimEIM = 200)
 {
-    if (length(irho) && !is.Numeric(irho, positive = TRUE))
-        stop("argument 'irho' must be > 0")
+    if (length(irho) &&
+        !is.Numeric(irho, positive = TRUE))
+      stop("argument 'irho' must be > 0")
     if (mode(link) != "character" && mode(link) != "name")
-        link = as.character(substitute(link))
+      link = as.character(substitute(link))
     if (!is.list(earg)) earg = list()
-    if (!is.Numeric(nsimEIM, allowable.length = 1, integer.valued = TRUE) ||
+    if (!is.Numeric(nsimEIM, allowable.length = 1,
+                    integer.valued = TRUE) ||
         nsimEIM <= 50)
-        stop("'nsimEIM' should be an integer greater than 50")
+      stop("'nsimEIM' should be an integer greater than 50")
 
     new("vglmff",
-    blurb = c("Yule-Simon distribution f(y) = rho*beta(y,rho+1), rho>0, y=1,2,..\n\n",
+    blurb = c("Yule-Simon distribution f(y) = rho*beta(y,rho+1), ",
+              "rho>0, y=1,2,..\n\n",
             "Link:    ",
             namesof("p", link, earg =earg), "\n\n",
             "Mean:     rho/(rho-1), provided rho>1\n",
@@ -636,7 +649,8 @@ yulesimon.control <- function(save.weight = TRUE, ...) {
         if (!length(etastart)) {
             wmeany = weighted.mean(y, w) + 1/8
             rho.init = wmeany / (wmeany - 1)
-            rho.init = rep( if (length( .irho )) .irho else rho.init, len = n)
+            rho.init = rep( if (length( .irho )) .irho else
+                           rho.init, len = n)
             etastart = theta2eta(rho.init, .link, earg =.earg)
         }
     }), list( .link=link, .earg =earg, .irho=irho ))),
@@ -698,7 +712,10 @@ dslash <- function(x, mu = 0, sigma = 1, log = FALSE,
   if (!is.Numeric(sigma) || any(sigma <= 0))
     stop("'sigma' must be positive")
   L = max(length(x), length(mu), length(sigma))
-  x = rep(x, len = L); mu = rep(mu, len = L); sigma = rep(sigma, len = L)
+  x = rep(x, len = L);
+  mu = rep(mu, len = L);
+  sigma = rep(sigma, len = L)
+
   zedd = (x-mu)/sigma
   if (log.arg)
     ifelse(abs(zedd)<smallno, -log(2*sigma*sqrt(2*pi)),
@@ -707,11 +724,15 @@ dslash <- function(x, mu = 0, sigma = 1, log = FALSE,
     -expm1(-zedd^2/2)/(sqrt(2*pi)*sigma*zedd^2))
 }
 
+
 pslash <- function(q, mu = 0, sigma = 1){
     if (!is.Numeric(sigma) || any(sigma <= 0))
       stop("'sigma' must be positive")
     L = max(length(q), length(mu), length(sigma))
-    q = rep(q, len = L); mu = rep(mu, len = L); sigma = rep(sigma, len = L)
+    q = rep(q, len = L);
+    mu = rep(mu, len = L);
+    sigma = rep(sigma, len = L)
+
     ans = q * NA
     for (ii in 1:L) {
         temp = integrate(dslash, lower = -Inf, upper = q[ii])
@@ -723,17 +744,21 @@ pslash <- function(q, mu = 0, sigma = 1){
     ans
 }
 
+
 rslash <- function (n, mu = 0, sigma = 1){
-    if (!is.Numeric(n, positive = TRUE, integer.valued = TRUE, allowable.length = 1))
-      stop("bad input for argument 'n'")
-    if (any(sigma <= 0))
-      stop("argument 'sigma' must be positive")
-    rnorm(n = n, mean=mu, sd=sigma) / runif(n = n)
+  if (!is.Numeric(n, positive = TRUE, integer.valued = TRUE,
+                  allowable.length = 1))
+    stop("bad input for argument 'n'")
+  if (any(sigma <= 0))
+    stop("argument 'sigma' must be positive")
+  rnorm(n = n, mean = mu, sd = sigma) / runif(n = n)
 }
+
+
 
 slash.control <- function(save.weight = TRUE, ...)
 {
-    list(save.weight = save.weight)
+  list(save.weight = save.weight)
 }
 
  slash = function(lmu = "identity", lsigma = "loge",
@@ -744,22 +769,31 @@ slash.control <- function(save.weight = TRUE, ...)
                   smallno = .Machine$double.eps*1000)
 {
     if (mode(lmu) != "character" && mode(lmu) != "name")
-        lmu = as.character(substitute(lmu))
+      lmu = as.character(substitute(lmu))
     if (mode(lsigma) != "character" && mode(lsigma) != "name")
-        lsigma = as.character(substitute(lsigma))
-    if (length(isigma) && !is.Numeric(isigma, positive = TRUE))
-        stop("'isigma' must be > 0")
-    if (length(zero) && !is.Numeric(zero, integer.valued = TRUE, positive = TRUE))
-        stop("bad input for argument 'zero'")
+      lsigma = as.character(substitute(lsigma))
+    if (length(isigma) &&
+        !is.Numeric(isigma, positive = TRUE))
+      stop("'isigma' must be > 0")
+    if (length(zero) &&
+        !is.Numeric(zero, integer.valued = TRUE, positive = TRUE))
+      stop("bad input for argument 'zero'")
+
     if (!is.list(emu)) emu = list()
     if (!is.list(esigma)) esigma = list()
-    if (!is.Numeric(nsimEIM, allowable.length = 1, integer.valued = TRUE) || nsimEIM <= 50)
-        stop("'nsimEIM' should be an integer greater than 50")
-    if (!is.Numeric(iprobs, positive = TRUE) || max(iprobs) >= 1 ||
-       length(iprobs)!=2)
-        stop("bad input for argument 'iprobs'")
-    if (!is.Numeric(smallno, positive = TRUE) || smallno > 0.1)
-        stop("bad input for argument 'smallno'")
+    if (!is.Numeric(nsimEIM, allowable.length = 1,
+                    integer.valued = TRUE) ||
+        nsimEIM <= 50)
+      stop("'nsimEIM' should be an integer greater than 50")
+
+    if (!is.Numeric(iprobs, positive = TRUE) ||
+        max(iprobs) >= 1 ||
+        length(iprobs) != 2)
+      stop("bad input for argument 'iprobs'")
+    if (!is.Numeric(smallno, positive = TRUE) ||
+        smallno > 0.1)
+      stop("bad input for argument 'smallno'")
+
 
     new("vglmff",
     blurb = c("Slash distribution\n\n",
@@ -767,7 +801,8 @@ slash.control <- function(save.weight = TRUE, ...)
            namesof("mu",    lmu,    earg = emu,    tag = FALSE), ", ",
            namesof("sigma", lsigma, earg = esigma, tag = FALSE), "\n",
            paste(
-           "1-exp(-(((y-mu)/sigma)^2)/2))/(sqrt(2*pi)*sigma*((y-mu)/sigma)^2)",
+           "1-exp(-(((y-mu)/sigma)^2)/2))/(sqrt(2*pi)*",
+           "sigma*((y-mu)/sigma)^2)",
            "\ty!=mu",
            "\n1/(2*sigma*sqrt(2*pi))",
            "\t\t\t\t\t\t\ty=mu\n")),
@@ -799,7 +834,9 @@ slash.control <- function(save.weight = TRUE, ...)
                       getMaxMin(mu.grid, objfun = slash.Loglikfun,
                                 y = y,  x = x, w = w)
             sigma.init = if (is.Numeric(.isigma)) .isigma else
-              max(0.01, ((quantile(rep(y, w), prob = 0.75)/2)-mu.init)/qnorm(0.75))
+              max(0.01,
+                 ((quantile(rep(y, w), prob = 0.75)/2) -
+                            mu.init) / qnorm(0.75))
             mu.init = rep(mu.init, length = length(y))
             etastart = matrix(0, n, 2)
             etastart[,1] = theta2eta(mu.init, .lmu, earg =.emu)
@@ -906,14 +943,19 @@ dnefghs = function(x, tau, log = FALSE) {
  nefghs <- function(link = "logit", earg = list(), itau = NULL,
                     imethod = 1)
 {
-    if (length(itau) && !is.Numeric(itau, positive = TRUE) || any(itau >= 1))
-        stop("argument 'itau' must be in (0,1)")
+    if (length(itau) &&
+        !is.Numeric(itau, positive = TRUE) ||
+        any(itau >= 1))
+      stop("argument 'itau' must be in (0,1)")
     if (mode(link) != "character" && mode(link) != "name")
-        link = as.character(substitute(link))
+      link = as.character(substitute(link))
+
     if (!is.list(earg)) earg = list()
-    if (!is.Numeric(imethod, allowable.length = 1, integer.valued = TRUE, positive = TRUE) ||
-       imethod > 2)
-        stop("argument 'imethod' must be 1 or 2")
+    if (!is.Numeric(imethod, allowable.length = 1,
+                    integer.valued = TRUE, positive = TRUE) ||
+         imethod > 2)
+      stop("argument 'imethod' must be 1 or 2")
+
 
     new("vglmff",
     blurb = c("Natural exponential family generalized hyperbolic ",
@@ -992,11 +1034,13 @@ dlogF = function(x, shape1, shape2, log = FALSE) {
                  ishape1 = NULL, ishape2 = 1,
                  imethod = 1)
 {
-  if (length(ishape1) && !is.Numeric(ishape1, positive = TRUE))
+  if (length(ishape1) &&
+      !is.Numeric(ishape1, positive = TRUE))
     stop("argument 'ishape1' must be positive")
   if ( # length(ishape2) &&
-   !is.Numeric(ishape2, positive = TRUE))
+      !is.Numeric(ishape2, positive = TRUE))
     stop("argument 'ishape2' must be positive")
+
   if (mode(lshape1) != "character" && mode(lshape1) != "name")
     lshape1 = as.character(substitute(lshape1))
   if (mode(lshape2) != "character" && mode(lshape2) != "name")
@@ -1104,9 +1148,10 @@ dlogF = function(x, shape1, shape2, log = FALSE) {
 
 
 dbenf <- function(x, ndigits = 1, log = FALSE) {
-  if (!is.Numeric(ndigits, allowable.length = 1, positive = TRUE, integer.valued = TRUE) ||
+  if (!is.Numeric(ndigits, allowable.length = 1,
+                  positive = TRUE, integer.valued = TRUE) ||
       ndigits > 2)
-      stop("argument 'ndigits' must be 1 or 2")
+    stop("argument 'ndigits' must be 1 or 2")
   lowerlimit <- ifelse(ndigits == 1, 1, 10)
   upperlimit <- ifelse(ndigits == 1, 9, 99)
   log.arg <- log; rm(log)
@@ -1123,14 +1168,16 @@ dbenf <- function(x, ndigits = 1, log = FALSE) {
 
 
 rbenf <- function(n, ndigits = 1) {
-  if (!is.Numeric(ndigits, allowable.length = 1, positive = TRUE, integer.valued = TRUE) ||
+  if (!is.Numeric(ndigits, allowable.length = 1,
+                  positive = TRUE, integer.valued = TRUE) ||
       ndigits > 2)
-      stop("argument 'ndigits' must be 1 or 2")
+    stop("argument 'ndigits' must be 1 or 2")
   lowerlimit <- ifelse(ndigits == 1, 1, 10)
   upperlimit <- ifelse(ndigits == 1, 9, 99)
   use.n <- if ((length.n <- length(n)) > 1) length.n else
-           if (!is.Numeric(n, integer.valued = TRUE, allowable.length = 1, positive = TRUE)) 
-               stop("bad input for argument 'n'") else n
+           if (!is.Numeric(n, integer.valued = TRUE,
+                           allowable.length = 1, positive = TRUE)) 
+             stop("bad input for argument 'n'") else n
   myrunif <- runif(use.n)
 
   ans <- rep(lowerlimit, length = use.n)
@@ -1144,16 +1191,18 @@ rbenf <- function(n, ndigits = 1) {
 
 
 pbenf <- function(q, ndigits = 1, log.p = FALSE) {
-  if (!is.Numeric(ndigits, allowable.length = 1, positive = TRUE, integer.valued = TRUE) ||
+  if (!is.Numeric(ndigits, allowable.length = 1,
+                  positive = TRUE, integer.valued = TRUE) ||
       ndigits > 2)
-      stop("argument 'ndigits' must be 1 or 2")
+    stop("argument 'ndigits' must be 1 or 2")
   lowerlimit <- ifelse(ndigits == 1, 1, 10)
   upperlimit <- ifelse(ndigits == 1, 9, 99)
 
   ans <- q * NA
   floorq <- floor(q)
   indexTF <- is.finite(q) & (floorq >= lowerlimit)
-  ans[indexTF] <- log10(1 + floorq[indexTF]) - ifelse(ndigits == 1, 0, 1)
+  ans[indexTF] <- log10(1 + floorq[indexTF]) -
+                  ifelse(ndigits == 1, 0, 1)
   ans[!is.na(q) & !is.nan(q) & (q >= upperlimit)] <- 1
   ans[!is.na(q) & !is.nan(q) & (q <  lowerlimit)] <- 0
   if (log.p) log(ans) else ans
@@ -1163,9 +1212,10 @@ pbenf <- function(q, ndigits = 1, log.p = FALSE) {
 
 
 qbenf <- function(p, ndigits = 1) {
-  if (!is.Numeric(ndigits, allowable.length = 1, positive = TRUE, integer.valued = TRUE) ||
+  if (!is.Numeric(ndigits, allowable.length = 1,
+                  positive = TRUE, integer.valued = TRUE) ||
       ndigits > 2)
-      stop("argument 'ndigits' must be 1 or 2")
+    stop("argument 'ndigits' must be 1 or 2")
   lowerlimit <- ifelse(ndigits == 1, 1, 10)
   upperlimit <- ifelse(ndigits == 1, 9, 99)
   bad <- !is.na(p) & !is.nan(p) & ((p < 0) | (p > 1))

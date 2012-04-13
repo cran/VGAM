@@ -14,7 +14,7 @@ vglm(formula, family, data = list(), weights = NULL, subset = NULL,
      coefstart = NULL, control = vglm.control(...), offset = NULL, 
      method = "vglm.fit", model = FALSE, x.arg = TRUE, y.arg = TRUE, 
      contrasts = NULL, constraints = NULL, extra = list(), 
-     form2 = NULL, qr.arg = FALSE, smart = TRUE, ...)
+     form2 = NULL, qr.arg = TRUE, smart = TRUE, ...)
 }
 %- maybe also `usage' for other objects documented here.
 \arguments{
@@ -358,11 +358,13 @@ The \code{VGAM} Package.
   \code{\link{vgam}}.
   Methods functions include 
   \code{coef.vlm},
+  \code{\link{hatvaluesvlm}},
   \code{\link{predictvglm}},
   \code{summary.vglm},
   \code{AIC.vglm},
   \code{\link{lrtest_vglm}},
   etc.
+
 
 }
 

@@ -2,6 +2,16 @@
 \alias{notdocumentedyet}
 %
 %
+% 20120310
+%\alias{hatvalues}
+%\alias{hatvalues.vlm}
+%
+%
+% 20120307
+\alias{npred}
+\alias{npred.vlm}
+%
+%
 %
 % 20120215
 % \alias{print.vglmff}
@@ -236,8 +246,8 @@
 \alias{deviance.uqo}
 \alias{deviance.vglm}
 \alias{deviance.vlm}
-\alias{df.residual}
-\alias{df.residual.vlm}
+%\alias{df.residual}
+%\alias{df.residual_vlm}
 \alias{dimm}
 % \alias{dneg.binomial}
 \alias{dnorm2}

@@ -9,7 +9,7 @@
 }
 \usage{
 multinomial(zero = NULL, parallel = FALSE, nointercept = NULL,
-            refLevel = "last")
+            refLevel = "last", whitespace = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -26,7 +26,7 @@ multinomial(zero = NULL, parallel = FALSE, nointercept = NULL,
   equal/unequal coefficients.
 
   }
-  \item{nointercept}{
+  \item{nointercept, whitespace}{
   See \code{\link{CommonVGAMffArguments}} for more details.
 
   }
