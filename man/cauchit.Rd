@@ -8,46 +8,26 @@
 
 }
 \usage{
-cauchit(theta, earg = list(bvalue= .Machine$double.eps),
+cauchit(theta, bvalue = .Machine$double.eps,
         inverse = FALSE, deriv = 0, short = TRUE, tag = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{theta}{
   Numeric or character.
-      See below for further details.
+  See below for further details.
   }
-  \item{earg}{
-  List. Extra argument for passing in additional information.
-  Values of \code{theta} which are less than or equal to 0 can be
-  replaced by the \code{bvalue} component of the list \code{earg}
-  before computing the link function value.
-  Values of \code{theta} which are greater than or equal to 1 can be
-  replaced by 1 minus the \code{bvalue} component of the list \code{earg}
-  before computing the link function value.
-  The component name \code{bvalue} stands for ``boundary value''.
-  See \code{\link{Links}} for general information about \code{earg}.
+  \item{bvalue}{
+  See \code{\link{Links}}.
+
 
   }
-  \item{inverse}{
-  Logical. If \code{TRUE} the inverse function is computed.
+  \item{inverse, deriv, short, tag}{
+  Details at \code{\link{Links}}.
+
 
   }
-  \item{deriv}{
-  Order of the derivative. Integer with value 0, 1 or 2.
 
-  }
-  \item{short}{
-  Used for labelling the \code{blurb} slot of a \code{\link{vglmff-class}}
-  object.
-
-  }
-  \item{tag}{
-  Used for labelling the linear/additive predictor in the
-  \code{initialize} slot of a \code{\link{vglmff-class}} object.
-  Contains a little more information if \code{TRUE}.
-
-  }
 }
 \details{
   This link function is an alternative link function for parameters that
@@ -58,8 +38,8 @@ cauchit(theta, earg = list(bvalue= .Machine$double.eps),
   (see examples below).
 
   Numerical values of \code{theta} close to 0 or 1 or out of range result
-  in \code{Inf}, \code{-Inf}, \code{NA} or \code{NaN}.  The arguments
-  \code{short} and \code{tag} are used only if \code{theta} is character.
+  in \code{Inf}, \code{-Inf}, \code{NA} or \code{NaN}.
+
 
 }
 \value{
@@ -82,7 +62,8 @@ cauchit(theta, earg = list(bvalue= .Machine$double.eps),
 
 \note{
   Numerical instability may occur when \code{theta} is close to 1 or 0.
-  One way of overcoming this is to use \code{earg}.
+  One way of overcoming this is to use \code{bvalue}.
+
 
   As mentioned above,
   in terms of the threshold approach with cumulative probabilities for
@@ -98,27 +79,29 @@ cauchit(theta, earg = list(bvalue= .Machine$double.eps),
     \code{\link{loge}},
     \code{\link{cauchy}},
     \code{\link{cauchy1}}.
+
+
  }
 \examples{
-p = seq(0.01, 0.99, by=0.01)
+p <- seq(0.01, 0.99, by=0.01)
 cauchit(p)
 max(abs(cauchit(cauchit(p), inverse = TRUE) - p)) # Should be 0
 
-p = c(seq(-0.02, 0.02, by=0.01), seq(0.97, 1.02, by=0.01))
+p <- c(seq(-0.02, 0.02, by=0.01), seq(0.97, 1.02, by = 0.01))
 cauchit(p)  # Has no NAs
 
 \dontrun{
 par(mfrow = c(2, 2), lwd = (mylwd <- 2))
-y = seq(-4, 4, length = 100)
-p = seq(0.01, 0.99, by = 0.01)
+y <- seq(-4, 4, length = 100)
+p <- seq(0.01, 0.99, by = 0.01)
 
 for(d in 0:1) {
   matplot(p, cbind(logit(p, deriv = d), probit(p, deriv = d)),
           type = "n", col = "purple", ylab = "transformation",
-          las=1, main = if (d == 0) "Some probability link functions"
+          las = 1, main = if (d == 0) "Some probability link functions"
           else "First derivative")
-  lines(p, logit(p, deriv = d), col = "limegreen")
-  lines(p, probit(p, deriv = d), col = "purple")
+  lines(p,   logit(p, deriv = d), col = "limegreen")
+  lines(p,  probit(p, deriv = d), col = "purple")
   lines(p, cloglog(p, deriv = d), col = "chocolate")
   lines(p, cauchit(p, deriv = d), col = "tan")
   if (d == 0) {
@@ -142,7 +125,7 @@ for(d in 0) {
   if (d == 0) {
       abline(h = 0.5, v = 0, lty = "dashed")
       legend(-4, 1, c("logit", "probit", "cloglog", "cauchit"), lwd = mylwd,
-             col = c("limegreen","purple","chocolate", "tan"))
+             col = c("limegreen", "purple", "chocolate", "tan"))
   }
 }
 par(lwd = 1)

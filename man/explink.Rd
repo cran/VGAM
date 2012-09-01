@@ -8,7 +8,7 @@
 
 }
 \usage{
-explink(theta, earg = list(), inverse = FALSE, deriv = 0, short = TRUE, tag = FALSE)
+explink(theta, bvalue = NULL, inverse = FALSE, deriv = 0, short = TRUE, tag = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -17,31 +17,21 @@ explink(theta, earg = list(), inverse = FALSE, deriv = 0, short = TRUE, tag = FA
   See below for further details.
 
   }
-  \item{earg}{
-  Optional list.
-  See \code{\link{Links}} for general information about \code{earg}.
+% \item{earg}{
+% Optional list.
+% See \code{\link{Links}} for general information about \code{earg}.
+% }
+
+  \item{bvalue}{
+  See \code{cloglog}.
 
   }
-  \item{inverse}{
-  Logical. If \code{TRUE} the inverse function is computed.
-  The inverse function is the \code{\link{loge}} function.
+  \item{inverse, deriv, short, tag}{
+  Details at \code{\link{Links}}.
+
 
   }
-  \item{deriv}{
-  Order of the derivative. Integer with value 0, 1 or 2.
 
-  }
-  \item{short}{
-  Used for labelling the \code{blurb} slot of a
-  \code{\link{vglmff-class}} object.
-
-  }
-  \item{tag}{
-  Used for labelling the linear/additive predictor in the
-  \code{initialize} slot of a \code{\link{vglmff-class}} object.
-  Contains a little more information if \code{TRUE}.
-
-  }
 }
 \details{
 
@@ -50,10 +40,6 @@ explink(theta, earg = list(), inverse = FALSE, deriv = 0, short = TRUE, tag = FA
   Numerical values of \code{theta} close to negative or positive infinity
   may result in
   \code{0}, \code{Inf}, \code{-Inf}, \code{NA} or \code{NaN}.
-
-
-  The arguments \code{short} and \code{tag} are used only if
-  \code{theta} is character.
 
 
 
@@ -86,12 +72,12 @@ explink(theta, earg = list(), inverse = FALSE, deriv = 0, short = TRUE, tag = FA
 
 \note{
   This function has particular use for computing quasi-variances when
-  used with \code{\link{rcam}} and \code{\link{normal1}}.
+  used with \code{\link{rcim}} and \code{\link{normal1}}.
 
 
   Numerical instability may occur when \code{theta} is
   close to negative or positive infinity.
-  One way of overcoming this (one day) is to use \code{earg}.
+  One way of overcoming this (one day) is to use \code{bvalue}.
 
 
 }
@@ -99,13 +85,13 @@ explink(theta, earg = list(), inverse = FALSE, deriv = 0, short = TRUE, tag = FA
 \seealso{ 
     \code{\link{Links}},
     \code{\link{loge}},
-    \code{\link{rcam}},
+    \code{\link{rcim}},
     \code{\link{Qvar}},
     \code{\link{normal1}}.
 
 }
 \examples{
-theta = rnorm(30)
+theta <- rnorm(30)
 explink(theta)
 max(abs(explink(explink(theta), inverse = TRUE) - theta)) # Should be 0
 }

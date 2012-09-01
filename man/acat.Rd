@@ -7,9 +7,8 @@
   (preferably) factor response.
 }
 \usage{
-acat(link = "loge", earg = list(),
-     parallel = FALSE, reverse = FALSE, zero = NULL,
-     whitespace = FALSE)
+acat(link = "loge", parallel = FALSE, reverse = FALSE,
+     zero = NULL, whitespace = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -18,11 +17,6 @@ acat(link = "loge", earg = list(),
   Link function applied to the ratios of the 
   adjacent categories probabilities. 
   See \code{\link{Links}} for more choices.
-
-  }
-  \item{earg}{
-  List. Extra argument for the link function.
-  See \code{\link{CommonVGAMffArguments}} for more information.
 
   }
   \item{parallel}{
@@ -39,15 +33,18 @@ acat(link = "loge", earg = list(),
   \eqn{\eta_j = \log(P[Y=j]/P[Y=j+1])}{eta_j=log(P[Y=j]/P[Y=j+1])}
   will be used.
 
+
   }
   \item{zero}{
   An integer-valued vector specifying which
   linear/additive predictors are modelled as intercepts only.
   The values must be from the set \{1,2,\ldots,\eqn{M}\}.
 
+
   }
   \item{whitespace}{
     See \code{\link{CommonVGAMffArguments}} for information.
+
 
   }
 }
@@ -96,7 +93,7 @@ contains further information and examples.
 \author{ Thomas W. Yee }
 \note{
   The response should be either a matrix of counts (with row sums that are
-  all positive), or a factor. In both cases, the \code{y} slot returned
+  all positive), or an ordered factor. In both cases, the \code{y} slot returned
   by \code{vglm}/\code{vgam}/\code{rrvglm} is the matrix of counts.
 
 
@@ -114,7 +111,8 @@ contains further information and examples.
 
 }
 \section{Warning }{
-  No check is made to verify that the response is ordinal;
+  No check is made to verify that the response is ordinal if the
+  response is a matrix;
   see \code{\link[base:factor]{ordered}}.
 
 }
@@ -129,7 +127,7 @@ contains further information and examples.
 }
 \examples{
 pneumo <- transform(pneumo, let = log(exposure.time))
-(fit <- vglm(cbind(normal,mild,severe) ~ let, acat, pneumo))
+(fit <- vglm(cbind(normal, mild, severe) ~ let, acat, pneumo))
 coef(fit, matrix = TRUE)
 constraints(fit)
 model.matrix(fit)

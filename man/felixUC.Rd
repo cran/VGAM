@@ -13,10 +13,10 @@
 
 }
 \usage{
-dfelix(x, a=0.25, log=FALSE)
-%pfelix(q, a=0.25)
-%qfelix(p, a=0.25)
-%rfelix(n, a=0.25)
+dfelix(x, a = 0.25, log = FALSE)
+%pfelix(q, a = 0.25)
+%qfelix(p, a = 0.25)
+%rfelix(n, a = 0.25)
 }
 \arguments{
   \item{x}{vector of quantiles.}

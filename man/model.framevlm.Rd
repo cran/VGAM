@@ -12,11 +12,14 @@ model.framevlm(object, setupsmart = TRUE, wrapupsmart = TRUE, \dots)
   \item{\dots}{further arguments such as \code{data}, \code{na.action},
     \code{subset}.
     See \code{\link[stats]{model.frame}} for more information on these.
+
+
   }
 
   \item{setupsmart, wrapupsmart}{
     Logical.
     Arguments to determine whether to use smart prediction.
+
 
   }
 
@@ -25,6 +28,8 @@ model.framevlm(object, setupsmart = TRUE, wrapupsmart = TRUE, \dots)
   This function returns a \code{\link{data.frame}} with the variables.
   It is applied to an object which inherits from class \code{"vlm"} (e.g.,
   a fitted model of class \code{"vglm"}).
+
+
 }
 \details{Since \code{object} is
   an object which inherits from class \code{"vlm"} (e.g.,
@@ -34,8 +39,10 @@ model.framevlm(object, setupsmart = TRUE, wrapupsmart = TRUE, \dots)
   \code{model = TRUE}) or pass the call used when fitting on to the
   default method.
 
+
   This code implements \emph{smart prediction}
   (see \code{\link{smartpred}}).
+
 
 
 }
@@ -63,22 +70,21 @@ model.framevlm(object, setupsmart = TRUE, wrapupsmart = TRUE, \dots)
 }
 \examples{
 # Illustrates smart prediction
-pneumo = transform(pneumo, let = log(exposure.time))
-fit = vglm(cbind(normal,mild, severe) ~ poly(c(scale(let)), 2),
-           fam = multinomial,
-           data = pneumo, trace = TRUE, x = FALSE)
+pneumo <- transform(pneumo, let = log(exposure.time))
+fit <- vglm(cbind(normal,mild, severe) ~ poly(c(scale(let)), 2),
+            multinomial, data = pneumo, trace = TRUE, x = FALSE)
 class(fit)
 
-check1 = head(model.frame(fit))
+check1 <- head(model.frame(fit))
 check1
-check2 = model.frame(fit, data = head(pneumo))
+check2 <- model.frame(fit, data = head(pneumo))
 check2
 all.equal(unlist(check1), unlist(check2)) # Should be TRUE
 
-q0 = head(predict(fit))
-q1 = head(predict(fit, newdata = pneumo))
-q2 = predict(fit, newdata = head(pneumo))
-all.equal(q0, q1)   # Should be TRUE
-all.equal(q1, q2)   # Should be TRUE
+q0 <- head(predict(fit))
+q1 <- head(predict(fit, newdata = pneumo))
+q2 <- predict(fit, newdata = head(pneumo))
+all.equal(q0, q1) # Should be TRUE
+all.equal(q1, q2) # Should be TRUE
 }
 \keyword{models}

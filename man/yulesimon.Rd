@@ -7,13 +7,14 @@
 
 }
 \usage{
-yulesimon(link = "loge", earg = list(), irho = NULL, nsimEIM = 200)
+yulesimon(link = "loge", irho = NULL, nsimEIM = 200, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{link, earg}{
-  Link function and extra argument for the \eqn{\rho}{rho} parameter.
+  \item{link}{
+  Link function for the \eqn{\rho}{rho} parameter.
   See \code{\link{Links}} for more choices and for general information.
+
 
   }
   \item{irho}{
@@ -22,9 +23,11 @@ yulesimon(link = "loge", earg = list(), irho = NULL, nsimEIM = 200)
   The default is to obtain an initial value internally. Use this argument
   if the default fails.
 
+
   }
-  \item{nsimEIM}{
+  \item{nsimEIM, zero}{
   See \code{\link{CommonVGAMffArguments}} for more information.
+
 
   }
 }
@@ -43,11 +46,20 @@ yulesimon(link = "loge", earg = list(), irho = NULL, nsimEIM = 200)
     \eqn{\rho^2/((\rho-1)^2 (\rho-2))}{rho^2/((rho-1)^2 (rho-2))}
     provided \eqn{\rho > 2}{rho > 2}.
 
+
+
+  The distribution was named after Udny Yule and Herbert A. Simon.
+  Simon originally called it the Yule distribution.
+  This family function can handle multiple responses.
+
+
+
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}}
   and \code{\link{vgam}}.
+
 
 }
 \references{ 
@@ -58,20 +70,21 @@ yulesimon(link = "loge", earg = list(), irho = NULL, nsimEIM = 200)
     \bold{42},
     425--440.
 
+
 }
 \author{ T. W. Yee }
 %\note{ 
 %}
 
 \seealso{
-    \code{\link{ryules}}.
+  \code{\link{ryules}}.
 
 }
 \examples{
-ydata = data.frame(x2 = runif(nn <- 1000))
-ydata = transform(ydata, y = ryules(nn, rho = exp(1.5-x2)))
+ydata <- data.frame(x2 = runif(nn <- 1000))
+ydata <- transform(ydata, y = ryules(nn, rho = exp(1.5 - x2)))
 with(ydata, table(y))
-fit = vglm(y ~ x2, yulesimon, ydata, trace = TRUE)
+fit <- vglm(y ~ x2, yulesimon, ydata, trace = TRUE)
 coef(fit, matrix = TRUE)
 summary(fit)
 }

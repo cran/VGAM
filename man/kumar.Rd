@@ -9,7 +9,6 @@
 }
 \usage{
 kumar(lshape1 = "loge", lshape2 = "loge",
-      eshape1 = list(), eshape2 = list(),
       ishape1 = NULL,   ishape2 = NULL, grid.shape1 = c(0.4, 6.0),
       tol12 = 1.0e-4, zero = NULL)
 
@@ -22,11 +21,13 @@ kumar(lshape1 = "loge", lshape2 = "loge",
   See \code{\link{Links}} for more choices.
 
   }
-  \item{eshape1, eshape2}{
-  List. Extra argument for each of the links.
-  See \code{earg} in \code{\link{Links}} for general information.
 
-  }
+% \item{eshape1, eshape2}{
+% List. Extra argument for each of the links.
+% See \code{earg} in \code{\link{Links}} for general information.
+%     eshape1 = list(), eshape2 = list(),
+% }
+
   \item{ishape1, ishape2}{
   Numeric.
   Optional initial values for the two positive shape parameters.
@@ -61,6 +62,8 @@ kumar(lshape1 = "loge", lshape2 = "loge",
   Applications of the Kumaraswamy distribution include the storage
   volume of a water reservoir.
   Fisher scoring is implemented.
+  Handles multiple responses (matrix input).
+
 
 
 }

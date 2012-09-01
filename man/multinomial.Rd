@@ -84,6 +84,7 @@ multinomial(zero = NULL, parallel = FALSE, nointercept = NULL,
   \code{\link{rrvglm}}
   and \code{\link{vgam}}.
 
+
 }
 \references{
 
@@ -107,25 +108,31 @@ London: Chapman & Hall.
 
 Agresti, A. (2002)
 \emph{Categorical Data Analysis},
-2nd ed. New York: Wiley.
+2nd ed. New York, USA: Wiley.
 
 
 Hastie, T. J., Tibshirani, R. J. and Friedman, J. H. (2009)
 \emph{The Elements of Statistical Learning: Data Mining,
       Inference and Prediction},
 2nd ed.
-New York: Springer-Verlag.
+New York, USA: Springer-Verlag.
 
 
 Simonoff, J. S. (2003)
 \emph{Analyzing Categorical Data},
-New York: Springer-Verlag.
+New York, USA: Springer-Verlag.
 
 
 Anderson, J. A. (1984)
 Regression and ordered categorical variables. 
 \emph{Journal of the Royal Statistical Society, Series B, Methodological},
 \bold{46}, 1--30.
+
+
+Tutz, G. (2012)
+\emph{Regression for Categorical Data},
+Cambridge University Press.
+
 
 
 Further information and examples on categorical data analysis
@@ -212,23 +219,26 @@ by the \pkg{VGAM} package can be found at
     \code{\link{rrvglm}},
     \code{\link{fill1}},
     \code{\link[stats:Multinom]{Multinomial}},
+    \code{\link{mlogit}},
     \code{\link[datasets]{iris}}.
   The author's homepage has further documentation about
   categorical data analysis using \pkg{VGAM}.
 
+
 }
 %   \code{\link[base:Multinom]{rmultinom}}
+
 
 \examples{
 # Example 1: fit a multinomial logit model to Edgar Anderson's iris data
 data(iris)
-\dontrun{ fit = vglm(Species ~ ., multinomial, iris)
+\dontrun{ fit <- vglm(Species ~ ., multinomial, iris)
 coef(fit, matrix = TRUE) }
 
 
 # Example 2a: a simple example 
-ycounts = t(rmultinom(10, size = 20, prob = c(0.1, 0.2, 0.8))) # Counts
-fit = vglm(ycounts ~ 1, multinomial)
+ycounts <- t(rmultinom(10, size = 20, prob = c(0.1, 0.2, 0.8))) # Counts
+fit <- vglm(ycounts ~ 1, multinomial)
 head(fitted(fit))   # Proportions
 fit@prior.weights   # NOT recommended for extraction of prior weights
 weights(fit, type = "prior", matrix = FALSE) # The better method
@@ -236,19 +246,19 @@ depvar(fit)         # Sample proportions; same as fit@y
 constraints(fit)    # Constraint matrices
 
 # Example 2b: Different reference level used as the baseline 
-fit2 = vglm(ycounts ~ 1, multinomial(refLevel = 2))
+fit2 <- vglm(ycounts ~ 1, multinomial(refLevel = 2))
 coef(fit2, matrix = TRUE)
 coef(fit , matrix = TRUE) # Easy to reconcile this output with fit2
 
 
 
 # Example 3: The response is a factor.
-nn = 10
-dframe3 = data.frame(yfactor = gl(3, nn, labels = c("Control", "Trt1", "Trt2")),
+nn <- 10
+dframe3 <- data.frame(yfactor = gl(3, nn, labels = c("Control", "Trt1", "Trt2")),
                      x2 = runif(3 * nn))
-myrefLevel = with(dframe3, yfactor[12])
-fit3a = vglm(yfactor ~ x2, multinomial(refLevel = myrefLevel), dframe3)
-fit3b = vglm(yfactor ~ x2, multinomial(refLevel = 2), dframe3)
+myrefLevel <- with(dframe3, yfactor[12])
+fit3a <- vglm(yfactor ~ x2, multinomial(refLevel = myrefLevel), dframe3)
+fit3b <- vglm(yfactor ~ x2, multinomial(refLevel = 2), dframe3)
 coef(fit3a, matrix = TRUE)  # "Treatment1" is the reference level
 coef(fit3b, matrix = TRUE)  # "Treatment1" is the reference level
 margeff(fit3b)
@@ -256,7 +266,7 @@ margeff(fit3b)
 
 # Example 4: Fit a rank-1 stereotype model 
 data(car.all)
-fit4 = rrvglm(Country ~ Width + Height + HP, multinomial, car.all)
+fit4 <- rrvglm(Country ~ Width + Height + HP, multinomial, car.all)
 coef(fit4)   # Contains the C matrix
 constraints(fit4)$HP       # The A matrix 
 coef(fit4, matrix = TRUE)  # The B matrix
@@ -268,9 +278,9 @@ svd(coef(fit4, matrix = TRUE)[-1, ])$d    # This has rank 1; = C %*% t(A)
 
 # Example 5: The use of the xij argument (aka conditional logit model)
 set.seed(111)
-nn = 100  # Number of people who travel to work
-M = 3  # There are M+1 models of transport to go to work
-ycounts = matrix(0, nn, M+1)
+nn <- 100  # Number of people who travel to work
+M <- 3  # There are M+1 models of transport to go to work
+ycounts <- matrix(0, nn, M+1)
 ycounts[cbind(1:nn, sample(x = M+1, size = nn, replace = TRUE))] = 1
 dimnames(ycounts) = list(NULL, c("bus","train","car","walk"))
 gotowork = data.frame(cost.bus  = runif(nn), time.bus  = runif(nn), 
@@ -287,13 +297,13 @@ gotowork = transform(gotowork,
                      Time.car   = time.car   - time.walk,
                      Time.train = time.train - time.walk,
                      Time       = time.train - time.walk) # for labelling
-fit = vglm(ycounts ~ Cost + Time,
-           multinomial(parall = TRUE ~ Cost + Time - 1),
-           xij = list(Cost ~ Cost.bus + Cost.train + Cost.car,
-                      Time ~ Time.bus + Time.train + Time.car),
-           form2 =  ~ Cost + Cost.bus + Cost.train + Cost.car +
-                      Time + Time.bus + Time.train + Time.car,
-           data=gotowork, trace = TRUE)
+fit <- vglm(ycounts ~ Cost + Time,
+            multinomial(parall = TRUE ~ Cost + Time - 1),
+            xij = list(Cost ~ Cost.bus + Cost.train + Cost.car,
+                       Time ~ Time.bus + Time.train + Time.car),
+            form2 =  ~ Cost + Cost.bus + Cost.train + Cost.car +
+                       Time + Time.bus + Time.train + Time.car,
+            data = gotowork, trace = TRUE)
 head(model.matrix(fit, type = "lm"))   # LM model matrix
 head(model.matrix(fit, type = "vlm"))  # Big VLM model matrix
 coef(fit)
@@ -309,9 +319,9 @@ max(abs(predict(fit) - predict(fit, new = gotowork))) # Should be 0
 
 % 20100915; this no longer works:
 % # Example 2c: Different input to Example 2a but same result
-% w = apply(ycounts, 1, sum) # Prior weights
-% yprop = ycounts / w    # Sample proportions
-% fitprop = vglm(yprop ~ 1, multinomial, weights=w)
+% w <- apply(ycounts, 1, sum) # Prior weights
+% yprop <- ycounts / w    # Sample proportions
+% fitprop <- vglm(yprop ~ 1, multinomial, weights=w)
 % head(fitted(fitprop))   # Proportions
 % weights(fitprop, type="prior", matrix=FALSE)
 % fitprop@y # Same as the input

@@ -11,6 +11,7 @@
   generation for the zero-inflated binomial distribution with
   parameter \code{pstr0}.
 
+
 }
 \usage{
 dzibinom(x, size, prob, pstr0 = 0, log = FALSE)
@@ -74,17 +75,18 @@ rzibinom(n, size, prob, pstr0 = 0)
     \code{\link{zibinomial}},
     \code{\link[stats:Binomial]{dbinom}}.
 
+
 }
 \examples{
-prob = 0.2; size = 10; pstr0 = 0.5
-(ii = dzibinom(0:size, size, prob, pstr0 = pstr0))
-max(abs(cumsum(ii) - pzibinom(0:size, size, prob, pstr0 = pstr0)))  # Should be 0
+prob <- 0.2; size <- 10; pstr0 <- 0.5
+(ii <- dzibinom(0:size, size, prob, pstr0 = pstr0))
+max(abs(cumsum(ii) - pzibinom(0:size, size, prob, pstr0 = pstr0))) # Should be 0
 table(rzibinom(100, size, prob, pstr0 = pstr0))
 
 table(qzibinom(runif(100), size, prob, pstr0 = pstr0))
 round(dzibinom(0:10, size, prob, pstr0 = pstr0) * 100) # Should be similar
 
-\dontrun{ x = 0:size
+\dontrun{ x <- 0:size
 barplot(rbind(dzibinom(x, size, prob, pstr0 = pstr0),
                 dbinom(x, size, prob)),
         beside = TRUE, col = c("blue", "green"), ylab = "Probability",

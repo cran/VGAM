@@ -6,6 +6,7 @@ The Lambert W function
 }
 \description{
 Computes the Lambert \emph{W} function for real values.
+
 }
 \usage{
 lambertW(x, tolerance = 1e-10, maxit = 50)
@@ -14,12 +15,15 @@ lambertW(x, tolerance = 1e-10, maxit = 50)
 \arguments{
   \item{x}{
 A vector of reals.
+
 }
   \item{tolerance}{
 Accuracy desired.
+
 }
   \item{maxit}{
 Maximum number of iterations of third-order Halley's method.
+
 }
 }
 \details{
@@ -31,12 +35,14 @@ Maximum number of iterations of third-order Halley's method.
   possible real values, and currently only the upper branch
   is computed.
 
+
 }
 \value{
   This function returns the principal branch of the \eqn{W} function
   for \emph{real} \eqn{z}.
   It returns \eqn{W(z) \geq -1}{W(z) >= -1},
   and \code{NA} for \eqn{z < -1/e}.
+
 
 }
 \references{
@@ -45,6 +51,7 @@ Hare, D. E. G. and Jeffrey, D. J. and Knuth, D. E. (1996)
 On the Lambert \eqn{W} function.
 \emph{Advances in Computational Mathematics},
 \bold{5}(4), 329--359.
+
 
 }
 \author{
@@ -61,6 +68,7 @@ the lower branch for
 real \eqn{-1/e \leq z < 0}{-1/e <= z < 0};
 this would give \eqn{W(z) \leq -1}{W(z) <= -1}.
 
+
 }
 
 %% ~Make other sections like Warning with \section{Warning }{....} ~
@@ -68,6 +76,7 @@ this would give \eqn{W(z) \leq -1}{W(z) <= -1}.
 \seealso{
   \code{\link[base:log]{log}},
   \code{\link[base:log]{exp}}.
+
 
 }
 \examples{ \dontrun{

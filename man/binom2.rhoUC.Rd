@@ -11,14 +11,14 @@
 }
 \usage{
 rbinom2.rho(n, mu1,
-           mu2=if(exchangeable) mu1 else stop("'mu2' not specified"),
-           rho=0, exchangeable=FALSE, twoCols=TRUE,
-           colnames=if(twoCols) c("y1","y2") else c("00", "01", "10", "11"),
-           ErrorCheck=TRUE)
+           mu2 = if(exchangeable) mu1 else stop("argument 'mu2' not specified"),
+           rho = 0, exchangeable = FALSE, twoCols = TRUE,
+           colnames = if(twoCols) c("y1","y2") else c("00", "01", "10", "11"),
+           ErrorCheck = TRUE)
 dbinom2.rho(mu1,
-           mu2=if(exchangeable) mu1 else stop("'mu2' not specified"),
-           rho=0, exchangeable=FALSE,
-           colnames=c("00", "01", "10", "11"), ErrorCheck=TRUE)
+           mu2 = if(exchangeable) mu1 else stop("'mu2' not specified"),
+           rho = 0, exchangeable = FALSE,
+           colnames = c("00", "01", "10", "11"), ErrorCheck = TRUE)
 
 }
 %- maybe also 'usage' for other objects documented here.
@@ -31,7 +31,7 @@ dbinom2.rho(mu1,
   }
   \item{mu1, mu2}{
     The marginal probabilities.
-    Only \code{mu1} is needed if \code{exchangeable=TRUE}.
+    Only \code{mu1} is needed if \code{exchangeable = TRUE}.
     Values should be between 0 and 1.
 
   }
@@ -94,19 +94,19 @@ dbinom2.rho(mu1,
 # Example 1
 (myrho <- rhobit(2, inverse = TRUE))
 ymat = rbinom2.rho(nn <- 2000, mu1 = 0.8, rho = myrho, exch = TRUE)
-(mytab = table(ymat[,1], ymat[,2], dnn = c("Y1","Y2")))                                     
+(mytab = table(ymat[, 1], ymat[, 2], dnn = c("Y1", "Y2")))                                     
 fit = vglm(ymat ~ 1, binom2.rho(exch = TRUE))
 coef(fit, matrix = TRUE)
 
 # Example 2
-bdata = data.frame(x = sort(runif(nn)))
-bdata = transform(bdata, mu1 = probit(-2+4*x, inverse = TRUE),
-                         mu2 = probit(-1+3*x, inverse = TRUE))
+bdata = data.frame(x2 = sort(runif(nn)))
+bdata = transform(bdata, mu1 = probit(-2+4*x2, inverse = TRUE),
+                         mu2 = probit(-1+3*x2, inverse = TRUE))
 dmat = with(bdata, dbinom2.rho(mu1, mu2, myrho))
 ymat = with(bdata, rbinom2.rho(nn, mu1, mu2, myrho))
-fit2 = vglm(ymat ~ x, binom2.rho, bdata)
+fit2 = vglm(ymat ~ x2, binom2.rho, bdata)
 coef(fit2, matrix = TRUE)
-\dontrun{ matplot(with(bdata, x), dmat, lty = 1:4, col = 1:4,
+\dontrun{ matplot(with(bdata, x2), dmat, lty = 1:4, col = 1:4,
         type = "l", main = "Joint probabilities",
         ylim = 0:1, lwd = 2, ylab = "Probability")
 legend(x = 0.25, y = 0.9, lty = 1:4, col = 1:4, lwd = 2,

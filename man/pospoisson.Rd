@@ -6,13 +6,13 @@
   Fits a positive Poisson distribution.
 }
 \usage{
-pospoisson(link = "loge", earg = list(),
-           expected = TRUE, ilambda = NULL, imethod = 1)
+pospoisson(link = "loge", expected = TRUE,
+           ilambda = NULL, imethod = 1, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{link, earg}{
-  Link function and extra argument for the usual mean (lambda) parameter of
+  \item{link}{
+  Link function for the usual mean (lambda) parameter of
   an ordinary Poisson distribution.
   See \code{\link{Links}} for more choices.
 
@@ -22,7 +22,7 @@ pospoisson(link = "loge", earg = list(),
   Fisher scoring is used if \code{expected = TRUE}, else Newton-Raphson.
 
   }
-  \item{ilambda, imethod}{
+  \item{ilambda, imethod, zero}{
   See \code{\link{CommonVGAMffArguments}} for more information.
 
   }
@@ -53,15 +53,18 @@ pospoisson(link = "loge", earg = list(),
   The object is used by modelling functions such as \code{\link{vglm}},
   \code{\link{rrvglm}} and \code{\link{vgam}}.
 
+
 }
 \references{
 Coleman, J. S. and James, J. (1961)
 The equilibrium size distribution of freely-forming groups.
 \emph{Sociometry}, \bold{24}, 36--45.
 
+
 Documentation accompanying the \pkg{VGAM} package at
 \url{http://www.stat.auckland.ac.nz/~yee}
 contains further information and examples.
+
 
 }
 \author{ Thomas W. Yee }
@@ -79,21 +82,22 @@ contains further information and examples.
   \code{\link{poissonff}},
   \code{\link{zipoisson}}.
 
+
 }
 \examples{
 # Data from Coleman and James (1961)
-cjdat = data.frame(y = 1:6, freq = c(1486, 694, 195, 37, 10, 1))
-fit = vglm(y ~ 1, pospoisson, cjdat, weights = freq)
+cjdata <- data.frame(y = 1:6, freq = c(1486, 694, 195, 37, 10, 1))
+fit <- vglm(y ~ 1, pospoisson, cjdata, weights = freq)
 Coef(fit)
 summary(fit)
 fitted(fit)
 
-pdat = data.frame(x2 = runif(nn <- 1000)) # Artificial data
-pdat = transform(pdat, lambda = exp(1 - 2 * x2))
-pdat = transform(pdat, y1 = rpospois(nn, lambda))
-with(pdat, table(y1))
-fit = vglm(y1 ~ x2, pospoisson, pdat, trace = TRUE, crit = "coef")
-coef(fit, matrix=TRUE)
+pdata <- data.frame(x2 = runif(nn <- 1000)) # Artificial data
+pdata <- transform(pdata, lambda = exp(1 - 2 * x2))
+pdata <- transform(pdata, y1 = rpospois(nn, lambda))
+with(pdata, table(y1))
+fit <- vglm(y1 ~ x2, pospoisson, pdata, trace = TRUE, crit = "coef")
+coef(fit, matrix = TRUE)
 }
 \keyword{models}
 \keyword{regression}

@@ -8,11 +8,11 @@
 
 }
 \usage{
-chisq(link = "loge", earg = list())
+chisq(link = "loge", zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{link, earg}{
+  \item{link, zero}{
   See \code{\link{CommonVGAMffArguments}} for information.
 
   }
@@ -22,6 +22,7 @@ chisq(link = "loge", earg = list())
   and as real (not integer).
   Being positive, a log link is used by default.
   Fisher scoring is used.
+
 
 }
 \value{
@@ -41,7 +42,7 @@ New York: Wiley-Interscience, Third edition.
 
 \author{ T. W. Yee }
 \note{ 
-  Matrix responses are permitted.
+  Multiple responses are permitted.
   There may be convergence problems if the degrees of freedom
   is very large or close to zero.
 
@@ -50,6 +51,7 @@ New York: Wiley-Interscience, Third edition.
 \seealso{
   \code{\link[stats]{Chisquare}}.
   \code{\link{normal1}}.
+
 
 }
 \examples{

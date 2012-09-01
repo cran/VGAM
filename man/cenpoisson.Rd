@@ -9,18 +9,18 @@
 
 }
 \usage{
-cenpoisson(link = "loge", earg = list(), imu = NULL)
+cenpoisson(link = "loge", imu = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{link, earg}{
-  Link function and its extra argument applied to the mean.
-  See \code{\link{Links}} for more choices.
+  \item{link}{
+  Link function applied to the mean;
+  see \code{\link{Links}} for more choices.
 
   }
   \item{imu}{
-    Optional initial value.
-    See \code{\link{CommonVGAMffArguments}} for more information.
+    Optional initial value;
+    see \code{\link{CommonVGAMffArguments}} for more information.
 
   }
 }

@@ -8,8 +8,8 @@
 
 }
 \usage{
-seq2binomial(lprob1 = "logit", lprob2 = "logit", eprob1 = list(),
-             eprob2 = list(), iprob1 = NULL, iprob2 = NULL, zero = NULL)
+seq2binomial(lprob1 = "logit", lprob2 = "logit",
+             iprob1 = NULL,    iprob2 = NULL, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -17,11 +17,6 @@ seq2binomial(lprob1 = "logit", lprob2 = "logit", eprob1 = list(),
   Parameter link functions applied to the two probabilities,
   called \eqn{p} and \eqn{q} below.
   See \code{\link{Links}} for more choices.
-
-  }
-  \item{eprob1, eprob2}{
-  Lists. Extra arguments for the links.
-  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{iprob1, iprob2}{ 
@@ -91,23 +86,25 @@ seq2binomial(lprob1 = "logit", lprob2 = "logit", eprob1 = list(),
   for \eqn{y_1}{y1}, e.g., if \code{mvector} below has some values
   which are zero.
 
+
 }
 
 \seealso{ 
   \code{\link{binomialff}}.
 
+
 }
 \examples{
-sdata = data.frame(mvector = round(rnorm(nn <- 100, m = 10, sd = 2)),
-                   x = runif(nn))
-sdata = transform(sdata, prob1 = logit(+2 - x, inverse = TRUE),
-                         prob2 = logit(-2 + x, inverse = TRUE))
-sdata = transform(sdata, successes1 = rbinom(nn, size=mvector, prob=prob1))
-sdata = transform(sdata, successes2 = rbinom(nn, size=successes1, prob=prob2))
-sdata = transform(sdata, y1 = successes1 / mvector)
-sdata = transform(sdata, y2 = successes2 / successes1)
-fit = vglm(cbind(y1,y2) ~ x, seq2binomial,  weight=mvector,
-           data = sdata, trace=TRUE)
+sdata <- data.frame(mvector = round(rnorm(nn <- 100, m = 10, sd = 2)),
+                    x2 = runif(nn))
+sdata <- transform(sdata, prob1 = logit(+2 - x2, inverse = TRUE),
+                          prob2 = logit(-2 + x2, inverse = TRUE))
+sdata <- transform(sdata, successes1 = rbinom(nn, size = mvector, prob = prob1))
+sdata <- transform(sdata, successes2 = rbinom(nn, size = successes1, prob = prob2))
+sdata <- transform(sdata, y1 = successes1 / mvector)
+sdata <- transform(sdata, y2 = successes2 / successes1)
+fit <- vglm(cbind(y1, y2) ~ x2, seq2binomial,  weight = mvector,
+            data = sdata, trace = TRUE)
 coef(fit)
 coef(fit, matrix = TRUE)
 head(fitted(fit))

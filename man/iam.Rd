@@ -9,7 +9,7 @@
 
 }
 \usage{
-iam(j, k, M, hbw = M, both = FALSE, diag = TRUE)
+iam(j, k, M, both = FALSE, diag = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -26,10 +26,6 @@ iam(j, k, M, hbw = M, both = FALSE, diag = TRUE)
   \item{M}{
   The number of linear/additive predictors. This is the
   dimension of each positive-definite symmetric matrix.
-
-  }
-  \item{hbw}{
-  Defunct.
 
   }
   \item{both}{
@@ -60,6 +56,7 @@ iam(j, k, M, hbw = M, both = FALSE, diag = TRUE)
   another matrix representing such.
   This is called the \emph{matrix-band} format and is used by 
   the \pkg{VGAM} package.
+
 
 }
 \value{
@@ -113,14 +110,14 @@ iam(NULL, NULL, M = 3, both = TRUE) # Return the row and column indices
 
 dirichlet()@weight
 
-M = 4
-temp1 = iam(NA, NA, M = M, both = TRUE)
-mat1 = matrix(NA, M, M)
+M <- 4
+temp1 <- iam(NA, NA, M = M, both = TRUE)
+mat1 <- matrix(NA, M, M)
 mat1[cbind(temp1$row, temp1$col)] = 1:length(temp1$row)
 mat1 # More commonly used
 
-temp2 = iam(NA, NA, M = M, both = TRUE, diag = FALSE)
-mat2 = matrix(NA, M, M)
+temp2 <- iam(NA, NA, M = M, both = TRUE, diag = FALSE)
+mat2 <- matrix(NA, M, M)
 mat2[cbind(temp2$row, temp2$col)] = 1:length(temp2$row)
 mat2 # Rarely used
 }

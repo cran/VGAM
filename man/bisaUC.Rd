@@ -11,10 +11,10 @@
 
 }
 \usage{
-dbisa(x, shape, scale=1, log=FALSE)
-pbisa(q, shape, scale=1)
-qbisa(p, shape, scale=1)
-rbisa(n, shape, scale=1)
+dbisa(x, shape, scale = 1, log = FALSE)
+pbisa(q, shape, scale = 1)
+qbisa(p, shape, scale = 1)
+rbisa(n, shape, scale = 1)
 }
 \arguments{
   \item{x, q}{vector of quantiles.}

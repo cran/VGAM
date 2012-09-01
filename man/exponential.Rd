@@ -7,18 +7,14 @@
 
 }
 \usage{
-exponential(link = "loge", earg = list(), location = 0, expected = TRUE)
+exponential(link = "loge", location = 0, expected = TRUE,
+            shrinkage.init = 0.95, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{link}{
   Parameter link function applied to the positive parameter \eqn{rate}.
   See \code{\link{Links}} for more choices.
-
-  }
-  \item{earg}{
-  List. Extra argument for the link.
-  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{location}{
@@ -28,6 +24,10 @@ exponential(link = "loge", earg = list(), location = 0, expected = TRUE)
   \item{expected}{
   Logical. If \code{TRUE} Fisher scoring is used,
   otherwise Newton-Raphson. The latter is usually faster.
+
+  }
+  \item{shrinkage.init, zero}{
+  See \code{\link{CommonVGAMffArguments}} for information.
 
   }
 
@@ -51,6 +51,7 @@ exponential(link = "loge", earg = list(), location = 0, expected = TRUE)
 
 }
 \references{
+
 Evans, M., Hastings, N. and Peacock, B. (2000)
 \emph{Statistical Distributions},
 New York: Wiley-Interscience, Third edition.
@@ -60,7 +61,7 @@ New York: Wiley-Interscience, Third edition.
 
 \author{ T. W. Yee }
 \note{ 
-  Suppose \eqn{A=0}.
+  Suppose \eqn{A = 0}.
   For a fixed time interval, the number of events is 
   Poisson with mean \eqn{\lambda}{rate} if the time
   between events has a
@@ -82,6 +83,7 @@ New York: Wiley-Interscience, Third edition.
     \code{\link{mix2exp}},
     \code{\link{freund61}}.
 
+
 }
 
 \examples{
@@ -94,7 +96,7 @@ with(edata, stem(y))
 
 fit.slow <- vglm(y ~ x2 + x3, exponential, edata, trace = TRUE, crit = "c")
 fit.fast <- vglm(y ~ x2 + x3, exponential(exp = FALSE), edata,
-                 trace = TRUE, crit = "c")
+                 trace = TRUE, crit = "coef")
 coef(fit.slow, mat = TRUE)
 summary(fit.slow)
 }

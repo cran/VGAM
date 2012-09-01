@@ -5,6 +5,17 @@
 %
 %
 %
+% 20120821
+\alias{model.matrix,vsmooth.spline-method}
+%
+% 20120511
+\alias{is.parallel,matrix-method}
+\alias{is.parallel,vglm-method}
+\alias{is.parallel,ANY-method}
+\alias{is.zero,matrix-method}
+\alias{is.zero,vglm-method}
+\alias{is.zero,ANY-method}
+%
 %
 % 20120215
 %\alias{print,vglmff-method}
@@ -20,8 +31,8 @@
 \alias{vcov,ANY-method}
 \alias{plot,cao,ANY-method}
 \alias{plot,qrrvglm,ANY-method}
-\alias{plot,rcam,ANY-method}
-\alias{plot,rcam0,ANY-method}
+\alias{plot,rcim,ANY-method}
+\alias{plot,rcim0,ANY-method}
 \alias{plot,uqo,ANY-method}
 \alias{plot,vgam,ANY-method}
 \alias{plot,vglm,ANY-method}
@@ -72,7 +83,7 @@
 \alias{depvar,ANY-method}
 \alias{depvar,cao-method}
 \alias{depvar,qrrvglm-method}
-\alias{depvar,rcam-method}
+\alias{depvar,rcim-method}
 \alias{depvar,rrvglm-method}
 \alias{depvar,vlm-method}
 %
@@ -128,7 +139,7 @@
 \alias{hatvalues,vglm-method}
 \alias{hatvalues,cao-method}
 \alias{hatvalues,qrrvglm-method}
-\alias{hatvalues,rcam-method}
+\alias{hatvalues,rcim-method}
 \alias{hatvalues,rrvglm-method}
 %
 %
@@ -138,7 +149,7 @@
 \alias{hatplot,vglm-method}
 \alias{hatplot,cao-method}
 \alias{hatplot,qrrvglm-method}
-\alias{hatplot,rcam-method}
+\alias{hatplot,rcim-method}
 \alias{hatplot,rrvglm-method}
 %
 %
@@ -148,7 +159,7 @@
 \alias{dfbeta,vglm-method}
 \alias{dfbeta,cao-method}
 \alias{dfbeta,qrrvglm-method}
-\alias{dfbeta,rcam-method}
+\alias{dfbeta,rcim-method}
 \alias{dfbeta,rrvglm-method}
 %
 %
@@ -157,8 +168,8 @@
 \alias{guplot,vlm-method}
 %\alias{model.frame,ANY-method}
 \alias{model.frame,vlm-method}
-%\alias{plot,rcam0,ANY-method}
-%\alias{plot,rcam,ANY-method}
+%\alias{plot,rcim0,ANY-method}
+%\alias{plot,rcim,ANY-method}
 %\alias{plot,cao,ANY-method}
 %\alias{plot,vlm,ANY-method}
 %\alias{plot,vglm,ANY-method}
@@ -204,7 +215,7 @@
 \alias{npred,vlm-method}
 \alias{npred,cao-method}
 \alias{npred,qrrvglm-method}
-\alias{npred,rcam-method}
+\alias{npred,rcim-method}
 \alias{npred,rrvglm-method}
 \alias{nvar,ANY-method}
 \alias{nvar,vlm-method}
@@ -213,7 +224,7 @@
 \alias{nvar,qrrvglm-method}
 \alias{nvar,cao-method}
 \alias{nvar,vlm-method}
-\alias{nvar,rcam-method}
+\alias{nvar,rcim-method}
 \alias{Opt,qrrvglm-method}
 \alias{Opt,Coef.qrrvglm-method}
 \alias{Opt,uqo-method}
@@ -301,8 +312,8 @@
 \alias{summary,grc-method}
 \alias{summary,cao-method}
 \alias{summary,qrrvglm-method}
-\alias{summary,rcam-method}
-\alias{summary,rcam0-method}
+\alias{summary,rcim-method}
+\alias{summary,rcim0-method}
 \alias{summary,rrvglm-method}
 \alias{summary,vgam-method}
 \alias{summary,vglm-method}

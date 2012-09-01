@@ -13,9 +13,11 @@
 
 
 edhuber <- function(x, k = 0.862, mu = 0, sigma = 1, log = FALSE) {
-  if (!is.logical(log.arg <- log))
+  if (!is.logical(log.arg <- log) || length(log) != 1)
     stop("bad input for argument 'log'")
   rm(log)
+
+
 
   zedd <- (x - mu) / sigma
   fk <- dnorm(k)
@@ -87,8 +89,7 @@ rhuber <- function(n, k = 0.862, mu = 0, sigma = 1) {
 
 
 
-qhuber <- function (p, k = 0.862, mu = 0, sigma = 1)
-{
+qhuber <- function (p, k = 0.862, mu = 0, sigma = 1) {
   if(min(sigma) <= 0)
     stop("argument 'sigma' must be positive")
   if(min(k)     <= 0)
@@ -107,8 +108,7 @@ qhuber <- function (p, k = 0.862, mu = 0, sigma = 1)
 
 
 
-phuber <- function(q, k = 0.862, mu = 0, sigma = 1)
-{
+phuber <- function(q, k = 0.862, mu = 0, sigma = 1) {
   if (any(sigma <= 0))
     stop("argument 'sigma' must be positive")
 
@@ -128,10 +128,7 @@ phuber <- function(q, k = 0.862, mu = 0, sigma = 1)
 
 
  huber <- function(llocation = "identity", lscale = "loge",
-                   elocation = list(), escale = list(),
-                   k = 0.862,
-                   imethod = 1,
-                   zero = 2) {
+                   k = 0.862, imethod = 1, zero = 2) {
   A1 <- (2 * dnorm(k) / k - 2 * pnorm(-k))
   eps <- A1 / (1 + A1)
 
@@ -143,34 +140,48 @@ phuber <- function(q, k = 0.862, mu = 0, sigma = 1)
   if (!is.Numeric(k, allowable.length = 1, positive = TRUE))
     stop("bad input for argument 'k'")
 
-  if (mode(llocation)  !=  "character" && mode(llocation) != "name")
-    llocation = as.character(substitute(llocation))
-  if (mode(lscale)  !=  "character" && mode(lscale) != "name")
-    lscale = as.character(substitute(lscale))
   if (length(zero) &&
       !is.Numeric(zero, integer.valued = TRUE, positive = TRUE))
     stop("bad input for argument 'zero'")
-  if (!is.list(elocation)) elocation = list()
-  if (!is.list(escale)) escale = list()
+
+
+  llocat <- as.list(substitute(llocation))
+  elocat <- link2list(llocat)
+  llocat <- attr(elocat, "function.name")
+
+  lscale <- as.list(substitute(lscale))
+  escale <- link2list(lscale)
+  lscale <- attr(escale, "function.name")
+
+
 
   new("vglmff",
   blurb = c("Huber least favorable distribution\n\n",
             "Links: ",
-            namesof("location",  llocation,  earg = elocation), ", ",
-            namesof("scale",     lscale,     earg = escale), "\n\n",
+            namesof("location",  llocat,  earg = elocat), ", ",
+            namesof("scale",     lscale,  earg = escale), "\n\n",
             "Mean: location"),
   constraints = eval(substitute(expression({
-          constraints <- cm.zero.vgam(constraints, x, .zero, M)
+    constraints <- cm.zero.vgam(constraints, x, .zero, M)
   }), list( .zero = zero ))),
   initialize = eval(substitute(expression({
+
+    temp5 <-
+    w.y.check(w = w, y = y,
+              out.wy = TRUE,
+              maximize = TRUE)
+    w <- temp5$w
+    y <- temp5$y
+
+
+
     predictors.names <-
        c(namesof("location", .llocat, earg = .elocat, tag = FALSE),
          namesof("scale",    .lscale, earg = .escale, tag = FALSE))
-    if (ncol(y <- cbind(y)) != 1)
-      stop("response must be a vector or a one-column matrix")
+
     if (!length(etastart)) {
-      junk = lm.wfit(x = x, y = y, w = w)
-      scale.y.est <- sqrt( sum(w * junk$resid^2) / junk$df.residual )
+      junk = lm.wfit(x = x, y = y, w = c(w))
+      scale.y.est <- sqrt( sum(c(w) * junk$resid^2) / junk$df.residual )
       location.init <- if ( .llocat == "loge") pmax(1/1024, y) else {
         if ( .imethod == 3) {
           rep(weighted.mean(y, w), len = n)
@@ -186,39 +197,42 @@ phuber <- function(q, k = 0.862, mu = 0, sigma = 1)
            theta2eta(location.init,  .llocat, earg = .elocat),
            theta2eta(scale.y.est,    .lscale, earg = .escale))
     }
-  }), list( .llocat = llocation, .lscale = lscale,
-            .elocat = elocation, .escale = escale,
+  }), list( .llocat = llocat, .lscale = lscale,
+            .elocat = elocat, .escale = escale,
             .imethod = imethod ))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
-    eta2theta(eta[,1], .llocat, earg = .elocat)
-  }, list( .llocat = llocation,
-           .elocat = elocation, .escale = escale ))),
+    eta2theta(eta[, 1], .llocat, earg = .elocat)
+  }, list( .llocat = llocat,
+           .elocat = elocat, .escale = escale ))),
   last = eval(substitute(expression({
     misc$link <-    c("location" = .llocat, "scale" = .lscale)
+
     misc$earg <- list("location" = .elocat, "scale" = .escale)
+
     misc$expected <- TRUE
     misc$k.huber <- .k
     misc$imethod <- .imethod
-  }), list( .llocat = llocation, .lscale = lscale,
-            .elocat = elocation, .escale = escale,
+    misc$multipleResponses <- FALSE
+  }), list( .llocat = llocat, .lscale = lscale,
+            .elocat = elocat, .escale = escale,
             .k      = k,         .imethod = imethod ))),
  loglikelihood = eval(substitute(
    function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
-   location <- eta2theta(eta[,1], .llocat, earg = .elocat)
-   myscale  <- eta2theta(eta[,2], .lscale, earg = .escale)
+   location <- eta2theta(eta[, 1], .llocat, earg = .elocat)
+   myscale  <- eta2theta(eta[, 2], .lscale, earg = .escale)
    kay      <- .k
    if (residuals) stop("loglikelihood residuals not ",
                        "implemented yet") else {
-     sum(w * dhuber(y, k = kay, mu = location,  sigma = myscale,
+     sum(c(w) * dhuber(y, k = kay, mu = location,  sigma = myscale,
                     log = TRUE))
    }
- }, list( .llocat = llocation, .lscale = lscale,
-          .elocat = elocation, .escale = escale,
+ }, list( .llocat = llocat, .lscale = lscale,
+          .elocat = elocat, .escale = escale,
           .k      = k ))),
   vfamily = c("huber"),
   deriv = eval(substitute(expression({
-    mylocat <- eta2theta(eta[,1], .llocat,  earg = .elocat)
-    myscale <- eta2theta(eta[,2], .lscale,  earg = .escale)
+    mylocat <- eta2theta(eta[, 1], .llocat,  earg = .elocat)
+    myscale <- eta2theta(eta[, 2], .lscale,  earg = .escale)
     myk     <- .k
 
     zedd <- (y - mylocat) / myscale
@@ -242,8 +256,8 @@ phuber <- function(q, k = 0.862, mu = 0, sigma = 1)
     c(w) * cbind(dl.dlocat * dlocat.deta,
                  dl.dscale * dscale.deta)
     ans
-  }), list( .llocat = llocation, .lscale = lscale,
-            .elocat = elocation, .escale = escale,
+  }), list( .llocat = llocat, .lscale = lscale,
+            .elocat = elocat, .escale = escale,
             .eps    = eps,       .k      = k ))),
   weight = eval(substitute(expression({
     wz   <- matrix(as.numeric(NA), n, 2) # diag matrix; y is one-col too
@@ -252,13 +266,13 @@ phuber <- function(q, k = 0.862, mu = 0, sigma = 1)
 
 
     temp4 <- erf(myk / sqrt(2))
-    ed2l.dlocat2 <- temp4 * (1 - .eps) / myscale^2
+    ned2l.dlocat2 <- temp4 * (1 - .eps) / myscale^2
 
-    ed2l.dscale2 <- (dnorm(myk) * (1 - myk^2) + temp4) *
+    ned2l.dscale2 <- (dnorm(myk) * (1 - myk^2) + temp4) *
                     2 * (1 - .eps) / (myk * myscale^2)
 
-    wz[, iam(1,1,M)] <- ed2l.dlocat2 * dlocat.deta^2
-    wz[, iam(2,2,M)] <- ed2l.dscale2 * dscale.deta^2
+    wz[, iam(1,1,M)] <- ned2l.dlocat2 * dlocat.deta^2
+    wz[, iam(2,2,M)] <- ned2l.dscale2 * dscale.deta^2
     ans
     c(w) * wz
   }), list( .eps = eps ))))
@@ -268,7 +282,6 @@ phuber <- function(q, k = 0.862, mu = 0, sigma = 1)
 
 
  huber1 <- function(llocation = "identity",
-                    elocation = list(),
                     k = 0.862,
                     imethod = 1) {
 
@@ -276,86 +289,100 @@ phuber <- function(q, k = 0.862, mu = 0, sigma = 1)
   A1 <- (2 * dnorm(k) / k - 2 * pnorm(-k))
   eps <- A1 / (1 + A1)
 
-  if (!is.Numeric(imethod, allowable.length = 1, integer.valued = TRUE, positive = TRUE) ||
+  if (!is.Numeric(imethod, allowable.length = 1,
+                  integer.valued = TRUE, positive = TRUE) ||
       imethod > 4)
-       stop("argument 'imethod' must be 1 or 2 or 3 or 4")
+    stop("argument 'imethod' must be 1 or 2 or 3 or 4")
 
   if (!is.Numeric(k, allowable.length = 1, positive = TRUE))
-      stop("bad input for argument 'k'")
+    stop("bad input for argument 'k'")
 
-  if (mode(llocation)  !=  "character" && mode(llocation) != "name")
-       llocation = as.character(substitute(llocation))
-  if (!is.list(elocation)) elocation = list()
+
+  llocat <- as.list(substitute(llocation))
+  elocat <- link2list(llocat)
+  llocat <- attr(elocat, "function.name")
+
 
   new("vglmff",
-    blurb = c("Huber least favorable distribution\n\n",
-              "Links: ",
-              namesof("location",  llocation,  earg = elocation), "\n\n",
-              "Mean: location"),
-    initialize = eval(substitute(expression({
-      predictors.names <-
-         c(namesof("location", .llocat, earg = .elocat, tag = FALSE))
+  blurb = c("Huber least favorable distribution\n\n",
+            "Links: ",
+            namesof("location",  llocat,  earg = elocat), "\n\n",
+            "Mean: location"),
+  initialize = eval(substitute(expression({
 
-      if (ncol(y <- cbind(y)) != 1)
-           stop("response must be a vector or a one-column matrix")
+    temp5 <-
+    w.y.check(w = w, y = y,
+              out.wy = TRUE,
+              maximize = TRUE)
+    w <- temp5$w
+    y <- temp5$y
 
-      if (!length(etastart)) {
-          junk = lm.wfit(x = x, y = y, w = w)
-          location.init <- if ( .llocat == "loge") pmax(1/1024, y) else {
-            if ( .imethod == 3) {
-              rep(weighted.mean(y, w), len = n)
-            } else if ( .imethod == 2) {
-              rep(median(rep(y, w)), len = n)
-            } else if ( .imethod == 1) {
-              junk$fitted
-            } else {
-              y
-            }
-          }
-          etastart <- cbind(
-               theta2eta(location.init,  .llocat, earg = .elocat))
+
+
+    predictors.names <-
+       c(namesof("location", .llocat, earg = .elocat, tag = FALSE))
+
+
+    if (!length(etastart)) {
+      junk = lm.wfit(x = x, y = y, w = c(w))
+      location.init <- if ( .llocat == "loge") pmax(1/1024, y) else {
+        if ( .imethod == 3) {
+          rep(weighted.mean(y, w), len = n)
+        } else if ( .imethod == 2) {
+          rep(median(rep(y, w)), len = n)
+        } else if ( .imethod == 1) {
+          junk$fitted
+        } else {
+          y
+        }
       }
-    }), list( .llocat = llocation,
-              .elocat = elocation,
-              .imethod = imethod ))),
-    linkinv = eval(substitute(function(eta, extra = NULL) {
-      eta2theta(eta, .llocat, earg = .elocat)
-    }, list( .llocat = llocation,
-             .elocat = elocation ))),
-    last = eval(substitute(expression({
-      misc$link <-    c("location" = .llocat )
-      misc$earg <- list("location" = .elocat )
-      misc$expected <- TRUE
-      misc$k.huber <- .k
-      misc$imethod <- .imethod
-    }), list( .llocat = llocation,
-              .elocat = elocation,
-              .k      = k,         .imethod = imethod ))),
-   loglikelihood = eval(substitute(
-     function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
-     location <- eta2theta(eta, .llocat, earg = .elocat)
-     kay      <- .k
-     if (residuals) stop("loglikelihood residuals not ",
-                         "implemented yet") else {
-       sum(w * dhuber(y, k = kay, mu = location,  sigma = 1,
-                      log = TRUE))
-     }
-   }, list( .llocat = llocation,
-            .elocat = elocation,
-            .k      = k ))),
-    vfamily = c("huber1"),
-    deriv = eval(substitute(expression({
-      mylocat <- eta2theta(eta, .llocat,  earg = .elocat)
-      myk     <- .k
+      etastart <- cbind(
+           theta2eta(location.init,  .llocat, earg = .elocat))
+    }
+  }), list( .llocat = llocat,
+            .elocat = elocat,
+            .imethod = imethod ))),
+  linkinv = eval(substitute(function(eta, extra = NULL) {
+    eta2theta(eta, .llocat, earg = .elocat)
+  }, list( .llocat = llocat,
+           .elocat = elocat ))),
+  last = eval(substitute(expression({
+    misc$link <-    c("location" = .llocat )
 
-      zedd <- (y - mylocat) # / myscale
-      cond2 <- (abs(zedd) <=  myk)
-      cond3 <-     (zedd  >   myk)
+    misc$earg <- list("location" = .elocat )
 
-      dl.dlocat        <- -myk + 0 * zedd # cond1
-      dl.dlocat[cond2] <- zedd[cond2]
-      dl.dlocat[cond3] <-  myk  # myk is a scalar
-      dl.dlocat <- dl.dlocat # / myscale
+    misc$expected <- TRUE
+    misc$k.huber <- .k
+    misc$imethod <- .imethod
+    misc$multipleResponses <- FALSE
+  }), list( .llocat = llocat,
+            .elocat = elocat,
+            .k      = k,         .imethod = imethod ))),
+ loglikelihood = eval(substitute(
+   function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
+   location <- eta2theta(eta, .llocat, earg = .elocat)
+   kay      <- .k
+   if (residuals) stop("loglikelihood residuals not ",
+                       "implemented yet") else {
+     sum(c(w) * dhuber(y, k = kay, mu = location,  sigma = 1,
+                    log = TRUE))
+   }
+ }, list( .llocat = llocat,
+          .elocat = elocat,
+          .k      = k ))),
+  vfamily = c("huber1"),
+  deriv = eval(substitute(expression({
+    mylocat <- eta2theta(eta, .llocat,  earg = .elocat)
+    myk     <- .k
+
+    zedd <- (y - mylocat) # / myscale
+    cond2 <- (abs(zedd) <=  myk)
+    cond3 <-     (zedd  >   myk)
+
+    dl.dlocat        <- -myk + 0 * zedd # cond1
+    dl.dlocat[cond2] <- zedd[cond2]
+    dl.dlocat[cond3] <-  myk  # myk is a scalar
+    dl.dlocat <- dl.dlocat # / myscale
 
 
     if (FALSE) {
@@ -365,27 +392,26 @@ phuber <- function(q, k = 0.862, mu = 0, sigma = 1)
       dl.dscale <- (-1 + dl.dscale) / myscale
     }
 
-      dlocat.deta <- dtheta.deta(mylocat, .llocat, earg = .elocat)
-      ans <-
-      c(w) * cbind(dl.dlocat * dlocat.deta)
-      ans
-    }), list( .llocat = llocation,
-              .elocat = elocation,
-              .eps    = eps,       .k      = k ))),
-    weight = eval(substitute(expression({
-      wz   <- matrix(as.numeric(NA), n, 1) # diag matrix; y is one-col too
+    dlocat.deta <- dtheta.deta(mylocat, .llocat, earg = .elocat)
+    ans <- c(w) * cbind(dl.dlocat * dlocat.deta)
+    ans
+  }), list( .llocat = llocat,
+            .elocat = elocat,
+            .eps    = eps,       .k      = k ))),
+  weight = eval(substitute(expression({
+    wz   <- matrix(as.numeric(NA), n, 1) # diag matrix; y is one-col too
 
 
 
 
-      temp4 <- erf(myk / sqrt(2))
-      ed2l.dlocat2 <- temp4 * (1 - .eps) # / myscale^2
+    temp4 <- erf(myk / sqrt(2))
+    ned2l.dlocat2 <- temp4 * (1 - .eps) # / myscale^2
 
 
-      wz[, iam(1,1,M)] <- ed2l.dlocat2 * dlocat.deta^2
-      ans
-      c(w) * wz
-    }), list( .eps = eps ))))
+    wz[, iam(1,1,M)] <- ned2l.dlocat2 * dlocat.deta^2
+    ans
+    c(w) * wz
+  }), list( .eps = eps ))))
 }
 
 

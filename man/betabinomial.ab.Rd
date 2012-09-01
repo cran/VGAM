@@ -9,7 +9,7 @@
 
 }
 \usage{
-betabinomial.ab(lshape12 = "loge", earg = list(), i1 = 1, i2 = NULL,
+betabinomial.ab(lshape12 = "loge", i1 = 1, i2 = NULL,
                 imethod = 1, shrinkage.init = 0.95, nsimEIM = NULL,
                 zero = NULL)
 }
@@ -19,11 +19,6 @@ betabinomial.ab(lshape12 = "loge", earg = list(), i1 = 1, i2 = NULL,
   Link function applied to both (positive) shape parameters
   of the beta distribution.
   See \code{\link{Links}} for more choices.
-
-  }
-  \item{earg}{
-  List. Extra argument for the link.
-  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{i1, i2}{ 

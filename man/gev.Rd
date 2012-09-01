@@ -9,19 +9,13 @@
 
 }
 \usage{
-gev(llocation = "identity", lscale = "loge", lshape = "logoff",
-    elocation = list(), escale = list(),
-    eshape = if (lshape == "logoff") list(offset = 0.5) else
-    if (lshape == "elogit") list(min = -0.5, max = 0.5) else list(),
+gev(llocation = "identity", lscale = "loge", lshape = logoff(offset = 0.5),
     percentiles = c(95, 99), iscale=NULL, ishape = NULL,
-    imethod = 1, gshape=c(-0.45, 0.45), tolshape0 = 0.001,
+    imethod = 1, gshape = c(-0.45, 0.45), tolshape0 = 0.001,
     giveWarning = TRUE, zero = 3)
-egev(llocation = "identity", lscale = "loge", lshape = "logoff",
-     elocation = list(), escale = list(),
-     eshape = if (lshape == "logoff") list(offset = 0.5) else
-     if (lshape == "elogit") list(min = -0.5, max = 0.5) else list(),
+egev(llocation = "identity", lscale = "loge", lshape = logoff(offset = 0.5),
      percentiles = c(95, 99), iscale=NULL,  ishape = NULL,
-     imethod = 1, gshape=c(-0.45, 0.45), tolshape0 = 0.001,
+     imethod = 1, gshape = c(-0.45, 0.45), tolshape0 = 0.001,
      giveWarning = TRUE, zero = 3)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -31,19 +25,19 @@ egev(llocation = "identity", lscale = "loge", lshape = "logoff",
   \eqn{\xi}{xi} respectively.
   See \code{\link{Links}} for more choices.
 
-  }
-  \item{elocation, escale, eshape}{
-  List. Extra argument for the respective links.
-  See \code{earg} in \code{\link{Links}} for general information.
+
   For the shape parameter,
-  if the \code{\link{logoff}} link is chosen then the offset is
+  the default \code{\link{logoff}} link has an offset
   called \eqn{A} below; and then the linear/additive predictor is
   \eqn{\log(\xi+A)}{log(xi+A)} which means that
   \eqn{\xi > -A}{xi > -A}.
   For technical reasons (see \bold{Details}) it is a good idea
   for \eqn{A = 0.5}.
 
+ 
   }
+
+
 
 %  \item{Offset}{
 %  Numeric, of length 1.
@@ -56,10 +50,12 @@ egev(llocation = "identity", lscale = "loge", lshape = "logoff",
 %  \code{Offset = 0.5}.
 
 %  }
+
+
   \item{percentiles}{
   Numeric vector of percentiles used
   for the fitted values. Values should be between 0 and 100.
-  However, if \code{percentiles=NULL}, then the mean
+  However, if \code{percentiles = NULL}, then the mean
   \eqn{\mu + \sigma (\Gamma(1-\xi)-1) / \xi}{mu + sigma * (gamma(1-xi)-1)/xi}
   is returned, and this is only defined if \eqn{\xi<1}{xi<1}.
 
@@ -82,15 +78,17 @@ egev(llocation = "identity", lscale = "loge", lshape = "logoff",
 %  Numeric, of length 2.
 %  Range of \eqn{\xi}{xi} if \code{lshape = "elogit"} is chosen.
 %  The rationale for the default values is given below.
-
 %  }
+
+
 % \item{mean}{
 % Logical. If \code{TRUE}, the mean is computed and returned
 % as the fitted values. This argument overrides the
 % \code{percentiles} argument.
 % See \bold{Details} for more details.
-
 % }
+
+
   \item{imethod}{
   Initialization method. Either the value 1 or 2.
   Method 1 involves choosing the best \eqn{\xi}{xi} on a course grid with 
@@ -118,7 +116,7 @@ egev(llocation = "identity", lscale = "loge", lshape = "logoff",
   linear/additive predictors are modelled as intercepts only.
   The values must be from the set \{1,2,3\} corresponding
   respectively to \eqn{\mu}{mu}, \eqn{\sigma}{sigma}, \eqn{\xi}{xi}.
-  If \code{zero=NULL} then all linear/additive predictors are modelled as
+  If \code{zero = NULL} then all linear/additive predictors are modelled as
   a linear combination of the explanatory variables.
   For many data sets having \code{zero = 3} is a good idea.
 
@@ -159,8 +157,8 @@ egev(llocation = "identity", lscale = "loge", lshape = "logoff",
   Smith (1985) established that when \eqn{\xi > -0.5}{xi > -0.5},
   the maximum likelihood estimators are completely regular.
   To have some control over the estimated \eqn{\xi}{xi} try
-  using \code{lshape = "logoff"} and the \code{eshape=list(offset = 0.5)}, say,
-  or \code{lshape = "elogit"} and \code{eshape=list(min = -0.5, max = 0.5)}, say.
+  using \code{lshape = logoff(offset = 0.5)}, say,
+  or \code{lshape = elogit(min = -0.5, max = 0.5)}, say.
 
 
 % and when \eqn{-1 < \xi < -0.5}{-1 < xi < -0.5} they exist but are
@@ -192,6 +190,7 @@ egev(llocation = "identity", lscale = "loge", lshape = "logoff",
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}},
   and \code{\link{vgam}}.
+
 
 }
 \references{ 
@@ -256,6 +255,7 @@ egev(llocation = "identity", lscale = "loge", lshape = "logoff",
   \code{\link{guplot}},
   \code{\link{rlplot.egev}},
   \code{\link{gpd}},
+  \code{\link{weibull}},
   \code{\link{frechet2}},
   \code{\link{elogit}},
   \code{\link{oxtemp}},
@@ -266,22 +266,21 @@ egev(llocation = "identity", lscale = "loge", lshape = "logoff",
 
 \examples{
 # Multivariate example
-fit1 = vgam(cbind(r1, r2) ~ s(year, df = 3), gev(zero = 2:3),
-            venice, trace = TRUE)
+fit1 <- vgam(cbind(r1, r2) ~ s(year, df = 3), gev(zero = 2:3),
+             venice, trace = TRUE)
 coef(fit1, matrix = TRUE)
 head(fitted(fit1))
-\dontrun{
-par(mfrow=c(1,2), las = 1)
+\dontrun{ par(mfrow = c(1, 2), las = 1)
 plot(fit1, se = TRUE, lcol = "blue", scol = "forestgreen",
      main = "Fitted mu(year) function (centered)", cex.main = 0.8)
-with(venice, matplot(year, y[,1:2], ylab = "Sea level (cm)", col = 1:2,
-     main = "Highest 2 annual sea levels", cex.main = 0.8))
+with(venice, matplot(year, depvar(fit1)[, 1:2], ylab = "Sea level (cm)",
+     col = 1:2, main = "Highest 2 annual sea levels", cex.main = 0.8))
 with(venice, lines(year, fitted(fit1)[,1], lty = "dashed", col = "blue"))
 legend("topleft", lty = "dashed", col = "blue", "Fitted 95 percentile") }
 
 
 # Univariate example
-(fit = vglm(maxtemp ~ 1, egev, oxtemp, trace = TRUE))
+(fit <- vglm(maxtemp ~ 1, egev, oxtemp, trace = TRUE))
 head(fitted(fit))
 coef(fit, matrix = TRUE)
 Coef(fit)

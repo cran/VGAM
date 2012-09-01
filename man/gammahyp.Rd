@@ -7,7 +7,7 @@
   by maximum likelihood estimation.
 }
 \usage{
-gammahyp(ltheta="loge", itheta=NULL, expected=FALSE)
+gammahyp(ltheta = "loge", itheta = NULL, expected = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -69,13 +69,13 @@ Asymptotics and the theory of inference.
   \code{\link{exponential}}.
 }
 \examples{
-gdata = data.frame(x  = runif(nn <- 1000))
-gdata = transform(gdata, theta = exp(-2+x))
-gdata = transform(gdata, y1 = rexp(nn, rate=exp(-theta)/theta),
-                         y2 = rexp(nn, rate=theta) + 1)
-fit = vglm(cbind(y1,y2) ~ x, fam=gammahyp(expected=TRUE), gdata)
-fit = vglm(cbind(y1,y2) ~ x, fam=gammahyp, gdata, trace=TRUE, crit="coef")
-coef(fit, matrix=TRUE)
+gdata <- data.frame(x = runif(nn <- 1000))
+gdata <- transform(gdata, theta = exp(-2+x))
+gdata <- transform(gdata, y1 = rexp(nn, rate = exp(-theta)/theta),
+                         y2 = rexp(nn, rate = theta) + 1)
+fit <- vglm(cbind(y1,y2) ~ x, fam = gammahyp(expected = TRUE), gdata)
+fit <- vglm(cbind(y1,y2) ~ x, fam = gammahyp, gdata, trace = TRUE, crit = "coef")
+coef(fit, matrix = TRUE)
 Coef(fit)
 head(fitted(fit))
 summary(fit)

@@ -6,8 +6,9 @@
   Fits a vector cubic smoothing spline.
 }
 \usage{
-vsmooth.spline(x, y, w = NULL, df = rep(5, M), spar = NULL, all.knots = FALSE,
-               iconstraint = diag(M), xconstraint = diag(M), 
+vsmooth.spline(x, y, w = NULL, df = rep(5, M), spar = NULL,
+               all.knots = FALSE, iconstraint = diag(M),
+               xconstraint = diag(M), 
                constraints = list("(Intercepts)" = diag(M), x = diag(M)), 
                var.arg = FALSE, scale.w = TRUE, nk = NULL,
                control.spar = list())
@@ -172,32 +173,33 @@ Heidelberg: Physica-Verlag.
 
 }
 \examples{
-nn = 20; x = 2 + 5*(nn:1)/nn
-x[2:4] = x[5:7]      # Allow duplication
-y1 = sin(x) + rnorm(nn, sd = 0.13)
-y2 = cos(x) + rnorm(nn, sd = 0.13)
-y3 = 1 + sin(x) + rnorm(nn, sd = 0.13) # Run this for constraints
-y = cbind(y1, y2, y3)
-ww = cbind(rep(3,nn), 4, (1:nn)/nn)
+nn <- 20; x <- 2 + 5*(nn:1)/nn
+x[2:4] <- x[5:7]      # Allow duplication
+y1 <- sin(x) + rnorm(nn, sd = 0.13)
+y2 <- cos(x) + rnorm(nn, sd = 0.13)
+y3 <- 1 + sin(x) + rnorm(nn, sd = 0.13) # Run this for constraints
+y <- cbind(y1, y2, y3)
+ww <- cbind(rep(3, nn), 4, (1:nn)/nn)
 
-(fit = vsmooth.spline(x, y, w = ww, df = 5))
+(fit <- vsmooth.spline(x, y, w = ww, df = 5))
 \dontrun{
 plot(fit) # The 1st and 3rd functions do not differ by a constant
 }
 
-mat = matrix(c(1,0,1, 0,1,0), 3, 2)
-(fit2 = vsmooth.spline(x, y, w = ww, df = 5, iconstr = mat, xconstr = mat))
+mat <- matrix(c(1,0,1, 0,1,0), 3, 2)
+(fit2 <- vsmooth.spline(x, y, w = ww, df = 5, iconstr = mat, xconstr = mat))
 # The 1st and 3rd functions do differ by a constant:
-mycols = c("orange", "blue", "orange")
+mycols <- c("orange", "blue", "orange")
 \dontrun{ plot(fit2, lcol = mycols, pcol = mycols, las = 1) }
 
-p = predict(fit, x = fit@x, deriv = 0)
+
+p <- predict(fit, x = model.matrix(fit, type = "lm"), deriv = 0)
 max(abs(fit@y - with(p, y))) # Should be zero
 
-par(mfrow = c(3, 1))
-ux = seq(1, 8, len = 100)
+par(mfrow <- c(3, 1))
+ux <- seq(1, 8, len = 100)
 for(d in 1:3) {
-    p = predict(fit, x = ux, deriv = d)
+    p <- predict(fit, x = ux, deriv = d)
 \dontrun{with(p, matplot(x, y, type = "l", main = paste("deriv =", d),
                          lwd = 2, ylab = "", cex.axis = 1.5,
                          cex.lab = 1.5, cex.main = 1.5)) }

@@ -9,8 +9,10 @@
 
 }
 \usage{
-TypicalVGAMlinkFunction(theta, earg = list(), inverse = FALSE,
-                        deriv = 0, short = TRUE, tag = FALSE)
+TypicalVGAMlinkFunction(theta, someParameter = 0,
+                        bvalue = NULL,
+                        inverse = FALSE, deriv = 0,
+                        short = TRUE, tag = FALSE)
 }
 \arguments{
   \item{theta}{
@@ -19,45 +21,76 @@ TypicalVGAMlinkFunction(theta, earg = list(), inverse = FALSE,
   depending on the other arguments.
   If \code{theta} is character then \code{inverse} and 
   \code{deriv} are ignored.
+  The name \code{theta} should always be the name of the first argument.
 
   }
-  \item{earg}{
-  List.
-  Extra argument allowing for additional information, specific to the
-  link function.  For example, for \code{\link{logoff}}, this will
-  contain the offset value.  The argument \code{earg} is
-  always a list with \emph{named} components. See each specific link
-  function to find the component names for the list.
 
+  \item{someParameter}{
+  Some parameter, e.g., an offset.
 
-  Almost all \pkg{VGAM} family functions with a single link
-  function have an argument (often called \code{earg}) which will
-  allow parameters to be inputted for that link function.
-  For \pkg{VGAM} family functions with more than one link
-  function there usually will be an \code{earg}-type argument for
-  each link. For example, if there are two links called
-  \code{lshape} and \code{lscale} then 
-  the \code{earg}-type arguments for these might be called
-  \code{eshape} and \code{escale}, say.
 
   }
+  \item{bvalue}{
+  Boundary value, positive if given.
+  If \code{0 < theta} then
+  values of \code{theta} which are less than or equal to 0 can be
+  replaced by \code{bvalue}
+  before computing the link function value.
+  Values of \code{theta} which are greater than or equal to 1 can be
+  replaced by 1 minus \code{bvalue}
+  before computing the link function value.
+  The value \code{bvalue = .Machine$double.eps} is sometimes a reasonable
+  value, or something slightly higher.
+
+
+  }
+
+
+% \item{earg}{
+% List.
+% Extra argument allowing for additional information, specific to the
+% link function.  For example, for \code{\link{logoff}}, this will
+% contain the offset value.  The argument \code{earg} is
+% always a list with \emph{named} components. See each specific link
+% function to find the component names for the list.
+%
+%
+% Almost all \pkg{VGAM} family functions with a single link
+% function have an argument (often called \code{earg}) which will
+% allow parameters to be inputted for that link function.
+% For \pkg{VGAM} family functions with more than one link
+% function there usually will be an \code{earg}-type argument for
+% each link. For example, if there are two links called
+% \code{lshape} and \code{lscale} then 
+% the \code{earg}-type arguments for these might be called
+% \code{eshape} and \code{escale}, say.
+%
+% }
+
+
+
+
   \item{inverse}{
   Logical. If \code{TRUE} the inverse link value
   \eqn{\theta}{theta} is returned, hence the argument
   \code{theta} is really \eqn{\eta}{eta}.
 
+
   }
   \item{deriv}{
   Integer. Either 0, 1, or 2 specifying the order of the derivative.
 
+
   }
   \item{short, tag}{
   Logical.
-  Used for labelling the \code{blurb} slot of a
+  These are used for labelling the \code{blurb} slot of a
   \code{\link{vglmff-class}} object.
-  Used only if \code{theta} is character, and gives the formula
-  for the link in character form.
-  If \code{tag = TRUE} then the result contains a little more information.
+  These arguments are used only if \code{theta} is character,
+  and gives the formula for the link in character form.
+  If \code{tag = TRUE} then the result is preceeded by a little
+  more information.
+
 
   }
 }
@@ -85,7 +118,7 @@ TypicalVGAMlinkFunction(theta, earg = list(), inverse = FALSE,
   \eqn{\eta}{eta}.
   If \code{inverse = TRUE} and \code{deriv} is positive then the 
   \emph{reciprocal} of the same link function with
-  \code{(theta = theta, earg = earg, inverse = TRUE, deriv = deriv)}
+  \code{(theta = theta, someParameter, inverse = TRUE, deriv = deriv)}
   is returned.
 
 
@@ -93,13 +126,18 @@ TypicalVGAMlinkFunction(theta, earg = list(), inverse = FALSE,
 \details{
   Almost all \pkg{VGAM} link functions have something similar to
   the argument list as given above.
-  That is, there is a matching \code{earg} for each \code{link} argument.
-  In this help file
-  we have \eqn{\eta = g(\theta)}{eta = g(theta)}
-  where \eqn{g} is the link function, \eqn{\theta}{theta} is the parameter
-  and \eqn{\eta}{eta} is the linear/additive predictor.
+  In this help file we have \eqn{\eta = g(\theta)}{eta = g(theta)}
+  where \eqn{g} is the link function, \eqn{\theta}{theta} is the
+  parameter and \eqn{\eta}{eta} is the linear/additive predictor.
 
 
+% The arguments \code{short} and \code{tag} are used only if
+% \code{theta} is character.
+
+
+
+
+% That is, there is a matching \code{earg} for each \code{link} argument.
 
 
 
@@ -189,17 +227,48 @@ TypicalVGAMlinkFunction(theta, earg = list(), inverse = FALSE,
   a character string, or just the name itself.  See the examples below.
 
 
+  From August 2012 onwards, a major change in link functions
+  occurred.
+  Argument \code{esigma} (and the like such as \code{earg})
+  used to be in \pkg{VGAM} prior to version 0.9-0 (released
+  during the 2nd half of 2012).
+  The major change is that arguments such as \code{offset} that used to
+  be passed in via those arguments can done directly through
+  the link function. For example, \code{gev(lshape = "logoff",
+  eshape = list(offset = 0.5))} is replaced by \code{gev(lshape
+  = logoff(offset = 0.5))}. The \code{@misc} slot no longer
+  has \code{link} and \code{earg} components, but two other
+  components replace these. Functions such as \code{dtheta.deta()},
+  \code{d2theta.deta2()}, \code{eta2theta()}, \code{theta2eta()}
+  are modified.
+
+
+
+
+
+
+
+
+
+
+
+
 }
 \examples{
 logit("a")
 logit("a", short = FALSE)
 logit("a", short = FALSE, tag = TRUE)
 
-logoff(1:5, earg = list(offset = 1))  # Same as log(1:5 + 1)
-powl(1:5, earg = list(power = 2))     # Same as (1:5)^2
+logoff(1:5, offset = 1) # Same as log(1:5 + 1)
+powl(1:5, power = 2) # Same as (1:5)^2
 
-fit1 <- vgam(agaaus ~ altitude, binomialff(link = cloglog), hunua)    # ok
-fit2 <- vgam(agaaus ~ altitude, binomialff(link = "cloglog"), hunua)  # ok
+\dontrun{ # This is old and no longer works:
+logoff(1:5, earg = list(offset = 1))
+powl(1:5, earg = list(power = 2))
+}
+
+fit1 <- vgam(agaaus ~ altitude, binomialff(link = "cloglog"), hunua) # ok
+fit2 <- vgam(agaaus ~ altitude, binomialff(link = "cloglog"), hunua) # ok
 
 \dontrun{
 # This no longer works since "clog" is not a valid VGAM link function:
@@ -209,17 +278,19 @@ fit3 <- vgam(agaaus ~ altitude, binomialff(link = "clog"), hunua) # not ok
 # No matter what the link, the estimated var-cov matrix is the same
 y <- rbeta(n = 1000, shape1 = exp(0), shape2 = exp(1))
 fit1 <- vglm(y ~ 1, beta.ab(lshape1 = "identity", lshape2 = "identity"),
-             trace = TRUE, crit = "c")
-fit2 <- vglm(y ~ 1, beta.ab(lshape1 = logoff, eshape1 = list(offset = 1.1),
-                            lshape2 = logoff, eshape2 = list(offset = 1.1)),
-            trace = TRUE, crit = "c")
-vcov(fit1, untran = TRUE)
-vcov(fit1, untran = TRUE) - vcov(fit2, untran = TRUE)  # Should be all 0s
-fit1@misc$earg   # No 'special' parameters
-fit2@misc$earg   # Some 'special' parameters are here
+             trace = TRUE, crit = "coef")
+fit2 <- vglm(y ~ 1, beta.ab(lshape1 = logoff(offset = 1.1),
+                            lshape2 = logoff(offset = 1.1)),
+            trace = TRUE, crit = "coef")
+vcov(fit1, untransform = TRUE)
+vcov(fit1, untransform = TRUE) - vcov(fit2, untransform = TRUE) # Should be all 0s
+\dontrun{ # This is old:
+fit1@misc$earg # Some 'special' parameters
+fit2@misc$earg # Some 'special' parameters are here
+}
 
 
-par(mfrow = c(2,2))
+par(mfrow = c(2, 2))
 p <- seq(0.01, 0.99, len = 200)
 x <- seq(-4, 4, len = 200)
 plot(p, logit(p), type = "l", col = "blue")

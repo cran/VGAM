@@ -8,18 +8,18 @@
 
 }
 \usage{
-gamma1(link = "loge", earg=list())
+gamma1(link = "loge", zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{link}{
   Link function applied to the (positive) \emph{shape} parameter.
-  See \code{\link{Links}} for more choices.
+  See \code{\link{Links}} for more choices and general information.
 
   }
-  \item{earg}{
-  List. Extra argument for the link.
-  See \code{earg} in \code{\link{Links}} for general information.
+  \item{zero}{
+  Details at \code{\link{CommonVGAMffArguments}}.
+
 
   }
 }
@@ -34,45 +34,55 @@ gamma1(link = "loge", earg=list())
   is \eqn{\mu=shape}{mu=shape}, and the variance is 
   \eqn{\sigma^2 = shape}{sigma^2 = shape}.
 
+
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}}
   and \code{\link{vgam}}.
+
+
 }
 \references{
   Most standard texts on statistical distributions describe
   the 1-parameter gamma distribution, e.g.,
+
   
 Evans, M., Hastings, N. and Peacock, B. (2000)
 \emph{Statistical Distributions},
 New York: Wiley-Interscience, Third edition.
 
+
 }
 \author{ T. W. Yee }
 \note{
-  This \pkg{VGAM} family function can handle a multivariate (matrix)
-  response.
+  This \pkg{VGAM} family function can handle a multiple 
+  responses, which is inputted as a matrix.
+
 
   The parameter \eqn{shape} matches with \code{shape} in
   \code{\link[stats]{rgamma}}. The argument
   \code{rate} in \code{\link[stats]{rgamma}} is assumed
   1 for this family function.
 
+
   If \eqn{rate} is unknown use the family function
   \code{\link{gamma2.ab}} to estimate it too.
+
 
 }
 
 \seealso{
   \code{\link{gamma2.ab}} for the 2-parameter gamma distribution,
-  \code{\link{lgammaff}}.
+  \code{\link{lgammaff}},
+  \code{\link{lindley}}.
+
 
 }
 \examples{
-gdata = data.frame(y = rgamma(n=100, shape= exp(3)))
-fit = vglm(y ~ 1, gamma1, gdata, trace=TRUE, crit="c")
-coef(fit, matrix=TRUE)
+gdata <- data.frame(y = rgamma(n = 100, shape = exp(3)))
+fit <- vglm(y ~ 1, gamma1, gdata, trace = TRUE, crit = "coef")
+coef(fit, matrix = TRUE)
 Coef(fit)
 summary(fit)
 }

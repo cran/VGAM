@@ -16,7 +16,7 @@
 
 
 
- rcam <- function(y,
+ rcim <- function(y,
          family = poissonff,
          Rank = 0,
          Musual = NULL,
@@ -88,11 +88,11 @@
 
   eifun <- function(i, n) diag(n)[, i, drop = FALSE]
 
-  .rcam.df <-
+  .rcim.df <-
     if (!noroweffects) data.frame("Row.2" = eifun(2, nrow(y))) else
     if (!nocoleffects) data.frame("Col.2" = eifun(2, nrow(y))) else
     stop("at least one of 'noroweffects' and 'nocoleffects' must be FALSE")
-  colnames( .rcam.df ) <- paste(rprefix, "2", sep = "") # Overwrite "Row.2"
+  colnames( .rcim.df ) <- paste(rprefix, "2", sep = "") # Overwrite "Row.2"
 
 
 
@@ -132,7 +132,7 @@
     Hlist[[   paste(rprefix, ii, sep = "")]] <- matrix(1, ncol(y), 1)
 
 
-    .rcam.df[[paste(rprefix, ii, sep = "")]] <- modmat.row[, ii]
+    .rcim.df[[paste(rprefix, ii, sep = "")]] <- modmat.row[, ii]
   }
 
 
@@ -141,21 +141,21 @@
 
 
     Hlist[[   paste(cprefix, ii, sep = "")]] <- modmat.col[, ii, drop = FALSE]
-    .rcam.df[[paste(cprefix, ii, sep = "")]] <- rep(1, nrow(y))
+    .rcim.df[[paste(cprefix, ii, sep = "")]] <- rep(1, nrow(y))
   }
 
   if (Rank > 0) {
     for(ii in 2:nrow(y)) {
       Hlist[[yn1[ii]]] <- diag(ncol(y))
-      .rcam.df[[yn1[ii]]] <- eifun(ii, nrow(y))
+      .rcim.df[[yn1[ii]]] <- eifun(ii, nrow(y))
     }
   }
 
 
-  dimnames(.rcam.df) <- list(if (length(dimnames(y)[[1]]))
+  dimnames(.rcim.df) <- list(if (length(dimnames(y)[[1]]))
                              dimnames(y)[[1]] else
                              as.character(1:nrow(y)),
-                             dimnames(.rcam.df)[[2]])
+                             dimnames(.rcim.df)[[2]])
 
   str1 <- paste("~ ", rprefix, "2", sep = "")
 
@@ -201,7 +201,7 @@
   if (Rank > 0)
     mycontrol$Norrr <- as.formula(str1)  # Overwrite this
 
-  assign(".rcam.df", .rcam.df, envir = VGAM::VGAMenv)
+  assign(".rcim.df", .rcim.df, envir = VGAM::VGAMenv)
 
   warn.save <- options()$warn
   options(warn = -3)  # Suppress the warnings (hopefully, temporarily)
@@ -250,7 +250,7 @@
              weights = if (length(weights))
                        weights else rep(1, length = nrow(y)),
              ...,
-             control = mycontrol, data = .rcam.df)
+             control = mycontrol, data = .rcim.df)
   } else {
     if (is(object.save, "vglm")) object.save else
         vglm(as.formula(str2),
@@ -260,7 +260,7 @@
              weights = if (length(weights))
                        weights else rep(1, length = nrow(y)),
              ...,
-             control = mycontrol, data = .rcam.df)
+             control = mycontrol, data = .rcim.df)
   }
 
   options(warn = warn.save)
@@ -273,7 +273,7 @@
       summary(answer)
     }
   } else {
-    as(answer, ifelse(Rank > 0, "rcam", "rcam0"))
+    as(answer, ifelse(Rank > 0, "rcim", "rcim0"))
   }
 
 
@@ -292,8 +292,8 @@
 
 
 
-summaryrcam = function(object, ...) {
-    rcam(object, summary.arg = TRUE, ...)
+summaryrcim = function(object, ...) {
+    rcim(object, summary.arg = TRUE, ...)
 }
 
 
@@ -304,21 +304,21 @@ summaryrcam = function(object, ...) {
 
 
 
- setClass("rcam0", representation(not.needed = "numeric"),
+ setClass("rcim0", representation(not.needed = "numeric"),
           contains = "vglm")  # Added 20110506
 
- setClass("rcam", representation(not.needed = "numeric"),
+ setClass("rcim", representation(not.needed = "numeric"),
           contains = "rrvglm")
 
 
-setMethod("summary", "rcam0",
+setMethod("summary", "rcim0",
           function(object, ...)
-          summaryrcam(object, ...))
+          summaryrcim(object, ...))
 
 
-setMethod("summary", "rcam",
+setMethod("summary", "rcim",
           function(object, ...)
-          summaryrcam(object, ...))
+          summaryrcim(object, ...))
 
 
 
@@ -329,7 +329,7 @@ setMethod("summary", "rcam",
 
 
 
- Rcam <- function (mat, rbaseline = 1, cbaseline = 1) {
+ Rcim <- function (mat, rbaseline = 1, cbaseline = 1) {
 
   mat <- as.matrix(mat)
   RRR <- dim(mat)[1]
@@ -389,7 +389,7 @@ setMethod("summary", "rcam",
 
 
 
- plotrcam0  <- function (object,
+ plotrcim0  <- function (object,
      centered = TRUE, whichplots = c(1, 2),
      hline0 = TRUE, hlty = "dashed", hcol = par()$col, hlwd = par()$lwd,
                          rfirst = 1, cfirst = 1,
@@ -504,14 +504,14 @@ setMethod("summary", "rcam",
 
 
 
-setMethod("plot", "rcam0",
+setMethod("plot", "rcim0",
           function(x, y, ...)
-          plotrcam0(object = x, ...))
+          plotrcim0(object = x, ...))
 
 
-setMethod("plot", "rcam",
+setMethod("plot", "rcim",
           function(x, y, ...)
-          plotrcam0(object = x, ...))
+          plotrcim0(object = x, ...))
 
 
 
@@ -667,10 +667,10 @@ confint_nb1 <- function(nb1, level = 0.95) {
     stop("argument 'nb1' does not appear to be a negbinomial() fit")
 
   if (!all(unlist(constraints(nb1)[-1]) == 1))
-    stop("argument 'nb1' does not appear to have parallel = TRUE")
+    stop("argument 'nb1' does not appear to have 'parallel = TRUE'")
 
   if (!all(unlist(constraints(nb1)[1]) == c(diag(nb1@misc$M))))
-    stop("argument 'nb1' does not have parallel = FALSE ",
+    stop("argument 'nb1' does not have 'parallel = FALSE' ",
          "for the intercept")
 
   if (nb1@misc$M != 2)
@@ -733,7 +733,7 @@ plota21 <- function(rrvglm2, plot.it = TRUE, nseq.a21 = 31,
 
   big.ci.a21 <- a21.hat +  c(-1, 1) * se.eachway * se.a21.hat
   seq.a21 <- seq(big.ci.a21[1], big.ci.a21[2], length = nseq.a21)
-  Hlist.orig <- constraints.vlm(rrvglm2, type = "lm")
+  Hlist.orig <- constraints.vlm(rrvglm2, type = "term")
 
 
   alreadyComputed <- !is.null(rrvglm2@post$a21.matrix)
@@ -809,109 +809,6 @@ plota21 <- function(rrvglm2, plot.it = TRUE, nseq.a21 = 31,
 
 
 
-if (FALSE)
-Qvar <- function(object, factor.name = NULL,
-                 level1.name = "level1",
-                 ...) {
-
-
-
-
-  object.xlevels = if (is(object, "vglm")) {
-    object@xlevels
-  } else {
-    factor(rownames(object))
-  }
-
-  myvcov = if (is(object, "vglm")) {
-    if (length(object.xlevels) == 0)
-      stop("no factors amongst the model.matrix of 'object'")
-
-    if (is.null(factor.name)) {
-      if (length(object.xlevels) > 1)
-        stop("more than one factor in the model.matrix of 'object'")
-
-      factor.name = names(object.xlevels)
-      object.xlevels = object@xlevels[[1]]
-    } else {
-      object.xlevels = object.xlevels[[factor.name]]
-    }
-
-
-
-
-
-    colptr = attr(model.matrix(object), "vassign")
-    colptr = colptr[[factor.name]]
-    vcov(object)[colptr, colptr, drop = FALSE]
-  } else if (is.matrix(object)) {
-    object
-  } else {
-    stop("argument 'object' is not a vglm() object or a matrix")
-  }
-
-
-
-
-  myvcov = rbind(0, cbind(0, myvcov))
-
-  LL = nrow(myvcov)
-  if (LL <= 3)
-    stop("the factor must have at least three levels")
-
-
-  vcov0 = myvcov
-  for (ilocal in 1:LL)
-    for (jlocal in ilocal:LL)
-      myvcov[ilocal, jlocal] =
-      myvcov[jlocal, ilocal] = vcov0[ilocal, ilocal] +
-                               vcov0[jlocal, jlocal] -
-                               vcov0[ilocal, jlocal] * 2
-
-  allvcov = myvcov
-  rownames(allvcov) =
-    c(paste(if (is.matrix(object)) level1.name else factor.name,
-            if (is.matrix(object)) NULL else object.xlevels[1],
-            sep = ""),
-            rownames(vcov0)[-1])
-  colnames(allvcov) = rownames(allvcov)
-
-
-
-
-
-
-
-
-
-  diag(allvcov) = rep(1,             len = LL) # Any positive value should do
-
-
-
-
-
-  Allvcov = allvcov
-
-
-
-
-  wmat   = matrix(1, LL, LL)
-  diag(wmat) = sqrt( .Machine$double.eps )
-
-
-  logAllvcov = log(Allvcov)
-  attr(logAllvcov, "Prior.Weights") = wmat
-  logAllvcov
-}
-
-
-
-
-
-
-
-
-
 
 
 
@@ -925,105 +822,141 @@ Qvar <- function(object, factorname = NULL, coef.indices = NULL,
 
 
   coef.indices.saved <- coef.indices
+
   if (!is.matrix(object)) {
-      model <- object
-      if (is.null(factorname) && is.null(coef.indices)) {
-        stop("arguments \"factorname\" and \"coef.indices\" are ",
-             "both NULL")
-      }
-
-      if (is.null(coef.indices)) {
-          tmodel <- terms(model)
-          modelmat <- if (is.matrix(model@x)) model@x else
-                         model.matrix(tmodel,
-                                      data = model@model)
+    model <- object
+    if (is.null(factorname) && is.null(coef.indices)) {
+      stop("arguments \"factorname\" and \"coef.indices\" are ",
+           "both NULL")
+    }
 
 
+    if (is.null(coef.indices)) {
+      tmodel <- terms(model)
+      modelmat <- if (is.matrix(model@x)) model@x else
+                     model.matrix(tmodel,
+                                  data = model@model)
 
 
-          colptr = attr(model.matrix(object), "vassign")
-          colptr = colptr[[factorname]]
-          coef.indices <- colptr
 
 
-          contmat <- if (length(model@xlevels[[factorname]]) ==
-                         length(coef.indices)) {
-              diag(length(coef.indices))
-          } else {
-              eval(call(model@contrasts[[factorname]],
-                        model@xlevels[[factorname]]))
-          }
-          rownames(contmat) <- model@xlevels[[factorname]]
+      colptr = attr(model.matrix(object, type = "vlm"), "vassign")
 
-          if (is.null(estimates))
-            estimates <- contmat %*% coefvlm(model)[coef.indices]
 
-          covmat <- vcovvlm(model, dispersion = dispersion)
-          covmat <- covmat[coef.indices, coef.indices, drop = FALSE]
-          covmat <- contmat %*% covmat %*% t(contmat)
+      M <- npred(model)
+      newfactorname = if (M > 1) {
+        clist = constraints(model, type = "term")
+        Mdot = ncol(clist[[factorname]])
+        vlabel(factorname, ncolBlist = Mdot, M = M)
       } else {
-          k <- length(coef.indices)
-          refPos <- numeric(0)
-          if (0 %in% coef.indices) {
-              refPos <- which(coef.indices == 0)
-              coef.indices <- coef.indices[-refPos]
-          }
-          covmat <- vcovvlm(model, dispersion = dispersion)
-          covmat <- covmat[coef.indices, coef.indices, drop = FALSE]
+        factorname
+      }
 
-          if (is.null(estimates))
-            estimates <- coefvlm(model)[coef.indices]
+      colptr = if (M > 1) {
+        colptr[newfactorname]
+      } else {
+        colptr[[newfactorname]]
+      }
+      coef.indices <- colptr
 
-          if (length(refPos) == 1) {
-              if (length(estimates) != k)
-                estimates <- c(0, estimates)
-              covmat <- rbind(0, cbind(0, covmat))
-              names(estimates)[1] <-
-              rownames(covmat)[1] <-
-              colnames(covmat)[1] <- reference.name
-              if (refPos != 1) {
-                perm <- if (refPos == k) c(2:k, 1) else
-                        c(2:refPos, 1, (refPos + 1):k)
-                  estimates <- estimates[perm]
-                  covmat <- covmat[perm, perm, drop = FALSE]
-              }
-          }
+
+      contmat <- if (length(model@xlevels[[factorname]]) ==
+                     length(coef.indices)) {
+        diag(length(coef.indices))
+      } else {
+        eval(call(model@contrasts[[factorname]],
+                  model@xlevels[[factorname]]))
+      }
+      rownames(contmat) <- model@xlevels[[factorname]]
+
+      if (is.null(estimates)) {
+        if (M > 1) {
+          estimates <- matrix(-1, nrow(contmat), Mdot)
+          for (ii in 1:Mdot)
+            estimates[, ii] <- contmat %*% (coefvlm(model)[(coef.indices[[ii]])])
+        } else {
+          estimates <- contmat %*% (coefvlm(model)[coef.indices])
+        }
       }
 
 
-      return(Recall(covmat,
-                    factorname = factorname,
-                    coef.indices = coef.indices.saved,
-                    labels = labels,
-                    dispersion = dispersion,
-                    estimates = estimates
-                    )
-             )
-  } else {
+      Covmat <- vcovvlm(model, dispersion = dispersion)
+      covmat <- Covmat[unlist(coef.indices),
+                       unlist(coef.indices), drop = FALSE]
+      covmat <- if (M > 1) {
 
-      covmat <- object
-      if (length(labels))
-        rownames(covmat) <- colnames(covmat) <- labels
-      if ((LL <- dim(covmat)[1]) <= 2)
-        stop("This function works only for factors with 3 ",
-             "or more levels")
-  }
+        for (ii in 1:Mdot) {
+          ans <- contmat %*% Covmat[colptr[[ii]], (colptr[[ii]])] %*% t(contmat)
+        }
+        ans
+
+
+      } else {
+        contmat %*% covmat %*% t(contmat)
+      }
+    } else { # ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+      kk <- length(coef.indices)
+      refPos <- numeric(0)
+      if (0 %in% coef.indices) {
+        refPos <- which(coef.indices == 0)
+        coef.indices <- coef.indices[-refPos]
+      }
+      covmat <- vcovvlm(model, dispersion = dispersion)
+      covmat <- covmat[coef.indices, coef.indices, drop = FALSE]
+
+      if (is.null(estimates))
+        estimates <- coefvlm(model)[coef.indices]
+
+      if (length(refPos) == 1) {
+        if (length(estimates) != kk)
+          estimates <- c(0, estimates)
+        covmat <- rbind(0, cbind(0, covmat))
+        names(estimates)[1] <-
+        rownames(covmat)[1] <-
+        colnames(covmat)[1] <- reference.name
+        if (refPos != 1) {
+          perm <- if (refPos == kk) c(2:kk, 1) else
+                  c(2:refPos, 1, (refPos + 1):kk)
+          estimates <- estimates[perm]
+          covmat <- covmat[perm, perm, drop = FALSE]
+        }
+      }
+    } # ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+
+    return(Recall(covmat,
+                  factorname = factorname,
+                  coef.indices = coef.indices.saved,
+                  labels = labels,
+                  dispersion = dispersion,
+                  estimates = estimates
+                  )
+           )
+  } else { # ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+    covmat <- object
+    if (length(labels))
+      rownames(covmat) <- colnames(covmat) <- labels
+    if ((LLL <- dim(covmat)[1]) <= 2)
+      stop("This function works only for factors with 3 ",
+           "or more levels")
+  } # ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
 
 
   allvcov = covmat
-  for (ilocal in 1:LL)
-    for (jlocal in ilocal:LL)
+  for (ilocal in 1:LLL)
+    for (jlocal in ilocal:LLL)
       allvcov[ilocal, jlocal] =
       allvcov[jlocal, ilocal] = covmat[ilocal, ilocal] +
                                 covmat[jlocal, jlocal] -
                                 covmat[ilocal, jlocal] * 2
 
-  diag(allvcov) = rep(1.0, len = LL) # Any positive value should do
+  diag(allvcov) = rep(1.0, len = LLL) # Any positive value should do
 
 
-  wmat   = matrix(1.0, LL, LL)
+  wmat   = matrix(1.0, LLL, LLL)
   diag(wmat) = sqrt( .Machine$double.eps )
 
   logAllvcov = log(allvcov)
@@ -1044,28 +977,29 @@ Qvar <- function(object, factorname = NULL, coef.indices = NULL,
 WorstErrors <- function(qv.object) {
   stop("20110729; does not work")
 
-    reducedForm <- function(covmat, qvmat){
-        nlevels <- dim(covmat)[1]
-     firstRow <- covmat[1, ]
-     ones <- rep(1, nlevels)
-     J <- outer(ones, ones)
-     notzero <- 2:nlevels
-     r.covmat <- covmat + (firstRow[1]*J) -
-                      outer(firstRow, ones) -
-                     outer(ones, firstRow)
-     r.covmat <- r.covmat[notzero, notzero]
-     qv1 <- qvmat[1, 1]
-     r.qvmat <- (qvmat + qv1*J)[notzero, notzero]
-     list(r.covmat, r.qvmat)}
-    covmat <- qv.object$covmat
-    qvmat <- diag(qv.object$qvframe$quasiVar)
-    r.form <- reducedForm(covmat, qvmat)
-    r.covmat <- r.form[[1]]
-    r.qvmat <- r.form[[2]]
-    inverse.sqrt <- solve(chol(r.covmat))
-    evalues <- eigen(t(inverse.sqrt) %*% r.qvmat %*% inverse.sqrt,
-                    symmetric = TRUE)$values
-    sqrt(c(min(evalues), max(evalues))) - 1
+  reducedForm <- function(covmat, qvmat) {
+    nlevels <- dim(covmat)[1]
+    firstRow <- covmat[1, ]
+    ones <- rep(1, nlevels)
+    J <- outer(ones, ones)
+    notzero <- 2:nlevels
+    r.covmat <- covmat + (firstRow[1]*J) -
+                         outer(firstRow, ones) -
+                         outer(ones, firstRow)
+    r.covmat <- r.covmat[notzero, notzero]
+    qv1 <- qvmat[1, 1]
+    r.qvmat <- (qvmat + qv1*J)[notzero, notzero]
+    list(r.covmat, r.qvmat)
+  }
+  covmat <- qv.object$covmat
+  qvmat <- diag(qv.object$qvframe$quasiVar)
+  r.form <- reducedForm(covmat, qvmat)
+  r.covmat <- r.form[[1]]
+  r.qvmat <- r.form[[2]]
+  inverse.sqrt <- solve(chol(r.covmat))
+  evalues <- eigen(t(inverse.sqrt) %*% r.qvmat %*% inverse.sqrt,
+                   symmetric = TRUE)$values
+  sqrt(c(min(evalues), max(evalues))) - 1
 }
 
 
@@ -1074,14 +1008,14 @@ WorstErrors <- function(qv.object) {
 IndentPrint <- function(object, indent = 4, ...){
   stop("20110729; does not work")
 
-    zz <- ""
-    tc <- textConnection("zz", "w", local = TRUE)
-    sink(tc)
-    try(print(object, ...))
-    sink()
-    close(tc)
-    indent <- paste(rep(" ", indent), sep = "", collapse = "")
-    cat(paste(indent, zz, sep = ""), sep = "\n")}
+  zz <- ""
+  tc <- textConnection("zz", "w", local = TRUE)
+  sink(tc)
+  try(print(object, ...))
+  sink()
+  close(tc)
+  indent <- paste(rep(" ", indent), sep = "", collapse = "")
+  cat(paste(indent, zz, sep = ""), sep = "\n")}
 
 
 
@@ -1196,7 +1130,7 @@ plotqvar <- function(object,
 
   if (!any("normal1" %in% object@family@vfamily))
     stop("argument 'object' dos not appear to be a ",
-         "rcam(, normal1) object")
+         "rcim(, normal1) object")
 
   estimates = c(object@extra$attributes.y$estimates)
   if (!length(names(estimates)) &&

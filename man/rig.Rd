@@ -8,8 +8,7 @@
 
 }
 \usage{
-rig(lmu = "identity", llambda = "loge",
-    emu=list(), elambda=list(), imu = NULL, ilambda = 1)
+rig(lmu = "identity", llambda = "loge", imu = NULL, ilambda = 1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -23,19 +22,16 @@ rig(lmu = "identity", llambda = "loge",
   A \code{NULL} means a value is computed internally.
 
   }
-  \item{emu, elambda}{
-  List. Extra argument for each of the links.
-  See \code{earg} in \code{\link{Links}} for general information.
-
-  }
 }
 \details{
   See Jorgensen (1997) for details.
+
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}},
   and \code{\link{vgam}}.
+
 
 }
 \references{
@@ -54,9 +50,9 @@ London: Chapman & Hall
 
 }
 \examples{
-rdata = data.frame(y = rchisq(n=100, df=14))    # Not 'proper' data!!
-fit = vglm(y ~ 1, rig, rdata, trace=TRUE)
-fit = vglm(y ~ 1, rig, rdata, trace=TRUE, eps=1e-9, cri="c")
+rdata <- data.frame(y = rchisq(n = 100, df = 14)) # Not 'proper' data!!
+fit <- vglm(y ~ 1, rig, rdata, trace = TRUE)
+fit <- vglm(y ~ 1, rig, rdata, trace = TRUE, eps = 1e-9, crit = "coef")
 summary(fit)
 }
 \keyword{models}

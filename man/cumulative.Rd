@@ -9,11 +9,10 @@
 
 }
 \usage{
-cumulative(link = "logit", earg = list(), parallel = FALSE,
-           reverse = FALSE, mv = FALSE, intercept.apply = FALSE,
-           whitespace = FALSE)
+cumulative(link = "logit", parallel = FALSE, reverse = FALSE,
+           mv = FALSE, intercept.apply = FALSE, whitespace = FALSE)
 }
-%scumulative(link="logit", earg = list(),
+%scumulative(link="logit",
 %            lscale="loge", escale = list(),
 %            parallel = FALSE, sparallel = TRUE, reverse = FALSE, iscale = 1)
 %- maybe also 'usage' for other objects documented here.
@@ -33,16 +32,13 @@ cumulative(link = "logit", earg = list(), parallel = FALSE,
 %
 % }
 
-  \item{earg}{
-  List. Extra argument for the link function.
-  See \code{earg} in \code{\link{Links}} for general information.
 
-
-  }
   \item{parallel}{
-  A logical  or formula specifying which terms have
+  A logical or formula specifying which terms have
   equal/unequal coefficients.
   See below for more information about the parallelism assumption.
+  The default results in what some people call the
+  \emph{generalized ordered logit model} to be fitted.
 
 
   }
@@ -170,8 +166,10 @@ Dobson, A. J. and Barnett, A. (2008)
 \emph{An Introduction to Generalized Linear Models},
 3rd ed. Boca Raton: Chapman & Hall/CRC Press.
 
+
 McCullagh, P. and Nelder, J. A. (1989)
 \emph{Generalized Linear Models}, 2nd ed. London: Chapman & Hall.
+
 
 Simonoff, J. S. (2003)
 \emph{Analyzing Categorical Data},
@@ -264,7 +262,8 @@ by the \pkg{VGAM} package can be found at
 
 }
 \section{Warning }{
-  No check is made to verify that the response is ordinal;
+  No check is made to verify that the response is ordinal if the
+  response is a matrix;
   see \code{\link[base:factor]{ordered}}.
 
 
@@ -292,9 +291,9 @@ by the \pkg{VGAM} package can be found at
 }
 \examples{
 # Fit the proportional odds model, p.179, in McCullagh and Nelder (1989)
-pneumo = transform(pneumo, let = log(exposure.time))
-(fit = vglm(cbind(normal, mild, severe) ~ let,
-            cumulative(parallel = TRUE, reverse = TRUE), pneumo))
+pneumo <- transform(pneumo, let = log(exposure.time))
+(fit <- vglm(cbind(normal, mild, severe) ~ let,
+             cumulative(parallel = TRUE, reverse = TRUE), pneumo))
 depvar(fit)   # Sample proportions (good technique)
 fit@y         # Sample proportions (bad technique)
 weights(fit, type = "prior")   # Number of observations
@@ -302,23 +301,23 @@ coef(fit, matrix = TRUE)
 constraints(fit)   # Constraint matrices
 
 # Check that the model is linear in let ----------------------
-fit2 = vgam(cbind(normal, mild, severe) ~ s(let, df = 2),
-            cumulative(reverse = TRUE), pneumo)
+fit2 <- vgam(cbind(normal, mild, severe) ~ s(let, df = 2),
+             cumulative(reverse = TRUE), pneumo)
 \dontrun{ plot(fit2, se = TRUE, overlay = TRUE, lcol = 1:2, scol = 1:2) }
 
 # Check the proportional odds assumption with a LRT ----------
-(fit3 = vglm(cbind(normal, mild, severe) ~ let,
-             cumulative(parallel = FALSE, reverse = TRUE), pneumo))
+(fit3 <- vglm(cbind(normal, mild, severe) ~ let,
+              cumulative(parallel = FALSE, reverse = TRUE), pneumo))
 pchisq(2 * (logLik(fit3) - logLik(fit)),
        df = length(coef(fit3)) - length(coef(fit)), lower.tail = FALSE)
 lrtest(fit3, fit)  # More elegant
 
 # A factor() version of fit ----------------------------------
 # This is in long format (cf. wide format above)
-Nobs = round(depvar(fit) * c(weights(fit, type = "prior")))
-sumNobs = colSums(Nobs) # apply(Nobs, 2, sum)
+Nobs <- round(depvar(fit) * c(weights(fit, type = "prior")))
+sumNobs <- colSums(Nobs) # apply(Nobs, 2, sum)
 
-pneumo.long =
+pneumo.long <-
   data.frame(symptoms = ordered(rep(rep(colnames(Nobs), nrow(Nobs)),
                                         times = c(t(Nobs))),
                                 levels = colnames(Nobs)),
@@ -327,18 +326,18 @@ pneumo.long =
 with(pneumo.long, table(let, symptoms)) # Check it; should be same as pneumo
 
 
-(fit.long1 = vglm(symptoms ~ let, data = pneumo.long,
+(fit.long1 <- vglm(symptoms ~ let, data = pneumo.long,
              cumulative(parallel = TRUE, reverse = TRUE), trace = TRUE))
 coef(fit.long1, matrix = TRUE) # Should be same as coef(fit, matrix = TRUE)
 # Could try using mustart if fit.long1 failed to converge.
-mymustart = matrix(sumNobs / sum(sumNobs),
+mymustart <- matrix(sumNobs / sum(sumNobs),
                    nrow(pneumo.long), ncol(Nobs), byrow = TRUE)
-fit.long2 = vglm(symptoms ~ let,
-                fam = cumulative(parallel = TRUE, reverse = TRUE),
-                mustart = mymustart, data = pneumo.long, trace = TRUE)
+fit.long2 <- vglm(symptoms ~ let,
+                  fam = cumulative(parallel = TRUE, reverse = TRUE),
+                  mustart = mymustart, data = pneumo.long, trace = TRUE)
 coef(fit.long2, matrix = TRUE) # Should be same as coef(fit, matrix = TRUE)
 }
 \keyword{models}
 \keyword{regression}
 
-% pneumo$let = log(pneumo$exposure.time)
+% pneumo$let <- log(pneumo$exposure.time)

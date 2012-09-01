@@ -31,6 +31,7 @@
   See also \code{\link{wffc}} and \code{\link{wffc.teams}} for more
   details and links.
 
+
 }
 %\source{
 %  \url{http://www.2008worldflyfishingchamps.com/}.
@@ -40,6 +41,7 @@
   VGLMs and VGAMs: an overview for applications in fisheries research.
   \emph{Fisheries Research},
   \bold{101}, 116--126.
+
 
 }
 \examples{

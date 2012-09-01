@@ -52,10 +52,10 @@ New York: Springer-Verlag.
 } 
 
 \examples{
-y = rdiric(n=1000, shape=c(3, 1, 4))
-fit = vglm(y ~ 1, dirichlet, trace = TRUE, crit="c")
+y <- rdiric(n = 1000, shape = c(3, 1, 4))
+fit <- vglm(y ~ 1, dirichlet, trace = TRUE, crit = "c")
 Coef(fit)
-coef(fit, matrix=TRUE)
+coef(fit, matrix = TRUE)
 }
 \keyword{distribution}
 

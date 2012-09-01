@@ -18,9 +18,13 @@ because CGO (for \emph{canonical Gaussian ordination}) is a confusing
 and inaccurate name.
 CQO (for \emph{constrained quadratic ordination}) is better.
 This new nomenclature described in Yee (2006).
+
+
 }
 \value{
   Nothing is returned; an error message is issued.
+
+
 }
 \references{ 
 Yee, T. W. (2004)
@@ -45,6 +49,7 @@ The code, therefore, in Yee (2004) will not run without changing the
 
 \seealso{ 
   \code{\link{cqo}}.
+
 }
 \examples{
 

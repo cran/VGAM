@@ -256,32 +256,32 @@ se.a21.hat <- sqrt(vcov(rrnb2)["I(lv.mat)", "I(lv.mat)"])
 ci.a21 <- a21.hat +  c(-1, 1) * 1.96 * se.a21.hat
 (ci.delta2 <- 2 - rev(ci.a21))  # The 95 percent confidence interval
 
-confint_rrnb(rrnb2)  # Quick way to get it
+confint_rrnb(rrnb2) # Quick way to get it
 
 # Plot the abundances and fitted values against the latent variable
 \dontrun{
 plot(y2 ~ lv(rrnb2), data = mydata, col = "blue",
-          xlab = "Latent variable", las = 1) 
+     xlab = "Latent variable", las = 1) 
 ooo <- order(lv(rrnb2))
 lines(fitted(rrnb2)[ooo] ~ lv(rrnb2)[ooo], col = "red") }
 
 # Example 2: stereotype model (reduced-rank multinomial logit model)
 data(car.all)
-index = with(car.all, Country == "Germany" | Country == "USA" |
-                      Country == "Japan"   | Country == "Korea")
-scar = car.all[index, ]  # standardized car data
-fcols = c(13,14,18:20,22:26,29:31,33,34,36)  # These are factors
+index <- with(car.all, Country == "Germany" | Country == "USA" |
+                       Country == "Japan"   | Country == "Korea")
+scar <- car.all[index, ] # standardized car data
+fcols <- c(13,14,18:20,22:26,29:31,33,34,36)  # These are factors
 scar[,-fcols] = scale(scar[, -fcols]) # Standardize all numerical vars
-ones = matrix(1, 3, 1)
-clist = list("(Intercept)" = diag(3), Width = ones, Weight = ones,
-             Disp. = diag(3), Tank = diag(3), Price = diag(3),
-             Frt.Leg.Room = diag(3))
+ones <- matrix(1, 3, 1)
+clist <- list("(Intercept)" = diag(3), Width = ones, Weight = ones,
+              Disp. = diag(3), Tank = diag(3), Price = diag(3),
+              Frt.Leg.Room = diag(3))
 set.seed(111)
-fit = rrvglm(Country ~ Width + Weight + Disp. + Tank + Price + Frt.Leg.Room,
-             multinomial, data =  scar, Rank = 2, trace = TRUE,
-             constraints = clist, Norrr = ~ 1 + Width + Weight,
-             Uncor = TRUE, Corner = FALSE, Bestof = 2)
-fit@misc$deviance  # A history of the fits
+fit <- rrvglm(Country ~ Width + Weight + Disp. + Tank + Price + Frt.Leg.Room,
+              multinomial, data =  scar, Rank = 2, trace = TRUE,
+              constraints = clist, Norrr = ~ 1 + Width + Weight,
+              Uncor = TRUE, Corner = FALSE, Bestof = 2)
+fit@misc$deviance # A history of the fits
 Coef(fit)
 \dontrun{ biplot(fit, chull = TRUE, scores = TRUE, clty = 2, Ccex = 2,
        ccol = "blue", scol = "red", Ccol = "darkgreen", Clwd = 2,

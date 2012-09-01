@@ -15,9 +15,11 @@ ccoef(object, ...)
 \arguments{
   \item{object}{ An object for which the extraction of canonical
     coefficients is meaningful.
+
   }
   \item{\dots}{ Other arguments fed into the specific
     methods function of the model.
+
   }
 }
 \details{
@@ -26,11 +28,14 @@ ccoef(object, ...)
   the latent variables.  They are highly interpretable in ecology,
   and are looked at as weights or loadings.
 
+
   They are also applicable for reduced-rank VGLMs.
+
 
 }
 \value{
   The value returned depends specifically on the methods function invoked.
+
 
 }
 \references{
@@ -39,15 +44,18 @@ Reduced-rank vector generalized linear models.
 \emph{Statistical Modelling},
 \bold{3}, 15--41.
 
+
 Yee, T. W. (2004)
 A new technique for maximum-likelihood
 canonical Gaussian ordination.
 \emph{Ecological Monographs},
 \bold{74}, 685--701.
 
+
 Yee, T. W. (2006)
 Constrained additive ordination.
 \emph{Ecology}, \bold{87}, 203--213.
+
 
 }
 \author{ Thomas W. Yee }
@@ -67,6 +75,7 @@ Constrained additive ordination.
   fitting quadratic ordination models is whether \code{EqualTolerances}
   is \code{TRUE} or \code{FALSE}.  See Yee (2004) for details.
 
+
 }
 
 \seealso{
@@ -75,16 +84,16 @@ Constrained additive ordination.
    \code{ccoef.cao},
    \code{\link[stats]{coef}}.
 
+
 }
 \examples{
-\dontrun{
-set.seed(111)  # This leads to the global solution
+\dontrun{ set.seed(111) # This leads to the global solution
 hspider[,1:6] = scale(hspider[,1:6]) # Standardized environmental vars
 p1 = cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,
                Auloalbi, Pardlugu, Pardmont, Pardnigr, Pardpull,
                Trocterr, Zoraspin) ~
          WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
-         fam = quasipoissonff, data = hspider, Crow1positive=FALSE)
+         fam = quasipoissonff, data = hspider, Crow1positive = FALSE)
 ccoef(p1)
 }
 }

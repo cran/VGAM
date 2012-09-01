@@ -546,20 +546,24 @@ rrr.normalize = function(rrcontrol, A, C, x, Dmat = NULL) {
 }
 
 
+
+
+
 rrr.end.expression = expression({
 
-    if (exists(".VGAM.etamat", envir = VGAM:::VGAMenv))
-        rm(".VGAM.etamat", envir = VGAM:::VGAMenv)
+  if (exists(".VGAM.etamat", envir = VGAM:::VGAMenv))
+    rm(".VGAM.etamat", envir = VGAM:::VGAMenv)
 
 
-    if (control$Quadratic) {
-        if (!length(extra)) extra=list()
-        extra$Cmat = Cmat      # Saves the latest iteration 
-        extra$Dmat = Dmat      # Not the latest iteration
-        extra$B1   = B1.save   # Not the latest iteration (not good)
-    } else {
-        Blist = replace.constraints(Blist.save, Amat, colx2.index)
-    }
+  if (control$Quadratic) {
+    if (!length(extra))
+      extra = list()
+    extra$Cmat = Cmat      # Saves the latest iteration 
+    extra$Dmat = Dmat      # Not the latest iteration
+    extra$B1   = B1.save   # Not the latest iteration (not good)
+  } else {
+    Blist = replace.constraints(Blist.save, Amat, colx2.index)
+  }
 
     X_vlm_save = if (control$Quadratic) {
         tmp300 = lm2qrrvlm.model.matrix(x=x, Blist = Blist.save,

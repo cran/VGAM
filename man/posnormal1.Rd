@@ -6,7 +6,7 @@
   Fits a positive (univariate) normal distribution.
 }
 \usage{
-posnormal1(lmean = "identity", lsd = "loge", emean = list(), esd = list(),
+posnormal1(lmean = "identity", lsd = "loge",
            imean = NULL, isd = NULL, nsimEIM = 100, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -18,11 +18,16 @@ posnormal1(lmean = "identity", lsd = "loge", emean = list(), esd = list(),
   See \code{\link{Links}} for more choices.
 
   }
-  \item{emean, esd}{
-  List. Extra argument for each of the links.
-  See \code{earg} in \code{\link{Links}} for general information.
 
-  }
+
+%  \item{emean, esd}{
+%  List. Extra argument for each of the links.
+%  See \code{earg} in \code{\link{Links}} for general information.
+%emean = list(), esd = list(),
+%
+%  }
+
+
   \item{imean, isd}{
   Optional initial values for \eqn{\mu}{mu} and \eqn{\sigma}{sigma}.
   A \code{NULL} means a value is computed internally.
@@ -72,12 +77,15 @@ posnormal1(lmean = "identity", lsd = "loge", emean = list(), esd = list(),
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}},
   and \code{\link{vgam}}.
+
+
 }
 \references{
 
   Documentation accompanying the \pkg{VGAM} package at
   \url{http://www.stat.auckland.ac.nz/~yee}
   contains further information and examples.
+
 
 }
 \author{ Thomas W. Yee }
@@ -87,6 +95,7 @@ posnormal1(lmean = "identity", lsd = "loge", emean = list(), esd = list(),
   Reasonably good initial values are needed.
   Fisher scoring is implemented.
 
+
   The distribution of the reciprocal of a positive normal random variable
   is known as an alpha distribution.
 
@@ -94,6 +103,7 @@ posnormal1(lmean = "identity", lsd = "loge", emean = list(), esd = list(),
 
 \section{Warning }{
   Under- or over-flow may occur if the data is ill-conditioned.
+
 
 }
 \seealso{ 
@@ -104,15 +114,15 @@ posnormal1(lmean = "identity", lsd = "loge", emean = list(), esd = list(),
 }
 
 \examples{
-pdata = data.frame(m = 1.0, SD = exp(1.0))
-pdata = transform(pdata, y = rposnorm(n <- 1000, m = m, sd = SD))
+pdata <- data.frame(m = 1.0, SD = exp(1.0))
+pdata <- transform(pdata, y = rposnorm(n <- 1000, m = m, sd = SD))
 
 \dontrun{with(pdata, hist(y, prob = TRUE, border = "blue",
          main = paste("posnorm(m =", m[1], ", sd =", round(SD[1], 2),")"))) }
-fit = vglm(y ~ 1, fam = posnormal1, pdata, trace = TRUE)
+fit <- vglm(y ~ 1, fam = posnormal1, pdata, trace = TRUE)
 coef(fit, matrix = TRUE)
-(Cfit = Coef(fit))
-mygrid = with(pdata, seq(min(y), max(y), len = 200)) # Add the fit to the histogram
+(Cfit <- Coef(fit))
+mygrid <- with(pdata, seq(min(y), max(y), len = 200)) # Add the fit to the histogram
 \dontrun{lines(mygrid, dposnorm(mygrid, Cfit[1], Cfit[2]), col = "red")}
 }
 \keyword{models}

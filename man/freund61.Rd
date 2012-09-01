@@ -10,14 +10,13 @@
 }
 \usage{
 freund61(la = "loge",  lap = "loge",  lb = "loge", lbp = "loge",
-         ea  = list(), eap = list(), eb  = list(), ebp = list(),
          ia = NULL, iap = NULL, ib = NULL, ibp = NULL,
          independent = FALSE, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{la,lap,lb,lbp,ea,eap,eb,ebp}{
-  Link functions and extra arguments applied to the (positive)
+  \item{la, lap, lb, lbp}{
+  Link functions applied to the (positive)
   parameters \eqn{\alpha}{alpha}, \eqn{\alpha'}{alpha'},
   \eqn{\beta}{beta} and \eqn{\beta'}{beta'}, respectively
   (the ``\code{p}'' stands for ``prime'').
@@ -25,7 +24,7 @@ freund61(la = "loge",  lap = "loge",  lb = "loge", lbp = "loge",
 
 
   }
-  \item{ia,iap,ib,ibp}{
+  \item{ia, iap, ib, ibp}{
   Initial value for the four parameters respectively.
   The default is to estimate them all internally.
 

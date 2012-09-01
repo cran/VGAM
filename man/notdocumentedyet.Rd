@@ -2,6 +2,26 @@
 \alias{notdocumentedyet}
 %
 %
+%
+%
+% 20120813 New links (no earg)
+\alias{Dtheta.deta}
+\alias{D2theta.deta2}
+\alias{Eta2theta}
+\alias{Theta2eta}
+\alias{link2list}
+\alias{Namesof}
+%
+%
+%
+%
+% 20120514, 20120528, 
+\alias{w.wz.merge}
+\alias{w.y.check}
+\alias{vweighted.mean.default}
+%
+% 20120418
+\alias{nvar_vlm}
 % 20120310
 %\alias{hatvalues}
 %\alias{hatvalues.vlm}
@@ -120,8 +140,8 @@
 %
 %
 %20101222; Alfian work
-%\alias{Rcam}        % Has been written
-%\alias{plotrcam0}   % Has been written
+%\alias{Rcim}        % Has been written
+%\alias{plotrcim0}   % Has been written
 %\alias{moffset}     % Has been written
 % \alias{Qvar}
 \alias{plotqvar}
@@ -196,7 +216,7 @@
 % \alias{attrassign}
 % \alias{attrassigndefault}
 % \alias{attrassignlm}
-\alias{beta4}
+% \alias{beta4}
 % \alias{betaffqn}
 \alias{biplot}
 \alias{biplot.qrrvglm}
@@ -230,7 +250,7 @@
 \alias{coefvlm}
 \alias{coefvsmooth.spline}
 \alias{coefvsmooth.spline.fit}
-\alias{constraints.vlm}
+% \alias{constraints.vlm}
 % \alias{cqo.fit}
 \alias{d2theta.deta2}
 % \alias{dcda.fast}
@@ -365,7 +385,7 @@
 \alias{nvar.rrvglm}
 \alias{nvar.qrrvglm}
 \alias{nvar.cao}
-\alias{nvar.rcam}
+\alias{nvar.rcim}
 \alias{ns}
 % \alias{num.deriv.rrr}
 \alias{persp}
@@ -464,7 +484,7 @@
 \alias{summary.lms}
 \alias{summary.qrrvglm}
 \alias{summary.rc.exponential}
-\alias{summaryrcam}
+\alias{summaryrcim}
 \alias{summary.rrvglm}
 \alias{summary.uqo}
 \alias{summaryvgam}
@@ -530,8 +550,8 @@
 %
 \alias{Coef.uqo-class}
 \alias{cao-class}
-\alias{rcam0-class}
-\alias{rcam-class}
+\alias{rcim0-class}
+\alias{rcim-class}
 \alias{grc-class}
 \alias{qrrvglm-class}
 \alias{summary.qrrvglm-class}
@@ -539,9 +559,9 @@
 \alias{summary.vgam-class}
 \alias{summary.vglm-class}
 \alias{summary.vlm-class}
-%%% 20101216 \alias{summary.rcam-class}
-%\alias{summary.rcam-class}
-%\alias{summaryrcam-class}
+%%% 20101216 \alias{summary.rcim-class}
+%\alias{summary.rcim-class}
+%\alias{summaryrcim-class}
 \alias{uqo-class}
 \alias{vcov.qrrvglm-class}
 \alias{vlm-class}

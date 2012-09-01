@@ -9,9 +9,8 @@
 
 }
 \usage{
-zabinomial(lprob = "logit", eprob = list(),
-           lpobs0  = "logit", epobs0  = list(),
-           iprob = NULL, ipobs0  = NULL,
+zabinomial(lprob = "logit", lpobs0 = "logit",
+           iprob = NULL,    ipobs0 = NULL,
            imethod = 1, zero = 2)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -25,11 +24,6 @@ zabinomial(lprob = "logit", eprob = list(),
   \item{lpobs0}{ 
     Link function for the parameter \eqn{p_0}{pobs0}, called \code{pobs0} here.
     See \code{\link{Links}} for more choices.
-
-  }
-  \item{eprob, epobs0}{
-  List. Extra argument for the respective links.
-  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{iprob, ipobs0}{ 

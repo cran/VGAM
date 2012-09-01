@@ -11,10 +11,10 @@
 
 }
 \usage{
-dfnorm(x, mean=0, sd=1, a1=1, a2=1)
-pfnorm(q, mean=0, sd=1, a1=1, a2=1)
-qfnorm(p, mean=0, sd=1, a1=1, a2=1, ...)
-rfnorm(n, mean=0, sd=1, a1=1, a2=1)
+dfnorm(x, mean = 0, sd = 1, a1 = 1, a2 = 1)
+pfnorm(q, mean = 0, sd = 1, a1 = 1, a2 = 1)
+qfnorm(p, mean = 0, sd = 1, a1 = 1, a2 = 1, ...)
+rfnorm(n, mean = 0, sd = 1, a1 = 1, a2 = 1)
 }
 \arguments{
   \item{x, q}{vector of quantiles.}
@@ -55,20 +55,20 @@ rfnorm(n, mean=0, sd=1, a1=1, a2=1)
 }
 \examples{
 \dontrun{
-m = 1.5; SD=exp(0)
-x = seq(-1, 4, len=501)
-plot(x, dfnorm(x, m=m, sd=SD), type="l", ylim=0:1, las=1,
-     ylab=paste("fnorm(m=", m, ", sd=", round(SD, dig=3), ")"), col="blue",
-     main="Blue is density, red is cumulative distribution function",
-     sub="Purple lines are the 10,20,...,90 percentiles")
-lines(x, pfnorm(x, m=m, sd=SD), col="red")
-abline(h=0)
-probs = seq(0.1, 0.9, by=0.1)
-Q = qfnorm(probs, m=m, sd=SD)
-lines(Q, dfnorm(Q, m=m, sd=SD), col="purple", lty=3, type="h")
-lines(Q, pfnorm(Q, m=m, sd=SD), col="purple", lty=3, type="h")
-abline(h=probs, col="purple", lty=3)
-max(abs(pfnorm(Q, m=m, sd=SD) - probs)) # Should be 0
+m <- 1.5; SD<-exp(0)
+x <- seq(-1, 4, len = 501)
+plot(x, dfnorm(x, m = m, sd = SD), type = "l", ylim = 0:1, las = 1,
+     ylab = paste("fnorm(m = ", m, ", sd = ", round(SD, dig = 3), ")"),
+     main = "Blue is density, red is cumulative distribution function",
+     sub = "Purple lines are the 10,20,...,90 percentiles", col = "blue")
+lines(x, pfnorm(x, m = m, sd = SD), col = "red")
+abline(h = 0)
+probs <- seq(0.1, 0.9, by = 0.1)
+Q <- qfnorm(probs, m = m, sd = SD)
+lines(Q, dfnorm(Q, m = m, sd = SD), col = "purple", lty = 3, type = "h")
+lines(Q, pfnorm(Q, m = m, sd = SD), col = "purple", lty = 3, type = "h")
+abline(h = probs, col = "purple", lty = 3)
+max(abs(pfnorm(Q, m = m, sd = SD) - probs)) # Should be 0
 }
 }
 \keyword{distribution}

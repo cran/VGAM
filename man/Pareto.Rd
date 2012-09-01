@@ -12,7 +12,7 @@
 
 }
 \usage{
-dpareto(x, location, shape, log=FALSE)
+dpareto(x, location, shape, log = FALSE)
 ppareto(q, location, shape)
 qpareto(p, location, shape)
 rpareto(n, location, shape)
@@ -24,7 +24,7 @@ rpareto(n, location, shape)
   \item{location, shape}{the \eqn{\alpha}{alpha} and \eqn{k} parameters.}
   \item{log}{
   Logical.
-  If \code{log=TRUE} then the logarithm of the density is returned.
+  If \code{log = TRUE} then the logarithm of the density is returned.
 
   }
 
@@ -56,18 +56,18 @@ New York: Wiley-Interscience, Third edition.
 
 }
 \examples{
-alpha = 3; k = exp(1); x = seq(2.8, 8, len=300)
+alpha <- 3; k <- exp(1); x <- seq(2.8, 8, len = 300)
 \dontrun{
-plot(x, dpareto(x, location=alpha, shape=k), type="l",
-     main="Pareto density split into 10 equal areas")
-abline(h=0, col="blue", lty=2)
-qq = qpareto(seq(0.1,0.9,by=0.1),location=alpha,shape=k)
-lines(qq, dpareto(qq, loc=alpha, shape=k), col="purple", lty=3, type="h")
+plot(x, dpareto(x, location = alpha, shape = k), type = "l",
+     main = "Pareto density split into 10 equal areas")
+abline(h = 0, col = "blue", lty = 2)
+qq <- qpareto(seq(0.1,0.9,by = 0.1),location = alpha,shape = k)
+lines(qq, dpareto(qq, loc = alpha, shape = k), col = "purple", lty = 3, type = "h")
 }
-pp = seq(0.1,0.9,by=0.1)
-qq = qpareto(pp, location=alpha, shape=k)
-ppareto(qq, location=alpha, shape=k)
-qpareto(ppareto(qq,loc=alpha,shape=k),loc=alpha,shape=k) - qq # Should be 0
+pp <- seq(0.1,0.9,by = 0.1)
+qq <- qpareto(pp, location = alpha, shape = k)
+ppareto(qq, location = alpha, shape = k)
+qpareto(ppareto(qq,loc = alpha,shape = k),loc = alpha,shape = k) - qq # Should be 0
 }
 \keyword{distribution}
 

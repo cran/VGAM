@@ -78,14 +78,15 @@ rsnorm(n, location = 0, scale = 1, shape = 0)
 \seealso{ 
   \code{\link{skewnormal1}}.
 
+
 }
 \examples{
-\dontrun{ N <- 200   # grid resolution
+\dontrun{ N <- 200 # grid resolution
 shape <- 7
 x <- seq(-4, 4, len = N)
 plot(x, dsnorm(x, shape = shape), type = "l", col = "blue", las = 1,
      ylab = "", lty = 1, lwd = 2)
-abline(v = 0, h = 0)
+abline(v = 0, h = 0, col = "grey")
 lines(x, dnorm(x), col = "orange", lty = 2, lwd = 2)
 legend("topleft", leg = c(paste("Blue = dsnorm(x, ", shape,")", sep = ""),
        "Orange = standard normal density"), lty = 1:2, lwd = 2,

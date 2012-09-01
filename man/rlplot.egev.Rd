@@ -135,12 +135,12 @@ London: Springer-Verlag.
 }
 
 \examples{
-gdata = data.frame(y = rgev(n <- 100, scale = 2, shape = -0.1))
-fit = vglm(y ~ 1, egev, gdata, trace = TRUE)
+gdata <- data.frame(y = rgev(n <- 100, scale = 2, shape = -0.1))
+fit <- vglm(y ~ 1, egev, gdata, trace = TRUE)
 
 # Identity link for all parameters:
-fit2 = vglm(y ~ 1, egev(lshape = identity, lscale = identity,
-                        iscale = 10), gdata, trace = TRUE)
+fit2 <- vglm(y ~ 1, egev(lshape = identity, lscale = identity,
+                         iscale = 10), gdata, trace = TRUE)
 coef(fit2, matrix = TRUE)
 \dontrun{
 par(mfrow = c(1, 2))

@@ -12,7 +12,7 @@
 \usage{
 rhuggins91(n, nTimePts = 5, pvars = length(xcoeff), xcoeff = c(-2, 1, 2),
            capeffect = -1, double.ch = FALSE,
-           link = "logit", earg = list())
+           link = "logit", earg.link = FALSE)
 dhuggins91(x, prob, prob0 = prob, log = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -20,15 +20,18 @@ dhuggins91(x, prob, prob0 = prob, log = FALSE)
   \item{x}{
   response vector or matrix.
   Should have values of 0s or 1s.
+
   }
 
   \item{nTimePts}{Number of sampling occasions.
   Called \eqn{T} in \code{\link{huggins91}}.
 
+
   }
   \item{n}{number of observations.
   Usually a single positive integer, else the length of the vector
   is used.
+
 
   }
 
@@ -50,6 +53,7 @@ dhuggins91(x, prob, prob0 = prob, log = FALSE)
   (this is a compromise of the Huggins (1991) model where the full
   capture history only appears in the numerator).
 
+
   }
 
   \item{pvars}{ Number of other numeric covariates that make up
@@ -59,6 +63,7 @@ dhuggins91(x, prob, prob0 = prob, log = FALSE)
   independent standard \code{\link[stats:Uniform]{runif}} random variates.
   The first \code{pvars} elements of \code{xcoeff} are used.
 
+
   }
 
   \item{xcoeff}{
@@ -67,10 +72,14 @@ dhuggins91(x, prob, prob0 = prob, log = FALSE)
   and the first is for the intercept.
   The length of \code{xcoeff} must be at least \code{pvars}.
 
+
   }
 
-  \item{link, earg}{ 
-  Used to generate the probabilities for capture at each occasion.
+  \item{link, earg.link}{ 
+  The former is used to generate the probabilities for capture
+  at each occasion.
+  Other details at \code{\link{CommonVGAMffArguments}}.
+
 
   }
   \item{prob, prob0}{ 
@@ -81,9 +90,12 @@ dhuggins91(x, prob, prob0 = prob, log = FALSE)
     be free of any capture history, i.e., as if it had
     never been caught before.
 
+
   }
   \item{log}{
   Logical. Return the logarithm of the answer?
+
+
   }
 
 }
@@ -113,10 +125,12 @@ dhuggins91(x, prob, prob0 = prob, log = FALSE)
   These functions are experimental and do not follow the
   usual conventions of \code{d}- and \code{r}-type R functions.
 
+
 }
 
 \seealso{ 
   \code{\link{huggins91}}.
+
 
 }
 \examples{

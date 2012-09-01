@@ -7,7 +7,7 @@
 
 }
 \usage{
-tikuv(d, lmean = "identity", lsigma = "loge", emean = list(), esigma = list(),
+tikuv(d, lmean = "identity", lsigma = "loge",
       isigma = NULL, zero = 2)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -25,11 +25,16 @@ tikuv(d, lmean = "identity", lsigma = "loge", emean = list(), esigma = list(),
   See \code{\link{Links}} for more choices.
 
   }
-  \item{emean, esigma}{
-  List. Extra argument for each of the links.
-  See \code{earg} in \code{\link{Links}} for general information.
 
-  }
+
+%  \item{emean, esigma}{
+%  List. Extra argument for each of the links.
+%  See \code{earg} in \code{\link{Links}} for general information.
+%emean = list(), esigma = list(),
+%
+%  }
+
+
   \item{isigma}{
   Optional initial value for \eqn{\sigma}{sigma}.
   A \code{NULL} means a value is computed internally.
@@ -116,11 +121,11 @@ tikuv(d, lmean = "identity", lsigma = "loge", emean = list(), esigma = list(),
 
 \examples{
 m = 1.0; sigma = exp(0.5)
-tdata = data.frame(y = rtikuv(n = 1000, d = 1, m = m, s = sigma))
-tdata = transform(tdata, sy = sort(y))
-fit = vglm(y ~ 1, fam = tikuv(d = 1), tdata, trace = TRUE)
+tdata <- data.frame(y = rtikuv(n = 1000, d = 1, m = m, s = sigma))
+tdata <- transform(tdata, sy = sort(y))
+fit <- vglm(y ~ 1, fam = tikuv(d = 1), tdata, trace = TRUE)
 coef(fit, matrix = TRUE)
-(Cfit = Coef(fit))
+(Cfit <- Coef(fit))
 with(tdata, mean(y))
 \dontrun{ with(tdata, hist(y, prob = TRUE))
 lines(dtikuv(sy, d = 1, m = Cfit[1], s = Cfit[2]) ~ sy, tdata, col = "orange") }

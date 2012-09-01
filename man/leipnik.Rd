@@ -8,8 +8,7 @@
 
 }
 \usage{
-leipnik(lmu = "logit", llambda = "loge", emu=list(),
-        elambda=list(), imu = NULL, ilambda = NULL)
+leipnik(lmu = "logit", llambda = "loge", imu = NULL, ilambda = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -21,11 +20,6 @@ leipnik(lmu = "logit", llambda = "loge", emu=list(),
   \item{imu, ilambda}{
   Numeric. Optional initial values for \eqn{\mu}{mu} and
   \eqn{\lambda}{lambda}.
-
-  }
-  \item{emu, elambda}{
-  List. Extra argument for each of the links.
-  See \code{earg} in \code{\link{Links}} for general information.
 
   }
 }
@@ -49,6 +43,7 @@ leipnik(lmu = "logit", llambda = "loge", emu=list(),
   Leipnik distribution.  Here, both \eqn{x} and \eqn{\theta}{theta}
   are in \eqn{(-1,1)}.
 
+
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
@@ -56,11 +51,13 @@ leipnik(lmu = "logit", llambda = "loge", emu=list(),
   \code{\link{rrvglm}}
   and \code{\link{vgam}}.
 
+
 }
 \references{
   Jorgensen, B. (1997)
   \emph{The Theory of Dispersion Models}.
   London: Chapman & Hall
+
 
   Johnson, N. L. and Kotz, S. and Balakrishnan, N. (1995)
   \emph{Continuous Univariate Distributions},
@@ -68,6 +65,7 @@ leipnik(lmu = "logit", llambda = "loge", emu=list(),
   Volume 2,
   New York: Wiley.
   (pages 612--617).
+
 
 }
 \author{ T. W. Yee }
@@ -79,6 +77,7 @@ leipnik(lmu = "logit", llambda = "loge", emu=list(),
   Currently, this family function probably only really works for
   intercept-only models, i.e., \code{y ~ 1} in the formula.
 
+
 }
 
 \section{Warning }{
@@ -87,25 +86,27 @@ leipnik(lmu = "logit", llambda = "loge", emu=list(),
   bounds. One way to stop this is to choose \code{llambda="loge"},
   however, \code{lambda} is then constrained to be positive.
 
+
 }
 
 \seealso{ 
     \code{\link{mccullagh89}}.
 
+
 }
 \examples{
-ldat = data.frame(y = rnorm(n=2000, mean=0.5, sd=0.1)) # Not good data
-fit = vglm(y ~ 1, leipnik(ilambda=1), ldat, tr=TRUE, checkwz=FALSE)
-fit = vglm(y ~ 1, leipnik(ilambda=1,llam=logoff, elam=list(offset=1)),
-           ldat, trace=TRUE, cri="coef")
+ldata <- data.frame(y = rnorm(n = 2000, mean = 0.5, sd = 0.1)) # Not proper data
+fit <- vglm(y ~ 1, leipnik(ilambda = 1), ldata, trace = TRUE, checkwz = FALSE)
+fit <- vglm(y ~ 1, leipnik(ilambda = 1, llambda = logoff(offset = 1)),
+            ldata, trace = TRUE, crit = "coef")
 head(fitted(fit))
-with(ldat, mean(y))
+with(ldata, mean(y))
 summary(fit)
-coef(fit, matrix=TRUE)
+coef(fit, matrix = TRUE)
 Coef(fit)
 
-sum(weights(fit))  # sum of the prior weights
-sum(weights(fit, type="w")) # sum of the working weights
+sum(weights(fit)) # sum of the prior weights
+sum(weights(fit, type = "w")) # sum of the working weights
 }
 \keyword{models}
 \keyword{regression}

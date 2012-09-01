@@ -22,26 +22,53 @@
   The second value of 4583 looks erroneous, as seen by the plot below.
 
 
+  Historically, there was a large exodus of Chinese from the Guangdong
+  region starting in the mid-1800s to the gold fields of
+  South Island of New Zealand,
+  California,
+  and Southern Australia, etc.
+  Racial discrimination then meant that only men were allowed
+  entry, to hinder permanent settlement.
+  In the case of New Zealand, the government relaxed its
+  immigration laws after WWII to allow wives of Chinese already in NZ to join them
+  because China had been among the Allied powers.
+  Gradual relaxation in the immigration and an influx during the 1980s
+  meant the Chinese population became increasingly demographically
+  normal over time.
+
+
 }
 %\source{
 %}
 \references{
 
-  Page 6 of \emph{Aliens At My Table: Asians as New Zealanders see them}
+  Page 6 of \emph{Aliens At My Table: Asians as New Zealanders See Them}
   by M. Ip and N. Murphy,
   (2005), Penguin.
 
 
 }
 \examples{
-\dontrun{ plot(female/(male+female) ~ year, chinese.nz, type = "b",
+\dontrun{ par(mfrow = c(1, 2))
+plot(female/(male+female) ~ year, chinese.nz, type = "b",
      ylab = "Proportion", col = "blue", las = 1,
      main = "Proportion of NZ Chinese that are female")
-abline(h = 0.5, lty = "dashed")
+abline(h = 0.5, lty = "dashed", col = "gray")
+
+fit1.cnz = vglm(cbind(female, male) ~ year, binomialff, chinese.nz)
+fit2.cnz = vglm(cbind(female, male) ~ poly(year, 2), binomialff, chinese.nz)
+fit4.cnz = vglm(cbind(female, male) ~ bs(year, 4), binomialff, chinese.nz)
+
+lines(fitted(fit1.cnz) ~ year, chinese.nz, col = "purple")
+lines(fitted(fit2.cnz) ~ year, chinese.nz, col = "green")
+lines(fitted(fit4.cnz) ~ year, chinese.nz, col = "orange")
+legend("bottomright", col = c("purple", "green", "orange"),
+       lty = 1, leg = c("linear", "quadratic", "B-spline"))
+
 
 plot(100*(male+female)/nz ~ year, chinese.nz, type = "b", ylab = "Percent",
      ylim = c(0, max(100*(male+female)/nz)), col = "blue", las = 1,
      main = "Percent of NZers that are Chinese")
-abline(h = 0, lty = "dashed") }
+abline(h = 0, lty = "dashed", col = "gray") }
 }
 \keyword{datasets}

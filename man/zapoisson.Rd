@@ -9,8 +9,7 @@
 
 }
 \usage{
-zapoisson(lpobs0 = "logit", llambda = "loge", epobs0 = list(),
-          elambda = list(), zero = NULL)
+zapoisson(lpobs0 = "logit", llambda = "loge", zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -24,11 +23,15 @@ zapoisson(lpobs0 = "logit", llambda = "loge", epobs0 = list(),
   See \code{\link{Links}} for more choices.
 
   }
-  \item{epobs0, elambda}{
-  Extra argument for the respective links.
-  See \code{earg} in \code{\link{Links}} for general information.
 
-  }
+
+% \item{epobs0, elambda}{
+%         epobs0 = list(), elambda = list(),
+% Extra argument for the respective links.
+% See \code{earg} in \code{\link{Links}} for general information.
+% }
+
+
   \item{zero}{
   See \code{\link{CommonVGAMffArguments}} for more information.
 

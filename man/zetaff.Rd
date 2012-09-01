@@ -6,11 +6,11 @@
   Estimates the parameter of the zeta distribution.
 }
 \usage{
-zetaff(link = "loge", earg = list(), init.p = NULL)
+zetaff(link = "loge", init.p = NULL, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{link, earg, init.p}{
+  \item{link, init.p, zero}{
   See \code{\link{CommonVGAMffArguments}} for more information.
   These arguments apply to the (positive) parameter \eqn{p}.
   See \code{\link{Links}} for more choices.
@@ -42,12 +42,16 @@ convergence. If convergence is not obtained, try several values
 ranging from values near 0 to values about 10 or more.
 
 
+Multiple responses are handled.
+
+
 }
 
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}},
   and \code{\link{vgam}}.
+
 
 }
 
@@ -73,8 +77,9 @@ Boca Raton: Chapman & Hall/CRC Press.
 }
 \author{ T. W. Yee }
 \note{
-  The \code{\link{zeta}} function may be used to compute values of the
-  zeta function.
+  The \code{\link{zeta}} function may be used to compute values
+  of the zeta function.
+
 
 }
 
@@ -84,11 +89,12 @@ Boca Raton: Chapman & Hall/CRC Press.
   \code{\link{hzeta}},
   \code{\link{zipf}}.
 
+
 }
 \examples{
-zdata = data.frame(y = 1:5, w =  c(63, 14, 5, 1, 2)) # Knight, p.304
-fit = vglm(y ~ 1, zetaff, zdata, trace = TRUE, weight = w, crit = "c")
-(phat = Coef(fit)) # 1.682557
+zdata <- data.frame(y = 1:5, w =  c(63, 14, 5, 1, 2)) # Knight, p.304
+fit <- vglm(y ~ 1, zetaff, zdata, trace = TRUE, weight = w, crit = "coef")
+(phat <- Coef(fit)) # 1.682557
 with(zdata, cbind(round(dzeta(y, phat) * sum(w), 1), w))
 
 with(zdata, weighted.mean(y, w))
@@ -100,3 +106,4 @@ with(zdata, mean(log(rep(y, w))) + zeta(1+phat, deriv = 1) / zeta(1+phat))
 }
 \keyword{models}
 \keyword{regression}
+% Also known as the Joos model or discrete Pareto distribution.

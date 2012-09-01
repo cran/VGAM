@@ -45,6 +45,7 @@ Kleiber, C. and Kotz, S. (2003)
              Actuarial Sciences},
 Hoboken, NJ: Wiley-Interscience.
 
+
 }
 \author{ T. W. Yee }
 \details{
@@ -63,10 +64,11 @@ Hoboken, NJ: Wiley-Interscience.
   \code{\link{sinmad}},
   \code{\link{genbetaII}}.
 
+
 }
 \examples{
-sdata = data.frame(y = rsinmad(n = 3000, 4, 6, 2))
-fit = vglm(y ~ 1, sinmad(ishape1.a = 2.1), sdata, trace = TRUE, crit = "coef")
+sdata <- data.frame(y = rsinmad(n = 3000, 4, 6, 2))
+fit <- vglm(y ~ 1, sinmad(ishape1.a = 2.1), sdata, trace = TRUE, crit = "coef")
 coef(fit, matrix = TRUE)
 Coef(fit)
 }

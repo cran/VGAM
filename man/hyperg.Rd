@@ -10,7 +10,7 @@
 
 }
 \usage{
-hyperg(N = NULL, D = NULL, lprob = "logit", earg = list(), iprob = NULL)
+hyperg(N = NULL, D = NULL, lprob = "logit", iprob = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -30,11 +30,6 @@ hyperg(N = NULL, D = NULL, lprob = "logit", earg = list(), iprob = NULL)
   \item{lprob}{ 
   Link function for the probabilities.
   See \code{\link{Links}} for more choices.
-
-  }
-  \item{earg}{
-  List. Extra argument for the link.
-  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{iprob}{ 
@@ -115,20 +110,20 @@ New York: Wiley-Interscience, Third edition.
 }
 
 \examples{
-nn = 100
-m = 5   # number of white balls in the population
-k = rep(4, len = nn)   # sample sizes
-n = 4   # number of black balls in the population
-y  = rhyper(nn = nn, m = m, n = n, k = k)
-yprop = y / k  # sample proportions
+nn <- 100
+m <- 5   # number of white balls in the population
+k <- rep(4, len = nn)   # sample sizes
+n <- 4   # number of black balls in the population
+y  <- rhyper(nn = nn, m = m, n = n, k = k)
+yprop <- y / k  # sample proportions
 
 # N is unknown, D is known. Both models are equivalent:
-fit = vglm(cbind(y,k-y) ~ 1, hyperg(D = m), trace = TRUE, crit = "c")
-fit = vglm(yprop ~ 1, hyperg(D=m), weight = k, trace = TRUE, crit = "c")
+fit <- vglm(cbind(y,k-y) ~ 1, hyperg(D = m), trace = TRUE, crit = "c")
+fit <- vglm(yprop ~ 1, hyperg(D=m), weight = k, trace = TRUE, crit = "c")
 
 # N is known, D is unknown. Both models are equivalent:
-fit = vglm(cbind(y,k-y) ~ 1, hyperg(N = m+n), trace = TRUE, crit = "l")
-fit = vglm(yprop ~ 1, hyperg(N = m+n), weight = k, trace = TRUE, crit = "l")
+fit <- vglm(cbind(y,k-y) ~ 1, hyperg(N = m+n), trace = TRUE, crit = "l")
+fit <- vglm(yprop ~ 1, hyperg(N = m+n), weight = k, trace = TRUE, crit = "l")
 
 coef(fit, matrix = TRUE)
 Coef(fit)  # Should be equal to the true population proportion

@@ -7,7 +7,7 @@
 
 }
 \usage{
-hzeta(link = "loglog", earg=list(), ialpha = NULL, nsimEIM=100)
+hzeta(link = "loglog", ialpha = NULL, nsimEIM=100)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -16,11 +16,6 @@ hzeta(link = "loglog", earg=list(), ialpha = NULL, nsimEIM=100)
   See \code{\link{Links}} for more choices.
   Here, a log-log link keeps the parameter greater than one, meaning
   the mean is finite.
-
-  }
-  \item{earg}{
-  List. Extra argument for the link.
-  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{ialpha}{
@@ -77,9 +72,9 @@ hzeta(link = "loglog", earg=list(), ialpha = NULL, nsimEIM=100)
 
 }
 \examples{
-alpha = exp(exp(-0.1))  # The parameter
-hdata = data.frame(y = rhzeta(n = 1000, alpha))
-fit = vglm(y ~ 1, hzeta, hdata, trace = TRUE, crit = "c")
+alpha <- exp(exp(-0.1))  # The parameter
+hdata <- data.frame(y = rhzeta(n = 1000, alpha))
+fit <- vglm(y ~ 1, hzeta, hdata, trace = TRUE, crit = "c")
 coef(fit, matrix = TRUE)
 Coef(fit)  # Useful for intercept-only models; should be same as alpha
 c(with(hdata, mean(y)), head(fitted(fit), 1))

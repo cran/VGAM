@@ -8,7 +8,7 @@
 
 }
 \usage{
-fsqrt(theta, earg = list(min = 0, max = 1, mux = sqrt(2)),
+fsqrt(theta, min = 0, max = 1, mux = sqrt(2),
       inverse = FALSE, deriv = 0, short = TRUE, tag = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -18,30 +18,16 @@ fsqrt(theta, earg = list(min = 0, max = 1, mux = sqrt(2)),
   See below for further details.
 
   }
-  \item{earg}{
-  List with components \code{min}, \code{max} and \code{mux}.
+  \item{min, max, mux}{
   These are called \eqn{L}, \eqn{U} and \eqn{K} below.
 
   }
-  \item{inverse}{
-  Logical. If \code{TRUE} the inverse function is computed.
+  \item{inverse, deriv, short, tag}{
+  Details at \code{\link{Links}}.
+
 
   }
-  \item{deriv}{
-  Order of the derivative. Integer with value 0, 1 or 2.
 
-  }
-  \item{short}{
-  Used for labelling the \code{blurb} slot of a
-  \code{\link{vglmff-class}} object.
-
-  }
-  \item{tag}{
-  Used for labelling the linear/additive predictor in the
-  \code{initialize} slot of a \code{\link{vglmff-class}} object.
-  Contains a little more information if \code{TRUE}.
-
-  }
 }
 \details{
   The folded square root link function can be applied to
@@ -49,9 +35,6 @@ fsqrt(theta, earg = list(min = 0, max = 1, mux = sqrt(2)),
   Numerical values of \code{theta}
   out of range result in \code{NA} or \code{NaN}.
 
-
-  The arguments \code{short} and \code{tag} are used only if
-  \code{theta} is character.
 
 
 }
@@ -102,7 +85,7 @@ fsqrt(p)
 max(abs(fsqrt(fsqrt(p), inverse = TRUE) - p)) # Should be 0
 
 p = c(seq(-0.02, 0.02, by = 0.01), seq(0.97, 1.02, by = 0.01))
-fsqrt(p)  # Has NAs
+fsqrt(p) # Has NAs
 
 \dontrun{
 p = seq(0.01, 0.99, by = 0.01)
@@ -146,9 +129,7 @@ par(lwd = 1)
 }
 
 # This is lucky to converge
-earg = list(min = 0, max = 1, mux = 5)
-fit.h = vglm(agaaus ~ bs(altitude),
-             fam =  binomialff(link = "fsqrt", earg = earg),
+fit.h <- vglm(agaaus ~ bs(altitude), binomialff(link = fsqrt(mux = 5)),
              data = hunua, trace = TRUE)
 \dontrun{
 plotvgam(fit.h, se = TRUE, lcol = "orange", scol = "orange",
@@ -158,11 +139,10 @@ head(predict(fit.h, hunua, type = "response"))
 
 \dontrun{
 # The following fails.
-pneumo = transform(pneumo, let = log(exposure.time))
-earg = list(min = 0, max = 1, mux = 10)
-fit = vglm(cbind(normal, mild, severe) ~ let,
-           cumulative(link = "fsqrt", earg = earg, par = TRUE, rev = TRUE),
-           data = pneumo, trace = TRUE, maxit = 200) }
+pneumo <- transform(pneumo, let = log(exposure.time))
+fit <- vglm(cbind(normal, mild, severe) ~ let,
+            cumulative(link = fsqrt(mux = 10), par = TRUE, rev = TRUE),
+            data = pneumo, trace = TRUE, maxit = 200) }
 }
 \keyword{math}
 \keyword{models}

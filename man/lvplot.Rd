@@ -27,10 +27,14 @@ lvplot(object, ...)
   latent variables are often called the \emph{site scores}.
   Latent variable plots were coined by Yee (2004), and have
   the latent variable as at least one of its axes.
+
+
 }
 \value{
   The value returned depends specifically on the methods
   function invoked.
+
+
 }
 \references{
 Yee, T. W. (2004)
@@ -57,19 +61,21 @@ Constrained additive ordination.
   \code{lvplot.cao},
   \code{\link{lv}},
   \code{\link{trplot}}.
+
+
 }
 
 \examples{
 \dontrun{
-hspider[,1:6] = scale(hspider[,1:6]) # Standardized environmental vars
+hspider[,1:6] <- scale(hspider[,1:6]) # Standardized environmental vars
 set.seed(123)
-p1 = cao(cbind(Pardlugu, Pardmont, Pardnigr, Pardpull, Zoraspin) ~
-         WaterCon + BareSand + FallTwig +
-         CoveMoss + CoveHerb + ReflLux,
-         family = poissonff, data = hspider, Bestof = 3,
-         df1.nl = c(Zoraspin=2.5, 3), Crow1positive = TRUE)
-index = 1:ncol(p1@y)
-lvplot(p1, lcol=index, pcol=index, y=TRUE, las=1)
+p1 <- cao(cbind(Pardlugu, Pardmont, Pardnigr, Pardpull, Zoraspin) ~
+          WaterCon + BareSand + FallTwig +
+          CoveMoss + CoveHerb + ReflLux,
+          family = poissonff, data = hspider, Bestof = 3,
+          df1.nl = c(Zoraspin = 2.5, 3), Crow1positive = TRUE)
+index <- 1:ncol(depvar(p1))
+lvplot(p1, lcol = index, pcol = index, y = TRUE, las = 1)
 
 }
 }

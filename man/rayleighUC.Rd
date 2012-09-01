@@ -9,6 +9,7 @@
   Density, distribution function, quantile function and random
   generation for the Rayleigh distribution with parameter
   \code{a}.
+
 }
 \usage{
 drayleigh(x, scale = 1, log = FALSE)
@@ -36,12 +37,14 @@ rrayleigh(n, scale = 1)
   \code{qrayleigh} gives the quantile function, and
   \code{rrayleigh} generates random deviates.
 
+
 }
 \references{
 
 Evans, M., Hastings, N. and Peacock, B. (2000)
 \emph{Statistical Distributions},
 New York: Wiley-Interscience, Third edition.
+
 
 }
 \author{ T. W. Yee }
@@ -52,23 +55,26 @@ New York: Wiley-Interscience, Third edition.
   probability density function and range restrictions on
   the parameter \eqn{b}.
 
+
 }
 \note{
   The Rayleigh distribution is related to the Maxwell distribution.
+
 
 }
 \seealso{
   \code{\link{rayleigh}},
   \code{\link{maxwell}}.
 
+
 }
 \examples{
-\dontrun{ Scale = 2; x = seq(-1, 8, by = 0.1)
+\dontrun{ Scale <- 2; x <- seq(-1, 8, by = 0.1)
 plot(x, drayleigh(x, scale = Scale), type = "l", ylim = c(0,1),
      las = 1, ylab = "",
      main = "Rayleigh density divided into 10 equal areas; orange = cdf")
 abline(h = 0, col = "blue", lty = 2)
-qq = qrayleigh(seq(0.1, 0.9, by = 0.1), scale = Scale)
+qq <- qrayleigh(seq(0.1, 0.9, by = 0.1), scale = Scale)
 lines(qq, drayleigh(qq, scale = Scale), col = "purple", lty = 3, type = "h")
 lines(x, prayleigh(x, scale = Scale), col = "orange") }
 }

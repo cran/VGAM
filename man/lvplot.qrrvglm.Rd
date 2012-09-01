@@ -46,7 +46,7 @@ lvplot.qrrvglm(object, varlvI = FALSE, reference = NULL,
   These values are jittered to expose ties.
   }
   \item{y}{ Logical. If \code{TRUE}, the responses will be plotted
-  (applies only to rank-1 models and if \code{type="fitted.values"}.)
+  (applies only to rank-1 models and if \code{type = "fitted.values"}.)
   }
   \item{type}{ Either \code{"fitted.values"} or \code{"predictors"},
   specifies whether the y-axis is on the response or eta-scales
@@ -86,12 +86,12 @@ For rank-2 models, points are the optima.
       assigned a value that is used for the elliptical contouring.
       If \code{Absolute} is \code{FALSE} then \code{ellipse}
       should be assigned a value between 0 and 1, for example,
-      setting \code{ellipse=0.9} means an ellipse with contour
+      setting \code{ellipse = 0.9} means an ellipse with contour
       = 90\% of the maximum will be plotted about each optimum.
       If \code{ellipse} is a negative value, then the function checks
       that the model is an equal-tolerances model and
-      \code{varlvI=FALSE}, and if so, plots circles with
-      radius \code{-ellipse}. For example, setting \code{ellipse=-1}
+      \code{varlvI = FALSE}, and if so, plots circles with
+      radius \code{-ellipse}. For example, setting \code{ellipse = -1}
       will result in circular contours that have unit radius (in latent
       variable units).  If \code{ellipse} is \code{NULL} or \code{FALSE}
       then no ellipse is drawn around the optima.
@@ -286,22 +286,22 @@ canonical Gaussian ordination.
 
 \examples{
 set.seed(123)
-nn = 200
-cdat = data.frame(x2 = rnorm(nn),   # Has mean 0 (needed when ITol=TRUE)
-                  x3 = rnorm(nn),   # Has mean 0 (needed when ITol=TRUE)
-                  x4 = rnorm(nn))   # Has mean 0 (needed when ITol=TRUE)
-cdat = transform(cdat, lv1 =  x2 + x3 - 2*x4,
-                       lv2 = -x2 + x3 + 0*x4)
+nn <- 200
+cdata <- data.frame(x2 = rnorm(nn),   # Has mean 0 (needed when ITol=TRUE)
+                    x3 = rnorm(nn),   # Has mean 0 (needed when ITol=TRUE)
+                    x4 = rnorm(nn))   # Has mean 0 (needed when ITol=TRUE)
+cdata <- transform(cdata, lv1 =  x2 + x3 - 2*x4,
+                          lv2 = -x2 + x3 + 0*x4)
 # Nb. lv2 is weakly correlated with lv1
-cdat = transform(cdat, lambda1 = exp(6 - 0.5 * (lv1-0)^2 - 0.5 * (lv2-0)^2),
-                       lambda2 = exp(5 - 0.5 * (lv1-1)^2 - 0.5 * (lv2-1)^2),
-                       lambda3 = exp(5 - 0.5 * (lv1+2)^2 - 0.5 * (lv2-0)^2))
-cdat = transform(cdat, spp1 = rpois(nn, lambda1),
-                       spp2 = rpois(nn, lambda2),
-                       spp3 = rpois(nn, lambda3))
+cdata <- transform(cdata, lambda1 = exp(6 - 0.5 * (lv1-0)^2 - 0.5 * (lv2-0)^2),
+                          lambda2 = exp(5 - 0.5 * (lv1-1)^2 - 0.5 * (lv2-1)^2),
+                          lambda3 = exp(5 - 0.5 * (lv1+2)^2 - 0.5 * (lv2-0)^2))
+cdata <- transform(cdata, spp1 = rpois(nn, lambda1),
+                          spp2 = rpois(nn, lambda2),
+                          spp3 = rpois(nn, lambda3))
 set.seed(111)
-# vvv p2 = cqo(cbind(spp1,spp2,spp3) ~ x2 + x3 + x4, poissonff, 
-# vvv          data = cdat,
+# vvv p2 <- cqo(cbind(spp1,spp2,spp3) ~ x2 + x3 + x4, poissonff, 
+# vvv          data = cdata,
 # vvv          Rank=2, ITolerances=TRUE,
 # vvv          Crow1positive=c(TRUE,FALSE))   # deviance = 505.81
 # vvv if (deviance(p2) > 506) stop("suboptimal fit obtained")
@@ -309,16 +309,16 @@ set.seed(111)
 # vvv Coef(p2)
 
 \dontrun{
-lvplot(p2, sites=TRUE, spch="*", scol="darkgreen", scex=1.5,
-       chull=TRUE, label=TRUE, Absolute=TRUE, ellipse=140,
-       adj=-0.5, pcol="blue", pcex=1.3, las=1,
-       C=TRUE, Cadj=c(-.3,-.3,1), Clwd=2, Ccex=1.4, Ccol="red",
-       main=paste("Contours at Abundance=140 with",
+lvplot(p2, sites = TRUE, spch = "*", scol = "darkgreen", scex = 1.5,
+       chull = TRUE, label = TRUE, Absolute = TRUE, ellipse = 140,
+       adj = -0.5, pcol = "blue", pcex = 1.3, las = 1,
+       C = TRUE, Cadj = c(-.3,-.3,1), Clwd = 2, Ccex = 1.4, Ccol = "red",
+       main = paste("Contours at Abundance = 140 with",
                   "convex hull of the site scores")) }
 # vvv var(lv(p2)) # A diagonal matrix, i.e., uncorrelated latent variables
-# vvv var(lv(p2, varlvI=TRUE)) # Identity matrix
+# vvv var(lv(p2, varlvI = TRUE)) # Identity matrix
 # vvv Tol(p2)[,,1:2] # Identity matrix
-# vvv Tol(p2, varlvI=TRUE)[,,1:2] # A diagonal matrix
+# vvv Tol(p2, varlvI = TRUE)[,,1:2] # A diagonal matrix
 }
 \keyword{models}
 \keyword{regression}

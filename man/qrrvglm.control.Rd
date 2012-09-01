@@ -459,25 +459,26 @@ Constrained additive ordination.
 }
 
 \examples{
-# Poisson CQO with equal tolerances
-set.seed(111)  # This leads to the global solution
-hspider[,1:6] = scale(hspider[,1:6]) # Good idea when ITolerances = TRUE
-p1 = cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi, Auloalbi,
+\dontrun{ # Poisson CQO with equal tolerances
+set.seed(111) # This leads to the global solution
+hspider[,1:6] <- scale(hspider[,1:6]) # Good idea when ITolerances = TRUE
+p1 <- cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi, Auloalbi,
                Pardlugu, Pardmont, Pardnigr, Pardpull, Trocterr, Zoraspin) ~
-         WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
-         quasipoissonff, data = hspider, EqualTolerances = TRUE)
+          WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
+          quasipoissonff, data = hspider, EqualTolerances = TRUE)
 sort(p1@misc$deviance.Bestof) # A history of all the iterations
 
-(isdlv = apply(lv(p1), 2, sd)) # Should be approx isdlv
+(isdlv <- apply(lv(p1), 2, sd)) # Should be approx isdlv
  
 # Refit the model with better initial values
 set.seed(111)  # This leads to the global solution
-p1 = cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi, Auloalbi, 
+p1 <- cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi, Auloalbi, 
                Pardlugu, Pardmont, Pardnigr, Pardpull, Trocterr, Zoraspin) ~
-         WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
-         ITolerances = TRUE, isdlv = isdlv,   # Note the use of isdlv here
-         fam = quasipoissonff, data = hspider)
+          WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
+          ITolerances = TRUE, isdlv = isdlv, # Note the use of isdlv here
+          quasipoissonff, data = hspider)
 sort(p1@misc$deviance.Bestof) # A history of all the iterations
+}
 }
 \keyword{models}
 \keyword{regression}

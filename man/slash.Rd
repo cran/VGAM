@@ -7,9 +7,9 @@
   slash distribution by maximum likelihood estimation.
 }
 \usage{
-slash (lmu="identity", lsigma="loge", emu=list(), esigma=list(),
-       imu=NULL, isigma=NULL, iprobs = c(0.1, 0.9), nsimEIM=250,
-       zero=NULL, smallno = .Machine$double.eps*1000)
+slash(lmu = "identity", lsigma = "loge",
+      imu = NULL, isigma = NULL, iprobs  =  c(0.1, 0.9), nsimEIM = 250,
+      zero = NULL, smallno = .Machine$double.eps*1000)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -19,11 +19,13 @@ slash (lmu="identity", lsigma="loge", emu=list(), esigma=list(),
   See \code{\link{Links}} for more choices.
 
   }
-  \item{emu, esigma}{
-  List. Extra argument for each of the link functions.
-  See \code{earg} in \code{\link{Links}} for general information.
 
-  }
+%  \item{emu, esigma}{
+%  List. Extra argument for each of the link functions.
+%  See \code{earg} in \code{\link{Links}} for general information.
+%emu = list(), esigma = list(),
+%  }
+
   \item{imu, isigma}{
   Initial values.
   A \code{NULL} means an initial value is chosen internally.
@@ -81,11 +83,13 @@ f(y) = 1/(2*sigma*sqrt(2*pi)) if y=mu
   \emph{Continuous Univariate Distributions},
   2nd edition, Volume 1, New York: Wiley.
   
+  
   Kafadar, K. (1982)
   A Biweight Approach to the One-Sample Problem
   \emph{Journal of the American Statistical Association},
   \bold{77}, 416--424.
-  
+
+
 }
 
 \author{ T. W. Yee and C. S. Chee }
@@ -94,19 +98,23 @@ f(y) = 1/(2*sigma*sqrt(2*pi)) if y=mu
  Convergence is often quite slow.
  Numerical problems may occur.
 
+
 }
 
 
 \seealso{
   \code{\link{rslash}}.
 
+
 }
 \examples{
-sdata = data.frame(y = rslash(n=1000, mu=4, sigma=exp(2)))
-fit = vglm(y ~ 1, slash, sdata, trace=TRUE) 
-coef(fit, matrix=TRUE)
+\dontrun{
+sdata <- data.frame(y = rslash(n = 1000, mu = 4, sigma = exp(2)))
+fit <- vglm(y ~ 1, slash, sdata, trace = TRUE) 
+coef(fit, matrix = TRUE)
 Coef(fit)
 summary(fit)
+}
 }
 \keyword{models}
 \keyword{regression}

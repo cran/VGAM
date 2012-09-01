@@ -9,11 +9,11 @@
 
 }
 \usage{
-gumbel(llocation = "identity", lscale = "loge", elocation = list(), 
-       escale = list(), iscale = NULL, R = NA, percentiles = c(95, 99),
+gumbel(llocation = "identity", lscale = "loge",
+       iscale = NULL, R = NA, percentiles = c(95, 99),
        mpv = FALSE, zero = NULL)
-egumbel(llocation = "identity", lscale = "loge", elocation = list(),
-        escale = list(), iscale = NULL, R = NA, percentiles = c(95, 99),
+egumbel(llocation = "identity", lscale = "loge",
+        iscale = NULL, R = NA, percentiles = c(95, 99),
         mpv = FALSE, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -22,10 +22,6 @@ egumbel(llocation = "identity", lscale = "loge", elocation = list(),
   Parameter link functions for \eqn{\mu}{mu} and \eqn{\sigma}{sigma}.
   See \code{\link{Links}} for more choices.
 
-  }
-  \item{elocation, escale}{
-  Extra argument for the \code{llocation} and \code{lscale} arguments.
-  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{iscale}{ 
@@ -34,6 +30,7 @@ egumbel(llocation = "identity", lscale = "loge", elocation = list(),
   Recycled to the appropriate length.
   In general, a larger value is better than a smaller value.
   A \code{NULL} means an initial value is computed internally. 
+
 
   }
 
@@ -71,7 +68,7 @@ egumbel(llocation = "identity", lscale = "loge", elocation = list(),
   \item{zero}{ 
   An integer-valued vector specifying which linear/additive predictors
   are modelled as intercepts only.  The value (possibly values) must
-  be from the set \{1,2\} corresponding respectively to \eqn{\mu}{mu}
+  be from the set \{1, 2\} corresponding respectively to \eqn{\mu}{mu}
   and \eqn{\sigma}{sigma}.  By default all linear/additive predictors
   are modelled as a linear combination of the explanatory variables.
 
@@ -169,7 +166,7 @@ egumbel(llocation = "identity", lscale = "loge", elocation = list(),
   \code{na.action = na.pass}. The response matrix needs to be
   padded with any missing values. With a multivariate response
   one has a matrix \code{y}, say, where
-  \code{y[,2]} contains the second order statistics etc. 
+  \code{y[, 2]} contains the second order statistics etc. 
 
 % If a random variable \eqn{Y} has a \emph{reverse}
 % \eqn{Gumbel(\mu,\sigma)}{Gumbel(mu,sigma)} distribution then \eqn{-Y}
@@ -181,11 +178,12 @@ egumbel(llocation = "identity", lscale = "loge", elocation = list(),
 
 \seealso{
   \code{\link{rgumbel}},
+  \code{\link{dgumbelII}},
   \code{\link{cgumbel}},
   \code{\link{guplot}},
   \code{\link{gev}},
   \code{\link{egev}},
-%\code{\link{ogev}},
+% \code{\link{ogev}},
   \code{\link{venice}}.
 
 
@@ -193,42 +191,42 @@ egumbel(llocation = "identity", lscale = "loge", elocation = list(),
 
 \examples{
 # Example 1: Simulated data
-gdata = data.frame(y = rgumbel(n = 1000, loc = 100, scale = exp(1)))
-fit = vglm(y ~ 1, egumbel(perc = NULL), gdata, trace = TRUE)
+gdata <- data.frame(y = rgumbel(n = 1000, loc = 100, scale = exp(1)))
+fit <- vglm(y ~ 1, egumbel(perc = NULL), gdata, trace = TRUE)
 coef(fit, matrix = TRUE)
 Coef(fit)
 head(fitted(fit))
 with(gdata, mean(y))
 
 # Example 2: Venice data
-(fit = vglm(cbind(r1,r2,r3,r4,r5) ~ year, data = venice,
-            gumbel(R = 365, mpv = TRUE), trace = TRUE))
+(fit <- vglm(cbind(r1,r2,r3,r4,r5) ~ year, data = venice,
+             gumbel(R = 365, mpv = TRUE), trace = TRUE))
 head(fitted(fit))
-coef(fit, mat = TRUE)
+coef(fit, matrix = TRUE)
 vcov(summary(fit))  
 sqrt(diag(vcov(summary(fit))))   # Standard errors
 
 
 # Example 3: Try a nonparametric fit ---------------------
 # Use the entire data set, including missing values
-y = as.matrix(venice[,paste("r",1:10,sep = "")])
-fit1 = vgam(y ~ s(year, df = 3), gumbel(R = 365, mpv = TRUE),
-            data = venice, trace = TRUE, na.action = na.pass)
-fit1@y[4:5,]  # NAs used to pad the matrix
+y <- as.matrix(venice[, paste("r", 1:10, sep = "")])
+fit1 <- vgam(y ~ s(year, df = 3), gumbel(R = 365, mpv = TRUE),
+             data = venice, trace = TRUE, na.action = na.pass)
+depvar(fit1)[4:5, ] # NAs used to pad the matrix
 
 \dontrun{
 # Plot the component functions
-par(mfrow = c(2,1), mar = c(5,4,.2,1)+0.1, xpd = TRUE)
+par(mfrow = c(2, 1), mar = c(5, 4, 0.2, 1) + 0.1, xpd = TRUE)
 plot(fit1, se = TRUE, lcol = "blue", scol = "green", lty = 1,
      lwd = 2, slwd = 2, slty = "dashed")
 
 # Quantile plot --- plots all the fitted values
-par(mfrow = c(1,1), bty = "l", mar = c(4,4,.2,3)+0.1, xpd = TRUE, las = 1)
-qtplot(fit1, mpv = TRUE, lcol = c(1,2,5), tcol = c(1,2,5), lwd = 2,
+par(mfrow = c(1, 1), bty = "l", mar = c(4, 4, 0.2, 3) + 0.1, xpd = TRUE, las = 1)
+qtplot(fit1, mpv = TRUE, lcol = c(1, 2,5), tcol = c(1, 2,5), lwd = 2,
        pcol = "blue", tadj = 0.1, ylab = "Sea level (cm)")
 
 # Plot the 99 percentile only
-par(mfrow = c(1,1), mar = c(3,4,.2,1)+0.1, xpd = TRUE)
+par(mfrow = c(1, 1), mar = c(3, 4, 0.2, 1) + 0.1, xpd = TRUE)
 year = venice[["year"]]
 matplot(year, y, ylab = "Sea level (cm)", type = "n")
 matpoints(year, y, pch = "*", col = "blue")
@@ -237,12 +235,12 @@ lines(year, fitted(fit1)[,"99\%"], lwd = 2, col = "red")
 # Check the 99 percentiles with a smoothing spline.
 # Nb. (1-0.99) * 365 = 3.65 is approx. 4, meaning the 4th order 
 # statistic is approximately the 99 percentile.
-par(mfrow = c(1,1), mar = c(3,4,2,1)+0.1, xpd = TRUE, lwd = 2)
-plot(year, y[,4], ylab = "Sea level (cm)", type = "n",
+par(mfrow = c(1, 1), mar = c(3, 4, 2, 1) + 0.1, xpd = TRUE, lwd = 2)
+plot(year, y[, 4], ylab = "Sea level (cm)", type = "n",
      main = "Red is 99 percentile, Green is a smoothing spline")
-points(year, y[,4], pch = "4", col = "blue")
+points(year, y[, 4], pch = "4", col = "blue")
 lines(year, fitted(fit1)[,"99\%"], lty = 1, col = "red")
-lines(smooth.spline(year, y[,4], df = 4), col = "darkgreen", lty = 2)
+lines(smooth.spline(year, y[, 4], df = 4), col = "darkgreen", lty = 2)
 }
 }
 \keyword{models}

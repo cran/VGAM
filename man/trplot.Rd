@@ -16,6 +16,8 @@ trplot(object, ...)
     methods function of the model. They usually are graphical
     parameters, and sometimes they are fed
     into the methods function for \code{\link{Coef}}.
+
+
   }
 }
 \details{
@@ -40,7 +42,7 @@ trplot(object, ...)
 \references{
 
 
-Yee, T. W. (2011)
+Yee, T. W. (2012)
 On constrained and unconstrained
 quadratic ordination.
 \emph{Manuscript in preparation}.
@@ -63,22 +65,21 @@ quadratic ordination.
 
 \examples{
 \dontrun{ set.seed(123)
-hspider[,1:6] = scale(hspider[,1:6]) # Standardized environmental vars
-
-p1cqo = cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,
+hspider[,1:6] <- scale(hspider[,1:6]) # Standardized environmental vars
+p1cqo <- cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,
                   Auloalbi, Pardlugu, Pardmont, Pardnigr, Pardpull,
                   Trocterr, Zoraspin) ~
             WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
-            fam = quasipoissonff, data = hspider, Crow1positive = FALSE)
+            quasipoissonff, data = hspider, Crow1positive = FALSE)
 
-nos = ncol(p1cqo@y)
-clr = 1:nos   # OR (1:(nos+1))[-7]  to omit yellow
+nos <- ncol(depvar(p1cqo))
+clr <- 1:nos # OR (1:(nos+1))[-7]  to omit yellow
 
 trplot(p1cqo, whichSpecies = 1:3, log = "xy",
-       col = c("blue","orange","green"), lwd = 2, label = TRUE) -> ii
-legend(0.00005, 0.3, paste(ii$species[,1], ii$species[,2], sep = " and "),
-       lwd = 2, lty = 1, col = c("blue","orange","green"))
-abline(a = 0, b = 1, lty = "dashed") }
+       col = c("blue", "orange", "green"), lwd = 2, label = TRUE) -> ii
+legend(0.00005, 0.3, paste(ii$species[, 1], ii$species[, 2], sep = " and "),
+       lwd = 2, lty = 1, col = c("blue", "orange", "green"))
+abline(a = 0, b = 1, lty = "dashed", col = "grey") }
 }
 \keyword{models}
 \keyword{regression}

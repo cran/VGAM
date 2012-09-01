@@ -611,9 +611,9 @@ to fit a nonparametric proportional odds model
 \citep[cf.~p.179 of][]{mccu:neld:1989}
 to the pneumoconiosis data one could try
 <<eval=T>>=
-pneumo <- transform(pneumo, let=log(exposure.time))
-fit <- vgam(cbind(normal, mild, severe) ~ s(let, df=2),
-            cumulative(reverse=TRUE, parallel=TRUE), pneumo)
+pneumo <- transform(pneumo, let = log(exposure.time))
+fit <- vgam(cbind(normal, mild, severe) ~ s(let, df = 2),
+            cumulative(reverse = TRUE, parallel = TRUE), pneumo)
 @
 Here, setting \texttt{df = 1} means a linear fit so that
 \texttt{df = 2} affords a little nonlinearity.
@@ -1437,7 +1437,7 @@ fit.ppom <- vglm(ordnum ~
           mornaft +
           fday +
           finame,
-          cumulative(parallel = FALSE ~ 1 + mornaft, reverse=TRUE),
+          cumulative(parallel = FALSE ~ 1 + mornaft, reverse = TRUE),
           data = fnc)
 head(coef(fit.ppom, matrix = TRUE),  8)
 @
@@ -1460,7 +1460,7 @@ fit2.ppom <- vglm(ordnum ~
           fday +
           finame,
           family = cumulative(parallel = FALSE ~ 1 + fday, reverse = TRUE),
-          data=fnc)
+          data = fnc)
 head(coef(fit2.ppom, matrix = TRUE), 8)
 @
 
@@ -1527,7 +1527,7 @@ summary(marital.nz)
 @
 We fit the VGAM
 <<>>=
-fit.ms <- vgam(mstatus ~ s(age, df = 3), multinomial(refLevel=2),
+fit.ms <- vgam(mstatus ~ s(age, df = 3), multinomial(refLevel = 2),
                data = marital.nz)
 @
 
@@ -1678,9 +1678,9 @@ clist <- list("(Intercept)" = diag(3),
              "age" = rbind(0, 0, 1))
 fit2.ms <-
     vglm(mstatus ~ poly(age, 2) + foo(age) + age,
-         family = multinomial(refLevel=2),
-         constraints=clist,
-         data=marital.nz)
+         family = multinomial(refLevel = 2),
+         constraints = clist,
+         data = marital.nz)
 @
 Then
 <<>>=
@@ -1690,12 +1690,12 @@ confirms that one term was used for each component function.
 The plots from
 <<fig=F>>=
 par(mfrow=c(2,2))
-plotvgam(fit2.ms, se=TRUE, scale=12,
-         lcol=mycol[1], scol=mycol[1], which.term=1)
-plotvgam(fit2.ms, se=TRUE, scale=12,
-         lcol=mycol[2], scol=mycol[2], which.term=2)
-plotvgam(fit2.ms, se=TRUE, scale=12,
-         lcol=mycol[3], scol=mycol[3], which.term=3)
+plotvgam(fit2.ms, se = TRUE, scale = 12,
+         lcol = mycol[1], scol = mycol[1], which.term = 1)
+plotvgam(fit2.ms, se = TRUE, scale = 12,
+         lcol = mycol[2], scol=mycol[2], which.term = 2)
+plotvgam(fit2.ms, se = TRUE, scale = 12,
+         lcol = mycol[3], scol = mycol[3], which.term = 3)
 @
 are given in Figure~\ref{fig:jsscat.eg.mstatus.vglm}
 and appear like
@@ -1710,12 +1710,12 @@ Figure~\ref{fig:jsscat.eg.mstatus}.
 # Plot output
 par(mfrow=c(2,2))
  par(mar=c(4.5,4.0,1.2,2.2)+0.1)
-plotvgam(fit2.ms, se=TRUE, scale=12,
-         lcol=mycol[1], scol=mycol[1], which.term=1)
-plotvgam(fit2.ms, se=TRUE, scale=12,
-         lcol=mycol[2], scol=mycol[2], which.term=2)
-plotvgam(fit2.ms, se=TRUE, scale=12,
-         lcol=mycol[3], scol=mycol[3], which.term=3)
+plotvgam(fit2.ms, se = TRUE, scale = 12,
+         lcol = mycol[1], scol = mycol[1], which.term = 1)
+plotvgam(fit2.ms, se = TRUE, scale = 12,
+         lcol = mycol[2], scol = mycol[2], which.term = 2)
+plotvgam(fit2.ms, se = TRUE, scale = 12,
+         lcol = mycol[3], scol = mycol[3], which.term = 3)
 @
 \caption{
 Parametric version of~\texttt{fit.ms}: \texttt{fit2.ms}.
@@ -1877,8 +1877,8 @@ set.seed(123)
 @
 A rank-2 model fitted \textit{with a different normalization}
 <<>>=
-bp.rrmlm2 <- rrvglm(pain ~ sx1 + sx2 + sx3, multinomial, backPain, Rank=2,
-                   Corner=FALSE, Uncor=TRUE)
+bp.rrmlm2 <- rrvglm(pain ~ sx1 + sx2 + sx3, multinomial, backPain, Rank = 2,
+                   Corner = FALSE, Uncor = TRUE)
 @
 produces uncorrelated $\widehat{\bnu}_i = \widehat{\bC}^{\top} \bix_{2i}$.
 In fact \textsl{\texttt{var(lv(bp.rrmlm2))}} equals $\bI_2$

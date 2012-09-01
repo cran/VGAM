@@ -8,8 +8,10 @@
 
 }
 \usage{
-gamma2(lmu = "loge", lshape = "loge", emu = list(), eshape = list(),
-       imethod = 1, deviance.arg = FALSE, ishape = NULL, zero = -2)
+gamma2(lmu = "loge", lshape = "loge",
+       imethod = 1,  ishape = NULL,
+       parallel = FALSE, intercept.apply = FALSE,
+       deviance.arg = FALSE, zero = -2)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -18,10 +20,6 @@ gamma2(lmu = "loge", lshape = "loge", emu = list(), eshape = list(),
   parameters (called \eqn{\mu}{mu} and \eqn{\lambda}{shape} respectively).
   See \code{\link{Links}} for more choices.
 
-  }
-  \item{emu, eshape}{
-  List. Extra argument for each of the links.
-  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{ishape}{
@@ -31,12 +29,14 @@ gamma2(lmu = "loge", lshape = "loge", emu = list(), eshape = list(),
   This argument is ignored if used within \code{\link{cqo}}; see the
   \code{iShape} argument of \code{\link{qrrvglm.control}} instead.
 
+
   }
   \item{imethod}{
   An integer with value \code{1} or \code{2} which
   specifies the initialization method for the \eqn{\mu}{mu} parameter.
   If failure to converge occurs
   try another value (and/or specify a value for \code{ishape}).
+
 
   }
   \item{deviance.arg}{
@@ -47,6 +47,7 @@ gamma2(lmu = "loge", lshape = "loge", emu = list(), eshape = list(),
   criterion to minimize within the IRLS algorithm.
   It should be set \code{TRUE} only when used with \code{\link{cqo}}
   under the fast algorithm.
+
 
   }
   \item{zero}{
@@ -65,6 +66,12 @@ gamma2(lmu = "loge", lshape = "loge", emu = list(), eshape = list(),
     value means that the value is recycled, so setting \eqn{-2} means
     all shape parameters are intercept only.
     See \code{\link{CommonVGAMffArguments}} for more information.
+
+
+  }
+  \item{parallel, intercept.apply}{
+    See \code{\link{CommonVGAMffArguments}} for more information.
+
 
   }
 }
@@ -118,8 +125,10 @@ gamma2(lmu = "loge", lshape = "loge", emu = list(), eshape = list(),
   The parameterization of this \pkg{VGAM} family function is the
   2-parameter gamma distribution described in the monograph
 
+
 McCullagh, P. and Nelder, J. A. (1989)
   \emph{Generalized Linear Models}, 2nd ed. London: Chapman & Hall.
+
 
 }
 \author{ T. W. Yee }
@@ -128,14 +137,17 @@ McCullagh, P. and Nelder, J. A. (1989)
   A moment estimator for the shape parameter may be implemented in
   the future.
 
-  If \code{mu} and \code{shape} are vectors, then \code{rgamma(n=n,
-  shape=shape, scale=mu/shape)} will generate random gamma variates of this
+
+  If \code{mu} and \code{shape} are vectors, then \code{rgamma(n = n,
+  shape = shape, scale = mu/shape)} will generate random gamma variates of this
   parameterization, etc.;
   see \code{\link[stats]{GammaDist}}.
+
 
   For \code{\link{cqo}} and \code{\link{cao}}, taking the logarithm
   of the response means (approximately) a \code{\link{gaussianff}} family
   may be used on the transformed data.
+
 
 }
 
@@ -148,6 +160,7 @@ McCullagh, P. and Nelder, J. A. (1989)
   \code{\link[stats]{GammaDist}},
   \code{\link{golf}},
   \code{\link{CommonVGAMffArguments}}.
+
 
 }
 \examples{

@@ -9,9 +9,8 @@
 
 }
 \usage{
-mix2exp(lphi = "logit", llambda = "loge", ephi = list(),
-        el1 = list(), el2 = list(), iphi = 0.5, il1 = NULL, il2 = NULL,
-        qmu = c(0.8, 0.2), nsimEIM = 100, zero = 1)
+mix2exp(lphi = "logit", llambda = "loge", iphi = 0.5, il1 = NULL,
+        il2 = NULL, qmu = c(0.8, 0.2), nsimEIM = 100, zero = 1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -24,11 +23,6 @@ mix2exp(lphi = "logit", llambda = "loge", ephi = list(),
 
   }
 
-  \item{ephi, el1, el2}{
-  List. Extra argument for each of the links.
-  See \code{earg} in \code{\link{Links}} for general information.
-
-  }
   \item{iphi, il1, il2}{
     Initial value for \eqn{\phi}{phi}, and
     optional initial value for \eqn{\lambda_1}{lambda1} and
@@ -114,22 +108,22 @@ mix2exp(lphi = "logit", llambda = "loge", ephi = list(),
 }
 
 \examples{
-lambda1 = exp(1); lambda2 = exp(3)
-(phi = logit(-1, inverse = TRUE))
-mdata = data.frame(y1 = rexp(nn <- 1000, lambda1))
-mdata = transform(mdata, y2 = rexp(nn, lambda2))
-mdata = transform(mdata, Y  = ifelse(runif(nn) < phi, y1, y2))
-fit = vglm(Y ~ 1, mix2exp, mdata, trace = TRUE)
+\dontrun{ lambda1 <- exp(1); lambda2 <- exp(3)
+(phi <- logit(-1, inverse = TRUE))
+mdata <- data.frame(y1 = rexp(nn <- 1000, lambda1))
+mdata <- transform(mdata, y2 = rexp(nn, lambda2))
+mdata <- transform(mdata, Y  = ifelse(runif(nn) < phi, y1, y2))
+fit <- vglm(Y ~ 1, mix2exp, mdata, trace = TRUE)
 coef(fit, matrix = TRUE)
 
 # Compare the results with the truth
 round(rbind('Estimated' = Coef(fit),
             'Truth' = c(phi, lambda1, lambda2)), dig = 2)
 
-\dontrun{# Plot the results
 with(mdata, hist(Y, prob = TRUE, main = "Orange = estimate, blue = truth"))
 abline(v = 1 / Coef(fit)[c(2, 3)],  lty = 2, col = "orange", lwd = 2)
-abline(v = 1 / c(lambda1, lambda2), lty = 2, col = "blue", lwd = 2) }
+abline(v = 1 / c(lambda1, lambda2), lty = 2, col = "blue", lwd = 2)
+}
 }
 \keyword{models}
 \keyword{regression}

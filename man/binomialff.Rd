@@ -9,16 +9,17 @@
 
 }
 \usage{
-binomialff(link = "logit", earg = list(), dispersion = 1, mv = FALSE,
-           onedpar = !mv, parallel = FALSE, zero = NULL)
+binomialff(link = "logit", dispersion = 1, mv = FALSE,
+           onedpar = !mv, parallel = FALSE, zero = NULL, bred = FALSE,
+           earg.link = FALSE)
 
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
 
-  \item{link, earg}{
-  Link function and extra argument optionally used by the link function.
-  See \code{\link{Links}} for more choices, and also
+  \item{link}{
+  Link function;
+  see \code{\link{Links}} and
   \code{\link{CommonVGAMffArguments}} for more information.
 
 
@@ -65,6 +66,12 @@ binomialff(link = "logit", earg = list(), dispersion = 1, mv = FALSE,
   are modelled as intercepts only.  The values must be from the set
   \{1,2,\ldots,\eqn{M}\}, where \eqn{M} is the number of columns of the
   matrix response.
+  See \code{\link{CommonVGAMffArguments}} for more information.
+
+
+  }
+  \item{bred, earg.link}{
+  Details at \code{\link{CommonVGAMffArguments}}.
 
 
   }
@@ -205,8 +212,8 @@ binomialff(link = "logit", earg = list(), dispersion = 1, mv = FALSE,
 quasibinomialff()
 quasibinomialff(link = "probit")
 
-shunua = hunua[sort.list(with(hunua, altitude)), ]  # Sort by altitude
-fit = vglm(agaaus ~ poly(altitude, 2), binomialff(link = cloglog), shunua)
+shunua <- hunua[sort.list(with(hunua, altitude)), ]  # Sort by altitude
+fit <- vglm(agaaus ~ poly(altitude, 2), binomialff(link = cloglog), shunua)
 \dontrun{
 plot(agaaus ~ jitter(altitude), shunua, col = "blue", ylab = "P(Agaaus = 1)",
      main = "Presence/absence of Agathis australis", las = 1)
@@ -214,20 +221,20 @@ with(shunua, lines(altitude, fitted(fit), col = "orange", lwd = 2)) }
 
 
 # Fit two species simultaneously
-fit2 = vgam(cbind(agaaus, kniexc) ~ s(altitude), binomialff(mv = TRUE), shunua)
+fit2 <- vgam(cbind(agaaus, kniexc) ~ s(altitude), binomialff(mv = TRUE), shunua)
 with(shunua, matplot(altitude, fitted(fit2), type = "l",
      main = "Two species response curves", las = 1))
 
 
 # Shows that Fisher scoring can sometime fail. See Ridout (1990).
-ridout = data.frame(v = c(1000, 100, 10), r = c(4, 3, 3), n = c(5, 5, 5))
-(ridout = transform(ridout, logv = log(v)))
+ridout <- data.frame(v = c(1000, 100, 10), r = c(4, 3, 3), n = c(5, 5, 5))
+(ridout <- transform(ridout, logv = log(v)))
 # The iterations oscillates between two local solutions:
-glm.fail = glm(r / n ~ offset(logv) + 1, weight = n,
-               binomial(link = cloglog), ridout, trace = TRUE)
+glm.fail <- glm(r / n ~ offset(logv) + 1, weight = n,
+               binomial(link = 'cloglog'), ridout, trace = TRUE)
 coef(glm.fail)
 # vglm()'s half-stepping ensures the MLE of -5.4007 is obtained:
-vglm.ok = vglm(cbind(r, n-r) ~ offset(logv) + 1,
+vglm.ok <- vglm(cbind(r, n-r) ~ offset(logv) + 1,
                binomialff(link = cloglog), ridout, trace = TRUE)
 coef(vglm.ok)
 }

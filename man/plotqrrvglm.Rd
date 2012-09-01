@@ -6,8 +6,7 @@
   The residuals of a QRR-VGLM are plotted for model diagnostic purposes.
 }
 \usage{
-plotqrrvglm(object, 
-            rtype = c("pearson", "response", "deviance", "working"), 
+plotqrrvglm(object, rtype = c("response", "pearson", "deviance", "working"),
             ask = FALSE, 
             main = paste(Rtype, "residuals vs latent variable(s)"), 
             xlab = "Latent Variable", 
@@ -16,14 +15,14 @@ plotqrrvglm(object,
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{object}{ An object of class \code{"qrrvglm"}. }
-  \item{rtype}{ Character string giving residual type. By default, the first
-                one is chosen. }
+  \item{rtype}{ Character string giving residual type.
+                By default, the first one is chosen. }
   \item{ask}{ Logical. If \code{TRUE}, the user is asked to hit the return
   key for the next plot. }
   \item{main}{ Character string giving the title of the plot. }
   \item{xlab}{ Character string giving the x-axis caption. }
   \item{ITolerances}{ Logical. This argument is fed into
-    \code{Coef(object, ITolerances=ITolerances)}.
+    \code{Coef(object, ITolerances = ITolerances)}.
   }
   \item{\dots}{ Other plotting arguments (see \code{\link[graphics]{par}}). }
 }
@@ -31,9 +30,11 @@ plotqrrvglm(object,
   Plotting the residuals can be potentially very useful for checking
   that the model fit is adequate.  
 
+
 }
 \value{
   The original object. 
+
 
 }
 \references{
@@ -59,20 +60,21 @@ canonical Gaussian ordination.
   \code{\link{lvplot.qrrvglm}},
   \code{\link{cqo}}.
 
+
 }
 
 \examples{\dontrun{
 # QRR-VGLM on the hunting spiders data
 # This is computationally expensive
-set.seed(111)  # This leads to the global solution
+set.seed(111) # This leads to the global solution
 # hspider[,1:6]=scale(hspider[,1:6]) # Standardize the environmental variables
-p1 = cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,
-               Auloalbi, Pardlugu, Pardmont, Pardnigr, Pardpull,
-               Trocterr, Zoraspin) ~
-         WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
-         fam = quasipoissonff, data = hspider, Crow1positive = FALSE)
+p1 <- cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,
+                Auloalbi, Pardlugu, Pardmont, Pardnigr, Pardpull,
+                Trocterr, Zoraspin) ~
+          WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
+          quasipoissonff, data = hspider, Crow1positive = FALSE)
 par(mfrow = c(3, 4)) 
-plot(p1, rtype = "d", col = "blue", pch = 4, las = 1)
+plot(p1, rtype = "response", col = "blue", pch = 4, las = 1, main = "")
 }
 }
 \keyword{dplot}

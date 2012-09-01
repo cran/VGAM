@@ -14,12 +14,12 @@
 
 
 
- abbott = function(link0 = "logit", earg0 = list(),
-                   link1 = "logit", earg1 = list(),
-                   iprob0 = NULL, iprob1 = NULL,
-                   fitted.type = c("observed", "treatment", "control"),
-                   mux.offdiagonal = 0.98,
-                   zero = 1) {
+ abbott <- function(link0 = "logit",
+                    link1 = "logit",
+                    iprob0 = NULL, iprob1 = NULL,
+                    fitted.type = c("observed", "treatment", "control"),
+                    mux.offdiagonal = 0.98,
+                    zero = 1) {
 
 
   fitted.type <- match.arg(fitted.type,
@@ -27,13 +27,16 @@
                            several.ok = TRUE)
 
 
-  if (mode(link0) !=  "character" && mode(link0) !=  "name")
-    link0 <- as.character(substitute(link0))
-  if (!is.list(earg0)) earg0 = list()
+  link0 <- as.list(substitute(link0))
+  earg0 <- link2list(link0)
+  link0 <- attr(earg0, "function.name")
 
-  if (mode(link1) !=  "character" && mode(link1) !=  "name")
-    link1 <- as.character(substitute(link1))
-  if (!is.list(earg1)) earg1 = list()
+  link1 <- as.list(substitute(link1))
+  earg1 <- link2list(link1)
+  link1 <- attr(earg1, "function.name")
+
+
+
 
   if (!is.Numeric(mux.offdiagonal, allowable.length = 1) ||
       mux.offdiagonal >= 1 ||
@@ -56,7 +59,7 @@
            ))),
 
   initialize = eval(substitute(expression({
-    eval(binomialff(link = .link0)@initialize) # w, y, mustart are assigned
+    eval(binomialff(link = .link0 )@initialize) # w, y, mustart are assigned
 
 
     predictors.names <-
@@ -214,9 +217,8 @@
 
 
 if (FALSE)
- Abbott = function(lprob1 = "elogit",
-                   eprob1 = list(min = 0, max = 1), # For now, that is
-                   lprob0 = "logit", eprob0 = list(),
+ Abbott <- function(lprob1 = elogit(min = 0, max = 1), # For now, that is
+                   lprob0 = "logit",
                    iprob0 = NULL, iprob1 = NULL,
                    nointercept = 2, # NULL,
                    zero = 1) {
@@ -227,14 +229,14 @@ if (FALSE)
  stop("does not work")
 
 
+  lprob1 <- as.list(substitute(lprob1))
+  eprob1 <- link2list(lprob1)
+  lprob1 <- attr(eprob1, "function.name")
 
-  if (mode(lprob1) !=  "character" && mode(lprob1) !=  "name")
-    lprob1 <- as.character(substitute(lprob1))
-  if (!is.list(eprob1)) eprob1 = list()
+  lprob0 <- as.list(substitute(lprob0))
+  eprob0 <- link2list(lprob0)
+  lprob0 <- attr(eprob0, "function.name")
 
-  if (mode(lprob0) !=  "character" && mode(lprob0) !=  "name")
-    lprob0 <- as.character(substitute(lprob0))
-  if (!is.list(eprob0)) eprob0 = list()
 
 
   new("vglmff",

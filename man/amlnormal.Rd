@@ -12,7 +12,7 @@
 }
 \usage{
 amlnormal(w.aml = 1, parallel = FALSE, lexpectile = "identity",
-          eexpectile = list(), iexpectile = NULL, imethod = 1, digw = 4)
+          iexpectile = NULL, imethod = 1, digw = 4)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -34,7 +34,7 @@ amlnormal(w.aml = 1, parallel = FALSE, lexpectile = "identity",
   See \code{\link{CommonVGAMffArguments}} for more information.
 
   }
-  \item{lexpectile, eexpectile, iexpectile}{
+  \item{lexpectile, iexpectile}{
   See \code{\link{CommonVGAMffArguments}} for more information.
 
   }

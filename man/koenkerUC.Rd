@@ -61,27 +61,27 @@ rkoenker(n, location = 0, scale = 1)
 }
 
 \examples{
-my_p = 0.25; y = rkoenker(nn <- 5000)
+my_p <- 0.25; y <- rkoenker(nn <- 5000)
 (myexp = qkoenker(my_p))
-sum(myexp - y[y <= myexp]) / sum(abs(myexp - y))  # Should be my_p
+sum(myexp - y[y <= myexp]) / sum(abs(myexp - y)) # Should be my_p
 # Equivalently:
-I1 = mean(y <= myexp) * mean( myexp - y[y <= myexp])
-I2 = mean(y >  myexp) * mean(-myexp + y[y >  myexp])
+I1 <- mean(y <= myexp) * mean( myexp - y[y <= myexp])
+I2 <- mean(y >  myexp) * mean(-myexp + y[y >  myexp])
 I1 / (I1 + I2)  # Should be my_p
 # Or:
-I1 = sum( myexp - y[y <= myexp])
-I2 = sum(-myexp + y[y >  myexp])
+I1 <- sum( myexp - y[y <= myexp])
+I2 <- sum(-myexp + y[y >  myexp])
 
 # Non-standard Koenker distribution
-myloc = 1; myscale = 2
-yy = rkoenker(nn, myloc, myscale)
-(myexp = qkoenker(my_p, myloc, myscale))
+myloc <- 1; myscale <- 2
+yy <- rkoenker(nn, myloc, myscale)
+(myexp <- qkoenker(my_p, myloc, myscale))
 sum(myexp - yy[yy <= myexp]) / sum(abs(myexp - yy)) # Should be my_p
-pkoenker(mean(yy), myloc, myscale)  #  Should be 0.5
+pkoenker(mean(yy), myloc, myscale) #  Should be 0.5
 abs(qkoenker(0.5, myloc, myscale) - mean(yy)) #  Should be 0
-abs(pkoenker(myexp, myloc, myscale) - my_p)  #  Should be 0
+abs(pkoenker(myexp, myloc, myscale) - my_p) #  Should be 0
 integrate(f = dkoenker, lower = -Inf, upper = Inf,
-          locat = myloc, scale = myscale) #  Should be 1
+          locat = myloc, scale = myscale) # Should be 1
 
 y <- seq(-7, 7, len = 201)
 max(abs(dkoenker(y) - dt(y / sqrt(2), df = 2) / sqrt(2))) # Should be 0

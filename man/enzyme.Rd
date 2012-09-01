@@ -15,9 +15,13 @@
 }
 \details{
   Sorry, more details need to be included later.
+
+
 }
 \source{
   Sorry, more details need to be included later.
+
+
 }
 \references{
 Watts, D. G. (1981)
@@ -26,12 +30,14 @@ Watts, D. G. (1981)
     \emph{Kinetic Data Analysis: Design and Analysis of Enzyme and
     Pharmacokinetic Experiments}, pp.1--24.
     New York: Plenum Press.
+
+
 }
 \seealso{
 \code{\link{micmen}}.
 }
 \examples{
-fit = vglm(velocity ~ 1, micmen, data=enzyme, trace = TRUE,
+fit <- vglm(velocity ~ 1, micmen, data = enzyme, trace = TRUE,
            form2 = ~ conc - 1, crit = "crit")
 summary(fit)
 }

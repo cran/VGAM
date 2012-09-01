@@ -8,8 +8,13 @@
 
 
 
-yformat = function(x, digits = options()$digits) {
-    format(ifelse(abs(x) < 0.001, signif(x, digits), round(x, digits)))
+
+
+
+
+
+yformat <- function(x, digits = options()$digits) {
+  format(ifelse(abs(x) < 0.001, signif(x, digits), round(x, digits)))
 }
 
 
@@ -20,7 +25,10 @@ summaryvglm <- function(object, correlation = FALSE,
 
 
 
-  if (length(dispersion) && dispersion == 0 && 
+
+
+  if (length(dispersion) &&
+      dispersion == 0 && 
       length(object@family@summary.dispersion) && 
       !object@family@summary.dispersion) {
       stop("cannot use the general VGLM formula (based on a residual ",
@@ -44,12 +52,12 @@ summaryvglm <- function(object, correlation = FALSE,
 
   presid = resid(object, type = "pearson")
   if (length(presid))
-    answer@pearson.resid = as.matrix(presid)
+    answer@pearson.resid <- as.matrix(presid)
 
-  slot(answer, "misc") = stuff@misc  # Replace
+  slot(answer, "misc") <- stuff@misc  # Replace
 
   if (is.numeric(stuff@dispersion))
-    slot(answer, "dispersion") = stuff@dispersion
+    slot(answer, "dispersion") <- stuff@dispersion
 
   answer
 }
@@ -61,7 +69,7 @@ summaryvglm <- function(object, correlation = FALSE,
 
 
 setMethod("logLik",  "summary.vglm", function(object, ...)
-    logLik.vlm(object, ...))
+  logLik.vlm(object, ...))
 
 
 show.summary.vglm <- function(x, digits = NULL, quote = TRUE,
@@ -108,7 +116,7 @@ show.summary.vglm <- function(x, digits = NULL, quote = TRUE,
     } else
     if (M <= 5) {
       cat("\nNames of linear predictors:",
-          paste(x@misc$predictors.names, collapse = ", "), fill = TRUE)
+        paste(x@misc$predictors.names, collapse = ", "), fill = TRUE)
     }
   }
 
@@ -127,8 +135,9 @@ show.summary.vglm <- function(x, digits = NULL, quote = TRUE,
               prose <- "(Pre-specified) "
       }
       cat(paste("\n", prose, "Dispersion Parameter for ",
-          x@family@vfamily[1],
-          " family:   ", yformat(x@dispersion, digits), "\n", sep = ""))
+                x@family@vfamily[1],
+                " family:   ", yformat(x@dispersion, digits), "\n",
+                sep = ""))
   }
 
 
@@ -204,60 +213,115 @@ vcovdefault <- function(object, ...) {
 
 
 
- vcovvlm <- function(object, dispersion = NULL, untransform = FALSE) {
-    so <- summaryvlm(object, correlation = FALSE, dispersion = dispersion)
-    d = if (any(slotNames(so) == "dispersion") && 
+
+ vcovvlm <-
+function(object, dispersion = NULL, untransform = FALSE) {
+
+
+
+  so <- summaryvlm(object, correlation = FALSE,
+                   dispersion = dispersion)
+  d <- if (any(slotNames(so) == "dispersion") && 
            is.Numeric(so@dispersion)) so@dispersion else 1
-    answer = d * so@cov.unscaled
+  answer <- d * so@cov.unscaled
 
-    if (is.logical(OKRC <- object@misc$RegCondOK) && !OKRC)
-        warning("MLE regularity conditions were violated ",
-                "at the final iteration of the fitted object")
+  if (is.logical(OKRC <- object@misc$RegCondOK) && !OKRC)
+    warning("MLE regularity conditions were violated ",
+            "at the final iteration of the fitted object")
 
-    if (!untransform)
-      return(answer)
-
-    if (!is.logical(object@misc$intercept.only))
-       stop("cannot determine whether the object is",
-            "an intercept-only fit, i.e., 'y ~ 1' is the response")
-    if (!object@misc$intercept.only)
-       stop("object must be an intercept-only fit, i.e., ",
-            "y ~ 1 is the response")
-
-    if (!all(trivial.constraints(constraints(object)) == 1))
-       stop("object must have trivial constraints")
-
-    M = object@misc$M
-    Links = object@misc$link
-    if (length(Links) != M && length(Links) != 1)
-       stop("cannot obtain the link functions to untransform the object")
+  if (!untransform)
+    return(answer)
 
 
-    tvector = numeric(M)
-    etavector = predict(object)[1,]   # Contains transformed parameters
-    earg = object@misc$earg  # This could be a NULL
-    if (!is.null(earg) && M > 1 && (!is.list(earg) || length(earg) != M))
-      stop("the 'earg' component of 'object@misc' should be of length ", M)
-    for(ii in 1:M) {
-        TTheta = etavector[ii]  # Transformed theta
-        use.earg = if (M == 1 || is.null(earg)) earg else earg[[ii]]
-        if (is.list(use.earg) && !length(use.earg))
-            use.earg = NULL
-        newcall = paste(Links[ii],
-                        "(theta = TTheta, earg = use.earg, inverse = TRUE)",
-                        sep = "")
-        newcall = parse(text=newcall)[[1]]
-        Theta = eval(newcall) # Theta, the untransformed parameter
-        newcall = paste(Links[ii],
-                        "(theta=Theta, earg = use.earg, deriv=1)", sep = "")
-        newcall = parse(text=newcall)[[1]]
-        tvector[ii] = eval(newcall)
+
+
+
+  new.way <- TRUE 
+
+
+
+  if (!is.logical(object@misc$intercept.only))
+    stop("cannot determine whether the object is",
+         "an intercept-only fit, i.e., 'y ~ 1' is the response")
+  if (!object@misc$intercept.only)
+    stop("object must be an intercept-only fit, i.e., ",
+         "y ~ 1 is the response")
+
+  if (!all(trivial.constraints(constraints(object)) == 1))
+    stop("object must have trivial constraints")
+
+  M <- object@misc$M
+
+
+
+
+  tvector <- numeric(M)
+  etavector <- predict(object)[1, ] # Contains transformed parameters
+  LINK <- object@misc$link # link.names # This should be a character vector.
+  EARG <- object@misc$earg # This could be a NULL
+  if (is.null(EARG))
+    EARG <- list(theta = NULL)
+  if (!is.list(EARG))
+    stop("the 'earg' component of 'object@misc' must be a list")
+
+
+
+
+  if (length(LINK) != M &&
+      length(LINK) != 1)
+    stop("cannot obtain the link functions to untransform 'object'")
+
+
+
+  if (!is.character(LINK))
+    stop("the 'link' component of 'object@misc' should ",
+         "be a character vector")
+
+  learg <- length(EARG)
+  llink <- length(LINK)
+  if (llink != learg)
+    stop("the 'earg' component of 'object@misc' should ",
+         "be a list of length ", learg)
+
+
+  level1 <- length(EARG) > 3 &&
+            length(intersect(names(EARG),
+              c("theta", "inverse", "deriv", "short", "tag"))) > 3
+  if (level1)
+    EARG <- list(oneOnly = EARG)
+
+
+
+  learg <- length(EARG)
+  for (ii in 1:M) {
+    TTheta <- etavector[ii] # Transformed theta
+
+    use.earg      <-
+      if (llink == 1) EARG[[1]] else EARG[[ii]]
+    function.name <-
+      if (llink == 1) LINK else LINK[ii]
+
+
+    if (new.way) {
+      use.earg[["inverse"]] <- TRUE # New
+      use.earg[["theta"]] <- TTheta # New
+      Theta <- do.call(function.name, use.earg)
+
+      use.earg[["inverse"]] <- FALSE # Reset this
+      use.earg[["deriv"]] <- 1 # New
+      use.earg[["theta"]] <- Theta # Renew this
+      tvector[ii] <- do.call(function.name, use.earg)
+    } else {
+      stop("link functions handled in the new way now")
+
     }
-    tvector = abs(tvector)
-    answer = (cbind(tvector) %*% rbind(tvector)) * answer
-    if (length(dmn2 <- names(object@misc$link)) == M)
-        dimnames(answer) = list(dmn2, dmn2)
-    answer
+  } # of for(ii in 1:M)
+
+  tvector <- abs(tvector)
+  answer <- (cbind(tvector) %*% rbind(tvector)) * answer
+  if (length(dmn2 <- names(object@misc$link)) == M)
+    dimnames(answer) <- list(dmn2, dmn2)
+  answer
 }
 
 

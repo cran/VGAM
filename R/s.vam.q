@@ -6,11 +6,14 @@
 
 
 
+
+
+
 s.vam <- function(x, zedd, wz, smomat, which, smooth.frame, bf.maxit = 10,
-                  bf.epsilon=0.001, trace=FALSE, se.fit = TRUE,
+                  bf.epsilon = 0.001, trace = FALSE, se.fit = TRUE,
                   X_vlm_save, Blist, ncolBlist, M, qbig, Umat,
-                  all.knots=FALSE, nk=NULL,
-                  sf.only=FALSE)
+                  all.knots = FALSE, nk = NULL,
+                  sf.only = FALSE)
 {
     nwhich <- names(which)
 
@@ -20,7 +23,7 @@ s.vam <- function(x, zedd, wz, smomat, which, smooth.frame, bf.maxit = 10,
 
 
     if (!length(smooth.frame$first)) {
-        data <- smooth.frame[, nwhich, drop=FALSE]
+        data <- smooth.frame[, nwhich, drop = FALSE]
         smooth.frame <- vgam.match(data, all.knots=all.knots, nk=nk)
         smooth.frame$first <- FALSE  # No longer first for next time
 
@@ -38,29 +41,29 @@ s.vam <- function(x, zedd, wz, smomat, which, smooth.frame, bf.maxit = 10,
 
             temp <- sparv[[ii]]
             if (!is.numeric(temp) || any(temp < 0)) {
-                stop("spar cannot be negative or non-numeric")
+              stop("spar cannot be negative or non-numeric")
             }
             if (length(temp) > ncolBlist[ii]) {
-                warning("only the first ", ncolBlist[ii], " values of ",
-                        "'spar' are used for variable '", s.xargument, "'")
+              warning("only the first ", ncolBlist[ii], " values of ",
+                      "'spar' are used for variable '", s.xargument, "'")
             }
-            sparv[[ii]] <- rep(temp, length=ncolBlist[ii])   # recycle
+            sparv[[ii]] <- rep(temp, length = ncolBlist[ii])   # recycle
     
             temp <- dfvec[[ii]]
             if (!is.numeric(temp) || any(temp < 1)) {
-                stop("df is non-numeric or less than 1")
+              stop("df is non-numeric or less than 1")
             }
             if (length(temp) > ncolBlist[ii]) {
-                warning("only the first", ncolBlist[ii], "values of 'df' ",
-                        "are used for variable '", s.xargument, "'")
+              warning("only the first ", ncolBlist[ii], " value(s) of 'df' ",
+                      "are used for variable '", s.xargument, "'")
             }
-            dfvec[[ii]] <- rep(temp, length=ncolBlist[ii])    # recycle
+            dfvec[[ii]] <- rep(temp, length = ncolBlist[ii])    # recycle
             if (max(temp) > smooth.frame$nef[kk]-1) {
-                stop("'df' value too high for variable '", s.xargument, "'")
+              stop("'df' value too high for variable '", s.xargument, "'")
             }
     
             if (any(sparv[[ii]] != 0) && any(dfvec[[ii]] != 4)) {
-                stop("cannot specify both 'spar' and 'df'")
+              stop("cannot specify both 'spar' and 'df'")
             }
         } # End of kk loop
 
@@ -70,8 +73,8 @@ s.vam <- function(x, zedd, wz, smomat, which, smooth.frame, bf.maxit = 10,
         smooth.frame$dfvec <- dfvec         # original
     
         if (sum(smooth.frame$dfvec[smooth.frame$sparv == 0]) + pbig >
-            smooth.frame$n_lm * sum(ncolBlist[nwhich])) {
-            stop("too many parameters/dof for data on hand")
+          smooth.frame$n_lm * sum(ncolBlist[nwhich])) {
+          stop("too many parameters/dof for data on hand")
         }
     
         xnrow_X_vlm <- labels(X_vlm_save)[[2]]
@@ -96,6 +99,8 @@ s.vam <- function(x, zedd, wz, smomat, which, smooth.frame, bf.maxit = 10,
         smooth.frame$kindex = as.integer(
             cumsum(c(1, 4 + smooth.frame$nknots)))
     } # End of first
+
+
     if (sf.only) {
         return(smooth.frame)
     }
@@ -137,13 +142,14 @@ s.vam <- function(x, zedd, wz, smomat, which, smooth.frame, bf.maxit = 10,
                      eps = 0.00244,   # was default till R 1.3.x
                      maxit = 500 )
 
+
     fit <- dotC(name="Yee_vbfa",  # ---------------------------------
          npetc = as.integer(c(n_lm, p_lm, length(which), se.fit, 0,
                bf.maxit, qrank = 0, M, nbig = n_lm * M, pbig,
-               qbig, dim2wz, dim1U, ier=0, ldk=ldk, # ldk may be unused
+               qbig, dim2wz, dim1U, ier = 0, ldk=ldk, # ldk may be unused
                contr.sp$maxit, iinfo = 0
                )),
-         doubvec = as.double(c(bf.epsilon, resSS=0, unlist(contr.sp[1:4]))),
+         doubvec = as.double(c(bf.epsilon, resSS = 0, unlist(contr.sp[1:4]))),
      as.double(x),
          y = as.double(zedd), wz = as.double(wz),
          dfvec  = as.double(smooth.frame$dfvec),
@@ -176,10 +182,10 @@ s.vam <- function(x, zedd, wz, smomat, which, smooth.frame, bf.maxit = 10,
     dim(fit$smomat) = dim(smomat)
     dimnames(fit$smomat) = dimnames(smomat)   # Needed for vgam.nlchisq
     if (se.fit) {
-        dim(fit$varmat) = dim(smomat)
-        dimnames(fit$varmat) = dimnames(smomat)
-        dim(fit$levmat) = dim(smomat)
-        dimnames(fit$levmat) = dimnames(smomat)
+      dim(fit$varmat) = dim(smomat)
+      dimnames(fit$varmat) = dimnames(smomat)
+      dim(fit$levmat) = dim(smomat)
+      dimnames(fit$levmat) = dimnames(smomat)
 
     }
 
@@ -189,10 +195,10 @@ s.vam <- function(x, zedd, wz, smomat, which, smooth.frame, bf.maxit = 10,
 
 
     if (fit$npetc[14] != 0 || fit$npetc[17] != 0) {
-        stop("something went wrong in the C function 'vbfa'")
+      stop("something went wrong in the C function 'vbfa'")
     }
 
-    fit$etamat = if (M > 1) matrix(fit$etamat, n_lm, M, byrow=TRUE) else
+    fit$etamat = if (M > 1) matrix(fit$etamat, n_lm, M, byrow = TRUE) else
                  c(fit$etamat)  # May no longer be a matrix
     nits <- fit$npetc[5]
     qrank <- fit$npetc[7]
@@ -208,8 +214,8 @@ s.vam <- function(x, zedd, wz, smomat, which, smooth.frame, bf.maxit = 10,
     smooth.frame$prev.dof <- fit$dfvec
 
     if ((nits == bf.maxit) & bf.maxit > 1) {
-        warning("'s.vam' convergence not obtained in ", bf.maxit,
-                " iterations")
+      warning("'s.vam' convergence not obtained in ", bf.maxit,
+              " iterations")
     }
 
     R <- fit$qr[1:pbig, 1:pbig]
@@ -253,7 +259,7 @@ s.vam <- function(x, zedd, wz, smomat, which, smooth.frame, bf.maxit = 10,
     names(rl$nl.df) <- smooth.frame$ndfspar
 
     if (se.fit) {
-        rl <- c(rl, list(varmat = fit$varmat))
+      rl <- c(rl, list(varmat = fit$varmat))
     }
     c(list(smooth.frame = smooth.frame), rl)
 }

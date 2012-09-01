@@ -1,6 +1,6 @@
 Package: VGAM
-Version: 0.8-7
-Date: 2012-04-13
+Version: 0.9-0
+Date: 2012-09-01
 Title: Vector Generalized Linear and Additive Models
 Author: Thomas W. Yee <t.yee@auckland.ac.nz>
 Maintainer: Thomas Yee <t.yee@auckland.ac.nz>
@@ -17,6 +17,6 @@ Imports: methods, stats, stats4
 URL: http://www.stat.auckland.ac.nz/~yee/VGAM
 LazyLoad: yes
 LazyData: yes
-Packaged: 2012-04-12 20:01:03 UTC; tyee001
+Packaged: 2012-09-01 04:39:09 UTC; tyee001
 Repository: CRAN
-Date/Publication: 2012-04-13 10:59:27
+Date/Publication: 2012-09-01 05:55:16

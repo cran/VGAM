@@ -8,6 +8,7 @@ model.matrixvlm(object, type = c("vlm", "lm", "lm2", "bothlmlm2"),
 \arguments{
   \item{object}{an object of a class that inherits from the
     \emph{vector linear model} (VLM).
+
   }
   \item{type}{Type of design matrix returned. The first is the default. 
   The value \code{"vlm"} is the VLM model matrix corresponding
@@ -93,23 +94,22 @@ Reduced-rank vector generalized linear models.
 }
 \examples{
 # Illustrates smart prediction
-pneumo = transform(pneumo, let = log(exposure.time))
-fit = vglm(cbind(normal, mild, severe) ~ poly(c(scale(let)), 2),
-           family = multinomial,
-           data = pneumo, trace = TRUE, x = FALSE)
+pneumo <- transform(pneumo, let = log(exposure.time))
+fit <- vglm(cbind(normal, mild, severe) ~ poly(c(scale(let)), 2),
+            multinomial, data = pneumo, trace = TRUE, x = FALSE)
 class(fit)
 fit@x # Not saved on the object
 model.matrix(fit)
 model.matrix(fit, lapred.index = 1, type = "lm")
 model.matrix(fit, lapred.index = 2, type = "lm")
 
-(Check1 = head(model.matrix(fit, type = "lm")))
-(Check2 = model.matrix(fit, data = head(pneumo), type = "lm"))
+(Check1 <- head(model.matrix(fit, type = "lm")))
+(Check2 <- model.matrix(fit, data = head(pneumo), type = "lm"))
 all.equal(c(Check1), c(Check2))
 
-q0 = head(predict(fit))
-q1 = head(predict(fit, newdata = pneumo))
-q2 = predict(fit, newdata = head(pneumo))
+q0 <- head(predict(fit))
+q1 <- head(predict(fit, newdata = pneumo))
+q2 <- predict(fit, newdata = head(pneumo))
 all.equal(q0, q1) # Should be TRUE
 all.equal(q1, q2) # Should be TRUE
 }

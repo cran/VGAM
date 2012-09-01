@@ -9,7 +9,7 @@
 
 }
 \usage{
-simplex(lmu = "logit", lsigma = "loge", emu=list(), esigma=list(),
+simplex(lmu = "logit", lsigma = "loge",
         imu = NULL, isigma = NULL,
         imethod = 1, shrinkage.init = 0.95, zero = 2)
 
@@ -19,11 +19,6 @@ simplex(lmu = "logit", lsigma = "loge", emu=list(), esigma=list(),
   \item{lmu, lsigma}{
   Link function for \code{mu} and \code{sigma}. 
   See \code{\link{Links}} for more choices.
-
-  }
-  \item{emu, esigma}{
-  List. Extra argument for each of the links.
-  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{imu, isigma}{
@@ -48,6 +43,7 @@ simplex(lmu = "logit", lsigma = "loge", emu=list(), esigma=list(),
   and \eqn{\sigma > 0}{sigma > 0}.
   The mean of \eqn{Y} is \eqn{\mu}{mu} (called \code{mu}, and
   returned as the fitted values).
+
 
 
 % This comes from Jorgensen but it is not confirmed by simulations:

@@ -7,7 +7,7 @@
   first two derivatives.
 }
 \usage{
-probit(theta, earg = list(), inverse = FALSE, deriv = 0,
+probit(theta, bvalue = NULL, inverse = FALSE, deriv = 0,
        short = TRUE, tag = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -17,37 +17,17 @@ probit(theta, earg = list(), inverse = FALSE, deriv = 0,
   See below for further details.
 
   }
-  \item{earg}{
-  Optional list. Extra argument for passing in additional information.
-  Values of \code{theta} which are less than or equal to 0 can be
-  replaced by the \code{bvalue} component of the list \code{earg}
-  before computing the link function value.
-  Values of \code{theta} which are greater than or equal to 1 can be
-  replaced by 1 minus the \code{bvalue} component of the list \code{earg}
-  before computing the link function value.
-  The component name \code{bvalue} stands for ``boundary value''.
-  See \code{\link{Links}} for general information about \code{earg}.
+  \item{bvalue}{
+  See \code{\link{Links}}.
+
 
   }
-  \item{inverse}{
-   Logical. If \code{TRUE} the inverse function is computed.
+  \item{inverse, deriv, short, tag}{
+  Details at \code{\link{Links}}.
+
 
   }
-  \item{deriv}{
-   Order of the derivative. Integer with value 0, 1 or 2.
 
-  }
-  \item{short}{
-  Used for labelling the \code{blurb} slot of a \code{\link{vglmff-class}}
-  object.
-
-  }
-  \item{tag}{
-  Used for labelling the linear/additive predictor in the
-  \code{initialize} slot of a \code{\link{vglmff-class}} object.
-  Contains a little more information if \code{TRUE}.
-
-  }
 }
 \details{
   The probit link function is commonly used for parameters that
@@ -55,8 +35,7 @@ probit(theta, earg = list(), inverse = FALSE, deriv = 0,
   Numerical values of \code{theta} close to 0 or 1 or out of range
   result in
   \code{Inf}, \code{-Inf}, \code{NA} or \code{NaN}.
-  The arguments \code{short} and \code{tag} are used only if
-  \code{theta} is character.
+
 
 
 }
@@ -83,7 +62,7 @@ probit(theta, earg = list(), inverse = FALSE, deriv = 0,
 
 \note{
   Numerical instability may occur when \code{theta} is close to 1 or 0.
-  One way of overcoming this is to use \code{earg}.
+  One way of overcoming this is to use \code{bvalue}.
 
 
   In terms of the threshold approach with cumulative probabilities for
@@ -101,15 +80,15 @@ probit(theta, earg = list(), inverse = FALSE, deriv = 0,
 
 }
 \examples{
-p = seq(0.01, 0.99, by = 0.01)
+p <- seq(0.01, 0.99, by = 0.01)
 probit(p)
 max(abs(probit(probit(p), inverse = TRUE) - p)) # Should be 0
 
-p = c(seq(-0.02, 0.02, by = 0.01), seq(0.97, 1.02, by = 0.01))
-probit(p)  # Has NAs
-probit(p, earg = list(bvalue = .Machine$double.eps))  # Has no NAs
+p <- c(seq(-0.02, 0.02, by = 0.01), seq(0.97, 1.02, by = 0.01))
+probit(p) # Has NAs
+probit(p, bvalue = .Machine$double.eps) # Has no NAs
 
-\dontrun{p = seq(0.01, 0.99, by = 0.01); par(lwd = (mylwd <- 2))
+\dontrun{p <- seq(0.01, 0.99, by = 0.01); par(lwd = (mylwd <- 2))
 plot(p, logit(p), type = "l", col = "limegreen", ylab = "transformation",
      las = 1, main = "Some probability link functions")
 lines(p,  probit(p), col = "purple")
@@ -117,7 +96,7 @@ lines(p, cloglog(p), col = "chocolate")
 lines(p, cauchit(p), col = "tan")
 abline(v = 0.5, h = 0, lty = "dashed")
 legend(0.1, 4.0, c("logit", "probit", "cloglog", "cauchit"), 
-       col = c("limegreen","purple","chocolate","tan"), lwd = mylwd)
+       col = c("limegreen", "purple", "chocolate", "tan"), lwd = mylwd)
 par(lwd = 1) }
 }
 \keyword{math}

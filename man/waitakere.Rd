@@ -52,8 +52,8 @@
 
 }
 \examples{
-fit = vgam(agaaus ~ s(altitude, df = 2), binomialff, waitakere)
+fit <- vgam(agaaus ~ s(altitude, df = 2), binomialff, waitakere)
 head(predict(fit, waitakere, type = "response"))
-\dontrun{ plot(fit, se = TRUE, lcol = "red", scol = "blue") }
+\dontrun{ plot(fit, se = TRUE, lcol = "orange", scol = "blue") }
 }
 \keyword{datasets}

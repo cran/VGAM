@@ -85,13 +85,13 @@ recnormal1(lmean = "identity", lsd = "loge",
 
 }
 \examples{
-nn = 10000; mymean = 100
+nn <- 10000; mymean <- 100
 # First value is reference value or trivial record
-Rdata = data.frame(rawy = c(mymean, rnorm(nn, me = mymean, sd = exp(3))))
+Rdata <- data.frame(rawy = c(mymean, rnorm(nn, me = mymean, sd = exp(3))))
 # Keep only observations that are records:
-rdata = data.frame(y = unique(cummax(with(Rdata, rawy))))
+rdata <- data.frame(y = unique(cummax(with(Rdata, rawy))))
 
-fit = vglm(y ~ 1, recnormal1, rdata, trace = TRUE, maxit = 200)
+fit <- vglm(y ~ 1, recnormal1, rdata, trace = TRUE, maxit = 200)
 coef(fit, matrix = TRUE)
 Coef(fit)
 summary(fit)

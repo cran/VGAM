@@ -1,0 +1,69 @@
+\name{Lindley}
+\alias{Lindley}
+\alias{dlind}
+\alias{plind}
+%\alias{qlind}
+\alias{rlind}
+\title{The Lindley Distribution}
+\description{
+  Density, cumulative distribution function,
+% quantile function
+  and
+  random generation for
+  the Lindley distribution.
+
+}
+\usage{
+dlind(x, theta, log = FALSE)
+plind(q, theta)
+%qlind(p, theta)
+rlind(n, theta)
+}
+\arguments{
+  \item{x, q}{vector of quantiles.}
+%  \item{p}{vector of probabilities.}
+  \item{n}{number of observations. }
+  \item{log}{
+  Logical.
+  If \code{log = TRUE} then the logarithm of the density is returned.
+
+  }
+  \item{theta}{positive parameter. }
+
+}
+\value{
+  \code{dlind} gives the density,
+  \code{plind} gives the cumulative distribution function, and
+% \code{qlind} gives the quantile function, and
+  \code{rlind} generates random deviates.
+
+
+}
+\author{ T. W. Yee }
+\details{
+  See \code{\link{lindley}} for details.
+
+}
+%\note{
+%
+%}
+\seealso{
+  \code{\link{lindley}}.
+
+}
+\examples{
+theta <- exp(-1); x <- seq(0.0, 17, length = 700)
+dlind(0:10, theta)
+\dontrun{
+plot(x, dlind(x, theta), type = "l", las = 1, col = "blue",
+     main = "dlind(x, theta = exp(-1))")
+abline(h = 1, col = "grey", lty = "dashed") }
+}
+\keyword{distribution}
+
+
+% probs <- seq(0.01, 0.99, by = 0.01)
+% max(abs(plind(qlind(p = probs, theta), theta) - probs)) # Should be 0
+
+
+

@@ -83,12 +83,12 @@ prplot.control(xlab = NULL, ylab = "Probability", main = NULL, xlim = NULL,
 
 }
 \examples{
-pneumo = transform(pneumo, let = log(exposure.time))
-fit = vglm(cbind(normal, mild, severe) ~ let, propodds, pneumo)
-M = fit@misc$M
+pneumo <- transform(pneumo, let = log(exposure.time))
+fit <- vglm(cbind(normal, mild, severe) ~ let, propodds, pneumo)
+M <- npred(fit) # Or fit@misc$M
 \dontrun{ prplot(fit)
 prplot(fit, lty = 1:M, col = (1:M)+2, rug = TRUE, las = 1,
-       ylim = c(0,1), rlwd = 2) }
+       ylim = c(0, 1), rlwd = 2) }
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

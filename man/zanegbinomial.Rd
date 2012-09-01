@@ -10,7 +10,6 @@
 }
 \usage{
 zanegbinomial(lpobs0 = "logit", lmunb = "loge", lsize = "loge",
-              epobs0 = list(),  emunb = list(), esize = list(),
               ipobs0 = NULL,                    isize = NULL,
               zero = c(-1, -3), imethod = 1,
               nsimEIM = 250, shrinkage.init = 0.95)
@@ -35,11 +34,13 @@ zanegbinomial(lpobs0 = "logit", lmunb = "loge", lsize = "loge",
     See \code{\link{Links}} for more choices.
 
   }
-  \item{epobs0, emunb, esize}{
-  List. Extra argument for the respective links.
-  See \code{earg} in \code{\link{Links}} for general information.
 
-  }
+% \item{epobs0, emunb, esize}{
+% List. Extra argument for the respective links.
+% See \code{earg} in \code{\link{Links}} for general information.
+%             epobs0 = list(),  emunb = list(), esize = list(),
+% }
+
   \item{ipobs0, isize}{ 
     Optional initial values for \eqn{p_0}{pobs0} and \code{k}.
     If given, it is okay to give one value
@@ -121,6 +122,11 @@ for counts with extra zeros.
   strongly on providing good initial values.
 
 
+  This \pkg{VGAM} family function is computationally expensive
+  and usually runs slowly;
+  setting \code{trace = TRUE} is useful for monitoring convergence.
+
+
   Inference obtained from \code{summary.vglm} and \code{summary.vgam}
   may or may not be correct.  In particular, the p-values, standard errors
   and degrees of freedom may need adjustment. Use simulation on artificial
@@ -163,6 +169,7 @@ for counts with extra zeros.
 }
 
 \examples{
+\dontrun{
 zdata <- data.frame(x2 = runif(nn <- 2000))
 zdata <- transform(zdata, pobs0 = logit(-1 + 2*x2, inverse = TRUE))
 zdata <- transform(zdata,
@@ -175,6 +182,7 @@ fit <- vglm(cbind(y1, y2) ~ x2, zanegbinomial, zdata, trace = TRUE)
 coef(fit, matrix = TRUE)
 head(fitted(fit))
 head(predict(fit))
+}
 }
 \keyword{models}
 \keyword{regression}

@@ -10,7 +10,7 @@
 \usage{
 ordpoisson(cutpoints, countdata = FALSE, NOS = NULL,
            Levels = NULL, init.mu = NULL, parallel = FALSE,
-           zero = NULL, link = "loge", earg = list())
+           zero = NULL, link = "loge")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -27,7 +27,7 @@ ordpoisson(cutpoints, countdata = FALSE, NOS = NULL,
     \code{2}, \ldots, \code{L}, say, where \code{L} is the number of
     levels. Such input can be generated with \code{\link[base]{cut}}
     with argument \code{labels = FALSE}.  If \code{countdata = TRUE} then
-    the response is expected to be in the same format as \code{fit@y}
+    the response is expected to be in the same format as \code{depvar(fit)}
     where \code{fit} is a fitted model with \code{ordpoisson} as the
     \pkg{VGAM} family function. That is, the response is matrix of counts
     with \code{L} columns (if \code{NOS = 1}).
@@ -54,7 +54,7 @@ ordpoisson(cutpoints, countdata = FALSE, NOS = NULL,
     default is to compute an initial value internally).
 
   }
-  \item{parallel, zero, link, earg}{
+  \item{parallel, zero, link}{
     See \code{\link{poissonff}}.
 
   }
@@ -115,7 +115,7 @@ ordpoisson(cutpoints, countdata = FALSE, NOS = NULL,
 \section{Warning }{
   The input requires care as little to no checking is done.
   If \code{fit} is the fitted object, have a look at \code{fit@extra} and
-  \code{fit@y} to check.
+  \code{depvar(fit)} to check.
   
 
 }
@@ -128,38 +128,38 @@ ordpoisson(cutpoints, countdata = FALSE, NOS = NULL,
 
 }
 \examples{
-set.seed(123)     # Example 1
-x2 = runif(n <- 1000); x3 = runif(n)
-mymu = exp(3 - 1 * x2 + 2 * x3)
-y1 = rpois(n, lambda = mymu)
-cutpts = c(-Inf, 20, 30, Inf)
-fcutpts = cutpts[is.finite(cutpts)]  # finite cutpoints
-ystar = cut(y1, breaks = cutpts, labels = FALSE)
+set.seed(123) # Example 1
+x2 <- runif(n <- 1000); x3 <- runif(n)
+mymu <- exp(3 - 1 * x2 + 2 * x3)
+y1 <- rpois(n, lambda = mymu)
+cutpts <- c(-Inf, 20, 30, Inf)
+fcutpts <- cutpts[is.finite(cutpts)] # finite cutpoints
+ystar <- cut(y1, breaks = cutpts, labels = FALSE)
 \dontrun{
 plot(x2, x3, col = ystar, pch = as.character(ystar))
 }
 table(ystar) / sum(table(ystar))
-fit = vglm(ystar ~ x2 + x3, fam = ordpoisson(cutpoi = fcutpts))
-head(fit@y)        # This can be input if countdata = TRUE
+fit <- vglm(ystar ~ x2 + x3, fam = ordpoisson(cutpoi = fcutpts))
+head(depvar(fit)) # This can be input if countdata = TRUE
 head(fitted(fit))
 head(predict(fit))
 coef(fit, matrix = TRUE)
 fit@extra
 
 # Example 2: multivariate and there are no obsns between some cutpoints
-cutpts2 = c(-Inf, 0, 9, 10, 20, 70, 200, 201, Inf)
-fcutpts2 = cutpts2[is.finite(cutpts2)]  # finite cutpoints
-y2 = rpois(n, lambda = mymu)   # Same model as y1
-ystar2 = cut(y2, breaks = cutpts2, labels = FALSE)
+cutpts2 <- c(-Inf, 0, 9, 10, 20, 70, 200, 201, Inf)
+fcutpts2 <- cutpts2[is.finite(cutpts2)] # finite cutpoints
+y2 <- rpois(n, lambda = mymu)   # Same model as y1
+ystar2 <- cut(y2, breaks = cutpts2, labels = FALSE)
 table(ystar2) / sum(table(ystar2))
-fit = vglm(cbind(ystar,ystar2) ~ x2 + x3, fam =
-           ordpoisson(cutpoi = c(fcutpts,Inf,fcutpts2,Inf),
-                      Levels = c(length(fcutpts)+1,length(fcutpts2)+1),
-                      parallel = TRUE), trace = TRUE)
+fit <- vglm(cbind(ystar,ystar2) ~ x2 + x3, fam =
+            ordpoisson(cutpoi = c(fcutpts,Inf,fcutpts2,Inf),
+                       Levels = c(length(fcutpts)+1,length(fcutpts2)+1),
+                       parallel = TRUE), trace = TRUE)
 coef(fit, matrix = TRUE)
 fit@extra
 constraints(fit)
-summary(fit@y)  # Some columns have all zeros
+summary(depvar(fit)) # Some columns have all zeros
 }
 \keyword{math}
 \keyword{models}

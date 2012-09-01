@@ -7,7 +7,7 @@
 
 }
 \usage{
-lerch(x, s, v, tolerance=1.0e-10, iter=100)
+lerch(x, s, v, tolerance = 1.0e-10, iter = 100)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -26,6 +26,7 @@ lerch(x, s, v, tolerance=1.0e-10, iter=100)
   If \code{iter} is too small then a result of \code{NA} may occur;
   if so, try increasing its value.
 
+
   }
 }
 \details{
@@ -42,6 +43,7 @@ lerch(x, s, v, tolerance=1.0e-10, iter=100)
     Phi(x,s,v) = x^m Phi(x,s,v+m) + sum_{n=0}^{m-1} x^n / (n+v)^s . }
   See the URL below for more information.
   This function is a wrapper function for the C code described below.
+
   
 }
 \value{
@@ -50,19 +52,23 @@ lerch(x, s, v, tolerance=1.0e-10, iter=100)
   If the above ranges of \eqn{x} and \eqn{v} are not satisfied,
   or some numeric problems occur, then
   this function will return a \code{NA} for those values.
-  
+
+
 }
 \references{
   \url{http://aksenov.freeshell.org/lerchphi/source/lerchphi.c}.
+
 
   Bateman, H. (1953)
   \emph{Higher Transcendental Functions}.
   Volume 1. McGraw-Hill, NY, USA.
 
+
 }
 \author{
   S. V. Aksenov and U. D. Jentschura wrote the C code.
   The R wrapper function was written by T. W. Yee.
+
 
 }
 \note{
@@ -74,6 +80,7 @@ lerch(x, s, v, tolerance=1.0e-10, iter=100)
   The Lerch transcendental Phi function should not be confused with the
   Lerch zeta function though they are quite similar.
 
+
 }
 \section{Warning }{
   This function has not been thoroughly tested and contains bugs,
@@ -84,21 +91,23 @@ lerch(x, s, v, tolerance=1.0e-10, iter=100)
   and underflow, especially near singularities. If any problems occur
   then a \code{NA} will be returned.
 
+
 }
 
 \seealso{
     \code{\link{zeta}}.
   
+
 }
 \examples{
 \dontrun{
-s=2; v=1; x = seq(-1.1, 1.1, len=201)
-plot(x, lerch(x, s=s, v=v), type="l", col="red", las=1,
-     main=paste("lerch(x, s=",s,", v=",v,")",sep=""))
-abline(v=0, h=1, lty="dashed")
+s <- 2; v <- 1; x <- seq(-1.1, 1.1, length = 201)
+plot(x, lerch(x, s = s, v = v), type = "l", col = "blue", las = 1,
+     main = paste("lerch(x, s = ", s,", v =", v, ")", sep = ""))
+abline(v = 0, h = 1, lty = "dashed", col = "gray")
 
-s = rnorm(n=100)
-max(abs(zeta(s)-lerch(x=1,s=s,v=1))) # This fails (a bug); should be 0
+s <- rnorm(n = 100)
+max(abs(zeta(s) - lerch(x = 1, s = s, v = 1))) # This fails (a bug); should be 0
 }
 }
 \keyword{math}

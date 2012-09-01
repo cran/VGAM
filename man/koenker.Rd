@@ -9,8 +9,7 @@
 }
 \usage{
 koenker(percentile = 50, llocation = "identity", lscale = "loge",
-        elocation = list(), escale = list(), ilocation = NULL,
-        iscale = NULL, imethod = 1, zero = 2)
+        ilocation = NULL, iscale = NULL, imethod = 1, zero = 2)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -20,7 +19,7 @@ koenker(percentile = 50, llocation = "identity", lscale = "loge",
   They will be returned as `fitted values'.
 
   }
-  \item{llocation, lscale, elocation, escale}{
+  \item{llocation, lscale}{
   See \code{\link{Links}} for more choices,
   and \code{\link{CommonVGAMffArguments}}.
 
@@ -94,22 +93,22 @@ When are expectiles percentiles? (solution)
 }
 \examples{
 set.seed(123); nn <- 1000
-kdat <- data.frame(x2 = sort(runif(nn)))
-kdat <- transform(kdat, mylocat = 1 + 3 * x2,
+kdata <- data.frame(x2 = sort(runif(nn)))
+kdata <- transform(kdata, mylocat = 1 + 3 * x2,
                         myscale = 1)
-kdat <- transform(kdat, y = rkoenker(nn, loc = mylocat, scale = myscale))
-fit  <- vglm(y ~ x2, koenker(perc = c(1, 50, 99)), kdat, trace = TRUE)
-fit2 <- vglm(y ~ x2, studentt2(df = 2), kdat, trace = TRUE) # 'same' as fit
+kdata <- transform(kdata, y = rkoenker(nn, loc = mylocat, scale = myscale))
+fit  <- vglm(y ~ x2, koenker(perc = c(1, 50, 99)), kdata, trace = TRUE)
+fit2 <- vglm(y ~ x2, studentt2(df = 2), kdata, trace = TRUE) # 'same' as fit
 
 coef(fit, matrix = TRUE)
 head(fitted(fit))
 head(predict(fit))
 
 # Nice plot of the results
-\dontrun{ plot(y ~ x2, kdat, col = "blue", las = 1,
+\dontrun{ plot(y ~ x2, kdata, col = "blue", las = 1,
      sub  = paste("n =", nn),
      main = "Fitted quantiles/expectiles using Koenker's distribution")
-matplot(with(kdat, x2), fitted(fit), add = TRUE, type = "l", lwd = 3)
+matplot(with(kdata, x2), fitted(fit), add = TRUE, type = "l", lwd = 3)
 legend("bottomright", lty = 1:3, lwd = 3, legend = colnames(fitted(fit)),
        col = 1:3) }
 

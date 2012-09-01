@@ -56,14 +56,14 @@ rzapois(n, lambda, pobs0 = 0)
 
 }
 \examples{
-lambda = 3; pobs0 = 0.2; x = (-1):7
-(ii = dzapois(x, lambda, pobs0))
-max(abs(cumsum(ii) - pzapois(x, lambda, pobs0)))  # Should be 0
+lambda <- 3; pobs0 <- 0.2; x <- (-1):7
+(ii <- dzapois(x, lambda, pobs0))
+max(abs(cumsum(ii) - pzapois(x, lambda, pobs0))) # Should be 0
 table(rzapois(100, lambda, pobs0))
 table(qzapois(runif(100), lambda, pobs0))
 round(dzapois(0:10, lambda, pobs0) * 100) # Should be similar
 
-\dontrun{ x = 0:10
+\dontrun{ x <- 0:10
 barplot(rbind(dzapois(x, lambda, pobs0), dpois(x, lambda)),
         beside = TRUE, col = c("blue", "green"), las = 1,
         main = paste("ZAP(", lambda, ", pobs0 = ", pobs0, ") [blue] vs",

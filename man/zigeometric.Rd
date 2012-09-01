@@ -8,8 +8,7 @@
 
 }
 \usage{
-zigeometric(lprob = "logit", eprob = list(),
-            lpstr0  = "logit", epstr0  = list(),
+zigeometric(lprob = "logit", lpstr0  = "logit",
             iprob = NULL, ipstr0  = NULL,
             imethod = 1, bias.red = 0.5, zero = 2)
 }
@@ -24,11 +23,12 @@ zigeometric(lprob = "logit", eprob = list(),
   For the zero-\emph{deflated} model see below.
 
   }
-  \item{eprob, epstr0}{
-  List. Extra argument for the respective links.
-  See \code{earg} in \code{\link{Links}} for general information.
 
-  }
+% \item{eprob, epstr0}{ eprob = list(), epstr0  = list(),
+% List. Extra argument for the respective links.
+% See \code{earg} in \code{\link{Links}} for general information.
+% }
+
   \item{bias.red}{
   A constant used in the initialization process of \code{pstr0}.
   It should lie between 0 and 1, with 1 having no effect.
@@ -98,32 +98,33 @@ zigeometric(lprob = "logit", eprob = list(),
   \code{\link{zageometric}},
   \code{\link[stats]{rgeom}}.
 
+
 }
 \examples{
-gdata = data.frame(x2 = runif(nn <- 1000) - 0.5)
-gdata = transform(gdata, x3 = runif(nn) - 0.5,
-                         x4 = runif(nn) - 0.5)
-gdata = transform(gdata, eta1 =  1.0 - 1.0 * x2 + 2.0 * x3,
-                         eta2 = -1.0,
-                         eta3 =  0.5)
-gdata = transform(gdata, prob1 = logit(eta1, inverse = TRUE),
-                         prob2 = logit(eta2, inverse = TRUE),
-                         prob3 = logit(eta3, inverse = TRUE))
-gdata = transform(gdata, y1 = rzigeom(nn, prob1, pstr0 = prob3),
-                         y2 = rzigeom(nn, prob2, pstr0 = prob3),
-                         y3 = rzigeom(nn, prob2, pstr0 = prob3))
+gdata <- data.frame(x2 = runif(nn <- 1000) - 0.5)
+gdata <- transform(gdata, x3 = runif(nn) - 0.5,
+                          x4 = runif(nn) - 0.5)
+gdata <- transform(gdata, eta1 =  1.0 - 1.0 * x2 + 2.0 * x3,
+                          eta2 = -1.0,
+                          eta3 =  0.5)
+gdata <- transform(gdata, prob1 = logit(eta1, inverse = TRUE),
+                          prob2 = logit(eta2, inverse = TRUE),
+                          prob3 = logit(eta3, inverse = TRUE))
+gdata <- transform(gdata, y1 = rzigeom(nn, prob1, pstr0 = prob3),
+                          y2 = rzigeom(nn, prob2, pstr0 = prob3),
+                          y3 = rzigeom(nn, prob2, pstr0 = prob3))
 with(gdata, table(y1))
 with(gdata, table(y2))
 with(gdata, table(y3))
 head(gdata)
 
-fit1 = vglm(y1 ~ x2 + x3 + x4, zigeometric, gdata, trace = TRUE)
+fit1 <- vglm(y1 ~ x2 + x3 + x4, zigeometric, gdata, trace = TRUE)
 coef(fit1, matrix = TRUE)
 
-fit2 = vglm(y2 ~ 1, zigeometric, gdata, trace = TRUE)
+fit2 <- vglm(y2 ~ 1, zigeometric, gdata, trace = TRUE)
 coef(fit2, matrix = TRUE)
 
-fit3 = vglm(y3 ~ 1, zigeometric, gdata, trace = TRUE)
+fit3 <- vglm(y3 ~ 1, zigeometric, gdata, trace = TRUE)
 coef(fit3, matrix = TRUE)
 summary(fit3)
 }

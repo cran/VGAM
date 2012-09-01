@@ -8,13 +8,12 @@
 
 }
 \usage{
-maxwell(link = "loge", earg = list())
+maxwell(link = "loge", zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{link, earg}{
-  Parameter link function and extra argument
-  applied to the parameter \eqn{a}. 
+  \item{link, zero}{
+  Parameter link function applied to \eqn{a}. 
   See \code{\link{Links}} for more choices and information;
   a log link is the default because the parameter is positive.
   More information is at \code{\link{CommonVGAMffArguments}}.
@@ -54,8 +53,9 @@ maxwell(link = "loge", earg = list())
 }
 \author{ T. W. Yee }
 \note{
-  A related distribution is the Rayleigh distribution.
   Fisher-scoring and Newton-Raphson are the same here.
+  A related distribution is the Rayleigh distribution.
+  This \pkg{VGAM} family function handles multiple responses.
 
 
 }
@@ -64,10 +64,11 @@ maxwell(link = "loge", earg = list())
   \code{\link{Maxwell}},
   \code{\link{rayleigh}}.
 
+
 }
 \examples{
-mdata = data.frame(y = rmaxwell(1000, a = exp(2)))
-fit = vglm(y ~ 1, maxwell, mdata, trace = TRUE, crit = "coef")
+mdata <- data.frame(y = rmaxwell(1000, a = exp(2)))
+fit <- vglm(y ~ 1, maxwell, mdata, trace = TRUE, crit = "coef")
 coef(fit, matrix = TRUE)
 Coef(fit)
 }

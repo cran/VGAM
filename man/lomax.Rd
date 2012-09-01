@@ -7,8 +7,8 @@
   Lomax distribution.
 }
 \usage{
-lomax(lscale = "loge", lshape3.q = "loge", escale = list(),
-      eshape3.q = list(), iscale = NULL, ishape3.q = 2, zero = NULL)
+lomax(lscale = "loge", lshape3.q = "loge",
+      iscale = NULL, ishape3.q = 2, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -16,11 +16,6 @@ lomax(lscale = "loge", lshape3.q = "loge", escale = list(),
   Parameter link function applied to the
   (positive) parameters \code{scale} and \code{q}.
   See \code{\link{Links}} for more choices.
-
-  }
-  \item{escale, eshape3.q}{
-  List. Extra argument for each of the links.
-  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{iscale, ishape3.q}{
@@ -99,9 +94,9 @@ Hoboken, NJ, USA: Wiley-Interscience.
 }
 
 \examples{
-ldata = data.frame(y = rlomax(n = 1000, exp(1), exp(2)))
-fit = vglm(y ~ 1, lomax, ldata, trace = TRUE)
-fit = vglm(y ~ 1, lomax(iscale = exp(1), ishape3.q = exp(2)), ldata, trace = TRUE)
+ldata <- data.frame(y = rlomax(n = 1000, exp(1), exp(2)))
+fit <- vglm(y ~ 1, lomax, ldata, trace = TRUE)
+fit <- vglm(y ~ 1, lomax(iscale = exp(1), ishape3.q = exp(2)), ldata, trace = TRUE)
 coef(fit, matrix = TRUE)
 Coef(fit)
 summary(fit)

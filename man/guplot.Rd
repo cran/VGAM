@@ -12,8 +12,8 @@
 }
 \usage{
 guplot(object, ...)
-guplot.default(y, main="Gumbel Plot",
-    xlab="Reduced data", ylab="Observed data", type="p", ...)
+guplot.default(y, main = "Gumbel Plot",
+    xlab = "Reduced data", ylab = "Observed data", type = "p", ...)
 guplot.vlm(object, ...)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -91,7 +91,7 @@ guplot.vlm(object, ...)
 
   
 }
-\examples{\dontrun{guplot(rnorm(500), las=1) -> ii
+\examples{\dontrun{guplot(rnorm(500), las = 1) -> ii
 names(ii)
 
 guplot(with(venice, r1), col = "blue")  # Venice sea levels data

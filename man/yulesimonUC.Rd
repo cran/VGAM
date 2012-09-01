@@ -66,7 +66,7 @@ ryules(20, 2.1)
 round(1000 * dyules(1:8, 2))
 table(ryules(1000, 2))
 
-\dontrun{ x = 0:6
+\dontrun{ x <- 0:6
 plot(x, dyules(x, rho = 2.2), type = "h", las = 1, col = "blue") }
 }
 \keyword{distribution}

@@ -8,7 +8,7 @@
 
 }
 \usage{
-polf(theta, earg = stop("argument 'earg' must be given"),
+polf(theta, cutpoint = NULL,
      inverse = FALSE, deriv = 0, short = TRUE, tag = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -18,32 +18,16 @@ polf(theta, earg = stop("argument 'earg' must be given"),
   See below for further details.
 
   }
-  \item{earg}{
-  Extra argument for passing in additional information.
-  This must be list with component \code{cutpoint}.
+  \item{cutpoint}{
   The cutpoints should be non-negative integers.
   If \code{polf()} is used as the link function in
   \code{\link{cumulative}} then one should choose
   \code{reverse = TRUE, parallel = TRUE, intercept.apply = TRUE}.
 
   }
-  \item{inverse}{
-  Logical. If \code{TRUE} the inverse function is computed.
+  \item{inverse, deriv, short, tag}{
+  Details at \code{\link{Links}}.
 
-  }
-  \item{deriv}{
-  Order of the derivative. Integer with value 0, 1 or 2.
-
-  }
-  \item{short}{
-  Used for labelling the \code{blurb} slot of a
-  \code{\link{vglmff-class}} object.
-
-  }
-  \item{tag}{
-  Used for labelling the linear/additive predictor in the
-  \code{initialize} slot of a \code{\link{vglmff-class}} object.
-  Contains a little more information if \code{TRUE}.
 
   }
 }
@@ -55,8 +39,6 @@ polf(theta, earg = stop("argument 'earg' must be given"),
   If the cutpoint is zero then a complementary log-log link is used.
 
 
-  The arguments \code{short} and \code{tag} are used only if
-  \code{theta} is character.
 
 
   See \code{\link{Links}} for general information about \pkg{VGAM}
@@ -112,52 +94,47 @@ polf(theta, earg = stop("argument 'earg' must be given"),
 
 }
 \examples{
-earg = list(cutpoint = 2)
-polf("p", earg = earg, short = FALSE)
-polf("p", earg = earg, tag = TRUE)
+polf("p", cutpoint = 2, short = FALSE)
+polf("p", cutpoint = 2, tag = TRUE)
 
-p = seq(0.01, 0.99, by=0.01)
-y = polf(p, earg = earg)
-y. = polf(p, earg = earg, deriv = 1)
-max(abs(polf(y, earg = earg, inv = TRUE) - p)) # Should be 0
+p <- seq(0.01, 0.99, by = 0.01)
+y <- polf(p, cutpoint = 2)
+y. <- polf(p, cutpoint = 2, deriv = 1)
+max(abs(polf(y, cutpoint = 2, inv = TRUE) - p)) # Should be 0
 
-\dontrun{
-par(mfrow=c(2,1), las = 1)
+\dontrun{par(mfrow = c(2, 1), las = 1)
 plot(p, y, type = "l", col = "blue", main = "polf()")
-abline(h=0, v=0.5, col = "red", lty = "dashed")
+abline(h = 0, v = 0.5, col = "orange", lty = "dashed")
 
 plot(p, y., type = "l", col = "blue",
      main = "(Reciprocal of) first POLF derivative") }
 
 
 # Rutherford and Geiger data
-ruge = data.frame(yy = rep(0:14,
-          times=c(57,203,383,525,532,408,273,139,45,27,10,4,0,1,1)))
-
+ruge <- data.frame(yy = rep(0:14,
+      times = c(57,203,383,525,532,408,273,139,45,27,10,4,0,1,1)))
 with(ruge, length(yy))  # 2608 1/8-minute intervals
-cutpoint = 5
-ruge = transform(ruge, yy01 = ifelse(yy <= cutpoint, 0, 1))
-earg = list(cutpoint=cutpoint)
-fit = vglm(yy01 ~ 1, binomialff(link = "polf", earg = earg), ruge)
+cutpoint <- 5
+ruge <- transform(ruge, yy01 = ifelse(yy <= cutpoint, 0, 1))
+fit <- vglm(yy01 ~ 1, binomialff(link = polf(cutpoint = cutpoint)), ruge)
 coef(fit, matrix = TRUE)
 exp(coef(fit))
 
 
 # Another example
-pdat = data.frame(x2 = sort(runif(nn <- 1000)))
-pdat = transform(pdat, x3 = runif(nn))
-pdat = transform(pdat, mymu = exp( 3 + 1 * x2 - 2 * x3))
-pdat = transform(pdat, y1 = rpois(nn, lambda=mymu))
-cutpoints = c(-Inf, 10, 20, Inf)
-pdat = transform(pdat, cuty = Cut(y1, breaks=cutpoints))
-\dontrun{
-with(pdat, plot(x2, x3, col=cuty, pch=as.character(cuty))) }
-with(pdat, table(cuty) / sum(table(cuty)))
-fit = vglm(cuty ~ x2 + x3, fam = cumulative(link = "polf",
-           reverse = TRUE, parallel = TRUE, intercept.apply = TRUE,
-           mv = TRUE, earg = list(cutpoint=cutpoints[2:3])),
-           pdat, trace = TRUE)
-head(fit@y)
+pdata <- data.frame(x2 = sort(runif(nn <- 1000)))
+pdata <- transform(pdata, x3 = runif(nn))
+pdata <- transform(pdata, mymu = exp( 3 + 1 * x2 - 2 * x3))
+pdata <- transform(pdata, y1 = rpois(nn, lambda = mymu))
+cutpoints <- c(-Inf, 10, 20, Inf)
+pdata <- transform(pdata, cuty = Cut(y1, breaks = cutpoints))
+\dontrun{ with(pdata, plot(x2, x3, col = cuty, pch = as.character(cuty))) }
+with(pdata, table(cuty) / sum(table(cuty)))
+fit <- vglm(cuty ~ x2 + x3, cumulative(reverse = TRUE,
+            parallel = TRUE, intercept.apply = TRUE,
+            link = polf(cutpoint = cutpoints[2:3]),
+            mv = TRUE), data = pdata, trace = TRUE)
+head(depvar(fit))
 head(fitted(fit))
 head(predict(fit))
 coef(fit)

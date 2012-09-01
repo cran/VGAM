@@ -10,6 +10,7 @@
   generation for the Gumbel distribution with
   location parameter \code{location} and
   scale parameter \code{scale}.
+
 }
 \usage{
 dgumbel(x, location = 0, scale = 1, log = FALSE)
@@ -57,22 +58,29 @@ rgumbel(n, location = 0, scale = 1)
   where \eqn{\gamma}{gamma} is Euler's constant (which can be
   obtained as \code{-digamma(1)}).
 
+
   See \code{\link{gumbel}}, the \pkg{VGAM} family function
   for estimating the two parameters by maximum likelihood estimation,
   for formulae and other details.
   Apart from \code{n}, all the above arguments may be vectors and
   are recyled to the appropriate length if necessary.
+
+
 }
 \value{
   \code{dgumbel} gives the density,
   \code{pgumbel} gives the distribution function,
   \code{qgumbel} gives the quantile function, and
   \code{rgumbel} generates random deviates.
+
+
 }
 \references{
   Coles, S. (2001)
   \emph{An Introduction to Statistical Modeling of Extreme Values}.
   London: Springer-Verlag.
+
+
 }
 \author{ T. W. Yee }
 \note{
@@ -80,26 +88,26 @@ rgumbel(n, location = 0, scale = 1)
   can estimate the parameters of a Gumbel distribution using
   maximum likelihood estimation.
 
+
 }
 
 \seealso{
   \code{\link{gumbel}},
   \code{\link{egumbel}},
-  \code{\link{gev}}.
+  \code{\link{gev}},
+  \code{\link{dgompertz}}.
+
+
 }
 \examples{
-mu = 1; sigma = 2
-y = rgumbel(n = 100, loc=mu, scale=sigma)
-mean(y)
-mu - sigma * digamma(1)  # population mean
-var(y)
-sigma^2 * pi^2 / 6       # population variance
+mu <- 1; sigma <- 2;
+y <- rgumbel(n = 100, loc = mu, scale = sigma)
+c(mean(y), mu - sigma * digamma(1)) # Sample and population means
+c(var(y), sigma^2 * pi^2 / 6) # Sample and population variances
 
-
-\dontrun{
-x = seq(-2.5, 3.5, by = 0.01)
-loc = 0; sigma = 1
-plot(x, dgumbel(x, loc, sigma), type = "l", col = "blue", ylim=c(0,1),
+\dontrun{ x <- seq(-2.5, 3.5, by = 0.01)
+loc <- 0; sigma <- 1
+plot(x, dgumbel(x, loc, sigma), type = "l", col = "blue", ylim = c(0, 1),
      main = "Blue is density, red is cumulative distribution function",
      sub = "Purple are 5,10,...,95 percentiles", ylab = "", las = 1)
 abline(h = 0, col = "blue", lty = 2)
@@ -107,8 +115,7 @@ lines(qgumbel(seq(0.05, 0.95, by = 0.05), loc, sigma),
       dgumbel(qgumbel(seq(0.05, 0.95, by = 0.05), loc, sigma), loc, sigma),
       col = "purple", lty = 3, type = "h")
 lines(x, pgumbel(x, loc, sigma), type = "l", col = "red")
-abline(h = 0, lty = 2)
-}
+abline(h = 0, lty = 2) }
 }
 \keyword{distribution}
 

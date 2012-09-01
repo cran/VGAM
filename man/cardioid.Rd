@@ -7,9 +7,8 @@
   cardioid distribution by maximum likelihood estimation.
 }
 \usage{
-cardioid(lmu = "elogit", lrho = "elogit",
-         emu = if(lmu == "elogit") list(min = 0, max = 2*pi) else list(),
-         erho = if(lmu == "elogit") list(min = -0.5, max = 0.5) else list(),
+cardioid(lmu = elogit(min = 0, max = 2*pi),
+         lrho = elogit(min = -0.5, max = 0.5),
          imu = NULL, irho = 0.3, nsimEIM = 100, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -18,11 +17,6 @@ cardioid(lmu = "elogit", lrho = "elogit",
   Parameter link functions applied to the \eqn{\mu}{mu}
   and \eqn{\rho}{rho} parameters, respectively.
   See \code{\link{Links}} for more choices.
-
-  }
-  \item{emu, erho}{
-  List. Extra argument for each of the link functions.
-  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{imu, irho}{
@@ -65,6 +59,7 @@ cardioid(lmu = "elogit", lrho = "elogit",
   \code{\link{rrvglm}}
   and \code{\link{vgam}}.
 
+
 }
 \references{ 
 
@@ -84,6 +79,7 @@ Singapore: World Scientific.
   The user is therefore encouraged to try different starting values,
   i.e., make use of \code{imu} and \code{irho}.
 
+
 }
 
 \seealso{
@@ -91,13 +87,15 @@ Singapore: World Scientific.
   \code{\link{elogit}},
   \code{\link{vonmises}}.
 
+
   \pkg{CircStats} and \pkg{circular} currently have a lot more
   R functions for circular data than the \pkg{VGAM} package. 
 
+
 }
 \examples{
-cdata = data.frame(y = rcard(n = 1000, mu = 4, rho = 0.45))
-fit = vglm(y ~ 1, cardioid, cdata, trace=TRUE) 
+cdata <- data.frame(y = rcard(n = 1000, mu = 4, rho = 0.45))
+fit <- vglm(y ~ 1, cardioid, cdata, trace = TRUE)
 coef(fit, matrix=TRUE)
 Coef(fit)
 c(with(cdata, mean(y)), head(fitted(fit), 1))

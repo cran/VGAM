@@ -8,18 +8,13 @@
 
 }
 \usage{
-ABO(link = "logit", earg=list(), ipA = NULL, ipO = NULL)
+ABO(link = "logit", ipA = NULL, ipO = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{link}{
   Link function applied to \code{pA} and \code{pB}.
   See \code{\link{Links}} for more choices.
-
-  }
-  \item{earg}{
-  List. Extra argument applied to each of the links.
-  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{ipA, ipO}{

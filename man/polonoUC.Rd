@@ -122,7 +122,7 @@ rpolono(n, meanlog = 0, sdlog = 1)
 
 }
 \examples{
-meanlog = 0.5; sdlog = 0.5; yy = 0:19
+meanlog <- 0.5; sdlog <- 0.5; yy <- 0:19
 sum(proby <- dpolono(yy, m = meanlog, sd = sdlog)) # Should be 1
 max(abs(cumsum(proby) - ppolono(yy, m = meanlog, sd = sdlog))) # Should be 0
 
@@ -132,7 +132,7 @@ plot(yy, proby, type = "h", col = "blue", ylab = "P[Y=y]", log = "",
      main = paste("Poisson lognormal(m = ", meanlog,
                   ", sdl = ", sdlog, ")", sep = ""))
 
-y = 0:190 # More extreme values; use the approximation and plot on a log scale
+y <- 0:190 # More extreme values; use the approximation and plot on a log scale
 (sum(proby <- dpolono(y, m = meanlog, sd = sdlog, bigx = 100))) # Should be 1
 plot(y, proby, type = "h", col = "blue", ylab = "P[Y=y] (log)", log = "y",
      main = paste("Poisson lognormal(m = ", meanlog,

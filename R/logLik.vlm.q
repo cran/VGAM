@@ -35,16 +35,16 @@ setMethod("logLik",  "vgam", function(object, ...)
 
 
 constraints.vlm <- function(object,
-                            type = c("vlm", "lm"),
+                            type = c("lm", "term"),
                             all = TRUE, which, ...) {
 
 
-  type <- match.arg(type, c("vlm","lm"))[1]
+  type <- match.arg(type, c("lm", "term"))[1]
 
-  Hlist <-
-  ans <- slot(object, "constraints")  # For "vlm"
 
-  if (type == "lm") {
+  Hlist <- ans <- slot(object, "constraints") # For "lm" (formerly "vlm")
+
+  if (type == "term") {
     oassign.LM <- object@misc$orig.assign
 
     x.LM <- model.matrix(object)
@@ -58,10 +58,11 @@ constraints.vlm <- function(object,
       ans[[ii]] <- (Hlist[[col.ptr]])
     }
     names(ans) <- names.att.x.LM
-  } # End of "lm"
+  } # End of "term"
 
   if (all) ans else ans[[which]]
 }
+
 
 
 if (!isGeneric("constraints"))
@@ -70,9 +71,6 @@ if (!isGeneric("constraints"))
 
 setMethod("constraints",  "vlm", function(object, ...)
     constraints.vlm(object, ...))
-
-
-
 
 
 

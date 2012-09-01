@@ -8,7 +8,6 @@
 }
 \usage{
 betaII(lscale = "loge", lshape2.p = "loge", lshape3.q = "loge",
-       escale = list(), eshape2.p = list(), eshape3.q = list(),
        iscale = NULL, ishape2.p = 2, ishape3.q = 2, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -17,11 +16,6 @@ betaII(lscale = "loge", lshape2.p = "loge", lshape3.q = "loge",
   Parameter link functions applied to the
   (positive) parameters \code{scale}, \code{p} and \code{q}.
   See \code{\link{Links}} for more choices.
-
-  }
-  \item{escale, eshape2.p, eshape3.q}{
-  List. Extra argument for each of the links.
-  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{iscale, ishape2.p, ishape3.q}{

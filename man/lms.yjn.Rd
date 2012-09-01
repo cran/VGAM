@@ -9,13 +9,12 @@
 }
 \usage{
 lms.yjn(percentiles = c(25, 50, 75), zero = c(1,3),
-        llambda = "identity", lsigma = "loge", elambda = list(),
-        esigma = list(), dfmu.init = 4, dfsigma.init = 2,
+        llambda = "identity", lsigma = "loge",
+        dfmu.init = 4, dfsigma.init = 2,
         ilambda = 1, isigma = NULL, rule = c(10, 5),
         yoffset = NULL, diagW = FALSE, iters.diagW = 6)
 lms.yjn2(percentiles=c(25,50,75), zero=c(1,3),
          llambda = "identity", lmu = "identity", lsigma = "loge",
-         elambda = list(), emu = list(), esigma = list(),
          dfmu.init = 4, dfsigma.init = 2, ilambda = 1.0,
          isigma = NULL, yoffset = NULL, nsimEIM = 250)
 }
@@ -32,10 +31,6 @@ lms.yjn2(percentiles=c(25,50,75), zero=c(1,3),
 
   } 
   \item{llambda, lmu, lsigma}{
-  See \code{\link{lms.bcn}}.
-
-  }
-  \item{elambda, emu, esigma}{
   See \code{\link{lms.bcn}}.
 
   }
@@ -158,7 +153,7 @@ The generic function \code{predict}, when applied to a
 
 }
 \examples{
-fit = vgam(BMI ~ s(age, df = 4), lms.yjn, bmi.nz, trace = TRUE)
+fit <- vgam(BMI ~ s(age, df = 4), lms.yjn, bmi.nz, trace = TRUE)
 head(predict(fit))
 head(fitted(fit))
 head(bmi.nz)
@@ -172,12 +167,12 @@ qtplot(fit, percentiles = c(5, 50, 90, 99), main = "Quantiles",
        xlim = c(15, 90), las = 1, ylab = "BMI", lwd = 2, lcol = 4)
 
 # Density plot
-ygrid = seq(15, 43, len=100)  # BMI ranges
-par(mfrow=c(1,1), lwd=2)
-(aa = deplot(fit, x0=20, y=ygrid, xlab="BMI", col="black",
-    main="Density functions at Age = 20 (black), 42 (red) and 55 (blue)"))
-aa = deplot(fit, x0=42, y=ygrid, add=TRUE, llty=2, col="red")
-aa = deplot(fit, x0=55, y=ygrid, add=TRUE, llty=4, col="blue", Attach=TRUE)
+ygrid <- seq(15, 43, len = 100)  # BMI ranges
+par(mfrow = c(1, 1), lwd = 2)
+(aa <- deplot(fit, x0 = 20, y = ygrid, xlab = "BMI", col = "black",
+    main = "Density functions at Age = 20 (black), 42 (red) and 55 (blue)"))
+aa <- deplot(fit, x0 = 42, y = ygrid, add = TRUE, llty = 2, col = "red")
+aa <- deplot(fit, x0 = 55, y = ygrid, add = TRUE, llty = 4, col = "blue", Attach = TRUE)
 with(aa@post, deplot) # Contains density function values; == a@post$deplot
 }
 }

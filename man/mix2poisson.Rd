@@ -9,7 +9,6 @@
 }
 \usage{
 mix2poisson(lphi = "logit", llambda = "loge",
-            ephi = list(), el1 = list(), el2 = list(),
             iphi = 0.5, il1 = NULL, il2 = NULL,
             qmu = c(0.2, 0.8), nsimEIM = 100, zero = 1)
 }
@@ -21,11 +20,13 @@ mix2poisson(lphi = "logit", llambda = "loge",
     See \code{\link{Links}} for more choices.
 
   }
-  \item{ephi, el1, el2}{
-  List. Extra argument for each of the links.
-  See \code{earg} in \code{\link{Links}} for general information.
 
-  }
+% \item{ephi, el1, el2}{
+%           ephi = list(), el1 = list(), el2 = list(),
+% List. Extra argument for each of the links.
+% See \code{earg} in \code{\link{Links}} for general information.
+% }
+
   \item{iphi}{
   Initial value for \eqn{\phi}{phi}, whose value must lie
   between 0 and 1.
@@ -36,6 +37,8 @@ mix2poisson(lphi = "logit", llambda = "loge",
     \eqn{\lambda_2}{lambda2}. These values must be positive.
     The default is to compute initial values internally using
     the argument \code{qmu}.
+%   If these arguments are supplied then practical experience
+%   suggests they should be quite well-separated.
 
   }
   \item{qmu}{
@@ -90,6 +93,7 @@ mix2poisson(lphi = "logit", llambda = "loge",
   see the example below.
 
 
+
 }
 
 \author{ T. W. Yee }
@@ -119,38 +123,38 @@ mix2poisson(lphi = "logit", llambda = "loge",
 }
 
 \examples{
-# Example 1: simulated data
-nn = 1000
-mu1 = exp(2.5) # also known as lambda1
-mu2 = exp(3)
-(phi = logit(-0.5, inverse = TRUE))
-mdata = data.frame(y = ifelse(runif(nn) < phi, rpois(nn, mu1), rpois(nn, mu2)))
-fit = vglm(y ~ 1, mix2poisson, mdata)
+\dontrun{ # Example 1: simulated data
+nn <- 1000
+mu1 <- exp(2.5) # also known as lambda1
+mu2 <- exp(3)
+(phi <- logit(-0.5, inverse = TRUE))
+mdata <- data.frame(y = rpois(nn, ifelse(runif(nn) < phi, mu1, mu2)))
+fit <- vglm(y ~ 1, mix2poisson, mdata)
 coef(fit, matrix = TRUE)
 
 # Compare the results with the truth
 round(rbind('Estimated' = Coef(fit), 'Truth' = c(phi, mu1, mu2)), dig = 2)
 
-\dontrun{# Plot the results
-ty = with(mdata, table(y))
+ty <- with(mdata, table(y))
 plot(names(ty), ty, type = "h", main = "Orange=estimate, blue=truth",
      ylab = "Frequency", xlab = "y")
 abline(v = Coef(fit)[-1], lty = 2, col = "orange", lwd = 2)
-abline(v = c(mu1, mu2), lty = 2, col = "blue", lwd = 2) }
+abline(v = c(mu1, mu2), lty = 2, col = "blue", lwd = 2)
 
 # Example 2: London Times data (Lange, 1997, p.31)
-ltdata1 = data.frame(deaths = 0:9,
-                     freq = c(162, 267, 271, 185, 111, 61, 27, 8, 3, 1))
-ltdata2 = data.frame(y = with(ltdata1, rep(deaths, freq)))
+ltdata1 <- data.frame(deaths = 0:9,
+                      freq = c(162, 267, 271, 185, 111, 61, 27, 8, 3, 1))
+ltdata2 <- data.frame(y = with(ltdata1, rep(deaths, freq)))
 
 # Usually this does not work well unless nsimEIM is large
-fit = vglm(deaths ~ 1, weight = freq, data = ltdata1,
-           mix2poisson(iphi = 0.3, il1 = 1, il2 = 2.5, nsimEIM = 5000))
+fit <- vglm(deaths ~ 1, weight = freq, data = ltdata1,
+            mix2poisson(iphi = 0.3, il1 = 1, il2 = 2.5, nsimEIM = 5000))
 
 # This works better in general
-fit = vglm(y ~ 1, mix2poisson(iphi = 0.3, il1 = 1, il2 = 2.5), ltdata2)
+fit <- vglm(y ~ 1, mix2poisson(iphi = 0.3, il1 = 1, il2 = 2.5), ltdata2)
 coef(fit, matrix = TRUE)
 Coef(fit)
+}
 }
 \keyword{models}
 \keyword{regression}

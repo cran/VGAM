@@ -8,7 +8,6 @@
 }
 \usage{
 invlomax(lscale = "loge", lshape2.p = "loge",
-         escale = list(), eshape2.p = list(),
          iscale = NULL, ishape2.p = 1, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -18,11 +17,6 @@ invlomax(lscale = "loge", lshape2.p = "loge",
   (positive) scale parameter \code{scale} and
   (positive) shape parameter \code{p}.
   See \code{\link{Links}} for more choices.
-
-  }
-  \item{escale, eshape2.p}{
-  List. Extra argument for each of the links.
-  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{iscale, ishape2.p}{
@@ -97,10 +91,10 @@ Hoboken, NJ, USA: Wiley-Interscience.
 }
 
 \examples{
-idata = data.frame(y = rinvlomax(n = 2000, exp(2), exp(1)))
-fit = vglm(y ~ 1, invlomax, idata, trace = TRUE)
-fit = vglm(y ~ 1, invlomax(iscale = exp(2), ishape2.p = exp(1)), idata,
-           trace = TRUE, epsilon = 1e-8)
+idata <- data.frame(y = rinvlomax(n = 2000, exp(2), exp(1)))
+fit <- vglm(y ~ 1, invlomax, idata, trace = TRUE)
+fit <- vglm(y ~ 1, invlomax(iscale = exp(2), ishape2.p = exp(1)), idata,
+            trace = TRUE, epsilon = 1e-8)
 coef(fit, matrix = TRUE)
 Coef(fit)
 summary(fit)

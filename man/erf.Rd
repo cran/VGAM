@@ -4,6 +4,7 @@
 \title{ Error Function }
 \description{
   Computes the error function based on the normal distribution.
+
 }
 \usage{
 erf(x)

@@ -8,13 +8,13 @@
 
 }
 \usage{
-explogarithmic(lscale = "loge", lshape = "logit", escale = list(),
-               eshape = list(), iscale = NULL, ishape = NULL,
+explogarithmic(lscale = "loge", lshape = "logit",
+               iscale = NULL,   ishape = NULL,
                tol12 = 1e-05, zero = 1, nsimEIM = 400)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{lscale, lshape, escale, eshape}{
+  \item{lscale, lshape}{
   See \code{\link{CommonVGAMffArguments}} for information.
 
 
@@ -78,13 +78,14 @@ explogarithmic(lscale = "loge", lshape = "logit", escale = list(),
 
 }
 \examples{
-scale = exp(2); shape = logit(-1, inverse = TRUE);
+\dontrun{ scale = exp(2); shape = logit(-1, inverse = TRUE);
 edata = data.frame(y = rexplog(n = 2000, scale = scale, shape = shape))
 fit = vglm(y ~ 1, explogarithmic, edata, trace = TRUE)
 c(with(edata, median(y)), head(fitted(fit), 1))
 coef(fit, matrix = TRUE)
 Coef(fit)
 summary(fit)
+}
 }
 \keyword{models}
 \keyword{regression}

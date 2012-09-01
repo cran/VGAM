@@ -8,9 +8,8 @@
 
 }
 \usage{
-laplace(llocation = "identity", lscale = "loge", elocation = list(),
-        escale = list(), ilocation = NULL, iscale = NULL,
-        imethod = 1, zero = 2)
+laplace(llocation = "identity", lscale = "loge",
+        ilocation = NULL, iscale = NULL, imethod = 1, zero = 2)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -20,24 +19,23 @@ laplace(llocation = "identity", lscale = "loge", elocation = list(),
   See \code{\link{Links}} for more choices.
 
   }
-  \item{elocation, escale}{
-  List. Extra argument for each of the links.
-  See \code{earg} in \code{\link{Links}} for general information.
-
-  }
   \item{ilocation, iscale}{
   Optional initial values.
   If given, it must be numeric and values are recycled to the
   appropriate length.
   The default is to choose the value internally.
+
+
   }
   \item{imethod}{
   Initialization method.
   Either the value 1 or 2.
 
+
   }
   \item{zero}{
   See \code{\link{CommonVGAMffArguments}} for more information.
+
 
   }
 }
@@ -57,10 +55,13 @@ laplace(llocation = "identity", lscale = "loge", elocation = list(),
   distribution} by Kotz et al. (2001), and the density is symmetric
   about \eqn{a}.
 
+
   For \code{y ~ 1} (where \code{y} is the response) the maximum likelihood
   estimate (MLE) for the location parameter is the sample median, and
   the MLE for \eqn{b} is \code{mean(abs(y-location))} (replace
   location by its MLE if unknown).
+
+
 
 }
 \value{
@@ -68,13 +69,17 @@ laplace(llocation = "identity", lscale = "loge", elocation = list(),
   The object is used by modelling functions such as \code{\link{vglm}}
   and \code{\link{vgam}}.
 
+
+
 }
 \references{
+
 Kotz, S., Kozubowski, T. J. and Podgorski, K. (2001)
 \emph{The Laplace distribution and generalizations:
 a revisit with applications to communications,
 economics, engineering, and finance},
 Boston: Birkhauser.
+
 
 }
 \author{ T. W. Yee }
@@ -84,11 +89,13 @@ Boston: Birkhauser.
   therefore misleading inferences may result,
   e.g., in the \code{summary} and \code{vcov} of the object.
 
+
 }
 \note{ 
   This family function uses Fisher scoring.
   Convergence may be slow for non-intercept-only models;
   half-stepping is frequently required.
+
 
 }
 
@@ -98,18 +105,19 @@ Boston: Birkhauser.
   \code{\link{exponential}},
   \code{\link[stats]{median}}.
 
+
 }
 
 \examples{
-lddat = data.frame(y = rlaplace(nn <- 100, loc = 2, scale = exp(1)))
-fit = vglm(y  ~ 1, laplace, lddat, trace = TRUE, crit = "l")
+ldata <- data.frame(y = rlaplace(nn <- 100, loc = 2, scale = exp(1)))
+fit <- vglm(y  ~ 1, laplace, ldata, trace = TRUE, crit = "l")
 coef(fit, matrix = TRUE)
 Coef(fit)
-with(lddat, median(y))
+with(ldata, median(y))
 
-lddat = data.frame(x = runif(nn <- 1001))
-lddat = transform(lddat, y = rlaplace(nn, loc = 2, scale = exp(-1+1*x)))
-coef(vglm(y ~ x, laplace(iloc = .2, imethod = 2, zero = 1), lddat,
+ldata <- data.frame(x = runif(nn <- 1001))
+ldata <- transform(ldata, y = rlaplace(nn, loc = 2, scale = exp(-1+1*x)))
+coef(vglm(y ~ x, laplace(iloc = .2, imethod = 2, zero = 1), ldata,
           trace = TRUE), matrix = TRUE)
 }
 \keyword{models}

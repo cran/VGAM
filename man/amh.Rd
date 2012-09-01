@@ -9,8 +9,7 @@
 
 }
 \usage{
-amh(lalpha = "rhobit", ealpha = list(), ialpha = NULL,
-    imethod = 1, nsimEIM = 250)
+amh(lalpha = "rhobit", ialpha = NULL, imethod = 1, nsimEIM = 250)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -19,11 +18,6 @@ amh(lalpha = "rhobit", ealpha = list(), ialpha = NULL,
   \eqn{\alpha}{alpha}, which is real
   and \eqn{-1 < \alpha < 1}{-1 < alpha < 1}.
   See \code{\link{Links}} for more choices.
-
-  }
-  \item{ealpha}{
-  List. Extra argument for the link.
-  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{ialpha}{

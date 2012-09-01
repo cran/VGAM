@@ -11,6 +11,7 @@
   for the zero-inflated negative binomial distribution with
   parameter \code{pstr0}.
 
+
 }
 \usage{
 dzinegbin(x, size, prob = NULL, munb = NULL, pstr0 = 0, log = FALSE)
@@ -86,8 +87,8 @@ rzinegbin(n, size, prob = NULL, munb = NULL, pstr0 = 0)
 
 }
 \examples{
-munb = 3; pstr0 = 0.2; size = k = 10; x = 0:10
-(ii = dzinegbin(x, pstr0 = pstr0, mu = munb, size = k))
+munb <- 3; pstr0 <- 0.2; size <- k <- 10; x <- 0:10
+(ii <- dzinegbin(x, pstr0 = pstr0, mu = munb, size = k))
 max(abs(cumsum(ii) - pzinegbin(x, pstr0 = pstr0, mu = munb, size = k))) # 0
 table(rzinegbin(100, pstr0 = pstr0, mu = munb, size = k))
 

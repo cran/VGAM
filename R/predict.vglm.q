@@ -6,14 +6,14 @@
 
 
 
-predictvglm = function(object,
-                        newdata=NULL,
-                        type=c("link", "response", "terms"),
-                        se.fit=FALSE,
-                        deriv=0,
-                        dispersion=NULL,
-                        untransform=FALSE,
-                        extra=object@extra, ...) {
+predictvglm <- function(object,
+                        newdata = NULL,
+                        type = c("link", "response", "terms"),
+                        se.fit = FALSE,
+                        deriv = 0,
+                        dispersion = NULL,
+                        untransform = FALSE,
+                        extra = object@extra, ...) {
     na.act = object@na.action
     object@na.action = list()
 
@@ -29,7 +29,7 @@ predictvglm = function(object,
 
     if (untransform && (type!="link" || se.fit || deriv != 0))
         stop("argument 'untransform=TRUE' only if 'type=\"link\", ",
-             "se.fit=FALSE, deriv=0'")
+             "se.fit = FALSE, deriv=0'")
 
 
 
@@ -38,7 +38,7 @@ predictvglm = function(object,
         switch(type,
                response = {
                    warning("'type=\"response\"' and 'se.fit=TRUE' not valid ",
-                           "together; setting 'se.fit=FALSE'")
+                           "together; setting 'se.fit = FALSE'")
                    se.fit = FALSE
                    predictor = predict.vlm(object, newdata=newdata,
                                            type=type, se.fit=se.fit,
@@ -135,13 +135,13 @@ setMethod("predict", "vglm", function(object, ...)
 
 
 
-predict.rrvglm = function(object, 
-                          newdata=NULL, 
-                          type=c("link", "response", "terms"),
-                          se.fit=FALSE, 
-                          deriv=0,
-                          dispersion=NULL, 
-                          extra=object@extra, ...) {
+predict.rrvglm <- function(object, 
+                          newdata = NULL, 
+                          type = c("link", "response", "terms"),
+                          se.fit = FALSE, 
+                          deriv = 0,
+                          dispersion = NULL, 
+                          extra = object@extra, ...) {
 
     if (se.fit) {
         stop("11/8/03; predict.rrvglm(..., se.fit=TRUE) not complete yet") 
@@ -149,7 +149,7 @@ predict.rrvglm = function(object,
         switch(type,
                response = {
                   warning("'type=\"response\"' and 'se.fit=TRUE' not valid ",
-                          "together; setting 'se.fit=FALSE'")
+                          "together; setting 'se.fit = FALSE'")
                   se.fit = FALSE
                     predictor = predict.vlm(object, newdata=newdata,
                                              type=type, se.fit=se.fit,
@@ -199,25 +199,85 @@ setMethod("predict", "rrvglm", function(object, ...)
 
 
 
-untransformVGAM = function(object, pred) {
-    M = object@misc$M
-    Links = object@misc$link
-    if (length(Links) != M && length(Links) != 1)
-       stop("cannot obtain the link functions to untransform the object")
-    upred = pred
-    earg = object@misc$earg
-    for(ii in 1:M) {
-        TTheta = pred[,ii]  # Transformed theta
-        newcall = paste(Links[ii], "(theta=TTheta, earg=earg, inverse=TRUE)", sep="")
-        newcall = parse(text=newcall)[[1]]
-        Theta = eval(newcall) # Theta, the untransformed parameter
-        upred[,ii] = Theta
-    }
-    dmn2 = if (length(names(object@misc$link))) names(object@misc$link) else {
-        if (length(object@misc$parameters)) object@misc$parameters else NULL
-    }
-    dimnames(upred) = list(dimnames(upred)[[1]], dmn2)
-    upred
+untransformVGAM <- function(object, pred) {
+  M <- object@misc$M
+  Links <- object@misc$link
+  if (length(Links) != M && length(Links) != 1)
+     stop("cannot obtain the link functions to untransform the object")
+
+  upred <- pred
+  earg <- object@misc$earg
+
+
+
+
+
+
+  LINK <- object@misc$link # link.names # This should be a character vector.
+  EARG <- object@misc$earg # This could be a NULL
+  if (is.null(EARG))
+    EARG <- list(theta = NULL)
+  if (!is.list(EARG))
+    stop("the 'earg' component of 'object@misc' must be a list")
+
+  if (length(LINK) != M &&
+      length(LINK) != 1)
+    stop("cannot obtain the link functions to untransform 'object'")
+
+
+
+  if (!is.character(LINK))
+    stop("the 'link' component of 'object@misc' should ",
+         "be a character vector")
+
+  learg <- length(EARG)
+  llink <- length(LINK)
+  if (llink != learg)
+    stop("the 'earg' component of 'object@misc' should ",
+         "be a list of length ", learg)
+
+
+  level1 <- length(EARG) > 3 &&
+            length(intersect(names(EARG),
+              c("theta", "inverse", "deriv", "short", "tag"))) > 3
+  if (level1)
+    EARG <- list(oneOnly = EARG)
+
+
+
+  learg <- length(EARG)
+
+
+
+
+
+  for(ii in 1:M) {
+    TTheta <- pred[, ii] # Transformed theta
+
+
+    use.earg      <-
+      if (llink == 1) EARG[[1]] else EARG[[ii]]
+   function.name <-
+      if (llink == 1) LINK else LINK[ii]
+
+
+      use.earg[["inverse"]] <- TRUE # New
+      use.earg[["theta"]] <- TTheta # New
+      Theta <- do.call(function.name, use.earg)
+
+
+
+
+
+
+    upred[, ii] <- Theta
+  }
+
+  dmn2 <- if (length(names(object@misc$link))) names(object@misc$link) else {
+      if (length(object@misc$parameters)) object@misc$parameters else NULL
+  }
+  dimnames(upred) <- list(dimnames(upred)[[1]], dmn2)
+  upred
 }
 
 

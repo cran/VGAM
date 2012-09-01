@@ -8,10 +8,10 @@
 
 
 predict.vlm = function(object,
-                       newdata=NULL,
-                       type=c("response","terms"),
+                       newdata = NULL,
+                       type = c("response", "terms"),
                        se.fit = FALSE, scale = NULL,
-                       terms.arg=NULL,
+                       terms.arg = NULL,
                        raw=FALSE,
                        dispersion = NULL, ...)
 {
@@ -20,7 +20,7 @@ predict.vlm = function(object,
 
     if (mode(type) != "character" && mode(type) != "name")
         type = as.character(substitute(type))
-    type = match.arg(type, c("response","terms"))[1]
+    type = match.arg(type, c("response", "terms"))[1]
 
     na.act = object@na.action
     object@na.action = list()

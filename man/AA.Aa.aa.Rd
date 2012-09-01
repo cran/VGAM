@@ -7,18 +7,13 @@
    AA-Aa-aa blood group system.
 }
 \usage{
-AA.Aa.aa(link = "logit", earg=list(), init.pA = NULL)
+AA.Aa.aa(link = "logit", init.pA = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{link}{
   Link function applied to \code{pA}.
   See \code{\link{Links}} for more choices.
-
-  }
-  \item{earg}{
-  List. Extra argument for the link.
-  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{init.pA}{ Optional initial value for \code{pA}. }

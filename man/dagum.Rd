@@ -8,7 +8,6 @@
 }
 \usage{
 dagum(lshape1.a = "loge", lscale = "loge", lshape2.p = "loge",
-      eshape1.a = list(), escale = list(), eshape2.p = list(),
       ishape1.a = NULL, iscale = NULL, ishape2.p = 1, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -17,11 +16,6 @@ dagum(lshape1.a = "loge", lscale = "loge", lshape2.p = "loge",
   Parameter link functions applied to the
   (positive) parameters \code{a}, \code{scale}, and \code{p}.
   See \code{\link{Links}} for more choices.
-
-  }
-  \item{eshape1.a, escale, eshape2.p}{
-  List. Extra argument for each of the links.
-  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{ishape1.a, iscale, ishape2.p}{
@@ -68,6 +62,7 @@ provided \eqn{-ap < 1 < a}; these are returned as the fitted values.
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}},
   and \code{\link{vgam}}.
+
 
 }
 \references{

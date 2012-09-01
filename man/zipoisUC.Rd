@@ -79,15 +79,15 @@ rzipois(n, lambda, pstr0 = 0)
 
 }
 \examples{
-lambda = 3; pstr0 = 0.2; x = (-1):7
-(ii = dzipois(x, lambda, pstr0 = pstr0))
+lambda <- 3; pstr0 <- 0.2; x <- (-1):7
+(ii <- dzipois(x, lambda, pstr0 = pstr0))
 max(abs(cumsum(ii) - pzipois(x, lambda, pstr0 = pstr0))) # Should be 0
 table(rzipois(100, lambda, pstr0 = pstr0))
 
 table(qzipois(runif(100), lambda, pstr0))
 round(dzipois(0:10, lambda, pstr0 = pstr0) * 100) # Should be similar
 
-\dontrun{ x = 0:10
+\dontrun{ x <- 0:10
 par(mfrow = c(2, 1)) # Zero-inflated Poisson
 barplot(rbind(dzipois(x, lambda, pstr0 = pstr0), dpois(x, lambda)),
         beside = TRUE, col = c("blue","orange"),
@@ -95,8 +95,8 @@ barplot(rbind(dzipois(x, lambda, pstr0 = pstr0), dpois(x, lambda)),
                      " Poisson(", lambda, ") (orange)", sep = ""),
         names.arg = as.character(x))
 
-deflat_limit = -1 / expm1(lambda) # Zero-deflated Poisson
-newpstr0 = round(deflat_limit / 1.5, 3)
+deflat_limit <- -1 / expm1(lambda) # Zero-deflated Poisson
+newpstr0 <- round(deflat_limit / 1.5, 3)
 barplot(rbind(dzipois(x, lambda, pstr0 = newpstr0),
                 dpois(x, lambda)),
         beside = TRUE, col = c("blue","orange"),

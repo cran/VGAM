@@ -8,7 +8,6 @@
 }
 \usage{
 betageometric(lprob = "logit", lshape = "loge",
-              eprob = list(),  eshape = list(),
               iprob = NULL,    ishape = 0.1,
               moreSummation=c(2,100), tolerance=1.0e-10, zero=NULL)
 }
@@ -20,11 +19,6 @@ betageometric(lprob = "logit", lshape = "loge",
   (called \code{prob} and \code{shape} below).
   The former lies in the unit interval and the latter is positive.
   See \code{\link{Links}} for more choices.
-
-  }
-  \item{eprob, eshape}{ 
-  List. Extra argument for each of the links.
-  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{iprob, ishape}{ 

@@ -8,13 +8,12 @@
 
 }
 \usage{
-cennormal1(lmu = "identity", lsd = "loge",
-           emu = list(), esd = list(), imethod = 1, zero = 2)
+cennormal1(lmu = "identity", lsd = "loge", imethod = 1, zero = 2)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{lmu, lsd, emu, esd}{
-  Parameter link functions and its extra arguments,
+  \item{lmu, lsd}{
+  Parameter link functions
   applied to the mean and standard deviation parameters.
   See \code{\link{Links}} for more choices.
   The standard deviation is a positive quantity, therefore a log link 
@@ -78,22 +77,24 @@ cennormal1(lmu = "identity", lsd = "loge",
 }
 
 \examples{
-cdata = data.frame(x2 = runif(nn <- 1000)) # ystar are true values
-cdata = transform(cdata, ystar = rnorm(nn, m = 100 + 15 * x2, sd = exp(3)))
-\dontrun{with(cdata, hist(ystar))}
-cdata = transform(cdata, L = runif(nn,  80,  90), # Lower censoring points
-                         U = runif(nn, 130, 140)) # Upper censoring points
-cdata = transform(cdata, y = pmax(L, ystar)) # Left  censored
-cdata = transform(cdata, y = pmin(U, y))     # Right censored
-\dontrun{with(cdata, hist(y))}
-Extra = list(leftcensored = with(cdata, ystar < L),
-            rightcensored = with(cdata, ystar > U))
-fit1 = vglm(y ~ x2, cennormal1, cdata, crit = "c", extra = Extra, trace = TRUE)
-fit2 = vglm(y ~ x2, tobit(Lower = with(cdata, L), Upper = with(cdata, U)),
+\dontrun{
+cdata <- data.frame(x2 = runif(nn <- 1000)) # ystar are true values
+cdata <- transform(cdata, ystar = rnorm(nn, m = 100 + 15 * x2, sd = exp(3)))
+with(cdata, hist(ystar))
+cdata <- transform(cdata, L = runif(nn,  80,  90), # Lower censoring points
+                          U = runif(nn, 130, 140)) # Upper censoring points
+cdata <- transform(cdata, y = pmax(L, ystar)) # Left  censored
+cdata <- transform(cdata, y = pmin(U, y))     # Right censored
+with(cdata, hist(y))
+Extra <- list(leftcensored = with(cdata, ystar < L),
+             rightcensored = with(cdata, ystar > U))
+fit1 <- vglm(y ~ x2, cennormal1, cdata, crit = "c", extra = Extra, trace = TRUE)
+fit2 <- vglm(y ~ x2, tobit(Lower = with(cdata, L), Upper = with(cdata, U)),
             cdata, crit = "c", trace = TRUE)
 coef(fit1, matrix = TRUE)
 max(abs(coef(fit1, matrix = TRUE) - coef(fit2, matrix = TRUE))) # Should be 0
 names(fit1@extra)
+}
 }
 \keyword{models}
 \keyword{regression}

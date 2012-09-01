@@ -69,7 +69,8 @@ contains further information and examples.
 \author{ Thomas W. Yee }
 
 \section{Warning }{
-  No check is made to verify that the response is ordinal;
+  No check is made to verify that the response is ordinal if the
+  response is a matrix;
   see \code{\link[base:factor]{ordered}}.
 
 
@@ -82,8 +83,8 @@ contains further information and examples.
 }
 \examples{
 # Fit the proportional odds model, p.179, in McCullagh and Nelder (1989)
-pneumo = transform(pneumo, let = log(exposure.time))
-(fit = vglm(cbind(normal, mild, severe) ~ let, propodds, pneumo))
+pneumo <- transform(pneumo, let = log(exposure.time))
+(fit <- vglm(cbind(normal, mild, severe) ~ let, propodds, pneumo))
 depvar(fit) # Sample proportions
 weights(fit, type = "prior") # Number of observations
 coef(fit, matrix = TRUE)
@@ -91,16 +92,17 @@ constraints(fit) # Constraint matrices
 summary(fit)
 
 # Check that the model is linear in let ----------------------
-fit2 = vgam(cbind(normal, mild, severe) ~ s(let, df = 2), propodds, pneumo)
+fit2 <- vgam(cbind(normal, mild, severe) ~ s(let, df = 2), propodds, pneumo)
 \dontrun{ plot(fit2, se = TRUE, lcol = 2, scol = 2) }
 
 # Check the proportional odds assumption with a LRT ----------
-(fit3 = vglm(cbind(normal, mild, severe) ~ let,
-             cumulative(parallel = FALSE, reverse = TRUE), pneumo))
+(fit3 <- vglm(cbind(normal, mild, severe) ~ let,
+              cumulative(parallel = FALSE, reverse = TRUE), pneumo))
 pchisq(deviance(fit) - deviance(fit3),
        df = df.residual(fit) - df.residual(fit3), lower.tail = FALSE)
+lrtest(fit3, fit) # Easier
 }
 \keyword{models}
 \keyword{regression}
 
-% pneumo$let = log(pneumo$exposure.time)
+% pneumo$let <- log(pneumo$exposure.time)

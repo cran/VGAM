@@ -1,16 +1,15 @@
 \name{lms.bcn}
 \alias{lms.bcn}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{ LMS Quantile/Expectile Regression with a Box-Cox Transformation to Normality }
+\title{ LMS Quantile Regression with a Box-Cox Transformation to Normality }
 \description{
-  LMS quantile/expectile regression with the Box-Cox transformation
+  LMS quantile regression with the Box-Cox transformation
   to normality.
 
 }
 \usage{
 lms.bcn(percentiles = c(25, 50, 75), zero = c(1, 3),
         llambda = "identity", lmu = "identity", lsigma = "loge",
-        elambda = list(), emu = list(), esigma = list(),
         dfmu.init = 4, dfsigma.init = 2, ilambda = 1,
         isigma = NULL, expectiles = FALSE)
 }
@@ -19,8 +18,11 @@ lms.bcn(percentiles = c(25, 50, 75), zero = c(1, 3),
 
   \item{percentiles}{
   A numerical vector containing values between 0 and 100,
-  which are the quantiles or expectiles.
+  which are the quantiles.
   They will be returned as `fitted values'.
+
+% or expectiles.
+
 
   }
   \item{zero}{
@@ -32,6 +34,7 @@ lms.bcn(percentiles = c(25, 50, 75), zero = c(1, 3),
   functions of the covariates.
   For more information see \code{\link{CommonVGAMffArguments}}.
 
+
   }
   \item{llambda, lmu, lsigma}{
   Parameter link functions applied to the first, second and third
@@ -39,17 +42,13 @@ lms.bcn(percentiles = c(25, 50, 75), zero = c(1, 3),
   See \code{\link{Links}} for more choices,
   and \code{\link{CommonVGAMffArguments}}.
 
-  }
-  \item{elambda, emu, esigma}{
-  List. Extra argument for each of the links.
-  See \code{earg} in \code{\link{Links}} for general information,
-  as well as \code{\link{CommonVGAMffArguments}}.
 
   }
   \item{dfmu.init}{
   Degrees of freedom for the cubic smoothing spline fit applied to
   get an initial estimate of mu.
   See \code{\link{vsmooth.spline}}.
+
 
   }
   \item{dfsigma.init}{
@@ -59,11 +58,13 @@ lms.bcn(percentiles = c(25, 50, 75), zero = c(1, 3),
   This argument may be assigned \code{NULL} to get an initial value
   using some other algorithm.
 
+
   }
   \item{ilambda}{
   Initial value for lambda.
   If necessary, it is recycled to be a vector of length \eqn{n}
   where \eqn{n} is the number of (independent) observations.
+
 
   }
   \item{isigma}{
@@ -72,11 +73,15 @@ lms.bcn(percentiles = c(25, 50, 75), zero = c(1, 3),
   The default value, \code{NULL}, means an initial value is computed
   in the \code{@initialize} slot of the family function.
 
+
   }
   \item{expectiles}{
-  A single logical. If \code{TRUE} then the method is LMS-expectile
-  regression; \emph{expectiles} are returned rather than quantiles.
-  The default is LMS quantile regression based on the normal distribution.
+  Experimental; please do not use.
+
+% A single logical. If \code{TRUE} then the method is LMS-expectile
+% regression; \emph{expectiles} are returned rather than quantiles.
+% The default is LMS quantile regression based on the normal distribution.
+
 
   }
 
@@ -176,8 +181,8 @@ contains further information and examples.
   and negative values.
 
 
-  LMS-BCN expectile regression is a \emph{new} methodology proposed
-  by myself!
+% LMS-BCN expectile regression is a \emph{new} methodology proposed
+% by myself!
 
 
   In general, the lambda and sigma functions should be more smoother
@@ -197,7 +202,10 @@ contains further information and examples.
 
 \section{Warning }{
   The computations are not simple, therefore convergence may fail.
-  In that case, try different starting values.
+  Set \code{trace = TRUE} to monitor convergence if it isn't set already.
+  Convergence failure will occur if, e.g., the response is bimodal
+  at any particular value of \eqn{x}.
+  In case of convergence failure, try different starting values.
   Also, the estimate may diverge quickly near the solution,
   in which case try prematurely
   stopping the iterations by assigning \code{maxits} to be the iteration
@@ -225,25 +233,25 @@ contains further information and examples.
 }
 
 \examples{
-mysubset = subset(xs.nz, sex == "M" & ethnic == "1" & Study1)
-mysubset = transform(mysubset, BMI = weight / height^2)
-BMIdata = mysubset[, c("age", "BMI")]
-BMIdata = na.omit(BMIdata)
-BMIdata = subset(BMIdata, BMI < 80 & age < 65) # Delete an outlier
+mysubset <- subset(xs.nz, sex == "M" & ethnic == "1" & Study1)
+mysubset <- transform(mysubset, BMI = weight / height^2)
+BMIdata <- mysubset[, c("age", "BMI")]
+BMIdata <- na.omit(BMIdata)
+BMIdata <- subset(BMIdata, BMI < 80 & age < 65) # Delete an outlier
 summary(BMIdata)
 
-fit = vgam(BMI ~ s(age, df = c(4, 2)), lms.bcn(zero = 1), BMIdata, trace = TRUE)
+fit <- vgam(BMI ~ s(age, df = c(4, 2)), lms.bcn(zero = 1), BMIdata)
 
 head(predict(fit))
 head(fitted(fit))
 head(BMIdata)
 head(cdf(fit)) # Person 56 is probably overweight, given his age
-colMeans(c(depvar(fit)) < fitted(fit)) # Sample proportions below the quantiles
+100 * colMeans(c(depvar(fit)) < fitted(fit)) # Empirical proportions
 
 # Convergence problems? Try this trick: fit0 is a simpler model used for fit1
-fit0 = vgam(BMI ~ s(age, df = 4), lms.bcn(zero = c(1,3)), BMIdata, trace = TRUE)
-fit1 = vgam(BMI ~ s(age, df = c(4, 2)), lms.bcn(zero = 1), BMIdata, 
-            etastart = predict(fit0), trace = TRUE)
+fit0 <- vgam(BMI ~ s(age, df = 4), lms.bcn(zero = c(1,3)), BMIdata)
+fit1 <- vgam(BMI ~ s(age, df = c(4, 2)), lms.bcn(zero = 1), BMIdata, 
+            etastart = predict(fit0))
 
 \dontrun{
 # Quantile plot
@@ -252,13 +260,13 @@ qtplot(fit, percentiles = c(5, 50, 90, 99), main = "Quantiles",
        xlim = c(15, 66), las = 1, ylab = "BMI", lwd = 2, lcol = 4)
 
 # Density plot
-ygrid = seq(15, 43, len = 100)  # BMI ranges
-par(mfrow=c(1, 1), lwd = 2)
-(aa = deplot(fit, x0 = 20, y = ygrid, xlab = "BMI", col = "black",
+ygrid <- seq(15, 43, len = 100)  # BMI ranges
+par(mfrow = c(1, 1), lwd = 2)
+(aa <- deplot(fit, x0 = 20, y = ygrid, xlab = "BMI", col = "black",
   main = "Density functions at Age = 20 (black), 42 (red) and 55 (blue)"))
-aa = deplot(fit, x0 = 42, y = ygrid, add = TRUE, llty = 2, col = "red")
-aa = deplot(fit, x0 = 55, y = ygrid, add = TRUE, llty = 4, col = "blue",
-            Attach = TRUE)
+aa <- deplot(fit, x0 = 42, y = ygrid, add = TRUE, llty = 2, col = "red")
+aa <- deplot(fit, x0 = 55, y = ygrid, add = TRUE, llty = 4, col = "blue",
+             Attach = TRUE)
 aa@post$deplot  # Contains density function values
 }
 }

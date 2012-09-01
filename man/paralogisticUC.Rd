@@ -9,6 +9,7 @@
   Density, distribution function, quantile function and random
   generation for the paralogistic distribution with shape parameter \code{a}
   and scale parameter \code{scale}.
+
 }
 \usage{
 dparalogistic(x, shape1.a, scale = 1, log = FALSE)
@@ -44,6 +45,7 @@ Kleiber, C. and Kotz, S. (2003)
              Actuarial Sciences},
 Hoboken, NJ, USA: Wiley-Interscience.
 
+
 }
 \author{ T. W. Yee }
 \details{
@@ -62,10 +64,11 @@ Hoboken, NJ, USA: Wiley-Interscience.
   \code{\link{paralogistic}},
   \code{\link{genbetaII}}.
 
+
 }
 \examples{
-pdata = data.frame(y = rparalogistic(n = 3000, 4, 6))
-fit = vglm(y ~ 1, paralogistic(ishape1.a = 2.1), pdata, trace = TRUE)
+pdata <- data.frame(y = rparalogistic(n = 3000, 4, 6))
+fit <- vglm(y ~ 1, paralogistic(ishape1.a = 2.1), pdata, trace = TRUE)
 coef(fit, matrix = TRUE)
 Coef(fit)
 }

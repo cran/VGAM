@@ -7,6 +7,7 @@
   This is a very large class of models that includes
   generalized linear models (GLMs) as a special case.
 
+
 }
 \usage{
 vglm(formula, family, data = list(), weights = NULL, subset = NULL, 
@@ -40,22 +41,40 @@ vglm(formula, family, data = list(), weights = NULL, subset = NULL,
   \code{environment(formula)}, typically the environment
   from which \code{vglm} is called.
 
+
+
+
   }
   \item{weights}{
   an optional vector or matrix of (prior) weights to be used
-  in the fitting process. If \code{weights} is a matrix,
-  then it must be in \emph{matrix-band} form, whereby the
-  first \eqn{M} columns of the matrix are the diagonals,
-  followed by the upper-diagonal band, followed by the
-  band above that, etc. In this case, there can be up to
-  \eqn{M(M+1)} columns, with the last column corresponding
-  to the (1,\eqn{M}) elements of the weight matrices.
+  in the fitting process.
+  If the \pkg{VGAM} family function handles multiple responses 
+  (\eqn{q > 1} of them, say) then
+  \code{weights} can be a matrix with \eqn{q} columns.
+  Each column matches the respective response.
+  If it is a vector (the usually case) then it is recycled into a
+  matrix with \eqn{q} columns.
+  The values of \code{weights} must be positive; try setting
+  a very small value such as \code{1.0e-8} to effectively
+  delete an observation.
+
+
+% If \code{weights} is a matrix,
+% then it should be must be in \emph{matrix-band} form, whereby the
+% first \eqn{M} columns of the matrix are the diagonals,
+% followed by the upper-diagonal band, followed by the
+% band above that, etc. In this case, there can be up to
+% \eqn{M(M+1)} columns, with the last column corresponding
+% to the (1,\eqn{M}) elements of the weight matrices.
+
 
   }
   \item{subset}{
   an optional logical vector specifying a subset of
   observations to 
   be used in the fitting process.
+
+
 
   }
   \item{na.action}{
@@ -73,6 +92,7 @@ vglm(formula, family, data = list(), weights = NULL, subset = NULL,
   Note that \code{etastart} and the output of \code{predict(fit)}
   should be comparable.
   Here, \code{fit} is the fitted object.
+
 
   }
   \item{mustart}{
@@ -97,7 +117,7 @@ vglm(formula, family, data = list(), weights = NULL, subset = NULL,
   \item{offset}{
    a vector or \eqn{M}-column matrix of offset values.
    These are \emph{a priori} known and are added to the
-   linear predictors during fitting.
+   linear/additive predictors during fitting.
 
   }
   \item{method}{
@@ -124,6 +144,7 @@ vglm(formula, family, data = list(), weights = NULL, subset = NULL,
   \item{contrasts}{
   an optional list. See the \code{contrasts.arg}
   of \code{\link{model.matrix.default}}.
+
 
   }
   \item{constraints}{
@@ -358,6 +379,7 @@ The \code{VGAM} Package.
   \code{\link{vgam}}.
   Methods functions include 
   \code{coef.vlm},
+  \code{\link{constraints.vlm}},
   \code{\link{hatvaluesvlm}},
   \code{\link{predictvglm}},
   \code{summary.vglm},
@@ -373,18 +395,18 @@ The \code{VGAM} Package.
 print(d.AD <- data.frame(treatment = gl(3, 3),
                          outcome = gl(3, 1, 9),
                          counts = c(18,17,15,20,10,20,25,13,12)))
-vglm.D93 = vglm(counts ~ outcome + treatment, family = poissonff,
-                data = d.AD, trace = TRUE)
+vglm.D93 <- vglm(counts ~ outcome + treatment, family = poissonff,
+                 data = d.AD, trace = TRUE)
 summary(vglm.D93)
 
 
 # Example 2. Multinomial logit model
-pneumo = transform(pneumo, let = log(exposure.time))
+pneumo <- transform(pneumo, let = log(exposure.time))
 vglm(cbind(normal, mild, severe) ~ let, multinomial, pneumo)
 
 
 # Example 3. Proportional odds model
-fit3 = vglm(cbind(normal,mild,severe) ~ let, propodds, pneumo, trace = TRUE)
+fit3 <- vglm(cbind(normal, mild, severe) ~ let, propodds, pneumo)
 coef(fit3, matrix = TRUE) 
 constraints(fit3)
 model.matrix(fit3, type = "lm") # LM model matrix
@@ -392,29 +414,29 @@ model.matrix(fit3)              # Larger VGLM (or VLM) model matrix
 
 
 # Example 4. Bivariate logistic model 
-fit4 = vglm(cbind(nBnW, nBW, BnW, BW) ~ age, binom2.or, coalminers)
+fit4 <- vglm(cbind(nBnW, nBW, BnW, BW) ~ age, binom2.or, coalminers)
 coef(fit4, matrix = TRUE)
-depvar(fit4)  # Response are proportions
+depvar(fit4) # Response are proportions
 weights(fit4, type = "prior")
 
 
 # Example 5. The use of the xij argument (simple case).
 # The constraint matrix for 'op' has one column.
-nn = 1000
+nn <- 1000
 eyesdat = round(data.frame(lop = runif(nn),
                            rop = runif(nn),
                             op = runif(nn)), dig = 2)
-eyesdat = transform(eyesdat, eta1 = -1+2*lop,
-                             eta2 = -1+2*lop)
+eyesdat = transform(eyesdat, eta1 = -1 + 2 * lop,
+                             eta2 = -1 + 2 * lop)
 eyesdat = transform(eyesdat,
-                    leye = rbinom(nn, size = 1, prob = logit(eta1, inv = TRUE)),
-                    reye = rbinom(nn, size = 1, prob = logit(eta2, inv = TRUE)))
+          leye = rbinom(nn, size = 1, prob = logit(eta1, inv = TRUE)),
+          reye = rbinom(nn, size = 1, prob = logit(eta2, inv = TRUE)))
 head(eyesdat)
-fit5 = vglm(cbind(leye,reye) ~ op,
-            binom2.or(exchangeable = TRUE, zero = 3),
-            data = eyesdat, trace = TRUE,
-            xij = list(op ~ lop + rop + fill(lop)),
-            form2 = ~  op + lop + rop + fill(lop))
+fit5 <- vglm(cbind(leye, reye) ~ op,
+             binom2.or(exchangeable = TRUE, zero = 3),
+             data = eyesdat, trace = TRUE,
+             xij = list(op ~ lop + rop + fill(lop)),
+             form2 = ~  op + lop + rop + fill(lop))
 coef(fit5)
 coef(fit5, matrix = TRUE)
 constraints(fit5)
@@ -422,8 +444,8 @@ constraints(fit5)
 \keyword{models}
 \keyword{regression}
 
-%eyesdat$leye = ifelse(runif(n) < 1/(1+exp(-1+2*eyesdat$lop)), 1, 0)
-%eyesdat$reye = ifelse(runif(n) < 1/(1+exp(-1+2*eyesdat$rop)), 1, 0)
+%eyesdat$leye <- ifelse(runif(n) < 1/(1+exp(-1+2*eyesdat$lop)), 1, 0)
+%eyesdat$reye <- ifelse(runif(n) < 1/(1+exp(-1+2*eyesdat$rop)), 1, 0)
 %coef(fit, matrix = TRUE, compress = FALSE)
 
 
@@ -440,7 +462,7 @@ constraints(fit5)
 %    head(poly(c(x,...), 3), length(x), drop = FALSE)
 %}
 %
-%fit6 = vglm(cbind(leye,reye) ~ POLY3(op), trace = TRUE,
+%fit6 = vglm(cbind(leye, reye) ~ POLY3(op), trace = TRUE,
 %            fam = binom2.or(exchangeable = TRUE, zero=3),  data=eyesdat,
 %            xij = list(POLY3(op) ~ POLY3(lop,rop) + POLY3(rop,lop) +
 %                                   fill(POLY3(lop,rop))),

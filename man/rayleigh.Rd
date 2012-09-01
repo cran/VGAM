@@ -9,8 +9,9 @@
 
 }
 \usage{
-   rayleigh(lscale = "loge", escale = list(), nrfs = 1/3 + 0.01)
-cenrayleigh(lscale = "loge", escale = list(), oim = TRUE)
+   rayleigh(lscale = "loge", nrfs = 1/3 + 0.01,
+            oim.mean = TRUE, zero = NULL)
+cenrayleigh(lscale = "loge", oim = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -18,12 +19,6 @@ cenrayleigh(lscale = "loge", escale = list(), oim = TRUE)
   Parameter link function applied to the scale parameter \eqn{b}.
   See \code{\link{Links}} for more choices.
   A log link is the default because \eqn{b} is positive.
-
-  }
-  \item{escale}{
-  List. Extra argument for the link.
-  See \code{earg} in \code{\link{Links}} for general information, as well
-  as \code{\link{CommonVGAMffArguments}}.
 
   }
   \item{nrfs}{
@@ -34,11 +29,23 @@ cenrayleigh(lscale = "loge", escale = list(), oim = TRUE)
   positive-definite working weights.
 
   }
+  \item{oim.mean}{
+  Logical, used only for intercept-only models.
+  \code{TRUE} means the mean of the OIM elements are used as working weights.
+  If \code{TRUE} then this argument has top priority for working
+  out the working weights.
+  \code{FALSE} means use another algorithm.
+
+  }
   \item{oim}{
   Logical.
   For censored data only,
   \code{TRUE} means the Newton-Raphson algorithm, and 
   \code{FALSE} means Fisher scoring.
+
+  }
+  \item{zero}{
+  Details at \code{\link{CommonVGAMffArguments}}.
 
   }
 }
@@ -63,9 +70,13 @@ cenrayleigh(lscale = "loge", escale = list(), oim = TRUE)
   in the \code{extra} slot.
 
 
+  Th \pkg{VGAM} family function \code{rayleigh} handles multiple responses.
+
+
 }
 \section{Warning}{
   The theory behind the argument \code{oim} is not fully complete.
+
 
 }
 \value{

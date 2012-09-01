@@ -29,6 +29,8 @@ trplot.qrrvglm(object, whichSpecies = NULL, add=FALSE, plot.it = TRUE,
   response matrix. If character, these must match exactly with the
   species' names. 
   The default is to use all species.
+
+
   }
   \item{add}{ Logical. Add to an existing plot? If \code{FALSE} (default),
   a new plot is made. }
@@ -38,54 +40,80 @@ trplot.qrrvglm(object, whichSpecies = NULL, add=FALSE, plot.it = TRUE,
   \item{sitenames}{ Character vector. The names of the sites. }
   \item{axes.equal}{ Logical. If \code{TRUE}, the x- and y-axes
   will be on the same scale. 
+
+
   }
   \item{cex}{ Character expansion of the labelling of the site names.
   Used only if \code{label.sites} is \code{TRUE}.   
   See the \code{cex} argument in \code{\link[graphics]{par}}.
+
+
   }
   \item{col}{Color of the lines.
   See the \code{col} argument in \code{\link[graphics]{par}}.
   Here, \code{nos} is the number of species.
+
+
   }
   \item{log}{ Character, specifying which (if any) of the x- and
   y-axes are to be on a logarithmic scale.
   See the \code{log} argument in \code{\link[graphics]{par}}.
+
+
   }
   \item{lty}{  Line type.
   See the \code{lty} argument of \code{\link[graphics]{par}}.
+
+
   }
   \item{lwd}{  Line width.
   See the \code{lwd} argument of \code{\link[graphics]{par}}.
+
+
   }
   \item{tcol}{Color of the text for the site names.
   See the \code{col} argument in \code{\link[graphics]{par}}.
   Used only if \code{label.sites} is \code{TRUE}.  
+
+
   }
   \item{xlab}{Character caption for the x-axis.
   By default, a suitable caption is found.
   See the \code{xlab} argument in \code{\link[graphics]{plot}} 
   or \code{\link[graphics]{title}}.
+
+
   }
   \item{ylab}{Character caption for the y-axis.
   By default, a suitable caption is found.
   See the \code{xlab} argument in \code{\link[graphics]{plot}} 
   or \code{\link[graphics]{title}}.
+
+
   }
   \item{main}{ Character, giving the title of the plot.
   See the \code{main} argument in \code{\link[graphics]{plot}} 
   or \code{\link[graphics]{title}}.
+
+
   }
   \item{type}{ Character, giving the type of plot. A common
   option is to use \code{type="l"} for lines only.
   See the \code{type} argument of \code{\link[graphics]{plot}}.
+
+
   }
   \item{check.ok}{ Logical. Whether a check is performed to see
   that \code{Norrr = ~ 1} was used. 
   It doesn't make sense to have a trace plot unless this is so.
+
+
   }
   \item{\dots}{ Arguments passed into the \code{plot} function
   when setting up the entire plot. Useful arguments here include
   \code{xlim} and \code{ylim}.
+
+
   }
 }
 \details{
@@ -118,6 +146,8 @@ variables.
    }
   \item{sitenames}{A character vector of site names, sorted by
    the latent variable (from low to high).
+
+
   }
 }
 \references{
@@ -127,7 +157,6 @@ Yee, T. W. (2012)
 On constrained and unconstrained
 quadratic ordination.
 \emph{Manuscript in preparation}.
-
 
 
 }
@@ -153,19 +182,19 @@ quadratic ordination.
 
 }
 
-\examples{\dontrun{ set.seed(111)  # This leads to the global solution
-# hspider[,1:6] = scale(hspider[,1:6]) # Standardize the environmental variables
-p1 = cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi, Auloalbi,
-               Pardlugu, Pardmont, Pardnigr, Pardpull, Trocterr, Zoraspin) ~
-         WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
-         fam = poissonff, data = hspider, trace = FALSE)
+\examples{\dontrun{ set.seed(111) # This leads to the global solution
+# hspider[,1:6] <- scale(hspider[,1:6]) # Standardize the environmental variables
+p1 <- cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi, Auloalbi,
+                Pardlugu, Pardmont, Pardnigr, Pardpull, Trocterr, Zoraspin) ~
+          WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
+          poissonff, data = hspider, trace = FALSE)
 
 trplot(p1, whichSpecies = 1:3, log = "xy", type = "b", lty = 1,
        main = "Trajectory plot of three hunting spiders species",
        col = c("blue","red","green"), lwd = 2, label = TRUE) -> ii
-legend(0.00005, 0.3, lwd = 2, lty = 1, col = c("blue","red","green"),
+legend(0.00005, 0.3, lwd = 2, lty = 1, col = c("blue", "red", "green"),
        with(ii, paste(species.names[,1], species.names[,2], sep = " and ")))
-abline(a = 0, b = 1, lty = "dashed")  # Useful reference line
+abline(a = 0, b = 1, lty = "dashed", col = "grey") # Useful reference line
 }
 }
 \keyword{models}

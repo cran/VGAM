@@ -8,8 +8,8 @@
 
 }
 \usage{
-fisk(lshape1.a = "loge", lscale = "loge", eshape1.a = list(),
-     escale = list(), ishape1.a = NULL, iscale = NULL, zero = NULL)
+fisk(lshape1.a = "loge", lscale = "loge",
+     ishape1.a = NULL, iscale = NULL, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -17,11 +17,6 @@ fisk(lshape1.a = "loge", lscale = "loge", eshape1.a = list(),
   Parameter link functions applied to the
   (positive) parameters \code{a} and \code{scale}.
   See \code{\link{Links}} for more choices.
-
-  }
-  \item{eshape1.a, escale}{
-  List. Extra argument for each of the links.
-  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{ishape1.a, iscale}{
@@ -96,9 +91,9 @@ Hoboken, NJ: Wiley-Interscience.
 }
 
 \examples{
-fdata = data.frame(y = rfisk(n = 200, exp(1), exp(2)))
-fit = vglm(y ~ 1, fisk, fdata, trace = TRUE)
-fit = vglm(y ~ 1, fisk(ishape1.a = exp(1)), fdata, trace = TRUE)
+fdata <- data.frame(y = rfisk(n = 200, exp(1), exp(2)))
+fit <- vglm(y ~ 1, fisk, fdata, trace = TRUE)
+fit <- vglm(y ~ 1, fisk(ishape1.a = exp(1)), fdata, trace = TRUE)
 coef(fit, matrix = TRUE)
 Coef(fit)
 summary(fit)

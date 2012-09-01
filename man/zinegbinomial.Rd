@@ -9,7 +9,6 @@
 }
 \usage{
 zinegbinomial(lpstr0 = "logit", lmunb = "loge", lsize = "loge",
-              epstr0 = list(),  emunb = list(), esize = list(),
               ipstr0 = NULL, isize = NULL, zero = c(-1, -3),
               imethod = 1, shrinkage.init = 0.95, nsimEIM = 250)
 }
@@ -23,11 +22,12 @@ zinegbinomial(lpstr0 = "logit", lmunb = "loge", lsize = "loge",
 
 
   }
-  \item{epstr0, emunb, esize}{
-  List. Extra arguments for the respective links.
-  See \code{earg} in \code{\link{Links}} for general information.
 
-  }
+% \item{epstr0, emunb, esize}{
+%             epstr0 = list(),  emunb = list(), esize = list(),
+% List. Extra arguments for the respective links.
+% See \code{earg} in \code{\link{Links}} for general information.
+% }
 
   \item{ipstr0, isize}{
   Optional initial values for \eqn{\phi}{pstr0} and \eqn{k}{k}.
@@ -125,6 +125,12 @@ zinegbinomial(lpstr0 = "logit", lmunb = "loge", lsize = "loge",
   \code{isize}, and/or
   \code{zero} if there are explanatory variables.
 
+
+  This \pkg{VGAM} family function is computationally expensive
+  and usually runs slowly;
+  setting \code{trace = TRUE} is useful for monitoring convergence.
+
+
 } 
 
 \seealso{
@@ -133,9 +139,10 @@ zinegbinomial(lpstr0 = "logit", lmunb = "loge", lsize = "loge",
   \code{\link[stats:Poisson]{rpois}},
   \code{\link{CommonVGAMffArguments}}.
 
+
 }
 \examples{
-# Example 1
+\dontrun{ # Example 1
 ndata <- data.frame(x2 = runif(nn <- 1000))
 ndata <- transform(ndata, pstr0 = logit(-0.5 + 1 * x2, inverse = TRUE),
                           munb  =   exp( 3   + 1 * x2),
@@ -165,6 +172,7 @@ rrzinb <- rrvglm(y1 ~ x2 + x3, zinegbinomial(zero = NULL), ndata,
                  Index.corner = 2, szero = 3, trace = TRUE)
 coef(rrzinb, matrix = TRUE)
 Coef(rrzinb)
+}
 }
 \keyword{models}
 \keyword{regression}

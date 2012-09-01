@@ -23,18 +23,15 @@ vgam(formula, family, data = list(), weights = NULL, subset = NULL,
 
   \item{formula}{
   a symbolic description of the model to be fit.
-  The RHS of the formula is applied to each linear/additive predictor.
-  Different
-  variables in each linear/additive predictor can be chosen by specifying
-  constraint matrices.
+  The RHS of the formula is applied to each linear/additive predictor,
+  and usually includes at least one \code{\link[VGAM]{s}} term.
+  Different variables in each linear/additive predictor
+  can be chosen by specifying constraint matrices.
+
 
   }
   \item{family}{
-  a function of class \code{"vglmff"} (see \code{\link{vglmff-class}})
-  describing what statistical model is to be fitted. This is called a
-  ``\pkg{VGAM} family function''.  See \code{\link{CommonVGAMffArguments}}
-  for general information about many types of arguments found in this
-  type of function.
+  Same as for \code{\link{vglm}}.
 
   }
   \item{data}{
@@ -44,45 +41,20 @@ vgam(formula, family, data = list(), weights = NULL, subset = NULL,
   \code{vgam} is called.
 
   }
-  \item{weights}{
-  an optional vector or matrix of (prior) weights
-  to be used in the fitting process.
-  If \code{weights} is a matrix, then it must be in
-  \emph{matrix-band} form, whereby the first \eqn{M} 
-  columns of the matrix are the
-  diagonals, followed by the upper-diagonal band, followed by the
-  band above that, etc. In this case, there can be up to \eqn{M(M+1)}
-  columns, with the last column corresponding to the (1,\eqn{M}) elements
-  of the weight matrices.
+  \item{weights, subset, na.action}{
+  Same as for \code{\link{vglm}}.
 
-  }
-  \item{subset}{
-  an optional logical vector specifying a subset of
-  observations to
-  be used in the fitting process.
-
-  }
-  \item{na.action}{
-  a function which indicates what should happen when
-  the data contain \code{NA}s.
-  The default is set by the \code{na.action} setting
-  of \code{\link[base]{options}}, and is \code{na.fail} if that is unset.
-  The ``factory-fresh'' default is \code{na.omit}.
 
   }
   \item{etastart, mustart, coefstart}{
   Same as for \code{\link{vglm}}.
+
 
   }
   \item{control}{
   a list of parameters for controlling the fitting process.
   See \code{\link{vgam.control}} for details.
 
-  }
-  \item{offset}{
-  a vector or \eqn{M}-column matrix of offset values.
-  These are \emph{a priori} known and are added to the linear/additive
-  predictors during fitting.
 
   }
   \item{method}{
@@ -91,9 +63,9 @@ vgam(formula, family, data = list(), weights = NULL, subset = NULL,
   uses iteratively reweighted least squares (IRLS).
 
   }
-  \item{model}{
-  a logical value indicating whether the \emph{model frame} should be
-  assigned in the \code{model} slot.
+  \item{constraints, model, offset}{
+  Same as for \code{\link{vglm}}.
+
 
   }
   \item{x.arg, y.arg}{
@@ -103,37 +75,11 @@ vgam(formula, family, data = list(), weights = NULL, subset = NULL,
   matrix; to get the VGAM model matrix type \code{model.matrix(vgamfit)}
   where \code{vgamfit} is a \code{vgam} object.
 
-  }
-  \item{contrasts}{
-  an optional list. See the \code{contrasts.arg} of
-  \code{\link{model.matrix.default}}.
 
   }
-  \item{constraints}{
-  an optional list  of constraint matrices.  The components
-  of the list must be named with the term it corresponds
-  to (and it must match in character format exactly).
-  Each constraint matrix must have \eqn{M} rows, and be
-  of full-column rank. By default, constraint matrices are
-  the \eqn{M} by \eqn{M} identity matrix unless arguments
-  in the family function itself override these values.
-  If \code{constraints} is used it must contain \emph{all}
-  the terms; an incomplete list is not accepted.
+  \item{contrasts, extra, qr.arg, smart}{
+  Same as for \code{\link{vglm}}.
 
-  }
-  \item{extra}{
-  an optional list with any extra information that might be needed by
-  the \pkg{VGAM} family function.
-
-  }
-  \item{qr.arg}{
-  logical value indicating whether the slot \code{qr}, which returns
-  the QR decomposition of the VLM model matrix, is returned on the object.
-
-  }
-  \item{smart}{
-  logical value indicating whether smart prediction
-  (\code{\link{smartpred}}) will be used.
 
   }
   \item{\dots}{
@@ -272,14 +218,14 @@ The \code{VGAM} Package.
 }
 
 \examples{ # Nonparametric proportional odds model 
-pneumo = transform(pneumo, let = log(exposure.time))
+pneumo <- transform(pneumo, let = log(exposure.time))
 vgam(cbind(normal, mild, severe) ~ s(let),
      cumulative(parallel = TRUE), pneumo)
 
 # Nonparametric logistic regression 
-fit = vgam(agaaus ~ s(altitude, df = 2), binomialff, hunua)
+fit <- vgam(agaaus ~ s(altitude, df = 2), binomialff, hunua)
 \dontrun{ plot(fit, se = TRUE) }
-pfit = predict(fit, type = "terms", raw = TRUE, se = TRUE)
+pfit <- predict(fit, type = "terms", raw = TRUE, se = TRUE)
 names(pfit)
 head(pfit$fitted)
 head(pfit$se.fit)
@@ -287,12 +233,12 @@ pfit$df
 pfit$sigma
 
 # Fit two species simultaneously 
-fit2 = vgam(cbind(agaaus, kniexc) ~ s(altitude, df = c(2, 3)),
-            binomialff(mv = TRUE), hunua)
+fit2 <- vgam(cbind(agaaus, kniexc) ~ s(altitude, df = c(2, 3)),
+             binomialff(mv = TRUE), hunua)
 coef(fit2, matrix = TRUE) # Not really interpretable 
 \dontrun{ plot(fit2, se = TRUE, overlay = TRUE, lcol = 1:2, scol = 1:2)
 
-ooo = with(hunua, order(altitude))
+ooo <- with(hunua, order(altitude))
 with(hunua, matplot(altitude[ooo], fitted(fit2)[ooo,], ylim = c(0, .8),
      xlab = "Altitude (m)", ylab = "Probability of presence", las = 1,
      main = "Two plant species' response curves", type = "l", lwd = 2))

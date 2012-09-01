@@ -9,13 +9,13 @@
 
 }
 \usage{
-negbinomial(lmu = "loge", lsize = "loge", emu = list(), esize = list(),
-            imu = NULL, isize = NULL, quantile.probs = 0.75,
+negbinomial(lmu = "loge", lsize = "loge",
+            imu = NULL, isize = NULL, probs.y = 0.75,
             nsimEIM = 100, cutoff = 0.995,
             Maxiter = 5000, deviance.arg = FALSE, imethod = 1,
             parallel = FALSE, shrinkage.init = 0.95, zero = -2)
-polya(lprob = "logit", lsize = "loge", eprob = list(), esize = list(),
-      iprob = NULL, isize = NULL, quantile.probs = 0.75, nsimEIM = 100,
+polya(lprob = "logit", lsize = "loge",
+      iprob = NULL, isize = NULL, probs.y = 0.75, nsimEIM = 100,
       deviance.arg = FALSE, imethod = 1, shrinkage.init = 0.95, zero = -2)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -32,10 +32,6 @@ polya(lprob = "logit", lsize = "loge", eprob = list(), esize = list(),
   \code{\link{nloge}} and
   \code{\link{reciprocal}}.
 
-  }
-  \item{emu, esize, eprob}{
-  List. Extra argument for each of the links.
-  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{imu, isize, iprob}{
@@ -48,11 +44,13 @@ polya(lprob = "logit", lsize = "loge", eprob = list(), esize = list(),
   The last argument is ignored if used within \code{\link{cqo}}; see
   the \code{iKvector} argument of \code{\link{qrrvglm.control}} instead.
 
+
   }
-  \item{quantile.probs}{
+  \item{probs.y}{
   Passed into the \code{probs} argument
   of \code{\link[stats:quantile]{quantile}}
   when \code{imethod = 3} to obtain an initial value for the mean.
+
 
   }
 
@@ -62,6 +60,7 @@ polya(lprob = "logit", lsize = "loge", eprob = list(), esize = list(),
   \emph{expected information matrix} (EIM) corresponding to \eqn{k}.
   See \code{\link{CommonVGAMffArguments}} for more information
   and the note below.
+
 
   }
   \item{cutoff}{
@@ -76,6 +75,7 @@ polya(lprob = "logit", lsize = "loge", eprob = list(), esize = list(),
   It is like specifying \code{p} in an imaginary function
   \code{qnegbin(p)}.
 
+
   }
   \item{Maxiter}{
   Used in the finite series approximation.
@@ -83,6 +83,7 @@ polya(lprob = "logit", lsize = "loge", eprob = list(), esize = list(),
   the second diagonal element of the EIM.
   In theory, the value involves an infinite series.
   If this argument is too small then the value may be inaccurate.
+
 
   }
   \item{deviance.arg}{
@@ -94,6 +95,7 @@ polya(lprob = "logit", lsize = "loge", eprob = list(), esize = list(),
   IRLS algorithm. It should be set \code{TRUE} only when
   used with \code{\link{cqo}} under the fast algorithm.
 
+
   }
   \item{imethod}{
   An integer with value \code{1} or \code{2} or \code{3} which
@@ -101,6 +103,7 @@ polya(lprob = "logit", lsize = "loge", eprob = list(), esize = list(),
   If failure to converge occurs try another value
   and/or else specify a value for \code{shrinkage.init}
   and/or else specify a value for \code{isize}.
+
 
   }
   \item{parallel}{
@@ -112,6 +115,7 @@ polya(lprob = "logit", lsize = "loge", eprob = list(), esize = list(),
   You should set \code{zero = NULL} too if \code{parallel = TRUE} to
   avoid a conflict.
 
+
   }
   \item{shrinkage.init}{
   How much shrinkage is used when initializing \eqn{\mu}{mu}.
@@ -120,6 +124,7 @@ polya(lprob = "logit", lsize = "loge", eprob = list(), esize = list(),
   and a value of 1 means the median or mean is used.
   This argument is used in conjunction with \code{imethod}.
   If convergence failure occurs try setting this argument to 1.
+
 
   }
   \item{zero}{
@@ -133,6 +138,7 @@ polya(lprob = "logit", lsize = "loge", eprob = list(), esize = list(),
   means that the value is recycled, so setting \eqn{-2} means all \eqn{k}
   are intercept-only.
   See \code{\link{CommonVGAMffArguments}} for more information.
+
 
   }
 
@@ -234,6 +240,7 @@ polya(lprob = "logit", lsize = "loge", eprob = list(), esize = list(),
   The object is used by modelling functions such as \code{\link{vglm}},
   \code{\link{rrvglm}}
   and \code{\link{vgam}}.
+
 
 }
 \references{
@@ -403,13 +410,13 @@ coef(fit1, matrix = TRUE)
 
 # Example 3: large counts so definitely use the nsimEIM argument
 ndata <- transform(ndata, y3 = rnbinom(nn, mu = exp(12+x2), size = exp(1)))
-with(ndata, range(y3))  # Large counts
+with(ndata, range(y3)) # Large counts
 fit2 <- vglm(y3 ~ x2, negbinomial(nsimEIM = 100), ndata, trace = TRUE)
 coef(fit2, matrix = TRUE)
 
 # Example 4: a NB-1 to estimate a negative binomial with Var(Y) = phi0 * mu
-nn <- 1000        # Number of observations
-phi0 <- 10        # Specify this; should be greater than unity
+nn <- 1000 # Number of observations
+phi0 <- 10 # Specify this; should be greater than unity
 delta0 <- 1 / (phi0 - 1)
 mydata <- data.frame(x2 = runif(nn), x3 = runif(nn))
 mydata <- transform(mydata, mu = exp(2 + 3 * x2 + 0 * x3))
@@ -421,9 +428,10 @@ nb1 <- vglm(y3 ~ x2 + x3, negbinomial(parallel = TRUE, zero = NULL),
             mydata, trace = TRUE)
 # Extracting out some quantities:
 cnb1 <- coef(nb1, matrix = TRUE)
-mydiff <- (cnb1["(Intercept)", "log(size)"] - cnb1["(Intercept)", "log(mu)"])
+mydiff <- (cnb1["(Intercept)", "log(size)"] -
+           cnb1["(Intercept)", "log(mu)"])
 delta0.hat <- exp(mydiff)
-(phi.hat <- 1 + 1 / delta0.hat)  # MLE of phi
+(phi.hat <- 1 + 1 / delta0.hat) # MLE of phi
 summary(nb1)
 # Obtain a 95 percent confidence interval for phi0:
 myvec <- rbind(-1, 1, 0, 0)

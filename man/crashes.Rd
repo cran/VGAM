@@ -16,7 +16,7 @@
   bicycles  and pedestrians.  There are some alcohol-related
   data too.
 
-   }
+}
 \usage{
 data(crashi)
 data(crashf)
@@ -33,7 +33,7 @@ data(alclevels)
 
   \describe{
    
-    \item{Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday}{
+    \item{Mon, Tue, Wed, Thu, Fri, Sat, Sun}{
     Day of the week.
 
 
@@ -89,7 +89,7 @@ data(alclevels)
 }
 \seealso{
   \code{\link{rrvglm}},
-  \code{\link{rcam}},
+  \code{\link{rcim}},
   \code{\link{grc}}.
 
 }

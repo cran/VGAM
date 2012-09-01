@@ -8,12 +8,9 @@
 }
 \usage{
 micmen(rpar = 0.001, divisor = 10, init1 = NULL, init2 = NULL,
-       imethod = 1, oim = TRUE,
-       link1 = "identity", link2 = "identity",
-       firstDeriv = c("nsimEIM", "rpar"),
-       earg1 = list(), earg2 = list(), prob.x = c(0.15, 0.85),
-       nsimEIM = 500,
-       dispersion = 0, zero = NULL)
+       imethod = 1, oim = TRUE,    link1 = "identity", link2 = "identity",
+       firstDeriv = c("nsimEIM", "rpar"), probs.x = c(0.15, 0.85),
+       nsimEIM = 500, dispersion = 0, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -40,11 +37,6 @@ micmen(rpar = 0.001, divisor = 10, init1 = NULL, init2 = NULL,
   See \code{\link{Links}} for more choices.
 
   }
-  \item{earg1, earg2}{
-  List. Extra argument for each of the links.
-  See \code{earg} in \code{\link{Links}} for general information.
-
-  }
   \item{dispersion}{
   Numerical. Dispersion parameter.
 
@@ -55,7 +47,7 @@ micmen(rpar = 0.001, divisor = 10, init1 = NULL, init2 = NULL,
   The first is the default.
 
   }
-  \item{imethod, prob.x}{
+  \item{imethod, probs.x}{
   See \code{\link{CommonVGAMffArguments}} for more information.
 
   }
@@ -95,6 +87,7 @@ micmen(rpar = 0.001, divisor = 10, init1 = NULL, init2 = NULL,
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}},
   and \code{\link{vgam}}.
+
 
 }
 \references{
@@ -154,7 +147,7 @@ micmen(rpar = 0.001, divisor = 10, init1 = NULL, init2 = NULL,
 
 }
 \examples{
-fit = vglm(velocity ~ 1, micmen, enzyme, trace = TRUE, crit = "coef",
+fit <- vglm(velocity ~ 1, micmen, enzyme, trace = TRUE, crit = "coef",
            form2 = ~ conc - 1)
 summary(fit)
 
@@ -164,8 +157,8 @@ summary(fit)
 points(fitted(fit) ~ conc, enzyme, col = "red", pch = "+", cex = 1.5)
 
 # This predicts the response at a finer grid:
-newenzyme = data.frame(conc = seq(0, max(with(enzyme, conc)), len = 200))
-fit@extra$Xm2 = newenzyme$conc   # This assignment is needed for prediction
+newenzyme <- data.frame(conc = seq(0, max(with(enzyme, conc)), len = 200))
+fit@extra$Xm2 <- newenzyme$conc # This assignment is needed for prediction
 lines(predict(fit, newenzyme, "response") ~ conc, newenzyme, col = "red") }
 }
 \keyword{models}

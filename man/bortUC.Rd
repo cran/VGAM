@@ -12,10 +12,10 @@
 
 }
 \usage{
-dbort(x, Qsize=1, a=0.5, log=FALSE)
-%pbort(q, Qsize=1, a=0.5)
-%qbort(p, Qsize=1, a=0.5)
-rbort(n, Qsize=1, a=0.5)
+dbort(x, Qsize = 1, a = 0.5, log = FALSE)
+%pbort(q, Qsize = 1, a = 0.5)
+%qbort(p, Qsize = 1, a = 0.5)
+rbort(n, Qsize = 1, a = 0.5)
 }
 \arguments{
   \item{x}{vector of quantiles.}

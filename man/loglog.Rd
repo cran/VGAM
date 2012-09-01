@@ -8,7 +8,7 @@
 
 }
 \usage{
-loglog(theta, earg = list(), inverse = FALSE, deriv = 0,
+loglog(theta, bvalue = NULL, inverse = FALSE, deriv = 0,
        short = TRUE, tag = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -18,32 +18,17 @@ loglog(theta, earg = list(), inverse = FALSE, deriv = 0,
   See below for further details.
 
   }
-  \item{earg}{
-  Optional list. Extra argument for passing in additional information.
+  \item{bvalue}{
   Values of \code{theta} which are less than or equal to 1 can be
-  replaced by the \code{bvalue} component of the list \code{earg}
+  replaced by \code{bvalue}
   before computing the link function value.
   The component name \code{bvalue} stands for ``boundary value''.
-  See \code{\link{Links}} for general information about \code{earg}.
+  See \code{\link{Links}} for more information.
 
   }
-  \item{inverse}{
-  Logical. If \code{TRUE} the inverse function is computed.
+  \item{inverse, deriv, short, tag}{
+  Details at \code{\link{Links}}.
 
-  }
-  \item{deriv}{
-  Order of the derivative. Integer with value 0, 1 or 2.
-
-  }
-  \item{short}{
-  Used for labelling the \code{blurb} slot of a
-  \code{\link{vglmff-class}} object.
-
-  }
-  \item{tag}{
-  Used for labelling the linear/additive predictor in the
-  \code{initialize} slot of a \code{\link{vglmff-class}} object.
-  Contains a little more information if \code{TRUE}.
 
   }
 }
@@ -53,8 +38,7 @@ loglog(theta, earg = list(), inverse = FALSE, deriv = 0,
   Numerical values of \code{theta} close to 1 or out of range
   result in
   \code{Inf}, \code{-Inf}, \code{NA} or \code{NaN}.
-  The arguments \code{short} and \code{tag} are used only if
-  \code{theta} is character.
+
 
 }
 \value{
@@ -84,7 +68,7 @@ loglog(theta, earg = list(), inverse = FALSE, deriv = 0,
 
 \note{
   Numerical instability may occur when \code{theta} is
-  close to 1 unless \code{earg} is used.
+  close to 1 unless \code{bvalue} is used.
 
 
 }
@@ -94,13 +78,14 @@ loglog(theta, earg = list(), inverse = FALSE, deriv = 0,
     \code{\link{loge}},
     \code{\link{logoff}}.
 
+
 }
 \examples{
-x = seq(0.8, 1.5, by=0.1)
-loglog(x)  # Has NAs
-loglog(x, earg = list(bvalue = 1.0 + .Machine$double.eps))  # Has no NAs
+x <- seq(0.8, 1.5, by = 0.1)
+loglog(x) # Has NAs
+loglog(x, bvalue = 1.0 + .Machine$double.eps) # Has no NAs
 
-x = seq(1.01, 10, len = 100)
+x <- seq(1.01, 10, len = 100)
 loglog(x)
 max(abs(loglog(loglog(x), inverse = TRUE) - x)) # Should be 0
 }

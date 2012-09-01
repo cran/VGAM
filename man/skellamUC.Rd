@@ -13,7 +13,7 @@
 
 }
 \usage{
-dskellam(x, mu1, mu2, log=FALSE)
+dskellam(x, mu1, mu2, log = FALSE)
 %pskellam(q, mu1, mu2)
 %qskellam(p, mu1, mu2)
 rskellam(n, mu1, mu2)
@@ -39,26 +39,26 @@ rskellam(n, mu1, mu2)
   for estimating the parameters,
   for the formula of the probability density function and other details.
 
+
 }
 \section{Warning }{
   Numerical problems may occur for data if \eqn{\mu_1}{mu1} and/or
   \eqn{\mu_2}{mu2} are large.
   The normal approximation for this case has not been implemented yet.
 
+
 }
 \seealso{
   \code{\link{skellam}},
   \code{\link[stats:Poisson]{dpois}}.
 
+
 }
 \examples{
-\dontrun{
-mu1 = 1; mu2 = 2
-x = (-7):7
-plot(x, dskellam(x, mu1, mu2), type="h", las=1, col="blue",
-     main=paste("Density of Skellam distribution with mu1=", mu1,
-                " and mu2=", mu2, sep=""))
-}
+\dontrun{ mu1 <- 1; mu2 <- 2; x <- (-7):7
+plot(x, dskellam(x, mu1, mu2), type = "h", las = 1, col = "blue",
+     main = paste("Density of Skellam distribution with mu1 = ", mu1,
+                " and mu2 = ", mu2, sep = "")) }
 }
 \keyword{distribution}
 

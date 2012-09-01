@@ -60,10 +60,10 @@ moffset(mat, roffset = 0, coffset = 0, postfix = "")
   considering a daily effect.
 
 
-  This is a data preprocessing function for \code{\link{rcam}}
-  and \code{\link{plotrcam0}}.  The differences between
-  \code{\link{Rcam}} and \code{\link{moffset}} is that
-  \code{\link{Rcam}} only reorders the level of the rows and columns
+  This is a data preprocessing function for \code{\link{rcim}}
+  and \code{\link{plotrcim0}}.  The differences between
+  \code{\link{Rcim}} and \code{\link{moffset}} is that
+  \code{\link{Rcim}} only reorders the level of the rows and columns
   so that the data is shifted but not moved.
   That is, a value in one row stays in that row,
   and ditto for column. 
@@ -95,23 +95,23 @@ moffset(mat, roffset = 0, coffset = 0, postfix = "")
 
 }
 \seealso{
-  \code{\link{Rcam}}, 
-  \code{\link{rcam}}, 
-  \code{\link{plotrcam0}},
+  \code{\link{Rcim}}, 
+  \code{\link{rcim}}, 
+  \code{\link{plotrcim0}},
   \code{\link{alcoff}},
   \code{\link{crashi}}.
 
 }
 \examples{
 moffset(alcoff, 3, 2, "*")  # Some day's data is moved to previous day.
-Rcam(alcoff, 3 + 1, 2 + 1)  # Data does not move as much.
+Rcim(alcoff, 3 + 1, 2 + 1)  # Data does not move as much.
 alcoff  # Original data
-moffset(alcoff, 3, 2, "*") - Rcam(alcoff, 3+1, 2+1) # Note the differences
+moffset(alcoff, 3, 2, "*") - Rcim(alcoff, 3+1, 2+1) # Note the differences
 
 # An 'effective day' data set:
 alcoff.e <- moffset(alcoff, roffset = "6", postfix = "*")
-fit.o <- rcam(alcoff)    # default baselines are first row and col
-fit.e <- rcam(alcoff.e)  # default baselines are first row and col 
+fit.o <- rcim(alcoff)    # default baselines are first row and col
+fit.e <- rcim(alcoff.e)  # default baselines are first row and col 
 
 \dontrun{ par(mfrow = c(2, 2), mar = c(9,4,2,1))
 plot(fit.o, rsub = "Not very interpretable", csub = "Not very interpretable")
@@ -124,8 +124,8 @@ moffset(alcoff, 1, 1, "*")
 moffset(alcoff, 2, 3, "*")
 moffset(alcoff, 1, 0, "*")
 moffset(alcoff, 0, 1, "*")
-moffset(alcoff, "6", "Monday", "*")  # This one is good
+moffset(alcoff, "6", "Mon", "*")  # This one is good
 
 # Customise row and column baselines
-fit2 <- rcam(Rcam(alcoff.e, rbaseline = "11", cbaseline = "Monday*"))
+fit2 <- rcim(Rcim(alcoff.e, rbaseline = "11", cbaseline = "Mon*"))
 }

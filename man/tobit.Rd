@@ -8,39 +8,40 @@
 }
 \usage{
 tobit(Lower = 0, Upper = Inf, lmu = "identity", lsd = "loge",
-      emu = list(), esd = list(), nsimEIM = 250,
-      imu = NULL, isd = NULL, 
+      nsimEIM = 250, imu = NULL, isd = NULL, 
       type.fitted = c("uncensored", "censored", "mean.obs"),
       imethod = 1, zero = -2)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{Lower}{
-  Numeric of length 1, it is the value \eqn{L} described below.
+  Numeric. It is the value \eqn{L} described below.
   Any value of the linear model 
   \eqn{x_i^T \beta}{x_i^T beta} that
   is less than this lowerbound is assigned this value.
   Hence this should be the smallest possible value in the response
   variable.
+  May be a vector (see below for more information).
 
   }
   \item{Upper}{
-  Numeric of length 1, it is the value \eqn{U} described below. 
+  Numeric. It is the value \eqn{U} described below. 
   Any value of the linear model 
   \eqn{x_i^T \beta}{x_i^T beta} that
   is greater than this upperbound is assigned this value.
   Hence this should be the largest possible value in the response
   variable.
+  May be a vector (see below for more information).
 
   }
-  \item{lmu, lsd, emu, esd}{
-  Parameter link functions and extra arguments for the mean and
-  standard deviation parameters.
+  \item{lmu, lsd}{
+  Parameter link functions for the mean and standard deviation parameters.
   See \code{\link{Links}} for more choices.
   The standard deviation is a positive quantity, therefore a log link 
   is its default.
 
   }
+
   \item{imu, isd}{
   See \code{\link{CommonVGAMffArguments}} for information.
 
@@ -135,8 +136,15 @@ tobit(Lower = 0, Upper = Inf, lmu = "identity", lsd = "loge",
 
 \author{ Thomas W. Yee }
 \note{
-  The response can be a matrix. Then \code{Lower} and \code{Upper}
-  are recycled to the number of columns.
+  The response can be a matrix.
+  If so, then \code{Lower} and \code{Upper}
+  are recycled into a matrix with the number of columns equal
+  to the number of responses,
+  and the recycling is done row-wise (\code{byrow = TRUE}).
+  For example, these are returned in \code{fit4@misc$Lower} and
+  \code{fit4@misc$Upper} below.
+
+
   If there is no censoring then
   \code{\link{normal1}} is recommended instead. Any value of the
   response less than \code{Lower} or greater than \code{Upper} will
@@ -162,31 +170,59 @@ tobit(Lower = 0, Upper = Inf, lmu = "identity", lsd = "loge",
 }
 \examples{
 # Here, fit1 is a standard Tobit model and fit2 is a nonstandard Tobit model
-Lower = 1; Upper = 4; set.seed(1)  # For the nonstandard Tobit model
-tdata = data.frame(x2 = seq(-1, 1, len = (nn <- 100)))
-meanfun1 = function(x) 0 + 2*x
-meanfun2 = function(x) 2 + 2*x
-tdata = transform(tdata,
-  y1 = rtobit(nn, mean = meanfun1(x2)),  # Standard Tobit model 
-  y2 = rtobit(nn, mean = meanfun2(x2), Lower = Lower, Upper = Upper))
+tdata <- data.frame(x2 = seq(-1, 1, length = (nn <- 100)))
+set.seed(1)
+Lower <- 1; Upper = 4 # For the nonstandard Tobit model
+tdata <- transform(tdata,
+  Lower.vec = rnorm(nn, Lower, 0.5),
+  Upper.vec = rnorm(nn, Upper, 0.5))
+meanfun1 <- function(x) 0 + 2*x
+meanfun2 <- function(x) 2 + 2*x
+meanfun3 <- function(x) 2 + 2*x
+meanfun4 <- function(x) 3 + 2*x
+tdata <- transform(tdata,
+  y1 = rtobit(nn, mean = meanfun1(x2)), # Standard Tobit model 
+  y2 = rtobit(nn, mean = meanfun2(x2), Lower = Lower, Upper = Upper),
+  y3 = rtobit(nn, mean = meanfun3(x2), Lower = Lower.vec, Upper = Upper.vec),
+  y4 = rtobit(nn, mean = meanfun3(x2), Lower = Lower.vec, Upper = Upper.vec))
 with(tdata, table(y1 == 0)) # How many censored values?
 with(tdata, table(y2 == Lower | y2 == Upper)) # How many censored values?
 with(tdata, table(attr(y2, "cenL")))
 with(tdata, table(attr(y2, "cenU")))
 
-fit1 = vglm(y1 ~ x2, tobit, tdata, trace = TRUE,
-            crit = "coeff")  # crit = "coeff" is recommended
+fit1 <- vglm(y1 ~ x2, tobit, tdata, trace = TRUE,
+            crit = "coeff") # crit = "coeff" is recommended
 coef(fit1, matrix = TRUE)
 summary(fit1)
 
-fit2 = vglm(y2 ~ x2, tobit(Lower = Lower, Upper = Upper, type.f = "cens"),
+fit2 <- vglm(y2 ~ x2, tobit(Lower = Lower, Upper = Upper, type.f = "cens"),
             tdata, crit = "coeff", trace = TRUE) # ditto
 table(fit2@extra$censoredL)
 table(fit2@extra$censoredU)
 coef(fit2, matrix = TRUE)
 
+fit3 <- vglm(y3 ~ x2,
+            tobit(Lower = with(tdata, Lower.vec),
+                  Upper = with(tdata, Upper.vec), type.f = "cens"),
+            tdata, crit = "coeff", trace = TRUE) # ditto
+table(fit3@extra$censoredL)
+table(fit3@extra$censoredU)
+coef(fit3, matrix = TRUE)
+
+# fit4 is fit3 but with type.fitted = "uncen".
+fit4 <- vglm(cbind(y3, y4) ~ x2,
+            tobit(Lower = rep(with(tdata, Lower.vec), each = 2),
+                  Upper = rep(with(tdata, Upper.vec), each = 2)),
+            tdata, crit = "coeff", trace = TRUE) # ditto
+head(fit4@extra$censoredL) # A matrix
+head(fit4@extra$censoredU) # A matrix
+head(fit4@misc$Lower)      # A matrix
+head(fit4@misc$Upper)      # A matrix
+coef(fit4, matrix = TRUE)
+
 \dontrun{ # Plot the results
-par(mfrow = c(2, 1))
+par(mfrow = c(2, 2))
+# Plot fit1
 plot(y1 ~ x2, tdata, las = 1, main = "Standard Tobit model",
      col = as.numeric(attr(y1, "cenL")) + 3,
      pch = as.numeric(attr(y1, "cenL")) + 1)
@@ -199,6 +235,7 @@ lines(fitted(fit1) ~ x2, tdata, col = "orange", lwd = 2, lty = 2)
 lines(fitted(lm(y1 ~ x2, tdata)) ~ x2, tdata, col = "black",
       lty = 2, lwd = 2) # This is simplest but wrong!
 
+# Plot fit2
 plot(y2 ~ x2, tdata, las = 1, main = "Tobit model",
      col = as.numeric(attr(y2, "cenL")) + 3 +
            as.numeric(attr(y2, "cenU")),
@@ -211,6 +248,38 @@ legend(-1.0, 3.5, c("Truth", "Estimate", "Naive"),
 lines(meanfun2(x2) ~ x2, tdata, col = "purple", lwd = 2)
 lines(fitted(fit2) ~ x2, tdata, col = "orange", lwd = 2, lty = 2)
 lines(fitted(lm(y2 ~ x2, tdata)) ~ x2, tdata, col = "black",
+      lty = 2, lwd = 2) # This is simplest but wrong!
+
+# Plot fit3
+plot(y3 ~ x2, tdata, las = 1,
+     main = "Tobit model with nonconstant censor levels",
+     col = as.numeric(attr(y3, "cenL")) + 3 +
+           as.numeric(attr(y3, "cenU")),
+     pch = as.numeric(attr(y3, "cenL")) + 1 +
+           as.numeric(attr(y3, "cenU")))
+legend(x = "topleft", leg = c("censored", "uncensored"),
+       pch = c(2, 1), col = c("blue", "green"))
+legend(-1.0, 3.5, c("Truth", "Estimate", "Naive"),
+       col = c("purple", "orange", "black"), lwd = 2, lty = c(1, 2, 2))
+lines(meanfun3(x2) ~ x2, tdata, col = "purple", lwd = 2)
+lines(fitted(fit3) ~ x2, tdata, col = "orange", lwd = 2, lty = 2)
+lines(fitted(lm(y3 ~ x2, tdata)) ~ x2, tdata, col = "black",
+      lty = 2, lwd = 2) # This is simplest but wrong!
+
+# Plot fit4
+plot(y3 ~ x2, tdata, las = 1,
+     main = "Tobit model with nonconstant censor levels",
+     col = as.numeric(attr(y3, "cenL")) + 3 +
+           as.numeric(attr(y3, "cenU")),
+     pch = as.numeric(attr(y3, "cenL")) + 1 +
+           as.numeric(attr(y3, "cenU")))
+legend(x = "topleft", leg = c("censored", "uncensored"),
+       pch = c(2, 1), col = c("blue", "green"))
+legend(-1.0, 3.5, c("Truth", "Estimate", "Naive"),
+       col = c("purple", "orange", "black"), lwd = 2, lty = c(1, 2, 2))
+lines(meanfun3(x2) ~ x2, tdata, col = "purple", lwd = 2)
+lines(fitted(fit4)[, 1] ~ x2, tdata, col = "orange", lwd = 2, lty = 2)
+lines(fitted(lm(y3 ~ x2, tdata)) ~ x2, tdata, col = "black",
       lty = 2, lwd = 2) # This is simplest but wrong!
 }
 }

@@ -9,9 +9,9 @@
 
 }
 \usage{
-loge(theta, earg = list(), inverse = FALSE, deriv = 0,
+loge(theta, bvalue = NULL, inverse = FALSE, deriv = 0,
      short = TRUE, tag = FALSE)
-nloge(theta, earg = list(), inverse = FALSE, deriv = 0,
+nloge(theta, bvalue = NULL, inverse = FALSE, deriv = 0,
       short = TRUE, tag = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -22,30 +22,18 @@ nloge(theta, earg = list(), inverse = FALSE, deriv = 0,
 
 
   }
-  \item{earg}{
-  Optional list. Extra argument for passing in additional information.
-  Values of \code{theta} which are less than or equal to 0 can be
-  replaced by the \code{bvalue} component of the list \code{earg}
-  before computing the link function value.
-  The component name \code{bvalue} stands for ``boundary value''.
-  See \code{\link{Links}} for general information about \code{earg}.
+  \item{bvalue}{
+  See \code{\link{Links}}.
 
 
   }
-  \item{inverse}{ Logical. If \code{TRUE} the inverse function is computed. }
-  \item{deriv}{ Order of the derivative. Integer with value 0, 1 or 2. }
-  \item{short}{
-  Used for labelling the \code{blurb} slot of a
-  \code{\link{vglmff-class}} object.
 
-  }
-  \item{tag}{
-  Used for labelling the linear/additive predictor in the
-  \code{initialize} slot of a \code{\link{vglmff-class}} object.
-  Contains a little more information if \code{TRUE}.
+  \item{inverse, deriv, short, tag}{
+  Details at \code{\link{Links}}.
 
 
   }
+
 }
 \details{
   The log link function is very commonly used for parameters that
@@ -53,8 +41,7 @@ nloge(theta, earg = list(), inverse = FALSE, deriv = 0,
   Numerical values of \code{theta} close to 0 or out of range
   result in
   \code{Inf}, \code{-Inf}, \code{NA} or \code{NaN}.
-  The arguments \code{short} and \code{tag} are used only if
-  \code{theta} is character.
+
 
 
   The function \code{loge} computes
@@ -92,7 +79,7 @@ nloge(theta, earg = list(), inverse = FALSE, deriv = 0,
 
 
   Numerical instability may occur when \code{theta} is close to 0 unless
-  \code{earg} is used.
+  \code{bvalue} is used.
 
 
 }
@@ -111,9 +98,9 @@ nloge(theta, earg = list(), inverse = FALSE, deriv = 0,
 }
 \examples{
 \dontrun{ loge(seq(-0.2, 0.5, by = 0.1))
- loge(seq(-0.2, 0.5, by = 0.1), earg = list(bvalue = .Machine$double.xmin))
+ loge(seq(-0.2, 0.5, by = 0.1), bvalue = .Machine$double.xmin)
 nloge(seq(-0.2, 0.5, by = 0.1))
-nloge(seq(-0.2, 0.5, by = 0.1), earg = list(bvalue = .Machine$double.xmin)) }
+nloge(seq(-0.2, 0.5, by = 0.1), bvalue = .Machine$double.xmin) }
 }
 \keyword{math}
 \keyword{models}

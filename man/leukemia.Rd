@@ -21,9 +21,13 @@ data(leukemia)
   \emph{Survival Analysis}.
   John Wiley & Sons.
   ISBN: 0-471-25218-2.
+
+
 }
 \note{
   This data set has been transferred from \pkg{survival} and renamed
   from \code{aml} to \code{leukemia}.
+
+
 }
 \keyword{datasets}

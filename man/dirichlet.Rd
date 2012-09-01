@@ -7,7 +7,7 @@
 
 }
 \usage{
-dirichlet(link = "loge", earg=list(), parallel = FALSE, zero=NULL)
+dirichlet(link = "loge", parallel = FALSE, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -18,14 +18,11 @@ dirichlet(link = "loge", earg=list(), parallel = FALSE, zero=NULL)
   See \code{\link{Links}} for more choices.
   The default gives \eqn{\eta_j=\log(\alpha_j)}{eta_j=log(alpha_j)}.
 
-  }
-  \item{earg}{
-  List. Extra argument for the link.
-  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{parallel, zero}{
   See \code{\link{CommonVGAMffArguments}} for more information.
+
 
   }
 }
@@ -62,6 +59,7 @@ dirichlet(link = "loge", earg=list(), parallel = FALSE, zero=NULL)
   alpha_{+}}, which are returned as the fitted values.
   For this distribution Fisher scoring corresponds to Newton-Raphson.
 
+
   The Dirichlet distribution can be motivated by considering the random variables
   \eqn{(G_1,\ldots,G_{M})^T}{(G_1,\ldots,G_M)^T} which are each independent
   and identically distributed as a gamma distribution with density 
@@ -70,6 +68,7 @@ dirichlet(link = "loge", earg=list(), parallel = FALSE, zero=NULL)
   Then the Dirichlet distribution arises when
   \eqn{Y_j=G_j / (G_1 + \cdots + G_M)}{Y_j = G_j / (G_1 + ... + G_M)}.
 
+
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
@@ -77,8 +76,10 @@ dirichlet(link = "loge", earg=list(), parallel = FALSE, zero=NULL)
   \code{\link{rrvglm}}
   and \code{\link{vgam}}.
 
+
   When fitted, the \code{fitted.values} slot of the object contains the
   \eqn{M}-column matrix of means. 
+
 
 }
 \references{
@@ -86,9 +87,11 @@ Lange, K. (2002)
 \emph{Mathematical and Statistical Methods for Genetic Analysis},
 2nd ed. New York: Springer-Verlag.
 
+
 Evans, M., Hastings, N. and Peacock, B. (2000)
 \emph{Statistical Distributions},
 New York: Wiley-Interscience, Third edition.
+
 
 %Documentation accompanying the \pkg{VGAM} package at
 %\url{http://www.stat.auckland.ac.nz/~yee}
@@ -103,6 +106,7 @@ New York: Wiley-Interscience, Third edition.
   Another similar distribution to the Dirichlet is the
   Dirichlet-multinomial (see \code{\link{dirmultinomial}}).
 
+
 }
 
 \seealso{
@@ -111,12 +115,14 @@ New York: Wiley-Interscience, Third edition.
   \code{\link{multinomial}},
   \code{\link{simplex}}.
 
+
 }
 \examples{
-y = rdiric(n=1000, shape=exp(c(-1,1,0)))
-fit = vglm(y ~ 1, dirichlet, trace = TRUE, crit="c")
+ydata <- data.frame(rdiric(n = 1000, shape = exp(c(-1, 1, 0))))
+colnames(ydata) <- paste("y", 1:3, sep = "")
+fit <- vglm(cbind(y1, y2, y3)  ~ 1, dirichlet, ydata, trace = TRUE, crit = "coef")
 Coef(fit)
-coef(fit, matrix=TRUE)
+coef(fit, matrix = TRUE)
 head(fitted(fit))
 }
 \keyword{models}

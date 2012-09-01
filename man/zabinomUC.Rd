@@ -65,11 +65,11 @@ rzabinom(n, size, prob, pobs0 = 0)
 
 }
 \examples{
-size <- 10; prob = 0.15; pobs0 <- 0.05; x <- (-1):7
+size <- 10; prob <- 0.15; pobs0 <- 0.05; x <- (-1):7
 dzabinom(x, size = size, prob = prob, pobs0 = pobs0)
 table(rzabinom(100, size = size, prob = prob, pobs0 = pobs0))
 
-\dontrun{ x = 0:10
+\dontrun{ x <- 0:10
 barplot(rbind(dzabinom(x, size = size, prob = prob, pobs0 = pobs0),
                 dbinom(x, size = size, prob = prob)),
         beside = TRUE, col = c("blue", "orange"), cex.main = 0.7, las = 1,

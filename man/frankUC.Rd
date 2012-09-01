@@ -10,7 +10,7 @@
 
 }
 \usage{
-dfrank(x1, x2, alpha, log=FALSE)
+dfrank(x1, x2, alpha, log = FALSE)
 pfrank(q1, q2, alpha)
 rfrank(n, alpha)
 }
@@ -21,7 +21,7 @@ rfrank(n, alpha)
   \item{alpha}{the positive association parameter \eqn{\alpha}{alpha}.}
   \item{log}{
   Logical.
-  If \code{log=TRUE} then the logarithm of the density is returned.
+  If \code{log = TRUE} then the logarithm of the density is returned.
 
   }
 
@@ -54,20 +54,19 @@ Frank's family of bivariate distributions.
 }
 \examples{
 \dontrun{
-N = 100
-x = seq(-0.30, 1.30, len=N)
-alpha = 8
-ox = expand.grid(x, x)
-z = dfrank(ox[,1], ox[,2], alp=alpha)
+N <- 100; alpha <- 8
+x <- seq(-0.30, 1.30, len = N)
+ox <- expand.grid(x, x)
+z <- dfrank(ox[, 1], ox[, 2], alpha = alpha)
 contour(x, x, matrix(z, N, N))
-z = pfrank(ox[,1], ox[,2], alp=alpha)
+z <- pfrank(ox[, 1], ox[, 2], alpha = alpha)
 contour(x, x, matrix(z, N, N))
 
-alpha = exp(4)
-plot(r <- rfrank(n=3000, alpha=alpha))
-par(mfrow=c(1,2))
-hist(r[,1]) # Should be uniform
-hist(r[,2]) # Should be uniform
+alpha <- exp(4)
+plot(r <- rfrank(n = 3000, alpha = alpha))
+par(mfrow = c(1, 2))
+hist(r[, 1]) # Should be uniform
+hist(r[, 2]) # Should be uniform
 }
 }
 \keyword{distribution}

@@ -9,11 +9,13 @@
 
 
 
-is.Numeric <- function(x, allowable.length=Inf, integer.valued=FALSE, positive=FALSE)
+is.Numeric <- function(x, allowable.length = Inf,
+                       integer.valued = FALSE, positive = FALSE)
     if (all(is.numeric(x)) && all(is.finite(x)) &&
-    (if(is.finite(allowable.length)) length(x)==allowable.length else TRUE) &&
-    (if(integer.valued) all(x==round(x)) else TRUE) &&
-    (if(positive) all(x>0) else TRUE)) TRUE else FALSE
+    (if (is.finite(allowable.length))
+       length(x) == allowable.length else TRUE) &&
+    (if (integer.valued) all(x == round(x)) else TRUE) &&
+    (if (positive) all(x>0) else TRUE)) TRUE else FALSE
 
 
 VGAMenv <- new.env()
@@ -22,7 +24,8 @@ VGAMenv <- new.env()
 
 
 
-.onLoad <- function(lib, pkg) require(methods)  # 25/1/05
+.onLoad <- function(lib, pkg)
+  require(methods)  # 25/1/05
  
  
  
@@ -53,7 +56,7 @@ setClass("vglmff", representation(
       "deviance"     = "function",
       "fini"         = "expression",
       "first"        = "expression",
-      "infos"        = "function",  # Added 20101203
+      "infos"        = "function", # Added 20101203
       "initialize"   = "expression",
       "last"         = "expression",
       "linkfun"      = "function",
@@ -64,7 +67,7 @@ setClass("vglmff", representation(
       "summary.dispersion"  = "logical",
       "vfamily"      = "character",
       "deriv"        = "expression",
-      "weight"       = "expression"),  #  "call"
+      "weight"       = "expression"), #  "call"
 prototype = .VGAM.prototype.list)
 
 
@@ -318,17 +321,17 @@ new("vglm", "extra"=from@extra,
 
 
 
- setClass("rcam0", representation(not.needed = "numeric"),
+ setClass("rcim0", representation(not.needed = "numeric"),
           contains = "vglm")  # Added 20110506
- setClass("rcam", representation(not.needed = "numeric"),
+ setClass("rcim", representation(not.needed = "numeric"),
           contains = "rrvglm")
  setClass("grc",  representation(not.needed = "numeric"),
           contains = "rrvglm")
 
 
-setMethod("summary", "rcam",
+setMethod("summary", "rcim",
           function(object, ...)
-          summary.rcam(object, ...))
+          summary.rcim(object, ...))
 
 setMethod("summary", "grc",
           function(object, ...)
@@ -463,8 +466,8 @@ if (!isGeneric("residuals"))
 
 
 if (!isGeneric("weights"))
-  setGeneric("weights", function(object, ...) standardGeneric("weights"),
-             package = "VGAM")
+  setGeneric("weights", function(object, ...)
+  standardGeneric("weights"), package = "VGAM")
 
 
 

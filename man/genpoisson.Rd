@@ -6,10 +6,8 @@
   Estimation of the two parameters of a generalized Poisson distribution.
 }
 \usage{
-genpoisson(llambda = "elogit", ltheta = "loge",
-           elambda = if (llambda == "elogit") list(min = -1, max = 1)
-                     else list(),
-           etheta = list(), ilambda = NULL, itheta = NULL,
+genpoisson(llambda = elogit(min = -1, max = 1), ltheta = "loge",
+           ilambda = NULL, itheta = NULL,
            use.approx = TRUE, imethod = 1, zero = 1)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -21,11 +19,6 @@ genpoisson(llambda = "elogit", ltheta = "loge",
   \eqn{[-1,1]}; see below for more details.
   The \eqn{\theta} parameter is positive, therefore the default is the
   log link.
-
-  }
-  \item{elambda, etheta}{
-  List. Extra argument for each of the links.
-  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{ilambda, itheta}{
@@ -89,6 +82,7 @@ and the variance is \eqn{\theta / (1 - \lambda)^3}.
 
 }
 \references{
+
 Consul, P. C. and Famoye, F. (2006)
 \emph{Lagrangian Probability Distributions},
 Boston: Birkhauser.
@@ -111,15 +105,17 @@ New York: Marcel Dekker.
   Convergence problems may occur when \code{lambda} is very close
   to 0 or 1.
 
+
 }
 \seealso{
   \code{\link{poissonff}}.
 
+
 }
 \examples{
-gdata = data.frame(x2 = runif(nn <- 200))
-gdata = transform(gdata, y = rpois(nn, exp(2 - x2))) # Ordinary Poisson data
-fit  = vglm(y ~ x2, genpoisson(zero = 1), gdata, trace = TRUE)
+gdata <- data.frame(x2 = runif(nn <- 200))
+gdata <- transform(gdata, y = rpois(nn, exp(2 - x2))) # Ordinary Poisson data
+fit <- vglm(y ~ x2, genpoisson(zero = 1), gdata, trace = TRUE)
 coef(fit, matrix = TRUE)
 summary(fit)
 }

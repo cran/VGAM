@@ -7,10 +7,8 @@
   von Mises distribution by maximum likelihood estimation.
 }
 \usage{
-vonmises(llocation = "elogit", lscale = "loge",
-         elocation = if (llocation == "elogit") list(min = 0, max = 2 * pi) else
-         list(), escale = list(), ilocation = NULL,
-         iscale = NULL, imethod = 1, zero = NULL)
+vonmises(llocation = elogit(min = 0, max = 2 * pi), lscale = "loge",
+         ilocation = NULL, iscale = NULL, imethod = 1, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -19,11 +17,6 @@ vonmises(llocation = "elogit", lscale = "loge",
   and scale parameter \eqn{k}, respectively.
   See \code{\link{Links}} for more choices.
   For \eqn{k}, a log link is the default because the parameter is positive.
-
-  }
-  \item{elocation, escale}{
-  List. Extra argument for each of the link functions.
-  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{ilocation}{
@@ -84,6 +77,7 @@ vonmises(llocation = "elogit", lscale = "loge",
  and
  \eqn{\eta_2=\log(k)}{eta2=log(k)} for this family function.
 
+
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
@@ -91,8 +85,10 @@ vonmises(llocation = "elogit", lscale = "loge",
   \code{\link{rrvglm}}
   and \code{\link{vgam}}.
 
+
 }
 \references{ 
+
 Evans, M., Hastings, N. and Peacock, B. (2000)
 \emph{Statistical Distributions},
 New York: Wiley-Interscience, Third edition.
@@ -121,18 +117,20 @@ New York: Wiley-Interscience, Third edition.
   \code{\link[base]{Bessel}},
   \code{\link{cardioid}}.
 
+
   \pkg{CircStats} and \pkg{circular} currently have a lot more
   R functions for circular data than the \pkg{VGAM} package. 
 
+
 }
 \examples{
-vdata = data.frame(x2 = runif(nn <- 1000))
-vdata = transform(vdata, y = rnorm(nn, m = 2+x2, sd = exp(0.2))) # Bad data!!
-fit = vglm(y  ~ x2, vonmises(zero = 2), vdata, trace = TRUE)
+vdata <- data.frame(x2 = runif(nn <- 1000))
+vdata <- transform(vdata, y = rnorm(nn, m = 2+x2, sd = exp(0.2))) # Bad data!!
+fit <- vglm(y  ~ x2, vonmises(zero = 2), vdata, trace = TRUE)
 coef(fit, matrix = TRUE)
 Coef(fit)
-with(vdata, range(y))   # Original data
-range(depvar(fit))      # Processed data is in [0,2*pi)
+with(vdata, range(y)) # Original data
+range(depvar(fit))    # Processed data is in [0,2*pi)
 }
 \keyword{models}
 \keyword{regression}

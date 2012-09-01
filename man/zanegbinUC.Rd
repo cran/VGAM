@@ -68,7 +68,7 @@ munb <- 3; size <- 4; pobs0 <- 0.3; x <- (-1):7
 dzanegbin(x,    munb = munb, size = size, pobs0 = pobs0)
 table(rzanegbin(100, munb = munb, size = size, pobs0 = pobs0))
 
-\dontrun{ x = 0:10
+\dontrun{ x <- 0:10
 barplot(rbind(dzanegbin(x, munb = munb, size = size, pobs0 = pobs0),
                 dnbinom(x, mu   = munb, size = size)),
         beside = TRUE, col = c("blue","green"), cex.main = 0.7, las = 1,

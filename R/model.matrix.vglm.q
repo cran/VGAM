@@ -214,7 +214,10 @@
 
 
     x   = slot(object, "x")
-    Xm2 = slot(object, "Xm2")
+
+
+    Xm2 = if (any(slotNames(object) == "Xm2")) slot(object, "Xm2") else
+          numeric(0)
 
     if (!length(x)) {
         data = model.frame(object, xlev = object@xlevels, ...) 
@@ -255,7 +258,7 @@
 
 
     M = object@misc$M  
-    Blist = object@constraints # == constraints(object, type = "vlm")
+    Blist = object@constraints # == constraints(object, type = "lm")
     X_vlm <- lm2vlm.model.matrix(x = x, Blist = Blist,
                                  xij = object@control$xij, Xm2 = Xm2)
 
@@ -415,7 +418,7 @@ setMethod("depvar",  "qrrvglm", function(object, ...)
            depvar.vlm(object, ...))
 setMethod("depvar",  "cao", function(object, ...)
            depvar.vlm(object, ...))
-setMethod("depvar",  "rcam", function(object, ...)
+setMethod("depvar",  "rcim", function(object, ...)
            depvar.vlm(object, ...))
 
 
@@ -443,9 +446,8 @@ setMethod("npred",  "qrrvglm", function(object, ...)
            npred.vlm(object, ...))
 setMethod("npred",  "cao", function(object, ...)
            npred.vlm(object, ...))
-setMethod("npred",  "rcam", function(object, ...)
+setMethod("npred",  "rcim", function(object, ...)
            npred.vlm(object, ...))
-
 
 
 
@@ -523,8 +525,6 @@ hatvaluesvlm <- function(model,
 }
 
 
-
-
 if (!isGeneric("hatvalues"))
     setGeneric("hatvalues", function(model, ...)
       standardGeneric("hatvalues"), package = "VGAM")
@@ -540,7 +540,7 @@ setMethod("hatvalues",  "qrrvglm", function(model, ...)
            hatvaluesvlm(model, ...))
 setMethod("hatvalues",  "cao", function(model, ...)
            hatvaluesvlm(model, ...))
-setMethod("hatvalues",  "rcam", function(model, ...)
+setMethod("hatvalues",  "rcim", function(model, ...)
            hatvaluesvlm(model, ...))
 
 
@@ -614,7 +614,7 @@ setMethod("hatplot",  "qrrvglm", function(model, ...)
            hatplot.vlm(model, ...))
 setMethod("hatplot",  "cao", function(model, ...)
            hatplot.vlm(model, ...))
-setMethod("hatplot",  "rcam", function(model, ...)
+setMethod("hatplot",  "rcim", function(model, ...)
            hatplot.vlm(model, ...))
 
 
@@ -685,7 +685,7 @@ dfbetavlm <-
                     control = new.control,
                     criterion =  new.control$criterion, # "coefficients",
                     qr.arg = FALSE,
-                    constraints = constraints(model, type = "lm"),
+                    constraints = constraints(model, type = "term"),
                     extra = model@extra,
                     Terms = Terms.zz,
                     function.name = "vglm")
@@ -720,11 +720,48 @@ setMethod("dfbeta",  "qrrvglm", function(model, ...)
            dfbetavlm(model, ...))
 setMethod("dfbeta",  "cao", function(model, ...)
            dfbetavlm(model, ...))
-setMethod("dfbeta",  "rcam", function(model, ...)
+setMethod("dfbeta",  "rcim", function(model, ...)
            dfbetavlm(model, ...))
 
 
 
+
+
+hatvaluesbasic <- function(X_vlm,
+                           diagWm,
+                           M = 1) {
+
+
+
+  if (M  > 1)
+    stop("currently argument 'M' must be 1")
+
+  nn <- nrow(X_vlm)
+  ncol_X_vlm = ncol(X_vlm)
+
+  XtW = t(c(diagWm) * X_vlm)
+
+
+    UU <- sqrt(diagWm) # Only for M == 1
+    UU.X_vlm <- UU * X_vlm
+
+    qrSlot <- qr(UU.X_vlm)
+    Rmat <- qr.R(qrSlot)
+
+    rinv = diag(ncol_X_vlm)
+    rinv = backsolve(Rmat, rinv)
+
+
+    Diag.Hat <- if (FALSE) {
+      covun = rinv %*% t(rinv)
+      rhs.mat <- covun %*% XtW
+      colSums(t(X_vlm) * rhs.mat)
+    } else {
+      mymat <- X_vlm %*% rinv
+      rowSums(diagWm * mymat^2)
+    }
+    Diag.Hat
+}
 
 
 

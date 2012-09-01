@@ -52,7 +52,7 @@ qeunif <- function(p, min = 0, max = 1, Maxit_nr = 10, Tol_nr = 1.0e-6) {
 
 
 peunif <- function(q, min = 0, max = 1, log = FALSE) {
-  if (!is.logical(log.arg <- log))
+  if (!is.logical(log.arg <- log) || length(log) != 1)
     stop("bad input for argument 'log'")
   rm(log)
   if (any(min >= max))
@@ -75,7 +75,7 @@ peunif <- function(q, min = 0, max = 1, log = FALSE) {
 
 
 deunif <- function(x, min = 0, max = 1, log = FALSE) {
-  if (!is.logical(log.arg <- log))
+  if (!is.logical(log.arg <- log) || length(log) != 1)
     stop("bad input for argument 'log'")
   rm(log)
   if (any(min >= max))
@@ -145,7 +145,7 @@ qenorm <- function(p, mean = 0, sd = 1, Maxit_nr = 10,
 
 
 penorm <- function(q, mean = 0, sd = 1, log = FALSE) {
-  if (!is.logical(log.arg <- log))
+  if (!is.logical(log.arg <- log) || length(log) != 1)
     stop("bad input for argument 'log'")
   rm(log)
 
@@ -166,7 +166,7 @@ penorm <- function(q, mean = 0, sd = 1, log = FALSE) {
 
 
 denorm <- function(x, mean = 0, sd = 1, log = FALSE) {
-  if (!is.logical(log.arg <- log))
+  if (!is.logical(log.arg <- log) || length(log) != 1)
     stop("bad input for argument 'log'")
   rm(log)
 
@@ -238,7 +238,7 @@ qeexp <- function(p, rate = 1, Maxit_nr = 10, Tol_nr = 1.0e-6) {
 
 
 peexp <- function(q, rate = 1, log = FALSE) {
-  if (!is.logical(log.arg <- log))
+  if (!is.logical(log.arg <- log) || length(log) != 1)
     stop("bad input for argument 'log'")
   rm(log)
 
@@ -261,7 +261,7 @@ peexp <- function(q, rate = 1, log = FALSE) {
 
 
 deexp <- function(x, rate = 1, log = FALSE) {
-  if (!is.logical(log.arg <- log))
+  if (!is.logical(log.arg <- log) || length(log) != 1)
     stop("bad input for argument 'log'")
   rm(log)
   if (any(rate <= 0))
@@ -294,7 +294,7 @@ reexp <- function(n, rate = 1) {
 
 
 dkoenker <- function(x, location = 0, scale = 1, log = FALSE) {
-  if (!is.logical(log.arg <- log))
+  if (!is.logical(log.arg <- log) || length(log) != 1)
     stop("bad input for argument 'log'")
   rm(log)
 
@@ -311,7 +311,7 @@ dkoenker <- function(x, location = 0, scale = 1, log = FALSE) {
 
 
 pkoenker <- function(q, location = 0, scale = 1, log = FALSE) {
-  if (!is.logical(log.arg <- log))
+  if (!is.logical(log.arg <- log) || length(log) != 1)
     stop("bad input for argument 'log'")
   rm(log)
 
@@ -356,7 +356,6 @@ rkoenker <- function(n, location = 0, scale = 1) {
 
  koenker <- function(percentile = 50,
                      llocation = "identity", lscale = "loge",
-                     elocation = list(), escale = list(),
                      ilocation = NULL,   iscale = NULL,
                      imethod = 1,
                      zero = 2)
@@ -364,23 +363,23 @@ rkoenker <- function(n, location = 0, scale = 1) {
 
  
 
+  llocat <- as.list(substitute(llocation))
+  elocat <- link2list(llocat)
+  llocat <- attr(elocat, "function.name")
 
-  llocat = llocation
-  elocat = elocation
-  ilocat = ilocation
+  lscale <- as.list(substitute(lscale))
+  escale <- link2list(lscale)
+  lscale <- attr(escale, "function.name")
 
-  if (mode(llocat) != "character" && mode(llocat) != "name")
-    llocat <- as.character(substitute(llocat))
-  if (mode(lscale) != "character" && mode(lscale) != "name")
-    lscale <- as.character(substitute(lscale))
+  ilocat <- ilocation
+
+
   if (length(ilocat) &&
      (!is.Numeric(ilocat, allowable.length = 1, positive = TRUE)))
       stop("bad input for argument 'ilocation'")
   if (length(iscale) && !is.Numeric(iscale))
     stop("bad input for argument 'iscale'")
 
-  if (!is.list(elocat)) elocat = list()
-  if (!is.list(escale)) escale = list()
 
   if (!is.Numeric(percentile, positive = TRUE) ||
       any(percentile >= 100))
@@ -389,6 +388,7 @@ rkoenker <- function(n, location = 0, scale = 1) {
                   integer.valued = TRUE, positive = TRUE) ||
      imethod > 2)
       stop("'imethod' must be 1 or 2")
+
 
   new("vglmff",
   blurb = c("Koenker distribution\n\n",
@@ -401,14 +401,23 @@ rkoenker <- function(n, location = 0, scale = 1) {
     constraints <- cm.zero.vgam(constraints, x, .zero, M)
   }), list( .zero = zero ))),
   initialize = eval(substitute(expression({
-    if (ncol(y <- cbind(y)) != 1)
-      stop("the response must be a vector or one-column matrix")
+
+    temp5 <-
+    w.y.check(w = w, y = y,
+              ncol.w.max = 1,
+              ncol.y.max = 1,
+              out.wy = TRUE,
+              maximize = TRUE)
+    w <- temp5$w
+    y <- temp5$y
+
 
     predictors.names <- c(
         namesof("location", .llocat, earg = .elocat, tag = FALSE),
         namesof("scale",    .lscale, earg = .escale, tag = FALSE))
-    if (!length(etastart)) {
 
+
+    if (!length(etastart)) {
       locat.init <- if ( .imethod == 2) {
         weighted.mean(y, w)
       } else {
@@ -440,10 +449,13 @@ rkoenker <- function(n, location = 0, scale = 1) {
            .percentile = percentile ))),
   last = eval(substitute(expression({
     misc$link <-    c("location" = .llocat, "scale" = .lscale)
+
     misc$earg <- list("location" = .elocat, "scale" = .escale)
+
     misc$expected <- TRUE
     misc$percentile <- .percentile
     misc$imethod <- .imethod
+    misc$multipleResponses <- FALSE
 
       ncoly <- ncol(y)
       for(ii in 1:length( .percentile )) {
@@ -496,16 +508,6 @@ rkoenker <- function(n, location = 0, scale = 1) {
   }), list( .llocat = llocat, .lscale = lscale,
             .elocat = elocat, .escale = escale ))))
 }
-
-
-
-
-
-
-
-
-
-
 
 
 

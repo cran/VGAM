@@ -9,7 +9,6 @@
 }
 \usage{
 lino(lshape1 = "loge", lshape2 = "loge", llambda = "loge",
-     eshape1 = list(), eshape2 = list(), elambda = list(),
      ishape1 = NULL,   ishape2 = NULL,   ilambda = 1, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -24,11 +23,6 @@ lino(lshape1 = "loge", lshape2 = "loge", llambda = "loge",
   Parameter link function applied to the 
   parameter \eqn{\lambda}{lambda}.
   See \code{\link{Links}} for more choices.
-
-  }
-  \item{eshape1, eshape2, elambda}{
-  List. Extra argument for each of the links.
-  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{ishape1, ishape2, ilambda}{
@@ -120,17 +114,17 @@ lino(lshape1 = "loge", lshape2 = "loge", llambda = "loge",
 }
 
 \examples{
-ldat1 = data.frame(y = rbeta(n=1000, exp(0.5), exp(1))) # ~ standard beta
-fit = vglm(y ~ 1, lino, ldat1, trace=TRUE)
-coef(fit, mat=TRUE)
+ldata1 <- data.frame(y = rbeta(n = 1000, exp(0.5), exp(1))) # ~ standard beta
+fit <- vglm(y ~ 1, lino, ldata1, trace = TRUE)
+coef(fit, matrix = TRUE)
 Coef(fit)
 head(fitted(fit))
 summary(fit)
 
 # Nonstandard beta distribution
-ldat2 = data.frame(y = rlino(n=1000, shape1=2, shape2=3, lambda=exp(1)))
-fit = vglm(y~1, lino(lshape1=identity, lshape2=identity, ilamb=10), ldat2)
-coef(fit, mat=TRUE)
+ldata2 <- data.frame(y = rlino(n = 1000, shape1 = 2, shape2 = 3, lambda = exp(1)))
+fit <- vglm(y~1, lino(lshape1 = identity, lshape2 = identity, ilamb = 10), ldata2)
+coef(fit, matrix = TRUE)
 }
 \keyword{models}
 \keyword{regression}

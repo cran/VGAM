@@ -66,10 +66,13 @@ quasipoissonff(link = "loge", onedpar = FALSE,
   \code{\link{cqo}},
   and \code{\link{cao}}.
 
+
 }
 \references{
- McCullagh, P. and Nelder, J. A. (1989)
+  McCullagh, P. and Nelder, J. A. (1989)
   \emph{Generalized Linear Models}, 2nd ed. London: Chapman & Hall.
+
+
 }
 
 \author{ Thomas W. Yee }
@@ -94,6 +97,13 @@ quasipoissonff(link = "loge", onedpar = FALSE,
 
 }
 
+
+\section{Warning }{
+  See the warning in \code{\link{quasibinomialff}}.
+
+
+}
+
 \seealso{
     \code{\link{poissonff}},
     \code{\link{negbinomial}},
@@ -105,20 +115,19 @@ quasipoissonff(link = "loge", onedpar = FALSE,
     \code{\link{quasibinomialff}},
     \code{\link[stats]{quasipoisson}}.
 
+
 }
 \examples{
 quasipoissonff()
 
-\dontrun{
-n = 200; p = 5; S = 5
-mydata = rcqo(n, p, S, fam="poisson", EqualTol=FALSE)
-myform = attr(mydata, "formula")
-p1 = cqo(myform, fam=quasipoissonff, EqualTol=FALSE, data=mydata)
+\dontrun{n <- 200; p <- 5; S <- 5
+mydata <- rcqo(n, p, S, fam = "poisson", EqualTol = FALSE)
+myform <- attr(mydata, "formula")
+p1 <- cqo(myform, fam = quasipoissonff, EqualTol = FALSE, data = mydata)
 sort(p1@misc$deviance.Bestof) # A history of all the iterations
-lvplot(p1, y=TRUE, lcol=1:S, pch=1:S, pcol=1:S)
-summary(p1)  # The dispersion parameters are estimated
-}
-}
+lvplot(p1, y = TRUE, lcol = 1:S, pch = 1:S, pcol = 1:S)
+summary(p1) # The dispersion parameters are estimated
+}}
 \keyword{models}
 \keyword{regression}
 

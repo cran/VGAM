@@ -8,17 +8,29 @@
   inherits from a \emph{vector linear model} (VLM), e.g., a model of
   class \code{"vglm"}.
 
+
 }
 \usage{
 fittedvlm(object, matrix.arg = TRUE, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{object}{ a model object that inherits from a VLM.
-    }
-  \item{matrix.arg}{ Logical. Return the answer as a matrix?
-  If \code{FALSE} then it will be a vector. }
-  \item{\dots}{ Currently unused. }
+  \item{object}{
+  a model object that inherits from a VLM.
+
+
+  }
+  \item{matrix.arg}{
+  Logical. Return the answer as a matrix?
+  If \code{FALSE} then it will be a vector.
+
+
+  }
+  \item{\dots}{
+  Currently unused.
+
+
+  }
 
 }
 \details{
@@ -28,11 +40,17 @@ fittedvlm(object, matrix.arg = TRUE, ...)
   The mean may even not exist, e.g., for a Cauchy distribution.
 
 
+  Note that the fitted value is output from the \code{@linkinv} slot
+  of the \pkg{VGAM} family function,
+  where the \code{eta} argument is the \eqn{n \times M}{n x M} matrix
+  of linear predictors.
+
+
+
+
 }
 \value{
-  The fitted values as returned by the
-  \code{inverse} slot of the \pkg{VGAM} family function,
-  evaluated at the final IRLS iteration.
+  The fitted values evaluated at the final IRLS iteration.
 
 
 }
@@ -53,7 +71,8 @@ Chambers, J. M. and T. J. Hastie (eds) (1992)
   
 
   If \code{fit} is a VLM or VGLM then \code{fitted(fit)} and
-  \code{predict(fit, type="response")} should be equivalent.
+  \code{predict(fit, type = "response")} should be equivalent
+  (see \code{\link{predictvglm}}).
   The latter has the advantage in that it handles a \code{newdata}
   argument so that the fitted values can be computed for a
   different data set.
@@ -75,11 +94,11 @@ pneumo = transform(pneumo, let = log(exposure.time))
 fitted(fit)
 
 # LMS quantile regression example 2
-fit = vgam(BMI ~ s(age, df = c(4,2)), 
+fit = vgam(BMI ~ s(age, df = c(4, 2)), 
            fam = lms.bcn(zero = 1), data = bmi.nz, trace = TRUE)
-head(predict(fit, type = "r"))  # The following three are equal
+head(predict(fit, type = "response"))  # The following three are equal
 head(fitted(fit))
-predict(fit, type = "r", newdata = head(bmi.nz))
+predict(fit, type = "response", newdata = head(bmi.nz))
 }
 \keyword{models}
 \keyword{regression}
