@@ -7,7 +7,24 @@
 useDynLib(VGAM)
 
 
+export(link2list)
+export(mlogit)
 
+
+export(perks, dperks, pperks, qperks, rperks)
+export(gumbelII, dgumbelII, pgumbelII, qgumbelII, rgumbelII)
+export(makeham, dmakeham, pmakeham, qmakeham, rmakeham)
+export(gompertz, dgompertz, pgompertz, qgompertz, rgompertz)
+export(lindley, dlind, plind, rlind)
+
+
+export(w.wz.merge, w.y.check, vweighted.mean.default)
+export(is.parallel.matrix, is.parallel.vglm,
+       is.zero.matrix, is.zero.vglm)
+exportMethods(is.parallel, is.zero)
+
+
+export(nvar_vlm)
 
 importFrom("stats4", nobs)
 exportMethods(nobs)
@@ -44,7 +61,7 @@ export(lrtest, lrtest_vglm)
 export(update_default, update_formula)
 
 
-export(nvar, nvar.vlm, nvar.vgam, nvar.rrvglm, nvar.qrrvglm, nvar.cao, nvar.rcam)
+export(nvar, nvar.vlm, nvar.vgam, nvar.rrvglm, nvar.qrrvglm, nvar.cao, nvar.rcim)
 export(      nobs.vlm)
 
 
@@ -90,8 +107,8 @@ explogarithmic, dexplog, pexplog, qexplog, rexplog)
 
 
 
-export(Rcam, plotrcam0,
-rcam, summaryrcam)
+export(Rcim, plotrcim0,
+rcim, summaryrcim)
 export(moffset)
 export(plotqvar, Qvar)
 export(depvar, depvar.vlm)
@@ -173,7 +190,6 @@ AICvlm, AICvgam, AICrrvglm,
 AICqrrvglm, # AICvglm, 
 anova.vgam,
 anova.vglm, 
-beta4,
 bisa, dbisa, pbisa, qbisa, rbisa,
 betabinomial.ab, betabinomial,
 dexpbinomial,
@@ -456,7 +472,8 @@ deexp, peexp, qeexp, reexp)
 export(
 meplot, meplot.default, meplot.vlm,
 guplot, guplot.default, guplot.vlm,
-negbinomial, negbinomial.size, polya, normal1, nbcanlink,
+negbinomial, negbinomial.size, polya, normal1,
+nbcanlink,
 tobit, dtobit, ptobit, qtobit, rtobit,
 Opt, 
 perspqrrvglm, plotdeplot.lmscreg, plotqrrvglm, plotqtplot.lmscreg,
@@ -514,7 +531,7 @@ export(DeLury,
 
 
 exportClasses(vglmff, vlm, vglm, vgam,
-rrvglm, qrrvglm, grc,  rcam, 
+rrvglm, qrrvglm, grc,  rcim, 
 vlmsmall, uqo, cao,
 summary.vgam, summary.vglm, summary.vlm,
 summary.qrrvglm,

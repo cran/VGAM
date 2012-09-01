@@ -9,7 +9,7 @@
 }
 \usage{
 amlexponential(w.aml = 1, parallel = FALSE, imethod = 1, digw = 4,
-               link = "loge", earg = list())
+               link = "loge")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -42,7 +42,7 @@ amlexponential(w.aml = 1, parallel = FALSE, imethod = 1, digw = 4,
   used cosmetically for labelling.
 
   }
-  \item{link, earg}{
+  \item{link}{
   See \code{\link{exponential}} and the warning below.
 
   }

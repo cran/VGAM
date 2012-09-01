@@ -12,16 +12,17 @@
   (on the log scale),
   and asymmetry parameter \code{kappa}.
 
+
 }
 \usage{
-dloglap(x, location.ald=0, scale.ald=1,
-        tau=0.5, kappa=sqrt(tau/(1-tau)), log=FALSE)
-ploglap(q, location.ald=0, scale.ald=1,
-        tau=0.5, kappa=sqrt(tau/(1-tau)))
-qloglap(p, location.ald=0, scale.ald=1,
-        tau=0.5, kappa=sqrt(tau/(1-tau)))
-rloglap(n, location.ald=0, scale.ald=1,
-        tau=0.5, kappa=sqrt(tau/(1-tau)))
+dloglap(x, location.ald = 0, scale.ald = 1,
+        tau = 0.5, kappa = sqrt(tau/(1-tau)), log = FALSE)
+ploglap(q, location.ald = 0, scale.ald = 1,
+        tau = 0.5, kappa = sqrt(tau/(1-tau)))
+qloglap(p, location.ald = 0, scale.ald = 1,
+        tau = 0.5, kappa = sqrt(tau/(1-tau)))
+rloglap(n, location.ald = 0, scale.ald = 1,
+        tau = 0.5, kappa = sqrt(tau/(1-tau)))
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -58,18 +59,24 @@ rloglap(n, location.ald=0, scale.ald=1,
   (ALD). There are many variants of ALDs and the one used here
   is described in \code{\link{alaplace3}}.
 
+
 }
 \value{
   \code{dloglap} gives the density,
   \code{ploglap} gives the distribution function,
   \code{qloglap} gives the quantile function, and
   \code{rloglap} generates random deviates.
+
+
 }
 \references{
+
 Kozubowski, T. J. and Podgorski, K. (2003)
 Log-Laplace distributions.
 \emph{International Mathematical Journal},
 \bold{3}, 467--495.
+
+
 
 }
 \author{ T. W. Yee }
@@ -84,23 +91,24 @@ Log-Laplace distributions.
 % \code{\link{loglaplace3}}.
   \code{\link{loglaplace1}}.
 
+
 }
 \examples{
-loc = 0; sigma = exp(0.5); kappa = 1
-x = seq(-0.2, 5, by=0.01)
+loc <- 0; sigma <- exp(0.5); kappa <- 1
+x <- seq(-0.2, 5, by = 0.01)
 \dontrun{
-plot(x, dloglap(x, loc, sigma, kappa=kappa), type="l", col="blue",
-     main="Blue is density, red is cumulative distribution function",
-     ylim=c(0,1), sub="Purple are 5,10,...,95 percentiles", las=1, ylab="")
-abline(h=0, col="blue", lty=2)
-lines(qloglap(seq(0.05,0.95,by=0.05), loc, sigma, kappa=kappa),
-      dloglap(qloglap(seq(0.05,0.95,by=0.05), loc, sigma, kappa=kappa),
-                loc, sigma, kappa=kappa), col="purple", lty=3, type="h")
-lines(x, ploglap(x, loc, sigma, kappa=kappa), type="l", col="red")
-abline(h=0, lty=2)
+plot(x, dloglap(x, loc, sigma, kappa = kappa), type = "l", col = "blue",
+     main = "Blue is density, red is cumulative distribution function",
+     ylim = c(0,1), sub = "Purple are 5,10,...,95 percentiles", las = 1, ylab = "")
+abline(h = 0, col = "blue", lty = 2)
+lines(qloglap(seq(0.05,0.95,by = 0.05), loc, sigma, kappa = kappa),
+      dloglap(qloglap(seq(0.05,0.95,by = 0.05), loc, sigma, kappa = kappa),
+                loc, sigma, kappa = kappa), col = "purple", lty = 3, type = "h")
+lines(x, ploglap(x, loc, sigma, kappa = kappa), type = "l", col = "red")
+abline(h = 0, lty = 2)
 }
-ploglap(qloglap(seq(0.05,0.95,by=0.05), loc, sigma, kappa=kappa),
-          loc, sigma, kappa=kappa)
+ploglap(qloglap(seq(0.05,0.95,by = 0.05), loc, sigma, kappa = kappa),
+          loc, sigma, kappa = kappa)
 }
 \keyword{distribution}
 

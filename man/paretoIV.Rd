@@ -12,13 +12,10 @@
 }
 \usage{
 paretoIV(location = 0, lscale = "loge", linequality = "loge", lshape = "loge",
-         escale = list(), einequality = list(), eshape = list(),
          iscale = 1, iinequality = 1, ishape = NULL, imethod = 1)
 paretoIII(location = 0, lscale = "loge", linequality = "loge",
-          escale = list(), einequality = list(),
           iscale = NULL, iinequality = NULL)
 paretoII(location = 0, lscale = "loge", lshape = "loge",
-         escale = list(), eshape = list(),
          iscale = NULL, ishape = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -36,11 +33,6 @@ paretoII(location = 0, lscale = "loge", lshape = "loge",
   See \code{\link{Links}} for more choices.
   A log link is the default for all because all these parameters are
   positive.
-
-  }
-  \item{escale, einequality, eshape}{
-  List. Extra argument for each of the links.
-  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{iscale, iinequality, ishape}{
@@ -165,10 +157,10 @@ Fairland, Maryland: International Cooperative Publishing House.
 
 }
 \examples{
-pdata = data.frame(y = rparetoIV(2000, scal = exp(1),
-                                 ineq = exp(-0.3), shape = exp(1)))
-\dontrun{par(mfrow = c(2,1)); with(pdata, hist(y)); with(pdata, hist(log(y))) }
-fit = vglm(y ~ 1, paretoIV, pdata, trace = TRUE)
+pdata <- data.frame(y = rparetoIV(2000, scale = exp(1),
+                                  ineq = exp(-0.3), shape = exp(1)))
+\dontrun{par(mfrow = c(2, 1)); with(pdata, hist(y)); with(pdata, hist(log(y))) }
+fit <- vglm(y ~ 1, paretoIV, pdata, trace = TRUE)
 coef(fit, matrix = TRUE)
 Coef(fit)
 summary(fit)

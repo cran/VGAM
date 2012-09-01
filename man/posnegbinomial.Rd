@@ -8,7 +8,7 @@
 
 }
 \usage{
-posnegbinomial(lmunb = "loge", lsize = "loge", emunb = list(), esize = list(),
+posnegbinomial(lmunb = "loge", lsize = "loge",
                isize = NULL, zero = -2, nsimEIM = 250,
                shrinkage.init = 0.95, imethod = 1)
 
@@ -20,16 +20,13 @@ posnegbinomial(lmunb = "loge", lsize = "loge", emunb = list(), esize = list(),
   \eqn{\mu_{nb}}{munb} of an ordinary negative binomial distribution.
   See \code{\link{Links}} for more choices.
 
+
   }
   \item{lsize}{ 
   Parameter link function applied to the dispersion parameter,
   called \code{k}.
   See \code{\link{Links}} for more choices.
 
-  }
-  \item{emunb, esize}{
-  List. Extra argument for the respective links.
-  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{isize}{ 
@@ -41,6 +38,7 @@ posnegbinomial(lmunb = "loge", lsize = "loge", emunb = list(), esize = list(),
   of responses. 
   A value \code{NULL} means an initial value for each response is
   computed internally using a range of values.
+
 
   }
   \item{nsimEIM, zero}{ 
@@ -88,11 +86,18 @@ posnegbinomial(lmunb = "loge", lsize = "loge", emunb = list(), esize = list(),
   occur. Possibly a loglog link could be added in the future to try help
   handle this problem.
 
+
+  This \pkg{VGAM} family function is computationally expensive
+  and usually runs slowly;
+  setting \code{trace = TRUE} is useful for monitoring convergence.
+
+
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}},
   \code{\link{rrvglm}} and \code{\link{vgam}}.
+
 
 }
 \references{
@@ -101,6 +106,15 @@ posnegbinomial(lmunb = "loge", lsize = "loge", emunb = list(), esize = list(),
   \emph{Ecological Modelling},
   \bold{157},
   179--188.
+
+
+  Fisher, R. A., Corbet, A. S. and Williams, C. B. (1943)
+  The Relation Between the Number of Species and
+  the Number of Individuals in a Random Sample of an Animal
+  Population,
+  \emph{Journal of Animal Ecology},
+  \bold{12},
+  42--58.
 
 
   Williamson, E. and Bretherton, M. H. (1964)
@@ -113,7 +127,8 @@ posnegbinomial(lmunb = "loge", lsize = "loge", emunb = list(), esize = list(),
 }
 \author{ Thomas W. Yee }
 \note{
-    This family function can handle a multivariate response.
+    This family function handles multiple responses.
+
 
 }
 
@@ -126,13 +141,15 @@ posnegbinomial(lmunb = "loge", lsize = "loge", emunb = list(), esize = list(),
   \code{\link[stats:NegBinomial]{rnbinom}},
   \code{\link{CommonVGAMffArguments}}.
 
+
 }
 
 \examples{
-pdata <- data.frame(x = runif(nn <- 1000))
-pdata <- transform(pdata, y1 = rposnegbin(nn, munb = exp(0+2*x), size = exp(1)),
-                          y2 = rposnegbin(nn, munb = exp(1+2*x), size = exp(3)))
-fit <- vglm(cbind(y1, y2) ~ x, posnegbinomial, pdata, trace = TRUE)
+\dontrun{
+pdata <- data.frame(x2 = runif(nn <- 1000))
+pdata <- transform(pdata, y1 = rposnegbin(nn, munb = exp(0+2*x2), size = exp(1)),
+                          y2 = rposnegbin(nn, munb = exp(1+2*x2), size = exp(3)))
+fit <- vglm(cbind(y1, y2) ~ x2, posnegbinomial, pdata, trace = TRUE)
 coef(fit, matrix = TRUE)
 dim(depvar(fit)) # dim(fit@y) is not as good
 
@@ -143,7 +160,7 @@ pdata2 <- transform(pdata2, y3 = rposnegbin(nn, munb = munb, size = size))
 with(pdata2, table(y3))
 fit <- vglm(y3 ~ 1, posnegbinomial, pdata2, trace = TRUE)
 coef(fit, matrix = TRUE)
-with(pdata2, mean(y3))    # Sample mean
+with(pdata2, mean(y3)) # Sample mean
 head(with(pdata2, munb/(1-(size/(size+munb))^size)), 1) # Population mean
 head(fitted(fit), 3)
 head(predict(fit), 3)
@@ -159,10 +176,11 @@ Coef(fit)
 (khat <- Coef(fit)["size"])
 pdf2 <- dposnegbin(x = with(corbet, nindiv), mu = fitted(fit), size = khat)
 print( with(corbet, cbind(nindiv, ofreq, fitted = pdf2*sum(ofreq))), dig = 1)
-\dontrun{ with(corbet,
+with(corbet,
 matplot(nindiv, cbind(ofreq, fitted = pdf2*sum(ofreq)), las = 1,
         type = "b", ylab = "Frequency", col = c("blue", "orange"),
-        main = "blue 1s = observe; orange 2s = fitted")) }
+        main = "blue 1s = observe; orange 2s = fitted"))
+}
 }
 \keyword{models}
 \keyword{regression}

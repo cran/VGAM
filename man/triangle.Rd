@@ -8,9 +8,8 @@
 
 }
 \usage{
-triangle(lower = 0, upper = 1, link = "elogit",
-         earg = if(link == "elogit") list(min = lower, max = upper) else
-         list(), itheta = NULL)
+triangle(lower = 0, upper = 1,
+         link = elogit(min = lower, max = upper), itheta = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -26,11 +25,6 @@ triangle(lower = 0, upper = 1, link = "elogit",
   The default constrains the estimate to lie in the interval.
 
   }
-  \item{earg}{
-  List. Extra argument for the link.
-  See \code{earg} in \code{\link{Links}} for general information.
-
-  }
   \item{itheta}{
   Optional initial value for the parameter.
   The default is to compute the value internally.
@@ -44,33 +38,40 @@ triangle(lower = 0, upper = 1, link = "elogit",
   \eqn{y = 0} axis at \eqn{A} and \eqn{B}.
   Here, Fisher scoring is used.
 
+
   On fitting, the \code{extra} slot has components called \code{lower}
   and \code{upper} which contains the values of the above arguments
   (recycled to the right length).
   The fitted values are the mean of the distribution, which is
   a little messy to write.
 
+
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}}
   and \code{\link{vgam}}.
+
+
 }
 %\references{ 
 %}
 \author{ T. W. Yee }
 \note{
-  The response must contain values in \eqn{(A,B)}.
+  The response must contain values in \eqn{(A, B)}.
   For most data sets (especially small ones) it is very common for
   half-stepping to occur.
+
 
 }
 \seealso{
      \code{\link{Triangle}}.
+
+
 }
 \examples{
-tdata = data.frame(y  = rtriangle(n <- 3000, theta = 3/4))
-fit = vglm(y ~ 1, triangle(link = "identity"), tdata, trace = TRUE)
+tdata <- data.frame(y  = rtriangle(n <- 3000, theta = 3/4))
+fit <- vglm(y ~ 1, triangle(link = "identity"), tdata, trace = TRUE)
 coef(fit, matrix = TRUE)
 Coef(fit)
 head(fit@extra$lower)

@@ -12,15 +12,20 @@ Tol(object, ...)
 \arguments{
   \item{object}{ An object for which the computation or
     extraction of a tolerance or tolerances is meaningful.
+
+
   }
   \item{\dots}{ Other arguments fed into the specific
     methods function of the model. Sometimes they are fed
     into the methods function for \code{\link{Coef}}.
+
+
   }
 }
 \details{
   Different models can define an optimum in different ways.
   Many models have no such notion or definition.
+
 
   Tolerances occur in quadratic ordination, i.e., CQO or UQO.
   They have ecological meaning because a high tolerance
@@ -31,12 +36,16 @@ Tol(object, ...)
   Mathematically, the tolerance is like the variance of
   a normal distribution.
 
+
 }
 \value{
   The value returned depends specifically on the methods
   function invoked.
+
+
 }
 \references{
+
 
 Yee, T. W. (2004)
 A new technique for maximum-likelihood
@@ -44,9 +53,12 @@ canonical Gaussian ordination.
 \emph{Ecological Monographs},
 \bold{74}, 685--701.
 
+
 Yee, T. W. (2006)
 Constrained additive ordination.
 \emph{Ecology}, \bold{87}, 203--213.
+
+
 
 }
 \author{ Thomas W. Yee }
@@ -56,6 +68,8 @@ Constrained additive ordination.
   Tolerances are undefined for `linear' and additive 
   ordination models.
   They are well-defined for quadratic ordination models.
+
+
 }
 \section{Warning }{
   There is a direct inverse relationship between the scaling of
@@ -70,25 +84,28 @@ Constrained additive ordination.
   \code{EqualTolerances} is \code{TRUE} or \code{FALSE}.
   See Yee (2004) for details.
 
+
+
 }
 
 \seealso{
   \code{Tol.qrrvglm}.
   \code{\link{Max}},
   \code{\link{Opt}}.
+
+
 }
 
 \examples{
-set.seed(111)  # This leads to the global solution
-hspider[,1:6] = scale(hspider[,1:6]) # Standardized environmental vars
-# vvv p1 = cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,
-# vvv                Auloalbi, Pardlugu, Pardmont, Pardnigr, Pardpull,
-# vvv                Trocterr, Zoraspin) ~
-# vvv          WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
-# vvv          Bestof = 2,
-# vvv          fam = quasipoissonff, data = hspider, Crow1positive=FALSE)
-# vvv 
-# vvv Tol(p1)
+set.seed(111) # This leads to the global solution
+hspider[,1:6] <- scale(hspider[,1:6]) # Standardized environmental vars
+p1 <- cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,
+               Auloalbi, Pardlugu, Pardmont, Pardnigr, Pardpull,
+               Trocterr, Zoraspin) ~
+         WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
+         Bestof = 2, quasipoissonff, data = hspider, Crow1positive = FALSE)
+
+Tol(p1)
 }
 \keyword{models}
 \keyword{regression}

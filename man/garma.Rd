@@ -7,7 +7,7 @@
 
 }
 \usage{
-garma(link = "identity", earg=list(), p.ar.lag = 1, q.ma.lag = 0,
+garma(link = "identity", p.ar.lag = 1, q.ma.lag = 0,
       coefstart = NULL, step = 1)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -16,20 +16,16 @@ garma(link = "identity", earg=list(), p.ar.lag = 1, q.ma.lag = 0,
   Link function applied to the mean response.
   The default is suitable for continuous responses.
   The link \code{\link{loge}} should be chosen if the data are counts.
-  Links such as \code{\link{logit}}, \code{\link{probit}},
-  \code{\link{cloglog}},
-  \code{\link{cauchit}} are suitable for binary responses.
+  The link \code{\link{reciprocal}} can be chosen if the data are counts
+  and the variance assumed for this is \eqn{\mu^2}{mu^2}.
+  The links \code{\link{logit}}, \code{\link{probit}},
+  \code{\link{cloglog}}, and
+  \code{\link{cauchit}} are supported and suitable for binary responses.
 
 
-  }
-  \item{earg}{
-  List. Extra argument for the link.
-  See \code{earg} in \code{\link{Links}} for general information.
-  In particular, this argument is useful
-  when the log or logit link is chosen:
+  Note that when the log or logit link is chosen:
   for log and logit,
-  zero values can be replaced by \code{bvalue} which
-  is inputted as \code{earg=list(bvalue = bvalue)}.
+  zero values can be replaced by \code{bvalue}.
   See \code{\link{loge}} and \code{\link{logit}} etc. for specific
   information about each link function.
 
@@ -51,6 +47,7 @@ garma(link = "identity", earg=list(), p.ar.lag = 1, q.ma.lag = 0,
   }
   \item{coefstart}{
   Starting values for the coefficients.
+  Assigning this argument is highly recommended.
   For technical reasons, the
   argument \code{coefstart} in \code{\link{vglm}} cannot be used.
 
@@ -74,10 +71,9 @@ garma(link = "identity", earg=list(), p.ar.lag = 1, q.ma.lag = 0,
   See also Benjamin \emph{et al.} (2003).
   GARMA models extend the ARMA time series model to generalized
   responses in the exponential family, e.g., Poisson counts,
-  binary responses. Currently, this function can handle continuous,
-  count and binary responses only. The possible link functions
-  given in the \code{link} argument reflect this, and the user
-  must choose an appropriate link.
+  binary responses. Currently, this function is rudimentary and
+  can handle only certain continuous, count and binary responses only.
+  The user must choose an appropriate link for the \code{link} argument.
 
 
   The GARMA(\eqn{p, q}) model is defined by firstly
@@ -144,9 +140,9 @@ garma(link = "identity", earg=list(), p.ar.lag = 1, q.ma.lag = 0,
 
 \author{ T. W. Yee }
 \note{
-  This function is unpolished and is requires lots
-  of improvements. In particular, initialization is quite poor,
-  and ought to be improved.
+  This function is unpolished and is requires \emph{lots} of improvements.
+  In particular, initialization is \emph{very poor}.
+  Results appear \emph{very} sensitive to quality of initial values.
   A limited amount of experience has shown that half-stepsizing is
   often needed for convergence, therefore choosing \code{crit = "coef"}
   is not recommended.
@@ -173,6 +169,7 @@ garma(link = "identity", earg=list(), p.ar.lag = 1, q.ma.lag = 0,
 % \code{\link{identity}},
 % \code{\link{logit}}.
 
+
   The site \url{http://www.stat.auckland.ac.nz/~yee} contains
   more documentation about this family function.
 
@@ -180,7 +177,7 @@ garma(link = "identity", earg=list(), p.ar.lag = 1, q.ma.lag = 0,
 }
 
 \examples{
-gdata = data.frame(interspike = c(68, 41, 82, 66, 101, 66, 57,  41,  27, 78,
+gdata <- data.frame(interspike = c(68, 41, 82, 66, 101, 66, 57,  41,  27, 78,
 59, 73,  6, 44,  72, 66, 59,  60,  39, 52,
 50, 29, 30, 56,  76, 55, 73, 104, 104, 52,
 25, 33, 20, 60,  47,  6, 47,  22,  35, 30,
@@ -190,14 +187,14 @@ gdata = data.frame(interspike = c(68, 41, 82, 66, 101, 66, 57,  41,  27, 78,
 19, 18, 14, 23,  18, 22, 18,  19,  26, 27,
 23, 24, 35, 22,  29, 28, 17,  30,  34, 17,
 20, 49, 29, 35,  49, 25, 55,  42,  29, 16)) # See Zeger and Qaqish (1988)
-gdata = transform(gdata, spikenum = seq(interspike))
-bvalue = 0.1  # .Machine$double.xmin # Boundary value
-fit = vglm(interspike ~ 1, trace = TRUE, data = gdata,
-           garma("loge", earg = list(bvalue = bvalue),
-                 p = 2, coef = c(4, 0.3, 0.4)))
+gdata <- transform(gdata, spikenum = seq(interspike))
+bvalue <- 0.1 # .Machine$double.xmin # Boundary value
+fit <- vglm(interspike ~ 1, trace = TRUE, data = gdata,
+            garma(loge(bvalue = bvalue),
+                 p = 2, coefstart = c(4, 0.3, 0.4)))
 summary(fit)
 coef(fit, matrix = TRUE)
-Coef(fit)  # A bug here
+Coef(fit) # A bug here
 \dontrun{ with(gdata, plot(interspike, ylim = c(0, 120), las = 1,
      xlab = "Spike Number", ylab = "Inter-Spike Time (ms)", col = "blue"))
 with(gdata, lines(spikenum[-(1:fit@misc$plag)], fitted(fit), col = "orange"))

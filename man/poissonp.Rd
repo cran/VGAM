@@ -8,8 +8,8 @@
 
 }
 \usage{
-poissonp(ostatistic, dimension=2, link="loge", earg=list(),
-         idensity=NULL, imethod=1)
+poissonp(ostatistic, dimension = 2, link = "loge",
+         idensity = NULL, imethod = 1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -27,11 +27,6 @@ poissonp(ostatistic, dimension=2, link="loge", earg=list(),
   Parameter link function applied to the (positive) density parameter,
   called \eqn{\lambda}{lambda} below.
   See \code{\link{Links}} for more choices.
-
-  }
-  \item{earg}{
-  List. Extra argument for the link.
-  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{idensity}{
@@ -97,13 +92,13 @@ poissonp(ostatistic, dimension=2, link="loge", earg=list(),
 
 }
 \examples{
-pdat = data.frame(y = rgamma(10, shape=exp(-1))) # Not good data!
-os = 2
-fit = vglm(y ~ 1, poissonp(os, 2), pdat, tra=TRUE, crit="c")
-fit = vglm(y ~ 1, poissonp(os, 3), pdat, tra=TRUE, crit="c") # Slow convergence?
-fit = vglm(y ~ 1, poissonp(os, 3, idensi=1), pdat, trace=TRUE, crit="c")
+pdata <- data.frame(y = rgamma(10, shape = exp(-1))) # Not proper data!
+os <- 2
+fit <- vglm(y ~ 1, poissonp(os, 2), pdata, tra = TRUE, crit = "c")
+fit <- vglm(y ~ 1, poissonp(os, 3), pdata, tra = TRUE, crit = "c") # Slow convergence?
+fit <- vglm(y ~ 1, poissonp(os, 3, idensi = 1), pdata, trace = TRUE, crit = "c")
 head(fitted(fit))
-with(pdat, mean(y))
+with(pdata, mean(y))
 coef(fit, matrix = TRUE)
 Coef(fit)
 }

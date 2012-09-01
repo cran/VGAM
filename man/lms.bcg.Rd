@@ -9,7 +9,6 @@
 \usage{
 lms.bcg(percentiles = c(25, 50, 75), zero = c(1, 3), 
         llambda = "identity", lmu = "identity", lsigma = "loge",
-        elambda = list(), emu = list(), esigma = list(),
         dfmu.init = 4, dfsigma.init = 2, ilambda = 1, isigma = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -27,10 +26,6 @@ lms.bcg(percentiles = c(25, 50, 75), zero = c(1, 3),
   }
 
   \item{llambda, lmu, lsigma}{
-  See \code{\link{lms.bcn}}.
-
-  }
-  \item{elambda, emu, esigma}{
   See \code{\link{lms.bcn}}.
 
   }
@@ -96,11 +91,12 @@ contains further information and examples.
   \code{\link{bmi.nz}},
   \code{\link{amlexponential}}.
 
+
 }
 
 \examples{
 # This converges, but deplot(fit) and qtplot(fit) do not work
-fit0 = vglm(BMI ~ bs(age, df = 4), lms.bcg, bmi.nz, trace = TRUE)
+fit0 <- vglm(BMI ~ bs(age, df = 4), lms.bcg, bmi.nz, trace = TRUE)
 coef(fit0, matrix = TRUE)
 \dontrun{
 par(mfrow = c(1, 1))
@@ -108,13 +104,13 @@ plotvgam(fit0, se = TRUE) # Plot mu function (only)
 }
 
 # Use a trick: fit0 is used for initial values for fit1.
-fit1 = vgam(BMI ~ s(age, df = c(4, 2)), etastart = predict(fit0),
-            lms.bcg(zero = 1), bmi.nz, trace = TRUE)
+fit1 <- vgam(BMI ~ s(age, df = c(4, 2)), etastart = predict(fit0),
+             lms.bcg(zero = 1), bmi.nz, trace = TRUE)
 
 # Difficult to get a model that converges.
 # Here, we prematurely stop iterations because it fails near the solution.
-fit2 = vgam(BMI ~ s(age, df = c(4, 2)), maxit = 4,
-            lms.bcg(zero = 1, ilam = 3), bmi.nz, trace = TRUE)
+fit2 <- vgam(BMI ~ s(age, df = c(4, 2)), maxit = 4,
+             lms.bcg(zero = 1, ilam = 3), bmi.nz, trace = TRUE)
 summary(fit1)
 head(predict(fit1))
 head(fitted(fit1))
@@ -129,12 +125,12 @@ qtplot(fit1, percentiles=c(5, 50, 90, 99), main = "Quantiles",
        xlim = c(15, 90), las = 1, ylab = "BMI", lwd = 2, lcol = 4)
 
 # Density plot
-ygrid = seq(15, 43, len = 100)  # BMI ranges
+ygrid <- seq(15, 43, len = 100)  # BMI ranges
 par(mfrow = c(1, 1), lwd = 2)
-(aa = deplot(fit1, x0 = 20, y = ygrid, xlab = "BMI", col = "black",
+(aa <- deplot(fit1, x0 = 20, y = ygrid, xlab = "BMI", col = "black",
   main = "Density functions at Age = 20 (black), 42 (red) and 55 (blue)"))
-aa = deplot(fit1, x0=42, y=ygrid, add=TRUE, llty=2, col="red")
-aa = deplot(fit1, x0=55, y=ygrid, add=TRUE, llty=4, col="blue", Attach=TRUE)
+aa <- deplot(fit1, x0=42, y=ygrid, add=TRUE, llty=2, col="red")
+aa <- deplot(fit1, x0=55, y=ygrid, add=TRUE, llty=4, col="blue", Attach=TRUE)
 aa@post$deplot  # Contains density function values
 }
 }

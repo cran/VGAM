@@ -338,6 +338,7 @@ A theory of gradient analysis.
   Yet to do: add an argument that allows absences to be equal
   to the first level if ordinal data is requested.
 
+
 }
 \seealso{
   \code{\link{cqo}},
@@ -349,51 +350,49 @@ A theory of gradient analysis.
   \code{\link{gamma2}},
   \code{\link{gaussianff}}.
 
+
 }
 
 \examples{
-# Example 1: Species packing model:
-n = 100; p = 5; S = 5
-mydata = rcqo(n, p, S, ESOpt = TRUE, EqualMax = TRUE)
-names(mydata)
-(myform = attr(mydata, "formula"))
-fit = cqo(myform, poissonff, mydata, Bestof = 3) # EqualTol = TRUE 
 \dontrun{
-matplot(attr(mydata, "lv"), mydata[,-(1:(p-1))], col=1:S)
-persp(fit, col=1:S, add = TRUE)
-lvplot(fit, lcol=1:S, y = TRUE, pcol=1:S)  # The same plot as above
-}
+# Example 1: Species packing model:
+n <- 100; p <- 5; S <- 5
+mydata <- rcqo(n, p, S, ESOpt = TRUE, EqualMax = TRUE)
+names(mydata)
+(myform <- attr(mydata, "formula"))
+fit <- cqo(myform, poissonff, mydata, Bestof = 3) # EqualTol = TRUE 
+matplot(attr(mydata, "lv"), mydata[,-(1:(p-1))], col = 1:S)
+persp(fit, col = 1:S, add = TRUE)
+lvplot(fit, lcol = 1:S, y = TRUE, pcol = 1:S) # The same plot as above
 
 # Compare the fitted model with the 'truth'
-ccoef(fit)  # The fitted model
+ccoef(fit) # The fitted model
 attr(mydata, "ccoefficients") # The 'truth'
 
 c(apply(attr(mydata, "lv"), 2, sd), apply(lv(fit), 2, sd)) # Both values should be approx equal
 
 
 # Example 2: negative binomial data fitted using a Poisson model:
-n = 200; p = 5; S = 5
-mydata = rcqo(n, p, S, fam="negbin", sqrt = TRUE)
-myform = attr(mydata, "formula")
-fit = cqo(myform, fam=poissonff, dat=mydata) # ITol = TRUE,
-\dontrun{
-lvplot(fit, lcol=1:S, y = TRUE, pcol=1:S) }
+n <- 200; p <- 5; S <- 5
+mydata <- rcqo(n, p, S, fam = "negbin", sqrt = TRUE)
+myform <- attr(mydata, "formula")
+fit <- cqo(myform, fam = poissonff, dat = mydata) # ITol = TRUE,
+lvplot(fit, lcol = 1:S, y = TRUE, pcol = 1:S)
 # Compare the fitted model with the 'truth'
-ccoef(fit)  # The fitted model
+ccoef(fit) # The fitted model
 attr(mydata, "ccoefficients") # The 'truth'
 
 
 # Example 3: gamma2 data fitted using a Gaussian model:
-n = 200; p = 5; S = 3
-mydata = rcqo(n, p, S, fam="gamma2", Log = TRUE)
-fit = cqo(attr(mydata, "formula"), fam=gaussianff, dat=mydata) # ITol=TRUE,
-\dontrun{
-matplot(attr(mydata, "lv"), exp(mydata[,-(1:(p-1))]), col=1:S) # 'raw' data
-lvplot(fit, lcol=1:S, y=TRUE, pcol=1:S)  # Fitted model to transformed data
-}
+n <- 200; p <- 5; S <- 3
+mydata <- rcqo(n, p, S, fam = "gamma2", Log = TRUE)
+fit <- cqo(attr(mydata, "formula"), fam = gaussianff, dat = mydata) # ITol = TRUE,
+matplot(attr(mydata, "lv"), exp(mydata[,-(1:(p-1))]), col = 1:S) # 'raw' data
+lvplot(fit, lcol = 1:S, y = TRUE, pcol = 1:S) # Fitted model to transformed data
 # Compare the fitted model with the 'truth'
-ccoef(fit)  # The fitted model
+ccoef(fit) # The fitted model
 attr(mydata, "ccoefficients") # The 'truth'
+}
 }
 \keyword{distribution}
 

@@ -6,10 +6,11 @@
   Computes the gamma-ordinal transformation, including its inverse
   and the first two derivatives.
 
+
 }
 \usage{
-golf(theta, earg = list(lambda = 1), inverse = FALSE, deriv = 0,
-     short = TRUE, tag = FALSE)
+golf(theta, lambda = 1, cutpoint = NULL,
+     inverse = FALSE, deriv = 0, short = TRUE, tag = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -17,13 +18,11 @@ golf(theta, earg = list(lambda = 1), inverse = FALSE, deriv = 0,
   Numeric or character.
   See below for further details.
 
+
   }
-  \item{earg}{
-  Extra argument for passing in additional information.
-  This must be list with component \code{lambda}.
-  Here, \code{lambda} is the shape parameter
-  in \code{\link{gamma2}}.
-  A component in the list called \code{cutpoint} is optional; if omitted
+  \item{lambda, cutpoint}{
+  The former is the shape parameter in \code{\link{gamma2}}.
+  \code{cutpoint} is optional; if \code{NULL}
   then \code{cutpoint} is ignored from the GOLF definition.
   If given, the cutpoints should be non-negative integers.
   If \code{golf()} is used as the link function in
@@ -33,26 +32,17 @@ golf(theta, earg = list(lambda = 1), inverse = FALSE, deriv = 0,
   If the cutpoints are unknown, then choose
   \code{reverse = TRUE, parallel = TRUE, intercept.apply = FALSE}.
 
-  }
-  \item{inverse}{
-  Logical. If \code{TRUE} the inverse function is computed.
 
   }
-  \item{deriv}{
-  Order of the derivative. Integer with value 0, 1 or 2.
+
+
+  \item{inverse, deriv, short, tag}{
+  Details at \code{\link{Links}}.
+
 
   }
-  \item{short}{
-  Used for labelling the \code{blurb} slot of a
-  \code{\link{vglmff-class}} object.
 
-  }
-  \item{tag}{
-  Used for labelling the linear/additive predictor in the
-  \code{initialize} slot of a \code{\link{vglmff-class}} object.
-  Contains a little more information if \code{TRUE}.
 
-  }
 }
 \details{
   The gamma-ordinal link function (GOLF) can be applied to a 
@@ -61,9 +51,6 @@ golf(theta, earg = list(lambda = 1), inverse = FALSE, deriv = 0,
   an ordinal response coming from an underlying 2-parameter gamma
   distribution.
 
-
-  The arguments \code{short} and \code{tag} are used only if
-  \code{theta} is character.
 
 
   See \code{\link{Links}} for general information about \pkg{VGAM}
@@ -117,48 +104,45 @@ golf(theta, earg = list(lambda = 1), inverse = FALSE, deriv = 0,
 
 }
 \examples{
-earg = list(lambda = 1)
-golf("p", earg = earg, short = FALSE)
-golf("p", earg = earg, tag = TRUE)
+golf("p", lambda = 1, short = FALSE)
+golf("p", lambda = 1, tag = TRUE)
 
-p = seq(0.02, 0.98, len = 201)
-y = golf(p, earg = earg)
-y. = golf(p, earg = earg, deriv = 1)
-max(abs(golf(y, earg = earg, inv = TRUE) - p)) # Should be 0
+p <- seq(0.02, 0.98, len = 201)
+y <- golf(p, lambda = 1)
+y. <- golf(p, lambda = 1, deriv = 1)
+max(abs(golf(y, lambda = 1, inv = TRUE) - p)) # Should be 0
 
-\dontrun{
-par(mfrow=c(2,1), las = 1)
+\dontrun{par(mfrow = c(2, 1), las = 1)
 plot(p, y, type = "l", col = "blue", main = "golf()")
-abline(h=0, v=0.5, col = "red", lty = "dashed")
-
+abline(h = 0, v = 0.5, col = "orange", lty = "dashed")
 plot(p, y., type = "l", col = "blue",
      main = "(Reciprocal of) first GOLF derivative")
 }
 
-
 # Another example
-gdata = data.frame(x2 = sort(runif(nn <- 1000)))
-gdata = transform(gdata, x3 = runif(nn))
-gdata = transform(gdata, mymu = exp( 3 + 1 * x2 - 2 * x3))
-lambda = 4
-gdata = transform(gdata, y1 = rgamma(nn, shape=lambda, scale=mymu/lambda))
-cutpoints = c(-Inf, 10, 20, Inf)
-gdata = transform(gdata, cuty = Cut(y1, breaks=cutpoints))
-\dontrun{
-par(mfrow=c(1,1), las = 1)
-with(gdata, plot(x2, x3, col=cuty, pch=as.character(cuty))) }
+gdata <- data.frame(x2 = sort(runif(nn <- 1000)))
+gdata <- transform(gdata, x3 = runif(nn))
+gdata <- transform(gdata, mymu = exp( 3 + 1 * x2 - 2 * x3))
+lambda <- 4
+gdata <- transform(gdata,
+         y1 = rgamma(nn, shape = lambda, scale = mymu / lambda))
+cutpoints <- c(-Inf, 10, 20, Inf)
+gdata <- transform(gdata, cuty = Cut(y1, breaks = cutpoints))
+
+\dontrun{ par(mfrow = c(1, 1), las = 1)
+with(gdata, plot(x2, x3, col = cuty, pch = as.character(cuty))) }
 with(gdata, table(cuty) / sum(table(cuty)))
-fit = vglm(cuty ~ x2 + x3, fam = cumulative(link = "golf",
+fit <- vglm(cuty ~ x2 + x3, cumulative(mv = TRUE,
            reverse = TRUE, parallel = TRUE, intercept.apply = TRUE,
-           mv = TRUE, earg = list(cutpoint=cutpoints[2:3], lambda=lambda)),
-           gdata, trace = TRUE)
-head(fit@y)
+           link = golf(cutpoint = cutpoints[2:3], lambda = lambda)),
+           data = gdata, trace = TRUE)
+head(depvar(fit))
 head(fitted(fit))
 head(predict(fit))
 coef(fit)
 coef(fit, matrix = TRUE)
 constraints(fit)
-fit@misc$earg
+fit@misc
 }
 \keyword{math}
 \keyword{models}

@@ -6,16 +6,16 @@
   Maximum likelihood estimation for the geometric distribution.
 }
 \usage{
-geometric(link = "logit", earg = list(), expected = TRUE, imethod = 1,
-          iprob = NULL)
+geometric(link = "logit", expected = TRUE, imethod = 1,
+          iprob = NULL, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{link, earg}{ 
-  Parameter link function and extra argument applied to the
+  \item{link}{
+  Parameter link function applied to the
   parameter \eqn{p}{prob}, which lies in the unit interval.
-  See \code{\link{Links}} for more choices,
-  and \code{earg} in \code{\link{Links}} for general information.
+  See \code{\link{Links}} for more choices.
+
 
   }
   \item{expected}{ 
@@ -29,8 +29,7 @@ geometric(link = "logit", earg = list(), expected = TRUE, imethod = 1,
   If failure to converge occurs try another value.
 
   }
-  \item{iprob}{
-  Optional initial value.
+  \item{iprob, zero}{
   See \code{\link{CommonVGAMffArguments}} for more details.
 
   }
@@ -50,6 +49,9 @@ geometric(link = "logit", earg = list(), expected = TRUE, imethod = 1,
   negative binomial distribution (see \code{\link{negbinomial}}).
   If \eqn{Y} has a geometric distribution with parameter \eqn{p}{prob} then
   \eqn{Y+1} has a positive-geometric distribution with the same parameter.
+
+
+  Multiple responses are permitted.
 
 
 }
@@ -85,14 +87,14 @@ geometric(link = "logit", earg = list(), expected = TRUE, imethod = 1,
 
 }
 \examples{
-gdata = data.frame(x2 = runif(nn <- 1000) - 0.5)
-gdata = transform(gdata, x3 = runif(nn) - 0.5,
-                         x4 = runif(nn) - 0.5)
-gdata = transform(gdata, eta = 1.0 - 1.0 * x2 + 2.0 * x3)
-gdata = transform(gdata, prob = logit(eta, inverse = TRUE))
-gdata = transform(gdata, y = rgeom(nn, prob))
-with(gdata, table(y))
-fit = vglm(y ~ x2 + x3 + x4, geometric, gdata, trace = TRUE)
+gdata <- data.frame(x2 = runif(nn <- 1000) - 0.5)
+gdata <- transform(gdata, x3 = runif(nn) - 0.5,
+                          x4 = runif(nn) - 0.5)
+gdata <- transform(gdata, eta  = 1.0 - 1.0 * x2 + 2.0 * x3)
+gdata <- transform(gdata, prob = logit(eta, inverse = TRUE))
+gdata <- transform(gdata, y1 = rgeom(nn, prob))
+with(gdata, table(y1))
+fit <- vglm(y1 ~ x2 + x3 + x4, geometric, gdata, trace = TRUE)
 coef(fit, matrix = TRUE)
 summary(fit)
 }

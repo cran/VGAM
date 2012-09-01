@@ -8,20 +8,14 @@
 
 }
 \usage{
-exppoisson(llambda = "loge", lbetave = "loge", elambda = list(),
-           ebetave = list(), ilambda = 1.1, ibetave = 2,
-           zero = NULL)
+exppoisson(llambda = "loge", lbetave = "loge",
+           ilambda = 1.1, ibetave = 2, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{llambda, lbetave}{
   Link function for the two positive parameters.
   See \code{\link{Links}} for more choices.
-
-  }
-  \item{elambda, ebetave}{
-  List. Extra argument for each of the links.
-  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{ilambda, ibetave}{

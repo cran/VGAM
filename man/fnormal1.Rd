@@ -6,8 +6,8 @@
   Fits a (generalized) folded (univariate) normal distribution.
 }
 \usage{
-fnormal1(lmean="identity", lsd="loge", emean=list(), esd=list(), imean=NULL,
-         isd=NULL, a1=1, a2=1, nsimEIM=500, imethod=1, zero=NULL)
+fnormal1(lmean = "identity", lsd = "loge", imean = NULL, isd = NULL,
+         a1 = 1, a2 = 1, nsimEIM = 500, imethod = 1, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -19,14 +19,19 @@ fnormal1(lmean="identity", lsd="loge", emean=list(), esd=list(), imean=NULL,
   See \code{\link{Links}} for more choices.
 
   }
-  \item{emean, esd}{
-  List. Extra argument for each of the links.
-  See \code{earg} in \code{\link{Links}} for general information.
 
-  }
+
+% \item{emean, esd}{
+% List. Extra argument for each of the links.
+% See \code{earg} in \code{\link{Links}} for general information.
+%        emean=list(), esd=list(),
+% }
+
+
   \item{imean, isd}{
   Optional initial values for \eqn{\mu}{mu} and \eqn{\sigma}{sigma}.
   A \code{NULL} means a value is computed internally.
+  See \code{\link{CommonVGAMffArguments}}.
 
   }
   \item{a1, a2}{
@@ -81,6 +86,7 @@ fnormal1(lmean="identity", lsd="loge", emean=list(), esd=list(), imean=NULL,
   The object is used by modelling functions such as \code{\link{vglm}}
   and \code{\link{vgam}}.
 
+
 }
 \references{
   Lin, P. C. (2005)
@@ -88,6 +94,7 @@ fnormal1(lmean="identity", lsd="loge", emean=list(), esd=list(), imean=NULL,
   capability measures.
   \emph{International Journal of Advanced Manufacturing Technology},
   \bold{26}, 825--830.
+
 
 }
 \author{ Thomas W. Yee }
@@ -101,6 +108,7 @@ fnormal1(lmean="identity", lsd="loge", emean=list(), esd=list(), imean=NULL,
   See \code{\link{CommonVGAMffArguments}} for general information about
   many of these arguments.
 
+
 }
 
 \section{Warning }{
@@ -108,23 +116,28 @@ fnormal1(lmean="identity", lsd="loge", emean=list(), esd=list(), imean=NULL,
   It is recommended that several different initial values be used
   to help avoid local solutions.
 
+
 }
 \seealso{ 
     \code{\link{rfnorm}},
     \code{\link{normal1}},
     \code{\link[stats:Normal]{dnorm}},
     \code{\link{skewnormal1}}.
+
+
 }
 
 \examples{
-m =  2; SD = exp(1)
-y = rfnorm(n <- 1000, m=m, sd=SD)
-\dontrun{hist(y, prob=TRUE, main=paste("fnormal1(m=",m,", sd=",round(SD,2),")"))}
-fit = vglm(y ~ 1, fam=fnormal1, trace=TRUE)
-coef(fit, mat=TRUE)
-(Cfit = Coef(fit))
-mygrid = seq(min(y), max(y), len=200) # Add the fit to the histogram
-\dontrun{lines(mygrid, dfnorm(mygrid, Cfit[1], Cfit[2]), col="red")}
+\dontrun{ m <-  2; SD <- exp(1)
+y <- rfnorm(n <- 1000, m = m, sd = SD)
+hist(y, prob = TRUE, main = paste("fnormal1(m = ", m,
+     ", sd = ", round(SD, 2), ")"))
+fit <- vglm(y ~ 1, fam = fnormal1, trace = TRUE)
+coef(fit, matrix = TRUE)
+(Cfit <- Coef(fit))
+mygrid <- seq(min(y), max(y), len = 200) # Add the fit to the histogram
+lines(mygrid, dfnorm(mygrid, Cfit[1], Cfit[2]), col = "orange")
+}
 }
 \keyword{models}
 \keyword{regression}

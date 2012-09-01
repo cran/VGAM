@@ -8,7 +8,7 @@
 
 }
 \usage{
-gumbelIbiv(lapar="identity", earg=list(), iapar=NULL, imethod=1)
+gumbelIbiv(lapar = "identity", iapar = NULL, imethod = 1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -16,11 +16,6 @@ gumbelIbiv(lapar="identity", earg=list(), iapar=NULL, imethod=1)
   Link function applied to the association parameter
   \eqn{\alpha}{alpha}.
   See \code{\link{Links}} for more choices.
-
-  }
-  \item{earg}{
-  List. Extra argument for the link.
-  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{iapar}{
@@ -49,15 +44,19 @@ gumbelIbiv(lapar="identity", earg=list(), iapar=NULL, imethod=1)
   The marginal distributions are an exponential distribution with
   unit mean.
 
+
   A variant of Newton-Raphson is used, which only seems to work for an
   intercept model.
   It is a very good idea to set \code{trace=TRUE}.
+
 
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}}
   and \code{\link{vgam}}.
+
+
 }
 
 \references{
@@ -65,6 +64,7 @@ gumbelIbiv(lapar="identity", earg=list(), iapar=NULL, imethod=1)
 Castillo, E., Hadi, A. S., Balakrishnan, N. Sarabia, J. S. (2005)
 \emph{Extreme Value and Related Models with Applications in Engineering and Science},
 Hoboken, NJ, USA: Wiley-Interscience.
+
 
 }
 \author{ T. W. Yee }
@@ -74,19 +74,22 @@ Hoboken, NJ, USA: Wiley-Interscience.
   This is because each marginal distribution corresponds to a
   exponential distribution with unit mean.
 
+
   This \pkg{VGAM} family function should be used with caution.
+
 
 }
 
 \seealso{
   \code{\link{morgenstern}}.
 
+
 }
 \examples{
-nn = 1000
-gdata = data.frame(y1 = rexp(nn), y2 = rexp(nn))
-\dontrun{ with(gdata, plot(cbind(y1,y2))) }
-fit = vglm(cbind(y1, y2) ~ 1, fam = gumbelIbiv, gdata, trace = TRUE)
+nn <- 1000
+gdata <- data.frame(y1 = rexp(nn), y2 = rexp(nn))
+\dontrun{ with(gdata, plot(cbind(y1, y2))) }
+fit <- vglm(cbind(y1, y2) ~ 1, fam = gumbelIbiv, gdata, trace = TRUE)
 coef(fit, matrix = TRUE)
 Coef(fit)
 head(fitted(fit))

@@ -10,22 +10,15 @@
 
 }
 \usage{
-huber1(llocation = "identity", elocation = list(),
-       k = 0.862, imethod = 1)
-huber(llocation = "identity", lscale = "loge", elocation = list(),
-      escale = list(), k = 0.862, imethod = 1, zero = 2)
+huber1(llocation = "identity", k = 0.862, imethod = 1)
+huber(llocation = "identity", lscale = "loge",
+      k = 0.862, imethod = 1, zero = 2)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{llocation, lscale}{
   Link functions applied to the location and scale parameters.
   See \code{\link{Links}} for more choices.
-
-
-  }
-  \item{elocation, escale}{
-  List. Extra argument for the links.
-  See \code{earg} in \code{\link{Links}} for general information.
 
 
   }
@@ -100,12 +93,12 @@ huber(llocation = "identity", lscale = "loge", elocation = list(),
 
 }
 \examples{
-set.seed(1231); NN = 30; coef1 = 1; coef2 = 10
-hdata = data.frame(x2 = sort(runif(NN)))
-hdata = transform(hdata, y  = rhuber(NN, mu = coef1 + coef2 * x2))
+set.seed(1231); NN <- 30; coef1 <- 1; coef2 <- 10
+hdata <- data.frame(x2 = sort(runif(NN)))
+hdata <- transform(hdata, y  = rhuber(NN, mu = coef1 + coef2 * x2))
 
-hdata$x2[1] = 0.0 # Add an outlier
-hdata$y[1] = 10  
+hdata$x2[1] <- 0.0 # Add an outlier
+hdata$y[1] <- 10  
 
 fit.huber  <- vglm(y ~ x2, huber (imethod = 3), hdata, trace = TRUE)
 fit.huber1 <- vglm(y ~ x2, huber1(imethod = 3), hdata, trace = TRUE)

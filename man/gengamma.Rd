@@ -8,8 +8,7 @@
 
 }
 \usage{
-gengamma(lscale  =  "loge", ld = "loge", lk = "loge",
-         escale = list(), ed = list(), ek = list(),
+gengamma(lscale = "loge", ld = "loge", lk = "loge",
          iscale = NULL, id = NULL, ik = NULL, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -18,11 +17,6 @@ gengamma(lscale  =  "loge", ld = "loge", lk = "loge",
   Parameter link function applied to each of the positive parameters
   \eqn{b}, \eqn{d} and \eqn{k}, respectively.
   See \code{\link{Links}} for more choices.
-
-  }
-  \item{escale, ed, ek}{
-  List. Extra argument for each of the links.
-  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{iscale, id, ik}{
@@ -45,7 +39,10 @@ gengamma(lscale  =  "loge", ld = "loge", lk = "loge",
         f(y;b,d,k) = d * b^(-d*k) * y^(d*k-1) * exp(-(y/b)^d) /  gamma(k)}
   for scale parameter \eqn{b > 0}, and \eqn{d > 0}, \eqn{k > 0},
   and \eqn{y > 0}.
-  The mean of \eqn{Y} is \eqn{bk}{b*k} (returned as the fitted values).
+  The mean of \eqn{Y}
+  is \eqn{b \times \Gamma(k+1/d) / \Gamma(k)}{b*gamma(k+1/d)/gamma(k)}
+  (returned as the fitted values),
+  which equals \eqn{bk}{b*k} if \eqn{d=1}.
 
 
 There are many special cases, as given in Table 1 of Stacey and Mihram (1965).
@@ -73,7 +70,7 @@ Rayleigh          \eqn{f(y;c\sqrt{2},2,1)}{f(y;c sqrt(2),2,1)} where \eqn{c>0}.
 \references{
   Stacy, E. W. (1962)
   A generalization of the gamma distribution.
-  \emph{Annals of Mathematical Statistics}, \bold{33}, 1187--1192.
+  \emph{Annals of Mathematical Statistics}, \bold{33}(3), 1187--1192.
 
 
   Stacy, E. W. and Mihram, G. A. (1965)
@@ -119,21 +116,24 @@ Rayleigh          \eqn{f(y;c\sqrt{2},2,1)}{f(y;c sqrt(2),2,1)} where \eqn{c>0}.
   \code{\link{gamma2}},
   \code{\link{prentice74}}.
 
+
 }
 \examples{
-k = exp(-1); Scale = exp(1)
-gdata = data.frame(y = rgamma(1000, shape = k, scale = Scale))
-fit = vglm(y ~ 1, gengamma, gdata, trace = TRUE)
+\dontrun{ k <- exp(-1); Scale = exp(1)
+gdata <- data.frame(y = rgamma(1000, shape = k, scale = Scale))
+fit <- vglm(y ~ 1, gengamma, gdata, trace = TRUE)
 coef(fit, matrix = TRUE)
 
 # Another example
-gdata = data.frame(x = runif(nn <- 5000))
-gdata = transform(gdata, Scale = exp(1), d = exp(0 + 1.2*x),
-                         k = exp(-1 + 2*x))
-gdata = transform(gdata, y = rgengamma(nn, scale = Scale, d = d, k = k))
-fit = vglm(y ~ x, gengamma(zero = 1, iscale = 6), gdata, trace = TRUE)
-fit = vglm(y ~ x, gengamma(zero = 1), gdata, trace = TRUE, maxit = 50)
+gdata <- data.frame(x2 = runif(nn <- 5000))
+gdata <- transform(gdata, Scale = exp(1),
+                          d = exp( 0 + 1.2* x2),
+                          k = exp(-1 + 2  * x2))
+gdata <- transform(gdata, y = rgengamma(nn, scale = Scale, d = d, k = k))
+fit <- vglm(y ~ x2, gengamma(zero = 1, iscale = 6), gdata, trace = TRUE)
+fit <- vglm(y ~ x2, gengamma(zero = 1), gdata, trace = TRUE, maxit = 50)
 coef(fit, matrix = TRUE)
+}
 }
 \keyword{models}
 \keyword{regression}

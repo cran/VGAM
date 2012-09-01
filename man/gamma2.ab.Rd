@@ -7,7 +7,6 @@
 }
 \usage{
 gamma2.ab(lrate = "loge", lshape = "loge",
-          erate = list(), eshape = list(),
           irate = NULL,   ishape = NULL, expected = TRUE, zero = 2)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -16,11 +15,6 @@ gamma2.ab(lrate = "loge", lshape = "loge",
   Link functions applied to the (positive) \emph{rate} and \emph{shape}
   parameters.
   See \code{\link{Links}} for more choices.
-
-  }
-  \item{erate, eshape}{
-  List. Extra arguments for the links.
-  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{expected}{

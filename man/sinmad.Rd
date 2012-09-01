@@ -8,7 +8,6 @@
 }
 \usage{
 sinmad(lshape1.a = "loge", lscale = "loge", lshape3.q = "loge",
-       eshape1.a = list(), escale = list(), eshape3.q = list(),
        ishape1.a = NULL, iscale = NULL, ishape3.q = 1, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -17,11 +16,6 @@ sinmad(lshape1.a = "loge", lscale = "loge", lshape3.q = "loge",
   Parameter link functions applied to the
   (positive) parameters \code{a}, \code{scale}, and \code{q}.
   See \code{\link{Links}} for more choices.
-
-  }
-  \item{eshape1.a, escale, eshape3.q}{
-  List. Extra argument for each of the links.
-  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{ishape1.a, iscale, ishape3.q}{
@@ -100,12 +94,13 @@ Hoboken, NJ, USA: Wiley-Interscience.
     \code{\link{paralogistic}},
     \code{\link{invparalogistic}}.
 
+
 }
 
 \examples{
-sdata = data.frame(y = rsinmad(n = 1000, exp(1), exp(2), exp(0)))
-fit = vglm(y ~ 1, sinmad, sdata, trace = TRUE)
-fit = vglm(y ~ 1, sinmad(ishape1.a = exp(1)), sdata, trace = TRUE)
+sdata <- data.frame(y = rsinmad(n = 1000, exp(1), exp(2), exp(0)))
+fit <- vglm(y ~ 1, sinmad, sdata, trace = TRUE)
+fit <- vglm(y ~ 1, sinmad(ishape1.a = exp(1)), sdata, trace = TRUE)
 coef(fit, matrix = TRUE)
 Coef(fit)
 summary(fit)

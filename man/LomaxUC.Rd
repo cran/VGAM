@@ -61,8 +61,8 @@ Hoboken, NJ, USA: Wiley-Interscience.
 
 }
 \examples{
-ldata = data.frame(y = rlomax(n = 2000, 6, 2))
-fit = vglm(y ~ 1, lomax(ishape3.q = 2.1), ldata, trace = TRUE, crit = "coef")
+ldata <- data.frame(y = rlomax(n = 2000, 6, 2))
+fit <- vglm(y ~ 1, lomax(ishape3.q = 2.1), ldata, trace = TRUE, crit = "coef")
 coef(fit, matrix = TRUE)
 Coef(fit)
 }

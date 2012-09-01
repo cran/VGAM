@@ -24,19 +24,19 @@ vnonlinear.control <- function(save.weight = TRUE, ...)
 
 
 subset_lohi <- function(xvec, yvec,
-                        prob.x = c(0.15, 0.85),
+                        probs.x = c(0.15, 0.85),
                         type = c("median", "wtmean", "unwtmean"),
                         wtvec = rep(1, len = length(xvec))) {
 
 
-  if (!is.Numeric(prob.x, allowable.length = 2))
-    stop("argument 'prob.x' must be numeric and of length two")
+  if (!is.Numeric(probs.x, allowable.length = 2))
+    stop("argument 'probs.x' must be numeric and of length two")
 
-  min.q <- quantile(xvec, probs = prob.x[1] )
-  max.q <- quantile(xvec, probs = prob.x[2] )
+  min.q <- quantile(xvec, probs = probs.x[1] )
+  max.q <- quantile(xvec, probs = probs.x[2] )
 
   if(mode(type) != "character" && mode(type) != "name")
-      type <- as.character(substitute(type))
+    type <- as.character(substitute(type))
   type <- match.arg(type, c("median", "wtmean", "unwtmean"))[1]
 
 
@@ -61,7 +61,7 @@ subset_lohi <- function(xvec, yvec,
 
   if (x1bar >= x2bar)
     stop("cannot find two distinct x values; try decreasing the first ",
-         "value of argument 'prob.x' and increasing the second value")
+         "value of argument 'probs.x' and increasing the second value")
 
   list(x1bar =  x1bar,
        y1bar =  y1bar,
@@ -87,8 +87,7 @@ micmen.control <- function(save.weight = TRUE, ...)
                     oim = TRUE,
                     link1 = "identity", link2 = "identity",
                     firstDeriv = c("nsimEIM", "rpar"),
-                    earg1 = list(), earg2 = list(), 
-                    prob.x = c(0.15, 0.85),
+                    probs.x = c(0.15, 0.85),
                     nsimEIM = 500,
                     dispersion = 0, zero = NULL)
 {
@@ -97,29 +96,33 @@ micmen.control <- function(save.weight = TRUE, ...)
 
   firstDeriv <- match.arg(firstDeriv, c("nsimEIM", "rpar"))[1]
 
-  if (!is.Numeric(imethod, allowable.length = 1, integer.valued = TRUE, positive = TRUE))
+  if (!is.Numeric(imethod, allowable.length = 1,
+                  integer.valued = TRUE, positive = TRUE))
     stop("argument 'imethod' must be integer")
-  if (!is.Numeric(prob.x, allowable.length = 2))
-    stop("argument 'prob.x' must be numeric and of length two")
+  if (!is.Numeric(probs.x, allowable.length = 2))
+    stop("argument 'probs.x' must be numeric and of length two")
   if (!is.logical(oim) || length(oim) != 1)
     stop("argument 'oim' must be single logical")
 
-    stopifnot(nsimEIM > 10, length(nsimEIM) == 1, nsimEIM==round(nsimEIM))
+    stopifnot(nsimEIM > 10, length(nsimEIM) == 1,
+              nsimEIM == round(nsimEIM))
 
-  if (!is.Numeric(imethod, allowable.length = 1, integer.valued = TRUE, positive = TRUE) ||
+  if (!is.Numeric(imethod, allowable.length = 1,
+                  integer.valued = TRUE, positive = TRUE) ||
      imethod > 3)
     stop("'imethod' must be 1 or 2 or 3")
 
 
   estimated.dispersion <- (dispersion == 0)
 
-  if (mode(link1) != "character" && mode(link1) != "name")
-    link1 <- as.character(substitute(link1))
-  if (mode(link2) != "character" && mode(link2) != "name")
-    link2 <- as.character(substitute(link2))
+  link1 <- as.list(substitute(link1))
+  earg1 <- link2list(link1)
+  link1 <- attr(earg1, "function.name")
 
-  if (!is.list(earg1)) earg1 = list()
-  if (!is.list(earg2)) earg2 = list()
+  link2 <- as.list(substitute(link2))
+  earg2 <- link2list(link2)
+  link2 <- attr(earg2, "function.name")
+
 
   new("vglmff",
   blurb = c("Michaelis-Menton regression model\n",
@@ -131,21 +134,28 @@ micmen.control <- function(save.weight = TRUE, ...)
          "Variance: constant"),
 
   constraints = eval(substitute(expression({
-      constraints <- cm.zero.vgam(constraints, x, .zero, M = 2)
+    constraints <- cm.zero.vgam(constraints, x, .zero, M = 2)
   }), list( .zero = zero))),
 
   deviance = function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
-      M <- if (is.matrix(y)) ncol(y) else 1
-      if (residuals) {
-        if (M > 1) NULL else (y - mu) * sqrt(w)
-      } else {
-        rss.vgam(y - mu, w, M = M)
-      }
+    M <- if (is.matrix(y)) ncol(y) else 1
+    if (residuals) {
+      if (M > 1) NULL else (y - mu) * sqrt(w)
+    } else {
+      rss.vgam(y - mu, w, M = M)
+    }
   },
 
   initialize = eval(substitute(expression({
-    if (ncol(cbind(y)) != 1)
-      stop("response must be a vector or a one-column matrix")
+
+
+    temp5 <-
+    w.y.check(w = w, y = y,
+              out.wy = TRUE,
+              maximize = TRUE)
+    w <- temp5$w
+
+
 
     if (!length(Xm2))
       stop("regressor not found")
@@ -156,20 +166,20 @@ micmen.control <- function(save.weight = TRUE, ...)
     extra$Xm2 <- Xm2          # Needed for @linkinv
 
     predictors.names <-
-      c(namesof("theta1", .link1, earg = .earg1, tag = FALSE),
-        namesof("theta2", .link2, earg = .earg2, tag = FALSE))
+      c(namesof("theta1", .link1 , earg = .earg1, tag = FALSE),
+        namesof("theta2", .link2 , earg = .earg2, tag = FALSE))
 
     if (length(mustart) || length(coefstart))
       stop("cannot handle 'mustart' or 'coefstart'")
 
     if (!length(etastart)) {
       if ( .imethod == 3 ) {
-        index0 <- (1:n)[Xm2 <= quantile(Xm2, prob = .prob.x[2] )]
+        index0 <- (1:n)[Xm2 <= quantile(Xm2, prob = .probs.x[2] )]
         init1 <- median(y[index0])
         init2 <- median(init1 * Xm2 / y - Xm2)
       }
       if ( .imethod == 1 || .imethod == 2) {
-        mysubset <- subset_lohi(Xm2, y, prob.x = .prob.x,
+        mysubset <- subset_lohi(Xm2, y, probs.x = .probs.x,
                   type = ifelse( .imethod == 1, "median", "wtmean"),
                   wtvec = w)
 
@@ -188,26 +198,28 @@ micmen.control <- function(save.weight = TRUE, ...)
       if (length( .init2 )) init2 <- .init2
 
       etastart <- cbind(
-          rep(theta2eta(init1, .link1, earg = .earg1), len = n),
-          rep(theta2eta(init2, .link2, earg = .earg2), len = n))
+          rep(theta2eta(init1, .link1 , earg = .earg1 ), len = n),
+          rep(theta2eta(init2, .link2 , earg = .earg2 ), len = n))
     } else {
       stop("cannot handle 'etastart' or 'mustart'")
     }
   }), list( .init1 = init1, .link1 = link1, .earg1 = earg1,
             .init2 = init2, .link2 = link2, .earg2 = earg2,
             .imethod = imethod,
-            .prob.x = prob.x ))),
+            .probs.x = probs.x ))),
 
   linkinv = eval(substitute(function(eta, extra = NULL) {
-    theta1 <- eta2theta(eta[, 1], .link1, earg = .earg1)
-    theta2 <- eta2theta(eta[, 2], .link2, earg = .earg2)
+    theta1 <- eta2theta(eta[, 1], .link1 , earg = .earg1 )
+    theta2 <- eta2theta(eta[, 2], .link2 , earg = .earg2 )
     theta1 * extra$Xm2 / (theta2 + extra$Xm2)
   }, list( .link1 = link1, .earg1 = earg1,
            .link2 = link2, .earg2 = earg2))),
 
   last = eval(substitute(expression({
-    misc$link <-    c(theta1 = .link1, theta2 = .link2)
+    misc$link <-    c(theta1 = .link1 , theta2 = .link2)
+
     misc$earg <- list(theta1 = .earg1, theta2 = .earg2 )
+
     misc$rpar <- rpar
     fit$df.residual <- n - rank   # Not nrow_X_vlm - rank
     fit$df.total <- n             # Not nrow_X_vlm
@@ -215,7 +227,7 @@ micmen.control <- function(save.weight = TRUE, ...)
     extra$Xm2 <- NULL             # Regressor is in control$regressor 
     dpar <- .dispersion
     if (!dpar) {
-      dpar <- sum(w * (y - mu)^2) / (n - ncol_X_vlm)
+      dpar <- sum(c(w) * (y - mu)^2) / (n - ncol_X_vlm)
     }
     misc$dispersion <- dpar
 
@@ -228,6 +240,7 @@ micmen.control <- function(save.weight = TRUE, ...)
     misc$oim <- .oim
     misc$rpar <- rpar
     misc$orig.rpar <- .rpar
+    misc$multipleResponses <- FALSE
   }), list( .link1 = link1, .earg1 = earg1,
             .link2 = link2, .earg2 = earg2,
             .dispersion = dispersion,
@@ -242,10 +255,10 @@ micmen.control <- function(save.weight = TRUE, ...)
   vfamily = c("micmen", "vnonlinear"),
 
   deriv = eval(substitute(expression({
-    theta1 <- eta2theta(eta[, 1], .link1, earg = .earg1)
-    theta2 <- eta2theta(eta[, 2], .link2, earg = .earg2)
-    dthetas.detas <- cbind(dtheta.deta(theta1, .link1, earg = .earg1),
-                           dtheta.deta(theta2, .link2, earg = .earg2))
+    theta1 <- eta2theta(eta[, 1], .link1 , earg = .earg1 )
+    theta2 <- eta2theta(eta[, 2], .link2 , earg = .earg2 )
+    dthetas.detas <- cbind(dtheta.deta(theta1, .link1 , earg = .earg1 ),
+                           dtheta.deta(theta2, .link2 , earg = .earg2 ))
 
     rpar <- if ( .firstDeriv == "rpar") {
       if (iter > 1) {
@@ -273,15 +286,15 @@ micmen.control <- function(save.weight = TRUE, ...)
         temp200809 <- dmus.dthetas * dthetas.detas
         if (M > 1)
           temp200809[, 2:M] <- temp200809[, 2:M] + sqrt(rpar)
-        w * (y - mu) * temp200809
+        c(w) * (y - mu) * temp200809
       } else {
-        w * (y - mu) *
+        c(w) * (y - mu) *
           cbind(dmus.dthetas[, 1] * dthetas.detas[, 1],
                 dmus.dthetas[, 2] * dthetas.detas[, 2] + sqrt(rpar))
       }
     } else {
       temp20101111 <- dmus.dthetas * dthetas.detas
-      w * (y - mu) * temp20101111
+      c(w) * (y - mu) * temp20101111
     }
 
     myderiv
@@ -346,8 +359,7 @@ micmen.control <- function(save.weight = TRUE, ...)
 
 
 
-skira.control <- function(save.weight = TRUE, ...)
-{
+skira.control <- function(save.weight = TRUE, ...) {
   list(save.weight = save.weight)
 }
 
@@ -360,7 +372,7 @@ skira.control <- function(save.weight = TRUE, ...)
            earg2 = list(),
            imethod = 1,
            oim = TRUE,
-           prob.x = c(0.15, 0.85),
+           probs.x = c(0.15, 0.85),
            smallno = 1.0e-3,
            nsimEIM = 500,
            firstDeriv = c("nsimEIM", "rpar"),
@@ -369,8 +381,8 @@ skira.control <- function(save.weight = TRUE, ...)
 
   firstDeriv <- match.arg(firstDeriv, c("nsimEIM", "rpar"))[1]
 
-  if (!is.Numeric(prob.x, allowable.length = 2))
-    stop("argument 'prob.x' must be numeric and of length two")
+  if (!is.Numeric(probs.x, allowable.length = 2))
+    stop("argument 'probs.x' must be numeric and of length two")
 
   estimated.dispersion <- dispersion == 0
   if (mode(link1) != "character" && mode(link1) != "name")
@@ -378,16 +390,21 @@ skira.control <- function(save.weight = TRUE, ...)
   if (mode(link2) != "character" && mode(link2) != "name")
     link2 <- as.character(substitute(link2))
 
-  if (!is.Numeric(imethod, allowable.length = 1, integer.valued = TRUE, positive = TRUE))
+  if (!is.Numeric(imethod, allowable.length = 1,
+                  integer.valued = TRUE, positive = TRUE))
     stop("argument 'imethod' must be integer")
+
   if (imethod > 5)
     stop("argument 'imethod' must be 1, 2, 3, 4 or 5")
+
   if (!is.list(earg1))
     earg1 = list()
   if (!is.list(earg2))
     earg2 = list()
 
-    stopifnot(nsimEIM > 10, length(nsimEIM) == 1, nsimEIM == round(nsimEIM))
+    stopifnot(nsimEIM > 10, length(nsimEIM) == 1,
+              nsimEIM == round(nsimEIM))
+
 
   new("vglmff",
   blurb = c("Shinozaki-Kira regression model\n",
@@ -409,8 +426,16 @@ skira.control <- function(save.weight = TRUE, ...)
 
  warning("20101105; need to fix a bug in the signs of initial vals")
 
-    if (ncol(cbind(y)) != 1)
-      stop("response must be a vector or a one-column matrix")
+
+    temp5 <-
+    w.y.check(w = w, y = y,
+              out.wy = TRUE,
+              maximize = TRUE)
+    w <- temp5$w
+    y <- temp5$y
+
+
+
     if (!length(Xm2)) stop("regressor not found")
     if (ncol(as.matrix(Xm2)) != 1)
       stop("regressor not found or is not a vector. ",
@@ -419,8 +444,8 @@ skira.control <- function(save.weight = TRUE, ...)
     extra$Xm2 <- Xm2
 
     predictors.names <-
-       c(namesof("theta1", .link1, earg = .earg1, tag = FALSE),
-         namesof("theta2", .link2, earg = .earg2, tag = FALSE))
+       c(namesof("theta1", .link1 , earg = .earg1, tag = FALSE),
+         namesof("theta2", .link2 , earg = .earg2, tag = FALSE))
 
     if (length(mustart) || length(coefstart))
       stop("cannot handle 'mustart' or 'coefstart'")
@@ -428,11 +453,11 @@ skira.control <- function(save.weight = TRUE, ...)
     if (!length(etastart)) {
 
 
-        min.q <- quantile(Xm2, probs = .prob.x[1] )
-        max.q <- quantile(Xm2, probs = .prob.x[2] )
+        min.q <- quantile(Xm2, probs = .probs.x[1] )
+        max.q <- quantile(Xm2, probs = .probs.x[2] )
       if ( .imethod == 3 || .imethod == 2 ) {
 
-        mysubset <- subset_lohi(Xm2, y, prob.x = .prob.x,
+        mysubset <- subset_lohi(Xm2, y, probs.x = .probs.x,
                   type = ifelse( .imethod == 2, "median", "wtmean"),
                   wtvec = w)
 
@@ -463,7 +488,7 @@ skira.control <- function(save.weight = TRUE, ...)
         fitted(smooth.spline(Xm2, y, w = w, df = 2.0))
       }
 
-      mysubset <- subset_lohi(Xm2, y, prob.x = .prob.x,
+      mysubset <- subset_lohi(Xm2, y, probs.x = .probs.x,
                 type = "wtmean", wtvec = w)
 
 
@@ -493,40 +518,44 @@ skira.control <- function(save.weight = TRUE, ...)
       if (length( .init1 )) init1 <- .init1
       if (length( .init2 )) init2 <- .init2
       etastart <- cbind(
-          rep(theta2eta(init1, .link1, earg = .earg1), len = n),
-          rep(theta2eta(init2, .link2, earg = .earg2), len = n))
+          rep(theta2eta(init1, .link1 , earg = .earg1 ), len = n),
+          rep(theta2eta(init2, .link2 , earg = .earg2 ), len = n))
     } else {
       stop("cannot handle 'etastart' or 'mustart'")
     }
   }), list( .init1 = init1, .link1 = link1, .earg1 = earg1,
             .init2 = init2, .link2 = link2, .earg2 = earg2,
-            .smallno = smallno, .prob.x = prob.x,
+            .smallno = smallno, .probs.x = probs.x,
             .nsimEIM = nsimEIM,
             .imethod = imethod ))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
-    theta1 <- eta2theta(eta[, 1], .link1, earg = .earg1)
-    theta2 <- eta2theta(eta[, 2], .link2, earg = .earg2)
+    theta1 <- eta2theta(eta[, 1], .link1 , earg = .earg1 )
+    theta2 <- eta2theta(eta[, 2], .link2 , earg = .earg2 )
     1 / (theta1 + theta2 * extra$Xm2)
   }, list( .link1 = link1, .earg1 = earg1,
            .link2 = link2, .earg2 = earg2 ))),
   last = eval(substitute(expression({
-    misc$link <-    c(theta1 = .link1, theta2 = .link2)
-    misc$earg <- list(theta1 = .earg1, theta2 = .earg2)
+    misc$link <-    c(theta1 = .link1 , theta2 = .link2)
+
+    misc$earg <- list(theta1 = .earg1, theta2 = .earg2 )
+
     misc$rpar <- rpar
     misc$orig.rpar <- .rpar
     fit$df.residual <- n - rank
     fit$df.total <- n
     dpar <- .dispersion
     if (!dpar) {
-      dpar <- sum(w * (y - mu)^2) / (n - ncol_X_vlm)
+      dpar <- sum(c(w) * (y - mu)^2) / (n - ncol_X_vlm)
     }
     misc$dispersion <- dpar
     misc$default.dispersion <- 0
     misc$estimated.dispersion <- .estimated.dispersion
+
     misc$imethod <- .imethod
     misc$nsimEIM <- .nsimEIM
     misc$firstDeriv <- .firstDeriv
     misc$oim <- .oim
+    misc$multipleResponses <- FALSE
   }), list( .link1 = link1, .earg1 = earg1,
             .link2 = link2, .earg2 = earg2,
             .dispersion = dispersion, .rpar = rpar,
@@ -548,10 +577,10 @@ skira.control <- function(save.weight = TRUE, ...)
         .rpar
     }
 
-    theta1 <- eta2theta(eta[, 1], .link1, earg = .earg1)
-    theta2 <- eta2theta(eta[, 2], .link2, earg = .earg2)
-    dthetas.detas <- cbind(dtheta.deta(theta1, .link1, earg = .earg1),
-                           dtheta.deta(theta2, .link2, earg = .earg2))
+    theta1 <- eta2theta(eta[, 1], .link1 , earg = .earg1 )
+    theta2 <- eta2theta(eta[, 2], .link2 , earg = .earg2 )
+    dthetas.detas <- cbind(dtheta.deta(theta1, .link1 , earg = .earg1 ),
+                           dtheta.deta(theta2, .link2 , earg = .earg2 ))
 
     dmus.dthetas <- if (FALSE) {
       attr(eval(d3), "gradient")
@@ -563,9 +592,9 @@ skira.control <- function(save.weight = TRUE, ...)
 
 
       myderiv <- if ( .firstDeriv == "nsimEIM") {
-        w * (y - mu) * dmus.dthetas * dthetas.detas
+        c(w) * (y - mu) * dmus.dthetas * dthetas.detas
       } else {
-        w * (y - mu) *
+        c(w) * (y - mu) *
         cbind(dmus.dthetas[, 1] * dthetas.detas[, 1],
               dmus.dthetas[, 2] * dthetas.detas[, 2] + sqrt(rpar))
       }

@@ -5,10 +5,10 @@
 \description{
   Estimation of a 3-parameter log-gamma distribution described by
   Prentice (1974).
+
 }
 \usage{
 prentice74(llocation = "identity", lscale = "loge", lshape = "identity",
-           elocation = list(), escale = list(), eshape = list(),
            ilocation = NULL, iscale = NULL, ishape = NULL, zero = 2:3)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -19,11 +19,6 @@ prentice74(llocation = "identity", lscale = "loge", lshape = "identity",
   positive scale parameter \eqn{b}
   and the shape parameter \eqn{q}, respectively.
   See \code{\link{Links}} for more choices.
-
-  }
-  \item{elocation, escale, eshape}{
-  List. Extra argument for each of the links.
-  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{ilocation, iscale}{
@@ -93,6 +88,7 @@ else \eqn{q < 0} is right skew.
   The special case \eqn{q = 0} is not handled, therefore
   estimates of \eqn{q} too close to zero may cause numerical problems.
 
+
 }
 \author{ T. W. Yee }
 \note{ 
@@ -101,19 +97,21 @@ else \eqn{q < 0} is right skew.
   \eqn{\sigma = b}{sigma = b}.
   Fisher scoring is used. 
 
+
 }
 \seealso{
   \code{\link{lgamma3ff}},
   \code{\link[base:Special]{lgamma}},
   \code{\link{gengamma}}.
 
+
 }
 \examples{
-pdat = data.frame(x = runif(nn <- 1000))
-pdat = transform(pdat, loc = -1 + 2*x, Scale = exp(1))
-pdat = transform(pdat, y = rlgamma(nn, loc = loc, scale = Scale, k = 1))
-fit = vglm(y ~ x, prentice74(zero = 2:3), pdat, trace = TRUE)
-coef(fit, matrix = TRUE)  # Note the coefficients for location
+pdata <- data.frame(x2 = runif(nn <- 1000))
+pdata <- transform(pdata, loc = -1 + 2*x2, Scale = exp(1))
+pdata <- transform(pdata, y = rlgamma(nn, loc = loc, scale = Scale, k = 1))
+fit <- vglm(y ~ x2, prentice74(zero = 2:3), pdata, trace = TRUE)
+coef(fit, matrix = TRUE) # Note the coefficients for location
 }
 \keyword{models}
 \keyword{regression}

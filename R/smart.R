@@ -217,8 +217,8 @@ function (x, df = NULL, knots = NULL, degree = 3, intercept = FALSE,
     }
     Aknots <- sort(c(rep(Boundary.knots, ord), knots))
     if (any(outside)) {
-        warning(
-"some 'x' values beyond boundary knots may cause ill-conditioned bases")
+        warning("some 'x' values beyond boundary knots may ",
+                "cause ill-conditioned bases")
         derivs <- 0:degree
         scalef <- gamma(1L:ord)
         basis <- array(0, c(length(x), length(Aknots) - degree - 
@@ -250,8 +250,11 @@ function (x, df = NULL, knots = NULL, degree = 3, intercept = FALSE,
         basis <- nmat
     }
     dimnames(basis) <- list(nx, 1L:n.col)
-    a <- list(degree = degree, knots = if (is.null(knots)) numeric(0L) else knots, 
-        Boundary.knots = Boundary.knots, intercept = intercept)
+    a <- list(degree = degree,
+        knots = if (is.null(knots)) numeric(0L) else knots, 
+        Boundary.knots = Boundary.knots,
+        intercept = intercept,
+        Aknots = Aknots)
     attributes(basis) <- c(attributes(basis), a)
     class(basis) <- c("bs", "basis", "matrix")
 
@@ -337,8 +340,11 @@ function (x, df = NULL, knots = NULL, intercept = FALSE, Boundary.knots = range(
         basis <- nmat
     }
     dimnames(basis) <- list(nx, 1L:n.col)
-    a <- list(degree = 3, knots = if (is.null(knots)) numeric(0) else knots, 
-        Boundary.knots = Boundary.knots, intercept = intercept)
+    a <- list(degree = 3,
+              knots = if (is.null(knots)) numeric(0) else knots, 
+              Boundary.knots = Boundary.knots,
+              intercept = intercept,
+              Aknots = Aknots)
     attributes(basis) <- c(attributes(basis), a)
     class(basis) <- c("ns", "basis", "matrix")
 

@@ -122,24 +122,24 @@ gaussianff(dispersion = 0, parallel = FALSE, zero = NULL)
 }
 
 \examples{
-mydat = data.frame(x = sort(runif(n <- 40)))
-mydat = transform(mydat, y1 = 1 + 2*x + rnorm(n, sd=0.1),
-                         y2 = 3 + 4*x + rnorm(n, sd=0.1),
-                         y3 = 7 + 4*x + rnorm(n, sd=0.1))
-fit = vglm(cbind(y1,y2) ~ x, gaussianff, data=mydat)
-coef(fit, matrix=TRUE)
+gdata <- data.frame(x2 = sort(runif(n <- 40)))
+gdata <- transform(gdata, y1 = 1 + 2*x2 + rnorm(n, sd = 0.1),
+                          y2 = 3 + 4*x2 + rnorm(n, sd = 0.1),
+                          y3 = 7 + 4*x2 + rnorm(n, sd = 0.1))
+fit <- vglm(cbind(y1,y2) ~ x2, gaussianff, data = gdata)
+coef(fit, matrix = TRUE)
 
 # For comparison:
-coef( lmfit <-  lm(y1 ~ x, data=mydat))
-coef(glmfit <- glm(y2 ~ x, data=mydat, gaussian))
+coef( lmfit <-  lm(y1 ~ x2, data = gdata))
+coef(glmfit <- glm(y2 ~ x2, data = gdata, gaussian))
 vcov(fit)
 vcov(lmfit)
 
-t(weights(fit, type="prior"))         # Unweighted observations
-head(weights(fit, type="working"))    # Identity matrices
+t(weights(fit, type = "prior"))      # Unweighted observations
+head(weights(fit, type = "working")) # Identity matrices
 
 # Reduced-rank VLM (rank-1)
-fit2 = rrvglm(cbind(y1,y2,y3) ~ x, gaussianff, data=mydat)
+fit2 <- rrvglm(cbind(y1, y2, y3) ~ x2, gaussianff, data = gdata)
 Coef(fit2)
 }
 \keyword{models}

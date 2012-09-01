@@ -65,11 +65,11 @@ rzageom(n, prob, pobs0 = 0)
 
 }
 \examples{
-prob = 0.35; pobs0 <- 0.05; x <- (-1):7
+prob <- 0.35; pobs0 <- 0.05; x <- (-1):7
 dzageom(x, prob = prob, pobs0 = pobs0)
 table(rzageom(100, prob = prob, pobs0 = pobs0))
 
-\dontrun{ x = 0:10
+\dontrun{ x <- 0:10
 barplot(rbind(dzageom(x, prob = prob, pobs0 = pobs0),
                 dgeom(x, prob = prob)),
         beside = TRUE, col = c("blue", "orange"), cex.main = 0.7, las = 1,

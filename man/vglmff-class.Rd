@@ -53,7 +53,7 @@ Objects can be created by calls of the form \code{new("vglmff", ...)}.
   At present only a very few \pkg{VGAM} family functions have this
   feature implemented.
   Those that do do not require specifying the \code{Musual}
-  argument when used with \code{\link{rcam}}.
+  argument when used with \code{\link{rcim}}.
 
 
   }
@@ -87,6 +87,10 @@ Objects can be created by calls of the form \code{new("vglmff", ...)}.
   given the fitted values, returns the linear/additive predictors.
   If present, the function must have arguments
   \code{function(mu, extra = NULL)}.
+  Most \pkg{VGAM} family functions do not have
+  a \code{linkfun} function. They largely are for
+  classical exponential families, i.e., GLMs.
+
 
   }
   \item{\code{loglikelihood}:}{
@@ -250,13 +254,13 @@ The file is amongst other \pkg{VGAM} PDF documentation.
   \code{\link{vglm}},
   \code{\link{vgam}},
   \code{\link{rrvglm}},
-  \code{\link{rcam}}.
+  \code{\link{rcim}}.
 
 
 }
 \examples{
 cratio()
 cratio(link = "cloglog")
-cratio(link = cloglog, reverse = TRUE)
+cratio(link = "cloglog", reverse = TRUE)
 }
 \keyword{classes}

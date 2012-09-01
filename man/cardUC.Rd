@@ -12,7 +12,7 @@
 
 }
 \usage{
-dcard(x, mu, rho, log=FALSE)
+dcard(x, mu, rho, log = FALSE)
 pcard(q, mu, rho)
 qcard(p, mu, rho, tolerance = 1e-07, maxits = 500)
 rcard(n, mu, rho, ...)

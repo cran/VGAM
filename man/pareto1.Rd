@@ -10,9 +10,8 @@
 
 }
 \usage{
-pareto1(lshape = "loge", earg = list(), location = NULL)
-tpareto1(lower, upper, lshape = "loge", earg = list(), ishape = NULL,
-         imethod = 1)
+ pareto1(lshape = "loge", location = NULL)
+tpareto1(lower, upper, lshape = "loge", ishape = NULL, imethod = 1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -20,12 +19,6 @@ tpareto1(lower, upper, lshape = "loge", earg = list(), ishape = NULL,
   Parameter link function applied to the parameter \eqn{k}.
   See \code{\link{Links}} for more choices.
   A log link is the default because \eqn{k} is positive.
-
-
-  }
-  \item{earg}{
-  List. Extra argument for the link.
-  See \code{earg} in \code{\link{Links}} for general information.
 
 
   }
@@ -97,6 +90,7 @@ tpareto1(lower, upper, lshape = "loge", earg = list(), ishape = NULL,
   \eqn{k \alpha^k (U^{1-k}-\alpha^{1-k}) /
        [(1-k)(1-(\alpha/U)^k)]}{
        k * lower^k * (U^(1-k)-alpha^(1-k)) / ((1-k) * (1-(alpha/U)^k))}.
+
 
 }
 \value{
@@ -172,27 +166,27 @@ tpareto1(lower, upper, lshape = "loge", earg = list(), ishape = NULL,
 
 }
 \examples{
-alpha = 2; kay = exp(3)
-pdat = data.frame(y = rpareto(n = 1000, location = alpha, shape = kay))
-fit = vglm(y ~ 1, pareto1, pdat, trace = TRUE)
-fit@extra   # The estimate of alpha is here
+alpha <- 2; kay <- exp(3)
+pdat <- data.frame(y = rpareto(n = 1000, location = alpha, shape = kay))
+fit <- vglm(y ~ 1, pareto1, pdat, trace = TRUE)
+fit@extra # The estimate of alpha is here
 head(fitted(fit))
 with(pdat, mean(y))
 coef(fit, matrix = TRUE)
-summary(fit)     # Standard errors are incorrect!!
+summary(fit) # Standard errors are incorrect!!
 
 # Here, alpha is assumed known
-fit2 = vglm(y ~ 1, pareto1(location = alpha), pdat, trace = TRUE, crit = "coef")
-fit2@extra   # alpha stored here
+fit2 <- vglm(y ~ 1, pareto1(location = alpha), pdat, trace = TRUE, crit = "coef")
+fit2@extra # alpha stored here
 head(fitted(fit2))
 coef(fit2, matrix = TRUE)
-summary(fit2)    # Standard errors are okay
+summary(fit2) # Standard errors are okay
 
 # Upper truncated Pareto distribution
-lower = 2; upper = 8; kay = exp(2)
-pdat3 = data.frame(y = rtpareto(n = 100, lower = lower,
+lower <- 2; upper <- 8; kay <- exp(2)
+pdat3 <- data.frame(y = rtpareto(n = 100, lower = lower,
                                 upper = upper, shape = kay))
-fit3 = vglm(y ~ 1, tpareto1(lower, upper), pdat3, trace = TRUE, cri = "coef")
+fit3 <- vglm(y ~ 1, tpareto1(lower, upper), pdat3, trace = TRUE, cri = "coef")
 coef(fit3, matrix = TRUE)
 c(fit3@misc$lower, fit3@misc$upper)
 }

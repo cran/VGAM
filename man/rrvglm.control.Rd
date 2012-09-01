@@ -5,6 +5,7 @@
 \description{
   Algorithmic constants and parameters for running \code{rrvglm} are set
   using this function.
+
 }
 \usage{
 rrvglm.control(Rank = 1, Algorithm = c("alternating", "derivative"),
@@ -27,10 +28,12 @@ rrvglm.control(Rank = 1, Algorithm = c("alternating", "derivative"),
     The variables making up \bold{x1} are given by the terms in
     \code{Norrr} argument, and the rest of the terms comprise \bold{x2}.
 
+
   }
   \item{Algorithm}{
     Character string indicating what algorithm is
     to be used. The default is the first one.
+
 
   }
   \item{Corner}{
@@ -40,6 +43,7 @@ rrvglm.control(Rank = 1, Algorithm = c("alternating", "derivative"),
     of the constraint matrices that are use as the corner constraints,
     i.e., they hold an order-\eqn{R} identity matrix.
 
+
   }
 \item{Uncorrelated.lv}{
   Logical indicating whether uncorrelated latent variables are to be used.
@@ -48,6 +52,7 @@ rrvglm.control(Rank = 1, Algorithm = c("alternating", "derivative"),
   variance and uncorrelated. This constraint does not lead to a unique
   solution because it can be rotated.
 
+
 }
   \item{Wmat}{ Yet to be done. }
   \item{Svd.arg}{
@@ -55,11 +60,13 @@ rrvglm.control(Rank = 1, Algorithm = c("alternating", "derivative"),
     of the outer product is to computed.  This is another normalization
     which ensures uniqueness.  See the argument \code{Alpha} below.
 
+
 }
   \item{Index.corner}{
     Specifies the \eqn{R} rows of the constraint matrices that are
     used for the corner constraints, i.e., they hold an order-\eqn{R}
     identity matrix.
+
 
   }
   \item{Alpha}{
@@ -73,6 +80,7 @@ rrvglm.control(Rank = 1, Algorithm = c("alternating", "derivative"),
     A value of 0.5 is `symmetrical'. 
     This argument is used only when \code{Svd.arg=TRUE}.
 
+
   }
   \item{Bestof}{
     Integer. The best of \code{Bestof} models fitted is
@@ -82,10 +90,12 @@ rrvglm.control(Rank = 1, Algorithm = c("alternating", "derivative"),
     for \bold{C},
     i.e., when \bold{C} is \emph{not} passed in as initial values.
 
+
   }
   \item{Ainit, Cinit}{
     Initial \bold{A} and \bold{C} matrices which may speed up convergence.
     They must be of the correct dimension.
+
 
   }
   \item{Etamat.colmax}{
@@ -95,6 +105,7 @@ rrvglm.control(Rank = 1, Algorithm = c("alternating", "derivative"),
     In general, the larger the value, the better the initial value.
     Used only if \code{Use.Init.Poisson.QO=TRUE}.
 
+
   }
 
 % \item{Quadratic}{
@@ -103,9 +114,13 @@ rrvglm.control(Rank = 1, Algorithm = c("alternating", "derivative"),
 %   \code{"qrrvglm"} will be returned, otherwise \code{"rrvglm"}.
 % }
   \item{szero}{
-      Integer vector specifying which rows
-      of the constraint matrices are to be all zeros.
-      These are called structural zeros.
+  Integer vector specifying which rows
+  of the estimated constraint matrices (\bold{A}) are
+  to be all zeros.
+  These are called \emph{structural zeros}.
+  Must not have any common value with \code{Index.corner}, and
+  be a subset of the vector \code{1:M}.
+
 
   }
   \item{SD.Ainit, SD.Cinit}{
@@ -113,6 +128,7 @@ rrvglm.control(Rank = 1, Algorithm = c("alternating", "derivative"),
       of \bold{A} and \bold{C}.
       These are normally distributed with mean zero.  
       This argument is used only if \code{Use.Init.Poisson.QO = FALSE}.
+
 
   }
 % \item{ppar}{ Ignore this. }
@@ -228,7 +244,7 @@ rrvglm.control(Rank = 1, Algorithm = c("alternating", "derivative"),
 \examples{
 set.seed(111)
 pneumo <- transform(pneumo, let = log(exposure.time),
-                    x3 = runif(nrow(pneumo)))  # x3 is random noise
+                    x3 = runif(nrow(pneumo))) # x3 is random noise
 fit <- rrvglm(cbind(normal, mild, severe) ~ let + x3,
               multinomial, pneumo, Rank = 1, Index.corner = 2)
 constraints(fit)

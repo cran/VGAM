@@ -9,7 +9,6 @@
 }
 \usage{
 bisa(lshape = "loge", lscale = "loge",
-     eshape = list(), escale = list(),
      ishape = NULL, iscale = 1, imethod = 1, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -19,11 +18,6 @@ bisa(lshape = "loge", lscale = "loge",
   (\eqn{a} and \eqn{b} below).
   See \code{\link{Links}} for more choices.
   A log link is the default for both because they are positive.
-
-  }
-  \item{escale, eshape}{
-  List. Extra argument for each of the links.
-  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{iscale, ishape}{

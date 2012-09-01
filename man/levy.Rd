@@ -5,10 +5,10 @@
 \description{
 Estimates the two parameters of the Levy distribution
 by maximum likelihood estimation.
+
 }
 \usage{
-levy(delta = NULL, link.gamma = "loge", earg=list(),
-     idelta = NULL, igamma = NULL)
+levy(delta = NULL, link.gamma = "loge", idelta = NULL, igamma = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -16,15 +16,12 @@ levy(delta = NULL, link.gamma = "loge", earg=list(),
   Location parameter. May be assigned a known value,
   otherwise it is estimated (the default).
 
+
   }
   \item{link.gamma}{
   Parameter link function for the (positive) \eqn{\gamma}{gamma} parameter. 
   See \code{\link{Links}} for more choices.
 
-  }
-  \item{earg}{
-  List. Extra argument for the link.
-  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{idelta}{
@@ -32,10 +29,12 @@ levy(delta = NULL, link.gamma = "loge", earg=list(),
   (if it is to be estimated).
   By default, an initial value is chosen internally.
 
+
   }
   \item{igamma}{
   Initial value for the \eqn{\gamma}{gamma} parameter.
   By default, an initial value is chosen internally.
+
 
   }
 }
@@ -52,23 +51,27 @@ levy(delta = NULL, link.gamma = "loge", earg=list(),
   where \eqn{\delta<y<\infty}{delta<y<Inf} and \eqn{\gamma>0}{gamma>0}.
   The mean does not exist.
 
+
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}},
   and \code{\link{vgam}}.
 
+
 }
 \references{ 
   Nolan, J. P. (2005)
   \emph{Stable Distributions: Models for Heavy Tailed Data}.
 
+
 }
 \author{ T. W. Yee }
 \note{
   If \eqn{\delta}{delta} is given, then only one parameter is estimated
-  and the default is \eqn{\eta_1=\log(\gamma)}{eta1=log(gamma)}.  If
-  \eqn{\delta}{delta} is not given, then \eqn{\eta_2=\delta}{eta2=delta}.
+  and the default is \eqn{\eta_1=\log(\gamma)}{eta1=log(gamma)}.
+  If \eqn{\delta}{delta} is not given, then \eqn{\eta_2=\delta}{eta2=delta}.
+
 
 }
 
@@ -78,23 +81,24 @@ levy(delta = NULL, link.gamma = "loge", earg=list(),
   The Nolan article is at
   \url{http://academic2.american.edu/~jpnolan/stable/chap1.pdf}.
 
+
 }
 \examples{
-nn = 1000; delta = 0
-mygamma = 1         # log link ==> 0 is the answer
-ldat = data.frame(y = delta + mygamma/rnorm(nn)^2) # Levy(mygamma, delta)
+nn <- 1000; delta <- 0
+mygamma <- 1 # log link ==> 0 is the answer
+ldata <- data.frame(y = delta + mygamma/rnorm(nn)^2) # Levy(mygamma, delta)
 
 # Cf. Table 1.1 of Nolan for Levy(1,0)
-with(ldat, sum(y > 1) / length(y))  # Should be 0.6827
-with(ldat, sum(y > 2) / length(y))  # Should be 0.5205
+with(ldata, sum(y > 1) / length(y)) # Should be 0.6827
+with(ldata, sum(y > 2) / length(y)) # Should be 0.5205
 
-fit = vglm(y ~ 1, levy(delta=delta), ldat, trace=TRUE) # 1 parameter
-fit = vglm(y ~ 1, levy(idelta=delta, igamma=mygamma),
-           ldat, trace=TRUE)    # 2 parameters
-coef(fit, matrix=TRUE)
+fit <- vglm(y ~ 1, levy(delta = delta), ldata, trace = TRUE) # 1 parameter
+fit <- vglm(y ~ 1, levy(idelta = delta, igamma = mygamma),
+           ldata, trace = TRUE) # 2 parameters
+coef(fit, matrix = TRUE)
 Coef(fit)
 summary(fit)
-head(weights(fit, type="w"))
+head(weights(fit, type = "w"))
 }
 \keyword{models}
 \keyword{regression}

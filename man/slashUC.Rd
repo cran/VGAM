@@ -11,9 +11,9 @@
 
 }
 \usage{
-dslash(x, mu=0, sigma=1, log=FALSE, smallno=.Machine$double.eps*1000)
-pslash(q, mu=0, sigma=1)
-rslash(n, mu=0, sigma=1)
+dslash(x, mu = 0, sigma = 1, log = FALSE, smallno = .Machine$double.eps*1000)
+pslash(q, mu = 0, sigma = 1)
+rslash(n, mu = 0, sigma = 1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -58,14 +58,14 @@ rslash(n, mu=0, sigma=1)
 }
 \examples{
 \dontrun{
-curve(dslash, col="blue", ylab="f(x)", -5, 5, ylim=c(0,0.4),
-     main="Standard slash, normal and Cauchy densities", lwd=2)
-curve(dnorm, col="black", lty=2, lwd=2, add=TRUE)
-curve(dcauchy, col="red", lty=3, lwd=2, add=TRUE)
-legend(x=2, y=0.3, c("slash","normal","Cauchy"), lty=1:3,
-       col=c("blue","black","red"), lwd=2)
+curve(dslash, col = "blue", ylab = "f(x)", -5, 5, ylim = c(0, 0.4),
+     main = "Standard slash, normal and Cauchy densities", lwd = 2)
+curve(dnorm, col = "black", lty = 2, lwd = 2, add = TRUE)
+curve(dcauchy, col = "orange", lty = 3, lwd = 2, add = TRUE)
+legend(x = 2, y = 0.3, c("slash", "normal", "Cauchy"), lty = 1:3,
+       col = c("blue","black","orange"), lwd = 2)
 
-curve(pslash, col="blue", -5, 5, ylim=0:1)
+curve(pslash, col = "blue", -5, 5, ylim = 0:1)
 }
 }
 \keyword{distribution}

@@ -93,7 +93,7 @@ contains further information and examples.
 
 }
 \examples{
-fit = vglm(cbind(cyadea, beitaw, kniexc) ~ altitude, loglinb3, hunua)
+fit <- vglm(cbind(cyadea, beitaw, kniexc) ~ altitude, loglinb3, hunua)
 coef(fit, matrix = TRUE)
 head(fitted(fit))
 summary(fit)

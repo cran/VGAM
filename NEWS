@@ -1,8 +1,91 @@
     **************************************************
     *                                                *
-    *           0.8 SERIES NEWS                      *
+    *           0.9 SERIES NEWS                      *
     *                                                *
     **************************************************
+
+
+
+                CHANGES IN VGAM VERSION 0.9-0
+
+NEW FEATURES
+
+    o   Major change: VGAM family functions no longer have
+        arguments such as earg, escale, eshape, etc. Arguments such
+        as offset that used to be passed in via those arguments can
+        be done directly through the link function. For example,
+        gev(lshape = "logoff", eshape = list(offset = 0.5)) is
+        replaced by gev(lshape = logoff(offset = 0.5)). The @misc
+        slot retains the $link and $earg components, however,
+        the latter is in a different format. Functions such as
+        dtheta.deta(), d2theta.deta2(), eta2theta(), theta2eta()
+        have been modified. Link functions have been simplified
+        somewhat.  The casual user will probably not be affected,
+        but programmers will. Sorry about this!
+    o   New VGAM family functions:
+        [dpqr]gompertz(), [dpqr]gumbelII(), [dpr]lindley(),
+        [dpqr]makeham(), [dpqr]perks().
+    o   df.residual() supports a new formula/equation for 'type = "lm"'.
+    o   garma("reciprocal") supported.
+    o   is.parallel() for constraint matrices summary.
+    o   Improved family functions:
+        these can handle multiple responses:
+        benini(), chisq(), erlang(), exponential(), gamma1(), geometric(),
+        gpd(), inv.gaussianff(), logff(), maxwell(), rayleigh(),
+        yulesimon(), zetaff().
+    o   New data set: hormone
+        [http://www.stat.tamu.edu/~carroll/data/hormone_data.txt].
+    o   If a factor response is not ordered then a warning
+        is issued for acat(), cratio(), cumulative() and sratio().
+    o   New dpqr-type functions:
+        [dpqr]perks(), [dpqr]mperks(), [dpqr]mbeard().
+    o   Argument 'parallel' added to gamma2().
+    o   New link functions: mlogit().
+
+
+BUG FIXES and CHANGES
+
+    o   zibinomial() had 1 wrong element in the EIM; one of the
+        corrections of VGAM 0.8-4 was actually incorrect.
+    o   zibinomial() blurb was wrong:
+        previously was "(1 - pstr0) * prob / (1 - (1 - prob)^w)" where
+        prob is the mean of the ordinary binomial distribution.
+        Now is "(1 - pstr0) * prob".
+    o   betaff() no longer has "A" and "B" arguments; they ar
+        extracted from "lmu = elogit(min = A, max = B)". 
+    o   binom2.rho() has "lmu" as a new argument 2.
+    o   logistic2() has has zero = -2 as default, and can handle
+        multiple responses.
+    o   gengamma() returned the wrong mean (picked up by Andrea Venturini):
+        not b * k but b * gamma(k + 1 / d) / gamma(k).
+    o   tobit.Rd nows states vector values for 'Lower' and 'Upper'
+        are permitted. Also, the @misc$Lower and @misc$Upper are
+        matrices of the same dimension as the response.
+    o   constraints.vlm(type = c("vlm", "lm")) has been changed to
+        constraints.vlm(type = c("lm", "term")) [respectively].
+    o   Rcam() renamed to Rcim(), and rcam() renamed to rcim().
+        Class "rcam" changed to "rcim".
+    o   Days changed from "Monday" to "Mon" in all crash data frames, etc.
+    o   w.wz.merge() written to handle the working weights
+        for multiple responses.
+        w.y.check() written to check the integrity of prior
+        weights and response.
+    o   Argument 'sameScale' changed to 'eq.scale',
+        'quantile.probs' in negbinomial-type families changed to 'probs.y'.
+    o   No more warnings: dirmultinomial().
+    o   Renamed arguments: benini(earg <- eshape),
+        binormal(equalmean <- eq.mean),
+        binormal(equalsd <- eq.sd),
+    o   dirmultinomial() can handle a 1-row response [thanks to Peng Yu].
+    o   weibull() gives improved warnings re. the shape parameter wrt
+        regularity conditions.
+    o   The 12 most time-consuming examples have been placed in a
+        \dontrun{} to save time.
+    o   Argument "prob.x" renamed to "probs.x".
+    o   Argument "hbw" removed from iam().
+    o   Argument 'name' is passed into .C and .Fortran() [in dotC()
+        and dotFortran()] is now okay because the first argument
+        is unnamed.
 
 
 
@@ -34,8 +117,6 @@ BUG FIXES and CHANGES
         [found by David Venet].
     o   Arguments lower.tail and log.p not supported (temporarily) in
         pposbinom() and qposbinom().
-
-
 
 
 

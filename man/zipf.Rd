@@ -7,7 +7,7 @@
 
 }
 \usage{
-zipf(N = NULL, link = "loge", earg = list(), init.s = NULL)
+zipf(N = NULL, link = "loge", init.s = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -22,11 +22,6 @@ zipf(N = NULL, link = "loge", earg = list(), init.s = NULL)
   \item{link}{
   Parameter link function applied to the (positive) parameter \eqn{s}.
   See \code{\link{Links}} for more choices.
-
-  }
-  \item{earg}{
-  List. Extra argument for the link.
-  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{init.s}{
@@ -73,7 +68,7 @@ zipf(N = NULL, link = "loge", earg = list(), init.s = NULL)
   Johnson N. L., Kemp, A. W. and Kotz S. (2005)
   \emph{Univariate Discrete Distributions},
   3rd edition,
-  Hoboken, New Jersey: Wiley.
+  Hoboken, New Jersey, USA: Wiley.
 
 }
 \author{ T. W. Yee }
@@ -89,12 +84,12 @@ zipf(N = NULL, link = "loge", earg = list(), init.s = NULL)
 
 }
 \examples{
-zdata = data.frame(y = 1:5, ofreq = c(63, 14, 5, 1, 2))
-fit = vglm(y ~ 1, zipf, zdata, trace = TRUE, weight = ofreq, crit = "coef")
-fit = vglm(y ~ 1, zipf(link = identity, init = 3.4), zdata,
-           trace = TRUE, weight = ofreq)
+zdata <- data.frame(y = 1:5, ofreq = c(63, 14, 5, 1, 2))
+fit <- vglm(y ~ 1, zipf, zdata, trace = TRUE, weight = ofreq, crit = "coef")
+fit <- vglm(y ~ 1, zipf(link = identity, init = 3.4), zdata,
+            trace = TRUE, weight = ofreq)
 fit@misc$N
-(shat = Coef(fit))
+(shat <- Coef(fit))
 with(zdata, weighted.mean(y, ofreq))
 fitted(fit, matrix = FALSE)
 }

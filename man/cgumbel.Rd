@@ -9,8 +9,8 @@
 
 }
 \usage{
-cgumbel(llocation = "identity", lscale = "loge", elocation = list(),
-        escale = list(), iscale=NULL, mean=TRUE, percentiles=NULL, zero=2)
+cgumbel(llocation = "identity", lscale = "loge",
+        iscale = NULL, mean = TRUE, percentiles = NULL, zero = 2)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -19,11 +19,6 @@ cgumbel(llocation = "identity", lscale = "loge", elocation = list(),
   Parameter link functions for the location and
   (positive) \eqn{scale} parameters.
   See \code{\link{Links}} for more choices.
-
-  }
-  \item{elocation, escale}{
-  Extra argument for the respective links.
-  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{iscale}{

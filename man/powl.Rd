@@ -8,7 +8,7 @@
 
 }
 \usage{
-powl(theta, earg = list(power=1), inverse = FALSE, deriv = 0,
+powl(theta, power = 1, inverse = FALSE, deriv = 0,
       short = TRUE, tag = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -18,31 +18,18 @@ powl(theta, earg = list(power=1), inverse = FALSE, deriv = 0,
   See below for further details.
 
   }
-  \item{earg}{
-  List. Extra argument for passing in additional information.
-  Here, the component name \code{power} denotes the power or exponent.
-  This component name should not be abbreviated.
+  \item{power}{
+  This denotes the power or exponent.
+
 
   }
-  \item{inverse}{
-  Logical. If \code{TRUE} the inverse function is computed.
+
+  \item{inverse, deriv, short, tag}{
+  Details at \code{\link{Links}}.
+
 
   }
-  \item{deriv}{
-  Order of the derivative. Integer with value 0, 1 or 2.
 
-  }
-  \item{short}{
-  Used for labelling the \code{blurb} slot of a
-  \code{\link{vglmff-class}} object.
-
-  }
-  \item{tag}{
-  Used for labelling the linear/additive predictor in the
-  \code{initialize} slot of a \code{\link{vglmff-class}} object.
-  Contains a little more information if \code{TRUE}.
-
-  }
 }
 \details{
   The power link function raises a parameter by a certain value of
@@ -51,8 +38,7 @@ powl(theta, earg = list(power=1), inverse = FALSE, deriv = 0,
   problems, e.g., if \code{power=0.5} and \code{theta} is
   negative.
 
-  The arguments \code{short} and \code{tag} are used only if
-  \code{theta} is character.
+
 
 }
 \value{
@@ -61,10 +47,12 @@ powl(theta, earg = list(power=1), inverse = FALSE, deriv = 0,
   And if \code{inverse = TRUE} then
   \code{theta} raised to the power of \code{1/power}.
 
+
   For \code{deriv = 1}, then the function returns
   \emph{d} \code{theta} / \emph{d} \code{eta} as a function of \code{theta}
   if \code{inverse = FALSE},
   else if \code{inverse = TRUE} then it returns the reciprocal.
+
 
 }
 %\references{
@@ -79,6 +67,7 @@ powl(theta, earg = list(power=1), inverse = FALSE, deriv = 0,
   \code{theta} and \code{power}.
   Consequently this link function should be used with caution.
 
+
 }
 
 \seealso{ 
@@ -86,24 +75,19 @@ powl(theta, earg = list(power=1), inverse = FALSE, deriv = 0,
   \code{\link{loge}}.
 }
 \examples{
-powl("a", earg=list(power=2), short=FALSE, tag=TRUE)
-
+powl("a", power = 2, short = FALSE, tag = TRUE)
 powl(x <- 1:5)
-powl(x, earg=list(power=2))
-
-earg=list(power=2)
-max(abs(powl(powl(x, earg=earg), earg=earg, inverse=TRUE) - x)) # Should be 0
-
-powl(x <- (-5):5, earg=list(power=0.5))  # Has NAs
+powl(x, power = 2)
+max(abs(powl(powl(x, power = 2), power = 2, inverse=TRUE) - x)) # Should be 0
+powl(x <- (-5):5, power = 0.5) # Has NAs
 
 # 1/2 = 0.5
-pdat = data.frame(y = rbeta(n=1000, shape1=2^2, shape2=3^2))
-fit = vglm(y ~ 1, beta.ab(lshape1="powl", lshape2="powl",
-                          eshape1=list(power=0.5), i1=3,
-                          eshape2=list(power=0.5), i2=7), pdat)
-t(coef(fit, matrix=TRUE))
-Coef(fit)  # Useful for intercept-only models
-vcov(fit, untrans=TRUE)
+pdata <- data.frame(y = rbeta(n = 1000, shape1 = 2^2, shape2 = 3^2))
+fit <- vglm(y ~ 1, beta.ab(lshape1 = powl(power = 0.5), i1 = 3,
+                           lshape2 = powl(power = 0.5), i2 = 7), pdata)
+t(coef(fit, matrix = TRUE))
+Coef(fit) # Useful for intercept-only models
+vcov(fit, untransform = TRUE)
 }
 \keyword{math}
 \keyword{models}

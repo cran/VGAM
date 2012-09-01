@@ -7,8 +7,7 @@
   regression model to an ordered (preferably) factor response.
 }
 \usage{
-cratio(link = "logit", earg = list(),
-       parallel = FALSE, reverse = FALSE, zero = NULL,
+cratio(link = "logit", parallel = FALSE, reverse = FALSE, zero = NULL,
        whitespace = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -17,11 +16,6 @@ cratio(link = "logit", earg = list(),
   \item{link}{
   Link function applied to the \eqn{M} continuation ratio probabilities.
   See \code{\link{Links}} for more choices.
-
-  }
-  \item{earg}{
-  List. Extra argument for the link function.
-  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{parallel}{
@@ -122,7 +116,8 @@ contains further information and examples.
 
 }
 \section{Warning }{
-  No check is made to verify that the response is ordinal;
+  No check is made to verify that the response is ordinal if the
+  response is a matrix;
   see \code{\link[base:factor]{ordered}}.
 
 }

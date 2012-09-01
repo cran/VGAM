@@ -67,7 +67,7 @@ rnaka(n, shape, scale = 1, Smallno = 1.0e-6)
 
 }
 \examples{
-\dontrun{ x = seq(0, 3.2, len = 200)
+\dontrun{ x <- seq(0, 3.2, len = 200)
 plot(x, dgamma(x, shape = 1), type = "n", col = "black", ylab = "",
      ylim = c(0,1.5), main = "dnaka(x, shape)")
 lines(x, dnaka(x, shape = 1), col = "orange")
@@ -84,8 +84,8 @@ lines(x, pnaka(x, shape = 3), col = "green")
 legend(2, 0.6, col = c("orange","blue","green"), lty = rep(1, len = 3),
        legend = paste("shape =", c(1, 2, 3))) }
 
-probs = seq(0.1, 0.9, by = 0.1)
-pnaka(qnaka(p = probs, shape = 2), shape = 2) - probs  # Should be all 0
+probs <- seq(0.1, 0.9, by = 0.1)
+pnaka(qnaka(p = probs, shape = 2), shape = 2) - probs # Should be all 0
 }
 \keyword{distribution}
 

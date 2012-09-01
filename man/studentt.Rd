@@ -9,16 +9,10 @@
 
 }
 \usage{
-studentt(ldf = "loglog", edf = list(), idf = NULL, tol1 = 0.1,
-         imethod = 1)
-studentt2(df = Inf,
-          llocation = "identity", elocation = list(),
-          lscale = "loge", escale = list(),
-          ilocation = NULL, iscale = NULL,
-          imethod = 1, zero = -2)
-studentt3(llocation = "identity", elocation = list(),
-          lscale = "loge", escale = list(),
-          ldf = "loglog", edf = list(),
+studentt(ldf = "loglog", idf = NULL, tol1 = 0.1, imethod = 1)
+studentt2(df = Inf, llocation = "identity", lscale = "loge",
+          ilocation = NULL, iscale = NULL, imethod = 1, zero = -2)
+studentt3(llocation = "identity", lscale = "loge", ldf = "loglog",
           ilocation = NULL, iscale = NULL, idf = NULL,
           imethod = 1, zero = -(2:3))
 }
@@ -31,11 +25,6 @@ studentt3(llocation = "identity", elocation = list(),
   The defaults ensures the parameters are in range.
   A \code{\link{loglog}} link keeps the degrees of freedom greater
   than unity; see below.
-
-  }
-  \item{elocation, escale, edf}{
-  List. Extra arguments for the links.
-  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{ilocation, iscale, idf}{
@@ -102,6 +91,7 @@ studentt3(llocation = "identity", elocation = list(),
   In general convergence can be slow, especially when there are
   covariates.
 
+
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
@@ -153,6 +143,7 @@ application to financial econometrics.
     \code{\link{huber}},
     \code{\link{koenker}},
     \code{\link[stats]{TDist}}.
+
 
 }
 \examples{

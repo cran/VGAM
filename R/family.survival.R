@@ -10,12 +10,10 @@
 
 
 
- dcennormal1 = function(r1 = 0, r2 = 0,
-                      lmu = "identity",
-                      lsd = "loge",
-                      emu = list(), 
-                      esd = list(), 
-                      imu = NULL, isd = NULL, zero = 2)
+ dcennormal1 <- function(r1 = 0, r2 = 0,
+                         lmu = "identity",
+                         lsd = "loge",
+                         imu = NULL, isd = NULL, zero = 2)
 {
   if (!is.Numeric(r1, allowable.length = 1, integer.valued = TRUE) ||
       r1 < 0)
@@ -23,12 +21,15 @@
   if (!is.Numeric(r2, allowable.length = 1, integer.valued = TRUE) ||
       r2 < 0)
     stop("bad input for 'r2'")
-  if (mode(lmu) != "character" && mode(lmu) != "name")
-    lmu = as.character(substitute(lmu))
-  if (mode(lsd) != "character" && mode(lsd) != "name")
-    lsd = as.character(substitute(lsd))
-  if (!is.list(emu)) emu = list()
-  if (!is.list(esd)) esd = list()
+
+  lmu <- as.list(substitute(lmu))
+  emu <- link2list(lmu)
+  lmu <- attr(emu, "function.name")
+
+  lsd <- as.list(substitute(lsd))
+  esd <- link2list(lsd)
+  lsd <- attr(esd, "function.name")
+
 
   new("vglmff",
   blurb = c("Univariate Normal distribution with double censoring\n\n",
@@ -148,16 +149,17 @@
 
 
 
-dbisa = function(x, shape, scale = 1, log = FALSE) {
-    if (!is.logical(log.arg <- log))
-        stop("bad input for argument 'log'")
-    rm(log)
+dbisa <- function(x, shape, scale = 1, log = FALSE) {
+  if (!is.logical(log.arg <- log) || length(log) != 1)
+    stop("bad input for argument 'log'")
+  rm(log)
+
 
     L = max(length(x), length(shape), length(scale))
     x = rep(x, len=L); shape = rep(shape, len=L); scale = rep(scale, len=L);
     logdensity = rep(log(0), len=L)
     xok = (x > 0)
-    xifun = function(x) {temp <- sqrt(x); temp - 1/temp}
+    xifun <- function(x) {temp <- sqrt(x); temp - 1/temp}
     logdensity[xok] = dnorm(xifun(x[xok]/scale[xok]) / shape[xok], log = TRUE) +
                       log1p(scale[xok]/x[xok]) - log(2) - log(shape[xok]) -
                       0.5 * log(x[xok]) - 0.5 * log(scale[xok])
@@ -167,7 +169,7 @@ dbisa = function(x, shape, scale = 1, log = FALSE) {
 }
 
 
-pbisa = function(q, shape, scale=1) {
+pbisa <- function(q, shape, scale=1) {
     if (!is.Numeric(q))
       stop("bad input for argument 'q'")
     if (!is.Numeric(shape, positive = TRUE))
@@ -181,7 +183,7 @@ pbisa = function(q, shape, scale=1) {
 }
 
 
-qbisa = function(p, shape, scale=1) {
+qbisa <- function(p, shape, scale=1) {
     if (!is.Numeric(p, positive = TRUE) || any(p >= 1))
         stop("argument 'p' must have values inside the interval (0,1)")
     if (!is.Numeric(shape, positive = TRUE))
@@ -196,7 +198,7 @@ qbisa = function(p, shape, scale=1) {
 }
 
 
-rbisa = function(n, shape, scale=1) {
+rbisa <- function(n, shape, scale=1) {
     use.n = if ((length.n <- length(n)) > 1) length.n else
             if (!is.Numeric(n, integer.valued = TRUE,
                             allowable.length = 1, positive = TRUE))
@@ -222,27 +224,30 @@ rbisa = function(n, shape, scale=1) {
 
 
 
- bisa = function(lshape = "loge", lscale = "loge",
-                 eshape = list(), escale = list(),
-                 ishape = NULL,   iscale = 1,
-                 imethod = 1, zero = NULL)
+ bisa <- function(lshape = "loge", lscale = "loge",
+                  ishape = NULL,   iscale = 1,
+                  imethod = 1, zero = NULL)
 {
-    if (mode(lshape) != "character" && mode(lshape) != "name")
-        lshape = as.character(substitute(lshape))
-    if (mode(lscale) != "character" && mode(lscale) != "name")
-        lscale = as.character(substitute(lscale))
+  lshape <- as.list(substitute(lshape))
+  eshape <- link2list(lshape)
+  lshape <- attr(eshape, "function.name")
 
-    if (length(ishape) && !is.Numeric(ishape, positive = TRUE))
-        stop("bad input for argument 'ishape'")
-    if (!is.Numeric(iscale, positive = TRUE))
-        stop("bad input for argument 'iscale'")
-    if (!is.Numeric(imethod, allowable.length = 1,
-                    integer.valued = TRUE, positive = TRUE) ||
-       imethod > 3)
-        stop("argument 'imethod' must be 1 or 2 or 3")
+  lscale <- as.list(substitute(lscale))
+  escale <- link2list(lscale)
+  lscale <- attr(escale, "function.name")
 
-    if (!is.list(eshape)) eshape = list()
-    if (!is.list(escale)) escale = list()
+
+  if (length(ishape) && !is.Numeric(ishape, positive = TRUE))
+      stop("bad input for argument 'ishape'")
+  if (!is.Numeric(iscale, positive = TRUE))
+      stop("bad input for argument 'iscale'")
+  if (!is.Numeric(imethod, allowable.length = 1,
+                  integer.valued = TRUE, positive = TRUE) ||
+     imethod > 3)
+      stop("argument 'imethod' must be 1 or 2 or 3")
+
+
+
 
     new("vglmff",
     blurb = c("Birnbaum-Saunders distribution\n\n",
@@ -317,7 +322,7 @@ rbisa = function(n, shape, scale=1) {
     weight = eval(substitute(expression({
         wz = matrix(as.numeric(NA), n, M)  # Diagonal!!
         wz[,iam(1,1,M)] = 2 * dsh.deta^2 / sh^2
-        hfunction = function(alpha)
+        hfunction <- function(alpha)
             alpha * sqrt(pi/2) - pi * exp(2/alpha^2) *
                                  pnorm(2/alpha, lower.tail = FALSE)
         wz[,iam(2,2,M)] = dsc.deta^2 * (sh * hfunction(sh)  / sqrt(2*pi) +

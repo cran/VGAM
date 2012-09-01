@@ -10,12 +10,12 @@
 
 }
 \usage{
-huggins91(link = "logit", earg = list(), parallel = TRUE,
+huggins91(link = "logit", parallel = TRUE,
           iprob = NULL, eim.not.oim = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{link, earg, parallel, iprob}{
+  \item{link, parallel, iprob}{
   See \code{\link{CommonVGAMffArguments}} for information.
   The \code{parallel} argument should generally be left alone since
   parallelism is assumed by Huggins (1991).
@@ -130,16 +130,17 @@ approach to capture experiments.
     \code{\link{rhuggins91}}.
     \code{\link{posbinomial}}.
 
+
 }
 
 \examples{
-set.seed(123); nTimePts = 5
-hdata = rhuggins91(n = 1000, nTimePts = nTimePts, pvars = 2)
+set.seed(123); nTimePts <- 5
+hdata <- rhuggins91(n = 1000, nTimePts = nTimePts, pvars = 2)
 
 # The truth: xcoeffs are c(-2, 1, 2) and capeffect = -1
 
 # Model 1 is where capture history information is used
-model1  = vglm(cbind(y1, y2, y3, y4, y5) ~ x2 + Chistory,
+model1  <- vglm(cbind(y1, y2, y3, y4, y5) ~ x2 + Chistory,
                huggins91, data = hdata, trace  = TRUE,
                xij = list(Chistory ~ ch0 + zch0 +
                                      ch1 + zch1 + ch2 + zch2 +
@@ -148,25 +149,25 @@ model1  = vglm(cbind(y1, y2, y3, y4, y5) ~ x2 + Chistory,
                           ch0 +  ch1 +  ch2 +  ch3 +  ch4 +
                          zch0 + zch1 + zch2 + zch3 + zch4)
 
-coef(model1, matrix = TRUE)  # Biased!!
+coef(model1, matrix = TRUE) # Biased!!
 summary(model1)
 head(fitted(model1))
 head(model.matrix(model1, type = "vlm"), 21)
 head(hdata)
 
 # Model 2 is where no capture history information is used
-model2  = vglm(cbind(y1, y2, y3, y4, y5) ~ x2,
+model2  <- vglm(cbind(y1, y2, y3, y4, y5) ~ x2,
                huggins91, data = hdata, trace  = TRUE)
-coef(model2, matrix = TRUE)  # Biased!!
+coef(model2, matrix = TRUE) # Biased!!
 summary(model2)
 
 # Model 3 is where half the capture history is used in both
 # the numerator and denominator
 set.seed(123); nTimePts = 5
-hdata2 = rhuggins91(n = 1000, nTimePts = nTimePts, pvars = 2,
+hdata2 <- rhuggins91(n = 1000, nTimePts = nTimePts, pvars = 2,
                     double.ch = TRUE)
 head(hdata2)  # 2s have replaced the 1s in hdata
-model3  = vglm(cbind(y1, y2, y3, y4, y5) ~ x2 + Chistory,
+model3  <- vglm(cbind(y1, y2, y3, y4, y5) ~ x2 + Chistory,
                huggins91, data = hdata2, trace  = TRUE,
                xij = list(Chistory ~ ch0 + zch0 +
                                      ch1 + zch1 + ch2 + zch2 +
@@ -174,7 +175,7 @@ model3  = vglm(cbind(y1, y2, y3, y4, y5) ~ x2 + Chistory,
                form2 = ~ 1 + x2 + Chistory +
                           ch0 +  ch1 +  ch2 +  ch3 +  ch4 +
                          zch0 + zch1 + zch2 + zch3 + zch4)
-coef(model3, matrix = TRUE)  # Biased!!
+coef(model3, matrix = TRUE) # Biased!!
 }
 \keyword{models}
 \keyword{regression}

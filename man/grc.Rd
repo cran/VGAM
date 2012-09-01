@@ -1,17 +1,17 @@
 \name{grc}
 \alias{grc}
-\alias{rcam}
+\alias{rcim}
 %- Also NEED an `\alias' for EACH other topic documented here.
-\title{ Row-Column Association Models including Goodman's RC Association Model }
+\title{ Row-Column Interaction Models including Goodman's RC Association Model }
 \description{
   Fits a Goodman's RC association model to a matrix of counts,
-  and more generally, a sub-class of row-column association models.
+  and more generally, a sub-class of row-column interaction models.
 
 }
 \usage{
 grc(y, Rank = 1, Index.corner = 2:(1 + Rank),
     szero = 1, summary.arg = FALSE, h.step = 1e-04, ...)
-rcam(y, family = poissonff, Rank = 0, Musual = NULL,
+rcim(y, family = poissonff, Rank = 0, Musual = NULL,
      weights = NULL, which.lp = 1,
      Index.corner = if (!Rank) NULL else 1 + Musual * (1:Rank),
      rprefix = "Row.", cprefix = "Col.", offset = 0,
@@ -26,7 +26,7 @@ rcam(y, family = poissonff, Rank = 0, Musual = NULL,
 \arguments{
   \item{y}{
   For \code{grc} a matrix of counts.
-  For \code{rcam} a general matrix response depending on \code{family}.
+  For \code{rcim} a general matrix response depending on \code{family}.
   Output from \code{table()} is acceptable; it is converted into a matrix.
   Note that \code{y} should be at least 3 by 3 in dimension.
 
@@ -115,7 +115,7 @@ rcam(y, family = poissonff, Rank = 0, Musual = NULL,
   \item{Musual}{
   The number of linear predictors of the \pkg{VGAM} \code{family} function
   for an ordinary (univariate) response.
-  Then the number of linear predictors of the \code{rcam()} fit is
+  Then the number of linear predictors of the \code{rcim()} fit is
   usually the number of columns of \code{y} multiplied by \code{Musual}.
   The default is to evaluate the \code{infos} slot of the
   \pkg{VGAM} \code{family} function to try to evaluate it;
@@ -151,12 +151,12 @@ These are called \code{Row.} and \code{Col.} (by default) followed
 by the row or column number.
 
 
-The function \code{rcam()} is more general than \code{grc()}.
+The function \code{rcim()} is more general than \code{grc()}.
 Its default is a no-interaction model of \code{grc()}, i.e.,
 rank-0 and a Poisson distribution. This means that each
 row and column has a dummy variable associated with it.
 The first row and column is baseline.
-The power of \code{rcam()} is that many \pkg{VGAM} family functions
+The power of \code{rcim()} is that many \pkg{VGAM} family functions
 can be assigned to its \code{family} argument.
 For example, 
 \code{\link{normal1}} fits something in between a 2-way
@@ -176,12 +176,12 @@ result may not have meaning.
   An object of class \code{"grc"}, which currently is the same as
   an \code{"rrvglm"} object.
   Currently,
-  a rank-0 \code{rcam()} object is of class \code{\link{rcam0-class}},
-  else of class \code{"rcam"} (this may change in the future).
+  a rank-0 \code{rcim()} object is of class \code{\link{rcim0-class}},
+  else of class \code{"rcim"} (this may change in the future).
 
 % Currently,
-% a rank-0 \code{rcam()} object is of class \code{\link{vglm-class}},
-% but it may become of class \code{"rcam"} one day.
+% a rank-0 \code{rcim()} object is of class \code{\link{vglm-class}},
+% but it may become of class \code{"rcim"} one day.
 
 
 }
@@ -193,7 +193,7 @@ Reduced-rank vector generalized linear models.
 
 
 Yee, T. W. and Hadi, A. F. (2012)
-Row-column association models
+Row-column interaction models
 \emph{In preparation}.
 
 
@@ -243,7 +243,7 @@ assistance from Alfian F. Hadi.
 }
 
 \section{Warning}{
-  The function \code{rcam()} is experimental at this stage and
+  The function \code{rcim()} is experimental at this stage and
   may have bugs.
   Quite a lot of expertise is needed when fitting and in its
   interpretion thereof. For example, the constraint
@@ -261,7 +261,7 @@ assistance from Alfian F. Hadi.
 
 
   The functions temporarily create a permanent data frame
-  called \code{.grc.df} or \code{.rcam.df}, which used
+  called \code{.grc.df} or \code{.rcim.df}, which used
   to be needed by \code{summary.rrvglm()}. Then these
   data frames are deleted before exiting the function.
   If an error occurs, then the data frames may be present
@@ -277,9 +277,9 @@ assistance from Alfian F. Hadi.
   \code{\link{rrvglm-class}},
   \code{summary.grc},
   \code{\link{moffset}},
-  \code{\link{Rcam}},
+  \code{\link{Rcim}},
   \code{\link{Qvar}},
-  \code{\link{plotrcam0}},
+  \code{\link{plotrcim0}},
   \code{\link{alcoff}},
   \code{\link{crashi}},
   \code{\link{auuc}},
@@ -309,19 +309,19 @@ Coef(oly1)
 
 
 # Roughly median polish
-rcam0 <- rcam(auuc, fam = alaplace2(tau = 0.5, intparloc = TRUE), trace = TRUE)
-round(fitted(rcam0), dig = 0)
-round(100 * (fitted(rcam0) - auuc) / auuc, dig = 0) # Discrepancy
-rcam0@y
-round(coef(rcam0, matrix = TRUE), dig = 2)
-print(Coef(rcam0, matrix = TRUE), dig = 3)
-# constraints(rcam0)
-names(constraints(rcam0))
+rcim0 <- rcim(auuc, fam = alaplace2(tau = 0.5, intparloc = TRUE), trace = TRUE)
+round(fitted(rcim0), dig = 0)
+round(100 * (fitted(rcim0) - auuc) / auuc, dig = 0) # Discrepancy
+rcim0@y
+round(coef(rcim0, matrix = TRUE), dig = 2)
+print(Coef(rcim0, matrix = TRUE), dig = 3)
+# constraints(rcim0)
+names(constraints(rcim0))
 
 # Compare with medpolish():
 (med.a <- medpolish(auuc))
 fv <- med.a$overall + outer(med.a$row, med.a$col, "+")
-round(100 * (fitted(rcam0) - fv) / fv) # Hopefully should be all 0s
+round(100 * (fitted(rcim0) - fv) / fv) # Hopefully should be all 0s
 }
 \keyword{models}
 \keyword{regression}

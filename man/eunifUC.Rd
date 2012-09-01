@@ -158,19 +158,19 @@ peunif(mean(yy), mymin, mymax)  #  Should be 0.5
 abs(qeunif(0.5, mymin, mymax) - mean(yy)) #  Should be 0
 abs(qeunif(0.5, mymin, mymax) - (mymin+mymax)/2) #  Should be 0
 abs(peunif(myexp, mymin, mymax) - my_p)  #  Should be 0
-integrate(f = deunif, lower=mymin - 3, upper = mymax + 3,
-          min=mymin, max=mymax) #  Should be 1
+integrate(f = deunif, lower = mymin - 3, upper = mymax + 3,
+          min = mymin, max = mymax) #  Should be 1
 
 \dontrun{
-par(mfrow=c(2,1))
-yy = seq(0.0, 1.0, len=nn)
-plot(yy, deunif(yy), type="l", col="blue", ylim = c(0, 2),
+par(mfrow = c(2,1))
+yy = seq(0.0, 1.0, len = nn)
+plot(yy, deunif(yy), type = "l", col = "blue", ylim = c(0, 2),
      xlab = "y", ylab = "g(y)", main = "g(y) for Uniform(0,1)")
-lines(yy, dunif(yy), col="darkgreen", lty="dotted", lwd = 2) # 'original'
+lines(yy, dunif(yy), col = "darkgreen", lty = "dotted", lwd = 2) # 'original'
 
-plot(yy, peunif(yy), type="l", col="blue", ylim = 0:1,
+plot(yy, peunif(yy), type = "l", col = "blue", ylim = 0:1,
      xlab = "y", ylab = "G(y)", main = "G(y) for Uniform(0,1)")
-abline(a=0.0, b=1.0, col="darkgreen", lty="dotted", lwd = 2)
-abline(v=0.5, h=0.5, col="red", lty="dashed") }
+abline(a = 0.0, b = 1.0, col = "darkgreen", lty = "dotted", lwd = 2)
+abline(v = 0.5, h = 0.5, col = "red", lty = "dashed") }
 }
 \keyword{distribution}

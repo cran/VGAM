@@ -11,7 +11,7 @@
 
 }
 \usage{
-dhzeta(x, alpha, log=FALSE)
+dhzeta(x, alpha, log = FALSE)
 phzeta(q, alpha)
 qhzeta(p, alpha)
 rhzeta(n, alpha)
@@ -79,11 +79,11 @@ round(1000 * dhzeta(1:8, 2))
 table(rhzeta(1000, 2))
 
 \dontrun{
-alpha = 1.1; x = 1:10
-plot(x, dhzeta(x, alpha=alpha), type="h", ylim=0:1, lwd=2,
-     sub=paste("alpha =", alpha), las=1, col="blue", ylab="Probability",
-     main="Haight's zeta: blue=density; red=distribution function")
-lines(x+0.1, phzeta(x, alpha=alpha), col="red", lty=3, lwd=2, type="h")
+alpha <- 1.1; x <- 1:10
+plot(x, dhzeta(x, alpha = alpha), type = "h", ylim = 0:1, lwd = 2,
+     sub = paste("alpha =", alpha), las = 1, col = "blue", ylab = "Probability",
+     main = "Haight's zeta: blue = density; red = distribution function")
+lines(x+0.1, phzeta(x, alpha = alpha), col = "red", lty = 3, lwd = 2, type = "h")
 }
 }
 \keyword{distribution}

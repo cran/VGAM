@@ -8,18 +8,13 @@
 
 }
 \usage{
-betaprime(link = "loge", earg=list(), i1 = 2, i2 = NULL, zero = NULL)
+betaprime(link = "loge", i1 = 2, i2 = NULL, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{link}{ 
   Parameter link function applied to the two (positive) shape parameters.
   See \code{\link{Links}} for more choices.
-
-  }
-  \item{earg}{
-  List. Extra argument for each of the links.
-  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{i1, i2}{
@@ -51,6 +46,7 @@ betaprime(link = "loge", earg=list(), i1 = 2, i2 = NULL, zero = NULL)
   here, \eqn{B} is the beta function.
   The mean of \eqn{Y} is \eqn{shape1 / (shape2-1)} provided \eqn{shape2>1}.
 
+
   If \eqn{Y} has a \eqn{Beta(shape1,shape2)} distribution then
   \eqn{Y/(1-Y)} and \eqn{(1-Y)/Y} have a \eqn{Betaprime(shape1,shape2)}
   and \eqn{Betaprime(shape2,shape1)} distribution respectively.
@@ -59,6 +55,7 @@ betaprime(link = "loge", earg=list(), i1 = 2, i2 = NULL, zero = NULL)
   then \eqn{Y_1/Y_2}{Y1/Y2} has a \eqn{Betaprime(shape1,shape2)}
   distribution.
 
+
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
@@ -66,10 +63,12 @@ betaprime(link = "loge", earg=list(), i1 = 2, i2 = NULL, zero = NULL)
   \code{\link{rrvglm}}
   and \code{\link{vgam}}.
 
+
 }
 
 %% zz not sure about the JKB reference.
 \references{ 
+
 Johnson, N. L. and Kotz, S. and Balakrishnan, N. (1995) 
 Chapter 25 of: 
 \emph{Continuous Univariate Distributions},
@@ -77,45 +76,50 @@ Chapter 25 of:
 Volume 2,
 New York: Wiley.
 
+
 Documentation accompanying the \pkg{VGAM} package at
 \url{http://www.stat.auckland.ac.nz/~yee}
 contains further information and examples.
+
 
 }
 \author{ Thomas W. Yee }
 \note{
   The response must have positive values only.
 
+
   The beta-prime distribution is also known as the
   \emph{beta distribution of the second kind} or the
   \emph{inverted beta distribution}.
+
 
 }
 
 \seealso{ 
   \code{\link{betaff}}.
 
+
 }
 \examples{
-nn = 1000
-betadat = data.frame(shape1 = exp(1), shape2 = exp(3))
-betadat = transform(betadat, yb = rbeta(nn, shape1, shape2))
-betadat = transform(betadat, y1 = (1-yb)/yb, y2 = yb/(1-yb),
+nn <- 1000
+bdata <- data.frame(shape1 = exp(1), shape2 = exp(3))
+bdata <- transform(bdata, yb = rbeta(nn, shape1, shape2))
+bdata <- transform(bdata, y1 = (1-yb)/yb, y2 = yb/(1-yb),
                              y3 = rgamma(nn, exp(3)) / rgamma(nn, exp(2)))
 
-fit1 = vglm(y1 ~ 1, betaprime, betadat, trace=TRUE)
-coef(fit1, matrix=TRUE)
+fit1 <- vglm(y1 ~ 1, betaprime, bdata, trace = TRUE)
+coef(fit1, matrix = TRUE)
 
-fit2 = vglm(y2 ~ 1, betaprime, betadat, trace=TRUE)
-coef(fit2, matrix=TRUE)
+fit2 <- vglm(y2 ~ 1, betaprime, bdata, trace = TRUE)
+coef(fit2, matrix = TRUE)
 
-fit3 = vglm(y3 ~ 1, betaprime, betadat, trace=TRUE)
-coef(fit3, matrix=TRUE)
+fit3 <- vglm(y3 ~ 1, betaprime, bdata, trace = TRUE)
+coef(fit3, matrix = TRUE)
 
 # Compare the fitted values
-with(betadat, mean(y3))
+with(bdata, mean(y3))
 head(fitted(fit3))
-Coef(fit3)  # Useful for intercept-only models
+Coef(fit3) # Useful for intercept-only models
 }
 \keyword{models}
 \keyword{regression}

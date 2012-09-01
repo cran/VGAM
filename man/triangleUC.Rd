@@ -60,17 +60,17 @@ rtriangle(n, theta, lower = 0, upper = 1)
 
 }
 \examples{
-\dontrun{ x = seq(-0.1, 1.1, by = 0.01); theta = 0.75
+\dontrun{ x <- seq(-0.1, 1.1, by = 0.01); theta <- 0.75
 plot(x, dtriangle(x, theta = theta), type = "l", col = "blue", las = 1,
      main = "Blue is density, orange is cumulative distribution function",
      sub = "Purple lines are the 10,20,...,90 percentiles",
      ylim = c(0,2), ylab = "")
 abline(h = 0, col = "blue", lty = 2)
 lines(x, ptriangle(x, theta = theta), col = "orange")
-probs = seq(0.1, 0.9, by = 0.1)
-Q = qtriangle(probs, theta = theta)
+probs <- seq(0.1, 0.9, by = 0.1)
+Q <- qtriangle(probs, theta = theta)
 lines(Q, dtriangle(Q, theta = theta), col = "purple", lty = 3, type = "h")
-ptriangle(Q, theta = theta) - probs    # Should be all zero
+ptriangle(Q, theta = theta) - probs # Should be all zero
 abline(h = probs, col = "purple", lty = 3) }
 }
 \keyword{distribution}

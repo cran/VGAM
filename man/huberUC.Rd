@@ -92,19 +92,19 @@ edhuber(1:5, k = 1.5)
 rhuber(5)
 
 # Plot cdf and pdf
-\dontrun{ mu = 3; xx = seq(-2, 7, len = 100)
+\dontrun{ mu <- 3; xx <- seq(-2, 7, len = 100)
 plot(xx, dhuber(xx, mu = mu), type = "l", col = "blue", las = 1, ylab = "",
      main = "blue is density, red is cumulative distribution function",
      sub = "Purple lines are the 10,20,...,90 percentiles",
      ylim = 0:1)
 abline(h = 0, col = "blue", lty = 2)
 lines(xx, phuber(xx, mu = mu), type = "l", col = "red")
-probs = seq(0.1, 0.9, by = 0.1)
-Q = qhuber(probs, mu = mu)
+probs <- seq(0.1, 0.9, by = 0.1)
+Q <- qhuber(probs, mu = mu)
 lines(Q, dhuber(Q, mu = mu), col = "purple", lty = 3, type = "h")
 lines(Q, phuber(Q, mu = mu), col = "purple", lty = 3, type = "h")
 abline(h = probs, col = "purple", lty = 3)
-phuber(Q, mu = mu) - probs    # Should be all zero
+phuber(Q, mu = mu) - probs # Should be all 0s
 } 
 } 
 \keyword{distribution}

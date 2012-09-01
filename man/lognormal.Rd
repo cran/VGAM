@@ -9,10 +9,8 @@
 
 }
 \usage{
-lognormal(lmeanlog = "identity", lsdlog = "loge",
-          emeanlog = list(), esdlog = list(), zero = 2)
+lognormal(lmeanlog = "identity", lsdlog = "loge", zero = 2)
 lognormal3(lmeanlog = "identity", lsdlog = "loge",
-           emeanlog = list(), esdlog = list(),
            powers.try = (-3):3, delta = NULL, zero = 2)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -24,11 +22,16 @@ lognormal3(lmeanlog = "identity", lsdlog = "loge",
   See \code{\link{Links}} for more choices.
 
   }
-  \item{emeanlog, esdlog}{
-  List. Extra argument for each of the links.
-  See \code{earg} in \code{\link{Links}} for general information.
 
-  }
+
+% \item{emeanlog, esdlog}{
+%         emeanlog = list(), esdlog = list(),
+%          emeanlog = list(), esdlog = list(),
+% List. Extra argument for each of the links.
+% See \code{earg} in \code{\link{Links}} for general information.
+% }
+
+
   \item{zero}{
   An integer-valued vector specifying which
   linear/additive predictors are modelled as intercepts only.
@@ -117,19 +120,19 @@ Hoboken, NJ, USA: Wiley-Interscience.
 \examples{
 ldat <- data.frame(y = rlnorm(nn <- 1000, meanlog = 1.5, sdlog = exp(-0.8)))
 fit <- vglm(y ~ 1, lognormal, ldat, trace = TRUE)
-coef(fit, mat = TRUE)
+coef(fit, matrix = TRUE)
 Coef(fit)
 
 ldat2 <- data.frame(x2 = runif(nn <- 1000))
 ldat2 <- transform(ldat2, y = rlnorm(nn, mean = 0.5, sd = exp(x2)))
 fit <- vglm(y ~ x2, lognormal(zero = 1), ldat2, trace = TRUE, crit = "c")
-coef(fit, mat = TRUE)
+coef(fit, matrix = TRUE)
 Coef(fit)
 
 lambda <- 4
 ldat3 <- data.frame(y = lambda + rlnorm(n = 1000, mean = 1.5, sd = exp(-0.8)))
 fit <- vglm(y ~ 1, lognormal3, ldat3, trace = TRUE, crit = "c")
-coef(fit, mat = TRUE)
+coef(fit, matrix = TRUE)
 summary(fit)
 }
 \keyword{models}

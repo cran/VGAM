@@ -6,6 +6,7 @@
   Data from a study of patients suffering from back pain. Prognostic
   variables were recorded at presentation and progress was categorised
   three weeks after treatment.
+
 }
 \usage{data(backPain)}
 \format{
@@ -23,9 +24,11 @@
 \source{
   \url{http://ideas.repec.org/c/boc/bocode/s419001.html}
 
+
   The data set and this help file was copied from \pkg{gnm}
   so that a vignette in \pkg{VGAM} could be run; the analysis is
   described in Yee (2010).
+
 
 
 }

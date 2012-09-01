@@ -126,14 +126,14 @@
 
 
 
-rrar.control <- function(stepsize = 0.5, save.weight = TRUE, ...)
-{
+rrar.control <- function(stepsize = 0.5, save.weight = TRUE, ...) {
 
     if (stepsize <= 0 || stepsize > 1) {
         warning("bad value of stepsize; using 0.5 instead")
         stepsize <- 0.5
     }
-    list(stepsize=stepsize, save.weight = as.logical(save.weight)[1])
+    list(stepsize = stepsize,
+         save.weight = as.logical(save.weight)[1])
 }
 
 
@@ -142,8 +142,8 @@ rrar.control <- function(stepsize = 0.5, save.weight = TRUE, ...)
     lag.p <- length(Ranks)
 
     new("vglmff",
-    blurb = c("Nested reduced-rank vector autoregressive model AR(", lag.p,
-           ")\n\n",
+    blurb = c("Nested reduced-rank vector autoregressive model AR(",
+              lag.p, ")\n\n",
            "Link:     ",
            namesof("mu_t", "identity"),
            ", t = ", paste(paste(1:lag.p, coll = ",", sep = "")) ,
@@ -152,7 +152,6 @@ rrar.control <- function(stepsize = 0.5, save.weight = TRUE, ...)
         Ranks. <- .Ranks
         plag <- length(Ranks.)
         nn <- nrow(x)   # original n
-        pp <- ncol(x)
         indices <- 1:plag
 
         copy_X_vlm <- TRUE   # X_vlm_save matrix changes at each iteration 
@@ -282,22 +281,16 @@ rrar.control <- function(stepsize = 0.5, save.weight = TRUE, ...)
 
 
 
-
-vglm.garma.control <- function(save.weight = TRUE, ...)
-{
+vglm.garma.control <- function(save.weight = TRUE, ...) {
     list(save.weight = as.logical(save.weight)[1])
 }
 
 
  garma <- function(link = "identity",
-                  earg  = list(),
-                  p.ar.lag = 1,
-                  q.ma.lag = 0,
-                  coefstart = NULL,
-                  step = 1.0)
-{
-  if (mode(link) != "character" && mode(link) != "name")
-      link = as.character(substitute(link))
+                   p.ar.lag = 1,
+                   q.ma.lag = 0,
+                   coefstart = NULL,
+                   step = 1.0) {
 
   if (!is.Numeric(p.ar.lag, integer.valued = TRUE, allowable.length = 1))
     stop("bad input for argument 'p.ar.lag'")
@@ -306,7 +299,10 @@ vglm.garma.control <- function(save.weight = TRUE, ...)
   if (q.ma.lag != 0)
     stop("sorry, only q.ma.lag = 0 is currently implemented")
 
-  if (!is.list(earg)) earg = list()
+
+  link <- as.list(substitute(link))
+  earg <- link2list(link)
+  link <- attr(earg, "function.name")
 
 
   new("vglmff",
@@ -316,32 +312,34 @@ vglm.garma.control <- function(save.weight = TRUE, ...)
             ", t = ", paste(paste(1:p.ar.lag, coll = ",", sep = ""))),
   initialize = eval(substitute(expression({
     plag <- .p.ar.lag
-    predictors.names = namesof("mu", .link, earg = .earg, tag = FALSE)
+    predictors.names = namesof("mu", .link , earg = .earg , tag = FALSE)
     indices <- 1:plag
-    tt <- (1+plag):nrow(x) 
-    pp <- ncol(x)
+    tt.index <- (1 + plag):nrow(x)
+    p_lm <- ncol(x)
 
     copy_X_vlm <- TRUE   # x matrix changes at each iteration 
 
-    if ( .link == "logit" || .link == "probit" || .link == "cloglog" ||
-        .link == "cauchit") {
+    if ( .link == "logit"   || .link == "probit" ||
+         .link == "cloglog" || .link == "cauchit") {
         delete.zero.colns <- TRUE
         eval(process.categorical.data.vgam)
-        mustart <- mustart[tt,2]
-        y <- y[,2]
+        mustart <- mustart[tt.index, 2]
+        y <- y[, 2]
+    } else {
     }
 
-    x.save <- x  # Save the original
-    y.save <- y  # Save the original
-    w.save <- w  # Save the original
+
+    x.save <- x # Save the original
+    y.save <- y # Save the original
+    w.save <- w # Save the original
 
     new.coeffs <- .coefstart  # Needed for iter = 1 of @weight
     new.coeffs <- if (length(new.coeffs))
-                    rep(new.coeffs, len = pp+plag) else
-                    c(runif(pp), rep(0, plag)) 
+                    rep(new.coeffs, len = p_lm + plag) else
+                    c(rnorm(p_lm, sd = 0.1), rep(0, plag)) 
 
     if (!length(etastart)) {
-      etastart <- x[-indices, , drop = FALSE] %*% new.coeffs[1:pp]
+      etastart <- x[-indices, , drop = FALSE] %*% new.coeffs[1:p_lm]
     }
 
     x <- cbind(x, matrix(as.numeric(NA), n, plag)) # Right size now
@@ -354,82 +352,89 @@ vglm.garma.control <- function(save.weight = TRUE, ...)
     y <- y[-indices]
     w <- w[-indices]
     n.save <- n <- n - plag
+
     more <- vector("list", plag)
     names(more) <- morenames
-    for(i in 1:plag)
-      more[[i]] <- i + max(unlist(attr(x.save, "assign")))
+    for(ii in 1:plag)
+      more[[ii]] <- ii + max(unlist(attr(x.save, "assign")))
     attr(x, "assign") <- c(attr(x.save, "assign"), more)
   }), list( .link = link, .p.ar.lag = p.ar.lag,
             .coefstart = coefstart, .earg = earg ))), 
   linkinv = eval(substitute(function(eta, extra = NULL) {
-      eta2theta(eta, link = .link, earg = .earg)
+    eta2theta(eta, link = .link , earg = .earg)
   }, list( .link = link, .earg = earg ))),
   last = eval(substitute(expression({
-    misc$link <- c(mu = .link)
-    misc$earg <- list(mu = .earg)
+    misc$link <-    c(mu = .link )
+    misc$earg <- list(mu = .earg )
     misc$plag <- plag
   }), list( .link = link, .earg = earg ))),
   loglikelihood = eval(substitute(
     function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
     if (residuals) switch( .link ,
-        identity = y-mu,
-        loge = w*(y/mu - 1),
-        inverse = w*(y/mu - 1),
-        w*(y/mu - (1-y)/(1-mu))) else
+        identity = y - mu,
+        loge       = w * (y / mu - 1),
+        reciprocal = w * (y / mu - 1),
+        inverse    = w * (y / mu - 1),
+        w * (y / mu - (1-y) / (1 - mu))) else
     switch( .link ,
-        identity = sum(w*(y-mu)^2),
-        loge = sum(w*(-mu + y*log(mu))),
-        inverse = sum(w*(-mu + y*log(mu))),
-        sum(w*(y * log(mu) + (1-y) * log1p(-mu))))
+        identity = sum(w * (y - mu)^2),
+        loge       = sum(w * (-mu + y * log(mu))),
+        reciprocal = sum(w * (-mu + y * log(mu))),
+        inverse    = sum(w * (-mu + y * log(mu))),
+        sum(w * (y * log(mu) + (1-y) * log1p(-mu))))
   }, list( .link = link, .earg = earg ))),
   middle2 = eval(substitute(expression({
     realfv <- fv
-    for(i in 1:plag) {
-        realfv <- realfv + old.coeffs[i+pp] *
-              (x.save[tt-i, 1:pp,drop = FALSE] %*% new.coeffs[1:pp]) # +
+    for(ii in 1:plag) {
+      realfv <- realfv + old.coeffs[ii + p_lm] *
+        (x.save[tt.index-ii, 1:p_lm, drop = FALSE] %*%
+         new.coeffs[1:p_lm]) # +
     }
 
     true.eta <- realfv + offset  
-    mu <- family@linkinv(true.eta, extra)  # overwrite mu with correct one
+    mu <- family@linkinv(true.eta, extra) # overwrite mu with correct one
   }), list( .link = link, .earg = earg ))),
   vfamily = c("garma", "vglmgam"),
   deriv = eval(substitute(expression({
-    dl.dmu <- switch( .link,
+    dl.dmu <- switch( .link ,
                   identity = y-mu,
-                  loge = (y - mu) / mu,
-                  inverse = (y - mu) / mu,
+                  loge       = (y - mu) / mu,
+                  reciprocal = (y - mu) / mu,
+                  inverse    = (y - mu) / mu,
                   (y - mu) / (mu * (1 - mu)))
-    dmu.deta <- dtheta.deta(mu, .link, earg = .earg)
-    step <- .step      # This is another method of adjusting step lengths
-    step * w * dl.dmu * dmu.deta
+    dmu.deta <- dtheta.deta(mu, .link , earg = .earg)
+    Step <- .step # This is another method of adjusting step lengths
+    Step * c(w) * dl.dmu * dmu.deta
   }), list( .link = link,
             .step = step,
             .earg = earg ))),
 
   weight = eval(substitute(expression({
-    x[, 1:pp] <- x.save[tt, 1:pp] # Reinstate 
+    x[, 1:p_lm] <- x.save[tt.index, 1:p_lm] # Reinstate 
 
-    for(i in 1:plag) {
-        temp = theta2eta(y.save[tt-i], .link, earg = .earg)
+    for(ii in 1:plag) {
+        temp = theta2eta(y.save[tt.index-ii], .link , earg = .earg )
 
 
-        x[, 1:pp] <- x[, 1:pp] - x.save[tt-i, 1:pp] * new.coeffs[i+pp]
-        x[, pp+i] <- temp - x.save[tt-i, 1:pp,drop = FALSE] %*%
-                            new.coeffs[1:pp]
+        x[, 1:p_lm] <- x[, 1:p_lm] -
+                     x.save[tt.index-ii, 1:p_lm] * new.coeffs[ii + p_lm]
+        x[, p_lm+ii] <- temp - x.save[tt.index-ii, 1:p_lm, drop = FALSE] %*%
+                            new.coeffs[1:p_lm]
     }
     class(x) = "matrix" # Added 27/2/02; 26/2/04
 
     if (iter == 1)
-        old.coeffs <- new.coeffs 
+      old.coeffs <- new.coeffs 
 
     X_vlm_save <- lm2vlm.model.matrix(x, Blist, xij = control$xij)
 
     vary = switch( .link ,
                    identity = 1,
-                   loge = mu,
-                   inverse = mu^2,
+                   loge       = mu,
+                   reciprocal = mu^2,
+                   inverse    = mu^2,
                    mu * (1 - mu))
-    w * dtheta.deta(mu, link = .link , earg = .earg )^2 / vary
+    c(w) * dtheta.deta(mu, link = .link , earg = .earg )^2 / vary
   }), list( .link = link,
             .earg = earg ))))
 }

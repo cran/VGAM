@@ -9,7 +9,6 @@
 }
 \usage{
 expgeometric(lscale = "loge", lshape = "logit",
-             escale = list(), eshape = list(),
              iscale = NULL,   ishape = NULL,
              tol12 = 1e-05, zero = 1, nsimEIM = 400)
 }
@@ -18,11 +17,6 @@ expgeometric(lscale = "loge", lshape = "logit",
   \item{lscale, lshape}{
   Link function for the two parameters.
   See \code{\link{Links}} for more choices.
-
-  }
-  \item{escale, eshape}{
-  List. Extra argument for each of the links.
-  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{iscale, ishape}{
@@ -84,6 +78,7 @@ expgeometric(lscale = "loge", lshape = "logit",
 
 }
 \examples{
+\dontrun{
 scale = exp(2); shape = logit(-1, inverse = TRUE);
 edata = data.frame(y = rexpgeom(n = 2000, scale = scale, shape = shape))
 fit = vglm(y ~ 1, expgeometric, edata, trace = TRUE)
@@ -91,6 +86,7 @@ c(with(edata, mean(y)), head(fitted(fit), 1))
 coef(fit, matrix = TRUE)
 Coef(fit)
 summary(fit)
+}
 }
 \keyword{models}
 \keyword{regression}

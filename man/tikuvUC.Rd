@@ -70,7 +70,7 @@ rtikuv(n, d, mean = 0, sigma = 1, Smallno = 1.0e-6)
 }
 \examples{
 \dontrun{ par(mfrow = c(2, 1))
-x = seq(-5, 5, len = 401)
+x <- seq(-5, 5, len = 401)
 plot(x, dnorm(x), type = "l", col = "black", ylab = "", las = 1,
      main = "Black is standard normal, others are dtikuv(x, d)")
 lines(x, dtikuv(x, d = -10), col = "orange")
@@ -85,11 +85,10 @@ lines(x, ptikuv(x, d = -10), col = "orange")
 lines(x, ptikuv(x, d = -1 ), col = "blue")
 lines(x, ptikuv(x, d =  1 ), col = "green")
 legend("topleft", col = c("orange","blue","green"), lty = rep(1, len = 3),
-       legend = paste("d =", c(-10, -1, 1)))
+       legend = paste("d =", c(-10, -1, 1))) }
 
-probs = seq(0.1, 0.9, by = 0.1)
-ptikuv(qtikuv(p = probs, d =  1), d = 1) - probs  # Should be all 0
-}
+probs <- seq(0.1, 0.9, by = 0.1)
+ptikuv(qtikuv(p = probs, d =  1), d = 1) - probs # Should be all 0
 }
 \keyword{distribution}
 

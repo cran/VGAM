@@ -11,21 +11,19 @@
 
 }
 \usage{
-alaplace1(tau = NULL, llocation = "identity", elocation = list(),
+alaplace1(tau = NULL, llocation = "identity",
           ilocation = NULL, kappa = sqrt(tau/(1 - tau)), Scale.arg = 1,
           shrinkage.init = 0.95, parallelLocation = FALSE, digt = 4,
           dfmu.init = 3, intparloc = FALSE, imethod = 1)
 
 alaplace2(tau = NULL,  llocation = "identity", lscale = "loge",
-          elocation = list(), escale = list(),
           ilocation = NULL, iscale = NULL, kappa = sqrt(tau/(1 - tau)),
           shrinkage.init = 0.95,
-          parallelLocation = FALSE, digt = 4, sameScale = TRUE,
+          parallelLocation = FALSE, digt = 4, eq.scale = TRUE,
           dfmu.init = 3, intparloc = FALSE, 
           imethod = 1, zero = -2)
 
 alaplace3(llocation = "identity", lscale = "loge", lkappa = "loge",
-          elocation = list(), escale = list(), ekappa = list(),
           ilocation = NULL, iscale = NULL, ikappa = 1,
           imethod = 1, zero = 2:3)
 }
@@ -52,11 +50,6 @@ alaplace3(llocation = "identity", lscale = "loge", lkappa = "loge",
   only works properly with the identity link.
 
   }
-  \item{elocation, escale, ekappa}{
-  List. Extra argument for each of the links.
-  See \code{earg} in \code{\link{Links}} for general information.
-
-  }
   \item{ilocation, iscale, ikappa}{
   Optional initial values.
   If given, it must be numeric and values are recycled to the
@@ -73,9 +66,9 @@ alaplace3(llocation = "identity", lscale = "loge", lkappa = "loge",
     the argument \code{parallelLocation} applies to other terms.
 
   }
-  \item{sameScale}{ Logical.
+  \item{eq.scale}{ Logical.
     Should the scale parameters be equal? It is advised
-    to keep \code{sameScale = TRUE} unchanged because it
+    to keep \code{eq.scale = TRUE} unchanged because it
     does not make sense to have different values for each
     \code{tau} value.
 
@@ -287,10 +280,10 @@ alaplace3(llocation = "identity", lscale = "loge", lkappa = "loge",
 
 \examples{
 # Example 1: quantile regression with smoothing splines
-adata = data.frame(x = sort(runif(n <- 500)))
-mymu = function(x) exp(-2 + 6*sin(2*x-0.2) / (x+0.5)^2)
-adata = transform(adata, y = rpois(n, lambda = mymu(x)))
-mytau = c(0.25, 0.75); mydof = 4
+adata <- data.frame(x = sort(runif(n <- 500)))
+mymu <- function(x) exp(-2 + 6*sin(2*x-0.2) / (x+0.5)^2)
+adata <- transform(adata, y = rpois(n, lambda = mymu(x)))
+mytau <- c(0.25, 0.75); mydof <- 4
 
 fit = vgam(y ~ s(x, df = mydof),
            alaplace1(tau = mytau, llocation = "loge",
@@ -312,7 +305,7 @@ finexgrid = seq(0, 1, len = 1001)
 for(ii in 1:length(mytau))
     lines(finexgrid, qpois(p = mytau[ii], lambda = mymu(finexgrid)),
           col = "blue", lwd = mylwd) }
-fit@extra  # Contains useful information
+fit@extra # Contains useful information
 
 
 # Example 2: regression quantile at a new tau value from an existing fit

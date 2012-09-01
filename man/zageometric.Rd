@@ -9,9 +9,8 @@
 
 }
 \usage{
-zageometric(lpobs0 = "logit", lprob = "logit",
-            epobs0 = list(), eprob = list(),
-            imethod = 1, ipobs0 = NULL, iprob = NULL, zero = NULL)
+zageometric(lpobs0 = "logit", lprob = "logit", imethod = 1,
+            ipobs0 = NULL,    iprob = NULL, zero = NULL)
 
 }
 %- maybe also 'usage' for other objects documented here.
@@ -29,11 +28,13 @@ zageometric(lpobs0 = "logit", lprob = "logit",
     See \code{\link{Links}} for more choices.
 
   }
-  \item{epobs0, eprob}{
-  List. Extra argument for the respective links.
-  See \code{earg} in \code{\link{Links}} for general information.
 
-  }
+% \item{epobs0, eprob}{
+% List. Extra argument for the respective links.
+% See \code{earg} in \code{\link{Links}} for general information.
+%           epobs0 = list(), eprob = list(),
+% }
+
   \item{ipobs0, iprob}{ 
     Optional initial values for the parameters.
     If given, they must be in range.
@@ -58,6 +59,7 @@ zageometric(lpobs0 = "logit", lprob = "logit",
   distribution too. The zero-inflated geometric distribution
   is implemented in the \pkg{VGAM} package.  Some people
   call the zero-altered geometric a \emph{hurdle} model.
+
 
   The input can be a matrix.
   By default, the two linear/additive
@@ -119,6 +121,7 @@ zageometric(lpobs0 = "logit", lprob = "logit",
   \code{\link{zigeometric}},
   \code{\link[stats:Geometric]{dgeom}},
   \code{\link{CommonVGAMffArguments}}.
+
 
 }
 

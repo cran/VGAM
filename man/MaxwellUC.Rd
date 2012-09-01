@@ -79,7 +79,7 @@ Q <- qmaxwell(probs, a = a)
 lines(Q, dmaxwell(Q, a), col = "purple", lty = 3, type = "h")
 lines(Q, pmaxwell(Q, a), col = "purple", lty = 3, type = "h")
 abline(h = probs, col = "purple", lty = 3)
-max(abs(pmaxwell(Q, a) - probs))  # Should be zero
+max(abs(pmaxwell(Q, a) - probs)) # Should be zero
 }
 }
 \keyword{distribution}

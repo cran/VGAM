@@ -110,7 +110,7 @@
 
     }
     \item{\code{acne}}{a numeric vector, have you ever
-      received treatment from a doctor for acne?
+      received treatment from a doctor for acne (pimples)?
 
 
     }
@@ -404,17 +404,15 @@ conceivable that some participants had poor reading skills!
 }
 
 
-
-
 \examples{
 data(xs.nz)
 summary(xs.nz)
 
 # Handling of factors requires care
 is.factor(xs.nz$babies) # TRUE
-summary(xs.nz$babies)   # Note the "-"s
+summary(xs.nz$babies) # Note the "-"s
 charbabies <- as.character(xs.nz$babies)
 summary(as.numeric(charbabies)) # "-"s converted to NAs + warning
-table(as.numeric(charbabies))   # Ditto
+table(as.numeric(charbabies)) # Ditto
 }
 \keyword{datasets}

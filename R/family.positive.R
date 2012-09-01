@@ -8,13 +8,19 @@
 
 
 
-rhuggins91 =
+
+
+rhuggins91 <-
   function(n, nTimePts = 5, pvars = length(xcoeff),
            xcoeff = c(-2, 1, 2),
            capeffect = -1,
            double.ch = FALSE,
-           link = "logit", earg = list()
-           ) {
+           link = "logit",
+           earg.link = FALSE) {
+
+
+
+
 
 
   use.n <- if ((length.n <- length(n)) > 1) length.n else
@@ -29,9 +35,16 @@ rhuggins91 =
   if (pvars > length(xcoeff))
     stop("argument 'pvars' is too high")
   
-  if (mode(link) != "character" && mode(link) != "name")
-    link = as.character(substitute(link))
-  if (!is.list(earg)) earg = list()
+
+  if (earg.link) {
+    earg <- link
+  } else {
+    link <- as.list(substitute(link))
+    earg <- link2list(link)
+  }
+  link <- attr(earg, "function.name")
+
+
 
 
   Ymatrix = matrix(0, use.n, nTimePts, dimnames =
@@ -95,7 +108,7 @@ rhuggins91 =
                      nTimePts = nTimePts, pvars = pvars,
                      xcoeff = xcoeff,
                      capeffect = capeffect,
-                     link = link, earg = earg))
+                     link = earg, earg.link = TRUE))
         }
 
   rownames(ans) = as.character(1:orig.n)
@@ -119,7 +132,9 @@ dhuggins91 = function(x, prob, prob0 = prob, log = FALSE) {
   x     = as.matrix(x)
   prob  = as.matrix(prob)
   prob0 = as.matrix(prob0)
-  log.arg = log
+
+  if (!is.logical(log.arg <- log) || length(log) != 1)
+    stop("bad input for argument 'log'")
   rm(log)
 
 
@@ -137,7 +152,7 @@ dhuggins91 = function(x, prob, prob0 = prob, log = FALSE) {
 
 
 
- huggins91 = function(link = "logit", earg = list(),
+ huggins91 = function(link = "logit",
                       parallel = TRUE,
                       iprob = NULL,
                       eim.not.oim = TRUE) {
@@ -146,9 +161,11 @@ dhuggins91 = function(x, prob, prob0 = prob, log = FALSE) {
 
 
 
-  if (mode(link) != "character" && mode(link) != "name")
-    link = as.character(substitute(link))
-  if (!is.list(earg)) earg = list()
+
+  link <- as.list(substitute(link))
+  earg <- link2list(link)
+  link <- attr(earg, "function.name")
+
 
   if (length(iprob))
     if (!is.Numeric(iprob, positive = TRUE) ||
@@ -179,20 +196,34 @@ dhuggins91 = function(x, prob, prob0 = prob, log = FALSE) {
   }, list( .parallel = parallel ))),
 
   initialize = eval(substitute(expression({
-    Musual = 2
-    mustart.orig = mustart
-    y = as.matrix(y)
-    Mdiv2 = ncoly = ncol(y)
-    M = Musual * ncoly
+    Musual <- 2
+    mustart.orig <- mustart
+    y <- as.matrix(y)
+    Mdiv2 <- ncoly <- ncol(y)
+    M <- Musual * ncoly
 
-    w = matrix(w, n, ncoly)
-    mustart = matrix(colSums(y) / colSums(w),
-                    n, ncol(y), byrow = TRUE)
-    mustart[mustart == 0] = 0.05
-    mustart[mustart == 1] = 0.95
+    w <- matrix(w, n, ncoly)
+    mustart <- matrix(colSums(y) / colSums(w),
+                      n, ncol(y), byrow = TRUE)
+    mustart[mustart == 0] <- 0.05
+    mustart[mustart == 1] <- 0.95
 
     if (ncoly == 1)
       stop("the response is univariate, therefore use posbinomial()")
+
+
+
+    temp5 <-
+    w.y.check(w = w, y = y,
+              Is.nonnegative.y = TRUE,
+              ncol.w.max = Inf,
+              ncol.y.max = Inf,
+              out.wy = TRUE,
+              maximize = TRUE)
+    w <- temp5$w
+    y <- temp5$y
+
+
 
 
     if (!all(y == 0 | y == 1))
@@ -208,7 +239,7 @@ dhuggins91 = function(x, prob, prob0 = prob, log = FALSE) {
     }
     dn2 = c(dn2, paste(dn2, ".0", sep = ""))
     dn2 = dn2[interleave.VGAM(M, M = Musual)]
-    predictors.names = namesof(dn2, .link, earg = .earg, short = TRUE)
+    predictors.names <- namesof(dn2, .link , earg = .earg, short = TRUE)
 
 
     if (!length(etastart)) {
@@ -220,22 +251,22 @@ dhuggins91 = function(x, prob, prob0 = prob, log = FALSE) {
       } else {
         mustart
       }
-      etastart = cbind(theta2eta(mustart.use, .link, earg = .earg ))
+      etastart = cbind(theta2eta(mustart.use, .link , earg = .earg ))
       etastart = kronecker(etastart, cbind(1, 1))
     }
     mustart = NULL
   }), list( .link = link, .earg = earg, .iprob = iprob ))),
 
   linkinv = eval(substitute(function(eta, extra = NULL) {
-    Musual = 2
-    Mdiv2  =  ncol(eta) / Musual
-    index1 =  Musual * (1:Mdiv2) - 1
-    index2 =  Musual * (1:Mdiv2) - 0
+    Musual <- 2
+    Mdiv2  <-  ncol(eta) / Musual
+    index1 <-  Musual * (1:Mdiv2) - 1
+    index2 <-  Musual * (1:Mdiv2) - 0
 
     probs.numer = eta2theta(eta[, index1], # + extra$moffset[, index1],
-                            .link, earg = .earg )
+                            .link , earg = .earg )
 
-    probs.denom = eta2theta(eta[, index1], .link, earg = .earg )
+    probs.denom = eta2theta(eta[, index1], .link , earg = .earg )
 
     logAA0 = rowSums(log1p(-probs.denom))
 
@@ -246,7 +277,7 @@ dhuggins91 = function(x, prob, prob0 = prob, log = FALSE) {
   }, list( .link = link, .earg = earg ))),
   last = eval(substitute(expression({
 
-    misc$link = rep( .link, length = M)
+    misc$link = rep( .link , length = M)
     names(misc$link) = dn2
 
     misc$earg = vector("list", M)
@@ -267,15 +298,15 @@ dhuggins91 = function(x, prob, prob0 = prob, log = FALSE) {
     function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
 
       ycounts = y
-      Musual = 2
-      Mdiv2  =  ncol(eta) / Musual
-      index1 =  Musual * (1:Mdiv2) - 1
-      index2 =  Musual * (1:Mdiv2) - 0
+      Musual <- 2
+      Mdiv2  <-  ncol(eta) / Musual
+      index1 <-  Musual * (1:Mdiv2) - 1
+      index2 <-  Musual * (1:Mdiv2) - 0
 
       probs.numer = eta2theta(eta[, index1], # + extra$moffset[, index1],
-                              .link, earg = .earg )
+                              .link , earg = .earg )
 
-      probs.denom = eta2theta(eta[, index1], .link, earg = .earg )
+      probs.denom = eta2theta(eta[, index1], .link , earg = .earg )
 
 
       if (residuals) stop("loglikelihood residuals ",
@@ -288,14 +319,14 @@ dhuggins91 = function(x, prob, prob0 = prob, log = FALSE) {
   }, list( .link = link, .earg = earg ))),
   vfamily = c("huggins91"),
   deriv = eval(substitute(expression({
-    Musual = 2
-    Mdiv2  =  ncol(eta) / Musual
-    index1 =  Musual * (1:Mdiv2) - 1
-    index2 =  Musual * (1:Mdiv2) - 0
-    probs.numer = eta2theta(eta[, index1], .link, earg = .earg )
+    Musual <- 2
+    Mdiv2  <-  ncol(eta) / Musual
+    index1 <-  Musual * (1:Mdiv2) - 1
+    index2 <-  Musual * (1:Mdiv2) - 0
+    probs.numer = eta2theta(eta[, index1], .link , earg = .earg )
 
 
-    probs.denom = eta2theta(eta[, index1], .link, earg = .earg )
+    probs.denom = eta2theta(eta[, index1], .link , earg = .earg )
 
     logAA0 = rowSums(log1p(-probs.denom))
 
@@ -396,11 +427,13 @@ dposnegbin = function(x, size, prob = NULL, munb = NULL, log = FALSE) {
       stop("'prob' and 'munb' both specified")
     prob <- size / (size + munb)
   }
-  if (!is.logical(log.arg <- log))
-    stop("bad input for 'log'")
+
+  if (!is.logical(log.arg <- log) || length(log) != 1)
+    stop("bad input for argument 'log'")
   rm(log)
 
-  LLL = max(length(x), length(prob), length(size))
+
+  LLL <- max(length(x), length(prob), length(size))
   x    = rep(x,    len = LLL);
   prob = rep(prob, len = LLL);
   size = rep(size, len = LLL);
@@ -429,7 +462,7 @@ pposnegbin = function(q, size, prob = NULL, munb = NULL) {
       stop("'prob' and 'munb' both specified")
     prob <- size / (size + munb)
   }
-  L = max(length(q), length(prob), length(size))
+  L <- max(length(q), length(prob), length(size))
   if (length(q)    != L)
     q    = rep(q,    length.out = L);
   if (length(prob) != L)
@@ -479,7 +512,6 @@ posnegbinomial.control <- function(save.weight = TRUE, ...)
 
 
  posnegbinomial = function(lmunb = "loge", lsize = "loge",
-                           emunb = list(), esize = list(),
                            isize = NULL, zero = -2,
                            nsimEIM = 250,
                            shrinkage.init = 0.95, imethod = 1)
@@ -496,13 +528,14 @@ posnegbinomial.control <- function(save.weight = TRUE, ...)
      shrinkage.init > 1)
     stop("bad input for argument 'shrinkage.init'")
 
-  if (mode(lmunb) != "character" && mode(lmunb) != "name")
-      lmunb = as.character(substitute(lmunb))
-  if (mode(lsize) != "character" && mode(lsize) != "name")
-      lsize = as.character(substitute(lsize))
 
-  if (!is.list(emunb)) emunb = list()
-  if (!is.list(esize)) esize = list()
+  lmunb <- as.list(substitute(lmunb))
+  emunb <- link2list(lmunb)
+  lmunb <- attr(emunb, "function.name")
+
+  lsize <- as.list(substitute(lsize))
+  esize <- link2list(lsize)
+  lsize <- attr(esize, "function.name")
 
 
   if (!is.Numeric(nsimEIM, allowable.length = 1,
@@ -520,33 +553,66 @@ posnegbinomial.control <- function(save.weight = TRUE, ...)
               "Mean:     munb / (1 - (size / (size + munb))^size)"),
   constraints = eval(substitute(expression({
 
-    dotzero = .zero
-    Musual = 2
+    dotzero <- .zero
+    Musual <- 2
     eval(negzero.expression)
   }), list( .zero = zero ))),
+  infos = eval(substitute(function(...) {
+    list(Musual = 2,
+         lmunb = .lmunb ,
+         emunb = .emunb ,
+         lsize = .lsize ,
+         esize = .esize )
+  }, list( .lmunb = lmunb, .lsize = lsize, .isize = isize,
+            .emunb = emunb, .esize = esize,
+            .sinit = shrinkage.init,
+            .imethod = imethod ))),
+
   initialize = eval(substitute(expression({
-    Musual = 2
+    Musual <- 2
 
     if (any(y == 0))
       stop("there are zero values in the response")
     y = as.matrix(y) 
-    M = 2 * ncol(y) 
+
+
+    temp5 <-
+    w.y.check(w = w, y = y,
+              Is.nonnegative.y = TRUE,
+              ncol.w.max = Inf,
+              ncol.y.max = Inf,
+              Is.integer.y = TRUE,
+              out.wy = TRUE,
+              colsyperw = 1,
+              maximize = TRUE)
+    w <- temp5$w
+    y <- temp5$y
+ print("head(w)")
+ print( head(w) )
+ print("head(y)")
+ print( head(y) )
+
+
+
+
+
+    M = Musual * ncol(y) 
     extra$NOS = NOS = ncoly = ncol(y)  # Number of species
 
-    predictors.names = c(
+    predictors.names <- c(
       namesof(if (NOS == 1) "munb" else
               paste("munb", 1:NOS, sep = ""),
               .lmunb, earg = .emunb, tag = FALSE),
       namesof(if (NOS == 1) "size" else
               paste("size", 1:NOS, sep = ""),
               .lsize, earg = .esize, tag = FALSE))
-    predictors.names = predictors.names[interleave.VGAM(M, M = Musual)]
+    predictors.names <- predictors.names[interleave.VGAM(M, M = Musual)]
 
     if (!length(etastart)) {
       mu.init = y
       for(iii in 1:ncol(y)) {
         use.this = if ( .imethod == 1) {
-          weighted.mean(y[, iii], w)
+          weighted.mean(y[, iii], w[, iii])
         } else {
           median(y[,iii])
         }
@@ -567,7 +633,7 @@ posnegbinomial.control <- function(save.weight = TRUE, ...)
             for(spp. in 1:NOS) {
               kmat0[, spp.] = getMaxMin(k.grid,
                                 objfun = posnegbinomial.Loglikfun,
-                                y = y[, spp.], x = x, w = w,
+                                y = y[, spp.], x = x, w = w[, spp.],
                                 extraargs = mu.init[, spp.])
             }
       }
@@ -583,7 +649,7 @@ posnegbinomial.control <- function(save.weight = TRUE, ...)
             .sinit = shrinkage.init,
             .imethod = imethod ))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
-    Musual = 2
+    Musual <- 2
     NOS = ncol(eta) / Musual
     munb = eta2theta(eta[, Musual*(1:NOS)-1, drop = FALSE],
                      .lmunb, earg = .emunb )
@@ -616,8 +682,8 @@ posnegbinomial.control <- function(save.weight = TRUE, ...)
             .nsimEIM = nsimEIM, .imethod = imethod ))),
   loglikelihood = eval(substitute(
     function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
-    Musual = 2
-    NOS = ncol(eta) / Musual
+    Musual <- 2
+    NOS <- ncol(eta) / Musual
     munb = eta2theta(eta[, Musual*(1:NOS)-1, drop = FALSE],
                      .lmunb, earg = .emunb )
     kmat = eta2theta(eta[, Musual*(1:NOS)  , drop = FALSE],
@@ -631,8 +697,8 @@ posnegbinomial.control <- function(save.weight = TRUE, ...)
 
   vfamily = c("posnegbinomial"),
   deriv = eval(substitute(expression({
-    Musual = 2
-    NOS = extra$NOS
+    Musual <- 2
+    NOS <- extra$NOS
 
     munb = eta2theta(eta[, Musual*(1:NOS)-1, drop = FALSE],
                      .lmunb , earg = .emunb )
@@ -669,7 +735,7 @@ posnegbinomial.control <- function(save.weight = TRUE, ...)
             .emunb = emunb, .esize = esize ))),
   weight = eval(substitute(expression({
     run.varcov =
-    wz = matrix(0.0, n, 4*NOS-1)
+    wz = matrix(0.0, n, 2 * Musual * NOS - 1)
 
 
 
@@ -723,8 +789,7 @@ posnegbinomial.control <- function(save.weight = TRUE, ...)
 
     }
 
-
-    c(w) * wz
+    w.wz.merge(w = w, wz = wz, n = n, M = M, ndepy = M / Musual)
   }), list( .nsimEIM = nsimEIM ))))
 }
 
@@ -740,7 +805,7 @@ dposgeom = function(x, prob, log = FALSE) {
 pposgeom = function(q, prob) {
   if (!is.Numeric(prob, positive = TRUE))
     stop("bad input for argument 'prob'")
-  L = max(length(q), length(prob))
+  L <- max(length(q), length(prob))
   if (length(q)    != L) q    = rep(q,    length.out = L);
   if (length(prob) != L) prob = rep(prob, length.out = L);
   ifelse(q < 1, 0,
@@ -780,12 +845,14 @@ rposgeom = function(n, prob) {
 
 
 dpospois = function(x, lambda, log = FALSE) {
-  if (!is.logical(log.arg <- log)) stop("bad input for 'log'")
+  if (!is.logical(log.arg <- log) || length(log) != 1)
+    stop("bad input for argument 'log'")
   rm(log)
+
 
   if (!is.Numeric(lambda, positive = TRUE))
     stop("bad input for argument 'lambda'")
-  L = max(length(x), length(lambda))
+  L <- max(length(x), length(lambda))
   x = rep(x, len = L); lambda = rep(lambda, len = L); 
 
   ans = if (log.arg) {
@@ -801,7 +868,7 @@ dpospois = function(x, lambda, log = FALSE) {
 ppospois = function(q, lambda) {
   if (!is.Numeric(lambda, positive = TRUE))
     stop("bad input for argument 'lambda'")
-  L = max(length(q), length(lambda))
+  L <- max(length(q), length(lambda))
   if (length(q)      != L) q      = rep(q,      length.out = L);
   if (length(lambda) != L) lambda = rep(lambda, length.out = L);
 
@@ -851,13 +918,14 @@ rposnegbin = function(n, size, prob = NULL, munb = NULL) {
 
 
 
- pospoisson = function(link = "loge", earg = list(), expected = TRUE,
-                       ilambda = NULL, imethod = 1)
+ pospoisson = function(link = "loge", expected = TRUE,
+                       ilambda = NULL, imethod = 1, zero = NULL)
 {
 
-  if (mode(link) != "character" && mode(link) != "name")
-    link <- as.character(substitute(link))
-  if (!is.list(earg)) earg <- list()
+  link <- as.list(substitute(link))
+  earg <- link2list(link)
+  link <- attr(earg, "function.name")
+
 
   if (!is.logical(expected) || length(expected) != 1)
     stop("bad input for argument 'expected'")
@@ -869,34 +937,61 @@ rposnegbin = function(n, size, prob = NULL, munb = NULL) {
     imethod > 3)
     stop("argument 'imethod' must be 1 or 2 or 3")
 
+  if (length(zero) &&
+      !is.Numeric(zero, integer.valued = TRUE))
+    stop("bad input for argument 'zero'")
+
+
+
   new("vglmff",
   blurb = c("Positive-Poisson distribution\n\n",
             "Links:    ",
             namesof("lambda", link, earg = earg, tag = FALSE)),
+  constraints = eval(substitute(expression({
+    dotzero <- .zero
+    Musual <- 1
+    eval(negzero.expression)
+  }), list( .zero = zero ))),
+
   infos = eval(substitute(function(...) {
     list(Musual = 1,
-         link = .link,
+         link = .link ,
          earg = .earg)
   }, list( .link = link, .earg = earg ))),
 
   initialize = eval(substitute(expression({
-    y <- as.matrix(y)
 
-    if (any(y < 1))
-        stop("all y values must be in 1,2,3,...")
-    if (any(y != round(y )))
-        stop("the response must be integer-valued")
+    temp5 <-
+    w.y.check(w = w, y = y,
+              Is.positive.y = TRUE,
+              ncol.w.max = Inf,
+              ncol.y.max = Inf,
+              Is.integer.y = TRUE,
+              out.wy = TRUE,
+              colsyperw = 1,
+              maximize = TRUE)
+    w <- temp5$w
+    y <- temp5$y
 
+    ncoly <- ncol(y)
+    Musual <- 1
+    extra$ncoly <- ncoly
+    extra$Musual <- Musual
+    M <- Musual * ncoly
+
+
+
+    mynames1 <- paste("lambda",
+                      if (ncoly > 1) 1:ncoly else "", sep = "")
     predictors.names <-
-      namesof(paste("lambda", if (ncol(y) > 1) 1:ncol(y) else "", sep = ""),
-              .link, earg = .earg, tag = FALSE)
+      namesof(mynames1, .link , earg = .earg, tag = FALSE)
 
     if ( .imethod == 1) {
       lambda.init <- apply(y, 2, median) + 1/8
-      lambda.init <- matrix(lambda.init, n, ncol(y), byrow = TRUE)
+      lambda.init <- matrix(lambda.init, n, ncoly, byrow = TRUE)
     } else if ( .imethod == 2) {
       lambda.init <- apply(y, 2, weighted.mean, w = w) + 1/8
-      lambda.init <- matrix(lambda.init, n, ncol(y), byrow = TRUE)
+      lambda.init <- matrix(lambda.init, n, ncoly, byrow = TRUE)
     } else {
       lambda.init <- -y / expm1(-y)
     }
@@ -904,28 +999,29 @@ rposnegbin = function(n, size, prob = NULL, munb = NULL) {
       lambda.init <- lambda.init * 0 + .ilambda
 
     if (!length(etastart))
-        etastart <- theta2eta(lambda.init, .link, earg = .earg)
+      etastart <- theta2eta(lambda.init, .link , earg = .earg)
   }), list( .link = link, .earg = earg,
             .ilambda = ilambda, .imethod = imethod ))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
-    lambda <- eta2theta(eta, .link, earg = .earg )
+    lambda <- eta2theta(eta, .link , earg = .earg )
     -lambda / expm1(-lambda)
   }, list( .link = link, .earg = earg ))),
   last = eval(substitute(expression({
-    misc$expected <- .expected
-
-    misc$link <- rep( .link, len = M)
-    names(misc$link) <- if (M == 1) "lambda" else
-                       paste("lambda", 1:M, sep = "")
+    misc$link <- rep( .link , len = M)
+    names(misc$link) <- mynames1
 
     misc$earg <- vector("list", M)
-    names(misc$earg) <- names(misc$link)
+    names(misc$earg) <- mynames1
     for(ii in 1:M)
       misc$earg[[ii]] <- .earg
+
+    misc$Musual <- Musual
+    misc$expected <- TRUE
+    misc$multipleResponses <- TRUE
   }), list( .link = link, .earg = earg, .expected = expected ))),
   loglikelihood = eval(substitute(
     function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
-    lambda <- eta2theta(eta, .link, earg = .earg ) 
+    lambda <- eta2theta(eta, .link , earg = .earg ) 
     if (residuals) {
       stop("loglikelihood residuals not implemented yet")
     } else {
@@ -934,19 +1030,22 @@ rposnegbin = function(n, size, prob = NULL, munb = NULL) {
   }, list( .link = link, .earg = earg ))),
   vfamily = c("pospoisson"),
   deriv = eval(substitute(expression({
-    lambda <- eta2theta(eta, .link, earg = .earg ) 
+    lambda <- eta2theta(eta, .link , earg = .earg ) 
+
     temp6 <- expm1(lambda)
     dl.dlambda <- y / lambda - 1 - 1 / temp6
-    dlambda.deta <- dtheta.deta(lambda, .link, earg = .earg )
-    w * dl.dlambda * dlambda.deta
+
+    dlambda.deta <- dtheta.deta(lambda, .link , earg = .earg )
+
+    c(w) * dl.dlambda * dlambda.deta
   }), list( .link = link, .earg = earg ))),
   weight = eval(substitute(expression({
     if ( .expected ) {
-      ed2l.dlambda2 <- (temp6 + 1) * (1/lambda - 1/temp6) / temp6
-      wz <- (dlambda.deta^2) * ed2l.dlambda2
+      ned2l.dlambda2 <- (temp6 + 1) * (1/lambda - 1/temp6) / temp6
+      wz <-  ned2l.dlambda2 * dlambda.deta^2
     } else {
       d2l.dlambda2 <- y / lambda^2 - (temp6 + 1) / temp6^2
-      d2lambda.deta2 <- d2theta.deta2(lambda, .link, earg = .earg)
+      d2lambda.deta2 <- d2theta.deta2(lambda, .link , earg = .earg)
       wz <- (dlambda.deta^2) * d2l.dlambda2 - dl.dlambda * d2lambda.deta2
     }
     c(w) * wz
@@ -966,7 +1065,7 @@ pposbinom = function(q, size, prob
 
   if (!is.Numeric(prob, positive = TRUE)) 
     stop("no zero or non-numeric values allowed for argument 'prob'")
-  L = max(length(q), length(size), length(prob))
+  L <- max(length(q), length(size), length(prob))
   if (length(q)      != L) q      = rep(q,      length.out = L);
   if (length(size)   != L) size   = rep(size,   length.out = L);
   if (length(prob)   != L) prob   = rep(prob,   length.out = L);
@@ -984,9 +1083,9 @@ qposbinom = function(p, size, prob
 
 
 
-  ans = qbinom(pbinom(0, size, prob, lower.tail = FALSE) * p +
-               dbinom(0, size, prob),
-               size = size, prob = prob)
+  ans <- qbinom(pbinom(0, size, prob, lower.tail = FALSE) * p +
+                dbinom(0, size, prob),
+                size = size, prob = prob)
 
   ans[p >  1] = NaN
   ans[p <  0] = NaN
@@ -1003,9 +1102,12 @@ rposbinom = function(n, size, prob) {
 
 
 dposbinom = function(x, size, prob, log = FALSE) {
-  log.arg = log
+  if (!is.logical(log.arg <- log) || length(log) != 1)
+    stop("bad input for argument 'log'")
   rm(log)
-  L = max(length(x), length(size), length(prob))
+
+
+  L <- max(length(x), length(size), length(prob))
   x    = rep(x,    len = L);
   size = rep(size, len = L);
   prob = rep(prob, len = L);
@@ -1033,13 +1135,23 @@ dposbinom = function(x, size, prob, log = FALSE) {
 
 
 
- posbinomial = function(link = "logit", earg = list(),
-                        mv = FALSE, parallel = FALSE, zero = NULL) {
+ posbinomial <-
+  function(link = "logit",
+           mv = FALSE, parallel = FALSE, zero = NULL) {
 
 
-  if (mode(link) != "character" && mode(link) != "name")
-    link = as.character(substitute(link))
-  if (!is.list(earg)) earg = list()
+  link <- as.list(substitute(link))
+  earg <- link2list(link)
+  link <- attr(earg, "function.name")
+
+
+
+  if (!is.logical(mv) || length(mv) != 1)
+    stop("bad input for argument 'mv'")
+
+  if (mv && length(zero) &&
+      !is.Numeric(zero, integer.valued = TRUE))
+    stop("bad input for argument 'zero'")
 
 
   new("vglmff",
@@ -1053,7 +1165,10 @@ dposbinom = function(x, size, prob, log = FALSE) {
             "\n"),
   constraints = eval(substitute(expression({
     constraints <- cm.vgam(matrix(1, M, 1), x, .parallel, constraints)
-    constraints <- cm.zero.vgam(constraints, x, .zero, M)
+
+    dotzero <- .zero
+    Musual <- 1
+    eval(negzero.expression)
   }), list( .parallel = parallel, .zero = zero ))),
   infos = eval(substitute(function(...) {
     list(Musual = 1,
@@ -1062,49 +1177,66 @@ dposbinom = function(x, size, prob, log = FALSE) {
 
   initialize = eval(substitute(expression({
 
-    mustart.orig = mustart
+    mustart.orig <- mustart
     if ( .mv ) {
-      y = as.matrix(y)
-      M = ncoly = ncol(y)
-      extra$orig.w = w
-      w = as.matrix(w)  # Added 20110308
-      mustart = matrix(colSums(y) / colSums(w),
-                       n, ncol(y), byrow = TRUE)
+    temp5 <-
+    w.y.check(w = w, y = y,
+              Is.positive.y = TRUE,
+              ncol.w.max = Inf,
+              ncol.y.max = Inf,
+              out.wy = TRUE,
+              colsyperw = 1,
+              maximize = TRUE)
+    w <- temp5$w
+    y <- temp5$y
+
+
+    ncoly <- ncol(y)
+    Musual <- 1
+    extra$ncoly <- ncoly
+    extra$Musual <- Musual
+    M <- Musual * ncoly
+
+      extra$orig.w <- w
+      mustart <- matrix(colSums(y) / colSums(w), # Not colSums(y * w)...
+                        n, ncoly, byrow = TRUE)
 
     } else {
-      eval(binomialff(link = .link, earg = .earg )@initialize)
+      eval(binomialff(link = .earg , # earg = .earg ,
+                      earg.link = TRUE)@initialize)
     }
 
 
     if ( .mv ) {
 
-      dn2 = if (is.matrix(y)) dimnames(y)[[2]] else NULL
-      dn2 = if (length(dn2)) {
+      dn2 <- if (is.matrix(y)) dimnames(y)[[2]] else NULL
+      dn2 <- if (length(dn2)) {
         paste("E[", dn2, "]", sep = "")
       } else {
         paste("prob", 1:M, sep = "")
       }
-      predictors.names = namesof(if (M > 1) dn2 else
-        "prob", .link, earg = .earg, short = TRUE)
+      predictors.names <- namesof(if (M > 1) dn2 else
+        "prob", .link , earg = .earg, short = TRUE)
 
-      w = matrix(w, n, ncoly)
-      y = y / w  # Now sample proportion
+      w <- matrix(w, n, ncoly)
+      y <- y / w # Now sample proportion
     } else {
-      predictors.names =
-        namesof("prob", .link, earg = .earg , tag = FALSE)
+      predictors.names <-
+        namesof("prob", .link , earg = .earg , tag = FALSE)
     }
 
-    if (length(extra)) extra$w = w else extra = list(w = w)
+    if (length(extra)) extra$w <- w else extra <- list(w = w)
 
     if (!length(etastart)) {
-      mustart.use = if (length(mustart.orig)) mustart.orig else mustart
-      etastart = cbind(theta2eta(mustart.use, .link, earg = .earg ))
+      mustart.use <- if (length(mustart.orig)) mustart.orig else mustart
+      etastart <- cbind(theta2eta(mustart.use, .link , earg = .earg ))
     }
-    mustart = NULL
-  }), list( .link = link, .earg = earg, .mv = mv ))),
+    mustart <- NULL
+  }), list( .link = link,
+            .earg = earg, .mv = mv ))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
     w = extra$w
-    mymu = eta2theta(eta, .link, earg = .earg )
+    mymu = eta2theta(eta, .link , earg = .earg )
     nvec = if ( .mv ) {
              w
            } else {
@@ -1115,10 +1247,10 @@ dposbinom = function(x, size, prob, log = FALSE) {
   },
   list( .link = link, .earg = earg, .mv = mv ))),
   last = eval(substitute(expression({
-    extra$w   = NULL   # Kill it off 
+    extra$w   = NULL # Kill it off 
 
 
-    misc$link = rep( .link, length = M)
+    misc$link = rep( .link , length = M)
     names(misc$link) = if (M > 1) dn2 else "prob"
 
     misc$earg = vector("list", M)
@@ -1146,7 +1278,7 @@ dposbinom = function(x, size, prob, log = FALSE) {
                  round(w)
              }
       use.orig.w = if (is.numeric(extra$orig.w)) extra$orig.w else 1
-    mymu = eta2theta(eta, .link, earg = .earg )
+    mymu = eta2theta(eta, .link , earg = .earg )
 
     if (residuals) stop("loglikelihood residuals ",
                         "not implemented yet") else {
@@ -1165,8 +1297,8 @@ dposbinom = function(x, size, prob, log = FALSE) {
              if (is.numeric(extra$orig.w)) round(w / extra$orig.w) else
                round(w)
            }
-    mymu = eta2theta(eta, .link, earg = .earg )
-    dmu.deta = dtheta.deta(mymu, .link, earg = .earg )
+    mymu = eta2theta(eta, .link , earg = .earg )
+    dmu.deta = dtheta.deta(mymu, .link , earg = .earg )
 
     temp1 = 1 - (1 - mymu)^nvec
     temp2 =     (1 - mymu)^2
@@ -1178,11 +1310,11 @@ dposbinom = function(x, size, prob, log = FALSE) {
     c(w) * dl.dmu * dmu.deta
   }), list( .link = link, .earg = earg, .mv = mv ))),
   weight = eval(substitute(expression({
-    ed2l.dmu2 = 1 / (mymu * temp1) + 1 / temp2 -
-                mymu / (temp1 * temp2) -
-                (nvec-1) * temp3 / temp1 -
-                nvec * (temp2^(nvec-1)) / temp1^2
-    wz = c(w) * ed2l.dmu2 * dmu.deta^2
+    ned2l.dmu2 = 1 / (mymu * temp1) + 1 / temp2 -
+                 mymu / (temp1 * temp2) -
+                 (nvec-1) * temp3 / temp1 -
+                 nvec * (temp2^(nvec-1)) / temp1^2
+    wz = c(w) * ned2l.dmu2 * dmu.deta^2
     wz
   }), list( .link = link, .earg = earg, .mv = mv ))))
 }
@@ -1193,11 +1325,13 @@ dposbinom = function(x, size, prob, log = FALSE) {
 
 
 
- rasch = function(lability = "identity",    eability = list(),
-                  ldifficulty = "identity", edifficulty = list(),
-                  iability = NULL,
-                  idifficulty = NULL,
-                  parallel = TRUE) {
+if (FALSE) rasch <-
+  function(lability = "identity",    eability = list(),
+           ldifficulty = "identity", edifficulty = list(),
+           iability = NULL,
+           idifficulty = NULL,
+           parallel = TRUE) {
+
 
 
 
@@ -1258,7 +1392,7 @@ dposbinom = function(x, size, prob, log = FALSE) {
       paste("zz", 1:Mdiv2, sep = "")
     }
     dn2 = c(dn2, paste("item", as.character(1:nrow(y)), sep = ""))
-    predictors.names =
+    predictors.names <-
       namesof(dn2, .labil, earg = .eability, short = TRUE)
 
 
@@ -1316,8 +1450,6 @@ dposbinom = function(x, size, prob, log = FALSE) {
            .ldiff = ldiff, .ediff = ediff ))),
   vfamily = c("rasch"),
   deriv = eval(substitute(expression({
- print("head(mu)")
- print( head(mu) )
     dabil.deta = 1
     ddiff.deta = 1
 
@@ -1326,8 +1458,6 @@ dposbinom = function(x, size, prob, log = FALSE) {
 
     deriv.ans = cbind(dl.dabil * dabil.deta,
                       dl.ddiff * ddiff.deta)
- print("head(deriv.ans)")
- print( head(deriv.ans) )
 
     deriv.ans
   }), list( .labil = labil, .eabil = eabil,
@@ -1352,8 +1482,6 @@ dposbinom = function(x, size, prob, log = FALSE) {
       for (jay in 1:ncoly)
         wz[ii, iam(ii, jay, M = M)] = -mu[ii, jay] * (1 - mu[ii, jay])
 
- print("head(wz)")
- print( head(wz) )
 
     wz = wz * w
     wz

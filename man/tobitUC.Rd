@@ -60,8 +60,8 @@ rtobit(n, mean = 0, sd = 1, Lower = 0, Upper = Inf)
 
 }
 \examples{
-\dontrun{ m = 0.5; x = seq(-2, 4, len = 501)
-Lower = -1; Upper = 2.5
+\dontrun{ m <- 0.5; x <- seq(-2, 4, len = 501)
+Lower <- -1; Upper <- 2.5
 plot(x, ptobit(x, m = m, Lower = Lower, Upper = Upper),
      type = "l", ylim = 0:1, las = 1, col = "orange",
      ylab = paste("ptobit(m = ", m, ", sd = 1, Lower =", Lower,
@@ -71,8 +71,8 @@ plot(x, ptobit(x, m = m, Lower = Lower, Upper = Upper),
 abline(h = 0)
 lines(x, dtobit(x, m = m, Lower = Lower, Upper = Upper), col = "blue")
 
-probs = seq(0.1, 0.9, by = 0.1)
-Q = qtobit(probs, m = m, Lower = Lower, Upper = Upper)
+probs <- seq(0.1, 0.9, by = 0.1)
+Q <- qtobit(probs, m = m, Lower = Lower, Upper = Upper)
 lines(Q, ptobit(Q, m = m, Lower = Lower, Upper = Upper),
       col = "purple", lty = "dashed", type = "h")
 lines(Q, dtobit(Q, m = m, Lower = Lower, Upper = Upper),
@@ -80,7 +80,7 @@ lines(Q, dtobit(Q, m = m, Lower = Lower, Upper = Upper),
 abline(h = probs, col = "purple", lty = "dashed")
 max(abs(ptobit(Q, m = m, Lower = Lower, Upper = Upper) - probs)) # Should be 0
 
-endpts = c(Lower, Upper) # Endpoints have a spike
+endpts <- c(Lower, Upper) # Endpoints have a spike
 lines(endpts, dtobit(endpts, m = m, Lower = Lower, Upper = Upper),
       col = "blue", lwd = 2, type = "h")
 }

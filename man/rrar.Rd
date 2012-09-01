@@ -87,16 +87,16 @@ time series.
 
 }
 \examples{
-year = seq(1961 + 1/12, 1972 + 10/12, by = 1/12)
+year <- seq(1961 + 1/12, 1972 + 10/12, by = 1/12)
 \dontrun{ par(mar = c(4, 4, 2, 2) + 0.1, mfrow = c(2, 2))
 for(ii in 1:4) {
-    plot(year, grain.us[, ii], main = names(grain.us)[ii], las = 1,
-         type = "l", xlab = "", ylab = "", col = "blue")
-    points(year, grain.us[,ii], pch = "*", col = "blue")
+  plot(year, grain.us[, ii], main = names(grain.us)[ii], las = 1,
+       type = "l", xlab = "", ylab = "", col = "blue")
+  points(year, grain.us[,ii], pch = "*", col = "blue")
 }}
 apply(grain.us, 2, mean)     # mu vector
-cgrain = scale(grain.us, scale = FALSE) # Center the time series only
-fit = vglm(cgrain ~ 1, rrar(Ranks = c(4, 1)), trace = TRUE)
+cgrain <- scale(grain.us, scale = FALSE) # Center the time series only
+fit <- vglm(cgrain ~ 1, rrar(Ranks = c(4, 1)), trace = TRUE)
 summary(fit)
 
 print(fit@misc$Ak1, dig = 2)

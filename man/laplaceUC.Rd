@@ -77,8 +77,8 @@ New York: Wiley-Interscience, Third edition.
   \code{\link{laplace}}.
 }
 \examples{
-loc = 1; b = 2
-y = rlaplace(n = 100, loc = loc, scale = b)
+loc <- 1; b <- 2
+y <- rlaplace(n = 100, loc = loc, scale = b)
 mean(y)  # sample mean
 loc      # population mean
 var(y)   # sample variance

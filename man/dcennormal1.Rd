@@ -9,7 +9,6 @@
 }
 \usage{
 dcennormal1(r1 = 0, r2 = 0, lmu = "identity", lsd = "loge",
-            emu = list(), esd = list(),
             imu = NULL, isd = NULL, zero = 2)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -18,8 +17,8 @@ dcennormal1(r1 = 0, r2 = 0, lmu = "identity", lsd = "loge",
   Integers. Number of smallest and largest values censored, respectively.
 
   }
-  \item{lmu, lsd, emu, esd}{
-  Parameter link functions and its extra arguments applied to the
+  \item{lmu, lsd}{
+  Parameter link functions applied to the
   mean and standard deviation.
   See \code{\link{Links}} for more choices.
 

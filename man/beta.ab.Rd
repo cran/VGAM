@@ -9,7 +9,6 @@
 }
 \usage{
 beta.ab(lshape1 = "loge", lshape2 = "loge",
-        eshape1 = list(), eshape2 = list(),
         i1 = NULL, i2 = NULL, trim = 0.05,
         A = 0, B = 1, parallel = FALSE, zero = NULL)
 }
@@ -19,11 +18,6 @@ beta.ab(lshape1 = "loge", lshape2 = "loge",
   Parameter link functions applied to the two shape parameters. 
   See \code{\link{Links}} for more choices.
   The log link (defaults) ensures that the parameters are positive.
-
-  }
-  \item{eshape1, eshape2}{
-  List. Extra argument for the links.
-  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{i1, i2}{ 
@@ -79,8 +73,10 @@ beta.ab(lshape1 = "loge", lshape2 = "loge",
   and a precision parameter is implemented in \code{\link{betaff}}.
 
 
-  If \eqn{A} and \eqn{B} are unknown, then the \pkg{VGAM} family function
-  \code{beta4()} can be used to estimate these too.
+% 20120525:
+% Regularity conditions not satisfied; support depends on the parameters:
+% If \eqn{A} and \eqn{B} are unknown, then the \pkg{VGAM} family function
+% \code{beta4()} can be used to estimate these too.
 
 
 }
@@ -131,8 +127,7 @@ beta.ab(lshape1 = "loge", lshape2 = "loge",
   \code{\link{betaprime}},
   \code{\link{rbetageom}},
   \code{\link{rbetanorm}},
-  \code{\link{kumar}},
-  \code{beta4}.
+  \code{\link{kumar}}.
 
 }
 \examples{
@@ -152,8 +147,8 @@ c(meanY = with(bdata, mean(Y)), head(fitted(fit),2))
 \keyword{regression}
 
 % 3/1/06; this works well:
-% fit = vglm(y~1, beta.abqn(link = logoff,earg = list(offset = 1)), tr = TRUE, cri = "c")
+% fit = vglm(y~1, beta.abqn(link = logoff(offset = 1), tr = TRUE, cri = "c")
 % 3/1/06; this does not work so well:
-%  it = vglm(y~1, beta.abqn(link = logoff,earg = list(offset = 0)), tr = TRUE, cri = "c")
+%  it = vglm(y~1, beta.abqn(link = logoff(offset = 0), tr = TRUE, cri = "c")
 % Interesting!!
 

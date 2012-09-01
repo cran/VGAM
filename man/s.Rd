@@ -106,21 +106,21 @@ Vector generalized additive models.
 
 \examples{
 # Nonparametric logistic regression
-fit = vgam(agaaus ~ s(altitude, df=2), binomialff, hunua)
+fit <- vgam(agaaus ~ s(altitude, df = 2), binomialff, hunua)
 \dontrun{
-plot(fit, se=TRUE)}
+plot(fit, se = TRUE)}
 
 # Bivariate logistic model with artificial data
-nn = 300
-mydf = data.frame(x1=runif(nn), x2=runif(nn))
-mydf = transform(mydf, 
-    y1 = rbinom(nn, size=1, prob=logit(sin(2*x2), inv=TRUE)),
-    y2 = rbinom(nn, size=1, prob=logit(sin(2*x2), inv=TRUE)))
-fit = vgam(cbind(y1,y2) ~ x1 + s(x2, 3), trace=TRUE,
-           binom2.or(exchangeable = TRUE ~ s(x2,3)), data=mydf)
-coef(fit, matrix=TRUE) # Hard to interpret
+nn <- 300
+mydf <- data.frame(x1 = runif(nn), x2 = runif(nn))
+mydf <- transform(mydf, 
+    y1 = rbinom(nn, size = 1, prob = logit(sin(2*x2), inv = TRUE)),
+    y2 = rbinom(nn, size = 1, prob = logit(sin(2*x2), inv = TRUE)))
+fit <- vgam(cbind(y1, y2) ~ x1 + s(x2, 3), trace=TRUE,
+            binom2.or(exchangeable = TRUE ~ s(x2, 3)), data = mydf)
+coef(fit, matrix = TRUE) # Hard to interpret
 \dontrun{
-plot(fit, se=TRUE, which.term= 2, scol="blue")}
+plot(fit, se = TRUE, which.term = 2, scol = "blue")}
 }
 \keyword{models}
 \keyword{regression}

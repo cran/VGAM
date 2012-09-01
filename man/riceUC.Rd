@@ -13,7 +13,7 @@
 
 }
 \usage{
-drice(x, vee, sigma, log=FALSE)
+drice(x, vee, sigma, log = FALSE)
 %price(q, vee, sigma)
 %qrice(p, vee, sigma)
 rrice(n, vee, sigma)
@@ -27,7 +27,7 @@ rrice(n, vee, sigma)
     }
   \item{log}{
   Logical.
-  If \code{log=TRUE} then the logarithm of the density is returned.
+  If \code{log = TRUE} then the logarithm of the density is returned.
 
   }
 
@@ -55,13 +55,13 @@ rrice(n, vee, sigma)
 }
 \examples{
 \dontrun{
-x = seq(0.01, 7, len=201)
-plot(x, drice(x, vee=0, sigma=1), type="n", las=1,, ylab="",
-     main="Density of Rice distribution for various values of v")
-sigma = 1; vee = c(0,0.5,1,2,4)
-for(ii in 1:length(vee)) lines(x, drice(x, vee[ii], sigma), col=ii)
-legend(x=5, y=0.6, legend=as.character(vee),
-       col=1:length(vee), lty=1)
+x <- seq(0.01, 7, len = 201)
+plot(x, drice(x, vee = 0, sigma = 1), type = "n", las = 1,, ylab = "",
+     main = "Density of Rice distribution for various values of v")
+sigma <- 1; vee <- c(0,0.5,1,2,4)
+for(ii in 1:length(vee)) lines(x, drice(x, vee[ii], sigma), col = ii)
+legend(x = 5, y = 0.6, legend = as.character(vee),
+       col = 1:length(vee), lty = 1)
 }
 }
 \keyword{distribution}

@@ -61,7 +61,7 @@ setMethod("nobs", "vlm",
 # ======================================================================
 # 20110711
 # Here is the 'nvar' methods functions.
-# Tricky for "vgam", "rrvglm", "qrrvglm", "cao", "rcam" objects?
+# Tricky for "vgam", "rrvglm", "qrrvglm", "cao", "rcim" objects?
 
 nvar.vlm <- function(object, type = c("vlm", "lm"), ...) {
 
@@ -159,18 +159,18 @@ nvar.cao <- function(object, type = c("cao", "zz"), ...) {
 
 
 
-nvar.rcam <- function(object, type = c("rcam", "zz"), ...) {
+nvar.rcim <- function(object, type = c("rcim", "zz"), ...) {
 # 20110711
 # Uses the effective dof, or edof, or edf zz??
 
   if(mode(type) != "character" && mode(type) != "name")
     type <- as.character(substitute(type))
   type <- match.arg(type,
-                    c("rcam", "zz"))[1]
+                    c("rcim", "zz"))[1]
 
-  stop("function nvar.rcam() has not been written yet")
+  stop("function nvar.rcim() has not been written yet")
 
-  if (type == "rcam") {
+  if (type == "rcim") {
     object@misc$p
   } else {
     object@misc$ncol_X_vlm
@@ -216,9 +216,9 @@ setMethod("nvar", "cao",
 
 
 
-setMethod("nvar", "rcam",
+setMethod("nvar", "rcim",
          function(object, ...)
-         nvar.rcam(object, ...))
+         nvar.rcim(object, ...))
 
 
 # ======================================================================

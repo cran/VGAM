@@ -10,11 +10,9 @@
 
 }
 \usage{
-logistic1(llocation = "identity", elocation = list(),
-          scale.arg = 1, imethod = 1)
+logistic1(llocation = "identity", scale.arg = 1, imethod = 1)
 logistic2(llocation = "identity", lscale = "loge",
-          elocation = list(), escale = list(),
-          ilocation = NULL, iscale = NULL, imethod = 1, zero = NULL)
+          ilocation = NULL, iscale = NULL, imethod = 1, zero = -2)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -23,11 +21,6 @@ logistic2(llocation = "identity", lscale = "loge",
   and scale parameter \eqn{s}.
   See \code{\link{Links}} for more choices, and
   \code{\link{CommonVGAMffArguments}} for more information.
-
-  }
-  \item{elocation, escale}{
-  List. Extra argument for each of the links.
-  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{scale.arg}{
@@ -70,6 +63,9 @@ logistic2(llocation = "identity", lscale = "loge",
   By default,
   \eqn{\eta_1 = l}{eta1 = l} and \eqn{\eta_2 = \log(s)}{eta2 = log(s)} for
   \code{logistic2}.
+
+
+  \code{logistic2} can handle multiple responses.
 
 
 }
@@ -120,19 +116,18 @@ A note on Deriving the Information Matrix for a Logistic Distribution,
 
 }
 \examples{
-# location unknown, scale known
-ldat1 = data.frame(x = runif(nn <- 500))
-ldat1 = transform(ldat1, y = rlogis(nn, loc = 1+5*x, scale = 4))
-fit = vglm(y ~ x, logistic1(scale = 4), ldat1, trace = TRUE, crit = "c")
-coef(fit, matrix = TRUE)
+# Location unknown, scale known
+ldata <- data.frame(x2 = runif(nn <- 500))
+ldata <- transform(ldata, y1 = rlogis(nn, loc = 1+5*x2, scale = exp(2)))
+fit1 <- vglm(y1 ~ x2, logistic1(scale = 4), ldata, trace = TRUE, crit = "c")
+coef(fit1, matrix = TRUE)
 
 # Both location and scale unknown
-ldat2 = data.frame(x = runif(nn <- 2000))
-ldat2 = transform(ldat2, y = rlogis(nn, loc = 1+5*x, scale = exp(0+1*x)))
-fit = vglm(y ~ x, logistic2, ldat2)
-coef(fit, matrix = TRUE)
-vcov(fit)
-summary(fit)
+ldata <- transform(ldata, y2 = rlogis(nn, loc = 1+5*x2, scale = exp(0+1*x2)))
+fit2 <- vglm(cbind(y1, y2) ~ x2, logistic2, ldata, trace = TRUE)
+coef(fit2, matrix = TRUE)
+vcov(fit2)
+summary(fit2)
 }
 \keyword{models}
 \keyword{regression}

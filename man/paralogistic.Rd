@@ -7,8 +7,8 @@
   paralogistic distribution.
 }
 \usage{
-paralogistic(lshape1.a = "loge", lscale = "loge", eshape1.a = list(),
-             escale = list(), ishape1.a = 2, iscale = NULL, zero = NULL)
+paralogistic(lshape1.a = "loge", lscale = "loge",
+             ishape1.a = 2, iscale = NULL, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -17,11 +17,6 @@ paralogistic(lshape1.a = "loge", lscale = "loge", eshape1.a = list(),
   (positive) shape parameter \code{a} and
   (positive) scale parameter \code{scale}.
   See \code{\link{Links}} for more choices.
-
-  }
-  \item{eshape1.a, escale}{
-  List. Extra argument for each of the links.
-  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{ishape1.a, iscale}{
@@ -93,10 +88,10 @@ Hoboken, NJ, USA: Wiley-Interscience.
 }
 
 \examples{
-pdata = data.frame(y = rparalogistic(n = 3000, exp(1), exp(2)))
-fit = vglm(y ~ 1, paralogistic, pdata, trace = TRUE)
-fit = vglm(y ~ 1, paralogistic(ishape1.a = 2.3, iscale = 7),
-           pdata, trace = TRUE, epsilon = 1e-8)
+pdata <- data.frame(y = rparalogistic(n = 3000, exp(1), exp(2)))
+fit <- vglm(y ~ 1, paralogistic, pdata, trace = TRUE)
+fit <- vglm(y ~ 1, paralogistic(ishape1.a = 2.3, iscale = 7),
+            pdata, trace = TRUE, epsilon = 1e-8)
 coef(fit, matrix = TRUE)
 Coef(fit)
 summary(fit)

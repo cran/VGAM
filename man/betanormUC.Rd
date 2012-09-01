@@ -11,10 +11,11 @@
 
 }
 \usage{
-dbetanorm(x, shape1, shape2, mean=0, sd=1, log=FALSE)
-pbetanorm(q, shape1, shape2, mean=0, sd=1, lower.tail=TRUE, log.p=FALSE)
-qbetanorm(p, shape1, shape2, mean=0, sd=1)
-rbetanorm(n, shape1, shape2, mean=0, sd=1)
+dbetanorm(x, shape1, shape2, mean = 0, sd = 1, log = FALSE)
+pbetanorm(q, shape1, shape2, mean = 0, sd = 1,
+          lower.tail = TRUE, log.p = FALSE)
+qbetanorm(p, shape1, shape2, mean = 0, sd = 1)
+rbetanorm(n, shape1, shape2, mean = 0, sd = 1)
 }
 \arguments{
   \item{x, q}{vector of quantiles.}

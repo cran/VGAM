@@ -8,18 +8,13 @@
 
 }
 \usage{
-skellam(lmu1="loge", lmu2="loge", emu1=list(), emu2=list(),
-        imu1=NULL, imu2=NULL, nsimEIM=100, parallel=FALSE, zero=NULL)
+skellam(lmu1 = "loge", lmu2 = "loge", imu1 = NULL, imu2 = NULL,
+        nsimEIM = 100, parallel = FALSE, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{lmu1, emu1}{
-  Link function and extra argument for the \eqn{\mu1}{mu1} parameter.
-  See \code{\link{Links}} for more choices and for general information.
-
-  }
-  \item{lmu2, emu2}{
-  Link function and extra argument for the \eqn{\mu1}{mu1} parameter.
+  \item{lmu1, lmu2}{
+  Link functions for the \eqn{\mu_1}{mu1} and \eqn{\mu_2}{mu2} parameters.
   See \code{\link{Links}} for more choices and for general information.
 
   }
@@ -55,9 +50,11 @@ f(y;mu1,mu2) =
   Here, \eqn{I_v} is the modified Bessel function of the
   first kind with order \eqn{v}.
 
+
   The mean is \eqn{\mu_1 - \mu_2}{mu1 - mu2} (returned as the fitted values)
   and the variance is \eqn{\mu_1 + \mu_2}{mu1 + mu2}.
   Simulated Fisher scoring is implemented.
+
 
 }
 \value{
@@ -65,11 +62,13 @@ f(y;mu1,mu2) =
   The object is used by modelling functions such as \code{\link{vglm}}
   and \code{\link{vgam}}.
 
+
 }
 \section{Warning }{
   This \pkg{VGAM} family function seems fragile and very sensitive to
   the initial values.
   Use very cautiously!!
+
 
 }
 
@@ -80,11 +79,13 @@ two Poisson variates belonging to different populations.
 \emph{Journal of the Royal Statistical Society, Series A},
 \bold{109}, 296.
 
+
 }
 %\author{ T. W. Yee }
 \note{
   Numerical problems may occur for data if \eqn{\mu_1}{mu1} and/or
   \eqn{\mu_2}{mu2} are large.
+
 
 }
 
@@ -93,19 +94,22 @@ two Poisson variates belonging to different populations.
   \code{\link[stats:Poisson]{dpois}},
   \code{\link{poissonff}}.
 
+
 }
 \examples{
-sdata = data.frame(x = runif(nn <- 1000))
-sdata = transform(sdata, mu1 = exp(1+x), mu2 = exp(1+x))
-sdata = transform(sdata, y = rskellam(nn, mu1, mu2))
-fit1 = vglm(y ~ x, skellam, sdata, trace=TRUE)
-fit2 = vglm(y ~ x, skellam(parallel=TRUE), sdata, trace=TRUE, crit="c")
-coef(fit1, matrix=TRUE)
-coef(fit2, matrix=TRUE)
+\dontrun{
+sdata <- data.frame(x2 = runif(nn <- 1000))
+sdata <- transform(sdata, mu1 = exp(1+x2), mu2 = exp(1+x2))
+sdata <- transform(sdata, y = rskellam(nn, mu1, mu2))
+fit1 <- vglm(y ~ x2, skellam, sdata, trace = TRUE, crit = "c")
+fit2 <- vglm(y ~ x2, skellam(parallel = TRUE), sdata, trace = TRUE)
+coef(fit1, matrix = TRUE)
+coef(fit2, matrix = TRUE)
 summary(fit1)
 # Likelihood ratio test for equal means:
-pchisq(2*(logLik(fit1)-logLik(fit2)),
-       df=fit2@df.residual-fit1@df.residual, lower.tail=FALSE)
+pchisq(2 * (logLik(fit1) - logLik(fit2)),
+       df = fit2@df.residual - fit1@df.residual, lower.tail = FALSE)
+}
 }
 \keyword{models}
 \keyword{regression}

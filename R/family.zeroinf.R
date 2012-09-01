@@ -12,7 +12,7 @@
 
 
 
-dzanegbin = function(x, size, prob = NULL, munb = NULL, pobs0 = 0,
+dzanegbin <- function(x, size, prob = NULL, munb = NULL, pobs0 = 0,
                      log = FALSE) {
   if (length(munb)) {
     if (length(prob))
@@ -20,15 +20,15 @@ dzanegbin = function(x, size, prob = NULL, munb = NULL, pobs0 = 0,
     prob <- size / (size + munb)
   }
 
-  if (!is.logical(log.arg <- log))
+  if (!is.logical(log.arg <- log) || length(log) != 1)
     stop("bad input for argument 'log'")
   rm(log)
 
   LLL = max(length(x), length(pobs0), length(prob), length(size))
-  if (length(x)     != LLL) x     = rep(x,    len = LLL)
-  if (length(pobs0) != LLL) pobs0 = rep(pobs0,  len = LLL);
-  if (length(prob)  != LLL) prob  = rep(prob, len = LLL)
-  if (length(size)  != LLL) size  = rep(size, len = LLL);
+  if (length(x)     != LLL) x     <- rep(x,     len = LLL)
+  if (length(pobs0) != LLL) pobs0 <- rep(pobs0, len = LLL);
+  if (length(prob)  != LLL) prob  <- rep(prob,  len = LLL)
+  if (length(size)  != LLL) size  <- rep(size,  len = LLL);
 
   ans = rep(0.0, len = LLL)
   if (!is.Numeric(pobs0) || any(pobs0 < 0) || any(pobs0 > 1))
@@ -37,24 +37,24 @@ dzanegbin = function(x, size, prob = NULL, munb = NULL, pobs0 = 0,
     stop("argument 'prob' must be in [0,Inf)")
   if (!is.Numeric(size, positive = TRUE))
     stop("argument 'size' must be in [0,Inf)")
-  index0 = x == 0
+  index0 <- x == 0
 
   if (log.arg) {
-    ans[ index0] = log(pobs0[index0])
-    ans[!index0] = log1p(-pobs0[!index0]) +
-                   dposnegbin(x[!index0], prob = prob[!index0],
-                              size = size[!index0], log = TRUE)
+    ans[ index0] <- log(pobs0[index0])
+    ans[!index0] <- log1p(-pobs0[!index0]) +
+                    dposnegbin(x[!index0], prob = prob[!index0],
+                               size = size[!index0], log = TRUE)
   } else {
-    ans[ index0] = pobs0[index0]
-    ans[!index0] = (1-pobs0[!index0]) * dposnegbin(x[!index0],
-                     prob = prob[!index0], size = size[!index0])
+    ans[ index0] <- pobs0[index0]
+    ans[!index0] <- (1-pobs0[!index0]) * dposnegbin(x[!index0],
+                      prob = prob[!index0], size = size[!index0])
   }
   ans
 }
 
 
 
-pzanegbin = function(q, size, prob = NULL, munb = NULL, pobs0 = 0) {
+pzanegbin <- function(q, size, prob = NULL, munb = NULL, pobs0 = 0) {
   if (length(munb)) {
     if (length(prob))
       stop("arguments 'prob' and 'munb' both specified")
@@ -80,7 +80,7 @@ pzanegbin = function(q, size, prob = NULL, munb = NULL, pobs0 = 0) {
 }
 
 
-qzanegbin = function(p, size, prob = NULL, munb = NULL, pobs0 = 0) {
+qzanegbin <- function(p, size, prob = NULL, munb = NULL, pobs0 = 0) {
   if (length(munb)) {
     if (length(prob))
       stop("arguments 'prob' and 'munb' both specified")
@@ -107,7 +107,7 @@ qzanegbin = function(p, size, prob = NULL, munb = NULL, pobs0 = 0) {
 }
 
 
-rzanegbin = function(n, size, prob = NULL, munb = NULL, pobs0 = 0) {
+rzanegbin <- function(n, size, prob = NULL, munb = NULL, pobs0 = 0) {
   use.n = if ((length.n <- length(n)) > 1) length.n else
           if (!is.Numeric(n, integer.valued = TRUE,
                           allowable.length = 1, positive = TRUE))
@@ -131,8 +131,8 @@ rzanegbin = function(n, size, prob = NULL, munb = NULL, pobs0 = 0) {
 
 
 
-dzapois = function(x, lambda, pobs0 = 0, log = FALSE) {
-  if (!is.logical(log.arg <- log))
+dzapois <- function(x, lambda, pobs0 = 0, log = FALSE) {
+  if (!is.logical(log.arg <- log) || length(log) != 1)
     stop("bad input for argument 'log'")
   rm(log)
 
@@ -161,7 +161,7 @@ dzapois = function(x, lambda, pobs0 = 0, log = FALSE) {
 
 
 
-pzapois = function(q, lambda, pobs0 = 0) {
+pzapois <- function(q, lambda, pobs0 = 0) {
   LLL = max(length(q), length(lambda), length(pobs0))
   if (length(q)      != LLL) q      = rep(q,      len = LLL);
   if (length(lambda) != LLL) lambda = rep(lambda, len = LLL);
@@ -178,7 +178,7 @@ pzapois = function(q, lambda, pobs0 = 0) {
 }
 
 
-qzapois = function(p, lambda, pobs0 = 0) {
+qzapois <- function(p, lambda, pobs0 = 0) {
   LLL = max(length(p), length(lambda), length(pobs0))
   if (length(p)      != LLL) p      = rep(p,      len = LLL);
   if (length(lambda) != LLL) lambda = rep(lambda, len = LLL);
@@ -195,7 +195,7 @@ qzapois = function(p, lambda, pobs0 = 0) {
 }
 
 
-rzapois = function(n, lambda, pobs0 = 0) {
+rzapois <- function(n, lambda, pobs0 = 0) {
   use.n = if ((length.n <- length(n)) > 1) length.n else
           if (!is.Numeric(n, integer.valued = TRUE,
                           allowable.length = 1, positive = TRUE))
@@ -214,11 +214,11 @@ rzapois = function(n, lambda, pobs0 = 0) {
 
 
 
-dzipois = function(x, lambda, pstr0 = 0, log = FALSE) {
+dzipois <- function(x, lambda, pstr0 = 0, log = FALSE) {
 
 
 
-  if (!is.logical(log.arg <- log))
+  if (!is.logical(log.arg <- log) || length(log) != 1)
     stop("bad input for argument 'log'")
   rm(log)
 
@@ -252,7 +252,7 @@ dzipois = function(x, lambda, pstr0 = 0, log = FALSE) {
 }
 
 
-pzipois = function(q, lambda, pstr0 = 0) {
+pzipois <- function(q, lambda, pstr0 = 0) {
 
   LLL = max(length(pstr0), length(lambda), length(q))
   if (length(pstr0)  != LLL) pstr0  = rep(pstr0,  len = LLL);
@@ -272,7 +272,7 @@ pzipois = function(q, lambda, pstr0 = 0) {
 }
 
 
-qzipois = function(p, lambda, pstr0 = 0) {
+qzipois <- function(p, lambda, pstr0 = 0) {
 
   LLL = max(length(p), length(lambda), length(pstr0))
   ans =
@@ -308,7 +308,7 @@ qzipois = function(p, lambda, pstr0 = 0) {
 }
 
 
-rzipois = function(n, lambda, pstr0 = 0) {
+rzipois <- function(n, lambda, pstr0 = 0) {
 
   use.n = if ((length.n <- length(n)) > 1) length.n else
           if (!is.Numeric(n, integer.valued = TRUE,
@@ -343,17 +343,22 @@ rzipois = function(n, lambda, pstr0 = 0) {
 
 
 
- yip88 = function(link.lambda = "loge", n.arg = NULL) {
+ yip88 <- function(link = "loge", n.arg = NULL) {
 
 
 
 
-  if (mode(link.lambda) != "character" && mode(link.lambda) != "name")
-    link.lambda = as.character(substitute(link.lambda))
+
+
+  link <- as.list(substitute(link))
+  earg <- link2list(link)
+  link <- attr(earg, "function.name")
+
 
   new("vglmff",
   blurb = c("Zero-inflated Poisson (based on Yip (1988))\n\n",
-            "Link:     ", namesof("lambda", link.lambda), "\n",
+            "Link:     ",
+            namesof("lambda", link, earg), "\n",
             "Variance: (1 - pstr0) * lambda"),
   first = eval(substitute(expression({
     zero <- y == 0
@@ -364,6 +369,7 @@ rzipois = function(n, lambda, pstr0 = 0) {
         stop("value of 'n.arg' conflicts with data ",
              "(it need not be specified anyway)")
       warning("trimming out the zero observations")
+
 
       axa.save =  attr(x, "assign")
       x = x[!zero,, drop = FALSE]
@@ -382,10 +388,17 @@ rzipois = function(n, lambda, pstr0 = 0) {
     if (sum(w) > narg)
       stop("sum(w) > narg")
 
-    predictors.names = namesof("lambda", .link.lambda, tag = FALSE)
+    w.y.check(w = w, y = y,
+              ncol.w.max = 1,
+              ncol.y.max = 1)
+
+
+    predictors.names <-
+      namesof("lambda", .link, list(theta = NULL), tag = FALSE)
+
     if (!length(etastart)) {
       lambda.init = rep(median(y), length = length(y))
-      etastart = theta2eta(lambda.init, .link.lambda)
+      etastart = theta2eta(lambda.init, .link , earg = .earg )
     }
     if (length(extra)) {
       extra$sumw = sum(w)
@@ -393,19 +406,20 @@ rzipois = function(n, lambda, pstr0 = 0) {
     } else {
       extra = list(sumw = sum(w), narg = narg)
     }
-  }), list( .link.lambda = link.lambda, .n.arg = n.arg ))),
+  }), list( .link = link, .earg = earg, .n.arg = n.arg ))),
 
   linkinv = eval(substitute(function(eta, extra = NULL) {
-    lambda = eta2theta(eta, .link.lambda)
+    lambda = eta2theta(eta, .link, .earg)
     temp5 = exp(-lambda)
     pstr0 = (1 - temp5 - extra$sumw/extra$narg) / (1 - temp5)
     if (any(pstr0 <= 0))
       stop("non-positive value(s) of pstr0")
-    (1-pstr0) * lambda
-  }, list( .link.lambda = link.lambda ))),
+    (1 - pstr0) * lambda
+  }, list( .link = link, .earg = earg ))),
 
   last = eval(substitute(expression({
-    misc$link = c(lambda = .link.lambda )
+    misc$link =    c(lambda = .link )
+    misc$earg = list(lambda = .earg )
 
     if (intercept.only) {
       suma = extra$sumw
@@ -413,52 +427,52 @@ rzipois = function(n, lambda, pstr0 = 0) {
       pstr0 = if (pstr0 < 0 || pstr0 > 1) NA else pstr0
       misc$pstr0 = pstr0
     }
-  }), list( .link.lambda = link.lambda ))),
+  }), list( .link = link, .earg = earg ))),
 
   loglikelihood = eval(substitute(function(mu, y, w, residuals = FALSE,
                                            eta, extra = NULL) {
-    lambda = eta2theta(eta, .link.lambda)
+    lambda = eta2theta(eta, .link)
     temp5 = exp(-lambda)
     pstr0 = (1 - temp5 - extra$sumw / extra$narg) / (1 - temp5)
     if (residuals) stop("loglikelihood residuals not ",
                         "implemented yet") else {
-      sum(w * dzipois(x = y, pstr0 = pstr0, lambda = lambda, log = TRUE))
+      sum(c(w) * dzipois(x = y, pstr0 = pstr0, lambda = lambda, log = TRUE))
     }
-  }, list( .link.lambda = link.lambda ))),
+  }, list( .link = link, .earg = earg ))),
 
   vfamily = c("yip88"),
   deriv = eval(substitute(expression({
-    lambda = eta2theta(eta, .link.lambda)
+    lambda = eta2theta(eta, .link , earg = .earg )
     temp5 = exp(-lambda)
     dl.dlambda = -1 + y/lambda - temp5/(1-temp5)
-    dlambda.deta = dtheta.deta(lambda, .link.lambda)
+    dlambda.deta = dtheta.deta(lambda, .link , earg = .earg )
     w * dl.dlambda * dlambda.deta
-  }), list( .link.lambda = link.lambda ))),
+  }), list( .link = link, .earg = earg ))),
   weight = eval(substitute(expression({
-    d2lambda.deta2 = d2theta.deta2(lambda, .link.lambda)
+    d2lambda.deta2 = d2theta.deta2(lambda, .link , earg = .earg )
     d2l.dlambda2 = -y / lambda^2 + temp5 / (1 - temp5)^2
     -w * (d2l.dlambda2*dlambda.deta^2 + dl.dlambda*d2lambda.deta2)
-  }), list( .link.lambda = link.lambda ))))
+  }), list( .link = link, .earg = earg ))))
 }
 
 
 
 
- zapoisson = function(lpobs0 = "logit", llambda = "loge",
-                      epobs0 = list(),  elambda = list(), zero = NULL) {
+ zapoisson <- function(lpobs0 = "logit", llambda = "loge",
+                       zero = NULL) {
 
 
 
-  lpobs_0 = lpobs0
-  epobs_0 = epobs0
 
-  if (mode(lpobs_0) != "character" && mode(lpobs_0) != "name")
-    lpobs_0 = as.character(substitute(lpobs_0))
-  if (mode(llambda) != "character" && mode(llambda) != "name")
-    llambda = as.character(substitute(llambda))
+  lpobs_0 <- as.list(substitute(lpobs0))
+  epobs_0 <- link2list(lpobs_0)
+  lpobs_0 <- attr(epobs_0, "function.name")
 
-  if (!is.list(epobs_0)) epobs_0 = list()
-  if (!is.list(elambda)) elambda = list()
+  llambda <- as.list(substitute(llambda))
+  elambda <- link2list(llambda)
+  llambda <- attr(elambda, "function.name")
+
+
 
   new("vglmff",
   blurb = c("Zero-altered Poisson ",
@@ -476,15 +490,24 @@ rzipois = function(n, lambda, pstr0 = 0) {
   }), list( .zero = zero ))),
   infos = eval(substitute(function(...) {
     list(Musual = 2,
-         zero = .zero)
+         zero = .zero )
   }, list( .zero = zero ))),
   initialize = eval(substitute(expression({
     Musual <- 2
-    y <- as.matrix(y)
-    if (any(y != round(y )))
-      stop("the response must be integer-valued")
     if (any(y < 0))
       stop("the response must not have negative values")
+
+    temp5 <-
+    w.y.check(w = w, y = y,
+              ncol.w.max = Inf,
+              ncol.y.max = Inf,
+              Is.integer.y = TRUE,
+              out.wy = TRUE,
+              colsyperw = 1,
+              maximize = TRUE)
+    w <- temp5$w
+    y <- temp5$y
+
 
     extra$y0 = y0 = ifelse(y == 0, 1, 0)
     extra$NOS = NOS = ncoly = ncol(y)  # Number of species
@@ -494,14 +517,15 @@ rzipois = function(n, lambda, pstr0 = 0) {
                paste("pobs0",    1:ncoly, sep = "")
     mynames2 = if (ncoly == 1) "lambda" else
                paste("lambda", 1:ncoly, sep = "")
-    predictors.names = 
+    predictors.names <-
         c(namesof(mynames1, .lpobs_0, earg = .epobs_0, tag = FALSE),
           namesof(mynames2, .llambda, earg = .elambda, tag = FALSE))[
           interleave.VGAM(Musual*NOS, M = Musual)]
 
     if (!length(etastart)) {
       etastart =
-        cbind(theta2eta((0.5 + w*y0) / (1+w), .lpobs_0, earg = .epobs_0 ),
+        cbind(theta2eta((0.5 + w*y0) / (1+w),
+                        .lpobs_0, earg = .epobs_0 ),
               matrix(1, n, NOS))  # 1 here is any old value
       for(spp. in 1:NOS) {
         sthese = skip.these[, spp.]
@@ -527,17 +551,18 @@ rzipois = function(n, lambda, pstr0 = 0) {
   }, list( .lpobs_0 = lpobs_0, .llambda = llambda,
            .epobs_0 = epobs_0, .elambda = elambda ))),
   last = eval(substitute(expression({
+    misc$expected = TRUE
+    misc$multipleResponses <- TRUE
+
     temp.names = c(rep( .lpobs_0 , len = NOS),
                    rep( .llambda , len = NOS))
     temp.names = temp.names[interleave.VGAM(Musual*NOS, M = Musual)]
     misc$link  = temp.names
-    misc$expected = TRUE
-    misc$earg = vector("list", Musual * NOS)
-
     names(misc$link) <-
-    names(misc$earg) <-
-        c(mynames1, mynames2)[interleave.VGAM(Musual*NOS, M = Musual)]
+      c(mynames1, mynames2)[interleave.VGAM(Musual*NOS, M = Musual)]
 
+    misc$earg = vector("list", Musual * NOS)
+    names(misc$earg) <- names(misc$link)
     for(ii in 1:NOS) {
       misc$earg[[Musual*ii-1]] = .epobs_0
       misc$earg[[Musual*ii  ]] = .elambda
@@ -556,7 +581,7 @@ rzipois = function(n, lambda, pstr0 = 0) {
 
     if (residuals)
       stop("loglikelihood residuals not implemented yet") else {
-      sum(w * dzapois(x = y, pobs0 = pobs0, lambda = lambda, log = TRUE))
+      sum(c(w) * dzapois(x = y, pobs0 = pobs0, lambda = lambda, log = TRUE))
     }
   }, list( .lpobs_0 = lpobs_0, .llambda = llambda,
            .epobs_0 = epobs_0, .elambda = elambda ))),
@@ -597,7 +622,7 @@ rzipois = function(n, lambda, pstr0 = 0) {
             .epobs_0 = epobs_0, .elambda = elambda ))),
   weight = eval(substitute(expression({
 
-    wz = matrix(0.0, n, Musual*NOS)
+    wz = matrix(0.0, n, Musual * NOS)
 
 
 
@@ -629,6 +654,8 @@ rzipois = function(n, lambda, pstr0 = 0) {
 
     wz = wz[, interleave.VGAM(ncol(wz), M = Musual)]
 
+
+
     wz
   }), list( .lpobs_0 = lpobs_0,
             .epobs_0 = epobs_0 ))))
@@ -647,7 +674,6 @@ zanegbinomial.control <- function(save.weight = TRUE, ...)
 
  zanegbinomial =
   function(lpobs0 = "logit", lmunb = "loge", lsize = "loge",
-           epobs0 = list(),  emunb = list(), esize = list(),
            ipobs0 = NULL,                    isize = NULL,
            zero = c(-1, -3),
            imethod = 1,
@@ -681,16 +707,19 @@ zanegbinomial.control <- function(save.weight = TRUE, ...)
      shrinkage.init > 1)
     stop("bad input for argument 'shrinkage.init'")
 
-  if (mode(lmunb) != "character" && mode(lmunb) != "name")
-      lmunb = as.character(substitute(lmunb))
-  if (mode(lsize) != "character" && mode(lsize) != "name")
-      lsize = as.character(substitute(lsize))
-  if (mode(lpobs0) != "character" && mode(lpobs0) != "name")
-      lpobs0 = as.character(substitute(lpobs0))
 
-  if (!is.list(epobs0)) epobs0 = list()
-  if (!is.list(emunb)) emunb = list()
-  if (!is.list(esize)) esize = list()
+  lmunb <- as.list(substitute(lmunb))
+  emunb <- link2list(lmunb)
+  lmunb <- attr(emunb, "function.name")
+
+  lsize <- as.list(substitute(lsize))
+  esize <- link2list(lsize)
+  lsize <- attr(esize, "function.name")
+
+  lpobs0 <- as.list(substitute(lpobs0))
+  epobs0 <- link2list(lpobs0)
+  lpobs0 <- attr(epobs0, "function.name")
+
 
 
 
@@ -711,45 +740,60 @@ zanegbinomial.control <- function(save.weight = TRUE, ...)
   }), list( .zero = zero ))),
   initialize = eval(substitute(expression({
     Musual <- 3
-    y <- as.matrix(y)
-    extra$NOS = NOS = ncoly = ncol(y)  # Number of species
-    M = Musual * ncoly # 
 
-    if (any(y != round(y)))
-      stop("the response must be integer-valued")
     if (any(y < 0))
       stop("the response must not have negative values")
+
+    temp5 <-
+    w.y.check(w = w, y = y,
+              ncol.w.max = Inf,
+              ncol.y.max = Inf,
+              Is.integer.y = TRUE,
+              out.wy = TRUE,
+              colsyperw = 1,
+              maximize = TRUE)
+    w <- temp5$w
+    y <- temp5$y
+
+
+    extra$NOS = NOS = ncoly = ncol(y)  # Number of species
+    M = Musual * ncoly # 
 
     mynames1 = if (NOS == 1) "pobs0" else paste("pobs0", 1:NOS, sep = "")
     mynames2 = if (NOS == 1) "munb"  else paste("munb",  1:NOS, sep = "")
     mynames3 = if (NOS == 1) "size"  else paste("size",  1:NOS, sep = "")
-    predictors.names =
+    predictors.names <-
         c(namesof(mynames1, .lpobs0 , earg = .epobs0 , tag = FALSE),
           namesof(mynames2, .lmunb  , earg = .emunb  , tag = FALSE),
           namesof(mynames3, .lsize  , earg = .esize  , tag = FALSE))[
           interleave.VGAM(Musual*NOS, M = Musual)]
 
 
-    extra$y0 = y0 = ifelse(y == 0, 1, 0)
-    extra$skip.these = skip.these = matrix(as.logical(y0), n, NOS)
+    extra$y0 <- y0 <- ifelse(y == 0, 1, 0)
+    extra$skip.these <- skip.these <- matrix(as.logical(y0), n, NOS)
 
 
     if (!length(etastart)) {
-      mu.init = y
+      mu.init <- y
       for(iii in 1:ncol(y)) {
-        index.posy = (y[, iii] > 0)
-        use.this = if ( .imethod == 2) {
-          weighted.mean(y[index.posy, iii], w[index.posy])
+        index.posy <- (y[, iii] > 0)
+        if ( .imethod == 1) {
+          use.this <- weighted.mean(y[index.posy, iii],
+                      w[index.posy, iii])
+          mu.init[ index.posy, iii] = (1 - .sinit ) * y[index.posy, iii] +
+                                          .sinit   * use.this
+          mu.init[!index.posy, iii] = use.this
         } else {
-          median(rep(y[index.posy, iii], w[index.posy])) + 1/2
+          use.this <-
+          mu.init[, iii] <- (y[, iii] +
+            weighted.mean(y[index.posy, iii], w[index.posy, iii])) / 2
         }
-        mu.init[ index.posy, iii] = (1 - .sinit ) * y[index.posy, iii] +
-                                        .sinit   * use.this
-        mu.init[!index.posy, iii] = use.this
+if (TRUE) {
         max.use.this =  7 * use.this + 10
         vecTF = (mu.init[, iii] > max.use.this)
         if (any(vecTF))
           mu.init[vecTF, iii] = max.use.this
+}
       }
 
       pnb0 = matrix(if (length( .ipobs0 )) .ipobs0 else -1,
@@ -765,9 +809,9 @@ zanegbinomial.control <- function(save.weight = TRUE, ...)
       if ( is.Numeric( .isize )) {
         kmat0 = matrix( .isize , nrow = n, ncol = ncoly, byrow = TRUE)
       } else {
-        posnegbinomial.Loglikfun = function(kmat, y, x, w, extraargs) {
+        posnegbinomial.Loglikfun <- function(kmat, y, x, w, extraargs) {
          munb = extraargs
-         sum(w * dposnegbin(x = y, munb = munb, size = kmat,
+         sum(c(w) * dposnegbin(x = y, munb = munb, size = kmat,
                             log = TRUE))
         }
         k.grid = 2^((-6):6)
@@ -777,8 +821,8 @@ zanegbinomial.control <- function(save.weight = TRUE, ...)
           posy = y[index.posy, spp.]
           kmat0[, spp.] = getMaxMin(k.grid,
                                    objfun = posnegbinomial.Loglikfun,
-                                   y = posy, x = x[index.posy,],
-                                   w = w[index.posy],
+                                   y = posy, x = x[index.posy, ],
+                                   w = w[index.posy, spp.],
                                    extraargs = mu.init[index.posy, spp.])
         }
       }
@@ -827,6 +871,7 @@ zanegbinomial.control <- function(save.weight = TRUE, ...)
     misc$imethod = .imethod
     misc$ipobs0  = .ipobs0
     misc$isize = .isize
+    misc$multipleResponses <- TRUE
   }), list( .lpobs0 = lpobs0, .lmunb = lmunb, .lsize = lsize,
             .epobs0 = epobs0, .emunb = emunb, .esize = esize,
             .ipobs0 = ipobs0, .isize = isize,
@@ -841,7 +886,7 @@ zanegbinomial.control <- function(save.weight = TRUE, ...)
     kmat = eta2theta(eta[, Musual*(1:NOS)  ], .lsize  , earg = .esize  )
     if (residuals) stop("loglikelihood residuals not ",
                         "implemented yet") else {
-      sum(w * dzanegbin(x = y, pobs0 = phi0, munb = munb, size = kmat,
+      sum(c(w) * dzanegbin(x = y, pobs0 = phi0, munb = munb, size = kmat,
                         log = TRUE))
     }
   }, list( .lpobs0 = lpobs0, .lmunb = lmunb, .lsize = lsize,
@@ -999,6 +1044,7 @@ zanegbinomial.control <- function(save.weight = TRUE, ...)
     wz[, Musual*(1:NOS)-2] =  tmp200
 
 
+
     wz
   }), list( .lpobs0 = lpobs0,
             .epobs0 = epobs0,
@@ -1015,7 +1061,7 @@ zanegbinomial.control <- function(save.weight = TRUE, ...)
 
 
  if (FALSE)
-rposnegbin = function(n, munb, size) {
+rposnegbin <- function(n, munb, size) {
   if (!is.Numeric(size, positive = TRUE))
     stop("argument 'size' must be positive")
   if (!is.Numeric(munb, positive = TRUE))
@@ -1036,7 +1082,7 @@ rposnegbin = function(n, munb, size) {
 }
 
  if (FALSE)
-dposnegbin = function(x, munb, size, log = FALSE) {
+dposnegbin <- function(x, munb, size, log = FALSE) {
     if (!is.Numeric(size, positive = TRUE))
         stop("argument 'size' must be positive")
     if (!is.Numeric(munb, positive = TRUE))
@@ -1058,21 +1104,26 @@ dposnegbin = function(x, munb, size, log = FALSE) {
 
 
 
- zipoisson = function(lpstr0 = "logit", llambda = "loge",
-                      epstr0 = list(),  elambda = list(),
-                      ipstr0 = NULL,    ilambda = NULL,
-                      imethod = 1,
-                      shrinkage.init = 0.8, zero = NULL)
+ zipoisson <- function(lpstr0 = "logit", llambda = "loge",
+                       ipstr0 = NULL,    ilambda = NULL,
+                       imethod = 1,
+                       shrinkage.init = 0.8, zero = NULL)
 {
-
-  if (mode(lpstr0) != "character" && mode(lpstr0) != "name")
-    lpstr0 = as.character(substitute(lpstr0))
-  if (mode(llambda) != "character" && mode(llambda) != "name")
-    llambda = as.character(substitute(llambda))
-
-  lpstr00 <- lpstr0
-  epstr00 <- epstr0
   ipstr00 <- ipstr0
+
+
+
+
+  lpstr0 <- as.list(substitute(lpstr0))
+  epstr00 <- link2list(lpstr0)
+  lpstr00 <- attr(epstr00, "function.name")
+
+  llambda <- as.list(substitute(llambda))
+  elambda <- link2list(llambda)
+  llambda <- attr(elambda, "function.name")
+
+
+
 
   if (length(ipstr00))
     if (!is.Numeric(ipstr00, positive = TRUE) ||
@@ -1082,8 +1133,6 @@ dposnegbin = function(x, munb, size, log = FALSE) {
     if (!is.Numeric(ilambda, positive = TRUE))
       stop("argument 'ilambda' values must be positive")
 
-  if (!is.list(epstr00)) epstr00 = list()
-  if (!is.list(elambda)) elambda = list()
 
   if (!is.Numeric(imethod, allowable.length = 1,
                   integer.valued = TRUE, positive = TRUE) ||
@@ -1111,10 +1160,23 @@ dposnegbin = function(x, munb, size, log = FALSE) {
 
   infos = eval(substitute(function(...) {
     list(Musual = 2,
-         zero = .zero)
+         zero = .zero )
   }, list( .zero = zero ))),
   initialize = eval(substitute(expression({
-    y <- as.matrix(y)
+
+    temp5 <-
+    w.y.check(w = w, y = y,
+              ncol.w.max = Inf,
+              ncol.y.max = Inf,
+              Is.integer.y = TRUE,
+              out.wy = TRUE,
+              colsyperw = 1,
+              maximize = TRUE)
+    w <- temp5$w
+    y <- temp5$y
+
+
+
     ncoly <- ncol(y)
 
     Musual <- 2
@@ -1162,7 +1224,7 @@ dposnegbin = function(x, munb, size, log = FALSE) {
         }
 
         zipois.Loglikfun <- function(phival, y, x, w, extraargs) {
-          sum(w * dzipois(x = y, pstr0 = phival,
+          sum(c(w) * dzipois(x = y, pstr0 = phival,
                           lambda = extraargs$lambda,
                           log = TRUE))
         }
@@ -1215,6 +1277,7 @@ dposnegbin = function(x, munb, size, log = FALSE) {
     misc$Musual <- Musual
     misc$imethod <- .imethod
     misc$expected <- TRUE
+    misc$multipleResponses <- TRUE
 
       misc$pobs0 = phimat + (1 - phimat) * exp(-lambda) # P(Y=0)
       if (length(dimnames(y)[[2]]) > 0)
@@ -1229,7 +1292,7 @@ dposnegbin = function(x, munb, size, log = FALSE) {
     lambda = eta2theta(eta[, c(FALSE, TRUE)], .llambda , earg = .elambda )
     if (residuals) stop("loglikelihood residuals not ",
                         "implemented yet") else {
-      sum(w * dzipois(x = y, pstr0 = phimat, lambda = lambda,
+      sum(c(w) * dzipois(x = y, pstr0 = phimat, lambda = lambda,
                       log = TRUE))
     }
     }, list( .lpstr00 = lpstr00, .llambda = llambda,
@@ -1237,31 +1300,32 @@ dposnegbin = function(x, munb, size, log = FALSE) {
   vfamily = c("zipoisson"),
   deriv = eval(substitute(expression({
     Musual <- 2
-    phimat = eta2theta(eta[, c(TRUE, FALSE), drop = FALSE], .lpstr00 ,
+    phimat <- eta2theta(eta[, c(TRUE, FALSE), drop = FALSE], .lpstr00 ,
                        earg = .epstr00 )
-    lambda = eta2theta(eta[, c(FALSE, TRUE), drop = FALSE], .llambda ,
+    lambda <- eta2theta(eta[, c(FALSE, TRUE), drop = FALSE], .llambda ,
                        earg = .elambda )
 
-    prob0 = phimat + (1 - phimat) * exp(-lambda)
-    index0 = as.matrix(y == 0)
+    prob0 <- phimat + (1 - phimat) * exp(-lambda)
+    index0 <- as.matrix(y == 0)
 
-    dl.dphimat = -expm1(-lambda) / prob0
-    dl.dphimat[!index0] = -1 / (1 - phimat[!index0])
-    dl.dlambda = -(1 - phimat) * exp(-lambda) / prob0
-    dl.dlambda[!index0] = (y[!index0] - lambda[!index0]) / lambda[!index0]
+    dl.dphimat <- -expm1(-lambda) / prob0
+    dl.dphimat[!index0] <- -1 / (1 - phimat[!index0])
 
-    dphimat.deta = dtheta.deta(phimat, .lpstr00 , earg = .epstr00 )
-    dlambda.deta = dtheta.deta(lambda, .llambda , earg = .elambda )
+    dl.dlambda <- -(1 - phimat) * exp(-lambda) / prob0
+    dl.dlambda[!index0] <- (y[!index0] - lambda[!index0]) / lambda[!index0]
 
-    ans = c(w) * cbind(dl.dphimat * dphimat.deta,
-                       dl.dlambda * dlambda.deta)
+    dphimat.deta <- dtheta.deta(phimat, .lpstr00 , earg = .epstr00 )
+    dlambda.deta <- dtheta.deta(lambda, .llambda , earg = .elambda )
+
+    ans <- c(w) * cbind(dl.dphimat * dphimat.deta,
+                        dl.dlambda * dlambda.deta)
     ans <- ans[, interleave.VGAM(M, M = Musual)]
 
 
     if ( .llambda == "loge" && is.empty.list( .elambda ) &&
        any(lambda[!index0] < .Machine$double.eps)) {
       for(spp. in 1:(M / Musual)) {
-        ans[!index0[, spp.], Musual * spp.] =
+        ans[!index0[, spp.], Musual * spp.] <-
           w[!index0[, spp.]] *
          (y[!index0[, spp.], spp.] - lambda[!index0[, spp.], spp.])
       }
@@ -1271,30 +1335,34 @@ dposnegbin = function(x, munb, size, log = FALSE) {
   }), list( .lpstr00 = lpstr00, .llambda = llambda,
             .epstr00 = epstr00, .elambda = elambda ))),
   weight = eval(substitute(expression({
-    wz = matrix(0.0, nrow = n, ncol = M + M-1)
+    wz <- matrix(0.0, nrow = n, ncol = M + M-1)
 
-    d2l.dphimat2 = -expm1(-lambda) / ((1 - phimat) * prob0)
-    d2l.dlambda2 = (1 - phimat) / lambda -
-                   phimat * (1 - phimat) * exp(-lambda) / prob0
-    d2l.dphimatlambda = -exp(-lambda) / prob0
+    ned2l.dphimat2 <- -expm1(-lambda) / ((1 - phimat) * prob0)
+    ned2l.dphimatlambda <- -exp(-lambda) / prob0
+    ned2l.dlambda2 <- (1 - phimat) / lambda -
+                      phimat * (1 - phimat) * exp(-lambda) / prob0
 
-    d2l.dphimat2 = as.matrix(d2l.dphimat2)
-    d2l.dlambda2 = as.matrix(d2l.dlambda2)
-    d2l.dphimatlambda = as.matrix(d2l.dphimatlambda)
+
+
+
+
+    ned2l.dphimat2 <- as.matrix(ned2l.dphimat2)
+    ned2l.dlambda2 <- as.matrix(ned2l.dlambda2)
+    ned2l.dphimatlambda <- as.matrix(ned2l.dphimatlambda)
 
     for (ii in 1:(M / Musual)) {
       wz[, iam(Musual * ii - 1, Musual * ii - 1, M)] <-
-        d2l.dphimat2[, ii] * dphimat.deta[, ii]^2
+        ned2l.dphimat2[, ii] * dphimat.deta[, ii]^2
       wz[, iam(Musual * ii    , Musual * ii    , M)] <-
-        d2l.dlambda2[, ii] * dlambda.deta[, ii]^2
+        ned2l.dlambda2[, ii] * dlambda.deta[, ii]^2
       wz[, iam(Musual * ii - 1, Musual * ii    , M)] <-
-        d2l.dphimatlambda[, ii] * dphimat.deta[, ii] * dlambda.deta[, ii]
-
+        ned2l.dphimatlambda[, ii] * dphimat.deta[, ii] * dlambda.deta[, ii]
     }
 
 
 
-      c(w) * wz
+
+    w.wz.merge(w = w, wz = wz, n = n, M = M, ndepy = M / Musual)
   }), list( .llambda = llambda, .elambda = elambda ))))
 } # zipoisson
 
@@ -1306,18 +1374,21 @@ dposnegbin = function(x, munb, size, log = FALSE) {
 
 
 
- zibinomial = function(lpstr0 = "logit", lprob = "logit",
-                       epstr0 = list(),  eprob = list(),
-                       ipstr0 = NULL,
-                       zero = 1, mv = FALSE, imethod = 1)
+ zibinomial <- function(lpstr0 = "logit", lprob = "logit",
+                        ipstr0 = NULL,
+                        zero = 1, mv = FALSE, imethod = 1)
 {
   if (as.logical(mv))
     stop("argument 'mv' must be FALSE")
 
-  if (mode(lpstr0) != "character" && mode(lpstr0) != "name")
-    lpstr0 = as.character(substitute(lpstr0))
-  if (mode(lprob) != "character" && mode(lprob) != "name")
-    lprob = as.character(substitute(lprob))
+  lpstr0 <- as.list(substitute(lpstr0))
+  epstr0 <- link2list(lpstr0)
+  lpstr0 <- attr(epstr0, "function.name")
+
+  lprob <- as.list(substitute(lprob))
+  eprob <- link2list(lprob)
+  lprob <- attr(eprob, "function.name")
+
 
   if (is.Numeric(ipstr0))
     if (!is.Numeric(ipstr0, positive = TRUE) || any(ipstr0 >= 1))
@@ -1327,8 +1398,6 @@ dposnegbin = function(x, munb, size, log = FALSE) {
      imethod > 2)
     stop("argument 'imethod' must be 1 or 2")
 
-  if (!is.list(epstr0)) epstr0 = list()
-  if (!is.list(eprob ))  eprob = list()
 
 
   new("vglmff",
@@ -1336,19 +1405,19 @@ dposnegbin = function(x, munb, size, log = FALSE) {
             "Links:    ",
             namesof("pstr0", lpstr0, earg = epstr0), ", ",
             namesof("prob" , lprob , earg = eprob ), "\n",
-            "Mean:     (1 - pstr0) * prob / (1 - (1 - prob)^w)"),
+            "Mean:     (1 - pstr0) * prob"),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.vgam(constraints, x, .zero, M)
+    constraints <- cm.zero.vgam(constraints, x, .zero , M)
   }), list( .zero = zero ))),
   initialize = eval(substitute(expression({
-            if (!all(w == 1))
-                extra$orig.w = w
+    if (!all(w == 1))
+      extra$orig.w <- w
 
 
     {
-        NCOL = function (x)
-            if (is.array(x) && length(dim(x)) > 1 ||
-            is.data.frame(x)) ncol(x) else as.integer(1)
+        NCOL <- function (x)
+          if (is.array(x) && length(dim(x)) > 1 ||
+          is.data.frame(x)) ncol(x) else as.integer(1)
 
         if (NCOL(y) == 1) {
             if (is.factor(y)) y <- y != levels(y)[1]
@@ -1359,23 +1428,23 @@ dposnegbin = function(x, munb, size, log = FALSE) {
                 mustart = (0.5 + w * y) / (1.0 + w)
 
 
-            no.successes = y
+            no.successes <- y
             if (min(y) < 0)
-                stop("Negative data not allowed!")
+              stop("Negative data not allowed!")
             if (any(abs(no.successes - round(no.successes)) > 1.0e-8))
-                stop("Number of successes must be integer-valued")
+              stop("Number of successes must be integer-valued")
 
         } else if (NCOL(y) == 2) {
             if (min(y) < 0)
-                stop("Negative data not allowed!")
+              stop("Negative data not allowed!")
             if (any(abs(y - round(y)) > 1.0e-8))
-                stop("Count data must be integer-valued")
-            y = round(y)
-            nvec = y[, 1] + y[, 2]
-            y = ifelse(nvec > 0, y[, 1] / nvec, 0)
-            w = w * nvec
+              stop("Count data must be integer-valued")
+            y <- round(y)
+            nvec <- y[, 1] + y[, 2]
+            y <- ifelse(nvec > 0, y[, 1] / nvec, 0)
+            w <- w * nvec
             if (!length(mustart) && !length(etastart))
-              mustart = (0.5 + nvec * y) / (1 + nvec)
+              mustart <- (0.5 + nvec * y) / (1 + nvec)
         } else {
             stop("for the binomialff family, response 'y' must be a ",
                  "vector of 0 and 1's\n",
@@ -1387,17 +1456,21 @@ dposnegbin = function(x, munb, size, log = FALSE) {
 
     }
 
+    if ( .imethod == 1)
+      mustart <- (mustart + y) / 2
 
 
 
 
-    predictors.names =
+
+
+    predictors.names <-
         c(namesof("pstr0", .lpstr0 , earg = .epstr0 , tag = FALSE),
           namesof("prob" , .lprob  , earg = .eprob  , tag = FALSE))
 
 
-    phi.init = if (length( .ipstr0 )) .ipstr0 else {
-        prob0.est = sum(w[y == 0]) / sum(w)
+    phi.init <- if (length( .ipstr0 )) .ipstr0 else {
+        prob0.est <- sum(w[y == 0]) / sum(w)
         if ( .imethod == 1) {
           (prob0.est - (1 - mustart)^w) / (1 - (1 - mustart)^w)
         } else {
@@ -1405,33 +1478,35 @@ dposnegbin = function(x, munb, size, log = FALSE) {
         }
     }
 
-    phi.init[phi.init <= -0.10] = 0.50  # Lots of sample variation
-    phi.init[phi.init <=  0.01] = 0.05  # Last resort
-    phi.init[phi.init >=  0.99] = 0.95  # Last resort
+    phi.init[phi.init <= -0.10] <- 0.50 # Lots of sample variation
+    phi.init[phi.init <=  0.01] <- 0.05 # Last resort
+    phi.init[phi.init >=  0.99] <- 0.95 # Last resort
 
     if ( length(mustart) && !length(etastart))
-      mustart = cbind(rep(phi.init, len = n),
-                      mustart) # 1st coln not a real mu
+      mustart <- cbind(rep(phi.init, len = n),
+                       mustart) # 1st coln not a real mu
   }), list( .lpstr0 = lpstr0, .lprob = lprob,
             .epstr0 = epstr0, .eprob = eprob,
             .ipstr0 = ipstr0,
             .imethod = imethod ))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
-    phi   = eta2theta(eta[, 1], .lpstr0 , earg = .epstr0 )
-    mubin = eta2theta(eta[, 2], .lprob  , earg = .eprob  )
-    (1 - phi) * mubin
+    pstr0 <- eta2theta(eta[, 1], .lpstr0 , earg = .epstr0 )
+    mubin <- eta2theta(eta[, 2], .lprob  , earg = .eprob  )
+    (1 - pstr0) * mubin
   }, list( .lpstr0 = lpstr0, .lprob = lprob,
            .epstr0 = epstr0, .eprob = eprob ))),
   last = eval(substitute(expression({
-    misc$link =    c("pstr0" = .lpstr0 , "prob" = .lprob )
-    misc$earg = list("pstr0" = .epstr0 , "prob" = .eprob )
-    misc$imethod = .imethod
+    misc$link <-    c("pstr0" = .lpstr0 , "prob" = .lprob )
+
+    misc$earg <- list("pstr0" = .epstr0 , "prob" = .eprob )
+
+    misc$imethod <- .imethod
 
 
     if (intercept.only && all(w == w[1])) {
-        phi   = eta2theta(eta[1, 1], .lpstr0 , earg = .epstr0 )
-        mubin = eta2theta(eta[1, 2], .lprob  , earg = .eprob  )
-        misc$pobs0 = phi + (1-phi) * (1-mubin)^w[1] # P(Y=0)
+      phi   <- eta2theta(eta[1, 1], .lpstr0 , earg = .epstr0 )
+      mubin <- eta2theta(eta[1, 2], .lprob  , earg = .eprob  )
+      misc$pobs0 <- phi + (1 - phi) * (1 - mubin)^w[1] # P(Y=0)
     }
   }), list( .lpstr0 = lpstr0, .lprob = lprob,
             .epstr0 = epstr0, .eprob = eprob,
@@ -1443,8 +1518,8 @@ dposnegbin = function(x, munb, size, log = FALSE) {
            .epstr0 = epstr0, .eprob = eprob ))),
   loglikelihood = eval(substitute( 
     function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
-    pstr0 = eta2theta(eta[, 1], .lpstr0 , earg = .epstr0 )
-    mubin = eta2theta(eta[, 2], .lprob  , earg = .eprob  )
+    pstr0 <- eta2theta(eta[, 1], .lpstr0 , earg = .epstr0 )
+    mubin <- eta2theta(eta[, 2], .lprob  , earg = .eprob  )
     if (residuals) stop("loglikelihood residuals not ",
                         "implemented yet") else {
       sum(dzibinom(x = round(w * y), size = w, prob = mubin,
@@ -1454,54 +1529,62 @@ dposnegbin = function(x, munb, size, log = FALSE) {
            .epstr0 = epstr0, .eprob = eprob ))),
   vfamily = c("zibinomial"),
   deriv = eval(substitute(expression({
-    phi   = eta2theta(eta[, 1], .lpstr0 , earg = .epstr0 )
-    mubin = eta2theta(eta[, 2], .lprob  , earg = .eprob  )
+    phi   <- eta2theta(eta[, 1], .lpstr0 , earg = .epstr0 )
+    mubin <- eta2theta(eta[, 2], .lprob  , earg = .eprob  )
 
-    prob0 = (1 - mubin)^w    # Actually q^w
-    tmp8 = phi + (1 - phi) * prob0
-    index = (y == 0)
-    dl.dphi = (1 - prob0) / tmp8
-    dl.dphi[!index] = -1 / (1 - phi[!index])
-    dl.dmubin = -w * (1 - phi) * (1 - mubin)^(w - 1) / tmp8
-    dl.dmubin[!index] = w[!index] *
-        (y[!index] / mubin[!index] -
+    prob0 <- (1 - mubin)^w # Actually q^w
+    tmp8 <- phi + (1 - phi) * prob0
+    index <- (y == 0)
+    dl.dphi <- (1 - prob0) / tmp8
+    dl.dphi[!index] <- -1 / (1 - phi[!index])
+
+    dl.dmubin <- -w * (1 - phi) * (1 - mubin)^(w - 1) / tmp8
+    dl.dmubin[!index] <- w[!index] *
+        (    y[!index]  /      mubin[!index]   -
         (1 - y[!index]) / (1 - mubin[!index]))
-    dphi.deta   = dtheta.deta(phi,   .lpstr0 , earg = .epstr0 )
-    dmubin.deta = dtheta.deta(mubin, .lprob  , earg = .eprob  )
-    ans = cbind(dl.dphi   * dphi.deta,
-                dl.dmubin * dmubin.deta)
+
+    dphi.deta   <- dtheta.deta(phi,   .lpstr0 , earg = .epstr0 )
+    dmubin.deta <- dtheta.deta(mubin, .lprob  , earg = .eprob  )
+
+    ans <- cbind(dl.dphi   * dphi.deta,
+                 dl.dmubin * dmubin.deta)
+
       if ( .lprob == "logit") {
-          ans[!index,2] = w[!index] * (y[!index] - mubin[!index])
+        ans[!index, 2] <- w[!index] * (y[!index] - mubin[!index])
       }
+
       ans
   }), list( .lpstr0 = lpstr0, .lprob = lprob,
             .epstr0 = epstr0, .eprob = eprob ))),
   weight = eval(substitute(expression({
-    wz = matrix(as.numeric(NA), nrow = n, ncol = dimm(M))
+    wz <- matrix(as.numeric(NA), nrow = n, ncol = dimm(M))
 
 
 
-    d2l.dphi2 = (1 - prob0) / ((1 - phi) * tmp8)
+    ned2l.dphi2 <- (1 - prob0) / ((1 - phi) * tmp8)
 
 
-    d2l.dphimubin = -w * (1 - mubin)^(w - 1) / tmp8
+    ned2l.dphimubin <- -w * ((1 - mubin)^(w - 1)) / tmp8
 
 
 
 
-    d2l.dmubin2 = w * (1 - phi) *
-                  (1 / (mubin * (1 - mubin)) -
-                   (tmp8 * (w - 1) * (1 - mubin)^(w - 2) -
-                    (1 - phi) * w * (1 - mubin)^(2*(w - 1))) / tmp8)
 
 
-    wz[,iam(1,1,M)] = d2l.dphi2     * dphi.deta^2
-    wz[,iam(2,2,M)] = d2l.dmubin2   * dmubin.deta^2
-    wz[,iam(1,2,M)] = d2l.dphimubin * dphi.deta * dmubin.deta
+    ned2l.dmubin2 <- (w * (1 - phi) / (mubin * (1 - mubin)^2)) *
+                     (1 - mubin - w * mubin * (1 - mubin)^w * phi / tmp8)
+
+
+
+
+
+    wz[,iam(1, 1, M)] <- ned2l.dphi2     * dphi.deta^2
+    wz[,iam(2, 2, M)] <- ned2l.dmubin2   * dmubin.deta^2
+    wz[,iam(1, 2, M)] <- ned2l.dphimubin * dphi.deta * dmubin.deta
     if (TRUE) {
-      ind6 = (wz[,iam(2,2,M)] < .Machine$double.eps)
+      ind6 <- (wz[, iam(2, 2, M)] < .Machine$double.eps)
       if (any(ind6))
-        wz[ind6,iam(2,2,M)] = .Machine$double.eps
+        wz[ind6, iam(2, 2, M)] <- .Machine$double.eps
     }
     wz
   }), list( .lpstr0 = lpstr0, .lprob = lprob,
@@ -1517,8 +1600,8 @@ dposnegbin = function(x, munb, size, log = FALSE) {
 
 
 
-dzibinom = function(x, size, prob, pstr0 = 0, log = FALSE) {
-  if (!is.logical(log.arg <- log))
+dzibinom <- function(x, size, prob, pstr0 = 0, log = FALSE) {
+  if (!is.logical(log.arg <- log) || length(log) != 1)
     stop("bad input for argument 'log'")
   rm(log)
 
@@ -1549,7 +1632,7 @@ dzibinom = function(x, size, prob, pstr0 = 0, log = FALSE) {
 }
 
 
-pzibinom = function(q, size, prob, pstr0 = 0,
+pzibinom <- function(q, size, prob, pstr0 = 0,
                     lower.tail = TRUE, log.p = FALSE) {
 
   LLL = max(length(pstr0), length(size), length(prob), length(q))
@@ -1571,7 +1654,7 @@ pzibinom = function(q, size, prob, pstr0 = 0,
 }
 
 
-qzibinom = function(p, size, prob, pstr0 = 0,
+qzibinom <- function(p, size, prob, pstr0 = 0,
                     lower.tail = TRUE, log.p = FALSE) {
   LLL = max(length(p), length(size), length(prob), length(pstr0))
   p     = rep(p,     length = LLL)
@@ -1613,7 +1696,7 @@ qzibinom = function(p, size, prob, pstr0 = 0,
 }
 
 
-rzibinom = function(n, size, prob, pstr0 = 0) {
+rzibinom <- function(n, size, prob, pstr0 = 0) {
   use.n = if ((length.n <- length(n)) > 1) length.n else
           if (!is.Numeric(n, integer.valued = TRUE,
                           allowable.length = 1, positive = TRUE))
@@ -1655,7 +1738,7 @@ rzibinom = function(n, size, prob, pstr0 = 0) {
 
 
 
-dzinegbin = function(x, size, prob = NULL, munb = NULL, pstr0 = 0,
+dzinegbin <- function(x, size, prob = NULL, munb = NULL, pstr0 = 0,
                      log = FALSE) {
   if (length(munb)) {
     if (length(prob))
@@ -1663,7 +1746,7 @@ dzinegbin = function(x, size, prob = NULL, munb = NULL, pstr0 = 0,
     prob <- size / (size + munb)
   }
 
-  if (!is.logical(log.arg <- log))
+  if (!is.logical(log.arg <- log) || length(log) != 1)
     stop("bad input for argument 'log'")
   rm(log)
 
@@ -1693,7 +1776,7 @@ dzinegbin = function(x, size, prob = NULL, munb = NULL, pstr0 = 0,
 }
 
 
-pzinegbin = function(q, size, prob = NULL, munb = NULL, pstr0 = 0) {
+pzinegbin <- function(q, size, prob = NULL, munb = NULL, pstr0 = 0) {
   if (length(munb)) {
     if (length(prob))
       stop("arguments 'prob' and 'munb' both specified")
@@ -1723,7 +1806,7 @@ pzinegbin = function(q, size, prob = NULL, munb = NULL, pstr0 = 0) {
 }
 
 
-qzinegbin = function(p, size, prob = NULL, munb = NULL, pstr0 = 0) {
+qzinegbin <- function(p, size, prob = NULL, munb = NULL, pstr0 = 0) {
   if (length(munb)) {
     if (length(prob))
       stop("arguments 'prob' and 'munb' both specified")
@@ -1766,7 +1849,7 @@ qzinegbin = function(p, size, prob = NULL, munb = NULL, pstr0 = 0) {
 }
 
 
-rzinegbin = function(n, size, prob = NULL, munb = NULL, pstr0 = 0) {
+rzinegbin <- function(n, size, prob = NULL, munb = NULL, pstr0 = 0) {
   if (length(munb)) {
     if (length(prob))
       stop("arguments 'prob' and 'munb' both specified")
@@ -1817,21 +1900,30 @@ zinegbinomial.control <- function(save.weight = TRUE, ...)
 }
 
 
- zinegbinomial =
+ zinegbinomial <-
   function(lpstr0 = "logit", lmunb = "loge", lsize = "loge",
-           epstr0 = list(),  emunb = list(), esize = list(),
            ipstr0 = NULL,                    isize = NULL,
            zero = c(-1, -3),
            imethod = 1, shrinkage.init = 0.95,
            nsimEIM = 250)
 {
 
-  if (mode(lpstr0) != "character" && mode(lpstr0) != "name")
-    lpstr0 = as.character(substitute(lpstr0))
-  if (mode(lmunb) != "character" && mode(lmunb) != "name")
-    lmunb = as.character(substitute(lmunb))
-  if (mode(lsize) != "character" && mode(lsize) != "name")
-    lsize = as.character(substitute(lsize))
+
+
+  lpstr0 <- as.list(substitute(lpstr0))
+  epstr0 <- link2list(lpstr0)
+  lpstr0 <- attr(epstr0, "function.name")
+
+  lmunb <- as.list(substitute(lmunb))
+  emunb <- link2list(lmunb)
+  lmunb <- attr(emunb, "function.name")
+
+  lsize <- as.list(substitute(lsize))
+  esize <- link2list(lsize)
+  lsize <- attr(esize, "function.name")
+
+
+
 
 
   if (length(ipstr0) &&
@@ -1856,9 +1948,8 @@ zinegbinomial.control <- function(save.weight = TRUE, ...)
       shrinkage.init > 1)
     stop("bad input for argument 'shrinkage.init'")
 
-  if (!is.list(epstr0)) epstr0 = list()
-  if (!is.list(emunb))  emunb  = list()
-  if (!is.list(esize))  esize  = list()
+
+
 
   new("vglmff",
   blurb = c("Zero-inflated negative binomial\n\n",
@@ -1875,7 +1966,21 @@ zinegbinomial.control <- function(save.weight = TRUE, ...)
   }), list( .zero = zero ))),
   initialize = eval(substitute(expression({
     Musual <- 3
-    y <- as.matrix(y)
+
+    temp5 <-
+    w.y.check(w = w, y = y,
+              ncol.w.max = Inf,
+              ncol.y.max = Inf,
+              Is.integer.y = TRUE,
+              out.wy = TRUE,
+              colsyperw = 1,
+              maximize = TRUE)
+    w <- temp5$w
+    y <- temp5$y
+
+
+
+
     extra$NOS = NOS = ncoly = ncol(y)  # Number of species
     if (length(dimnames(y)))
       extra$dimnamesy2 = dimnames(y)[[2]]
@@ -1883,7 +1988,7 @@ zinegbinomial.control <- function(save.weight = TRUE, ...)
     mynames1 = if (NOS == 1) "pstr0" else paste("pstr0", 1:NOS, sep = "")
     mynames2 = if (NOS == 1) "munb"  else paste("munb",  1:NOS, sep = "")
     mynames3 = if (NOS == 1) "size"  else paste("size",  1:NOS, sep = "")
-    predictors.names =
+    predictors.names <-
       c(namesof(mynames1, .lpstr0 , earg = .epstr0 , tag = FALSE),
         namesof(mynames2, .lmunb  , earg = .emunb  , tag = FALSE),
         namesof(mynames3, .lsize  , earg = .esize  , tag = FALSE))[
@@ -1897,8 +2002,8 @@ zinegbinomial.control <- function(save.weight = TRUE, ...)
         for(iii in 1:ncol(y)) {
           index = (y[, iii] > 0)
           mum.init[, iii] = if ( .imethod == 2)
-              weighted.mean(y[index, iii], w     = w[index]) else
-                 median(rep(y[index, iii], times = w[index])) + 1/8
+              weighted.mean(y[index, iii], w     = w[index, iii]) else
+                 median(rep(y[index, iii], times = w[index, iii])) + 1/8
         }
         (1 - .sinit) * (y + 1/16) + .sinit * mum.init
       }
@@ -1909,7 +2014,7 @@ zinegbinomial.control <- function(save.weight = TRUE, ...)
       } else {
         pstr0.init = y
         for(iii in 1:ncol(y))
-          pstr0.init[, iii] = sum(w[y[, iii] == 0]) / sum(w)
+          pstr0.init[, iii] = sum(w[y[, iii] == 0, iii]) / sum(w[, iii])
         pstr0.init[pstr0.init <= 0.02] = 0.02  # Last resort
         pstr0.init[pstr0.init >= 0.98] = 0.98  # Last resort
         pstr0.init
@@ -1919,7 +2024,7 @@ zinegbinomial.control <- function(save.weight = TRUE, ...)
         if ( is.Numeric( .isize )) {
           matrix( .isize, nrow = n, ncol = ncoly, byrow = TRUE)
         } else {
-          zinegbin.Loglikfun = function(kval, y, x, w, extraargs) {
+          zinegbin.Loglikfun <- function(kval, y, x, w, extraargs) {
             index0 = (y == 0)
             pstr0vec = extraargs$pstr0
             muvec = extraargs$mu
@@ -1943,7 +2048,7 @@ zinegbinomial.control <- function(save.weight = TRUE, ...)
           for(spp. in 1:NOS) {
             kay.init[, spp.] = getMaxMin(k.grid,
                               objfun = zinegbin.Loglikfun,
-                              y = y[, spp.], x = x, w = w,
+                              y = y[, spp.], x = x, w = w[, spp.],
                               extraargs = list(pstr0 = pstr0.init[, spp.],
                                                mu  = mum.init[, spp.]))
           }
@@ -1962,15 +2067,15 @@ zinegbinomial.control <- function(save.weight = TRUE, ...)
             .sinit = shrinkage.init,
             .imethod = imethod ))), 
   linkinv = eval(substitute(function(eta, extra = NULL) {
-    Musual = 3
-    NOS = extra$NOS
-    pstr0 = eta2theta(eta[, Musual*(1:NOS)-2, drop = FALSE],
-                      .lpstr0 , earg = .epstr0 )
-    munb  = eta2theta(eta[, Musual*(1:NOS)-1, drop = FALSE],
-                      .lmunb  , earg = .emunb  )
-    fv.matrix = (1 - pstr0) * munb
+    Musual <- 3
+    NOS <- extra$NOS
+    pstr0 <- eta2theta(eta[, Musual*(1:NOS)-2, drop = FALSE],
+                       .lpstr0 , earg = .epstr0 )
+    munb  <- eta2theta(eta[, Musual*(1:NOS)-1, drop = FALSE],
+                       .lmunb  , earg = .emunb  )
+    fv.matrix <- (1 - pstr0) * munb
     if (length(extra$dimnamesy2))
-      dimnames(fv.matrix) = list(dimnames(pstr0)[[1]], extra$dimnamesy2)
+      dimnames(fv.matrix) <- list(dimnames(pstr0)[[1]], extra$dimnamesy2)
     fv.matrix
   }, list( .lpstr0 = lpstr0, .lsize = lsize, .lmunb = lmunb,
            .epstr0 = epstr0, .esize = esize, .emunb = emunb ))),
@@ -2000,10 +2105,12 @@ zinegbinomial.control <- function(save.weight = TRUE, ...)
     misc$Musual = Musual
     misc$ipstr0  = .ipstr0
     misc$isize = .isize
+    misc$multipleResponses <- TRUE
+
     if (intercept.only) {
-   pstr0.val = eta2theta(eta[1,Musual*(1:NOS)-2], .lpstr0 , earg= .epstr0 )
-   munb.val  = eta2theta(eta[1,Musual*(1:NOS)-1], .lmunb  , earg= .emunb  )
-   kval      = eta2theta(eta[1,Musual*(1:NOS)  ], .lsize  , earg= .esize  )
+   pstr0.val = eta2theta(eta[1, Musual*(1:NOS)-2], .lpstr0 , earg= .epstr0 )
+   munb.val  = eta2theta(eta[1, Musual*(1:NOS)-1], .lmunb  , earg= .emunb  )
+   kval      = eta2theta(eta[1, Musual*(1:NOS)  ], .lsize  , earg= .esize  )
    misc$pobs0 =      pstr0.val +
                 (1 - pstr0.val) * (kval / (kval + munb.val))^kval # P(Y=0)
     }
@@ -2023,7 +2130,7 @@ zinegbinomial.control <- function(save.weight = TRUE, ...)
                       .lsize , earg = .esize )
     if (residuals) stop("loglikelihood residuals not ",
                         "implemented yet") else {
-      sum(w * dzinegbin(x = y, size = kmat, munb = munb,
+      sum(c(w) * dzinegbin(x = y, size = kmat, munb = munb,
                         pstr0 = pstr0, log = TRUE))
     }
   }, list( .lpstr0 = lpstr0, .lmunb = lmunb, .lsize = lsize,
@@ -2180,7 +2287,9 @@ zinegbinomial.control <- function(save.weight = TRUE, ...)
         }
       }
     }
-    c(w) * wz
+
+
+    w.wz.merge(w = w, wz = wz, n = n, M = M, ndepy = M / Musual)
   }), list( .lpstr0 = lpstr0,
             .epstr0 = epstr0, .nsimEIM = nsimEIM ))))
 } # End of zinegbinomial
@@ -2193,18 +2302,23 @@ zinegbinomial.control <- function(save.weight = TRUE, ...)
 
 
  zipoissonff <- function(llambda = "loge", lprobp = "logit",
-                         elambda = list(), eprobp = list(),
                          ilambda = NULL,   iprobp = NULL, imethod = 1,
                          shrinkage.init = 0.8, zero = -2)
 {
   lprobp. <- lprobp
-  eprobp. <- eprobp
   iprobp. <- iprobp
 
-  if (mode(llambda) != "character" && mode(llambda) != "name")
-      llambda <- as.character(substitute(llambda))
-  if (mode(lprobp.) != "character" && mode(lprobp.) != "name")
-      lprobp. <- as.character(substitute(lprobp.))
+
+
+  llambda <- as.list(substitute(llambda))
+  elambda <- link2list(llambda)
+  llambda <- attr(elambda, "function.name")
+
+  lprobp <- as.list(substitute(lprobp))
+  eprobp. <- link2list(lprobp)
+  lprobp. <- attr(eprobp., "function.name")
+
+
 
   if (length(ilambda))
     if (!is.Numeric(ilambda, positive = TRUE))
@@ -2214,8 +2328,6 @@ zinegbinomial.control <- function(save.weight = TRUE, ...)
       any(iprobp. >= 1))
       stop("'iprobp' values must be inside the interval (0,1)")
 
-  if (!is.list(elambda)) elambda <- list()
-  if (!is.list(eprobp.)) eprobp. <- list()
 
   if (!is.Numeric(imethod, allowable.length = 1,
                   integer.valued = TRUE, positive = TRUE) ||
@@ -2226,6 +2338,8 @@ zinegbinomial.control <- function(save.weight = TRUE, ...)
     shrinkage.init < 0 ||
     shrinkage.init > 1)
     stop("bad input for argument 'shrinkage.init'")
+
+
 
   new("vglmff",
   blurb = c("Zero-inflated Poisson\n\n",
@@ -2240,10 +2354,24 @@ zinegbinomial.control <- function(save.weight = TRUE, ...)
   }), list( .zero = zero ))),
   infos = eval(substitute(function(...) {
     list(Musual = 2,
-         zero = .zero)
+         zero = .zero )
   }, list( .zero = zero ))),
   initialize = eval(substitute(expression({
-    y <- as.matrix(y)
+
+
+    temp5 <-
+    w.y.check(w = w, y = y,
+              ncol.w.max = Inf,
+              ncol.y.max = Inf,
+              Is.integer.y = TRUE,
+              out.wy = TRUE,
+              colsyperw = 1,
+              maximize = TRUE)
+    w <- temp5$w
+    y <- temp5$y
+
+
+
 
     ncoly <- ncol(y)
     Musual <- 2
@@ -2251,8 +2379,6 @@ zinegbinomial.control <- function(save.weight = TRUE, ...)
     extra$Musual <- Musual
     M <- Musual * ncoly
 
-    if (any(round(y) != y))
-      stop("responses must be integer-valued")
 
     mynames1 <- paste("lambda", if (ncoly > 1) 1:ncoly else "", sep = "")
     mynames2 <- paste("probp",  if (ncoly > 1) 1:ncoly else "", sep = "")
@@ -2288,7 +2414,7 @@ zinegbinomial.control <- function(save.weight = TRUE, ...)
           }
 
           zipois.Loglikfun <- function(phival, y, x, w, extraargs) {
-            sum(w * dzipois(x = y, pstr0 = phival,
+            sum(c(w) * dzipois(x = y, pstr0 = phival,
                             lambda = extraargs$lambda,
                             log = TRUE))
           }
@@ -2339,13 +2465,14 @@ zinegbinomial.control <- function(save.weight = TRUE, ...)
     misc$earg <- vector("list", Musual * ncoly)
     names(misc$earg) <- temp.names
     for(ii in 1:ncoly) {
-        misc$earg[[Musual*ii-1]] <- .elambda
-        misc$earg[[Musual*ii  ]] <- .eprobp.
+      misc$earg[[Musual*ii-1]] <- .elambda
+      misc$earg[[Musual*ii  ]] <- .eprobp.
     }
 
     misc$Musual <- Musual
     misc$imethod <- .imethod
     misc$expected = TRUE
+    misc$multipleResponses <- TRUE
 
       misc$pobs0 <- (1 - probp.) + probp. * exp(-lambda) # P(Y=0)
       misc$pobs0 <- as.matrix(misc$pobs0)
@@ -2366,7 +2493,7 @@ zinegbinomial.control <- function(save.weight = TRUE, ...)
 
     if (residuals) stop("loglikelihood residuals not ",
                         "implemented yet") else {
-      sum(w * dzipois(x = y, pstr0 = 1 - probp., lambda = lambda,
+      sum(c(w) * dzipois(x = y, pstr0 = 1 - probp., lambda = lambda,
                       log = TRUE))
     }
   }, list( .lprobp. = lprobp., .llambda = llambda,
@@ -2414,29 +2541,29 @@ zinegbinomial.control <- function(save.weight = TRUE, ...)
 
 
     wz <- matrix(0, nrow = n, ncol = M + M-1)
-    d2l.dlambda2 <-  (    probp.) / lambda -
+    ned2l.dlambda2 <-  (    probp.) / lambda -
                     probp. * (1 - probp.) * exp(-lambda) / denom
-    d2l.dprobp.2 <- -expm1(-lambda) / ((  probp.) * denom)
-    d2l.dphilambda <- +exp(-lambda) / denom
+    ned2l.dprobp.2 <- -expm1(-lambda) / ((  probp.) * denom)
+    ned2l.dphilambda <- +exp(-lambda) / denom
 
 
     if (ncoly == 1) {  # Make sure these are matrices
-      d2l.dlambda2 <- cbind(d2l.dlambda2)
-      d2l.dprobp.2 <- cbind(d2l.dprobp.2)
+      ned2l.dlambda2 <- cbind(ned2l.dlambda2)
+      ned2l.dprobp.2 <- cbind(ned2l.dprobp.2)
       dlambda.deta <- cbind(dlambda.deta)
       dprobp..deta <- cbind(dprobp..deta)
-      d2l.dphilambda <- cbind(d2l.dphilambda)
+      ned2l.dphilambda <- cbind(ned2l.dphilambda)
     }
 
     for (ii in 1:ncoly) {
       wz[, iam(Musual*ii - 1, Musual*ii - 1, M)] <-
-        d2l.dlambda2[, ii] *
+        ned2l.dlambda2[, ii] *
         dlambda.deta[, ii]^2
       wz[, iam(Musual*ii    , Musual*ii    , M)] <-
-        d2l.dprobp.2[, ii] *
+        ned2l.dprobp.2[, ii] *
         dprobp..deta[, ii]^2
       wz[, iam(Musual*ii - 1, Musual*ii    , M)] <-
-       d2l.dphilambda[, ii] *
+       ned2l.dphilambda[, ii] *
          dprobp..deta[, ii] *
          dlambda.deta[, ii]
 
@@ -2445,7 +2572,7 @@ zinegbinomial.control <- function(save.weight = TRUE, ...)
     } # ii
 
 
-    c(w) * wz
+    w.wz.merge(w = w, wz = wz, n = n, M = M, ndepy = ncoly)
   }), list( .llambda = llambda ))))
 }
 
@@ -2455,8 +2582,8 @@ zinegbinomial.control <- function(save.weight = TRUE, ...)
 
 
 
-dzigeom = function(x, prob, pstr0 = 0, log = FALSE) {
-  if (!is.logical(log.arg <- log))
+dzigeom <- function(x, prob, pstr0 = 0, log = FALSE) {
+  if (!is.logical(log.arg <- log) || length(log) != 1)
     stop("bad input for argument 'log'")
   rm(log)
 
@@ -2489,7 +2616,7 @@ dzigeom = function(x, prob, pstr0 = 0, log = FALSE) {
 
 
 
-pzigeom = function(q, prob, pstr0 = 0) {
+pzigeom <- function(q, prob, pstr0 = 0) {
 
 
   LLL = max(length(q), length(prob), length(pstr0))
@@ -2511,7 +2638,7 @@ pzigeom = function(q, prob, pstr0 = 0) {
 
 
 
-qzigeom = function(p, prob, pstr0 = 0) {
+qzigeom <- function(p, prob, pstr0 = 0) {
   LLL = max(length(p), length(prob), length(pstr0))
   ans = p = rep(p,     len = LLL)
   prob    = rep(prob,  len = LLL)
@@ -2543,7 +2670,7 @@ qzigeom = function(p, prob, pstr0 = 0) {
 
 
 
-rzigeom = function(n, prob, pstr0 = 0) {
+rzigeom <- function(n, prob, pstr0 = 0) {
   use.n = if ((length.n <- length(n)) > 1) length.n else
           if (!is.Numeric(n, integer.valued = TRUE,
                           allowable.length = 1, positive = TRUE))
@@ -2578,24 +2705,28 @@ rzigeom = function(n, prob, pstr0 = 0) {
 
 
 
- zigeometric = function(lprob = "logit", eprob = list(),
-                        lpstr0  = "logit", epstr0  = list(),
-                        iprob = NULL,    ipstr0  = NULL,
-                        imethod = 1,
-                        bias.red = 0.5,
-                        zero = 2)
+ zigeometric <- function(lprob = "logit",
+                         lpstr0  = "logit",
+                         iprob = NULL,    ipstr0  = NULL,
+                         imethod = 1,
+                         bias.red = 0.5,
+                         zero = 2)
 {
 
 
   expected = TRUE
 
-  if (mode(lprob) != "character" && mode(lprob) != "name")
-    lprob = as.character(substitute(lprob))
-  if (mode(lpstr0) != "character" && mode(lpstr0) != "name")
-    lpstr0 = as.character(substitute(lpstr0))
 
-  if (!is.list(eprob))    eprob    = list()
-  if (!is.list(epstr0))  epstr0  = list()
+
+  lprob <- as.list(substitute(lprob))
+  eprob <- link2list(lprob)
+  lprob <- attr(eprob, "function.name")
+
+  lpstr0 <- as.list(substitute(lpstr0))
+  epstr0 <- link2list(lpstr0)
+  lpstr0 <- attr(epstr0, "function.name")
+
+
 
 
   if (length(iprob))
@@ -2628,11 +2759,11 @@ rzigeom = function(n, prob, pstr0 = 0) {
             namesof("pstr0",  lpstr0,  earg = epstr0), "\n",
             "Mean:     (1 - pstr0) * (1 - prob) / prob"),
   constraints = eval(substitute(expression({
-      constraints <- cm.zero.vgam(constraints, x, .zero, M)
+      constraints <- cm.zero.vgam(constraints, x, .zero , M)
   }), list( .zero = zero ))),
   infos = eval(substitute(function(...) {
     list(Musual = 2,
-         zero = .zero)
+         zero = .zero )
   }, list( .zero = zero ))),
   initialize = eval(substitute(expression({
     if (ncol(cbind(y)) != 1)
@@ -2640,12 +2771,20 @@ rzigeom = function(n, prob, pstr0 = 0) {
 
     if (any(y < 0))
       stop("all responses must be >= 0")
-    if (any(y != round(y)))
-      stop("response should be integer-valued")
 
-    predictors.names =
-            c(namesof("prob", .lprob, earg = .earg, tag = FALSE),
-              namesof("pstr0",  .lpstr0,  earg = .epstr0, tag = FALSE))
+
+    w.y.check(w = w, y = y,
+              ncol.w.max = 1,
+              ncol.y.max = 1,
+              Is.integer.y = TRUE)
+
+
+
+
+
+    predictors.names <-
+            c(namesof("prob",  .lprob,   earg = .eprob,  tag = FALSE),
+              namesof("pstr0", .lpstr0,  earg = .epstr0, tag = FALSE))
 
     if (!length(etastart)) {
       prob.init = if ( .imethod == 3)
@@ -2713,7 +2852,7 @@ rzigeom = function(n, prob, pstr0 = 0) {
     pstr0  = eta2theta(eta[, 2], .lpstr0 , earg = .epstr0 )
     if (residuals) stop("loglikelihood residuals not ",
                         "implemented yet") else {
-      sum(w * dzigeom(x = y, prob = prob, pstr0 = pstr0, log = TRUE))
+      sum(c(w) * dzigeom(x = y, prob = prob, pstr0 = pstr0, log = TRUE))
     }
   }, list( .lprob = lprob, .lpstr0 = lpstr0,
            .eprob = eprob, .epstr0 = epstr0 ))),
@@ -2763,17 +2902,18 @@ rzigeom = function(n, prob, pstr0 = 0) {
 
     wz = matrix(as.numeric(NA), nrow = n, ncol = dimm(M))
     if ( .expected ) {
-      wz[,iam(1,1,M)] = ed2l.dprob2       * dprob.deta^2
-      wz[,iam(2,2,M)] = ed2l.dpstr02     * dpstr0.deta^2
-      wz[,iam(1,2,M)] = ed2l.dpstr0.prob * dprob.deta * dpstr0.deta
+      wz[,iam(1, 1, M)] = ed2l.dprob2       * dprob.deta^2
+      wz[,iam(2, 2, M)] = ed2l.dpstr02     * dpstr0.deta^2
+      wz[,iam(1, 2, M)] = ed2l.dpstr0.prob * dprob.deta * dpstr0.deta
     } else {
-      wz[,iam(1,1,M)] = od2l.dprob2       * dprob.deta^2
-      wz[,iam(2,2,M)] = od2l.dpstr02     * dpstr0.deta^2
-      wz[,iam(1,2,M)] = od2l.dpstr0.prob * dprob.deta * dpstr0.deta
+      wz[,iam(1, 1, M)] = od2l.dprob2       * dprob.deta^2
+      wz[,iam(2, 2, M)] = od2l.dpstr02     * dpstr0.deta^2
+      wz[,iam(1, 2, M)] = od2l.dpstr0.prob * dprob.deta * dpstr0.deta
     }
 
 
-    c(w) * wz
+
+    w.wz.merge(w = w, wz = wz, n = n, M = M, ndepy = 1)
   }), list( .lprob = lprob, .lpstr0 = lpstr0,
             .expected = expected,
             .eprob = eprob, .epstr0 = epstr0 ))))
@@ -2784,8 +2924,8 @@ rzigeom = function(n, prob, pstr0 = 0) {
 
 
 
-dzageom = function(x, prob, pobs0 = 0, log = FALSE) {
-  if (!is.logical(log.arg <- log))
+dzageom <- function(x, prob, pobs0 = 0, log = FALSE) {
+  if (!is.logical(log.arg <- log) || length(log) != 1)
     stop("bad input for argument 'log'")
   rm(log)
 
@@ -2814,7 +2954,7 @@ dzageom = function(x, prob, pobs0 = 0, log = FALSE) {
 
 
 
-pzageom = function(q, prob, pobs0 = 0) {
+pzageom <- function(q, prob, pobs0 = 0) {
 
   LLL = max(length(q), length(prob), length(pobs0))
   if (length(q)      != LLL) q      = rep(q,      len = LLL);
@@ -2833,7 +2973,7 @@ pzageom = function(q, prob, pobs0 = 0) {
 }
 
 
-qzageom = function(p, prob, pobs0 = 0) {
+qzageom <- function(p, prob, pobs0 = 0) {
 
   LLL = max(length(p), length(prob), length(pobs0))
   if (length(p)      != LLL) p      = rep(p,      len = LLL);
@@ -2852,7 +2992,7 @@ qzageom = function(p, prob, pobs0 = 0) {
 }
 
 
-rzageom = function(n, prob, pobs0 = 0) {
+rzageom <- function(n, prob, pobs0 = 0) {
   use.n = if ((length.n <- length(n)) > 1) length.n else
           if (!is.Numeric(n, integer.valued = TRUE,
                           allowable.length = 1, positive = TRUE))
@@ -2874,8 +3014,8 @@ rzageom = function(n, prob, pobs0 = 0) {
 
 
 
-dzabinom = function(x, size, prob, pobs0 = 0, log = FALSE) {
-  if (!is.logical(log.arg <- log))
+dzabinom <- function(x, size, prob, pobs0 = 0, log = FALSE) {
+  if (!is.logical(log.arg <- log) || length(log) != 1)
     stop("bad input for argument 'log'")
   rm(log)
 
@@ -2905,7 +3045,7 @@ dzabinom = function(x, size, prob, pobs0 = 0, log = FALSE) {
 
 
 
-pzabinom = function(q, size, prob, pobs0 = 0) {
+pzabinom <- function(q, size, prob, pobs0 = 0) {
 
   LLL = max(length(q), length(size), length(prob), length(pobs0))
   if (length(q)      != LLL) q      = rep(q,      len = LLL);
@@ -2926,7 +3066,7 @@ pzabinom = function(q, size, prob, pobs0 = 0) {
 }
 
 
-qzabinom = function(p, size, prob, pobs0 = 0) {
+qzabinom <- function(p, size, prob, pobs0 = 0) {
 
   LLL = max(length(p), length(size), length(prob), length(pobs0))
   if (length(p)      != LLL) p      = rep(p,      len = LLL);
@@ -2947,7 +3087,7 @@ qzabinom = function(p, size, prob, pobs0 = 0) {
 }
 
 
-rzabinom = function(n, size, prob, pobs0 = 0) {
+rzabinom <- function(n, size, prob, pobs0 = 0) {
   use.n = if ((length.n <- length(n)) > 1) length.n else
           if (!is.Numeric(n, integer.valued = TRUE,
                           allowable.length = 1, positive = TRUE))
@@ -2964,23 +3104,28 @@ rzabinom = function(n, size, prob, pobs0 = 0) {
 
 
 
- zabinomial = function(lprob  = "logit", eprob  = list(),
-                       lpobs0 = "logit", epobs0 = list(),
-                       iprob = NULL, ipobs0 = NULL,
-                       imethod = 1,
-                       zero = 2)
+ zabinomial <- function(lprob  = "logit",
+                        lpobs0 = "logit",
+                        iprob = NULL, ipobs0 = NULL,
+                        imethod = 1,
+                        zero = 2)
 {
 
 
 
 
-  if (mode(lprob) != "character" && mode(lprob) != "name")
-    lprob = as.character(substitute(lprob))
-  if (mode(lpobs0) != "character" && mode(lpobs0) != "name")
-    lpobs0 = as.character(substitute(lpobs0))
 
-  if (!is.list(eprob))   eprob   = list()
-  if (!is.list(epobs0))  epobs0  = list()
+
+  lprob <- as.list(substitute(lprob))
+  eprob <- link2list(lprob)
+  lprob <- attr(eprob, "function.name")
+
+  lpobs0 <- as.list(substitute(lpobs0))
+  epobs0 <- link2list(lpobs0)
+  lpobs0 <- attr(epobs0, "function.name")
+
+
+
 
   if (length(iprob))
     if (!is.Numeric(iprob, positive = TRUE) ||
@@ -3010,15 +3155,15 @@ rzabinom = function(n, size, prob, pobs0 = 0) {
             namesof("pobs0",   lpobs0, earg = epobs0), "\n",
             "Mean:     (1 - pobs0) * prob / (1 - (1 - prob)^size)"),
   constraints = eval(substitute(expression({
-      constraints <- cm.zero.vgam(constraints, x, .zero, M)
+      constraints <- cm.zero.vgam(constraints, x, .zero , M)
   }), list( .zero = zero ))),
   infos = eval(substitute(function(...) {
     list(Musual = 2,
-         zero = .zero)
+         zero = .zero )
   }, list( .zero = zero ))),
   initialize = eval(substitute(expression({
             if (!all(w == 1))
-                extra$orig.w = w
+                extra$orig.w <- w
 
 
 
@@ -3074,14 +3219,14 @@ rzabinom = function(n, size, prob, pobs0 = 0) {
 
 
 
-    predictors.names =
+    predictors.names <-
         c(namesof("prob" , .lprob  , earg = .eprob  , tag = FALSE),
           namesof("pobs0", .lpobs0 , earg = .epobs0 , tag = FALSE))
 
 
-    orig.w = if (length(extra$orig.w)) extra$orig.w else 1
-    new.w  = if (length(extra$new.w))  extra$new.w  else 1
-    Size = new.w / orig.w
+    orig.w <- if (length(extra$orig.w)) extra$orig.w else 1
+    new.w  <- if (length(extra$new.w))  extra$new.w  else 1
+    Size <- new.w / orig.w
 
     phi.init = if (length( .ipobs0 )) .ipobs0 else {
         prob0.est = sum(Size[y == 0]) / sum(Size)
@@ -3115,21 +3260,21 @@ rzabinom = function(n, size, prob, pobs0 = 0) {
             .imethod = imethod ))),
 
   linkinv = eval(substitute(function(eta, extra = NULL) {
-    prob  = eta2theta(eta[, 1], .lprob,  earg = .eprob  )
-    phi0  = eta2theta(eta[, 2], .lpobs0, earg = .epobs0 )
-    orig.w = if (length(extra$orig.w)) extra$orig.w else 1
-    new.w  = if (length(extra$new.w))  extra$new.w  else 1
-    Size = new.w / orig.w
+    prob  <- eta2theta(eta[, 1], .lprob,  earg = .eprob  )
+    phi0  <- eta2theta(eta[, 2], .lpobs0, earg = .epobs0 )
+    orig.w <- if (length(extra$orig.w)) extra$orig.w else 1
+    new.w  <- if (length(extra$new.w))  extra$new.w  else 1
+    Size <- new.w / orig.w
     (1 - phi0) * prob / (1 - (1 - prob)^Size)
   }, list( .lprob = lprob, .lpobs0 = lpobs0,
            .eprob = eprob, .epobs0 = epobs0 ))),
 
   last = eval(substitute(expression({
-    misc$link =    c(prob = .lprob, pobs0 = .lpobs0 )
-    misc$earg = list(prob = .eprob, pobs0 = .epobs0 )
-    misc$imethod = .imethod
-    misc$zero = .zero
-    misc$expected = TRUE
+    misc$link <-    c(prob = .lprob, pobs0 = .lpobs0 )
+    misc$earg <- list(prob = .eprob, pobs0 = .epobs0 )
+    misc$imethod <- .imethod
+    misc$zero <- .zero
+    misc$expected <- TRUE
   }), list( .lprob = lprob, .lpobs0 = lpobs0,
             .eprob = eprob, .epobs0 = epobs0,
             .zero = zero,
@@ -3137,11 +3282,11 @@ rzabinom = function(n, size, prob, pobs0 = 0) {
 
   loglikelihood = eval(substitute(
     function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
-    orig.w = if (length(extra$orig.w)) extra$orig.w else 1
-    new.w  = if (length(extra$new.w))  extra$new.w  else 1
-    Size = new.w / orig.w
-    prob  = eta2theta(eta[, 1], .lprob  , earg = .eprob  )
-    pobs0 = eta2theta(eta[, 2], .lpobs0 , earg = .epobs0 )
+    orig.w <- if (length(extra$orig.w)) extra$orig.w else 1
+    new.w  <- if (length(extra$new.w))  extra$new.w  else 1
+    Size <- new.w / orig.w
+    prob  <- eta2theta(eta[, 1], .lprob  , earg = .eprob  )
+    pobs0 <- eta2theta(eta[, 2], .lpobs0 , earg = .epobs0 )
     if (residuals) stop("loglikelihood residuals not ",
                         "implemented yet") else {
       sum(orig.w * dzabinom(x = round(y * Size), size = Size,
@@ -3153,18 +3298,18 @@ rzabinom = function(n, size, prob, pobs0 = 0) {
   vfamily = c("zabinomial"),
 
   deriv = eval(substitute(expression({
-    NOS = if (length(extra$NOS)) extra$NOS else 1
-    Musual = 2
+    NOS <- if (length(extra$NOS)) extra$NOS else 1
+    Musual <- 2
 
-    orig.w = if (length(extra$orig.w)) extra$orig.w else 1
-    new.w  = if (length(extra$new.w))  extra$new.w  else 1
-    Size = new.w / orig.w
+    orig.w <- if (length(extra$orig.w)) extra$orig.w else 1
+    new.w  <- if (length(extra$new.w))  extra$new.w  else 1
+    Size <- new.w / orig.w
 
-    prob = eta2theta(eta[, 1], .lprob  , earg = .eprob  )
-    phi0 = eta2theta(eta[, 2], .lpobs0 , earg = .epobs0 )
+    prob <- eta2theta(eta[, 1], .lprob  , earg = .eprob  )
+    phi0 <- eta2theta(eta[, 2], .lpobs0 , earg = .epobs0 )
 
-    dprob.deta = dtheta.deta(prob, .lprob , earg = .eprob  )
-    dphi0.deta = dtheta.deta(phi0, .lpobs0, earg = .epobs0 )
+    dprob.deta <- dtheta.deta(prob, .lprob , earg = .eprob  )
+    dphi0.deta <- dtheta.deta(phi0, .lpobs0, earg = .epobs0 )
 
     df0.dprob   = -Size *              (1 -  prob)^(Size - 1)
     df02.dprob2 =  Size * (Size - 1) * (1 -  prob)^(Size - 2)
@@ -3206,7 +3351,7 @@ rzabinom = function(n, size, prob, pobs0 = 0) {
     term2 =  -(1 - phi0) * df02.dprob2 / oneminusf0
     term3 =  -(1 - phi0) * (df0.dprob  / oneminusf0)^2
     ed2l.dprob2 = term1 + term2 + term3
-    wz[, iam(1,1,M)] = ed2l.dprob2 * dprob.deta^2
+    wz[, iam(1, 1, M)] = ed2l.dprob2 * dprob.deta^2
 
 
     mu.phi0 = phi0
@@ -3216,7 +3361,8 @@ rzabinom = function(n, size, prob, pobs0 = 0) {
     } else {
       (dphi0.deta^2) / tmp100
     }
-    wz[, iam(2,2,M)] = tmp200
+    wz[, iam(2, 2, M)] = tmp200
+
 
     c(orig.w) * wz
   }), list( .lprob = lprob, .lpobs0 = lpobs0,
@@ -3227,20 +3373,23 @@ rzabinom = function(n, size, prob, pobs0 = 0) {
 
 
 
- zageometric = function(lpobs0 = "logit", lprob = "logit",
-                        epobs0 = list(),  eprob = list(),
-                        imethod = 1,
-                        ipobs0 = NULL, iprob = NULL,
-                        zero = NULL) {
+ zageometric <- function(lpobs0 = "logit", lprob = "logit",
+                         imethod = 1,
+                         ipobs0 = NULL, iprob = NULL,
+                         zero = NULL) {
 
 
-  if (mode(lpobs0) != "character" && mode(lpobs0) != "name")
-    lpobs0 = as.character(substitute(lpobs0))
-  if (mode(lprob) != "character" && mode(lprob) != "name")
-    lprob = as.character(substitute(lprob))
 
-  if (!is.list(epobs0)) epobs0 = list()
-  if (!is.list(eprob))  eprob  = list()
+  lpobs0 <- as.list(substitute(lpobs0))
+  epobs0 <- link2list(lpobs0)
+  lpobs0 <- attr(epobs0, "function.name")
+
+  lprob <- as.list(substitute(lprob))
+  eprob <- link2list(lprob)
+  lprob <- attr(eprob, "function.name")
+
+
+
 
   if (!is.Numeric(imethod, allowable.length = 1,
                   integer.valued = TRUE, positive = TRUE) ||
@@ -3272,26 +3421,39 @@ rzabinom = function(n, size, prob, pobs0 = 0) {
   }), list( .zero = zero ))),
   initialize = eval(substitute(expression({
     Musual <- 2
-    y <- as.matrix(y)
-    if (any(y != round(y )))
-      stop("the response must be integer-valued")
     if (any(y < 0))
       stop("the response must not have negative values")
+
+    temp5 <-
+    w.y.check(w = w, y = y,
+              ncol.w.max = 1,
+              ncol.y.max = 1,
+              Is.integer.y = TRUE,
+              out.wy = TRUE,
+              colsyperw = 1,
+              maximize = TRUE)
+    w <- temp5$w
+    y <- temp5$y
+
+
+
 
     extra$y0 = y0 = ifelse(y == 0, 1, 0)
     extra$NOS = NOS = ncoly = ncol(y)  # Number of species
     extra$skip.these = skip.these = matrix(as.logical(y0), n, NOS)
 
-    mynames1 = if (ncoly == 1) "pobs0"  else paste("pobs0",  1:ncoly, sep = "")
-    mynames2 = if (ncoly == 1) "prob" else paste("prob", 1:ncoly, sep = "")
-    predictors.names = 
+    mynames1 <- if (ncoly == 1) "pobs0"  else
+                paste("pobs0",  1:ncoly, sep = "")
+    mynames2 <- if (ncoly == 1) "prob" else
+                paste("prob", 1:ncoly, sep = "")
+    predictors.names <-
         c(namesof(mynames1, .lpobs0 , earg = .epobs0 , tag = FALSE),
           namesof(mynames2, .lprob  , earg = .eprob  , tag = FALSE))[
           interleave.VGAM(Musual*NOS, M = Musual)]
 
     if (!length(etastart)) {
 
-      foo = function(x) mean(as.numeric(x == 0))
+      foo <- function(x) mean(as.numeric(x == 0))
       phi0.init = matrix(apply(y, 2, foo), n, ncoly, byrow = TRUE)
       if (length( .ipobs0 ))
         phi0.init = matrix( .ipobs0 , n, ncoly, byrow = TRUE)
@@ -3311,7 +3473,7 @@ rzabinom = function(n, size, prob, pobs0 = 0) {
 
 
       etastart = cbind(theta2eta(phi0.init, .lpobs0 , earg = .epobs0 ),
-                       theta2eta(prob.init, .lprob , earg = .eprob ))
+                       theta2eta(prob.init, .lprob ,  earg = .eprob ))
       etastart = etastart[, interleave.VGAM(ncol(etastart), M = Musual)]
     }
   }), list( .lpobs0 = lpobs0, .lprob = lprob,
@@ -3335,11 +3497,13 @@ rzabinom = function(n, size, prob, pobs0 = 0) {
                    rep( .lprob  , len = NOS))
     temp.names = temp.names[interleave.VGAM(Musual*NOS, M = Musual)]
     misc$link  = temp.names
+
     misc$expected = TRUE
     misc$earg = vector("list", Musual * NOS)
     misc$imethod = .imethod
     misc$ipobs0  = .ipobs0
     misc$iprob   = .iprob
+    misc$multipleResponses <- TRUE
 
     names(misc$link) <-
     names(misc$earg) <-
@@ -3365,7 +3529,7 @@ rzabinom = function(n, size, prob, pobs0 = 0) {
 
     if (residuals)
       stop("loglikelihood residuals not implemented yet") else {
-      sum(w * dzageom(x = y, pobs0 = phi0, prob = prob, log = TRUE))
+      sum(c(w) * dzageom(x = y, pobs0 = phi0, prob = prob, log = TRUE))
     }
   }, list( .lpobs0 = lpobs0, .lprob = lprob,
            .epobs0 = epobs0, .eprob = eprob ))),
@@ -3421,6 +3585,8 @@ rzabinom = function(n, size, prob, pobs0 = 0) {
 
 
     wz = wz[, interleave.VGAM(ncol(wz), M = Musual)]
+
+
     wz
   }), list( .lpobs0 = lpobs0,
             .epobs0 = epobs0 ))))

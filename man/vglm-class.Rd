@@ -197,17 +197,21 @@ a more detailed summary of the object. }
   }
 }
 \references{ 
+
 Yee, T. W. and Hastie, T. J. (2003)
 Reduced-rank vector generalized linear models.
 \emph{Statistical Modelling},
 \bold{3}, 15--41.
+
 
 Yee, T. W. and Wild, C. J. (1996)
 Vector generalized additive models.
 \emph{Journal of the Royal Statistical Society, Series B, Methodological},
 \bold{58}, 481--493.
 
+
 \url{http://www.stat.auckland.ac.nz/~yee}
+
 
 }
 \author{ Thomas W. Yee }
@@ -216,14 +220,17 @@ Vector generalized additive models.
 %~Make other sections like WARNING with \section{WARNING }{....} ~
 
 \seealso{
-\code{\link{vglm}},
-\code{\link{vglmff-class}},
-\code{\link{vgam-class}}.
+  \code{\link{vglm}},
+  \code{\link{vglmff-class}},
+  \code{\link{vgam-class}}.
+
+
+
 }
 
 \examples{
 # Multinomial logit model 
-pneumo = transform(pneumo, let = log(exposure.time))
+pneumo <- transform(pneumo, let = log(exposure.time))
 vglm(cbind(normal, mild, severe) ~ let, multinomial, pneumo)
 }
 \keyword{classes}

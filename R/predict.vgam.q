@@ -6,13 +6,13 @@
 
 
 
-predict.vgam <- function(object, newdata=NULL,
-                         type=c("link", "response", "terms"),
-                         se.fit = FALSE, deriv.arg=0, terms.arg=NULL,
+predict.vgam <- function(object, newdata = NULL,
+                         type = c("link", "response", "terms"),
+                         se.fit = FALSE, deriv.arg = 0, terms.arg = NULL,
                          raw = FALSE,
-                         all = TRUE, offset=0, 
+                         all = TRUE, offset = 0,
                          untransform = FALSE,
-                         dispersion=NULL, ...)
+                         dispersion = NULL, ...)
 {
     if (missing(newdata)) {
         newdata <- NULL
@@ -79,8 +79,9 @@ predict.vgam <- function(object, newdata=NULL,
                 } else {
                     answer = object@predictors
                 }
-                if (untransform) return(untransformVGAM(object, answer)) else
-                    return(answer)
+                if (untransform)
+                  return(untransformVGAM(object, answer)) else
+                  return(answer)
             }
         } else 
         if (type=="response") {
@@ -96,14 +97,14 @@ predict.vgam <- function(object, newdata=NULL,
         }
 
         predictor <- predict.vlm(object,
-                         type="terms",
-                         se.fit=se.fit,
-                         terms.arg=terms.arg,
-                         raw=raw,
-                         all=all, offset=offset, 
-                         dispersion=dispersion, ...) # deriv.arg=deriv.arg,
+                         type = "terms",
+                         se.fit = se.fit,
+                         terms.arg = terms.arg,
+                         raw = raw,
+                         all = all, offset = offset, 
+                         dispersion = dispersion, ...) # deriv.arg = deriv.arg,
 
-        newdata <- model.matrixvlm(object, type="lm")
+        newdata <- model.matrixvlm(object, type = "lm")
 
 
     } else {
@@ -112,12 +113,12 @@ predict.vgam <- function(object, newdata=NULL,
 
 
         predictor <- predict.vlm(object, newdata,
-                            type=temp.type,
-                            se.fit=se.fit,
-                            terms.arg=terms.arg,
-                            raw=raw,
-                            all=all, offset=offset, 
-                            dispersion=dispersion, ...) # deriv.arg=deriv.arg,
+                            type = temp.type,
+                            se.fit = se.fit,
+                            terms.arg = terms.arg,
+                            raw = raw,
+                            all = all, offset = offset, 
+                            dispersion = dispersion, ...) # deriv.arg = deriv.arg,
     }
 
 
@@ -174,8 +175,8 @@ predict.vgam <- function(object, newdata=NULL,
 
             rawMat <- predictvsmooth.spline.fit(
                                  object@Bspline[[ii]],
-                                 x=xx,
-                                 deriv=deriv.arg)$y
+                                 x = xx,
+                                 deriv = deriv.arg)$y
 
 
             eta.mat <- if (raw) rawMat else (rawMat %*% t(Blist[[ii]]))
@@ -242,7 +243,7 @@ predict.vgam <- function(object, newdata=NULL,
             }
         }
         if (se.fit) {
-            return(list(fit=fv, se.fit=fv*NA))
+            return(list(fit = fv, se.fit = fv*NA))
         } else {
             return(fv)
         }
@@ -280,7 +281,7 @@ predict.vgam <- function(object, newdata=NULL,
                                 matrix(ans, ncol = lindex, byrow = TRUE) else 0
                         } else {
                             predictor[,index] <- if (deriv.arg==1)
-                                matrix(ans, ncol=lindex, byrow = TRUE) else 0
+                                matrix(ans, ncol = lindex, byrow = TRUE) else 0
                         }
                     }
                 } else

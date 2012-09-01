@@ -7,18 +7,13 @@
   the MNSs blood group system.
 }
 \usage{
-MNSs(link = "logit", earg=list(), imS = NULL, ims = NULL, inS = NULL)
+MNSs(link = "logit", imS = NULL, ims = NULL, inS = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{link}{
   Link function applied to the three parameters.
   See \code{\link{Links}} for more choices.
-
-  }
-  \item{earg}{
-  List. Extra argument applied to each of the links.
-  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{imS, ims, inS}{
@@ -36,16 +31,19 @@ MNSs(link = "logit", earg=list(), imS = NULL, ims = NULL, inS = NULL)
   \code{(g(m_S), g(m_s), g(n_S))} where \code{g} is the
   link function.
 
+
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}}
   and \code{\link{vgam}}.
+
 }
 \references{ 
   Elandt-Johnson, R. C. (1971)
   \emph{Probability Models and Statistical Methods in Genetics},
   New York: Wiley.
+
 
 }
 \author{ T. W. Yee }
@@ -56,6 +54,7 @@ MNSs(link = "logit", earg=list(), imS = NULL, ims = NULL, inS = NULL)
   proportions (so each row adds to 1) and the \code{weights}
   argument is used to specify the total number of counts for each row.
 
+
 }
 \seealso{
   \code{\link{AA.Aa.aa}},
@@ -63,15 +62,17 @@ MNSs(link = "logit", earg=list(), imS = NULL, ims = NULL, inS = NULL)
   \code{\link{AB.Ab.aB.ab2}},
   \code{\link{ABO}},
   \code{\link{G1G2G3}}.
+
+
 }
 \examples{
 # Order matters only:
-y = cbind(MS=295, Ms=107, MNS=379, MNs=322, NS=102, Ns=214) 
-fit = vglm(y ~ 1, MNSs("logit", .25, .28, .08), trace=TRUE)
-fit = vglm(y ~ 1, MNSs(link=logit), trace=TRUE, cri="coef")
+y <- cbind(MS = 295, Ms = 107, MNS = 379, MNs = 322, NS = 102, Ns = 214) 
+fit <- vglm(y ~ 1, MNSs("logit", .25, .28, .08), trace = TRUE)
+fit <- vglm(y ~ 1, MNSs(link = logit), trace = TRUE, crit = "coef")
 Coef(fit) 
 rbind(y, sum(y)*fitted(fit))
-diag(vcov(fit))^0.5
+sqrt(diag(vcov(fit)))
 }
 \keyword{models}
 \keyword{regression}

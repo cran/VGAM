@@ -111,7 +111,7 @@ abline(h = 0, lty = 2) }
 
 pp = seq(0.05, 0.95, by = 0.05)  # Test two functions
 max(abs(palap(qalap(pp, loc, sigma, kappa = kappa),
-              loc, sigma, kappa = kappa) - pp))  # Should be 0
+              loc, sigma, kappa = kappa) - pp)) # Should be 0
 }
 \keyword{distribution}
 

@@ -8,7 +8,7 @@
 
 }
 \usage{
-expexp(lshape = "loge", lscale = "loge", eshape = list(), escale = list(),
+expexp(lshape = "loge", lscale = "loge",
        ishape = 1.1, iscale = NULL, tolerance = 1.0e-6, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -18,11 +18,6 @@ expexp(lshape = "loge", lscale = "loge", eshape = list(), escale = list(),
   \eqn{\alpha}{shape} and \eqn{\lambda}{scale} parameters.
   See \code{\link{Links}} for more choices.
   The defaults ensure both parameters are positive.
-
-  }
-  \item{eshape, escale}{
-  List. Extra argument for each of the links.
-  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{ishape}{
@@ -71,16 +66,19 @@ expexp(lshape = "loge", lscale = "loge", eshape = list(), escale = list(),
     scale^2}
   where \eqn{\psi'}{psi'} is the trigamma function.
 
+
   This distribution has been called the two-parameter generalized
   exponential distribution by Gupta and Kundu (2006).
   A special case of the exponentiated exponential distribution:
   \eqn{\alpha=1}{shape=1} is the exponential distribution.
+
 
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}}
   and \code{\link{vgam}}.
+
 
 }
 \references{
@@ -91,12 +89,14 @@ expexp(lshape = "loge", lscale = "loge", eshape = list(), escale = list(),
   \bold{43},
   117--130.
 
+
   Gupta, R. D. and Kundu, D. (2006)
   On the comparison of Fisher information of the
   Weibull and GE distributions,
   \emph{Journal of Statistical Planning and Inference},
   \bold{136},
   3130--3144.
+
 
 }
 \author{ T. W. Yee }
@@ -107,8 +107,10 @@ expexp(lshape = "loge", lscale = "loge", eshape = list(), escale = list(),
   Also, I have yet to implement Type-I right censored data using the
   results of Gupta and Kundu (2006).
 
+
   Another algorithm for fitting this model is implemented in
   \code{\link{expexp1}}.
+
 
 }
 \section{Warning }{
@@ -120,6 +122,7 @@ expexp(lshape = "loge", lscale = "loge", eshape = list(), escale = list(),
   The algorithm may fail if the estimate of the shape parameter is
   too close to unity.
 
+
 }
 
 \seealso{
@@ -128,11 +131,12 @@ expexp(lshape = "loge", lscale = "loge", eshape = list(), escale = list(),
   \code{\link{weibull}},
   \code{\link{CommonVGAMffArguments}}.
 
+
 }
 \examples{
 # A special case: exponential data
-y = rexp(n <- 1000)
-fit = vglm(y ~ 1, fam = expexp, trace = TRUE, maxit = 99)
+edata <- data.frame(y = rexp(n <- 1000))
+fit = vglm(y ~ 1, fam = expexp, edata, trace = TRUE, maxit = 99)
 coef(fit, matrix=TRUE)
 Coef(fit)
 
@@ -142,8 +146,8 @@ bbearings = c(17.88, 28.92, 33.00, 41.52, 42.12, 45.60,
 48.80, 51.84, 51.96, 54.12, 55.56, 67.80, 68.64, 68.64,
 68.88, 84.12, 93.12, 98.64, 105.12, 105.84, 127.92,
 128.04, 173.40)
-fit = vglm(bbearings ~ 1, fam = expexp(iscale = 0.05, ish = 5),
-           trace = TRUE, maxit = 300)
+fit <- vglm(bbearings ~ 1, fam = expexp(iscale = 0.05, ish = 5),
+            trace = TRUE, maxit = 300)
 coef(fit, matrix = TRUE)
 Coef(fit)   # Authors get c(shape=5.2589, scale=0.0314)
 logLik(fit) # Authors get -112.9763

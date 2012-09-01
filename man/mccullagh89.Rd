@@ -8,14 +8,13 @@
 
 }
 \usage{
-mccullagh89(ltheta = "rhobit", lnu = "logoff", itheta = NULL, inu = NULL,
-            etheta = list(), enu = if(lnu == "logoff") list(offset = 0.5)
-            else list(), zero = NULL)
+mccullagh89(ltheta = "rhobit", lnu = logoff(offset = 0.5),
+            itheta = NULL, inu = NULL, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{ltheta, lnu, etheta, enu}{
-  Link functions and their extra arguments
+  \item{ltheta, lnu}{
+  Link functions
   for the \eqn{\theta}{theta} and \eqn{\nu}{nu} parameters.
   See \code{\link{Links}} for general information.
 
@@ -111,8 +110,8 @@ all else fails.
 %}
 
 \examples{
-mdata = data.frame(y = rnorm(n = 1000, sd = 0.2)) # Limit as theta = 0, nu = Inf
-fit = vglm(y ~ 1, mccullagh89, mdata, trace = TRUE)
+mdata <- data.frame(y = rnorm(n = 1000, sd = 0.2)) # Limit as theta = 0, nu = Inf
+fit <- vglm(y ~ 1, mccullagh89, mdata, trace = TRUE)
 head(fitted(fit))
 with(mdata, mean(y))
 summary(fit)

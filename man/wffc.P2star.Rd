@@ -79,7 +79,7 @@ wffc.P3star(length, c1 = 100, min.eligible = 0.18, ppm = 2000)
 }
 \seealso{ \code{\link{wffc}}. }
 \examples{
-\dontrun{ fishlength = seq(0.0, 0.72, by = 0.001)
+\dontrun{ fishlength <- seq(0.0, 0.72, by = 0.001)
 plot(fishlength, wffc.P2star(fishlength), type = "l", col = "blue",
      las = 1, lty = "dashed", lwd = 2, las = 1, cex.main = 0.8,
      xlab = "Fish length (m)", ylab = "Competition points",

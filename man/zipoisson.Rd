@@ -10,22 +10,19 @@
 }
 \usage{
 zipoissonff(llambda = "loge", lprobp = "logit",
-            elambda = list(), eprobp = list(),
-            ilambda = NULL, iprobp = NULL, imethod = 1,
-            shrinkage.init = 0.8, zero = -2)
+            ilambda = NULL,   iprobp = NULL,
+            imethod = 1, shrinkage.init = 0.8, zero = -2)
 zipoisson(lpstr0 = "logit", llambda = "loge",
-          epstr0 = list(), elambda = list(),
-          ipstr0 = NULL,   ilambda = NULL, imethod = 1,
-          shrinkage.init = 0.8, zero = NULL)
+          ipstr0 = NULL,    ilambda = NULL,
+          imethod = 1, shrinkage.init = 0.8, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{lpstr0, llambda, epstr0, elambda}{
-  Link function and extra argument for the parameter \eqn{\phi}{phi}
+  \item{lpstr0, llambda}{
+  Link function for the parameter \eqn{\phi}{phi}
   and the usual \eqn{\lambda}{lambda} parameter.
-  See \code{\link{Links}} for more choices,
-  and \code{earg} in \code{\link{Links}} for general information.
-  See \code{\link{CommonVGAMffArguments}} for more information.
+  See \code{\link{Links}} for more choices;
+  see \code{\link{CommonVGAMffArguments}} for more information.
   For the zero-\emph{deflated} model see below.
 
 
@@ -40,7 +37,7 @@ zipoisson(lpstr0 = "logit", llambda = "loge",
   If a vector then recycling is used.
 
   }
-  \item{lprobp, eprobp, iprobp}{
+  \item{lprobp, iprobp}{
   Corresponding arguments for the other parameterization.
   See details below.
 
@@ -54,6 +51,7 @@ zipoisson(lpstr0 = "logit", llambda = "loge",
   and/or else specify a value for \code{ipstr0}.
   See \code{\link{CommonVGAMffArguments}} for more information.
 
+
   }
   \item{shrinkage.init}{
   How much shrinkage is used when initializing \eqn{\lambda}{lambda}.
@@ -63,6 +61,7 @@ zipoisson(lpstr0 = "logit", llambda = "loge",
   This argument is used in conjunction with \code{imethod}.
   See \code{\link{CommonVGAMffArguments}} for more information.
 
+
   }
   \item{zero}{ 
   An integer specifying which linear/additive predictor is modelled as
@@ -70,6 +69,7 @@ zipoisson(lpstr0 = "logit", llambda = "loge",
   default is none of them. Setting \code{zero = 1} makes \eqn{\phi}{phi}
   a single parameter.
   See \code{\link{CommonVGAMffArguments}} for more information.
+
 
   }
 }
@@ -121,6 +121,7 @@ zipoisson(lpstr0 = "logit", llambda = "loge",
 
 }
 \references{
+
   Thas, O. and Rayner, J. C. W. (2005)
   Smooth tests for the zero-inflated Poisson distribution.
   \emph{Biometrics},
@@ -225,16 +226,16 @@ with(zdata, table(y1)) # Eyeball the data
 with(zdata, table(y2))
 fit1 <- vglm(y1 ~ x2, zipoisson(zero = 1), zdata, crit = "coef")
 fit2 <- vglm(y2 ~ x2, zipoisson(zero = 1), zdata, crit = "coef")
-coef(fit1, matrix = TRUE)  # These should agree with the above values
-coef(fit2, matrix = TRUE)  # These should agree with the above values
+coef(fit1, matrix = TRUE) # These should agree with the above values
+coef(fit2, matrix = TRUE) # These should agree with the above values
 
 # Fit all two simultaneously, using a different parameterization:
 fit12 <- vglm(cbind(y1, y2) ~ x2, zipoissonff, zdata, crit = "coef")
-coef(fit12, matrix = TRUE)  # These should agree with the above values
+coef(fit12, matrix = TRUE) # These should agree with the above values
 
 # Example 2: McKendrick (1926). Data from 223 Indian village households
 cholera <- data.frame(ncases = 0:4, # Number of cholera cases,
-                      wfreq = c(168, 32, 16, 6, 1)) # Frequencies
+                      wfreq  = c(168, 32, 16, 6, 1)) # Frequencies
 fit <- vglm(ncases ~ 1, zipoisson, wei = wfreq, cholera, trace = TRUE)
 coef(fit, matrix = TRUE)
 with(cholera, cbind(actual = wfreq,
@@ -266,8 +267,8 @@ fit3 <- vglm(y3 ~ 1, zipoisson(zero = -1, lpstr0 = identity),
              zdata, trace = TRUE, crit = "coef")
 coef(fit3, matrix = TRUE)
 # Check how accurate it was:
-zdata[1, 'usepstr0']      # Answer
-coef(fit3)[1]             # Estimate
+zdata[1, 'usepstr0'] # Answer
+coef(fit3)[1]        # Estimate
 Coef(fit3)
 
 # Example 5: This RR-ZIP is known as a COZIGAM or COZIVGLM-ZIP

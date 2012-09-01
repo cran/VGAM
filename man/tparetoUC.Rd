@@ -60,20 +60,20 @@ rtpareto(n, lower, upper, shape)
 
 
 }
-\examples{ lower = 3; upper = 8; kay = exp(0.5)
-\dontrun{ xx = seq(lower - 0.5, upper + 0.5, len = 401)
+\examples{ lower <- 3; upper <- 8; kay <- exp(0.5)
+\dontrun{ xx <- seq(lower - 0.5, upper + 0.5, len = 401)
 plot(xx, dtpareto(xx, low = lower, upp = upper, shape = kay),
      main = "Truncated Pareto density split into 10 equal areas",
      type = "l", ylim = 0:1, xlab = "x")
 abline(h = 0, col = "blue", lty = 2)
-qq = qtpareto(seq(0.1, 0.9, by = 0.1), low = lower, upp = upper,
-              shape = kay)
+qq <- qtpareto(seq(0.1, 0.9, by = 0.1), low = lower, upp = upper,
+               shape = kay)
 lines(qq, dtpareto(qq, low = lower, upp = upper, shape = kay),
       col = "purple", lty = 3, type = "h")
 lines(xx, ptpareto(xx, low = lower, upp = upper, shape = kay),
       col = "orange") }
-pp = seq(0.1, 0.9, by = 0.1)
-qq = qtpareto(pp, low = lower, upp = upper, shape = kay)
+pp <- seq(0.1, 0.9, by = 0.1)
+qq <- qtpareto(pp, low = lower, upp = upper, shape = kay)
 
 ptpareto(qq, low = lower, upp = upper, shape = kay)
 qtpareto(ptpareto(qq, low = lower, upp = upper, shape = kay),

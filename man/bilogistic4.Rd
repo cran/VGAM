@@ -121,9 +121,9 @@ Hoboken, NJ, USA: Wiley-Interscience.
 
 }
 \examples{
-ymat = rbilogis4(n <- 1000, loc1 = 5, loc2 = 7, scale2 = exp(1))
+ymat <- rbilogis4(n <- 1000, loc1 = 5, loc2 = 7, scale2 = exp(1))
 \dontrun{plot(ymat)}
-fit = vglm(ymat ~ 1, fam = bilogistic4, trace = TRUE)
+fit <- vglm(ymat ~ 1, fam = bilogistic4, trace = TRUE)
 coef(fit, matrix = TRUE)
 Coef(fit)
 head(fitted(fit))

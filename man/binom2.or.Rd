@@ -12,7 +12,6 @@
 }
 \usage{
 binom2.or(lmu = "logit", lmu1 = lmu, lmu2 = lmu, loratio = "loge",
-          emu = list(), emu1 = emu, emu2 = emu, eoratio = list(),
           imu1 = NULL, imu2 = NULL, ioratio = NULL, zero = 3,
           exchangeable = FALSE, tol = 0.001, morerobust = FALSE)
 }
@@ -39,11 +38,6 @@ binom2.or(lmu = "logit", lmu1 = lmu, lmu2 = lmu, loratio = "loge",
   See \code{\link{CommonVGAMffArguments}} for more details.
   In general good initial values are often required so use these
   arguments if convergence failure occurs.
-
-  }
-  \item{emu, emu1, emu2, eoratio}{
-  List. Extra argument for each of the links.
-  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{zero}{

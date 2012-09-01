@@ -8,12 +8,11 @@
 
 }
 \usage{
-skewnormal1(lshape = "identity", earg = list(), ishape = NULL,
-            nsimEIM = NULL)
+skewnormal1(lshape = "identity", ishape = NULL, nsimEIM = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{lshape, earg, ishape, nsimEIM}{
+  \item{lshape, ishape, nsimEIM}{
   See \code{\link{Links}} and
   \code{\link{CommonVGAMffArguments}}.
 
@@ -52,6 +51,7 @@ skewnormal1(lshape = "identity", earg = list(), ishape = NULL,
   The object is used by modelling functions such as \code{\link{vglm}},
   and \code{\link{vgam}}.
 
+
 }
 \references{
 
@@ -82,9 +82,9 @@ distribution.
 
 }
 \section{Warning }{
-  It is well known that the EIM of Azzalini's skew-normal distribution
-  is singular for skewness parameter tending to zero, and thus produces
-  influential problems.
+  It is well known that the EIM of Azzalini's skew-normal
+  distribution is singular for skewness parameter tending to zero,
+  and thus produces influential problems.
 
 
 }  
@@ -92,6 +92,7 @@ distribution.
   \code{\link{snorm}},
   \code{\link{normal1}},
   \code{\link{fnormal1}}.
+
 
 }
 
@@ -105,9 +106,9 @@ with(sdata, mean(y))
 x <- with(sdata, seq(min(y), max(y), len = 200))
 with(sdata, lines(x, dsnorm(x, shape = Coef(fit)), col = "blue")) }
 
-sdata <- data.frame(x = runif(nn))
-sdata <- transform(sdata, y = rsnorm(nn, shape = 1 + 2*x))
-fit <- vglm(y ~ x, skewnormal1, sdata, trace = TRUE, crit = "coef")
+sdata <- data.frame(x2 = runif(nn))
+sdata <- transform(sdata, y = rsnorm(nn, shape = 1 + 2*x2))
+fit <- vglm(y ~ x2, skewnormal1, sdata, trace = TRUE, crit = "coef")
 summary(fit)
 }
 \keyword{models}

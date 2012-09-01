@@ -8,14 +8,12 @@
 
 }
 \usage{
-plackett(link = "loge", earg = list(), ioratio = NULL,
-         imethod = 1, nsimEIM = 200)
+plackett(link = "loge", ioratio = NULL, imethod = 1, nsimEIM = 200)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{link, earg}{
-  Link function and extra argument applied to the (positive) odds ratio
-  \eqn{\psi}{psi}.
+  \item{link}{
+  Link function applied to the (positive) odds ratio \eqn{\psi}{psi}.
   See \code{\link{Links}} for more choices
   and information.
 
@@ -100,9 +98,9 @@ A class of bivariate distributions.
 
 }
 \examples{
-ymat = rplack(n = 2000, oratio = exp(2))
+ymat <- rplack(n = 2000, oratio = exp(2))
 \dontrun{plot(ymat, col = "blue")}
-fit = vglm(ymat ~ 1, fam = plackett, trace = TRUE)
+fit <- vglm(ymat ~ 1, fam = plackett, trace = TRUE)
 coef(fit, matrix = TRUE)
 Coef(fit)
 vcov(fit)

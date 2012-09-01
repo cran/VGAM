@@ -7,9 +7,8 @@
   regression model to an ordered (preferably) factor response.
 }
 \usage{
-sratio(link = "logit", earg = list(),
-       parallel = FALSE, reverse = FALSE, zero = NULL,
-       whitespace = FALSE)
+sratio(link = "logit", parallel = FALSE, reverse = FALSE,
+       zero = NULL, whitespace = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -18,11 +17,6 @@ sratio(link = "logit", earg = list(),
     Link function applied to the \eqn{M}
     stopping ratio probabilities. 
     See \code{\link{Links}} for more choices.
-
-  }
-  \item{earg}{
-  List. Extra argument for the link function.
-  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{parallel}{
@@ -122,7 +116,8 @@ contains further information and examples.
 
 }
 \section{Warning }{
-  No check is made to verify that the response is ordinal;
+  No check is made to verify that the response is ordinal if the
+  response is a matrix;
   see \code{\link[base:factor]{ordered}}.
 
 
@@ -143,8 +138,8 @@ contains further information and examples.
 }
 
 \examples{
-pneumo = transform(pneumo, let = log(exposure.time))
-(fit = vglm(cbind(normal, mild, severe) ~ let,
+pneumo <- transform(pneumo, let = log(exposure.time))
+(fit <- vglm(cbind(normal, mild, severe) ~ let,
             sratio(parallel = TRUE), data = pneumo))
 coef(fit, matrix = TRUE)
 constraints(fit)

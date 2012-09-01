@@ -26,7 +26,7 @@ rinv.gaussian(n, mu, lambda)
   \item{lambda}{the \eqn{\lambda}{lambda} parameter.}
   \item{log}{
   Logical.
-  If \code{log=TRUE} then the logarithm of the density is returned.
+  If \code{log = TRUE} then the logarithm of the density is returned.
 
   }
 

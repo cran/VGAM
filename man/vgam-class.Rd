@@ -229,6 +229,7 @@ Vector generalized additive models.
   have (\code{\link{vglm-class}}), plus the first few slots
   described in the section above. 
 
+
 }
 
 %~Make other sections like WARNING with \section{WARNING }{....} ~
@@ -240,11 +241,12 @@ Vector generalized additive models.
 \code{\link{vglm-class}},
 \code{\link{vglmff-class}}.
 
+
 }
 
 \examples{
 # Fit a nonparametric proportional odds model
-pneumo = transform(pneumo, let = log(exposure.time))
+pneumo <- transform(pneumo, let = log(exposure.time))
 vgam(cbind(normal, mild, severe) ~ s(let),
      cumulative(parallel = TRUE), pneumo)
 }

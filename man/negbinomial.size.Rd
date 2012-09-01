@@ -8,8 +8,8 @@
 
 }
 \usage{
-negbinomial.size(size = Inf, lmu = "loge", emu = list(), imu = NULL,
-                 quantile.probs = 0.75, imethod = 1,
+negbinomial.size(size = Inf, lmu = "loge", imu = NULL,
+                 probs.y = 0.75, imethod = 1,
                  shrinkage.init = 0.95, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -24,12 +24,12 @@ negbinomial.size(size = Inf, lmu = "loge", emu = list(), imu = NULL,
 
   }
 
-  \item{lmu, emu, imu}{
+  \item{lmu, imu}{
   Same as \code{\link{negbinomial}}.
 
 
   }
-  \item{quantile.probs}{
+  \item{probs.y}{
   Same as \code{\link{negbinomial}}.
 
 
@@ -86,8 +86,12 @@ Cambridge: Cambridge University Press.
 \author{ Thomas W. Yee }
 \note{
   If \code{lmu = "nbcanlink"} in \code{negbinomial.size()} then
-  the \code{size} argument here is placed inside the \code{earg}
-  argument of \code{nbcanlink()} as a matrix with conformable size.
+  the \code{size} argument here should be assigned.
+
+
+
+% is placed inside the \code{earg}
+% argument of \code{nbcanlink()} as a matrix with conformable size.
 
 
 }
@@ -104,12 +108,12 @@ Cambridge: Cambridge University Press.
 }
 \examples{
 # Simulated data with various multiple responses
-size1 = exp(1); size2 = exp(2); size3 = exp(0); size4 = Inf
+size1 <- exp(1); size2 <- exp(2); size3 <- exp(0); size4 <- Inf
 ndata <- data.frame(x2 = runif(nn <- 1000))
 ndata <- transform(ndata, eta1  = -1 - 2 * x2, # eta1 must be negative
                           size1 = size1)
 ndata <- transform(ndata,
-                   mu1  = nbcanlink(eta1, earg = list(size = size1), inv = TRUE))
+                   mu1  = nbcanlink(eta1, size = size1, inv = TRUE))
 ndata <- transform(ndata,
                    y1 = rnbinom(nn, mu = mu1,         size = size1), # NB-C
                    y2 = rnbinom(nn, mu = exp(2 - x2), size = size2),

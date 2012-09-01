@@ -8,7 +8,7 @@
 
 }
 \usage{
-borel.tanner(Qsize = 1, link = "logit", earg = list(), imethod = 1)
+borel.tanner(Qsize = 1, link = "logit", imethod = 1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -17,9 +17,9 @@ borel.tanner(Qsize = 1, link = "logit", earg = list(), imethod = 1)
   queue size.
 
   }
-  \item{link, earg}{
-  Link function and extra argument for the parameter.
-  See \code{\link{Links}} for more choices and for general information.
+  \item{link}{
+  Link function for the parameter;
+  see \code{\link{Links}} for more choices and for general information.
 
   }
   \item{imethod}{

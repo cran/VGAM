@@ -12,6 +12,7 @@
   scale parameter \code{scale} and
   shape parameter \code{k}.
 
+
 }
 \usage{
 dlgamma(x, location = 0, scale = 1, k = 1, log = FALSE)
@@ -56,10 +57,12 @@ London: Imperial College Press.
   \code{n}, all the above arguments may be vectors and are recyled to
   the appropriate length if necessary.
 
+
 }
 \note{
   The \pkg{VGAM} family function \code{\link{lgamma3ff}} is
   for the three parameter (nonstandard) log-gamma distribution.
+
 
 }
 \seealso{
@@ -69,8 +72,8 @@ London: Imperial College Press.
 
 }
 \examples{
-\dontrun{ loc = 1; Scale = 1.5; k = 1.4
-x = seq(-3.2, 5, by = 0.01)
+\dontrun{ loc <- 1; Scale <- 1.5; k <- 1.4
+x <- seq(-3.2, 5, by = 0.01)
 plot(x, dlgamma(x, loc, Scale, k), type = "l", col = "blue", ylim = 0:1,
      main = "Blue is density, orange is cumulative distribution function",
      sub = "Purple are 5,10,...,95 percentiles", las = 1, ylab = "")

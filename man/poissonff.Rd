@@ -10,13 +10,14 @@
 
 }
 \usage{
-poissonff(link = "loge", earg=list(), dispersion = 1, onedpar = FALSE,
-          imu = NULL, imethod = 1, parallel = FALSE, zero = NULL)
+poissonff(link = "loge", dispersion = 1, onedpar = FALSE, imu = NULL,
+          imethod = 1, parallel = FALSE, zero = NULL, bred = FALSE,
+          earg.link = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{link, earg}{
-  Link function and extra argument applied to the mean or means.
+  \item{link}{
+  Link function applied to the mean or means.
   See \code{\link{Links}} for more choices
   and information.
 
@@ -51,6 +52,13 @@ poissonff(link = "loge", earg=list(), dispersion = 1, onedpar = FALSE,
   are modelled as intercepts only.  The values must be from the set
   \{1,2,\ldots,\eqn{M}\}, where \eqn{M} is the number of columns of the
   matrix response.
+  See \code{\link{CommonVGAMffArguments}} for more information.
+
+
+  }
+  \item{bred, earg.link}{
+  Details at \code{\link{CommonVGAMffArguments}}.
+
 
   }
 }
@@ -151,25 +159,25 @@ poissonff(link = "loge", earg=list(), dispersion = 1, onedpar = FALSE,
 \examples{
 poissonff()
 
-pdat = data.frame(x = rnorm(nn <- 100))
-pdat = transform(pdat, y = rpois(nn, exp(1+x)))
-(fit = vglm(y ~ x, family = poissonff, pdat))
+pdata <- data.frame(x = rnorm(nn <- 100))
+pdata <- transform(pdata, y = rpois(nn, exp(1+x)))
+(fit <- vglm(y ~ x, family = poissonff, pdata))
 coef(fit, matrix = TRUE)
 
-nn = 200
-cdat = data.frame(x2 = rnorm(nn), x3 = rnorm(nn), x4 = rnorm(nn))
-cdat = transform(cdat, lv1 = 0 + x3 - 2*x4)
-cdat = transform(cdat, lambda1 = exp(3 - 0.5 *  (lv1-0)^2),
-                       lambda2 = exp(2 - 0.5 *  (lv1-1)^2),
-                       lambda3 = exp(2 - 0.5 * ((lv1+4)/2)^2))
-cdat = transform(cdat, y1 = rpois(nn, lambda1),
-                       y2 = rpois(nn, lambda2),
-                       y3 = rpois(nn, lambda3))
-# vvv p1 = cqo(cbind(y1,y2,y3) ~ x2 + x3 + x4, poissonff, cdat,
-# vvv          EqualTol = FALSE, ITol = FALSE)
-# vvv summary(p1)  # # Three dispersion parameters are all unity
+nn <- 200
+cdata <- data.frame(x2 = rnorm(nn), x3 = rnorm(nn), x4 = rnorm(nn))
+cdata <- transform(cdata, lv1 = 0 + x3 - 2*x4)
+cdata <- transform(cdata, lambda1 = exp(3 - 0.5 *  (lv1-0)^2),
+                          lambda2 = exp(2 - 0.5 *  (lv1-1)^2),
+                          lambda3 = exp(2 - 0.5 * ((lv1+4)/2)^2))
+cdata <- transform(cdata, y1 = rpois(nn, lambda1),
+                          y2 = rpois(nn, lambda2),
+                          y3 = rpois(nn, lambda3))
 \dontrun{ lvplot(p1, y = TRUE, lcol = 2:4, pch = 2:4, pcol = 2:4, rug = FALSE) }
 }
 \keyword{models}
 \keyword{regression}
 
+%# vvv p1 = cqo(cbind(y1,y2,y3) ~ x2 + x3 + x4, poissonff, cdata,
+%# vvv          EqualTol = FALSE, ITol = FALSE)
+%# vvv summary(p1)  # # Three dispersion parameters are all unity

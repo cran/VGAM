@@ -12,30 +12,39 @@
 
 
 
+
+
+
+
+
+
 rgev <- function(n, location = 0, scale = 1, shape = 0) {
-  use.n = if ((length.n <- length(n)) > 1) length.n else
-          if (!is.Numeric(n, integer.valued = TRUE,
-                          allowable.length = 1, positive = TRUE))
-            stop("bad input for argument 'n'") else n
+  use.n <- if ((length.n <- length(n)) > 1) length.n else
+           if (!is.Numeric(n, integer.valued = TRUE,
+                           allowable.length = 1, positive = TRUE))
+             stop("bad input for argument 'n'") else n
 
   if (!is.Numeric(location)) 
     stop("bad input for argument argument 'location'")
   if (!is.Numeric(shape))
     stop("bad input for argument argument 'shape'")
 
-  ans = numeric(use.n)
-  shape    = rep(shape,    length.out = use.n);
-  location = rep(location, length.out = use.n);
-  scale    = rep(scale,    length.out = use.n)
+  ans <- numeric(use.n)
+  if (length(shape)    != use.n)
+    shape    <- rep(shape,        length.out = use.n)
+  if (length(location) != use.n)
+    location <- rep(location,     length.out = use.n); 
+  if (length(scale)    != use.n)
+    scale    <- rep(scale,        length.out = use.n)
 
-  scase = abs(shape) < sqrt(.Machine$double.eps)
-  nscase = sum(scase)
+  scase <- abs(shape) < sqrt(.Machine$double.eps)
+  nscase <- sum(scase)
   if (use.n - nscase)
-    ans[!scase] = location[!scase] + scale[!scase] *
+    ans[!scase] <- location[!scase] + scale[!scase] *
     ((-log(runif(use.n - nscase)))^(-shape[!scase]) -1) / shape[!scase]
   if (nscase)
-    ans[scase] = rgumbel(nscase, location[scase], scale[scase])
-  ans[scale <= 0] = NaN
+    ans[scase] <- rgumbel(nscase, location[scase], scale[scase])
+  ans[scale <= 0] <- NaN
   ans
 }
 
@@ -44,7 +53,7 @@ rgev <- function(n, location = 0, scale = 1, shape = 0) {
  dgev <- function(x, location = 0, scale = 1, shape = 0, log = FALSE,
                   tolshape0 = sqrt(.Machine$double.eps),
                   oobounds.log = -Inf, giveWarning = FALSE) {
-  if (!is.logical(log.arg <- log))
+  if (!is.logical(log.arg <- log) || length(log) != 1)
       stop("bad input for argument 'log'")
   rm(log)
   if (oobounds.log > 0)
@@ -54,34 +63,40 @@ rgev <- function(n, location = 0, scale = 1, shape = 0) {
     stop("bad input for argument 'tolshape0'")
 
   use.n = max(length(x), length(location), length(scale), length(shape))
-  shape     = rep(shape,    length.out = use.n)
-  location  = rep(location, length.out = use.n); 
-  scale     = rep(scale,    length.out = use.n);
-  x         = rep(x,       length.out = use.n)
+  if (length(shape)    != use.n)
+    shape    <- rep(shape,        length.out = use.n)
+  if (length(location) != use.n)
+    location <- rep(location,     length.out = use.n); 
+  if (length(scale)    != use.n)
+    scale    <- rep(scale,        length.out = use.n)
 
-  logdensity = rep(log(0), length.out = use.n)
-  scase = abs(shape) < tolshape0
-  nscase = sum(scase)
+
+
+  x         <- rep(x,       length.out = use.n)
+
+  logdensity <- rep(log(0), length.out = use.n)
+  scase <- abs(shape) < tolshape0
+  nscase <- sum(scase)
   if (use.n - nscase) {
-    zedd = 1+shape*(x-location)/scale # pmax(0, (1+shape*xc/scale))
-    xok = (!scase) & (zedd > 0)
-    logdensity[xok] = -log(scale[xok]) - zedd[xok]^(-1/shape[xok]) -
+    zedd <- 1+shape*(x-location)/scale # pmax(0, (1+shape*xc/scale))
+    xok <- (!scase) & (zedd > 0)
+    logdensity[xok] <- -log(scale[xok]) - zedd[xok]^(-1/shape[xok]) -
                       (1 + 1/shape[xok]) * log(zedd[xok])
-    outofbounds = (!scase) & (zedd <= 0)
+    outofbounds <- (!scase) & (zedd <= 0)
     if (any(outofbounds)) {
-      logdensity[outofbounds] = oobounds.log
-      no.oob = sum(outofbounds)
+      logdensity[outofbounds] <- oobounds.log
+      no.oob <- sum(outofbounds)
       if (giveWarning)
         warning(no.oob, " observation",
                 ifelse(no.oob > 1, "s are", " is"), " out of bounds")
     }
   }
   if (nscase) {
-    logdensity[scase] = dgumbel(x[scase], location = location[scase],
-                                scale = scale[scase], log = TRUE)
+    logdensity[scase] <- dgumbel(x[scase], location = location[scase],
+                                 scale = scale[scase], log = TRUE)
   }
 
-  logdensity[scale <= 0] = NaN
+  logdensity[scale <= 0] <- NaN
   if (log.arg) logdensity else exp(logdensity)
 }
 
@@ -95,23 +110,27 @@ pgev <- function(q, location = 0, scale = 1, shape = 0) {
   if (!is.Numeric(shape))
     stop("bad input for argument 'shape'")
 
-  use.n = max(length(q), length(location), length(scale), length(shape))
-  ans = numeric(use.n)
-  shape    = rep(shape,        length.out = use.n)
-  location = rep(location,     length.out = use.n); 
-  scale    = rep(scale,        length.out = use.n)
-  q        = rep(q - location, length.out = use.n)
+  use.n <- max(length(q), length(location), length(scale), length(shape))
+  ans <- numeric(use.n)
+  if (length(shape)    != use.n)
+    shape    <- rep(shape,        length.out = use.n)
+  if (length(location) != use.n)
+    location <- rep(location,     length.out = use.n); 
+  if (length(scale)    != use.n)
+    scale    <- rep(scale,        length.out = use.n)
+  if (length(q)        != use.n)
+    q        <- rep(q - location, length.out = use.n)
 
-  scase = abs(shape) < sqrt(.Machine$double.eps)
-  nscase = sum(scase)
+  scase <- abs(shape) < sqrt(.Machine$double.eps)
+  nscase <- sum(scase)
   if (use.n - nscase) {
-    zedd = pmax(0, (1 + shape * q / scale))
-    ans[!scase] = exp(-zedd[!scase]^(-1 / shape[!scase]))
+    zedd <- pmax(0, (1 + shape * q / scale))
+    ans[!scase] <- exp(-zedd[!scase]^(-1 / shape[!scase]))
   }
   if (nscase) {
-    ans[scase] = pgumbel(q[scase], location[scase], scale[scase])
+    ans[scase] <- pgumbel(q[scase], location[scase], scale[scase])
   }
-  ans[scale <= 0] = NaN
+  ans[scale <= 0] <- NaN
   ans
 }
 
@@ -125,22 +144,27 @@ qgev <- function(p, location = 0, scale = 1, shape = 0) {
   if (!is.Numeric(shape))
     stop("bad input for argument 'shape'")
 
-  use.n = max(length(p), length(location), length(scale), length(shape))
-  ans = numeric(use.n)
-  shape    = rep(shape,    length.out = use.n)
-  location = rep(location, length.out = use.n); 
-  scale    = rep(scale,    length.out = use.n);
-  p        = rep(p,        length.out = use.n)
+  use.n <- max(length(p), length(location), length(scale), length(shape))
+  ans <- numeric(use.n)
+  if (length(shape)    != use.n)
+    shape    <- rep(shape,        length.out = use.n)
+  if (length(location) != use.n)
+    location <- rep(location,     length.out = use.n); 
+  if (length(scale)    != use.n)
+    scale    <- rep(scale,        length.out = use.n)
+  if (length(p)        != use.n)
+    p        <- rep(p,            length.out = use.n)
 
-  scase = abs(shape) < sqrt(.Machine$double.eps)
-  nscase = sum(scase)
+
+  scase <- abs(shape) < sqrt(.Machine$double.eps)
+  nscase <- sum(scase)
   if (use.n - nscase) {
-    ans[!scase] = location[!scase] + scale[!scase] *
+    ans[!scase] <- location[!scase] + scale[!scase] *
         ((-log(p[!scase]))^(-shape[!scase]) - 1) / shape[!scase]
   }
   if (nscase)
-    ans[scase] = qgumbel(p[scase], location[scase], scale[scase])
-  ans[scale <= 0] = NaN
+    ans[scase] <- qgumbel(p[scase], location[scase], scale[scase])
+  ans[scale <= 0] <- NaN
   ans
 }
 
@@ -148,13 +172,10 @@ qgev <- function(p, location = 0, scale = 1, shape = 0) {
 
 
 
- gev <- function(llocation = "identity",
+ gev <- function(
+          llocation = "identity",
           lscale = "loge",
-          lshape = "logoff",
-          elocation = list(),
-          escale = list(),
-          eshape = if (lshape == "logoff") list(offset = 0.5) else 
-          if (lshape == "elogit") list(min = -0.5, max = 0.5) else list(),
+          lshape = logoff(offset = 0.5),
           percentiles = c(95, 99),
           iscale = NULL, ishape = NULL,
           imethod = 1, gshape = c(-0.45, 0.45),
@@ -163,210 +184,282 @@ qgev <- function(p, location = 0, scale = 1, shape = 0) {
 {
 
 
-    if (!is.logical(giveWarning) || length(giveWarning) != 1)
-        stop("bad input for argument 'giveWarning'")
 
-    mean = FALSE
-    if (length(iscale) && !is.Numeric(iscale, positive = TRUE))
-        stop("bad input for argument 'iscale'")
-    if (mode(lscale) != "character" && mode(lscale) != "name")
-        lscale = as.character(substitute(lscale))
-    if (mode(llocation) != "character" && mode(llocation) != "name")
-        llocation = as.character(substitute(llocation))
-    if (mode(lshape) != "character" && mode(lshape) != "name")
-        lshape = as.character(substitute(lshape))
+  llocat <- as.list(substitute(llocation))
+  elocat <- link2list(llocat)
+  llocat <- attr(elocat, "function.name")
 
-    if (!mean &&  length(percentiles) &&
-       (!is.Numeric(percentiles, positive = TRUE) ||
-        max(percentiles) >= 100))
-      stop("bad input for argument 'percentiles'")
-    if (!is.Numeric(imethod, allowable.length = 1,
-                    positive = TRUE, integer.valued = TRUE) ||
-       imethod > 2.5)
-      stop("argument 'imethod' must be 1 or 2")
-    if (length(ishape) && !is.Numeric(ishape))
-        stop("bad input for argument 'ishape'")
-    if (!is.Numeric(tolshape0, allowable.length = 1, positive = TRUE) ||
-        tolshape0 > 0.1)
-      stop("bad input for argument 'tolshape0'")
-    if (!is.Numeric(gshape, allowable.length = 2) ||
-        gshape[1] >= gshape[2])
-      stop("bad input for argument 'gshape'")
-    if (length(zero) &&
-        !is.Numeric(zero, integer.valued = TRUE, positive = TRUE))
-      stop("bad input for argument 'zero'")
+  lscale <- as.list(substitute(lscale))
+  escale <- link2list(lscale)
+  lscale <- attr(escale, "function.name")
 
-    if (!is.list(elocation)) elocation = list()
-    if (!is.list(escale)) escale = list()
-    if (!is.list(eshape)) eshape = list()
-
-    new("vglmff",
-    blurb = c("Generalized extreme value distribution\n",
-            "Links:    ",
-            namesof("location", link = llocation, earg = elocation), ", ", 
-            namesof("scale", link = lscale, earg = escale), ", ",
-            namesof("shape", link = lshape, earg = eshape)),
-    constraints=eval(substitute(expression({
-        constraints = cm.zero.vgam(constraints, x, .zero, M)
-    }), list( .zero = zero ))),
-    initialize = eval(substitute(expression({
-        predictors.names = 
-        c(namesof("location", .llocation, earg = .elocation, short = TRUE),
-          namesof("scale",    .lscale,    earg = .escale, short = TRUE),
-          namesof("shape",    .lshape,    earg = .eshape, short = TRUE))
-        y = as.matrix(y)
-        if (ncol(y) > 1)
-            y = -t(apply(-y, 1, sort, na.last = TRUE))
-
-        r.vec = rowSums(cbind(!is.na(y)))
+  lshape <- as.list(substitute(lshape))
+  eshape <- link2list(lshape)
+  lshape <- attr(eshape, "function.name")
 
 
-        if (any(r.vec == 0))
-            stop("A row contains all missing values")
 
-        extra$percentiles = .percentiles
-        if (!length(etastart)) {
-          init.sig = if (length( .iscale))
-            rep( .iscale, length.out = nrow(y)) else NULL
-          init.xi = if (length( .ishape))
-            rep( .ishape, length.out = nrow(y)) else NULL
-          eshape = .eshape
 
-          if ( .lshape == "elogit" && length(init.xi) &&
-              (any(init.xi <= eshape$min |
-                   init.xi >= eshape$max)))
-              stop("bad input for argument 'eshape'")
 
-          if ( .imethod == 1) {
-                nvector = 4:10   # Arbitrary; could be made an argument
-                ynvector = quantile(y[, 1], probs = 1-1/nvector)
-                objecFunction = -Inf   # Actually the log-likelihood
-                est.sigma = !length(init.sig)
-                gshape = .gshape
-                temp234 = if (length(init.xi)) init.xi[1] else
-                          seq(gshape[1], gshape[2], length.out = 12)
-                for(xi.try in temp234) {
-                    xvec = if (abs(xi.try) < .tolshape0) log(nvector) else
-                           (nvector^xi.try - 1) / xi.try
-                    fit0 = lsfit(x = xvec, y=ynvector, intercept = TRUE)
-                    sigmaTry = if (est.sigma)
-                      rep(fit0$coef["X"], length.out = nrow(y)) else
-                      init.sig
-                    muTry = rep(fit0$coef["Intercept"], length.out = nrow(y))
-                    llTry = egev(giveWarning=
-                     FALSE)@loglikelihood(mu = NULL, y=y[, 1], w=w,
-                     residuals = FALSE,
-                     eta =
-                     cbind(theta2eta(muTry, .llocation,earg = .elocation),
-                           theta2eta(sigmaTry, .lscale,earg = .escale), 
-                           theta2eta(xi.try, link= .lshape, earg = .eshape)))
-                    if (llTry >= objecFunction) {
-                        if (est.sigma)
-                            init.sig = sigmaTry
-                        init.mu = rep(muTry, length.out = nrow(y))
-                        objecFunction = llTry
-                        bestxi = xi.try
-                    }
+  if (!is.logical(giveWarning) || length(giveWarning) != 1)
+    stop("bad input for argument 'giveWarning'")
+
+  mean <- FALSE
+  if (length(iscale) &&
+      !is.Numeric(iscale, positive = TRUE))
+    stop("bad input for argument 'iscale'")
+
+
+
+  if (!mean &&  length(percentiles) &&
+     (!is.Numeric(percentiles, positive = TRUE) ||
+      max(percentiles) >= 100))
+    stop("bad input for argument 'percentiles'")
+
+  if (!is.Numeric(imethod, allowable.length = 1,
+                  positive = TRUE, integer.valued = TRUE) ||
+     imethod > 2.5)
+    stop("argument 'imethod' must be 1 or 2")
+  if (length(ishape) && !is.Numeric(ishape))
+      stop("bad input for argument 'ishape'")
+
+  if (!is.Numeric(tolshape0, allowable.length = 1, positive = TRUE) ||
+      tolshape0 > 0.1)
+    stop("bad input for argument 'tolshape0'")
+  if (!is.Numeric(gshape, allowable.length = 2) ||
+      gshape[1] >= gshape[2])
+    stop("bad input for argument 'gshape'")
+  if (length(zero) &&
+      !is.Numeric(zero, integer.valued = TRUE, positive = TRUE))
+    stop("bad input for argument 'zero'")
+
+
+  new("vglmff",
+  blurb = c("Generalized extreme value distribution\n",
+          "Links:    ",
+          namesof("location", llocat, elocat), ", ", 
+          namesof("scale",    lscale, escale), ", ",
+          namesof("shape",    lshape, eshape)),
+  constraints=eval(substitute(expression({
+    constraints = cm.zero.vgam(constraints, x, .zero, M)
+  }), list( .zero = zero ))),
+  infos = eval(substitute(function(...) {
+    list(Musual = 3,
+         multipleResponses = FALSE,
+         zero = .zero )
+  }, list( .zero = zero ))),
+
+
+  initialize = eval(substitute(expression({
+    Musual <- extra$Musual <- 3
+    ncoly <- ncol(y)
+    extra$ncoly <- ncoly
+    extra$Musual <- Musual
+
+
+    mynames1  <- "location"
+    mynames2  <- "scale"
+    mynames3  <- "shape"
+    llocat <- .llocat
+    lscale <- .lscale
+    lshape <- .lshape
+
+
+    predictors.names <- c(
+      namesof(mynames1, .llocat , .elocat , short = TRUE),
+      namesof(mynames2, .lscale , .escale , short = TRUE),
+      namesof(mynames3, .lshape , .eshape , short = TRUE))
+
+
+
+
+    y = as.matrix(y)
+
+
+
+
+
+    if (ncol(y) > 1)
+      y = -t(apply(-y, 1, sort, na.last = TRUE))
+
+
+
+
+
+
+
+    r.vec = rowSums(cbind(!is.na(y)))
+
+
+    if (any(r.vec == 0))
+      stop("A row contains all missing values")
+
+    extra$percentiles = .percentiles
+    if (!length(etastart)) {
+      init.sig = if (length( .iscale ))
+        rep( .iscale, length.out = nrow(y)) else NULL
+      init.xi = if (length( .ishape ))
+        rep( .ishape, length.out = nrow(y)) else NULL
+      LIST.lshape = .lshape
+
+      if ( .lshape == "elogit" && length(init.xi) &&
+          (any(init.xi <= LIST.lshape$min |
+               init.xi >= LIST.lshape$max)))
+          stop("bad input for an argument in 'lshape'")
+
+      if ( .imethod == 1) {
+        nvector = 4:10   # Arbitrary; could be made an argument
+        ynvector = quantile(y[, 1], probs = 1-1/nvector)
+          objecFunction = -Inf   # Actually the log-likelihood
+          est.sigma = !length(init.sig)
+          gshape = .gshape
+          temp234 = if (length(init.xi)) init.xi[1] else
+                        seq(gshape[1], gshape[2], length.out = 12)
+          for(shapeTry in temp234) {
+              xvec = if (abs(shapeTry) < .tolshape0) log(nvector) else
+                     (nvector^shapeTry - 1) / shapeTry
+              fit0 = lsfit(x = xvec, y=ynvector, intercept = TRUE)
+              sigmaTry = if (est.sigma)
+                rep(fit0$coef["X"], length.out = nrow(y)) else
+                init.sig
+              LocatTry = rep(fit0$coef["Intercept"], length.out = nrow(y))
+              llTry = egev(giveWarning =
+               FALSE)@loglikelihood(mu = NULL, y = y[, 1], w = w,
+               residuals = FALSE,
+               eta =
+               cbind(theta2eta(LocatTry, .llocat , .elocat ),
+                     theta2eta(sigmaTry, .lscale , .escale ),
+                     theta2eta(shapeTry, .lshape , .eshape )))
+                if (llTry >= objecFunction) {
+                  if (est.sigma)
+                    init.sig = sigmaTry
+                  init.mu = rep(LocatTry, length.out = nrow(y))
+                  objecFunction = llTry
+                  bestxi = shapeTry
                 }
-                if (!length(init.xi))
-                    init.xi = rep(bestxi, length.out = nrow(y))
-            } else {
-                init.xi = rep(0.05, length.out = nrow(y))
-                if (!length(init.sig))
-                  init.sig = rep(sqrt(6 * var(y[, 1]))/pi,
-                                 length.out = nrow(y))
-                EulerM = -digamma(1)
-                init.mu = rep(median(y[, 1]) - EulerM*init.sig,
-                              length.out = nrow(y))
             }
+            if (!length(init.xi))
+                init.xi = rep(bestxi, length.out = nrow(y))
+      } else {
+        init.xi = rep(0.05, length.out = nrow(y))
+        if (!length(init.sig))
+          init.sig = rep(sqrt(6 * var(y[, 1]))/pi,
+                         length.out = nrow(y))
+        EulerM <- -digamma(1)
+        init.mu = rep(median(y[, 1]) - EulerM*init.sig,
+                      length.out = nrow(y))
+      }
 
-            bad = ((1 + init.xi*(y-init.mu)/init.sig) <= 0)
-            if (fred <- sum(bad)) {
-                warning(paste(fred, "observations violating boundary",
-                "constraints while initializing. Taking corrective action."))
-                init.xi[bad] = ifelse(y[bad] > init.mu[bad], 0.1, -0.1)
-            }
+      bad = ((1 + init.xi*(y-init.mu)/init.sig) <= 0)
+      if (fred <- sum(bad)) {
+        warning(paste(fred, "observations violating boundary",
+        "constraints while initializing. Taking corrective action."))
+        init.xi[bad] = ifelse(y[bad] > init.mu[bad], 0.1, -0.1)
+      }
 
-            etastart =
-              cbind(theta2eta(init.mu,  .llocation, earg = .elocation),
-                    theta2eta(init.sig, .lscale,    earg = .escale),
-                    theta2eta(init.xi,  .lshape,    earg = .eshape))
-        }
-    }), list( .llocation = llocation, .lscale = lscale, .lshape = lshape,
-              .elocation = elocation, .escale = escale, .eshape = eshape,
-                                      .iscale = iscale, .ishape = ishape,
-              .gshape = gshape,
-              .percentiles = percentiles,
-              .tolshape0 = tolshape0,
-              .imethod = imethod, .giveWarning= giveWarning ))),
-    linkinv = eval(substitute(function(eta, extra = NULL) {
-        loc = eta2theta(eta[, 1], .llocation, earg = .elocation)
-        sigma = eta2theta(eta[, 2], .lscale, earg = .escale)
-        xi = eta2theta(eta[,3], .lshape, earg = .eshape)
-        is.zero = (abs(xi) < .tolshape0)
-        cent = extra$percentiles
-        LP = length(cent)
-        fv = matrix(as.numeric(NA), nrow(eta), LP)
-        if (LP) {
-            for(ii in 1:LP) {
-                yp = -log(cent[ii]/100)
-                fv[!is.zero,ii] = loc[!is.zero] - sigma[!is.zero] *
-                                (1 - yp^(-xi[!is.zero])) / xi[!is.zero]
-                fv[is.zero,ii] = loc[is.zero] - sigma[is.zero] * log(yp)
-            }
-            dimnames(fv) = list(dimnames(eta)[[1]],
-                                paste(as.character(cent), "%", sep = ""))
-        } else {
-            EulerM = -digamma(1)
-            fv = loc + sigma * EulerM  # When xi = 0, is Gumbel
-            fv[!is.zero] = loc[!is.zero] + sigma[!is.zero] *
-                          (gamma(1-xi[!is.zero])-1) / xi[!is.zero]
-            fv[xi >= 1] = NA  # Mean exists only if xi < 1.
-        }
-        fv
-    }, list( .llocation = llocation, .lscale = lscale,
-             .lshape = lshape,
-             .eshape = eshape, .tolshape0 = tolshape0 ))),
-    last = eval(substitute(expression({
-        misc$links = c(location = .llocation,
-                       scale = .lscale,
-                       shape = .lshape)
-        misc$true.mu = !length( .percentiles) # @fitted is not a true mu
-        misc$percentiles = .percentiles
-        misc$earg = list(location = .elocation,
-                         scale = .escale,
-                         shape = .eshape)
-        misc$expected = TRUE
-        misc$tolshape0 = .tolshape0
-        if (ncol(y) == 1)
-            y = as.vector(y)
-        if (any(xi < -0.5))
-            warning("some values of the shape parameter are less than -0.5")
-    }), list( .llocation = llocation, .lscale = lscale, .lshape = lshape,
-              .elocation = elocation, .escale = escale, .eshape = eshape,
-              .tolshape0 = tolshape0, .percentiles = percentiles ))),
-    loglikelihood = eval(substitute(
-    function(mu,y,w,residuals = FALSE,eta,extra = NULL) {
-        mmu = eta2theta(eta[, 1], .llocation, earg = .elocation)
-        sigma = eta2theta(eta[, 2], .lscale, earg = .escale)
-        xi = eta2theta(eta[,3], .lshape, earg = .eshape)
-        is.zero = (abs(xi) < .tolshape0)
-        zedd = (y-mmu) / sigma
-        r.vec = rowSums(cbind(!is.na(y)))
-        A = 1 + xi * (y-mmu)/sigma
-        ii = 1:nrow(eta)
-        A1 = A[cbind(ii, r.vec)]
-        mytolerance = 0  # .Machine$double.eps
-        if (any(bad <- (A1 <= mytolerance), na.rm = TRUE)) {
-            cat("There are", sum(bad),
-                "range violations in @loglikelihood\n")
-            flush.console()
-        }
-        igev = !is.zero &  !bad
-        igum =  is.zero &  !bad
-        pow = 1 + 1/xi[igev]
-        if (residuals) stop("loglikelihood residuals not ",
-                            "implemented yet") else {
+      etastart <-
+        cbind(theta2eta(init.mu,  .llocat , .elocat ),
+              theta2eta(init.sig, .lscale , .escale ),
+              theta2eta(init.xi,  .lshape , .eshape ))
+    }
+  }), list( 
+            .llocat = llocat, .lscale = lscale, .lshape = lshape,
+            .elocat = elocat, .escale = escale, .eshape = eshape,
+            .ishape = ishape, .iscale = iscale,
+
+            .gshape = gshape,
+            .percentiles = percentiles,
+            .tolshape0 = tolshape0,
+            .imethod = imethod, .giveWarning = giveWarning ))),
+
+  linkinv = eval(substitute(function(eta, extra = NULL) {
+    Locat <- eta2theta(eta[, 1], .llocat , .elocat )
+    sigma <- eta2theta(eta[, 2], .lscale , .escale )
+    shape <- eta2theta(eta[, 3], .lshape , .eshape )
+
+    is.zero = (abs(shape) < .tolshape0 )
+    cent = extra$percentiles
+    LP = length(cent)
+    fv = matrix(as.numeric(NA), nrow(eta), LP)
+    if (LP) {
+      for(ii in 1:LP) {
+        yp = -log(cent[ii]/100)
+        fv[!is.zero,ii] = Locat[!is.zero] - sigma[!is.zero] *
+                        (1 - yp^(-shape[!is.zero])) / shape[!is.zero]
+        fv[is.zero,ii] = Locat[is.zero] - sigma[is.zero] * log(yp)
+      }
+      dimnames(fv) = list(dimnames(eta)[[1]],
+                          paste(as.character(cent), "%", sep = ""))
+    } else {
+      EulerM <- -digamma(1)
+      fv = Locat + sigma * EulerM  # When shape = 0, is Gumbel
+      fv[!is.zero] = Locat[!is.zero] + sigma[!is.zero] *
+                    (gamma(1-shape[!is.zero])-1) / shape[!is.zero]
+      fv[shape >= 1] = NA  # Mean exists only if shape < 1.
+    }
+    fv
+  }, list(
+            .llocat = llocat, .lscale = lscale, .lshape = lshape,
+            .elocat = elocat, .escale = escale, .eshape = eshape,
+
+           .tolshape0 = tolshape0 ))),
+  last = eval(substitute(expression({
+    misc$earg <- vector("list", M)
+    names(misc$earg) <- c(mynames1, mynames2, mynames3)
+    misc$earg[[1]] <- .elocat
+    misc$earg[[2]] <- .escale
+    misc$earg[[3]] <- .eshape
+
+    misc$link <-       c( .llocat , .lscale , .lshape )
+    names(misc$link) <- c(mynames1, mynames2, mynames3)
+
+    misc$Musual <- Musual
+    misc$expected <- TRUE
+    misc$multipleResponses <- FALSE
+
+
+
+
+
+
+
+    misc$true.mu = !length( .percentiles) # @fitted is not a true mu
+    misc$percentiles = .percentiles
+    misc$expected = TRUE
+    misc$tolshape0 = .tolshape0
+    if (ncol(y) == 1)
+      y = as.vector(y)
+    if (any(shape < -0.5))
+      warning("some values of the shape parameter are less than -0.5")
+  }), list(
+            .llocat = llocat, .lscale = lscale, .lshape = lshape,
+            .elocat = elocat, .escale = escale, .eshape = eshape,
+
+            .tolshape0 = tolshape0, .percentiles = percentiles ))),
+  loglikelihood = eval(substitute(
+  function(mu, y, w, residuals = FALSE,eta,extra = NULL) {
+    Locat <- eta2theta(eta[, 1], .llocat , .elocat )
+    sigma <- eta2theta(eta[, 2], .lscale , .escale )
+    shape <- eta2theta(eta[, 3], .lshape , .eshape )
+
+
+    is.zero = (abs(shape) < .tolshape0)
+    zedd = (y-Locat) / sigma
+    r.vec = rowSums(cbind(!is.na(y)))
+    A = 1 + shape * (y-Locat)/sigma
+    ii = 1:nrow(eta)
+    A1 = A[cbind(ii, r.vec)]
+    mytolerance = 0  # .Machine$double.eps
+    if (any(bad <- (A1 <= mytolerance), na.rm = TRUE)) {
+      cat("There are", sum(bad),
+          "range violations in @loglikelihood\n")
+      flush.console()
+    }
+      igev = !is.zero &  !bad
+      igum =  is.zero &  !bad
+      pow = 1 + 1/shape[igev]
+      if (residuals) stop("loglikelihood residuals not ",
+                          "implemented yet") else {
 
  old.answer =
             sum(bad) * (-1.0e10) +
@@ -375,40 +468,54 @@ qgev <- function(p, location = 0, scale = 1, shape = 0) {
                            rowSums(cbind(zedd, na.rm = TRUE)))) +
             sum(w[igev] * (-r.vec[igev]*log(sigma[igev]) -
                            pow*rowSums(cbind(log(A[igev])), na.rm = TRUE) -
-                           A1[igev]^(-1/xi[igev])))
+                           A1[igev]^(-1/shape[igev])))
             old.answer
-        }
-    }, list( .llocation = llocation, .lscale = lscale, .lshape = lshape,
-             .elocation = elocation, .escale = escale, .eshape = eshape,
-             .giveWarning = giveWarning, .tolshape0 = tolshape0 ))),
-    vfamily = c("gev", "vextremes"),
-    deriv = eval(substitute(expression({
-        r.vec = rowSums(cbind(!is.na(y)))
-        mmu = eta2theta(eta[, 1], .llocation, earg = .elocation)
-        sigma = eta2theta(eta[, 2], .lscale, earg = .escale)
-        xi = eta2theta(eta[,3], .lshape, earg = .eshape)
-        is.zero = (abs(xi) < .tolshape0)
-        ii = 1:nrow(eta)
-        zedd = (y-mmu) / sigma
-        A = 1 + xi * zedd
+      }
+  }, list( 
+            .llocat = llocat, .lscale = lscale, .lshape = lshape,
+            .elocat = elocat, .escale = escale, .eshape = eshape,
+
+
+
+           .giveWarning = giveWarning, .tolshape0 = tolshape0 ))),
+  vfamily = c("gev", "vextremes"),
+  deriv = eval(substitute(expression({
+    Musual <- 3
+    r.vec = rowSums(cbind(!is.na(y)))
+
+    Locat <- eta2theta(eta[, 1], .llocat , .elocat )
+    sigma <- eta2theta(eta[, 2], .lscale , .escale )
+    shape <- eta2theta(eta[, 3], .lshape , .eshape )
+
+
+
+    dmu.deta <- dtheta.deta(Locat, .llocat , .elocat )
+    dsi.deta <- dtheta.deta(sigma, .lscale , .escale )
+    dxi.deta <- dtheta.deta(shape, .lshape , .eshape )
+
+
+    is.zero = (abs(shape) < .tolshape0)
+    ii = 1:nrow(eta)
+    zedd = (y-Locat) / sigma
+        A = 1 + shape * zedd
         dA.dxi = zedd                # matrix
-        dA.dmu = -xi/sigma           # vector
-        dA.dsigma = -xi*zedd/sigma   # matrix
-        pow = 1 + 1/xi
+        dA.dmu = -shape/sigma           # vector
+        dA.dsigma = -shape*zedd/sigma   # matrix
+        pow = 1 + 1/shape
         A1 = A[cbind(ii, r.vec)]
 
-        AAr1 = dA.dmu/(xi * A1^pow) -
+        AAr1 = dA.dmu/(shape * A1^pow) -
                pow * rowSums(cbind(dA.dmu/A), na.rm = TRUE)
-        AAr2 = dA.dsigma[cbind(ii,r.vec)] / (xi * A1^pow) -
+        AAr2 = dA.dsigma[cbind(ii,r.vec)] / (shape * A1^pow) -
                pow * rowSums(cbind(dA.dsigma/A), na.rm = TRUE)
-        AAr3 = 1/(xi * A1^pow) -
+        AAr3 = 1/(shape * A1^pow) -
                pow * rowSums(cbind(dA.dsigma/A), na.rm = TRUE)
         dl.dmu = AAr1
         dl.dsi = AAr2 - r.vec/sigma
-        dl.dxi = rowSums(cbind(log(A)), na.rm = TRUE)/xi^2 -
+        dl.dxi = rowSums(cbind(log(A)), na.rm = TRUE)/shape^2 -
                  pow * rowSums(cbind(dA.dxi/A), na.rm = TRUE) -
-                 (log(A1) / xi^2 -
-                 dA.dxi[cbind(ii,r.vec)] / (xi*A1)) * A1^(-1/xi)
+                 (log(A1) / shape^2 -
+                 dA.dxi[cbind(ii,r.vec)] / (shape*A1)) * A1^(-1/shape)
 
         if (any(is.zero)) {
             zorro = c(zedd[cbind(1:n,r.vec)])
@@ -417,71 +524,79 @@ qgev <- function(p, location = 0, scale = 1, shape = 0) {
             dl.dmu[is.zero] = (1-ezedd) / sigma[is.zero]
             dl.dsi[is.zero] = (zorro * (1-ezedd) - 1) / sigma[is.zero]
             dl.dxi[is.zero] = zorro * ((1 - ezedd) * zorro / 2 - 1)
-        }
-        dmu.deta = dtheta.deta(mmu, .llocation, earg = .elocation)
-        dsi.deta = dtheta.deta(sigma, .lscale, earg = .escale)
-        dxi.deta = dtheta.deta(xi, .lshape, earg = .eshape)
-        c(w) * cbind(dl.dmu * dmu.deta,
-                     dl.dsi * dsi.deta,
-                     dl.dxi * dxi.deta)
-    }), list( .llocation = llocation, .lscale = lscale, .lshape = lshape,
-              .elocation = elocation, .escale = escale, .eshape = eshape,
-              .tolshape0 = tolshape0 ))),
-    weight = eval(substitute(expression({
-        kay = -xi
-        dd = digamma(r.vec-kay+1)
-        ddd = digamma(r.vec+1) # Unnecessarily evaluated at each iteration
-        temp13 = -kay * dd + (kay^2 - kay + 1) / (1-kay)
-        temp33 = 1 - 2 * kay * ddd +
-                 kay^2 * (1 + trigamma(r.vec+1) + ddd^2)
-        temp23 = -kay * dd + (1+(1-kay)^2) / (1-kay)
-        GR.gev = function(j, ri, kay) gamma(ri - j*kay + 1) /  gamma(ri)
-        tmp2 = (1-kay)^2 * GR.gev(2, r.vec, kay)  # Latter is GR2
-        tmp1 = (1-2*kay) * GR.gev(1, r.vec, kay)  # Latter is GR1
-        k0 = (1-2*kay)
-        k1 = k0 * kay
-        k2 = k1 * kay
-        k3 = k2 * kay   # kay^3 * (1-2*kay)
-        wz = matrix(as.numeric(NA), n, 6)
-        wz[, iam(1, 1, M)] = tmp2 / (sigma^2 * k0)
-        wz[, iam(1, 2, M)] = (tmp2 - tmp1) / (sigma^2 * k1)
-        wz[, iam(1, 3, M)] = (tmp1 * temp13 - tmp2) / (sigma * k2)
-        wz[, iam(2, 2, M)] = (r.vec*k0 - 2*tmp1 + tmp2) / (sigma^2 * k2)
-        wz[, iam(2, 3, M)] = (r.vec*k1*ddd + tmp1 *
-                           temp23 - tmp2 - r.vec*k0) / (sigma * k3)
-        wz[, iam(3, 3, M)] = (2*tmp1*(-temp13) + tmp2 +
-                             r.vec*k0*temp33)/(k3*kay)
+      }
 
-        if (any(is.zero)) {
-            if (ncol(y) > 1)
-                stop("cannot handle xi == 0 with a multivariate response")
+      c(w) * cbind(dl.dmu * dmu.deta,
+                   dl.dsi * dsi.deta,
+                   dl.dxi * dxi.deta)
+  }), list(
+            .llocat = llocat, .lscale = lscale, .lshape = lshape,
+            .elocat = elocat, .escale = escale, .eshape = eshape,
 
-            EulerM = -digamma(1)
-            wz[is.zero, iam(2, 2, M)] = (pi^2/6 + (1-EulerM)^2) / sigma^2
-            wz[is.zero, iam(3, 3, M)] = 2.4236
-            wz[is.zero, iam(1, 2, M)] = (digamma(2) +
-                                         2*(EulerM-1)) / sigma^2
-            wz[is.zero, iam(1, 3, M)]= -(trigamma(1)/2 + digamma(1)*
-                                    (digamma(1)/2+1))/sigma
-            wz[is.zero, iam(2, 3, M)] = (-dgammadx(2,3)/6 + dgammadx(1, 1) +
-                                    2*dgammadx(1, 2) +
-                                    2*dgammadx(1,3)/3) / sigma
+            .tolshape0 = tolshape0 ))),
 
-            if (FALSE ) {
+  weight = eval(substitute(expression({
+    kay = -shape
+    dd = digamma(r.vec-kay+1)
+    ddd = digamma(r.vec+1) # Unnecessarily evaluated at each iteration
+    temp13 = -kay * dd + (kay^2 - kay + 1) / (1-kay)
+    temp33 = 1 - 2 * kay * ddd +
+             kay^2 * (1 + trigamma(r.vec+1) + ddd^2)
+    temp23 = -kay * dd + (1+(1-kay)^2) / (1-kay)
+    GR.gev = function(j, ri, kay) gamma(ri - j*kay + 1) /  gamma(ri)
+    tmp2 = (1-kay)^2 * GR.gev(2, r.vec, kay) # Latter is GR2
+    tmp1 = (1-2*kay) * GR.gev(1, r.vec, kay) # Latter is GR1
+    k0 = (1-2*kay)
+    k1 = k0 * kay
+    k2 = k1 * kay
+    k3 = k2 * kay # kay^3 * (1-2*kay)
+
+      wz = matrix(as.numeric(NA), n, 6)
+      wz[, iam(1, 1, M)] = tmp2 / (sigma^2 * k0)
+      wz[, iam(1, 2, M)] = (tmp2 - tmp1) / (sigma^2 * k1)
+      wz[, iam(1, 3, M)] = (tmp1 * temp13 - tmp2) / (sigma * k2)
+      wz[, iam(2, 2, M)] = (r.vec*k0 - 2*tmp1 + tmp2) / (sigma^2 * k2)
+      wz[, iam(2, 3, M)] = (r.vec*k1*ddd + tmp1 *
+                         temp23 - tmp2 - r.vec*k0) / (sigma * k3)
+      wz[, iam(3, 3, M)] = (2*tmp1*(-temp13) + tmp2 +
+                           r.vec*k0*temp33)/(k3*kay)
+
+    if (any(is.zero)) {
+      if (ncol(y) > 1)
+        stop("cannot handle shape == 0 with a multivariate response")
+
+      EulerM <- -digamma(1)
+      wz[is.zero, iam(2, 2, M)] = (pi^2/6 + (1-EulerM)^2) / sigma^2
+      wz[is.zero, iam(3, 3, M)] = 2.4236
+      wz[is.zero, iam(1, 2, M)] = (digamma(2) +
+                                   2*(EulerM-1)) / sigma^2
+      wz[is.zero, iam(1, 3, M)]= -(trigamma(1)/2 + digamma(1)*
+                              (digamma(1)/2+1))/sigma
+      wz[is.zero, iam(2, 3, M)] = (-dgammadx(2, 3)/6 + dgammadx(1, 1) +
+                              2*dgammadx(1, 2) +
+                              2*dgammadx(1, 3)/3) / sigma
+
+      if (FALSE ) {
             wz[, iam(1, 2, M)] = 2 * r.vec / sigma^2
             wz[, iam(2, 2, M)] = -4 * r.vec * digamma(r.vec+1) + 2 * r.vec +
       (4 * dgammadx(r.vec+1, deriv.arg = 1) - 
        3 * dgammadx(r.vec+1, deriv.arg = 2)) / gamma(r.vec) # Not checked
             }
         }
-        wz[, iam(1, 1, M)] = wz[, iam(1, 1, M)] * dmu.deta^2
-        wz[, iam(2, 2, M)] = wz[, iam(2, 2, M)] * dsi.deta^2
-        wz[, iam(3, 3, M)] = wz[, iam(3,3, M)] * dxi.deta^2
-        wz[, iam(1, 2, M)] = wz[, iam(1, 2, M)] * dmu.deta * dsi.deta
-        wz[, iam(1, 3, M)] = wz[, iam(1,3, M)] * dmu.deta * (-dxi.deta)
-        wz[, iam(2, 3, M)] = wz[, iam(2,3, M)] * dsi.deta * (-dxi.deta)
-        c(w) * wz
-    }), list( .eshape = eshape ))))
+
+    wz[, iam(1, 1, M)] = wz[, iam(1, 1, M)] * dmu.deta^2
+    wz[, iam(2, 2, M)] = wz[, iam(2, 2, M)] * dsi.deta^2
+    wz[, iam(3, 3, M)] = wz[, iam(3, 3, M)] * dxi.deta^2
+    wz[, iam(1, 2, M)] = wz[, iam(1, 2, M)] * dmu.deta * dsi.deta
+    wz[, iam(1, 3, M)] = wz[, iam(1, 3, M)] * dmu.deta * (-dxi.deta)
+    wz[, iam(2, 3, M)] = wz[, iam(2, 3, M)] * dsi.deta * (-dxi.deta)
+    c(w) * wz
+  }), list(
+            .llocat = llocat, .lscale = lscale, .lshape = lshape,
+            .elocat = elocat, .escale = escale, .eshape = eshape
+
+          ))))
+
 }
 
 
@@ -514,11 +629,7 @@ dgammadx <- function(x, deriv.arg = 1) {
 
  egev <- function(llocation = "identity",
                   lscale = "loge",
-                  lshape = "logoff",
-                  elocation = list(),
-                  escale = list(),
-                  eshape = if (lshape == "logoff") list(offset = 0.5) else 
-                  if (lshape == "elogit") list(min = -0.5, max = 0.5) else list(),
+                  lshape = logoff(offset = 0.5),
                   percentiles = c(95, 99),
                   iscale = NULL, ishape = NULL,
                   imethod = 1, gshape = c(-0.45, 0.45),
@@ -529,12 +640,23 @@ dgammadx <- function(x, deriv.arg = 1) {
     stop("bad input for argument 'giveWarning'")
   if (length(iscale) && !is.Numeric(iscale, positive = TRUE))
     stop("bad input for argument 'iscale'")
-  if (mode(lscale) != "character" && mode(lscale) != "name")
-      lscale <- as.character(substitute(lscale))
-  if (mode(llocation) != "character" && mode(llocation) != "name")
-      llocation <- as.character(substitute(llocation))
-  if (mode(lshape) != "character" && mode(lshape) != "name")
-      lshape <- as.character(substitute(lshape))
+
+
+  llocat <- as.list(substitute(llocation))
+  elocat <- link2list(llocat)
+  llocat <- attr(elocat, "function.name")
+
+  lscale <- as.list(substitute(lscale))
+  escale <- link2list(lscale)
+  lscale <- attr(escale, "function.name")
+
+  lshape <- as.list(substitute(lshape))
+  eshape <- link2list(lshape)
+  lshape <- attr(eshape, "function.name")
+
+
+
+
   if (!is.Numeric(gshape, allowable.length = 2) ||
       gshape[1] >= gshape[2])
       stop("bad input for argument 'gshape'")
@@ -555,30 +677,37 @@ dgammadx <- function(x, deriv.arg = 1) {
         !is.Numeric(zero, integer.valued = TRUE, positive = TRUE))
       stop("bad input for argument 'zero'")
 
-    if (!is.list(elocation)) elocation = list()
-    if (!is.list(escale)) escale = list()
-    if (!is.list(eshape)) eshape = list()
 
   new("vglmff",
   blurb = c("Generalized extreme value distribution\n",
           "Links:    ",
-          namesof("location", link = llocation, earg = elocation), ", ", 
-          namesof("scale", link = lscale, earg = escale), ", ",
-          namesof("shape", link = lshape, earg = eshape)),
+          namesof("location", link = llocat, earg = elocat), ", ", 
+          namesof("scale",    link = lscale, earg = escale), ", ",
+          namesof("shape",    link = lshape, earg = eshape)),
   constraints=eval(substitute(expression({
       constraints <- cm.zero.vgam(constraints, x, .zero, M)
   }), list( .zero = zero ))),
   initialize = eval(substitute(expression({
-      predictors.names =
-       c(namesof("location", .llocation , earg = .elocation , short = TRUE),
-         namesof("scale", .lscale, earg = .escale,  short = TRUE),
-         namesof("shape",  .lshape, earg = .eshape, short = TRUE))
+      predictors.names <-
+       c(namesof("location", .llocat , earg = .elocat , short = TRUE),
+         namesof("scale",    .lscale , earg = .escale , short = TRUE),
+         namesof("shape",    .lshape , earg = .eshape , short = TRUE))
+
+
+
+
+
       if (ncol(as.matrix(y)) != 1)
-          stop("response must be a vector or one-column matrix")
+        stop("response must be a vector or one-column matrix")
+
+
+
+
+
       if (!length(etastart)) {
-          init.sig = if (length( .iscale))
+          init.sig = if (length( .iscale ))
                      rep( .iscale, length.out = length(y)) else NULL
-          init.xi  = if (length( .ishape))
+          init.xi  = if (length( .ishape ))
                      rep( .ishape, length.out = length(y)) else NULL
           eshape = .eshape
           if ( .lshape == "elogit" && length(init.xi) && 
@@ -605,9 +734,9 @@ dgammadx <- function(x, deriv.arg = 1) {
                     llTry = egev(giveWarning=
                 FALSE)@loglikelihood(mu = NULL, y = y, w = w,
                 residuals = FALSE,
-                eta = cbind(theta2eta(muTry, .llocation, earg = .elocation),
-                            theta2eta(sigmaTry, .lscale, earg = .escale), 
-                            theta2eta(xi.try,  .lshape,  earg = .eshape)))
+                eta = cbind(theta2eta(muTry,    .llocat , earg = .elocat ),
+                            theta2eta(sigmaTry, .lscale , earg = .escale ), 
+                            theta2eta(xi.try,   .lshape , earg = .eshape )))
                     if (llTry >= objecFunction) {
                         if (est.sigma)
                             init.sig = sigmaTry
@@ -625,7 +754,7 @@ dgammadx <- function(x, deriv.arg = 1) {
                 if (!length(init.sig))
                     init.sig = rep(sqrt(6*var(y))/pi,
                                    length.out = length(y))
-                EulerM = -digamma(1)
+                EulerM <- -digamma(1)
                 init.mu = rep(median(y) - EulerM * init.sig,
                               length.out = length(y))
             }
@@ -638,21 +767,21 @@ dgammadx <- function(x, deriv.arg = 1) {
 
             extra$percentiles = .percentiles
 
-            etastart =
-              cbind(theta2eta(init.mu,  .llocation, earg = .elocation),
-                    theta2eta(init.sig, .lscale,    earg = .escale), 
-                    theta2eta(init.xi,  .lshape,    earg = .eshape))
+            etastart <-
+              cbind(theta2eta(init.mu,  .llocat ,    earg = .elocat ),
+                    theta2eta(init.sig, .lscale ,    earg = .escale ), 
+                    theta2eta(init.xi,  .lshape ,    earg = .eshape ))
         }
-    }), list( .llocation = llocation, .lscale = lscale, .lshape = lshape,
+    }), list( .llocat = llocat, .lscale = lscale, .lshape = lshape,
+              .elocat = elocat, .escale = escale, .eshape = eshape,
               .percentiles = percentiles, .tolshape0 = tolshape0,
-              .elocation = elocation, .escale = escale, .eshape = eshape,
               .imethod = imethod,
               .giveWarning= giveWarning,
               .iscale = iscale, .ishape = ishape, .gshape = gshape ))),
     linkinv = eval(substitute(function(eta, extra = NULL) {
-        loc <- eta2theta(eta[, 1], .llocation, earg = .elocation)
-        sigma <- eta2theta(eta[, 2], .lscale, earg = .escale)
-        xi <- eta2theta(eta[,3], .lshape, earg = .eshape)
+        loc   <- eta2theta(eta[, 1], .llocat , earg = .elocat )
+        sigma <- eta2theta(eta[, 2], .lscale , earg = .escale )
+        xi    <- eta2theta(eta[, 3], .lshape , earg = .eshape )
         is.zero <- (abs(xi) < .tolshape0)
         cent = extra$percentiles
         LP <- length(cent)
@@ -667,37 +796,37 @@ dgammadx <- function(x, deriv.arg = 1) {
             dimnames(fv) = list(dimnames(eta)[[1]],
                                 paste(as.character(cent), "%", sep = ""))
         } else {
-            EulerM = -digamma(1)
+            EulerM <- -digamma(1)
             fv = loc + sigma * EulerM  # When xi = 0, is Gumbel
             fv[!is.zero] = loc[!is.zero] + sigma[!is.zero] *
                           (gamma(1-xi[!is.zero])-1) / xi[!is.zero]
             fv[xi >= 1] = NA  # Mean exists only if xi < 1.
         }
         fv
-    }, list( .llocation = llocation, .lscale = lscale, .lshape = lshape,
-             .elocation = elocation, .escale = escale, .eshape = eshape,
+    }, list( .llocat = llocat, .lscale = lscale, .lshape = lshape,
+             .elocat = elocat, .escale = escale, .eshape = eshape,
              .tolshape0 = tolshape0 ))),
     last = eval(substitute(expression({
-        misc$links <- c(location = .llocation,
-                        scale = .lscale,
+        misc$links <- c(location = .llocat,
+                        scale = .lscale ,
                         shape = .lshape)
         misc$true.mu = !length( .percentiles) # @fitted is not a true mu
         misc$percentiles <- .percentiles
-        misc$earg = list(location = .elocation,
+        misc$earg = list(location = .elocat,
                          scale = .escale,
                          shape = .eshape)
         misc$tolshape0 = .tolshape0
         misc$expected = TRUE 
         if (any(xi < -0.5))
           warning("some values of the shape parameter are less than -0.5")
-      }), list( .llocation = llocation, .lscale = lscale, .lshape = lshape,
-                .elocation = elocation, .escale = escale, .eshape = eshape,
+      }), list( .llocat = llocat, .lscale = lscale, .lshape = lshape,
+                .elocat = elocat, .escale = escale, .eshape = eshape,
                 .tolshape0 = tolshape0,  .percentiles = percentiles ))),
     loglikelihood = eval(substitute(
     function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
-        mmu <- eta2theta(eta[, 1], .llocation, earg = .elocation )
-        sigma <- eta2theta(eta[, 2], .lscale, earg = .escale )
-        xi <- eta2theta(eta[,3], .lshape, earg = .eshape )
+        mmu   <- eta2theta(eta[, 1], .llocat , earg = .elocat )
+        sigma <- eta2theta(eta[, 2], .lscale , earg = .escale )
+        xi    <- eta2theta(eta[, 3], .lshape , earg = .eshape )
 
         if (residuals) stop("loglikelihood residuals not ",
                             "implemented yet") else {
@@ -706,16 +835,16 @@ dgammadx <- function(x, deriv.arg = 1) {
                          log = TRUE, oobounds.log = -1.0e04,
                          giveWarning= .giveWarning))
         }
-    }, list( .llocation = llocation, .lscale = lscale, .lshape = lshape,
-             .elocation = elocation, .escale = escale, .eshape = eshape,
+    }, list( .llocat = llocat, .lscale = lscale, .lshape = lshape,
+             .elocat = elocat, .escale = escale, .eshape = eshape,
              .giveWarning= giveWarning, .tolshape0 = tolshape0 ))),
     vfamily = c("egev", "vextremes"),
     deriv = eval(substitute(expression({
-        mmu = eta2theta(eta[, 1], .llocation, earg = .elocation)
-        sigma = eta2theta(eta[, 2], .lscale, earg = .escale )
-        xi = eta2theta(eta[,3], .lshape, earg = .eshape)
+        Locat = eta2theta(eta[, 1], .llocat , earg = .elocat )
+        sigma = eta2theta(eta[, 2], .lscale , earg = .escale )
+        xi = eta2theta(eta[, 3], .lshape , earg = .eshape)
         is.zero <- (abs(xi) < .tolshape0)
-        zedd = (y-mmu) / sigma
+        zedd = (y-Locat) / sigma
         A = 1 + xi * zedd
         dA.dxi = zedd
         dA.dmu = -xi / sigma
@@ -737,14 +866,14 @@ dgammadx <- function(x, deriv.arg = 1) {
           dl.dxi[is.zero] = zedd[is.zero] *
                             ((1 - ezedd) * zedd[is.zero] / 2 - 1)
         }
-        dmu.deta = dtheta.deta(mmu, .llocation, earg = .elocation)
-        dsi.deta = dtheta.deta(sigma, .lscale, earg = .escale )
-        dxi.deta = dtheta.deta(xi, .lshape, earg = .eshape)
+        dmu.deta = dtheta.deta(Locat, .llocat , earg = .elocat )
+        dsi.deta = dtheta.deta(sigma, .lscale , earg = .escale )
+        dxi.deta = dtheta.deta(xi, .lshape , earg = .eshape)
         c(w) * cbind(dl.dmu * dmu.deta,
                      dl.dsi * dsi.deta,
                      dl.dxi * dxi.deta)
-    }), list( .llocation = llocation, .lscale = lscale, .lshape = lshape,
-              .elocation = elocation, .escale = escale, .eshape = eshape,
+    }), list( .llocat = llocat, .lscale = lscale, .lshape = lshape,
+              .elocat = elocat, .escale = escale, .eshape = eshape,
               .tolshape0 = tolshape0 ))),
     weight = eval(substitute(expression({
         bad <- A <= 0
@@ -759,29 +888,29 @@ dgammadx <- function(x, deriv.arg = 1) {
         wz = matrix(as.numeric(NA), n, 6)
         wz[, iam(1, 1, M)] = pp / sigma^2
         wz[, iam(2, 2, M)] = (1-2*temp100 + pp) / (sigma * kay)^2
-        EulerM = -digamma(1)
-        wz[, iam(3,3, M)] = (pi^2 / 6 + (1-EulerM-1/kay)^2 +
+        EulerM <- -digamma(1)
+        wz[, iam(3, 3, M)] = (pi^2 / 6 + (1-EulerM-1/kay)^2 +
                            (2*qq + pp/kay)/kay) / kay^2 
         wz[, iam(1, 2, M)] = (pp - temp100) / (sigma^2 * kay)
-        wz[, iam(1,3, M)] = -(qq + pp/kay) / (sigma * kay)
-        wz[, iam(2,3, M)] = (1-EulerM - (1-temp100)/kay - qq -
+        wz[, iam(1, 3, M)] = -(qq + pp/kay) / (sigma * kay)
+        wz[, iam(2, 3, M)] = (1-EulerM - (1-temp100)/kay - qq -
                             pp/kay) / (sigma * kay^2)
         if (any(is.zero)) {
             wz[is.zero, iam(2, 2, M)] = (pi^2/6 + (1-EulerM)^2) / sigma^2
-            wz[is.zero, iam(3,3, M)] <- 2.4236
+            wz[is.zero, iam(3, 3, M)] <- 2.4236
             wz[is.zero, iam(1, 2, M)] <- (digamma(2) + 2*(EulerM-1)) / sigma^2
-            wz[is.zero, iam(1,3, M)] <- -(trigamma(1)/2 + digamma(1)*
+            wz[is.zero, iam(1, 3, M)] <- -(trigamma(1)/2 + digamma(1)*
                                        (digamma(1)/2+1))/sigma
-            wz[is.zero, iam(2,3, M)] <- (-dgammadx(2,3)/6 + dgammadx(1, 1) +
+            wz[is.zero, iam(2, 3, M)] <- (-dgammadx(2, 3)/6 + dgammadx(1, 1) +
                                     2*dgammadx(1, 2) +
-                                    2*dgammadx(1,3)/3)/sigma
+                                    2*dgammadx(1, 3)/3)/sigma
         }
         wz[, iam(1, 1, M)] <- wz[, iam(1, 1, M)] * dmu.deta^2
         wz[, iam(2, 2, M)] <- wz[, iam(2, 2, M)] * dsi.deta^2
-        wz[, iam(3,3, M)] <- wz[, iam(3,3, M)] * dxi.deta^2
+        wz[, iam(3, 3, M)] <- wz[, iam(3, 3, M)] * dxi.deta^2
         wz[, iam(1, 2, M)] <- wz[, iam(1, 2, M)] * dmu.deta * dsi.deta
-        wz[, iam(1,3, M)] <- wz[, iam(1,3, M)] * dmu.deta * (-dxi.deta)
-        wz[, iam(2,3, M)] <- wz[, iam(2,3, M)] * dsi.deta * (-dxi.deta)
+        wz[, iam(1, 3, M)] <- wz[, iam(1, 3, M)] * dmu.deta * (-dxi.deta)
+        wz[, iam(2, 3, M)] <- wz[, iam(2, 3, M)] * dsi.deta * (-dxi.deta)
         c(w) * wz
     }), list( .eshape = eshape, .tolshape0 = tolshape0 ))))
 }
@@ -791,91 +920,106 @@ dgammadx <- function(x, deriv.arg = 1) {
 
 
 rgumbel <- function(n, location = 0, scale = 1) {
-    use.n = if ((length.n <- length(n)) > 1) length.n else
-            if (!is.Numeric(n, integer.valued = TRUE,
-                            allowable.length = 1, positive = TRUE))
-                stop("bad input for argument 'n'") else n
+  use.n = if ((length.n <- length(n)) > 1) length.n else
+          if (!is.Numeric(n, integer.valued = TRUE,
+                          allowable.length = 1, positive = TRUE))
+              stop("bad input for argument 'n'") else n
 
-    answer = location - scale * log(-log(runif(use.n)))
-    answer[scale <= 0] = NaN
-    answer
+  answer <- location - scale * log(-log(runif(use.n)))
+  answer[scale <= 0] <- NaN
+  answer
 }
 
 
 dgumbel <- function(x, location = 0, scale = 1, log = FALSE) {
-    if (!is.logical(log.arg <- log))
-        stop("bad input for argument 'log'")
-    rm(log)
+  if (!is.logical(log.arg <- log) || length(log) != 1)
+    stop("bad input for argument 'log'")
+  rm(log)
 
-    zedd = (x - location) / scale
-    logdensity = -zedd - exp(-zedd) - log(scale)
-    if (log.arg) logdensity else exp(logdensity)
+  zedd = (x - location) / scale
+  logdensity = -zedd - exp(-zedd) - log(scale)
+  if (log.arg) logdensity else exp(logdensity)
 }
 
 
 qgumbel <- function(p, location = 0, scale = 1) {
-    answer = location - scale * log(-log(p))
-    answer[scale <= 0] = NaN
-    answer[p < 0] = NaN
-    answer[p > 1] = NaN
-    answer[p == 0] = -Inf
-    answer[p == 1] =  Inf
-    answer
+  answer <- location - scale * log(-log(p))
+  answer[scale <= 0] <- NaN
+  answer[p <  0] <- NaN
+  answer[p >  1] <- NaN
+  answer[p == 0] <- -Inf
+  answer[p == 1] <-  Inf
+  answer
 }
 
 
 pgumbel <- function(q, location = 0, scale = 1) {
-    answer = exp(-exp(-(q-location) / scale))
-    answer[scale <= 0] = NaN
-    answer
+  answer <- exp(-exp(-(q - location) / scale))
+  answer[scale <= 0] <- NaN
+  answer
 }
 
 
  gumbel <- function(llocation = "identity",
-                   lscale = "loge",
-                   elocation = list(),
-                   escale = list(),
-                   iscale = NULL,
-                   R=NA, percentiles = c(95,99),
-                   mpv = FALSE, zero = NULL)
+                    lscale = "loge",
+                    iscale = NULL,
+                    R = NA, percentiles = c(95, 99),
+                    mpv = FALSE, zero = NULL)
 {
-  if (mode(llocation) != "character" && mode(llocation) != "name")
-    llocation = as.character(substitute(llocation))
-  if (mode(lscale) != "character" && mode(lscale) != "name")
-    lscale = as.character(substitute(lscale))
+
+  llocat <- as.list(substitute(llocation))
+  elocat <- link2list(llocat)
+  llocat <- attr(elocat, "function.name")
+
+  lscale <- as.list(substitute(lscale))
+  escale <- link2list(lscale)
+  lscale <- attr(escale, "function.name")
+
+
   if (!is.logical(mpv) || length(mpv) != 1)
     stop("bad input for argument 'mpv'")
+
   if (length(percentiles) &&
      (!is.Numeric(percentiles, positive = TRUE) ||
       max(percentiles) >= 100))
     stop("bad input for argument 'percentiles'")
+
   if (length(zero) &&
       !is.Numeric(zero, integer.valued = TRUE, positive = TRUE))
     stop("bad input for argument 'zero'")
+
   if (length(iscale) && !is.Numeric(iscale, positive = TRUE))
     stop("bad input for argument 'iscale'")
 
-  if (!is.list(elocation)) elocation = list()
-  if (!is.list(escale)) escale = list()
+
 
   new("vglmff",
   blurb = c("Gumbel distribution for extreme value regression\n",
       "Links:    ",
-      namesof("location", link = llocation, earg = elocation), ", ",
-      namesof("scale", link = lscale, earg = escale )),
+      namesof("location", llocat, earg = elocat), ", ",
+      namesof("scale",    lscale, earg = escale )),
   constraints=eval(substitute(expression({
-      constraints = cm.zero.vgam(constraints, x, .zero, M)
+    constraints = cm.zero.vgam(constraints, x, .zero, M)
   }), list( .zero = zero ))),
   initialize = eval(substitute(expression({
-    predictors.names = 
-    c(namesof("location", .llocation, earg = .elocation, short = TRUE),
-      namesof("scale", .lscale, earg = .escale , short = TRUE))
+
+    predictors.names <-
+    c(namesof("location", .llocat , earg = .elocat , short = TRUE),
+      namesof("scale",    .lscale , earg = .escale , short = TRUE))
+
+
     y = as.matrix(y)
     if (ncol(y) > 1)
       y = -t(apply(-y, 1, sort, na.last = TRUE))
+
+
+
     r.vec = rowSums(cbind(!is.na(y)))
     if (any(r.vec == 0))
       stop("There is at least one row of the response containing all NAs")
+
+
+
     if (ncol(y) > 1) {
       yiri = y[cbind(1:nrow(y), r.vec)]
       sc.init = if (is.Numeric( .iscale, positive = TRUE))
@@ -887,7 +1031,7 @@ pgumbel <- function(q, location = 0, scale = 1) {
       sc.init =  if (is.Numeric( .iscale, positive = TRUE))
                      .iscale else 1.1 * (0.01+sqrt(var(y)*6)) / pi
       sc.init = rep(sc.init, length.out = n)
-      EulerM = -digamma(1)
+      EulerM <- -digamma(1)
       loc.init = (y - sc.init * EulerM)
       loc.init[loc.init <= 0] = min(y)
     }
@@ -897,96 +1041,106 @@ pgumbel <- function(q, location = 0, scale = 1) {
     extra$percentiles = .percentiles
 
     if (!length(etastart)) 
-      etastart =
-        cbind(theta2eta(loc.init, .llocation, earg = .elocation),
-              theta2eta(sc.init, .lscale, earg = .escale ))
-}), list( .llocation = llocation, .lscale = lscale, .iscale = iscale,
-          .elocation = elocation, .escale = escale,
-          .R = R, .mpv = mpv, .percentiles = percentiles ))),
+      etastart <-
+        cbind(theta2eta(loc.init, .llocat , earg = .elocat ),
+              theta2eta( sc.init, .lscale , earg = .escale ))
+  }), list( .llocat = llocat, .lscale = lscale, .iscale = iscale,
+            .elocat = elocat, .escale = escale,
+            .R = R, .mpv = mpv, .percentiles = percentiles ))),
 
   linkinv = eval(substitute(function(eta, extra = NULL) {
-      loc = eta2theta(eta[, 1], .llocation, earg = .elocation)
-      sigma = eta2theta(eta[, 2], .lscale, earg = .escale )  # sigma
-      Percentiles = extra$percentiles
-      LP = length(Percentiles)  # may be 0
-      if (LP > 0) {
-          mpv = extra$mpv
-          mu = matrix(as.numeric(NA), nrow(eta), LP + mpv) # LP may be 0
-          Rvec = extra$R
-          for(ii in 1:LP) {
-              ci = if (is.Numeric(Rvec))
-                     Rvec * (1 - Percentiles[ii] / 100) else
-                     -log(Percentiles[ii] / 100)
-              mu[,ii] = loc - sigma * log(ci)
-          }
-          if (mpv) 
-              mu[,ncol(mu)] = loc - sigma * log(log(2))
-        dmn2 = paste(as.character(Percentiles), "%", sep = "")
+    loc   = eta2theta(eta[, 1], .llocat , earg = .elocat )
+    sigma = eta2theta(eta[, 2], .lscale , earg = .escale )  # sigma
+
+    Percentiles = extra$percentiles
+    LP = length(Percentiles)  # may be 0
+    if (LP > 0) {
+        mpv = extra$mpv
+        mu = matrix(as.numeric(NA), nrow(eta), LP + mpv) # LP may be 0
+        Rvec = extra$R
+        for(ii in 1:LP) {
+            ci = if (is.Numeric(Rvec))
+                   Rvec * (1 - Percentiles[ii] / 100) else
+                   -log(Percentiles[ii] / 100)
+            mu[,ii] = loc - sigma * log(ci)
+        }
         if (mpv) 
-            dmn2 = c(dmn2, "MPV")
-        dimnames(mu) = list(dimnames(eta)[[1]], dmn2)
-    } else {
-        EulerM = -digamma(1)
-        mu = loc + sigma * EulerM
-    }
-    mu
-  }, list( .llocation = llocation, .lscale = lscale,
-           .elocation = elocation, .escale = escale ))),
+            mu[,ncol(mu)] = loc - sigma * log(log(2))
+      dmn2 = paste(as.character(Percentiles), "%", sep = "")
+      if (mpv) 
+          dmn2 = c(dmn2, "MPV")
+      dimnames(mu) = list(dimnames(eta)[[1]], dmn2)
+  } else {
+    EulerM <- -digamma(1)
+    mu = loc + sigma * EulerM
+  }
+  mu
+  }, list( .llocat = llocat, .lscale = lscale,
+           .elocat = elocat, .escale = escale ))),
+
   last = eval(substitute(expression({
+    misc$links = c(location = .llocat, scale = .lscale)
+
+    misc$earg = list(location= .elocat, scale= .escale )
+
     misc$R = .R
-    misc$links = c(location = .llocation, scale = .lscale)
-    misc$earg = list(location= .elocation, scale= .escale )
     misc$mpv = .mpv
     misc$true.mu = !length( .percentiles) # @fitted is not a true mu
     misc$percentiles = .percentiles
-  }), list( .llocation = llocation, .lscale = lscale,
-            .elocation = elocation, .escale = escale,
+  }), list( .llocat = llocat, .lscale = lscale,
+            .elocat = elocat, .escale = escale,
              .percentiles = percentiles,
             .mpv = mpv, .R = R ))),
   vfamily = c("gumbel", "vextremes"),
   loglikelihood = eval(substitute(
   function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
-    loc = eta2theta(eta[, 1], .llocation, earg = .elocation)
-    sigma = eta2theta(eta[, 2], .lscale, earg = .escale )
-    r.vec = rowSums(cbind(!is.na(y)))
-    yiri = y[cbind(1:nrow(y),r.vec)]
-    ans = -r.vec * log(sigma) - exp( -(yiri-loc)/sigma )
-    max.r.vec = max(r.vec)
+    loc   <- eta2theta(eta[, 1], .llocat, earg = .elocat)
+    sigma <- eta2theta(eta[, 2], .lscale , earg = .escale )
+
+    r.vec <- rowSums(cbind(!is.na(y)))
+    yiri <- y[cbind(1:nrow(y),r.vec)]
+    ans <- -r.vec * log(sigma) - exp( -(yiri-loc)/sigma )
+    max.r.vec <- max(r.vec)
     for(jay in 1:max.r.vec) {
-        index = (jay <= r.vec)
-        ans[index] = ans[index] - (y[index,jay]-loc[index]) / sigma[index]
+      index <- (jay <= r.vec)
+      ans[index] <- ans[index] - (y[index,jay]-loc[index]) / sigma[index]
     }
     if (residuals) stop("loglikelihood residuals not ",
                         "implemented yet") else {
 
 
-        sum(w * ans)
+        sum(c(w) * ans)
       }
-  }, list( .llocation = llocation, .lscale = lscale,
-           .elocation = elocation, .escale = escale ))),
+  }, list( .llocat = llocat, .lscale = lscale,
+           .elocat = elocat, .escale = escale ))),
   deriv = eval(substitute(expression({
-    loc = eta2theta(eta[, 1], .llocation, earg = .elocation)
-    sigma = eta2theta(eta[, 2], .lscale, earg = .escale )
+    loc   = eta2theta(eta[, 1], .llocat, earg = .elocat)
+    sigma = eta2theta(eta[, 2], .lscale , earg = .escale )
+
     r.vec = rowSums(cbind(!is.na(y)))
     yiri = y[cbind(1:nrow(y),r.vec)]
     yi.bar = rowMeans(y, na.rm = TRUE)
     temp2 = (yiri - loc) / sigma
     term2 = exp(-temp2)
-    dloc.deta = dtheta.deta(loc, .llocation, earg = .elocation)
-    dsigma.deta = dtheta.deta(sigma, .lscale, earg = .escale )
+
+    dloc.deta = dtheta.deta(loc, .llocat, earg = .elocat)
+    dsigma.deta = dtheta.deta(sigma, .lscale , earg = .escale )
+
     dl.dloc = (r.vec - term2) / sigma
     dl.dsigma = (rowSums((y - loc) / sigma, na.rm = TRUE) - r.vec -
          temp2 * term2) / sigma
-    c(w) * cbind(dl.dloc * dloc.deta,
+
+    c(w) * cbind(dl.dloc   * dloc.deta,
                  dl.dsigma * dsigma.deta)
-  }), list( .llocation = llocation, .lscale = lscale,
-            .elocation = elocation, .escale = escale ))),
+  }), list( .llocat = llocat, .lscale = lscale,
+            .elocat = elocat, .escale = escale ))),
   weight = eval(substitute(expression({
-    temp6 = digamma(r.vec)  # , integer=T
+    temp6 = digamma(r.vec)  # , integer = T
     temp5 = digamma(1:max(r.vec))  # , integer=T
     temp5 = matrix(temp5, n, max(r.vec), byrow = TRUE)
     temp5[col(temp5) > r.vec] = 0
     temp5 = temp5 %*% rep(1, ncol(temp5))
+
     wz = matrix(as.numeric(NA), n, dimm(M = 2))  # 3=dimm(M = 2)
     wz[, iam(1, 1, M)] = r.vec / sigma^2
     wz[, iam(2, 1, M)] = -(1 + r.vec * temp6) / sigma^2
@@ -995,6 +1149,7 @@ pgumbel <- function(q, location = 0, scale = 1) {
     wz[, iam(1, 1, M)] = wz[, iam(1, 1, M)] * dloc.deta^2
     wz[, iam(2, 1, M)] = wz[, iam(2, 1, M)] * dsigma.deta * dloc.deta
     wz[, iam(2, 2, M)] = wz[, iam(2, 2, M)] * dsigma.deta^2
+
     c(w) * wz
   }), list( .lscale = lscale ))))
 }
@@ -1002,29 +1157,34 @@ pgumbel <- function(q, location = 0, scale = 1) {
 
 
 rgpd <- function(n, location = 0, scale = 1, shape = 0) {
-  use.n = if ((length.n <- length(n)) > 1) length.n else
-          if (!is.Numeric(n, integer.valued = TRUE,
-                          allowable.length = 1, positive = TRUE))
-            stop("bad input for argument 'n'") else n
+  use.n <- if ((length.n <- length(n)) > 1) length.n else
+           if (!is.Numeric(n, integer.valued = TRUE,
+                           allowable.length = 1, positive = TRUE))
+             stop("bad input for argument 'n'") else n
 
   if (!is.Numeric(location))
     stop("bad input for argument 'location'")
   if (!is.Numeric(shape))
     stop("bad input for argument 'shape'")
-  ans = numeric(use.n)
-  shape = rep(shape, length.out = use.n);
-  location = rep(location, length.out = use.n); 
-  scale = rep(scale, length.out = use.n)
 
-  scase = abs(shape) < sqrt(.Machine$double.eps)
-  nscase = sum(scase)
+  ans <- numeric(use.n)
+  if (length(shape)    != use.n)
+    shape    <- rep(shape,        length.out = use.n)
+  if (length(location) != use.n)
+    location <- rep(location,     length.out = use.n); 
+  if (length(scale)    != use.n)
+    scale    <- rep(scale,        length.out = use.n)
+
+
+  scase <- abs(shape) < sqrt(.Machine$double.eps)
+  nscase <- sum(scase)
   if (use.n - nscase)
-    ans[!scase] = location[!scase] +
-                  scale[!scase] *
+    ans[!scase] <- location[!scase] +
+                   scale[!scase] *
        ((runif(use.n - nscase))^(-shape[!scase])-1) / shape[!scase]
   if (nscase)
-    ans[scase] = location[scase] - scale[scase] * log(runif(nscase))
-  ans[scale <= 0] = NaN
+    ans[scase] <- location[scase] - scale[scase] * log(runif(nscase))
+  ans[scale <= 0] <- NaN
   ans
 }
 
@@ -1033,53 +1193,65 @@ rgpd <- function(n, location = 0, scale = 1, shape = 0) {
 dgpd <- function(x, location = 0, scale = 1, shape = 0, log = FALSE,
                 tolshape0 = sqrt(.Machine$double.eps),
                 oobounds.log = -Inf, giveWarning = FALSE) {
-    if (!is.logical(log.arg <- log))
-        stop("bad input for argument 'log'")
-    rm(log)
-    if (oobounds.log > 0)
-        stop("bad input for argument 'oobounds.log'")
+  if (!is.logical(log.arg <- log) || length(log) != 1)
+    stop("bad input for argument 'log'")
+  rm(log)
 
-    if (!is.Numeric(tolshape0, allowable.length = 1, positive = TRUE))
-        stop("bad input for argument 'tolshape0'")
-    L = max(length(x), length(location), length(scale), length(shape))
-    shape = rep(shape, length.out = L);
-    location = rep(location, length.out = L); 
-    scale = rep(scale, length.out = L);
-    x = rep(x, length.out = L)
+  if (oobounds.log > 0)
+    stop("bad input for argument 'oobounds.log'")
 
-    logdensity = rep(log(0), length.out = L)
-    scase = abs(shape) < tolshape0
-    nscase = sum(scase)
-    if (L - nscase) {
-        zedd = (x-location) / scale
-        xok = (!scase) & (zedd > 0) & (1 + shape*zedd > 0)
-        logdensity[xok] = -(1 + 1/shape[xok])*log1p(shape[xok]*zedd[xok]) -
-                          log(scale[xok])
-        outofbounds = (!scase) & ((zedd <= 0) | (1 + shape*zedd <= 0))
-        if (any(outofbounds)) {
-            logdensity[outofbounds] = oobounds.log
-            no.oob = sum(outofbounds)
-            if (giveWarning)
-              warning(no.oob, " observation",
-                      ifelse(no.oob > 1, "s are", " is"), " out of bounds")
-        }
+  if (!is.Numeric(tolshape0, allowable.length = 1, positive = TRUE))
+    stop("bad input for argument 'tolshape0'")
+
+
+  L = max(length(x), length(location), length(scale), length(shape))
+  if (length(shape)    != L)
+    shape    <- rep(shape,        length.out = L)
+  if (length(location) != L)
+    location <- rep(location,     length.out = L); 
+  if (length(scale)    != L)
+    scale    <- rep(scale,        length.out = L)
+  if (length(x)        != L)
+    x        <- rep(x,            length.out = L)
+
+
+
+
+
+
+  logdensity = rep(log(0), length.out = L)
+  scase = abs(shape) < tolshape0
+  nscase = sum(scase)
+  if (L - nscase) {
+    zedd = (x-location) / scale
+    xok = (!scase) & (zedd > 0) & (1 + shape*zedd > 0)
+    logdensity[xok] = -(1 + 1/shape[xok])*log1p(shape[xok]*zedd[xok]) -
+                      log(scale[xok])
+    outofbounds = (!scase) & ((zedd <= 0) | (1 + shape*zedd <= 0))
+    if (any(outofbounds)) {
+      logdensity[outofbounds] = oobounds.log
+      no.oob = sum(outofbounds)
+      if (giveWarning)
+        warning(no.oob, " observation",
+                ifelse(no.oob > 1, "s are", " is"), " out of bounds")
     }
-    if (nscase) {
-        xok = scase & (x > location)
-        logdensity[xok] = -(x[xok] - location[xok]) / scale[xok] -
-                          log(scale[xok])
-        outofbounds = scase & (x <= location)
-        if (any(outofbounds)) {
-            logdensity[outofbounds] = oobounds.log
-            no.oob = sum(outofbounds)
-            if (giveWarning)
-              warning(no.oob, " observation",
-                      ifelse(no.oob > 1, "s are", " is"), " out of bounds")
-        }
+  }
+  if (nscase) {
+    xok = scase & (x > location)
+    logdensity[xok] = -(x[xok] - location[xok]) / scale[xok] -
+                      log(scale[xok])
+    outofbounds = scase & (x <= location)
+    if (any(outofbounds)) {
+        logdensity[outofbounds] = oobounds.log
+        no.oob = sum(outofbounds)
+        if (giveWarning)
+          warning(no.oob, " observation",
+                  ifelse(no.oob > 1, "s are", " is"), " out of bounds")
     }
+  }
 
-    logdensity[scale <= 0] = NaN
-    if (log.arg) logdensity else exp(logdensity)
+  logdensity[scale <= 0] = NaN
+  if (log.arg) logdensity else exp(logdensity)
 }
 
 
@@ -1093,17 +1265,24 @@ pgpd <- function(q, location = 0, scale = 1, shape = 0) {
       stop("bad input for argument 'shape'")
 
     use.n = max(length(q), length(location), length(scale), length(shape))
-    ans = numeric(use.n)
-    shape    = rep(shape,      length.out = use.n);
-    location = rep(location,   length.out = use.n); 
-    scale    = rep(scale,      length.out = use.n);
-    q        = rep(q-location, length.out = use.n)
+
+  ans <- numeric(use.n)
+  if (length(shape)    != use.n)
+    shape    <- rep(shape,        length.out = use.n)
+  if (length(location) != use.n)
+    location <- rep(location,     length.out = use.n); 
+  if (length(scale)    != use.n)
+    scale    <- rep(scale,        length.out = use.n)
+  if (length(q)        != use.n)
+    q        <- rep(q - location, length.out = use.n)
+
+
 
     scase = abs(shape) < sqrt(.Machine$double.eps)
     nscase = sum(scase)
     if (use.n - nscase) {
         q[q < 0] = 0
-        ans = 1 - pmax(0, (1 + shape*q/scale))^(-1/shape)
+        ans <- 1 - pmax(0, (1 + shape*q/scale))^(-1/shape)
     }
     if (nscase) {
         pos = q >= 0
@@ -1116,14 +1295,22 @@ pgpd <- function(q, location = 0, scale = 1, shape = 0) {
     ans
 }
 
+
 qgpd <- function(p, location = 0, scale = 1, shape = 0) {
 
-    use.n = max(length(p), length(location), length(scale), length(shape))
-    ans = numeric(use.n)
-    shape = rep(shape, length.out = use.n);
-    location = rep(location, length.out = use.n); 
-    scale = rep(scale, length.out = use.n);
-    p = rep(p, length.out = use.n)
+  use.n = max(length(p), length(location), length(scale), length(shape))
+
+  ans <- numeric(use.n)
+  if (length(shape)    != use.n)
+    shape    <- rep(shape,        length.out = use.n)
+  if (length(location) != use.n)
+    location <- rep(location,     length.out = use.n); 
+  if (length(scale)    != use.n)
+    scale    <- rep(scale,        length.out = use.n)
+  if (length(p)        != use.n)
+    p        <- rep(p,            length.out = use.n)
+
+
 
     scase = abs(shape) < sqrt(.Machine$double.eps)
     nscase = sum(scase)
@@ -1149,189 +1336,346 @@ qgpd <- function(p, location = 0, scale = 1, shape = 0) {
 
 
 
-
  gpd <- function(threshold = 0,
           lscale = "loge",
-          lshape = "logoff",
-          escale = list(),
-          eshape = if (lshape == "logoff") list(offset = 0.5) else 
-          if (lshape == "elogit") list(min = -0.5, max = 0.5) else NULL,
-          percentiles = c(90,95),
+          lshape = logoff(offset = 0.5),
+          percentiles = c(90, 95),
           iscale = NULL,
           ishape = NULL, 
           tolshape0 = 0.001, giveWarning = TRUE,
           imethod = 1,
-          zero = 2) {
-    if (!is.logical(giveWarning) || length(giveWarning) != 1)
-        stop("bad input for argument 'giveWarning'")
-    if (!is.Numeric(threshold)) 
-        stop("bad input for argument 'threshold'")
-    if (!is.Numeric(imethod, allowable.length = 1,
-                    positive = TRUE, integer.valued = TRUE) ||
-       imethod > 2.5)
-      stop("argument 'imethod' must be 1 or 2")
+          zero = -2) {
+  if (!is.logical(giveWarning) || length(giveWarning) != 1)
+    stop("bad input for argument 'giveWarning'")
+  if (!is.Numeric(threshold)) 
+    stop("bad input for argument 'threshold'")
+  if (!is.Numeric(imethod, allowable.length = 1,
+                  positive = TRUE, integer.valued = TRUE) ||
+     imethod > 2.5)
+    stop("argument 'imethod' must be 1 or 2")
 
-    if (mode(lscale) != "character" && mode(lscale) != "name")
-      lscale = as.character(substitute(lscale))
-    if (mode(lshape) != "character" && mode(lshape) != "name")
-      lshape = as.character(substitute(lshape))
+  lscale <- as.list(substitute(lscale))
+  escale <- link2list(lscale)
+  lscale <- attr(escale, "function.name")
 
-    if (length(percentiles) && 
-      (!is.Numeric(percentiles, positive = TRUE) ||
-       max(percentiles) >= 100))
-      stop("bad input for argument 'percentiles'")
-    if (!is.Numeric(tolshape0, allowable.length = 1, positive = TRUE) ||
-        tolshape0 > 0.1)
-      stop("bad input for argument 'tolshape0'")
-    if (length(zero) &&
-        !is.Numeric(zero, integer.valued = TRUE, positive = TRUE))
-      stop("bad input for argument 'zero'")
+  lshape <- as.list(substitute(lshape))
+  eshape <- link2list(lshape)
+  lshape <- attr(eshape, "function.name")
 
-    if (!is.list(escale)) escale = list()
-    if (!is.list(eshape)) eshape = list()
 
-    new("vglmff",
-    blurb = c("Generalized Pareto distribution\n",
-            "Links:    ",
-            namesof("scale", link = lscale, earg = escale ), ", ",
-            namesof("shape", link = lshape, earg = eshape)),
-    constraints=eval(substitute(expression({
-        constraints = cm.zero.vgam(constraints, x, .zero, M)
-    }), list( .zero = zero ))),
-    initialize = eval(substitute(expression({
-        if (ncol(as.matrix(y)) != 1)
-            stop("response must be a vector or one-column matrix")
-        Threshold = if (is.Numeric( .threshold)) .threshold else 0
-        if (is.Numeric(  .threshold)) {
-            orig.y = y
-        }
-        ystar = y - Threshold  # Operate on ystar
-        extra$threshold = Threshold
-        predictors.names=
-            c(namesof("scale", .lscale, earg = .escale, short = TRUE),
-              namesof("shape", .lshape, earg = .eshape, short = TRUE ))
-        if (!length(etastart)) {
-            meany = mean(ystar)
-            vary = var(ystar)
-            init.xi = if (length( .ishape)) .ishape else {
-                if ( .imethod == 1) -0.5*(meany^2/vary - 1) else
-                    0.5 * (1 - median(ystar)^2 / vary)
-            }
-            init.sig = if (length( .iscale)) .iscale else {
-                if (.imethod == 1) 0.5*meany*(meany^2/vary + 1) else
-                    abs(1-init.xi) * median(ystar)
-            }
-            init.sig[init.sig <= 0] = 0.01    # sigma > 0
-            init.xi[init.xi <= -0.5] = -0.40  # Fisher scoring works if xi > -0.5
-            init.xi[init.xi >=  1.0] =  0.90  # Mean/var exists if xi < 1 / 0.5
-            if ( .lshape == "loge") init.xi[init.xi <=  0.0] =  0.05
-            init.sig = rep(init.sig, leng=length(y))
-            init.xi = rep(init.xi, leng=length(y))
+  if (length(percentiles) && 
+    (!is.Numeric(percentiles, positive = TRUE) ||
+     max(percentiles) >= 100))
+    stop("bad input for argument 'percentiles'")
+  if (!is.Numeric(tolshape0, allowable.length = 1, positive = TRUE) ||
+      tolshape0 > 0.1)
+    stop("bad input for argument 'tolshape0'")
 
-            etastart = cbind(theta2eta(init.sig, .lscale, earg = .escale ),
-                             theta2eta(init.xi,  .lshape, earg = .eshape ))
-        }
-    }), list( .lscale = lscale, .lshape = lshape, .threshold=threshold,
-              .iscale = iscale, .ishape = ishape,
-              .escale = escale, .eshape = eshape,
-              .imethod = imethod ))),
-    linkinv = eval(substitute(function(eta, extra = NULL) {
-        sigma = eta2theta(eta[, 1], .lscale, earg = .escale )
-        Shape = eta2theta(eta[, 2], .lshape, earg = .eshape )
-        cent = .percentiles
-        LP = length(cent)  # NULL means LP == 0 and the mean is returned
-        Threshold = if (is.Numeric( .threshold)) .threshold else 0
-        if (LP) {
-            fv = matrix(as.numeric(NA), nrow(eta), LP)
-            is.zero = (abs(Shape) < .tolshape0)
-            for(ii in 1:LP) {
-                temp = 1-cent[ii]/100
-                fv[!is.zero,ii] = Threshold + (temp^(-Shape[!is.zero])-1) *
-                                    sigma[!is.zero] / Shape[!is.zero]
-                fv[ is.zero,ii] = Threshold - sigma[is.zero] * log(temp)
-            }
-            dimnames(fv) = list(dimnames(eta)[[1]],
-                                paste(as.character(.percentiles), "%",
-                                      sep = ""))
-        } else {
-            fv = Threshold + sigma / (1 - Shape) # This is the mean, E(Y)
-            fv[Shape >= 1] = NA  # Mean exists only if Shape < 1.
-        }
-        fv
-    }, list( .lscale = lscale, .lshape = lshape, .threshold=threshold,
-             .escale = escale, .eshape = eshape,
-             .tolshape0 = tolshape0, .percentiles = percentiles ))),
-    last = eval(substitute(expression({
-        misc$links = c(scale = .lscale, shape = .lshape)
-        misc$true.mu = FALSE     # @fitted is not a true mu
-        misc$earg = list(scale= .escale , shape= .eshape )
-        misc$percentiles = .percentiles
-        misc$threshold = if (is.Numeric( .threshold)) .threshold else 0
-        misc$expected = TRUE
-        misc$tolshape0 = .tolshape0
-        if (any(Shape < -0.5))
-            warning("some values of the shape parameter are less than -0.5")
-    }), list( .lscale = lscale, .lshape = lshape, .threshold=threshold,
-              .escale = escale, .eshape = eshape,
-              .tolshape0 = tolshape0, .percentiles = percentiles ))),
-    loglikelihood = eval(substitute(
-        function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
-        sigma = eta2theta(eta[, 1], .lscale, earg = .escale )
-        Shape = eta2theta(eta[, 2], .lshape, earg = .eshape )
-        Threshold = extra$threshold
-        if (residuals) stop("loglikelihood residuals not ",
-                            "implemented yet") else {
-            sum(w * dgpd(x = y, location = Threshold, scale = sigma,
-                         shape = Shape, tolshape0 = .tolshape0,
-                         giveWarning = .giveWarning,
-                         log = TRUE, oobounds.log = -1.0e04))
-        }
-    }, list( .tolshape0 = tolshape0, .giveWarning= giveWarning,
-             .escale = escale, .eshape = eshape,
-             .lscale = lscale, .lshape = lshape ))),
-    vfamily = c("gpd", "vextremes"),
-    deriv = eval(substitute(expression({
-        sigma = eta2theta(eta[, 1], .lscale, earg = .escale )
-        Shape = eta2theta(eta[, 2], .lshape, earg = .eshape )
-        Threshold = extra$threshold
-        ystar = y - Threshold  # Operate on ystar
-        A = 1 + Shape*ystar/sigma
-        mytolerance = .Machine$double.eps
-        bad <- (A <= mytolerance)
-        if (any(bad) && any(w[bad] != 0)) {
-            cat(sum(w[bad],na.rm = TRUE), # "; ignoring them"
-                "observations violating boundary constraints\n")
-            flush.console()
-        }
-        if (any(is.zero <- (abs(Shape) < .tolshape0))) {
-        }
-        igpd = !is.zero &  !bad
-        iexp =  is.zero &  !bad
-        dl.dShape = dl.dsigma = rep(0, length.out = length(y))
-        dl.dsigma[igpd] = ((1 + Shape[igpd]) * ystar[igpd] / (sigma[igpd] +
-                          Shape[igpd]*ystar[igpd]) - 1) / sigma[igpd]
-        dl.dShape[igpd] = log(A[igpd])/Shape[igpd]^2 - (1 + 1/Shape[igpd]) *
-                          ystar[igpd] / (A[igpd] * sigma[igpd])
-        dl.dShape[iexp] = ystar[iexp] *
-                       (0.5*ystar[iexp]/sigma[iexp] - 1) / sigma[iexp]
-        dsigma.deta = dtheta.deta(sigma, .lscale, earg = .escale )
-        dShape.deta = dtheta.deta(Shape, .lshape, earg = .eshape )
-        c(w) * cbind(dl.dsigma * dsigma.deta,
-                     dl.dShape * dShape.deta)
-    }), list( .tolshape0 = tolshape0,
-              .lscale = lscale, .escale = escale,
-              .lshape = lshape, .eshape = eshape ))),
-    weight = eval(substitute(expression({
-        n <- length(w) # needed! 
-        wz = matrix(as.numeric(NA), n, 3)
-        wz[, iam(1, 1, M)] = 1 / ((1+2*Shape) * sigma^2)
-        wz[, iam(2, 2, M)] = 2 / ((1+2*Shape) * (1+Shape))
-        wz[, iam(1, 2, M)] = 1 / ((1+2*Shape) * (1+Shape) * sigma) # > 0 !
-        wz[, iam(1, 1, M)] = wz[, iam(1, 1, M)] * dsigma.deta^2
-        wz[, iam(2, 2, M)] = wz[, iam(2, 2, M)] * dShape.deta^2
-        wz[, iam(1, 2, M)] = wz[, iam(1, 2, M)] * dsigma.deta * dShape.deta
-        c(w) * wz
-    }), list( .lscale = lscale ))))
+  if (length(zero) &&
+      !is.Numeric(zero, integer.valued = TRUE))
+    stop("bad input for argument 'zero'")
+
+
+  new("vglmff",
+  blurb = c("Generalized Pareto distribution\n",
+          "Links:    ",
+          namesof("scale", link = lscale, earg = escale ), ", ",
+          namesof("shape", link = lshape, earg = eshape )),
+ constraints = eval(substitute(expression({
+    dotzero <- .zero
+    Musual <- 2
+    eval(negzero.expression)
+  }), list( .zero = zero ))),
+
+  infos = eval(substitute(function(...) {
+    list(Musual = 2,
+         zero = .zero )
+  }, list( .zero = zero
+         ))),
+
+
+  initialize = eval(substitute(expression({
+
+
+    temp5 <-
+    w.y.check(w = w, y = y,
+              ncol.w.max = Inf,
+              ncol.y.max = Inf,
+              out.wy = TRUE,
+              colsyperw = 1,
+              maximize = TRUE)
+    w <- temp5$w
+    y <- temp5$y
+
+
+    ncoly <- ncol(y)
+    Musual <- 2
+    extra$ncoly <- ncoly
+    extra$Musual <- Musual
+    M <- Musual * ncoly
+    y.names <- dimnames(y)[[2]]
+    if (length(y.names) != ncoly)
+      y.names <- paste("Y", 1:ncoly, sep = "")
+    extra$y.names <- y.names
+
+
+
+    Threshold <- if (is.Numeric( .threshold )) .threshold else 0
+    Threshold <- matrix(Threshold, n, ncoly, byrow = TRUE)
+    if (is.Numeric(  .threshold )) {
+      orig.y <- y
+    }
+    ystar <- as.matrix(y - Threshold) # Operate on ystar
+    extra$threshold <- Threshold
+
+
+    mynames1 <- paste("scale",   if (ncoly > 1) 1:ncoly else "", sep = "")
+    mynames2 <- paste("shape",   if (ncoly > 1) 1:ncoly else "", sep = "")
+    predictors.names <-
+        c(namesof(mynames1, .lscale , earg = .escale , tag = FALSE),
+          namesof(mynames2, .lshape , earg = .eshape , tag = FALSE))[
+          interleave.VGAM(M, M = Musual)]
+
+
+
+    if (!length(etastart)) {
+      meany <- colSums(ystar * w) / colSums(w)
+      vary <- apply(ystar, 2, var)
+      mediany <- apply(ystar, 2, median)
+
+
+      init.xii <- if (length( .ishape )) .ishape else {
+        if ( .imethod == 1)
+          -0.5 * (meany^2 / vary - 1) else
+           0.5 * (1 - mediany^2 / vary)
+      }
+      init.sig <- if (length( .iscale )) .iscale else {
+        if (.imethod == 1)
+          0.5 * meany * (meany^2 / vary + 1) else
+          abs(1 - init.xii) * mediany
+      }
+
+
+      init.xii <- matrix(init.xii, n, ncoly, byrow = TRUE)
+      init.sig <- matrix(init.sig, n, ncoly, byrow = TRUE)
+
+
+      init.sig[init.sig <=  0.0] <-  0.01 # sigma > 0
+      init.xii[init.xii <= -0.5] <- -0.40 # Fisher scoring works if xi > -0.5
+      init.xii[init.xii >=  1.0] <-  0.90 # Mean/var exists if xi < 1 / 0.5
+      if ( .lshape == "loge")
+        init.xii[init.xii <= 0.0] <-  0.05
+
+
+
+      etastart <-
+        cbind(theta2eta(init.sig, .lscale , earg = .escale ),
+              theta2eta(init.xii, .lshape , earg = .eshape ))[,
+              interleave.VGAM(M, M = Musual)]
+    }
+  }), list( .lscale = lscale, .lshape = lshape,
+            .iscale = iscale, .ishape = ishape,
+            .escale = escale, .eshape = eshape,
+            .percentiles = percentiles,
+            .threshold = threshold,
+            .imethod = imethod ))),
+
+
+
+  linkinv = eval(substitute(function(eta, extra = NULL) {
+    sigma <- eta2theta(eta[, c(TRUE, FALSE)], .lscale , earg = .escale )
+    shape <- eta2theta(eta[, c(FALSE, TRUE)], .lshape , earg = .eshape )
+    if (!is.matrix(sigma))
+      sigma <- as.matrix(sigma)
+    if (!is.matrix(shape))
+      shape <- as.matrix(shape)
+
+
+    Musual <- 2
+    pcent <- .percentiles
+    LP <- length(pcent) # NULL means LP == 0 and the mean is returned
+    ncoly <- ncol(eta) / Musual
+    if (!length(y.names <- extra$y.names))
+      y.names <- paste("Y", 1:ncoly, sep = "")
+
+    Threshold <- extra$threshold
+
+
+
+    if (LP) {
+
+
+
+
+    do.one <- function(yvec, shape, scale, 
+                       threshold,
+                       percentiles = c(90, 95),
+                       y.name = NULL,
+                       tolshape0 = 0.001) {
+      is.zero <- (abs(shape) < tolshape0 ) # A matrix
+
+      LP = length(percentiles)
+      fv = matrix(as.numeric(NA), length(shape), LP)
+      is.zero = (abs(shape) < tolshape0)
+      for(ii in 1:LP) {
+        temp = 1 - percentiles[ii] / 100
+        fv[!is.zero, ii] = threshold[!is.zero] +
+                           (temp^(-shape[!is.zero]) - 1) *
+                           scale[!is.zero] / shape[!is.zero]
+        fv[ is.zero, ii] = threshold[is.zero] - scale[is.zero] * log(temp)
+      }
+
+      post.name <- paste(as.character(percentiles), "%", sep = "")
+
+      dimnames(fv) <-
+        list(dimnames(shape)[[1]],
+             if (is.null(y.name))
+               post.name else
+               paste(y.name, post.name, sep = " "))
+      fv
+    }
+
+
+
+
+      fv <- matrix(-1, nrow(sigma),  LP * ncoly)
+      colnames.cumsum.fv <- NULL
+      for(jlocal in 1:ncoly) {
+        block.mat.fv <-
+          do.one(yvec = y[, jlocal],
+                 shape = shape[, jlocal],
+                 scale = sigma[, jlocal],
+                 threshold = Threshold[, jlocal],
+                 percentiles = pcent,
+                 y.name = if (ncoly > 1) y.names[jlocal] else NULL,
+                 tolshape0 = .tolshape0 )
+        fv[, (jlocal - 1) *  LP + (1:LP)] <- block.mat.fv
+        colnames.cumsum.fv <- c(colnames.cumsum.fv,
+                                colnames(block.mat.fv))
+      }
+      colnames(fv) <- colnames.cumsum.fv
+    } else {
+      fv <- Threshold + sigma / (1 - shape)
+      fv[shape >= 1] <- NA # Mean exists only if shape < 1.
+      dimnames(fv) <- list(dimnames(eta)[[1]], y.names)
+    }
+
+    fv
+  }, list( .lscale = lscale, .lshape = lshape,
+           .escale = escale, .eshape = eshape,
+           .threshold = threshold,
+           .tolshape0 = tolshape0,
+           .percentiles = percentiles ))),
+
+
+
+
+  last = eval(substitute(expression({
+    Musual <- extra$Musual
+    misc$link <-
+      c(rep( .lscale , length = ncoly),
+        rep( .lshape , length = ncoly))[interleave.VGAM(M, M = Musual)]
+    temp.names <- c(mynames1, mynames2)[interleave.VGAM(M, M = Musual)]
+    names(misc$link) <- temp.names
+
+    misc$earg <- vector("list", M)
+    names(misc$earg) <- temp.names
+    for(ii in 1:ncoly) {
+      misc$earg[[Musual*ii-1]] <- .escale
+      misc$earg[[Musual*ii  ]] <- .eshape
+    }
+
+    misc$Musual <- Musual
+    misc$expected <- TRUE
+    misc$multipleResponses <- TRUE
+
+    misc$true.mu <- FALSE    # @fitted is not a true mu
+    misc$percentiles <- .percentiles
+    misc$tolshape0 <- .tolshape0
+      if (any(Shape < -0.5))
+        warning("some values of the shape parameter are less than -0.5")
+  }), list( .lscale = lscale, .lshape = lshape,
+            .escale = escale, .eshape = eshape,
+            .threshold = threshold,
+            .tolshape0 = tolshape0, .percentiles = percentiles ))),
+  loglikelihood = eval(substitute(
+    function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
+    sigma <- eta2theta(eta[, c(TRUE, FALSE)], .lscale , earg = .escale )
+    Shape <- eta2theta(eta[, c(FALSE, TRUE)], .lshape , earg = .eshape )
+    Threshold <- extra$threshold
+    if (residuals) stop("loglikelihood residuals not ",
+                        "implemented yet") else {
+      sum(c(w) * dgpd(x = y, location = Threshold, scale = sigma,
+                      shape = Shape, tolshape0 = .tolshape0,
+                      giveWarning = .giveWarning,
+                      log = TRUE, oobounds.log = -1.0e04))
+    }
+  }, list( .tolshape0 = tolshape0, .giveWarning= giveWarning,
+           .escale = escale, .eshape = eshape,
+           .lscale = lscale, .lshape = lshape ))),
+  vfamily = c("gpd", "vextremes"),
+  deriv = eval(substitute(expression({
+    Musual <- 2
+    sigma <- eta2theta(eta[, c(TRUE, FALSE)], .lscale , earg = .escale )
+    Shape <- eta2theta(eta[, c(FALSE, TRUE)], .lshape , earg = .eshape )
+
+    Threshold <- extra$threshold
+    ystar <- y - Threshold # Operate on ystar
+    A <- 1 + Shape * ystar / sigma
+
+    mytolerance <- .Machine$double.eps
+    bad <- (A <= mytolerance)
+    if (any(bad) && any(w[bad] != 0)) {
+      cat(sum(w[bad],na.rm = TRUE), # "; ignoring them"
+          "observations violating boundary constraints\n")
+      flush.console()
+    }
+    if (any(is.zero <- (abs(Shape) < .tolshape0))) {
+    }
+    igpd <- !is.zero &  !bad
+    iexp <-  is.zero &  !bad
+
+    dl.dShape <- dl.dsigma <- rep(0, length.out = length(y))
+    dl.dsigma[igpd] <- ((1 + Shape[igpd]) * ystar[igpd] / (sigma[igpd] +
+                    Shape[igpd]*ystar[igpd]) - 1) / sigma[igpd]
+
+    dl.dShape[igpd] <- log(A[igpd])/Shape[igpd]^2 - (1 + 1/Shape[igpd]) *
+                      ystar[igpd] / (A[igpd] * sigma[igpd])
+    dl.dShape[iexp] <- ystar[iexp] *
+                     (0.5*ystar[iexp]/sigma[iexp] - 1) / sigma[iexp]
+
+    dsigma.deta <- dtheta.deta(sigma, .lscale , earg = .escale )
+    dShape.deta <- dtheta.deta(Shape, .lshape , earg = .eshape )
+
+    myderiv <- 
+    c(w) * cbind(dl.dsigma * dsigma.deta,
+                 dl.dShape * dShape.deta)
+    myderiv[, interleave.VGAM(M, M = Musual)]
+  }), list( .tolshape0 = tolshape0,
+            .lscale = lscale, .escale = escale,
+            .lshape = lshape, .eshape = eshape ))),
+  weight = eval(substitute(expression({
+
+
+    ned2l.dscale2 <- 1 / ((1+2*Shape) * sigma^2)
+    ned2l.dshape2 <- 2 / ((1+2*Shape) * (1+Shape))
+    ned2l.dshapescale <- 1 / ((1+2*Shape) * (1+Shape) * sigma) # > 0 !
+
+    NOS <- M / Musual
+    wz <- matrix(0.0, n, M + M - 1) # wz is 'tridiagonal'
+
+    ind11 <- ind22 <- ind12 <- NULL
+    for (ii in 1:(M / Musual)) {
+      ind11 <- c(ind11, iam(Musual*ii - 1, Musual*ii - 1, M))
+      ind22 <- c(ind22, iam(Musual*ii - 0, Musual*ii - 0, M))
+      ind12 <- c(ind12, iam(Musual*ii - 1, Musual*ii - 0, M))
+    }
+    wz[, ind11] <- ned2l.dscale2 * dsigma.deta^2
+    wz[, ind22] <- ned2l.dshape2 * dShape.deta^2
+    wz[, ind12] <- ned2l.dshapescale * dsigma.deta * dShape.deta
+
+    w.wz.merge(w = w, wz = wz, n = n, M = M, ndepy = M / Musual)
+  }), list( .lscale = lscale ))))
 }
 
 
@@ -1347,36 +1691,37 @@ meplot.default <- function(y, main = "Mean Excess Plot",
     conf = 0.95, col = c("blue", "black", "blue"), type = "l", ...) {
 
 
-    if (!is.Numeric(y))
-      stop("bad input for argument 'y'")
+  if (!is.Numeric(y))
+    stop("bad input for argument 'y'")
 
-    n = length(y)
-    sy = sort(y)
-    dsy = rev(sy)  # decreasing sequence
-    me = rev(cumsum(dsy)) / (n:1) - sy
-    me2 = rev(cumsum(dsy^2))
-    var = (me2 - (n:1) * (me+sy)^2) / (n:1)
-    ci = qnorm((1+conf)/2) * sqrt(abs(var)) / sqrt(n:1)
+  n = length(y)
+  sy = sort(y)
+  dsy = rev(sy)  # decreasing sequence
+  me = rev(cumsum(dsy)) / (n:1) - sy
+  me2 = rev(cumsum(dsy^2))
+  var = (me2 - (n:1) * (me+sy)^2) / (n:1)
+  ci = qnorm((1+conf)/2) * sqrt(abs(var)) / sqrt(n:1)
 
-    ci[length(ci)] = NA
+  ci[length(ci)] = NA
 
-    mymat = cbind(me - ci, me, me + ci)
-    sy = sy - sqrt( .Machine$double.eps )
+  mymat = cbind(me - ci, me, me + ci)
+  sy = sy - sqrt( .Machine$double.eps )
 
-    matplot(sy, mymat, main = main,
-            xlab = xlab, ylab = ylab, 
-            lty = lty, col = col, type = type, ...)
-    invisible(list(threshold = sy, meanExcess = me,
-                   plusminus = ci))
+  matplot(sy, mymat, main = main,
+          xlab = xlab, ylab = ylab, 
+          lty = lty, col = col, type = type, ...)
+  invisible(list(threshold = sy,
+                 meanExcess = me,
+                 plusminus = ci))
 }
 
 
 
 meplot.vlm <- function(object, ...) {
-    if (!length(y <- object@y))
-      stop("y slot is empty")
-    ans = meplot(as.numeric(y), ...) 
-    invisible(ans)
+   if (!length(y <- object@y))
+     stop("y slot is empty")
+   ans <- meplot(as.numeric(y), ...) 
+   invisible(ans)
 }
 
 
@@ -1398,8 +1743,10 @@ setMethod("meplot", "vlm",
 
 
 
-guplot.default <- function(y, main = "Gumbel Plot",
-    xlab = "Reduced data", ylab = "Observed data", type = "p", ...) {
+guplot.default <-
+  function(y, main = "Gumbel Plot",
+           xlab = "Reduced data",
+           ylab = "Observed data", type = "p", ...) {
 
     if (!is.Numeric(y))
       stop("bad input for argument 'y'")
@@ -1417,7 +1764,7 @@ guplot.default <- function(y, main = "Gumbel Plot",
 guplot.vlm <- function(object, ...) {
     if (!length(y <- object@y))
       stop("y slot is empty")
-    ans = guplot(as.numeric(y), ...) 
+    ans <- guplot(as.numeric(y), ...) 
     invisible(ans)
 }
 
@@ -1444,37 +1791,40 @@ setMethod("guplot", "vlm",
 
 
  egumbel <- function(llocation = "identity",
-                    lscale = "loge",
-                    elocation = list(),
-                    escale = list(),
-                    iscale = NULL,
-                    R=NA, percentiles = c(95,99),
-                    mpv = FALSE, zero = NULL)
+                     lscale = "loge",
+                     iscale = NULL,
+                     R = NA, percentiles = c(95, 99),
+                     mpv = FALSE, zero = NULL)
 {
-  if (mode(llocation) != "character" && mode(llocation) != "name")
-    llocation = as.character(substitute(llocation))
-  if (mode(lscale) != "character" && mode(lscale) != "name")
-    lscale = as.character(substitute(lscale))
+
+  llocat <- as.list(substitute(llocation))
+  elocat <- link2list(llocat)
+  llocat <- attr(elocat, "function.name")
+
+  lscale <- as.list(substitute(lscale))
+  escale <- link2list(lscale)
+  lscale <- attr(escale, "function.name")
+
+
   if (!is.logical(mpv) || length(mpv) != 1)
     stop("bad input for argument 'mpv'")
   if (length(percentiles) &&
      (!is.Numeric(percentiles, positive = TRUE) ||
       max(percentiles) >= 100))
     stop("bad input for argument 'percentiles'")
+
   if (length(zero) &&
       !is.Numeric(zero, integer.valued = TRUE, positive = TRUE))
     stop("bad input for argument 'zero'")
+
   if (length(iscale) && !is.Numeric(iscale, positive = TRUE))
     stop("bad input for argument 'iscale'")
-
-  if (!is.list(elocation)) elocation = list()
-  if (!is.list(escale)) escale = list()
 
   new("vglmff",
   blurb = c("Gumbel distribution (univariate response)\n\n",
           "Links:    ",
-          namesof("location", llocation,
-                  earg = elocation, tag = TRUE), ", ", 
+          namesof("location", llocat,
+                  earg = elocat, tag = TRUE), ", ", 
           namesof("scale", lscale, earg = escale , tag = TRUE), "\n",
           "Mean:     location + scale*0.5772..\n",
           "Variance: pi^2 * scale^2 / 6"),
@@ -1487,96 +1837,106 @@ setMethod("guplot", "vlm",
         stop("Use gumbel() to handle multivariate responses")
     if (min(y) <= 0)
         stop("all response values must be positive")
-    predictors.names =
-    c(namesof("location", .llocation, earg = .elocation, tag = FALSE),
-      namesof("scale", .lscale, earg = .escale , tag = FALSE))
+
+
+
+
+
+
+    predictors.names <-
+    c(namesof("location", .llocat , earg = .elocat , tag = FALSE),
+      namesof("scale",    .lscale , earg = .escale , tag = FALSE))
+
 
     extra$R = .R
     extra$mpv = .mpv
     extra$percentiles = .percentiles
 
     if (!length(etastart)) {
-        sc.init =  if (is.Numeric( .iscale, positive = TRUE)) 
-                       .iscale else 1.5 * (0.01+sqrt(var(y)*6)) / pi
-        sc.init = rep(sc.init, length.out = n)
-        EulerM = -digamma(1)
-        loc.init = (y - sc.init * EulerM)
-        etastart = cbind(theta2eta(loc.init, .llocation, earg = .elocation),
-                         theta2eta(sc.init,  .lscale, earg = .escale ))
+      sca.init =  if (is.Numeric( .iscale, positive = TRUE)) 
+                     .iscale else 1.5 * (0.01+sqrt(var(y)*6)) / pi
+      sca.init = rep(sca.init, length.out = n)
+      EulerM <- -digamma(1)
+      loc.init = (y - sca.init * EulerM)
+      etastart <-
+        cbind(theta2eta(loc.init, .llocat , earg = .elocat ),
+              theta2eta(sca.init, .lscale , earg = .escale ))
     }
-  }), list( .llocation = llocation, .lscale = lscale,
-            .elocation = elocation, .escale = escale,
-                                    .iscale = iscale, 
+  }), list( .llocat = llocat, .lscale = lscale,
+            .elocat = elocat, .escale = escale,
+                              .iscale = iscale, 
             .R = R, .mpv = mpv, .percentiles = percentiles ))),
   linkinv = eval(substitute( function(eta, extra = NULL) {
-    loc = eta2theta(eta[, 1], .llocation, earg = .elocation)
-    sigma = eta2theta(eta[, 2], .lscale, earg = .escale )
-    EulerM = -digamma(1)
+    locat = eta2theta(eta[, 1], .llocat, earg = .elocat)
+    sigma = eta2theta(eta[, 2], .lscale , earg = .escale )
+    EulerM <- -digamma(1)
     Percentiles = extra$percentiles
     mpv = extra$mpv
     LP = length(Percentiles)  # may be 0
-    if (!LP) return(loc + sigma * EulerM)
+    if (!LP) return(locat + sigma * EulerM)
     mu = matrix(as.numeric(NA), nrow(eta), LP + mpv)
     Rvec = extra$R
     if (1 <= LP)
     for(ii in 1:LP) {
       ci = if (is.Numeric(Rvec)) Rvec * (1 - Percentiles[ii] / 100) else
           -log(Percentiles[ii] / 100)
-      mu[,ii] = loc - sigma * log(ci)
+      mu[,ii] = locat - sigma * log(ci)
     }
     if (mpv)
-      mu[, ncol(mu)] = loc - sigma * log(log(2))
+      mu[, ncol(mu)] = locat - sigma * log(log(2))
     dmn2 = if (LP >= 1) paste(as.character(Percentiles), "%",
                               sep = "") else NULL
     if (mpv)
       dmn2 = c(dmn2, "MPV")
     dimnames(mu) = list(dimnames(eta)[[1]], dmn2)
     mu
-  }, list( .llocation = llocation, .lscale = lscale,
-           .elocation = elocation, .escale = escale ))),
+  }, list( .llocat = llocat, .lscale = lscale,
+           .elocat = elocat, .escale = escale ))),
   last = eval(substitute(expression({
-    misc$link = c(location= .llocation, scale = .lscale) 
-    misc$earg = list(location= .elocation, scale= .escale)
+    misc$link =    c(location = .llocat, scale = .lscale) 
+    misc$earg = list(location = .elocat, scale = .escale)
     misc$true.mu = !length( .percentiles) # @fitted is not a true mu
     misc$R = .R
     misc$mpv = .mpv
     misc$percentiles = .percentiles
-  }), list( .llocation = llocation, .lscale = lscale, .mpv = mpv,
-            .elocation = elocation, .escale = escale,
+  }), list( .llocat = llocat, .lscale = lscale, .mpv = mpv,
+            .elocat = elocat, .escale = escale,
             .R = R, .percentiles = percentiles ))),
   loglikelihood = eval(substitute(
-        function(mu,y,w,residuals= FALSE,eta,extra = NULL) {
-    loc = eta2theta(eta[, 1], .llocation, earg = .elocation)
-    sc  = eta2theta(eta[, 2], .lscale, earg = .escale )
+        function(mu, y, w, residuals = FALSE,eta,extra = NULL) {
+    loc = eta2theta(eta[, 1], .llocat , earg = .elocat )
+    sca = eta2theta(eta[, 2], .lscale , earg = .escale )
     if (residuals) stop("loglikelihood residuals not ",
                         "implemented yet") else {
-       sum(w * dgumbel(x=y, location = loc, scale=sc, log = TRUE))
+       sum(w * dgumbel(x=y, location = loc, scale = sca, log = TRUE))
     }
-  }, list( .llocation = llocation, .lscale = lscale,
-           .elocation = elocation, .escale = escale ))),
+  }, list( .llocat = llocat, .lscale = lscale,
+           .elocat = elocat, .escale = escale ))),
   vfamily = "egumbel",
   deriv = eval(substitute(expression({
-    loc = eta2theta(eta[, 1], .llocation, earg = .elocation)
-    sc = eta2theta(eta[, 2], .lscale, earg = .escale )
-    zedd = (y-loc) / sc
+    loc = eta2theta(eta[, 1], .llocat , earg = .elocat )
+    sca = eta2theta(eta[, 2], .lscale , earg = .escale )
+    zedd = (y-loc) / sca
     temp2 = -expm1(-zedd)
-    dl.dloc = temp2 / sc
-    dl.dsc = -1/sc + temp2 * zedd / sc
-    dloc.deta = dtheta.deta(loc, .llocation, earg = .elocation)
-    dsc.deta = dtheta.deta(sc, .lscale, earg = .escale )
+    dl.dloc = temp2 / sca
+    dl.dsca = -1/sca + temp2 * zedd / sca
+    dloc.deta = dtheta.deta(loc, .llocat , earg = .elocat)
+    dsca.deta = dtheta.deta(sca, .lscale , earg = .escale )
     c(w) * cbind(dl.dloc * dloc.deta,
-                 dl.dsc * dsc.deta)
-  }), list( .llocation = llocation, .lscale = lscale,
-            .elocation = elocation, .escale = escale ))),
+                 dl.dsca * dsca.deta)
+  }), list( .llocat = llocat, .lscale = lscale,
+            .elocat = elocat, .escale = escale ))),
   weight=expression({
     digamma1 = digamma(1)
-    ed2l.dsc2 = ((2+digamma1)*digamma1 + trigamma(1) + 1) / sc^2
-    ed2l.dloc2 = 1 / sc^2
-    ed2l.dscloc = -(1 + digamma1) / sc^2 
+    ned2l.dsca2 = ((2+digamma1)*digamma1 + trigamma(1) + 1) / sca^2
+    ned2l.dloc2 = 1 / sca^2
+    ned2l.dscaloc = -(1 + digamma1) / sca^2 
+
     wz = matrix(as.numeric(NA), n, dimm(M = 2))
-    wz[, iam(1, 1, M)] = ed2l.dloc2 * dloc.deta^2
-    wz[, iam(2, 2, M)] = ed2l.dsc2 * dsc.deta^2
-    wz[, iam(1, 2, M)] = ed2l.dscloc * dloc.deta * dsc.deta
+    wz[, iam(1, 1, M)] = ned2l.dloc2 * dloc.deta^2
+    wz[, iam(2, 2, M)] = ned2l.dsca2 * dsca.deta^2
+    wz[, iam(1, 2, M)] = ned2l.dscaloc * dloc.deta * dsca.deta
+
     c(w) * wz
   }))
 }
@@ -1585,30 +1945,34 @@ setMethod("guplot", "vlm",
 
 
  cgumbel <- function(llocation = "identity",
-                    lscale = "loge",
-                    elocation = list(),
-                    escale = list(), iscale = NULL,
-                    mean = TRUE, percentiles = NULL, zero = 2)
+                     lscale = "loge",
+                     iscale = NULL,
+                     mean = TRUE, percentiles = NULL, zero = 2)
 {
-  if (mode(llocation) != "character" && mode(llocation) != "name")
-      llocation = as.character(substitute(llocation))
-  if (mode(lscale) != "character" && mode(lscale) != "name")
-      lscale = as.character(substitute(lscale))
+  llocat <- as.list(substitute(llocation))
+  elocat <- link2list(llocat)
+  llocat <- attr(elocat, "function.name")
+
+  lscale <- as.list(substitute(lscale))
+  escale <- link2list(lscale)
+  lscale <- attr(escale, "function.name")
+
+
   if (!is.logical(mean) || length(mean) != 1)
       stop("mean must be a single logical value")
   if (!mean && (!is.Numeric(percentiles, positive = TRUE) ||
                any(percentiles >= 100)))
-      stop("valid percentiles values must be given when mean = FALSE")
+    stop("valid percentiles values must be given when mean = FALSE")
+
   if (length(zero) &&
       !is.Numeric(zero, integer.valued = TRUE, positive = TRUE))
       stop("bad input for argument 'zero'")
-  if (!is.list(elocation)) elocation = list()
-  if (!is.list(escale)) escale = list()
+
 
   new("vglmff",
   blurb = c("Censored Gumbel distribution\n\n",
           "Links:    ",
-          namesof("location", llocation, earg = elocation, tag = TRUE),
+          namesof("location", llocat, earg = elocat, tag = TRUE),
           ", ", 
           namesof("scale", lscale, earg = escale, tag = TRUE),
           "\n",
@@ -1624,6 +1988,10 @@ setMethod("guplot", "vlm",
     if (any(y) <= 0)
       stop("all response values must be positive")
 
+
+
+
+
     if (!length(extra$leftcensored))
       extra$leftcensored = rep(FALSE, length.out = n)
     if (!length(extra$rightcensored))
@@ -1631,55 +1999,56 @@ setMethod("guplot", "vlm",
     if (any(extra$rightcensored & extra$leftcensored))
       stop("some observations are both right and left censored!")
 
-    predictors.names =
-    c(namesof("location", .llocation, earg = .elocation, tag = FALSE),
-      namesof("scale",    .lscale,    earg = .escale   , tag = FALSE))
+    predictors.names <-
+    c(namesof("location", .llocat, earg = .elocat, tag = FALSE),
+      namesof("scale",    .lscale ,    earg = .escale   , tag = FALSE))
 
-        if (!length(etastart)) {
-            sc.init =  if (is.Numeric( .iscale, positive = TRUE)) 
-                           .iscale else 1.1 * sqrt(var(y) * 6 ) / pi
-            sc.init = rep(sc.init, length.out = n)
-            EulerM = -digamma(1)
-            loc.init = (y - sc.init * EulerM)
-            loc.init[loc.init <= 0] = min(y)
-            etastart = cbind(theta2eta(loc.init, .llocation, earg = .elocation ),
-                             theta2eta(sc.init,  .lscale, earg = .escale ))
-        }
-    }), list( .lscale = lscale, .iscale = iscale,
-              .llocation = llocation,
-              .elocation = elocation, .escale = escale ))), 
-    linkinv = eval(substitute( function(eta, extra = NULL) {
-        loc  = eta2theta(eta[, 1], .llocation)
-        sc   = eta2theta(eta[, 2], .lscale)
-        EulerM = -digamma(1)
-        if (.mean) loc + sc * EulerM else {
-            LP = length(.percentiles)  # 0 if NULL
-            mu = matrix(as.numeric(NA), nrow(eta), LP)
-            for(ii in 1:LP) {
-                ci = -log( .percentiles[ii] / 100)
-                mu[, ii] = loc - sc * log(ci)
-            }
-            dmn2 = paste(as.character(.percentiles), "%", sep = "")
-            dimnames(mu) <- list(dimnames(eta)[[1]], dmn2)
-            mu
-        }
-    }, list( .lscale = lscale, .percentiles = percentiles,
-             .llocation = llocation,
-             .elocation = elocation, .escale = escale ,
-             .mean=mean ))), 
-    last = eval(substitute(expression({
-        misc$link = c(location= .llocation, scale = .lscale) 
-        misc$earg = list(location= .elocation, scale= .escale )
+    if (!length(etastart)) {
+      sc.init =  if (is.Numeric( .iscale, positive = TRUE)) 
+                     .iscale else 1.1 * sqrt(var(y) * 6 ) / pi
+      sc.init = rep(sc.init, length.out = n)
+      EulerM <- -digamma(1)
+      loc.init = (y - sc.init * EulerM)
+      loc.init[loc.init <= 0] = min(y)
+      etastart <-
+        cbind(theta2eta(loc.init, .llocat , earg = .elocat ),
+              theta2eta(sc.init,  .lscale    , earg = .escale ))
+    }
+  }), list( .lscale = lscale, .iscale = iscale,
+            .llocat = llocat,
+            .elocat = elocat, .escale = escale ))), 
+  linkinv = eval(substitute( function(eta, extra = NULL) {
+    loc  = eta2theta(eta[, 1], .llocat)
+    sc   = eta2theta(eta[, 2], .lscale)
+    EulerM <- -digamma(1)
+    if (.mean) loc + sc * EulerM else {
+      LP = length(.percentiles)  # 0 if NULL
+      mu = matrix(as.numeric(NA), nrow(eta), LP)
+      for(ii in 1:LP) {
+          ci = -log( .percentiles[ii] / 100)
+          mu[, ii] = loc - sc * log(ci)
+      }
+      dmn2 = paste(as.character(.percentiles), "%", sep = "")
+      dimnames(mu) <- list(dimnames(eta)[[1]], dmn2)
+      mu
+    }
+  }, list( .lscale = lscale, .percentiles = percentiles,
+           .llocat = llocat,
+           .elocat = elocat, .escale = escale ,
+           .mean=mean ))), 
+  last = eval(substitute(expression({
+        misc$link = c(location= .llocat, scale = .lscale) 
+        misc$earg = list(location= .elocat, scale= .escale )
         misc$true.mu = .mean    # if FALSE then @fitted is not a true mu 
         misc$percentiles = .percentiles
     }), list( .lscale = lscale, .mean=mean,
-              .llocation = llocation,
-              .elocation = elocation, .escale = escale ,
+              .llocat = llocat,
+              .elocat = elocat, .escale = escale ,
               .percentiles = percentiles ))),
     loglikelihood = eval(substitute(
-            function(mu,y,w,residuals= FALSE,eta,extra = NULL) {
-        loc = eta2theta(eta[, 1], .llocation, earg = .elocation )
-        sc  = eta2theta(eta[, 2], .lscale, earg = .escale )
+            function(mu, y, w, residuals = FALSE,eta,extra = NULL) {
+        loc = eta2theta(eta[, 1], .llocat, earg = .elocat )
+        sc  = eta2theta(eta[, 2], .lscale , earg = .escale )
         zedd = (y-loc) / sc
 
         cenL = extra$leftcensored
@@ -1693,22 +2062,22 @@ setMethod("guplot", "vlm",
                             "implemented yet") else
             sum(w[cen0] * ell1) + sum(w[cenL] * ell2) + sum(w[cenU] * ell3)
     }, list( .lscale = lscale,
-             .llocation = llocation,
-             .elocation = elocation, .escale = escale ))),
+             .llocat = llocat,
+             .elocat = elocat, .escale = escale ))),
     vfamily = "cgumbel",
     deriv = eval(substitute(expression({
         cenL = extra$leftcensored
         cenU = extra$rightcensored
         cen0 = !cenL & !cenU   # uncensored obsns
 
-        loc = eta2theta(eta[, 1], .llocation, earg = .elocation )
-        sc  = eta2theta(eta[, 2], .lscale, earg = .escale )
+        loc = eta2theta(eta[, 1], .llocat, earg = .elocat )
+        sc  = eta2theta(eta[, 2], .lscale , earg = .escale )
         zedd = (y-loc) / sc
         temp2 = -expm1(-zedd)
         dl.dloc = temp2 / sc
         dl.dsc = -1/sc + temp2 * zedd / sc
-        dloc.deta = dtheta.deta(loc, .llocation, earg = .elocation )
-        dsc.deta = dtheta.deta(sc, .lscale, earg = .escale )
+        dloc.deta = dtheta.deta(loc, .llocat, earg = .elocat )
+        dsc.deta = dtheta.deta(sc, .lscale , earg = .escale )
 
         ezedd = exp(-zedd)
         Fy = exp(-ezedd)
@@ -1725,8 +2094,8 @@ setMethod("guplot", "vlm",
         c(w) * cbind(dl.dloc * dloc.deta,
                      dl.dsc * dsc.deta)
     }), list( .lscale = lscale,
-              .llocation = llocation,
-              .elocation = elocation, .escale = escale ))),
+              .llocat = llocat,
+              .elocat = elocat, .escale = escale ))),
     weight=expression({
         A1 = ifelse(cenL, Fy, 0)
         A3 = ifelse(cenU, 1-Fy, 0)
@@ -1763,7 +2132,7 @@ setMethod("guplot", "vlm",
 
 
 dfrechet <- function(x, location = 0, scale = 1, shape, log = FALSE) {
-  if (!is.logical(log.arg <- log))
+  if (!is.logical(log.arg <- log) || length(log) != 1)
     stop("bad input for argument 'log'")
   rm(log)
 
@@ -1791,7 +2160,7 @@ pfrechet <- function(q, location = 0, scale = 1, shape) {
   if (!is.Numeric(shape, positive = TRUE))
     stop("shape must be positive")
   rzedd = scale / (q - location)
-  ans = exp(-(rzedd^shape))
+  ans <- exp(-(rzedd^shape))
   ans[q <= location] = 0
   ans
 }
@@ -1833,9 +2202,7 @@ frechet2.control <- function(save.weight = TRUE, ...)
 
  frechet2 <- function(location = 0,
                       lscale = "loge",
-                      lshape = "logoff",
-                      escale = list(),
-                      eshape = list(offset = -2),
+                      lshape = logoff(offset = -2),
                       iscale = NULL, ishape = NULL,
                       nsimEIM = 250,
                       zero = NULL)
@@ -1844,13 +2211,15 @@ frechet2.control <- function(save.weight = TRUE, ...)
   if (!is.Numeric(location))
     stop("bad input for argument 'location'")
 
-  if (mode(lscale) != "character" && mode(lscale) != "name")
-    lscale <- as.character(substitute(lscale))
-  if (mode(lshape) != "character" && mode(lshape) != "name")
-    lshape <- as.character(substitute(lshape))
+  lscale <- as.list(substitute(lscale))
+  escale <- link2list(lscale)
+  lscale <- attr(escale, "function.name")
 
-  if (!is.list(escale)) escale = list()
-  if (!is.list(eshape)) eshape = list()
+  lshape <- as.list(substitute(lshape))
+  eshape <- link2list(lshape)
+  lshape <- attr(eshape, "function.name")
+
+
 
   stopifnot(nsimEIM > 10, length(nsimEIM) == 1, nsimEIM == round(nsimEIM))
 
@@ -1864,14 +2233,27 @@ frechet2.control <- function(save.weight = TRUE, ...)
     constraints <- cm.zero.vgam(constraints, x, .zero, M)
   }), list( .zero = zero ))),
   initialize = eval(substitute(expression({
-    if (ncol(cbind(y)) != 1)
-      stop("response must be a vector or a one-column matrix")
 
-    predictors.names =
-      c(namesof("scale", .lscale, earg = .escale, short = TRUE),
-        namesof("shape", .lshape, earg = .eshape, short = TRUE))
+
+      temp5 <-
+      w.y.check(w = w, y = y,
+                ncol.w.max = 1,
+                ncol.y.max = 1,
+                out.wy = TRUE,
+                colsyperw = 1,
+                maximize = TRUE)
+      w <- temp5$w
+      y <- temp5$y
+
+
+
+    predictors.names <-
+      c(namesof("scale", .lscale , earg = .escale, short = TRUE),
+        namesof("shape", .lshape , earg = .eshape, short = TRUE))
+
 
     extra$location = rep( .location, length.out = n) # stored here
+
 
     if (!length(etastart)) {
       locinit = extra$location
@@ -1894,47 +2276,48 @@ frechet2.control <- function(save.weight = TRUE, ...)
                            abs.arg = TRUE)
 
       shape.init = if (length( .ishape ))
-        rep( .ishape, length.out = n) else {
-        rep(try.this, length.out = n)   # variance exists if shape > 2
+        rep( .ishape , length.out = n) else {
+        rep(try.this , length.out = n) # variance exists if shape > 2
       }
 
 
-        myprobs = c(0.25, 0.5, 0.75)
-        myobsns = quantile(y, probs = myprobs)
-        myquant = (-log(myprobs))^(-1/shape.init[1])
-        myfit = lsfit(x = myquant, y = myobsns)
+      myprobs = c(0.25, 0.5, 0.75)
+      myobsns = quantile(y, probs = myprobs)
+      myquant = (-log(myprobs))^(-1/shape.init[1])
+      myfit = lsfit(x = myquant, y = myobsns)
 
-      Scale.init = if (length( .iscale))
-                   rep( .iscale, length.out = n) else {
-        if (all(shape.init > 1)) {
-          myfit$coef[2]
-        } else {
-          rep( 1.0, length.out = n)
-        }
+    Scale.init = if (length( .iscale ))
+                 rep( .iscale , length.out = n) else {
+      if (all(shape.init > 1)) {
+        myfit$coef[2]
+      } else {
+        rep( 1.0, length.out = n)
       }
+    }
 
-      etastart = cbind(theta2eta(Scale.init, .lscale, earg = .escale ), 
-                       theta2eta(shape.init, .lshape, earg = .escale ))
-      }
+    etastart <-
+      cbind(theta2eta(Scale.init, .lscale , earg = .escale ),
+            theta2eta(shape.init, .lshape , earg = .eshape ))
+    }
   }), list( .lscale = lscale, .lshape = lshape,
             .escale = escale, .eshape = eshape,
             .iscale = iscale, .ishape = ishape,
             .location = location ))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
     loc = extra$location
-    Scale = eta2theta(eta[, 1], .lscale, earg = .escale )
-    shape = eta2theta(eta[, 2], .lshape, earg = .eshape )
+    Scale = eta2theta(eta[, 1], .lscale , earg = .escale )
+    shape = eta2theta(eta[, 2], .lshape , earg = .eshape )
 
-    ans = rep(as.numeric(NA), length.out = length(shape))
-    ok = shape > 1
-    ans[ok] = loc[ok] + Scale[ok] * gamma(1 - 1/shape[ok])
+    ans <- rep(as.numeric(NA), length.out = length(shape))
+    ok <- shape > 1
+    ans[ok] <- loc[ok] + Scale[ok] * gamma(1 - 1/shape[ok])
     ans
   }, list( .lscale = lscale, .lshape = lshape,
            .escale = escale, .eshape = eshape ))),
   last = eval(substitute(expression({
-    misc$links <-   c("scale" = .lscale, "shape" = .lshape)
+    misc$links <-   c("scale" = .lscale , "shape" = .lshape )
 
-    misc$earg <- list("scale" = .escale, "shape" = .eshape)
+    misc$earg <- list("scale" = .escale , "shape" = .eshape )
 
     misc$nsimEIM = .nsimEIM
   }), list( .lscale = lscale, .lshape = lshape,
@@ -1943,8 +2326,8 @@ frechet2.control <- function(save.weight = TRUE, ...)
   loglikelihood = eval(substitute(
     function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
     loctn = extra$location
-    Scale = eta2theta(eta[, 1], .lscale, earg = .escale )
-    shape = eta2theta(eta[, 2], .lshape, earg = .eshape )
+    Scale = eta2theta(eta[, 1], .lscale , earg = .escale )
+    shape = eta2theta(eta[, 2], .lshape , earg = .eshape )
     if (residuals) stop("loglikelihood residuals not ",
                         "implemented yet") else
         sum(w * dfrechet(x = y, location = loctn, scale = Scale,
@@ -1954,18 +2337,18 @@ frechet2.control <- function(save.weight = TRUE, ...)
   vfamily = c("frechet2", "vextremes"),
   deriv = eval(substitute(expression({
     loctn = extra$location
-    Scale = eta2theta(eta[, 1], .lscale, earg = .escale )
-    shape = eta2theta(eta[, 2], .lshape, earg = .eshape )
+    Scale = eta2theta(eta[, 1], .lscale , earg = .escale )
+    shape = eta2theta(eta[, 2], .lshape , earg = .eshape )
 
-    rzedd = Scale / (y - loctn)   # reciprocial of zedd
+    rzedd = Scale / (y - loctn) # reciprocial of zedd
     dl.dloctn = (shape + 1) / (y - loctn) -
                 (shape / (y - loctn)) * (rzedd)^shape
     dl.dScale = shape * (1 - rzedd^shape) / Scale
     dl.dshape = 1 / shape + log(rzedd) * (1 -  rzedd^shape)
 
     dthetas.detas <- cbind(
-      dScale.deta <- dtheta.deta(Scale, .lscale, earg = .escale ),
-      dShape.deta <- dtheta.deta(shape, .lshape, earg = .eshape ))
+      dScale.deta <- dtheta.deta(Scale, .lscale , earg = .escale ),
+      dShape.deta <- dtheta.deta(shape, .lshape , earg = .eshape ))
 
     c(w) * cbind(dl.dScale,
                  dl.dshape) * dthetas.detas
@@ -1973,33 +2356,33 @@ frechet2.control <- function(save.weight = TRUE, ...)
             .escale = escale, .eshape = eshape ))),
   weight = eval(substitute(expression({
 
-    run.varcov = 0
-    ind1 = iam(NA, NA, M = M, both = TRUE, diag = TRUE)
+    run.varcov <- 0
+    ind1 <- iam(NA, NA, M = M, both = TRUE, diag = TRUE)
 
     if (length( .nsimEIM )) {
       for(ii in 1:( .nsimEIM )) {
-          ysim = rfrechet(n, loc = loctn, scale = Scale, shape = shape)
+          ysim <- rfrechet(n, loc = loctn, scale = Scale, shape = shape)
 
-          rzedd = Scale / (ysim - loctn)   # reciprocial of zedd
-          dl.dloctn = (shape + 1) / (ysim - loctn) -
+          rzedd <- Scale / (ysim - loctn)   # reciprocial of zedd
+          dl.dloctn <- (shape + 1) / (ysim - loctn) -
                       (shape / (ysim - loctn)) * (rzedd)^shape
-          dl.dScale = shape * (1 - rzedd^shape) / Scale
-          dl.dshape = 1 / shape + log(rzedd) * (1 -  rzedd^shape)
+          dl.dScale <- shape * (1 - rzedd^shape) / Scale
+          dl.dshape <- 1 / shape + log(rzedd) * (1 -  rzedd^shape)
 
           rm(ysim)
-          temp3 = cbind(dl.dScale, dl.dshape)
-          run.varcov = run.varcov +
+          temp3 <- cbind(dl.dScale, dl.dshape)
+          run.varcov <- run.varcov +
                        temp3[, ind1$row.index] *
                        temp3[, ind1$col.index]
       }
-      run.varcov = run.varcov / .nsimEIM
+      run.varcov <- run.varcov / .nsimEIM
 
       wz = if (intercept.only)
           matrix(colMeans(run.varcov),
                  n, ncol(run.varcov), byrow = TRUE) else run.varcov
 
-      wz = c(w) * wz * dthetas.detas[, ind1$row] *
-                       dthetas.detas[, ind1$col]
+      wz = c(w) * wz * dthetas.detas[, ind1$row.index] *
+                       dthetas.detas[, ind1$col.index]
     } else {
       stop("argument 'nsimEIM' must be numeric")
     }
@@ -2024,28 +2407,25 @@ if (FALSE)
  frechet3 <- function(anchor = NULL,
                      ldifference = "loge",
                      lscale = "loge",
-                     lshape = "logoff",
-                     edifference = list(),
-                     escale = list(),
-                     eshape = list(offset = -2),
+                     lshape = logoff(offset = -2),
                      ilocation = NULL, iscale = NULL, ishape = NULL,
                      nsimEIM = 250,
                      zero = 1)
 {
-  ediffr = edifference
-  ldiffr = ldifference
+  lscale <- as.list(substitute(lscale))
+  escale <- link2list(lscale)
+  lscale <- attr(escale, "function.name")
 
-  if (mode(ldiffr) != "character" && mode(ldiffr) != "name")
-    ldiffr <- as.character(substitute(ldiffr))
-  if (mode(lscale) != "character" && mode(lscale) != "name")
-    lscale <- as.character(substitute(lscale))
-  if (mode(lshape) != "character" && mode(lshape) != "name")
-    lshape <- as.character(substitute(lshape))
+  lshape <- as.list(substitute(lshape))
+  eshape <- link2list(lshape)
+  lshape <- attr(eshape, "function.name")
+
+  ldiffr <- as.list(substitute(ldifference))
+  ediffr <- link2list(ldiffr)
+  ldiffr <- attr(escale, "function.name")
 
 
-  if (!is.list(ediffr)) ediffr = list()
-  if (!is.list(escale)) escale = list()
-  if (!is.list(eshape)) eshape = list()
+
 
   stopifnot(nsimEIM > 10, length(nsimEIM) == 1, nsimEIM == round(nsimEIM))
 
@@ -2063,10 +2443,10 @@ if (FALSE)
     if (ncol(cbind(y)) != 1)
       stop("response must be a vector or a one-column matrix")
 
-    predictors.names =
-    c(namesof("difference", .ldiffr, earg = .ediffr, short = TRUE),
-      namesof("scale",      .lscale, earg = .escale, short = TRUE),
-      namesof("shape",      .lshape, earg = .eshape, short = TRUE))
+    predictors.names <-
+    c(namesof("difference", .ldiffr , earg = .ediffr, short = TRUE),
+      namesof("scale",      .lscale , earg = .escale, short = TRUE),
+      namesof("shape",      .lshape , earg = .eshape, short = TRUE))
 
     anchorpt = if (is.Numeric( .anchor, allowable.length = 1))
                .anchor else min(y)
@@ -2090,8 +2470,6 @@ if (FALSE)
       try.this = getMaxMin(shape.grid, objfun = frech.aux,
                            y = y,  x = x, w = w, maximize = FALSE,
                            abs.arg = TRUE)
- print("try.this")
- print( try.this )
 
       shape.init =
         if (length( .ishape ))
@@ -2106,8 +2484,6 @@ if (FALSE)
         myobsns = quantile(y, probs = myprobs)
         myquant = (-log(myprobs))^(-1/shape.init[1])
         myfit = lsfit(x = myquant, y = myobsns)
- print("myfit$coef")
- print( myfit$coef )
  plot(myobsns ~ myquant)
 
 
@@ -2125,13 +2501,8 @@ if (FALSE)
       locinit = if (length( .ilocation))
                 rep( .ilocation, length.out = n) else {
         if (myfit$coef[1] < min(y)) {
- print("using myfit$coef[1] for initial location")
- print(       myfit$coef[1] )
- print(       min(y)  )
- print(       anchorpt   )
           rep(myfit$coef[1], length.out = n)
         } else {
- print("using heuristic initial location")
           rep(anchorpt - 0.01 * diff(range(y)), length.out = n)
         }
       }
@@ -2143,13 +2514,10 @@ if (FALSE)
 
 
 
-      etastart = cbind(theta2eta(anchorpt - locinit, .ldiffr),
-                       theta2eta(Scale.init, .lscale), 
-                       theta2eta(shape.init, .lshape))
- print("head(etastart)")
- print( head(etastart) )
- print("summary(etastart)")
- print( summary(etastart) )
+      etastart <-
+        cbind(theta2eta(anchorpt - locinit, .ldiffr),
+              theta2eta(Scale.init, .lscale), 
+              theta2eta(shape.init, .lshape))
       }
   }), list( .ldiffr = ldiffr, .lscale = lscale, .lshape = lshape, 
             .ediffr = ediffr, .escale = escale, .eshape = eshape, 
@@ -2157,18 +2525,18 @@ if (FALSE)
             .ilocation = ilocation, .anchor = anchor ))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
     loctn = extra$LHSanchor -
-            eta2theta(eta[, 1], .ldiffr, earg = .ediffr)
-    Scale = eta2theta(eta[, 2], .lscale, earg = .escale )
-    shape = eta2theta(eta[, 3], .lshape, earg = .eshape )
-    ans = rep(as.numeric(NA), length.out = length(shape))
+            eta2theta(eta[, 1], .ldiffr , earg = .ediffr)
+    Scale = eta2theta(eta[, 2], .lscale , earg = .escale )
+    shape = eta2theta(eta[, 3], .lshape , earg = .eshape )
+    ans <- rep(as.numeric(NA), length.out = length(shape))
     okay = shape > 1
     ans[okay] = loctn[okay] + Scale[okay] * gamma(1 - 1/shape[okay])
     ans
   }, list( .ldiffr = ldiffr, .lscale = lscale, .lshape = lshape,
            .ediffr = ediffr, .escale = escale, .eshape = eshape ))), 
   last = eval(substitute(expression({
-    misc$links <- c("difference" = .ldiffr,
-                    "scale"      = .lscale,
+    misc$links <- c("difference" = .ldiffr ,
+                    "scale"      = .lscale ,
                     "shape"      = .lshape)
 
     misc$earg <- list("difference" = .ediffr,
@@ -2185,9 +2553,9 @@ if (FALSE)
   loglikelihood = eval(substitute(
     function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
     loctn = extra$LHSanchor -
-            eta2theta(eta[, 1], .ldiffr, earg = .ediffr)
-    Scale = eta2theta(eta[, 2], .lscale, earg = .escale )
-    shape = eta2theta(eta[, 3], .lshape, earg = .eshape )
+            eta2theta(eta[, 1], .ldiffr , earg = .ediffr)
+    Scale = eta2theta(eta[, 2], .lscale , earg = .escale )
+    shape = eta2theta(eta[, 3], .lshape , earg = .eshape )
     if (residuals) stop("loglikelihood residuals not ",
                         "implemented yet") else {
         sum(w * dfrechet(x = y, location = loctn, scale = Scale,
@@ -2197,11 +2565,9 @@ if (FALSE)
            .ediffr = ediffr, .escale = escale, .eshape = eshape ))),
   vfamily = c("frechet3", "vextremes"),
   deriv = eval(substitute(expression({
- print("summary(eta) in @deriv ,,,,,,,,,,,,,,")
- print( summary(eta) )
-    Difrc      = eta2theta(eta[, 1], .ldiffr, earg = .ediffr )
-    Scale      = eta2theta(eta[, 2], .lscale, earg = .escale )
-    shape      = eta2theta(eta[, 3], .lshape, earg = .eshape )
+    Difrc      = eta2theta(eta[, 1], .ldiffr , earg = .ediffr )
+    Scale      = eta2theta(eta[, 2], .lscale , earg = .escale )
+    shape      = eta2theta(eta[, 3], .lshape , earg = .eshape )
 
     loctn = extra$LHSanchor - Difrc
     rzedd = Scale / (y - loctn)   # reciprocial of zedd
@@ -2213,11 +2579,11 @@ if (FALSE)
     dl.dshape = 1 / shape + log(rzedd) * (1 -  rzedd^shape)
 
     dthetas.detas <- cbind(
-      ddifff.deta <- dtheta.deta(Difrc, .ldiffr, earg = .ediffr ),
-      dScale.deta <- dtheta.deta(Scale, .lscale, earg = .escale ),
-      dShape.deta <- dtheta.deta(shape, .lshape, earg = .eshape ))
+      ddifff.deta <- dtheta.deta(Difrc, .ldiffr , earg = .ediffr ),
+      dScale.deta <- dtheta.deta(Scale, .lscale , earg = .escale ),
+      dShape.deta <- dtheta.deta(shape, .lshape , earg = .eshape ))
 
-    ans =
+    ans <-
     c(w) * cbind(dl.ddifff,
                  dl.dScale,
                  dl.dshape) * dthetas.detas
@@ -2281,31 +2647,46 @@ recnormal1.control <- function(save.weight = TRUE, ...)
     list(save.weight = save.weight)
 }
 
+
  recnormal1 <- function(lmean = "identity", lsd = "loge",
-                        imean = NULL, isd = NULL, imethod = 1, zero = NULL)
+                        imean = NULL, isd = NULL, imethod = 1,
+                        zero = NULL)
 {
-  if (mode(lmean) != "character" && mode(lmean) != "name")
-    lmean = as.character(substitute(lmean))
-  if (mode(lsd) != "character" && mode(lsd) != "name")
-    lsd = as.character(substitute(lsd))
+  lmean <- as.list(substitute(lmean))
+  emean <- link2list(lmean)
+  lmean <- attr(emean, "function.name")
+
+  lsdev <- as.list(substitute(lsd))
+  esdev <- link2list(lsdev)
+  lsdev <- attr(esdev, "function.name")
+
+  isdev <- isd
+
+
   if (!is.Numeric(imethod, allowable.length = 1,
                   integer.valued = TRUE, positive = TRUE) ||
       imethod > 3.5)
     stop("argument 'imethod' must be 1 or 2 or 3")
 
+
+
   new("vglmff",
   blurb = c("Upper record values from a univariate normal distribution\n\n",
           "Links:    ",
-          namesof("mean", lmean, tag = TRUE), "; ",
-          namesof("sd", lsd, tag = TRUE),
+          namesof("mean", lmean, emean, tag = TRUE), "; ",
+          namesof("sd",   lsdev, esdev, tag = TRUE),
           "\n",
           "Variance: sd^2"),
   constraints=eval(substitute(expression({
       constraints = cm.zero.vgam(constraints, x, .zero, M)
   }), list( .zero = zero ))),
   initialize = eval(substitute(expression({
-    predictors.names = c(namesof("mean", .lmean, tag = FALSE),
-                         namesof("sd",   .lsd,   tag = FALSE))
+
+
+
+    predictors.names <-
+      c(namesof("mean", .lmean, .emean, tag = FALSE),
+        namesof("sd",   .lsdev, .esdev, tag = FALSE))
 
     if (ncol(y <- cbind(y)) != 1)
         stop("response must be a vector or a one-column matrix")
@@ -2314,51 +2695,62 @@ recnormal1.control <- function(save.weight = TRUE, ...)
         stop("response must have increasingly larger and larger values")
     if (any(w != 1))
         warning("weights should have unit values only")
+
+
     if (!length(etastart)) {
         mean.init = if (length( .imean)) rep( .imean ,
                                              length.out = n) else {
             if (.lmean == "loge") pmax(1/1024, min(y)) else min(y)}
-        sd.init = if (length( .isd)) rep( .isd, length.out = n) else {
+        sd.init = if (length( .isdev)) rep( .isdev, length.out = n) else {
             if (.imethod == 1)  1*(sd(c(y))) else
             if (.imethod == 2)  5*(sd(c(y))) else
                                   .5*(sd(c(y)))
             }
-        etastart = cbind(theta2eta(rep(mean.init, len = n), .lmean),
-                         theta2eta(rep(sd.init,   len = n), .lsd))
+        etastart <-
+          cbind(theta2eta(rep(mean.init, len = n), .lmean, .emean ),
+                theta2eta(rep(sd.init,   len = n), .lsdev, .esdev ))
     }
-  }), list( .lmean = lmean, .lsd = lsd, .imean = imean, .isd = isd,
-             .imethod = imethod ))),
-    linkinv = eval(substitute(function(eta, extra = NULL) {
-        eta2theta(eta[, 1], .lmean)
-    }, list( .lmean = lmean ))),
-    last = eval(substitute(expression({
-        misc$link = c("mu" = .lmean, "sd" = .lsd)
-        misc$expected = FALSE
-    }), list( .lmean = lmean, .lsd = lsd ))),
-    loglikelihood = eval(substitute(
-    function(mu,y,w,residuals= FALSE,eta, extra = NULL) {
-        sd = eta2theta(eta[, 2], .lsd)
-        if (residuals) stop("loglikelihood residuals not ",
-                            "implemented yet") else {
-            zedd = (y - mu) / sd
-            NN = nrow(eta)
-          sum(w * (-log(sd) - 0.5 * zedd^2)) -
-          sum(w[-NN] * pnorm(zedd[-NN], lower.tail = FALSE, log.p = TRUE))
+  }), list( .lmean = lmean, .lsdev = lsdev,
+            .emean = emean, .esdev = esdev,
+            .imean = imean, .isdev = isdev,
+            .imethod = imethod ))),
+  linkinv = eval(substitute(function(eta, extra = NULL) {
+    eta2theta(eta[, 1], .lmean, .emean )
+  }, list( .lmean = lmean, .emean = emean ))),
+  last = eval(substitute(expression({
+    misc$link <-    c("mu" = .lmean , "sd" = .lsdev )
+    misc$earg <- list("mu" = .emean , "sd" = .esdev )
+
+
+    misc$expected = FALSE
+  }), list( .lmean = lmean, .lsdev = lsdev,
+            .emean = emean, .esdev = esdev ))),
+  loglikelihood = eval(substitute(
+    function(mu, y, w, residuals = FALSE,eta, extra = NULL) {
+    sdev = eta2theta(eta[, 2], .lsdev)
+    if (residuals) stop("loglikelihood residuals not ",
+                        "implemented yet") else {
+        zedd = (y - mu) / sdev
+        NN = nrow(eta)
+        sum(w * (-log(sdev) - 0.5 * zedd^2)) -
+        sum(w[-NN] * pnorm(zedd[-NN], lower.tail = FALSE, log.p = TRUE))
       }
-  }, list( .lsd = lsd ))),
+  }, list( .lsdev = lsdev, .esdev = esdev ))),
   vfamily = c("recnormal1"),
   deriv = eval(substitute(expression({
     NN = nrow(eta)
     mymu = eta2theta(eta[, 1], .lmean)
-    sd = eta2theta(eta[, 2], .lsd)
-    zedd = (y - mymu) / sd
+    sdev = eta2theta(eta[, 2], .lsdev)
+    zedd = (y - mymu) / sdev
     temp200 = dnorm(zedd) / (1-pnorm(zedd))
-    dl.dmu = (zedd - temp200) / sd
-    dl.dmu[NN] = zedd[NN] / sd[NN]
-    dl.dsd = (-1 + zedd^2 - zedd * temp200)  / sd
-    dl.dsd[NN] = (-1 + zedd[NN]^2)  / sd[NN]
-    dmu.deta = dtheta.deta(mymu, .lmean) 
-    dsd.deta = dtheta.deta(sd, .lsd) 
+    dl.dmu = (zedd - temp200) / sdev
+    dl.dmu[NN] = zedd[NN] / sdev[NN]
+    dl.dsd = (-1 + zedd^2 - zedd * temp200)  / sdev
+    dl.dsd[NN] = (-1 + zedd[NN]^2)  / sdev[NN]
+
+    dmu.deta = dtheta.deta(mymu, .lmean, .emean )
+    dsd.deta = dtheta.deta(sdev, .lsdev, .esdev )
+
     if (iter == 1) {
       etanew = eta
     } else {
@@ -2369,7 +2761,8 @@ recnormal1.control <- function(save.weight = TRUE, ...)
     derivnew = c(w) * cbind(dl.dmu * dmu.deta,
                             dl.dsd * dsd.deta)
     derivnew
-    }), list( .lmean = lmean, .lsd = lsd ))),
+    }), list( .lmean = lmean, .lsdev = lsdev,
+              .emean = emean, .esdev = esdev ))),
     weight = expression({
       if (iter == 1) {
           wznew = cbind(matrix(w, n, M), matrix(0, n, dimm(M)-M))
@@ -2387,77 +2780,95 @@ recnormal1.control <- function(save.weight = TRUE, ...)
 
 recexp1.control <- function(save.weight = TRUE, ...)
 {
-    list(save.weight = save.weight)
+  list(save.weight = save.weight)
 }
+
 
  recexp1 <- function(lrate = "loge", irate = NULL, imethod = 1)
 {
+  lrate <- as.list(substitute(lrate))
+  erate <- link2list(lrate)
+  lrate <- attr(erate, "function.name")
 
-    if (mode(lrate) != "character" && mode(lrate) != "name")
-        lrate = as.character(substitute(lrate))
-    if (!is.Numeric(imethod, allowable.length = 1,
+
+
+  if (!is.Numeric(imethod, allowable.length = 1,
                     integer.valued = TRUE, positive = TRUE) ||
-       imethod > 3.5)
-        stop("argument 'imethod' must be 1 or 2 or 3")
+     imethod > 3.5)
+      stop("argument 'imethod' must be 1 or 2 or 3")
 
-    new("vglmff",
-    blurb = c("Upper record values from a ",
-              "1-parameter exponential distribution\n\n",
-            "Links:    ",
-            namesof("rate", lrate, tag = TRUE),
-            "\n",
-            "Variance: 1/rate^2"),
-    initialize = eval(substitute(expression({
-        predictors.names = c(namesof("rate", .lrate, tag = FALSE))
-        if (ncol(y <- cbind(y)) != 1)
-            stop("response must be a vector or a one-column matrix")
-        if (any(diff(y) <= 0))
-            stop("response must have increasingly larger and larger values")
-        if (any(w != 1))
-            warning("weights should have unit values only")
-        if (!length(etastart)) {
-            rate.init = if (length( .irate))
-                        rep( .irate, len = n) else {
-                init.rate =
-                    if (.imethod == 1) length(y) / y[length(y), 1] else
-                    if (.imethod == 2) 1/mean(y) else 1/median(y)
-                if (.lrate == "loge") pmax(1/1024, init.rate) else
-                  init.rate}
-            etastart =
-              cbind(theta2eta(rep(rate.init, len = n), .lrate))
-        }
-    }), list( .lrate = lrate, .irate = irate, .imethod = imethod ))),
-    linkinv = eval(substitute(function(eta, extra = NULL) {
-        eta2theta(eta, .lrate)
-    }, list( .lrate = lrate ))),
-    last = eval(substitute(expression({
-        misc$link = c("rate" = .lrate)
-        misc$expected = TRUE
-    }), list( .lrate = lrate ))),
-    loglikelihood = eval(substitute(
-        function(mu,y,w,residuals= FALSE,eta, extra = NULL) {
-        rate = eta2theta(eta, .lrate)
-        if (residuals) stop("loglikelihood residuals not ",
-                            "implemented yet") else {
-            NN = length(eta)
-            y = cbind(y)
-            sum(w * log(rate)) - w[NN] * rate[NN] * y[NN, 1]
-        }
-    }, list( .lrate = lrate ))),
-    vfamily = c("recexp1"),
-    deriv = eval(substitute(expression({
+
+
+  new("vglmff",
+  blurb = c("Upper record values from a ",
+            "1-parameter exponential distribution\n\n",
+          "Links:    ",
+          namesof("rate", lrate, erate, tag = TRUE),
+          "\n",
+          "Variance: 1/rate^2"),
+  initialize = eval(substitute(expression({
+    predictors.names <-
+      c(namesof("rate", .lrate , .erate , tag = FALSE))
+
+    if (ncol(y <- cbind(y)) != 1)
+      stop("response must be a vector or a one-column matrix")
+    if (any(diff(y) <= 0))
+      stop("response must have increasingly larger and larger values")
+    if (any(w != 1))
+      warning("weights should have unit values only")
+
+
+    if (!length(etastart)) {
+      rate.init = if (length( .irate))
+                  rep( .irate, len = n) else {
+          init.rate =
+              if (.imethod == 1) length(y) / y[length(y), 1] else
+              if (.imethod == 2) 1/mean(y) else 1/median(y)
+          if (.lrate == "loge") pmax(1/1024, init.rate) else
+            init.rate}
+
+      etastart =
+        cbind(theta2eta(rep(rate.init, len = n), .lrate , .erate ))
+      }
+  }), list( .lrate = lrate,
+            .erate = erate,
+            .irate = irate, .imethod = imethod ))),
+  linkinv = eval(substitute(function(eta, extra = NULL) {
+    eta2theta(eta, .lrate , .erate )
+  }, list( .lrate = lrate, .erate = erate ))),
+  last = eval(substitute(expression({
+    misc$link <-    c("rate" = .lrate)
+    misc$earg <- list("rate" = .erate)
+
+    misc$expected = TRUE
+  }), list( .lrate = lrate, .erate = erate ))),
+  loglikelihood = eval(substitute(
+    function(mu, y, w, residuals = FALSE,eta, extra = NULL) {
+    rate = eta2theta(eta, .lrate , .erate )
+    if (residuals) stop("loglikelihood residuals not ",
+                        "implemented yet") else {
         NN = length(eta)
-        rate = c(eta2theta(eta, .lrate))
-        dl.drate = 1 / rate 
-        dl.drate[NN] = 1/ rate[NN] - y[NN, 1]
-        drate.deta = dtheta.deta(rate, .lrate)
-        c(w) * cbind(dl.drate * drate.deta)
-    }), list( .lrate = lrate ))),
-    weight=expression({
-        ed2l.drate2 = 1 / rate^2
-        wz = drate.deta^2 * ed2l.drate2
-        c(w) * wz
-    }))
+        y = cbind(y)
+        sum(w * log(rate)) - w[NN] * rate[NN] * y[NN, 1]
+    }
+  }, list( .lrate = lrate, .erate = erate ))),
+  vfamily = c("recexp1"),
+  deriv = eval(substitute(expression({
+    NN = length(eta)
+    rate = c(eta2theta(eta, .lrate , .erate ))
+
+    dl.drate = 1 / rate 
+    dl.drate[NN] = 1/ rate[NN] - y[NN, 1]
+
+    drate.deta = dtheta.deta(rate, .lrate , .erate )
+
+    c(w) * cbind(dl.drate * drate.deta)
+  }), list( .lrate = lrate, .erate = erate ))),
+  weight = expression({
+    ed2l.drate2 = 1 / rate^2
+    wz = drate.deta^2 * ed2l.drate2
+    c(w) * wz
+  }))
 }
 
 
@@ -2469,116 +2880,128 @@ recexp1.control <- function(save.weight = TRUE, ...)
 
 
  poissonp <- function(ostatistic, dimension = 2,
-                     link = "loge", earg = list(),
+                     link = "loge",
                      idensity = NULL, imethod = 1) {
-    if (!is.Numeric(ostatistic, positive = TRUE,
-                    allowable.length = 1, integer.valued = TRUE))
-      stop("argument 'ostatistic' must be a single positive integer")
-    if (!is.Numeric(dimension, positive = TRUE,
-                    allowable.length = 1, integer.valued = TRUE) ||
-        dimension > 3)
-      stop("argument 'dimension' must be 2 or 3")
-    if (mode(link) != "character" && mode(link) != "name")
-      link = as.character(substitute(link))
+  if (!is.Numeric(ostatistic, positive = TRUE,
+                  allowable.length = 1, integer.valued = TRUE))
+    stop("argument 'ostatistic' must be a single positive integer")
+  if (!is.Numeric(dimension, positive = TRUE,
+                  allowable.length = 1, integer.valued = TRUE) ||
+      dimension > 3)
+    stop("argument 'dimension' must be 2 or 3")
 
-    if (!is.list(earg)) earg = list()
-    if (!is.Numeric(imethod, allowable.length = 1,
-                    positive = TRUE, integer.valued = TRUE) ||
-        imethod > 2.5)
-      stop("argument 'imethod' must be 1 or 2")
-    if (length(idensity) &&
-        !is.Numeric(idensity, positive = TRUE))
-      stop("bad input for argument 'idensity'")
 
-    new("vglmff",
-    blurb = c(if (dimension == 2)
-            "Poisson-points-on-a-plane distances distribution\n" else
-            "Poisson-points-on-a-volume distances distribution\n",
-            "Link:    ",
-            namesof("density", link, earg = earg), "\n\n",
-            if (dimension == 2)
+  link <- as.list(substitute(link))
+  earg <- link2list(link)
+  link <- attr(earg, "function.name")
+
+
+  if (!is.Numeric(imethod, allowable.length = 1,
+                  positive = TRUE, integer.valued = TRUE) ||
+      imethod > 2.5)
+    stop("argument 'imethod' must be 1 or 2")
+  if (length(idensity) &&
+      !is.Numeric(idensity, positive = TRUE))
+    stop("bad input for argument 'idensity'")
+
+  new("vglmff",
+  blurb = c(if (dimension == 2)
+          "Poisson-points-on-a-plane distances distribution\n" else
+          "Poisson-points-on-a-volume distances distribution\n",
+          "Link:    ",
+          namesof("density", link, earg = earg), "\n\n",
+          if (dimension == 2)
             "Mean:    gamma(s+0.5) / (gamma(s) * sqrt(density * pi))" else
             "Mean:    gamma(s+1/3) / (gamma(s) * (4*density*pi/3)^(1/3))"),
-    initialize = eval(substitute(expression({
-        if (ncol(cbind(y)) != 1)
-            stop("response must be a vector or a one-column matrix")
-        if (any(y <= 0))
-            stop("response must contain positive values only")
-        predictors.names =
-          namesof("density", .link, earg = .earg, tag = FALSE) 
-        if (!length(etastart)) {
-            use.this = if ( .imethod == 1) median(y) + 1/8 else
-                       weighted.mean(y,w)
-            if ( .dimension == 2) {
-                myratio = exp(lgamma( .ostatistic + 0.5) -
-                              lgamma( .ostatistic ))
-                density.init = if (is.Numeric( .idensity ))
-                    rep( .idensity, len = n) else
-                    rep(myratio^2 / (pi * use.this^2), len = n)
-                etastart = theta2eta(density.init, .link, earg = .earg)
-            } else {
-                myratio = exp(lgamma( .ostatistic +1/3) -
-                              lgamma( .ostatistic ))
-                density.init = if (is.Numeric( .idensity ))
-                    rep( .idensity, len = n) else
-                    rep(3 * myratio^3 / (4 * pi * use.this^3), len = n)
-                etastart = theta2eta(density.init, .link, earg = .earg)
-            }
-        }
-    }), list( .link = link, .earg = earg, .ostatistic = ostatistic,
-              .dimension = dimension, .imethod = imethod,
-              .idensity = idensity ))),
-    linkinv = eval(substitute(function(eta, extra = NULL) {
-        density = eta2theta(eta, .link, earg = .earg)
+  initialize = eval(substitute(expression({
+    if (ncol(cbind(y)) != 1)
+        stop("response must be a vector or a one-column matrix")
+    if (any(y <= 0))
+        stop("response must contain positive values only")
+
+
+
+    predictors.names <-
+      namesof("density", .link, earg = .earg, tag = FALSE) 
+
+
+
+    if (!length(etastart)) {
+        use.this = if ( .imethod == 1) median(y) + 1/8 else
+                   weighted.mean(y,w)
         if ( .dimension == 2) {
-            myratio = exp(lgamma( .ostatistic +0.5) - lgamma( .ostatistic ))
-            myratio / sqrt(density * pi)
+            myratio = exp(lgamma( .ostatistic + 0.5) -
+                          lgamma( .ostatistic ))
+            density.init = if (is.Numeric( .idensity ))
+                rep( .idensity, len = n) else
+                rep(myratio^2 / (pi * use.this^2), len = n)
+            etastart = theta2eta(density.init, .link, earg = .earg)
         } else {
-            myratio = exp(lgamma( .ostatistic +1/3) - lgamma( .ostatistic))
-            myratio / (4 * density * pi/3)^(1/3)
+            myratio = exp(lgamma( .ostatistic +1/3) -
+                          lgamma( .ostatistic ))
+            density.init = if (is.Numeric( .idensity ))
+                rep( .idensity, len = n) else
+                rep(3 * myratio^3 / (4 * pi * use.this^3), len = n)
+            etastart = theta2eta(density.init, .link, earg = .earg)
         }
-    }, list( .link = link, .earg = earg, .ostatistic = ostatistic,
-             .dimension = dimension ))),
-    last = eval(substitute(expression({
-        misc$link =    c("density" = .link)
-        misc$earg = list("density" = .earg)
-        misc$expected = TRUE
-        misc$ostatistic = .ostatistic
-        misc$dimension = .dimension
-    }), list( .link = link, .earg = earg, .ostatistic = ostatistic,
-              .dimension = dimension ))),
-    loglikelihood = eval(substitute(
-        function(mu,y,w,residuals= FALSE,eta, extra = NULL) {
-        density = eta2theta(eta, .link, earg = .earg)
-        if (residuals) stop("loglikelihood residuals not ",
-                            "implemented yet") else
-            if ( .dimension == 2)
-                sum(w * (log(2) + .ostatistic * log(pi * density) -
-                     lgamma( .ostatistic) + (2* .ostatistic-1) * log(y) -
-                     density * pi * y^2)) else
-                sum(w * (log(3) + .ostatistic * log(4*pi * density/3) -
-                     lgamma( .ostatistic) + (3* .ostatistic-1) * log(y) -
-                     (4/3) * density * pi * y^3))
-    }, list( .link = link, .earg = earg, .ostatistic = ostatistic,
-             .dimension = dimension ))),
-    vfamily = c("poissonp"),
-    deriv = eval(substitute(expression({
-        density = eta2theta(eta, .link, earg = .earg)
-        if ( .dimension == 2) {
-            dl.ddensity = .ostatistic / density - pi * y^2
-        } else {
-            dl.ddensity = .ostatistic / density - (4/3) * pi * y^3
-        }
-        ddensity.deta = dtheta.deta(density, .link, earg = .earg)
-        w * dl.ddensity * ddensity.deta
-    }), list( .link = link, .earg = earg, .ostatistic = ostatistic,
-              .dimension = dimension ))),
-    weight = eval(substitute(expression({
-        ed2l.ddensity2 = .ostatistic / density^2
-        wz = ddensity.deta^2 * ed2l.ddensity2
-        c(w) * wz
-    }), list( .link = link, .earg = earg, .ostatistic = ostatistic,
-              .dimension = dimension ))))
+    }
+  }), list( .link = link, .earg = earg, .ostatistic = ostatistic,
+            .dimension = dimension, .imethod = imethod,
+            .idensity = idensity ))),
+  linkinv = eval(substitute(function(eta, extra = NULL) {
+    density = eta2theta(eta, .link, earg = .earg)
+    if ( .dimension == 2) {
+      myratio = exp(lgamma( .ostatistic +0.5) - lgamma( .ostatistic ))
+      myratio / sqrt(density * pi)
+    } else {
+      myratio = exp(lgamma( .ostatistic +1/3) - lgamma( .ostatistic))
+      myratio / (4 * density * pi/3)^(1/3)
+    }
+  }, list( .link = link, .earg = earg, .ostatistic = ostatistic,
+           .dimension = dimension ))),
+  last = eval(substitute(expression({
+    misc$link =    c("density" = .link)
+    misc$earg = list("density" = .earg)
+    misc$expected = TRUE
+    misc$ostatistic = .ostatistic
+    misc$dimension = .dimension
+  }), list( .link = link, .earg = earg, .ostatistic = ostatistic,
+            .dimension = dimension ))),
+  loglikelihood = eval(substitute(
+    function(mu, y, w, residuals = FALSE,eta, extra = NULL) {
+    density = eta2theta(eta, .link, earg = .earg)
+    if (residuals) stop("loglikelihood residuals not ",
+                        "implemented yet") else
+      if ( .dimension == 2)
+          sum(w * (log(2) + .ostatistic * log(pi * density) -
+               lgamma( .ostatistic) + (2* .ostatistic-1) * log(y) -
+               density * pi * y^2)) else
+          sum(w * (log(3) + .ostatistic * log(4*pi * density/3) -
+               lgamma( .ostatistic) + (3* .ostatistic-1) * log(y) -
+               (4/3) * density * pi * y^3))
+  }, list( .link = link, .earg = earg, .ostatistic = ostatistic,
+           .dimension = dimension ))),
+  vfamily = c("poissonp"),
+  deriv = eval(substitute(expression({
+    density = eta2theta(eta, .link, earg = .earg)
+
+    if ( .dimension == 2) {
+        dl.ddensity = .ostatistic / density - pi * y^2
+    } else {
+        dl.ddensity = .ostatistic / density - (4/3) * pi * y^3
+    }
+
+    ddensity.deta = dtheta.deta(density, .link, earg = .earg)
+
+    c(w) * dl.ddensity * ddensity.deta
+  }), list( .link = link, .earg = earg, .ostatistic = ostatistic,
+            .dimension = dimension ))),
+  weight = eval(substitute(expression({
+    ned2l.ddensity2 = .ostatistic / density^2
+    wz = ddensity.deta^2 * ned2l.ddensity2
+    c(w) * wz
+  }), list( .link = link, .earg = earg, .ostatistic = ostatistic,
+            .dimension = dimension ))))
 }
 
 

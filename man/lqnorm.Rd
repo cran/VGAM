@@ -8,8 +8,8 @@
 
 }
 \usage{
-lqnorm(qpower=2, link="identity", earg=list(),
-       imethod=1, imu=NULL, shrinkage.init=0.95)
+lqnorm(qpower = 2, link = "identity",
+       imethod = 1, imu = NULL, shrinkage.init = 0.95)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -20,9 +20,8 @@ lqnorm(qpower=2, link="identity", earg=list(),
   This quantity is minimized with respect to the regression coefficients.
 
   }
-  \item{link, earg}{
-  Link function applied to the `mean' \eqn{\mu}{mu},
-  and extra argument optionally used by the link function.
+  \item{link}{
+  Link function applied to the `mean' \eqn{\mu}{mu}.
   See \code{\link{Links}} for more details.
 
   }
@@ -34,7 +33,7 @@ lqnorm(qpower=2, link="identity", earg=list(),
   }
   \item{imu}{
   Numeric, optional initial values used for the fitted values.
-  The default is to use \code{imethod=1}.
+  The default is to use \code{imethod = 1}.
 
   }
   \item{shrinkage.init}{
@@ -42,7 +41,7 @@ lqnorm(qpower=2, link="identity", earg=list(),
   The value must be between 0 and 1 inclusive, and
   a value of 0 means the individual response values are used,
   and a value of 1 means the median or mean is used.
-  This argument is used in conjunction with \code{imethod=3}.
+  This argument is used in conjunction with \code{imethod = 3}.
 
   }
 }
@@ -59,6 +58,7 @@ lqnorm(qpower=2, link="identity", earg=list(),
   it should be just a vector here since
   this function handles only a single vector or one-column response.
 
+
   Numerical problem will occur when \eqn{q} is too close to one.
   Probably reasonable values range from 1.5 and up, say.
   The value \eqn{q=2} corresponds to ordinary least squares while
@@ -66,11 +66,13 @@ lqnorm(qpower=2, link="identity", earg=list(),
   distibution. The procedure becomes more sensitive to outliers the
   larger the value of \eqn{q}.
 
+
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}},
   and \code{\link{vgam}}.
+
 
 }
 \references{
@@ -78,6 +80,7 @@ lqnorm(qpower=2, link="identity", earg=list(),
   Vector generalized additive models.
   \emph{Journal of the Royal Statistical Society, Series B, Methodological},
   \bold{58}, 481--493.
+
 
 }
 \author{ Thomas W. Yee }
@@ -90,40 +93,43 @@ lqnorm(qpower=2, link="identity", earg=list(),
   called \code{objectiveFunction} which is the value of the
   objective function at the final iteration.
 
+
 }
 
 \section{Warning }{
  Convergence failure is common, therefore the user is advised to be
  cautious and monitor convergence!
 
+
 }
 
 \seealso{
   \code{\link{gaussianff}}.
 
+
 }
 
 \examples{
 set.seed(123)
-ldat = data.frame(x = sort(runif(nn <- 10 )))
-realfun = function(x) 4 + 5*x
-ldat = transform(ldat, y = realfun(x) + rnorm(nn, sd=exp(1)))
+ldata <- data.frame(x = sort(runif(nn <- 10 )))
+realfun <- function(x) 4 + 5*x
+ldata <- transform(ldata, y = realfun(x) + rnorm(nn, sd = exp(-1)))
 # Make the first observation an outlier
-ldat = transform(ldat, y = c(4*y[1], y[-1]), x=c(-1, x[-1]))
-fit = vglm(y ~ x, fam = lqnorm(qpower=1.2), data=ldat)
-coef(fit, matrix=TRUE)
+ldata <- transform(ldata, y = c(4*y[1], y[-1]), x = c(-1, x[-1]))
+fit <- vglm(y ~ x, fam = lqnorm(qpower = 1.2), data = ldata)
+coef(fit, matrix = TRUE)
 head(fitted(fit))
 fit@misc$qpower 
 fit@misc$objectiveFunction 
 
 \dontrun{
 # Graphical check
-with(ldat, plot(x, y, main=paste("LS=red, lqnorm=blue (qpower = ",
-             fit@misc$qpower, "), truth=black", sep=""), col="blue"))
-lmfit = lm(y ~ x, data=ldat)
-with(ldat, lines(x,  fitted(fit), col="blue"))
-with(ldat, lines(x, lmfit$fitted, col="red"))
-with(ldat, lines(x,  realfun(x),  col="black")) }
+with(ldata, plot(x, y, main = paste("LS = red, lqnorm = blue (qpower = ",
+             fit@misc$qpower, "), truth = black", sep = ""), col = "blue"))
+lmfit <- lm(y ~ x, data = ldata)
+with(ldata, lines(x,  fitted(fit), col = "blue"))
+with(ldata, lines(x, lmfit$fitted, col = "red"))
+with(ldata, lines(x,  realfun(x),  col = "black")) }
 }
 \keyword{models}
 \keyword{regression}

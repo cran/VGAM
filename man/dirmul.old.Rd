@@ -7,7 +7,7 @@
   non-negative integers.
 }
 \usage{
-dirmul.old(link = "loge", earg = list(),
+dirmul.old(link = "loge",
            init.alpha = 0.01, parallel = FALSE, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -17,11 +17,6 @@ dirmul.old(link = "loge", earg = list(),
   shape parameters \eqn{\alpha_j}{alpha_j} for \eqn{j=1,\ldots,M}. 
   See \code{\link{Links}} for more choices.
   Here, \eqn{M} is the number of columns of the response matrix.
-
-  }
-  \item{earg}{
-  List. Extra argument for \code{link}.
-  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{init.alpha}{
@@ -149,8 +144,8 @@ fit <- vglm(cbind(Allele5,Allele6,Allele7,Allele8,Allele9,
 
 (sfit <- summary(fit))
 vcov(sfit)
-round(eta2theta(coef(fit), fit@misc$link), dig = 2)  # not preferred
-round(Coef(fit), dig = 2) # preferred  # preferred
+round(eta2theta(coef(fit), fit@misc$link, fit@misc$earg), dig = 2) # not preferred
+round(Coef(fit), dig = 2) # preferred
 round(t(fitted(fit)), dig = 4) # 2nd row of Table 3.5 of Lange (2002)
 coef(fit, matrix = TRUE)
 
@@ -159,8 +154,9 @@ pfit <- vglm(cbind(Allele5,Allele6,Allele7,Allele8,Allele9,
                    Allele10,Allele11,Allele12) ~ 1,
              dirmul.old(parallel = TRUE), trace = TRUE,
              data = alleleCounts)
-round(eta2theta(coef(pfit), pfit@misc$link), dig = 2) # not preferred
-round(Coef(pfit), dig = 2)   # preferred
+round(eta2theta(coef(pfit, matrix = TRUE), pfit@misc$link,
+                pfit@misc$earg), dig = 2) # 'Right' answer
+round(Coef(pfit), dig = 2) # 'Wrong' answer due to parallelism constraint
 }
 \keyword{models}
 \keyword{regression}

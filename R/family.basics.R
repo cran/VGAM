@@ -363,7 +363,8 @@ add.constraints <- function(constraints, new.constraints,
 
 
 
-iam <- function(j, k, M, hbw = M, both = FALSE, diag = TRUE) {
+ iam <- function(j, k, M, # hbw = M,
+                 both = FALSE, diag = TRUE) {
 
 
   jay <- j 
@@ -709,16 +710,13 @@ setMethod("weights", "vglm",
 
 dotFortran <- function(name, ..., NAOK = FALSE, DUP = TRUE,
                        PACKAGE = "VGAM") {
-    if (is.R()) {
-      .Fortran(name=name, ..., NAOK = NAOK, DUP = DUP, PACKAGE = PACKAGE)
-    } else {
-      stop()
-    }
+  .Fortran(name, ..., NAOK = NAOK, DUP = DUP, PACKAGE = PACKAGE)
 }
 
 
-dotC <- function(name, ..., NAOK = FALSE, DUP = TRUE, PACKAGE = "VGAM") {
-      .C(name=name, ..., NAOK = NAOK, DUP = DUP, PACKAGE = PACKAGE)
+dotC <- function(name, ..., NAOK = FALSE, DUP = TRUE,
+                 PACKAGE = "VGAM") {
+  .C(name, ..., NAOK = NAOK, DUP = DUP, PACKAGE = PACKAGE)
 }
 
 
@@ -957,7 +955,178 @@ is.empty.list = function(mylist) {
 
 
 
+interleave.VGAM = function(L, M) c(matrix(1:L, nrow = M, byrow = TRUE))
 
+
+
+
+
+w.wz.merge <- function(w, wz, n, M, ndepy,
+                       intercept.only = FALSE) {
+
+
+
+
+
+  wz <- as.matrix(wz)
+
+  if (ndepy == 1)
+    return( c(w) * wz)
+
+
+  if (intercept.only)
+    warning("yettodo: support intercept.only == TRUE")
+
+  if (ncol(as.matrix(w)) > ndepy)
+    stop("number of columns of 'w' exceeds number of responses")
+
+  w  <- matrix(w, n, ndepy)
+  w.rep <- matrix(0, n, ncol(wz))
+  Musual <- M / ndepy
+  all.indices = iam(NA, NA, M = M, both = TRUE)
+
+
+
+  if (FALSE)
+  for (ii in 1:ncol(wz)) {
+
+    if ((ind1 <- ceiling(all.indices$row[ii] / Musual)) ==
+                 ceiling(all.indices$col[ii] / Musual)) {
+      w.rep[, ii] <- w[, ind1]
+    }
+
+
+  } # ii
+
+
+  res.Ind1 <- ceiling(all.indices$row.index / Musual)
+  Ind1 <- res.Ind1 == ceiling(all.indices$col.index / Musual)
+
+  LLLL <- min(ncol(wz), length(Ind1))
+  Ind1 <- Ind1[1:LLLL]
+  res.Ind1 <- res.Ind1[1:LLLL]
+
+  for (ii in 1:ndepy) {
+    sub.ind1 <- (1:LLLL)[Ind1 & (res.Ind1 == ii)]
+    w.rep[, sub.ind1] <- w[, ii]
+  } # ii
+
+  w.rep * wz
+}
+
+
+
+
+
+
+w.y.check <- function(w, y,
+                      ncol.w.max = 1, ncol.y.max = 1,
+                      ncol.w.min = 1, ncol.y.min = 1,
+                      out.wy = FALSE,
+                      colsyperw = 1,
+                      maximize = FALSE,
+                      Is.integer.y = FALSE,
+                      Is.positive.y = FALSE,
+                      Is.nonnegative.y = FALSE,
+                      prefix.w = "PriorWeight",
+                      prefix.y = "Response") {
+
+
+
+  if (!is.matrix(w))
+    w <- as.matrix(w)
+  if (!is.matrix(y))
+    y <- as.matrix(y)
+  n_lm <- nrow(y)
+  rn.w <- rownames(w)
+  rn.y <- rownames(y)
+  cn.w <- colnames(w)
+  cn.y <- colnames(y)
+
+
+  if (Is.integer.y && any(y != round(y)))
+    stop("response variable 'y' must be integer-valued")
+  if (Is.positive.y && any(y <= 0))
+    stop("response variable 'y' must be positive-valued")
+  if (Is.nonnegative.y && any(y < 0))
+    stop("response variable 'y' must be 0 or positive-valued")
+
+  if (nrow(w) != n_lm)
+    stop("nrow(w) should be equal to nrow(y)")
+
+  if (ncol(w) > ncol.w.max)
+    stop("prior-weight variable 'w' has too many columns")
+  if (ncol(y) > ncol.y.max)
+    stop("response variable 'y' has too many columns; ",
+         "only ", ncol.y.max, " allowed")
+
+  if (ncol(w) < ncol.w.min)
+    stop("prior-weight variable 'w' has too few columns")
+  if (ncol(y) < ncol.y.min)
+    stop("response variable 'y' has too few columns; ",
+         "at least ", ncol.y.max, " needed")
+
+  if (min(w) <= 0)
+    stop("prior-weight variable 'w' must contain positive values only")
+
+  if (is.numeric(colsyperw) && ncol(y) %% colsyperw != 0)
+    stop("number of columns of the response variable 'y' is not ",
+         "a multiple of ", colsyperw)
+
+
+  if (maximize) {
+    Ncol.max.w = max(ncol(w), ncol(y) / colsyperw)
+    Ncol.max.y = max(ncol(y), ncol(w) * colsyperw)
+  } else {
+    Ncol.max.w = ncol(w)
+    Ncol.max.y = ncol(y)
+  }
+
+  if (out.wy && ncol(w) < Ncol.max.w) {
+    nblanks <- sum(cn.w == "")
+    if (nblanks > 0)
+      cn.w[cn.w == ""] <- paste(prefix.w, 1:nblanks, sep = "")
+    if (length(cn.w) < Ncol.max.w)
+      cn.w <- c(cn.w, paste(prefix.w, (length(cn.w)+1):Ncol.max.w,
+                            sep = ""))
+    w <- matrix(w, n_lm, Ncol.max.w, dimnames = list(rn.w, cn.w))
+  }
+  if (out.wy && ncol(y) < Ncol.max.y) {
+    nblanks <- sum(cn.y == "")
+    if (nblanks > 0)
+      cn.y[cn.y == ""] <- paste(prefix.y, 1:nblanks, sep = "")
+    if (length(cn.y) < Ncol.max.y)
+      cn.y <- c(cn.y, paste(prefix.y, (length(cn.y)+1):Ncol.max.y,
+                            sep = ""))
+    y <- matrix(y, n_lm, Ncol.max.y, dimnames = list(rn.y, cn.y))
+  }
+       
+  list(w = if (out.wy) w else NULL,
+       y = if (out.wy) y else NULL)
+}
+
+
+
+
+vweighted.mean.default <- function (x, w, ..., na.rm = FALSE) {
+  temp5 <- w.y.check(w = w, y = x, ncol.w.max = Inf, ncol.y.max = Inf,
+                     out.wy = TRUE,
+                     colsyperw = 1,
+                     maximize = TRUE,
+                     Is.integer.y = FALSE,
+                     Is.positive.y = FALSE,
+                     Is.nonnegative.y = FALSE,
+                     prefix.w = "PriorWeight",
+                     prefix.y = "Response")
+
+  x <- temp5$y
+  w <- temp5$w
+
+  ans <- numeric(ncol(w))
+  for (ii in 1:ncol(w))
+    ans[ii] <- weighted.mean(x[, ii], w = w[, ii], ..., na.rm = na.rm)
+  ans
+}
 
 
 

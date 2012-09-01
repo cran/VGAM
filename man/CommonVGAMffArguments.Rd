@@ -13,11 +13,14 @@
 
 }
 \usage{
-TypicalVGAMfamilyFunction(lsigma = "loge", esigma = list(), isigma = NULL,
-                          parallel = TRUE, shrinkage.init = 0.95,
+TypicalVGAMfamilyFunction(lsigma = "loge",
+                          isigma = NULL, parallel = TRUE,
+                          shrinkage.init = 0.95,
                           nointercept = NULL, imethod = 1,
-                          prob.x = c(0.15, 0.85), mv = FALSE,
-                          whitespace = FALSE,
+                          probs.x = c(0.15, 0.85),
+                          probs.y = c(0.25, 0.50, 0.75),
+                          mv = FALSE, earg.link = FALSE,
+                          whitespace = FALSE, bred = FALSE,
                           oim = FALSE, nsimEIM = 100, zero = NULL)
 }
 \arguments{
@@ -30,15 +33,17 @@ TypicalVGAMfamilyFunction(lsigma = "loge", esigma = list(), isigma = NULL,
   \code{link}.
 
   }
-  \item{esigma}{
-  List.
-  Extra argument allowing for additional information, specific to the
-  link function.
-  See \code{\link{Links}} for more information.
-  If there is only one parameter then this argument is often called
-  \code{earg}.
+% \item{esigma}{
+% List.
+% Extra argument allowing for additional information, specific to the
+% link function.
+% See \code{\link{Links}} for more information.
+% If there is only one parameter then this argument is often called
+% \code{earg}.
 
-  }
+% }
+
+
   \item{isigma}{
   Optional initial values can often be inputted using an argument
   beginning with \code{"i"}.
@@ -51,8 +56,16 @@ TypicalVGAMfamilyFunction(lsigma = "loge", esigma = list(), isigma = NULL,
 
   }
   \item{parallel}{
-  A logical, or formula specifying which terms have equal/unequal
+  A logical, or a simple formula specifying which terms have equal/unequal
   coefficients.
+  The formula must be simple, i.e., additive with simple main effects terms.
+  Interactions and nesting etc. are not handled.
+  To handle complex formulas use the \code{constraints} argument
+  (of \code{\link{vglm}} etc.);
+  however, there is a lot more setting up involved and things will
+  not be as convenient.
+
+
   This argument is common in \pkg{VGAM} family functions for categorical
   responses, e.g., \code{\link{cumulative}},  \code{\link{acat}}, 
   \code{\link{cratio}}, \code{\link{sratio}}.
@@ -104,12 +117,12 @@ TypicalVGAMfamilyFunction(lsigma = "loge", esigma = list(), isigma = NULL,
 
 
   }
-  \item{prob.x}{
-  Numeric, of length two.
+  \item{probs.x, probs.y}{
+  Numeric, with values in (0, 1).
   The probabilites that define quantiles with respect to some vector,
-  usually an \code{x} of some sort.
+  usually an \code{x} or \code{y} of some sort.
   This is used to create two subsets of data corresponding to `low' and
-  `high' values of x.
+  `high' values of x or y.
   Each value is separately fed into the \code{probs} argument
   of \code{\link[stats:quantile]{quantile}}.
   If the data set size is small then it may be necessary to
@@ -218,12 +231,29 @@ TypicalVGAMfamilyFunction(lsigma = "loge", esigma = list(), isigma = NULL,
   response and contains the number of trials.
 
   }
+  \item{earg.link}{
+  Sometimes the link argument can receive \code{earg}-type input,
+  such as \code{\link{quasibinomial}} calling \code{\link{binomial}}.
+  This argument should be generally ignored.
+
+
+  }
+  \item{bred}{
+  Logical.
+  Some \pkg{VGAM} family functions will allow bias-reduction based
+  on the work by Kosmidis and Firth. 
+  Currently none are working yet!
+
+
+
+  }
 
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}}
   and \code{\link{vgam}}.
+
 
 }
 \section{Warning }{
@@ -261,21 +291,41 @@ TypicalVGAMfamilyFunction(lsigma = "loge", esigma = list(), isigma = NULL,
   Full details will be given in documentation yet to be written,
   at a later date!
 
+
 }
 
-%\references{
-%}
+\references{
+
+Kosmidis, I. and Firth, D. (2009)
+Bias reduction in exponential family nonlinear models.
+\emph{Biometrika},
+\bold{96}(4), 793--804.
+
+
+%Kosmidis, I. and Firth, D. (2010)
+%A generic algorithm for reducing bias in parametric estimation.
+%\emph{Electronic Journal of Statistics},
+%\bold{4}, 1097--1112.
+
+
+}
 
 \seealso{
   \code{\link{Links}},
   \code{\link{vglmff-class}}.
 
+
 }
 \author{T. W. Yee}
 
-%\note{
-%
-%}
+\note{
+  See \code{\link{Links}} regarding a major change in
+  link functions, for version 0.9-0 and higher
+  (released during the 2nd half of 2012).
+
+
+
+}
 
 \examples{
 # Example 1
@@ -283,21 +333,21 @@ cumulative()
 cumulative(link = "probit", reverse = TRUE, parallel = TRUE)
 
 # Example 2
-wdata <- data.frame(x = runif(nn <- 1000))
+wdata <- data.frame(x2 = runif(nn <- 1000))
 wdata <- transform(wdata,
-           y = rweibull(nn, shape = 2 + exp(1+x), scale = exp(-0.5)))
-fit = vglm(y ~ x, weibull(lshape = "logoff", eshape = list(offset = -2),
-                          zero = 2), wdata)
+         y = rweibull(nn, shape = 2 + exp(1 + x2), scale = exp(-0.5)))
+fit <- vglm(y ~ x2, weibull(lshape = logoff(offset = -2), zero = 2), wdata)
 coef(fit, mat = TRUE)
 
 # Example 3; multivariate (multiple) response
+\dontrun{
 ndata <- data.frame(x = runif(nn <- 500))
 ndata <- transform(ndata,
            y1 = rnbinom(nn, mu = exp(3+x), size = exp(1)), # k is size
            y2 = rnbinom(nn, mu = exp(2-x), size = exp(0)))
 fit <- vglm(cbind(y1, y2) ~ x, negbinomial(zero = -2), ndata)
 coef(fit, matrix = TRUE)
-
+}
 # Example 4
 \dontrun{
 # fit1 and fit2 are equivalent
@@ -308,27 +358,27 @@ fit2 <- vglm(ymatrix ~ x2 + x3 + x4 + x5,
 }
 
 # Example 5
-gdata <- data.frame(x = rnorm(nn <- 200))
+gdata <- data.frame(x2 = rnorm(nn <- 200))
 gdata <- transform(gdata,
-           y1 = rnorm(nn, mean = 1 - 3*x, sd = exp(1 + 0.2*x)),
-           y2 = rnorm(nn, mean = 1 - 3*x, sd = exp(1)))
+           y1 = rnorm(nn, mean = 1 - 3*x2, sd = exp(1 + 0.2*x2)),
+           y2 = rnorm(nn, mean = 1 - 3*x2, sd = exp(1)))
 args(normal1)
-fit1 <- vglm(y1 ~ x, normal1, gdata) # This is ok
-fit2 <- vglm(y2 ~ x, normal1(zero = 2), gdata) # This is ok
+fit1 <- vglm(y1 ~ x2, normal1, gdata) # This is ok
+fit2 <- vglm(y2 ~ x2, normal1(zero = 2), gdata) # This is ok
 
 # This creates potential conflict
-clist <- list("(Intercept)" = diag(2), "x" = diag(2))
-fit3 <- vglm(y2 ~ x, normal1(zero = 2), gdata,
+clist <- list("(Intercept)" = diag(2), "x2" = diag(2))
+fit3 <- vglm(y2 ~ x2, normal1(zero = 2), gdata,
              constraints = clist) # Conflict!
-coef(fit3, matrix = TRUE)   # Shows that clist[["x"]] was overwritten,
+coef(fit3, matrix = TRUE) # Shows that clist[["x2"]] was overwritten,
 constraints(fit3) # i.e., 'zero' seems to override the 'constraints' arg
 
 # Example 6 ('whitespace' argument)
-pneumo = transform(pneumo, let = log(exposure.time))
-fit1 = vglm(cbind(normal, mild, severe) ~ let,
-            sratio(whitespace = FALSE, parallel = TRUE), pneumo)
-fit2 = vglm(cbind(normal, mild, severe) ~ let,
-            sratio(whitespace = TRUE,  parallel = TRUE), pneumo)
+pneumo <- transform(pneumo, let = log(exposure.time))
+fit1 <- vglm(cbind(normal, mild, severe) ~ let,
+             sratio(whitespace = FALSE, parallel = TRUE), pneumo)
+fit2 <- vglm(cbind(normal, mild, severe) ~ let,
+             sratio(whitespace = TRUE,  parallel = TRUE), pneumo)
 head(predict(fit1), 2) # No white spaces
 head(predict(fit2), 2) # Uses white spaces
 }

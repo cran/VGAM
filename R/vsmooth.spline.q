@@ -81,6 +81,18 @@ setMethod("predict",  "vsmooth.spline.fit",
           predictvsmooth.spline.fit(object, ...))
 
 
+
+setMethod("model.matrix",  "vsmooth.spline",
+          function(object, ...)
+          model.matrixvlm(object, ...))
+
+
+
+
+
+
+
+
 vsmooth.spline <- function(x, y, w = NULL, df = rep(5, M),
                       spar = NULL, #rep(0,M),
                       all.knots = FALSE, 
@@ -451,23 +463,23 @@ show.vsmooth.spline <- function(x, ...) {
 }
 
 
-coefvsmooth.spline.fit = function(object, ...) {
+coefvsmooth.spline.fit <- function(object, ...) {
     object@Bcoefficients 
 }
 
 
-coefvsmooth.spline = function(object, matrix = FALSE, ...) {
+coefvsmooth.spline <- function(object, matrix = FALSE, ...) {
 
         list(lfit = coefvlm(object@lfit, matrix.out = matrix),
              nlfit=coefvsmooth.spline.fit(object@nlfit))
 }
 
 
-fittedvsmooth.spline = function(object, ...) {
+fittedvsmooth.spline <- function(object, ...) {
     object@y
 }
 
-residvsmooth.spline = function(object, ...) {
+residvsmooth.spline <- function(object, ...) {
     as.matrix(object@yin - object@y)
 }
 
@@ -594,7 +606,8 @@ predictvsmooth.spline.fit <- function(object, x, deriv = 0) {
 }
 
 
-valid.vknotl2 = function(knot, tol = 1/1024) {
+
+valid.vknotl2 <- function(knot, tol = 1/1024) {
 
     junk = dotC(name="Yee_pknootl2", knot=as.double(knot),
                       as.integer(length(knot)),

@@ -1,17 +1,17 @@
-\name{plotrcam0}
-\alias{plotrcam0}
+\name{plotrcim0}
+\alias{plotrcim0}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-  Main effects plot for a Row-Column Association Model (RCAM) 
+  Main effects plot for a Row-Column Interaction Model (RCIM) 
 
 }
 \description{
-  Produces a main effects plot for Row-Column Association
-  Models (RCAMs).
+  Produces a main effects plot for Row-Column Interaction
+  Models (RCIMs).
 
 }
 \usage{
-  plotrcam0(object, centered = TRUE, whichplots = c(1, 2),
+  plotrcim0(object, centered = TRUE, whichplots = c(1, 2),
             hline0 = TRUE, hlty = "dashed", hcol = par()$col, hlwd = par()$lwd,
             rfirst = 1, cfirst = 1,
             rtype = "h", ctype = "h",
@@ -26,7 +26,7 @@
 }
 \arguments{
 \item{object}{   
-  An \code{\link{rcam}} object.
+  An \code{\link{rcim}} object.
   This should be of rank-0, i.e., main effects only and no
   interactions.
 
@@ -130,7 +130,7 @@
 
 }
 \details{
-  This function plots the row and column effects of a rank-0 RCAM.
+  This function plots the row and column effects of a rank-0 RCIM.
   As the result is a main effects plot of a regression analysis, its
   interpretation when \code{centered = FALSE} is relative
   to the baseline (reference level) of a row and column, and
@@ -151,7 +151,7 @@
 
 
 \note{
-  This function should be only used to plot the object of rank-0 RCAM.
+  This function should be only used to plot the object of rank-0 RCIM.
   If the rank is positive then it will issue a warning. 
 
 
@@ -179,13 +179,13 @@
 
 \seealso{
   \code{\link{moffset}} 
-  \code{\link{Rcam}}, 
-  \code{\link{rcam}}.
+  \code{\link{Rcim}}, 
+  \code{\link{rcim}}.
 
 }
 \examples{
-alcoff.e <- moffset(alcoff, "6", "Monday", postfix = "*") # Effective day
-fit0 <- rcam(alcoff.e, family = poissonff)
+alcoff.e <- moffset(alcoff, "6", "Mon", postfix = "*") # Effective day
+fit0 <- rcim(alcoff.e, family = poissonff)
 \dontrun{par(oma = c(0, 0, 4, 0), mfrow = 1:2) # For all plots below too
 ii = plot(fit0, rcol = "blue", ccol = "orange",
           lwd = 4, ylim = c(-2, 2),  # A common ylim
@@ -195,22 +195,22 @@ ii@post # Endowed with additional information
 }
 
 # Negative binomial example
-fit1 <- rcam(alcoff.e, negbinomial, trace = TRUE)
+fit1 <- rcim(alcoff.e, negbinomial, trace = TRUE)
 \dontrun{ plot(fit1, ylim = c(-2, 2)) }
 
 # Univariate normal example
-fit2 <- rcam(alcoff.e, normal1, trace = TRUE)
+fit2 <- rcim(alcoff.e, normal1, trace = TRUE)
 \dontrun{ plot(fit2, ylim = c(-200, 400)) }
 
 # Median-polish example
-fit3 <- rcam(alcoff.e, alaplace2(tau  =  0.5, intparloc  =  TRUE),
+fit3 <- rcim(alcoff.e, alaplace2(tau  =  0.5, intparloc  =  TRUE),
              trace = TRUE)
 \dontrun{ plot(fit3, ylim = c(-200, 250)) }
 
 # Zero-inflated Poisson example on "crashp" (no 0s in alcoff)
 cbind(rowSums(crashp))  # Easy to see the data
 cbind(colSums(crashp))  # Easy to see the data
-fit4 <- rcam(Rcam(crashp, rbaseline = "5", cbaseline = "Sunday"),
+fit4 <- rcim(Rcim(crashp, rbaseline = "5", cbaseline = "Sun"),
              zipoissonff, trace = TRUE)
 \dontrun{ plot(fit4, ylim = c(-3, 3)) }
 }

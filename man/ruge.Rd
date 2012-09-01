@@ -21,6 +21,7 @@
   of zero counts.
   The counts can be thought of as being approximately Poisson distributed.
 
+
 }
 \source{
   Rutherford, E. and Geiger, H. (1910)
@@ -28,13 +29,14 @@
   \emph{Philosophical Magazine},
   \bold{20}, 698--704.
 
+
 }
 %\references{
 %}
 \examples{
-lambdahat = with(ruge, weighted.mean(number, w=counts))
-(N = with(ruge, sum(counts)))
+lambdahat <- with(ruge, weighted.mean(number, w = counts))
+(N <- with(ruge, sum(counts)))
 with(ruge, cbind(number, counts,
-                 fitted=round(N * dpois(number, lam=lambdahat))))
+                 fitted = round(N * dpois(number, lam = lambdahat))))
 }
 \keyword{datasets}

@@ -98,7 +98,7 @@ contains further information and examples.
 }
 
 \examples{\dontrun{
-fit = vgam(BMI ~ s(age, df = c(4,2)), fam = lms.bcn(zero = 1), data = bmi.nz)
+fit <- vgam(BMI ~ s(age, df = c(4,2)), lms.bcn(zero = 1), data = bmi.nz)
 qtplot(fit)
 qtplot(fit, perc = c(25,50,75,95), lcol = "blue", tcol = "blue", llwd = 2)
 }

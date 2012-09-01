@@ -8,8 +8,8 @@
 
 }
 \usage{
-genrayleigh(lshape = "loge", lscale = "loge", eshape = list(),
-            escale = list(), ishape = NULL,   iscale = NULL,
+genrayleigh(lshape = "loge", lscale = "loge",
+            ishape = NULL,   iscale = NULL,
             tol12 = 1e-05, nsimEIM = 300, zero = 1)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -17,11 +17,6 @@ genrayleigh(lshape = "loge", lscale = "loge", eshape = list(),
   \item{lshape, lscale}{
   Link function for the two positive parameters, shape and scale.
   See \code{\link{Links}} for more choices.
-
-  }
-  \item{eshape, escale}{
-  List. Extra argument for each of the links.
-  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{ishape, iscale}{

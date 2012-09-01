@@ -8,8 +8,7 @@
 
 }
 \usage{
-amlbinomial(w.aml = 1, parallel = FALSE, digw = 4,
-            link = "logit", earg = list())
+amlbinomial(w.aml = 1, parallel = FALSE, digw = 4, link = "logit")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -37,7 +36,7 @@ amlbinomial(w.aml = 1, parallel = FALSE, digw = 4,
   used cosmetically for labelling.
 
   }
-  \item{link, earg}{
+  \item{link}{
   See \code{\link{binomialff}}.
 
   }

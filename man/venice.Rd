@@ -122,9 +122,9 @@ Istituzione Centro Previsione e Segnalazioni Maree.
 \dontrun{ matplot(venice[["year"]], venice[, -1], xlab = "Year",
                   ylab = "Sea level (cm)", type = "l") }
 
-ymat = as.matrix(venice[, paste("r", 1:10, sep = "")])
-fit1 = vgam(ymat ~ s(year, df = 3), gumbel(R = 365, mpv = TRUE),
-            data = venice, trace = TRUE, na.action = na.pass)
+ymat <- as.matrix(venice[, paste("r", 1:10, sep = "")])
+fit1 <- vgam(ymat ~ s(year, df = 3), gumbel(R = 365, mpv = TRUE),
+             data = venice, trace = TRUE, na.action = na.pass)
 head(fitted(fit1))
 
 \dontrun{ par(mfrow = c(2, 1), xpd = TRUE)

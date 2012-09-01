@@ -11,7 +11,7 @@
 
 }
 \usage{
-damh(x1, x2, alpha, log=FALSE)
+damh(x1, x2, alpha, log = FALSE)
 pamh(q1, q2, alpha)
 ramh(n, alpha)
 }

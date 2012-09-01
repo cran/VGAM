@@ -115,27 +115,28 @@ weightsvglm(object, type = c("prior", "working"),
   \code{\link{vglmff-class}},
   \code{\link{vglm}}.
 
+
 }
 \examples{
-pneumo = transform(pneumo, let = log(exposure.time))
-(fit = vglm(cbind(normal, mild, severe) ~ let,
+pneumo <- transform(pneumo, let = log(exposure.time))
+(fit <- vglm(cbind(normal, mild, severe) ~ let,
             cumulative(parallel = TRUE, reverse = TRUE), pneumo))
-depvar(fit)       # These are sample proportions 
+depvar(fit) # These are sample proportions 
 weights(fit, type = "prior", matrix = FALSE) # Number of observations
 
 # Look at the working residuals
-nn = nrow(model.matrix(fit, type = "lm"))
-M = ncol(predict(fit))
+nn <- nrow(model.matrix(fit, type = "lm"))
+M <- ncol(predict(fit))
 
-temp = weights(fit, type = "working", deriv = TRUE)
-wz = m2adefault(temp$weights, M = M)  # In array format
-wzinv = array(apply(wz, 3, solve), c(M, M, nn))
-wresid = matrix(NA, nn, M)  # Working residuals 
+temp <- weights(fit, type = "working", deriv = TRUE)
+wz <- m2adefault(temp$weights, M = M)  # In array format
+wzinv <- array(apply(wz, 3, solve), c(M, M, nn))
+wresid <- matrix(NA, nn, M)  # Working residuals 
 for(ii in 1:nn)
-    wresid[ii,] = wzinv[, , ii, drop = TRUE] \%*\% temp$deriv[ii, ]
-max(abs(c(resid(fit, type = "w")) - c(wresid))) # Should be 0
+  wresid[ii,] <- wzinv[, , ii, drop = TRUE] \%*\% temp$deriv[ii, ]
+max(abs(c(resid(fit, type = "work")) - c(wresid))) # Should be 0
 
-(z <- predict(fit) + wresid)  # Adjusted dependent vector
+(zedd <- predict(fit) + wresid) # Adjusted dependent vector
 }
 \keyword{models}
 \keyword{regression}

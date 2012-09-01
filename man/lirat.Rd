@@ -4,6 +4,8 @@
 \title{ Low-iron Rat Teratology Data }
 \description{
   Low-iron rat teratology data.
+
+
 }
 \usage{data(lirat)}
 \format{
@@ -51,11 +53,15 @@ are accounted for.
   Extra-binomial and Extra-Poisson Variation.
   \emph{Biometrics},
   \bold{47}, 383--401.
+
+
 }
 \references{
    Shepard, T. H., Mackler, B. and Finch, C. A. (1980)
    Reproductive studies in the iron-deficient rat.
    \emph{Teratology}, \bold{22}, 329--334.
+
+
 }
 \examples{
 \dontrun{

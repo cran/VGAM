@@ -6,8 +6,8 @@
    Maximum likelihood estimation of the (2-parameter) F distribution.
 }
 \usage{
-fff(link="loge", earg=list(), idf1=NULL, idf2=NULL, nsimEIM=100,
-    imethod=1, zero=NULL)
+fff(link = "loge", idf1 = NULL, idf2 = NULL, nsimEIM = 100,
+    imethod = 1, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -17,35 +17,34 @@ fff(link="loge", earg=list(), idf1=NULL, idf2=NULL, nsimEIM=100,
   The default keeps the parameters positive.
 
   }
-  \item{earg}{
-  List. Extra argument for the link.
-  See \code{earg} in \code{\link{Links}} for general information.
-
-  }
   \item{idf1, idf2}{
   Numeric and positive. 
   Initial value for the parameters.
   The default is to choose each value internally.
 
   }
-  \item{nsimEIM}{
+  \item{nsimEIM, zero}{
   See \code{\link{CommonVGAMffArguments}} for more information.
+
 
   }
   \item{imethod}{
   Initialization method. Either the value 1 or 2.
   If both fail try setting values for \code{idf1} and \code{idf2}.
 
-  }
-  \item{zero}{
-  An integer-valued vector specifying which
-  linear/additive predictors are modelled as intercepts only.
-  The value must be from the set \{1,2\}, corresponding
-  respectively to \eqn{df1} and \eqn{df2}.
-  By default all linear/additive predictors are modelled as
-  a linear combination of the explanatory variables.
 
   }
+% \item{zero}{
+% An integer-valued vector specifying which
+% linear/additive predictors are modelled as intercepts only.
+% The value must be from the set \{1,2\}, corresponding
+% respectively to \eqn{df1} and \eqn{df2}.
+% By default all linear/additive predictors are modelled as
+% a linear combination of the explanatory variables.
+%
+%
+% }
+
 }
 \details{
   The F distribution is named after Fisher and has a density function 
@@ -60,8 +59,9 @@ fff(link="loge", earg=list(), idf1=NULL, idf2=NULL, nsimEIM=100,
   The estimated mean is returned as the fitted values.
   Although the F distribution can be defined to accommodate a
   non-centrality parameter \code{ncp}, it is assumed zero here.
-  Actually it shouldn't be too difficult to handle any known \code{ncp}; something
-  to do in the short future.
+  Actually it shouldn't be too difficult to handle any known
+  \code{ncp}; something to do in the short future.
+
 
 }
 \value{
@@ -69,17 +69,22 @@ fff(link="loge", earg=list(), idf1=NULL, idf2=NULL, nsimEIM=100,
   The object is used by modelling functions such as \code{\link{vglm}}
   and \code{\link{vgam}}.
 
+
 }
 \references{
+
 Evans, M., Hastings, N. and Peacock, B. (2000)
 \emph{Statistical Distributions},
 New York: Wiley-Interscience, Third edition.
+
+
 
 }
 \author{ T. W. Yee }
 \section{Warning}{
   Numerical problems will occur when the estimates of the parameters
   are too low or too high.
+
 
 }
 
@@ -93,14 +98,18 @@ New York: Wiley-Interscience, Third edition.
 %}
 \seealso{
   \code{\link[stats:Fdist]{FDist}}.
+
+
 }
 \examples{
-x = runif(n <- 2000)
-df1 = exp(2+0.5*x)
-df2 = exp(2-0.5*x)
-y = rf(n, df1, df2)
-fit = vglm(y  ~ x, fff, trace=TRUE)
-coef(fit, matrix=TRUE)
+\dontrun{
+fdata <- data.frame(x2 = runif(nn <- 2000))
+fdata <- transform(fdata, df1 = exp(2+0.5*x2),
+                          df2 = exp(2-0.5*x2))
+fdata <- transform(fdata, y   = rf(nn, df1, df2))
+fit <- vglm(y  ~ x2, fff, fdata, trace = TRUE)
+coef(fit, matrix = TRUE)
+}
 }
 \keyword{models}
 \keyword{regression}

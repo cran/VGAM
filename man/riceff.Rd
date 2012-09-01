@@ -8,18 +8,13 @@
 
 }
 \usage{
-riceff(lvee="loge", lsigma="loge", evee=list(), esigma=list(),
-       ivee=NULL, isigma=NULL, nsimEIM=100, zero=NULL)
+riceff(lvee = "loge", lsigma = "loge",
+       ivee = NULL, isigma = NULL, nsimEIM = 100, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{lvee, evee}{
-  Link function and extra argument for the \eqn{v} parameter.
-  See \code{\link{Links}} for more choices and for general information.
-
-  }
-  \item{lsigma, esigma}{
-  Link function and extra argument for the \eqn{\sigma}{sigma} parameter.
+  \item{lvee, lsigma}{
+  Link functions for the \eqn{v} and \eqn{\sigma}{sigma} parameters.
   See \code{\link{Links}} for more choices and for general information.
 
   }
@@ -61,6 +56,7 @@ riceff(lvee="loge", lsigma="loge", evee=list(), esigma=list(),
   The object is used by modelling functions such as \code{\link{vglm}}
   and \code{\link{vgam}}.
 
+
 }
 \references{
 
@@ -75,8 +71,10 @@ Mathematical Analysis of Random Noise.
   Convergence problems may occur for data where \eqn{v=0}; if so, use
   \code{\link{rayleigh}} or possibly use an \code{\link{identity}} link.
 
+
   When \eqn{v} is large (greater than 3, say) then the mean is approximately
   \eqn{v} and the standard deviation is approximately \eqn{\sigma}{sigma}.
+
 
 }
 
@@ -85,15 +83,17 @@ Mathematical Analysis of Random Noise.
   \code{\link{rayleigh}},
   \code{\link[base:Bessel]{besselI}}.
 
+
 }
 \examples{
-vee = exp(2); sigma = exp(1);
-y = rrice(n <- 1000, vee, sigma)
-fit = vglm(y ~ 1, riceff, trace=TRUE, crit="c")
+\dontrun{ vee <- exp(2); sigma <- exp(1);
+y <- rrice(n <- 1000, vee, sigma)
+fit <- vglm(y ~ 1, riceff, trace = TRUE, crit = "c")
 c(mean(y), fitted(fit)[1])
-coef(fit, matrix=TRUE)
+coef(fit, matrix = TRUE)
 Coef(fit)
 summary(fit)
+}
 }
 \keyword{models}
 \keyword{regression}

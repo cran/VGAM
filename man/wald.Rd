@@ -8,13 +8,12 @@ by maximum likelihood estimation.
 
 }
 \usage{
-wald(link.lambda = "loge", earg = list(), init.lambda = NULL)
+wald(link.lambda = "loge", init.lambda = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{link.lambda, earg}{
-  Parameter link function and its extra argument for
-  the \eqn{\lambda}{lambda} parameter. 
+  \item{link.lambda}{
+  Parameter link function for the \eqn{\lambda}{lambda} parameter. 
   See \code{\link{Links}} for more choices and general information.
 
   }

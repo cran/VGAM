@@ -9,7 +9,6 @@
 }
 \usage{
 genbetaII(lshape1.a = "loge", lscale = "loge", lshape2.p = "loge", lshape3.q = "loge",
-          eshape1.a = list(), escale = list(), eshape2.p = list(), eshape3.q = list(),
           ishape1.a = NULL, iscale = NULL, ishape2.p = 1, ishape3.q = 1,
           zero = NULL)
 }
@@ -23,12 +22,6 @@ genbetaII(lshape1.a = "loge", lscale = "loge", lshape2.p = "loge", lshape3.q = "
   shape parameter \code{q}.
   All four parameters are positive.
   See \code{\link{Links}} for more choices.
-
-
-  }
-  \item{eshape1.a, escale, eshape2.p, eshape3.q}{
-  List. Extra argument for each of the links.
-  See \code{earg} in \code{\link{Links}} for general information.
 
 
   }
@@ -139,10 +132,10 @@ More improvements could be made here.
 }
 
 \examples{
-gdata = data.frame(y = rsinmad(3000, exp(2), exp(2), exp(1))) # A special case!
-fit = vglm(y ~ 1, genbetaII, gdata, trace = TRUE)
-fit = vglm(y ~ 1, data = gdata, trace = TRUE,
-           genbetaII(ishape1.a = 4, ishape2.p = 2.2, iscale = 7, ishape3.q = 2.3))
+gdata <- data.frame(y = rsinmad(3000, exp(2), exp(2), exp(1))) # A special case!
+fit <- vglm(y ~ 1, genbetaII, gdata, trace = TRUE)
+fit <- vglm(y ~ 1, data = gdata, trace = TRUE,
+            genbetaII(ishape1.a = 4, ishape2.p = 2.2, iscale = 7, ishape3.q = 2.3))
 coef(fit, matrix = TRUE)
 Coef(fit)
 summary(fit)

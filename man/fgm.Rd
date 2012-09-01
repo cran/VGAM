@@ -9,7 +9,7 @@
 
 }
 \usage{
-fgm(lapar="rhobit", earg=list(), iapar=NULL, imethod=1, nsimEIM=200)
+fgm(lapar="rhobit", iapar = NULL, imethod = 1, nsimEIM = 200)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -17,11 +17,6 @@ fgm(lapar="rhobit", earg=list(), iapar=NULL, imethod=1, nsimEIM=200)
   Link function applied to the association parameter
   \eqn{\alpha}{alpha}, which is real.
   See \code{\link{Links}} for more choices.
-
-  }
-  \item{earg}{
-  List. Extra argument for the link.
-  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{iapar}{

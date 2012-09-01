@@ -440,125 +440,121 @@ contains further information and examples.
 
 }
 \examples{
+\dontrun{
 # Example 1; Fit an unequal tolerances model to the hunting spiders data
-hspider[,1:6]=scale(hspider[,1:6]) # Standardize the environmental variables
+hspider[,1:6] <- scale(hspider[,1:6]) # Standardize the environmental variables
 set.seed(1234) # For reproducibility of the results
-p1ut = cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,
-                 Auloalbi, Pardlugu, Pardmont, Pardnigr, Pardpull,
-                 Trocterr, Zoraspin) ~
-           WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
-           fam = poissonff, data = hspider, Crow1positive = FALSE,
-           EqualTol = FALSE)
+p1ut <- cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,
+                  Auloalbi, Pardlugu, Pardmont, Pardnigr, Pardpull,
+                  Trocterr, Zoraspin) ~
+            WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
+            fam = poissonff, data = hspider, Crow1positive = FALSE,
+            EqualTol = FALSE)
 sort(p1ut@misc$deviance.Bestof) # A history of all the iterations
 if(deviance(p1ut) > 1177) warning("suboptimal fit obtained")
 
-\dontrun{
-S = ncol(p1ut@y) # Number of species
-clr = (1:(S+1))[-7] # Omits yellow
+S <- ncol(depvar(p1ut)) # Number of species
+clr <- (1:(S+1))[-7] # Omits yellow
 lvplot(p1ut, y = TRUE, lcol = clr, pch = 1:S, pcol = clr, las = 1) # ordination diagram
-legend("topright", leg = colnames(p1ut@y), col = clr,
-       pch = 1:S, merge = TRUE, bty = "n", lty = 1:S, lwd = 2) }
-(cp = Coef(p1ut))
+legend("topright", leg = colnames(depvar(p1ut)), col = clr,
+       pch = 1:S, merge = TRUE, bty = "n", lty = 1:S, lwd = 2)
+(cp <- Coef(p1ut))
 
-(a = cp@lv[cp@lvOrder])  # The ordered site scores along the gradient
+(a <- cp@lv[cp@lvOrder])  # The ordered site scores along the gradient
 # Names of the ordered sites along the gradient:
 rownames(cp@lv)[cp@lvOrder]
-(a = (cp@Optimum)[,cp@OptimumOrder]) # The ordered optima along the gradient
-a = a[!is.na(a)] # Delete the species that is not unimodal
-names(a)         # Names of the ordered optima along the gradient
+(aa <- (cp@Optimum)[,cp@OptimumOrder]) # The ordered optima along the gradient
+aa <- aa[!is.na(aa)] # Delete the species that is not unimodal
+names(aa) # Names of the ordered optima along the gradient
 
-\dontrun{
 trplot(p1ut, whichSpecies = 1:3, log = "xy", type = "b", lty = 1, lwd = 2,
        col = c("blue","red","green"), label = TRUE) -> ii # trajectory plot
-legend(0.00005, 0.3, paste(ii$species[,1], ii$species[,2], sep = " and "),
-       lwd = 2, lty = 1, col = c("blue","red","green"))
+legend(0.00005, 0.3, paste(ii$species[, 1], ii$species[, 2], sep = " and "),
+       lwd = 2, lty = 1, col = c("blue", "red", "green"))
 abline(a = 0, b = 1, lty = "dashed")
 
-S = ncol(p1ut@y) # Number of species
-clr = (1:(S+1))[-7] # Omits yellow
+S <- ncol(depvar(p1ut)) # Number of species
+clr <- (1:(S+1))[-7] # Omits yellow
 persp(p1ut, col = clr, label = TRUE, las = 1) # perspective plot
-}
 
 
 # Example 2; Fit an equal tolerances model. Less numerically fraught.
 set.seed(1234)
-p1et = cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,
-                 Auloalbi, Pardlugu, Pardmont, Pardnigr, Pardpull,
-                 Trocterr, Zoraspin) ~
-           WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
-           fam = poissonff, data = hspider, Crow1positive = FALSE)
+p1et <- cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,
+                  Auloalbi, Pardlugu, Pardmont, Pardnigr, Pardpull,
+                  Trocterr, Zoraspin) ~
+            WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
+            poissonff, data = hspider, Crow1positive = FALSE)
 sort(p1et@misc$deviance.Bestof) # A history of all the iterations
-if(deviance(p1et) > 1586) warning("suboptimal fit obtained")
-\dontrun{
-S = ncol(p1et@y) # Number of species
-clr = (1:(S+1))[-7] # Omits yellow
-persp(p1et, col = clr, label = TRUE, las = 1) }
+if (deviance(p1et) > 1586) warning("suboptimal fit obtained")
+S <- ncol(depvar(p1et)) # Number of species
+clr <- (1:(S+1))[-7] # Omits yellow
+persp(p1et, col = clr, label = TRUE, las = 1)
 
 
 # Example 3: A rank-2 equal tolerances CQO model with Poisson data
 # This example is numerically fraught... need IToler = TRUE too.
 set.seed(555)
-p2 = cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,
-               Auloalbi, Pardlugu, Pardmont, Pardnigr, Pardpull,
-               Trocterr, Zoraspin) ~
-         WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
-         fam = poissonff, data = hspider, Crow1positive = FALSE,
-         IToler = TRUE, Rank = 2, Bestof = 3, isdlv = c(2.1, 0.9))
+p2 <- cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,
+                Auloalbi, Pardlugu, Pardmont, Pardnigr, Pardpull,
+                Trocterr, Zoraspin) ~
+          WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
+          poissonff, data = hspider, Crow1positive = FALSE,
+          IToler = TRUE, Rank = 2, Bestof = 3, isdlv = c(2.1, 0.9))
 sort(p2@misc$deviance.Bestof) # A history of all the iterations
 if(deviance(p2) > 1127) warning("suboptimal fit obtained")
-\dontrun{
 lvplot(p2, ellips = FALSE, label = TRUE, xlim = c(-3,4),
        C = TRUE, Ccol = "brown", sites = TRUE, scol = "grey", 
-       pcol = "blue", pch = "+", chull = TRUE, ccol = "grey") }
+       pcol = "blue", pch = "+", chull = TRUE, ccol = "grey")
 
 
 # Example 4: species packing model with presence/absence data
 set.seed(2345)
-n = 200; p = 5; S = 5
-mydata = rcqo(n, p, S, fam = "binomial", hiabundance = 4,
-              EqualTol = TRUE, ESOpt = TRUE, EqualMax = TRUE)
-myform = attr(mydata, "formula")
+n <- 200; p <- 5; S <- 5
+mydata <- rcqo(n, p, S, fam = "binomial", hiabundance = 4,
+               EqualTol = TRUE, ESOpt = TRUE, EqualMax = TRUE)
+myform <- attr(mydata, "formula")
 set.seed(1234)
-b1et = cqo(myform, binomialff(mv = TRUE, link = "cloglog"), data = mydata)
+b1et <- cqo(myform, binomialff(mv = TRUE, link = "cloglog"), data = mydata)
 sort(b1et@misc$deviance.Bestof) # A history of all the iterations
-\dontrun{ lvplot(b1et, y = TRUE, lcol = 1:S, pch = 1:S, pcol = 1:S, las = 1) }
+lvplot(b1et, y = TRUE, lcol = 1:S, pch = 1:S, pcol = 1:S, las = 1)
 Coef(b1et)
 
 # Compare the fitted model with the 'truth'
-cbind(truth=attr(mydata, "ccoefficients"), fitted = ccoef(b1et))
+cbind(truth = attr(mydata, "ccoefficients"), fitted = ccoef(b1et))
 
 
 # Example 5: Plot the deviance residuals for diagnostic purposes
 set.seed(1234)
-p1et = cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,
-                 Auloalbi, Pardlugu, Pardmont, Pardnigr, Pardpull,
-                 Trocterr, Zoraspin) ~
-           WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
-           fam = poissonff, data = hspider, EqualTol = TRUE, trace = FALSE)
+p1et <- cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,
+                  Auloalbi, Pardlugu, Pardmont, Pardnigr, Pardpull,
+                  Trocterr, Zoraspin) ~
+            WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
+            poissonff, data = hspider, EqualTol = TRUE, trace = FALSE)
 sort(p1et@misc$deviance.Bestof) # A history of all the iterations
 if(deviance(p1et) > 1586) warning("suboptimal fit obtained")
-S = ncol(p1et@y)
-par(mfrow = c(3,4))
+S <- ncol(depvar(p1et))
+par(mfrow = c(3, 4))
 for(ii in 1:S) {
-    tempdata = data.frame(lv1 = c(lv(p1et)), sppCounts = p1et@y[,ii])
-    tempdata = transform(tempdata, myOffset = -0.5 * lv1^2)
+  tempdata <- data.frame(lv1 = c(lv(p1et)), sppCounts = depvar(p1et)[, ii])
+  tempdata <- transform(tempdata, myOffset = -0.5 * lv1^2)
 
 # For species ii, refit the model to get the deviance residuals
-    fit1 = vglm(sppCounts ~ offset(myOffset) + lv1, fam = poissonff,
-                data = tempdata, trace = FALSE)
+  fit1 <- vglm(sppCounts ~ offset(myOffset) + lv1, fam = poissonff,
+               data = tempdata, trace = FALSE)
 
 # For checking: this should be 0
-    print("max(abs(c(Coef(p1et)@B1[1,ii], Coef(p1et)@A[ii,1]) - coef(fit1)))")
-    print( max(abs(c(Coef(p1et)@B1[1,ii], Coef(p1et)@A[ii,1]) - coef(fit1))) )
+  print("max(abs(c(Coef(p1et)@B1[1,ii], Coef(p1et)@A[ii,1]) - coef(fit1)))")
+  print( max(abs(c(Coef(p1et)@B1[1,ii], Coef(p1et)@A[ii,1]) - coef(fit1))) )
 
-#   # Plot the deviance residuals
-    devresid = resid(fit1, type = "deviance")
-    predvalues = predict(fit1) + fit1@offset
-    ooo = with(tempdata, order(lv1))
-\dontrun{
-    with(tempdata, plot(lv1, predvalues + devresid, col = "darkgreen",
-                        xlab = "lv1", ylab = "", main = colnames(p1et@y)[ii]))
-    with(tempdata, lines(lv1[ooo], predvalues[ooo], col = "blue")) }
+# Plot the deviance residuals
+  devresid <- resid(fit1, type = "deviance")
+  predvalues <- predict(fit1) + fit1@offset
+  ooo <- with(tempdata, order(lv1))
+  with(tempdata, plot(lv1, predvalues + devresid, col = "darkgreen",
+                      xlab = "lv1", ylab = "", main = colnames(depvar(p1et))[ii]))
+  with(tempdata, lines(lv1[ooo], predvalues[ooo], col = "blue"))
+}
 }
 }
 \keyword{models}

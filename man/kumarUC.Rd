@@ -54,7 +54,7 @@ rkumar(n, shape1, shape2)
 }
 \examples{
 \dontrun{
-shape1 <- 2; shape2 <- 2; nn <- 201; # shape1 = shape2 = 0.5;
+shape1 <- 2; shape2 <- 2; nn <- 201; # shape1 <- shape2 <- 0.5;
 x <- seq(-0.05, 1.05, len = nn)
 plot(x, dkumar(x, shape1, shape2), type = "l", las = 1, ylim = c(0,1.5),
      ylab = paste("fkumar(shape1 = ", shape1, ", shape2 = ", shape2, ")"),

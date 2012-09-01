@@ -9,21 +9,14 @@
 
 }
 \usage{
-hypersecant(link.theta = "elogit", earg = if(link.theta == "elogit")
-    list(min = -pi/2, max = pi/2) else list(), init.theta = NULL)
-hypersecant.1(link.theta = "elogit", earg = if(link.theta == "elogit")
-    list(min = -pi/2, max = pi/2) else list(), init.theta = NULL)
+hypersecant(link.theta = elogit(min = -pi/2, max = pi/2), init.theta = NULL)
+hypersecant.1(link.theta = elogit(min = -pi/2, max = pi/2), init.theta = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{link.theta}{
   Parameter link function applied to the parameter \eqn{\theta}{theta}.
   See \code{\link{Links}} for more choices.
-
-  }
-  \item{earg}{
-  List. Extra argument for the link.
-  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{init.theta}{
@@ -43,6 +36,7 @@ hypersecant.1(link.theta = "elogit", earg = if(link.theta == "elogit")
   The mean of \eqn{Y} is \eqn{\tan(\theta)}{tan(theta)} (returned as
   the fitted values).
 
+
   Another parameterization is used for \code{hypersecant.1()}.
   This uses
   \deqn{f(y)=(\cos(\theta)/\pi) \times y^{-0.5+\theta/\pi} \times
@@ -54,7 +48,9 @@ hypersecant.1(link.theta = "elogit", earg = if(link.theta == "elogit")
   (returned as the fitted values) and the variance is
   \eqn{(\pi^2 - 4 \theta^2) / (8\pi^2)}{(pi^2 - 4*theta^2) / (8*pi^2)}.
 
+
   For both parameterizations Newton-Raphson is same as Fisher scoring.
+
 
 }
 
@@ -63,12 +59,14 @@ hypersecant.1(link.theta = "elogit", earg = if(link.theta == "elogit")
   The object is used by modelling functions such as \code{\link{vglm}},
   and \code{\link{vgam}}.
 
+
 }
 \references{
   Jorgensen, B. (1997)
   \emph{The Theory of Dispersion Models}.
   London: Chapman & Hall.
 %  p.101, Eqn (3.37).
+
 
 }
 
@@ -78,16 +76,18 @@ hypersecant.1(link.theta = "elogit", earg = if(link.theta == "elogit")
 %}
 \seealso{
   \code{\link{elogit}}.
+
+
 }
 \examples{
-hdata = data.frame(x = rnorm(nn <- 200))
-hdata = transform(hdata, y = rnorm(nn))  # Not very good data!
-fit = vglm(y ~ x, hypersecant, hdata, trace = TRUE, crit = "coef")
+hdata <- data.frame(x2 = rnorm(nn <- 200))
+hdata <- transform(hdata, y = rnorm(nn))  # Not very good data!
+fit <- vglm(y ~ x2, hypersecant, hdata, trace = TRUE, crit = "coef")
 coef(fit, matrix = TRUE)
 fit@misc$earg
 
 # Not recommended:
-fit = vglm(y ~ x, hypersecant(link = "identity"), hdata, trace = TRUE)
+fit <- vglm(y ~ x2, hypersecant(link = "identity"), hdata, trace = TRUE)
 coef(fit, matrix = TRUE)
 fit@misc$earg
 }

@@ -9,8 +9,8 @@
 }
 \usage{
 inv.gaussianff(lmu = "loge", llambda = "loge",
-               emu = list(), elambda = list(), 
-               imethod = 1, ilambda = 1,
+               imethod = 1, ilambda = NULL,
+               parallel = FALSE, intercept.apply = FALSE,
                shrinkage.init = 0.99, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -21,13 +21,8 @@ inv.gaussianff(lmu = "loge", llambda = "loge",
   See \code{\link{Links}} for more choices.
 
   }
-  \item{emu, elambda}{
-  List. Extra argument for each of the links.
-  See \code{earg} in \code{\link{Links}} for general information.
-
-  }
-  \item{ilambda}{ 
-  Initial value for the \eqn{\lambda}{lambda} parameter. 
+  \item{ilambda, parallel, intercept.apply}{ 
+  See \code{\link{CommonVGAMffArguments}} for more information.
 
   }
   \item{imethod, shrinkage.init, zero}{ 
@@ -52,6 +47,9 @@ inv.gaussianff(lmu = "loge", llambda = "loge",
   By default, \eqn{\eta_1=\log(\mu)}{eta1=log(mu)} and
   \eqn{\eta_2=\log(\lambda)}{eta2=log(lambda)}.
   The mean is returned as the fitted values.
+  This \pkg{VGAM} family function can handle multiple
+  responses (inputted as a matrix).
+
 
 
 }

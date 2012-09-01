@@ -60,12 +60,12 @@ Some contributions to contingency-type distributions.
 
 }
 \examples{
-\dontrun{ N = 101; oratio = exp(1)
-x = seq(0.0, 1.0, len = N)
-ox = expand.grid(x, x)
-z = dplack(ox[,1], ox[,2], oratio = oratio)
+\dontrun{ N <- 101; oratio <- exp(1)
+x <- seq(0.0, 1.0, len = N)
+ox <- expand.grid(x, x)
+z <- dplack(ox[,1], ox[,2], oratio = oratio)
 contour(x, x, matrix(z, N, N), col = "blue")
-z = pplack(ox[,1], ox[,2], oratio = oratio)
+z <- pplack(ox[,1], ox[,2], oratio = oratio)
 contour(x, x, matrix(z, N, N), col = "blue")
 
 plot(rr <- rplack(n = 3000, oratio = oratio))

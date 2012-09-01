@@ -8,15 +8,13 @@
 
 }
 \usage{
-binormal(lmean1 = "identity", emean1 = list(),
-         lmean2 = "identity", emean2 = list(),
-         lsd1   = "loge",     esd1   = list(),
-         lsd2   = "loge",     esd2   = list(),
-         lrho   = "rhobit",   erho   = list(),
+binormal(lmean1 = "identity", lmean2 = "identity",
+         lsd1   = "loge", lsd2   = "loge",
+         lrho   = "rhobit",
          imean1 = NULL,       imean2 = NULL,
          isd1   = NULL,       isd2   = NULL,
          irho   = NULL,       imethod = 1,
-         equalmean = FALSE,   equalsd = FALSE,
+         eq.mean = FALSE,     eq.sd = FALSE,
          zero = 3:5)
 
 
@@ -31,16 +29,11 @@ binormal(lmean1 = "identity", emean1 = list(),
   standard deviations.
 
   }
-  \item{emean1, emean2, esd1, esd2, erho}{
-  List. Extra argument for the links.
-  See \code{earg} in \code{\link{Links}} for general information.
-
-  }
   \item{imean1, imean2, isd1, isd2, irho, imethod, zero}{ 
   See \code{\link{CommonVGAMffArguments}} for more information.
 
   }
-  \item{equalmean, equalsd}{ 
+  \item{eq.mean, eq.sd}{ 
   Logical or formula.
   Constrains the means or the standard deviations to be equal.
   Only one of these arguments may be assigned a value.
@@ -60,6 +53,7 @@ binormal(lmean1 = "identity", emean1 = list(),
   The fitted means are returned as the fitted values, which is in
   the form of a two-column matrix.
   Fisher scoring is implemented.
+
 
 }
 \value{
@@ -89,14 +83,15 @@ binormal(lmean1 = "identity", emean1 = list(),
     \code{\link{normal1}},
     \code{\link{gaussianff}}.
 
+
 }
 \examples{
 nn <- 1000
-mydat = data.frame(x2 = runif(nn), x3 = runif(nn))
-mydat = transform(mydat, y1 = rnorm(nn, 1 + 2*x2),
-                         y2 = rnorm(nn, 3 + 4*x2))
-fit1 = vglm(cbind(y1, y2) ~ x2,
-            binormal(equalsd = TRUE), data = mydat, trace = TRUE)
+bdata <- data.frame(x2 = runif(nn), x3 = runif(nn))
+bdata <- transform(bdata, y1 = rnorm(nn, 1 + 2*x2),
+                          y2 = rnorm(nn, 3 + 4*x2))
+fit1 <- vglm(cbind(y1, y2) ~ x2,
+            binormal(eq.sd = TRUE), data = bdata, trace = TRUE)
 coef(fit1, matrix = TRUE)
 constraints(fit1)
 summary(fit1)

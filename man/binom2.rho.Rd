@@ -9,7 +9,7 @@
 
 }
 \usage{
-binom2.rho(lrho = "rhobit", erho=list(), imu1 = NULL, imu2 = NULL,
+binom2.rho(lrho = "rhobit", lmu = "probit", imu1 = NULL, imu2 = NULL,
            irho = NULL, imethod = 1,
            zero = 3, exchangeable = FALSE, nsimEIM = NULL)
 binom2.Rho(rho = 0, imu1 = NULL, imu2 = NULL,
@@ -22,9 +22,10 @@ binom2.Rho(rho = 0, imu1 = NULL, imu2 = NULL,
   See \code{\link{Links}} for more choices.
 
   }
-  \item{erho}{
-  List. Extra argument for the \code{lrho} link.
-  See \code{earg} in \code{\link{Links}} for general information.
+  \item{lmu}{
+  Link function applied to the marginal probabilities.
+  Should be left alone.
+
 
   }
   \item{irho}{

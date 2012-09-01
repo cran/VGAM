@@ -12,16 +12,15 @@
 }
 \usage{
 zipebcom(lmu12 = "cloglog", lphi12 = "logit", loratio = "loge",
-         emu12 = list(), ephi12 = list(), eoratio = list(),
          imu12 = NULL, iphi12 = NULL, ioratio = NULL, 
          zero = 2:3, tol = 0.001, addRidge = 0.001)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{lmu12, emu12, imu12}{
+  \item{lmu12, imu12}{
   Link function, extra argument and optional initial values for
   the first (and second) marginal probabilities.
-  Arguments \code{lmu12} and \code{emu12} should be left alone.
+  Argument \code{lmu12} should be left alone.
   Argument \code{imu12} may be of length 2 (one element for each response).
 
   }
@@ -46,11 +45,13 @@ zipebcom(lmu12 = "cloglog", lphi12 = "logit", loratio = "loge",
   proportions of zeros in either response.
 
   }
-  \item{ephi12, eoratio}{
-  List. Extra argument for each of the links.
-  See \code{earg} in \code{\link{Links}} for general information.
 
-  }
+% \item{ephi12, eoratio}{
+% List. Extra argument for each of the links.
+%        emu12 = list(), ephi12 = list(), eoratio = list(),
+% See \code{earg} in \code{\link{Links}} for general information.
+% }
+
   \item{zero}{
   Which linear/additive predictor is modelled as an intercept only?
   A \code{NULL} means none.
@@ -202,15 +203,16 @@ zipebcom(lmu12 = "cloglog", lphi12 = "logit", loratio = "loge",
   \code{\link{cloglog}},
   \code{\link{CommonVGAMffArguments}}.
 
+
 }
 \examples{
-mydat = data.frame(x = seq(0, 1, len=(nsites <- 2000)))
-mydat = transform(mydat, eta1 =  -3 + 5 * x,
+mydat <- data.frame(x = seq(0, 1, len=(nsites <- 2000)))
+mydat <- transform(mydat, eta1 =  -3 + 5 * x,
                          phi1 = logit(-1, inverse=TRUE),
                          oratio = exp(2))
-mydat = transform(mydat, mu12 = cloglog(eta1, inverse=TRUE) * (1-phi1))
-tmat =  with(mydat, rbinom2.or(nsites, mu1=mu12, oratio=oratio, exch=TRUE))
-mydat = transform(mydat, ybin1 = tmat[,1], ybin2 = tmat[,2])
+mydat <- transform(mydat, mu12 = cloglog(eta1, inverse = TRUE) * (1-phi1))
+tmat <-  with(mydat, rbinom2.or(nsites, mu1 = mu12, oratio = oratio, exch = TRUE))
+mydat <- transform(mydat, ybin1 = tmat[,1], ybin2 = tmat[,2])
 
 with(mydat, table(ybin1,ybin2)) / nsites  # For interest only
 \dontrun{
@@ -224,12 +226,12 @@ plot(mu12 ~ x, data = mydat, col = "blue", type = "l", ylim = 0:1,
      ylab = "Probability", main = "Marginal probability and phi")
 with(mydat, abline(h = phi1[1], col = "red", lty = "dashed"))
 
-tmat2 = with(mydat, dbinom2.or(mu1 = mu12, oratio = oratio, exch = TRUE))
+tmat2 <- with(mydat, dbinom2.or(mu1 = mu12, oratio = oratio, exch = TRUE))
 with(mydat, matplot(x, tmat2, col = 1:4, type = "l", ylim = 0:1,
      ylab = "Probability", main = "Joint probabilities")) }
 
 # Now fit the model to the data.
-fit = vglm(cbind(ybin1,ybin2) ~ x, fam = zipebcom, dat = mydat, trace = TRUE)
+fit <- vglm(cbind(ybin1, ybin2) ~ x, fam = zipebcom, dat = mydat, trace = TRUE)
 coef(fit, matrix = TRUE)
 summary(fit)
 vcov(fit)

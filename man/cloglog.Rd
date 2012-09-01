@@ -9,7 +9,7 @@
   
 }
 \usage{
-cloglog(theta, earg = list(), inverse = FALSE, deriv = 0,
+cloglog(theta, bvalue = NULL, inverse = FALSE, deriv = 0,
         short = TRUE, tag = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -19,35 +19,13 @@ cloglog(theta, earg = list(), inverse = FALSE, deriv = 0,
     See below for further details.
     
   }
-  \item{earg}{
-  Optional list. Extra argument for passing in additional information.
-  Values of \code{theta} which are less than or equal to 0 can be
-  replaced by the \code{bvalue} component of the list \code{earg}
-  before computing the link function value.
-  Values of \code{theta} which are greater than or equal to 1 can be
-  replaced by 1 minus the \code{bvalue} component of the list \code{earg}
-  before computing the link function value.
-  The component name \code{bvalue} stands for ``boundary value''.
-  See \code{\link{Links}} for general information about \code{earg}.
+  \item{bvalue}{
+  See \code{\link{Links}} for general information about links.
 
   }
-  \item{inverse}{
-  Logical. If \code{TRUE} the inverse function is computed.
+  \item{inverse, deriv, short, tag}{
+  Details at \code{\link{Links}}.
 
-  }
-  \item{deriv}{
-  Order of the derivative. Integer with value 0, 1 or 2.
-
-  }
-  \item{short}{
-  Used for labelling the \code{blurb} slot of a
-  \code{\link{vglmff-class}} object.
-
-  }
-  \item{tag}{
-  Used for labelling the linear/additive predictor in the
-  \code{initialize} slot of a \code{\link{vglmff-class}} object.
-  Contains a little more information if \code{TRUE}.
 
   }
 }
@@ -55,8 +33,8 @@ cloglog(theta, earg = list(), inverse = FALSE, deriv = 0,
   The complementary log-log link function is commonly used for parameters
   that lie in the unit interval.  Numerical values of \code{theta}
   close to 0 or 1 or out of range result in \code{Inf}, \code{-Inf},
-  \code{NA} or \code{NaN}.  The arguments \code{short} and \code{tag}
-  are used only if \code{theta} is character.
+  \code{NA} or \code{NaN}.
+
 
 }
 \value{
@@ -81,21 +59,25 @@ cloglog(theta, earg = list(), inverse = FALSE, deriv = 0,
 
 \note{
   Numerical instability may occur when \code{theta} is close to 1 or 0.
-  One way of overcoming this is to use \code{earg}.
+  One way of overcoming this is to use \code{bvalue}.
+
 
   Changing 1s to 0s and 0s to 1s in the response means that effectively
   a loglog link is fitted. That is, tranform \eqn{y} by \eqn{1-y}.
   That's why only one of \code{\link{cloglog}}
   and \code{loglog} is written.
 
+
   With constrained ordination (e.g., \code{\link{cqo}} and
   \code{\link{cao}}) used with \code{\link{binomialff}}, a complementary
   log-log link function is preferred over the default \code{\link{logit}}
   link, for a good reason.  See the example below.
 
+
   In terms of the threshold approach with cumulative probabilities for
   an ordinal response this link function corresponds to the extreme
   value distribution.
+
 
 }
 
@@ -107,35 +89,35 @@ cloglog(theta, earg = list(), inverse = FALSE, deriv = 0,
 
 }
 \examples{
-p = seq(0.01, 0.99, by=0.01)
+p <- seq(0.01, 0.99, by = 0.01)
 cloglog(p)
-max(abs(cloglog(cloglog(p), inverse=TRUE) - p)) # Should be 0
+max(abs(cloglog(cloglog(p), inverse = TRUE) - p)) # Should be 0
 
-p = c(seq(-0.02, 0.02, by=0.01), seq(0.97, 1.02, by=0.01))
-cloglog(p)  # Has NAs
-cloglog(p, earg=list(bvalue= .Machine$double.eps))  # Has no NAs
+p <- c(seq(-0.02, 0.02, by = 0.01), seq(0.97, 1.02, by = 0.01))
+cloglog(p) # Has NAs
+cloglog(p, bvalue = .Machine$double.eps) # Has no NAs
 
 \dontrun{
-p = seq(0.01, 0.99, by=0.01)
-plot(p, logit(p), type="l", col="limegreen", ylab="transformation",
-     lwd=2, las=1, main="Some probability link functions")
-lines(p, probit(p), col="purple", lwd=2)
-lines(p, cloglog(p), col="chocolate", lwd=2)
-lines(p, cauchit(p), col="tan", lwd=2)
-abline(v=0.5, h=0, lty="dashed")
+p <- seq(0.01, 0.99, by = 0.01)
+plot(p, logit(p), type = "l", col = "limegreen", ylab = "transformation",
+     lwd = 2, las = 1, main = "Some probability link functions")
+lines(p, probit(p), col = "purple", lwd = 2)
+lines(p, cloglog(p), col = "chocolate", lwd = 2)
+lines(p, cauchit(p), col = "tan", lwd = 2)
+abline(v = 0.5, h = 0, lty = "dashed")
 legend(0.1, 4, c("logit", "probit", "cloglog", "cauchit"),
-       col=c("limegreen","purple","chocolate", "tan"), lwd=2)
+       col=c("limegreen","purple","chocolate", "tan"), lwd = 2)
 }
 
 \dontrun{
 # This example shows that a cloglog link is preferred over the logit
 n = 500; p = 5; S = 3; Rank = 1  # Species packing model:
-mydata = rcqo(n, p, S, EqualTol=TRUE, ESOpt=TRUE, EqualMax=TRUE,
-              family="binomial", hiabundance=5, seed=123, Rank=Rank)
-fitc = cqo(attr(mydata, "formula"), ITol=TRUE, data=mydata, 
-           fam=binomialff(mv=TRUE, link="cloglog"), Rank=Rank)
-fitl = cqo(attr(mydata, "formula"), ITol=TRUE, data=mydata, 
-           fam=binomialff(mv=TRUE, link="logit"), Rank=Rank)
+mydata = rcqo(n, p, S, EqualTol = TRUE, ESOpt = TRUE, EqualMax = TRUE,
+              family = "binomial", hiabundance=5, seed = 123, Rank = Rank)
+fitc = cqo(attr(mydata, "formula"), ITol = TRUE, data = mydata, 
+           fam = binomialff(mv = TRUE, link = "cloglog"), Rank = Rank)
+fitl = cqo(attr(mydata, "formula"), ITol = TRUE, data = mydata, 
+           fam = binomialff(mv = TRUE, link = "logit"), Rank = Rank)
 
 # Compare the fitted models (cols 1 and 3) with the truth (col 2)
 cbind(ccoef(fitc), attr(mydata, "ccoefficients"), ccoef(fitl))

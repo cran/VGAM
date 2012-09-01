@@ -10,6 +10,7 @@
   Density, and random generation
   for the zero-inflated geometric distribution with parameter \code{pstr0}.
 
+
 }
 \usage{
 dzigeom(x, prob, pstr0 = 0, log = FALSE)
@@ -71,12 +72,12 @@ rzigeom(n, prob, pstr0 = 0)
 
 }
 \examples{
-prob = 0.5; pstr0 = 0.2; x = (-1):20
-(ii = dzigeom(x, prob, pstr0))
+prob <- 0.5; pstr0 <- 0.2; x <- (-1):20
+(ii <- dzigeom(x, prob, pstr0))
 max(abs(cumsum(ii) - pzigeom(x, prob, pstr0))) # Should be 0
 table(rzigeom(1000, prob, pstr0))
 
-\dontrun{ x = 0:10
+\dontrun{ x <- 0:10
 barplot(rbind(dzigeom(x, prob, pstr0), dgeom(x, prob)),
         beside = TRUE, col = c("blue","orange"),
         ylab = "P[Y = y]", xlab = "y", las = 1,

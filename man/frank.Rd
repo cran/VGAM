@@ -8,7 +8,7 @@
 
 }
 \usage{
-frank(lapar="loge", eapar=list(), iapar=2, nsimEIM=250)
+frank(lapar = "loge", iapar = 2, nsimEIM = 250)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -17,19 +17,17 @@ frank(lapar="loge", eapar=list(), iapar=2, nsimEIM=250)
   \eqn{\alpha}{alpha}.
   See \code{\link{Links}} for more choices.
 
-  }
-  \item{eapar}{
-  List. Extra argument for the link.
-  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{iapar}{
   Numeric. Initial value for \eqn{\alpha}{alpha}.
   If a convergence failure occurs try assigning a different value.
 
+
   }
   \item{nsimEIM}{
   See \code{\link{CommonVGAMffArguments}}.
+
 
   }
 }
@@ -45,12 +43,14 @@ frank(lapar="loge", eapar=list(), iapar=2, nsimEIM=250)
   Note the logarithm here is to base \eqn{\alpha}{alpha}.
   The support of the function is the unit square.
 
+
   When \eqn{0 < \alpha < 1}{0<alpha<1} the probability density function 
   \eqn{h_{\alpha}(y_1,y_2)}{h_{alpha}(y_1,y_2)}
   is symmetric with respect to the lines \eqn{y_2=y_1}{y2=y1}
   and \eqn{y_2=1-y_1}{y2=1-y1}.
   When \eqn{\alpha > 1}{alpha>1} then
   \eqn{h_{\alpha}(y_1,y_2) = h_{1/\alpha}(1-y_1,y_2)}{h_{1/alpha}(1-y_1,y_2)}.
+
 
   If \eqn{\alpha=1}{alpha=1} then \eqn{H(y_1,y_2) = y_1 y_2}{H(y1,y2)=y1*y2},
   i.e., uniform on the unit square.
@@ -59,16 +59,20 @@ frank(lapar="loge", eapar=list(), iapar=2, nsimEIM=250)
   As \eqn{\alpha}{alpha} approaches infinity then
   \eqn{H(y_1,y_2) = \max(0, y_1+y_2-1)}{H(y1,y2)=max(0,y1+y2-1)}.
 
+
   The default is to use Fisher scoring implemented using
   \code{\link{rfrank}}.
   For intercept-only models an alternative is to set \code{nsimEIM=NULL}
   so that a variant of Newton-Raphson is used.
+
 
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}}
   and \code{\link{vgam}}.
+
+
 }
 
 %% improve the references
@@ -79,13 +83,15 @@ Frank's family of bivariate distributions.
 \emph{Biometrika},
 \bold{74}, 549--555.
 
+
 }
 \author{ T. W. Yee }
 \note{
-  The response must be a two-column matrix.  Currently, the fitted
+  The response must be a two-column matrix. Currently, the fitted
   value is a matrix with two columns and values equal to a half.
   This is because the marginal distributions correspond to a standard
   uniform distribution.
+
 
 }
 
@@ -93,16 +99,19 @@ Frank's family of bivariate distributions.
   \code{\link{rfrank}},
   \code{\link{fgm}}.
 
+
 }
 \examples{
-ymat = rfrank(n=2000, alpha=exp(4))
-\dontrun{plot(ymat, col="blue")}
-fit = vglm(ymat ~ 1, fam=frank, trace=TRUE)
-coef(fit, matrix=TRUE)
+\dontrun{
+ymat <- rfrank(n = 2000, alpha = exp(4))
+plot(ymat, col = "blue")
+fit <- vglm(ymat ~ 1, fam = frank, trace = TRUE)
+coef(fit, matrix = TRUE)
 Coef(fit)
 vcov(fit)
 head(fitted(fit))
 summary(fit)
+}
 }
 \keyword{models}
 \keyword{regression}

@@ -8,11 +8,9 @@
 
 }
 \usage{
-gpd(threshold = 0, lscale = "loge", lshape = "logoff", escale = list(),
-    eshape = if (lshape == "logoff") list(offset = 0.5) else
-             if (lshape == "elogit") list(min = -0.5, max = 0.5) else NULL,
+gpd(threshold = 0, lscale = "loge", lshape = logoff(offset = 0.5),
     percentiles = c(90, 95), iscale = NULL, ishape = NULL,
-    tolshape0 = 0.001, giveWarning = TRUE, imethod = 1, zero = 2)
+    tolshape0 = 0.001, giveWarning = TRUE, imethod = 1, zero = -2)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -34,12 +32,9 @@ gpd(threshold = 0, lscale = "loge", lshape = "logoff", escale = list(),
   scoring does not work.
   See the Details section below for more information.
 
-  }
-  \item{escale, eshape}{
-  Extra argument for the \code{lscale} and \code{lshape} arguments.
-  See \code{earg} in \code{\link{Links}} for general information.
+
   For the shape parameter,
-  if the \code{\link{logoff}} link is chosen then the offset is
+  the default \code{\link{logoff}} link has an offset
   called \eqn{A} below; and then the second linear/additive predictor is
   \eqn{\log(\xi+A)}{log(xi+A)} which means that
   \eqn{\xi > -A}{xi > -A}.
@@ -104,15 +99,19 @@ gpd(threshold = 0, lscale = "loge", lshape = "logoff", escale = list(),
   \item{zero}{
   An integer-valued vector specifying which
   linear/additive predictors are modelled as intercepts only.
-  The value must be from the set \{1,2\} corresponding
+  For one response, the value should be from the set \{1,2\} corresponding
   respectively to \eqn{\sigma}{sigma} and \eqn{\xi}{xi}.
   It is often a good idea for the \eqn{\sigma}{sigma} parameter only
   to be modelled through
   a linear combination of the explanatory variables because the
   shape parameter is probably best left as an intercept only:
   \code{zero = 2}.
-  Setting \code{zero=NULL} means both parameters are modelled with
+  Setting \code{zero = NULL} means both parameters are modelled with
   explanatory variables.
+  See \code{\link{CommonVGAMffArguments}} for more details.
+
+
+
 
   }
 }
@@ -163,6 +162,9 @@ gpd(threshold = 0, lscale = "loge", lshape = "logoff", escale = list(),
   The response in the formula of \code{\link{vglm}}
   and \code{\link{vgam}} is \eqn{y}.
   Internally, \eqn{y-\mu}{y-mu} is computed.
+  This \pkg{VGAM} family function can handle a multiple
+  responses, which is inputted as a matrix.
+
 
 
   With functions \code{\link{rgpd}}, \code{\link{dgpd}}, etc., the
@@ -223,23 +225,23 @@ gpd(threshold = 0, lscale = "loge", lshape = "logoff", escale = list(),
 
 \examples{
 # Simulated data from an exponential distribution (xi = 0)
-threshold = 0.5
-gdata = data.frame(y1 = threshold + rexp(n = 3000, rate = 2))
-fit = vglm(y1 ~ 1, gpd(threshold = threshold), gdata, trace = TRUE)
+threshold <- 0.5
+gdata <- data.frame(y1 = threshold + rexp(n = 3000, rate = 2))
+fit <- vglm(y1 ~ 1, gpd(threshold = threshold), gdata, trace = TRUE)
 head(fitted(fit))
 coef(fit, matrix = TRUE)   # xi should be close to 0
 Coef(fit)
 summary(fit)
 
-fit@extra$threshold  # Note the threshold is stored here
+fit@extra$threshold # Note the threshold is stored here
 
 # Check the 90 percentile
-ii = depvar(fit) < fitted(fit)[1, "90\%"]
-100 * table(ii) / sum(table(ii))   # Should be 90%
+ii <- depvar(fit) < fitted(fit)[1, "90\%"]
+100 * table(ii) / sum(table(ii)) # Should be 90%
 
 # Check the 95 percentile
-ii = depvar(fit) < fitted(fit)[1, "95\%"]
-100 * table(ii) / sum(table(ii))   # Should be 95%
+ii <- depvar(fit) < fitted(fit)[1, "95\%"]
+100 * table(ii) / sum(table(ii)) # Should be 95%
 
 \dontrun{ plot(depvar(fit), col = "blue", las = 1,
                main = "Fitted 90\% and 95\% quantiles")
@@ -247,21 +249,21 @@ matlines(1:length(depvar(fit)), fitted(fit), lty = 2:3, lwd = 2) }
 
 
 # Another example
-gdata = data.frame(x2 = runif(nn <- 2000))
-threshold = 0; xi = exp(-0.8) - 0.5
-gdata = transform(gdata, y2 = rgpd(nn, scale = exp(1+0.1*x2), shape = xi))
-fit = vglm(y2 ~ x2, gpd(threshold), gdata, trace = TRUE)
+gdata <- data.frame(x2 = runif(nn <- 2000))
+threshold <- 0; xi <- exp(-0.8) - 0.5
+gdata <- transform(gdata, y2 = rgpd(nn, scale = exp(1 + 0.1*x2), shape = xi))
+fit <- vglm(y2 ~ x2, gpd(threshold), gdata, trace = TRUE)
 coef(fit, matrix = TRUE)
 
 
 \dontrun{ # Nonparametric fits
-gdata = transform(gdata, yy = y2 + rnorm(nn, sd = 0.1))
+gdata <- transform(gdata, yy = y2 + rnorm(nn, sd = 0.1))
 # Not so recommended:
-fit1 = vgam(yy ~ s(x2), gpd(threshold), gdata, trace = TRUE)
+fit1 <- vgam(yy ~ s(x2), gpd(threshold), gdata, trace = TRUE)
 par(mfrow = c(2,1))
 plotvgam(fit1, se = TRUE, scol = "blue")
 # More recommended:
-fit2 = vglm(yy ~ bs(x2), gpd(threshold), gdata, trace = TRUE)
+fit2 <- vglm(yy ~ bs(x2), gpd(threshold), gdata, trace = TRUE)
 plotvgam(fit2, se = TRUE, scol = "blue") }
 }
 \keyword{models}

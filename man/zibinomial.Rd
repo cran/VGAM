@@ -9,7 +9,6 @@
 }
 \usage{
 zibinomial(lpstr0 = "logit", lprob = "logit",
-           epstr0 = list(),  eprob = list(),
            ipstr0 = NULL, zero = 1, mv = FALSE, imethod = 1)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -21,11 +20,12 @@ zibinomial(lpstr0 = "logit", lprob = "logit",
   For the zero-\emph{deflated} model see below.
 
   }
-  \item{epstr0, eprob}{
-  List. Extra argument for the respective links.
-  See \code{earg} in \code{\link{Links}} for general information.
 
-  }
+% \item{epstr0, eprob}{
+%          epstr0 = list(),  eprob = list(),
+% List. Extra argument for the respective links.
+% See \code{earg} in \code{\link{Links}} for general information.
+% }
 
   \item{ipstr0}{
   Optional initial values for \eqn{\phi}{phi}, whose values must lie
@@ -117,6 +117,7 @@ zibinomial(lpstr0 = "logit", lprob = "logit",
   Half-stepping is not uncommon.
   If failure to converge occurs, make use of the argument \code{ipstr0}.
 
+
 } 
 
 \seealso{
@@ -125,17 +126,18 @@ zibinomial(lpstr0 = "logit", lprob = "logit",
   \code{\link{posbinomial}},
   \code{\link[stats:Binomial]{rbinom}}.
 
+
 }
 \examples{
-size = 10  # Number of trials; N in the notation above
-nn = 200
-zibdata = data.frame(pstr0 = logit( 0, inverse = TRUE), # 0.50
-                     mubin = logit(-1, inverse = TRUE), # Mean of usual binomial
-                     sv    = rep(size, length = nn))
-zibdata = transform(zibdata, 
-                    y = rzibinom(nn, size = sv, prob = mubin, pstr0 = pstr0))
+size <- 10 # Number of trials; N in the notation above
+nn <- 200
+zibdata <- data.frame(pstr0 = logit( 0, inverse = TRUE), # 0.50
+                      mubin = logit(-1, inverse = TRUE), # Mean of usual binomial
+                      sv    = rep(size, length = nn))
+zibdata <- transform(zibdata, 
+                     y = rzibinom(nn, size = sv, prob = mubin, pstr0 = pstr0))
 with(zibdata, table(y))
-fit = vglm(cbind(y, sv - y) ~ 1, zibinomial, zibdata, trace = TRUE)
+fit <- vglm(cbind(y, sv - y) ~ 1, zibinomial, zibdata, trace = TRUE)
 
 coef(fit, matrix = TRUE)
 Coef(fit) # Useful for intercept-only models

@@ -1,5 +1,5 @@
-\name{Rcam}
-\alias{Rcam}
+\name{Rcim}
+\alias{Rcim}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
   Mark the Baseline of Row and Column on a Matrix data 
@@ -8,12 +8,13 @@
 \description{
   Rearrange the rows and columns of the input so
   that the first row and first column are baseline.
-  This function is for rank-zero row-column association models
-  (RCAMs; i.e., general main effects models).
+  This function is for rank-zero row-column interaction models
+  (RCIMs; i.e., general main effects models).
+
 
 }
 \usage{
-  Rcam(mat, rbaseline = 1, cbaseline = 1) 
+  Rcim(mat, rbaseline = 1, cbaseline = 1) 
 
 }
 %- maybe also 'usage' for other objects documented here.
@@ -32,8 +33,8 @@
 }
 }
 \details{
-  This is a data preprocessing function for \code{\link{rcam}}.
-  For rank-zero row-column association models this function
+  This is a data preprocessing function for \code{\link{rcim}}.
+  For rank-zero row-column interaction models this function
   establishes the baseline (or reference) levels of the matrix
   response with respect to the row and columns---these become
   the new first row and column.
@@ -49,6 +50,7 @@
 }
 \author{
 Alfian F. Hadi and T. W. Yee.
+
 
 }
 \note{
@@ -70,13 +72,14 @@ Alfian F. Hadi and T. W. Yee.
 
 \seealso{
   \code{\link{moffset}},
-  \code{\link{rcam}},
-  \code{\link{plotrcam0}}.
+  \code{\link{rcim}},
+  \code{\link{plotrcim0}}.
+
 
 }
 \examples{
 (alcoff.e <- moffset(alcoff, roffset = "6", postfix = "*"))
-(aa = Rcam(alcoff,    rbaseline = "11", cbaseline = "Sunday"))
-(bb = moffset(alcoff,             "11",             "Sunday", postfix = "*"))
-aa - bb   # Notice the difference!
+(aa <- Rcim(alcoff,    rbaseline = "11", cbaseline = "Sun"))
+(bb <- moffset(alcoff,             "11",             "Sun", postfix = "*"))
+aa - bb # Notice the difference!
 }

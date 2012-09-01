@@ -8,19 +8,20 @@
 
 }
 \usage{
-felix(link = "elogit", earg = if (link == "elogit") list(min
-      = 0, max = 0.5) else list(), imethod=1)
+felix(link = elogit(min = 0, max = 0.5), imethod = 1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{link, earg}{
-  Link function and extra argument for the parameter.
-  See \code{\link{Links}} for more choices and for general information.
+  \item{link}{
+  Link function for the parameter;
+  see \code{\link{Links}} for more choices and for general information.
+
 
   }
   \item{imethod}{
   See \code{\link{CommonVGAMffArguments}}.
   Valid values are 1, 2, 3 or 4.
+
 
   }
 }
@@ -60,10 +61,11 @@ Boston: Birkhauser.
   \code{\link{dfelix}},
   \code{\link{borel.tanner}}.
 
+
 }
 \examples{
-fdata = data.frame(y = 2*rpois(n=200, 1) + 1)  # Not real data!
-fit = vglm(y ~ 1, felix, fdata, trace=TRUE, crit="c")
+fdata <- data.frame(y = 2*rpois(n = 200, 1) + 1) # Not real data!
+fit <- vglm(y ~ 1, felix, fdata, trace = TRUE, crit = "c")
 coef(fit, matrix=TRUE)
 Coef(fit)
 summary(fit)

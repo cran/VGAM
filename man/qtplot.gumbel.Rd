@@ -18,18 +18,28 @@ qtplot.gumbel(object, plot.it = TRUE,
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{object}{  A \pkg{VGAM} extremes model of the
-    Gumbel type, produced by modelling functions such as \code{\link{vglm}}
+  \item{object}{
+  A \pkg{VGAM} extremes model of the
+  Gumbel type, produced by modelling functions such as \code{\link{vglm}}
   and \code{\link{vgam}} with a family function either
-  \code{"gumbel"} or \code{"egumbel"}. }
+  \code{"gumbel"} or \code{"egumbel"}.
+
+  }
   \item{plot.it}{
   Logical. Plot it? If \code{FALSE} no plot will be done.
 
+
   }
-  \item{y.arg}{ Logical. Add the raw data on to the plot? }
-  \item{spline.fit}{ Logical. Use a spline fit through the fitted
-    percentiles? This can be useful if there are large gaps
-    between some values along the covariate.
+  \item{y.arg}{
+  Logical. Add the raw data on to the plot?
+
+  }
+  \item{spline.fit}{
+  Logical. Use a spline fit through the fitted
+  percentiles? This can be useful if there are large gaps
+  between some values along the covariate.
+
+
   }
   \item{label}{ Logical. Label the percentiles? }
   \item{R}{ See \code{\link{gumbel}}. }
@@ -57,9 +67,12 @@ qtplot.gumbel(object, plot.it = TRUE,
   \item{tadj}{ Text justification.
   See the \code{adj} argument of \code{\link[graphics]{par}}.
   }
-  \item{\dots}{  Arguments passed into the \code{plot} function
+  \item{\dots}{
+  Arguments passed into the \code{plot} function
   when setting up the entire plot. Useful arguments here include
   \code{sub} and \code{las}.
+
+
   }
 
 
@@ -67,41 +80,51 @@ qtplot.gumbel(object, plot.it = TRUE,
 \details{
   There should be a single covariate such as time.
   The quantiles specified by \code{percentiles} are plotted.
+
+
 }
 \value{
   The object with a list called \code{qtplot} in the \code{post}
   slot of \code{object}.
-  (If \code{plot.it=FALSE} then just the list is returned.)
+  (If \code{plot.it = FALSE} then just the list is returned.)
   The list contains components
-  \item{fitted.values}{ The percentiles of the response,
-    possibly including the MPV. }
-  \item{percentiles }{The percentiles (small vector of values between
-    0 and 100. }
+  \item{fitted.values}{
+  The percentiles of the response,
+  possibly including the MPV.
+
+  }
+  \item{percentiles}{
+  The percentiles (small vector of values between 0 and 100.
+
+
+  }
 }
 %\references{ ~put references to the literature/web site here ~ }
 \author{ Thomas W. Yee }
 \note{
   Unlike \code{\link{gumbel}}, one cannot have
-  \code{percentiles=NULL}.
+  \code{percentiles = NULL}.
+
 
 }
 \seealso{
   \code{\link{gumbel}}.
+
+
 }
 \examples{
-y = as.matrix(venice[,paste("r",1:10,sep="")])
-fit1 = vgam(y ~ s(year, df=3), gumbel(R=365, mpv=TRUE),
-            data=venice, trace=TRUE, na.action=na.pass)
+ymat <- as.matrix(venice[, paste("r", 1:10, sep = "")])
+fit1 <- vgam(ymat ~ s(year, df = 3), gumbel(R = 365, mpv = TRUE),
+             data = venice, trace = TRUE, na.action = na.pass)
 head(fitted(fit1))
 
-\dontrun{
-par(mfrow=c(1,1), bty="l", xpd=TRUE, las=1)
-qtplot(fit1, mpv=TRUE, lcol=c(1,2,5), tcol=c(1,2,5), lwd=2,
-       pcol="blue", tadj=0.4)
+\dontrun{ par(mfrow = c(1, 1), bty = "l", xpd = TRUE, las = 1)
+qtplot(fit1, mpv = TRUE, lcol = c(1, 2, 5), tcol = c(1, 2, 5),
+       lwd = 2, pcol = "blue", tadj = 0.4, ylab = "Sea level (cm)")
 
-qtplot(fit1, perc=97, mpv=FALSE, lcol=3, tcol=3,
-       lwd=2, tadj=0.4, add=TRUE) -> i
-head(i@post$qtplot$fitted)
+qtplot(fit1, perc = 97, mpv = FALSE, lcol = 3, tcol = 3,
+       lwd = 2, tadj = 0.4, add = TRUE) -> saved
+head(saved@post$qtplot$fitted)
 }
 }
 \keyword{graphs}

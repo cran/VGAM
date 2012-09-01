@@ -12,8 +12,8 @@
 }
 \usage{
 weibull(lshape = "loge", lscale = "loge", 
-        eshape = list(), escale = list(),
-        ishape = NULL,   iscale = NULL, nrfs = 1, imethod = 1, zero = 2)
+        ishape = NULL,   iscale = NULL, nrfs = 1,
+        probs.y = c(0.2, 0.5, 0.8), imethod = 1, zero = -2)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -23,15 +23,11 @@ weibull(lshape = "loge", lscale = "loge",
   (positive) scale parameter (called \eqn{b} below).
   See \code{\link{Links}} for more choices.
 
-  }
-  \item{eshape, escale}{
-  Extra argument for the respective links.
-  See \code{earg} in \code{\link{Links}} for general information.
 
   }
-  Parameter link functions applied to the 
   \item{ishape, iscale}{
   Optional initial values for the shape and scale parameters.
+
 
   }
   \item{nrfs}{
@@ -42,6 +38,7 @@ weibull(lshape = "loge", lscale = "loge",
   The default value uses a mixture of the two algorithms, and retaining
   positive-definite working weights.
 
+
   }
   \item{imethod}{
   Initialization method used if there are censored observations.
@@ -49,11 +46,8 @@ weibull(lshape = "loge", lscale = "loge",
 
 
   }
-  \item{zero}{
-  An integer specifying which linear/additive predictor is to be modelled
-  as an intercept only.  The value must be from the set \{1,2\},
-  which correspond to the shape and scale parameters respectively.
-  Setting \code{zero = NULL} means none of them.
+  \item{zero, probs.y}{
+  Details at \code{\link{CommonVGAMffArguments}}.
 
   }
 }
@@ -78,14 +72,33 @@ weibull(lshape = "loge", lscale = "loge",
   This \pkg{VGAM} family function currently does not handle 
   censored data.
   Fisher scoring is used to estimate the two parameters.
-  Although the Fisher information matrices used here are valid
+  Although the expected information matrices used here are valid
   in all regions of the parameter space,
   the regularity conditions for maximum
   likelihood estimation are satisfied only if \eqn{a>2}
   (according to Kleiber and Kotz (2003)).
   If this is violated then a warning message is issued.
-  One can enforce \eqn{a>2} by choosing \code{lshape = "logoff"}
-  and \code{eshape = list(offset = -2)}.
+  One can enforce \eqn{a>2} by
+  choosing \code{lshape = logoff(offset = -2)}.
+  Common values of the shape parameter lie between 0.5 and 3.5.
+
+
+  Summarized in Harper et al. (2011),
+  for inference, there are 4 cases to consider.
+  If \eqn{a \leq 1} then the MLEs are not consistent
+  (and the smallest observation becomes a hyperefficient
+  solution for the location parameter in the 3-parameter case).
+  If \eqn{1 < a < 2} then MLEs exist but are not asymptotically normal.
+  If \eqn{a = 2} then the MLEs exist and are normal and asymptotically
+  efficient but with a slower convergence rate than when \eqn{a > 2}.
+  If \eqn{a > 2} then MLEs have classical asymptotic properties.
+
+
+  The 3-parameter (location is the third parameter) Weibull can
+  be estimated by maximizing a profile log-likelihood (see,
+  e.g., Harper et al. (2011) and Lawless (2003)), else try
+  \code{\link{gev}} which is a better parameterization.
+
 
 
 }
@@ -107,6 +120,13 @@ Johnson, N. L. and Kotz, S. and Balakrishnan, N. (1994)
 2nd edition, Volume 1, New York: Wiley.
 
 
+Lawless, J. F. (2003)
+\emph{Statistical Models and Methods for Lifetime Data},
+2nd ed.
+{Hoboken, NJ, USA: John Wiley & Sons}.
+
+
+
 Rinne, Horst. (2009)
 \emph{The Weibull Distribution: A Handbook}.
 Boca Raton, FL, USA: CRC Press.
@@ -119,6 +139,15 @@ Weibull and GE distributions,
 \emph{Journal of Statistical Planning and Inference},
 \bold{136},
 3130--3144.
+
+
+Harper, W. V. and Eschenbach, T. G. and James, T. R. (2011)
+Concerns about Maximum Likelihood Estimation for
+              the Three-Parameter {W}eibull Distribution:
+              Case Study of Statistical Software,
+\emph{The American Statistician},
+\bold{65(1)},
+{44--54}.
 
 
   Smith, R. L. (1985)
@@ -142,8 +171,11 @@ Weibull and GE distributions,
   make use the two initial value arguments.
 
 
+  This \pkg{VGAM} family function handles multiple responses.
+
+
   The Weibull distribution is often an alternative to the lognormal
-  distribution.  The inverse Weibull distribution, which is that of
+  distribution. The inverse Weibull distribution, which is that of
   \eqn{1/Y} where \eqn{Y} has a Weibull(\eqn{a,b}) distribution, is
   known as the log-Gompertz distribution.
 
@@ -168,6 +200,7 @@ Weibull and GE distributions,
   If the shape parameter is less than two then misleading inference may
   result, e.g., in the \code{summary} and \code{vcov} of the object.
 
+
 }
 
 \seealso{
@@ -175,14 +208,16 @@ Weibull and GE distributions,
     \code{\link{gev}},
     \code{\link{lognormal}},
     \code{\link{expexp}}.
+    \code{\link{gumbelII}}.
 
 
 }
 \examples{
-# Complete data
-wdata = data.frame(x2 = runif(nn <- 1000))
-wdata = transform(wdata, y = rweibull(nn, shape = exp(1 + x2), scale = exp(-2)))
-fit = vglm(y ~ x2, weibull, wdata, trace = TRUE)
+wdata <- data.frame(x2 = runif(nn <- 1000)) # Complete data
+wdata <- transform(wdata,
+            y1 = rweibull(nn, shape = exp(1 + x2), scale = exp(-2)),
+            y2 = rweibull(nn, shape = exp(2 - x2), scale = exp( 1)))
+fit <- vglm(cbind(y1, y2) ~ x2, weibull, wdata, trace = TRUE)
 coef(fit, matrix = TRUE)
 vcov(fit)
 summary(fit)

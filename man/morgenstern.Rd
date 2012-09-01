@@ -8,18 +8,17 @@
 
 }
 \usage{
-morgenstern(lapar = "rhobit", earg = list(), iapar = NULL, tola0 = 0.01,
-            imethod = 1)
+morgenstern(lapar = "rhobit", iapar = NULL, tola0 = 0.01, imethod = 1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{lapar, earg}{
-  Link function
-  and extra argument for the
+  \item{lapar}{
+  Link function for the
   association parameter
   \eqn{\alpha}{alpha}, which lies between \eqn{-1} and \eqn{1}.
   See \code{\link{Links}} for more choices
   and other information.
+
 
   }
   \item{iapar}{
@@ -107,11 +106,11 @@ Hoboken, NJ, USA: Wiley-Interscience.
 
 }
 \examples{
-N = 1000; mdata = data.frame(y1 = rexp(N), y2 = rexp(N))
+N <- 1000; mdata <- data.frame(y1 = rexp(N), y2 = rexp(N))
 \dontrun{plot(ymat)}
-fit = vglm(cbind(y1, y2) ~ 1, morgenstern, mdata, trace = TRUE)
+fit <- vglm(cbind(y1, y2) ~ 1, morgenstern, mdata, trace = TRUE)
 # This may fail:
-fit = vglm(cbind(y1, y2) ~ 1, morgenstern, mdata, trace = TRUE, crit = "coef")
+fit <- vglm(cbind(y1, y2) ~ 1, morgenstern, mdata, trace = TRUE, crit = "coef")
 coef(fit, matrix = TRUE)
 Coef(fit)
 head(fitted(fit))

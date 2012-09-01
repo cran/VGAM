@@ -105,11 +105,13 @@ plotvgam = function(x, newdata = NULL, y = NULL, residuals = NULL, rugplot = TRU
 
 
 ylim.scale <- function(ylim, scale = 0) {
-    if (length(ylim) != 2 || ylim[2] < ylim[1])
-        stop("error in 'ylim'")
-    try <- ylim[2] - ylim[1]
-    if (try > scale) ylim else
-        c(ylim[1]+ylim[2]-scale, ylim[1]+ylim[2]+scale) / 2 
+  if (length(ylim) != 2 ||
+      ylim[2] < ylim[1])
+    stop("error in 'ylim'")
+  try <- ylim[2] - ylim[1]
+  if (try > scale) ylim else
+    c(ylim[1] + ylim[2] - scale,
+      ylim[1] + ylim[2] + scale) / 2 
 }
 
 
@@ -831,42 +833,43 @@ setMethod("plot", "vgam",
 
 
 plotqrrvglm = function(object,
-               rtype = c("pearson", "response", "deviance", "working"), 
+               rtype = c("response", "pearson", "deviance", "working"), 
                ask = FALSE,
                main = paste(Rtype, "residuals vs latent variable(s)"),
                xlab = "Latent Variable",
                ITolerances = object@control$EqualTolerances,
                ...) {
-    M = object@misc$M
-    n = object@misc$n
-    Rank = object@control$Rank
-    Coef.object = Coef(object, ITolerances = ITolerances)
-    rtype <- match.arg(rtype, c("pearson", "response", "deviance", "working"))[1]
-    res = resid(object, type=rtype)
+  M <- object@misc$M
+  n <- object@misc$n
+  Rank <- object@control$Rank
+  Coef.object <- Coef(object, ITolerances = ITolerances)
+  rtype <- match.arg(rtype,
+                     c("response", "pearson", "deviance", "working"))[1]
+  res <- resid(object, type = rtype)
 
-    my.ylab = if (length(object@misc$ynames)) object@misc$ynames else 
-              rep(" ", len=M)
-    Rtype = switch(rtype, pearson = "Pearson", response = "Response",
-                   deviance = "Deviance", working = "Working")
+  my.ylab <- if (length(object@misc$ynames)) object@misc$ynames else 
+            rep(" ", len = M)
+  Rtype <- switch(rtype, pearson = "Pearson", response = "Response",
+                 deviance = "Deviance", working = "Working")
 
-    done = 0
-    for(rr in 1:Rank)
-        for(ii in 1:M) {
-            plot(Coef.object@lv[,rr], res[,ii],
-                 xlab=paste(xlab, if (Rank == 1) "" else rr, sep = ""),
-                 ylab=my.ylab[ii],
-                 main = main, ...)
-            done = done + 1
-            if (done >= prod(par()$mfrow) && ask && done != Rank*M) {
-                done = 0
-                readline("Hit return for the next plot: ")
-            }
-        }
-    object
+  done <- 0
+  for(rr in 1:Rank)
+    for(ii in 1:M) {
+      plot(Coef.object@lv[,rr], res[,ii],
+           xlab = paste(xlab, if (Rank == 1) "" else rr, sep = ""),
+           ylab = my.ylab[ii],
+           main = main, ...)
+      done <- done + 1
+      if (done >= prod(par()$mfrow) && ask && done != Rank*M) {
+          done <- 0
+          readline("Hit return for the next plot: ")
+      }
+    }
+  object
 }
 
 setMethod("plot", "qrrvglm", function(x, y, ...)
-         invisible(plotqrrvglm(object=x, ...)))
+         invisible(plotqrrvglm(object = x, ...)))
 
 
 

@@ -43,10 +43,13 @@ it to a low value will obtain the global solution.  It appears that,
 if BFGS kicks in too late when the Nelder-Mead algorithm is starting to
 converge to a local solution, then switching to BFGS will not be sufficient
 to bypass convergence to that local solution.
+
 }
 
-\seealso{ \code{\link{rrvglm.control}},
-\code{\link[stats]{optim}}.
+\seealso{
+  \code{\link{rrvglm.control}},
+  \code{\link[stats]{optim}}.
+
 }
 %\examples{
 %}

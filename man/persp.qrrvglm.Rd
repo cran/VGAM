@@ -191,18 +191,18 @@ canonical Gaussian ordination.
 \code{\link[graphics]{title}}.
 }
 \examples{\dontrun{
-hspider[,1:6] = scale(hspider[,1:6]) # Good idea when ITolerances = TRUE
+hspider[,1:6] <- scale(hspider[,1:6]) # Good idea when ITolerances = TRUE
 set.seed(111)
-r1 = cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,
-               Auloalbi, Pardmont, Pardnigr, Pardpull, Trocterr) ~
-         WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
-         poissonff, hspider, trace = FALSE, ITolerances = TRUE)
+r1 <- cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,
+                Auloalbi, Pardmont, Pardnigr, Pardpull, Trocterr) ~
+          WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
+          poissonff, hspider, trace = FALSE, ITolerances = TRUE)
 set.seed(111)  # r2 below is an ill-conditioned model
-r2 = cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,
-               Auloalbi, Pardmont, Pardnigr, Pardpull, Trocterr) ~
-         WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
-         isdlv = c(2.4,1.0), Muxfactor = 3.0, trace = FALSE,
-         poissonff, hspider, Rank = 2, EqualTolerances = TRUE)
+r2 <- cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,
+                Auloalbi, Pardmont, Pardnigr, Pardpull, Trocterr) ~
+          WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
+          isdlv = c(2.4,1.0), Muxfactor = 3.0, trace = FALSE,
+          poissonff, hspider, Rank = 2, EqualTolerances = TRUE)
 
 sort(r1@misc$deviance.Bestof)  # A history of the fits
 sort(r2@misc$deviance.Bestof)  # A history of the fits

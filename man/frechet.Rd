@@ -12,12 +12,11 @@
 
 }
 \usage{
-frechet2(location = 0, lscale = "loge", lshape = "logoff",
-         escale = list(), eshape = list(offset = -2), iscale = NULL,
-         ishape = NULL, nsimEIM = 250, zero = NULL)
+frechet2(location = 0, lscale = "loge", lshape = logoff(offset = -2),
+         iscale = NULL, ishape = NULL, nsimEIM = 250, zero = NULL)
 %frechet3(anchor = NULL, ldifference = "loge", lscale = "loge",
-%         lshape = "loglog", edifference = list(), escale = list(),
-%         eshape = list(), ilocation = NULL, iscale = NULL, ishape = NULL,
+%         lshape = "loglog",
+%         ilocation = NULL, iscale = NULL, ishape = NULL,
 %         zero = NULL, effpos = .Machine$double.eps^0.75)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -27,19 +26,20 @@ frechet2(location = 0, lscale = "loge", lshape = "logoff",
   It is called \eqn{a} below.
 
   }
-  \item{lscale, lshape, escale, eshape}{
-  Link functions and extra arguments for the parameters.
-  See \code{\link{Links}} for more choices.
+  \item{lscale, lshape}{
+  Link functions for the parameters;
+  see \code{\link{Links}} for more choices.
 
   }
   \item{iscale, ishape, zero, nsimEIM}{
   See \code{\link{CommonVGAMffArguments}} for information.
 
   }
-% \item{edifference}{   % 
+
+
+% \item{edifference}{   %
 % Extra argument for the respective links.
 % See \code{earg} in \code{\link{Links}} for general information.
-
 % }
 
 
@@ -107,12 +107,15 @@ frechet2(location = 0, lscale = "loge", lshape = "logoff",
   The object is used by modelling functions such as \code{\link{vglm}}
   and \code{\link{vgam}}.
 
+
 }
 \references{
+
 Castillo, E., Hadi, A. S., Balakrishnan, N. Sarabia, J. S. (2005)
 \emph{Extreme Value and Related Models with Applications
       in Engineering and Science},
 Hoboken, NJ, USA: Wiley-Interscience.
+
 
 }
 \author{ T. W. Yee }
@@ -124,6 +127,7 @@ Hoboken, NJ, USA: Wiley-Interscience.
 
   Family function \code{frechet2} may fail for low values of
   the shape parameter, e.g., near 2 or lower.
+
 
 }
 
@@ -148,12 +152,13 @@ Hoboken, NJ, USA: Wiley-Interscience.
   \code{\link{rfrechet}},
   \code{\link{gev}}.
 
+
 }
 \examples{
 set.seed(123)
-fdata = data.frame(y1 = rfrechet(nn <- 1000, shape = 2 + exp(1)))
+fdata <- data.frame(y1 = rfrechet(nn <- 1000, shape = 2 + exp(1)))
 \dontrun{ with(fdata, hist(y1)) }
-fit2 = vglm(y1 ~ 1, frechet2, fdata, trace = TRUE)
+fit2 <- vglm(y1 ~ 1, frechet2, fdata, trace = TRUE)
 coef(fit2, matrix = TRUE)
 Coef(fit2)
 head(fitted(fit2))

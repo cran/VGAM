@@ -6,13 +6,12 @@
   Fits a positive binomial distribution.
 }
 \usage{
-posbinomial(link = "logit", earg = list(),
-            mv = FALSE, parallel = FALSE, zero = NULL)
+posbinomial(link = "logit", mv = FALSE, parallel = FALSE, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{link, earg}{
-  Link function and its extra argument for the usual probability parameter.
+  \item{link}{
+  Link function for the usual probability parameter.
   See \code{\link{CommonVGAMffArguments}} for more information.
 
   }
@@ -39,17 +38,13 @@ posbinomial(link = "logit", earg = list(),
 
 }
 \references{
+
 Patil, G. P. (1962)
 Maximum likelihood estimation for
 generalised power series distributions and its application to a
 truncated binomial distribution.
 \emph{Biometrika},
 \bold{49}, 227--237.
-
-
-Documentation accompanying the \pkg{VGAM} package at
-\url{http://www.stat.auckland.ac.nz/~yee}
-contains further information and examples.
 
 
 }
@@ -88,11 +83,11 @@ contains further information and examples.
 
 \examples{
 # Number of albinotic children in families with 5 kids (from Patil, 1962)
-akids = data.frame(y = c(rep(1, 25), rep(2, 23), rep(3, 10), 4, 5),
-                   n = rep(5, 60))
-fit1 = vglm(cbind(y, n-y) ~ 1, posbinomial, akids, trace = TRUE)
+akids <- data.frame(y = c(rep(1, 25), rep(2, 23), rep(3, 10), 4, 5),
+                    n = rep(5, 60))
+fit1 <- vglm(cbind(y, n-y) ~ 1, posbinomial, akids, trace = TRUE)
 summary(fit1)
-Coef(fit1)   # = MLE of p = 0.3088
+Coef(fit1) # = MLE of p = 0.3088
 head(fitted(fit1))
 }
 \keyword{models}

@@ -8,7 +8,7 @@
 
 }
 \usage{
-mbinomial(mvar = NULL, link = "logit", earg = list(),
+mbinomial(mvar = NULL, link = "logit",
           parallel = TRUE, smallno = .Machine$double.eps^(3/4))
 }
 %- maybe also 'usage' for other objects documented here.
@@ -21,9 +21,8 @@ mbinomial(mvar = NULL, link = "logit", earg = list(),
 
 
   }
-  \item{link, earg}{ 
-  Parameter link function and extra argument for the probability
-  parameter.
+  \item{link}{ 
+  Parameter link function for the probability parameter.
 % called \eqn{p} below.
   Information for these are at \code{\link{Links}}
   and \code{\link{CommonVGAMffArguments}}.
@@ -141,27 +140,27 @@ mbinomial(mvar = NULL, link = "logit", earg = list(),
 # Cf. Hastie and Tibshirani (1990) p.209. The variable n must be even.
 # Here, the intercept for each matched set accounts for x3 which is
 # the confounder or matching variable.
-n = 700 # Requires a big machine with lots of memory. Expensive wrt time
-n = 100 # This requires a reasonably big machine.
-mydat = data.frame(x2 = rnorm(n), x3 = rep(rnorm(n/2), each = 2))
-xmat = with(mydat, cbind(x2, x3))
-mydat = transform(mydat, eta = -0.1 + 0.2 * x2 + 0.3 * x3)
-etamat = with(mydat, matrix(eta, n/2, 2))
-condmu = exp(etamat[, 1]) / (exp(etamat[, 1]) + exp(etamat[, 2]))
-y1 = ifelse(runif(n/2) < condmu, 1, 0)
-y = cbind(y1, 1 - y1)
-mydat = transform(mydat, y = c(y1, 1-y1),
+n <- 700 # Requires a big machine with lots of memory. Expensive wrt time
+n <- 100 # This requires a reasonably big machine.
+mydat <- data.frame(x2 = rnorm(n), x3 = rep(rnorm(n/2), each = 2))
+xmat <- with(mydat, cbind(x2, x3))
+mydat <- transform(mydat, eta = -0.1 + 0.2 * x2 + 0.3 * x3)
+etamat <- with(mydat, matrix(eta, n/2, 2))
+condmu <- exp(etamat[, 1]) / (exp(etamat[, 1]) + exp(etamat[, 2]))
+y1 <- ifelse(runif(n/2) < condmu, 1, 0)
+y <- cbind(y1, 1 - y1)
+mydat <- transform(mydat, y = c(y1, 1-y1),
                          ID = factor(c(row(etamat))))
-fit = vglm(y ~ 1 + ID + x2, trace = TRUE,
-           fam = mbinomial(mvar = ~ ID - 1), data = mydat)
+fit <- vglm(y ~ 1 + ID + x2, trace = TRUE,
+            mbinomial(mvar = ~ ID - 1), data = mydat)
 dimnames(coef(fit, matrix = TRUE))
 coef(fit, matrix = TRUE)
 summary(fit)
 head(fitted(fit))
-objsizemb = function(object) round(object.size(object) / 2^20, dig = 2)
+objsizemb <- function(object) round(object.size(object) / 2^20, dig = 2)
 objsizemb(fit) # in Mb
 
-VLMX = model.matrix(fit, type = "vlm")  # The big model matrix
+VLMX <- model.matrix(fit, type = "vlm")  # The big model matrix
 dim(VLMX)
 objsizemb(VLMX) # in Mb
 rm(VLMX) }

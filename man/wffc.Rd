@@ -172,16 +172,16 @@ summary(wffc)
 with(wffc, table(water, session))
 
 # Obtain some simple plots
-waihou = subset(wffc, water == "Waihou")
-waimak = subset(wffc, water == "Waimakariri")
-whang  = subset(wffc, water == "Whanganui")
-otam   = subset(wffc, water == "Otamangakau")
-roto   = subset(wffc, water == "Rotoaira")
-minlength = min(wffc[,"length"])
-maxlength = max(wffc[,"length"])
-nwater = c("Waihou" = nrow(waihou), "Waimakariri" = nrow(waimak),
-           "Whanganui" = nrow(whang), "Otamangakau" = nrow(otam),
-           "Rotoaira" = nrow(roto))
+waihou <- subset(wffc, water == "Waihou")
+waimak <- subset(wffc, water == "Waimakariri")
+whang  <- subset(wffc, water == "Whanganui")
+otam   <- subset(wffc, water == "Otamangakau")
+roto   <- subset(wffc, water == "Rotoaira")
+minlength <- min(wffc[,"length"])
+maxlength <- max(wffc[,"length"])
+nwater <- c("Waihou" = nrow(waihou), "Waimakariri" = nrow(waimak),
+            "Whanganui" = nrow(whang), "Otamangakau" = nrow(otam),
+            "Rotoaira" = nrow(roto))
 \dontrun{
 par(mfrow = c(2,3), las = 1)
 # Overall distribution of length

@@ -297,66 +297,68 @@ dcqo <- function(x, p, S,
  warning("12/6/06; needs a lot of work based on rcqo()")
 
 
-    if (mode(family) != "character" && mode(family) != "name")
-        family = as.character(substitute(family))
-    family = match.arg(family, c("poisson", "binomial",
+  if (mode(family) != "character" && mode(family) != "name")
+    family = as.character(substitute(family))
+  family = match.arg(family, c("poisson", "binomial",
                                  "negbinomial", "ordinal"))[1]
-    if (!is.Numeric(p, integer.valued = TRUE,
-                    positive = TRUE, allowable.length = 1) ||
-        p < 2)
-      stop("bad input for argument 'p'")
-    if (!is.Numeric(S, integer.valued = TRUE,
-                    positive = TRUE, allowable.length = 1))
-      stop("bad input for argument 'S'")
-    if (!is.Numeric(Rank, integer.valued = TRUE,
-                    positive = TRUE, allowable.length = 1))
-      stop("bad input for argument 'Rank'")
-    if (length(seed) &&
-        !is.Numeric(seed, integer.valued = TRUE, positive = TRUE))
-      stop("bad input for argument 'seed'")
-    if (!is.logical(EqualTolerances) || length(EqualTolerances)>1)
-      stop("bad input for argument 'EqualTolerances)'")
-    if (EqualMaxima && loabundance != hiabundance)
-      stop("'loabundance' and 'hiabundance' must ",
-           "be equal when 'EqualTolerances = TRUE'")
-    if (length(seed)) set.seed(seed)
-
-    xmat = matrix(rnorm(n*(p-1)), n, p-1, dimnames=list(as.character(1:n),
-                  paste("x", 2:p, sep="")))
-    ccoefs = matrix(rnorm((p-1)*Rank), p-1, Rank)
-    lvmat = xmat %*% ccoefs
-    optima = matrix(rnorm(Rank*S, sd=sdOptima), S, Rank)
-    Tols = if (EqualTolerances) matrix(1, S, Rank) else
-           matrix(rnorm(Rank*S, mean=1, sd=1), S, Rank)
-    loeta = log(loabundance)
-    hieta = log(hiabundance)
-    logmaxima = runif(S, min=loeta, max=hieta)
-
-    etamat = matrix(logmaxima,n,S,byrow = TRUE) # eta=log(mu) only; intercept term
-    for(jay in 1:S) {
-        optmat = matrix(optima[jay,], n, Rank, byrow = TRUE)
-        tolmat = matrix(Tols[jay,], n, Rank, byrow = TRUE)
-        temp = cbind((lvmat - optmat) * tolmat)
-        for(r in 1:Rank)
-            etamat[,jay] = etamat[,jay] - 0.5 * temp[,r] *
-                           (lvmat[,r] - optmat[jay,r])
-    }
-
-    ymat = if (family == "negbinomial") {
 
 
+  if (!is.Numeric(p, integer.valued = TRUE,
+                  positive = TRUE, allowable.length = 1) ||
+      p < 2)
+    stop("bad input for argument 'p'")
+  if (!is.Numeric(S, integer.valued = TRUE,
+                  positive = TRUE, allowable.length = 1))
+    stop("bad input for argument 'S'")
+  if (!is.Numeric(Rank, integer.valued = TRUE,
+                  positive = TRUE, allowable.length = 1))
+    stop("bad input for argument 'Rank'")
+  if (length(seed) &&
+      !is.Numeric(seed, integer.valued = TRUE, positive = TRUE))
+    stop("bad input for argument 'seed'")
+  if (!is.logical(EqualTolerances) || length(EqualTolerances)>1)
+    stop("bad input for argument 'EqualTolerances)'")
+  if (EqualMaxima && loabundance != hiabundance)
+    stop("'loabundance' and 'hiabundance' must ",
+         "be equal when 'EqualTolerances = TRUE'")
+  if (length(seed)) set.seed(seed)
 
-    } else {
-           matrix(rpois(n*S, lambda = exp(etamat)), n, S)
-    }
-    if (family == "binomial")
-        ymat = 0 + (ymat > 0)
+  xmat = matrix(rnorm(n*(p-1)), n, p-1, dimnames=list(as.character(1:n),
+                paste("x", 2:p, sep="")))
+  ccoefs = matrix(rnorm((p-1)*Rank), p-1, Rank)
+  lvmat = xmat %*% ccoefs
+  optima = matrix(rnorm(Rank*S, sd=sdOptima), S, Rank)
+  Tols = if (EqualTolerances) matrix(1, S, Rank) else
+         matrix(rnorm(Rank*S, mean=1, sd=1), S, Rank)
+  loeta = log(loabundance)
+  hieta = log(hiabundance)
+  logmaxima = runif(S, min=loeta, max=hieta)
 
-    dimnames(ymat) = list(as.character(1:n), paste("y", 1:S, sep=""))
-    ans = data.frame(xmat, ymat)
-    attr(ans, "ccoefficients") = ccoefs
-    attr(ans, "family") = family
-    ans
+  etamat = matrix(logmaxima,n,S,byrow = TRUE) # eta=log(mu) only; intercept term
+  for(jay in 1:S) {
+    optmat = matrix(optima[jay,], n, Rank, byrow = TRUE)
+    tolmat = matrix(Tols[jay,], n, Rank, byrow = TRUE)
+    temp = cbind((lvmat - optmat) * tolmat)
+    for(r in 1:Rank)
+        etamat[,jay] = etamat[,jay] - 0.5 * temp[,r] *
+                       (lvmat[,r] - optmat[jay,r])
+  }
+
+  ymat = if (family == "negbinomial") {
+
+
+
+  } else {
+     matrix(rpois(n*S, lambda = exp(etamat)), n, S)
+  }
+  if (family == "binomial")
+    ymat = 0 + (ymat > 0)
+
+  dimnames(ymat) = list(as.character(1:n), paste("y", 1:S, sep=""))
+  ans = data.frame(xmat, ymat)
+  attr(ans, "ccoefficients") = ccoefs
+  attr(ans, "family") = family
+  ans
 }
 
 

@@ -9,9 +9,8 @@
 
 }
 \usage{
-lgammaff(link = "loge", earg = list(), init.k = NULL)
+lgammaff(link = "loge", init.k = NULL)
 lgamma3ff(llocation = "identity", lscale = "loge", lshape = "loge",
-          elocation = list(), escale = list(), eshape = list(),
           ilocation = NULL, iscale = NULL, ishape = 1, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -27,11 +26,6 @@ lgamma3ff(llocation = "identity", lscale = "loge", lshape = "loge",
   Parameter link function applied to 
   the positive shape parameter \eqn{k}. 
   See \code{\link{Links}} for more choices.
-
-  }
-  \item{earg, elocation, escale, eshape}{
-  List. Extra argument for each of the links.
-  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{init.k, ishape}{
@@ -120,16 +114,16 @@ New York: Wiley.
 
 }
 \examples{
-ldata = data.frame(y = rlgamma(100, k = exp(1)))
-fit = vglm(y ~ 1, lgammaff, ldata, trace = TRUE, crit = "coef")
+ldata <- data.frame(y = rlgamma(100, k = exp(1)))
+fit <- vglm(y ~ 1, lgammaff, ldata, trace = TRUE, crit = "coef")
 summary(fit)
 coef(fit, matrix = TRUE)
 Coef(fit)
 
-ldata = data.frame(x = runif(nn <- 5000))     # Another example
-ldata = transform(ldata, loc = -1 + 2 * x, Scale = exp(1))
-ldata = transform(ldata, y = rlgamma(nn, loc, scale = Scale, k = exp(0)))
-fit2 = vglm(y ~ x, lgamma3ff(zero = 2:3), ldata, trace = TRUE, crit = "c")
+ldata <- data.frame(x = runif(nn <- 5000))     # Another example
+ldata <- transform(ldata, loc = -1 + 2 * x, Scale = exp(1))
+ldata <- transform(ldata, y = rlgamma(nn, loc, scale = Scale, k = exp(0)))
+fit2 <- vglm(y ~ x, lgamma3ff(zero = 2:3), ldata, trace = TRUE, crit = "c")
 coef(fit2, matrix = TRUE)
 }
 \keyword{models}

@@ -7,8 +7,7 @@
 
 }
 \usage{
-dirmultinomial(lphi="logit", ephi = list(), iphi = 0.10,
-               parallel= FALSE, zero="M")
+dirmultinomial(lphi = "logit", iphi = 0.10, parallel = FALSE, zero = "M")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -17,17 +16,14 @@ dirmultinomial(lphi="logit", ephi = list(), iphi = 0.10,
   parameter, which lies in the open unit interval \eqn{(0,1)}.
   See \code{\link{Links}} for more choices.
 
-  }
-  \item{ephi}{
-  List. Extra argument for \code{lphi}.
-  See \code{earg} in \code{\link{Links}} for general information.
 
   }
   \item{iphi}{
   Numeric. Initial value for \eqn{\phi}{phi}.
   Must be in the open unit interval \eqn{(0,1)}.
-  If a failure to converge occurs try assigning this argument a different
-  value.
+  If a failure to converge occurs then try assigning this argument
+  a different value.
+
 
   }
   \item{parallel}{
@@ -36,8 +32,8 @@ dirmultinomial(lphi="logit", ephi = list(), iphi = 0.10,
   are to be equal via equal coefficients.
   Note \eqn{\pi_M}{pi_M} will generally be different from the
   other probabilities.
-  Setting \code{parallel=TRUE} will only work if you also set
-  \code{zero=NULL} because of interference between these arguments
+  Setting \code{parallel = TRUE} will only work if you also set
+  \code{zero = NULL} because of interference between these arguments
   (with respect to the intercept term).
 
   }
@@ -48,7 +44,7 @@ dirmultinomial(lphi="logit", ephi = list(), iphi = 0.10,
   If the character \code{"M"} then this means the numerical value
   \eqn{M}, which corresponds to linear/additive predictor associated
   with \eqn{\phi}{phi}.
-  Setting \code{zero=NULL} means none of the values from
+  Setting \code{zero = NULL} means none of the values from
   the set \eqn{\{1,2,\ldots,M\}}.
 
   }
@@ -176,21 +172,23 @@ Overdispersion in allelic counts and \eqn{\theta}-correction in forensic genetic
   \code{\link{dirichlet}},
   \code{\link{multinomial}}.
 
+
 }
 
 \examples{
-n <- 10; M <- 5
-y <- round(matrix(runif(n*M)*10, n, M))  # Integer counts
-fit <- vglm(y ~ 1, dirmultinomial, trace = TRUE)
+nn <- 10; M <- 5
+ydata <- data.frame(round(matrix(runif(nn * M, max = 10), nn, M))) # Integer counts
+colnames(ydata) <- paste("y", 1:M, sep = "")
+
+fit <- vglm(cbind(y1, y2, y3, y4, y5) ~ 1, dirmultinomial, ydata, trace = TRUE)
 head(fitted(fit))
-fit@y  # Sample proportions
+depvar(fit) # Sample proportions
 weights(fit, type = "prior", matrix = FALSE) # Total counts per row
 
-x <- runif(n)
-fit <- vglm(y ~ x, dirmultinomial, trace = TRUE)
-\dontrun{
-Coef(fit)   # This does not work
-}
+ydata <- transform(ydata, x2 = runif(nn))
+fit <- vglm(cbind(y1, y2, y3, y4, y5) ~ x2, dirmultinomial, ydata, trace = TRUE)
+\dontrun{ # This does not work:
+Coef(fit) }
 coef(fit, matrix = TRUE)
 (sfit <- summary(fit))
 vcov(sfit)

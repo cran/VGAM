@@ -9,7 +9,6 @@
 }
 \usage{
 normal1(lmean = "identity", lsd = "loge", lvar = "loge",
-        emean = list(), esd = list(), evar = list(),
         var.arg = FALSE, imethod = 1, isd = NULL, parallel = FALSE,
         intercept.apply = FALSE, zero = -2)
 }
@@ -23,12 +22,15 @@ normal1(lmean = "identity", lsd = "loge", lvar = "loge",
 
 
   }
-  \item{emean, esd, evar}{
-  List. Extra argument for the links.
-  See \code{earg} in \code{\link{Links}} for general information.
 
 
-  }
+% \item{emean, esd, evar}{
+% List. Extra argument for the links.
+% See \code{earg} in \code{\link{Links}} for general information.
+%       emean = list(), esd = list(), evar = list(),
+% }
+
+
   \item{var.arg}{
   Logical.
   If \code{TRUE} then the second parameter is the variance and
@@ -76,8 +78,8 @@ normal1(lmean = "identity", lsd = "loge", lvar = "loge",
 
 \author{ T. W. Yee }
 \note{
-    Yet to do: allow an argument such as \code{sameSD} that enables the
-    standard devations to be the same.
+  Yet to do: allow an argument such as \code{eq.sd} that enables
+  the standard devations to be the same.
 
 
 }
@@ -85,6 +87,7 @@ normal1(lmean = "identity", lsd = "loge", lvar = "loge",
     \code{\link{gaussianff}},
     \code{\link{posnormal1}},
     \code{\link{mix2normal1}},
+%   \code{\link{normal1sum1}},
     \code{\link{Qvar}},
     \code{\link{tobit}},
     \code{\link{cennormal1}},
@@ -114,9 +117,12 @@ coef(fit2, matrix = TRUE)
 # Generate data from N(mu = theta = 10, sigma = theta) and estimate theta.
 theta <- 10
 ndata <- data.frame(y = rnorm(100, m = theta, sd = theta))
-fit <- vglm(y ~ 1, normal1(lsd = "identity"), ndata,
-            constraints = list("(Intercept)" = rbind(1, 1)))
-coef(fit, matrix = TRUE)
+fit3 <- vglm(y ~ 1, normal1(lsd = "identity"), ndata,
+             constraints = list("(Intercept)" = rbind(1, 1)))
+fit4 <- vglm(y ~ 1, normal1(lsd = "identity", parallel = TRUE,
+                            intercept.apply = TRUE, zero = NULL), ndata)
+coef(fit3, matrix = TRUE)
+coef(fit4, matrix = TRUE) # Same as fit3
 }
 \keyword{models}
 \keyword{regression}

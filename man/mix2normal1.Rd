@@ -9,8 +9,6 @@
 }
 \usage{
 mix2normal1(lphi = "logit", lmu = "identity", lsd = "loge",
-            ephi = list(), emu1 = list(), emu2 = list(),
-            esd1 = list(), esd2 = list(),
             iphi = 0.5, imu1 = NULL, imu2 = NULL, isd1 = NULL, isd2 = NULL,
             qmu = c(0.2, 0.8), equalsd = TRUE, nsimEIM = 100, zero = 1)
 }
@@ -22,22 +20,26 @@ mix2normal1(lphi = "logit", lmu = "identity", lsd = "loge",
     \eqn{\sigma}{sd}.
     See \code{\link{Links}} for more choices.
 
-  }
-  \item{ephi, emu1, emu2, esd1, esd2}{
-  List. Extra argument for each of the links.
-  See \code{earg} in \code{\link{Links}} for general information.
-  If \code{equalsd = TRUE} then \code{esd1} must equal \code{esd2}.
 
   }
+
+% \item{ephi, emu1, emu2, esd1, esd2}{
+% List. Extra argument for each of the links.
+% See \code{earg} in \code{\link{Links}} for general information.
+% If \code{equalsd = TRUE} then \code{esd1} must equal \code{esd2}.
+% }
+
   \item{iphi}{
   Initial value for \eqn{\phi}{phi}, whose value must lie
   between 0 and 1.
+
 
   }
   \item{imu1, imu2}{
     Optional initial value for \eqn{\mu_1}{mu1} and \eqn{\mu_2}{mu2}.
     The default is to compute initial values internally using
     the argument \code{qmu}.
+
 
   }
   \item{isd1, isd2}{
@@ -47,6 +49,7 @@ mix2normal1(lphi = "logit", lmu = "identity", lsd = "loge",
     Currently these are not great, therefore using these arguments 
     where practical is a good idea.
 
+
   }
   \item{qmu}{
     Vector with two values giving the probabilities relating to the sample
@@ -55,15 +58,18 @@ mix2normal1(lphi = "logit", lmu = "identity", lsd = "loge",
     The two values are fed in as the \code{probs} argument into
     \code{\link[stats]{quantile}}.
 
+
   }
   \item{equalsd}{
     Logical indicating whether the two standard deviations should be 
     constrained to be equal. If \code{TRUE} then the appropriate
     constraint matrices will be used.
 
+
   }
   \item{nsimEIM}{
   See \code{\link{CommonVGAMffArguments}}.
+
 
   }
   \item{zero}{
@@ -75,6 +81,7 @@ mix2normal1(lphi = "logit", lmu = "identity", lsd = "loge",
   Set \code{zero = NULL} to model all linear/additive predictors as
   functions of the explanatory variables.
   See \code{\link{CommonVGAMffArguments}} for more information.
+
 
 }
 }
@@ -102,6 +109,7 @@ mix2normal1(lphi = "logit", lmu = "identity", lsd = "loge",
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}},
   and \code{\link{vgam}}.
+
 
 }
 \references{
@@ -169,32 +177,35 @@ London: Chapman & Hall.
   \code{\link[stats:Normal]{Normal}},
   \code{\link{mix2poisson}}.
 
+
 }
 
 \examples{
-mu1 =  99; mu2 = 150; nn = 1000
-sd1 = sd2 = exp(3)
-(phi = logit(-1, inverse = TRUE))
-mdata = data.frame(y = ifelse(runif(nn) < phi, rnorm(nn, mu1, sd1),
-                                               rnorm(nn, mu2, sd2)))
-fit = vglm(y ~ 1, mix2normal1(equalsd = TRUE), mdata)
+\dontrun{ mu1 <-  99; mu2 <- 150; nn <- 1000
+sd1 <- sd2 <- exp(3)
+(phi <- logit(-1, inverse = TRUE))
+mdata <- data.frame(y = ifelse(runif(nn) < phi, rnorm(nn, mu1, sd1),
+                                                rnorm(nn, mu2, sd2)))
+fit <- vglm(y ~ 1, mix2normal1(equalsd = TRUE), mdata)
 
 # Compare the results
-cfit = coef(fit)
+cfit <- coef(fit)
 round(rbind('Estimated' = c(logit(cfit[1], inverse = TRUE),
-    cfit[2], exp(cfit[3]), cfit[4]), 'Truth' = c(phi, mu1, sd1, mu2)), dig = 2)
+      cfit[2], exp(cfit[3]), cfit[4]),
+      'Truth' = c(phi, mu1, sd1, mu2)), dig = 2)
 
-\dontrun{# Plot the results
-xx = with(mdata, seq(min(y), max(y), len = 200))
+# Plot the results
+xx <- with(mdata, seq(min(y), max(y), len = 200))
 plot(xx, (1-phi)*dnorm(xx, mu2, sd2), type = "l", xlab = "y",
-     main = "Orange=estimate, blue=truth", col = "blue", ylab = "Density")
-phi.est = logit(coef(fit)[1], inverse = TRUE)
-sd.est = exp(coef(fit)[3])
+     main = "Orange = estimate, blue = truth", col = "blue", ylab = "Density")
+phi.est <- logit(coef(fit)[1], inverse = TRUE)
+sd.est <- exp(coef(fit)[3])
 lines(xx, phi*dnorm(xx, mu1, sd1), col = "blue")
 lines(xx, phi.est * dnorm(xx, Coef(fit)[2], sd.est), col = "orange")
 lines(xx, (1-phi.est) * dnorm(xx, Coef(fit)[4], sd.est), col = "orange")
 abline(v = Coef(fit)[c(2,4)], lty = 2, col = "orange")
-abline(v = c(mu1, mu2), lty = 2, col = "blue") }
+abline(v = c(mu1, mu2), lty = 2, col = "blue")
+}
 }
 \keyword{models}
 \keyword{regression}

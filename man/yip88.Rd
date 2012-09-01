@@ -7,11 +7,11 @@
 
 }
 \usage{
-yip88(link.lambda = "loge", n.arg = NULL)
+yip88(link = "loge", n.arg = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{link.lambda}{
+  \item{link}{
   Link function for the usual \eqn{\lambda}{lambda} parameter.
   See \code{\link{Links}} for more choices.
 
@@ -115,32 +115,32 @@ model.
 }
 
 \examples{
-phi = 0.35; lambda = 2   # Generate some artificial data
-y = rzipois(n <- 1000, lambda, phi)
+phi <- 0.35; lambda <- 2 # Generate some artificial data
+y <- rzipois(n <- 1000, lambda, phi)
 table(y)
 
 # Two equivalent ways of fitting the same model
-fit1 = vglm(y ~ 1, yip88(n = length(y)), subset = y > 0, trace = TRUE)
-fit2 = vglm(y ~ 1, yip88, trace = TRUE, crit = "c")
-(true.mean = (1-phi) * lambda)
+fit1 <- vglm(y ~ 1, yip88(n = length(y)), subset = y > 0)
+fit2 <- vglm(y ~ 1, yip88, trace = TRUE, crit = "coef")
+(true.mean <- (1-phi) * lambda)
 mean(y) 
 head(fitted(fit1))
-fit1@misc$phi      # The estimate of phi
+fit1@misc$pstr0 # The estimate of phi
 
 # Compare the ZIP with the positive Poisson distribution 
-pp = vglm(y ~ 1, pospoisson, subset = y > 0, trace = TRUE, crit = "c")
+pp <- vglm(y ~ 1, pospoisson, subset = y > 0, crit = "c")
 coef(pp)
 Coef(pp)
-coef(fit1) - coef(pp)            # Same 
-head(fitted(fit1) - fitted(pp))  # Different 
+coef(fit1) - coef(pp)           # Same 
+head(fitted(fit1) - fitted(pp)) # Different 
 
 # Another example (Angers and Biswas, 2003) ---------------------
-abdata = data.frame(y = 0:7, w = c(182, 41, 12, 2, 2, 0, 0, 1))
-abdata = subset(abdata, w > 0)
+abdata <- data.frame(y = 0:7, w = c(182, 41, 12, 2, 2, 0, 0, 1))
+abdata <- subset(abdata, w > 0)
 
-yy = with(abdata, rep(y, w))
-fit3 = vglm(yy ~ 1, yip88(n = length(yy)), subset = yy > 0, trace = TRUE)
-fit3@misc$phi # Estimate of phi (they get 0.5154 with SE 0.0707)
+yy <- with(abdata, rep(y, w))
+fit3 <- vglm(yy ~ 1, yip88(n = length(yy)), subset = yy > 0)
+fit3@misc$pstr0 # Estimate of phi (they get 0.5154 with SE 0.0707)
 coef(fit3, matrix = TRUE)
 Coef(fit3) # Estimate of lambda (they get 0.6997 with SE 0.1520)
 head(fitted(fit3))

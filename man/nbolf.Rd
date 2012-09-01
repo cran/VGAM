@@ -8,7 +8,7 @@
 
 }
 \usage{
-nbolf(theta, earg = stop("argument 'earg' must be given"),
+nbolf(theta, cutpoint = NULL, k = NULL,
       inverse = FALSE, deriv = 0, short = TRUE, tag = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -18,10 +18,8 @@ nbolf(theta, earg = stop("argument 'earg' must be given"),
   See below for further details.
 
   }
-  \item{earg}{
-  Extra argument for passing in additional information.
-  This must be list with components \code{cutpoint}
-  and \code{k}. Here, \code{k} is the \eqn{k} parameter associated
+  \item{cutpoint, k}{
+  Here, \code{k} is the \eqn{k} parameter associated
   with the negative binomial distribution; see 
   \code{\link{negbinomial}}.
   The cutpoints should be non-negative integers.
@@ -31,29 +29,13 @@ nbolf(theta, earg = stop("argument 'earg' must be given"),
 
 
   }
-  \item{inverse}{
-  Logical. If \code{TRUE} the inverse function is computed.
+
+  \item{inverse, deriv, short, tag}{
+  Details at \code{\link{Links}}.
 
 
   }
-  \item{deriv}{
-  Order of the derivative. Integer with value 0, 1 or 2.
 
-
-  }
-  \item{short}{
-  Used for labelling the \code{blurb} slot of a
-  \code{\link{vglmff-class}} object.
-
-
-  }
-  \item{tag}{
-  Used for labelling the linear/additive predictor in the
-  \code{initialize} slot of a \code{\link{vglmff-class}} object.
-  Contains a little more information if \code{TRUE}.
-
-
-  }
 }
 \details{
   The negative binomial-ordinal link function (NBOLF) can be applied to
@@ -61,10 +43,6 @@ nbolf(theta, earg = stop("argument 'earg' must be given"),
   Its purpose is to link cumulative probabilities associated with
   an ordinal response coming from an underlying negative binomial
   distribution.
-
-
-  The arguments \code{short} and \code{tag} are used only if
-  \code{theta} is character.
 
 
   See \code{\link{Links}} for general information about \pkg{VGAM}
@@ -120,14 +98,13 @@ nbolf(theta, earg = stop("argument 'earg' must be given"),
 
 }
 \examples{
-earg = list(cutpoint = 2, k = 1)
-nbolf("p", earg = earg, short = FALSE)
-nbolf("p", earg = earg, tag = TRUE)
+nbolf("p", cutpoint = 2, k = 1, short = FALSE)
+nbolf("p", cutpoint = 2, k = 1, tag = TRUE)
 
-p = seq(0.02, 0.98, by = 0.01)
-y = nbolf(p, earg = earg)
-y. = nbolf(p, earg = earg, deriv = 1)
-max(abs(nbolf(y, earg = earg, inv = TRUE) - p)) # Should be 0
+p <- seq(0.02, 0.98, by = 0.01)
+y <- nbolf(p,cutpoint = 2, k = 1)
+y. <- nbolf(p,cutpoint = 2, k = 1, deriv = 1)
+max(abs(nbolf(y,cutpoint = 2, k = 1, inv = TRUE) - p)) # Should be 0
 
 \dontrun{ par(mfrow = c(2, 1), las = 1)
 plot(p, y, type = "l", col = "blue", main = "nbolf()")
@@ -137,27 +114,27 @@ plot(p, y., type = "l", col = "blue",
      main = "(Reciprocal of) first NBOLF derivative") }
 
 # Another example
-nn = 1000
-x2 = sort(runif(nn))
-x3 = runif(nn)
-mymu = exp( 3 + 1 * x2 - 2 * x3)
-k = 4
-y1 = rnbinom(nn, mu = mymu, size = k)
-cutpoints = c(-Inf, 10, 20, Inf)
-cuty = Cut(y1, breaks = cutpoints)
+nn <- 1000
+x2 <- sort(runif(nn))
+x3 <- runif(nn)
+mymu <- exp( 3 + 1 * x2 - 2 * x3)
+k <- 4
+y1 <- rnbinom(nn, mu = mymu, size = k)
+cutpoints <- c(-Inf, 10, 20, Inf)
+cuty <- Cut(y1, breaks = cutpoints)
 \dontrun{ plot(x2, x3, col = cuty, pch = as.character(cuty)) }
 table(cuty) / sum(table(cuty))
-fit = vglm(cuty ~ x2 + x3, fam = cumulative(link = "nbolf",
-           reverse = TRUE, parallel = TRUE, intercept.apply = TRUE,
-           mv = TRUE, earg = list(cutpoint = cutpoints[2:3], k = k)),
-           trace = TRUE)
-head(fit@y)
+fit <- vglm(cuty ~ x2 + x3, cumulative(reverse = TRUE,
+            parallel = TRUE, intercept.apply = TRUE,
+            link = nbolf(cutpoint = cutpoints[2:3], k = k),
+            mv = TRUE), trace = TRUE)
+head(depvar(fit))
 head(fitted(fit))
 head(predict(fit))
 coef(fit)
 coef(fit, matrix = TRUE)
 constraints(fit)
-fit@misc$earg
+fit@misc
 }
 \keyword{math}
 \keyword{models}

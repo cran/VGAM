@@ -8,7 +8,7 @@
   record values.
 }
 \usage{
-recexp1(lrate="loge", irate=NULL, imethod=1)
+recexp1(lrate = "loge", irate = NULL, imethod = 1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -58,13 +58,13 @@ recexp1(lrate="loge", irate=NULL, imethod=1)
     \code{\link{exponential}}.
 }
 \examples{
-rawy = rexp(n <- 10000, rate=exp(1))
-y = unique(cummax(rawy)) # Keep only the records
+rawy <- rexp(n <- 10000, rate = exp(1))
+y <- unique(cummax(rawy)) # Keep only the records
 
 length(y) / y[length(y)]   # MLE of rate
 
-fit = vglm(y ~ 1, recexp1, trace=TRUE)
-coef(fit, matrix=TRUE)
+fit <- vglm(y ~ 1, recexp1, trace = TRUE)
+coef(fit, matrix = TRUE)
 Coef(fit)
 }
 \keyword{models}

@@ -70,16 +70,19 @@ New York: Wiley-Interscience, Third edition.
   Very large values in \code{q} are handled by an approximation by
   Owen (1965).
 
+
 }
 
 \seealso{
-    \code{\link{logff}}.
+  \code{\link{logff}}.
+
+
 }
 \examples{
 dlog(1:20, 0.5)
 rlog(20, 0.5)
 
-\dontrun{ prob = 0.8; x = 1:10
+\dontrun{ prob <- 0.8; x <- 1:10
 plot(x, dlog(x, prob = prob), type = "h", ylim = 0:1,
      sub = "prob=0.8", las = 1, col = "blue", ylab = "Probability",
      main="Logarithmic distribution: blue=density; red=distribution function")

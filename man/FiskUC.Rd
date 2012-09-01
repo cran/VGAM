@@ -9,6 +9,7 @@
   Density, distribution function, quantile function and random
   generation for the Fisk distribution with shape parameter \code{a}
   and scale parameter \code{scale}.
+
 }
 \usage{
 dfisk(x, shape1.a, scale = 1, log = FALSE)

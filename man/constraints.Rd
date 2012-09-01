@@ -1,5 +1,6 @@
 \name{constraints}
 \alias{constraints}
+\alias{constraints.vlm}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Constraint Matrices }
 \description{
@@ -9,6 +10,7 @@
 }
 \usage{
 constraints(object, ...)
+constraints.vlm(object, type = c("lm", "term"), all = TRUE, which, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -16,9 +18,25 @@ constraints(object, ...)
   Some \pkg{VGAM} object, for example, having
   class \code{\link{vglmff-class}}.
 
+
+  }
+  \item{type}{
+  Character. Whether LM- or term-type constraints are to be returned.
+  The number of such matrices returned is equal to
+  \code{nvar(object, type = "lm")} and
+  the number of terms, respectively.
+
+
+  }
+  \item{all, which}{
+  If \code{all = FALSE} then \code{which} gives the integer index or a
+  vector of logicals specifying the selection.
+
+
   }
   \item{\dots}{
   Other possible arguments such as \code{type}.
+
 
   }
 
@@ -40,7 +58,9 @@ constraints(object, ...)
 
 }
 \value{
-  This extractor function returns a list comprising of
+  The extractor function
+  \code{constraints()}
+  returns a list comprising of
   constraint matrices---usually one for each column of the
   VLM model matrix, and in that order.
   The list is labelled with the variable names.
@@ -53,9 +73,11 @@ constraints(object, ...)
 
 
   For \code{\link{vglm}} and \code{\link{vgam}} objects,
-  feeding in the \code{"lm"}-type constraint matrices back
+  feeding in \code{type = "term"} constraint matrices back
   into the same model should work and give an identical model.
-  The default are the \code{"vlm"}-type constraint matrices.
+  The default are the \code{"lm"}-type constraint matrices;
+  this is a list with one constraint matrix per column of
+  the LM matrix.
   See the \code{constraints} argument of \code{\link{vglm}},
   and the example below.
 
@@ -106,6 +128,8 @@ information.
 
 
 \seealso{
+  \code{\link{is.parallel}},
+  \code{\link{is.zero}}.
   VGLMs are described in \code{\link{vglm-class}};
   RR-VGLMs are described in \code{\link{rrvglm-class}}.
 
@@ -124,13 +148,14 @@ pneumo <- transform(pneumo, let = log(exposure.time))
 (fit1 <- vglm(cbind(normal, mild, severe) ~ bs(let, 3),
               cumulative(parallel = TRUE, reverse = TRUE), pneumo))
 coef(fit1, matrix = TRUE)
-constraints(fit1)  # Parallel assumption results in this
-constraints(fit1, type = "vlm") # This is the same as the default ("vlm"-type)
+constraints(fit1) # Parallel assumption results in this
+constraints(fit1, type = "term") # This is the same as the default ("vlm"-type)
+is.parallel(fit1)
 
-# An equivalent model to fit1 (needs the type "lm" constraints):
-clist.lm <- constraints(fit1, type = "lm") # The "lm"-type constraints
+# An equivalent model to fit1 (needs the type "term" constraints):
+clist.term <- constraints(fit1, type = "term") # The "term"-type constraints
 (fit2 <- vglm(cbind(normal, mild, severe) ~ bs(let, 3),
-              cumulative(reverse = TRUE), pneumo, constraints = clist.lm))
+              cumulative(reverse = TRUE), pneumo, constraints = clist.term))
 abs(max(coef(fit1, matrix = TRUE) -
         coef(fit2, matrix = TRUE))) # Should be zero
 

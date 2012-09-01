@@ -8,7 +8,7 @@ Quasi-variances Preprocessing Function
 }
 \description{
   Takes a \code{\link{vglm}} fit or a variance-covariance matrix,
-  and preprocesses it for \code{\link{rcam}} and
+  and preprocesses it for \code{\link{rcim}} and
   \code{\link{normal1}} so that quasi-variances can be computed.
 
 
@@ -84,8 +84,8 @@ Qvar(object, factorname = NULL, coef.indices = NULL, labels = NULL,
   can compute \eqn{L} quasi-variances based on all pairwise difference
   of the coefficients. They are based on an approximation, and can be
   treated as uncorrelated. In minimizing the relative (not absolute)
-  errors it is not hard to see that the estimation involves a RCAM
-  (\code{\link{rcam}}) with an exponential link function
+  errors it is not hard to see that the estimation involves a RCIM
+  (\code{\link{rcim}}) with an exponential link function
   (\code{\link{explink}}).
 
 
@@ -159,7 +159,7 @@ Qvar(object, factorname = NULL, coef.indices = NULL, labels = NULL,
 
 
   It is important to set \code{maxit} to be larger than usual for
-  \code{\link{rcam}} since convergence is slow. Upon successful
+  \code{\link{rcim}} since convergence is slow. Upon successful
   convergence the \eqn{i}th row effect and the \eqn{i}th column effect
   should be equal. A simple computation involving the fitted and
   predicted values allows the quasi-variances to be extracted (see
@@ -183,7 +183,7 @@ Qvar(object, factorname = NULL, coef.indices = NULL, labels = NULL,
 
 
 \seealso{
-  \code{\link{rcam}},
+  \code{\link{rcim}},
   \code{\link{vglm}},
   \code{\link{normal1}},
   \code{\link{explink}},
@@ -202,18 +202,18 @@ Shipmodel <- vglm(incidents ~ type + year + period,
                   data = ships, subset = (service > 0))
 
 # Easiest form of input
-fit1 <- rcam(Qvar(Shipmodel, "type"), normal1("explink"), maxit = 99)
+fit1 <- rcim(Qvar(Shipmodel, "type"), normal1("explink"), maxit = 99)
 (quasiVar <- exp(diag(fitted(fit1))) / 2)                 # Version 1
 (quasiVar <- diag(predict(fit1)[, c(TRUE, FALSE)]) / 2)   # Version 2
 (quasiSE  <- sqrt(quasiVar))
 
 # Another form of input
-fit2 <- rcam(Qvar(Shipmodel, coef.ind = c(0,2:5), reference.name = "typeA"),
+fit2 <- rcim(Qvar(Shipmodel, coef.ind = c(0,2:5), reference.name = "typeA"),
              normal1("explink"), maxit = 99)
-\dontrun{ plotqvar(fit2, col = "orange", lwd = 3, scol = "blue", slwd = 2, las = 1) }
+\dontrun{ plotqvar(fit2, col = "green", lwd = 3, scol = "blue", slwd = 2, las = 1) }
 
 # The variance-covariance matrix is another form of input (not recommended)
-fit3 <- rcam(Qvar(cbind(0, rbind(0, vcov(Shipmodel)[2:5, 2:5])),
+fit3 <- rcim(Qvar(cbind(0, rbind(0, vcov(Shipmodel)[2:5, 2:5])),
                   labels = c("typeA", "typeB", "typeC", "typeD", "typeE"),
                   estimates = c(typeA = 0, coef(Shipmodel)[2:5])),
              normal1("explink"), maxit = 99)

@@ -169,6 +169,7 @@ vglm.control(checkwz = TRUE, criterion = names(.min.criterion.VGAM),
   \emph{Statistical Modelling},
   \bold{3}, 15--41.
 
+
 }
 \author{ Thomas W. Yee}
 \note{ 
@@ -180,6 +181,7 @@ vglm.control(checkwz = TRUE, criterion = names(.min.criterion.VGAM),
   predictor specific values.
   These are handled using the \code{xij} argument.
 
+
 }
 
 % ~Make other sections like Warning with \section{Warning }{....} ~
@@ -190,27 +192,28 @@ vglm.control(checkwz = TRUE, criterion = names(.min.criterion.VGAM),
   The author's homepage has further documentation about
   the \code{xij} argument.
 
+
 }
 
 \examples{
 # Example 1.
-pneumo = transform(pneumo, let = log(exposure.time))
+pneumo <- transform(pneumo, let = log(exposure.time))
 vglm(cbind(normal, mild, severe) ~ let, multinomial, data = pneumo,
      crit = "coef", step = 0.5, trace = TRUE, eps = 1e-8, maxit = 40)
 
 
 # Example 2. The use of the xij argument (simple case).
-ymat = rdiric(n <- 1000, shape = rep(exp(2), len = 4))
-mydat = data.frame(x1 = runif(n), x2 = runif(n), x3 = runif(n), x4 = runif(n),
+ymat <- rdiric(n <- 1000, shape = rep(exp(2), len = 4))
+mydat <- data.frame(x1 = runif(n), x2 = runif(n), x3 = runif(n), x4 = runif(n),
                    z1 = runif(n), z2 = runif(n), z3 = runif(n), z4 = runif(n))
-mydat = transform(mydat, X = x1, Z = z1)
-mydat = round(mydat, dig = 2)
-fit2 = vglm(ymat ~ X + Z,
-            dirichlet(parallel = TRUE), data = mydat, trace = TRUE,
-            xij = list(Z ~ z1 + z2 + z3 + z4,
-                       X ~ x1 + x2 + x3 + x4),
-            form2 = ~  Z + z1 + z2 + z3 + z4 +
-                       X + x1 + x2 + x3 + x4)
+mydat <- transform(mydat, X = x1, Z = z1)
+mydat <- round(mydat, dig = 2)
+fit2 <- vglm(ymat ~ X + Z,
+             dirichlet(parallel = TRUE), data = mydat, trace = TRUE,
+             xij = list(Z ~ z1 + z2 + z3 + z4,
+                        X ~ x1 + x2 + x3 + x4),
+             form2 = ~  Z + z1 + z2 + z3 + z4 +
+                        X + x1 + x2 + x3 + x4)
 head(model.matrix(fit2, type = "lm"))   # LM model matrix
 head(model.matrix(fit2, type = "vlm"))  # Big VLM model matrix
 coef(fit2)
@@ -227,27 +230,27 @@ plotvgam(fit2, xlab = "z1") # Correct
 
 # Example 3. The use of the xij argument (complex case).
 set.seed(123)
-coalminers = transform(coalminers,
-                       Age = (age - 42) / 5,
-                       dum1 = round(runif(nrow(coalminers)), dig = 2),
-                       dum2 = round(runif(nrow(coalminers)), dig = 2),
-                       dum3 = round(runif(nrow(coalminers)), dig = 2),
-                       dumm = round(runif(nrow(coalminers)), dig = 2))
-BS = function(x, ..., df = 3) bs(c(x,...), df = df)[1:length(x),,drop = FALSE]
-NS = function(x, ..., df = 3) ns(c(x,...), df = df)[1:length(x),,drop = FALSE]
+coalminers <- transform(coalminers,
+                        Age = (age - 42) / 5,
+                        dum1 = round(runif(nrow(coalminers)), dig = 2),
+                        dum2 = round(runif(nrow(coalminers)), dig = 2),
+                        dum3 = round(runif(nrow(coalminers)), dig = 2),
+                        dumm = round(runif(nrow(coalminers)), dig = 2))
+BS <- function(x, ..., df = 3) bs(c(x,...), df = df)[1:length(x),,drop = FALSE]
+NS <- function(x, ..., df = 3) ns(c(x,...), df = df)[1:length(x),,drop = FALSE]
 
 # Equivalently...
-BS = function(x, ..., df = 3) head(bs(c(x,...), df = df), length(x), drop = FALSE)
-NS = function(x, ..., df = 3) head(ns(c(x,...), df = df), length(x), drop = FALSE)
+BS <- function(x, ..., df = 3) head(bs(c(x,...), df = df), length(x), drop = FALSE)
+NS <- function(x, ..., df = 3) head(ns(c(x,...), df = df), length(x), drop = FALSE)
 
-fit3 = vglm(cbind(nBnW,nBW,BnW,BW) ~ Age + NS(dum1, dum2),
-            fam = binom2.or(exchangeable = TRUE, zero = 3),
-            xij = list(NS(dum1, dum2) ~ NS(dum1, dum2) +
-                                        NS(dum2, dum1) +
-                                        fill(NS( dum1))),
-            form2 = ~  NS(dum1, dum2) + NS(dum2, dum1) + fill(NS(dum1)) +
-                       dum1 + dum2 + dum3 + Age + age + dumm,
-            data = coalminers, trace = TRUE)
+fit3 <- vglm(cbind(nBnW,nBW,BnW,BW) ~ Age + NS(dum1, dum2),
+             fam = binom2.or(exchangeable = TRUE, zero = 3),
+             xij = list(NS(dum1, dum2) ~ NS(dum1, dum2) +
+                                         NS(dum2, dum1) +
+                                         fill(NS( dum1))),
+             form2 = ~  NS(dum1, dum2) + NS(dum2, dum1) + fill(NS(dum1)) +
+                        dum1 + dum2 + dum3 + Age + age + dumm,
+             data = coalminers, trace = TRUE)
 head(model.matrix(fit3, type = "lm"))   # LM model matrix
 head(model.matrix(fit3, type = "vlm"))  # Big VLM model matrix
 coef(fit3)
@@ -268,13 +271,13 @@ coef(fit3, matrix = TRUE)
 %# Here is one method to handle the xij argument with a term that
 %# produces more than one column in the model matrix.
 %# The constraint matrix for 'op' has one column.
-%POLY3 = function(x, ...) {
+%POLY3 <- function(x, ...) {
 %    # A cubic; ensures that the basis functions are the same.
 %    poly(c(x,...), 3)[1:length(x),]
 %}
 %
 %\dontrun{
-%fit4 = vglm(cbind(leye,reye) ~ POLY3(op), trace=TRUE,
+%fit4 <- vglm(cbind(leye,reye) ~ POLY3(op), trace=TRUE,
 %            fam = binom2.or(exchangeable=TRUE, zero=3),  data=eyesdata,
 %            xij = list(POLY3(op) ~ POLY3(lop,rop) + POLY3(rop,lop) +
 %                                   fill(POLY3(lop,rop))),
