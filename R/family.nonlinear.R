@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2012 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2013 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -12,8 +12,7 @@
 
 
 
-vnonlinear.control <- function(save.weight = TRUE, ...)
-{
+vnonlinear.control <- function(save.weight = TRUE, ...) {
 
 
 
@@ -72,8 +71,7 @@ subset_lohi <- function(xvec, yvec,
 
 
 
-micmen.control <- function(save.weight = TRUE, ...)
-{
+micmen.control <- function(save.weight = TRUE, ...) {
     list(save.weight = save.weight)
 }
 
@@ -89,8 +87,7 @@ micmen.control <- function(save.weight = TRUE, ...)
                     firstDeriv = c("nsimEIM", "rpar"),
                     probs.x = c(0.15, 0.85),
                     nsimEIM = 500,
-                    dispersion = 0, zero = NULL)
-{
+                    dispersion = 0, zero = NULL) {
 
 
 
@@ -126,12 +123,12 @@ micmen.control <- function(save.weight = TRUE, ...)
 
   new("vglmff",
   blurb = c("Michaelis-Menton regression model\n",
-         "Y_i = theta1 * u_i / (theta2 + u_i) + e_i\n\n",
-         "Links:    ",
-         namesof("theta1", link1, earg = earg1), ", ",
-         namesof("theta2", link2, earg = earg2),
-         "\n",
-         "Variance: constant"),
+            "Y_i = theta1 * u_i / (theta2 + u_i) + e_i\n\n",
+            "Links:    ",
+            namesof("theta1", link1, earg = earg1), ", ",
+            namesof("theta2", link2, earg = earg2),
+            "\n",
+            "Variance: constant"),
 
   constraints = eval(substitute(expression({
     constraints <- cm.zero.vgam(constraints, x, .zero, M = 2)
@@ -142,7 +139,7 @@ micmen.control <- function(save.weight = TRUE, ...)
     if (residuals) {
       if (M > 1) NULL else (y - mu) * sqrt(w)
     } else {
-      rss.vgam(y - mu, w, M = M)
+      ResSS.vgam(y - mu, w, M = M)
     }
   },
 
@@ -216,9 +213,9 @@ micmen.control <- function(save.weight = TRUE, ...)
            .link2 = link2, .earg2 = earg2))),
 
   last = eval(substitute(expression({
-    misc$link <-    c(theta1 = .link1 , theta2 = .link2)
+    misc$link <-    c(theta1 = .link1 , theta2 = .link2 )
 
-    misc$earg <- list(theta1 = .earg1, theta2 = .earg2 )
+    misc$earg <- list(theta1 = .earg1 , theta2 = .earg2 )
 
     misc$rpar <- rpar
     fit$df.residual <- n - rank   # Not nrow_X_vlm - rank
@@ -376,8 +373,7 @@ skira.control <- function(save.weight = TRUE, ...) {
            smallno = 1.0e-3,
            nsimEIM = 500,
            firstDeriv = c("nsimEIM", "rpar"),
-           dispersion = 0, zero = NULL)
-{
+           dispersion = 0, zero = NULL) {
 
   firstDeriv <- match.arg(firstDeriv, c("nsimEIM", "rpar"))[1]
 
@@ -420,7 +416,7 @@ skira.control <- function(save.weight = TRUE, ...) {
       ncol(y) else 1
     if (residuals) {
       if (M > 1) NULL else (y - mu) * sqrt(w)
-    } else rss.vgam(y - mu, w, M = M)
+    } else ResSS.vgam(y - mu, w, M = M)
   },
   initialize = eval(substitute(expression({
 
@@ -477,7 +473,9 @@ skira.control <- function(save.weight = TRUE, ...) {
         wt.temp.max <- median(wt.temp) * 100
         wt.temp[wt.temp > wt.temp.max] <- wt.temp.max
 
-        mylm.wfit <- lm.wfit(x = cbind(1, xx), y = 1 / yy, w = wt.temp)
+        mylm.wfit <- lm.wfit(x = cbind(1, xx),
+                             y = c(1 / yy),
+                             w = c(wt.temp))
         init1 <- mylm.wfit$coef[1]
         init2 <- mylm.wfit$coef[2]
     } else if (( .imethod == 4) || ( .imethod == 5)) {
@@ -535,9 +533,9 @@ skira.control <- function(save.weight = TRUE, ...) {
   }, list( .link1 = link1, .earg1 = earg1,
            .link2 = link2, .earg2 = earg2 ))),
   last = eval(substitute(expression({
-    misc$link <-    c(theta1 = .link1 , theta2 = .link2)
+    misc$link <-    c(theta1 = .link1 , theta2 = .link2 )
 
-    misc$earg <- list(theta1 = .earg1, theta2 = .earg2 )
+    misc$earg <- list(theta1 = .earg1 , theta2 = .earg2 )
 
     misc$rpar <- rpar
     misc$orig.rpar <- .rpar

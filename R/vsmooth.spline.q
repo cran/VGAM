@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2012 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2013 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -31,31 +31,31 @@ setClass("vsmooth.spline", representation(
          "yin"          = "matrix"))
 
 
-setMethod("coefficients", signature(object="vsmooth.spline"),
+setMethod("coefficients", signature(object = "vsmooth.spline"),
           function(object, ...)
           coefvsmooth.spline(object, ...))
-setMethod("coef", signature(object="vsmooth.spline"),
+setMethod("coef", signature(object = "vsmooth.spline"),
           function(object, ...)
           coefvsmooth.spline(object, ...))
 
-setMethod("coefficients", signature(object="vsmooth.spline.fit"),
+setMethod("coefficients", signature(object = "vsmooth.spline.fit"),
           function(object, ...)
           coefvsmooth.spline.fit(object, ...))
-setMethod("coef", signature(object="vsmooth.spline.fit"),
+setMethod("coef", signature(object = "vsmooth.spline.fit"),
           function(object, ...)
           coefvsmooth.spline.fit(object, ...))
 
-setMethod("fitted.values", signature(object="vsmooth.spline"),
+setMethod("fitted.values", signature(object = "vsmooth.spline"),
           function(object, ...)
           fittedvsmooth.spline(object, ...))
-setMethod("fitted", signature(object="vsmooth.spline"),
+setMethod("fitted", signature(object = "vsmooth.spline"),
           function(object, ...)
           fittedvsmooth.spline(object, ...))
 
-setMethod("residuals", signature(object="vsmooth.spline"),
+setMethod("residuals", signature(object = "vsmooth.spline"),
           function(object, ...)
           residvsmooth.spline(object, ...))
-setMethod("resid", signature(object="vsmooth.spline"),
+setMethod("resid", signature(object = "vsmooth.spline"),
           function(object, ...)
           residvsmooth.spline(object, ...))
 
@@ -89,159 +89,170 @@ setMethod("model.matrix",  "vsmooth.spline",
 
 
 
+depvar.vsmooth.spline <- function(object, ...) {
+  object@y
+}
+
+
+if (!isGeneric("depvar"))
+    setGeneric("depvar", function(object, ...) standardGeneric("depvar"),
+               package = "VGAM")
+
+
+setMethod("depvar",  "vsmooth.spline", function(object, ...)
+           depvar.vsmooth.spline(object, ...))
 
 
 
 
-vsmooth.spline <- function(x, y, w = NULL, df = rep(5, M),
-                      spar = NULL, #rep(0,M),
-                      all.knots = FALSE, 
-                      iconstraint = diag(M),
-                      xconstraint = diag(M),
-                      constraints = list("(Intercepts)"=diag(M), x=diag(M)),
-                      var.arg = FALSE,
-                      scale.w=TRUE,
-                      nk=NULL,
-                      control.spar = list()) {
+vsmooth.spline <-
+  function(x, y, w = NULL, df = rep(5, M),
+           spar = NULL, #rep(0,M),
+           all.knots = FALSE, 
+           iconstraint = diag(M),
+           xconstraint = diag(M),
+           constraints = list("(Intercepts)" = diag(M), x = diag(M)),
+           var.arg = FALSE,
+           scale.w = TRUE,
+           nk = NULL,
+           control.spar = list()) {
 
-    if (var.arg) {
-        warning("@var will be returned, but no use will be made of it") 
-    }
-
-
-    missing.constraints <- missing(constraints)
-    if (!(missing.spar <- missing(spar)) && !missing(df)) {
-        stop("cannot specify both 'spar' and 'df'")
-    }
+  if (var.arg) {
+    warning("@var will be returned, but no use will be made of it") 
+  }
 
 
-
-    contr.sp <- list(low = -1.5,## low = 0.      was default till R 1.3.x
-                     high = 1.5,
-                     tol = 1e-4,## tol = 0.001   was default till R 1.3.x
-                     eps = 2e-8,## eps = 0.00244 was default till R 1.3.x
-                     maxit = 500 )
-
-    if(FALSE)
-    contr.sp <- list(low = -1.5,## low = 0.      was default till R 1.3.x
-                     high = 1.5,
-                     tol = 0.001,     # was default till R 1.3.x
-                     eps = 0.00244,   # was default till R 1.3.x
-                     maxit = 500 )
-    contr.sp[(names(control.spar))] <- control.spar
-    if(!all(sapply(contr.sp[1:4], is.numeric)) ||
-       contr.sp$tol < 0 || contr.sp$eps <= 0 || contr.sp$maxit <= 0)
-        stop("invalid 'control.spar'")
+  missing.constraints <- missing(constraints)
+  if (!(missing.spar <- missing(spar)) && !missing(df)) {
+    stop("cannot specify both 'spar' and 'df'")
+  }
 
 
-    my.call <- match.call()
-    if (missing(y)) {
-        if (is.list(x)) {
-            if (any(is.na(match(c("x", "y"), names(x)))))
-                stop("cannot find 'x' and 'y' in list")
-            y <- x$y
-            x <- x$x
-        } else if (is.complex(x)) {
-            y <- Im(x)
-            x <- Re(x)
-        } else if (is.matrix(x)) {
-            y <- x[,-1]
-            x <- x[,1]
-        } else {
-            y <- x
-            x <- time(x)
-        }
-    }
 
-    xvector <- x
-    n_lm <- length(xvector)
-    ymat <- as.matrix(y)
-    ny2 <- dimnames(ymat)[[2]]  # NULL if vector 
-    M <- ncol(ymat)
-    if (n_lm != nrow(ymat)) {
-        stop("lengths of 'x' and 'y' must match")
-    }
+  contr.sp <- list(low = -1.5,## low = 0.      was default till R 1.3.x
+                   high = 1.5,
+                   tol = 1e-4,## tol = 0.001   was default till R 1.3.x
+                   eps = 2e-8,## eps = 0.00244 was default till R 1.3.x
+                   maxit = 500 )
 
-    if (any(is.na(xvector)) || any(is.na(ymat))) {
-        stop("NAs not allowed in 'x' or 'y'")
-    }
 
-    if (is.null(w)) {
-        wzmat <- matrix(1, n_lm, M)
+
+
+  contr.sp[(names(control.spar))] <- control.spar
+  if(!all(sapply(contr.sp[1:4], is.numeric)) ||
+     contr.sp$tol < 0 || contr.sp$eps <= 0 || contr.sp$maxit <= 0)
+      stop("invalid 'control.spar'")
+
+
+  my.call <- match.call()
+  if (missing(y)) {
+    if (is.list(x)) {
+      if (any(is.na(match(c("x", "y"), names(x)))))
+        stop("cannot find 'x' and 'y' in list")
+      y <- x$y
+      x <- x$x
+    } else if (is.complex(x)) {
+      y <- Im(x)
+      x <- Re(x)
+    } else if (is.matrix(x)) {
+      y <- x[,-1]
+      x <- x[,1]
     } else {
-        if (any(is.na(w))) {
-            stop("NAs not allowed in 'w'")
-        }
-        wzmat <- as.matrix(w)
+      y <- x
+      x <- time(x)
+    }
+  }
 
-        if (nrow(ymat) != nrow(wzmat) || ncol(wzmat) > M * (M+1) / 2) {
-            stop("'w' and 'y' don't match")
-        }
+  xvector <- x
+  n_lm <- length(xvector)
+  ymat <- as.matrix(y)
+  ny2 <- dimnames(ymat)[[2]]  # NULL if vector 
+  M <- ncol(ymat)
+  if (n_lm != nrow(ymat)) {
+    stop("lengths of arguments 'x' and 'y' must match")
+  }
 
-        if (scale.w) {
-            wzmat <- wzmat / mean(wzmat[,1:M])    # 'Average' value is 1
-        }
-    }
-    dim2wz <- ncol(wzmat)
+  if (any(is.na(xvector)) || any(is.na(ymat))) {
+    stop("NAs not allowed in arguments 'x' or 'y'")
+  }
 
-    if (missing.constraints) {
-        constraints <- list("(Intercepts)" = eval(iconstraint),
-                            "x"            = eval(xconstraint))
+  if (is.null(w)) {
+    wzmat <- matrix(1, n_lm, M)
+  } else {
+    if (any(is.na(w))) {
+      stop("NAs not allowed in argument 'w'")
     }
-    constraints <- eval(constraints)
-    if (is.matrix(constraints)) {
-       constraints <- list("(Intercepts)" = constraints, x = constraints)
+    wzmat <- as.matrix(w)
+
+    if (nrow(ymat) != nrow(wzmat) || ncol(wzmat) > M * (M+1) / 2) {
+      stop("arguments 'w' and 'y' don't match")
     }
-    if (!is.list(constraints) || length(constraints) != 2) {
-        stop("'constraints' must equal a list (of length 2) or a matrix")
+
+    if (scale.w) {
+      wzmat <- wzmat / mean(wzmat[,1:M])    # 'Average' value is 1
     }
-    for (ii in 1:2) 
-        if (!is.numeric(constraints[[ii]]) ||
-            !is.matrix (constraints[[ii]]) || 
-            nrow(constraints[[ii]]) != M   ||
-            ncol(constraints[[ii]]) >  M)
-            stop("something wrong with 'constraints'")
-    names(constraints) <- c("(Intercepts)", "x")
+  }
+  dim2wz <- ncol(wzmat)
+
+  if (missing.constraints) {
+    constraints <- list("(Intercepts)" = eval(iconstraint),
+                        "x"            = eval(xconstraint))
+  }
+  constraints <- eval(constraints)
+  if (is.matrix(constraints)) {
+    constraints <- list("(Intercepts)" = constraints,
+                        "x"            = constraints)
+  }
+  if (!is.list(constraints) || length(constraints) != 2) {
+    stop("'constraints' must equal a list (of length 2) or a matrix")
+  }
+  for (ii in 1:2) 
+    if (!is.numeric(constraints[[ii]]) ||
+        !is.matrix (constraints[[ii]]) || 
+        nrow(constraints[[ii]]) != M   ||
+        ncol(constraints[[ii]]) >  M)
+      stop("something wrong with argument 'constraints'")
+  names(constraints) <- c("(Intercepts)", "x")
 
 
     usortx <- unique(sort(as.vector(xvector)))
     ooo <- match(xvector, usortx)             # usortx[ooo] == x
     neff <- length(usortx)
     if (neff < 7) {
-        stop("not enough unique 'x' values (need 7 or more)")
+      stop("not enough unique 'x' values (need 7 or more)")
     }
 
     dim1U <- dim2wz # 10/1/00; was M * (M+1) / 2
 
-    collaps <- dotC(name="vsuff9",
+    collaps <- dotC(name = "vsuff9",
       as.integer(n_lm), as.integer(neff), as.integer(ooo),
       as.double(xvector), as.double(ymat), as.double(wzmat),
-      xbar=double(neff), ybar=double(neff * M),
-          wzbar=double(neff * dim2wz),
-      uwzbar=double(1), wzybar=double(neff * M), okint=as.integer(0),
-      as.integer(M), dim2wz=as.integer(dim2wz), dim1U=as.integer(dim1U),
-      blist=as.double(diag(M)), ncolb=as.integer(M),
-      trivc=as.integer(1), wuwzbar=as.integer(0),
+      xbar = double(neff), ybar = double(neff * M),
+          wzbar = double(neff * dim2wz),
+      uwzbar = double(1), wzybar = double(neff * M), okint = as.integer(0),
+      as.integer(M), dim2wz = as.integer(dim2wz), dim1U = as.integer(dim1U),
+      blist = as.double(diag(M)), ncolb = as.integer(M),
+      trivc = as.integer(1), wuwzbar = as.integer(0),
       dim1Uwzbar = as.integer(dim1U), dim2wzbar = as.integer(dim2wz))
 
     if (collaps$okint != 1) {
-       stop("some non-positive-definite weight matrices ",
-            "detected in 'vsuff9'")
+      stop("some non-positive-definite weight matrices ",
+           "detected in 'vsuff9'")
     }
     dim(collaps$ybar)   <- c(neff, M)
 
 
     if (FALSE) {
     } else {
-        yinyin = collaps$ybar   # Includes both linear and nonlinear parts
-        x = collaps$xbar  # Could call this xxx for location finder
+      yinyin <- collaps$ybar   # Includes both linear and nonlinear parts
+      x <- collaps$xbar  # Could call this xxx for location finder
 
-        lfit = vlm(yinyin ~ 1 + x,    # xxx
-                   constraints = constraints,
-                   save.weight = FALSE,
-                   qr.arg = FALSE, x.arg = FALSE, y.arg = FALSE,
-                   smart = FALSE,
-                   weights = matrix(collaps$wzbar, neff, dim2wz))
+      lfit <- vlm(yinyin ~ 1 + x,    # xxx
+                 constraints = constraints,
+                 save.weight = FALSE,
+                 qr.arg = FALSE, x.arg = FALSE, y.arg = FALSE,
+                 smart = FALSE,
+                 weights = matrix(collaps$wzbar, neff, dim2wz))
     }
 
     ncb0  <- ncol(constraints[[2]])   # Of xxx and not of the intercept
@@ -249,193 +260,199 @@ vsmooth.spline <- function(x, y, w = NULL, df = rep(5, M),
     dfvec <- rep(df, length = ncb0)
 
     if (!missing.spar) {
-        ispar <- 1
-        if (any(spar <= 0) || !is.numeric(spar)) {
-            stop("not allowed non-positive or non-numeric ",
-                 "smoothing parameters")
-        }
-        nonlin <- (spar != Inf)
+      ispar <- 1
+      if (any(spar <= 0) || !is.numeric(spar)) {
+        stop("not allowed non-positive or non-numeric ",
+             "smoothing parameters")
+      }
+      nonlin <- (spar != Inf)
     } else {
-        ispar <- 0
-        if (!is.numeric(dfvec) || any(dfvec < 2 | dfvec > neff)) {
-            stop("you must supply '2 <= df <= ", neff, "'")
-        }
-        nonlin <- (abs(dfvec - 2) > contr.sp$tol)
+      ispar <- 0
+      if (!is.numeric(dfvec) || any(dfvec < 2 | dfvec > neff)) {
+        stop("you must supply '2 <= df <= ", neff, "'")
+      }
+      nonlin <- (abs(dfvec - 2) > contr.sp$tol)
     }
 
 
     if (all(!nonlin)) {
 
-        junk.fill = new("vsmooth.spline.fit",
-                        "Bcoefficients" = matrix(as.numeric(NA), 1, 1),
-                        "knots"         = numeric(0),
-                        "xmin"          = numeric(0),
-                        "xmax"          = numeric(0)) # 8/11/03
+      junk.fill <- new("vsmooth.spline.fit",
+                       "Bcoefficients" = matrix(as.numeric(NA), 1, 1),
+                       "knots"         = numeric(0),
+                       "xmin"          = numeric(0),
+                       "xmax"          = numeric(0)) # 8/11/03
 
-        ratio = as.numeric(NA)
+      dratio <- as.numeric(NA)
 
-        object =
-        new("vsmooth.spline",
-            "call"         = my.call,
-            "constraints"  = constraints,
-            "df"     = if (ispar == 0) dfvec else rep(2, length(spar)),
-            "lfit"         = lfit,
-            "nlfit"        = junk.fill,
-            "spar"   = if (ispar == 1) spar   else rep(Inf, length(dfvec)),
-            "lambda" = if (ispar == 1) ratio * 16.0^(spar * 6.0 - 2.0) else
-                                       rep(Inf, length(dfvec)),
-            "w"            = matrix(collaps$wzbar, neff, dim2wz),
-            "x"            = usortx,
-            "y"            = lfit@fitted.values,
-            "yin"          = yinyin)
+      object <-
+      new("vsmooth.spline",
+          "call"         = my.call,
+          "constraints"  = constraints,
+          "df"     = if (ispar == 0) dfvec else rep(2, length(spar)),
+          "lfit"         = lfit,
+          "nlfit"        = junk.fill,
+          "spar"   = if (ispar == 1) spar   else rep(Inf, length(dfvec)),
+          "lambda" = if (ispar == 1) dratio * 16.0^(spar * 6.0 - 2.0) else
+                                     rep(Inf, length(dfvec)),
+          "w"            = matrix(collaps$wzbar, neff, dim2wz),
+          "x"            = usortx,
+          "y"            = lfit@fitted.values,
+          "yin"          = yinyin)
 
     
-        return(object)
+      return(object)
+  }
+    
+
+  xbar <- (usortx - usortx[1]) / (usortx[neff] - usortx[1])
+  noround <- TRUE   # Improvement 3/8/02
+  nknots <- nk
+  if (all.knots) {
+    knot <- if (noround) {
+      valid.vknotl2(c(rep(xbar[1],3), xbar, rep(xbar[neff],3)))
+    } else { 
+      c(rep(xbar[1], 3), xbar, rep(xbar[neff], 3))
     }
-    
-
-    xbar <- (usortx - usortx[1]) / (usortx[neff] - usortx[1])
-    noround = TRUE   # Improvement 3/8/02
-    nknots <- nk
-    if (all.knots) {
-            knot <- if (noround) {
-                valid.vknotl2(c(rep(xbar[1],3), xbar, rep(xbar[neff],3)))
-            } else { 
-                c(rep(xbar[1], 3), xbar, rep(xbar[neff], 3))
-            }
-        if (length(nknots)) {
-            warning("overriding 'nk' by 'all.knots = TRUE'")
-        }
-        nknots <- length(knot) - 4     # No longer neff + 2
+    if (length(nknots)) {
+      warning("overriding 'nk' by 'all.knots = TRUE'")
+    }
+    nknots <- length(knot) - 4     # No longer neff + 2
+  } else {
+    chosen <- length(nknots)
+    if (chosen && (nknots > neff+2 || nknots <= 5)) {
+      stop("bad value for 'nk'")
+    }
+    if (!chosen) {
+      nknots <- 0
+    }
+      knot.list <- dotC(name = "vknootl2", as.double(xbar),
+                        as.integer(neff), knot = double(neff+6),
+                        k = as.integer(nknots+4),
+                        chosen = as.integer(chosen))
+    if (noround) {
+      knot <- valid.vknotl2(knot.list$knot[1:(knot.list$k)])
+      knot.list$k <- length(knot)
     } else {
-        chosen = length(nknots)
-        if (chosen && (nknots > neff+2 || nknots <= 5)) {
-            stop("bad value for 'nk'")
-        }
-        if (!chosen) {
-            nknots = 0
-        }
-        knot.list <- dotC(name="vknootl2", as.double(xbar),
-                          as.integer(neff), knot=double(neff+6),
-                          k=as.integer(nknots+4), chosen=as.integer(chosen))
-        if (noround) {
-            knot = valid.vknotl2(knot.list$knot[1:(knot.list$k)])
-            knot.list$k = length(knot)
-        } else {
-            knot <- knot.list$knot[1:(knot.list$k)]
-        }
-        nknots <- knot.list$k - 4
+      knot <- knot.list$knot[1:(knot.list$k)]
     }
-    if (nknots <= 5) {
-        stop("not enough distinct knots found")
-    }
+    nknots <- knot.list$k - 4
+  }
+  if (nknots <= 5) {
+    stop("not enough distinct knots found")
+  }
 
-    conmat <- (constraints[[2]])[, nonlin, drop=FALSE]
-    ncb <- sum(nonlin)
-    trivc <- trivial.constraints(conmat)
-    resmat <- collaps$ybar - lfit@fitted.values     # neff by M
-    spar.nl <-  spar[nonlin]
-    dofr.nl <- dfvec[nonlin]
+  conmat <- (constraints[[2]])[, nonlin, drop = FALSE]
+  ncb <- sum(nonlin)
+  trivc <- trivial.constraints(conmat)
+  resmat <- collaps$ybar - lfit@fitted.values     # neff by M
+  spar.nl <-  spar[nonlin]
+  dofr.nl <- dfvec[nonlin]
 
-     dim1Uwzbar = if (trivc) dim1U  else ncb * (ncb+1) / 2
-     dim2wzbar  = if (trivc) dim2wz else ncb * (ncb+1) / 2
-    ooo <- 1:neff   # Already sorted
+   dim1Uwzbar <- if (trivc) dim1U  else ncb * (ncb+1) / 2
+   dim2wzbar  <- if (trivc) dim2wz else ncb * (ncb+1) / 2
+   ooo <- 1:neff # Already sorted
 
 
-    collaps <- dotC(name="vsuff9",
+  collaps <- dotC(name = "vsuff9",
       as.integer(neff), as.integer(neff), as.integer(ooo),
       as.double(collaps$xbar), as.double(resmat), as.double(collaps$wzbar),
-      xbar=double(neff), ybar=double(neff * ncb),
-          wzbar=double(neff * dim2wzbar),
-      uwzbar=double(1), wzybar=double(neff * ncb), okint=as.integer(0),
+      xbar = double(neff), ybar = double(neff * ncb),
+          wzbar = double(neff * dim2wzbar),
+      uwzbar = double(1), wzybar = double(neff * ncb), okint = as.integer(0),
       as.integer(M), as.integer(dim2wz), as.integer(dim1U),
-      blist=as.double(conmat), ncolb=as.integer(ncb),
-      as.integer(trivc), wuwzbar=as.integer(0),
+      blist = as.double(conmat), ncolb = as.integer(ncb),
+      as.integer(trivc), wuwzbar = as.integer(0),
       as.integer(dim1Uwzbar), as.integer(dim2wzbar))
 
-    if (collaps$okint != 1) {
-       stop("some non-positive-definite weight matrices ",
-            "detected in 'vsuff9' during the second call.")
-    }
+  if (collaps$okint != 1) {
+   stop("some non-positive-definite weight matrices ",
+        "detected in 'vsuff9' during the second call.")
+  }
 
-    dim(collaps$ybar) <- dim(collaps$wzybar) <- c(neff, ncb)
-    dim(collaps$wzbar) <- c(neff, dim2wzbar)
+  dim(collaps$ybar) <- dim(collaps$wzybar) <- c(neff, ncb)
+  dim(collaps$wzbar) <- c(neff, dim2wzbar)
 
 
-    ldk = 3 * ncb + 1     # 10/7/02; Previously 4 * ncb
-    varmat <- if (var.arg) matrix(0, neff, ncb) else double(1)
-    vsplin <- dotC(name="Yee_spline",
-     xs=as.double(xbar),  as.double(collaps$wzybar),
-         as.double(collaps$wzbar), xknot=as.double(knot),
-     n=as.integer(neff), nknots=as.integer(nknots), as.integer(ldk),
-         M=as.integer(ncb), dim2wz=as.integer(dim2wzbar),
-     spar.nl=as.double(spar.nl), lamvec=as.double(spar.nl),
-         iinfo=integer(1), fv=double(neff * ncb),
-     Bcoef=double(nknots * ncb), varmat=as.double(varmat), 
-     levmat=double(neff * ncb), as.double(dofr.nl), 
-     ifvar=as.integer(var.arg), ierror=as.integer(0),
-     n_lm=as.integer(neff),
+  ldk <- 3 * ncb + 1     # 10/7/02; Previously 4 * ncb
+  varmat <- if (var.arg) matrix(0, neff, ncb) else double(1)
+  vsplin <- dotC(name = "Yee_spline",
+     xs = as.double(xbar),  as.double(collaps$wzybar),
+         as.double(collaps$wzbar), xknot = as.double(knot),
+     n = as.integer(neff), nknots = as.integer(nknots), as.integer(ldk),
+         M = as.integer(ncb), dim2wz = as.integer(dim2wzbar),
+
+     spar.nl = as.double(spar.nl), lamvec = as.double(spar.nl),
+
+         iinfo = integer(1), fv = double(neff * ncb),
+     Bcoef = double(nknots * ncb), varmat = as.double(varmat), 
+
+     levmat = double(neff * ncb), as.double(dofr.nl),
+
+     ifvar = as.integer(var.arg), ierror = as.integer(0),
+     n_lm = as.integer(neff),
      double(nknots), double(nknots), double(nknots), double(nknots),
      double(1), as.integer(0),
+
      icontrsp = as.integer(contr.sp$maxit),
       contrsp = as.double(unlist(contr.sp[1:4])))
 
-    if (vsplin$ierror != 0) {
-        stop("vsplin$ierror == ", vsplin$ierror,
-             ". Something gone wrong in 'vsplin'")
-    }
-    if (vsplin$iinfo != 0) {
-      stop("leading minor of order ", vsplin$iinfo,
-           " is not positive-definite")
-    }
+  if (vsplin$ierror != 0) {
+    stop("vsplin$ierror == ", vsplin$ierror,
+         ". Something gone wrong in 'vsplin'")
+  }
+  if (vsplin$iinfo != 0) {
+    stop("leading minor of order ", vsplin$iinfo,
+         " is not positive-definite")
+  }
 
-    dim(vsplin$levmat) <- c(neff, ncb)   # A matrix even when ncb == 1
-    if (ncb > 1) {
-        dim(vsplin$fv) <- c(neff, ncb)
-        if (var.arg)
-            dim(vsplin$varmat) <- c(neff, ncb)
-    }
-
-    dofr.nl <- colSums(vsplin$levmat)  # Actual EDF used 
-
-
-    fv <- lfit@fitted.values + vsplin$fv %*% t(conmat)
-    if (M > 1) {
-        dimnames(fv) <- list(NULL, ny2)
-    }
-
-    dfvec[!nonlin] = 2.0
-    dfvec[ nonlin] = dofr.nl
-    if (ispar == 0) {
-        spar[!nonlin] = Inf
-        spar[ nonlin] = vsplin$spar.nl   # Actually used
-    }
-
-    fit.object = new("vsmooth.spline.fit",
-                     "Bcoefficients" = matrix(vsplin$Bcoef, nknots, ncb),
-                     "knots"         = knot,
-                     "xmax"          = usortx[neff],
-                     "xmin"          = usortx[1])
- 
-    object =
-    new("vsmooth.spline",
-        "call"         = my.call,
-        "constraints"  = constraints,
-        "df"           = dfvec,
-        "nlfit"        = fit.object,
-        "lev"          = vsplin$levmat,
-        "lfit"         = lfit,
-        "spar"         = spar,   # if (ispar == 1) spar else vsplin$spar,
-        "lambda"       = vsplin$lamvec,  #
-        "w"            = collaps$wzbar,
-        "x"            = usortx,
-        "y"            = fv,
-        "yin"          = yinyin)
-
+  dim(vsplin$levmat) <- c(neff, ncb)   # A matrix even when ncb == 1
+  if (ncb > 1) {
+    dim(vsplin$fv) <- c(neff, ncb)
     if (var.arg)
-        object@var = vsplin$varmat
+      dim(vsplin$varmat) <- c(neff, ncb)
+  }
 
-    object
+  dofr.nl <- colSums(vsplin$levmat)  # Actual EDF used 
+
+
+  fv <- lfit@fitted.values + vsplin$fv %*% t(conmat)
+  if (M > 1) {
+    dimnames(fv) <- list(NULL, ny2)
+  }
+
+  dfvec[!nonlin] <- 2.0
+  dfvec[ nonlin] <- dofr.nl
+  if (ispar == 0) {
+    spar[!nonlin] <- Inf
+    spar[ nonlin] <- vsplin$spar.nl   # Actually used
+  }
+
+  fit.object <- new("vsmooth.spline.fit",
+                   "Bcoefficients" = matrix(vsplin$Bcoef, nknots, ncb),
+                   "knots"         = knot,
+                   "xmax"          = usortx[neff],
+                   "xmin"          = usortx[1])
+ 
+  object <-
+  new("vsmooth.spline",
+      "call"         = my.call,
+      "constraints"  = constraints,
+      "df"           = dfvec,
+      "nlfit"        = fit.object,
+      "lev"          = vsplin$levmat,
+      "lfit"         = lfit,
+      "spar"         = spar,   # if (ispar == 1) spar else vsplin$spar,
+      "lambda"       = vsplin$lamvec,  #
+      "w"            = collaps$wzbar,
+      "x"            = usortx,
+      "y"            = fv,
+      "yin"          = yinyin)
+
+  if (var.arg)
+    object@var <- vsplin$varmat
+
+  object
 }
 
 
@@ -448,11 +465,11 @@ show.vsmooth.spline <- function(x, ...) {
   ncb <- if (length(x@nlfit)) ncol(x@nlfit@Bcoefficients) else NULL
   cat("\nSmoothing Parameter (Spar):", 
     if (length(ncb) && ncb == 1) format(x@spar) else
-        paste(format(x@spar), collapse=", "), "\n")
+        paste(format(x@spar), collapse = ", "), "\n")
 
   cat("\nEquivalent Degrees of Freedom (Df):", 
     if (length(ncb) && ncb == 1) format(x@df) else
-        paste(format(x@df), collapse=", "), "\n")
+        paste(format(x@df), collapse = ", "), "\n")
 
   if (!all(trivial.constraints(x@constraints) == 1)) {
     cat("\nConstraint matrices:\n")
@@ -464,160 +481,162 @@ show.vsmooth.spline <- function(x, ...) {
 
 
 coefvsmooth.spline.fit <- function(object, ...) {
-    object@Bcoefficients 
+  object@Bcoefficients 
 }
 
 
 coefvsmooth.spline <- function(object, matrix = FALSE, ...) {
 
         list(lfit = coefvlm(object@lfit, matrix.out = matrix),
-             nlfit=coefvsmooth.spline.fit(object@nlfit))
+             nlfit = coefvsmooth.spline.fit(object@nlfit))
 }
 
 
 fittedvsmooth.spline <- function(object, ...) {
-    object@y
+  object@y
 }
 
 residvsmooth.spline <- function(object, ...) {
-    as.matrix(object@yin - object@y)
+  as.matrix(object@yin - object@y)
 }
 
 
 
-plotvsmooth.spline <- function(x, xlab="x", ylab="", points=TRUE,
-                               pcol=par()$col, pcex=par()$cex,
-                               pch=par()$pch, lcol=par()$col,
-                               lwd=par()$lwd, lty=par()$lty,
-                               add=FALSE, ...) {
-    points.arg = points; rm(points)
-    M = ncol(x@y)
-    pcol = rep(pcol, length = M)
-    pcex = rep(pcex, length = M)
-    pch  = rep(pch,  length = M)
-    lcol = rep(lcol, length = M)
-    lwd  = rep(lwd,  length = M)
-    lty  = rep(lty,  length = M)
-    if (!add)
-        matplot(x@x, x@yin, type="n", xlab=xlab, ylab=ylab, ...)
-    for (ii in 1:ncol(x@y)) {
-        if (points.arg)
-            points(x@x, x@yin[,ii], col=pcol[ii], pch=pch[ii], cex=pcex[ii])
-        lines(x@x, x@y[,ii], col=lcol[ii], lwd=lwd[ii], lty=lty[ii])
-    }
-    invisible(x)
+plotvsmooth.spline <- function(x, xlab = "x", ylab = "", points = TRUE,
+                               pcol = par()$col, pcex = par()$cex,
+                               pch = par()$pch, lcol = par()$col,
+                               lwd = par()$lwd, lty = par()$lty,
+                               add = FALSE, ...) {
+  points.arg <- points; rm(points)
+  M <- ncol(x@y)
+  pcol <- rep(pcol, length = M)
+  pcex <- rep(pcex, length = M)
+  pch  <- rep(pch,  length = M)
+  lcol <- rep(lcol, length = M)
+  lwd  <- rep(lwd,  length = M)
+  lty  <- rep(lty,  length = M)
+  if (!add)
+    matplot(x@x, x@yin, type = "n", xlab = xlab, ylab = ylab, ...)
+  for (ii in 1:ncol(x@y)) {
+    if (points.arg)
+      points(x@x, x@yin[,ii], col = pcol[ii], pch = pch[ii], cex = pcex[ii])
+    lines(x@x, x@y[,ii], col = lcol[ii], lwd = lwd[ii], lty = lty[ii])
+  }
+  invisible(x)
 }
 
 
 
 predictvsmooth.spline <- function(object, x, deriv = 0, se.fit = FALSE) {
-    if (se.fit)
-        warning("'se.fit=TRUE' is not currently implemented. ",
-                "Using 'se.fit=FALSE'")
+  if (se.fit)
+    warning("'se.fit = TRUE' is not currently implemented. ",
+            "Using 'se.fit = FALSE'")
 
-     lfit <- object@lfit    #    Linear part of the vector spline
-    nlfit <- object@nlfit   # Nonlinear part of the vector spline
+   lfit <- object@lfit    #    Linear part of the vector spline
+  nlfit <- object@nlfit   # Nonlinear part of the vector spline
 
-    if (missing(x)) {
-        if (deriv == 0) {
-            return(list(x = object@x, y = object@y))
-        } else {
-            x <- object@x
-            return(Recall(object, x, deriv))
-        }
-
+  if (missing(x)) {
+    if (deriv == 0) {
+      return(list(x = object@x, y = object@y))
+    } else {
+      x <- object@x
+      return(Recall(object, x, deriv))
     }
 
-    mat.coef = coefvlm(lfit, matrix.out = TRUE)
-    coeflfit <- t(mat.coef)   # M x p now
-    M <- nrow(coeflfit) # if (is.matrix(object@y)) ncol(object@y) else 1
+  }
 
-    pred = if (deriv == 0)
-             predict(lfit, data.frame(x = x)) else
-           if (deriv == 1)
-             matrix(coeflfit[,2], length(x), M, byrow = TRUE) else
-             matrix(0, length(x), M)
-    if (!length(nlfit@knots)) {
-        return(list(x = x, y = pred))
-    }
+  mat.coef <- coefvlm(lfit, matrix.out = TRUE)
+  coeflfit <- t(mat.coef)   # M x p now
+  M <- nrow(coeflfit) # if (is.matrix(object@y)) ncol(object@y) else 1
 
-    nonlin <- (object@spar != Inf)
+  pred <- if (deriv == 0)
+           predict(lfit, data.frame(x = x)) else
+          if (deriv == 1)
+            matrix(coeflfit[,2], length(x), M, byrow = TRUE) else
+            matrix(0, length(x), M)
+  if (!length(nlfit@knots)) {
+    return(list(x = x, y = pred))
+  }
 
-    conmat = if (!length(lfit@constraints)) diag(M) else
-                lfit@constraints[[2]]
-    conmat = conmat[, nonlin, drop = FALSE] # Of nonlinear functions
+  nonlin <- (object@spar != Inf)
 
-    list(x = x, y=pred + predict(nlfit, x, deriv)$y %*% t(conmat))
+  conmat <- if (!length(lfit@constraints)) diag(M) else
+              lfit@constraints[[2]]
+  conmat <- conmat[, nonlin, drop = FALSE] # Of nonlinear functions
+
+  list(x = x, y = pred + predict(nlfit, x, deriv)$y %*% t(conmat))
 }
 
 
+
+
 predictvsmooth.spline.fit <- function(object, x, deriv = 0) {
-    nknots = nrow(object@Bcoefficients)
-    drangex <- object@xmax - object@xmin
-    if (missing(x))
-      x <- seq(from = object@xmin, to = object@xmax, length.out = nknots-4)
+  nknots <- nrow(object@Bcoefficients)
+  drangex <- object@xmax - object@xmin
+  if (missing(x))
+    x <- seq(from = object@xmin, to = object@xmax, length.out = nknots-4)
 
-    xs <- as.double((x - object@xmin) / drangex)
+  xs <- as.double((x - object@xmin) / drangex)
 
-    bad.left  <- (xs <  0)
-    bad.right <- (xs >  1)
-    good <- !(bad.left | bad.right)
+  bad.left  <- (xs <  0)
+  bad.right <- (xs >  1)
+  good <- !(bad.left | bad.right)
 
-    ncb <- ncol(object@Bcoefficients)
-    y <- matrix(as.numeric(NA), length(xs), ncb)
-    if (ngood <- sum(good)) {
-        junk <- dotC(name="Yee_vbvs", as.integer(ngood),
-            as.double(object@knots), as.double(object@Bcoefficients),
-            as.double(xs[good]), smomat=double(ngood * ncb),
-            as.integer(nknots), as.integer(deriv), as.integer(ncb))
-        y[good,] <- junk$smomat
+  ncb <- ncol(object@Bcoefficients)
+  y <- matrix(as.numeric(NA), length(xs), ncb)
+  if (ngood <- sum(good)) {
+    junk <- dotC(name = "Yee_vbvs", as.integer(ngood),
+          as.double(object@knots), as.double(object@Bcoefficients),
+          as.double(xs[good]), smomat = double(ngood * ncb),
+          as.integer(nknots), as.integer(deriv), as.integer(ncb))
+    y[good,] <- junk$smomat
 
-        if (TRUE && deriv > 1) {
-            edges <- xs <= 0 | xs >= 1 # Zero the edges & beyond explicitly
-            y[edges,] <- 0
-        }
-   }
-    if (any(!good)) {
-        xrange <- c(object@xmin, object@xmax)
-        if (deriv == 0) {
-            end.object <- Recall(object, xrange)$y
-            end.slopes <- Recall(object, xrange, 1)$y * drangex
-
-            if (any(bad.left)) {
-              y[bad.left,] =  rep(end.object[1,], rep(sum(bad.left), ncb)) +
-                              rep(end.slopes[1,], rep(sum(bad.left), ncb)) *
-                              xs[bad.left]
-            }
-            if (any(bad.right)) {
-              y[bad.right,]= rep(end.object[2,], rep(sum(bad.right), ncb)) +
-                             rep(end.slopes[2,], rep(sum(bad.right), ncb)) *
-                             (xs[bad.right] - 1)
-            }
-        } else if (deriv == 1) {
-            end.slopes <- Recall(object, xrange, 1)$y * drangex
-            y[bad.left,]  <- rep(end.slopes[1,], rep(sum(bad.left),  ncb)) 
-            y[bad.right,] <- rep(end.slopes[2,], rep(sum(bad.right), ncb)) 
-        } else
-            y[!good,] <- 0
+    if (TRUE && deriv > 1) {
+      edges <- xs <= 0 | xs >= 1 # Zero the edges & beyond explicitly
+      y[edges,] <- 0
     }
-    if (deriv > 0)
-        y <- y / (drangex^deriv)
-    list(x = x, y = y)
+  }
+  if (any(!good)) {
+    xrange <- c(object@xmin, object@xmax)
+    if (deriv == 0) {
+      end.object <- Recall(object, xrange)$y
+      end.slopes <- Recall(object, xrange, 1)$y * drangex
+
+      if (any(bad.left)) {
+        y[bad.left,] <-  rep(end.object[1,], rep(sum(bad.left), ncb)) +
+                         rep(end.slopes[1,], rep(sum(bad.left), ncb)) *
+                         xs[bad.left]
+      }
+      if (any(bad.right)) {
+        y[bad.right,] <- rep(end.object[2,], rep(sum(bad.right), ncb)) +
+                         rep(end.slopes[2,], rep(sum(bad.right), ncb)) *
+                         (xs[bad.right] - 1)
+      }
+    } else if (deriv == 1) {
+      end.slopes <- Recall(object, xrange, 1)$y * drangex
+      y[bad.left,]  <- rep(end.slopes[1,], rep(sum(bad.left),  ncb)) 
+      y[bad.right,] <- rep(end.slopes[2,], rep(sum(bad.right), ncb)) 
+    } else
+      y[!good,] <- 0
+  }
+  if (deriv > 0)
+    y <- y / (drangex^deriv)
+  list(x = x, y = y)
 }
 
 
 
 valid.vknotl2 <- function(knot, tol = 1/1024) {
 
-    junk = dotC(name="Yee_pknootl2", knot=as.double(knot),
-                      as.integer(length(knot)),
-                      keep=integer(length(knot)), as.double(tol))
-    keep = as.logical(junk$keep)
-    knot = junk$knot[keep]
-    if (length(knot) <= 11) {
-        stop("too few (distinct) knots")
-    }
-    knot
+  junk <- dotC(name = "Yee_pknootl2", knot = as.double(knot),
+               as.integer(length(knot)),
+               keep = integer(length(knot)), as.double(tol))
+  keep <- as.logical(junk$keep)
+  knot <- junk$knot[keep]
+  if (length(knot) <= 11) {
+    stop("too few (distinct) knots")
+  }
+  knot
 }
 
 

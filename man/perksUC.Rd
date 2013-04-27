@@ -43,6 +43,7 @@ rperks(n, shape, scale = 1)
 \details{
   See \code{\link{perks}} for details.
 
+
 }
 %\note{
 %

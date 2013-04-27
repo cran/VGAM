@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2012 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2013 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -256,8 +256,8 @@ setMethod("lrtest", "vglm",
 
 
 
-use.S3.lrtest = TRUE
-use.S3.lrtest = FALSE
+use.S3.lrtest <- TRUE
+use.S3.lrtest <- FALSE
 
 
 if (use.S3.lrtest)
@@ -271,7 +271,7 @@ if (use.S3.lrtest)
 lrtest.formula <- function(object, ..., data = list()) {
   object <- if (length(data) < 1)
     eval(call("lm", formula = as.formula(deparse(substitute(object))),
-    environment(object))) else
+              environment(object))) else
     eval(call("lm", formula = as.formula(deparse(substitute(object))),
               data = as.name(deparse(substitute(data))),
               environment(data)))
@@ -286,7 +286,6 @@ lrtest.default <- function(object, ..., name = NULL) {
 
 
 
-print("hi S3   20111224")
 
 
   cls <- class(object)[1]
@@ -335,20 +334,20 @@ print("hi S3   20111224")
   nmodels <- length(objects)
   if (nmodels < 2) {
     objects <- c(objects, . ~ 1)
-print("objects 1")
-print( objects )
+ print("objects 1")
+ print( objects )
     nmodels <- 2
   }
   
   no.update <- sapply(objects, function(obj) inherits(obj, cls))
-print("no.update")
-print( no.update )
+ print("no.update")
+ print( no.update )
   
   for(i in 2:nmodels)
     objects[[i]] <- modelUpdate(objects[[i-1]], objects[[i]])
 
-print("objects i")
-print( objects )
+ print("objects i")
+ print( objects )
 
   ns <- sapply(objects, nobs)
   if (any(ns != ns[1])) {
@@ -359,8 +358,8 @@ print( objects )
                "the same size of dataset") else {
             commonobs <- row.names(model.frame(objects[[i]])) %in%
                          row.names(model.frame(objects[[i-1]]))
-print("commonobs")
-print( commonobs )
+ print("commonobs")
+ print( commonobs )
             objects[[i]] <- eval(substitute(update(objects[[i]],
                                  subset = commonobs),
                                  list(commonobs = commonobs)))
@@ -411,12 +410,15 @@ waldtest <- function(object, ...) {
 
 
 waldtest_formula <- function(object, ..., data = list()) {
+
+  stop("cannot find waldtest_lm()")
+
   object <- if (length(data) < 1)
     eval(call("lm", formula = as.formula(deparse(substitute(object))),
          environment(object))) else
     eval(call("lm", formula = as.formula(deparse(substitute(object))),
          data = as.name(deparse(substitute(data))), environment(data)))
-  waldtest_lm(object, ...)
+ 
 }
 
 

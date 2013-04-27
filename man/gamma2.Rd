@@ -10,7 +10,7 @@
 \usage{
 gamma2(lmu = "loge", lshape = "loge",
        imethod = 1,  ishape = NULL,
-       parallel = FALSE, intercept.apply = FALSE,
+       parallel = FALSE, apply.parint = FALSE,
        deviance.arg = FALSE, zero = -2)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -69,8 +69,8 @@ gamma2(lmu = "loge", lshape = "loge",
 
 
   }
-  \item{parallel, intercept.apply}{
-    See \code{\link{CommonVGAMffArguments}} for more information.
+  \item{parallel, apply.parint}{
+    Details at \code{\link{CommonVGAMffArguments}}.
 
 
   }

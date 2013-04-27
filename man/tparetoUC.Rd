@@ -10,6 +10,7 @@
   for the upper truncated Pareto(I) distribution with parameters
   \code{lower}, \code{upper} and \code{shape}.
 
+
 }
 \usage{
 dtpareto(x, lower, upper, shape, log = FALSE)
@@ -24,6 +25,7 @@ rtpareto(n, lower, upper, shape)
   \item{lower, upper, shape}{
   the lower, upper and shape (\eqn{k}) parameters.
   If necessary, values are recycled.
+
   }
 
 }
@@ -49,6 +51,7 @@ rtpareto(n, lower, upper, shape)
   for estimating the parameter \eqn{k} by maximum likelihood estimation,
   for the formula of the probability density function and the
   range restrictions imposed on the parameters.
+
 
 
 }

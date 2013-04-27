@@ -9,7 +9,7 @@
 }
 \usage{data(chinese.nz)}
 \format{
-  A data frame with 26 observations on the following 4 variables.
+  A data frame with 27 observations on the following 4 variables.
   \describe{
     \item{\code{year}}{Year. }
     \item{\code{male}}{Number of Chinese males. }
@@ -18,16 +18,12 @@
   }
 }
 \details{
-  The NZ total for the years 1867 and 1871 exclude the Maori population.
-  The second value of 4583 looks erroneous, as seen by the plot below.
-
-
   Historically, there was a large exodus of Chinese from the Guangdong
   region starting in the mid-1800s to the gold fields of
   South Island of New Zealand,
   California,
   and Southern Australia, etc.
-  Racial discrimination then meant that only men were allowed
+  Discrimination then meant that only men were allowed
   entry, to hinder permanent settlement.
   In the case of New Zealand, the government relaxed its
   immigration laws after WWII to allow wives of Chinese already in NZ to join them
@@ -37,34 +33,42 @@
   normal over time.
 
 
+  The NZ total for the years 1867 and 1871 exclude the Maori population.
+  Three modifications have been made to the female column to make
+  the data internally consistent with the original table.
+
+
+%  The second value of 4583 looks erroneous, as seen by the plot below.
+
+
 }
 %\source{
 %}
 \references{
 
   Page 6 of \emph{Aliens At My Table: Asians as New Zealanders See Them}
-  by M. Ip and N. Murphy,
-  (2005), Penguin.
+  by M. Ip and N. Murphy, (2005).
+  Penguin Books.
+  Auckland, New Zealand.
 
 
 }
 \examples{
 \dontrun{ par(mfrow = c(1, 2))
-plot(female/(male+female) ~ year, chinese.nz, type = "b",
+plot(female / (male + female) ~ year, chinese.nz, type = "b",
      ylab = "Proportion", col = "blue", las = 1,
      main = "Proportion of NZ Chinese that are female")
 abline(h = 0.5, lty = "dashed", col = "gray")
 
-fit1.cnz = vglm(cbind(female, male) ~ year, binomialff, chinese.nz)
-fit2.cnz = vglm(cbind(female, male) ~ poly(year, 2), binomialff, chinese.nz)
-fit4.cnz = vglm(cbind(female, male) ~ bs(year, 4), binomialff, chinese.nz)
+fit1.cnz <- vglm(cbind(female, male) ~ year,          binomialff, chinese.nz)
+fit2.cnz <- vglm(cbind(female, male) ~ poly(year, 2), binomialff, chinese.nz)
+fit4.cnz <- vglm(cbind(female, male) ~   bs(year, 5), binomialff, chinese.nz)
 
 lines(fitted(fit1.cnz) ~ year, chinese.nz, col = "purple")
 lines(fitted(fit2.cnz) ~ year, chinese.nz, col = "green")
-lines(fitted(fit4.cnz) ~ year, chinese.nz, col = "orange")
+lines(fitted(fit4.cnz) ~ year, chinese.nz, col = "orange", lwd = 2)
 legend("bottomright", col = c("purple", "green", "orange"),
        lty = 1, leg = c("linear", "quadratic", "B-spline"))
-
 
 plot(100*(male+female)/nz ~ year, chinese.nz, type = "b", ylab = "Percent",
      ylim = c(0, max(100*(male+female)/nz)), col = "blue", las = 1,
@@ -72,3 +76,6 @@ plot(100*(male+female)/nz ~ year, chinese.nz, type = "b", ylab = "Percent",
 abline(h = 0, lty = "dashed", col = "gray") }
 }
 \keyword{datasets}
+
+
+% Albany, Auckland, New Zealand.

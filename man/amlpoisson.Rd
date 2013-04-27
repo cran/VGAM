@@ -141,18 +141,18 @@ amlpoisson(w.aml = 1, parallel = FALSE, imethod = 1, digw = 4,
 
 \examples{
 set.seed(1234)
-mydat = data.frame(x = sort(runif(nn <- 200)))
-mydat = transform(mydat, y = rpois(nn, exp(0-sin(8*x))))
-(fit = vgam(y ~ s(x), fam=amlpoisson(w.aml=c(0.02, 0.2, 1, 5, 50)),
-            mydat, trace=TRUE))
+mydat <- data.frame(x = sort(runif(nn <- 200)))
+mydat <- transform(mydat, y = rpois(nn, exp(0 - sin(8*x))))
+(fit <- vgam(y ~ s(x), fam = amlpoisson(w.aml = c(0.02, 0.2, 1, 5, 50)),
+             mydat, trace = TRUE))
 fit@extra
 
 \dontrun{
 # Quantile plot
-with(mydat, plot(x, jitter(y), col="blue", las=1, main=
-     paste(paste(round(fit@extra$percentile, dig=1), collapse=", "),
+with(mydat, plot(x, jitter(y), col = "blue", las = 1, main =
+     paste(paste(round(fit@extra$percentile, dig = 1), collapse = ", "),
            "percentile-expectile curves")))
-with(mydat, matlines(x, fitted(fit), lwd=2)) }
+with(mydat, matlines(x, fitted(fit), lwd = 2)) }
 }
 \keyword{models}
 \keyword{regression}

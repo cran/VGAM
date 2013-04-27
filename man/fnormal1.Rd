@@ -4,6 +4,7 @@
 \title{ Folded Normal Distribution Family Function }
 \description{
   Fits a (generalized) folded (univariate) normal distribution.
+
 }
 \usage{
 fnormal1(lmean = "identity", lsd = "loge", imean = NULL, isd = NULL,
@@ -33,14 +34,17 @@ fnormal1(lmean = "identity", lsd = "loge", imean = NULL, isd = NULL,
   A \code{NULL} means a value is computed internally.
   See \code{\link{CommonVGAMffArguments}}.
 
+
   }
   \item{a1, a2}{
   Positive weights, called \eqn{a_1}{a1} and \eqn{a_2}{a2} below.
   Each must be of length 1.
 
+
   }
   \item{nsimEIM, imethod, zero}{
   See \code{\link{CommonVGAMffArguments}}.
+
 
   }
 }

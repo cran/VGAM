@@ -176,9 +176,9 @@ contains further information and examples.
   
 }
 \examples{
-coalminers = transform(coalminers, Age = (age - 42) / 5)
-fit = vgam(cbind(nBnW, nBW, BnW, BW) ~ s(Age),
-           binom2.or(zero = NULL), coalminers)
+coalminers <- transform(coalminers, Age = (age - 42) / 5)
+fit <- vgam(cbind(nBnW, nBW, BnW, BW) ~ s(Age),
+            binom2.or(zero = NULL), coalminers)
 \dontrun{ par(mfrow = c(1,3))
 plot(fit, se = TRUE, ylim = c(-3, 2), las = 1)
 plot(fit, se = TRUE, which.cf = 1:2, lcol = "blue", scol = "orange",

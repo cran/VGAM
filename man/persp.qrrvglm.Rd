@@ -4,7 +4,7 @@
 \title{ Perspective plot for QRR-VGLMs }
 \description{
 Produces a perspective plot for a CQO model (QRR-VGLM).  It is only
-applicable for rank-1 or rank-2 models with argument \code{Norrr = ~ 1}.
+applicable for rank-1 or rank-2 models with argument \code{noRRR = ~ 1}.
 
 }
 \usage{
@@ -133,7 +133,7 @@ perspqrrvglm(x, varlvI = FALSE, reference = NULL, plot.it = TRUE,
   To view rare species, use the \code{whichSpecies} argument to select
   a subset of the species.
 
-  A perspective  plot will be performed if \code{Norrr = ~ 1}, and
+  A perspective  plot will be performed if \code{noRRR = ~ 1}, and
   \code{Rank = 1} or \code{2}.  Also, all the tolerance matrices of
   those species to be plotted must be positive-definite.
 

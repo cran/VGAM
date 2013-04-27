@@ -87,14 +87,15 @@ time series.
 
 }
 \examples{
+\dontrun{
 year <- seq(1961 + 1/12, 1972 + 10/12, by = 1/12)
-\dontrun{ par(mar = c(4, 4, 2, 2) + 0.1, mfrow = c(2, 2))
+par(mar = c(4, 4, 2, 2) + 0.1, mfrow = c(2, 2))
 for(ii in 1:4) {
   plot(year, grain.us[, ii], main = names(grain.us)[ii], las = 1,
        type = "l", xlab = "", ylab = "", col = "blue")
-  points(year, grain.us[,ii], pch = "*", col = "blue")
-}}
-apply(grain.us, 2, mean)     # mu vector
+  points(year, grain.us[, ii], pch = "*", col = "blue")
+}
+apply(grain.us, 2, mean) # mu vector
 cgrain <- scale(grain.us, scale = FALSE) # Center the time series only
 fit <- vglm(cgrain ~ 1, rrar(Ranks = c(4, 1)), trace = TRUE)
 summary(fit)
@@ -105,12 +106,13 @@ print(fit@misc$Dmatrices, dig = 3)
 print(fit@misc$omegahat, dig = 3)
 print(fit@misc$Phimatrices, dig = 2)
 
-\dontrun{ par(mar = c(4, 4, 2, 2) + 0.1, mfrow = c(4, 1))
+par(mar = c(4, 4, 2, 2) + 0.1, mfrow = c(4, 1))
 for(ii in 1:4) {
-  plot(year, fit@misc$Z[,ii], main = paste("Z", ii, sep = ""),
+  plot(year, fit@misc$Z[, ii], main = paste("Z", ii, sep = ""),
        type = "l", xlab = "", ylab = "", las = 1, col = "blue")
-  points(year, fit@misc$Z[,ii], pch = "*", col = "blue")
-} }
+  points(year, fit@misc$Z[, ii], pch = "*", col = "blue")
+}
+}
 }
 \keyword{ts}
 \keyword{regression}

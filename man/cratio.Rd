@@ -17,10 +17,12 @@ cratio(link = "logit", parallel = FALSE, reverse = FALSE, zero = NULL,
   Link function applied to the \eqn{M} continuation ratio probabilities.
   See \code{\link{Links}} for more choices.
 
+
   }
   \item{parallel}{
   A logical, or formula specifying which terms have
   equal/unequal coefficients.
+
 
   }
   \item{reverse}{
@@ -32,6 +34,7 @@ cratio(link = "logit", parallel = FALSE, reverse = FALSE, zero = NULL,
   \eqn{\eta_j = logit(P[Y<j+1|Y\leq j+1])}{eta_j=logit(P[Y<j+1|Y<=j+1])}
   will be used.
 
+
   }
   \item{zero}{
   An integer-valued vector specifying which
@@ -39,9 +42,11 @@ cratio(link = "logit", parallel = FALSE, reverse = FALSE, zero = NULL,
   The values must be from the set \{1,2,\ldots,\eqn{M}\}.
   The default value means none are modelled as intercept-only terms.
 
+
   }
   \item{whitespace}{
   See \code{\link{CommonVGAMffArguments}} for information.
+
 
   }
 }
@@ -70,13 +75,16 @@ cratio(link = "logit", parallel = FALSE, reverse = FALSE, zero = NULL,
 
 }
 \references{
+
 Agresti, A. (2002)
 \emph{Categorical Data Analysis},
 2nd ed. New York: Wiley.
 
+
 Simonoff, J. S. (2003)
 \emph{Analyzing Categorical Data},
 New York: Springer-Verlag.
+
 
 McCullagh, P. and Nelder, J. A. (1989)
 \emph{Generalized Linear Models}, 2nd ed. London: Chapman & Hall.
@@ -89,29 +97,28 @@ The \pkg{VGAM} package for categorical data analysis.
 \url{http://www.jstatsoft.org/v32/i10/}.
 
 
-Documentation accompanying the \pkg{VGAM} package at
-\url{http://www.stat.auckland.ac.nz/~yee}
-contains further information and examples.
-
 }
 \author{ Thomas W. Yee }
 \note{
-  The response should be either a matrix of counts (with row sums that
-  are all positive), or a factor. In both cases, the \code{y} slot
-  returned by \code{vglm}/\code{vgam}/\code{rrvglm} is the matrix
+  The response should be either a matrix of counts
+  (with row sums that are all positive), or a
+  factor. In both cases, the \code{y} slot returned by
+  \code{vglm}/\code{vgam}/\code{rrvglm} is the matrix
   of counts.
 
 
-  For a nominal (unordered) factor response, the multinomial
-  logit model (\code{\link{multinomial}}) is more appropriate.
+  For a nominal (unordered) factor response, the
+  multinomial logit model (\code{\link{multinomial}})
+  is more appropriate.
 
 
-  Here is an example of the usage of the \code{parallel} argument.
-  If there are covariates \code{x1}, \code{x2} and \code{x3}, then
-  \code{parallel = TRUE ~ x1 + x2 -1} and
-  \code{parallel = FALSE ~ x3} are equivalent. This would constrain
-  the regression coefficients for \code{x1} and \code{x2} to be
-  equal; those of the intercepts and \code{x3} would be different.
+  Here is an example of the usage of the \code{parallel}
+  argument.  If there are covariates \code{x1}, \code{x2}
+  and \code{x3}, then \code{parallel = TRUE ~ x1 + x2 -1}
+  and \code{parallel = FALSE ~ x3} are equivalent. This
+  would constrain the regression coefficients for \code{x1}
+  and \code{x2} to be equal; those of the intercepts and
+  \code{x3} would be different.
 
 
 }
@@ -120,25 +127,27 @@ contains further information and examples.
   response is a matrix;
   see \code{\link[base:factor]{ordered}}.
 
+
 }
 
 \seealso{
-    \code{\link{sratio}},
-    \code{\link{acat}},
-    \code{\link{cumulative}},
-    \code{\link{multinomial}},
-    \code{\link{pneumo}},
+  \code{\link{sratio}},
+  \code{\link{acat}},
+  \code{\link{cumulative}},
+  \code{\link{multinomial}},
+  \code{\link{pneumo}},
   \code{\link{logit}},
   \code{\link{probit}},
   \code{\link{cloglog}},
   \code{\link{cauchit}}.
 
+
 }
 
 \examples{
-pneumo = transform(pneumo, let = log(exposure.time))
-(fit = vglm(cbind(normal, mild, severe) ~ let,
-            cratio(parallel = TRUE), pneumo))
+pneumo <- transform(pneumo, let = log(exposure.time))
+(fit <- vglm(cbind(normal, mild, severe) ~ let,
+             cratio(parallel = TRUE), pneumo))
 coef(fit, matrix = TRUE)
 constraints(fit)
 predict(fit)

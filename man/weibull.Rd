@@ -85,7 +85,7 @@ weibull(lshape = "loge", lscale = "loge",
 
   Summarized in Harper et al. (2011),
   for inference, there are 4 cases to consider.
-  If \eqn{a \leq 1} then the MLEs are not consistent
+  If \eqn{a \le 1} then the MLEs are not consistent
   (and the smallest observation becomes a hyperefficient
   solution for the location parameter in the 3-parameter case).
   If \eqn{1 < a < 2} then MLEs exist but are not asymptotically normal.
@@ -205,6 +205,7 @@ Concerns about Maximum Likelihood Estimation for
 
 \seealso{
     \code{\link[stats:Weibull]{dweibull}},
+    \code{\link{truncweibull}},
     \code{\link{gev}},
     \code{\link{lognormal}},
     \code{\link{expexp}}.

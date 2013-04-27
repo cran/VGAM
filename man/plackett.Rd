@@ -98,14 +98,16 @@ A class of bivariate distributions.
 
 }
 \examples{
+\dontrun{
 ymat <- rplack(n = 2000, oratio = exp(2))
-\dontrun{plot(ymat, col = "blue")}
+plot(ymat, col = "blue")
 fit <- vglm(ymat ~ 1, fam = plackett, trace = TRUE)
 coef(fit, matrix = TRUE)
 Coef(fit)
 vcov(fit)
 head(fitted(fit))
 summary(fit)
+}
 }
 \keyword{models}
 \keyword{regression}

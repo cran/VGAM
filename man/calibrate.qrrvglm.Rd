@@ -16,12 +16,15 @@ calibrate.qrrvglm(object, newdata = NULL,
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{object}{ The fitted CQO/CAO model.
+
   }
   \item{newdata}{ A data frame with new response data
     (usually new species data).
     The default is to use the original data used to fit the model;
     however, the calibration may take a long time to compute
     because the computations are expensive.
+
+
   }
   \item{type}{ What type of result is to be returned.
     The first are the calibrated latent variables or site scores.
@@ -39,6 +42,8 @@ calibrate.qrrvglm(object, newdata = NULL,
     \code{"vcov"} is unavailable, so all 3 are returned.
      For CQO models,
     \code{"vcov"} is available, so all 4 are returned.
+
+
   }
   \item{initial.vals}{ Initial values for the search.
     For rank-1 models, this should be a vector of length
@@ -47,6 +52,8 @@ calibrate.qrrvglm(object, newdata = NULL,
     the number of rows in \code{newdata}.
     The default is a grid defined by arguments in
     \code{\link{calibrate.qrrvglm.control}}.
+
+
   }
   \item{\dots}{
   Arguments that are fed into
@@ -72,24 +79,32 @@ calibrate.qrrvglm(object, newdata = NULL,
 }
 \value{
   The argument \code{type} determines what is returned.
-  If \code{type = "all3or4"} then all the \code{type} values are returned
-  in a list, with the following components.
+  If \code{type = "all3or4"} then all the \code{type} values
+  are returned in a list, with the following components.
   Each component has length \code{nrow(newdata)}.
-  
-  
-  \item{lv}{Calibrated latent variables or site scores. }
+
+
+  \item{lv}{Calibrated latent variables or site scores.
+
+
+  }
   \item{predictors }{linear/quadratic or additive predictors.
     For example, for Poisson families, this will be on a log scale,
-    and for binomial families, this will be on a logit scale.}
-  \item{response}{Fitted values of the response, evaluated at the
-    calibrated latent variables or site scores.}
-  \item{vcov}{Estimated variance-covariance matrix of the
-    calibrated latent variables or site scores.
-    Actually, these are stored in an array whose last dimension
-    is \code{nrow(newdata)}.
+    and for binomial families, this will be on a logit scale.
+
   }
-}
-\references{
+  \item{response}{Fitted values of the response, evaluated at the
+    calibrated latent variables or site scores.
+
+  }
+  \item{vcov}{Estimated variance-covariance matrix of the
+    calibrated latent variables or site scores.  Actually,
+    these are stored in an array whose last dimension is
+    \code{nrow(newdata)}.
+
+
+  }
+} \references{
 
 Yee, T. W. (2012)
 On constrained and unconstrained
@@ -132,16 +147,16 @@ Cambridge.
 }
 \examples{
 \dontrun{
-hspider[,1:6] = scale(hspider[,1:6]) # Standardize the environmental variables
+hspider[,1:6] <- scale(hspider[, 1:6]) # Standardize the environmental variables
 set.seed(123)
-p1 = cqo(cbind(Pardlugu, Pardmont, Pardnigr, Pardpull, Zoraspin) ~
+p1 <- cqo(cbind(Pardlugu, Pardmont, Pardnigr, Pardpull, Zoraspin) ~
          WaterCon + BareSand + FallTwig +
          CoveMoss + CoveHerb + ReflLux,
          family = poissonff, data = hspider, Rank = 1,
          IToler = TRUE, Crow1positive = TRUE)
 
-siteNos = 1:2  # Calibrate these sites
-cp1 = calibrate(p1, new=data.frame(p1@y[siteNos,]), trace = TRUE)
+siteNos <- 1:2  # Calibrate these sites
+cp1 <- calibrate(p1, new = data.frame(depvar(p1)[siteNos, ]), trace = TRUE)
 }
 
 \dontrun{

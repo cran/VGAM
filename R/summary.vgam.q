@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2012 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2013 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -19,7 +19,7 @@ summaryvgam <- function(object, dispersion = NULL,
   newobject <- object 
   class(newobject) <- "vglm"
   stuff <- summaryvglm(newobject, dispersion = dispersion)
-  rdf <- stuff@df[2] <- object@df.residual  # NA 
+  rdf <- stuff@df[2] <- object@df.residual # NA 
 
   M <- object@misc$M
   nrow_X_vlm <- object@misc$nrow_X_vlm
@@ -47,8 +47,8 @@ summaryvgam <- function(object, dispersion = NULL,
       aod <- cbind(aod, NA, NA, NA)
       nl.chisq <- object@nl.chisq / object@dispersion
 
-      special = abs(nldf) < 0.1  # This was the quick fix in s.vam()  
-      nldf[special] = 1          # Give it a plausible value for pchisq & pf
+      special <- abs(nldf) < 0.1  # This was the quick fix in s.vam()  
+      nldf[special] <- 1          # Give it a plausible value for pchisq & pf
 
       snames <- names(nldf)
       aod[snames, 2] <- round(nldf, 1)
@@ -58,12 +58,12 @@ summaryvgam <- function(object, dispersion = NULL,
           pchisq(nl.chisq, nldf, lower.tail = FALSE)
 
       if (any(special)) {
-          aod[snames[special], 2:4] = NA 
+        aod[snames[special], 2:4] <- NA 
       }
 
       rnames <- c("Df", "Npar Df", "Npar Chisq", "P(Chi)")
       if (useF)
-            rnames[3:4] <- c("Npar F", "Pr(F)")
+          rnames[3:4] <- c("Npar F", "Pr(F)")
       dimnames(aod) <- list(names(df), rnames)
       heading <- if (useF)
       "\nDF for Terms and Approximate F-values for Nonparametric Effects\n"
@@ -72,30 +72,31 @@ summaryvgam <- function(object, dispersion = NULL,
     } else {
       heading <- "DF for Terms\n\n"
     }
-    aod <- as.vanova(data.frame(aod, check.names=FALSE), heading)
+    aod <- as.vanova(data.frame(aod, check.names = FALSE), heading)
 
-    if (is.R()) class(aod) = "data.frame"
+    class(aod) <- "data.frame"
+  } else {
+    aod <- data.frame()
   }
-  else aod <- if (is.R()) data.frame() else NULL
 
   answer <-
   new("summary.vgam",
       object,
-      call=stuff@call,
-      cov.unscaled=stuff@cov.unscaled,
-      correlation=stuff@correlation,
-      df=stuff@df,
-      sigma=stuff@sigma)
+      call = stuff@call,
+      cov.unscaled = stuff@cov.unscaled,
+      correlation = stuff@correlation,
+      df = stuff@df,
+      sigma = stuff@sigma)
 
-  slot(answer, "coefficients") = stuff@coefficients  # Replace
+  slot(answer, "coefficients") <- stuff@coefficients  # Replace
   if (is.numeric(stuff@dispersion))
-    slot(answer, "dispersion") = stuff@dispersion
+    slot(answer, "dispersion") <- stuff@dispersion
 
-  presid = residuals(object, type = "pearson")
+  presid <- residuals(object, type = "pearson")
   if (length(presid))
-    answer@pearson.resid= as.matrix(presid)
+    answer@pearson.resid <- as.matrix(presid)
 
-    slot(answer, "anova") = aod 
+  slot(answer, "anova") <- aod 
 
   answer
 }
@@ -140,27 +141,27 @@ show.summary.vgam <- function(x, quote = TRUE, prefix = "",
 
   prose <- ""
   if (length(x@dispersion)) {
-      if (is.logical(x@misc$estimated.dispersion) &&
-         x@misc$estimated.dispersion)
-          prose <- "(Estimated) " else {
+    if (is.logical(x@misc$estimated.dispersion) &&
+        x@misc$estimated.dispersion) {
+      prose <- "(Estimated) " 
+    } else {
+      if (is.numeric(x@misc$default.dispersion) &&
+          x@dispersion == x@misc$default.dispersion)
+        prose <- "(Default) "
 
-          if (is.numeric(x@misc$default.dispersion) &&
-             x@dispersion==x@misc$default.dispersion)
-              prose <- "(Default) "
-
-          if (is.numeric(x@misc$default.dispersion) &&
-             x@dispersion!=x@misc$default.dispersion)
-              prose <- "(Pre-specified) "
-      }
-      cat(paste("\n", prose, "Dispersion Parameter for ",
-          x@family@vfamily[1],
-          " family:   ",
-          format(round(x@dispersion, digits)), "\n", sep = ""))
+      if (is.numeric(x@misc$default.dispersion) &&
+          x@dispersion != x@misc$default.dispersion)
+        prose <- "(Pre-specified) "
+    }
+    cat(paste("\n", prose, "Dispersion Parameter for ",
+        x@family@vfamily[1],
+        " family:   ",
+        format(round(x@dispersion, digits)), "\n", sep = ""))
   }
 
-    if (length(deviance(x)))
-      cat("\nResidual deviance: ", format(round(deviance(x), digits)),
-          "on", format(round(rdf, 3)), "degrees of freedom\n")
+  if (length(deviance(x)))
+    cat("\nResidual deviance: ", format(round(deviance(x), digits)),
+        "on", format(round(rdf, 3)), "degrees of freedom\n")
 
   if (length(logLik.vlm(x)))
     cat("\nLog-likelihood:", format(round(logLik.vlm(x), digits)),
@@ -177,7 +178,7 @@ show.summary.vgam <- function(x, quote = TRUE, prefix = "",
   cat("\nNumber of iterations: ", x@iter, "\n")
 
   if (length(x@anova)) {
-      show.vanova(x@anova, digits = digits)   # ".vanova" for Splus6
+    show.vanova(x@anova, digits = digits)   # ".vanova" for Splus6
   }
 
   invisible(NULL)
@@ -186,15 +187,15 @@ show.summary.vgam <- function(x, quote = TRUE, prefix = "",
 
 
 
-    setMethod("summary", "vgam",
-             function(object, ...)
-             summaryvgam(object, ...))
+setMethod("summary", "vgam",
+          function(object, ...)
+          summaryvgam(object, ...))
 
 
 
-    setMethod("show", "summary.vgam",
-             function(object)
-             show.summary.vgam(object))
+setMethod("show", "summary.vgam",
+          function(object)
+          show.summary.vgam(object))
 
 
 
@@ -204,14 +205,14 @@ show.vanova <- function(x, digits = .Options$digits, ...) {
   rrr <- row.names(x) 
   heading <- attr(x, "heading")
   if (!is.null(heading))
-      cat(heading, sep = "\n")
+    cat(heading, sep = "\n")
   attr(x, "heading") <- NULL
   for(i in 1:length(x)) {
-      xx <- x[[i]]
-      xna <- is.na(xx)
-      xx <- format(zapsmall(xx, digits))
-      xx[xna] <- ""
-      x[[i]] <- xx
+    xx <- x[[i]]
+    xna <- is.na(xx)
+    xx <- format(zapsmall(xx, digits))
+    xx[xna] <- ""
+    x[[i]] <- xx
   }
   print.data.frame(as.data.frame(x, row.names = rrr))
   invisible(x)

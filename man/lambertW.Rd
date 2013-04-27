@@ -80,9 +80,10 @@ this would give \eqn{W(z) \leq -1}{W(z) <= -1}.
 
 }
 \examples{ \dontrun{
-curve(lambertW, -exp(-1), 3, xlim = c(-1, 3), ylim = c(-2, 1), col = "red")
-abline(v = -exp(-1), h = -1, lty = "dotted")
-abline(h = 0, v = 0, lty = "dashed", lwd = 2) }
+curve(lambertW, -exp(-1), 3, xlim = c(-1, 3), ylim = c(-2, 1),
+      las = 1, col = "orange")
+abline(v = -exp(-1), h = -1, lwd = 2, lty = "dotted", col = "gray")
+abline(h = 0, v = 0, lty = "dashed", col = "blue") }
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

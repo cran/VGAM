@@ -15,7 +15,8 @@ Quasi-variances Preprocessing Function
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~
 }
 \usage{
-Qvar(object, factorname = NULL, coef.indices = NULL, labels = NULL,
+Qvar(object, factorname = NULL, which.eta = 1,
+     coef.indices = NULL, labels = NULL,
      dispersion = NULL, reference.name = "(reference)", estimates = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -31,6 +32,19 @@ Qvar(object, factorname = NULL, coef.indices = NULL, labels = NULL,
 
 %%     ~~Describe \code{object} here~~
 }
+\item{which.eta}{
+  A single integer from the set \code{1:M}.
+  Specifies which linear predictor to use.
+  Let the value of \code{which.eta} be called \eqn{j}.
+  Then the factor should appear in that linear predictor, hence
+  the \eqn{j}th row of the constraint matrix corresponding
+  to the factor should have at least one nonzero value.
+  Currently the \eqn{j}th row must have exactly one nonzero value
+  because programming it for more than one nonzero value is difficult.
+
+
+}
+
 \item{factorname}{
   Character.
   If the \code{\link{vglm}} object contains more than one
@@ -194,6 +208,7 @@ Qvar(object, factorname = NULL, coef.indices = NULL, labels = NULL,
 %% ~~objects to See Also as \code{\link{help}}, ~~~
 }
 \examples{
+# Example 1
 data("ships", package = "MASS")
 
 Shipmodel <- vglm(incidents ~ type + year + period,
@@ -221,6 +236,36 @@ fit3 <- rcim(Qvar(cbind(0, rbind(0, vcov(Shipmodel)[2:5, 2:5])),
 (QuasiVar <- diag(predict(fit3)[, c(TRUE, FALSE)]) / 2)   # Version 2
 (QuasiSE  <- sqrt(quasiVar))
 \dontrun{ plotqvar(fit3) }
+
+
+# Example 2: a model with M > 1 linear predictors
+\dontrun{ require(VGAMdata)
+xs.nz.f <- subset(xs.nz, sex == "F")
+xs.nz.f <- subset(xs.nz.f, !is.na(babies)  & !is.na(age) & !is.na(ethnic))
+xs.nz.f$babies <- as.numeric(as.character(xs.nz.f$babies))
+xs.nz.f <- subset(xs.nz.f, babies >=  0)
+xs.nz.f <- subset(xs.nz.f, as.numeric(as.character(ethnic)) <=  2)
+
+clist <- list("bs(age, df = 4)" = rbind(1, 0),
+              "bs(age, df = 3)" = rbind(0, 1),
+              "ethnic" = diag(2),
+              "(Intercept)" = diag(2))
+fit1 <- vglm(babies ~ bs(age, df = 4) + bs(age, df = 3) + ethnic,
+            zipoissonff(zero = NULL), xs.nz.f,
+            constraints = clist, trace = TRUE)
+Fit1 <- rcim(Qvar(fit1, "ethnic", which.eta = 1),
+             normal1("explink", imethod = 1), maxit = 99, trace = TRUE)
+Fit2 <- rcim(Qvar(fit1, "ethnic", which.eta = 2),
+             normal1("explink", imethod = 1), maxit = 99, trace = TRUE)
+}
+\dontrun{ par(mfrow = c(1, 2))
+plotqvar(Fit1, scol = "blue", pch = 16,
+         main = expression(eta[1]),
+         slwd = 1.5, las = 1, length.arrows = 0.07)
+plotqvar(Fit2, scol = "blue", pch = 16,
+         main = expression(eta[2]),
+         slwd = 1.5, las = 1, length.arrows = 0.07)
+}
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

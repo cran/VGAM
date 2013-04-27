@@ -19,15 +19,19 @@ multinomial(zero = NULL, parallel = FALSE, nointercept = NULL,
   linear/additive predictors are modelled as intercepts only.
   Any values must be from the set \{1,2,\ldots,\eqn{M}\}.
   The default value means none are modelled as intercept-only terms.
+  See \code{\link{CommonVGAMffArguments}} for more information.
+
 
   }
   \item{parallel}{
   A logical, or formula specifying which terms have
   equal/unequal coefficients.
 
+
   }
   \item{nointercept, whitespace}{
   See \code{\link{CommonVGAMffArguments}} for more details.
+
 
   }
   \item{refLevel}{
@@ -41,6 +45,7 @@ multinomial(zero = NULL, parallel = FALSE, nointercept = NULL,
   (\code{drop.unused.levels = TRUE} or
    \code{drop.unused.levels = FALSE}).
   See the example below.
+
 
   }
 }
@@ -282,21 +287,21 @@ nn <- 100  # Number of people who travel to work
 M <- 3  # There are M+1 models of transport to go to work
 ycounts <- matrix(0, nn, M+1)
 ycounts[cbind(1:nn, sample(x = M+1, size = nn, replace = TRUE))] = 1
-dimnames(ycounts) = list(NULL, c("bus","train","car","walk"))
-gotowork = data.frame(cost.bus  = runif(nn), time.bus  = runif(nn), 
-                      cost.train= runif(nn), time.train= runif(nn),
-                      cost.car  = runif(nn), time.car  = runif(nn),
-                      cost.walk = runif(nn), time.walk = runif(nn))
-gotowork = round(gotowork, dig = 2) # For convenience
-gotowork = transform(gotowork,
-                     Cost.bus   = cost.bus   - cost.walk,
-                     Cost.car   = cost.car   - cost.walk,
-                     Cost.train = cost.train - cost.walk,
-                     Cost       = cost.train - cost.walk, # for labelling
-                     Time.bus   = time.bus   - time.walk,
-                     Time.car   = time.car   - time.walk,
-                     Time.train = time.train - time.walk,
-                     Time       = time.train - time.walk) # for labelling
+dimnames(ycounts) <- list(NULL, c("bus","train","car","walk"))
+gotowork <- data.frame(cost.bus  = runif(nn), time.bus  = runif(nn), 
+                       cost.train= runif(nn), time.train= runif(nn),
+                       cost.car  = runif(nn), time.car  = runif(nn),
+                       cost.walk = runif(nn), time.walk = runif(nn))
+gotowork <- round(gotowork, dig = 2) # For convenience
+gotowork <- transform(gotowork,
+                      Cost.bus   = cost.bus   - cost.walk,
+                      Cost.car   = cost.car   - cost.walk,
+                      Cost.train = cost.train - cost.walk,
+                      Cost       = cost.train - cost.walk, # for labelling
+                      Time.bus   = time.bus   - time.walk,
+                      Time.car   = time.car   - time.walk,
+                      Time.train = time.train - time.walk,
+                      Time       = time.train - time.walk) # for labelling
 fit <- vglm(ycounts ~ Cost + Time,
             multinomial(parall = TRUE ~ Cost + Time - 1),
             xij = list(Cost ~ Cost.bus + Cost.train + Cost.car,

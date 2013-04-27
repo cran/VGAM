@@ -88,9 +88,10 @@ data(alclevels)
 
 }
 \seealso{
-  \code{\link{rrvglm}},
-  \code{\link{rcim}},
-  \code{\link{grc}}.
+  \code{\link[VGAM]{rrvglm}},
+  \code{\link[VGAM]{rcim}},
+  \code{\link[VGAM]{grc}}.
+
 
 }
 \examples{
@@ -106,9 +107,11 @@ abline(v = sort(1 + c((0:7) * 24, (0:6) * 24 + 12)), lty = "dashed",
        col = c("purple", "orange")) }
 
 # Goodmans RC models
+\dontrun{
 fitgrc1 <- grc(alcoff) # Rank-1 model
 fitgrc2 <- grc(alcoff, Rank = 2, Corner = FALSE, Uncor = TRUE)
-print(Coef(fitgrc2), dig = 2)
+Coef(fitgrc2)
+}
 \dontrun{ biplot(fitgrc2, scaleA = 2.3, Ccol = "blue", Acol = "orange",
        Clabels = as.character(1:23), xlim = c(-1.3, 2.3),
        ylim = c(-1.2, 1)) }
@@ -126,5 +129,6 @@ print(Coef(fitgrc2), dig = 2)
 %\alias{crashp}     Table 45, p.84
 %\alias{alcoff}     Table  3, p.121
 %\alias{alclevels}  Table  2, p.132
+% print(Coef(fitgrc2), dig = 2)
 
 

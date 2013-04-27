@@ -22,7 +22,7 @@ linear predictors and \eqn{n} is the number of observations.
     linear `coefficients' of the matrix of latent variables. 
     It is \eqn{M} by \eqn{R}. }
     \item{\code{B1}:}{Of class \code{"matrix"}, \bold{B1}.
-    These correspond to terms of the argument \code{Norrr}. }
+    These correspond to terms of the argument \code{noRRR}. }
     \item{\code{C}:}{Of class \code{"matrix"}, \bold{C}, the
     canonical coefficients. It has \eqn{R} columns. }
     \item{\code{Constrained}:}{Logical. Whether the model is
@@ -44,8 +44,8 @@ linear predictors and \eqn{n} is the number of observations.
           }
     \item{\code{Maximum}:}{Of class \code{"numeric"}, the 
           \eqn{M} maximum fitted values. That is, the fitted values 
-          at the optima for \code{Norrr = ~ 1} models.
-    If \code{Norrr} is not \code{~ 1} then these will be \code{NA}s. }
+          at the optima for \code{noRRR = ~ 1} models.
+    If \code{noRRR} is not \code{~ 1} then these will be \code{NA}s. }
     \item{\code{NOS}:}{Number of species.}
     \item{\code{Optimum}:}{Of class \code{"matrix"}, the values
           of the latent variables where the optima are. 
@@ -109,18 +109,18 @@ canonical Gaussian ordination.
 }
 
 \examples{
-x2 = rnorm(n <- 100)
-x3 = rnorm(n)
-x4 = rnorm(n)
-lv1 = 0 + x3 - 2*x4
-lambda1 = exp(3 - 0.5 * (lv1-0)^2)
-lambda2 = exp(2 - 0.5 * (lv1-1)^2)
-lambda3 = exp(2 - 0.5 * ((lv1+4)/2)^2)
-y1 = rpois(n, lambda1)
-y2 = rpois(n, lambda2)
-y3 = rpois(n, lambda3)
-yy = cbind(y1,y2,y3)
-# vvv p1 = cqo(yy ~ x2 + x3 + x4, fam=poissonff, trace=FALSE)
+x2 <- rnorm(n <- 100)
+x3 <- rnorm(n)
+x4 <- rnorm(n)
+lv1 <- 0 + x3 - 2*x4
+lambda1 <- exp(3 - 0.5 * (lv1-0)^2)
+lambda2 <- exp(2 - 0.5 * (lv1-1)^2)
+lambda3 <- exp(2 - 0.5 * ((lv1+4)/2)^2)
+y1 <- rpois(n, lambda1)
+y2 <- rpois(n, lambda2)
+y3 <- rpois(n, lambda3)
+yy <- cbind(y1, y2, y3)
+# vvv p1 <- cqo(yy ~ x2 + x3 + x4, fam=poissonff, trace=FALSE)
 \dontrun{
 lvplot(p1, y = TRUE, lcol = 1:3, pch = 1:3, pcol = 1:3)
 }

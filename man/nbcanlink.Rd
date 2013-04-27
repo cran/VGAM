@@ -74,9 +74,9 @@ nbcanlink(theta, size = NULL, wrt.eta = NULL, bvalue = NULL,
 }
 \references{
 
-  Yee, T. W. (2012)
-  Two-parameter reduced-rank vector generalized linear models.
-  \emph{In preparation}.
+  Yee, T. W. (2013)
+  Reduced-rank vector generalized linear models with two linear predictors.
+  \emph{Computational Statistics and Data Analysis}.
 
 
   Hilbe, J. M. (2011)

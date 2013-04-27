@@ -102,8 +102,8 @@ London: Springer-Verlag.
 
 }
 \examples{
-\dontrun{ x <- seq(-0.2, 3, by = 0.01)
-loc <- 0; sigma <- 1; xi <- -0.4
+\dontrun{ loc <- 2; sigma <- 1; xi <- -0.4
+x <- seq(loc - 0.2, loc + 3, by = 0.01)
 plot(x, dgpd(x, loc, sigma, xi), type = "l", col = "blue", ylim = c(0, 1),
      main = "Blue is density, red is cumulative distribution function",
      sub = "Purple are 5,10,...,95 percentiles", ylab = "", las = 1)
@@ -113,6 +113,8 @@ lines(qgpd(seq(0.05, 0.95, by = 0.05), loc, sigma, xi),
       col = "purple", lty = 3, type = "h")
 lines(x, pgpd(x, loc, sigma, xi), type = "l", col = "red")
 abline(h = 0, lty = 2)
+
+pgpd(qgpd(seq(0.05, 0.95, by = 0.05), loc, sigma, xi), loc, sigma, xi)
 }
 }
 \keyword{distribution}

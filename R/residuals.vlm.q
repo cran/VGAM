@@ -1,192 +1,204 @@
 # These functions are
-# Copyright (C) 1998-2012 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2013 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
 
 
 
-residualsvlm  <- function(object,
-                       type = c("response", "deviance", "pearson", "working"))
-{
-    if (mode(type) != "character" && mode(type) != "name")
-        type <- as.character(substitute(type))
-    type <- match.arg(type, c("response", "deviance", "pearson", "working"))[1]
 
-    na.act = object@na.action
-    object@na.action = list()
 
-    pooled.weight <- object@misc$pooled.weight
-    if (is.null(pooled.weight))
-        pooled.weight <- FALSE
 
-    answer = 
-    switch(type,
-        working = if (pooled.weight) NULL else object@residuals,
-        pearson = {
-            if (pooled.weight) return(NULL)
-            n <- object@misc$n
-            M <- object@misc$M
-            wz <- weights(object, type="w")   # $weights
-            if (!length(wz))
-                wz <- if (M==1) rep(1, n) else matrix(1, n, M)
+residualsvlm  <-
+  function(object,
+           type = c("response", "deviance", "pearson", "working")) {
 
-            if (M==1) {
-                if (any(wz < 0))
-                    warning(paste("some weights are negative.",
-                                  "Their residual will be assigned NA"))
-                ans <- sqrt(c(wz)) * c(object@residuals)
-                names(ans) <- names(object@residuals)
-                ans 
-            } else {
-                wz.sqrt <- matrix.power(wz, M = M, power = 0.5, fast = TRUE)
-                ans <- mux22(wz.sqrt, object@residuals,
-                             M = M, upper = FALSE)
-                dim(ans) <- c(M, n) 
-                ans <- t(ans) 
-                dimnames(ans) <- dimnames(object@residuals)   # n x M
-                ans
-            }
-        },
-        deviance = {
-            M <- object@misc$M
-            if (M > 1)
-                return(NULL)
-            ans <- residualsvlm(object, type = "pearson")
+  if (mode(type) != "character" && mode(type) != "name")
+    type <- as.character(substitute(type))
+  type <- match.arg(type, c("response", "deviance", "pearson", "working"))[1]
+
+  na.act <- object@na.action
+  object@na.action <- list()
+
+  pooled.weight <- object@misc$pooled.weight
+  if (is.null(pooled.weight))
+    pooled.weight <- FALSE
+
+  answer <- 
+  switch(type,
+      working = if (pooled.weight) NULL else object@residuals,
+      pearson = {
+          if (pooled.weight) return(NULL)
+          n <- object@misc$n
+          M <- object@misc$M
+          wz <- weights(object, type = "w") # $weights
+          if (!length(wz))
+            wz <- if (M == 1) rep(1, n) else matrix(1, n, M)
+
+          if (M == 1) {
+            if (any(wz < 0))
+              warning(paste("some weights are negative.",
+                            "Their residual will be assigned NA"))
+            ans <- sqrt(c(wz)) * c(object@residuals)
+            names(ans) <- names(object@residuals)
+            ans 
+          } else {
+            wz.sqrt <- matrix.power(wz, M = M, power = 0.5, fast = TRUE)
+            ans <- mux22(wz.sqrt, object@residuals,
+                           M = M, upper = FALSE)
+            dim(ans) <- c(M, n) 
+            ans <- t(ans) 
+            dimnames(ans) <- dimnames(object@residuals) # n x M
             ans
-        },
-        response = object@residuals
-    )
+          }
+      },
+      deviance = {
+        M <- object@misc$M
+        if (M > 1)
+          return(NULL)
+        ans <- residualsvlm(object, type = "pearson")
+        ans
+      },
+      response = object@residuals
+  )
 
-    if (length(answer) && length(na.act)) {
-        napredict(na.act[[1]], answer)
-    } else {
-        answer
-    }
+  if (length(answer) && length(na.act)) {
+    napredict(na.act[[1]], answer)
+  } else {
+    answer
+  }
 }
 
 
 
-residualsvglm  <- function(object,
-              type = c("working", "pearson", "response", "deviance", "ldot"),
-              matrix.arg=TRUE)
+residualsvglm  <-
+  function(object,
+           type = c("working", "pearson", "response", "deviance", "ldot"),
+           matrix.arg = TRUE)
 {
 
-    if (mode(type) != "character" && mode(type) != "name")
-        type <- as.character(substitute(type))
-    type <- match.arg(type,
-            c("working", "pearson", "response", "deviance", "ldot"))[1]
+  if (mode(type) != "character" && mode(type) != "name")
+    type <- as.character(substitute(type))
+  type <- match.arg(type,
+          c("working", "pearson", "response", "deviance", "ldot"))[1]
 
-    na.act = object@na.action
-    object@na.action = list()
+  na.act <- object@na.action
+  object@na.action <- list()
 
-    pooled.weight <- object@misc$pooled.weight
-    if (is.null(pooled.weight))
-        pooled.weight <- FALSE
+  pooled.weight <- object@misc$pooled.weight
+  if (is.null(pooled.weight))
+    pooled.weight <- FALSE
 
-    answer = 
-    switch(type,
-        working = if (pooled.weight) NULL else object@residuals,
-        pearson = {
-            if (pooled.weight) return(NULL)
+  answer <- 
+  switch(type,
+      working = if (pooled.weight) NULL else object@residuals,
+      pearson = {
+          if (pooled.weight) return(NULL)
 
-            n <- object@misc$n
-            M <- object@misc$M
-            wz <- weights(object, type="w")   # $weights
+          n <- object@misc$n
+          M <- object@misc$M
+          wz <- weights(object, type = "w")   # $weights
 
-            if (M==1) {
-                if (any(wz < 0))
-                    warning(paste("some weights are negative.",
-                                  "Their residual will be assigned NA"))
-                ans <- sqrt(c(wz)) * c(object@residuals)
-                names(ans) <- names(object@residuals)
-                ans 
+          if (M == 1) {
+            if (any(wz < 0))
+              warning(paste("some weights are negative.",
+                            "Their residual will be assigned NA"))
+            ans <- sqrt(c(wz)) * c(object@residuals)
+            names(ans) <- names(object@residuals)
+            ans 
+          } else {
+            wz.sqrt <- matrix.power(wz, M = M, power = 0.5, fast = TRUE)
+            ans <- mux22(wz.sqrt, object@residuals,
+                         M = M, upper = FALSE)
+            dim(ans) <- c(M, n)
+            ans <- t(ans) 
+            dimnames(ans) <- dimnames(object@residuals)   # n x M
+            ans
+          }
+      },
+      deviance = {
+        n <- object@misc$n
+
+        y <- as.matrix(object@y)
+        mu <- object@fitted.values
+
+
+        w <- object@prior.weights
+        if (!length(w))
+          w <- rep(1, n)
+        eta <- object@predictors
+
+        dev.fn <- object@family@deviance # May not 'exist' for that model
+        if (length(body(dev.fn)) > 0) {
+          extra <- object@extra
+          ans <- dev.fn(mu = mu,y = y, w = w,
+                        residuals = TRUE, eta = eta, extra)
+          if (length(ans)) {
+            lob <- labels(object@residuals)
+            if (is.list(lob)) {
+              if (is.matrix(ans))
+                dimnames(ans) <- lob else
+                names(ans) <- lob[[1]]
             } else {
-                wz.sqrt <- matrix.power(wz, M=M, power=0.5, fast=TRUE)
-                ans <- mux22(wz.sqrt, object@residuals,
-                             M = M, upper = FALSE)
-                dim(ans) <- c(M,n) 
-                ans <- t(ans) 
-                dimnames(ans) <- dimnames(object@residuals)   # n x M
-                ans
+              names(ans) <- lob
             }
-        },
-        deviance = {
-            n <- object@misc$n
+          }
+          ans
+        } else {
+          NULL 
+        }
+      },
+      ldot = {
+          n <- object@misc$n
+          y <- as.matrix(object@y)
+          mu <- object@fitted
+          w <- object@prior.weights
+          if (is.null(w))
+              w <- rep(1, n)
+          eta <- object@predictors
+          if (!is.null(ll.fn <- object@family@loglikelihood)) {
+              extra <- object@extra
+              ans <- ll.fn(mu = mu,y = y,w = w,
+                           residuals = TRUE, eta = eta, extra)
+              if (!is.null(ans)) {
+                ans <- c(ans) # ldot residuals can only be a vector
+                names(ans) <- labels(object@residuals)
+              }
+              ans
+          } else NULL 
+      },
+      response = {
+          y <- object@y
 
-            y <- as.matrix(object@y)
-            mu <- object@fitted.values
+          mu <- fitted(object)
 
+          true.mu <- object@misc$true.mu
+          if (is.null(true.mu))
+            true.mu <- TRUE
 
-            w <- object@prior.weights
-            if (!length(w))
-                w <- rep(1, n)
-            eta <- object@predictors
-
-            dev.fn <- object@family@deviance # May not 'exist' for that model
-            if (( is.R() && length(body(dev.fn)) > 0) ||
-               (!is.R() && length(args(dev.fn)) > 1)) {
-                extra <- object@extra
-                ans <- dev.fn(mu=mu,y=y,w=w,residuals=TRUE,eta=eta,extra)
-                if (length(ans)) {
-                    lob <- labels(object@residuals)
-                    if (is.list(lob)) {
-                        if (is.matrix(ans)) dimnames(ans) <- lob else 
-                        names(ans) <- lob[[1]]
-                    } else 
-                        names(ans) <- lob
-                }
-                ans
-            } else NULL 
-        },
-        ldot = {
-            n <- object@misc$n
-            y <- as.matrix(object@y)
-            mu <- object@fitted
-            w <- object@prior.weights
-            if (is.null(w))
-                w <- rep(1, n)
-            eta <- object@predictors
-            if (!is.null(ll.fn <- object@family@loglikelihood)) {
-                extra <- object@extra
-                ans <- ll.fn(mu=mu,y=y,w=w,residuals=TRUE,eta=eta,extra)
-                if (!is.null(ans)) {
-                    ans <- c(ans)   # ldot residuals can only be a vector
-                    names(ans) <- labels(object@residuals)
-                }
-                ans
-            } else NULL 
-        },
-        response = {
-            y <- object@y
-
-            mu <- fitted(object)
-
-            true.mu <- object@misc$true.mu
-            if (is.null(true.mu))
-                true.mu <- TRUE
- 
-            ans <- if (true.mu) y - mu else NULL
+          ans <- if (true.mu) y - mu else NULL
 
 
-            if (!matrix.arg && length(ans)) {
-                if (ncol(ans) == 1) {
-                    names.ans = dimnames(ans)[[1]] 
-                    ans = c(ans) 
-                    names(ans) = names.ans
-                    ans
-                } else {
-                    warning("ncol(ans) is not 1")
-                    ans
-                }
-            } else ans
-        })
+          if (!matrix.arg && length(ans)) {
+            if (ncol(ans) == 1) {
+              names.ans <- dimnames(ans)[[1]] 
+              ans <- c(ans) 
+              names(ans) <- names.ans
+              ans
+            } else {
+              warning("ncol(ans) is not 1")
+              ans
+            }
+          } else {
+            ans
+          }
+      })
 
-    if (length(answer) && length(na.act)) {
-        napredict(na.act[[1]], answer)
-    } else {
-        answer
-    }
+  if (length(answer) && length(na.act)) {
+    napredict(na.act[[1]], answer)
+  } else {
+    answer
+  }
 }
 
 
@@ -194,24 +206,23 @@ residualsvglm  <- function(object,
 
 
 residualsqrrvglm  <- function(object,
-              type = c("response"),
-              matrix.arg = TRUE)
+                              type = c("response"),
+                              matrix.arg = TRUE)
 {
 
 
   if (mode(type) != "character" && mode(type) != "name")
     type <- as.character(substitute(type))
-  type <- match.arg(type,
-          c("response"))[1]
+  type <- match.arg(type, c("response"))[1]
 
-  na.act = object@na.action
-  object@na.action = list()
+  na.act <- object@na.action
+  object@na.action <- list()
 
   pooled.weight <- object@misc$pooled.weight
   if (is.null(pooled.weight))
     pooled.weight <- FALSE
 
-  answer = 
+  answer <- 
   switch(type,
     working = if (pooled.weight) NULL else object@residuals,
     pearson = {
@@ -229,16 +240,16 @@ residualsqrrvglm  <- function(object,
 
       true.mu <- object@misc$true.mu
       if (is.null(true.mu))
-          true.mu <- TRUE
+        true.mu <- TRUE
 
       ans <- if (true.mu) y - mu else NULL
 
 
       if (!matrix.arg && length(ans)) {
         if (ncol(ans) == 1) {
-          names.ans = dimnames(ans)[[1]] 
-          ans = c(ans) 
-          names(ans) = names.ans
+          names.ans <- dimnames(ans)[[1]] 
+          ans <- c(ans) 
+          names(ans) <- names.ans
           ans
         } else {
           warning("ncol(ans) is not 1")

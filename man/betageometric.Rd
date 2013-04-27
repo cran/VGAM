@@ -108,9 +108,9 @@ betageometric(lprob = "logit", lshape = "loge",
 
 }
 \examples{
-bg.data = data.frame(y = 0:11, wts = c(227,123,72,42,21,31,11,14,6,4,7,28))
-fit  = vglm(y ~ 1, betageometric, bg.data, weight = wts, trace = TRUE)
-fitg = vglm(y ~ 1,     geometric, bg.data, weight = wts, trace = TRUE)
+bdata <- data.frame(y = 0:11, wts = c(227,123,72,42,21,31,11,14,6,4,7,28))
+fit  <- vglm(y ~ 1, betageometric, bdata, weight = wts, trace = TRUE)
+fitg <- vglm(y ~ 1,     geometric, bdata, weight = wts, trace = TRUE)
 coef(fit, matrix = TRUE)
 Coef(fit)
 sqrt(diag(vcov(fit, untransform = TRUE)))

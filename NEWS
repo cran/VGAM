@@ -6,6 +6,98 @@
 
 
 
+                CHANGES IN VGAM VERSION 0.9-1
+
+NEW FEATURES
+
+    o   A companion package, called \pkg{VGAMdata}, is new.
+        Some large data sets previously in \pkg{VGAM} have
+        been shifted there, e.g., xs.nz and ugss.
+        In \pkg{VGAMdata} there is (new) oly12 and students.tw.
+    o   pnorm2() argument names have changed from 'sd1' to
+        'var1', etc. and 'rho' to 'cov12'.
+        See documentation.
+        Warning given if it returns any negative value.
+    o   Introduction of g-type arguments for grid search.
+    o   Improved initial values for: lomax().
+    o   Argument 'bred' works for poissonff().
+    o   latvar() generic available, identical to lv(). But the
+        latter will be withdrawn soon.
+    o   Rank() generic available for RR-VGLMs, QRR-VGLMs, CAO models.
+    o   New function: pgamma.deriv(), pgamma.deriv.unscaled(),
+        vlm2lm.model.matrix().
+    o   New VGAM family functions:
+        posbernoulli.b(), posbernoulli.t(), posbernoulli.tb(tau = 2 or 3).
+        These provide estimates of N as well as its standard error.
+        Also, truncgeometric() and truncweibull() are new.
+        Also, SUR() is new.
+        Also, binom2.rho.ss() does not work yet.
+    o   New argument 'matrix.out = FALSE' for constraints.vlm().
+    o   cm.vgam() has a few more arguments to provide more flexibility.
+        But there should be no changes for VGAM users at this stage.
+    o   Renamed functions: confint_rrnb() is now renamed to
+        Confint.rrnb() and confint_nb1() is now renamed to Confint.nb1().
+    o   Some changes to component names returned by Confint.rrnb() and
+        Confint.nb1(): $CI. and $SE. are uppercase.
+    o   Some zero-inflated VGAM family functions return a
+        "vglm" object with @misc$pstr0 for the estimated
+        probability of a structural zero.
+    o   New data set: olym12.
+        Note that Students.tw is earmarked for \pkg{VGAMdata}.
+    o   Data sets renamed:
+        olympic renamed to olym08.
+    o   Qvar() has a 'which.eta = 1' argument specifying which linear
+        predictor to use. So quasi-variances are now
+        available to models with M > 1 linear predictors.
+    o   Tested okay on R 3.0.0.
+
+
+BUG FIXES and CHANGES
+
+    o   VGAM now depends on R >= 2.15.1.
+    o   Fortran array bounds problems (picked up by
+        AddressSanitizer) have been fixed.
+    o   All "no visible binding for global variables" warnings
+        have been suppressed.
+    o   vgam() with a s(spar = myspar) term should run, and if myspar
+        is extracted from a previous vgam() model then the two models
+        should effectively be the same.
+    o   summaryvgam() did not calculate or print out all the p-values
+        for testing linearity.
+    o   fnormal1()@initialize was faulty wrt lm.wfit().
+    o   zageometric() and zigeometric() handle multiple responses.
+    o   mlogit(inverse = TRUE) and mlogit(inverse = FALSE)
+        were switched. Now multinomial() makes use of mlogit().
+        mlogit() now calls care.exp() to avoid overflow and underflow;
+        this stops multinomial() from returning a NA as a fitted
+        value if abs(eta) is very large.
+    o   arwz2wz() introduced to simplify multiple responses
+        working weight matrices (wrt construction).
+    o   Renamed functions:
+        dhuggins91() is now dposbern(),
+        huber() is now huber2(),
+        ei() is now eifun(), eij() is now eijfun(),
+        rss.vgam() is now ResSS.vgam().
+    o   fisherz(theta) was wrong. Corrected, then replaced by
+        atanh(theta).
+    o   [dpq]dagum(x), [dpq]lomax(x), [dpq]sinmad(x), etc. handled
+        correctly for x = 0, Inf, -Inf, NaN, NA.
+    o   qdagum(x) failed due to 'Scale' [thanks to Alena Tartalova].
+    o   Arguments renamed:
+        'intercept.apply' renamed to 'apply.parint',
+        'Norrr' renamed to 'noRRR' (warning/error message issued),
+        'nowarning' renamed to 'noWarning' in vglm.control().
+    o   seq2binomial()@loglikelihood includes the binomial
+        lchoose() constants.
+    o   qgev() bug [thanks to Alex Cannon], and qgpd().
+    o   cao() produces less error/warning messages usually.
+    o   Data sets corrected for errors: chinese.nz.
+    o   Data set changes: gew had incorrect y1 and y2 values,
+        and variables x1 to x4 have been renamed to value.g, capital.w,
+        etc. The year variable has been added.
+
+
+
                 CHANGES IN VGAM VERSION 0.9-0
 
 NEW FEATURES

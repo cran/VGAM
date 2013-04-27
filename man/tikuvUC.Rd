@@ -10,6 +10,7 @@
   random generation for 
   the short-tailed symmetric distribution of Tiku and Vaughan (1999).
 
+
 }
 \usage{
 dtikuv(x, d, mean = 0, sigma = 1, log = FALSE)
@@ -66,6 +67,7 @@ rtikuv(n, d, mean = 0, sigma = 1, Smallno = 1.0e-6)
 %}
 \seealso{
   \code{\link{tikuv}}.
+
 
 }
 \examples{

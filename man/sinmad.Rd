@@ -47,7 +47,7 @@ paralogistic (\eqn{a=q}).
 The Singh-Maddala distribution has density
   \deqn{f(y) = aq y^{a-1} / [b^a \{1 + (y/b)^a\}^{1+q}]}{%
         f(y) = aq y^(a-1) / [b^a (1 + (y/b)^a)^(1+q)]}
-  for \eqn{a > 0}, \eqn{b > 0}, \eqn{q > 0}, \eqn{y > 0}.
+  for \eqn{a > 0}, \eqn{b > 0}, \eqn{q > 0}, \eqn{y \geq 0}{y >= 0}.
 Here, \eqn{b} is the scale parameter \code{scale},
 and the others are shape parameters.
 The cumulative distribution function is
@@ -64,6 +64,7 @@ provided \eqn{-a < 1 < aq}; these are returned as the fitted values.
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}},
   and \code{\link{vgam}}.
+
 
 }
 \references{
@@ -104,6 +105,24 @@ fit <- vglm(y ~ 1, sinmad(ishape1.a = exp(1)), sdata, trace = TRUE)
 coef(fit, matrix = TRUE)
 Coef(fit)
 summary(fit)
+
+# Harder problem (has the shape3.q parameter going to infinity)
+
+set.seed(3)
+sdata <- data.frame(y1 = rbeta(1000, 6, 6))
+# hist(with(sdata, y1))
+if (FALSE) {
+# This fails
+  fit1 <- vglm(y1 ~ 1, sinmad, data = sdata, trace = TRUE)
+  fit1 <- vglm(y1 ~ 1, sinmad, data = sdata, trace = TRUE, maxit = 6,
+               crit = "coef")
+  Coef(fit1)
+}
+# Try this remedy:
+fit2 <- vglm(y1 ~ 1, sinmad(ishape3.q = 3, lshape3.q = "loglog"),
+             data = sdata, trace = TRUE, stepsize = 0.05, maxit = 99)
+coef(fit2, matrix = TRUE)
+Coef(fit2)
 }
 \keyword{models}
 \keyword{regression}

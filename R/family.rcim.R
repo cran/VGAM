@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2012 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2013 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -40,8 +40,8 @@
 
 
 
-  noroweffects = FALSE
-  nocoleffects = FALSE
+  noroweffects <- FALSE
+  nocoleffects <- FALSE
 
   if (!is.Numeric(which.lp, allowable.length = 1,
                   integer.valued = TRUE, positive = TRUE))
@@ -59,7 +59,7 @@
   if (!inherits(family, "vglmff")) {
     stop("'family = ", family, "' is not a VGAM family function")
   }
-  efamily = family
+  efamily <- family
 
 
   if (!is.Numeric(Musual)) {
@@ -98,7 +98,7 @@
 
   yn1 <- if (length(dimnames(y)[[1]])) dimnames(y)[[1]] else
             paste("X2.", 1:nrow(y), sep = "")
-  warn.save = options()$warn
+  warn.save <- options()$warn
   options(warn = -3)    # Suppress the warnings (hopefully, temporarily)
   if (any(!is.na(as.numeric(substring(yn1, 1, 1)))))
     yn1 <- paste("X2.", 1:nrow(y), sep = "")
@@ -128,21 +128,21 @@
   Hlist <- list("(Intercept)" = matrix(1, ncol(y), 1))
 
   if (!noroweffects)
-  for(ii in 2:nrow(y)) {
-    Hlist[[   paste(rprefix, ii, sep = "")]] <- matrix(1, ncol(y), 1)
+    for(ii in 2:nrow(y)) {
+      Hlist[[paste(rprefix, ii, sep = "")]] <- matrix(1, ncol(y), 1)
 
 
-    .rcim.df[[paste(rprefix, ii, sep = "")]] <- modmat.row[, ii]
-  }
+      .rcim.df[[paste(rprefix, ii, sep = "")]] <- modmat.row[, ii]
+    }
 
 
   if (!nocoleffects)
-  for(ii in 2:ncol(y)) {
+    for(ii in 2:ncol(y)) {
 
 
-    Hlist[[   paste(cprefix, ii, sep = "")]] <- modmat.col[, ii, drop = FALSE]
-    .rcim.df[[paste(cprefix, ii, sep = "")]] <- rep(1, nrow(y))
-  }
+      Hlist[[   paste(cprefix, ii, sep = "")]] <- modmat.col[, ii, drop = FALSE]
+      .rcim.df[[paste(cprefix, ii, sep = "")]] <- rep(1, nrow(y))
+    }
 
   if (Rank > 0) {
     for(ii in 2:nrow(y)) {
@@ -179,7 +179,7 @@
 
 
   controlfun <- if (Rank == 0) rrvglm.control else rrvglm.control
-  controlfun <- if (Rank == 0)   vglm.control else rrvglm.control # orig.
+  controlfun <- if (Rank == 0)   vglm.control else rrvglm.control  # orig.
 
 
   mycontrol <- controlfun(Rank = Rank,
@@ -199,7 +199,7 @@
 
 
   if (Rank > 0)
-    mycontrol$Norrr <- as.formula(str1)  # Overwrite this
+    mycontrol$noRRR <- as.formula(str1)  # Overwrite this
 
   assign(".rcim.df", .rcim.df, envir = VGAM::VGAMenv)
 
@@ -212,13 +212,13 @@
 
   if (Musual > 1) {
     orig.Hlist <- Hlist
-    kmat1 = rbind(1, 0)
-    kmat0 = rbind(0, 1)
+    kmat1 <- rbind(1, 0)
+    kmat0 <- rbind(0, 1)
 
-    kmat1 = matrix(0, nrow = Musual, ncol = 1)
-    kmat1[which.lp, 1] = 1
-    kmat0 = matrix(1, nrow = Musual, ncol = 1)
-    kmat0[which.lp, 1] = 0
+    kmat1 <- matrix(0, nrow = Musual, ncol = 1)
+    kmat1[which.lp, 1] <- 1
+    kmat0 <- matrix(1, nrow = Musual, ncol = 1)
+    kmat0[which.lp, 1] <- 0
 
     for (ii in 1:length(Hlist)) {
       Hlist[[ii]] <- kronecker(Hlist[[ii]],
@@ -238,7 +238,7 @@
 
 
 
-  offset.matrix = matrix(offset, nrow = nrow(y),
+  offset.matrix <- matrix(offset, nrow = nrow(y),
                                  ncol = ncol(y) * Musual) # byrow = TRUE
 
   answer <- if (Rank > 0) {
@@ -292,7 +292,7 @@
 
 
 
-summaryrcim = function(object, ...) {
+summaryrcim <- function(object, ...) {
     rcim(object, summary.arg = TRUE, ...)
 }
 
@@ -329,19 +329,23 @@ setMethod("summary", "rcim",
 
 
 
- Rcim <- function (mat, rbaseline = 1, cbaseline = 1) {
+ Rcim <- function(mat, rbaseline = 1, cbaseline = 1) {
 
   mat <- as.matrix(mat)
   RRR <- dim(mat)[1]
   CCC <- dim(mat)[2]
     
-  if (is.null(rownames(mat))) 
-    rnames <- paste("X", 1:RRR, sep = "") else  
-                 rnames  <- rownames(mat)
+  rnames <- if (is.null(rownames(mat))) {
+    paste("X", 1:RRR, sep = "")
+  } else {
+    rownames(mat)
+  }
 
-  if (is.null(colnames(mat))) 
-    cnames <- paste("Y", 1:CCC, sep = "") else  
-                 cnames  <- colnames(mat)
+  cnames <- if (is.null(colnames(mat))) {
+    paste("Y", 1:CCC, sep = "")
+  } else {
+    colnames(mat)
+  }
 
   r.index <- if (is.character(rbaseline))  
                which(rownames(mat) == rbaseline) else
@@ -389,21 +393,21 @@ setMethod("summary", "rcim",
 
 
 
- plotrcim0  <- function (object,
+ plotrcim0  <- function(object,
      centered = TRUE, whichplots = c(1, 2),
      hline0 = TRUE, hlty = "dashed", hcol = par()$col, hlwd = par()$lwd,
-                         rfirst = 1, cfirst = 1,
-                         rtype = "h", ctype = "h",
-                         rcex.lab = 1, rcex.axis = 1, # rlabels = FALSE,
-                         rtick = FALSE,
-                         ccex.lab = 1, ccex.axis = 1, # clabels = FALSE,
-                         ctick = FALSE,
-                         rmain = "Row effects", rsub = "",
-                         rxlab = "", rylab = "Row effects",
-                         cmain = "Column effects", csub = "",
-                         cxlab = "", cylab = "Column effects",
-                         rcol = par()$col, ccol = par()$col,
-                         ...) {
+     rfirst = 1, cfirst = 1,
+     rtype = "h", ctype = "h",
+     rcex.lab = 1, rcex.axis = 1, # rlabels = FALSE,
+     rtick = FALSE,
+     ccex.lab = 1, ccex.axis = 1, # clabels = FALSE,
+     ctick = FALSE,
+     rmain = "Row effects", rsub = "",
+     rxlab = "", rylab = "Row effects",
+     cmain = "Column effects", csub = "",
+     cxlab = "", cylab = "Column effects",
+     rcol = par()$col, ccol = par()$col,
+     ...) {
 
  
   nparff <- if (is.numeric(object@family@infos()$Musual)) {
@@ -418,11 +422,11 @@ setMethod("summary", "rcim",
     warning("argument 'object' is not Rank-0")
 
 
-  n_lm  = nrow(object@y)
+  n_lm  <- nrow(object@y)
 
   cobj <- coefficients(object)
 
-  upperbound = if (!is.numeric(object@control$Rank) ||
+  upperbound <- if (!is.numeric(object@control$Rank) ||
                    object@control$Rank == 0) length(cobj) else
                length(object@control$colx1.index)
 
@@ -435,9 +439,9 @@ setMethod("summary", "rcim",
   orig.raxisl  <- rownames(object@y)
   orig.caxisl  <- colnames(object@y) 
   if (is.null(orig.raxisl))
-    orig.raxisl = as.character(1:nrow(object@y))
+    orig.raxisl <- as.character(1:nrow(object@y))
   if (is.null(orig.caxisl))
-    orig.caxisl = as.character(1:ncol(object@y))
+    orig.caxisl <- as.character(1:ncol(object@y))
     
   roweff.orig <- 
   roweff <- orig.roweff[c(rfirst:last.r,
@@ -447,8 +451,8 @@ setMethod("summary", "rcim",
                           if (cfirst > 1) 1:(cfirst-1) else NULL)]
 
   if (centered) {
-    roweff = scale(roweff, scale = FALSE)  # Center it only
-    coleff = scale(coleff, scale = FALSE)  # Center it only
+    roweff <- scale(roweff, scale = FALSE)  # Center it only
+    coleff <- scale(coleff, scale = FALSE)  # Center it only
   }
 
   raxisl <- orig.raxisl[c(rfirst:last.r,
@@ -525,9 +529,7 @@ setMethod("plot", "rcim",
 
 
 
-
-
-moffset <- function (mat, roffset = 0, coffset = 0, postfix = "") {
+moffset <- function(mat, roffset = 0, coffset = 0, postfix = "") {
 
 
 
@@ -538,7 +540,7 @@ moffset <- function (mat, roffset = 0, coffset = 0, postfix = "") {
     return(mat)
 
 
-  vecmat = c(unlist(mat))
+  vecmat <- c(unlist(mat))
   ind1 <- if (is.character(roffset))
              which(rownames(mat) == roffset) else
                    if (is.numeric(roffset)) roffset + 1 else
@@ -565,31 +567,31 @@ moffset <- function (mat, roffset = 0, coffset = 0, postfix = "") {
     stop("too large a value for argument 'coffset'")
 
 
-  start.ind = (ind2 - 1)* nrow(mat) + ind1
+  start.ind <- (ind2 - 1)* nrow(mat) + ind1
 
 
-  svecmat = vecmat[c(start.ind:(nrow(mat) * ncol(mat)),
+  svecmat <- vecmat[c(start.ind:(nrow(mat) * ncol(mat)),
                      0:(start.ind - 1))]
 
-  rownames.mat = rownames(mat)
+  rownames.mat <- rownames(mat)
   if (length(rownames.mat) != nrow(mat))
-    rownames.mat = paste("Row.", 1:nrow(mat), sep = "")
+    rownames.mat <- paste("Row.", 1:nrow(mat), sep = "")
 
-  colnames.mat = colnames(mat)
+  colnames.mat <- colnames(mat)
   if (length(colnames.mat) != ncol(mat))
-    colnames.mat = paste("Col.", 1:ncol(mat), sep = "")
+    colnames.mat <- paste("Col.", 1:ncol(mat), sep = "")
 
 
-  newrn = if (roffset > 0)
+  newrn <- if (roffset > 0)
             c(rownames.mat[c(ind1:nrow(mat))],
               paste(rownames.mat[0:(ind1-1)], postfix, sep = "")) else
            rownames.mat
 
-  newcn = c(colnames.mat[c(ind2:ncol(mat), 0:(ind2 - 1))])
+  newcn <- c(colnames.mat[c(ind2:ncol(mat), 0:(ind2 - 1))])
   if (roffset > 0)
-    newcn = paste(newcn, postfix, sep = "")
+    newcn <- paste(newcn, postfix, sep = "")
 
-  newmat = matrix(svecmat, nrow(mat), ncol(mat),
+  newmat <- matrix(svecmat, nrow(mat), ncol(mat),
                   dimnames = list(newrn, newcn))
   newmat
 }
@@ -612,7 +614,7 @@ moffset <- function (mat, roffset = 0, coffset = 0, postfix = "") {
 
 
 
-confint_rrnb <- function(rrnb2, level = 0.95) {
+Confint.rrnb <- function(rrnb2, level = 0.95) {
 
   if (class(rrnb2) != "rrvglm")
     stop("argument 'rrnb2' does not appear to be a rrvglm() object")
@@ -635,27 +637,27 @@ confint_rrnb <- function(rrnb2, level = 0.95) {
   delta1.hat <- exp(a21.hat * beta11.hat - beta21.hat)
   delta2.hat <- 2 - a21.hat
 
-  se.a21.hat <- sqrt(vcovrrvglm(rrnb2)["I(lv.mat)", "I(lv.mat)"])
+  SE.a21.hat <- sqrt(vcovrrvglm(rrnb2)["I(lv.mat)", "I(lv.mat)"])
 
 
-  ci.a21 <- a21.hat +  c(-1, 1) * qnorm(1 - (1 - level)/2) * se.a21.hat
+  ci.a21 <- a21.hat +  c(-1, 1) * qnorm(1 - (1 - level)/2) * SE.a21.hat
   (ci.delta2 <- 2 - rev(ci.a21)) # e.g., the 95 percent CI
 
   list(a21.hat    = a21.hat,
        beta11.hat = beta11.hat,
        beta21.hat = beta21.hat,
        CI.a21     = ci.a21,
-       ci.delta2  = ci.delta2,
+       CI.delta2  = ci.delta2,
        delta1     = delta1.hat,
        delta2     = delta2.hat,
-       se.a21.hat = se.a21.hat)
+       SE.a21.hat = SE.a21.hat)
 }
 
 
 
 
 
-confint_nb1 <- function(nb1, level = 0.95) {
+Confint.nb1 <- function(nb1, level = 0.95) {
 
 
 
@@ -692,13 +694,14 @@ confint_nb1 <- function(nb1, level = 0.95) {
   ci.mydiff <- mydiff + c(-1, 1) * qnorm(1 - (1 - level)/2) * se.mydiff
 
   ci.delta0 <- ci.exp.mydiff <- exp(ci.mydiff)
-  (ci.phi0 <- 1 + 1 / rev(ci.delta0)) # e.g., the 95 percent CI for phi0
+  (ci.phi0 <- 1 + 1 / rev(ci.delta0))  # e.g., the 95 percent CI for phi0
 
-  list(ci.phi0    = ci.phi0,
+  list(CI.phi0    = ci.phi0,
        CI.delta0  = ci.delta0,
        delta0     = delta0.hat,
        phi0       = phi0.hat)
 }
+
 
 
 
@@ -722,16 +725,16 @@ plota21 <- function(rrvglm2, plot.it = TRUE, nseq.a21 = 31,
 
 
   loglik.orig <- logLik(rrvglm2)
-  temp1 <- confint_rrnb(rrvglm2) # zz
+  temp1 <- Confint.rrnb(rrvglm2) # zz
 
   a21.hat <- (Coef(rrvglm2)@A)[2, 1]
-  se.a21.hat <- temp1$se.a21.hat
+  SE.a21.hat <- temp1$SE.a21.hat
 
 
-  se.a21.hat <- sqrt(vcov(rrvglm2)["I(lv.mat)", "I(lv.mat)"])
+  SE.a21.hat <- sqrt(vcov(rrvglm2)["I(lv.mat)", "I(lv.mat)"])
 
 
-  big.ci.a21 <- a21.hat +  c(-1, 1) * se.eachway * se.a21.hat
+  big.ci.a21 <- a21.hat +  c(-1, 1) * se.eachway * SE.a21.hat
   seq.a21 <- seq(big.ci.a21[1], big.ci.a21[2], length = nseq.a21)
   Hlist.orig <- constraints.vlm(rrvglm2, type = "term")
 
@@ -757,9 +760,9 @@ plota21 <- function(rrvglm2, plot.it = TRUE, nseq.a21 = 31,
 
        names(argslist) <- c(names(listcall)[-1])
 
-       argslist$trace       = trace.arg
-       argslist$etastart    = prev.etastart
-       argslist$constraints = Hlist.orig
+       argslist$trace       <- trace.arg
+       argslist$etastart    <- prev.etastart
+       argslist$constraints <- Hlist.orig
 
 
        for (kay in 2:length(argslist[["constraints"]])) {
@@ -767,7 +770,7 @@ plota21 <- function(rrvglm2, plot.it = TRUE, nseq.a21 = 31,
        }
 
 
-       fitnew = do.call(what = funname, args = argslist)
+       fitnew <- do.call(what = funname, args = argslist)
 
        a21.matrix[ii, 2] <- logLik(fitnew)
 
@@ -790,7 +793,7 @@ plota21 <- function(rrvglm2, plot.it = TRUE, nseq.a21 = 31,
     abline(h = loglik.orig - qchisq(0.95, df = 1),
            col = "darkorange", lty = "dashed")
 
-    abline(v = a21.hat +  c(-1, 1) * 1.96 * se.a21.hat,
+    abline(v = a21.hat +  c(-1, 1) * 1.96 * SE.a21.hat,
            col = "gray50", lty = "dashed", lwd = 2.0)
 
   } # End of (plot.it)
@@ -812,12 +815,25 @@ plota21 <- function(rrvglm2, plot.it = TRUE, nseq.a21 = 31,
 
 
 
-Qvar <- function(object, factorname = NULL, coef.indices = NULL,
-                 labels = NULL, dispersion = NULL,
-                 reference.name = "(reference)",
-                 estimates = NULL
-                ) {
+ Qvar <- function(object,
+                  factorname = NULL,
+                  which.eta = 1,
+                  coef.indices = NULL,
+                  labels = NULL, dispersion = NULL,
+                  reference.name = "(reference)",
+                  estimates = NULL
+                 ) {
 
+
+
+
+
+
+
+
+  if (!is.Numeric(which.eta, allowable.length = 1, integer.valued = TRUE,
+                  positive = TRUE))
+    stop("argument 'which.eta' must be a positive integer")
 
 
 
@@ -826,54 +842,67 @@ Qvar <- function(object, factorname = NULL, coef.indices = NULL,
   if (!is.matrix(object)) {
     model <- object
     if (is.null(factorname) && is.null(coef.indices)) {
-      stop("arguments \"factorname\" and \"coef.indices\" are ",
+      stop("arguments 'factorname' and 'coef.indices' are ",
            "both NULL")
     }
 
 
     if (is.null(coef.indices)) {
-      tmodel <- terms(model)
-      modelmat <- if (is.matrix(model@x)) model@x else
-                     model.matrix(tmodel,
-                                  data = model@model)
-
-
-
-
-      colptr = attr(model.matrix(object, type = "vlm"), "vassign")
-
 
       M <- npred(model)
-      newfactorname = if (M > 1) {
-        clist = constraints(model, type = "term")
-        Mdot = ncol(clist[[factorname]])
-        vlabel(factorname, ncolBlist = Mdot, M = M)
+      if (M < which.eta)
+        stop("argument 'which.eta' must be a value from the set 1:", M)
+
+
+      newfactorname <- if (M > 1) {
+        clist <- constraints(model, type = "term")
+
+        Hk <- clist[[factorname]]
+        Mdot <- ncol(Hk)
+        Hk.row <- Hk[which.eta, ]
+        if (sum(Hk.row != 0) > 1)
+          stop("cannot handle rows of constraint matrices with more ",
+               "than one nonzero value")
+
+        foo <- function(ii)
+          switch(as.character(ii), '1'="1st", '2'="2nd", '3'="3rd",
+                 paste(ii, "th", sep = ""))
+        if (sum(Hk.row != 0) == 0)
+          stop("factor '", factorname, "' is not used the ",
+               foo(which.eta), " eta (linear predictor)")
+
+        row.index <- (1:Mdot)[Hk.row != 0]
+
+        all.labels <- vlabel(factorname, ncolBlist = Mdot, M = M)
+        all.labels[row.index]
       } else {
         factorname
       }
 
-      colptr = if (M > 1) {
+      colptr <- attr(model.matrix(object, type = "vlm"), "vassign")
+      colptr <- if (M > 1) {
         colptr[newfactorname]
       } else {
         colptr[[newfactorname]]
       }
-      coef.indices <- colptr
 
+      coef.indices <- colptr
 
       contmat <- if (length(model@xlevels[[factorname]]) ==
                      length(coef.indices)) {
         diag(length(coef.indices))
       } else {
         eval(call(model@contrasts[[factorname]],
-                  model@xlevels[[factorname]]))
+                  model@xlevels  [[factorname]]))
       }
       rownames(contmat) <- model@xlevels[[factorname]]
 
       if (is.null(estimates)) {
         if (M > 1) {
-          estimates <- matrix(-1, nrow(contmat), Mdot)
-          for (ii in 1:Mdot)
-            estimates[, ii] <- contmat %*% (coefvlm(model)[(coef.indices[[ii]])])
+          estimates <- matrix(-1, nrow(contmat), 1)  # Used to be nc = Mdot
+          ii <- 1
+          estimates[, ii] <- contmat %*%
+                             (coefvlm(model)[(coef.indices[[ii]])])
         } else {
           estimates <- contmat %*% (coefvlm(model)[coef.indices])
         }
@@ -884,13 +913,10 @@ Qvar <- function(object, factorname = NULL, coef.indices = NULL,
       covmat <- Covmat[unlist(coef.indices),
                        unlist(coef.indices), drop = FALSE]
       covmat <- if (M > 1) {
-
-        for (ii in 1:Mdot) {
-          ans <- contmat %*% Covmat[colptr[[ii]], (colptr[[ii]])] %*% t(contmat)
-        }
+        ii <- 1
+        ans <- contmat %*% Covmat[(colptr[[ii]]),
+                                  (colptr[[ii]])] %*% t(contmat)
         ans
-
-
       } else {
         contmat %*% covmat %*% t(contmat)
       }
@@ -926,6 +952,7 @@ Qvar <- function(object, factorname = NULL, coef.indices = NULL,
 
     return(Recall(covmat,
                   factorname = factorname,
+                  which.eta = which.eta,
                   coef.indices = coef.indices.saved,
                   labels = labels,
                   dispersion = dispersion,
@@ -945,29 +972,32 @@ Qvar <- function(object, factorname = NULL, coef.indices = NULL,
 
 
 
-  allvcov = covmat
+  allvcov <- covmat
   for (ilocal in 1:LLL)
     for (jlocal in ilocal:LLL)
-      allvcov[ilocal, jlocal] =
-      allvcov[jlocal, ilocal] = covmat[ilocal, ilocal] +
-                                covmat[jlocal, jlocal] -
-                                covmat[ilocal, jlocal] * 2
+      allvcov[ilocal, jlocal] <-
+      allvcov[jlocal, ilocal] <- covmat[ilocal, ilocal] +
+                                 covmat[jlocal, jlocal] -
+                                 covmat[ilocal, jlocal] * 2
 
-  diag(allvcov) = rep(1.0, len = LLL) # Any positive value should do
+  diag(allvcov) <- rep(1.0, length = LLL)  # Any positive value should do
 
 
-  wmat   = matrix(1.0, LLL, LLL)
-  diag(wmat) = sqrt( .Machine$double.eps )
+  wmat   <- matrix(1.0, LLL, LLL)
+  diag(wmat) <- sqrt( .Machine$double.eps )
 
-  logAllvcov = log(allvcov)
-  attr(logAllvcov, "Prior.Weights") = wmat
-  attr(logAllvcov, "estimates") = estimates
-  attr(logAllvcov, "coef.indices") = coef.indices
-  attr(logAllvcov, "factorname") = factorname
-  attr(logAllvcov, "regularVar") = diag(covmat)
+
+  logAllvcov <- log(allvcov)
+  attr(logAllvcov, "Prior.Weights") <- wmat
+  attr(logAllvcov, "estimates")     <- estimates
+  attr(logAllvcov, "coef.indices")  <- coef.indices
+  attr(logAllvcov, "factorname")    <- factorname
+  attr(logAllvcov, "regularVar")    <- diag(covmat)
+  attr(logAllvcov, "which.eta")     <- which.eta
 
   logAllvcov
 }
+
 
 
 
@@ -1005,7 +1035,7 @@ WorstErrors <- function(qv.object) {
 
 
 
-IndentPrint <- function(object, indent = 4, ...){
+IndentPrint <- function(object, indent = 4, ...) {
   stop("20110729; does not work")
 
   zz <- ""
@@ -1015,11 +1045,12 @@ IndentPrint <- function(object, indent = 4, ...){
   sink()
   close(tc)
   indent <- paste(rep(" ", indent), sep = "", collapse = "")
-  cat(paste(indent, zz, sep = ""), sep = "\n")}
+  cat(paste(indent, zz, sep = ""), sep = "\n")
+}
 
 
 
-Print.qv <- function(x, ...){
+Print.qv <- function(x, ...) {
   stop("20110729; does not work")
 
 }
@@ -1029,23 +1060,23 @@ Print.qv <- function(x, ...){
 summary.qvar <- function(object, ...) {
 
 
-  relerrs = 1 - sqrt(exp(residuals(object, type = "response")))
-  diag(relerrs) = NA
+  relerrs <- 1 - sqrt(exp(residuals(object, type = "response")))
+  diag(relerrs) <- NA
 
     minErrSimple <- round(100 * min(relerrs, na.rm = TRUE), 1)
     maxErrSimple <- round(100 * max(relerrs, na.rm = TRUE), 1)
 
 
 
-  estimates = c(object@extra$attributes.y$estimates)
+  estimates <- c(object@extra$attributes.y$estimates)
   if (!length(names(estimates)) &&
       is.matrix(object@extra$attributes.y$estimates))
-    names( estimates) = rownames(object@extra$attributes.y$estimates)
+    names( estimates) <- rownames(object@extra$attributes.y$estimates)
   if (!length(names(estimates)))
-    names( estimates) = paste("Level", 1:length(estimates), sep = "")
+    names( estimates) <- paste("Level", 1:length(estimates), sep = "")
 
 
-  regularVar = c(object@extra$attributes.y$regularVar)
+  regularVar <- c(object@extra$attributes.y$regularVar)
   QuasiVar <- exp(diag(fitted(object))) / 2
   QuasiSE  <- sqrt(QuasiVar)
 
@@ -1062,15 +1093,16 @@ summary.qvar <- function(object, ...) {
 
 
 
+
 print.summary.qvar <- function(x, ...) {
 
-  object = x$object
-  minErrSimple  = x$minErrSimple
-  maxErrSimple  = x$maxErrSimple
+  object <- x$object
+  minErrSimple  <- x$minErrSimple
+  maxErrSimple  <- x$maxErrSimple
 
-  x$minErrSimple = NULL
-  x$maxErrSimple = NULL
-  x$object = NULL
+  x$minErrSimple <- NULL
+  x$maxErrSimple <- NULL
+  x$object <- NULL
 
 
     if (length(cl <- object@call)) {
@@ -1079,7 +1111,7 @@ print.summary.qvar <- function(x, ...) {
     }
 
 
-    facname = c(object@extra$attributes.y$factorname)
+    facname <- c(object@extra$attributes.y$factorname)
     if (length(facname))
       cat("Factor name: ", facname, "\n")
 
@@ -1087,7 +1119,7 @@ print.summary.qvar <- function(x, ...) {
     if (length(object@dispersion))
         cat("\nDispersion: ", object@dispersion, "\n\n")
 
-  x = as.data.frame(c(x))
+  x <- as.data.frame(c(x))
   print.data.frame(x)
 
 
@@ -1096,6 +1128,7 @@ print.summary.qvar <- function(x, ...) {
 
   invisible(x)
 }
+
 
 
 
@@ -1132,12 +1165,12 @@ plotqvar <- function(object,
     stop("argument 'object' dos not appear to be a ",
          "rcim(, normal1) object")
 
-  estimates = c(object@extra$attributes.y$estimates)
+  estimates <- c(object@extra$attributes.y$estimates)
   if (!length(names(estimates)) &&
       is.matrix(object@extra$attributes.y$estimates))
-    names( estimates) = rownames(object@extra$attributes.y$estimates)
+    names( estimates) <- rownames(object@extra$attributes.y$estimates)
   if (!length(names(estimates)))
-    names( estimates) = paste("Level", 1:length(estimates),
+    names( estimates) <- paste("Level", 1:length(estimates),
                               sep = "")
 
 
@@ -1166,7 +1199,7 @@ plotqvar <- function(object,
 
 
     if (is.numeric(conf.level)) {
-      zedd = abs(qnorm((1 - conf.level) / 2))
+      zedd <- abs(qnorm((1 - conf.level) / 2))
       lsd.tops  <- estimates + zedd * QuasiSE / sqrt(2)
       lsd.tails <- estimates - zedd * QuasiSE / sqrt(2)
       if (max(QuasiSE) / min(QuasiSE) > warn.ratio)

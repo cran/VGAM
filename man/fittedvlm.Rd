@@ -89,14 +89,14 @@ Chambers, J. M. and T. J. Hastie (eds) (1992)
 }
 \examples{
 # Categorical regression example 1
-pneumo = transform(pneumo, let = log(exposure.time))
-(fit = vglm(cbind(normal, mild, severe) ~ let, propodds, pneumo))
+pneumo <- transform(pneumo, let = log(exposure.time))
+(fit <- vglm(cbind(normal, mild, severe) ~ let, propodds, pneumo))
 fitted(fit)
 
 # LMS quantile regression example 2
-fit = vgam(BMI ~ s(age, df = c(4, 2)), 
-           fam = lms.bcn(zero = 1), data = bmi.nz, trace = TRUE)
-head(predict(fit, type = "response"))  # The following three are equal
+fit <- vgam(BMI ~ s(age, df = c(4, 2)), 
+            lms.bcn(zero = 1), data = bmi.nz, trace = TRUE)
+head(predict(fit, type = "response")) # Equal to the the following two:
 head(fitted(fit))
 predict(fit, type = "response", newdata = head(bmi.nz))
 }

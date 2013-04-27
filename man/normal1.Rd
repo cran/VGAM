@@ -10,7 +10,7 @@
 \usage{
 normal1(lmean = "identity", lsd = "loge", lvar = "loge",
         var.arg = FALSE, imethod = 1, isd = NULL, parallel = FALSE,
-        intercept.apply = FALSE, zero = -2)
+        apply.parint = FALSE, smallno = 1e-05, zero = -2)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -40,10 +40,19 @@ normal1(lmean = "identity", lsd = "loge", lvar = "loge",
 
 
   }
-  \item{imethod, parallel, isd, intercept.apply, zero}{
+  \item{smallno}{
+  Numeric, positive but close to 0.
+  Used specifically for quasi-variances; if the link for the
+  mean is \code{\link{explink}} then any non-positive value
+  of \code{eta} is replaced by this quantity (hopefully,
+  temporarily and only during early iterations).
+
+
+  }
+  \item{imethod, parallel, isd, apply.parint, zero}{
   See \code{\link{CommonVGAMffArguments}} for more information.
   If \code{lmean = loge} then try \code{imethod = 2}.
-  Argument \code{intercept.apply} refers to whether the parallelism
+  Argument \code{apply.parint} refers to whether the parallelism
   constraint is applied to the intercept too.
 
 
@@ -94,7 +103,8 @@ normal1(lmean = "identity", lsd = "loge", lvar = "loge",
     \code{\link{fnormal1}},
     \code{\link{skewnormal1}},
     \code{\link{dcennormal1}},
-    \code{\link{huber}},
+    \code{\link{SUR}},
+    \code{\link{huber2}},
     \code{\link{studentt}},
     \code{\link{binormal}},
     \code{\link[stats:Normal]{dnorm}}.
@@ -111,7 +121,7 @@ fit1 <- vglm(y1 ~ x2, normal1(zero = NULL), ndata, trace = TRUE)
 coef(fit1, matrix = TRUE)
 fit2 <- vglm(cbind(y2, y3) ~ x2, data = ndata, trace = TRUE,
              normal1(var = TRUE, parallel = TRUE,
-                     intercept.apply = TRUE, zero = NULL))
+                     apply.parint = TRUE, zero = NULL))
 coef(fit2, matrix = TRUE)
 
 # Generate data from N(mu = theta = 10, sigma = theta) and estimate theta.
@@ -120,7 +130,7 @@ ndata <- data.frame(y = rnorm(100, m = theta, sd = theta))
 fit3 <- vglm(y ~ 1, normal1(lsd = "identity"), ndata,
              constraints = list("(Intercept)" = rbind(1, 1)))
 fit4 <- vglm(y ~ 1, normal1(lsd = "identity", parallel = TRUE,
-                            intercept.apply = TRUE, zero = NULL), ndata)
+                            apply.parint = TRUE, zero = NULL), ndata)
 coef(fit3, matrix = TRUE)
 coef(fit4, matrix = TRUE) # Same as fit3
 }

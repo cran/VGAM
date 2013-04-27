@@ -13,27 +13,10 @@ fgm(lapar="rhobit", iapar = NULL, imethod = 1, nsimEIM = 200)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{lapar}{
-  Link function applied to the association parameter
-  \eqn{\alpha}{alpha}, which is real.
-  See \code{\link{Links}} for more choices.
+  \item{lapar, iapar, imethod, nsimEIM}{
+  Details at \code{\link{CommonVGAMffArguments}}.
+  See \code{\link{Links}} for more link function choices.
 
-  }
-  \item{iapar}{
-  Numeric. Optional initial value for \eqn{\alpha}{alpha}.
-  By default, an initial value is chosen internally.
-  If a convergence failure occurs try assigning a different value.
-  Assigning a value will override the argument \code{imethod}.
-
-  }
-  \item{imethod}{
-  An integer with value \code{1} or \code{2} which
-  specifies the initialization method. If failure to converge occurs
-  try the other value, or else specify a value for \code{ia}.
-
-  }
-  \item{nsimEIM}{
-  See \code{\link{CommonVGAMffArguments}} for more information.
 
   }
 }
@@ -49,16 +32,19 @@ fgm(lapar="rhobit", iapar = NULL, imethod = 1, nsimEIM = 200)
   When \eqn{\alpha = 0}{alpha=0} the random variables are
   independent.
 
+
 % A variant of Newton-Raphson is used, which only seems to work for an
 % intercept model.
 % It is a very good idea to set \code{trace=TRUE}.
 % This \pkg{VGAM} family function is prone to numerical difficulties.
+
 
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}}
   and \code{\link{vgam}}.
+
 
 }
 
@@ -68,6 +54,7 @@ Castillo, E., Hadi, A. S., Balakrishnan, N. Sarabia, J. S. (2005)
 \emph{Extreme Value and Related Models with Applications in Engineering and Science},
 Hoboken, NJ, USA: Wiley-Interscience.
 
+
 }
 \author{ T. W. Yee }
 \note{
@@ -76,7 +63,9 @@ Hoboken, NJ, USA: Wiley-Interscience.
   This is because each marginal distribution corresponds to a standard
   uniform distribution.
 
+
 % This \pkg{VGAM} family function should be used with caution.
+
 
 }
 
@@ -85,11 +74,12 @@ Hoboken, NJ, USA: Wiley-Interscience.
   \code{\link{frank}},
   \code{\link{morgenstern}}.
 
+
 }
 \examples{
-ymat = rfgm(n = 1000, alpha = rhobit(3, inverse = TRUE))
+ymat <- rfgm(n = 1000, alpha = rhobit(3, inverse = TRUE))
 \dontrun{plot(ymat, col = "blue")}
-fit = vglm(ymat ~ 1, fam = fgm, trace = TRUE)
+fit <- vglm(ymat ~ 1, fam = fgm, trace = TRUE)
 coef(fit, matrix = TRUE)
 Coef(fit)
 head(fitted(fit))

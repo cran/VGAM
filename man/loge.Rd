@@ -38,10 +38,10 @@ nloge(theta, bvalue = NULL, inverse = FALSE, deriv = 0,
 \details{
   The log link function is very commonly used for parameters that
   are positive.
+  Here, all logarithms are natural logarithms, i.e., to base \eqn{e}.
   Numerical values of \code{theta} close to 0 or out of range
   result in
   \code{Inf}, \code{-Inf}, \code{NA} or \code{NaN}.
-
 
 
   The function \code{loge} computes
@@ -59,9 +59,6 @@ nloge(theta, bvalue = NULL, inverse = FALSE, deriv = 0,
   \emph{d} \code{theta} / \emph{d} \code{eta} as a function of \code{theta}
   if \code{inverse = FALSE},
   else if \code{inverse = TRUE} then it returns the reciprocal.
-
-
-  Here, all logarithms are natural logarithms, i.e., to base \eqn{e}.
 
 
 }

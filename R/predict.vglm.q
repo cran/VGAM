@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2012 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2013 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -14,116 +14,116 @@ predictvglm <- function(object,
                         dispersion = NULL,
                         untransform = FALSE,
                         extra = object@extra, ...) {
-    na.act = object@na.action
-    object@na.action = list()
+  na.act <- object@na.action
+  object@na.action <- list()
 
-    if (missing(extra)) {
-    }
+  if (missing(extra)) {
+  }
 
-    if (deriv != 0)
-        stop("'deriv' must be 0 for predictvglm()")
+  if (deriv != 0)
+    stop("'deriv' must be 0 for predictvglm()")
 
-    if (mode(type) != "character" && mode(type) != "name")
-        type = as.character(substitute(type))
-    type = match.arg(type, c("link", "response", "terms"))[1]
+  if (mode(type) != "character" && mode(type) != "name")
+    type <- as.character(substitute(type))
+  type <- match.arg(type, c("link", "response", "terms"))[1]
 
-    if (untransform && (type!="link" || se.fit || deriv != 0))
-        stop("argument 'untransform=TRUE' only if 'type=\"link\", ",
-             "se.fit = FALSE, deriv=0'")
-
-
+  if (untransform && (type!="link" || se.fit || deriv != 0))
+    stop("argument 'untransform=TRUE' only if 'type=\"link\", ",
+         "se.fit = FALSE, deriv=0'")
 
 
-    pred = if (se.fit) {
-        switch(type,
-               response = {
-                   warning("'type=\"response\"' and 'se.fit=TRUE' not valid ",
-                           "together; setting 'se.fit = FALSE'")
-                   se.fit = FALSE
-                   predictor = predict.vlm(object, newdata=newdata,
-                                           type=type, se.fit=se.fit,
-                                           deriv=deriv, 
-                                           dispersion=dispersion, ...) 
-                   fv = object@family@linkinv(predictor, extra)
-                   dimnames(fv) = list(dimnames(fv)[[1]],
-                                       dimnames(object@fitted.values)[[2]])
+
+
+  pred <- if (se.fit) {
+      switch(type,
+             response = {
+               warning("'type=\"response\"' and 'se.fit=TRUE' not valid ",
+                       "together; setting 'se.fit = FALSE'")
+               se.fit <- FALSE
+               predictor <- predict.vlm(object, newdata = newdata,
+                                        type = type, se.fit = se.fit,
+                                        deriv = deriv, 
+                                        dispersion = dispersion, ...) 
+               fv <- object@family@linkinv(predictor, extra)
+               dimnames(fv) <- list(dimnames(fv)[[1]],
+                                    dimnames(object@fitted.values)[[2]])
+               fv
+             },
+             link = {
+               predict.vlm(object, newdata = newdata,
+                           type = "response", se.fit = se.fit,
+                           deriv = deriv, dispersion = dispersion, ...) 
+             },
+             terms = {
+               predict.vlm(object, newdata = newdata,
+                           type = type, se.fit = se.fit,
+                           deriv = deriv, dispersion = dispersion, ...) 
+             }) # End of switch
+  } else {
+    if (is.null(newdata)) {
+      switch(type, 
+             link = object@predictors, 
+             response = object@fitted.values,
+             terms = {
+                 predict.vlm(object, newdata = newdata,
+                             type = type, se.fit = se.fit,
+                             deriv = deriv, dispersion = dispersion, ...) 
+             })
+    } else {
+      if (!(length(object@offset) == 1 && object@offset == 0))
+        warning("zero offset used") 
+      switch(type, 
+             response = {
+
+
+
+
+                   predictor <- predict.vlm(object, newdata = newdata,
+                                           type = type, se.fit = se.fit,
+                                           deriv = deriv, 
+                                           dispersion = dispersion, ...)
+
+
+
+                   M <- object@misc$M
+
+                   fv <- object@family@linkinv(predictor, extra)
+                   if (M > 1 && is.matrix(fv)) {
+                       dimnames(fv) <- list(dimnames(fv)[[1]],
+                                      dimnames(object@fitted.values)[[2]])
+                   } else {
+                   }
                    fv
                },
                link = {
-                   predict.vlm(object, newdata=newdata,
-                               type="response", se.fit=se.fit,
-                               deriv=deriv, dispersion=dispersion, ...) 
+
+
+
+                   predict.vlm(object, newdata = newdata,
+                               type = "response", se.fit = se.fit,
+                               deriv = deriv, dispersion = dispersion, ...)
+
+
+
                },
-                terms={
-                   predict.vlm(object, newdata=newdata,
-                               type=type, se.fit=se.fit,
-                               deriv=deriv, dispersion=dispersion, ...) 
-                }) # End of switch
-      } else {
-        if (is.null(newdata)) {
-            switch(type, 
-                   link = object@predictors, 
-                   response = object@fitted.values,
-                   terms={
-                       predict.vlm(object, newdata=newdata,
-                                   type=type, se.fit=se.fit,
-                                   deriv=deriv, dispersion=dispersion, ...) 
-                   })
-        } else {
-            if (!(length(object@offset) == 1 && object@offset == 0))
-                warning("zero offset used") 
-            switch(type, 
-                   response={
-
-
-
-
-                       predictor = predict.vlm(object, newdata=newdata,
-                                               type=type, se.fit=se.fit,
-                                               deriv=deriv, 
-                                               dispersion=dispersion, ...)
-
-
-
-                       M = object@misc$M
-
-                       fv = object@family@linkinv(predictor, extra)
-                       if (M > 1 && is.matrix(fv)) {
-                           dimnames(fv) = list(dimnames(fv)[[1]],
-                                          dimnames(object@fitted.values)[[2]])
-                       } else {
-                       }
-                       fv
-                   },
-                   link = {
-
-
-
-                       predict.vlm(object, newdata=newdata,
-                                   type="response", se.fit=se.fit,
-                                   deriv=deriv, dispersion=dispersion, ...)
-
-
-
-                   },
-                   terms = {
-                       predict.vlm(object, newdata=newdata,
-                                   type=type, se.fit=se.fit,
-                                   deriv=deriv, dispersion=dispersion, ...) 
-                   }) # End of switch
+               terms = {
+                   predict.vlm(object, newdata = newdata,
+                               type = type, se.fit = se.fit,
+                               deriv = deriv, dispersion = dispersion, ...) 
+               }) # End of switch
         }
-    }
+  }
 
-    if (!length(newdata) && length(na.act)) {
-        if (se.fit) {
-            pred$fitted.values = napredict(na.act[[1]], pred$fitted.values)
-            pred$se.fit = napredict(na.act[[1]], pred$se.fit)
-        } else {
-            pred = napredict(na.act[[1]], pred)
-        }
+  if (!length(newdata) && length(na.act)) {
+    if (se.fit) {
+      pred$fitted.values <- napredict(na.act[[1]], pred$fitted.values)
+      pred$se.fit <- napredict(na.act[[1]], pred$se.fit)
+    } else {
+      pred <- napredict(na.act[[1]], pred)
     }
-    
-    if (untransform) untransformVGAM(object, pred) else pred
+  }
+  
+  if (untransform) untransformVGAM(object, pred) else pred
 }
 
 
@@ -143,59 +143,59 @@ predict.rrvglm <- function(object,
                           dispersion = NULL, 
                           extra = object@extra, ...) {
 
+  if (se.fit) {
+      stop("20030811; predict.rrvglm(..., se.fit=TRUE) not complete yet") 
+      pred <- 
+      switch(type,
+             response = {
+                warning("'type=\"response\"' and 'se.fit=TRUE' not valid ",
+                        "together; setting 'se.fit = FALSE'")
+                se.fit <- FALSE
+                  predictor <- predict.vlm(object, newdata = newdata,
+                                           type = type, se.fit = se.fit,
+                                           deriv = deriv, 
+                                           dispersion = dispersion, ...) 
+                fv <- object@family@linkinv(predictor, extra)
+                dimnames(fv) <- list(dimnames(fv)[[1]],
+                                     dimnames(object@fitted.values)[[2]])
+                fv
+             },
+             link = {
+                   type <- "response"
+                   predict.vlm(object, newdata = newdata,
+                               type = type, se.fit = se.fit,
+                               deriv = deriv, dispersion = dispersion, ...) 
+             },
+              terms = {
+                predict.vlm(object, newdata = newdata,
+                            type = type, se.fit = se.fit,
+                            deriv = deriv, dispersion = dispersion, ...) 
+              }
+            )
+  } else {
+        return(predictvglm(object, newdata = newdata,
+                            type = type, se.fit = se.fit,
+                            deriv = deriv, 
+                            dispersion = dispersion, ...))
+    }
+
+  na.act <- object@na.action
+
+  if (!length(newdata) && length(na.act)) {
     if (se.fit) {
-        stop("11/8/03; predict.rrvglm(..., se.fit=TRUE) not complete yet") 
-        pred = 
-        switch(type,
-               response = {
-                  warning("'type=\"response\"' and 'se.fit=TRUE' not valid ",
-                          "together; setting 'se.fit = FALSE'")
-                  se.fit = FALSE
-                    predictor = predict.vlm(object, newdata=newdata,
-                                             type=type, se.fit=se.fit,
-                                             deriv=deriv, 
-                                             dispersion=dispersion, ...) 
-                  fv = object@family@linkinv(predictor, extra)
-                  dimnames(fv) = list(dimnames(fv)[[1]],
-                                       dimnames(object@fitted.values)[[2]])
-                  fv
-               },
-               link = {
-                       type = "response"
-                       predict.vlm(object, newdata=newdata,
-                                   type=type, se.fit=se.fit,
-                                   deriv=deriv, dispersion=dispersion, ...) 
-               },
-                terms={
-                    predict.vlm(object, newdata=newdata,
-                                type=type, se.fit=se.fit,
-                                deriv=deriv, dispersion=dispersion, ...) 
-                }
-              )
+      pred$fitted.values <- napredict(na.act[[1]], pred$fitted.values)
+      pred$se.fit <- napredict(na.act[[1]], pred$se.fit)
     } else {
-        return(predictvglm(object, newdata=newdata,
-                            type=type, se.fit=se.fit,
-                            deriv=deriv, 
-                            dispersion=dispersion, ...))
+      pred <- napredict(na.act[[1]], pred)
     }
+  }
 
-    na.act = object@na.action
-
-    if (!length(newdata) && length(na.act)) {
-        if (se.fit) {
-            pred$fitted.values = napredict(na.act[[1]], pred$fitted.values)
-            pred$se.fit = napredict(na.act[[1]], pred$se.fit)
-        } else {
-            pred = napredict(na.act[[1]], pred)
-        }
-    }
-
-    pred
+  pred
 }
 
 
 setMethod("predict", "rrvglm", function(object, ...) 
-    predict.rrvglm(object, ...))
+  predict.rrvglm(object, ...))
 
 
 
@@ -203,7 +203,7 @@ untransformVGAM <- function(object, pred) {
   M <- object@misc$M
   Links <- object@misc$link
   if (length(Links) != M && length(Links) != 1)
-     stop("cannot obtain the link functions to untransform the object")
+   stop("cannot obtain the link functions to untransform the object")
 
   upred <- pred
   earg <- object@misc$earg

@@ -27,6 +27,7 @@ zabinomial(lprob = "logit", lpobs0 = "logit",
 
   }
   \item{iprob, ipobs0}{ 
+  See
   \code{\link{CommonVGAMffArguments}}.
 
   }

@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2012 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2013 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -81,21 +81,30 @@ Coef.vlm <- function(object, ...) {
   LL <- length(object@family@vfamily)
   funname <- paste("Coef.", object@family@vfamily[LL], sep = "")
 
+
   if (exists(funname)) {
     newcall <- paste("Coef.", object@family@vfamily[LL],
                     "(object, ...)", sep = "")
     newcall <- parse(text = newcall)[[1]]
-    eval(newcall)
-  } else
+    return(eval(newcall))
+  }
+
+
+  answer <-
   if (length(tmp2 <- object@misc$link) &&
     object@misc$intercept.only &&
     trivial.constraints(object@constraints)) {
 
 
+
+
+    if (!is.list(use.earg <- object@misc$earg))
+      use.earg <- list()
+    
     answer <-
       eta2theta(rbind(coefvlm(object)),
                 link = object@misc$link,
-                earg = object@misc$earg)
+                earg = use.earg)
 
 
     answer <- c(answer)
@@ -105,6 +114,20 @@ Coef.vlm <- function(object, ...) {
   } else {
     coefvlm(object, ... )
   }
+
+
+
+  if (length(tmp3 <- object@misc$parameter.names) &&
+    object@misc$intercept.only &&
+    trivial.constraints(object@constraints)) {
+    answer <- c(answer)
+    if (length(tmp3) == object@misc$M &&
+        is.character(tmp3))
+      names(answer) <- tmp3
+  }
+
+
+  answer
 }
 
 

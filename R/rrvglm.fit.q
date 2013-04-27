@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2012 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2013 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -8,19 +8,20 @@
 
 
 
-rrvglm.fit <- function(x, y, w=rep(1, length(x[, 1])),
-    etastart = NULL, mustart = NULL, coefstart = NULL,
-    offset = 0, family,
-    control=rrvglm.control(...),
-    criterion = "coefficients",
-    qr.arg = FALSE,
-    constraints = NULL,
-    extra = NULL,
-    Terms=Terms, function.name = "rrvglm", ...)
-{
-    specialCM = NULL
-    post = list()
-    check.rank = TRUE # !control$Quadratic
+rrvglm.fit <-
+  function(x, y, w = rep(1, length(x[, 1])),
+           etastart = NULL, mustart = NULL, coefstart = NULL,
+           offset = 0, family,
+           control=rrvglm.control(...),
+           criterion = "coefficients",
+           qr.arg = FALSE,
+           constraints = NULL,
+           extra = NULL,
+           Terms = Terms, function.name = "rrvglm", ...) {
+
+    specialCM <- NULL
+    post <- list()
+    check.rank <- TRUE # !control$Quadratic
     nonparametric <- FALSE
     epsilon <- control$epsilon
     maxit <- control$maxit
@@ -30,11 +31,16 @@ rrvglm.fit <- function(x, y, w=rep(1, length(x[, 1])),
     minimize.criterion <- control$min.criterion
 
 
+    fv <- one.more <- rrr.expression <- modelno <- NULL
+    RRR.expression <- paste("rrr", control$Algorithm,
+                            "expression", sep = ".")
+
+
+
     n <- dim(x)[1]
 
     new.s.call <- expression({
-        if (c.list$one.more)
-        {
+        if (c.list$one.more) {
             fv <- c.list$fit
             new.coeffs <- c.list$coeff
 
@@ -51,19 +57,19 @@ rrvglm.fit <- function(x, y, w=rep(1, length(x[, 1])),
             old.crit <- new.crit
             new.crit <- 
                 switch(criterion,
-                    coefficients=new.coeffs,
-                    tfun(mu=mu, y=y, w=w, res = FALSE, eta=eta, extra))
+                    coefficients = new.coeffs,
+                    tfun(mu = mu, y = y, w = w, res = FALSE, eta = eta, extra))
 
 
 
             if (trace && orig.stepsize == 1) {
                 cat(if(control$Quadratic) "QRR-VGLM" else "RR-VGLM",
                     "   linear loop ", iter, ": ", criterion, "= ")
-                UUUU = switch(criterion, coefficients=
+                UUUU <- switch(criterion, coefficients=
                        format(new.crit, dig=round(2-log10(epsilon))),
                        format(round(new.crit, 4)))
                 switch(criterion,
-                    coefficients={if(length(new.crit) > 2) cat("\n");
+                    coefficients = {if(length(new.crit) > 2) cat("\n");
                        cat(UUUU, fill = TRUE, sep = ", ")},
                     cat(UUUU, fill = TRUE, sep = ", "))
            }
@@ -76,7 +82,7 @@ rrvglm.fit <- function(x, y, w=rep(1, length(x[, 1])),
                              (if(minimize.criterion) new.crit > old.crit else
                              new.crit < old.crit)))
                 if (!is.logical(take.half.step))
-                    take.half.step = TRUE
+                    take.half.step <- TRUE
                 if (take.half.step) {
                     stepsize <- 2 * min(orig.stepsize, 2*stepsize)
                     new.coeffs.save <- new.coeffs
@@ -110,8 +116,8 @@ rrvglm.fit <- function(x, y, w=rep(1, length(x[, 1])),
 
                         new.crit <- 
                             switch(criterion,
-                                coefficients=new.coeffs,
-                                tfun(mu=mu,y=y,w=w,res = FALSE,eta=eta,extra))
+                                coefficients = new.coeffs,
+                                tfun(mu = mu,y = y,w = w,res = FALSE,eta = eta,extra))
 
                         if ((criterion == "coefficients") || 
                            ( minimize.criterion && new.crit < old.crit) ||
@@ -129,12 +135,12 @@ rrvglm.fit <- function(x, y, w=rep(1, length(x[, 1])),
                         if (trace) {
                        cat(if(control$Quadratic) "QRR-VGLM" else "RR-VGLM",
                     "   linear loop ", iter, ": ", criterion, "= ")
-                            UUUU = switch(criterion, coefficients=
-                                  format(new.crit, dig=round(2-log10(epsilon))),
+                            UUUU <- switch(criterion, coefficients =
+                                  format(new.crit, dig = round(2-log10(epsilon))),
                                   format(round(new.crit, 4)))
 
                             switch(criterion,
-                            coefficients={if(length(new.crit) > 2) cat("\n");
+                            coefficients = {if(length(new.crit) > 2) cat("\n");
                                cat(UUUU, fill = TRUE, sep = ", ")},
                             cat(UUUU, fill = TRUE, sep = ", "))
                         }
@@ -152,18 +158,16 @@ rrvglm.fit <- function(x, y, w=rep(1, length(x[, 1])),
                 deriv.mu <- eval(family@deriv)
                 wz <- eval(family@weight)
                 if (control$checkwz)
-                    wz = checkwz(wz, M = M, trace = trace,
+                    wz <- checkwz(wz, M = M, trace = trace,
                                  wzepsilon = control$wzepsilon)
 
 
-                wz = matrix(wz, nrow = n)
+                wz <- matrix(wz, nrow = n)
                 U <- vchol(wz, M = M, n = n, silent=!trace)
                 tvfor <- vforsub(U, as.matrix(deriv.mu), M = M, n = n)
-                z = eta + vbacksub(U, tvfor, M, n) - offset # Contains \bI \bnu
+                z <- eta + vbacksub(U, tvfor, M, n) - offset # Contains \bI \bnu
 
-                rrr.expression = paste("rrr", control$Algorithm,
-                                       "expression", sep = ".")
-                rrr.expression = get(rrr.expression)
+                rrr.expression <- get(RRR.expression)
                 eval(rrr.expression)
 
                 c.list$z <- z  # contains \bI_{Rank} \bnu
@@ -227,13 +231,13 @@ rrvglm.fit <- function(x, y, w=rep(1, length(x[, 1])),
     M <- if (is.matrix(eta)) ncol(eta) else 1
 
     if (is.character(rrcontrol$Dzero)) {
-        index = match(rrcontrol$Dzero, dimnames(as.matrix(y))[[2]]) 
+        index <- match(rrcontrol$Dzero, dimnames(as.matrix(y))[[2]]) 
         if (any(is.na(index)))
             stop("Dzero argument didn't fully match y-names")
         if (length(index) == M)
             stop("all linear predictors are linear in the ",
                  "latent variable(s); so set 'Quadratic = FALSE'")
-        rrcontrol$Dzero = control$Dzero = index
+        rrcontrol$Dzero <- control$Dzero <- index
     }
 
 
@@ -244,12 +248,12 @@ rrvglm.fit <- function(x, y, w=rep(1, length(x[, 1])),
         eval(family@constraints)
 
 
-    special.matrix = matrix(-34956.125, M, M)    # An unlikely used matrix 
-    just.testing <- cm.vgam(special.matrix, x, rrcontrol$Norrr, constraints)
+    special.matrix <- matrix(-34956.125, M, M)    # An unlikely used matrix 
+    just.testing <- cm.vgam(special.matrix, x, rrcontrol$noRRR, constraints)
 
-    findex = trivial.constraints(just.testing, special.matrix)
-    if (is.null(just.testing)) findex = NULL # 20100617
-    tc1 = trivial.constraints(constraints)
+    findex <- trivial.constraints(just.testing, special.matrix)
+    if (is.null(just.testing)) findex <- NULL # 20100617
+    tc1 <- trivial.constraints(constraints)
 
     if (!is.null(findex) && !control$Quadratic && sum(!tc1)) {
         for(ii in names(tc1))
@@ -260,28 +264,28 @@ rrvglm.fit <- function(x, y, w=rep(1, length(x[, 1])),
 
     if (!is.null(findex) && all(findex == 1))
         stop("use vglm(), not rrvglm()!")
-    colx1.index = names.colx1.index = NULL
-    dx2 = dimnames(x)[[2]]
+    colx1.index <- names.colx1.index <- NULL
+    dx2 <- dimnames(x)[[2]]
     if (sum(findex)) {
-        asx = attr(x, "assign")
+        asx <- attr(x, "assign")
         for(ii in names(findex))
             if (findex[ii]) {
-                names.colx1.index = c(names.colx1.index, dx2[asx[[ii]]])
-                colx1.index = c(colx1.index, asx[[ii]])
+                names.colx1.index <- c(names.colx1.index, dx2[asx[[ii]]])
+                colx1.index <- c(colx1.index, asx[[ii]])
         }
-        names(colx1.index) = names.colx1.index
+        names(colx1.index) <- names.colx1.index
     }
-    rrcontrol$colx1.index = control$colx1.index =
+    rrcontrol$colx1.index <- control$colx1.index <-
                             colx1.index # Save it on the object
-    colx2.index = 1:ncol(x)
-    names(colx2.index) = dx2
+    colx2.index <- 1:ncol(x)
+    names(colx2.index) <- dx2
     if (length(colx1.index)) 
-        colx2.index = colx2.index[-colx1.index]
+        colx2.index <- colx2.index[-colx1.index]
 
-    p1 = length(colx1.index); p2 = length(colx2.index)
-    rrcontrol$colx2.index = control$colx2.index =
-                            colx2.index # Save it on the object
-    Index.corner = control$Index.corner
+    p1 <- length(colx1.index); p2 <- length(colx2.index)
+    rrcontrol$colx2.index <- control$colx2.index <-
+                                     colx2.index # Save it on the object
+    Index.corner <- control$Index.corner
 
 
 
@@ -290,35 +294,39 @@ rrvglm.fit <- function(x, y, w=rep(1, length(x[, 1])),
             matrix(rnorm(M * Rank, sd = rrcontrol$SD.Cinit), M, Rank)
     Cmat <- if (length(rrcontrol$Cinit)) rrcontrol$Cinit else {
                 if (!rrcontrol$Use.Init.Poisson.QO) {
-                    matrix(rnorm(p2 * Rank, sd=rrcontrol$SD.Cinit), p2, Rank)
+                    matrix(rnorm(p2 * Rank, sd = rrcontrol$SD.Cinit), p2, Rank)
                 } else
-                .Init.Poisson.QO(ymat=as.matrix(y), 
-                    X1=if (length(colx1.index)) x[, colx1.index, drop = FALSE] else NULL,
-                    X2=x[, colx2.index, drop = FALSE],
-                    Rank=rrcontrol$Rank, trace=rrcontrol$trace,
+                .Init.Poisson.QO(ymat = as.matrix(y), 
+                    X1 = if (length(colx1.index))
+                         x[, colx1.index, drop = FALSE] else NULL,
+                    X2 = x[, colx2.index, drop = FALSE],
+                    Rank = rrcontrol$Rank, trace = rrcontrol$trace,
                     max.ncol.etamat = rrcontrol$Etamat.colmax,
-                    Crow1positive=rrcontrol$Crow1positive,
-                    isdlv=rrcontrol$isdlv)
+                    Crow1positive = rrcontrol$Crow1positive,
+                    isdlv = rrcontrol$isdlv)
             }
 
-    if (modelno == 3)
-        Amat[c(FALSE, TRUE),] <- 0  # Intercept only for log(k)
+
+
+
+
+
 
 
     if (control$Corner)
-        Amat[control$Index.corner,] = diag(Rank)
+        Amat[control$Index.corner,] <- diag(Rank)
     if (length(control$szero))
-        Amat[control$szero,] = 0
+        Amat[control$szero,] <- 0
 
-    rrcontrol$Ainit = control$Ainit = Amat   # Good for valt()
-    rrcontrol$Cinit = control$Cinit = Cmat   # Good for valt()
+    rrcontrol$Ainit <- control$Ainit <- Amat   # Good for valt()
+    rrcontrol$Cinit <- control$Cinit <- Cmat   # Good for valt()
 
-    Blist <- process.constraints(constraints, x, M, specialCM=specialCM)
+    Blist <- process.constraints(constraints, x, M, specialCM = specialCM)
 
-    nice31 = control$Quadratic && (!control$EqualTol || control$ITolerances) &&
-             all(trivial.constraints(Blist) == 1)
+    nice31 <- control$Quadratic && (!control$EqualTol || control$ITolerances) &&
+              all(trivial.constraints(Blist) == 1)
 
-    Blist = Blist.save = replace.constraints(Blist, Amat, colx2.index)
+    Blist <- Blist.save <- replace.constraints(Blist, Amat, colx2.index)
 
 
     ncolBlist <- unlist(lapply(Blist, ncol))
@@ -326,22 +334,22 @@ rrvglm.fit <- function(x, y, w=rep(1, length(x[, 1])),
 
 
     X_vlm_save <- if (control$Quadratic) {
-        tmp500 = lm2qrrvlm.model.matrix(x=x, Blist=Blist,
-                       C=Cmat, control=control)
-        xsmall.qrr = tmp500$new.lv.model.matrix 
-        B.list = tmp500$constraints # Doesn't change or contain \bI_{Rank} \bnu
-        if (modelno == 3 && FALSE) {
-            B.list[[1]] = (B.list[[1]])[,c(TRUE,FALSE),drop = FALSE] # Amat
-            B.list[[2]] = (B.list[[2]])[,c(TRUE,FALSE),drop = FALSE] # D
+        tmp500 <- lm2qrrvlm.model.matrix(x = x, Blist = Blist,
+                       C = Cmat, control = control)
+        xsmall.qrr <- tmp500$new.lv.model.matrix 
+        B.list <- tmp500$constraints # Doesn't change or contain \bI_{Rank} \bnu
+        if (FALSE && modelno == 3) {
+          B.list[[1]] <- (B.list[[1]])[, c(TRUE, FALSE), drop = FALSE] # Amat
+          B.list[[2]] <- (B.list[[2]])[, c(TRUE, FALSE), drop = FALSE] # D
         }
 
-        lv.mat = tmp500$lv.mat
+        lv.mat <- tmp500$lv.mat
         if (length(tmp500$offset)) {
-            offset = tmp500$offset 
+            offset <- tmp500$offset 
         }
-        lm2vlm.model.matrix(xsmall.qrr, B.list, xij=control$xij)
+        lm2vlm.model.matrix(xsmall.qrr, B.list, xij = control$xij)
     } else {
-        lv.mat = x[,colx2.index,drop = FALSE] %*% Cmat 
+        lv.mat <- x[,colx2.index,drop = FALSE] %*% Cmat 
         lm2vlm.model.matrix(x, Blist, xij=control$xij)
     }
 
@@ -351,7 +359,7 @@ rrvglm.fit <- function(x, y, w=rep(1, length(x[, 1])),
     if (length(coefstart)) {
         eta <- if (ncol(X_vlm_save)>1) X_vlm_save %*% coefstart +
                    offset else X_vlm_save * coefstart + offset
-        eta <- if (M > 1) matrix(eta, ncol=M, byrow = TRUE) else c(eta) 
+        eta <- if (M > 1) matrix(eta, ncol = M, byrow = TRUE) else c(eta) 
 
 
         mu <- family@linkinv(eta, extra)
@@ -364,7 +372,7 @@ rrvglm.fit <- function(x, y, w=rep(1, length(x[, 1])),
     iter <- 1
     new.crit <- switch(criterion,
                       coefficients = 1,
-                      tfun(mu=mu, y=y, w=w, res = FALSE, eta=eta, extra))
+                      tfun(mu = mu, y = y, w = w, res = FALSE, eta = eta, extra))
     old.crit <- if (minimize.criterion) 10*new.crit+10 else -10*new.crit-10
 
 
@@ -372,17 +380,20 @@ rrvglm.fit <- function(x, y, w=rep(1, length(x[, 1])),
 
     wz <- eval(family@weight)
     if (control$checkwz)
-      wz = checkwz(wz, M = M, trace = trace,
+      wz <- checkwz(wz, M = M, trace = trace,
                    wzepsilon = control$wzepsilon)
 
     U <- vchol(wz, M = M, n = n, silent = !trace)
     tvfor <- vforsub(U, as.matrix(deriv.mu), M = M, n = n)
     z <- eta + vbacksub(U, tvfor, M = M, n = n) - offset
 
-    c.list <- list(z=as.double(z), fit=as.double(t(eta)), one.more = TRUE,
-                   coeff=as.double(rep(1,ncol(X_vlm_save))), U=as.double(U),
-                   copy_X_vlm=copy_X_vlm,
-                   X_vlm = if (copy_X_vlm) as.double(X_vlm_save) else double(3))
+    c.list <- list(z = as.double(z), fit = as.double(t(eta)),
+                   one.more = TRUE,
+                   coeff = as.double(rep(1,ncol(X_vlm_save))),
+                   U = as.double(U),
+                   copy_X_vlm = copy_X_vlm,
+                   X_vlm = if (copy_X_vlm) as.double(X_vlm_save) else
+                   double(3))
 
 
 
@@ -394,7 +405,7 @@ rrvglm.fit <- function(x, y, w=rep(1, length(x[, 1])),
         stop(ncol_X_vlm, " parameters but only ", nrow_X_vlm, " observations")
 
     {
-        bf.call = expression(vlm.wfit(xmat=X_vlm_save, zedd, 
+        bf.call <- expression(vlm.wfit(xmat=X_vlm_save, zedd, 
             Blist = if (control$Quadratic) B.list else Blist,
             ncolx=ncol(x), U=U,
             Eta.range = control$Eta.range,
@@ -402,35 +413,36 @@ rrvglm.fit <- function(x, y, w=rep(1, length(x[, 1])),
             is.vlmX = TRUE, qr = qr.arg, xij = control$xij))
 
         while(c.list$one.more) {
-            if (control$Quadratic) {
-                zedd = as.matrix(z)
-                if (control$Corner)
-                    zedd[,Index.corner] = zedd[,Index.corner] - lv.mat 
-            } else {
-                zedd = z 
-            }
+          if (control$Quadratic) {
+            zedd <- as.matrix(z)
+            if (control$Corner)
+              zedd[,Index.corner] <- zedd[,Index.corner] - lv.mat 
+          } else {
+            zedd <- z 
+          }
 
             if (!nice31)
-                tfit <- eval(bf.call)   # tfit$fitted.values is n x M
+              tfit <- eval(bf.call)   # tfit$fitted.values is n x M
 
             if (!control$Quadratic) {
-                Cmat = tfit$mat.coef[colx2.index,,drop = FALSE] %*%
+                Cmat <- tfit$mat.coef[colx2.index,,drop = FALSE] %*%
                        Amat %*% solve(t(Amat) %*% Amat)
-                rrcontrol$Ainit = control$Ainit = Amat  # Good for valt()
-                rrcontrol$Cinit = control$Cinit = Cmat  # Good for valt()
+                rrcontrol$Ainit <- control$Ainit <- Amat  # Good for valt()
+                rrcontrol$Cinit <- control$Cinit <- Cmat  # Good for valt()
             }
     
             if (!nice31) c.list$coeff <- tfit$coefficients 
     
             if (control$Quadratic) {
                 if (control$Corner)
-                    tfit$fitted.values[,Index.corner] =
+                    tfit$fitted.values[,Index.corner] <-
                         tfit$fitted.values[,Index.corner] + lv.mat 
             }
 
             if (!nice31)
-                tfit$predictors = tfit$fitted.values # Doesn't contain the offset
-            if (!nice31) c.list$fit = tfit$fitted.values
+              tfit$predictors <- tfit$fitted.values # Doesn't contain the offset
+            if (!nice31)
+              c.list$fit <- tfit$fitted.values
             c.list <- eval(new.s.call)
             NULL
         }
@@ -452,7 +464,7 @@ rrvglm.fit <- function(x, y, w=rep(1, length(x[, 1])),
 
     asgn <- attr(X_vlm_save, "assign")
     if (nice31) {
-        coefs <- rep(0, len=length(xnrow_X_vlm))
+        coefs <- rep(0, len = length(xnrow_X_vlm))
         rank <- ncol_X_vlm
     } else {
         coefs <- tfit$coefficients
@@ -470,12 +482,12 @@ rrvglm.fit <- function(x, y, w=rep(1, length(x[, 1])),
     } else {
         R <- tfit$qr$qr[1:ncol_X_vlm, 1:ncol_X_vlm, drop = FALSE]
         R[lower.tri(R)] <- 0
-        attributes(R) <- list(dim=c(ncol_X_vlm, ncol_X_vlm),
-                              dimnames=list(cnames, cnames), rank=rank)
+        attributes(R) <- list(dim = c(ncol_X_vlm, ncol_X_vlm),
+                              dimnames = list(cnames, cnames), rank = rank)
     }
 
     if (nice31) {
-        effects <- rep(0, len=77)
+        effects <- rep(0, len = 77)
     } else {
         effects <- tfit$effects
         neff <- rep("", nrow_X_vlm)
@@ -508,39 +520,41 @@ rrvglm.fit <- function(x, y, w=rep(1, length(x[, 1])),
     }
 
     if (is.matrix(mu)) {
-          if (length(dimnames(y)[[2]])) {
-              y.names <- dimnames(y)[[2]]
-          }
-          if (length(dimnames(mu)[[2]])) {
-              y.names <- dimnames(mu)[[2]]
-          }
-          dimnames(mu) <- list(yn, y.names)
+      if (length(dimnames(y)[[2]])) {
+        y.names <- dimnames(y)[[2]]
+      }
+      if (length(dimnames(mu)[[2]])) {
+        y.names <- dimnames(mu)[[2]]
+      }
+      dimnames(mu) <- list(yn, y.names)
     } else {
-        names(mu) <- names(fv)
+      names(mu) <- names(fv)
     }
 
 
 
 
-    elts.tildeA = (M - Rank - length(control$szero)) * Rank
-    no.dpar = 0
+
+
+    elts.tildeA <- (M - Rank - length(control$szero)) * Rank
+    no.dpar <- 0
     df.residual <- nrow_X_vlm - rank -
                    (if(control$Quadratic) Rank*p2 else 0) -
                    no.dpar - elts.tildeA
 
 
-    fit <- list(assign=asgn,
-                coefficients=coefs,
+    fit <- list(assign = asgn,
+                coefficients = coefs,
                 constraints = if (control$Quadratic) B.list else Blist,
-                df.residual=df.residual,
-                df.total=n*M,
-                effects=effects, 
-                fitted.values=mu,
-                offset=offset, 
-                rank=rank,
-                residuals=residuals,
-                R=R,
-                terms=Terms) # terms: This used to be done in vglm() 
+                df.residual = df.residual,
+                df.total = n*M,
+                effects = effects, 
+                fitted.values = mu,
+                offset = offset, 
+                rank = rank,
+                residuals = residuals,
+                R = R,
+                terms = Terms) # terms: This used to be done in vglm() 
 
     if (qr.arg && !nice31) {
         fit$qr <- tfit$qr
@@ -570,7 +584,7 @@ rrvglm.fit <- function(x, y, w=rep(1, length(x[, 1])),
         ynames = dimnames(y)[[2]])
 
     if (one.more)
-        misc$rrr.expression = rrr.expression # 
+      misc$rrr.expression <- rrr.expression  #
 
 
     crit.list <- list()
@@ -579,9 +593,11 @@ rrvglm.fit <- function(x, y, w=rep(1, length(x[, 1])),
 
     for(ii in names(.min.criterion.VGAM)) {
         if (ii != criterion &&
-           any(slotNames(family) == ii) && length(body(slot(family, ii)))) {
+           any(slotNames(family) == ii) &&
+               length(body(slot(family, ii)))) {
                 fit[[ii]] <- crit.list[[ii]] <-
-                (slot(family, ii))(mu=mu, y=y, w=w, res = FALSE, eta=eta, extra)
+                (slot(family, ii))(mu = mu, y = y, w = w,
+                                   res = FALSE, eta = eta, extra)
         }
     }
 
@@ -596,18 +612,18 @@ rrvglm.fit <- function(x, y, w=rep(1, length(x[, 1])),
 
     structure(c(fit, list(predictors = if (nice31) matrix(eta, n, M) else
                                        tfit$predictors,
-        contrasts=attr(x, "contrasts"),
-        control=control,
-        crit.list=crit.list,
-        extra=extra,
-        family=family,
-        iter=iter,
-        misc=misc,
+        contrasts = attr(x, "contrasts"),
+        control = control,
+        crit.list = crit.list,
+        extra = extra,
+        family = family,
+        iter = iter,
+        misc = misc,
         post = post,
         rss = if (nice31) 000 else tfit$rss,
-        x=x,
-        y=y)),
-        vclass=family@vfamily)
+        x = x,
+        y = y)),
+        vclass = family@vfamily)
 }
 
 

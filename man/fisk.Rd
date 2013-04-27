@@ -43,7 +43,7 @@ fisk(lshape1.a = "loge", lscale = "loge",
 The Fisk distribution has density
   \deqn{f(y) = a y^{a-1} / [b^a \{1 + (y/b)^a\}^2]}{%
         f(y) = a y^(a-1) / [b^a (1 + (y/b)^a)^2]}
-  for \eqn{a > 0}, \eqn{b > 0}, \eqn{y > 0}.
+  for \eqn{a > 0}, \eqn{b > 0}, \eqn{y \geq 0}{y >= 0}.
 Here, \eqn{b} is the scale parameter \code{scale},
 and \code{a} is a shape parameter.
 The cumulative distribution function is

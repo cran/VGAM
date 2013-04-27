@@ -99,30 +99,30 @@ London: Springer-Verlag.
 
 \examples{
 # Example 1
-ystar = venice[["r1"]]  # Use the first order statistic as the response
-n = length(ystar)
-L = runif(n, 100, 104) # Lower censoring points
-U = runif(n, 130, 135) # Upper censoring points
-y = pmax(L, ystar) # Left  censored
-y = pmin(U, y)     # Right censored
-extra = list(leftcensored = ystar < L, rightcensored = ystar > U)
-fit = vglm(y ~ scale(year), data=venice, trace=TRUE, extra=extra,
-           cgumbel(mean=FALSE, perc=c(5,25,50,75,95)))
-coef(fit, matrix=TRUE)
+ystar <- venice[["r1"]]  # Use the first order statistic as the response
+nn <- length(ystar)
+L <- runif(nn, 100, 104) # Lower censoring points
+U <- runif(nn, 130, 135) # Upper censoring points
+y <- pmax(L, ystar) # Left  censored
+y <- pmin(U, y)     # Right censored
+extra <- list(leftcensored = ystar < L, rightcensored = ystar > U)
+fit <- vglm(y ~ scale(year), data = venice, trace = TRUE, extra = extra,
+            cgumbel(mean = FALSE, perc = c(5, 25, 50, 75, 95)))
+coef(fit, matrix = TRUE)
 head(fitted(fit))
 fit@extra
 
 # Example 2: simulated data
-n = 1000
-ystar = rgumbel(n, loc=1, scale=exp(0.5)) # The uncensored data
-L = runif(n, -1, 1) # Lower censoring points
-U = runif(n,  2, 5) # Upper censoring points
-y = pmax(L, ystar) # Left  censored
-y = pmin(U, y)     # Right censored
-\dontrun{par(mfrow=c(1,2)); hist(ystar); hist(y);}
-extra = list(leftcensored = ystar < L, rightcensored = ystar > U)
-fit = vglm(y ~ 1, trace=TRUE, extra=extra, cgumbel)
-coef(fit, matrix=TRUE)
+nn <- 1000
+ystar <- rgumbel(nn, loc = 1, scale = exp(0.5))  # The uncensored data
+L <- runif(nn, -1, 1)  # Lower censoring points
+U <- runif(nn,  2, 5)  # Upper censoring points
+y <- pmax(L, ystar) # Left  censored
+y <- pmin(U, y)     # Right censored
+\dontrun{par(mfrow = c(1, 2)); hist(ystar); hist(y);}
+extra <- list(leftcensored = ystar < L, rightcensored = ystar > U)
+fit <- vglm(y ~ 1, trace = TRUE, extra = extra, cgumbel)
+coef(fit, matrix = TRUE)
 }
 \keyword{models}
 \keyword{regression}

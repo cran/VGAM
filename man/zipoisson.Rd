@@ -93,7 +93,6 @@ zipoisson(lpstr0 = "logit", llambda = "loge",
   (1-phi)*lambda*(1 + phi lambda)}.
   By default, the two linear/additive predictors are
   \eqn{(logit(\phi), \log(\lambda))^T}{(logit(phi), log(lambda))^T}.
-  This function implements Fisher scoring.
 
 
   The \pkg{VGAM} family function \code{zipoissonff()} has a few
@@ -107,8 +106,10 @@ zipoisson(lpstr0 = "logit", llambda = "loge",
   (iv)  argument \code{zero} has a new default so that the \code{probp}
         is an intercept-only  by default.
   Now \code{zipoissonff()} is generally recommended over
-  \code{zipoisson()}, and definitely recommended over
-  \code{\link{yip88}}.
+  \code{zipoisson()} (and definitely recommended over \code{\link{yip88}}).
+  Both functions implement Fisher scoring and can handle
+  multiple responses.
+
 
 
 }
@@ -139,18 +140,19 @@ zipoisson(lpstr0 = "logit", llambda = "loge",
   Cambridge University Press: Cambridge.
 
 
-  Yee, T. W. (2012)
-  Two-parameter reduced-rank vector generalized linear models.
-  \emph{In preparation}.
+  Yee, T. W. (2013)
+  Reduced-rank vector generalized linear models with two linear predictors.
+  \emph{Computational Statistics and Data Analysis}.
 
 
 }
 \author{ T. W. Yee }
 \note{
-  For intercept-models, the \code{misc} slot has a component called
-  \code{p0} which is the estimate of \eqn{P(Y = 0)}. Note that
-  \eqn{P(Y = 0)} is not the parameter \eqn{\phi}{phi}.  This family
-  function currently cannot handle a multivariate response.
+  The \code{misc} slot has a component called
+  \code{pobs0} which is the estimate of \eqn{P(Y = 0)}.
+  Note that \eqn{P(Y = 0)} is not the parameter \eqn{\phi}{phi}.
+  The estimated probability of a structural 0 is returned in
+  the \code{misc} slot with component name \code{pstr0}.
 
 
   Although the functions in \code{\link{Zipois}}
@@ -212,6 +214,7 @@ zipoisson(lpstr0 = "logit", llambda = "loge",
 }
 \examples{
 # Example 1: simulated ZIP data
+set.seed(123)
 zdata <- data.frame(x2 = runif(nn <- 2000))
 zdata <- transform(zdata, pstr01  = logit(-0.5 + 1*x2, inverse = TRUE),
                           pstr02  = logit( 0.5 - 1*x2, inverse = TRUE),
@@ -232,6 +235,15 @@ coef(fit2, matrix = TRUE) # These should agree with the above values
 # Fit all two simultaneously, using a different parameterization:
 fit12 <- vglm(cbind(y1, y2) ~ x2, zipoissonff, zdata, crit = "coef")
 coef(fit12, matrix = TRUE) # These should agree with the above values
+
+# For the first observation compute the probability that y1 is
+# due to a structural zero.
+head(zdata, 1)
+pfit1 <- predict(fit1, zdata[1, ])
+pstr0 <- logit(pfit1[1], inverse = TRUE)
+lambda <- loge(pfit1[2], inverse = TRUE)
+(prob.struc.0 <- pstr0 / dzipois(x = 0, lambda = lambda, pstr0 = pstr0))
+
 
 # Example 2: McKendrick (1926). Data from 223 Indian village households
 cholera <- data.frame(ncases = 0:4, # Number of cholera cases,

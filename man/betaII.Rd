@@ -42,7 +42,7 @@ betaII(lscale = "loge", lshape2.p = "loge", lshape3.q = "loge",
 The beta II distribution has density
   \deqn{f(y) = y^{p-1} / [b^p B(p,q) \{1 + y/b\}^{p+q}]}{%
         f(y) = y^(p-1) / [b^p B(p,q) (1 + y/b)^(p+q)]}
-  for \eqn{b > 0}, \eqn{p > 0}, \eqn{q > 0}, \eqn{y > 0}.
+  for \eqn{b > 0}, \eqn{p > 0}, \eqn{q > 0}, \eqn{y \geq 0}{y >= 0}.
 Here, \eqn{b} is the scale parameter \code{scale},
 and the others are shape parameters.
 The mean is 
@@ -87,10 +87,10 @@ Hoboken, NJ, USA: Wiley-Interscience.
 }
 
 \examples{
-bdata = data.frame(y = rsinmad(2000, shape1.a = 1, 6, 2)) # Not genuine data!
-fit = vglm(y ~ 1, betaII, bdata, trace = TRUE)
-fit = vglm(y ~ 1, betaII(ishape2.p = 0.7, ishape3.q = 0.7),
-           bdata, trace = TRUE)
+bdata <- data.frame(y = rsinmad(2000, shape1.a = 1, exp(2), exp(1))) # Not genuine data!
+fit <- vglm(y ~ 1, betaII, bdata, trace = TRUE)
+fit <- vglm(y ~ 1, betaII(ishape2.p = 0.7, ishape3.q = 0.7),
+            bdata, trace = TRUE)
 coef(fit, matrix = TRUE)
 Coef(fit)
 summary(fit)

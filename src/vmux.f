@@ -1,6 +1,6 @@
       subroutine qpsedg8xf(tgiyxdw1, dufozmt7, wy1vqfzu)
       implicit logical (a-z)
-      integer wy1vqfzu, tgiyxdw1(1), dufozmt7(1)
+      integer wy1vqfzu, tgiyxdw1(*), dufozmt7(*)
       integer urohxe6t, bpvaqm5z, ayfnwr1v
       ayfnwr1v = 1
       urohxe6t = wy1vqfzu
@@ -23,7 +23,7 @@
       end
       integer function viamf(cz8qdfyj, rvy1fpli, wy1vqfzu, tgiyxdw1, 
      &dufozmt7)
-      integer cz8qdfyj, rvy1fpli, wy1vqfzu, tgiyxdw1(1), dufozmt7(1)
+      integer cz8qdfyj, rvy1fpli, wy1vqfzu, tgiyxdw1(*), dufozmt7(*)
       integer urohxe6t, imk5wjxg
       imk5wjxg = wy1vqfzu*(wy1vqfzu+1)/2
       do 23009 urohxe6t=1,imk5wjxg 
@@ -78,7 +78,7 @@
       subroutine nudh6szqf(wpuarq2m, tlgduey8, lfu2qhid, dimu, tgiyxdw1,
      & dufozmt7, kuzxj1lo, wy1vqfzu, wk1200)
       implicit logical (a-z)
-      integer dimu, tgiyxdw1(1), dufozmt7(1), kuzxj1lo, wy1vqfzu
+      integer dimu, tgiyxdw1(*), dufozmt7(*), kuzxj1lo, wy1vqfzu
       double precision wpuarq2m(dimu,kuzxj1lo), tlgduey8(kuzxj1lo,
      &wy1vqfzu), lfu2qhid(wy1vqfzu,kuzxj1lo), wk1200(wy1vqfzu,wy1vqfzu)
       double precision q6zdcwxk
@@ -111,7 +111,7 @@
       subroutine vbksf(wpuarq2m, bvecto, wy1vqfzu, kuzxj1lo, wk1200, 
      &tgiyxdw1, dufozmt7, dimu)
       implicit logical (a-z)
-      integer wy1vqfzu, kuzxj1lo, tgiyxdw1(1), dufozmt7(1), dimu
+      integer wy1vqfzu, kuzxj1lo, tgiyxdw1(*), dufozmt7(*), dimu
       double precision wpuarq2m(dimu,kuzxj1lo), bvecto(wy1vqfzu,
      &kuzxj1lo), wk1200(wy1vqfzu,wy1vqfzu)
       double precision q6zdcwxk
@@ -204,8 +204,8 @@
       subroutine mxrbkut0f(wpuarq2m, he7mqnvy, wy1vqfzu, xjc4ywlh, 
      &kuzxj1lo, wk1200, wk3400, tgiyxdw1, dufozmt7, dimu, rutyk8mg)
       implicit logical (a-z)
-      integer dimu, wy1vqfzu, xjc4ywlh, kuzxj1lo, tgiyxdw1(1), dufozmt7(
-     &1), rutyk8mg
+      integer dimu, wy1vqfzu, xjc4ywlh, kuzxj1lo, tgiyxdw1(*), dufozmt7(
+     &*), rutyk8mg
       double precision wpuarq2m(dimu,kuzxj1lo), he7mqnvy(rutyk8mg,
      &xjc4ywlh), wk1200(wy1vqfzu,wy1vqfzu), wk3400(wy1vqfzu,xjc4ywlh)
       double precision q6zdcwxk

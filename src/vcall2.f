@@ -1,6 +1,7 @@
+C Output from Public domain Ratfor, version 1.01
       subroutine vcall2(onemor,w,y,eta,beta,u)
       logical onemor
-      double precision w(1), y(1), eta(1), beta(1), u(1)
+      double precision w(*), y(*), eta(*), beta(*), u(*)
       onemor = .true.
       w(1) = 1.0d0
       y(1) = 1.0d0
@@ -11,7 +12,7 @@
       end
       subroutine vcall1(onemor,y,eta,beta,u,xbig,cpxbig)
       logical onemor, cpxbig
-      double precision y(1), eta(1), beta(1), u(1), xbig(1)
+      double precision y(*), eta(*), beta(*), u(*), xbig(*)
       onemor = .true.
       y(1) = 1.0d0
       eta(1) = 1.0d0

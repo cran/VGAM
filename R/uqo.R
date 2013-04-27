@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2012 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2013 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -80,7 +80,7 @@ uqo.control = function(Rank = 1,
     if (Use.Init.Poisson.QO && CA1)
       stop("cannot have both 'Use.Init.Poisson.QO = TRUE' and 'CA1 = TRUE'")
 
-    ans = list(
+    ans <- list(
            Bestof = Bestof,
            CA1 = CA1,
            ConstrainedQO = FALSE, # A constant, not a control parameter
@@ -116,7 +116,7 @@ uqo.control = function(Rank = 1,
 
 
 uqo  <- function(formula,
-                 family, data=list(), 
+                 family, data = list(), 
                  weights = NULL, subset = NULL, na.action = na.fail,
                  etastart = NULL, mustart = NULL, coefstart = NULL,
                  control = uqo.control(...), 
@@ -126,8 +126,7 @@ uqo  <- function(formula,
                  contrasts = NULL, 
                  constraints = NULL,
                  extra = NULL, 
-                 qr.arg = FALSE, ...)
-{
+                 qr.arg = FALSE, ...) {
     dataname <- as.character(substitute(data))  # "list" if no data=
     function.name <- "uqo"
 
@@ -158,7 +157,7 @@ uqo  <- function(formula,
 
     y <- model.response(mf, "numeric") # model.extract(mf, "response")
     x <- model.matrix(mt, mf, contrasts)
-    attr(x, "assign") = attrassigndefault(x, mt)
+    attr(x, "assign") <- attrassigndefault(x, mt)
     offset <- model.offset(mf)
     if (is.null(offset)) 
         offset <- 0 # yyy ???
@@ -187,7 +186,7 @@ uqo  <- function(formula,
        length(as.list(family@deviance)) <= 1)
         stop("The fast algorithm requires the family ",
              "function to have a deviance slot")
-    deviance.Bestof = rep(as.numeric(NA), len = control$Bestof)
+    deviance.Bestof <- rep(as.numeric(NA), len = control$Bestof)
     for(tries in 1:control$Bestof) {
          if (control$trace && (control$Bestof>1))
          cat(paste("\n========================= Fitting model", tries,
@@ -199,11 +198,12 @@ uqo  <- function(formula,
                    qr.arg = qr.arg, Terms = mt, function.name = function.name,
                    ca1 = control$CA1 && tries == 1, ...)
         deviance.Bestof[tries] = it$crit.list$deviance
-        if (tries == 1||min(deviance.Bestof[1:(tries-1)]) > deviance.Bestof[tries])
-            fit = it
+        if (tries == 1 ||
+            min(deviance.Bestof[1:(tries-1)]) > deviance.Bestof[tries])
+          fit <- it
     }
-    fit$misc$deviance.Bestof = deviance.Bestof
-    fit$misc$criterion = "deviance"  # Needed for calibrate; 21/1/05
+    fit$misc$deviance.Bestof <- deviance.Bestof
+    fit$misc$criterion <- "deviance"  # Needed for calibrate; 21/1/05
 
     fit$misc$dataname <- dataname
 
@@ -226,12 +226,12 @@ uqo  <- function(formula,
     answer@control$min.criterion = TRUE # Needed for calibrate; 21/1/05
 
     if (length(fit$weights))
-        slot(answer, "weights") = as.matrix(fit$weights)
+        slot(answer, "weights") <- as.matrix(fit$weights)
     if (x.arg)
-        slot(answer, "x") = x
+        slot(answer, "x") <- x
     if (y.arg)
-        slot(answer, "y") = as.matrix(fit$y)
-    slot(answer, "extra") = if (length(fit$extra)) {
+        slot(answer, "y") <- as.matrix(fit$y)
+    slot(answer, "extra") <- if (length(fit$extra)) {
         if (is.list(fit$extra)) fit$extra else {
             warning("'extra' is not a list, therefore ",
                     "placing 'extra' into a list")
@@ -239,55 +239,56 @@ uqo  <- function(formula,
         }
     } else list() # R-1.5.0
     if (length(fit$prior.weights))
-        slot(answer, "prior.weights") = as.matrix(fit$prior.weights)
+        slot(answer, "prior.weights") <- as.matrix(fit$prior.weights)
 
     answer
 }
 
 
-calluqof = function(sitescores, etamat, ymat, wvec, modelno, nice31, xmat,
+calluqof <- function(sitescores, etamat, ymat, wvec, modelno, nice31, xmat,
                     Control,
-                    n, M, maxMr5, othint, othdbl, bnumat, Hstep=NA, alldump) {
-    control = Control
-    Rank = control$Rank
-    itol = othint[14]
-    inited = if (is.R()) {
+                    n, M, maxMr5, othint, othdbl, bnumat,
+                    Hstep = NA, alldump) {
+    control <- Control
+    Rank <- control$Rank
+    itol <- othint[14]
+    inited <- if (is.R()) {
         as.numeric(existsinVGAMenv("etamat", prefix = ".VGAM.UQO."))
     } else 0
-    othint[5] = inited  # Replacement
-    usethiseta = if (inited == 1)
+    othint[5] <- inited  # Replacement
+    usethiseta <- if (inited == 1)
         getfromVGAMenv("etamat", prefix = ".VGAM.UQO.") else t(etamat)
-    usethisbeta = double(othint[13])
-    pstar = othint[3]
-    nstar = if (nice31) ifelse(modelno==3 || modelno==5,n*2,n) else n*M
-    NOS = ifelse(modelno == 3 || modelno==5, M/2, M)
+    usethisbeta <- double(othint[13])
+    pstar <- othint[3]
+    nstar <- if (nice31) ifelse(modelno==3 || modelno==5,n*2,n) else n*M
+    NOS <- ifelse(modelno == 3 || modelno==5, M/2, M)
 
-    sitescores = matrix(sitescores, ncol=Rank)
-    sitescores = scale(sitescores, center = TRUE, scale = FALSE)
+    sitescores <- matrix(sitescores, ncol=Rank)
+    sitescores <- scale(sitescores, center = TRUE, scale = FALSE)
     if (itol) {
-        numat = matrix(sitescores, ncol=Rank)
+        numat <- matrix(sitescores, ncol=Rank)
         if (Rank > 1) {
-            evnu = eigen(var(numat))
-            numat = numat %*% evnu$vector
+            evnu <- eigen(var(numat))
+            numat <- numat %*% evnu$vector
         }
 
 
 
-        sdnumat = apply(numat, 2, sd)
+        sdnumat <- apply(numat, 2, sd)
         for(lookat in 1:Rank)
             if (sdnumat[lookat]>control$MUXfactor[lookat]*control$isdlv[lookat]){
                 muxer = control$isdlv[lookat] *
                         control$MUXfactor[lookat] / sdnumat[lookat]
-                numat[,lookat] = numat[,lookat] * muxer
+                numat[,lookat] <- numat[,lookat] * muxer
                 if (control$trace) {
                 }
             }
     } else {
-        numat = matrix(sitescores, ncol=Rank)
-        evnu = eigen(var(numat))
-        temp7 = if (Rank > 1) evnu$vector %*% diag(evnu$value^(-0.5)) else
+        numat <- matrix(sitescores, ncol=Rank)
+        evnu <- eigen(var(numat))
+        temp7 <- if (Rank > 1) evnu$vector %*% diag(evnu$value^(-0.5)) else
                 evnu$vector %*% evnu$value^(-0.5)
-        numat = numat %*% temp7
+        numat <- numat %*% temp7
     }
 
     ans1 <- 
@@ -508,18 +509,25 @@ uqo.fit <- function(x, y, w = rep(1, len = nrow(x)),
               "negbinomial" = 0,
               "gamma2"=5,
               0)  # stop("can't fit this model using fast algorithm")
-    if (!modelno) stop("the family function does not work with uqo()")
-    if (modelno == 1) modelno = get("modelno", envir = VGAM:::VGAMenv)
+    if (!modelno)
+      stop("the family function does not work with uqo()")
+    if (modelno == 1)
+      modelno <- get("modelno", envir = VGAM:::VGAMenv)
     rmfromVGAMenv(c("etamat", "beta"), prefix = ".VGAM.UQO.")
 
-    cqofastok = if (is.R()) (exists("CQO.FastAlgorithm", envir = VGAM:::VGAMenv) &&
-                  get("CQO.FastAlgorithm", envir = VGAM:::VGAMenv)) else
-              (exists("CQO.FastAlgorithm", inherits = TRUE) && CQO.FastAlgorithm)
-    if (!cqofastok)
-        stop("can't fit this model using fast algorithm")
 
-    nice31 = (!control$EqualTol || control$ITolerances) && control$Quadratic &&
-             all(trivial.constraints(Blist))
+    cqofastok <-
+      exists("CQO.FastAlgorithm", envir = VGAM:::VGAMenv) &&
+         get("CQO.FastAlgorithm", envir = VGAM:::VGAMenv)
+
+
+    if (!cqofastok)
+      stop("can't fit this model using fast algorithm")
+
+    nice31 <- (!control$EqualTol ||
+                control$ITolerances) &&
+                control$Quadratic &&
+              all(trivial.constraints(Blist))
 
 
     X_vlm_1save <- if (nice31) {
@@ -837,7 +845,7 @@ jitteruqo = function(mat) {
 
 setMethod("Opt", "uqo", function(object, ...) Opt.qrrvglm(object, ...))
 setMethod("Max", "uqo", function(object, ...) Max.qrrvglm(object, ...))
-setMethod("lv",  "uqo", function(object, ...)  lv.qrrvglm(object, ...))
+setMethod("lv",  "uqo", function(object, ...) latvar.qrrvglm(object, ...))
 
 
 

@@ -172,7 +172,15 @@ Vector generalized additive models.
 
 }
 
-% ~Make other sections like Warning with \section{Warning }{....} ~
+
+\section{Warning}{
+  See \code{\link{vglm.control}}.
+
+}
+
+
+
+
 
 \seealso{
   \code{\link{vgam}},

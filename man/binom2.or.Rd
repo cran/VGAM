@@ -9,6 +9,7 @@
   model can be fitted.
   The odds ratio is used as a measure of dependency.
 
+
 }
 \usage{
 binom2.or(lmu = "logit", lmu1 = lmu, lmu2 = lmu, loratio = "loge",
@@ -64,7 +65,8 @@ binom2.or(lmu = "logit", lmu1 = lmu, lmu2 = lmu, loratio = "loge",
   }
 }
 \details{
-  Known also as the \emph{Palmgren model}, the bivariate logistic model is
+  Also known informally as the \emph{Palmgren model},
+  the bivariate logistic model is
   a full-likelihood based model defined as two logistic regressions plus
   \code{log(oratio) = eta3} where \code{eta3} is the third linear/additive
   predictor relating the odds ratio to explanatory variables.
@@ -199,8 +201,8 @@ binom2.or(lmu = "logit", lmu1 = lmu, lmu2 = lmu, loratio = "loge",
 }
 \examples{
 # Fit the model in Table 6.7 in McCullagh and Nelder (1989)
-coalminers = transform(coalminers, Age = (age - 42) / 5)
-fit = vglm(cbind(nBnW,nBW,BnW,BW) ~ Age, binom2.or(zero = NULL), coalminers)
+coalminers <- transform(coalminers, Age = (age - 42) / 5)
+fit <- vglm(cbind(nBnW,nBW,BnW,BW) ~ Age, binom2.or(zero = NULL), coalminers)
 fitted(fit)
 summary(fit)
 coef(fit, matrix = TRUE)
@@ -208,7 +210,7 @@ c(weights(fit, type = "prior")) * fitted(fit)  # Table 6.8
 
 \dontrun{ with(coalminers, matplot(Age, fitted(fit), type = "l", las = 1,
                          xlab = "(age - 42) / 5", lwd = 2))
-with(coalminers, matpoints(Age, fit@y, col=1:4))
+with(coalminers, matpoints(Age, depvar(fit), col=1:4))
 legend(x = -4, y = 0.5, lty = 1:4, col = 1:4, lwd = 2,
        legend=c("1 = (Breathlessness=0, Wheeze=0)",
                 "2 = (Breathlessness=0, Wheeze=1)",
@@ -217,19 +219,22 @@ legend(x = -4, y = 0.5, lty = 1:4, col = 1:4, lwd = 2,
 
 
 # Another model: pet ownership
-petdata = subset(xs.nz, ethnic == "0" & age < 70 & sex == "M") # More homogeneous
-petdata = na.omit(petdata[, c("cat", "dog", "age")])
+\dontrun{ require(VGAMdata)
+# More homogeneous:
+petdata <- subset(xs.nz, ethnic == "0" & age < 70 & sex == "M")
+petdata <- na.omit(petdata[, c("cat", "dog", "age")])
 summary(petdata)
 with(petdata, table(cat, dog)) # Can compute the odds ratio
 
-fit = vgam(cbind((1-cat)*(1-dog), (1-cat)*dog,
-                  cat*(1-dog), cat*dog) ~  s(age, df = 5),
-           binom2.or(zero =    3), data = petdata, trace = TRUE)
+fit <- vgam(cbind((1-cat)*(1-dog), (1-cat)*dog,
+                     cat *(1-dog),    cat *dog) ~ s(age, df = 5),
+            binom2.or(zero =    3), data = petdata, trace = TRUE)
 colSums(depvar(fit))
 coef(fit, matrix = TRUE)
+}
 
 \dontrun{ # Plot the estimated probabilities
-ooo = order(with(petdata, age))
+ooo <- order(with(petdata, age))
 matplot(with(petdata, age)[ooo], fitted(fit)[ooo, ], type = "l",
         xlab = "Age", ylab = "Probability", main = "Pet ownership",
         ylim = c(0, max(fitted(fit))), las = 1, lwd = 1.5)

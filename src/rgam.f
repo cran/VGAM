@@ -6,7 +6,7 @@
      &fbd5yktj
       double precision penalt, pjb6wfoq, xs(kuzxj1lo), ys(kuzxj1lo), ws(
      &kuzxj1lo), ankcghz2(nk+4), coef(nk), sz(kuzxj1lo), ifys6woa(
-     &kuzxj1lo), qcpiaj7f, wbkq9zyi, parms(3), scrtch(1)
+     &kuzxj1lo), qcpiaj7f, wbkq9zyi, parms(3), scrtch(*)
       call hbzuprs6(penalt,pjb6wfoq,xs,ys,ws, kuzxj1lo,nk, ankcghz2,
      &coef,sz,ifys6woa, qcpiaj7f,l3zpbstu(1),wbkq9zyi,l3zpbstu(2), 
      &l3zpbstu(3), parms(1),parms(2),parms(3), gp0xjetb, scrtch(1), 

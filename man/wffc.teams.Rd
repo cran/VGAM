@@ -11,19 +11,19 @@
 \usage{data(wffc.teams)}
 \format{
   A data frame with 18 observations on the following 5 variables.
-  Some of these variable are described in \code{\link{wffc}}.
+  Some of these variable are described in \code{\link[VGAM]{wffc}}.
   \describe{
     \item{\code{country}}{a character vector.}
     \item{\code{totalPlacings}}{a numeric vector; these are the summed
     placings over the 5 sessions and 5 team members. }
-    \item{\code{points}}{a numeric vector; see \code{\link{wffc}}.}
+    \item{\code{points}}{a numeric vector; see \code{\link[VGAM]{wffc}}.}
     \item{\code{noofcaptures}}{a numeric vector.}
     \item{\code{longestfish}}{a numeric vector.}
   }
 }
 \details{
   This data frame gives the team results of the competition.
-  See also \code{\link{wffc}} and \code{\link{wffc.indiv}} for more
+  See also \code{\link[VGAM]{wffc}} and \code{\link[VGAM]{wffc.indiv}} for more
   details and links.
 
 

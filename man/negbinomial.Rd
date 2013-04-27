@@ -262,9 +262,9 @@ Fitting the negative binomial distribution to biological data.
 \bold{9}, 174--200.
 
 
-  Yee, T. W. (2012)
-  Two-parameter reduced-rank vector generalized linear models.
-  \emph{In preparation}.
+  Yee, T. W. (2013)
+  Reduced-rank vector generalized linear models with two linear predictors.
+  \emph{Computational Statistics and Data Analysis}.
 
 
 
@@ -440,7 +440,7 @@ ci.mydiff <- mydiff + c(-1.96, 1.96) * se.mydiff
 ci.delta0 <- ci.exp.mydiff <- exp(ci.mydiff)
 (ci.phi0 <- 1 + 1 / rev(ci.delta0)) # The 95 percent conf. interval for phi0
 
-confint_nb1(nb1) # Quick way to get it
+Confint.nb1(nb1) # Quick way to get it
 
 summary(glm(y3 ~ x2 + x3, quasipoisson, mydata))$disper # cf. moment estimator
 }

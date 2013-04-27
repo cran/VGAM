@@ -111,32 +111,34 @@ Istituzione Centro Previsione e Segnalazioni Maree.
 
 }
 \seealso{
-  \code{\link{guplot}},
-  \code{\link{gev}},
-  \code{\link{gpd}}.
+  \code{\link[VGAM]{guplot}},
+  \code{\link[VGAM]{gev}},
+  \code{\link[VGAM]{gpd}}.
 
 }
 
 
 \examples{
-\dontrun{ matplot(venice[["year"]], venice[, -1], xlab = "Year",
-                  ylab = "Sea level (cm)", type = "l") }
+\dontrun{
+matplot(venice[["year"]], venice[, -1], xlab = "Year",
+        ylab = "Sea level (cm)", type = "l")
 
 ymat <- as.matrix(venice[, paste("r", 1:10, sep = "")])
 fit1 <- vgam(ymat ~ s(year, df = 3), gumbel(R = 365, mpv = TRUE),
              data = venice, trace = TRUE, na.action = na.pass)
 head(fitted(fit1))
 
-\dontrun{ par(mfrow = c(2, 1), xpd = TRUE)
+par(mfrow = c(2, 1), xpd = TRUE)
 plot(fit1, se = TRUE, lcol = "blue", llwd = 2, slty = "dashed")
 
 par(mfrow = c(1,1), bty = "l", xpd = TRUE, las = 1)
 qtplot(fit1, mpv = TRUE, lcol = c(1, 2, 5), tcol = c(1, 2, 5),
-       llwd = 2, pcol = "blue", tadj = 0.1) }
+       llwd = 2, pcol = "blue", tadj = 0.1)
 
 plot(sealevel ~ Year, data = venice90, type = "h", col = "blue")
 summary(venice90)
 dim(venice90)
-round(100 * nrow(venice90) / ((2009-1940+1)*365.26*24), dig = 3)
+round(100 * nrow(venice90) / ((2009 - 1940 + 1) * 365.26 * 24), dig = 3)
+}
 }
 \keyword{datasets}

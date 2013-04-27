@@ -10,7 +10,7 @@
 \usage{
 bivgamma.mckay(lscale = "loge", lshape1 = "loge", lshape2 = "loge",
                iscale = NULL, ishape1 = NULL, ishape2 = NULL,
-               imethod=1, zero = 1)
+               imethod = 1, zero = 1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -19,14 +19,17 @@ bivgamma.mckay(lscale = "loge", lshape1 = "loge", lshape2 = "loge",
   parameters \eqn{a}, \eqn{p} and \eqn{q} respectively.
   See \code{\link{Links}} for more choices.
 
+
   }
   \item{iscale, ishape1, ishape2}{
   Optional initial values for \eqn{a}, \eqn{p} and \eqn{q} respectively.
   The default is to compute them internally.
 
+
   }
   \item{imethod, zero}{
   See \code{\link{CommonVGAMffArguments}}.
+
 
   }
 }
@@ -115,16 +118,16 @@ New York: Springer.
 
 }
 \examples{
-shape1 = exp(1); shape2 = exp(2); scalepar = exp(3)
-mdata = data.frame(y1 = rgamma(nn <- 1000, shape=shape1, scale=scalepar))
-mdata = transform(mdata, zedd = rgamma(nn, shape=shape2, scale=scalepar))
-mdata = transform(mdata, y2 = y1 + zedd) # Z is defined as Y2-y1|Y1=y1
-fit = vglm(cbind(y1, y2) ~ 1, bivgamma.mckay, mdata, trace = TRUE)
+shape1 <- exp(1); shape2 = exp(2); scalepar = exp(3)
+mdata <- data.frame(y1 = rgamma(nn <- 1000, shape = shape1, scale = scalepar))
+mdata <- transform(mdata, zedd = rgamma(nn, shape = shape2, scale = scalepar))
+mdata <- transform(mdata, y2 = y1 + zedd)  # Z is defined as Y2-y1|Y1=y1
+fit <- vglm(cbind(y1, y2) ~ 1, bivgamma.mckay, mdata, trace = TRUE)
 coef(fit, matrix = TRUE)
 Coef(fit)
 vcov(fit)
 
-colMeans(depvar(fit))    # Check moments
+colMeans(depvar(fit))  # Check moments
 head(fitted(fit), 1)
 }
 \keyword{models}

@@ -1,21 +1,31 @@
 \name{lv}
 \alias{lv}
+\alias{latvar}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Latent Variables }
 \description{
   Generic function for the \emph{latent variables} of a model.
+
+
 }
 \usage{
 lv(object, ...)
+latvar(object, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{object}{ An object for which the extraction of latent
-    variables is meaningful.
+  \item{object}{
+  An object for which the extraction of latent
+  variables is meaningful.
+
+
   }
-  \item{\dots}{ Other arguments fed into the specific
-    methods function of the model. Sometimes they are fed
-    into the methods function for \code{\link{Coef}}.
+  \item{\dots}{
+  Other arguments fed into the specific
+  methods function of the model. Sometimes they are fed
+  into the methods function for \code{\link{Coef}}.
+
+
   }
 }
 \details{
@@ -58,6 +68,11 @@ Constrained additive ordination.
 \author{ Thomas W. Yee }
 
 \note{
+  \code{\link{latvar}} and \code{\link{lv}} are identical and will remain
+  available for a short while.
+  But soon \code{\link{lv}} will be withdrawn.
+
+
   Latent variables are not really applicable to
   \code{\link{vglm}}/\code{\link{vgam}} models.
 
@@ -66,9 +81,9 @@ Constrained additive ordination.
 
 
 \seealso{
-  \code{lv.qrrvglm},
-  \code{lv.rrvglm},
-  \code{lv.cao},
+  \code{latvar.qrrvglm},
+  \code{latvar.rrvglm},
+  \code{latvar.cao},
   \code{\link{lvplot}}.
 
 
@@ -76,15 +91,15 @@ Constrained additive ordination.
 
 \examples{
 \dontrun{
-hspider[,1:6] = scale(hspider[,1:6]) # Standardized environmental vars
+hspider[, 1:6] <- scale(hspider[, 1:6]) # Standardized environmental vars
 set.seed(123)
 p1 <- cao(cbind(Pardlugu, Pardmont, Pardnigr, Pardpull, Zoraspin) ~
           WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
           family = poissonff, data = hspider, Rank = 1, df1.nl =
           c(Zoraspin = 2.5, 3), Bestof = 3, Crow1positive = TRUE)
 
-var(lv(p1)) # Scaled to unit variance  # Scaled to unit variance
-c(lv(p1))   # Estimated site scores
+var(latvar(p1)) # Scaled to unit variance  # Scaled to unit variance
+c(latvar(p1))   # Estimated site scores
 }
 }
 \keyword{models}

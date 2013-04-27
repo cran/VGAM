@@ -9,7 +9,8 @@
 }
 \usage{
 makeham(lshape = "loge", lscale = "loge", lepsilon = "loge",
-        ishape = NULL,   iscale = NULL,   iepsilon = 0.3,
+        ishape = NULL,   iscale = NULL,   iepsilon = NULL,
+        gshape = exp(-5:5), gscale = exp(-5:5), gepsilon = exp(-4:1),
         nsimEIM = 500, oim.mean = TRUE, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -39,6 +40,12 @@ makeham(lshape = "loge", lscale = "loge", lepsilon = "loge",
 
 
   }
+  \item{gshape, gscale, gepsilon}{
+  See \code{\link{CommonVGAMffArguments}}.
+  }
+
+
+
   \item{nsimEIM, zero}{
   See \code{\link{CommonVGAMffArguments}}.
   Argument \code{probs.y} is used only when \code{imethod = 2}.

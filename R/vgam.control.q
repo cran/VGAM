@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2012 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2013 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -80,7 +80,7 @@ vgam.control <- function(all.knots = FALSE,
 
 vgam.nlchisq <- function(qr, resid, wz, smomat, deriv, U, smooth.labels,
                          assign, M, n, constraints) {
-        attr(qr, "class") = "qr" 
+        attr(qr, "class") <- "qr" 
         class(qr) <- "qr"
 
     if (!is.matrix(smomat)) smomat <- as.matrix(smomat)

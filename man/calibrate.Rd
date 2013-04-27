@@ -8,17 +8,25 @@
      particular `methods' which depend on the `class' of the first
      argument.
 
+
 }
 \usage{
 calibrate(object, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{object}{ An object for which a calibration is desired. }
-  \item{\dots}{ Additional arguments affecting the calibration produced.
+  \item{object}{ An object for which a calibration is desired.
+
+
+  }
+  \item{\dots}{
+    Additional arguments affecting the calibration produced.
     Usually the most important argument in \code{\dots} is
     \code{newdata} which, for \code{calibrate}, contains new
-    \emph{response} data, \bold{Y}, say. }
+    \emph{response} data, \bold{Y}, say.
+
+
+  }
 }
 \details{
   Given a regression model with explanatory variables \bold{X} and
@@ -27,6 +35,7 @@ calibrate(object, ...)
   regression model.
   It can be loosely thought of as the opposite of \code{\link{predict}}
   (which takes an \bold{X} and returns a \bold{Y}.)
+
   
 }
 \value{
@@ -38,6 +47,8 @@ calibrate(object, ...)
   linear combinations of the \bold{X}).
   See the specific \code{calibrate} methods functions to see
   what they return.
+
+
 }
 %\references{
 %}
@@ -46,33 +57,37 @@ calibrate(object, ...)
   This function was not called \code{predictx} because of the
   inability of constrained ordination models to return \bold{X};
   they can only return the latent variable values (site scores) instead.
+
+
 }
 
 
 \seealso{
   \code{\link{predict}},
   \code{\link{calibrate.qrrvglm}}.
+
+
 }
 
 \examples{
 \dontrun{
-hspider[,1:6] = scale(hspider[,1:6]) # Standardized environmental vars
+hspider[,1:6] <- scale(hspider[,1:6]) # Standardized environmental vars
 set.seed(123)
-p1 = cao(cbind(Pardlugu, Pardmont, Pardnigr, Pardpull, Zoraspin) ~
-         WaterCon + BareSand + FallTwig + 
-         CoveMoss + CoveHerb + ReflLux,
-         family = poissonff, data = hspider, Rank = 1,
-         df1.nl = c(Zoraspin=2, 1.9),
-         Bestof = 3, Crow1positive = TRUE)
+p1 <- cao(cbind(Pardlugu, Pardmont, Pardnigr, Pardpull, Zoraspin) ~
+          WaterCon + BareSand + FallTwig + 
+          CoveMoss + CoveHerb + ReflLux,
+          family = poissonff, data = hspider, Rank = 1,
+          df1.nl = c(Zoraspin = 2, 1.9),
+          Bestof = 3, Crow1positive = TRUE)
 
-siteNos = 1:2  # Calibrate these sites
-cp1 = calibrate(p1, new=data.frame(p1@y[siteNos,]), trace=TRUE)
+siteNos <- 1:2  # Calibrate these sites
+cp1 <- calibrate(p1, new = data.frame(depvar(p1)[siteNos,]), trace = TRUE)
 
 # Graphically compare the actual site scores with their calibrated values
-persp(p1, main="Solid=actual, dashed=calibrated site scores",
-      label=TRUE, col="blue", las=1)
-abline(v=lv(p1)[siteNos], lty=1, col=1:length(siteNos)) # actual site scores
-abline(v=cp1, lty=2, col=1:length(siteNos)) # calibrated values
+persp(p1, main = "Solid=actual, dashed=calibrated site scores",
+      label = TRUE, col = "blue", las = 1)
+abline(v = lv(p1)[siteNos], lty = 1, col = 1:length(siteNos)) # actual site scores
+abline(v = cp1, lty = 2, col = 1:length(siteNos)) # calibrated values
 }
 }
 \keyword{models}

@@ -34,7 +34,7 @@
 }
 
 \seealso{
-    \code{\link{dexpbinomial}}.
+    \code{\link[VGAM]{dexpbinomial}}.
 
 }
 
@@ -54,7 +54,7 @@
 
 }
 \examples{
-\dontrun{ with(toxop, plot(rainfall, positive/ssize, col = "blue"))
+\dontrun{ with(toxop, plot(rainfall, positive / ssize, col = "blue"))
 plot(toxop, col = "blue") }
 }
 \keyword{datasets}

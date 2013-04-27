@@ -45,6 +45,7 @@ Coef.qrrvglm(object, varlvI = FALSE, reference = NULL, ...)
   to compare the tolerances with the sites score variability then setting
   \code{varlvI=TRUE} is more appropriate.
 
+
   For rank-2 QRR-VGLMs, one of the species can be chosen so that the
   angle of its major axis and minor axis is zero, i.e., parallel to
   the ordination axes.  This means the effect on the latent vars is
@@ -58,12 +59,15 @@ Coef.qrrvglm(object, varlvI = FALSE, reference = NULL, ...)
   fitting the model, e.g., in the functions \code{\link{Coef.qrrvglm}} and
   \code{\link{lvplot.qrrvglm}}.
 
+
 }
 \value{
   The \bold{A}, \bold{B1}, \bold{C},  \bold{T},  \bold{D} matrices/arrays
   are returned, along with other slots.  For UQO, \bold{C} is undefined.
   The returned object has class \code{"Coef.qrrvglm"}
   (see \code{\link{Coef.qrrvglm-class}}).
+
+
 
 }
 \references{ 
@@ -73,26 +77,29 @@ canonical Gaussian ordination.
 \emph{Ecological Monographs},
 \bold{74}, 685--701.
 
+
 Yee, T. W. (2006)
 Constrained additive ordination.
 \emph{Ecology}, \bold{87}, 203--213.
 
+
 }
 \author{ Thomas W. Yee }
 \note{
-Consider an equal-tolerances Poisson/binomial CQO model with \code{Norrr = ~ 1}.
+Consider an equal-tolerances Poisson/binomial CQO model with \code{noRRR = ~ 1}.
 For \eqn{R=1} it has about \eqn{2S+p_2}{2*S+p2} parameters.
 For \eqn{R=2} it has about \eqn{3S+2 p_2}{3*S+2*p_2} parameters.
 Here, \eqn{S} is the number of species, and \eqn{p_2=p-1}{p2=p-1} is
 the number of environmental variables making up the latent variable.
 For an unequal-tolerances Poisson/binomial CQO model with
-\code{Norrr = ~ 1}, it has about \eqn{3S -1 +p_2}{3*S-1+p2} parameters
+\code{noRRR = ~ 1}, it has about \eqn{3S -1 +p_2}{3*S-1+p2} parameters
 for \eqn{R=1}, and about \eqn{6S -3 +2p_2}{6*S -3 +2*p2} parameters
 for \eqn{R=2}.
 Since the total number of data points is \eqn{nS}{n*S}, where
 \eqn{n} is the number of sites, it pays to divide the number
 of data points by the number of parameters to get some idea
 about how much information the parameters contain.
+
 
 }
 
@@ -102,24 +109,25 @@ about how much information the parameters contain.
 \code{\link{Coef.qrrvglm-class}},
 \code{print.Coef.qrrvglm},
 \code{\link{lvplot.qrrvglm}}.
+
+
 }
 
 \examples{
 set.seed(123)
-x2 = rnorm(n <- 100)
-x3 = rnorm(n)
-x4 = rnorm(n)
-lv1 = 0 + x3 - 2*x4
-lambda1 = exp(3 - 0.5 * (lv1-0)^2)
-lambda2 = exp(2 - 0.5 * (lv1-1)^2)
-lambda3 = exp(2 - 0.5 * ((lv1+4)/2)^2) # Unequal tolerances
-y1 = rpois(n, lambda1)
-y2 = rpois(n, lambda2)
-y3 = rpois(n, lambda3)
+x2 <- rnorm(n <- 100)
+x3 <- rnorm(n)
+x4 <- rnorm(n)
+lv1 <- 0 + x3 - 2*x4
+lambda1 <- exp(3 - 0.5 * (lv1-0)^2)
+lambda2 <- exp(2 - 0.5 * (lv1-1)^2)
+lambda3 <- exp(2 - 0.5 * ((lv1+4)/2)^2) # Unequal tolerances
+y1 <- rpois(n, lambda1)
+y2 <- rpois(n, lambda2)
+y3 <- rpois(n, lambda3)
 set.seed(111)
-# vvv p1 = cqo(cbind(y1,y2,y3) ~ x2 + x3 + x4, poissonff, trace=FALSE)
-\dontrun{
-lvplot(p1, y=TRUE, lcol=1:3, pch=1:3, pcol=1:3)
+# vvv p1 <- cqo(cbind(y1, y2, y3) ~ x2 + x3 + x4, poissonff, trace = FALSE)
+\dontrun{ lvplot(p1, y = TRUE, lcol = 1:3, pch = 1:3, pcol = 1:3)
 }
 # vvv Coef(p1)
 # vvv print(Coef(p1), digits=3)

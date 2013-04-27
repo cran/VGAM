@@ -10,10 +10,11 @@
 
 }
 \usage{
-cao.control(Rank = 1, all.knots = FALSE, criterion = "deviance", Cinit=NULL,
-            Crow1positive=TRUE, epsilon = 1.0e-05, Etamat.colmax = 10,
-            GradientFunction=FALSE, iKvector = 0.1, iShape = 0.1,
-            Norrr = ~ 1, SmallNo = 5.0e-13, Use.Init.Poisson.QO=TRUE,
+cao.control(Rank = 1, all.knots = FALSE, criterion = "deviance", Cinit = NULL,
+            Crow1positive = TRUE, epsilon = 1.0e-05, Etamat.colmax = 10,
+            GradientFunction = FALSE, iKvector = 0.1, iShape = 0.1,
+            noRRR = ~ 1, Norrr = NA,
+            SmallNo = 5.0e-13, Use.Init.Poisson.QO = TRUE,
             Bestof = if (length(Cinit)) 1 else 10, maxitl = 10,
             imethod = 1, bf.epsilon = 1.0e-7, bf.maxit = 10,
             Maxit.optim = 250, optim.maxit = 20, SD.sitescores = 1.0,
@@ -25,7 +26,7 @@ cao.control(Rank = 1, all.knots = FALSE, criterion = "deviance", Cinit=NULL,
 
   \item{Rank}{ 
     The numerical rank \eqn{R} of the model, i.e., the number of latent
-    variables.  Currently only \code{Rank=1} is implemented.
+    variables.  Currently only \code{Rank = 1} is implemented.
 
   }
   \item{all.knots}{
@@ -48,7 +49,7 @@ cao.control(Rank = 1, all.knots = FALSE, criterion = "deviance", Cinit=NULL,
   \item{Crow1positive}{ 
     Logical vector of length \code{Rank} (recycled if necessary): are
     the elements of the first row of \bold{C} positive?  For example,
-    if \code{Rank} is 4, then specifying \code{Crow1positive=c(FALSE,
+    if \code{Rank} is 4, then specifying \code{Crow1positive = c(FALSE,
     TRUE)} will force \bold{C[1,1]} and \bold{C[1,3]} to be negative,
     and \bold{C[1,2]} and \bold{C[1,4]} to be positive.
 
@@ -65,7 +66,7 @@ cao.control(Rank = 1, all.knots = FALSE, criterion = "deviance", Cinit=NULL,
     of memory used by \code{.Init.Poisson.QO()}.  It is the maximum
     number of columns allowed for the pseudo-response and its weights.
     In general, the larger the value, the better the initial value.
-    Used only if \code{Use.Init.Poisson.QO=TRUE}.
+    Used only if \code{Use.Init.Poisson.QO = TRUE}.
 
   }
 
@@ -103,18 +104,27 @@ cao.control(Rank = 1, all.knots = FALSE, criterion = "deviance", Cinit=NULL,
 
 %}
 
-  \item{Norrr}{
+  \item{noRRR}{
     Formula giving terms that are \emph{not} to be included in the
     reduced-rank regression (or formation of the latent variables).
     The default is to omit the intercept term from the latent variables.
-    Currently, only \code{Norrr = ~ 1} is implemented.
+    Currently, only \code{noRRR = ~ 1} is implemented.
 
   }
+  \item{Norrr}{
+  Defunct. Please use \code{noRRR}.
+  Use of \code{Norrr} will become an error soon.
+
+
+  }
+
+
+
 % \item{Parscale}{ 
 %  Numerical and positive-valued vector of length \bold{C}
 %  (recycled if necessary).  Passed into \code{optim(...,
-%  control=list(parscale=Parscale))}; the elements of \bold{C} become
-%  \bold{C} / \code{Parscale}.  Setting \code{ITolerances=TRUE} results
+%  control = list(parscale = Parscale))}; the elements of \bold{C} become
+%  \bold{C} / \code{Parscale}.  Setting \code{ITolerances = TRUE} results
 %  in line searches that are very large, therefore \bold{C} has to be
 %  scaled accordingly to avoid large step sizes.
 
@@ -264,11 +274,11 @@ London: Chapman & Hall.
 }
 \author{T. W. Yee}
 \note{
-  The argument \code{df1.nl} can be inputted in the format \code{c(spp1=2,
-  spp2=3, 2.5)}, say, meaning the default value is 2.5, but two species
+  The argument \code{df1.nl} can be inputted in the format \code{c(spp1 = 2,
+  spp2 = 3, 2.5)}, say, meaning the default value is 2.5, but two species
   have alternative values.
 
-  If \code{spar1=0} and \code{df1.nl=0} then this represents fitting
+  If \code{spar1 = 0} and \code{df1.nl = 0} then this represents fitting
   linear functions (CLO). Currently, this is handled in the awkward
   manner of setting \code{df1.nl} to be a small positive value, so that
   the smooth is almost linear but not quite.
@@ -280,29 +290,29 @@ London: Chapman & Hall.
 }
 
 \examples{\dontrun{
-hspider[,1:6] = scale(hspider[,1:6]) # Standardized environmental vars
+hspider[,1:6] <- scale(hspider[,1:6]) # Standardized environmental vars
 set.seed(123)
-ap1 = cao(cbind(Pardlugu, Pardmont, Pardnigr, Pardpull, Zoraspin) ~
-         WaterCon + BareSand + FallTwig +
-         CoveMoss + CoveHerb + ReflLux,
-         family = poissonff, data = hspider,
-         df1.nl = c(Zoraspin=2.3, 2.1),
-         Bestof = 10, Crow1positive = FALSE)
+ap1 <- cao(cbind(Pardlugu, Pardmont, Pardnigr, Pardpull, Zoraspin) ~
+           WaterCon + BareSand + FallTwig +
+           CoveMoss + CoveHerb + ReflLux,
+           family = poissonff, data = hspider,
+           df1.nl = c(Zoraspin = 2.3, 2.1),
+           Bestof = 10, Crow1positive = FALSE)
 sort(ap1@misc$deviance.Bestof) # A history of all the iterations
 
 Coef(ap1)
 
-par(mfrow=c(2,3)) # All or most of the curves are unimodal; some are
-plot(ap1, lcol = "blue") # quite symmetric. Hence a CQO model should be ok
+par(mfrow = c(2, 3))  # All or most of the curves are unimodal; some are
+plot(ap1, lcol = "blue")  # quite symmetric. Hence a CQO model should be ok
 
-par(mfrow=c(1,1), las=1)
-index = 1:ncol(ap1@y)  # lvplot is jagged because only 28 sites
-lvplot(ap1, lcol = index, pcol = index, y=TRUE)
+par(mfrow = c(1, 1), las = 1)
+index = 1:ncol(depvar(ap1))  # lvplot is jagged because only 28 sites
+lvplot(ap1, lcol = index, pcol = index, y = TRUE)
 
-trplot(ap1, label=TRUE, col=index)
+trplot(ap1, label = TRUE, col = index)
 abline(a = 0, b = 1, lty = 2)
 
-persp(ap1, label=TRUE, col=1:4)
+persp(ap1, label = TRUE, col = 1:4)
 }
 }
 \keyword{models}
@@ -321,7 +331,7 @@ persp(ap1, label=TRUE, col=1:4)
 %%           GradientFunction = FALSE,
 %            iKvector = 0.1,
 %            iShape = 0.1,
-%            Norrr = ~1,
+%            noRRR = ~1,
 %%           Parscale = 1, 
 %            SmallNo = 5e-13,
 %            Use.Init.Poisson.QO = TRUE, 

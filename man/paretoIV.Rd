@@ -122,7 +122,7 @@ paretoII(location = 0, lscale = "loge", lshape = "loge",
 
 Brazauskas, V. (2003)
 Information matrix for Pareto(IV), Burr, and related distributions.
-\emph{Comm.\ Statist.\ Theory and Methods}
+\emph{Comm. Statist. Theory and Methods}
 \bold{32}, 315--325.
 
 

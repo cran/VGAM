@@ -28,23 +28,27 @@ dbinom2.or(mu1,
     The arguments \code{mu1}, \code{mu2}, \code{oratio} are recycled to
     length \code{n}.
 
+
   }
   \item{mu1, mu2}{
     The marginal probabilities.
     Only \code{mu1} is needed if \code{exchangeable = TRUE}.
     Values should be between 0 and 1.
 
+
   }
   \item{oratio}{
     Odds ratio. Must be numeric and positive.
     The default value of unity means the responses are statistically
     independent.
-    
+
+
   }
   \item{exchangeable}{
    Logical. If \code{TRUE}, the two marginal probabilities are constrained
    to be equal.
-    
+
+
   }
   \item{twoCols}{
    Logical.
@@ -53,19 +57,23 @@ dbinom2.or(mu1,
    If \code{FALSE}, then a \eqn{n} \eqn{\times}{*} \eqn{4} matrix of 1s
    and 0s is returned.
 
+
   }
   \item{colnames}{
   The \code{dimnames} argument of
   \code{\link[base]{matrix}} is assigned \code{list(NULL, colnames)}.
+
 
   }
   \item{tol}{
   Tolerance for testing independence. Should be some
   small positive numerical value.
 
+
   }
   \item{ErrorCheck}{
   Logical. Do some error checking of the input parameters?
+
 
   }
 
@@ -76,9 +84,11 @@ dbinom2.or(mu1,
   The data might be fitted with the \pkg{VGAM} family function
   \code{\link{binom2.or}}.
 
+
   The function \code{dbinom2.or} does not really compute the density
   (because that does not make sense here) but rather returns the
   four joint probabilities.
+
 
 }
 \value{
@@ -86,36 +96,38 @@ dbinom2.or(mu1,
   either a 2 or 4 column matrix of 1s and 0s, depending on the argument
   \code{twoCols}.
 
+
   The function \code{dbinom2.or} returns
   a 4 column matrix of joint probabilities; each row adds up to unity.
+
 
 }
 \author{ T. W. Yee }
 \seealso{
   \code{\link{binom2.or}}.
 
+
 }
 \examples{
-# Example 1
-nn = 2000
-ymat = rbinom2.or(n = nn, mu1 = 0.8, oratio = exp(2), exch = TRUE)
-(mytab = table(ymat[,1], ymat[,2], dnn=c("Y1", "Y2")))
-(myor = mytab["0","0"] * mytab["1","1"] / (mytab["1","0"] * mytab["0","1"]))
-fit = vglm(ymat ~ 1, binom2.or(exch = TRUE))
+nn <- 2000  # Example 1
+ymat <- rbinom2.or(n = nn, mu1 = 0.8, oratio = exp(2), exch = TRUE)
+(mytab <- table(ymat[, 1], ymat[, 2], dnn = c("Y1", "Y2")))
+(myor <- mytab["0","0"] * mytab["1","1"] / (mytab["1","0"] * mytab["0","1"]))
+fit <- vglm(ymat ~ 1, binom2.or(exch = TRUE))
 coef(fit, matrix = TRUE)
 
 
-# Example 2
-x = sort(runif(nn))
-mu1 = logit(-2+4*x, inv = TRUE)
-mu2 = logit(-1+3*x, inv = TRUE)
-dmat = dbinom2.or(mu1 = mu1, mu2 = mu2, oratio = exp(2))
-ymat = rbinom2.or(n = nn, mu1 = mu1, mu2 = mu2, oratio = exp(2))
-fit2 = vglm(ymat ~ x, binom2.or)
+bdata <- data.frame(x2 = sort(runif(nn)))  # Example 2
+bdata <- transform(bdata, mu1 = logit(-2 + 4*x2, inverse = TRUE),
+                          mu2 = logit(-1 + 3*x2, inverse = TRUE))
+dmat <- with(bdata, dbinom2.or(mu1 = mu1, mu2 = mu2, oratio = exp(2)))
+ymat <- with(bdata, rbinom2.or(n = nn, mu1 = mu1, mu2 = mu2, oratio = exp(2)))
+fit2 <- vglm(ymat ~ x2, binom2.or, data = bdata)
 coef(fit2, matrix = TRUE)
 \dontrun{
-matplot(x, dmat, lty = 1:4, col = 1:4, type = "l",
-        main = "Joint probabilities", ylim = 0:1, lwd = 2)
+matplot(with(bdata, x2), dmat, lty = 1:4, col = 1:4, type = "l",
+        main = "Joint probabilities", ylim = 0:1, lwd = 2,
+        ylab = "Probabilities", xlab = "x2", las = 1)
 legend(x = 0, y = 0.5, lty = 1:4, col = 1:4, lwd = 2,
        legend = c("1 = (y1=0, y2=0)", "2 = (y1=0, y2=1)",
                   "3 = (y1=1, y2=0)", "4 = (y1=1, y2=1)"))

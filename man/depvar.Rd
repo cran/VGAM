@@ -56,10 +56,10 @@ depvar(object, ...)
 
 }
 \examples{
-pneumo = transform(pneumo, let = log(exposure.time))
-(fit = vglm(cbind(normal, mild, severe) ~ let, propodds, pneumo))
-fit@y        # Sample proportions (not recommended)
-depvar(fit)  # Better than using fit@y; dependent variable (response)
+pneumo <- transform(pneumo, let = log(exposure.time))
+(fit <- vglm(cbind(normal, mild, severe) ~ let, propodds, pneumo))
+fit@y       # Sample proportions (not recommended)
+depvar(fit) # Better than using fit@y; dependent variable (response)
 weights(fit, type = "prior") # Number of observations
 }
 \keyword{models}

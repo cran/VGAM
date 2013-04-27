@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2012 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2013 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -19,7 +19,10 @@ ToString <- function(x)
 
  TypicalVGAMfamilyFunction <-
   function(lsigma = "loge",
-           isigma = NULL, parallel = TRUE,
+           isigma = NULL,
+           gsigma = exp(-5:5),
+           parallel = TRUE,
+           apply.parint = FALSE,
            shrinkage.init = 0.95,
            nointercept = NULL, imethod = 1,
            probs.x = c(0.15, 0.85),
@@ -45,6 +48,17 @@ TypicalVGAMlinkFunction <-
 
 
 
+care.exp <- function(x,
+                     thresh = -log( sqrt( .Machine$double.xmin ) )
+                     ) {
+  x[x >   thresh]  <-  thresh
+  x[x < (-thresh)] <- -thresh
+  exp(x)
+}
+
+
+
+
 
 
 
@@ -57,8 +71,8 @@ TypicalVGAMlinkFunction <-
 
   if (is.character(theta)) {
     string <- if (short)
-        paste("log(", theta, ")", sep = "") else
-        paste("log(", theta, ")", sep = "")
+        paste("log(",  theta, ")", sep = "") else
+        paste("log(",  theta, ")", sep = "")
     if (tag)
       string <- paste("Log:", string)
     return(string)
@@ -94,8 +108,8 @@ TypicalVGAMlinkFunction <-
     stop("bad input for argument 'offset'")
 
   if (is.character(theta)) {
-    string <- if (short) 
-      paste("Logoff(", theta,
+    string <- if (short)
+      paste("logoff(", theta,
             ", offset = ", as.character(offset),
             ")", sep = "") else
       paste("log(",
@@ -130,6 +144,8 @@ TypicalVGAMlinkFunction <-
  identity <- function(theta,
                       inverse = FALSE, deriv = 0,
                       short = TRUE, tag = FALSE) {
+
+
   if (is.character(theta)) {
     string <- theta
     if (tag)
@@ -192,7 +208,7 @@ TypicalVGAMlinkFunction <-
   if (is.character(theta)) {
     string <- if (short) 
         paste("logit(", theta, ")", sep = "") else
-        paste("log(", theta, "/(1-", theta, "))", sep = "")
+        paste("log(",   theta, "/(1-", theta, "))", sep = "")
     if (tag) 
       string <- paste("Logit:", string) 
     return(string)
@@ -234,7 +250,7 @@ TypicalVGAMlinkFunction <-
 {
   if (is.character(theta)) {
     string <- if (short) 
-        paste("loglog(", theta, ")", sep = "") else
+        paste("loglog(",  theta, ")",  sep = "") else
         paste("log(log(", theta, "))", sep = "")
     if (tag) 
       string <- paste("Log-Log:", string) 
@@ -274,7 +290,7 @@ TypicalVGAMlinkFunction <-
 {
   if (is.character(theta)) {
     string <- if (short) 
-        paste("cloglog(", theta, ")", sep = "") else
+        paste("cloglog(",    theta, ")",  sep = "") else
         paste("log(-log(1-", theta, "))", sep = "")
     if (tag) 
       string <- paste("Complementary log-log:", string) 
@@ -317,7 +333,7 @@ TypicalVGAMlinkFunction <-
   if (is.character(theta)) {
     string <- if (short) 
         paste("probit(", theta, ")", sep = "") else
-        paste("qnorm(", theta, ")", sep = "")
+        paste("qnorm(",  theta, ")", sep = "")
     if (tag) 
       string <- paste("Probit:", string) 
     return(string)
@@ -383,7 +399,7 @@ TypicalVGAMlinkFunction <-
 {
   if (is.character(theta)) {
     string <- if (short) 
-        paste("exp(", theta, ")", sep = "") else
+        paste("explink(", theta, ")", sep = "") else
         paste("exp(", theta, ")", sep = "")
     if (tag) 
       string <- paste("Exp:", string) 
@@ -452,8 +468,8 @@ TypicalVGAMlinkFunction <-
                    short = TRUE, tag = FALSE) {
   if (is.character(theta)) {
       string <- if (short) 
-          paste("-log(", theta, ")", sep = "") else
-          paste("-log(", theta, ")", sep = "")
+          paste("nloge(", theta, ")", sep = "") else
+          paste("-log(",  theta, ")", sep = "")
       if (tag) 
         string <- paste("Negative log:", string) 
       return(string)
@@ -601,7 +617,7 @@ TypicalVGAMlinkFunction <-
   if (is.character(theta)) {
     string <- if (short) 
         paste("fisherz(", theta, ")", sep = "") else
-        paste("(1/2)log((1+", theta, ")/(1-", theta, "))", sep = "")
+        paste("(1/2) * log((1+", theta, ")/(1-", theta, "))", sep = "")
     if (tag) 
       string <- paste("Fisher's Z transformation:", string) 
     return(string)
@@ -619,12 +635,11 @@ TypicalVGAMlinkFunction <-
                  bmaxvalue = bmaxvalue,
                  inverse = FALSE, deriv = deriv)
     } else {
-      junk <- exp(2*theta)
-      expm1(2*theta) / (junk+1.0)
+      tanh(theta)
     }
   } else {
       switch(deriv+1,
-         0.5 * log1p(theta) - log1p(-theta),
+         atanh(theta),
          1.0 - theta^2,
          (1.0 - theta^2)^2 / (2*theta))
     }
@@ -643,8 +658,7 @@ TypicalVGAMlinkFunction <-
            whitespace = FALSE,
            bvalue = NULL,
            inverse = FALSE, deriv = 0,
-           short = TRUE, tag = FALSE)
-{
+           short = TRUE, tag = FALSE) {
  
 
   fillerChar <- ifelse(whitespace, " ", "")
@@ -667,8 +681,8 @@ TypicalVGAMlinkFunction <-
       stop("could not coerce 'refLevel' into a single positive integer")
   } else
   if (!is.Numeric(refLevel, allowable.length = 1,
-                  integer.valued = TRUE, positive = TRUE))
-    stop("'refLevel' must be a single positive integer")
+                  integer.valued = TRUE))
+    stop("'refLevel' must be a single (positive?) integer")
 
 
 
@@ -683,7 +697,7 @@ TypicalVGAMlinkFunction <-
                    theta, "[,",
                    ifelse(is.M, M+1, "M+1"),
                    "]), j = 1:",
-                   M, sep = ""),
+                   ifelse(is.M, M, "M"), sep = ""),
              paste("log(", theta, "[,j]/",
                    theta, "[,",
                    ifelse(is.M, M+1, "M+1"),
@@ -716,12 +730,17 @@ TypicalVGAMlinkFunction <-
 
 
 
+  M.orig <- M
   M <- if (inverse) ncol(cbind(theta)) else
        ncol(cbind(theta)) - 1
   if (M < 1)
     ifelse(inverse,
            stop("argument 'eta' should have at least one column"),
            stop("argument 'theta' should have at least two columns"))
+  if (is.numeric(M.orig) && M != M.orig) {
+    warning("argument 'M' does not seem right but using it")
+    M <- M.orig
+  }
 
 
 
@@ -734,14 +753,15 @@ TypicalVGAMlinkFunction <-
 
   foo <- function(eta, refLevel = -1, M) {
     phat <- if ((refLevel < 0) || (refLevel == M+1)) {
-      cbind(exp(eta), 1)
+      cbind(care.exp(eta), 1.0)
     } else if ( refLevel == 1) {
-      cbind(1, exp(eta))
+      cbind(1.0, care.exp(eta))
     } else {
       use.refLevel <- if ( refLevel < 0) M+1 else refLevel
-      etamat <- cbind(eta[, 1:( refLevel - 1)], 0,
+      etamat <- cbind(eta[, 1:( refLevel - 1)],
+                      0.0,
                       eta[, ( refLevel ):M])
-      exp(etamat)
+      care.exp(etamat)
     }
     ans <- phat / rowSums(phat)
     colnames(ans) <- NULL
@@ -756,22 +776,24 @@ TypicalVGAMlinkFunction <-
                  bvalue = bvalue,
                  inverse = FALSE, deriv = deriv)
     } else {
-      ans <- if ( refLevel < 0) {
+       foo(theta, refLevel, M = M) # log(theta[, -jay] / theta[, jay])
+    }
+  } else {
+    switch(deriv + 1, {
+      ans <- if (refLevel < 0) {
         log(theta[, -ncol(theta)] / theta[, ncol(theta)])
       } else {
-        use.refLevel <- if ( refLevel < 0) ncol(theta) else refLevel
+        use.refLevel <- if (refLevel < 0) ncol(theta) else refLevel
         log(theta[, -( use.refLevel )] / theta[, use.refLevel ])
       }
       colnames(ans) <- NULL
       ans
-    }
-  } else {
-    switch(deriv + 1,
-       foo(theta, refLevel, M = M), # log(theta[, -jay] / theta[, jay])
-       exp(log(theta) + log1p(-theta)),
-       exp(log(theta) + log1p(-theta)) * (1 - 2 * theta))
+      },
+      care.exp(log(theta) + log1p(-theta)),
+      care.exp(log(theta) + log1p(-theta)) * (1 - 2 * theta))
   }
-}
+} # end of mlogit
+
 
 
 
@@ -1001,10 +1023,11 @@ fsqrt <- function(theta, #  = NA  , = NULL,
         0.5 + atan(theta) / pi
       }
   } else {
-      switch(deriv+1, {
-             tan(pi * (theta-0.5))},
+      switch(deriv+1,
+             tan(pi * (theta-0.5)),
              cos(pi * (theta-0.5))^2 / pi,
-            -sin(pi * (theta-0.5) * 2))
+            -sin(pi * (theta-0.5) * 2)
+            )
   }
 }
 
@@ -1316,7 +1339,7 @@ fsqrt <- function(theta, #  = NA  , = NULL,
                     inverse = FALSE, deriv = 0,
                     short = TRUE, tag = FALSE) {
 
-    kay = k
+    kay <- k
     if (!is.Numeric(kay, positive = TRUE))
       stop("could not determine argument 'k' or ",
            "it is not positive-valued")

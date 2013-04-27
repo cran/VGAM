@@ -14,15 +14,10 @@ beta.ab(lshape1 = "loge", lshape2 = "loge",
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{lshape1, lshape2}{ 
-  Parameter link functions applied to the two shape parameters. 
+  \item{lshape1, lshape2, i1, i2}{ 
+  Details at \code{\link{CommonVGAMffArguments}}.
   See \code{\link{Links}} for more choices.
-  The log link (defaults) ensures that the parameters are positive.
 
-  }
-  \item{i1, i2}{ 
-  Initial value for the first and second shape parameters respectively.
-  A \code{NULL} value means it is obtained in the \code{initialize} slot.
 
   }
   \item{trim}{
@@ -31,15 +26,18 @@ beta.ab(lshape1 = "loge", lshape2 = "loge",
   \code{y} before the mean is computed. This is used when computing
   initial values, and guards against outliers.
 
+
   }
   \item{A, B}{ 
   Lower and upper limits of the distribution.
   The defaults correspond to the \emph{standard beta distribution}
   where the response lies between 0 and 1.
 
+
   }
   \item{parallel, zero}{
   See \code{\link{CommonVGAMffArguments}} for more information.
+
 
   }
 }
@@ -115,6 +113,7 @@ beta.ab(lshape1 = "loge", lshape2 = "loge",
   The response must have values in the interval (\eqn{A}, \eqn{B}).
   \pkg{VGAM} 0.7-4 and prior called this function \code{\link{betaff}}.
 
+
 }
 
 \seealso{ 
@@ -129,17 +128,18 @@ beta.ab(lshape1 = "loge", lshape2 = "loge",
   \code{\link{rbetanorm}},
   \code{\link{kumar}}.
 
+
 }
 \examples{
-bdata = data.frame(y = rbeta(n = 1000, shape1 = exp(0), shape2 = exp(1)))
-fit = vglm(y ~ 1, beta.ab(lshape1 = "identity", lshape2 = "identity"),
-           data = bdata, trace = TRUE, crit = "coef")
-fit = vglm(y ~ 1, beta.ab, bdata, trace = TRUE, crit = "coef")
+bdata <- data.frame(y = rbeta(n = 1000, shape1 = exp(0), shape2 = exp(1)))
+fit <- vglm(y ~ 1, beta.ab(lshape1 = "identity", lshape2 = "identity"),
+            data = bdata, trace = TRUE, crit = "coef")
+fit <- vglm(y ~ 1, beta.ab, bdata, trace = TRUE, crit = "coef")
 coef(fit, matrix = TRUE)
 Coef(fit)  # Useful for intercept-only models
 
-bdata = transform(bdata, Y = 5 + 8 * y)   # From 5 to 13, not 0 to 1
-fit = vglm(Y ~ 1, beta.ab(A = 5, B = 13), bdata, trace = TRUE)
+bdata <- transform(bdata, Y = 5 + 8 * y)  # From 5 to 13, not 0 to 1
+fit <- vglm(Y ~ 1, beta.ab(A = 5, B = 13), bdata, trace = TRUE)
 Coef(fit)
 c(meanY = with(bdata, mean(Y)), head(fitted(fit),2))
 }
@@ -147,8 +147,8 @@ c(meanY = with(bdata, mean(Y)), head(fitted(fit),2))
 \keyword{regression}
 
 % 3/1/06; this works well:
-% fit = vglm(y~1, beta.abqn(link = logoff(offset = 1), tr = TRUE, cri = "c")
+% fit <- vglm(y~1, beta.abqn(link = logoff(offset = 1), tr = TRUE, crit = "c")
 % 3/1/06; this does not work so well:
-%  it = vglm(y~1, beta.abqn(link = logoff(offset = 0), tr = TRUE, cri = "c")
+%  it <- vglm(y~1, beta.abqn(link = logoff(offset = 0), tr = TRUE, crit = "c")
 % Interesting!!
 

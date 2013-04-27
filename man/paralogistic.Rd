@@ -42,7 +42,7 @@ It is the 3-parameter Singh-Maddala distribution with \eqn{a=q}.
 The 2-parameter paralogistic has density
   \deqn{f(y) = a^2 y^{a-1} / [b^a \{1 + (y/b)^a\}^{1+a}]}{%
         f(y) = a^2 y^(a-1) / [b^a (1 + (y/b)^a)^(1+a)]}
-  for \eqn{a > 0}, \eqn{b > 0}, \eqn{y > 0}.
+  for \eqn{a > 0}, \eqn{b > 0}, \eqn{y \geq 0}{y >= 0}.
 Here, \eqn{b} is the scale parameter \code{scale},
 and \eqn{a} is the shape parameter.
 The mean is
@@ -60,6 +60,7 @@ provided \eqn{a > 1}; these are returned as the fitted values.
 
 }
 \references{
+
 
 Kleiber, C. and Kotz, S. (2003)
 \emph{Statistical Size Distributions in Economics and Actuarial Sciences},

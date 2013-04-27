@@ -8,6 +8,7 @@
   by maximum likelihood estimation.
   Also includes the upper truncated Pareto(I) distribution.
 
+
 }
 \usage{
  pareto1(lshape = "loge", location = NULL)
@@ -176,7 +177,7 @@ coef(fit, matrix = TRUE)
 summary(fit) # Standard errors are incorrect!!
 
 # Here, alpha is assumed known
-fit2 <- vglm(y ~ 1, pareto1(location = alpha), pdat, trace = TRUE, crit = "coef")
+fit2 <- vglm(y ~ 1, pareto1(location = alpha), pdat, trace = TRUE)
 fit2@extra # alpha stored here
 head(fitted(fit2))
 coef(fit2, matrix = TRUE)
@@ -185,8 +186,8 @@ summary(fit2) # Standard errors are okay
 # Upper truncated Pareto distribution
 lower <- 2; upper <- 8; kay <- exp(2)
 pdat3 <- data.frame(y = rtpareto(n = 100, lower = lower,
-                                upper = upper, shape = kay))
-fit3 <- vglm(y ~ 1, tpareto1(lower, upper), pdat3, trace = TRUE, cri = "coef")
+                                 upper = upper, shape = kay))
+fit3 <- vglm(y ~ 1, tpareto1(lower, upper), pdat3, trace = TRUE)
 coef(fit3, matrix = TRUE)
 c(fit3@misc$lower, fit3@misc$upper)
 }

@@ -1,6 +1,8 @@
 # These functions are
-# Copyright (C) 1998-2012 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2013 T.W. Yee, University of Auckland.
 # All rights reserved.
+
+
 
 
 
@@ -96,13 +98,13 @@
     prob0 <- eta2theta(eta[, 1], .link0 , earg = .earg0 )
     prob1 <- eta2theta(eta[, 2], .link1 , earg = .earg1 )
 
-    con.fv = prob0
-    trt.fv = prob1
-    obs.fv = prob0 + (1 - prob0) * prob1
+    con.fv <- prob0
+    trt.fv <- prob1
+    obs.fv <- prob0 + (1 - prob0) * prob1
 
 
 
-    ans = cbind("observed"  = obs.fv,
+    ans <- cbind("observed"  = obs.fv,
                 "treatment" = trt.fv,
                 "control"   = con.fv)
 
@@ -118,21 +120,21 @@
 
       prob0 <- eta2theta(eta[, 1], .link0 , earg = .earg0 )
       prob1 <- eta2theta(eta[, 2], .link1 , earg = .earg1 )
-      mymu = prob0 + (1 - prob0) * prob1
+      mymu <- prob0 + (1 - prob0) * prob1
 
 
       if (residuals) {
         w * (y / mymu - (1 - y) / (1 - mymu))
       } else {
-        ycounts = if (is.numeric(extra$orig.w)) y * w / extra$orig.w else
+        ycounts <- if (is.numeric(extra$orig.w)) y * w / extra$orig.w else
                     y * w # Convert proportions to counts
-        nvec = if (is.numeric(extra$orig.w)) round(w / extra$orig.w) else
+        nvec <- if (is.numeric(extra$orig.w)) round(w / extra$orig.w) else
                     round(w)
-        smallno = 1.0e6 * .Machine$double.eps
-        smallno = sqrt(.Machine$double.eps)
+        smallno <- 1.0e6 * .Machine$double.eps
+        smallno <- sqrt(.Machine$double.eps)
         if (max(abs(ycounts - round(ycounts))) > smallno)
           warning("converting 'ycounts' to integer in @loglikelihood")
-        ycounts = round(ycounts)
+        ycounts <- round(ycounts)
         sum((if (is.numeric(extra$orig.w)) extra$orig.w else 1) *
             dbinom(x = ycounts, size = nvec, prob = mymu, log = TRUE))
       }
@@ -143,9 +145,10 @@
   last = eval(substitute(expression({
     misc$link <-    c(prob0 = .link0 , prob1 = .link1 )
     misc$earg <- list(prob0 = .earg0 , prob1 = .earg1 )
-    misc$mux.offdiagonal = .mux.offdiagonal
-    misc$fitted.type = .fitted.type
-    misc$true.mu = ( .fitted.type == "observed")
+
+    misc$mux.offdiagonal <- .mux.offdiagonal
+    misc$fitted.type <- .fitted.type
+    misc$true.mu <- ( .fitted.type == "observed")
 
 
   }), list( .link0 = link0, .earg0 = earg0,
@@ -161,7 +164,7 @@
     dprob1.deta <- dtheta.deta(prob1, .link1 , earg = .earg1 )
 
 
-    mymu = prob0 + (1 - prob0) * prob1
+    mymu <- prob0 + (1 - prob0) * prob1
 
 
     dl.dmu <- y / mymu - (1 - y) / (1 - mymu)
@@ -178,15 +181,15 @@
   weight = eval(substitute(expression({
 
 
-    ed2l.dmu2 <- 1 / (mymu * (1-mymu))
-    ed2l.dprob02     <- ed2l.dmu2 * dmu.dprob0^2
-    ed2l.dprob12     <- ed2l.dmu2 * dmu.dprob1^2
-    ed2l.dprob1prob2 <-             ( 1)  # seems sort of ok but slow cvgc
-    ed2l.dprob1prob2 <-             ( 0)  # kill it
-    ed2l.dprob1prob2 <- ed2l.dmu2 * ( 1)  # dont seem to work
+    ned2l.dmu2 <- 1 / (mymu * (1-mymu))
+    ned2l.dprob02     <- ned2l.dmu2 * dmu.dprob0^2
+    ned2l.dprob12     <- ned2l.dmu2 * dmu.dprob1^2
+    ned2l.dprob1prob2 <-              ( 1) # seems sort of ok but slow cvgc
+    ned2l.dprob1prob2 <-              ( 0) # kill it
+    ned2l.dprob1prob2 <- ned2l.dmu2 * ( 1) # dont seem to work
 
-    ed2l.dprob1prob2 <- ed2l.dmu2 * dmu.dprob1 * dmu.dprob0 *
-                        .mux.offdiagonal
+    ned2l.dprob1prob2 <- ned2l.dmu2 * dmu.dprob1 * dmu.dprob0 *
+                         .mux.offdiagonal
 
     od2l.dmu2 <- y / mymu^2 + (1 - y) / (1 - mymu)^2
     od2l.dprob02     <- od2l.dmu2 * dmu.dprob0^2
@@ -194,9 +197,9 @@
     od2l.dprob1prob2 <- od2l.dmu2 * dmu.dprob1 * dmu.dprob0 + dl.dmu
 
 
-    wz <- cbind(ed2l.dprob02 * dprob0.deta^2,
-                ed2l.dprob12 * dprob1.deta^2,
-                ed2l.dprob1prob2 * dprob1.deta * dprob0.deta)
+    wz <- cbind(ned2l.dprob02 * dprob0.deta^2,
+                ned2l.dprob12 * dprob1.deta^2,
+                ned2l.dprob1prob2 * dprob1.deta * dprob0.deta)
 
 
 
@@ -206,8 +209,6 @@
             .link1 = link1, .earg1 = earg1,
              .mux.offdiagonal = mux.offdiagonal ))))
 }
-
-
 
 
 
@@ -248,8 +249,8 @@ if (FALSE)
             namesof("prob0", lprob0, earg = eprob0), ",  ",
             namesof("prob1", lprob1, earg = eprob1)),
   constraints = eval(substitute(expression({
-      constraints <- cm.zero.vgam(constraints, x, .zero, M)
-      constraints = cm.nointercept.vgam(constraints, x, .nointercept, M)
+    constraints <- cm.zero.vgam(constraints, x, .zero, M)
+    constraints <- cm.nointercept.vgam(constraints, x, .nointercept, M)
   }), list( .zero = zero,
             .nointercept = nointercept ))),
 
@@ -291,7 +292,7 @@ if (FALSE)
  print( sort(prob1.init) )
 
 
-        eprob1 = list(min = prob0.init, max = 1)
+        eprob1 <- list(min = prob0.init, max = 1)
         etastart <-
          cbind(theta2eta(prob0.init, link = .lprob0 , earg = .eprob0 ),
                theta2eta(prob1.init, link = .lprob1 , earg =  eprob1 ))
@@ -304,15 +305,16 @@ if (FALSE)
   linkinv = eval(substitute(function(eta, extra = NULL) {
     prob0 <- eta2theta(eta[, 1], .lprob0 , earg = .eprob0)
 
-    eprob1 = list(min = prob0, max = 1)
+    eprob1 <- list(min = prob0, max = 1)
 
     prob1 <- eta2theta(eta[, 2], .lprob1 , earg =  eprob1)
     prob0 + prob1
   }, list( .lprob1 = lprob1, .eprob1 = eprob1,
            .lprob0 = lprob0, .eprob0 = eprob0 ))),
   last = eval(substitute(expression({
-    eprob1 = list(min = prob0, max = 1)
+    eprob1 <- list(min = prob0, max = 1)
     misc$link <-    c(prob0 = .lprob0, prob1 = .lprob1)
+
     misc$earg <- list(prob0 = .eprob0, prob1 =  eprob1)
 
     misc$nointercept = .nointercept
@@ -323,7 +325,7 @@ if (FALSE)
   deriv = eval(substitute(expression({
     prob0 <- eta2theta(eta[,1], .lprob0, earg = .eprob0)
 
-    eprob1 = list(min = prob0, max = 1)
+    eprob1 <- list(min = prob0, max = 1)
     prob1 <- eta2theta(eta[,2], .lprob1, earg =  eprob1)
     dprob0.deta <- dtheta.deta(prob0, .lprob0 , earg = .eprob0 )
     dprob1.deta <- dtheta.deta(prob1, .lprob1 , earg =  eprob1 )
@@ -341,12 +343,12 @@ if (FALSE)
     weight = eval(substitute(expression({
 
 
-    ed2l.dmu2 <- 1 / (mu * (1-mu))
-    ed2l.dprob02 <- ed2l.dmu2 * dmu.dprob0^2
-    ed2l.dprob12 <- ed2l.dmu2 * dmu.dprob1^2
+    ned2l.dmu2 <- 1 / (mu * (1-mu))
+    ned2l.dprob02 <- ned2l.dmu2 * dmu.dprob0^2
+    ned2l.dprob12 <- ned2l.dmu2 * dmu.dprob1^2
 
-    wz <- cbind(ed2l.dprob02 * dprob0.deta^2,
-                ed2l.dprob12 * dprob1.deta^2)
+    wz <- cbind(ned2l.dprob02 * dprob0.deta^2,
+                ned2l.dprob12 * dprob1.deta^2)
 
  print("head(wz)")
  print( head(wz) )
@@ -365,6 +367,190 @@ if (FALSE)
 
 
 
+
+
+
+
+abbott.EM.control <- function(maxit = 1000, ...) {
+  list(maxit = maxit)
+}
+
+
+ abbott.EM <-
+  function(link = "probit",
+           b1.arg = 0, b2.arg = 0,
+           imethod = 1, ilambda = 0.5,
+           iprob = NULL) {
+
+
+  link <- as.list(substitute(link))
+  earg <- link2list(link)
+  link <- attr(earg, "function.name")
+
+
+  if (!is.Numeric(b1.arg, # allowable.length = 1,
+                  integer.valued = TRUE) ||
+      b1.arg < 0)
+    stop("argument 'b1.arg' must be a vector of non-negative integers")
+
+
+  if (!is.Numeric(b2.arg, # allowable.length = 1,
+                  integer.valued = TRUE) ||
+      b2.arg < 0)
+    stop("argument 'b2.arg' must be a vector of non-negative integers")
+
+
+  if (!is.Numeric(imethod, allowable.length = 1,
+                  integer.valued = TRUE, positive = TRUE) ||
+     imethod > 3)
+    stop("argument 'imethod' must be 1 or 2 or 3")
+
+
+  zero <- NULL
+  if (length(zero) &&
+      !is.Numeric(zero, integer.valued = TRUE, positive = TRUE))
+    stop("bad input for argument 'zero'")
+
+
+  new("vglmff",
+  blurb = c("Probit regression with nonzero background (EM algorithm)\n",
+            "P[Y=1] = mu = prob0 + (1 - prob0) * linkinv(eta)\n\n",
+            "Link:     ",
+            namesof("pi", link, earg = earg), "\n",
+            "Mean:     mu"),
+  constraints = eval(substitute(expression({
+    dotzero <- .zero
+    Musual <- 1
+    eval(negzero.expression)
+  }), list( .zero = zero ))),
+
+  infos = eval(substitute(function(...) {
+    list(Musual = 1,
+         zero = .zero )
+  }, list( .zero = zero ))),
+
+  initialize = eval(substitute(expression({
+
+    temp5 <-
+    w.y.check(w = w, y = y,
+              Is.nonnegative.y = TRUE,
+              Is.integer.y = TRUE,
+              ncol.w.max = Inf,
+              ncol.y.max = Inf,
+              out.wy = TRUE,
+              colsyperw = 1,
+              maximize = TRUE)
+    w <- temp5$w
+    y <- temp5$y
+
+
+    if (length(table(y)) != 2 || max(y) > 1)
+      stop("response must be a vector of 0s and 1s only")
+
+
+    ncoly <- ncol(y)
+    Musual <- 1
+    extra$ncoly <- ncoly
+    extra$Musual <- Musual
+    M <- Musual * ncoly
+    extra$lambda <- matrix( .ilambda , n, M, byrow = TRUE)
+    extra$orig.w <- w
+
+
+    mynames1 <- paste("prob0", if (ncoly > 1) 1:ncoly else "", sep = "")
+    predictors.names <-
+      namesof(mynames1, .link , earg = .earg , tag = FALSE)
+
+
+    if (!length(etastart)) {
+      prob.init <- if ( .imethod == 2)
+                      1 / (1 + y + 1/16) else
+                  if ( .imethod == 3)
+                      1 / (1 + apply(y, 2, median) + 1/16) else
+                      rnorm(n * M, mean = 0.5, sd = 0.01)  # Mean 0.5
+
+      if (!is.matrix(prob.init))
+        prob.init <- matrix(prob.init, n, M, byrow = TRUE)
+
+
+      if (length( .iprob ))
+        prob.init <- matrix( .iprob , n, M, byrow = TRUE)  # Mean 0.5
+
+
+        etastart <- theta2eta(prob.init, .link , earg = .earg )  # Mean 0
+    }
+  }), list( .link = link, .earg = earg,
+            .ilambda = ilambda,
+            .imethod = imethod, .iprob = iprob ))),
+
+  linkinv = eval(substitute(function(eta, extra = NULL) {
+    prob <- eta2theta(eta, .link , earg = .earg )
+    mymu <- extra$lambda + (1 - extra$lambda) * prob  # Eqn (3)
+    mymu
+  }, list( .link = link, .earg = earg ))),
+
+  last = eval(substitute(expression({
+    Musual <- extra$Musual
+    misc$link <- c(rep( .link , length = ncoly))
+    names(misc$link) <- mynames1
+
+    misc$earg <- vector("list", M)
+    names(misc$earg) <- mynames1
+    for(ii in 1:ncoly) {
+      misc$earg[[ii]] <- .earg
+    }
+
+    misc$Musual <- Musual
+    misc$multipleResponses <- TRUE
+    misc$imethod <- .imethod
+    misc$iprob <- .iprob
+    misc$b1.arg <- .b1.arg
+    misc$b2.arg <- .b2.arg
+
+    extra$lambda <- extra$lambda[1, ]  # Now a vector
+  }), list( .link = link, .earg = earg,
+            .iprob = iprob,
+            .b1.arg = b1.arg, .b2.arg = b2.arg,
+            .imethod = imethod ))),
+  loglikelihood = eval(substitute(
+    function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
+    prob <- eta2theta(eta, .link , earg = .earg )
+    mymu <- extra$lambda + (1 - extra$lambda) * prob  # Eqn (3)
+    if (residuals) stop("loglikelihood residuals not ",
+                        "implemented yet") else {
+        nvec <- if (is.numeric(extra$orig.w)) round(w / extra$orig.w) else
+                    round(w)
+        sum(c(w) * dbinom(x = y, prob = mymu,
+                          size = nvec, log = TRUE))
+    }
+  }, list( .link = link, .earg = earg ))),
+  vfamily = c("abbott.EM"),
+  deriv = eval(substitute(expression({
+    prob <- eta2theta(eta, .link , earg = .earg )
+
+    mymu <- extra$lambda + (1 - extra$lambda) * prob  # Eqn (3)
+
+    wz <- cbind((1 - extra$lambda) * prob / mymu)  # Eqn (4)
+
+    Deriv1 <- ifelse(y == 0, -dnorm(eta) / pnorm(eta, lower.tail = FALSE),
+                              dnorm(eta) / pnorm(eta))
+
+    c(w) * wz * Deriv1
+  }), list( .link = link, .earg = earg ))),
+
+  weight = eval(substitute(expression({
+
+    extra$lambda <-
+      matrix((colSums((1 - wz) * y) + .b1.arg ) / (n + .b1.arg + .b2.arg ),
+             n, M, byrow = TRUE)  # Between eqns (6),(7)
+
+
+
+
+    c(w) * wz
+  }), list( .link = link, .earg = earg,
+            .b1.arg = b1.arg, .b2.arg = b2.arg ))))
+}
 
 
 

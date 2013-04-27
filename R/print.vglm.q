@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2012 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2013 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -37,7 +37,7 @@ show.vglm <- function(object) {
 
   if (length(deviance(object)))
     cat("Residual deviance:", format(deviance(object)), "\n")
-  llx = logLik.vlm(object = object)
+  llx <- logLik.vlm(object = object)
 
   if (length(llx))
     cat("Log-likelihood:", format(llx), "\n")
@@ -65,7 +65,7 @@ show.vglm <- function(object) {
 
 show.vgam <- function(object) {
 
-  digits = 2
+  digits <- 2
 
 
   if (!is.null(cl <- object@call)) {
@@ -90,7 +90,7 @@ show.vgam <- function(object) {
   if (length(deviance(object)))
     cat("Residual deviance:", format(deviance(object)), "\n")
 
-  llx = logLik.vlm(object = object)
+  llx <- logLik.vlm(object = object)
 
   if (length(llx))
     cat("Log-likelihood:", format(llx), "\n")
@@ -148,7 +148,7 @@ print.vglm <- function(x, ...) {
 
   if (length(deviance(x)))
     cat("Residual deviance:", format(deviance(x)), "\n")
-  llx = logLik.vlm(object = x)
+  llx <- logLik.vlm(object = x)
 
   if (length(llx))
     cat("Log-likelihood:", format(llx), "\n")
@@ -191,7 +191,7 @@ print.vgam <- function(x, digits = 2, ...) {
   if (length(deviance(x)))
     cat("Residual deviance:", format(deviance(x)), "\n")
 
-  llx = logLik.vlm(object = x)
+  llx <- logLik.vlm(object = x)
 
   if (length(llx))
     cat("Log-likelihood:", format(llx), "\n")
@@ -206,8 +206,7 @@ print.vgam <- function(x, digits = 2, ...) {
 
 
 
- if (FALSE)
-{
+ if (FALSE) {
 
 setMethod("print",  "vlm", function(x, ...)  print.vlm(x, ...))
 setMethod("print", "vglm", function(x, ...) print.vglm(x, ...))

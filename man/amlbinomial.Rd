@@ -113,34 +113,34 @@ amlbinomial(w.aml = 1, parallel = FALSE, digw = 4, link = "logit")
 \examples{
 # Example: binomial data with lots of trials per observation
 set.seed(1234)
-sizevec = rep(100, length=(nn <- 200))
-mydat = data.frame(x = sort(runif(nn)))
-mydat = transform(mydat, prob = logit(-0+2.5*x+x^2, inverse = TRUE))
-mydat = transform(mydat, y = rbinom(nn, size = sizevec, prob = prob))
-(fit = vgam(cbind(y, sizevec - y) ~ s(x, df = 3),
-            amlbinomial(w = c(0.01, 0.2, 1, 5, 60)),
-            mydat, trace = TRUE))
+sizevec <- rep(100, length = (nn <- 200))
+mydat <- data.frame(x = sort(runif(nn)))
+mydat <- transform(mydat, prob = logit(-0 + 2.5*x + x^2, inverse = TRUE))
+mydat <- transform(mydat, y = rbinom(nn, size = sizevec, prob = prob))
+(fit <- vgam(cbind(y, sizevec - y) ~ s(x, df = 3),
+             amlbinomial(w = c(0.01, 0.2, 1, 5, 60)),
+             mydat, trace = TRUE))
 fit@extra
 
 \dontrun{
-par(mfrow=c(1,2))
+par(mfrow = c(1,2))
 # Quantile plot
-with(mydat, plot(x, jitter(y), col="blue", las=1, main=
-     paste(paste(round(fit@extra$percentile, dig=1), collapse=", "),
+with(mydat, plot(x, jitter(y), col = "blue", las = 1, main =
+     paste(paste(round(fit@extra$percentile, dig = 1), collapse = ", "),
            "percentile-expectile curves")))
-with(mydat, matlines(x, 100 * fitted(fit), lwd=2, col="blue", lty=1))
+with(mydat, matlines(x, 100 * fitted(fit), lwd = 2, col = "blue", lty = 1))
 
 
 # Compare the fitted expectiles with the quantiles
-with(mydat, plot(x, jitter(y), col="blue", las=1, main=
-     paste(paste(round(fit@extra$percentile, dig=1), collapse=", "),
+with(mydat, plot(x, jitter(y), col = "blue", las = 1, main = 
+     paste(paste(round(fit@extra$percentile, dig = 1), collapse = ", "),
            "percentile curves are red")))
-with(mydat, matlines(x, 100 * fitted(fit), lwd=2, col="blue", lty=1))
+with(mydat, matlines(x, 100 * fitted(fit), lwd = 2, col = "blue", lty = 1))
 
 for(ii in fit@extra$percentile)
     with(mydat, matlines(x, 100 *
-         qbinom(p=ii/100, size=sizevec, prob=prob) / sizevec,
-                  col="red", lwd=2, lty=1))
+         qbinom(p = ii/100, size = sizevec, prob = prob) / sizevec,
+                  col = "red", lwd = 2, lty = 1))
 }
 }
 \keyword{models}

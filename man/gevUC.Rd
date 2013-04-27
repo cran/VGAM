@@ -101,9 +101,8 @@ London: Springer-Verlag.
 
 }
 \examples{
-\dontrun{
-x <- seq(-3, 3, by = 0.01)
-loc <- 0; sigma <- 1; xi <- -0.4
+\dontrun{ loc <- 2; sigma <- 1; xi <- -0.4
+x <- seq(loc - 3, loc + 3, by = 0.01)
 plot(x, dgev(x, loc, sigma, xi), type = "l", col = "blue", ylim = c(0,1),
      main = "Blue is density, red is cumulative distribution function",
      sub = "Purple are 5,10,...,95 percentiles", ylab = "", las = 1)

@@ -11,7 +11,7 @@
 \usage{data(wffc.nc)}
 \format{
   A data frame with 475 observations on the following 7 variables.
-  Most of these variable are described in \code{\link{wffc}}.
+  Most of these variable are described in \code{\link[VGAM]{wffc}}.
   Each row is sorted by sector, session and beat.
   \describe{
     \item{\code{sector}}{a numeric vector.}
@@ -24,7 +24,7 @@
   }
 }
 \details{
-  This data frame was obtained by processing \code{\link{wffc}}.
+  This data frame was obtained by processing \code{\link[VGAM]{wffc}}.
   The key variable is \code{numbers}, which is
   sector-session-beat specific.
 
@@ -47,7 +47,7 @@
 }
 
 \seealso{
-\code{\link{DeLury}}.
+\code{\link[VGAM]{DeLury}}.
 
 }
 

@@ -138,60 +138,53 @@ amlnormal(w.aml = 1, parallel = FALSE, lexpectile = "identity",
 }
 
 \examples{
-# Example 1
-ooo = with(bmi.nz, order(age))
-bmi.nz = bmi.nz[ooo,]  # Sort by age
-(fit = vglm(BMI ~ bs(age), fam=amlnormal(w.aml=0.1), bmi.nz))
-fit@extra  # Gives the w value and the percentile
-coef(fit, matrix=TRUE)
-
 \dontrun{
+# Example 1
+ooo <- with(bmi.nz, order(age))
+bmi.nz <- bmi.nz[ooo,]  # Sort by age
+(fit <- vglm(BMI ~ bs(age), fam = amlnormal(w.aml = 0.1), bmi.nz))
+fit@extra # Gives the w value and the percentile
+coef(fit, matrix = TRUE)
+
 # Quantile plot
-with(bmi.nz, plot(age, BMI, col="blue", main=
-     paste(round(fit@extra$percentile, dig=1),
+with(bmi.nz, plot(age, BMI, col = "blue", main =
+     paste(round(fit@extra$percentile, dig = 1),
            "expectile-percentile curve")))
-with(bmi.nz, lines(age, c(fitted(fit)), col="black")) }
-
-
+with(bmi.nz, lines(age, c(fitted(fit)), col = "black"))
 
 # Example 2
 # Find the w values that give the 25, 50 and 75 percentiles
-findw = function(w, percentile=50) {
-    fit2 = vglm(BMI ~ bs(age), fam=amlnormal(w=w), data=bmi.nz)
-    fit2@extra$percentile - percentile
+findw <- function(w, percentile = 50) {
+  fit2 <- vglm(BMI ~ bs(age), fam = amlnormal(w = w), data = bmi.nz)
+  fit2@extra$percentile - percentile
 }
-\dontrun{
 # Quantile plot
-with(bmi.nz, plot(age, BMI, col="blue", las=1, main=
-     "25, 50 and 75 expectile-percentile curves")) }
-for(myp in c(25,50,75)) {
+with(bmi.nz, plot(age, BMI, col = "blue", las = 1, main =
+     "25, 50 and 75 expectile-percentile curves"))
+for(myp in c(25, 50, 75)) {
 # Note: uniroot() can only find one root at a time
-    bestw = uniroot(f=findw, interval=c(1/10^4, 10^4), percentile=myp)
-    fit2 = vglm(BMI ~ bs(age), fam=amlnormal(w=bestw$root), data=bmi.nz)
-\dontrun{
-    with(bmi.nz, lines(age, c(fitted(fit2)), col="red")) }
+  bestw <- uniroot(f = findw, interval = c(1/10^4, 10^4), percentile = myp)
+  fit2 <- vglm(BMI ~ bs(age), fam = amlnormal(w = bestw$root), data = bmi.nz)
+  with(bmi.nz, lines(age, c(fitted(fit2)), col = "red"))
 }
-
-
 
 # Example 3; this is Example 1 but with smoothing splines and
 # a vector w and a parallelism assumption.
-ooo = with(bmi.nz, order(age))
-bmi.nz = bmi.nz[ooo,]  # Sort by age
-fit3 = vgam(BMI ~ s(age, df=4), fam=amlnormal(w=c(.1,1,10), parallel=TRUE),
-            bmi.nz, trac=TRUE)
+ooo <- with(bmi.nz, order(age))
+bmi.nz <- bmi.nz[ooo,] # Sort by age
+fit3 <- vgam(BMI ~ s(age, df = 4), bmi.nz, trace = TRUE,
+             fam = amlnormal(w = c(0.1, 1, 10), parallel = TRUE))
 fit3@extra # The w values, percentiles and weighted deviances
 
 # The linear components of the fit; not for human consumption:
-coef(fit3, matrix=TRUE)
+coef(fit3, matrix = TRUE)
 
-\dontrun{
 # Quantile plot
-with(bmi.nz, plot(age, BMI, col="blue", main=
-     paste(paste(round(fit3@extra$percentile, dig=1), collapse=", "),
+with(bmi.nz, plot(age, BMI, col="blue", main =
+     paste(paste(round(fit3@extra$percentile, dig = 1), collapse = ", "),
            "expectile-percentile curves")))
-with(bmi.nz, matlines(age, fitted(fit3), col=1:fit3@extra$M, lwd=2))
-with(bmi.nz, lines(age, c(fitted(fit )), col="black")) # For comparison
+with(bmi.nz, matlines(age, fitted(fit3), col = 1:fit3@extra$M, lwd = 2))
+with(bmi.nz, lines(age, c(fitted(fit )), col = "black")) # For comparison
 }
 }
 \keyword{models}
