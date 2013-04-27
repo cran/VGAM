@@ -75,6 +75,7 @@ gaussianff(dispersion = 0, parallel = FALSE, zero = NULL)
   If in doubt, type something like \code{weights(object, type="working")}
   after the model has been fitted.
 
+
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
@@ -82,15 +83,18 @@ gaussianff(dispersion = 0, parallel = FALSE, zero = NULL)
   \code{\link{rrvglm}}
   and \code{\link{vgam}}.
 
+
 }
 \references{
   McCullagh, P. and Nelder, J. A. (1989)
   \emph{Generalized Linear Models}, 2nd ed. London: Chapman & Hall.
 
+
   Yee, T. W. and Wild, C. J. (1996)
   Vector generalized additive models.
   \emph{Journal of the Royal Statistical Society, Series B, Methodological},
   \bold{58}, 481--493.
+
 
 }
 \author{ Thomas W. Yee }
@@ -101,6 +105,7 @@ gaussianff(dispersion = 0, parallel = FALSE, zero = NULL)
   \code{\link[stats]{glm}}.
   The \code{"ff"} in the name is added to avoid any masking problems.
 
+
 }
 
 % \section{Warning }{
@@ -108,16 +113,19 @@ gaussianff(dispersion = 0, parallel = FALSE, zero = NULL)
 % be cautious.
 %
 %
+% }
 
 \seealso{
   \code{\link{normal1}},
-  \code{\link{huber}},
+  \code{\link{huber2}},
   \code{\link{lqnorm}},
   \code{\link{binormal}},
+  \code{\link{SUR}}.
   \code{vlm},
   \code{\link{vglm}},
   \code{\link{vgam}},
   \code{\link{rrvglm}}.
+
 
 }
 

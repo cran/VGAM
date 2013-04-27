@@ -16,10 +16,13 @@ ABO(link = "logit", ipA = NULL, ipO = NULL)
   Link function applied to \code{pA} and \code{pB}.
   See \code{\link{Links}} for more choices.
 
+
   }
   \item{ipA, ipO}{
   Optional initial value for \code{pA} and \code{pO}.
   A \code{NULL} value means values are computed internally.
+
+
   }
 
 }
@@ -44,6 +47,7 @@ ABO(link = "logit", ipA = NULL, ipO = NULL)
 
 }
 \references{
+
   Lange, K. (2002)
   \emph{Mathematical and Statistical Methods for Genetic Analysis},
   2nd ed. New York: Springer-Verlag.
@@ -71,11 +75,11 @@ ABO(link = "logit", ipA = NULL, ipO = NULL)
 
 }
 \examples{
-ymatrix = cbind(A = 725, B = 258, AB = 72, O = 1073) # Order matters, not the name
-fit = vglm(ymatrix ~ 1, ABO(link = identity), trace = TRUE, cri = "coef")
+ymat <- cbind(A = 725, B = 258, AB = 72, O = 1073) # Order matters, not the name
+fit <- vglm(ymat ~ 1, ABO(link = identity), trace = TRUE, cri = "coef")
 coef(fit, matrix = TRUE)
 Coef(fit) # Estimated pA and pB
-rbind(ymatrix, sum(ymatrix) * fitted(fit))
+rbind(ymat, sum(ymat) * fitted(fit))
 sqrt(diag(vcov(fit)))
 }
 \keyword{models}

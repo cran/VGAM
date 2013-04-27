@@ -95,7 +95,7 @@ leipnik(lmu = "logit", llambda = "loge", imu = NULL, ilambda = NULL)
 
 }
 \examples{
-ldata <- data.frame(y = rnorm(n = 2000, mean = 0.5, sd = 0.1)) # Not proper data
+ldata <- data.frame(y = rnorm(n = 2000, mean = 0.5, sd = 0.1))  # Not proper data
 fit <- vglm(y ~ 1, leipnik(ilambda = 1), ldata, trace = TRUE, checkwz = FALSE)
 fit <- vglm(y ~ 1, leipnik(ilambda = 1, llambda = logoff(offset = 1)),
             ldata, trace = TRUE, crit = "coef")
@@ -111,4 +111,4 @@ sum(weights(fit, type = "w")) # sum of the working weights
 \keyword{models}
 \keyword{regression}
 
-%fit = vglm(y ~ 1, leipnik(ilambda=1), tr=TRUE, cri="c", checkwz=FALSE)
+%fit <- vglm(y ~ 1, leipnik(ilambda=1), tr=TRUE, cri="c", checkwz=FALSE)

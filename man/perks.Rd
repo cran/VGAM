@@ -10,6 +10,7 @@
 \usage{
 perks(lshape = "loge", lscale = "loge",
       ishape = NULL,   iscale = NULL,
+      gshape = exp(-5:5), gscale = exp(-5:5),
       nsimEIM = 500, oim.mean = FALSE, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -33,6 +34,11 @@ perks(lshape = "loge", lscale = "loge",
   \item{ishape, iscale}{
   Optional initial values.
   A \code{NULL} means a value is computed internally.
+
+
+  }
+  \item{gshape, gscale}{
+  See \code{\link{CommonVGAMffArguments}}.
 
 
   }

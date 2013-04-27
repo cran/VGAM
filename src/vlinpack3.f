@@ -19,7 +19,15 @@ c     constant times a vector plus a vector.
 c     uses unrolled loops for increments equal to one.
 c     jack dongarra, linpack, 3/11/78.
 c
-      double precision dx(1),dy(1),da
+c
+c
+c 20130419: orig.:
+c     double precision dx(1),dy(1),da
+c
+c
+c
+c
+      double precision dx(*),dy(*),da
       integer          i,incx,incy,m,mp1,n
 
 c Undeclared, so added by T.Yee
@@ -74,7 +82,7 @@ c     copies a vector, x, to a vector, y.
 c     uses unrolled loops for increments equal to one.
 c     jack dongarra, linpack, 3/11/78.
 c
-      double precision dx(1),dy(1)
+      double precision dx(*),dy(*)
       integer i,incx,incy,ix,iy,m,mp1,n
 c
       if(n.le.0)return
@@ -134,7 +142,7 @@ c     forms the dot product of two vectors.
 c     uses unrolled loops for increments equal to one.
 c     jack dongarra, linpack, 3/11/78.
 c
-      double precision dx(1),dy(1),dtemp
+      double precision dx(*),dy(*),dtemp
       integer          i,incx,incy,ix,iy,m,mp1,n
 c
       ddot8 = 0.0d0
@@ -326,7 +334,7 @@ c     scales a vector by a constant.
 c     uses unrolled loops for increment equal to one.
 c     jack dongarra, linpack, 3/11/78.
 c
-      double precision da,dx(1)
+      double precision da,dx(*)
       integer i,incx,m,mp1,n,nincx
 c
       if(n.le.0)return
@@ -386,8 +394,16 @@ c
       subroutine vdqrsl(x,ldx,n,k,qraux,y,qy,qty,b,rsd,xb,job,info)
       implicit logical (a-z) 
       integer ldx,n,k,job,info
-      double precision x(ldx,1),qraux(1),y(1),qy(1),qty(1),b(1),rsd(1),
-     *                 xb(1)
+      double precision x(ldx,*),qraux(*),y(*),qy(*),qty(*),b(*),rsd(*),
+     *                 xb(*)
+c
+c
+c
+c 20130419: orig.:
+c     double precision x(ldx,1),qraux(1),y(1),qy(1),qty(1),b(1),rsd(1),
+c    *                 xb(1)
+c
+c
 c
 c     dqrsl applies the output of dqrdc to compute coordinate
 c     transformations, projections, and least squares solutions.

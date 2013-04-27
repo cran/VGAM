@@ -24,7 +24,10 @@ rsnorm(n, location = 0, scale = 1, shape = 0)
   \item{x}{vector of quantiles.}
 % \item{x, q}{vector of quantiles.}
 % \item{p}{vector of probabilities.}
-  \item{n}{number of observations. Must be a single positive integer. }
+  \item{n}{number of observations.
+  Same as \code{\link[stats]{runif}}.
+
+  }
 
   \item{location}{
   The location parameter \eqn{\xi}{xi}. A vector. 

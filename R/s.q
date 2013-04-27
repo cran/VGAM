@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2012 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2013 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -10,12 +10,12 @@ s <- function(x, df = 4, spar = 0, ...) {
   xs <- substitute(x)
   ans <- as.character(xs)
   if (length(ans) > 1)
-    stop("x argument must be of length one")
+    stop("argument 'x' must be of length one")
 
   call <- deparse(sys.call())
 
   if (ncol(as.matrix(x)) > 1)
-    stop("x must be a vector") 
+    stop("argument 'x' must be a vector") 
   if (!is.null(levels(x))) {
     x <- if (is.ordered(x)) {
       as.vector(x)

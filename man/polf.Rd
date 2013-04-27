@@ -22,7 +22,7 @@ polf(theta, cutpoint = NULL,
   The cutpoints should be non-negative integers.
   If \code{polf()} is used as the link function in
   \code{\link{cumulative}} then one should choose
-  \code{reverse = TRUE, parallel = TRUE, intercept.apply = TRUE}.
+  \code{reverse = TRUE, parallel = TRUE, apply.parint = TRUE}.
 
   }
   \item{inverse, deriv, short, tag}{
@@ -130,10 +130,11 @@ cutpoints <- c(-Inf, 10, 20, Inf)
 pdata <- transform(pdata, cuty = Cut(y1, breaks = cutpoints))
 \dontrun{ with(pdata, plot(x2, x3, col = cuty, pch = as.character(cuty))) }
 with(pdata, table(cuty) / sum(table(cuty)))
-fit <- vglm(cuty ~ x2 + x3, cumulative(reverse = TRUE,
-            parallel = TRUE, intercept.apply = TRUE,
-            link = polf(cutpoint = cutpoints[2:3]),
-            mv = TRUE), data = pdata, trace = TRUE)
+fit <- vglm(cuty ~ x2 + x3, data = pdata, trace = TRUE,
+            cumulative(reverse = TRUE,
+                       parallel = TRUE, apply.parint = TRUE,
+                       link = polf(cutpoint = cutpoints[2:3]),
+                       mv = TRUE))
 head(depvar(fit))
 head(fitted(fit))
 head(predict(fit))

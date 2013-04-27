@@ -254,16 +254,17 @@ Vector generalized additive models.
   \code{\link{lvplot.rrvglm}},
   \code{\link{vglmff-class}}.
 
+
 }
 
 \examples{
-# Rank-1 stereotype model of Anderson (1984)
-pneumo <- transform(pneumo,
-             let = log(exposure.time),
-             x3  = runif(nrow(pneumo))) # x3 is some unrelated covariate
+\dontrun{ # Rank-1 stereotype model of Anderson (1984)
+pneumo <- transform(pneumo, let = log(exposure.time),
+                            x3  = runif(nrow(pneumo))) # x3 is unrelated
 fit <- rrvglm(cbind(normal, mild, severe) ~ let + x3,
               multinomial, pneumo, Rank = 1)
 Coef(fit)
+}
 }
 \keyword{classes}
 % set.seed(111)

@@ -41,6 +41,27 @@ citEntry(entry = "Article",
 )
 
 
+citEntry(entry = "Article",
+  title        = "The {VGAM} Package for Categorical Data Analysis",
+  author       = personList(as.person("Thomas W. Yee")),
+  journal      = "Journal of Statistical Software",
+  year         = "2010",
+  volume       = "32",
+  number       = "10",
+  pages        = "1--34",
+  url          = "http://www.jstatsoft.org/v32/i10/",
+
+  textVersion  =
+  paste("Thomas W. Yee (2010).",
+        "The VGAM Package for Categorical Data Analysis.",
+        "Journal of Statistical Software, 32(10), 1-34.",
+        "URL http://www.jstatsoft.org/v32/i10/."),
+  header = "and/or"
+)
+
+
+
+
 citEntry(entry = "Manual",
          title = "{VGAM}: Vector Generalized Linear and Additive Models",
          author = personList(as.person("Thomas W. Yee")),

@@ -283,14 +283,15 @@ assistance from Alfian F. Hadi.
   \code{\link{alcoff}},
   \code{\link{crashi}},
   \code{\link{auuc}},
-  \code{\link{olympic}},
+  \code{\link[VGAM:olym08]{olym08}},
+  \code{\link[VGAM:olym12]{olym12}},
   \code{\link{poissonff}}.
 
 
 }
 
 \examples{
-grc1 <- grc(auuc) # Undergraduate enrolments at Auckland University in 1990
+grc1 <- grc(auuc)  # Undergraduate enrolments at Auckland University in 1990
 fitted(grc1)
 summary(grc1)
 
@@ -299,33 +300,34 @@ fitted(grc2)
 summary(grc2)
 
 
-# 2008 Summer Olympic Games in Beijing
-top10 <- head(olympic, n = 10)
-oly1 <- with(top10, grc(cbind(gold, silver, bronze)))
-round(fitted(oly1))
-round(resid(oly1, type = "response"), dig = 1) # Response residuals
-summary(oly1)
-Coef(oly1)
+# 2012 Summer Olympic Games in London
+\dontrun{ top10 <- head(oly12, n = 10)
+grc.oly1 <- with(top10, grc(cbind(gold, silver, bronze)))
+round(fitted(grc.oly1))
+round(resid(grc.oly1, type = "response"), dig = 1)  # Response residuals
+summary(grc.oly1)
+Coef(grc.oly1)
+}
 
 
 # Roughly median polish
 rcim0 <- rcim(auuc, fam = alaplace2(tau = 0.5, intparloc = TRUE), trace = TRUE)
 round(fitted(rcim0), dig = 0)
-round(100 * (fitted(rcim0) - auuc) / auuc, dig = 0) # Discrepancy
+round(100 * (fitted(rcim0) - auuc) / auuc, dig = 0)  # Discrepancy
 rcim0@y
 round(coef(rcim0, matrix = TRUE), dig = 2)
-print(Coef(rcim0, matrix = TRUE), dig = 3)
+Coef(rcim0, matrix = TRUE)
 # constraints(rcim0)
 names(constraints(rcim0))
 
 # Compare with medpolish():
 (med.a <- medpolish(auuc))
 fv <- med.a$overall + outer(med.a$row, med.a$col, "+")
-round(100 * (fitted(rcim0) - fv) / fv) # Hopefully should be all 0s
+round(100 * (fitted(rcim0) - fv) / fv)  # Hopefully should be all 0s
 }
 \keyword{models}
 \keyword{regression}
-% plot(oly1)
+% plot(grc.oly1)
 % oly2 <- with(top10, grc(cbind(gold,silver,bronze), Rank = 2)) # Saturated model
 % round(fitted(oly2))
 % round(fitted(oly2)) - with(top10, cbind(gold,silver,bronze))
@@ -337,5 +339,6 @@ round(100 * (fitted(rcim0) - fv) / fv) # Hopefully should be all 0s
 % Then \code{.grc.df} is deleted before exiting the function.
 
 
+% print(Coef(rcim0, matrix = TRUE), dig = 3)
 
 

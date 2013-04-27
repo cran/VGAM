@@ -27,6 +27,8 @@ uqo.control(Rank=1, Bestof = if (length(lvstart) &&
   \item{Rank}{ The numerical rank \eqn{R} of the model,
     i.e., the number of latent variables or ordination axes.
     Currently only \eqn{R=1} is recommended.
+
+
   }
   \item{Bestof}{ Integer. The best of \code{Bestof} models fitted is
     returned. This argument helps guard against local solutions by
@@ -34,12 +36,14 @@ uqo.control(Rank=1, Bestof = if (length(lvstart) &&
     The argument has value 1 if an initial value for the site scores is
     inputted using \code{lvstart}.
 
+
   }
   \item{CA1}{ 
     Logical. If \code{TRUE} the site scores from a correspondence analysis
     (CA) are computed and used on the first axis as initial values.
     Both \code{CA1} and \code{Use.Init.Poisson.QO} cannot both be
     \code{TRUE}.
+
 
   }
   \item{Crow1positive}{ 
@@ -53,11 +57,13 @@ uqo.control(Rank=1, Bestof = if (length(lvstart) &&
       \eqn{C} matrix with UQO, but the argument's name comes from
       \code{\link{qrrvglm.control}} and is left unchanged for convenience.
 
+
   }
     \item{epsilon}{
       Positive numeric. Used to test for convergence for GLMs fitted
       in FORTRAN.  Larger values mean a loosening of the convergence
       criterion.
+
 
     }
     \item{EqualTolerances}{
@@ -76,6 +82,7 @@ uqo.control(Rank=1, Bestof = if (length(lvstart) &&
       See \bold{Details} in \code{\link{cqo}} and \code{\link{qrrvglm.control}}
       for more details.
 
+
     }
   \item{Etamat.colmax}{
     Positive integer, no smaller than \code{Rank}.  Controls the amount
@@ -84,6 +91,7 @@ uqo.control(Rank=1, Bestof = if (length(lvstart) &&
     In general, the larger the value, the better the initial value.
     Used only if \code{Use.Init.Poisson.QO=TRUE}.
 
+
   }
 
   \item{GradientFunction}{ 
@@ -91,10 +99,12 @@ uqo.control(Rank=1, Bestof = if (length(lvstart) &&
    used or not, i.e., to compute gradient values.  The default value is
    usually faster on most problems.
 
+
   }
   \item{Hstep}{ 
    Positive value. Used as the step size in the finite difference
    approximation to the derivatives by \code{\link[stats]{optim}}.
+
 
   }
   \item{isdlv}{
@@ -110,6 +120,7 @@ uqo.control(Rank=1, Bestof = if (length(lvstart) &&
    values should decrease because the first ordination axis should have
    the most spread of site scores, followed by the second ordination
    axis, etc.
+
 
  }
   \item{ITolerances}{
@@ -133,16 +144,19 @@ uqo.control(Rank=1, Bestof = if (length(lvstart) &&
    Good possibilities for \code{lvstart} are the site scores from a
    constrained ordination, e.g., from \code{\link{cqo}}.
 
+
   }
   \item{jitter.sitescores}{ Logical.
    If \code{TRUE} the initial values for the site scores are jittered
    to add a random element to the starting values.
+
 
   }
 
   \item{maxitl}{ 
     Positive integer.  Number of iterations allowed for the IRLS algorithm
     implemented in the compiled code.
+
 
     }
   \item{Maxit.optim}{ 
@@ -164,13 +178,16 @@ uqo.control(Rank=1, Bestof = if (length(lvstart) &&
    \eqn{x_2} is recommended).  A value about 3 or 4 is recommended.
    If failure to converge occurs, try a slightly lower value.
 
+
 }
   \item{optim.maxit}{ 
     Positive integer.  Number of times \code{\link[stats]{optim}}
     is invoked.
 
+
 %   At iteration \code{i}, the \code{i}th value of \code{Maxit.optim}
 %   is fed into \code{\link[stats]{optim}}.
+
 
   }
   \item{nRmax}{ 
@@ -181,10 +198,13 @@ uqo.control(Rank=1, Bestof = if (length(lvstart) &&
     conjugate-gradients method is more suitable when the number of
     parameters is large because it requires less memory.
 
+
     }
   \item{SD.sitescores}{ Numeric. Standard deviation of the
     initial values of the site scores, which are generated from
     a normal distribution.
+
+
     }
 % \item{Dzero}{ Integer vector specifying which squared terms
 %     are to be zeroed. These linear predictors will correspond to
@@ -195,20 +215,26 @@ uqo.control(Rank=1, Bestof = if (length(lvstart) &&
   \item{SmallNo}{ Positive numeric between \code{.Machine$double.eps} and
       \code{0.0001}.
       Used to avoid under- or over-flow in the IRLS algorithm.
+
+
   }
   \item{trace}{ Logical indicating if output should be produced for
     each iteration.
+
+
   }
 %  \item{Kinit}{ Initial values for the index parameters \code{k} in the
 %   negative binomial distribution (one per species).
 %   In general, a smaller number is preferred over a larger number.
 %   The vector is recycled to the number of responses (species).
 % }
+
   \item{Use.Init.Poisson.QO}{
     Logical. If \code{TRUE} then the function \code{.Init.Poisson.QO()} is
     used to obtain initial values for the site scores.  If \code{FALSE}
     then random numbers are used instead.  Both \code{CA1} and
     \code{Use.Init.Poisson.QO} cannot both be \code{TRUE}.
+
 
   }
   \item{\dots}{ Ignored at present. }
@@ -217,18 +243,23 @@ uqo.control(Rank=1, Bestof = if (length(lvstart) &&
    The algorithm currently used by \code{\link{uqo}} is unsophisticated
    and fails often. Improvements will hopefully be made soon.
 
+
    See \code{\link{cqo}} and \code{\link{qrrvglm.control}} for more details
    that are equally pertinent to UQO.
+
 
 % zz site scores are centered. Possibly uncorrelated too?
 
    To reduce the number of parameters being estimated, setting
    \code{ITolerances = TRUE} or \code{EqualTolerances = TRUE} is advised.
 
+
 }
 \value{
   A list with the components corresponding to its arguments, after
   some basic error checking.
+
+
 }
 \references{
 

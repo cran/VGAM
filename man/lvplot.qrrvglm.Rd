@@ -34,32 +34,54 @@ lvplot.qrrvglm(object, varlvI = FALSE, reference = NULL,
   \item{object}{ A CQO or UQO object. }
   \item{varlvI}{
   Logical that is fed into \code{\link{Coef.qrrvglm}}. 
+
   }
   \item{reference}{
     Integer or character that is fed into \code{\link{Coef.qrrvglm}}.
+
   }
   \item{add}{ Logical. Add to an existing plot? If \code{FALSE}, a new
-  plot is made. }
-  \item{plot.it}{ Logical. Plot it? }
+  plot is made.
+
+ }
+  \item{plot.it}{ Logical. Plot it?
+
+ }
   \item{rug}{ Logical. If \code{TRUE}, a rug plot is plotted at the
   foot of the plot (applies to rank-1 models only).
   These values are jittered to expose ties.
+
+
   }
   \item{y}{ Logical. If \code{TRUE}, the responses will be plotted
   (applies only to rank-1 models and if \code{type = "fitted.values"}.)
+
+
   }
   \item{type}{ Either \code{"fitted.values"} or \code{"predictors"},
   specifies whether the y-axis is on the response or eta-scales
   respectively.
+
+
   }
-  \item{xlab}{ Caption for the x-axis. See \code{\link[graphics]{par}}. }
-  \item{ylab}{ Caption for the y-axis. See \code{\link[graphics]{par}}. }
+  \item{xlab}{ Caption for the x-axis. See \code{\link[graphics]{par}}.
+
+
+ }
+  \item{ylab}{ Caption for the y-axis. See \code{\link[graphics]{par}}.
+
+
+ }
   \item{pcex}{ Character expansion of the points.
 Here, for rank-1 models, points are the response \emph{y} data. 
 For rank-2 models, points are the optima.
-  See the \code{cex} argument in \code{\link[graphics]{par}}. }
+  See the \code{cex} argument in \code{\link[graphics]{par}}.
+
+ }
   \item{pcol}{ Color of the points. 
-  See the \code{col} argument in \code{\link[graphics]{par}}. }
+  See the \code{col} argument in \code{\link[graphics]{par}}.
+
+ }
   \item{pch}{ Either an integer specifying a symbol or a single character
       to be used as the default in plotting points.
       See \code{\link[graphics]{par}}.
@@ -67,18 +89,28 @@ For rank-2 models, points are the optima.
   }
   \item{llty}{ Line type.
   Rank-1 models only.
-  See the \code{lty} argument of \code{\link[graphics]{par}}. }
+  See the \code{lty} argument of \code{\link[graphics]{par}}.
+
+ }
   \item{lcol}{ Line color.
   Rank-1 models only.
-  See the \code{col} argument of \code{\link[graphics]{par}}. }
+  See the \code{col} argument of \code{\link[graphics]{par}}.
+
+ }
   \item{llwd}{ Line width.
   Rank-1 models only.
-  See the \code{lwd} argument of \code{\link[graphics]{par}}. }
+  See the \code{lwd} argument of \code{\link[graphics]{par}}.
+
+ }
   \item{label.arg}{ Logical. Label the optima and \bold{C}? 
-  (applies only to rank-2 models only). }
+  (applies only to rank-2 models only).
+
+ }
   \item{adj.arg}{ Justification of text strings for labelling the optima
   (applies only to rank-2 models only). 
-  See the \code{adj} argument of \code{\link[graphics]{par}}. }
+  See the \code{adj} argument of \code{\link[graphics]{par}}.
+
+ }
 
   \item{ellipse}{ 
       Numerical, of length 0 or 1 (applies only to rank-2 models only).
@@ -195,21 +227,25 @@ For rank-2 models, points are the optima.
 % }
 
   \item{check.ok}{ Logical. Whether a check is performed to see
-  that \code{Norrr = ~ 1} was used.
+  that \code{noRRR = ~ 1} was used.
   It doesn't make sense to have a latent variable plot unless this is so.
   }
+
   \item{\dots}{ Arguments passed into the \code{plot} function
   when setting up the entire plot. Useful arguments here include
   \code{xlim} and \code{ylim}.
   }
+
 }
 \details{
   This function only works for rank-1 and rank-2 QRR-VGLMs with argument
-  \code{Norrr = ~ 1}.
+  \code{noRRR = ~ 1}.
+
 
   For unequal-tolerances models, the latent variable axes can be
   rotated so that at least one of the tolerance matrices is diagonal;
   see \code{\link{Coef.qrrvglm}} for details.
+
 
   Arguments beginning with ``\code{p}'' correspond to the points e.g.,
   \code{pcex} and \code{pcol} correspond to the size and color of the
@@ -217,10 +253,12 @@ For rank-2 models, points are the optima.
   or \eqn{n}, the number of sites.  For the rank-2 model, arguments
   beginning with ``\code{p}'' correspond to the optima.
 
+
 }
 \value{
   Returns a matrix of latent variables (site scores)
   regardless of whether a plot was produced or not.
+
 
 }
 \references{ 
@@ -240,15 +278,19 @@ canonical Gaussian ordination.
    drawn even if requested, i.e., if its tolerance matrix is not
    positive-definite.
 
+
 % Stationary points which are not bell-shaped will not be plotted
 % at all.
+
 
   Plotting \bold{C} gives a visual display of the weights (loadings)
   of each of the variables used in the linear combination defining each
   latent variable.
 
+
   The arguments \code{elty}, \code{ecol} and \code{elwd}, may be replaced
   in the future by \code{llty}, \code{lcol} and \code{llwd}, respectively.
+
 
   For rank-1 models, a similar function to this one is
   \code{\link{perspqrrvglm}}.  It plots the fitted values on a more
@@ -258,8 +300,10 @@ canonical Gaussian ordination.
   the truth without an appreciation of the statistical variability in
   the estimates.
 
+
 % Yet to do: allow for the contour line to correspond to the tolerance
 % matrix itself. zz ??
+
 
   In the example below, the data comes from an equal-tolerances model.
   The species' tolerance matrices are all the identity matrix,
@@ -274,6 +318,7 @@ canonical Gaussian ordination.
   of the species are unequal and (ii) the contours of these tolerance
   matrices are not included in the ordination diagram.
 
+
 }
 
 \seealso{
@@ -282,6 +327,8 @@ canonical Gaussian ordination.
 \code{\link{Coef.qrrvglm}},
 \code{\link[graphics]{par}},
 \code{\link{cqo}}.
+
+
 }
 
 \examples{

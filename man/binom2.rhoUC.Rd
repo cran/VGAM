@@ -58,9 +58,11 @@ dbinom2.rho(mu1,
   The \code{dimnames} argument of
   \code{\link[base]{matrix}} is assigned \code{list(NULL, colnames)}.
 
+
   }
   \item{ErrorCheck}{
   Logical. Do some error checking of the input parameters?
+
 
   }
 
@@ -71,9 +73,11 @@ dbinom2.rho(mu1,
   The data might be fitted with the \pkg{VGAM} family function
   \code{\link{binom2.rho}}.
 
+
   The function \code{dbinom2.rho} does not really compute the density
   (because that does not make sense here) but rather returns the
   four joint probabilities.
+
 
 }
 \value{
@@ -81,30 +85,31 @@ dbinom2.rho(mu1,
   either a 2 or 4 column matrix of 1s and 0s, depending on the argument
   \code{twoCols}.
 
+
   The function \code{dbinom2.rho} returns
   a 4 column matrix of joint probabilities; each row adds up to unity.
+
 
 }
 \author{ T. W. Yee }
 \seealso{
   \code{\link{binom2.rho}}.
 
+
 }
 \examples{
-# Example 1
-(myrho <- rhobit(2, inverse = TRUE))
-ymat = rbinom2.rho(nn <- 2000, mu1 = 0.8, rho = myrho, exch = TRUE)
-(mytab = table(ymat[, 1], ymat[, 2], dnn = c("Y1", "Y2")))                                     
-fit = vglm(ymat ~ 1, binom2.rho(exch = TRUE))
+(myrho <- rhobit(2, inverse = TRUE))  # Example 1
+ymat <- rbinom2.rho(nn <- 2000, mu1 = 0.8, rho = myrho, exch = TRUE)
+(mytab <- table(ymat[, 1], ymat[, 2], dnn = c("Y1", "Y2")))                                     
+fit <- vglm(ymat ~ 1, binom2.rho(exch = TRUE))
 coef(fit, matrix = TRUE)
 
-# Example 2
-bdata = data.frame(x2 = sort(runif(nn)))
-bdata = transform(bdata, mu1 = probit(-2+4*x2, inverse = TRUE),
-                         mu2 = probit(-1+3*x2, inverse = TRUE))
-dmat = with(bdata, dbinom2.rho(mu1, mu2, myrho))
-ymat = with(bdata, rbinom2.rho(nn, mu1, mu2, myrho))
-fit2 = vglm(ymat ~ x2, binom2.rho, bdata)
+bdata <- data.frame(x2 = sort(runif(nn)))  # Example 2
+bdata <- transform(bdata, mu1 = probit(-2+4*x2, inverse = TRUE),
+                          mu2 = probit(-1+3*x2, inverse = TRUE))
+dmat <- with(bdata, dbinom2.rho(mu1, mu2, myrho))
+ymat <- with(bdata, rbinom2.rho(nn, mu1, mu2, myrho))
+fit2 <- vglm(ymat ~ x2, binom2.rho, bdata)
 coef(fit2, matrix = TRUE)
 \dontrun{ matplot(with(bdata, x2), dmat, lty = 1:4, col = 1:4,
         type = "l", main = "Joint probabilities",

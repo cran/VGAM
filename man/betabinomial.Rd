@@ -20,6 +20,7 @@ betabinomial(lmu = "logit", lrho = "logit",
   The defaults ensure the parameters remain in \eqn{(0,1)},
   however, see the warning below.
 
+
   }
   \item{irho}{ 
   Optional initial value for the correlation parameter.
@@ -28,12 +29,14 @@ betabinomial(lmu = "logit", lrho = "logit",
   Having \code{irho = NULL} means an initial value is obtained internally,
   though this can give unsatisfactory results.
 
+
   }
   \item{imethod}{
   An integer with value \code{1} or \code{2} or \ldots,
   which specifies the initialization method for \eqn{\mu}{mu}.
   If failure to converge occurs try the another value
   and/or else specify a value for \code{irho}.
+
 
   }
   \item{zero}{ 
@@ -45,12 +48,14 @@ betabinomial(lmu = "logit", lrho = "logit",
   \code{zero = NULL}.
   See \code{\link{CommonVGAMffArguments}} for more information.
 
+
   }
   \item{shrinkage.init, nsimEIM}{ 
   See \code{\link{CommonVGAMffArguments}} for more information.
   The argument \code{shrinkage.init} is used only if \code{imethod = 2}.
   Using the argument \code{nsimEIM} may offer large advantages for large
   values of \eqn{N} and/or large data sets.
+
 
   }
 }
@@ -160,17 +165,18 @@ betabinomial(lmu = "logit", lrho = "logit",
 \section{Warning }{
 
 
-  If the estimated rho parameter is close to zero then it pays to try
-  \code{lrho = "rhobit"}. One day this may become the default link function.
+  If the estimated rho parameter is close to zero then it pays to
+  try \code{lrho = "rhobit"}. One day this may become the default
+  link function.
 
 
-  This family function is prone to numerical difficulties
-  due to the expected information matrices not being positive-definite
+  This family function is prone to numerical difficulties due to
+  the expected information matrices not being positive-definite
   or ill-conditioned over some regions of the parameter space.
-  If problems occur try setting \code{irho} to some numerical value,
-  \code{nsimEIM = 100}, say,
-  or else use \code{etastart} argument of
-  \code{\link{vglm}}, etc.
+  If problems occur try setting \code{irho} to some numerical
+  value, \code{nsimEIM = 100}, say, or else use \code{etastart}
+  argument of \code{\link{vglm}}, etc.
+
 
 }
 \seealso{
@@ -185,30 +191,30 @@ betabinomial(lmu = "logit", lrho = "logit",
 }
 \examples{
 # Example 1
-bdata = data.frame(N = 10, mu = 0.5, rho = 0.8)
-bdata = transform(bdata,
-                  y = rbetabinom(n=100, size = N, prob = mu, rho = rho))
-fit = vglm(cbind(y, N-y) ~ 1, betabinomial, bdata, trace = TRUE)
+bdata <- data.frame(N = 10, mu = 0.5, rho = 0.8)
+bdata <- transform(bdata,
+                   y = rbetabinom(n=100, size = N, prob = mu, rho = rho))
+fit <- vglm(cbind(y, N-y) ~ 1, betabinomial, bdata, trace = TRUE)
 coef(fit, matrix = TRUE)
 Coef(fit)
-head(cbind(fit@y, weights(fit, type = "prior")))
+head(cbind(depvar(fit), weights(fit, type = "prior")))
 
 
 # Example 2
-fit = vglm(cbind(R, N-R) ~ 1, betabinomial, lirat,
-           trace = TRUE, subset = N > 1)
+fit <- vglm(cbind(R, N-R) ~ 1, betabinomial, lirat,
+            trace = TRUE, subset = N > 1)
 coef(fit, matrix = TRUE)
 Coef(fit)
 t(fitted(fit))
-t(fit@y)
+t(depvar(fit))
 t(weights(fit, type = "prior"))
 
 
 # Example 3, which is more complicated
-lirat = transform(lirat, fgrp = factor(grp))
-summary(lirat)   # Only 5 litters in group 3
-fit2 = vglm(cbind(R, N-R) ~ fgrp + hb, betabinomial(zero = 2),
-           data = lirat, trace = TRUE, subset = N > 1)
+lirat <- transform(lirat, fgrp = factor(grp))
+summary(lirat)  # Only 5 litters in group 3
+fit2 <- vglm(cbind(R, N-R) ~ fgrp + hb, betabinomial(zero = 2),
+             data = lirat, trace = TRUE, subset = N > 1)
 coef(fit2, matrix = TRUE)
 \dontrun{ with(lirat, plot(hb[N > 1], fit2@misc$rho,
                  xlab = "Hemoglobin", ylab = "Estimated rho",
@@ -217,12 +223,12 @@ coef(fit2, matrix = TRUE)
 with(lirat, plot(hb, R / N, pch = as.character(grp), col = grp, las = 1,
                  xlab = "Hemoglobin level", ylab = "Proportion Dead",
                  main = "Fitted values (lines)"))
-smalldf = with(lirat, lirat[N > 1, ])
+smalldf <- with(lirat, lirat[N > 1, ])
 for(gp in 1:4) {
-    xx = with(smalldf, hb[grp == gp])
-    yy = with(smalldf, fitted(fit2)[grp == gp])
-    ooo = order(xx)
-    lines(xx[ooo], yy[ooo], col = gp) } }
+  xx <- with(smalldf, hb[grp == gp])
+  yy <- with(smalldf, fitted(fit2)[grp == gp])
+  ooo <- order(xx)
+  lines(xx[ooo], yy[ooo], col = gp) } }
 }
 \keyword{models}
 \keyword{regression}

@@ -19,10 +19,9 @@ qmaxwell(p, a)
 rmaxwell(n, a)
 }
 \arguments{
-  \item{x, q}{vector of quantiles.}
-  \item{p}{vector of probabilities.}
-  \item{n}{number of observations.
-  A single positive integer.
+  \item{x, q, p, n}{
+  Same as \code{\link[stats:Uniform]{Uniform}}.
+
 
   }
   \item{a}{the parameter.}
@@ -39,8 +38,10 @@ rmaxwell(n, a)
   \code{qmaxwell} gives the quantile function, and
   \code{rmaxwell} generates random deviates.
 
+
 }
 \references{
+
   Balakrishnan, N. and Nevzorov, V. B. (2003) 
   \emph{A Primer on Statistical Distributions}.
   Hoboken, New Jersey: Wiley.

@@ -9,7 +9,8 @@
 }
 \usage{
 seq2binomial(lprob1 = "logit", lprob2 = "logit",
-             iprob1 = NULL,    iprob2 = NULL, zero = NULL)
+             iprob1 = NULL,    iprob2 = NULL,
+             parallel = FALSE, apply.parint = TRUE, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -24,12 +25,9 @@ seq2binomial(lprob1 = "logit", lprob2 = "logit",
   A \code{NULL} means a value is obtained in the \code{initialize} slot.
 
   }
-  \item{zero}{
-  An integer-valued vector specifying which
-  linear/additive predictors are modelled as intercepts only.
-  If used, the value must be from the set \{1,2\} which correspond to
-  the first and second probabilities respectively.
-  A \code{NULL} value means none.
+  \item{parallel, apply.parint, zero}{
+  Details at \code{\link{Links}}.
+
 
   }
 }
@@ -58,19 +56,23 @@ seq2binomial(lprob1 = "logit", lprob2 = "logit",
   I have named it the \emph{(two-stage) sequential binomial} model.
   Fisher scoring is used.
 
+
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}}
   and \code{\link{vgam}}.
 
+
 }
 \references{ 
+
   Crowder, M. and Sweeting, T. (1989).
   Bayesian inference for a bivariate binomial distribution.
   \emph{Biometrika},
   \bold{76},
   599--603.
+
 
 }
 \author{ Thomas W. Yee }
@@ -108,6 +110,8 @@ fit <- vglm(cbind(y1, y2) ~ x2, seq2binomial,  weight = mvector,
 coef(fit)
 coef(fit, matrix = TRUE)
 head(fitted(fit))
+head(depvar(fit))
+head(weights(fit, type = "prior"))  # Same as with(sdata, mvector)
 }
 \keyword{models}
 \keyword{regression}

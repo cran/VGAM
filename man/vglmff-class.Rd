@@ -11,7 +11,7 @@ Objects can be created by calls of the form \code{new("vglmff", ...)}.
   In the following, \eqn{M} is the number of linear/additive
   predictors.
   
-  \describe{
+\describe{
   \item{\code{blurb}:}{
   Object of class \code{"character"} giving
   a small description of the model. Important arguments such as
@@ -43,8 +43,8 @@ Objects can be created by calls of the form \code{new("vglmff", ...)}.
   }
   \item{\code{first}:}{
   Object of class \code{"expression"} to insert
-  code at a special position in \code{vglm} or
-  \code{vgam}.
+  code at a special position in \code{\link{vglm}} or
+  \code{\link{vgam}}.
 
   }
   \item{\code{infos}:}{
@@ -74,9 +74,9 @@ Objects can be created by calls of the form \code{new("vglmff", ...)}.
 
   }
   \item{\code{last}:}{
-  Object of class \code{"expression"} to insert
-  code at a special position (at the very end) of \code{vglm.fit} or
-  \code{vgam.fit}.
+  Object of class \code{"expression"} to insert code at a
+  special position (at the very end) of \code{vglm.fit()}
+  or \code{vgam.fit()}.
   This code is evaluated after the fitting.
   The list \code{misc} is often assigned components in this slot,
   which becomes the \code{misc} slot on the fitted object.
@@ -107,6 +107,7 @@ Objects can be created by calls of the form \code{new("vglmff", ...)}.
   Object of class \code{"expression"} to insert
   code at a special position in \code{vglm.fit} or
   \code{vgam.fit}.
+
 
   }
   \item{\code{middle2}:}{
@@ -169,7 +170,7 @@ Objects can be created by calls of the form \code{new("vglmff", ...)}.
   of the weight matrices.
    
   }
-  }
+}
 }
 
 \section{Methods}{
@@ -203,26 +204,29 @@ The file is amongst other \pkg{VGAM} PDF documentation.
   for functions.
 
 
-  A unified method of handling arguments is to use
-  \code{match.arg}. This allows, for example,
-  \code{vglm(..., family = cratio(link = logit))}
-  and 
-  \code{vglm(..., family = cratio(link = "logi"))}
-  to be equivalent (Nb. there is a \code{logit} function).
+% 20130322; this is obsolete, and can delete it:
+% A unified method of handling arguments is to use
+% \code{match.arg}. This allows, for example,
+% \code{vglm(..., family = cratio(link = logit))}
+% and 
+% \code{vglm(..., family = cratio(link = "logi"))}
+% to be equivalent (Nb. there is a \code{logit} function).
 
 
   The \code{extra} argument in
-  \code{linkinv}, \code{linkfun}, \code{deviance}, \code{loglikelihood}, etc. 
+  \code{linkinv}, \code{linkfun}, \code{deviance},
+  \code{loglikelihood}, etc. 
   matches with the argument \code{extra}
-  in \code{vglm}, \code{vgam} and \code{rrvglm}. This allows input
-  to be fed into all slots of a \pkg{VGAM} family function.
+  in \code{\link{vglm}}, \code{\link{vgam}} and \code{\link{rrvglm}}.
+  This allows input to be fed into all slots of a \pkg{VGAM}
+  family function.
 
 
   The expression \code{derivative} is evaluated immediately
   prior to \code{weight}, so there is provision for re-use
   of variables etc.  Programmers must be careful to choose
   variable names that do not interfere with \code{vglm.fit},
-  \code{vgam.fit} etc.
+  \code{vgam.fit()} etc.
 
 
   Programmers of \pkg{VGAM} family functions are encouraged
@@ -264,3 +268,9 @@ cratio(link = "cloglog")
 cratio(link = "cloglog", reverse = TRUE)
 }
 \keyword{classes}
+
+
+
+
+
+

@@ -23,22 +23,30 @@ reunif(n, min = 0, max = 1)
   \item{x, q}{
   Vector of expectiles.
   See the terminology note below.
+
   }
   \item{p}{
   Vector of probabilities. % (tau or \eqn{\tau}).
   These should lie in \eqn{(0,1)}.
+
   }
-  \item{n, min, max, log}{See \code{\link[stats:Uniform]{runif}}.}
+  \item{n, min, max, log}{
+  See \code{\link[stats:Uniform]{runif}}.
+
+
+  }
   \item{Maxit_nr}{
   Numeric.
   Maximum number of Newton-Raphson iterations allowed.
   A warning is issued if convergence is not obtained for all \code{p}
   values.
+
   }
   \item{Tol_nr}{
   Numeric.
   Small positive value specifying the tolerance or precision to which
   the expectiles are computed.
+
   }
 }
 \details{
@@ -91,6 +99,7 @@ For \code{qeunif} the Newton-Raphson algorithm is used to solve for
 Numerical problems may occur when values of \code{p} are
 very close to 0 or 1.
 
+
 }
 \value{
   \code{deunif(x)} gives the density function \eqn{g(x)}.
@@ -133,24 +142,25 @@ quantile and expectile regression.
   \code{\link{dunif}},
   \code{\link{dkoenker}}.
 
+
 }
 
 \examples{
-my_p = 0.25; y = runif(nn <- 1000)
-(myexp = qeunif(my_p))
-sum(myexp - y[y <= myexp]) / sum(abs(myexp - y))  # Should be my_p
+my_p <- 0.25; y <- runif(nn <- 1000)
+(myexp <- qeunif(my_p))
+sum(myexp - y[y <= myexp]) / sum(abs(myexp - y)) # Should be my_p
 # Equivalently:
-I1 = mean(y <= myexp) * mean( myexp - y[y <= myexp])
-I2 = mean(y >  myexp) * mean(-myexp + y[y >  myexp])
-I1 / (I1 + I2)  # Should be my_p
+I1 <- mean(y <= myexp) * mean( myexp - y[y <= myexp])
+I2 <- mean(y >  myexp) * mean(-myexp + y[y >  myexp])
+I1 / (I1 + I2) # Should be my_p
 # Or:
-I1 = sum( myexp - y[y <= myexp])
-I2 = sum(-myexp + y[y >  myexp])
+I1 <- sum( myexp - y[y <= myexp])
+I2 <- sum(-myexp + y[y >  myexp])
 
 # Non-standard uniform
-mymin = 1; mymax = 8
-yy = runif(nn, mymin, mymax)
-(myexp = qeunif(my_p, mymin, mymax))
+mymin <- 1; mymax <- 8
+yy <- runif(nn, mymin, mymax)
+(myexp <- qeunif(my_p, mymin, mymax))
 sum(myexp - yy[yy <= myexp]) / sum(abs(myexp - yy)) # Should be my_p
 peunif(mymin, mymin, mymax)     #  Should be 0
 peunif(mymax, mymin, mymax)     #  Should be 1
@@ -159,11 +169,11 @@ abs(qeunif(0.5, mymin, mymax) - mean(yy)) #  Should be 0
 abs(qeunif(0.5, mymin, mymax) - (mymin+mymax)/2) #  Should be 0
 abs(peunif(myexp, mymin, mymax) - my_p)  #  Should be 0
 integrate(f = deunif, lower = mymin - 3, upper = mymax + 3,
-          min = mymin, max = mymax) #  Should be 1
+          min = mymin, max = mymax) # Should be 1
 
 \dontrun{
 par(mfrow = c(2,1))
-yy = seq(0.0, 1.0, len = nn)
+yy <- seq(0.0, 1.0, len = nn)
 plot(yy, deunif(yy), type = "l", col = "blue", ylim = c(0, 2),
      xlab = "y", ylab = "g(y)", main = "g(y) for Uniform(0,1)")
 lines(yy, dunif(yy), col = "darkgreen", lty = "dotted", lwd = 2) # 'original'

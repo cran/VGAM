@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2012 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2013 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -9,7 +9,7 @@
 
 
 logLik.vlm <- function(object, ...)
-        object@criterion$loglikelihood
+  object@criterion$loglikelihood
 
 
 if (!isGeneric("logLik"))
@@ -34,9 +34,14 @@ setMethod("logLik",  "vgam", function(object, ...)
 
 
 
+
+
+
 constraints.vlm <- function(object,
                             type = c("lm", "term"),
-                            all = TRUE, which, ...) {
+                            all = TRUE, which,
+                            matrix.out = FALSE,
+                            ...) {
 
 
   type <- match.arg(type, c("lm", "term"))[1]
@@ -60,7 +65,21 @@ constraints.vlm <- function(object,
     names(ans) <- names.att.x.LM
   } # End of "term"
 
-  if (all) ans else ans[[which]]
+  if (matrix.out) {
+    if (all) {
+      M <- npred(object)
+      mat.ans <- matrix(unlist(ans), nrow = M)
+      if (length(object@misc$predictors.names) == M)
+        rownames(mat.ans) <- object@misc$predictors.names
+      if (length(object@misc$colnames.X_vlm) == ncol(mat.ans))
+        colnames(mat.ans) <- object@misc$colnames.X_vlm
+      mat.ans
+    } else {
+      ans[[which]]
+    }
+  } else {
+    if (all) ans else ans[[which]]
+  }
 }
 
 
@@ -69,8 +88,9 @@ if (!isGeneric("constraints"))
   setGeneric("constraints", function(object, ...)
              standardGeneric("constraints"))
 
+
 setMethod("constraints",  "vlm", function(object, ...)
-    constraints.vlm(object, ...))
+  constraints.vlm(object, ...))
 
 
 

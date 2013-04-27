@@ -169,6 +169,7 @@ tobit(Lower = 0, Upper = Inf, lmu = "identity", lsd = "loge",
 
 }
 \examples{
+\dontrun{
 # Here, fit1 is a standard Tobit model and fit2 is a nonstandard Tobit model
 tdata <- data.frame(x2 = seq(-1, 1, length = (nn <- 100)))
 set.seed(1)
@@ -219,6 +220,7 @@ head(fit4@extra$censoredU) # A matrix
 head(fit4@misc$Lower)      # A matrix
 head(fit4@misc$Upper)      # A matrix
 coef(fit4, matrix = TRUE)
+}
 
 \dontrun{ # Plot the results
 par(mfrow = c(2, 2))

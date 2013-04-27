@@ -34,11 +34,13 @@ Watts, D. G. (1981)
 
 }
 \seealso{
-\code{\link{micmen}}.
+\code{\link[VGAM]{micmen}}.
 }
 \examples{
+\dontrun{
 fit <- vglm(velocity ~ 1, micmen, data = enzyme, trace = TRUE,
-           form2 = ~ conc - 1, crit = "crit")
+            form2 = ~ conc - 1, crit = "crit")
 summary(fit)
+}
 }
 \keyword{datasets}

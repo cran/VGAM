@@ -63,10 +63,13 @@ wffc.P3star(length, c1 = 100, min.eligible = 0.18, ppm = 2000)
 %  \url{http://www.http://san2010.pl}
 %  was the official 2010 website.
 
-  Yee, T. W. (2011)
+
+  Yee, T. W. (2013)
   On strategies and issues raised by an analysis of
   the 2008 World Fly Fishing Championships data.
   \emph{In preparation}.
+
+
 
 }
 
@@ -77,7 +80,7 @@ wffc.P3star(length, c1 = 100, min.eligible = 0.18, ppm = 2000)
   \code{wffc.P3} and \code{wffc.P3star}.
 
 }
-\seealso{ \code{\link{wffc}}. }
+\seealso{ \code{\link[VGAM]{wffc}}. }
 \examples{
 \dontrun{ fishlength <- seq(0.0, 0.72, by = 0.001)
 plot(fishlength, wffc.P2star(fishlength), type = "l", col = "blue",

@@ -2,7 +2,27 @@
 \alias{notdocumentedyet}
 %
 %
+% 201302;
+% \alias{pgamma.deriv.unscaled}
+% \alias{pgamma.deriv}
+% \alias{digami}
 %
+% 201212;
+\alias{binom2.rho.ss}
+%
+% 20121105;
+\alias{N.hat.posbernoulli}
+\alias{aux.posbernoulli}
+\alias{posbern.aux}
+\alias{Rank}
+\alias{Rank.rrvglm}
+\alias{Rank.qrrvglm}
+\alias{Rank.cao}
+% 20121015; delete this later
+%\alias{huggins91.old}
+%
+% 20120912
+\alias{arwz2wz}
 %
 % 20120813 New links (no earg)
 \alias{Dtheta.deta}
@@ -116,8 +136,8 @@
 %
 %
 % 20110321; misc. datasets.
-\alias{fibre1.5}
-\alias{fibre15}
+%\alias{fibre1.5}
+%\alias{fibre15}
 %
 %
 % 20120206; for RR-NB, or rrn.tex.
@@ -126,9 +146,9 @@
 %
 % 20110202; for Melbourne; these include datasets.
 \alias{azprocedure}
-\alias{confint_rrnb}
-\alias{confint_nb1}
-\alias{gala}
+\alias{Confint.rrnb}
+\alias{Confint.nb1}
+%\alias{gala}
 \alias{mmt}
 %
 %
@@ -232,7 +252,7 @@
 % \alias{canonical.Blist}
 % \alias{cao.fit}
 \alias{car.all}
-% \alias{care.exp}
+\alias{care.exp}
 \alias{ccoef.Coef.cao}
 \alias{ccoef.Coef.qrrvglm}
 \alias{ccoef.cao}
@@ -282,8 +302,8 @@
 \alias{effects}
 % \alias{effects.vgam}
 % \alias{effects.vlm}
-% \alias{ei}
-% \alias{eij}
+% \alias{eifun}
+% \alias{eijfun}
 \alias{erfc}
 \alias{eta2theta}
 %\alias{explink}
@@ -340,15 +360,16 @@
 \alias{lm}
 \alias{lm2qrrvlm.model.matrix}
 \alias{lm2vlm.model.matrix}
+\alias{vlm2lm.model.matrix}
 \alias{lms.bcg.control}
 \alias{lms.bcn.control}
 \alias{lms.yjn.control}
 \alias{lmscreg.control}
 \alias{logLik.vlm}
-% \alias{lv.Coef.cao}  20090505
-\alias{lv.Coef.qrrvglm}
+% \alias{lv.Coef.cao} 20090505
+\alias{latvar.Coef.qrrvglm}
 \alias{lv.cao}
-\alias{lv.qrrvglm}
+\alias{latvar.qrrvglm}
 \alias{lvplot.cao}
 \alias{m2adefault}
 \alias{m2avglm}
@@ -395,7 +416,7 @@
 \alias{plotvglm}
 \alias{plotvlm}
 \alias{plotvsmooth.spline}
-\alias{pnorm2}
+% \alias{pnorm2} done 20120910
 % \alias{poissonqn}
 \alias{poly}
 \alias{predict}
@@ -435,7 +456,7 @@
 \alias{qtplot.vextremes}
 \alias{qtplot.vglm}
 \alias{quasiff}
-\alias{rainfall}
+% \alias{rainfall}
 % \alias{remove.arg}
 % \alias{replace.constraints}
 \alias{resid}
@@ -468,7 +489,7 @@
 % \alias{rrr.normalize}
 \alias{rrvglm.control.Gaussian}
 % \alias{rrvglm.fit}
-\alias{rss.vgam}
+\alias{ResSS.vgam}
 \alias{s.vam}
 \alias{scale.default}
 \alias{simple.exponential}

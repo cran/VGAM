@@ -91,15 +91,30 @@ zibinomial(lpstr0 = "logit", lprob = "logit",
   specifying the values of \eqn{N}.
 
 
-  To work well, one needs \eqn{N>1} and \eqn{\mu>0}{prob>0}, i.e.,
+  To work well, one needs large values of \eqn{N}
+  and \eqn{\mu>0}{prob>0}, i.e.,
   the larger \eqn{N} and \eqn{\mu}{prob} are, the better.
+  If \eqn{N = 1} then the model is unidentifiable since
+  the number of parameters is excessive.
 
 
-  For intercept-models and constant \eqn{N} over the \eqn{n} observations,
-  the \code{misc} slot has a component called \code{pobs0} which is the
-  estimate of the probability of an observed 0, i.e., \eqn{P(Y=0)}.
-  This family function currently cannot handle a multivariate
-  response (only \code{mv = FALSE} can be handled).
+  Setting \code{stepsize = 0.5}, say, may aid convergence.
+
+
+
+
+% 20130316; commenting out this:
+% For intercept-models and constant \eqn{N} over the \eqn{n} observations,
+% the \code{misc} slot has a component called \code{pobs0} which is the
+% estimate of the probability of an observed 0, i.e., \eqn{P(Y=0)}.
+% This family function currently cannot handle a multivariate
+% response (only \code{mv = FALSE} can be handled).
+
+% 20130316; adding this:
+  Estimated probabilities of a structural zero and an 
+  observed zero are returned, as in \code{\link{zipoisson}}.
+
+
 
 
   The zero-\emph{deflated} binomial distribution might
@@ -129,7 +144,7 @@ zibinomial(lpstr0 = "logit", lprob = "logit",
 
 }
 \examples{
-size <- 10 # Number of trials; N in the notation above
+size <- 10  # Number of trials; N in the notation above
 nn <- 200
 zibdata <- data.frame(pstr0 = logit( 0, inverse = TRUE), # 0.50
                       mubin = logit(-1, inverse = TRUE), # Mean of usual binomial
@@ -138,12 +153,13 @@ zibdata <- transform(zibdata,
                      y = rzibinom(nn, size = sv, prob = mubin, pstr0 = pstr0))
 with(zibdata, table(y))
 fit <- vglm(cbind(y, sv - y) ~ 1, zibinomial, zibdata, trace = TRUE)
+fit <- vglm(cbind(y, sv - y) ~ 1, zibinomial, zibdata, trace = TRUE, stepsize = 0.5)
 
 coef(fit, matrix = TRUE)
-Coef(fit) # Useful for intercept-only models
+Coef(fit)  # Useful for intercept-only models
 fit@misc$pobs0  # Estimate of P(Y = 0)
 head(fitted(fit))
-with(zibdata, mean(y)) # Compare this with fitted(fit)
+with(zibdata, mean(y))  # Compare this with fitted(fit)
 summary(fit)
 }
 \keyword{models}

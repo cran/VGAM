@@ -42,7 +42,7 @@ It is the 3-parameter Dagum distribution with \eqn{a=p}.
 The inverse paralogistic distribution has density
   \deqn{f(y) = a^2 y^{a^2-1} / [b^{a^2} \{1 + (y/b)^a\}^{a+1}]}{%
         f(y) = a^2 y^(a^2-1) / [b^(a^2) (1 + (y/b)^a)^(a+1)]}
-  for \eqn{a > 0}, \eqn{b > 0}, \eqn{y > 0}.
+  for \eqn{a > 0}, \eqn{b > 0}, \eqn{y \geq 0}{y >= 0}.
 Here, \eqn{b} is the scale parameter \code{scale},
 and \eqn{a} is the shape parameter.
 The mean is

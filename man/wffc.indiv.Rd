@@ -11,7 +11,7 @@
 \usage{data(wffc.indiv)}
 \format{
   A data frame with 99 observations on the following 8 variables.
-  Some of these variable are described in \code{\link{wffc}}.
+  Some of these variable are described in \code{\link[VGAM]{wffc}}.
   \describe{
     \item{\code{totalPlacings}}{a numeric vector; these are the summed
     placings over the 5 sessions.}
@@ -28,7 +28,7 @@
 }
 \details{
   This data frame gives the individual results of the competition.
-  See also \code{\link{wffc}} and \code{\link{wffc.teams}} for more
+  See also \code{\link[VGAM]{wffc}} and \code{\link[VGAM]{wffc.teams}} for more
   details and links.
 
 

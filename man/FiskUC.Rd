@@ -66,8 +66,8 @@ Hoboken, NJ, USA: Wiley-Interscience.
 
 }
 \examples{
-fdata = data.frame(y = rfisk(n = 1000, 4, 6))
-fit = vglm(y ~ 1, fisk, data = fdata, trace = TRUE, crit = "coef")
+fdata <- data.frame(y = rfisk(n = 1000, 4, 6))
+fit <- vglm(y ~ 1, fisk, data = fdata, trace = TRUE, crit = "coef")
 coef(fit, matrix = TRUE)
 Coef(fit)
 }

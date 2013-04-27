@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2012 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2013 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -46,9 +46,9 @@ dhuber <- function(x, k = 0.862, mu = 0, sigma = 1, log = FALSE)
 
 
 rhuber <- function(n, k = 0.862, mu = 0, sigma = 1) {
-  use.n = if ((length.n <- length(n)) > 1) length.n else
-          if (!is.Numeric(n, integer.valued = TRUE,
-                          allowable.length = 1, positive = TRUE))
+  use.n <- if ((length.n <- length(n)) > 1) length.n else
+           if (!is.Numeric(n, integer.valued = TRUE,
+                           allowable.length = 1, positive = TRUE))
               stop("bad input for argument 'n'") else n
 
   myl <- rep(0.0, len = use.n)
@@ -127,8 +127,10 @@ phuber <- function(q, k = 0.862, mu = 0, sigma = 1) {
 
 
 
- huber <- function(llocation = "identity", lscale = "loge",
-                   k = 0.862, imethod = 1, zero = 2) {
+ huber2 <- function(llocation = "identity", lscale = "loge",
+                    k = 0.862, imethod = 1, zero = 2) {
+
+
   A1 <- (2 * dnorm(k) / k - 2 * pnorm(-k))
   eps <- A1 / (1 + A1)
 
@@ -180,7 +182,7 @@ phuber <- function(q, k = 0.862, mu = 0, sigma = 1) {
          namesof("scale",    .lscale, earg = .escale, tag = FALSE))
 
     if (!length(etastart)) {
-      junk = lm.wfit(x = x, y = y, w = c(w))
+      junk <- lm.wfit(x = x, y = c(y), w = c(w))
       scale.y.est <- sqrt( sum(c(w) * junk$resid^2) / junk$df.residual )
       location.init <- if ( .llocat == "loge") pmax(1/1024, y) else {
         if ( .imethod == 3) {
@@ -205,9 +207,9 @@ phuber <- function(q, k = 0.862, mu = 0, sigma = 1) {
   }, list( .llocat = llocat,
            .elocat = elocat, .escale = escale ))),
   last = eval(substitute(expression({
-    misc$link <-    c("location" = .llocat, "scale" = .lscale)
+    misc$link <-    c("location" = .llocat , "scale" = .lscale )
 
-    misc$earg <- list("location" = .elocat, "scale" = .escale)
+    misc$earg <- list("location" = .elocat , "scale" = .escale )
 
     misc$expected <- TRUE
     misc$k.huber <- .k
@@ -229,7 +231,7 @@ phuber <- function(q, k = 0.862, mu = 0, sigma = 1) {
  }, list( .llocat = llocat, .lscale = lscale,
           .elocat = elocat, .escale = escale,
           .k      = k ))),
-  vfamily = c("huber"),
+  vfamily = c("huber2"),
   deriv = eval(substitute(expression({
     mylocat <- eta2theta(eta[, 1], .llocat,  earg = .elocat)
     myscale <- eta2theta(eta[, 2], .lscale,  earg = .escale)
@@ -239,7 +241,7 @@ phuber <- function(q, k = 0.862, mu = 0, sigma = 1) {
     cond2 <- (abs(zedd) <=  myk)
     cond3 <-     (zedd  >   myk)
 
-    dl.dlocat        <- -myk + 0 * zedd # cond1
+    dl.dlocat        <- -myk + 0 * zedd  # cond1
     dl.dlocat[cond2] <- zedd[cond2]
     dl.dlocat[cond3] <-  myk  # myk is a scalar
     dl.dlocat <- dl.dlocat / myscale
@@ -252,9 +254,8 @@ phuber <- function(q, k = 0.862, mu = 0, sigma = 1) {
 
     dlocat.deta <- dtheta.deta(mylocat, .llocat, earg = .elocat)
     dscale.deta <- dtheta.deta(myscale, .lscale, earg = .escale)
-    ans <-
-    c(w) * cbind(dl.dlocat * dlocat.deta,
-                 dl.dscale * dscale.deta)
+    ans <- c(w) * cbind(dl.dlocat * dlocat.deta,
+                        dl.dscale * dscale.deta)
     ans
   }), list( .llocat = llocat, .lscale = lscale,
             .elocat = elocat, .escale = escale,
@@ -269,10 +270,10 @@ phuber <- function(q, k = 0.862, mu = 0, sigma = 1) {
     ned2l.dlocat2 <- temp4 * (1 - .eps) / myscale^2
 
     ned2l.dscale2 <- (dnorm(myk) * (1 - myk^2) + temp4) *
-                    2 * (1 - .eps) / (myk * myscale^2)
+                     2 * (1 - .eps) / (myk * myscale^2)
 
-    wz[, iam(1,1,M)] <- ned2l.dlocat2 * dlocat.deta^2
-    wz[, iam(2,2,M)] <- ned2l.dscale2 * dscale.deta^2
+    wz[, iam(1, 1, M)] <- ned2l.dlocat2 * dlocat.deta^2
+    wz[, iam(2, 2, M)] <- ned2l.dscale2 * dscale.deta^2
     ans
     c(w) * wz
   }), list( .eps = eps ))))
@@ -324,7 +325,7 @@ phuber <- function(q, k = 0.862, mu = 0, sigma = 1) {
 
 
     if (!length(etastart)) {
-      junk = lm.wfit(x = x, y = y, w = c(w))
+      junk <- lm.wfit(x = x, y = c(y), w = c(w))
       location.init <- if ( .llocat == "loge") pmax(1/1024, y) else {
         if ( .imethod == 3) {
           rep(weighted.mean(y, w), len = n)

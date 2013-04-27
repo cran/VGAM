@@ -50,9 +50,12 @@ fisherz(theta, bminvalue = NULL, bmaxvalue = NULL,
 }
 \value{
   For \code{deriv = 0},
-  \code{0.5 * log((1+theta)/(1-theta))} when \code{inverse = FALSE},
+  \code{0.5 * log((1+theta)/(1-theta))}
+  (same as \code{atanh(theta)})
+   when \code{inverse = FALSE},
   and if \code{inverse = TRUE} then
-  \code{(exp(2*theta)-1)/(exp(2*theta)+1)}.
+  \code{(exp(2*theta)-1)/(exp(2*theta)+1)}
+  (same as \code{tanh(theta)}).
 
 
   For \code{deriv = 1}, then the function returns
@@ -81,6 +84,7 @@ fisherz(theta, bminvalue = NULL, bmaxvalue = NULL,
 
   The link function \code{\link{rhobit}} is very similar to \code{fisherz},
   e.g., just twice the value of \code{fisherz}.
+  This link function may be renamed to \code{atanhlink} in the near future.
 
 
 }
@@ -88,6 +92,7 @@ fisherz(theta, bminvalue = NULL, bmaxvalue = NULL,
 \seealso{ 
   \code{\link{Links}},
   \code{\link{rhobit}},
+  \code{\link{atanh}},
   \code{\link{logit}}.
 
 
@@ -96,8 +101,8 @@ fisherz(theta, bminvalue = NULL, bmaxvalue = NULL,
 theta <- seq(-0.99, 0.99, by = 0.01)
 y <- fisherz(theta)
 \dontrun{ plot(theta, y, type = "l", las = 1, ylab = "",
-   main = "fisherz(theta)")
-abline(v = 0, h = 0, lty = 2) }
+   main = "fisherz(theta)", col = "blue")
+abline(v = (-1):1, h = 0, lty = 2, col = "gray") }
 
 x <- c(seq(-1.02, -0.98, by = 0.01), seq(0.97, 1.02, by = 0.01))
 fisherz(x) # Has NAs

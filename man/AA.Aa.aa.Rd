@@ -22,17 +22,25 @@ AA.Aa.aa(link = "logit", init.pA = NULL)
   This one parameter model involves a probability called \code{pA}.
   The probability of getting a count in the first column of the
   input (an AA) is \code{pA*pA}.
+
+
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}}
   and \code{\link{vgam}}.
+
+
 }
 \references{ 
+
+
 Weir, B. S. (1996)
 \emph{Genetic Data Analysis II: Methods for Discrete Population
       Genetic Data},
 Sunderland, MA: Sinauer Associates, Inc.
+
+
 }
 \author{ T. W. Yee }
 \note{ 
@@ -46,17 +54,18 @@ Sunderland, MA: Sinauer Associates, Inc.
 
 }
 \seealso{
-\code{\link{AB.Ab.aB.ab}},
-\code{\link{AB.Ab.aB.ab2}},
-\code{\link{ABO}},
-\code{\link{G1G2G3}},
-\code{\link{MNSs}}.
+  \code{\link{AB.Ab.aB.ab}},
+  \code{\link{AB.Ab.aB.ab2}},
+  \code{\link{ABO}},
+  \code{\link{G1G2G3}},
+  \code{\link{MNSs}}.
+
 
 }
 \examples{
-y = cbind(53, 95, 38)
-fit = vglm(y ~ 1, AA.Aa.aa(link="probit"), trace=TRUE)
-rbind(y, sum(y)*fitted(fit))
+y <- cbind(53, 95, 38)
+fit <- vglm(y ~ 1, AA.Aa.aa(link = "probit"), trace = TRUE)
+rbind(y, sum(y) * fitted(fit))
 Coef(fit) # Estimated pA
 summary(fit)
 }

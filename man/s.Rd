@@ -17,9 +17,11 @@ s(x, df = 4, spar = 0, ...)
   Note that \code{x} must be a \emph{single} variable
   and not a function of a variable.
   For example, \code{s(x)} is fine but \code{s(log(x))} will fail. 
-  In this case, let \code{logx <- log(x)}, say, and then use \code{s(logx)}.
+  In this case, let \code{logx <- log(x)} (in the data frame),
+  say, and then use \code{s(logx)}.
   At this stage bivariate smoothers (\code{x} would be a two-column matrix)
   are not implemented.
+
 
   }
   \item{df}{
@@ -29,6 +31,8 @@ s(x, df = 4, spar = 0, ...)
   Thus one could say that \code{df-1} is the
   \emph{nonlinear degrees of freedom} of the smooth.
   Recycling of values will be used if \code{df} is not of length \eqn{r}.
+  If \code{spar} is positive then this argument is ignored.
+
 
   }
   \item{spar}{ numerical vector of length \eqn{r}. 
@@ -39,8 +43,13 @@ s(x, df = 4, spar = 0, ...)
   Recycling of values will be used if \code{spar} is not of length 
   \eqn{r}.  
 
+
   }
-  \item{\dots}{ Ignored for now. }
+  \item{\dots}{
+  Ignored for now.
+
+
+  }
 }
 \details{
   In this help file \eqn{M} is the number of additive predictors
@@ -63,28 +72,35 @@ s(x, df = 4, spar = 0, ...)
   involving interactions and nesting etc.
   For example, \code{myfactor:s(x2)} is not a good idea.
 
-  It also differs from the S-PLUS \code{s} which
-  allows \code{spar} to be negative;
-  \pkg{VGAM} does not allow this. 
+
+% It also differs from the S-PLUS \code{s} which allows
+% \code{spar} to be negative; \pkg{VGAM} does not allow this.
+
 
 }
 \value{
   A vector with attributes that are (only) used by \code{vgam}. 
 
+
 }
 \references{
+
 Yee, T. W. and Wild, C. J. (1996)
 Vector generalized additive models.
 \emph{Journal of the Royal Statistical Society, Series B, Methodological},
 \bold{58}, 481--493.
 
+
 }
 \author{ Thomas W. Yee }
 \note{
 
+
   The vector cubic smoothing spline which \code{s()} represents is
   computationally demanding for large \eqn{M}.
-  The cost is approximately \eqn{O(M^3)}.
+  The cost is approximately \eqn{O(n M^3)} where \eqn{n} is the
+  number of unique abscissae.
+
 
   An alternative to using
   \code{s} with \code{\link{vgam}} is
@@ -94,6 +110,7 @@ Vector generalized additive models.
   The latter implements half-stepping, which is helpful if
   convergence is difficult.
 
+
 }
 
 % ~Make other sections like WARNING with \section{WARNING }{....} ~
@@ -102,25 +119,24 @@ Vector generalized additive models.
   \code{\link{vgam}},
   \code{\link{vsmooth.spline}}.
 
+
 }
 
 \examples{
 # Nonparametric logistic regression
-fit <- vgam(agaaus ~ s(altitude, df = 2), binomialff, hunua)
-\dontrun{
-plot(fit, se = TRUE)}
+fit <- vgam(agaaus ~ s(altitude, df = 2), binomialff, data = hunua)
+\dontrun{ plot(fit, se = TRUE) }
 
 # Bivariate logistic model with artificial data
 nn <- 300
-mydf <- data.frame(x1 = runif(nn), x2 = runif(nn))
-mydf <- transform(mydf, 
-    y1 = rbinom(nn, size = 1, prob = logit(sin(2*x2), inv = TRUE)),
-    y2 = rbinom(nn, size = 1, prob = logit(sin(2*x2), inv = TRUE)))
-fit <- vgam(cbind(y1, y2) ~ x1 + s(x2, 3), trace=TRUE,
-            binom2.or(exchangeable = TRUE ~ s(x2, 3)), data = mydf)
-coef(fit, matrix = TRUE) # Hard to interpret
-\dontrun{
-plot(fit, se = TRUE, which.term = 2, scol = "blue")}
+bdata <- data.frame(x1 = runif(nn), x2 = runif(nn))
+bdata <- transform(bdata, 
+    y1 = rbinom(nn, size = 1, prob = logit(sin(2 * x2), inverse = TRUE)),
+    y2 = rbinom(nn, size = 1, prob = logit(sin(2 * x2), inverse = TRUE)))
+fit <- vgam(cbind(y1, y2) ~ x1 + s(x2, 3), trace = TRUE,
+            binom2.or(exchangeable = TRUE ~ s(x2, 3)), data = bdata)
+coef(fit, matrix = TRUE)  # Hard to interpret
+\dontrun{ plot(fit, se = TRUE, which.term = 2, scol = "blue") }
 }
 \keyword{models}
 \keyword{regression}

@@ -66,7 +66,7 @@ are accounted for.
 \examples{
 \dontrun{
 # cf. Figure 3 of Moore and Tsiatis (1991)
-plot(R/N ~ hb, data = lirat, pch = as.character(grp), col = grp,
+plot(R / N ~ hb, data = lirat, pch = as.character(grp), col = grp,
      las = 1, xlab = "Hemoglobin level", ylab = "Proportion Dead") }
 }
 \keyword{datasets}

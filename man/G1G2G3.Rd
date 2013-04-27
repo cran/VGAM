@@ -27,50 +27,57 @@ G1G2G3(link = "logit", ip1 = NULL, ip2 = NULL, iF = NULL)
   \code{p3=1-p1-p2} is the third probability.
   The parameter \code{f} is the third independent parameter.
 
+
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}}
   and \code{\link{vgam}}.
 
+
 }
 \references{
+
 Lange, K. (2002)
 \emph{Mathematical and Statistical Methods for Genetic Analysis},
 2nd ed. New York: Springer-Verlag.
 
+
 }
 \author{ T. W. Yee }
 \note{ 
-The input can be a 6-column matrix of counts,
-with columns corresponding to   
-\code{G1G1},
-\code{G1G2},
-\code{G1G3},
-\code{G2G2},
-\code{G2G3},
-\code{G3G3} (in order). 
-Alternatively, the input can be a 6-column matrix of 
-proportions (so each row adds to 1) and the \code{weights}
-argument is used to specify the total number of counts for each row.
+  The input can be a 6-column matrix of counts,
+  with columns corresponding to   
+  \code{G1G1},
+  \code{G1G2},
+  \code{G1G3},
+  \code{G2G2},
+  \code{G2G3},
+  \code{G3G3} (in order). 
+  Alternatively, the input can be a 6-column matrix of 
+  proportions (so each row adds to 1) and the \code{weights}
+  argument is used to specify the total number of counts for each row.
+
 
 }
 
 \seealso{
-\code{\link{AA.Aa.aa}},
-\code{\link{AB.Ab.aB.ab}},
-\code{\link{AB.Ab.aB.ab2}},
-\code{\link{ABO}},
-\code{\link{MNSs}}.
+  \code{\link{AA.Aa.aa}},
+  \code{\link{AB.Ab.aB.ab}},
+  \code{\link{AB.Ab.aB.ab2}},
+  \code{\link{ABO}},
+  \code{\link{MNSs}}.
+
+
 }
 \examples{
-y <- cbind(108, 196, 429, 143, 513, 559)
-fit <- vglm(y ~ 1, G1G2G3(link = probit), trace = TRUE, crit = "coef")
-fit <- vglm(y ~ 1, G1G2G3(link = logit, ip1 = 0.3, ip2 = 0.3, iF = 0.02),
+ymat <- cbind(108, 196, 429, 143, 513, 559)
+fit <- vglm(ymat ~ 1, G1G2G3(link = probit), trace = TRUE, crit = "coef")
+fit <- vglm(ymat ~ 1, G1G2G3(link = logit, ip1 = 0.3, ip2 = 0.3, iF = 0.02),
            trace = TRUE, crit = "coef")
-fit <- vglm(y ~ 1, G1G2G3(link = "identity"), trace = TRUE)
+fit <- vglm(ymat ~ 1, G1G2G3(link = "identity"), trace = TRUE)
 Coef(fit) # Estimated p1, p2 and f
-rbind(y, sum(y)*fitted(fit))
+rbind(ymat, sum(ymat)*fitted(fit))
 sqrt(diag(vcov(fit)))
 }
 \keyword{models}

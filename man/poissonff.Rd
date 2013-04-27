@@ -21,6 +21,7 @@ poissonff(link = "loge", dispersion = 1, onedpar = FALSE, imu = NULL,
   See \code{\link{Links}} for more choices
   and information.
 
+
   }
   \item{dispersion}{
   Dispersion parameter. By default, maximum
@@ -30,6 +31,7 @@ poissonff(link = "loge", dispersion = 1, onedpar = FALSE, imu = NULL,
   else specify a known positive value (or values if the response
   is a matrix---one value per column).
 
+
   }
   \item{onedpar}{
   One dispersion parameter? If the response is a matrix,
@@ -38,13 +40,16 @@ poissonff(link = "loge", dispersion = 1, onedpar = FALSE, imu = NULL,
   Setting \code{onedpar=TRUE} will pool them so that there is only
   one dispersion parameter to be estimated.
 
+
   }
   \item{parallel}{
   A logical or formula. Used only if the response is a matrix.
 
+
   }
   \item{imu, imethod}{
   See \code{\link{CommonVGAMffArguments}} for more information.
+
 
   }
   \item{zero}{
@@ -58,6 +63,11 @@ poissonff(link = "loge", dispersion = 1, onedpar = FALSE, imu = NULL,
   }
   \item{bred, earg.link}{
   Details at \code{\link{CommonVGAMffArguments}}.
+  Setting \code{bred = TRUE} should work for
+  multiple responses and all \pkg{VGAM} link functions;
+  it has been tested for
+  \code{\link{loge}},
+  \code{\link{identity}} but further testing is required.
 
 
   }
@@ -159,10 +169,13 @@ poissonff(link = "loge", dispersion = 1, onedpar = FALSE, imu = NULL,
 \examples{
 poissonff()
 
-pdata <- data.frame(x = rnorm(nn <- 100))
-pdata <- transform(pdata, y = rpois(nn, exp(1+x)))
-(fit <- vglm(y ~ x, family = poissonff, pdata))
-coef(fit, matrix = TRUE)
+set.seed(123)
+pdata <- data.frame(x2 = rnorm(nn <- 100))
+pdata <- transform(pdata, y1 = rpois(nn, exp(1 + x2)))
+(fit1 <- vglm(y1 ~ x2, family = poissonff, pdata))
+(fit2 <- vglm(y1 ~ x2, family = poissonff(bred = TRUE), pdata))
+coef(fit1, matrix = TRUE)
+coef(fit2, matrix = TRUE)
 
 nn <- 200
 cdata <- data.frame(x2 = rnorm(nn), x3 = rnorm(nn), x4 = rnorm(nn))

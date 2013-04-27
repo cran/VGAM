@@ -56,7 +56,7 @@ Wales (WAL).
 
 }
 \details{
-  Details may be obtained at Yee (2010) and Yee (2010b).
+  Details may be obtained at Yee (2010) and Yee (2013).
   Here is a brief summary.
   The three competition days were 28--30 March.
   Each session was fixed at 9.00am--12.00pm and 2.30--5.30pm daily.
@@ -115,10 +115,10 @@ is rather poor and furthermore they were not recorded electronically.
 
   Note also that a few internal discrepancies may be found within
   and between the data frames
-  \code{\link{wffc}},
-  \code{\link{wffc.nc}},
-  \code{\link{wffc.indiv}},
-  \code{\link{wffc.teams}}.
+  \code{\link[VGAM]{wffc}},
+  \code{\link[VGAM]{wffc.nc}},
+  \code{\link[VGAM]{wffc.indiv}},
+  \code{\link[VGAM]{wffc.teams}}.
   This is due to various reasons, such as
   competitors being replaced by reserves when sick,
   fish that were included or excluded upon the local judge's decision,
@@ -130,10 +130,10 @@ is rather poor and furthermore they were not recorded electronically.
 }
 
 \seealso{
-  \code{\link{wffc.indiv}},
-  \code{\link{wffc.teams}},
-  \code{\link{wffc.nc}},
-  \code{\link{wffc.P1}}.
+  \code{\link[VGAM]{wffc.indiv}},
+  \code{\link[VGAM]{wffc.teams}},
+  \code{\link[VGAM]{wffc.nc}},
+  \code{\link[VGAM]{wffc.P1}}.
 
 }
 \source{
@@ -160,7 +160,7 @@ is rather poor and furthermore they were not recorded electronically.
   \bold{101}, 116--126.
 
 
-  Yee, T. W. (2011)
+  Yee, T. W. (2013)
   On strategies and issues raised by an analysis of
   the 2008 World Fly Fishing Championships data.
   \emph{In preparation}.

@@ -145,9 +145,9 @@ Regression and ordered categorical variables.
 \bold{46}, 1--30.
 
 
-  Yee, T. W. (2012)
-  Two-parameter reduced-rank vector generalized linear models.
-  \emph{In preparation}.
+  Yee, T. W. (2013)
+  Reduced-rank vector generalized linear models with two linear predictors.
+  \emph{Computational Statistics and Data Analysis}.
 
 
 
@@ -230,6 +230,7 @@ Regression and ordered categorical variables.
 }
 
 \examples{
+\dontrun{
 # Example 1: RR negative binomial (RR-NB) with Var(Y) = mu + delta1 * mu^delta2
 nn <- 1000       # Number of observations
 delta1 <- 3.0    # Specify this
@@ -238,9 +239,8 @@ a21 <- 2 - delta2
 mydata <- data.frame(x2 = runif(nn), x3 = runif(nn))
 mydata <- transform(mydata, mu = exp(2 + 3 * x2 + 0 * x3))
 mydata <- transform(mydata, y2 = rnbinom(nn, mu=mu, size=(1/delta1)*mu^a21))
-\dontrun{
 plot(y2 ~ x2, data = mydata, pch = "+", col = 'blue', las = 1,
-     main = paste("Var(Y) = mu + ", delta1, " * mu^", delta2, sep = "")) }
+     main = paste("Var(Y) = mu + ", delta1, " * mu^", delta2, sep = ""))
 rrnb2 <- rrvglm(y2 ~ x2 + x3, negbinomial(zero = NULL), mydata, trace = TRUE)
 
 a21.hat <- (Coef(rrnb2)@A)["log(size)", 1]
@@ -256,22 +256,21 @@ se.a21.hat <- sqrt(vcov(rrnb2)["I(lv.mat)", "I(lv.mat)"])
 ci.a21 <- a21.hat +  c(-1, 1) * 1.96 * se.a21.hat
 (ci.delta2 <- 2 - rev(ci.a21))  # The 95 percent confidence interval
 
-confint_rrnb(rrnb2) # Quick way to get it
+Confint.rrnb(rrnb2)  # Quick way to get it
 
 # Plot the abundances and fitted values against the latent variable
-\dontrun{
 plot(y2 ~ lv(rrnb2), data = mydata, col = "blue",
      xlab = "Latent variable", las = 1) 
 ooo <- order(lv(rrnb2))
-lines(fitted(rrnb2)[ooo] ~ lv(rrnb2)[ooo], col = "red") }
+lines(fitted(rrnb2)[ooo] ~ lv(rrnb2)[ooo], col = "red")
 
 # Example 2: stereotype model (reduced-rank multinomial logit model)
 data(car.all)
 index <- with(car.all, Country == "Germany" | Country == "USA" |
                        Country == "Japan"   | Country == "Korea")
-scar <- car.all[index, ] # standardized car data
+scar <- car.all[index, ]  # standardized car data
 fcols <- c(13,14,18:20,22:26,29:31,33,34,36)  # These are factors
-scar[,-fcols] = scale(scar[, -fcols]) # Standardize all numerical vars
+scar[,-fcols] = scale(scar[, -fcols])  # Standardize all numerical vars
 ones <- matrix(1, 3, 1)
 clist <- list("(Intercept)" = diag(3), Width = ones, Weight = ones,
               Disp. = diag(3), Tank = diag(3), Price = diag(3),
@@ -279,13 +278,14 @@ clist <- list("(Intercept)" = diag(3), Width = ones, Weight = ones,
 set.seed(111)
 fit <- rrvglm(Country ~ Width + Weight + Disp. + Tank + Price + Frt.Leg.Room,
               multinomial, data =  scar, Rank = 2, trace = TRUE,
-              constraints = clist, Norrr = ~ 1 + Width + Weight,
+              constraints = clist, noRRR = ~ 1 + Width + Weight,
               Uncor = TRUE, Corner = FALSE, Bestof = 2)
-fit@misc$deviance # A history of the fits
+fit@misc$deviance  # A history of the fits
 Coef(fit)
-\dontrun{ biplot(fit, chull = TRUE, scores = TRUE, clty = 2, Ccex = 2,
+biplot(fit, chull = TRUE, scores = TRUE, clty = 2, Ccex = 2,
        ccol = "blue", scol = "red", Ccol = "darkgreen", Clwd = 2,
-       main = "1=Germany, 2=Japan, 3=Korea, 4=USA") }
+       main = "1=Germany, 2=Japan, 3=Korea, 4=USA")
+}
 }
 \keyword{models}
 \keyword{regression}

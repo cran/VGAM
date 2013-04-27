@@ -172,9 +172,9 @@ A bivariate extension of the exponential distribution.
 
 }
 \examples{
-fdata = data.frame(y1 = rexp(nn <- 200, rate = 4))
-fdata = transform(fdata, y2 = rexp(nn, rate = 8))
-fit =  vglm(cbind(y1, y2) ~ 1, fam = freund61, fdata, trace = TRUE)
+fdata <- data.frame(y1 = rexp(nn <- 200, rate = 4))
+fdata <- transform(fdata, y2 = rexp(nn, rate = 8))
+fit <-  vglm(cbind(y1, y2) ~ 1, fam = freund61, fdata, trace = TRUE)
 coef(fit, matrix = TRUE)
 Coef(fit)
 vcov(fit)
@@ -182,11 +182,11 @@ head(fitted(fit))
 summary(fit)
 
 # y1 and y2 are independent, so fit an independence model
-fit2 = vglm(cbind(y1, y2) ~ 1, fam = freund61(indep = TRUE),
-            fdata, trace = TRUE)
+fit2 <- vglm(cbind(y1, y2) ~ 1, fam = freund61(indep = TRUE),
+             fdata, trace = TRUE)
 coef(fit2, matrix = TRUE)
 constraints(fit2)
-pchisq(2 * (logLik(fit)-logLik(fit2)),    # p-value
+pchisq(2 * (logLik(fit)-logLik(fit2)),  # p-value
        df = df.residual(fit2) - df.residual(fit), lower.tail = FALSE)
 }
 \keyword{models}

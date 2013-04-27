@@ -14,9 +14,12 @@ loglinb3(exchangeable = FALSE, zero = NULL)
   \item{exchangeable}{ Logical.
     If \code{TRUE}, the three marginal probabilities are constrained to
     be equal.
+
   }
   \item{zero}{ Which linear/additive predictor is modelled as an
     intercept only? A \code{NULL} means none.
+
+
   }
 
 }
@@ -85,11 +88,13 @@ contains further information and examples.
   response need to appear in the data set, therefore data sets
   will need to be large in order for this family function to work.
 
+
 }
 
 \seealso{
   \code{\link{loglinb2}},
   \code{\link{hunua}}.
+
 
 }
 \examples{

@@ -8,9 +8,10 @@
 
 }
 \usage{
-vglm.control(checkwz = TRUE, criterion = names(.min.criterion.VGAM),
+vglm.control(checkwz = TRUE, Check.rank = TRUE,
+             criterion = names(.min.criterion.VGAM),
              epsilon = 1e-07, half.stepsizing = TRUE,
-             maxit = 30, nowarning = FALSE,
+             maxit = 30, noWarning = FALSE,
              stepsize = 1, save.weight = FALSE,
              trace = FALSE, wzepsilon = .Machine$double.eps^0.75, 
              xij = NULL, ...)
@@ -24,6 +25,16 @@ vglm.control(checkwz = TRUE, criterion = names(.min.criterion.VGAM),
   than \code{wzepsilon}. If not, any values less than
   \code{wzepsilon} are replaced with this value.
 
+
+  }
+  \item{Check.rank}{
+  logical indicating whether the rank of the VLM matrix
+  should be checked. If this is not of full column rank then
+  the results are not to be trusted.
+  The default is to give an error message if the VLM
+  matrix is not of full column rank.
+
+
   }
   \item{criterion}{
   character variable describing what criterion is to be
@@ -31,12 +42,14 @@ vglm.control(checkwz = TRUE, criterion = names(.min.criterion.VGAM),
   listed in \code{.min.criterion.VGAM}, but most family
   functions only implement a few of these.
 
+
   }
   \item{epsilon}{
   positive convergence tolerance epsilon. Roughly speaking,
   the Newton-Raphson/Fisher-scoring iterations are assumed
   to have converged when two successive \code{criterion}
   values are within \code{epsilon} of each other.
+
 
   }
   \item{half.stepsizing}{
@@ -51,6 +64,7 @@ vglm.control(checkwz = TRUE, criterion = names(.min.criterion.VGAM),
   criterion.  \code{half.stepsizing} is ignored if
   \code{criterion == "coefficients"}.
 
+
   }
   \item{maxit}{
   maximum number of (usually Fisher-scoring) iterations allowed.
@@ -58,7 +72,7 @@ vglm.control(checkwz = TRUE, criterion = names(.min.criterion.VGAM),
 
 
   }
-  \item{nowarning}{
+  \item{noWarning}{
   logical indicating whether to suppress a warning if
   convergence is not obtained within \code{maxit} iterations.
   This is ignored if \code{maxit = 1} is set.
@@ -74,6 +88,7 @@ vglm.control(checkwz = TRUE, criterion = names(.min.criterion.VGAM),
   to be generally slow but may help increase the chances
   of successful convergence for some family functions.
 
+
   }
   \item{save.weight}{
   logical indicating whether the \code{weights} slot of a
@@ -82,6 +97,7 @@ vglm.control(checkwz = TRUE, criterion = names(.min.criterion.VGAM),
   Some family functions have \code{save.weight = TRUE} and
   others have \code{save.weight = FALSE} in their control
   functions.
+
 
   }
   \item{trace}{
@@ -95,10 +111,12 @@ vglm.control(checkwz = TRUE, criterion = names(.min.criterion.VGAM),
   values are needed, the making of invalid assumptions,
   or that the model is inappropriate for the data, etc.
 
+
   }
   \item{wzepsilon}{
   small positive number used to test whether the diagonals
   of the working weight matrices are sufficiently positive.
+
 
   }
   \item{xij}{
@@ -116,6 +134,7 @@ vglm.control(checkwz = TRUE, criterion = names(.min.criterion.VGAM),
   matrix.
   When \code{xij} is used, the use of \code{form2} is also required
   to give \emph{every} term used by the model.
+
 
   }
 % \item{jix}{
@@ -138,6 +157,7 @@ vglm.control(checkwz = TRUE, criterion = names(.min.criterion.VGAM),
   \item{\dots}{
   other parameters that may be picked up from control
   functions that are specific to the \pkg{VGAM} family function.
+
 
   }
 }
@@ -164,6 +184,7 @@ vglm.control(checkwz = TRUE, criterion = names(.min.criterion.VGAM),
 
 }
 \references{
+
   Yee, T. W. and Hastie, T. J. (2003)
   Reduced-rank vector generalized linear models.
   \emph{Statistical Modelling},
@@ -184,7 +205,20 @@ vglm.control(checkwz = TRUE, criterion = names(.min.criterion.VGAM),
 
 }
 
-% ~Make other sections like Warning with \section{Warning }{....} ~
+\section{Warning}{
+  For some applications the default convergence criterion should
+  be tightened.
+  Setting something like \code{criterion = "coef", epsilon = 1e-09}
+  is one way to achieve this, and also add
+  \code{trace = TRUE} to monitor the convergence.
+  Setting  \code{maxit} to some higher number is usually not
+  needed, and needing to do so suggests something is wrong, e.g.,
+  an ill-conditioned model, over-fitting or under-fitting.
+
+
+}
+
+
 
 \seealso{
   \code{\link{vglm}},
@@ -199,13 +233,13 @@ vglm.control(checkwz = TRUE, criterion = names(.min.criterion.VGAM),
 # Example 1.
 pneumo <- transform(pneumo, let = log(exposure.time))
 vglm(cbind(normal, mild, severe) ~ let, multinomial, data = pneumo,
-     crit = "coef", step = 0.5, trace = TRUE, eps = 1e-8, maxit = 40)
+     crit = "coef", step = 0.5, trace = TRUE, epsil = 1e-8, maxit = 40)
 
 
 # Example 2. The use of the xij argument (simple case).
 ymat <- rdiric(n <- 1000, shape = rep(exp(2), len = 4))
 mydat <- data.frame(x1 = runif(n), x2 = runif(n), x3 = runif(n), x4 = runif(n),
-                   z1 = runif(n), z2 = runif(n), z3 = runif(n), z4 = runif(n))
+                    z1 = runif(n), z2 = runif(n), z3 = runif(n), z4 = runif(n))
 mydat <- transform(mydat, X = x1, Z = z1)
 mydat <- round(mydat, dig = 2)
 fit2 <- vglm(ymat ~ X + Z,
@@ -214,8 +248,8 @@ fit2 <- vglm(ymat ~ X + Z,
                         X ~ x1 + x2 + x3 + x4),
              form2 = ~  Z + z1 + z2 + z3 + z4 +
                         X + x1 + x2 + x3 + x4)
-head(model.matrix(fit2, type = "lm"))   # LM model matrix
-head(model.matrix(fit2, type = "vlm"))  # Big VLM model matrix
+head(model.matrix(fit2, type =  "lm")) # LM model matrix
+head(model.matrix(fit2, type = "vlm")) # Big VLM model matrix
 coef(fit2)
 coef(fit2, matrix = TRUE)
 max(abs(predict(fit2)-predict(fit2, new = mydat))) # Predicts correctly

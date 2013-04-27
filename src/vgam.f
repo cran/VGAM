@@ -56,8 +56,8 @@
      &tgiyxdw1, dufozmt7)
       implicit logical (a-z)
       integer iii, cz8qdfyj, tesdm5kv, kxvq6sfw, nyfu9rod, wy1vqfzu, 
-     &ldk, dimw, kuzxj1lo, nk, tgiyxdw1(1), dufozmt7(1)
-      double precision g9fvdrbw(4,1), osiz4fxy(ldk, nk*wy1vqfzu), wmat(
+     &ldk, dimw, kuzxj1lo, nk, tgiyxdw1(*), dufozmt7(*)
+      double precision g9fvdrbw(4,*), osiz4fxy(ldk, nk*wy1vqfzu), wmat(
      &kuzxj1lo,dimw)
       double precision obr6tcex
       integer urohxe6t, nead, bcol, brow, biuvowq2, nbj8tdsk
@@ -87,8 +87,8 @@
      &t8hwvalr, rpyis2kc, osiz4fxy, btwy, sgdub, ui8ysltq, yzoe1rsp, 
      &bmb, ifys6woa, dof, scrtch, fbd5yktj, truen)
       implicit logical (a-z)
-      integer kuzxj1lo, nk, ldk, wy1vqfzu, dimw, tgiyxdw1(1), dufozmt7(
-     &1), info, fbd5yktj, truen
+      integer kuzxj1lo, nk, ldk, wy1vqfzu, dimw, tgiyxdw1(*), dufozmt7(*
+     &), info, fbd5yktj, truen
       integer yzoe1rsp
       double precision he7mqnvy(kuzxj1lo), rbne6ouj(kuzxj1lo,wy1vqfzu), 
      &wmat(kuzxj1lo,dimw), gkdx5jal(nk+4), wkmm(wy1vqfzu,wy1vqfzu,16), 
@@ -96,7 +96,7 @@
      &wy1vqfzu), osiz4fxy(ldk,nk*wy1vqfzu), btwy(wy1vqfzu,nk)
       double precision sgdub(nk,wy1vqfzu), ui8ysltq(truen,wy1vqfzu), 
      &bmb(wy1vqfzu,wy1vqfzu), ifys6woa(kuzxj1lo,wy1vqfzu), dof(wy1vqfzu)
-     &, scrtch(1)
+     &, scrtch(*)
       integer yq6lorbx, ayfnwr1v, dqlr5bse, pqzfxw4i, urohxe6t, icrit
       integer gp0xjetb, e5knafcg, wep0oibc, l3zpbstu(3), ispar, i1loc
       double precision qaltf0nz, g9fvdrbw(4,1), ms0qypiw(16), penalt, 
@@ -300,10 +300,10 @@
      &wuwbar, dvhw1ulq)
       implicit logical (a-z)
       integer kuzxj1lo, nef, ezlgm2up(kuzxj1lo), wy1vqfzu, dimw, dimu, 
-     &tgiyxdw1(1),dufozmt7(1), kgwmz4ip, iz2nbfjc, wuwbar, dvhw1ulq
+     &kgwmz4ip, iz2nbfjc, wuwbar, dvhw1ulq, tgiyxdw1(*),dufozmt7(*)
       double precision he7mqnvy(kuzxj1lo), tlgduey8(kuzxj1lo,wy1vqfzu), 
      &wmat(kuzxj1lo,dimw), pygsw6ko(nef), pasjmo8g(nef,wy1vqfzu), wbar(
-     &nef,1), uwbar(dimu,nef), wpasjmo8g(nef,wy1vqfzu), work(wy1vqfzu,
+     &nef,*), uwbar(dimu,nef), wpasjmo8g(nef,wy1vqfzu), work(wy1vqfzu,
      &wy1vqfzu+1), work2(kgwmz4ip,kgwmz4ip+1), hjm2ktyr(wy1vqfzu,
      &kgwmz4ip)
       integer ayfnwr1v, yq6lorbx, gp1jxzuh, urohxe6t, bpvaqm5z, 
@@ -455,8 +455,8 @@
      &kuzxj1lo, nk, wy1vqfzu, jzwsy6tp, bmb, work, wmat, ifys6woa, dimw,
      & tgiyxdw1, dufozmt7, truen)
       implicit logical (a-z)
-      integer ldk, kuzxj1lo, nk, wy1vqfzu, jzwsy6tp, dimw, tgiyxdw1(1), 
-     &dufozmt7(1), truen
+      integer ldk, kuzxj1lo, nk, wy1vqfzu, jzwsy6tp, dimw, tgiyxdw1(*), 
+     &dufozmt7(*), truen
       double precision enaqpzk9(ldk,nk*wy1vqfzu), he7mqnvy(kuzxj1lo), 
      &gkdx5jal(nk+4), grmuyvx9(truen,wy1vqfzu), bmb(wy1vqfzu,wy1vqfzu), 
      &work(wy1vqfzu,wy1vqfzu), wmat(kuzxj1lo,dimw), ifys6woa(kuzxj1lo,
@@ -572,7 +572,7 @@
       subroutine ovjnsmt2(bmb, wmat, work, ifys6woa, wy1vqfzu, kuzxj1lo,
      & dimw, tgiyxdw1, dufozmt7, iii)
       implicit logical (a-z)
-      integer wy1vqfzu, kuzxj1lo, dimw, tgiyxdw1(1), dufozmt7(1), iii
+      integer wy1vqfzu, kuzxj1lo, dimw, tgiyxdw1(*), dufozmt7(*), iii
       double precision bmb(wy1vqfzu,wy1vqfzu), wmat(kuzxj1lo,dimw), 
      &work(wy1vqfzu,wy1vqfzu), ifys6woa(kuzxj1lo,wy1vqfzu)
       double precision q6zdcwxk, obr6tcex
@@ -690,20 +690,20 @@
      &r0oydcxb, ub4xioar, effect, uwin)
       implicit logical (a-z)
       integer kuzxj1lo,wy1vqfzu,ezlgm2up(kuzxj1lo),nef, dimw, fbd5yktj, 
-     &ldk, info, yzoe1rsp, acpios9q,tgiyxdw1(1),dufozmt7(1), iz2nbfjc, 
+     &ldk, info, yzoe1rsp, acpios9q,tgiyxdw1(*),dufozmt7(*), iz2nbfjc, 
      &kgwmz4ip, ges1xpkr(kgwmz4ip*2)
       double precision sjwyig9tto(kuzxj1lo), tlgduey8(kuzxj1lo,wy1vqfzu)
      &, wmat(kuzxj1lo,dimw), wbkq9zyi(kgwmz4ip), dof(kgwmz4ip), smo(
      &kuzxj1lo,kgwmz4ip), cov(kuzxj1lo,kgwmz4ip)
       double precision s0(2*kgwmz4ip, 2*kgwmz4ip,2)
-      double precision work1(1), work3(1), sgdub(1), rpyis2kc(1), 
+      double precision work1(*), work3(*), sgdub(*), rpyis2kc(*), 
      &zv2xfhei(acpios9q+4)
       double precision xin(nef), yin(nef,wy1vqfzu), rbne6ouj(nef,
-     &wy1vqfzu), win(nef,1), bmb(1), ifys6woa(nef,kgwmz4ip), wkmm(
+     &wy1vqfzu), win(nef,*), bmb(*), ifys6woa(nef,kgwmz4ip), wkmm(
      &wy1vqfzu,wy1vqfzu,16), hjm2ktyr(wy1vqfzu,kgwmz4ip)
       double precision beta(2*kgwmz4ip), fasrkub3(2*kgwmz4ip), sout(nef,
      &kgwmz4ip), r0oydcxb(kgwmz4ip,nef), ub4xioar(kgwmz4ip,nef), effect(
-     &nef*kgwmz4ip), uwin(1)
+     &nef*kgwmz4ip), uwin(*)
       integer dimwin
       integer ayfnwr1v, yq6lorbx, gp1jxzuh, rutyk8mg, xjc4ywlh, job, 
      &qemj9asg, dvhw1ulq
@@ -807,16 +807,16 @@
      &wkmm, work3, sgdub, bmb, ifys6woa, mwk, twk, rpyis2kc, zv2xfhei, 
      &resss, nbzjkpi3, acpios9q, itwk, jwbkl9fp)
       implicit logical (a-z)
-      integer irhm4cfa, n, wy1vqfzu, psdvgce3(15), ezlgm2up(1),nef(1),
-     &which(1), ges1xpkr(1)
-      integer jnxpuym2(1), hnpt1zym(1), fzm1ihwj(1), iz2nbfjc(1), 
-     &nbzjkpi3(1), acpios9q(1), itwk(1), jwbkl9fp(1)
-      double precision he7mqnvy(1),tlgduey8(1),wmat(1),wbkq9zyi(1),dof(
-     &1), ub4xioar(1),kispwgx3(1), m0ibglfx(1), s0(wy1vqfzu), beta(1),
-     &cov(1),zpcqv3uj, vc6hatuj(1),fasrkub3(1)
-      double precision xbig(1), wpuarq2m(1), hjm2ktyr(1), work1(1), wk2(
-     &n,wy1vqfzu,3), wkmm(wy1vqfzu,wy1vqfzu,16), work3(1), sgdub(1), 
-     &bmb(1), ifys6woa(1), mwk(1), twk(1), rpyis2kc(1), zv2xfhei(1), 
+      integer irhm4cfa, n, wy1vqfzu, psdvgce3(15), ezlgm2up(*),nef(*),
+     &which(*), ges1xpkr(*)
+      integer jnxpuym2(*), hnpt1zym(*), fzm1ihwj(*), iz2nbfjc(*), 
+     &nbzjkpi3(*), acpios9q(*), itwk(*), jwbkl9fp(*)
+      double precision he7mqnvy(*),tlgduey8(*),wmat(*),wbkq9zyi(*),dof(*
+     &), ub4xioar(*),kispwgx3(*), m0ibglfx(*), s0(wy1vqfzu), beta(*),
+     &cov(*),zpcqv3uj, vc6hatuj(*),fasrkub3(*)
+      double precision xbig(*), wpuarq2m(*), hjm2ktyr(*), work1(*), wk2(
+     &n,wy1vqfzu,3), wkmm(wy1vqfzu,wy1vqfzu,16), work3(*), sgdub(*), 
+     &bmb(*), ifys6woa(*), mwk(*), twk(*), rpyis2kc(*), zv2xfhei(*), 
      &resss
       integer p,q,yzoe1rsp,niter,gtrlbz3e, rutyk8mg, xjc4ywlh, lyma1kwc,
      & dimw, dimu, fbd5yktj,ldk
@@ -902,13 +902,13 @@
      &xjc4ywlh, lyma1kwc, dimw, dimu, fbd5yktj, ldk)
       implicit logical (a-z)
       integer qemj9asg
-      integer dufozmt7(1), tgiyxdw1(1)
+      integer dufozmt7(*), tgiyxdw1(*)
       integer p, q, yzoe1rsp, niter, gtrlbz3e, rutyk8mg, xjc4ywlh, 
      &lyma1kwc, dimw, dimu, fbd5yktj, ldk
       integer irhm4cfa, kuzxj1lo, wy1vqfzu, ezlgm2up(kuzxj1lo,q),nef(q),
      &which(q), ges1xpkr(xjc4ywlh)
       integer jnxpuym2(q), hnpt1zym(q), iz2nbfjc(q), nbzjkpi3(q+1), 
-     &acpios9q(q), itwk(1), jwbkl9fp(q+1)
+     &acpios9q(q), itwk(*), jwbkl9fp(q+1)
       double precision he7mqnvy(kuzxj1lo,p), tlgduey8(kuzxj1lo,wy1vqfzu)
      &, wmat(kuzxj1lo,dimw), wbkq9zyi(lyma1kwc), dof(lyma1kwc)
       double precision ub4xioar(wy1vqfzu,kuzxj1lo), kispwgx3(kuzxj1lo,
@@ -916,9 +916,9 @@
      &xjc4ywlh), cov(kuzxj1lo,lyma1kwc), zpcqv3uj, vc6hatuj(rutyk8mg,
      &xjc4ywlh), fasrkub3(xjc4ywlh)
       double precision xbig(rutyk8mg,xjc4ywlh), wpuarq2m(dimu,kuzxj1lo),
-     & hjm2ktyr(wy1vqfzu,lyma1kwc), work1(1), wk2(kuzxj1lo,wy1vqfzu), 
-     &wkmm(wy1vqfzu,wy1vqfzu,16), work3(1), sgdub(1), bmb(1), ifys6woa(
-     &1), mwk(1), twk(1), rpyis2kc(1), zv2xfhei(1), resss
+     & hjm2ktyr(wy1vqfzu,lyma1kwc), work1(*), wk2(kuzxj1lo,wy1vqfzu), 
+     &wkmm(wy1vqfzu,wy1vqfzu,16), work3(*), sgdub(*), bmb(*), ifys6woa(*
+     &), mwk(*), twk(*), rpyis2kc(*), zv2xfhei(*), resss
       double precision ghz9vuba(kuzxj1lo,wy1vqfzu), oldmat(kuzxj1lo,
      &wy1vqfzu)
       integer job,info,nefk
@@ -1141,7 +1141,7 @@
       subroutine x6kanjdh(he7mqnvy, xout, kuzxj1lo, wy1vqfzu)
       implicit logical (a-z)
       integer kuzxj1lo, wy1vqfzu
-      double precision he7mqnvy(kuzxj1lo), xout(1)
+      double precision he7mqnvy(kuzxj1lo), xout(*)
       integer ayfnwr1v, yq6lorbx, gp1jxzuh, iptr
       iptr=1
       do 23422 yq6lorbx=1,wy1vqfzu 
@@ -1223,7 +1223,7 @@
       integer yzoe1rsp
       double precision x(kuzxj1lo), w(kuzxj1lo), bhcji9gl(kuzxj1lo), 
      &ub4xioar(kuzxj1lo)
-      double precision cov(kuzxj1lo,1)
+      double precision cov(kuzxj1lo,*)
       integer ayfnwr1v
       double precision pasjmo8g, pygsw6ko, q6zdcwxk, nsum, eck8vubt, 
      &interc, bzmd6ftv, hofjnx2e, lm9vcjob

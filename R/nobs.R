@@ -1,19 +1,14 @@
-# These functions are Copyright (C) 1998-2012 T. W. Yee    All rights reserved.
-
-# nobs.R 
-
-# Notes.
-# 1. 20110711 Looked at "NEWS" and found out about nobs().
-#    Adding nvar() too while I am at it.
+# These functions are
+# Copyright (C) 1998-2013 T.W. Yee, University of Auckland.
+# All rights reserved.
 
 
-# ======================================================================
-# 20110711
+
+
+
 
 nobs.vlm <- function(object, type = c("lm", "vlm"), ...) {
 
-# Notes:
-# 1. with type = "vlm" this is n * M.
 
   if(mode(type) != "character" && mode(type) != "name")
     type <- as.character(substitute(type))
@@ -30,9 +25,6 @@ nobs.vlm <- function(object, type = c("lm", "vlm"), ...) {
 
 
 
-# 20120216; if I have the if() commented out then
-# Error in loadNamespace(package, c(which.lib.loc, lib.loc)) : 
-# cyclic namespace dependency detected when loading ‘VGAM’, already loading ‘VGAM’
 if (!isGeneric("nobs"))
   setGeneric("nobs", function(object, ...)
              standardGeneric("nobs"),
@@ -44,24 +36,14 @@ setMethod("nobs", "vlm",
          nobs.vlm(object, ...))
 
 
-# setMethod("nobs", "vglm",
-#          function(object, ...)
-#          nobs.vlm(object, ...))
-
-
-# setMethod("nobs", "vgam",
-#          function(object, ...)
-#          nobs.vlm(object, ...))
 
 
 
 
 
 
-# ======================================================================
-# 20110711
-# Here is the 'nvar' methods functions.
-# Tricky for "vgam", "rrvglm", "qrrvglm", "cao", "rcim" objects?
+
+
 
 nvar.vlm <- function(object, type = c("vlm", "lm"), ...) {
 
@@ -81,8 +63,6 @@ nvar.vlm <- function(object, type = c("vlm", "lm"), ...) {
 
 
 nvar.vgam <- function(object, type = c("vgam", "zz"), ...) {
-# 20110711
-# Uses the effective dof, or edof, or edf zz??
 
   if(mode(type) != "character" && mode(type) != "name")
     type <- as.character(substitute(type))
@@ -100,8 +80,6 @@ nvar.vgam <- function(object, type = c("vgam", "zz"), ...) {
 
 
 nvar.rrvglm <- function(object, type = c("rrvglm", "zz"), ...) {
-# 20110711
-# Uses the effective dof, or edof, or edf zz??
 
   if(mode(type) != "character" && mode(type) != "name")
     type <- as.character(substitute(type))
@@ -120,8 +98,6 @@ nvar.rrvglm <- function(object, type = c("rrvglm", "zz"), ...) {
 
 
 nvar.qrrvglm <- function(object, type = c("qrrvglm", "zz"), ...) {
-# 20110711
-# Uses the effective dof, or edof, or edf zz??
 
   if(mode(type) != "character" && mode(type) != "name")
     type <- as.character(substitute(type))
@@ -140,8 +116,6 @@ nvar.qrrvglm <- function(object, type = c("qrrvglm", "zz"), ...) {
 
 
 nvar.cao <- function(object, type = c("cao", "zz"), ...) {
-# 20110711
-# Uses the effective dof, or edof, or edf zz??
 
   if(mode(type) != "character" && mode(type) != "name")
     type <- as.character(substitute(type))
@@ -160,8 +134,6 @@ nvar.cao <- function(object, type = c("cao", "zz"), ...) {
 
 
 nvar.rcim <- function(object, type = c("rcim", "zz"), ...) {
-# 20110711
-# Uses the effective dof, or edof, or edf zz??
 
   if(mode(type) != "character" && mode(type) != "name")
     type <- as.character(substitute(type))
@@ -221,7 +193,6 @@ setMethod("nvar", "rcim",
          nvar.rcim(object, ...))
 
 
-# ======================================================================
 
 
 

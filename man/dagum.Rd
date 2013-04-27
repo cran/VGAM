@@ -48,7 +48,7 @@ The Dagum distribution has a cumulative distribution function
 which leads to a probability density function
   \deqn{f(y) = ap y^{ap-1} / [b^{ap} \{1 + (y/b)^a\}^{p+1}]}{%
         f(y) = ap y^(ap-1) / [b^(ap)  (1 + (y/b)^a)^(p+1)]}
-  for \eqn{a > 0}, \eqn{b > 0}, \eqn{p > 0}, \eqn{y > 0}.
+  for \eqn{a > 0}, \eqn{b > 0}, \eqn{p > 0}, \eqn{y \geq 0}{y >= 0}.
 Here, \eqn{b} is the scale parameter \code{scale},
 and the others are shape parameters.
 The mean is
@@ -100,12 +100,13 @@ while estimates for \eqn{a} and \eqn{p} can be considered unbiased for
     \code{\link{paralogistic}},
     \code{\link{invparalogistic}}.
 
+
 }
 
 \examples{
-ddata = data.frame(y = rdagum(n = 3000, exp(1), exp(2), exp(1)))
-fit = vglm(y ~ 1, dagum, ddata, trace = TRUE)
-fit = vglm(y ~ 1, dagum(ishape1.a = exp(1)), ddata, trace = TRUE)
+ddata <- data.frame(y = rdagum(n = 3000, exp(1), exp(2), exp(1)))
+fit <- vglm(y ~ 1, dagum, ddata, trace = TRUE)
+fit <- vglm(y ~ 1, dagum(ishape1.a = exp(1)), ddata, trace = TRUE)
 coef(fit, matrix = TRUE)
 Coef(fit)
 summary(fit)

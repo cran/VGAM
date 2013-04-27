@@ -4,9 +4,9 @@
       double precision dsign, dabs, dmax1, dsqrt
       integer min0
       integer ldx,n,p,xwdf5ltg
-      integer jpvt(1)
+      integer jpvt(*)
       integer j,jj,jp,l,lup,curpvt
-      double precision x(ldx,p),fasrkub3(p),work(1),eps
+      double precision x(ldx,p),fasrkub3(p),work(*),eps
       double precision vdnrm2,tt
       double precision ddot8,nrmxl,t
       do 23000 j=1,p 

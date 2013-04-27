@@ -64,15 +64,18 @@ rparetoI(n, scale = 1, shape = 1)
   functions beginning with the letter \code{r} generates random deviates.
 }
 \references{
+
 Brazauskas, V. (2003)
 Information matrix for Pareto(IV), Burr, and related
 distributions.
-\emph{Comm.\ Statist.\ Theory and Methods}
+\emph{Comm. Statist. Theory and Methods}
 \bold{32}, 315--325.
+
 
 Arnold, B. C. (1983)
 \emph{Pareto Distributions}.
 Fairland, Maryland: International Cooperative Publishing House.
+
 
 }
 \author{ T. W. Yee }

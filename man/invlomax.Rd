@@ -43,7 +43,7 @@ invlomax(lscale = "loge", lshape2.p = "loge",
 The inverse Lomax distribution has density
   \deqn{f(y) = p y^{p-1} / [b^p \{1 + y/b\}^{p+1}]}{%
         f(y) = p y^(p-1) / [b^p (1 + y/b)^(p+1)]}
-  for \eqn{b > 0}, \eqn{p > 0}, \eqn{y > 0}.
+  for \eqn{b > 0}, \eqn{p > 0}, \eqn{y \geq 0}{y >= 0}.
 Here, \eqn{b} is the scale parameter \code{scale},
 and \code{p} is a shape parameter.
 The mean does not exist; \code{NA}s are returned as the fitted values.

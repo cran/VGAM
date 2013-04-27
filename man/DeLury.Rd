@@ -8,7 +8,7 @@
 
 }
 \usage{
-DeLury(catch, effort, type=c("DeLury","Leslie"), ricker=FALSE)
+DeLury(catch, effort, type = c("DeLury","Leslie"), ricker = FALSE)
        
 }
 %- maybe also 'usage' for other objects documented here.
@@ -47,8 +47,8 @@ DeLury(catch, effort, type=c("DeLury","Leslie"), ricker=FALSE)
   up to interval \eqn{t}, and \eqn{N(t)} be the number of individuals
   in the population at time \eqn{t}.
   It is good idea to plot
-  \eqn{\log(C(t))} against \eqn{E(t)} for \code{type="DeLury"} and
-  \eqn{C(t)} versus \eqn{K(t)} for \code{type="Leslie"}.
+  \eqn{\log(C(t))} against \eqn{E(t)} for \code{type = "DeLury"} and
+  \eqn{C(t)} versus \eqn{K(t)} for \code{type = "Leslie"}.
 
 The other assumptions are as follows.
 %
@@ -87,16 +87,20 @@ The other assumptions are as follows.
 \value{
   A list with the following components.
 
+
   \item{catch, effort }{
   Catch and effort. Same as the original vectors.
   These correspond to \eqn{c(t)} and \eqn{e(t)} respectively.
 
+
   }
   \item{type, ricker}{Same as input.
+
 
   }
   \item{N0}{an estimate of the population size at time 0.
   Only valid if the assumptions are satisfied.
+
 
   }
   \item{CPUE}{Catch Per Unit Effort \eqn{=C(t)}. }
@@ -104,18 +108,21 @@ The other assumptions are as follows.
   depending on \code{type}. }
   \item{lmfit}{
   the \code{\link[stats:lm]{lm}} object from the
-  fit of \code{log(CPUE)} on \code{K} (when \code{type="Leslie"}).
+  fit of \code{log(CPUE)} on \code{K} (when \code{type = "Leslie"}).
   Note that the \code{x} component of the object is the model matrix.
+
 
   }
 
 }
 \references{
 
+
 DeLury, D. B. (1947)
 On the estimation of biological populations.
 \emph{Biometrics},
 \bold{3}, 145--167.
+
 
 Ricker, W. E. (1975)
 Computation and interpretation of biological
@@ -123,9 +130,13 @@ statistics of fish populations.
 \emph{Bull. Fish. Res. Bd. Can.},
 \bold{191}, 382--
 
-  Yee, T. W. (2009)
-  VGLMs and VGAMs: an overview for applications in fisheries research.
-  In press.
+
+Yee, T. W. (2010)
+VGLMs and VGAMs: an overview for applications in fisheries research.
+\emph{Fisheries Research},
+\bold{101}, 116--126.
+
+
 
 
 }
@@ -136,46 +147,48 @@ some plots of his are reproduced.
 Note that he used log to base 10 whereas natural logs are used here.
 His plots had some observations obscured by the y-axis!
 
+
 The DeLury method is not applicable to the data frame
 \code{\link{wffc.nc}} since the 2008 World Fly Fishing Competition was
 strictly catch-and-release.
 
+
 }
 \seealso{ \code{\link{wffc.nc}}. }
 \examples{
-pounds = c(  147, 2796, 6888, 7723, 5330, 8839, 6324, 3569, 8120, 8084,
+pounds <- c(  147, 2796, 6888, 7723, 5330, 8839, 6324, 3569, 8120, 8084,
             8252, 8411, 6757, 1152, 1500, 11945, 6995, 5851, 3221, 6345,
             3035, 6271, 5567, 3017, 4559, 4721, 3613,  473,  928, 2784,
             2375, 2640, 3569)
-traps  = c(  200, 3780, 7174, 8850, 5793, 9504, 6655, 3685, 8202, 8585,
+traps  <- c(  200, 3780, 7174, 8850, 5793, 9504, 6655, 3685, 8202, 8585,
             9105, 9069, 7920, 1215, 1471, 11597, 8470, 7770, 3430, 7970,
             4740, 8144, 7965, 5198, 7115, 8585, 6935, 1060, 2070, 5725,
             5235, 5480, 8300)
-table1 = DeLury(pounds/1000, traps/1000)
+table1 <- DeLury(pounds/1000, traps/1000)
 
 \dontrun{
-with(table1, plot(1+log(CPUE) ~ E, las=1, pch=19, main="DeLury method",
-     xlab="E(t)", ylab="1 + log(C(t))", col="blue"))
+with(table1, plot(1+log(CPUE) ~ E, las = 1, pch = 19, main = "DeLury method",
+     xlab = "E(t)", ylab = "1 + log(C(t))", col = "blue"))
 }
-omitIndices = -(1:16)
-table1b = DeLury(pounds[omitIndices]/1000, traps[omitIndices]/1000)
+omitIndices <- -(1:16)
+table1b <- DeLury(pounds[omitIndices]/1000, traps[omitIndices]/1000)
 \dontrun{
-with(table1b, plot(1+log(CPUE) ~ E, las=1, pch=19, main="DeLury method",
-     xlab="E(t)", ylab="1 + log(C(t))", col="blue"))
-mylmfit = with(table1b, lmfit)
-lines(mylmfit$x[,2], 1 + predict.lm(mylmfit), col="red", lty="dashed")
+with(table1b, plot(1+log(CPUE) ~ E, las = 1, pch = 19, main = "DeLury method",
+     xlab = "E(t)", ylab = "1 + log(C(t))", col = "blue"))
+mylmfit <- with(table1b, lmfit)
+lines(mylmfit$x[, 2], 1 + predict.lm(mylmfit), col = "red", lty = "dashed")
 }
 
 
-
-omitIndices = -(1:16)
-table2 = DeLury(pounds[omitIndices]/1000, traps[omitIndices]/1000, type="L")
+omitIndices <- -(1:16)
+table2 <- DeLury(pounds[omitIndices]/1000, traps[omitIndices]/1000, type = "L")
 \dontrun{
-with(table2, plot(CPUE ~ K, las=1, pch=19,
-     main="Leslie method; Fig. III",
-     xlab="K(t)", ylab="C(t)", col="blue"))
-mylmfit = with(table2, lmfit)
-abline(a=coef(mylmfit)[1], b=coef(mylmfit)[2], col="red", lty="dashed")
+with(table2, plot(CPUE ~ K, las = 1, pch = 19,
+     main = "Leslie method; Fig. III",
+     xlab = "K(t)", ylab = "C(t)", col = "blue"))
+mylmfit <- with(table2, lmfit)
+abline(a = coef(mylmfit)[1], b = coef(mylmfit)[2],
+       col = "orange", lty = "dashed")
 }
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the

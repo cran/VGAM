@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2012 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2013 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -9,269 +9,270 @@
 
 
 
-        rrar.Ci <- function(i, coeffs, aa, Ranks., MM) {
-            index <- cumsum(c(aa, MM*Ranks.))
-            ans <- matrix(coeffs[(index[i]+1):index[i+1]],
-                          Ranks.[i], MM, byrow = TRUE)
-            t(ans)
-        }
-        rrar.Ak1 <- function(MM, coeffs, Ranks., aa) {
-            ptr <- 0
-            Ak1 <- diag(MM)
-            for(jay in 1:MM) {
-                for(i in 1:MM) {
-                    if (i > jay && (MM+1)-(Ranks.[jay]-1) <= i) {
-                        ptr <- ptr + 1
-                        Ak1[i,jay] <- coeffs[ptr]
-                    }
-                }
-            }
-            if (aa > 0 && ptr != aa) stop("something wrong")
-            Ak1
-        }
+rrar.Ci <- function(i, coeffs, aa, Ranks., MM) {
+  index <- cumsum(c(aa, MM*Ranks.))
+  ans <- matrix(coeffs[(index[i]+1):index[i+1]],
+                Ranks.[i], MM, byrow = TRUE)
+  t(ans)
+}
 
 
-        rrar.Di <- function(i, Ranks.) {
-            if (Ranks.[1] == Ranks.[i]) diag(Ranks.[i]) else 
-            rbind(diag(Ranks.[i]),
-                  matrix(0, Ranks.[1] - Ranks.[i], Ranks.[i]))
-        }
+rrar.Ak1 <- function(MM, coeffs, Ranks., aa) {
+  ptr <- 0
+  Ak1 <- diag(MM)
+  for(jay in 1:MM) {
+    for(i in 1:MM) {
+      if (i > jay && (MM+1)-(Ranks.[jay]-1) <= i) {
+        ptr <- ptr + 1
+        Ak1[i,jay] <- coeffs[ptr]
+      }
+    }
+  }
+  if (aa > 0 && ptr != aa) stop("something wrong")
+  Ak1
+}
 
 
-        rrar.Mi <- function(i, MM, Ranks., ki) {
-            if (Ranks.[ki[i]] == MM)
-                return(NULL)
-            hi <- Ranks.[ki[i]] - Ranks.[ki[i+1]]
-            Ji <- matrix(0, hi, Ranks.[1])
-            for(j in 1:hi) {
-                Ji[j,j+Ranks.[ki[i+1]]] <- 1
-            }
-            Mi <- matrix(0, MM-Ranks.[ki[i]], MM)  # dim(Oi) == dim(Ji)
-            for(j in 1:(MM-Ranks.[ki[i]])) {
-                Mi[j,j+Ranks.[ki[i  ]]] <- 1
-            }
-            kronecker(Mi, Ji)
-        }
-
-        rrar.Mmat <- function(MM, uu, Ranks., ki) {
-            Mmat <- NULL
-            for(ii in uu:1) {
-                Mmat <- rbind(Mmat, rrar.Mi(ii, MM, Ranks., ki))
-            }
-            Mmat
-        }
+rrar.Di <- function(i, Ranks.) {
+  if (Ranks.[1] == Ranks.[i]) diag(Ranks.[i]) else 
+  rbind(diag(Ranks.[i]),
+        matrix(0, Ranks.[1] - Ranks.[i], Ranks.[i]))
+}
 
 
-        block.diag <- function(A, B) {
-            if (is.null(A) && is.null(B))
-                return(NULL)
-            if (!is.null(A) && is.null(B))
-                return(A)
-            if (is.null(A) && !is.null(B))
-                return(B)
-
-            A <- as.matrix(A)
-            B <- as.matrix(B)
-            temp <- cbind(A, matrix(0, nrow(A), ncol(B)))
-            rbind(temp, cbind(matrix(0, nrow(B), ncol(A)), B))
-        }
-
-
-        rrar.Ht <- function(plag, MM, Ranks., coeffs, aa, uu, ki) {
-            Htop <- Hbot <- NULL
-            Mmat <- rrar.Mmat(MM, uu, Ranks., ki)   # NULL if full rank
-            Ak1 <- rrar.Ak1(MM, coeffs, Ranks., aa)
-
-            if (!is.null(Mmat))
-            for(i in 1:plag) {
-                Di <- rrar.Di(i, Ranks.)
-                Ci <- rrar.Ci(i, coeffs, aa, Ranks., MM)
-                temp <- Di %*% t(Ci)
-                Htop <- cbind(Htop, Mmat %*% kronecker(diag(MM), temp))
-            }
-
-            for(i in 1:plag) {
-                Di <- rrar.Di(i, Ranks.)
-                temp <- kronecker(t(Di) %*% t(Ak1), diag(MM))
-                Hbot <- block.diag(Hbot, temp)
-            }
-            rbind(Htop, Hbot)
-        }
+rrar.Mi <- function(i, MM, Ranks., ki) {
+  if (Ranks.[ki[i]] == MM)
+    return(NULL)
+  hi <- Ranks.[ki[i]] - Ranks.[ki[i+1]]
+  Ji <- matrix(0, hi, Ranks.[1])
+  for(j in 1:hi) {
+    Ji[j,j+Ranks.[ki[i+1]]] <- 1
+  }
+  Mi <- matrix(0, MM-Ranks.[ki[i]], MM) # dim(Oi) == dim(Ji)
+  for(j in 1:(MM-Ranks.[ki[i]])) {
+    Mi[j,j+Ranks.[ki[i  ]]] <- 1
+  }
+  kronecker(Mi, Ji)
+}
 
 
-        rrar.Ut <- function(y, tt, plag, MM) {
-            Ut <- NULL
-            if (plag>1)
-            for(i in 1:plag) {
-                Ut <- rbind(Ut, kronecker(diag(MM), cbind(y[tt-i,])))
-            }
-            Ut
-        }
+rrar.Mmat <- function(MM, uu, Ranks., ki) {
+  Mmat <- NULL
+  for(ii in uu:1) {
+    Mmat <- rbind(Mmat, rrar.Mi(ii, MM, Ranks., ki))
+  }
+  Mmat
+}
 
 
-        rrar.UU <- function(y, plag, MM, n) {
-            UU <- NULL
-            for(i in (plag+1):n) {
-                UU <- rbind(UU, t(rrar.Ut(y, i, plag, MM)))
-            }
-            UU
-        }
+block.diag <- function(A, B) {
+  if (is.null(A) && is.null(B))
+    return(NULL)
+  if (!is.null(A) && is.null(B))
+    return(A)
+  if (is.null(A) && !is.null(B))
+    return(B)
+
+  A <- as.matrix(A)
+  B <- as.matrix(B)
+  temp <-  cbind(A, matrix(0, nrow(A), ncol(B)))
+  rbind(temp, cbind(matrix(0, nrow(B), ncol(A)), B))
+}
 
 
-        rrar.Wmat <- function(y, Ranks., MM, ki, plag, aa, uu, n, coeffs) {
-            temp1 <- rrar.UU(y, plag, MM, n)
-            temp2 <- t(rrar.Ht(plag, MM, Ranks., coeffs, aa, uu, ki))
-            list(UU=temp1, Ht=temp2)
-        }
+rrar.Ht <- function(plag, MM, Ranks., coeffs, aa, uu, ki) {
+  Htop <- Hbot <- NULL
+  Mmat <- rrar.Mmat(MM, uu, Ranks., ki)   # NULL if full rank
+  Ak1 <- rrar.Ak1(MM, coeffs, Ranks., aa)
+
+  if (!is.null(Mmat))
+  for(i in 1:plag) {
+    Di <- rrar.Di(i, Ranks.)
+    Ci <- rrar.Ci(i, coeffs, aa, Ranks., MM)
+    temp <- Di %*% t(Ci)
+    Htop <- cbind(Htop, Mmat %*% kronecker(diag(MM), temp))
+  }
+
+  for(i in 1:plag) {
+    Di <- rrar.Di(i, Ranks.)
+    temp <- kronecker(t(Di) %*% t(Ak1), diag(MM))
+    Hbot <- block.diag(Hbot, temp)
+  }
+  rbind(Htop, Hbot)
+}
+
+
+rrar.Ut <- function(y, tt, plag, MM) {
+  Ut <- NULL
+  if (plag>1)
+  for(i in 1:plag) {
+    Ut <- rbind(Ut, kronecker(diag(MM), cbind(y[tt-i,])))
+  }
+  Ut
+}
+
+
+rrar.UU <- function(y, plag, MM, n) {
+  UU <- NULL
+  for(i in (plag+1):n) {
+    UU <- rbind(UU, t(rrar.Ut(y, i, plag, MM)))
+  }
+  UU
+}
+
+
+rrar.Wmat <- function(y, Ranks., MM, ki, plag, aa, uu, n, coeffs) {
+  temp1 <- rrar.UU(y, plag, MM, n)
+  temp2 <- t(rrar.Ht(plag, MM, Ranks., coeffs, aa, uu, ki))
+  list(UU = temp1, Ht = temp2)
+}
 
 
 
 rrar.control <- function(stepsize = 0.5, save.weight = TRUE, ...) {
 
-    if (stepsize <= 0 || stepsize > 1) {
-        warning("bad value of stepsize; using 0.5 instead")
-        stepsize <- 0.5
-    }
-    list(stepsize = stepsize,
-         save.weight = as.logical(save.weight)[1])
+  if (stepsize <= 0 || stepsize > 1) {
+    warning("bad value of stepsize; using 0.5 instead")
+    stepsize <- 0.5
+  }
+  list(stepsize = stepsize,
+       save.weight = as.logical(save.weight)[1])
 }
 
 
- rrar <- function(Ranks = 1, coefstart = NULL)
-{
-    lag.p <- length(Ranks)
+ rrar <- function(Ranks = 1, coefstart = NULL) {
+  lag.p <- length(Ranks)
 
-    new("vglmff",
-    blurb = c("Nested reduced-rank vector autoregressive model AR(",
-              lag.p, ")\n\n",
-           "Link:     ",
-           namesof("mu_t", "identity"),
-           ", t = ", paste(paste(1:lag.p, coll = ",", sep = "")) ,
-           ""),
-    initialize = eval(substitute(expression({
-        Ranks. <- .Ranks
-        plag <- length(Ranks.)
-        nn <- nrow(x)   # original n
-        indices <- 1:plag
+  new("vglmff",
+  blurb = c("Nested reduced-rank vector autoregressive model AR(",
+            lag.p, ")\n\n",
+            "Link:     ",
+            namesof("mu_t", "identity"),
+            ", t = ", paste(paste(1:lag.p, coll = ",", sep = ""))),
+  initialize = eval(substitute(expression({
+      Ranks. <- .Ranks
+      plag <- length(Ranks.)
+      nn <- nrow(x)   # original n
+      indices <- 1:plag
 
-        copy_X_vlm <- TRUE   # X_vlm_save matrix changes at each iteration 
+      copy_X_vlm <- TRUE # X_vlm_save matrix changes at each iteration 
 
-        dsrank <- -sort(-Ranks.)   # ==rev(sort(Ranks.))
-        if (any(dsrank != Ranks.))
-            stop("Ranks must be a non-increasing sequence")
-        if (!is.matrix(y) || ncol(y) == 1) {
-            stop("response must be a matrix with more than one column")
-        } else {
-            MM <- ncol(y)
-            ki <- udsrank <- unique(dsrank)
-            uu <- length(udsrank)
-            for(i in 1:uu)
-               ki[i] <- max((1:plag)[dsrank == udsrank[i]])
-            ki <- c(ki, plag+1)  # For computing a
-            Ranks. <- c(Ranks., 0) # For computing a
-            aa <- sum( (MM-Ranks.[ki[1:uu]]) * (Ranks.[ki[1:uu]]-Ranks.[ki[-1]]) )
-        }
-        if (!intercept.only)
-            warning("ignoring explanatory variables")
-
-        if (any(MM < Ranks.))
-            stop("'max(Ranks)' can only be ", MM, " or less")
-        y.save <- y  # Save the original
-        if (any(w != 1))
-            stop("all weights should be 1")
-
-        new.coeffs <- .coefstart  # Needed for iter = 1 of $weight
-        new.coeffs <- if (length(new.coeffs))
-                          rep(new.coeffs, len = aa+sum(Ranks.)*MM) else
-                          runif(aa+sum(Ranks.)*MM)
-        temp8 <- rrar.Wmat(y.save, Ranks., MM, ki, plag,
-                           aa, uu, nn, new.coeffs)
-        X_vlm_save <- temp8$UU %*% temp8$Ht 
-
-        if (!length(etastart)) {
-            etastart <- X_vlm_save %*% new.coeffs
-            etastart <- matrix(etastart, ncol = ncol(y), byrow = TRUE)
-        }
-
-        extra$Ranks. <- Ranks.; extra$aa <- aa
-        extra$plag <- plag; extra$nn <- nn
-        extra$MM <- MM; extra$coeffs <- new.coeffs;
-        extra$y.save <- y.save
-
-        keep.assign <- attr(x, "assign")
-        x <- x[-indices, , drop = FALSE]
-        if (is.R())
-            attr(x, "assign") <- keep.assign
-        y <- y[-indices, , drop = FALSE]
-        w <- w[-indices]
-        n.save <- n <- nn - plag
-    }), list( .Ranks = Ranks, .coefstart = coefstart ))), 
-
-    linkinv = function(eta, extra = NULL) {
-        aa <- extra$aa
-        coeffs <- extra$coeffs
-        MM <- extra$MM
-        nn <- extra$nn
-        plag <- extra$plag
-        Ranks. <- extra$Ranks.
-        y.save <- extra$y.save
-
-        tt <- (1+plag):nn
-        mu <- matrix(0, nn-plag, MM)
-        Ak1 <- rrar.Ak1(MM, coeffs, Ranks., aa)
-        for(i in 1:plag) {
-            Di <- rrar.Di(i, Ranks.)
-            Ci <- rrar.Ci(i, coeffs, aa, Ranks., MM)
-            mu <- mu + y.save[tt-i, , drop = FALSE] %*%
-                       t(Ak1 %*% Di %*% t(Ci))
-        }
-        mu
-    },
-    last = expression({
-      misc$plag <- plag
-      misc$Ranks <- Ranks.
-      misc$Ak1 <- Ak1
-      misc$omegahat <- omegahat
-      misc$Cmatrices <- Cmatrices
-      misc$Dmatrices <- Dmatrices
-      misc$Hmatrix <- temp8$Ht
-      misc$Phimatrices <- vector("list", plag)
-      for(ii in 1:plag) {
-        misc$Phimatrices[[ii]] = Ak1 %*% Dmatrices[[ii]] %*%
-                                 t(Cmatrices[[ii]])
+      dsrank <- -sort(-Ranks.) # ==rev(sort(Ranks.))
+      if (any(dsrank != Ranks.))
+          stop("Ranks must be a non-increasing sequence")
+      if (!is.matrix(y) || ncol(y) == 1) {
+          stop("response must be a matrix with more than one column")
+      } else {
+          MM <- ncol(y)
+          ki <- udsrank <- unique(dsrank)
+          uu <- length(udsrank)
+          for(i in 1:uu)
+             ki[i] <- max((1:plag)[dsrank == udsrank[i]])
+          ki <- c(ki, plag+1) # For computing a
+          Ranks. <- c(Ranks., 0) # For computing a
+          aa <- sum( (MM-Ranks.[ki[1:uu]]) * (Ranks.[ki[1:uu]]-Ranks.[ki[-1]]) )
       }
-      misc$Z <- y.save %*% t(solve(Ak1)) 
-    }),
-    vfamily = "rrar",
-    deriv = expression({
-        temp8 <- rrar.Wmat(y.save,Ranks.,MM,ki,plag,aa,uu,nn,new.coeffs)
-        X_vlm_save <- temp8$UU %*% temp8$Ht 
+      if (!intercept.only)
+        warning("ignoring explanatory variables")
 
-        extra$coeffs <- new.coeffs
+      if (any(MM < Ranks.))
+        stop("'max(Ranks)' can only be ", MM, " or less")
+      y.save <- y  # Save the original
+      if (any(w != 1))
+        stop("all weights should be 1")
 
-        resmat <- y
-        tt <- (1+plag):nn
-        Ak1 <- rrar.Ak1(MM, new.coeffs, Ranks., aa)
-        Cmatrices <- Dmatrices <- vector("list", plag)
-        for(ii in 1:plag) {
-          Dmatrices[[ii]] <- Di <- rrar.Di(ii, Ranks.)
-          Cmatrices[[ii]] <- Ci <- rrar.Ci(ii, new.coeffs, aa, Ranks., MM)
-          resmat <- resmat - y.save[tt - ii, , drop = FALSE] %*%
-                             t(Ak1 %*% Di %*% t(Ci))
-        }
-        omegahat <- (t(resmat) %*% resmat) / n  # MM x MM
-        omegainv <- solve(omegahat)
+      new.coeffs <- .coefstart  # Needed for iter = 1 of $weight
+      new.coeffs <- if (length(new.coeffs))
+                        rep(new.coeffs, len = aa+sum(Ranks.)*MM) else
+                        runif(aa+sum(Ranks.)*MM)
+      temp8 <- rrar.Wmat(y.save, Ranks., MM, ki, plag,
+                         aa, uu, nn, new.coeffs)
+      X_vlm_save <- temp8$UU %*% temp8$Ht 
 
-        omegainv <- solve(omegahat)
-        ind1 <- iam(NA,NA,MM,both = TRUE)
+      if (!length(etastart)) {
+        etastart <- X_vlm_save %*% new.coeffs
+        etastart <- matrix(etastart, ncol = ncol(y), byrow = TRUE)
+      }
 
-        wz = matrix(omegainv[cbind(ind1$row, ind1$col)],
-                    nn-plag, length(ind1$row), byrow = TRUE)
-        mux22(t(wz), y-mu, M = extra$MM, as.matrix = TRUE)
-    }),
-    weight = expression({
-        wz
-    }))
+      extra$Ranks. <- Ranks.; extra$aa <- aa
+      extra$plag <- plag; extra$nn <- nn
+      extra$MM <- MM; extra$coeffs <- new.coeffs;
+      extra$y.save <- y.save
+
+      keep.assign <- attr(x, "assign")
+      x <- x[-indices, , drop = FALSE]
+      if (is.R())
+          attr(x, "assign") <- keep.assign
+      y <- y[-indices, , drop = FALSE]
+      w <- w[-indices]
+      n.save <- n <- nn - plag
+  }), list( .Ranks = Ranks, .coefstart = coefstart ))), 
+
+  linkinv = function(eta, extra = NULL) {
+    aa <- extra$aa
+    coeffs <- extra$coeffs
+    MM <- extra$MM
+    nn <- extra$nn
+    plag <- extra$plag
+    Ranks. <- extra$Ranks.
+    y.save <- extra$y.save
+
+    tt <- (1+plag):nn
+    mu <- matrix(0, nn-plag, MM)
+    Ak1 <- rrar.Ak1(MM, coeffs, Ranks., aa)
+    for(i in 1:plag) {
+      Di <- rrar.Di(i, Ranks.)
+      Ci <- rrar.Ci(i, coeffs, aa, Ranks., MM)
+      mu <- mu + y.save[tt-i, , drop = FALSE] %*%
+                 t(Ak1 %*% Di %*% t(Ci))
+    }
+    mu
+  },
+  last = expression({
+    misc$plag <- plag
+    misc$Ranks <- Ranks.
+    misc$Ak1 <- Ak1
+    misc$omegahat <- omegahat
+    misc$Cmatrices <- Cmatrices
+    misc$Dmatrices <- Dmatrices
+    misc$Hmatrix <- temp8$Ht
+    misc$Phimatrices <- vector("list", plag)
+    for(ii in 1:plag) {
+      misc$Phimatrices[[ii]] <- Ak1 %*% Dmatrices[[ii]] %*%
+                                t(Cmatrices[[ii]])
+    }
+    misc$Z <- y.save %*% t(solve(Ak1)) 
+  }),
+  vfamily = "rrar",
+  deriv = expression({
+    temp8 <- rrar.Wmat(y.save,Ranks.,MM,ki,plag,aa,uu,nn,new.coeffs)
+    X_vlm_save <- temp8$UU %*% temp8$Ht 
+
+    extra$coeffs <- new.coeffs
+
+    resmat <- y
+    tt <- (1+plag):nn
+    Ak1 <- rrar.Ak1(MM, new.coeffs, Ranks., aa)
+    Cmatrices <- Dmatrices <- vector("list", plag)
+    for(ii in 1:plag) {
+      Dmatrices[[ii]] <- Di <- rrar.Di(ii, Ranks.)
+      Cmatrices[[ii]] <- Ci <- rrar.Ci(ii, new.coeffs, aa, Ranks., MM)
+      resmat <- resmat - y.save[tt - ii, , drop = FALSE] %*%
+                         t(Ak1 %*% Di %*% t(Ci))
+    }
+    omegahat <- (t(resmat) %*% resmat) / n # MM x MM
+    omegainv <- solve(omegahat)
+
+    omegainv <- solve(omegahat)
+    ind1 <- iam(NA, NA, MM, both = TRUE)
+
+    wz <- matrix(omegainv[cbind(ind1$row, ind1$col)],
+                 nn-plag, length(ind1$row), byrow = TRUE)
+    mux22(t(wz), y-mu, M = extra$MM, as.matrix = TRUE)
+  }),
+  weight = expression({
+    wz
+  }))
 }
 
 
@@ -312,7 +313,8 @@ vglm.garma.control <- function(save.weight = TRUE, ...) {
             ", t = ", paste(paste(1:p.ar.lag, coll = ",", sep = ""))),
   initialize = eval(substitute(expression({
     plag <- .p.ar.lag
-    predictors.names = namesof("mu", .link , earg = .earg , tag = FALSE)
+    predictors.names <- namesof("mu", .link , earg = .earg , tag = FALSE)
+
     indices <- 1:plag
     tt.index <- (1 + plag):nrow(x)
     p_lm <- ncol(x)
@@ -348,7 +350,7 @@ vglm.garma.control <- function(save.weight = TRUE, ...) {
     dimnames(x) <- list(dx[[1]], c(dx[[2]], morenames)) 
 
     x <- x[-indices, , drop = FALSE]
-    class(x) = "matrix"
+    class(x) <- "matrix"
     y <- y[-indices]
     w <- w[-indices]
     n.save <- n <- n - plag
@@ -365,7 +367,9 @@ vglm.garma.control <- function(save.weight = TRUE, ...) {
   }, list( .link = link, .earg = earg ))),
   last = eval(substitute(expression({
     misc$link <-    c(mu = .link )
+
     misc$earg <- list(mu = .earg )
+
     misc$plag <- plag
   }), list( .link = link, .earg = earg ))),
   loglikelihood = eval(substitute(
@@ -413,7 +417,7 @@ vglm.garma.control <- function(save.weight = TRUE, ...) {
     x[, 1:p_lm] <- x.save[tt.index, 1:p_lm] # Reinstate 
 
     for(ii in 1:plag) {
-        temp = theta2eta(y.save[tt.index-ii], .link , earg = .earg )
+        temp <- theta2eta(y.save[tt.index-ii], .link , earg = .earg )
 
 
         x[, 1:p_lm] <- x[, 1:p_lm] -
@@ -421,14 +425,14 @@ vglm.garma.control <- function(save.weight = TRUE, ...) {
         x[, p_lm+ii] <- temp - x.save[tt.index-ii, 1:p_lm, drop = FALSE] %*%
                             new.coeffs[1:p_lm]
     }
-    class(x) = "matrix" # Added 27/2/02; 26/2/04
+    class(x) <- "matrix" # Added 27/2/02; 26/2/04
 
     if (iter == 1)
       old.coeffs <- new.coeffs 
 
     X_vlm_save <- lm2vlm.model.matrix(x, Blist, xij = control$xij)
 
-    vary = switch( .link ,
+    vary <- switch( .link ,
                    identity = 1,
                    loge       = mu,
                    reciprocal = mu^2,
@@ -444,8 +448,7 @@ vglm.garma.control <- function(save.weight = TRUE, ...) {
 
 
 
- if (FALSE)
-{
+ if (FALSE) {
 setClass(Class = "Coef.rrar", representation(
          "plag"    = "integer",
          "Ranks"   = "integer",
@@ -482,16 +485,15 @@ show.Coef.rrar <- function(object) {
 
 
 setMethod("Coef", "rrar",
-         function(object, ...)
-         Coef(object, ...))
+          function(object, ...)
+          Coef(object, ...))
 
 
 
 
 setMethod("show", "Coef.rrar",
           function(object)
-            show.Coef.rrar(object))
-
+          show.Coef.rrar(object))
 
 }
 

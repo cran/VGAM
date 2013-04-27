@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2012 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2013 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -50,7 +50,7 @@ summaryvglm <- function(object, correlation = FALSE,
       df = stuff@df,
       sigma = stuff@sigma)
 
-  presid = resid(object, type = "pearson")
+  presid <- resid(object, type = "pearson")
   if (length(presid))
     answer@pearson.resid <- as.matrix(presid)
 
@@ -92,16 +92,16 @@ show.summary.vglm <- function(x, digits = NULL, quote = TRUE,
       length(Presid) &&
       all(!is.na(Presid)) &&
       is.finite(rdf)) {
-      cat("\nPearson Residuals:\n")
-      if (rdf/M > 5) {
-        rq <-  apply(as.matrix(Presid), 2, quantile) # 5 x M
-        dimnames(rq) <- list(c("Min", "1Q", "Median", "3Q", "Max"),
-                             x@misc$predictors.names)
-        print(t(rq), digits = digits)
-      } else
-      if (rdf > 0) {
-        print(Presid, digits = digits)
-      }
+    cat("\nPearson Residuals:\n")
+    if (rdf/M > 5) {
+      rq <-  apply(as.matrix(Presid), 2, quantile) # 5 x M
+      dimnames(rq) <- list(c("Min", "1Q", "Median", "3Q", "Max"),
+                           x@misc$predictors.names)
+      print(t(rq), digits = digits)
+    } else
+    if (rdf > 0) {
+      print(Presid, digits = digits)
+    }
   }
 
   cat("\nCoefficients:\n")
@@ -122,38 +122,39 @@ show.summary.vglm <- function(x, digits = NULL, quote = TRUE,
 
   prose <- ""
   if (length(x@dispersion)) {
-      if (is.logical(x@misc$estimated.dispersion) &&
-         x@misc$estimated.dispersion)
-          prose <- "(Estimated) " else {
+    if (is.logical(x@misc$estimated.dispersion) &&
+       x@misc$estimated.dispersion) {
+      prose <- "(Estimated) "
+    }  else {
 
-          if (is.numeric(x@misc$default.dispersion) &&
-             x@dispersion==x@misc$default.dispersion)
-              prose <- "(Default) "
+      if (is.numeric(x@misc$default.dispersion) &&
+          x@dispersion == x@misc$default.dispersion)
+        prose <- "(Default) "
 
-          if (is.numeric(x@misc$default.dispersion) &&
-             x@dispersion!=x@misc$default.dispersion)
-              prose <- "(Pre-specified) "
-      }
-      cat(paste("\n", prose, "Dispersion Parameter for ",
-                x@family@vfamily[1],
-                " family:   ", yformat(x@dispersion, digits), "\n",
-                sep = ""))
+      if (is.numeric(x@misc$default.dispersion) &&
+          x@dispersion != x@misc$default.dispersion)
+        prose <- "(Pre-specified) "
+    }
+    cat(paste("\n", prose, "Dispersion Parameter for ",
+              x@family@vfamily[1],
+              " family:   ", yformat(x@dispersion, digits), "\n",
+              sep = ""))
   }
 
 
   if (length(deviance(x))) {
     cat("\nResidual deviance:", yformat(deviance(x), digits))
     if (is.finite(rdf))
-        cat(" on", round(rdf, digits), "degrees of freedom\n") else
-        cat("\n")
+      cat(" on", round(rdf, digits), "degrees of freedom\n") else
+      cat("\n")
   }
 
 
   if (length(vll <- logLik.vlm(x))) {
     cat("\nLog-likelihood:", yformat(vll, digits))
     if (is.finite(rdf))
-        cat(" on", round(rdf, digits), "degrees of freedom\n") else
-        cat("\n")
+      cat(" on", round(rdf, digits), "degrees of freedom\n") else
+      cat("\n")
   }
 
 
@@ -184,17 +185,17 @@ show.summary.vglm <- function(x, digits = NULL, quote = TRUE,
 
 
 
-    setMethod("summary", "vglm",
-             function(object, ...)
-             summaryvglm(object, ...))
+setMethod("summary", "vglm",
+          function(object, ...)
+          summaryvglm(object, ...))
 
 
 
 
 
-    setMethod("show", "summary.vglm",
-             function(object)
-             show.summary.vglm(object))
+setMethod("show", "summary.vglm",
+          function(object)
+          show.summary.vglm(object))
 
 
 

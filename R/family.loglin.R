@@ -1,23 +1,23 @@
 # These functions are
-# Copyright (C) 1998-2012 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2013 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
 
 
- loglinb2 <- function(exchangeable = FALSE, zero = NULL)
-{
+
+ loglinb2 <- function(exchangeable = FALSE, zero = NULL) {
 
   new("vglmff",
   blurb = c("Log-linear model for binary data\n\n",
-         "Links:    ",
-         "Identity: u1, u2, u12",
-         "\n"),
+            "Links:    ",
+            "Identity: u1, u2, u12",
+            "\n"),
   constraints = eval(substitute(expression({
     constraints <- cm.vgam(matrix(c(1,1,0, 0,0,1), 3, 2), x,
-                           .exchangeable, constraints,
-                           intercept.apply = TRUE)
-    constraints <- cm.zero.vgam(constraints, x, .zero, M)
+                           .exchangeable , constraints,
+                           apply.int = TRUE)
+    constraints <- cm.zero.vgam(constraints, x, .zero , M)
   }), list( .exchangeable = exchangeable, .zero = zero ))),
   initialize = expression({
 
@@ -59,10 +59,12 @@
           "11" = exp(u1+u2+u12) / denom)
   },
   last = expression({
-    misc$link =   c("u1" = "identity", "u2" = "identity", "u12" = "identity")
-    misc$earg = list(u1  = list(),      u2  = list(),      u12  = list())
+    misc$link <-    c("u1" = "identity", "u2" = "identity",
+                      "u12" = "identity")
+    misc$earg <- list("u1"  = list(),    "u2"  = list(),
+                      "u12"  = list())
 
-    misc$expected = TRUE
+    misc$expected <- TRUE
     misc$multipleResponses <- TRUE
   }),
   linkfun = function(mu, extra = NULL)  {
@@ -115,19 +117,20 @@
 }
 
 
- loglinb3 <- function(exchangeable = FALSE, zero = NULL)
-{
+
+
+ loglinb3 <- function(exchangeable = FALSE, zero = NULL) {
 
   new("vglmff",
   blurb = c("Log-linear model for trivariate binary data\n\n",
-         "Links:    ",
-         "Identity: u1, u2, u3, u12, u13, u23",
-         "\n"),
+            "Links:    ",
+            "Identity: u1, u2, u3, u12, u13, u23",
+            "\n"),
   constraints = eval(substitute(expression({
-      constraints = cm.vgam(matrix(c(1,1,1,0,0,0, 0,0,0,1,1,1), 6, 2), x,
-                            .exchangeable, constraints,
-                            intercept.apply = TRUE)
-      constraints = cm.zero.vgam(constraints, x, .zero, M)
+    constraints <- cm.vgam(matrix(c(1,1,1,0,0,0, 0,0,0,1,1,1), 6, 2), x,
+                           .exchangeable, constraints,
+                           apply.int = TRUE)
+    constraints <- cm.zero.vgam(constraints, x, .zero, M)
   }), list( .exchangeable = exchangeable, .zero = zero ))),
   initialize = expression({
     predictors.names <- c("u1", "u2", "u3", "u12", "u13", "u23")
@@ -150,31 +153,20 @@
     if (ncol(y) != 3)
       stop("ncol(y) must be = 3")
 
+
+    if (FALSE)
     extra$my.expression <- expression({
-      u1 <-  eta[,1]
-      u2 <-  eta[,2]
-      u3 <-  eta[,3]
-      u12 <- eta[,4]
-      u13 <- eta[,5]
-      u23 <- eta[,6]
+      u1  <- eta[, 1]
+      u2  <- eta[, 2]
+      u3  <- eta[, 3]
+      u12 <- eta[, 4]
+      u13 <- eta[, 5]
+      u23 <- eta[, 6]
       denom <- 1 + exp(u1) + exp(u2) + exp(u3) + exp(u1 + u2 + u12) +
                exp(u1 + u3 + u13) + exp(u2 + u3 + u23) +
                exp(u1 + u2 + u3 + u12 + u13 + u23)
     })
 
-
-    extra$deriv.expression <- expression({
-      allterms <- exp(u1+u2+u3+u12+u13+u23)
-      A1 <- exp(u1) + exp(u1 + u2 + u12) + exp(u1 + u3 + u13) +
-            allterms
-      A2 <- exp(u2) + exp(u1 + u2 + u12) + exp(u2 + u3 + u23) +
-            allterms
-      A3 <- exp(u3) + exp(u3 + u2 + u23) + exp(u1 + u3 + u13) +
-            allterms
-      A12 <- exp(u1 + u2 + u12) + allterms
-      A13 <- exp(u1 + u3 + u13) + allterms
-      A23 <- exp(u2 + u3 + u23) + allterms
-    })
 
 
     if (length(mustart) + length(etastart) == 0) {
@@ -192,7 +184,17 @@
     }
   }),
   linkinv = function(eta, extra = NULL) {
-    eval(extra$my.expression)
+      u1  <- eta[, 1]
+      u2  <- eta[, 2]
+      u3  <- eta[, 3]
+      u12 <- eta[, 4]
+      u13 <- eta[, 5]
+      u23 <- eta[, 6]
+      denom <- 1 + exp(u1) + exp(u2) + exp(u3) + exp(u1 + u2 + u12) +
+               exp(u1 + u3 + u13) + exp(u2 + u3 + u23) +
+               exp(u1 + u2 + u3 + u12 + u13 + u23)
+
+
     cbind("000" = 1,
           "001" = exp(u3),
           "010" = exp(u2),
@@ -203,13 +205,13 @@
           "111" = exp(u1+u2+u3+u12+u13+u23)) / denom
   },
   last = expression({
-    misc$link = rep("identity", length = M)
-    names(misc$link) = predictors.names
+    misc$link <- rep("identity", length = M)
+    names(misc$link) <- predictors.names
 
-    misc$earg = list(u1  = list(), u2  = list(), u3  = list(),
-                     u12 = list(), u13 = list(), u23 = list())
+    misc$earg <- list(u1  = list(), u2  = list(), u3  = list(),
+                      u12 = list(), u13 = list(), u23 = list())
 
-    misc$expected = TRUE
+    misc$expected <- TRUE
     misc$multipleResponses <- TRUE
 
   }),
@@ -224,7 +226,16 @@
     cbind(u1, u2, u3, u12, u13, u23)
   },
   loglikelihood = function(mu,y,w,residuals = FALSE,eta,extra = NULL) {
-    eval(extra$my.expression)
+      u1  <- eta[, 1]
+      u2  <- eta[, 2]
+      u3  <- eta[, 3]
+      u12 <- eta[, 4]
+      u13 <- eta[, 5]
+      u23 <- eta[, 6]
+      denom <- 1 + exp(u1) + exp(u2) + exp(u3) + exp(u1 + u2 + u12) +
+               exp(u1 + u3 + u13) + exp(u2 + u3 + u23) +
+               exp(u1 + u2 + u3 + u12 + u13 + u23)
+
     u0 <- -log(denom)
     if (residuals)
       stop("loglikelihood residuals not implemented yet") else
@@ -233,8 +244,30 @@
   },
   vfamily = c("loglinb3"),
   deriv = expression({
-    eval(extra$my.expression)
-    eval(extra$deriv.expression)
+      u1  <- eta[, 1]
+      u2  <- eta[, 2]
+      u3  <- eta[, 3]
+      u12 <- eta[, 4]
+      u13 <- eta[, 5]
+      u23 <- eta[, 6]
+      denom <- 1 + exp(u1) + exp(u2) + exp(u3) + exp(u1 + u2 + u12) +
+               exp(u1 + u3 + u13) + exp(u2 + u3 + u23) +
+               exp(u1 + u2 + u3 + u12 + u13 + u23)
+
+
+
+      allterms <- exp(u1+u2+u3+u12+u13+u23)
+      A1 <- exp(u1) + exp(u1 + u2 + u12) + exp(u1 + u3 + u13) +
+            allterms
+      A2 <- exp(u2) + exp(u1 + u2 + u12) + exp(u2 + u3 + u23) +
+            allterms
+      A3 <- exp(u3) + exp(u3 + u2 + u23) + exp(u1 + u3 + u13) +
+            allterms
+      A12 <- exp(u1 + u2 + u12) + allterms
+      A13 <- exp(u1 + u3 + u13) + allterms
+      A23 <- exp(u2 + u3 + u23) + allterms
+
+
     c(w) * cbind(-A1/denom + y[,1], 
                  -A2/denom + y[,2],
                  -A3/denom + y[,3],

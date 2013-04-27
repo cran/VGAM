@@ -23,6 +23,7 @@ vsmooth.spline(x, y, w = NULL, df = rep(5, M), spar = NULL,
   the real part is used, and the imaginary part is used for the response.
   In this help file, \code{n} is the number of unique values of \code{x}. 
 
+
 }
   \item{y}{
   A vector, matrix or a list.
@@ -30,6 +31,7 @@ vsmooth.spline(x, y, w = NULL, df = rep(5, M), spar = NULL,
   If a matrix, all but the first column is used.
   In this help file, \code{M} is the number of columns of \code{y} if
   there are no constraints on the functions. 
+
 
 }
   \item{w}{ 
@@ -39,6 +41,7 @@ vsmooth.spline(x, y, w = NULL, df = rep(5, M), spar = NULL,
   If a vector, then these are the number of observations.
   By default, \code{w} is the \code{M} by \code{M} identity
   matrix, denoted by  \code{matrix(1, n, M)}.
+
 
 }
   \item{df}{
@@ -52,6 +55,7 @@ A value of 2 means a linear fit, and each element of
 \code{df} should lie between 2 and \code{n}.
 The larger the values of \code{df} the more wiggly the
 smooths.
+
 
 }
   \item{spar}{ 
@@ -69,6 +73,7 @@ By default, the \code{NULL} value of \code{spar} means
 \code{df} is used to determine the smoothing
 parameters.
 
+
 }
   \item{all.knots}{ Logical. If \code{TRUE} then each distinct
 value of \code{x} will be a knot. By default, only a subset of
@@ -76,17 +81,20 @@ the unique values  of \code{x} are used; typically, the number
 of knots is \code{O(n^0.25)} for \code{n} large, 
 but if \code{n <= 40} then all the unique values of \code{x} are used.
 
+
 }
   \item{iconstraint}{ A \code{M}-row constraint matrix for the
 intercepts. It must be of full column rank.
 By default, the constraint matrix for the intercepts is the
 \code{M} by \code{M} identity matrix, meaning no constraints.
 
+
 }
   \item{xconstraint}{ A \code{M}-row constraint matrix for \code{x}. 
 It must be of full column rank.
 By default, the constraint matrix for the intercepts is the
 \code{M} by \code{M} identity matrix, meaning no constraints.
+
 
 }
   \item{constraints}{ 
@@ -95,11 +103,13 @@ this is a list with two components corresponding to the
 intercept and \code{x} respectively. They must both be a
 \code{M}-row constraint matrix with full column rank.
 
+
 }
   \item{var.arg}{ Logical: return the pointwise variances 
 of the fit?
 Currently, this corresponds only to the nonlinear part of the
 fit, and may be wrong.
+
 
 }
   \item{scale.w}{ 
@@ -107,14 +117,17 @@ Logical.
 By default, the weights \code{w} are scaled so that the
 diagonal elements have mean 1.
 
+
 }
   \item{nk}{ Number of knots.
 If used, this argument overrides \code{all.knots}, and
 must lie between 6 and \code{n}+2 inclusive.
 
+
 }
   \item{control.spar}{
 See \code{\link[stats]{smooth.spline}}.
+
 
 }
 }
@@ -130,8 +143,9 @@ See \code{\link[stats]{smooth.spline}}.
 
 }
 \value{
-  An object of class \code{"vsmooth.spline"} (see
-\code{vsmooth.spline-class}).
+  An object of class \code{"vsmooth.spline"}
+  (see \code{vsmooth.spline-class}).
+
 
 }
 \references{
@@ -155,7 +169,8 @@ Heidelberg: Physica-Verlag.
 
   The vector cubic smoothing spline which \code{s()} represents is
   computationally demanding for large \eqn{M}.
-  The cost is approximately \eqn{O(M^3)}.
+  The cost is approximately \eqn{O(n M^3)} where
+  \eqn{n} is the number of unique abscissae.
 
 
   Yet to be done: return the \emph{unscaled} smoothing parameters.
@@ -171,19 +186,20 @@ Heidelberg: Physica-Verlag.
 \code{\link[VGAM]{s}},
 \code{\link[stats]{smooth.spline}}.
 
+
 }
 \examples{
 nn <- 20; x <- 2 + 5*(nn:1)/nn
-x[2:4] <- x[5:7]      # Allow duplication
+x[2:4] <- x[5:7]  # Allow duplication
 y1 <- sin(x) + rnorm(nn, sd = 0.13)
 y2 <- cos(x) + rnorm(nn, sd = 0.13)
-y3 <- 1 + sin(x) + rnorm(nn, sd = 0.13) # Run this for constraints
+y3 <- 1 + sin(x) + rnorm(nn, sd = 0.13)  # Run this for constraints
 y <- cbind(y1, y2, y3)
 ww <- cbind(rep(3, nn), 4, (1:nn)/nn)
 
 (fit <- vsmooth.spline(x, y, w = ww, df = 5))
 \dontrun{
-plot(fit) # The 1st and 3rd functions do not differ by a constant
+plot(fit)  # The 1st and 3rd functions do not differ by a constant
 }
 
 mat <- matrix(c(1,0,1, 0,1,0), 3, 2)
@@ -192,17 +208,16 @@ mat <- matrix(c(1,0,1, 0,1,0), 3, 2)
 mycols <- c("orange", "blue", "orange")
 \dontrun{ plot(fit2, lcol = mycols, pcol = mycols, las = 1) }
 
-
 p <- predict(fit, x = model.matrix(fit, type = "lm"), deriv = 0)
-max(abs(fit@y - with(p, y))) # Should be zero
+max(abs(depvar(fit) - with(p, y))) # Should be 0; and fit@y is not good
 
-par(mfrow <- c(3, 1))
+par(mfrow = c(3, 1))
 ux <- seq(1, 8, len = 100)
-for(d in 1:3) {
-    p <- predict(fit, x = ux, deriv = d)
-\dontrun{with(p, matplot(x, y, type = "l", main = paste("deriv =", d),
-                         lwd = 2, ylab = "", cex.axis = 1.5,
-                         cex.lab = 1.5, cex.main = 1.5)) }
+for(dd in 1:3) {
+  pp <- predict(fit, x = ux, deriv = dd)
+\dontrun{with(pp, matplot(x, y, type = "l", main = paste("deriv =", dd),
+                          lwd = 2, ylab = "", cex.axis = 1.5,
+                          cex.lab = 1.5, cex.main = 1.5)) }
 }
 }
 \keyword{regression}

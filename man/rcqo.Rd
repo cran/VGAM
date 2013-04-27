@@ -395,5 +395,6 @@ attr(mydata, "ccoefficients") # The 'truth'
 }
 }
 \keyword{distribution}
+\keyword{datagen}
 
 

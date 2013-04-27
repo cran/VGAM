@@ -10,6 +10,7 @@
   generation for the inverse paralogistic distribution with
   shape parameters \code{a} and \code{p}, and scale parameter \code{scale}.
 
+
 }
 \usage{
 dinvparalogistic(x, shape1.a, scale = 1, log = FALSE)
@@ -36,6 +37,7 @@ rinvparalogistic(n, shape1.a, scale = 1)
   \code{pinvparalogistic} gives the distribution function,
   \code{qinvparalogistic} gives the quantile function, and
   \code{rinvparalogistic} generates random deviates.
+
 
 }
 \references{
@@ -66,7 +68,7 @@ Hoboken, NJ, USA: Wiley-Interscience.
 
 }
 \examples{
-idata <- data.frame(y = rinvparalogistic(n = 3000, 4, 6))
+idata <- data.frame(y = rinvparalogistic(n = 3000, exp(1), exp(2)))
 fit <- vglm(y ~ 1, invparalogistic(ishape1.a = 2.1),
             idata, trace = TRUE, crit = "coef")
 coef(fit, matrix = TRUE)

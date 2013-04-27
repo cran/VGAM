@@ -43,7 +43,7 @@
 
 }
 \details{
-  Details are given in \code{\link{huber}}, the
+  Details are given in \code{\link{huber2}}, the
   \pkg{VGAM} family function for estimating the
   parameters \code{mu} and \code{sigma}.
 
@@ -67,8 +67,10 @@
 %  Huber, P. J. and Ronchetti, E. (2009)
 %  \emph{Robust Statistics}, 2nd ed. New York: Wiley.
 %
+%
 %  Huber, P. J. and Ronchetti, E. (2009) Robust Statistics
 %  (2nd ed.). Wiley, New York.
+%
 %
 %}
 
@@ -82,7 +84,7 @@
 
 }
 \seealso{
-    \code{\link{huber}}.
+    \code{\link{huber2}}.
 
 }
 
@@ -91,8 +93,7 @@ set.seed(123456)
 edhuber(1:5, k = 1.5)
 rhuber(5)
 
-# Plot cdf and pdf
-\dontrun{ mu <- 3; xx <- seq(-2, 7, len = 100)
+\dontrun{ mu <- 3; xx <- seq(-2, 7, len = 100)  # Plot CDF and PDF
 plot(xx, dhuber(xx, mu = mu), type = "l", col = "blue", las = 1, ylab = "",
      main = "blue is density, red is cumulative distribution function",
      sub = "Purple lines are the 10,20,...,90 percentiles",
@@ -104,7 +105,7 @@ Q <- qhuber(probs, mu = mu)
 lines(Q, dhuber(Q, mu = mu), col = "purple", lty = 3, type = "h")
 lines(Q, phuber(Q, mu = mu), col = "purple", lty = 3, type = "h")
 abline(h = probs, col = "purple", lty = 3)
-phuber(Q, mu = mu) - probs # Should be all 0s
+phuber(Q, mu = mu) - probs  # Should be all 0s
 } 
 } 
 \keyword{distribution}

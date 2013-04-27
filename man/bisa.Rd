@@ -19,11 +19,13 @@ bisa(lshape = "loge", lscale = "loge",
   See \code{\link{Links}} for more choices.
   A log link is the default for both because they are positive.
 
+
   }
   \item{iscale, ishape}{
   Initial values for \eqn{a} and \eqn{b}.
   A \code{NULL} means an initial value is chosen internally using
   \code{imethod}.
+
 
   }
   \item{imethod}{
@@ -32,12 +34,14 @@ bisa(lshape = "loge", lscale = "loge",
   try the other value, or else specify a value for 
   \code{ishape} and/or \code{iscale}. 
 
+
   }
   \item{zero}{
   An integer-valued vector specifying which
   linear/additive predictors are modelled as intercepts only.
   The default is none of them.
   If used, choose one value from the set \{1,2\}.
+
 
   }
 }

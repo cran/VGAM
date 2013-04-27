@@ -7,6 +7,7 @@
   in many \pkg{VGAM} family functions, e.g.,
   \code{lsigma}, 
   \code{isigma},
+  \code{gsigma},
   \code{nsimEI},
   \code{parallel} and
   \code{zero}.
@@ -14,7 +15,10 @@
 }
 \usage{
 TypicalVGAMfamilyFunction(lsigma = "loge",
-                          isigma = NULL, parallel = TRUE,
+                          isigma = NULL,
+                          gsigma = exp(-5:5),
+                          parallel = TRUE,
+                          apply.parint = FALSE,
                           shrinkage.init = 0.95,
                           nointercept = NULL, imethod = 1,
                           probs.x = c(0.15, 0.85),
@@ -55,6 +59,22 @@ TypicalVGAMfamilyFunction(lsigma = "loge",
 
 
   }
+  \item{gsigma}{
+  Grid-search initial values can be inputted using an argument
+  beginning with \code{"g"},
+  e.g., \code{"gsigma"}, \code{"gshape"} and \code{"gscale"}.
+  If argument \code{isigma} is inputted then that has precedence over
+  \code{gsigma}, etc.
+% The actual search values will be \code{unique(sort(c(gshape)))}, etc.
+  If the grid search is 2-dimensional then it is advisable not to
+  make the vectors too long as a nested \code{for} loop may be used.
+  Ditto for 3-dimensions.
+
+
+% Then the actual search values will be \code{unique(sort(c(gshape, 1/gshape)))}, etc.
+
+
+  }
   \item{parallel}{
   A logical, or a simple formula specifying which terms have equal/unequal
   coefficients.
@@ -74,6 +94,15 @@ TypicalVGAMfamilyFunction(lsigma = "loge",
   the intercepts) means the fitted probabilities do not become negative
   or greater than 1. However this parallelism or proportional-odds
   assumption ought to be checked.
+
+
+  }
+  \item{apply.parint}{
+  Logical. It refers to whether the parallelism constraint is
+  applied to the intercept too.
+  By default, in some models it does, in other models it does not.
+  Used only if \code{parallel = TRUE} (fully or partially with
+  respect to all the explanatory variables).
 
 
   }
@@ -151,13 +180,16 @@ TypicalVGAMfamilyFunction(lsigma = "loge",
   }
   \item{zero}{
   An integer specifying which linear/additive predictor is modelled
-  as intercepts-only. That is, the regression coefficients are
+  as intercept-only. That is, the regression coefficients are
   set to zero for all covariates except for the intercept.
-  If \code{zero} is specified then it is a vector with values
+  If \code{zero} is specified then it may be a vector with values
   from the set \eqn{\{1,2,\ldots,M\}}.
-  The value \code{zero = NULL} means model all linear/additive
+  The value \code{zero = NULL} means model \emph{all} linear/additive
   predictors as functions of the explanatory variables.
   Here, \eqn{M} is the number of linear/additive predictors.
+  Technically, if \code{zero} contains the value \eqn{j} then
+  the \eqn{j}th row of every constraint matrix (except for the
+  intercept) consists of all 0 values.
 
 
   Some \pkg{VGAM} family functions allow the \code{zero} argument to

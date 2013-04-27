@@ -61,7 +61,7 @@ zageometric(lpobs0 = "logit", lprob = "logit", imethod = 1,
   call the zero-altered geometric a \emph{hurdle} model.
 
 
-  The input can be a matrix.
+  The input can be a matrix (multiple responses).
   By default, the two linear/additive
   predictors are \eqn{(\log(\phi), logit(p))^T}{(log(phi), logit(prob))^T}.
 
@@ -112,6 +112,7 @@ zageometric(lpobs0 = "logit", lprob = "logit", imethod = 1,
   However, \code{posgeometric()} is not written because it
   is trivially related to \code{\link{geometric}}.
 
+
 }
 
 \seealso{
@@ -131,10 +132,11 @@ zdata <- transform(zdata,
                    pobs0 = logit(-1 + 2*x2, inverse = TRUE),
                    prob  = logit(-2 + 3*x2, inverse = TRUE))
 zdata <- transform(zdata,
-                   y1 = rzageom(nn, prob = prob, pobs0 = pobs0))
+                   y1 = rzageom(nn, prob = prob, pobs0 = pobs0),
+                   y2 = rzageom(nn, prob = prob, pobs0 = pobs0))
 with(zdata, table(y1))
 
-fit <- vglm(y1 ~ x2, zageometric, zdata, trace = TRUE)
+fit <- vglm(cbind(y1, y2) ~ x2, zageometric, zdata, trace = TRUE)
 coef(fit, matrix = TRUE)
 head(fitted(fit))
 head(predict(fit))

@@ -26,6 +26,7 @@ vglm(formula, family, data = list(), weights = NULL, subset = NULL,
   predictor. Different variables in each linear predictor
   can be chosen by specifying constraint matrices.
 
+
   }
   \item{family}{
   a function of class \code{"vglmff"} (see \code{\link{vglmff-class}})
@@ -33,6 +34,7 @@ vglm(formula, family, data = list(), weights = NULL, subset = NULL,
   ``\pkg{VGAM} family function''.  See \code{\link{CommonVGAMffArguments}}
   for general information about many types of arguments found in this
   type of function.
+
 
   }
   \item{data}{
@@ -84,6 +86,7 @@ vglm(formula, family, data = list(), weights = NULL, subset = NULL,
   of \code{\link[base]{options}}, and is \code{na.fail} if that is unset.
   The ``factory-fresh'' default is \code{na.omit}.
 
+
   }
   \item{etastart}{
   starting values for the linear predictors.
@@ -103,15 +106,18 @@ vglm(formula, family, data = list(), weights = NULL, subset = NULL,
   should be comparable.
   Some family functions do not make use of this argument.
 
+
   }
   \item{coefstart}{
   starting values for the coefficient vector.
   The length and order must match that of \code{coef(fit)}.
 
+
   }
   \item{control}{
   a list of parameters for controlling the fitting process. 
   See \code{\link{vglm.control}} for details.
+
 
   }
   \item{offset}{
@@ -119,17 +125,20 @@ vglm(formula, family, data = list(), weights = NULL, subset = NULL,
    These are \emph{a priori} known and are added to the
    linear/additive predictors during fitting.
 
+
   }
   \item{method}{
   the method to be used in fitting the model.  The default (and
   presently only) method \code{vglm.fit()} uses iteratively
   reweighted least squares (IRLS).
 
+
   }
   \item{model}{
   a logical value indicating whether the
   \emph{model frame}
   should be assigned in the \code{model} slot.
+
 
   }
   \item{x.arg, y.arg}{
@@ -139,6 +148,7 @@ vglm(formula, family, data = list(), weights = NULL, subset = NULL,
   Note the model matrix is the LM model matrix; to get the VGLM
   model matrix type \code{model.matrix(vglmfit)} where
   \code{vglmfit} is a \code{vglm} object. 
+
 
   }
   \item{contrasts}{
@@ -177,6 +187,7 @@ vglm(formula, family, data = list(), weights = NULL, subset = NULL,
   an optional list with any extra information that might be needed by
   the \pkg{VGAM} family function.
 
+
   }
   \item{form2}{
   The second (optional) formula.
@@ -187,20 +198,24 @@ vglm(formula, family, data = list(), weights = NULL, subset = NULL,
   If given, the slots \code{@Xm2} and \code{@Ym2} may be assigned.
   Note that smart prediction applies to terms in \code{form2} too.
 
+
   }
   \item{qr.arg}{
   logical value indicating whether the slot \code{qr}, which
   returns the QR decomposition of the VLM model matrix,
   is returned on the object.
 
+
   }
   \item{smart}{
   logical value indicating whether smart prediction
   (\code{\link{smartpred}}) will be used.
 
+
   }
   \item{\dots}{
   further arguments passed into \code{\link{vglm.control}}.
+
 
   }
 
@@ -291,9 +306,13 @@ vglm(formula, family, data = list(), weights = NULL, subset = NULL,
   \item{xlevels}{the levels of the factors, if any, used in fitting.}
   \item{y}{the response, in matrix form.}
 
+
   This slot information is repeated at \code{\link{vglm-class}}.
+
+
 }
 \references{ 
+
 
 Yee, T. W. and Hastie, T. J. (2003)
 Reduced-rank vector generalized linear models.
@@ -367,6 +386,13 @@ The \code{VGAM} Package.
 }
 
 %~Make other sections like WARNING with \section{WARNING }{....} ~
+\section{WARNING}{
+  See warnings in \code{\link{vglm.control}}.
+
+
+}
+
+
 
 \seealso{ 
   \code{\link{vglm.control}},
@@ -423,14 +449,14 @@ weights(fit4, type = "prior")
 # Example 5. The use of the xij argument (simple case).
 # The constraint matrix for 'op' has one column.
 nn <- 1000
-eyesdat = round(data.frame(lop = runif(nn),
-                           rop = runif(nn),
-                            op = runif(nn)), dig = 2)
-eyesdat = transform(eyesdat, eta1 = -1 + 2 * lop,
-                             eta2 = -1 + 2 * lop)
-eyesdat = transform(eyesdat,
-          leye = rbinom(nn, size = 1, prob = logit(eta1, inv = TRUE)),
-          reye = rbinom(nn, size = 1, prob = logit(eta2, inv = TRUE)))
+eyesdat <- round(data.frame(lop = runif(nn),
+                            rop = runif(nn),
+                             op = runif(nn)), dig = 2)
+eyesdat <- transform(eyesdat, eta1 = -1 + 2 * lop,
+                              eta2 = -1 + 2 * lop)
+eyesdat <- transform(eyesdat,
+           leye = rbinom(nn, size = 1, prob = logit(eta1, inv = TRUE)),
+           reye = rbinom(nn, size = 1, prob = logit(eta2, inv = TRUE)))
 head(eyesdat)
 fit5 <- vglm(cbind(leye, reye) ~ op,
              binom2.or(exchangeable = TRUE, zero = 3),
@@ -456,13 +482,13 @@ constraints(fit5)
 %# Here is one method to handle the xij argument with a term that
 %# produces more than one column in the model matrix.
 %# The constraint matrix for 'op' has essentially one column.
-%POLY3 = function(x, ...) {
+%POLY3 <- function(x, ...) {
 %    # A cubic; ensures that the basis functions are the same.
 %    poly(c(x,...), 3)[1:length(x),]
 %    head(poly(c(x,...), 3), length(x), drop = FALSE)
 %}
 %
-%fit6 = vglm(cbind(leye, reye) ~ POLY3(op), trace = TRUE,
+%fit6 <- vglm(cbind(leye, reye) ~ POLY3(op), trace = TRUE,
 %            fam = binom2.or(exchangeable = TRUE, zero=3),  data=eyesdat,
 %            xij = list(POLY3(op) ~ POLY3(lop,rop) + POLY3(rop,lop) +
 %                                   fill(POLY3(lop,rop))),
@@ -478,12 +504,12 @@ constraints(fit5)
 %
 %# Example 7. The use of the xij argument (simple case).
 %# Each constraint matrix has 4 columns.
-%ymat = rdiric(n <- 1000, shape=c(4,7,3,1))
-%mydat = data.frame(x1=runif(n), x2=runif(n), x3=runif(n), x4=runif(n),
+%ymat <- rdiric(n <- 1000, shape=c(4,7,3,1))
+%mydat <- data.frame(x1=runif(n), x2=runif(n), x3=runif(n), x4=runif(n),
 %                   z1=runif(n), z2=runif(n), z3=runif(n), z4=runif(n),
 %                   X2=runif(n), Z2=runif(n))
-%mydat = round(mydat, dig=2)
-%fit7 = vglm(ymat ~ X2 + Z2, data=mydat, crit="c",
+%mydat <- round(mydat, dig=2)
+%fit7 <- vglm(ymat ~ X2 + Z2, data=mydat, crit="c",
 %           fam = dirichlet(parallel = TRUE), # Intercept is also parallel.
 %           xij = list(Z2 ~ z1 + z2 + z3 + z4,
 %                      X2 ~ x1 + x2 + x3 + x4),

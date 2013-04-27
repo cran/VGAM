@@ -48,7 +48,7 @@ Health Study: design and baseline findings.
 }
 \examples{
 \dontrun{ with(bmi.nz, plot(age, BMI, col = "blue"))
-fit = vgam(BMI ~ s(age, df = c(2, 4, 2)), fam = lms.yjn, bmi.nz, trace = TRUE)
+fit <- vgam(BMI ~ s(age, df = c(2, 4, 2)), lms.yjn, data = bmi.nz, trace = TRUE)
 qtplot(fit, pcol = "blue", tcol = "brown", lcol = "brown") }
 }
 \keyword{datasets}

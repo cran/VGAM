@@ -25,6 +25,7 @@ cqo(formula, family, data = list(), weights = NULL, subset = NULL,
   variables in each linear predictor can be chosen by specifying
   constraint matrices. 
 
+
   }
   \item{family}{ 
   a function of class \code{"vglmff"} (see \code{\link{vglmff-class}})
@@ -44,8 +45,10 @@ cqo(formula, family, data = list(), weights = NULL, subset = NULL,
   Also, \code{\link{quasipoissonff}} and \code{\link{quasibinomialff}}
   may or may not work.
 
+
 % \code{negbinomial(deviance = TRUE)},
 % \code{gamma2(deviance = TRUE)}.
+
 
   }
   \item{data}{
@@ -53,15 +56,18 @@ cqo(formula, family, data = list(), weights = NULL, subset = NULL,
    By default the variables are taken from \code{environment(formula)},
    typically the environment from which \code{cqo} is called.
 
+
   }
   \item{weights}{ an optional vector or matrix of (prior) weights 
     to be used in the fitting process.
     Currently, this argument should not be used.
 
+
   }
   \item{subset}{
   an optional logical vector specifying a subset of
   observations to be used in the fitting process.
+
 
   }
   \item{na.action}{ 
@@ -70,12 +76,14 @@ cqo(formula, family, data = list(), weights = NULL, subset = NULL,
   \code{\link[base]{options}}, and is \code{na.fail} if that is unset.
   The ``factory-fresh'' default is \code{na.omit}.
 
+
   }
   \item{etastart}{
   starting values for the linear predictors.
   It is a \eqn{M}-column matrix.
   If \eqn{M = 1} then it may be a vector.
   Currently, this argument probably should not be used.
+
 
   }
   \item{mustart}{
@@ -84,16 +92,19 @@ cqo(formula, family, data = list(), weights = NULL, subset = NULL,
   Some family functions do not make use of this argument.
   Currently, this argument probably should not be used.
 
+
   }
   \item{coefstart}{
   starting values for the
   coefficient vector.
   Currently, this argument probably should not be used.
 
+
   }
   \item{control}{
   a list of parameters for controlling the fitting process.
   See \code{\link{qrrvglm.control}} for details.
+
 
   }
   \item{offset}{ 
@@ -110,10 +121,12 @@ cqo(formula, family, data = list(), weights = NULL, subset = NULL,
   The default (and presently only) method \code{cqo.fit}
   uses \emph{iteratively reweighted least squares} (IRLS).
 
+
   }
   \item{model}{
   a logical value indicating whether the \emph{model frame}
   should be assigned in the \code{model} slot.
+
 
   }
   \item{x.arg, y.arg}{
@@ -122,14 +135,17 @@ cqo(formula, family, data = list(), weights = NULL, subset = NULL,
   process should be assigned in the \code{x} and \code{y} slots.
   Note the model matrix is the LM model matrix.
 
+
 %    ; to get the VGLM
 %    model matrix type \code{model.matrix(vglmfit)} where
 %    \code{vglmfit} is a \code{vglm} object. 
+
 
   }
   \item{contrasts}{
   an optional list. See the \code{contrasts.arg}
   of \code{model.matrix.default}.
+
 
   }
   \item{constraints}{
@@ -145,10 +161,12 @@ cqo(formula, family, data = list(), weights = NULL, subset = NULL,
   Constraint matrices for \eqn{x_2}{x_2} variables are taken as the
   identity matrix.
 
+
   }
   \item{extra}{
   an optional list with any extra information that might be needed
   by the family function.
+
 
   }
 % \item{qr.arg}{ logical value indicating whether
@@ -159,9 +177,11 @@ cqo(formula, family, data = list(), weights = NULL, subset = NULL,
   logical value indicating whether smart prediction
   (\code{\link{smartpred}}) will be used.
 
+
   }
   \item{\dots}{ 
   further arguments passed into \code{\link{qrrvglm.control}}.
+
 
   }
 }
@@ -196,7 +216,7 @@ cqo(formula, family, data = list(), weights = NULL, subset = NULL,
   contain the regression coefficients.  The tolerance matrices
   satisfy \eqn{T_s = -\frac12 D_s^{-1}}{T_s = -(0.5 D_s^(-1)}.
   Many important CQO details are directly related to arguments
-  in \code{\link{qrrvglm.control}}, e.g., the argument \code{Norrr}
+  in \code{\link{qrrvglm.control}}, e.g., the argument \code{noRRR}
   specifies which variables comprise \eqn{x_1}{x_1}.
 
 
@@ -320,7 +340,7 @@ original FORTRAN code into C.
   \code{\link{vglm}} and \code{\link{rrvglm.control}}.
   The most important arguments are
   \code{Rank},
-  \code{Norrr},
+  \code{noRRR},
   \code{Bestof}, 
   \code{ITolerances},
   \code{EqualTolerances},
@@ -438,11 +458,12 @@ Documentation accompanying the \pkg{VGAM} package at
 \url{http://www.stat.auckland.ac.nz/~yee}
 contains further information and examples.
 
+
 }
 \examples{
 \dontrun{
 # Example 1; Fit an unequal tolerances model to the hunting spiders data
-hspider[,1:6] <- scale(hspider[,1:6]) # Standardize the environmental variables
+hspider[,1:6] <- scale(hspider[,1:6]) # Standardized environmental variables
 set.seed(1234) # For reproducibility of the results
 p1ut <- cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,
                   Auloalbi, Pardlugu, Pardmont, Pardnigr, Pardpull,
@@ -560,5 +581,5 @@ for(ii in 1:S) {
 \keyword{models}
 \keyword{regression}
 
-%legend("topright", x=1, y=135, leg = colnames(p1ut@y), col = clr,
+%legend("topright", x=1, y=135, leg = colnames(depvar(p1ut)), col = clr,
 %       pch = 1:S, merge = TRUE, bty = "n", lty = 1:S, lwd = 2)

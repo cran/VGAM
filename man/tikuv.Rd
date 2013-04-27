@@ -120,10 +120,10 @@ tikuv(d, lmean = "identity", lsigma = "loge",
 }
 
 \examples{
-m = 1.0; sigma = exp(0.5)
+m <- 1.0; sigma <- exp(0.5)
 tdata <- data.frame(y = rtikuv(n = 1000, d = 1, m = m, s = sigma))
 tdata <- transform(tdata, sy = sort(y))
-fit <- vglm(y ~ 1, fam = tikuv(d = 1), tdata, trace = TRUE)
+fit <- vglm(y ~ 1, tikuv(d = 1), data = tdata, trace = TRUE)
 coef(fit, matrix = TRUE)
 (Cfit <- Coef(fit))
 with(tdata, mean(y))

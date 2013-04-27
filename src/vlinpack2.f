@@ -160,7 +160,14 @@ c Works
 
       subroutine vdpbfa7(abd,lda,n,m,info,d)
       integer lda,n,m,info
-      double precision abd(lda,1), d(n)
+      double precision abd(lda,*), d(n)
+c
+c
+c
+c 20130419: orig.:
+c     double precision abd(lda,1), d(n)
+c
+c
 c
 c     vdpbfa7 is dpbfa8 but uses Rational Cholesky instead of ordinary 
 c     Cholesky
@@ -240,7 +247,14 @@ c
 
       subroutine vdpbsl7(abd,lda,n,m,b,d)
       integer lda,n,m
-      double precision abd(lda,1),b(1),d(1)
+      double precision abd(lda,*),b(*),d(*)
+c
+c
+c
+c 20130419: orig:
+c     double precision abd(lda,1),b(1),d(1)
+c
+c
 c
 c     vdpbsl7 is dpbsl8 but uses Rational Cholesky instead of ordinary 
 c     Cholesky

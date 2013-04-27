@@ -91,9 +91,17 @@ zinegbinomial(lpstr0 = "logit", lmunb = "loge", lsize = "loge",
 %}
 \author{ T. W. Yee }
 \note{
-  For intercept-models, the \code{misc} slot has a component called
-  \code{pobs0} which is the estimate of \eqn{P(Y=0)}.
-  Note that \eqn{P(Y=0)} is not the parameter \eqn{\phi}{phi}.
+
+% 20130316: commenting out this:
+% For intercept-models, the \code{misc} slot has a component called
+% \code{pobs0} which is the estimate of \eqn{P(Y=0)}.
+% Note that \eqn{P(Y=0)} is not the parameter \eqn{\phi}{phi}.
+
+
+% 20130316: adding this:
+  Estimated probabilities of a structural zero and an 
+  observed zero are returned, as in \code{\link{zipoisson}}.
+
 
 
   If \eqn{k} is large then the use of \pkg{VGAM} family function

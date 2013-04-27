@@ -35,9 +35,11 @@
 
 }
 \examples{
-fit = vgam(cbind(nolnor, nolr, lnor, lr) ~ s(age, c(4, 3)), 
-           binom2.or(exchan = TRUE, zero = NULL), data = chest.nz)
+\dontrun{
+fit <- vgam(cbind(nolnor, nolr, lnor, lr) ~ s(age, c(4, 3)), 
+            binom2.or(exchan = TRUE, zero = NULL), data = chest.nz)
 coef(fit, matrix = TRUE)
+}
 \dontrun{ plot(fit, which.cf = 2, se = TRUE) }
 }
 \keyword{datasets}

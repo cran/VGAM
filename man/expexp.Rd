@@ -136,13 +136,13 @@ expexp(lshape = "loge", lscale = "loge",
 \examples{
 # A special case: exponential data
 edata <- data.frame(y = rexp(n <- 1000))
-fit = vglm(y ~ 1, fam = expexp, edata, trace = TRUE, maxit = 99)
-coef(fit, matrix=TRUE)
+fit <- vglm(y ~ 1, fam = expexp, edata, trace = TRUE, maxit = 99)
+coef(fit, matrix = TRUE)
 Coef(fit)
 
 
 # Ball bearings data (number of million revolutions before failure)
-bbearings = c(17.88, 28.92, 33.00, 41.52, 42.12, 45.60,
+bbearings <- c(17.88, 28.92, 33.00, 41.52, 42.12, 45.60,
 48.80, 51.84, 51.96, 54.12, 55.56, 67.80, 68.64, 68.64,
 68.88, 84.12, 93.12, 98.64, 105.12, 105.84, 127.92,
 128.04, 173.40)
@@ -154,11 +154,11 @@ logLik(fit) # Authors get -112.9763
 
 
 # Failure times of the airconditioning system of an airplane
-acplane = c(23, 261, 87, 7, 120, 14, 62, 47,
+acplane <- c(23, 261, 87, 7, 120, 14, 62, 47,
 225, 71, 246, 21, 42, 20, 5, 12, 120, 11, 3, 14,
 71, 11, 14, 11, 16, 90, 1, 16, 52, 95)
-fit = vglm(acplane ~ 1, fam = expexp(ishape = 0.8, isc = 0.15),
-           trace = TRUE, maxit = 99)
+fit <- vglm(acplane ~ 1, fam = expexp(ishape = 0.8, isc = 0.15),
+            trace = TRUE, maxit = 99)
 coef(fit, matrix = TRUE)
 Coef(fit)   # Authors get c(shape=0.8130, scale=0.0145)
 logLik(fit) # Authors get log-lik -152.264

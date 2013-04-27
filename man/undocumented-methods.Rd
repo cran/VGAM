@@ -5,6 +5,10 @@
 %
 %
 %
+% 20121105
+\alias{Rank,qrrvglm-method}
+\alias{Rank,rrvglm-method}
+\alias{Rank,cao-method}
 % 20120821
 \alias{model.matrix,vsmooth.spline-method}
 %
@@ -86,6 +90,7 @@
 \alias{depvar,rcim-method}
 \alias{depvar,rrvglm-method}
 \alias{depvar,vlm-method}
+\alias{depvar,vsmooth.spline-method}
 %
 \alias{deviance,qrrvglm-method}
 \alias{deviance,vlm-method}
@@ -201,6 +206,10 @@
 \alias{lv,Coef.rrvglm-method}
 \alias{lv,Coef.qrrvglm-method}
 \alias{lv,uqo-method}
+\alias{latvar,Coef.qrrvglm-method}
+\alias{latvar,Coef.rrvglm-method}
+\alias{latvar,qrrvglm-method}
+\alias{latvar,rrvglm-method}
 \alias{Max,qrrvglm-method}
 \alias{Max,Coef.qrrvglm-method}
 \alias{Max,uqo-method}
@@ -326,6 +335,7 @@
 \alias{Tol,Coef.uqo-method}
 \alias{trplot,qrrvglm-method}
 \alias{trplot,uqo-method}
+\alias{trplot,cao-method}
 \alias{vcov,rrvglm-method}
 \alias{vcov,qrrvglm-method}
 \alias{vcov,vlm-method}

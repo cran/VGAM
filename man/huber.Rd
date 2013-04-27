@@ -1,5 +1,5 @@
-\name{huber}
-\alias{huber}
+\name{huber2}
+\alias{huber2}
 \alias{huber1}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Huber's least favourable distribution family function }
@@ -11,8 +11,8 @@
 }
 \usage{
 huber1(llocation = "identity", k = 0.862, imethod = 1)
-huber(llocation = "identity", lscale = "loge",
-      k = 0.862, imethod = 1, zero = 2)
+huber2(llocation = "identity", lscale = "loge",
+       k = 0.862, imethod = 1, zero = 2)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -74,7 +74,7 @@ huber(llocation = "identity", lscale = "loge",
 }
 
 \note{
-  Warning: actually, \code{huber()} may be erroneous since the
+  Warning: actually, \code{huber2()} may be erroneous since the
   first derivative is not continuous when there are two parameters
   to estimate. \code{huber1()} is fine in this respect.
 
@@ -100,16 +100,16 @@ hdata <- transform(hdata, y  = rhuber(NN, mu = coef1 + coef2 * x2))
 hdata$x2[1] <- 0.0 # Add an outlier
 hdata$y[1] <- 10  
 
-fit.huber  <- vglm(y ~ x2, huber (imethod = 3), hdata, trace = TRUE)
+fit.huber2 <- vglm(y ~ x2, huber2(imethod = 3), hdata, trace = TRUE)
 fit.huber1 <- vglm(y ~ x2, huber1(imethod = 3), hdata, trace = TRUE)
 
-coef(fit.huber, matrix = TRUE)
-summary(fit.huber)
+coef(fit.huber2, matrix = TRUE)
+summary(fit.huber2)
 
 
 \dontrun{ # Plot the results
 plot(y ~ x2, hdata, col = "blue", las = 1)
-lines(fitted(fit.huber) ~ x2, hdata, col = "darkgreen", lwd = 2)
+lines(fitted(fit.huber2) ~ x2, hdata, col = "darkgreen", lwd = 2)
 
 fit.lm <- lm(y ~ x2, hdata) # Compare to a LM:
 lines(fitted(fit.lm) ~ x2, hdata, col = "lavender", lwd = 3)

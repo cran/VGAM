@@ -181,9 +181,9 @@ betabinomial.ab(lshape12 = "loge", i1 = 1, i2 = NULL,
 }
 \examples{
 # Example 1
-N = 10; s1 = exp(1); s2 = exp(2)
-y = rbetabinom.ab(n = 100, size = N, shape1 = s1, shape2 = s2)
-fit = vglm(cbind(y, N-y) ~ 1, betabinomial.ab, trace = TRUE)
+N <- 10; s1 <- exp(1); s2 <- exp(2)
+y <- rbetabinom.ab(n = 100, size = N, shape1 = s1, shape2 = s2)
+fit <- vglm(cbind(y, N-y) ~ 1, betabinomial.ab, trace = TRUE)
 coef(fit, matrix = TRUE)
 Coef(fit)
 head(fit@misc$rho) # The correlation parameter
@@ -191,8 +191,8 @@ head(cbind(depvar(fit), weights(fit, type = "prior")))
 
 
 # Example 2
-fit = vglm(cbind(R, N-R) ~ 1, betabinomial.ab, data = lirat,
-           trace = TRUE, subset = N > 1)
+fit <- vglm(cbind(R, N-R) ~ 1, betabinomial.ab, data = lirat,
+            trace = TRUE, subset = N > 1)
 coef(fit, matrix = TRUE)
 Coef(fit)
 fit@misc$rho      # The correlation parameter
@@ -206,9 +206,9 @@ all.equal(c(fitted(fit)),
 
 
 # Example 3, which is more complicated
-lirat = transform(lirat, fgrp = factor(grp))
+lirat <- transform(lirat, fgrp = factor(grp))
 summary(lirat)   # Only 5 litters in group 3
-fit2 = vglm(cbind(R, N-R) ~ fgrp + hb, betabinomial.ab(zero = 2),
+fit2 <- vglm(cbind(R, N-R) ~ fgrp + hb, betabinomial.ab(zero = 2),
            data = lirat, trace = TRUE, subset = N > 1)
 coef(fit2, matrix = TRUE)
 coef(fit2, matrix = TRUE)[, 1] -
@@ -221,11 +221,11 @@ with(lirat, plot(hb, R / N, pch = as.character(grp), col = grp, las = 1,
             xlab = "Hemoglobin level", ylab = "Proportion Dead",
             main = "Fitted values (lines)"))
 
-smalldf = with(lirat, lirat[N > 1, ])
+smalldf <- with(lirat, lirat[N > 1, ])
 for(gp in 1:4) {
-    xx = with(smalldf, hb[grp == gp])
-    yy = with(smalldf, fitted(fit2)[grp == gp])
-    ooo = order(xx)
+    xx <- with(smalldf, hb[grp == gp])
+    yy <- with(smalldf, fitted(fit2)[grp == gp])
+    ooo <- order(xx)
     lines(xx[ooo], yy[ooo], col = gp) } }
 }
 \keyword{models}

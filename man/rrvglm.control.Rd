@@ -15,7 +15,8 @@ rrvglm.control(Rank = 1, Algorithm = c("alternating", "derivative"),
     Ainit = NULL, Alpha = 0.5, Bestof = 1, Cinit = NULL,
     Etamat.colmax = 10,
     SD.Ainit = 0.02, SD.Cinit = 0.02, szero = NULL,
-    Norrr = ~1, trace = FALSE, Use.Init.Poisson.QO = FALSE, 
+    noRRR = ~1, Norrr = NA,
+    trace = FALSE, Use.Init.Poisson.QO = FALSE, 
     checkwz = TRUE, wzepsilon = .Machine$double.eps^0.75, ...)
 }
 %- maybe also `usage' for other objects documented here.
@@ -26,7 +27,7 @@ rrvglm.control(Rank = 1, Algorithm = c("alternating", "derivative"),
     Here, the vector of explanatory variables \bold{x} is partitioned into
     (\bold{x1},\bold{x2}), which is of dimension \emph{p1}+\emph{p2}.
     The variables making up \bold{x1} are given by the terms in
-    \code{Norrr} argument, and the rest of the terms comprise \bold{x2}.
+    \code{noRRR} argument, and the rest of the terms comprise \bold{x2}.
 
 
   }
@@ -132,10 +133,10 @@ rrvglm.control(Rank = 1, Algorithm = c("alternating", "derivative"),
 
   }
 % \item{ppar}{ Ignore this. }
-  \item{Norrr}{
+  \item{noRRR}{
     Formula giving terms that are \emph{not} to be included
     in the reduced-rank regression.
-    That is, \code{Norrr} specifes which explanatory variables
+    That is, \code{noRRR} specifes which explanatory variables
     are in the \eqn{x_1}{x1} vector of \code{\link{rrvglm}},
     and the rest go into \eqn{x_2}{x2}.
     The \eqn{x_1}{x1} variables constitute
@@ -143,11 +144,19 @@ rrvglm.control(Rank = 1, Algorithm = c("alternating", "derivative"),
     Those \eqn{x_2}{x2} variables which are subject to the reduced-rank
     regression correspond to the \eqn{\bold{B}_2}{\bold{B}2}
     matrix.
-    Set \code{Norrr = NULL} for the reduced-rank regression to
+    Set \code{noRRR = NULL} for the reduced-rank regression to
     be applied to every explanatory variable including the intercept.
 
 
   }
+  \item{Norrr}{
+  Defunct. Please use \code{noRRR}.
+  Use of \code{Norrr} will become an error soon.
+
+
+  }
+
+
   \item{trace}{
     Logical indicating if output should be produced for
     each iteration.
@@ -242,14 +251,16 @@ rrvglm.control(Rank = 1, Algorithm = c("alternating", "derivative"),
 }
 
 \examples{
+\dontrun{
 set.seed(111)
 pneumo <- transform(pneumo, let = log(exposure.time),
-                    x3 = runif(nrow(pneumo))) # x3 is random noise
+                            x3 = runif(nrow(pneumo))) # x3 is random noise
 fit <- rrvglm(cbind(normal, mild, severe) ~ let + x3,
               multinomial, pneumo, Rank = 1, Index.corner = 2)
 constraints(fit)
 vcov(fit)
 summary(fit)
+}
 }
 \keyword{models}
 \keyword{regression}

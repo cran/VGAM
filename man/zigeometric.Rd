@@ -56,6 +56,12 @@ zigeometric(lprob = "logit", lpstr0  = "logit",
   = (1-phi) * prob / (1-prob)} and these are returned as the fitted values.
   By default, the two linear/additive predictors are \eqn{(logit(p),
   logit(\phi))^T}{(logit(prob), logit(phi))^T}.
+  Multiple responses are handled.
+
+
+% 20130316:
+  Estimated probabilities of a structural zero and an
+  observed zero are returned as in \code{\link{zipoisson}}.
 
 
 }
@@ -121,12 +127,9 @@ head(gdata)
 fit1 <- vglm(y1 ~ x2 + x3 + x4, zigeometric, gdata, trace = TRUE)
 coef(fit1, matrix = TRUE)
 
-fit2 <- vglm(y2 ~ 1, zigeometric, gdata, trace = TRUE)
+fit2 <- vglm(cbind(y2, y3) ~ 1, zigeometric, gdata, trace = TRUE)
 coef(fit2, matrix = TRUE)
-
-fit3 <- vglm(y3 ~ 1, zigeometric, gdata, trace = TRUE)
-coef(fit3, matrix = TRUE)
-summary(fit3)
+summary(fit2)
 }
 \keyword{models}
 \keyword{regression}

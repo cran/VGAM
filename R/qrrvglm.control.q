@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2012 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2013 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -22,7 +22,8 @@ qrrvglm.control = function(Rank = 1,
           imethod = 1,
           Maxit.optim = 250,
           MUXfactor = rep(7, length = Rank),
-          Norrr = ~ 1,
+          noRRR = ~ 1,
+          Norrr = NA,
           optim.maxit = 20,
           Parscale = if (ITolerances) 0.001 else 1.0,
           SD.Cinit = 0.02,
@@ -30,8 +31,18 @@ qrrvglm.control = function(Rank = 1,
           trace = TRUE,
           Use.Init.Poisson.QO = TRUE,
           wzepsilon = .Machine$double.eps^0.75,
-          ...)
-{
+          ...) {
+
+
+
+
+
+  if (length(Norrr) != 1 || !is.na(Norrr)) {
+    warning("argument 'Norrr' has been replaced by 'noRRR'. ",
+            "Assigning the latter but using 'Norrr' will become an error in ",
+            "the next VGAM version soon.")
+    noRRR <- Norrr
+  }
 
 
 
@@ -101,7 +112,7 @@ qrrvglm.control = function(Rank = 1,
                     allowable.length = 1, positive = TRUE))
         stop("bad input for 'wzepsilon'")
 
-    ans = list(
+    ans <- list(
            Bestof = Bestof,
            checkwz=checkwz,
            Cinit = Cinit,
@@ -124,7 +135,7 @@ qrrvglm.control = function(Rank = 1,
            Maxit.optim = Maxit.optim,
            min.criterion = TRUE, # needed for calibrate 
            MUXfactor = rep(MUXfactor, length = Rank),
-           Norrr = Norrr,
+           noRRR = noRRR,
            optim.maxit = optim.maxit,
            OptimizeWrtC = TRUE,
            Parscale = Parscale,

@@ -19,14 +19,17 @@ AICvlm(object, \dots, k = 2)
   \item{object}{
   Some \pkg{VGAM} object, for example, having
   class \code{\link{vglmff-class}}.
+
   }
   \item{\dots}{
   Other possible arguments fed into
   \code{logLik} in order to compute the log-likelihood.
+
   }
   \item{k}{
   Numeric, the penalty per parameter to be used;
   the default is the classical AIC.
+
   }
 }
 \details{
@@ -37,17 +40,21 @@ AICvlm(object, \dots, k = 2)
   One could assign \eqn{k = \log(n)} (\eqn{n} the number of observations)
   for the so-called BIC or SBC (Schwarz's Bayesian criterion).
 
+
   This code relies on the log-likelihood being defined, and computed,
   for the object.
   When comparing fitted objects, the smaller the AIC, the better the fit.
   The log-likelihood and hence the AIC is only defined up to an additive
   constant.
 
+
   Any estimated scale parameter (in GLM parlance) is used as one
   parameter.
 
+
   For VGAMs the nonlinear effective degrees of freedom for each
   smoothed component is used. This formula is heuristic.
+
 
 }
 \value{
@@ -58,6 +65,7 @@ AICvlm(object, \dots, k = 2)
 \author{T. W. Yee. }
 \note{
   AIC has not been defined for QRR-VGLMs yet.
+
 
 }
 
@@ -74,6 +82,7 @@ AICvlm(object, \dots, k = 2)
   In particular, \code{AIC} should not be run on some \pkg{VGAM} family
   functions because of violation of certain regularity conditions, etc.
 
+
 }
 
 \seealso{
@@ -82,16 +91,17 @@ AICvlm(object, \dots, k = 2)
   RR-VGLMs are described in \code{\link{rrvglm-class}};
   \code{\link[stats]{AIC}}.
 
+
 }
 \examples{
-pneumo = transform(pneumo, let=log(exposure.time))
+pneumo <- transform(pneumo, let = log(exposure.time))
 (fit1 <- vglm(cbind(normal, mild, severe) ~ let,
-              cumulative(parallel=TRUE, reverse=TRUE), pneumo))
-coef(fit1, matrix=TRUE)
+              cumulative(parallel = TRUE, reverse = TRUE), pneumo))
+coef(fit1, matrix = TRUE)
 AIC(fit1)
 (fit2 <- vglm(cbind(normal, mild, severe) ~ let,
-              cumulative(parallel=FALSE, reverse=TRUE), pneumo))
-coef(fit2, matrix=TRUE)
+              cumulative(parallel = FALSE, reverse = TRUE), pneumo))
+coef(fit2, matrix = TRUE)
 AIC(fit2)
 }
 \keyword{models}

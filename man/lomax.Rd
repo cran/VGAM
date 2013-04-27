@@ -5,10 +5,12 @@
 \description{
   Maximum likelihood estimation of the 2-parameter 
   Lomax distribution.
+
 }
 \usage{
 lomax(lscale = "loge", lshape3.q = "loge",
-      iscale = NULL, ishape3.q = 2, zero = NULL)
+      iscale = NULL,   ishape3.q = NULL,
+      gshape3.q = exp(-5:5), zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -17,18 +19,31 @@ lomax(lscale = "loge", lshape3.q = "loge",
   (positive) parameters \code{scale} and \code{q}.
   See \code{\link{Links}} for more choices.
 
+
   }
   \item{iscale, ishape3.q}{
   Optional initial values for \code{scale} and \code{q}.
 
-  }
-  \item{zero}{
-  An integer-valued vector specifying which
-  linear/additive predictors are modelled as intercepts only.
-  Here, the values must be from the set \{1,2\} which correspond to
-  \code{scale}, \code{q}, respectively.
 
   }
+
+  \item{gshape3.q, zero}{
+  See
+  \code{\link{CommonVGAMffArguments}}.
+
+
+  }
+
+% \item{zero}{
+% An integer-valued vector specifying which
+% linear/additive predictors are modelled as intercepts only.
+% Here, the values must be from the set \{1,2\} which correspond to
+% \code{scale}, \code{q}, respectively.
+% }
+
+
+
+
 }
 \details{
   The 2-parameter Lomax distribution is the 4-parameter
@@ -43,7 +58,7 @@ It is probably more widely known as the Pareto (II) distribution.
 The Lomax distribution has density
   \deqn{f(y) = q / [b \{1 + y/b\}^{1+q}]}{%
         f(y) = q / [b (1 + y/b)^(1+q)]}
-  for \eqn{b > 0}, \eqn{q > 0}, \eqn{y > 0}.
+  for \eqn{b > 0}, \eqn{q > 0}, \eqn{y \geq 0}{y >= 0}.
 Here, \eqn{b} is the scale parameter \code{scale},
 and \code{q} is a shape parameter.
 The cumulative distribution function is
@@ -94,9 +109,8 @@ Hoboken, NJ, USA: Wiley-Interscience.
 }
 
 \examples{
-ldata <- data.frame(y = rlomax(n = 1000, exp(1), exp(2)))
+ldata <- data.frame(y = rlomax(n = 1000, scale =  exp(1), exp(2)))
 fit <- vglm(y ~ 1, lomax, ldata, trace = TRUE)
-fit <- vglm(y ~ 1, lomax(iscale = exp(1), ishape3.q = exp(2)), ldata, trace = TRUE)
 coef(fit, matrix = TRUE)
 Coef(fit)
 summary(fit)

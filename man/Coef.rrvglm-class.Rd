@@ -40,10 +40,14 @@ and \eqn{n} is the number of observations.
 %}
 
 \references{
+
+
 Yee, T. W. and Hastie, T. J. (2003)
 Reduced-rank vector generalized linear models.
 \emph{Statistical Modelling},
 \bold{3}, 15--41.
+
+
 }
 \author{ Thomas W. Yee }
 %\note{ ~~further notes~~ }
@@ -51,18 +55,20 @@ Reduced-rank vector generalized linear models.
 % ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-\code{\link{Coef.rrvglm}},
-\code{\link{rrvglm}},
-\code{\link{rrvglm-class}},
-\code{print.Coef.rrvglm}.
+  \code{\link{Coef.rrvglm}},
+  \code{\link{rrvglm}},
+  \code{\link{rrvglm-class}},
+  \code{print.Coef.rrvglm}.
+
+
 }
 
 \examples{
 # Rank-1 stereotype model of Anderson (1984)
-pneumo = transform(pneumo, let = log(exposure.time), x3 = runif(nrow(pneumo)))
-fit = rrvglm(cbind(normal, mild, severe) ~ let + x3, multinomial, pneumo)
+pneumo <- transform(pneumo, let = log(exposure.time), x3 = runif(nrow(pneumo)))
+fit <- rrvglm(cbind(normal, mild, severe) ~ let + x3, multinomial, pneumo)
 coef(fit, matrix = TRUE)
 Coef(fit)
-print(Coef(fit), digits = 3)
+# print(Coef(fit), digits = 3)
 }
 \keyword{classes}

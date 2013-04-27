@@ -9,6 +9,7 @@
   Density, distribution function, quantile function and random
   generation for the three parameter Frechet distribution.
 
+
 }
 \usage{
 dfrechet(x, location = 0, scale = 1, shape, log = FALSE)
@@ -22,12 +23,14 @@ rfrechet(n, location = 0, scale = 1, shape)
   \item{n}{number of observations.
     Passed into \code{\link[stats:Uniform]{runif}}.
 
+
   }
   \item{location, scale, shape}{the location parameter \eqn{a},
   scale parameter \eqn{b}, and shape parameter \eqn{s}.}
   \item{log}{
   Logical.
   If \code{log = TRUE} then the logarithm of the density is returned.
+
 
   }
 
@@ -38,12 +41,16 @@ rfrechet(n, location = 0, scale = 1, shape)
   \code{qfrechet} gives the quantile function, and
   \code{rfrechet} generates random deviates.
 
+
 }
 \references{
+
 Castillo, E., Hadi, A. S., Balakrishnan, N. Sarabia, J. S. (2005)
 \emph{Extreme Value and Related Models with Applications in
       Engineering and Science},
 Hoboken, NJ, USA: Wiley-Interscience.
+
+
 
 }
 \author{ T. W. Yee }
@@ -54,6 +61,7 @@ Hoboken, NJ, USA: Wiley-Interscience.
   of the probability density function and range restrictions on
   the parameters.
 
+
 }
 %\note{
 %}
@@ -61,16 +69,18 @@ Hoboken, NJ, USA: Wiley-Interscience.
   \code{\link{frechet2}}.
 % \code{\link{frechet3}}.
 
+
 }
 \examples{
-\dontrun{ shape = 5
-x = seq(-0.1, 3.5, len = 401)
+\dontrun{ shape <- 5
+x <- seq(-0.1, 3.5, len = 401)
 plot(x, dfrechet(x, shape = shape), type = "l", ylab = "", las = 1,
      main = "Frechet density divided into 10 equal areas; orange = cdf")
 abline(h = 0, col = "blue", lty = 2)
-qq = qfrechet(seq(0.1, 0.9,by = 0.1), shape = shape)
+qq <- qfrechet(seq(0.1, 0.9, by = 0.1), shape = shape)
 lines(qq, dfrechet(qq, shape = shape), col = "purple", lty = 3, type = "h")
-lines(x, pfrechet(q = x, shape = shape), col = "orange") }
+lines(x, pfrechet(q = x, shape = shape), col = "orange")
+}
 }
 \keyword{distribution}
 

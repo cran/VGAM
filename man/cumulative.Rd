@@ -10,10 +10,10 @@
 }
 \usage{
 cumulative(link = "logit", parallel = FALSE, reverse = FALSE,
-           mv = FALSE, intercept.apply = FALSE, whitespace = FALSE)
+           mv = FALSE, apply.parint = FALSE, whitespace = FALSE)
 }
-%scumulative(link="logit",
-%            lscale="loge", escale = list(),
+%scumulative(link = "logit",
+%            lscale = "loge", escale = list(),
 %            parallel = FALSE, sparallel = TRUE, reverse = FALSE, iscale = 1)
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -24,6 +24,7 @@ cumulative(link = "logit", parallel = FALSE, reverse = FALSE,
   e.g., for the cumulative
   \code{\link{probit}}/\code{\link{cloglog}}/\code{\link{cauchit}}/\ldots
   models.
+
 
   }
 % \item{lscale}{
@@ -81,22 +82,25 @@ cumulative(link = "logit", parallel = FALSE, reverse = FALSE,
 
 
   }
-  \item{intercept.apply}{
+  \item{apply.parint}{
   Logical.
   Whether the \code{parallel} argument should be applied to the intercept term.
   This should be set to \code{TRUE} for \code{link=}
   \code{\link{golf}},
   \code{\link{polf}},
   \code{\link{nbolf}}.
+  See \code{\link{CommonVGAMffArguments}} for more information.
 
 
   }
 % \item{iscale}{
 % Numeric. Initial values for the scale parameters.
 
+
 % }
   \item{whitespace}{
     See \code{\link{CommonVGAMffArguments}} for information.
+
 
   }
 

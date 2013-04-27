@@ -33,12 +33,14 @@ vgam(formula, family, data = list(), weights = NULL, subset = NULL,
   \item{family}{
   Same as for \code{\link{vglm}}.
 
+
   }
   \item{data}{
   an optional data frame containing the variables in the model.
   By default the variables are taken from
   \code{environment(formula)}, typically the environment from which
   \code{vgam} is called.
+
 
   }
   \item{weights, subset, na.action}{
@@ -62,6 +64,7 @@ vgam(formula, family, data = list(), weights = NULL, subset = NULL,
   The default (and presently only) method \code{vgam.fit}
   uses iteratively reweighted least squares (IRLS).
 
+
   }
   \item{constraints, model, offset}{
   Same as for \code{\link{vglm}}.
@@ -84,6 +87,7 @@ vgam(formula, family, data = list(), weights = NULL, subset = NULL,
   }
   \item{\dots}{
   further arguments passed into \code{\link{vgam.control}}.
+
 
   }
 
@@ -203,6 +207,11 @@ The \code{VGAM} Package.
 
 
 %~Make other sections like WARNING with \section{WARNING }{....} ~
+\section{WARNING}{
+  See warnings in \code{\link{vglm.control}}.
+
+
+}
 
 \seealso{
   \code{\link{vgam.control}},
@@ -220,10 +229,10 @@ The \code{VGAM} Package.
 \examples{ # Nonparametric proportional odds model 
 pneumo <- transform(pneumo, let = log(exposure.time))
 vgam(cbind(normal, mild, severe) ~ s(let),
-     cumulative(parallel = TRUE), pneumo)
+     cumulative(parallel = TRUE), data = pneumo)
 
 # Nonparametric logistic regression 
-fit <- vgam(agaaus ~ s(altitude, df = 2), binomialff, hunua)
+fit <- vgam(agaaus ~ s(altitude, df = 2), binomialff, data = hunua)
 \dontrun{ plot(fit, se = TRUE) }
 pfit <- predict(fit, type = "terms", raw = TRUE, se = TRUE)
 names(pfit)
@@ -234,12 +243,12 @@ pfit$sigma
 
 # Fit two species simultaneously 
 fit2 <- vgam(cbind(agaaus, kniexc) ~ s(altitude, df = c(2, 3)),
-             binomialff(mv = TRUE), hunua)
-coef(fit2, matrix = TRUE) # Not really interpretable 
+             binomialff(mv = TRUE), data = hunua)
+coef(fit2, matrix = TRUE)  # Not really interpretable 
 \dontrun{ plot(fit2, se = TRUE, overlay = TRUE, lcol = 1:2, scol = 1:2)
 
 ooo <- with(hunua, order(altitude))
-with(hunua, matplot(altitude[ooo], fitted(fit2)[ooo,], ylim = c(0, .8),
+with(hunua, matplot(altitude[ooo], fitted(fit2)[ooo,], ylim = c(0, 0.8),
      xlab = "Altitude (m)", ylab = "Probability of presence", las = 1,
      main = "Two plant species' response curves", type = "l", lwd = 2))
 with(hunua, rug(altitude)) }

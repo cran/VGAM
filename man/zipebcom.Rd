@@ -23,16 +23,19 @@ zipebcom(lmu12 = "cloglog", lphi12 = "logit", loratio = "loge",
   Argument \code{lmu12} should be left alone.
   Argument \code{imu12} may be of length 2 (one element for each response).
 
+
   }
   \item{lphi12}{
   Link function applied to the \eqn{\phi}{phi} parameter of the
   zero-inflated Poisson distribution (see \code{\link{zipoisson}}).
   See \code{\link{Links}} for more choices.
 
+
   }
   \item{loratio}{
   Link function applied to the odds ratio.
   See \code{\link{Links}} for more choices.
+
 
   }
   \item{iphi12, ioratio}{
@@ -43,6 +46,7 @@ zipebcom(lmu12 = "cloglog", lphi12 = "logit", loratio = "loge",
   arguments if convergence failure occurs.
   If inputted, the value of \code{iphi12} cannot be more than the sample
   proportions of zeros in either response.
+
 
   }
 
@@ -59,10 +63,12 @@ zipebcom(lmu12 = "cloglog", lphi12 = "logit", loratio = "loge",
   not being modelled as a function of the explanatory variables (apart
   from an intercept).
 
+
   }
   \item{tol}{
   Tolerance for testing independence.
   Should be some small positive numerical value.
+
 
   }
   \item{addRidge}{
@@ -70,6 +76,7 @@ zipebcom(lmu12 = "cloglog", lphi12 = "logit", loratio = "loge",
   The first two diagonal elements of the working weight matrices are 
   multiplied by \code{1+addRidge} to make it diagonally dominant,
   therefore positive-definite.
+
 
   }
 }
@@ -201,37 +208,38 @@ zipebcom(lmu12 = "cloglog", lphi12 = "logit", loratio = "loge",
   \code{\link{binom2.or}},
   \code{\link{zipoisson}},
   \code{\link{cloglog}},
-  \code{\link{CommonVGAMffArguments}}.
+  \code{\link{CommonVGAMffArguments}},
+  \code{\link{posbernoulli.tb}}.
 
 
 }
 \examples{
-mydat <- data.frame(x = seq(0, 1, len=(nsites <- 2000)))
-mydat <- transform(mydat, eta1 =  -3 + 5 * x,
-                         phi1 = logit(-1, inverse=TRUE),
+zdata <- data.frame(x2 = seq(0, 1, len = (nsites <- 2000)))
+zdata <- transform(zdata, eta1 =  -3 + 5 * x2,
+                         phi1 = logit(-1, inverse = TRUE),
                          oratio = exp(2))
-mydat <- transform(mydat, mu12 = cloglog(eta1, inverse = TRUE) * (1-phi1))
-tmat <-  with(mydat, rbinom2.or(nsites, mu1 = mu12, oratio = oratio, exch = TRUE))
-mydat <- transform(mydat, ybin1 = tmat[,1], ybin2 = tmat[,2])
+zdata <- transform(zdata, mu12 = cloglog(eta1, inverse = TRUE) * (1-phi1))
+tmat <-  with(zdata, rbinom2.or(nsites, mu1 = mu12, oratio = oratio, exch = TRUE))
+zdata <- transform(zdata, ybin1 = tmat[, 1], ybin2 = tmat[, 2])
 
-with(mydat, table(ybin1,ybin2)) / nsites  # For interest only
+with(zdata, table(ybin1, ybin2)) / nsites  # For interest only
 \dontrun{
 # Various plots of the data, for interest only
 par(mfrow = c(2, 2))
-plot(jitter(ybin1) ~ x, data = mydat, col = "blue")
+plot(jitter(ybin1) ~ x2, data = zdata, col = "blue")
 
-plot(jitter(ybin2) ~ jitter(ybin1), data = mydat, col = "blue")
+plot(jitter(ybin2) ~ jitter(ybin1), data = zdata, col = "blue")
 
-plot(mu12 ~ x, data = mydat, col = "blue", type = "l", ylim = 0:1,
+plot(mu12 ~ x2, data = zdata, col = "blue", type = "l", ylim = 0:1,
      ylab = "Probability", main = "Marginal probability and phi")
-with(mydat, abline(h = phi1[1], col = "red", lty = "dashed"))
+with(zdata, abline(h = phi1[1], col = "red", lty = "dashed"))
 
-tmat2 <- with(mydat, dbinom2.or(mu1 = mu12, oratio = oratio, exch = TRUE))
-with(mydat, matplot(x, tmat2, col = 1:4, type = "l", ylim = 0:1,
+tmat2 <- with(zdata, dbinom2.or(mu1 = mu12, oratio = oratio, exch = TRUE))
+with(zdata, matplot(x2, tmat2, col = 1:4, type = "l", ylim = 0:1,
      ylab = "Probability", main = "Joint probabilities")) }
 
 # Now fit the model to the data.
-fit <- vglm(cbind(ybin1, ybin2) ~ x, fam = zipebcom, dat = mydat, trace = TRUE)
+fit <- vglm(cbind(ybin1, ybin2) ~ x2, zipebcom, dat = zdata, trace = TRUE)
 coef(fit, matrix = TRUE)
 summary(fit)
 vcov(fit)

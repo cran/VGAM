@@ -10,6 +10,7 @@
   generation for the Singh-Maddala distribution with shape parameters \code{a}
   and \code{q}, and scale parameter \code{scale}.
 
+
 }
 \usage{
 dsinmad(x, shape1.a, scale = 1, shape3.q, log = FALSE)
@@ -36,6 +37,7 @@ rsinmad(n, shape1.a, scale = 1, shape3.q)
   \code{psinmad} gives the distribution function,
   \code{qsinmad} gives the quantile function, and
   \code{rsinmad} generates random deviates.
+
 
 }
 \references{
@@ -67,7 +69,7 @@ Hoboken, NJ: Wiley-Interscience.
 
 }
 \examples{
-sdata <- data.frame(y = rsinmad(n = 3000, 4, 6, 2))
+sdata <- data.frame(y = rsinmad(n = 3000, exp(1), exp(2), exp(1)))
 fit <- vglm(y ~ 1, sinmad(ishape1.a = 2.1), sdata, trace = TRUE, crit = "coef")
 coef(fit, matrix = TRUE)
 Coef(fit)

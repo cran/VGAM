@@ -140,7 +140,7 @@ application to financial econometrics.
     \code{\link{normal1}},
     \code{\link{cauchy1}},
     \code{\link{logistic}},
-    \code{\link{huber}},
+    \code{\link{huber2}},
     \code{\link{koenker}},
     \code{\link[stats]{TDist}}.
 

@@ -155,9 +155,10 @@ Hoboken, NJ, USA: Wiley-Interscience.
 
 }
 \examples{
+\dontrun{
 set.seed(123)
 fdata <- data.frame(y1 = rfrechet(nn <- 1000, shape = 2 + exp(1)))
-\dontrun{ with(fdata, hist(y1)) }
+with(fdata, hist(y1))
 fit2 <- vglm(y1 ~ 1, frechet2, fdata, trace = TRUE)
 coef(fit2, matrix = TRUE)
 Coef(fit2)
@@ -165,6 +166,7 @@ head(fitted(fit2))
 with(fdata, mean(y1))
 head(weights(fit2, type = "working"))
 vcov(fit2)
+}
 }
 \keyword{models}
 \keyword{regression}

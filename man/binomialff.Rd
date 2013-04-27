@@ -10,8 +10,8 @@
 }
 \usage{
 binomialff(link = "logit", dispersion = 1, mv = FALSE,
-           onedpar = !mv, parallel = FALSE, zero = NULL, bred = FALSE,
-           earg.link = FALSE)
+           onedpar = !mv, parallel = FALSE, apply.parint = FALSE,
+           zero = NULL, bred = FALSE, earg.link = FALSE)
 
 }
 %- maybe also 'usage' for other objects documented here.
@@ -70,8 +70,23 @@ binomialff(link = "logit", dispersion = 1, mv = FALSE,
 
 
   }
-  \item{bred, earg.link}{
+  \item{apply.parint, earg.link}{ 
   Details at \code{\link{CommonVGAMffArguments}}.
+
+
+  }
+  \item{bred}{
+  Details at \code{\link{CommonVGAMffArguments}}.
+  Setting \code{bred = TRUE} should work for
+  multiple responses (\code{mv = TRUE}) and
+  all \pkg{VGAM} link functions;
+  it has been tested for
+  \code{\link{logit}} only (and it gives similar
+  results to \pkg{brglm} but not identical),
+  and further testing is required.
+  One result from fitting bias reduced binary regression
+  is that finite regression coefficients occur when
+  the data is separable (see example below).
 
 
   }
@@ -198,6 +213,10 @@ binomialff(link = "logit", dispersion = 1, mv = FALSE,
     Currently, only a single known dispersion parameter is handled well.
 
 
+    See the above note regarding \code{bred}.
+
+
+
   The maximum likelihood estimate will not exist if the data is
   \emph{completely separable} or \emph{quasi-completely separable}.
   See Chapter 10 of Altman et al. (2004) for more details,
@@ -237,6 +256,20 @@ coef(glm.fail)
 vglm.ok <- vglm(cbind(r, n-r) ~ offset(logv) + 1,
                binomialff(link = cloglog), ridout, trace = TRUE)
 coef(vglm.ok)
+
+
+# Separable data
+set.seed(123)
+threshold <- 0
+bdata <- data.frame(x2 = sort(rnorm(nn <- 100)))
+bdata <- transform(bdata, y1 = ifelse(x2 < threshold, 0, 1))
+fit <- vglm(y1 ~ x2, binomialff(bred = TRUE),
+            data = bdata, criter = "coef", trace = TRUE)
+coef(fit, matrix = TRUE) # Finite!!
+summary(fit)
+\dontrun{ plot(depvar(fit) ~ x2, data = bdata, col = "blue", las = 1)
+lines(fitted(fit) ~ x2, data = bdata, col = "orange")
+abline(v = threshold, col = "gray", lty = "dashed") }
 }
 \keyword{models}
 \keyword{regression}

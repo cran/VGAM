@@ -1,10 +1,18 @@
 # These functions are
-# Copyright (C) 1998-2012 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2013 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
 
 useDynLib(VGAM)
+
+
+export(pgamma.deriv, pgamma.deriv.unscaled, truncweibull)
+
+export(binom2.rho.ss)
+
+
+export(arwz2wz)
 
 
 export(link2list)
@@ -69,11 +77,14 @@ export(plota21)
 
 
 
-export(confint_rrnb, confint_nb1)
+export(Confint.rrnb, Confint.nb1)
 export(vcovrrvglm)
 
 
-export(huggins91, dhuggins91, rhuggins91)
+export(posbernoulli.b, posbernoulli.t, posbernoulli.tb, aux.posbernoulli)
+export(N.hat.posbernoulli)
+export(dposbern, rposbern)
+export(posbern.aux)
 
 
 
@@ -87,7 +98,7 @@ export(is.empty.list)
 export(
 Build.terms.vlm,
 procVec,
-rss.vgam,
+ResSS.vgam,
 vcontrol.expression, 
 vplot, vplot.default, vplot.factor, vplot.list,
 vplot.matrix, vplot.numeric, vvplot.factor)
@@ -193,9 +204,11 @@ anova.vglm,
 bisa, dbisa, pbisa, qbisa, rbisa,
 betabinomial.ab, betabinomial,
 dexpbinomial,
-dbetabinom, pbetabinom, rbetabinom, dbetabinom.ab, pbetabinom.ab, rbetabinom.ab,
+dbetabinom,    pbetabinom,    rbetabinom,
+dbetabinom.ab, pbetabinom.ab, rbetabinom.ab,
 biplot.qrrvglm,
 dbort, rbort, borel.tanner,
+care.exp,
 cauchy, cauchy1,
 ccoef.cao, ccoef.Coef.cao, ccoef.Coef.qrrvglm, ccoef.qrrvglm,
 cdf, cdf.lms.bcg, cdf.lms.bcn,
@@ -241,8 +254,9 @@ lqnorm,
 dbilogis4, pbilogis4, rbilogis4, bilogistic4,
 logistic1, logistic2,
 logLik.vlm, lv.cao,
-lv.Coef.qrrvglm,
-lvplot.cao, lv.qrrvglm,
+latvar.Coef.qrrvglm, latvar.qrrvglm,
+lvplot.cao,
+Rank, Rank.rrvglm, Rank.qrrvglm, Rank.cao,
 Max.Coef.qrrvglm, Max.qrrvglm,
 is.bell.vlm, is.bell.rrvglm, is.bell.qrrvglm, is.bell.cao, is.bell,
 model.matrix.qrrvglm,
@@ -319,6 +333,7 @@ dzeta)
 
 
 export(lm2vlm.model.matrix) 
+export(vlm2lm.model.matrix) 
 
 
 
@@ -438,7 +453,8 @@ export(dgengamma, pgengamma, qgengamma, rgengamma)
 
 export(
 dbenf, pbenf, qbenf, rbenf,
-genbetaII, genpoisson, geometric,
+genbetaII, genpoisson,
+geometric, truncgeometric,
 dlino, plino, qlino, rlino, lino, 
 grc,
 dhzeta, phzeta, qhzeta, rhzeta, hzeta, 
@@ -450,12 +466,12 @@ dyules, pyules, ryules, yulesimon,
 logff, dlog, plog, rlog,
 loglinb2, loglinb3,
 loglog, lognormal3, lvplot.qrrvglm,
-lvplot, lvplot.rrvglm, lv, Max, MNSs,
+lvplot, lvplot.rrvglm, lv, latvar, Max, MNSs,
 dmultinomial, multinomial, margeff)
 
 
 export(
-huber, huber1, dhuber, edhuber, phuber, qhuber, rhuber)
+huber2, huber1, dhuber, edhuber, phuber, qhuber, rhuber)
 
 
 export(
@@ -472,7 +488,8 @@ deexp, peexp, qeexp, reexp)
 export(
 meplot, meplot.default, meplot.vlm,
 guplot, guplot.default, guplot.vlm,
-negbinomial, negbinomial.size, polya, normal1,
+negbinomial, negbinomial.size, polya,
+normal1, SUR,
 nbcanlink,
 tobit, dtobit, ptobit, qtobit, rtobit,
 Opt, 
@@ -568,7 +585,7 @@ logLik,
 vcov,
 deviance,
 calibrate, cdf, ccoef, df.residual,
-lv, Max, Opt, Tol,
+lv, latvar, Max, Opt, Tol,
 biplot, deplot, lvplot, qtplot, rlplot, meplot,
 trplot, vplot,
 formula, case.names, variable.names,

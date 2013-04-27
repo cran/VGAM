@@ -10,7 +10,8 @@
 }
 \usage{
 constraints(object, ...)
-constraints.vlm(object, type = c("lm", "term"), all = TRUE, which, ...)
+constraints.vlm(object, type = c("lm", "term"), all = TRUE, which,
+                matrix.out = FALSE, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -31,6 +32,14 @@ constraints.vlm(object, type = c("lm", "term"), all = TRUE, which, ...)
   \item{all, which}{
   If \code{all = FALSE} then \code{which} gives the integer index or a
   vector of logicals specifying the selection.
+
+
+  }
+  \item{matrix.out}{
+  Logical. If \code{TRUE} then the constraint matrices
+  are \code{\link[base]{cbind}()ed} together.
+  The result is usually more compact because the default
+  is a list of constraint matrices.
 
 
   }

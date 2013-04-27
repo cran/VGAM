@@ -35,13 +35,17 @@ rlomax(n, scale = 1, shape3.q)
   \code{plomax} gives the distribution function,
   \code{qlomax} gives the quantile function, and
   \code{rlomax} generates random deviates.
+
+
 }
 \references{
+
 
 Kleiber, C. and Kotz, S. (2003)
 \emph{Statistical Size Distributions in Economics and
              Actuarial Sciences},
 Hoboken, NJ, USA: Wiley-Interscience.
+
 
 }
 \author{ T. W. Yee }
@@ -49,21 +53,41 @@ Hoboken, NJ, USA: Wiley-Interscience.
   See \code{\link{lomax}}, which is the \pkg{VGAM} family function
   for estimating the parameters by maximum likelihood estimation.
 
+
 }
 \note{
   The Lomax distribution is a special case of the 4-parameter
   generalized beta II distribution.
+
 
 }
 \seealso{
   \code{\link{lomax}},
   \code{\link{genbetaII}}.
 
+
 }
 \examples{
-ldata <- data.frame(y = rlomax(n = 2000, 6, 2))
-fit <- vglm(y ~ 1, lomax(ishape3.q = 2.1), ldata, trace = TRUE, crit = "coef")
-coef(fit, matrix = TRUE)
-Coef(fit)
+probs <- seq(0.1, 0.9, by = 0.1)
+max(abs(plomax(qlomax(p = probs, shape3.q =  1), shape3.q = 1) - probs)) # Should be 0
+
+\dontrun{ par(mfrow = c(1, 2))
+x <- seq(-0.01, 5, len = 401)
+plot(x, dexp(x), type = "l", col = "black", ylab = "", las = 1, ylim = c(0, 3),
+     main = "Black is standard exponential, others are dlomax(x, shape3.q)")
+lines(x, dlomax(x, shape3.q = 1), col = "orange")
+lines(x, dlomax(x, shape3.q = 2), col = "blue")
+lines(x, dlomax(x, shape3.q = 5), col = "green")
+legend("topright", col = c("orange","blue","green"), lty = rep(1, len = 3),
+       legend = paste("shape3.q =", c(1, 2, 5)))
+
+plot(x, pexp(x), type = "l", col = "black", ylab = "", las = 1,
+     main = "Black is standard exponential, others are plomax(x, shape3.q)")
+lines(x, plomax(x, shape3.q = 1), col = "orange")
+lines(x, plomax(x, shape3.q = 2), col = "blue")
+lines(x, plomax(x, shape3.q = 5), col = "green")
+legend("bottomright", col = c("orange","blue","green"), lty = rep(1, len = 3),
+       legend = paste("shape3.q =", c(1, 2, 5)))
+}
 }
 \keyword{distribution}

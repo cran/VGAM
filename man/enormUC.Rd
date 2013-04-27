@@ -11,6 +11,7 @@
   expectile function and random generation for the distribution
   associated with the expectiles of a normal distribution.
 
+
 }
 \usage{
 denorm(x, mean = 0, sd = 1, log = FALSE)
@@ -22,10 +23,18 @@ renorm(n, mean = 0, sd = 1)
 \arguments{
   \item{x, p, q}{
   See \code{\link{deunif}}.
+
+
   }
-  \item{n, mean, sd, log}{See \code{\link[stats:Normal]{rnorm}}.}
+  \item{n, mean, sd, log}{
+  See \code{\link[stats:Normal]{rnorm}}.
+
+
+  }
   \item{Maxit_nr, Tol_nr}{
   See \code{\link{deunif}}.
+
+
   }
 }
 \details{
@@ -50,6 +59,7 @@ For \code{qenorm} the Newton-Raphson algorithm is used to solve for
 Numerical problems may occur when values of \code{p} are
 very close to 0 or 1.
 
+
 }
 \value{
   \code{denorm(x)} gives the density function \eqn{g(x)}.
@@ -57,6 +67,7 @@ very close to 0 or 1.
   \code{qenorm(p)} gives the expectile function:
   the value \eqn{y} such that \eqn{G(y)=p}.
   \code{renorm(n)} gives \eqn{n} random variates from \eqn{G}.
+
 
 }
 
@@ -85,32 +96,33 @@ very close to 0 or 1.
   \code{\link{amlnormal}},
   \code{\link{lms.bcn}}.
 
+
 }
 
 \examples{
-my_p = 0.25; y = rnorm(nn <- 1000)
-(myexp = qenorm(my_p))
-sum(myexp - y[y <= myexp]) / sum(abs(myexp - y))  # Should be my_p
+my_p <- 0.25; y <- rnorm(nn <- 1000)
+(myexp <- qenorm(my_p))
+sum(myexp - y[y <= myexp]) / sum(abs(myexp - y)) # Should be my_p
 
 # Non-standard normal
-mymean = 1; mysd = 2
-yy = rnorm(nn, mymean, mysd)
-(myexp = qenorm(my_p, mymean, mysd))
+mymean <- 1; mysd <- 2
+yy <- rnorm(nn, mymean, mysd)
+(myexp <- qenorm(my_p, mymean, mysd))
 sum(myexp - yy[yy <= myexp]) / sum(abs(myexp - yy)) # Should be my_p
 penorm(-Inf, mymean, mysd)     #  Should be 0
 penorm( Inf, mymean, mysd)     #  Should be 1
 penorm(mean(yy), mymean, mysd) #  Should be 0.5
 abs(qenorm(0.5, mymean, mysd) - mean(yy)) #  Should be 0
-abs(penorm(myexp, mymean, mysd) - my_p)  #  Should be 0
-integrate(f = denorm, lower=-Inf, upper = Inf,
+abs(penorm(myexp, mymean, mysd) - my_p)   #  Should be 0
+integrate(f = denorm, lower = -Inf, upper = Inf,
           mymean, mysd) #  Should be 1
 
 \dontrun{
 par(mfrow = c(2, 1))
-yy = seq(-3, 3, len = nn)
+yy <- seq(-3, 3, len = nn)
 plot(yy, denorm(yy), type = "l", col="blue", xlab = "y", ylab = "g(y)",
      main = "g(y) for N(0,1); dotted green is f(y) = dnorm(y)")
-lines(yy, dnorm(yy), col="darkgreen", lty="dotted", lwd=2) # 'original'
+lines(yy, dnorm(yy), col = "darkgreen", lty = "dotted", lwd = 2) # 'original'
 
 plot(yy, penorm(yy), type = "l", col = "blue", ylim = 0:1,
      xlab = "y", ylab = "G(y)", main = "G(y) for N(0,1)")

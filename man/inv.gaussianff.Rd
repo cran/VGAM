@@ -10,7 +10,7 @@
 \usage{
 inv.gaussianff(lmu = "loge", llambda = "loge",
                imethod = 1, ilambda = NULL,
-               parallel = FALSE, intercept.apply = FALSE,
+               parallel = FALSE, apply.parint = FALSE,
                shrinkage.init = 0.99, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -21,7 +21,7 @@ inv.gaussianff(lmu = "loge", llambda = "loge",
   See \code{\link{Links}} for more choices.
 
   }
-  \item{ilambda, parallel, intercept.apply}{ 
+  \item{ilambda, parallel, apply.parint}{ 
   See \code{\link{CommonVGAMffArguments}} for more information.
 
   }

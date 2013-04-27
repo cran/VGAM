@@ -20,6 +20,7 @@ elogit(theta, min = 0, max = 1, bminvalue = NULL, bmaxvalue = NULL,
   Numeric or character.
   See below for further details.
 
+
   }
   \item{bvalue, bminvalue, bmaxvalue}{
   See \code{\link{Links}}.
@@ -120,7 +121,8 @@ elogit(theta, min = 0, max = 1, bminvalue = NULL, bmaxvalue = NULL,
     \code{\link{cloglog}},
     \code{\link{cauchit}},
     \code{\link{logistic1}},
-    \code{\link{loge}}.
+    \code{\link{loge}},
+    \code{\link{mlogit}}.
 
 
  }

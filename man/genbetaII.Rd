@@ -60,7 +60,7 @@ genbetaII(lshape1.a = "loge", lscale = "loge", lshape2.p = "loge", lshape3.q = "
 The 4-parameter generalized beta II distribution has density
   \deqn{f(y) = a y^{ap-1} / [b^{ap} B(p,q) \{1 + (y/b)^a\}^{p+q}]}{%
         f(y) = a y^(ap-1) / [b^(ap) B(p,q) (1 + (y/b)^a)^(p+q)]}
-  for \eqn{a > 0}, \eqn{b > 0}, \eqn{p > 0}, \eqn{q > 0}, \eqn{y > 0}.
+  for \eqn{a > 0}, \eqn{b > 0}, \eqn{p > 0}, \eqn{q > 0}, \eqn{y \geq 0}{y >= 0}.
 Here \eqn{B} is the beta function, and 
 \eqn{b} is the scale parameter \code{scale},
 while the others are shape parameters.
@@ -132,6 +132,7 @@ More improvements could be made here.
 }
 
 \examples{
+\dontrun{
 gdata <- data.frame(y = rsinmad(3000, exp(2), exp(2), exp(1))) # A special case!
 fit <- vglm(y ~ 1, genbetaII, gdata, trace = TRUE)
 fit <- vglm(y ~ 1, data = gdata, trace = TRUE,
@@ -139,6 +140,7 @@ fit <- vglm(y ~ 1, data = gdata, trace = TRUE,
 coef(fit, matrix = TRUE)
 Coef(fit)
 summary(fit)
+}
 }
 \keyword{models}
 \keyword{regression}

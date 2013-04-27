@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2012 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2013 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -42,11 +42,11 @@ vglm <- function(formula,
          stop("invalid 'method': ", method))
   mt <- attr(mf, "terms")
 
-  xlev = .getXlevels(mt, mf)
+  xlev <- .getXlevels(mt, mf)
   y <- model.response(mf, "any") # model.extract(mf, "response")
   x <- if (!is.empty.model(mt)) model.matrix(mt, mf, contrasts) else
        matrix(, NROW(y), 0)
-  attr(x, "assign") = attrassigndefault(x, mt)
+  attr(x, "assign") <- attrassigndefault(x, mt)
 
 
 
@@ -57,7 +57,7 @@ vglm <- function(formula,
     if (!is.null(subset))
       stop("argument 'subset' cannot be used when ",
             "argument 'form2' is used")
-    retlist = shadowvglm(formula =
+    retlist <- shadowvglm(formula =
                  form2,
                  family = family, data = data,
                  na.action = na.action,
@@ -80,7 +80,7 @@ vglm <- function(formula,
         stop("number of rows of 'y' and 'Ym2' are unequal")
     }
   } else {
-    Xm2 = Ym2 = NULL
+    Xm2 <- Ym2 <- NULL
   }
 
 
@@ -152,58 +152,58 @@ vglm <- function(formula,
   if (!smart) answer@smart.prediction <- list(smart.arg = FALSE)
 
   if (qr.arg) {
-    class(fit$qr) = "list"
-    slot(answer, "qr") = fit$qr
+    class(fit$qr) <- "list"
+    slot(answer, "qr") <- fit$qr
   }
   if (length(attr(x, "contrasts")))
-    slot(answer, "contrasts") = attr(x, "contrasts")
+    slot(answer, "contrasts") <- attr(x, "contrasts")
   if (length(fit$fitted.values))
-    slot(answer, "fitted.values") = as.matrix(fit$fitted.values)
-  slot(answer, "na.action") = if (length(aaa <- attr(mf, "na.action")))
+    slot(answer, "fitted.values") <- as.matrix(fit$fitted.values)
+  slot(answer, "na.action") <- if (length(aaa <- attr(mf, "na.action")))
     list(aaa) else list()
   if (length(offset))
-    slot(answer, "offset") = as.matrix(offset)
+    slot(answer, "offset") <- as.matrix(offset)
 
   if (length(fit$weights))
-      slot(answer, "weights") = as.matrix(fit$weights)
+      slot(answer, "weights") <- as.matrix(fit$weights)
 
   if (x.arg)
-    slot(answer, "x") = fit$x # The 'small' (lm) design matrix
+    slot(answer, "x") <- fit$x # The 'small' (lm) design matrix
   if (x.arg && length(Xm2))
-    slot(answer, "Xm2") = Xm2 # The second (lm) design matrix
+    slot(answer, "Xm2") <- Xm2 # The second (lm) design matrix
   if (y.arg && length(Ym2))
-    slot(answer, "Ym2") = as.matrix(Ym2) # The second response
+    slot(answer, "Ym2") <- as.matrix(Ym2) # The second response
   if (!is.null(form2))
-    slot(answer, "callXm2") = retlist$call
-  answer@misc$formula = formula
-  answer@misc$form2 = form2
+    slot(answer, "callXm2") <- retlist$call
+  answer@misc$formula <- formula
+  answer@misc$form2 <- form2
 
   if (length(xlev))
-    slot(answer, "xlevels") = xlev
+    slot(answer, "xlevels") <- xlev
   if (y.arg)
-    slot(answer, "y") = as.matrix(fit$y)
+    slot(answer, "y") <- as.matrix(fit$y)
 
 
-  slot(answer, "control") = fit$control
-  slot(answer, "extra") = if (length(fit$extra)) {
+  slot(answer, "control") <- fit$control
+  slot(answer, "extra") <- if (length(fit$extra)) {
     if (is.list(fit$extra)) fit$extra else {
       warning("'extra' is not a list, therefore placing ",
               "'extra' into a list")
       list(fit$extra)
     }
   } else list() # R-1.5.0
-  slot(answer, "iter") = fit$iter
-  slot(answer, "post") = fit$post
+  slot(answer, "iter") <- fit$iter
+  slot(answer, "post") <- fit$post
 
 
-  fit$predictors = as.matrix(fit$predictors)  # Must be a matrix
+  fit$predictors <- as.matrix(fit$predictors)  # Must be a matrix
 
   if (length(fit$misc$predictors.names) == ncol(fit$predictors))
-    dimnames(fit$predictors) = list(dimnames(fit$predictors)[[1]],
+    dimnames(fit$predictors) <- list(dimnames(fit$predictors)[[1]],
                                     fit$misc$predictors.names)
-  slot(answer, "predictors") = fit$predictors
+  slot(answer, "predictors") <- fit$predictors
   if (length(fit$prior.weights))
-    slot(answer, "prior.weights") = as.matrix(fit$prior.weights)
+    slot(answer, "prior.weights") <- as.matrix(fit$prior.weights)
 
 
   answer
@@ -250,11 +250,11 @@ shadowvglm <-
 
     x <- y <- NULL 
 
-    xlev = .getXlevels(mt, mf)
+    xlev <- .getXlevels(mt, mf)
     y <- model.response(mf, "any") # model.extract(mf, "response")
     x <- if (!is.empty.model(mt)) model.matrix(mt, mf, contrasts) else
          matrix(, NROW(y), 0)
-    attr(x, "assign") = attrassigndefault(x, mt)
+    attr(x, "assign") <- attrassigndefault(x, mt)
 
     list(Xm2=x, Ym2=y, call=ocall)
 }

@@ -32,6 +32,8 @@ For detailed control of fitting,
 each of these has its own control function, e.g., 
 \code{\link{vglm.control}}.
 The package uses S4 (see \code{\link[methods]{methods-package}}).
+A companion package called \pkg{VGAMdata} contains some larger
+data sets which were shifted from \pkg{VGAM}.
 
 
 The classes of GLMs and GAMs are special cases of VGLMs and VGAMs.
@@ -87,13 +89,19 @@ Maintainer: Thomas Yee \email{t.yee@auckland.ac.nz}.
   This package is undergoing continual development and improvement.
   Until my monograph comes out and this package is released as version 1.0-0
   the user should treat everything subject to change.
-  This includes the family function names, many of the internals,
-  the use of link functions, and slot names.
+  This includes the
+  family function names,
+  argument names,
+  many of the internals,
+  the use of link functions,
+  and slot names.
   Some future pain can be minimized by using good programming
   techniques, e.g., using extractor/accessor functions such as
   \code{coef()}, \code{weights()}, \code{vcov()},
   \code{predict()}.
   Nevertheless, please expect changes in all aspects of the package.
+  See the \code{NEWS} file for a list of changes from version to
+  version.
 
 
 
@@ -106,14 +114,6 @@ Maintainer: Thomas Yee \email{t.yee@auckland.ac.nz}.
 Yee, T. W.
 Vector Generalized Linear and Additive Models.
 \emph{Monograph in preparation}.
-
-
-
-Yee, T. W. (2010)
-The \pkg{VGAM} package for categorical data analysis.
-\emph{Journal of Statistical Software},
-\bold{32}, 1--34.
-\url{http://www.jstatsoft.org/v32/i10/}.
 
 
 Yee, T. W. and Hastie, T. J. (2003)
@@ -150,6 +150,20 @@ The \code{VGAM} Package.
 \emph{R News}, \bold{8}, 28--39.
 
 
+Yee, T. W. (2010)
+The \pkg{VGAM} package for categorical data analysis.
+\emph{Journal of Statistical Software},
+\bold{32}, 1--34.
+\url{http://www.jstatsoft.org/v32/i10/}.
+
+
+  Yee, T. W. (2013)
+  Reduced-rank vector generalized linear models with two linear predictors.
+  \emph{Computational Statistics and Data Analysis}.
+
+
+
+
 (Oldish) documentation accompanying the \pkg{VGAM} package at
 \url{http://www.stat.auckland.ac.nz/~yee/VGAM}
 contains some further information and examples.
@@ -178,12 +192,12 @@ contains some further information and examples.
 \examples{
 # Example 1; proportional odds model
 pneumo <- transform(pneumo, let = log(exposure.time))
-(fit <- vglm(cbind(normal, mild, severe) ~ let, propodds, pneumo))
-depvar(fit) # Better than using fit@y; dependent variable (response)
-weights(fit, type = "prior") # Number of observations
-coef(fit, matrix = TRUE)     # p.179, in McCullagh and Nelder (1989)
-constraints(fit)             # Constraint matrices
-summary(fit)
+(fit1 <- vglm(cbind(normal, mild, severe) ~ let, propodds, pneumo))
+depvar(fit1) # Better than using fit1@y; dependent variable (response)
+weights(fit1, type = "prior") # Number of observations
+coef(fit1, matrix = TRUE)     # p.179, in McCullagh and Nelder (1989)
+constraints(fit1)             # Constraint matrices
+summary(fit1)
 
 
 # Example 2; zero-inflated Poisson model
@@ -192,56 +206,57 @@ zdata <- transform(zdata, pstr0  = logit(-0.5 + 1*x2, inverse = TRUE),
                           lambda = loge(  0.5 + 2*x2, inverse = TRUE))
 zdata <- transform(zdata, y = rzipois(nn, lambda, pstr0 = pstr0))
 with(zdata, table(y))
-fit <- vglm(y ~ x2, zipoisson, zdata, trace = TRUE)
-coef(fit, matrix = TRUE)  # These should agree with the above values
+fit2 <- vglm(y ~ x2, zipoisson, zdata, trace = TRUE)
+coef(fit2, matrix = TRUE)  # These should agree with the above values
 
 
 # Example 3; fit a two species GAM simultaneously
-fit2 <- vgam(cbind(agaaus, kniexc) ~ s(altitude, df = c(2, 3)),
+fit3 <- vgam(cbind(agaaus, kniexc) ~ s(altitude, df = c(2, 3)),
             binomialff(mv = TRUE), hunua)
-coef(fit2, matrix = TRUE)   # Not really interpretable
-\dontrun{ plot(fit2, se = TRUE, overlay = TRUE, lcol = 1:2, scol = 1:2)
+coef(fit3, matrix = TRUE)   # Not really interpretable
+\dontrun{ plot(fit3, se = TRUE, overlay = TRUE, lcol = 3:4, scol = 3:4)
 
 ooo <- with(hunua, order(altitude))
-with(hunua,  matplot(altitude[ooo], fitted(fit2)[ooo,], type = "l", lwd = 2,
+with(hunua,  matplot(altitude[ooo], fitted(fit3)[ooo, ], type = "l",
+     lwd = 2, col = 3:4,
      xlab = "Altitude (m)", ylab = "Probability of presence", las = 1,
      main = "Two plant species' response curves", ylim = c(0, 0.8)))
 with(hunua, rug(altitude)) }
 
 
 # Example 4; LMS quantile regression
-fit <- vgam(BMI ~ s(age, df = c(4, 2)), lms.bcn(zero = 1), dat = bmi.nz,
-           trace = TRUE)
-head(predict(fit))
-head(fitted(fit))
-head(bmi.nz) # Person 1 is near the lower quartile among people his age
-head(cdf(fit))
+fit4 <- vgam(BMI ~ s(age, df = c(4, 2)), lms.bcn(zero = 1),
+             data = bmi.nz, trace = TRUE)
+head(predict(fit4))
+head(fitted(fit4))
+head(bmi.nz)  # Person 1 is near the lower quartile among people his age
+head(cdf(fit4))
 
 \dontrun{ par(mfrow = c(1, 1), bty = "l", mar = c(5,4,4,3)+0.1, xpd = TRUE)
-qtplot(fit, percentiles = c(5,50,90,99), main = "Quantiles", las = 1,
+qtplot(fit4, percentiles = c(5,50,90,99), main = "Quantiles", las = 1,
        xlim = c(15, 90), ylab = "BMI", lwd = 2, lcol = 4) # Quantile plot
 
 ygrid <- seq(15, 43, len = 100)  # BMI ranges
 par(mfrow = c(1, 1), lwd = 2) # Density plot
-aa <- deplot(fit, x0 = 20, y = ygrid, xlab = "BMI", col = "black",
+aa <- deplot(fit4, x0 = 20, y = ygrid, xlab = "BMI", col = "black",
     main = "Density functions at Age = 20 (black), 42 (red) and 55 (blue)")
 aa
-aa <- deplot(fit, x0 = 42, y = ygrid, add = TRUE, llty = 2, col = "red")
-aa <- deplot(fit, x0 = 55, y = ygrid, add = TRUE, llty = 4, col = "blue",
+aa <- deplot(fit4, x0 = 42, y = ygrid, add = TRUE, llty = 2, col = "red")
+aa <- deplot(fit4, x0 = 55, y = ygrid, add = TRUE, llty = 4, col = "blue",
             Attach = TRUE)
 aa@post$deplot  # Contains density function values
 }
 
 
 # Example 5; GEV distribution for extremes
-(fit <- vglm(maxtemp ~ 1, egev, data = oxtemp, trace = TRUE))
-head(fitted(fit))
-coef(fit, matrix = TRUE)
-Coef(fit)
-vcov(fit)
-vcov(fit, untransform = TRUE)
-sqrt(diag(vcov(fit))) # Approximate standard errors
-\dontrun{ rlplot(fit) }
+(fit5 <- vglm(maxtemp ~ 1, egev, data = oxtemp, trace = TRUE))
+head(fitted(fit5))
+coef(fit5, matrix = TRUE)
+Coef(fit5)
+vcov(fit5)
+vcov(fit5, untransform = TRUE)
+sqrt(diag(vcov(fit5)))  # Approximate standard errors
+\dontrun{ rlplot(fit5) }
 }
 
 

@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2012 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2013 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -53,21 +53,21 @@ setMethod("df.residual", "vlm", function(object, ...)
 nvar_vlm <- function(object, ...) {
 
 
-  M = npred(object)
-  allH = matrix(unlist(constraints(object, type = "lm")), nrow = M)
-  checkNonZero = function(m) sum(as.logical(m))
-  numPars = apply(allH, 1, checkNonZero)
+  M <- npred(object)
+  allH <- matrix(unlist(constraints(object, type = "lm")), nrow = M)
+  checkNonZero <- function(m) sum(as.logical(m))
+  numPars <- apply(allH, 1, checkNonZero)
   if (length(object@misc$predictors.names) == M)
-    names(numPars) = object@misc$predictors.names
+    names(numPars) <- object@misc$predictors.names
 
 
-  NumPars = rep(0, length = M)
+  NumPars <- rep(0, length = M)
   for (jay in 1:M) {
-    X_lm_jay = model.matrix(object, type = "lm", lapred.index = jay)
-    NumPars[jay] = ncol(X_lm_jay)
+    X_lm_jay <- model.matrix(object, type = "lm", lapred.index = jay)
+    NumPars[jay] <- ncol(X_lm_jay)
   }
   if (length(object@misc$predictors.names) == M)
-    names(NumPars) = object@misc$predictors.names
+    names(NumPars) <- object@misc$predictors.names
   if (!all(NumPars == numPars)) {
     print(NumPars - numPars) # Should be all 0s
     stop("something wrong in nvar_vlm()")

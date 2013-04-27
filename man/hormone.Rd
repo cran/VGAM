@@ -2,12 +2,12 @@
 \alias{hormone}
 \docType{data}
 \title{
-  Hormone Data
+  Hormone Assay Data
 
 }
 \description{
-  A data set described in Carroll and Ruppert (1988) 
-  concerning hormone assay.
+  A hormone assay data set from Carroll and Ruppert (1988).
+
 
 %%  ~~ A concise (1-5 lines) description of the dataset. ~~
 }
@@ -18,10 +18,12 @@
   \describe{
     \item{\code{X}}{a numeric vector, suitable as the x-axis in
     a scatter plot.
+    The reference method.
 
     }
     \item{\code{Y}}{a numeric vector, suitable as the y-axis in
     a scatter plot.
+    The test method.
 
     }
   }
@@ -29,8 +31,22 @@
 \details{
 %%  ~~ If necessary, more details than the __description__ above ~~
 
-The data is described in
-Carroll and Ruppert (1988).
+The data is given in Table 2.4 of
+Carroll and Ruppert (1988), and was downloaded
+from \url{http://www.stat.tamu.edu/~carroll}.
+The book describes the data as follows.
+The data are the results of two assay methods for hormone
+data; the scale of the data as presented is not
+particularly meaningful, and the original source
+of the data refused permission to divulge further
+information. As in a similar example of
+Leurgans (1980), the old or reference method is
+being used to predict the new or test method.
+The overall goal is to see whether we can reproduce
+the test-method measurements with the reference-method
+measurements.
+Thus calibration might be of interest for the data.
+
 
 
 }
@@ -39,6 +55,8 @@ Carroll and Ruppert (1988).
 % Originally,
 
 %}
+
+
 \references{
 
   Carroll, R. J. and Ruppert, D. (1988) 
@@ -46,15 +64,24 @@ Carroll and Ruppert (1988).
   New York, USA: Chapman & Hall.
 
 
-  Yee, T. W. (2012)
-  Two-parameter reduced-rank vector generalized linear models.
-  \emph{In preparation}.
+  Leurgans, S. (1980)
+  Evaluating laboratory measurement techniques.
+  \emph{Biostatistics Casebook}.
+  Eds.: Miller, R. G. Jr., and Efron, B. and
+  Brown, B. W. Jr., and Moses, L.
+  New York, USA: Wiley.
+
+
+  Yee, T. W. (2013)
+  Reduced-rank vector generalized linear models with two linear predictors.
+  \emph{Computational Statistics and Data Analysis}.
+
 
 }
 
 \seealso{
-  \code{\link{normal1}},
-  \code{\link{rrvglm}}.
+  \code{\link[VGAM]{normal1}},
+  \code{\link[VGAM]{rrvglm}}.
 
 
 }
@@ -62,6 +89,7 @@ Carroll and Ruppert (1988).
 
 
 \examples{
+\dontrun{
 data(hormone)
 summary(hormone)
 
@@ -80,7 +108,8 @@ logLik(modelI)
 logLik(modelII) # Less than logLik(modelI)
 
 
-# Reproduce Equations (1)--(3) on p.65 of Carroll and Ruppert (1988)
+# Reproduce the top 3 equations on p.65 of Carroll and Ruppert (1988).
+# They are called Equations (1)--(3) here.
 
 # Equation (1)
 hormone <- transform(hormone, rX = 1 / X)
@@ -89,31 +118,37 @@ fit1 <- vglm(Y ~ 1 + X + rX, family = normal1(zero = NULL),
              constraints = clist, data = hormone, trace = TRUE)
 coef(fit1, matrix = TRUE)
 summary(fit1) # Actually, the intercepts do not seem significant
-\dontrun{ plot(Y ~ X, hormone, col = "blue")
-lines(fitted(fit1) ~ X, hormone, col = "orange") }
+plot(Y ~ X, hormone, col = "blue")
+lines(fitted(fit1) ~ X, hormone, col = "orange")
 
 # Equation (2)
 fit2 <- rrvglm(Y ~ 1 + X, normal1(zero = NULL), hormone, trace = TRUE)
 coef(fit2, matrix = TRUE)
-\dontrun{ plot(Y ~ X, hormone, col = "blue")
+plot(Y ~ X, hormone, col = "blue")
 lines(fitted(fit2) ~ X, hormone, col = "red")
 # Add +- 2 SEs
 lines(fitted(fit2) + 2 * exp(predict(fit2)[, "log(sd)"]) ~ X,
       hormone, col = "orange")
 lines(fitted(fit2) - 2 * exp(predict(fit2)[, "log(sd)"]) ~ X,
-      hormone, col = "orange") }
+      hormone, col = "orange")
 
 # Equation (3)
 # Does not fit well because the loge link for the mean is not good.
 fit3 <- rrvglm(Y ~ 1 + X, maxit = 300, data = hormone, trace = TRUE,
                normal1(lmean = "loge", zero = NULL))
 coef(fit3, matrix = TRUE)
-\dontrun{ plot(Y ~ X, hormone, col = "blue") # Does not look okay.
+plot(Y ~ X, hormone, col = "blue") # Does not look okay.
 lines(exp(predict(fit3)[, 1]) ~ X, hormone, col = "red")
 # Add +- 2 SEs
 lines(fitted(fit3) + 2 * exp(predict(fit3)[, "log(sd)"]) ~ X,
       hormone, col = "orange")
 lines(fitted(fit3) - 2 * exp(predict(fit3)[, "log(sd)"]) ~ X,
-      hormone, col = "orange") }
+      hormone, col = "orange")
+}
 }
 \keyword{datasets}
+
+
+% from \url{http://www.stat.tamu.edu/~carroll/data/hormone_data.txt}.
+
+

@@ -7,7 +7,7 @@ Produces a trajectory plot for
 \emph{quadratic reduced-rank vector generalized linear models}
 (QRR-VGLMs).
 It is only applicable for rank-1 models with argument
-\code{Norrr = ~ 1}.
+\code{noRRR = ~ 1}.
 
 }
 \usage{
@@ -104,7 +104,7 @@ trplot.qrrvglm(object, whichSpecies = NULL, add=FALSE, plot.it = TRUE,
 
   }
   \item{check.ok}{ Logical. Whether a check is performed to see
-  that \code{Norrr = ~ 1} was used. 
+  that \code{noRRR = ~ 1} was used. 
   It doesn't make sense to have a trace plot unless this is so.
 
 
@@ -130,7 +130,7 @@ In the above, \eqn{M} is the number of species selected for plotting,
 so there will be \eqn{M(M-1)/2}{M*(M-1)/2} curves/trajectories in total.
 
 
-A trajectory plot will be fitted only if \code{Norrr = ~ 1} because
+A trajectory plot will be fitted only if \code{noRRR = ~ 1} because
 otherwise the trajectory will not be a smooth function of the latent
 variables.
 

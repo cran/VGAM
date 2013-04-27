@@ -48,7 +48,7 @@ c  values.
 c
       integer k,left,nderiv,   i,ideriv,il,j,jlow,jp1mid,kp1,kp1mm,
      *        ldummy,m,mhigh
-      double precision a(k,k),dbiatx(k,nderiv),t(1),x
+      double precision a(k,k),dbiatx(k,nderiv),t(*),x
       double precision factor,fkp1mm,sum
       mhigh = max0(min0(nderiv,k),1)
 c     mhigh is usually equal to nderiv.
@@ -186,7 +186,7 @@ c  gorithm  (8)  in chapter x of the text.
 c
       parameter(jmax = 20)
       integer index,jhigh,left,   i,j,jp1
-      double precision biatx(jhigh),t(1),x,   deltal(jmax)
+      double precision biatx(jhigh),t(*),x,   deltal(jmax)
       double precision deltar(jmax),saved,term
 c     dimension biatx(jout), t(left+jout)
 current fortran standard makes it impossible to specify the length of
@@ -277,7 +277,7 @@ c  be the desired number  (d**j)f(x). (see x.(17)-(19) of text).
 c
       parameter(kmax = 20)
       integer jderiv,k,n,   i,ilo,imk,j,jc,jcmin,jcmax,jj,km1,mflag,nmi
-      double precision bcoef(n),t(1),x
+      double precision bcoef(n),t(*),x
       double precision aj(kmax),dm(kmax),dp(kmax),fkmj
 c     dimension t(n+k)
 current fortran standard makes it impossible to specify the length of
@@ -476,7 +476,14 @@ c T.Yee has renamed dbpbfa to dbpbfa8 and dpbsl to dpbsl8, to ensure uniqueness
 
       subroutine  dpbfa8(abd,lda,n,m,info)
       integer          lda,n,m,info
-      double precision abd(lda,1)
+      double precision abd(lda,*)
+c
+c
+c 20130419; Originally:
+c     double precision abd(lda,1)
+c
+c
+c
 c
 c     dpbfa8 factors a double precision symmetric positive definite
 c     matrix stored in band form.
@@ -571,7 +578,12 @@ c     ......exit
 
       subroutine  dpbsl8(abd,lda,n,m,b)
       integer lda,n,m
-      double precision abd(lda,1),b(1)
+      double precision abd(lda,*),b(*)
+c
+c
+c 20130419; originally:
+c     double precision abd(lda,1),b(1)
+c
 c
 c     dpbsl8 solves the double precision symmetric positive definite
 c     band system  a*x = b

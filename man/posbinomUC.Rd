@@ -75,7 +75,7 @@ rposbinom(n, size, prob)
 %None.
 %}
 
-\author{ T. W. Yee }
+\author{ T. W. Yee. }
 \note{
   For \code{dposbinom()}, if arguments \code{size} or \code{prob}
   equal 0 then a \code{NaN} is returned.
@@ -96,6 +96,7 @@ rposbinom(n, size, prob)
 
 \seealso{ 
   \code{\link{posbinomial}},
+  \code{\link{dposbern}},
   \code{\link{zabinomial}},
   \code{\link{zibinomial}},
   \code{\link[stats:Binomial]{rbinom}}.
@@ -105,15 +106,15 @@ rposbinom(n, size, prob)
 \examples{
 prob <- 0.2; size <- 10
 table(y <- rposbinom(n = 1000, size, prob))
-mean(y) # Sample mean
-size * prob / (1-(1-prob)^size) # Population mean
+mean(y)  # Sample mean
+size * prob / (1-(1-prob)^size)  # Population mean
 
 (ii <- dposbinom(0:size, size, prob))
-cumsum(ii) - pposbinom(0:size, size, prob) # Should be 0s
+cumsum(ii) - pposbinom(0:size, size, prob)  # Should be 0s
 table(rposbinom(100, size, prob))
 
 table(qposbinom(runif(1000), size, prob))
-round(dposbinom(1:10, size, prob) * 1000) # Should be similar
+round(dposbinom(1:10, size, prob) * 1000)  # Should be similar
 
 \dontrun{ barplot(rbind(dposbinom(x = 0:size, size, prob),
                            dbinom(x = 0:size, size, prob)),

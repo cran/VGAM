@@ -11,7 +11,7 @@
 lms.bcn(percentiles = c(25, 50, 75), zero = c(1, 3),
         llambda = "identity", lmu = "identity", lsigma = "loge",
         dfmu.init = 4, dfsigma.init = 2, ilambda = 1,
-        isigma = NULL, expectiles = FALSE)
+        isigma = NULL, tol0 = 0.001, expectiles = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -72,6 +72,12 @@ lms.bcn(percentiles = c(25, 50, 75), zero = c(1, 3),
   If necessary, it is recycled to be a vector of length \eqn{n}.
   The default value, \code{NULL}, means an initial value is computed
   in the \code{@initialize} slot of the family function.
+
+
+  }
+  \item{tol0}{
+  Small positive number,
+  the tolerance for testing if lambda is equal to zero.
 
 
   }
@@ -233,6 +239,7 @@ contains further information and examples.
 }
 
 \examples{
+\dontrun{ require(VGAMdata)
 mysubset <- subset(xs.nz, sex == "M" & ethnic == "1" & Study1)
 mysubset <- transform(mysubset, BMI = weight / height^2)
 BMIdata <- mysubset[, c("age", "BMI")]
@@ -252,6 +259,7 @@ head(cdf(fit)) # Person 56 is probably overweight, given his age
 fit0 <- vgam(BMI ~ s(age, df = 4), lms.bcn(zero = c(1,3)), BMIdata)
 fit1 <- vgam(BMI ~ s(age, df = c(4, 2)), lms.bcn(zero = 1), BMIdata, 
             etastart = predict(fit0))
+}
 
 \dontrun{
 # Quantile plot

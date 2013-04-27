@@ -25,7 +25,7 @@ cao(formula, family, data = list(),
     formula is used to construct the latent variables, upon which the
     smooths are applied.  All the variables in the formula are used
     for the construction of latent variables except for those specified
-    by the argument \code{Norrr}, which is itself a formula.  The LHS
+    by the argument \code{noRRR}, which is itself a formula.  The LHS
     of the formula contains the response variables, which should be a
     matrix with each column being a response (species).
 
@@ -178,14 +178,14 @@ cao(formula, family, data = list(),
 
 
   Currently, only \code{Rank=1} is implemented, and only
-  \code{Norrr = ~1} models are handled.
+  \code{noRRR = ~1} models are handled.
 
 
 % Poisson and binary responses are implemented (viz.,
 % \code{\link{poissonff}}, \code{\link{binomialff}}), and
 % dispersion parameters for these must be assumed known.  Hence using
 % \code{\link{quasipoissonff}} and \code{\link{quasibinomialff}} will
-% currently fail.  Also, currently, only \code{Norrr = ~ 1} models are
+% currently fail.  Also, currently, only \code{noRRR = ~ 1} models are
 % handled.
 
 
@@ -197,7 +197,7 @@ cao(formula, family, data = list(),
   The \eqn{\eta_s}{eta_s} is an additive predictor for species \eqn{s},
   and it models the probabilities of presence as an additive model on
   the logit scale.  The matrix \eqn{C} is estimated from the data, as
-  well as the smooth functions \eqn{f_s}.  The argument \code{Norrr = ~
+  well as the smooth functions \eqn{f_s}.  The argument \code{noRRR = ~
   1} specifies that the vector \eqn{x_1}{x_1}, defined for RR-VGLMs
   and QRR-VGLMs, is simply a 1 for an intercept.
   Here, the intercept in the model is absorbed into the functions.
@@ -306,35 +306,35 @@ Constrained additive ordination.
 
 \examples{
 \dontrun{
-hspider[,1:6] = scale(hspider[,1:6]) # Standardized environmental vars
+hspider[,1:6] <- scale(hspider[,1:6]) # Standardized environmental vars
 set.seed(149) # For reproducible results 
-ap1 = cao(cbind(Pardlugu, Pardmont, Pardnigr, Pardpull) ~
-          WaterCon + BareSand + FallTwig +
-          CoveMoss + CoveHerb + ReflLux,
-          family = poissonff, data = hspider, Rank = 1,
-          df1.nl = c(Pardpull=2.7, 2.5),
-          Bestof = 7, Crow1positive = FALSE)
+ap1 <- cao(cbind(Pardlugu, Pardmont, Pardnigr, Pardpull) ~
+           WaterCon + BareSand + FallTwig +
+           CoveMoss + CoveHerb + ReflLux,
+           family = poissonff, data = hspider, Rank = 1,
+           df1.nl = c(Pardpull=2.7, 2.5),
+           Bestof = 7, Crow1positive = FALSE)
 sort(ap1@misc$deviance.Bestof) # A history of all the iterations
 
 Coef(ap1)
 ccoef(ap1)
 
-par(mfrow=c(2,2))
+par(mfrow = c(2, 2))
 plot(ap1)   # All the curves are unimodal; some quite symmetric
 
-par(mfrow=c(1,1), las=1)
-index = 1:ncol(ap1@y)
-lvplot(ap1, lcol=index, pcol=index, y=TRUE)
+par(mfrow = c(1, 1), las = 1)
+index <- 1:ncol(depvar(ap1))
+lvplot(ap1, lcol = index, pcol = index, y = TRUE)
 
-trplot(ap1, label=TRUE, col=index)
-abline(a=0, b=1, lty=2)
+trplot(ap1, label = TRUE, col = index)
+abline(a=0, b = 1, lty = 2)
 
-trplot(ap1, label=TRUE, col="blue", log="xy", whichSp=c(1,3))
-abline(a=0, b=1, lty=2)
+trplot(ap1, label = TRUE, col = "blue", log = "xy", whichSp = c(1,3))
+abline(a=0, b = 1, lty = 2)
 
-persp(ap1, col=index, lwd=2, label=TRUE)
-abline(v=Opt(ap1), lty=2, col=index)
-abline(h=Max(ap1), lty=2, col=index)
+persp(ap1, col = index, lwd = 2, label = TRUE)
+abline(v = Opt(ap1), lty = 2, col = index)
+abline(h = Max(ap1), lty = 2, col = index)
 }
 }
 \keyword{models}

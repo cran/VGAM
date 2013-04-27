@@ -73,6 +73,8 @@ mlogit(theta, refLevel = "last", M = NULL, whitespace = FALSE,
   Numerical instability may occur when \code{theta} is
   close to 1 or 0 (for \code{mlogit}).
   One way of overcoming this is to use, e.g., \code{bvalue}.
+  Currently \code{care.exp()} is used to avoid \code{NA}s being
+  returned if the probability is too close to 1.
 
 
 }
@@ -87,16 +89,16 @@ mlogit(theta, refLevel = "last", M = NULL, whitespace = FALSE,
 \examples{
 pneumo <- transform(pneumo, let = log(exposure.time))
 fit <- vglm(cbind(normal, mild, severe) ~ let,
-             multinomial, trace = TRUE, pneumo) # For illustration only
+            multinomial, trace = TRUE, pneumo) # For illustration only!
 fitted(fit)
 predict(fit)
 
-mlogit(predict(fit))
-mlogit(predict(fit), refLevel = 1) # For illustration only
-mlogit(predict(fit)) - fitted(fit) # Should be all 0s
+mlogit(fitted(fit))
+mlogit(fitted(fit)) - predict(fit) # Should be all 0s
 
-mlogit(fitted(fit), inverse = TRUE)
-mlogit(fitted(fit), inverse = TRUE) - predict(fit) # Should be all 0s
+mlogit(predict(fit), inverse = TRUE)
+mlogit(predict(fit), inverse = TRUE, refLevel = 1) # For illustration only
+mlogit(predict(fit), inverse = TRUE) - fitted(fit) # Should be all 0s
 
 mlogit(fitted(fit), deriv = 1)
 mlogit(fitted(fit), deriv = 2)

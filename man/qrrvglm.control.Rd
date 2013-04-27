@@ -28,8 +28,8 @@ qrrvglm.control(Rank = 1,
                 maxitl = 40,
                 imethod = 1,
                 Maxit.optim = 250,
-                MUXfactor = rep(7, length=Rank),
-                Norrr = ~ 1,
+                MUXfactor = rep(7, length = Rank),
+                noRRR = ~ 1, Norrr = NA,
                 optim.maxit = 20,
                 Parscale = if(ITolerances) 0.001 else 1.0,
                 SD.Cinit = 0.02,
@@ -52,7 +52,7 @@ qrrvglm.control(Rank = 1,
     \{1,2,\ldots,min(\eqn{M},\eqn{p_2}{p2})\} where the vector of explanatory
     variables \eqn{x} is partitioned into (\eqn{x_1},\eqn{x_2}), which is
     of dimension \eqn{p_1+p_2}{p1+p2}. The variables making up \eqn{x_1}
-    are given by the terms in the \code{Norrr} argument, and the rest
+    are given by the terms in the \code{noRRR} argument, and the rest
     of the terms comprise \eqn{x_2}.
 
     }
@@ -78,7 +78,7 @@ qrrvglm.control(Rank = 1,
   \item{Crow1positive}{ 
       Logical vector of length \code{Rank} (recycled if necessary): are
       the elements of the first row of \eqn{C} positive? For example,
-      if \code{Rank} is 4, then specifying \code{Crow1positive=c(FALSE,
+      if \code{Rank} is 4, then specifying \code{Crow1positive = c(FALSE,
       TRUE)} will force \eqn{C[1,1]} and \eqn{C[1,3]} to be negative,
       and \eqn{C[1,2]} and \eqn{C[1,4]} to be positive. This argument
       allows for a reflection in the ordination axes because the
@@ -223,7 +223,7 @@ qrrvglm.control(Rank = 1,
 
   }
 
-  \item{Norrr}{ 
+  \item{noRRR}{ 
     Formula giving terms that are \emph{not} to be included in the
     reduced-rank regression (or formation of the latent variables),
     i.e., those belong to \eqn{x_1}.
@@ -231,11 +231,20 @@ qrrvglm.control(Rank = 1,
     regression) correspond to the \eqn{B_1}{B_1} matrix.
     The default is to omit the intercept term from the latent variables.
 
+
   } 
+  \item{Norrr}{
+  Defunct. Please use \code{noRRR}.
+  Use of \code{Norrr} will become an error soon.
+
+
+  }
+
+
   \item{Parscale}{
     Numerical and positive-valued vector of length \eqn{C}
    (recycled if necessary).
-   Passed into \code{optim(..., control=list(parscale=Parscale))};
+   Passed into \code{optim(..., control = list(parscale = Parscale))};
    the elements of \eqn{C} become \eqn{C} / \code{Parscale}.
    Setting \code{ITolerances = TRUE} results in line searches that
    are very large, therefore \eqn{C} has to be scaled accordingly
@@ -360,7 +369,7 @@ qrrvglm.control(Rank = 1,
 
 
 %Suppose \code{FastAlgorithm = FALSE}. In theory (if
-%\code{Eta.range=NULL}), for QRR-VGLMs, the predictors have the values of
+%\code{Eta.range = NULL}), for QRR-VGLMs, the predictors have the values of
 %a quadratic form. However, when \code{Eta.range} is assigned a numerical
 %vector of length 2 (giving the endpoints of an interval), then those
 %values lying outside the interval are assigned the closest boundary
@@ -489,7 +498,7 @@ sort(p1@misc$deviance.Bestof) # A history of all the iterations
 %# 20120221; withdrawn for a while coz it creates a lot of error messages.
 %# Negative binomial CQO; smallest deviance is about 275.389
 %set.seed(1234) # This leads to a reasonable (but not the global) solution?
-%nb1 = cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi, Auloalbi, 
+%nb1 <- cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi, Auloalbi, 
 %                Pardlugu, Pardmont, Pardnigr, Pardpull, Trocterr, Zoraspin) ~
 %          WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
 %          ITol = FALSE, EqualTol = TRUE, # A good idea for negbinomial
@@ -497,7 +506,7 @@ sort(p1@misc$deviance.Bestof) # A history of all the iterations
 %sort(nb1@misc$deviance.Bestof) # A history of all the iterations
 %summary(nb1)
 %}
-%\dontrun{ lvplot(nb1, lcol=1:12, y = TRUE, pcol=1:12) }
+%\dontrun{ lvplot(nb1, lcol = 1:12, y = TRUE, pcol = 1:12) }
 
 
 

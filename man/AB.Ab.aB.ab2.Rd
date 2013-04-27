@@ -22,48 +22,55 @@ AB.Ab.aB.ab2(link = "logit", init.p = NULL)
 \details{
   This one parameter model involves a probability called \code{p}.
 
+
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}}
   and \code{\link{vgam}}.
 
+
 }
 \references{
-Elandt-Johnson, R. C. (1971)
-\emph{Probability Models and Statistical Methods in Genetics},
-New York: Wiley.
+
+  Elandt-Johnson, R. C. (1971)
+  \emph{Probability Models and Statistical Methods in Genetics},
+  New York: Wiley.
+
+
 }
 \author{ T. W. Yee }
 \note{
-The input can be a 4-column matrix of counts.
-Alternatively, the input can be a 4-column matrix of
-proportions (so each row adds to 1) and the \code{weights}
-argument is used to specify the total number of counts for each row.
+  The input can be a 4-column matrix of counts.
+  Alternatively, the input can be a 4-column matrix of
+  proportions (so each row adds to 1) and the \code{weights}
+  argument is used to specify the total number of counts for each row.
+
 
 }
 
 \section{Warning}{
-There may be a bug in the \code{deriv} and \code{weight} slot of the
-family function.
+  There may be a bug in the \code{deriv} and \code{weight} slot of the
+  family function.
+
 
 }
 \seealso{
-\code{\link{AA.Aa.aa}},
-\code{\link{AB.Ab.aB.ab}},
-\code{\link{ABO}},
-\code{\link{G1G2G3}},
-\code{\link{MNSs}}.
+  \code{\link{AA.Aa.aa}},
+  \code{\link{AB.Ab.aB.ab}},
+  \code{\link{ABO}},
+  \code{\link{G1G2G3}},
+  \code{\link{MNSs}}.
+
+
 }
 
 \examples{
-# See Elandt-Johnson, pp.430,427
-# Estimated variance is approx 0.0021
-y = cbind(68, 11, 13, 21)
-fit = vglm(y ~ 1, AB.Ab.aB.ab2(link=cloglog), trace=TRUE, crit="coef")
-Coef(fit)   # Estimated p
-rbind(y, sum(y)*fitted(fit))
-sqrt(diag(vcov(fit)))
+ymat <- cbind(68, 11, 13, 21) # See Elandt-Johnson, pp.430,427
+fit <- vglm(ymat ~ 1, AB.Ab.aB.ab2(link = cloglog), trace = TRUE, crit = "coef")
+Coef(fit) # Estimated p
+rbind(ymat, sum(ymat) * fitted(fit))
+sqrt(diag(vcov(fit))) # Estimated variance is approx 0.0021
 }
 \keyword{models}
 \keyword{regression}

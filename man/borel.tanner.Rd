@@ -109,8 +109,8 @@ Boston: Birkhauser.
 
 }
 \examples{
-bdata = data.frame(y = rbort(n <- 200))
-fit = vglm(y ~ 1, borel.tanner, bdata, trace = TRUE, crit = "c")
+bdata <- data.frame(y = rbort(n <- 200))
+fit <- vglm(y ~ 1, borel.tanner, bdata, trace = TRUE, crit = "c")
 coef(fit, matrix = TRUE)
 Coef(fit)
 summary(fit)

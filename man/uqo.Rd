@@ -26,24 +26,32 @@ uqo(formula, family, data = list(), weights = NULL, subset = NULL,
     Since there is no \eqn{x_2} vector by definition, the RHS of
     the formula has all terms belonging to the \eqn{x_1} vector.
 
+
   }
   \item{family}{ a function of class \code{"vglmff"} describing
     what statistical model is to be fitted. Currently two families
     are supported: Poisson and binomial.
+
+
   }
   \item{data}{ an optional data frame containing the variables
     in the model. By default the variables are taken from
     \code{environment(formula)}, typically the environment from
     which \code{uqo} is called.
+
+
  }
   \item{weights}{ an optional vector or matrix of (prior) weights 
     to be used in the fitting process.
     This argument should not be used.
 
+
 }
   \item{subset}{ an optional logical vector specifying a subset of
           observations to 
           be used in the fitting process.
+
+
     }
     \item{na.action}{
       a function which indicates what should happen when
@@ -52,50 +60,82 @@ uqo(formula, family, data = list(), weights = NULL, subset = NULL,
       of \code{\link[base]{options}}, and is \code{na.fail}
       if that is unset.
       The ``factory-fresh'' default is \code{na.omit}.
+
+
     }
   \item{etastart}{ starting values for the linear predictors.
     It is a \eqn{M}-column matrix. If \eqn{M = 1} then it may be a vector.
+
+
     }
   \item{mustart}{ starting values for the 
     fitted values. It can be a vector or a matrix. 
     Some family functions do not make use of this argument.
+
+
   }
   \item{coefstart}{ starting values for the
-    coefficient vector. }
+    coefficient vector.
+
+
+  }
   \item{control}{ a list of parameters for controlling the fitting process. 
           See \code{\link{uqo.control}} for details.
+
+
  }
   \item{offset}{ a vector or \eqn{M}-column matrix of offset values.
    This argument should not be used.
+
+
  }
   \item{method}{
     the method to be used in fitting the model.
     The default (and presently only) method \code{uqo.fit}
     uses iteratively reweighted least squares (IRLS).
+
+
     }
   \item{model}{ a logical value indicating whether the
     \emph{model frame}
-    should be assigned in the \code{model} slot. }
+    should be assigned in the \code{model} slot.
+
+  }
+
   \item{x.arg, y.arg}{ logical values indicating whether
     the model matrix and response matrix used in the fitting
     process should be assigned in the \code{x} and \code{y} slots.
     Note the model matrix is the LM model matrix.
 
+
     }
   \item{contrasts}{ an optional list. See the \code{contrasts.arg}
-    of \code{\link{model.matrix.default}}. }
+    of \code{\link{model.matrix.default}}.
+
+
+  }
+
   \item{constraints}{ an optional list  of constraint matrices.
     This argument should not be used.
+
+
     }
   \item{extra}{ an optional list with any extra information that  
     might be needed by the family function. 
+
+
     }
   \item{qr.arg}{ logical value indicating whether
     the slot \code{qr}, which returns the QR decomposition of the
     VLM model matrix, is returned on the object.
     This argument should not be set \code{TRUE}.
+
+
     }
-  \item{\dots}{ further arguments passed into \code{\link{uqo.control}}. }
+  \item{\dots}{ further arguments passed into \code{\link{uqo.control}}.
+
+
+  }
 
 }
 
@@ -107,6 +147,7 @@ uqo(formula, family, data = list(), weights = NULL, subset = NULL,
   difficult optimization problem.  The current algorithm is very simple
   and will often fail (even for \code{Rank = 1}) but hopefully this will
   be improved in the future.
+
 
   The central formula is given by
   \deqn{\eta = B_1^T x_1 + A \nu +
@@ -127,6 +168,7 @@ uqo(formula, family, data = list(), weights = NULL, subset = NULL,
   arguments in \code{\link{uqo.control}};
   see also \code{\link{cqo}} and \code{\link{qrrvglm.control}}.
 
+
 Currently, only Poisson and binomial \pkg{VGAM} family functions are
 implemented for this function, and dispersion parameters for these are
 assumed known.  Thus the Poisson is catered for by
@@ -134,10 +176,13 @@ assumed known.  Thus the Poisson is catered for by
 Those beginning with \code{"quasi"} have dispersion parameters that are
 estimated for each species, hence will give an error message here.
 
+
 }
 \value{
   An object of class \code{"uqo"}
   (this may change to \code{"quvglm"} in the future).
+
+
 }
 \references{
 
@@ -248,12 +293,12 @@ up1 <- uqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,
           Crow1positive = TRUE, lvstart = -lv(p1))
 if (deviance(up1) > 1310.0) stop("suboptimal fit obtained")
 
-nos <- ncol(up1@y) # Number of species
+nos <- ncol(depvar(up1))  # Number of species
 clr <- (1:(nos+1))[-7] # Omit yellow
 lvplot(up1, las = 1, y = TRUE, pch = 1:nos, scol = clr, lcol = clr, 
-       pcol = clr, llty = 1:nos, llwd=2)
-legend(x=2, y = 135, colnames(up1@y), col = clr, lty = 1:nos,
-       lwd=2, merge = FALSE, ncol = 1, x.inter=4.0, bty = "l", cex = 0.9)
+       pcol = clr, llty = 1:nos, llwd = 2)
+legend(x = 2, y = 135, colnames(up1@y), col = clr, lty = 1:nos,
+       lwd = 2, merge = FALSE, ncol = 1, x.inter = 4.0, bty = "l", cex = 0.9)
 
 # Compare the site scores between the two models
 plot(lv(p1), lv(up1), xlim = c(-3, 4), ylim = c(-3, 4), las = 1)

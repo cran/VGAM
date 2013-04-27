@@ -1,5 +1,21 @@
 Here is a list of known bugs.
 
+2012-09
+
+
+loge('a', short = FALSE, inverse = FALSE)
+loge('a', short = FALSE, inverse = TRUE)
+give the same answer.
+
+
+
+Coef(vglm.dirmultinomial.fit) fails.
+Evidently, multiple "mlogit"s saved on vglm.dirmultinomial.fit@misc
+do not suffice.
+
+
+
+
 2011-12
 
 VGAM version 0.8-4 said it needed R version 2-11.1 or later.

@@ -75,6 +75,7 @@ void n5aioudkdnaoqj0l(double *qgnl3toc,
 
 
 
+
   double   *wkumc9idxwy,  *wkumc9idbuhyalv4,
            *wkumc9idzvau2lct,  *wkumc9idf6lsuzax,  *wkumc9idfvh2rwtc, *wkumc9iddcfir2no,
            *wkumc9idfulcp8wa, *wkumc9idplj0trqx;
@@ -108,6 +109,8 @@ void n5aioudkdnaoqj0l(double *qgnl3toc,
 }
 
 
+
+
 void n5aioudkhbzuprs6(double *qgnl3toc,
             double sjwyig9t[], double bhcji9gl[], double po8rwsmy[],
             int *kuzxj1lo, int *acpios9q, double gkdx5jal[],
@@ -136,6 +139,9 @@ void n5aioudkhbzuprs6(double *qgnl3toc,
          *qcpiaj7f,  qcpiaj7f0 = 0.0;
 
 
+  qcpiaj7f = &qcpiaj7f0;
+
+
 
   g2dnwteb  = bk3ymcih;
   bk3ymcih += bk3ymcih;
@@ -148,7 +154,9 @@ void n5aioudkhbzuprs6(double *qgnl3toc,
 
 
 
-         qcpiaj7f = &qcpiaj7f0,
+
+
+
 
 
 
@@ -190,24 +198,24 @@ void n5aioudkhbzuprs6(double *qgnl3toc,
                 zvau2lct, f6lsuzax, fvh2rwtc, dcfir2no);
 
   for (ayfnwr1v = 3; ayfnwr1v <= (*acpios9q - 3); ayfnwr1v++) {
-      tt1 += zvau2lct[ayfnwr1v-1];
+    tt1 += zvau2lct[ayfnwr1v-1];
   }
   g2dnwteb = tt1 / *tt2;
 
   if (*pn9eowxc == 1) {
 
-      *mynl7uaq = g2dnwteb * pow(16.0, *wbkq9zyi * 6.0 - 2.0);
-      n5aioudkwmhctl9x(qgnl3toc, sjwyig9t,
-                     po8rwsmy, kuzxj1lo, acpios9q,
-                     pn9eowxc, // icrit, (icrit used to be used solely)
-                     gkdx5jal, rpyis2kc, imdvf4hx,
-                     ifys6woa, mynl7uaq, xwy,
-                     qcpiaj7f,  // Not used here
-                     zvau2lct, f6lsuzax, fvh2rwtc, dcfir2no,
-                     xecbg0pf, z4grbpiq, d7glzhbj, v2eydbxs,
-                     buhyalv4, fulcp8wa, plj0trqx,
-                     xtov9rbf, wep0oibc, fbd5yktj);
-      return;
+    *mynl7uaq = g2dnwteb * pow(16.0, *wbkq9zyi * 6.0 - 2.0);
+    n5aioudkwmhctl9x(qgnl3toc, sjwyig9t,
+                   po8rwsmy, kuzxj1lo, acpios9q,
+                   pn9eowxc, // icrit, (icrit used to be used solely)
+                   gkdx5jal, rpyis2kc, imdvf4hx,
+                   ifys6woa, mynl7uaq, xwy,
+                   qcpiaj7f,  // Not used here
+                   zvau2lct, f6lsuzax, fvh2rwtc, dcfir2no,
+                   xecbg0pf, z4grbpiq, d7glzhbj, v2eydbxs,
+                   buhyalv4, fulcp8wa, plj0trqx,
+                   xtov9rbf, wep0oibc, fbd5yktj);
+    return;
   }
 
 
@@ -285,8 +293,9 @@ void n5aioudkhbzuprs6(double *qgnl3toc,
             wkumc9idp >= wkumc9idq * (wkumc9idb - wkumc9idx))    goto a3bdsirf;
 
         wkumc9idd = wkumc9idp / wkumc9idq;
-        if(!R_FINITE(wkumc9idd))
-            Rprintf("Error in n5aioudkhbzuprs6: wkumc9idd is not finite.\n");
+
+
+
 
         wkumc9idu = wkumc9idx + wkumc9idd;
 
@@ -346,6 +355,9 @@ ceqzd1hi50: wkumc9idu = wkumc9idx +
 
 
 
+
+
+
 void n5aioudkzosq7hub(double xecbg0pf[], double z4grbpiq[], double d7glzhbj[], double v2eydbxs[],
                    double gkdx5jal[], int *acpios9q) {
 
@@ -360,7 +372,7 @@ void n5aioudkzosq7hub(double xecbg0pf[], double z4grbpiq[], double d7glzhbj[], d
 
 
 
-  qnwamo0e0 = xecbg0pf; qnwamo0e1 = z4grbpiq;  qnwamo0e2 = d7glzhbj; qnwamo0e3 = v2eydbxs;
+  qnwamo0e0 = xecbg0pf; qnwamo0e1 = z4grbpiq; qnwamo0e2 = d7glzhbj; qnwamo0e3 = v2eydbxs;
   for (ayfnwr1v = 0; ayfnwr1v < *acpios9q; ayfnwr1v++) {
       *qnwamo0e0++ = *qnwamo0e1++ = *qnwamo0e2++ = *qnwamo0e3++ = 0.0e0;
   }
@@ -477,6 +489,8 @@ void n5aioudkzosq7hub(double xecbg0pf[], double z4grbpiq[], double d7glzhbj[], d
       }
   }
 }
+
+
 
 
 void n5aioudkvmnweiy2(double buhyalv4[], double fulcp8wa[], double plj0trqx[], int *xtov9rbf,
@@ -628,9 +642,9 @@ void n5aioudkwmhctl9x(double *qgnl3toc, double sjwyig9t[],
 
   F77_CALL(dpbfa8)(buhyalv4, xtov9rbf, acpios9q, &bvsquk3z, algpft4y);
   if (*algpft4y != 0) {
-      Rprintf("In C function wmhctl9x; Error:\n");
-      Rprintf("Leading minor of order %d is not pos-def\n", *algpft4y);
-      return;
+    Rprintf("In C function wmhctl9x; Error:\n");
+    Rprintf("Leading minor of order %d is not pos-def\n", *algpft4y);
+    return;
   }
   F77_CALL(dpbsl8)(buhyalv4, xtov9rbf, acpios9q, &bvsquk3z, rpyis2kc);
 
@@ -649,48 +663,49 @@ void n5aioudkwmhctl9x(double *qgnl3toc, double sjwyig9t[],
     chw8lzty = sjwyig9t;
     for (ayfnwr1v = 1; ayfnwr1v <= *kuzxj1lo; ayfnwr1v++) {
 
-        F77_CALL(vinterv)(gkdx5jal, &nkp1, chw8lzty, &dqlr5bse, &pqzfxw4i);
+      F77_CALL(vinterv)(gkdx5jal, &nkp1, chw8lzty, &dqlr5bse, &pqzfxw4i);
 
-        if (pqzfxw4i == -1) {
-            dqlr5bse = 4;
-            *chw8lzty = gkdx5jal[3]       + qaltf0nz;
-        } else
-        if (pqzfxw4i ==  1) {
-            dqlr5bse = *acpios9q;
-            *chw8lzty = gkdx5jal[*acpios9q] - qaltf0nz;
-        }
-        yq6lorbx = dqlr5bse-3;
+      if (pqzfxw4i == -1) {
+        dqlr5bse = 4;
+        *chw8lzty = gkdx5jal[3]       + qaltf0nz;
+      } else
+      if (pqzfxw4i ==  1) {
+        dqlr5bse = *acpios9q;
+        *chw8lzty = gkdx5jal[*acpios9q] - qaltf0nz;
+      }
+      yq6lorbx = dqlr5bse-3;
 
-        F77_CALL(vbsplvd)(gkdx5jal, &h2dpsbkr, chw8lzty++, &dqlr5bse,
-                          ms0qypiw, g9fvdrbw, &pqneb2ra);
+      F77_CALL(vbsplvd)(gkdx5jal, &h2dpsbkr, chw8lzty++, &dqlr5bse,
+                        ms0qypiw, g9fvdrbw, &pqneb2ra);
 
-        b0 = g9fvdrbw[0]; b1 = g9fvdrbw[1]; b2 = g9fvdrbw[2]; b3 = g9fvdrbw[3];
+      b0 = g9fvdrbw[0]; b1 = g9fvdrbw[1]; b2 = g9fvdrbw[2]; b3 = g9fvdrbw[3];
 
-        qtce8hzo = (b0   * (fulcp8wa[3 + (yq6lorbx-1) * *xtov9rbf] * b0 +
-                  2.0e0* (fulcp8wa[2 + (yq6lorbx-1) * *xtov9rbf] * b1 +
-                          fulcp8wa[1 + (yq6lorbx-1) * *xtov9rbf] * b2 +
-                          fulcp8wa[0 + (yq6lorbx-1) * *xtov9rbf] * b3)) +
-                  b1   * (fulcp8wa[3 +  yq6lorbx    * *xtov9rbf] * b1 +
-                  2.0e0* (fulcp8wa[2 +  yq6lorbx    * *xtov9rbf] * b2 +
-                          fulcp8wa[1 +  yq6lorbx    * *xtov9rbf] * b3)) +
-                  b2   * (fulcp8wa[3 + (yq6lorbx+1) * *xtov9rbf] * b2 +
-                  2.0e0*  fulcp8wa[2 + (yq6lorbx+1) * *xtov9rbf] * b3) +
-                          fulcp8wa[3 + (yq6lorbx+2) * *xtov9rbf] *
-                          pow(b3, (double) 2.0)) *
-                      po8rwsmy[ayfnwr1v-1];
-        ifys6woa[ayfnwr1v-1] = qtce8hzo;
+      qtce8hzo = (b0   * (fulcp8wa[3 + (yq6lorbx-1) * *xtov9rbf] * b0 +
+                2.0e0* (fulcp8wa[2 + (yq6lorbx-1) * *xtov9rbf] * b1 +
+                        fulcp8wa[1 + (yq6lorbx-1) * *xtov9rbf] * b2 +
+                        fulcp8wa[0 + (yq6lorbx-1) * *xtov9rbf] * b3)) +
+                b1   * (fulcp8wa[3 +  yq6lorbx    * *xtov9rbf] * b1 +
+                2.0e0* (fulcp8wa[2 +  yq6lorbx    * *xtov9rbf] * b2 +
+                        fulcp8wa[1 +  yq6lorbx    * *xtov9rbf] * b3)) +
+                b2   * (fulcp8wa[3 + (yq6lorbx+1) * *xtov9rbf] * b2 +
+                2.0e0*  fulcp8wa[2 + (yq6lorbx+1) * *xtov9rbf] * b3) +
+                        fulcp8wa[3 + (yq6lorbx+2) * *xtov9rbf] *
+                        pow(b3, (double) 2.0)) *
+                    po8rwsmy[ayfnwr1v-1];
+      ifys6woa[ayfnwr1v-1] = qtce8hzo;
     }
 
-  if (*pn9eowxc == 1) {
+    if (*pn9eowxc == 1) {
       return;
-  }
+    }
 
 
     for (ayfnwr1v = 1; ayfnwr1v <= *kuzxj1lo; ayfnwr1v++) {
-        egwbdua212 += ifys6woa[ayfnwr1v-1];
+      egwbdua212 += ifys6woa[ayfnwr1v-1];
     }
     *qcpiaj7f = pow(*qgnl3toc - egwbdua212, (double) 2.0);
 }
+
 
 
 void n5aioudkgt9iulbf(double sjwyig9t[], double ghz9vuba[], double po8rwsmy[],
@@ -706,7 +721,7 @@ void n5aioudkgt9iulbf(double sjwyig9t[], double ghz9vuba[], double po8rwsmy[],
 
   qnwamo0e0 = zvau2lct; qnwamo0e1 = f6lsuzax;  qnwamo0e2 = fvh2rwtc; qnwamo0e3 = dcfir2no; qnwamo0e4 = zyupcmk6;
   for (ayfnwr1v = 0; ayfnwr1v < *kuzxj1lo; ayfnwr1v++) {
-      *qnwamo0e0++ = *qnwamo0e1++ = *qnwamo0e2++ = *qnwamo0e3++ = *qnwamo0e4++ = 0.0e0;
+    *qnwamo0e0++ = *qnwamo0e1++ = *qnwamo0e2++ = *qnwamo0e3++ = *qnwamo0e4++ = 0.0e0;
   }
 
   //Rprintf("first one n5aioudkgt9iulbf pow(po8rwsmy[0], (double) 1.0) = ");
@@ -715,45 +730,45 @@ void n5aioudkgt9iulbf(double sjwyig9t[], double ghz9vuba[], double po8rwsmy[],
 
   for (ayfnwr1v = 1; ayfnwr1v <= *rvy1fpli; ayfnwr1v++) {
 
-      F77_CALL(vinterv)(gkdx5jal, &nhnpt1zym1, sjwyig9t + ayfnwr1v - 1, &dqlr5bse, &pqzfxw4i);
+    F77_CALL(vinterv)(gkdx5jal, &nhnpt1zym1, sjwyig9t + ayfnwr1v - 1, &dqlr5bse, &pqzfxw4i);
 
-      if (pqzfxw4i == 1) {
-          if (sjwyig9t[ayfnwr1v-1] <= (gkdx5jal[dqlr5bse-1] + qaltf0nz)) {
-              dqlr5bse--;
-          } else {
-              return;
-          }
+    if (pqzfxw4i == 1) {
+      if (sjwyig9t[ayfnwr1v-1] <= (gkdx5jal[dqlr5bse-1] + qaltf0nz)) {
+        dqlr5bse--;
+      } else {
+        return;
       }
+    }
 
-      F77_CALL(vbsplvd)(gkdx5jal, &h2dpsbkr, sjwyig9t + ayfnwr1v - 1, &dqlr5bse,
-                        ms0qypiw, g9fvdrbw, &pqneb2ra);
+    F77_CALL(vbsplvd)(gkdx5jal, &h2dpsbkr, sjwyig9t + ayfnwr1v - 1, &dqlr5bse,
+                      ms0qypiw, g9fvdrbw, &pqneb2ra);
 
 
-      yq6lorbx = dqlr5bse - 4 + 1;
-      wsvdbx3tk =     po8rwsmy[ayfnwr1v-1];
-      wv2svdbx3tk = wsvdbx3tk * g9fvdrbw[0];
-      zyupcmk6[yq6lorbx-1] += wv2svdbx3tk * ghz9vuba[ayfnwr1v-1];
-      zvau2lct[yq6lorbx-1]     += wv2svdbx3tk * g9fvdrbw[0];
-      f6lsuzax[yq6lorbx-1]     += wv2svdbx3tk * g9fvdrbw[1];
-      fvh2rwtc[yq6lorbx-1]     += wv2svdbx3tk * g9fvdrbw[2];
-      dcfir2no[yq6lorbx-1]     += wv2svdbx3tk * g9fvdrbw[3];
+    yq6lorbx = dqlr5bse - 4 + 1;
+    wsvdbx3tk =     po8rwsmy[ayfnwr1v-1];
+    wv2svdbx3tk = wsvdbx3tk * g9fvdrbw[0];
+    zyupcmk6[yq6lorbx-1] += wv2svdbx3tk * ghz9vuba[ayfnwr1v-1];
+    zvau2lct[yq6lorbx-1]     += wv2svdbx3tk * g9fvdrbw[0];
+    f6lsuzax[yq6lorbx-1]     += wv2svdbx3tk * g9fvdrbw[1];
+    fvh2rwtc[yq6lorbx-1]     += wv2svdbx3tk * g9fvdrbw[2];
+    dcfir2no[yq6lorbx-1]     += wv2svdbx3tk * g9fvdrbw[3];
 
-      yq6lorbx = dqlr5bse - 4 + 2;
-      wv2svdbx3tk = wsvdbx3tk * g9fvdrbw[1];
-      zyupcmk6[yq6lorbx-1] += wv2svdbx3tk * ghz9vuba[ayfnwr1v-1];
-      zvau2lct[yq6lorbx-1]     += wv2svdbx3tk * g9fvdrbw[1];
-      f6lsuzax[yq6lorbx-1]     += wv2svdbx3tk * g9fvdrbw[2];
-      fvh2rwtc[yq6lorbx-1]     += wv2svdbx3tk * g9fvdrbw[3];
+    yq6lorbx = dqlr5bse - 4 + 2;
+    wv2svdbx3tk = wsvdbx3tk * g9fvdrbw[1];
+    zyupcmk6[yq6lorbx-1] += wv2svdbx3tk * ghz9vuba[ayfnwr1v-1];
+    zvau2lct[yq6lorbx-1]     += wv2svdbx3tk * g9fvdrbw[1];
+    f6lsuzax[yq6lorbx-1]     += wv2svdbx3tk * g9fvdrbw[2];
+    fvh2rwtc[yq6lorbx-1]     += wv2svdbx3tk * g9fvdrbw[3];
 
-      yq6lorbx = dqlr5bse - 4 + 3;
-      wv2svdbx3tk = wsvdbx3tk * g9fvdrbw[2];
-      zyupcmk6[yq6lorbx-1] += wv2svdbx3tk * ghz9vuba[ayfnwr1v-1];
-      zvau2lct[yq6lorbx-1]     += wv2svdbx3tk * g9fvdrbw[2];
-      f6lsuzax[yq6lorbx-1]     += wv2svdbx3tk * g9fvdrbw[3];
-      yq6lorbx = dqlr5bse;
-      wv2svdbx3tk = wsvdbx3tk * g9fvdrbw[3];
-      zyupcmk6[yq6lorbx-1] += wv2svdbx3tk * ghz9vuba[ayfnwr1v-1];
-      zvau2lct[yq6lorbx-1]     += wv2svdbx3tk * g9fvdrbw[3];
+    yq6lorbx = dqlr5bse - 4 + 3;
+    wv2svdbx3tk = wsvdbx3tk * g9fvdrbw[2];
+    zyupcmk6[yq6lorbx-1] += wv2svdbx3tk * ghz9vuba[ayfnwr1v-1];
+    zvau2lct[yq6lorbx-1]     += wv2svdbx3tk * g9fvdrbw[2];
+    f6lsuzax[yq6lorbx-1]     += wv2svdbx3tk * g9fvdrbw[3];
+    yq6lorbx = dqlr5bse;
+    wv2svdbx3tk = wsvdbx3tk * g9fvdrbw[3];
+    zyupcmk6[yq6lorbx-1] += wv2svdbx3tk * ghz9vuba[ayfnwr1v-1];
+    zvau2lct[yq6lorbx-1]     += wv2svdbx3tk * g9fvdrbw[3];
   }
 }
 

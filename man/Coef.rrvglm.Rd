@@ -28,6 +28,7 @@ Coef.rrvglm(object, ...)
 
 }
 \references{ 
+
 Yee, T. W. and Hastie, T. J. (2003)
 Reduced-rank vector generalized linear models.
 \emph{Statistical Modelling},
@@ -36,7 +37,11 @@ Reduced-rank vector generalized linear models.
 
 }
 \author{ Thomas W. Yee }
-\note{ This function is an alternative to \code{coef.rrvglm}. }
+\note{
+This function is an alternative to \code{coef.rrvglm}.
+
+
+}
 
 % ~Make other sections like Warning with \section{Warning }{....} ~ 
 \seealso{ 
@@ -49,12 +54,12 @@ Reduced-rank vector generalized linear models.
 
 \examples{
 # Rank-1 stereotype model of Anderson (1984)
-pneumo = transform(pneumo, let = log(exposure.time), x3 = runif(nrow(pneumo)))
-fit = rrvglm(cbind(normal, mild, severe) ~ let + x3, multinomial, pneumo)
+pneumo <- transform(pneumo, let = log(exposure.time), x3 = runif(nrow(pneumo)))
+fit <- rrvglm(cbind(normal, mild, severe) ~ let + x3, multinomial, pneumo)
 coef(fit, matrix = TRUE)
 Coef(fit)
-print(Coef(fit), digits = 3)
 }
 \keyword{models}
 \keyword{regression}
 
+% # print(Coef(fit), digits = 3)

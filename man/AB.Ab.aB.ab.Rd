@@ -18,48 +18,58 @@ AB.Ab.aB.ab(link = "logit", init.p = NULL)
 
   }
   \item{init.p}{ Optional initial value for \code{p}. }
+
 }
 \details{
   This one parameter model involves a probability called \code{p}.
+
+
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}}
   and \code{\link{vgam}}.
+
+
 }
 \references{
+
 Lange, K. (2002)
 \emph{Mathematical and Statistical Methods for Genetic Analysis},
 2nd ed. New York: Springer-Verlag.
 
+
 }
 \author{ T. W. Yee }
 \note{ 
-The input can be a 4-column matrix of counts, where the columns 
-are AB, Ab, aB and ab
-(in order).
-Alternatively, the input can be a 4-column matrix of 
-proportions (so each row adds to 1) and the \code{weights}
-argument is used to specify the total number of counts for each row.
+  The input can be a 4-column matrix of counts, where the columns 
+  are AB, Ab, aB and ab
+  (in order).
+  Alternatively, the input can be a 4-column matrix of 
+  proportions (so each row adds to 1) and the \code{weights}
+  argument is used to specify the total number of counts for each row.
+
+
 
 }
 
 \seealso{
-\code{\link{AA.Aa.aa}},
-\code{\link{AB.Ab.aB.ab2}},
-\code{\link{ABO}},
-\code{\link{G1G2G3}},
-\code{\link{MNSs}}.
+  \code{\link{AA.Aa.aa}},
+  \code{\link{AB.Ab.aB.ab2}},
+  \code{\link{ABO}},
+  \code{\link{G1G2G3}},
+  \code{\link{MNSs}}.
+
 
 }
 
 \examples{
-y = cbind(AB=1997, Ab=906, aB=904, ab=32) # Data from Fisher (1925)
-fit = vglm(y ~ 1, AB.Ab.aB.ab(link="identity", init.p=0.9), trace=TRUE)
-fit = vglm(y ~ 1, AB.Ab.aB.ab, trace=TRUE)
-rbind(y, sum(y)*fitted(fit))
+ymat <- cbind(AB=1997, Ab=906, aB=904, ab=32) # Data from Fisher (1925)
+fit <- vglm(ymat ~ 1, AB.Ab.aB.ab(link = "identity", init.p = 0.9), trace = TRUE)
+fit <- vglm(ymat ~ 1, AB.Ab.aB.ab, trace = TRUE)
+rbind(ymat, sum(ymat)*fitted(fit))
 Coef(fit) # Estimated p
-p = sqrt(4*(fitted(fit)[,4]))
+p <- sqrt(4*(fitted(fit)[, 4]))
 p*p
 summary(fit)
 }

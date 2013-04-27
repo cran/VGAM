@@ -265,19 +265,19 @@ egev(llocation = "identity", lscale = "loge", lshape = logoff(offset = 0.5),
 }
 
 \examples{
+\dontrun{
 # Multivariate example
 fit1 <- vgam(cbind(r1, r2) ~ s(year, df = 3), gev(zero = 2:3),
-             venice, trace = TRUE)
+             data = venice, trace = TRUE)
 coef(fit1, matrix = TRUE)
 head(fitted(fit1))
-\dontrun{ par(mfrow = c(1, 2), las = 1)
+par(mfrow = c(1, 2), las = 1)
 plot(fit1, se = TRUE, lcol = "blue", scol = "forestgreen",
      main = "Fitted mu(year) function (centered)", cex.main = 0.8)
 with(venice, matplot(year, depvar(fit1)[, 1:2], ylab = "Sea level (cm)",
      col = 1:2, main = "Highest 2 annual sea levels", cex.main = 0.8))
 with(venice, lines(year, fitted(fit1)[,1], lty = "dashed", col = "blue"))
-legend("topleft", lty = "dashed", col = "blue", "Fitted 95 percentile") }
-
+legend("topleft", lty = "dashed", col = "blue", "Fitted 95 percentile")
 
 # Univariate example
 (fit <- vglm(maxtemp ~ 1, egev, oxtemp, trace = TRUE))
@@ -286,8 +286,9 @@ coef(fit, matrix = TRUE)
 Coef(fit)
 vcov(fit)
 vcov(fit, untransform = TRUE)
-sqrt(diag(vcov(fit)))   # Approximate standard errors
-\dontrun{ rlplot(fit) }
+sqrt(diag(vcov(fit))) # Approximate standard errors
+rlplot(fit)
+}
 }
 \keyword{models}
 \keyword{regression}

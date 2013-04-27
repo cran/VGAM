@@ -10,12 +10,13 @@
   generation for the Dagum distribution with shape parameters \code{a}
   and \code{p}, and scale parameter \code{scale}.
 
+
 }
 \usage{
-ddagum(x, shape1.a, scale, shape2.p, log = FALSE)
-pdagum(q, shape1.a, scale, shape2.p)
-qdagum(p, shape1.a, scale, shape2.p)
-rdagum(n, shape1.a, scale, shape2.p)
+ddagum(x, shape1.a, scale = 1, shape2.p, log = FALSE)
+pdagum(q, shape1.a, scale = 1, shape2.p)
+qdagum(p, shape1.a, scale = 1, shape2.p)
+rdagum(n, shape1.a, scale = 1, shape2.p)
 }
 \arguments{
   \item{x, q}{vector of quantiles.}
@@ -40,10 +41,12 @@ rdagum(n, shape1.a, scale, shape2.p)
 }
 \references{
 
+
 Kleiber, C. and Kotz, S. (2003)
 \emph{Statistical Size Distributions in Economics and
              Actuarial Sciences},
 Hoboken, NJ, USA: Wiley-Interscience.
+
 
 }
 \author{ T. W. Yee }
@@ -51,21 +54,44 @@ Hoboken, NJ, USA: Wiley-Interscience.
   See \code{\link{dagum}}, which is the \pkg{VGAM} family function
   for estimating the parameters by maximum likelihood estimation.
 
+
 }
 \note{
   The Dagum distribution is a special case of the 4-parameter
   generalized beta II distribution.
+
 
 }
 \seealso{
   \code{\link{dagum}},
   \code{\link{genbetaII}}.
 
+
 }
 \examples{
-ddata = data.frame(y = rdagum(n = 3000, 4, 6, 2))
-fit = vglm(y ~ 1, dagum(ishape1.a = 2.1), ddata, trace = TRUE, crit = "coef")
-coef(fit, matrix = TRUE)
-Coef(fit)
+probs <- seq(0.1, 0.9, by = 0.1)
+shape1.a <- 1; shape2.p <- 2
+# Should be 0:
+max(abs(pdagum(qdagum(p = probs, shape1.a = shape1.a, shape2.p =  shape2.p),
+                                 shape1.a = shape1.a, shape2.p = shape2.p) - probs))
+
+\dontrun{ par(mfrow = c(1, 2))
+x <- seq(-0.01, 5, len = 401)
+plot(x, dexp(x), type = "l", col = "black", ylab = "", las = 1, ylim = c(0, 1),
+     main = "Black is standard exponential, others are ddagum(x, ...)")
+lines(x, ddagum(x, shape1.a = shape1.a, shape2.p = 1), col = "orange")
+lines(x, ddagum(x, shape1.a = shape1.a, shape2.p = 2), col = "blue")
+lines(x, ddagum(x, shape1.a = shape1.a, shape2.p = 5), col = "green")
+legend("topright", col = c("orange","blue","green"), lty = rep(1, len = 3),
+       legend = paste("shape1.a =", shape1.a, ", shape2.p =", c(1, 2, 5)))
+
+plot(x, pexp(x), type = "l", col = "black", ylab = "", las = 1,
+     main = "Black is standard exponential, others are pdagum(x, ...)")
+lines(x, pdagum(x, shape1.a = shape1.a, shape2.p = 1), col = "orange")
+lines(x, pdagum(x, shape1.a = shape1.a, shape2.p = 2), col = "blue")
+lines(x, pdagum(x, shape1.a = shape1.a, shape2.p = 5), col = "green")
+legend("bottomright", col = c("orange","blue","green"), lty = rep(1, len = 3),
+       legend = paste("shape1.a =", shape1.a, ", shape2.p =", c(1, 2, 5)))
+}
 }
 \keyword{distribution}

@@ -12,15 +12,20 @@ Opt(object, ...)
 \arguments{
   \item{object}{ An object for which the computation or
     extraction of an optimum (or optima) is meaningful.
+
+
   }
   \item{\dots}{ Other arguments fed into the specific
     methods function of the model. Sometimes they are fed
     into the methods function for \code{\link{Coef}}.
+
+
   }
 }
 \details{
   Different models can define an optimum in different ways.
   Many models have no such notion or definition.
+
 
   Optima occur in quadratic and additive ordination,
   e.g., CQO or UQO or CAO.
@@ -34,10 +39,13 @@ Opt(object, ...)
   At an optimum, the fitted value of the response is
   called the \emph{maximum}.
 
+
 }
 \value{
   The value returned depends specifically on the methods
   function invoked.
+
+
 }
 \references{
 
@@ -47,9 +55,11 @@ canonical Gaussian ordination.
 \emph{Ecological Monographs},
 \bold{74}, 685--701.
 
+
 Yee, T. W. (2006)
 Constrained additive ordination.
 \emph{Ecology}, \bold{87}, 203--213.
+
 
 }
 \author{ Thomas W. Yee }
@@ -57,6 +67,8 @@ Constrained additive ordination.
 \note{
 In ordination, the optimum of a species is sometimes
 called the \emph{species score}.
+
+
 }
 %\section{Warning }{
 %}
@@ -65,11 +77,13 @@ called the \emph{species score}.
   \code{Opt.qrrvglm},
   \code{\link{Max}},
   \code{\link{Tol}}.
+
+
 }
 
 \examples{
 set.seed(111)  # This leads to the global solution
-hspider[,1:6] = scale(hspider[,1:6]) # Standardized environmental vars
+hspider[,1:6] <- scale(hspider[,1:6]) # Standardized environmental vars
 # vvv p1 = cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,
 # vvv                Auloalbi, Pardlugu, Pardmont, Pardnigr, Pardpull,
 # vvv                Trocterr, Zoraspin) ~
@@ -79,9 +93,9 @@ hspider[,1:6] = scale(hspider[,1:6]) # Standardized environmental vars
 # vvv Opt(p1)
 
 \dontrun{
-index = 1:ncol(p1@y)
-persp(p1, col=index, las=1, lwd=2, main="Vertical lines at the optima")
-abline(v=Opt(p1), lty=2, col=index)
+index <- 1:ncol(depvar(p1))
+persp(p1, col = index, las = 1, lwd = 2, main = "Vertical lines at the optima")
+abline(v = Opt(p1), lty = 2, col = index)
 }
 }
 \keyword{models}
