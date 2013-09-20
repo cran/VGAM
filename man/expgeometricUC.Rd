@@ -9,6 +9,7 @@
   Density, distribution function, quantile function and random
   generation for the exponential geometric distribution.
 
+
 }
 \usage{
 dexpgeom(x, scale = 1, shape, log = FALSE)
@@ -43,10 +44,12 @@ rexpgeom(n, scale = 1, shape)
   for estimating the parameters, 
   for the formula of the probability density function and other details.
 
+
 }
 \note{
   We define \code{scale} as the reciprocal of the scale parameter
   used by Adamidis and Loukas (1998).
+
 
 }
 \seealso{
@@ -58,20 +61,20 @@ rexpgeom(n, scale = 1, shape)
 }
 \examples{
 \dontrun{
-shape = 0.5; scale = 1; nn = 501
-x = seq(-0.10, 3.0, len = nn)
+shape <- 0.5; scale <- 1; nn <- 501
+x <- seq(-0.10, 3.0, len = nn)
 plot(x, dexpgeom(x, scale, shape), type = "l", las = 1, ylim = c(0, 2),
      ylab = paste("[dp]expgeom(shape = ", shape, ", scale = ", scale, ")"),
      col = "blue", cex.main = 0.8,
      main = "Blue is density, red is cumulative distribution function",
      sub = "Purple lines are the 10,20,...,90 percentiles")
 lines(x, pexpgeom(x, scale, shape), col = "red")
-probs = seq(0.1, 0.9, by = 0.1)
-Q = qexpgeom(probs, scale, shape)
+probs <- seq(0.1, 0.9, by = 0.1)
+Q <- qexpgeom(probs, scale, shape)
 lines(Q, dexpgeom(Q, scale, shape), col = "purple", lty = 3, type = "h")
 lines(Q, pexpgeom(Q, scale, shape), col = "purple", lty = 3, type = "h")
 abline(h = probs, col = "purple", lty = 3)
-max(abs(pexpgeom(Q, scale, shape) - probs)) # Should be 0
+max(abs(pexpgeom(Q, scale, shape) - probs))  # Should be 0
 }
 }
 \keyword{distribution}

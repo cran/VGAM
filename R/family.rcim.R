@@ -128,7 +128,7 @@
   Hlist <- list("(Intercept)" = matrix(1, ncol(y), 1))
 
   if (!noroweffects)
-    for(ii in 2:nrow(y)) {
+    for (ii in 2:nrow(y)) {
       Hlist[[paste(rprefix, ii, sep = "")]] <- matrix(1, ncol(y), 1)
 
 
@@ -137,7 +137,7 @@
 
 
   if (!nocoleffects)
-    for(ii in 2:ncol(y)) {
+    for (ii in 2:ncol(y)) {
 
 
       Hlist[[   paste(cprefix, ii, sep = "")]] <- modmat.col[, ii, drop = FALSE]
@@ -145,7 +145,7 @@
     }
 
   if (Rank > 0) {
-    for(ii in 2:nrow(y)) {
+    for (ii in 2:nrow(y)) {
       Hlist[[yn1[ii]]] <- diag(ncol(y))
       .rcim.df[[yn1[ii]]] <- eifun(ii, nrow(y))
     }
@@ -160,20 +160,20 @@
   str1 <- paste("~ ", rprefix, "2", sep = "")
 
   if (nrow(y) > 2) 
-    for(ii in 3:nrow(y)) {
+    for (ii in 3:nrow(y)) {
       str1 <- paste(str1, paste(rprefix, ii, sep = ""), sep = " + ")
     }
 
 
 
-  for(ii in 2:ncol(y)) {
+  for (ii in 2:ncol(y)) {
     str1 <- paste(str1, paste(cprefix, ii, sep = ""), sep = " + ")
   }
 
 
   str2 <- paste("y ", str1)
   if (Rank > 0) {
-    for(ii in 2:nrow(y))
+    for (ii in 2:nrow(y))
       str2 <- paste(str2, yn1[ii], sep = " + ")
   }
 
@@ -293,7 +293,7 @@
 
 
 summaryrcim <- function(object, ...) {
-    rcim(object, summary.arg = TRUE, ...)
+  rcim(depvar(object), summary.arg = TRUE, ...)
 }
 
 
@@ -422,7 +422,7 @@ setMethod("summary", "rcim",
     warning("argument 'object' is not Rank-0")
 
 
-  n_lm  <- nrow(object@y)
+  n.lm  <- nrow(object@y)
 
   cobj <- coefficients(object)
 
@@ -430,8 +430,8 @@ setMethod("summary", "rcim",
                    object@control$Rank == 0) length(cobj) else
                length(object@control$colx1.index)
 
-  orig.roweff <- c("Row.1" = 0, cobj[(nparff + 1) : (nparff + n_lm - 1)])
-  orig.coleff <- c("Col.1" = 0, cobj[(nparff + n_lm) : upperbound])
+  orig.roweff <- c("Row.1" = 0, cobj[(nparff + 1) : (nparff + n.lm - 1)])
+  orig.coleff <- c("Col.1" = 0, cobj[(nparff + n.lm) : upperbound])
   last.r <- length(orig.roweff)
   last.c <- length(orig.coleff)
 
@@ -637,7 +637,7 @@ Confint.rrnb <- function(rrnb2, level = 0.95) {
   delta1.hat <- exp(a21.hat * beta11.hat - beta21.hat)
   delta2.hat <- 2 - a21.hat
 
-  SE.a21.hat <- sqrt(vcovrrvglm(rrnb2)["I(lv.mat)", "I(lv.mat)"])
+  SE.a21.hat <- sqrt(vcovrrvglm(rrnb2)["I(latvar.mat)", "I(latvar.mat)"])
 
 
   ci.a21 <- a21.hat +  c(-1, 1) * qnorm(1 - (1 - level)/2) * SE.a21.hat
@@ -706,6 +706,7 @@ Confint.nb1 <- function(nb1, level = 0.95) {
 
 
 
+
 plota21 <- function(rrvglm2, plot.it = TRUE, nseq.a21 = 31,
                     se.eachway = c(5, 5), # == c(LHS, RHS),
                     trace.arg = TRUE, ...) {
@@ -731,7 +732,7 @@ plota21 <- function(rrvglm2, plot.it = TRUE, nseq.a21 = 31,
   SE.a21.hat <- temp1$SE.a21.hat
 
 
-  SE.a21.hat <- sqrt(vcov(rrvglm2)["I(lv.mat)", "I(lv.mat)"])
+  SE.a21.hat <- sqrt(vcov(rrvglm2)["I(latvar.mat)", "I(latvar.mat)"])
 
 
   big.ci.a21 <- a21.hat +  c(-1, 1) * se.eachway * SE.a21.hat
@@ -1004,6 +1005,7 @@ plota21 <- function(rrvglm2, plot.it = TRUE, nseq.a21 = 31,
 
 
 
+
 WorstErrors <- function(qv.object) {
   stop("20110729; does not work")
 
@@ -1057,14 +1059,15 @@ Print.qv <- function(x, ...) {
 
 
 
+
 summary.qvar <- function(object, ...) {
 
 
   relerrs <- 1 - sqrt(exp(residuals(object, type = "response")))
   diag(relerrs) <- NA
 
-    minErrSimple <- round(100 * min(relerrs, na.rm = TRUE), 1)
-    maxErrSimple <- round(100 * max(relerrs, na.rm = TRUE), 1)
+  minErrSimple <- round(100 * min(relerrs, na.rm = TRUE), 1)
+  maxErrSimple <- round(100 * max(relerrs, na.rm = TRUE), 1)
 
 
 
@@ -1105,29 +1108,56 @@ print.summary.qvar <- function(x, ...) {
   x$object <- NULL
 
 
-    if (length(cl <- object@call)) {
-        cat("Call:\n")
-        dput(cl)
-    }
+  if (length(cl <- object@call)) {
+      cat("Call:\n")
+      dput(cl)
+  }
 
 
-    facname <- c(object@extra$attributes.y$factorname)
-    if (length(facname))
-      cat("Factor name: ", facname, "\n")
+  facname <- c(object@extra$attributes.y$factorname)
+  if (length(facname))
+    cat("Factor name: ", facname, "\n")
 
 
-    if (length(object@dispersion))
-        cat("\nDispersion: ", object@dispersion, "\n\n")
+  if (length(object@dispersion))
+    cat("\nDispersion: ", object@dispersion, "\n\n")
 
   x <- as.data.frame(c(x))
   print.data.frame(x)
 
 
-        cat("\nWorst relative errors in SEs of simple contrasts (%): ",
-            minErrSimple, ", ", maxErrSimple, "\n")
+    cat("\nWorst relative errors in SEs of simple contrasts (%): ",
+        minErrSimple, ", ", maxErrSimple, "\n")
 
   invisible(x)
 }
+
+
+
+
+qvar <- function(object, se = FALSE, ...) {
+
+
+
+  if (!inherits(object, "rcim") && !inherits(object, "rcim0"))
+    warning("argument 'object' should be an 'rcim' or 'rcim0' object. ",
+            "This call may fail.")
+
+  if (!(object@family@vfamily %in% c("uninormal", "normal1")))
+    warning("argument 'object' does not seem to have used ",
+            "a 'uninormal' family.")
+
+  if (!any(object@misc$link == "explink"))
+    warning("argument 'object' does not seem to have used ",
+            "a 'explink' link function.")
+
+  quasiVar <- diag(predict(object)[, c(TRUE, FALSE)]) / 2
+  if (se) sqrt(quasiVar) else quasiVar
+}
+
+
+
+
 
 
 
@@ -1152,18 +1182,18 @@ plotqvar <- function(object,
 
 
 
-    if (!is.numeric(intervalWidth) &&
-        !is.numeric(conf.level))
-      stop("at least one of arguments 'intervalWidth' and 'conf.level' ",
-            "should be numeric")
+  if (!is.numeric(intervalWidth) &&
+      !is.numeric(conf.level))
+    stop("at least one of arguments 'intervalWidth' and 'conf.level' ",
+          "should be numeric")
 
 
 
 
 
-  if (!any("normal1" %in% object@family@vfamily))
+  if (!any("uninormal" %in% object@family@vfamily))
     stop("argument 'object' dos not appear to be a ",
-         "rcim(, normal1) object")
+         "rcim(, uninormal) object")
 
   estimates <- c(object@extra$attributes.y$estimates)
   if (!length(names(estimates)) &&
@@ -1179,88 +1209,88 @@ plotqvar <- function(object,
   QuasiVar <- exp(diag(fitted(object))) / 2
   QuasiSE  <- sqrt(QuasiVar)
 
-    if (!is.numeric(estimates))
-      stop("Cannot plot, because there are no 'proper' ",
-            "parameter estimates")
-    if (!is.numeric(QuasiSE))
-      stop("Cannot plot, because there are no ",
-           "quasi standard errors")
+  if (!is.numeric(estimates))
+    stop("Cannot plot, because there are no 'proper' ",
+          "parameter estimates")
+  if (!is.numeric(QuasiSE))
+    stop("Cannot plot, because there are no ",
+         "quasi standard errors")
 
 
 
-    faclevels <- factor(names(estimates), levels = names(estimates))
+  faclevels <- factor(names(estimates), levels = names(estimates))
 
 
-    xvalues <- seq(along = faclevels)
-    tops  <- estimates + intervalWidth * QuasiSE
-    tails <- estimates - intervalWidth * QuasiSE
-
-
-
-
-    if (is.numeric(conf.level)) {
-      zedd <- abs(qnorm((1 - conf.level) / 2))
-      lsd.tops  <- estimates + zedd * QuasiSE / sqrt(2)
-      lsd.tails <- estimates - zedd * QuasiSE / sqrt(2)
-      if (max(QuasiSE) / min(QuasiSE) > warn.ratio)
-        warning("Quasi SEs appear to be quite different... the ",
-                "LSD intervals may not be very accurate")
-    } else {
-      lsd.tops  <- NULL
-      lsd.tails <- NULL
-    }
+  xvalues <- seq(along = faclevels)
+  tops  <- estimates + intervalWidth * QuasiSE
+  tails <- estimates - intervalWidth * QuasiSE
 
 
 
 
-    if (is.null(ylim))
-      ylim <- range(c(tails, tops, lsd.tails, lsd.tops),
-                    na.rm = TRUE)
-
-    if (is.null(xlab))
-      xlab <- "Factor level"
-
-    plot(faclevels, estimates,
-         border = border,
-         ylim = ylim, xlab = xlab, ylab = ylab,
-         main = main, ...)
-
-
-    if (points.arg)
-      points(estimates, ...)
+  if (is.numeric(conf.level)) {
+    zedd <- abs(qnorm((1 - conf.level) / 2))
+    lsd.tops  <- estimates + zedd * QuasiSE / sqrt(2)
+    lsd.tails <- estimates - zedd * QuasiSE / sqrt(2)
+    if (max(QuasiSE) / min(QuasiSE) > warn.ratio)
+      warning("Quasi SEs appear to be quite different... the ",
+              "LSD intervals may not be very accurate")
+  } else {
+    lsd.tops  <- NULL
+    lsd.tails <- NULL
+  }
 
 
-    if (is.numeric(intervalWidth)) {
-      segments(xvalues, tails, xvalues, tops,
-               col = scol, lty = slty, lwd = slwd)
-    }
 
 
-    if (is.numeric(conf.level)) {
-      arrows(xvalues, lsd.tails, xvalues, lsd.tops,
-             col = scol, lty = slty, lwd = slwd, code = 3,
-             length = length.arrows, angle = angle)
+  if (is.null(ylim))
+    ylim <- range(c(tails, tops, lsd.tails, lsd.tops),
+                  na.rm = TRUE)
 
-    }
+  if (is.null(xlab))
+    xlab <- "Factor level"
+
+  plot(faclevels, estimates,
+       border = border,
+       ylim = ylim, xlab = xlab, ylab = ylab,
+       main = main, ...)
+
+
+  if (points.arg)
+    points(estimates, ...)
+
+
+  if (is.numeric(intervalWidth)) {
+    segments(xvalues, tails, xvalues, tops,
+             col = scol, lty = slty, lwd = slwd)
+  }
+
+
+  if (is.numeric(conf.level)) {
+    arrows(xvalues, lsd.tails, xvalues, lsd.tops,
+           col = scol, lty = slty, lwd = slwd, code = 3,
+           length = length.arrows, angle = angle)
+
+  }
 
 
 
 
   if (any(slotNames(object) == "post")) {
-    object@post$estimates  = estimates 
-    object@post$xvalues    = xvalues  
+    object@post$estimates  <- estimates 
+    object@post$xvalues    <- xvalues  
     if (is.numeric(intervalWidth)) {
-      object@post$tails = tails
-      object@post$tops  = tops
+      object@post$tails <- tails
+      object@post$tops  <- tops
     }
     if (is.numeric(conf.level)) {
-      object@post$lsd.tails = lsd.tails
-      object@post$lsd.tops  = lsd.tops
+      object@post$lsd.tails <- lsd.tails
+      object@post$lsd.tops  <- lsd.tops
     }
   }
 
 
-    invisible(object)
+  invisible(object)
 }
 
 

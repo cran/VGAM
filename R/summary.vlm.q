@@ -12,7 +12,8 @@
 
 summaryvlm <-
   function(object, correlation = FALSE, dispersion = NULL,
-           Colnames = c("Estimate", "Std. Error", "z value")) {
+           Colnames = c("Estimate", "Std. Error", "z value"),
+           presid = TRUE) {
                          
 
 
@@ -23,12 +24,15 @@ summaryvlm <-
 
   M <- object@misc$M
   n <- object@misc$n
-  nrow_X_vlm <- object@misc$nrow_X_vlm 
-  ncol_X_vlm <- object@misc$ncol_X_vlm   # May be NULL for CQO objects
+  nrow.X.vlm <- object@misc$nrow.X.vlm 
+  ncol.X.vlm <- object@misc$ncol.X.vlm  # May be NULL for CQO objects
 
   coef <- object@coefficients
   cnames <- names(coef)
-  presid <- residualsvlm(object, type = "pearson") # NULL if pooled.weight
+
+  if (presid) {
+    Presid <- residualsvlm(object, type = "pearson")  # NULL if pooled.weight
+  }
 
   if (any(is.na(coef))) {
     warning(paste("Some NAs in the coefficients---no summary",
@@ -38,48 +42,49 @@ summaryvlm <-
   rdf <- object@df.residual   
 
   if (!length(dispersion)) {
-      if (is.numeric(object@misc$dispersion)) {
-          dispersion <- object@misc$dispersion
-          if (all(dispersion == 0))
-              stop("dispersion shouldn't be zero here!")
-      } else {
-          dispersion <- 1
-          object@misc$estimated.dispersion <- FALSE
-      }
+    if (is.numeric(object@misc$dispersion)) {
+      dispersion <- object@misc$dispersion
+      if (all(dispersion == 0))
+        stop("dispersion shouldn't be zero here!")
+    } else {
+      dispersion <- 1
+      object@misc$estimated.dispersion <- FALSE
+    }
   } else if (dispersion == 0) {
-      dispersion <- if (!length(object@rss)) {
-          stop("object@rss is empty")
+      dispersion <-
+        if (!length(object@res.ss)) {
+          stop("object@res.ss is empty")
       } else {
-          object@rss / object@df.residual
+        object@res.ss / object@df.residual
       }
       object@misc$estimated.dispersion <- TRUE
   } else {
-      if (is.numeric(object@misc$dispersion) &&
-         object@misc$dispersion != dispersion)
-          warning("overriding the value of object@misc$dispersion")
-      object@misc$estimated.dispersion <- FALSE
+    if (is.numeric(object@misc$dispersion) &&
+        object@misc$dispersion != dispersion)
+      warning("overriding the value of object@misc$dispersion")
+    object@misc$estimated.dispersion <- FALSE
   }
-  sigma <- dispersion^0.5     # Can be a vector 
+  sigma <- dispersion^0.5  # Can be a vector 
 
-  if (is.Numeric(ncol_X_vlm)) {
+  if (is.Numeric(ncol.X.vlm)) {
     R <- object@R
 
-    if (ncol_X_vlm < max(dim(R)))
+    if (ncol.X.vlm < max(dim(R)))
       stop("R is rank deficient")
 
-    rinv <- diag(ncol_X_vlm)
+    rinv <- diag(ncol.X.vlm)
     rinv <- backsolve(R, rinv)
-    rowlen <- drop(((rinv^2) %*% rep(1, ncol_X_vlm))^0.5)
+    rowlen <- drop(((rinv^2) %*% rep(1, ncol.X.vlm))^0.5)
     covun <- rinv %*% t(rinv)
     dimnames(covun) <- list(cnames, cnames)
   }
   coef <- matrix(rep(coef, 3), ncol = 3)
   dimnames(coef) <- list(cnames, Colnames)
-  if (length(sigma) == 1 && is.Numeric(ncol_X_vlm)) {
-    coef[, 2] <- rowlen %o% sigma      # Fails here when sigma is a vector 
+  if (length(sigma) == 1 && is.Numeric(ncol.X.vlm)) {
+    coef[, 2] <- rowlen %o% sigma  # Fails here when sigma is a vector 
     coef[, 3] <- coef[, 1] / coef[, 2]
   } else {
-    coef[,1] <- coef[,2] <- coef[,3] <- NA
+    coef[, 1] <- coef[, 2] <- coef[, 3] <- NA
   }
   if (correlation) {
     correl <- covun * outer(1 / rowlen, 1 / rowlen)
@@ -96,15 +101,15 @@ summaryvlm <-
       object,
       coef3 = coef, 
       correlation = correl,
-      df = c(ncol_X_vlm, rdf),
+      df = c(ncol.X.vlm, rdf),
       sigma = sigma)
 
-  if (is.Numeric(ncol_X_vlm))
+  if (is.Numeric(ncol.X.vlm))
     answer@cov.unscaled <- covun
   answer@dispersion <- dispersion  # Overwrite this 
 
-  if (length(presid))
-    answer@pearson.resid <- as.matrix(presid)
+  if (length(Presid))
+    answer@pearson.resid <- as.matrix(Presid)
 
 
   answer
@@ -131,18 +136,19 @@ show.summary.vlm <- function(x, digits = NULL, quote = TRUE,
   cat("\nCall:\n")
   dput(x@call)
 
-  presid <- x@pearson.resid
+  Presid <- x@pearson.resid
   rdf <- x@df[2]
-  if (length(presid) && all(!is.na(presid))) {
-    cat("\nPearson residuals:\n")
+  if (length(Presid) && all(!is.na(Presid))) {
     if (rdf/M > 5) {
-      rq <-  apply(as.matrix(presid), 2, quantile) # 5 x M
+      rq <-  apply(as.matrix(Presid), 2, quantile)  # 5 x M
       dimnames(rq) <- list(c("Min", "1Q", "Median", "3Q", "Max"),
                            x@misc$predictors.names)
+      cat("\nPearson residuals:\n")
       print(t(rq), digits = digits)
     } else
     if (rdf > 0) {
-      print(presid, digits = digits)
+      cat("\nPearson residuals:\n")
+      print(Presid, digits = digits)
     }
   }
 
@@ -166,23 +172,22 @@ show.summary.vlm <- function(x, digits = NULL, quote = TRUE,
   }
 
 
-  if (!is.null(x@rss))
-    cat("\nResidual Sum of Squares:", format(round(x@rss, digits)),
+  if (!is.null(x@res.ss))
+    cat("\nResidual Sum of Squares:", format(round(x@res.ss, digits)),
         "on", round(rdf, digits), "degrees of freedom\n")
 
 
   if (length(correl)) {
-    ncol_X_vlm <- dim(correl)[2]
-    if (ncol_X_vlm > 1) {
+    ncol.X.vlm <- dim(correl)[2]
+    if (ncol.X.vlm > 1) {
       cat("\nCorrelation of Coefficients:\n")
       ll <- lower.tri(correl)
       correl[ll] <- format(round(correl[ll], digits))
       correl[!ll] <- ""
-      print(correl[-1, -ncol_X_vlm, drop = FALSE],
+      print(correl[-1, -ncol.X.vlm, drop = FALSE],
             quote = FALSE, digits = digits)
     }
   }
-
 
   invisible(NULL)
 }

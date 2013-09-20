@@ -265,7 +265,7 @@ rgumbelII <- function(n, shape, scale = 1) {
 
     misc$earg <- vector("list", M)
     names(misc$earg) <- temp.names
-    for(ii in 1:ncoly) {
+    for (ii in 1:ncoly) {
       misc$earg[[Musual*ii-1]] <- .eshape
       misc$earg[[Musual*ii  ]] <- .escale
     }
@@ -774,7 +774,7 @@ perks.control <- function(save.weight = TRUE, ...) {
 
     misc$earg <- vector("list", M)
     names(misc$earg) <- temp.names
-    for(ii in 1:ncoly) {
+    for (ii in 1:ncoly) {
       misc$earg[[Musual*ii-1]] <- .eshape
       misc$earg[[Musual*ii  ]] <- .escale
     }
@@ -836,7 +836,7 @@ perks.control <- function(save.weight = TRUE, ...) {
     ind1 <- iam(NA, NA, M = Musual, both = TRUE, diag = TRUE)
 
 
-    for(spp. in 1:NOS) {
+    for (spp. in 1:NOS) {
       run.varcov <- 0
       Shape <- shape[, spp.]
       Scale <- scale[, spp.]
@@ -862,7 +862,7 @@ perks.control <- function(save.weight = TRUE, ...) {
       run.varcov <- cbind(ave.oim11, ave.oim22, ave.oim12)
     } else {
 
-      for(ii in 1:( .nsimEIM )) {
+      for (ii in 1:( .nsimEIM )) {
         ysim <- rperks(n = n, shape = Shape, scale = Scale)
 if (ii < 3) {
 }
@@ -898,14 +898,14 @@ if (ii < 3) {
                    dThetas.detas[, Musual * (spp. - 1) + ind1$col]
 
 
-      for(jay in 1:Musual)
-        for(kay in jay:Musual) {
+      for (jay in 1:Musual)
+        for (kay in jay:Musual) {
           cptr <- iam((spp. - 1) * Musual + jay,
                       (spp. - 1) * Musual + kay,
                       M = M)
           wz[, cptr] <- wz1[, iam(jay, kay, M = Musual)]
         }
-    } # End of for(spp.) loop
+    } # End of for (spp.) loop
 
 
 
@@ -1224,7 +1224,7 @@ makeham.control <- function(save.weight = TRUE, ...) {
 
     misc$earg <- vector("list", M)
     names(misc$earg) <- temp.names
-    for(ii in 1:ncoly) {
+    for (ii in 1:ncoly) {
       misc$earg[[Musual*ii-2]] <- .eshape
       misc$earg[[Musual*ii-1]] <- .escale
       misc$earg[[Musual*ii  ]] <- .eepsil
@@ -1298,7 +1298,7 @@ makeham.control <- function(save.weight = TRUE, ...) {
     ind1 <- iam(NA, NA, M = Musual, both = TRUE, diag = TRUE)
 
 
-    for(spp. in 1:NOS) {
+    for (spp. in 1:NOS) {
       run.varcov <- 0
       Shape <- shape[, spp.]
       Scale <- scale[, spp.]
@@ -1324,7 +1324,7 @@ makeham.control <- function(save.weight = TRUE, ...) {
       run.varcov <- cbind(ave.oim11, ave.oim22, ave.oim12)
     } else {
 
-      for(ii in 1:( .nsimEIM )) {
+      for (ii in 1:( .nsimEIM )) {
         ysim <- rmakeham(n = n, shape = Shape, scale = Scale,
                          epsil = Epsil)
 if (ii < 3) {
@@ -1375,14 +1375,14 @@ if (ii < 3) {
                    dThetas.detas[, Musual * (spp. - 1) + ind1$col]
 
 
-      for(jay in 1:Musual)
-        for(kay in jay:Musual) {
+      for (jay in 1:Musual)
+        for (kay in jay:Musual) {
           cptr <- iam((spp. - 1) * Musual + jay,
                       (spp. - 1) * Musual + kay,
                       M = M)
           wz[, cptr] <- wz1[, iam(jay, kay, M = Musual)]
         }
-    } # End of for(spp.) loop
+    } # End of for (spp.) loop
 
 
 
@@ -1632,7 +1632,7 @@ gompertz.control <- function(save.weight = TRUE, ...) {
 
     misc$earg <- vector("list", M)
     names(misc$earg) <- temp.names
-    for(ii in 1:ncoly) {
+    for (ii in 1:ncoly) {
       misc$earg[[Musual*ii-1]] <- .eshape
       misc$earg[[Musual*ii  ]] <- .escale
     }
@@ -1691,12 +1691,12 @@ gompertz.control <- function(save.weight = TRUE, ...) {
     ind1 <- iam(NA, NA, M = Musual, both = TRUE, diag = TRUE)
 
 
-    for(spp. in 1:NOS) {
+    for (spp. in 1:NOS) {
       run.varcov <- 0
       Shape <- shape[, spp.]
       Scale <- scale[, spp.]
 
-      for(ii in 1:( .nsimEIM )) {
+      for (ii in 1:( .nsimEIM )) {
         ysim <- rgompertz(n = n, shape = Shape, scale = Scale)
 if (ii < 3) {
 }
@@ -1724,14 +1724,14 @@ if (ii < 3) {
                    dThetas.detas[, Musual * (spp. - 1) + ind1$col]
 
 
-      for(jay in 1:Musual)
-        for(kay in jay:Musual) {
+      for (jay in 1:Musual)
+        for (kay in jay:Musual) {
           cptr <- iam((spp. - 1) * Musual + jay,
                       (spp. - 1) * Musual + kay,
                       M = M)
           wz[, cptr] <- wz1[, iam(jay, kay, M = Musual)]
         }
-    } # End of for(spp.) loop
+    } # End of for (spp.) loop
 
 
 
@@ -1961,7 +1961,7 @@ exponential.mo.control <- function(save.weight = TRUE, ...) {
 
     misc$earg <- vector("list", M)
     names(misc$earg) <- temp.names
-    for(ii in 1:ncoly) {
+    for (ii in 1:ncoly) {
       misc$earg[[Musual*ii-1]] <- .ealpha0
       misc$earg[[Musual*ii  ]] <- .elambda
     }
@@ -2020,12 +2020,12 @@ exponential.mo.control <- function(save.weight = TRUE, ...) {
     ind1 <- iam(NA, NA, M = Musual, both = TRUE, diag = TRUE)
 
 
-    for(spp. in 1:NOS) {
+    for (spp. in 1:NOS) {
       run.varcov <- 0
       Alph <- alpha0[, spp.]
       Lamb <- lambda[, spp.]
 
-      for(ii in 1:( .nsimEIM )) {
+      for (ii in 1:( .nsimEIM )) {
         ysim <- rmoe(n = n, alpha = Alph, lambda = Lamb)
 if (ii < 3) {
 }
@@ -2052,14 +2052,14 @@ if (ii < 3) {
                    dThetas.detas[, Musual * (spp. - 1) + ind1$col]
 
 
-      for(jay in 1:Musual)
-        for(kay in jay:Musual) {
+      for (jay in 1:Musual)
+        for (kay in jay:Musual) {
           cptr <- iam((spp. - 1) * Musual + jay,
                       (spp. - 1) * Musual + kay,
                       M = M)
           wz[, cptr] <- wz1[, iam(jay, kay, M = Musual)]
         }
-    } # End of for(spp.) loop
+    } # End of for (spp.) loop
 
 
 
@@ -3910,11 +3910,11 @@ dinvparalogistic <- function(x, shape1.a, scale = 1, log = FALSE)
  if (FALSE)
  genlognormal <- function(link.sigma = "loge", link.r = "loge",
                           init.sigma = 1, init.r = 1, zero = NULL) {
-warning("2/4/04; doesn't work, possibly because first derivs are ",
+warning("20040402; does not work, possibly because first derivs are ",
         "not continuous (sign() is used). Certainly, the derivs wrt ",
         "mymu are problematic (run with maxit=4:9 and look at weight ",
         "matrices). Possibly fundamentally cannot be estimated by IRLS. ",
-        "Pooling doesn't seem to help")
+        "Pooling does not seem to help")
 
 
 

@@ -8,6 +8,7 @@
   Density, distribution function, quantile function and random generation
   for the 4-parameter bivariate logistic distribution.
 
+
 }
 \usage{
 dbilogis4(x1, x2, loc1 = 0, scale1 = 1, loc2 = 0, scale2 = 1, log = FALSE)
@@ -17,12 +18,16 @@ rbilogis4(n, loc1 = 0, scale1 = 1, loc2 = 0, scale2 = 1)
 \arguments{
   \item{x1, x2, q1, q2}{vector of quantiles.}
   \item{n}{number of observations.
-    Same as \code{\link[stats]{rlogis}}. }
+    Same as \code{\link[stats]{rlogis}}.
+
+
+  }
   \item{loc1, loc2}{the location parameters \eqn{l_1}{l1} and \eqn{l_2}{l2}.}
   \item{scale1, scale2}{the scale parameters \eqn{s_1}{s1} and \eqn{s_2}{s2}.}
   \item{log}{
   Logical.
   If \code{log = TRUE} then the logarithm of the density is returned.
+
 
   }
 
@@ -60,8 +65,7 @@ Bivariate logistic distributions.
 }
 \examples{
 \dontrun{ par(mfrow = c(1, 3))
-n <- 2000
-ymat <- rbilogis4(n, loc1 = 5, loc2 = 7, scale2 = exp(1))
+ymat <- rbilogis4(n = 2000, loc1 = 5, loc2 = 7, scale2 = exp(1))
 myxlim <- c(-2, 15); myylim <- c(-10, 30)
 plot(ymat, xlim = myxlim, ylim = myylim)
 

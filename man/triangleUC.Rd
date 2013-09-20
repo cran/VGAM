@@ -9,6 +9,7 @@
   Density, distribution function, quantile function and random
   generation for the Triangle distribution with parameter
   \code{theta}.
+
 }
 \usage{
 dtriangle(x, theta, lower = 0, upper = 1, log = FALSE)
@@ -20,15 +21,18 @@ rtriangle(n, theta, lower = 0, upper = 1)
   \item{x, q}{vector of quantiles.}
   \item{p}{vector of probabilities.}
   \item{n}{number of observations.
-    Must be a positive integer of length 1.}
+    Same as \code{\link[stats]{runif}}.
+
+   }
   \item{theta}{the theta parameter which lies between \code{lower}
      and \code{upper}. }
   \item{lower, upper}{lower and upper limits of the distribution.
      Must be finite.
-   }
+  }
   \item{log}{
   Logical.
   If \code{log = TRUE} then the logarithm of the density is returned.
+
 
   }
 
@@ -38,6 +42,7 @@ rtriangle(n, theta, lower = 0, upper = 1)
   \code{ptriangle} gives the distribution function,
   \code{qtriangle} gives the quantile function, and
   \code{rtriangle} generates random deviates.
+
 
 }
 %\references{
@@ -52,7 +57,7 @@ rtriangle(n, theta, lower = 0, upper = 1)
 
 }
 %\note{
-%  
+%
 %}
 \seealso{
   \code{\link{triangle}}.
@@ -70,7 +75,7 @@ lines(x, ptriangle(x, theta = theta), col = "orange")
 probs <- seq(0.1, 0.9, by = 0.1)
 Q <- qtriangle(probs, theta = theta)
 lines(Q, dtriangle(Q, theta = theta), col = "purple", lty = 3, type = "h")
-ptriangle(Q, theta = theta) - probs # Should be all zero
+ptriangle(Q, theta = theta) - probs  # Should be all zero
 abline(h = probs, col = "purple", lty = 3) }
 }
 \keyword{distribution}

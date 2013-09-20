@@ -19,6 +19,7 @@ nakagami(lshape = "loge", lscale = "loge", ishape = NULL, iscale = 1)
   See \code{\link{Links}} for more choices
   and information.
 
+
   }
   \item{ishape, iscale}{
   Optional initial values for the shape and scale parameters.
@@ -27,6 +28,7 @@ nakagami(lshape = "loge", lscale = "loge", ishape = NULL, iscale = 1)
   For \code{iscale}, assigning a \code{NULL} means a value is obtained in the
   \code{initialize} slot, however, setting another numerical
   value is recommended if convergence fails or is too slow.
+
 
   }
 }
@@ -94,7 +96,7 @@ nakagami(lshape = "loge", lscale = "loge", ishape = NULL, iscale = 1)
 \examples{
 nn <- 1000; shape <- exp(0); Scale <- exp(1)
 ndata <- data.frame(y1 = sqrt(rgamma(nn, shape = shape, scale = Scale/shape)))
-fit <- vglm(y1 ~ 1, nakagami, ndata, trace = TRUE, crit = "c")
+fit <- vglm(y1 ~ 1, nakagami, ndata, trace = TRUE, crit = "coef")
 ndata <- transform(ndata, y2 = rnaka(nn, shape = shape, scale = Scale))
 fit <- vglm(y2 ~ 1, nakagami(iscale = 3), ndata, trace = TRUE)
 head(fitted(fit))

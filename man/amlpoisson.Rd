@@ -150,7 +150,7 @@ fit@extra
 \dontrun{
 # Quantile plot
 with(mydat, plot(x, jitter(y), col = "blue", las = 1, main =
-     paste(paste(round(fit@extra$percentile, dig = 1), collapse = ", "),
+     paste(paste(round(fit@extra$percentile, digits = 1), collapse = ", "),
            "percentile-expectile curves")))
 with(mydat, matlines(x, fitted(fit), lwd = 2)) }
 }

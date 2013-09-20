@@ -25,6 +25,7 @@ rcard(n, mu, rho, ...)
   \item{mu, rho}{
   See \code{\link{cardioid}} for more information.
 
+
   }
   \item{tolerance, maxits, ...}{
   The first two are control parameters for the algorithm
@@ -34,10 +35,12 @@ rcard(n, mu, rho, ...)
   \code{rcard} calls \code{qcard} so the \code{...} can be used
   to vary the two arguments.
 
+
   }
   \item{log}{
   Logical.
-  If \code{log=TRUE} then the logarithm of the density is returned.
+  If \code{log = TRUE} then the logarithm of the density is returned.
+
 
   }
 
@@ -47,40 +50,44 @@ rcard(n, mu, rho, ...)
   for estimating the two parameters by maximum likelihood estimation,
   for the formula of the probability density function and other details.
 
+
 }
 \value{
   \code{dcard} gives the density,
   \code{pcard} gives the distribution function,
   \code{qcard} gives the quantile function, and
   \code{rcard} generates random deviates.
+
+
 }
 %\references{ }
 \author{ Thomas W. Yee }
 \note{ 
-    Convergence problems might occur with \code{rcard}.
+  Convergence problems might occur with \code{rcard}.
+
 
 }
 
 \seealso{ 
-    \code{\link{cardioid}}.
+  \code{\link{cardioid}}.
+
 
 }
 \examples{
 \dontrun{
-mu = 4; rho = 0.4
-x = seq(0, 2*pi, len=501)
-plot(x, dcard(x, mu, rho), type="l", las=1, ylim=c(0,1), col="blue",
-     ylab=paste("[dp]card(mu=", mu, ", rho=", rho, ")"),
-     main="Blue is density, red is cumulative distribution function",
-     sub="Purple lines are the 10,20,...,90 percentiles")
-lines(x, pcard(x, mu, rho), col="red")
+mu <- 4; rho <- 0.4; x <- seq(0, 2*pi, len = 501)
+plot(x, dcard(x, mu, rho), type = "l", las = 1, ylim = c(0, 1), col = "blue",
+     ylab = paste("[dp]card(mu=", mu, ", rho=", rho, ")"),
+     main = "Blue is density, orange is cumulative distribution function",
+     sub = "Purple lines are the 10,20,...,90 percentiles")
+lines(x, pcard(x, mu, rho), col = "orange")
 
-probs = seq(0.1, 0.9, by=0.1)
-Q = qcard(probs, mu, rho)
-lines(Q, dcard(Q, mu, rho), col="purple", lty=3, type="h")
-lines(Q, pcard(Q, mu, rho), col="purple", lty=3, type="h")
-abline(h=c(0,probs,1), v=c(0,2*pi), col="purple", lty=3)
-max(abs(pcard(Q, mu, rho) - probs)) # Should be 0
+probs <- seq(0.1, 0.9, by = 0.1)
+Q <- qcard(probs, mu, rho)
+lines(Q, dcard(Q, mu, rho), col = "purple", lty = 3, type = "h")
+lines(Q, pcard(Q, mu, rho), col = "purple", lty = 3, type = "h")
+abline(h = c(0,probs, 1), v = c(0, 2*pi), col = "purple", lty = 3)
+max(abs(pcard(Q, mu, rho) - probs))  # Should be 0
 }
 }
 \keyword{distribution}

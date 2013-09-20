@@ -10,11 +10,13 @@
 
 
 
- dcennormal1 <- function(r1 = 0, r2 = 0,
-                         lmu = "identity",
-                         lsd = "loge",
-                         imu = NULL, isd = NULL, zero = 2)
-{
+
+
+ double.cennormal <-
+  function(r1 = 0, r2 = 0,
+           lmu = "identity",
+           lsd = "loge",
+           imu = NULL, isd = NULL, zero = 2) {
   if (!is.Numeric(r1, allowable.length = 1, integer.valued = TRUE) ||
       r1 < 0)
     stop("bad input for 'r1'")
@@ -57,7 +59,7 @@
            "of positive integers")
 
     sumw <- sum(w)
-    extra$bign <- sumw + .r1 + .r2 # Tot num of censored & uncensored obsns
+    extra$bign <- sumw + .r1 + .r2  # Tot num of censored & uncensored obsns
 
     if (!length(etastart)) {
       yyyy.est <- if (length( .imu )) .imu else median(y)
@@ -100,15 +102,15 @@
   } , list( .lmu = lmu, .lsd = lsd,
             .emu = emu, .esd = esd,
             .r1 = r1, .r2 = r2 ))),
-  vfamily = c("dcennormal1"),
+  vfamily = c("double.cennormal"),
   deriv = eval(substitute(expression({
     sd <- eta2theta(eta[, 2], .lsd, earg =.esd)
 
     q1 <- .r1 / extra$bign
     q2 <- .r2 / extra$bign
     pee <- 1 - q1 - q2  # 1 if r1==r2==0
-    z1 <- if ( .r1 == 0) - 100 else min((y - mu) / sd) # 100==Inf
-    z2 <- if ( .r2 == 0) + 100 else max((y - mu) / sd) # 100==Inf
+    z1 <- if ( .r1 == 0) - 100 else min((y - mu) / sd)  # 100==Inf
+    z2 <- if ( .r2 == 0) + 100 else max((y - mu) / sd)  # 100==Inf
     fz1 <- if ( .r1 == 0) 0 else dnorm(z1)
     fz2 <- if ( .r2 == 0) 0 else dnorm(z2)
     Fz1 <- if ( .r1 == 0) 0.02 else pnorm(z1)  # 0/0 undefined
@@ -159,12 +161,17 @@ dbisa <- function(x, shape, scale = 1, log = FALSE) {
 
 
   L <- max(length(x), length(shape), length(scale))
-  x     <- rep(x,     len = L);
-  shape <- rep(shape, len = L);
-  scale <- rep(scale, len = L);
+  if (length(x)     != L) x     <- rep(x,     len = L)
+  if (length(shape) != L) shape <- rep(shape, len = L)
+  if (length(scale) != L) scale <- rep(scale, len = L)
+
   logdensity <- rep(log(0), len = L)
+
   xok <- (x > 0)
-  xifun <- function(x) {temp <- sqrt(x); temp - 1/temp}
+  xifun <- function(x) {
+    temp <- sqrt(x)
+    temp - 1/temp
+  }
   logdensity[xok] <-
     dnorm(xifun(x[xok] / scale[xok]) / shape[xok], log = TRUE) +
     log1p(scale[xok]/x[xok]) - log(2) - log(shape[xok]) -
@@ -175,7 +182,7 @@ dbisa <- function(x, shape, scale = 1, log = FALSE) {
 }
 
 
-pbisa <- function(q, shape, scale=1) {
+pbisa <- function(q, shape, scale = 1) {
   if (!is.Numeric(q))
     stop("bad input for argument 'q'")
   if (!is.Numeric(shape, positive = TRUE))
@@ -189,7 +196,7 @@ pbisa <- function(q, shape, scale=1) {
 }
 
 
-qbisa <- function(p, shape, scale=1) {
+qbisa <- function(p, shape, scale = 1) {
   if (!is.Numeric(p, positive = TRUE) || any(p >= 1))
       stop("argument 'p' must have values inside the interval (0,1)")
   if (!is.Numeric(shape, positive = TRUE))
@@ -213,6 +220,7 @@ rbisa <- function(n, shape, scale = 1) {
   ans2 <- (2 + A^2 * shape^2 - temp1) * scale / 2
 
 
+
   ans <- ifelse(A < 0, pmin(ans1, ans2), pmax(ans1, ans2))
   ans[shape <= 0] <- NaN
   ans[scale <= 0] <- NaN
@@ -228,8 +236,7 @@ rbisa <- function(n, shape, scale = 1) {
 
  bisa <- function(lshape = "loge", lscale = "loge",
                   ishape = NULL,   iscale = 1,
-                  imethod = 1, zero = NULL)
-{
+                  imethod = 1, zero = NULL) {
   lshape <- as.list(substitute(lshape))
   eshape <- link2list(lshape)
   lshape <- attr(eshape, "function.name")
@@ -270,7 +277,7 @@ rbisa <- function(n, shape, scale = 1) {
       shape.init <- if (is.Numeric( .ishape)) rep( .ishape, len = n) else {
       if ( .imethod == 1) {
         ybar <- rep(weighted.mean(y, w), len = n)
-        ybarr <- rep(1 / weighted.mean(1/y, w), len = n) # Reqrs y > 0
+        ybarr <- rep(1 / weighted.mean(1/y, w), len = n)  # Reqrs y > 0
         sqrt(ybar / scale.init + scale.init / ybarr - 2)
       } else if ( .imethod == 2) {
         sqrt(2*( pmax(y, scale.init+0.1) / scale.init - 1))
@@ -328,7 +335,7 @@ rbisa <- function(n, shape, scale = 1) {
   }) , list( .lshape = lshape, .lscale = lscale,
              .eshape = eshape, .escale = escale ))),
   weight = eval(substitute(expression({
-    wz <- matrix(as.numeric(NA), n, M) # Diagonal!!
+    wz <- matrix(as.numeric(NA), n, M)  # Diagonal!!
     wz[,iam(1,1,M)] <- 2 * dsh.deta^2 / sh^2
     hfunction <- function(alpha)
       alpha * sqrt(pi/2) - pi * exp(2/alpha^2) *

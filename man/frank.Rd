@@ -1,5 +1,5 @@
-\name{frank}
-\alias{frank}
+\name{bifrankcop}
+\alias{bifrankcop}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Frank's Bivariate Distribution Family Function }
 \description{
@@ -8,7 +8,7 @@
 
 }
 \usage{
-frank(lapar = "loge", iapar = 2, nsimEIM = 250)
+bifrankcop(lapar = "loge", iapar = 2, nsimEIM = 250)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -61,7 +61,7 @@ frank(lapar = "loge", iapar = 2, nsimEIM = 250)
 
 
   The default is to use Fisher scoring implemented using
-  \code{\link{rfrank}}.
+  \code{\link{rbifrankcop}}.
   For intercept-only models an alternative is to set \code{nsimEIM=NULL}
   so that a variant of Newton-Raphson is used.
 
@@ -96,16 +96,16 @@ Frank's family of bivariate distributions.
 }
 
 \seealso{
-  \code{\link{rfrank}},
+  \code{\link{rbifrankcop}},
   \code{\link{fgm}}.
 
 
 }
 \examples{
 \dontrun{
-ymat <- rfrank(n = 2000, alpha = exp(4))
+ymat <- rbifrankcop(n = 2000, alpha = exp(4))
 plot(ymat, col = "blue")
-fit <- vglm(ymat ~ 1, fam = frank, trace = TRUE)
+fit <- vglm(ymat ~ 1, fam = bifrankcop, trace = TRUE)
 coef(fit, matrix = TRUE)
 Coef(fit)
 vcov(fit)

@@ -16,6 +16,7 @@ tikuv(d, lmean = "identity", lsigma = "loge",
   The \eqn{d} parameter. It must be a single numeric value less than 2.
   Then \eqn{h = 2-d>0} is another parameter.
 
+
   }
   \item{lmean, lsigma}{
   Link functions for the mean and standard
@@ -23,6 +24,7 @@ tikuv(d, lmean = "identity", lsigma = "loge",
   (see \bold{Details} below).
   They are \eqn{\mu}{mu} and \eqn{\sigma}{sigma} respectively.
   See \code{\link{Links}} for more choices.
+
 
   }
 
@@ -39,6 +41,7 @@ tikuv(d, lmean = "identity", lsigma = "loge",
   Optional initial value for \eqn{\sigma}{sigma}.
   A \code{NULL} means a value is computed internally.
 
+
   }
   \item{zero}{
   An integer-valued vector specifying which
@@ -48,6 +51,7 @@ tikuv(d, lmean = "identity", lsigma = "loge",
   If \code{zero = NULL} then all linear/additive predictors are modelled as
   a linear combination of the explanatory variables.
   For many data sets having \code{zero = 2} is a good idea.
+
 
   }
 }
@@ -114,7 +118,7 @@ tikuv(d, lmean = "identity", lsigma = "loge",
 }
 \seealso{ 
   \code{\link{dtikuv}},
-  \code{\link{normal1}}.
+  \code{\link{uninormal}}.
 
 
 }

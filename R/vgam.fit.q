@@ -4,18 +4,24 @@
 
 
 
-vgam.fit <- function(x, y, w, mf,
-        etastart, mustart, coefstart,
-        offset, family, control, criterion = "coefficients",
-        constraints = NULL, extra, qr.arg,
-        Terms,
-        nonparametric, smooth.labels,
-        function.name = "vgam", ...) {
 
+
+vgam.fit <-
+  function(x, y, w, mf,
+           Xm2 = NULL, Ym2 = NULL,  # Added 20130730
+           etastart, mustart, coefstart,
+           offset, family, control, criterion = "coefficients",
+           constraints = NULL, extra, qr.arg,
+           Terms,
+           nonparametric, smooth.labels,
+           function.name = "vgam", ...) {
+
+
+  eff.n <- nrow(x)  # + sum(abs(w[1:nrow(x)]))
 
   specialCM <- NULL
   post <- list()
-  check.Rank <- TRUE # Set this to false for family functions vppr() etc.
+  check.Rank <- TRUE  # Set this to false for family functions vppr() etc.
   epsilon <- control$epsilon
   maxit <- control$maxit
   save.weight <- control$save.weight
@@ -42,7 +48,7 @@ vgam.fit <- function(x, y, w, mf,
       new.coeffs <- c.list$coeff
 
       if (length(family@middle))
-          eval(family@middle)
+        eval(family@middle)
 
       eta <- fv + offset
       mu <- family@linkinv(eta, extra)
@@ -59,22 +65,27 @@ vgam.fit <- function(x, y, w, mf,
       if (trace) {
         cat("VGAM ", bf, " loop ", iter, ": ", criterion, "= ")
 
-        UUUU <- switch(criterion, coefficients =
-                       format(new.crit, dig = round(2-log10(epsilon))),
-                       format(round(new.crit, 4)))
+        UUUU <- switch(criterion,
+                       coefficients =
+                         format(new.crit,
+                                dig = round(1 - log10(epsilon))),
+                         format(new.crit, 
+                                dig = max(4, 
+                                          round(-0 - log10(epsilon) +
+                                          log10(sqrt(eff.n))))))
 
         switch(criterion,
-               coefficients = {if(length(new.crit) > 2) cat("\n");
+               coefficients = {if (length(new.crit) > 2) cat("\n");
                cat(UUUU, fill = TRUE, sep = ", ")},
                cat(UUUU, fill = TRUE, sep = ", "))
       }
 
-                one.more <- eval(control$convergence)
+      one.more <- eval(control$convergence)
 
       flush.console()
 
-      if (!is.finite(one.more) ||
-        !is.logical(one.more)) one.more <- FALSE
+      if (!is.finite(one.more) || !is.logical(one.more))
+        one.more <- FALSE
       if (one.more) {
         iter <- iter + 1
         deriv.mu <- eval(family@deriv)
@@ -93,7 +104,7 @@ vgam.fit <- function(x, y, w, mf,
       }
 
       c.list$one.more <- one.more
-      c.list$coeff <- runif(length(new.coeffs)) # 12/3/03; twist needed!
+      c.list$coeff <- runif(length(new.coeffs))  # 20030312; twist needed!
       old.coeffs <- new.coeffs
     }
     c.list
@@ -106,11 +117,11 @@ vgam.fit <- function(x, y, w, mf,
   old.coeffs <- coefstart
 
   intercept.only <- ncol(x) == 1 && dimnames(x)[[2]] == "(Intercept)"
-  y.names <- predictors.names <- NULL # May be overwritten in @initialize
+  y.names <- predictors.names <- NULL  # May be overwritten in @initialize
 
   n.save <- n
   if (length(slot(family, "initialize")))
-    eval(slot(family, "initialize")) # Initialize mu & M (& optionally w)
+    eval(slot(family, "initialize"))  # Initialize mu & M (& optionally w)
 
   if (length(etastart)) {
     eta <- etastart
@@ -145,7 +156,6 @@ vgam.fit <- function(x, y, w, mf,
     if (nonparametric) {
 
 
-
       smooth.frame <- mf
       assignx <- attr(x, "assign")
       which <- assignx[smooth.labels]
@@ -153,7 +163,7 @@ vgam.fit <- function(x, y, w, mf,
       bf <- "s.vam"
       bf.call <- parse(text = paste(
               "s.vam(x, z, wz, tfit$smomat, which, tfit$smooth.frame,",
-              "bf.maxit, bf.epsilon, trace, se = se.fit, X_vlm_save, ",
+              "bf.maxit, bf.epsilon, trace, se = se.fit, X.vlm.save, ",
               "Blist, ncolBlist, M = M, qbig = qbig, Umat = U, ",
               "all.knots = control$all.knots, nk = control$nk)",
               sep = ""))[[1]]
@@ -162,26 +172,26 @@ vgam.fit <- function(x, y, w, mf,
       smomat <- matrix(0, n, qbig)
       dy <- if (is.matrix(y)) dimnames(y)[[1]] else names(y)
       d2 <- if (is.null(predictors.names))
-          paste("(Additive predictor ",1:M,")", sep = "") else
-          predictors.names
+              paste("(Additive predictor ",1:M,")", sep = "") else
+              predictors.names
       dimnames(smomat) <- list(dy, vlabel(smooth.labels,
-            ncolBlist[smooth.labels], M))
+                                          ncolBlist[smooth.labels], M))
 
       tfit <- list(smomat = smomat, smooth.frame = smooth.frame)
     } else {
-      bf.call <- expression(vlm.wfit(xmat = X_vlm_save, z,
+      bf.call <- expression(vlm.wfit(xmat = X.vlm.save, z,
                                      Blist = NULL, U = U,
                                      matrix.out = FALSE, is.vlmX = TRUE,
                                      qr = qr.arg, xij = NULL))
       bf <- "vlm.wfit"
     }
 
-    X_vlm_save <- lm2vlm.model.matrix(x, Blist, xij = control$xij)
+    X.vlm.save <- lm2vlm.model.matrix(x, Blist, xij = control$xij)
 
 
     if (length(coefstart)) {
-      eta <- if (ncol(X_vlm_save) > 1) X_vlm_save %*% coefstart +
-               offset else X_vlm_save * coefstart + offset
+      eta <- if (ncol(X.vlm.save) > 1) X.vlm.save %*% coefstart +
+               offset else X.vlm.save * coefstart + offset
       eta <- if (M > 1) matrix(eta, ncol = M, byrow = TRUE) else c(eta)
       mu <- family@linkinv(eta, extra)
     }
@@ -196,7 +206,8 @@ vgam.fit <- function(x, y, w, mf,
                        coefficients = 1,
                        tfun(mu = mu, y = y, w = w, res = FALSE,
                             eta = eta, extra))
-    old.crit <- if (minimize.criterion) 10*new.crit+10 else -10*new.crit-10
+    old.crit <- ifelse(minimize.criterion,  10 * new.crit + 10,
+                                           -10 * new.crit - 10)
 
     deriv.mu <- eval(family@deriv)
     wz <- eval(family@weight)
@@ -211,15 +222,14 @@ vgam.fit <- function(x, y, w, mf,
     c.list <- list(wz = as.double(wz), z = as.double(z),
                    fit = as.double(t(eta)),
                    one.more = TRUE, U = as.double(U),
-                   coeff = as.double(rep(1, ncol(X_vlm_save))))
+                   coeff = as.double(rep(1, ncol(X.vlm.save))))
 
 
-    dX_vlm <- as.integer(dim(X_vlm_save))
-    nrow_X_vlm <- dX_vlm[[1]]
-    ncol_X_vlm <- dX_vlm[[2]]
-    if (nrow_X_vlm < ncol_X_vlm)
-      stop(ncol_X_vlm, " parameters but only ", nrow_X_vlm,
-           " observations")
+    dX.vlm <- as.integer(dim(X.vlm.save))
+    nrow.X.vlm <- dX.vlm[[1]]
+    ncol.X.vlm <- dX.vlm[[2]]
+    if (nrow.X.vlm < ncol.X.vlm)
+      stop(ncol.X.vlm, " parameters but only ", nrow.X.vlm, " observations")
 
     while (c.list$one.more) {
       tfit <- eval(bf.call)  # fit$smooth.frame is new
@@ -237,18 +247,18 @@ vgam.fit <- function(x, y, w, mf,
       warning("convergence not obtained in ", maxit, " iterations")
 
 
-    dnrow_X_vlm <- labels(X_vlm_save)
-    xnrow_X_vlm <- dnrow_X_vlm[[2]]
-    ynrow_X_vlm <- dnrow_X_vlm[[1]]
+    dnrow.X.vlm <- labels(X.vlm.save)
+    xnrow.X.vlm <- dnrow.X.vlm[[2]]
+    ynrow.X.vlm <- dnrow.X.vlm[[1]]
 
     if (length(family@fini))
       eval(family@fini)
 
     coefs <- tfit$coefficients
-    asgn <- attr(X_vlm_save, "assign")    # 29/11/01 was x 
+    asgn <- attr(X.vlm.save, "assign")    # 20011129 was x 
 
-    names(coefs) <- xnrow_X_vlm
-    cnames <- xnrow_X_vlm
+    names(coefs) <- xnrow.X.vlm
+    cnames <- xnrow.X.vlm
 
     if (!is.null(tfit$rank)) {
       rank <- tfit$rank
@@ -256,9 +266,9 @@ vgam.fit <- function(x, y, w, mf,
         stop("rank < ncol(x) is bad")
     } else rank <- ncol(x)
 
-    R <- tfit$qr$qr[1:ncol_X_vlm, 1:ncol_X_vlm, drop = FALSE]
+    R <- tfit$qr$qr[1:ncol.X.vlm, 1:ncol.X.vlm, drop = FALSE]
     R[lower.tri(R)] <- 0
-    attributes(R) <- list(dim = c(ncol_X_vlm, ncol_X_vlm),
+    attributes(R) <- list(dim = c(ncol.X.vlm, ncol.X.vlm),
                           dimnames = list(cnames, cnames), rank = rank)
 
 
@@ -280,9 +290,9 @@ vgam.fit <- function(x, y, w, mf,
       names(mu) <- names(fv)
     }
 
-    tfit$fitted.values <- NULL      # Have to kill it off  3/12/01
-    fit <- structure(c(tfit, list(
-                assign = asgn,
+    tfit$fitted.values <- NULL  # Have to kill it off  3/12/01
+    fit <- structure(c(tfit,
+           list(assign = asgn,
                 constraints = Blist,
                 control = control,
                 fitted.values = mu,
@@ -293,7 +303,7 @@ vgam.fit <- function(x, y, w, mf,
                 R = R,
                 terms = Terms)))
 
-    df.residual <- nrow_X_vlm - rank 
+    df.residual <- nrow.X.vlm - rank 
 
     if (!se.fit) {
       fit$varmat <- NULL
@@ -310,16 +320,17 @@ vgam.fit <- function(x, y, w, mf,
       fit$predictors <- as.vector(fit$predictors)
       fit$residuals <- as.vector(fit$residuals)
       names(fit$residuals) <- names(fit$predictors) <- yn
-    } else
-      dimnames(fit$residuals) <-
+    } else {
+      dimnames(fit$residuals)  <-
       dimnames(fit$predictors) <- list(yn, predictors.names)
+    }
 
     NewBlist <- process.constraints(constraints, x, M,
                                     specialCM = specialCM, by.col = FALSE)
 
     misc <- list(
         colnames.x = xn,
-        colnames.X_vlm = xnrow_X_vlm,
+        colnames.X.vlm = xnrow.X.vlm,
         criterion = criterion,
         function.name = function.name,
         intercept.only=intercept.only,
@@ -328,10 +339,10 @@ vgam.fit <- function(x, y, w, mf,
         n = n,
         new.assign = new.assign(x, NewBlist),
         nonparametric = nonparametric,
-        nrow_X_vlm = nrow_X_vlm,
+        nrow.X.vlm = nrow.X.vlm,
         orig.assign = attr(x, "assign"),
         p = ncol(x),
-        ncol_X_vlm = ncol_X_vlm,
+        ncol.X.vlm = ncol.X.vlm,
         ynames = dimnames(y)[[2]])
 
 
@@ -358,10 +369,10 @@ vgam.fit <- function(x, y, w, mf,
       if (ii != criterion &&
           any(slotNames(family) == ii) &&
           length(body(slot(family, ii)))) {
-            fit[[ii]] <-
-            crit.list[[ii]] <-
-               (slot(family, ii))(mu = mu, y = y, w = w, res = FALSE,
-                                  eta = eta, extra)
+        fit[[ii]] <-
+        crit.list[[ii]] <-
+          (slot(family, ii))(mu = mu, y = y, w = w, res = FALSE,
+                             eta = eta, extra)
         }
     }
 
@@ -370,11 +381,12 @@ vgam.fit <- function(x, y, w, mf,
 
     if (M == 1) {
       fit$predictors <- as.vector(fit$predictors)
-      fit$residuals <- as.vector(fit$residuals)
-      names(fit$residuals) <- names(fit$predictors) <- yn
+      fit$residuals  <- as.vector(fit$residuals)
+      names(fit$residuals)  <-
+      names(fit$predictors) <- yn
     } else {
-      dimnames(fit$residuals) <- dimnames(fit$predictors) <-
-          list(yn, predictors.names)
+      dimnames(fit$residuals)  <-
+      dimnames(fit$predictors) <- list(yn, predictors.names)
     }
 
 
@@ -403,7 +415,7 @@ vgam.fit <- function(x, y, w, mf,
 
 
 
-    fit$misc <- NULL # 8/6/02; It's necessary to kill it as it exists in vgam
+    fit$misc <- NULL  # 20020608; It is necessary to kill it as it
     structure(c(fit, list(
         contrasts = attr(x, "contrasts"),
         control = control,
@@ -433,7 +445,7 @@ new.assign <- function(X, Blist) {
   lasgn <- unlist(lapply(asgn, length))
 
   ncolBlist <- unlist(lapply(Blist, ncol))
-  names(ncolBlist) <- NULL    # This is necessary for below to work 
+  names(ncolBlist) <- NULL  # This is necessary for below to work 
 
   temp2 <- vlabel(nasgn, ncolBlist, M)
   L <- length(temp2)
@@ -442,10 +454,10 @@ new.assign <- function(X, Blist) {
   kk <- 0
   low <- 1
   for (ii in 1:length(asgn)) {
-    len <- low:(low + ncolBlist[ii] * lasgn[ii] -1)
-    temp <- matrix(len, ncolBlist[ii], lasgn[ii])
+    len  <- low:(low  + ncolBlist[ii] * lasgn[ii] -1)
+    temp <- matrix(len, ncolBlist[ii],  lasgn[ii])
     for (mm in 1:ncolBlist[ii])
-      newasgn[[kk+mm]] <- temp[mm,]
+      newasgn[[kk + mm]] <- temp[mm, ]
     low <- low + ncolBlist[ii] * lasgn[ii]
     kk <- kk + ncolBlist[ii]
   }
@@ -453,4 +465,7 @@ new.assign <- function(X, Blist) {
   names(newasgn) <- temp2
   newasgn
 }
+
+
+
 

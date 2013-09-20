@@ -56,13 +56,13 @@
 }
 \examples{
 # Fit a GAM using vgam() and compare it with the Waitakere Ranges one
-fit.h <- vgam(agaaus ~ s(altitude, df = 2), binomialff, hunua)
+fit.h <- vgam(agaaus ~ s(altitude, df = 2), binomialff, data = hunua)
 \dontrun{
-plot(fit.h, se = TRUE, lcol = "red", scol = "red",
-     main = "Red is Hunua, Blue is Waitakere") }
+plot(fit.h, se = TRUE, lcol = "orange", scol = "orange",
+     llwd = 2, slwd = 2, main = "Orange is Hunua, Blue is Waitakere") }
 head(predict(fit.h, hunua, type = "response"))
 
-fit.w <- vgam(agaaus ~ s(altitude, df = 2), binomialff, waitakere)
+fit.w <- vgam(agaaus ~ s(altitude, df = 2), binomialff, data = waitakere)
 \dontrun{
 plot(fit.w, se = TRUE, lcol = "blue", scol = "blue", add = TRUE) }
 head(predict(fit.w, hunua, type = "response"))   # Same as above? 

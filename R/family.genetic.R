@@ -132,8 +132,8 @@
     dPP <- array(c(dP1, dP2, dP3), c(n, 6, 3))
 
     wz <- matrix(as.numeric(NA), n, dimm(M)) # dimm(M)==6 because M==3
-    for(i1 in 1:M)
-      for(i2 in i1:M) {
+    for (i1 in 1:M)
+      for (i2 in i1:M) {
         index <- iam(i1,i2, M)
         wz[,index] <- rowSums(dPP[, , i1, drop = TRUE] *
                               dPP[, , i2, drop = TRUE] / mu) *
@@ -238,8 +238,8 @@
     dPP.deta <- cbind(dtheta.deta(pA, link = .link , earg = .earg ),
                       dtheta.deta(f,  link = "identity"))
     wz <- matrix(as.numeric(NA), n, dimm(M)) # dimm(M)==3 because M==2
-    for(i1 in 1:M)
-      for(i2 in i1:M) {
+    for (i1 in 1:M)
+      for (i2 in i1:M) {
         index <- iam(i1, i2, M)
         wz[,index] <- rowSums(dPP[,,i1,drop = TRUE] *
                               dPP[,,i2,drop = TRUE] / mu) *
@@ -531,8 +531,8 @@
   weight = eval(substitute(expression({
     dPP <- array(c(dP1,dP2,dP3), c(n,6, 3))
     wz <- matrix(as.numeric(NA), n, dimm(M)) # dimm(M)==6 because M==3
-    for(i1 in 1:M)
-      for(i2 in i1:M) {
+    for (i1 in 1:M)
+      for (i2 in i1:M) {
         index <- iam(i1,i2, M)
         wz[,index] <- rowSums(dPP[,,i1,drop = TRUE] *
                               dPP[,,i2,drop = TRUE] / mu) *

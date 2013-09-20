@@ -69,7 +69,7 @@ New York: Wiley.
 }
 \seealso{
   \code{\link{inv.gaussianff}},
-  \code{\link{wald}}.
+  \code{\link{waldff}}.
 
 
 }

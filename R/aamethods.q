@@ -24,17 +24,11 @@ VGAMenv <- new.env()
 
 
 
-.onLoad <- function(lib, pkg)
-  require(methods)  # 25/1/05
  
  
  
-if (!any(search() == "package:methods"))
-    library(methods)
 
 
-if (!any(search() == "package:splines"))
-    require(splines)
 
 
 
@@ -135,6 +129,10 @@ setMethod("show", "vglmff",
 
 
 
+
+
+
+
 setClass("vlmsmall", representation(
       "call"         = "call",
       "coefficients" = "numeric",
@@ -167,7 +165,7 @@ setClass("vlm", representation(
       "qr"           = "list",
       "R"            = "matrix",
       "rank"         = "integer",
-      "rss"          = "numeric",
+      "res.ss"       = "numeric",
       "smart.prediction" = "list",
       "terms"        = "list",
       "Xm2"          = "matrix",
@@ -311,7 +309,7 @@ new("vglm", "extra"=from@extra,
  "R"=from@R,
  "rank"=from@rank,
  "residuals"=from@residuals,
- "rss"=from@rss,
+ "res.ss"=from@res.ss,
  "smart.prediction"=from@smart.prediction,
  "terms"=from@terms,
  "weights"=from@weights,
@@ -383,7 +381,7 @@ if (!isGeneric("vcov"))
 
 
 setClass("uqo", representation(
-      "lv"               = "matrix",
+      "latvar"           = "matrix",
       "extra"            = "list",
       "family"           = "vglmff",
       "iter"             = "numeric",
@@ -400,9 +398,19 @@ setGeneric("lvplot", function(object, ...) standardGeneric("lvplot"),
            package = "VGAM")
 
 
-if (!isGeneric("ccoef"))
-    setGeneric("ccoef", function(object, ...) standardGeneric("ccoef"),
-           package = "VGAM")
+
+ if (!isGeneric("ccoef"))
+    setGeneric("ccoef", function(object, ...) {
+    .Deprecated("concoef")
+
+    standardGeneric("ccoef")
+    })
+
+ if (!isGeneric("concoef"))
+    setGeneric("concoef", function(object, ...) {
+    standardGeneric("concoef")
+    })
+
 
 
 

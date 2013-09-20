@@ -31,7 +31,11 @@ rposbinom(n, size, prob)
    given in \code{\link{posbinomial}}.
 
   }
-  \item{prob}{probability of success on each trial. }
+  \item{prob}{probability of success on each trial. 
+  Should be in \eqn{(0,1)}.
+
+
+  }
 
 
 % 20120407:
@@ -107,7 +111,7 @@ rposbinom(n, size, prob)
 prob <- 0.2; size <- 10
 table(y <- rposbinom(n = 1000, size, prob))
 mean(y)  # Sample mean
-size * prob / (1-(1-prob)^size)  # Population mean
+size * prob / (1 - (1 - prob)^size)  # Population mean
 
 (ii <- dposbinom(0:size, size, prob))
 cumsum(ii) - pposbinom(0:size, size, prob)  # Should be 0s

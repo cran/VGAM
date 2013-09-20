@@ -9,7 +9,7 @@ vglm <- function(formula,
                  family, data = list(), 
                  weights = NULL, subset = NULL, na.action = na.fail,
                  etastart = NULL, mustart = NULL, coefstart = NULL,
-                 control=vglm.control(...), 
+                 control = vglm.control(...), 
                  offset = NULL, 
                  method = "vglm.fit",
                  model = FALSE, x.arg = TRUE, y.arg = TRUE,
@@ -17,8 +17,7 @@ vglm <- function(formula,
                  constraints = NULL,
                  extra = list(), 
                  form2 = NULL, 
-                 qr.arg = TRUE, smart = TRUE, ...)
-{
+                 qr.arg = TRUE, smart = TRUE, ...) {
   dataname <- as.character(substitute(data))  # "list" if no data=
   function.name <- "vglm"
 
@@ -77,7 +76,7 @@ vglm <- function(formula,
     }
     if (length(Xm2)) {
       if (nrow(as.matrix(Xm2)) != nrow(as.matrix(x)))
-        stop("number of rows of 'y' and 'Ym2' are unequal")
+        stop("number of rows of 'x' and 'Xm2' are unequal")
     }
   } else {
     Xm2 <- Ym2 <- NULL
@@ -111,15 +110,15 @@ vglm <- function(formula,
   vglm.fitter <- get(method)
 
   fit <- vglm.fitter(x = x, y = y, w = w, offset = offset,
-              Xm2 = Xm2, Ym2 = Ym2,
-              etastart = etastart, mustart = mustart, coefstart = coefstart,
-              family = family, 
-              control = control,
-              constraints = constraints,
-              criterion = control$criterion,
-              extra = extra,
-              qr.arg = qr.arg,
-              Terms = mt, function.name = function.name, ...)
+           Xm2 = Xm2, Ym2 = Ym2,
+           etastart = etastart, mustart = mustart, coefstart = coefstart,
+           family = family, 
+           control = control,
+           constraints = constraints,
+           criterion = control$criterion,
+           extra = extra,
+           qr.arg = qr.arg,
+           Terms = mt, function.name = function.name, ...)
 
   fit$misc$dataname <- dataname
 
@@ -145,7 +144,7 @@ vglm <- function(formula,
     "R"            = fit$R,
     "rank"         = fit$rank,
     "residuals"    = as.matrix(fit$residuals),
-    "rss"          = fit$rss,
+    "res.ss"       = fit$res.ss,
     "smart.prediction" = as.list(fit$smart.prediction),
     "terms"        = list(terms = mt))
 
@@ -168,11 +167,11 @@ vglm <- function(formula,
       slot(answer, "weights") <- as.matrix(fit$weights)
 
   if (x.arg)
-    slot(answer, "x") <- fit$x # The 'small' (lm) design matrix
+    slot(answer, "x") <- fit$x  # The 'small' (lm) design matrix
   if (x.arg && length(Xm2))
-    slot(answer, "Xm2") <- Xm2 # The second (lm) design matrix
+    slot(answer, "Xm2") <- Xm2  # The second (lm) design matrix
   if (y.arg && length(Ym2))
-    slot(answer, "Ym2") <- as.matrix(Ym2) # The second response
+    slot(answer, "Ym2") <- as.matrix(Ym2)  # The second response
   if (!is.null(form2))
     slot(answer, "callXm2") <- retlist$call
   answer@misc$formula <- formula
@@ -218,17 +217,16 @@ attr(vglm, "smart") <- TRUE
 shadowvglm <-
         function(formula,
                  family, data = list(), 
-                 weights = NULL, subset = NULL, na.action=na.fail,
+                 weights = NULL, subset = NULL, na.action = na.fail,
                  etastart = NULL, mustart = NULL, coefstart = NULL,
-                 control=vglm.control(...), 
+                 control = vglm.control(...), 
                  offset = NULL, 
                  method = "vglm.fit",
                  model = FALSE, x.arg = TRUE, y.arg = TRUE,
                  contrasts = NULL, 
                  constraints = NULL,
                  extra = list(), 
-                 qr.arg = FALSE, ...)
-{
+                 qr.arg = FALSE, ...) {
     dataname <- as.character(substitute(data))  # "list" if no data=
     function.name <- "shadowvglm"
 
@@ -256,7 +254,7 @@ shadowvglm <-
          matrix(, NROW(y), 0)
     attr(x, "assign") <- attrassigndefault(x, mt)
 
-    list(Xm2=x, Ym2=y, call=ocall)
+    list(Xm2 = x, Ym2 = y, call = ocall)
 }
 
 

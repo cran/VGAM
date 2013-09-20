@@ -6,7 +6,13 @@
 
 
 
- loglinb2 <- function(exchangeable = FALSE, zero = NULL) {
+ loglinb2 <- function(exchangeable = FALSE, zero = 3) {
+
+
+
+  if (!is.logical(exchangeable))
+    warning("argument 'exchangeable' should be a single logical")
+
 
   new("vglmff",
   blurb = c("Log-linear model for binary data\n\n",
@@ -14,9 +20,14 @@
             "Identity: u1, u2, u12",
             "\n"),
   constraints = eval(substitute(expression({
-    constraints <- cm.vgam(matrix(c(1,1,0, 0,0,1), 3, 2), x,
-                           .exchangeable , constraints,
-                           apply.int = TRUE)
+    cm.intercept.default <- diag(3)
+
+    constraints <- cm.vgam(matrix(c(1,1,0, 0,0,1), 3, 2), x = x,
+                           bool = .exchangeable ,
+                           constraints = constraints,
+                           apply.int = TRUE,
+                           cm.default           = cm.intercept.default[, -3],
+                           cm.intercept.default = cm.intercept.default)
     constraints <- cm.zero.vgam(constraints, x, .zero , M)
   }), list( .exchangeable = exchangeable, .zero = zero ))),
   initialize = expression({
@@ -119,7 +130,12 @@
 
 
 
- loglinb3 <- function(exchangeable = FALSE, zero = NULL) {
+ loglinb3 <- function(exchangeable = FALSE, zero = 4:6) {
+
+
+  if (!is.logical(exchangeable))
+    warning("argument 'exchangeable' should be a single logical")
+
 
   new("vglmff",
   blurb = c("Log-linear model for trivariate binary data\n\n",
@@ -127,9 +143,14 @@
             "Identity: u1, u2, u3, u12, u13, u23",
             "\n"),
   constraints = eval(substitute(expression({
-    constraints <- cm.vgam(matrix(c(1,1,1,0,0,0, 0,0,0,1,1,1), 6, 2), x,
-                           .exchangeable, constraints,
-                           apply.int = TRUE)
+    cm.intercept.default <- diag(6)
+
+    constraints <- cm.vgam(matrix(c(1,1,1,0,0,0, 0,0,0,1,1,1), 6, 2), x = x,
+                           bool = .exchangeable ,
+                           constraints = constraints,
+                           apply.int = TRUE,
+                           cm.default           = cm.intercept.default,
+                           cm.intercept.default = cm.intercept.default)
     constraints <- cm.zero.vgam(constraints, x, .zero, M)
   }), list( .exchangeable = exchangeable, .zero = zero ))),
   initialize = expression({

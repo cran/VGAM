@@ -33,9 +33,9 @@ chisq(link = "loge", zero = NULL)
 
 }
 \references{
-Evans, M., Hastings, N. and Peacock, B. (2000)
+Forbes, C., Evans, M., Hastings, N. and Peacock, B. (2011)
 \emph{Statistical Distributions},
-New York: Wiley-Interscience, Third edition.
+Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
 
 
 }
@@ -50,7 +50,7 @@ New York: Wiley-Interscience, Third edition.
 
 \seealso{
   \code{\link[stats]{Chisquare}}.
-  \code{\link{normal1}}.
+  \code{\link{uninormal}}.
 
 
 }

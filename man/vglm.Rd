@@ -292,7 +292,7 @@ vglm(formula, family, data = list(), weights = NULL, subset = NULL,
   \item{R}{the \bold{R} matrix in the QR decomposition used in the fitting.}
   \item{rank}{numerical rank of the fitted model.}
   \item{residuals}{the \emph{working} residuals at the final IRLS iteration.}
-  \item{rss}{residual sum of squares at the final IRLS iteration with
+  \item{res.ss}{residual sum of squares at the final IRLS iteration with
   the adjusted dependent vectors and weight matrices.}
   \item{smart.prediction}{
   a list of data-dependent parameters (if any)
@@ -451,12 +451,12 @@ weights(fit4, type = "prior")
 nn <- 1000
 eyesdat <- round(data.frame(lop = runif(nn),
                             rop = runif(nn),
-                             op = runif(nn)), dig = 2)
+                             op = runif(nn)), digits = 2)
 eyesdat <- transform(eyesdat, eta1 = -1 + 2 * lop,
                               eta2 = -1 + 2 * lop)
 eyesdat <- transform(eyesdat,
-           leye = rbinom(nn, size = 1, prob = logit(eta1, inv = TRUE)),
-           reye = rbinom(nn, size = 1, prob = logit(eta2, inv = TRUE)))
+           leye = rbinom(nn, size = 1, prob = logit(eta1, inverse = TRUE)),
+           reye = rbinom(nn, size = 1, prob = logit(eta2, inverse = TRUE)))
 head(eyesdat)
 fit5 <- vglm(cbind(leye, reye) ~ op,
              binom2.or(exchangeable = TRUE, zero = 3),

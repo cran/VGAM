@@ -1,7 +1,7 @@
 \name{Simplex }
 \alias{dsimplex}
-\alias{psimplex}
-\alias{qsimplex}
+%\alias{psimplex}
+%\alias{qsimplex}
 \alias{rsimplex}
 \title{ Simplex Distribution }
 \description{
@@ -19,12 +19,19 @@ rsimplex(n, mu = 0.5, dispersion = 1)
   Vector of quantiles.
   The support of the distribution is the interval \eqn{(0,1)}.
 
-  }
-  \item{mu, dispersion}{Mean and dispersion parameters.
-  The former lies in the interval \eqn{(0,1)} and the latter is positive.
 
   }
-  \item{n, log}{Same usage as \code{\link[stats:Uniform]{runif}}.}
+  \item{mu, dispersion}{
+  Mean and dispersion parameters.
+  The former lies in the interval \eqn{(0,1)} and the latter is positive.
+
+
+  }
+  \item{n, log}{
+  Same usage as \code{\link[stats:Uniform]{runif}}.
+
+
+  }
 }
 \details{
 
@@ -40,6 +47,7 @@ rsimplex(n, mu = 0.5, dispersion = 1)
   \code{dsimplex(x)} gives the density function,
   \code{rsimplex(n)} gives \eqn{n} random variates.
 
+
 }
 % \references{ 
 %
@@ -53,11 +61,11 @@ rsimplex(n, mu = 0.5, dispersion = 1)
 }
 
 \examples{
-sigma <- c(4, 2, 1) # Dispersion parameter
+sigma <- c(4, 2, 1)  # Dispersion parameter
 mymu  <- c(0.1, 0.5, 0.7); xxx <- seq(0, 1, len = 501)
-\dontrun{ par(mfrow = c(3, 3)) # Figure 2.1 of Song (2007)
-for(iii in 1:3)
-  for(jjj in 1:3) {
+\dontrun{ par(mfrow = c(3, 3))  # Figure 2.1 of Song (2007)
+for (iii in 1:3)
+  for (jjj in 1:3) {
     plot(xxx, dsimplex(xxx, mymu[jjj], sigma[iii]),
          type = "l", col = "blue", xlab = "", ylab = "", main =
          paste("mu = ", mymu[jjj], ", sigma = ", sigma[iii], sep = "")) } }

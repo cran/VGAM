@@ -7,11 +7,14 @@
 
 
 summaryvgam <- function(object, dispersion = NULL,
-                        digits = options()$digits-2) {
+                        digits = options()$digits-2,
+                        presid = TRUE) {
+
+
 
   if (length(dispersion) && dispersion == 0 &&
-   length(object@family@summary.dispersion) &&
-   !object@family@summary.dispersion) {
+      length(object@family@summary.dispersion) &&
+      !object@family@summary.dispersion) {
     stop("cannot use the general VGLM formula (based on a residual ",
          "sum of squares) for computing the dispersion parameter")
   }
@@ -19,10 +22,10 @@ summaryvgam <- function(object, dispersion = NULL,
   newobject <- object 
   class(newobject) <- "vglm"
   stuff <- summaryvglm(newobject, dispersion = dispersion)
-  rdf <- stuff@df[2] <- object@df.residual # NA 
+  rdf <- stuff@df[2] <- object@df.residual  # NA 
 
   M <- object@misc$M
-  nrow_X_vlm <- object@misc$nrow_X_vlm
+  nrow.X.vlm <- object@misc$nrow.X.vlm
   rank <- if (is.null(object@qr$rank)) length(object@coefficients) else
           object@qr$rank
 
@@ -31,6 +34,7 @@ summaryvgam <- function(object, dispersion = NULL,
 
 
 
+  # Overwrite some of the stuff with the correct stuff
 
 
   useF <- object@misc$useF
@@ -92,9 +96,11 @@ summaryvgam <- function(object, dispersion = NULL,
   if (is.numeric(stuff@dispersion))
     slot(answer, "dispersion") <- stuff@dispersion
 
-  presid <- residuals(object, type = "pearson")
-  if (length(presid))
-    answer@pearson.resid <- as.matrix(presid)
+  if (presid) {
+    Presid <- residuals(object, type = "pearson")
+    if (length(Presid))
+      answer@pearson.resid <- as.matrix(Presid)
+  }
 
   slot(answer, "anova") <- aod 
 
@@ -113,19 +119,20 @@ show.summary.vgam <- function(x, quote = TRUE, prefix = "",
   cat("\nCall:\n")
   dput(x@call)
 
-  presid <- x@pearson.resid
+  Presid <- x@pearson.resid
   rdf <- x@df[2]
   if (FALSE &&
-     !is.null(presid) && all(!is.na(presid))) {
-    cat("\nPearson Residuals:\n")
+     !is.null(Presid) && all(!is.na(Presid))) {
     if (rdf/M > 5) {
-      rq <-  apply(as.matrix(presid), 2, quantile) # 5 x M
+      rq <-  apply(as.matrix(Presid), 2, quantile) # 5 x M
       dimnames(rq) <- list(c("Min", "1Q", "Median", "3Q", "Max"),
                            x@misc$predictors.names)
+      cat("\nPearson residuals:\n")
       print(t(rq), digits = digits)
     } else
     if (rdf > 0) {
-      print(presid, digits = digits)
+      cat("\nPearson residuals:\n")
+      print(Presid, digits = digits)
     }
   }
 
@@ -207,12 +214,12 @@ show.vanova <- function(x, digits = .Options$digits, ...) {
   if (!is.null(heading))
     cat(heading, sep = "\n")
   attr(x, "heading") <- NULL
-  for(i in 1:length(x)) {
-    xx <- x[[i]]
+  for(ii in 1:length(x)) {
+    xx <- x[[ii]]
     xna <- is.na(xx)
     xx <- format(zapsmall(xx, digits))
     xx[xna] <- ""
-    x[[i]] <- xx
+    x[[ii]] <- xx
   }
   print.data.frame(as.data.frame(x, row.names = rrr))
   invisible(x)

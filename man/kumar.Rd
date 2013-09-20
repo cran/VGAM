@@ -101,7 +101,7 @@ kumar(lshape1 = "loge", lshape2 = "loge",
 
 }
 \examples{
-shape1 <- exp(1); shape2 <- exp(2);
+shape1 <- exp(1); shape2 <- exp(2)
 kdata <- data.frame(y = rkumar(n = 1000, shape1, shape2))
 fit <- vglm(y ~ 1, kumar, kdata, trace = TRUE)
 c(with(kdata, mean(y)), head(fitted(fit), 1))

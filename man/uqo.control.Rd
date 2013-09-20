@@ -11,16 +11,16 @@
   
 }
 \usage{
-uqo.control(Rank=1, Bestof = if (length(lvstart) &&
+uqo.control(Rank = 1, Bestof = if (length(lvstart) &&
             !jitter.sitescores) 1 else 10, CA1 = FALSE, Crow1positive
             = TRUE, epsilon = 1.0e-07, EqualTolerances = ITolerances,
-            Etamat.colmax = 10, GradientFunction=TRUE, Hstep = 0.001,
-            isdlv = rep(c(2, 1, rep(0.5, len=Rank)), len=Rank),
+            Etamat.colmax = 10, GradientFunction = TRUE, Hstep = 0.001,
+            isd.latvar = rep(c(2, 1, rep(0.5, len = Rank)), len = Rank),
             ITolerances = FALSE, lvstart = NULL, jitter.sitescores
             = FALSE, maxitl = 40, Maxit.optim = 250, MUXfactor =
-            rep(3, length=Rank), optim.maxit = 20, nRmax = 250,
-            SD.sitescores = 1.0, SmallNo = 5.0e-13, trace = TRUE,
-            Use.Init.Poisson.QO=TRUE, ...)
+            rep(3, length = Rank), optim.maxit = 20, nRmax = 250,
+            sd.sitescores = 1.0, SmallNo = 5.0e-13, trace = TRUE,
+            Use.Init.Poisson.QO = TRUE, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -107,7 +107,7 @@ uqo.control(Rank=1, Bestof = if (length(lvstart) &&
 
 
   }
-  \item{isdlv}{
+  \item{isd.latvar}{
    Initial standard deviations for the latent variables (site scores).
    Numeric, positive and of length \eqn{R} (recycled if necessary).
    This argument is used only if \code{ITolerances=TRUE}.  Used by
@@ -133,7 +133,7 @@ uqo.control(Rank=1, Bestof = if (length(lvstart) &&
    See \bold{Details} in \code{\link{cqo}} and \code{\link{qrrvglm.control}}
    for more details.
    more details.  The success of \code{ITolerances=TRUE} often depends
-   on suitable values for \code{isdlv} and/or \code{MUXfactor}.
+   on suitable values for \code{isd.latvar} and/or \code{MUXfactor}.
 
  }
  \item{lvstart}{ 
@@ -173,7 +173,7 @@ uqo.control(Rank=1, Bestof = if (length(lvstart) &&
    values. If the latent variable values are too large then this will
    result in numerical problems. By too large, it is meant that the
    standard deviation of the latent variable values are greater than
-   \code{MUXfactor[r] * isdlv[r]} for \code{r=1:Rank} (this is why
+   \code{MUXfactor[r] * isd.latvar[r]} for \code{r=1:Rank} (this is why
    centering and scaling all the numerical predictor variables in
    \eqn{x_2} is recommended).  A value about 3 or 4 is recommended.
    If failure to converge occurs, try a slightly lower value.
@@ -200,7 +200,7 @@ uqo.control(Rank=1, Bestof = if (length(lvstart) &&
 
 
     }
-  \item{SD.sitescores}{ Numeric. Standard deviation of the
+  \item{sd.sitescores}{ Numeric. Standard deviation of the
     initial values of the site scores, which are generated from
     a normal distribution.
 

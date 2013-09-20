@@ -44,6 +44,7 @@ felix(link = elogit(min = 0, max = 0.5), imethod = 1)
   The object is used by modelling functions such as \code{\link{vglm}}
   and \code{\link{vgam}}.
 
+
 }
 \references{
 
@@ -64,9 +65,9 @@ Boston: Birkhauser.
 
 }
 \examples{
-fdata <- data.frame(y = 2*rpois(n = 200, 1) + 1) # Not real data!
-fit <- vglm(y ~ 1, felix, fdata, trace = TRUE, crit = "c")
-coef(fit, matrix=TRUE)
+fdata <- data.frame(y = 2 * rpois(n = 200, 1) + 1)  # Not real data!
+fit <- vglm(y ~ 1, felix, fdata, trace = TRUE, crit = "coef")
+coef(fit, matrix = TRUE)
 Coef(fit)
 summary(fit)
 }

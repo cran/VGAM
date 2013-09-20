@@ -290,7 +290,7 @@ up1 <- uqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,
                 Trocterr, Zoraspin) ~ 1,
           family = poissonff, data = hspider,
           ITolerances = TRUE,
-          Crow1positive = TRUE, lvstart = -lv(p1))
+          Crow1positive = TRUE, lvstart = -latvar(p1))
 if (deviance(up1) > 1310.0) stop("suboptimal fit obtained")
 
 nos <- ncol(depvar(up1))  # Number of species
@@ -301,9 +301,9 @@ legend(x = 2, y = 135, colnames(up1@y), col = clr, lty = 1:nos,
        lwd = 2, merge = FALSE, ncol = 1, x.inter = 4.0, bty = "l", cex = 0.9)
 
 # Compare the site scores between the two models
-plot(lv(p1), lv(up1), xlim = c(-3, 4), ylim = c(-3, 4), las = 1)
+plot(latvar(p1), latvar(up1), xlim = c(-3, 4), ylim = c(-3, 4), las = 1)
 abline(a = 0, b = -1, lty = 2, col = "blue", xpd = FALSE)
-cor(lv(p1, ITol = TRUE), lv(up1))
+cor(latvar(p1, ITol = TRUE), latvar(up1))
 
 # Another comparison between the constrained and unconstrained models
 # The signs are not right so they are similar when reflected about 0 

@@ -206,59 +206,58 @@ if (FALSE)
             if (location == 0) "Exponential: mu^2" else
             paste("(mu-",  location, ")^2", sep = "")),
   initialize = eval(substitute(expression({
-      extra$location <- .location
+    extra$location <- .location
 
-      if (any(y[, 1] <= extra$location))
+    if (any(y[, 1] <= extra$location))
         stop("all responses must be greater than ", extra$location)
 
-      predictors.names <- namesof("rate", .link , .earg , tag = FALSE)
+    predictors.names <- namesof("rate", .link , .earg , tag = FALSE)
 
-      type <- attr(y, "type")
-      if (type == "right" || type == "left"){
-        mu <- y[, 1] + (abs(y[, 1] - extra$location) < 0.001) / 8
-      }else
-      if (type == "interval"){
-        temp <- y[, 3]
-        mu <- ifelse(temp == 3,
-                     y[, 2] + (abs(y[, 2] - extra$location) < 0.001) / 8,
-                     y[, 1] + (abs(y[, 1] - extra$location) < 0.001) / 8)
-      }
-      if (!length(etastart))
-          etastart <- theta2eta(1/(mu-extra$location), .link , .earg )
+    type <- attr(y, "type")
+    if (type == "right" || type == "left"){
+      mu <- y[, 1] + (abs(y[, 1] - extra$location) < 0.001) / 8
+    } else if (type == "interval") {
+      temp <- y[, 3]
+      mu <- ifelse(temp == 3,
+                   y[, 2] + (abs(y[, 2] - extra$location) < 0.001) / 8,
+                   y[, 1] + (abs(y[, 1] - extra$location) < 0.001) / 8)
+    }
+    if (!length(etastart))
+      etastart <- theta2eta(1/(mu-extra$location), .link , .earg )
 
-      if (type == "right") {
-        temp <- y[, 2]
-        extra$uncensored <- ifelse(temp == 1, TRUE, FALSE)
-        extra$rightcensored <- ifelse(temp == 0, TRUE, FALSE)
-        extra$leftcensored <- rep(FALSE, len = n)
-        extra$interval <- rep(FALSE, len = n)
-      } else
-      if (type == "left") {
-        temp <- y[, 2]
-        extra$uncensored <- ifelse(temp == 1, TRUE, FALSE)
-        extra$rightcensored <- rep(FALSE, len = n)
-        extra$leftcensored <- ifelse(temp == 0, TRUE, FALSE)
-        extra$interval <- rep(FALSE, len = n)
-      } else
-      if (type == "counting") {
-        stop("type == 'counting' not recognized")
-        extra$uncensored <- rep(temp == 1, TRUE, FALSE)
-        extra$interval <- rep(FALSE, len = n)
-        extra$leftcensored <- rep(FALSE, len = n)
-        extra$rightcensored <- rep(FALSE, len = n)
-        extra$counting <- ifelse(temp == 0, TRUE, FALSE)
-      } else
-      if (type == "interval") {
-        temp <- y[, 3]
-        extra$uncensored <- ifelse(temp == 1, TRUE, FALSE)
-        extra$rightcensored <- ifelse(temp == 0, TRUE, FALSE)
-        extra$leftcensored <- ifelse(temp == 2, TRUE, FALSE)
-        extra$interval <- ifelse(temp == 3, TRUE, FALSE)
-      } else
-        stop("'type' not recognized")
-  }), list( .location=location, .link = link ))),
+    if (type == "right") {
+      temp <- y[, 2]
+      extra$uncensored <- ifelse(temp == 1, TRUE, FALSE)
+      extra$rightcensored <- ifelse(temp == 0, TRUE, FALSE)
+      extra$leftcensored <- rep(FALSE, len = n)
+      extra$interval <- rep(FALSE, len = n)
+    } else
+    if (type == "left") {
+      temp <- y[, 2]
+      extra$uncensored <- ifelse(temp == 1, TRUE, FALSE)
+      extra$rightcensored <- rep(FALSE, len = n)
+      extra$leftcensored <- ifelse(temp == 0, TRUE, FALSE)
+      extra$interval <- rep(FALSE, len = n)
+    } else
+    if (type == "counting") {
+      stop("type == 'counting' not recognized")
+      extra$uncensored <- rep(temp == 1, TRUE, FALSE)
+      extra$interval <- rep(FALSE, len = n)
+      extra$leftcensored <- rep(FALSE, len = n)
+      extra$rightcensored <- rep(FALSE, len = n)
+      extra$counting <- ifelse(temp == 0, TRUE, FALSE)
+    } else
+    if (type == "interval") {
+      temp <- y[, 3]
+      extra$uncensored <- ifelse(temp == 1, TRUE, FALSE)
+      extra$rightcensored <- ifelse(temp == 0, TRUE, FALSE)
+      extra$leftcensored <- ifelse(temp == 2, TRUE, FALSE)
+      extra$interval <- ifelse(temp == 3, TRUE, FALSE)
+    } else
+      stop("'type' not recognized")
+  }), list( .location = location, .link = link ))),
   linkinv = eval(substitute(function(eta, extra = NULL)
-      extra$location + 1 / eta2theta(eta, .link , .earg ),
+    extra$location + 1 / eta2theta(eta, .link , .earg ),
   list( .link = link ) )),
   last = eval(substitute(expression({
     misc$location <- extra$location
@@ -266,7 +265,7 @@ if (FALSE)
     misc$multipleResponses <- FALSE
   }), list( .link = link ))),
   link = eval(substitute(function(mu, extra = NULL)
-    theta2eta(1/(mu-extra$location), .link , .earg ),
+    theta2eta(1 / (mu - extra$location), .link , .earg ),
   list( .link = link ) )),
   loglikelihood = eval(substitute(
     function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
@@ -277,7 +276,8 @@ if (FALSE)
     cenI <- extra$interval
     if (residuals) stop("loglikelihood residuals not ",
                         "implemented yet") else
-    sum(w[cenL] * log1p(-exp(-rate[cenL]*(y[cenL, 1]-extra$location)))) +
+    sum(w[cenL] * log1p(-exp(-rate[cenL] *
+                  (y[cenL, 1] - extra$location)))) +
     sum(w[cenU] * (-rate[cenU]*(y[cenU, 1]-extra$location))) +
     sum(w[cen0] * (log(rate[cen0]) -
                    rate[cen0]*(y[cen0, 1]-extra$location))) +
@@ -295,14 +295,14 @@ if (FALSE)
     tmp200 <- exp(-rate*(y[, 1]-extra$location))
     tmp200b <- exp(-rate*(y[, 2]-extra$location)) # for interval censored
     if (any(cenL))
-        dl.drate[cenL] <- (y[cenL, 1]-extra$location) *
-                          tmp200[cenL] / (1 - tmp200[cenL])
+      dl.drate[cenL] <- (y[cenL, 1]-extra$location) *
+                        tmp200[cenL] / (1 - tmp200[cenL])
     if (any(cenU))
-        dl.drate[cenU] <- -(y[cenU, 1]-extra$location)
+      dl.drate[cenU] <- -(y[cenU, 1]-extra$location)
     if (any(cenI))
-        dl.drate[cenI] <- ((y[cenI, 2]-extra$location)*tmp200b[cenI]-
-        (y[cenI, 1]-extra$location)*tmp200[cenI])/
-        (-tmp200b[cenI]+tmp200[cenI])
+      dl.drate[cenI] <- ((y[cenI, 2] - extra$location) *
+                        tmp200b[cenI] - (y[cenI, 1] - extra$location) *
+                        tmp200[cenI]) / (-tmp200b[cenI] + tmp200[cenI])
 
     drate.deta <- dtheta.deta(rate, .link , .earg )
 
@@ -333,8 +333,9 @@ if (FALSE)
 
 
 
- cennormal1 <- function(lmu = "identity", lsd = "loge",
-                        imethod = 1, zero = 2) {
+ cennormal1 <-
+ cennormal <- function(lmu = "identity", lsd = "loge",
+                       imethod = 1, zero = 2) {
 
 
   lmu <- as.list(substitute(lmu))
@@ -359,8 +360,8 @@ if (FALSE)
                           namesof("sd", lsd, tag = TRUE), "\n",
             "Conditional variance: sd^2"),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.vgam(constraints, x, .zero, M)
-  }), list( .zero=zero ))),
+    constraints <- cm.zero.vgam(constraints, x, .zero , M)
+  }), list( .zero = zero ))),
   initialize = eval(substitute(expression({
 
     temp5 <-
@@ -380,28 +381,28 @@ if (FALSE)
         stop("some observations are both right and left censored!")
 
     predictors.names <-
-      c(namesof("mu", .lmu, earg =.emu, tag = FALSE),
+      c(namesof("mu", .lmu , earg =.emu, tag = FALSE),
         namesof("sd", .lsd, earg =.esd, tag = FALSE))
 
     if (!length(etastart)) {
       anyc <- extra$leftcensored | extra$rightcensored
-        i11 <- if ( .imethod == 1) anyc else FALSE  # can be all data
-        junk <- lm.wfit(x = cbind(x[!i11, ]),
-                        y = y[!i11], w = w[!i11])
-        sd.y.est <- sqrt(sum(w[!i11] * junk$resid^2) / junk$df.residual)
-        etastart <- cbind(mu = y,
-                          rep(theta2eta(sd.y.est, .lsd), length = n))
-        if (any(anyc))
-          etastart[anyc, 1] <- x[anyc,,drop = FALSE] %*% junk$coeff
+      i11 <- if ( .imethod == 1) anyc else FALSE  # can be all data
+      junk <- lm.wfit(x = cbind(x[!i11, ]),
+                      y = y[!i11], w = w[!i11])
+      sd.y.est <- sqrt(sum(w[!i11] * junk$resid^2) / junk$df.residual)
+      etastart <- cbind(mu = y,
+                        rep(theta2eta(sd.y.est, .lsd), length = n))
+      if (any(anyc))
+        etastart[anyc, 1] <- x[anyc, , drop = FALSE] %*% junk$coeff
     }
  }), list( .lmu = lmu, .lsd = lsd,
            .emu = emu, .esd = esd,
            .imethod = imethod ))),
   linkinv = eval(substitute( function(eta, extra = NULL) {
-    eta2theta(eta[, 1], .lmu, earg = .emu)
+    eta2theta(eta[, 1], .lmu , earg = .emu )
   }, list( .lmu = lmu, .emu = emu ))),
   last = eval(substitute(expression({
-    misc$link <-    c("mu" = .lmu, "sd" = .lsd)
+    misc$link <-    c("mu" = .lmu , "sd" = .lsd)
 
     misc$earg <- list("mu" = .emu ,"sd" = .esd )
 
@@ -415,20 +416,20 @@ if (FALSE)
     cenU <- extra$rightcensored
     cen0 <- !cenL & !cenU   # uncensored obsns
 
-    mum <- eta2theta(eta[, 1], .lmu, earg = .emu )
+    mum <- eta2theta(eta[, 1], .lmu , earg = .emu )
     sdv <- eta2theta(eta[, 2], .lsd, earg = .esd )
 
     Lower <- ifelse(cenL, y, -Inf)
     Upper <- ifelse(cenU, y,  Inf)
     ell1 <- -log(sdv[cen0]) - 0.5 * ((y[cen0] - mum[cen0])/sdv[cen0])^2
-    ell2 <- log1p(-pnorm((mum[cenL] - Lower[cenL])/sdv[cenL]))
-    ell3 <- log1p(-pnorm(( Upper[cenU] -  mum[cenU])/sdv[cenU]))
+    ell2 <- log1p(-pnorm((mum[cenL] - Lower[cenL]) / sdv[cenL]))
+    ell3 <- log1p(-pnorm(( Upper[cenU] -  mum[cenU]) / sdv[cenU]))
     if (residuals) stop("loglikelihood residuals not ",
                         "implemented yet") else
     sum(w[cen0] * ell1) + sum(w[cenL] * ell2) + sum(w[cenU] * ell3)
   }, list( .lmu = lmu, .lsd = lsd,
            .emu = emu, .esd = esd ))),
-  vfamily = c("cennormal1"),
+  vfamily = c("cennormal"),
   deriv = eval(substitute(expression({
     cenL <- extra$leftcensored
     cenU <- extra$rightcensored
@@ -442,7 +443,7 @@ if (FALSE)
     dl.dmu <- (y-mum) / sdv^2
     dl.dsd <- (((y-mum)/sdv)^2 - 1) / sdv
 
-    dmu.deta <- dtheta.deta(mum, .lmu, earg = .emu )
+    dmu.deta <- dtheta.deta(mum, .lmu , earg = .emu )
     dsd.deta <- dtheta.deta(sdv, .lsd, earg = .esd )
 
     if (any(cenL)) {
@@ -461,7 +462,7 @@ if (FALSE)
       PhiU <- pnorm(temp21U)
       phiU <- dnorm(temp21U)
       fred21 <- phiU / (1 - PhiU)
-      dl.dmu[cenU] <- fred21 / sdv[cenU] # Negated
+      dl.dmu[cenU] <- fred21 / sdv[cenU]  # Negated
       dl.dsd[cenU] <- mumU[cenU] * fred21 / sdv[cenU]^2
       rm(fred21)
     }
@@ -470,12 +471,12 @@ if (FALSE)
   }), list( .lmu = lmu, .lsd = lsd,
             .emu = emu, .esd = esd ))),
   weight = eval(substitute(expression({
-    A1 <- 1 - pnorm((mum - Lower) / sdv) # Lower
-    A3 <- 1 - pnorm((Upper - mum) / sdv) # Upper
-    A2 <- 1 - A1 - A3                    # Middle; uncensored
+    A1 <- 1 - pnorm((mum - Lower) / sdv)  # Lower
+    A3 <- 1 - pnorm((Upper - mum) / sdv)  # Upper
+    A2 <- 1 - A1 - A3                     # Middle; uncensored
     wz <- matrix(0, n, 3)
-    wz[,iam(1, 1,M)] <- A2 * 1 / sdv^2 # ed2l.dmu2
-    wz[,iam(2, 2,M)] <- A2 * 2 / sdv^2 # ed2l.dsd2
+    wz[,iam(1, 1,M)] <- A2 * 1 / sdv^2  # ed2l.dmu2
+    wz[,iam(2, 2,M)] <- A2 * 2 / sdv^2  # ed2l.dsd2
     mumL <- mum - Lower
     temp21L <- mumL / sdv
     PhiL <- pnorm(temp21L)
@@ -503,9 +504,9 @@ if (FALSE)
     wzcenU22 <- mumU * phiU * (tmp9 + mumU * phiU / sdv) / (sdv * temp31U)
     wzcenU12 <- -phiU * ((1-PhiU)*(temp21U^2 - 1) -
                 temp21U*phiU) / temp31U
-    wzcenU11[!is.finite(wzcenU11)] <- 0 # Needed when Upper==Inf
-    wzcenU22[!is.finite(wzcenU22)] <- 0 # Needed when Upper==Inf
-    wzcenU12[!is.finite(wzcenU12)] <- 0 # Needed when Upper==Inf
+    wzcenU11[!is.finite(wzcenU11)] <- 0  # Needed when Upper==Inf
+    wzcenU22[!is.finite(wzcenU22)] <- 0  # Needed when Upper==Inf
+    wzcenU12[!is.finite(wzcenU12)] <- 0  # Needed when Upper==Inf
     wz[,iam(1, 1,M)] <- wz[,iam(1, 1,M)] + A3 * wzcenU11
     wz[,iam(2, 2,M)] <- wz[,iam(2, 2,M)] + A3 * wzcenU22
     wz[,iam(1, 2,M)] <- wz[,iam(1, 2,M)] + A3 * wzcenU12
@@ -548,15 +549,15 @@ if (FALSE)
       extra$rightcensored <- rep(FALSE, len = n)
 
     predictors.names <-
-      namesof("scale", .lscale, earg = .escale, tag = FALSE)
+      namesof("scale", .lscale , earg = .escale , tag = FALSE)
 
     if (!length(etastart)) {
       a.init <- (y+1/8) / sqrt(pi/2)
-      etastart <- theta2eta(a.init, .lscale, earg = .escale )
+      etastart <- theta2eta(a.init, .lscale , earg = .escale )
     }
   }), list( .lscale = lscale, .escale = escale ))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
-    Scale <- eta2theta(eta, .lscale, earg = .escale )
+    Scale <- eta2theta(eta, .lscale , earg = .escale )
     Scale * sqrt(pi/2)
   }, list( .lscale = lscale, .escale = escale ))),
   last = eval(substitute(expression({
@@ -569,7 +570,7 @@ if (FALSE)
             .oim = oim ))),
   loglikelihood = eval(substitute(
     function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
-    Scale <- eta2theta(eta, .lscale, earg = .escale )
+    Scale <- eta2theta(eta, .lscale , earg = .escale )
 
     cen0 <- !extra$rightcensored   # uncensored obsns
     cenU <- extra$rightcensored
@@ -586,11 +587,11 @@ if (FALSE)
     cen0 <- !extra$rightcensored   # uncensored obsns
     cenU <- extra$rightcensored
 
-    Scale <- eta2theta(eta, .lscale, earg = .escale )
+    Scale <- eta2theta(eta, .lscale , earg = .escale )
 
     dl.dScale <- ((y/Scale)^2 - 2) / Scale
 
-    dScale.deta <- dtheta.deta(Scale, .lscale, earg = .escale )
+    dScale.deta <- dtheta.deta(Scale, .lscale , earg = .escale )
     dl.dScale[cenU] <- y[cenU]^2 / Scale[cenU]^3
 
     c(w) * dl.dScale * dScale.deta
@@ -602,7 +603,7 @@ if (FALSE)
 
     if ( .oim ) {
       d2l.dScale2 <- 3 * (y[cenU])^2 / (Scale[cenU])^4
-      d2Scale.deta2 <- d2theta.deta2(Scale[cenU], .lscale, earg = .escale )
+      d2Scale.deta2 <- d2theta.deta2(Scale[cenU], .lscale , earg = .escale )
       wz[cenU] <- (dScale.deta[cenU])^2 * d2l.dScale2 -
                    dl.dScale[cenU] * d2Scale.deta2
     } else {
@@ -794,7 +795,7 @@ if (FALSE)
 
     misc$earg <- vector("list", M)
     names(misc$earg) <- temp.names
-    for(ii in 1:ncoly) {
+    for (ii in 1:ncoly) {
       misc$earg[[Musual*ii-1]] <- .eshape
       misc$earg[[Musual*ii  ]] <- .escale
     }
@@ -833,7 +834,7 @@ if (FALSE)
     dl.dscale <- (Shape / Scale) * (-1.0 + (y / Scale)^Shape)
 
     dshape.deta <- dtheta.deta(Shape, .lshape, earg = .eshape )
-    dscale.deta <- dtheta.deta(Scale, .lscale, earg = .escale )
+    dscale.deta <- dtheta.deta(Scale, .lscale , earg = .escale )
 
     myderiv <- c(w) * cbind(dl.dshape * dshape.deta,
                             dl.dscale * dscale.deta)
@@ -1275,7 +1276,7 @@ pgamma.deriv.unscaled <- function(q, shape) {
 
     misc$earg <- vector("list", M)
     names(misc$earg) <- temp.names
-    for(ii in 1:ncoly) {
+    for (ii in 1:ncoly) {
       misc$earg[[Musual*ii-1]] <- .eAlpha
       misc$earg[[Musual*ii  ]] <- .eBetaa
     }

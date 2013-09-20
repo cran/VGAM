@@ -7,7 +7,7 @@
 
 }
 \usage{
-loglinb3(exchangeable = FALSE, zero = NULL)
+loglinb3(exchangeable = FALSE, zero = 4:6)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -98,7 +98,7 @@ contains further information and examples.
 
 }
 \examples{
-fit <- vglm(cbind(cyadea, beitaw, kniexc) ~ altitude, loglinb3, hunua)
+fit <- vglm(cbind(cyadea, beitaw, kniexc) ~ altitude, loglinb3, data = hunua)
 coef(fit, matrix = TRUE)
 head(fitted(fit))
 summary(fit)

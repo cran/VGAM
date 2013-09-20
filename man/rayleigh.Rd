@@ -20,6 +20,7 @@ cenrayleigh(lscale = "loge", oim = TRUE)
   See \code{\link{Links}} for more choices.
   A log link is the default because \eqn{b} is positive.
 
+
   }
   \item{nrfs}{
   Numeric, of length one, with value in \eqn{[0,1]}.
@@ -27,6 +28,7 @@ cenrayleigh(lscale = "loge", oim = TRUE)
   The value 0 means pure Newton-Raphson, while 1 means pure Fisher scoring.
   The default value uses a mixture of the two algorithms, and retaining
   positive-definite working weights.
+
 
   }
   \item{oim.mean}{
@@ -36,6 +38,7 @@ cenrayleigh(lscale = "loge", oim = TRUE)
   out the working weights.
   \code{FALSE} means use another algorithm.
 
+
   }
   \item{oim}{
   Logical.
@@ -43,9 +46,11 @@ cenrayleigh(lscale = "loge", oim = TRUE)
   \code{TRUE} means the Newton-Raphson algorithm, and 
   \code{FALSE} means Fisher scoring.
 
+
   }
   \item{zero}{
   Details at \code{\link{CommonVGAMffArguments}}.
+
 
   }
 }
@@ -70,7 +75,7 @@ cenrayleigh(lscale = "loge", oim = TRUE)
   in the \code{extra} slot.
 
 
-  Th \pkg{VGAM} family function \code{rayleigh} handles multiple responses.
+  The \pkg{VGAM} family function \code{rayleigh} handles multiple responses.
 
 
 }
@@ -88,22 +93,31 @@ cenrayleigh(lscale = "loge", oim = TRUE)
 
 }
 \references{
-Evans, M., Hastings, N. and Peacock, B. (2000)
+
+Forbes, C., Evans, M., Hastings, N. and Peacock, B. (2011)
 \emph{Statistical Distributions},
-New York: Wiley-Interscience, Third edition.
+Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
 
 
 }
 \author{ T. W. Yee }
 \note{
-A related distribution is the Maxwell distribution.
+  The  \code{\link{poisson.points}} family function is
+  more general so that if \code{ostatistic = 1} and \code{dimension = 2}
+  then it coincides with \code{\link{rayleigh}}.
+  Another related distribution is the Maxwell distribution.
+
+
+
 
 }
 \seealso{
-    \code{\link{Rayleigh}},
-    \code{\link{genrayleigh}},
-    \code{\link{riceff}},
-    \code{\link{maxwell}}.
+  \code{\link{Rayleigh}},
+  \code{\link{genrayleigh}},
+  \code{\link{riceff}},
+  \code{\link{maxwell}},
+  \code{\link{poisson.points}}.
+
 
 }
 \examples{

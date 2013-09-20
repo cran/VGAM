@@ -18,6 +18,7 @@ laplace(llocation = "identity", lscale = "loge",
   scale parameter \eqn{b}.
   See \code{\link{Links}} for more choices.
 
+
   }
   \item{ilocation, iscale}{
   Optional initial values.
@@ -116,8 +117,8 @@ Coef(fit)
 with(ldata, median(y))
 
 ldata <- data.frame(x = runif(nn <- 1001))
-ldata <- transform(ldata, y = rlaplace(nn, loc = 2, scale = exp(-1+1*x)))
-coef(vglm(y ~ x, laplace(iloc = .2, imethod = 2, zero = 1), ldata,
+ldata <- transform(ldata, y = rlaplace(nn, loc = 2, scale = exp(-1 + 1*x)))
+coef(vglm(y ~ x, laplace(iloc = 0.2, imethod = 2, zero = 1), ldata,
           trace = TRUE), matrix = TRUE)
 }
 \keyword{models}

@@ -16,15 +16,18 @@ logff(link = "logit", init.c = NULL, zero = NULL)
   which lies between 0 and 1.
   See \code{\link{Links}} for more choices and information.
 
+
   }
   \item{init.c}{
   Optional initial value for the \eqn{c} parameter.
   If given, it often pays to start with a larger value, e.g., 0.95.
   The default is to choose an initial value internally.
 
+
   }
   \item{zero}{
   Details at \code{\link{CommonVGAMffArguments}}.
+
 
   }
 }
@@ -57,9 +60,9 @@ Chapter 7 of
     Hoboken, New Jersey: Wiley.
 
 
-Evans, M., Hastings, N. and Peacock, B. (2000)
+Forbes, C., Evans, M., Hastings, N. and Peacock, B. (2011)
 \emph{Statistical Distributions},
-New York: Wiley-Interscience, Third edition.
+Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
 
 
 }
@@ -86,7 +89,7 @@ New York: Wiley-Interscience, Third edition.
   \code{\link[base:Log]{log}},
   \code{\link{loge}},
   \code{\link{logoff}},
-  \code{\link{explogarithmic}}.
+  \code{\link{explogff}}.
 
 
 }
@@ -110,7 +113,7 @@ fit <- vglm(nindiv ~ 1, logff, data = corbet, weights = ofreq)
 coef(fit, matrix = TRUE)
 chat <- Coef(fit)["c"]
 pdf2 <- dlog(x = with(corbet, nindiv), prob = chat)
-print(with(corbet, cbind(nindiv, ofreq, fitted = pdf2 * sum(ofreq))), dig = 1)
+print(with(corbet, cbind(nindiv, ofreq, fitted = pdf2 * sum(ofreq))), digits = 1)
 }
 \keyword{models}
 \keyword{regression}

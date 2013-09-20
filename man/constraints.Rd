@@ -11,7 +11,7 @@
 \usage{
 constraints(object, ...)
 constraints.vlm(object, type = c("lm", "term"), all = TRUE, which,
-                matrix.out = FALSE, ...)
+                matrix.out = FALSE, colnames.arg = TRUE, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -40,6 +40,12 @@ constraints.vlm(object, type = c("lm", "term"), all = TRUE, which,
   are \code{\link[base]{cbind}()ed} together.
   The result is usually more compact because the default
   is a list of constraint matrices.
+
+
+  }
+  \item{colnames.arg}{
+  Logical. If \code{TRUE} then column names are assigned
+  corresponding to the variables.
 
 
   }

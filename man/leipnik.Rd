@@ -6,6 +6,7 @@
   Estimates the two parameters of a (transformed) Leipnik distribution
   by maximum likelihood estimation.
 
+
 }
 \usage{
 leipnik(lmu = "logit", llambda = "loge", imu = NULL, ilambda = NULL)
@@ -16,10 +17,12 @@ leipnik(lmu = "logit", llambda = "loge", imu = NULL, ilambda = NULL)
   Link function for the \eqn{\mu}{mu} and \eqn{\lambda}{lambda} parameters.
   See \code{\link{Links}} for more choices.
 
+
   }
   \item{imu, ilambda}{
   Numeric. Optional initial values for \eqn{\mu}{mu} and
   \eqn{\lambda}{lambda}.
+
 
   }
 }
@@ -33,15 +36,17 @@ leipnik(lmu = "logit", llambda = "loge", imu = NULL, ilambda = NULL)
   (y(1-y))^(-1/2) * (1 + (y-mu)^2 / (y*(1-y)))^(-lambda/2) / 
   Beta((lambda+1)/2, 1/2)}
   where \eqn{0 < y < 1} and \eqn{\lambda > -1}{lambda > -1}.
-  The mean is \eqn{\mu}{mu} (returned as the fitted values) and the variance is
-  \eqn{1/\lambda}{1/lambda}.
+  The mean is \eqn{\mu}{mu} (returned as the fitted values)
+  and the variance is \eqn{1/\lambda}{1/lambda}.
+
 
   Jorgensen (1997) calls the above the \bold{transformed} Leipnik
-  distribution, and if \eqn{y = (x+1)/2} and \eqn{\mu = (\theta+1)/2}{mu
-  = (theta+1)/2}, then the distribution of \eqn{X} as a function of
+  distribution, and if \eqn{y = (x+1)/2}
+  and \eqn{\mu = (\theta+1)/2}{mu = (theta+1)/2},
+  then the distribution of \eqn{X} as a function of
   \eqn{x} and \eqn{\theta}{theta} is known as the the (untransformed)
   Leipnik distribution.  Here, both \eqn{x} and \eqn{\theta}{theta}
-  are in \eqn{(-1,1)}.
+  are in \eqn{(-1, 1)}.
 
 
 }
@@ -83,14 +88,14 @@ leipnik(lmu = "logit", llambda = "loge", imu = NULL, ilambda = NULL)
 \section{Warning }{
   If \code{llambda="identity"} then it is possible that the
   \code{lambda} estimate becomes less than \eqn{-1}, i.e., out of
-  bounds. One way to stop this is to choose \code{llambda="loge"},
+  bounds. One way to stop this is to choose \code{llambda = "loge"},
   however, \code{lambda} is then constrained to be positive.
 
 
 }
 
 \seealso{ 
-    \code{\link{mccullagh89}}.
+  \code{\link{mccullagh89}}.
 
 
 }
@@ -105,10 +110,12 @@ summary(fit)
 coef(fit, matrix = TRUE)
 Coef(fit)
 
-sum(weights(fit)) # sum of the prior weights
-sum(weights(fit, type = "w")) # sum of the working weights
+sum(weights(fit))  # Sum of the prior weights
+sum(weights(fit, type = "work"))  # Sum of the working weights
 }
 \keyword{models}
 \keyword{regression}
 
-%fit <- vglm(y ~ 1, leipnik(ilambda=1), tr=TRUE, cri="c", checkwz=FALSE)
+%fit <- vglm(y ~ 1, leipnik(ilambda = 1), tr = TRUE, cri = "c", checkwz = FALSE)
+
+

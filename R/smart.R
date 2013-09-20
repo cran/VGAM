@@ -26,8 +26,8 @@ smartpredenv <- new.env()
 
 smart.mode.is <- function(mode.arg = NULL) {
   if (!length(mode.arg)) {
-    if (exists(".smart.prediction", envir = VGAM:::smartpredenv)) {
-      get(".smart.prediction.mode", envir = VGAM:::smartpredenv)
+    if (exists(".smart.prediction", envir = smartpredenv)) {
+      get(".smart.prediction.mode", envir = smartpredenv)
     } else {
       "neutral"
     }
@@ -37,8 +37,8 @@ smart.mode.is <- function(mode.arg = NULL) {
         mode.arg != "write")
       stop("argument \"mode.arg\" must be one of",
            " \"neutral\", \"read\" or \"write\"")
-    if (exists(".smart.prediction", envir = VGAM:::smartpredenv)) {
-      get(".smart.prediction.mode", envir = VGAM:::smartpredenv) ==
+    if (exists(".smart.prediction", envir = smartpredenv)) {
+      get(".smart.prediction.mode", envir = smartpredenv) ==
         mode.arg
     } else {
       mode.arg == "neutral"
@@ -58,35 +58,35 @@ setup.smart <- function(mode.arg, smart.prediction = NULL,
   if (length(actual)) {
 
 
-    assign(".smart.prediction", actual, envir = VGAM:::smartpredenv)
-    assign(".smart.prediction.counter", 0, envir = VGAM:::smartpredenv)
-    assign(".smart.prediction.mode", mode.arg, envir = VGAM:::smartpredenv)
-    assign(".max.smart", max.smart, envir = VGAM:::smartpredenv)
-    assign(".smart.prediction", actual, envir = VGAM:::smartpredenv)
+    assign(".smart.prediction", actual, envir = smartpredenv)
+    assign(".smart.prediction.counter", 0, envir = smartpredenv)
+    assign(".smart.prediction.mode", mode.arg, envir = smartpredenv)
+    assign(".max.smart", max.smart, envir = smartpredenv)
+    assign(".smart.prediction", actual, envir = smartpredenv)
   }
 }
 
 wrapup.smart <- function() {
-  if (exists(".smart.prediction", envir = VGAM:::smartpredenv))
-    rm(".smart.prediction", envir = VGAM:::smartpredenv)
-  if (exists(".smart.prediction.counter", envir = VGAM:::smartpredenv))
-    rm(".smart.prediction.counter", envir = VGAM:::smartpredenv)
-  if (exists(".smart.prediction.mode", envir = VGAM:::smartpredenv))
-    rm(".smart.prediction.mode", envir = VGAM:::smartpredenv)
-  if (exists(".max.smart", envir = VGAM:::smartpredenv))
-    rm(".max.smart", envir = VGAM:::smartpredenv)
+  if (exists(".smart.prediction", envir = smartpredenv))
+    rm(".smart.prediction", envir = smartpredenv)
+  if (exists(".smart.prediction.counter", envir = smartpredenv))
+    rm(".smart.prediction.counter", envir = smartpredenv)
+  if (exists(".smart.prediction.mode", envir = smartpredenv))
+    rm(".smart.prediction.mode", envir = smartpredenv)
+  if (exists(".max.smart", envir = smartpredenv))
+    rm(".max.smart", envir = smartpredenv)
 }
 
 
 get.smart.prediction <- function() {
 
   smart.prediction.counter <- get(".smart.prediction.counter",
-                                  envir = VGAM:::smartpredenv)
-  max.smart <- get(".max.smart", envir = VGAM:::smartpredenv)
+                                  envir = smartpredenv)
+  max.smart <- get(".max.smart", envir = smartpredenv)
 
   if (smart.prediction.counter > 0) {
     # Save this on the object for smart prediction later
-    smart.prediction <- get(".smart.prediction", envir = VGAM:::smartpredenv)
+    smart.prediction <- get(".smart.prediction", envir = smartpredenv)
     if (max.smart >= (smart.prediction.counter + 1))
       for(i in max.smart:(smart.prediction.counter + 1))
         smart.prediction[[i]] <- NULL
@@ -100,34 +100,34 @@ put.smart <- function(smart) {
 
 
 
-  max.smart <- get(".max.smart", envir = VGAM:::smartpredenv)
+  max.smart <- get(".max.smart", envir = smartpredenv)
   smart.prediction.counter <- get(".smart.prediction.counter",
-                                  envir = VGAM:::smartpredenv)
-  smart.prediction <- get(".smart.prediction", envir = VGAM:::smartpredenv)
+                                  envir = smartpredenv)
+  smart.prediction <- get(".smart.prediction", envir = smartpredenv)
   smart.prediction.counter <- smart.prediction.counter + 1
 
   if (smart.prediction.counter > max.smart) {
     # if list is too small, make it larger
     max.smart <- max.smart + (inc.smart <- 10) # can change inc.smart
     smart.prediction <- c(smart.prediction, vector("list", inc.smart))
-    assign(".max.smart", max.smart, envir = VGAM:::smartpredenv)
+    assign(".max.smart", max.smart, envir = smartpredenv)
   }
 
   smart.prediction[[smart.prediction.counter]] <- smart
-  assign(".smart.prediction", smart.prediction, envir = VGAM:::smartpredenv)
+  assign(".smart.prediction", smart.prediction, envir = smartpredenv)
   assign(".smart.prediction.counter", smart.prediction.counter,
-         envir = VGAM:::smartpredenv)
+         envir = smartpredenv)
 }
 
 
 get.smart <- function() {
   # Returns one list component of information
-  smart.prediction <- get(".smart.prediction", envir = VGAM:::smartpredenv)
+  smart.prediction <- get(".smart.prediction", envir = smartpredenv)
   smart.prediction.counter <- get(".smart.prediction.counter",
-                                  envir = VGAM:::smartpredenv)
+                                  envir = smartpredenv)
   smart.prediction.counter <- smart.prediction.counter + 1
   assign(".smart.prediction.counter", smart.prediction.counter,
-         envir = VGAM:::smartpredenv)
+         envir = smartpredenv)
   smart <- smart.prediction[[smart.prediction.counter]]
   smart
 }
@@ -136,13 +136,13 @@ smart.expression <- expression({
 
 
   smart  <- get.smart()
-  assign(".smart.prediction.mode", "neutral", envir = VGAM:::smartpredenv)
+  assign(".smart.prediction.mode", "neutral", envir = smartpredenv)
 
   .smart.match.call <- as.character(smart$match.call)
   smart$match.call <- NULL  # Kill it off for the do.call 
 
   ans.smart <- do.call(.smart.match.call[1], c(list(x=x), smart))
-  assign(".smart.prediction.mode", "read", envir = VGAM:::smartpredenv)
+  assign(".smart.prediction.mode", "read", envir = smartpredenv)
 
   ans.smart
 })
@@ -176,14 +176,12 @@ is.smart <- function(object) {
 
 
 
-library(splines) 
 
 
 
 bs <-
 function (x, df = NULL, knots = NULL, degree = 3, intercept = FALSE, 
-    Boundary.knots = range(x)) 
-{
+    Boundary.knots = range(x)) {
     x <- x  # Evaluate x
     if (smart.mode.is("read")) {
         return(eval(smart.expression))
@@ -276,8 +274,8 @@ attr(bs, "smart") <- TRUE
 
 
 ns <-
-function (x, df = NULL, knots = NULL, intercept = FALSE, Boundary.knots = range(x)) 
-{
+  function (x, df = NULL, knots = NULL, intercept = FALSE,
+            Boundary.knots = range(x)) {
     x <- x  # Evaluate x
     if (smart.mode.is("read")) {
         return(eval(smart.expression))
@@ -367,8 +365,7 @@ attr(ns, "smart") <- TRUE
 
 
 poly <-
-function (x, ..., degree = 1, coefs = NULL, raw = FALSE) 
-{
+  function (x, ..., degree = 1, coefs = NULL, raw = FALSE) {
     x <- x  # Evaluate x
     if (!raw && smart.mode.is("read")) {
         smart <- get.smart()
@@ -468,8 +465,7 @@ attr(poly, "smart") <- TRUE
 
 
 scale.default <-
-function (x, center = TRUE, scale = TRUE) 
-{
+  function (x, center = TRUE, scale = TRUE) {
     x <- as.matrix(x)
 
     if (smart.mode.is("read")) {
@@ -518,7 +514,7 @@ attr(scale, "smart") <- TRUE
 
 
 
-"my1" <- function(x, minx=min(x)) {
+"my1" <- function(x, minx = min(x)) {
 
     x <- x   # Evaluate x
 
@@ -536,7 +532,7 @@ attr(my1, "smart") <- TRUE
 
 
 
-"my2" <- function(x, minx=min(x)) {
+"my2" <- function(x, minx = min(x)) {
 
     x <- x   # Evaluate x
 
@@ -554,7 +550,7 @@ attr(my2, "smart") <- TRUE
 
 
 
-"stdze1" <- function(x, center=TRUE, scale=TRUE) {
+"stdze1" <- function(x, center = TRUE, scale = TRUE) {
 
     x <- x  # Evaluate x
 
@@ -579,7 +575,9 @@ attr(my2, "smart") <- TRUE
 }
 attr(stdze1, "smart") <- TRUE
 
-"stdze2" <- function(x, center=TRUE, scale=TRUE) {
+
+
+"stdze2" <- function(x, center = TRUE, scale = TRUE) {
 
     x <- x  # Evaluate x
 

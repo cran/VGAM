@@ -19,12 +19,12 @@
  abbott <- function(link0 = "logit",
                     link1 = "logit",
                     iprob0 = NULL, iprob1 = NULL,
-                    fitted.type = c("observed", "treatment", "control"),
+                    type.fitted = c("observed", "treatment", "control"),
                     mux.offdiagonal = 0.98,
                     zero = 1) {
 
 
-  fitted.type <- match.arg(fitted.type,
+  type.fitted <- match.arg(type.fitted,
                            c("observed", "treatment", "control"),
                            several.ok = TRUE)
 
@@ -109,10 +109,10 @@
                 "control"   = con.fv)
 
                    
-    ans[, .fitted.type , drop = FALSE]
+    ans[, .type.fitted , drop = FALSE]
   }, list( .link0 = link0, .earg0 = earg0,
            .link1 = link1, .earg1 = earg1,
-           .fitted.type = fitted.type ))),
+           .type.fitted = type.fitted ))),
 
   loglikelihood = eval(substitute(
     function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
@@ -147,14 +147,14 @@
     misc$earg <- list(prob0 = .earg0 , prob1 = .earg1 )
 
     misc$mux.offdiagonal <- .mux.offdiagonal
-    misc$fitted.type <- .fitted.type
-    misc$true.mu <- ( .fitted.type == "observed")
+    misc$type.fitted <- .type.fitted
+    misc$true.mu <- ( .type.fitted == "observed")
 
 
   }), list( .link0 = link0, .earg0 = earg0,
             .link1 = link1, .earg1 = earg1,
             .mux.offdiagonal = mux.offdiagonal,
-            .fitted.type = fitted.type
+            .type.fitted = type.fitted
           ))),
   vfamily = c("abbott", "vquantal"),
   deriv = eval(substitute(expression({
@@ -496,7 +496,7 @@ abbott.EM.control <- function(maxit = 1000, ...) {
 
     misc$earg <- vector("list", M)
     names(misc$earg) <- mynames1
-    for(ii in 1:ncoly) {
+    for (ii in 1:ncoly) {
       misc$earg[[ii]] <- .earg
     }
 

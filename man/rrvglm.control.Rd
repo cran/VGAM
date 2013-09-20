@@ -9,12 +9,13 @@
 }
 \usage{
 rrvglm.control(Rank = 1, Algorithm = c("alternating", "derivative"),
-    Corner = TRUE, Uncorrelated.lv = FALSE, Wmat = NULL, Svd.arg = FALSE, 
+    Corner = TRUE, Uncorrelated.latvar = FALSE,
+    Wmat = NULL, Svd.arg = FALSE,
     Index.corner = if (length(szero)) 
     head((1:1000)[-szero], Rank) else 1:Rank,
     Ainit = NULL, Alpha = 0.5, Bestof = 1, Cinit = NULL,
     Etamat.colmax = 10,
-    SD.Ainit = 0.02, SD.Cinit = 0.02, szero = NULL,
+    sd.Ainit = 0.02, sd.Cinit = 0.02, szero = NULL,
     noRRR = ~1, Norrr = NA,
     trace = FALSE, Use.Init.Poisson.QO = FALSE, 
     checkwz = TRUE, wzepsilon = .Machine$double.eps^0.75, ...)
@@ -46,7 +47,7 @@ rrvglm.control(Rank = 1, Algorithm = c("alternating", "derivative"),
 
 
   }
-\item{Uncorrelated.lv}{
+\item{Uncorrelated.latvar}{
   Logical indicating whether uncorrelated latent variables are to be used.
   This is normalization forces the variance-covariance
   matrix of the latent variables to be \code{diag(Rank)}, i.e., unit
@@ -124,7 +125,7 @@ rrvglm.control(Rank = 1, Algorithm = c("alternating", "derivative"),
 
 
   }
-  \item{SD.Ainit, SD.Cinit}{
+  \item{sd.Ainit, sd.Cinit}{
       Standard deviation of the initial values for the elements
       of \bold{A} and \bold{C}.
       These are normally distributed with mean zero.  

@@ -117,7 +117,7 @@ mix2poisson(lphi = "logit", llambda = "loge",
 \seealso{
   \code{\link[stats:Poisson]{rpois}},
   \code{\link{poissonff}},
-  \code{\link{mix2normal1}}.
+  \code{\link{mix2normal}}.
 
 
 }
@@ -125,7 +125,7 @@ mix2poisson(lphi = "logit", llambda = "loge",
 \examples{
 \dontrun{ # Example 1: simulated data
 nn <- 1000
-mu1 <- exp(2.5) # also known as lambda1
+mu1 <- exp(2.5)  # also known as lambda1
 mu2 <- exp(3)
 (phi <- logit(-0.5, inverse = TRUE))
 mdata <- data.frame(y = rpois(nn, ifelse(runif(nn) < phi, mu1, mu2)))
@@ -133,7 +133,7 @@ fit <- vglm(y ~ 1, mix2poisson, mdata)
 coef(fit, matrix = TRUE)
 
 # Compare the results with the truth
-round(rbind('Estimated' = Coef(fit), 'Truth' = c(phi, mu1, mu2)), dig = 2)
+round(rbind('Estimated' = Coef(fit), 'Truth' = c(phi, mu1, mu2)), digits = 2)
 
 ty <- with(mdata, table(y))
 plot(names(ty), ty, type = "h", main = "Orange=estimate, blue=truth",

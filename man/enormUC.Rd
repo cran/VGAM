@@ -16,7 +16,7 @@
 \usage{
 denorm(x, mean = 0, sd = 1, log = FALSE)
 penorm(q, mean = 0, sd = 1, log = FALSE)
-qenorm(p, mean = 0, sd = 1, Maxit_nr = 10, Tol_nr = 1.0e-6)
+qenorm(p, mean = 0, sd = 1, Maxit.nr = 10, Tol.nr = 1.0e-6)
 renorm(n, mean = 0, sd = 1)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -31,7 +31,7 @@ renorm(n, mean = 0, sd = 1)
 
 
   }
-  \item{Maxit_nr, Tol_nr}{
+  \item{Maxit.nr, Tol.nr}{
   See \code{\link{deunif}}.
 
 

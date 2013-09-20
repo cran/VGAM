@@ -16,11 +16,21 @@
 \usage{
 TypicalVGAMfamilyFunction(lsigma = "loge",
                           isigma = NULL,
+                          link.list = list("(Default)" = "identity",
+                                           x2          = "loge",
+                                           x3          = "logoff",
+                                           x4          = "mlogit",
+                                           x5          = "mlogit"),
+                          earg.list = list("(Default)" = list(),
+                                           x2          = list(),
+                                           x3          = list(offset = -1),
+                                           x4          = list(),
+                                           x5          = list()),
                           gsigma = exp(-5:5),
                           parallel = TRUE,
-                          apply.parint = FALSE,
                           shrinkage.init = 0.95,
                           nointercept = NULL, imethod = 1,
+                          type.fitted = c("mean", "pobs0", "pstr0", "onempstr0"),
                           probs.x = c(0.15, 0.85),
                           probs.y = c(0.25, 0.50, 0.75),
                           mv = FALSE, earg.link = FALSE,
@@ -28,6 +38,7 @@ TypicalVGAMfamilyFunction(lsigma = "loge",
                           oim = FALSE, nsimEIM = 100, zero = NULL)
 }
 \arguments{
+%                         apply.parint = FALSE,
 
   \item{lsigma}{
   Character.
@@ -46,6 +57,27 @@ TypicalVGAMfamilyFunction(lsigma = "loge",
 % \code{earg}.
 
 % }
+
+
+  \item{link.list, earg.list}{
+  Some \pkg{VGAM} family functions
+  (such as \code{\link{normal.vcm}})
+  implement models with
+  potentially lots of parameter link functions.
+  These two arguments allow many such links and extra arguments
+  to be inputted more easily.
+  One has something like
+  \code{link.list = list("(Default)" = "identity", x2 = "loge", x3 = "logoff")}
+  and 
+  \code{earg.list = list("(Default)" = list(), x2 = list(), x3 = "list(offset = -1)")}.
+  Then any unnamed terms will have the default link with its
+  corresponding extra argument.
+  Note: the \code{\link{mlogit}} link is also possible, and if so,
+  at least two instances of it are necessary.
+  Then the last term is the baseline/reference group.
+
+
+  }
 
 
   \item{isigma}{
@@ -86,6 +118,25 @@ TypicalVGAMfamilyFunction(lsigma = "loge",
   not be as convenient.
 
 
+  Here are some examples.
+1. \code{parallel = TRUE ~ x2 + x5} means the parallelism assumption
+is only applied to \eqn{X_2}, \eqn{X_5} and the intercept.
+2.  \code{parallel = TRUE ~ -1}
+and \code{parallel = TRUE ~ 0}
+mean the parallelism assumption
+is applied to \emph{no} variables at all.
+Similarly,
+\code{parallel = FALSE ~ -1} and
+\code{parallel = FALSE ~ 0}
+mean the parallelism assumption
+is applied to \emph{all} the variables including the intercept.
+3.  \code{parallel = FALSE ~ x2 - 1}
+and \code{parallel = FALSE ~ x2 + 0}
+applies the
+parallelism constraint to all terms (including the intercept)
+except for \eqn{X_2}.
+
+
   This argument is common in \pkg{VGAM} family functions for categorical
   responses, e.g., \code{\link{cumulative}},  \code{\link{acat}}, 
   \code{\link{cratio}}, \code{\link{sratio}}.
@@ -97,15 +148,21 @@ TypicalVGAMfamilyFunction(lsigma = "loge",
 
 
   }
-  \item{apply.parint}{
-  Logical. It refers to whether the parallelism constraint is
-  applied to the intercept too.
-  By default, in some models it does, in other models it does not.
-  Used only if \code{parallel = TRUE} (fully or partially with
-  respect to all the explanatory variables).
 
 
-  }
+% \item{apply.parint}{
+% \emph{This variable will be depreciated shortly}.
+% Logical.
+% It refers to whether the parallelism constraint is
+% applied to the intercept too.
+% By default, in some models it does, in other models it does not.
+% Used only if \code{parallel = TRUE} (fully or partially with
+% respect to all the explanatory variables).
+
+
+% }
+
+
   \item{nsimEIM}{
   Some \pkg{VGAM} family functions use simulation to obtain an approximate
   expected information matrix (EIM).
@@ -146,6 +203,16 @@ TypicalVGAMfamilyFunction(lsigma = "loge",
 
 
   }
+  \item{type.fitted}{
+  Character.
+  Type of fitted value returned by the \code{fitted()} methods function.
+  The first choice is always the default.
+  The available choices depends on what kind of family function it is.
+  Using the first few letters of the chosen choice is okay.
+  See \code{\link{fittedvlm}} for more details.
+
+
+  }
   \item{probs.x, probs.y}{
   Numeric, with values in (0, 1).
   The probabilites that define quantiles with respect to some vector,
@@ -176,6 +243,7 @@ TypicalVGAMfamilyFunction(lsigma = "loge",
   algorithm, and \code{oim = FALSE} means Fisher-scoring.
   The latter uses the EIM, and is usually recommended.
   If \code{oim = TRUE} then \code{nsimEIM} is ignored.
+
 
   }
   \item{zero}{
@@ -344,7 +412,9 @@ Bias reduction in exponential family nonlinear models.
 
 \seealso{
   \code{\link{Links}},
-  \code{\link{vglmff-class}}.
+  \code{\link{vglmff-class}},
+  \code{\link{normal.vcm}},
+  \code{\link{mlogit}}.
 
 
 }
@@ -394,13 +464,13 @@ gdata <- data.frame(x2 = rnorm(nn <- 200))
 gdata <- transform(gdata,
            y1 = rnorm(nn, mean = 1 - 3*x2, sd = exp(1 + 0.2*x2)),
            y2 = rnorm(nn, mean = 1 - 3*x2, sd = exp(1)))
-args(normal1)
-fit1 <- vglm(y1 ~ x2, normal1, gdata) # This is ok
-fit2 <- vglm(y2 ~ x2, normal1(zero = 2), gdata) # This is ok
+args(uninormal)
+fit1 <- vglm(y1 ~ x2, uninormal, gdata)            # This is okay
+fit2 <- vglm(y2 ~ x2, uninormal(zero = 2), gdata)  # This is okay
 
 # This creates potential conflict
 clist <- list("(Intercept)" = diag(2), "x2" = diag(2))
-fit3 <- vglm(y2 ~ x2, normal1(zero = 2), gdata,
+fit3 <- vglm(y2 ~ x2, uninormal(zero = 2), gdata,
              constraints = clist) # Conflict!
 coef(fit3, matrix = TRUE) # Shows that clist[["x2"]] was overwritten,
 constraints(fit3) # i.e., 'zero' seems to override the 'constraints' arg

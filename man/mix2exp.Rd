@@ -118,7 +118,7 @@ coef(fit, matrix = TRUE)
 
 # Compare the results with the truth
 round(rbind('Estimated' = Coef(fit),
-            'Truth' = c(phi, lambda1, lambda2)), dig = 2)
+            'Truth' = c(phi, lambda1, lambda2)), digits = 2)
 
 with(mdata, hist(Y, prob = TRUE, main = "Orange = estimate, blue = truth"))
 abline(v = 1 / Coef(fit)[c(2, 3)],  lty = 2, col = "orange", lwd = 2)

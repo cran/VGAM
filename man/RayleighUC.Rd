@@ -10,6 +10,7 @@
   generation for the Rayleigh distribution with parameter
   \code{a}.
 
+
 }
 \usage{
 drayleigh(x, scale = 1, log = FALSE)
@@ -41,9 +42,9 @@ rrayleigh(n, scale = 1)
 }
 \references{
 
-Evans, M., Hastings, N. and Peacock, B. (2000)
+Forbes, C., Evans, M., Hastings, N. and Peacock, B. (2011)
 \emph{Statistical Distributions},
-New York: Wiley-Interscience, Third edition.
+Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
 
 
 }

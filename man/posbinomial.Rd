@@ -26,8 +26,10 @@ posbinomial(link = "logit", mv = FALSE, parallel = FALSE, zero = NULL)
   fitted values, i.e., the usual mean.
 
 
-  In the capture-recapture literature this model is called
-  the \eqn{M_0}. It arises from a sum of a sequence of
+  In the capture--recapture literature this model is called
+  the \eqn{M_0} if it is an intercept-only model.
+  Otherwise it is called the \eqn{M_h} when there are covariates.
+  It arises from a sum of a sequence of
   \eqn{\tau}-Bernoulli random variates subject to at least
   one success (capture).
   Here, each animal has the same probability of capture or
@@ -55,7 +57,7 @@ truncated binomial distribution.
 
 
 Pearson, K. (1913)
-\emph{A monograph on Albinism in Man}.
+\emph{A Monograph on Albinism in Man}.
 Drapers Company Research Memoirs.
 
 
@@ -108,7 +110,7 @@ sqrt(vcov(fit1, untransform = TRUE))  # SE = 0.0322
 # Fit a M_0 model to the Perom data ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 M_0   <- vglm(cbind(    y1 + y2 + y3 + y4 + y5 + y6,
                     6 - y1 - y2 - y3 - y4 - y5 - y6) ~ 1,
-              data = Perom, posbinomial, trace = TRUE)
+              posbinomial, data = Perom, trace = TRUE)
 coef(M_0, matrix = TRUE)
 Coef(M_0)
 constraints(M_0, matrix = TRUE)

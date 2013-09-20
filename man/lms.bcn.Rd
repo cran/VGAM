@@ -242,9 +242,9 @@ contains further information and examples.
 \dontrun{ require(VGAMdata)
 mysubset <- subset(xs.nz, sex == "M" & ethnic == "1" & Study1)
 mysubset <- transform(mysubset, BMI = weight / height^2)
-BMIdata <- mysubset[, c("age", "BMI")]
-BMIdata <- na.omit(BMIdata)
-BMIdata <- subset(BMIdata, BMI < 80 & age < 65) # Delete an outlier
+BMIdata <- na.omit(mysubset)
+BMIdata <- subset(BMIdata, BMI < 80 & age < 65,
+                   select = c(age, BMI))  # Delete an outlier
 summary(BMIdata)
 
 fit <- vgam(BMI ~ s(age, df = c(4, 2)), lms.bcn(zero = 1), BMIdata)
@@ -256,8 +256,8 @@ head(cdf(fit)) # Person 56 is probably overweight, given his age
 100 * colMeans(c(depvar(fit)) < fitted(fit)) # Empirical proportions
 
 # Convergence problems? Try this trick: fit0 is a simpler model used for fit1
-fit0 <- vgam(BMI ~ s(age, df = 4), lms.bcn(zero = c(1,3)), BMIdata)
-fit1 <- vgam(BMI ~ s(age, df = c(4, 2)), lms.bcn(zero = 1), BMIdata, 
+fit0 <- vgam(BMI ~ s(age, df = 4), lms.bcn(zero = c(1, 3)), data = BMIdata)
+fit1 <- vgam(BMI ~ s(age, df = c(4, 2)), lms.bcn(zero = 1), data = BMIdata,
             etastart = predict(fit0))
 }
 
@@ -280,4 +280,7 @@ aa@post$deplot  # Contains density function values
 }
 \keyword{models}
 \keyword{regression}
+
+% BMIdata <- subset(mysubset, select = c(age, BMI))
+% BMIdata <- mysubset[, c("age", "BMI")]
 

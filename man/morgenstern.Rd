@@ -27,6 +27,7 @@ morgenstern(lapar = "rhobit", iapar = NULL, tola0 = 0.01, imethod = 1)
   If a convergence failure occurs try assigning a different value.
   Assigning a value will override the argument \code{imethod}.
 
+
   }
   \item{tola0}{
   Positive numeric.
@@ -35,11 +36,13 @@ morgenstern(lapar = "rhobit", iapar = NULL, tola0 = 0.01, imethod = 1)
   This is an attempt to fix a numerical problem when the estimate
   is too close to zero.
 
+
   }
   \item{imethod}{
   An integer with value \code{1} or \code{2} which
   specifies the initialization method. If failure to converge occurs
   try the other value, or else specify a value for \code{ia}.
+
 
   }
 }
@@ -101,7 +104,7 @@ Hoboken, NJ, USA: Wiley-Interscience.
 
 \seealso{
   \code{\link{fgm}},
-  \code{\link{gumbelIbiv}}.
+  \code{\link{bigumbelI}}.
 
 
 }

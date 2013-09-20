@@ -9,7 +9,7 @@
 \usage{
 betageometric(lprob = "logit", lshape = "loge",
               iprob = NULL,    ishape = 0.1,
-              moreSummation=c(2,100), tolerance=1.0e-10, zero=NULL)
+              moreSummation = c(2, 100), tolerance = 1.0e-10, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -20,11 +20,13 @@ betageometric(lprob = "logit", lshape = "loge",
   The former lies in the unit interval and the latter is positive.
   See \code{\link{Links}} for more choices.
 
+
   }
   \item{iprob, ishape}{ 
   Numeric. 
   Initial values for the two parameters.
   A \code{NULL} means a value is computed internally.
+
 
   }
   \item{moreSummation}{ 
@@ -34,17 +36,20 @@ betageometric(lprob = "logit", lshape = "loge",
   upper limit is an approximation to infinity.
   Here, \code{y} is the response.
 
+
   }
   \item{tolerance}{ 
   Positive numeric. 
   When all terms are less than this then the series is deemed to have
   converged.
 
+
   }
   \item{zero}{
   An integer-valued vector specifying which
   linear/additive predictors are modelled as intercepts only.
   If used, the value must be from the set \{1,2\}.
+
 
   }
 }
@@ -64,17 +69,20 @@ betageometric(lprob = "logit", lshape = "loge",
   \eqn{E(Y) = shape2 / (shape1-1) = (1-p) / (p-\phi)}{E(Y) = 
        shape2 / (shape1-1) = (1-prob) / (prob-phi)}.
 
+
   The geometric distribution is a special case of the beta-geometric
   distribution with \eqn{\phi=0}{phi=0} (see \code{\link{geometric}}).
   However, fitting data from a geometric distribution may result in
   numerical problems because the estimate of \eqn{\log(\phi)}{log(phi)}
   will 'converge' to \code{-Inf}.
 
+
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}},
   and \code{\link{vgam}}.
+
 
 }
 \references{
@@ -83,6 +91,7 @@ betageometric(lprob = "logit", lshape = "loge",
   an application to human fecundability data.
   \emph{Journal of Modern Applied Statistical Methods}, \bold{4}, 425--433.
 
+
 }
 
 \author{ T. W. Yee }
@@ -90,13 +99,15 @@ betageometric(lprob = "logit", lshape = "loge",
   The first iteration may be very slow;
   if practical, it is best for the \code{weights} argument of
   \code{\link{vglm}} etc. to be used rather than inputting a very
-  long vector as the response, i.e., \code{vglm(y ~ 1, ..., weights=wts)}
+  long vector as the response, i.e., \code{vglm(y ~ 1, ..., weights = wts)}
   is to be preferred over \code{vglm(rep(y, wts) ~ 1, ...)}.
   If convergence problems occur try inputting some values of argument
   \code{ishape}.
 
+
   If an intercept-only model is fitted then the \code{misc} slot of the
   fitted object has list components \code{shape1} and \code{shape2}.
+
 
 }
 
@@ -109,15 +120,15 @@ betageometric(lprob = "logit", lshape = "loge",
 }
 \examples{
 bdata <- data.frame(y = 0:11, wts = c(227,123,72,42,21,31,11,14,6,4,7,28))
-fit  <- vglm(y ~ 1, betageometric, bdata, weight = wts, trace = TRUE)
+fitb <- vglm(y ~ 1, betageometric, bdata, weight = wts, trace = TRUE)
 fitg <- vglm(y ~ 1,     geometric, bdata, weight = wts, trace = TRUE)
-coef(fit, matrix = TRUE)
-Coef(fit)
-sqrt(diag(vcov(fit, untransform = TRUE)))
-fit@misc$shape1
-fit@misc$shape2
+coef(fitb, matrix = TRUE)
+Coef(fitb)
+sqrt(diag(vcov(fitb, untransform = TRUE)))
+fitb@misc$shape1
+fitb@misc$shape2
 # Very strong evidence of a beta-geometric:
-pchisq(2*(logLik(fit) - logLik(fitg)), df = 1, lower.tail = FALSE)
+pchisq(2 * (logLik(fitb) - logLik(fitg)), df = 1, lower.tail = FALSE)
 }
 \keyword{models}
 \keyword{regression}

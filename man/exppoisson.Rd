@@ -17,6 +17,7 @@ exppoisson(llambda = "loge", lbetave = "loge",
   Link function for the two positive parameters.
   See \code{\link{Links}} for more choices.
 
+
   }
   \item{ilambda, ibetave}{
   Numeric.
@@ -24,9 +25,11 @@ exppoisson(llambda = "loge", lbetave = "loge",
   Currently this function is not intelligent enough to
   obtain better initial values.
 
+
   }
   \item{zero}{
   See \code{\link{CommonVGAMffArguments}}.
+
 
   }
 }
@@ -55,11 +58,13 @@ exppoisson(llambda = "loge", lbetave = "loge",
 \section{Warning }{
   This \pkg{VGAM} family function does not work properly!
 
+
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}}
   and \code{\link{vgam}}.
+
 
 }
 \references{
@@ -82,10 +87,10 @@ exppoisson(llambda = "loge", lbetave = "loge",
 }
 \examples{
 \dontrun{
-lambda = exp(1); betave = exp(2)
-rdata = data.frame(y = rexppois(n = 1000, lambda, betave))
+lambda <- exp(1); betave <- exp(2)
+rdata <- data.frame(y = rexppois(n = 1000, lambda, betave))
 library(hypergeo)
-fit = vglm(y ~ 1, exppoisson, rdata, trace = TRUE)
+fit <- vglm(y ~ 1, exppoisson, rdata, trace = TRUE)
 c(with(rdata, mean(y)), head(fitted(fit), 1))
 coef(fit, matrix = TRUE)
 Coef(fit)

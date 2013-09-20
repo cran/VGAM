@@ -9,11 +9,11 @@
 
 }
 \usage{
-fgm(lapar="rhobit", iapar = NULL, imethod = 1, nsimEIM = 200)
+fgm(lapar = "rhobit", iapar = NULL, imethod = 1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{lapar, iapar, imethod, nsimEIM}{
+  \item{lapar, iapar, imethod}{
   Details at \code{\link{CommonVGAMffArguments}}.
   See \code{\link{Links}} for more link function choices.
 
@@ -55,6 +55,13 @@ Castillo, E., Hadi, A. S., Balakrishnan, N. Sarabia, J. S. (2005)
 Hoboken, NJ, USA: Wiley-Interscience.
 
 
+Smith, M. D. (2007)
+Invariance theorems for Fisher information.
+\emph{Communications in Statistics---Theory and Methods},
+\bold{36}(12), 2213--2222.
+
+
+
 }
 \author{ T. W. Yee }
 \note{
@@ -71,7 +78,7 @@ Hoboken, NJ, USA: Wiley-Interscience.
 
 \seealso{
   \code{\link{rfgm}},
-  \code{\link{frank}},
+  \code{\link{bifrankcop}},
   \code{\link{morgenstern}}.
 
 

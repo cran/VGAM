@@ -18,7 +18,7 @@
  dtheta.deta <-
   function(theta,
            link = "identity",
-           earg = list(theta = theta, # Needed
+           earg = list(theta = theta,  # Needed
                        inverse = FALSE,
                        deriv = 1,
                        short = TRUE,
@@ -32,9 +32,9 @@
     warning("apparent conflict in name of link function")
   }
 
-  earg[["theta"]] <- theta # New data
+  earg[["theta"]] <- theta  # New data
 
-  earg[["deriv"]] <- 1 # New
+  earg[["deriv"]] <- 1  # New
 
 
   do.call(what = function.name, args = earg)
@@ -47,7 +47,7 @@
  d2theta.deta2 <- 
   function(theta,
            link = "identity",
-           earg = list(theta = theta, # Needed
+           earg = list(theta = theta,  # Needed
                        inverse = FALSE,
                        deriv = 2,
                        short = TRUE,
@@ -60,9 +60,9 @@
   if (length(function.name2) && function.name != function.name2)
     warning("apparent conflict in name of link function in D2theta.deta2")
 
-  earg[["theta"]] <- theta # New data
+  earg[["theta"]] <- theta  # New data
 
-  earg[["deriv"]] <- 2 # New
+  earg[["deriv"]] <- 2  # New
 
   do.call(what = function.name, args = earg)
 }
@@ -80,7 +80,7 @@
   if (length(function.name2) && function.name != function.name2)
     warning("apparent conflict in name of link function")
 
-  earg[["theta"]] <- theta # New data
+  earg[["theta"]] <- theta  # New data
 
   do.call(what = function.name, args = earg)
 }
@@ -89,7 +89,7 @@
 
 
  eta2theta <-
-  function(theta, # This is really eta.
+  function(theta,  # This is really eta.
            link = "identity",
            earg = list(theta = NULL)) {
 
@@ -120,7 +120,7 @@
     stop("length(earg) == 0 not allowed")
 
 
-  if (llink == 1) { # ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+  if (llink == 1) {  # ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
 
     if (is.list(earg[[1]]))
@@ -128,14 +128,14 @@
 
     function.name  <- link
 
-    function.name2 <- attr(earg, "function.name") # May be, e.g., NULL
+    function.name2 <- attr(earg, "function.name")  # May be, e.g., NULL
     if (length(function.name2) && function.name != function.name2)
       warning("apparent conflict in name of link function")
 
 
-    earg[["theta"]] <- theta # New data
+    earg[["theta"]] <- theta  # New data
 
-    earg[["inverse"]] <- TRUE # New
+    earg[["inverse"]] <- TRUE  # New
 
     return(do.call(what = function.name, args = earg))
   }
@@ -148,21 +148,21 @@
 
 
 
-   if (!is.matrix(theta) &&
-       length(theta) == length(earg))
-     theta <- rbind(theta)
+ if (!is.matrix(theta) &&
+     length(theta) == length(earg))
+   theta <- rbind(theta)
 
 
-    ans <- NULL
-    for(iii in 1:llink) {
-        use.earg <- earg[[iii]]
-        use.earg[["inverse"]] <- TRUE # New
-        use.earg[["theta"]] <- theta[, iii] # New
-        use.function.name <- link[iii]
+  ans <- NULL
+  for (iii in 1:llink) {
+    use.earg <- earg[[iii]]
+    use.earg[["inverse"]] <- TRUE  # New
+    use.earg[["theta"]] <- theta[, iii]  # New
+    use.function.name <- link[iii]
 
-        ans <- cbind(ans, do.call(what = use.function.name,
-                                  args = use.earg))
-      }
+    ans <- cbind(ans, do.call(what = use.function.name,
+                              args = use.earg))
+  }
 
   if (length(orig.earg) == ncol(ans) &&
       length(names(orig.earg)) > 0 &&
@@ -175,6 +175,31 @@
 
 
 
+
+
+ namesof <- function(theta,
+                     link = "identity",
+                     earg = list(tag = tag, short = short),
+                     tag = FALSE,
+                     short = TRUE) {
+
+  funname.only <- strsplit(as.character(link), "(", fixed = TRUE)
+  funname.only <- (funname.only[[1]])[1]
+  link <- funname.only
+
+  earg[["theta"]] <- as.character(theta)
+
+  earg[["tag"]] <- tag
+  earg[["short"]] <- short
+
+
+  do.call(link, args = earg)
+}
+
+
+
+
+if (FALSE)
  namesof <- function(theta,
                      link = "identity",
                      earg = list(tag = tag, short = short),
@@ -204,7 +229,7 @@ link2list <- function(link
   big.list <- as.list(as.function(get(fun.name)))
 
 
-  big.list[[length(big.list)]] <- NULL # Kill the body of code
+  big.list[[length(big.list)]] <- NULL  # Kill the body of code
 
 
 

@@ -15,8 +15,7 @@ cqo <- function(formula,
                 contrasts = NULL, 
                 constraints = NULL,
                 extra = NULL, 
-                smart = TRUE, ...)
-{
+                smart = TRUE, ...) {
     dataname <- as.character(substitute(data))  # "list" if no data =
     function.name <- "cqo"
 
@@ -51,7 +50,7 @@ cqo <- function(formula,
 
     y <- model.response(mf, "numeric") # model.extract(mf, "response")
     x <- model.matrix(mt, mf, contrasts)
-    attr(x, "assign") = attrassigndefault(x, mt)
+    attr(x, "assign") <- attrassigndefault(x, mt)
     offset <- model.offset(mf)
     if (is.null(offset)) 
         offset <- 0 # yyy ???
@@ -66,10 +65,10 @@ cqo <- function(formula,
     if (is.function(family))
         family <- family()
     if (!inherits(family, "vglmff")) {
-        stop("'family=", family, "' is not a VGAM family function")
+        stop("'family = ", family, "' is not a VGAM family function")
     }
 
-    control$criterion = "coefficients" # Specifically 4 vcontrol.expression
+    control$criterion <- "coefficients" # Specifically 4 vcontrol.expression
     eval(vcontrol.expression)
 
     if (!is.null(family@first))
@@ -79,7 +78,7 @@ cqo <- function(formula,
     cqo.fitter <- get(method)
 
 
-    deviance.Bestof = rep(as.numeric(NA), len=control$Bestof)
+    deviance.Bestof <- rep(as.numeric(NA), len=control$Bestof)
     for(tries in 1:control$Bestof) {
          if (control$trace && (control$Bestof>1))
          cat(paste("\n========================= Fitting model", tries,
@@ -88,13 +87,13 @@ cqo <- function(formula,
                    etastart=etastart, mustart=mustart, coefstart=coefstart,
                    family=family, control=control, constraints=constraints,
                    extra=extra, Terms=mt, function.name=function.name, ...)
-        deviance.Bestof[tries] = if (length(onefit$crit.list$deviance))
+        deviance.Bestof[tries] <- if (length(onefit$crit.list$deviance))
             onefit$crit.list$deviance else onefit$crit.list$loglikelihood
        if (tries == 1 ||
           min(deviance.Bestof[1:(tries-1)]) > deviance.Bestof[tries])
-            fit = onefit
+            fit <- onefit
     }
-    fit$misc$deviance.Bestof = deviance.Bestof
+    fit$misc$deviance.Bestof <- deviance.Bestof
 
 
     fit$misc$dataname <- dataname
@@ -105,7 +104,7 @@ cqo <- function(formula,
     }
 
     answer <-
-    new(Class="qrrvglm",
+    new(Class = "qrrvglm",
       "assign"       = attr(x, "assign"),
       "call"         = ocall,
       "coefficients" = fit$coefficients,
@@ -117,44 +116,44 @@ cqo <- function(formula,
       "model"        = if (model) mf else data.frame(),
       "residuals"    = as.matrix(fit$residuals),
       "smart.prediction" = as.list(fit$smart.prediction),
-      "terms"        = list(terms=mt))
+      "terms"        = list(terms = mt))
 
     if (!smart) answer@smart.prediction <- list(smart.arg = FALSE)
 
     if (length(attr(x, "contrasts")))
-        slot(answer, "contrasts") = attr(x, "contrasts")
+        slot(answer, "contrasts") <- attr(x, "contrasts")
     if (length(fit$fitted.values))
-        slot(answer, "fitted.values") = as.matrix(fit$fitted.values)
-    slot(answer, "na.action") = if (length(na.act)) list(na.act) else list()
+        slot(answer, "fitted.values") <- as.matrix(fit$fitted.values)
+    slot(answer, "na.action") <- if (length(na.act)) list(na.act) else list()
     if (length(offset))
-        slot(answer, "offset") = as.matrix(offset)
+        slot(answer, "offset") <- as.matrix(offset)
     if (length(fit$weights))
-        slot(answer, "weights") = as.matrix(fit$weights)
+        slot(answer, "weights") <- as.matrix(fit$weights)
     if (x.arg)
-        slot(answer, "x") = fit$x # The 'small' design matrix
+        slot(answer, "x") <- fit$x # The 'small' design matrix
     if (length(xlev))
-        slot(answer, "xlevels") = xlev
+        slot(answer, "xlevels") <- xlev
     if (y.arg)
-        slot(answer, "y") = as.matrix(fit$y)
+        slot(answer, "y") <- as.matrix(fit$y)
 
-    fit$control$min.criterion = TRUE # needed for calibrate; a special case
+    fit$control$min.criterion <- TRUE # needed for calibrate; a special case
 
 
-    slot(answer, "control") = fit$control
-    slot(answer, "extra") = if (length(fit$extra)) {
+    slot(answer, "control") <- fit$control
+    slot(answer, "extra") <- if (length(fit$extra)) {
         if (is.list(fit$extra)) fit$extra else {
             warning("'extra' is not a list, therefore placing ",
                     "'extra' into a list")
             list(fit$extra)
         }
     } else list() # R-1.5.0
-    slot(answer, "iter") = fit$iter
-    fit$predictors = as.matrix(fit$predictors)  # Must be a matrix 
-    dimnames(fit$predictors) = list(dimnames(fit$predictors)[[1]],
-                                    fit$misc$predictors.names)
-    slot(answer, "predictors") = fit$predictors
+    slot(answer, "iter") <- fit$iter
+    fit$predictors <- as.matrix(fit$predictors)  # Must be a matrix 
+    dimnames(fit$predictors) <- list(dimnames(fit$predictors)[[1]],
+                                     fit$misc$predictors.names)
+    slot(answer, "predictors") <- fit$predictors
     if (length(fit$prior.weights))
-        slot(answer, "prior.weights") = as.matrix(fit$prior.weights)
+        slot(answer, "prior.weights") <- as.matrix(fit$prior.weights)
     answer
 }
 attr(cqo, "smart") <- TRUE

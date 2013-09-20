@@ -29,7 +29,7 @@ polya(lprob = "logit", lsize = "loge",
   \code{size} and \code{prob} arguments of 
   \code{\link[stats:NegBinomial]{rnbinom}} respectively.
   Common alternatives for \code{lsize} are
-  \code{\link{nloge}} and
+  \code{\link{negloge}} and
   \code{\link{reciprocal}}.
 
 
@@ -170,7 +170,7 @@ polya(lprob = "logit", lsize = "loge",
   It is common for some to use \eqn{\alpha=1/k}{alpha=1/k} as the
   ancillary or heterogeneity parameter;
   so common alternatives for \code{lsize} are
-  \code{\link{nloge}} and
+  \code{\link{negloge}} and
   \code{\link{reciprocal}}.
 
 
@@ -410,13 +410,13 @@ coef(fit1, matrix = TRUE)
 
 # Example 3: large counts so definitely use the nsimEIM argument
 ndata <- transform(ndata, y3 = rnbinom(nn, mu = exp(12+x2), size = exp(1)))
-with(ndata, range(y3)) # Large counts
+with(ndata, range(y3))  # Large counts
 fit2 <- vglm(y3 ~ x2, negbinomial(nsimEIM = 100), ndata, trace = TRUE)
 coef(fit2, matrix = TRUE)
 
 # Example 4: a NB-1 to estimate a negative binomial with Var(Y) = phi0 * mu
-nn <- 1000 # Number of observations
-phi0 <- 10 # Specify this; should be greater than unity
+nn <- 1000  # Number of observations
+phi0 <- 10  # Specify this; should be greater than unity
 delta0 <- 1 / (phi0 - 1)
 mydata <- data.frame(x2 = runif(nn), x3 = runif(nn))
 mydata <- transform(mydata, mu = exp(2 + 3 * x2 + 0 * x3))
@@ -431,18 +431,18 @@ cnb1 <- coef(nb1, matrix = TRUE)
 mydiff <- (cnb1["(Intercept)", "log(size)"] -
            cnb1["(Intercept)", "log(mu)"])
 delta0.hat <- exp(mydiff)
-(phi.hat <- 1 + 1 / delta0.hat) # MLE of phi
+(phi.hat <- 1 + 1 / delta0.hat)  # MLE of phi
 summary(nb1)
 # Obtain a 95 percent confidence interval for phi0:
 myvec <- rbind(-1, 1, 0, 0)
 (se.mydiff <- sqrt(t(myvec) \%*\%  vcov(nb1) \%*\%  myvec))
 ci.mydiff <- mydiff + c(-1.96, 1.96) * se.mydiff
 ci.delta0 <- ci.exp.mydiff <- exp(ci.mydiff)
-(ci.phi0 <- 1 + 1 / rev(ci.delta0)) # The 95 percent conf. interval for phi0
+(ci.phi0 <- 1 + 1 / rev(ci.delta0))  # The 95 percent conf. interval for phi0
 
-Confint.nb1(nb1) # Quick way to get it
+Confint.nb1(nb1)  # Quick way to get it
 
-summary(glm(y3 ~ x2 + x3, quasipoisson, mydata))$disper # cf. moment estimator
+summary(glm(y3 ~ x2 + x3, quasipoisson, mydata))$disper  # cf. moment estimator
 }
 \keyword{models}
 \keyword{regression}

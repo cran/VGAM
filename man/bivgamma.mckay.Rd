@@ -1,5 +1,5 @@
-\name{bivgamma.mckay}
-\alias{bivgamma.mckay}
+\name{bigamma.mckay}
+\alias{bigamma.mckay}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Bivariate Gamma: McKay's Distribution }
 \description{
@@ -8,9 +8,9 @@
 
 }
 \usage{
-bivgamma.mckay(lscale = "loge", lshape1 = "loge", lshape2 = "loge",
-               iscale = NULL, ishape1 = NULL, ishape2 = NULL,
-               imethod = 1, zero = 1)
+bigamma.mckay(lscale = "loge", lshape1 = "loge", lshape2 = "loge",
+              iscale = NULL, ishape1 = NULL, ishape2 = NULL,
+              imethod = 1, zero = 1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -91,6 +91,7 @@ Balakrishnan, N. and Lai, C.-D. (2009)
 2nd edition.
 New York: Springer.
 
+
 }
 \author{ T. W. Yee }
 \note{
@@ -116,13 +117,14 @@ New York: Springer.
 \seealso{
   \code{\link{gamma2}}.
 
+
 }
 \examples{
-shape1 <- exp(1); shape2 = exp(2); scalepar = exp(3)
+shape1 <- exp(1); shape2 <- exp(2); scalepar <- exp(3)
 mdata <- data.frame(y1 = rgamma(nn <- 1000, shape = shape1, scale = scalepar))
 mdata <- transform(mdata, zedd = rgamma(nn, shape = shape2, scale = scalepar))
 mdata <- transform(mdata, y2 = y1 + zedd)  # Z is defined as Y2-y1|Y1=y1
-fit <- vglm(cbind(y1, y2) ~ 1, bivgamma.mckay, mdata, trace = TRUE)
+fit <- vglm(cbind(y1, y2) ~ 1, bigamma.mckay, mdata, trace = TRUE)
 coef(fit, matrix = TRUE)
 Coef(fit)
 vcov(fit)

@@ -114,7 +114,7 @@ lino(lshape1 = "loge", lshape2 = "loge", llambda = "loge",
 }
 
 \examples{
-ldata1 <- data.frame(y = rbeta(n = 1000, exp(0.5), exp(1))) # ~ standard beta
+ldata1 <- data.frame(y = rbeta(n = 1000, exp(0.5), exp(1)))  # ~ standard beta
 fit <- vglm(y ~ 1, lino, ldata1, trace = TRUE)
 coef(fit, matrix = TRUE)
 Coef(fit)

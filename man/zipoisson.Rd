@@ -9,12 +9,14 @@
 
 }
 \usage{
-zipoissonff(llambda = "loge", lprobp = "logit",
-            ilambda = NULL,   iprobp = NULL,
-            imethod = 1, shrinkage.init = 0.8, zero = -2)
 zipoisson(lpstr0 = "logit", llambda = "loge",
-          ipstr0 = NULL,    ilambda = NULL,
+          type.fitted = c("mean", "pobs0", "pstr0", "onempstr0"),
+          ipstr0 = NULL, ilambda = NULL,
           imethod = 1, shrinkage.init = 0.8, zero = NULL)
+zipoissonff(llambda = "loge", lonempstr0 = "logit",
+            type.fitted = c("mean", "pobs0", "pstr0", "onempstr0"),
+            ilambda = NULL,   ionempstr0 = NULL,
+            imethod = 1, shrinkage.init = 0.8, zero = -2)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -36,10 +38,24 @@ zipoisson(lpstr0 = "logit", llambda = "loge",
   The defaults are to compute an initial value internally for each.
   If a vector then recycling is used.
 
+
   }
-  \item{lprobp, iprobp}{
+  \item{lonempstr0, ionempstr0}{
   Corresponding arguments for the other parameterization.
   See details below.
+
+
+  }
+
+  \item{type.fitted}{
+  Character. The type of fitted value to be returned.
+  The first choice (the expected value) is the default.
+  The estimated probability of an observed 0 is an alternative, else
+  the estimated probability of a  structural 0,
+  or one minus the estimated probability of a  structural 0.
+  See \code{\link{CommonVGAMffArguments}} 
+  and \code{\link{fittedvlm}} for more information.
+
 
   }
 
@@ -74,7 +90,7 @@ zipoisson(lpstr0 = "logit", llambda = "loge",
   }
 }
 \details{
-  This model is a mixture of a Poisson distribution and the value 0;
+  These models are a mixture of a Poisson distribution and the value 0;
   it has value 0 with probability \eqn{\phi}{phi} else is
   Poisson(\eqn{\lambda}{lambda}) distributed.
   Thus there are two sources for zero values, and \eqn{\phi}{phi}
@@ -88,11 +104,13 @@ zipoisson(lpstr0 = "logit", llambda = "loge",
   Here, the parameter \eqn{\phi}{phi} satisfies
   \eqn{0 < \phi < 1}{0 < phi < 1}.
   The mean of \eqn{Y} is \eqn{(1-\phi) \lambda}{(1-phi)*lambda} and these
-  are returned as the fitted values.
+  are returned as the fitted values,
+  by default.
   The variance of \eqn{Y} is \eqn{(1-\phi) \lambda (1 + \phi \lambda)}{
   (1-phi)*lambda*(1 + phi lambda)}.
-  By default, the two linear/additive predictors are
-  \eqn{(logit(\phi), \log(\lambda))^T}{(logit(phi), log(lambda))^T}.
+  By default, the two linear/additive predictors
+  of \code{zipoisson()}
+  are \eqn{(logit(\phi), \log(\lambda))^T}{(logit(phi), log(lambda))^T}.
 
 
   The \pkg{VGAM} family function \code{zipoissonff()} has a few
@@ -100,11 +118,11 @@ zipoisson(lpstr0 = "logit", llambda = "loge",
   These are:
   (i)   the order of the linear/additive predictors is switched so the
         Poisson mean comes first;
-  (ii)  \code{probp} is now the probability of the Poisson component,
-        i.e., \code{probp} is \code{1-pstr0};
-  (iii) it can handle multiple responses;
-  (iv)  argument \code{zero} has a new default so that the \code{probp}
-        is an intercept-only  by default.
+  (ii)  \code{onempstr0} is now 1 minus the probability of a structural 0,
+        i.e., the probability of the parent (Poisson) component,
+        i.e., \code{onempstr0} is \code{1-pstr0};
+  (iii) argument \code{zero} has a new default so that the \code{onempstr0}
+        is intercept-only  by default.
   Now \code{zipoissonff()} is generally recommended over
   \code{zipoisson()} (and definitely recommended over \code{\link{yip88}}).
   Both functions implement Fisher scoring and can handle
@@ -148,11 +166,11 @@ zipoisson(lpstr0 = "logit", llambda = "loge",
 }
 \author{ T. W. Yee }
 \note{
-  The \code{misc} slot has a component called
-  \code{pobs0} which is the estimate of \eqn{P(Y = 0)}.
-  Note that \eqn{P(Y = 0)} is not the parameter \eqn{\phi}{phi}.
-  The estimated probability of a structural 0 is returned in
-  the \code{misc} slot with component name \code{pstr0}.
+% The \code{misc} slot has a component called
+% \code{pobs0} which is the estimate of \eqn{P(Y = 0)}.
+% Note that \eqn{P(Y = 0)} is not the parameter \eqn{\phi}{phi}.
+% The estimated probability of a structural 0 is returned in
+% the \code{misc} slot with component name \code{pstr0}.
 
 
   Although the functions in \code{\link{Zipois}}
@@ -214,8 +232,7 @@ zipoisson(lpstr0 = "logit", llambda = "loge",
 }
 \examples{
 # Example 1: simulated ZIP data
-set.seed(123)
-zdata <- data.frame(x2 = runif(nn <- 2000))
+zdata <- data.frame(x2 = runif(nn <- 1000))
 zdata <- transform(zdata, pstr01  = logit(-0.5 + 1*x2, inverse = TRUE),
                           pstr02  = logit( 0.5 - 1*x2, inverse = TRUE),
                           Ps01    = logit(-0.5       , inverse = TRUE),
@@ -225,62 +242,58 @@ zdata <- transform(zdata, pstr01  = logit(-0.5 + 1*x2, inverse = TRUE),
 zdata <- transform(zdata, y1 = rzipois(nn, lambda = lambda1, pstr0 = Ps01),
                           y2 = rzipois(nn, lambda = lambda2, pstr0 = Ps02))
 
-with(zdata, table(y1)) # Eyeball the data
+with(zdata, table(y1))  # Eyeball the data
 with(zdata, table(y2))
-fit1 <- vglm(y1 ~ x2, zipoisson(zero = 1), zdata, crit = "coef")
-fit2 <- vglm(y2 ~ x2, zipoisson(zero = 1), zdata, crit = "coef")
-coef(fit1, matrix = TRUE) # These should agree with the above values
-coef(fit2, matrix = TRUE) # These should agree with the above values
+fit1 <- vglm(y1 ~ x2, zipoisson(zero = 1), data = zdata, crit = "coef")
+fit2 <- vglm(y2 ~ x2, zipoisson(zero = 1), data = zdata, crit = "coef")
+coef(fit1, matrix = TRUE)  # These should agree with the above values
+coef(fit2, matrix = TRUE)  # These should agree with the above values
 
 # Fit all two simultaneously, using a different parameterization:
-fit12 <- vglm(cbind(y1, y2) ~ x2, zipoissonff, zdata, crit = "coef")
-coef(fit12, matrix = TRUE) # These should agree with the above values
+fit12 <- vglm(cbind(y1, y2) ~ x2, zipoissonff, data = zdata, crit = "coef")
+coef(fit12, matrix = TRUE)  # These should agree with the above values
 
 # For the first observation compute the probability that y1 is
 # due to a structural zero.
-head(zdata, 1)
-pfit1 <- predict(fit1, zdata[1, ])
-pstr0 <- logit(pfit1[1], inverse = TRUE)
-lambda <- loge(pfit1[2], inverse = TRUE)
-(prob.struc.0 <- pstr0 / dzipois(x = 0, lambda = lambda, pstr0 = pstr0))
+(fitted(fit1, type = "pstr0") / fitted(fit1, type = "pobs0"))[1]
 
 
 # Example 2: McKendrick (1926). Data from 223 Indian village households
-cholera <- data.frame(ncases = 0:4, # Number of cholera cases,
-                      wfreq  = c(168, 32, 16, 6, 1)) # Frequencies
+cholera <- data.frame(ncases = 0:4,  # Number of cholera cases,
+                      wfreq  = c(168, 32, 16, 6, 1))  # Frequencies
 fit <- vglm(ncases ~ 1, zipoisson, wei = wfreq, cholera, trace = TRUE)
 coef(fit, matrix = TRUE)
 with(cholera, cbind(actual = wfreq,
                     fitted = round(dzipois(ncases, lambda = Coef(fit)[2],
                                            pstr0 = Coef(fit)[1]) *
-                                   sum(wfreq), dig = 2)))
+                                   sum(wfreq), digits = 2)))
 
 # Example 3: data from Angers and Biswas (2003)
 abdata <- data.frame(y = 0:7, w = c(182, 41, 12, 2, 2, 0, 0, 1))
 abdata <- subset(abdata, w > 0)
 fit <- vglm(y ~ 1, zipoisson(lpstr0 = probit, ipstr0 = 0.8),
             abdata, weight = w, trace = TRUE)
-fit@misc$pobs0  # Estimate of P(Y = 0)
+fitted(fit, type = "pobs0")  # Estimate of P(Y = 0)
 coef(fit, matrix = TRUE)
 Coef(fit)  # Estimate of pstr0 and lambda
 fitted(fit)
-with(abdata, weighted.mean(y, w)) # Compare this with fitted(fit)
+with(abdata, weighted.mean(y, w))  # Compare this with fitted(fit)
 summary(fit)
 
 # Example 4: zero-deflated model for an intercept-only data
-zdata <- transform(zdata, lambda3 = loge( 0.0       , inverse = TRUE))
-zdata <- transform(zdata, deflat_limit = -1 / expm1(lambda3)) # Boundary
+zdata <- transform(zdata, lambda3 = loge(0.0, inverse = TRUE))
+zdata <- transform(zdata, deflat.limit = -1 / expm1(lambda3))  # Boundary
 # The 'pstr0' parameter is negative and in parameter space:
-zdata <- transform(zdata, usepstr0 = deflat_limit / 1.5)
+zdata <- transform(zdata, usepstr0 = deflat.limit / 1.5)
 zdata <- transform(zdata, y3 = rzipois(nn, lambda3, pstr0 = usepstr0))
 head(zdata)
-with(zdata, table(y3)) # A lot of deflation
+with(zdata, table(y3))  # A lot of deflation
 fit3 <- vglm(y3 ~ 1, zipoisson(zero = -1, lpstr0 = identity),
-             zdata, trace = TRUE, crit = "coef")
+             data = zdata, trace = TRUE, crit = "coef")
 coef(fit3, matrix = TRUE)
 # Check how accurate it was:
-zdata[1, 'usepstr0'] # Answer
-coef(fit3)[1]        # Estimate
+zdata[1, "usepstr0"]  # Answer
+coef(fit3)[1]         # Estimate
 Coef(fit3)
 
 # Example 5: This RR-ZIP is known as a COZIGAM or COZIVGLM-ZIP
@@ -300,3 +313,8 @@ summary(rrzip)
 % regression: the reduced-rank negative binomial model.
 % \emph{In preparation}.
 
+%# head(zdata, 1); pfit1 <- predict(fit1, zdata[1, ]);
+%# lambda <- loge(pfit1[2], inverse = TRUE)
+%# lambda <- (fitted(fit1, type = "mean") / fitted(fit1, type = "onempstr0"))[1]
+%# (prob.struc.0 <- pstr0 / dzipois(x = 0, lambda = lambda, pstr0 = pstr0))
+% fit@misc$pobs0  # Estimate of P(Y = 0)

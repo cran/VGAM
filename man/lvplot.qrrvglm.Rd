@@ -10,7 +10,7 @@ y-axis are the first and second ordination axes respectively.
 
 }
 \usage{
-lvplot.qrrvglm(object, varlvI = FALSE, reference = NULL,
+lvplot.qrrvglm(object, varI.latvar = FALSE, reference = NULL,
     add = FALSE, plot.it = TRUE, 
     rug = TRUE, y = FALSE, type = c("fitted.values", "predictors"), 
     xlab = paste("Latent Variable", if (Rank == 1) "" else " 1", sep = ""), 
@@ -32,7 +32,7 @@ lvplot.qrrvglm(object, varlvI = FALSE, reference = NULL,
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{object}{ A CQO or UQO object. }
-  \item{varlvI}{
+  \item{varI.latvar}{
   Logical that is fed into \code{\link{Coef.qrrvglm}}. 
 
   }
@@ -122,7 +122,7 @@ For rank-2 models, points are the optima.
       = 90\% of the maximum will be plotted about each optimum.
       If \code{ellipse} is a negative value, then the function checks
       that the model is an equal-tolerances model and
-      \code{varlvI = FALSE}, and if so, plots circles with
+      \code{varI.latvar = FALSE}, and if so, plots circles with
       radius \code{-ellipse}. For example, setting \code{ellipse = -1}
       will result in circular contours that have unit radius (in latent
       variable units).  If \code{ellipse} is \code{NULL} or \code{FALSE}
@@ -337,15 +337,17 @@ nn <- 200
 cdata <- data.frame(x2 = rnorm(nn),   # Has mean 0 (needed when ITol=TRUE)
                     x3 = rnorm(nn),   # Has mean 0 (needed when ITol=TRUE)
                     x4 = rnorm(nn))   # Has mean 0 (needed when ITol=TRUE)
-cdata <- transform(cdata, lv1 =  x2 + x3 - 2*x4,
-                          lv2 = -x2 + x3 + 0*x4)
-# Nb. lv2 is weakly correlated with lv1
-cdata <- transform(cdata, lambda1 = exp(6 - 0.5 * (lv1-0)^2 - 0.5 * (lv2-0)^2),
-                          lambda2 = exp(5 - 0.5 * (lv1-1)^2 - 0.5 * (lv2-1)^2),
-                          lambda3 = exp(5 - 0.5 * (lv1+2)^2 - 0.5 * (lv2-0)^2))
-cdata <- transform(cdata, spp1 = rpois(nn, lambda1),
-                          spp2 = rpois(nn, lambda2),
-                          spp3 = rpois(nn, lambda3))
+cdata <- transform(cdata, latvar1 =  x2 + x3 - 2*x4,
+                          latvar2 = -x2 + x3 + 0*x4)
+# Nb. latvar2 is weakly correlated with latvar1
+cdata <- transform(cdata,
+            lambda1 = exp(6 - 0.5 * (latvar1-0)^2 - 0.5 * (latvar2-0)^2),
+            lambda2 = exp(5 - 0.5 * (latvar1-1)^2 - 0.5 * (latvar2-1)^2),
+            lambda3 = exp(5 - 0.5 * (latvar1+2)^2 - 0.5 * (latvar2-0)^2))
+cdata <- transform(cdata,
+            spp1 = rpois(nn, lambda1),
+            spp2 = rpois(nn, lambda2),
+            spp3 = rpois(nn, lambda3))
 set.seed(111)
 # vvv p2 <- cqo(cbind(spp1,spp2,spp3) ~ x2 + x3 + x4, poissonff, 
 # vvv          data = cdata,
@@ -362,10 +364,10 @@ lvplot(p2, sites = TRUE, spch = "*", scol = "darkgreen", scex = 1.5,
        C = TRUE, Cadj = c(-.3,-.3,1), Clwd = 2, Ccex = 1.4, Ccol = "red",
        main = paste("Contours at Abundance = 140 with",
                   "convex hull of the site scores")) }
-# vvv var(lv(p2)) # A diagonal matrix, i.e., uncorrelated latent variables
-# vvv var(lv(p2, varlvI = TRUE)) # Identity matrix
+# vvv var(latvar(p2)) # A diagonal matrix, i.e., uncorrelated latent variables
+# vvv var(latvar(p2, varI.latvar = TRUE)) # Identity matrix
 # vvv Tol(p2)[,,1:2] # Identity matrix
-# vvv Tol(p2, varlvI = TRUE)[,,1:2] # A diagonal matrix
+# vvv Tol(p2, varI.latvar = TRUE)[,,1:2] # A diagonal matrix
 }
 \keyword{models}
 \keyword{regression}

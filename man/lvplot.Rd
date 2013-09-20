@@ -59,7 +59,7 @@ Constrained additive ordination.
 \seealso{
   \code{\link{lvplot.qrrvglm}},
   \code{lvplot.cao},
-  \code{\link{lv}},
+  \code{\link{latvar}},
   \code{\link{trplot}}.
 
 
@@ -76,7 +76,6 @@ p1 <- cao(cbind(Pardlugu, Pardmont, Pardnigr, Pardpull, Zoraspin) ~
           df1.nl = c(Zoraspin = 2.5, 3), Crow1positive = TRUE)
 index <- 1:ncol(depvar(p1))
 lvplot(p1, lcol = index, pcol = index, y = TRUE, las = 1)
-
 }
 }
 \keyword{models}

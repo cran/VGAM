@@ -42,13 +42,16 @@ cloglog(theta, bvalue = NULL, inverse = FALSE, deriv = 0,
   i.e., \code{log(-log(1 - theta))} when \code{inverse = FALSE}, and if
   \code{inverse = TRUE} then \code{1-exp(-exp(theta))},.
 
+
   For \code{deriv = 1}, then the function returns
   \emph{d} \code{theta} / \emph{d} \code{eta} as a function of \code{theta}
   if \code{inverse = FALSE},
   else if \code{inverse = TRUE} then it returns the reciprocal.
 
+
   Here, all logarithms are natural logarithms, i.e., to base \eqn{e}.
   
+
 }
 \references{
     McCullagh, P. and Nelder, J. A. (1989)
@@ -87,15 +90,16 @@ cloglog(theta, bvalue = NULL, inverse = FALSE, deriv = 0,
     \code{\link{probit}},
     \code{\link{cauchit}}.
 
+
 }
 \examples{
 p <- seq(0.01, 0.99, by = 0.01)
 cloglog(p)
-max(abs(cloglog(cloglog(p), inverse = TRUE) - p)) # Should be 0
+max(abs(cloglog(cloglog(p), inverse = TRUE) - p))  # Should be 0
 
 p <- c(seq(-0.02, 0.02, by = 0.01), seq(0.97, 1.02, by = 0.01))
-cloglog(p) # Has NAs
-cloglog(p, bvalue = .Machine$double.eps) # Has no NAs
+cloglog(p)  # Has NAs
+cloglog(p, bvalue = .Machine$double.eps)  # Has no NAs
 
 \dontrun{
 p <- seq(0.01, 0.99, by = 0.01)
@@ -106,21 +110,21 @@ lines(p, cloglog(p), col = "chocolate", lwd = 2)
 lines(p, cauchit(p), col = "tan", lwd = 2)
 abline(v = 0.5, h = 0, lty = "dashed")
 legend(0.1, 4, c("logit", "probit", "cloglog", "cauchit"),
-       col=c("limegreen","purple","chocolate", "tan"), lwd = 2)
+       col = c("limegreen", "purple", "chocolate", "tan"), lwd = 2)
 }
 
 \dontrun{
 # This example shows that a cloglog link is preferred over the logit
-n = 500; p = 5; S = 3; Rank = 1  # Species packing model:
-mydata = rcqo(n, p, S, EqualTol = TRUE, ESOpt = TRUE, EqualMax = TRUE,
-              family = "binomial", hiabundance=5, seed = 123, Rank = Rank)
-fitc = cqo(attr(mydata, "formula"), ITol = TRUE, data = mydata, 
-           fam = binomialff(mv = TRUE, link = "cloglog"), Rank = Rank)
-fitl = cqo(attr(mydata, "formula"), ITol = TRUE, data = mydata, 
-           fam = binomialff(mv = TRUE, link = "logit"), Rank = Rank)
+n <- 500; p <- 5; S <- 3; Rank <- 1  # Species packing model:
+mydata <- rcqo(n, p, S, EqualTol = TRUE, ESOpt = TRUE, EqualMax = TRUE,
+               family = "binomial", hiabundance = 5, seed = 123, Rank = Rank)
+fitc <- cqo(attr(mydata, "formula"), ITol = TRUE, data = mydata,
+            fam = binomialff(mv = TRUE, link = "cloglog"), Rank = Rank)
+fitl <- cqo(attr(mydata, "formula"), ITol = TRUE, data = mydata,
+            fam = binomialff(mv = TRUE, link = "logit"), Rank = Rank)
 
 # Compare the fitted models (cols 1 and 3) with the truth (col 2)
-cbind(ccoef(fitc), attr(mydata, "ccoefficients"), ccoef(fitl))
+cbind(concoef(fitc), attr(mydata, "ccoefficients"), concoef(fitl))
 }
 }
 \keyword{math}

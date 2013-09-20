@@ -37,11 +37,13 @@ setMethod("logLik",  "vgam", function(object, ...)
 
 
 
-constraints.vlm <- function(object,
-                            type = c("lm", "term"),
-                            all = TRUE, which,
-                            matrix.out = FALSE,
-                            ...) {
+constraints.vlm <-
+  function(object,
+           type = c("lm", "term"),
+           all = TRUE, which,
+           matrix.out = FALSE,
+           colnames.arg = TRUE,  # 20130827
+           ...) {
 
 
   type <- match.arg(type, c("lm", "term"))[1]
@@ -57,6 +59,7 @@ constraints.vlm <- function(object,
     names.att.x.LM <- names(att.x.LM)
     ppp <- length(names.att.x.LM)
 
+
     ans <- vector("list", ppp)
     for (ii in 1:ppp) {
       col.ptr <- (oassign.LM[[ii]])[1] # 20110114
@@ -64,6 +67,8 @@ constraints.vlm <- function(object,
     }
     names(ans) <- names.att.x.LM
   } # End of "term"
+
+
 
   if (matrix.out) {
     if (all) {
@@ -73,6 +78,14 @@ constraints.vlm <- function(object,
         rownames(mat.ans) <- object@misc$predictors.names
       if (length(object@misc$colnames.X_vlm) == ncol(mat.ans))
         colnames(mat.ans) <- object@misc$colnames.X_vlm
+
+
+      if (colnames.arg)
+        dimnames(mat.ans) <-
+          list(NULL,
+               colnames(model.matrix(object, type = "vlm")))
+
+
       mat.ans
     } else {
       ans[[which]]

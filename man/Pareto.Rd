@@ -34,25 +34,34 @@ rpareto(n, location, shape)
   \code{ppareto} gives the distribution function,
   \code{qpareto} gives the quantile function, and
   \code{rpareto} generates random deviates.
+
+
 }
 \references{
-Evans, M., Hastings, N. and Peacock, B. (2000)
+
+Forbes, C., Evans, M., Hastings, N. and Peacock, B. (2011)
 \emph{Statistical Distributions},
-New York: Wiley-Interscience, Third edition.
+Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
+
+
 }
 \author{ T. W. Yee }
 \details{
-  See \code{\link{pareto1}}, the \pkg{VGAM} family function
+  See \code{\link{paretoff}}, the \pkg{VGAM} family function
   for estimating the parameter \eqn{k} by maximum likelihood estimation,
   for the formula of the probability density function and the
   range restrictions imposed on the parameters.
+
+
 }
 %%\note{
 %%  The Pareto distribution is 
 %%}
+
 \seealso{
-  \code{\link{pareto1}},
+  \code{\link{paretoff}},
   \code{\link{ParetoIV}}.
+
 
 }
 \examples{
@@ -61,13 +70,15 @@ alpha <- 3; k <- exp(1); x <- seq(2.8, 8, len = 300)
 plot(x, dpareto(x, location = alpha, shape = k), type = "l",
      main = "Pareto density split into 10 equal areas")
 abline(h = 0, col = "blue", lty = 2)
-qq <- qpareto(seq(0.1,0.9,by = 0.1),location = alpha,shape = k)
-lines(qq, dpareto(qq, loc = alpha, shape = k), col = "purple", lty = 3, type = "h")
+qvec <- qpareto(seq(0.1,0.9,by = 0.1),location = alpha,shape = k)
+lines(qvec, dpareto(qvec, loc = alpha, shape = k),
+      col = "purple", lty = 3, type = "h")
 }
-pp <- seq(0.1,0.9,by = 0.1)
-qq <- qpareto(pp, location = alpha, shape = k)
-ppareto(qq, location = alpha, shape = k)
-qpareto(ppareto(qq,loc = alpha,shape = k),loc = alpha,shape = k) - qq # Should be 0
+pvec <- seq(0.1, 0.9, by = 0.1)
+qvec <- qpareto(pvec, location = alpha, shape = k)
+ppareto(qvec, location = alpha, shape = k)
+qpareto(ppareto(qvec, loc = alpha, shape = k),
+        loc = alpha, shape = k) - qvec  # Should be 0
 }
 \keyword{distribution}
 

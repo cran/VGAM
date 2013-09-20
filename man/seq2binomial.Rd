@@ -10,23 +10,27 @@
 \usage{
 seq2binomial(lprob1 = "logit", lprob2 = "logit",
              iprob1 = NULL,    iprob2 = NULL,
-             parallel = FALSE, apply.parint = TRUE, zero = NULL)
+             parallel = FALSE, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
+%  apply.parint = TRUE,
 \arguments{
   \item{lprob1, lprob2}{ 
   Parameter link functions applied to the two probabilities,
   called \eqn{p} and \eqn{q} below.
   See \code{\link{Links}} for more choices.
 
+
   }
   \item{iprob1, iprob2}{ 
   Optional initial value for the first and second probabilities respectively.
   A \code{NULL} means a value is obtained in the \code{initialize} slot.
 
+
   }
-  \item{parallel, apply.parint, zero}{
+  \item{parallel, zero}{
   Details at \code{\link{Links}}.
+  If \code{parallel = TRUE} then the constraint also applies to the intercept.
 
 
   }
@@ -101,17 +105,22 @@ sdata <- data.frame(mvector = round(rnorm(nn <- 100, m = 10, sd = 2)),
                     x2 = runif(nn))
 sdata <- transform(sdata, prob1 = logit(+2 - x2, inverse = TRUE),
                           prob2 = logit(-2 + x2, inverse = TRUE))
-sdata <- transform(sdata, successes1 = rbinom(nn, size = mvector, prob = prob1))
+sdata <- transform(sdata, successes1 = rbinom(nn, size = mvector,    prob = prob1))
 sdata <- transform(sdata, successes2 = rbinom(nn, size = successes1, prob = prob2))
 sdata <- transform(sdata, y1 = successes1 / mvector)
 sdata <- transform(sdata, y2 = successes2 / successes1)
-fit <- vglm(cbind(y1, y2) ~ x2, seq2binomial,  weight = mvector,
+fit <- vglm(cbind(y1, y2) ~ x2, seq2binomial, weight = mvector,
             data = sdata, trace = TRUE)
 coef(fit)
 coef(fit, matrix = TRUE)
 head(fitted(fit))
 head(depvar(fit))
 head(weights(fit, type = "prior"))  # Same as with(sdata, mvector)
+# Number of first successes:
+head(depvar(fit)[, 1] * c(weights(fit, type = "prior")))
+# Number of second successes:
+head(depvar(fit)[, 2] * c(weights(fit, type = "prior")) * 
+                          depvar(fit)[, 1])
 }
 \keyword{models}
 \keyword{regression}

@@ -27,7 +27,7 @@ dfelix(x, a = 0.25, log = FALSE)
     }
   \item{log}{
   Logical.
-  If \code{log=TRUE} then the logarithm of the density is returned.
+  If \code{log = TRUE} then the logarithm of the density is returned.
 
   }
 
@@ -45,21 +45,24 @@ dfelix(x, a = 0.25, log = FALSE)
   for estimating the parameter,
   for the formula of the probability density function and other details.
 
+
 }
 \section{Warning }{
   The default value of \code{a} is subjective.
+
 
 }
 \seealso{
   \code{\link{felix}}.
 
+
 }
 \examples{
 \dontrun{
-a = 0.25; x = 1:15
-plot(x, dfelix(x, a), type="h", las=1, col="blue",
-     ylab=paste("dfelix(a=", a, ")"),
-     main="Felix density function")
+a <- 0.25; x <- 1:15
+plot(x, dfelix(x, a), type = "h", las = 1, col = "blue",
+     ylab = paste("dfelix(a=", a, ")"),
+     main = "Felix density function")
 }
 }
 \keyword{distribution}

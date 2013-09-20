@@ -5,29 +5,32 @@
 
 
 
-rrvglm.control <- function(Rank = 1,
-                          Algorithm = c("alternating", "derivative"),
-                          Corner = TRUE,
-                          Uncorrelated.lv = FALSE,
-                          Wmat = NULL,
-                          Svd.arg = FALSE,
-                          Index.corner = if (length(szero)) 
-                          head((1:1000)[-szero], Rank) else 1:Rank,
-                          Ainit = NULL,
-                          Alpha = 0.5, 
-                          Bestof = 1,
-                          Cinit = NULL,
-                          Etamat.colmax = 10,
-                          SD.Ainit = 0.02,
-                          SD.Cinit = 0.02,
-                          szero = NULL,
-                          noRRR = ~ 1, 
-                          Norrr = NA,
-                          trace = FALSE,
-                          Use.Init.Poisson.QO = FALSE,
-                          checkwz = TRUE,
-                          wzepsilon = .Machine$double.eps^0.75,
-                          ...) {
+
+
+rrvglm.control <-
+  function(Rank = 1,
+           Algorithm = c("alternating", "derivative"),
+           Corner = TRUE,
+           Uncorrelated.latvar = FALSE,
+           Wmat = NULL,
+           Svd.arg = FALSE,
+           Index.corner = if (length(szero)) 
+           head((1:1000)[-szero], Rank) else 1:Rank,
+           Ainit = NULL,
+           Alpha = 0.5, 
+           Bestof = 1,
+           Cinit = NULL,
+           Etamat.colmax = 10,
+           sd.Ainit = 0.02,
+           sd.Cinit = 0.02,
+           szero = NULL,
+           noRRR = ~ 1, 
+           Norrr = NA,
+           trace = FALSE,
+           Use.Init.Poisson.QO = FALSE,
+           checkwz = TRUE,
+           wzepsilon = .Machine$double.eps^0.75,
+           ...) {
 
 
 
@@ -35,18 +38,18 @@ rrvglm.control <- function(Rank = 1,
 
   if (length(Norrr) != 1 || !is.na(Norrr)) {
     warning("argument 'Norrr' has been replaced by 'noRRR'. ",
-            "Assigning the latter but using 'Norrr' will become an error in ",
-            "the next VGAM version soon.")
+            "Assigning the latter but using 'Norrr' will become an ",
+            "error in the next VGAM version soon.")
     noRRR <- Norrr
   }
 
 
   if (mode(Algorithm) != "character" && mode(Algorithm) != "name")
-      Algorithm <- as.character(substitute(Algorithm))
+    Algorithm <- as.character(substitute(Algorithm))
   Algorithm <- match.arg(Algorithm, c("alternating", "derivative"))[1]
 
-    if (Svd.arg)
-      Corner <- FALSE 
+  if (Svd.arg)
+    Corner <- FALSE 
 
   if (!is.Numeric(Rank, positive = TRUE,
                   allowable.length = 1, integer.valued = TRUE))
@@ -57,37 +60,36 @@ rrvglm.control <- function(Rank = 1,
   if (!is.Numeric(Bestof, positive = TRUE,
                   allowable.length = 1, integer.valued = TRUE))
     stop("bad input for 'Bestof'")
-  if (!is.Numeric(SD.Ainit, positive = TRUE,
+  if (!is.Numeric(sd.Ainit, positive = TRUE,
                   allowable.length = 1))
-    stop("bad input for 'SD.Ainit'")
-  if (!is.Numeric(SD.Cinit, positive = TRUE,
+    stop("bad input for 'sd.Ainit'")
+  if (!is.Numeric(sd.Cinit, positive = TRUE,
                   allowable.length = 1))
-    stop("bad input for 'SD.Cinit'")
+    stop("bad input for 'sd.Cinit'")
   if (!is.Numeric(Etamat.colmax, positive = TRUE,
                   allowable.length = 1) ||
       Etamat.colmax < Rank)
     stop("bad input for 'Etamat.colmax'")
 
   if (length(szero) &&
-     (any(round(szero) != szero) ||
-     any(szero < 1)))
+     (any(round(szero) != szero) || any(szero < 1)))
     stop("bad input for the argument 'szero'")
 
 
   Quadratic <- FALSE
   if (!Quadratic && Algorithm == "derivative" && !Corner) {
-      dd <- "derivative algorithm only supports corner constraints"
-      if (length(Wmat) || Uncorrelated.lv || Svd.arg)
-        stop(dd)
-      warning(dd)
-      Corner <- TRUE
+    dd <- "derivative algorithm only supports corner constraints"
+    if (length(Wmat) || Uncorrelated.latvar || Svd.arg)
+      stop(dd)
+    warning(dd)
+    Corner <- TRUE
   }
   if (Quadratic && Algorithm != "derivative")
-      stop("Quadratic model can only be fitted using the derivative algorithm")
+   stop("Quadratic model can only be fitted using the derivative algorithm")
 
-  if (Corner && (Svd.arg || Uncorrelated.lv || length(Wmat)))
+  if (Corner && (Svd.arg || Uncorrelated.latvar || length(Wmat)))
       stop("cannot have 'Corner = TRUE' and either 'Svd = TRUE' or ",
-           "'Uncorrelated.lv = TRUE' or Wmat")
+           "'Uncorrelated.latvar = TRUE' or Wmat")
 
   if (Corner && length(intersect(szero, Index.corner)))
     stop("cannot have 'szero' and 'Index.corner' having ",
@@ -121,12 +123,12 @@ rrvglm.control <- function(Rank = 1,
          Index.corner = Index.corner,
          noRRR = noRRR,
          Corner = Corner,
-         Uncorrelated.lv = Uncorrelated.lv,
+         Uncorrelated.latvar = Uncorrelated.latvar,
          Wmat = Wmat,
-         OptimizeWrtC = TRUE, # OptimizeWrtC,
-         Quadratic = FALSE, # A constant now, here.
-         SD.Ainit = SD.Ainit,
-         SD.Cinit = SD.Cinit,
+         OptimizeWrtC = TRUE,  # OptimizeWrtC,
+         Quadratic = FALSE,  # A constant now, here.
+         sd.Ainit = sd.Ainit,
+         sd.Cinit = sd.Cinit,
          Etamat.colmax = Etamat.colmax,
          szero = szero,
          Svd.arg = Svd.arg,
@@ -137,11 +139,11 @@ rrvglm.control <- function(Rank = 1,
 
   if (Quadratic && ans$ITolerances) {
       ans$Svd.arg <- FALSE
-      ans$Uncorrelated.lv <- FALSE
+      ans$Uncorrelated.latvar <- FALSE
       ans$Corner <- FALSE
   }
 
-  ans$half.stepsizing <- FALSE # Turn it off 
+  ans$half.stepsizing <- FALSE  # Turn it off 
   ans
 }
 
@@ -182,12 +184,18 @@ show.summary.rrvglm <- function(x, digits = NULL,
 
 
 
+
  setMethod("show", "summary.rrvglm",
            function(object)
              show.summary.rrvglm(x = object))
 
 
 
+
+setMethod("coefficients", "summary.rrvglm", function(object, ...)
+          object@coef3)
+setMethod("coef",         "summary.rrvglm", function(object, ...)
+          object@coef3)
 
 
 

@@ -37,7 +37,7 @@ predict.vlm <- function(object,
     }
   }
 
-  ttob <- terms(object)  # 11/8/03; object@terms$terms
+  ttob <- terms(object)  # 20030811; object@terms$terms
 
 
   if (!length(newdata)) {
@@ -139,7 +139,6 @@ predict.vlm <- function(object,
 
 
 
-
     coefs <- coefvlm(object)
     vasgn <- attr(X_vlm, "vassign")
 
@@ -163,10 +162,10 @@ predict.vlm <- function(object,
 
     dname2 <- object@misc$predictors.names
     if (se.fit) {
-      object <- as(object, "vlm") # Coerce
+      object <- as(object, "vlm")  # Coerce
       fit.summary <- summaryvlm(object, dispersion=dispersion)
       sigma <- if (is.numeric(fit.summary@sigma)) fit.summary@sigma else
-               sqrt(deviance(object) / object@df.residual) # was @rss
+               sqrt(deviance(object) / object@df.residual)  # was @res.ss
       pred <- Build.terms.vlm(x = X_vlm, coefs = coefs,
                               cov = sigma^2 * fit.summary@cov.unscaled,
                               assign = vasgn,
@@ -203,9 +202,9 @@ predict.vlm <- function(object,
       ncolBlist <- ncolBlist[-1]
 
     cs <- cumsum(c(1, ncolBlist))  # Like a pointer
-    for(ii in 1:(length(cs)-1))
+    for (ii in 1:(length(cs)-1))
       if (cs[ii+1] - cs[ii] > 1)
-        for(kk in (cs[ii]+1):(cs[ii+1]-1))
+        for (kk in (cs[ii]+1):(cs[ii+1]-1))
           if (se.fit) {
             pred$fitted.values[, cs[ii]]<- pred$fitted.values[, cs[ii]] +
                                            pred$fitted.values[, kk]
@@ -216,8 +215,8 @@ predict.vlm <- function(object,
           }
 
         if (se.fit) {
-          pred$fitted.values <- pred$fitted.values[, cs[-length(cs)],
-                                                   drop = FALSE]
+          pred$fitted.values <-
+          pred$fitted.values[, cs[-length(cs)], drop = FALSE]
           pred$se.fit <- pred$se.fit[, cs[-length(cs)], drop = FALSE]
         } else {
           pred <- pred[, cs[-length(cs)], drop = FALSE]
@@ -231,7 +230,7 @@ predict.vlm <- function(object,
           pred$se.fit <- aperm(pred$se.fit, c(2, 1, 3))
           dim(pred$fitted.values) <- dim(pred$se.fit) <- c(nn, M*pp)
         } else {
-          dimnames(pred) <- NULL # Saves a warning
+          dimnames(pred) <- NULL  # Saves a warning
           dim(pred) <- c(M, nn, pp)
           pred <- aperm(pred, c(2, 1, 3))
           dim(pred) <- c(nn, M*pp)
@@ -239,7 +238,7 @@ predict.vlm <- function(object,
 
       if (raw) {
         kindex <- NULL
-        for(ii in 1:pp) 
+        for (ii in 1:pp) 
           kindex <- c(kindex, (ii-1)*M + (1:ncolBlist[ii]))
         if (se.fit) {
           pred$fitted.values <- pred$fitted.values[, kindex, drop = FALSE]
@@ -270,9 +269,9 @@ predict.vlm <- function(object,
       }
 
     if (!raw)
-      cs <- cumsum(c(1, M + 0*ncolBlist))
+      cs <- cumsum(c(1, M + 0 * ncolBlist))
     fred <- vector("list", length(ncolBlist))
-    for(ii in 1:length(fred))
+    for (ii in 1:length(fred))
       fred[[ii]] <- cs[ii]:(cs[ii+1]-1)
     names(fred) <- names(ncolBlist)
     if (se.fit) {
@@ -281,7 +280,7 @@ predict.vlm <- function(object,
     } else {
       attr(pred,               "vterm.assign") <- fred
     }
-  } # End of if (type == "terms")
+  }  # End of if (type == "terms")
 
   if (!is.null(xbar)) {
     if (se.fit) {
@@ -310,7 +309,7 @@ setMethod("predict", "vlm",
 predict.vglm.se <- function(fit, ...) {
 
 
-  H_ss <- hatvalues(fit, type = "centralBlocks") # diag = FALSE
+  H_ss <- hatvalues(fit, type = "centralBlocks")  # diag = FALSE
 
   M <- npred(fit)
   nn <- nobs(fit, type = "lm")
@@ -336,9 +335,9 @@ predict.vglm.se <- function(fit, ...) {
     }
 
   var.boldeta_i <- mux5(H_ss, Utinv.array, M = M,
-                        matrix.arg = TRUE) # First M cols are SE^2
+                        matrix.arg = TRUE)  # First M cols are SE^2
 
-  sqrt(var.boldeta_i[, 1:M]) # SE(linear.predictor)
+  sqrt(var.boldeta_i[, 1:M])  # SE(linear.predictor)
 
 
 
@@ -359,7 +358,7 @@ subconstraints <- function(assign, constraints) {
   ans <- vector("list", length(assign))
   if (!length(assign) || !length(constraints))
     stop("assign and/or constraints is empty")
-  for(ii in 1:length(assign))
+  for (ii in 1:length(assign))
     ans[[ii]] <- constraints[[assign[[ii]][1]]]
   names(ans) <- names(assign)
   ans
@@ -369,7 +368,7 @@ subconstraints <- function(assign, constraints) {
 is.linear.term <- function(ch) {
   lchar <- length(ch)
   ans <- rep(FALSE, len = lchar)
-  for(ii in 1:lchar) {
+  for (ii in 1:lchar) {
     nc <- nchar(ch[ii])
     x <- substring(ch[ii], 1:nc, 1:nc)
     ans[ii] <- all(x != "(" & x != "+" & x != "-" &
@@ -381,9 +380,9 @@ is.linear.term <- function(ch) {
 
 
 canonical.Blist <- function(Blist) {
-  for(ii in 1:length(Blist)) {
+  for (ii in 1:length(Blist)) {
     temp <- Blist[[ii]] * 0
-    temp[cbind(1:ncol(temp),1:ncol(temp))] <- 1
+    temp[cbind(1:ncol(temp), 1:ncol(temp))] <- 1
     Blist[[ii]] <- temp
   }
   Blist

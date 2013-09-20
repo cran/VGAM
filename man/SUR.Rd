@@ -11,10 +11,10 @@ Fits a system of seemingly unrelated regressions.
 \usage{
 SUR(mle.normal = FALSE,
     divisor = c("n", "n-max(pj,pk)", "sqrt((n-pj)*(n-pk))"),
-    parallel = FALSE, apply.parint = TRUE,
-    Varcov = NULL, matrix.arg = FALSE)
+    parallel = FALSE, Varcov = NULL, matrix.arg = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
+%apply.parint = TRUE,
 \arguments{
 %  \item{estimator}{
 %Character.
@@ -44,9 +44,11 @@ a warning or an error will result.
 
 
 }
-  \item{parallel, apply.parint}{
+  \item{parallel}{
   See
   \code{\link{CommonVGAMffArguments}}.
+  If \code{parallel = TRUE} then the constraint applies to
+  the intercept too.
 
 
 }
@@ -134,7 +136,7 @@ a warning or an error will result.
 
 }
 \note{
-  The fitted object has slot \code{@extra$ncols_X_lm} which is
+  The fitted object has slot \code{@extra$ncols.X.lm} which is
   a \eqn{M} vector with the number of parameters for each LM.
   Also, \code{@misc$values.divisor} is the \eqn{M}-vector of
   \code{divisor} values.
@@ -155,7 +157,7 @@ a warning or an error will result.
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-  \code{\link{normal1}},
+  \code{\link{uninormal}},
   \code{\link{gew}}.
 
 
@@ -172,19 +174,19 @@ zef1 <- vglm(cbind(invest.g, invest.w) ~
              SUR(divisor = "sqrt"), maxit = 1,
              data = gew, trace = TRUE, constraints = clist)
 
-round(coef(zef1, matrix = TRUE), dig = 4) # ZEF
-zef1@extra$ncols_X_lm
+round(coef(zef1, matrix = TRUE), digits = 4)  # ZEF
+zef1@extra$ncols.X.lm
 zef1@misc$divisor
 zef1@misc$values.divisor
-round(sqrt(diag(vcov(zef1))),    dig = 4) # SEs
+round(sqrt(diag(vcov(zef1))),    digits = 4)  # SEs
 
 mle1 <- vglm(cbind(invest.g, invest.w) ~
              capital.g + value.g + capital.w + value.w,
              SUR(mle.normal = TRUE, divisor = "n-max"),
              epsilon = 1e-11,
              data = gew, trace = TRUE, constraints = clist)
-round(coef(mle1, matrix = TRUE), dig = 4) # MLE
-round(sqrt(diag(vcov(mle1))),    dig = 4) # SEs
+round(coef(mle1, matrix = TRUE), digits = 4)  # MLE
+round(sqrt(diag(vcov(mle1))),    digits = 4)  # SEs
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

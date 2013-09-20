@@ -56,7 +56,7 @@ rzibinom(n, size, prob, pstr0 = 0)
 
 }
 %\references{ }
-\author{ Thomas W. Yee }
+\author{ T. W. Yee }
 \note{ 
   The argument \code{pstr0} is recycled to the required length,
   and must have values which lie in the interval \eqn{[0,1]}.
@@ -80,11 +80,11 @@ rzibinom(n, size, prob, pstr0 = 0)
 \examples{
 prob <- 0.2; size <- 10; pstr0 <- 0.5
 (ii <- dzibinom(0:size, size, prob, pstr0 = pstr0))
-max(abs(cumsum(ii) - pzibinom(0:size, size, prob, pstr0 = pstr0))) # Should be 0
+max(abs(cumsum(ii) - pzibinom(0:size, size, prob, pstr0 = pstr0)))  # Should be 0
 table(rzibinom(100, size, prob, pstr0 = pstr0))
 
 table(qzibinom(runif(100), size, prob, pstr0 = pstr0))
-round(dzibinom(0:10, size, prob, pstr0 = pstr0) * 100) # Should be similar
+round(dzibinom(0:10, size, prob, pstr0 = pstr0) * 100)  # Should be similar
 
 \dontrun{ x <- 0:size
 barplot(rbind(dzibinom(x, size, prob, pstr0 = pstr0),

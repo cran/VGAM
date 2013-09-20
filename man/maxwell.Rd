@@ -56,13 +56,16 @@ maxwell(link = "loge", zero = NULL)
   Fisher-scoring and Newton-Raphson are the same here.
   A related distribution is the Rayleigh distribution.
   This \pkg{VGAM} family function handles multiple responses.
+  This \pkg{VGAM} family function can be mimicked by
+  \code{poisson.points(ostatistic = 1.5, dimension = 2)}.
 
 
 }
 
 \seealso{ 
   \code{\link{Maxwell}},
-  \code{\link{rayleigh}}.
+  \code{\link{rayleigh}},
+  \code{\link{poisson.points}}.
 
 
 }

@@ -21,7 +21,10 @@ yformat <- function(x, digits = options()$digits) {
 
 
 summaryvglm <- function(object, correlation = FALSE,
-                        dispersion = NULL, digits = NULL) {
+                        dispersion = NULL, digits = NULL,
+                        presid = TRUE) {
+
+
 
 
 
@@ -31,8 +34,8 @@ summaryvglm <- function(object, correlation = FALSE,
       dispersion == 0 && 
       length(object@family@summary.dispersion) && 
       !object@family@summary.dispersion) {
-      stop("cannot use the general VGLM formula (based on a residual ",
-           "sum of squares) for computing the dispersion parameter")
+    stop("cannot use the general VGLM formula (based on a residual ",
+         "sum of squares) for computing the dispersion parameter")
   }
 
   stuff <- summaryvlm(as(object, "vlm"),
@@ -50,9 +53,11 @@ summaryvglm <- function(object, correlation = FALSE,
       df = stuff@df,
       sigma = stuff@sigma)
 
-  presid <- resid(object, type = "pearson")
-  if (length(presid))
-    answer@pearson.resid <- as.matrix(presid)
+  if (presid) {
+    Presid <- resid(object, type = "pearson")
+    if (length(Presid))
+      answer@pearson.resid <- as.matrix(Presid)
+  }
 
   slot(answer, "misc") <- stuff@misc  # Replace
 
@@ -92,14 +97,16 @@ show.summary.vglm <- function(x, digits = NULL, quote = TRUE,
       length(Presid) &&
       all(!is.na(Presid)) &&
       is.finite(rdf)) {
-    cat("\nPearson Residuals:\n")
+
     if (rdf/M > 5) {
-      rq <-  apply(as.matrix(Presid), 2, quantile) # 5 x M
+      rq <- apply(as.matrix(Presid), 2, quantile)  # 5 x M
       dimnames(rq) <- list(c("Min", "1Q", "Median", "3Q", "Max"),
                            x@misc$predictors.names)
+      cat("\nPearson residuals:\n")
       print(t(rq), digits = digits)
     } else
     if (rdf > 0) {
+      cat("\nPearson residuals:\n")
       print(Presid, digits = digits)
     }
   }
@@ -126,7 +133,6 @@ show.summary.vglm <- function(x, digits = NULL, quote = TRUE,
        x@misc$estimated.dispersion) {
       prose <- "(Estimated) "
     }  else {
-
       if (is.numeric(x@misc$default.dispersion) &&
           x@dispersion == x@misc$default.dispersion)
         prose <- "(Default) "
@@ -170,13 +176,13 @@ show.summary.vglm <- function(x, digits = NULL, quote = TRUE,
   cat("\nNumber of iterations:", format(trunc(x@iter)), "\n")
 
   if (!is.null(correl)) {
-    ncol_X_vlm <- dim(correl)[2]
-    if (ncol_X_vlm > 1) {
+    ncol.X.vlm <- dim(correl)[2]
+    if (ncol.X.vlm > 1) {
       cat("\nCorrelation of Coefficients:\n")
       ll <- lower.tri(correl)
       correl[ll] <- format(round(correl[ll], digits))
       correl[!ll] <- ""
-      print(correl[-1,  -ncol_X_vlm, drop = FALSE], quote = FALSE,
+      print(correl[-1,  -ncol.X.vlm, drop = FALSE], quote = FALSE,
             digits = digits)
     }
   }
@@ -205,6 +211,7 @@ setMethod("show", "summary.vglm",
 
 
 
+
 vcovdefault <- function(object, ...) {
   if (is.null(object@vcov))
     stop("no default")
@@ -223,7 +230,8 @@ function(object, dispersion = NULL, untransform = FALSE) {
   so <- summaryvlm(object, correlation = FALSE,
                    dispersion = dispersion)
   d <- if (any(slotNames(so) == "dispersion") && 
-           is.Numeric(so@dispersion)) so@dispersion else 1
+           is.Numeric(so@dispersion))
+       so@dispersion else 1
   answer <- d * so@cov.unscaled
 
   if (is.logical(OKRC <- object@misc$RegCondOK) && !OKRC)
@@ -257,9 +265,9 @@ function(object, dispersion = NULL, untransform = FALSE) {
 
 
   tvector <- numeric(M)
-  etavector <- predict(object)[1, ] # Contains transformed parameters
-  LINK <- object@misc$link # link.names # This should be a character vector.
-  EARG <- object@misc$earg # This could be a NULL
+  etavector <- predict(object)[1, ]  # Contains transformed parameters
+  LINK <- object@misc$link  # link.names # This should be a character vector.
+  EARG <- object@misc$earg  # This could be a NULL
   if (is.null(EARG))
     EARG <- list(theta = NULL)
   if (!is.list(EARG))
@@ -339,8 +347,6 @@ setMethod("vcov", "vlm",
 setMethod("vcov", "vglm",
          function(object, ...)
          vcovvlm(object, ...))
-
-
 
 
 

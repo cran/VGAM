@@ -24,22 +24,27 @@ rbenf(n, ndigits = 1)
    Vector of quantiles.
    See \code{ndigits}.
 
+
   }
   \item{p}{vector of probabilities.}
   \item{n}{number of observations. A single positive integer.
   Else if \code{length(n) > 1} then the length is
           taken to be the number required.
+
+
   }
   \item{ndigits}{
   Number of leading digits, either 1 or 2.
   If 1 then the support of the distribution is \{1,\ldots,9\}, else
   \{10,\ldots,99\}.
 
+
   }
   \item{log, log.p}{
   Logical.
   If \code{log.p = TRUE} then all probabilities \code{p} are
   given as \code{log(p)}.
+
 
   }
 

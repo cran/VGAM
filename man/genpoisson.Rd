@@ -4,6 +4,7 @@
 \title{ Generalized Poisson distribution }
 \description{
   Estimation of the two parameters of a generalized Poisson distribution.
+
 }
 \usage{
 genpoisson(llambda = elogit(min = -1, max = 1), ltheta = "loge",
@@ -20,15 +21,18 @@ genpoisson(llambda = elogit(min = -1, max = 1), ltheta = "loge",
   The \eqn{\theta} parameter is positive, therefore the default is the
   log link.
 
+
   }
   \item{ilambda, itheta}{
   Optional initial values for \eqn{\lambda} and \eqn{\theta}.
   The default is to choose values internally.
 
+
   }
   \item{use.approx}{
   Logical. If \code{TRUE} then an approximation to the expected
   information matrix is used, otherwise Newton-Raphson is used.
+
 
   }
   \item{imethod}{
@@ -37,6 +41,7 @@ genpoisson(llambda = elogit(min = -1, max = 1), ltheta = "loge",
   If failure to converge occurs try another value
   and/or else specify a value for \code{ilambda} and/or \code{itheta}.
 
+
   }
   \item{zero}{
   An integer vector, containing the value 1 or 2.
@@ -44,6 +49,7 @@ genpoisson(llambda = elogit(min = -1, max = 1), ltheta = "loge",
   are modelled as an intercept only.
   If set to \code{NULL} then both linear/additive predictors are modelled
   as functions of the explanatory variables.
+
 
   }
 }
@@ -114,7 +120,7 @@ New York: Marcel Dekker.
 }
 \examples{
 gdata <- data.frame(x2 = runif(nn <- 200))
-gdata <- transform(gdata, y = rpois(nn, exp(2 - x2))) # Ordinary Poisson data
+gdata <- transform(gdata, y = rpois(nn, exp(2 - x2)))  # Ordinary Poisson data
 fit <- vglm(y ~ x2, genpoisson(zero = 1), gdata, trace = TRUE)
 coef(fit, matrix = TRUE)
 summary(fit)

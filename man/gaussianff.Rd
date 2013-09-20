@@ -116,7 +116,7 @@ gaussianff(dispersion = 0, parallel = FALSE, zero = NULL)
 % }
 
 \seealso{
-  \code{\link{normal1}},
+  \code{\link{uninormal}},
   \code{\link{huber2}},
   \code{\link{lqnorm}},
   \code{\link{binormal}},

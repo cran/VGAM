@@ -2,6 +2,24 @@
 \alias{notdocumentedyet}
 %
 %
+% 201309;
+\alias{BIC}
+%
+% 201308;
+%\alias{dbiclaytoncop}
+%\alias{rbiclaytoncop}
+%\alias{biclaytoncop}
+%
+% 201307;
+\alias{posnormal.control}
+\alias{recnormal.control}
+%\alias{kendall.tau}
+%\alias{binormalcop}
+%\alias{dbinormcop}
+%\alias{pbinormcop}
+%\alias{rbinormcop}
+%\alias{expint, expexpint, expint.E1}
+%
 % 201302;
 % \alias{pgamma.deriv.unscaled}
 % \alias{pgamma.deriv}
@@ -11,9 +29,8 @@
 \alias{binom2.rho.ss}
 %
 % 20121105;
+% \alias{posbernoulli.b.control}
 \alias{N.hat.posbernoulli}
-\alias{aux.posbernoulli}
-\alias{posbern.aux}
 \alias{Rank}
 \alias{Rank.rrvglm}
 \alias{Rank.qrrvglm}
@@ -171,7 +188,8 @@
 %
 %
 %20110411
-\alias{dbinorm}
+%\alias{dbinorm}
+\alias{dnorm2}
 %
 %20090330
 \alias{dclogloglap}
@@ -253,10 +271,12 @@
 % \alias{cao.fit}
 \alias{car.all}
 \alias{care.exp}
-\alias{ccoef.Coef.cao}
-\alias{ccoef.Coef.qrrvglm}
-\alias{ccoef.cao}
-\alias{ccoef.qrrvglm}
+%
+\alias{concoef.Coef.cao}
+\alias{concoef.Coef.qrrvglm}
+\alias{concoef.cao}
+\alias{concoef.qrrvglm}
+%
 \alias{cdf}
 \alias{cdf.lms.bcg}
 \alias{cdf.lms.bcn}
@@ -308,8 +328,6 @@
 \alias{eta2theta}
 %\alias{explink}
 % \alias{extract.arg}
-%\alias{felix}
-%\alias{dfelix}
 \alias{fff.control}
 \alias{fill2}
 \alias{fill3}
@@ -368,7 +386,8 @@
 \alias{logLik.vlm}
 % \alias{lv.Coef.cao} 20090505
 \alias{latvar.Coef.qrrvglm}
-\alias{lv.cao}
+\alias{latvar.cao}
+\alias{latvar.rrvglm}
 \alias{latvar.qrrvglm}
 \alias{lvplot.cao}
 \alias{m2adefault}
@@ -376,7 +395,7 @@
 % \alias{matrix.power}
 \alias{mbesselI0}
 \alias{mix2exp.control}
-\alias{mix2normal1.control}
+\alias{mix2normal.control}
 \alias{mix2poisson.control}
 \alias{model.matrix.qrrvglm}
 % \alias{mux11}
@@ -413,7 +432,7 @@
 \alias{persp.cao}
 \alias{plot.cao}
 \alias{plotpreplotvgam}
-\alias{plotvglm}
+%\alias{plotvglm}
 \alias{plotvlm}
 \alias{plotvsmooth.spline}
 % \alias{pnorm2} done 20120910
@@ -487,7 +506,7 @@
 % \alias{rrr.end.expression}
 % \alias{rrr.init.expression}
 % \alias{rrr.normalize}
-\alias{rrvglm.control.Gaussian}
+% \alias{rrvglm.control.Gaussian}
 % \alias{rrvglm.fit}
 \alias{ResSS.vgam}
 \alias{s.vam}
@@ -540,6 +559,7 @@
 % \alias{vgam.match}
 % \alias{vgam.nlchisq}
 % \alias{vgety}
+\alias{vgam.fit}
 \alias{vglm.fit}
 \alias{vglm.garma.control}
 \alias{vglm.multinomial.control}
@@ -602,7 +622,7 @@
 
 }
 %\usage{
-%normal1(lmean = "identity", lsd = "loge", zero = NULL)
+%uninormal(lmean = "identity", lsd = "loge", zero = NULL)
 %}
 %- maybe also 'usage' for other objects documented here.
 %\arguments{
@@ -633,7 +653,7 @@
 %}
 %\seealso{
 %    \code{gaussianff},
-%    \code{\link{posnormal1}}.
+%    \code{\link{posnormal}}.
 %}
 %\examples{
 %}

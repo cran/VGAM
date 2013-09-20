@@ -240,34 +240,30 @@ data(iris)
 \dontrun{ fit <- vglm(Species ~ ., multinomial, iris)
 coef(fit, matrix = TRUE) }
 
-
 # Example 2a: a simple example 
 ycounts <- t(rmultinom(10, size = 20, prob = c(0.1, 0.2, 0.8))) # Counts
 fit <- vglm(ycounts ~ 1, multinomial)
 head(fitted(fit))   # Proportions
 fit@prior.weights   # NOT recommended for extraction of prior weights
-weights(fit, type = "prior", matrix = FALSE) # The better method
+weights(fit, type = "prior", matrix = FALSE)  # The better method
 depvar(fit)         # Sample proportions; same as fit@y
 constraints(fit)    # Constraint matrices
 
 # Example 2b: Different reference level used as the baseline 
 fit2 <- vglm(ycounts ~ 1, multinomial(refLevel = 2))
 coef(fit2, matrix = TRUE)
-coef(fit , matrix = TRUE) # Easy to reconcile this output with fit2
-
-
+coef(fit , matrix = TRUE)  # Easy to reconcile this output with fit2
 
 # Example 3: The response is a factor.
 nn <- 10
 dframe3 <- data.frame(yfactor = gl(3, nn, labels = c("Control", "Trt1", "Trt2")),
-                     x2 = runif(3 * nn))
+                      x2 = runif(3 * nn))
 myrefLevel <- with(dframe3, yfactor[12])
 fit3a <- vglm(yfactor ~ x2, multinomial(refLevel = myrefLevel), dframe3)
 fit3b <- vglm(yfactor ~ x2, multinomial(refLevel = 2), dframe3)
 coef(fit3a, matrix = TRUE)  # "Treatment1" is the reference level
 coef(fit3b, matrix = TRUE)  # "Treatment1" is the reference level
 margeff(fit3b)
-
 
 # Example 4: Fit a rank-1 stereotype model 
 data(car.all)
@@ -276,9 +272,13 @@ coef(fit4)   # Contains the C matrix
 constraints(fit4)$HP       # The A matrix 
 coef(fit4, matrix = TRUE)  # The B matrix
 Coef(fit4)@C               # The C matrix 
-ccoef(fit4)                # Better to get the C matrix this way
+concoef(fit4)              # Better to get the C matrix this way
 Coef(fit4)@A               # The A matrix 
-svd(coef(fit4, matrix = TRUE)[-1, ])$d    # This has rank 1; = C %*% t(A) 
+svd(coef(fit4, matrix = TRUE)[-1, ])$d  # This has rank 1; = C %*% t(A) 
+# Classification (but watch out for NAs in some of the variables):
+apply(fitted(fit4), 1, which.max)  # Classification
+apply(predict(fit4, car.all, type = "response"), 1, which.max)  # Classification
+colnames(fitted(fit4))[apply(fitted(fit4), 1, which.max)]  # Classification
 
 
 # Example 5: The use of the xij argument (aka conditional logit model)
@@ -292,7 +292,7 @@ gotowork <- data.frame(cost.bus  = runif(nn), time.bus  = runif(nn),
                        cost.train= runif(nn), time.train= runif(nn),
                        cost.car  = runif(nn), time.car  = runif(nn),
                        cost.walk = runif(nn), time.walk = runif(nn))
-gotowork <- round(gotowork, dig = 2) # For convenience
+gotowork <- round(gotowork, digits = 2)  # For convenience
 gotowork <- transform(gotowork,
                       Cost.bus   = cost.bus   - cost.walk,
                       Cost.car   = cost.car   - cost.walk,

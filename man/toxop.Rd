@@ -4,6 +4,7 @@
 \title{ Toxoplasmosis Data }
 \description{
   Toxoplasmosis data in 34 cities in El Salvador.
+
 }
 \usage{data(toxop)}
 \format{
@@ -34,7 +35,7 @@
 }
 
 \seealso{
-    \code{\link[VGAM]{dexpbinomial}}.
+    \code{\link[VGAM]{double.expbinomial}}.
 
 }
 

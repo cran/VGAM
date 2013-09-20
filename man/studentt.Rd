@@ -5,11 +5,12 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Student t Distribution }
 \description{
-  Estimation of parameters in a Student t distribution.
+  Estimating the parameters of a Student t distribution.
+
 
 }
 \usage{
-studentt(ldf = "loglog", idf = NULL, tol1 = 0.1, imethod = 1)
+ studentt(ldf = "loglog", idf = NULL, tol1 = 0.1, imethod = 1)
 studentt2(df = Inf, llocation = "identity", lscale = "loge",
           ilocation = NULL, iscale = NULL, imethod = 1, zero = -2)
 studentt3(llocation = "identity", lscale = "loge", ldf = "loglog",
@@ -26,11 +27,13 @@ studentt3(llocation = "identity", lscale = "loge", ldf = "loglog",
   A \code{\link{loglog}} link keeps the degrees of freedom greater
   than unity; see below.
 
+
   }
   \item{ilocation, iscale, idf}{
   Optional initial values.
   If given, the values must be in range.
   The default is to compute an initial value internally.
+
 
   }
 
@@ -39,6 +42,7 @@ studentt3(llocation = "identity", lscale = "loge", ldf = "loglog",
   initial value is 1.
   Best to leave this argument alone.
 
+
   }
 
   \item{df}{
@@ -46,9 +50,11 @@ studentt3(llocation = "identity", lscale = "loge", ldf = "loglog",
   It may be of length equal to the number of columns of a response
   matrix.
 
+
   }
   \item{imethod, zero}{
   See \code{\link{CommonVGAMffArguments}}.
+
 
   }
 }
@@ -78,9 +84,10 @@ studentt3(llocation = "identity", lscale = "loge", ldf = "loglog",
   Let \eqn{Y = (T - \mu) / \sigma}{Y = (T -  mu) /  sigma} where
   \eqn{\mu}{mu} and \eqn{\sigma}{sigma} are the location
   and scale parameters respectively.
-  Then \code{studentt3} estimates the location, scale and degrees of freedom parameters.
-  And \code{studentt2} estimates the location, scale parameters for a user-specified
-  degrees of freedom, \code{df}.
+  Then \code{studentt3} estimates the location, scale and
+  degrees of freedom parameters.
+  And \code{studentt2} estimates the location, scale parameters
+  for a user-specified degrees of freedom, \code{df}.
   And \code{studentt} estimates the degrees of freedom parameter only.
   The fitted values are the location parameters.
   By default the linear/additive predictors are
@@ -118,7 +125,7 @@ application to financial econometrics.
 
 \author{ T. W. Yee }
 \note{
-  \code{studentt3} and \code{studentt2} can handle multiple responses.
+  \code{studentt3()} and \code{studentt2()} can handle multiple responses.
 
 
   Practical experience has shown reasonably good initial values are
@@ -132,17 +139,17 @@ application to financial econometrics.
   A standard normal distribution corresponds to a \emph{t} distribution
   with infinite degrees of freedom. Consequently, if the data is close
   to normal, there may be convergence problems; best to use
-  \code{\link{normal1}} instead.
+  \code{\link{uninormal}} instead.
 
 
 }
 \seealso{
-    \code{\link{normal1}},
-    \code{\link{cauchy1}},
-    \code{\link{logistic}},
-    \code{\link{huber2}},
-    \code{\link{koenker}},
-    \code{\link[stats]{TDist}}.
+  \code{\link{uninormal}},
+  \code{\link{cauchy1}},
+  \code{\link{logistic}},
+  \code{\link{huber2}},
+  \code{\link{koenker}},
+  \code{\link[stats]{TDist}}.
 
 
 }
@@ -159,6 +166,8 @@ coef(fit2, matrix = TRUE)
 \keyword{models}
 \keyword{regression}
 
-%Evans, M., Hastings, N. and Peacock, B. (2000)
+%Forbes, C., Evans, M., Hastings, N. and Peacock, B. (2011)
 %\emph{Statistical Distributions},
-%New York: Wiley-Interscience, Third edition.
+%Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
+
+

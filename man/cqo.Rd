@@ -189,8 +189,8 @@ cqo(formula, family, data = list(), weights = NULL, subset = NULL,
   QRR-VGLMs or \emph{constrained quadratic ordination} (CQO) models
   are estimated here by maximum likelihood estimation. Optimal linear
   combinations of the environmental variables are computed, called
-  \emph{latent variables} (these appear as \code{lv} for \eqn{R=1}
-  else \code{lv1}, \code{lv2}, etc. in the output).  Here, \eqn{R}
+  \emph{latent variables} (these appear as \code{latvar} for \eqn{R=1}
+  else \code{latvar1}, \code{latvar2}, etc. in the output).  Here, \eqn{R}
   is the \emph{rank} or the number of ordination axes.  Each species'
   response is then a regression of these latent variables using quadratic
   polynomials on a transformed scale (e.g., log for Poisson counts, logit
@@ -344,7 +344,7 @@ original FORTRAN code into C.
   \code{Bestof}, 
   \code{ITolerances},
   \code{EqualTolerances},
-  \code{isdlv}, and
+  \code{isd.latvar}, and
   \code{MUXfactor}.
 
 
@@ -481,10 +481,10 @@ legend("topright", leg = colnames(depvar(p1ut)), col = clr,
        pch = 1:S, merge = TRUE, bty = "n", lty = 1:S, lwd = 2)
 (cp <- Coef(p1ut))
 
-(a <- cp@lv[cp@lvOrder])  # The ordered site scores along the gradient
+(a <- cp@latvar[cp@latvar.order])  # The ordered site scores along the gradient
 # Names of the ordered sites along the gradient:
-rownames(cp@lv)[cp@lvOrder]
-(aa <- (cp@Optimum)[,cp@OptimumOrder]) # The ordered optima along the gradient
+rownames(cp@latvar)[cp@latvar.order]
+(aa <- (cp@Optimum)[,cp@Optimum.order]) # The ordered optima along the gradient
 aa <- aa[!is.na(aa)] # Delete the species that is not unimodal
 names(aa) # Names of the ordered optima along the gradient
 
@@ -521,7 +521,7 @@ p2 <- cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,
                 Trocterr, Zoraspin) ~
           WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
           poissonff, data = hspider, Crow1positive = FALSE,
-          IToler = TRUE, Rank = 2, Bestof = 3, isdlv = c(2.1, 0.9))
+          IToler = TRUE, Rank = 2, Bestof = 3, isd.latvar = c(2.1, 0.9))
 sort(p2@misc$deviance.Bestof) # A history of all the iterations
 if(deviance(p2) > 1127) warning("suboptimal fit obtained")
 lvplot(p2, ellips = FALSE, label = TRUE, xlim = c(-3,4),
@@ -542,7 +542,7 @@ lvplot(b1et, y = TRUE, lcol = 1:S, pch = 1:S, pcol = 1:S, las = 1)
 Coef(b1et)
 
 # Compare the fitted model with the 'truth'
-cbind(truth = attr(mydata, "ccoefficients"), fitted = ccoef(b1et))
+cbind(truth = attr(mydata, "concoefficients"), fitted = concoef(b1et))
 
 
 # Example 5: Plot the deviance residuals for diagnostic purposes
@@ -557,11 +557,11 @@ if(deviance(p1et) > 1586) warning("suboptimal fit obtained")
 S <- ncol(depvar(p1et))
 par(mfrow = c(3, 4))
 for(ii in 1:S) {
-  tempdata <- data.frame(lv1 = c(lv(p1et)), sppCounts = depvar(p1et)[, ii])
-  tempdata <- transform(tempdata, myOffset = -0.5 * lv1^2)
+  tempdata <- data.frame(latvar1 = c(latvar(p1et)), sppCounts = depvar(p1et)[, ii])
+  tempdata <- transform(tempdata, myOffset = -0.5 * latvar1^2)
 
 # For species ii, refit the model to get the deviance residuals
-  fit1 <- vglm(sppCounts ~ offset(myOffset) + lv1, fam = poissonff,
+  fit1 <- vglm(sppCounts ~ offset(myOffset) + latvar1, fam = poissonff,
                data = tempdata, trace = FALSE)
 
 # For checking: this should be 0
@@ -571,10 +571,10 @@ for(ii in 1:S) {
 # Plot the deviance residuals
   devresid <- resid(fit1, type = "deviance")
   predvalues <- predict(fit1) + fit1@offset
-  ooo <- with(tempdata, order(lv1))
-  with(tempdata, plot(lv1, predvalues + devresid, col = "darkgreen",
-                      xlab = "lv1", ylab = "", main = colnames(depvar(p1et))[ii]))
-  with(tempdata, lines(lv1[ooo], predvalues[ooo], col = "blue"))
+  ooo <- with(tempdata, order(latvar1))
+  with(tempdata, plot(latvar1, predvalues + devresid, col = "darkgreen",
+                      xlab = "latvar1", ylab = "", main = colnames(depvar(p1et))[ii]))
+  with(tempdata, lines(latvar1[ooo], predvalues[ooo], col = "blue"))
 }
 }
 }

@@ -7,12 +7,12 @@
   QO object.
 }
 \usage{
-Coef.qrrvglm(object, varlvI = FALSE, reference = NULL, ...)
+Coef.qrrvglm(object, varI.latvar = FALSE, reference = NULL, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{object}{ A CQO or UQO object. The former has class \code{"qrrvglm"}. }
-  \item{varlvI}{
+  \item{varI.latvar}{
   Logical indicating whether to scale the site scores (latent variables)
   to have variance-covariance matrix equal to the rank-\eqn{R} identity
   matrix. All models have uncorrelated site scores (latent variables),
@@ -43,7 +43,7 @@ Coef.qrrvglm(object, varlvI = FALSE, reference = NULL, ...)
   tolerances are unity by transformation or by definition, and the spread
   of the site scores can be compared to them. Vice versa, if one wishes
   to compare the tolerances with the sites score variability then setting
-  \code{varlvI=TRUE} is more appropriate.
+  \code{varI.latvar=TRUE} is more appropriate.
 
 
   For rank-2 QRR-VGLMs, one of the species can be chosen so that the
@@ -118,10 +118,10 @@ set.seed(123)
 x2 <- rnorm(n <- 100)
 x3 <- rnorm(n)
 x4 <- rnorm(n)
-lv1 <- 0 + x3 - 2*x4
-lambda1 <- exp(3 - 0.5 * (lv1-0)^2)
-lambda2 <- exp(2 - 0.5 * (lv1-1)^2)
-lambda3 <- exp(2 - 0.5 * ((lv1+4)/2)^2) # Unequal tolerances
+latvar1 <- 0 + x3 - 2*x4
+lambda1 <- exp(3 - 0.5 * ( latvar1-0)^2)
+lambda2 <- exp(2 - 0.5 * ( latvar1-1)^2)
+lambda3 <- exp(2 - 0.5 * ((latvar1+4)/2)^2)  # Unequal tolerances
 y1 <- rpois(n, lambda1)
 y2 <- rpois(n, lambda2)
 y3 <- rpois(n, lambda3)

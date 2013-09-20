@@ -6,6 +6,7 @@
   Estimates the (1-parameter) Lindley distribution
   by maximum likelihood estimation.
 
+
 }
 \usage{
 lindley(link = "loge", itheta = NULL, zero = NULL)
@@ -17,15 +18,19 @@ lindley(link = "loge", itheta = NULL, zero = NULL)
   Link function applied to the (positive) parameter.
   See \code{\link{Links}} for more choices.
 
+
   }
 
 % \item{earg}{
 % List. Extra argument for the link.
 % See \code{earg} in \code{\link{Links}} for general information.
+
+
 % }
 
   \item{itheta, zero}{
   See \code{\link{CommonVGAMffArguments}} for information.
+
 
   }
 }

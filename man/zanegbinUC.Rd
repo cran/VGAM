@@ -51,7 +51,7 @@ rzanegbin(n, size, prob = NULL, munb = NULL, pobs0 = 0)
 
 }
 %\references{ }
-\author{ Thomas W. Yee }
+\author{ T. W. Yee }
 \note{ 
     The argument \code{pobs0} is recycled to the required length, and
     must have values which lie in the interval \eqn{[0,1]}.
@@ -65,14 +65,14 @@ rzanegbin(n, size, prob = NULL, munb = NULL, pobs0 = 0)
 }
 \examples{
 munb <- 3; size <- 4; pobs0 <- 0.3; x <- (-1):7
-dzanegbin(x,    munb = munb, size = size, pobs0 = pobs0)
+dzanegbin(x, munb = munb, size = size, pobs0 = pobs0)
 table(rzanegbin(100, munb = munb, size = size, pobs0 = pobs0))
 
 \dontrun{ x <- 0:10
 barplot(rbind(dzanegbin(x, munb = munb, size = size, pobs0 = pobs0),
                 dnbinom(x, mu   = munb, size = size)),
-        beside = TRUE, col = c("blue","green"), cex.main = 0.7, las = 1,
-        ylab = "Probability",names.arg = as.character(x),
+        beside = TRUE, col = c("blue", "green"), cex.main = 0.7, las = 1,
+        ylab = "Probability", names.arg = as.character(x),
         main = paste("ZANB(munb = ", munb, ", size = ", size,",
                      pobs0 = ", pobs0, 
                    ") [blue] vs",  " NB(mu = ", munb, ", size = ", size,

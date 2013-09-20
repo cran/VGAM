@@ -18,15 +18,18 @@ cardioid(lmu = elogit(min = 0, max = 2*pi),
   and \eqn{\rho}{rho} parameters, respectively.
   See \code{\link{Links}} for more choices.
 
+
   }
   \item{imu, irho}{
   Initial values.
   A \code{NULL} means an initial value is chosen internally.
   See \code{\link{CommonVGAMffArguments}} for more information.
 
+
   }
   \item{nsimEIM, zero}{
   See \code{\link{CommonVGAMffArguments}} for more information.
+
 
   }
 
@@ -71,6 +74,7 @@ Singapore: World Scientific.
 \author{ T. W. Yee }
 \note{
  Fisher scoring using simulation is used.
+
 
 }
 \section{Warning }{

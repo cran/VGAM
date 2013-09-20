@@ -13,7 +13,7 @@
 
 
 
-qeunif <- function(p, min = 0, max = 1, Maxit_nr = 10, Tol_nr = 1.0e-6) {
+qeunif <- function(p, min = 0, max = 1, Maxit.nr = 10, Tol.nr = 1.0e-6) {
 
   ppp <- p
   vsmallno <- sqrt(.Machine$double.eps)
@@ -21,9 +21,9 @@ qeunif <- function(p, min = 0, max = 1, Maxit_nr = 10, Tol_nr = 1.0e-6) {
   if (any(min >= max))
     stop("argument 'min' has values greater or equal ",
          "to argument 'max'")
-  if (!is.Numeric( Tol_nr, allowable.length = 1, positive = TRUE) ||
-      Tol_nr > 0.10)
-    stop("argument 'Tol_nr' is not a single positive value, ",
+  if (!is.Numeric( Tol.nr, allowable.length = 1, positive = TRUE) ||
+      Tol.nr > 0.10)
+    stop("argument 'Tol.nr' is not a single positive value, ",
          "or is too large")
   nrok <- ppp >= vsmallno & ppp <= 1.0 - vsmallno & is.finite(ppp)
 
@@ -32,14 +32,14 @@ qeunif <- function(p, min = 0, max = 1, Maxit_nr = 10, Tol_nr = 1.0e-6) {
   eee[ppp > 1.0 -  smallno] <- 1.0 - sqrt(1.0 - ppp[ppp > 1.0 -  smallno])
 
 
-  for(iii in 1:Maxit_nr) {
+  for (iii in 1:Maxit.nr) {
     realdiff <- (peunif(eee[nrok]) - ppp[nrok]) / deunif(eee[nrok])
     eee[nrok] <- eee[nrok] - realdiff
-    if (all(abs(realdiff) / (1.0 + abs(realdiff)) < Tol_nr )) break
-    if (iii == Maxit_nr) warning("did not converge")
+    if (all(abs(realdiff) / (1.0 + abs(realdiff)) < Tol.nr )) break
+    if (iii == Maxit.nr) warning("did not converge")
   }
 
-  if (max(abs(peunif(eee[nrok]) - ppp[nrok])) > Tol_nr)
+  if (max(abs(peunif(eee[nrok]) - ppp[nrok])) > Tol.nr)
     warning("did not converge on the second check")
 
   eee[ppp <       vsmallno] <-       sqrt(      ppp[ppp <       vsmallno])
@@ -109,12 +109,12 @@ reunif <- function(n, min = 0, max = 1) {
 
 
 
-qenorm <- function(p, mean = 0, sd = 1, Maxit_nr = 10,
-                   Tol_nr = 1.0e-6) {
+qenorm <- function(p, mean = 0, sd = 1, Maxit.nr = 10,
+                   Tol.nr = 1.0e-6) {
   ppp <- p
-  if (!is.Numeric( Tol_nr, allowable.length = 1, positive = TRUE) ||
-      Tol_nr > 0.10)
-    stop("argument 'Tol_nr' is not a single ",
+  if (!is.Numeric( Tol.nr, allowable.length = 1, positive = TRUE) ||
+      Tol.nr > 0.10)
+    stop("argument 'Tol.nr' is not a single ",
          "positive value, or is too large")
   nrok <- is.finite(ppp)
 
@@ -123,14 +123,14 @@ qenorm <- function(p, mean = 0, sd = 1, Maxit_nr = 10,
 
   gnorm <- function(y) dnorm(y) / (y * (1-2*pnorm(y)) - 2*dnorm(y))^2
 
-  for(iii in 1:Maxit_nr) {
+  for (iii in 1:Maxit.nr) {
     realdiff <- (penorm(eee[nrok]) - ppp[nrok]) / gnorm(eee[nrok])
     eee[nrok] <- eee[nrok] - realdiff
-    if (all(abs(realdiff) / (1.0 + abs(realdiff)) < Tol_nr )) break
-    if (iii == Maxit_nr) warning("did not converge")
+    if (all(abs(realdiff) / (1.0 + abs(realdiff)) < Tol.nr )) break
+    if (iii == Maxit.nr) warning("did not converge")
   }
 
-  if (max(abs(penorm(eee[nrok]) - ppp[nrok])) > Tol_nr)
+  if (max(abs(penorm(eee[nrok]) - ppp[nrok])) > Tol.nr)
     warning("did not converge on the second check")
 
   eee[ppp == 0] <- -Inf
@@ -193,12 +193,12 @@ renorm <- function(n, mean = 0, sd = 1) {
 
 
 
-qeexp <- function(p, rate = 1, Maxit_nr = 10, Tol_nr = 1.0e-6) {
+qeexp <- function(p, rate = 1, Maxit.nr = 10, Tol.nr = 1.0e-6) {
   ppp <- p
   vsmallno <- sqrt(.Machine$double.eps)
-  if (!is.Numeric( Tol_nr, allowable.length = 1, positive = TRUE) ||
-      Tol_nr > 0.10)
-    stop("argument 'Tol_nr' is not a single positive value, or ",
+  if (!is.Numeric( Tol.nr, allowable.length = 1, positive = TRUE) ||
+      Tol.nr > 0.10)
+    stop("argument 'Tol.nr' is not a single positive value, or ",
          "is too large")
   nrok <- ppp >= vsmallno & is.finite(ppp)
 
@@ -211,14 +211,14 @@ qeexp <- function(p, rate = 1, Maxit_nr = 10, Tol_nr = 1.0e-6) {
   eee[ppp <       vsmallno] <- sqrt(ppp[ppp < vsmallno])
 
 
-  for(iii in 1:Maxit_nr) {
+  for (iii in 1:Maxit.nr) {
     realdiff <- (peexp(eee[nrok]) - ppp[nrok]) / deexp(eee[nrok])
     eee[nrok] <- eee[nrok] - realdiff
-    if (all(abs(realdiff) / (1.0 + abs(realdiff)) < Tol_nr )) break
-    if (iii == Maxit_nr) warning("did not converge")
+    if (all(abs(realdiff) / (1.0 + abs(realdiff)) < Tol.nr )) break
+    if (iii == Maxit.nr) warning("did not converge")
   }
 
-  if (max(abs(peexp(eee[nrok]) - ppp[nrok])) > Tol_nr)
+  if (max(abs(peexp(eee[nrok]) - ppp[nrok])) > Tol.nr)
     warning("did not converge on the second check")
 
   eee[ppp < vsmallno] <- sqrt(ppp[ppp < vsmallno])
@@ -446,7 +446,7 @@ rkoenker <- function(n, location = 0, scale = 1) {
     misc$multipleResponses <- FALSE
 
       ncoly <- ncol(y)
-      for(ii in 1:length( .percentile )) {
+      for (ii in 1:length( .percentile )) {
         y.use <- if (ncoly > 1) y[, ii] else y
         mu <- cbind(mu)
         extra$percentile[ii] <- 100 * weighted.mean(y.use <= mu[, ii], w)

@@ -6,6 +6,7 @@
   Fits a beta-binomial distribution by maximum likelihood estimation.
   The two parameters here are the mean and correlation coefficient.
 
+
 }
 \usage{
 betabinomial(lmu = "logit", lrho = "logit",
@@ -127,6 +128,7 @@ betabinomial(lmu = "logit", lrho = "logit",
 
 }
 \references{
+
   Moore, D. F. and Tsiatis, A. (1991)
   Robust estimation of the variance in moment methods for
   extra-binomial and extra-Poisson variation.
@@ -193,7 +195,7 @@ betabinomial(lmu = "logit", lrho = "logit",
 # Example 1
 bdata <- data.frame(N = 10, mu = 0.5, rho = 0.8)
 bdata <- transform(bdata,
-                   y = rbetabinom(n=100, size = N, prob = mu, rho = rho))
+                   y = rbetabinom(n = 100, size = N, prob = mu, rho = rho))
 fit <- vglm(cbind(y, N-y) ~ 1, betabinomial, bdata, trace = TRUE)
 coef(fit, matrix = TRUE)
 Coef(fit)
@@ -219,7 +221,7 @@ coef(fit2, matrix = TRUE)
 \dontrun{ with(lirat, plot(hb[N > 1], fit2@misc$rho,
                  xlab = "Hemoglobin", ylab = "Estimated rho",
                  pch = as.character(grp[N > 1]), col = grp[N > 1])) }
-\dontrun{ # cf. Figure 3 of Moore and Tsiatis (1991)
+\dontrun{  # cf. Figure 3 of Moore and Tsiatis (1991)
 with(lirat, plot(hb, R / N, pch = as.character(grp), col = grp, las = 1,
                  xlab = "Hemoglobin level", ylab = "Proportion Dead",
                  main = "Fitted values (lines)"))
@@ -228,7 +230,8 @@ for(gp in 1:4) {
   xx <- with(smalldf, hb[grp == gp])
   yy <- with(smalldf, fitted(fit2)[grp == gp])
   ooo <- order(xx)
-  lines(xx[ooo], yy[ooo], col = gp) } }
+  lines(xx[ooo], yy[ooo], col = gp)
+} }
 }
 \keyword{models}
 \keyword{regression}

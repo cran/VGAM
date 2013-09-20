@@ -4,6 +4,13 @@
 %\alias{ccoef-method}
 %
 %
+% 20130903
+\alias{BIC,ANY-method}
+\alias{BIC,vlm-method}
+\alias{BIC,vglm-method}
+\alias{BIC,vgam-method}
+\alias{BIC,rrvglm-method}
+\alias{BIC,qrrvglm-method}
 %
 % 20121105
 \alias{Rank,qrrvglm-method}
@@ -66,6 +73,7 @@
 \alias{coefficients,vsmooth.spline-method}
 \alias{coefficients,vsmooth.spline.fit-method}
 \alias{coefficients,summary.vglm-method}
+\alias{coefficients,summary.rrvglm-method}
 \alias{Coefficients,vlm-method}
 \alias{coef,cao-method}
 \alias{coef,vlm-method}
@@ -75,6 +83,7 @@
 \alias{coef,vsmooth.spline-method}
 \alias{coef,vsmooth.spline.fit-method}
 \alias{coef,summary.vglm-method}
+\alias{coef,summary.rrvglm-method}
 \alias{Coef,cao-method}
 \alias{Coef,vlm-method}
 \alias{Coef,qrrvglm-method}
@@ -195,24 +204,30 @@
 \alias{logLik,summary.vglm-method}
 \alias{logLik,vglm-method}
 \alias{logLik,vgam-method}
+%
 \alias{lvplot,cao-method}
 \alias{lvplot,qrrvglm-method}
 \alias{lvplot,rrvglm-method}
 \alias{lvplot,uqo-method}
-\alias{lv,cao-method}
-\alias{lv,Coef.cao-method}
+%
 \alias{lv,rrvglm-method}
 \alias{lv,qrrvglm-method}
+\alias{lv,cao-method}
 \alias{lv,Coef.rrvglm-method}
 \alias{lv,Coef.qrrvglm-method}
-\alias{lv,uqo-method}
+\alias{lv,Coef.cao-method}
+% \alias{lv,uqo-method} defunct
+\alias{latvar,uqo-method}
+\alias{latvar,cao-method}
 \alias{latvar,Coef.qrrvglm-method}
 \alias{latvar,Coef.rrvglm-method}
-\alias{latvar,qrrvglm-method}
 \alias{latvar,rrvglm-method}
+\alias{latvar,qrrvglm-method}
+%
 \alias{Max,qrrvglm-method}
 \alias{Max,Coef.qrrvglm-method}
 \alias{Max,uqo-method}
+\alias{Max,cao-method}
 \alias{meplot,numeric-method}
 \alias{meplot,vlm-method}
 %\alias{model.matrix,ANY-method}
@@ -237,6 +252,7 @@
 \alias{Opt,qrrvglm-method}
 \alias{Opt,Coef.qrrvglm-method}
 \alias{Opt,uqo-method}
+\alias{Opt,cao-method}
 \alias{persp,cao-method}
 \alias{persp,qrrvglm-method}
 \alias{persp,uqo-method}

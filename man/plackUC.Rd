@@ -23,6 +23,7 @@ rplack(n, oratio)
   Logical.
   If \code{TRUE} then the logarithm is returned.
 
+
   }
 }
 \value{
@@ -55,7 +56,7 @@ Some contributions to contingency-type distributions.
 %}
 \seealso{
   \code{\link{plackett}},
-  \code{\link{frank}}.
+  \code{\link{bifrankcop}}.
 
 
 }
@@ -63,15 +64,15 @@ Some contributions to contingency-type distributions.
 \dontrun{ N <- 101; oratio <- exp(1)
 x <- seq(0.0, 1.0, len = N)
 ox <- expand.grid(x, x)
-z <- dplack(ox[,1], ox[,2], oratio = oratio)
-contour(x, x, matrix(z, N, N), col = "blue")
-z <- pplack(ox[,1], ox[,2], oratio = oratio)
-contour(x, x, matrix(z, N, N), col = "blue")
+zedd <- dplack(ox[, 1], ox[, 2], oratio = oratio)
+contour(x, x, matrix(zedd, N, N), col = "blue")
+zedd <- pplack(ox[, 1], ox[, 2], oratio = oratio)
+contour(x, x, matrix(zedd, N, N), col = "blue")
 
 plot(rr <- rplack(n = 3000, oratio = oratio))
-par(mfrow = c(1,2))
-hist(rr[,1]) # Should be uniform
-hist(rr[,2]) # Should be uniform
+par(mfrow = c(1, 2))
+hist(rr[, 1])  # Should be uniform
+hist(rr[, 2])  # Should be uniform
 }
 }
 \keyword{distribution}

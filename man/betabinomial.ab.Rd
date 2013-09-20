@@ -7,6 +7,7 @@
   The two parameters here are the shape parameters of the underlying
   beta distribution.
 
+
 }
 \usage{
 betabinomial.ab(lshape12 = "loge", i1 = 1, i2 = NULL,
@@ -20,6 +21,7 @@ betabinomial.ab(lshape12 = "loge", i1 = 1, i2 = NULL,
   of the beta distribution.
   See \code{\link{Links}} for more choices.
 
+
   }
   \item{i1, i2}{ 
   Initial value for the shape parameters.
@@ -28,13 +30,15 @@ betabinomial.ab(lshape12 = "loge", i1 = 1, i2 = NULL,
   If a failure to converge occurs, try assigning a different value
   to \code{i1} and/or using \code{i2}.
 
+
   }
   \item{zero}{ 
   An integer specifying which linear/additive predictor is to be modelled
-  as an intercept only.  If assigned, the single value should be either
-  \code{1} or \code{2}.  The default is to model both shape parameters
-  as functions of the covariates.  If a failure to converge occurs,
+  as an intercept only. If assigned, the single value should be either
+  \code{1} or \code{2}. The default is to model both shape parameters
+  as functions of the covariates. If a failure to converge occurs,
   try \code{zero = 2}.
+
 
   }
   \item{shrinkage.init, nsimEIM, imethod}{
@@ -42,6 +46,7 @@ betabinomial.ab(lshape12 = "loge", i1 = 1, i2 = NULL,
   The argument \code{shrinkage.init} is used only if \code{imethod = 2}.
   Using the argument \code{nsimEIM} may offer large advantages for large
   values of \eqn{N} and/or large data sets.
+
 
   }
 }
@@ -112,6 +117,7 @@ betabinomial.ab(lshape12 = "loge", i1 = 1, i2 = NULL,
 
 }
 \references{
+
   Moore, D. F. and Tsiatis, A. (1991)
   Robust estimation of the variance in moment methods for
   extra-binomial and extra-Poisson variation.
@@ -186,7 +192,7 @@ y <- rbetabinom.ab(n = 100, size = N, shape1 = s1, shape2 = s2)
 fit <- vglm(cbind(y, N-y) ~ 1, betabinomial.ab, trace = TRUE)
 coef(fit, matrix = TRUE)
 Coef(fit)
-head(fit@misc$rho) # The correlation parameter
+head(fit@misc$rho)  # The correlation parameter
 head(cbind(depvar(fit), weights(fit, type = "prior")))
 
 
@@ -195,7 +201,7 @@ fit <- vglm(cbind(R, N-R) ~ 1, betabinomial.ab, data = lirat,
             trace = TRUE, subset = N > 1)
 coef(fit, matrix = TRUE)
 Coef(fit)
-fit@misc$rho      # The correlation parameter
+fit@misc$rho  # The correlation parameter
 t(fitted(fit))
 t(depvar(fit))
 t(weights(fit, type = "prior"))
@@ -207,26 +213,27 @@ all.equal(c(fitted(fit)),
 
 # Example 3, which is more complicated
 lirat <- transform(lirat, fgrp = factor(grp))
-summary(lirat)   # Only 5 litters in group 3
+summary(lirat)  # Only 5 litters in group 3
 fit2 <- vglm(cbind(R, N-R) ~ fgrp + hb, betabinomial.ab(zero = 2),
            data = lirat, trace = TRUE, subset = N > 1)
 coef(fit2, matrix = TRUE)
 coef(fit2, matrix = TRUE)[, 1] -
-coef(fit2, matrix = TRUE)[, 2] # logit(p)
+coef(fit2, matrix = TRUE)[, 2]  # logit(p)
 \dontrun{ with(lirat, plot(hb[N > 1], fit2@misc$rho,
                  xlab = "Hemoglobin", ylab = "Estimated rho",
                  pch = as.character(grp[N > 1]), col = grp[N > 1])) }
-\dontrun{ # cf. Figure 3 of Moore and Tsiatis (1991)
+\dontrun{  # cf. Figure 3 of Moore and Tsiatis (1991)
 with(lirat, plot(hb, R / N, pch = as.character(grp), col = grp, las = 1,
             xlab = "Hemoglobin level", ylab = "Proportion Dead",
             main = "Fitted values (lines)"))
 
 smalldf <- with(lirat, lirat[N > 1, ])
-for(gp in 1:4) {
-    xx <- with(smalldf, hb[grp == gp])
-    yy <- with(smalldf, fitted(fit2)[grp == gp])
-    ooo <- order(xx)
-    lines(xx[ooo], yy[ooo], col = gp) } }
+for (gp in 1:4) {
+  xx <- with(smalldf, hb[grp == gp])
+  yy <- with(smalldf, fitted(fit2)[grp == gp])
+  ooo <- order(xx)
+  lines(xx[ooo], yy[ooo], col = gp)
+} }
 }
 \keyword{models}
 \keyword{regression}

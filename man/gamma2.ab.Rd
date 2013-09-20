@@ -16,16 +16,19 @@ gamma2.ab(lrate = "loge", lshape = "loge",
   parameters.
   See \code{\link{Links}} for more choices.
 
+
   }
   \item{expected}{
   Logical. Use Fisher scoring? The default is yes, otherwise
   Newton-Raphson is used.
+
 
   }
   \item{irate, ishape}{
   Optional initial values for \emph{rate} and \emph{shape}.
   A \code{NULL} means a value is computed internally.
   If a failure to converge occurs, try using these arguments.
+
 
   }
   \item{zero}{
@@ -34,6 +37,7 @@ gamma2.ab(lrate = "loge", lshape = "loge",
   If assigned, the single value should be either 1 or 2 or \code{NULL}.
   The default is to model \eqn{shape} as an intercept only.
   A value \code{NULL} means neither 1 or 2.
+
 
   }
 }
@@ -75,9 +79,9 @@ gamma2.ab(lrate = "loge", lshape = "loge",
   the 2-parameter gamma distribution, e.g.,
   
 
-  Evans, M., Hastings, N. and Peacock, B. (2000)
-  \emph{Statistical Distributions},
-  New York: Wiley-Interscience, Third edition.
+Forbes, C., Evans, M., Hastings, N. and Peacock, B. (2011)
+\emph{Statistical Distributions},
+Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
 
 
 }
@@ -98,23 +102,22 @@ gamma2.ab(lrate = "loge", lshape = "loge",
   \code{\link{gamma1}} for the 1-parameter gamma distribution,
   \code{\link{gamma2}} for another parameterization of
   the 2-parameter gamma distribution,
-  \code{\link{bivgamma.mckay}} for \emph{a} bivariate gamma distribution,
+  \code{\link{bigamma.mckay}} for \emph{a} bivariate gamma distribution,
   \code{\link{expexp}}.
 
 
 }
 \examples{
 # Essentially a 1-parameter gamma
-gdata <- data.frame(y = rgamma(n <- 100, shape =  exp(1)))
-fit1 <- vglm(y ~ 1, gamma1, gdata, trace = TRUE)
-fit2 <- vglm(y ~ 1, gamma2.ab, gdata, trace = TRUE, crit = "c")
+gdata <- data.frame(y1 = rgamma(n <- 100, shape =  exp(1)))
+fit1 <- vglm(y1 ~ 1, gamma1, gdata, trace = TRUE)
+fit2 <- vglm(y1 ~ 1, gamma2.ab, gdata, trace = TRUE, crit = "coef")
 coef(fit2, matrix = TRUE)
 Coef(fit2)
 
-
 # Essentially a 2-parameter gamma
-gdata <- data.frame(y = rgamma(n = 500, rate = exp(1), shape = exp(2)))
-fit2 <- vglm(y ~ 1, gamma2.ab, gdata, trace = TRUE, crit = "c")
+gdata <- data.frame(y2 = rgamma(n = 500, rate = exp(1), shape = exp(2)))
+fit2 <- vglm(y2 ~ 1, gamma2.ab, gdata, trace = TRUE, crit = "coef")
 coef(fit2, matrix = TRUE)
 Coef(fit2)
 summary(fit2)

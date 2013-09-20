@@ -1,6 +1,6 @@
 \name{identity}
 \alias{identity}
-\alias{nidentity}
+\alias{negidentity}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Identity Link Function }
 \description{
@@ -9,8 +9,8 @@
 
 }
 \usage{
- identity(theta, inverse = FALSE, deriv = 0, short = TRUE, tag = FALSE)
-nidentity(theta, inverse = FALSE, deriv = 0, short = TRUE, tag = FALSE)
+   identity(theta, inverse = FALSE, deriv = 0, short = TRUE, tag = FALSE)
+negidentity(theta, inverse = FALSE, deriv = 0, short = TRUE, tag = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -37,7 +37,7 @@ nidentity(theta, inverse = FALSE, deriv = 0, short = TRUE, tag = FALSE)
   \code{Inf}, \code{-Inf}, \code{NA} or \code{NaN}.
 
 
-  The function \code{nidentity} is the negative-identity link function and
+  The function \code{negidentity} is the negative-identity link function and
   corresponds to \eqn{g(\theta)=-\theta}{g(theta)=-theta}.
   This is useful for some models, e.g., in the literature supporting the
   \code{\link{egev}} function it seems that half of the authors use
@@ -57,7 +57,7 @@ nidentity(theta, inverse = FALSE, deriv = 0, short = TRUE, tag = FALSE)
   else if \code{inverse = TRUE} then it returns the reciprocal.
 
 
-  For \code{nidentity()}: the results are similar to \code{identity()}
+  For \code{negidentity()}: the results are similar to \code{identity()}
   except for a sign change in most cases.
 
 
@@ -75,7 +75,7 @@ nidentity(theta, inverse = FALSE, deriv = 0, short = TRUE, tag = FALSE)
   \code{\link{loge}},
   \code{\link{logit}},
   \code{\link{probit}},
-  \code{\link{powl}}.
+  \code{\link{powerlink}}.
 
 
 }
@@ -83,9 +83,9 @@ nidentity(theta, inverse = FALSE, deriv = 0, short = TRUE, tag = FALSE)
 identity((-5):5) 
 identity((-5):5, deriv = 1)
 identity((-5):5, deriv = 2)
-nidentity((-5):5) 
-nidentity((-5):5, deriv = 1)
-nidentity((-5):5, deriv = 2)
+negidentity((-5):5) 
+negidentity((-5):5, deriv = 1)
+negidentity((-5):5, deriv = 2)
 }
 \keyword{math}
 \keyword{models}

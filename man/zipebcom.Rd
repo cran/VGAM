@@ -183,7 +183,7 @@ zipebcom(lmu12 = "cloglog", lphi12 = "logit", loratio = "loge",
 
 
 }
-%\author{ Thomas W. Yee }
+%\author{ T. W. Yee }
 \note{
   The \code{"12"} in the argument names reinforce the user about the
   exchangeability assumption.
@@ -208,8 +208,7 @@ zipebcom(lmu12 = "cloglog", lphi12 = "logit", loratio = "loge",
   \code{\link{binom2.or}},
   \code{\link{zipoisson}},
   \code{\link{cloglog}},
-  \code{\link{CommonVGAMffArguments}},
-  \code{\link{posbernoulli.tb}}.
+  \code{\link{CommonVGAMffArguments}}.
 
 
 }

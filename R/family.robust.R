@@ -12,6 +12,10 @@
 
 
 
+
+
+
+
 edhuber <- function(x, k = 0.862, mu = 0, sigma = 1, log = FALSE) {
   if (!is.logical(log.arg <- log) || length(log) != 1)
     stop("bad input for argument 'log'")

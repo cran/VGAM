@@ -85,9 +85,9 @@ truncgeometric(upper.limit = Inf,
 
 }
 \references{
-  Evans, M., Hastings, N. and Peacock, B. (2000)
-  \emph{Statistical Distributions},
-  New York: Wiley-Interscience, Third edition.
+Forbes, C., Evans, M., Hastings, N. and Peacock, B. (2011)
+\emph{Statistical Distributions},
+Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
 
 
 }

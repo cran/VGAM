@@ -37,7 +37,7 @@ rposnorm(n, mean = 0, sd = 1)
 }
 \author{ T. W. Yee }
 \details{
-  See \code{\link{posnormal1}}, the \pkg{VGAM} family function
+  See \code{\link{posnormal}}, the \pkg{VGAM} family function
   for estimating the parameters, 
   for the formula of the probability density function and other details.
 
@@ -47,7 +47,7 @@ rposnorm(n, mean = 0, sd = 1)
 
 %}
 \seealso{
-  \code{\link{posnormal1}}.
+  \code{\link{posnormal}}.
 
 }
 \examples{

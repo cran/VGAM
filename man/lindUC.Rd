@@ -16,19 +16,26 @@
 \usage{
 dlind(x, theta, log = FALSE)
 plind(q, theta)
-%qlind(p, theta)
 rlind(n, theta)
 }
+%qlind(p, theta)
 \arguments{
   \item{x, q}{vector of quantiles.}
 %  \item{p}{vector of probabilities.}
-  \item{n}{number of observations. }
+  \item{n}{number of observations. 
+
+
+  }
   \item{log}{
   Logical.
   If \code{log = TRUE} then the logarithm of the density is returned.
 
+
   }
-  \item{theta}{positive parameter. }
+  \item{theta}{positive parameter.
+
+
+  }
 
 }
 \value{
@@ -43,12 +50,14 @@ rlind(n, theta)
 \details{
   See \code{\link{lindley}} for details.
 
+
 }
 %\note{
 %
 %}
 \seealso{
   \code{\link{lindley}}.
+
 
 }
 \examples{

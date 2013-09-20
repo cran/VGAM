@@ -138,7 +138,7 @@ qtplot(fit1, mpv = TRUE, lcol = c(1, 2, 5), tcol = c(1, 2, 5),
 plot(sealevel ~ Year, data = venice90, type = "h", col = "blue")
 summary(venice90)
 dim(venice90)
-round(100 * nrow(venice90) / ((2009 - 1940 + 1) * 365.26 * 24), dig = 3)
+round(100 * nrow(venice90) / ((2009 - 1940 + 1) * 365.26 * 24), digits = 3)
 }
 }
 \keyword{datasets}

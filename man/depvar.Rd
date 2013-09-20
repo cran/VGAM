@@ -20,12 +20,18 @@ depvar(object, ...)
 \item{\dots}{
   Other arguments fed into the specific methods function of
   the model.
+  In particular, sometimes \code{type = c("lm", "lm2")} is
+  available, in which case the first one is chosen if the
+  user does not input a value.
+  The latter value corresponds to argument \code{form2}, and
+  sometimes a response for that is optional.
 
 
 }
 }
 \details{
-  This function is preferred to calling \code{fit@y}, say.
+  By default
+  this function is preferred to calling \code{fit@y}, say.
 
 
 }
@@ -58,9 +64,9 @@ depvar(object, ...)
 \examples{
 pneumo <- transform(pneumo, let = log(exposure.time))
 (fit <- vglm(cbind(normal, mild, severe) ~ let, propodds, pneumo))
-fit@y       # Sample proportions (not recommended)
-depvar(fit) # Better than using fit@y; dependent variable (response)
-weights(fit, type = "prior") # Number of observations
+fit@y        # Sample proportions (not recommended)
+depvar(fit)  # Better than using fit@y; dependent variable (response)
+weights(fit, type = "prior")  # Number of observations
 }
 \keyword{models}
 \keyword{regression}

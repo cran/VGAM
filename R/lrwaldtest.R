@@ -112,7 +112,7 @@ lrtest_vglm <- function(object, ..., name = NULL) {
 
   cls <- class(object)[1]
 
-  nobs <- function(x) x@misc$nrow_X_vlm
+  nobs <- function(x) x@misc$nrow.X.vlm
 
 
   tlab <- function(x) attr(terms(x), "term.labels")
@@ -245,9 +245,13 @@ setMethod("lrtest", "vglm",
 
 
 
+
+
+
  setMethod("show", "VGAManova",
            function(object)
-           stats::print.anova(object@Body))
+             getS3method("print", "anova")(object@Body))
+
 
 
 

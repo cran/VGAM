@@ -155,7 +155,7 @@ c(all.equal(ans1, ans2), all.equal(ans1, ans3), all.equal(ans1, ans4))
 (mypval <- pchisq(testStatistic, df = length(coef(fit2)) - length(coef(fit1)),
                   lower.tail = FALSE))
 
-(ans4 <- lrtest(fit3, fit1)) # Test proportional odds (parallelism) assumption
+(ans4 <- lrtest(fit3, fit1))  # Test proportional odds (parallelism) assumption
 }
 
 \keyword{htest}

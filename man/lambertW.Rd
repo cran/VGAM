@@ -46,6 +46,8 @@ Maximum number of iterations of third-order Halley's method.
 
 }
 \references{
+
+
 Corless, R. M. and Gonnet, G. H. and
 Hare, D. E. G. and Jeffrey, D. J. and Knuth, D. E. (1996)
 On the Lambert \eqn{W} function.

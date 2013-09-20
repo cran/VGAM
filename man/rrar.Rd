@@ -95,16 +95,16 @@ for(ii in 1:4) {
        type = "l", xlab = "", ylab = "", col = "blue")
   points(year, grain.us[, ii], pch = "*", col = "blue")
 }
-apply(grain.us, 2, mean) # mu vector
-cgrain <- scale(grain.us, scale = FALSE) # Center the time series only
+apply(grain.us, 2, mean)  # mu vector
+cgrain <- scale(grain.us, scale = FALSE)  # Center the time series only
 fit <- vglm(cgrain ~ 1, rrar(Ranks = c(4, 1)), trace = TRUE)
 summary(fit)
 
-print(fit@misc$Ak1, dig = 2)
-print(fit@misc$Cmatrices, dig = 3)
-print(fit@misc$Dmatrices, dig = 3)
-print(fit@misc$omegahat, dig = 3)
-print(fit@misc$Phimatrices, dig = 2)
+print(fit@misc$Ak1, digits = 2)
+print(fit@misc$Cmatrices, digits = 3)
+print(fit@misc$Dmatrices, digits = 3)
+print(fit@misc$omegahat, digits = 3)
+print(fit@misc$Phimatrices, digits = 2)
 
 par(mar = c(4, 4, 2, 2) + 0.1, mfrow = c(4, 1))
 for(ii in 1:4) {

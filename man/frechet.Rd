@@ -25,14 +25,17 @@ frechet2(location = 0, lscale = "loge", lshape = logoff(offset = -2),
   Numeric. Location parameter.
   It is called \eqn{a} below.
 
+
   }
   \item{lscale, lshape}{
   Link functions for the parameters;
   see \code{\link{Links}} for more choices.
 
+
   }
   \item{iscale, ishape, zero, nsimEIM}{
   See \code{\link{CommonVGAMffArguments}} for information.
+
 
   }
 

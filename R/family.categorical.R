@@ -210,7 +210,9 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
                    "mu[,j] * (1 - mu[,j]); -mu[,j] * mu[,k]",
                    "mu[,j]*(1-mu[,j]); -mu[,j]*mu[,k]")),
   constraints = eval(substitute(expression({
-    constraints <- cm.vgam(matrix(1, M, 1), x, .parallel , constraints)
+    constraints <- cm.vgam(matrix(1, M, 1), x = x,
+                           bool = .parallel ,
+                           constraints = constraints)
     constraints <- cm.zero.vgam(constraints, x, .zero , M)
   }), list( .parallel = parallel, .zero = zero ))),
   deviance = Deviance.categorical.data.vgam,
@@ -379,7 +381,9 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
                    "mu[,j]*(1-mu[,j]); -mu[,j]*mu[,k]")),
 
   constraints = eval(substitute(expression({
-    constraints <- cm.vgam(matrix(1, M, 1), x, .parallel , constraints)
+    constraints <- cm.vgam(matrix(1, M, 1), x = x,
+                           bool = .parallel ,
+                           constraints = constraints)
     constraints <- cm.zero.vgam(constraints, x, .zero , M)
   }), list( .parallel = parallel, .zero = zero ))),
   deviance = Deviance.categorical.data.vgam,
@@ -559,7 +563,8 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
     warning("bad value of maxit; using 200 instead")
     maxit = 200
   }
-  list(maxit = maxit, trace = as.logical(trace)[1],
+  list(maxit = maxit,
+       trace = as.logical(trace)[1],
        panic = as.logical(panic)[1])
 }
 
@@ -571,8 +576,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
 
  multinomial <- function(zero = NULL, parallel = FALSE,
                          nointercept = NULL, refLevel = "last",
-                         whitespace = FALSE)
-{
+                         whitespace = FALSE) {
 
   if (length(refLevel) != 1)
     stop("the length of 'refLevel' must be one")
@@ -633,7 +637,9 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
 
 
 
-    constraints <- cm.vgam(matrix(1, M, 1), x, .parallel, constraints,
+    constraints <- cm.vgam(matrix(1, M, 1), x = x,
+                           bool = .parallel, 
+                           constraints = constraints,
                            apply.int = FALSE)
     constraints <- cm.zero.vgam(constraints, x, .zero, M)
     constraints <- cm.nointercept.vgam(constraints, x, .nointercept, M)
@@ -780,10 +786,13 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
 
 
  cumulative <- function(link = "logit",
-                        parallel = FALSE, reverse = FALSE, 
+                        parallel = FALSE,  # Does not apply to the intercept
+                        reverse = FALSE, 
                         mv = FALSE,
-                        apply.parint = FALSE,
                         whitespace = FALSE) {
+
+
+  apply.parint <- FALSE
 
 
   link <- as.list(substitute(link))
@@ -824,12 +833,16 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
           Llevels <- extra$Llevels
           NOS <- extra$NOS
           Hk.matrix <- kronecker(diag(NOS), matrix(1,Llevels-1,1))
-          constraints <- cm.vgam(Hk.matrix, x, .parallel, constraints,
-                                 apply.int = .apply.parint)
+          constraints <- cm.vgam(Hk.matrix, x = x,
+                                 bool = .parallel ,
+                                 constraints = constraints,
+                                 apply.int = .apply.parint )
       }
     } else {
-      constraints <- cm.vgam(matrix(1, M, 1), x, .parallel, constraints,
-                             apply.int = .apply.parint)
+      constraints <- cm.vgam(matrix(1, M, 1), x = x,
+                             bool = .parallel ,
+                             constraints = constraints,
+                             apply.int = .apply.parint )
     }
   }), list( .parallel = parallel, .mv = mv,
             .apply.parint = apply.parint ))),
@@ -1172,7 +1185,9 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
             "mu[,j] * (1 - mu[,j]); -mu[,j] * mu[,k]",
             "mu[,j]*(1-mu[,j]); -mu[,j]*mu[,k]")),
   constraints = eval(substitute(expression({
-    constraints <- cm.vgam(matrix(1, M, 1), x, .parallel, constraints)
+    constraints <- cm.vgam(matrix(1, M, 1), x = x,
+                           bool = .parallel ,
+                           constraints = constraints)
     constraints <- cm.zero.vgam(constraints, x, .zero, M)
   }), list( .parallel = parallel, .zero = zero ))),
 
@@ -1339,8 +1354,7 @@ acat.deriv <- function(zeta, reverse, M, n) {
 
  brat <- function(refgp = "last",
                   refvalue = 1,
-                  init.alpha = 1)
-{
+                  init.alpha = 1) {
   if (!is.Numeric(init.alpha, positive = TRUE))
     stop("'init.alpha' must contain positive values only")
   if (!is.Numeric(refvalue, allowable.length = 1, positive = TRUE))
@@ -1369,7 +1383,7 @@ acat.deriv <- function(zeta, reverse, M, n) {
                          n, M, byrow = TRUE)
     etastart <- matrix(theta2eta(init.alpha, "loge",
                                 earg = list(theta = NULL)),
-                      n, M, byrow = TRUE)
+                       n, M, byrow = TRUE)
     refgp <- .refgp
     if (!intercept.only)
       warning("this function only works with intercept-only models")
@@ -1378,6 +1392,7 @@ acat.deriv <- function(zeta, reverse, M, n) {
 
     predictors.names <-
       namesof(paste("alpha", uindex, sep = ""), "loge", short = TRUE)
+
   }), list( .refgp = refgp, .init.alpha=init.alpha ))),
 
   linkinv = eval(substitute( function(eta, extra = NULL) {
@@ -1479,8 +1494,7 @@ acat.deriv <- function(zeta, reverse, M, n) {
  bratt <- function(refgp = "last",
                    refvalue = 1,
                    init.alpha = 1,
-                   i0 = 0.01)
-{
+                   i0 = 0.01) {
   if (!is.Numeric(i0, allowable.length = 1, positive = TRUE))
     stop("'i0' must be a single positive value")
   if (!is.Numeric(init.alpha, positive = TRUE))
@@ -1529,8 +1543,8 @@ acat.deriv <- function(zeta, reverse, M, n) {
     if (!intercept.only)
       warning("this function only works with intercept-only models")
     extra$ties <- ties # Flat (1-row) matrix
-    extra$ybrat.indices <- .brat.indices(NCo=NCo, are.ties = FALSE)
-    extra$tbrat.indices <- .brat.indices(NCo=NCo, are.ties = TRUE) # unused
+    extra$ybrat.indices <- .brat.indices(NCo = NCo, are.ties = FALSE)
+    extra$tbrat.indices <- .brat.indices(NCo = NCo, are.ties = TRUE)  # unused
     extra$dnties <- dimnames(ties)
     uindex <- if (refgp == "last") 1:(NCo-1) else (1:(NCo))[-refgp ]
 
@@ -1551,8 +1565,8 @@ acat.deriv <- function(zeta, reverse, M, n) {
       alpha0 <- loge(eta[ii, M], inverse = TRUE)
       alpha1 <- alpha[extra$ybrat.indices[, "rindex"]]
       alpha2 <- alpha[extra$ybrat.indices[, "cindex"]]
-      probs <- rbind(probs, alpha1 / (alpha1+alpha2+alpha0)) #
-      qprobs <- rbind(qprobs, alpha0 / (alpha1+alpha2+alpha0)) #
+       probs <- rbind( probs, alpha1 / (alpha1 + alpha2 + alpha0)) #
+      qprobs <- rbind(qprobs, alpha0 / (alpha1 + alpha2 + alpha0)) #
     }
     if (length(extra$dnties))
       dimnames(qprobs) <- extra$dnties
@@ -1591,18 +1605,18 @@ acat.deriv <- function(zeta, reverse, M, n) {
     eta <- as.matrix(eta)
     for (ii in 1:nrow(eta)) {
       alpha <- .brat.alpha(eta2theta(eta[ii, -M], "loge",
-                                    earg = list(theta = NULL)),
-                          .refvalue, .refgp)
+                                     earg = list(theta = NULL)),
+                          .refvalue, .refgp )
       alpha0 <- loge(eta[ii, M], inverse = TRUE)
-      ymat <- InverseBrat(y[ii,], NCo = M, diag = 0)
-      tmat <- InverseBrat(ties[ii,], NCo = M, diag = 0)
-      answer <- rep(0, len=NCo-1) # deriv wrt eta[-M]
+      ymat <- InverseBrat(   y[ii, ], NCo = M, diag = 0)
+      tmat <- InverseBrat(ties[ii, ], NCo = M, diag = 0)
+      answer <- rep(0, len = NCo-1) # deriv wrt eta[-M]
       for (aa in 1:NCo) {
         Daj <- alpha[aa] + alpha[uindex] + alpha0
         pja <- alpha[uindex] / Daj
         answer <- answer + alpha[uindex] *
-                  (-ymat[aa,uindex] + ymat[uindex,aa]*(1-pja)/pja -
-                  tmat[uindex,aa]) / Daj
+                  (-ymat[aa, uindex] + ymat[uindex, aa] * (1 - pja) / pja -
+                  tmat[uindex, aa]) / Daj
       }
       deriv0 <- 0 # deriv wrt eta[M]
       for (aa in 1:(NCo-1)) 
@@ -1610,8 +1624,8 @@ acat.deriv <- function(zeta, reverse, M, n) {
           Dab <- alpha[aa] + alpha[bb] + alpha0
           qab <- alpha0 / Dab
           deriv0 <- deriv0 + alpha0 *
-                    (-ymat[aa,bb] - ymat[bb,aa] +
-                    tmat[aa,bb]*(1-qab)/qab) / Dab
+                    (-ymat[aa, bb] - ymat[bb,aa] +
+                    tmat[aa, bb] * (1 - qab) / qab) / Dab
           }
         ans <- rbind(ans, w[ii] * c(answer, deriv0))
     }
@@ -1622,11 +1636,11 @@ acat.deriv <- function(zeta, reverse, M, n) {
     wz <- matrix(0, n, dimm(M))   # includes diagonal
     for (ii in 1:nrow(eta)) {
       alpha <- .brat.alpha(eta2theta(eta[ii, -M], "loge",
-                         earg = list(theta = NULL)),
+                           earg = list(theta = NULL)),
                           .refvalue, .refgp)
       alpha0 <- loge(eta[ii, M], inverse = TRUE)
-      ymat <- InverseBrat(y[ii,], NCo = M, diag = 0)
-      tmat <- InverseBrat(ties[ii,], NCo = M, diag = 0)
+      ymat <- InverseBrat(   y[ii, ], NCo = M, diag = 0)
+      tmat <- InverseBrat(ties[ii, ], NCo = M, diag = 0)
 
       for (aa in 1:(NCo)) {
         Daj <- alpha[aa] + alpha[uindex] + alpha0
@@ -1647,7 +1661,7 @@ acat.deriv <- function(zeta, reverse, M, n) {
 
       if (NCo > 2) {
         ind5 <- iam(1, 1, M = NCo, both = TRUE, diag = FALSE)
-        alphajunk <- c(alpha, junk=NA)
+        alphajunk <- c(alpha, junk = NA)
         mat4 <- cbind(uindex[ind5$row],uindex[ind5$col])
         wz[ii,(M+1):ncol(wz)] <- -(ymat[mat4] + ymat[mat4[, 2:1]] +
            tmat[mat4]) * alphajunk[uindex[ind5$col]] *
@@ -1656,9 +1670,9 @@ acat.deriv <- function(zeta, reverse, M, n) {
       }
       for (sss in 1:length(uindex)) {
         jay <- uindex[sss]
-        naj <- ymat[, jay] + ymat[jay,] + tmat[, jay]
+        naj <- ymat[, jay] + ymat[jay, ] + tmat[, jay]
         Daj <- alpha[jay] + alpha + alpha0
-        wz[ii,iam(sss, NCo, M = NCo, diag = TRUE)] = 
+        wz[ii, iam(sss, NCo, M = NCo, diag = TRUE)] <- 
             -alpha[jay] * alpha0 * sum(naj / Daj^2)
       }
     }
@@ -1692,8 +1706,10 @@ acat.deriv <- function(zeta, reverse, M, n) {
 }
 
 
- Brat <- function(mat, ties = 0 * mat, string = c(">", "=="),
-                 whitespace = FALSE) {
+ Brat <- function(mat,
+                  ties = 0 * mat,
+                  string = c(">", "=="),
+                  whitespace = FALSE) {
 
 
   stopifnot(is.logical(whitespace) &&
@@ -1704,7 +1720,7 @@ acat.deriv <- function(zeta, reverse, M, n) {
 
   allargs <- list(mat)  # ,...
   callit <- if (length(names(allargs))) names(allargs) else
-           as.character(1:length(allargs))
+            as.character(1:length(allargs))
   ans <- ans.ties <- NULL
   for (ii in 1:length(allargs)) {
     m <- allargs[[ii]]
@@ -1717,15 +1733,15 @@ acat.deriv <- function(zeta, reverse, M, n) {
     are.ties <- any(ties > 0)
     diag(ties) <- NA
 
-    diag(m) <- 0 # Could have been NAs
+    diag(m) <- 0  # Could have been NAs
     if (any(is.na(m)))
       stop("missing values not allowed (except on the diagonal)")
     diag(m) <- NA
 
     dm <- as.data.frame.table(m)
     dt <- as.data.frame.table(ties)
-    dm <- dm[!is.na(dm$Freq),]
-    dt <- dt[!is.na(dt$Freq),]
+    dm <- dm[!is.na(dm$Freq), ]
+    dt <- dt[!is.na(dt$Freq), ]
     usethis1 <- paste(dm[, 1], string[1], dm[, 2], sep = "")
     usethis2 <- paste(dm[, 1], string[2], dm[, 2], sep = "")
     ans <- rbind(ans, matrix(dm$Freq, nrow = 1))
@@ -1741,11 +1757,13 @@ acat.deriv <- function(zeta, reverse, M, n) {
 
 
 
-InverseBrat <- function(yvec, NCo =
-                (1:900)[(1:900)*((1:900)-1) == ncol(rbind(yvec))],
-                multiplicity = if (is.matrix(yvec)) nrow(yvec) else 1,
-                diag = NA, string = c(">","=="),
-                whitespace = FALSE) {
+InverseBrat <-
+  function(yvec,
+           NCo = (1:900)[(1:900)*((1:900)-1) == ncol(rbind(yvec))],
+           multiplicity = if (is.matrix(yvec)) nrow(yvec) else 1,
+           diag = NA,
+           string = c(">", "=="),
+           whitespace = FALSE) {
 
 
 
@@ -1763,12 +1781,13 @@ InverseBrat <- function(yvec, NCo =
     for (i1 in 1:(NCo))
       for (i2 in 1:(NCo))
         if (i1 != i2) {
-          ans[i2,i1,mul] <- yvec[ptr]
+          ans[i2, i1, mul] <- yvec[ptr]
           ptr <- ptr + 1
         }
   ans <- if (multiplicity > 1) ans else matrix(ans, NCo, NCo)
 
-  if (is.array(yvec.orig) || is.matrix(yvec.orig)) {
+  if (is.array(yvec.orig) ||
+      is.matrix(yvec.orig)) {
     names.yvec <- dimnames(yvec.orig)[[2]]
     ii <- strsplit(names.yvec, string[1])
     cal <- NULL
@@ -1787,8 +1806,7 @@ InverseBrat <- function(yvec, NCo =
 
 
 tapplymat1 <- function(mat,
-                      function.arg = c("cumsum", "diff", "cumprod"))
-{
+                      function.arg = c("cumsum", "diff", "cumprod")) {
 
 
   if (!missing(function.arg))
@@ -1803,8 +1821,9 @@ tapplymat1 <- function(mat,
     mat <- as.matrix(mat)
   NR <- nrow(mat)
   NC <- ncol(mat)
-  fred <- dotC(name = "tapplymat1", mat=as.double(mat),
-               as.integer(NR), as.integer(NC), as.integer(type))
+  fred <- .C("tapplymat1", mat = as.double(mat),
+             as.integer(NR), as.integer(NC), as.integer(type),
+             NAOK = FALSE, DUP = TRUE, PACKAGE = "VGAM")
 
   dim(fred$mat) <- c(NR, NC)
   dimnames(fred$mat) <- dimnames(mat)
@@ -1854,7 +1873,9 @@ tapplymat1 <- function(mat,
   blurb = c(paste("Ordinal Poisson model\n\n"), 
             "Link:     ", namesof("mu", link, earg = earg)),
   constraints = eval(substitute(expression({
-    constraints <- cm.vgam(matrix(1, M, 1), x, .parallel, constraints,
+    constraints <- cm.vgam(matrix(1, M, 1), x = x,
+                           bool = .parallel ,
+                           constraints = constraints,
                            apply.int = TRUE)
     constraints <- cm.zero.vgam(constraints, x, .zero, M)
   }), list( .parallel = parallel, .zero = zero ))),
@@ -2072,14 +2093,18 @@ ordpoissonProbs <- function(extra, mu, deriv = 0) {
               ", ",
               namesof("scale_j", lscale, escale)),
     constraints = eval(substitute(expression({
-        J = M / 2
-        constraints <- cm.vgam(matrix(1,J,1), x, .parallel, constraints,
+        J <- M / 2
+        constraints <- cm.vgam(matrix(1,J,1), x = x,
+                               bool = .parallel ,
+                               constraints = constraints,
                                apply.int = FALSE)
         constraints[["(Intercept)"]] = rbind(constraints[["(Intercept)"]],
             matrix(0, J, ncol(constraints[["(Intercept)"]])))
 
-        cm2 <- cm.vgam(matrix(1,J,1), x, .sparallel, constraints = NULL,
-                       apply.int = FALSE)
+        cm2 <- cm.vgam(matrix(1,J,1), x = x,
+                           bool = .sparallel ,
+                           constraints = NULL,
+                           apply.int = FALSE)
 
         for (ii in 2:length(constraints))
             constraints[[ii]] =
@@ -2585,11 +2610,11 @@ if (!isGeneric("is.zero"))
 
 
 setMethod("is.zero",  "matrix", function(object, ...)
-    is.zero.matrix(object, ...))
+          is.zero.matrix(object, ...))
 
 
 setMethod("is.zero",  "vglm", function(object, ...)
-    is.zero.vglm(object, ...))
+          is.zero.vglm(object, ...))
 
 
 

@@ -146,24 +146,24 @@ tobit(Lower = 0, Upper = Inf, lmu = "identity", lsd = "loge",
 
 
   If there is no censoring then
-  \code{\link{normal1}} is recommended instead. Any value of the
+  \code{\link{uninormal}} is recommended instead. Any value of the
   response less than \code{Lower} or greater than \code{Upper} will
   be assigned the value \code{Lower} and \code{Upper} respectively,
   and a warning will be issued.
   The fitted object has components \code{censoredL} and \code{censoredU}
   in the \code{extra} slot which specifies whether observations
   are censored in that direction.
-  The function \code{\link{cennormal1}} is an alternative
+  The function \code{\link{cennormal}} is an alternative
   to \code{tobit()}.
 
 
 }
 \seealso{
   \code{\link{rtobit}},
-  \code{\link{cennormal1}},
-  \code{\link{normal1}},
-  \code{\link{dcennormal1}},
-  \code{\link{posnormal1}},
+  \code{\link{cennormal}},
+  \code{\link{uninormal}},
+  \code{\link{double.cennormal}},
+  \code{\link{posnormal}},
   \code{\link[stats:Normal]{rnorm}}.
 
 
@@ -173,10 +173,10 @@ tobit(Lower = 0, Upper = Inf, lmu = "identity", lsd = "loge",
 # Here, fit1 is a standard Tobit model and fit2 is a nonstandard Tobit model
 tdata <- data.frame(x2 = seq(-1, 1, length = (nn <- 100)))
 set.seed(1)
-Lower <- 1; Upper = 4 # For the nonstandard Tobit model
+Lower <- 1; Upper <- 4  # For the nonstandard Tobit model
 tdata <- transform(tdata,
-  Lower.vec = rnorm(nn, Lower, 0.5),
-  Upper.vec = rnorm(nn, Upper, 0.5))
+                   Lower.vec = rnorm(nn, Lower, 0.5),
+                   Upper.vec = rnorm(nn, Upper, 0.5))
 meanfun1 <- function(x) 0 + 2*x
 meanfun2 <- function(x) 2 + 2*x
 meanfun3 <- function(x) 2 + 2*x
@@ -192,12 +192,12 @@ with(tdata, table(attr(y2, "cenL")))
 with(tdata, table(attr(y2, "cenU")))
 
 fit1 <- vglm(y1 ~ x2, tobit, tdata, trace = TRUE,
-            crit = "coeff") # crit = "coeff" is recommended
+             crit = "coeff")  # crit = "coeff" is recommended
 coef(fit1, matrix = TRUE)
 summary(fit1)
 
 fit2 <- vglm(y2 ~ x2, tobit(Lower = Lower, Upper = Upper, type.f = "cens"),
-            tdata, crit = "coeff", trace = TRUE) # ditto
+            tdata, crit = "coeff", trace = TRUE)  # ditto
 table(fit2@extra$censoredL)
 table(fit2@extra$censoredU)
 coef(fit2, matrix = TRUE)
@@ -215,10 +215,10 @@ fit4 <- vglm(cbind(y3, y4) ~ x2,
             tobit(Lower = rep(with(tdata, Lower.vec), each = 2),
                   Upper = rep(with(tdata, Upper.vec), each = 2)),
             tdata, crit = "coeff", trace = TRUE) # ditto
-head(fit4@extra$censoredL) # A matrix
-head(fit4@extra$censoredU) # A matrix
-head(fit4@misc$Lower)      # A matrix
-head(fit4@misc$Upper)      # A matrix
+head(fit4@extra$censoredL)  # A matrix
+head(fit4@extra$censoredU)  # A matrix
+head(fit4@misc$Lower)       # A matrix
+head(fit4@misc$Upper)       # A matrix
 coef(fit4, matrix = TRUE)
 }
 
@@ -235,7 +235,7 @@ legend(-1.0, 2.5, c("Truth", "Estimate", "Naive"),
 lines(meanfun1(x2) ~ x2, tdata, col = "purple", lwd = 2)
 lines(fitted(fit1) ~ x2, tdata, col = "orange", lwd = 2, lty = 2)
 lines(fitted(lm(y1 ~ x2, tdata)) ~ x2, tdata, col = "black",
-      lty = 2, lwd = 2) # This is simplest but wrong!
+      lty = 2, lwd = 2)  # This is simplest but wrong!
 
 # Plot fit2
 plot(y2 ~ x2, tdata, las = 1, main = "Tobit model",
@@ -250,7 +250,7 @@ legend(-1.0, 3.5, c("Truth", "Estimate", "Naive"),
 lines(meanfun2(x2) ~ x2, tdata, col = "purple", lwd = 2)
 lines(fitted(fit2) ~ x2, tdata, col = "orange", lwd = 2, lty = 2)
 lines(fitted(lm(y2 ~ x2, tdata)) ~ x2, tdata, col = "black",
-      lty = 2, lwd = 2) # This is simplest but wrong!
+      lty = 2, lwd = 2)  # This is simplest but wrong!
 
 # Plot fit3
 plot(y3 ~ x2, tdata, las = 1,
@@ -266,7 +266,7 @@ legend(-1.0, 3.5, c("Truth", "Estimate", "Naive"),
 lines(meanfun3(x2) ~ x2, tdata, col = "purple", lwd = 2)
 lines(fitted(fit3) ~ x2, tdata, col = "orange", lwd = 2, lty = 2)
 lines(fitted(lm(y3 ~ x2, tdata)) ~ x2, tdata, col = "black",
-      lty = 2, lwd = 2) # This is simplest but wrong!
+      lty = 2, lwd = 2)  # This is simplest but wrong!
 
 # Plot fit4
 plot(y3 ~ x2, tdata, las = 1,
@@ -282,7 +282,7 @@ legend(-1.0, 3.5, c("Truth", "Estimate", "Naive"),
 lines(meanfun3(x2) ~ x2, tdata, col = "purple", lwd = 2)
 lines(fitted(fit4)[, 1] ~ x2, tdata, col = "orange", lwd = 2, lty = 2)
 lines(fitted(lm(y3 ~ x2, tdata)) ~ x2, tdata, col = "black",
-      lty = 2, lwd = 2) # This is simplest but wrong!
+      lty = 2, lwd = 2)  # This is simplest but wrong!
 }
 }
 \keyword{models}

@@ -12,6 +12,8 @@ erf(x)
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{x}{ Numeric. }
+
+
 }
 \details{
   \eqn{Erf(x)} is defined as
@@ -19,17 +21,21 @@ erf(x)
     Erf(x) = (2/sqrt(pi)) int_0^x exp(-t^2) dt}
   so that it is closely related to \code{\link[stats:Normal]{pnorm}}.
 
+
 }
 \value{
   Returns the value of the function evaluated at \code{x}.
 
+
 }
 \references{
+
 
 Abramowitz, M. and Stegun, I. A. (1972)
 \emph{Handbook of Mathematical Functions with Formulas,
   Graphs, and Mathematical Tables},
 New York: Dover Publications Inc.
+
 
 }
 \author{ T. W. Yee}
@@ -38,22 +44,25 @@ New York: Dover Publications Inc.
   definition of \eqn{Erf(x)}. Although defined for complex
   arguments, this function only works for real arguments.
 
+
   The \emph{complementary error function} \eqn{erfc(x)} is defined
   as \eqn{1-erf(x)}, and is implemented by \code{erfc}.
+
 
 }
 
 \seealso{
   \code{\link[stats:Normal]{pnorm}}.
 
+
 }
 
 \examples{
 \dontrun{
-curve(erf,   -3, 3, col="red", ylab="", las=1)
-curve(pnorm, -3, 3, add=TRUE, col="blue", lty="dotted", lwd=2)
-abline(v=0, h=0, lty="dashed")
-legend("topleft", c("erf(x)", "pnorm(x)"), col=c("red", "blue"),
-       lty=c("solid", "dotted"), lwd=1:2) }
+curve(erf,   -3, 3, col = "orange", ylab = "", las = 1)
+curve(pnorm, -3, 3, add = TRUE, col = "blue", lty = "dotted", lwd = 2)
+abline(v = 0, h = 0, lty = "dashed")
+legend("topleft", c("erf(x)", "pnorm(x)"), col = c("orange", "blue"),
+       lty = c("solid", "dotted"), lwd = 1:2) }
 }
 \keyword{math}

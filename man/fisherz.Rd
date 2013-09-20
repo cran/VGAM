@@ -105,9 +105,9 @@ y <- fisherz(theta)
 abline(v = (-1):1, h = 0, lty = 2, col = "gray") }
 
 x <- c(seq(-1.02, -0.98, by = 0.01), seq(0.97, 1.02, by = 0.01))
-fisherz(x) # Has NAs
+fisherz(x)  # Has NAs
 fisherz(x, bminvalue = -1 + .Machine$double.eps,
-           bmaxvalue =  1 - .Machine$double.eps) # Has no NAs
+           bmaxvalue =  1 - .Machine$double.eps)  # Has no NAs
 }
 \keyword{math}
 \keyword{models}

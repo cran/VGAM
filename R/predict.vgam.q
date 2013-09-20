@@ -6,13 +6,14 @@
 
 
 
-predict.vgam <- function(object, newdata = NULL,
-                         type = c("link", "response", "terms"),
-                         se.fit = FALSE, deriv.arg = 0, terms.arg = NULL,
-                         raw = FALSE,
-                         all = TRUE, offset = 0,
-                         untransform = FALSE,
-                         dispersion = NULL, ...) {
+predict.vgam <-
+  function(object, newdata = NULL,
+           type = c("link", "response", "terms"),
+           se.fit = FALSE, deriv.arg = 0, terms.arg = NULL,
+           raw = FALSE,
+           all = TRUE, offset = 0,
+           untransform = FALSE,
+           dispersion = NULL, ...) {
   newdata <- if (missing(newdata)) {
     NULL
   } else {
@@ -52,7 +53,7 @@ predict.vgam <- function(object, newdata = NULL,
          "is assigned")
 
 
-  tt <- terms(object) # 11/8/03; object@terms$terms
+  tt <- terms(object)  # 20030811; object@terms$terms
 
   ttf <- attr(tt, "factors")
   tto <- attr(tt, "order")
@@ -98,12 +99,13 @@ predict.vgam <- function(object, newdata = NULL,
     }
 
     predictor <- predict.vlm(object,
-                     type = "terms",
-                     se.fit = se.fit,
-                     terms.arg = terms.arg,
-                     raw = raw,
-                     all = all, offset = offset, 
-                     dispersion = dispersion, ...) # deriv.arg = deriv.arg,
+                             type = "terms",
+                             se.fit = se.fit,
+                             terms.arg = terms.arg,
+                             raw = raw,
+                             all = all, offset = offset,
+                             dispersion = dispersion,
+                             ...)  # deriv.arg = deriv.arg,
 
     newdata <- model.matrixvlm(object, type = "lm")
 
@@ -114,12 +116,13 @@ predict.vgam <- function(object, newdata = NULL,
 
 
     predictor <- predict.vlm(object, newdata,
-                        type = temp.type,
-                        se.fit = se.fit,
-                        terms.arg = terms.arg,
-                        raw = raw,
-                        all = all, offset = offset, 
-                        dispersion = dispersion, ...) # deriv.arg = deriv.arg,
+                             type = temp.type,
+                             se.fit = se.fit,
+                             terms.arg = terms.arg,
+                             raw = raw,
+                             all = all, offset = offset, 
+                             dispersion = dispersion,
+                             ...)  # deriv.arg = deriv.arg,
   }
 
 
@@ -150,74 +153,71 @@ predict.vgam <- function(object, newdata = NULL,
     if (is.null(tmp6 <- attr(if(se.fit) predictor$fitted.values else
                             predictor, "vterm.assign"))) {
 
-          Blist <- subconstraints(object@misc$orig.assign,
-                                  object@constraints)
-          ncolBlist <- unlist(lapply(Blist, ncol))
-          if (intercept)
-            ncolBlist <- ncolBlist[-1]
+      Blist <- subconstraints(object@misc$orig.assign,
+                              object@constraints)
+      ncolBlist <- unlist(lapply(Blist, ncol))
+      if (intercept)
+        ncolBlist <- ncolBlist[-1]
     
-          cs <- if (raw) cumsum(c(1, ncolBlist)) else
-                         cumsum(c(1, M + 0*ncolBlist))
-          tmp6 <- vector("list", length(ncolBlist))
-          for(ii in 1:length(tmp6))
-            tmp6[[ii]] <- cs[ii]:(cs[ii+1]-1)
-          names(tmp6) <- names(ncolBlist)
+      cs <- if (raw) cumsum(c(1, ncolBlist)) else
+                     cumsum(c(1, M + 0 * ncolBlist))
+      tmp6 <- vector("list", length(ncolBlist))
+      for (ii in 1:length(tmp6))
+        tmp6[[ii]] <- cs[ii]:(cs[ii+1]-1)
+      names(tmp6) <- names(ncolBlist)
     }
 
-    n.s.xargument <- names(s.xargument)   # e.g., c("s(x)", "s(x2)")
-      for(ii in n.s.xargument) {
+    n.s.xargument <- names(s.xargument)  # e.g., c("s(x)", "s(x2)")
+      for (ii in n.s.xargument) {
 
         fred <- s.xargument[ii]
         if (!any(dimnames(newdata)[[2]] == fred))
           fred <- ii
 
-            xx <- newdata[,fred] # [,s.xargument[ii]]   # [,nindex[ii]]   
-            ox <- order(xx)
+        xx <- newdata[, fred]  # [, s.xargument[ii]]  # [, nindex[ii]]
 
-            rawMat <- predictvsmooth.spline.fit(
-                                 object@Bspline[[ii]],
-                                 x = xx,
-                                 deriv = deriv.arg)$y
+        rawMat <- predictvsmooth.spline.fit(object@Bspline[[ii]],
+                                            x = xx,
+                                            deriv = deriv.arg)$y
 
 
-            eta.mat <- if (raw) rawMat else (rawMat %*% t(Blist[[ii]]))
+        eta.mat <- if (raw) rawMat else (rawMat %*% t(Blist[[ii]]))
 
-            if (type == "terms") {
-                hhh <- tmp6[[ii]]
-                if (se.fit) {
-                    predictor$fitted.values[,hhh] <- 
-                    predictor$fitted.values[,hhh] + eta.mat
+        if (type == "terms") {
+          hhh <- tmp6[[ii]]
+          if (se.fit) {
+            predictor$fitted.values[, hhh] <- 
+            predictor$fitted.values[, hhh] + eta.mat
 
-                        TS <- predictor$sigma^2
+            TS <- predictor$sigma^2
 
-                        temp.var <- if (raw) {
-                                        tmp7 <- object@misc$varassign
-                                        tmp7 <- tmp7[[ii]]
-                                        object@var[, tmp7, drop = FALSE]
-                                    } else
-                                   stop("cannot handle se's with raw = FALSE")
+            temp.var <- if (raw) {
+                          tmp7 <- object@misc$varassign
+                          tmp7 <- tmp7[[ii]]
+                          object@var[, tmp7, drop = FALSE]
+                        } else {
+                          stop("cannot handle se's with raw = FALSE")
+                        }
 
-                        predictor$se.fit[,hhh] <- (predictor$se.fit[,hhh]^2 +
-                           TS * temp.var)^0.5
+                        predictor$se.fit[, hhh] <-
+                       (predictor$se.fit[, hhh]^2 + TS * temp.var)^0.5
                 } else {
-                    predictor[,hhh] <- predictor[,hhh] + eta.mat
+                  predictor[, hhh] <- predictor[, hhh] + eta.mat
                 }
         } else {
-            if (se.fit) {
-                predictor$fitted.values <- predictor$fitted.values + eta.mat 
+          if (se.fit) {
+            predictor$fitted.values <- predictor$fitted.values + eta.mat 
 
-                TS <- 1  # out$residual.scale^2
-                TS <- predictor$sigma^2
+            TS <- 1  # out$residual.scale^2
+            TS <- predictor$sigma^2
 
-                TT <- ncol(object@var)
-                predictor$se.fit <- sqrt(predictor$se.fit^2 + TS *
-                                         object@var %*% rep(1, TT))
-
-
-            } else {
-                predictor <- predictor + eta.mat 
-            }
+            TT <- ncol(object@var)
+            predictor$se.fit <- sqrt(predictor$se.fit^2 +
+                                     TS * object@var %*% rep(1, TT))
+          } else {
+            predictor <- predictor + eta.mat 
           }
+        }
       }
   }
 
@@ -233,7 +233,7 @@ predict.vgam <- function(object, newdata = NULL,
                                 predictor, object@extra)
     if (is.matrix(fv) && is.matrix(object@fitted.values))
       dimnames(fv) <- list(dimnames(fv)[[1]],
-                             dimnames(object@fitted.values)[[2]])
+                           dimnames(object@fitted.values)[[2]])
     if (is.matrix(fv) && ncol(fv) == 1)
       fv <- c(fv)
     if (no.newdata && length(na.act)) {
@@ -244,17 +244,19 @@ predict.vgam <- function(object, newdata = NULL,
       }
     }
     if (se.fit) {
-      return(list(fit = fv, se.fit = fv*NA))
+      return(list(fit = fv, se.fit = fv * NA))
     } else {
       return(fv)
     }
   } else {
-    if (deriv.arg >= 1)
+    if (deriv.arg >= 1) {
       if (se.fit) {
         attr(predictor$fitted.values, "constant") <- NULL
       } else {
         attr(predictor, "constant") <- NULL
       }
+    }
+
 
     if (deriv.arg >= 1) {
       v <- attr(if(se.fit) predictor$fitted.values else 
@@ -262,38 +264,38 @@ predict.vgam <- function(object, newdata = NULL,
       is.lin <- is.linear.term(names(v))
         coefmat <- coefvlm(object, matrix.out = TRUE)
         ord <- 0
-        for(ii in names(v)) {
+        for (ii in names(v)) {
           ord <- ord + 1
           index <- v[[ii]]
           lindex <- length(index)
           if (is.lin[ii]) {
-            if (tto[ord] > 1 || (length(ttf) && ttf[ii,ii])) {
-                  if (se.fit) {
-                    predictor$fitted.values[,index] <- 
-                        if (tto[ord]>1) NA else NA
-                  } else {
-                    predictor[,index] <- if (tto[ord]>1) NA else NA
-                  }
+            if (tto[ord] > 1 || (length(ttf) && ttf[ii, ii])) {
+              if (se.fit) {
+                predictor$fitted.values[, index] <-
+                  if (tto[ord] > 1) NA else NA
               } else {
-                ans <- coefmat[ii, 1:lindex]
+                predictor[, index] <- if (tto[ord] > 1) NA else NA
+              }
+            } else {
+              ans <- coefmat[ii, 1:lindex]
                 if (se.fit) {
-                  predictor$fitted.values[,index] =
+                  predictor$fitted.values[, index] <-
                       if (deriv.arg == 1)
-                      matrix(ans, ncol <- lindex, byrow = TRUE) else 0
+                      matrix(ans, ncol = lindex, byrow = TRUE) else 0
                 } else {
-                  predictor[,index] <- if (deriv.arg == 1)
-                      matrix(ans, ncol <- lindex, byrow = TRUE) else 0
+                  predictor[, index] <- if (deriv.arg == 1)
+                      matrix(ans, ncol = lindex, byrow = TRUE) else 0
                 }
             }
           } else
             if (length(s.xargument) && any(n.s.xargument == ii)) {
-                ans <- coefmat[ii, 1:lindex]
+              ans <- coefmat[ii, 1:lindex]
               if (se.fit) {
-                predictor$fitted.values[,index] =
-                predictor$fitted.values[,index] + 
-                     (if(deriv.arg == 1)
+                predictor$fitted.values[, index] <-
+                predictor$fitted.values[, index] + 
+                     (if (deriv.arg == 1)
                       matrix(ans, nrow = nrow(predictor$fitted.values),
-                       ncol = lindex, byrow = TRUE) else 0)
+                             ncol = lindex, byrow = TRUE) else 0)
               } else {
                 predictor[, index] <- predictor[, index] +
                      (if(deriv.arg == 1)
@@ -303,9 +305,9 @@ predict.vgam <- function(object, newdata = NULL,
           } else {
               cat("Derivatives of term ", ii, "are unknown\n")
               if (se.fit) {
-                predictor$fitted.values[,index] <- NA
+                predictor$fitted.values[, index] <- NA
               } else {
-                predictor[,index] <- NA
+                predictor[, index] <- NA
               }
           }
         }
@@ -332,9 +334,9 @@ predict.vgam <- function(object, newdata = NULL,
 }
 
 
-  setMethod("predict", "vgam",
-            function(object, ...)
-            predict.vgam(object, ...))
+setMethod("predict", "vgam",
+          function(object, ...)
+          predict.vgam(object, ...))
 
 
 
@@ -349,7 +351,7 @@ varassign <- function(constraints, n.s.xargument) {
 
   names(ans) <- n.s.xargument
   ptr <- 1
-  for(ii in n.s.xargument) {
+  for (ii in n.s.xargument) {
     temp <- ncolBlist[[ii]]
     ans[[ii]] <- ptr:(ptr + temp - 1)
     ptr <- ptr + temp

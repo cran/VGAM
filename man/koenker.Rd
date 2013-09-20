@@ -6,6 +6,7 @@
   Estimates the location and scale parameters of Koenker's
   distribution by maximum likelihood estimation.
 
+
 }
 \usage{
 koenker(percentile = 50, llocation = "identity", lscale = "loge",
@@ -18,14 +19,17 @@ koenker(percentile = 50, llocation = "identity", lscale = "loge",
   which are the quantiles and expectiles.
   They will be returned as `fitted values'.
 
+
   }
   \item{llocation, lscale}{
   See \code{\link{Links}} for more choices,
   and \code{\link{CommonVGAMffArguments}}.
 
+
   }
   \item{ilocation, iscale, imethod, zero}{ 
   See \code{\link{CommonVGAMffArguments}} for details.
+
 
   }
 }
@@ -34,6 +38,7 @@ koenker(percentile = 50, llocation = "identity", lscale = "loge",
   equal to its expectiles. This is called Koenker's distribution
   here. Its canonical form has mean and mode at 0 and has a heavy
   tail (in fact, its variance is infinite).
+
 
   The standard (``canonical'') form of Koenker's 
   distribution can be endowed with a location and scale parameter.
@@ -71,6 +76,7 @@ koenker(percentile = 50, llocation = "identity", lscale = "loge",
   \code{\link{rrvglm}}
   and \code{\link{vgam}}.
 
+
 }
 \references{ 
 
@@ -78,6 +84,7 @@ Koenker, R. (1993)
 When are expectiles percentiles? (solution)
 \emph{Econometric Theory},
 \bold{9}, 526--527.
+
 
 }
 \author{ T. W. Yee }
@@ -95,10 +102,10 @@ When are expectiles percentiles? (solution)
 set.seed(123); nn <- 1000
 kdata <- data.frame(x2 = sort(runif(nn)))
 kdata <- transform(kdata, mylocat = 1 + 3 * x2,
-                        myscale = 1)
+                          myscale = 1)
 kdata <- transform(kdata, y = rkoenker(nn, loc = mylocat, scale = myscale))
 fit  <- vglm(y ~ x2, koenker(perc = c(1, 50, 99)), kdata, trace = TRUE)
-fit2 <- vglm(y ~ x2, studentt2(df = 2), kdata, trace = TRUE) # 'same' as fit
+fit2 <- vglm(y ~ x2, studentt2(df = 2), kdata, trace = TRUE)  # 'same' as fit
 
 coef(fit, matrix = TRUE)
 head(fitted(fit))
@@ -112,7 +119,7 @@ matplot(with(kdata, x2), fitted(fit), add = TRUE, type = "l", lwd = 3)
 legend("bottomright", lty = 1:3, lwd = 3, legend = colnames(fitted(fit)),
        col = 1:3) }
 
-fit@extra$percentile # Sample quantiles
+fit@extra$percentile  # Sample quantiles
 }
 \keyword{models}
 \keyword{regression}

@@ -22,7 +22,7 @@
   region starting in the mid-1800s to the gold fields of
   South Island of New Zealand,
   California,
-  and Southern Australia, etc.
+  and southern Australia, etc.
   Discrimination then meant that only men were allowed
   entry, to hinder permanent settlement.
   In the case of New Zealand, the government relaxed its
@@ -57,6 +57,8 @@
 \dontrun{ par(mfrow = c(1, 2))
 plot(female / (male + female) ~ year, chinese.nz, type = "b",
      ylab = "Proportion", col = "blue", las = 1,
+     cex = 0.015 * sqrt(male + female),
+#    cex = 0.10 * sqrt((male + female)^1.5 / sqrt(female) / sqrt(male)),
      main = "Proportion of NZ Chinese that are female")
 abline(h = 0.5, lty = "dashed", col = "gray")
 
@@ -64,11 +66,11 @@ fit1.cnz <- vglm(cbind(female, male) ~ year,          binomialff, chinese.nz)
 fit2.cnz <- vglm(cbind(female, male) ~ poly(year, 2), binomialff, chinese.nz)
 fit4.cnz <- vglm(cbind(female, male) ~   bs(year, 5), binomialff, chinese.nz)
 
-lines(fitted(fit1.cnz) ~ year, chinese.nz, col = "purple")
-lines(fitted(fit2.cnz) ~ year, chinese.nz, col = "green")
-lines(fitted(fit4.cnz) ~ year, chinese.nz, col = "orange", lwd = 2)
+lines(fitted(fit1.cnz) ~ year, chinese.nz, col = "purple", lty = 1)
+lines(fitted(fit2.cnz) ~ year, chinese.nz, col = "green", lty = 2)
+lines(fitted(fit4.cnz) ~ year, chinese.nz, col = "orange", lwd = 2, lty = 1)
 legend("bottomright", col = c("purple", "green", "orange"),
-       lty = 1, leg = c("linear", "quadratic", "B-spline"))
+       lty = c(1, 2, 1), leg = c("linear", "quadratic", "B-spline"))
 
 plot(100*(male+female)/nz ~ year, chinese.nz, type = "b", ylab = "Percent",
      ylim = c(0, max(100*(male+female)/nz)), col = "blue", las = 1,

@@ -52,9 +52,9 @@ exponential(link = "loge", location = 0, expected = TRUE,
 }
 \references{
 
-Evans, M., Hastings, N. and Peacock, B. (2000)
+Forbes, C., Evans, M., Hastings, N. and Peacock, B. (2011)
 \emph{Statistical Distributions},
-New York: Wiley-Interscience, Third edition.
+Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
 
 
 }
@@ -78,7 +78,7 @@ New York: Wiley-Interscience, Third edition.
     \code{\link{amlexponential}},
     \code{\link{laplace}},
     \code{\link{expgeometric}},
-    \code{\link{explogarithmic}},
+    \code{\link{explogff}},
     \code{\link{poissonff}},
     \code{\link{mix2exp}},
     \code{\link{freund61}}.

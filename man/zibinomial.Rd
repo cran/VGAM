@@ -1,5 +1,6 @@
 \name{zibinomial}
 \alias{zibinomial}
+\alias{zibinomialff}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Zero-Inflated Binomial Distribution Family Function }
 \description{
@@ -9,11 +10,15 @@
 }
 \usage{
 zibinomial(lpstr0 = "logit", lprob = "logit",
-           ipstr0 = NULL, zero = 1, mv = FALSE, imethod = 1)
+           type.fitted = c("mean", "pobs0", "pstr0", "onempstr0"),
+           ipstr0 = NULL, zero = NULL, mv = FALSE, imethod = 1)
+zibinomialff(lprob = "logit", lonempstr0 = "logit",
+             type.fitted = c("mean", "pobs0", "pstr0", "onempstr0"),
+             ionempstr0 = NULL, zero = 2, mv = FALSE, imethod = 1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{lpstr0, lprob}{ 
+  \item{lpstr0, lprob}{
   Link functions for the parameter \eqn{\phi}{phi}
   and the usual binomial probability \eqn{\mu}{prob} parameter.
   See \code{\link{Links}} for more choices.
@@ -27,12 +32,27 @@ zibinomial(lpstr0 = "logit", lprob = "logit",
 % See \code{earg} in \code{\link{Links}} for general information.
 % }
 
+  \item{type.fitted}{
+  See \code{\link{CommonVGAMffArguments}} and \code{\link{fittedvlm}}.
+
+
+  }
+
   \item{ipstr0}{
   Optional initial values for \eqn{\phi}{phi}, whose values must lie
   between 0 and 1. The default is to compute an initial value internally.
   If a vector then recyling is used.
 
   }
+
+  \item{lonempstr0, ionempstr0}{
+  Corresponding arguments for the other parameterization.
+  See details below.
+
+
+  }
+
+
 % \item{zero}{ 
 % An integer specifying which linear/additive predictor is modelled
 % as intercepts only.  If given, the value must be either 1 or 2,
@@ -50,11 +70,13 @@ zibinomial(lpstr0 = "logit", lprob = "logit",
   }
   \item{zero, imethod}{ 
   See \code{\link{CommonVGAMffArguments}} for information.
+  Argument \code{zero} has changed its default value for version 0.9-2.
+
 
   }
 }
 \details{
-  This function uses Fisher scoring and is based on
+  These functions are based on
   \deqn{P(Y=0) =  \phi + (1-\phi) (1-\mu)^N,}{%
         P(Y=0) =   phi + (1- phi) * (1-prob)^N,}
   for \eqn{y=0}, and 
@@ -66,9 +88,29 @@ zibinomial(lpstr0 = "logit", lprob = "logit",
   The parameter \eqn{\phi}{phi} is the probability of a structural zero,
   and it satisfies \eqn{0 < \phi < 1}{0 < phi < 1}.
   The mean of \eqn{Y} is \eqn{E(Y)=(1-\phi) \mu}{E(Y) = (1-phi) * prob}
-  and these are returned as the fitted values.
+  and these are returned as the fitted values
+  by default.
   By default, the two linear/additive predictors
+  for \code{zibinomial()}
   are \eqn{(logit(\phi), logit(\mu))^T}{(logit(phi), logit(prob))^T}.
+
+
+
+  The \pkg{VGAM} family function \code{zibinomialff()} has a few
+  changes compared to \code{zibinomial()}.
+  These are:
+  (i)   the order of the linear/additive predictors is switched so the
+        binomial probability comes first;
+  (ii)  argument \code{onempstr0} is now 1 minus
+        the probability of a structural zero, i.e.,
+        the probability of the parent (binomial) component,
+        i.e., \code{onempstr0} is \code{1-pstr0};
+  (iii) argument \code{zero} has a new default so that the \code{onempstr0}
+        is intercept-only by default.
+  Now \code{zibinomialff()} is generally recommended over
+  \code{zibinomial()}.
+  Both functions implement Fisher scoring.
+
 
 
 }
@@ -79,9 +121,17 @@ zibinomial(lpstr0 = "logit", lprob = "logit",
 
 
 }
-%\references{
+\references{
 
-%}
+
+Welsh, A. H., Lindenmayer, D. B. and Donnelly, C. F. (2013)
+Fitting and interpreting occupancy models.
+\emph{PLOS One},
+\bold{8},
+1--21.
+
+
+}
 
 \author{ T. W. Yee }
 \note{
@@ -130,7 +180,9 @@ zibinomial(lpstr0 = "logit", lprob = "logit",
 \section{Warning }{
   Numerical problems can occur.
   Half-stepping is not uncommon.
-  If failure to converge occurs, make use of the argument \code{ipstr0}.
+  If failure to converge occurs, make use of the argument \code{ipstr0}
+  or \code{ionempstr0},
+  or \code{imethod}.
 
 
 } 
@@ -146,22 +198,23 @@ zibinomial(lpstr0 = "logit", lprob = "logit",
 \examples{
 size <- 10  # Number of trials; N in the notation above
 nn <- 200
-zibdata <- data.frame(pstr0 = logit( 0, inverse = TRUE), # 0.50
-                      mubin = logit(-1, inverse = TRUE), # Mean of usual binomial
-                      sv    = rep(size, length = nn))
-zibdata <- transform(zibdata, 
-                     y = rzibinom(nn, size = sv, prob = mubin, pstr0 = pstr0))
-with(zibdata, table(y))
-fit <- vglm(cbind(y, sv - y) ~ 1, zibinomial, zibdata, trace = TRUE)
-fit <- vglm(cbind(y, sv - y) ~ 1, zibinomial, zibdata, trace = TRUE, stepsize = 0.5)
+zdata <- data.frame(pstr0 = logit( 0, inverse = TRUE),  # 0.50
+                    mubin = logit(-1, inverse = TRUE),  # Mean of usual binomial
+                    sv    = rep(size, length = nn))
+zdata <- transform(zdata, 
+                   y = rzibinom(nn, size = sv, prob = mubin, pstr0 = pstr0))
+with(zdata, table(y))
+fit <- vglm(cbind(y, sv - y) ~ 1, zibinomialff, zdata, trace = TRUE)
+fit <- vglm(cbind(y, sv - y) ~ 1, zibinomialff, zdata, trace = TRUE, stepsize = 0.5)
 
 coef(fit, matrix = TRUE)
 Coef(fit)  # Useful for intercept-only models
-fit@misc$pobs0  # Estimate of P(Y = 0)
+fitted(fit, type = "pobs0")  # Estimate of P(Y = 0)
 head(fitted(fit))
-with(zibdata, mean(y))  # Compare this with fitted(fit)
+with(zdata, mean(y))  # Compare this with fitted(fit)
 summary(fit)
 }
 \keyword{models}
 \keyword{regression}
 
+% fit@misc$pobs0  # Estimate of P(Y = 0)

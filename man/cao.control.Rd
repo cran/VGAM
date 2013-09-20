@@ -17,8 +17,9 @@ cao.control(Rank = 1, all.knots = FALSE, criterion = "deviance", Cinit = NULL,
             SmallNo = 5.0e-13, Use.Init.Poisson.QO = TRUE,
             Bestof = if (length(Cinit)) 1 else 10, maxitl = 10,
             imethod = 1, bf.epsilon = 1.0e-7, bf.maxit = 10,
-            Maxit.optim = 250, optim.maxit = 20, SD.sitescores = 1.0,
-            SD.Cinit = 0.02, trace = TRUE, df1.nl = 2.5, df2.nl = 2.5,
+            Maxit.optim = 250, optim.maxit = 20, sd.sitescores = 1.0,
+            sd.Cinit = 0.02, suppress.warnings = TRUE,
+            trace = TRUE, df1.nl = 2.5, df2.nl = 2.5,
             spar1 = 0, spar2 = 0, ...)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -30,43 +31,46 @@ cao.control(Rank = 1, all.knots = FALSE, criterion = "deviance", Cinit = NULL,
 
   }
   \item{all.knots}{
-    Logical indicating if all distinct points of the smoothing variables
-    are to be used as knots.  Assigning the value \code{FALSE} means
-    fewer knots are chosen when the number of distinct points is large,
-    meaning less computational expense. See \code{\link{vgam.control}}
-    for details.
+    Logical indicating if all distinct points of the smoothing
+    variables are to be used as knots.  Assigning the value
+    \code{FALSE} means fewer knots are chosen when the number
+    of distinct points is large, meaning less computational
+    expense. See \code{\link{vgam.control}} for details.
 
   }
   \item{criterion}{ 
-    Convergence criterion. Currently, only one is supported: the deviance
-    is minimized.
+    Convergence criterion. Currently, only one is supported:
+    the deviance is minimized.
 
   }
   \item{Cinit}{
-    Optional initial \bold{C} matrix which may speed up convergence.
+    Optional initial \bold{C} matrix which may speed up
+    convergence.
 
   }
   \item{Crow1positive}{ 
-    Logical vector of length \code{Rank} (recycled if necessary): are
-    the elements of the first row of \bold{C} positive?  For example,
-    if \code{Rank} is 4, then specifying \code{Crow1positive = c(FALSE,
-    TRUE)} will force \bold{C[1,1]} and \bold{C[1,3]} to be negative,
-    and \bold{C[1,2]} and \bold{C[1,4]} to be positive.
+    Logical vector of length \code{Rank} (recycled if
+    necessary): are the elements of the first row of \bold{C}
+    positive?  For example, if \code{Rank} is 4, then specifying
+    \code{Crow1positive = c(FALSE, TRUE)} will force \bold{C[1,1]}
+    and \bold{C[1,3]} to be negative, and \bold{C[1,2]} and
+    \bold{C[1,4]} to be positive.
 
   }
     \item{epsilon}{
-    Positive numeric. Used to test for convergence for GLMs fitted in
-    FORTRAN.  Larger values mean a loosening of the convergence criterion.
+    Positive numeric. Used to test for convergence for GLMs
+    fitted in FORTRAN.  Larger values mean a loosening of the
+    convergence criterion.
 
 %   Used only if \code{FastAlgorithm} is \code{TRUE}.
 
     }
   \item{Etamat.colmax}{
-    Positive integer, no smaller than \code{Rank}.  Controls the amount
-    of memory used by \code{.Init.Poisson.QO()}.  It is the maximum
-    number of columns allowed for the pseudo-response and its weights.
-    In general, the larger the value, the better the initial value.
-    Used only if \code{Use.Init.Poisson.QO = TRUE}.
+    Positive integer, no smaller than \code{Rank}.  Controls the
+    amount of memory used by \code{.Init.Poisson.QO()}.  It is the
+    maximum number of columns allowed for the pseudo-response and
+    its weights.  In general, the larger the value, the better the
+    initial value.  Used only if \code{Use.Init.Poisson.QO = TRUE}.
 
   }
 
@@ -80,8 +84,10 @@ cao.control(Rank = 1, all.knots = FALSE, criterion = "deviance", Cinit = NULL,
 \item{GradientFunction}{
   Logical. Whether \code{\link[stats]{optim}}'s argument \code{gr}
   is used or not, i.e., to compute gradient values.  Used only if
-  \code{FastAlgorithm} is \code{TRUE}.  Currently, this argument must
-  be set to \code{FALSE}.
+  \code{FastAlgorithm} is \code{TRUE}.  Currently, this argument
+  must be set to \code{FALSE}.
+
+
 
 }
   \item{iKvector, iShape}{
@@ -105,10 +111,11 @@ cao.control(Rank = 1, all.knots = FALSE, criterion = "deviance", Cinit = NULL,
 %}
 
   \item{noRRR}{
-    Formula giving terms that are \emph{not} to be included in the
-    reduced-rank regression (or formation of the latent variables).
-    The default is to omit the intercept term from the latent variables.
-    Currently, only \code{noRRR = ~ 1} is implemented.
+  Formula giving terms that are \emph{not} to be included in the
+  reduced-rank regression (or formation of the latent variables).
+  The default is to omit the intercept term from the latent
+  variables.  Currently, only \code{noRRR = ~ 1} is implemented.
+
 
   }
   \item{Norrr}{
@@ -131,16 +138,21 @@ cao.control(Rank = 1, all.knots = FALSE, criterion = "deviance", Cinit = NULL,
 % }
 
   \item{SmallNo}{
-   Positive numeric between \code{.Machine$double.eps} and \code{0.0001}.
-   Used to avoid under- or over-flow in the IRLS algorithm.
+   Positive numeric between \code{.Machine$double.eps} and
+   \code{0.0001}.  Used to avoid under- or over-flow in the
+   IRLS algorithm.
+
 
 %  Used only if \code{FastAlgorithm} is \code{TRUE}.
 
+
   }
   \item{Use.Init.Poisson.QO }{
-    Logical. If \code{TRUE} then the function \code{.Init.Poisson.QO} is
-    used to obtain initial values for the canonical coefficients \bold{C}.
-    If \code{FALSE} then random numbers are used instead.
+  Logical. If \code{TRUE} then the function
+  \code{.Init.Poisson.QO} is used to obtain initial values
+  for the canonical coefficients \bold{C}.  If \code{FALSE}
+  then random numbers are used instead.
+
 
   }
 
@@ -153,10 +165,12 @@ cao.control(Rank = 1, all.knots = FALSE, criterion = "deviance", Cinit = NULL,
     The default is only a convenient minimal number and users are urged
     to increase this value.
 
+
   }
   \item{maxitl}{ 
     Positive integer. Maximum number of
     Newton-Raphson/Fisher-scoring/local-scoring iterations allowed.
+
 
   }
   \item{imethod}{
@@ -192,18 +206,24 @@ cao.control(Rank = 1, all.knots = FALSE, criterion = "deviance", Cinit = NULL,
 %   Currently this argument must have the value \code{FALSE}.
 
 % }
-  \item{SD.sitescores}{ 
+  \item{sd.sitescores}{ 
     Numeric. Standard deviation of the
     initial values of the site scores, which are generated from
     a normal distribution.
     Used when \code{Use.Init.Poisson.QO} is \code{FALSE}.
 
+
     }
-  \item{SD.Cinit}{ 
+  \item{sd.Cinit}{ 
     Standard deviation of the initial values for the elements
     of \bold{C}.
     These are normally distributed with mean zero.
     This argument is used only if \code{Use.Init.Poisson.QO = FALSE}.
+
+  }   
+  \item{suppress.warnings}{ 
+    Logical. Suppress warnings?
+ 
 
   }   
   \item{trace}{ 
@@ -306,7 +326,7 @@ par(mfrow = c(2, 3))  # All or most of the curves are unimodal; some are
 plot(ap1, lcol = "blue")  # quite symmetric. Hence a CQO model should be ok
 
 par(mfrow = c(1, 1), las = 1)
-index = 1:ncol(depvar(ap1))  # lvplot is jagged because only 28 sites
+index <- 1:ncol(depvar(ap1))  # lvplot is jagged because only 28 sites
 lvplot(ap1, lcol = index, pcol = index, y = TRUE)
 
 trplot(ap1, label = TRUE, col = index)
@@ -339,6 +359,6 @@ persp(ap1, label = TRUE, col = 1:4)
 %            bf.epsilon = 1.0e-7, bf.maxit = 40,
 %            Maxit.optim = 250, optim.maxit = 20,
 %%           se.fit = FALSE, 
-%            SD.sitescores = 1,
-%            SD.Cinit = 0.02, trace = TRUE,
+%            sd.sitescores = 1,
+%            sd.Cinit = 0.02, trace = TRUE,
 %%            df1.nl = 2.5, spar1 = 0, ...)

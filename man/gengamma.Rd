@@ -18,10 +18,12 @@ gengamma(lscale = "loge", ld = "loge", lk = "loge",
   \eqn{b}, \eqn{d} and \eqn{k}, respectively.
   See \code{\link{Links}} for more choices.
 
+
   }
   \item{iscale, id, ik}{
   Initial value for \eqn{b}, \eqn{d} and \eqn{k}, respectively.
   The defaults mean an initial value is determined internally for each.
+
 
   }
   \item{zero}{
@@ -30,6 +32,7 @@ gengamma(lscale = "loge", ld = "loge", lk = "loge",
   The values must be from the set \{1,2,3\}.
   The default value means none are modelled as intercept-only terms.
   See \code{\link{CommonVGAMffArguments}} for more information.
+
 
   }
 }
@@ -65,6 +68,7 @@ Rayleigh          \eqn{f(y;c\sqrt{2},2,1)}{f(y;c sqrt(2),2,1)} where \eqn{c>0}.
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}},
   and \code{\link{vgam}}.
+
 
 }
 \references{

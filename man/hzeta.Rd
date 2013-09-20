@@ -3,11 +3,12 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Haight's Zeta Family Function }
 \description{
-  Estimating the parameter of Haight's Zeta function.
+  Estimating the parameter of Haight's zeta distribution
+
 
 }
 \usage{
-hzeta(link = "loglog", ialpha = NULL, nsimEIM=100)
+hzeta(link = "loglog", ialpha = NULL, nsimEIM = 100)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -17,15 +18,18 @@ hzeta(link = "loglog", ialpha = NULL, nsimEIM=100)
   Here, a log-log link keeps the parameter greater than one, meaning
   the mean is finite.
 
+
   }
   \item{ialpha}{
   Optional initial value for the (positive) parameter. 
   The default is to obtain an initial value internally. Use this argument
   if the default fails.
 
+
   }
   \item{nsimEIM}{
   See \code{\link{CommonVGAMffArguments}} for more information.
+
 
   }
 }
@@ -44,11 +48,13 @@ hzeta(link = "loglog", ialpha = NULL, nsimEIM=100)
     The mean is infinite if \eqn{\alpha \leq 1}{alpha <= 1}, and
     the variance is infinite if \eqn{\alpha \leq 2}{alpha <= 2}.
 
+
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}}
   and \code{\link{vgam}}.
+
 
 }
 \references{ 
@@ -64,17 +70,19 @@ hzeta(link = "loglog", ialpha = NULL, nsimEIM=100)
 %\note{ 
 %}
 
+
 \seealso{
-    \code{\link{Hzeta}},
-    \code{\link{zeta}},
-    \code{\link{zetaff}},
-    \code{\link{loglog}}.
+  \code{\link{Hzeta}},
+  \code{\link{zeta}},
+  \code{\link{zetaff}},
+  \code{\link{loglog}}.
+
 
 }
 \examples{
 alpha <- exp(exp(-0.1))  # The parameter
 hdata <- data.frame(y = rhzeta(n = 1000, alpha))
-fit <- vglm(y ~ 1, hzeta, hdata, trace = TRUE, crit = "c")
+fit <- vglm(y ~ 1, hzeta, hdata, trace = TRUE, crit = "coef")
 coef(fit, matrix = TRUE)
 Coef(fit)  # Useful for intercept-only models; should be same as alpha
 c(with(hdata, mean(y)), head(fitted(fit), 1))

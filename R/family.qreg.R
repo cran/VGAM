@@ -122,9 +122,9 @@ lms.yjn.control <- function(trace = TRUE, ...)
       eta[, 2] <- eta2theta(eta[, 2], .lmu,     earg = .emu)
       eta[, 3] <- eta2theta(eta[, 3], .lsigma,  earg = .esigma)
       if ( .expectiles ) {
-        explot.lms.bcn(percentiles= .percentiles, eta = eta)
+        explot.lms.bcn(percentiles = .percentiles, eta = eta)
       } else {
-        qtplot.lms.bcn(percentiles= .percentiles, eta = eta)
+        qtplot.lms.bcn(percentiles = .percentiles, eta = eta)
       }
   }, list( .llambda = llambda, .lmu = lmu, .lsigma = lsigma,
            .elambda = elambda, .emu = emu, .esigma = esigma, 
@@ -291,7 +291,7 @@ lms.yjn.control <- function(trace = TRUE, ...)
     eta[, 1] <- eta2theta(eta[, 1], .llambda, earg = .elambda)
     eta[, 2] <- eta2theta(eta[, 2], .lmu,     earg = .emu)
     eta[, 3] <- eta2theta(eta[, 3], .lsigma,  earg = .esigma)
-    qtplot.lms.bcg(percentiles= .percentiles, eta = eta)
+    qtplot.lms.bcg(percentiles = .percentiles, eta = eta)
   }, list( .llambda = llambda, .lmu = lmu, .lsigma = lsigma,
            .elambda = elambda, .emu = emu, .esigma = esigma, 
            .percentiles = percentiles ))),
@@ -380,8 +380,8 @@ lms.yjn.control <- function(trace = TRUE, ...)
 dy.dpsi.yeojohnson <- function(psi, lambda) {
 
     L <- max(length(psi), length(lambda))
-    psi <- rep(psi, length.out = L);
-    lambda <- rep(lambda, length.out = L);
+    if (length(psi)    != L) psi    <- rep(psi,    length.out = L)
+    if (length(lambda) != L) lambda <- rep(lambda, length.out = L)
 
     ifelse(psi > 0, (1 + psi * lambda)^(1/lambda - 1),
                     (1 - (2-lambda) * psi)^((lambda - 1) / (2-lambda)))
@@ -390,8 +390,8 @@ dy.dpsi.yeojohnson <- function(psi, lambda) {
 
 dyj.dy.yeojohnson <- function(y, lambda) {
     L <- max(length(y), length(lambda))
-    y <- rep(y, length.out = L);
-    lambda <- rep(lambda, length.out = L);
+    if (length(y)      != L) y      <- rep(y,      length.out = L)
+    if (length(lambda) != L) lambda <- rep(lambda, length.out = L)
 
     ifelse(y>0, (1 + y)^(lambda - 1), (1 - y)^(1 - lambda))
 }
@@ -413,7 +413,7 @@ dyj.dy.yeojohnson <- function(y, lambda) {
     if (length(y) != L)
       y <- rep(y, length.out = L)
     if (length(lambda) != L)
-      lambda <- rep(lambda, length.out = L) # lambda may be of length 1
+      lambda <- rep(lambda, length.out = L)  # lambda may be of length 1
 
     if (inverse) {
         if (derivative != 0)
@@ -470,10 +470,10 @@ dpsi.dlambda.yjn <- function(psi, lambda, mymu, sigma,
       stop("argument 'smallno' must be a single positive number")
 
     L <- max(length(psi), length(lambda), length(mymu), length(sigma))
-    if (length(psi) != L) psi <- rep(psi, length.out = L)
+    if (length(psi)    != L) psi    <- rep(psi,    length.out = L)
     if (length(lambda) != L) lambda <- rep(lambda, length.out = L)
-    if (length(mymu) != L) mymu <- rep(mymu, length.out = L)
-    if (length(sigma) != L) sigma <- rep(sigma, length.out = L)
+    if (length(mymu)   != L) mymu   <- rep(mymu,   length.out = L)
+    if (length(sigma)  != L) sigma  <- rep(sigma,  length.out = L)
 
     answer <- matrix(as.numeric(NA), L, derivative+1)
     CC <- psi >= 0
@@ -801,7 +801,7 @@ lms.yjn2.control <- function(save.weight = TRUE, ...) {
 
     run.varcov <- 0
     ind1 <- iam(NA, NA, M = M, both = TRUE, diag = TRUE)
-    for(ii in 1:( .nsimEIM )) {
+    for (ii in 1:( .nsimEIM )) {
         psi <- rnorm(n, mymu, sigma)
         ysim <- yeo.johnson(y=psi, lam=lambda, inv = TRUE)
         d1 <- yeo.johnson(ysim, lambda, deriv = 1)
@@ -1068,53 +1068,54 @@ lms.yjn2.control <- function(save.weight = TRUE, ...) {
     LL <- pmin(discontinuity, 0)
     UU <- pmax(discontinuity, 0)
     if (FALSE) {
-        AA <- (UU-LL)/2
-        for(kk in 1:length(gleg.wts)) {
-          temp1 <- AA * gleg.wts[kk] 
-          abscissae <- (UU+LL)/2 + AA * gleg.abs[kk]
-          psi <- mymu + sqrt(2) * sigma * abscissae
-          temp9 <- dpsi.dlambda.yjn(psi, lambda, mymu, sigma,
-                                   derivative = 2)
-          temp9 <- cbind(temp9, exp(-abscissae^2) / (sqrt(pi) * sigma^2))
+      AA <- (UU-LL)/2
+      for (kk in 1:length(gleg.wts)) {
+        temp1 <- AA * gleg.wts[kk] 
+        abscissae <- (UU+LL)/2 + AA * gleg.abs[kk]
+        psi <- mymu + sqrt(2) * sigma * abscissae
+        temp9 <- dpsi.dlambda.yjn(psi, lambda, mymu, sigma,
+                                  derivative = 2)
+        temp9 <- cbind(temp9, exp(-abscissae^2) / (sqrt(pi) * sigma^2))
 
-          wz[,iam(1, 1, M)] <- wz[,iam(1, 1, M)] + temp1 *
+        wz[,iam(1, 1, M)] <- wz[,iam(1, 1, M)] + temp1 *
               gleg.weight.yjn.11(abscissae, lambda, mymu, sigma, temp9)
-          wz[,iam(1, 2, M)] <- wz[,iam(1, 2, M)] + temp1 *
+        wz[,iam(1, 2, M)] <- wz[,iam(1, 2, M)] + temp1 *
               gleg.weight.yjn.12(abscissae, lambda, mymu, sigma, temp9)
-          wz[,iam(1, 3, M)] <- wz[,iam(1, 3, M)] + temp1 *
+        wz[,iam(1, 3, M)] <- wz[,iam(1, 3, M)] + temp1 *
               gleg.weight.yjn.13(abscissae, lambda, mymu, sigma, temp9)
-        }
-        } else {
-        temp9 = dotFortran(name = "yjngintf", as.double(LL),
+      }
+    } else {
+      temp9 <- .Fortran("yjngintf", as.double(LL),
                  as.double(UU),
                  as.double(gleg.abs), as.double(gleg.wts), as.integer(n),
                  as.integer(length(gleg.abs)), as.double(lambda),
-                 as.double(mymu), as.double(sigma), answer=double(3*n),
-                     eps=as.double(1.0e-5))$ans
-            dim(temp9) <- c(3,n)
-            wz[,iam(1, 1, M)] <- temp9[1,]
-            wz[,iam(1, 2, M)] <- temp9[2,]
-            wz[,iam(1, 3, M)] <- temp9[3,]
-        }
+                 as.double(mymu), as.double(sigma), answer = double(3*n),
+                     eps = as.double(1.0e-5),
+                 NAOK = FALSE, DUP = TRUE, PACKAGE = "VGAM")$ans
+      dim(temp9) <- c(3,n)
+      wz[,iam(1, 1, M)] <- temp9[1,]
+      wz[,iam(1, 2, M)] <- temp9[2,]
+      wz[,iam(1, 3, M)] <- temp9[3,]
+    }
 
 
 
-    for(kk in 1:length(sgh.wts)) {
+    for (kk in 1:length(sgh.wts)) {
 
-        abscissae <- sign(-discontinuity) * sgh.abs[kk]
-        psi <- mymu + sqrt(2) * sigma * abscissae   # abscissae = z
-        temp9 <- dpsi.dlambda.yjn(psi, lambda, mymu, sigma,
+      abscissae <- sign(-discontinuity) * sgh.abs[kk]
+      psi <- mymu + sqrt(2) * sigma * abscissae   # abscissae = z
+      temp9 <- dpsi.dlambda.yjn(psi, lambda, mymu, sigma,
                                  derivative = 2)
-        wz[,iam(1, 1, M)] <- wz[,iam(1, 1, M)] + sgh.wts[kk] * 
+      wz[,iam(1, 1, M)] <- wz[,iam(1, 1, M)] + sgh.wts[kk] * 
             gh.weight.yjn.11(abscissae, lambda, mymu, sigma, temp9)
-        wz[,iam(1, 2, M)] <- wz[,iam(1, 2, M)] + sgh.wts[kk] * 
+      wz[,iam(1, 2, M)] <- wz[,iam(1, 2, M)] + sgh.wts[kk] * 
             gh.weight.yjn.12(abscissae, lambda, mymu, sigma, temp9)
-        wz[,iam(1, 3, M)] <- wz[,iam(1, 3, M)] + sgh.wts[kk] * 
+      wz[,iam(1, 3, M)] <- wz[,iam(1, 3, M)] + sgh.wts[kk] * 
             gh.weight.yjn.13(abscissae, lambda, mymu, sigma, temp9)
     }
 
     temp1 <- exp(-discontinuity^2)
-    for(kk in 1:length(glag.wts)) {
+    for (kk in 1:length(glag.wts)) {
       abscissae <- sign(discontinuity) * sqrt(glag.abs[kk]) + discontinuity^2
       psi <- mymu + sqrt(2) * sigma * abscissae
       temp9 <- dpsi.dlambda.yjn(psi, lambda, mymu, sigma, derivative = 2)
@@ -1131,21 +1132,21 @@ lms.yjn2.control <- function(save.weight = TRUE, ...) {
           glag.weight.yjn.13(abscissae, lambda, mymu, sigma, temp9)
     }
 
-    wz[,iam(1, 1, M)] <- wz[,iam(1, 1, M)] * dlambda.deta^2
-    wz[,iam(1, 2, M)] <- wz[,iam(1, 2, M)] * dlambda.deta
-    wz[,iam(1, 3, M)] <- wz[,iam(1, 3, M)] * dsigma.deta * dlambda.deta
+    wz[, iam(1, 1, M)] <- wz[, iam(1, 1, M)] * dlambda.deta^2
+    wz[, iam(1, 2, M)] <- wz[, iam(1, 2, M)] * dlambda.deta
+    wz[, iam(1, 3, M)] <- wz[, iam(1, 3, M)] * dsigma.deta * dlambda.deta
     if ( .diagW && iter <= .iters.diagW) {
-        wz[,iam(1, 2, M)] <- wz[,iam(1, 3, M)] <- 0
+      wz[,iam(1, 2, M)] <- wz[, iam(1, 3, M)] <- 0
     }
-    wz[,iam(2, 3, M)] <- wz[,iam(2, 3, M)] * dsigma.deta
-    wz[,iam(3, 3, M)] <- wz[,iam(3, 3, M)] * dsigma.deta^2
+    wz[, iam(2, 3, M)] <- wz[, iam(2, 3, M)] * dsigma.deta
+    wz[, iam(3, 3, M)] <- wz[, iam(3, 3, M)] * dsigma.deta^2
 
         c(w) * wz
   }), list(.lsigma = lsigma,
            .esigma = esigma, .elambda = elambda,
-           .rule=rule,
-           .diagW=diagW,
-           .iters.diagW=iters.diagW,
+           .rule = rule,
+           .diagW = diagW,
+           .iters.diagW = iters.diagW,
            .llambda = llambda))))
 }
 
@@ -1185,7 +1186,7 @@ amlnormal.deviance <- function(mu, y, w, residuals = FALSE,
   } else {
     all.deviances <- numeric(M)
     myresid <- matrix(y,extra$n,extra$M) - cbind(mu)
-    for(ii in 1:M)
+    for (ii in 1:M)
         all.deviances[ii] <- sum(c(w) * devi[, ii] *
                                  Wr1(myresid[, ii], w=extra$w.aml[ii]))
   }
@@ -1223,7 +1224,9 @@ amlnormal.deviance <- function(mu, y, w, residuals = FALSE,
             "Links:    ",
             namesof("expectile", link = lexpectile, earg = eexpectile)),
   constraints = eval(substitute(expression({
-    constraints <- cm.vgam(matrix(1, M, 1), x, .parallel, constraints)
+    constraints <- cm.vgam(matrix(1, M, 1), x = x,
+                           bool = .parallel ,
+                           constraints = constraints)
   }), list( .parallel = parallel ))),
   deviance = function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
     amlnormal.deviance(mu = mu, y = y, w = w, residuals = residuals,
@@ -1271,7 +1274,7 @@ amlnormal.deviance <- function(mu, y, w, residuals = FALSE,
             .imethod = imethod, .digw = digw, .w.aml = w.aml ))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
     ans <- eta <- as.matrix(eta)
-    for(ii in 1:ncol(eta))
+    for (ii in 1:ncol(eta))
       ans[, ii] <- eta2theta(eta[, ii], .lexpectile, earg = .eexpectile)
     dimnames(ans) <- list(dimnames(eta)[[1]], extra$y.names)
     ans
@@ -1291,7 +1294,7 @@ amlnormal.deviance <- function(mu, y, w, residuals = FALSE,
     misc$multipleResponses <- TRUE
 
 
-    for(ii in 1:M) {
+    for (ii in 1:M) {
         use.w <- if (M > 1 && ncol(cbind(w)) == M) w[, ii] else w
         extra$percentile[ii] <- 100 *
           weighted.mean(myresid[, ii] <= 0, use.w)
@@ -1351,7 +1354,7 @@ amlpoisson.deviance <- function(mu, y, w, residuals = FALSE, eta,
     } else {
         all.deviances <- numeric(M)
         myresid <- matrix(y,extra$n,extra$M) - cbind(mu)
-        for(ii in 1:M) all.deviances[ii] <- 2 * sum(c(w) * devi[, ii] *
+        for (ii in 1:M) all.deviances[ii] <- 2 * sum(c(w) * devi[, ii] *
                                Wr1(myresid[, ii], w=extra$w.aml[ii]))
     }
     if (is.logical(extra$individual) && extra$individual)
@@ -1375,7 +1378,9 @@ amlpoisson.deviance <- function(mu, y, w, residuals = FALSE, eta,
             " asymmetric maximum likelihood estimation\n\n",
             "Link:     ", namesof("expectile", link, earg = earg)),
   constraints = eval(substitute(expression({
-    constraints <- cm.vgam(matrix(1, M, 1), x, .parallel, constraints)
+    constraints <- cm.vgam(matrix(1, M, 1), x = x,
+                           bool = .parallel ,
+                           constraints = constraints)
   }), list( .parallel = parallel ))),
   deviance = function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
     amlpoisson.deviance(mu = mu, y = y, w = w, residuals = residuals,
@@ -1418,7 +1423,7 @@ amlpoisson.deviance <- function(mu, y, w, residuals = FALSE, eta,
             .digw = digw, .w.aml = w.aml ))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
     mu.ans <- eta <- as.matrix(eta)
-    for(ii in 1:ncol(eta))
+    for (ii in 1:ncol(eta))
       mu.ans[, ii] <- eta2theta(eta[, ii], .link , earg = .earg )
     dimnames(mu.ans) <- list(dimnames(eta)[[1]], extra$y.names)
     mu.ans
@@ -1438,7 +1443,7 @@ amlpoisson.deviance <- function(mu, y, w, residuals = FALSE, eta,
     names(misc$earg) <- names(misc$link)
 
     extra$percentile <- numeric(M)
-    for(ii in 1:M)
+    for (ii in 1:M)
       extra$percentile[ii] <- 100 * weighted.mean(myresid[, ii] <= 0, w)
     names(extra$percentile) <- names(misc$link)
 
@@ -1504,7 +1509,7 @@ amlbinomial.deviance <- function(mu, y, w, residuals = FALSE,
     } else {
       all.deviances <- numeric(M)
       myresid <- matrix(y,extra$n,extra$M) - matrix(mu,extra$n,extra$M)
-      for(ii in 1:M) all.deviances[ii] <- sum(c(w) * devi[, ii] *
+      for (ii in 1:M) all.deviances[ii] <- sum(c(w) * devi[, ii] *
                              Wr1(myresid[, ii], w=extra$w.aml[ii]))
     }
     if (is.logical(extra$individual) && extra$individual)
@@ -1529,7 +1534,9 @@ amlbinomial.deviance <- function(mu, y, w, residuals = FALSE,
             "asymmetric maximum likelihood estimation\n\n",
             "Link:     ", namesof("expectile", link, earg = earg)),
   constraints = eval(substitute(expression({
-    constraints <- cm.vgam(matrix(1, M, 1), x, .parallel, constraints)
+    constraints <- cm.vgam(matrix(1, M, 1), x = x,
+                           bool = .parallel ,
+                           constraints = constraints)
   }), list( .parallel = parallel ))),
   deviance = function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
     amlbinomial.deviance(mu = mu, y = y, w = w, residuals = residuals,
@@ -1587,7 +1594,7 @@ amlbinomial.deviance <- function(mu, y, w, residuals = FALSE,
             .digw = digw, .w.aml = w.aml ))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
     mu.ans <- eta <- as.matrix(eta)
-    for(ii in 1:ncol(eta))
+    for (ii in 1:ncol(eta))
       mu.ans[, ii] <- eta2theta(eta[, ii], .link , earg = .earg )
     dimnames(mu.ans) <- list(dimnames(eta)[[1]], extra$y.names)
     mu.ans
@@ -1605,7 +1612,7 @@ amlbinomial.deviance <- function(mu, y, w, residuals = FALSE,
     misc$expected <- TRUE
 
     extra$percentile <- numeric(M)
-    for(ii in 1:M)
+    for (ii in 1:M)
       extra$percentile[ii] <- 100 * weighted.mean(myresid[, ii] <= 0, w)
     names(extra$percentile) <- names(misc$link)
 
@@ -1659,7 +1666,7 @@ amlexponential.deviance <- function(mu, y, w, residuals = FALSE,
   } else {
     all.deviances <- numeric(M)
     myresid <- matrix(y,extra$n,extra$M) - cbind(mu)
-    for(ii in 1:M) all.deviances[ii] = 2 * sum(c(w) *
+    for (ii in 1:M) all.deviances[ii] = 2 * sum(c(w) *
                            (devy[, ii] - devi[, ii]) *
                            Wr1(myresid[, ii], w=extra$w.aml[ii]))
   }
@@ -1696,7 +1703,9 @@ amlexponential.deviance <- function(mu, y, w, residuals = FALSE,
             " asymmetric maximum likelihood estimation\n\n",
             "Link:     ", predictors.names),
   constraints = eval(substitute(expression({
-    constraints <- cm.vgam(matrix(1, M, 1), x, .parallel, constraints)
+    constraints <- cm.vgam(matrix(1, M, 1), x = x,
+                           bool = .parallel ,
+                           constraints = constraints)
   }), list( .parallel = parallel ))),
   deviance = function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
     amlexponential.deviance(mu = mu, y = y, w = w,
@@ -1743,7 +1752,7 @@ amlexponential.deviance <- function(mu, y, w, residuals = FALSE,
             .digw = digw, .w.aml = w.aml ))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
     mu.ans <- eta <- as.matrix(eta)
-    for(ii in 1:ncol(eta))
+    for (ii in 1:ncol(eta))
       mu.ans[, ii] <- eta2theta(eta[, ii], .link , earg = .earg )
     dimnames(mu.ans) <- list(dimnames(eta)[[1]], extra$y.names)
     mu.ans
@@ -1763,7 +1772,7 @@ amlexponential.deviance <- function(mu, y, w, residuals = FALSE,
 
 
     extra$percentile <- numeric(M)
-    for(ii in 1:M)
+    for (ii in 1:M)
       extra$percentile[ii] <- 100 * weighted.mean(myresid[, ii] <= 0, w)
     names(extra$percentile) <- names(misc$link)
 
@@ -1815,12 +1824,13 @@ dalap <- function(x, location = 0, scale = 1, tau = 0.5,
 
 
 
-  NN <- max(length(x), length(location), length(scale), length(kappa))
-  location <- rep(location, length.out = NN);
-  scale <- rep(scale, length.out = NN)
-  kappa <- rep(kappa, length.out = NN);
-  x <- rep(x, length.out = NN)
-  tau <- rep(tau, length.out = NN)
+  NN <- max(length(x), length(location), length(scale), length(kappa),
+            length(tau))
+  if (length(x)        != NN) x        <- rep(x,        length.out = NN)
+  if (length(location) != NN) location <- rep(location, length.out = NN)
+  if (length(scale)    != NN) scale    <- rep(scale,    length.out = NN)
+  if (length(kappa)    != NN) kappa    <- rep(kappa,    length.out = NN)
+  if (length(tau)      != NN) tau      <- rep(tau,      length.out = NN)
 
   logconst <- 0.5 * log(2) - log(scale) + log(kappa) - log1p(kappa^2)
   exponent <- -(sqrt(2) / scale) * abs(x - location) *
@@ -1854,12 +1864,14 @@ ralap <- function(n, location = 0, scale = 1, tau = 0.5,
 
 palap <- function(q, location = 0, scale = 1, tau = 0.5,
                  kappa = sqrt(tau/(1-tau))) {
-  NN <- max(length(q), length(location), length(scale), length(kappa))
-  location <- rep(location, length.out = NN);
-  scale <- rep(scale, length.out = NN)
-  kappa <- rep(kappa, length.out = NN);
-  q <- rep(q, length.out = NN)
-  tau <- rep(tau, length.out = NN);
+
+  NN <- max(length(q), length(location), length(scale), length(kappa),
+            length(tau))
+  if (length(q)        != NN) q        <- rep(q,        length.out = NN)
+  if (length(location) != NN) location <- rep(location, length.out = NN)
+  if (length(scale)    != NN) scale    <- rep(scale,    length.out = NN)
+  if (length(kappa)    != NN) kappa    <- rep(kappa,    length.out = NN)
+  if (length(tau)      != NN) tau      <- rep(tau,      length.out = NN)
 
   exponent <- -(sqrt(2) / scale) * abs(q - location) *
              ifelse(q >= location, kappa, 1/kappa)
@@ -1876,12 +1888,15 @@ palap <- function(q, location = 0, scale = 1, tau = 0.5,
 
 qalap <- function(p, location = 0, scale = 1, tau = 0.5,
                  kappa = sqrt(tau / (1 - tau))) {
-  NN <- max(length(p), length(location), length(scale), length(kappa))
-  location <- rep(location, length.out = NN);
-  scale <- rep(scale, length.out = NN)
-  kappa <- rep(kappa, length.out = NN);
-  p <- rep(p, length.out = NN)
-  tau <- rep(tau, length.out = NN)
+
+  NN <- max(length(p), length(location), length(scale), length(kappa),
+            length(tau))
+  if (length(p)        != NN) p        <- rep(p,        length.out = NN)
+  if (length(location) != NN) location <- rep(location, length.out = NN)
+  if (length(scale)    != NN) scale    <- rep(scale,    length.out = NN)
+  if (length(kappa)    != NN) kappa    <- rep(kappa,    length.out = NN)
+  if (length(tau)      != NN) tau      <- rep(tau,      length.out = NN)
+
 
   ans <- p
   temp5 <- kappa^2 / (1 + kappa^2)
@@ -1931,14 +1946,17 @@ dloglap <- function(x, location.ald = 0, scale.ald = 1, tau = 0.5,
   rm(log)
 
 
+  scale    <- scale.ald
+  location <- location.ald
+  NN <- max(length(x), length(location),
+           length(scale), length(kappa), length(tau))
 
-  NN <- max(length(x), length(location.ald),
-           length(scale.ald), length(kappa))
-  location <- rep(location.ald, length.out = NN);
-  scale <- rep(scale.ald, length.out = NN)
-  kappa <- rep(kappa, length.out = NN);
-  x <- rep(x, length.out = NN)
-  tau <- rep(tau, length.out = NN)
+  if (length(x)        != NN) x        <- rep(x,        length.out = NN)
+  if (length(location) != NN) location <- rep(location, length.out = NN)
+  if (length(scale)    != NN) scale    <- rep(scale,    length.out = NN)
+  if (length(kappa)    != NN) kappa    <- rep(kappa,    length.out = NN)
+  if (length(tau)      != NN) tau      <- rep(tau,      length.out = NN)
+
 
   Alpha <- sqrt(2) * kappa / scale.ald
   Beta  <- sqrt(2) / (scale.ald * kappa)
@@ -1954,15 +1972,18 @@ dloglap <- function(x, location.ald = 0, scale.ald = 1, tau = 0.5,
 }
 
 
+
+
 qloglap <- function(p, location.ald = 0, scale.ald = 1,
                    tau = 0.5, kappa = sqrt(tau/(1-tau))) {
   NN <- max(length(p), length(location.ald), length(scale.ald),
             length(kappa))
+  p        <- rep(p,            length.out = NN)
   location <- rep(location.ald, length.out = NN);
-  scale <- rep(scale.ald, length.out = NN)
-  kappa <- rep(kappa, length.out = NN);
-  p <- rep(p, length.out = NN)
-  tau <- rep(tau, length.out = NN)
+  scale    <- rep(scale.ald,    length.out = NN)
+  kappa    <- rep(kappa,        length.out = NN);
+  tau      <- rep(tau,          length.out = NN)
+
 
   Alpha <- sqrt(2) * kappa / scale.ald
   Beta  <- sqrt(2) / (scale.ald * kappa)
@@ -2397,7 +2418,9 @@ alaplace2.control <- function(maxit = 100, ...) {
 
 
     constraints <- cm.vgam(cbind(locatHmatk, scaleHmatk),
-                           x, .PARALLEL , constraints,
+                           x = x,
+                           bool = .PARALLEL , 
+                           constraints = constraints,
                            apply.int = FALSE)
 
       if (names(constraints)[1] == "(Intercept)") {
@@ -2408,7 +2431,7 @@ alaplace2.control <- function(maxit = 100, ...) {
       dotzero <- .zero
       Musual <- 2
       eval(negzero.expression)
-      constraints <- cm.zero.vgam(constraints, x, z_Index, M)
+      constraints <- cm.zero.vgam(constraints, x, z.Index, M)
 
 
 
@@ -2484,7 +2507,7 @@ alaplace2.control <- function(maxit = 100, ...) {
 
     locat.init <- scale.init <- matrix(0, n, Mdiv2)
     if (!length(etastart)) {
-      for(jay in 1:Mdiv2) {
+      for (jay in 1:Mdiv2) {
         y.use <- if (ncoly > 1) y[, jay] else y
         if ( .imethod == 1) {
           locat.init[, jay] <- weighted.mean(y.use, w[, jay])
@@ -2561,7 +2584,7 @@ alaplace2.control <- function(maxit = 100, ...) {
 
     misc$earg <- vector("list", M)
     misc$Musual <- Musual
-    for(ii in 1:Mdiv2) {
+    for (ii in 1:Mdiv2) {
       misc$earg[[Musual * ii - 1]] <- .elocat
       misc$earg[[Musual * ii    ]] <- .escale
     }
@@ -2577,7 +2600,7 @@ alaplace2.control <- function(maxit = 100, ...) {
 
     extra$percentile <- numeric(Mdiv2)  # length(misc$kappa)
     locat <- as.matrix(locat)
-    for(ii in 1:Mdiv2) {
+    for (ii in 1:Mdiv2) {
       y.use <- if (ncoly > 1) y[, ii] else y
       extra$percentile[ii] <- 100 * weighted.mean(y.use <= locat[, ii],
                                                  w[, ii])
@@ -2745,7 +2768,9 @@ alaplace1.control <- function(maxit = 100, ...) {
     locatHmat1 <- if ( .intparloc ) onemat else diag(M)
     locatHmatk <- if ( .parallelLocation ) onemat else diag(M)
 
-      constraints <- cm.vgam(locatHmatk, x, .parallelLocation, constraints,
+      constraints <- cm.vgam(locatHmatk, x = x,
+                             bool = .parallelLocation, 
+                             constraints = constraints,
                              apply.int = FALSE)
 
       if (names(constraints)[1] == "(Intercept)") {
@@ -2826,7 +2851,7 @@ alaplace1.control <- function(maxit = 100, ...) {
     locat.init <- matrix(0, n, M)
     if (!length(etastart)) {
 
-      for(jay in 1:M) {
+      for (jay in 1:M) {
         y.use <- if (ncoly > 1) y[, jay] else y
         if ( .imethod == 1) {
           locat.init[, jay] <- weighted.mean(y.use, w)
@@ -2883,7 +2908,7 @@ alaplace1.control <- function(maxit = 100, ...) {
 
     misc$earg <- vector("list", M)
     names(misc$earg) <- names(misc$link)
-    for(ii in 1:M) {
+    for (ii in 1:M) {
       misc$earg[[ii]] <- .elocat
     }
 
@@ -2895,7 +2920,7 @@ alaplace1.control <- function(maxit = 100, ...) {
 
     extra$percentile <- numeric(M)
     locat <- as.matrix(locat)
-    for(ii in 1:M) {
+    for (ii in 1:M) {
       y.use <- if (ncoly > 1) y[, ii] else y
       extra$percentile[ii] =
         100 * weighted.mean(y.use <= locat[, ii], w)
@@ -3131,11 +3156,12 @@ alaplace3.control <- function(maxit = 100, ...) {
 
 
 
+
+
 dlaplace <- function(x, location = 0, scale = 1, log = FALSE) {
   if (!is.logical(log.arg <- log) || length(log) != 1)
     stop("bad input for argument 'log'")
   rm(log)
-
 
 
   logdensity <- (-abs(x-location)/scale) - log(2*scale)
@@ -3147,37 +3173,47 @@ plaplace <- function(q, location = 0, scale = 1) {
   if (!is.Numeric(scale, positive = TRUE)) 
     stop("argument 'scale' must be positive")
   zedd <- (q-location) / scale
-  L <- max(length(q), length(location), length(scale))
-  q <- rep(q, length.out = L);
-  location <- rep(location, length.out = L);
-  scale <- rep(scale, length.out = L)
 
-  ifelse(q < location, 0.5*exp(zedd), 1-0.5*exp(-zedd))
+  L <- max(length(q), length(location), length(scale))
+  if (length(q)        != L) q        <- rep(q,        length.out = L)
+  if (length(location) != L) location <- rep(location, length.out = L)
+  if (length(scale)    != L) scale    <- rep(scale,    length.out = L)
+
+  ifelse(q < location, 0.5 * exp(zedd), 1 - 0.5 * exp(-zedd))
 }
 
 
 qlaplace <- function(p, location = 0, scale = 1) {
   if (!is.Numeric(scale, positive = TRUE)) 
     stop("argument 'scale' must be positive")
-  L <- max(length(p), length(location), length(scale))
-  p <- rep(p, length.out = L);
-  location <- rep(location, length.out = L);
-  scale <- rep(scale, length.out = L)
 
-  location - sign(p-0.5) * scale * log(2*ifelse(p < 0.5, p, 1-p))
+  L <- max(length(p), length(location), length(scale))
+  if (length(p)        != L) p        <- rep(p,        length.out = L)
+  if (length(location) != L) location <- rep(location, length.out = L)
+  if (length(scale)    != L) scale    <- rep(scale,    length.out = L)
+
+  location - sign(p-0.5) * scale * log(2 * ifelse(p < 0.5, p, 1-p))
 }
 
 
 rlaplace <- function(n, location = 0, scale = 1) {
-  if (!is.Numeric(n, positive = TRUE,
-                  integer.valued = TRUE, allowable.length = 1))
-    stop("bad input for argument 'n'")
+
+  use.n <- if ((length.n <- length(n)) > 1) length.n else
+           if (!is.Numeric(n, integer.valued = TRUE,
+                           allowable.length = 1, positive = TRUE))
+              stop("bad input for argument 'n'") else n
+
   if (!is.Numeric(scale, positive = TRUE))
     stop("'scale' must be positive")
-  location <- rep(location, length.out = n);
-  scale <- rep(scale, length.out = n)
-  r <- runif(n)
-  location - sign(r-0.5) * scale * log(2 * ifelse(r < 0.5, r, 1-r))
+
+  location <- rep(location, length.out = use.n)
+  scale    <- rep(scale,    length.out = use.n)
+  rrrr     <- runif(use.n)
+
+
+
+  location - sign(rrrr - 0.5) * scale *
+  (log(2) + ifelse(rrrr < 0.5, log(rrrr), log1p(-rrrr)))
 }
 
 
@@ -3441,7 +3477,7 @@ fff.control <- function(save.weight = TRUE, ...) {
   weight = eval(substitute(expression({
     run.varcov <- 0
     ind1 <- iam(NA, NA, M = M, both = TRUE, diag = TRUE)
-    for(ii in 1:( .nsimEIM )) {
+    for (ii in 1:( .nsimEIM )) {
       ysim <- rf(n = n, df1=df1, df2=df2)
       dl.ddf1 <- 0.5*digamma(0.5*(df1+df2)) + 0.5 + 0.5*log(df1/df2) +
                 0.5*log(ysim) - 0.5*digamma(0.5*df1) -
@@ -3628,9 +3664,9 @@ dbenini <- function(x, shape, y0, log = FALSE) {
 
 
   N <- max(length(x), length(shape), length(y0))
-  x <- rep(x, length.out = N);
-  shape <- rep(shape, length.out = N);
-  y0 <- rep(y0, length.out = N); 
+  if (length(x)        != N) x        <- rep(x,        length.out = N)
+  if (length(shape)    != N) shape    <- rep(shape,    length.out = N)
+  if (length(y0)       != N) y0       <- rep(y0,       length.out = N)
 
   logdensity <- rep(log(0), length.out = N)
   xok <- (x > y0)
@@ -3649,9 +3685,9 @@ pbenini <- function(q, shape, y0) {
   if (!is.Numeric(y0, positive = TRUE))
     stop("bad input for argument 'y0'")
   N <- max(length(q), length(shape), length(y0))
-  q <- rep(q, length.out = N);
-  shape <- rep(shape, length.out = N);
-  y0 <- rep(y0, length.out = N); 
+  if (length(q)        != N) q        <- rep(q,        length.out = N)
+  if (length(shape)    != N) shape    <- rep(shape,    length.out = N)
+  if (length(y0)       != N) y0       <- rep(y0,       length.out = N)
 
   ans <- y0 * 0
   ok <- q > y0
@@ -3779,7 +3815,7 @@ rbenini <- function(n, shape, y0) {
 
     misc$earg <- vector("list", M)
     names(misc$earg) <- mynames1
-    for(ii in 1:ncoly) {
+    for (ii in 1:ncoly) {
       misc$earg[[ii]] <- .eshape
     }
 
@@ -3884,6 +3920,9 @@ rpolono <- function(n, meanlog = 0, sdlog = 1) {
 
 
 
+
+
+
 dtriangle <- function(x, theta, lower = 0, upper = 1, log = FALSE) {
   if (!is.logical(log.arg <- log) || length(log) != 1)
     stop("bad input for argument 'log'")
@@ -3891,10 +3930,10 @@ dtriangle <- function(x, theta, lower = 0, upper = 1, log = FALSE) {
 
 
   N <- max(length(x), length(theta), length(lower), length(upper))
-  x <- rep(x, length.out = N);
-  lower <- rep(lower, length.out = N);
-  upper <- rep(upper, length.out = N);
-  theta <- rep(theta, length.out = N)
+  if (length(x)     != N) x     <- rep(x,     length.out = N)
+  if (length(theta) != N) theta <- rep(theta, length.out = N)
+  if (length(lower) != N) lower <- rep(lower, length.out = N)
+  if (length(upper) != N) upper <- rep(upper, length.out = N)
 
   denom1 <- ((upper-lower)*(theta-lower))
   denom2 <- ((upper-lower)*(upper-theta))
@@ -3913,8 +3952,14 @@ dtriangle <- function(x, theta, lower = 0, upper = 1, log = FALSE) {
 
 
 rtriangle <- function(n, theta, lower = 0, upper = 1) {
-  if (!is.Numeric(n, integer.valued = TRUE, allowable.length = 1))
-    stop("bad input for argument 'n'")
+
+
+  use.n <- if ((length.n <- length(n)) > 1) length.n else
+           if (!is.Numeric(n, integer.valued = TRUE,
+                           allowable.length = 1, positive = TRUE))
+              stop("bad input for argument 'n'") else n
+
+
   if (!is.Numeric(theta))
     stop("bad input for argument 'theta'")
   if (!is.Numeric(lower))
@@ -3924,9 +3969,9 @@ rtriangle <- function(n, theta, lower = 0, upper = 1) {
   if (!all(lower < theta & theta < upper))
     stop("lower < theta < upper values are required")
 
-  N <- n
-  lower <- rep(lower, length.out = N);
-  upper <- rep(upper, length.out = N);
+  N <- use.n
+  lower <- rep(lower, length.out = N)
+  upper <- rep(upper, length.out = N)
   theta <- rep(theta, length.out = N)
   t1 <- sqrt(runif(n))
   t2 <- sqrt(runif(n))
@@ -3949,10 +3994,10 @@ qtriangle <- function(p, theta, lower = 0, upper = 1) {
     stop("lower < theta < upper values are required")
 
   N <- max(length(p), length(theta), length(lower), length(upper))
-  p <- rep(p, length.out = N);
-  lower <- rep(lower, length.out = N);
-  upper <- rep(upper, length.out = N);
-  theta <- rep(theta, length.out = N)
+  if (length(p)     != N) p     <- rep(p,     length.out = N)
+  if (length(theta) != N) theta <- rep(theta, length.out = N)
+  if (length(lower) != N) lower <- rep(lower, length.out = N)
+  if (length(upper) != N) upper <- rep(upper, length.out = N)
 
   bad <- (p < 0) | (p > 1)
   if (any(bad))
@@ -3991,10 +4036,11 @@ ptriangle <- function(q, theta, lower = 0, upper = 1) {
     stop("lower < theta < upper values are required")
 
   N <- max(length(q), length(theta), length(lower), length(upper))
-  q <- rep(q, length.out = N);
-  lower <- rep(lower, length.out = N);
-  upper <- rep(upper, length.out = N);
-  theta <- rep(theta, length.out = N)
+  if (length(q)     != N) q     <- rep(q,     length.out = N)
+  if (length(theta) != N) theta <- rep(theta, length.out = N)
+  if (length(lower) != N) lower <- rep(lower, length.out = N)
+  if (length(upper) != N) upper <- rep(upper, length.out = N)
+
   ans <- q * 0
 
   qstar <- (q - lower)^2 / ((upper-lower) * (theta-lower))
@@ -4011,9 +4057,20 @@ ptriangle <- function(q, theta, lower = 0, upper = 1) {
 
 
 
- triangle <- function(lower = 0, upper = 1,
-                      link = elogit(min = lower, max = upper),
-                      itheta = NULL) {
+
+
+ triangle <-
+  function(lower = 0, upper = 1,
+           link = elogit(min = 0, max = 1),
+           itheta = NULL) {
+
+
+
+
+
+
+
+
   if (!is.Numeric(lower))
     stop("bad input for argument 'lower'")
   if (!is.Numeric(upper))
@@ -4025,9 +4082,18 @@ ptriangle <- function(q, theta, lower = 0, upper = 1) {
     stop("bad input for 'itheta'")
 
 
+
+
   link <- as.list(substitute(link))
   earg <- link2list(link)
   link <- attr(earg, "function.name")
+
+
+  if (length(earg$min) && any(earg$min != lower))
+    stop("argument 'lower' does not match the 'link'")
+  if (length(earg$max) && any(earg$max != upper))
+    stop("argument 'upper' does not match the 'link'")
+
 
 
   new("vglmff",
@@ -4044,6 +4110,7 @@ ptriangle <- function(q, theta, lower = 0, upper = 1) {
     w.y.check(w = w, y = y,
               ncol.w.max = 1,
               ncol.y.max = 1)
+
 
 
 
@@ -4070,11 +4137,10 @@ ptriangle <- function(q, theta, lower = 0, upper = 1) {
     Theta <- eta2theta(eta, .link , earg = .earg )
     lower <- extra$lower
     upper <- extra$upper
-    mu <-  ((Theta^3 / 3 - lower * Theta^2 / 2 +
-          lower^3 / 6) / (Theta - lower) + 
-           ((Theta^3 / 3 - upper * Theta^2 / 2 +
-          upper^3 / 6) / (upper - Theta))) * 2  / (upper-lower)
-    mu
+
+    mu1<-  (lower + upper + Theta) / 3
+
+    mu1
   }, list( .link = link, .earg = earg ))),
   last = eval(substitute(expression({
     misc$link <-    c(theta = .link )
@@ -4218,8 +4284,9 @@ loglaplace1.control <- function(maxit = 300, ...) {
             "Links:      ", mystring0, "\n", "\n",
           "Quantiles:  ", mystring1),
   constraints = eval(substitute(expression({
-    constraints <- cm.vgam(matrix(1, M, 1), x, .parallelLocation,
-                           constraints, apply.int = FALSE)
+    constraints <- cm.vgam(matrix(1, M, 1), x = x,
+                           bool = .parallelLocation ,
+                           constraints = constraints, apply.int = FALSE)
     constraints <- cm.zero.vgam(constraints, x, .zero, M)
   }), list( .parallelLocation = parallelLocation,
             .Scale.arg = Scale.arg, .zero = zero ))),
@@ -4333,7 +4400,7 @@ loglaplace1.control <- function(maxit = 300, ...) {
 
     extra$percentile <- numeric(length(misc$kappa))
     locat.y <- as.matrix(locat.y)
-    for(ii in 1:length(misc$kappa))
+    for (ii in 1:length(misc$kappa))
       extra$percentile[ii] <- 100 * weighted.mean(y <= locat.y[, ii], w)
   }), list( .elocat = elocat, .llocat = llocat,
             .Scale.arg = Scale.arg, .fittedMean = fittedMean,
@@ -4490,7 +4557,9 @@ loglaplace2.control <- function(save.weight = TRUE, ...) {
                   matrix(1, M/2, 1) else diag(M/2)
       mycmatrix <- cbind(rbind(  parelHmat, 0*parelHmat),
                         rbind(0*scaleHmat,   scaleHmat))
-      constraints <- cm.vgam(mycmatrix, x, .PARALLEL, constraints,
+      constraints <- cm.vgam(mycmatrix, x = x,
+                             bool = .PARALLEL ,
+                             constraints = constraints,
                              apply.int = FALSE)
       constraints <- cm.zero.vgam(constraints, x, .ZERO, M)
 
@@ -4607,7 +4676,7 @@ loglaplace2.control <- function(save.weight = TRUE, ...) {
     misc$rep0 <- .rep0
         extra$percentile <- numeric(length(misc$kappa))
         locat <- as.matrix(locat.y)
-        for(ii in 1:length(misc$kappa))
+        for (ii in 1:length(misc$kappa))
           extra$percentile[ii] <- 100 *
                                  weighted.mean(y <= locat.y[, ii], w)
   }), list( .elocat = elocat, .llocat = llocat,
@@ -4665,7 +4734,7 @@ loglaplace2.control <- function(save.weight = TRUE, ...) {
     ind1 <- iam(NA, NA, M = M, both = TRUE, diag = TRUE)
     dthetas.detas <- cbind(dlocat.deta, dscale.deta)
     if (length( .nsimEIM )) {
-        for(ii in 1:( .nsimEIM )) {
+        for (ii in 1:( .nsimEIM )) {
             wsim <- matrix(rloglap(n*M/2, loc = c(locat.w),
                                   sca = c(Scale.w),
                                   kappa = c(kappamat)), n, M/2)
@@ -4794,8 +4863,9 @@ adjust01.logitlaplace1 <- function(ymat, y, w, rep01) {
             "Links:      ", mystring0, "\n", "\n",
           "Quantiles:  ", mystring1),
   constraints = eval(substitute(expression({
-    constraints <- cm.vgam(matrix(1, M, 1), x, .parallelLocation,
-                           constraints, apply.int = FALSE)
+    constraints <- cm.vgam(matrix(1, M, 1), x = x,
+                           bool = .parallelLocation ,
+                           constraints = constraints, apply.int = FALSE)
     constraints <- cm.zero.vgam(constraints, x, .zero, M)
   }), list( .parallelLocation = parallelLocation,
             .Scale.arg = Scale.arg, .zero = zero ))),
@@ -4900,7 +4970,7 @@ adjust01.logitlaplace1 <- function(ymat, y, w, rep01) {
     extra$percentile <- numeric(length(misc$kappa))
     locat.y <- eta2theta(eta, .llocat , earg = .elocat )
     locat.y <- as.matrix(locat.y)
-    for(ii in 1:length(misc$kappa))
+    for (ii in 1:length(misc$kappa))
       extra$percentile[ii] <- 100 *
                              weighted.mean(y <= locat.y[, ii], w)
 

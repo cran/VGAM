@@ -54,12 +54,14 @@ expgeometric(lscale = "loge", lshape = "logit",
   The object is used by modelling functions such as \code{\link{vglm}}
   and \code{\link{vgam}}.
 
+
 }
 \references{
   Adamidis, K., Loukas, S. (1998).
   A lifetime distribution with decreasing failure rate.
   \emph{Statistics and Probability Letters},
   \bold{39}, 35--42.
+
 
 }
 \author{ J. G. Lauder and T. W. Yee }
@@ -79,9 +81,9 @@ expgeometric(lscale = "loge", lshape = "logit",
 }
 \examples{
 \dontrun{
-scale = exp(2); shape = logit(-1, inverse = TRUE);
-edata = data.frame(y = rexpgeom(n = 2000, scale = scale, shape = shape))
-fit = vglm(y ~ 1, expgeometric, edata, trace = TRUE)
+scale <- exp(2); shape = logit(-1, inverse = TRUE);
+edata <- data.frame(y = rexpgeom(n = 2000, scale = scale, shape = shape))
+fit <- vglm(y ~ 1, expgeometric, edata, trace = TRUE)
 c(with(edata, mean(y)), head(fitted(fit), 1))
 coef(fit, matrix = TRUE)
 Coef(fit)

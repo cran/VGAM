@@ -92,9 +92,9 @@ cauchy1(scale.arg = 1, llocation = "identity",
 
 \references{ 
 
-Evans, M., Hastings, N. and Peacock, B. (2000)
+Forbes, C., Evans, M., Hastings, N. and Peacock, B. (2011)
 \emph{Statistical Distributions},
-New York: Wiley-Interscience, Third edition.
+Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
 
 
 Barnett, V. D. (1966)

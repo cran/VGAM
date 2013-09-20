@@ -163,8 +163,9 @@ cp1 <- calibrate(p1, new = data.frame(depvar(p1)[siteNos, ]), trace = TRUE)
 # Graphically compare the actual site scores with their calibrated values
 persp(p1, main = "Site scores: solid=actual, dashed=calibrated",
       label = TRUE, col = "blue", las = 1)
-abline(v = lv(p1)[siteNos], lty = 1, col = 1:length(siteNos)) # actual site scores
-abline(v = cp1, lty = 2, col = 1:length(siteNos)) # calibrated values
+# Actual site scores:
+abline(v = latvar(p1)[siteNos], lty = 1, col = 1:length(siteNos))
+abline(v = cp1, lty = 2, col = 1:length(siteNos)) # Calibrated values
 }
 }
 \keyword{models}

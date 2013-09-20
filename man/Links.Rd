@@ -157,8 +157,8 @@ TypicalVGAMlinkFunction(theta, someParameter = 0,
 
   For positive parameters (i.e., greater than 0):
   \code{\link{loge}},
-  \code{\link{nloge}},
-  \code{\link{powl}}.
+  \code{\link{negloge}},
+  \code{\link{powerlink}}.
 
 
   For parameters greater than 1:
@@ -177,9 +177,9 @@ TypicalVGAMlinkFunction(theta, someParameter = 0,
 
   For unrestricted parameters (i.e., any value):
   \code{\link{identity}},
-  \code{\link{nidentity}},
+  \code{\link{negidentity}},
   \code{\link{reciprocal}},
-  \code{\link{nreciprocal}}.
+  \code{\link{negreciprocal}}.
 
 
 % Other links:
@@ -188,6 +188,8 @@ TypicalVGAMlinkFunction(theta, someParameter = 0,
 \references{
     McCullagh, P. and Nelder, J. A. (1989)
     \emph{Generalized Linear Models}, 2nd ed. London: Chapman & Hall.
+
+
 }
 
 \seealso{
@@ -247,32 +249,26 @@ TypicalVGAMlinkFunction(theta, someParameter = 0,
 
 
 
-
-
-
-
-
-
 }
 \examples{
 logit("a")
 logit("a", short = FALSE)
 logit("a", short = FALSE, tag = TRUE)
 
-logoff(1:5, offset = 1) # Same as log(1:5 + 1)
-powl(1:5, power = 2) # Same as (1:5)^2
+logoff(1:5, offset = 1)  # Same as log(1:5 + 1)
+powerlink(1:5, power = 2)  # Same as (1:5)^2
 
 \dontrun{ # This is old and no longer works:
 logoff(1:5, earg = list(offset = 1))
-powl(1:5, earg = list(power = 2))
+powerlink(1:5, earg = list(power = 2))
 }
 
-fit1 <- vgam(agaaus ~ altitude, binomialff(link = "cloglog"), hunua) # ok
-fit2 <- vgam(agaaus ~ altitude, binomialff(link = "cloglog"), hunua) # ok
+fit1 <- vgam(agaaus ~ altitude, binomialff(link = "cloglog"), hunua)  # okay
+fit2 <- vgam(agaaus ~ altitude, binomialff(link = "cloglog"), hunua)  # okay
 
 \dontrun{
 # This no longer works since "clog" is not a valid VGAM link function:
-fit3 <- vgam(agaaus ~ altitude, binomialff(link = "clog"), hunua) # not ok
+fit3 <- vgam(agaaus ~ altitude, binomialff(link = "clog"), hunua)  # not okay
 
 
 # No matter what the link, the estimated var-cov matrix is the same
@@ -283,10 +279,10 @@ fit2 <- vglm(y ~ 1, beta.ab(lshape1 = logoff(offset = 1.1),
                             lshape2 = logoff(offset = 1.1)),
             trace = TRUE, crit = "coef")
 vcov(fit1, untransform = TRUE)
-vcov(fit1, untransform = TRUE) - vcov(fit2, untransform = TRUE) # Should be all 0s
+vcov(fit1, untransform = TRUE) - vcov(fit2, untransform = TRUE)  # Should be all 0s
 \dontrun{ # This is old:
-fit1@misc$earg # Some 'special' parameters
-fit2@misc$earg # Some 'special' parameters are here
+fit1@misc$earg  # Some 'special' parameters
+fit2@misc$earg  # Some 'special' parameters are here
 }
 
 
@@ -295,8 +291,8 @@ p <- seq(0.01, 0.99, len = 200)
 x <- seq(-4, 4, len = 200)
 plot(p, logit(p), type = "l", col = "blue")
 plot(x, logit(x, inverse = TRUE), type = "l", col = "blue")
-plot(p, logit(p, deriv = 1), type = "l", col = "blue") # reciprocal!
-plot(p, logit(p, deriv = 2), type = "l", col = "blue") # reciprocal!
+plot(p, logit(p, deriv = 1), type = "l", col = "blue")  # reciprocal!
+plot(p, logit(p, deriv = 2), type = "l", col = "blue")  # reciprocal!
 }
 }
 \keyword{models}

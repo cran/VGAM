@@ -21,11 +21,13 @@ lgamma3ff(llocation = "identity", lscale = "loge", lshape = "loge",
   and the positive scale parameter \eqn{b}.
   See \code{\link{Links}} for more choices.
 
+
   }
   \item{link, lshape}{
   Parameter link function applied to 
   the positive shape parameter \eqn{k}. 
   See \code{\link{Links}} for more choices.
+
 
   }
   \item{init.k, ishape}{
@@ -34,9 +36,11 @@ lgamma3ff(llocation = "identity", lscale = "loge", lshape = "loge",
   If failure to converge occurs, try some other value.
   The default means an initial value is determined internally.
 
+
   }
   \item{ilocation, iscale}{ Initial value for \eqn{a} and \eqn{b}.
   The defaults mean an initial value is determined internally for each.
+
 
   }
   \item{zero}{
@@ -45,6 +49,7 @@ lgamma3ff(llocation = "identity", lscale = "loge", lshape = "loge",
   The values must be from the set \{1,2,3\}.
   The default value means none are modelled as intercept-only terms.
   See \code{\link{CommonVGAMffArguments}} for more information.
+
 
   }
 }
@@ -75,8 +80,10 @@ lgamma3ff(llocation = "identity", lscale = "loge", lshape = "loge",
   The object is used by modelling functions such as \code{\link{vglm}},
   and \code{\link{vgam}}.
 
+
 }
 \references{
+
 Kotz, S. and Nadarajah, S. (2000)
 \emph{Extreme Value Distributions: Theory and Applications},
 pages 48--49,
@@ -93,10 +100,10 @@ New York: Wiley.
 
 \author{ T. W. Yee }
 \note{ 
-  The standard log-gamma distribution can be viewed as a generalization
-  of the standard type 1 extreme value density: when \eqn{k = 1}
-  the distribution of \eqn{-Y} is the standard type 1 extreme value
-  distribution.
+  The standard log-gamma distribution can be viewed as a
+  generalization of the standard type 1 extreme value density:
+  when \eqn{k = 1} the distribution of \eqn{-Y} is the standard
+  type 1 extreme value distribution.
 
 
   The standard log-gamma distribution is fitted with \code{lgammaff}
@@ -112,6 +119,7 @@ New York: Wiley.
   \code{\link{gamma1}},
   \code{\link[base:Special]{lgamma}}.
 
+
 }
 \examples{
 ldata <- data.frame(y = rlgamma(100, k = exp(1)))
@@ -120,7 +128,7 @@ summary(fit)
 coef(fit, matrix = TRUE)
 Coef(fit)
 
-ldata <- data.frame(x = runif(nn <- 5000))     # Another example
+ldata <- data.frame(x = runif(nn <- 5000))  # Another example
 ldata <- transform(ldata, loc = -1 + 2 * x, Scale = exp(1))
 ldata <- transform(ldata, y = rlgamma(nn, loc, scale = Scale, k = exp(0)))
 fit2 <- vglm(y ~ x, lgamma3ff(zero = 2:3), ldata, trace = TRUE, crit = "c")

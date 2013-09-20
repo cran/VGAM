@@ -241,7 +241,7 @@ ymat <- rdiric(n <- 1000, shape = rep(exp(2), len = 4))
 mydat <- data.frame(x1 = runif(n), x2 = runif(n), x3 = runif(n), x4 = runif(n),
                     z1 = runif(n), z2 = runif(n), z3 = runif(n), z4 = runif(n))
 mydat <- transform(mydat, X = x1, Z = z1)
-mydat <- round(mydat, dig = 2)
+mydat <- round(mydat, digits = 2)
 fit2 <- vglm(ymat ~ X + Z,
              dirichlet(parallel = TRUE), data = mydat, trace = TRUE,
              xij = list(Z ~ z1 + z2 + z3 + z4,
@@ -266,10 +266,10 @@ plotvgam(fit2, xlab = "z1") # Correct
 set.seed(123)
 coalminers <- transform(coalminers,
                         Age = (age - 42) / 5,
-                        dum1 = round(runif(nrow(coalminers)), dig = 2),
-                        dum2 = round(runif(nrow(coalminers)), dig = 2),
-                        dum3 = round(runif(nrow(coalminers)), dig = 2),
-                        dumm = round(runif(nrow(coalminers)), dig = 2))
+                        dum1 = round(runif(nrow(coalminers)), digits = 2),
+                        dum2 = round(runif(nrow(coalminers)), digits = 2),
+                        dum3 = round(runif(nrow(coalminers)), digits = 2),
+                        dumm = round(runif(nrow(coalminers)), digits = 2))
 BS <- function(x, ..., df = 3) bs(c(x,...), df = df)[1:length(x),,drop = FALSE]
 NS <- function(x, ..., df = 3) ns(c(x,...), df = df)[1:length(x),,drop = FALSE]
 

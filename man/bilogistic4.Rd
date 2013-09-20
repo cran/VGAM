@@ -19,28 +19,38 @@ bilogistic4(llocation = "identity", lscale = "loge",
   \eqn{l_1}{l1} and \eqn{l_2}{l2}.
   See \code{\link{Links}} for more choices.
 
+
   }
   \item{lscale}{
   Parameter link function applied to both
   (positive) scale parameters \eqn{s_1}{s1} and \eqn{s_2}{s2}.
   See \code{\link{Links}} for more choices. 
 
+
   }
   \item{iloc1, iloc2}{ Initial values for the location parameters.
     By default, initial values are chosen internally using
     \code{imethod}. Assigning values here will override
-    the argument \code{imethod}. }
+    the argument \code{imethod}.
+
+  }
   \item{iscale1, iscale2}{ Initial values for the scale parameters.
     By default, initial values are chosen internally using
     \code{imethod}. Assigning values here will override
-    the argument \code{imethod}. }
+    the argument \code{imethod}.
+
+  }
   \item{imethod}{ An integer with value \code{1} or \code{2} which
     specifies the initialization method. If failure to converge occurs
-    try the other value. }
+    try the other value.
+
+  }
   \item{zero}{ An integer-valued vector specifying which
   linear/additive predictors are modelled as intercepts only.
   The default is none of them.
   If used, choose values from the set \{1,2,3,4\}.
+
+
   }
 }
 \details{

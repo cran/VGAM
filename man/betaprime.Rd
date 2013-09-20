@@ -16,11 +16,13 @@ betaprime(link = "loge", i1 = 2, i2 = NULL, zero = NULL)
   Parameter link function applied to the two (positive) shape parameters.
   See \code{\link{Links}} for more choices.
 
+
   }
   \item{i1, i2}{
   Initial values for the first and second shape parameters.
   A \code{NULL} value means it is obtained in the \code{initialize} slot.
   Note that \code{i2} is obtained using \code{i1}.
+
 
   }
   \item{zero}{
@@ -30,6 +32,7 @@ betaprime(link = "loge", i1 = 2, i2 = NULL, zero = NULL)
   respectively.  If \code{zero=NULL} then both parameters are modelled
   with the explanatory variables.
 
+
   }
 }
 
@@ -37,14 +40,13 @@ betaprime(link = "loge", i1 = 2, i2 = NULL, zero = NULL)
 
 \details{
   The beta-prime distribution is given by
-  \deqn{f(y) = y^{shape1-1} (1+y)^{-shape1-shape2} /
-  B(shape1,shape2)}{%
-  f(y) = y^(shape1-1) * (1+y)^(-shape1-shape2) /
-  B(shape1,shape2) }
+  \deqn{f(y) = y^{shape1-1}   (1+y)^{-shape1-shape2} / B(shape1,shape2)}{%
+        f(y) = y^(shape1-1) * (1+y)^(-shape1-shape2) / B(shape1,shape2) }
   for \eqn{y > 0}.
   The shape parameters are positive, and
   here, \eqn{B} is the beta function.
-  The mean of \eqn{Y} is \eqn{shape1 / (shape2-1)} provided \eqn{shape2>1}.
+  The mean of \eqn{Y} is \eqn{shape1 / (shape2-1)} provided \eqn{shape2>1};
+  these are returned as the fitted values.
 
 
   If \eqn{Y} has a \eqn{Beta(shape1,shape2)} distribution then
@@ -96,7 +98,8 @@ contains further information and examples.
 }
 
 \seealso{ 
-  \code{\link{betaff}}.
+  \code{\link{betaff}},
+  \code{\link[stats]{Beta}}.
 
 
 }
@@ -104,22 +107,23 @@ contains further information and examples.
 nn <- 1000
 bdata <- data.frame(shape1 = exp(1), shape2 = exp(3))
 bdata <- transform(bdata, yb = rbeta(nn, shape1, shape2))
-bdata <- transform(bdata, y1 = (1-yb)/yb, y2 = yb/(1-yb),
-                             y3 = rgamma(nn, exp(3)) / rgamma(nn, exp(2)))
+bdata <- transform(bdata, y1 = (1-yb) /    yb,
+                          y2 =    yb  / (1-yb),
+                          y3 = rgamma(nn, exp(3)) / rgamma(nn, exp(2)))
 
-fit1 <- vglm(y1 ~ 1, betaprime, bdata, trace = TRUE)
+fit1 <- vglm(y1 ~ 1, betaprime, data = bdata, trace = TRUE)
 coef(fit1, matrix = TRUE)
 
-fit2 <- vglm(y2 ~ 1, betaprime, bdata, trace = TRUE)
+fit2 <- vglm(y2 ~ 1, betaprime, data = bdata, trace = TRUE)
 coef(fit2, matrix = TRUE)
 
-fit3 <- vglm(y3 ~ 1, betaprime, bdata, trace = TRUE)
+fit3 <- vglm(y3 ~ 1, betaprime, data = bdata, trace = TRUE)
 coef(fit3, matrix = TRUE)
 
 # Compare the fitted values
 with(bdata, mean(y3))
 head(fitted(fit3))
-Coef(fit3) # Useful for intercept-only models
+Coef(fit3)  # Useful for intercept-only models
 }
 \keyword{models}
 \keyword{regression}

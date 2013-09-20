@@ -108,15 +108,6 @@ posnegbinomial(lmunb = "loge", lsize = "loge",
   179--188.
 
 
-  Fisher, R. A., Corbet, A. S. and Williams, C. B. (1943)
-  The Relation Between the Number of Species and
-  the Number of Individuals in a Random Sample of an Animal
-  Population,
-  \emph{Journal of Animal Ecology},
-  \bold{12},
-  42--58.
-
-
   Williamson, E. and Bretherton, M. H. (1964)
   Tables of the logarithmic series distribution.
   \emph{Annals of Mathematical Statistics},
@@ -139,7 +130,9 @@ posnegbinomial(lmunb = "loge", lsize = "loge",
   \code{\link{zanegbinomial}},
 % \code{\link[MASS]{rnegbin}}.
   \code{\link[stats:NegBinomial]{rnbinom}},
-  \code{\link{CommonVGAMffArguments}}.
+  \code{\link{CommonVGAMffArguments}},
+  \code{\link{corbet}},
+  \code{\link{logff}}.
 
 
 }
@@ -167,18 +160,16 @@ head(predict(fit), 3)
 
 
 # Example: Corbet (1943) butterfly Malaya data
-corbet <- data.frame(nindiv = 1:24,
-                     ofreq = c(118, 74, 44, 24, 29, 22, 20, 19, 20, 15, 12,
-                               14, 6, 12, 6, 9, 9, 6, 10, 10, 11, 5, 3, 3))
-fit <- vglm(nindiv ~ 1, posnegbinomial, weights = ofreq, data = corbet)
+fit <- vglm(ofreq ~ 1, posnegbinomial, weights = species, data = corbet)
 coef(fit, matrix = TRUE)
 Coef(fit)
 (khat <- Coef(fit)["size"])
-pdf2 <- dposnegbin(x = with(corbet, nindiv), mu = fitted(fit), size = khat)
-print( with(corbet, cbind(nindiv, ofreq, fitted = pdf2*sum(ofreq))), dig = 1)
+pdf2 <- dposnegbin(x = with(corbet, ofreq), mu = fitted(fit), size = khat)
+print( with(corbet, cbind(ofreq, species, fitted = pdf2*sum(species))), digits = 1)
 with(corbet,
-matplot(nindiv, cbind(ofreq, fitted = pdf2*sum(ofreq)), las = 1,
-        type = "b", ylab = "Frequency", col = c("blue", "orange"),
+matplot(ofreq, cbind(species, fitted = pdf2*sum(species)), las = 1,
+        xlab = "Observed frequency (of individual butterflies)",
+        type = "b", ylab = "Number of species", col = c("blue", "orange"),
         main = "blue 1s = observe; orange 2s = fitted"))
 }
 }
@@ -186,4 +177,7 @@ matplot(nindiv, cbind(ofreq, fitted = pdf2*sum(ofreq)), las = 1,
 \keyword{regression}
 
 
-% bigN = with(corbet, sum(ofreq))
+% bigN = with(corbet, sum(species))
+
+
+

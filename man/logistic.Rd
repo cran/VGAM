@@ -8,6 +8,7 @@
   Estimates the location and scale parameters of the logistic
   distribution by maximum likelihood estimation.
 
+
 }
 \usage{
 logistic1(llocation = "identity", scale.arg = 1, imethod = 1)
@@ -22,17 +23,21 @@ logistic2(llocation = "identity", lscale = "loge",
   See \code{\link{Links}} for more choices, and
   \code{\link{CommonVGAMffArguments}} for more information.
 
+
   }
   \item{scale.arg}{
   Known positive scale parameter (called \eqn{s} below).
+
 
   }
   \item{ilocation, iscale}{
   See \code{\link{CommonVGAMffArguments}} for more information.
 
+
   }
   \item{imethod, zero}{
   See \code{\link{CommonVGAMffArguments}} for more information.
+
 
   }
 }
@@ -77,14 +82,15 @@ logistic2(llocation = "identity", lscale = "loge",
 
 }
 \references{ 
+
 Johnson, N. L. and Kotz, S. and Balakrishnan, N. (1994)
 \emph{Continuous Univariate Distributions},
 2nd edition, Volume 1, New York: Wiley.  Chapter 15.
 
 
-Evans, M., Hastings, N. and Peacock, B. (2000)
+Forbes, C., Evans, M., Hastings, N. and Peacock, B. (2011)
 \emph{Statistical Distributions},
-New York: Wiley-Interscience, Third edition.
+Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
 
 
 Castillo, E., Hadi, A. S., Balakrishnan, N. Sarabia, J. S. (2005)
@@ -104,6 +110,7 @@ A note on Deriving the Information Matrix for a Logistic Distribution,
 \note{
   Fisher scoring is used, and the Fisher information matrix is diagonal.
 
+
 }
 %\section{Warning }{
 %}
@@ -114,16 +121,17 @@ A note on Deriving the Information Matrix for a Logistic Distribution,
   \code{\link{cumulative}},
   \code{\link{bilogistic4}}.
 
+
 }
 \examples{
 # Location unknown, scale known
 ldata <- data.frame(x2 = runif(nn <- 500))
-ldata <- transform(ldata, y1 = rlogis(nn, loc = 1+5*x2, scale = exp(2)))
+ldata <- transform(ldata, y1 = rlogis(nn, loc = 1 + 5*x2, scale = exp(2)))
 fit1 <- vglm(y1 ~ x2, logistic1(scale = 4), ldata, trace = TRUE, crit = "c")
 coef(fit1, matrix = TRUE)
 
 # Both location and scale unknown
-ldata <- transform(ldata, y2 = rlogis(nn, loc = 1+5*x2, scale = exp(0+1*x2)))
+ldata <- transform(ldata, y2 = rlogis(nn, loc = 1 + 5*x2, scale = exp(0 + 1*x2)))
 fit2 <- vglm(cbind(y1, y2) ~ x2, logistic2, ldata, trace = TRUE)
 coef(fit2, matrix = TRUE)
 vcov(fit2)

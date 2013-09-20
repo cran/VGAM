@@ -224,7 +224,7 @@ vsmooth.spline <-
 
     dim1U <- dim2wz # 10/1/00; was M * (M+1) / 2
 
-    collaps <- dotC(name = "vsuff9",
+    collaps <- .C("vsuff9",
       as.integer(n_lm), as.integer(neff), as.integer(ooo),
       as.double(xvector), as.double(ymat), as.double(wzmat),
       xbar = double(neff), ybar = double(neff * M),
@@ -233,7 +233,8 @@ vsmooth.spline <-
       as.integer(M), dim2wz = as.integer(dim2wz), dim1U = as.integer(dim1U),
       blist = as.double(diag(M)), ncolb = as.integer(M),
       trivc = as.integer(1), wuwzbar = as.integer(0),
-      dim1Uwzbar = as.integer(dim1U), dim2wzbar = as.integer(dim2wz))
+      dim1Uwzbar = as.integer(dim1U), dim2wzbar = as.integer(dim2wz),
+      NAOK = FALSE, DUP = TRUE, PACKAGE = "VGAM")
 
     if (collaps$okint != 1) {
       stop("some non-positive-definite weight matrices ",
@@ -326,10 +327,11 @@ vsmooth.spline <-
     if (!chosen) {
       nknots <- 0
     }
-      knot.list <- dotC(name = "vknootl2", as.double(xbar),
-                        as.integer(neff), knot = double(neff+6),
-                        k = as.integer(nknots+4),
-                        chosen = as.integer(chosen))
+      knot.list <- .C("vknootl2", as.double(xbar),
+                      as.integer(neff), knot = double(neff+6),
+                      k = as.integer(nknots+4),
+                      chosen = as.integer(chosen),
+                      NAOK = FALSE, DUP = TRUE, PACKAGE = "VGAM")
     if (noround) {
       knot <- valid.vknotl2(knot.list$knot[1:(knot.list$k)])
       knot.list$k <- length(knot)
@@ -354,7 +356,7 @@ vsmooth.spline <-
    ooo <- 1:neff # Already sorted
 
 
-  collaps <- dotC(name = "vsuff9",
+  collaps <- .C("vsuff9",
       as.integer(neff), as.integer(neff), as.integer(ooo),
       as.double(collaps$xbar), as.double(resmat), as.double(collaps$wzbar),
       xbar = double(neff), ybar = double(neff * ncb),
@@ -363,7 +365,8 @@ vsmooth.spline <-
       as.integer(M), as.integer(dim2wz), as.integer(dim1U),
       blist = as.double(conmat), ncolb = as.integer(ncb),
       as.integer(trivc), wuwzbar = as.integer(0),
-      as.integer(dim1Uwzbar), as.integer(dim2wzbar))
+      as.integer(dim1Uwzbar), as.integer(dim2wzbar),
+      NAOK = FALSE, DUP = TRUE, PACKAGE = "VGAM")
 
   if (collaps$okint != 1) {
    stop("some non-positive-definite weight matrices ",
@@ -376,7 +379,7 @@ vsmooth.spline <-
 
   ldk <- 3 * ncb + 1     # 10/7/02; Previously 4 * ncb
   varmat <- if (var.arg) matrix(0, neff, ncb) else double(1)
-  vsplin <- dotC(name = "Yee_spline",
+  vsplin <- .C("Yee_spline",
      xs = as.double(xbar),  as.double(collaps$wzybar),
          as.double(collaps$wzbar), xknot = as.double(knot),
      n = as.integer(neff), nknots = as.integer(nknots), as.integer(ldk),
@@ -395,7 +398,8 @@ vsmooth.spline <-
      double(1), as.integer(0),
 
      icontrsp = as.integer(contr.sp$maxit),
-      contrsp = as.double(unlist(contr.sp[1:4])))
+      contrsp = as.double(unlist(contr.sp[1:4])),
+     NAOK = FALSE, DUP = TRUE, PACKAGE = "VGAM")
 
   if (vsplin$ierror != 0) {
     stop("vsplin$ierror == ", vsplin$ierror,
@@ -585,10 +589,11 @@ predictvsmooth.spline.fit <- function(object, x, deriv = 0) {
   ncb <- ncol(object@Bcoefficients)
   y <- matrix(as.numeric(NA), length(xs), ncb)
   if (ngood <- sum(good)) {
-    junk <- dotC(name = "Yee_vbvs", as.integer(ngood),
+    junk <- .C("Yee_vbvs", as.integer(ngood),
           as.double(object@knots), as.double(object@Bcoefficients),
           as.double(xs[good]), smomat = double(ngood * ncb),
-          as.integer(nknots), as.integer(deriv), as.integer(ncb))
+          as.integer(nknots), as.integer(deriv), as.integer(ncb),
+          NAOK = FALSE, DUP = TRUE, PACKAGE = "VGAM")
     y[good,] <- junk$smomat
 
     if (TRUE && deriv > 1) {
@@ -628,9 +633,10 @@ predictvsmooth.spline.fit <- function(object, x, deriv = 0) {
 
 valid.vknotl2 <- function(knot, tol = 1/1024) {
 
-  junk <- dotC(name = "Yee_pknootl2", knot = as.double(knot),
-               as.integer(length(knot)),
-               keep = integer(length(knot)), as.double(tol))
+  junk <- .C("Yee_pknootl2", knot = as.double(knot),
+             as.integer(length(knot)),
+             keep = integer(length(knot)), as.double(tol),
+             NAOK = FALSE, DUP = TRUE, PACKAGE = "VGAM")
   keep <- as.logical(junk$keep)
   knot <- junk$knot[keep]
   if (length(knot) <= 11) {

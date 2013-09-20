@@ -114,11 +114,13 @@ freund61(la = "loge",  lap = "loge",  lb = "loge", lbp = "loge",
   and the initial values correspond to the MLEs of an intercept model.
   Consequently, convergence may take only one iteration.
 
+
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}}
   and \code{\link{vgam}}.
+
 
 }
 
@@ -162,6 +164,7 @@ A bivariate extension of the exponential distribution.
               [alpha' * beta' - alpha * beta]/
               [alpha' * beta' * (alpha + beta)^2]. }
 
+
 }
 %\section{Warning}{
 %}
@@ -172,22 +175,23 @@ A bivariate extension of the exponential distribution.
 
 }
 \examples{
-fdata <- data.frame(y1 = rexp(nn <- 200, rate = 4))
-fdata <- transform(fdata, y2 = rexp(nn, rate = 8))
-fit <-  vglm(cbind(y1, y2) ~ 1, fam = freund61, fdata, trace = TRUE)
-coef(fit, matrix = TRUE)
-Coef(fit)
-vcov(fit)
-head(fitted(fit))
-summary(fit)
+fdata <- data.frame(y1 = rexp(nn <- 1000, rate = exp(1)))
+fdata <- transform(fdata, y2 = rexp(nn, rate = exp(2)))
+fit1 <- vglm(cbind(y1, y2) ~ 1, fam = freund61, fdata, trace = TRUE)
+coef(fit1, matrix = TRUE)
+Coef(fit1)
+vcov(fit1)
+head(fitted(fit1))
+summary(fit1)
 
 # y1 and y2 are independent, so fit an independence model
-fit2 <- vglm(cbind(y1, y2) ~ 1, fam = freund61(indep = TRUE),
-             fdata, trace = TRUE)
+fit2 <- vglm(cbind(y1, y2) ~ 1, freund61(indep = TRUE),
+             data = fdata, trace = TRUE)
 coef(fit2, matrix = TRUE)
 constraints(fit2)
-pchisq(2 * (logLik(fit)-logLik(fit2)),  # p-value
-       df = df.residual(fit2) - df.residual(fit), lower.tail = FALSE)
+pchisq(2 * (logLik(fit1) - logLik(fit2)),  # p-value
+       df = df.residual(fit2) - df.residual(fit1), lower.tail = FALSE)
+lrtest(fit1, fit2)  # Better alternative
 }
 \keyword{models}
 \keyword{regression}

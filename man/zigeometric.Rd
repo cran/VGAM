@@ -1,5 +1,6 @@
 \name{zigeometric}
 \alias{zigeometric}
+\alias{zigeometricff}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Zero-Inflated Geometric Distribution Family Function }
 \description{
@@ -8,17 +9,24 @@
 
 }
 \usage{
-zigeometric(lprob = "logit", lpstr0  = "logit",
-            iprob = NULL, ipstr0  = NULL,
-            imethod = 1, bias.red = 0.5, zero = 2)
+zigeometric(lpstr0  = "logit", lprob = "logit",
+            type.fitted = c("mean", "pobs0", "pstr0", "onempstr0"),
+            ipstr0  = NULL, iprob = NULL,
+            imethod = 1, bias.red = 0.5, zero = NULL)
+zigeometricff(lprob = "logit", lonempstr0 = "logit",
+              type.fitted = c("mean", "pobs0", "pstr0", "onempstr0"),
+              iprob = NULL, ionempstr0 = NULL,
+              imethod = 1, bias.red = 0.5, zero = -2)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{lprob, lpstr0}{ 
-  Link functions for the parameters \eqn{p}{prob} (\code{prob})
-  and \eqn{\phi}{phi}.
-  The usual geometric probability parameter is the former.
-  The probability of a structural zero is the latter.
+  \item{lpstr0, lprob}{ 
+  Link functions for the parameters
+  \eqn{\phi}{phi}
+  and
+  \eqn{p}{prob} (\code{prob}).
+  The usual geometric probability parameter is the latter.
+  The probability of a structural zero is the former.
   See \code{\link{Links}} for more choices.
   For the zero-\emph{deflated} model see below.
 
@@ -29,22 +37,39 @@ zigeometric(lprob = "logit", lpstr0  = "logit",
 % See \code{earg} in \code{\link{Links}} for general information.
 % }
 
+
+  \item{lonempstr0, ionempstr0}{
+  Corresponding arguments for the other parameterization.
+  See details below.
+
+
+  }
+
   \item{bias.red}{
   A constant used in the initialization process of \code{pstr0}.
   It should lie between 0 and 1, with 1 having no effect.
 
+
   }
-  \item{iprob, ipstr0}{
+  \item{type.fitted}{
+  See \code{\link{CommonVGAMffArguments}}
+  and \code{\link{fittedvlm}} for information.
+
+
+  }
+  \item{ipstr0, iprob}{
   See \code{\link{CommonVGAMffArguments}} for information.
+
 
   }
   \item{zero, imethod}{ 
   See \code{\link{CommonVGAMffArguments}} for information.
 
+
   }
 }
 \details{
-  This function uses Fisher scoring and is based on
+  Function \code{zigeometric()} is based on
   \deqn{P(Y=0) =  \phi + (1-\phi) p,}{%
         P(Y=0) =  phi + (1-phi) * prob,}
   for \eqn{y=0}, and 
@@ -53,15 +78,34 @@ zigeometric(lprob = "logit", lpstr0  = "logit",
   for \eqn{y=1,2,\ldots}.
   The parameter \eqn{\phi}{phi} satisfies \eqn{0 < \phi < 1}{0 <
   phi < 1}.  The mean of \eqn{Y} is \eqn{E(Y)=(1-\phi) p / (1-p)}{E(Y)
-  = (1-phi) * prob / (1-prob)} and these are returned as the fitted values.
-  By default, the two linear/additive predictors are \eqn{(logit(p),
-  logit(\phi))^T}{(logit(prob), logit(phi))^T}.
+  = (1-phi) * prob / (1-prob)} and these are returned as the fitted values
+  by default.
+  By default, the two linear/additive predictors
+  are \eqn{(logit(\phi), logit(p))^T}{(logit(phi), logit(prob))^T}.
   Multiple responses are handled.
 
 
 % 20130316:
   Estimated probabilities of a structural zero and an
-  observed zero are returned as in \code{\link{zipoisson}}.
+  observed zero can be returned, as in \code{\link{zipoisson}};
+  see \code{\link{fittedvlm}} for information.
+
+
+  The \pkg{VGAM} family function \code{zigeometricff()} has a few
+  changes compared to \code{zigeometric()}.
+  These are:
+  (i)   the order of the linear/additive predictors is switched so the
+        geometric probability comes first;
+  (ii)  argument \code{onempstr0} is now 1 minus
+        the probability of a structural zero, i.e.,
+        the probability of the parent (geometric) component,
+        i.e., \code{onempstr0} is \code{1-pstr0};
+  (iii) argument \code{zero} has a new default so that the \code{onempstr0}
+        is intercept-only  by default.
+  Now \code{zigeometricff()} is generally recommended over
+  \code{zigeometric()}.
+  Both functions implement Fisher scoring and can handle
+  multiple responses.
 
 
 }
@@ -124,10 +168,11 @@ with(gdata, table(y2))
 with(gdata, table(y3))
 head(gdata)
 
-fit1 <- vglm(y1 ~ x2 + x3 + x4, zigeometric, gdata, trace = TRUE)
+fit1 <- vglm(y1 ~ x2 + x3 + x4, zigeometric(zero = 1), data = gdata, trace = TRUE)
 coef(fit1, matrix = TRUE)
+head(fitted(fit1, type = "pstr0"))
 
-fit2 <- vglm(cbind(y2, y3) ~ 1, zigeometric, gdata, trace = TRUE)
+fit2 <- vglm(cbind(y2, y3) ~ 1, zigeometric(zero = 1), data = gdata, trace = TRUE)
 coef(fit2, matrix = TRUE)
 summary(fit2)
 }

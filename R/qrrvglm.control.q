@@ -3,7 +3,8 @@
 # All rights reserved.
 
 
-qrrvglm.control = function(Rank = 1,
+
+qrrvglm.control <- function(Rank = 1,
           Bestof = if (length(Cinit)) 1 else 10,
           checkwz = TRUE,
           Cinit = NULL,
@@ -14,7 +15,8 @@ qrrvglm.control = function(Rank = 1,
           FastAlgorithm = TRUE,
           GradientFunction = TRUE,
           Hstep = 0.001,
-          isdlv = rep(c(2, 1, rep(0.5, length = Rank)), length = Rank),
+          isd.latvar = rep(c(2, 1, rep(0.5, length = Rank)),
+                           length = Rank),
           iKvector = 0.1,
           iShape = 0.1,
           ITolerances = FALSE,
@@ -26,7 +28,7 @@ qrrvglm.control = function(Rank = 1,
           Norrr = NA,
           optim.maxit = 20,
           Parscale = if (ITolerances) 0.001 else 1.0,
-          SD.Cinit = 0.02,
+          sd.Cinit = 0.02,
           SmallNo = 5.0e-13,
           trace = TRUE,
           Use.Init.Poisson.QO = TRUE,
@@ -50,13 +52,13 @@ qrrvglm.control = function(Rank = 1,
       stop("bad input for 'iShape'")
     if (!is.Numeric(iKvector, positive = TRUE))
       stop("bad input for 'iKvector'")
-    if (!is.Numeric(isdlv, positive = TRUE))
-      stop("bad input for 'isdlv'")
-    if (any(isdlv < 0.2 |
-            isdlv > 10))
-        stop("isdlv values must lie between 0.2 and 10")
-    if (length(isdlv) > 1 && any(diff(isdlv) > 0))
-        stop("successive isdlv values must not increase")
+    if (!is.Numeric(isd.latvar, positive = TRUE))
+      stop("bad input for 'isd.latvar'")
+    if (any(isd.latvar < 0.2 |
+            isd.latvar > 10))
+        stop("isd.latvar values must lie between 0.2 and 10")
+    if (length(isd.latvar) > 1 && any(diff(isd.latvar) > 0))
+        stop("successive isd.latvar values must not increase")
     if (!is.Numeric(epsilon, positive = TRUE,
                     allowable.length = 1)) 
         stop("bad input for 'epsilon'")
@@ -85,9 +87,9 @@ qrrvglm.control = function(Rank = 1,
     if (!is.Numeric(Rank, positive = TRUE,
                     allowable.length = 1, integer.valued = TRUE)) 
         stop("bad input for 'Rank'")
-    if (!is.Numeric(SD.Cinit, positive = TRUE,
+    if (!is.Numeric(sd.Cinit, positive = TRUE,
                     allowable.length = 1)) 
-        stop("bad input for 'SD.Cinit'")
+        stop("bad input for 'sd.Cinit'")
     if (ITolerances && !EqualTolerances)
         stop("'EqualTolerances' must be TRUE if 'ITolerances' is TRUE")
     if (!is.Numeric(Bestof, positive = TRUE,
@@ -126,7 +128,7 @@ qrrvglm.control = function(Rank = 1,
            FastAlgorithm = FastAlgorithm,
            GradientFunction = GradientFunction,
            Hstep = Hstep,
-           isdlv = rep(isdlv, len = Rank),
+           isd.latvar = rep(isd.latvar, len = Rank),
            iKvector = as.numeric(iKvector),
            iShape = as.numeric(iShape),
            ITolerances = ITolerances,
@@ -142,13 +144,15 @@ qrrvglm.control = function(Rank = 1,
            Quadratic = TRUE,
            Rank = Rank,
            save.weight = FALSE,
-           SD.Cinit = SD.Cinit,
+           sd.Cinit = sd.Cinit,
            SmallNo = SmallNo,
            szero = NULL,
-           Svd.arg = TRUE, Alpha = 0.5, Uncorrelated.lv = TRUE,
+           Svd.arg = TRUE, Alpha = 0.5, Uncorrelated.latvar = TRUE,
            trace = trace,
            Use.Init.Poisson.QO = as.logical(Use.Init.Poisson.QO)[1],
            wzepsilon = wzepsilon)
     ans
 }
+
+
 

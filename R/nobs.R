@@ -19,7 +19,7 @@ nobs.vlm <- function(object, type = c("lm", "vlm"), ...) {
   if (type == "lm") {
     object@misc$n
   } else {
-    object@misc$nrow_X_vlm
+    object@misc$nrow.X.vlm
   }
 }
 
@@ -56,7 +56,7 @@ nvar.vlm <- function(object, type = c("vlm", "lm"), ...) {
   if (type == "lm") {
     object@misc$p
   } else {
-    object@misc$ncol_X_vlm
+    object@misc$ncol.X.vlm
   }
 }
 
@@ -74,7 +74,7 @@ nvar.vgam <- function(object, type = c("vgam", "zz"), ...) {
   if (type == "vgam") {
     object@misc$p
   } else {
-    object@misc$ncol_X_vlm
+    object@misc$ncol.X.vlm
   }
 }
 
@@ -91,7 +91,7 @@ nvar.rrvglm <- function(object, type = c("rrvglm", "zz"), ...) {
   if (type == "vgam") {
     object@misc$p
   } else {
-    object@misc$ncol_X_vlm
+    object@misc$ncol.X.vlm
   }
 }
 
@@ -109,7 +109,7 @@ nvar.qrrvglm <- function(object, type = c("qrrvglm", "zz"), ...) {
   if (type == "qrrvglm") {
     object@misc$p
   } else {
-    object@misc$ncol_X_vlm
+    object@misc$ncol.X.vlm
   }
 }
 
@@ -127,7 +127,7 @@ nvar.cao <- function(object, type = c("cao", "zz"), ...) {
   if (type == "cao") {
     object@misc$p
   } else {
-    object@misc$ncol_X_vlm
+    object@misc$ncol.X.vlm
   }
 }
 
@@ -145,7 +145,7 @@ nvar.rcim <- function(object, type = c("rcim", "zz"), ...) {
   if (type == "rcim") {
     object@misc$p
   } else {
-    object@misc$ncol_X_vlm
+    object@misc$ncol.X.vlm
   }
 }
 

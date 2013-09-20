@@ -6,6 +6,7 @@
   Estimates the two parameters of the exponentiated exponential
   distribution by maximizing a profile (concentrated) likelihood.
 
+
 }
 \usage{
 expexp1(lscale = "loge", iscale = NULL, ishape = 1)
@@ -16,15 +17,18 @@ expexp1(lscale = "loge", iscale = NULL, ishape = 1)
   Parameter link function for the (positive) \eqn{\lambda}{scale} parameter.
   See \code{\link{Links}} for more choices.
 
+
   }
   \item{iscale}{
   Initial value for the \eqn{\lambda}{scale} parameter.
   By default, an initial value is chosen internally using \code{ishape}.
 
+
   }
   \item{ishape}{
   Initial value for the \eqn{\alpha}{shape} parameter. If convergence
   fails try setting a different value for this argument.
+
 
   }
 }
@@ -102,10 +106,10 @@ bbearings <- data.frame(y = c(17.88, 28.92, 33.00, 41.52, 42.12, 45.60,
 68.88, 84.12, 93.12, 98.64, 105.12, 105.84, 127.92,
 128.04, 173.40))
 fit <- vglm(y ~ 1, expexp1(ishape = 4), bbearings, trace = TRUE,
-           maxit = 50, checkwz = FALSE)
+            maxit = 50, checkwz = FALSE)
 coef(fit, matrix = TRUE)
-Coef(fit) # Authors get c(0.0314, 5.2589) with log-lik -112.9763
-fit@misc$shape    # Estimate of shape
+Coef(fit)  # Authors get c(0.0314, 5.2589) with log-lik -112.9763
+fit@misc$shape  # Estimate of shape
 logLik(fit)
 
 
@@ -114,10 +118,10 @@ acplane <- data.frame(y = c(23, 261, 87, 7, 120, 14, 62, 47,
 225, 71, 246, 21, 42, 20, 5, 12, 120, 11, 3, 14,
 71, 11, 14, 11, 16, 90, 1, 16, 52, 95))
 fit <- vglm(y ~ 1, expexp1(ishape = 0.8), acplane, trace = TRUE,
-           maxit = 50, checkwz = FALSE)
+            maxit = 50, checkwz = FALSE)
 coef(fit, matrix = TRUE)
-Coef(fit) # Authors get c(0.0145, 0.8130) with log-lik -152.264
-fit@misc$shape # Estimate of shape
+Coef(fit)  # Authors get c(0.0145, 0.8130) with log-lik -152.264
+fit@misc$shape  # Estimate of shape
 logLik(fit)
 }
 \keyword{models}

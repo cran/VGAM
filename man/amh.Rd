@@ -19,6 +19,7 @@ amh(lalpha = "rhobit", ialpha = NULL, imethod = 1, nsimEIM = 250)
   and \eqn{-1 < \alpha < 1}{-1 < alpha < 1}.
   See \code{\link{Links}} for more choices.
 
+
   }
   \item{ialpha}{
   Numeric. Optional initial value for \eqn{\alpha}{alpha}.
@@ -26,15 +27,18 @@ amh(lalpha = "rhobit", ialpha = NULL, imethod = 1, nsimEIM = 250)
   If a convergence failure occurs try assigning a different value.
   Assigning a value will override the argument \code{imethod}.
 
+
   }
   \item{imethod}{
   An integer with value \code{1} or \code{2} which
   specifies the initialization method. If failure to converge occurs
   try the other value, or else specify a value for \code{ialpha}.
 
+
   }
   \item{nsimEIM}{
   See \code{\link{CommonVGAMffArguments}} for more information.
+
 
   }
 }
@@ -50,16 +54,20 @@ amh(lalpha = "rhobit", ialpha = NULL, imethod = 1, nsimEIM = 250)
   When \eqn{\alpha = 0}{alpha = 0} the random variables are
   independent.
 
+
 % A variant of Newton-Raphson is used, which only seems to work for an
 % intercept model.
 % It is a very good idea to set \code{trace = TRUE}.
 % This \pkg{VGAM} family function is prone to numerical difficulties.
+
 
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}}
   and \code{\link{vgam}}.
+
+
 }
 
 \references{
@@ -88,7 +96,8 @@ New York: Springer.
 \seealso{
   \code{\link{ramh}},
   \code{\link{fgm}},
-  \code{\link{gumbelIbiv}}.
+  \code{\link{bigumbelI}}.
+
 
 }
 \examples{

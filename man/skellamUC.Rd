@@ -14,23 +14,35 @@
 }
 \usage{
 dskellam(x, mu1, mu2, log = FALSE)
-%pskellam(q, mu1, mu2)
-%qskellam(p, mu1, mu2)
 rskellam(n, mu1, mu2)
 }
+%pskellam(q, mu1, mu2)
+%qskellam(p, mu1, mu2)
 \arguments{
   \item{x}{vector of quantiles.}
 % \item{p}{vector of probabilities.}
   \item{n}{number of observations.
-    Must be a positive integer of length 1.}
-  \item{mu1, mu2}{ See \code{\link{skellam}}}.
-  \item{log}{ Logical; if TRUE, the logarithm is returned. }
+  Same as \code{\link[stats:Uniform]{runif}}.
+
+
+  }
+  \item{mu1, mu2}{
+  See \code{\link{skellam}}
+
+
+  }.
+  \item{log}{
+  Logical; if TRUE, the logarithm is returned.
+
+
+  }
 }
 \value{
   \code{dskellam} gives the density, and
 % \code{pskellam} gives the distribution function,
 % \code{qskellam} gives the quantile function, and
   \code{rskellam} generates random deviates.
+
 
 }
 %\author{ T. W. Yee }
@@ -58,7 +70,7 @@ rskellam(n, mu1, mu2)
 \dontrun{ mu1 <- 1; mu2 <- 2; x <- (-7):7
 plot(x, dskellam(x, mu1, mu2), type = "h", las = 1, col = "blue",
      main = paste("Density of Skellam distribution with mu1 = ", mu1,
-                " and mu2 = ", mu2, sep = "")) }
+                  " and mu2 = ", mu2, sep = "")) }
 }
 \keyword{distribution}
 
