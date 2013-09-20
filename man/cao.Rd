@@ -29,6 +29,7 @@ cao(formula, family, data = list(),
     of the formula contains the response variables, which should be a
     matrix with each column being a response (species).
 
+
   }
   \item{family}{ 
   a function of class \code{"vglmff"} (see \code{\link{vglmff-class}})
@@ -38,6 +39,7 @@ cao(formula, family, data = list(),
   type of function.
     See \code{\link{cqo}} for a list of those presently implemented.
 
+
   }
 
   \item{data}{
@@ -45,16 +47,19 @@ cao(formula, family, data = list(),
     By default the variables are taken from \code{environment(formula)},
     typically the environment from which \code{cao} is called.
 
+
   }
   \item{weights}{ 
     an optional vector or matrix of (prior) weights to be used in the
     fitting process.  For \code{cao}, this argument currently should
     not be used.
 
+
   }
   \item{subset}{ 
     an optional logical vector specifying a subset of observations to
     be used in the fitting process.
+
 
   }
   \item{na.action}{ 
@@ -63,11 +68,13 @@ cao(formula, family, data = list(),
     \code{\link[base]{options}}, and is \code{na.fail} if that is unset.
     The ``factory-fresh'' default is \code{na.omit}.
 
+
   }
   \item{etastart}{ 
     starting values for the linear predictors.  It is a \eqn{M}-column
     matrix. If \eqn{M=1} then it may be a vector.  For \code{cao},
     this argument currently should not be used.
+
 
     }
   \item{mustart}{ 
@@ -75,21 +82,25 @@ cao(formula, family, data = list(),
     matrix.  Some family functions do not make use of this argument.
     For \code{cao}, this argument currently should not be used.
 
+
   }
   \item{coefstart}{ 
     starting values for the coefficient vector.  For \code{cao}, this
     argument currently should not be used.
+
 
   }
   \item{control}{ 
     a list of parameters for controlling the fitting process.
     See \code{\link{cao.control}} for details.
 
+
   }
   \item{offset}{ 
     a vector or \eqn{M}-column matrix of offset values.  These are
     \emph{a priori} known and are added to the linear predictors during
     fitting.  For \code{cao}, this argument currently should not be used.
+
 
   }
   \item{method}{
@@ -98,10 +109,12 @@ cao(formula, family, data = list(),
     reweighted least squares (IRLS) within FORTRAN code called from
     \code{\link[stats]{optim}}.
 
+
   }
   \item{model}{ 
     a logical value indicating whether the \emph{model frame} should be
     assigned in the \code{model} slot.
+
 
   }
   \item{x.arg, y.arg}{ 
@@ -110,10 +123,12 @@ cao(formula, family, data = list(),
     \code{x} and \code{y} slots.  Note the model matrix is the linear
     model (LM) matrix.
 
+
   }
   \item{contrasts}{ 
     an optional list. See the \code{contrasts.arg} of
     \code{\link{model.matrix.default}}.
+
 
   }
   \item{constraints}{ 
@@ -127,24 +142,29 @@ cao(formula, family, data = list(),
     is used it must contain \emph{all} the terms; an incomplete list is
     not accepted.
 
+
   }
   \item{extra}{ 
     an optional list with any extra information that might be needed by
     the family function.  For \code{cao}, this argument currently should
     not be used.
 
+
   }
   \item{qr.arg}{ 
     For \code{cao}, this argument currently should not be used.
+
 
   }
   \item{smart}{ 
     logical value indicating whether smart prediction
     (\code{\link{smartpred}}) will be used.
 
+
   }
   \item{\dots}{ 
     further arguments passed into \code{\link{cao.control}}.
+
 
   }
 }
@@ -225,8 +245,9 @@ cao(formula, family, data = list(),
   An object of class \code{"cao"}
   (this may change to \code{"rrvgam"} in the future).
   Several generic functions can be applied to the object, e.g.,
-  \code{\link{Coef}}, \code{\link{ccoef}}, \code{\link{lvplot}},
+  \code{\link{Coef}}, \code{\link{concoef}}, \code{\link{lvplot}},
   \code{\link{summary}}.
+
 
 }
 
@@ -242,9 +263,9 @@ Constrained additive ordination.
 }   
 \author{T. W. Yee}
 \note{
-  CAO models are computationally expensive, therefore setting \code{trace
-  = TRUE} is a good idea, as well as running it on a simple random sample
-  of the data set instead.
+  CAO models are computationally expensive, therefore
+  setting \code{trace = TRUE} is a good idea, as well as running it
+  on a simple random sample of the data set instead.
 
 
   Sometimes the IRLS algorithm does not converge within the FORTRAN
@@ -289,10 +310,9 @@ Constrained additive ordination.
   \code{\link{cao.control}},
   \code{Coef.cao},
   \code{\link{cqo}},
-  \code{\link{lv}},
+  \code{\link{latvar}},
   \code{\link{Opt}},
   \code{\link{Max}},
-  \code{\link{lv}},
   \code{persp.cao},
   \code{\link{poissonff}},
   \code{\link{binomialff}},
@@ -306,31 +326,30 @@ Constrained additive ordination.
 
 \examples{
 \dontrun{
-hspider[,1:6] <- scale(hspider[,1:6]) # Standardized environmental vars
-set.seed(149) # For reproducible results 
+hspider[, 1:6] <- scale(hspider[, 1:6]) # Standardized environmental vars
+set.seed(149)  # For reproducible results 
 ap1 <- cao(cbind(Pardlugu, Pardmont, Pardnigr, Pardpull) ~
-           WaterCon + BareSand + FallTwig +
-           CoveMoss + CoveHerb + ReflLux,
+           WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
            family = poissonff, data = hspider, Rank = 1,
-           df1.nl = c(Pardpull=2.7, 2.5),
+           df1.nl = c(Pardpull= 2.7, 2.5),
            Bestof = 7, Crow1positive = FALSE)
-sort(ap1@misc$deviance.Bestof) # A history of all the iterations
+sort(ap1@misc$deviance.Bestof)  # A history of all the iterations
 
 Coef(ap1)
-ccoef(ap1)
+concoef(ap1)
 
 par(mfrow = c(2, 2))
-plot(ap1)   # All the curves are unimodal; some quite symmetric
+plot(ap1)  # All the curves are unimodal; some quite symmetric
 
 par(mfrow = c(1, 1), las = 1)
 index <- 1:ncol(depvar(ap1))
 lvplot(ap1, lcol = index, pcol = index, y = TRUE)
 
 trplot(ap1, label = TRUE, col = index)
-abline(a=0, b = 1, lty = 2)
+abline(a = 0, b = 1, lty = 2)
 
-trplot(ap1, label = TRUE, col = "blue", log = "xy", whichSp = c(1,3))
-abline(a=0, b = 1, lty = 2)
+trplot(ap1, label = TRUE, col = "blue", log = "xy", whichSp = c(1, 3))
+abline(a = 0, b = 1, lty = 2)
 
 persp(ap1, col = index, lwd = 2, label = TRUE)
 abline(v = Opt(ap1), lty = 2, col = index)

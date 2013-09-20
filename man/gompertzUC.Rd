@@ -12,6 +12,7 @@
   random generation for
   the Gompertz distribution.
 
+
 }
 \usage{
 dgompertz(x, shape, scale = 1, log = FALSE)
@@ -26,6 +27,7 @@ rgompertz(n, shape, scale = 1)
   \item{log}{
   Logical.
   If \code{log = TRUE} then the logarithm of the density is returned.
+
 
   }
   \item{shape, scale}{positive shape and scale parameters. }
@@ -43,6 +45,7 @@ rgompertz(n, shape, scale = 1)
 \details{
   See \code{\link{gompertz}} for details.
 
+
 }
 %\note{
 %
@@ -56,11 +59,11 @@ rgompertz(n, shape, scale = 1)
 }
 \examples{
 probs <- seq(0.01, 0.99, by = 0.01)
-Shape <- exp(1); Scale <- exp(1);
+Shape <- exp(1); Scale <- exp(1)
 max(abs(pgompertz(qgompertz(p = probs, Shape, Scale),
-                  Shape, Scale) - probs)) # Should be 0
+                  Shape, Scale) - probs))  # Should be 0
 
-\dontrun{ x <- seq(-0.1, 1.0, by = 0.01);
+\dontrun{ x <- seq(-0.1, 1.0, by = 0.01)
 plot(x, dgompertz(x, Shape, Scale), type = "l", col = "blue", las = 1,
      main = "Blue is density, orange is cumulative distribution function",
      sub = "Purple lines are the 10,20,...,90 percentiles",
@@ -70,7 +73,7 @@ lines(x, pgompertz(x, Shape, Scale), col = "orange")
 probs <- seq(0.1, 0.9, by = 0.1)
 Q <- qgompertz(probs, Shape, Scale)
 lines(Q, dgompertz(Q, Shape, Scale), col = "purple", lty = 3, type = "h")
-pgompertz(Q, Shape, Scale) - probs # Should be all zero
+pgompertz(Q, Shape, Scale) - probs  # Should be all zero
 abline(h = probs, col = "purple", lty = 3) }
 }
 \keyword{distribution}

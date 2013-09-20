@@ -10,11 +10,12 @@
 }
 \usage{
 binomialff(link = "logit", dispersion = 1, mv = FALSE,
-           onedpar = !mv, parallel = FALSE, apply.parint = FALSE,
+           onedpar = !mv, parallel = FALSE,
            zero = NULL, bred = FALSE, earg.link = FALSE)
 
 }
 %- maybe also 'usage' for other objects documented here.
+% apply.parint = FALSE,
 \arguments{
 
   \item{link}{
@@ -58,6 +59,8 @@ binomialff(link = "logit", dispersion = 1, mv = FALSE,
   argument allows for the parallelism assumption whereby the regression
   coefficients for a variable is constrained to be equal over the \eqn{M}
   linear/additive predictors.
+  If \code{parallel = TRUE} then the constraint is not applied to the
+  intercepts.
 
 
   }
@@ -70,7 +73,7 @@ binomialff(link = "logit", dispersion = 1, mv = FALSE,
 
 
   }
-  \item{apply.parint, earg.link}{ 
+  \item{earg.link}{ 
   Details at \code{\link{CommonVGAMffArguments}}.
 
 
@@ -197,8 +200,8 @@ binomialff(link = "logit", dispersion = 1, mv = FALSE,
     \code{\link{betabinomial}},
     \code{\link{posbinomial}},
     \code{\link{zibinomial}},
-    \code{\link{dexpbinomial}},
-    \code{\link{mbinomial}},
+    \code{\link{double.expbinomial}},
+    \code{\link{matched.binomial}},
     \code{\link{seq2binomial}},
     \code{\link{amlbinomial}},
     \code{\link{simplex}},

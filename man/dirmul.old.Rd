@@ -81,9 +81,9 @@ Lange, K. (2002)
 2nd ed.  New York: Springer-Verlag.
 
 
-Evans, M., Hastings, N. and Peacock, B. (2000)
+Forbes, C., Evans, M., Hastings, N. and Peacock, B. (2011)
 \emph{Statistical Distributions},
-New York: Wiley-Interscience, Third edition.
+Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
 
 
 Paul, S. R., Balasooriya, U. and Banerjee, T. (2005)
@@ -144,9 +144,9 @@ fit <- vglm(cbind(Allele5,Allele6,Allele7,Allele8,Allele9,
 
 (sfit <- summary(fit))
 vcov(sfit)
-round(eta2theta(coef(fit), fit@misc$link, fit@misc$earg), dig = 2) # not preferred
-round(Coef(fit), dig = 2) # preferred
-round(t(fitted(fit)), dig = 4) # 2nd row of Table 3.5 of Lange (2002)
+round(eta2theta(coef(fit), fit@misc$link, fit@misc$earg), digits = 2)  # not preferred
+round(Coef(fit), digits = 2)  # preferred
+round(t(fitted(fit)), digits = 4)  # 2nd row of Table 3.5 of Lange (2002)
 coef(fit, matrix = TRUE)
 
 
@@ -155,8 +155,8 @@ pfit <- vglm(cbind(Allele5,Allele6,Allele7,Allele8,Allele9,
              dirmul.old(parallel = TRUE), trace = TRUE,
              data = alleleCounts)
 round(eta2theta(coef(pfit, matrix = TRUE), pfit@misc$link,
-                pfit@misc$earg), dig = 2) # 'Right' answer
-round(Coef(pfit), dig = 2) # 'Wrong' answer due to parallelism constraint
+                pfit@misc$earg), digits = 2)  # 'Right' answer
+round(Coef(pfit), digits = 2)  # 'Wrong' answer due to parallelism constraint
 }
 \keyword{models}
 \keyword{regression}

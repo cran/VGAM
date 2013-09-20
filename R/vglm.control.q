@@ -4,15 +4,18 @@
 
 
 
+
+
 .min.criterion.VGAM <-
   c("deviance" = TRUE,
     "loglikelihood" = FALSE,
     "AIC" = TRUE, 
     "Likelihood" = FALSE,
-    "rss" = TRUE,
+    "res.ss" = TRUE,
     "coefficients" = TRUE)
 
 
+ 
 
 vlm.control <- function(save.weight = TRUE,
                         tol = 1e-7,
@@ -21,7 +24,7 @@ vlm.control <- function(save.weight = TRUE,
                         wzepsilon = .Machine$double.eps^0.75,
                         ...) {
   if (tol <= 0) {
-    warning("tol not positive; using 1e-7 instead")
+    warning("argument 'tol' not positive; using 1e-7 instead")
     tol <- 1e-7
   }
   if (!is.logical(checkwz) || length(checkwz) != 1)
@@ -35,6 +38,8 @@ vlm.control <- function(save.weight = TRUE,
        checkwz = checkwz,
        wzepsilon = wzepsilon)
 }
+
+
 
 
 vglm.control <- function(checkwz = TRUE,
@@ -53,17 +58,19 @@ vglm.control <- function(checkwz = TRUE,
 
 
 
+
     if (mode(criterion) != "character" && mode(criterion) != "name")
       criterion <- as.character(substitute(criterion))
-    criterion <- pmatch(criterion[1], names(.min.criterion.VGAM), nomatch = 1)
+    criterion <- pmatch(criterion[1], names(.min.criterion.VGAM),
+                        nomatch = 1)
     criterion <- names(.min.criterion.VGAM)[criterion]
 
 
 
     if (!is.logical(checkwz) || length(checkwz) != 1)
-        stop("bad input for argument 'checkwz'")
+      stop("bad input for argument 'checkwz'")
     if (!is.Numeric(wzepsilon, allowable.length = 1, positive = TRUE))
-        stop("bad input for argument 'wzepsilon'")
+      stop("bad input for argument 'wzepsilon'")
 
     convergence <- expression({
 
@@ -71,9 +78,12 @@ vglm.control <- function(checkwz = TRUE,
       switch(criterion,
              coefficients = if (iter == 1) iter < maxit else
                             (iter < maxit &&
-      max(abs(new.crit - old.crit) / (abs(old.crit) + epsilon)) > epsilon),
-                             iter < maxit &&
-          abs(old.crit - new.crit) / (abs(old.crit) + epsilon)  > epsilon)
+                            max(abs(new.crit - old.crit) / (
+                                abs(old.crit) + epsilon)) > epsilon),
+             iter < maxit &&
+             sqrt(eff.n) *
+             abs(old.crit - new.crit) / (
+             abs(old.crit) + epsilon)  > epsilon)
     })
 
     if (!is.Numeric(epsilon, allowable.length = 1, positive = TRUE)) {
@@ -113,53 +123,57 @@ vcontrol.expression <- expression({
 
   control <- control   # First one, e.g., vgam.control(...)
   mylist <- family@vfamily
-  for(i in length(mylist):1) {
-      for(ii in 1:2) {
-          temp <- paste(if(ii == 1) "" else paste(function.name, ".", sep=""),
-                        mylist[i], ".control", sep="")
-          tempexists <- if (is.R()) exists(temp, envir = VGAM:::VGAMenv) else 
-                       exists(temp, inherit = TRUE)
-          if (tempexists) {
-            temp <- get(temp)
-            temp <- temp(...)
-            for(k in names(temp))
-              control[[k]] <- temp[[k]]
-          }
+  for (i in length(mylist):1) {
+    for (ii in 1:2) {
+      temp <- paste(if (ii == 1) "" else
+                    paste(function.name, ".", sep = ""),
+                    mylist[i], ".control", sep = "")
+      if (exists(temp, envir = VGAMenv)) {
+        temp <- get(temp)
+        temp <- temp(...)
+        for (k in names(temp))
+          control[[k]] <- temp[[k]]
       }
-}
-
-
-    orig.criterion <- control$criterion
-    if (control$criterion != "coefficients") {
-        try.crit <- c(names(.min.criterion.VGAM), "coefficients")
-        for(i in try.crit) {
-            if (any(slotNames(family) == i) &&
-            (( is.R() && length(body(slot(family, i)))) ||
-            ((!is.R() && length(slot(family, i)) > 1)))) {
-                control$criterion <- i
-                break
-            } else
-                control$criterion <- "coefficients"
-        }
     }
-    control$min.criterion <- control$min.criterion[control$criterion]
+  }
+
+
+  orig.criterion <- control$criterion
+  if (control$criterion != "coefficients") {
+    try.crit <- c(names(.min.criterion.VGAM), "coefficients")
+    for (i in try.crit) {
+      if (any(slotNames(family) == i) &&
+          length(body(slot(family, i)))) {
+        control$criterion <- i
+        break
+      } else {
+        control$criterion <- "coefficients"
+      }
+    }
+  }
+
+  control$min.criterion <- control$min.criterion[control$criterion]
 
 
 
 
 
-        for(ii in 1:2) {
-            temp <- paste(if(ii == 1) "" else paste(function.name, ".", sep=""),
-                          family@vfamily[1], 
-                          ".", control$criterion, ".control", sep="")
-            if (exists(temp, inherit=T)) {
-                temp <- get(temp)
-                temp <- temp(...)
-                for(k in names(temp))
-                    control[[k]] <- temp[[k]]
-            }
-        }
-
+  for (ii in 1:2) {
+    temp <- paste(if (ii == 1) "" else
+                  paste(function.name, ".", sep = ""),
+                  family@vfamily[1], 
+                  ".", control$criterion, ".control", sep = "")
+    if (exists(temp, inherit = TRUE)) {
+      temp <- get(temp)
+      temp <- temp(...)
+      for (k in names(temp))
+        control[[k]] <- temp[[k]]
+    }
+  }
 })
+
+
+
+
 
 

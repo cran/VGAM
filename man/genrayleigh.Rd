@@ -81,9 +81,9 @@ genrayleigh(lshape = "loge", lscale = "loge",
 
 }
 \examples{
-shape = exp(1); scale = exp(1);
-rdata = data.frame(y = rgenray(n = 1000, shape, scale))
-fit = vglm(y ~ 1, genrayleigh, rdata, trace = TRUE)
+shape <- exp(1); scale <- exp(1)
+rdata <- data.frame(y = rgenray(n = 1000, shape, scale))
+fit <- vglm(y ~ 1, genrayleigh, rdata, trace = TRUE)
 c(with(rdata, mean(y)), head(fitted(fit), 1))
 coef(fit, matrix = TRUE)
 Coef(fit)

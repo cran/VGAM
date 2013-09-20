@@ -10,13 +10,14 @@ rcqo(n, p, S, Rank = 1,
      family = c("poisson", "negbinomial", "binomial-poisson",
                 "Binomial-negbinomial", "ordinal-poisson",
                 "Ordinal-negbinomial", "gamma2"),
-     EqualMaxima = FALSE, EqualTolerances = TRUE, ESOptima = FALSE,
+     EqualMaxima = FALSE, EqualTolerances = TRUE, ES.Optima = FALSE,
      loabundance = if (EqualMaxima) hiabundance else 10,
-     hiabundance = 100, sdlv = head(1.5/2^(0:3), Rank),
-     sdOptima = ifelse(ESOptima, 1.5/Rank, 1) * ifelse(scalelv, sdlv, 1),
+     hiabundance = 100, sd.latvar = head(1.5/2^(0:3), Rank),
+     sdOptima = ifelse(ES.Optima, 1.5/Rank, 1) *
+                       ifelse(scale.latvar, sd.latvar, 1),
      sdTolerances = 0.25, Kvector = 1, Shape = 1,
      sqrt = FALSE, Log = FALSE, rhox = 0.5, breaks = 4,
-     seed = NULL, Crow1positive = TRUE, xmat = NULL, scalelv = TRUE)
+     seed = NULL, Crow1positive = TRUE, xmat = NULL, scale.latvar = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -63,16 +64,18 @@ rcqo(n, p, S, Rank = 1,
   \item{EqualMaxima}{
     Logical. Does each species have the same maxima?
     See arguments \code{loabundance} and \code{hiabundance}.
-    
+
+
   }
   \item{EqualTolerances}{
     Logical. Does each species have the
     same tolerance? If \code{TRUE} then the common value is 1 along
     every latent variable, i.e., all species' tolerance matrices are the
     order-\eqn{R} identity matrix.
-    
+
+
   }
-  \item{ESOptima}{
+  \item{ES.Optima}{
     Logical. Do the species have equally spaced optima?
     If \code{TRUE} then the quantity
     \eqn{S^{1/R}}{S^(1/R)} must be an
@@ -82,6 +85,7 @@ rcqo(n, p, S, Rank = 1,
     latent variable space
     in order to place the species' optima.
     Also see the argument \code{sdTolerances}.
+    
     
   }
   \item{loabundance, hiabundance}{
@@ -97,7 +101,7 @@ rcqo(n, p, S, Rank = 1,
     \code{log(loabundance)} and \code{log(hiabundance)}.
     
   }
-  \item{sdlv}{
+  \item{sd.latvar}{
     Numeric, of length \eqn{R}
     (recycled if necessary). Site scores along
     each latent variable have these standard deviation values.
@@ -109,13 +113,13 @@ rcqo(n, p, S, Rank = 1,
   }
   \item{sdOptima}{
     Numeric, of length \eqn{R} (recycled if necessary).
-    If \code{ESOptima = FALSE} then,
+    If \code{ES.Optima = FALSE} then,
     for the \eqn{r}th latent variable axis,
     the optima of the species are generated from a
     normal distribution centered about 0.
-    If \code{ESOptima = TRUE} then the \eqn{S} optima
+    If \code{ES.Optima = TRUE} then the \eqn{S} optima
     are equally spaced about 0 along every latent variable axis.
-    Regardless of the value of \code{ESOptima}, the optima
+    Regardless of the value of \code{ES.Optima}, the optima
     are then scaled to give standard deviation \code{sdOptima[r]}.
     
   }
@@ -177,7 +181,7 @@ rcqo(n, p, S, Rank = 1,
     Note that each environmental variable is normally distributed
     with mean 0. The standard deviation of each environmental variable
     is chosen so that the site scores have the determined standard
-    deviation, as given by argument \code{sdlv}.
+    deviation, as given by argument \code{sd.latvar}.
     
   }
   \item{breaks}{
@@ -205,9 +209,9 @@ rcqo(n, p, S, Rank = 1,
    environmental matrix can be inputted.
     
   }
-  \item{scalelv}{
+  \item{scale.latvar}{
    Logical. If \code{FALSE} the argument
-   \code{sdlv} is ignored and no scaling of the latent variable
+   \code{sd.latvar} is ignored and no scaling of the latent variable
    values is performed. 
     
   }
@@ -220,7 +224,7 @@ rcqo(n, p, S, Rank = 1,
   The species packing model states that species have equal tolerances,
   equal maxima, and optima which are uniformly distributed over
   the latent variable space. This can be achieved by assigning
-  the arguments \code{ESOptima = TRUE}, \code{EqualMaxima = TRUE},
+  the arguments \code{ES.Optima = TRUE}, \code{EqualMaxima = TRUE},
   \code{EqualTolerances = TRUE}.
 
   At present, the Poisson and negative binomial abundances are
@@ -259,7 +263,7 @@ rcqo(n, p, S, Rank = 1,
     \code{family}.
     
   }
-  \item{"ccoefficients"}{
+  \item{"concoefficients"}{
     The \eqn{p-1} by \eqn{R} matrix of
     constrained coefficients
     (or canonical coefficients).
@@ -279,11 +283,11 @@ rcqo(n, p, S, Rank = 1,
     
 
   }
-  \item{"lv"}{
+  \item{"latvar"}{
     The \eqn{n} by \eqn{R} matrix of site scores.
     Each successive column (latent variable) has
     sample standard deviation
-    equal to successive values of \code{sdlv}.
+    equal to successive values of \code{sd.latvar}.
     
   }
   \item{"eta"}{
@@ -357,41 +361,45 @@ A theory of gradient analysis.
 \dontrun{
 # Example 1: Species packing model:
 n <- 100; p <- 5; S <- 5
-mydata <- rcqo(n, p, S, ESOpt = TRUE, EqualMax = TRUE)
+mydata <- rcqo(n, p, S, ES.Opt = TRUE, EqualMax = TRUE)
 names(mydata)
 (myform <- attr(mydata, "formula"))
-fit <- cqo(myform, poissonff, mydata, Bestof = 3) # EqualTol = TRUE 
-matplot(attr(mydata, "lv"), mydata[,-(1:(p-1))], col = 1:S)
+fit <- cqo(myform, poissonff, mydata, Bestof = 3)  # EqualTol = TRUE 
+matplot(attr(mydata, "latvar"), mydata[,-(1:(p-1))], col = 1:S)
 persp(fit, col = 1:S, add = TRUE)
-lvplot(fit, lcol = 1:S, y = TRUE, pcol = 1:S) # The same plot as above
+lvplot(fit, lcol = 1:S, y = TRUE, pcol = 1:S)  # The same plot as above
 
 # Compare the fitted model with the 'truth'
-ccoef(fit) # The fitted model
-attr(mydata, "ccoefficients") # The 'truth'
+concoef(fit)  # The fitted model
+attr(mydata, "concoefficients")  # The 'truth'
 
-c(apply(attr(mydata, "lv"), 2, sd), apply(lv(fit), 2, sd)) # Both values should be approx equal
+c(apply(attr(mydata, "latvar"), 2, sd),
+  apply(latvar(fit), 2, sd))  # Both values should be approx equal
 
 
 # Example 2: negative binomial data fitted using a Poisson model:
 n <- 200; p <- 5; S <- 5
 mydata <- rcqo(n, p, S, fam = "negbin", sqrt = TRUE)
 myform <- attr(mydata, "formula")
-fit <- cqo(myform, fam = poissonff, dat = mydata) # ITol = TRUE,
+fit <- cqo(myform, fam = poissonff, dat = mydata)  # ITol = TRUE,
 lvplot(fit, lcol = 1:S, y = TRUE, pcol = 1:S)
 # Compare the fitted model with the 'truth'
-ccoef(fit) # The fitted model
-attr(mydata, "ccoefficients") # The 'truth'
+concoef(fit)  # The fitted model
+attr(mydata, "concoefficients")  # The 'truth'
 
 
 # Example 3: gamma2 data fitted using a Gaussian model:
 n <- 200; p <- 5; S <- 3
 mydata <- rcqo(n, p, S, fam = "gamma2", Log = TRUE)
-fit <- cqo(attr(mydata, "formula"), fam = gaussianff, dat = mydata) # ITol = TRUE,
-matplot(attr(mydata, "lv"), exp(mydata[,-(1:(p-1))]), col = 1:S) # 'raw' data
-lvplot(fit, lcol = 1:S, y = TRUE, pcol = 1:S) # Fitted model to transformed data
+fit <- cqo(attr(mydata, "formula"),
+           fam = gaussianff, data = mydata)  # ITol = TRUE,
+matplot(attr(mydata, "latvar"),
+        exp(mydata[, -(1:(p-1))]), col = 1:S)  # 'raw' data
+# Fitted model to transformed data:
+lvplot(fit, lcol = 1:S, y = TRUE, pcol = 1:S)
 # Compare the fitted model with the 'truth'
-ccoef(fit) # The fitted model
-attr(mydata, "ccoefficients") # The 'truth'
+concoef(fit)  # The fitted model
+attr(mydata, "concoefficients")  # The 'truth'
 }
 }
 \keyword{distribution}

@@ -107,7 +107,7 @@ plot(x, lerch(x, s = s, v = v), type = "l", col = "blue", las = 1,
 abline(v = 0, h = 1, lty = "dashed", col = "gray")
 
 s <- rnorm(n = 100)
-max(abs(zeta(s) - lerch(x = 1, s = s, v = 1))) # This fails (a bug); should be 0
+max(abs(zeta(s) - lerch(x = 1, s = s, v = 1)))  # This fails (a bug); should be 0
 }
 }
 \keyword{math}

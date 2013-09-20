@@ -132,7 +132,7 @@ Numerical rank of the fitted model.
  from class \code{ "vlm"}.
 The \emph{working} residuals at the final IRLS iteration.
  }
-    \item{\code{rss}:}{Object of class \code{"numeric"},
+    \item{\code{res.ss}:}{Object of class \code{"numeric"},
  from class \code{ "vlm"}.
 Residual sum of squares at the final IRLS iteration with
 the adjusted dependent vectors and weight matrices.
@@ -248,7 +248,7 @@ Vector generalized additive models.
 # Fit a nonparametric proportional odds model
 pneumo <- transform(pneumo, let = log(exposure.time))
 vgam(cbind(normal, mild, severe) ~ s(let),
-     cumulative(parallel = TRUE), pneumo)
+     cumulative(parallel = TRUE), data = pneumo)
 }
 \keyword{classes}
 \keyword{models}

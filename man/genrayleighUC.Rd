@@ -9,6 +9,7 @@
   Density, distribution function, quantile function and random
   generation for the generalized Rayleigh distribution.
 
+
 }
 \usage{
 dgenray(x, shape, scale = 1, log = FALSE)
@@ -26,6 +27,7 @@ rgenray(n, shape, scale = 1)
   \item{log}{
   Logical.
   If \code{log = TRUE} then the logarithm of the density is returned.
+
 
   }
 
@@ -59,20 +61,20 @@ rgenray(n, shape, scale = 1)
 }
 \examples{
 \dontrun{
-shape = 0.5; scale = 1; nn = 501
-x = seq(-0.10, 3.0, len = nn)
+shape <- 0.5; scale <- 1; nn <- 501
+x <- seq(-0.10, 3.0, len = nn)
 plot(x, dgenray(x, shape, scale), type = "l", las = 1, ylim = c(0, 1.2),
      ylab = paste("[dp]genray(shape = ", shape, ", scale = ", scale, ")"),
      col = "blue", cex.main = 0.8,
      main = "Blue is density, orange is cumulative distribution function",
      sub = "Purple lines are the 10,20,...,90 percentiles")
 lines(x, pgenray(x, shape, scale), col = "orange")
-probs = seq(0.1, 0.9, by = 0.1)
-Q = qgenray(probs, shape, scale)
+probs <- seq(0.1, 0.9, by = 0.1)
+Q <- qgenray(probs, shape, scale)
 lines(Q, dgenray(Q, shape, scale), col = "purple", lty = 3, type = "h")
 lines(Q, pgenray(Q, shape, scale), col = "purple", lty = 3, type = "h")
 abline(h = probs, col = "purple", lty = 3)
-max(abs(pgenray(Q, shape, scale) - probs)) # Should be 0
+max(abs(pgenray(Q, shape, scale) - probs))  # Should be 0
 }
 }
 \keyword{distribution}

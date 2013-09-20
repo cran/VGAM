@@ -35,12 +35,12 @@ linear predictors and \eqn{n} is the number of observations.
     }
     \item{\code{Rank}:}{The rank (dimension, number of latent variables) 
     of the RR-VGLM. Called \eqn{R}. }
-    \item{\code{lv}:}{\eqn{n} by \eqn{R} matrix
+    \item{\code{latvar}:}{\eqn{n} by \eqn{R} matrix
           of latent variable values. }
-    \item{\code{lvOrder}:}{Of class \code{"matrix"}, the permutation
+    \item{\code{latvar.order}:}{Of class \code{"matrix"}, the permutation
           returned when the function 
-          \code{\link{order}} is applied to each column of \code{lv}.
-          This enables each column of \code{lv} to be easily sorted. 
+          \code{\link{order}} is applied to each column of \code{latvar}.
+          This enables each column of \code{latvar} to be easily sorted. 
           }
     \item{\code{Maximum}:}{Of class \code{"numeric"}, the 
           \eqn{M} maximum fitted values. That is, the fitted values 
@@ -51,7 +51,7 @@ linear predictors and \eqn{n} is the number of observations.
           of the latent variables where the optima are. 
           If the curves are not bell-shaped, then the value will
           be \code{NA} or \code{NaN}.}
-    \item{\code{OptimumOrder}:}{Of class \code{"matrix"}, the permutation
+    \item{\code{Optimum.order}:}{Of class \code{"matrix"}, the permutation
           returned when the function 
           \code{\link{order}} is applied to each column of \code{Optimum}.
           This enables each row of \code{Optimum} to be easily sorted. 
@@ -112,18 +112,18 @@ canonical Gaussian ordination.
 x2 <- rnorm(n <- 100)
 x3 <- rnorm(n)
 x4 <- rnorm(n)
-lv1 <- 0 + x3 - 2*x4
-lambda1 <- exp(3 - 0.5 * (lv1-0)^2)
-lambda2 <- exp(2 - 0.5 * (lv1-1)^2)
-lambda3 <- exp(2 - 0.5 * ((lv1+4)/2)^2)
+latvar1 <- 0 + x3 - 2*x4
+lambda1 <- exp(3 - 0.5 * ( latvar1-0)^2)
+lambda2 <- exp(2 - 0.5 * ( latvar1-1)^2)
+lambda3 <- exp(2 - 0.5 * ((latvar1+4)/2)^2)
 y1 <- rpois(n, lambda1)
 y2 <- rpois(n, lambda2)
 y3 <- rpois(n, lambda3)
 yy <- cbind(y1, y2, y3)
-# vvv p1 <- cqo(yy ~ x2 + x3 + x4, fam=poissonff, trace=FALSE)
+# vvv p1 <- cqo(yy ~ x2 + x3 + x4, fam = poissonff, trace = FALSE)
 \dontrun{
 lvplot(p1, y = TRUE, lcol = 1:3, pch = 1:3, pcol = 1:3)
 }
-# vvv print(Coef(p1), digits=3)
+# vvv print(Coef(p1), digits = 3)
 }
 \keyword{classes}

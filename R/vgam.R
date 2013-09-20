@@ -9,21 +9,18 @@
 
 
 vgam <- function(formula, 
-                 family, 
-                 data = list(), 
-                 weights = NULL,
-                 subset = NULL,
-                 na.action=na.fail,
+                 family, data = list(), 
+                 weights = NULL, subset = NULL, na.action = na.fail,
                  etastart = NULL, mustart = NULL, coefstart = NULL,
-                 control=vgam.control(...),
+                 control = vgam.control(...),
                  offset = NULL, 
                  method = "vgam.fit",
                  model = FALSE, x.arg = TRUE, y.arg = TRUE,
                  contrasts = NULL,
                  constraints = NULL,
-                 extra=list(),
-                 qr.arg = FALSE, smart = TRUE,
-                 ...) {
+                 extra = list(),
+                 form2 = NULL,  # Added 20130730
+                 qr.arg = FALSE, smart = TRUE, ...) {
   dataname <- as.character(substitute(data))  # "list" if no data= 
   function.name <- "vgam"
 
@@ -44,38 +41,82 @@ vgam <- function(formula,
   mf$drop.unused.levels <- TRUE
   mf[[1]] <- as.name("model.frame")
   mf <- eval(mf, parent.frame())
-  switch(method, model.frame = return(mf), vgam.fit = 1,
+  switch(method,
+         model.frame = return(mf),
+         vgam.fit = 1,
          stop("invalid 'method': ", method))
   mt <- attr(mf, "terms")
 
   xlev <- .getXlevels(mt, mf)
-  y <- model.response(mf, "any") # model.extract(mf, "response")
-  x <- if (!is.empty.model(mt)) model.matrix(mt, mf, contrasts) else
-       matrix(, NROW(y), 0)
+  y <- model.response(mf, "any")  # model.extract(mf, "response")
+  x <- if (!is.empty.model(mt))
+         model.matrix(mt, mf, contrasts) else
+         matrix(, NROW(y), 0)
   attr(x, "assign") <- attrassigndefault(x, mt)
+
+
+
+
+
+
+  if (!is.null(form2)) {
+    if (!is.null(subset))
+      stop("argument 'subset' cannot be used when ",
+            "argument 'form2' is used")
+    retlist <- shadowvgam(formula =
+                 form2,
+                 family = family, data = data,
+                 na.action = na.action,
+                 control = vgam.control(...),
+                 method = method,
+                 model = model, x.arg = x.arg, y.arg = y.arg,
+                 contrasts = contrasts,
+                 constraints = constraints,
+                 extra = extra,
+                 qr.arg = qr.arg)
+    Ym2 <- retlist$Ym2
+    Xm2 <- retlist$Xm2
+
+    if (length(Ym2)) {
+      if (nrow(as.matrix(Ym2)) != nrow(as.matrix(y)))
+        stop("number of rows of 'y' and 'Ym2' are unequal")
+    }
+    if (length(Xm2)) {
+      if (nrow(as.matrix(Xm2)) != nrow(as.matrix(x)))
+        stop("number of rows of 'x' and 'Xm2' are unequal")
+    }
+  } else {
+    Xm2 <- Ym2 <- NULL
+  }
+
+
+
+
+
+
 
   offset <- model.offset(mf)
   if (is.null(offset))
-    offset <- 0 # yyy ???
+    offset <- 0  # yyy ???
 
 
 
 
   mf2 <- mf
   if (!missing(subset)) {
-      mf2$subset <- NULL 
-      mf2 <- eval(mf2, parent.frame())   # mf2 is the full data frame. 
-      spars2 <-  lapply(mf2, attr, "spar") 
-      dfs2 <-  lapply(mf2, attr, "df") 
-      sx2 <-  lapply(mf2, attr, "s.xargument") 
-      for (ii in 1:length(mf)) {
-        if (length(sx2[[ii]])) {
-          attr(mf[[ii]], "spar") <- spars2[[ii]]
-          attr(mf[[ii]], "dfs2") <- dfs2[[ii]]
-          attr(mf[[ii]], "s.xargument") <- sx2[[ii]]
-        }
+    mf2$subset <- NULL 
+    mf2 <- eval(mf2, parent.frame())  # mf2 is the full data frame. 
+    spars2 <-  lapply(mf2, attr, "spar") 
+    dfs2   <-  lapply(mf2, attr, "df") 
+    sx2 <-  lapply(mf2, attr, "s.xargument") 
+    for (ii in 1:length(mf)) {
+      if (length(sx2[[ii]])) {
+        attr(mf[[ii]], "spar") <- spars2[[ii]]
+        attr(mf[[ii]], "dfs2") <- dfs2[[ii]]
+        attr(mf[[ii]], "s.xargument") <- sx2[[ii]]
       }
-      rm(mf2) 
+    }
+    rm(mf2) 
   }
 
 
@@ -102,11 +143,12 @@ vgam <- function(formula,
   n <- dim(x)[1]
 
   if (FALSE && is.R()) {
-      family@linkinv <- eval(family@linkinv)
-      family@link <- eval(family@link)
+    family@linkinv <- eval(family@linkinv)
+    family@link <- eval(family@link)
 
-      for (ii in names(.min.criterion.VGAM)) 
-          if (length(family[[ii]])) family[[ii]] <- eval(family[[ii]])
+    for (ii in names(.min.criterion.VGAM)) 
+      if (length(family[[ii]]))
+        family[[ii]] <- eval(family[[ii]])
   }
 
   if (length(slot(family, "first")))
@@ -126,16 +168,18 @@ vgam <- function(formula,
   if (nonparametric) {
 
       ff <- apply(aa$factors[smoothers[["s"]],,drop = FALSE], 2, any)
-      smoothers[["s"]] <- if (any(ff))
-          seq(along = ff)[aa$order == 1 & ff] else NULL
+      smoothers[["s"]] <-
+        if (any(ff)) seq(along = ff)[aa$order == 1 & ff] else NULL
 
     smooth.labels <- aa$term.labels[unlist(smoothers)]
-  } else 
-    function.name <- "vglm"       # This is effectively so 
+  } else {
+    function.name <- "vglm"  # This is effectively so 
+  }
 
 
 
   fit <- vgam.fit(x = x, y = y, w = w, mf = mf,
+                  Xm2 = Xm2, Ym2 = Ym2,  # Added 20130730
       etastart = etastart, mustart = mustart, coefstart = coefstart,
       offset = offset, family = family, control = control,
       criterion = control$criterion,
@@ -149,7 +193,6 @@ vgam <- function(formula,
     fit$nl.df[fit$nl.df < 0] <- 0
   }
 
-    # --------------------------------------------------------------
 
   if (!is.null(fit[["smooth.frame"]])) {
     fit <- fit[-1]       # Strip off smooth.frame
@@ -178,7 +221,7 @@ vgam <- function(formula,
 
 
   answer <-
-  new("vgam", 
+  new("vgam",
     "assign"       = attr(x, "assign"),
     "call"         = fit$call,
     "coefficients" = fit$coefficients,
@@ -192,9 +235,9 @@ vgam <- function(formula,
     "R"            = fit$R,
     "rank"         = fit$rank,
     "residuals"    = as.matrix(fit$residuals),
-    "rss"          = fit$rss,
+    "res.ss"       = fit$res.ss,
     "smart.prediction" = as.list(fit$smart.prediction),
-    "terms"        = list(terms=fit$terms))
+    "terms"        = list(terms = fit$terms))
 
   if (!smart)
     answer@smart.prediction <- list(smart.arg = FALSE)
@@ -213,22 +256,41 @@ vgam <- function(formula,
     slot(answer, "offset") <- as.matrix(offset)
   if (length(fit$weights))
     slot(answer, "weights") <- as.matrix(fit$weights)
+
+
   if (x.arg)
-    slot(answer, "x") <- x # The 'small' design matrix
+    slot(answer, "x") <- x  # The 'small' design matrix
+
+
+
+  if (x.arg && length(Xm2))
+    slot(answer, "Xm2") <- Xm2  # The second (lm) design matrix
+  if (y.arg && length(Ym2))
+    slot(answer, "Ym2") <- as.matrix(Ym2)  # The second response
+  if (!is.null(form2))
+    slot(answer, "callXm2") <- retlist$call
+  answer@misc$formula <- formula
+  answer@misc$form2   <- form2
+
+
+
   if (length(xlev))
     slot(answer, "xlevels") <- xlev
   if (y.arg)
     slot(answer, "y") <- as.matrix(fit$y)
-    answer@misc$formula <- formula
+  answer@misc$formula <- formula
 
 
-    slot(answer, "control") <- fit$control
+
+
+
+  slot(answer, "control") <- fit$control
 
   if (length(fit$extra)) {
     slot(answer, "extra") <- fit$extra
   }
-  slot(answer, "iter") <- fit$iter
-  slot(answer, "post") <- fit$post
+  slot(answer, "iter")   <- fit$iter
+  slot(answer, "post")   <- fit$post
 
   fit$predictors <- as.matrix(fit$predictors)  # Must be a matrix
   dimnames(fit$predictors) <- list(dimnames(fit$predictors)[[1]],
@@ -252,8 +314,6 @@ vgam <- function(formula,
 
 
 
-
-
   }
   if (length(fit$effects))
     slot(answer, "effects") <- fit$effects
@@ -263,6 +323,56 @@ vgam <- function(formula,
 }
 attr(vgam, "smart") <- TRUE 
 
+
+
+
+
+
+
+
+
+shadowvgam <-
+        function(formula,
+                 family, data = list(), 
+                 weights = NULL, subset = NULL, na.action = na.fail,
+                 etastart = NULL, mustart = NULL, coefstart = NULL,
+                 control = vgam.control(...), 
+                 offset = NULL, 
+                 method = "vgam.fit",
+                 model = FALSE, x.arg = TRUE, y.arg = TRUE,
+                 contrasts = NULL, 
+                 constraints = NULL,
+                 extra = list(), 
+                 qr.arg = FALSE, ...) {
+    dataname <- as.character(substitute(data))  # "list" if no data=
+    function.name <- "shadowvgam"
+
+    ocall <- match.call()
+
+    if (missing(data)) 
+        data <- environment(formula)
+
+    mf <- match.call(expand.dots = FALSE)
+    m <- match(c("formula", "data", "subset", "weights", "na.action",
+        "etastart", "mustart", "offset"), names(mf), 0)
+    mf <- mf[c(1, m)]
+    mf$drop.unused.levels <- TRUE
+    mf[[1]] <- as.name("model.frame")
+    mf <- eval(mf, parent.frame())
+    switch(method, model.frame = return(mf), vgam.fit = 1,
+           stop("invalid 'method': ", method))
+    mt <- attr(mf, "terms")
+
+    x <- y <- NULL 
+
+    xlev <- .getXlevels(mt, mf)
+    y <- model.response(mf, "any") # model.extract(mf, "response")
+    x <- if (!is.empty.model(mt)) model.matrix(mt, mf, contrasts) else
+         matrix(, NROW(y), 0)
+    attr(x, "assign") <- attrassigndefault(x, mt)
+
+    list(Xm2 = x, Ym2 = y, call = ocall)
+}
 
 
 

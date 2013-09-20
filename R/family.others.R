@@ -442,7 +442,7 @@ genrayleigh.control <- function(save.weight = TRUE, ...) {
 
     run.varcov <- 0
     ind1 <- iam(NA, NA, M = M, both = TRUE, diag = TRUE)
-    for(ii in 1:( .nsimEIM )) {
+    for (ii in 1:( .nsimEIM )) {
         ysim <- rgenray(n = n, shape = shape, scale = Scale)
 
         temp1 <- ysim / Scale
@@ -707,7 +707,7 @@ expgeometric.control <- function(save.weight = TRUE, ...) {
         ind1 <- iam(NA, NA, M = M, both = TRUE, diag = TRUE)
 
         if (length( .nsimEIM )) {
-            for(ii in 1:( .nsimEIM )) {
+            for (ii in 1:( .nsimEIM )) {
                 ysim <- rexpgeom(n, scale=Scale, shape=shape)
 
                 temp2 <- exp(-ysim / Scale)
@@ -745,6 +745,8 @@ expgeometric.control <- function(save.weight = TRUE, ...) {
 
 
 
+
+
 dexplog <- function(x, scale = 1, shape, log = FALSE) {
   if (!is.logical(log.arg <- log) || length(log) != 1)
     stop("bad input for argument 'log'")
@@ -752,7 +754,7 @@ dexplog <- function(x, scale = 1, shape, log = FALSE) {
 
 
   N <- max(length(x), length(scale), length(shape))
-  x <- rep(x, len = N)
+  x     <- rep(x,     len = N)
   scale <- rep(scale, len = N)
   shape <- rep(shape, len = N)
 
@@ -810,14 +812,16 @@ rexplog <- function(n, scale = 1, shape) {
 
 
 
-explogarithmic.control <- function(save.weight = TRUE, ...) {
+
+explogff.control <- function(save.weight = TRUE, ...) {
     list(save.weight = save.weight)
 }
 
- explogarithmic <- function(lscale = "loge", lshape = "logit",
-                            iscale = NULL,   ishape = NULL,
-                            tol12 = 1.0e-05, zero = 1,
-                            nsimEIM = 400) {
+
+ explogff <- function(lscale = "loge", lshape = "logit",
+                      iscale = NULL,   ishape = NULL,
+                      tol12 = 1.0e-05, zero = 1,
+                      nsimEIM = 400) {
 
   lscale <- as.list(substitute(lscale))
   escale <- link2list(lscale)
@@ -940,7 +944,7 @@ explogarithmic.control <- function(save.weight = TRUE, ...) {
   }, list( .lscale = lscale , .lshape = lshape ,
            .escale = escale , .eshape = eshape ))),
 
-  vfamily = c("explogarithmic"),
+  vfamily = c("explogff"),
 
   deriv = eval(substitute(expression({
     Scale <- eta2theta(eta[, 1], .lscale , earg = .escale )
@@ -971,31 +975,32 @@ explogarithmic.control <- function(save.weight = TRUE, ...) {
         ind1 <- iam(NA, NA, M = M, both = TRUE, diag = TRUE)
 
         if (length( .nsimEIM )) {
-            for(ii in 1:( .nsimEIM )) {
-                ysim <- rexplog(n, scale=Scale, shape=shape)
+          for (ii in 1:( .nsimEIM )) {
+            ysim <- rexplog(n, scale = Scale, shape = shape)
 
-                temp2 <- exp(-ysim / Scale)
-                temp3 <- ysim / Scale^2
-                temp4 <- 1 - shape
-                dl.dscale <- (-1 / Scale) + temp3 + (temp4 * temp3 *
-                             temp2) / (1 - temp4 * temp2)
-                dl.dshape <- -1 / (shape * log(shape)) - 1 / temp4 -
-                             temp2 / (1 - temp4 * temp2)
+            temp2 <- exp(-ysim / Scale)
+            temp3 <- ysim / Scale^2
+            temp4 <- 1 - shape
+            dl.dscale <- (-1 / Scale) + temp3 + (temp4 * temp3 *
+                         temp2) / (1 - temp4 * temp2)
+            dl.dshape <- -1 / (shape * log(shape)) - 1 / temp4 -
+                         temp2 / (1 - temp4 * temp2)
 
-                temp6 <- cbind(dl.dscale, dl.dshape)
-                run.varcov <- run.varcov +
-                           temp6[,ind1$row.index] *
-                           temp6[,ind1$col.index]
-            }
+            temp6 <- cbind(dl.dscale, dl.dshape)
+            run.varcov <- run.varcov +
+                       temp6[,ind1$row.index] *
+                       temp6[,ind1$col.index]
+          }
 
-            run.varcov <- run.varcov / .nsimEIM
+          run.varcov <- run.varcov / .nsimEIM
 
-            wz <- if (intercept.only)
+          wz <- if (intercept.only)
                 matrix(colMeans(run.varcov),
-                       n, ncol(run.varcov), byrow = TRUE) else run.varcov
+                       n, ncol(run.varcov), byrow = TRUE) else
+                run.varcov
 
-            wz <- wz * dthetas.detas[, ind1$row] *
-                      dthetas.detas[, ind1$col]
+          wz <- wz * dthetas.detas[, ind1$row] *
+                    dthetas.detas[, ind1$col]
         }
 
     c(w) * wz

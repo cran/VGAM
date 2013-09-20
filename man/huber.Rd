@@ -26,6 +26,7 @@ huber2(llocation = "identity", lscale = "loge",
   Tuning constant.
   See \code{\link{rhuber}} for more information.
 
+
   }
   \item{imethod, zero}{ 
   See \code{\link{CommonVGAMffArguments}} for information.
@@ -68,7 +69,8 @@ huber2(llocation = "identity", lscale = "loge",
 }
 
 \author{
-  T. W. Yee. Help was given by Arash Ardalan.
+  T. W. Yee.
+  Help was given by Arash Ardalan.
 
 
 }
@@ -85,7 +87,7 @@ huber2(llocation = "identity", lscale = "loge",
 }
 \seealso{
     \code{\link{rhuber}},
-    \code{\link{normal1}},
+    \code{\link{uninormal}},
     \code{\link{gaussianff}},
     \code{\link{laplace}},
     \code{\link{CommonVGAMffArguments}}.
@@ -97,7 +99,7 @@ set.seed(1231); NN <- 30; coef1 <- 1; coef2 <- 10
 hdata <- data.frame(x2 = sort(runif(NN)))
 hdata <- transform(hdata, y  = rhuber(NN, mu = coef1 + coef2 * x2))
 
-hdata$x2[1] <- 0.0 # Add an outlier
+hdata$x2[1] <- 0.0  # Add an outlier
 hdata$y[1] <- 10  
 
 fit.huber2 <- vglm(y ~ x2, huber2(imethod = 3), hdata, trace = TRUE)
@@ -111,7 +113,7 @@ summary(fit.huber2)
 plot(y ~ x2, hdata, col = "blue", las = 1)
 lines(fitted(fit.huber2) ~ x2, hdata, col = "darkgreen", lwd = 2)
 
-fit.lm <- lm(y ~ x2, hdata) # Compare to a LM:
+fit.lm <- lm(y ~ x2, hdata)  # Compare to a LM:
 lines(fitted(fit.lm) ~ x2, hdata, col = "lavender", lwd = 3)
 
 # Compare to truth:

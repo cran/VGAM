@@ -17,9 +17,11 @@ betaII(lscale = "loge", lshape2.p = "loge", lshape3.q = "loge",
   (positive) parameters \code{scale}, \code{p} and \code{q}.
   See \code{\link{Links}} for more choices.
 
+
   }
   \item{iscale, ishape2.p, ishape3.q}{
   Optional initial values for \code{scale}, \code{p} and \code{q}.
+
 
   }
   \item{zero}{
@@ -27,6 +29,7 @@ betaII(lscale = "loge", lshape2.p = "loge", lshape3.q = "loge",
   linear/additive predictors are modelled as intercepts only.
   Here, the values must be from the set \{1,2,3\} which correspond to
   \code{scale}, \code{p}, \code{q}, respectively.
+
 
   }
 }
@@ -60,9 +63,11 @@ provided \eqn{q > 1}; these are returned as the fitted values.
 
 }
 \references{
+
 Kleiber, C. and Kotz, S. (2003)
 \emph{Statistical Size Distributions in Economics and Actuarial Sciences},
 Hoboken, NJ, USA: Wiley-Interscience.
+
 
 }
 
@@ -83,6 +88,7 @@ Hoboken, NJ, USA: Wiley-Interscience.
     \code{\link{lomax}},
     \code{\link{paralogistic}},
     \code{\link{invparalogistic}}.
+
 
 }
 

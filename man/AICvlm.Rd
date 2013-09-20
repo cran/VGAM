@@ -12,7 +12,7 @@
 
 }
 \usage{
-AICvlm(object, \dots, k = 2)
+AICvlm(object, \dots, corrected = FALSE, k = 2)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -20,15 +20,23 @@ AICvlm(object, \dots, k = 2)
   Some \pkg{VGAM} object, for example, having
   class \code{\link{vglmff-class}}.
 
+
   }
   \item{\dots}{
   Other possible arguments fed into
   \code{logLik} in order to compute the log-likelihood.
 
+
+  }
+  \item{corrected}{
+  Logical, perform the finite sample correction?
+
+
   }
   \item{k}{
   Numeric, the penalty per parameter to be used;
   the default is the classical AIC.
+
 
   }
 }
@@ -56,6 +64,12 @@ AICvlm(object, \dots, k = 2)
   smoothed component is used. This formula is heuristic.
 
 
+  The finite sample correction is usually recommended when the
+  sample size is small or when the number of parameters is large.
+  When the sample size is large their difference tends to be negligible.
+  The correction is described in Hurvich and Tsai (1989).
+
+
 }
 \value{
   Returns a numeric value with the corresponding AIC (or BIC, or \dots,
@@ -69,11 +83,19 @@ AICvlm(object, \dots, k = 2)
 
 }
 
-%\references{
+\references{
+
+Hurvich, C. M. and Tsai, C.-L. (1989)
+Regression and time series model selection in small samples,
+\emph{Biometrika},
+\bold{76}, 297--307.
+
+
+
 %  Sakamoto, Y., Ishiguro, M., and Kitagawa G. (1986).
 %  \emph{Akaike Information Criterion Statistics}.
 %  D. Reidel Publishing Company.
-%}
+}
 
 \section{Warning }{
   This code has not been double-checked.
@@ -89,7 +111,8 @@ AICvlm(object, \dots, k = 2)
   VGLMs are described in \code{\link{vglm-class}};
   VGAMs are described in \code{\link{vgam-class}};
   RR-VGLMs are described in \code{\link{rrvglm-class}};
-  \code{\link[stats]{AIC}}.
+  \code{\link[stats]{AIC}},
+  \code{\link{BICvlm}}.
 
 
 }
@@ -99,10 +122,12 @@ pneumo <- transform(pneumo, let = log(exposure.time))
               cumulative(parallel = TRUE, reverse = TRUE), pneumo))
 coef(fit1, matrix = TRUE)
 AIC(fit1)
+AIC(fit1, corrected = TRUE)
 (fit2 <- vglm(cbind(normal, mild, severe) ~ let,
               cumulative(parallel = FALSE, reverse = TRUE), pneumo))
 coef(fit2, matrix = TRUE)
 AIC(fit2)
+AIC(fit2, corrected = TRUE)
 }
 \keyword{models}
 \keyword{regression}

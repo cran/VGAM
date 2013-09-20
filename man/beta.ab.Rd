@@ -98,9 +98,9 @@ beta.ab(lshape1 = "loge", lshape2 = "loge",
   New York: Marcel Dekker.
 
 
-%Evans, M., Hastings, N. and Peacock, B. (2000)
+%Forbes, C., Evans, M., Hastings, N. and Peacock, B. (2011)
 %\emph{Statistical Distributions},
-%New York: Wiley-Interscience, Third edition.
+%Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
 
 
   Documentation accompanying the \pkg{VGAM} package at

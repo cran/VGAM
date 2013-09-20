@@ -15,7 +15,7 @@ vgam(formula, family, data = list(), weights = NULL, subset = NULL,
      coefstart = NULL, control = vgam.control(...), offset = NULL, 
      method = "vgam.fit", model = FALSE, x.arg = TRUE, y.arg = TRUE, 
      contrasts = NULL, constraints = NULL, 
-     extra = list(), qr.arg = FALSE, smart = TRUE, ...)
+     extra = list(), form2 = NULL, qr.arg = FALSE, smart = TRUE, ...)
 }
 %- maybe also `usage' for other objects documented here.
 \arguments{
@@ -80,7 +80,7 @@ vgam(formula, family, data = list(), weights = NULL, subset = NULL,
 
 
   }
-  \item{contrasts, extra, qr.arg, smart}{
+  \item{contrasts, extra, form2, qr.arg, smart}{
   Same as for \code{\link{vglm}}.
 
 

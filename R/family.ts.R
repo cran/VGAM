@@ -20,8 +20,8 @@ rrar.Ci <- function(i, coeffs, aa, Ranks., MM) {
 rrar.Ak1 <- function(MM, coeffs, Ranks., aa) {
   ptr <- 0
   Ak1 <- diag(MM)
-  for(jay in 1:MM) {
-    for(i in 1:MM) {
+  for (jay in 1:MM) {
+    for (i in 1:MM) {
       if (i > jay && (MM+1)-(Ranks.[jay]-1) <= i) {
         ptr <- ptr + 1
         Ak1[i,jay] <- coeffs[ptr]
@@ -45,11 +45,11 @@ rrar.Mi <- function(i, MM, Ranks., ki) {
     return(NULL)
   hi <- Ranks.[ki[i]] - Ranks.[ki[i+1]]
   Ji <- matrix(0, hi, Ranks.[1])
-  for(j in 1:hi) {
+  for (j in 1:hi) {
     Ji[j,j+Ranks.[ki[i+1]]] <- 1
   }
   Mi <- matrix(0, MM-Ranks.[ki[i]], MM) # dim(Oi) == dim(Ji)
-  for(j in 1:(MM-Ranks.[ki[i]])) {
+  for (j in 1:(MM-Ranks.[ki[i]])) {
     Mi[j,j+Ranks.[ki[i  ]]] <- 1
   }
   kronecker(Mi, Ji)
@@ -58,7 +58,7 @@ rrar.Mi <- function(i, MM, Ranks., ki) {
 
 rrar.Mmat <- function(MM, uu, Ranks., ki) {
   Mmat <- NULL
-  for(ii in uu:1) {
+  for (ii in uu:1) {
     Mmat <- rbind(Mmat, rrar.Mi(ii, MM, Ranks., ki))
   }
   Mmat
@@ -86,14 +86,14 @@ rrar.Ht <- function(plag, MM, Ranks., coeffs, aa, uu, ki) {
   Ak1 <- rrar.Ak1(MM, coeffs, Ranks., aa)
 
   if (!is.null(Mmat))
-  for(i in 1:plag) {
+  for (i in 1:plag) {
     Di <- rrar.Di(i, Ranks.)
     Ci <- rrar.Ci(i, coeffs, aa, Ranks., MM)
     temp <- Di %*% t(Ci)
     Htop <- cbind(Htop, Mmat %*% kronecker(diag(MM), temp))
   }
 
-  for(i in 1:plag) {
+  for (i in 1:plag) {
     Di <- rrar.Di(i, Ranks.)
     temp <- kronecker(t(Di) %*% t(Ak1), diag(MM))
     Hbot <- block.diag(Hbot, temp)
@@ -105,7 +105,7 @@ rrar.Ht <- function(plag, MM, Ranks., coeffs, aa, uu, ki) {
 rrar.Ut <- function(y, tt, plag, MM) {
   Ut <- NULL
   if (plag>1)
-  for(i in 1:plag) {
+  for (i in 1:plag) {
     Ut <- rbind(Ut, kronecker(diag(MM), cbind(y[tt-i,])))
   }
   Ut
@@ -114,7 +114,7 @@ rrar.Ut <- function(y, tt, plag, MM) {
 
 rrar.UU <- function(y, plag, MM, n) {
   UU <- NULL
-  for(i in (plag+1):n) {
+  for (i in (plag+1):n) {
     UU <- rbind(UU, t(rrar.Ut(y, i, plag, MM)))
   }
   UU
@@ -152,10 +152,10 @@ rrar.control <- function(stepsize = 0.5, save.weight = TRUE, ...) {
   initialize = eval(substitute(expression({
       Ranks. <- .Ranks
       plag <- length(Ranks.)
-      nn <- nrow(x)   # original n
+      nn <- nrow(x)  # original n
       indices <- 1:plag
 
-      copy_X_vlm <- TRUE # X_vlm_save matrix changes at each iteration 
+      copy.X.vlm <- TRUE  # X.vlm.save matrix changes at each iteration 
 
       dsrank <- -sort(-Ranks.) # ==rev(sort(Ranks.))
       if (any(dsrank != Ranks.))
@@ -166,7 +166,7 @@ rrar.control <- function(stepsize = 0.5, save.weight = TRUE, ...) {
           MM <- ncol(y)
           ki <- udsrank <- unique(dsrank)
           uu <- length(udsrank)
-          for(i in 1:uu)
+          for (i in 1:uu)
              ki[i] <- max((1:plag)[dsrank == udsrank[i]])
           ki <- c(ki, plag+1) # For computing a
           Ranks. <- c(Ranks., 0) # For computing a
@@ -187,10 +187,10 @@ rrar.control <- function(stepsize = 0.5, save.weight = TRUE, ...) {
                         runif(aa+sum(Ranks.)*MM)
       temp8 <- rrar.Wmat(y.save, Ranks., MM, ki, plag,
                          aa, uu, nn, new.coeffs)
-      X_vlm_save <- temp8$UU %*% temp8$Ht 
+      X.vlm.save <- temp8$UU %*% temp8$Ht 
 
       if (!length(etastart)) {
-        etastart <- X_vlm_save %*% new.coeffs
+        etastart <- X.vlm.save %*% new.coeffs
         etastart <- matrix(etastart, ncol = ncol(y), byrow = TRUE)
       }
 
@@ -220,7 +220,7 @@ rrar.control <- function(stepsize = 0.5, save.weight = TRUE, ...) {
     tt <- (1+plag):nn
     mu <- matrix(0, nn-plag, MM)
     Ak1 <- rrar.Ak1(MM, coeffs, Ranks., aa)
-    for(i in 1:plag) {
+    for (i in 1:plag) {
       Di <- rrar.Di(i, Ranks.)
       Ci <- rrar.Ci(i, coeffs, aa, Ranks., MM)
       mu <- mu + y.save[tt-i, , drop = FALSE] %*%
@@ -237,7 +237,7 @@ rrar.control <- function(stepsize = 0.5, save.weight = TRUE, ...) {
     misc$Dmatrices <- Dmatrices
     misc$Hmatrix <- temp8$Ht
     misc$Phimatrices <- vector("list", plag)
-    for(ii in 1:plag) {
+    for (ii in 1:plag) {
       misc$Phimatrices[[ii]] <- Ak1 %*% Dmatrices[[ii]] %*%
                                 t(Cmatrices[[ii]])
     }
@@ -246,7 +246,7 @@ rrar.control <- function(stepsize = 0.5, save.weight = TRUE, ...) {
   vfamily = "rrar",
   deriv = expression({
     temp8 <- rrar.Wmat(y.save,Ranks.,MM,ki,plag,aa,uu,nn,new.coeffs)
-    X_vlm_save <- temp8$UU %*% temp8$Ht 
+    X.vlm.save <- temp8$UU %*% temp8$Ht 
 
     extra$coeffs <- new.coeffs
 
@@ -254,7 +254,7 @@ rrar.control <- function(stepsize = 0.5, save.weight = TRUE, ...) {
     tt <- (1+plag):nn
     Ak1 <- rrar.Ak1(MM, new.coeffs, Ranks., aa)
     Cmatrices <- Dmatrices <- vector("list", plag)
-    for(ii in 1:plag) {
+    for (ii in 1:plag) {
       Dmatrices[[ii]] <- Di <- rrar.Di(ii, Ranks.)
       Cmatrices[[ii]] <- Ci <- rrar.Ci(ii, new.coeffs, aa, Ranks., MM)
       resmat <- resmat - y.save[tt - ii, , drop = FALSE] %*%
@@ -317,9 +317,9 @@ vglm.garma.control <- function(save.weight = TRUE, ...) {
 
     indices <- 1:plag
     tt.index <- (1 + plag):nrow(x)
-    p_lm <- ncol(x)
+    p.lm <- ncol(x)
 
-    copy_X_vlm <- TRUE   # x matrix changes at each iteration 
+    copy.X.vlm <- TRUE   # x matrix changes at each iteration 
 
     if ( .link == "logit"   || .link == "probit" ||
          .link == "cloglog" || .link == "cauchit") {
@@ -337,11 +337,11 @@ vglm.garma.control <- function(save.weight = TRUE, ...) {
 
     new.coeffs <- .coefstart  # Needed for iter = 1 of @weight
     new.coeffs <- if (length(new.coeffs))
-                    rep(new.coeffs, len = p_lm + plag) else
-                    c(rnorm(p_lm, sd = 0.1), rep(0, plag)) 
+                    rep(new.coeffs, len = p.lm + plag) else
+                    c(rnorm(p.lm, sd = 0.1), rep(0, plag)) 
 
     if (!length(etastart)) {
-      etastart <- x[-indices, , drop = FALSE] %*% new.coeffs[1:p_lm]
+      etastart <- x[-indices, , drop = FALSE] %*% new.coeffs[1:p.lm]
     }
 
     x <- cbind(x, matrix(as.numeric(NA), n, plag)) # Right size now
@@ -357,7 +357,7 @@ vglm.garma.control <- function(save.weight = TRUE, ...) {
 
     more <- vector("list", plag)
     names(more) <- morenames
-    for(ii in 1:plag)
+    for (ii in 1:plag)
       more[[ii]] <- ii + max(unlist(attr(x.save, "assign")))
     attr(x, "assign") <- c(attr(x.save, "assign"), more)
   }), list( .link = link, .p.ar.lag = p.ar.lag,
@@ -389,10 +389,10 @@ vglm.garma.control <- function(save.weight = TRUE, ...) {
   }, list( .link = link, .earg = earg ))),
   middle2 = eval(substitute(expression({
     realfv <- fv
-    for(ii in 1:plag) {
-      realfv <- realfv + old.coeffs[ii + p_lm] *
-        (x.save[tt.index-ii, 1:p_lm, drop = FALSE] %*%
-         new.coeffs[1:p_lm]) # +
+    for (ii in 1:plag) {
+      realfv <- realfv + old.coeffs[ii + p.lm] *
+        (x.save[tt.index-ii, 1:p.lm, drop = FALSE] %*%
+         new.coeffs[1:p.lm]) # +
     }
 
     true.eta <- realfv + offset  
@@ -414,23 +414,23 @@ vglm.garma.control <- function(save.weight = TRUE, ...) {
             .earg = earg ))),
 
   weight = eval(substitute(expression({
-    x[, 1:p_lm] <- x.save[tt.index, 1:p_lm] # Reinstate 
+    x[, 1:p.lm] <- x.save[tt.index, 1:p.lm] # Reinstate 
 
-    for(ii in 1:plag) {
+    for (ii in 1:plag) {
         temp <- theta2eta(y.save[tt.index-ii], .link , earg = .earg )
 
 
-        x[, 1:p_lm] <- x[, 1:p_lm] -
-                     x.save[tt.index-ii, 1:p_lm] * new.coeffs[ii + p_lm]
-        x[, p_lm+ii] <- temp - x.save[tt.index-ii, 1:p_lm, drop = FALSE] %*%
-                            new.coeffs[1:p_lm]
+        x[, 1:p.lm] <- x[, 1:p.lm] -
+                       x.save[tt.index-ii, 1:p.lm] * new.coeffs[ii + p.lm]
+        x[, p.lm+ii] <- temp - x.save[tt.index-ii, 1:p.lm, drop = FALSE] %*%
+                            new.coeffs[1:p.lm]
     }
     class(x) <- "matrix" # Added 27/2/02; 26/2/04
 
     if (iter == 1)
       old.coeffs <- new.coeffs 
 
-    X_vlm_save <- lm2vlm.model.matrix(x, Blist, xij = control$xij)
+    X.vlm.save <- lm2vlm.model.matrix(x, Blist, xij = control$xij)
 
     vary <- switch( .link ,
                    identity = 1,
@@ -462,7 +462,7 @@ setClass(Class = "Coef.rrar", representation(
 
 
 
-Coef.rrar = function(object, ...) {
+Coef.rrar <- function(object, ...) {
     result = new(Class = "Coef.rrar",
          "plag"     = object@misc$plag,
          "Ranks"    = object@misc$Ranks,

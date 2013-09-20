@@ -199,7 +199,7 @@ fit1 <- rcim(alcoff.e, negbinomial, trace = TRUE)
 \dontrun{ plot(fit1, ylim = c(-2, 2)) }
 
 # Univariate normal example
-fit2 <- rcim(alcoff.e, normal1, trace = TRUE)
+fit2 <- rcim(alcoff.e, uninormal, trace = TRUE)
 \dontrun{ plot(fit2, ylim = c(-200, 400)) }
 
 # Median-polish example

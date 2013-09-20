@@ -111,14 +111,14 @@ mynewdata <- with(pneumo, data.frame(let = let[ii]+hh))
 (newp <- predict(fit, newdata = mynewdata, type = "response"))
 
 # Compare the difference. Should be the same as hh --> 0.
-round(dig = 3, (newp-fitted(fit)[ii, ])/hh) # Finite-difference approxn
-round(dig = 3, margeff(fit, subset = ii)["let",])
+round(digits = 3, (newp-fitted(fit)[ii, ])/hh) # Finite-difference approxn
+round(digits = 3, margeff(fit, subset = ii)["let",])
 
 # Other examples
-round(dig = 3, margeff(fit))
-round(dig = 3, margeff(fit, subset = 2)["let",])
-round(dig = 3, margeff(fit, subset = c(FALSE, TRUE))["let",,]) # recycling
-round(dig = 3, margeff(fit, subset = c(2, 4, 6, 8))["let",,])
+round(digits = 3, margeff(fit))
+round(digits = 3, margeff(fit, subset = 2)["let",])
+round(digits = 3, margeff(fit, subset = c(FALSE, TRUE))["let",,]) # recycling
+round(digits = 3, margeff(fit, subset = c(2, 4, 6, 8))["let",,])
 }
 
 

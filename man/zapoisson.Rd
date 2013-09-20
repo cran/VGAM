@@ -1,5 +1,6 @@
 \name{zapoisson}
 \alias{zapoisson}
+\alias{zapoissonff}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Zero-Altered Poisson Distribution }
 \description{
@@ -9,7 +10,10 @@
 
 }
 \usage{
-zapoisson(lpobs0 = "logit", llambda = "loge", zero = NULL)
+zapoisson(lpobs0 = "logit", llambda = "loge",
+          type.fitted = c("mean", "pobs0", "onempobs0"), zero = NULL)
+zapoissonff(llambda = "loge", lonempobs0 = "logit",
+            type.fitted = c("mean", "pobs0", "onempobs0"), zero = -2)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -21,6 +25,20 @@ zapoisson(lpobs0 = "logit", llambda = "loge", zero = NULL)
   \item{llambda}{
   Link function for the usual \eqn{\lambda}{lambda} parameter.
   See \code{\link{Links}} for more choices.
+
+  }
+
+  \item{type.fitted}{
+  See \code{\link{CommonVGAMffArguments}}
+  and \code{\link{fittedvlm}} for information.
+
+
+  }
+
+  \item{lonempobs0}{
+  Corresponding argument  for the other parameterization.
+  See details below.
+
 
   }
 
@@ -63,9 +81,25 @@ zapoisson(lpobs0 = "logit", llambda = "loge", zero = NULL)
 
 
   For one response/species, by default, the two linear/additive
-  predictors are \eqn{(logit(p_0), \log(\lambda))^T}{(logit(pobs0),
+  predictors for \code{zapoisson()}
+  are \eqn{(logit(p_0), \log(\lambda))^T}{(logit(pobs0),
   log(lambda))^T}.
-  Fisher scoring is implemented.
+
+
+  The \pkg{VGAM} family function \code{zapoissonff()} has a few
+  changes compared to \code{zapoisson()}.
+  These are:
+  (i)   the order of the linear/additive predictors is switched so the
+        Poisson mean comes first;
+  (ii)  argument \code{onempobs0} is now 1 minus the probability of an observed 0,
+        i.e., the probability of the positive Poisson distribution,
+        i.e., \code{onempobs0} is \code{1-pobs0};
+  (iii) argument \code{zero} has a new default so that the \code{onempobs0}
+        is intercept-only by default.
+  Now \code{zapoissonff()} is generally recommended over
+  \code{zapoisson()}.
+  Both functions implement Fisher scoring and can handle
+  multiple responses.
 
 
 }
@@ -77,13 +111,16 @@ zapoisson(lpobs0 = "logit", llambda = "loge", zero = NULL)
 
   The \code{fitted.values} slot of the fitted object,
   which should be extracted by the generic function \code{fitted},
-  returns the mean \eqn{\mu}{mu} which is given by 
+  returns the mean \eqn{\mu}{mu} (default) which is given by 
   \deqn{\mu = (1-p_0)  \lambda / [1 - \exp(-\lambda)].}{%
          mu = (1-pobs0) * lambda / [1 - exp(-lambda)].}
+  If \code{type.fitted = "pobs0"} then \eqn{p_0}{pobs0} is returned.
+
 
 
 }
 \references{
+
 Welsh, A. H., Cunningham, R. B., Donnelly, C. F. and
 Lindenmayer, D. B. (1996)
 Modelling the abundances of rare species: statistical models
@@ -97,6 +134,12 @@ Angers, J-F. and Biswas, A. (2003)
 A Bayesian analysis of zero-inflated generalized Poisson model.
 \emph{Computational Statistics & Data Analysis},
 \bold{42}, 37--46.
+
+
+  Yee, T. W. (2013)
+  Reduced-rank vector generalized linear models with two linear predictors.
+  \emph{Computational Statistics and Data Analysis}.
+
 
 
 Documentation accompanying the \pkg{VGAM} package at
@@ -156,14 +199,14 @@ contains further information and examples.
 }
 
 \examples{
-zapdata <- data.frame(x2 = runif(nn <- 1000))
-zapdata <- transform(zapdata, pobs0  = logit( -1 + 1*x2, inverse = TRUE),
-                              lambda = loge(-0.5 + 2*x2, inverse = TRUE))
-zapdata <- transform(zapdata, y = rzapois(nn, lambda, pobs0 = pobs0))
+zdata <- data.frame(x2 = runif(nn <- 1000))
+zdata <- transform(zdata, pobs0  = logit( -1 + 1*x2, inverse = TRUE),
+                          lambda = loge(-0.5 + 2*x2, inverse = TRUE))
+zdata <- transform(zdata, y = rzapois(nn, lambda, pobs0 = pobs0))
 
-with(zapdata, table(y))
-fit <- vglm(y ~ x2, zapoisson, zapdata, trace = TRUE)
-fit <- vglm(y ~ x2, zapoisson, zapdata, trace = TRUE, crit = "coef")
+with(zdata, table(y))
+fit <- vglm(y ~ x2, zapoisson, data = zdata, trace = TRUE)
+fit <- vglm(y ~ x2, zapoisson, data = zdata, trace = TRUE, crit = "coef")
 head(fitted(fit))
 head(predict(fit))
 head(predict(fit, untransform = TRUE))
@@ -178,9 +221,9 @@ abdata <- subset(abdata, w > 0)
 yy <- with(abdata, rep(y, w))
 fit3 <- vglm(yy ~ 1, zapoisson, trace = TRUE, crit = "coef")
 coef(fit3, matrix = TRUE)
-Coef(fit3) # Estimate lambda (they get 0.6997 with SE 0.1520)
+Coef(fit3)  # Estimate lambda (they get 0.6997 with SE 0.1520)
 head(fitted(fit3), 1)
-mean(yy) # compare this with fitted(fit3)
+mean(yy)  # Compare this with fitted(fit3)
 }
 \keyword{models}
 \keyword{regression}

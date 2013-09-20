@@ -73,7 +73,7 @@ Hoboken, NJ, USA: Wiley-Interscience.
 }
 \examples{
 \dontrun{ shape <- 5
-x <- seq(-0.1, 3.5, len = 401)
+x <- seq(-0.1, 3.5, length = 401)
 plot(x, dfrechet(x, shape = shape), type = "l", ylab = "", las = 1,
      main = "Frechet density divided into 10 equal areas; orange = cdf")
 abline(h = 0, col = "blue", lty = 2)

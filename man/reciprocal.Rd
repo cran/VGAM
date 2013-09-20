@@ -1,18 +1,19 @@
 \name{reciprocal}
 \alias{reciprocal}
-\alias{nreciprocal}
+\alias{negreciprocal}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Reciprocal link function }
 \description{
   Computes the reciprocal transformation, including its inverse and the
   first two derivatives.
 
+
 }
 \usage{
- reciprocal(theta, bvalue = NULL, inverse = FALSE, deriv = 0,
-            short = TRUE, tag = FALSE)
-nreciprocal(theta, bvalue = NULL, inverse = FALSE, deriv = 0,
-            short = TRUE, tag = FALSE)
+   reciprocal(theta, bvalue = NULL, inverse = FALSE, deriv = 0,
+              short = TRUE, tag = FALSE)
+negreciprocal(theta, bvalue = NULL, inverse = FALSE, deriv = 0,
+              short = TRUE, tag = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -40,7 +41,7 @@ nreciprocal(theta, bvalue = NULL, inverse = FALSE, deriv = 0,
   \code{Inf}, \code{-Inf}, \code{NA} or \code{NaN}.
 
 
-  The \code{nreciprocal} link function computes the negative reciprocal,
+  The \code{negreciprocal} link function computes the negative reciprocal,
   i.e., \eqn{-1/ \theta}{-1/theta}.
 
 
@@ -77,19 +78,19 @@ close to 0.
 
 \seealso{ 
     \code{\link{identity}},
-    \code{\link{powl}}.
+    \code{\link{powerlink}}.
 
 
 }
 \examples{
- reciprocal(1:5)
- reciprocal(1:5, inverse = TRUE, deriv = 2)
-nreciprocal(1:5)
-nreciprocal(1:5, inverse = TRUE, deriv = 2)
+   reciprocal(1:5)
+   reciprocal(1:5, inverse = TRUE, deriv = 2)
+negreciprocal(1:5)
+negreciprocal(1:5, inverse = TRUE, deriv = 2)
 
 x <- (-3):3
-reciprocal(x) # Has Inf
-reciprocal(x, bvalue = .Machine$double.eps) # Has no Inf
+reciprocal(x)  # Has Inf
+reciprocal(x, bvalue = .Machine$double.eps)  # Has no Inf
 }
 \keyword{math}
 \keyword{models}

@@ -1,8 +1,8 @@
 \name{Frank}
 \alias{Frank}
-\alias{dfrank}
-\alias{pfrank}
-\alias{rfrank}
+\alias{dbifrankcop}
+\alias{pbifrankcop}
+\alias{rbifrankcop}
 \title{Frank's Bivariate Distribution}
 \description{
   Density, distribution function, and random
@@ -10,9 +10,9 @@
 
 }
 \usage{
-dfrank(x1, x2, alpha, log = FALSE)
-pfrank(q1, q2, alpha)
-rfrank(n, alpha)
+dbifrankcop(x1, x2, alpha, log = FALSE)
+pbifrankcop(q1, q2, alpha)
+rbifrankcop(n, alpha)
 }
 \arguments{
   \item{x1, x2, q1, q2}{vector of quantiles.}
@@ -23,13 +23,16 @@ rfrank(n, alpha)
   Logical.
   If \code{log = TRUE} then the logarithm of the density is returned.
 
+
   }
 
 }
 \value{
-  \code{dfrank} gives the density,
-  \code{pfrank} gives the distribution function, and
-  \code{rfrank} generates random deviates (a two-column matrix).
+  \code{dbifrankcop} gives the density,
+  \code{pbifrankcop} gives the distribution function, and
+  \code{rbifrankcop} generates random deviates (a two-column matrix).
+
+
 }
 \references{
 
@@ -41,32 +44,34 @@ Frank's family of bivariate distributions.
 }
 \author{ T. W. Yee }
 \details{
-  See \code{\link{frank}}, the \pkg{VGAM}
+  See \code{\link{bifrankcop}}, the \pkg{VGAM}
   family functions for estimating the association
   parameter by maximum likelihood estimation, for the formula of the
   cumulative distribution function and other details.
+
 
 }
 %\note{
 %}
 \seealso{
-  \code{\link{frank}}.
+  \code{\link{bifrankcop}}.
+
+
 }
 \examples{
-\dontrun{
-N <- 100; alpha <- 8
-x <- seq(-0.30, 1.30, len = N)
-ox <- expand.grid(x, x)
-z <- dfrank(ox[, 1], ox[, 2], alpha = alpha)
-contour(x, x, matrix(z, N, N))
-z <- pfrank(ox[, 1], ox[, 2], alpha = alpha)
-contour(x, x, matrix(z, N, N))
+\dontrun{N <- 100; alpha <- exp(2)
+xx <- seq(-0.30, 1.30, len = N)
+ox <- expand.grid(xx, xx)
+zedd <- dbifrankcop(ox[, 1], ox[, 2], alpha = alpha)
+contour(xx, xx, matrix(zedd, N, N))
+zedd <- pbifrankcop(ox[, 1], ox[, 2], alpha = alpha)
+contour(xx, xx, matrix(zedd, N, N))
 
 alpha <- exp(4)
-plot(r <- rfrank(n = 3000, alpha = alpha))
+plot(rr <- rbifrankcop(n = 3000, alpha = alpha))
 par(mfrow = c(1, 2))
-hist(r[, 1]) # Should be uniform
-hist(r[, 2]) # Should be uniform
+hist(rr[, 1])  # Should be uniform
+hist(rr[, 2])  # Should be uniform
 }
 }
 \keyword{distribution}

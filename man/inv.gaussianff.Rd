@@ -6,27 +6,33 @@
   Estimates the two parameters of the inverse Gaussian distribution
   by maximum likelihood estimation.
 
+
 }
 \usage{
 inv.gaussianff(lmu = "loge", llambda = "loge",
                imethod = 1, ilambda = NULL,
-               parallel = FALSE, apply.parint = FALSE,
-               shrinkage.init = 0.99, zero = NULL)
+               parallel = FALSE, shrinkage.init = 0.99, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
+%apply.parint = FALSE,
 \arguments{
   \item{lmu, llambda}{
   Parameter link functions for the \eqn{\mu}{mu} and
   \eqn{\lambda}{lambda} parameters.
   See \code{\link{Links}} for more choices.
 
+
   }
-  \item{ilambda, parallel, apply.parint}{ 
+  \item{ilambda, parallel}{ 
   See \code{\link{CommonVGAMffArguments}} for more information.
+  If \code{parallel = TRUE} then the constraint is not applied to the
+  intercept.
+
 
   }
   \item{imethod, shrinkage.init, zero}{ 
   See \code{\link{CommonVGAMffArguments}} for more information.
+
 
   }
 }
@@ -62,14 +68,15 @@ inv.gaussianff(lmu = "loge", llambda = "loge",
 
 }
 \references{ 
+
 Johnson, N. L. and Kotz, S. and Balakrishnan, N. (1994)
 \emph{Continuous Univariate Distributions},
 2nd edition, Volume 1, New York: Wiley.
 
 
-Evans, M., Hastings, N. and Peacock, B. (2000)
+Forbes, C., Evans, M., Hastings, N. and Peacock, B. (2011)
 \emph{Statistical Distributions},
-New York: Wiley-Interscience, Third edition.
+Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
 
 
 }
@@ -85,7 +92,7 @@ New York: Wiley-Interscience, Third edition.
 
 \seealso{ 
   \code{\link{Inv.gaussian}},
-  \code{\link{wald}},
+  \code{\link{waldff}},
   \code{\link{bisa}}.
 
 

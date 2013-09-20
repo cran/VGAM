@@ -11,24 +11,24 @@ family.vglm <- function(object, ...)
 
 
 if (FALSE)
-print.vfamily <- function(x, ...)
-{
-    f <- x$vfamily
-    if (is.null(f))
-        stop("not a VGAM family function")
+print.vfamily <- function(x, ...) {
+  f <- x$vfamily
+  if (is.null(f))
+    stop("not a VGAM family function")
 
-    nn <- x$blurb
-    if (is.null(nn))
-        invisible(return(x))
-
-    cat("Family: ", f[1], "\n") 
-    if (length(f)>1) cat("Classes:", paste(f, collapse=", "), "\n")
-    cat("\n")
-
-    for(i in 1:length(nn))
-        cat(nn[i])
-    cat("\n")
+  nn <- x$blurb
+  if (is.null(nn))
     invisible(return(x))
+
+  cat("Family: ", f[1], "\n") 
+  if (length(f)>1)
+    cat("Classes:", paste(f, collapse=", "), "\n")
+  cat("\n")
+
+  for (ii in 1:length(nn))
+    cat(nn[ii])
+  cat("\n")
+  invisible(return(x))
 }
 
 

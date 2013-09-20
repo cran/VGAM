@@ -11,6 +11,7 @@
   scale parameter \code{scale},
   and parameters \code{d} and \code{k}.
 
+
 }
 \usage{
 dgengamma(x, scale = 1, d = 1, k = 1, log = FALSE)
@@ -28,6 +29,7 @@ rgengamma(n, scale = 1, d = 1, k = 1)
   Logical.
   If \code{log = TRUE} then the logarithm of the density is returned.
 
+
   }
 
 }
@@ -36,8 +38,11 @@ rgengamma(n, scale = 1, d = 1, k = 1)
   \code{pgengamma} gives the distribution function,
   \code{qgengamma} gives the quantile function, and
   \code{rgengamma} generates random deviates.
+
+
 }
 \references{
+
 Stacy, E. W. and Mihram, G. A. (1965)
 Parameter estimation for a generalized gamma distribution.
 \emph{Technometrics}, \bold{7}, 349--358.
@@ -63,15 +68,15 @@ Parameter estimation for a generalized gamma distribution.
 
 }
 \examples{
-\dontrun{ x = seq(0, 14, by = 0.01); d = 1.5; Scale = 2; k = 6
+\dontrun{ x <- seq(0, 14, by = 0.01); d <- 1.5; Scale <- 2; k <- 6
 plot(x, dgengamma(x, Scale, d, k), type = "l", col = "blue", ylim = 0:1,
-     main = "Blue is density, red is cumulative distribution function",
+     main = "Blue is density, orange is cumulative distribution function",
      sub = "Purple are 5,10,...,95 percentiles", las = 1, ylab = "")
 abline(h = 0, col = "blue", lty = 2)
 lines(qgengamma(seq(0.05,0.95,by = 0.05), Scale, d, k),
       dgengamma(qgengamma(seq(0.05,0.95,by = 0.05), Scale, d, k),
                 Scale, d, k), col = "purple", lty = 3, type = "h")
-lines(x, pgengamma(x, Scale, d, k), type = "l", col = "red")
+lines(x, pgengamma(x, Scale, d, k), type = "l", col = "orange")
 abline(h = 0, lty = 2) }
 }
 \keyword{distribution}

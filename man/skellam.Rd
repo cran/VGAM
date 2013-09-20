@@ -17,6 +17,7 @@ skellam(lmu1 = "loge", lmu2 = "loge", imu1 = NULL, imu2 = NULL,
   Link functions for the \eqn{\mu_1}{mu1} and \eqn{\mu_2}{mu2} parameters.
   See \code{\link{Links}} for more choices and for general information.
 
+
   }
   \item{imu1, imu2}{
   Optional initial values for the parameters.
@@ -24,25 +25,28 @@ skellam(lmu1 = "loge", lmu2 = "loge", imu1 = NULL, imu2 = NULL,
   If convergence failure occurs (this \pkg{VGAM} family function seems
   to require good initial values) try using these arguments.
 
+
   }
   \item{nsimEIM, parallel, zero}{
   See \code{\link{CommonVGAMffArguments}} for more information.
   In particular, setting \code{parallel=TRUE} will constrain the
   two means to be equal.
 
+
   }
 }
 \details{
   The Skellam distribution models the difference between two
-  independent Poisson distributions.
+  independent Poisson distributions
+  (with means \eqn{\mu_{j}}{mu_j}, say).
   It has density function
   \deqn{f(y;\mu_1,\mu_2) =
   \left( \frac{ \mu_1 }{\mu_2} \right)^{y/2} \,
-  \exp(-\mu_1-\mu_2 ) \, I_y( 2 \sqrt{ \mu_1 \mu_2})
+  \exp(-\mu_1-\mu_2 ) \, I_{|y|}( 2 \sqrt{ \mu_1 \mu_2})
   }{%
 f(y;mu1,mu2) =
   ( \mu1 / mu_2 )^(y/2) *
-  exp(-mu1-mu2 ) * I_y( 2 * sqrt(mu1*mu2)) 
+  exp(-mu1-mu2 ) * I_(|y|)( 2 * sqrt(mu1*mu2)) 
   }
   where \eqn{y} is an integer,
   \eqn{\mu_1 > 0}{mu1 > 0},
@@ -51,7 +55,8 @@ f(y;mu1,mu2) =
   first kind with order \eqn{v}.
 
 
-  The mean is \eqn{\mu_1 - \mu_2}{mu1 - mu2} (returned as the fitted values)
+  The mean is \eqn{\mu_1 - \mu_2}{mu1 - mu2}
+  (returned as the fitted values),
   and the variance is \eqn{\mu_1 + \mu_2}{mu1 + mu2}.
   Simulated Fisher scoring is implemented.
 
@@ -73,6 +78,7 @@ f(y;mu1,mu2) =
 }
 
 \references{
+
 Skellam, J. G. (1946)
 The frequency distribution of the difference between 
 two Poisson variates belonging to different populations.
@@ -99,9 +105,9 @@ two Poisson variates belonging to different populations.
 \examples{
 \dontrun{
 sdata <- data.frame(x2 = runif(nn <- 1000))
-sdata <- transform(sdata, mu1 = exp(1+x2), mu2 = exp(1+x2))
+sdata <- transform(sdata, mu1 = exp(1 + x2), mu2 = exp(1 + x2))
 sdata <- transform(sdata, y = rskellam(nn, mu1, mu2))
-fit1 <- vglm(y ~ x2, skellam, sdata, trace = TRUE, crit = "c")
+fit1 <- vglm(y ~ x2, skellam, sdata, trace = TRUE, crit = "coef")
 fit2 <- vglm(y ~ x2, skellam(parallel = TRUE), sdata, trace = TRUE)
 coef(fit1, matrix = TRUE)
 coef(fit2, matrix = TRUE)
@@ -109,6 +115,7 @@ summary(fit1)
 # Likelihood ratio test for equal means:
 pchisq(2 * (logLik(fit1) - logLik(fit2)),
        df = fit2@df.residual - fit1@df.residual, lower.tail = FALSE)
+lrtest(fit1, fit2)  # Alternative
 }
 }
 \keyword{models}

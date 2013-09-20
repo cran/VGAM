@@ -17,13 +17,14 @@ dcard <- function(x, mu, rho, log = FALSE) {
 
 
   L <- max(length(x), length(mu), length(rho))
-  x   <- rep(x,   len = L);
-  mu  <- rep(mu,  len = L);
-  rho <- rep(rho, len = L);
+  if (length(x)   != L) x   <- rep(x,   len = L)
+  if (length(mu)  != L) mu  <- rep(mu,  len = L)
+  if (length(rho) != L) rho <- rep(rho, len = L)
+
   logdensity <- rep(log(0), len = L)
   xok <- (x > 0) & (x < (2*pi))
   logdensity[xok] <- -log(2*pi) + log1p(2 * rho[xok] *
-                     cos(x[xok]-mu[xok]))
+                      cos(x[xok]-mu[xok]))
   logdensity[mu  <=    0] <- NaN
   logdensity[mu  >= 2*pi] <- NaN
   logdensity[rho <= -0.5] <- NaN
@@ -52,15 +53,16 @@ qcard <- function(p, mu, rho, tolerance=1.0e-7, maxits=500) {
     stop("'rho' must be between -0.5 and 0.5 inclusive")
   if (!is.Numeric(p, positive = TRUE) || any(p > 1))
     stop("'p' must be between 0 and 1")
+
   nn <- max(length(p), length(mu), length(rho))
-  p <- rep(p, len=nn)
-  mu <- rep(mu, len=nn)
-  rho <- rep(rho, len=nn)
+  if (length(p)   != nn) p   <- rep(p,   len = nn)
+  if (length(mu)  != nn) mu  <- rep(mu,  len = nn)
+  if (length(rho) != nn) rho <- rep(rho, len = nn)
 
 
   oldans <- 2 * pi * p
 
-  for(its in 1:maxits) {
+  for (its in 1:maxits) {
     ans <- oldans - (oldans + 2 * rho * (sin(oldans-mu)+sin(mu)) -
            2*pi*p) / (1 + 2 * rho * cos(oldans - mu))
     index <- (ans <= 0) | (ans > 2*pi)
@@ -222,7 +224,7 @@ cardioid.control <- function(save.weight = TRUE, ...) {
     run.varcov <- 0
     ind1   <- iam(NA, NA, M = M, both = TRUE, diag = TRUE)
     index0 <- iam(NA, NA, M = M, both = TRUE, diag = TRUE)
-    for(ii in 1:( .nsimEIM )) {
+    for (ii in 1:( .nsimEIM )) {
       ysim <- rcard(n, mu=mu, rho=rho)
       dl.dmu <-  2 * rho * sin(ysim-mu) / (1 + 2 * rho * cos(ysim-mu))
       dl.drho <- 2 * cos(ysim-mu) / (1 + 2 * rho * cos(ysim-mu))

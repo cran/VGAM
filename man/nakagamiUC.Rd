@@ -28,20 +28,24 @@ rnaka(n, shape, scale = 1, Smallno = 1.0e-6)
   For \code{rnaka}, arguments \code{shape} and \code{scale} must be of
   length 1.
 
+
   }
   \item{Smallno}{
   Numeric, a small value used by the rejection method for determining
   the upper limit of the distribution.
   That is, \code{pnaka(U) > 1-Smallno} where \code{U} is the upper limit.
 
+
   }
   \item{\ldots}{
   Arguments that can be passed into \code{\link[stats]{uniroot}}.
+
 
   }
   \item{log}{
   Logical.
   If \code{log = TRUE} then the logarithm of the density is returned.
+
 
   }
 }
@@ -50,6 +54,7 @@ rnaka(n, shape, scale = 1, Smallno = 1.0e-6)
   \code{pnaka} gives the cumulative distribution function,
   \code{qnaka} gives the quantile function, and
   \code{rnaka} generates random deviates.
+
 
 }
 \author{ T. W. Yee }
@@ -85,7 +90,7 @@ legend(2, 0.6, col = c("orange","blue","green"), lty = rep(1, len = 3),
        legend = paste("shape =", c(1, 2, 3))) }
 
 probs <- seq(0.1, 0.9, by = 0.1)
-pnaka(qnaka(p = probs, shape = 2), shape = 2) - probs # Should be all 0
+pnaka(qnaka(p = probs, shape = 2), shape = 2) - probs  # Should be all 0
 }
 \keyword{distribution}
 

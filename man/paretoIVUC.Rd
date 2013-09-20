@@ -24,6 +24,7 @@
   Density, distribution function, quantile function and random generation
   for the Pareto(IV/III/II) distributions.
 
+
 }
 \usage{
 dparetoIV(x, location = 0, scale = 1, inequality = 1, shape = 1, log = FALSE)
@@ -38,7 +39,7 @@ dparetoII(x, location = 0, scale = 1, shape = 1, log = FALSE)
 pparetoII(q, location = 0, scale = 1, shape = 1)
 qparetoII(p, location = 0, scale = 1, shape = 1)
 rparetoII(n, location = 0, scale = 1, shape = 1)
-dparetoI(x, scale = 1, shape = 1)
+dparetoI(x, scale = 1, shape = 1, log = FALSE)
 pparetoI(q, scale = 1, shape = 1)
 qparetoI(p, scale = 1, shape = 1)
 rparetoI(n, scale = 1, shape = 1)
@@ -46,7 +47,10 @@ rparetoI(n, scale = 1, shape = 1)
 \arguments{
   \item{x, q}{vector of quantiles. }
   \item{p}{vector of probabilities. }
-  \item{n}{number of observations. Must be a single positive integer. }
+  \item{n}{number of observations. Must be a single positive integer.
+
+
+  }
   \item{location}{the location parameter. }
   \item{scale, shape, inequality}{the (positive) scale,
   inequality and shape parameters. }
@@ -62,6 +66,8 @@ rparetoI(n, scale = 1, shape = 1)
   functions beginning with the letter \code{p} give the distribution function,
   functions beginning with the letter \code{q} give the quantile function, and
   functions beginning with the letter \code{r} generates random deviates.
+
+
 }
 \references{
 
@@ -86,7 +92,7 @@ Fairland, Maryland: International Cooperative Publishing House.
 
 }
 \note{
-  The functions \code{[dpqr]paretoI} are the same as \code{[dpqr]pareto1}
+  The functions \code{[dpqr]paretoI} are the same as \code{[dpqr]pareto}
   except for a slight change in notation: \eqn{s=k} and
   \eqn{b=\alpha}{b=alpha}; see \code{\link{Pareto}}.
 
@@ -101,12 +107,12 @@ Fairland, Maryland: International Cooperative Publishing House.
 \examples{
 \dontrun{
 x <- seq(-0.2, 4, by = 0.01)
-loc <- 0; Scale <- 1; ineq <- 1; shape <- 1.0;
+loc <- 0; Scale <- 1; ineq <- 1; shape <- 1.0
 plot(x, dparetoIV(x, loc, Scale, ineq, shape), type = "l", col = "blue",
      main = "Blue is density, orange is cumulative distribution function",
      sub = "Purple are 5,10,...,95 percentiles", ylim = 0:1, las = 1, ylab = "")
 abline(h = 0, col = "blue", lty = 2)
-Q <- qparetoIV(seq(0.05,0.95,by = 0.05), loc, Scale, ineq, shape)
+Q <- qparetoIV(seq(0.05, 0.95,by = 0.05), loc, Scale, ineq, shape)
 lines(Q, dparetoIV(Q, loc, Scale, ineq, shape), col = "purple", lty = 3, type = "h")
 lines(x, pparetoIV(x, loc, Scale, ineq, shape), col = "orange")
 abline(h = 0, lty = 2)

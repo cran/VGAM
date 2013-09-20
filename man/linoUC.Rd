@@ -83,7 +83,7 @@ probs <- seq(0.1, 0.9, by = 0.1)
 Q <- qlino(probs, shape1 = shape1, shape2 = shape2, lambda = lambda)
 lines(Q, dlino(Q, shape1 = shape1, shape2 = shape2, lambda = lambda),
       col = "purple", lty = 3, type = "h")
-plino(Q, shape1 = shape1, shape2 = shape2, l = lambda) - probs # Should be all 0
+plino(Q, shape1 = shape1, shape2 = shape2, l = lambda) - probs  # Should be all 0
 }
 }
 \keyword{distribution}

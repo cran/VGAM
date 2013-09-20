@@ -129,6 +129,6 @@ Coef(fitgrc2)
 %\alias{crashp}     Table 45, p.84
 %\alias{alcoff}     Table  3, p.121
 %\alias{alclevels}  Table  2, p.132
-% print(Coef(fitgrc2), dig = 2)
+% print(Coef(fitgrc2), digits = 2)
 
 

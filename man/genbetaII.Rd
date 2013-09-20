@@ -102,6 +102,7 @@ Fisher information matrix for the Feller-Pareto distribution.
 
 \author{ T. W. Yee }
 \note{
+
 If the self-starting initial values fail, try experimenting
 with the initial value arguments, especially those whose
 default value is not \code{NULL}.
@@ -133,7 +134,7 @@ More improvements could be made here.
 
 \examples{
 \dontrun{
-gdata <- data.frame(y = rsinmad(3000, exp(2), exp(2), exp(1))) # A special case!
+gdata <- data.frame(y = rsinmad(3000, exp(2), exp(2), exp(1)))  # A special case!
 fit <- vglm(y ~ 1, genbetaII, gdata, trace = TRUE)
 fit <- vglm(y ~ 1, data = gdata, trace = TRUE,
             genbetaII(ishape1.a = 4, ishape2.p = 2.2, iscale = 7, ishape3.q = 2.3))

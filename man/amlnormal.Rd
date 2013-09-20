@@ -148,7 +148,7 @@ coef(fit, matrix = TRUE)
 
 # Quantile plot
 with(bmi.nz, plot(age, BMI, col = "blue", main =
-     paste(round(fit@extra$percentile, dig = 1),
+     paste(round(fit@extra$percentile, digits = 1),
            "expectile-percentile curve")))
 with(bmi.nz, lines(age, c(fitted(fit)), col = "black"))
 
@@ -181,7 +181,7 @@ coef(fit3, matrix = TRUE)
 
 # Quantile plot
 with(bmi.nz, plot(age, BMI, col="blue", main =
-     paste(paste(round(fit3@extra$percentile, dig = 1), collapse = ", "),
+     paste(paste(round(fit3@extra$percentile, digits = 1), collapse = ", "),
            "expectile-percentile curves")))
 with(bmi.nz, matlines(age, fitted(fit3), col = 1:fit3@extra$M, lwd = 2))
 with(bmi.nz, lines(age, c(fitted(fit )), col = "black")) # For comparison

@@ -99,6 +99,9 @@ nbcanlink(theta, size = NULL, wrt.eta = NULL, bvalue = NULL,
   see the example below.
 
 
+  Standard errors may be unreliable.
+
+
 }
 \note{
 

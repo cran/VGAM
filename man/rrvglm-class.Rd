@@ -147,7 +147,7 @@ Objects can be created by calls to \code{\link{rrvglm}}.
   from class \code{ "vlm"}.
   The \emph{working} residuals at the final IRLS iteration.
   }
-  \item{\code{rss}:}{
+  \item{\code{res.ss}:}{
   Object of class \code{"numeric"},
   from class \code{ "vlm"}.
   Residual sum of squares at the final IRLS iteration with

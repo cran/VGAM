@@ -13,12 +13,12 @@
 
 
 
-mix2normal1.control <- function(trace = TRUE, ...) {
-    list(trace = trace)
+mix2normal.control <- function(trace = TRUE, ...) {
+  list(trace = trace)
 }
 
 
- mix2normal1 <-
+ mix2normal <-
     function(lphi = "logit",
              lmu = "identity",
              lsd = "loge",
@@ -26,7 +26,7 @@ mix2normal1.control <- function(trace = TRUE, ...) {
              imu1 = NULL, imu2 = NULL,
              isd1 = NULL, isd2 = NULL,
              qmu = c(0.2, 0.8),
-             equalsd = TRUE,
+             eq.sd = TRUE,
              nsimEIM = 100,
              zero = 1) {
   lphi <- as.list(substitute(lphi))
@@ -67,8 +67,8 @@ mix2normal1.control <- function(trace = TRUE, ...) {
     stop("bad input for argument 'isd2'")
 
 
-  if (!is.logical(equalsd) || length(equalsd) != 1)
-    stop("bad input for argument 'equalsd'")
+  if (!is.logical(eq.sd) || length(eq.sd) != 1)
+    stop("bad input for argument 'eq.sd'")
   if (!is.Numeric(nsimEIM, allowable.length = 1,
                   integer.valued = TRUE) ||
       nsimEIM <= 10)
@@ -87,10 +87,12 @@ mix2normal1.control <- function(trace = TRUE, ...) {
             "Variance: phi*sd1^2 + (1 - phi)*sd2^2 + ",
                       "phi*(1 - phi)*(mu1-mu2)^2"),
   constraints = eval(substitute(expression({
-    constraints <- cm.vgam(rbind(diag(4), c(0, 0, 1,0)), x, .equalsd ,
-                           constraints, apply.int = TRUE)
+    constraints <- cm.vgam(rbind(diag(4), c(0, 0, 1,0)), x = x,
+                           bool = .eq.sd ,
+                           constraints = constraints,
+                           apply.int = TRUE)
     constraints <- cm.zero.vgam(constraints, x, .zero , M)
-  }), list( .zero = zero, .equalsd = equalsd ))),
+  }), list( .zero = zero, .eq.sd = eq.sd ))),
   initialize = eval(substitute(expression({
 
     temp5 <-
@@ -129,10 +131,10 @@ mix2normal1.control <- function(trace = TRUE, ...) {
                       len = n)
       init.sd2 <- rep(if(length( .isd2 )) .isd2 else sd(sorty[ind.2]),
                       len = n)
-      if ( .equalsd ) {
+      if ( .eq.sd ) {
         init.sd1 <- init.sd2 = (init.sd1 + init.sd2)/2
         if (!all.equal( .esd1, .esd2 ))
-          stop("'esd1' and 'esd2' must be equal if 'equalsd = TRUE'")
+          stop("'esd1' and 'esd2' must be equal if 'eq.sd = TRUE'")
       }
       etastart <- cbind(
                   theta2eta(init.phi, .lphi, earg = .ephi),
@@ -144,7 +146,7 @@ mix2normal1.control <- function(trace = TRUE, ...) {
   }), list(.lphi = lphi, .lmu = lmu,
            .iphi = iphi, .imu1 = imu1, .imu2 = imu2,
            .ephi = ephi, .emu1 = emu1, .emu2 = emu2,
-           .esd1 = esd1, .esd2 = esd2, .equalsd = equalsd,
+           .esd1 = esd1, .esd2 = esd2, .eq.sd = eq.sd,
            .lsd = lsd, .isd1 = isd1, .isd2 = isd2, .qmu = qmu))),
   linkinv = eval(substitute(function(eta, extra = NULL){
       phi <- eta2theta(eta[, 1], link = .lphi, earg = .ephi)
@@ -162,10 +164,10 @@ mix2normal1.control <- function(trace = TRUE, ...) {
                       "sd1" = .esd1, "mu2" = .emu2, "sd2" = .esd2)
 
     misc$expected <- TRUE
-    misc$equalsd <- .equalsd
+    misc$eq.sd <- .eq.sd
     misc$nsimEIM <- .nsimEIM
     misc$multipleResponses <- FALSE
-  }), list(.lphi = lphi, .lmu = lmu, .lsd = lsd, .equalsd = equalsd,
+  }), list(.lphi = lphi, .lmu = lmu, .lsd = lsd, .eq.sd = eq.sd,
            .ephi = ephi, .emu1 = emu1, .emu2 = emu2,
            .esd1 = esd1, .esd2 = esd2,
            .nsimEIM = nsimEIM ))),
@@ -185,7 +187,7 @@ mix2normal1.control <- function(trace = TRUE, ...) {
           .ephi = ephi, .emu1 = emu1, .emu2 = emu2,
           .esd1 = esd1, .esd2 = esd2,
           .lsd = lsd ))),
-  vfamily = c("mix2normal1"),
+  vfamily = c("mix2normal"),
   deriv = eval(substitute(expression({
     phi <- eta2theta(eta[, 1], link = .lphi, earg = .ephi)
     mu1 <- eta2theta(eta[, 2], link = .lmu,  earg = .emu1)
@@ -227,7 +229,7 @@ mix2normal1.control <- function(trace = TRUE, ...) {
         (1 - phi) * dnorm((ysim-mu2)/sd2) / sd2),
         c("phi","mu1","sd1","mu2","sd2"), hessian= TRUE)
     run.mean <- 0
-    for(ii in 1:( .nsimEIM )) {
+    for (ii in 1:( .nsimEIM )) {
       ysim <- ifelse(runif(n) < phi, rnorm(n, mu1, sd1),
                                      rnorm(n, mu2, sd2))
 
@@ -236,8 +238,8 @@ mix2normal1.control <- function(trace = TRUE, ...) {
       rm(ysim)
 
       temp3 <- matrix(0, n, dimm(M))
-      for(ss in 1:M)
-          for(tt in ss:M)
+      for (ss in 1:M)
+          for (tt in ss:M)
               temp3[,iam(ss,tt, M)] <-  -d2l.dthetas2[,ss,tt]
 
       run.mean <- ((ii-1) * run.mean + temp3) / ii
@@ -408,7 +410,7 @@ mix2poisson.control <- function(trace = TRUE, ...) {
            .nsimEIM = nsimEIM ))),
   weight = eval(substitute(expression({
     run.mean <- 0
-    for(ii in 1:( .nsimEIM )) {
+    for (ii in 1:( .nsimEIM )) {
       ysim <- ifelse(runif(n) < phi, rpois(n, lambda1),
                                     rpois(n, lambda2))
       f1 <- dpois(x = ysim, lam = lambda1)
@@ -611,7 +613,7 @@ mix2exp.control <- function(trace = TRUE, ...) {
            .ephi = ephi, .el1 = el1, .el2 = el2 ))),
   weight = eval(substitute(expression({
     run.mean <- 0
-    for(ii in 1:( .nsimEIM )) {
+    for (ii in 1:( .nsimEIM )) {
       ysim <- ifelse(runif(n) < phi, rexp(n, lambda1),
                                      rexp(n, lambda2))
       f1 <- dexp(x = ysim, rate=lambda1)

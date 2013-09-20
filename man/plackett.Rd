@@ -6,6 +6,7 @@
   Estimate the association parameter of Plackett's bivariate distribution
   by maximum likelihood estimation.
 
+
 }
 \usage{
 plackett(link = "loge", ioratio = NULL, imethod = 1, nsimEIM = 200)
@@ -17,14 +18,17 @@ plackett(link = "loge", ioratio = NULL, imethod = 1, nsimEIM = 200)
   See \code{\link{Links}} for more choices
   and information.
 
+
   }
   \item{ioratio}{
   Numeric. Optional initial value for \eqn{\psi}{psi}.
   If a convergence failure occurs try assigning a value or a different value.
 
+
   }
   \item{imethod, nsimEIM}{
   See \code{\link{CommonVGAMffArguments}}.
+
 
   }
 }
@@ -93,7 +97,7 @@ A class of bivariate distributions.
 
 \seealso{
   \code{\link{rplack}},
-  \code{\link{frank}}.
+  \code{\link{bifrankcop}}.
 
 
 }

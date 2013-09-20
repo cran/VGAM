@@ -162,7 +162,9 @@ poissonff(link = "loge", dispersion = 1, onedpar = FALSE, imu = NULL,
     \code{\link{binomialff}},
     \code{\link{quasibinomialff}},
     \code{\link[stats]{poisson}},
-    \code{\link{poissonp}}.
+    \code{\link{poisson.points}},
+    \code{\link{ruge}},
+    \code{\link{V1}}.
 
 
 }
@@ -171,8 +173,9 @@ poissonff()
 
 set.seed(123)
 pdata <- data.frame(x2 = rnorm(nn <- 100))
-pdata <- transform(pdata, y1 = rpois(nn, exp(1 + x2)))
-(fit1 <- vglm(y1 ~ x2, family = poissonff, pdata))
+pdata <- transform(pdata, y1 = rpois(nn, exp(1 + x2)),
+                          y2 = rpois(nn, exp(1 + x2)))
+(fit1 <- vglm(cbind(y1, y2) ~ x2, family = poissonff, pdata))
 (fit2 <- vglm(y1 ~ x2, family = poissonff(bred = TRUE), pdata))
 coef(fit1, matrix = TRUE)
 coef(fit2, matrix = TRUE)

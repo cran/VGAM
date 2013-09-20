@@ -13,6 +13,7 @@
   Density, distribution function, and random
   generation for the beta-binomial distribution.
 
+
 }
 \usage{
 dbetabinom(x, size, prob, rho = 0, log = FALSE)
@@ -27,10 +28,14 @@ rbetabinom.ab(n, size, shape1, shape2, .dontuse.prob = NULL)
 % \item{p}{vector of probabilities.}
   \item{size}{number of trials.}
   \item{n}{number of observations.
-  Must be a positive integer of length 1.}
+  Same as \code{\link[stats]{runif}}.
+
+
+  }
   \item{prob}{
   the probability of success \eqn{\mu}{mu}.
   Must be in the unit closed interval \eqn{[0,1]}.
+
 
   }
   \item{rho}{
@@ -39,21 +44,25 @@ rbetabinom.ab(n, size, shape1, shape2, .dontuse.prob = NULL)
   however, the value 0 is sometimes supported
   (if so then it corresponds to the usual binomial distribution).
 
+
   }
   \item{shape1, shape2}{
   the two (positive) shape parameters of the standard
   beta distribution. They are called \code{a} and \code{b} in
   \code{\link[base:Special]{beta}} respectively.
 
+
   }
   \item{log, log.p}{
   Logical.
   If \code{TRUE} then all probabilities \code{p} are given as \code{log(p)}.
 
+
   }
 
   \item{.dontuse.prob}{
   An argument that should be ignored and unused.
+
 
   }
 
@@ -104,7 +113,7 @@ rbetabinom.ab(n, size, shape1, shape2, .dontuse.prob = NULL)
 }
 \examples{
 set.seed(1); rbetabinom(10, 100, prob = 0.5)
-set.seed(1);     rbinom(10, 100, prob = 0.5) # The same since rho = 0
+set.seed(1);     rbinom(10, 100, prob = 0.5)  # The same since rho = 0
 
 \dontrun{ N <- 9; xx <- 0:N; s1 <- 2; s2 <- 3
 dy <- dbetabinom.ab(xx, size = N, shape1 = s1, shape2 = s2)
@@ -114,18 +123,18 @@ barplot(rbind(dy, dbinom(xx, size = N, prob = s1 / (s1+s2))),
                    ", shape2=", s2, ") (blue) vs\n",
         " Binomial(size=", N, ", prob=", s1/(s1+s2), ") (green)", sep = ""),
         names.arg = as.character(xx), cex.main = 0.8)
-sum(dy * xx) # Check expected values are equal
-sum(dbinom(xx, size = N, prob = s1 / (s1+s2))*xx)
-cumsum(dy) - pbetabinom.ab(xx, N, shape1 = s1, shape2 = s2)
+sum(dy * xx)  # Check expected values are equal
+sum(dbinom(xx, size = N, prob = s1 / (s1+s2)) * xx)
+cumsum(dy) - pbetabinom.ab(xx, N, shape1 = s1, shape2 = s2)  # Should be all 0
 
 y <- rbetabinom.ab(n = 10000, size = N, shape1 = s1, shape2 = s2)
 ty <- table(y)
 barplot(rbind(dy, ty / sum(ty)),
-        beside = TRUE, col = c("blue","red"), las = 1,
-        main = paste("Beta-binomial (size=",N,", shape1=",s1,
-                   ", shape2=",s2,") (blue) vs\n",
+        beside = TRUE, col = c("blue", "orange"), las = 1,
+        main = paste("Beta-binomial (size=", N, ", shape1=", s1,
+                     ", shape2=", s2, ") (blue) vs\n",
         " Random generated beta-binomial(size=", N, ", prob=", s1/(s1+s2),
-        ") (red)", sep = ""), cex.main = 0.8,
+        ") (orange)", sep = ""), cex.main = 0.8,
         names.arg = as.character(xx)) }
 }
 \keyword{distribution}

@@ -504,7 +504,6 @@ void fvlmz9iyC_enbin8(double bzmd6ftvmat[], double hdqsx7bk[], double hsj9bzaq[]
   double onemse, nm0eljqk, ydb, btiehdm2 = -100.0 * *rsynp1go,
          kbig = 1.0e4, oxjgzv0e = 0.0010;
 
-  Rprintf("zz 20100122; this function fvlmz9iyC_enbin8 unchecked.\n");
   if (*n2kersmx <= 0.80e0 || *n2kersmx >= 1.0e0) {
       Rprintf("returning since n2kersmx <= 0.8 or >= 1\n");
       *dvhw1ulq = 0;
@@ -608,7 +607,6 @@ void fvlmz9iyC_mbessI0(double unvxka0m[], int *f8yswcat, int *kpzavbj3,
   int    ayfnwr1v, gp1jxzuh, c5aesxkus;
   double f0, t0, m0, f1, t1, m1, f2, t2, m2, Toobig = 20.0e0;
 
-  Rprintf("zz 20100122; this function fvlmz9iyC_mbessI0 unchecked.\n");
   *zjkrtol8 = 0;
   if (!(*kpzavbj3 == 0 || *kpzavbj3 == 1 || *kpzavbj3 == 2)) {
       Rprintf("Error in fvlmz9iyC_mbessI0: kpzavbj3 not in 0:2. Returning.\n");

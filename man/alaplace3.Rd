@@ -9,6 +9,7 @@
    the 1, 2 and 3-parameter asymmetric Laplace distributions (ALDs).
    The 1-parameter ALD may be used for quantile regression.
 
+
 }
 \usage{
 alaplace1(tau = NULL, llocation = "identity",
@@ -303,7 +304,7 @@ fitp <- vgam(y ~ s(x, df = mydof), data = adata, trace = TRUE,
              alaplace1(tau = mytau, llocation = "loge", parallelLoc = TRUE))
  
 par(las = 1); mylwd = 1.5
-with(adata, plot(x, jitter(y, factor = 0.5), col = "red",
+with(adata, plot(x, jitter(y, factor = 0.5), col = "orange",
                  main = "Example 1; green: parallelLoc = TRUE",
                  ylab = "y", pch = "o", cex = 0.75))
 with(adata, matlines(x, fitted(fit ), col = "blue",
@@ -314,7 +315,7 @@ finexgrid <- seq(0, 1, len = 1001)
 for(ii in 1:length(mytau))
     lines(finexgrid, qpois(p = mytau[ii], lambda = mymu(finexgrid)),
           col = "blue", lwd = mylwd)
-fit@extra # Contains useful information
+fit@extra  # Contains useful information
 
 
 # Example 2: regression quantile at a new tau value from an existing fit
@@ -326,9 +327,9 @@ fitp2 <- vglm(y ~ bs(x, df = mydof),
 
 newtau <- 0.5  # Want to refit the model with this tau value
 fitp3 <- vglm(y ~ 1 + offset(predict(fitp2)[,1]),
-            family = alaplace1(tau = newtau, llocation = "loge"),
-             adata)
-with(adata, plot(x, jitter(y, factor = 0.5), col = "red",
+              family = alaplace1(tau = newtau, llocation = "loge"),
+              adata)
+with(adata, plot(x, jitter(y, factor = 0.5), col = "orange",
                pch = "o", cex = 0.75, ylab = "y",
                main = "Example 2; parallelLoc = TRUE"))
 with(adata, matlines(x, fitted(fitp2), col = "blue", 

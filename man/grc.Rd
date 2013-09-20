@@ -105,11 +105,17 @@ rcim(y, family = poissonff, Rank = 0, Musual = NULL,
   If \code{TRUE}, \code{y} may be the output (fitted
   object) of \code{grc()}.
 
+
   }
   \item{h.step}{
   A small positive value that is passed into
-  \code{summary.rrvglm()}. Only used when \code{summary.arg = TRUE}. }
-  \item{\dots}{ Arguments that are passed into \code{rrvglm.control()}.
+  \code{summary.rrvglm()}. Only used when \code{summary.arg = TRUE}.
+
+
+  }
+  \item{\dots}{ Arguments that are passed
+  into \code{rrvglm.control()}.
+
 
   }
   \item{Musual}{
@@ -128,6 +134,7 @@ rcim(y, family = poissonff, Rank = 0, Musual = NULL,
   \item{rbaseline, cbaseline}{
   Baseline reference levels for the rows and columns.
   Currently stored on the object but not used.
+
 
   }
 }
@@ -159,7 +166,7 @@ The first row and column is baseline.
 The power of \code{rcim()} is that many \pkg{VGAM} family functions
 can be assigned to its \code{family} argument.
 For example, 
-\code{\link{normal1}} fits something in between a 2-way
+\code{\link{uninormal}} fits something in between a 2-way
 ANOVA with and without interactions,
 \code{\link{alaplace2}} with \code{Rank = 0} is something like
 \code{\link[stats]{medpolish}}.
@@ -186,13 +193,14 @@ result may not have meaning.
 
 }
 \references{
+
 Yee, T. W. and Hastie, T. J. (2003)
 Reduced-rank vector generalized linear models.
 \emph{Statistical Modelling},
 \bold{3}, 15--41.
 
 
-Yee, T. W. and Hadi, A. F. (2012)
+Yee, T. W. and Hadi, A. F. (2013)
 Row-column interaction models
 \emph{In preparation}.
 
@@ -235,9 +243,12 @@ assistance from Alfian F. Hadi.
 
 
   If \code{summary = TRUE}, then \code{y} can be a
-  \code{"grc"} object, in which case a summary can be
-  returned. That is, \code{grc(y, summary = TRUE)} is
+  \code{"grc"} object, in which case a summary can be returned.
+  That is, \code{grc(y, summary = TRUE)} is
   equivalent to \code{summary(grc(y))}.
+  It is not possible to plot a
+   \code{grc(y, summary = TRUE)} or
+  \code{rcim(y, summary = TRUE)} object.
 
 
 }
@@ -301,10 +312,10 @@ summary(grc2)
 
 
 # 2012 Summer Olympic Games in London
-\dontrun{ top10 <- head(oly12, n = 10)
+\dontrun{ top10 <- head(olym12, n = 10)
 grc.oly1 <- with(top10, grc(cbind(gold, silver, bronze)))
 round(fitted(grc.oly1))
-round(resid(grc.oly1, type = "response"), dig = 1)  # Response residuals
+round(resid(grc.oly1, type = "response"), digits = 1)  # Response residuals
 summary(grc.oly1)
 Coef(grc.oly1)
 }
@@ -312,10 +323,10 @@ Coef(grc.oly1)
 
 # Roughly median polish
 rcim0 <- rcim(auuc, fam = alaplace2(tau = 0.5, intparloc = TRUE), trace = TRUE)
-round(fitted(rcim0), dig = 0)
-round(100 * (fitted(rcim0) - auuc) / auuc, dig = 0)  # Discrepancy
+round(fitted(rcim0), digits = 0)
+round(100 * (fitted(rcim0) - auuc) / auuc, digits = 0)  # Discrepancy
 rcim0@y
-round(coef(rcim0, matrix = TRUE), dig = 2)
+round(coef(rcim0, matrix = TRUE), digits = 2)
 Coef(rcim0, matrix = TRUE)
 # constraints(rcim0)
 names(constraints(rcim0))
@@ -328,10 +339,10 @@ round(100 * (fitted(rcim0) - fv) / fv)  # Hopefully should be all 0s
 \keyword{models}
 \keyword{regression}
 % plot(grc.oly1)
-% oly2 <- with(top10, grc(cbind(gold,silver,bronze), Rank = 2)) # Saturated model
+% oly2 <- with(top10, grc(cbind(gold,silver,bronze), Rank = 2))  # Saturated model
 % round(fitted(oly2))
 % round(fitted(oly2)) - with(top10, cbind(gold,silver,bronze))
-% summary(oly2) # Saturated model
+% summary(oly2)  # Saturated model
 
 
 
@@ -339,6 +350,6 @@ round(100 * (fitted(rcim0) - fv) / fv)  # Hopefully should be all 0s
 % Then \code{.grc.df} is deleted before exiting the function.
 
 
-% print(Coef(rcim0, matrix = TRUE), dig = 3)
+% print(Coef(rcim0, matrix = TRUE), digits = 3)
 
 

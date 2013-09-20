@@ -67,7 +67,7 @@ probit(theta, bvalue = NULL, inverse = FALSE, deriv = 0,
 
   In terms of the threshold approach with cumulative probabilities for
   an ordinal response this link function corresponds to the univariate
-  normal distribution (see \code{\link{normal1}}).
+  normal distribution (see \code{\link{uninormal}}).
 
 
 }

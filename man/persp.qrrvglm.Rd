@@ -8,17 +8,17 @@ applicable for rank-1 or rank-2 models with argument \code{noRRR = ~ 1}.
 
 }
 \usage{
-perspqrrvglm(x, varlvI = FALSE, reference = NULL, plot.it = TRUE, 
-              xlim = NULL, ylim = NULL, zlim = NULL,
-              gridlength = if (Rank == 1) 301 else c(51,51),
-              whichSpecies = NULL,
-              xlab = if (Rank == 1) "Latent Variable" else "Latent Variable 1",
-              ylab = if (Rank == 1) "Expected Value" else "Latent Variable 2",
-              zlab = "Expected value", labelSpecies = FALSE,
-              stretch = 1.05, main = "", ticktype = "detailed",
-              col = if (Rank == 1) par()$col else "white",
-              llty = par()$lty, llwd = par()$lwd,
-              add1 = FALSE, ...)
+perspqrrvglm(x, varI.latvar = FALSE, reference = NULL, plot.it = TRUE, 
+             xlim = NULL, ylim = NULL, zlim = NULL,
+             gridlength = if (Rank == 1) 301 else c(51,51),
+             whichSpecies = NULL,
+             xlab = if (Rank == 1) "Latent Variable" else "Latent Variable 1",
+             ylab = if (Rank == 1) "Expected Value" else "Latent Variable 2",
+             zlab = "Expected value", labelSpecies = FALSE,
+             stretch = 1.05, main = "", ticktype = "detailed",
+             col = if (Rank == 1) par()$col else "white",
+             llty = par()$lty, llwd = par()$lwd,
+             add1 = FALSE, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -27,7 +27,7 @@ perspqrrvglm(x, varlvI = FALSE, reference = NULL, plot.it = TRUE,
   constrained quadratic ordination (CQO) object.
 
   }
-  \item{varlvI}{
+  \item{varI.latvar}{
   Logical that is fed into \code{\link{Coef.qrrvglm}}.
 
   }
@@ -123,6 +123,7 @@ perspqrrvglm(x, varlvI = FALSE, reference = NULL, plot.it = TRUE,
   \code{\link{lvplot.qrrvglm}} but plots the curves along a fine grid
   and there is no rugplot to show the site scores.
 
+
   For a rank-2 model, a perspective plot has the first latent variable as
   the x-axis, the second latent variable as the y-axis, and the expected
   value (fitted value) as the z-axis.  The result of a CQO is that each
@@ -133,9 +134,11 @@ perspqrrvglm(x, varlvI = FALSE, reference = NULL, plot.it = TRUE,
   To view rare species, use the \code{whichSpecies} argument to select
   a subset of the species.
 
+
   A perspective  plot will be performed if \code{noRRR = ~ 1}, and
   \code{Rank = 1} or \code{2}.  Also, all the tolerance matrices of
   those species to be plotted must be positive-definite.
+
 
 }
 \value{
@@ -145,16 +148,23 @@ perspqrrvglm(x, varlvI = FALSE, reference = NULL, plot.it = TRUE,
   of fitted values on the grid. Here, \eqn{G_1}{G1} and \eqn{G_2}{G2}
   are the two values of \code{gridlength}.
 
-  }
-  \item{lv1grid, lv2grid}{The grid points for the x-axis and y-axis. }
-  \item{maxfitted}{
-  A \eqn{G_1}{G1} by \eqn{G_2}{G2} matrix of maximum
-  of the fitted values over all species. These are the
-  values that are plotted on the z-axis.
 
   }
-  For a rank-1 model, the components \code{lv2grid} and \code{maxfitted}
-  are \code{NULL}.
+  \item{latvar1grid, latvar2grid}{
+  The grid points for the x-axis and y-axis.
+
+
+  }
+  \item{max.fitted}{
+  A \eqn{G_1}{G1} by \eqn{G_2}{G2} matrix of maximum
+  of the fitted values over all species.
+  These are the values that are plotted on the z-axis.
+
+
+  }
+  For a rank-1 model, the components \code{latvar2grid} and
+  \code{max.fitted} are \code{NULL}.
+
 
 }
 \references{
@@ -173,6 +183,7 @@ canonical Gaussian ordination.
   Yee (2004) does not refer to perspective plots.  Instead, contour plots
   via \code{\link{lvplot.qrrvglm}} are used.
 
+
   For rank-1 models, a similar function to this one is
   \code{\link{lvplot.qrrvglm}}.  It plots the fitted values at the actual
   site score values rather than on a fine grid here.  The result has
@@ -181,28 +192,31 @@ canonical Gaussian ordination.
   bell-shaped curves are the truth because the data is more of a distance
   away.
 
+
 }
 \seealso{
-\code{\link[graphics]{persp}},
-\code{\link{cqo}},
-\code{\link{Coef.qrrvglm}},
-\code{\link{lvplot.qrrvglm}},
-\code{\link[graphics]{par}},
-\code{\link[graphics]{title}}.
+  \code{\link[graphics]{persp}},
+  \code{\link{cqo}},
+  \code{\link{Coef.qrrvglm}},
+  \code{\link{lvplot.qrrvglm}},
+  \code{\link[graphics]{par}},
+  \code{\link[graphics]{title}}.
+
+
 }
 \examples{\dontrun{
-hspider[,1:6] <- scale(hspider[,1:6]) # Good idea when ITolerances = TRUE
+hspider[, 1:6] <- scale(hspider[, 1:6])  # Good idea when ITolerances = TRUE
 set.seed(111)
 r1 <- cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,
                 Auloalbi, Pardmont, Pardnigr, Pardpull, Trocterr) ~
           WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
-          poissonff, hspider, trace = FALSE, ITolerances = TRUE)
+          poissonff, data = hspider, trace = FALSE, ITolerances = TRUE)
 set.seed(111)  # r2 below is an ill-conditioned model
 r2 <- cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,
                 Auloalbi, Pardmont, Pardnigr, Pardpull, Trocterr) ~
           WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
-          isdlv = c(2.4,1.0), Muxfactor = 3.0, trace = FALSE,
-          poissonff, hspider, Rank = 2, EqualTolerances = TRUE)
+          isd.lv = c(2.4, 1.0), Muxfactor = 3.0, trace = FALSE,
+          poissonff, data = hspider, Rank = 2, EqualTolerances = TRUE)
 
 sort(r1@misc$deviance.Bestof)  # A history of the fits
 sort(r2@misc$deviance.Bestof)  # A history of the fits
@@ -211,10 +225,10 @@ if (deviance(r2) > 857) stop("suboptimal fit obtained")
 persp(r1, xlim = c(-6,5), col = 1:4, label = TRUE)
 
 # Involves all species 
-persp(r2, xlim = c(-6,5), ylim = c(-4,5), theta = 10, phi = 20, zlim = c(0,220))
-# Omit the two dominant species to see what's behind them
-persp(r2, xlim = c(-6,5), ylim = c(-4,5), theta = 10, phi = 20, zlim = c(0,220), 
-      which = (1:10)[-c(8,10)]) # Use zlim to retain the original z-scale
+persp(r2, xlim = c(-6,5), ylim = c(-4, 5), theta = 10, phi = 20, zlim = c(0, 220))
+# Omit the two dominant species to see what is behind them
+persp(r2, xlim = c(-6,5), ylim = c(-4, 5), theta = 10, phi = 20, zlim = c(0, 220),
+      which = (1:10)[-c(8, 10)])  # Use zlim to retain the original z-scale
 }
 }
 \keyword{models}

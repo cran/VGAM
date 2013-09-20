@@ -44,7 +44,7 @@ show.vglm <- function(object) {
 
   if (length(object@criterion)) {
     ncrit <- names(object@criterion)
-    for(ii in ncrit)
+    for (ii in ncrit)
       if (ii != "loglikelihood" &&
           ii != "deviance")
           cat(paste(ii, ":", sep = ""),
@@ -155,7 +155,7 @@ print.vglm <- function(x, ...) {
 
   if (length(x@criterion)) {
     ncrit <- names(x@criterion)
-    for(ii in ncrit)
+    for (ii in ncrit)
       if (ii != "loglikelihood" && ii != "deviance")
           cat(paste(ii, ":", sep = ""),
               format(x@criterion[[ii]]), "\n")

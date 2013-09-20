@@ -98,6 +98,8 @@ lvplot.rrvglm(object,
   \item{\dots}{ Arguments passed into the \code{plot} function
   when setting up the entire plot. Useful arguments here include
   \code{xlim} and \code{ylim}.
+
+
  }
 }
 \details{
@@ -111,18 +113,23 @@ lvplot.rrvglm(object,
   As the result is a biplot, its interpretation is based on the inner
   product.
 
+
 }
 \value{
   The matrix of scores (\eqn{n} latent variable values) is returned
   regardless of whether a plot was produced or not.
 
+
 }
 
 \references{
+
 Yee, T. W. and Hastie, T. J. (2003)
 Reduced-rank vector generalized linear models.
 \emph{Statistical Modelling},
 \bold{3}, 15--41.
+
+
 }
 \author{ Thomas W. Yee }
 \note{
@@ -130,19 +137,25 @@ Reduced-rank vector generalized linear models.
 %  to the normalization code of \code{\link{rrvglm}} to allow uncorrelated
 %  latent variables etc.
 
+
    The functions \code{\link{lvplot.rrvglm}} and
    \code{\link{biplot.rrvglm}} are equivalent.
 
+
    In the example below the predictor variables are centered, which
    is a good idea.
+
+
 }
 
 \seealso{
-    \code{\link{lvplot}},
-    \code{\link[graphics]{par}},
-    \code{\link{rrvglm}},
-    \code{\link{Coef.rrvglm}},
-    \code{\link{rrvglm.control}}.
+  \code{\link{lvplot}},
+  \code{\link[graphics]{par}},
+  \code{\link{rrvglm}},
+  \code{\link{Coef.rrvglm}},
+  \code{\link{rrvglm.control}}.
+
+
 }
 \examples{
 nn <- nrow(pneumo) # x1, x2 and x3 are some unrelated covariates

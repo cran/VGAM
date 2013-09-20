@@ -20,14 +20,17 @@ simplex(lmu = "logit", lsigma = "loge",
   Link function for \code{mu} and \code{sigma}. 
   See \code{\link{Links}} for more choices.
 
+
   }
   \item{imu, isigma}{
   Optional initial values for \code{mu} and \code{sigma}.
   A \code{NULL} means a value is obtained internally.
 
+
   }
   \item{imethod, shrinkage.init, zero}{
   See \code{\link{CommonVGAMffArguments}} for more information.
+
 
   }
 }

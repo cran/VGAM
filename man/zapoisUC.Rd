@@ -44,7 +44,7 @@ rzapois(n, lambda, pobs0 = 0)
   \code{rzapois} generates random deviates.
 }
 %\references{ }
-\author{ Thomas W. Yee }
+\author{ T. W. Yee }
 \note{ 
     The argument \code{pobs0} is recycled to the required length, and
     must have values which lie in the interval \eqn{[0,1]}.
@@ -52,16 +52,18 @@ rzapois(n, lambda, pobs0 = 0)
 }
 
 \seealso{ 
-    \code{\link{zapoisson}}.
+    \code{\link{zapoisson}},
+    \code{\link{dzipois}}.
+
 
 }
 \examples{
 lambda <- 3; pobs0 <- 0.2; x <- (-1):7
 (ii <- dzapois(x, lambda, pobs0))
-max(abs(cumsum(ii) - pzapois(x, lambda, pobs0))) # Should be 0
+max(abs(cumsum(ii) - pzapois(x, lambda, pobs0)))  # Should be 0
 table(rzapois(100, lambda, pobs0))
 table(qzapois(runif(100), lambda, pobs0))
-round(dzapois(0:10, lambda, pobs0) * 100) # Should be similar
+round(dzapois(0:10, lambda, pobs0) * 100)  # Should be similar
 
 \dontrun{ x <- 0:10
 barplot(rbind(dzapois(x, lambda, pobs0), dpois(x, lambda)),

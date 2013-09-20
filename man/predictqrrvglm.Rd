@@ -9,9 +9,9 @@
 }
 \usage{
 predictqrrvglm(object, newdata=NULL,
-               type = c("link", "response", "lv", "terms"),
+               type = c("link", "response", "latvar", "terms"),
                se.fit = FALSE, deriv = 0, dispersion = NULL,
-               extra = object@extra, varlvI = FALSE, reference = NULL, ...)
+               extra = object@extra, varI.latvar = FALSE, reference = NULL, ...)
 
 }
 %- maybe also 'usage' for other objects documented here.
@@ -21,14 +21,18 @@ predictqrrvglm(object, newdata=NULL,
   An optional data frame in which to look for variables with which
   to predict. If omitted, the fitted linear predictors are used.
 
+
   }
   \item{type, se.fit, dispersion, extra}{
   See \code{\link{predictvglm}}.
 
+
   }
   \item{deriv}{ Derivative. Currently only 0 is handled. }
-  \item{varlvI, reference}{
+  \item{varI.latvar, reference}{
   Arguments passed into \code{\link{Coef.qrrvglm}}.
+
+
   }
   \item{\dots}{ Currently undocumented. }
 }
@@ -38,7 +42,9 @@ predictqrrvglm(object, newdata=NULL,
   Currently there are lots of limitations of this function; it is
   unfinished.
 
+
 % and optionally estimates standard errors of those predictions
+
 
 }
 \value{
@@ -53,16 +59,19 @@ canonical Gaussian ordination.
 \emph{Ecological Monographs},
 \bold{74}, 685--701.
 
+
 }
 
 \author{ T. W. Yee }
 \note{
   This function is not robust and has not been checked fully.
 
+
 }
 
 \seealso{ 
   \code{\link{cqo}}.
+
 
 }
 

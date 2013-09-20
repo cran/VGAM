@@ -72,7 +72,7 @@ explink(theta, bvalue = NULL, inverse = FALSE, deriv = 0, short = TRUE, tag = FA
 
 \note{
   This function has particular use for computing quasi-variances when
-  used with \code{\link{rcim}} and \code{\link{normal1}}.
+  used with \code{\link{rcim}} and \code{\link{uninormal}}.
 
 
   Numerical instability may occur when \code{theta} is
@@ -87,7 +87,7 @@ explink(theta, bvalue = NULL, inverse = FALSE, deriv = 0, short = TRUE, tag = FA
     \code{\link{loge}},
     \code{\link{rcim}},
     \code{\link{Qvar}},
-    \code{\link{normal1}}.
+    \code{\link{uninormal}}.
 
 }
 \examples{

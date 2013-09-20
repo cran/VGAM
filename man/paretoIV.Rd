@@ -9,9 +9,11 @@
   by maximum likelihood estimation. Some special cases of this
   distribution are also handled.
 
+
 }
 \usage{
-paretoIV(location = 0, lscale = "loge", linequality = "loge", lshape = "loge",
+paretoIV(location = 0, lscale = "loge", linequality = "loge",
+         lshape = "loge",
          iscale = 1, iinequality = 1, ishape = NULL, imethod = 1)
 paretoIII(location = 0, lscale = "loge", linequality = "loge",
           iscale = NULL, iinequality = NULL)
@@ -24,6 +26,7 @@ paretoII(location = 0, lscale = "loge", lshape = "loge",
   Location parameter, called \eqn{a} below.
   It is assumed known.
 
+
   }
   \item{lscale, linequality, lshape}{
   Parameter link functions for the
@@ -34,6 +37,7 @@ paretoII(location = 0, lscale = "loge", lshape = "loge",
   A log link is the default for all because all these parameters are
   positive.
 
+
   }
   \item{iscale, iinequality, ishape}{
   Initial values for the parameters.
@@ -41,11 +45,13 @@ paretoII(location = 0, lscale = "loge", lshape = "loge",
   If convergence failure occurs, use these arguments to input
   some alternative initial values.
 
+
   }
   \item{imethod}{
   Method of initialization for the shape parameter.
   Currently only values 1 and 2 are available.
   Try the other value if convergence failure occurs.
+
 
   }
 }
@@ -103,9 +109,9 @@ paretoII(location = 0, lscale = "loge", lshape = "loge",
   and 
   the Pareto(I) distribution \eqn{PI(b,s)} is \eqn{PIV(b,b,g=1,s)}.
   Thus the Burr distribution can be fitted using the
-  \code{\link{nloge}} link
+  \code{\link{negloge}} link
   function and using the default \code{location=0} argument.
-  The Pareto(I) distribution can be fitted using \code{\link{pareto1}}
+  The Pareto(I) distribution can be fitted using \code{\link{paretoff}}
   but there is a slight change in notation: \eqn{s=k} and
   \eqn{b=\alpha}{b=alpha}.
 
@@ -151,7 +157,7 @@ Fairland, Maryland: International Cooperative Publishing House.
 %}
 \seealso{
   \code{\link{ParetoIV}},
-  \code{\link{pareto1}},
+  \code{\link{paretoff}},
   \code{\link{gpd}}.
 
 
@@ -159,8 +165,9 @@ Fairland, Maryland: International Cooperative Publishing House.
 \examples{
 pdata <- data.frame(y = rparetoIV(2000, scale = exp(1),
                                   ineq = exp(-0.3), shape = exp(1)))
-\dontrun{par(mfrow = c(2, 1)); with(pdata, hist(y)); with(pdata, hist(log(y))) }
-fit <- vglm(y ~ 1, paretoIV, pdata, trace = TRUE)
+\dontrun{par(mfrow = c(2, 1))
+with(pdata, hist(y)); with(pdata, hist(log(y))) }
+fit <- vglm(y ~ 1, paretoIV, data = pdata, trace = TRUE)
 coef(fit, matrix = TRUE)
 Coef(fit)
 summary(fit)

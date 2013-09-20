@@ -22,10 +22,12 @@ calibrate.qrrvglm.control(object, trace = FALSE, Method.optim = "BFGS",
     is a good idea to set this argument to be \code{TRUE} since the
     computations are expensive.
 
+
   }
 \item{Method.optim}{ 
   Character. Fed into the \code{method} argument of
   \code{\link[stats]{optim}}.
+
 
   }
 \item{gridSize}{ 
@@ -38,14 +40,17 @@ calibrate.qrrvglm.control(object, trace = FALSE, Method.optim = "BFGS",
   the chance of obtaining the global solution, however, the computing
   time increases proportionately.
 
+
   }
   \item{varlvI}{ 
   Logical. For CQO objects only, this argument is fed into
   \code{\link{Coef.qrrvglm}}.
 
-    }
+
+  }
   \item{\dots}{ 
   Avoids an error message for extraneous arguments.
+
 
   }
 }
@@ -55,6 +60,7 @@ calibrate.qrrvglm.control(object, trace = FALSE, Method.optim = "BFGS",
   call to \code{\link{calibrate.qrrvglm}}, not this function
   directly.
 
+
   }
 \value{
   A list which with the following components.
@@ -62,10 +68,11 @@ calibrate.qrrvglm.control(object, trace = FALSE, Method.optim = "BFGS",
   \item{gridSize }{Positive integer. }
   \item{varlvI }{Logical.}
 
+
 }
 \references{
 
-Yee, T. W. (2012)
+Yee, T. W. (2013)
 On constrained and unconstrained quadratic ordination.
 \emph{Manuscript in preparation}.
 
@@ -85,14 +92,14 @@ On constrained and unconstrained quadratic ordination.
 
 }
 \examples{
-\dontrun{ hspider[,1:6] <- scale(hspider[,1:6]) # Needed when ITol = TRUE
+\dontrun{ hspider[, 1:6] <- scale(hspider[, 1:6])  # Needed when ITol = TRUE
 set.seed(123)
 p1 <- cqo(cbind(Alopacce, Alopcune, Pardlugu, Pardnigr, 
                 Pardpull, Trocterr, Zoraspin) ~
           WaterCon + BareSand + FallTwig +
           CoveMoss + CoveHerb + ReflLux,
           family = poissonff, data = hspider, ITol = TRUE)
-sort(p1@misc$deviance.Bestof) # A history of all the iterations
+sort(p1@misc$deviance.Bestof)  # A history of all the iterations
 
 siteNos <- 1:2  # Calibrate these sites
 cp1 <- calibrate(p1, new = data.frame(depvar(p1)[siteNos, ]), trace = TRUE)
@@ -102,8 +109,9 @@ cp1 <- calibrate(p1, new = data.frame(depvar(p1)[siteNos, ]), trace = TRUE)
 # Graphically compare the actual site scores with their calibrated values
 persp(p1, main = "Site scores: solid=actual, dashed=calibrated",
       label = TRUE, col = "blue", las = 1)
-abline(v = lv(p1)[siteNos], lty = 1, col = 1:length(siteNos)) # actual site scores
-abline(v = cp1, lty = 2, col = 1:length(siteNos)) # calibrated values
+abline(v = latvar(p1)[siteNos], lty = 1,
+       col = 1:length(siteNos))  # actual site scores
+abline(v = cp1, lty = 2, col = 1:length(siteNos))  # calibrated values
 }
 }
 \keyword{models}

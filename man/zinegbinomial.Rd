@@ -1,5 +1,6 @@
 \name{zinegbinomial}
 \alias{zinegbinomial}
+\alias{zinegbinomialff}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Zero-Inflated Negative Binomial Distribution Family Function }
 \description{
@@ -9,8 +10,13 @@
 }
 \usage{
 zinegbinomial(lpstr0 = "logit", lmunb = "loge", lsize = "loge",
-              ipstr0 = NULL, isize = NULL, zero = c(-1, -3),
+              type.fitted = c("mean", "pobs0", "pstr0", "onempstr0"),
+              ipstr0 = NULL, isize = NULL, zero = -3,
               imethod = 1, shrinkage.init = 0.95, nsimEIM = 250)
+zinegbinomialff(lmunb = "loge", lsize = "loge", lonempstr0 = "logit",
+                type.fitted = c("mean", "pobs0", "pstr0", "onempstr0"),
+                isize = NULL, ionempstr0 = NULL, zero = c(-2, -3),
+                imethod = 1, shrinkage.init = 0.95, nsimEIM = 250)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -29,12 +35,28 @@ zinegbinomial(lpstr0 = "logit", lmunb = "loge", lsize = "loge",
 % See \code{earg} in \code{\link{Links}} for general information.
 % }
 
+  \item{type.fitted}{
+  See \code{\link{CommonVGAMffArguments}} 
+  and \code{\link{fittedvlm}} for more information.
+
+
+  }
+
   \item{ipstr0, isize}{
   Optional initial values for \eqn{\phi}{pstr0} and \eqn{k}{k}.
   The default is to compute an initial value internally for both.
   If a vector then recycling is used.
 
   }
+
+  \item{lonempstr0, ionempstr0}{
+  Corresponding arguments for the other parameterization.
+  See details below.
+
+
+  }
+
+
   \item{imethod}{
   An integer with value \code{1} or \code{2} or \code{3} which
   specifies the initialization method for the mean parameter.
@@ -57,7 +79,7 @@ zinegbinomial(lpstr0 = "logit", lmunb = "loge", lsize = "loge",
   }
 }
 \details{
-  This function uses simulation and Fisher scoring, and is based on
+  These functions are based on
   \deqn{P(Y=0) =  \phi + (1-\phi) (k/(k+\mu))^k,}{%
         P(Y=0) =  \phi + (1-\phi) * (k/(k+\mu))^k,}
   and for \eqn{y=1,2,\ldots},
@@ -65,8 +87,10 @@ zinegbinomial(lpstr0 = "logit", lmunb = "loge", lsize = "loge",
         P(Y=y) =  (1-\phi) * dnbinom(y, \mu, k).}
   The parameter \eqn{\phi}{phi} satisfies \eqn{0 < \phi < 1}{0 < phi < 1}.
   The mean of \eqn{Y} is \eqn{(1-\phi) \mu}{(1-phi)*munb}
-  (returned as the fitted values).  By default, the three linear/additive
-  predictors are \eqn{(logit(\phi), \log(\mu), \log(k))^T}{(logit(phi),
+  (returned as the fitted values).
+  By default, the three linear/additive predictors
+  for \code{zinegbinomial()}
+  are \eqn{(logit(\phi), \log(\mu), \log(k))^T}{(logit(phi),
   log(munb), log(k))^T}.
   See \code{\link{negbinomial}}, another \pkg{VGAM} family function,
   for the formula of the probability density function and other details
@@ -76,6 +100,23 @@ zinegbinomial(lpstr0 = "logit", lmunb = "loge", lsize = "loge",
   Independent multivariate responses are handled.
   If so then arguments \code{ipstr0} and \code{isize} may be vectors
   with length equal to the number of responses.
+
+
+  The \pkg{VGAM} family function \code{zinegbinomialff()} has a few
+  changes compared to \code{zinegbinomial()}.
+  These are:
+  (i)   the order of the linear/additive predictors is switched so the
+        NB mean comes first;
+  (ii)  \code{onempstr0} is now 1 minus the probability of a structural 0,
+        i.e., the probability of the parent (NB) component,
+        i.e., \code{onempstr0} is \code{1-pstr0};
+  (iii) argument \code{zero} has a new default so that the \code{onempstr0}
+        is intercept-only by default.
+  Now \code{zinegbinomialff()} is generally recommended over
+  \code{zinegbinomial()}.
+  Both functions implement Fisher scoring and can handle
+  multiple responses.
+
 
 
 }
@@ -100,7 +141,8 @@ zinegbinomial(lpstr0 = "logit", lmunb = "loge", lsize = "loge",
 
 % 20130316: adding this:
   Estimated probabilities of a structural zero and an 
-  observed zero are returned, as in \code{\link{zipoisson}}.
+  observed zero can be returned, as in \code{\link{zipoisson}};
+  see \code{\link{fittedvlm}} for more information.
 
 
 
@@ -126,12 +168,17 @@ zinegbinomial(lpstr0 = "logit", lmunb = "loge", lsize = "loge",
   zero is actually less than, not more than, the nominal
   probability of zero.
   Half-stepping is not uncommon.
-  If failure to converge occurs, try using combinations of
+  If failure to converge occurs, try using combinations of arguments
+  \code{stepsize} (in \code{\link{vglm.control}}),
   \code{imethod},
   \code{shrinkage.init},
   \code{ipstr0},
   \code{isize}, and/or
   \code{zero} if there are explanatory variables.
+
+
+  An infinite loop might occur if some of the fitted values
+  (the means) are too close to 0.
 
 
   This \pkg{VGAM} family function is computationally expensive
@@ -159,7 +206,7 @@ ndata <- transform(ndata,
                    y1 = rzinegbin(nn, mu = munb, size = size, pstr0 = pstr0),
                    y2 = rzinegbin(nn, mu = munb, size = size, pstr0 = pstr0))
 with(ndata, table(y1)["0"] / sum(table(y1)))
-fit <- vglm(cbind(y1, y2) ~ x2, zinegbinomial(zero = NULL), ndata)
+fit <- vglm(cbind(y1, y2) ~ x2, zinegbinomial(zero = NULL), data = ndata)
 coef(fit, matrix = TRUE)
 summary(fit)
 head(cbind(fitted(fit), with(ndata, (1 - pstr0) * munb)))
@@ -176,7 +223,7 @@ ndata <- transform(ndata, pstr0  = logit(-1.5 + 0.5 * eta1, inverse = TRUE),
 ndata <- transform(ndata,
                    y1 = rzinegbin(nn, pstr0 = pstr0, mu = munb, size = size))
 with(ndata, table(y1)["0"] / sum(table(y1)))
-rrzinb <- rrvglm(y1 ~ x2 + x3, zinegbinomial(zero = NULL), ndata,
+rrzinb <- rrvglm(y1 ~ x2 + x3, zinegbinomial(zero = NULL), data = ndata,
                  Index.corner = 2, szero = 3, trace = TRUE)
 coef(rrzinb, matrix = TRUE)
 Coef(rrzinb)

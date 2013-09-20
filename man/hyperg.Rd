@@ -8,6 +8,7 @@
   number of white balls or the total number of white and black balls
   are unknown.
 
+
 }
 \usage{
 hyperg(N = NULL, D = NULL, lprob = "logit", iprob = NULL)
@@ -19,22 +20,28 @@ hyperg(N = NULL, D = NULL, lprob = "logit", iprob = NULL)
     Must be a vector with positive values, and is recycled, if necessary,
     to the same length as the response.
     One of \code{N} and \code{D} must be specified.
+
+
   }
   \item{D}{ 
     Number of white balls in the urn.
     Must be a vector with positive values, and is recycled, if necessary,
     to the same length as the response.
     One of \code{N} and \code{D} must be specified.
+
+
   }
 
   \item{lprob}{ 
   Link function for the probabilities.
   See \code{\link{Links}} for more choices.
 
+
   }
   \item{iprob}{ 
   Optional initial value for the probabilities.
   The default is to choose initial values internally.
+
 
   }
 }
@@ -78,9 +85,9 @@ hyperg(N = NULL, D = NULL, lprob = "logit", iprob = NULL)
 
 }
 \references{
-Evans, M., Hastings, N. and Peacock, B. (2000)
+Forbes, C., Evans, M., Hastings, N. and Peacock, B. (2011)
 \emph{Statistical Distributions},
-New York: Wiley-Interscience, Third edition.
+Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
 
 
 }
@@ -98,31 +105,31 @@ New York: Wiley-Interscience, Third edition.
 
 }
 \seealso{
-    \code{\link[stats]{dhyper}},
-    \code{\link{binomialff}}.
+  \code{\link[stats]{dhyper}},
+  \code{\link{binomialff}}.
 
 
 }
 \section{Warning }{
-    No checking is done to ensure that certain values are within range,
-    e.g., \eqn{k \leq N}{k <= N}.
+  No checking is done to ensure that certain values are within range,
+  e.g., \eqn{k \leq N}{k <= N}.
 
 }
 
 \examples{
 nn <- 100
-m <- 5   # number of white balls in the population
-k <- rep(4, len = nn)   # sample sizes
-n <- 4   # number of black balls in the population
+m <- 5  # Number of white balls in the population
+k <- rep(4, len = nn)  # Sample sizes
+n <- 4  # Number of black balls in the population
 y  <- rhyper(nn = nn, m = m, n = n, k = k)
-yprop <- y / k  # sample proportions
+yprop <- y / k  # Sample proportions
 
 # N is unknown, D is known. Both models are equivalent:
 fit <- vglm(cbind(y,k-y) ~ 1, hyperg(D = m), trace = TRUE, crit = "c")
-fit <- vglm(yprop ~ 1, hyperg(D=m), weight = k, trace = TRUE, crit = "c")
+fit <- vglm(yprop ~ 1, hyperg(D = m), weight = k, trace = TRUE, crit = "c")
 
 # N is known, D is unknown. Both models are equivalent:
-fit <- vglm(cbind(y,k-y) ~ 1, hyperg(N = m+n), trace = TRUE, crit = "l")
+fit <- vglm(cbind(y, k-y) ~ 1, hyperg(N = m+n), trace = TRUE, crit = "l")
 fit <- vglm(yprop ~ 1, hyperg(N = m+n), weight = k, trace = TRUE, crit = "l")
 
 coef(fit, matrix = TRUE)

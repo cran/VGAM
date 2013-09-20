@@ -80,7 +80,7 @@ Thus calibration might be of interest for the data.
 }
 
 \seealso{
-  \code{\link[VGAM]{normal1}},
+  \code{\link[VGAM]{uninormal}},
   \code{\link[VGAM]{rrvglm}}.
 
 
@@ -94,15 +94,15 @@ data(hormone)
 summary(hormone)
 
 modelI <-rrvglm(Y ~ 1 + X, data = hormone, trace = TRUE,
-                normal1(zero = NULL, lsd = "identity", imethod = 2))
+                uninormal(zero = NULL, lsd = "identity", imethod = 2))
 
 # Alternative way to fit modelI
 modelI.other <- vglm(Y ~ 1 + X, data = hormone, trace = TRUE,
-                     normal1(zero = NULL, lsd = "identity"))
+                     uninormal(zero = NULL, lsd = "identity"))
 
 # Inferior to modelI
 modelII <- vglm(Y ~ 1 + X, data = hormone, trace = TRUE,
-                family = normal1(zero = NULL))
+                family = uninormal(zero = NULL))
 
 logLik(modelI)
 logLik(modelII) # Less than logLik(modelI)
@@ -114,7 +114,7 @@ logLik(modelII) # Less than logLik(modelI)
 # Equation (1)
 hormone <- transform(hormone, rX = 1 / X)
 clist <- list("(Intercept)" = diag(2), X = diag(2), rX = rbind(0, 1))
-fit1 <- vglm(Y ~ 1 + X + rX, family = normal1(zero = NULL),
+fit1 <- vglm(Y ~ 1 + X + rX, family = uninormal(zero = NULL),
              constraints = clist, data = hormone, trace = TRUE)
 coef(fit1, matrix = TRUE)
 summary(fit1) # Actually, the intercepts do not seem significant
@@ -122,7 +122,7 @@ plot(Y ~ X, hormone, col = "blue")
 lines(fitted(fit1) ~ X, hormone, col = "orange")
 
 # Equation (2)
-fit2 <- rrvglm(Y ~ 1 + X, normal1(zero = NULL), hormone, trace = TRUE)
+fit2 <- rrvglm(Y ~ 1 + X, uninormal(zero = NULL), hormone, trace = TRUE)
 coef(fit2, matrix = TRUE)
 plot(Y ~ X, hormone, col = "blue")
 lines(fitted(fit2) ~ X, hormone, col = "red")
@@ -135,7 +135,7 @@ lines(fitted(fit2) - 2 * exp(predict(fit2)[, "log(sd)"]) ~ X,
 # Equation (3)
 # Does not fit well because the loge link for the mean is not good.
 fit3 <- rrvglm(Y ~ 1 + X, maxit = 300, data = hormone, trace = TRUE,
-               normal1(lmean = "loge", zero = NULL))
+               uninormal(lmean = "loge", zero = NULL))
 coef(fit3, matrix = TRUE)
 plot(Y ~ X, hormone, col = "blue") # Does not look okay.
 lines(exp(predict(fit3)[, 1]) ~ X, hormone, col = "red")

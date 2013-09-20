@@ -12,7 +12,7 @@
 }
 \usage{
 rposbern(n, nTimePts = 5, pvars = length(xcoeff), xcoeff = c(-2, 1, 2),
-         cap.effect = -1, link = "logit", is.popn = FALSE, earg.link = FALSE)
+         cap.effect = 1, is.popn = FALSE, link = "logit", earg.link = FALSE)
 dposbern(x, prob, prob0 = prob, log = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -40,13 +40,13 @@ dposbern(x, prob, prob0 = prob, log = FALSE)
 
   \item{is.popn}{
   Logical.
-  If \code{TRUE} then argument \code{n} is the population
-  size and what is returned may have substantially less
-  rows than \code{n}.
+  If \code{TRUE} then argument \code{n} is the population size
+  and what is returned may have substantially less rows than \code{n}.
   That is, if an animal has at least one one in its sequence then
-  it is returned, else that animal is not returned.
-  Put in other words, only animals captured at least once are
-  returned in the sample.
+  it is returned, else that animal is not returned because it
+  never was captured.
+% Put in other words, only animals captured at least once are
+% returned in the sample.
 
 
   }
@@ -112,24 +112,32 @@ dposbern(x, prob, prob0 = prob, log = FALSE)
 
 }
 \details{
-  The form of the conditional likelihood is
-  described in \code{\link{posbernoulli.b}}.
-
-
+  The form of the conditional likelihood is described in
+  \code{\link{posbernoulli.b}} and/or
+  \code{\link{posbernoulli.t}} and/or
+  \code{\link{posbernoulli.tb}}.
   The denominator is equally shared among the elements of
   the matrix \code{x}.
 
 
 }
 \value{
-  This function returns a data frame with some attributes.
+  \code{rposbern} returns a data frame with some attributes.
   The function generates random deviates
   (\eqn{\tau} columns labelled \code{y1}, \code{y2}, \ldots)
   for the response.
   Some indicator columns are also included
-  (those starting with \code{ch} are for previous capture history,
-  and those starting with \code{z} are zero),
-  and these are useful for the \code{xij} argument.
+  (those starting with \code{ch} are for previous capture history).
+  The default setting corresponds to a \eqn{M_{bh}} model that
+  has a single trap-happy effect.
+  Covariates \code{x1}, \code{x2}, \ldots have the same
+  affect on capture/recapture at every sampling occasion
+  (see the argument \code{parallel.t} in, e.g.,
+  \code{\link{posbernoulli.tb}}).
+
+
+
+% and these are useful for the \code{xij} argument.
 
 
   The function \code{dposbern} gives the density,
@@ -139,30 +147,37 @@ dposbern(x, prob, prob0 = prob, log = FALSE)
 %\references{ }
 \author{ Thomas W. Yee. }
 \note{ 
-  The \code{r}-type function is experimental and does not follow the
+  The \code{r}-type function is experimental only and does not follow the
   usual conventions of \code{r}-type R functions.
-  The \code{d}-type function is more conventional.
+  It may change a lot in the future.
+  The \code{d}-type function is more conventional and is less
+  likely to change.
 
 
 }
 
 \seealso{ 
 % \code{\link{huggins91}},
+  \code{\link{posbernoulli.tb}},
   \code{\link{posbernoulli.b}},
-  \code{\link{posbernoulli.t}},
-  \code{\link{posbernoulli.tb}}.
+  \code{\link{posbernoulli.t}}.
 
 
 }
 \examples{
-set.seed(123); rposbern(n = 10)
-attributes(rposbern(n = 10))
+rposbern(n = 10)
+attributes(pdata <- rposbern(n = 100))
+M.bh <- vglm(cbind(y1, y2, y3, y4, y5) ~ x2 + x3, posbernoulli.b(I2 = FALSE),
+             data = pdata, trace = TRUE)
+constraints(M.bh)
+summary(M.bh)
 }
 \keyword{distribution} 
 \keyword{datagen} 
 
 
 %double.ch = FALSE,
+% and those starting with \code{z} are zero.
 
 
 

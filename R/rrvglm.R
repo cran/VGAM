@@ -19,8 +19,7 @@ rrvglm <- function(formula,
                  contrasts = NULL, 
                  constraints = NULL,
                  extra = NULL, 
-                 qr.arg = FALSE, smart = TRUE, ...)
-{
+                 qr.arg = FALSE, smart = TRUE, ...) {
     dataname <- as.character(substitute(data))  # "list" if no data=
     function.name <- "rrvglm"
 
@@ -34,8 +33,9 @@ rrvglm <- function(formula,
         data <- environment(formula)
 
     mf <- match.call(expand.dots = FALSE)
-    mf$family <- mf$method <- mf$model <- mf$x.arg <- mf$y.arg <- mf$control <-
-        mf$contrasts <- mf$constraints <- mf$extra <- mf$qr.arg <- NULL
+    mf$family <- mf$method <- mf$model <- mf$x.arg <- mf$y.arg <-
+    mf$control <- mf$contrasts <- mf$constraints <- mf$extra <-
+    mf$qr.arg <- NULL
     mf$coefstart <- mf$etastart <- mf$... <- NULL
     mf$smart <- NULL
     mf$drop.unused.levels <- TRUE 
@@ -90,34 +90,36 @@ rrvglm <- function(formula,
 
     rrvglm.fitter <- get(method)
 
-    fit <- rrvglm.fitter(x=x, y=y, w=w, offset=offset, 
-                       etastart=etastart, mustart=mustart, coefstart=coefstart,
-                       family=family, 
-                       control=control,
-                       constraints=constraints,
-                       criterion=control$criterion,
-                       extra=extra,
-                       qr.arg = qr.arg,
-                       Terms=mt, function.name=function.name, ...)
+    fit <- rrvglm.fitter(x = x, y = y, w = w, offset = offset,
+                        etastart = etastart, mustart = mustart,
+                        coefstart = coefstart,
+                        family = family, 
+                        control = control,
+                        constraints = constraints,
+                        criterion = control$criterion,
+                        extra = extra,
+                        qr.arg  =  qr.arg,
+                        Terms = mt, function.name = function.name, ...)
 
     if (control$Bestof > 1) {
-        deviance.Bestof = rep(fit$crit.list$deviance, len= control$Bestof)
+        deviance.Bestof <- rep(fit$crit.list$deviance, len= control$Bestof)
         for(tries in 2:control$Bestof) {
              if (control$trace && (control$Bestof>1))
              cat(paste("\n========================= Fitting model", tries,
                          "=========================\n\n"))
-             it <- rrvglm.fitter(x=x, y=y, w=w, offset=offset, 
-                       etastart=etastart, mustart=mustart, coefstart=coefstart,
-                       family=family, 
-                       control=control,
-                       constraints=constraints,
-                       criterion=control$criterion,
-                       extra=extra,
+             it <- rrvglm.fitter(x = x, y = y, w = w, offset = offset, 
+                       etastart = etastart, mustart = mustart,
+                       coefstart = coefstart,
+                       family = family, 
+                       control = control,
+                       constraints = constraints,
+                       criterion = control$criterion,
+                       extra = extra,
                        qr.arg = qr.arg,
-                       Terms=mt, function.name=function.name, ...)
-            deviance.Bestof[tries] = it$crit.list$deviance
+                       Terms = mt, function.name = function.name, ...)
+            deviance.Bestof[tries] <- it$crit.list$deviance
             if (min(deviance.Bestof[1:(tries-1)]) > deviance.Bestof[tries])
-                fit = it
+              fit <- it
         }
         fit$misc$deviance.Bestof = deviance.Bestof
     }
@@ -125,8 +127,8 @@ rrvglm <- function(formula,
     fit$misc$dataname <- dataname
 
     if (smart) {
-        fit$smart.prediction <- get.smart.prediction()
-        wrapup.smart()
+      fit$smart.prediction <- get.smart.prediction()
+      wrapup.smart()
     }
 
     answer <-
@@ -146,9 +148,9 @@ rrvglm <- function(formula,
       "R"            = fit$R,
       "rank"         = fit$rank,
       "residuals"    = as.matrix(fit$residuals),
-      "rss"          = fit$rss,
+      "res.ss"       = fit$res.ss,
       "smart.prediction" = as.list(fit$smart.prediction),
-      "terms"        = list(terms=mt))
+      "terms"        = list(terms = mt))
 
     if (!smart) answer@smart.prediction <- list(smart.arg = FALSE)
 

@@ -7,6 +7,27 @@
 useDynLib(VGAM)
 
 
+
+importMethodsFrom("methods")
+
+
+
+importFrom("stats4", BIC)
+exportMethods(BIC)
+export(BICvlm)
+
+
+
+export(dbiclaytoncop, rbiclaytoncop, biclaytoncop)
+
+
+export(bistudentt, dbistudentt)
+export(dbinormcop, pbinormcop, rbinormcop, binormalcop)
+export(kendall.tau)
+
+export(expint, expexpint, expint.E1)
+
+
 export(pgamma.deriv, pgamma.deriv.unscaled, truncweibull)
 
 export(binom2.rho.ss)
@@ -43,7 +64,7 @@ importMethodsFrom("stats4")
 
 
 
-importFrom(stats4, AIC, coef, summary, plot, logLik, vcov)
+importFrom("stats4", AIC, coef, summary, plot, logLik, vcov)
 exportMethods(AIC, coef, summary, plot, logLik, vcov)
 
 
@@ -81,10 +102,10 @@ export(Confint.rrnb, Confint.nb1)
 export(vcovrrvglm)
 
 
-export(posbernoulli.b, posbernoulli.t, posbernoulli.tb, aux.posbernoulli)
+export(posbernoulli.b, posbernoulli.t, posbernoulli.tb,
+       aux.posbernoulli.t)
 export(N.hat.posbernoulli)
 export(dposbern, rposbern)
-export(posbern.aux)
 
 
 
@@ -113,7 +134,7 @@ variable.namesvlm
 export(expgeometric, dexpgeom, pexpgeom, qexpgeom, rexpgeom,
 genrayleigh, dgenray, pgenray, qgenray, rgenray,
 exppoisson, dexppois, pexppois, qexppois, rexppois,
-explogarithmic, dexplog, pexplog, qexplog, rexplog)
+explogff, dexplog, pexplog, qexplog, rexplog)
 
 
 
@@ -121,7 +142,7 @@ explogarithmic, dexplog, pexplog, qexplog, rexplog)
 export(Rcim, plotrcim0,
 rcim, summaryrcim)
 export(moffset)
-export(plotqvar, Qvar)
+export(plotqvar, Qvar, qvar)
 export(depvar, depvar.vlm)
 
 
@@ -138,7 +159,6 @@ export(
 d2theta.deta2, Deviance.categorical.data.vgam, 
 lm2qrrvlm.model.matrix,
 m2avglm, 
-dotFortran, dotC,
 dimm)
 
 
@@ -151,8 +171,10 @@ put.smart)
 
 
 
-export(
-dbinorm, binormal)
+export(dbinorm, pbinorm, rbinorm, binormal)
+
+
+export(pnorm2, dnorm2)
 
 
 
@@ -165,32 +187,33 @@ export(iam,
 fill, fill1, fill2, fill3,
 abbott,
 amh, damh, pamh, ramh, 
-bivgamma.mckay,
+bigamma.mckay,
 freund61,
 frechet2, dfrechet, pfrechet, qfrechet, rfrechet,
-frank, dfrank, pfrank, rfrank, 
+bifrankcop, dbifrankcop, pbifrankcop, rbifrankcop, 
 plackett, dplack, pplack, rplack, 
 benini, dbenini, pbenini, qbenini, rbenini, 
 maxwell, dmaxwell, pmaxwell, qmaxwell, rmaxwell,
 morgenstern,
-dfgm, pfgm, rfgm, fgm,
-gumbelIbiv,
-erf, erfc, lerch, lambertW,
-tpareto1, dtpareto, qtpareto, rtpareto, ptpareto,
-pareto1, dpareto, qpareto, rpareto, ppareto,
+fgm, dfgm, pfgm, rfgm,
+bigumbelI,
+erf, erfc, lerch, lambertW, log1pexp,
+truncpareto, dtruncpareto, qtruncpareto, rtruncpareto, ptruncpareto,
+paretoff, dpareto, qpareto, rpareto, ppareto,
 paretoIV, dparetoIV, qparetoIV, rparetoIV, pparetoIV,
 paretoIII, dparetoIII, qparetoIII, rparetoIII, pparetoIII,
 paretoII, dparetoII, qparetoII, rparetoII, pparetoII,
 dparetoI, qparetoI, rparetoI, pparetoI,
 cgumbel, egumbel, gumbel,
 dgumbel, pgumbel, qgumbel, rgumbel, 
-fnormal1, dfnorm, pfnorm, qfnorm, rfnorm,
-cennormal1, dcennormal1,
-recnormal1, recexp1,
+foldnormal, dfoldnorm, pfoldnorm, qfoldnorm, rfoldnorm,
+cennormal1,
+cennormal, double.cennormal,
+recnormal, recnormal.control, recexp1,
 cenrayleigh, rayleigh, drayleigh, prayleigh, qrayleigh, rrayleigh, 
 drice, rrice, riceff,
 dskellam, rskellam, skellam,
-inv.gaussianff, dinv.gaussian, pinv.gaussian, rinv.gaussian, wald,
+inv.gaussianff, dinv.gaussian, pinv.gaussian, rinv.gaussian, waldff,
 expexp1, expexp)
 
 
@@ -203,14 +226,14 @@ anova.vgam,
 anova.vglm, 
 bisa, dbisa, pbisa, qbisa, rbisa,
 betabinomial.ab, betabinomial,
-dexpbinomial,
+double.expbinomial,
 dbetabinom,    pbetabinom,    rbetabinom,
 dbetabinom.ab, pbetabinom.ab, rbetabinom.ab,
 biplot.qrrvglm,
 dbort, rbort, borel.tanner,
 care.exp,
 cauchy, cauchy1,
-ccoef.cao, ccoef.Coef.cao, ccoef.Coef.qrrvglm, ccoef.qrrvglm,
+concoef.cao, concoef.Coef.cao, concoef.Coef.qrrvglm, concoef.qrrvglm,
 cdf, cdf.lms.bcg, cdf.lms.bcn,
 cdf.lms.yjn, cdf.vglm, 
 Coef.cao, Coefficients,
@@ -223,15 +246,15 @@ deplot.lms.yjn, deplot.lms.yjn2, deplot.vglm,
 deviance.uqo, deviance.vglm, deviance.vlm,
 df.residual_vlm,
 dirmultinomial, dirmul.old,
-dnorm2,
 dtheta.deta)
 
 
-export(cloglog,cauchit,elogit,explink,fisherz,logc,loge,logit,
-       logoff,nreciprocal,
+export(cloglog,cauchit,elogit,explink,fisherz,logc,loge,logneg,logit,
+       logoff,negreciprocal,
        probit,reciprocal,rhobit,
        golf,polf,nbolf,nbolf2,Cut)
-export(ordpoisson, poissonp)
+export(ordpoisson)
+export(poisson.points, dpois.points)
 
 
 
@@ -253,8 +276,8 @@ lms.bcg, lms.bcn, lms.yjn, lms.yjn2,
 lqnorm,
 dbilogis4, pbilogis4, rbilogis4, bilogistic4,
 logistic1, logistic2,
-logLik.vlm, lv.cao,
-latvar.Coef.qrrvglm, latvar.qrrvglm,
+logLik.vlm,
+latvar.cao, latvar.Coef.qrrvglm, latvar.rrvglm, latvar.qrrvglm,
 lvplot.cao,
 Rank, Rank.rrvglm, Rank.qrrvglm, Rank.cao,
 Max.Coef.qrrvglm, Max.qrrvglm,
@@ -264,7 +287,7 @@ model.matrixvlm,
 model.framevlm,
 nakagami, dnaka, pnaka, qnaka, rnaka,
 namesof,
-nlminbcontrol, nloge,
+nlminbcontrol, negloge,
 Opt.Coef.qrrvglm, Opt.qrrvglm, persp.cao)
 
 
@@ -274,7 +297,7 @@ export( micmen )
 export( plot.cao,
 plotpreplotvgam,
 plotvglm, plotvlm,
-plotvsmooth.spline, pnorm2, powl,
+plotvsmooth.spline, powerlink,
 predict.cao, predictcao,
 predictors, predictors.vglm,
 predictqrrvglm, predict.rrvglm, predict.uqo, predict.vgam,
@@ -300,15 +323,14 @@ explot.lms.bcn,
 rlplot,
 rlplot.egev, rlplot.gev,
 rlplot.vextremes, rlplot.vglm,
-rlplot, rlplot.vglm, rrar.control,
-rrvglm.control.Gaussian)
+rlplot, rlplot.vglm, rrar.control)
 
 
 export(
 SurvS4, is.SurvS4, as.character.SurvS4,
 show.SurvS4,
 simple.exponential, simple.poisson,
-mbinomial,
+matched.binomial,
 seq2binomial, size.binomial,
 stdze1, stdze2,
 summary.cao, summary.grc,
@@ -319,7 +341,7 @@ s.vam, terms.vlm,
 theta2eta, Tol.Coef.qrrvglm, Tol.Coef.uqo, Tol.qrrvglm, Tol.uqo,
 triangle, dtriangle, ptriangle, qtriangle, rtriangle, 
   vcovvlm,
-vglm.fit,
+vglm.fit, vgam.fit,
 vglm.garma.control, vglm.multinomial.control,
 vglm.multinomial.deviance.control, vglm.vcategorical.control,
 vlm, vlm.control,
@@ -433,7 +455,7 @@ bratt, Brat, calibrate.qrrvglm.control, calibrate.qrrvglm,
 calibrate, cao.control,
 cao,
 cdf.lmscreg, cgo, chisq, clo, 
-ccoef,
+ccoef, concoef,
 Coef, Coef.qrrvglm, Coef.rrvglm, Coef.vlm,
 predictqrrvglm,
 cratio, cumulative, propodds, prplot, prplot.control)
@@ -458,15 +480,17 @@ geometric, truncgeometric,
 dlino, plino, qlino, rlino, lino, 
 grc,
 dhzeta, phzeta, qhzeta, rhzeta, hzeta, 
-nidentity, identity,
+negidentity, identity,
 prentice74,
 amlnormal, amlbinomial, amlexponential, amlpoisson, Wr1, Wr2,
 dkumar, pkumar, qkumar, rkumar, kumar,
 dyules, pyules, ryules, yulesimon, 
 logff, dlog, plog, rlog,
+logF, dlogF,
 loglinb2, loglinb3,
-loglog, lognormal3, lvplot.qrrvglm,
-lvplot, lvplot.rrvglm, lv, latvar, Max, MNSs,
+loglog, lognormal3,
+lvplot.qrrvglm, lvplot.rrvglm,
+Max, MNSs,
 dmultinomial, multinomial, margeff)
 
 
@@ -489,7 +513,7 @@ export(
 meplot, meplot.default, meplot.vlm,
 guplot, guplot.default, guplot.vlm,
 negbinomial, negbinomial.size, polya,
-normal1, SUR,
+uninormal, SUR, normal.vcm,
 nbcanlink,
 tobit, dtobit, ptobit, qtobit, rtobit,
 Opt, 
@@ -500,9 +524,9 @@ poissonff,
 dposbinom, pposbinom, qposbinom, rposbinom, posbinomial,
 dposgeom, pposgeom, qposgeom, rposgeom, # posgeometric,
 dposnegbin, pposnegbin, qposnegbin, rposnegbin, posnegbinomial,
-dposnorm, pposnorm, qposnorm, rposnorm, posnormal1,
+dposnorm, pposnorm, qposnorm, rposnorm, posnormal, posnormal.control,
 dpospois, ppospois, qpospois, rpospois, pospoisson,
-qtplot.lmscreg, quasibinomialff, quasipoissonff, rdiric, rig,
+qtplot.lmscreg, quasibinomialff, quasipoissonff, rdiric, rigff,
 rrar, rrvglm.control,
 rrvglm.optim.control)
 
@@ -521,26 +545,22 @@ uqo.control, uqo,
 vgam.control, vgam, vglm.control, vglm,
 vsmooth.spline,
 weibull, yip88,
-dzanegbin, pzanegbin, qzanegbin, rzanegbin, zanegbinomial,
-dzabinom, pzabinom, qzabinom, rzabinom, zabinomial,
-dzapois, pzapois, qzapois, rzapois, zapoisson,
-dzibinom, pzibinom, qzibinom, rzibinom, zibinomial,
-dzinegbin, pzinegbin, qzinegbin, rzinegbin, zinegbinomial,
-dzigeom, pzigeom, qzigeom, rzigeom, zigeometric,
-dzageom, pzageom, qzageom, rzageom, zageometric,
-dzipois, pzipois, qzipois, rzipois,
-zipoisson, zipoissonff,
-mix2exp, mix2normal1, mix2poisson,
-mix2exp.control, mix2normal1.control, mix2poisson.control,
-skewnormal1, dsnorm, rsnorm,
+dzabinom, pzabinom, qzabinom, rzabinom, zabinomial, zabinomialff,
+dzageom, pzageom, qzageom, rzageom, zageometric, zageometricff,
+dzanegbin, pzanegbin, qzanegbin, rzanegbin, zanegbinomial, zanegbinomialff,
+dzapois, pzapois, qzapois, rzapois, zapoisson, zapoissonff,
+dzibinom, pzibinom, qzibinom, rzibinom, zibinomial, zibinomialff,
+dzigeom, pzigeom, qzigeom, rzigeom, zigeometric, zigeometricff,
+dzinegbin, pzinegbin, qzinegbin, rzinegbin, zinegbinomial, zinegbinomialff,
+dzipois, pzipois, qzipois, rzipois, zipoisson, zipoissonff,
+mix2exp, mix2normal, mix2poisson,
+mix2exp.control, mix2normal.control, mix2poisson.control,
+skewnormal, dskewnorm, rskewnorm,
 tikuv, dtikuv, ptikuv, qtikuv, rtikuv)
 
 
 
 
-export(DeLury,
-       wffc.P1, wffc.P1star, wffc.P2, wffc.P2star, wffc.P3, wffc.P3star
-)
 
 
 
@@ -584,7 +604,7 @@ plot,
 logLik,
 vcov,
 deviance,
-calibrate, cdf, ccoef, df.residual,
+calibrate, cdf, df.residual,
 lv, latvar, Max, Opt, Tol,
 biplot, deplot, lvplot, qtplot, rlplot, meplot,
 trplot, vplot,

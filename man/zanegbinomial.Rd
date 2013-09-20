@@ -1,5 +1,6 @@
 \name{zanegbinomial}
 \alias{zanegbinomial}
+\alias{zanegbinomialff}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Zero-Altered Negative Binomial Distribution }
 \description{
@@ -10,9 +11,13 @@
 }
 \usage{
 zanegbinomial(lpobs0 = "logit", lmunb = "loge", lsize = "loge",
-              ipobs0 = NULL,                    isize = NULL,
-              zero = c(-1, -3), imethod = 1,
+              type.fitted = c("mean", "pobs0"),
+              ipobs0 = NULL, isize = NULL, zero = -3, imethod = 1,
               nsimEIM = 250, shrinkage.init = 0.95)
+zanegbinomialff(lmunb = "loge", lsize = "loge", lonempobs0 = "logit",
+                type.fitted = c("mean", "pobs0", "onempobs0"),
+                isize = NULL, ionempobs0 = NULL, zero = c(-2, -3),
+                imethod = 1, nsimEIM = 250, shrinkage.init = 0.95)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -35,6 +40,24 @@ zanegbinomial(lpobs0 = "logit", lmunb = "loge", lsize = "loge",
 
   }
 
+  \item{type.fitted}{
+  See \code{\link{CommonVGAMffArguments}}
+  and \code{\link{fittedvlm}} for information.
+
+
+  }
+
+
+  \item{lonempobs0, ionempobs0}{
+  Corresponding argument  for the other parameterization.
+  See details below.
+
+
+  }
+
+
+
+
 % \item{epobs0, emunb, esize}{
 % List. Extra argument for the respective links.
 % See \code{earg} in \code{\link{Links}} for general information.
@@ -43,24 +66,29 @@ zanegbinomial(lpobs0 = "logit", lmunb = "loge", lsize = "loge",
 
   \item{ipobs0, isize}{ 
     Optional initial values for \eqn{p_0}{pobs0} and \code{k}.
-    If given, it is okay to give one value
+    If given then it is okay to give one value
     for each response/species by inputting a vector whose length
     is the number of columns of the response matrix.
 
+
   }
   \item{zero}{ 
-    Integer valued vector, may be assigned, e.g., \eqn{-3} or \eqn{3} if
-    the probability of an observed value is to be modelled with the
-    covariates.
+%   Integer valued vector, may be assigned, e.g., \eqn{-3} or \eqn{3} if
+%   the probability of an observed value is to be modelled with the
+%   covariates.
     Specifies which of the three linear predictors are
-    modelled as an intercept only. By default, the \code{k} and \eqn{p_0}{pobs0}
-    parameters for each response are modelled as
-    single unknown numbers that are estimated.
+    modelled as an intercept only.
+%   By default, the \code{k} and \eqn{p_0}{pobs0}
+%   parameters for each response are modelled as
+%   single unknown numbers that are estimated.
     All parameters can be modelled as a
-    function of the explanatory variables by setting \code{zero = NULL}.
-    A negative value means that the value is recycled, so setting \eqn{-3}
-    means all \code{k} are intercept-only.
+    function of the explanatory variables by setting \code{zero = NULL}
+    (not recommended).
+    A negative value means that the value is recycled, e.g.,
+    setting \eqn{-3} means all \code{k} are intercept-only
+    for \code{zanegbinomial}.
     See \code{\link{CommonVGAMffArguments}} for more information.
+
 
   }
   \item{nsimEIM, imethod}{
@@ -88,8 +116,26 @@ zanegbinomial(lpobs0 = "logit", lmunb = "loge", lsize = "loge",
 
 
   For one response/species, by default, the three linear/additive
-  predictors are \eqn{(logit(p_0), \log(\mu_{nb}), \log(k))^T}{(logit(pobs0),
+  predictors
+  for \code{zanegbinomial()}
+  are \eqn{(logit(p_0), \log(\mu_{nb}), \log(k))^T}{(logit(pobs0),
   log(munb), log(k))^T}.  This vector is recycled for multiple species.
+
+
+  The \pkg{VGAM} family function \code{zanegbinomialff()} has a few
+  changes compared to \code{zanegbinomial()}.
+  These are:
+  (i)   the order of the linear/additive predictors is switched so the
+        negative binomial mean comes first;
+  (ii)  argument \code{onempobs0} is now 1 minus the probability of an observed 0,
+        i.e., the probability of the positive negative binomial distribution,
+        i.e., \code{onempobs0} is \code{1-pobs0};
+  (iii) argument \code{zero} has a new default so that the \code{pobs0}
+        is intercept-only by default.
+  Now \code{zanegbinomialff()} is generally recommended over
+  \code{zanegbinomial()}.
+  Both functions implement Fisher scoring and can handle
+  multiple responses.
 
 
 }
@@ -101,12 +147,16 @@ zanegbinomial(lpobs0 = "logit", lmunb = "loge", lsize = "loge",
 
   The \code{fitted.values} slot of the fitted object,
   which should be extracted by the generic function \code{fitted}, returns
-  the mean \eqn{\mu}{mu} which is given by 
+  the mean \eqn{\mu}{mu} (default) which is given by 
   \deqn{\mu = (1-p_0) \mu_{nb} / [1 - (k/(k+\mu_{nb}))^k].}{%
          mu = (1-pobs0) * munb / [1 - (k/(k+munb))^k].}
+  If \code{type.fitted = "pobs0"} then \eqn{p_0}{pobs0} is returned.
+
+
 
 }
 \references{
+
 Welsh, A. H., Cunningham, R. B., Donnelly, C. F. and Lindenmayer,
 D. B. (1996)
 Modelling the abundances of rare species: statistical models
@@ -114,6 +164,11 @@ for counts with extra zeros.
 \emph{Ecological Modelling},
 \bold{88},
 297--308.
+
+
+  Yee, T. W. (2013)
+  Reduced-rank vector generalized linear models with two linear predictors.
+  \emph{Computational Statistics and Data Analysis}.
 
 
 }
@@ -178,7 +233,7 @@ zdata <- transform(zdata,
 with(zdata, table(y1))
 with(zdata, table(y2))
 
-fit <- vglm(cbind(y1, y2) ~ x2, zanegbinomial, zdata, trace = TRUE)
+fit <- vglm(cbind(y1, y2) ~ x2, zanegbinomial, data = zdata, trace = TRUE)
 coef(fit, matrix = TRUE)
 head(fitted(fit))
 head(predict(fit))

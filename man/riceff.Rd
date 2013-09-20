@@ -6,6 +6,7 @@
   Estimates the two parameters of a Rice distribution
   by maximum likelihood estimation.
 
+
 }
 \usage{
 riceff(lvee = "loge", lsigma = "loge",
@@ -17,6 +18,7 @@ riceff(lvee = "loge", lsigma = "loge",
   Link functions for the \eqn{v} and \eqn{\sigma}{sigma} parameters.
   See \code{\link{Links}} for more choices and for general information.
 
+
   }
   \item{ivee, isigma}{
   Optional initial values for the parameters.
@@ -24,9 +26,11 @@ riceff(lvee = "loge", lsigma = "loge",
   If convergence failure occurs (this \pkg{VGAM} family function seems
   to require good initial values) try using these arguments.
 
+
   }
   \item{nsimEIM, zero}{
   See \code{\link{CommonVGAMffArguments}} for more information.
+
 
   }
 }
@@ -50,6 +54,7 @@ riceff(lvee = "loge", lsigma = "loge",
   \eqn{z=-v^2/(2 \sigma^2)}{z=-v^2/(2*sigma^2)}.
   Simulated Fisher scoring is implemented.
 
+
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
@@ -64,6 +69,7 @@ Rice, S. O. (1945)
 Mathematical Analysis of Random Noise.
 \emph{Bell System Technical Journal},
 \bold{24}, 46--156.
+
 
 }
 \author{ T. W. Yee }
@@ -86,10 +92,10 @@ Mathematical Analysis of Random Noise.
 
 }
 \examples{
-\dontrun{ vee <- exp(2); sigma <- exp(1);
-y <- rrice(n <- 1000, vee, sigma)
-fit <- vglm(y ~ 1, riceff, trace = TRUE, crit = "c")
-c(mean(y), fitted(fit)[1])
+\dontrun{ vee <- exp(2); sigma <- exp(1)
+rdata <- data.frame(y = rrice(n <- 1000, vee, sigma))
+fit <- vglm(y ~ 1, riceff, data = rdata, trace = TRUE, crit = "coef")
+c(with(rdata, mean(y)), fitted(fit)[1])
 coef(fit, matrix = TRUE)
 Coef(fit)
 summary(fit)

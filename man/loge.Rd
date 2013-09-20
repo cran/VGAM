@@ -1,18 +1,22 @@
 \name{loge}
 \alias{loge}
-\alias{nloge}
+\alias{negloge}
+\alias{logneg}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{ Log link function }
+\title{ Log link function, and variants }
 \description{
   Computes the log transformation, including its inverse and the first
   two derivatives.
+
 
 }
 \usage{
 loge(theta, bvalue = NULL, inverse = FALSE, deriv = 0,
      short = TRUE, tag = FALSE)
-nloge(theta, bvalue = NULL, inverse = FALSE, deriv = 0,
-      short = TRUE, tag = FALSE)
+negloge(theta, bvalue = NULL, inverse = FALSE, deriv = 0,
+        short = TRUE, tag = FALSE)
+logneg(theta, bvalue = NULL, inverse = FALSE, deriv = 0,
+       short = TRUE, tag = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -45,8 +49,14 @@ nloge(theta, bvalue = NULL, inverse = FALSE, deriv = 0,
 
 
   The function \code{loge} computes
-  \eqn{\log(\theta)}{log(theta)} whereas \code{nloge} computes
+  \eqn{\log(\theta)}{log(theta)} whereas \code{negloge} computes
   \eqn{-\log(\theta)=\log(1/\theta)}{-log(theta)=log(1/theta)}.
+
+
+  The function \code{logneg} computes
+  \eqn{\log(-\theta)}{log(-theta)}, hence is suitable for parameters
+  that are negative, e.g.,
+  a trap-shy effect in \code{\link{posbernoulli.b}}.
 
 
 }
@@ -89,15 +99,17 @@ nloge(theta, bvalue = NULL, inverse = FALSE, deriv = 0,
     \code{\link{loglog}},
     \code{\link[base:Log]{log}},
     \code{\link{logoff}},
-    \code{\link{lambertW}}.
+    \code{\link{lambertW}},
+    \code{\link{posbernoulli.b}}.
 
 
 }
 \examples{
 \dontrun{ loge(seq(-0.2, 0.5, by = 0.1))
  loge(seq(-0.2, 0.5, by = 0.1), bvalue = .Machine$double.xmin)
-nloge(seq(-0.2, 0.5, by = 0.1))
-nloge(seq(-0.2, 0.5, by = 0.1), bvalue = .Machine$double.xmin) }
+negloge(seq(-0.2, 0.5, by = 0.1))
+negloge(seq(-0.2, 0.5, by = 0.1), bvalue = .Machine$double.xmin) }
+logneg(seq(-0.5, -0.2, by = 0.1))
 }
 \keyword{math}
 \keyword{models}

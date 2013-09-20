@@ -16,7 +16,7 @@
 \usage{
 deexp(x, rate = 1, log = FALSE)
 peexp(q, rate = 1, log = FALSE)
-qeexp(p, rate = 1, Maxit_nr = 10, Tol_nr = 1.0e-6)
+qeexp(p, rate = 1, Maxit.nr = 10, Tol.nr = 1.0e-6)
 reexp(n, rate = 1)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -31,7 +31,7 @@ reexp(n, rate = 1)
 
 
   }
-  \item{Maxit_nr, Tol_nr}{
+  \item{Maxit.nr, Tol.nr}{
   See \code{\link{deunif}}.
 
 

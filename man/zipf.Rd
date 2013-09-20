@@ -18,16 +18,19 @@ zipf(N = NULL, link = "loge", init.s = NULL)
   If \code{N = Inf} and \eqn{s>1} then this is the zeta
   distribution (use \code{\link{zetaff}} instead).
 
+
   }
   \item{link}{
   Parameter link function applied to the (positive) parameter \eqn{s}.
   See \code{\link{Links}} for more choices.
+
 
   }
   \item{init.s}{
   Optional initial value for the parameter \eqn{s}.
   The default is to choose an initial value internally.
   If converge failure occurs use this argument to input a value.
+
 
   }
 }
@@ -70,6 +73,7 @@ zipf(N = NULL, link = "loge", init.s = NULL)
   3rd edition,
   Hoboken, New Jersey, USA: Wiley.
 
+
 }
 \author{ T. W. Yee }
 \note{
@@ -81,6 +85,7 @@ zipf(N = NULL, link = "loge", init.s = NULL)
 \seealso{ 
   \code{\link{dzipf}},
   \code{\link{zetaff}}.
+
 
 }
 \examples{

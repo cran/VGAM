@@ -6,6 +6,7 @@
 Estimates the two parameters of the Levy distribution
 by maximum likelihood estimation.
 
+
 }
 \usage{
 levy(delta = NULL, link.gamma = "loge", idelta = NULL, igamma = NULL)
@@ -43,11 +44,10 @@ levy(delta = NULL, link.gamma = "loge", idelta = NULL, igamma = NULL)
   whose density function has a tractable form. 
   The formula for the density is
  \deqn{f(y;\gamma,\delta) = \sqrt{\frac{\gamma}{2\pi}}
-       \exp \left( \frac{-\gamma}{2(y - \delta)} \right) /
-       (y - \delta)^{3/2} }{%
+       \exp \left( \frac{-\gamma}{2(y - \delta)}
+            \right) / (y - \delta)^{3/2} }{%
   f(y;gamma,delta) = sqrt(gamma / (2 pi))
-       exp( -gamma / (2(y - delta))) /
-       (y - \delta)^{3/2} }
+       exp( -gamma / (2(y - delta))) / (y - \delta)^{3/2} }
   where \eqn{\delta<y<\infty}{delta<y<Inf} and \eqn{\gamma>0}{gamma>0}.
   The mean does not exist.
 
@@ -85,20 +85,20 @@ levy(delta = NULL, link.gamma = "loge", idelta = NULL, igamma = NULL)
 }
 \examples{
 nn <- 1000; delta <- 0
-mygamma <- 1 # log link ==> 0 is the answer
-ldata <- data.frame(y = delta + mygamma/rnorm(nn)^2) # Levy(mygamma, delta)
+mygamma <- 1  # log link ==> 0 is the answer
+ldata <- data.frame(y = delta + mygamma/rnorm(nn)^2)  # Levy(mygamma, delta)
 
 # Cf. Table 1.1 of Nolan for Levy(1,0)
-with(ldata, sum(y > 1) / length(y)) # Should be 0.6827
-with(ldata, sum(y > 2) / length(y)) # Should be 0.5205
+with(ldata, sum(y > 1) / length(y))  # Should be 0.6827
+with(ldata, sum(y > 2) / length(y))  # Should be 0.5205
 
-fit <- vglm(y ~ 1, levy(delta = delta), ldata, trace = TRUE) # 1 parameter
+fit <- vglm(y ~ 1, levy(delta = delta), ldata, trace = TRUE)  # 1 parameter
 fit <- vglm(y ~ 1, levy(idelta = delta, igamma = mygamma),
-           ldata, trace = TRUE) # 2 parameters
+           ldata, trace = TRUE)  # 2 parameters
 coef(fit, matrix = TRUE)
 Coef(fit)
 summary(fit)
-head(weights(fit, type = "w"))
+head(weights(fit, type = "work"))
 }
 \keyword{models}
 \keyword{regression}

@@ -63,7 +63,7 @@ rzinegbin(n, size, prob = NULL, munb = NULL, pstr0 = 0)
 
 }
 %\references{ }
-\author{ Thomas W. Yee }
+\author{ T. W. Yee }
 \note{ 
   The argument \code{pstr0} is recycled to the required
   length, and must have values which lie in the interval
@@ -89,11 +89,11 @@ rzinegbin(n, size, prob = NULL, munb = NULL, pstr0 = 0)
 \examples{
 munb <- 3; pstr0 <- 0.2; size <- k <- 10; x <- 0:10
 (ii <- dzinegbin(x, pstr0 = pstr0, mu = munb, size = k))
-max(abs(cumsum(ii) - pzinegbin(x, pstr0 = pstr0, mu = munb, size = k))) # 0
+max(abs(cumsum(ii) - pzinegbin(x, pstr0 = pstr0, mu = munb, size = k)))  # 0
 table(rzinegbin(100, pstr0 = pstr0, mu = munb, size = k))
 
 table(qzinegbin(runif(1000), pstr0 = pstr0, mu = munb, size = k))
-round(dzinegbin(x, pstr0 = pstr0, mu = munb, size = k) * 1000) # Should be similar
+round(dzinegbin(x, pstr0 = pstr0, mu = munb, size = k) * 1000)  # Should be similar
 
 \dontrun{barplot(rbind(dzinegbin(x, pstr0 = pstr0, mu = munb, size = k),
                 dnbinom(x, mu = munb, size = k)), las = 1,

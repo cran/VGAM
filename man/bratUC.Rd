@@ -9,7 +9,7 @@
 
 }
 \usage{
-Brat(mat, ties = 0 * mat, string = c(">","=="), whitespace = FALSE)
+Brat(mat, ties = 0 * mat, string = c(">", "=="), whitespace = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -96,12 +96,12 @@ Agresti, A. (2002)
 
 }
 \examples{
-journal = c("Biometrika", "Comm Statist", "JASA", "JRSS-B")
-mat = matrix(c( NA, 33, 320, 284,   730, NA, 813, 276,
-             498, 68,  NA, 325,   221, 17, 142, NA), 4, 4)
-dimnames(mat) = list(winner = journal, loser = journal)
-Brat(mat) # Less readable
-Brat(mat, whitespace = TRUE) # More readable
+journal <- c("Biometrika", "Comm Statist", "JASA", "JRSS-B")
+mat <- matrix(c( NA, 33, 320, 284,   730, NA, 813, 276,
+                498, 68,  NA, 325,   221, 17, 142, NA), 4, 4)
+dimnames(mat) <- list(winner = journal, loser = journal)
+Brat(mat)  # Less readable
+Brat(mat, whitespace = TRUE)  # More readable
 vglm(Brat(mat, whitespace = TRUE) ~ 1, brat, trace = TRUE)
 }
 \keyword{models}

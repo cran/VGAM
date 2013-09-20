@@ -12,6 +12,7 @@
 
 % quantile function
 
+
 }
 \usage{
 dlog(x, prob, log = FALSE)
@@ -23,6 +24,8 @@ rlog(n, prob, Smallno = 1.0e-6)
   \item{x, q}{
    Vector of quantiles. For the density, it should be a vector with
    positive integer values in order for the probabilities to be positive.
+
+
   }
 % \item{p}{vector of probabilities.}
   \item{n}{number of observations. A single positive integer.}
@@ -30,20 +33,27 @@ rlog(n, prob, Smallno = 1.0e-6)
    The parameter value \eqn{c} described in in \code{\link{logff}}.
    Here it is called \code{prob} because \eqn{0<c<1} is the range.
    For \code{rlog()} this parameter must be of length 1.
+
+
   }
   \item{log, log.p}{
   Logical.
   If \code{log.p = TRUE} then all probabilities \code{p} are
   given as \code{log(p)}.
+
+
   }
   \item{Smallno}{
   Numeric, a small value used by the rejection method for determining
   the upper limit of the distribution.
   That is, \code{plog(U, prob) > 1-Smallno} where \code{U} is the upper limit.
+
+
   }
 }
 \details{
    The details are given in \code{\link{logff}}.
+
 
 }
 \value{
@@ -55,15 +65,16 @@ rlog(n, prob, Smallno = 1.0e-6)
 }
 \references{ 
 
-Evans, M., Hastings, N. and Peacock, B. (2000)
+Forbes, C., Evans, M., Hastings, N. and Peacock, B. (2011)
 \emph{Statistical Distributions},
-New York: Wiley-Interscience, Third edition.
+Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
+
 
 }
 \author{ T. W. Yee }
 \note{ 
-   Given some response data, the \pkg{VGAM} family function
-   \code{\link{logff}} estimates the parameter \code{prob}.
+  Given some response data, the \pkg{VGAM} family function
+  \code{\link{logff}} estimates the parameter \code{prob}.
   For \code{plog()}, if argument \code{q} contains large values
   and/or \code{q} is long in length
   then the memory requirements may be very high.
@@ -85,7 +96,7 @@ rlog(20, 0.5)
 \dontrun{ prob <- 0.8; x <- 1:10
 plot(x, dlog(x, prob = prob), type = "h", ylim = 0:1,
      sub = "prob=0.8", las = 1, col = "blue", ylab = "Probability",
-     main="Logarithmic distribution: blue=density; red=distribution function")
-lines(x + 0.1, plog(x, prob = prob), col = "red", lty = 3, type = "h") }
+     main = "Logarithmic distribution: blue=density; orange=distribution function")
+lines(x + 0.1, plog(x, prob = prob), col = "orange", lty = 3, type = "h") }
 }
 \keyword{distribution}

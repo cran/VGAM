@@ -12,10 +12,10 @@
 
 vlm.wfit <-
   function(xmat, zmat, Blist, wz = NULL, U = NULL, 
-           matrix.out = FALSE, is.vlmX = FALSE, rss = TRUE, qr = FALSE,
+           matrix.out = FALSE, is.vlmX = FALSE, res.ss = TRUE, qr = FALSE,
            x.ret = FALSE,
            offset = NULL,
-           omit.these = NULL, only.rss = FALSE,
+           omit.these = NULL, only.res.ss = FALSE,
            ncolx = if (matrix.out && is.vlmX) {
                      stop("need argument 'ncolx'") 
                    } else {
@@ -29,7 +29,7 @@ vlm.wfit <-
   zmat <- as.matrix(zmat)
   n <- nrow(zmat)
   M <- ncol(zmat)
-  if (!only.rss) {
+  if (!only.res.ss) {
     contrast.save <- attr(xmat, "contrasts")
     znames <- dimnames(zmat)[[2]]
   }
@@ -45,25 +45,25 @@ vlm.wfit <-
     stop("input unconformable")
   }
 
-  X_vlm_save <- if (is.vlmX) {
-          xmat 
+  X.vlm.save <- if (is.vlmX) {
+        xmat 
       } else {
-          if (missing.Blist || !length(Blist)) {
-              Blist <- replace.constraints(vector("list", ncol(xmat)),
-                                          diag(M), 1:ncol(xmat)) # NULL
-          }
-          lm2vlm.model.matrix(x = xmat, Blist = Blist, M = M,
-                              assign.attributes = FALSE,
-                              xij = xij,
-                              Xm2 = Xm2)
+        if (missing.Blist || !length(Blist)) {
+          Blist <- replace.constraints(vector("list", ncol(xmat)),
+                                       diag(M), 1:ncol(xmat)) # NULL
         }
-  X_vlm <- mux111(U, X_vlm_save, M = M)
-  z_vlm <- mux22(U, zmat, M = M, upper = TRUE, as.matrix = FALSE)
+        lm2vlm.model.matrix(x = xmat, Blist = Blist, M = M,
+                            assign.attributes = FALSE,
+                            xij = xij,
+                            Xm2 = Xm2)
+      }
+  X.vlm <- mux111(U, X.vlm.save, M = M)
+  z.vlm <- mux22(U, zmat, M = M, upper = TRUE, as.matrix = FALSE)
 
 
   if (length(omit.these)) {
-      X_vlm <- X_vlm[!omit.these,,drop = FALSE] 
-      z_vlm <- z_vlm[!omit.these]
+    X.vlm <- X.vlm[!omit.these, , drop = FALSE] 
+    z.vlm <- z.vlm[!omit.these]
   }
 
 
@@ -71,12 +71,12 @@ vlm.wfit <-
 
 
 
-  ans <- lm.fit(X_vlm, y = z_vlm, ...)
+  ans <- lm.fit(X.vlm, y = z.vlm, ...)
 
-  if (rss) {
-    ans$rss <- sum(ans$resid^2)
-    if (only.rss)
-      return(list(rss = ans$rss))
+  if (res.ss) {
+    ans$res.ss <- sum(ans$resid^2)
+    if (only.res.ss)
+      return(list(res.ss = ans$res.ss))
   }
 
   if (length(omit.these) && any(omit.these)) {
@@ -111,7 +111,7 @@ vlm.wfit <-
   ans$constraints <- Blist
   ans$contrasts <- contrast.save
   if (x.ret) {
-    ans$X_vlm <- X_vlm_save
+    ans$X.vlm <- X.vlm.save
   }
 
   if (!is.null(offset)) {
@@ -169,8 +169,8 @@ print.vlm.wfit <- function(x, ...) {
   }
   cat("\nDegrees of Freedom:", n*M, "Total;", rdf, "Residual\n")
 
-  if (!is.null(x$rss)) {
-    cat("Residual Sum of Squares:", format(x$rss), "\n")
+  if (!is.null(x$res.ss)) {
+    cat("Residual Sum of Squares:", format(x$res.ss), "\n")
   }
 
   invisible(x)

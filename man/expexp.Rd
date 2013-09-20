@@ -6,6 +6,7 @@
   Estimates the two parameters of the exponentiated exponential
   distribution by maximum likelihood estimation.
 
+
 }
 \usage{
 expexp(lshape = "loge", lscale = "loge",
@@ -19,11 +20,13 @@ expexp(lshape = "loge", lscale = "loge",
   See \code{\link{Links}} for more choices.
   The defaults ensure both parameters are positive.
 
+
   }
   \item{ishape}{
   Initial value for the \eqn{\alpha}{shape} 
   parameter. If convergence fails try setting a different
   value for this argument.
+
 
   }
   \item{iscale}{
@@ -31,10 +34,12 @@ expexp(lshape = "loge", lscale = "loge",
   By default, an initial value is chosen internally using
   \code{ishape}.
 
+
   }
   \item{tolerance}{
   Numeric. Small positive value for testing whether values
   are close enough to 1 and 2.
+
 
   }
   \item{zero}{ An integer-valued vector specifying which
@@ -160,8 +165,8 @@ acplane <- c(23, 261, 87, 7, 120, 14, 62, 47,
 fit <- vglm(acplane ~ 1, fam = expexp(ishape = 0.8, isc = 0.15),
             trace = TRUE, maxit = 99)
 coef(fit, matrix = TRUE)
-Coef(fit)   # Authors get c(shape=0.8130, scale=0.0145)
-logLik(fit) # Authors get log-lik -152.264
+Coef(fit)    # Authors get c(shape=0.8130, scale=0.0145)
+logLik(fit)  # Authors get log-lik -152.264
 }
 \keyword{models}
 \keyword{regression}

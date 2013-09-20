@@ -252,17 +252,17 @@ beta21.hat <- Coef(rrnb2)@B1["(Intercept)", "log(size)"]
 summary(rrnb2)
 
 # Obtain a 95 percent confidence interval for delta2:
-se.a21.hat <- sqrt(vcov(rrnb2)["I(lv.mat)", "I(lv.mat)"])
+se.a21.hat <- sqrt(vcov(rrnb2)["I(latvar.mat)", "I(latvar.mat)"])
 ci.a21 <- a21.hat +  c(-1, 1) * 1.96 * se.a21.hat
 (ci.delta2 <- 2 - rev(ci.a21))  # The 95 percent confidence interval
 
 Confint.rrnb(rrnb2)  # Quick way to get it
 
 # Plot the abundances and fitted values against the latent variable
-plot(y2 ~ lv(rrnb2), data = mydata, col = "blue",
+plot(y2 ~ latvar(rrnb2), data = mydata, col = "blue",
      xlab = "Latent variable", las = 1) 
-ooo <- order(lv(rrnb2))
-lines(fitted(rrnb2)[ooo] ~ lv(rrnb2)[ooo], col = "red")
+ooo <- order(latvar(rrnb2))
+lines(fitted(rrnb2)[ooo] ~ latvar(rrnb2)[ooo], col = "red")
 
 # Example 2: stereotype model (reduced-rank multinomial logit model)
 data(car.all)

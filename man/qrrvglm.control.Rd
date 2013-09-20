@@ -21,7 +21,7 @@ qrrvglm.control(Rank = 1,
                 FastAlgorithm = TRUE,
                 GradientFunction = TRUE,
                 Hstep = 0.001,
-                isdlv = rep(c(2, 1, rep(0.5, length = Rank)), length = Rank),
+                isd.latvar = rep(c(2, 1, rep(0.5, length = Rank)), length = Rank),
                 iKvector = 0.1,
                 iShape = 0.1,
                 ITolerances = FALSE,
@@ -32,7 +32,7 @@ qrrvglm.control(Rank = 1,
                 noRRR = ~ 1, Norrr = NA,
                 optim.maxit = 20,
                 Parscale = if(ITolerances) 0.001 else 1.0,
-                SD.Cinit = 0.02,
+                sd.Cinit = 0.02,
                 SmallNo = 5.0e-13, 
                 trace = TRUE,
                 Use.Init.Poisson.QO = TRUE, 
@@ -144,7 +144,7 @@ qrrvglm.control(Rank = 1,
 
 %  Used only if \code{FastAlgorithm} is \code{TRUE}.
   } 
-  \item{isdlv}{
+  \item{isd.latvar}{
    Initial standard deviations for the latent variables (site scores).
    Numeric, positive and of length \eqn{R} (recycled if necessary).
    This argument is used only if \code{ITolerances = TRUE}. Used by
@@ -179,7 +179,7 @@ qrrvglm.control(Rank = 1,
    and scale all numerical variables in the \eqn{x_2} vector}.
    See \bold{Details} for more details.
    The success of \code{ITolerances = TRUE} often
-   depends on suitable values for \code{isdlv} and/or
+   depends on suitable values for \code{isd.latvar} and/or
    \code{MUXfactor}.
 
  }
@@ -210,7 +210,7 @@ qrrvglm.control(Rank = 1,
    values. If the latent variable values are too large then this will
    result in numerical problems. By too large, it is meant that the
    standard deviation of the latent variable values are greater than
-   \code{MUXfactor[r] * isdlv[r]} for \code{r=1:Rank} (this is why
+   \code{MUXfactor[r] * isd.latvar[r]} for \code{r=1:Rank} (this is why
    centering and scaling all the numerical predictor variables in
    \eqn{x_2} is recommended). A value about 3 or 4 is recommended.
    If failure to converge occurs, try a slightly lower value.
@@ -252,7 +252,7 @@ qrrvglm.control(Rank = 1,
    See \bold{Details} for more information.
    It's probably best to leave this argument alone.
   } 
-  \item{SD.Cinit}{ 
+  \item{sd.Cinit}{ 
       Standard deviation of the initial values for the elements
       of \eqn{C}.
       These are normally distributed with mean zero.
@@ -330,12 +330,12 @@ qrrvglm.control(Rank = 1,
    errors and it appears there are more local solutions. To help avoid
    the overflow errors, scaling \eqn{C} by the factor \code{Parscale}
    can help enormously. Even better, scaling \eqn{C} by specifying
-   \code{isdlv} is more understandable to humans. If failure to
+   \code{isd.latvar} is more understandable to humans. If failure to
    converge occurs, try adjusting \code{Parscale}, or better, setting
    \code{EqualTolerances = TRUE} (and hope that the estimated tolerance
    matrix is positive-definite). To fit an equal-tolerances model, it
    is firstly best to try setting \code{ITolerances = TRUE} and varying
-   \code{isdlv} and/or \code{MUXfactor} if it fails to converge.
+   \code{isd.latvar} and/or \code{MUXfactor} if it fails to converge.
    If it still fails to converge after many attempts, try setting
    \code{EqualTolerances = TRUE}, however this will usually be a lot slower
    because it requires a lot more memory.
@@ -351,7 +351,7 @@ qrrvglm.control(Rank = 1,
    effectively the same as the \code{ITolerances = TRUE} model (the two are
    transformations of each other). In general, \code{ITolerances = TRUE}
    is numerically more unstable and presents a more difficult problem
-   to optimize; the arguments \code{isdlv} and/or \code{MUXfactor} often
+   to optimize; the arguments \code{isd.latvar} and/or \code{MUXfactor} often
    must be assigned some good value(s) (possibly found by trial and error)
    in order for convergence to occur. Setting \code{ITolerances = TRUE}
    \emph{forces} a bell-shaped curve or surface onto all the species data,
@@ -429,7 +429,7 @@ Constrained additive ordination.
   hunting spiders data. Because \code{ITolerances = TRUE}, it is a good idea
   to center all the \eqn{x_2} variables first. Upon fitting the model,
   the actual standard deviation of the site scores are computed. Ideally,
-  the \code{isdlv} argument should have had this value for the best
+  the \code{isd.latvar} argument should have had this value for the best
   chances of getting good initial values.  For comparison, the model is
   refitted with that value and it should run more faster and reliably.
 }
@@ -469,24 +469,24 @@ Constrained additive ordination.
 
 \examples{
 \dontrun{ # Poisson CQO with equal tolerances
-set.seed(111) # This leads to the global solution
-hspider[,1:6] <- scale(hspider[,1:6]) # Good idea when ITolerances = TRUE
+set.seed(111)  # This leads to the global solution
+hspider[,1:6] <- scale(hspider[,1:6])  # Good idea when ITolerances = TRUE
 p1 <- cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi, Auloalbi,
                Pardlugu, Pardmont, Pardnigr, Pardpull, Trocterr, Zoraspin) ~
           WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
           quasipoissonff, data = hspider, EqualTolerances = TRUE)
-sort(p1@misc$deviance.Bestof) # A history of all the iterations
+sort(p1@misc$deviance.Bestof)  # A history of all the iterations
 
-(isdlv <- apply(lv(p1), 2, sd)) # Should be approx isdlv
+(isd.latvar <- apply(latvar(p1), 2, sd))  # Should be approx isd.latvar
  
 # Refit the model with better initial values
 set.seed(111)  # This leads to the global solution
 p1 <- cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi, Auloalbi, 
                Pardlugu, Pardmont, Pardnigr, Pardpull, Trocterr, Zoraspin) ~
           WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
-          ITolerances = TRUE, isdlv = isdlv, # Note the use of isdlv here
-          quasipoissonff, data = hspider)
-sort(p1@misc$deviance.Bestof) # A history of all the iterations
+          ITolerances = TRUE, quasipoissonff, data = hspider,
+          isd.latvar = isd.latvar)  # Note the use of isd.latvar here
+sort(p1@misc$deviance.Bestof)  # A history of all the iterations
 }
 }
 \keyword{models}

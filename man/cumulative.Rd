@@ -10,8 +10,9 @@
 }
 \usage{
 cumulative(link = "logit", parallel = FALSE, reverse = FALSE,
-           mv = FALSE, apply.parint = FALSE, whitespace = FALSE)
+           mv = FALSE, whitespace = FALSE)
 }
+%apply.parint = FALSE,
 %scumulative(link = "logit",
 %            lscale = "loge", escale = list(),
 %            parallel = FALSE, sparallel = TRUE, reverse = FALSE, iscale = 1)
@@ -40,6 +41,9 @@ cumulative(link = "logit", parallel = FALSE, reverse = FALSE,
   See below for more information about the parallelism assumption.
   The default results in what some people call the
   \emph{generalized ordered logit model} to be fitted.
+  If \code{parallel = TRUE} then it does not apply to the intercept.
+
+
 
 
   }
@@ -82,17 +86,17 @@ cumulative(link = "logit", parallel = FALSE, reverse = FALSE,
 
 
   }
-  \item{apply.parint}{
-  Logical.
-  Whether the \code{parallel} argument should be applied to the intercept term.
-  This should be set to \code{TRUE} for \code{link=}
-  \code{\link{golf}},
-  \code{\link{polf}},
-  \code{\link{nbolf}}.
-  See \code{\link{CommonVGAMffArguments}} for more information.
-
-
-  }
+%  \item{apply.parint}{
+%  Logical.
+%  Whether the \code{parallel} argument should be applied to the intercept term.
+%  This should be set to \code{TRUE} for \code{link=}
+%  \code{\link{golf}},
+%  \code{\link{polf}},
+%  \code{\link{nbolf}}.
+%  See \code{\link{CommonVGAMffArguments}} for more information.
+%
+%
+%  }
 % \item{iscale}{
 % Numeric. Initial values for the scale parameters.
 
@@ -292,17 +296,20 @@ by the \pkg{VGAM} package can be found at
   \code{\link{nbolf}},
   \code{\link{logistic1}}.
 
+
 }
 \examples{
 # Fit the proportional odds model, p.179, in McCullagh and Nelder (1989)
 pneumo <- transform(pneumo, let = log(exposure.time))
 (fit <- vglm(cbind(normal, mild, severe) ~ let,
              cumulative(parallel = TRUE, reverse = TRUE), pneumo))
-depvar(fit)   # Sample proportions (good technique)
-fit@y         # Sample proportions (bad technique)
-weights(fit, type = "prior")   # Number of observations
+depvar(fit)  # Sample proportions (good technique)
+fit@y        # Sample proportions (bad technique)
+weights(fit, type = "prior")  # Number of observations
 coef(fit, matrix = TRUE)
-constraints(fit)   # Constraint matrices
+constraints(fit)  # Constraint matrices
+apply(fitted(fit), 1, which.max)  # Classification
+apply(predict(fit, newdata = pneumo, type = "response"), 1, which.max)  # Classification
 
 # Check that the model is linear in let ----------------------
 fit2 <- vgam(cbind(normal, mild, severe) ~ s(let, df = 2),
@@ -327,19 +334,19 @@ pneumo.long <-
                                 levels = colnames(Nobs)),
              let = rep(rep(with(pneumo, let), each = ncol(Nobs)),
                        times = c(t(Nobs))))
-with(pneumo.long, table(let, symptoms)) # Check it; should be same as pneumo
+with(pneumo.long, table(let, symptoms))  # Check it; should be same as pneumo
 
 
-(fit.long1 <- vglm(symptoms ~ let, data = pneumo.long,
-             cumulative(parallel = TRUE, reverse = TRUE), trace = TRUE))
-coef(fit.long1, matrix = TRUE) # Should be same as coef(fit, matrix = TRUE)
+(fit.long1 <- vglm(symptoms ~ let, data = pneumo.long, trace = TRUE,
+                   cumulative(parallel = TRUE, reverse = TRUE)))
+coef(fit.long1, matrix = TRUE)  # Should be same as coef(fit, matrix = TRUE)
 # Could try using mustart if fit.long1 failed to converge.
 mymustart <- matrix(sumNobs / sum(sumNobs),
-                   nrow(pneumo.long), ncol(Nobs), byrow = TRUE)
-fit.long2 <- vglm(symptoms ~ let,
-                  fam = cumulative(parallel = TRUE, reverse = TRUE),
-                  mustart = mymustart, data = pneumo.long, trace = TRUE)
-coef(fit.long2, matrix = TRUE) # Should be same as coef(fit, matrix = TRUE)
+                    nrow(pneumo.long), ncol(Nobs), byrow = TRUE)
+fit.long2 <- vglm(symptoms ~ let, mustart = mymustart,
+                  cumulative(parallel = TRUE, reverse = TRUE),
+                  data = pneumo.long, trace = TRUE)
+coef(fit.long2, matrix = TRUE)  # Should be same as coef(fit, matrix = TRUE)
 }
 \keyword{models}
 \keyword{regression}

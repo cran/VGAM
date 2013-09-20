@@ -109,8 +109,9 @@ tapplymat1 <-
     mat <- as.matrix(mat)
   nr <- nrow(mat)
   nc <- ncol(mat)
-  fred <- dotC(name = "tapplymat1", mat = as.double(mat),
-      as.integer(nr), as.integer(nc), as.integer(type))
+  fred <- .C("tapplymat1", mat = as.double(mat),
+             as.integer(nr), as.integer(nc), as.integer(type),
+             NAOK = TRUE, DUP = TRUE, PACKAGE = "VGAM")
 
   dim(fred$mat) <- c(nr, nc)
   dimnames(fred$mat) <- dimnames(mat)
@@ -214,7 +215,7 @@ veigen <- function(x, M) {
   index <- iam(NA, NA, M = M, both = TRUE, diag = TRUE)
   dimm.value <- nrow(x) # usually M or M(M+1)/2
 
-  z <- dotFortran(name = "veigen",
+  z <- .Fortran("veigen",
       as.integer(M),
       as.integer(n),
       as.double(x),
@@ -226,7 +227,8 @@ veigen <- function(x, M) {
       wk = double(M*M),
       as.integer(index$row), as.integer(index$col),
       as.integer(dimm.value),
-      error.code = integer(1))
+      error.code = integer(1),
+      NAOK = FALSE, DUP = TRUE, PACKAGE = "VGAM")
 
   if (z$error.code)
     stop("eigen algorithm (rs) returned error code ", z$error.code)

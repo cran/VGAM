@@ -22,7 +22,7 @@ vnonlinear.control <- function(save.weight = TRUE, ...) {
 
 
 
-subset_lohi <- function(xvec, yvec,
+subset.lohi <- function(xvec, yvec,
                         probs.x = c(0.15, 0.85),
                         type = c("median", "wtmean", "unwtmean"),
                         wtvec = rep(1, len = length(xvec))) {
@@ -176,7 +176,7 @@ micmen.control <- function(save.weight = TRUE, ...) {
         init2 <- median(init1 * Xm2 / y - Xm2)
       }
       if ( .imethod == 1 || .imethod == 2) {
-        mysubset <- subset_lohi(Xm2, y, probs.x = .probs.x,
+        mysubset <- subset.lohi(Xm2, y, probs.x = .probs.x,
                   type = ifelse( .imethod == 1, "median", "wtmean"),
                   wtvec = w)
 
@@ -218,13 +218,13 @@ micmen.control <- function(save.weight = TRUE, ...) {
     misc$earg <- list(theta1 = .earg1 , theta2 = .earg2 )
 
     misc$rpar <- rpar
-    fit$df.residual <- n - rank   # Not nrow_X_vlm - rank
-    fit$df.total <- n             # Not nrow_X_vlm
+    fit$df.residual <- n - rank   # Not nrow.X.vlm - rank
+    fit$df.total <- n             # Not nrow.X.vlm
 
     extra$Xm2 <- NULL             # Regressor is in control$regressor 
     dpar <- .dispersion
     if (!dpar) {
-      dpar <- sum(c(w) * (y - mu)^2) / (n - ncol_X_vlm)
+      dpar <- sum(c(w) * (y - mu)^2) / (n - ncol.X.vlm)
     }
     misc$dispersion <- dpar
 
@@ -453,7 +453,7 @@ skira.control <- function(save.weight = TRUE, ...) {
         max.q <- quantile(Xm2, probs = .probs.x[2] )
       if ( .imethod == 3 || .imethod == 2 ) {
 
-        mysubset <- subset_lohi(Xm2, y, probs.x = .probs.x,
+        mysubset <- subset.lohi(Xm2, y, probs.x = .probs.x,
                   type = ifelse( .imethod == 2, "median", "wtmean"),
                   wtvec = w)
 
@@ -486,8 +486,8 @@ skira.control <- function(save.weight = TRUE, ...) {
         fitted(smooth.spline(Xm2, y, w = w, df = 2.0))
       }
 
-      mysubset <- subset_lohi(Xm2, y, probs.x = .probs.x,
-                type = "wtmean", wtvec = w)
+      mysubset <- subset.lohi(Xm2, y, probs.x = .probs.x,
+                              type = "wtmean", wtvec = w)
 
 
       mat.x <- with(mysubset, cbind(c(1, 1),
@@ -543,7 +543,7 @@ skira.control <- function(save.weight = TRUE, ...) {
     fit$df.total <- n
     dpar <- .dispersion
     if (!dpar) {
-      dpar <- sum(c(w) * (y - mu)^2) / (n - ncol_X_vlm)
+      dpar <- sum(c(w) * (y - mu)^2) / (n - ncol.X.vlm)
     }
     misc$dispersion <- dpar
     misc$default.dispersion <- 0
@@ -624,7 +624,7 @@ skira.control <- function(save.weight = TRUE, ...) {
       mysigma <- sqrt( median( (y - mu)^2 ) ) / 100
       mysigma <- 1
 
-      for(ii in 1:( .nsimEIM )) {
+      for (ii in 1:( .nsimEIM )) {
         ysim <- 1 / (theta1 + theta2 * Xm2) + rnorm(n, sd = mysigma)
         temp3 <- (ysim - mu) * dmus.dthetas * dthetas.detas
         run.varcov <- run.varcov +

@@ -216,7 +216,7 @@ gpd(threshold = 0, lscale = "loge", lshape = logoff(offset = 0.5),
   \code{\link{rgpd}},
   \code{\link{meplot}},
   \code{\link{gev}},
-  \code{\link{pareto1}},
+  \code{\link{paretoff}},
   \code{\link{vglm}},
   \code{\link{vgam}},
   \code{\link{s}}.

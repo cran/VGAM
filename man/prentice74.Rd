@@ -20,10 +20,12 @@ prentice74(llocation = "identity", lscale = "loge", lshape = "identity",
   and the shape parameter \eqn{q}, respectively.
   See \code{\link{Links}} for more choices.
 
+
   }
   \item{ilocation, iscale}{
   Initial value for \eqn{a} and \eqn{b}, respectively.
   The defaults mean an initial value is determined internally for each.
+
 
   }
   \item{ishape}{
@@ -31,12 +33,14 @@ prentice74(llocation = "identity", lscale = "loge", lshape = "identity",
   If failure to converge occurs, try some other value.
   The default means an initial value is determined internally.
 
+
   }
   \item{zero}{
   An integer-valued vector specifying which
   linear/additive predictors are modelled as intercepts-only.
   The values must be from the set \{1,2,3\}.
   See \code{\link{CommonVGAMffArguments}} for more information.
+
 
   }
 }
@@ -69,6 +73,7 @@ else \eqn{q < 0} is right skew.
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}},
   and \code{\link{vgam}}.
+
 
 }
 \references{

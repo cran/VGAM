@@ -31,6 +31,7 @@ rlgamma(n, location = 0, scale = 1, k = 1)
   Logical.
   If \code{log = TRUE} then the logarithm of the density is returned.
 
+
   }
 
 }
@@ -40,8 +41,10 @@ rlgamma(n, location = 0, scale = 1, k = 1)
   \code{qlgamma} gives the quantile function, and
   \code{rlgamma} generates random deviates.
 
+
 }
 \references{
+
 Kotz, S. and Nadarajah, S. (2000)
 \emph{Extreme Value Distributions: Theory and Applications},
 pages 48--49,

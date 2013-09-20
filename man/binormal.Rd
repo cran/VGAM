@@ -28,15 +28,18 @@ binormal(lmean1 = "identity", lmean2 = "identity",
   Being positive quantities, a log link is the default for the
   standard deviations.
 
+
   }
   \item{imean1, imean2, isd1, isd2, irho, imethod, zero}{ 
   See \code{\link{CommonVGAMffArguments}} for more information.
+
 
   }
   \item{eq.mean, eq.sd}{ 
   Logical or formula.
   Constrains the means or the standard deviations to be equal.
   Only one of these arguments may be assigned a value.
+
 
   }
 
@@ -88,17 +91,18 @@ binormal(lmean1 = "identity", lmean2 = "identity",
 }
 
 \seealso{
-    \code{\link{normal1}},
-    \code{\link{gaussianff}},
-    \code{\link{pnorm2}}.
+  \code{\link{uninormal}},
+  \code{\link{gaussianff}},
+  \code{\link{pnorm2}},
+  \code{\link{bistudentt}}.
 
 
 }
 \examples{
 set.seed(123); nn <- 1000
 bdata <- data.frame(x2 = runif(nn), x3 = runif(nn))
-bdata <- transform(bdata, y1 = rnorm(nn, 1 + 2*x2),
-                          y2 = rnorm(nn, 3 + 4*x2))
+bdata <- transform(bdata, y1 = rnorm(nn, 1 + 2 * x2),
+                          y2 = rnorm(nn, 3 + 4 * x2))
 fit1 <- vglm(cbind(y1, y2) ~ x2,
             binormal(eq.sd = TRUE), data = bdata, trace = TRUE)
 coef(fit1, matrix = TRUE)

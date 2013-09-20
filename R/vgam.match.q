@@ -69,9 +69,10 @@ vgam.match <- function(x, all.knots = FALSE, nk = NULL) {
       stop("bad value for 'nk'")
     if (!chosen)
       nk <- 0
-    knot.list <- dotC(name = "vknootl2", as.double(xbar),
-                      as.integer(neffec), knot = double(neffec+6),
-                      k = as.integer(nk+4), chosen = as.integer(chosen))
+    knot.list <- .C("vknootl2", as.double(xbar),
+                    as.integer(neffec), knot = double(neffec+6),
+                    k = as.integer(nk+4), chosen = as.integer(chosen),
+                    NAOK = TRUE, DUP = TRUE, PACKAGE = "VGAM")
     if (noround) {
       knot <- valid.vknotl2(knot.list$knot[1:(knot.list$k)])
       knot.list$k <- length(knot)

@@ -127,7 +127,7 @@ truncweibull(lower.limit = 1e-5,
 nn <- 5000; prop.lost <- 0.40   # Proportion lost to truncation
 wdata <- data.frame(x2 = runif(nn))  # Complete Weibull data
 wdata <- transform(wdata,
-                   Betaa = exp(1)) # > 2 is okay (satisfies regularity conds)
+                   Betaa = exp(1))  # > 2 is okay (satisfies regularity conds)
 wdata <- transform(wdata, Alpha = exp(0.5 - 1 * x2))
 wdata <- transform(wdata, Shape = Betaa,
 #                         aaa   = Betaa,

@@ -10,10 +10,10 @@
 \usage{
 gamma2(lmu = "loge", lshape = "loge",
        imethod = 1,  ishape = NULL,
-       parallel = FALSE, apply.parint = FALSE,
-       deviance.arg = FALSE, zero = -2)
+       parallel = FALSE, deviance.arg = FALSE, zero = -2)
 }
 %- maybe also 'usage' for other objects documented here.
+% apply.parint = FALSE,
 \arguments{
   \item{lmu, lshape}{
   Link functions applied to the (positive) \emph{mu} and \emph{shape}
@@ -69,8 +69,10 @@ gamma2(lmu = "loge", lshape = "loge",
 
 
   }
-  \item{parallel, apply.parint}{
-    Details at \code{\link{CommonVGAMffArguments}}.
+  \item{parallel}{
+  Details at \code{\link{CommonVGAMffArguments}}.
+  If \code{parallel = TRUE} then the constraint is not applied to the intercept.
+
 
 
   }
@@ -155,7 +157,7 @@ McCullagh, P. and Nelder, J. A. (1989)
   \code{\link{gamma1}} for the 1-parameter gamma distribution,
   \code{\link{gamma2.ab}} for another parameterization of
   the 2-parameter gamma distribution,
-  \code{\link{bivgamma.mckay}} for \emph{a} bivariate gamma distribution,
+  \code{\link{bigamma.mckay}} for \emph{a} bivariate gamma distribution,
   \code{\link{expexp}},
   \code{\link[stats]{GammaDist}},
   \code{\link{golf}},
@@ -170,7 +172,6 @@ fit1 <- vglm(y ~ 1, gamma1, gdata)
 fit2 <- vglm(y ~ 1, gamma2, gdata, trace = TRUE, crit = "coef")
 coef(fit2, matrix = TRUE)
 Coef(fit2)
-
 
 # Essentially a 2-parameter gamma
 gdata <- data.frame(y = rgamma(n = 500, rate = exp(1), shape = exp(2)))

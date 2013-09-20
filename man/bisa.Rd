@@ -123,24 +123,25 @@ New York: Wiley.
   \code{\link{pbisa}},
   \code{\link{inv.gaussianff}}.
 
+
 }
 \examples{
-bdat1 <- data.frame(x2 = runif(nn <- 1000))
-bdat1 <- transform(bdat1, shape = exp(-0.5 + x2), scale = exp(1.5))
-bdat1 <- transform(bdat1, y = rbisa(nn, shape, scale))
-fit1 <- vglm(y ~ x2, bisa(zero = 2), bdat1, trace = TRUE)
+bdata1 <- data.frame(x2 = runif(nn <- 1000))
+bdata1 <- transform(bdata1, shape = exp(-0.5 + x2), scale = exp(1.5))
+bdata1 <- transform(bdata1, y = rbisa(nn, shape, scale))
+fit1 <- vglm(y ~ x2, bisa(zero = 2), bdata1, trace = TRUE)
 coef(fit1, matrix = TRUE)
 
 \dontrun{
-bdat2 <- data.frame(shape = exp(-0.5), scale = exp(0.5))
-bdat2 <- transform(bdat2, y = rbisa(nn, shape, scale))
-fit <- vglm(y ~ 1, bisa, bdat2, trace = TRUE)
-with(bdat2, hist(y, prob = TRUE, ylim = c(0, 0.5), col = "lightblue"))
+bdata2 <- data.frame(shape = exp(-0.5), scale = exp(0.5))
+bdata2 <- transform(bdata2, y = rbisa(nn, shape, scale))
+fit <- vglm(y ~ 1, bisa, bdata2, trace = TRUE)
+with(bdata2, hist(y, prob = TRUE, ylim = c(0, 0.5), col = "lightblue"))
 coef(fit, matrix = TRUE)
-with(bdat2, mean(y))
+with(bdata2, mean(y))
 head(fitted(fit))
-x <- with(bdat2, seq(0, max(y), len = 200))
-lines(dbisa(x, Coef(fit)[1], Coef(fit)[2]) ~ x, bdat2, col = "orange", lwd = 2) }
+x <- with(bdata2, seq(0, max(y), len = 200))
+lines(dbisa(x, Coef(fit)[1], Coef(fit)[2]) ~ x, bdata2, col = "orange", lwd = 2) }
 }
 \keyword{models}
 \keyword{regression}

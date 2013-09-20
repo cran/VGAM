@@ -15,8 +15,7 @@ vlm <- function(formula,
                 contrasts = NULL, 
                 constraints = NULL,
                 extra = NULL, offset = NULL,  
-                smart = TRUE, ...)
-{
+                smart = TRUE, ...) {
   dataname <- as.character(substitute(data)) # "list" if no data=
   function.name <- "vlm"
 
@@ -97,11 +96,11 @@ vlm <- function(formula,
 
   fit <- vlm.wfit(xmat = x, zmat = y, Blist = Blist, wz = wz, U = NULL,
                  matrix.out = FALSE, is.vlmX = FALSE,
-                 rss = TRUE, qr = qr.arg,
+                 res.ss = TRUE, qr = qr.arg,
                  x.ret = TRUE, offset = offset)
 
-  ncol_X_vlm <- fit$rank
-  fit$R <- fit$qr$qr[1:ncol_X_vlm, 1:ncol_X_vlm, drop = FALSE]
+  ncol.X.vlm <- fit$rank
+  fit$R <- fit$qr$qr[1:ncol.X.vlm, 1:ncol.X.vlm, drop = FALSE]
   fit$R[lower.tri(fit$R)] <- 0
 
 
@@ -109,26 +108,26 @@ vlm <- function(formula,
 
     fit$constraints <- Blist
 
-    dnrow_X_vlm <- labels(fit$X_vlm)
-    xnrow_X_vlm <- dnrow_X_vlm[[2]]
+    dnrow.X.vlm <- labels(fit$X.vlm)
+    xnrow.X.vlm <- dnrow.X.vlm[[2]]
     dn <- labels(x)
     xn <- dn[[2]]
-    dX_vlm <- as.integer(dim(fit$X_vlm))
-    nrow_X_vlm <- dX_vlm[[1]]
-    ncol_X_vlm <- dX_vlm[[2]]
+    dX.vlm <- as.integer(dim(fit$X.vlm))
+    nrow.X.vlm <- dX.vlm[[1]]
+    ncol.X.vlm <- dX.vlm[[2]]
 
     misc <- list(
         colnames.x = xn,
-        colnames.X_vlm = xnrow_X_vlm,
+        colnames.X.vlm = xnrow.X.vlm,
         function.name = function.name,
         intercept.only=intercept.only,
         predictors.names = predictors.names,
         M = M,
         n = nrow(x),
-        nrow_X_vlm = nrow_X_vlm,
+        nrow.X.vlm = nrow.X.vlm,
         orig.assign = attr(x, "assign"),
         p = ncol(x),
-        ncol_X_vlm = ncol_X_vlm,
+        ncol.X.vlm = ncol.X.vlm,
         ynames = dimnames(y)[[2]])
     
     fit$misc <- misc
@@ -149,7 +148,7 @@ vlm <- function(formula,
       "coefficients" = fit$coefficients,
       "constraints"  = fit$constraints,
       "control"      = control, 
-      "criterion"    = list(deviance = fit$rss),
+      "criterion"    = list(deviance = fit$res.ss),
       "dispersion"   = 1,
       "df.residual"  = fit$df.residual,
       "df.total"     = n*M,
@@ -160,7 +159,7 @@ vlm <- function(formula,
       "R"            = fit$R,
       "rank"         = fit$rank,
       "residuals"    = as.matrix(fit$residuals),
-      "rss"          = fit$rss,
+      "res.ss"       = fit$res.ss,
       "smart.prediction" = as.list(fit$smart.prediction),
       "terms"        = list(terms = mt))
 

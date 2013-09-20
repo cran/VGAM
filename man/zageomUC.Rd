@@ -51,7 +51,7 @@ rzageom(n, prob, pobs0 = 0)
 
 }
 %\references{ }
-\author{ Thomas W. Yee }
+\author{ T. W. Yee }
 \note{ 
     The argument \code{pobs0} is recycled to the required length, and
     must have values which lie in the interval \eqn{[0,1]}.

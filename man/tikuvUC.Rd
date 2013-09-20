@@ -29,6 +29,7 @@ rtikuv(n, d, mean = 0, sigma = 1, Smallno = 1.0e-6)
   For \code{rtikuv}, arguments \code{mean} and \code{sigma} must be of
   length 1.
 
+
   }
   \item{Smallno}{
   Numeric, a small value used by the rejection method for determining
@@ -36,14 +37,17 @@ rtikuv(n, d, mean = 0, sigma = 1, Smallno = 1.0e-6)
   That is, \code{ptikuv(L) < Smallno} and \code{ptikuv(U) > 1-Smallno}
   where \code{L} and \code{U} are the lower and upper limits respectively.
 
+
   }
   \item{\ldots}{
   Arguments that can be passed into \code{\link[stats]{uniroot}}.
+
 
   }
   \item{log}{
   Logical.
   If \code{log = TRUE} then the logarithm of the density is returned.
+
 
   }
 
@@ -90,7 +94,7 @@ legend("topleft", col = c("orange","blue","green"), lty = rep(1, len = 3),
        legend = paste("d =", c(-10, -1, 1))) }
 
 probs <- seq(0.1, 0.9, by = 0.1)
-ptikuv(qtikuv(p = probs, d =  1), d = 1) - probs # Should be all 0
+ptikuv(qtikuv(p = probs, d =  1), d = 1) - probs  # Should be all 0
 }
 \keyword{distribution}
 

@@ -15,7 +15,7 @@
 \usage{
 deunif(x, min = 0, max = 1, log = FALSE)
 peunif(q, min = 0, max = 1, log = FALSE)
-qeunif(p, min = 0, max = 1, Maxit_nr = 10, Tol_nr = 1.0e-6)
+qeunif(p, min = 0, max = 1, Maxit.nr = 10, Tol.nr = 1.0e-6)
 reunif(n, min = 0, max = 1)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -35,14 +35,14 @@ reunif(n, min = 0, max = 1)
 
 
   }
-  \item{Maxit_nr}{
+  \item{Maxit.nr}{
   Numeric.
   Maximum number of Newton-Raphson iterations allowed.
   A warning is issued if convergence is not obtained for all \code{p}
   values.
 
   }
-  \item{Tol_nr}{
+  \item{Tol.nr}{
   Numeric.
   Small positive value specifying the tolerance or precision to which
   the expectiles are computed.

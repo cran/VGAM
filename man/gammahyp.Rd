@@ -5,6 +5,8 @@
 \description{
   Estimate the parameter of a gamma hyperbola bivariate distribution
   by maximum likelihood estimation.
+
+
 }
 \usage{
 gammahyp(ltheta = "loge", itheta = NULL, expected = FALSE)
@@ -15,16 +17,19 @@ gammahyp(ltheta = "loge", itheta = NULL, expected = FALSE)
   Link function applied to the (positive) parameter \eqn{\theta}{theta}.
   See \code{\link{Links}} for more choices.
 
+
   }
   \item{itheta}{
   Initial value for the parameter.
   The default is to estimate it internally.
+
 
   }
   \item{expected}{
   Logical. \code{FALSE} means the Newton-Raphson (using
   the observed information matrix) algorithm, otherwise the expected
   information matrix is used (Fisher scoring algorithm).
+
 
   }
 }
@@ -43,13 +48,19 @@ gammahyp(ltheta = "loge", itheta = NULL, expected = FALSE)
   means, which are \eqn{\theta \exp(\theta)}{theta * exp(theta)} and
   \eqn{1 + 1/\theta}{1 + 1/theta}.
 
+
   The default algorithm is Newton-Raphson because Fisher scoring tends to
   be much slower for this distribution.
+
+
+
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}}
   and \code{\link{vgam}}.
+
+
 }
 
 \references{
@@ -59,22 +70,26 @@ Asymptotics and the theory of inference.
 \emph{Annals of Statistics},
 \bold{31}, 1695--1731.
 
+
 }
 \author{ T. W. Yee }
 \note{
   The response must be a two column matrix.
 
+
 }
 \seealso{
   \code{\link{exponential}}.
+
+
 }
 \examples{
-gdata <- data.frame(x = runif(nn <- 1000))
-gdata <- transform(gdata, theta = exp(-2+x))
+gdata <- data.frame(x2 = runif(nn <- 1000))
+gdata <- transform(gdata, theta = exp(-2 + x2))
 gdata <- transform(gdata, y1 = rexp(nn, rate = exp(-theta)/theta),
-                         y2 = rexp(nn, rate = theta) + 1)
-fit <- vglm(cbind(y1,y2) ~ x, fam = gammahyp(expected = TRUE), gdata)
-fit <- vglm(cbind(y1,y2) ~ x, fam = gammahyp, gdata, trace = TRUE, crit = "coef")
+                          y2 = rexp(nn, rate = theta) + 1)
+fit <- vglm(cbind(y1, y2) ~ x2, fam = gammahyp(expected = TRUE), gdata)
+fit <- vglm(cbind(y1, y2) ~ x2, fam = gammahyp, gdata, trace = TRUE, crit = "coef")
 coef(fit, matrix = TRUE)
 Coef(fit)
 head(fitted(fit))

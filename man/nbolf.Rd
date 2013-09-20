@@ -25,7 +25,7 @@ nbolf(theta, cutpoint = NULL, k = NULL,
   The cutpoints should be non-negative integers.
   If \code{nbolf()} is used as the link function in
   \code{\link{cumulative}} then one should choose
-  \code{reverse = TRUE, parallel = TRUE, apply.parint = TRUE}.
+  \code{reverse = TRUE, parallel = TRUE}.
 
 
   }
@@ -127,7 +127,7 @@ cuty <- Cut(y1, breaks = cutpoints)
 table(cuty) / sum(table(cuty))
 fit <- vglm(cuty ~ x2 + x3, trace = TRUE,
             cumulative(reverse = TRUE, mv = TRUE,
-                       parallel = TRUE, apply.parint = TRUE,
+                       parallel = TRUE,
                        link = nbolf(cutpoint = cutpoints[2:3], k = k)))
 head(depvar(fit))
 head(fitted(fit))

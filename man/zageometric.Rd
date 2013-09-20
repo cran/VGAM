@@ -1,5 +1,6 @@
 \name{zageometric}
 \alias{zageometric}
+\alias{zageometricff}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Zero-Altered Geometric Distribution }
 \description{
@@ -9,8 +10,12 @@
 
 }
 \usage{
-zageometric(lpobs0 = "logit", lprob = "logit", imethod = 1,
-            ipobs0 = NULL,    iprob = NULL, zero = NULL)
+zageometric(lpobs0 = "logit", lprob = "logit",
+            type.fitted = c("mean", "pobs0", "onempobs0"),
+            imethod = 1, ipobs0 = NULL, iprob = NULL, zero = NULL)
+zageometricff(lprob = "logit", lonempobs0 = "logit",
+              type.fitted = c("mean", "pobs0", "onempobs0"),
+              imethod = 1, iprob = NULL, ionempobs0 = NULL, zero = -2)
 
 }
 %- maybe also 'usage' for other objects documented here.
@@ -29,6 +34,14 @@ zageometric(lpobs0 = "logit", lprob = "logit", imethod = 1,
 
   }
 
+  \item{type.fitted}{
+  See \code{\link{CommonVGAMffArguments}}
+  and \code{\link{fittedvlm}} for information.
+
+
+  }
+
+
 % \item{epobs0, eprob}{
 % List. Extra argument for the respective links.
 % See \code{earg} in \code{\link{Links}} for general information.
@@ -41,6 +54,15 @@ zageometric(lpobs0 = "logit", lprob = "logit", imethod = 1,
     For multi-column responses, these are recycled sideways.
 
   }
+
+  \item{lonempobs0, ionempobs0}{
+  Corresponding argument  for the other parameterization.
+  See details below.
+
+
+  }
+
+
   \item{zero, imethod}{
   See
   \code{\link{CommonVGAMffArguments}}.
@@ -62,8 +84,26 @@ zageometric(lpobs0 = "logit", lprob = "logit", imethod = 1,
 
 
   The input can be a matrix (multiple responses).
-  By default, the two linear/additive
-  predictors are \eqn{(\log(\phi), logit(p))^T}{(log(phi), logit(prob))^T}.
+  By default, the two linear/additive predictors
+  of \code{zageometric} 
+  are \eqn{(logit(\phi), logit(p))^T}{(logit(phi), logit(prob))^T}.
+
+
+  The \pkg{VGAM} family function \code{zageometricff()} has a few
+  changes compared to \code{zageometric()}.
+  These are:
+  (i)   the order of the linear/additive predictors is switched so the
+        geometric probability comes first;
+  (ii)  argument \code{onempobs0} is now 1 minus the probability of an observed 0,
+        i.e., the probability of the positive geometric distribution,
+        i.e., \code{onempobs0} is \code{1-pobs0};
+  (iii) argument \code{zero} has a new default so that the \code{pobs0}
+        is intercept-only by default.
+  Now \code{zageometricff()} is generally recommended over
+  \code{zageometric()}.
+  Both functions implement Fisher scoring and can handle
+  multiple responses.
+
 
 
 }
@@ -75,9 +115,12 @@ zageometric(lpobs0 = "logit", lprob = "logit", imethod = 1,
 
   The \code{fitted.values} slot of the fitted object,
   which should be extracted by the generic function \code{fitted}, returns
-  the mean \eqn{\mu}{mu} which is given by 
+  the mean \eqn{\mu}{mu} (default) which is given by 
   \deqn{\mu = (1-\phi) / p.}{%
          mu = (1- phi) / p.}
+  If \code{type.fitted = "pobs0"} then \eqn{p_0}{pobs0} is returned.
+
+
 
 }
 %\references{
@@ -117,7 +160,6 @@ zageometric(lpobs0 = "logit", lprob = "logit", imethod = 1,
 
 \seealso{
   \code{\link{dzageom}},
-% \code{\link{posgeometric}},
   \code{\link{geometric}},
   \code{\link{zigeometric}},
   \code{\link[stats:Geometric]{dgeom}},
@@ -125,18 +167,18 @@ zageometric(lpobs0 = "logit", lprob = "logit", imethod = 1,
 
 
 }
+% \code{\link{posgeometric}},
+
 
 \examples{
 zdata <- data.frame(x2 = runif(nn <- 1000))
-zdata <- transform(zdata,
-                   pobs0 = logit(-1 + 2*x2, inverse = TRUE),
-                   prob  = logit(-2 + 3*x2, inverse = TRUE))
-zdata <- transform(zdata,
-                   y1 = rzageom(nn, prob = prob, pobs0 = pobs0),
-                   y2 = rzageom(nn, prob = prob, pobs0 = pobs0))
+zdata <- transform(zdata, pobs0 = logit(-1 + 2*x2, inverse = TRUE),
+                          prob  = logit(-2 + 3*x2, inverse = TRUE))
+zdata <- transform(zdata, y1 = rzageom(nn, prob = prob, pobs0 = pobs0),
+                          y2 = rzageom(nn, prob = prob, pobs0 = pobs0))
 with(zdata, table(y1))
 
-fit <- vglm(cbind(y1, y2) ~ x2, zageometric, zdata, trace = TRUE)
+fit <- vglm(cbind(y1, y2) ~ x2, zageometric, data = zdata, trace = TRUE)
 coef(fit, matrix = TRUE)
 head(fitted(fit))
 head(predict(fit))

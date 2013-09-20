@@ -1,4 +1,4 @@
-\name{lv}
+\name{latvar}
 \alias{lv}
 \alias{latvar}
 %- Also NEED an '\alias' for EACH other topic documented here.
@@ -9,8 +9,8 @@
 
 }
 \usage{
-lv(object, ...)
 latvar(object, ...)
+    lv(object, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -67,10 +67,9 @@ Constrained additive ordination.
 }
 \author{ Thomas W. Yee }
 
-\note{
-  \code{\link{latvar}} and \code{\link{lv}} are identical and will remain
-  available for a short while.
-  But soon \code{\link{lv}} will be withdrawn.
+\section{Warning}{
+  \code{\link{latvar}} and \code{\link{lv}} are identical,
+  but the latter will be deprecated soon.
 
 
   Latent variables are not really applicable to

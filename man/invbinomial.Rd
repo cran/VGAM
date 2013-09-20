@@ -17,14 +17,17 @@ invbinomial(lrho = elogit(min = 0.5, max = 1),
   Link function for the \eqn{\rho}{rho} and \eqn{\lambda}{lambda} parameters.
   See \code{\link{Links}} for more choices.
 
+
   }
   \item{irho, ilambda}{
   Numeric.
   Optional initial values for \eqn{\rho}{rho} and \eqn{\lambda}{lambda}.
 
+
   }
   \item{zero}{
   See \code{\link{CommonVGAMffArguments}}.
+
 
   }
 }
@@ -108,10 +111,10 @@ with(idata, c(mean(y), head(fitted(fit), 1)))
 summary(fit)
 coef(fit, matrix = TRUE)
 Coef(fit)
-sum(weights(fit)) # sum of the prior weights
-sum(weights(fit, type = "work")) # sum of the working weights
+sum(weights(fit))  # Sum of the prior weights
+sum(weights(fit, type = "work"))  # Sum of the working weights
 }
 \keyword{models}
 \keyword{regression}
 
-%fit <- vglm(y ~ 1, invbinomial(ilambda=1), tr=TRUE, cri="c", checkwz=FALSE)
+%fit <- vglm(y ~ 1, invbinomial(ilambda = 1), trace = TRUE, crit = "c", checkwz = FALSE)

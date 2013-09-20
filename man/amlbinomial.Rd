@@ -126,14 +126,14 @@ fit@extra
 par(mfrow = c(1,2))
 # Quantile plot
 with(mydat, plot(x, jitter(y), col = "blue", las = 1, main =
-     paste(paste(round(fit@extra$percentile, dig = 1), collapse = ", "),
+     paste(paste(round(fit@extra$percentile, digits = 1), collapse = ", "),
            "percentile-expectile curves")))
 with(mydat, matlines(x, 100 * fitted(fit), lwd = 2, col = "blue", lty = 1))
 
 
 # Compare the fitted expectiles with the quantiles
 with(mydat, plot(x, jitter(y), col = "blue", las = 1, main = 
-     paste(paste(round(fit@extra$percentile, dig = 1), collapse = ", "),
+     paste(paste(round(fit@extra$percentile, digits = 1), collapse = ", "),
            "percentile curves are red")))
 with(mydat, matlines(x, 100 * fitted(fit), lwd = 2, col = "blue", lty = 1))
 

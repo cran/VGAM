@@ -28,9 +28,9 @@ golf(theta, lambda = 1, cutpoint = NULL,
   If \code{golf()} is used as the link function in
   \code{\link{cumulative}} then, if the cutpoints are known, then
   one should choose
-  \code{reverse = TRUE, parallel = TRUE, apply.parint = TRUE}.
+  \code{reverse = TRUE, parallel = FALSE ~ -1}.
   If the cutpoints are unknown, then choose
-  \code{reverse = TRUE, parallel = TRUE, apply.parint = FALSE}.
+  \code{reverse = TRUE, parallel = TRUE}.
 
 
   }
@@ -133,7 +133,7 @@ gdata <- transform(gdata, cuty = Cut(y1, breaks = cutpoints))
 with(gdata, plot(x2, x3, col = cuty, pch = as.character(cuty))) }
 with(gdata, table(cuty) / sum(table(cuty)))
 fit <- vglm(cuty ~ x2 + x3, cumulative(mv = TRUE,
-           reverse = TRUE, parallel = TRUE, apply.parint = TRUE,
+           reverse = TRUE, parallel = FALSE ~ -1,
            link = golf(cutpoint = cutpoints[2:3], lambda = lambda)),
            data = gdata, trace = TRUE)
 head(depvar(fit))

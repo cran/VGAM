@@ -12,49 +12,49 @@
 
 
 
- attrassigndefault <- function(mmat, tt) {
-    if (!inherits(tt, "terms"))
-        stop("need terms object")
-    aa <- attr(mmat, "assign")
-    if (is.null(aa))
-        stop("argument is not really a model matrix")
-    ll <- attr(tt, "term.labels")
-    if (attr(tt, "intercept") > 0)
-        ll <- c("(Intercept)", ll)
-    aaa <- factor(aa, labels = ll)
-    split(order(aa), aaa)
+attrassigndefault <- function(mmat, tt) {
+  if (!inherits(tt, "terms"))
+    stop("need terms object")
+  aa <- attr(mmat, "assign")
+  if (is.null(aa))
+    stop("argument is not really a model matrix")
+  ll <- attr(tt, "term.labels")
+  if (attr(tt, "intercept") > 0)
+    ll <- c("(Intercept)", ll)
+  aaa <- factor(aa, labels = ll)
+  split(order(aa), aaa)
 }
 
 
- attrassignlm <- function(object, ...)
-     attrassigndefault(model.matrix(object), object@terms)
+attrassignlm <- function(object, ...)
+  attrassigndefault(model.matrix(object), object@terms)
 
 
 
  vlabel <- function(xn, ncolBlist, M, separator = ":") {
 
-    if (length(xn) != length(ncolBlist))
-        stop("length of first two arguments not equal")
+  if (length(xn) != length(ncolBlist))
+    stop("length of first two arguments not equal")
 
-    n1 <- rep(xn, ncolBlist)
-    if (M == 1)
-        return(n1)
-    n2 <- as.list(ncolBlist)
-    n2 <- lapply(n2, seq)
-    n2 <- unlist(n2)
-    n2 <- as.character(n2)
-    n2 <- paste(separator, n2, sep = "")
-    n3 <- rep(ncolBlist, ncolBlist)
-    n2[n3 == 1] <- ""
-    n1n2 <- paste(n1, n2, sep = "")
-    n1n2
+  n1 <- rep(xn, ncolBlist)
+  if (M == 1)
+    return(n1)
+  n2 <- as.list(ncolBlist)
+  n2 <- lapply(n2, seq)
+  n2 <- unlist(n2)
+  n2 <- as.character(n2)
+  n2 <- paste(separator, n2, sep = "")
+  n3 <- rep(ncolBlist, ncolBlist)
+  n2[n3 == 1] <- ""
+  n1n2 <- paste(n1, n2, sep = "")
+  n1n2
 }
 
 
 
 
  vlm2lm.model.matrix <-
-  function(x_vlm, Blist = NULL,
+  function(x.vlm, Blist = NULL,
            which.lp = 1,
            M = NULL) {
 
@@ -73,158 +73,160 @@
 
 
   Hmatrices <- matrix(c(unlist(Blist)), nrow = M)
-  if (ncol(Hmatrices) != ncol(x_vlm))
-    stop("ncol(Hmatrices) != ncol(x_vlm)")
+  if (ncol(Hmatrices) != ncol(x.vlm))
+    stop("ncol(Hmatrices) != ncol(x.vlm)")
 
 
-  n_lm <- nrow(x_vlm) / M
-  if (round(n_lm) != n_lm)
-    stop("'n_lm' does not seem to be an integer")
+  n.lm <- nrow(x.vlm) / M
+  if (round(n.lm) != n.lm)
+    stop("'n.lm' does not seem to be an integer")
     lapred.index <- which.lp
     vecTF <- Hmatrices[lapred.index, ] != 0
-    X_lm_jay <- x_vlm[(0:(n_lm - 1)) * M + lapred.index, vecTF,
+    X.lm.jay <- x.vlm[(0:(n.lm - 1)) * M + lapred.index, vecTF,
                       drop = FALSE]
-  X_lm_jay
+  X.lm.jay
 }
 
 
 
 
 
- lm2vlm.model.matrix <- function(x, Blist = NULL, assign.attributes = TRUE,
-                                 M = NULL, xij = NULL, Xm2 = NULL) {
+ lm2vlm.model.matrix <-
+  function(x, Blist = NULL, assign.attributes = TRUE,
+           M = NULL, xij = NULL, Xm2 = NULL) {
 
 
 
 
-    if (length(Blist) != ncol(x))
-        stop("length(Blist) != ncol(x)")
+  if (length(Blist) != ncol(x))
+    stop("length(Blist) != ncol(x)")
 
-    if (length(xij)) {
-        if (inherits(xij, "formula"))
-            xij <- list(xij)
-        if (!is.list(xij))
-            stop("'xij' is not a list of formulae")
-    }
+  if (length(xij)) {
+    if (inherits(xij, "formula"))
+      xij <- list(xij)
+    if (!is.list(xij))
+      stop("'xij' is not a list of formulae")
+  }
 
-    if (!is.numeric(M))
-        M <- nrow(Blist[[1]])
+  if (!is.numeric(M))
+    M <- nrow(Blist[[1]])
 
-    nrow_X_lm <- nrow(x)
-    if (all(trivial.constraints(Blist) == 1)) {
-        X_vlm <- if (M > 1) kronecker(x, diag(M)) else x
-        ncolBlist <- rep(M, ncol(x))
-    } else {
-        allB <- matrix(unlist(Blist), nrow = M)
-        ncolBlist <- unlist(lapply(Blist, ncol))
-        Rsum <- sum(ncolBlist)
+  nrow.X.lm <- nrow(x)
+  if (all(trivial.constraints(Blist) == 1)) {
+    X.vlm <- if (M > 1) kronecker(x, diag(M)) else x
+    ncolBlist <- rep(M, ncol(x))
+  } else {
+    allB <- matrix(unlist(Blist), nrow = M)
+    ncolBlist <- unlist(lapply(Blist, ncol))
+    Rsum <- sum(ncolBlist)
 
-        X1 <- rep(c(t(x)), rep(ncolBlist, nrow_X_lm))
-        dim(X1) <- c(Rsum, nrow_X_lm)
-        X_vlm <- kronecker(t(X1), matrix(1, M, 1)) *
-                 kronecker(matrix(1, nrow_X_lm, 1), allB)
-        rm(X1)
-    }
+    X1 <- rep(c(t(x)), rep(ncolBlist, nrow.X.lm))
+    dim(X1) <- c(Rsum, nrow.X.lm)
+    X.vlm <- kronecker(t(X1), matrix(1, M, 1)) *
+             kronecker(matrix(1, nrow.X.lm, 1), allB)
+    rm(X1)
+  }
 
-    dn <- labels(x)
-    yn <- dn[[1]]
-    xn <- dn[[2]]
-    dimnames(X_vlm) <- list(vlabel(yn, rep(M, nrow_X_lm), M), 
-                            vlabel(xn, ncolBlist, M))
+  dn <- labels(x)
+  yn <- dn[[1]]
+  xn <- dn[[2]]
+  dimnames(X.vlm) <- list(vlabel(yn, rep(M, nrow.X.lm), M), 
+                          vlabel(xn, ncolBlist, M))
 
-    if (assign.attributes) {
-        attr(X_vlm, "contrasts")   <- attr(x, "contrasts")
-        attr(X_vlm, "factors")     <- attr(x, "factors")
-        attr(X_vlm, "formula")     <- attr(x, "formula")
-        attr(X_vlm, "class")       <- attr(x, "class")
-        attr(X_vlm, "order")       <- attr(x, "order")
-        attr(X_vlm, "term.labels") <- attr(x, "term.labels")
+  if (assign.attributes) {
+      attr(X.vlm, "contrasts")   <- attr(x, "contrasts")
+      attr(X.vlm, "factors")     <- attr(x, "factors")
+      attr(X.vlm, "formula")     <- attr(x, "formula")
+      attr(X.vlm, "class")       <- attr(x, "class")
+      attr(X.vlm, "order")       <- attr(x, "order")
+      attr(X.vlm, "term.labels") <- attr(x, "term.labels")
     
-        nasgn <- oasgn <- attr(x, "assign")
-        lowind <- 0
-        for(ii in 1:length(oasgn)) {
-            mylen <- length(oasgn[[ii]]) * ncolBlist[oasgn[[ii]][1]]
-            nasgn[[ii]] <- (lowind+1):(lowind+mylen)
-            lowind <- lowind + mylen
-        } # End of ii
-        if (lowind != ncol(X_vlm))
-            stop("something gone wrong")
-        attr(X_vlm, "assign") <- nasgn
+      nasgn <- oasgn <- attr(x, "assign")
+      lowind <- 0
+      for (ii in 1:length(oasgn)) {
+          mylen <- length(oasgn[[ii]]) * ncolBlist[oasgn[[ii]][1]]
+          nasgn[[ii]] <- (lowind+1):(lowind+mylen)
+          lowind <- lowind + mylen
+      } # End of ii
+      if (lowind != ncol(X.vlm))
+        stop("something gone wrong")
+      attr(X.vlm, "assign") <- nasgn
     
 
-        fred <- unlist(lapply(nasgn, length)) / unlist(lapply(oasgn, length))
-        vasgn <- vector("list", sum(fred))
-        kk <- 0
-        for(ii in 1:length(oasgn)) {
-            temp <- matrix(nasgn[[ii]], ncol = length(oasgn[[ii]]))
-            for(jloc in 1:nrow(temp)) {
-                kk <- kk + 1
-                vasgn[[kk]] <- temp[jloc,]
-            }
+      fred <- unlist(lapply(nasgn, length)) / unlist(lapply(oasgn, length))
+      vasgn <- vector("list", sum(fred))
+      kk <- 0
+      for (ii in 1:length(oasgn)) {
+        temp <- matrix(nasgn[[ii]], ncol = length(oasgn[[ii]]))
+        for (jloc in 1:nrow(temp)) {
+          kk <- kk + 1
+          vasgn[[kk]] <- temp[jloc,]
         }
-        names(vasgn) <- vlabel(names(oasgn), fred, M)
-        attr(X_vlm, "vassign") <- vasgn
+      }
+      names(vasgn) <- vlabel(names(oasgn), fred, M)
+      attr(X.vlm, "vassign") <- vasgn
 
-        attr(X_vlm, "constraints") <- Blist
-    } # End of if (assign.attributes)
-
-
-
-
-    if (!length(xij)) return(X_vlm)
+      attr(X.vlm, "constraints") <- Blist
+  } # End of if (assign.attributes)
 
 
 
 
+  if (!length(xij))
+    return(X.vlm)
 
 
 
-    at.x <- attr(x, "assign")
-    at.vlmx <- attr(X_vlm, "assign")
-    at.Xm2 <- attr(Xm2, "assign")
 
-    for(ii in 1:length(xij)) {
-        form.xij <- xij[[ii]]
-        if (length(form.xij) != 3) 
-            stop("xij[[", ii, "]] is not a formula with a response")
-        tform.xij <- terms(form.xij)
-        aterm.form <- attr(tform.xij, "term.labels") # Does not include response
-        if (length(aterm.form) != M)
-            stop("xij[[", ii, "]] does not contain ", M, " terms")
 
-        name.term.y <- as.character(form.xij)[2]
-        cols.X_vlm <- at.vlmx[[name.term.y]]  # May be > 1 in length.
 
-        x.name.term.2 <- aterm.form[1]   # Choose the first one
-        One.such.term <- at.Xm2[[x.name.term.2]]
-        for(bbb in 1:length(One.such.term)) {
-            use.cols.Xm2 <- NULL
-            for(sss in 1:M) {
-                x.name.term.2 <- aterm.form[sss]
-                one.such.term <- at.Xm2[[x.name.term.2]]
-                use.cols.Xm2 <- c(use.cols.Xm2, one.such.term[bbb])
-            } # End of sss
 
-            allXk <- Xm2[,use.cols.Xm2,drop=FALSE]
-            cmat.no <- (at.x[[name.term.y]])[1] # First one will do (all the same).
-            cmat <- Blist[[cmat.no]]
-            Rsum.k <- ncol(cmat)
-            tmp44 <- kronecker(matrix(1, nrow_X_lm, 1), t(cmat)) *
-                    kronecker(allXk, matrix(1,ncol(cmat), 1)) # n*Rsum.k x M
+  at.x <- attr(x, "assign")
+  at.vlmx <- attr(X.vlm, "assign")
+  at.Xm2 <- attr(Xm2, "assign")
 
-            tmp44 <- array(t(tmp44), c(M, Rsum.k, nrow_X_lm))
-            tmp44 <- aperm(tmp44, c(1,3,2)) # c(M, n, Rsum.k)
-            rep.index <- cols.X_vlm[((bbb-1)*Rsum.k+1):(bbb*Rsum.k)]
-            X_vlm[,rep.index] <- c(tmp44) 
-        } # End of bbb
-    } # End of for(ii in 1:length(xij))
+  for (ii in 1:length(xij)) {
+      form.xij <- xij[[ii]]
+      if (length(form.xij) != 3) 
+        stop("xij[[", ii, "]] is not a formula with a response")
+      tform.xij <- terms(form.xij)
+      aterm.form <- attr(tform.xij, "term.labels") # Does not include response
+      if (length(aterm.form) != M)
+        stop("xij[[", ii, "]] does not contain ", M, " terms")
 
-    if (assign.attributes) {
-        attr(X_vlm, "vassign") <- vasgn
-        attr(X_vlm, "assign") <- nasgn
-        attr(X_vlm, "xij") <- xij
-    }
-    X_vlm
+      name.term.y <- as.character(form.xij)[2]
+      cols.X.vlm <- at.vlmx[[name.term.y]]  # May be > 1 in length.
+
+      x.name.term.2 <- aterm.form[1]   # Choose the first one
+      One.such.term <- at.Xm2[[x.name.term.2]]
+      for (bbb in 1:length(One.such.term)) {
+        use.cols.Xm2 <- NULL
+        for (sss in 1:M) {
+          x.name.term.2 <- aterm.form[sss]
+          one.such.term <- at.Xm2[[x.name.term.2]]
+          use.cols.Xm2 <- c(use.cols.Xm2, one.such.term[bbb])
+        } # End of sss
+
+      allXk <- Xm2[,use.cols.Xm2,drop=FALSE]
+      cmat.no <- (at.x[[name.term.y]])[1] # First one will do (all the same).
+      cmat <- Blist[[cmat.no]]
+      Rsum.k <- ncol(cmat)
+      tmp44 <- kronecker(matrix(1, nrow.X.lm, 1), t(cmat)) *
+               kronecker(allXk, matrix(1,ncol(cmat), 1)) # n*Rsum.k x M
+
+      tmp44 <- array(t(tmp44), c(M, Rsum.k, nrow.X.lm))
+      tmp44 <- aperm(tmp44, c(1,3,2)) # c(M, n, Rsum.k)
+      rep.index <- cols.X.vlm[((bbb-1)*Rsum.k+1):(bbb*Rsum.k)]
+      X.vlm[,rep.index] <- c(tmp44) 
+    } # End of bbb
+  } # End of for (ii in 1:length(xij))
+
+  if (assign.attributes) {
+    attr(X.vlm, "vassign") <- vasgn
+    attr(X.vlm, "assign") <- nasgn
+    attr(X.vlm, "xij") <- xij
+  }
+  X.vlm
 }
 
 
@@ -239,90 +241,90 @@
 
 
 
-    if (mode(type) != "character" && mode(type) != "name")
+  if (mode(type) != "character" && mode(type) != "name")
     type <- as.character(substitute(type))
-    type <- match.arg(type, c("vlm", "lm", "lm2", "bothlmlm2"))[1]
+  type <- match.arg(type, c("vlm", "lm", "lm2", "bothlmlm2"))[1]
 
-    if (length(lapred.index) &&
-        type != "lm")
-      stop("Must set 'type = \"lm\"' when 'lapred.index' is ",
-           "assigned a value")
-    if (length(lapred.index) &&
-        length(object@control$xij))
-      stop("Currently cannot handle 'xij' models when 'lapred.index' is ",
-           "assigned a value")
-
-
-    x   <- slot(object, "x")
+  if (length(lapred.index) &&
+      type != "lm")
+    stop("Must set 'type = \"lm\"' when 'lapred.index' is ",
+         "assigned a value")
+  if (length(lapred.index) &&
+      length(object@control$xij))
+    stop("Currently cannot handle 'xij' models when 'lapred.index' is ",
+         "assigned a value")
 
 
-    Xm2 <- if (any(slotNames(object) == "Xm2")) slot(object, "Xm2") else
-          numeric(0)
-
-    if (!length(x)) {
-        data <- model.frame(object, xlev = object@xlevels, ...) 
-
-        kill.con <- if (length(object@contrasts)) object@contrasts else NULL
-
-        x <- vmodel.matrix.default(object, data = data,
-                                  contrasts.arg = kill.con)
-        tt <- terms(object)
-        attr(x, "assign") <- attrassigndefault(x, tt)
-    }
-
-    if ((type == "lm2" || type == "bothlmlm2") &&
-        !length(Xm2)) {
-      object.copy2 <- object
-      data <- model.frame(object.copy2, xlev = object.copy2@xlevels, ...) 
-
-      kill.con <- if (length(object.copy2@contrasts))
-                 object.copy2@contrasts else NULL
-
-      Xm2 <- vmodel.matrix.default(object.copy2, data = data,
-                                  contrasts.arg = kill.con)
-      ttXm2 <- terms(object.copy2@misc$form2)
-      attr(Xm2, "assign") <- attrassigndefault(Xm2, ttXm2)
-    }
+  x   <- slot(object, "x")
 
 
+  Xm2 <- if (any(slotNames(object) == "Xm2")) slot(object, "Xm2") else
+         numeric(0)
+
+  if (!length(x)) {
+    data <- model.frame(object, xlev = object@xlevels, ...) 
+
+    kill.con <- if (length(object@contrasts)) object@contrasts else NULL
+
+    x <- vmodel.matrix.default(object, data = data,
+                              contrasts.arg = kill.con)
+    tt <- terms(object)
+    attr(x, "assign") <- attrassigndefault(x, tt)
+  }
+
+  if ((type == "lm2" || type == "bothlmlm2") &&
+      !length(Xm2)) {
+    object.copy2 <- object
+    data <- model.frame(object.copy2, xlev = object.copy2@xlevels, ...) 
+
+    kill.con <- if (length(object.copy2@contrasts))
+               object.copy2@contrasts else NULL
+
+    Xm2 <- vmodel.matrix.default(object.copy2, data = data,
+                                 contrasts.arg = kill.con)
+    ttXm2 <- terms(object.copy2@misc$form2)
+    attr(Xm2, "assign") <- attrassigndefault(Xm2, ttXm2)
+  }
 
 
 
-    if (type == "lm" && is.null(lapred.index)) {
-      return(x)
-    } else if (type == "lm2") {
-      return(Xm2)
-    } else if (type == "bothlmlm2") {
-      return(list(X = x, Xm2 = Xm2))
-    }
 
 
-    M <- object@misc$M  
-    Blist <- object@constraints # == constraints(object, type = "lm")
-    X_vlm <- lm2vlm.model.matrix(x = x, Blist = Blist,
-                                 xij = object@control$xij, Xm2 = Xm2)
+  if (type == "lm" && is.null(lapred.index)) {
+    return(x)
+  } else if (type == "lm2") {
+    return(Xm2)
+  } else if (type == "bothlmlm2") {
+    return(list(X = x, Xm2 = Xm2))
+  }
 
-    if (type == "vlm") {
-      return(X_vlm)
-    } else if (type == "lm" && length(lapred.index)) {
-      if (!is.Numeric(lapred.index, integer.valued = TRUE, positive = TRUE,
-                      allowable.length = 1))
-        stop("bad input for argument 'lapred.index'")
-      if (!length(intersect(lapred.index, 1:M)))
-        stop("argument 'lapred.index' should have ",
-             "a single value from the set 1:", M)
 
-      Hlist <- Blist
-      n_lm <- nobs(object)  # Number of rows of the LM matrix
-      M <- object@misc$M  # Number of linear/additive predictors
-      Hmatrices <- matrix(c(unlist(Hlist)), nrow = M)
-      jay <- lapred.index
-      index0 <- Hmatrices[jay, ] != 0
-      X_lm_jay <- X_vlm[(0:(n_lm - 1)) * M + jay, index0, drop = FALSE]
-      X_lm_jay
-    } else {
-      stop("am confused. Do not know what to return")
-    }
+  M <- object@misc$M  
+  Blist <- object@constraints # == constraints(object, type = "lm")
+  X.vlm <- lm2vlm.model.matrix(x = x, Blist = Blist,
+                               xij = object@control$xij, Xm2 = Xm2)
+
+  if (type == "vlm") {
+    return(X.vlm)
+  } else if (type == "lm" && length(lapred.index)) {
+    if (!is.Numeric(lapred.index, integer.valued = TRUE, positive = TRUE,
+                    allowable.length = 1))
+      stop("bad input for argument 'lapred.index'")
+    if (!length(intersect(lapred.index, 1:M)))
+      stop("argument 'lapred.index' should have ",
+           "a single value from the set 1:", M)
+
+    Hlist <- Blist
+    n.lm <- nobs(object)  # Number of rows of the LM matrix
+    M <- object@misc$M  # Number of linear/additive predictors
+    Hmatrices <- matrix(c(unlist(Hlist)), nrow = M)
+    jay <- lapred.index
+    index0 <- Hmatrices[jay, ] != 0
+    X.lm.jay <- X.vlm[(0:(n.lm - 1)) * M + jay, index0, drop = FALSE]
+    X.lm.jay
+  } else {
+    stop("am confused. Do not know what to return")
+  }
 }
 
 
@@ -338,7 +340,8 @@ setMethod("model.matrix",  "vlm", function(object, ...)
 
 
  model.framevlm <- function(object, 
-                            setupsmart = TRUE, wrapupsmart = TRUE, ...) {
+                            setupsmart = TRUE,
+                            wrapupsmart = TRUE, ...) {
 
   dots <- list(...)
   nargs <- dots[match(c("data", "na.action", "subset"), names(dots), 0)]
@@ -377,8 +380,9 @@ setMethod("model.frame",  "vlm", function(formula, ...)
 
 
 
- vmodel.matrix.default <- function(object, data = environment(object),
-                                   contrasts.arg = NULL, xlev = NULL, ...) {
+ vmodel.matrix.default <-
+  function(object, data = environment(object),
+           contrasts.arg = NULL, xlev = NULL, ...) {
 
   t <- if (missing(data)) terms(object) else terms(object, data = data)
   if (is.null(attr(data, "terms")))
@@ -439,14 +443,22 @@ setMethod("model.frame",  "vlm", function(formula, ...)
 
 
 
-depvar.vlm <- function(object, ...) {
-  object@y
+
+depvar.vlm <- function(object, type = c("lm", "lm2"), ...) {
+  type <- match.arg(type, c("lm", "lm2"))[1]
+  if (type == "lm") {
+    object@y
+  } else {
+    object@Ym2
+  }
 }
 
 
 
 if (!isGeneric("depvar"))
-    setGeneric("depvar", function(object, ...) standardGeneric("depvar"),
+    setGeneric("depvar",
+               function(object, ...)
+                 standardGeneric("depvar"),
                package = "VGAM")
 
 
@@ -494,8 +506,9 @@ setMethod("npred",  "rcim", function(object, ...)
 
 
 
-hatvaluesvlm <- function(model,
-                         type = c("diagonal", "matrix", "centralBlocks"), ...) {
+hatvaluesvlm <-
+  function(model,
+           type = c("diagonal", "matrix", "centralBlocks"), ...) {
 
 
   if(!missing(type))
@@ -536,7 +549,7 @@ hatvaluesvlm <- function(model,
       rownames(Diag.Elts) <- rownames(model.matrix(model, type = "lm"))
 
     attr(Diag.Elts, "predictors.names") <- model@misc$predictors.names
-    attr(Diag.Elts, "ncol_X_vlm") <- model@misc$ncol_X_vlm
+    attr(Diag.Elts, "ncol.X.vlm") <- model@misc$ncol.X.vlm
 
     Diag.Elts
   } else if (type.arg == "matrix") {
@@ -547,7 +560,7 @@ hatvaluesvlm <- function(model,
 
     attr(all.mat, "M") <- M
     attr(all.mat, "predictors.names") <- model@misc$predictors.names
-    attr(all.mat, "ncol_X_vlm") <- model@misc$ncol_X_vlm
+    attr(all.mat, "ncol.X.vlm") <- model@misc$ncol.X.vlm
 
     all.mat
   } else {
@@ -556,18 +569,18 @@ hatvaluesvlm <- function(model,
     all.rows.index <- rep((0:(nn-1)) * M, rep(MM12, nn)) + ind1$row.index
     all.cols.index <- rep((0:(nn-1)) * M, rep(MM12, nn)) + ind1$col.index
 
-    H_ss <- rowSums(Q.S3[all.rows.index, ] *
-                   Q.S3[all.cols.index, ])
+    H.ss <- rowSums(Q.S3[all.rows.index, ] *
+                    Q.S3[all.cols.index, ])
 
-    H_ss <- matrix(H_ss, nn, MM12, byrow = TRUE)
-    H_ss
+    H.ss <- matrix(H.ss, nn, MM12, byrow = TRUE)
+    H.ss
   }
 }
 
 
 if (!isGeneric("hatvalues"))
     setGeneric("hatvalues", function(model, ...)
-      standardGeneric("hatvalues"), package = "VGAM")
+  standardGeneric("hatvalues"), package = "VGAM")
 
 
 setMethod("hatvalues",  "vlm", function(model, ...)
@@ -606,7 +619,7 @@ hatplot.vlm <-
   if (!is.matrix(hatval))
     stop("argument 'model' seems neither a vglm() object or a matrix")
 
-  ncol_X_vlm <- attr(hatval, "ncol_X_vlm")
+  ncol.X.vlm <- attr(hatval, "ncol.X.vlm")
   M <- attr(hatval, "M")
   predictors.names <- attr(hatval, "predictors.names")
   if (!length(predictors.names)) {
@@ -628,7 +641,7 @@ hatplot.vlm <-
          ylim = ylim, xlab = xlab, ylab = ylab,
          ...)
     points(1:N, hatval[, jay], ...)
-    abline(h = multiplier * ncol_X_vlm / (N * M), lty = lty, ...)
+    abline(h = multiplier * ncol.X.vlm / (N * M), lty = lty, ...)
   }
 }
 
@@ -674,14 +687,14 @@ dfbetavlm <-
   if (!is(model, "vlm"))
     stop("argument 'model' does not seem to be a vglm() object")
 
-  n_lm <- nobs(model, type = "lm")
-  X_lm <- model.matrix(model, type = "lm")
-  X_vlm <- model.matrix(model, type = "vlm")
-  p_vlm <- ncol(X_vlm) # nvar(model, type = "vlm")
+  n.lm <- nobs(model, type = "lm")
+  X.lm <- model.matrix(model, type = "lm")
+  X.vlm <- model.matrix(model, type = "vlm")
+  p.vlm <- ncol(X.vlm)  # nvar(model, type = "vlm")
   M    <- npred(model)
-  wz <- weights(model, type = "work") # zz unused!!!!!!!
+  wz <- weights(model, type = "work")  # zz unused!!!!!!!
   etastart <- predict(model)
-  offset <- matrix(model@offset, n_lm, M)
+  offset <- matrix(model@offset, n.lm, M)
   new.control <- model@control
   pweights <- weights(model, type = "prior")
   orig.w <- if (is.numeric(model@extra$orig.w))
@@ -693,7 +706,7 @@ dfbetavlm <-
   new.control$trace <- trace.new
   new.control$maxit <- maxit.new
 
-  dfbeta <- matrix(0, n_lm, p_vlm)
+  dfbeta <- matrix(0, n.lm, p.vlm)
 
   Terms.zz <- NULL
 
@@ -701,29 +714,29 @@ dfbetavlm <-
 
 
 
-  for (ii in 1:n_lm) {
+  for (ii in 1:n.lm) {
     if (trace.new) {
       cat("\n", "Observation ", ii, "\n")
       flush.console()
     }
 
-    w.orig <- if (length(orig.w) != n_lm)
-               rep(orig.w, length.out = n_lm) else
-               orig.w
+    w.orig <- if (length(orig.w) != n.lm)
+                rep(orig.w, length.out = n.lm) else
+                orig.w
     w.orig[ii] <- w.orig[ii] * smallno # Relative
 
-    fit <- vglm.fit(x = X_lm,
-                    X_vlm_arg = X_vlm, # Should be more efficient
+    fit <- vglm.fit(x = X.lm,
+                    X.vlm.arg = X.vlm,  # Should be more efficient
                     y = if (y.integer)
                       round(depvar(model) * c(pweights) / c(orig.w)) else
                            (depvar(model) * c(pweights) / c(orig.w)),
-                    w = w.orig, # Set to zero so that it is 'deleted'.
+                    w = w.orig,  # Set to zero so that it is 'deleted'.
                     Xm2 = NULL, Ym2 = NULL,
-                    etastart = etastart, # coefstart = NULL,
+                    etastart = etastart,  # coefstart = NULL,
                     offset = offset,
                     family = model@family,
                     control = new.control,
-                    criterion =  new.control$criterion, # "coefficients",
+                    criterion =  new.control$criterion,  # "coefficients",
                     qr.arg = FALSE,
                     constraints = constraints(model, type = "term"),
                     extra = model@extra,
@@ -734,7 +747,7 @@ dfbetavlm <-
   }
 
 
-  dimnames(dfbeta) <- list(rownames(X_lm), names(coef(model)))
+  dimnames(dfbeta) <- list(rownames(X.lm), names(coef(model)))
   dfbeta
 }
 
@@ -767,7 +780,7 @@ setMethod("dfbeta",  "rcim", function(model, ...)
 
 
 
-hatvaluesbasic <- function(X_vlm,
+hatvaluesbasic <- function(X.vlm,
                            diagWm,
                            M = 1) {
 
@@ -775,31 +788,31 @@ hatvaluesbasic <- function(X_vlm,
   if (M  > 1)
     stop("currently argument 'M' must be 1")
 
-  nn <- nrow(X_vlm)
-  ncol_X_vlm <- ncol(X_vlm)
+  nn <- nrow(X.vlm)
+  ncol.X.vlm <- ncol(X.vlm)
 
-  XtW <- t(c(diagWm) * X_vlm)
-
-
-    UU <- sqrt(diagWm) # Only for M == 1
-    UU.X_vlm <- c(UU) * X_vlm # c(UU) okay for M==1
-
-    qrSlot <- qr(UU.X_vlm)
-    Rmat <- qr.R(qrSlot)
-
-    rinv <- diag(ncol_X_vlm)
-    rinv <- backsolve(Rmat, rinv)
+  XtW <- t(c(diagWm) * X.vlm)
 
 
-    Diag.Hat <- if (FALSE) {
-      covun <- rinv %*% t(rinv)
-      rhs.mat <- covun %*% XtW
-      colSums(t(X_vlm) * rhs.mat)
-    } else {
-      mymat <- X_vlm %*% rinv
-      rowSums(diagWm * mymat^2)
-    }
-    Diag.Hat
+  UU <- sqrt(diagWm) # Only for M == 1
+  UU.X.vlm <- c(UU) * X.vlm # c(UU) okay for M==1
+
+  qrSlot <- qr(UU.X.vlm)
+  Rmat <- qr.R(qrSlot)
+
+  rinv <- diag(ncol.X.vlm)
+  rinv <- backsolve(Rmat, rinv)
+
+
+  Diag.Hat <- if (FALSE) {
+    covun <- rinv %*% t(rinv)
+    rhs.mat <- covun %*% XtW
+    colSums(t(X.vlm) * rhs.mat)
+  } else {
+    mymat <- X.vlm %*% rinv
+    rowSums(diagWm * mymat^2)
+  }
+  Diag.Hat
 }
 
 

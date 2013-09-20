@@ -97,7 +97,7 @@ fit <- vglm(y ~ 1, benini(y0 = y0), bdata, trace = TRUE, crit = "coef")
 coef(fit, matrix = TRUE)
 Coef(fit)
 fit@extra$y0
-c(head(fitted(fit), 1), with(bdata, median(y))) # Should be equal
+c(head(fitted(fit), 1), with(bdata, median(y)))  # Should be equal
 }
 \keyword{models}
 \keyword{regression}

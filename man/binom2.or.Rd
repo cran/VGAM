@@ -23,15 +23,18 @@ binom2.or(lmu = "logit", lmu1 = lmu, lmu2 = lmu, loratio = "loge",
   See \code{\link{Links}} for more choices.
   See the note below.
 
+
   }
   \item{lmu1, lmu2}{
   Link function applied to the first and second of the two marginal
   probabilities.
 
+
   }
   \item{loratio}{
   Link function applied to the odds ratio.
   See \code{\link{Links}} for more choices.
+
 
   }
   \item{imu1, imu2, ioratio}{
@@ -40,20 +43,24 @@ binom2.or(lmu = "logit", lmu1 = lmu, lmu2 = lmu, loratio = "loge",
   In general good initial values are often required so use these
   arguments if convergence failure occurs.
 
+
   }
   \item{zero}{
-  Which linear/additive predictor is modelled as an intercept only? A
-  \code{NULL} means none.
+  Which linear/additive predictor is modelled as an intercept only?
+  A \code{NULL} means none.
+
 
   }
   \item{exchangeable}{
-  Logical. If \code{TRUE}, the two marginal probabilities are constrained
-  to be equal.
+  Logical.
+  If \code{TRUE}, the two marginal probabilities are constrained to be equal.
+
 
   }
   \item{tol}{
   Tolerance for testing independence. Should be some
   small positive numerical value.
+
 
   }
   \item{morerobust}{
@@ -61,6 +68,7 @@ binom2.or(lmu = "logit", lmu1 = lmu, lmu2 = lmu, loratio = "loge",
   derivatives and working weights more robustly, i.e., in an attempt
   to avoid numerical problems. Currently this feature is not debugged
   if set \code{TRUE}.
+
 
   }
 }
@@ -202,7 +210,7 @@ binom2.or(lmu = "logit", lmu1 = lmu, lmu2 = lmu, loratio = "loge",
 \examples{
 # Fit the model in Table 6.7 in McCullagh and Nelder (1989)
 coalminers <- transform(coalminers, Age = (age - 42) / 5)
-fit <- vglm(cbind(nBnW,nBW,BnW,BW) ~ Age, binom2.or(zero = NULL), coalminers)
+fit <- vglm(cbind(nBnW, nBW, BnW, BW) ~ Age, binom2.or(zero = NULL), coalminers)
 fitted(fit)
 summary(fit)
 coef(fit, matrix = TRUE)
@@ -212,10 +220,10 @@ c(weights(fit, type = "prior")) * fitted(fit)  # Table 6.8
                          xlab = "(age - 42) / 5", lwd = 2))
 with(coalminers, matpoints(Age, depvar(fit), col=1:4))
 legend(x = -4, y = 0.5, lty = 1:4, col = 1:4, lwd = 2,
-       legend=c("1 = (Breathlessness=0, Wheeze=0)",
-                "2 = (Breathlessness=0, Wheeze=1)",
-                "3 = (Breathlessness=1, Wheeze=0)",
-                "4 = (Breathlessness=1, Wheeze=1)")) }
+       legend = c("1 = (Breathlessness=0, Wheeze=0)",
+                  "2 = (Breathlessness=0, Wheeze=1)",
+                  "3 = (Breathlessness=1, Wheeze=0)",
+                  "4 = (Breathlessness=1, Wheeze=1)")) }
 
 
 # Another model: pet ownership
@@ -224,10 +232,10 @@ legend(x = -4, y = 0.5, lty = 1:4, col = 1:4, lwd = 2,
 petdata <- subset(xs.nz, ethnic == "0" & age < 70 & sex == "M")
 petdata <- na.omit(petdata[, c("cat", "dog", "age")])
 summary(petdata)
-with(petdata, table(cat, dog)) # Can compute the odds ratio
+with(petdata, table(cat, dog))  # Can compute the odds ratio
 
-fit <- vgam(cbind((1-cat)*(1-dog), (1-cat)*dog,
-                     cat *(1-dog),    cat *dog) ~ s(age, df = 5),
+fit <- vgam(cbind((1-cat) * (1-dog), (1-cat) * dog,
+                     cat  * (1-dog),    cat  * dog) ~ s(age, df = 5),
             binom2.or(zero =    3), data = petdata, trace = TRUE)
 colSums(depvar(fit))
 coef(fit, matrix = TRUE)

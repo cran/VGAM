@@ -6,7 +6,7 @@
 \alias{rpolono}
 \title{The Poisson Lognormal Distribution}
 \description{
-  Density, and random
+  Density, distribution function and random
   generation for the Poisson lognormal distribution.
 
 }
@@ -52,18 +52,22 @@ rpolono(n, meanlog = 0, sdlog = 1)
   Used to test whether the cumulative probabilities have
   effectively reached unity.
 
+
   }
   \item{...}{
   Arguments passed into 
   \code{\link[stats]{integrate}}.
+
 
   }
 }
 \value{
   \code{dpolono} gives the density,
   \code{ppolono} gives the distribution function, and
-% \code{qpolono} gives the quantile function, and
   \code{rpolono} generates random deviates.
+
+
+% \code{qpolono} gives the quantile function, and
 
 
 }
@@ -110,7 +114,7 @@ rpolono(n, meanlog = 0, sdlog = 1)
 
 
   For the maximum likelihood estimation of the 2 parameters a \pkg{VGAM}
-  family function called \code{polono}, say, has not been written yet.
+  family function called \code{polono()}, say, has not been written yet.
 
 
 }
@@ -123,8 +127,8 @@ rpolono(n, meanlog = 0, sdlog = 1)
 }
 \examples{
 meanlog <- 0.5; sdlog <- 0.5; yy <- 0:19
-sum(proby <- dpolono(yy, m = meanlog, sd = sdlog)) # Should be 1
-max(abs(cumsum(proby) - ppolono(yy, m = meanlog, sd = sdlog))) # Should be 0
+sum(proby <- dpolono(yy, m = meanlog, sd = sdlog))  # Should be 1
+max(abs(cumsum(proby) - ppolono(yy, m = meanlog, sd = sdlog)))  # Should be 0
 
 \dontrun{ opar = par(no.readonly = TRUE)
 par(mfrow = c(2, 2))
@@ -132,11 +136,11 @@ plot(yy, proby, type = "h", col = "blue", ylab = "P[Y=y]", log = "",
      main = paste("Poisson lognormal(m = ", meanlog,
                   ", sdl = ", sdlog, ")", sep = ""))
 
-y <- 0:190 # More extreme values; use the approximation and plot on a log scale
-(sum(proby <- dpolono(y, m = meanlog, sd = sdlog, bigx = 100))) # Should be 1
+y <- 0:190  # More extreme values; use the approximation and plot on a log scale
+(sum(proby <- dpolono(y, m = meanlog, sd = sdlog, bigx = 100)))  # Should be 1
 plot(y, proby, type = "h", col = "blue", ylab = "P[Y=y] (log)", log = "y",
      main = paste("Poisson lognormal(m = ", meanlog,
-                  ", sdl = ", sdlog, ")", sep = "")) # Note the kink at bigx
+                  ", sdl = ", sdlog, ")", sep = ""))  # Note the kink at bigx
 
 # Random number generation
 table(y <- rpolono(n = 1000, m = meanlog, sd = sdlog))

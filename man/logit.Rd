@@ -129,16 +129,16 @@ elogit(theta, min = 0, max = 1, bminvalue = NULL, bmaxvalue = NULL,
 \examples{
 p <- seq(0.01, 0.99, by = 0.01)
 logit(p)
-max(abs(logit(logit(p), inverse = TRUE) - p)) # Should be 0
+max(abs(logit(logit(p), inverse = TRUE) - p))  # Should be 0
 
 p <- c(seq(-0.02, 0.02, by = 0.01), seq(0.97, 1.02, by = 0.01))
-logit(p) # Has NAs
-logit(p, bvalue = .Machine$double.eps) # Has no NAs
+logit(p)  # Has NAs
+logit(p, bvalue = .Machine$double.eps)  # Has no NAs
 
 p <- seq(0.9, 2.2, by = 0.1)
 elogit(p, min = 1, max = 2,
           bminvalue = 1 + .Machine$double.eps,
-          bmaxvalue = 2 - .Machine$double.eps) # Has no NAs
+          bmaxvalue = 2 - .Machine$double.eps)  # Has no NAs
 
 \dontrun{ par(mfrow = c(2,2), lwd = (mylwd <- 2))
 y <- seq(-4, 4, length = 100)
