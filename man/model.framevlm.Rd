@@ -79,12 +79,12 @@ check1 <- head(model.frame(fit))
 check1
 check2 <- model.frame(fit, data = head(pneumo))
 check2
-all.equal(unlist(check1), unlist(check2)) # Should be TRUE
+all.equal(unlist(check1), unlist(check2))  # Should be TRUE
 
 q0 <- head(predict(fit))
 q1 <- head(predict(fit, newdata = pneumo))
 q2 <- predict(fit, newdata = head(pneumo))
-all.equal(q0, q1) # Should be TRUE
-all.equal(q1, q2) # Should be TRUE
+all.equal(q0, q1)  # Should be TRUE
+all.equal(q1, q2)  # Should be TRUE
 }
 \keyword{models}

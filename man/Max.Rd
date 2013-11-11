@@ -28,13 +28,17 @@ Max(object, ...)
 
 
   Maxima occur in quadratic and additive ordination,
-  e.g., CQO or UQO or CAO.
+  e.g., CQO or CAO.
   For these models the maximum is the fitted value at the
   optimum. For quadratic ordination models there is a formula
   for the optimum but for additive ordination models the
   optimum must be searched for numerically. If it occurs
   on the boundary, then the optimum is undefined. For
   a valid optimum, the fitted value at the optimum is the maximum.
+
+
+
+% e.g., CQO or UQO or CAO.
 
 
 }
@@ -76,8 +80,8 @@ Constrained additive ordination.
 
 \examples{
 \dontrun{
-set.seed(111) # This leads to the global solution
-hspider[,1:6] <- scale(hspider[,1:6]) # Standardized environmental vars
+set.seed(111)  # This leads to the global solution
+hspider[,1:6] <- scale(hspider[,1:6])  # Standardized environmental vars
 p1 <- cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,
                 Auloalbi, Pardlugu, Pardmont, Pardnigr, Pardpull,
                 Trocterr, Zoraspin) ~

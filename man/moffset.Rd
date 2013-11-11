@@ -10,7 +10,8 @@ Matrix Offset
 
 }
 \usage{
-moffset(mat, roffset = 0, coffset = 0, postfix = "")
+moffset(mat, roffset = 0, coffset = 0, postfix = "",
+        rprefix = "Row.", cprefix = "Col.")
 }
 \arguments{
 \item{mat}{
@@ -40,6 +41,11 @@ moffset(mat, roffset = 0, coffset = 0, postfix = "")
   Modified rows and columns are renamed by pasting this argument
   to the end of each name.
   The default is no change.
+
+
+}
+\item{rprefix, cprefix}{
+  Same as \code{\link{rcim}}.
 
 
 }
@@ -120,7 +126,7 @@ alcoff.e <- moffset(alcoff, roffset = "6", postfix = "*")
 fit.o <- rcim(alcoff)    # default baselines are first row and col
 fit.e <- rcim(alcoff.e)  # default baselines are first row and col 
 
-\dontrun{ par(mfrow = c(2, 2), mar = c(9,4,2,1))
+\dontrun{ par(mfrow = c(2, 2), mar = c(9, 4, 2, 1))
 plot(fit.o, rsub = "Not very interpretable", csub = "Not very interpretable")
 plot(fit.e, rsub = "More interpretable", csub = "More interpretable")
 }

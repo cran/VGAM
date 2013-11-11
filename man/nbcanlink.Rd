@@ -74,7 +74,7 @@ nbcanlink(theta, size = NULL, wrt.eta = NULL, bvalue = NULL,
 }
 \references{
 
-  Yee, T. W. (2013)
+  Yee, T. W. (2014)
   Reduced-rank vector generalized linear models with two linear predictors.
   \emph{Computational Statistics and Data Analysis}.
 
@@ -131,11 +131,11 @@ nbcanlink(theta, size = NULL, wrt.eta = NULL, bvalue = NULL,
 \examples{
 nbcanlink("mu", short = FALSE)
 
-mymu <- 1:10 # Test some basic operations:
+mymu <- 1:10  # Test some basic operations:
 kmatrix <- matrix(runif(length(mymu)), length(mymu), 1)
 eta1 <- nbcanlink(mymu, size = kmatrix)
 ans2 <- nbcanlink(eta1, size = kmatrix, inverse = TRUE)
-max(abs(ans2 - mymu)) # Should be 0
+max(abs(ans2 - mymu))  # Should be 0
 
 \dontrun{ mymu <- c(seq(0.5, 10, length = 101))
 kmatrix <- matrix(10, length(mymu), 1)
@@ -146,7 +146,7 @@ plot(nbcanlink(mymu, size = kmatrix) ~ mymu, las = 1,
 set.seed(123)
 ndata <- data.frame(x2 = runif(nn <- 1000 ))
 size1 <- exp(1); size2 <- exp(2)
-ndata <- transform(ndata, eta1 = -1 - 2 * x2, # eta1 < 0
+ndata <- transform(ndata, eta1 = -1 - 2 * x2,  # eta1 < 0
                           size1 = size1,
                           size2 = size2)
 ndata <- transform(ndata,
@@ -158,8 +158,8 @@ head(ndata)
 summary(ndata)
 
 fit <- vglm(cbind(y1, y2) ~ x2, negbinomial("nbcanlink", imethod = 3),
-            stepsize = 0.5, ndata, # Deliberately slow the convergence rate
-            maxit = 100, trace = TRUE) # Warning: may converge to a local soln
+            stepsize = 0.5, ndata,  # Deliberately slow the convergence rate
+            maxit = 100, trace = TRUE)  # Warning: may converge to a local soln
 coef(fit, matrix = TRUE)
 summary(fit)
 }
@@ -170,4 +170,4 @@ summary(fit)
 % abline(h = 0, col = "lightgray", lty = "dashed", lwd = 2.0)
 % The variance-covariance matrix may be wrong when the
 % canonical link is used.
-% vcov(fit) # May be wrong
+% vcov(fit)  # May be wrong

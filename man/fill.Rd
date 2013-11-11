@@ -155,11 +155,11 @@ eyesdat = data.frame(lop = round(runif(nn), 2),
                      rop = round(runif(nn), 2),
                      age = round(rnorm(nn, 40, 10)))
 eyesdat <- transform(eyesdat,
-    mop = (lop + rop) / 2,       # Mean ocular pressure
-    op  = (lop + rop) / 2,       # Value unimportant unless plotting
-#   op  =  lop,                  # Choose this if plotting
-    eta1 = 0 - 2*lop + 0.04*age, # Linear predictor for left eye
-    eta2 = 0 - 2*rop + 0.04*age) # Linear predictor for right eye
+    mop = (lop + rop) / 2,        # Mean ocular pressure
+    op  = (lop + rop) / 2,        # Value unimportant unless plotting
+#   op  =  lop,                   # Choose this if plotting
+    eta1 = 0 - 2*lop + 0.04*age,  # Linear predictor for left eye
+    eta2 = 0 - 2*rop + 0.04*age)  # Linear predictor for right eye
 eyesdat <- transform(eyesdat,
     leye = rbinom(nn, size = 1, prob = logit(eta1, inverse = TRUE)),
     reye = rbinom(nn, size = 1, prob = logit(eta2, inverse = TRUE)))
@@ -178,7 +178,7 @@ coef(fit1, matrix = TRUE)  # Unchanged with 'xij'
 constraints(fit1)
 max(abs(predict(fit1)-predict(fit1, new = eyesdat)))  # Predicts correctly
 summary(fit1)
-\dontrun{ plotvgam(fit1, se = TRUE) # Wrong, e.g., because it plots against op, not lop.
+\dontrun{ plotvgam(fit1, se = TRUE)  # Wrong, e.g., because it plots against op, not lop.
 # So set op=lop in the above for a correct plot.
 }
 
@@ -194,16 +194,16 @@ head(model.matrix(fit2, type = "lm"))   # LM model matrix
 head(model.matrix(fit2, type = "vlm"))  # Big VLM model matrix
 coef(fit2)
 coef(fit2, matrix = TRUE)  # Unchanged with 'xij'
-max(abs(predict(fit2) - predict(fit2, new = eyesdat))) # Predicts correctly
+max(abs(predict(fit2) - predict(fit2, new = eyesdat)))  # Predicts correctly
 summary(fit2)
-\dontrun{ plotvgam(fit2, se = TRUE) # Wrong because it plots against op, not lop.
+\dontrun{ plotvgam(fit2, se = TRUE)  # Wrong because it plots against op, not lop.
 }
 
 
 # Example 3. This model uses regression splines on ocular pressure.
 # It uses a trick to ensure common basis functions.
 BS <- function(x, ...)
-  bs(c(x,...), df = 3)[1:length(x), , drop = FALSE] # trick
+  bs(c(x,...), df = 3)[1:length(x), , drop = FALSE]  # trick
 
 fit3 <- vglm(cbind(leye,reye) ~ BS(lop,rop) + age,
              family = binom2.or(exchangeable = TRUE, zero = 3),
@@ -219,9 +219,9 @@ coef(fit3)
 coef(fit3, matrix = TRUE)
 summary(fit3)
 fit3@smart.prediction
-max(abs(predict(fit3) - predict(fit3, new = eyesdat))) # Predicts correctly
+max(abs(predict(fit3) - predict(fit3, new = eyesdat)))  # Predicts correctly
 predict(fit3, new = head(eyesdat))  # Note the 'scalar' OR, i.e., zero=3
-max(abs(head(predict(fit3)) - predict(fit3, new = head(eyesdat)))) # Should be 0
+max(abs(head(predict(fit3)) - predict(fit3, new = head(eyesdat))))  # Should be 0
 \dontrun{
 plotvgam(fit3, se = TRUE, xlab = "lop")  # Correct
 }

@@ -104,6 +104,8 @@ qvar(fit1, se = FALSE)  # Quasi-standard errors
 (quasiVar <- exp(diag(fitted(fit1))) / 2)                 # Version 1
 (quasiVar <- diag(predict(fit1)[, c(TRUE, FALSE)]) / 2)   # Version 2
 (quasiSE  <- sqrt(quasiVar))
+
+\dontrun{ plotqvar(fit1, col = "green", lwd = 3, scol = "blue", slwd = 2, las = 1) }
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

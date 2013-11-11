@@ -76,7 +76,7 @@ Gompertz-Makeham distribution.
 probs <- seq(0.01, 0.99, by = 0.01)
 Shape <- exp(-1); Scale <- exp(1); eps = Epsilon <- exp(-1)
 max(abs(pmakeham(qmakeham(p = probs, Shape, sca = Scale, eps = Epsilon),
-                 Shape, sca = Scale, eps = Epsilon) - probs)) # Should be 0
+                 Shape, sca = Scale, eps = Epsilon) - probs))  # Should be 0
 
 \dontrun{ x <- seq(-0.1, 2.0, by = 0.01);
 plot(x, dmakeham(x, Shape, sca = Scale, eps = Epsilon), type = "l",

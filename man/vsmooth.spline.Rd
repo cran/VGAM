@@ -178,6 +178,15 @@ Heidelberg: Physica-Verlag.
 
 }
 
+%~Make other sections like WARNING with \section{WARNING }{....} ~
+\section{WARNING}{
+  See \code{\link{vgam}} for information about an important bug.
+
+
+}
+
+
+
 \seealso{
 \code{vsmooth.spline-class},
 \code{plot.vsmooth.spline},
@@ -209,11 +218,11 @@ mycols <- c("orange", "blue", "orange")
 \dontrun{ plot(fit2, lcol = mycols, pcol = mycols, las = 1) }
 
 p <- predict(fit, x = model.matrix(fit, type = "lm"), deriv = 0)
-max(abs(depvar(fit) - with(p, y))) # Should be 0; and fit@y is not good
+max(abs(depvar(fit) - with(p, y)))  # Should be 0; and fit@y is not good
 
 par(mfrow = c(3, 1))
 ux <- seq(1, 8, len = 100)
-for(dd in 1:3) {
+for (dd in 1:3) {
   pp <- predict(fit, x = ux, deriv = dd)
 \dontrun{with(pp, matplot(x, y, type = "l", main = paste("deriv =", dd),
                           lwd = 2, ylab = "", cex.axis = 1.5,

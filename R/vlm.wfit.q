@@ -50,7 +50,7 @@ vlm.wfit <-
       } else {
         if (missing.Blist || !length(Blist)) {
           Blist <- replace.constraints(vector("list", ncol(xmat)),
-                                       diag(M), 1:ncol(xmat)) # NULL
+                                       diag(M), 1:ncol(xmat))  # NULL
         }
         lm2vlm.model.matrix(x = xmat, Blist = Blist, M = M,
                             assign.attributes = FALSE,
@@ -86,7 +86,7 @@ vlm.wfit <-
 
   fv <- ans$fitted.values
   dim(fv) <- c(M, n)
-  fv <- vbacksub(U, fv, M = M, n = n) # Have to premultiply fv by U
+  fv <- vbacksub(U, fv, M = M, n = n)  # Have to premultiply fv by U
 
 
   if (length(Eta.range)) {
@@ -134,10 +134,10 @@ vlm.wfit <-
   }
   ncolBlist <- unlist(lapply(Blist, ncol)) 
   temp <- c(0, cumsum(ncolBlist))
-  for(ii in 1:ncolx) {
+  for (ii in 1:ncolx) {
     index <- (temp[ii]+1):temp[ii+1]
     cm <- Blist[[ii]]
-    B[,ii] <- cm %*% ans$coef[index]
+    B[, ii] <- cm %*% ans$coef[index]
   }
   ans$mat.coefficients <- t(B)
   ans

@@ -312,7 +312,7 @@ with(adata, matlines(x, fitted(fit ), col = "blue",
 with(adata, matlines(x, fitted(fitp), col = "green",
                      lty = "solid", lwd = mylwd))
 finexgrid <- seq(0, 1, len = 1001)
-for(ii in 1:length(mytau))
+for (ii in 1:length(mytau))
     lines(finexgrid, qpois(p = mytau[ii], lambda = mymu(finexgrid)),
           col = "blue", lwd = mylwd)
 fit@extra  # Contains useful information
@@ -344,13 +344,13 @@ with(adata, matlines(x, fitted(fitp3), col = "black",
 # link to ensure an increasing quantiles at any value of x.
 
 mytau <- seq(0.2, 0.9, by = 0.1)
-answer <- matrix(0, nrow(adata), length(mytau)) # Stores the quantiles
+answer <- matrix(0, nrow(adata), length(mytau))  # Stores the quantiles
 adata <- transform(adata, offsety = y*0)
 usetau <- mytau
-for(ii in 1:length(mytau)) {
+for (ii in 1:length(mytau)) {
 #   cat("\n\nii  = ", ii, "\n")
   adata <- transform(adata, usey = y-offsety)
-  iloc <- ifelse(ii == 1, with(adata, median(y)), 1.0) # Well-chosen!
+  iloc <- ifelse(ii == 1, with(adata, median(y)), 1.0)  # Well-chosen!
   mydf <- ifelse(ii == 1, 5, 3)  # Maybe less smoothing will help
   lloc <- ifelse(ii == 1, "identity", "loge")  # 2nd value must be "loge"
   fit3 <- vglm(usey ~ ns(x, df = mydf), data = adata, trace = TRUE,

@@ -63,13 +63,13 @@ nvar_vlm <- function(object, ...) {
 
   NumPars <- rep(0, length = M)
   for (jay in 1:M) {
-    X.lm.jay <- model.matrix(object, type = "lm", lapred.index = jay)
+    X.lm.jay <- model.matrix(object, type = "lm", linpred.index = jay)
     NumPars[jay] <- ncol(X.lm.jay)
   }
   if (length(object@misc$predictors.names) == M)
     names(NumPars) <- object@misc$predictors.names
   if (!all(NumPars == numPars)) {
-    print(NumPars - numPars) # Should be all 0s
+    print(NumPars - numPars)  # Should be all 0s
     stop("something wrong in nvar_vlm()")
   }
 

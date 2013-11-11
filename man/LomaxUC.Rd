@@ -69,7 +69,7 @@ Hoboken, NJ, USA: Wiley-Interscience.
 }
 \examples{
 probs <- seq(0.1, 0.9, by = 0.1)
-max(abs(plomax(qlomax(p = probs, shape3.q =  1), shape3.q = 1) - probs)) # Should be 0
+max(abs(plomax(qlomax(p = probs, shape3.q =  1), shape3.q = 1) - probs))  # Should be 0
 
 \dontrun{ par(mfrow = c(1, 2))
 x <- seq(-0.01, 5, len = 401)

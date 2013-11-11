@@ -87,7 +87,7 @@ rposgeom(n, prob)
 \examples{
 prob <- 0.75; y = rposgeom(n = 1000, prob)
 table(y)
-mean(y) # Sample mean
+mean(y)  # Sample mean
 1 / prob  # Population mean
 
 (ii <- dposgeom(0:7, prob))
@@ -95,7 +95,7 @@ cumsum(ii) - pposgeom(0:7, prob)  # Should be 0s
 table(rposgeom(100, prob))
 
 table(qposgeom(runif(1000), prob))
-round(dposgeom(1:10, prob) * 1000) # Should be similar
+round(dposgeom(1:10, prob) * 1000)  # Should be similar
 
 \dontrun{
 x <- 0:5

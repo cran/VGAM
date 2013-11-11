@@ -85,7 +85,7 @@ cauchit(theta, bvalue = .Machine$double.eps,
 \examples{
 p <- seq(0.01, 0.99, by=0.01)
 cauchit(p)
-max(abs(cauchit(cauchit(p), inverse = TRUE) - p)) # Should be 0
+max(abs(cauchit(cauchit(p), inverse = TRUE) - p))  # Should be 0
 
 p <- c(seq(-0.02, 0.02, by=0.01), seq(0.97, 1.02, by = 0.01))
 cauchit(p)  # Has no NAs
@@ -95,7 +95,7 @@ par(mfrow = c(2, 2), lwd = (mylwd <- 2))
 y <- seq(-4, 4, length = 100)
 p <- seq(0.01, 0.99, by = 0.01)
 
-for(d in 0:1) {
+for (d in 0:1) {
   matplot(p, cbind(logit(p, deriv = d), probit(p, deriv = d)),
           type = "n", col = "purple", ylab = "transformation",
           las = 1, main = if (d == 0) "Some probability link functions"
@@ -112,7 +112,7 @@ for(d in 0:1) {
     abline(v = 0.5, lty = "dashed")
 }
 
-for(d in 0) {
+for (d in 0) {
   matplot(y, cbind( logit(y, deriv = d, inverse = TRUE),
                    probit(y, deriv = d, inverse = TRUE)),
           type  = "n", col = "purple", xlab = "transformation", ylab = "p",

@@ -110,7 +110,7 @@ qzanegbin <- function(p, size, prob = NULL, munb = NULL, pobs0 = 0) {
 rzanegbin <- function(n, size, prob = NULL, munb = NULL, pobs0 = 0) {
   use.n <- if ((length.n <- length(n)) > 1) length.n else
            if (!is.Numeric(n, integer.valued = TRUE,
-                           allowable.length = 1, positive = TRUE))
+                           length.arg = 1, positive = TRUE))
               stop("bad input for argument 'n'") else n
 
   if (length(munb)) {
@@ -199,7 +199,7 @@ qzapois <- function(p, lambda, pobs0 = 0) {
 rzapois <- function(n, lambda, pobs0 = 0) {
   use.n <- if ((length.n <- length(n)) > 1) length.n else
            if (!is.Numeric(n, integer.valued = TRUE,
-                           allowable.length = 1, positive = TRUE))
+                           length.arg = 1, positive = TRUE))
               stop("bad input for argument 'n'") else n
 
   ans <- rpospois(use.n, lambda)
@@ -315,7 +315,7 @@ rzipois <- function(n, lambda, pstr0 = 0) {
 
   use.n <- if ((length.n <- length(n)) > 1) length.n else
            if (!is.Numeric(n, integer.valued = TRUE,
-                           allowable.length = 1, positive = TRUE))
+                           length.arg = 1, positive = TRUE))
               stop("bad input for argument 'n'") else n
 
   if (length(pstr0)  != use.n) pstr0  <- rep(pstr0,  len = use.n)
@@ -644,7 +644,7 @@ rzipois <- function(n, lambda, pstr0 = 0) {
                               .llambda, earg = .elambda ))
 
     dl.dlambda <- y / lambda + 1 / expm1(-lambda)
-    dl.dphimat <- -1 / (1 - phimat) # For y > 0 obsns
+    dl.dphimat <- -1 / (1 - phimat)  # For y > 0 obsns
 
     for (spp. in 1:NOS) {
       dl.dphimat[skip[, spp.], spp.] <- 1 / phimat[skip[, spp.], spp.]
@@ -971,7 +971,7 @@ zanegbinomial.control <- function(save.weight = TRUE, ...) {
 
 
 
-  if (!is.Numeric(nsimEIM, allowable.length = 1,
+  if (!is.Numeric(nsimEIM, length.arg = 1,
                   positive = TRUE, integer.valued = TRUE))
     stop("argument 'nsimEIM' must be a positive integer")
   if (nsimEIM <= 30)
@@ -985,12 +985,12 @@ zanegbinomial.control <- function(save.weight = TRUE, ...) {
   if (length(isize) && !is.Numeric(isize, positive = TRUE))
     stop("If given, argument 'isize' must contain positive values only")
 
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
      imethod > 2)
     stop("argument 'imethod' must be 1 or 2")
 
-  if (!is.Numeric(shrinkage.init, allowable.length = 1) ||
+  if (!is.Numeric(shrinkage.init, length.arg = 1) ||
      shrinkage.init < 0 ||
      shrinkage.init > 1)
     stop("bad input for argument 'shrinkage.init'")
@@ -1396,7 +1396,7 @@ zanegbinomialff.control <- function(save.weight = TRUE, ...) {
 
 
 
-  if (!is.Numeric(nsimEIM, allowable.length = 1,
+  if (!is.Numeric(nsimEIM, length.arg = 1,
                   positive = TRUE, integer.valued = TRUE))
     stop("argument 'nsimEIM' must be a positive integer")
   if (nsimEIM <= 30)
@@ -1410,12 +1410,12 @@ zanegbinomialff.control <- function(save.weight = TRUE, ...) {
   if (length(isize) && !is.Numeric(isize, positive = TRUE))
     stop("If given, argument 'isize' must contain positive values only")
 
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
      imethod > 2)
     stop("argument 'imethod' must be 1 or 2")
 
-  if (!is.Numeric(shrinkage.init, allowable.length = 1) ||
+  if (!is.Numeric(shrinkage.init, length.arg = 1) ||
      shrinkage.init < 0 ||
      shrinkage.init > 1)
     stop("bad input for argument 'shrinkage.init'")
@@ -1815,7 +1815,7 @@ rposnegbin <- function(n, munb, size) {
   if (!is.Numeric(munb, positive = TRUE))
     stop("argument 'munb' must be positive")
   if (!is.Numeric(n, positive = TRUE, integer.valued = TRUE,
-                  allowable.length = 1))
+                  length.arg = 1))
     stop("argument 'n' must be a positive integer")
   ans <- rnbinom(n = n, mu = munb, size = size)
   munb <- rep(munb, length = n)
@@ -1883,12 +1883,12 @@ dposnegbin <- function(x, munb, size, log = FALSE) {
       stop("argument 'ilambda' values must be positive")
 
 
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
      imethod > 2)
     stop("argument 'imethod' must be 1 or 2")
 
-  if (!is.Numeric(shrinkage.init, allowable.length = 1) ||
+  if (!is.Numeric(shrinkage.init, length.arg = 1) ||
      shrinkage.init < 0 ||
      shrinkage.init > 1)
     stop("bad input for argument 'shrinkage.init'")
@@ -1967,7 +1967,7 @@ dposnegbin <- function(x, munb, size, log = FALSE) {
         Phi.init[Phi.init >= 0.98] <- 0.98 # Last resort
 
         if ( length(mustart)) {
-          mustart <- matrix(mustart, n, ncoly) # Make sure right size
+          mustart <- matrix(mustart, n, ncoly)  # Make sure right size
           Lambda.init <- mustart / (1 - Phi.init)
         } else if ( .imethod == 2) {
           mymean <- weighted.mean(yvec[yvec > 0],
@@ -2179,7 +2179,7 @@ dposnegbin <- function(x, munb, size, log = FALSE) {
   if (is.Numeric(ipstr0))
     if (!is.Numeric(ipstr0, positive = TRUE) || any(ipstr0 >= 1))
       stop("'ipstr0' values must be inside the interval (0,1)")
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
      imethod > 2)
     stop("argument 'imethod' must be 1 or 2")
@@ -2451,7 +2451,7 @@ dposnegbin <- function(x, munb, size, log = FALSE) {
   if (is.Numeric(ionempstr0))
     if (!is.Numeric(ionempstr0, positive = TRUE) || any(ionempstr0 >= 1))
       stop("'ionempstr0' values must be inside the interval (0,1)")
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
      imethod > 2)
     stop("argument 'imethod' must be 1 or 2")
@@ -2800,7 +2800,7 @@ qzibinom <- function(p, size, prob, pstr0 = 0,
 rzibinom <- function(n, size, prob, pstr0 = 0) {
   use.n <- if ((length.n <- length(n)) > 1) length.n else
            if (!is.Numeric(n, integer.valued = TRUE,
-                           allowable.length = 1, positive = TRUE))
+                           length.arg = 1, positive = TRUE))
               stop("bad input for argument 'n'") else n
 
   pstr0 <- rep(pstr0, len = use.n)
@@ -2957,7 +2957,7 @@ rzinegbin <- function(n, size, prob = NULL, munb = NULL, pstr0 = 0) {
 
   use.n <- if ((length.n <- length(n)) > 1) length.n else
            if (!is.Numeric(n, integer.valued = TRUE,
-                           allowable.length = 1, positive = TRUE))
+                           length.arg = 1, positive = TRUE))
                stop("bad input for argument 'n'") else n
 
 
@@ -3033,17 +3033,17 @@ zinegbinomial.control <- function(save.weight = TRUE, ...) {
   if (length(isize) && !is.Numeric(isize, positive = TRUE))
     stop("argument 'isize' must contain positive values only")
 
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
      imethod > 3)
     stop("argument 'imethod' must be 1, 2 or 3")
 
-  if (!is.Numeric(nsimEIM, allowable.length = 1, integer.valued = TRUE))
+  if (!is.Numeric(nsimEIM, length.arg = 1, integer.valued = TRUE))
     stop("argument 'nsimEIM' must be a positive integer")
   if (nsimEIM <= 50)
     warning("argument 'nsimEIM' should be greater than 50, say")
 
-  if (!is.Numeric(shrinkage.init, allowable.length = 1) ||
+  if (!is.Numeric(shrinkage.init, length.arg = 1) ||
       shrinkage.init < 0 ||
       shrinkage.init > 1)
     stop("bad input for argument 'shrinkage.init'")
@@ -3486,17 +3486,17 @@ zinegbinomialff.control <- function(save.weight = TRUE, ...) {
   if (length(isize) && !is.Numeric(isize, positive = TRUE))
     stop("argument 'isize' must contain positive values only")
 
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
      imethod > 3)
     stop("argument 'imethod' must be 1, 2 or 3")
 
-  if (!is.Numeric(nsimEIM, allowable.length = 1, integer.valued = TRUE))
+  if (!is.Numeric(nsimEIM, length.arg = 1, integer.valued = TRUE))
     stop("argument 'nsimEIM' must be a positive integer")
   if (nsimEIM <= 50)
     warning("argument 'nsimEIM' should be greater than 50, say")
 
-  if (!is.Numeric(shrinkage.init, allowable.length = 1) ||
+  if (!is.Numeric(shrinkage.init, length.arg = 1) ||
       shrinkage.init < 0 ||
       shrinkage.init > 1)
     stop("bad input for argument 'shrinkage.init'")
@@ -3934,12 +3934,12 @@ zinegbinomialff.control <- function(save.weight = TRUE, ...) {
       stop("'ionempstr0' values must be inside the interval (0,1)")
 
 
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
     imethod > 2)
     stop("argument 'imethod' must be 1 or 2")
 
-  if (!is.Numeric(shrinkage.init, allowable.length = 1) ||
+  if (!is.Numeric(shrinkage.init, length.arg = 1) ||
     shrinkage.init < 0 ||
     shrinkage.init > 1)
     stop("bad input for argument 'shrinkage.init'")
@@ -4303,7 +4303,7 @@ qzigeom <- function(p, prob, pstr0 = 0) {
 rzigeom <- function(n, prob, pstr0 = 0) {
   use.n <- if ((length.n <- length(n)) > 1) length.n else
            if (!is.Numeric(n, integer.valued = TRUE,
-                           allowable.length = 1, positive = TRUE))
+                           length.arg = 1, positive = TRUE))
               stop("bad input for argument 'n'") else n
 
 
@@ -4371,12 +4371,12 @@ rzigeom <- function(n, prob, pstr0 = 0) {
       iprob >= 1)
     stop("argument 'iprob' is out of range")
 
-  if (!is.Numeric(bias.red, allowable.length = 1, positive = TRUE) ||
+  if (!is.Numeric(bias.red, length.arg = 1, positive = TRUE) ||
      bias.red > 1)
     stop("argument 'bias.red' must be between 0 and 1")
 
 
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
      imethod > 3)
     stop("argument 'imethod' must be 1 or 2 or 3")
@@ -4671,12 +4671,12 @@ rzigeom <- function(n, prob, pstr0 = 0) {
         ionempstr0 >= 1)
       stop("argument 'ionempstr0' is out of range")
 
-  if (!is.Numeric(bias.red, allowable.length = 1, positive = TRUE) ||
+  if (!is.Numeric(bias.red, length.arg = 1, positive = TRUE) ||
      bias.red > 1)
     stop("argument 'bias.red' must be between 0 and 1")
 
 
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
      imethod > 3)
     stop("argument 'imethod' must be 1 or 2 or 3")
@@ -5015,7 +5015,7 @@ qzageom <- function(p, prob, pobs0 = 0) {
 rzageom <- function(n, prob, pobs0 = 0) {
   use.n <- if ((length.n <- length(n)) > 1) length.n else
            if (!is.Numeric(n, integer.valued = TRUE,
-                           allowable.length = 1, positive = TRUE))
+                           length.arg = 1, positive = TRUE))
                stop("bad input for argument 'n'") else n
 
   ans <- rposgeom(use.n, prob)
@@ -5111,7 +5111,7 @@ qzabinom <- function(p, size, prob, pobs0 = 0) {
 rzabinom <- function(n, size, prob, pobs0 = 0) {
   use.n <- if ((length.n <- length(n)) > 1) length.n else
            if (!is.Numeric(n, integer.valued = TRUE,
-                           allowable.length = 1, positive = TRUE))
+                           length.arg = 1, positive = TRUE))
                stop("bad input for argument 'n'") else n
 
   ans <- rposbinom(use.n, size, prob)
@@ -5162,7 +5162,7 @@ rzabinom <- function(n, size, prob, pobs0 = 0) {
 
 
 
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
       imethod > 3)
     stop("argument 'imethod' must be 1 or 2 or 3")
@@ -5457,7 +5457,7 @@ rzabinom <- function(n, size, prob, pobs0 = 0) {
 
 
 
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
       imethod > 3)
     stop("argument 'imethod' must be 1 or 2 or 3")
@@ -5745,7 +5745,7 @@ rzabinom <- function(n, size, prob, pobs0 = 0) {
                            c("mean", "pobs0", "onempobs0"))[1]
 
 
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
      imethod > 3)
     stop("argument 'imethod' must be 1 or 2 or 3")
@@ -6011,7 +6011,7 @@ rzabinom <- function(n, size, prob, pobs0 = 0) {
                            c("mean", "pobs0", "onempobs0"))[1]
 
 
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
      imethod > 3)
     stop("argument 'imethod' must be 1 or 2 or 3")

@@ -326,7 +326,7 @@ Constrained additive ordination.
 
 \examples{
 \dontrun{
-hspider[, 1:6] <- scale(hspider[, 1:6]) # Standardized environmental vars
+hspider[, 1:6] <- scale(hspider[, 1:6])  # Standardized environmental vars
 set.seed(149)  # For reproducible results 
 ap1 <- cao(cbind(Pardlugu, Pardmont, Pardnigr, Pardpull) ~
            WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
@@ -348,7 +348,7 @@ lvplot(ap1, lcol = index, pcol = index, y = TRUE)
 trplot(ap1, label = TRUE, col = index)
 abline(a = 0, b = 1, lty = 2)
 
-trplot(ap1, label = TRUE, col = "blue", log = "xy", whichSp = c(1, 3))
+trplot(ap1, label = TRUE, col = "blue", log = "xy", which.sp = c(1, 3))
 abline(a = 0, b = 1, lty = 2)
 
 persp(ap1, col = index, lwd = 2, label = TRUE)

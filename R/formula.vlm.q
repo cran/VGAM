@@ -10,7 +10,7 @@
 
 formulavlm = function(x, fnumber=1, ...) {
   if (!is.Numeric(fnumber, integer.valued = TRUE,
-                  allowable.length = 1, positive = TRUE) ||
+                  length.arg = 1, positive = TRUE) ||
       fnumber > 2)
     stop("argument 'fnumber' must be 1 or 2")
 

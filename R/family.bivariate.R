@@ -87,7 +87,7 @@ rbiclaytoncop <- function(n, alpha = 0) {
 
 
 
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) || imethod > 3)
     stop("argument 'imethod' must be 1 or 2 or 3")
 
@@ -388,7 +388,7 @@ bistudent.deriv.dof <-  function(u, v, nu, rho) {
 
 
 
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
       imethod > 2)
     stop("argument 'imethod' must be 1 or 2")
@@ -644,7 +644,7 @@ bistudent.deriv.dof <-  function(u, v, nu, rho) {
     wz22 <- wz22 + (Dof^2 + 2 * Dof) * (2 - 3 * Rho^2 + Rho^6) *   
             beta(3, Dof / 2) / (16 * (1 - Rho^2)^4)
     wz22 <- wz22 + (Dof^2 + 2 * Dof) * (1 + Rho^2) *    # Replace - by + ???
-            beta(2, Dof / 2) / (4 * (1 - Rho^2)^2) # denom == 4 or 2 ???
+            beta(2, Dof / 2) / (4 * (1 - Rho^2)^2)  # denom == 4 or 2 ???
     ned2l.ddof2   <- wz11
     ned2l.ddofrho <- wz12
     ned2l.drho2   <- wz22
@@ -735,7 +735,7 @@ rbinormcop <- function(n, rho = 0) {
 
 
 
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
       imethod > 3)
     stop("argument 'imethod' must be 1 or 2 or 3")
@@ -926,6 +926,8 @@ rbinormcop <- function(n, rho = 0) {
 
 
 
+
+
 bilogistic4.control <- function(save.weight = TRUE, ...) {
   list(save.weight = save.weight)
 }
@@ -948,7 +950,7 @@ bilogistic4.control <- function(save.weight = TRUE, ...) {
 
 
 
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
      imethod > 2) stop("argument 'imethod' must be 1 or 2")
 
@@ -998,10 +1000,10 @@ bilogistic4.control <- function(save.weight = TRUE, ...) {
         scale.init2 <- const4 * sum(c(w) *(y[, 2] - locat.init2)^2)
       }
       loc1.init <- if (length( .iloc1 ))
-                   rep( .iloc1, length.out = n) else
+                   rep( .iloc1 , length.out = n) else
                    rep(locat.init1, length.out = n)
       loc2.init <- if (length( .iloc2 ))
-                   rep( .iloc2, length.out = n) else
+                   rep( .iloc2 , length.out = n) else
                    rep(locat.init2, length.out = n)
       scale1.init <- if (length( .iscale1 ))
                      rep( .iscale1, length.out = n) else
@@ -1154,6 +1156,8 @@ pbilogis4 <-
 
 
 rbilogis4 <- function(n, loc1 = 0, scale1 = 1, loc2 = 0, scale2 = 1) {
+
+
   y1 <- rlogis(n = n, location = loc1, scale = scale1)
   ezedd1 <- exp(-(y1-loc1)/scale1)
   y2 <- loc2 - scale2 * log(1/sqrt(runif(n) / (1 + ezedd1)^2) - 1 - ezedd1)
@@ -1161,6 +1165,7 @@ rbilogis4 <- function(n, loc1 = 0, scale1 = 1, loc2 = 0, scale2 = 1) {
   ans[scale2 <= 0, ] <- NA
   ans
 }
+
 
 
 
@@ -1327,7 +1332,7 @@ rbilogis4 <- function(n, loc1 = 0, scale1 = 1, loc2 = 0, scale2 = 1) {
     d33 <- (1-py1.lt.y2) / beta^2
     d44 <- py1.lt.y2 / betap^2
 
-    wz <- matrix(0, n, M) # diagonal
+    wz <- matrix(0, n, M)  # diagonal
     wz[, iam(1, 1, M)] <- dalpha.deta^2  * d11
     wz[, iam(2, 2, M)] <- dalphap.deta^2 * d22
     wz[, iam(3, 3, M)] <- dbeta.deta^2   * d33
@@ -1376,7 +1381,7 @@ rbilogis4 <- function(n, loc1 = 0, scale1 = 1, loc2 = 0, scale2 = 1) {
     if (!is.Numeric(ishape2, positive = TRUE))
       stop("argument 'ishape2' must be positive or NULL")
 
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
      imethod > 2.5)
     stop("argument 'imethod' must be 1 or 2")
@@ -1551,7 +1556,7 @@ rbilogis4 <- function(n, loc1 = 0, scale1 = 1, loc2 = 0, scale2 = 1) {
 rbifrankcop <- function(n, alpha) {
   use.n <- if ((length.n <- length(n)) > 1) length.n else
            if (!is.Numeric(n, integer.valued = TRUE,
-                           allowable.length = 1, positive = TRUE))
+                           length.arg = 1, positive = TRUE))
               stop("bad input for argument 'n'") else n
   if (!is.Numeric(alpha, positive = TRUE))
     stop("bad input for argument 'alpha'")
@@ -1661,7 +1666,7 @@ bifrankcop.control <- function(save.weight = TRUE, ...) {
 
 
   if (length(nsimEIM) &&
-     (!is.Numeric(nsimEIM, allowable.length = 1,
+     (!is.Numeric(nsimEIM, length.arg = 1,
                   integer.valued = TRUE) ||
       nsimEIM <= 50))
     stop("argument 'nsimEIM' should be an integer greater than 50")
@@ -1894,16 +1899,16 @@ bifrankcop.control <- function(save.weight = TRUE, ...) {
   lapar <- attr(earg, "function.name")
 
   if (length(iapar) &&
-     (!is.Numeric(iapar, allowable.length = 1) ||
+     (!is.Numeric(iapar, length.arg = 1) ||
       abs(iapar) >= 1))
     stop("argument 'iapar' must be a single number between -1 and 1")
 
-  if (!is.Numeric(tola0, allowable.length = 1, positive = TRUE))
+  if (!is.Numeric(tola0, length.arg = 1, positive = TRUE))
       stop("argument 'tola0' must be a single positive number")
 
   if (length(iapar) && abs(iapar) <= tola0)
       stop("argument 'iapar' must not be between -tola0 and tola0")
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
      imethod > 2.5)
       stop("argument 'imethod' must be 1 or 2")
@@ -2014,7 +2019,7 @@ bifrankcop.control <- function(save.weight = TRUE, ...) {
 rfgm <- function(n, alpha) {
   use.n <- if ((length.n <- length(n)) > 1) length.n else
            if (!is.Numeric(n, integer.valued = TRUE,
-                           allowable.length = 1, positive = TRUE))
+                           length.arg = 1, positive = TRUE))
               stop("bad input for argument 'n'") else n
 
   if (!is.Numeric(alpha))
@@ -2108,7 +2113,7 @@ pfgm <- function(q1, q2, alpha) {
   lapar <- attr(earg, "function.name")
 
 
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
      imethod > 3.5)
     stop("argument 'imethod' must be 1 or 2 or 3")
@@ -2232,9 +2237,9 @@ pfgm <- function(q1, q2, alpha) {
 
 
   if (length(iapar) &&
-      !is.Numeric(iapar, allowable.length = 1))
+      !is.Numeric(iapar, length.arg = 1))
     stop("'iapar' must be a single number")
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
      imethod > 2.5)
     stop("argument 'imethod' must be 1 or 2")
@@ -2367,10 +2372,10 @@ pplack <- function(q1, q2, oratio) {
     ans[!index] <- 0.5 * temp2 / (oratio[!index] - 1)
   }
 
-  ind2 <- (abs(oratio - 1) < 1.0e-6) # .Machine$double.eps
+  ind2 <- (abs(oratio - 1) < 1.0e-6)  # .Machine$double.eps
   ans[ind2] <- x[ind2] * y[ind2]
-  ans[x >= 1 & y<1] <- y[x >= 1 & y<1] # P(Y2 < q2) = q2
-  ans[y >= 1 & x<1] <- x[y >= 1 & x<1] # P(Y1 < q1) = q1
+  ans[x >= 1 & y<1] <- y[x >= 1 & y<1]  # P(Y2 < q2) = q2
+  ans[y >= 1 & x<1] <- x[y >= 1 & x<1]  # P(Y1 < q1) = q1
   ans[x <= 0 | y <= 0] <- 0
   ans[x >= 1 & y >= 1] <- 1
   ans
@@ -2381,7 +2386,7 @@ pplack <- function(q1, q2, oratio) {
 rplack <- function(n, oratio) {
   use.n <- if ((length.n <- length(n)) > 1) length.n else
            if (!is.Numeric(n, integer.valued = TRUE,
-                           allowable.length = 1, positive = TRUE))
+                           length.arg = 1, positive = TRUE))
               stop("bad input for argument 'n'") else n
 
 
@@ -2433,7 +2438,7 @@ plackett.control <- function(save.weight = TRUE, ...) {
   if (length(ioratio) && (!is.Numeric(ioratio, positive = TRUE)))
     stop("'ioratio' must be positive")
 
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
      imethod > 2)
     stop("argument 'imethod' must be 1 or 2")
@@ -2604,8 +2609,8 @@ pamh <- function(q1, q2, alpha) {
       ans[!index] <- (q1[!index]*q2[!index]) / (1 -
                      alpha[!index]*(1-q1[!index])*(1-q2[!index]))
   }
-  ans[x >= 1 & y <  1] <- y[x >= 1 & y < 1] # P(Y2 < q2) = q2
-  ans[y >= 1 & x <  1] <- x[y >= 1 & x < 1] # P(Y1 < q1) = q1
+  ans[x >= 1 & y <  1] <- y[x >= 1 & y < 1]  # P(Y2 < q2) = q2
+  ans[y >= 1 & x <  1] <- x[y >= 1 & x < 1]  # P(Y1 < q1) = q1
   ans[x <= 0 | y <= 0] <- 0
   ans[x >= 1 & y >= 1] <- 1
   ans[abs(alpha) > 1] <- NA
@@ -2616,7 +2621,7 @@ pamh <- function(q1, q2, alpha) {
 ramh <- function(n, alpha) {
   use.n <- if ((length.n <- length(n)) > 1) length.n else
            if (!is.Numeric(n, integer.valued = TRUE,
-                           allowable.length = 1, positive = TRUE))
+                           length.arg = 1, positive = TRUE))
               stop("bad input for argument 'n'") else n
 
   if (any(abs(alpha) > 1))
@@ -2647,13 +2652,13 @@ amh.control <- function(save.weight = TRUE, ...) {
 
   if (length(ialpha) && (abs(ialpha) > 1))
     stop("'ialpha' should be less than or equal to 1 in absolute value")
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
     imethod > 2)
     stop("imethod must be 1 or 2")
 
   if (length(nsimEIM) &&
-    (!is.Numeric(nsimEIM, allowable.length = 1,
+    (!is.Numeric(nsimEIM, length.arg = 1,
                   integer.valued = TRUE) ||
      nsimEIM <= 50))
   stop("'nsimEIM' should be an integer greater than 50")
@@ -2869,7 +2874,7 @@ rbinorm <- function(n, mean1 = 0, mean2 = 0,
   if (!trivial1 && !trivial2)
     stop("only one of 'eq.mean' and 'eq.sd' can be assigned a value")
 
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
       imethod > 2)
     stop("argument 'imethod' must be 1 or 2")
@@ -3092,10 +3097,10 @@ gumbelI <-
 
 
 
-  if (length(ia) && !is.Numeric(ia, allowable.length = 1))
+  if (length(ia) && !is.Numeric(ia, length.arg = 1))
       stop("'ia' must be a single number")
 
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
      imethod > 2.5)
       stop("argument 'imethod' must be 1 or 2")
@@ -3200,9 +3205,10 @@ kendall.tau <- function(x, y, exact = FALSE, max.n = 3000) {
 
 
   ans3 <-
-    c(.C("VGAM_C_kend_tau", as.double(x), as.double(y),
+    c( .C("VGAM_C_kend_tau",
+         as.double(x), as.double(y),
          as.integer(NN), ans = double(3),
-         NAOK = TRUE, DUP = TRUE, PACKAGE = "VGAM")$ans)
+         NAOK = TRUE, PACKAGE = "VGAM")$ans)
 
   con <- ans3[1] + ans3[2] / 2  # Ties put half and half
   dis <- ans3[3] + ans3[2] / 2

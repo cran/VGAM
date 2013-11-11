@@ -435,14 +435,14 @@ vglm(cbind(normal, mild, severe) ~ let, multinomial, pneumo)
 fit3 <- vglm(cbind(normal, mild, severe) ~ let, propodds, pneumo)
 coef(fit3, matrix = TRUE) 
 constraints(fit3)
-model.matrix(fit3, type = "lm") # LM model matrix
-model.matrix(fit3)              # Larger VGLM (or VLM) model matrix
+model.matrix(fit3, type = "lm")  # LM model matrix
+model.matrix(fit3)               # Larger VGLM (or VLM) model matrix
 
 
 # Example 4. Bivariate logistic model 
 fit4 <- vglm(cbind(nBnW, nBW, BnW, BW) ~ age, binom2.or, coalminers)
 coef(fit4, matrix = TRUE)
-depvar(fit4) # Response are proportions
+depvar(fit4)  # Response are proportions
 weights(fit4, type = "prior")
 
 
@@ -498,7 +498,7 @@ constraints(fit5)
 %coef(fit6, matrix = TRUE)
 %head(predict(fit6))
 %\dontrun{
-%plotvgam(fit6, se = TRUE) # Wrong since it plots against op, not lop.
+%plotvgam(fit6, se = TRUE)  # Wrong since it plots against op, not lop.
 %}
 %
 %
@@ -510,7 +510,7 @@ constraints(fit5)
 %                   X2=runif(n), Z2=runif(n))
 %mydat <- round(mydat, dig=2)
 %fit7 <- vglm(ymat ~ X2 + Z2, data=mydat, crit="c",
-%           fam = dirichlet(parallel = TRUE), # Intercept is also parallel.
+%           fam = dirichlet(parallel = TRUE),  # Intercept is also parallel.
 %           xij = list(Z2 ~ z1 + z2 + z3 + z4,
 %                      X2 ~ x1 + x2 + x3 + x4),
 %           form2 =  ~ Z2 + z1 + z2 + z3 + z4 +
@@ -519,7 +519,7 @@ constraints(fit5)
 %head(model.matrix(fit7, type="vlm"))  # Big VLM model matrix
 %coef(fit7)
 %coef(fit7, matrix = TRUE)
-%max(abs(predict(fit7)-predict(fit7, new=mydat))) # Predicts correctly
+%max(abs(predict(fit7)-predict(fit7, new=mydat)))  # Predicts correctly
 %summary(fit7)
 
 

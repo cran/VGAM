@@ -77,11 +77,8 @@ callcqoc <- function(cmatrix, etamat, xmat, ymat, wvec,
 
  
 
-
-
-
-  ans1 <-
-    if (nice31) .C("cqo_1",
+  ans1 <- if (nice31)
+  .C("cqo_1",
      numat = as.double(numat), as.double(ymat), 
      as.double(if (p1) xmat[,control$colx1.index] else 999),
      as.double(wvec), etamat = as.double(usethiseta),
@@ -97,9 +94,8 @@ callcqoc <- function(cmatrix, etamat, xmat, ymat, wvec,
          othdbl = as.double(c(small = control$SmallNo,
                 epsilon = control$epsilon, .Machine$double.eps,
                 iKvector = rep(control$iKvector, len = NOS),
-                iShape = rep(control$iShape, len = NOS))),
-      NAOK = FALSE, DUP = TRUE, PACKAGE = "VGAM") else
-    .C("cqo_2",
+                iShape = rep(control$iShape, len = NOS))), PACKAGE = "VGAM") else
+  .C("cqo_2",
      numat = as.double(numat), as.double(ymat), 
      as.double(if (p1) xmat[,control$colx1.index] else 999),
      as.double(wvec), etamat = as.double(usethiseta),
@@ -115,8 +111,12 @@ callcqoc <- function(cmatrix, etamat, xmat, ymat, wvec,
          othdbl = as.double(c(small = control$SmallNo,
                 epsilon = control$epsilon, .Machine$double.eps,
                 iKvector = rep(control$iKvector, len = NOS),
-                iShape = rep(control$iShape, len = NOS))),
-      NAOK = FALSE, DUP = TRUE, PACKAGE = "VGAM")
+                iShape = rep(control$iShape, len = NOS))), PACKAGE = "VGAM")
+
+
+
+
+
 
 
 
@@ -127,11 +127,8 @@ callcqoc <- function(cmatrix, etamat, xmat, ymat, wvec,
     assign(".VGAM.CQO.cmatrix",   cmatrix, envir = VGAMenv)
     assign(".VGAM.CQO.ocmatrix", ocmatrix, envir = VGAMenv)
   } else {
- print("hi 88 20100402; all the species did not converge in callcqo")
         warning("error code in callcqoc = ", ans1$errcode[1])
     if (nice31) {
- print("ans1$errcode[-1]") # Only if (nice31)
- print( ans1$errcode[-1] )
     }
     rmfromVGAMenv(c("etamat", "z", "U", "beta", "deviance",
                     "cmatrix", "ocmatrix"), prefix = ".VGAM.CQO.")
@@ -186,16 +183,16 @@ calldcqo <- function(cmatrix, etamat, xmat, ymat, wvec,
           rmfromVGAMenv(c("etamat", "z", "U", "beta", "deviance",
                           "cmatrix", "ocmatrix"), prefix = ".VGAM.CQO.")
       }
-    } else {
-        numat <- xmat[,control$colx2.index,drop=FALSE] %*% cmatrix
-        evnu <- eigen(var(numat))
-        temp7 <- if (Rank > 1)
+  } else {
+    numat <- xmat[,control$colx2.index,drop=FALSE] %*% cmatrix
+    evnu <- eigen(var(numat))
+    temp7 <- if (Rank > 1)
                    evnu$vector %*% diag(evnu$value^(-0.5)) else
                    evnu$vector %*% evnu$value^(-0.5)
         cmatrix <- cmatrix %*% temp7
         cmatrix <- crow1C(cmatrix, control$Crow1positive)
         numat <- xmat[, control$colx2.index, drop = FALSE] %*% cmatrix
-    }
+  }
 
     inited <- ifelse(exists(".VGAM.CQO.etamat",
                             envir = VGAMenv), 1, 0)
@@ -216,7 +213,9 @@ calldcqo <- function(cmatrix, etamat, xmat, ymat, wvec,
              cbind(matrix(0,nstar,p2star), X.vlm.1save)
     flush.console()
 
-    ans1 <- .C("dcqo1", numat = as.double(numat), as.double(ymat), 
+    ans1 <- 
+    .C("dcqo1",
+       numat = as.double(numat), as.double(ymat), 
        as.double(if (p1) xmat[,control$colx1.index] else 999),
        as.double(wvec), etamat = as.double(usethiseta),
            moff = double(if (itol) n else 1),
@@ -235,14 +234,10 @@ calldcqo <- function(cmatrix, etamat, xmat, ymat, wvec,
        xmat2 = as.double(xmat2),
            cmat = as.double(cmatrix),
        p2 = as.integer(p2), deriv = double(p2*Rank),
-           hstep = as.double(control$Hstep),
-       NAOK = FALSE, DUP = TRUE, PACKAGE = "VGAM")
+           hstep = as.double(control$Hstep), PACKAGE = "VGAM")
 
     if (ans1$errcode[1] != 0) {
-        warning("error code in calldcqo = ", ans1$errcode[1])
- print("hi 88 20100402; all the species did not converge in calldcqo")
- print("ans1$errcode[]")
- print( ans1$errcode[] )
+      warning("error code in calldcqo = ", ans1$errcode[1])
     }
 
     flush.console()
@@ -454,8 +449,8 @@ cqo.fit <- function(x, y, w = rep(1, length(x[, 1])),
     if (modelno %in% c(3, 5))
       Amat[c(FALSE, TRUE), ] <- 0  # Intercept only for log(k)
 
-    if (length(control$szero))
-      Amat[control$szero, ] <- 0
+    if (length(control$str0))
+      Amat[control$str0, ] <- 0
 
     rrcontrol$Ainit <- control$Ainit <- Amat  # Good for valt()
     rrcontrol$Cinit <- control$Cinit <- Cmat  # Good for valt()
@@ -544,7 +539,7 @@ cqo.fit <- function(x, y, w = rep(1, length(x[, 1])),
                 fitted.values = mu,
                 offset = offset, 
                 residuals = residuals,
-                terms = Terms) # terms: This used to be done in vglm() 
+                terms = Terms)  # terms: This used to be done in vglm() 
 
     if (M == 1) {
       wz <- as.vector(wz)  # Convert wz into a vector
@@ -684,7 +679,7 @@ cqo.fit <- function(x, y, w = rep(1, length(x[, 1])),
     Rank <- Rank.save 
 
     if (effrank < Rank) {
-      ans <- cbind(ans, ans.save[,-(1:effrank)]) # ans is better
+      ans <- cbind(ans, ans.save[,-(1:effrank)])  # ans is better
     }
     eval(print.CQO.expression)
   } else {

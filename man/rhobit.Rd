@@ -102,9 +102,9 @@ abline(v = 0, h = 0, lty = 2)
 }
 
 x <- c(seq(-1.02, -0.98, by = 0.01), seq(0.97, 1.02, by = 0.01))
-rhobit(x) # Has NAs
+rhobit(x)  # Has NAs
 rhobit(x, bminvalue = -1 + .Machine$double.eps,
-          bmaxvalue =  1 - .Machine$double.eps) # Has no NAs
+          bmaxvalue =  1 - .Machine$double.eps)  # Has no NAs
 }
 \keyword{math}
 \keyword{models}

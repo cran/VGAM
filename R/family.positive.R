@@ -18,21 +18,24 @@ N.hat.posbernoulli <-
            R = NULL, w = NULL,
            X.vlm = NULL, Hlist = NULL,
            extra = list(),
-           model.type = c("b", "t", "tb")
+           model.type = c("0", "b", "t", "tb")
           ) {
 
 
 
 
 
-  if (!is.null(w) && !all(1 == w))
+  if (!is.null(w) && !all(w[1] == w))
     warning("estimate of N may be wrong when prior weights ",
-            "are not all unity")
+            "are not all the same")
 
-  model.type <- match.arg(model.type, c("b", "t", "tb"))[1]
-
+  model.type <- match.arg(model.type, c("0", "b", "t", "tb"))[1]
+  if (!is.matrix(eta))
+    eta <- as.matrix(eta)  # May be needed for "0"
+ 
   tau <-
     switch(model.type,
+           "0"  = extra$tau,
            "b"  = extra$tau,
            "t"  = ncol(eta),
            "tb" = (ncol(eta) + 1) / 2)
@@ -42,6 +45,7 @@ N.hat.posbernoulli <-
 
   jay.index <-
     switch(model.type,
+           "0"  = rep(1, length = tau),
            "b"  = rep(1, length = tau),  # Subset: 2 out of 1:2
            "t"  = 1:tau,  # All of them
            "tb" = 1:tau)  # Subset: first tau of them out of M = 2*tau-2
@@ -65,6 +69,12 @@ N.hat.posbernoulli <-
   ss2 <- sum(QQQ / pibbeta^2)  # Assumes bbeta is known
 
 
+  if (length(extra$p.small) &&
+     any(pibbeta < extra$p.small) &&
+     !extra$no.warning)
+    warning("The abundance estimation for this model can be unstable")
+
+
   if (length(R)) {
 
     dvect <- matrix(0, length(pibbeta), ncol = ncol(X.vlm))
@@ -73,9 +83,9 @@ N.hat.posbernoulli <-
     dprc.deta <- dtheta.deta(prc, link, earg = earg)
     Hmatrices <- matrix(c(unlist(Hlist)), nrow = M)
     for (jay in 1:tau) {
-      lapred.index <- jay.index[jay]
-      Index0 <- Hmatrices[lapred.index, ] != 0
-      X.lm.jay <- X.vlm[(0:(n.lm - 1)) * M + lapred.index, Index0,
+      linpred.index <- jay.index[jay]
+      Index0 <- Hmatrices[linpred.index, ] != 0
+      X.lm.jay <- X.vlm[(0:(n.lm - 1)) * M + linpred.index, Index0,
                         drop = FALSE]
 
       dvect[, Index0] <-
@@ -94,8 +104,8 @@ N.hat.posbernoulli <-
     covun <- rinv %*% t(rinv)
     vecTF <- FALSE
     for (jay in 1:tau) {
-      lapred.index <- jay.index[jay]
-      vecTF <- vecTF | (Hmatrices[lapred.index, ] != 0)
+      linpred.index <- jay.index[jay]
+      vecTF <- vecTF | (Hmatrices[linpred.index, ] != 0)
     }
     vecTF.index <- (1:length(vecTF))[vecTF]
     covun <- covun[vecTF.index, vecTF.index, drop = FALSE]
@@ -104,8 +114,8 @@ N.hat.posbernoulli <-
  
   list(N.hat    = N.hat,
        SE.N.hat = if (length(R))
-                    sqrt(ss2 + t(dvect) %*% covun %*% dvect) else
-                    sqrt(ss2)
+                    c(sqrt(ss2 + t(dvect) %*% covun %*% dvect)) else
+                    c(sqrt(ss2))
       )
 }
 
@@ -181,7 +191,7 @@ rposbern <-
 
   use.n <- if ((length.n <- length(n)) > 1) length.n else
            if (!is.Numeric(n, integer.valued = TRUE,
-                           allowable.length = 1, positive = TRUE))
+                           length.arg = 1, positive = TRUE))
                stop("bad input for argument 'n'") else n
   orig.n <- use.n
   if (!is.popn)
@@ -410,13 +420,13 @@ posnegbinomial.control <- function(save.weight = TRUE, ...) {
                             nsimEIM = 250,
                             shrinkage.init = 0.95, imethod = 1) {
 
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
      imethod > 2)
     stop("argument 'imethod' must be 1 or 2")
   if (length(isize) && !is.Numeric(isize, positive = TRUE))
       stop("bad input for argument 'isize'")
-  if (!is.Numeric(shrinkage.init, allowable.length = 1) ||
+  if (!is.Numeric(shrinkage.init, length.arg = 1) ||
      shrinkage.init < 0 ||
      shrinkage.init > 1)
     stop("bad input for argument 'shrinkage.init'")
@@ -431,7 +441,7 @@ posnegbinomial.control <- function(save.weight = TRUE, ...) {
   lsize <- attr(esize, "function.name")
 
 
-  if (!is.Numeric(nsimEIM, allowable.length = 1,
+  if (!is.Numeric(nsimEIM, length.arg = 1,
                   positive = TRUE, integer.valued = TRUE))
     stop("argument 'nsimEIM' must be a positive integer")
   if (nsimEIM <= 30)
@@ -822,7 +832,7 @@ rposnegbin <- function(n, size, prob = NULL, munb = NULL) {
   if (length( ilambda) && !is.Numeric(ilambda, positive = TRUE))
     stop("bad input for argument 'ilambda'")
 
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
     imethod > 3)
     stop("argument 'imethod' must be 1 or 2 or 3")
@@ -1027,7 +1037,14 @@ dposbinom <- function(x, size, prob, log = FALSE) {
 
  posbinomial <-
   function(link = "logit",
-           mv = FALSE, parallel = FALSE, zero = NULL) {
+           mv = FALSE, parallel = FALSE,
+           omit.constant = FALSE,
+
+           p.small = 1e-4, no.warning = FALSE,
+
+           zero = NULL) {
+
+
 
 
   link <- as.list(substitute(link))
@@ -1039,9 +1056,16 @@ dposbinom <- function(x, size, prob, log = FALSE) {
   if (!is.logical(mv) || length(mv) != 1)
     stop("bad input for argument 'mv'")
 
+  if (!is.logical(omit.constant) || length(omit.constant) != 1)
+    stop("bad input for argument 'omit.constant'")
+
   if (mv && length(zero) &&
       !is.Numeric(zero, integer.valued = TRUE))
     stop("bad input for argument 'zero'")
+
+
+  if (!is.Numeric(p.small, positive = TRUE, length.arg = 1))
+    stop("bad input for argument 'p.small'")
 
 
   new("vglmff",
@@ -1064,8 +1088,12 @@ dposbinom <- function(x, size, prob, log = FALSE) {
   }), list( .parallel = parallel, .zero = zero ))),
   infos = eval(substitute(function(...) {
     list(Musual = 1,
-         zero = .zero)
-  }, list( .zero = zero ))),
+         p.small    = .p.small ,
+         no.warning = .no.warning ,
+         zero = .zero )
+  }, list( .zero = zero,
+           .p.small    = p.small,
+           .no.warning = no.warning ))),
 
   initialize = eval(substitute(expression({
 
@@ -1089,12 +1117,16 @@ dposbinom <- function(x, size, prob, log = FALSE) {
     extra$Musual <- Musual
     M <- Musual * ncoly
 
+
+    extra$p.small    <- .p.small
+    extra$no.warning <- .no.warning
+
       extra$orig.w <- w
-      mustart <- matrix(colSums(y) / colSums(w), # Not colSums(y * w)...
+      mustart <- matrix(colSums(y) / colSums(w),  # Not colSums(y * w)...
                         n, ncoly, byrow = TRUE)
 
     } else {
-      eval(binomialff(link = .earg , # earg = .earg ,
+      eval(binomialff(link = .earg ,  # earg = .earg ,
                       earg.link = TRUE)@initialize)
     }
 
@@ -1107,11 +1139,12 @@ dposbinom <- function(x, size, prob, log = FALSE) {
       } else {
         paste("prob", 1:M, sep = "")
       }
-      predictors.names <- namesof(if (M > 1) dn2 else
-        "prob", .link , earg = .earg, short = TRUE)
+      predictors.names <-
+        namesof(if (M > 1) dn2 else "prob",
+                .link , earg = .earg, short = TRUE)
 
       w <- matrix(w, n, ncoly)
-      y <- y / w # Now sample proportion
+      y <- y / w  # Now sample proportion
     } else {
       predictors.names <-
         namesof("prob", .link , earg = .earg , tag = FALSE)
@@ -1124,7 +1157,20 @@ dposbinom <- function(x, size, prob, log = FALSE) {
       etastart <- cbind(theta2eta(mustart.use, .link , earg = .earg ))
     }
     mustart <- NULL
+
+
+
+    nvec <- if (ncol(as.matrix(y)) > 1) {
+              NULL
+            } else {
+              if (is.numeric(extra$orig.w)) round(w / extra$orig.w) else
+              round(w)
+            }
+    extra$tau <- if (length(nvec) && length(unique(nvec) == 1))
+                   nvec[1] else NULL
   }), list( .link = link,
+            .p.small    = p.small,
+            .no.warning = no.warning,
             .earg = earg, .mv = mv ))),
 
   linkinv = eval(substitute(function(eta, extra = NULL) {
@@ -1153,35 +1199,61 @@ dposbinom <- function(x, size, prob, log = FALSE) {
       misc$earg[[ii]] <- .earg
 
     misc$expected <- TRUE
-
+    misc$omit.constant <- .omit.constant
+    misc$needto.omit.constant <- TRUE  # Safety mechanism
+    
+    
     misc$mv   <- .mv
     w <- as.numeric(w)
-  }), list( .link = link, .earg = earg, .mv = mv ))),
+
+
+
+if (length(extra$tau)) {
+    R <- tfit$qr$qr[1:ncol.X.vlm, 1:ncol.X.vlm, drop = FALSE]
+    R[lower.tri(R)] <- 0
+    tmp6 <- N.hat.posbernoulli(eta = eta, link = .link , earg = .earg ,
+                               R = R, w = w,
+                               X.vlm = X.vlm.save, Hlist = constraints,
+                               extra = extra, model.type = "0")
+    extra$N.hat    <- tmp6$N.hat
+    extra$SE.N.hat <- tmp6$SE.N.hat
+}
+
+    
+  }), list( .link = link, .earg = earg, .mv = mv,
+            .omit.constant = omit.constant ))),
 
   loglikelihood = eval(substitute(
     function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
 
       ycounts <- if ( .mv ) {
                   round(y * extra$orig.w)
-                } else {
-                  if (is.numeric(extra$orig.w)) y * w / extra$orig.w else
-                  y * w # Convert proportions to counts
-                }
+                 } else {
+                   if (is.numeric(extra$orig.w)) y * w / extra$orig.w else
+                   y * w  # Convert proportions to counts
+                 }
       nvec <- if ( .mv ) {
-               w
-             } else {
-               if (is.numeric(extra$orig.w)) round(w / extra$orig.w) else
-                 round(w)
-             }
+                w
+              } else {
+                if (is.numeric(extra$orig.w)) round(w / extra$orig.w) else
+                  round(w)
+              }
       use.orig.w <- if (is.numeric(extra$orig.w)) extra$orig.w else 1
     binprob <- eta2theta(eta, .link , earg = .earg )
 
     if (residuals) stop("loglikelihood residuals ",
                         "not implemented yet") else {
-      sum(use.orig.w * dposbinom(x = ycounts, size = nvec,
-                                 prob = binprob, log = TRUE))
+
+      answer <- sum(use.orig.w * dposbinom(x = ycounts, size = nvec,
+                                           prob = binprob, log = TRUE))
+      if ( .omit.constant ) {
+        answer <- answer - sum(use.orig.w * lchoose(n = nvec, k = ycounts))
+      }
+      answer
     }
-  }, list( .link = link, .earg = earg, .mv = mv ))),
+  }, list( .link = link, .earg = earg,
+          .mv = mv,
+          .omit.constant = omit.constant ))),
 
   vfamily = c("posbinomial"),
   deriv = eval(substitute(expression({
@@ -1233,7 +1305,10 @@ dposbinom <- function(x, size, prob, log = FALSE) {
 
 
 
-           iprob = NULL) {
+           iprob = NULL,
+
+           p.small = 1e-4, no.warning = FALSE) {
+
 
 
 
@@ -1258,6 +1333,9 @@ dposbinom <- function(x, size, prob, log = FALSE) {
       length(apply.parint) != 1)
     stop("argument 'apply.parint' must be a single logical")
 
+  if (!is.Numeric(p.small, positive = TRUE, length.arg = 1))
+    stop("bad input for argument 'p.small'")
+
 
   new("vglmff",
   blurb = c("Positive-Bernoulli (capture-recapture) model ",
@@ -1271,7 +1349,7 @@ dposbinom <- function(x, size, prob, log = FALSE) {
     constraints <- cm.vgam(matrix(1, M, 1), x = x, 
                            bool = .parallel.t , 
                            constraints = constraints,
-                           apply.int = .apply.parint , #  TRUE,
+                           apply.int = .apply.parint ,  #  TRUE,
                            cm.default = diag(M),
                            cm.intercept.default = diag(M))
   }), list( .parallel.t = parallel.t,
@@ -1279,9 +1357,13 @@ dposbinom <- function(x, size, prob, log = FALSE) {
   infos = eval(substitute(function(...) {
     list(Musual = 1,
          multipleResponses = TRUE,
+         p.small    = .p.small ,
+         no.warning = .no.warning ,
          apply.parint = .apply.parint ,
          parallel.t = .parallel.t )
   }, list( .parallel.t   = parallel.t,
+           .p.small    = p.small,
+           .no.warning = no.warning,          
            .apply.parint = apply.parint ))),
 
   initialize = eval(substitute(expression({
@@ -1293,6 +1375,10 @@ dposbinom <- function(x, size, prob, log = FALSE) {
     extra$ncoly       <- ncoly <- ncol(y)
     extra$tau <- tau <- ncol(y)
     extra$orig.w <- w
+
+    extra$p.small    <- .p.small
+    extra$no.warning <- .no.warning
+    
 
     w <- matrix(w, n, ncoly)
     mustart <- matrix(colSums(y) / colSums(w),
@@ -1337,7 +1423,10 @@ dposbinom <- function(x, size, prob, log = FALSE) {
       etastart <- cbind(theta2eta(mustart.use, .link , earg = .earg ))
     }
     mustart <- NULL
-  }), list( .link = link, .earg = earg ))),
+  }), list( .link = link, .earg = earg,
+            .p.small    = p.small,
+            .no.warning = no.warning
+           ))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
     tau <- extra$ncoly
     probs <- eta2theta(eta, .link , earg = .earg )
@@ -1395,12 +1484,12 @@ dposbinom <- function(x, size, prob, log = FALSE) {
     if (residuals) stop("loglikelihood residuals ",
                         "not implemented yet") else {
 
-      sum(dposbern(x = ycounts, # size = 1, # Bernoulli trials
+      sum(dposbern(x = ycounts,  # size = 1,  # Bernoulli trials
                    prob = probs, prob0 = probs, log = TRUE))
 
 
       sum(use.orig.w *
-          dposbern(x = ycounts, # size = 1, # Bernoulli trials
+          dposbern(x = ycounts,  # size = 1,  # Bernoulli trials
                    prob = probs, prob0 = probs, log = TRUE))
     }
   }, list( .link = link, .earg = earg ))),
@@ -1464,7 +1553,9 @@ dposbinom <- function(x, size, prob, log = FALSE) {
 
            I2 = FALSE,
            ipcapture = NULL,
-           iprecapture = NULL) {
+           iprecapture = NULL,
+           p.small = 1e-4, no.warning = FALSE
+           ) {
 
 
 
@@ -1493,6 +1584,12 @@ dposbinom <- function(x, size, prob, log = FALSE) {
     stop("argument 'I2' must be a single logical")
 
 
+  if (!is.Numeric(p.small, positive = TRUE, length.arg = 1))
+    stop("bad input for argument 'p.small'")
+
+ 
+
+
   new("vglmff",
   blurb = c("Positive-Bernoulli (capture-recapture) model ",
             "with behavioural effects (M_{b}/M_{bh})\n\n",
@@ -1516,12 +1613,16 @@ dposbinom <- function(x, size, prob, log = FALSE) {
             .apply.parint.b = apply.parint.b ))),
 
   infos = eval(substitute(function(...) {
-    list( Musual = 2,
+    list(Musual = 2,
+         p.small    = .p.small ,
+         no.warning = .no.warning ,
          type.fitted = .type.fitted ,
          apply.parint.b = .apply.parint.b ,
          multipleResponses = FALSE)
   }, list(
            .apply.parint.b = apply.parint.b,
+           .p.small    = p.small,
+           .no.warning = no.warning,
            .type.fitted = type.fitted
          ))),
 
@@ -1539,6 +1640,13 @@ dposbinom <- function(x, size, prob, log = FALSE) {
     extra$ncoly   <- ncoly <- ncol(y)
     extra$type.fitted      <- .type.fitted
     extra$dimnamesy <- dimnames(y)
+
+
+    extra$p.small    <- .p.small
+    extra$no.warning <- .no.warning
+
+
+    
 
     mustart.orig <- mustart
     M <- 2
@@ -1594,7 +1702,9 @@ dposbinom <- function(x, size, prob, log = FALSE) {
     mustart <- NULL
   }), list( .link = link, .earg = earg,
             .type.fitted = type.fitted,
-              .ipcapture =   ipcapture,
+            .p.small    = p.small,
+            .no.warning = no.warning,
+            .ipcapture =   ipcapture,
             .iprecapture = iprecapture
           ))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
@@ -1793,6 +1903,7 @@ dposbinom <- function(x, size, prob, log = FALSE) {
            type.fitted = c("likelihood.cond", "mean.uncond"),
            imethod = 1,
            iprob = NULL,
+           p.small = 1e-4, no.warning = FALSE,  
            ridge.constant = 0.01,
            ridge.power = -4) {
 
@@ -1810,7 +1921,7 @@ dposbinom <- function(x, size, prob, log = FALSE) {
                            c("likelihood.cond", "mean.uncond"))[1]
 
 
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
       imethod > 2)
     stop("argument 'imethod' must be 1 or 2")
@@ -1828,6 +1939,10 @@ dposbinom <- function(x, size, prob, log = FALSE) {
     if (!is.Numeric(iprob, positive = TRUE) ||
           max(iprob) >= 1)
       stop("argument 'iprob' must have values in (0, 1)")
+
+
+  if (!is.Numeric(p.small, positive = TRUE, length.arg = 1))
+    stop("bad input for argument 'p.small'")
 
 
   
@@ -1904,6 +2019,8 @@ dposbinom <- function(x, size, prob, log = FALSE) {
          drop.b             = .drop.b,
          imethod            = .imethod ,
          type.fitted        = .type.fitted ,
+         p.small    = .p.small ,
+         no.warning = .no.warning ,
          apply.parint.b     = .apply.parint.b ,
          apply.parint.t     = .apply.parint.t ,
          parallel.t         = .parallel.t ,
@@ -1912,6 +2029,8 @@ dposbinom <- function(x, size, prob, log = FALSE) {
            .parallel.b         = parallel.b,
            .drop.b             = drop.b,
            .type.fitted        = type.fitted,
+           .p.small    = p.small,
+           .no.warning = no.warning,
            .imethod            = imethod,
            .ridge.constant     = ridge.constant,
            .ridge.power        = ridge.power,
@@ -1943,6 +2062,14 @@ dposbinom <- function(x, size, prob, log = FALSE) {
     mustart[mustart > 0.99] <- 0.99
 
     mustart <- cbind(mustart, mustart[, -1])
+
+
+
+ 
+    extra$p.small    <- .p.small
+    extra$no.warning <- .no.warning
+
+   
 
 
 
@@ -1980,6 +2107,8 @@ dposbinom <- function(x, size, prob, log = FALSE) {
     mustart <- NULL
   }), list( .link = link, .earg = earg,
             .type.fitted = type.fitted,
+            .p.small    = p.small,
+            .no.warning = no.warning,
             .iprob = iprob,
             .imethod = imethod ))),
 
@@ -2115,7 +2244,7 @@ dposbinom <- function(x, size, prob, log = FALSE) {
       probs.numer[extra$cap.hist1 == 0] <- prc[extra$cap.hist1 == 0]
 
       sum(use.orig.w *
-            dposbern(x = ycounts,  # size = 1, # Bernoulli trials
+            dposbern(x = ycounts,  # size = 1,  # Bernoulli trials
                      prob = probs.numer, prob0 = prc, log = TRUE))
     }
   }, list( .link = link, .earg = earg ))),

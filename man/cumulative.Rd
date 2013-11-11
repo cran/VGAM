@@ -326,7 +326,7 @@ lrtest(fit3, fit)  # More elegant
 # A factor() version of fit ----------------------------------
 # This is in long format (cf. wide format above)
 Nobs <- round(depvar(fit) * c(weights(fit, type = "prior")))
-sumNobs <- colSums(Nobs) # apply(Nobs, 2, sum)
+sumNobs <- colSums(Nobs)  # apply(Nobs, 2, sum)
 
 pneumo.long <-
   data.frame(symptoms = ordered(rep(rep(colnames(Nobs), nrow(Nobs)),

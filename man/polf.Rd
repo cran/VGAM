@@ -100,7 +100,7 @@ polf("p", cutpoint = 2, tag = TRUE)
 p <- seq(0.01, 0.99, by = 0.01)
 y <- polf(p, cutpoint = 2)
 y. <- polf(p, cutpoint = 2, deriv = 1)
-max(abs(polf(y, cutpoint = 2, inv = TRUE) - p)) # Should be 0
+max(abs(polf(y, cutpoint = 2, inv = TRUE) - p))  # Should be 0
 
 \dontrun{par(mfrow = c(2, 1), las = 1)
 plot(p, y, type = "l", col = "blue", main = "polf()")

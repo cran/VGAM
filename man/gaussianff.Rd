@@ -143,8 +143,8 @@ coef(glmfit <- glm(y2 ~ x2, data = gdata, gaussian))
 vcov(fit)
 vcov(lmfit)
 
-t(weights(fit, type = "prior"))      # Unweighted observations
-head(weights(fit, type = "working")) # Identity matrices
+t(weights(fit, type = "prior"))       # Unweighted observations
+head(weights(fit, type = "working"))  # Identity matrices
 
 # Reduced-rank VLM (rank-1)
 fit2 <- rrvglm(cbind(y1, y2, y3) ~ x2, gaussianff, data = gdata)

@@ -9,11 +9,11 @@
 
 
 
-is.Numeric <- function(x, allowable.length = Inf,
+is.Numeric <- function(x, length.arg = Inf,
                        integer.valued = FALSE, positive = FALSE)
     if (all(is.numeric(x)) && all(is.finite(x)) &&
-    (if (is.finite(allowable.length))
-       length(x) == allowable.length else TRUE) &&
+    (if (is.finite(length.arg))
+       length(x) == length.arg else TRUE) &&
     (if (integer.valued) all(x == round(x)) else TRUE) &&
     (if (positive) all(x>0) else TRUE)) TRUE else FALSE
 
@@ -50,7 +50,7 @@ setClass("vglmff", representation(
       "deviance"     = "function",
       "fini"         = "expression",
       "first"        = "expression",
-      "infos"        = "function", # Added 20101203
+      "infos"        = "function",  # Added 20101203
       "initialize"   = "expression",
       "last"         = "expression",
       "linkfun"      = "function",
@@ -61,23 +61,25 @@ setClass("vglmff", representation(
       "summary.dispersion"  = "logical",
       "vfamily"      = "character",
       "deriv"        = "expression",
-      "weight"       = "expression"), #  "call"
+      "weight"       = "expression"),  #  "call"
 prototype = .VGAM.prototype.list)
 
 
-valid.vglmff = function(object) {
-    compulsory = c("initialize", "weight", "deriv", "linkinv")
-    for(ii in compulsory) {
-        if (!length(slot(object, ii)))
-            stop("slot ", ii, " is empty")
-    }
+valid.vglmff <- function(object) {
+  compulsory <- c("initialize", "weight", "deriv", "linkinv")
+  for (ii in compulsory) {
+    if (!length(slot(object, ii)))
+        stop("slot ", ii, " is empty")
+  }
 
-    if (length(as.list(object@linkinv)) != 3)
-        stop("wrong number of arguments in object@linkinv")
+  if (length(as.list(object@linkinv)) != 3)
+    stop("wrong number of arguments in object@linkinv")
 }
+
 
 if (FALSE) 
     setValidity("vglmff", valid.vglmff)
+
 
 
 
@@ -100,7 +102,7 @@ show.vglmff <- function(object) {
     cat("Informal classes:", paste(f, collapse = ", "), "\n")
   cat("\n")
 
-  for(ii in 1:length(nn))
+  for (ii in 1:length(nn))
     cat(nn[ii])
   cat("\n")
 
@@ -185,7 +187,7 @@ setClass("vglm", representation(
 
 
 setClass("vgam", representation(
-      "Bspline"             = "list", # each [[i]] is a "vsmooth.spline.fit"
+      "Bspline"             = "list",  # each [[i]] is a "vsmooth.spline.fit"
       "nl.chisq"            = "numeric",
       "nl.df"               = "numeric",
       "spar"                = "numeric",

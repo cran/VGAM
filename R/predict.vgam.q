@@ -41,7 +41,7 @@ predict.vgam <-
      deriv.arg != round(deriv.arg) || length(deriv.arg) > 1)
     stop("bad input for the 'deriv' argument")
 
-  if (deriv.arg > 0 && type!="terms")
+  if (deriv.arg > 0 && type != "terms")
     stop("'deriv>0' can only be specified if 'type=\"terms\"'")
 
   if (deriv.arg != 0 && !(type != "response" && !se.fit))
@@ -150,7 +150,7 @@ predict.vgam <-
 
 
 
-    if (is.null(tmp6 <- attr(if(se.fit) predictor$fitted.values else
+    if (is.null(tmp6 <- attr(if (se.fit) predictor$fitted.values else
                             predictor, "vterm.assign"))) {
 
       Blist <- subconstraints(object@misc$orig.assign,
@@ -229,7 +229,7 @@ predict.vgam <-
     }
   } else
   if (type == "response") {
-    fv <- object@family@linkinv(if(se.fit) predictor$fitted.values else
+    fv <- object@family@linkinv(if (se.fit) predictor$fitted.values else
                                 predictor, object@extra)
     if (is.matrix(fv) && is.matrix(object@fitted.values))
       dimnames(fv) <- list(dimnames(fv)[[1]],
@@ -259,7 +259,7 @@ predict.vgam <-
 
 
     if (deriv.arg >= 1) {
-      v <- attr(if(se.fit) predictor$fitted.values else 
+      v <- attr(if (se.fit) predictor$fitted.values else 
           predictor, "vterm.assign")
       is.lin <- is.linear.term(names(v))
         coefmat <- coefvlm(object, matrix.out = TRUE)
@@ -298,7 +298,7 @@ predict.vgam <-
                              ncol = lindex, byrow = TRUE) else 0)
               } else {
                 predictor[, index] <- predictor[, index] +
-                     (if(deriv.arg == 1)
+                     (if (deriv.arg == 1)
                       matrix(ans, nrow = nrow(predictor), 
                        ncol = lindex, byrow = TRUE) else 0)
               }

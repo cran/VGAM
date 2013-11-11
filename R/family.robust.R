@@ -52,7 +52,7 @@ dhuber <- function(x, k = 0.862, mu = 0, sigma = 1, log = FALSE)
 rhuber <- function(n, k = 0.862, mu = 0, sigma = 1) {
   use.n <- if ((length.n <- length(n)) > 1) length.n else
            if (!is.Numeric(n, integer.valued = TRUE,
-                           allowable.length = 1, positive = TRUE))
+                           length.arg = 1, positive = TRUE))
               stop("bad input for argument 'n'") else n
 
   myl <- rep(0.0, len = use.n)
@@ -138,12 +138,12 @@ phuber <- function(q, k = 0.862, mu = 0, sigma = 1) {
   A1 <- (2 * dnorm(k) / k - 2 * pnorm(-k))
   eps <- A1 / (1 + A1)
 
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
       imethod > 4)
        stop("argument 'imethod' must be 1 or 2 or 3 or 4")
 
-  if (!is.Numeric(k, allowable.length = 1, positive = TRUE))
+  if (!is.Numeric(k, length.arg = 1, positive = TRUE))
     stop("bad input for argument 'k'")
 
   if (length(zero) &&
@@ -265,7 +265,7 @@ phuber <- function(q, k = 0.862, mu = 0, sigma = 1) {
             .elocat = elocat, .escale = escale,
             .eps    = eps,       .k      = k ))),
   weight = eval(substitute(expression({
-    wz   <- matrix(as.numeric(NA), n, 2) # diag matrix; y is one-col too
+    wz   <- matrix(as.numeric(NA), n, 2)  # diag matrix; y is one-col too
 
 
 
@@ -294,12 +294,12 @@ phuber <- function(q, k = 0.862, mu = 0, sigma = 1) {
   A1 <- (2 * dnorm(k) / k - 2 * pnorm(-k))
   eps <- A1 / (1 + A1)
 
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
       imethod > 4)
     stop("argument 'imethod' must be 1 or 2 or 3 or 4")
 
-  if (!is.Numeric(k, allowable.length = 1, positive = TRUE))
+  if (!is.Numeric(k, length.arg = 1, positive = TRUE))
     stop("bad input for argument 'k'")
 
 
@@ -380,7 +380,7 @@ phuber <- function(q, k = 0.862, mu = 0, sigma = 1) {
     mylocat <- eta2theta(eta, .llocat,  earg = .elocat)
     myk     <- .k
 
-    zedd <- (y - mylocat) # / myscale
+    zedd <- (y - mylocat)  # / myscale
     cond2 <- (abs(zedd) <=  myk)
     cond3 <-     (zedd  >   myk)
 
@@ -404,13 +404,13 @@ phuber <- function(q, k = 0.862, mu = 0, sigma = 1) {
             .elocat = elocat,
             .eps    = eps,       .k      = k ))),
   weight = eval(substitute(expression({
-    wz   <- matrix(as.numeric(NA), n, 1) # diag matrix; y is one-col too
+    wz   <- matrix(as.numeric(NA), n, 1)  # diag matrix; y is one-col too
 
 
 
 
     temp4 <- erf(myk / sqrt(2))
-    ned2l.dlocat2 <- temp4 * (1 - .eps) # / myscale^2
+    ned2l.dlocat2 <- temp4 * (1 - .eps)  # / myscale^2
 
 
     wz[, iam(1,1,M)] <- ned2l.dlocat2 * dlocat.deta^2

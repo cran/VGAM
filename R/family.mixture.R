@@ -46,14 +46,14 @@ mix2normal.control <- function(trace = TRUE, ...) {
   esd1 <- esd2 <- esd
 
 
-  if (!is.Numeric(qmu, allowable.length = 2,
+  if (!is.Numeric(qmu, length.arg = 2,
                   positive = TRUE) ||
       any(qmu >= 1))
     stop("bad input for argument 'qmu'")
 
 
   if (length(iphi) &&
-     (!is.Numeric(iphi, allowable.length = 1,
+     (!is.Numeric(iphi, length.arg = 1,
                   positive = TRUE) ||
       iphi>= 1))
       stop("bad input for argument 'iphi'")
@@ -69,7 +69,7 @@ mix2normal.control <- function(trace = TRUE, ...) {
 
   if (!is.logical(eq.sd) || length(eq.sd) != 1)
     stop("bad input for argument 'eq.sd'")
-  if (!is.Numeric(nsimEIM, allowable.length = 1,
+  if (!is.Numeric(nsimEIM, length.arg = 1,
                   integer.valued = TRUE) ||
       nsimEIM <= 10)
     stop("'nsimEIM' should be an integer greater than 10")
@@ -284,11 +284,11 @@ mix2poisson.control <- function(trace = TRUE, ...) {
 
 
 
-  if (!is.Numeric(qmu, allowable.length = 2, positive = TRUE) ||
+  if (!is.Numeric(qmu, length.arg = 2, positive = TRUE) ||
       any(qmu >= 1))
     stop("bad input for argument 'qmu'")
   if (length(iphi) &&
-     (!is.Numeric(iphi, allowable.length = 1, positive = TRUE) ||
+     (!is.Numeric(iphi, length.arg = 1, positive = TRUE) ||
      iphi >= 1))
     stop("bad input for argument 'iphi'")
   if (length(il1) && !is.Numeric(il1))
@@ -297,7 +297,7 @@ mix2poisson.control <- function(trace = TRUE, ...) {
     stop("bad input for argument 'il2'")
 
 
-  if (!is.Numeric(nsimEIM, allowable.length = 1,
+  if (!is.Numeric(nsimEIM, length.arg = 1,
                   integer.valued = TRUE) ||
       nsimEIM <= 10)
     stop("'nsimEIM' should be an integer greater than 10")
@@ -488,11 +488,11 @@ mix2exp.control <- function(trace = TRUE, ...) {
   el1 <- el2 <- elambda
 
 
-  if (!is.Numeric(qmu, allowable.length = 2, positive = TRUE) ||
+  if (!is.Numeric(qmu, length.arg = 2, positive = TRUE) ||
       any(qmu >= 1))
     stop("bad input for argument 'qmu'")
   if (length(iphi) &&
-     (!is.Numeric(iphi, allowable.length = 1, positive = TRUE) ||
+     (!is.Numeric(iphi, length.arg = 1, positive = TRUE) ||
       iphi >= 1))
     stop("bad input for argument 'iphi'")
   if (length(il1) && !is.Numeric(il1))
@@ -503,7 +503,7 @@ mix2exp.control <- function(trace = TRUE, ...) {
 
 
 
-  if (!is.Numeric(nsimEIM, allowable.length = 1, integer.valued = TRUE) ||
+  if (!is.Numeric(nsimEIM, length.arg = 1, integer.valued = TRUE) ||
       nsimEIM <= 10)
     stop("'nsimEIM' should be an integer greater than 10")
 

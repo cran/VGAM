@@ -126,7 +126,7 @@ Also, monitor convergence by setting \code{trace = TRUE}.
 
 \examples{
 \dontrun{ set.seed(123)
-pdata <- data.frame(x2 = runif(nn <- 1000)) # x2 unused
+pdata <- data.frame(x2 = runif(nn <- 1000))  # x2 unused
 pdata <- transform(pdata, eta1  = -1,
                           ceta1 =  1)
 pdata <- transform(pdata, shape1 = exp(eta1),

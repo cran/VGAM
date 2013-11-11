@@ -10,7 +10,7 @@
 nobs.vlm <- function(object, type = c("lm", "vlm"), ...) {
 
 
-  if(mode(type) != "character" && mode(type) != "name")
+  if (mode(type) != "character" && mode(type) != "name")
     type <- as.character(substitute(type))
   type <- match.arg(type,
                     c("lm", "vlm"))[1]
@@ -47,7 +47,7 @@ setMethod("nobs", "vlm",
 
 nvar.vlm <- function(object, type = c("vlm", "lm"), ...) {
 
-  if(mode(type) != "character" && mode(type) != "name")
+  if (mode(type) != "character" && mode(type) != "name")
     type <- as.character(substitute(type))
   type <- match.arg(type,
                     c("vlm", "lm"))[1]
@@ -64,7 +64,7 @@ nvar.vlm <- function(object, type = c("vlm", "lm"), ...) {
 
 nvar.vgam <- function(object, type = c("vgam", "zz"), ...) {
 
-  if(mode(type) != "character" && mode(type) != "name")
+  if (mode(type) != "character" && mode(type) != "name")
     type <- as.character(substitute(type))
   type <- match.arg(type,
                     c("vgam", "zz"))[1]
@@ -81,7 +81,7 @@ nvar.vgam <- function(object, type = c("vgam", "zz"), ...) {
 
 nvar.rrvglm <- function(object, type = c("rrvglm", "zz"), ...) {
 
-  if(mode(type) != "character" && mode(type) != "name")
+  if (mode(type) != "character" && mode(type) != "name")
     type <- as.character(substitute(type))
   type <- match.arg(type,
                     c("rrvglm", "zz"))[1]
@@ -99,7 +99,7 @@ nvar.rrvglm <- function(object, type = c("rrvglm", "zz"), ...) {
 
 nvar.qrrvglm <- function(object, type = c("qrrvglm", "zz"), ...) {
 
-  if(mode(type) != "character" && mode(type) != "name")
+  if (mode(type) != "character" && mode(type) != "name")
     type <- as.character(substitute(type))
   type <- match.arg(type,
                     c("qrrvglm", "zz"))[1]
@@ -117,7 +117,7 @@ nvar.qrrvglm <- function(object, type = c("qrrvglm", "zz"), ...) {
 
 nvar.cao <- function(object, type = c("cao", "zz"), ...) {
 
-  if(mode(type) != "character" && mode(type) != "name")
+  if (mode(type) != "character" && mode(type) != "name")
     type <- as.character(substitute(type))
   type <- match.arg(type,
                     c("rrvglm", "zz"))[1]
@@ -135,7 +135,7 @@ nvar.cao <- function(object, type = c("cao", "zz"), ...) {
 
 nvar.rcim <- function(object, type = c("rcim", "zz"), ...) {
 
-  if(mode(type) != "character" && mode(type) != "name")
+  if (mode(type) != "character" && mode(type) != "name")
     type <- as.character(substitute(type))
   type <- match.arg(type,
                     c("rcim", "zz"))[1]

@@ -88,17 +88,17 @@ betabinomial.control <- function(save.weight = TRUE, ...) {
 
 
 
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
      imethod > 4)
     stop("argument 'imethod' must be 1, 2, 3 or 4")
 
-  if (!is.Numeric(shrinkage.init, allowable.length = 1) ||
+  if (!is.Numeric(shrinkage.init, length.arg = 1) ||
       shrinkage.init < 0 ||
       shrinkage.init > 1)
     stop("bad input for argument 'shrinkage.init'")
   if (!is.null(nsimEIM)) {
-    if (!is.Numeric(nsimEIM, allowable.length = 1,
+    if (!is.Numeric(nsimEIM, length.arg = 1,
                     integer.valued = TRUE))
       stop("bad input for argument 'nsimEIM'")
     if (nsimEIM <= 10)
@@ -113,7 +113,7 @@ betabinomial.control <- function(save.weight = TRUE, ...) {
             "Mean:       mu", "\n",
             "Variance:   mu*(1-mu)*(1+(w-1)*rho)/w"),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.vgam(constraints, x, .zero , M)
+    constraints <- cm.zero.vgam(constraints, x = x, .zero , M = M)
   }), list( .zero = zero ))),
   initialize = eval(substitute(expression({
     if (!all(w == 1))
@@ -134,7 +134,7 @@ betabinomial.control <- function(save.weight = TRUE, ...) {
     if (max(abs(ycounts - round(ycounts))) > 1.0e-6)
       warning("the response (as counts) does not appear to ",
               "be integer-valued. Am rounding to integer values.")
-    ycounts <- round(ycounts) # Make sure it is an integer
+    ycounts <- round(ycounts)  # Make sure it is an integer
     predictors.names <-
       c(namesof("mu",  .lmu ,  earg = .emu  , tag = FALSE),
         namesof("rho", .lrho , earg = .erho , tag = FALSE))
@@ -346,7 +346,7 @@ dbinom2.or <-
       stop("bad input for argument 'mu2'") 
     if (!is.Numeric(oratio, positive = TRUE))
       stop("bad input for argument 'oratio'") 
-    if (!is.Numeric(tol, positive = TRUE, allowable.length = 1) ||
+    if (!is.Numeric(tol, positive = TRUE, length.arg = 1) ||
         tol > 0.1)
       stop("bad input for argument 'tol'") 
     if (exchangeable && max(abs(mu1 - mu2)) > 0.00001)
@@ -386,7 +386,7 @@ rbinom2.or <-
            ErrorCheck = TRUE) {
   if (ErrorCheck) {
     if (!is.Numeric(n, integer.valued = TRUE, positive = TRUE,
-                    allowable.length = 1))
+                    length.arg = 1))
       stop("bad input for argument 'n'")
     if (!is.Numeric(mu1, positive = TRUE) || max(mu1) >= 1)
       stop("bad input for argument 'mu1'") 
@@ -394,7 +394,7 @@ rbinom2.or <-
       stop("bad input for argument 'mu2'") 
     if (!is.Numeric(oratio, positive = TRUE))
       stop("bad input for argument 'oratio'") 
-    if (!is.Numeric(tol, positive = TRUE, allowable.length = 1) ||
+    if (!is.Numeric(tol, positive = TRUE, length.arg = 1) ||
         tol > 0.1)
       stop("bad input for argument 'tol'") 
     if (exchangeable && max(abs(mu1 - mu2)) > 0.00001)
@@ -430,8 +430,10 @@ rbinom2.or <-
  binom2.or <- function(lmu = "logit", lmu1 = lmu, lmu2 = lmu,
                        loratio = "loge",
                        imu1 = NULL, imu2 = NULL, ioratio = NULL,
-                       zero = 3, exchangeable = FALSE, tol = 0.001,
-                       morerobust = FALSE) {
+                       zero = 3,
+                       exchangeable = FALSE,
+                       tol = 0.001,
+                       more.robust = FALSE) {
 
   lmu1 <- lmu1
   lmu2 <- lmu2
@@ -461,7 +463,7 @@ rbinom2.or <-
 
 
 
-  if (!is.Numeric(tol, positive = TRUE, allowable.length = 1) ||
+  if (!is.Numeric(tol, positive = TRUE, length.arg = 1) ||
       tol > 0.1)
     stop("bad input for argument 'tol'") 
 
@@ -478,9 +480,9 @@ rbinom2.or <-
                            bool = .exchangeable ,
                            constraints = constraints,
                            apply.int = TRUE,
-                           cm.default           = cm.intercept.default[, -3],
+                           cm.default           = cm.intercept.default,
                            cm.intercept.default = cm.intercept.default)
-      constraints <- cm.zero.vgam(constraints, x, .zero , M)
+      constraints <- cm.zero.vgam(constraints, x = x, .zero , M = M)
   }), list( .exchangeable = exchangeable, .zero = zero ))),
   deviance = Deviance.categorical.data.vgam,
   initialize = eval(substitute(expression({
@@ -551,7 +553,7 @@ rbinom2.or <-
     function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
     if (residuals)
       stop("loglikelihood residuals not implemented yet") else {
-      if ( .morerobust) {
+      if ( .more.robust) {
         vsmallno <-  1.0e4 * .Machine$double.xmin
         mu[mu < vsmallno] <- vsmallno
       }
@@ -571,7 +573,7 @@ rbinom2.or <-
                        log = TRUE, dochecking = FALSE))
 
     }
-  }, list( .morerobust = morerobust ))),
+  }, list( .more.robust = more.robust ))),
   vfamily = c("binom2.or", "binom2"),
   deriv = eval(substitute(expression({
     smallno <- 1.0e4 * .Machine$double.eps
@@ -679,7 +681,7 @@ rbinom2.rho <-
            ErrorCheck = TRUE) {
   if (ErrorCheck) {
     if (!is.Numeric(n, integer.valued = TRUE,
-                    positive = TRUE, allowable.length = 1))
+                    positive = TRUE, length.arg = 1))
       stop("bad input for argument 'n'")
     if (!is.Numeric(mu1, positive = TRUE) ||
         max(mu1) >= 1)
@@ -731,7 +733,7 @@ binom2.rho.control <- function(save.weight = TRUE, ...) {
 
 
  binom2.rho <- function(lrho = "rhobit",
-                        lmu = "probit", # added 20120817
+                        lmu = "probit",  # added 20120817
                         imu1 = NULL, imu2 = NULL, irho = NULL,
                         imethod = 1,
                         zero = 3, exchangeable = FALSE,
@@ -757,14 +759,14 @@ binom2.rho.control <- function(save.weight = TRUE, ...) {
 
 
   if (is.Numeric(nsimEIM)) {
-    if (!is.Numeric(nsimEIM, allowable.length = 1,
+    if (!is.Numeric(nsimEIM, length.arg = 1,
                     integer.valued = TRUE))
       stop("bad input for argument 'nsimEIM'")
     if (nsimEIM <= 100)
       warning("'nsimEIM' should be an integer greater than 100")
   }
 
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
       imethod > 2)
     stop("argument 'imethod' must be 1 or 2")
@@ -783,7 +785,7 @@ binom2.rho.control <- function(save.weight = TRUE, ...) {
                            bool = .exchangeable ,
                            constraints = constraints,
                            apply.int = TRUE)
-    constraints <- cm.zero.vgam(constraints, x, .zero , M)
+    constraints <- cm.zero.vgam(constraints, x = x, .zero , M = M)
   }), list( .exchangeable = exchangeable, .zero = zero ))),
 
   infos = eval(substitute(function(...) {
@@ -811,11 +813,11 @@ binom2.rho.control <- function(save.weight = TRUE, ...) {
 
 
     ycounts <- if (is.numeric(extra$orig.w)) y * c(w) / extra$orig.w else
-               y * c(w) # Convert proportions to counts
+               y * c(w)  # Convert proportions to counts
     if (max(abs(ycounts - round(ycounts))) > 1.0e-6)
        warning("the response (as counts) does not appear to ",
                "be integer-valued. Am rounding to integer values.")
-    ycounts <- round(ycounts) # Make sure it is an integer
+    ycounts <- round(ycounts)  # Make sure it is an integer
     nvec <- if (is.numeric(extra$orig.w)) round(w / extra$orig.w) else
                                           round(w)
 
@@ -929,7 +931,7 @@ binom2.rho.control <- function(save.weight = TRUE, ...) {
 
       ycounts <- if (is.numeric(extra$orig.w))
                  y * c(w) / extra$orig.w else
-                 y * c(w) # Convert proportions to counts
+                 y * c(w)  # Convert proportions to counts
 
       smallno <- 1.0e4 * .Machine$double.eps
       if (max(abs(ycounts - round(ycounts))) > smallno)
@@ -949,7 +951,7 @@ binom2.rho.control <- function(save.weight = TRUE, ...) {
     nvec <- if (is.numeric(extra$orig.w)) round(w / extra$orig.w) else
             round(w)
     ycounts <- if (is.numeric(extra$orig.w)) y * c(w) / extra$orig.w else
-               y * c(w) # Convert proportions to counts
+               y * c(w)  # Convert proportions to counts
 
     pmargin <- cbind(eta2theta(eta[, 1], .lmu12 , earg = .emu12 ),
                      eta2theta(eta[, 2], .lmu12 , earg = .emu12 ))
@@ -1006,7 +1008,7 @@ binom2.rho.control <- function(save.weight = TRUE, ...) {
                           onemPhiA * (1/p01 + 1/p00)) * dprob00
       ned2l.drho2 <-  (1/p11 + 1/p01 + 1/p10 + 1/p00) * dprob00^2
 
-      wz <- matrix(0, n, dimm(M)) # 6=dimm(M)
+      wz <- matrix(0, n, dimm(M))  # 6=dimm(M)
       wz[, iam(1, 1, M)] <- ned2l.dprob1prob1 * dprob1.deta^2
       wz[, iam(2, 2, M)] <- ned2l.dprob2prob2 * dprob2.deta^2
       wz[, iam(3, 3, M)] <- ned2l.drho2 * drho.deta^2
@@ -1115,8 +1117,7 @@ dnorm2 <- function(x, y, rho = 0, log = FALSE) {
   answer <- .C("pnorm2",
        ah = as.double(-Z1), ak = as.double(-Z2), r = as.double(rho),
        size = as.integer(LLL), singler = as.integer(singler),
-       ans = as.double(ans),
-       NAOK = FALSE, DUP = TRUE, PACKAGE = "VGAM")$ans
+       ans = as.double(ans), PACKAGE = "VGAM")$ans
   if (any(answer < 0.0))
     warning("some negative values returned")
   answer
@@ -1171,10 +1172,9 @@ dnorm2 <- function(x, y, rho = 0, log = FALSE) {
   ans <- Z1
   singler <- ifelse(length(rho) == 1, 1, 0)
   answer <- .C("pnorm2",
-               ah = as.double(-Z1), ak = as.double(-Z2), r = as.double(rho),
-               size = as.integer(LLL), singler = as.integer(singler),
-               ans = as.double(ans),
-               NAOK = FALSE, DUP = TRUE, PACKAGE = "VGAM")$ans
+       ah = as.double(-Z1), ak = as.double(-Z2), r = as.double(rho),
+       size = as.integer(LLL), singler = as.integer(singler),
+       ans = as.double(ans), PACKAGE = "VGAM")$ans
   if (any(answer < 0.0))
     warning("some negative values returned")
   answer
@@ -1307,9 +1307,9 @@ my.dbinom <- function(x,
     }
   }
 
-  okay1 <- is.na(shape1)       & is.infinite(shape2) # rho = 0 and prob == 0
+  okay1 <- is.na(shape1)       & is.infinite(shape2)  # rho = 0 and prob == 0
   okay2 <- is.infinite(shape1) & is.na(shape2)       # rho = 0 and prob == 1
-  okay3 <- is.infinite(shape1) & is.infinite(shape2) # rho = 0 and 0 < prob < 1
+  okay3 <- is.infinite(shape1) & is.infinite(shape2)  # rho = 0 and 0 < prob < 1
 
   if (sum.okay1 <- sum(okay1))
     ans[okay1] <- dbinom(x = x[okay1], size = size[okay1],
@@ -1398,7 +1398,7 @@ my.dbinom <- function(x,
 
   use.n <- if ((length.n <- length(n)) > 1) length.n else
            if (!is.Numeric(n, integer.valued = TRUE,
-                           allowable.length = 1, positive = TRUE))
+                           length.arg = 1, positive = TRUE))
               stop("bad input for argument 'n'") else n
   if (length(size)   != use.n) size   <- rep(size,   len = use.n)
   if (length(shape1) != use.n) shape1 <- rep(shape1, len = use.n)
@@ -1411,9 +1411,9 @@ my.dbinom <- function(x,
                          prob = rbeta(n = smalln, shape1 = shape1[okay0],
                                                   shape2 = shape2[okay0]))
 
-  okay1 <- is.na(shape1)       & is.infinite(shape2) # rho = 0 and prob == 0
+  okay1 <- is.na(shape1)       & is.infinite(shape2)  # rho = 0 and prob == 0
   okay2 <- is.infinite(shape1) & is.na(shape2)       # rho = 0 and prob == 1
-  okay3 <- is.infinite(shape1) & is.infinite(shape2) # rho = 0 and 0 < prob < 1
+  okay3 <- is.infinite(shape1) & is.infinite(shape2)  # rho = 0 and 0 < prob < 1
 
   if (sum.okay1 <- sum(okay1))
     ans[okay1] <- rbinom(n = sum.okay1, size = size[okay1],
@@ -1510,7 +1510,7 @@ betabinomial.ab.control <- function(save.weight = TRUE, ...) {
 
   if (!is.Numeric(i1, positive = TRUE))
     stop("bad input for argument 'i1'")
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
      imethod > 3)
     stop("argument 'imethod' must be 1, 2 or 3")
@@ -1519,7 +1519,7 @@ betabinomial.ab.control <- function(save.weight = TRUE, ...) {
     stop("bad input for argument 'i2'")
 
   if (!is.null(nsimEIM)) {
-    if (!is.Numeric(nsimEIM, allowable.length = 1,
+    if (!is.Numeric(nsimEIM, length.arg = 1,
                     integer.valued = TRUE))
       stop("bad input for argument 'nsimEIM'")
     if (nsimEIM <= 10)
@@ -1536,7 +1536,7 @@ betabinomial.ab.control <- function(save.weight = TRUE, ...) {
             "Variance: mu * (1-mu) * (1+(w-1)*rho) / w, ",
                        "where rho = 1 / (shape1+shape2+1)"),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.vgam(constraints, x, .zero , M)
+    constraints <- cm.zero.vgam(constraints, x = x, .zero , M = M)
   }), list( .zero = zero ))),
   initialize = eval(substitute(expression({
     if (!all(w == 1))
@@ -1578,7 +1578,7 @@ betabinomial.ab.control <- function(save.weight = TRUE, ...) {
       if (max(abs(ycounts - round(ycounts))) > 1.0e-6)
          warning("the response (as counts) does not appear to ",
                  "be integer-valued. Am rounding to integer values.")
-      ycounts <- round(ycounts) # Make sure it is an integer
+      ycounts <- round(ycounts)  # Make sure it is an integer
       etastart <- cbind(theta2eta(shape1, .lshape12, earg = .earg),
                         theta2eta(shape2, .lshape12, earg = .earg))
       mustart <- NULL  # Since etastart has been computed.
@@ -1682,7 +1682,7 @@ betabinomial.ab.control <- function(save.weight = TRUE, ...) {
                       digamma(shape1+shape2+nvec) -
                       digamma(shape2) + digamma(shape1+shape2)
         rm(ysim)
-        temp3 <- cbind(dl.dshape1, dl.dshape2) # n x M matrix
+        temp3 <- cbind(dl.dshape1, dl.dshape2)  # n x M matrix
         run.varcov <- ((ii-1) * run.varcov +
                      temp3[, ind1$row.index]*
                      temp3[, ind1$col.index]) / ii
@@ -1717,9 +1717,9 @@ betabinomial.ab.control <- function(save.weight = TRUE, ...) {
   if (!is.Numeric(ishape, positive = TRUE))
     stop("bad input for argument 'ishape'")
   if (!is.Numeric(moreSummation, positive = TRUE,
-                  allowable.length = 2, integer.valued = TRUE))
+                  length.arg = 2, integer.valued = TRUE))
     stop("bad input for argument 'moreSummation'")
-  if (!is.Numeric(tolerance, positive = TRUE, allowable.length = 1) ||
+  if (!is.Numeric(tolerance, positive = TRUE, length.arg = 1) ||
       1.0 - tolerance >= 1.0)
       stop("bad input for argument 'tolerance'")
 
@@ -1732,7 +1732,7 @@ betabinomial.ab.control <- function(save.weight = TRUE, ...) {
             namesof("prob",  lprob,  earg = eprob), ", ",
             namesof("shape", lshape, earg = eshape)),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.vgam(constraints, x, .zero , M)
+    constraints <- cm.zero.vgam(constraints, x = x, .zero , M = M)
   }), list( .zero = zero ))),
   initialize = eval(substitute(expression({
     eval(geometric()@initialize)
@@ -1896,7 +1896,7 @@ seq2binomial <- function(lprob1 = "logit", lprob2 = "logit",
                            bool = .parallel ,
                            constraints = constraints,
                            apply.int = .apply.parint )
-    constraints <- cm.zero.vgam(constraints, x, .zero , M)
+    constraints <- cm.zero.vgam(constraints, x = x, .zero , M = M)
   }), list( .parallel = parallel,
             .apply.parint = apply.parint,
             .zero = zero ))),
@@ -2044,10 +2044,10 @@ seq2binomial <- function(lprob1 = "logit", lprob2 = "logit",
 
 
 
-  if (!is.Numeric(tol, positive = TRUE, allowable.length = 1) ||
+  if (!is.Numeric(tol, positive = TRUE, length.arg = 1) ||
       tol > 0.1)
       stop("bad input for argument 'tol'") 
-  if (!is.Numeric(addRidge, allowable.length = 1, positive = TRUE) ||
+  if (!is.Numeric(addRidge, length.arg = 1, positive = TRUE) ||
       addRidge > 0.5)
     stop("bad input for argument 'addRidge'") 
 
@@ -2064,7 +2064,7 @@ seq2binomial <- function(lprob1 = "logit", lprob2 = "logit",
             namesof("phi12",  lphi12,  earg = ephi12), ", ",
             namesof("oratio", loratio, earg = eoratio)),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.vgam(constraints, x, .zero , M)
+    constraints <- cm.zero.vgam(constraints, x = x, .zero , M = M)
     }), list( .zero = zero ))),
   initialize = eval(substitute(expression({
     eval(process.binomial2.data.vgam)
@@ -2252,8 +2252,8 @@ if (FALSE)
                    mu[, 1] / (mu[, 1] + mu[, 2])
       init.pee2 <- if (length( .iprob2 )) rep( .iprob2 , len = n) else
                    mu[, 3] / (mu[, 3] + mu[, 4])
-      init.rhopos <- pmax(1.1, init.pee1 / init.pee2) # Should be > 1
-      init.rhoneg <- pmin(0.4, (1 - init.pee1) / (1 - init.pee2)) # c. 0
+      init.rhopos <- pmax(1.1, init.pee1 / init.pee2)  # Should be > 1
+      init.rhoneg <- pmin(0.4, (1 - init.pee1) / (1 - init.pee2))  # c. 0
 
       if (length( .irhopos)) init.rhopos <- rep( .irhopos , len = n)
       if (length( .irhoneg)) init.rhoneg <- rep( .irhoneg , len = n)
@@ -2387,7 +2387,7 @@ if (FALSE)
   emu12 <- list()
 
   if (is.Numeric(nsimEIM)) {
-    if (!is.Numeric(nsimEIM, allowable.length = 1,
+    if (!is.Numeric(nsimEIM, length.arg = 1,
                     integer.valued = TRUE))
       stop("bad input for argument 'nsimEIM'")
     if (nsimEIM <= 100)
@@ -2572,7 +2572,7 @@ if (FALSE)
     emu12 <- emu  # list()
 
 
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
       imethod > 2)
     stop("argument 'imethod' must be 1 or 2")
@@ -2589,7 +2589,7 @@ if (FALSE)
                            bool = .exchangeable ,
                            constraints = constraints,
                            apply.int = TRUE)
-    constraints <- cm.zero.vgam(constraints, x, .zero , M)
+    constraints <- cm.zero.vgam(constraints, x = x, .zero , M = M)
   }), list( .exchangeable = exchangeable, .zero = zero ))),
 
   infos = eval(substitute(function(...) {
@@ -2840,9 +2840,9 @@ if (FALSE)
                               dl.dprob2 * dprob2.deta,
                               dl.drho   * drho...deta)
  } # else {
-    eta1 <- eta[, 1] # dat1 %*% params[1:X1.d2]
-    eta2 <- eta[, 2] # dat2 %*% params[(X1.d2 + 1):(X1.d2 + X2.d2)]
-    corr.st <- eta[, 3] # params[(X1.d2 + X2.d2 + 1)]
+    eta1 <- eta[, 1]  # dat1 %*% params[1:X1.d2]
+    eta2 <- eta[, 2]  # dat2 %*% params[(X1.d2 + 1):(X1.d2 + X2.d2)]
+    corr.st <- eta[, 3]  # params[(X1.d2 + X2.d2 + 1)]
     corr <- rhovec # tanh(corr.st)
 
     dat <- ycounts

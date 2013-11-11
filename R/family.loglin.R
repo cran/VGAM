@@ -26,7 +26,7 @@
                            bool = .exchangeable ,
                            constraints = constraints,
                            apply.int = TRUE,
-                           cm.default           = cm.intercept.default[, -3],
+                           cm.default           = cm.intercept.default,
                            cm.intercept.default = cm.intercept.default)
     constraints <- cm.zero.vgam(constraints, x, .zero , M)
   }), list( .exchangeable = exchangeable, .zero = zero ))),

@@ -173,7 +173,7 @@ lrtest_vglm <- function(object, ..., name = NULL) {
   
   no.update <- sapply(objects, function(obj) inherits(obj, cls))
   
-  for(i in 2:nmodels) {
+  for (i in 2:nmodels) {
     objects[[i]] <- modelUpdate(objects[[i-1]], objects[[i]])
   }
 
@@ -182,7 +182,7 @@ lrtest_vglm <- function(object, ..., name = NULL) {
 
 
   if (any(ns != ns[1])) {
-    for(i in 2:nmodels) {
+    for (i in 2:nmodels) {
       if (ns[1] != ns[i]) {
         if (no.update[i])
           stop("models were not all fitted to ",
@@ -347,7 +347,7 @@ lrtest.default <- function(object, ..., name = NULL) {
  print("no.update")
  print( no.update )
   
-  for(i in 2:nmodels)
+  for (i in 2:nmodels)
     objects[[i]] <- modelUpdate(objects[[i-1]], objects[[i]])
 
  print("objects i")
@@ -355,7 +355,7 @@ lrtest.default <- function(object, ..., name = NULL) {
 
   ns <- sapply(objects, nobs)
   if (any(ns != ns[1])) {
-    for(i in 2:nmodels) {
+    for (i in 2:nmodels) {
       if (ns[1] != ns[i]) {
         if (no.update[i])
           stop("models were not all fitted to ",
@@ -514,7 +514,7 @@ waldtest_default <- function(object, ..., vcov = NULL,
   
   no.update <- sapply(objects, function(obj) inherits(obj, cls))
   
-  for(i in 2:nmodels)
+  for (i in 2:nmodels)
     objects[[i]] <- modelUpdate(objects[[i-1]], objects[[i]])
 
   responses <- as.character(lapply(objects,
@@ -528,7 +528,7 @@ waldtest_default <- function(object, ..., vcov = NULL,
 
   ns <- sapply(objects, nobs)
   if (any(ns != ns[1])) {
-    for(i in 2:nmodels) {
+    for (i in 2:nmodels) {
       if (ns[1] != ns[i]) {
         if (no.update[i])
           stop("models were not all fitted to the ",
@@ -554,16 +554,18 @@ waldtest_default <- function(object, ..., vcov = NULL,
                       paste("Pr(>", test, ")", sep = ""))
   rownames(rval) <- 1:nmodels
   rval[,1] <- as.numeric(sapply(objects, df.residual))
-  for(i in 2:nmodels)
+  for (i in 2:nmodels)
     rval[i, 2:3] <- modelCompare(objects[[i-1]], objects[[i]],
                                  vfun = vcov.)
   if (test == "Chisq") {
     rval[,4] <- pchisq(rval[,3], round(abs(rval[,2])), lower.tail = FALSE)
   } else {
     df <- rval[,1]
-    for(i in 2:nmodels) if (rval[i,2] < 0) df[i] <- rval[i-1,1]
-    rval[,3] <- rval[,3]/abs(rval[,2])
-    rval[,4] <- pf(rval[,3], abs(rval[,2]), df, lower.tail = FALSE)
+    for (i in 2:nmodels)
+      if (rval[i, 2] < 0)
+        df[i] <- rval[i-1, 1]
+    rval[, 3] <- rval[, 3] / abs(rval[, 2])
+    rval[, 4] <- pf(rval[, 3], abs(rval[, 2]), df, lower.tail = FALSE)
   }
 
 

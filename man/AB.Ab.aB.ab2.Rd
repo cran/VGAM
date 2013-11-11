@@ -66,11 +66,11 @@ AB.Ab.aB.ab2(link = "logit", init.p = NULL)
 }
 
 \examples{
-ymat <- cbind(68, 11, 13, 21) # See Elandt-Johnson, pp.430,427
+ymat <- cbind(68, 11, 13, 21)  # See Elandt-Johnson, pp.430,427
 fit <- vglm(ymat ~ 1, AB.Ab.aB.ab2(link = cloglog), trace = TRUE, crit = "coef")
-Coef(fit) # Estimated p
+Coef(fit)  # Estimated p
 rbind(ymat, sum(ymat) * fitted(fit))
-sqrt(diag(vcov(fit))) # Estimated variance is approx 0.0021
+sqrt(diag(vcov(fit)))  # Estimated variance is approx 0.0021
 }
 \keyword{models}
 \keyword{regression}

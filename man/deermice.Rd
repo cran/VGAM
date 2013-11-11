@@ -1,5 +1,5 @@
-\name{Perom}
-\alias{Perom}
+\name{deermice}
+%\alias{Perom}
 \alias{deermice}
 \docType{data}
 \title{
@@ -16,13 +16,13 @@
 
 %%  ~~ A concise (1-5 lines) description of the dataset. ~~
 }
+% data(Perom)
 \usage{
-  data(Perom)
   data(deermice)
 }
 \format{
-  The format is:
- chr "Perom"
+  The format is a data frame.
+
 
 }
 \details{
@@ -32,7 +32,8 @@
   not counting the length of the tail.
 
 
-  The columns of this data frame
+  Originally,
+  the columns of this data frame
   represent the sex (\code{m} or \code{f}),
   the ages (\code{y}: young, \code{sa}: semi-adult, \code{a}: adult),
   the weights in grams, and the
@@ -44,9 +45,11 @@
   with the \pkg{CAPTURE} program of Otis et al. (1978).
 
 
-  \code{Perom} has 36 deermice;
-  \code{deermice} has 38 deermice.
+  \code{deermice} has 38 deermice whereas
+  \code{Perom} had 36 deermice
+  (\code{Perom} has been withdrawn.)
   In \code{deermice} the two semi-adults have been classified as adults.
+  The \code{sex} variable has 1 for female, and 0 for male.
 
 
 %%  ~~ If necessary, more details than the __description__ above ~~
@@ -81,10 +84,10 @@ approach to capture experiments.
 }
 
 \examples{
-head(Perom)
+head(deermice)
 \dontrun{
 fit1 <- vglm(cbind(y1, y2, y3, y4, y5, y6) ~ sex + age,
-             posbernoulli.t(parallel.t = TRUE), data = Perom, trace = TRUE)
+             posbernoulli.t(parallel.t = TRUE), data = deermice, trace = TRUE)
 coef(fit1)
 coef(fit1, matrix = TRUE)
 }

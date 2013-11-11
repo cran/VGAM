@@ -9,6 +9,7 @@
 
 
 
+
  getind <- function(constraints, M, ncolx) {
 
 
@@ -151,7 +152,7 @@ cm.nointercept.vgam <- function(constraints, x, nointercept, M) {
   asgn <- attr(x, "assign")
   nasgn <- names(asgn)
   if (is.null(constraints)) {
-    constraints <- vector("list", length(nasgn)) # list()
+    constraints <- vector("list", length(nasgn))  # list()
     names(constraints) <- nasgn
   }
   if (!is.list(constraints))
@@ -203,10 +204,11 @@ cm.nointercept.vgam <- function(constraints, x, nointercept, M) {
 
   if (is.null(zero))
     return(constraints)
+
   if (!is.numeric(zero))
-    stop("'zero' must be numeric")
+    stop("argument 'zero' must be numeric")
   if (any(zero < 1 | zero > M))
-    stop("'zero' out of range")
+    stop("argument 'zero' out of range")
   if (nasgn[1] != "(Intercept)")
     stop("cannot fit an intercept to a no-intercept model")
 
@@ -350,7 +352,7 @@ cm.nointercept.vgam <- function(constraints, x, nointercept, M) {
   if (empty.list(constraints))
     if (is.list(new.constraints))
       return(new.constraints) else 
-      return(list()) # Both NULL probably
+      return(list())  # Both NULL probably
 
   constraints <- as.list(constraints)
   new.constraints <- as.list(new.constraints)
@@ -475,12 +477,11 @@ cm.nointercept.vgam <- function(constraints, x, nointercept, M) {
   }
 
   fred <- .C("m2a", as.double(t(m)), ans=double(M*M*n),
-             as.integer(dimm),
-             as.integer(index$row-1),  
-             as.integer(index$col-1),  
-             as.integer(n),  as.integer(M),  
-             as.integer(as.numeric(upper)),
-             NAOK = TRUE, DUP = TRUE, PACKAGE = "VGAM")
+      as.integer(dimm),
+      as.integer(index$row-1),  
+      as.integer(index$col-1),  
+      as.integer(n),  as.integer(M),  
+      as.integer(as.numeric(upper)), NAOK = TRUE, PACKAGE = "VGAM")
   dim(fred$ans) <- c(M, M, n)
   alpn <- NULL
   dimnames(fred$ans) <- list(alpn, alpn, dimnames(m)[[1]])
@@ -504,12 +505,12 @@ cm.nointercept.vgam <- function(constraints, x, nointercept, M) {
   index <- iam(NA, NA, M, both = TRUE, diag = TRUE)
 
 
-  fred <- .C("a2m", as.double(a), m = double(dimm.value*n),
-             as.integer(dimm.value),
-             as.integer(index$row-1),  
-             as.integer(index$col-1),  
-             as.integer(n),  as.integer(M),
-             NAOK = TRUE, DUP = TRUE, PACKAGE = "VGAM")
+  fred <- .C("a2m",
+             as.double(a), m = double(dimm.value * n),
+      as.integer(dimm.value),
+      as.integer(index$row-1),  
+      as.integer(index$col-1),  
+      as.integer(n),  as.integer(M), NAOK = TRUE, PACKAGE = "VGAM")
   dim(fred$m) <- c(dimm.value,n)
   fred$m <- t(fred$m)
 
@@ -549,7 +550,7 @@ cm.nointercept.vgam <- function(constraints, x, nointercept, M) {
 
 
 
-if(!exists("is.R"))
+if (!exists("is.R"))
   is.R <- function()
     exists("version") &&
     !is.null(version$language) &&
@@ -581,7 +582,7 @@ if(!exists("is.R"))
   mu <- object@fitted.values
   if (any(slotNames(object) == "predictors"))
     eta <- object@predictors
-  mt <- terms(object) # object@terms$terms; 20030811
+  mt <- terms(object)  # object@terms$terms; 20030811
   Blist <- constraints <- object@constraints 
   new.coeffs <- object@coefficients
   if (any(slotNames(object) == "iter"))
@@ -649,7 +650,7 @@ if(!exists("is.R"))
     ans 
   } else {
     temp <- object@y
-    ans <- rep(1, nrow(temp)) # Assumed all equal and unity.
+    ans <- rep(1, nrow(temp))  # Assumed all equal and unity.
     names(ans) <- dimnames(temp)[[1]]
     ans 
   }
@@ -769,8 +770,6 @@ setMethod("weights", "vglm",
 
 
 
-
-
 qnupdate <- function(w, wzold, dderiv, deta, M, keeppd = TRUE, 
                     trace = FALSE, reset = FALSE,
                     effpos=.Machine$double.eps^0.75) {
@@ -781,7 +780,7 @@ qnupdate <- function(w, wzold, dderiv, deta, M, keeppd = TRUE,
     deta <- cbind(deta)
   }
   Bs <- mux22(t(wzold), deta, M = M,
-              upper = FALSE, as.matrix = TRUE) # n x M
+              upper = FALSE, as.matrix = TRUE)  # n x M
   sBs <- c( (deta * Bs) %*% rep(1, M) )   # should have positive values
   sy <- c( (dderiv * deta) %*% rep(1, M) )
   wznew <- wzold
@@ -813,7 +812,7 @@ qnupdate <- function(w, wzold, dderiv, deta, M, keeppd = TRUE,
 
 
 mbesselI0 <- function(x, deriv.arg = 0) {
-  if (!is.Numeric(deriv.arg, allowable.length = 1,
+  if (!is.Numeric(deriv.arg, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) &&
       deriv.arg != 0)
     stop("argument 'deriv.arg' must be a single non-negative integer")
@@ -912,10 +911,10 @@ lerch <- function(x, s, v, tolerance = 1.0e-10, iter = 100) {
     stop("bad input in 'x', 's', and/or 'v'")
   if (is.complex(c(x,s,v)))
     stop("complex arguments not allowed in 'x', 's' and 'v'")
-  if (!is.Numeric(tolerance, allowable.length = 1, positive = TRUE) ||
+  if (!is.Numeric(tolerance, length.arg = 1, positive = TRUE) ||
       tolerance > 0.01)
     stop("bad input for argument 'tolerance'")
-  if (!is.Numeric(iter, allowable.length = 1,
+  if (!is.Numeric(iter, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE))
     stop("bad input for argument 'iter'")
 
@@ -926,11 +925,11 @@ lerch <- function(x, s, v, tolerance = 1.0e-10, iter = 100) {
   xok <- abs(x) < 1 & !(v <= 0 & v == round(v))
   x[!xok] <- 0  # Fix this later
 
-  ans <- .C("lerchphi123", err = integer(L), as.integer(L),
-            as.double(x), as.double(s), as.double(v),
-            acc=as.double(tolerance), result=double(L),
-            as.integer(iter),
-            NAOK = TRUE, DUP = TRUE, PACKAGE = "VGAM")
+  ans <- .C("lerchphi123",
+           err = integer(L), as.integer(L),
+           as.double(x), as.double(s), as.double(v),
+           acc=as.double(tolerance), result=double(L),
+           as.integer(iter), PACKAGE = "VGAM")
 
   ifelse(ans$err == 0 & xok , ans$result, NA)
 }
@@ -1203,6 +1202,44 @@ vweighted.mean.default <- function (x, w, ..., na.rm = FALSE) {
     ans[ii] <- weighted.mean(x[, ii], w = w[, ii], ..., na.rm = na.rm)
   ans
 }
+
+
+
+
+
+
+family.name.vlm <- function(object, all = FALSE, ...) {
+  ans <- object@family@vfamily
+  if (all) ans else ans[1]
+}
+
+
+family.name.vglmff <- function(object, all = FALSE, ...) {
+  ans <- object@vfamily
+  if (all) ans else ans[1]
+}
+
+
+
+if (!isGeneric("family.name"))
+    setGeneric("family.name",
+  function(object, ...) standardGeneric("family.name"))
+
+
+setMethod("family.name", "vglmff",
+         function(object, ...)
+         family.name.vglmff(object, ...))
+
+
+
+setMethod("family.name", "vlm",
+         function(object, ...)
+         family.name.vlm(object, ...))
+
+
+
+
+
 
 
 

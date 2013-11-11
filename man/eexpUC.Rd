@@ -107,7 +107,7 @@ sum(myexp - y[y <= myexp]) / sum(abs(myexp - y))  # Should be my_p
 yy <- seq(-0, 4, len = nn)
 plot(yy, deexp(yy),  col = "blue", ylim = 0:1, xlab = "y", ylab = "g(y)",
      type = "l", main = "g(y) for Exp(1); dotted green is f(y) = dexp(y)")
-lines(yy, dexp(yy), col = "darkgreen", lty = "dotted", lwd = 2) # 'original'
+lines(yy, dexp(yy), col = "darkgreen", lty = "dotted", lwd = 2)  # 'original'
 
 plot(yy, peexp(yy), type = "l", col = "blue", ylim = 0:1,
      xlab = "y", ylab = "G(y)", main = "G(y) for Exp(1)")
@@ -129,13 +129,13 @@ lines(yy, pexp(yy), col = "darkgreen", lty = "dotted", lwd = 2) }
 %myrate <- 8
 %yy <- rexp(nn, rate = myrate)
 %(myexp <- qeexp(my_p, rate = myrate))
-%sum(myexp - yy[yy <= myexp]) / sum(abs(myexp - yy)) # Should be my_p
-%peexp(-Inf, rate = myrate)     #  Should be 0
-%peexp( Inf, rate = myrate)     #  Should be 1
-%peexp(mean(yy), rate = myrate) #  Should be 0.5
-%abs(qeexp(0.5, rate = myrate) - mean(yy)) #  Should be 0
-%abs(peexp(myexp, rate = myrate) - my_p) #  Should be 0
-%integrate(f = deexp, lower = -1, upper = Inf, rate = myrate) #  Should be 1
+%sum(myexp - yy[yy <= myexp]) / sum(abs(myexp - yy))  # Should be my_p
+%peexp(-Inf, rate = myrate)      #  Should be 0
+%peexp( Inf, rate = myrate)      #  Should be 1
+%peexp(mean(yy), rate = myrate)  #  Should be 0.5
+%abs(qeexp(0.5, rate = myrate) - mean(yy))  #  Should be 0
+%abs(peexp(myexp, rate = myrate) - my_p)  #  Should be 0
+%integrate(f = deexp, lower = -1, upper = Inf, rate = myrate)  #  Should be 1
 
 
 

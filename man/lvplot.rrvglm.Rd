@@ -12,7 +12,7 @@
 }
 \usage{
 lvplot.rrvglm(object, 
-              A = TRUE, C = TRUE, scores = FALSE, plot.it = TRUE,
+              A = TRUE, C = TRUE, scores = FALSE, show.plot = TRUE,
               groups = rep(1, n), gapC = sqrt(sum(par()$cxy^2)), 
               scaleA = 1, 
               xlab = "Latent Variable 1", ylab = "Latent Variable 2", 
@@ -37,7 +37,7 @@ lvplot.rrvglm(object,
   \item{scores}{ Logical. Allow the plotting of the \eqn{n} scores? 
                  The scores are the values of the latent variables for each
                  observation. }
-  \item{plot.it}{ Logical. Plot it? If \code{FALSE}, no plot is produced
+  \item{show.plot}{ Logical. Plot it? If \code{FALSE}, no plot is produced
   and the matrix of scores (\eqn{n} latent variable values) is returned.
   If \code{TRUE}, the rank of \code{object} need not be 2.
   }
@@ -158,7 +158,7 @@ Reduced-rank vector generalized linear models.
 
 }
 \examples{
-nn <- nrow(pneumo) # x1, x2 and x3 are some unrelated covariates
+nn <- nrow(pneumo)  # x1, x2 and x3 are some unrelated covariates
 pneumo <- transform(pneumo, slet = scale(log(exposure.time)),
                               x1 = rnorm(nn), x2 = rnorm(nn), x3 = rnorm(nn))
 fit <- rrvglm(cbind(normal, mild, severe) ~ slet + x1 + x2 + x3,

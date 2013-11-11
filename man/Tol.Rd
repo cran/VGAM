@@ -27,7 +27,7 @@ Tol(object, ...)
   Many models have no such notion or definition.
 
 
-  Tolerances occur in quadratic ordination, i.e., CQO or UQO.
+  Tolerances occur in quadratic ordination, i.e., CQO. % or UQO.
   They have ecological meaning because a high tolerance
   for a species means the species can survive over a large
   environmental range (stenoecous species), whereas a
@@ -97,8 +97,8 @@ Constrained additive ordination.
 }
 
 \examples{
-set.seed(111) # This leads to the global solution
-hspider[,1:6] <- scale(hspider[,1:6]) # Standardized environmental vars
+set.seed(111)  # This leads to the global solution
+hspider[,1:6] <- scale(hspider[,1:6])  # Standardized environmental vars
 p1 <- cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,
                Auloalbi, Pardlugu, Pardmont, Pardnigr, Pardpull,
                Trocterr, Zoraspin) ~

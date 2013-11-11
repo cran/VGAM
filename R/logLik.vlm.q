@@ -8,8 +8,41 @@
 
 
 
+
+ 
 logLik.vlm <- function(object, ...)
   object@criterion$loglikelihood
+
+
+
+ 
+logLik.qrrvglm <- function(object, ...) {
+
+  ff.code <- object@family
+  ll.ff.code <- ff.code@loglikelihood
+
+  prior.weights <- weights(object, type = "prior")
+  if (is.matrix(prior.weights) &&
+      ncol(prior.weights) == 1)
+    prior.weights <- c(prior.weights)
+
+  loglik.try <-
+    ll.ff.code(mu = fitted(object),
+               y = depvar(object),
+               w = prior.weights,
+               residuals = FALSE,
+               eta = predict(object),
+               extra = object@extra)
+  if (!is.numeric(loglik.try))
+    loglik.try <- NULL
+
+  loglik.try
+}
+
+
+
+
+
 
 
 if (!isGeneric("logLik"))
@@ -34,6 +67,32 @@ setMethod("logLik",  "vgam", function(object, ...)
 
 
 
+setMethod("logLik",  "qrrvglm", function(object, ...)
+    logLik.qrrvglm(object, ...))
+
+
+setMethod("logLik",  "cao", function(object, ...)
+    logLik.qrrvglm(object, ...))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -49,7 +108,7 @@ constraints.vlm <-
   type <- match.arg(type, c("lm", "term"))[1]
 
 
-  Hlist <- ans <- slot(object, "constraints") # For "lm" (formerly "vlm")
+  Hlist <- ans <- slot(object, "constraints")  # For "lm" (formerly "vlm")
 
   if (type == "term") {
     oassign.LM <- object@misc$orig.assign
@@ -62,7 +121,7 @@ constraints.vlm <-
 
     ans <- vector("list", ppp)
     for (ii in 1:ppp) {
-      col.ptr <- (oassign.LM[[ii]])[1] # 20110114
+      col.ptr <- (oassign.LM[[ii]])[1]  # 20110114
       ans[[ii]] <- (Hlist[[col.ptr]])
     }
     names(ans) <- names.att.x.LM

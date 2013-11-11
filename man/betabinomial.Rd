@@ -226,7 +226,7 @@ with(lirat, plot(hb, R / N, pch = as.character(grp), col = grp, las = 1,
                  xlab = "Hemoglobin level", ylab = "Proportion Dead",
                  main = "Fitted values (lines)"))
 smalldf <- with(lirat, lirat[N > 1, ])
-for(gp in 1:4) {
+for (gp in 1:4) {
   xx <- with(smalldf, hb[grp == gp])
   yy <- with(smalldf, fitted(fit2)[grp == gp])
   ooo <- order(xx)

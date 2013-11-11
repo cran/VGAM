@@ -224,7 +224,7 @@ ndata <- transform(ndata,
                    y1 = rzinegbin(nn, pstr0 = pstr0, mu = munb, size = size))
 with(ndata, table(y1)["0"] / sum(table(y1)))
 rrzinb <- rrvglm(y1 ~ x2 + x3, zinegbinomial(zero = NULL), data = ndata,
-                 Index.corner = 2, szero = 3, trace = TRUE)
+                 Index.corner = 2, str0 = 3, trace = TRUE)
 coef(rrzinb, matrix = TRUE)
 Coef(rrzinb)
 }

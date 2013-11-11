@@ -65,7 +65,7 @@ quadratic ordination.
 
 \examples{
 \dontrun{ set.seed(123)
-hspider[,1:6] <- scale(hspider[,1:6]) # Standardized environmental vars
+hspider[, 1:6] <- scale(hspider[, 1:6])  # Standardized environmental vars
 p1cqo <- cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,
                   Auloalbi, Pardlugu, Pardmont, Pardnigr, Pardpull,
                   Trocterr, Zoraspin) ~
@@ -75,7 +75,7 @@ p1cqo <- cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,
 nos <- ncol(depvar(p1cqo))
 clr <- 1:nos # OR (1:(nos+1))[-7]  to omit yellow
 
-trplot(p1cqo, whichSpecies = 1:3, log = "xy",
+trplot(p1cqo, which.species = 1:3, log = "xy",
        col = c("blue", "orange", "green"), lwd = 2, label = TRUE) -> ii
 legend(0.00005, 0.3, paste(ii$species[, 1], ii$species[, 2], sep = " and "),
        lwd = 2, lty = 1, col = c("blue", "orange", "green"))

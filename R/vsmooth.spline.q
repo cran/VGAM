@@ -19,7 +19,7 @@ setClass("vsmooth.spline", representation(
          "call"         = "call",
          "constraints"  = "list",
          "df"           = "numeric",
-         "nlfit"        = "vsmooth.spline.fit", # is the nonlinear component
+         "nlfit"        = "vsmooth.spline.fit",  # is the nonlinear component
          "lev"          = "matrix",
          "lfit" = "vlm",  # 20020606 was "vlm.wfit"; is the linear component
          "spar"         = "numeric",
@@ -107,7 +107,7 @@ setMethod("depvar",  "vsmooth.spline", function(object, ...)
 
 vsmooth.spline <-
   function(x, y, w = NULL, df = rep(5, M),
-           spar = NULL, #rep(0,M),
+           spar = NULL,  #rep(0,M),
            all.knots = FALSE, 
            iconstraint = diag(M),
            xconstraint = diag(M),
@@ -117,6 +117,8 @@ vsmooth.spline <-
            nk = NULL,
            control.spar = list()) {
 
+ 
+    
   if (var.arg) {
     warning("@var will be returned, but no use will be made of it") 
   }
@@ -194,6 +196,7 @@ vsmooth.spline <-
   }
   dim2wz <- ncol(wzmat)
 
+ 
   if (missing.constraints) {
     constraints <- list("(Intercepts)" = eval(iconstraint),
                         "x"            = eval(xconstraint))
@@ -216,25 +219,25 @@ vsmooth.spline <-
 
 
     usortx <- unique(sort(as.vector(xvector)))
-    ooo <- match(xvector, usortx)             # usortx[ooo] == x
+    ooo <- match(xvector, usortx)  # usortx[ooo] == x
     neff <- length(usortx)
     if (neff < 7) {
       stop("not enough unique 'x' values (need 7 or more)")
     }
 
-    dim1U <- dim2wz # 10/1/00; was M * (M+1) / 2
+    dim1U <- dim2wz  # 10/1/00; was M * (M+1) / 2
 
     collaps <- .C("vsuff9",
       as.integer(n_lm), as.integer(neff), as.integer(ooo),
       as.double(xvector), as.double(ymat), as.double(wzmat),
+                    
       xbar = double(neff), ybar = double(neff * M),
           wzbar = double(neff * dim2wz),
       uwzbar = double(1), wzybar = double(neff * M), okint = as.integer(0),
       as.integer(M), dim2wz = as.integer(dim2wz), dim1U = as.integer(dim1U),
       blist = as.double(diag(M)), ncolb = as.integer(M),
       trivc = as.integer(1), wuwzbar = as.integer(0),
-      dim1Uwzbar = as.integer(dim1U), dim2wzbar = as.integer(dim2wz),
-      NAOK = FALSE, DUP = TRUE, PACKAGE = "VGAM")
+      dim1Uwzbar = as.integer(dim1U), dim2wzbar = as.integer(dim2wz), PACKAGE = "VGAM")
 
     if (collaps$okint != 1) {
       stop("some non-positive-definite weight matrices ",
@@ -245,10 +248,10 @@ vsmooth.spline <-
 
     if (FALSE) {
     } else {
-      yinyin <- collaps$ybar   # Includes both linear and nonlinear parts
+      yinyin <- collaps$ybar  # Includes both linear and nonlinear parts
       x <- collaps$xbar  # Could call this xxx for location finder
 
-      lfit <- vlm(yinyin ~ 1 + x,    # xxx
+      lfit <- vlm(yinyin ~ 1 + x,  # xxx
                  constraints = constraints,
                  save.weight = FALSE,
                  qr.arg = FALSE, x.arg = FALSE, y.arg = FALSE,
@@ -256,7 +259,7 @@ vsmooth.spline <-
                  weights = matrix(collaps$wzbar, neff, dim2wz))
     }
 
-    ncb0  <- ncol(constraints[[2]])   # Of xxx and not of the intercept
+    ncb0  <- ncol(constraints[[2]])  # Of xxx and not of the intercept
     spar  <- rep(if (length(spar)) spar else 0, length = ncb0)
     dfvec <- rep(df, length = ncb0)
 
@@ -282,7 +285,7 @@ vsmooth.spline <-
                        "Bcoefficients" = matrix(as.numeric(NA), 1, 1),
                        "knots"         = numeric(0),
                        "xmin"          = numeric(0),
-                       "xmax"          = numeric(0)) # 8/11/03
+                       "xmax"          = numeric(0))  # 8/11/03
 
       dratio <- as.numeric(NA)
 
@@ -318,7 +321,7 @@ vsmooth.spline <-
     if (length(nknots)) {
       warning("overriding 'nk' by 'all.knots = TRUE'")
     }
-    nknots <- length(knot) - 4     # No longer neff + 2
+    nknots <- length(knot) - 4  # No longer neff + 2
   } else {
     chosen <- length(nknots)
     if (chosen && (nknots > neff+2 || nknots <= 5)) {
@@ -327,11 +330,10 @@ vsmooth.spline <-
     if (!chosen) {
       nknots <- 0
     }
-      knot.list <- .C("vknootl2", as.double(xbar),
+    knot.list <- .C("vknootl2", as.double(xbar),
                       as.integer(neff), knot = double(neff+6),
                       k = as.integer(nknots+4),
-                      chosen = as.integer(chosen),
-                      NAOK = FALSE, DUP = TRUE, PACKAGE = "VGAM")
+                      chosen = as.integer(chosen), PACKAGE = "VGAM")
     if (noround) {
       knot <- valid.vknotl2(knot.list$knot[1:(knot.list$k)])
       knot.list$k <- length(knot)
@@ -344,6 +346,7 @@ vsmooth.spline <-
     stop("not enough distinct knots found")
   }
 
+ 
   conmat <- (constraints[[2]])[, nonlin, drop = FALSE]
   ncb <- sum(nonlin)
   trivc <- trivial.constraints(conmat)
@@ -356,17 +359,18 @@ vsmooth.spline <-
    ooo <- 1:neff # Already sorted
 
 
+
   collaps <- .C("vsuff9",
       as.integer(neff), as.integer(neff), as.integer(ooo),
       as.double(collaps$xbar), as.double(resmat), as.double(collaps$wzbar),
+                  
       xbar = double(neff), ybar = double(neff * ncb),
           wzbar = double(neff * dim2wzbar),
       uwzbar = double(1), wzybar = double(neff * ncb), okint = as.integer(0),
       as.integer(M), as.integer(dim2wz), as.integer(dim1U),
       blist = as.double(conmat), ncolb = as.integer(ncb),
       as.integer(trivc), wuwzbar = as.integer(0),
-      as.integer(dim1Uwzbar), as.integer(dim2wzbar),
-      NAOK = FALSE, DUP = TRUE, PACKAGE = "VGAM")
+      as.integer(dim1Uwzbar), as.integer(dim2wzbar), PACKAGE = "VGAM")
 
   if (collaps$okint != 1) {
    stop("some non-positive-definite weight matrices ",
@@ -377,10 +381,45 @@ vsmooth.spline <-
   dim(collaps$wzbar) <- c(neff, dim2wzbar)
 
 
-  ldk <- 3 * ncb + 1     # 10/7/02; Previously 4 * ncb
+ 
+
+ 
+
+
+  wzyb.c <-
+  zedd.c <- matrix(0, neff, ncb)
+  Wmat.c <- array(0, c(ncb, ncb, neff))
+ if (FALSE)
+  for (ii in 1:neff) {
+    Wi.indiv <- m2adefault(wzmat[ii, , drop = FALSE], M = ncb)
+    Wi.indiv <- Wi.indiv[,, 1]  # Drop the 3rd dimension
+    Wmat.c[,, ii] <- t(conmat) %*% Wi.indiv %*% conmat
+    one.Wmat.c <- matrix(Wmat.c[,, ii], ncb, ncb)
+    zedd.c[ii, ] <- solve(Wmat.c[,, ii],
+                          t(conmat) %*% Wi.indiv %*% cbind(resmat[ii, ]))
+    wzyb.c[ii, ] <- one.Wmat.c %*% zedd.c[ii, ]
+  }
+
+ 
+
+
+
+
+
+
+ 
+
+  ldk <- 3 * ncb + 1  # 20020710; Previously 4 * ncb
   varmat <- if (var.arg) matrix(0, neff, ncb) else double(1)
+
+
+
+
+
   vsplin <- .C("Yee_spline",
-     xs = as.double(xbar),  as.double(collaps$wzybar),
+     xs = as.double(xbar),
+     yyy = as.double(collaps$wzybar),  # zz
+                 
          as.double(collaps$wzbar), xknot = as.double(knot),
      n = as.integer(neff), nknots = as.integer(nknots), as.integer(ldk),
          M = as.integer(ncb), dim2wz = as.integer(dim2wzbar),
@@ -398,9 +437,14 @@ vsmooth.spline <-
      double(1), as.integer(0),
 
      icontrsp = as.integer(contr.sp$maxit),
-      contrsp = as.double(unlist(contr.sp[1:4])),
-     NAOK = FALSE, DUP = TRUE, PACKAGE = "VGAM")
+      contrsp = as.double(unlist(contr.sp[1:4])), PACKAGE = "VGAM")
 
+
+
+
+
+
+ 
   if (vsplin$ierror != 0) {
     stop("vsplin$ierror == ", vsplin$ierror,
          ". Something gone wrong in 'vsplin'")
@@ -420,6 +464,8 @@ vsmooth.spline <-
   dofr.nl <- colSums(vsplin$levmat)  # Actual EDF used 
 
 
+
+ 
   fv <- lfit@fitted.values + vsplin$fv %*% t(conmat)
   if (M > 1) {
     dimnames(fv) <- list(NULL, ny2)
@@ -551,7 +597,7 @@ predictvsmooth.spline <- function(object, x, deriv = 0, se.fit = FALSE) {
 
   mat.coef <- coefvlm(lfit, matrix.out = TRUE)
   coeflfit <- t(mat.coef)   # M x p now
-  M <- nrow(coeflfit) # if (is.matrix(object@y)) ncol(object@y) else 1
+  M <- nrow(coeflfit)  # if (is.matrix(object@y)) ncol(object@y) else 1
 
   pred <- if (deriv == 0)
            predict(lfit, data.frame(x = x)) else
@@ -566,7 +612,7 @@ predictvsmooth.spline <- function(object, x, deriv = 0, se.fit = FALSE) {
 
   conmat <- if (!length(lfit@constraints)) diag(M) else
               lfit@constraints[[2]]
-  conmat <- conmat[, nonlin, drop = FALSE] # Of nonlinear functions
+  conmat <- conmat[, nonlin, drop = FALSE]  # Of nonlinear functions
 
   list(x = x, y = pred + predict(nlfit, x, deriv)$y %*% t(conmat))
 }
@@ -592,8 +638,7 @@ predictvsmooth.spline.fit <- function(object, x, deriv = 0) {
     junk <- .C("Yee_vbvs", as.integer(ngood),
           as.double(object@knots), as.double(object@Bcoefficients),
           as.double(xs[good]), smomat = double(ngood * ncb),
-          as.integer(nknots), as.integer(deriv), as.integer(ncb),
-          NAOK = FALSE, DUP = TRUE, PACKAGE = "VGAM")
+          as.integer(nknots), as.integer(deriv), as.integer(ncb), PACKAGE = "VGAM")
     y[good,] <- junk$smomat
 
     if (TRUE && deriv > 1) {
@@ -634,9 +679,8 @@ predictvsmooth.spline.fit <- function(object, x, deriv = 0) {
 valid.vknotl2 <- function(knot, tol = 1/1024) {
 
   junk <- .C("Yee_pknootl2", knot = as.double(knot),
-             as.integer(length(knot)),
-             keep = integer(length(knot)), as.double(tol),
-             NAOK = FALSE, DUP = TRUE, PACKAGE = "VGAM")
+               as.integer(length(knot)),
+               keep = integer(length(knot)), as.double(tol), PACKAGE = "VGAM")
   keep <- as.logical(junk$keep)
   knot <- junk$knot[keep]
   if (length(knot) <= 11) {

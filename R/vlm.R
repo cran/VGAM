@@ -16,7 +16,7 @@ vlm <- function(formula,
                 constraints = NULL,
                 extra = NULL, offset = NULL,  
                 smart = TRUE, ...) {
-  dataname <- as.character(substitute(data)) # "list" if no data=
+  dataname <- as.character(substitute(data))  # "list" if no data=
   function.name <- "vlm"
 
   ocall <- match.call()
@@ -50,7 +50,7 @@ vlm <- function(formula,
 
 
   xlev <- .getXlevels(mt, mf)
-  y <- model.response(mf, "any") # model.extract(mf, "response")
+  y <- model.response(mf, "any")  # model.extract(mf, "response")
   x <- if (!is.empty.model(mt)) model.matrix(mt, mf, contrasts) else
        matrix(, NROW(y), 0)
   attr(x, "assign") <- attrassigndefault(x, mt)

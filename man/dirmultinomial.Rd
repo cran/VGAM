@@ -177,13 +177,13 @@ Overdispersion in allelic counts and \eqn{\theta}-correction in forensic genetic
 
 \examples{
 nn <- 10; M <- 5
-ydata <- data.frame(round(matrix(runif(nn * M, max = 10), nn, M))) # Integer counts
+ydata <- data.frame(round(matrix(runif(nn * M, max = 10), nn, M)))  # Integer counts
 colnames(ydata) <- paste("y", 1:M, sep = "")
 
 fit <- vglm(cbind(y1, y2, y3, y4, y5) ~ 1, dirmultinomial, ydata, trace = TRUE)
 head(fitted(fit))
-depvar(fit) # Sample proportions
-weights(fit, type = "prior", matrix = FALSE) # Total counts per row
+depvar(fit)  # Sample proportions
+weights(fit, type = "prior", matrix = FALSE)  # Total counts per row
 
 ydata <- transform(ydata, x2 = runif(nn))
 fit <- vglm(cbind(y1, y2, y3, y4, y5) ~ x2, dirmultinomial, ydata, trace = TRUE)

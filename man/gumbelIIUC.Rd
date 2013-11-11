@@ -57,7 +57,7 @@ rgumbelII(n, shape, scale = 1)
 probs <- seq(0.01, 0.99, by = 0.01)
 Shape <- exp( 0.5); Scale <- exp(1);
 max(abs(pgumbelII(qgumbelII(p = probs, Shape, Scale),
-                  Shape, Scale) - probs)) # Should be 0
+                  Shape, Scale) - probs))  # Should be 0
 
 \dontrun{ x <- seq(-0.1, 10, by = 0.01);
 plot(x, dgumbelII(x, Shape, Scale), type = "l", col = "blue", las = 1,

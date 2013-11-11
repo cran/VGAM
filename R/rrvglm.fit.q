@@ -12,7 +12,7 @@ rrvglm.fit <-
   function(x, y, w = rep(1, length(x[, 1])),
            etastart = NULL, mustart = NULL, coefstart = NULL,
            offset = 0, family,
-           control=rrvglm.control(...),
+           control = rrvglm.control(...),
            criterion = "coefficients",
            qr.arg = FALSE,
            constraints = NULL,
@@ -23,7 +23,8 @@ rrvglm.fit <-
 
     specialCM <- NULL
     post <- list()
-    check.rank <- TRUE # !control$Quadratic
+    check.rank <- TRUE  # !control$Quadratic
+    check.rank <- control$Check.rank
     nonparametric <- FALSE
     epsilon <- control$epsilon
     maxit <- control$maxit
@@ -336,8 +337,8 @@ rrvglm.fit <-
 
     if (control$Corner)
       Amat[control$Index.corner,] <- diag(Rank)
-    if (length(control$szero))
-      Amat[control$szero,] <- 0
+    if (length(control$str0))
+      Amat[control$str0, ] <- 0
 
     rrcontrol$Ainit <- control$Ainit <- Amat  # Good for valt()
     rrcontrol$Cinit <- control$Cinit <- Cmat  # Good for valt()
@@ -470,8 +471,12 @@ rrvglm.fit <-
       NULL
     }
 
-    if (maxit > 1 && iter >= maxit)
-        warning("convergence not obtained in ", maxit, " iterations")
+
+  if (maxit > 1 && iter >= maxit && !control$noWarning)
+    warning("convergence not obtained in ", maxit, " iterations")
+
+
+
 
 
     dnrow.X.vlm <- labels(X.vlm.save)
@@ -559,7 +564,7 @@ rrvglm.fit <-
 
 
 
-    elts.tildeA <- (M - Rank - length(control$szero)) * Rank
+    elts.tildeA <- (M - Rank - length(control$str0)) * Rank
     no.dpar <- 0
     df.residual <- nrow.X.vlm - rank -
                    ifelse(control$Quadratic, Rank*p2, 0) -
@@ -577,7 +582,7 @@ rrvglm.fit <-
                 rank = rank,
                 residuals = residuals,
                 R = R,
-                terms = Terms) # terms: This used to be done in vglm() 
+                terms = Terms)  # terms: This used to be done in vglm() 
 
     if (qr.arg && !nice31) {
       fit$qr <- tfit$qr

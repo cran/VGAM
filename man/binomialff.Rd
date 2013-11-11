@@ -268,7 +268,7 @@ bdata <- data.frame(x2 = sort(rnorm(nn <- 100)))
 bdata <- transform(bdata, y1 = ifelse(x2 < threshold, 0, 1))
 fit <- vglm(y1 ~ x2, binomialff(bred = TRUE),
             data = bdata, criter = "coef", trace = TRUE)
-coef(fit, matrix = TRUE) # Finite!!
+coef(fit, matrix = TRUE)  # Finite!!
 summary(fit)
 \dontrun{ plot(depvar(fit) ~ x2, data = bdata, col = "blue", las = 1)
 lines(fitted(fit) ~ x2, data = bdata, col = "orange")

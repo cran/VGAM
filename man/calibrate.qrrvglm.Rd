@@ -1,7 +1,7 @@
 \name{calibrate.qrrvglm}
 \alias{calibrate.qrrvglm}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{ Calibration for CQO, UQO and CAO models }
+\title{ Calibration for CQO and CAO models }
 \description{
   Performs maximum likelihood calibration for constrained and
   unconstrained quadratic and additive ordination models (CQO and CAO
@@ -10,7 +10,7 @@
 }
 \usage{
 calibrate.qrrvglm(object, newdata = NULL,
-        type = c("lv", "predictors", "response", "vcov", "all3or4"),
+        type = c("latvar", "predictors", "response", "vcov", "all3or4"),
         initial.vals = NULL, ...)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -84,7 +84,7 @@ calibrate.qrrvglm(object, newdata = NULL,
   Each component has length \code{nrow(newdata)}.
 
 
-  \item{lv}{Calibrated latent variables or site scores.
+  \item{latvar}{Calibrated latent variables or site scores.
 
 
   }
@@ -124,8 +124,12 @@ Cambridge.
 }
 \author{T. W. Yee}
 \note{
-  Despite the name of this function, UQO and CAO models are handled 
+  Despite the name of this function, CAO models are handled 
   as well.
+
+
+
+% Despite the name of this function, UQO and CAO models are handled 
 
 
 }
@@ -140,14 +144,14 @@ Cambridge.
   \code{\link{calibrate.qrrvglm.control}},
   \code{\link{calibrate}},
   \code{\link{cqo}},
-  \code{\link{uqo}},
   \code{\link{cao}}.
+% \code{\link{uqo}},
 
 
 }
 \examples{
 \dontrun{
-hspider[,1:6] <- scale(hspider[, 1:6]) # Standardize the environmental variables
+hspider[,1:6] <- scale(hspider[, 1:6])  # Standardize the environmental variables
 set.seed(123)
 p1 <- cqo(cbind(Pardlugu, Pardmont, Pardnigr, Pardpull, Zoraspin) ~
          WaterCon + BareSand + FallTwig +
@@ -155,7 +159,7 @@ p1 <- cqo(cbind(Pardlugu, Pardmont, Pardnigr, Pardpull, Zoraspin) ~
          family = poissonff, data = hspider, Rank = 1,
          IToler = TRUE, Crow1positive = TRUE)
 
-siteNos <- 1:2  # Calibrate these sites
+siteNos <- 3:4  # Calibrate these sites
 cp1 <- calibrate(p1, new = data.frame(depvar(p1)[siteNos, ]), trace = TRUE)
 }
 
@@ -165,7 +169,7 @@ persp(p1, main = "Site scores: solid=actual, dashed=calibrated",
       label = TRUE, col = "blue", las = 1)
 # Actual site scores:
 abline(v = latvar(p1)[siteNos], lty = 1, col = 1:length(siteNos))
-abline(v = cp1, lty = 2, col = 1:length(siteNos)) # Calibrated values
+abline(v = cp1, lty = 2, col = 1:length(siteNos))  # Calibrated values
 }
 }
 \keyword{models}

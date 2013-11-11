@@ -124,7 +124,7 @@ show.summary.vgam <- function(x, quote = TRUE, prefix = "",
   if (FALSE &&
      !is.null(Presid) && all(!is.na(Presid))) {
     if (rdf/M > 5) {
-      rq <-  apply(as.matrix(Presid), 2, quantile) # 5 x M
+      rq <-  apply(as.matrix(Presid), 2, quantile)  # 5 x M
       dimnames(rq) <- list(c("Min", "1Q", "Median", "3Q", "Max"),
                            x@misc$predictors.names)
       cat("\nPearson residuals:\n")
@@ -176,7 +176,7 @@ show.summary.vgam <- function(x, quote = TRUE, prefix = "",
 
   if (length(x@criterion)) {
     ncrit <- names(x@criterion)
-    for(ii in ncrit)
+    for (ii in ncrit)
       if (ii != "loglikelihood" && ii != "deviance")
         cat(paste(ii, ":", sep = ""), format(x@criterion[[ii]]), "\n")
   }
@@ -214,7 +214,7 @@ show.vanova <- function(x, digits = .Options$digits, ...) {
   if (!is.null(heading))
     cat(heading, sep = "\n")
   attr(x, "heading") <- NULL
-  for(ii in 1:length(x)) {
+  for (ii in 1:length(x)) {
     xx <- x[[ii]]
     xna <- is.na(xx)
     xx <- format(zapsmall(xx, digits))

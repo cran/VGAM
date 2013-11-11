@@ -885,7 +885,14 @@ void vsuff9(int *ftnjamu2, int *lqsahu0r, int ezlgm2up[],
          imk5wjxg   = *wy1vqfzu   * (*wy1vqfzu   + 1) / 2,
          n2colb = *kgwmz4ip *  *kgwmz4ip,
          n3colb = *kgwmz4ip * (*kgwmz4ip + 1) / 2;
-  wkumc9ideshvo2ic   = conmat;   wkumc9idonxjvw8u = conmat;
+
+  double hmayv1xt1 = 1.0, hmayv1xt2;
+
+
+
+
+  hmayv1xt2 = hmayv1xt1 + 1.0;
+  wkumc9ideshvo2ic   = &hmayv1xt2;   wkumc9idonxjvw8u = &hmayv1xt2;
 
   wkumc9idwk1a    = Calloc(zyojx5hw          , double);
   wkumc9idwk1b    = Calloc(*wy1vqfzu         , double);

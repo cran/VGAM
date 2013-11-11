@@ -24,18 +24,24 @@ rrvglm.optim.control(Fnscale = 1, Maxit = 100,
   \item{Abstol}{ Passed into \code{optim} as \code{abstol}. }
   \item{Reltol}{ Passed into \code{optim} as \code{reltol}. }
   \item{\dots}{ Ignored. }
+
 }
 \details{
 See \code{\link[stats]{optim}} for more details. 
+
+
 }
 \value{
   A list with components equal to the arguments.
+
+
 }
 %\references{ ~put references to the literature/web site here ~ }
 \author{ Thomas W. Yee }
 \note{
 The transition between optimization methods may be unstable, so users
 may have to vary the value of \code{Switch.optimizer}.
+
  
 Practical experience with \code{Switch.optimizer} shows that setting
 it to too large a value may lead to a local solution, whereas setting
@@ -44,11 +50,13 @@ if BFGS kicks in too late when the Nelder-Mead algorithm is starting to
 converge to a local solution, then switching to BFGS will not be sufficient
 to bypass convergence to that local solution.
 
+
 }
 
 \seealso{
   \code{\link{rrvglm.control}},
   \code{\link[stats]{optim}}.
+
 
 }
 %\examples{

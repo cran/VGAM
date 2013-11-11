@@ -85,9 +85,9 @@ logc(theta, bvalue = NULL, inverse = FALSE, deriv = 0,
 }
 \examples{
 \dontrun{
-logc(seq(-0.2, 1.1, by = 0.1)) # Has NAs
+logc(seq(-0.2, 1.1, by = 0.1))  # Has NAs
 }
-logc(seq(-0.2, 1.1, by = 0.1), bvalue = 1 - .Machine$double.eps) # Has no NAs
+logc(seq(-0.2, 1.1, by = 0.1), bvalue = 1 - .Machine$double.eps)  # Has no NAs
 }
 \keyword{math}
 \keyword{models}

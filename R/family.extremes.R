@@ -21,7 +21,7 @@
 rgev <- function(n, location = 0, scale = 1, shape = 0) {
   use.n <- if ((length.n <- length(n)) > 1) length.n else
            if (!is.Numeric(n, integer.valued = TRUE,
-                           allowable.length = 1, positive = TRUE))
+                           length.arg = 1, positive = TRUE))
              stop("bad input for argument 'n'") else n
 
   if (!is.Numeric(location)) 
@@ -61,7 +61,7 @@ rgev <- function(n, location = 0, scale = 1, shape = 0) {
   if (oobounds.log > 0)
     stop("bad input for argument 'oobounds.log'")
 
-  if (!is.Numeric(tolshape0, allowable.length = 1, positive = TRUE))
+  if (!is.Numeric(tolshape0, length.arg = 1, positive = TRUE))
     stop("bad input for argument 'tolshape0'")
 
   use.n <- max(length(x), length(location), length(scale), length(shape))
@@ -220,17 +220,17 @@ qgev <- function(p, location = 0, scale = 1, shape = 0) {
       max(percentiles) >= 100))
     stop("bad input for argument 'percentiles'")
 
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   positive = TRUE, integer.valued = TRUE) ||
      imethod > 2.5)
     stop("argument 'imethod' must be 1 or 2")
   if (length(ishape) && !is.Numeric(ishape))
       stop("bad input for argument 'ishape'")
 
-  if (!is.Numeric(tolshape0, allowable.length = 1, positive = TRUE) ||
+  if (!is.Numeric(tolshape0, length.arg = 1, positive = TRUE) ||
       tolshape0 > 0.1)
     stop("bad input for argument 'tolshape0'")
-  if (!is.Numeric(gshape, allowable.length = 2) ||
+  if (!is.Numeric(gshape, length.arg = 2) ||
       gshape[1] >= gshape[2])
     stop("bad input for argument 'gshape'")
   if (length(zero) &&
@@ -428,7 +428,7 @@ qgev <- function(p, location = 0, scale = 1, shape = 0) {
 
 
 
-    misc$true.mu <- !length( .percentiles) # @fitted is not a true mu
+    misc$true.mu <- !length( .percentiles)  # @fitted is not a true mu
     misc$percentiles <- .percentiles
     misc$expected <- TRUE
     misc$tolshape0 <- .tolshape0
@@ -543,14 +543,14 @@ qgev <- function(p, location = 0, scale = 1, shape = 0) {
   weight = eval(substitute(expression({
     kay <- -shape
     dd <- digamma(r.vec-kay+1)
-    ddd <- digamma(r.vec+1) # Unnecessarily evaluated at each iteration
+    ddd <- digamma(r.vec+1)  # Unnecessarily evaluated at each iteration
     temp13 <- -kay * dd + (kay^2 - kay + 1) / (1-kay)
     temp33 <- 1 - 2 * kay * ddd +
               kay^2 * (1 + trigamma(r.vec+1) + ddd^2)
     temp23 <- -kay * dd + (1+(1-kay)^2) / (1-kay)
     GR.gev <- function(j, ri, kay) gamma(ri - j*kay + 1) /  gamma(ri)
-    tmp2 <- (1-kay)^2 * GR.gev(2, r.vec, kay) # Latter is GR2
-    tmp1 <- (1-2*kay) * GR.gev(1, r.vec, kay) # Latter is GR1
+    tmp2 <- (1-kay)^2 * GR.gev(2, r.vec, kay)  # Latter is GR2
+    tmp1 <- (1-2*kay) * GR.gev(1, r.vec, kay)  # Latter is GR1
     k0 <- (1-2*kay)
     k1 <- k0 * kay
     k2 <- k1 * kay
@@ -585,7 +585,7 @@ qgev <- function(p, location = 0, scale = 1, shape = 0) {
         wz[, iam(1, 2, M)] <- 2 * r.vec / sigma^2
         wz[, iam(2, 2, M)] <- -4 * r.vec * digamma(r.vec+1) + 2 * r.vec +
     (4 * dgammadx(r.vec+1, deriv.arg = 1) - 
-     3 * dgammadx(r.vec+1, deriv.arg = 2)) / gamma(r.vec) # Not checked
+     3 * dgammadx(r.vec+1, deriv.arg = 2)) / gamma(r.vec)  # Not checked
         }
     }
 
@@ -657,20 +657,20 @@ dgammadx <- function(x, deriv.arg = 1) {
 
 
 
-  if (!is.Numeric(gshape, allowable.length = 2) ||
+  if (!is.Numeric(gshape, length.arg = 2) ||
       gshape[1] >= gshape[2])
       stop("bad input for argument 'gshape'")
     if (length(percentiles) && 
       (!is.Numeric(percentiles, positive = TRUE) ||
        max(percentiles) >= 100))
       stop("bad input for argument 'percentiles'")
-    if (!is.Numeric(imethod, allowable.length = 1,
+    if (!is.Numeric(imethod, length.arg = 1,
                     positive = TRUE, integer.valued = TRUE) ||
        imethod > 2.5)
       stop("argument 'imethod' must be 1 or 2")
     if (length(ishape) && !is.Numeric(ishape))
       stop("bad input for argument 'ishape'")
-    if (!is.Numeric(tolshape0, allowable.length = 1,
+    if (!is.Numeric(tolshape0, length.arg = 1,
                     positive = TRUE) ||
         tolshape0 > 0.1)
       stop("bad input for argument 'tolshape0'")
@@ -814,7 +814,7 @@ dgammadx <- function(x, deriv.arg = 1) {
                       shape    = .eshape)
 
 
-    misc$true.mu <- !length( .percentiles) # @fitted is not a true mu
+    misc$true.mu <- !length( .percentiles)  # @fitted is not a true mu
     misc$percentiles <- .percentiles
     misc$tolshape0 <- .tolshape0
     misc$expected <- TRUE 
@@ -884,7 +884,7 @@ dgammadx <- function(x, deriv.arg = 1) {
     kay <- -xi  # for the formulae 
     kay[abs(kay-0.5) < .tolshape0] <- 0.501
     temp100 <- gamma(2-kay)
-    pp <- (1-kay)^2 * gamma(1-2*kay) # gamma(0) is undefined so kay != 0.5
+    pp <- (1-kay)^2 * gamma(1-2*kay)  # gamma(0) is undefined so kay != 0.5
     qq <- temp100 * (digamma(1-kay) - (1-kay)/kay)
     wz <- matrix(as.numeric(NA), n, 6)
     wz[, iam(1, 1, M)] <- pp / sigma^2
@@ -923,7 +923,7 @@ dgammadx <- function(x, deriv.arg = 1) {
 rgumbel <- function(n, location = 0, scale = 1) {
   use.n <- if ((length.n <- length(n)) > 1) length.n else
            if (!is.Numeric(n, integer.valued = TRUE,
-                           allowable.length = 1, positive = TRUE))
+                           length.arg = 1, positive = TRUE))
               stop("bad input for argument 'n'") else n
 
   answer <- location - scale * log(-log(runif(use.n)))
@@ -1055,10 +1055,10 @@ pgumbel <- function(q, location = 0, scale = 1) {
     sigma <- eta2theta(eta[, 2], .lscale , earg = .escale )
 
     Percentiles <- extra$percentiles
-    LP <- length(Percentiles) # may be 0
+    LP <- length(Percentiles)  # may be 0
     if (LP > 0) {
       mpv <- extra$mpv
-      mu <- matrix(as.numeric(NA), nrow(eta), LP + mpv) # LP may be 0
+      mu <- matrix(as.numeric(NA), nrow(eta), LP + mpv)  # LP may be 0
       Rvec <- extra$R
       for (ii in 1:LP) {
         ci <- if (is.Numeric(Rvec))
@@ -1087,7 +1087,7 @@ pgumbel <- function(q, location = 0, scale = 1) {
 
     misc$R <- .R
     misc$mpv <- .mpv
-    misc$true.mu <- !length( .percentiles) # @fitted is not a true mu
+    misc$true.mu <- !length( .percentiles)  # @fitted is not a true mu
     misc$percentiles <- .percentiles
   }), list( .llocat = llocat,  .lscale = lscale,
             .elocat = elocat, .escale = escale,
@@ -1137,13 +1137,13 @@ pgumbel <- function(q, location = 0, scale = 1) {
   }), list( .llocat = llocat,  .lscale = lscale,
             .elocat = elocat, .escale = escale ))),
   weight = eval(substitute(expression({
-    temp6 <- digamma(r.vec) # , integer = T
-    temp5 <- digamma(1:max(r.vec)) # , integer=T
+    temp6 <- digamma(r.vec)  # , integer = T
+    temp5 <- digamma(1:max(r.vec))  # , integer=T
     temp5 <- matrix(temp5, n, max(r.vec), byrow = TRUE)
     temp5[col(temp5) > r.vec] <- 0
     temp5 <- temp5 %*% rep(1, ncol(temp5))
 
-    wz <- matrix(as.numeric(NA), n, dimm(M = 2)) # 3=dimm(M = 2)
+    wz <- matrix(as.numeric(NA), n, dimm(M = 2))  # 3=dimm(M = 2)
     wz[, iam(1, 1, M)] <- r.vec / sigma^2
     wz[, iam(2, 1, M)] <- -(1 + r.vec * temp6) / sigma^2
     wz[, iam(2, 2, M)] <- (2*(r.vec+1)*temp6 + r.vec*(trigamma(r.vec) +
@@ -1162,7 +1162,7 @@ pgumbel <- function(q, location = 0, scale = 1) {
 rgpd <- function(n, location = 0, scale = 1, shape = 0) {
   use.n <- if ((length.n <- length(n)) > 1) length.n else
            if (!is.Numeric(n, integer.valued = TRUE,
-                           allowable.length = 1, positive = TRUE))
+                           length.arg = 1, positive = TRUE))
              stop("bad input for argument 'n'") else n
 
   if (!is.Numeric(location))
@@ -1203,7 +1203,7 @@ dgpd <- function(x, location = 0, scale = 1, shape = 0, log = FALSE,
   if (oobounds.log > 0)
     stop("bad input for argument 'oobounds.log'")
 
-  if (!is.Numeric(tolshape0, allowable.length = 1, positive = TRUE))
+  if (!is.Numeric(tolshape0, length.arg = 1, positive = TRUE))
     stop("bad input for argument 'tolshape0'")
 
 
@@ -1353,7 +1353,7 @@ qgpd <- function(p, location = 0, scale = 1, shape = 0) {
     stop("bad input for argument 'giveWarning'")
   if (!is.Numeric(threshold)) 
     stop("bad input for argument 'threshold'")
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   positive = TRUE, integer.valued = TRUE) ||
      imethod > 2.5)
     stop("argument 'imethod' must be 1 or 2")
@@ -1371,7 +1371,7 @@ qgpd <- function(p, location = 0, scale = 1, shape = 0) {
     (!is.Numeric(percentiles, positive = TRUE) ||
      max(percentiles) >= 100))
     stop("bad input for argument 'percentiles'")
-  if (!is.Numeric(tolshape0, allowable.length = 1, positive = TRUE) ||
+  if (!is.Numeric(tolshape0, length.arg = 1, positive = TRUE) ||
       tolshape0 > 0.1)
     stop("bad input for argument 'tolshape0'")
 
@@ -1429,7 +1429,7 @@ qgpd <- function(p, location = 0, scale = 1, shape = 0) {
     if (is.Numeric(  .threshold )) {
       orig.y <- y
     }
-    ystar <- as.matrix(y - Threshold) # Operate on ystar
+    ystar <- as.matrix(y - Threshold)  # Operate on ystar
     extra$threshold <- Threshold
 
 
@@ -1497,7 +1497,7 @@ qgpd <- function(p, location = 0, scale = 1, shape = 0) {
 
     Musual <- 2
     pcent <- .percentiles
-    LP <- length(pcent) # NULL means LP == 0 and the mean is returned
+    LP <- length(pcent)  # NULL means LP == 0 and the mean is returned
     ncoly <- ncol(eta) / Musual
     if (!length(y.names <- extra$y.names))
       y.names <- paste("Y", 1:ncoly, sep = "")
@@ -1516,7 +1516,7 @@ qgpd <- function(p, location = 0, scale = 1, shape = 0) {
                        percentiles = c(90, 95),
                        y.name = NULL,
                        tolshape0 = 0.001) {
-      is.zero <- (abs(shape) < tolshape0 ) # A matrix
+      is.zero <- (abs(shape) < tolshape0 )  # A matrix
 
       LP <- length(percentiles)
       fv <- matrix(as.numeric(NA), length(shape), LP)
@@ -1630,7 +1630,7 @@ qgpd <- function(p, location = 0, scale = 1, shape = 0) {
     mytolerance <- .Machine$double.eps
     bad <- (A <= mytolerance)
     if (any(bad) && any(w[bad] != 0)) {
-      cat(sum(w[bad],na.rm = TRUE), # "; ignoring them"
+      cat(sum(w[bad],na.rm = TRUE),  # "; ignoring them"
           "observations violating boundary constraints\n")
       flush.console()
     }
@@ -1663,7 +1663,7 @@ qgpd <- function(p, location = 0, scale = 1, shape = 0) {
 
     ned2l.dscale2 <- 1 / ((1+2*Shape) * sigma^2)
     ned2l.dshape2 <- 2 / ((1+2*Shape) * (1+Shape))
-    ned2l.dshapescale <- 1 / ((1+2*Shape) * (1+Shape) * sigma) # > 0 !
+    ned2l.dshapescale <- 1 / ((1+2*Shape) * (1+Shape) * sigma)  # > 0 !
 
     NOS <- M / Musual
 
@@ -1895,7 +1895,7 @@ setMethod("guplot", "vlm",
   last = eval(substitute(expression({
     misc$link <-    c(location = .llocat,  scale = .lscale) 
     misc$earg <- list(location = .elocat, scale = .escale)
-    misc$true.mu <- !length( .percentiles) # @fitted is not a true mu
+    misc$true.mu <- !length( .percentiles)  # @fitted is not a true mu
     misc$R <- .R
     misc$mpv <- .mpv
     misc$percentiles = .percentiles
@@ -2249,7 +2249,7 @@ frechet2.control <- function(save.weight = TRUE, ...) {
         namesof("shape", .lshape , earg = .eshape, short = TRUE))
 
 
-    extra$location <- rep( .location , length.out = n) # stored here
+    extra$location <- rep( .location , length.out = n)  # stored here
 
 
     if (!length(etastart)) {
@@ -2274,7 +2274,7 @@ frechet2.control <- function(save.weight = TRUE, ...) {
 
       shape.init <- if (length( .ishape ))
         rep( .ishape , length.out = n) else {
-        rep(try.this , length.out = n) # variance exists if shape > 2
+        rep(try.this , length.out = n)  # variance exists if shape > 2
       }
 
 
@@ -2337,7 +2337,7 @@ frechet2.control <- function(save.weight = TRUE, ...) {
     Scale <- eta2theta(eta[, 1], .lscale , earg = .escale )
     shape <- eta2theta(eta[, 2], .lshape , earg = .eshape )
 
-    rzedd <- Scale / (y - loctn) # reciprocial of zedd
+    rzedd <- Scale / (y - loctn)  # reciprocial of zedd
     dl.dloctn <- (shape + 1) / (y - loctn) -
                 (shape / (y - loctn)) * (rzedd)^shape
     dl.dScale <- shape * (1 - rzedd^shape) / Scale
@@ -2443,7 +2443,7 @@ if (FALSE)
       namesof("scale",      .lscale , earg = .escale, short = TRUE),
       namesof("shape",      .lshape , earg = .eshape, short = TRUE))
 
-    anchorpt <- if (is.Numeric( .anchor, allowable.length = 1))
+    anchorpt <- if (is.Numeric( .anchor, length.arg = 1))
                .anchor else min(y)
     if (min(y) < anchorpt)
       stop("anchor point is too large")
@@ -2469,7 +2469,7 @@ if (FALSE)
       shape.init <-
         if (length( .ishape ))
           rep( .ishape , length.out = n) else {
-          rep(try.this , length.out = n) # variance exists if shape > 2
+          rep(try.this , length.out = n)  # variance exists if shape > 2
       }
 
 
@@ -2652,7 +2652,7 @@ recnormal.control <- function(save.weight = TRUE, ...) {
   isdev <- isd
 
 
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
       imethod > 3.5)
     stop("argument 'imethod' must be 1 or 2 or 3")
@@ -2780,7 +2780,7 @@ recexp1.control <- function(save.weight = TRUE, ...) {
 
 
 
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                     integer.valued = TRUE, positive = TRUE) ||
       imethod > 3.5)
     stop("argument 'imethod' must be 1 or 2 or 3")
@@ -2911,11 +2911,11 @@ dpois.points <- function(x, lambda, ostatistic,
 
 
   if (!is.Numeric(ostatistic,
-                  allowable.length = 1,
+                  length.arg = 1,
                   positive = TRUE))
     stop("argument 'ostatistic' must be a single positive integer")
   if (!is.Numeric(dimension, positive = TRUE,
-                  allowable.length = 1, integer.valued = TRUE) ||
+                  length.arg = 1, integer.valued = TRUE) ||
       dimension > 3)
     stop("argument 'dimension' must be 2 or 3")
 
@@ -2925,7 +2925,7 @@ dpois.points <- function(x, lambda, ostatistic,
   link <- attr(earg, "function.name")
 
 
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   positive = TRUE, integer.valued = TRUE) ||
       imethod > 2.5)
     stop("argument 'imethod' must be 1 or 2")

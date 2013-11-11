@@ -137,7 +137,7 @@ with(mydat, plot(x, jitter(y), col = "blue", las = 1, main =
            "percentile curves are red")))
 with(mydat, matlines(x, 100 * fitted(fit), lwd = 2, col = "blue", lty = 1))
 
-for(ii in fit@extra$percentile)
+for (ii in fit@extra$percentile)
     with(mydat, matlines(x, 100 *
          qbinom(p = ii/100, size = sizevec, prob = prob) / sizevec,
                   col = "red", lwd = 2, lty = 1))

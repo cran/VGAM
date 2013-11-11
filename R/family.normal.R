@@ -14,7 +14,7 @@ VGAM.weights.function <- function(w, M, n) {
 
   ncolw <- ncol(as.matrix(w))
   if (ncolw == 1) {
-    wz <- matrix(w, nrow = n, ncol = M) # w_i * diag(M)
+    wz <- matrix(w, nrow = n, ncol = M)  # w_i * diag(M)
   } else if (ncolw == M) {
     wz <- as.matrix(w)
   } else if (ncolw < M && M > 1) {
@@ -40,7 +40,7 @@ VGAM.weights.function <- function(w, M, n) {
 
  gaussianff <- function(dispersion = 0, parallel = FALSE, zero = NULL) {
 
-  if (!is.Numeric(dispersion, allowable.length = 1) ||
+  if (!is.Numeric(dispersion, length.arg = 1) ||
       dispersion < 0)
     stop("bad input for argument 'dispersion'")
   estimated.dispersion <- dispersion == 0
@@ -115,7 +115,7 @@ VGAM.weights.function <- function(w, M, n) {
       wz <- VGAM.weights.function(w = w, M = M, n = n)
       temp5 <- ResSS.vgam(y-mu, wz = wz, M = M)
         dpar <- temp5 / (length(y) -
-        (if(is.numeric(ncol(X.vlm.save))) ncol(X.vlm.save) else 0))
+        (if (is.numeric(ncol(X.vlm.save))) ncol(X.vlm.save) else 0))
     }
     misc$dispersion <- dpar
     misc$default.dispersion <- 0
@@ -275,7 +275,7 @@ rposnorm <- function(n, mean = 0, sd = 1) {
 
 
   if (length(nsimEIM))
-    if (!is.Numeric(nsimEIM, allowable.length = 1,
+    if (!is.Numeric(nsimEIM, length.arg = 1,
                     integer.valued = TRUE) ||
         nsimEIM <= 10)
       stop("argument 'nsimEIM' should be an integer greater than 10")
@@ -473,7 +473,7 @@ dtikuv <- function(x, d, mean = 0, sigma = 1, log = FALSE) {
   rm(log)
 
 
-  if (!is.Numeric(d, allowable.length = 1) ||
+  if (!is.Numeric(d, length.arg = 1) ||
       max(d) >= 2)
     stop("bad input for argument 'd'")
 
@@ -496,7 +496,7 @@ dtikuv <- function(x, d, mean = 0, sigma = 1, log = FALSE) {
 
 
 ptikuv <- function(q, d, mean = 0, sigma = 1) {
-  if (!is.Numeric(d, allowable.length = 1) ||
+  if (!is.Numeric(d, length.arg = 1) ||
       max(d) >= 2)
     stop("bad input for argument 'd'")
 
@@ -526,7 +526,7 @@ ptikuv <- function(q, d, mean = 0, sigma = 1) {
 qtikuv <- function(p, d, mean = 0, sigma = 1, ...) {
   if (!is.Numeric(p, positive = TRUE) || max(p) >= 1)
     stop("bad input for argument 'p'")
-  if (!is.Numeric(d, allowable.length = 1) || max(d) >= 2)
+  if (!is.Numeric(d, length.arg = 1) || max(d) >= 2)
     stop("bad input for argument 'd'")
   if (!is.Numeric(mean))
     stop("bad input for argument 'mean'")
@@ -562,13 +562,13 @@ qtikuv <- function(p, d, mean = 0, sigma = 1, ...) {
 rtikuv <- function(n, d, mean = 0, sigma = 1, Smallno = 1.0e-6) {
   if (!is.Numeric(n, positive = TRUE, integer.valued = TRUE))
     stop("bad input for argument 'n'")
-  if (!is.Numeric(d, allowable.length = 1) || max(d) >= 2)
+  if (!is.Numeric(d, length.arg = 1) || max(d) >= 2)
     stop("bad input for argument 'd'")
-  if (!is.Numeric(mean, allowable.length = 1))
+  if (!is.Numeric(mean, length.arg = 1))
     stop("bad input for argument 'mean'")
-  if (!is.Numeric(sigma, allowable.length = 1))
+  if (!is.Numeric(sigma, length.arg = 1))
     stop("bad input for argument 'sigma'")
-  if (!is.Numeric(Smallno, positive = TRUE, allowable.length = 1) ||
+  if (!is.Numeric(Smallno, positive = TRUE, length.arg = 1) ||
       Smallno > 0.01 ||
       Smallno < 2 * .Machine$double.eps)
       stop("bad input for argument 'Smallno'")
@@ -590,7 +590,7 @@ rtikuv <- function(n, d, mean = 0, sigma = 1, Smallno = 1.0e-6) {
       Upper <- Upper + sigma
     x <- runif(2*n, min = Lower, max = Upper)
     index <- runif(2*n, max = ymax) <
-            dtikuv(x, d = d, mean = mean, sigma = sigma)
+             dtikuv(x, d = d, mean = mean, sigma = sigma)
     sindex <- sum(index)
     if (sindex) {
       ptr2 <- min(n, ptr1 + sindex - 1)
@@ -622,7 +622,7 @@ rtikuv <- function(n, d, mean = 0, sigma = 1, Smallno = 1.0e-6) {
      (!is.Numeric(zero, integer.valued = TRUE, positive = TRUE) ||
      max(zero) > 2))
     stop("bad input for argument 'zero'")
-  if (!is.Numeric(d, allowable.length = 1) || max(d) >= 2)
+  if (!is.Numeric(d, length.arg = 1) || max(d) >= 2)
       stop("bad input for argument 'd'")
 
 
@@ -720,7 +720,7 @@ rtikuv <- function(n, d, mean = 0, sigma = 1, Smallno = 1.0e-6) {
     ned2l.dmymu2 <- Dnos / sigma^2
     ned2l.dnu2   <- Dstar / sigma^2
 
-    wz <- matrix(as.numeric(NA), n, M) # diagonal matrix
+    wz <- matrix(as.numeric(NA), n, M)  # diagonal matrix
     wz[, iam(1, 1, M)] <- ned2l.dmymu2 * dmu.deta^2
     wz[, iam(2, 2, M)] <- ned2l.dnu2 * dsigma.deta^2
     c(w) * wz
@@ -817,13 +817,13 @@ rfoldnorm <- function(n, mean = 0, sd = 1, a1 = 1, a2=1) {
                       imean = NULL,       isd = NULL,
                       a1 = 1, a2 = 1,
                       nsimEIM = 500, imethod = 1, zero = NULL) {
-  if (!is.Numeric(a1, positive = TRUE, allowable.length = 1) ||
-      !is.Numeric(a2, positive = TRUE, allowable.length = 1))
+  if (!is.Numeric(a1, positive = TRUE, length.arg = 1) ||
+      !is.Numeric(a2, positive = TRUE, length.arg = 1))
     stop("bad input for arguments 'a1' and 'a2'")
   if (any(a1 <= 0 | a2 <= 0))
     stop("arguments 'a1' and 'a2' must each be a positive value")
 
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
       imethod > 2)
     stop("argument 'imethod' must be 1 or 2")
@@ -844,7 +844,7 @@ rfoldnorm <- function(n, mean = 0, sd = 1, a1 = 1, a2=1) {
       !is.Numeric(zero, integer.valued = TRUE, positive = TRUE))
     stop("bad input for argument 'zero'")
 
-  if (!is.Numeric(nsimEIM, allowable.length = 1,
+  if (!is.Numeric(nsimEIM, length.arg = 1,
                   integer.valued = TRUE) ||
       nsimEIM <= 10)
     stop("argument 'nsimEIM' should be an integer greater than 10")
@@ -900,19 +900,19 @@ rfoldnorm <- function(n, mean = 0, sd = 1, a1 = 1, a2=1) {
             stddev <- sqrt( sum(c(w) * junk$resid^2) / junk$df.residual )
             Ahat <- m1d^2 / m2d
             thetahat <- sqrt(max(1/Ahat -1, 0.1))
-            mean.init <- rep(if(length( .imean)) .imean else
+            mean.init <- rep(if (length( .imean)) .imean else
                 thetahat * sqrt((stddev^2 + meany^2) * Ahat), len = n)
-            sd.init <- rep(if(length( .isd)) .isd else
+            sd.init <- rep(if (length( .isd)) .isd else
                 sqrt((stddev^2 + meany^2) * Ahat), len = n)
 }
 
 
       stddev <- sqrt( sum(c(w) * junk$resid^2) / junk$df.residual )
       meany <- weighted.mean(y, w)
-      mean.init <- rep(if(length( .imean )) .imean else
-          {if( .imethod == 1) median(y) else meany}, len = n)
-      sd.init <- rep(if(length( .isd )) .isd else
-          {if( .imethod == 1)  stddev else 1.2*sd(c(y))}, len = n)
+      mean.init <- rep(if (length( .imean )) .imean else
+          {if ( .imethod == 1) median(y) else meany}, len = n)
+      sd.init <- rep(if (length( .isd )) .isd else
+          {if ( .imethod == 1)  stddev else 1.2*sd(c(y))}, len = n)
       etastart <- cbind(theta2eta(mean.init, .lmean, earg = .emean ),
                         theta2eta(sd.init,   .lsd,   earg = .esd ))
     }
@@ -976,7 +976,7 @@ rfoldnorm <- function(n, mean = 0, sd = 1, a1 = 1, a2=1) {
                            mymu/mysd)^2)/a2vec)/(mysd*sqrt(2*pi))),
                 name = c("mymu", "mysd"), hessian = FALSE)
     eval.d3 <- eval(d3)
-    dl.dthetas <-  attr(eval.d3, "gradient") # == cbind(dl.dmu, dl.dsd)
+    dl.dthetas <-  attr(eval.d3, "gradient")  # == cbind(dl.dmu, dl.dsd)
     DTHETA.detas <- cbind(dmu.deta, dsd.deta)
     c(w) * DTHETA.detas * dl.dthetas
   }), list( .lmean = lmean, .lsd = lsd,
@@ -1037,14 +1037,14 @@ lqnorm <- function(qpower = 2,
 
 
 
-  if (!is.Numeric(qpower, allowable.length = 1) || qpower <= 1)
+  if (!is.Numeric(qpower, length.arg = 1) || qpower <= 1)
     stop("bad input for argument 'qpower'")
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
       imethod > 3)
     stop("argument 'imethod' must be 1 or 2 or 3")
 
-  if (!is.Numeric(shrinkage.init, allowable.length = 1) ||
+  if (!is.Numeric(shrinkage.init, length.arg = 1) ||
       shrinkage.init < 0 ||
       shrinkage.init > 1)
     stop("bad input for argument 'shrinkage.init'")
@@ -1079,11 +1079,11 @@ lqnorm <- function(qpower = 2,
 
     if (!length(etastart))  {
         meany <- weighted.mean(y, w)
-        mean.init <- rep(if(length( .i.mu)) .i.mu else
-            {if( .imethod == 2) median(y) else 
-             if ( .imethod == 1) meany else
-             .sinit * meany + (1 - .sinit) * y
-            }, len = n)
+        mean.init <- rep(if (length( .i.mu )) .i.mu else {
+          if ( .imethod == 2) median(y) else 
+          if ( .imethod == 1) meany else
+            .sinit * meany + (1 - .sinit) * y
+        }, len = n)
         etastart <- theta2eta(mean.init, link = .link, earg = .earg)
     }
   }), list( .imethod = imethod, .i.mu = imu,
@@ -1242,7 +1242,7 @@ rtobit <- function(n, mean = 0, sd = 1,
 
   use.n <- if ((length.n <- length(n)) > 1) length.n else
            if (!is.Numeric(n, integer.valued = TRUE,
-                           allowable.length = 1, positive = TRUE))
+                           length.arg = 1, positive = TRUE))
             stop("bad input for argument 'n'") else n
   L <- use.n
   if (length(mean)  != L) mean  <- rep(mean,  len = L)
@@ -1295,7 +1295,7 @@ tobit.control <- function(save.weight = TRUE, ...) {
 
 
 
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
     imethod > 2)
     stop("argument 'imethod' must be 1 or 2")
@@ -1309,7 +1309,7 @@ tobit.control <- function(save.weight = TRUE, ...) {
   if (length(zero) &&
       !is.Numeric(zero, integer.valued = TRUE))
     stop("bad input for argument 'zero'")
-  if (!is.Numeric(nsimEIM, allowable.length = 1,
+  if (!is.Numeric(nsimEIM, length.arg = 1,
                   integer.valued = TRUE) ||
       nsimEIM <= 10)
     stop("argument 'nsimEIM' should be an integer greater than 10")
@@ -1586,7 +1586,7 @@ tobit.control <- function(save.weight = TRUE, ...) {
             .Lower = Lower, .Upper = Upper ))),
   weight = eval(substitute(expression({
 
-    wz <- matrix(0.0, n, M + M - 1) # wz is 'tridiagonal'
+    wz <- matrix(0.0, n, M + M - 1)  # wz is 'tridiagonal'
     ind1 <- iam(NA, NA, M = Musual, both = TRUE, diag = TRUE)
 
 
@@ -1746,7 +1746,7 @@ tobit.control <- function(save.weight = TRUE, ...) {
       stop("bad input for argument 'zero'")
 
 
-  if (!is.Numeric(smallno, allowable.length = 1,
+  if (!is.Numeric(smallno, length.arg = 1,
                   positive = TRUE))
       stop("argument 'smallno' must be positive and close to 0")
   if (smallno > 0.1) {
@@ -1754,7 +1754,7 @@ tobit.control <- function(save.weight = TRUE, ...) {
     smallno <- 0.1
   }
 
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
      imethod > 4)
       stop("argument 'imethod' must be 1 or 2 or 3 or 4")
@@ -2119,7 +2119,7 @@ tobit.control <- function(save.weight = TRUE, ...) {
 
 
 
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
      imethod > 4)
       stop("argument 'imethod' must be 1 or 2 or 3 or 4")
@@ -2758,7 +2758,7 @@ tobit.control <- function(save.weight = TRUE, ...) {
   }), list( .lmulog = lmulog, .lsdlog = lsdlog,
             .emulog = emulog, .esdlog = esdlog ))),
   weight = expression({
-    wz <- matrix(as.numeric(NA), n, 2) # Diagonal!
+    wz <- matrix(as.numeric(NA), n, 2)  # Diagonal!
     ned2l.dmulog2 <- 1 / sdlog^2
     ned2l.dsdlog2 <- 2 * ned2l.dmulog2
 
@@ -2978,7 +2978,7 @@ rskewnorm <- function(n, location = 0, scale = 1, shape = 0) {
 
 
   if (length(nsimEIM) &&
-     (!is.Numeric(nsimEIM, allowable.length = 1,
+     (!is.Numeric(nsimEIM, length.arg = 1,
                   integer.valued = TRUE) ||
       nsimEIM <= 10))
     stop("argument 'nsimEIM' should be an integer greater than 10")
@@ -3130,7 +3130,7 @@ if (FALSE)
       stop("bad input for argument 'zero'")
 
 
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
      imethod > 4)
       stop("argument 'imethod' must be 1 or 2 or 3 or 4")

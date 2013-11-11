@@ -206,8 +206,8 @@ predict.vlm <- function(object,
       if (cs[ii+1] - cs[ii] > 1)
         for (kk in (cs[ii]+1):(cs[ii+1]-1))
           if (se.fit) {
-            pred$fitted.values[, cs[ii]]<- pred$fitted.values[, cs[ii]] +
-                                           pred$fitted.values[, kk]
+            pred$fitted.values[, cs[ii]] <- pred$fitted.values[, cs[ii]] +
+                                            pred$fitted.values[, kk]
             pred$se.fit[, cs[ii]] <- pred$se.fit[, cs[ii]] +
                                      pred$se.fit[, kk]
           } else {
@@ -252,10 +252,10 @@ predict.vlm <- function(object,
       dd <- vlabel(names(ncolBlist), temp, M)
       if (se.fit) {
         dimnames(pred$fitted.values) <- 
-        dimnames(pred$se.fit) <- list(if(length(newdata))
+        dimnames(pred$se.fit) <- list(if (length(newdata))
                                       dimnames(newdata)[[1]] else dx1, dd)
       } else {
-        dimnames(pred) <- list(if(length(newdata))
+        dimnames(pred) <- list(if (length(newdata))
                                dimnames(newdata)[[1]] else dx1, dd)
       }
 

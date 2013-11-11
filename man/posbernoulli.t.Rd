@@ -16,7 +16,8 @@
 
 }
 \usage{
-posbernoulli.t(link = "logit", parallel.t = FALSE ~ 1, iprob = NULL)
+posbernoulli.t(link = "logit", parallel.t = FALSE ~ 1, iprob = NULL,
+               p.small = 1e-4, no.warning = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 %apply.parint = FALSE,
@@ -27,6 +28,19 @@ posbernoulli.t(link = "logit", parallel.t = FALSE ~ 1, iprob = NULL)
   Setting \code{parallel.t = FALSE ~ -1},
   or equivalently \code{parallel.t = FALSE ~ 0},
   results in the \eqn{M_0}/\eqn{M_h} model.
+
+
+  }
+  \item{p.small, no.warning}{
+  A small probability value used to give a warning for the
+  Horvitz--Thompson estimator.
+  Any estimated probability value less than \code{p.small} will
+  result in a warning, however, setting \code{no.warning = TRUE}
+  will suppress this warning if it occurs.
+  This is because the Horvitz-Thompson estimator is the sum of the
+  reciprocal of such probabilities, therefore any probability that
+  is too close to 0 will result in an unstable estimate.
+
 
 
   }
@@ -109,7 +123,8 @@ posbernoulli.t(link = "logit", parallel.t = FALSE ~ 1, iprob = NULL)
 
   Upon fitting the \code{extra} slot has a (list) component
   called \code{N.hat}
-  which is a point estimate of the population size \eqn{N}.
+  which is a point estimate of the population size \eqn{N}
+  (it is the Horvitz-Thompson (1952) estimator).
   And there is a component called \code{SE.N.hat}
   containing its standard error.
 
@@ -172,6 +187,16 @@ capture--recapture experiments.
 
 
 
+  Using \code{AIC()} or \code{BIC()} to compare
+  \code{\link{posbernoulli.t}},
+  \code{\link{posbernoulli.b}},
+  \code{\link{posbernoulli.tb}}
+  models with a
+  \code{\link{posbinomial}}
+  model requires \code{posbinomial(omit.constant = TRUE)} 
+  because one needs to remove the normalizing constant from the
+  log-likelihood function.
+  See \code{\link{posbinomial}} for an example.
 
 
 
@@ -198,11 +223,15 @@ capture--recapture experiments.
 \seealso{ 
   \code{\link{posbernoulli.b}},
   \code{\link{posbernoulli.tb}},
-  \code{\link{Perom}},
+  \code{\link{deermice}},
+  \code{\link{Huggins89table1}},
   \code{\link{Huggins89.t1}},
   \code{\link{dposbern}},
   \code{\link{rposbern}},
-  \code{\link{posbinomial}}.
+  \code{\link{posbinomial}},
+  \code{\link{AICvlm}},
+  \code{\link{BICvlm}},
+  \code{\link{prinia}}.
 % \code{\link{aux.posbernoulli.t}},
 % \code{\link{vglm.control}} for \code{xij},
 % \code{\link{huggins91}}.
@@ -212,13 +241,13 @@ capture--recapture experiments.
 
 \examples{
 M.t <- vglm(cbind(y1, y2, y3, y4, y5, y6) ~ 1, posbernoulli.t,
-            data = Perom, trace = TRUE)
+            data = deermice, trace = TRUE)
 coef(M.t, matrix = TRUE)
 constraints(M.t, matrix = TRUE)
 summary(M.t, presid = FALSE)
 
 M.h.1 <- vglm(cbind(y1, y2, y3, y4, y5, y6) ~ sex + weight, trace = TRUE,
-              posbernoulli.t(parallel.t = FALSE ~ -1), data = Perom)
+              posbernoulli.t(parallel.t = FALSE ~ -1), data = deermice)
 coef(M.h.1, matrix = TRUE)
 constraints(M.h.1)
 summary(M.h.1, presid = FALSE)
@@ -226,7 +255,7 @@ head(depvar(M.h.1))  # Response capture history matrix
 dim(depvar(M.h.1))
 
 M.th.2 <- vglm(cbind(y1, y2, y3, y4, y5, y6) ~ sex + weight, trace = TRUE,
-               posbernoulli.t(parallel.t = FALSE), data = Perom)
+               posbernoulli.t(parallel.t = FALSE), data = deermice)
 lrtest(M.h.1, M.th.2)  # Test the parallelism assumption wrt sex and weight
 coef(M.th.2)
 coef(M.th.2, matrix = TRUE)
@@ -239,11 +268,11 @@ M.th.2@extra$SE.N.hat  # SE of the estimate of the population size
 # An approximate 95 percent confidence interval:
 round(M.th.2@extra$N.hat + c(-1, 1) * 1.96 *  M.th.2@extra$SE.N.hat, 1)
 
-# Fit a M_0 model, effectively the parallel M_t model, using posbinomial()
-Perom <- transform(Perom, ysum = y1 + y2 + y3 + y4 + y5 + y6,
+# Fit a M_h model, effectively the parallel M_t model, using posbinomial()
+deermice <- transform(deermice, ysum = y1 + y2 + y3 + y4 + y5 + y6,
                           tau  = 6)
 M.h.3 <- vglm(cbind(ysum, tau - ysum) ~ sex + weight,
-              posbinomial, data = Perom, trace = TRUE)
+              posbinomial(omit.constant = TRUE), data = deermice, trace = TRUE)
 max(abs(coef(M.h.1) - coef(M.h.3)))  # Should be zero
 logLik(M.h.3) - logLik(M.h.1)  # Difference is due to the binomial constants
 }
@@ -253,17 +282,17 @@ logLik(M.h.3) - logLik(M.h.1)  # Difference is due to the binomial constants
 
 
 %# Fit a M_tbh model:
-%pdata <- aux.posbernoulli.t(with(Perom, cbind(y1, y2, y3, y4, y5, y6)))  # Convenient
-%Perom <- data.frame(Perom, bei = 0, pdata$cap.hist1)  # Put all into 1 dataframe
-%head(Perom)  # Augmented with behavioural effect indicator variables
+%pdata <- aux.posbernoulli.t(with(deermice, cbind(y1, y2, y3, y4, y5, y6)))  # Convenient
+%deermice <- data.frame(deermice, bei = 0, pdata$cap.hist1)  # Put all into 1 dataframe
+%head(deermice)  # Augmented with behavioural effect indicator variables
 %M.tbh.1 <- vglm(cbind(y1, y2, y3, y4, y5, y6) ~ sex + weight + age + bei,
 %                posbernoulli.t(parallel.t = TRUE ~ sex + weight + age + bei - 1),
-%                data = Perom, trace = TRUE,
+%                data = deermice, trace = TRUE,
 %                xij = list(bei ~ bei1 + bei2 + bei3 + bei4 + bei5 + bei6 - 1),
 %                form2 = ~        bei1 + bei2 + bei3 + bei4 + bei5 + bei6 +
 %                           sex + weight + age + bei)
 %coef(M.tbh.1, matrix = TRUE)
-%head(Perom, 3)
+%head(deermice, 3)
 %head(model.matrix(M.tbh.1, type = "vlm"), 20)
 %summary(M.tbh.1, presid = FALSE)
 %head(depvar(M.tbh.1))  # Response capture history matrix

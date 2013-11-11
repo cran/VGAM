@@ -75,10 +75,10 @@ ABO(link = "logit", ipA = NULL, ipO = NULL)
 
 }
 \examples{
-ymat <- cbind(A = 725, B = 258, AB = 72, O = 1073) # Order matters, not the name
+ymat <- cbind(A = 725, B = 258, AB = 72, O = 1073)  # Order matters, not the name
 fit <- vglm(ymat ~ 1, ABO(link = identity), trace = TRUE, cri = "coef")
 coef(fit, matrix = TRUE)
-Coef(fit) # Estimated pA and pB
+Coef(fit)  # Estimated pA and pB
 rbind(ymat, sum(ymat) * fitted(fit))
 sqrt(diag(vcov(fit)))
 }

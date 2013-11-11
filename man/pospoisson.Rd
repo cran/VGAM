@@ -92,7 +92,7 @@ Coef(fit)
 summary(fit)
 fitted(fit)
 
-pdata <- data.frame(x2 = runif(nn <- 1000)) # Artificial data
+pdata <- data.frame(x2 = runif(nn <- 1000))  # Artificial data
 pdata <- transform(pdata, lambda = exp(1 - 2 * x2))
 pdata <- transform(pdata, y1 = rpospois(nn, lambda))
 with(pdata, table(y1))

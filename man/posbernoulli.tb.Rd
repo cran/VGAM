@@ -19,6 +19,7 @@ posbernoulli.tb(link = "logit",
                 drop.b     = FALSE ~ 1,
                 type.fitted = c("likelihood.cond", "mean.uncond"),
                 imethod = 1, iprob = NULL,
+                p.small = 1e-4, no.warning = FALSE,
                 ridge.constant = 0.01, ridge.power = -4)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -102,6 +103,13 @@ posbernoulli.tb(link = "logit",
 
 
   }
+  \item{p.small, no.warning}{
+  See \code{\link{posbernoulli.t}}.
+
+
+  }
+
+
 }
 \details{
   This model
@@ -184,10 +192,13 @@ posbernoulli.tb(link = "logit",
 
 
 \seealso{ 
-  \code{\link{posbernoulli.b}} (including \eqn{\widehat{N}}),
+  \code{\link{posbernoulli.b}} (including \code{N.hat}),
   \code{\link{posbernoulli.t}},
   \code{\link{posbinomial}},
-  \code{\link{Huggins89.t1}}.
+  \code{\link{Huggins89table1}},
+  \code{\link{Huggins89.t1}},
+  \code{\link{deermice}}.
+  \code{\link{prinia}}.
 
 
 }
@@ -195,14 +206,13 @@ posbernoulli.tb(link = "logit",
 \examples{
 \dontrun{
 # Example 1: simulated data
-nTimePts <- 10  # (aka tau == # of sampling occasions)
+nTimePts <- 5  # (aka tau == # of sampling occasions)
 nnn <- 1000   # Number of animals
 pdata <- rposbern(n = nnn, nTimePts = nTimePts, pvars = 2)
 dim(pdata); head(pdata)
 
-M_tbh.1 <- vglm(cbind(y1, y2, y3, y4, y5, y6, y7, y8, y9, y10) ~ x2,
-                posbernoulli.tb(parallel.t = FALSE ~  0),
-                data = pdata, trace = TRUE)
+M_tbh.1 <- vglm(cbind(y1, y2, y3, y4, y5) ~ x2,
+                posbernoulli.tb, data = pdata, trace = TRUE)
 coef(M_tbh.1)  # First element is the behavioural effect
 coef(M_tbh.1, matrix = TRUE)
 constraints(M_tbh.1, matrix = TRUE)
@@ -211,9 +221,20 @@ head(fitted(M_tbh.1))
 head(model.matrix(M_tbh.1, type = "vlm"), 21)
 dim(depvar(M_tbh.1))
 
-# Example 2: Perom subset data
+M_tbh.2 <- vglm(cbind(y1, y2, y3, y4, y5) ~ x2,
+                posbernoulli.tb(parallel.t = FALSE ~  0),
+                data = pdata, trace = TRUE)
+coef(M_tbh.2)  # First element is the behavioural effect
+coef(M_tbh.2, matrix = TRUE)
+constraints(M_tbh.2, matrix = TRUE)
+summary(M_tbh.2, presid = FALSE)  # Standard errors are approximate
+head(fitted(M_tbh.2))
+head(model.matrix(M_tbh.2, type = "vlm"), 21)
+dim(depvar(M_tbh.2))
+
+# Example 2: deermice subset data
 fit1 <- vglm(cbind(y1, y2, y3, y4, y5, y6) ~ sex + weight,
-             posbernoulli.t, data = Perom, trace = TRUE)
+             posbernoulli.t, data = deermice, trace = TRUE)
 coef(fit1)
 coef(fit1, matrix = TRUE)
 constraints(fit1, matrix = TRUE)
@@ -223,7 +244,7 @@ summary(fit1, presid = FALSE)  # Standard errors are approximate
 Fit1 <- vglm(cbind(y1, y2, y3, y4, y5, y6) ~ sex + weight,
              posbernoulli.tb(drop.b = TRUE ~ sex + weight,
                              parallel.t = TRUE),  # No parallelism for the intercept
-             data = Perom, trace = TRUE)
+             data = deermice, trace = TRUE)
 constraints(Fit1)
 }
 }

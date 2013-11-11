@@ -6,11 +6,61 @@
 
 
 
+                CHANGES IN VGAM VERSION 0.9-3
+
+NEW FEATURES
+
+    o   New argument:
+        posbinomial(omit.constant = FALSE), set to TRUE if
+        comparing M_0/M_h models with M_b/M_t/M_tb/M_bh/M_th/M_tbh.
+    o   rcim() works with family = multinomial; in conjunction with
+        arguments M and cindex to be specified.
+        rcim() also had additional arguments and new defaults.
+    o   New arguments:
+        positive Bernoulli functions have 'p.small' and 'no.warning'
+        arguments.
+    o   AICc() is new.
+    o   family.name() generic is new.
+    o   New data sets: prinia.
+    o   logLik() methods function for "qrrvglm" objects.
+        AIC() methods function for "qrrvglm" objects is corrected.
+        AIC() methods function for "cao" objects is new.
+
+
+BUG FIXES and CHANGES
+
+    o   vgam() with nontrivial constraints is giving incorrect
+        predict(vgam.object) and fitted(vgam.object).
+        Not yet fixed up but will try soon!
+        Thanks to Zachary Kurtz for picking this up.
+    o   Argument 'which.lp' changed to 'which.linpred'.
+        Argument 'which.eta' changed to 'which.linpred'.
+        Argument 'lapred.index' changed to 'linpred.index'.
+        Argument 'whichSpecies' changed to 'which.species'.
+        Argument 'plot.it' changed to 'show.plot'.
+        Argument 'intervalWidth' in plotqvar() changed to 'interval.width'.
+    o   Decommissioned VGAM family functions: cennormal1().
+    o   posbinomial() returns @extra$N.hat and @extra$SE.N.hat
+        if the number of trials is constant across observations.
+    o   calibrate() restored to working order.
+    o   Argument names changed:
+        'szero' renamed to 'str0' thoughout,
+        'allowable.length' renamed to 'length.arg' in is.Numeric().
+    o   Function uqo() has been withdrawn. Reasons:
+        (i)  It needs to be rewritten in C but unfortunately am too busy...
+        (ii) It is a very difficult optimization problem, probably too
+        difficult to solve in general efficiently.
+    o   Arguments in rcqo() have changed.
+    o   Data set Perom withdrawn, but deermice remains.
+    o   Argument 'zero' in binom2.or() had a bug.
+
+
+
                 CHANGES IN VGAM VERSION 0.9-2
 
 NEW FEATURES
 
-    o   New family functions: logF(d), biclayton(dr), binormalcop(dp),
+    o   New family functions: logF(d), biclaytoncop(dr), binormalcop(dp),
         bistudentt(d), and a basic normal.vcm(),
         zabinomialff(), zageometricff(), zanegbinomialff(), zapoissonff(),
         zibinomialff(), zigeometricff(), zinegbinomialff().

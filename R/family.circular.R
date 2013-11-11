@@ -84,7 +84,7 @@ rcard <- function(n, mu, rho, ...) {
   if (!is.Numeric(rho) || max(abs(rho) > 0.5))
     stop("argument 'rho' must be between -0.5 and 0.5 inclusive")
   if (!is.Numeric(n, positive = TRUE,
-                  integer.valued = TRUE, allowable.length = 1))
+                  integer.valued = TRUE, length.arg = 1))
     stop("argument 'n' must be a single positive integer")
 
   mu <- rep(mu, len = n)
@@ -123,7 +123,7 @@ cardioid.control <- function(save.weight = TRUE, ...) {
   if (!is.Numeric(irho) || max(abs(irho)) > 0.5)
     stop("bad input for argument 'irho'")
 
-  if (!is.Numeric(nsimEIM, allowable.length = 1,
+  if (!is.Numeric(nsimEIM, length.arg = 1,
                   integer.valued = TRUE) ||
       nsimEIM <= 50)
     stop("'nsimEIM' should be an integer greater than 50")
@@ -262,7 +262,7 @@ cardioid.control <- function(save.weight = TRUE, ...) {
   ilocat <- ilocation
 
 
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
      imethod > 2)
     stop("argument 'imethod' must be 1 or 2")
@@ -317,7 +317,7 @@ cardioid.control <- function(save.weight = TRUE, ...) {
             theta2eta(locat.init, .llocat, earg = .elocat),
             theta2eta(scale.init, .lscale, earg = .escale))
       }
-      y <- y %% (2*pi) # Coerce after initial values have been computed
+      y <- y %% (2*pi)  # Coerce after initial values have been computed
   }), list( .imethod = imethod, .ilocat = ilocat,
             .escale = escale, .elocat = elocat,
             .lscale = lscale, .llocat = llocat,
@@ -366,7 +366,7 @@ cardioid.control <- function(save.weight = TRUE, ...) {
     ned2l.dlocat2 <- Scale * tmp6[, 2] / tmp6[, 1]
     ned2l.dscale2 <- tmp6[, 3] / tmp6[, 1] - (tmp6[, 2] / tmp6[, 1])^2
 
-    wz <- matrix(as.numeric(NA), nrow = n, ncol = 2) # diagonal
+    wz <- matrix(as.numeric(NA), nrow = n, ncol = 2)  # diagonal
     wz[,iam(1, 1, M)] <- ned2l.dlocat2 * dlocat.deta^2
     wz[,iam(2, 2, M)] <- ned2l.dscale2 * dscale.deta^2
     c(w) * wz

@@ -266,6 +266,7 @@ cqo(formula, family, data = list(), weights = NULL, subset = NULL,
   \code{deviance.Bestof} which gives the history of deviances over all
   the iterations.
 
+
 }
 \references{
 
@@ -302,12 +303,85 @@ original FORTRAN code into C.
 } 
 
 \note{
+  The input requires care, preparation and
+  thought---\emph{a lot more} than other ordination methods.
+  Here is a partial \bold{checklist}.
+  \describe{
+  \item{(1)}{
+  The number of species should be kept reasonably low, e.g., 12 max.
+  Feeding in 100+ species wholesale is a recipe for failure.
+  Choose a few species carefully.
+  Using 10 well-chosen species is better than 100+ species thrown in
+  willy-nilly.
+
+
+  }
+  \item{(2)}{
+  Each species should be screened individually first, e.g.,
+  for presence/absence is the species totally absent or totally present
+  at all sites?
+  For presence/absence data \code{sort(colMeans(data))} can help
+  avoid such species.
+
+
+  }
+  \item{(3)}{
+  The number of explanatory variables should be kept low,
+  e.g., 7 max.
+
+
+  }
+  \item{(4)}{
+  Each explanatory variable should be screened individually first, e.g.,
+  is it heavily skewed or are there outliers?
+  They should be plotted and then transformed where needed.
+  They should not be too highly correlated with each other.
+
+
+  }
+  \item{(5)}{
+  Each explanatory variable should be scaled, e.g.,
+  to mean 0 and unit variance.
+  This is especially needed for \code{ITolerance = TRUE}.
+
+
+  }
+  \item{(6)}{
+  Keep the rank low.
+  Only if the data is very good should a rank-2 model be attempted.
+  Usually a rank-1 model is all that is practically possible even
+  after a lot of work.
+  The rank-1 model should always be attempted first.
+  Then might be clever and try use this for initial values for
+  a rank-2 model.
+
+
+  }
+  \item{(7)}{
+  If the number of sites is large then choose a random sample of them.
+  For example, choose a maximum of 500 sites.
+  This will reduce the memory and time expense of the computations.
+
+
+  }
+  \item{(8)}{
+  Try \code{ITolerance = TRUE} or \code{EqualTolerance = FALSE}
+  if the inputted data set is large,
+  so as to reduce the computational expense.
+  That's because the default, \code{ITolerance = FALSE} and 
+  \code{EqualTolerance = TRUE}, is very memory hungry.
+
+
+  }
+  }
+
+
 
   By default, a rank-1 equal-tolerances QRR-VGLM model is fitted
   (see \code{\link{qrrvglm.control}} for the default control
   parameters).
-  The latent variables are always transformed so that they
-  are uncorrelated.
+  If \code{Rank > 1} then the latent variables are always transformed
+  so that they are uncorrelated.
   By default, the argument \code{trace} is \code{TRUE} meaning a running
   log is printed out while the computations are taking place.  This is
   because the algorithm is computationally expensive, therefore users
@@ -394,7 +468,8 @@ original FORTRAN code into C.
 
 
   Unless \code{ITolerances = TRUE} or \code{EqualTolerances = FALSE},
-  CQO is computationally expensive. It pays to keep the rank down to 1
+  CQO is computationally expensive with memory and time.
+  It pays to keep the rank down to 1
   or 2.  If \code{EqualTolerances = TRUE} and \code{ITolerances = FALSE} then
   the cost grows quickly with the number of species and sites (in terms of
   memory requirements and time).  The data needs to conform quite closely
@@ -438,9 +513,9 @@ original FORTRAN code into C.
   \code{\link{predictqrrvglm}},
   \code{\link{rcqo}},
   \code{\link{cao}},
-  \code{\link{uqo}},
+% \code{\link{uqo}},
   \code{\link{rrvglm}},
-%   \code{\link{rrvglm.control}},
+% \code{\link{rrvglm.control}},
   \code{\link{poissonff}},
   \code{\link{binomialff}},
   \code{\link{negbinomial}},
@@ -463,20 +538,20 @@ contains further information and examples.
 \examples{
 \dontrun{
 # Example 1; Fit an unequal tolerances model to the hunting spiders data
-hspider[,1:6] <- scale(hspider[,1:6]) # Standardized environmental variables
-set.seed(1234) # For reproducibility of the results
+hspider[,1:6] <- scale(hspider[,1:6])  # Standardized environmental variables
+set.seed(1234)  # For reproducibility of the results
 p1ut <- cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,
                   Auloalbi, Pardlugu, Pardmont, Pardnigr, Pardpull,
                   Trocterr, Zoraspin) ~
             WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
             fam = poissonff, data = hspider, Crow1positive = FALSE,
             EqualTol = FALSE)
-sort(p1ut@misc$deviance.Bestof) # A history of all the iterations
+sort(p1ut@misc$deviance.Bestof)  # A history of all the iterations
 if(deviance(p1ut) > 1177) warning("suboptimal fit obtained")
 
-S <- ncol(depvar(p1ut)) # Number of species
-clr <- (1:(S+1))[-7] # Omits yellow
-lvplot(p1ut, y = TRUE, lcol = clr, pch = 1:S, pcol = clr, las = 1) # ordination diagram
+S <- ncol(depvar(p1ut))  # Number of species
+clr <- (1:(S+1))[-7]  # Omits yellow
+lvplot(p1ut, y = TRUE, lcol = clr, pch = 1:S, pcol = clr, las = 1)  # Ordination diagram
 legend("topright", leg = colnames(depvar(p1ut)), col = clr,
        pch = 1:S, merge = TRUE, bty = "n", lty = 1:S, lwd = 2)
 (cp <- Coef(p1ut))
@@ -484,19 +559,19 @@ legend("topright", leg = colnames(depvar(p1ut)), col = clr,
 (a <- cp@latvar[cp@latvar.order])  # The ordered site scores along the gradient
 # Names of the ordered sites along the gradient:
 rownames(cp@latvar)[cp@latvar.order]
-(aa <- (cp@Optimum)[,cp@Optimum.order]) # The ordered optima along the gradient
-aa <- aa[!is.na(aa)] # Delete the species that is not unimodal
-names(aa) # Names of the ordered optima along the gradient
+(aa <- (cp@Optimum)[,cp@Optimum.order])  # The ordered optima along the gradient
+aa <- aa[!is.na(aa)]  # Delete the species that is not unimodal
+names(aa)  # Names of the ordered optima along the gradient
 
-trplot(p1ut, whichSpecies = 1:3, log = "xy", type = "b", lty = 1, lwd = 2,
-       col = c("blue","red","green"), label = TRUE) -> ii # trajectory plot
+trplot(p1ut, which.species = 1:3, log = "xy", type = "b", lty = 1, lwd = 2,
+       col = c("blue","red","green"), label = TRUE) -> ii  # Trajectory plot
 legend(0.00005, 0.3, paste(ii$species[, 1], ii$species[, 2], sep = " and "),
        lwd = 2, lty = 1, col = c("blue", "red", "green"))
 abline(a = 0, b = 1, lty = "dashed")
 
-S <- ncol(depvar(p1ut)) # Number of species
-clr <- (1:(S+1))[-7] # Omits yellow
-persp(p1ut, col = clr, label = TRUE, las = 1) # perspective plot
+S <- ncol(depvar(p1ut))  # Number of species
+clr <- (1:(S+1))[-7]  # Omits yellow
+persp(p1ut, col = clr, label = TRUE, las = 1)  # Perspective plot
 
 
 # Example 2; Fit an equal tolerances model. Less numerically fraught.
@@ -506,10 +581,10 @@ p1et <- cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,
                   Trocterr, Zoraspin) ~
             WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
             poissonff, data = hspider, Crow1positive = FALSE)
-sort(p1et@misc$deviance.Bestof) # A history of all the iterations
+sort(p1et@misc$deviance.Bestof)  # A history of all the iterations
 if (deviance(p1et) > 1586) warning("suboptimal fit obtained")
-S <- ncol(depvar(p1et)) # Number of species
-clr <- (1:(S+1))[-7] # Omits yellow
+S <- ncol(depvar(p1et))  # Number of species
+clr <- (1:(S+1))[-7]  # Omits yellow
 persp(p1et, col = clr, label = TRUE, las = 1)
 
 
@@ -522,7 +597,7 @@ p2 <- cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,
           WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
           poissonff, data = hspider, Crow1positive = FALSE,
           IToler = TRUE, Rank = 2, Bestof = 3, isd.latvar = c(2.1, 0.9))
-sort(p2@misc$deviance.Bestof) # A history of all the iterations
+sort(p2@misc$deviance.Bestof)  # A history of all the iterations
 if(deviance(p2) > 1127) warning("suboptimal fit obtained")
 lvplot(p2, ellips = FALSE, label = TRUE, xlim = c(-3,4),
        C = TRUE, Ccol = "brown", sites = TRUE, scol = "grey", 
@@ -532,12 +607,12 @@ lvplot(p2, ellips = FALSE, label = TRUE, xlim = c(-3,4),
 # Example 4: species packing model with presence/absence data
 set.seed(2345)
 n <- 200; p <- 5; S <- 5
-mydata <- rcqo(n, p, S, fam = "binomial", hiabundance = 4,
-               EqualTol = TRUE, ESOpt = TRUE, EqualMax = TRUE)
+mydata <- rcqo(n, p, S, fam = "binomial", hi.abundance = 4,
+               eq.tol = TRUE, es.opt = TRUE, eq.max = TRUE)
 myform <- attr(mydata, "formula")
 set.seed(1234)
 b1et <- cqo(myform, binomialff(mv = TRUE, link = "cloglog"), data = mydata)
-sort(b1et@misc$deviance.Bestof) # A history of all the iterations
+sort(b1et@misc$deviance.Bestof)  # A history of all the iterations
 lvplot(b1et, y = TRUE, lcol = 1:S, pch = 1:S, pcol = 1:S, las = 1)
 Coef(b1et)
 
@@ -552,21 +627,21 @@ p1et <- cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,
                   Trocterr, Zoraspin) ~
             WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
             poissonff, data = hspider, EqualTol = TRUE, trace = FALSE)
-sort(p1et@misc$deviance.Bestof) # A history of all the iterations
+sort(p1et@misc$deviance.Bestof)  # A history of all the iterations
 if(deviance(p1et) > 1586) warning("suboptimal fit obtained")
 S <- ncol(depvar(p1et))
 par(mfrow = c(3, 4))
-for(ii in 1:S) {
+for (ii in 1:S) {
   tempdata <- data.frame(latvar1 = c(latvar(p1et)), sppCounts = depvar(p1et)[, ii])
   tempdata <- transform(tempdata, myOffset = -0.5 * latvar1^2)
 
 # For species ii, refit the model to get the deviance residuals
-  fit1 <- vglm(sppCounts ~ offset(myOffset) + latvar1, fam = poissonff,
+  fit1 <- vglm(sppCounts ~ offset(myOffset) + latvar1, poissonff,
                data = tempdata, trace = FALSE)
 
 # For checking: this should be 0
-  print("max(abs(c(Coef(p1et)@B1[1,ii], Coef(p1et)@A[ii,1]) - coef(fit1)))")
-  print( max(abs(c(Coef(p1et)@B1[1,ii], Coef(p1et)@A[ii,1]) - coef(fit1))) )
+# print("max(abs(c(Coef(p1et)@B1[1,ii], Coef(p1et)@A[ii,1]) - coef(fit1)))")
+# print( max(abs(c(Coef(p1et)@B1[1,ii], Coef(p1et)@A[ii,1]) - coef(fit1))) )
 
 # Plot the deviance residuals
   devresid <- resid(fit1, type = "deviance")

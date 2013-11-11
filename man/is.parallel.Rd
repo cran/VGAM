@@ -64,7 +64,7 @@ is.parallel.vglm(object, type = c("term", "lm"), \dots)
 fit <- vglm(educ ~ bs(age) * sex + ethnic,
             cumulative(parallel = TRUE), xs.nz[1:200, ])
 is.parallel(fit)
-is.parallel(fit, type = "lm") # For each column of the LM matrix
+is.parallel(fit, type = "lm")  # For each column of the LM matrix
 }
 }
 

@@ -57,7 +57,7 @@ rperks(n, shape, scale = 1)
 probs <- seq(0.01, 0.99, by = 0.01)
 Shape <- exp(-1.0); Scale <- exp(1);
 max(abs(pperks(qperks(p = probs, Shape, Scale),
-                  Shape, Scale) - probs)) # Should be 0
+                  Shape, Scale) - probs))  # Should be 0
 
 \dontrun{ x <- seq(-0.1, 07, by = 0.01);
 plot(x, dperks(x, Shape, Scale), type = "l", col = "blue", las = 1,
@@ -69,7 +69,7 @@ lines(x, pperks(x, Shape, Scale), col = "orange")
 probs <- seq(0.1, 0.9, by = 0.1)
 Q <- qperks(probs, Shape, Scale)
 lines(Q, dperks(Q, Shape, Scale), col = "purple", lty = 3, type = "h")
-pperks(Q, Shape, Scale) - probs # Should be all zero
+pperks(Q, Shape, Scale) - probs  # Should be all zero
 abline(h = probs, col = "purple", lty = 3) }
 }
 \keyword{distribution}

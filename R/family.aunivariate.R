@@ -85,14 +85,14 @@ pkumar <- function(q, shape1, shape2) {
 
 
   if (length(ishape1) &&
-     (!is.Numeric(ishape1, allowable.length = 1, positive = TRUE)))
+     (!is.Numeric(ishape1, length.arg = 1, positive = TRUE)))
     stop("bad input for argument 'ishape1'")
   if (length(ishape2) && !is.Numeric(ishape2))
     stop("bad input for argument 'ishape2'")
 
-  if (!is.Numeric(tol12, allowable.length = 1, positive = TRUE))
+  if (!is.Numeric(tol12, length.arg = 1, positive = TRUE))
     stop("bad input for argument 'tol12'")
-  if (!is.Numeric(grid.shape1, allowable.length = 2, positive = TRUE))
+  if (!is.Numeric(grid.shape1, length.arg = 2, positive = TRUE))
     stop("bad input for argument 'grid.shape1'")
 
 
@@ -166,7 +166,7 @@ pkumar <- function(q, shape1, shape2) {
 
 
 
-           mediany <- colSums(y * w) / colSums(w) # weighted.mean(y, w)
+           mediany <- colSums(y * w) / colSums(w)  # weighted.mean(y, w)
 
           shape2 <- log(0.5) / log1p(-(mediany^shape1))
           sum(c(w) * dkumar(x = y, shape1 = shape1, shape2 = shape2,
@@ -182,7 +182,7 @@ pkumar <- function(q, shape1, shape2) {
 
 
 
-       mediany <- colSums(y * w) / colSums(w) # weighted.mean(y, w)
+       mediany <- colSums(y * w) / colSums(w)  # weighted.mean(y, w)
 
 
       shape2.init <- if (length( .ishape2 )) .ishape2 else
@@ -298,9 +298,9 @@ drice <- function(x, vee, sigma, log = FALSE) {
 
 
   N <- max(length(x), length(vee), length(sigma))
-  x     <- rep(x,     len = N)
-  vee   <- rep(vee,   len = N)
-  sigma <- rep(sigma, len = N)
+  if (length(x)      != N) x      <- rep(x,      len = N)
+  if (length(vee)    != N) vee    <- rep(vee   , len = N)
+  if (length(sigma ) != N) sigma  <- rep(sigma , len = N)
 
   logdensity <- rep(log(0), len = N)
   xok <- (x > 0)
@@ -316,7 +316,7 @@ drice <- function(x, vee, sigma, log = FALSE) {
 
 
 rrice <- function(n, vee, sigma) {
-  if (!is.Numeric(n, integer.valued = TRUE, allowable.length = 1))
+  if (!is.Numeric(n, integer.valued = TRUE, length.arg = 1))
     stop("bad input for argument 'n'")
   theta <- 1  # any number
   X <- rnorm(n, mean = vee * cos(theta), sd = sigma)
@@ -350,7 +350,7 @@ riceff.control <- function(save.weight = TRUE, ...) {
   if (length(isigma) && !is.Numeric(isigma, positive = TRUE))
     stop("bad input for argument 'isigma'")
 
-  if (!is.Numeric(nsimEIM, allowable.length = 1,
+  if (!is.Numeric(nsimEIM, length.arg = 1,
                   integer.valued = TRUE) ||
       nsimEIM <= 50)
     stop("'nsimEIM' should be an integer greater than 50")
@@ -502,9 +502,9 @@ dskellam <- function(x, mu1, mu2, log = FALSE) {
 
 
   L <- max(length(x), length(mu1), length(mu2))
-  x   <- rep(x,   len = L)
-  mu1 <- rep(mu1, len = L)
-  mu2 <- rep(mu2, len = L)
+  if (length(x)      != L) x      <- rep(x,      len = L)
+  if (length(mu1)    != L) mu1    <- rep(mu1,    len = L)
+  if (length(mu2)    != L) mu2    <- rep(mu2,    len = L)
 
   ok2 <- is.finite(mu1) & is.finite(mu2) & (mu1 >= 0) & (mu2 >= 0)
   ok3 <- (mu1 == 0) & (mu2 >  0)
@@ -576,7 +576,7 @@ skellam.control <- function(save.weight = TRUE, ...) {
 
 
 
-  if (!is.Numeric(nsimEIM, allowable.length = 1,
+  if (!is.Numeric(nsimEIM, length.arg = 1,
                   integer.valued = TRUE) ||
       nsimEIM <= 50)
     stop("argument 'nsimEIM' should be an integer greater than 50")
@@ -621,9 +621,9 @@ skellam.control <- function(save.weight = TRUE, ...) {
 
       mu1.init <- max((var.y.est + mean.init) / 2, 0.01)
       mu2.init <- max((var.y.est - mean.init) / 2, 0.01)
-      mu1.init <- rep(if(length( .imu1 )) .imu1 else mu1.init,
+      mu1.init <- rep(if (length( .imu1 )) .imu1 else mu1.init,
                       length = n)
-      mu2.init <- rep(if(length( .imu2 )) .imu2 else mu2.init,
+      mu2.init <- rep(if (length( .imu2 )) .imu2 else mu2.init,
                       length = n)
 
       etastart <- cbind(theta2eta(mu1.init, .lmu1, earg = .emu1 ),
@@ -745,7 +745,7 @@ dyules <- function(x, rho, log = FALSE) {
 
 
 ryules <- function(n, rho) {
-  if (!is.Numeric(n, integer.valued = TRUE, allowable.length = 1))
+  if (!is.Numeric(n, integer.valued = TRUE, length.arg = 1))
     stop("bad input for argument 'n'")
   rgeom(n, prob = exp(-rexp(n, rate=rho))) + 1
 }
@@ -782,7 +782,7 @@ yulesimon.control <- function(save.weight = TRUE, ...) {
   link <- attr(earg, "function.name")
 
 
-  if (!is.Numeric(nsimEIM, allowable.length = 1,
+  if (!is.Numeric(nsimEIM, length.arg = 1,
                   integer.valued = TRUE) ||
       nsimEIM <= 50)
     stop("argument 'nsimEIM' should be an integer greater than 50")
@@ -1145,7 +1145,7 @@ if (FALSE)
   link <- attr(earg, "function.name")
 
 
-  if (!is.Numeric(nsimEIM, allowable.length = 1,
+  if (!is.Numeric(nsimEIM, length.arg = 1,
                   integer.valued = TRUE) ||
       nsimEIM <= 50)
     stop("argument 'nsimEIM' should be an integer greater than 50")
@@ -1300,9 +1300,9 @@ dslash <- function(x, mu = 0, sigma = 1, log = FALSE,
   if (!is.Numeric(sigma) || any(sigma <= 0))
     stop("argument 'sigma' must be positive")
   L <- max(length(x), length(mu), length(sigma))
-  x     <- rep(x,     len = L);
-  mu    <- rep(mu,    len = L);
-  sigma <- rep(sigma, len = L)
+  if (length(x)     != L) x     <- rep(x,     len = L)
+  if (length(mu)    != L) mu    <- rep(mu,    len = L)
+  if (length(sigma) != L) sigma <- rep(sigma, len = L)
 
   zedd <- (x-mu)/sigma
   if (log.arg)
@@ -1317,9 +1317,9 @@ pslash <- function(q, mu = 0, sigma = 1) {
   if (!is.Numeric(sigma) || any(sigma <= 0))
     stop("argument 'sigma' must be positive")
   L <- max(length(q), length(mu), length(sigma))
-  q     <- rep(q,     len = L);
-  mu    <- rep(mu,    len = L);
-  sigma <- rep(sigma, len = L)
+  if (length(q)     != L) q     <- rep(q,     len = L)
+  if (length(mu)    != L) mu    <- rep(mu,    len = L)
+  if (length(sigma) != L) sigma <- rep(sigma, len = L)
 
   ans <- q * NA
   for (ii in 1:L) {
@@ -1369,7 +1369,7 @@ slash.control <- function(save.weight = TRUE, ...) {
     stop("bad input for argument 'zero'")
 
 
-  if (!is.Numeric(nsimEIM, allowable.length = 1,
+  if (!is.Numeric(nsimEIM, length.arg = 1,
                   integer.valued = TRUE) ||
       nsimEIM <= 50)
     stop("argument 'nsimEIM' should be an integer greater than 50")
@@ -1539,8 +1539,8 @@ dnefghs <- function(x, tau, log = FALSE) {
 
 
   N <- max(length(x), length(tau))
-  x   <- rep(x,   len = N)
-  tau <- rep(tau, len = N)
+  if (length(x)   != N) x   <- rep(x,   len = N)
+  if (length(tau) != N) tau <- rep(tau, len = N)
 
   logdensity <- log(sin(pi*tau)) + (1-tau)*x - log(pi) - log1pexp(x)
   logdensity[tau < 0] <- NaN
@@ -1562,7 +1562,7 @@ dnefghs <- function(x, tau, log = FALSE) {
   earg <- link2list(link)
   link <- attr(earg, "function.name")
 
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
        imethod > 2)
     stop("argument 'imethod' must be 1 or 2")
@@ -1683,7 +1683,7 @@ dlogF <- function(x, shape1, shape2, log = FALSE) {
   lshape2 <- attr(eshape2, "function.name")
 
 
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
      imethod > 2)
       stop("argument 'imethod' must be 1 or 2")
@@ -1799,7 +1799,7 @@ dlogF <- function(x, shape1, shape2, log = FALSE) {
 
 
 dbenf <- function(x, ndigits = 1, log = FALSE) {
-  if (!is.Numeric(ndigits, allowable.length = 1,
+  if (!is.Numeric(ndigits, length.arg = 1,
                   positive = TRUE, integer.valued = TRUE) ||
       ndigits > 2)
     stop("argument 'ndigits' must be 1 or 2")
@@ -1824,7 +1824,7 @@ dbenf <- function(x, ndigits = 1, log = FALSE) {
 
 
 rbenf <- function(n, ndigits = 1) {
-  if (!is.Numeric(ndigits, allowable.length = 1,
+  if (!is.Numeric(ndigits, length.arg = 1,
                   positive = TRUE, integer.valued = TRUE) ||
       ndigits > 2)
     stop("argument 'ndigits' must be 1 or 2")
@@ -1832,7 +1832,7 @@ rbenf <- function(n, ndigits = 1) {
   upperlimit <- ifelse(ndigits == 1, 9, 99)
   use.n <- if ((length.n <- length(n)) > 1) length.n else
            if (!is.Numeric(n, integer.valued = TRUE,
-                           allowable.length = 1, positive = TRUE)) 
+                           length.arg = 1, positive = TRUE)) 
              stop("bad input for argument 'n'") else n
   myrunif <- runif(use.n)
 
@@ -1847,7 +1847,7 @@ rbenf <- function(n, ndigits = 1) {
 
 
 pbenf <- function(q, ndigits = 1, log.p = FALSE) {
-  if (!is.Numeric(ndigits, allowable.length = 1,
+  if (!is.Numeric(ndigits, length.arg = 1,
                   positive = TRUE, integer.valued = TRUE) ||
       ndigits > 2)
     stop("argument 'ndigits' must be 1 or 2")
@@ -1868,7 +1868,7 @@ pbenf <- function(q, ndigits = 1, log.p = FALSE) {
 
 
 qbenf <- function(p, ndigits = 1) {
-  if (!is.Numeric(ndigits, allowable.length = 1,
+  if (!is.Numeric(ndigits, length.arg = 1,
                   positive = TRUE, integer.valued = TRUE) ||
       ndigits > 2)
     stop("argument 'ndigits' must be 1 or 2")
@@ -1905,7 +1905,7 @@ qbenf <- function(p, ndigits = 1) {
 
 
  truncgeometric <-
-  function(upper.limit = Inf,  # lower.limit = 1, # Inclusive
+  function(upper.limit = Inf,  # lower.limit = 1,  # Inclusive
            link = "logit", expected = TRUE,
            imethod = 1, iprob = NULL, zero = NULL) {
 
@@ -1928,7 +1928,7 @@ qbenf <- function(p, ndigits = 1) {
   link <- attr(earg, "function.name")
 
 
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
      imethod > 3)
     stop("argument 'imethod' must be 1 or 2 or 3")

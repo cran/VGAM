@@ -310,7 +310,7 @@ London: Chapman & Hall.
 }
 
 \examples{\dontrun{
-hspider[,1:6] <- scale(hspider[,1:6]) # Standardized environmental vars
+hspider[,1:6] <- scale(hspider[,1:6])  # Standardized environmental vars
 set.seed(123)
 ap1 <- cao(cbind(Pardlugu, Pardmont, Pardnigr, Pardpull, Zoraspin) ~
            WaterCon + BareSand + FallTwig +
@@ -318,7 +318,7 @@ ap1 <- cao(cbind(Pardlugu, Pardmont, Pardnigr, Pardpull, Zoraspin) ~
            family = poissonff, data = hspider,
            df1.nl = c(Zoraspin = 2.3, 2.1),
            Bestof = 10, Crow1positive = FALSE)
-sort(ap1@misc$deviance.Bestof) # A history of all the iterations
+sort(ap1@misc$deviance.Bestof)  # A history of all the iterations
 
 Coef(ap1)
 

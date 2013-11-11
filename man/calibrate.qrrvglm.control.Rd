@@ -1,7 +1,7 @@
 \name{calibrate.qrrvglm.control}
 \alias{calibrate.qrrvglm.control}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{ Control function for CQO/UQO/CAO calibration }
+\title{ Control function for CQO/CAO calibration }
 \description{
   Algorithmic constants and parameters for running
   \code{\link{calibrate.qrrvglm}} are set using this function.
@@ -9,12 +9,16 @@
 }
 \usage{
 calibrate.qrrvglm.control(object, trace = FALSE, Method.optim = "BFGS",
-    gridSize = if (Rank == 1) 9 else 5, varlvI = FALSE, ...)
+    gridSize = if (Rank == 1) 9 else 5, varI.latvar = FALSE, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{object}{
-    The fitted CQO/UQO/CAO model. The user should ignore this argument.
+    The fitted CQO/CAO model. The user should ignore this argument.
+
+
+%   The fitted CQO/UQO/CAO model. The user should ignore this argument.
+
 
   }
   \item{trace}{ 
@@ -42,7 +46,7 @@ calibrate.qrrvglm.control(object, trace = FALSE, Method.optim = "BFGS",
 
 
   }
-  \item{varlvI}{ 
+  \item{varI.latvar}{ 
   Logical. For CQO objects only, this argument is fed into
   \code{\link{Coef.qrrvglm}}.
 
@@ -64,9 +68,9 @@ calibrate.qrrvglm.control(object, trace = FALSE, Method.optim = "BFGS",
   }
 \value{
   A list which with the following components.
-  \item{trace }{Numeric (even though the input can be logical). }
-  \item{gridSize }{Positive integer. }
-  \item{varlvI }{Logical.}
+  \item{trace}{Numeric (even though the input can be logical). }
+  \item{gridSize}{Positive integer. }
+  \item{varI.latvar}{Logical.}
 
 
 }
@@ -80,10 +84,15 @@ On constrained and unconstrained quadratic ordination.
 }
 \author{T. W. Yee}
 \note{
-  Despite the name of this function, UQO and CAO models are handled
+  Despite the name of this function, CAO models are handled
   as well.
 
+
+% Despite the name of this function, UQO and CAO models are handled
+
 }
+
+
 
 \seealso{
   \code{\link{calibrate.qrrvglm}},
@@ -101,7 +110,7 @@ p1 <- cqo(cbind(Alopacce, Alopcune, Pardlugu, Pardnigr,
           family = poissonff, data = hspider, ITol = TRUE)
 sort(p1@misc$deviance.Bestof)  # A history of all the iterations
 
-siteNos <- 1:2  # Calibrate these sites
+siteNos <- 3:4  # Calibrate these sites
 cp1 <- calibrate(p1, new = data.frame(depvar(p1)[siteNos, ]), trace = TRUE)
 }
 
@@ -110,8 +119,8 @@ cp1 <- calibrate(p1, new = data.frame(depvar(p1)[siteNos, ]), trace = TRUE)
 persp(p1, main = "Site scores: solid=actual, dashed=calibrated",
       label = TRUE, col = "blue", las = 1)
 abline(v = latvar(p1)[siteNos], lty = 1,
-       col = 1:length(siteNos))  # actual site scores
-abline(v = cp1, lty = 2, col = 1:length(siteNos))  # calibrated values
+       col = 1:length(siteNos))  # Actual site scores
+abline(v = cp1, lty = 2, col = 1:length(siteNos))  # Calibrated values
 }
 }
 \keyword{models}

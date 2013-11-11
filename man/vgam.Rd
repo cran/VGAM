@@ -208,6 +208,11 @@ The \code{VGAM} Package.
 
 %~Make other sections like WARNING with \section{WARNING }{....} ~
 \section{WARNING}{
+  Currently \code{vgam} can only handle constraint matrices \code{cmat},
+  say, such that \code{crossprod(cmat)} is diagonal.
+  This is a bug that I will try to fix up soon.
+
+
   See warnings in \code{\link{vglm.control}}.
 
 

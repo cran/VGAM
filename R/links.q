@@ -73,7 +73,7 @@ care.exp <- function(x,
 
 
  loge <- function(theta,
-                  bvalue = NULL, # .Machine$double.xmin is an alternative
+                  bvalue = NULL,  # .Machine$double.xmin is an alternative
                   inverse = FALSE, deriv = 0,
                   short = TRUE, tag = FALSE) {
 
@@ -109,7 +109,7 @@ care.exp <- function(x,
 
 
  logneg <- function(theta,
-                    bvalue = NULL, # .Machine$double.xmin is an alternative
+                    bvalue = NULL,  # .Machine$double.xmin is an alternative
                     inverse = FALSE, deriv = 0,
                     short = TRUE, tag = FALSE) {
 
@@ -246,7 +246,7 @@ care.exp <- function(x,
 
 
  logit <- function(theta,
-                   bvalue = NULL, # .Machine$double.eps is an alternative
+                   bvalue = NULL,  # .Machine$double.eps is an alternative
                    inverse = FALSE, deriv = 0,
                    short = TRUE, tag = FALSE) {
   if (is.character(theta)) {
@@ -288,7 +288,7 @@ care.exp <- function(x,
 
 
  loglog <- function(theta,
-                    bvalue = NULL, # .Machine$double.eps is an alternative
+                    bvalue = NULL,  # .Machine$double.eps is an alternative
                     inverse = FALSE, deriv = 0,
                     short = TRUE, tag = FALSE) {
   if (is.character(theta)) {
@@ -327,7 +327,7 @@ care.exp <- function(x,
 
 
  cloglog <- function(theta,
-                     bvalue = NULL, # .Machine$double.eps is an alternative
+                     bvalue = NULL,  # .Machine$double.eps is an alternative
                      inverse = FALSE, deriv = 0,
                      short = TRUE, tag = FALSE) {
   if (is.character(theta)) {
@@ -368,7 +368,7 @@ care.exp <- function(x,
 
 
  probit <- function(theta,
-                    bvalue = NULL, # .Machine$double.eps is an alternative
+                    bvalue = NULL,  # .Machine$double.eps is an alternative
                     inverse = FALSE, deriv = 0,
                     short = TRUE, tag = FALSE) {
   if (is.character(theta)) {
@@ -432,7 +432,7 @@ care.exp <- function(x,
 
 
  explink <- function(theta,
-                     bvalue = NULL, # .Machine$double.eps is an alternative
+                     bvalue = NULL,  # .Machine$double.eps is an alternative
                      inverse = FALSE, deriv = 0,
                      short = TRUE, tag = FALSE) {
   if (is.character(theta)) {
@@ -467,7 +467,7 @@ care.exp <- function(x,
 
 
  reciprocal <- function(theta,
-                        bvalue = NULL, # .Machine$double.eps is an alternative
+                        bvalue = NULL,  # .Machine$double.eps is an alternative
                         inverse = FALSE, deriv = 0,
                         short = TRUE, tag = FALSE) {
   if (is.character(theta)) {
@@ -501,7 +501,7 @@ care.exp <- function(x,
 
 
  negloge <- function(theta,
-                   bvalue = NULL, # .Machine$double.eps is an alternative
+                   bvalue = NULL,  # .Machine$double.eps is an alternative
                    inverse = FALSE, deriv = 0,
                    short = TRUE, tag = FALSE) {
   if (is.character(theta)) {
@@ -537,7 +537,7 @@ care.exp <- function(x,
 
  negreciprocal <-
   function(theta,
-           bvalue = NULL, # .Machine$double.eps is an alternative
+           bvalue = NULL,  # .Machine$double.eps is an alternative
            inverse = FALSE,
            deriv = 0, short = TRUE, tag = FALSE) {
   if (is.character(theta)) {
@@ -571,7 +571,7 @@ care.exp <- function(x,
 
  natural.ig <-
   function(theta,
-           bvalue = NULL, # .Machine$double.eps is an alternative
+           bvalue = NULL,  # .Machine$double.eps is an alternative
            inverse = FALSE, deriv = 0,
            short = TRUE, tag = FALSE) {
 
@@ -688,7 +688,7 @@ care.exp <- function(x,
  mlogit <-
   function(theta,
            refLevel = "last",
-           M = NULL, # stop("argument 'M' not specified"),
+           M = NULL,  # stop("argument 'M' not specified"),
            whitespace = FALSE,
            bvalue = NULL,
            inverse = FALSE, deriv = 0,
@@ -710,11 +710,11 @@ care.exp <- function(x,
       warning("argument 'refLevel' is from an ordered factor")
     refLevel <- as.character(refLevel) == levels(refLevel)
     refLevel <- (1:length(refLevel))[refLevel]
-    if (!is.Numeric(refLevel, allowable.length = 1,
+    if (!is.Numeric(refLevel, length.arg = 1,
                     integer.valued = TRUE, positive = TRUE))
       stop("could not coerce 'refLevel' into a single positive integer")
   } else
-  if (!is.Numeric(refLevel, allowable.length = 1,
+  if (!is.Numeric(refLevel, length.arg = 1,
                   integer.valued = TRUE))
     stop("'refLevel' must be a single (positive?) integer")
 
@@ -810,7 +810,7 @@ care.exp <- function(x,
                  bvalue = bvalue,
                  inverse = FALSE, deriv = deriv)
     } else {
-       foo(theta, refLevel, M = M) # log(theta[, -jay] / theta[, jay])
+       foo(theta, refLevel, M = M)  # log(theta[, -jay] / theta[, jay])
     }
   } else {
     switch(deriv + 1, {
@@ -834,15 +834,15 @@ care.exp <- function(x,
 
 
 
-fsqrt <- function(theta, #  = NA  , = NULL,
+fsqrt <- function(theta,  #  = NA  , = NULL,
                   min = 0, max = 1, mux = sqrt(2),
                   inverse = FALSE, deriv = 0,
                   short = TRUE, tag = FALSE) {
-  if (!is.Numeric(min, allowable.length = 1))
+  if (!is.Numeric(min, length.arg = 1))
     stop("bad input for 'min' component")
-  if (!is.Numeric(max, allowable.length = 1))
+  if (!is.Numeric(max, length.arg = 1))
     stop("bad input for 'max' component")
-  if (!is.Numeric(mux, allowable.length = 1, positive = TRUE))
+  if (!is.Numeric(mux, length.arg = 1, positive = TRUE))
     stop("bad input for 'mux' component")
   if (min >= max)
     stop("'min' >= 'max' is not allowed")
@@ -989,7 +989,7 @@ fsqrt <- function(theta, #  = NA  , = NULL,
 
 
  logc <- function(theta,
-                  bvalue = NULL, # .Machine$double.xmin is an alternative
+                  bvalue = NULL,  # .Machine$double.xmin is an alternative
                   inverse = FALSE, deriv = 0,
                   short = TRUE, tag = FALSE) {
   if (is.character(theta)) {
@@ -1146,8 +1146,8 @@ fsqrt <- function(theta, #  = NA  , = NULL,
   } else {
     smallno <- 1 * .Machine$double.eps
     Theta <- theta
-    Theta <- pmin(Theta, 1 - smallno) # Since theta == 1 is a possibility
-    Theta <- pmax(Theta, smallno) # Since theta == 0 is a possibility
+    Theta <- pmin(Theta, 1 - smallno)  # Since theta == 1 is a possibility
+    Theta <- pmax(Theta, smallno)  # Since theta == 0 is a possibility
     Ql <- qnorm(Theta)
     switch(deriv+1, {
         temp <- Ql / (3*sqrt(lambda))
@@ -1167,7 +1167,7 @@ fsqrt <- function(theta, #  = NA  , = NULL,
 
 
 
- polf <- function(theta, # = 1,
+ polf <- function(theta,  # = 1,
                   cutpoint = NULL,
                   inverse = FALSE, deriv = 0,
                   short = TRUE, tag = FALSE) {
@@ -1201,7 +1201,7 @@ fsqrt <- function(theta, #  = NA  , = NULL,
     thmat <- cbind(theta)
     if (ncol(thmat) > 1) {
         answer <- thmat
-        cutpoint <- rep(cutpoint, len = ncol(thmat)) # Reqd for the for loop
+        cutpoint <- rep(cutpoint, len = ncol(thmat))  # Reqd for the for loop
         for (ii in 1:ncol(thmat))
             answer[, ii] <- Recall(theta = thmat[, ii],
                                  cutpoint = cutpoint,
@@ -1237,8 +1237,8 @@ fsqrt <- function(theta, #  = NA  , = NULL,
       smallno <- 1 * .Machine$double.eps
       SMALLNO <- 1 * .Machine$double.xmin
       Theta <- theta
-      Theta <- pmin(Theta, 1 - smallno) # Since theta == 1 is a possibility
-      Theta <- pmax(Theta, smallno) # Since theta == 0 is a possibility
+      Theta <- pmin(Theta, 1 - smallno)  # Since theta == 1 is a possibility
+      Theta <- pmax(Theta, smallno)  # Since theta == 0 is a possibility
       Ql <- qnorm(Theta)
       switch(deriv+1, {
       temp <- 0.5 * Ql + sqrt(cutpoint + 7/8)
@@ -1300,8 +1300,8 @@ fsqrt <- function(theta, #  = NA  , = NULL,
 
 
     thmat <- cbind(theta)
-    kay <- rep(kay, len = ncol(thmat)) # Allow recycling for kay
-    cutpoint <- rep(cutpoint, len = ncol(thmat)) # Allow recycling for cutpoint
+    kay <- rep(kay, len = ncol(thmat))  # Allow recycling for kay
+    cutpoint <- rep(cutpoint, len = ncol(thmat))  # Allow recycling for cutpoint
     if (ncol(thmat) > 1) {
       answer <- thmat
       for (ii in 1:ncol(thmat))
@@ -1331,8 +1331,8 @@ fsqrt <- function(theta, #  = NA  , = NULL,
       smallno <- 1 * .Machine$double.eps
       SMALLNO <- 1 * .Machine$double.xmin
       Theta <- theta
-      Theta <- pmin(Theta, 1 - smallno) # Since theta == 1 is a possibility
-      Theta <- pmax(Theta, smallno) # Since theta == 0 is a possibility
+      Theta <- pmin(Theta, 1 - smallno)  # Since theta == 1 is a possibility
+      Theta <- pmax(Theta, smallno)  # Since theta == 0 is a possibility
       if (cutpoint == 0) {
         switch(deriv+1, {
         temp <- (1 - Theta)^(-1/kay) - 1
@@ -1405,7 +1405,7 @@ fsqrt <- function(theta, #  = NA  , = NULL,
 
 
     thmat <- cbind(theta)
-    kay <- rep(kay, len = ncol(thmat)) # Allow recycling for kay
+    kay <- rep(kay, len = ncol(thmat))  # Allow recycling for kay
     if (ncol(thmat) > 1) {
         answer <- thmat
         for (ii in 1:ncol(thmat))
@@ -1458,8 +1458,8 @@ fsqrt <- function(theta, #  = NA  , = NULL,
         smallno <- 1 * .Machine$double.eps
         SMALLNO <- 1 * .Machine$double.xmin
         Theta <- theta
-        Theta <- pmin(Theta, 1 - smallno) # Since theta == 1 is a possibility
-        Theta <- pmax(Theta, smallno) # Since theta == 0 is a possibility
+        Theta <- pmin(Theta, 1 - smallno)  # Since theta == 1 is a possibility
+        Theta <- pmax(Theta, smallno)  # Since theta == 0 is a possibility
         if (cutpoint == 0) {
             switch(deriv+1, {
             temp <- (1 - Theta)^(-1/kay) - 1
@@ -1504,7 +1504,7 @@ fsqrt <- function(theta, #  = NA  , = NULL,
 
 
   temp <- cut(y, breaks = breaks, labels = FALSE)
-  temp <- c(temp) # integer vector of integers
+  temp <- c(temp)  # integer vector of integers
   if (any(is.na(temp)))
     stop("there are NAs")
   answer <- if (ncol(y) > 1) matrix(temp, nrow(y), ncol(y)) else temp

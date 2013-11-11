@@ -144,7 +144,7 @@ pdata <- transform(pdata, y1 = rposnegbin(nn, munb = exp(0+2*x2), size = exp(1))
                           y2 = rposnegbin(nn, munb = exp(1+2*x2), size = exp(3)))
 fit <- vglm(cbind(y1, y2) ~ x2, posnegbinomial, pdata, trace = TRUE)
 coef(fit, matrix = TRUE)
-dim(depvar(fit)) # dim(fit@y) is not as good
+dim(depvar(fit))  # dim(fit@y) is not as good
 
 
 # Another artificial data example
@@ -153,8 +153,8 @@ pdata2 <- transform(pdata2, y3 = rposnegbin(nn, munb = munb, size = size))
 with(pdata2, table(y3))
 fit <- vglm(y3 ~ 1, posnegbinomial, pdata2, trace = TRUE)
 coef(fit, matrix = TRUE)
-with(pdata2, mean(y3)) # Sample mean
-head(with(pdata2, munb/(1-(size/(size+munb))^size)), 1) # Population mean
+with(pdata2, mean(y3))  # Sample mean
+head(with(pdata2, munb/(1-(size/(size+munb))^size)), 1)  # Population mean
 head(fitted(fit), 3)
 head(predict(fit), 3)
 

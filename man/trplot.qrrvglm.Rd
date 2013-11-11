@@ -11,7 +11,7 @@ It is only applicable for rank-1 models with argument
 
 }
 \usage{
-trplot.qrrvglm(object, whichSpecies = NULL, add=FALSE, plot.it = TRUE,
+trplot.qrrvglm(object, which.species = NULL, add = FALSE, show.plot = TRUE,
                label.sites = FALSE, sitenames = rownames(object@y), 
                axes.equal = TRUE, cex = par()$cex, 
                col = 1:(nos * (nos - 1)/2), log = "", 
@@ -24,7 +24,7 @@ trplot.qrrvglm(object, whichSpecies = NULL, add=FALSE, plot.it = TRUE,
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{object}{ Object of class \code{"qrrvglm"}, i.e., a CQO object. }
-  \item{whichSpecies}{ Integer or character vector specifying the
+  \item{which.species}{ Integer or character vector specifying the
   species to be plotted. If integer, these are the columns of the
   response matrix. If character, these must match exactly with the
   species' names. 
@@ -34,7 +34,7 @@ trplot.qrrvglm(object, whichSpecies = NULL, add=FALSE, plot.it = TRUE,
   }
   \item{add}{ Logical. Add to an existing plot? If \code{FALSE} (default),
   a new plot is made. }
-  \item{plot.it}{ Logical. Plot it? }
+  \item{show.plot}{ Logical. Plot it? }
   \item{label.sites}{ Logical. If \code{TRUE}, the points on the
   curves/trajectories are labelled with the \code{sitenames}. }
   \item{sitenames}{ Character vector. The names of the sites. }
@@ -118,7 +118,7 @@ trplot.qrrvglm(object, whichSpecies = NULL, add=FALSE, plot.it = TRUE,
 }
 \details{
  A trajectory plot plots the fitted values of a `second' species
- against a `first' species. The argument \code{whichSpecies} must
+ against a `first' species. The argument \code{which.species} must
  therefore contain at least two species. By default, all of the
  species that were fitted in \code{object} are plotted. 
  With more than a few species
@@ -182,19 +182,19 @@ quadratic ordination.
 
 }
 
-\examples{\dontrun{ set.seed(111) # This leads to the global solution
-# hspider[,1:6] <- scale(hspider[,1:6]) # Standardize the environmental variables
+\examples{\dontrun{ set.seed(111)  # This leads to the global solution
+# hspider[,1:6] <- scale(hspider[,1:6])  # Standardize the environmental variables
 p1 <- cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi, Auloalbi,
                 Pardlugu, Pardmont, Pardnigr, Pardpull, Trocterr, Zoraspin) ~
           WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
           poissonff, data = hspider, trace = FALSE)
 
-trplot(p1, whichSpecies = 1:3, log = "xy", type = "b", lty = 1,
+trplot(p1, which.species = 1:3, log = "xy", type = "b", lty = 1,
        main = "Trajectory plot of three hunting spiders species",
        col = c("blue","red","green"), lwd = 2, label = TRUE) -> ii
 legend(0.00005, 0.3, lwd = 2, lty = 1, col = c("blue", "red", "green"),
        with(ii, paste(species.names[,1], species.names[,2], sep = " and ")))
-abline(a = 0, b = 1, lty = "dashed", col = "grey") # Useful reference line
+abline(a = 0, b = 1, lty = "dashed", col = "grey")  # Useful reference line
 }
 }
 \keyword{models}

@@ -299,8 +299,8 @@ dhzeta <- function(x, alpha, log = FALSE) {
     stop("'alpha' must be numeric and have positive values")
 
   nn <- max(length(x), length(alpha))
-  x <- rep(x, length.out = nn);
-  alpha <- rep(alpha, length.out = nn)
+  if (length(x)     != nn) x     <- rep(x,     length.out = nn)
+  if (length(alpha) != nn) alpha <- rep(alpha, length.out = nn)
 
   ox <- !is.finite(x)
   zero <- ox | round(x) != x | x < 1
@@ -467,7 +467,7 @@ rhzeta <- function(n, alpha) {
     misc$expected <- TRUE
 
     if (intercept.only) {
-      misc$shape <- probs[1,] * (1/phi[1]-1) # phi & probs computed in @deriv
+      misc$shape <- probs[1,] * (1/phi[1]-1)  # phi & probs computed in @deriv
     }
   }), list( .ephi = ephi, .lphi = lphi ))),
   loglikelihood = eval(substitute(
@@ -490,7 +490,7 @@ rhzeta <- function(n, alpha) {
         loopOveri <- (n < maxyj)
         if (loopOveri) {
           for (iii in 1:n) {
-              rrr <- 1:ycount[iii, jay] # a vector
+              rrr <- 1:ycount[iii, jay]  # a vector
               if (ycount[iii, jay] > 0)
                 ans[iii] <- ans[iii] + sum(log((1-phi[iii]) *
                             probs[iii, jay] + (rrr-1)*phi[iii]))
@@ -588,7 +588,7 @@ rhzeta <- function(n, alpha) {
       }
     }
 
-    dprobs.deta <- probs[, -M] * (1 - probs[, -M]) # n x (M-1)
+    dprobs.deta <- probs[, -M] * (1 - probs[, -M])  # n x (M-1)
     dphi.deta <- dtheta.deta(phi, .lphi , earg = .ephi )
 
     ans <- cbind(dl.dprobs * dprobs.deta,
@@ -720,7 +720,7 @@ dirmul.old <- function(link = "loge", init.alpha = 0.01,
       predictors.names <- namesof(paste("shape", 1:M, sep = ""),
                                   .link , earg = .earg , short = TRUE)
 
-      extra$n2 <- rowSums(y) # Nb. don't multiply by 2
+      extra$n2 <- rowSums(y)  # Nb. don't multiply by 2
       extra$y  <- y
 
       if (!length(etastart)) {
@@ -799,7 +799,7 @@ rdiric <- function(n, shape, dimension = NULL) {
 
   use.n <- if ((length.n <- length(n)) > 1) length.n else
            if (!is.Numeric(n, integer.valued = TRUE,
-                           allowable.length = 1, positive = TRUE))
+                           length.arg = 1, positive = TRUE))
               stop("bad input for argument 'n'") else n
 
   if (!is.numeric(dimension))
@@ -923,7 +923,7 @@ rdiric <- function(n, shape, dimension = NULL) {
 
   deriv.arg <- deriv
   rm(deriv)
-  if (!is.Numeric(deriv.arg, allowable.length = 1,
+  if (!is.Numeric(deriv.arg, length.arg = 1,
                   integer.valued = TRUE))
     stop("'deriv' must be a single non-negative integer")
   if (deriv.arg < 0 || deriv.arg > 2)
@@ -982,7 +982,7 @@ rdiric <- function(n, shape, dimension = NULL) {
  Zeta.derivative <- function(x, deriv.arg = 0) {
 
 
-    if (!is.Numeric(deriv.arg, allowable.length = 1,
+    if (!is.Numeric(deriv.arg, length.arg = 1,
                     integer.valued = TRUE))
         stop("'deriv.arg' must be a single non-negative integer")
     if (deriv.arg < 0 || deriv.arg > 2)
@@ -998,8 +998,7 @@ rdiric <- function(n, shape, dimension = NULL) {
     nn <- sum(ok)  # Effective length (excludes x < 0 and x = 1 values)
     if (nn)
         ans[ok] <- .C("vzetawr", as.double(x[ok]), ans = double(nn),
-                      as.integer(deriv.arg), as.integer(nn),
-                      NAOK = FALSE, DUP = TRUE, PACKAGE = "VGAM")$ans
+                  as.integer(deriv.arg), as.integer(nn), PACKAGE = "VGAM")$ans
 
 
 
@@ -1017,7 +1016,7 @@ dzeta <- function(x, p, log = FALSE) {
   rm(log)
 
 
-    if (!is.Numeric(p, positive = TRUE)) # || min(p) <= 1
+    if (!is.Numeric(p, positive = TRUE))  # || min(p) <= 1
         stop("'p' must be numeric and > 0")
     LLL <- max(length(p), length(x))
     x <- rep(x, length.out = LLL);
@@ -1170,7 +1169,7 @@ gharmonic <- function(n, s = 1, lognexponent = 0) {
 
     if (!is.Numeric(n, integer.valued = TRUE, positive = TRUE))
         stop("bad input for argument 'n'")
-    if (!is.Numeric(lognexponent, allowable.length = 1))
+    if (!is.Numeric(lognexponent, length.arg = 1))
         stop("bad input for argument 'lognexponent'")
     if (length(n) == 1 && length(s) == 1) {
         if (lognexponent != 0) sum(log(1:n)^lognexponent * (1:n)^(-s)) else
@@ -1259,7 +1258,7 @@ pzipf <- function(q, N, s) {
  zipf <- function(N = NULL, link = "loge", init.s = NULL) {
   if (length(N) &&
     (!is.Numeric(N, positive = TRUE,
-                 integer.valued = TRUE, allowable.length = 1) ||
+                 integer.valued = TRUE, length.arg = 1) ||
       N <= 1))
     stop("bad input for argument 'N'")
   enteredN <- length(N)
@@ -1290,7 +1289,7 @@ pzipf <- function(q, N, s) {
     predictors.names <- namesof("s", .link , earg = .earg , tag = FALSE)
 
     NN <- .N
-    if (!is.Numeric(NN, allowable.length = 1,
+    if (!is.Numeric(NN, length.arg = 1,
                     positive = TRUE, integer.valued = TRUE))
         NN <- max(y)
     if (max(y) > NN)
@@ -1368,7 +1367,7 @@ cauchy.control <- function(save.weight = TRUE, ...) {
   lscale <- attr(escale, "function.name")
 
 
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
      imethod > 3)
     stop("argument 'imethod' must be 1 or 2 or 3")
@@ -1378,7 +1377,7 @@ cauchy.control <- function(save.weight = TRUE, ...) {
       !is.Numeric(zero, integer.valued = TRUE, positive = TRUE))
       stop("bad input for argument 'zero'")
   if (length(nsimEIM) &&
-     (!is.Numeric(nsimEIM, allowable.length = 1, integer.valued = TRUE) ||
+     (!is.Numeric(nsimEIM, length.arg = 1, integer.valued = TRUE) ||
       nsimEIM <= 50))
     stop("argument 'nsimEIM' should be an integer greater than 50")
   if (length(iscale) && !is.Numeric(iscale, positive = TRUE))
@@ -1542,7 +1541,7 @@ cauchy.control <- function(save.weight = TRUE, ...) {
 
   if (!is.Numeric(scale.arg, positive = TRUE))
     stop("bad input for 'scale.arg'")
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
      imethod > 3)
     stop("argument 'imethod' must be 1 or 2 or 3")
@@ -1639,9 +1638,9 @@ cauchy.control <- function(save.weight = TRUE, ...) {
 
  logistic1 <- function(llocation = "identity",
                        scale.arg = 1, imethod = 1) {
-  if (!is.Numeric(scale.arg, allowable.length = 1, positive = TRUE))
+  if (!is.Numeric(scale.arg, length.arg = 1, positive = TRUE))
     stop("'scale.arg' must be a single positive number")
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
      imethod > 2)
     stop("argument 'imethod' must be 1 or 2")
@@ -1727,10 +1726,10 @@ cauchy.control <- function(save.weight = TRUE, ...) {
            imethod = 1, zero = NULL)
 {
 
-  if (!is.Numeric(shape.arg, allowable.length = 1,
+  if (!is.Numeric(shape.arg, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE))
       stop("'shape' must be a positive integer")
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
      imethod > 3)
       stop("argument 'imethod' must be 1 or 2 or 3")
@@ -1865,7 +1864,7 @@ dbort <- function(x, Qsize = 1, a = 0.5, log = FALSE) {
 
   if (!is.Numeric(x))
     stop("bad input for argument 'x'")
-  if (!is.Numeric(Qsize, allowable.length = 1,
+  if (!is.Numeric(Qsize, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE))
     stop("bad input for argument 'Qsize'")
   if (!is.Numeric(a, positive = TRUE) || max(a) >= 1)
@@ -1876,7 +1875,7 @@ dbort <- function(x, Qsize = 1, a = 0.5, log = FALSE) {
   a <- rep(a, length.out = N);
 
   xok <- (x >= Qsize) & (x == round(x)) & (a > 0) & (a < 1)
-  ans <- rep(if (log.arg) log(0) else 0, length.out = N) # loglikelihood
+  ans <- rep(if (log.arg) log(0) else 0, length.out = N)  # loglikelihood
   ans[xok] <- lgamma(1 + Qsize[xok]) - lgamma(x[xok] + 1 - Qsize[xok]) +
              (x[xok] - 1 - Qsize[xok]) * log(x[xok]) +
              (x[xok] - Qsize[xok]) * log(a[xok]) - a[xok] * x[xok]
@@ -1891,9 +1890,9 @@ rbort <- function(n, Qsize = 1, a = 0.5) {
 
   use.n <- if ((length.n <- length(n)) > 1) length.n else
            if (!is.Numeric(n, integer.valued = TRUE,
-                           allowable.length = 1, positive = TRUE))
+                           length.arg = 1, positive = TRUE))
               stop("bad input for argument 'n'") else n
-  if (!is.Numeric(Qsize, allowable.length = 1,
+  if (!is.Numeric(Qsize, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE))
     stop("bad input for argument 'Qsize'")
   if (!is.Numeric(a, positive = TRUE) ||
@@ -1919,7 +1918,7 @@ rbort <- function(n, Qsize = 1, a = 0.5) {
 
  borel.tanner <- function(Qsize = 1, link = "logit",
                           imethod = 1) {
-  if (!is.Numeric(Qsize, allowable.length = 1,
+  if (!is.Numeric(Qsize, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE))
     stop("bad input for argument 'Qsize'")
 
@@ -1928,7 +1927,7 @@ rbort <- function(n, Qsize = 1, a = 0.5) {
   link <- attr(earg, "function.name")
 
 
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
       imethod > 4)
     stop("argument 'imethod' must be 1 or 2, 3 or 4")
@@ -2018,7 +2017,7 @@ dfelix <- function(x, a = 0.25, log = FALSE) {
   a <- rep(a, length.out = N);
 
   xok <- (x %% 2 == 1) & (x == round(x)) & (x >= 1) & (a > 0) & (a < 0.5)
-  ans <- rep(if (log.arg) log(0) else 0, length.out = N) # loglikelihood
+  ans <- rep(if (log.arg) log(0) else 0, length.out = N)  # loglikelihood
   ans[xok] <- ((x[xok]-3)/2) * log(x[xok]) + ((x[xok]-1)/2) * log(a[xok]) -
              lgamma(x[xok]/2 + 0.5) - a[xok] * x[xok]
   if (!log.arg) {
@@ -2036,7 +2035,7 @@ dfelix <- function(x, a = 0.25, log = FALSE) {
   link <- attr(earg, "function.name")
 
 
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
      imethod > 4)
       stop("argument 'imethod' must be 1 or 2, 3 or 4")
@@ -2132,8 +2131,8 @@ dfelix <- function(x, a = 0.25, log = FALSE) {
   lphi <- attr(ephi, "function.name")
 
 
-  if (!is.Numeric(A, allowable.length = 1) ||
-      !is.Numeric(B, allowable.length = 1) || A >= B)
+  if (!is.Numeric(A, length.arg = 1) ||
+      !is.Numeric(B, length.arg = 1) || A >= B)
     stop("A must be < B, and both must be of length one")
 
 
@@ -2147,7 +2146,7 @@ dfelix <- function(x, a = 0.25, log = FALSE) {
     stop("bad input for argument 'imu'")
   if (length(iphi) && !is.Numeric(iphi, positive = TRUE))
     stop("bad input for argument 'iphi'")
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
      imethod > 2)
     stop("argument 'imethod' must be 1 or 2")
@@ -2291,12 +2290,12 @@ dfelix <- function(x, a = 0.25, log = FALSE) {
   if (length( i2 ) && !is.Numeric( i2, positive = TRUE))
     stop("bad input for argument 'i2'")
 
-  if (!is.Numeric(A, allowable.length = 1) ||
-     !is.Numeric(B, allowable.length = 1) ||
+  if (!is.Numeric(A, length.arg = 1) ||
+     !is.Numeric(B, length.arg = 1) ||
      A >= B)
     stop("A must be < B, and both must be of length one")
 
-  stdbeta <- (A == 0 && B == 1) # stdbeta == T iff standard beta distn
+  stdbeta <- (A == 0 && B == 1)  # stdbeta == T iff standard beta distn
 
 
 
@@ -2452,7 +2451,7 @@ dfelix <- function(x, a = 0.25, log = FALSE) {
                          location = 0, expected = TRUE,
                          shrinkage.init = 0.95,
                          zero = NULL) {
-  if (!is.Numeric(location, allowable.length = 1))
+  if (!is.Numeric(location, length.arg = 1))
     stop("bad input for argument 'location'")
 
   if (!is.logical(expected) || length(expected) != 1)
@@ -2467,7 +2466,7 @@ dfelix <- function(x, a = 0.25, log = FALSE) {
       !is.Numeric(zero, integer.valued = TRUE, positive = TRUE))
     stop("bad input for argument 'zero'")
 
-  if (!is.Numeric(shrinkage.init, allowable.length = 1) ||
+  if (!is.Numeric(shrinkage.init, length.arg = 1) ||
       shrinkage.init < 0 ||
       shrinkage.init > 1)
     stop("bad input for argument 'shrinkage.init'")
@@ -2828,7 +2827,7 @@ dfelix <- function(x, a = 0.25, log = FALSE) {
 
   if (length( ishape) && !is.Numeric(ishape, positive = TRUE))
     stop("bad input for argument 'ishape'")
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
      imethod > 2)
     stop("argument 'imethod' must be 1 or 2")
@@ -2890,7 +2889,7 @@ dfelix <- function(x, a = 0.25, log = FALSE) {
       assign("CQO.FastAlgorithm", ( .lmu == "loge" && .lshape == "loge"),
              envir = VGAMenv)
       if (any(function.name == c("cqo","cao")) &&
-         is.Numeric( .zero , allowable.length = 1) && .zero != -2)
+         is.Numeric( .zero , length.arg = 1) && .zero != -2)
         stop("argument zero = -2 is required")
 
       M <- Musual * ncol(y)
@@ -3020,7 +3019,7 @@ dfelix <- function(x, a = 0.25, log = FALSE) {
   weight = eval(substitute(expression({
     ned2l.dmu2 <- shape / (mymu^2)
     ned2l.dshape2 <- trigamma(shape) - 1 / shape
-    wz <- matrix(as.numeric(NA), n, M) # 2 = M; diagonal!
+    wz <- matrix(as.numeric(NA), n, M)  # 2 = M; diagonal!
 
     wz[, Musual*(1:NOS)-1] <- ned2l.dmu2 * dmu.deta^2
     wz[, Musual*(1:NOS)  ] <- ned2l.dshape2 * dshape.deta^2
@@ -3068,7 +3067,7 @@ dfelix <- function(x, a = 0.25, log = FALSE) {
   link <- attr(earg, "function.name")
 
 
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
      imethod > 3)
     stop("argument 'imethod' must be 1 or 2 or 3")
@@ -3320,24 +3319,24 @@ negbinomial.control <- function(save.weight = TRUE, ...) {
   if (length(isize) && !is.Numeric(isize, positive = TRUE))
     stop("bad input for argument 'isize'")
 
-  if (!is.Numeric(cutoff, allowable.length = 1) ||
+  if (!is.Numeric(cutoff, length.arg = 1) ||
     cutoff < 0.8 ||
     cutoff >= 1)
     stop("range error in the argument 'cutoff'")
-  if (!is.Numeric(Maxiter, integer.valued = TRUE, allowable.length = 1) ||
+  if (!is.Numeric(Maxiter, integer.valued = TRUE, length.arg = 1) ||
     Maxiter < 100)
     stop("bad input for argument 'Maxiter'")
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
     integer.valued = TRUE, positive = TRUE) ||
      imethod > 3)
     stop("argument 'imethod' must be 1 or 2 or 3")
-  if (!is.Numeric(shrinkage.init, allowable.length = 1) ||
+  if (!is.Numeric(shrinkage.init, length.arg = 1) ||
     shrinkage.init < 0 ||
      shrinkage.init > 1)
     stop("bad input for argument 'shrinkage.init'")
 
   if (!is.null(nsimEIM)) {
-    if (!is.Numeric(nsimEIM, allowable.length = 1, integer.valued = TRUE))
+    if (!is.Numeric(nsimEIM, length.arg = 1, integer.valued = TRUE))
       stop("bad input for argument 'nsimEIM'")
     if (nsimEIM <= 10)
       warning("argument 'nsimEIM' should be an integer ",
@@ -3401,7 +3400,7 @@ negbinomial.control <- function(save.weight = TRUE, ...) {
            envir = VGAMenv)
 
     if (any(function.name == c("cqo", "cao")) &&
-        is.Numeric( .zero , allowable.length = 1) &&
+        is.Numeric( .zero , length.arg = 1) &&
         .zero != -2)
         stop("argument zero = -2 is required")
 
@@ -3415,7 +3414,7 @@ negbinomial.control <- function(save.weight = TRUE, ...) {
            "the number of responses")
 
     M <- Musual * ncol(y) 
-    NOS <- ncoly <- ncol(y) # Number of species
+    NOS <- ncoly <- ncol(y)  # Number of species
     predictors.names <-
      c(namesof(if (NOS == 1) "mu"   else paste("mu",   1:NOS, sep = ""),
                 .lmuuu, earg = .emuuu, tag = FALSE),
@@ -3688,8 +3687,7 @@ negbinomial.control <- function(save.weight = TRUE, ...) {
                   as.double(kmat), as.double(mu), as.double( .cutoff ),
                   as.integer(n), ok = as.integer(1), as.integer(NOS),
                   sumpdf = double(1), as.double( .Machine$double.eps ),
-                  as.integer( .Maxiter ),
-                  NAOK = FALSE, DUP = TRUE, PACKAGE = "VGAM")
+                  as.integer( .Maxiter ), PACKAGE = "VGAM")
       if (fred2$ok != 1)
         stop("error in Fortran subroutine exnbin9")
       dim(fred2$ans) <- c(n, NOS)
@@ -3822,16 +3820,16 @@ polya.control <- function(save.weight = TRUE, ...) {
   if (length(isize) && !is.Numeric(isize, positive = TRUE))
     stop("bad input for argument 'isize'")
 
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
      imethod > 3)
      stop("argument 'imethod' must be 1 or 2 or 3")
-  if (!is.Numeric(shrinkage.init, allowable.length = 1) ||
+  if (!is.Numeric(shrinkage.init, length.arg = 1) ||
      shrinkage.init < 0 ||
      shrinkage.init > 1)
      stop("bad input for argument 'shrinkage.init'")
 
-  if (!is.Numeric(nsimEIM, allowable.length = 1,
+  if (!is.Numeric(nsimEIM, length.arg = 1,
                   integer.valued = TRUE))
     stop("bad input for argument 'nsimEIM'")
   if (nsimEIM <= 10)
@@ -4057,7 +4055,7 @@ polya.control <- function(save.weight = TRUE, ...) {
   }), list( .lprob = lprob, .lsize = lsize,
             .eprob = eprob, .esize = esize))),
   weight = eval(substitute(expression({
-    wz <- matrix(0.0, n, M + M - 1) # wz is 'tridiagonal' 
+    wz <- matrix(0.0, n, M + M - 1)  # wz is 'tridiagonal' 
 
     ind1 <- iam(NA, NA, M = Musual, both = TRUE, diag = TRUE)
     mumat <- as.matrix(mu)
@@ -4222,7 +4220,7 @@ polya.control <- function(save.weight = TRUE, ...) {
   if (!is.Numeric(tol1, positive  = TRUE))
     stop("argument 'tol1' should be positive")
 
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
      imethod > 3)
       stop("argument 'imethod' must be 1 or 2 or 3")
@@ -4367,7 +4365,7 @@ polya.control <- function(save.weight = TRUE, ...) {
   idof <- idf
  
 
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
      imethod > 3)
       stop("argument 'imethod' must be 1 or 2 or 3")
@@ -4640,7 +4638,7 @@ polya.control <- function(save.weight = TRUE, ...) {
     if (!is.Numeric(doff, positive = TRUE))
     stop("argument 'df' must be positive")
 
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
      imethod > 3)
       stop("argument 'imethod' must be 1 or 2 or 3")
@@ -4683,7 +4681,7 @@ polya.control <- function(save.weight = TRUE, ...) {
 
 
 
-    extra$NOS <- NOS <- ncoly <- ncol(y) # Number of species
+    extra$NOS <- NOS <- ncoly <- ncol(y)  # Number of species
     extra$Musual <- Musual
     M <- Musual * ncoly #
 
@@ -4951,7 +4949,7 @@ dsimplex <- function(x, mu = 0.5, dispersion = 1, log = FALSE) {
 rsimplex <- function(n, mu = 0.5, dispersion = 1) {
   use.n <- if ((length.n <- length(n)) > 1) length.n else
            if (!is.Numeric(n, integer.valued = TRUE,
-                           allowable.length = 1, positive = TRUE))
+                           length.arg = 1, positive = TRUE))
                stop("bad input for argument 'n'") else n
 
   oneval <- (length(mu) == 1 && length(dispersion) == 1)
@@ -4961,7 +4959,7 @@ rsimplex <- function(n, mu = 0.5, dispersion = 1) {
   Kay1 <- 3 * (dispersion * mu * (1-mu))^2
 
   if (oneval) {
-    Kay1 <- Kay1[1] # Since oneval means there is only one unique value
+    Kay1 <- Kay1[1]  # Since oneval means there is only one unique value
     mymu <-   mu[1]
     myroots <- polyroot(c(-mymu^2, Kay1+2*mymu^2, -3*Kay1+1-2*mymu, 2*Kay1))
     myroots <- myroots[abs(Im(myroots)) < 0.00001]
@@ -4969,7 +4967,7 @@ rsimplex <- function(n, mu = 0.5, dispersion = 1) {
     myroots <- myroots[myroots >= 0.0]
     myroots <- myroots[myroots <= 1.0]
     pdfmax <- dsimplex(myroots, mymu, dispersion[1])
-    pdfmax <- rep(max(pdfmax), length.out = use.n) # For multiple peaks
+    pdfmax <- rep(max(pdfmax), length.out = use.n)  # For multiple peaks
   } else {
     pdfmax <- numeric(use.n)
     for (ii in 1:use.n) {
@@ -4986,7 +4984,7 @@ rsimplex <- function(n, mu = 0.5, dispersion = 1) {
   index <- 1:use.n
   nleft <- length(index)
   while (nleft > 0) {
-    xx <- runif(nleft) # , 0, 1
+    xx <- runif(nleft)  # , 0, 1
     yy <- runif(nleft, max = pdfmax[index])
     newindex <- (1:nleft)[yy < dsimplex(xx, mu[index], dispersion[index])]
     if (length(newindex)) {
@@ -5023,11 +5021,11 @@ rsimplex <- function(n, mu = 0.5, dispersion = 1) {
   lsigma <- attr(esigma, "function.name")
 
 
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
        imethod > 3)
       stop("argument 'imethod' must be 1 or 2 or 3")
-  if (!is.Numeric(shrinkage.init, allowable.length = 1) ||
+  if (!is.Numeric(shrinkage.init, length.arg = 1) ||
       shrinkage.init < 0 ||
       shrinkage.init > 1)
     stop("bad input for argument 'shrinkage.init'")
@@ -5523,7 +5521,7 @@ rsimplex <- function(n, mu = 0.5, dispersion = 1) {
     d2l.dthetas2[, 2, 2] <- c(w) * (-0.25*trigamma((lambda+1)/2) +
                                  0.25*trigamma(1+lambda/2))
 
-    wz <- matrix(as.numeric(NA), n, dimm(M)) #3=dimm(M)
+    wz <- matrix(as.numeric(NA), n, dimm(M))  #3=dimm(M)
     wz[, iam(1, 1, M)] <- -d2l.dthetas2[, 1, 1] * dtheta.detas[, 1]^2
     wz[, iam(2, 2, M)] <- -d2l.dthetas2[, 2, 2] * dtheta.detas[, 2]^2
     wz[, iam(1, 2, M)] <- -d2l.dthetas2[, 1, 2] * dtheta.detas[, 1] *
@@ -5706,7 +5704,7 @@ rsimplex <- function(n, mu = 0.5, dispersion = 1) {
     stop("bad input for argument 'zero'")
 
 
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
      imethod > 2)
     stop("argument 'imethod' must be 1 or 2")
@@ -6522,16 +6520,15 @@ plog  <- function(q, prob, log.p = FALSE) {
         bigans <- 1 + bigans / log1p(-ppp)
     }
 
-    floorq <- pmax(1, floor(q)) # Ensures at least one element per q value
+    floorq <- pmax(1, floor(q))  # Ensures at least one element per q value
     floorq[owen1965] <- 1
     seqq <- sequence(floorq)
     seqp <- rep(prob, floorq)
     onevector <- (seqp^seqq / seqq) / (-log1p(-seqp))
-    rlist <- .C("tyee_C_cum8sum",
-                as.double(onevector), answer = double(N),
-                as.integer(N), as.double(seqq),
-                as.integer(length(onevector)), notok=integer(1),
-                NAOK = FALSE, DUP = TRUE, PACKAGE = "VGAM")
+    rlist <-  .C("tyee_C_cum8sum",
+                  as.double(onevector), answer = double(N),
+                  as.integer(N), as.double(seqq),
+                  as.integer(length(onevector)), notok=integer(1), PACKAGE = "VGAM")
     if (rlist$notok != 0) stop("error in 'cum8sum'")
     ans <- if (log.p) log(rlist$answer) else rlist$answer
     if (specialCase)
@@ -6550,13 +6547,13 @@ rlog <- function(n, prob, Smallno = 1.0e-6) {
 
   use.n <- if ((length.n <- length(n)) > 1) length.n else
            if (!is.Numeric(n, integer.valued = TRUE,
-                           allowable.length = 1, positive = TRUE))
+                           length.arg = 1, positive = TRUE))
                stop("bad input for argument 'n'") else n
 
-  if (!is.Numeric(prob, allowable.length = 1, positive = TRUE) ||
+  if (!is.Numeric(prob, length.arg = 1, positive = TRUE) ||
       max(prob) >= 1)
     stop("bad input for argument 'prob'")
-  if (!is.Numeric(Smallno, positive = TRUE, allowable.length = 1) ||
+  if (!is.Numeric(Smallno, positive = TRUE, length.arg = 1) ||
       Smallno > 0.01 ||
      Smallno < 2 * .Machine$double.eps)
     stop("bad input for argument 'Smallno'")
@@ -6565,7 +6562,7 @@ rlog <- function(n, prob, Smallno = 1.0e-6) {
   ptr1 <- 1; ptr2 <- 0
   a <- -1 / log1p(-prob)
   mean <- a*prob/(1-prob)    # E(Y)
-  sigma <- sqrt(a * prob * (1 - a * prob)) / (1 - prob) # sd(Y)
+  sigma <- sqrt(a * prob * (1 - a * prob)) / (1 - prob)  # sd(Y)
   ymax <- dlog(x = 1, prob)
   while(ptr2 < use.n) {
     Lower <- 0.5 # A continuity correction is used = 1 - 0.5.
@@ -6726,7 +6723,7 @@ rlog <- function(n, prob, Smallno = 1.0e-6) {
 
 
 
-  delta.known = is.Numeric(delta, allowable.length = 1)
+  delta.known = is.Numeric(delta, length.arg = 1)
 
   link.gamma <- as.list(substitute(link.gamma))
   earg <- link2list(link.gamma)
@@ -6774,7 +6771,7 @@ rlog <- function(n, prob, Smallno = 1.0e-6) {
                          diff(range(y,na.rm = TRUE))
                    }
       gamma.init <- if (length( .igamma)) .igamma else
-                   median(y - delta.init) # = 1/median(1/(y-delta.init))
+                   median(y - delta.init)  # = 1/median(1/(y-delta.init))
       gamma.init <- rep(gamma.init, length = length(y))
       etastart <-
         cbind(theta2eta(gamma.init, .link.gamma , earg = .earg ),
@@ -6833,7 +6830,7 @@ rlog <- function(n, prob, Smallno = 1.0e-6) {
             .delta.known = delta.known,
             .delta = delta ))),
   weight = eval(substitute(expression({
-    wz <- matrix(as.numeric(NA), n, dimm(M)) # M = if (delta is known) 1 else 2
+    wz <- matrix(as.numeric(NA), n, dimm(M))  # M = if (delta is known) 1 else 2
     wz[, iam(1, 1, M)] <- 1 * dgamma.deta^2 
     if (! .delta.known) {
       wz[, iam(1, 2, M)] <-  3 * dgamma.deta
@@ -7188,7 +7185,7 @@ rmaxwell <- function(n, a) {
  maxwell <- function(link = "loge", zero = NULL) {
 
 
-  link <- as.list(substitute(link)) # orig
+  link <- as.list(substitute(link))  # orig
   earg <- link2list(link)
   link <- attr(earg, "function.name")
 
@@ -7374,14 +7371,14 @@ rnaka <- function(n, shape, scale = 1, Smallno = 1.0e-6) {
 
   use.n <- if ((length.n <- length(n)) > 1) length.n else
            if (!is.Numeric(n, integer.valued = TRUE,
-                           allowable.length = 1, positive = TRUE))
+                           length.arg = 1, positive = TRUE))
               stop("bad input for argument 'n'") else n
 
-  if (!is.Numeric(scale, positive = TRUE, allowable.length = 1))
+  if (!is.Numeric(scale, positive = TRUE, length.arg = 1))
     stop("bad input for argument 'scale'")
-  if (!is.Numeric(shape, positive = TRUE, allowable.length = 1))
+  if (!is.Numeric(shape, positive = TRUE, length.arg = 1))
     stop("bad input for argument 'shape'")
-  if (!is.Numeric(Smallno, positive = TRUE, allowable.length = 1) ||
+  if (!is.Numeric(Smallno, positive = TRUE, length.arg = 1) ||
       Smallno > 0.01 ||
       Smallno < 2 * .Machine$double.eps)
     stop("bad input for argument 'Smallno'")
@@ -7570,7 +7567,7 @@ rrayleigh <- function(n, scale = 1) {
   lscale <- attr(escale, "function.name")
 
 
-  if (!is.Numeric(nrfs, allowable.length = 1) ||
+  if (!is.Numeric(nrfs, length.arg = 1) ||
       nrfs < 0 ||
       nrfs > 1)
     stop("bad input for 'nrfs'")
@@ -7851,7 +7848,7 @@ rparetoI <- function(n, scale = 1, shape = 1)
     stop("argument 'iinequality' must be positive")
   if (is.Numeric(ishape) && any(ishape <= 0))
     stop("argument 'ishape' must be positive")
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE) ||
       imethod > 2)
     stop("bad input for argument 'imethod'")
@@ -8141,7 +8138,7 @@ rparetoI <- function(n, scale = 1, shape = 1)
     weight = eval(substitute(expression({
         d2scale.deta2 <- 1 / ((inequ*Scale)^2 * 3)
         d2inequ.deta2 <- (1 + 2* trigamma(1)) / (inequ^2 * 3)
-        wz <- matrix(0, n, M) # It is diagonal
+        wz <- matrix(0, n, M)  # It is diagonal
         wz[, iam(1, 1, M)] <- dscale.deta^2 * d2scale.deta2
         wz[, iam(2, 2, M)] <- dinequ.deta^2 * d2inequ.deta2
         c(w) * wz
@@ -8520,9 +8517,9 @@ rtruncpareto <- function(n, lower, upper, shape) {
  truncpareto <- function(lower, upper, lshape = "loge",
                          ishape = NULL, imethod = 1) {
 
-  if (!is.Numeric(lower, positive = TRUE, allowable.length = 1))
+  if (!is.Numeric(lower, positive = TRUE, length.arg = 1))
     stop("bad input for argument 'lower'")
-  if (!is.Numeric(upper, positive = TRUE, allowable.length = 1))
+  if (!is.Numeric(upper, positive = TRUE, length.arg = 1))
     stop("bad input for argument 'upper'")
   if (lower >= upper)
     stop("lower < upper is required")
@@ -8538,7 +8535,7 @@ rtruncpareto <- function(n, lower, upper, shape) {
   earg <- eshape
 
 
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
      imethod > 2)
     stop("argument 'imethod' must be 1 or 2")
@@ -8721,7 +8718,7 @@ rtruncpareto <- function(n, lower, upper, shape) {
 
 
  expexp <- function(lshape = "loge", lscale = "loge",
-                    ishape = 1.1, iscale = NULL, # ishape cannot be 1
+                    ishape = 1.1, iscale = NULL,  # ishape cannot be 1
                     tolerance = 1.0e-6,
                     zero = NULL) {
 
@@ -8730,7 +8727,7 @@ rtruncpareto <- function(n, lower, upper, shape) {
       !is.Numeric(zero, integer.valued = TRUE, positive = TRUE))
     stop("bad input for argument 'zero'")
 
-  if (!is.Numeric(tolerance, positive = TRUE, allowable.length = 1) ||
+  if (!is.Numeric(tolerance, positive = TRUE, length.arg = 1) ||
       tolerance > 1.0e-2)
     stop("bad input for argument 'tolerance'")
   if (!is.Numeric(ishape, positive = TRUE))
@@ -8929,7 +8926,7 @@ rtruncpareto <- function(n, lower, upper, shape) {
   linkinv = eval(substitute(function(eta, extra = NULL) {
     scale <- eta2theta(eta, .lscale , earg = .escale )
     temp7 <-  -expm1(-scale*extra$yvector)
-    shape <- -extra$sumw / sum(extra$w*log(temp7)) # \gamma(\theta)
+    shape <- -extra$sumw / sum(extra$w*log(temp7))  # \gamma(\theta)
     (digamma(shape+1)-digamma(1)) / scale
   }, list( .lscale = lscale,
            .escale = escale))),
@@ -8938,7 +8935,7 @@ rtruncpareto <- function(n, lower, upper, shape) {
     misc$earg <- list("scale" = .escale )
 
     temp7 <-  -expm1(-scale*y)
-    shape <- -extra$sumw / sum(w*log(temp7)) # \gamma(\theta)
+    shape <- -extra$sumw / sum(w*log(temp7))  # \gamma(\theta)
     misc$shape <- shape   # Store the ML estimate here
     misc$pooled.weight <- pooled.weight
   }), list( .lscale = lscale, .escale = escale))),
@@ -8946,7 +8943,7 @@ rtruncpareto <- function(n, lower, upper, shape) {
     function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
     scale <- eta2theta(eta, .lscale , earg = .escale )
     temp7 <-  -expm1(-scale*y)
-    shape <- -extra$sumw / sum(w*log(temp7)) # \gamma(\theta)
+    shape <- -extra$sumw / sum(w*log(temp7))  # \gamma(\theta)
     if (residuals) stop("loglikelihood residuals ",
                         "not implemented yet") else
     sum(c(w) * (log(shape) + log(scale) + 
@@ -8958,7 +8955,7 @@ rtruncpareto <- function(n, lower, upper, shape) {
 
     temp6 <- exp(-scale*y)
     temp7 <- 1-temp6
-    shape <- -extra$sumw / sum(w*log(temp7)) # \gamma(\theta)
+    shape <- -extra$sumw / sum(w*log(temp7))  # \gamma(\theta)
     d1 <- 1/scale + (shape-1)*y*temp6/temp7 - y
 
     c(w) * cbind(d1 * dtheta.deta(scale, .lscale , earg = .escale ))
@@ -9001,7 +8998,7 @@ rtruncpareto <- function(n, lower, upper, shape) {
   ilocat <- ilocation
 
 
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
       imethod > 2)
     stop("argument 'imethod' must be 1 or 2")
@@ -9174,7 +9171,7 @@ rtruncpareto <- function(n, lower, upper, shape) {
     ned2l.dlocat2 <- 1 / (3 * Scale^2)
     ned2l.dscale2 <- (3 + pi^2) / (9 * Scale^2)
 
-    wz <- matrix(as.numeric(NA), nrow = n, ncol = M) # diagonal
+    wz <- matrix(as.numeric(NA), nrow = n, ncol = M)  # diagonal
     wz[, (1:ncoly) * Musual - 1] <- ned2l.dlocat2 * dlocat.deta^2
     wz[, (1:ncoly) * Musual    ] <- ned2l.dscale2 * dscale.deta^2
 
@@ -9218,11 +9215,11 @@ rtruncpareto <- function(n, lower, upper, shape) {
   if (length(imu) && !is.Numeric(imu, positive = TRUE))
     stop("bad input for argument 'imu'")
 
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
      imethod > 3)
     stop("argument 'imethod' must be 1 or 2 or 3")
-  if (!is.Numeric(shrinkage.init, allowable.length = 1) ||
+  if (!is.Numeric(shrinkage.init, length.arg = 1) ||
      shrinkage.init < 0 ||
      shrinkage.init > 1)
     stop("bad input for argument 'shrinkage.init'")
@@ -9273,7 +9270,7 @@ rtruncpareto <- function(n, lower, upper, shape) {
 
 
     M <- Musual * ncol(y) 
-    NOS <- ncoly <- ncol(y) # Number of species
+    NOS <- ncoly <- ncol(y)  # Number of species
     mynames1 <- paste("mu", if (NOS > 1) 1:NOS else "", sep = "")
     predictors.names <-
       namesof(mynames1, .lmu , earg = .emu , tag = FALSE)
@@ -9424,7 +9421,7 @@ rtruncpareto <- function(n, lower, upper, shape) {
 
     if ( .lmu == "nbcanlink")
       newemu$wrt.eta <- 1
-    dmu.deta <- dtheta.deta(mu, .lmu , earg = newemu) # eta1
+    dmu.deta <- dtheta.deta(mu, .lmu , earg = newemu)  # eta1
 
     myderiv <- c(w) * dl.dmu * dmu.deta
     myderiv

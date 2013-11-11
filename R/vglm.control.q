@@ -29,7 +29,7 @@ vlm.control <- function(save.weight = TRUE,
   }
   if (!is.logical(checkwz) || length(checkwz) != 1)
     stop("bad input for argument 'checkwz'")
-  if (!is.Numeric(wzepsilon, allowable.length = 1, positive = TRUE))
+  if (!is.Numeric(wzepsilon, length.arg = 1, positive = TRUE))
     stop("bad input for argument 'wzepsilon'")
 
   list(save.weight = save.weight,
@@ -69,7 +69,7 @@ vglm.control <- function(checkwz = TRUE,
 
     if (!is.logical(checkwz) || length(checkwz) != 1)
       stop("bad input for argument 'checkwz'")
-    if (!is.Numeric(wzepsilon, allowable.length = 1, positive = TRUE))
+    if (!is.Numeric(wzepsilon, length.arg = 1, positive = TRUE))
       stop("bad input for argument 'wzepsilon'")
 
     convergence <- expression({
@@ -86,16 +86,16 @@ vglm.control <- function(checkwz = TRUE,
              abs(old.crit) + epsilon)  > epsilon)
     })
 
-    if (!is.Numeric(epsilon, allowable.length = 1, positive = TRUE)) {
+    if (!is.Numeric(epsilon, length.arg = 1, positive = TRUE)) {
       warning("bad input for argument 'epsilon'; using 0.00001 instead")
       epsilon <- 0.00001
     }
-    if (!is.Numeric(maxit, allowable.length = 1,
+    if (!is.Numeric(maxit, length.arg = 1,
                     positive = TRUE, integer.valued = TRUE)) {
       warning("bad input for argument 'maxit'; using 30 instead")
       maxit <- 30
     }
-    if (!is.Numeric(stepsize, allowable.length = 1, positive = TRUE)) {
+    if (!is.Numeric(stepsize, length.arg = 1, positive = TRUE)) {
       warning("bad input for argument 'stepsize'; using 1 instead")
       stepsize <- 1
     }

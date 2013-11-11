@@ -71,7 +71,7 @@ calibrate(object, ...)
 
 \examples{
 \dontrun{
-hspider[,1:6] <- scale(hspider[,1:6]) # Standardized environmental vars
+hspider[,1:6] <- scale(hspider[,1:6])  # Standardized environmental vars
 set.seed(123)
 p1 <- cao(cbind(Pardlugu, Pardmont, Pardnigr, Pardpull, Zoraspin) ~
           WaterCon + BareSand + FallTwig + 
@@ -88,7 +88,7 @@ persp(p1, main = "Solid=actual, dashed=calibrated site scores",
       label = TRUE, col = "blue", las = 1)
 # Actual site scores:
 abline(v = latvar(p1)[siteNos], lty = 1, col = 1:length(siteNos))
-abline(v = cp1, lty = 2, col = 1:length(siteNos)) # Calibrated values
+abline(v = cp1, lty = 2, col = 1:length(siteNos))  # Calibrated values
 }
 }
 \keyword{models}

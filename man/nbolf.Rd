@@ -105,7 +105,7 @@ nbolf("p", cutpoint = 2, k = 1, tag = TRUE)
 p <- seq(0.02, 0.98, by = 0.01)
 y <- nbolf(p,cutpoint = 2, k = 1)
 y. <- nbolf(p,cutpoint = 2, k = 1, deriv = 1)
-max(abs(nbolf(y,cutpoint = 2, k = 1, inv = TRUE) - p)) # Should be 0
+max(abs(nbolf(y,cutpoint = 2, k = 1, inv = TRUE) - p))  # Should be 0
 
 \dontrun{ par(mfrow = c(2, 1), las = 1)
 plot(p, y, type = "l", col = "blue", main = "nbolf()")

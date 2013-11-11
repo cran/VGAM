@@ -12,8 +12,6 @@
 
 
 
-
-
 log1pexp <- function(x) {
 
   ans <- log1p(exp(x))
@@ -49,7 +47,7 @@ lambertW <- function(x, tolerance = 1.0e-10, maxit = 50) {
   cutpt <- 3.0
   if (any(myTF <- !is.na(x) & x > cutpt)) {
     L1 <- log(x[!is.na(x) & x > cutpt])  # log(as.complex(x))
-    L2 <- log(L1) # log(as.complex(L1))
+    L2 <- log(L1)  # log(as.complex(L1))
     wzinit <- L1 - L2 +
           (L2 +
           (L2*( -2 + L2)/(2) +
@@ -92,7 +90,7 @@ lambertW <- function(x, tolerance = 1.0e-10, maxit = 50) {
   if (!is.Numeric(shape, positive = TRUE))
     stop("bad input for argument 'shape'")
 
-  if (!is.Numeric(tmax, allowable.length = 1, positive = TRUE))
+  if (!is.Numeric(tmax, length.arg = 1, positive = TRUE))
     stop("bad input for argument 'tmax'")
   if (tmax < 10)
     warning("probably argument 'tmax' is too small")
@@ -105,15 +103,15 @@ lambertW <- function(x, tolerance = 1.0e-10, maxit = 50) {
   psidp  <- trigamma(shape)
   psidp1 <- psidp - 1 / shape^2
 
-  fred <- .C("VGAM_C_vdigami",
+  fred <-
+    .C("VGAM_C_vdigami",
          d = as.double(matrix(0, 6, nnn)),
          x = as.double(q), p = as.double(shape),
          as.double(gplog), as.double(gp1log), as.double(psip),
          as.double(psip1), as.double(psidp), as.double(psidp1),
          ifault = integer(nnn),
          tmax = as.double(tmax),
-         as.integer(nnn),
-         NAOK = FALSE, DUP = TRUE, PACKAGE = "VGAM")
+         as.integer(nnn), PACKAGE = "VGAM")
   answer <- matrix(fred$d, nnn, 6, byrow = TRUE)
   dimnames(answer) <- list(names(q),
                            c("q", "q^2", "shape", "shape^2",
@@ -139,8 +137,7 @@ expint <- function(x) {
   answer <- .C("sf_C_expint",
                  x = as.double(x),
                  size = as.integer(LLL),
-                 ans = double(LLL),
-                NAOK = FALSE, DUP = TRUE, PACKAGE = "VGAM")$ans
+                 ans = double(LLL), PACKAGE = "VGAM")$ans
 
   answer[x  < 0] <- NA
   answer[x == 0] <- NA
@@ -159,8 +156,7 @@ expexpint <- function(x) {
   answer <- .C("sf_C_expexpint",
                  x = as.double(x),
                  size = as.integer(LLL),
-                 ans = double(LLL),
-                NAOK = FALSE, DUP = TRUE, PACKAGE = "VGAM")$ans
+                 ans = double(LLL), PACKAGE = "VGAM")$ans
 
   answer[x  < 0] <- NA
   answer[x == 0] <- NA
@@ -182,8 +178,7 @@ expint.E1 <- function(x) {
   answer <- .C("sf_C_expint_e1",
                  x = as.double(x),
                  size = as.integer(LLL),
-                 ans = double(LLL),
-                NAOK = FALSE, DUP = TRUE, PACKAGE = "VGAM")$ans
+                 ans = double(LLL), PACKAGE = "VGAM")$ans
 
   answer[x  < 0] <- NA
   answer[x == 0] <- NA

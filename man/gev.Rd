@@ -286,7 +286,7 @@ coef(fit, matrix = TRUE)
 Coef(fit)
 vcov(fit)
 vcov(fit, untransform = TRUE)
-sqrt(diag(vcov(fit))) # Approximate standard errors
+sqrt(diag(vcov(fit)))  # Approximate standard errors
 rlplot(fit)
 }
 }

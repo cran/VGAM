@@ -193,7 +193,7 @@ cao.fit <-
                                   trace = as.integer(control$trace),
                                   maxit = control$Maxit.optim,
                                   REPORT = 10),
-                   etamat = eta, xmat = x, ymat = y, # as.matrix(y), 
+                   etamat = eta, xmat = x, ymat = y,  # as.matrix(y), 
                    wvec = w, modelno = modelno,
                    Control = control,
                    Nice21 = Nice21,
@@ -378,7 +378,7 @@ cao.control <- function(Rank = 1,
     stop("bad input for argument 'iShape'")
   if (!is.Numeric(iKvector, positive = TRUE))
     stop("bad input for argument 'iKvector'")
-  if (!is.Numeric(imethod, positive = TRUE, allowable.length = 1,
+  if (!is.Numeric(imethod, positive = TRUE, length.arg = 1,
                   integer.valued = TRUE))
     stop("bad input for argument 'imethod'")
 
@@ -393,34 +393,34 @@ cao.control <- function(Rank = 1,
 
   if (length(Cinit) && !is.Numeric(Cinit))
     stop("Bad input for argument 'Cinit'")
-  if (!is.Numeric(Bestof, allowable.length = 1,
+  if (!is.Numeric(Bestof, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE))
     stop("Bad input for argument 'Bestof'")
-  if (!is.Numeric(maxitl, allowable.length = 1,
+  if (!is.Numeric(maxitl, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE))
     stop("Bad input for argument 'maxitl'")
-  if (!is.Numeric(bf.epsilon, allowable.length = 1,
+  if (!is.Numeric(bf.epsilon, length.arg = 1,
                   positive = TRUE))
     stop("Bad input for argument 'bf.epsilon'")
   if (!is.Numeric(bf.maxit, integer.valued = TRUE,
-                  positive = TRUE, allowable.length = 1))
+                  positive = TRUE, length.arg = 1))
     stop("Bad input for argument 'bf.maxit'")
 
   if (!is.Numeric(Etamat.colmax, positive = TRUE,
-                  allowable.length = 1) ||
+                  length.arg = 1) ||
       Etamat.colmax < Rank)
     stop("bad input for argument 'Etamat.colmax'")
 
   if (!is.Numeric(Maxit.optim, integer.valued = TRUE,
-                  positive = TRUE, allowable.length = 1))
+                  positive = TRUE, length.arg = 1))
     stop("Bad input for argument 'Maxit.optim'")
-  if (!is.Numeric(optim.maxit, allowable.length = 1,
+  if (!is.Numeric(optim.maxit, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE))
     stop("Bad input for argument 'optim.maxit'")
-  if (!is.Numeric(sd.sitescores, allowable.length = 1,
+  if (!is.Numeric(sd.sitescores, length.arg = 1,
                   positive = TRUE))
     stop("Bad input for argument 'sd.sitescores'")
-  if (!is.Numeric(sd.Cinit, allowable.length = 1,
+  if (!is.Numeric(sd.Cinit, length.arg = 1,
                   positive = TRUE))
     stop("Bad input for argument 'sd.Cinit'")
   if (!is.Numeric(df1.nl) || any(df1.nl < 0))
@@ -439,10 +439,10 @@ cao.control <- function(Rank = 1,
     stop("Bad input for argument 'spar1'")
   if (!is.Numeric(spar2) || any(spar2 < 0))
     stop("Bad input for argument 'spar2'")
-  if (!is.Numeric(epsilon, positive = TRUE, allowable.length = 1))
+  if (!is.Numeric(epsilon, positive = TRUE, length.arg = 1))
     stop("Bad input for argument 'epsilon'")
 
-  if (!is.Numeric(SmallNo, positive = TRUE, allowable.length = 1))
+  if (!is.Numeric(SmallNo, positive = TRUE, length.arg = 1))
     stop("Bad input for argument 'SmallNo'")
   if ((SmallNo < .Machine$double.eps) ||
       (SmallNo > .0001))
@@ -493,7 +493,7 @@ cao.control <- function(Rank = 1,
 
 
 create.cms <- function(Rank = 1, M, MSratio = 1, which, p1 = 1) {
-  if (!is.Numeric(p1, allowable.length = 1,
+  if (!is.Numeric(p1, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE))
     stop("bad input for argument 'p1'")
   Blist. <- vector("list", p1 + Rank)
@@ -633,10 +633,10 @@ callcaoc <- function(cmatrix,
 
 
 
-  contr.sp <- list(low = -1.5, ## low = 0.      was default till R 1.3.x
+  contr.sp <- list(low = -1.5,  ## low = 0.      was default till R 1.3.x
                    high = 1.5,
-                   tol = 1e-4, ## tol = 0.001   was default till R 1.3.x
-                   eps = 2e-8, ## eps = 0.00244 was default till R 1.3.x
+                   tol = 1e-4,  ## tol = 0.001   was default till R 1.3.x
+                   eps = 2e-8,  ## eps = 0.00244 was default till R 1.3.x
                    maxit = 500 )
 
 
@@ -665,11 +665,11 @@ callcaoc <- function(cmatrix,
   ans1 <- .C("vcao6",
   numat = as.double(numat), ymat = as.double(ymat), wvec = as.double(wvec),
   etamat = as.double(usethiseta), fv = double(NOS*n), zedd = double(n*M),
-  wz = double(n*M), U = double(M*n), # bnumat = as.double(bnumat),
+  wz = double(n*M), U = double(M*n),  # bnumat = as.double(bnumat),
   qr = double(nstar*pstar.), qraux = double(pstar.),
     qpivot = integer(pstar.),
   n = as.integer(n), M = as.integer(M), NOS = as.integer(NOS),
-      nstar = as.integer(nstar), dim1U = as.integer( M ), # for U, not U. 
+      nstar = as.integer(nstar), dim1U = as.integer( M ),  # for U, not U. 
   errcode = integer(1), othint = as.integer(othint),
   deviance = double(1 + NOS),  # NOS more elts added 20100413
   beta = as.double(usethisbeta),
@@ -685,7 +685,7 @@ callcaoc <- function(cmatrix,
       nu1mat = as.double(nu1mat),
   blist = as.double(unlist( Blist. )),
   as.integer(ncbvec), 
-      smap = as.integer(1:(Rank+1)), # 
+      smap = as.integer(1:(Rank+1)),  # 
       trivc = as.integer(trivc),
 
 
@@ -700,8 +700,7 @@ callcaoc <- function(cmatrix,
   bindex = as.integer(smooth.frame$bindex),
   lindex = as.integer(smooth.frame$lindex),
       nknots = as.integer(smooth.frame$nknots),
-      kindex = as.integer(smooth.frame$kindex),
-  NAOK = FALSE, DUP = TRUE, PACKAGE = "VGAM")
+      kindex = as.integer(smooth.frame$kindex), PACKAGE = "VGAM")
 flush.console()
 
 
@@ -822,7 +821,7 @@ calldcaoc <- function(cmatrix,
   xmat2 <- xmat[, control$colx2.index, drop = FALSE]   #ccc
   numat <- xmat2 %*% matrix(cmatrix, p2, Rank)
   dim(numat) <- c(nrow(xmat), Rank)
-  temp.smooth.frame <- vector("list", 1+Rank) # Temporary makeshift frame
+  temp.smooth.frame <- vector("list", 1+Rank)  # Temporary makeshift frame
   mynames5 <- if (Rank == 1) "latvar" else paste("latvar", 1:Rank, sep = "")
   names(temp.smooth.frame) <- c("(Intercept)", mynames5)
   temp.smooth.frame[[1]] <- rep(1, len = n)
@@ -884,7 +883,7 @@ calldcaoc <- function(cmatrix,
                           ncolBlist = ncolBlist. ,
                           M = M. , qbig = NULL,
 
-                          Umat = U, # NULL value ==> not needed
+                          Umat = U,  # NULL value ==> not needed
                           all.knots = control$all.knots, nk = NULL,
                           sf.only = TRUE)
 
@@ -959,7 +958,6 @@ warning("20100405; this is new:")
 
     flush.console()
 
-
     if (!Nice21)
       stop("need 'Nice21'")
 
@@ -967,7 +965,7 @@ warning("20100405; this is new:")
     numat = as.double(numat), as.double(ymat), as.double(wvec),
     etamat = as.double(usethiseta), fv = double(NOS*n),
       zedd = double(n*M),
-    wz = double(n*M), U = double(M*n), # bnumat = as.double(bnumat),
+    wz = double(n*M), U = double(M*n),  # bnumat = as.double(bnumat),
     qr = double(nstar*pstar.), qraux = double(pstar.),
       qpivot = integer(pstar.),
     as.integer(n), as.integer(M), NOS = as.integer(NOS),
@@ -1004,8 +1002,7 @@ warning("20100405; this is new:")
     bindex = as.integer(smooth.frame$bindex),
     lindex = as.integer(smooth.frame$lindex),
     nknots = as.integer(smooth.frame$nknots),
-    kindex = as.integer(smooth.frame$kindex),
-  NAOK = FALSE, DUP = TRUE, PACKAGE = "VGAM")
+    kindex = as.integer(smooth.frame$kindex), PACKAGE = "VGAM")
         flush.console()
 
          assign(".VGAM.CAO.etamat", ans1$etamat, envir = VGAMenv)
@@ -1104,18 +1101,18 @@ Coef.cao <- function(object,
     maxgriditer = 10,  # Maximum number of iters allowed for grid search
     smallno = 0.05, ...) {
 
-  if (!is.Numeric(epsOptimum, positive = TRUE, allowable.length = 1))
+  if (!is.Numeric(epsOptimum, positive = TRUE, length.arg = 1))
     stop("bad input for argument 'epsOptimum'")
   if (!is.Numeric(gridlen, positive = TRUE, integer.valued = TRUE) ||
       gridlen < 5)
     stop("bad input for argument 'gridlen'")
   if (!is.Numeric(maxgriditer, positive = TRUE,
-                  allowable.length = 1, integer.valued = TRUE) ||
+                  length.arg = 1, integer.valued = TRUE) ||
       maxgriditer < 3)
     stop("bad input for argument 'maxgriditer'")
   if (!is.logical(ConstrainedO <- object@control$ConstrainedO))
     stop("cannot determine whether the model is constrained or not")
-  if (!is.Numeric(smallno, positive = TRUE, allowable.length = 1) ||
+  if (!is.Numeric(smallno, positive = TRUE, length.arg = 1) ||
      smallno > 0.5 || smallno < 0.0001)
     stop("bad input for argument 'smallno'")
 
@@ -1161,7 +1158,7 @@ Coef.cao <- function(object,
 
     maximum <- rep(as.numeric(NA), len = NOS)
 
-    whichSpecies <- 1:NOS  # Do it for all species
+    which.species <- 1:NOS  # Do it for all species
     if (Rank == 1) {
       gridd <- cbind(seq(extents[1,1], extents[2,1], len = gridlen))
     } else {
@@ -1170,18 +1167,18 @@ Coef.cao <- function(object,
       eta2matrix <- matrix(0, NOS, 1)
     }
     gridd.orig <- gridd
-    for (sppno in 1:length(whichSpecies)) {
+    for (sppno in 1:length(which.species)) {
       gridd <- gridd.orig 
       gridres1 <- gridd[2, 1] - gridd[1, 1]
       gridres2 <- if (Rank == 2) gridd[2, 2] - gridd[1, 2] else 0
       griditer <- 1
 
-      thisSpecies <- whichSpecies[sppno]
-      indexSpecies <- if (is.character(whichSpecies))
-          match(whichSpecies[sppno], ynames) else whichSpecies[sppno]
+      thisSpecies <- which.species[sppno]
+      indexSpecies <- if (is.character(which.species))
+          match(which.species[sppno], ynames) else which.species[sppno]
 
       if (is.na(indexSpecies))
-        stop("mismatch found in 'whichSpecies'")
+        stop("mismatch found in 'which.species'")
 
       while(griditer == 1 ||
             ((griditer <= maxgriditer) &&
@@ -1198,7 +1195,7 @@ Coef.cao <- function(object,
         if (length(index) != 1)
           warning("could not find a single maximum")
         if (Rank == 2) {
-          initvalue <- rep(xvals[index,], length = Rank) # for optim()
+          initvalue <- rep(xvals[index,], length = Rank)  # for optim()
           if (abs(initvalue[1] - extents[1, 1]) < smallno)
             initvalue[1] <- extents[1, 1] + smallno
           if (abs(initvalue[1] - extents[2, 1]) < smallno)
@@ -1214,7 +1211,7 @@ Coef.cao <- function(object,
           gridres1 <- epsOptimum + 1  # equivalent to a break
           break  # just in case
         } else {
-          maximum[sppno] <- yvals[index] # on the eta scale
+          maximum[sppno] <- yvals[index]  # on the eta scale
           optimum[1,sppno] <- xvals[index,1]
           gridd[,1] <- seq(
                   max(extents[1, 1], optimum[1,sppno] - gridres1),
@@ -1359,7 +1356,7 @@ setMethod("Coef", "cao", function(object, ...) Coef.cao(object, ...))
 
 
 lvplot.cao <- function(object,
-          add = FALSE, plot.it = TRUE, rugplot = TRUE, y = FALSE, 
+          add = FALSE, show.plot = TRUE, rugplot = TRUE, y = FALSE, 
           type = c("fitted.values", "predictors"),
           xlab = paste("Latent Variable",
                        if (Rank == 1) "" else " 1", sep = ""),
@@ -1370,7 +1367,7 @@ lvplot.cao <- function(object,
           label.arg= FALSE, adj.arg=-0.5, 
           sites= FALSE, spch = NULL, scol = par()$col, scex = par()$cex,
           sfont = par()$font,
-          whichSpecies = NULL,
+          which.species = NULL,
           check.ok = TRUE, ...) {
     type <- match.arg(type, c("fitted.values", "predictors"))[1]
 
@@ -1385,8 +1382,8 @@ lvplot.cao <- function(object,
     n <- object@misc$n
     colx2.index <- object@control$colx2.index
     cx1i <- object@control$colx1.index
-    if (!length(whichSpecies))
-      whichSpecies <- 1:NOS
+    if (!length(which.species))
+      which.species <- 1:NOS
     if (check.ok)
       if (!(length(cx1i) == 1 && names(cx1i) == "(Intercept)"))
           stop("latent variable plots allowable only ",
@@ -1396,46 +1393,46 @@ lvplot.cao <- function(object,
     Cmat <- Coeflist@C
     latvarmat <- Coeflist@latvar  # n x Rank 
 
-    if (!plot.it)
+    if (!show.plot)
       return(latvarmat)
 
     r.curves <- slot(object, type)
 
     if (MSratio != 1 && type == "predictors")
       stop("can only plot the predictors if M == S")
-    MorS <- ncol(r.curves) # Actually, here, the value is S always.
+    MorS <- ncol(r.curves)  # Actually, here, the value is S always.
     if (!add) {
       if (Rank == 1) {
         matplot(latvarmat,
                 if ( y && type == "fitted.values")
-                    object@y[, whichSpecies, drop = FALSE] else
-                    r.curves[, whichSpecies, drop = FALSE],
+                    object@y[, which.species, drop = FALSE] else
+                    r.curves[, which.species, drop = FALSE],
                 type = "n", xlab = xlab, ylab = ylab, ...)
       } else { # Rank == 2
-        matplot(c(Coeflist@Optimum[1, whichSpecies], latvarmat[, 1]),
-                c(Coeflist@Optimum[2, whichSpecies], latvarmat[, 2]),
+        matplot(c(Coeflist@Optimum[1, which.species], latvarmat[, 1]),
+                c(Coeflist@Optimum[2, which.species], latvarmat[, 2]),
                 type = "n", xlab = xlab, ylab = ylab, ...)
       }
     }
 
 
-    pch  <- rep(pch,  length = length(whichSpecies))
-    pcol <- rep(pcol, length = length(whichSpecies))
-    pcex <- rep(pcex, length = length(whichSpecies))
-    llty <- rep(llty, length = length(whichSpecies))
-    lcol <- rep(lcol, length = length(whichSpecies))
-    llwd <- rep(llwd, length = length(whichSpecies))
-    adj.arg <- rep(adj.arg, length = length(whichSpecies))
+    pch  <- rep(pch,  length = length(which.species))
+    pcol <- rep(pcol, length = length(which.species))
+    pcex <- rep(pcex, length = length(which.species))
+    llty <- rep(llty, length = length(which.species))
+    lcol <- rep(lcol, length = length(which.species))
+    llwd <- rep(llwd, length = length(which.species))
+    adj.arg <- rep(adj.arg, length = length(which.species))
 
     sppnames <- if (type == "predictors") dimnames(r.curves)[[2]] else
                                           dimnames(object@y)[[2]]
     if (Rank == 1) {
-      for (sppno in 1:length(whichSpecies)) {
-        thisSpecies <- whichSpecies[sppno]
-        indexSpecies <- if (is.character(whichSpecies))
-           match(whichSpecies[sppno], sppnames) else whichSpecies[sppno]
+      for (sppno in 1:length(which.species)) {
+        thisSpecies <- which.species[sppno]
+        indexSpecies <- if (is.character(which.species))
+           match(which.species[sppno], sppnames) else which.species[sppno]
         if (is.na(indexSpecies))
-          stop("mismatch found in 'whichSpecies'")
+          stop("mismatch found in 'which.species'")
         xx <- latvarmat 
         yy <- r.curves[, indexSpecies]
         ooo <- sort.list(xx)
@@ -1458,23 +1455,23 @@ lvplot.cao <- function(object,
              rep(spch, length = nrow(latvarmat)),
              col = scol, cex = scex, font=sfont)
       }
-      for (sppno in 1:length(whichSpecies)) {
-          thisSpecies <- whichSpecies[sppno]
-          indexSpecies <- if (is.character(whichSpecies))
-               match(whichSpecies[sppno], sppnames) else
-               whichSpecies[sppno]
+      for (sppno in 1:length(which.species)) {
+          thisSpecies <- which.species[sppno]
+          indexSpecies <- if (is.character(which.species))
+               match(which.species[sppno], sppnames) else
+               which.species[sppno]
           if (is.na(indexSpecies))
-            stop("mismatch found in 'whichSpecies'")
+            stop("mismatch found in 'which.species'")
           points(Coeflist@Optimum[1, indexSpecies],
                  Coeflist@Optimum[2, indexSpecies],
                  col = pcol[sppno], cex = pcex[sppno], pch = pch[sppno])
       }
       if (label.arg) {
-        for (sppno in 1:length(whichSpecies)) {
-          thisSpecies <- whichSpecies[sppno]
-          indexSpecies <- if (is.character(whichSpecies))
-             match(whichSpecies[sppno], sppnames) else
-                   whichSpecies[sppno]
+        for (sppno in 1:length(which.species)) {
+          thisSpecies <- which.species[sppno]
+          indexSpecies <- if (is.character(which.species))
+             match(which.species[sppno], sppnames) else
+                   which.species[sppno]
           text(Coeflist@Optimum[1, indexSpecies],
                Coeflist@Optimum[2, indexSpecies],
                labels = (dimnames(Coeflist@Optimum)[[2]])[indexSpecies],
@@ -1566,19 +1563,19 @@ predict.cao <- function (object, newdata = NULL,
          object@misc$M
     MSratio <- M / NOS  # First value is g(mean) = quadratic form in latvar
     if (type == "terms") {
-      terms.mat <- matrix(0, nrow(X), Rank*NOS) # 1st R cols for spp.1, etc.
+      terms.mat <- matrix(0, nrow(X), Rank*NOS)  # 1st R cols for spp.1, etc.
       interceptvector <- rep(0, len = NOS)
     } else {
       etamat <- matrix(0, nrow(X), M)  # Could contain derivatives
     }
     ind8 <- 1:Rank
-    whichSpecies <- 1:NOS  # Do it all for all species
-    for (sppno in 1:length(whichSpecies)) {
-      thisSpecies <- whichSpecies[sppno]
-      indexSpecies <- if (is.character(whichSpecies))
-        match(whichSpecies[sppno], sppnames) else whichSpecies[sppno]
+    which.species <- 1:NOS  # Do it all for all species
+    for (sppno in 1:length(which.species)) {
+      thisSpecies <- which.species[sppno]
+      indexSpecies <- if (is.character(which.species))
+        match(which.species[sppno], sppnames) else which.species[sppno]
       if (is.na(indexSpecies))
-        stop("mismatch found in 'whichSpecies'")
+        stop("mismatch found in 'which.species'")
 
      temp345 <-
        predictcao(object, grid = latvarmat, sppno = thisSpecies,
@@ -1635,7 +1632,7 @@ predictcao <- function(object, grid, sppno, Rank = 1,
     stop("'link' must be \"link\" or \"terms\"")
   if (ncol(grid <- as.matrix(grid)) != Rank)
     stop("'grid' must have ", Rank, " columns")
-  if (!is.Numeric(1 + deriv, allowable.length = 1,
+  if (!is.Numeric(1 + deriv, length.arg = 1,
                   positive = TRUE, integer.valued = TRUE))
     stop("'deriv' must be a non-negative integer")
   if (type == "terms" && deriv != 0)
@@ -1702,7 +1699,7 @@ plot.cao <- function(x,
                      main = NULL,
                      center.cf = Rank > 1,
                      WhichRank = 1:Rank, 
-                     whichSpecies = NULL,  # a numeric or character vector
+                     which.species = NULL,  # a numeric or character vector
                      rugplot = TRUE, se.arg = FALSE, deriv = 0,
                      scale = 0, ylim = NULL,
                      overlay = FALSE, ...) {
@@ -1727,11 +1724,11 @@ plot.cao <- function(x,
   lty  <- rep(lty,  length = Rank*NOS)
   xlab <- rep(xlab, length = Rank)
 
-  if (!length(whichSpecies)) whichSpecies <- 1:NOS
+  if (!length(which.species)) which.species <- 1:NOS
   if (length(ylab)) 
-    ylab <- rep(ylab, len = length(whichSpecies))  # Too long if overlay
+    ylab <- rep(ylab, len = length(which.species))  # Too long if overlay
   if (length(main))
-    main <- rep(main, len = length(whichSpecies))  # Too long if overlay
+    main <- rep(main, len = length(which.species))  # Too long if overlay
   latvarmat <- latvar(x)
   nice21 <- length(x@control$colx1.index) == 1 &&
                    names(x@control$colx1.index) == "(Intercept)"
@@ -1739,12 +1736,12 @@ plot.cao <- function(x,
     stop("can only handle intercept-only models")
 
   counter <- 0
-  for (sppno in 1:length(whichSpecies)) {
-    thisSpecies <- whichSpecies[sppno]
-    indexSpecies <- if (is.character(whichSpecies))
-        match(whichSpecies[sppno], sppnames) else whichSpecies[sppno]
+  for (sppno in 1:length(which.species)) {
+    thisSpecies <- which.species[sppno]
+    indexSpecies <- if (is.character(which.species))
+        match(which.species[sppno], sppnames) else which.species[sppno]
     if (is.na(indexSpecies))
-        stop("mismatch found in 'whichSpecies'")
+        stop("mismatch found in 'which.species'")
     terms.mat <- predictcao(object = x, grid = latvarmat, type = "terms",
                             sppno = indexSpecies, Rank = Rank,
                             deriv = deriv, MSratio = MSratio)
@@ -1794,10 +1791,10 @@ setMethod("plot", "cao",
 
 persp.cao <-
   function(x,
-           plot.it = TRUE,
+           show.plot = TRUE,
            xlim = NULL, ylim = NULL, zlim = NULL,  # zlim ignored if Rank == 1
            gridlength = if (Rank == 1) 301 else c(51, 51),
-           whichSpecies = NULL,
+           which.species = NULL,
            xlab = if (Rank == 1) "Latent Variable" else "Latent Variable 1",
            ylab = if (Rank == 1) "Expected Value"  else "Latent Variable 2",
            zlab = "Expected value",
@@ -1841,15 +1838,15 @@ persp.cao <-
                    cbind(latvar1)
 
   sppNames <- dimnames(object@y)[[2]]
-  if (!length(whichSpecies)) {
-    whichSpecies <- sppNames[1:NOS]
-    whichSpecies.numer <- 1:NOS
+  if (!length(which.species)) {
+    which.species <- sppNames[1:NOS]
+    which.species.numer <- 1:NOS
   } else
-  if (is.numeric(whichSpecies)) {
-    whichSpecies.numer <- whichSpecies
-    whichSpecies <- sppNames[whichSpecies.numer]  # Convert to character
+  if (is.numeric(which.species)) {
+    which.species.numer <- which.species
+    which.species <- sppNames[which.species.numer]  # Convert to character
   } else {
-    whichSpecies.numer <- match(whichSpecies, sppNames)
+    which.species.numer <- match(which.species, sppNames)
   }
 
   LP <- matrix(as.numeric(NA), nrow(latvarmat), NOS)
@@ -1865,17 +1862,17 @@ persp.cao <-
   dimnames(fitvals) <- list(NULL, dimnames(fvmat)[[2]])
 
   if (Rank == 1) {
-    if (plot.it) {
+    if (show.plot) {
       if (!length(ylim.orig))
-        ylim <- c(0, max(fitvals[,whichSpecies.numer]) * stretch)  # A revision
-      col <- rep(col, len = length(whichSpecies.numer))
-      lty <- rep(lty, len = length(whichSpecies.numer))
-      lwd <- rep(lwd, len = length(whichSpecies.numer))
+        ylim <- c(0, max(fitvals[,which.species.numer]) * stretch)  # A revision
+      col <- rep(col, len = length(which.species.numer))
+      lty <- rep(lty, len = length(which.species.numer))
+      lwd <- rep(lwd, len = length(which.species.numer))
       matplot(latvar1, fitvals, xlab = xlab, ylab = ylab,
               type = "n", main = main, xlim = xlim, ylim = ylim, ...)
       if (rugplot) rug(latvar(object)) 
-      for (sppno in 1:length(whichSpecies.numer)) {
-        ptr2 <- whichSpecies.numer[sppno]  # points to species column
+      for (sppno in 1:length(which.species.numer)) {
+        ptr2 <- which.species.numer[sppno]  # points to species column
         lines(latvar1, fitvals[,ptr2], col = col[sppno], 
               lty = lty[sppno], lwd = lwd [sppno], ...)
         if (labelSpecies) {
@@ -1889,10 +1886,10 @@ persp.cao <-
       }
     }
   } else {
-    max.fitted <- matrix(fitvals[,whichSpecies[1]],
+    max.fitted <- matrix(fitvals[,which.species[1]],
                          length(latvar1), length(latvar2))
-    if (length(whichSpecies) > 1)
-      for (sppno in whichSpecies[-1]) {
+    if (length(which.species) > 1)
+      for (sppno in which.species[-1]) {
         max.fitted <- pmax(max.fitted,
                            matrix(fitvals[, sppno], 
                                   length(latvar1), length(latvar2)))
@@ -1902,7 +1899,7 @@ persp.cao <-
 
 
     perspdefault <- getS3method("persp", "default")
-    if (plot.it)
+    if (show.plot)
       perspdefault(latvar1, latvar2, max.fitted,
                    zlim = zlim,
                    xlab = xlab, ylab = ylab, zlab = zlab,
@@ -1927,6 +1924,7 @@ setMethod("persp", "cao", function(x, ...) persp.cao(x = x, ...))
 latvar.cao <- function(object, ...) {
   Coef(object, ...)@latvar
 }
+
 
 
 

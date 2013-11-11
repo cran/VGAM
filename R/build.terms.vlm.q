@@ -75,7 +75,7 @@ Build.terms.vlm <-
     }
     if (any(complex)) {
       assign <- assign[complex]
-      for(term in names(assign)) {
+      for (term in names(assign)) {
         TT <- assign[[term]]
         xt <- x[, TT]
         fit[, term] <- xt %*% coefs[TT]

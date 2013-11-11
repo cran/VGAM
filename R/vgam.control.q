@@ -33,25 +33,25 @@ vgam.control <- function(all.knots = FALSE,
 
   if (!is.logical(checkwz) || length(checkwz) != 1)
     stop("bad input for argument 'checkwz'")
-  if (!is.Numeric(wzepsilon, allowable.length = 1, positive = TRUE))
+  if (!is.Numeric(wzepsilon, length.arg = 1, positive = TRUE))
     stop("bad input for argument 'wzepsilon'")
 
   if (length(all.knots) > 1)
     warning("all.knots should be of length 1; using first value only")
-  if (!is.Numeric(bf.epsilon, allowable.length = 1, positive = TRUE)) {
+  if (!is.Numeric(bf.epsilon, length.arg = 1, positive = TRUE)) {
     warning("bad input for argument 'bf.epsilon'; using 0.00001 instead")
     bf.epsilon <- 0.00001
   }
-  if (!is.Numeric(bf.maxit, allowable.length = 1,
+  if (!is.Numeric(bf.maxit, length.arg = 1,
                   positive = TRUE, integer.valued = TRUE)) {
     warning("bad input for argument 'bf.maxit'; using 30 instead")
     bf.maxit <- 30
   }
-  if (!is.Numeric(epsilon, allowable.length = 1, positive = TRUE)) {
+  if (!is.Numeric(epsilon, length.arg = 1, positive = TRUE)) {
     warning("bad input for argument 'epsilon'; using 0.0001 instead")
     epsilon <- 0.0001
   }
-  if (!is.Numeric(maxit, allowable.length = 1,
+  if (!is.Numeric(maxit, length.arg = 1,
                   positive = TRUE, integer.valued = TRUE)) {
     warning("bad input for argument 'maxit'; using 30 instead")
     maxit <- 30

@@ -42,7 +42,7 @@ vgam.match <- function(x, all.knots = FALSE, nk = NULL) {
   if (!is.null(attributes(x)$NAs) || any(is.na(x)))
     stop("cannot smooth on variables with NAs") 
 
-  sx <- unique(sort(as.vector(x))) # "as.vector()" strips off attributes
+  sx <- unique(sort(as.vector(x)))  # "as.vector()" strips off attributes
   ooo <- match(x, sx)  # as.integer(match(x, sx))      # sx[o]==x
   neffec <- length(sx)  # as.integer(length(sx))
 
@@ -69,10 +69,10 @@ vgam.match <- function(x, all.knots = FALSE, nk = NULL) {
       stop("bad value for 'nk'")
     if (!chosen)
       nk <- 0
-    knot.list <- .C("vknootl2", as.double(xbar),
+    knot.list <- .C("vknootl2",
+                    as.double(xbar),
                     as.integer(neffec), knot = double(neffec+6),
-                    k = as.integer(nk+4), chosen = as.integer(chosen),
-                    NAOK = TRUE, DUP = TRUE, PACKAGE = "VGAM")
+                    k = as.integer(nk+4), chosen = as.integer(chosen), PACKAGE = "VGAM")
     if (noround) {
       knot <- valid.vknotl2(knot.list$knot[1:(knot.list$k)])
       knot.list$k <- length(knot)

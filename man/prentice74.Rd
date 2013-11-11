@@ -116,7 +116,7 @@ pdata <- data.frame(x2 = runif(nn <- 1000))
 pdata <- transform(pdata, loc = -1 + 2*x2, Scale = exp(1))
 pdata <- transform(pdata, y = rlgamma(nn, loc = loc, scale = Scale, k = 1))
 fit <- vglm(y ~ x2, prentice74(zero = 2:3), pdata, trace = TRUE)
-coef(fit, matrix = TRUE) # Note the coefficients for location
+coef(fit, matrix = TRUE)  # Note the coefficients for location
 }
 \keyword{models}
 \keyword{regression}

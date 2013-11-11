@@ -64,7 +64,7 @@ rrice(n, vee, sigma)
 plot(x, drice(x, vee = 0, sigma = 1), type = "n", las = 1,, ylab = "",
      main = "Density of Rice distribution for various values of v")
 sigma <- 1; vee <- c(0, 0.5, 1, 2, 4)
-for(ii in 1:length(vee))
+for (ii in 1:length(vee))
   lines(x, drice(x, vee[ii], sigma), col = ii)
 legend(x = 5, y = 0.6, legend = as.character(vee),
        col = 1:length(vee), lty = 1)

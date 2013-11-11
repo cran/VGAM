@@ -89,14 +89,14 @@ rpospois(n, lambda)
 lambda <- 2; y = rpospois(n = 1000, lambda)
 table(y)
 mean(y)  # Sample mean
-lambda / (1 - exp(-lambda)) # Population mean
+lambda / (1 - exp(-lambda))  # Population mean
 
 (ii <- dpospois(0:7, lambda))
 cumsum(ii) - ppospois(0:7, lambda)  # Should be 0s
 table(rpospois(100, lambda))
 
 table(qpospois(runif(1000), lambda))
-round(dpospois(1:10, lambda) * 1000) # Should be similar
+round(dpospois(1:10, lambda) * 1000)  # Should be similar
 
 \dontrun{ x <- 0:7
 barplot(rbind(dpospois(x, lambda), dpois(x, lambda)),

@@ -92,9 +92,9 @@ Boca Raton: Chapman & Hall/CRC Press.
 
 }
 \examples{
-zdata <- data.frame(y = 1:5, w =  c(63, 14, 5, 1, 2)) # Knight, p.304
+zdata <- data.frame(y = 1:5, w =  c(63, 14, 5, 1, 2))  # Knight, p.304
 fit <- vglm(y ~ 1, zetaff, zdata, trace = TRUE, weight = w, crit = "coef")
-(phat <- Coef(fit)) # 1.682557
+(phat <- Coef(fit))  # 1.682557
 with(zdata, cbind(round(dzeta(y, phat) * sum(w), 1), w))
 
 with(zdata, weighted.mean(y, w))

@@ -7,7 +7,7 @@
   associated with a LMS quantile regression.
 }
 \usage{
-deplot.lmscreg(object, newdata = NULL, x0, y.arg, plot.it = TRUE, ...)
+deplot.lmscreg(object, newdata = NULL, x0, y.arg, show.plot = TRUE, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -32,7 +32,7 @@ deplot.lmscreg(object, newdata = NULL, x0, y.arg, plot.it = TRUE, ...)
   \item{y.arg}{ Numerical vector. The values of the response variable 
   at which to evaluate the density. This should be a grid that is fine
   enough to ensure the plotted curves are smooth.  }
-  \item{plot.it}{ Logical. Plot it? If \code{FALSE} no plot will
+  \item{show.plot}{ Logical. Plot it? If \code{FALSE} no plot will
   be done.
 
 

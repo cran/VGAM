@@ -248,17 +248,17 @@ fit2 <- vglm(ymat ~ X + Z,
                         X ~ x1 + x2 + x3 + x4),
              form2 = ~  Z + z1 + z2 + z3 + z4 +
                         X + x1 + x2 + x3 + x4)
-head(model.matrix(fit2, type =  "lm")) # LM model matrix
-head(model.matrix(fit2, type = "vlm")) # Big VLM model matrix
+head(model.matrix(fit2, type =  "lm"))  # LM model matrix
+head(model.matrix(fit2, type = "vlm"))  # Big VLM model matrix
 coef(fit2)
 coef(fit2, matrix = TRUE)
-max(abs(predict(fit2)-predict(fit2, new = mydat))) # Predicts correctly
+max(abs(predict(fit2)-predict(fit2, new = mydat)))  # Predicts correctly
 summary(fit2)
 \dontrun{
-# plotvgam(fit2, se = TRUE, xlab = "x1", which.term = 1) # Bug!
-# plotvgam(fit2, se = TRUE, xlab = "z1", which.term = 2) # Bug!
-plotvgam(fit2, xlab = "x1") # Correct
-plotvgam(fit2, xlab = "z1") # Correct
+# plotvgam(fit2, se = TRUE, xlab = "x1", which.term = 1)  # Bug!
+# plotvgam(fit2, se = TRUE, xlab = "z1", which.term = 2)  # Bug!
+plotvgam(fit2, xlab = "x1")  # Correct
+plotvgam(fit2, xlab = "z1")  # Correct
 }
 
 

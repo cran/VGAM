@@ -212,7 +212,7 @@ sqrt(diag(vcov(summary(fit))))   # Standard errors
 y <- as.matrix(venice[, paste("r", 1:10, sep = "")])
 fit1 <- vgam(y ~ s(year, df = 3), gumbel(R = 365, mpv = TRUE),
              data = venice, trace = TRUE, na.action = na.pass)
-depvar(fit1)[4:5, ] # NAs used to pad the matrix
+depvar(fit1)[4:5, ]  # NAs used to pad the matrix
 
 \dontrun{
 # Plot the component functions

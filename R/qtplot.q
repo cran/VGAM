@@ -95,7 +95,7 @@ qtplot.default <- function(object, ...) {
 qtplot.lmscreg <- function(object,
                            newdata = NULL,
                            percentiles = object@misc$percentiles,
-                           plot.it= TRUE, ...) {
+                           show.plot = TRUE, ...) {
 
   same <- length(percentiles) == length(object@misc$percentiles) &&
           all(percentiles == object@misc$percentiles)
@@ -119,7 +119,7 @@ qtplot.lmscreg <- function(object,
     if (!length(double.check.earg <- object@misc$earg))
       double.check.earg <- list(theta = NULL)
       eta  <- eta2theta(eta, link = object@misc$link,
-                        earg = double.check.earg) # lambda, mu, sigma
+                        earg = double.check.earg)  # lambda, mu, sigma
 
 
 
@@ -139,7 +139,7 @@ qtplot.lmscreg <- function(object,
            paste(as.character(percentiles), "%", sep = ""))
   }
 
-  if (plot.it) {
+  if (show.plot) {
     plotqtplot.lmscreg(fitted.values = fitted.values,
                        object = object,
                        newdata = newdata,
@@ -295,7 +295,7 @@ if (TRUE) {
  
 qtplot.egumbel <-
 qtplot.gumbel <-
-    function(object, plot.it = TRUE, y.arg = TRUE,
+    function(object, show.plot = TRUE, y.arg = TRUE,
              spline.fit = FALSE, label = TRUE,
              R = object@misc$R,
              percentiles = object@misc$percentiles,
@@ -334,7 +334,7 @@ qtplot.gumbel <-
   answer <- list(fitted.values = fitted.values,
                  percentiles = percentiles)
 
-  if (!plot.it)
+  if (!show.plot)
     return(answer)
 
 
@@ -473,7 +473,7 @@ deplot.default <- function(object, ...) {
 "deplot.lmscreg" <- function(object,
                              newdata = NULL,
                              x0,
-                             y.arg, plot.it = TRUE, ...) {
+                             y.arg, show.plot = TRUE, ...) {
 
 
   if (!length(newdata)) {
@@ -502,7 +502,7 @@ deplot.default <- function(object, ...) {
   newcall <- parse(text = newcall)[[1]]
   answer <- eval(newcall)
 
-  if (plot.it) 
+  if (show.plot) 
     plotdeplot.lmscreg(answer, y.arg=y.arg, ...)
 
   invisible(answer) 
@@ -603,7 +603,7 @@ if (TRUE) {
   if (!length(double.check.earg <- object@misc$earg))
     double.check.earg <- list(theta = NULL)
   eta0 <- eta2theta(eta0, link = object@misc$link,
-                    earg = double.check.earg) # lambda, mu, sigma
+                    earg = double.check.earg)  # lambda, mu, sigma
 
   y <- vgety(object, newdata)   # Includes yoffset 
 
@@ -694,7 +694,7 @@ vgety <- function(object, newdata = NULL) {
  
 rlplot.egev <-
 rlplot.gev <-
-  function(object, plot.it = TRUE,
+  function(object, show.plot = TRUE,
            probability = c((1:9)/100, (1:9)/10, 0.95, 0.99, 0.995, 0.999),
            add.arg = FALSE,
            xlab = "Return Period",
@@ -711,7 +711,7 @@ rlplot.gev <-
 
   log.arg <- log
   rm(log)
-  if (!is.Numeric(epsilon, allowable.length = 1) ||
+  if (!is.Numeric(epsilon, length.arg = 1) ||
       abs(epsilon) > 0.10)
     stop("bad input for 'epsilon'")
   if (!is.Numeric(probability, positive = TRUE) ||

@@ -128,7 +128,7 @@ Deviance.categorical.data.vgam <-
     M <- if (is.matrix(eta)) ncol(eta) else 1
     if (M > 1)
       return(NULL)
-    devi <- devi %*% rep(1, ncol(devi)) # deviance = \sum_i devi[i]
+    devi <- devi %*% rep(1, ncol(devi))  # deviance = \sum_i devi[i]
     return(c(sign(y[, 1] - mu[, 1]) * sqrt(abs(devi) * w)))
   } else {
     sum(w * devi)
@@ -452,7 +452,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
     misc$whitespace <- .whitespace
 
 
-    extra <- list() # kill what was used 
+    extra <- list()  # kill what was used 
   }), list( .earg = earg, .link = link, .reverse = reverse,
             .fillerChar = fillerChar,
             .whitespace = whitespace ))),
@@ -591,11 +591,11 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
       warning("'refLevel' is from an ordered factor")
     refLevel <- as.character(refLevel) == levels(refLevel)
     refLevel <- (1:length(refLevel))[refLevel]
-    if (!is.Numeric(refLevel, allowable.length = 1,
+    if (!is.Numeric(refLevel, length.arg = 1,
                     integer.valued = TRUE, positive = TRUE))
       stop("could not coerce 'refLevel' into a single positive integer")
   } else
-  if (!is.Numeric(refLevel, allowable.length = 1,
+  if (!is.Numeric(refLevel, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE))
     stop("'refLevel' must be a single positive integer")
 
@@ -652,6 +652,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
   infos = eval(substitute(function(...) {
     list(parallel = .parallel ,
          refLevel = .refLevel ,
+         Musual = -1,
          multipleResponses = FALSE,
          zero = .zero )
   }, list( .zero = zero,
@@ -890,7 +891,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
           stop("the 'weights' argument must be a vector of all ones")
       Llevels <- max(y)
       delete.zero.colns <- FALSE 
-      orig.y <- cbind(y) # Convert y into a matrix if necessary
+      orig.y <- cbind(y)  # Convert y into a matrix if necessary
       NOS <- ncol(cbind(orig.y))
       use.y <- use.mustart <- NULL
       for (iii in 1:NOS) {
@@ -1100,7 +1101,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
     if ( .mv ) {
       NOS <- extra$NOS
       Llevels <- extra$Llevels
-      wz <- matrix(0, n, NOS*(Llevels-1)) # Diagonal elts only for a start
+      wz <- matrix(0, n, NOS*(Llevels-1))  # Diagonal elts only for a start
       for (iii in 1:NOS) {
         cindex <- (iii-1)*(Llevels-1) + 1:(Llevels-1)
         aindex <- (iii-1)*(Llevels)   + 1:(Llevels-1)
@@ -1283,7 +1284,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
     },
   vfamily = c("acat", "vcategorical"),
   deriv = eval(substitute(expression({
-    zeta <- eta2theta(eta, .link , earg = .earg ) # May be zetar
+    zeta <- eta2theta(eta, .link , earg = .earg )  # May be zetar
 
     dzeta.deta <- dtheta.deta(zeta, .link , earg = .earg )
 
@@ -1357,11 +1358,11 @@ acat.deriv <- function(zeta, reverse, M, n) {
                   init.alpha = 1) {
   if (!is.Numeric(init.alpha, positive = TRUE))
     stop("'init.alpha' must contain positive values only")
-  if (!is.Numeric(refvalue, allowable.length = 1, positive = TRUE))
+  if (!is.Numeric(refvalue, length.arg = 1, positive = TRUE))
     stop("'refvalue' must be a single positive value")
 
   if (!is.character(refgp) &&
-      !is.Numeric(refgp, allowable.length = 1,
+      !is.Numeric(refgp, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE))
     stop("'refgp' must be a single positive integer")
 
@@ -1397,7 +1398,7 @@ acat.deriv <- function(zeta, reverse, M, n) {
 
   linkinv = eval(substitute( function(eta, extra = NULL) {
     probs <- NULL
-    eta <- as.matrix(eta) # in case M = 1
+    eta <- as.matrix(eta)  # in case M = 1
     for (ii in 1:nrow(eta)) {
         alpha <- .brat.alpha(eta2theta(eta[ii,], "loge",
                                        earg = list(theta = NULL)),
@@ -1495,15 +1496,15 @@ acat.deriv <- function(zeta, reverse, M, n) {
                    refvalue = 1,
                    init.alpha = 1,
                    i0 = 0.01) {
-  if (!is.Numeric(i0, allowable.length = 1, positive = TRUE))
+  if (!is.Numeric(i0, length.arg = 1, positive = TRUE))
     stop("'i0' must be a single positive value")
   if (!is.Numeric(init.alpha, positive = TRUE))
     stop("'init.alpha' must contain positive values only")
-  if (!is.Numeric(refvalue, allowable.length = 1, positive = TRUE))
+  if (!is.Numeric(refvalue, length.arg = 1, positive = TRUE))
     stop("'refvalue' must be a single positive value")
 
   if (!is.character(refgp) && 
-     !is.Numeric(refgp, allowable.length = 1,
+     !is.Numeric(refgp, length.arg = 1,
                  integer.valued = TRUE, positive = TRUE))
     stop("'refgp' must be a single positive integer")
 
@@ -1515,7 +1516,7 @@ acat.deriv <- function(zeta, reverse, M, n) {
   initialize = eval(substitute(expression({
     try.index <- 1:400
     M <- (1:length(try.index))[(try.index*(try.index-1)) == ncol(y)]
-    if (!is.Numeric(M, allowable.length = 1, integer.valued = TRUE))
+    if (!is.Numeric(M, length.arg = 1, integer.valued = TRUE))
       stop("cannot determine 'M'")
     NCo <- M # Number of contestants
 
@@ -1565,8 +1566,8 @@ acat.deriv <- function(zeta, reverse, M, n) {
       alpha0 <- loge(eta[ii, M], inverse = TRUE)
       alpha1 <- alpha[extra$ybrat.indices[, "rindex"]]
       alpha2 <- alpha[extra$ybrat.indices[, "cindex"]]
-       probs <- rbind( probs, alpha1 / (alpha1 + alpha2 + alpha0)) #
-      qprobs <- rbind(qprobs, alpha0 / (alpha1 + alpha2 + alpha0)) #
+       probs <- rbind( probs, alpha1 / (alpha1 + alpha2 + alpha0))  #
+      qprobs <- rbind(qprobs, alpha0 / (alpha1 + alpha2 + alpha0))  #
     }
     if (length(extra$dnties))
       dimnames(qprobs) <- extra$dnties
@@ -1610,7 +1611,7 @@ acat.deriv <- function(zeta, reverse, M, n) {
       alpha0 <- loge(eta[ii, M], inverse = TRUE)
       ymat <- InverseBrat(   y[ii, ], NCo = M, diag = 0)
       tmat <- InverseBrat(ties[ii, ], NCo = M, diag = 0)
-      answer <- rep(0, len = NCo-1) # deriv wrt eta[-M]
+      answer <- rep(0, len = NCo-1)  # deriv wrt eta[-M]
       for (aa in 1:NCo) {
         Daj <- alpha[aa] + alpha[uindex] + alpha0
         pja <- alpha[uindex] / Daj
@@ -1692,7 +1693,7 @@ acat.deriv <- function(zeta, reverse, M, n) {
 
 
 .brat.indices <- function(NCo, are.ties = FALSE) {
-  if (!is.Numeric(NCo, allowable.length = 1,
+  if (!is.Numeric(NCo, length.arg = 1,
                   integer.valued = TRUE) ||
       NCo < 2)
     stop("bad input for 'NCo'")
@@ -1821,9 +1822,9 @@ tapplymat1 <- function(mat,
     mat <- as.matrix(mat)
   NR <- nrow(mat)
   NC <- ncol(mat)
-  fred <- .C("tapplymat1", mat = as.double(mat),
-             as.integer(NR), as.integer(NC), as.integer(type),
-             NAOK = FALSE, DUP = TRUE, PACKAGE = "VGAM")
+  fred <- .C("tapplymat1",
+               mat = as.double(mat),
+               as.integer(NR), as.integer(NC), as.integer(type), PACKAGE = "VGAM")
 
   dim(fred$mat) <- c(NR, NC)
   dimnames(fred$mat) <- dimnames(mat)
@@ -1880,11 +1881,11 @@ tapplymat1 <- function(mat,
     constraints <- cm.zero.vgam(constraints, x, .zero, M)
   }), list( .parallel = parallel, .zero = zero ))),
   initialize = eval(substitute(expression({
-    orig.y <- cbind(y) # Convert y into a matrix if necessary
+    orig.y <- cbind(y)  # Convert y into a matrix if necessary
     if ( .countdata ) {
       extra$NOS <- M <- NOS <- .NOS
       extra$Levels <- Levels <- .Levels
-      y.names <- dimnames(y)[[2]] # Hopefully the user inputted them
+      y.names <- dimnames(y)[[2]]  # Hopefully the user inputted them
     } else {
       if (any(w != 1) || ncol(cbind(w)) != 1)
         stop("the 'weights' argument must be a vector of all ones")
@@ -1940,7 +1941,7 @@ tapplymat1 <- function(mat,
             .init.mu = init.mu
           ))),
   linkinv = eval(substitute( function(eta, extra = NULL) {
-    mu <- eta2theta(eta, link= .link , earg = .earg ) # Poisson means
+    mu <- eta2theta(eta, link= .link , earg = .earg )  # Poisson means
     mu <- cbind(mu)
     mu
   }, list( .link = link, .earg = earg, .countdata = countdata ))),
@@ -2278,7 +2279,7 @@ ordpoissonProbs <- function(extra, mu, deriv = 0) {
             wz0 = -c(w) *
                   (dcump.deta[, -J] / scalemat[, -J]) *
                   (dcump.deta[, -1]  / scalemat[, -1]) / mu.use[, 2:J]
-            wz0 = as.matrix(wz0) # Just in case J=2
+            wz0 = as.matrix(wz0)  # Just in case J=2
             for (ii in 1:(J-1))
               wz[, iam(2*ii-1, 2*ii+1, M = M)] = if (ooz) wz0[, ii] else 0
             wz0 = -c(w) * (dcump.dscale[, -1] * dscale.deta[, -1]) *
@@ -2335,7 +2336,7 @@ ordpoissonProbs <- function(extra, mu, deriv = 0) {
             "the LM design matrix")
 
   nnn <- object@misc$n
-  M <- object@misc$M # ncol(B) # length(pvec) - 1
+  M <- object@misc$M # ncol(B)  # length(pvec) - 1
 
 
     if (model.multinomial) {
@@ -2362,10 +2363,10 @@ ordpoissonProbs <- function(extra, mu, deriv = 0) {
         pvec  <- c(t(fitted(object)))
         pvec  <- rep(pvec, each=ppp)
         temp1 <- array(BB * pvec, c(ppp, M+1, nnn))
-        temp2 <- aperm(temp1, c(2,1,3)) # (M+1) x ppp x nnn
-        temp2 <- colSums(temp2) # ppp x nnn
+        temp2 <- aperm(temp1, c(2,1,3))  # (M+1) x ppp x nnn
+        temp2 <- colSums(temp2)  # ppp x nnn
         temp2 <- array(rep(temp2, each=M+1), c(M+1, ppp, nnn))
-        temp2 <- aperm(temp2, c(2, 1, 3)) # ppp x (M+1) x nnn
+        temp2 <- aperm(temp2, c(2, 1, 3))  # ppp x (M+1) x nnn
         temp3 <- pvec
         ans <- array((BB - temp2) * temp3, c(ppp, M+1, nnn),
                      dimnames = list(dimnames(B)[[1]],
@@ -2433,7 +2434,7 @@ ordpoissonProbs <- function(extra, mu, deriv = 0) {
                    dimnames = list(dimnames(B)[[1]],
                                    dimnames(fitted(object))[[1]],
                                    dimnames(fitted(object))[[2]]))
-    temp1 <- aperm(temp1, c(1, 3, 2)) # ppp x (M+1) x nnn
+    temp1 <- aperm(temp1, c(1, 3, 2))  # ppp x (M+1) x nnn
 
     if (is.null(ii)) {
       return(temp1)
@@ -2467,7 +2468,7 @@ prplot <- function(object,
     control <- prplot.control(...)
 
 
-  object <- plotvgam(object, plot.arg = FALSE, raw = FALSE) # , ...
+  object <- plotvgam(object, plot.arg = FALSE, raw = FALSE)  # , ...
 
   if (length(names(object@preplot)) != 1)
       stop("object needs to have only one term")

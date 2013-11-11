@@ -140,8 +140,8 @@ matched.binomial(mvar = NULL, link = "logit",
 # Cf. Hastie and Tibshirani (1990) p.209. The variable n must be even.
 # Here, the intercept for each matched set accounts for x3 which is
 # the confounder or matching variable.
-n <- 700 # Requires a big machine with lots of memory. Expensive wrt time
-n <- 100 # This requires a reasonably big machine.
+n <- 700  # Requires a big machine with lots of memory. Expensive wrt time
+n <- 100  # This requires a reasonably big machine.
 mydat <- data.frame(x2 = rnorm(n), x3 = rep(rnorm(n/2), each = 2))
 xmat <- with(mydat, cbind(x2, x3))
 mydat <- transform(mydat, eta = -0.1 + 0.2 * x2 + 0.3 * x3)
@@ -158,11 +158,11 @@ coef(fit, matrix = TRUE)
 summary(fit)
 head(fitted(fit))
 objsizemb <- function(object) round(object.size(object) / 2^20, digits = 2)
-objsizemb(fit) # in Mb
+objsizemb(fit)  # in Mb
 
 VLMX <- model.matrix(fit, type = "vlm")  # The big model matrix
 dim(VLMX)
-objsizemb(VLMX) # in Mb
+objsizemb(VLMX)  # in Mb
 rm(VLMX) }
 }
 \keyword{models}

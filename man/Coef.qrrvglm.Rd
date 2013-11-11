@@ -5,13 +5,21 @@
 \description{
   This methods function returns important matrices etc. of a 
   QO object.
+
+
 }
 \usage{
 Coef.qrrvglm(object, varI.latvar = FALSE, reference = NULL, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{object}{ A CQO or UQO object. The former has class \code{"qrrvglm"}. }
+  \item{object}{
+% A CQO or UQO object.
+  A CQO object.
+  The former has class \code{"qrrvglm"}.
+  }
+
+
   \item{varI.latvar}{
   Logical indicating whether to scale the site scores (latent variables)
   to have variance-covariance matrix equal to the rank-\eqn{R} identity
@@ -63,7 +71,8 @@ Coef.qrrvglm(object, varI.latvar = FALSE, reference = NULL, ...)
 }
 \value{
   The \bold{A}, \bold{B1}, \bold{C},  \bold{T},  \bold{D} matrices/arrays
-  are returned, along with other slots.  For UQO, \bold{C} is undefined.
+  are returned, along with other slots.
+% For UQO, \bold{C} is undefined.
   The returned object has class \code{"Coef.qrrvglm"}
   (see \code{\link{Coef.qrrvglm-class}}).
 

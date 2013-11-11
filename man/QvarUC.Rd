@@ -15,7 +15,7 @@ Quasi-variances Preprocessing Function
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~
 }
 \usage{
-Qvar(object, factorname = NULL, which.eta = 1,
+Qvar(object, factorname = NULL, which.linpred = 1,
      coef.indices = NULL, labels = NULL,
      dispersion = NULL, reference.name = "(reference)", estimates = NULL)
 }
@@ -30,10 +30,10 @@ Qvar(object, factorname = NULL, which.eta = 1,
 
 
 }
-\item{which.eta}{
+\item{which.linpred}{
   A single integer from the set \code{1:M}.
   Specifies which linear predictor to use.
-  Let the value of \code{which.eta} be called \eqn{j}.
+  Let the value of \code{which.linpred} be called \eqn{j}.
   Then the factor should appear in that linear predictor, hence
   the \eqn{j}th row of the constraint matrix corresponding
   to the factor should have at least one nonzero value.
@@ -252,9 +252,9 @@ clist <- list("bs(age, df = 4)" = rbind(1, 0),
 fit1 <- vglm(babies ~ bs(age, df = 4) + bs(age, df = 3) + ethnic,
             zipoissonff(zero = NULL), xs.nz.f,
             constraints = clist, trace = TRUE)
-Fit1 <- rcim(Qvar(fit1, "ethnic", which.eta = 1),
+Fit1 <- rcim(Qvar(fit1, "ethnic", which.linpred = 1),
              uninormal("explink", imethod = 1), maxit = 99, trace = TRUE)
-Fit2 <- rcim(Qvar(fit1, "ethnic", which.eta = 2),
+Fit2 <- rcim(Qvar(fit1, "ethnic", which.linpred = 2),
              uninormal("explink", imethod = 1), maxit = 99, trace = TRUE)
 }
 \dontrun{ par(mfrow = c(1, 2))

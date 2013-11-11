@@ -42,7 +42,7 @@ vglm <- function(formula,
   mt <- attr(mf, "terms")
 
   xlev <- .getXlevels(mt, mf)
-  y <- model.response(mf, "any") # model.extract(mf, "response")
+  y <- model.response(mf, "any")  # model.extract(mf, "response")
   x <- if (!is.empty.model(mt)) model.matrix(mt, mf, contrasts) else
        matrix(, NROW(y), 0)
   attr(x, "assign") <- attrassigndefault(x, mt)
@@ -190,7 +190,7 @@ vglm <- function(formula,
               "'extra' into a list")
       list(fit$extra)
     }
-  } else list() # R-1.5.0
+  } else list()  # R-1.5.0
   slot(answer, "iter") <- fit$iter
   slot(answer, "post") <- fit$post
 
@@ -249,7 +249,7 @@ shadowvglm <-
     x <- y <- NULL 
 
     xlev <- .getXlevels(mt, mf)
-    y <- model.response(mf, "any") # model.extract(mf, "response")
+    y <- model.response(mf, "any")  # model.extract(mf, "response")
     x <- if (!is.empty.model(mt)) model.matrix(mt, mf, contrasts) else
          matrix(, NROW(y), 0)
     attr(x, "assign") <- attrassigndefault(x, mt)

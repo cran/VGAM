@@ -157,7 +157,7 @@ The \pkg{VGAM} package for categorical data analysis.
 \url{http://www.jstatsoft.org/v32/i10/}.
 
 
-  Yee, T. W. (2013)
+  Yee, T. W. (2014)
   Reduced-rank vector generalized linear models with two linear predictors.
   \emph{Computational Statistics and Data Analysis}.
 
@@ -193,10 +193,10 @@ contains some further information and examples.
 # Example 1; proportional odds model
 pneumo <- transform(pneumo, let = log(exposure.time))
 (fit1 <- vglm(cbind(normal, mild, severe) ~ let, propodds, pneumo))
-depvar(fit1) # Better than using fit1@y; dependent variable (response)
-weights(fit1, type = "prior") # Number of observations
-coef(fit1, matrix = TRUE)     # p.179, in McCullagh and Nelder (1989)
-constraints(fit1)             # Constraint matrices
+depvar(fit1)  # Better than using fit1@y; dependent variable (response)
+weights(fit1, type = "prior")  # Number of observations
+coef(fit1, matrix = TRUE)      # p.179, in McCullagh and Nelder (1989)
+constraints(fit1)              # Constraint matrices
 summary(fit1)
 
 
@@ -234,10 +234,10 @@ head(cdf(fit4))
 
 \dontrun{ par(mfrow = c(1, 1), bty = "l", mar = c(5,4,4,3)+0.1, xpd = TRUE)
 qtplot(fit4, percentiles = c(5,50,90,99), main = "Quantiles", las = 1,
-       xlim = c(15, 90), ylab = "BMI", lwd = 2, lcol = 4) # Quantile plot
+       xlim = c(15, 90), ylab = "BMI", lwd = 2, lcol = 4)  # Quantile plot
 
 ygrid <- seq(15, 43, len = 100)  # BMI ranges
-par(mfrow = c(1, 1), lwd = 2) # Density plot
+par(mfrow = c(1, 1), lwd = 2)  # Density plot
 aa <- deplot(fit4, x0 = 20, y = ygrid, xlab = "BMI", col = "black",
     main = "Density functions at Age = 20 (black), 42 (red) and 55 (blue)")
 aa

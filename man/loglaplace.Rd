@@ -204,7 +204,7 @@ mymu <- function(x) exp( 1 + 3*sin(2*x) / (x+0.5)^2)
 alldat <- transform(alldat, y = rnbinom(n, mu = mymu(x2), size = my.k))
 mytau <- c(0.1, 0.25, 0.5, 0.75, 0.9); mydof = 3
 fitp <- vglm(y ~ bs(x2, df = mydof), data=alldat, trace = TRUE,
-            loglaplace1(tau = mytau, parallelLoc = TRUE)) # halfstepping is usual
+            loglaplace1(tau = mytau, parallelLoc = TRUE))  # halfstepping is usual
  
 \dontrun{
 par(las = 1)  # Plot on a log1p() scale
@@ -212,10 +212,10 @@ mylwd <- 1.5
 with(alldat, plot(x2, jitter(log1p(y), factor = 1.5), col = "red", pch = "o",
      main = "Example 1; darkgreen=truth, blue=estimated", cex = 0.75))
 with(alldat, matlines(x2, log1p(fitted(fitp)), col = "blue", lty = 1, lwd = mylwd))
-finexgrid <- seq(0, 1, len=201)
-for(ii in 1:length(mytau))
-    lines(finexgrid, col = "darkgreen", lwd = mylwd,
-          log1p(qnbinom(p = mytau[ii], mu = mymu(finexgrid), si = my.k)))
+finexgrid <- seq(0, 1, len = 201)
+for (ii in 1:length(mytau))
+  lines(finexgrid, col = "darkgreen", lwd = mylwd,
+        log1p(qnbinom(p = mytau[ii], mu = mymu(finexgrid), si = my.k)))
 }
 fitp@extra  # Contains useful information
 
@@ -243,22 +243,22 @@ with(alldat, lines(x2, trueFunction - mean(trueFunction), col = "darkgreen"))
 
 # Plot the data + fitted quantiles (on the original scale)
 myylim <- with(alldat, range(y2))
-with(alldat, plot(x2, y2, col = "blue", ylim = myylim, las = 1, pch = ".", cex=2.5))
+with(alldat, plot(x2, y2, col = "blue", ylim = myylim, las = 1, pch = ".", cex = 2.5))
 with(alldat, matplot(x2, fitted(fit1), add = TRUE, lwd = 3, type = "l"))
-truecol <- rep(1:3, len=fit1@misc$M) # Add the 'truth'
-smallxgrid <- seq(0, 1, len=501)
-for(ii in 1:length(mytau))
-    lines(smallxgrid, col=truecol[ii], lwd=2,
-          qbinom(p = mytau[ii], prob = mymu(smallxgrid), size=ssize) / ssize)
+truecol <- rep(1:3, len = fit1@misc$M)  # Add the 'truth'
+smallxgrid <- seq(0, 1, len = 501)
+for (ii in 1:length(mytau))
+    lines(smallxgrid, col = truecol[ii], lwd = 2,
+          qbinom(p = mytau[ii], prob = mymu(smallxgrid), size = ssize) / ssize)
 
 
 # Plot on the eta (== logit()/probit()/...) scale
 with(alldat, matplot(x2, predict(fit1), add = FALSE, lwd = 3, type = "l"))
 # Add the 'truth'
-for(ii in 1:length(mytau)) {
-    true.quant <- qbinom(p = mytau[ii], pr = mymu(smallxgrid), si=ssize)/ssize
-    lines(smallxgrid, theta2eta(theta=true.quant, link=linkFunctionChar),
-          col=truecol[ii], lwd=2)
+for (ii in 1:length(mytau)) {
+  true.quant <- qbinom(p = mytau[ii], pr = mymu(smallxgrid), si = ssize) / ssize
+  lines(smallxgrid, theta2eta(theta = true.quant, link = linkFunctionChar),
+        col = truecol[ii], lwd = 2)
 }
 }
 }

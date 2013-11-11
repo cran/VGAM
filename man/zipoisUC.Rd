@@ -88,7 +88,7 @@ table(qzipois(runif(100), lambda, pstr0))
 round(dzipois(0:10, lambda, pstr0 = pstr0) * 100)  # Should be similar
 
 \dontrun{ x <- 0:10
-par(mfrow = c(2, 1)) # Zero-inflated Poisson
+par(mfrow = c(2, 1))  # Zero-inflated Poisson
 barplot(rbind(dzipois(x, lambda, pstr0 = pstr0), dpois(x, lambda)),
         beside = TRUE, col = c("blue", "orange"),
         main = paste("ZIP(", lambda, ", pstr0 = ", pstr0, ") (blue) vs",
