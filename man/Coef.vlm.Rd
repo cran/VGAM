@@ -65,9 +65,9 @@ Reduced-rank vector generalized linear models.
 \examples{
 set.seed(123); nn <- 1000
 bdata <- data.frame(y = rbeta(nn, shape1 = 1, shape2 = 3))
-fit <- vglm(y ~ 1, betaff, data = bdata, trace = TRUE) # intercept-only model
-coef(fit, matrix = TRUE) # log scale
-Coef(fit) # On the original scale
+fit <- vglm(y ~ 1, betaff, data = bdata, trace = TRUE)  # intercept-only model
+coef(fit, matrix = TRUE)  # log scale
+Coef(fit)  # On the original scale
 }
 \keyword{models}
 \keyword{regression}

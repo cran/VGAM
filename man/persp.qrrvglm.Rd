@@ -8,10 +8,10 @@ applicable for rank-1 or rank-2 models with argument \code{noRRR = ~ 1}.
 
 }
 \usage{
-perspqrrvglm(x, varI.latvar = FALSE, reference = NULL, plot.it = TRUE, 
+perspqrrvglm(x, varI.latvar = FALSE, reference = NULL, show.plot = TRUE, 
              xlim = NULL, ylim = NULL, zlim = NULL,
              gridlength = if (Rank == 1) 301 else c(51,51),
-             whichSpecies = NULL,
+             which.species = NULL,
              xlab = if (Rank == 1) "Latent Variable" else "Latent Variable 1",
              ylab = if (Rank == 1) "Expected Value" else "Latent Variable 2",
              zlab = "Expected value", labelSpecies = FALSE,
@@ -35,7 +35,7 @@ perspqrrvglm(x, varI.latvar = FALSE, reference = NULL, plot.it = TRUE,
   Integer or character that is fed into \code{\link{Coef.qrrvglm}}.
 
   }
-  \item{plot.it}{ Logical. Plot it? }
+  \item{show.plot}{ Logical. Plot it? }
   \item{xlim, ylim}{
   Limits of the x- and y-axis. Both are numeric of length 2.
   See \code{\link[graphics]{par}}.
@@ -54,7 +54,7 @@ perspqrrvglm(x, varI.latvar = FALSE, reference = NULL, plot.it = TRUE,
   are the number of grid points on the  x- and y-axes respectively.
 
   }
-  \item{whichSpecies}{
+  \item{which.species}{
   Numeric or character vector. Indicates which species are to be
   plotted. The default is to plot all of them.  If numeric, it should
   contain values in the set \{1,2,\ldots,\eqn{S}\} where \eqn{S}
@@ -131,7 +131,7 @@ perspqrrvglm(x, varI.latvar = FALSE, reference = NULL, plot.it = TRUE,
   will, at each grid point, work out the maximum fitted value over all
   the species. The resulting response surface is plotted. Thus rare
   species will be obscured and abundant species will dominate the plot.
-  To view rare species, use the \code{whichSpecies} argument to select
+  To view rare species, use the \code{which.species} argument to select
   a subset of the species.
 
 

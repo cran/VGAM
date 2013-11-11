@@ -10,14 +10,15 @@ rcqo(n, p, S, Rank = 1,
      family = c("poisson", "negbinomial", "binomial-poisson",
                 "Binomial-negbinomial", "ordinal-poisson",
                 "Ordinal-negbinomial", "gamma2"),
-     EqualMaxima = FALSE, EqualTolerances = TRUE, ES.Optima = FALSE,
-     loabundance = if (EqualMaxima) hiabundance else 10,
-     hiabundance = 100, sd.latvar = head(1.5/2^(0:3), Rank),
-     sdOptima = ifelse(ES.Optima, 1.5/Rank, 1) *
+     eq.maxima = FALSE, eq.tolerances = TRUE, es.optima = FALSE,
+     lo.abundance = if (eq.maxima) hi.abundance else 10,
+     hi.abundance = 100, sd.latvar = head(1.5/2^(0:3), Rank),
+     sd.optima = ifelse(es.optima, 1.5/Rank, 1) *
                        ifelse(scale.latvar, sd.latvar, 1),
-     sdTolerances = 0.25, Kvector = 1, Shape = 1,
-     sqrt = FALSE, Log = FALSE, rhox = 0.5, breaks = 4,
-     seed = NULL, Crow1positive = TRUE, xmat = NULL, scale.latvar = TRUE)
+     sd.tolerances = 0.25, Kvector = 1, Shape = 1,
+     sqrt.arg = FALSE, Log = FALSE, rhox = 0.5, breaks = 4,
+     seed = NULL, optima1.arg = NULL, Crow1positive = TRUE,
+     xmat = NULL, scale.latvar = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -61,13 +62,13 @@ rcqo(n, p, S, Rank = 1,
 %    else zz.
     
   }
-  \item{EqualMaxima}{
+  \item{eq.maxima}{
     Logical. Does each species have the same maxima?
-    See arguments \code{loabundance} and \code{hiabundance}.
+    See arguments \code{lo.abundance} and \code{hi.abundance}.
 
 
   }
-  \item{EqualTolerances}{
+  \item{eq.tolerances}{
     Logical. Does each species have the
     same tolerance? If \code{TRUE} then the common value is 1 along
     every latent variable, i.e., all species' tolerance matrices are the
@@ -75,7 +76,7 @@ rcqo(n, p, S, Rank = 1,
 
 
   }
-  \item{ES.Optima}{
+  \item{es.optima}{
     Logical. Do the species have equally spaced optima?
     If \code{TRUE} then the quantity
     \eqn{S^{1/R}}{S^(1/R)} must be an
@@ -84,21 +85,21 @@ rcqo(n, p, S, Rank = 1,
     of optimum values is possible in \eqn{R}-dimensional
     latent variable space
     in order to place the species' optima.
-    Also see the argument \code{sdTolerances}.
+    Also see the argument \code{sd.tolerances}.
     
     
   }
-  \item{loabundance, hiabundance}{
+  \item{lo.abundance, hi.abundance}{
     Numeric. These are recycled to a vector of length \eqn{S}.
     The species have a maximum
-    between \code{loabundance} and \code{hiabundance}. That is,
+    between \code{lo.abundance} and \code{hi.abundance}. That is,
     at their optimal environment, the mean abundance of each
-    species is between the two componentwise values. If \code{EqualMaxima}
-    is \code{TRUE} then \code{loabundance} and \code{hiabundance}
+    species is between the two componentwise values. If \code{eq.maxima}
+    is \code{TRUE} then \code{lo.abundance} and \code{hi.abundance}
     must have the same values.
-    If \code{EqualMaxima} is \code{FALSE} then the
+    If \code{eq.maxima} is \code{FALSE} then the
     logarithm of the maxima are uniformly distributed between
-    \code{log(loabundance)} and \code{log(hiabundance)}.
+    \code{log(lo.abundance)} and \code{log(hi.abundance)}.
     
   }
   \item{sd.latvar}{
@@ -111,29 +112,29 @@ rcqo(n, p, S, Rank = 1,
     axis, etc.
         
   }
-  \item{sdOptima}{
+  \item{sd.optima}{
     Numeric, of length \eqn{R} (recycled if necessary).
-    If \code{ES.Optima = FALSE} then,
+    If \code{es.optima = FALSE} then,
     for the \eqn{r}th latent variable axis,
     the optima of the species are generated from a
     normal distribution centered about 0.
-    If \code{ES.Optima = TRUE} then the \eqn{S} optima
+    If \code{es.optima = TRUE} then the \eqn{S} optima
     are equally spaced about 0 along every latent variable axis.
-    Regardless of the value of \code{ES.Optima}, the optima
-    are then scaled to give standard deviation \code{sdOptima[r]}.
+    Regardless of the value of \code{es.optima}, the optima
+    are then scaled to give standard deviation \code{sd.optima[r]}.
     
   }
-  \item{sdTolerances}{
-    Logical. If \code{EqualTolerances = FALSE} then, for the
+  \item{sd.tolerances}{
+    Logical. If \code{eq.tolerances = FALSE} then, for the
     \eqn{r}th latent variable, the
     species' tolerances are
     chosen from a normal distribution with mean 1 and
     standard deviation
-    \code{sdTolerances[r]}.
+    \code{sd.tolerances[r]}.
     However, the first species \code{y1} has its tolerance matrix
     set equal to the order-\eqn{R} identity matrix.
     All tolerance matrices for all species are diagonal in this function.
-    This argument is ignored if \code{EqualTolerances} is \code{TRUE},
+    This argument is ignored if \code{eq.tolerances} is \code{TRUE},
     otherwise it is recycled to length \eqn{R} if necessary.
 
   }
@@ -155,9 +156,9 @@ rcqo(n, p, S, Rank = 1,
     one, and that \eqn{Var(Y) = \mu^2 / \lambda}{Var(Y) = mu^2 / lambda}.
 
   }
-  \item{sqrt}{
+  \item{sqrt.arg}{
     Logical. Take the square-root of the negative binomial counts?
-    Assigning \code{sqrt = TRUE} when \code{family="negbinomial"} means
+    Assigning \code{sqrt.arg = TRUE} when \code{family="negbinomial"} means
     that the resulting species data can be considered very crudely to be
     approximately Poisson distributed.
     They will not integers in general but much easier (less numerical
@@ -199,6 +200,12 @@ rcqo(n, p, S, Rank = 1,
     \code{\link[base:Random]{.Random.seed}} as \code{"seed"} attribute.
 
   }
+  \item{optima1.arg}{
+    If assigned and \code{Rank = 1} then these are the explicity optima.
+    Recycled to length \code{S}.
+
+
+  }
   \item{Crow1positive}{
     See \code{\link{qrrvglm.control}} for details.
     
@@ -224,11 +231,11 @@ rcqo(n, p, S, Rank = 1,
   The species packing model states that species have equal tolerances,
   equal maxima, and optima which are uniformly distributed over
   the latent variable space. This can be achieved by assigning
-  the arguments \code{ES.Optima = TRUE}, \code{EqualMaxima = TRUE},
-  \code{EqualTolerances = TRUE}.
+  the arguments \code{es.optima = TRUE}, \code{eq.maxima = TRUE},
+  \code{eq.tolerances = TRUE}.
 
   At present, the Poisson and negative binomial abundances are
-  generated first using \code{loabundance} and \code{hiabundance},
+  generated first using \code{lo.abundance} and \code{hi.abundance},
   and if \code{family} is binomial or ordinal then it is converted into
   these forms.
 
@@ -279,7 +286,7 @@ rcqo(n, p, S, Rank = 1,
   \item{"logmaxima"}{
     The \eqn{S}-vector of species' maxima, on a log scale.
     These are uniformly distributed between
-    \code{log(loabundance)} and \code{log(hiabundance)}.
+    \code{log(lo.abundance)} and \code{log(hi.abundance)}.
     
 
   }
@@ -308,8 +315,8 @@ rcqo(n, p, S, Rank = 1,
   }
   Other attributes are \code{"break"},
   \code{"family"}, \code{"Rank"},
-  \code{"loabundance"}, \code{"hiabundance"},
-  \code{"EqualTolerances"}, \code{"EqualMaxima"},
+  \code{"lo.abundance"}, \code{"hi.abundance"},
+  \code{"eq.tolerances"}, \code{"eq.maxima"},
   \code{"seed"} as used.
 
 }
@@ -361,10 +368,10 @@ A theory of gradient analysis.
 \dontrun{
 # Example 1: Species packing model:
 n <- 100; p <- 5; S <- 5
-mydata <- rcqo(n, p, S, ES.Opt = TRUE, EqualMax = TRUE)
+mydata <- rcqo(n, p, S, es.opt = TRUE, eq.max = TRUE)
 names(mydata)
 (myform <- attr(mydata, "formula"))
-fit <- cqo(myform, poissonff, mydata, Bestof = 3)  # EqualTol = TRUE 
+fit <- cqo(myform, poissonff, mydata, Bestof = 3)  # eq.tol = TRUE 
 matplot(attr(mydata, "latvar"), mydata[,-(1:(p-1))], col = 1:S)
 persp(fit, col = 1:S, add = TRUE)
 lvplot(fit, lcol = 1:S, y = TRUE, pcol = 1:S)  # The same plot as above

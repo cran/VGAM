@@ -12,22 +12,23 @@ rcqo <- function(n, p, S,
                  family = c("poisson", "negbinomial", "binomial-poisson",
                             "Binomial-negbinomial", "ordinal-poisson",
                             "Ordinal-negbinomial", "gamma2"),
-                 EqualMaxima = FALSE,
-                 EqualTolerances = TRUE,
-                 ES.Optima = FALSE,
-                 loabundance = if (EqualMaxima) hiabundance else 10,
-                 hiabundance = 100,
+                 eq.maxima = FALSE,
+                 eq.tolerances = TRUE,
+                 es.optima = FALSE,
+                 lo.abundance = if (eq.maxima) hi.abundance else 10,
+                 hi.abundance = 100,
                  sd.latvar = head(1.5/2^(0:3), Rank),
-                 sdOptima = ifelse(ES.Optima, 1.5/Rank, 1) *
+                 sd.optima = ifelse(es.optima, 1.5/Rank, 1) *
                             ifelse(scale.latvar, sd.latvar, 1),
-                 sdTolerances = 0.25,
+                 sd.tolerances = 0.25,
                  Kvector = 1,
                  Shape = 1,
-                 sqrt = FALSE,
+                 sqrt.arg = FALSE,
                  Log = FALSE,
                  rhox = 0.5,
                  breaks = 4,  # ignored unless family = "ordinal"
                  seed = NULL,
+                 optima1.arg = NULL,
                  Crow1positive = TRUE,
                  xmat = NULL,  # Can be input
                  scale.latvar = TRUE) {
@@ -37,17 +38,17 @@ rcqo <- function(n, p, S,
                         "Ordinal-negbinomial", "gamma2"))[1]
 
   if (!is.Numeric(n, integer.valued = TRUE,
-                  positive = TRUE, allowable.length = 1))
+                  positive = TRUE, length.arg = 1))
     stop("bad input for argument 'n'")
   if (!is.Numeric(p, integer.valued = TRUE,
-                  positive = TRUE, allowable.length = 1) ||
+                  positive = TRUE, length.arg = 1) ||
       p < 1 + Rank)
     stop("bad input for argument 'p'")
   if (!is.Numeric(S, integer.valued = TRUE,
-                  positive = TRUE, allowable.length = 1))
+                  positive = TRUE, length.arg = 1))
     stop("bad input for argument 'S'")
   if (!is.Numeric(Rank, integer.valued = TRUE,
-                  positive = TRUE, allowable.length = 1) ||
+                  positive = TRUE, length.arg = 1) ||
       Rank > 4)
     stop("bad input for argument 'Rank'")
   if (!is.Numeric(Kvector, positive = TRUE))
@@ -57,26 +58,26 @@ rcqo <- function(n, p, S,
   if (length(seed) &&
       !is.Numeric(seed, integer.valued = TRUE, positive = TRUE))
     stop("bad input for argument 'seed'")
-  if (!is.logical(EqualTolerances) ||
-      length(EqualTolerances) > 1)
-    stop("bad input for argument 'EqualTolerances)'")
-  if (!is.logical(sqrt) || length(sqrt)>1)
-    stop("bad input for argument 'sqrt)'")
-  if (family != "negbinomial" && sqrt)
-    warning("argument 'sqrt' is used only with family='negbinomial'")
-  if (!EqualTolerances && !is.Numeric(sdTolerances, positive = TRUE))
-    stop("bad input for argument 'sdTolerances'")
-  if (!is.Numeric(loabundance, positive = TRUE))
-    stop("bad input for argument 'loabundance'")
+  if (!is.logical(eq.tolerances) ||
+      length(eq.tolerances) > 1)
+    stop("bad input for argument 'eq.tolerances)'")
+  if (!is.logical(sqrt.arg) || length(sqrt.arg) > 1)
+    stop("bad input for argument 'sqrt.arg)'")
+  if (family != "negbinomial" && sqrt.arg)
+    warning("argument 'sqrt.arg' is used only with family='negbinomial'")
+  if (!eq.tolerances && !is.Numeric(sd.tolerances, positive = TRUE))
+    stop("bad input for argument 'sd.tolerances'")
+  if (!is.Numeric(lo.abundance, positive = TRUE))
+    stop("bad input for argument 'lo.abundance'")
   if (!is.Numeric(sd.latvar, positive = TRUE))
     stop("bad input for argument 'sd.latvar'")
-  if (!is.Numeric(sdOptima, positive = TRUE))
-    stop("bad input for argument 'sdOptima'")
-  if (EqualMaxima && loabundance != hiabundance)
-    stop("arguments 'loabundance' and 'hiabundance' must ",
-         "be equal when 'EqualTolerances = TRUE'")
-  if (any(loabundance > hiabundance))
-    stop("loabundance > hiabundance is not allowed")
+  if (!is.Numeric(sd.optima, positive = TRUE))
+    stop("bad input for argument 'sd.optima'")
+  if (eq.maxima && lo.abundance != hi.abundance)
+    stop("arguments 'lo.abundance' and 'hi.abundance' must ",
+         "be equal when 'eq.tolerances = TRUE'")
+  if (any(lo.abundance > hi.abundance))
+    stop("lo.abundance > hi.abundance is not allowed")
   if (!is.logical(Crow1positive)) {
     stop("bad input for argument 'Crow1positive)'")
   } else {
@@ -84,9 +85,9 @@ rcqo <- function(n, p, S,
   }
   Shape <- rep(Shape, len = S)
   sd.latvar <- rep(sd.latvar, len = Rank)
-  sdOptima <- rep(sdOptima, len = Rank)
-  sdTolerances <- rep(sdTolerances, len = Rank)
-  AA <- sdOptima / 3^0.5
+  sd.optima <- rep(sd.optima, len = Rank)
+  sd.tolerances <- rep(sd.tolerances, len = Rank)
+  AA <- sd.optima / 3^0.5
   if (Rank > 1 && any(diff(sd.latvar) > 0))
    stop("argument 'sd.latvar)' must be a vector with decreasing values")
 
@@ -149,7 +150,7 @@ rcqo <- function(n, p, S,
       sd.latvarr <- c(sd.latvarr, sd(latvarmat[, r]))
     }
   }
-  if (ES.Optima) {
+  if (es.optima) {
     if (!is.Numeric(S^(1/Rank), integer.valued = TRUE) ||
         S^(1/Rank) < 2)
       stop("S^(1/Rank) must be an integer greater or equal to 2")
@@ -177,24 +178,31 @@ rcqo <- function(n, p, S,
     optima <- matrix(1, S, Rank)
     eval(change.seed.expression)
     for (r in 1:Rank) {
-      optima[, r] <- rnorm(n = S, sd = sdOptima[r])
+      optima[, r] <- rnorm(n = S, sd = sd.optima[r])
     }
   }
   for (r in 1:Rank)
-    optima[, r] <- optima[, r] * sdOptima[r] / sd(optima[, r])
+    optima[, r] <- optima[, r] * sd.optima[r] / sd(optima[, r])
+
+
+  if (length(optima1.arg) && Rank == 1)
+  for (r in 1:Rank)
+    optima[, r] <- optima1.arg
+
+
 
   ynames <- paste("y", 1:S, sep = "")
   Kvector <- rep(Kvector, len = S)
   names(Kvector) <- ynames
   latvarnames <- if (Rank == 1) "latvar" else paste("latvar", 1:Rank, sep = "")
-  Tols <- if (EqualTolerances) {
+  Tols <- if (eq.tolerances) {
     matrix(1, S, Rank)
   } else {
     eval(change.seed.expression)
     temp <- matrix(1, S, Rank)
     if (S > 1)
       for (r in 1:Rank) {
-        temp[-1, r] <- rnorm(S-1, mean = 1, sd = sdTolerances[r])
+        temp[-1, r] <- rnorm(S-1, mean = 1, sd = sd.tolerances[r])
         if (any(temp[, r] <= 0))
           stop("negative tolerances!")
         temp[, r] <- temp[, r]^2  # Tolerance matrix  = var-cov matrix)
@@ -205,8 +213,8 @@ rcqo <- function(n, p, S,
   dimnames(Tols)   <- list(ynames, latvarnames)
   dimnames(ccoefs) <- list(xnames, latvarnames)
   dimnames(optima) <- list(ynames, latvarnames)
-  loeta <- log(loabundance)   # May be a vector
-  hieta <- log(hiabundance)
+  loeta <- log(lo.abundance)   # May be a vector
+  hieta <- log(hi.abundance)
   eval(change.seed.expression)
   logmaxima <- runif(S, min = loeta, max = hieta)
   names(logmaxima) <- ynames
@@ -232,7 +240,8 @@ rcqo <- function(n, p, S,
     mKvector <- matrix(Kvector, n, S, byrow = TRUE)
     ymat <- matrix(rnbinom(n = n * S, mu = exp(etamat), size = mKvector),
                    n, S)
-    if (sqrt) ymat <- ymat^0.5
+    if (sqrt.arg)
+      ymat <- ymat^0.5
   } else if (rootdist == 3) {
     Shape <- matrix(Shape, n, S, byrow = TRUE)
     ymat <- matrix(rgamma(n * S, shape = Shape,
@@ -267,22 +276,22 @@ rcqo <- function(n, p, S,
   attr(ans, "family") <- family
   attr(ans, "Kvector") <- Kvector
   attr(ans, "logmaxima") <- logmaxima
-  attr(ans, "loabundance") <- loabundance
-  attr(ans, "hiabundance") <- hiabundance
+  attr(ans, "lo.abundance") <- lo.abundance
+  attr(ans, "hi.abundance") <- hi.abundance
   attr(ans, "optima") <- optima
   attr(ans, "Log") <- Log
   attr(ans, "latvar") <- latvarmat
   attr(ans, "eta") <- etamat
-  attr(ans, "EqualTolerances") <- EqualTolerances
-  attr(ans, "EqualMaxima") <- EqualMaxima ||
-                              all(loabundance == hiabundance)
-  attr(ans, "ES.Optima") <- ES.Optima
+  attr(ans, "eq.tolerances") <- eq.tolerances
+  attr(ans, "eq.maxima") <- eq.maxima ||
+                              all(lo.abundance == hi.abundance)
+  attr(ans, "es.optima") <- es.optima
   attr(ans, "seed") <- seed # RNGstate
-  attr(ans, "sdTolerances") <- sdTolerances
+  attr(ans, "sd.tolerances") <- sd.tolerances
   attr(ans, "sd.latvar") <- if (scale.latvar) sd.latvar else sd.latvarr
-  attr(ans, "sdOptima") <- sdOptima
+  attr(ans, "sd.optima") <- sd.optima
   attr(ans, "Shape") <- Shape
-  attr(ans, "sqrt") <- sqrt
+  attr(ans, "sqrt") <- sqrt.arg
   attr(ans, "tolerances") <- Tols^0.5  # Like a standard deviation
   attr(ans, "breaks") <- if (length(tmp1)) attributes(tmp1) else breaks
   ans
@@ -296,13 +305,13 @@ dcqo <-
   function(x, p, S,
            family = c("poisson", "binomial", "negbinomial", "ordinal"),
            Rank = 1,
-           EqualTolerances = TRUE,
-           EqualMaxima = FALSE,
+           eq.tolerances = TRUE,
+           eq.maxima = FALSE,
            EquallySpacedOptima = FALSE,
-           loabundance = if (EqualMaxima) 100 else 10,
-           hiabundance = 100,
-           sdTolerances = 1,
-           sdOptima = 1,
+           lo.abundance = if (eq.maxima) 100 else 10,
+           hi.abundance = 100,
+           sd.tolerances = 1,
+           sd.optima = 1,
            nlevels = 4,  # ignored unless family = "ordinal"
            seed = NULL) {
  warning("12/6/06; needs a lot of work based on rcqo()")
@@ -315,23 +324,23 @@ dcqo <-
 
 
   if (!is.Numeric(p, integer.valued = TRUE,
-                  positive = TRUE, allowable.length = 1) ||
+                  positive = TRUE, length.arg = 1) ||
       p < 2)
     stop("bad input for argument 'p'")
   if (!is.Numeric(S, integer.valued = TRUE,
-                  positive = TRUE, allowable.length = 1))
+                  positive = TRUE, length.arg = 1))
     stop("bad input for argument 'S'")
   if (!is.Numeric(Rank, integer.valued = TRUE,
-                  positive = TRUE, allowable.length = 1))
+                  positive = TRUE, length.arg = 1))
     stop("bad input for argument 'Rank'")
   if (length(seed) &&
       !is.Numeric(seed, integer.valued = TRUE, positive = TRUE))
     stop("bad input for argument 'seed'")
-  if (!is.logical(EqualTolerances) || length(EqualTolerances)>1)
-    stop("bad input for argument 'EqualTolerances)'")
-  if (EqualMaxima && loabundance != hiabundance)
-    stop("'loabundance' and 'hiabundance' must ",
-         "be equal when 'EqualTolerances = TRUE'")
+  if (!is.logical(eq.tolerances) || length(eq.tolerances)>1)
+    stop("bad input for argument 'eq.tolerances)'")
+  if (eq.maxima && lo.abundance != hi.abundance)
+    stop("'lo.abundance' and 'hi.abundance' must ",
+         "be equal when 'eq.tolerances = TRUE'")
   if (length(seed)) set.seed(seed)
 
   xmat <- matrix(rnorm(n*(p-1)), n, p-1,
@@ -339,11 +348,11 @@ dcqo <-
                                  paste("x", 2:p, sep = "")))
   ccoefs <- matrix(rnorm((p-1)*Rank), p-1, Rank)
   latvarmat <- xmat %*% ccoefs
-  optima <- matrix(rnorm(Rank*S, sd = sdOptima), S, Rank)
-  Tols <- if (EqualTolerances) matrix(1, S, Rank) else
+  optima <- matrix(rnorm(Rank*S, sd = sd.optima), S, Rank)
+  Tols <- if (eq.tolerances) matrix(1, S, Rank) else
          matrix(rnorm(Rank*S, mean = 1, sd = 1), S, Rank)
-  loeta <- log(loabundance)
-  hieta <- log(hiabundance)
+  loeta <- log(lo.abundance)
+  hieta <- log(hi.abundance)
   logmaxima <- runif(S, min = loeta, max = hieta)
 
   etamat <- matrix(logmaxima, n, S, byrow = TRUE)

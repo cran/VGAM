@@ -158,7 +158,7 @@ zipoissonff(llambda = "loge", lonempstr0 = "logit",
   Cambridge University Press: Cambridge.
 
 
-  Yee, T. W. (2013)
+  Yee, T. W. (2014)
   Reduced-rank vector generalized linear models with two linear predictors.
   \emph{Computational Statistics and Data Analysis}.
 
@@ -307,11 +307,6 @@ summary(rrzip)
 }
 \keyword{models}
 \keyword{regression}
-
-% Yee, T. W. (2012)
-% An alternative to quasi-Poisson vs. negative binomial
-% regression: the reduced-rank negative binomial model.
-% \emph{In preparation}.
 
 %# head(zdata, 1); pfit1 <- predict(fit1, zdata[1, ]);
 %# lambda <- loge(pfit1[2], inverse = TRUE)

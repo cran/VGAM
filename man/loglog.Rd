@@ -82,12 +82,12 @@ loglog(theta, bvalue = NULL, inverse = FALSE, deriv = 0,
 }
 \examples{
 x <- seq(0.8, 1.5, by = 0.1)
-loglog(x) # Has NAs
-loglog(x, bvalue = 1.0 + .Machine$double.eps) # Has no NAs
+loglog(x)  # Has NAs
+loglog(x, bvalue = 1.0 + .Machine$double.eps)  # Has no NAs
 
 x <- seq(1.01, 10, len = 100)
 loglog(x)
-max(abs(loglog(loglog(x), inverse = TRUE) - x)) # Should be 0
+max(abs(loglog(loglog(x), inverse = TRUE) - x))  # Should be 0
 }
 \keyword{math}
 \keyword{models}

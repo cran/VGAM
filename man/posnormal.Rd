@@ -122,7 +122,7 @@ pdata <- transform(pdata, y = rposnorm(n <- 1000, m = m, sd = SD))
 fit <- vglm(y ~ 1, fam = posnormal, pdata, trace = TRUE)
 coef(fit, matrix = TRUE)
 (Cfit <- Coef(fit))
-mygrid <- with(pdata, seq(min(y), max(y), len = 200)) # Add the fit to the histogram
+mygrid <- with(pdata, seq(min(y), max(y), len = 200))  # Add the fit to the histogram
 \dontrun{lines(mygrid, dposnorm(mygrid, Cfit[1], Cfit[2]), col = "red")}
 }
 \keyword{models}

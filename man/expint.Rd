@@ -24,6 +24,7 @@ expint.E1(x)
   \item{x}{
   Numeric. Ideally a vector of positive reals.
 
+
 }
 }
 \details{
@@ -33,6 +34,7 @@ expint.E1(x)
   The function \eqn{E_1(x)} is the integral of
   \eqn{exp(-t) / t}
   from \eqn{x} to infinity, for positive real \eqn{x}.
+
 
 }
 \value{

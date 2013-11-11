@@ -48,7 +48,7 @@ rrar.Mi <- function(i, MM, Ranks., ki) {
   for (j in 1:hi) {
     Ji[j,j+Ranks.[ki[i+1]]] <- 1
   }
-  Mi <- matrix(0, MM-Ranks.[ki[i]], MM) # dim(Oi) == dim(Ji)
+  Mi <- matrix(0, MM-Ranks.[ki[i]], MM)  # dim(Oi) == dim(Ji)
   for (j in 1:(MM-Ranks.[ki[i]])) {
     Mi[j,j+Ranks.[ki[i  ]]] <- 1
   }
@@ -157,7 +157,7 @@ rrar.control <- function(stepsize = 0.5, save.weight = TRUE, ...) {
 
       copy.X.vlm <- TRUE  # X.vlm.save matrix changes at each iteration 
 
-      dsrank <- -sort(-Ranks.) # ==rev(sort(Ranks.))
+      dsrank <- -sort(-Ranks.)  # ==rev(sort(Ranks.))
       if (any(dsrank != Ranks.))
           stop("Ranks must be a non-increasing sequence")
       if (!is.matrix(y) || ncol(y) == 1) {
@@ -168,8 +168,8 @@ rrar.control <- function(stepsize = 0.5, save.weight = TRUE, ...) {
           uu <- length(udsrank)
           for (i in 1:uu)
              ki[i] <- max((1:plag)[dsrank == udsrank[i]])
-          ki <- c(ki, plag+1) # For computing a
-          Ranks. <- c(Ranks., 0) # For computing a
+          ki <- c(ki, plag+1)  # For computing a
+          Ranks. <- c(Ranks., 0)  # For computing a
           aa <- sum( (MM-Ranks.[ki[1:uu]]) * (Ranks.[ki[1:uu]]-Ranks.[ki[-1]]) )
       }
       if (!intercept.only)
@@ -293,9 +293,9 @@ vglm.garma.control <- function(save.weight = TRUE, ...) {
                    coefstart = NULL,
                    step = 1.0) {
 
-  if (!is.Numeric(p.ar.lag, integer.valued = TRUE, allowable.length = 1))
+  if (!is.Numeric(p.ar.lag, integer.valued = TRUE, length.arg = 1))
     stop("bad input for argument 'p.ar.lag'")
-  if (!is.Numeric(q.ma.lag, integer.valued = TRUE, allowable.length = 1))
+  if (!is.Numeric(q.ma.lag, integer.valued = TRUE, length.arg = 1))
     stop("bad input for argument 'q.ma.lag'")
   if (q.ma.lag != 0)
     stop("sorry, only q.ma.lag = 0 is currently implemented")
@@ -344,7 +344,7 @@ vglm.garma.control <- function(save.weight = TRUE, ...) {
       etastart <- x[-indices, , drop = FALSE] %*% new.coeffs[1:p.lm]
     }
 
-    x <- cbind(x, matrix(as.numeric(NA), n, plag)) # Right size now
+    x <- cbind(x, matrix(as.numeric(NA), n, plag))  # Right size now
     dx <- dimnames(x.save)
     morenames <- paste("(lag", 1:plag, ")", sep = "") 
     dimnames(x) <- list(dx[[1]], c(dx[[2]], morenames)) 
@@ -392,11 +392,11 @@ vglm.garma.control <- function(save.weight = TRUE, ...) {
     for (ii in 1:plag) {
       realfv <- realfv + old.coeffs[ii + p.lm] *
         (x.save[tt.index-ii, 1:p.lm, drop = FALSE] %*%
-         new.coeffs[1:p.lm]) # +
+         new.coeffs[1:p.lm])  # +
     }
 
     true.eta <- realfv + offset  
-    mu <- family@linkinv(true.eta, extra) # overwrite mu with correct one
+    mu <- family@linkinv(true.eta, extra)  # overwrite mu with correct one
   }), list( .link = link, .earg = earg ))),
   vfamily = c("garma", "vglmgam"),
   deriv = eval(substitute(expression({
@@ -414,7 +414,7 @@ vglm.garma.control <- function(save.weight = TRUE, ...) {
             .earg = earg ))),
 
   weight = eval(substitute(expression({
-    x[, 1:p.lm] <- x.save[tt.index, 1:p.lm] # Reinstate 
+    x[, 1:p.lm] <- x.save[tt.index, 1:p.lm]  # Reinstate 
 
     for (ii in 1:plag) {
         temp <- theta2eta(y.save[tt.index-ii], .link , earg = .earg )

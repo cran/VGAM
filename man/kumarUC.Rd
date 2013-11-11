@@ -67,7 +67,7 @@ Q <- qkumar(probs, shape1, shape2)
 lines(Q, dkumar(Q, shape1, shape2), col = "purple", lty = 3, type = "h")
 lines(Q, pkumar(Q, shape1, shape2), col = "purple", lty = 3, type = "h")
 abline(h = probs, col = "purple", lty = 3)
-max(abs(pkumar(Q, shape1, shape2) - probs)) # Should be 0
+max(abs(pkumar(Q, shape1, shape2) - probs))  # Should be 0
 }
 }
 \keyword{distribution}

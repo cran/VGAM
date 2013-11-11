@@ -237,11 +237,11 @@ fit@extra$threshold # Note the threshold is stored here
 
 # Check the 90 percentile
 ii <- depvar(fit) < fitted(fit)[1, "90\%"]
-100 * table(ii) / sum(table(ii)) # Should be 90%
+100 * table(ii) / sum(table(ii))  # Should be 90%
 
 # Check the 95 percentile
 ii <- depvar(fit) < fitted(fit)[1, "95\%"]
-100 * table(ii) / sum(table(ii)) # Should be 95%
+100 * table(ii) / sum(table(ii))  # Should be 95%
 
 \dontrun{ plot(depvar(fit), col = "blue", las = 1,
                main = "Fitted 90\% and 95\% quantiles")

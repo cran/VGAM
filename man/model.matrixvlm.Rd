@@ -3,7 +3,7 @@
 \title{Construct the Design Matrix of a VLM Object}
 \usage{
 model.matrixvlm(object, type = c("vlm", "lm", "lm2", "bothlmlm2"),
-                lapred.index = NULL, \dots)
+                linpred.index = NULL, \dots)
 }
 \arguments{
   \item{object}{an object of a class that inherits from the
@@ -21,13 +21,14 @@ model.matrixvlm(object, type = c("vlm", "lm", "lm2", "bothlmlm2"),
 
 
   }
-  \item{lapred.index}{
-    Single integer. The index for a linear/additive predictor,
-    it must have a value from the set \code{1:M}, and
-    \code{type = "lm"}  must be assigned.
+  \item{linpred.index}{
+    Single integer.
+    The index for a linear/additive predictor,
+    it must have a value from the set \code{1:M},
+    and \code{type = "lm"}  must be assigned.
     Then it returns a subset of the VLM matrix corresponding to
-    the \code{lapred.index}th linear/additive predictor; this
-    is a LM-type matrix.
+    the \code{linpred.index}th linear/additive predictor;
+    this is a LM-type matrix.
 
 
   }    
@@ -100,8 +101,8 @@ fit <- vglm(cbind(normal, mild, severe) ~ poly(c(scale(let)), 2),
 class(fit)
 fit@x # Not saved on the object
 model.matrix(fit)
-model.matrix(fit, lapred.index = 1, type = "lm")
-model.matrix(fit, lapred.index = 2, type = "lm")
+model.matrix(fit, linpred.index = 1, type = "lm")
+model.matrix(fit, linpred.index = 2, type = "lm")
 
 (Check1 <- head(model.matrix(fit, type = "lm")))
 (Check2 <- model.matrix(fit, data = head(pneumo), type = "lm"))
@@ -110,7 +111,7 @@ all.equal(c(Check1), c(Check2))
 q0 <- head(predict(fit))
 q1 <- head(predict(fit, newdata = pneumo))
 q2 <- predict(fit, newdata = head(pneumo))
-all.equal(q0, q1) # Should be TRUE
-all.equal(q1, q2) # Should be TRUE
+all.equal(q0, q1)  # Should be TRUE
+all.equal(q1, q2)  # Should be TRUE
 }
 \keyword{models}

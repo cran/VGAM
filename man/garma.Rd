@@ -186,15 +186,15 @@ gdata <- data.frame(interspike = c(68, 41, 82, 66, 101, 66, 57,  41,  27, 78,
  2, 30, 18, 17,  28,  9, 28,  20,  17, 12,
 19, 18, 14, 23,  18, 22, 18,  19,  26, 27,
 23, 24, 35, 22,  29, 28, 17,  30,  34, 17,
-20, 49, 29, 35,  49, 25, 55,  42,  29, 16)) # See Zeger and Qaqish (1988)
+20, 49, 29, 35,  49, 25, 55,  42,  29, 16))  # See Zeger and Qaqish (1988)
 gdata <- transform(gdata, spikenum = seq(interspike))
-bvalue <- 0.1 # .Machine$double.xmin # Boundary value
+bvalue <- 0.1  # .Machine$double.xmin # Boundary value
 fit <- vglm(interspike ~ 1, trace = TRUE, data = gdata,
             garma(loge(bvalue = bvalue),
                  p = 2, coefstart = c(4, 0.3, 0.4)))
 summary(fit)
 coef(fit, matrix = TRUE)
-Coef(fit) # A bug here
+Coef(fit)  # A bug here
 \dontrun{ with(gdata, plot(interspike, ylim = c(0, 120), las = 1,
      xlab = "Spike Number", ylab = "Inter-Spike Time (ms)", col = "blue"))
 with(gdata, lines(spikenum[-(1:fit@misc$plag)], fitted(fit), col = "orange"))

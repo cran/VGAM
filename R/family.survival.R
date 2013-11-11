@@ -17,10 +17,10 @@
            lmu = "identity",
            lsd = "loge",
            imu = NULL, isd = NULL, zero = 2) {
-  if (!is.Numeric(r1, allowable.length = 1, integer.valued = TRUE) ||
+  if (!is.Numeric(r1, length.arg = 1, integer.valued = TRUE) ||
       r1 < 0)
     stop("bad input for 'r1'")
-  if (!is.Numeric(r2, allowable.length = 1, integer.valued = TRUE) ||
+  if (!is.Numeric(r2, length.arg = 1, integer.valued = TRUE) ||
       r2 < 0)
     stop("bad input for 'r2'")
 
@@ -250,7 +250,7 @@ rbisa <- function(n, shape, scale = 1) {
       stop("bad input for argument 'ishape'")
   if (!is.Numeric(iscale, positive = TRUE))
       stop("bad input for argument 'iscale'")
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
      imethod > 3)
       stop("argument 'imethod' must be 1 or 2 or 3")

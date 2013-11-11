@@ -40,7 +40,7 @@ Nested reduced-rank autoregressive models for multiple time series.
 }
 \examples{
 \dontrun{
-cgrain <- scale(grain.us, scale = FALSE) # Center the time series only
+cgrain <- scale(grain.us, scale = FALSE)  # Center the time series only
 fit <- vglm(cgrain ~ 1, rrar(Rank = c(4, 1)),
             epsilon = 1e-3, stepsize = 0.5, trace = TRUE, maxit = 50)
 summary(fit)

@@ -317,7 +317,7 @@ genrayleigh.control <- function(save.weight = TRUE, ...) {
   if (length(zero) &&
       !is.Numeric(zero, integer.valued = TRUE, positive = TRUE))
     stop("bad input for argument 'zero'")
-  if (!is.Numeric(nsimEIM, allowable.length = 1,
+  if (!is.Numeric(nsimEIM, length.arg = 1,
                   integer.valued = TRUE) ||
       nsimEIM <= 50)
       stop("argument 'nsimEIM' should be an integer greater than 50")
@@ -572,7 +572,7 @@ expgeometric.control <- function(save.weight = TRUE, ...) {
     stop("bad input for argument 'zero'")
 
 
-  if (!is.Numeric(nsimEIM, allowable.length = 1,
+  if (!is.Numeric(nsimEIM, length.arg = 1,
                   integer.valued = TRUE))
       stop("bad input for argument 'nsimEIM'")
   if (nsimEIM <= 50)
@@ -616,7 +616,7 @@ expgeometric.control <- function(save.weight = TRUE, ...) {
       scale.init <- if (is.Numeric( .iscale , positive = TRUE)) {
                       rep( .iscale , len = n)
                     } else {
-                      stats::sd(c(y)) # The papers scale parameter beta
+                      stats::sd(c(y))  # The papers scale parameter beta
                     }
 
       shape.init <- if (is.Numeric( .ishape , positive = TRUE)) {
@@ -847,7 +847,7 @@ explogff.control <- function(save.weight = TRUE, ...) {
     stop("bad input for argument 'zero'")
 
 
-  if (!is.Numeric(nsimEIM, allowable.length = 1,
+  if (!is.Numeric(nsimEIM, length.arg = 1,
                   integer.valued = TRUE))
       stop("bad input for argument 'nsimEIM'")
   if (nsimEIM <= 50)
@@ -1096,7 +1096,7 @@ ptpn <- function(q, location = 0, scale = 1, skewpar = 0.5) {
 
  zedd <- (q - location) / scale
 
-  s1 <- 2 * skewpar * pnorm(zedd, sd = 2 * skewpar) #/ scale
+  s1 <- 2 * skewpar * pnorm(zedd, sd = 2 * skewpar)  #/ scale
   s2 <- skewpar + (1 - skewpar) *
         pgamma(zedd^2 / (8 * (1-skewpar)^2), 0.5)
  
@@ -1158,12 +1158,12 @@ rtpn <- function(n, location = 0, scale = 1, skewpar = 0.5) {
 tpnff <- function(llocation = "identity", lscale = "loge",
                   pp = 0.5, method.init = 1,  zero = 2)
 {
-  if (!is.Numeric(method.init, allowable.length = 1,
+  if (!is.Numeric(method.init, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
       method.init > 4)
      stop("argument 'imethod' must be 1 or 2 or 3 or 4")
 
-  if (!is.Numeric(pp, allowable.length = 1, positive = TRUE))
+  if (!is.Numeric(pp, length.arg = 1, positive = TRUE))
     stop("bad input for argument 'pp'")
 
 
@@ -1294,7 +1294,7 @@ tpnff <- function(llocation = "identity", lscale = "loge",
             .elocat = elocat, .escale = escale,
             .pp      = pp ))),
   weight = eval(substitute(expression({
-    wz   <- matrix(as.numeric(NA), n, M) # diag matrix; y is one-col too
+    wz   <- matrix(as.numeric(NA), n, M)  # diag matrix; y is one-col too
     temp10 <- mypp * (1 - mypp)
     ned2l.dlocat2        <- 1 / ((4 * temp10) * myscale^2)
     ned2l.dscale2        <- 2 /  myscale^2
@@ -1319,7 +1319,7 @@ tpnff3 <- function(llocation = "identity",
                     lskewpar = "identity",
                     method.init = 1,  zero = 2)
 {
-  if (!is.Numeric(method.init, allowable.length = 1,
+  if (!is.Numeric(method.init, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
       method.init > 4)
     stop("argument 'imethod' must be 1 or 2 or 3 or 4")
@@ -1463,7 +1463,7 @@ tpnff3 <- function(llocation = "identity",
             .elocat = elocat, .escale = escale, .eskewp = eskewp
             ))),
   weight = eval(substitute(expression({
-    wz <- matrix(as.numeric(NA), n, dimm(M)) # diag matrix; y is one-col too
+    wz <- matrix(as.numeric(NA), n, dimm(M))  # diag matrix; y is one-col too
    
     temp10 <- myskew * (1 - myskew)
 

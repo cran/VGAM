@@ -145,11 +145,11 @@ dimnames(mat) <- list(winner = journal, loser = journal)
 fit <- vglm(Brat(mat) ~ 1, brat(refgp = 1), trace = TRUE)
 fit <- vglm(Brat(mat) ~ 1, brat(refgp = 1), trace = TRUE, crit = "coef")
 summary(fit)
-c(0, coef(fit)) # Log-abilities (in order of "journal")
-c(1, Coef(fit)) # Abilities (in order of "journal")
+c(0, coef(fit))  # Log-abilities (in order of "journal")
+c(1, Coef(fit))  # Abilities (in order of "journal")
 fitted(fit)     # Probabilities of winning in awkward form
-(check <- InverseBrat(fitted(fit))) # Probabilities of winning 
-check + t(check) # Should be 1's in the off-diagonals 
+(check <- InverseBrat(fitted(fit)))  # Probabilities of winning 
+check + t(check)  # Should be 1's in the off-diagonals 
 }
 \keyword{models}
 \keyword{regression}

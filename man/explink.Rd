@@ -93,7 +93,7 @@ explink(theta, bvalue = NULL, inverse = FALSE, deriv = 0, short = TRUE, tag = FA
 \examples{
 theta <- rnorm(30)
 explink(theta)
-max(abs(explink(explink(theta), inverse = TRUE) - theta)) # Should be 0
+max(abs(explink(explink(theta), inverse = TRUE) - theta))  # Should be 0
 }
 \keyword{math}
 \keyword{models}

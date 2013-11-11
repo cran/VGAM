@@ -2,8 +2,14 @@
 \alias{notdocumentedyet}
 %
 %
+% 201311;
+\alias{family.name}
+\alias{family.name.vlm}
+\alias{family.name.vglmff}
 % 201309;
+\alias{I.col}
 \alias{BIC}
+\alias{check.omit.constant}
 %
 % 201308;
 %\alias{dbiclaytoncop}
@@ -89,6 +95,7 @@
 %
 % 20120112
 \alias{AIC}
+\alias{AICc}
 \alias{coef}
 \alias{logLik}
 \alias{plot}
@@ -106,11 +113,11 @@
 \alias{show.summary.qrrvglm}
 % \alias{show.summary.rc.exponential}
 \alias{show.summary.rrvglm}
-\alias{show.summary.uqo}
+%\alias{show.summary.uqo}
 \alias{show.summary.vgam}
 \alias{show.summary.vglm}
 \alias{show.summary.vlm}
-\alias{show.uqo}
+%\alias{show.uqo}
 \alias{show.vanova}
 \alias{show.vsmooth.spline}
 %
@@ -166,7 +173,7 @@
 \alias{Confint.rrnb}
 \alias{Confint.nb1}
 %\alias{gala}
-\alias{mmt}
+% \alias{mmt}
 %
 %
 %
@@ -230,9 +237,9 @@
 \alias{Opt.qrrvglm}
 % \alias{R170.or.later}
 \alias{Tol.Coef.qrrvglm}
-\alias{Tol.Coef.uqo}
+%\alias{Tol.Coef.uqo}
 \alias{Tol.qrrvglm}
-\alias{Tol.uqo}
+%\alias{Tol.uqo}
 \alias{a2m}
 \alias{abbott}
 % \alias{acat.deriv}
@@ -303,7 +310,7 @@
 \alias{deplot.lms.yjn2}
 \alias{deplot.vglm}
 \alias{deviance}
-\alias{deviance.uqo}
+%\alias{deviance.uqo}
 \alias{deviance.vglm}
 \alias{deviance.vlm}
 %\alias{df.residual}
@@ -311,8 +318,8 @@
 \alias{dimm}
 % \alias{dneg.binomial}
 \alias{dnorm2}
-\alias{dotC}
-\alias{dotFortran}
+%\alias{dotC}
+%\alias{dotFortran}
 % \alias{dpsi.dlambda.yjn}
 % \alias{drop1.vgam}
 % \alias{drop1.vglm}
@@ -333,7 +340,7 @@
 \alias{fill3}
 \alias{fitted}
 \alias{fitted.values}
-\alias{fitted.values.uqo}
+%\alias{fitted.values.uqo}
 \alias{fittedvsmooth.spline}
 %
 \alias{variable.names}
@@ -384,6 +391,7 @@
 \alias{lms.yjn.control}
 \alias{lmscreg.control}
 \alias{logLik.vlm}
+\alias{logLik.qrrvglm}
 % \alias{lv.Coef.cao} 20090505
 \alias{latvar.Coef.qrrvglm}
 \alias{latvar.cao}
@@ -398,6 +406,7 @@
 \alias{mix2normal.control}
 \alias{mix2poisson.control}
 \alias{model.matrix.qrrvglm}
+\alias{model.matrixvgam}
 % \alias{mux11}
 % \alias{mux111}
 % \alias{mux15}
@@ -445,7 +454,7 @@
 \alias{predict.mlm}
 % \alias{predictqrrvglm}
 \alias{predict.rrvglm}
-\alias{predict.uqo}
+%\alias{predict.uqo}
 \alias{predict.vgam}
 \alias{predict.vlm}
 \alias{predictcao}
@@ -526,7 +535,7 @@
 \alias{summary.rc.exponential}
 \alias{summaryrcim}
 \alias{summary.rrvglm}
-\alias{summary.uqo}
+%\alias{summary.uqo}
 \alias{summaryvgam}
 \alias{summaryvglm}
 \alias{summaryvlm}
@@ -589,7 +598,7 @@
 %
 %
 %
-\alias{Coef.uqo-class}
+%\alias{Coef.uqo-class}
 \alias{cao-class}
 \alias{rcim0-class}
 \alias{rcim-class}
@@ -603,7 +612,7 @@
 %%% 20101216 \alias{summary.rcim-class}
 %\alias{summary.rcim-class}
 %\alias{summaryrcim-class}
-\alias{uqo-class}
+%\alias{uqo-class}
 \alias{vcov.qrrvglm-class}
 \alias{vlm-class}
 \alias{vlmsmall-class}

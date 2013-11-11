@@ -63,7 +63,7 @@ Q <- qposnorm(probs, m = m)
 lines(Q, dposnorm(Q, m = m), col = "purple", lty = 3, type = "h")
 lines(Q, pposnorm(Q, m = m), col = "purple", lty = 3, type = "h")
 abline(h = probs, col = "purple", lty = 3)
-max(abs(pposnorm(Q, m = m) - probs)) # Should be 0
+max(abs(pposnorm(Q, m = m) - probs))  # Should be 0
 }
 }
 \keyword{distribution}

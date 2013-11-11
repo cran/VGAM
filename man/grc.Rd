@@ -10,17 +10,20 @@
 }
 \usage{
 grc(y, Rank = 1, Index.corner = 2:(1 + Rank),
-    szero = 1, summary.arg = FALSE, h.step = 1e-04, ...)
+    str0 = 1, summary.arg = FALSE, h.step = 1e-04, ...)
 rcim(y, family = poissonff, Rank = 0, Musual = NULL,
-     weights = NULL, which.lp = 1,
-     Index.corner = if (!Rank) NULL else 1 + Musual * (1:Rank),
-     rprefix = "Row.", cprefix = "Col.", offset = 0,
-     szero = if (!Rank) NULL else {
-       if (Musual == 1) 1 else setdiff(1:(Musual * ncol(y)),
-                    c(1 + (1:ncol(y)) * Musual, Index.corner))
-     },
+     weights = NULL, which.linpred = 1,
+     Index.corner = ifelse(is.null(str0), 0, max(str0)) + 1:Rank,
+     rprefix = "Row.", cprefix = "Col.", iprefix = "X2.",
+     offset = 0, str0 = if (Rank) 1 else NULL,
      summary.arg = FALSE, h.step = 0.0001,
-     rbaseline = 1, cbaseline = 1, ...)
+     rbaseline = 1, cbaseline = 1, 
+     has.intercept = TRUE,
+     M = NULL,
+     rindex = 2:nrow(y),
+     cindex = 2:ncol(y),
+     iindex = 2:nrow(y),
+     ...)
 }
 %- maybe also `usage' for other objects documented here.
 \arguments{
@@ -29,6 +32,7 @@ rcim(y, family = poissonff, Rank = 0, Musual = NULL,
   For \code{rcim} a general matrix response depending on \code{family}.
   Output from \code{table()} is acceptable; it is converted into a matrix.
   Note that \code{y} should be at least 3 by 3 in dimension.
+
 
   }
   \item{family}{
@@ -60,6 +64,7 @@ rcim(y, family = poissonff, Rank = 0, Musual = NULL,
   A value of 0 means no interactions (i.e., main effects only);
   each row and column is represented by an indicator variable.
 
+
   }
   \item{weights}{
   Prior weights. Fed into 
@@ -69,11 +74,11 @@ rcim(y, family = poissonff, Rank = 0, Musual = NULL,
 
 
   }
-  \item{which.lp}{
+  \item{which.linpred}{
   Single integer.
-  Specifies which linear predictor is modelled as the sum of
-  an intercept, row effect, column effect plus an optional interaction term.
-  It should be one value from the set \code{1:Musual}.
+  Specifies which linear predictor is modelled as the sum of an
+  intercept, row effect, column effect plus an optional interaction
+  term. It should be one value from the set \code{1:Musual}.
 
 
   }
@@ -85,19 +90,25 @@ rcim(y, family = poissonff, Rank = 0, Musual = NULL,
 
 
   }
-  \item{rprefix, cprefix}{ 
-  Character, for rows and columns resp.
+  \item{rprefix, cprefix, iprefix}{ 
+  Character, for rows and columns and interactions respectively.
   For labelling the indicator variables.
+
 
   }
   \item{offset}{ 
   Numeric. Either a matrix of the right dimension, else
   a single numeric expanded into such a matrix.
 
+
   }
-  \item{szero}{ 
-  An integer from the set \{1,\ldots,\code{min(nrow(y), ncol(y))}\},
+  \item{str0}{ 
+  Ignored if \code{Rank = 0}, else
+  an integer from the set \{1,\ldots,\code{min(nrow(y), ncol(y))}\},
   specifying the row that is used as the structural zero.
+  Passed into \code{\link{rrvglm.control}} if \code{Rank > 0}.
+  Set \code{str0 = NULL} for none.
+
 
   }
   \item{summary.arg}{
@@ -137,6 +148,34 @@ rcim(y, family = poissonff, Rank = 0, Musual = NULL,
 
 
   }
+  \item{has.intercept}{
+  Logical. Include an intercept?
+
+
+  }
+  \item{M, cindex}{
+  \eqn{M}  is the usual \pkg{VGAM} \eqn{M}, viz. the number of linear/additive
+  predictors in total.
+  Also, \code{cindex} means column index, and these point to the columns
+  of \code{y} which are part of the vector of linear/additive predictor
+  \emph{main effects}.
+
+
+  For \code{family = multinomial} it is necessary to input these arguments
+  as \code{M = ncol(y)-1} and
+  \code{cindex = 2:(ncol(y)-1)}.
+
+
+% except for the possibly the first one (due to identifiability constraints).
+
+
+  }
+  \item{rindex, iindex}{
+  \code{rindex} means row index, and these are similar to \code{cindex}.
+  \code{iindex} means interaction index, and these are similar to \code{cindex}.
+
+
+  }
 }
 \details{
   Goodman's RC association model fits a reduced-rank approximation
@@ -147,7 +186,7 @@ rcim(y, family = poissonff, Rank = 0, Musual = NULL,
   Indeed, \code{A} and \code{C} have \code{Rank} columns.
 By default, the first column and row of the interaction matrix
 \code{A \%*\% t(C)} is chosen 
-to be structural zeros, because \code{szero = 1}.
+to be structural zeros, because \code{str0 = 1}.
 This means the first row of \code{A} are all zeros. 
 
 
@@ -259,13 +298,13 @@ assistance from Alfian F. Hadi.
   Quite a lot of expertise is needed when fitting and in its
   interpretion thereof. For example, the constraint
   matrices applies the reduced-rank regression to the first
-  (see \code{which.lp})
+  (see \code{which.linpred})
   linear predictor and the other linear predictors are intercept-only and
   have a common value throughout the entire data set.
   This means that, by default, \code{family =} \code{\link{zipoissonff}} is
   appropriate but not
   \code{family =} \code{\link{zipoisson}}.
-  Else set \code{family =} \code{\link{zipoisson}} and \code{which.lp = 2}.
+  Else set \code{family =} \code{\link{zipoisson}} and \code{which.linpred = 2}.
   To understand what is going on, do examine the constraint
   matrices of the fitted object, and reconcile this with
   Equations (4.3) to (4.5) of Yee and Hastie (2003).
@@ -291,6 +330,7 @@ assistance from Alfian F. Hadi.
   \code{\link{Rcim}},
   \code{\link{Qvar}},
   \code{\link{plotrcim0}},
+  \code{\link{multinomial}},
   \code{\link{alcoff}},
   \code{\link{crashi}},
   \code{\link{auuc}},
@@ -310,6 +350,11 @@ grc2 <- grc(auuc, Rank = 2, Index.corner = c(2, 5))
 fitted(grc2)
 summary(grc2)
 
+model3 <- rcim(auuc, Rank = 1, fam = multinomial,
+               M = ncol(auuc)-1, cindex = 2:(ncol(auuc)-1), trace = TRUE)
+fitted(model3)
+summary(model3)
+
 
 # 2012 Summer Olympic Games in London
 \dontrun{ top10 <- head(olym12, n = 10)
@@ -325,7 +370,7 @@ Coef(grc.oly1)
 rcim0 <- rcim(auuc, fam = alaplace2(tau = 0.5, intparloc = TRUE), trace = TRUE)
 round(fitted(rcim0), digits = 0)
 round(100 * (fitted(rcim0) - auuc) / auuc, digits = 0)  # Discrepancy
-rcim0@y
+depvar(rcim0)
 round(coef(rcim0, matrix = TRUE), digits = 2)
 Coef(rcim0, matrix = TRUE)
 # constraints(rcim0)
@@ -351,5 +396,16 @@ round(100 * (fitted(rcim0) - fv) / fv)  # Hopefully should be all 0s
 
 
 % print(Coef(rcim0, matrix = TRUE), digits = 3)
+
+
+% Prior to 201310:
+%    str0 = if (!Rank) NULL else {
+%      if (Musual == 1) 1 else setdiff(1:(Musual * ncol(y)),
+%                   c(1 + (1:ncol(y)) * Musual, Index.corner))
+%    },
+%    str0 = if (Rank > 0) 1 else NULL,
+%    Index.corner = if (!Rank) NULL else 1 + Musual * (1:Rank),
+
+
 
 

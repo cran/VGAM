@@ -1,6 +1,16 @@
 Here is a list of known bugs.
 
 
+2013-11
+
+vgam() can only handle constraint matrices cmat, say, such that
+t(cmat) %*% cmat is diagonal.
+
+
+
+
+
+
 2013-07
 
 quasipoisson()'s scale parameter estimate does not handle

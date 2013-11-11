@@ -140,7 +140,7 @@
 
         X.lm.jay <- vlm2lm.model.matrix(x.vlm = X.vlm.early,
                                         Blist = Blist.early,
-                                        which.lp = jay, M = M)
+                                        which.linpred = jay, M = M)
 
         extra$ncols.X.lm[jay] <- ncol(X.lm.jay)
 

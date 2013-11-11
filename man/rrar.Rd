@@ -90,7 +90,7 @@ time series.
 \dontrun{
 year <- seq(1961 + 1/12, 1972 + 10/12, by = 1/12)
 par(mar = c(4, 4, 2, 2) + 0.1, mfrow = c(2, 2))
-for(ii in 1:4) {
+for (ii in 1:4) {
   plot(year, grain.us[, ii], main = names(grain.us)[ii], las = 1,
        type = "l", xlab = "", ylab = "", col = "blue")
   points(year, grain.us[, ii], pch = "*", col = "blue")
@@ -107,7 +107,7 @@ print(fit@misc$omegahat, digits = 3)
 print(fit@misc$Phimatrices, digits = 2)
 
 par(mar = c(4, 4, 2, 2) + 0.1, mfrow = c(4, 1))
-for(ii in 1:4) {
+for (ii in 1:4) {
   plot(year, fit@misc$Z[, ii], main = paste("Z", ii, sep = ""),
        type = "l", xlab = "", ylab = "", las = 1, col = "blue")
   points(year, fit@misc$Z[, ii], pch = "*", col = "blue")

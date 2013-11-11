@@ -3,7 +3,7 @@
 \alias{damh}
 \alias{pamh}
 \alias{ramh}
-\title{Ali-Mikhail-Haq Distribution's Bivariate Distribution}
+\title{Ali-Mikhail-Haq Bivariate Distribution}
 \description{
   Density, distribution function, and random
   generation for the (one parameter) bivariate

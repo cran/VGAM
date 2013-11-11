@@ -173,7 +173,7 @@ par(mfrow = c(1, 1), lwd = 2)
     main = "Density functions at Age = 20 (black), 42 (red) and 55 (blue)"))
 aa <- deplot(fit, x0 = 42, y = ygrid, add = TRUE, llty = 2, col = "red")
 aa <- deplot(fit, x0 = 55, y = ygrid, add = TRUE, llty = 4, col = "blue", Attach = TRUE)
-with(aa@post, deplot) # Contains density function values; == a@post$deplot
+with(aa@post, deplot)  # Contains density function values; == a@post$deplot
 }
 }
 \keyword{models}

@@ -223,7 +223,7 @@ polya(lprob = "logit", lsize = "loge",
   estimate of the index parameter is fraught (see Lawless,
   1987). In general, the \code{\link{quasipoissonff}} is
   more robust.  Other alternatives to \code{negbinomial} are
-  to fit a NB-1 or RR-NB (aka NB-P) model; see Yee (2012).
+  to fit a NB-1 or RR-NB (aka NB-P) model; see Yee (2014).
   Also available are the NB-C, NB-H and NB-G.
   Assigning values to the \code{isize} argument may lead
   to a local solution, and smaller values are preferred
@@ -262,7 +262,7 @@ Fitting the negative binomial distribution to biological data.
 \bold{9}, 174--200.
 
 
-  Yee, T. W. (2013)
+  Yee, T. W. (2014)
   Reduced-rank vector generalized linear models with two linear predictors.
   \emph{Computational Statistics and Data Analysis}.
 
@@ -448,5 +448,5 @@ summary(glm(y3 ~ x2 + x3, quasipoisson, mydata))$disper  # cf. moment estimator
 \keyword{regression}
 
 
-%y1 = MASS:::rnegbin(n, mu=exp(3+x), theta=exp(1)) # k is theta
+%y1 = MASS:::rnegbin(n, mu=exp(3+x), theta=exp(1))  # k is theta
 %y2 = MASS:::rnegbin(n, mu=exp(2-x), theta=exp(0))

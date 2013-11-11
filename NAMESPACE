@@ -7,6 +7,12 @@
 useDynLib(VGAM)
 
 
+export(family.name.vlm)
+export(family.name.vglmff)
+exportMethods(family.name)
+export(logLik.qrrvglm)
+
+
 
 importMethodsFrom("methods")
 
@@ -15,6 +21,8 @@ importMethodsFrom("methods")
 importFrom("stats4", BIC)
 exportMethods(BIC)
 export(BICvlm)
+export(check.omit.constant)
+export(I.col)
 
 
 
@@ -65,7 +73,7 @@ importMethodsFrom("stats4")
 
 
 importFrom("stats4", AIC, coef, summary, plot, logLik, vcov)
-exportMethods(AIC, coef, summary, plot, logLik, vcov)
+exportMethods(AIC, AICc, coef, summary, plot, logLik, vcov)
 
 
 export(npred, npred.vlm)
@@ -220,8 +228,7 @@ expexp1, expexp)
 
 
 export(A1A2A3, a2m, AAaa.nohw,
-AICvlm, AICvgam, AICrrvglm, 
-AICqrrvglm, # AICvglm, 
+AICvlm, AICvgam, AICrrvglm, AICqrrvglm, # AICvglm, 
 anova.vgam,
 anova.vglm, 
 bisa, dbisa, pbisa, qbisa, rbisa,
@@ -243,7 +250,7 @@ coefvsmooth.spline, coefvsmooth.spline.fit,
 constraints, constraints.vlm, 
 deplot, deplot.default, deplot.lms.bcg, deplot.lms.bcn,
 deplot.lms.yjn, deplot.lms.yjn2, deplot.vglm, 
-deviance.uqo, deviance.vglm, deviance.vlm,
+deviance.vglm, deviance.vlm,
 df.residual_vlm,
 dirmultinomial, dirmul.old,
 dtheta.deta)
@@ -262,7 +269,7 @@ export(poisson.points, dpois.points)
 export(m2adefault, 
 erlang,
 dfelix, felix,
-fitted.values.uqo, fittedvlm, fittedvsmooth.spline, fsqrt,
+fittedvlm, fittedvsmooth.spline, fsqrt,
 formulavlm, formulaNA.VGAM,
 garma, gaussianff,
 hypersecant, hypersecant.1, 
@@ -300,16 +307,17 @@ plotvglm, plotvlm,
 plotvsmooth.spline, powerlink,
 predict.cao, predictcao,
 predictors, predictors.vglm,
-predictqrrvglm, predict.rrvglm, predict.uqo, predict.vgam,
+predictqrrvglm, predict.rrvglm,
+predict.vgam,
 predictvglm, predict.vlm, predictvsmooth.spline,
 predictvsmooth.spline.fit,
   show.Coef.cao,
   show.Coef.qrrvglm, show.Coef.rrvglm, show.rrvglm,
   show.summary.cao, show.summary.qrrvglm,
-  show.summary.rrvglm, show.summary.uqo,
+  show.summary.rrvglm,
   show.summary.vgam,
   show.summary.vglm,
-  show.summary.vlm, show.uqo,
+  show.summary.vlm,
   show.vanova,
 show.vgam, show.vglm, show.vlm,
  show.vglmff,
@@ -335,10 +343,10 @@ seq2binomial, size.binomial,
 stdze1, stdze2,
 summary.cao, summary.grc,
   summary.qrrvglm,
-summary.rrvglm, summary.uqo,
+summary.rrvglm,
 summaryvgam, summaryvglm, summaryvlm,
 s.vam, terms.vlm, 
-theta2eta, Tol.Coef.qrrvglm, Tol.Coef.uqo, Tol.qrrvglm, Tol.uqo,
+theta2eta, Tol.Coef.qrrvglm, Tol.qrrvglm,
 triangle, dtriangle, ptriangle, qtriangle, rtriangle, 
   vcovvlm,
 vglm.fit, vgam.fit,
@@ -541,7 +549,6 @@ trplot,
 rcqo,
 cqo,
 qrrvglm.control,
-uqo.control, uqo,
 vgam.control, vgam, vglm.control, vglm,
 vsmooth.spline,
 weibull, yip88,
@@ -569,11 +576,11 @@ tikuv, dtikuv, ptikuv, qtikuv, rtikuv)
 
 exportClasses(vglmff, vlm, vglm, vgam,
 rrvglm, qrrvglm, grc,  rcim, 
-vlmsmall, uqo, cao,
+vlmsmall, cao,
 summary.vgam, summary.vglm, summary.vlm,
 summary.qrrvglm,
 summary.cao, summary.rrvglm, 
-Coef.rrvglm, Coef.uqo, Coef.qrrvglm, Coef.cao,
+Coef.rrvglm, Coef.qrrvglm, Coef.cao,
 vcov.qrrvglm,
 vsmooth.spline.fit, vsmooth.spline)
 
@@ -600,6 +607,7 @@ model.matrix,
 summary,
 coef,
 AIC,
+AICc,
 plot,
 logLik,
 vcov,
@@ -613,6 +621,6 @@ weights,
 persp)
 
 
- exportMethods(AIC, coef, summary, plot, logLik, vcov)
+ exportMethods(AIC, AICc, coef, summary, plot, logLik, vcov)
 
 

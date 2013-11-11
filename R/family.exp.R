@@ -21,7 +21,7 @@ qeunif <- function(p, min = 0, max = 1, Maxit.nr = 10, Tol.nr = 1.0e-6) {
   if (any(min >= max))
     stop("argument 'min' has values greater or equal ",
          "to argument 'max'")
-  if (!is.Numeric( Tol.nr, allowable.length = 1, positive = TRUE) ||
+  if (!is.Numeric( Tol.nr, length.arg = 1, positive = TRUE) ||
       Tol.nr > 0.10)
     stop("argument 'Tol.nr' is not a single positive value, ",
          "or is too large")
@@ -112,7 +112,7 @@ reunif <- function(n, min = 0, max = 1) {
 qenorm <- function(p, mean = 0, sd = 1, Maxit.nr = 10,
                    Tol.nr = 1.0e-6) {
   ppp <- p
-  if (!is.Numeric( Tol.nr, allowable.length = 1, positive = TRUE) ||
+  if (!is.Numeric( Tol.nr, length.arg = 1, positive = TRUE) ||
       Tol.nr > 0.10)
     stop("argument 'Tol.nr' is not a single ",
          "positive value, or is too large")
@@ -196,7 +196,7 @@ renorm <- function(n, mean = 0, sd = 1) {
 qeexp <- function(p, rate = 1, Maxit.nr = 10, Tol.nr = 1.0e-6) {
   ppp <- p
   vsmallno <- sqrt(.Machine$double.eps)
-  if (!is.Numeric( Tol.nr, allowable.length = 1, positive = TRUE) ||
+  if (!is.Numeric( Tol.nr, length.arg = 1, positive = TRUE) ||
       Tol.nr > 0.10)
     stop("argument 'Tol.nr' is not a single positive value, or ",
          "is too large")
@@ -363,7 +363,7 @@ rkoenker <- function(n, location = 0, scale = 1) {
 
 
   if (length(ilocat) &&
-     (!is.Numeric(ilocat, allowable.length = 1, positive = TRUE)))
+     (!is.Numeric(ilocat, length.arg = 1, positive = TRUE)))
       stop("bad input for argument 'ilocation'")
   if (length(iscale) && !is.Numeric(iscale))
     stop("bad input for argument 'iscale'")
@@ -372,7 +372,7 @@ rkoenker <- function(n, location = 0, scale = 1) {
   if (!is.Numeric(percentile, positive = TRUE) ||
       any(percentile >= 100))
     stop("bad input for argument 'percentile'")
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
      imethod > 2)
       stop("'imethod' must be 1 or 2")
@@ -488,7 +488,7 @@ rkoenker <- function(n, location = 0, scale = 1) {
     ned2l.dlocat2 <- 0.3 / Scale^2
     ned2l.dscale2 <- 2.0 / (3 * Scale^2)
 
-    wz <- matrix(-10, n, M) # Diagonal EIM
+    wz <- matrix(-10, n, M)  # Diagonal EIM
     wz[, iam(1, 1, M = M)] <- ned2l.dlocat2 * dlocat.deta^2
     wz[, iam(2, 2, M = M)] <- ned2l.dscale2 * dscale.deta^2
 

@@ -78,9 +78,9 @@ lines(Q, ptobit(Q, m = m, Lower = Lower, Upper = Upper),
 lines(Q, dtobit(Q, m = m, Lower = Lower, Upper = Upper),
       col = "darkgreen", lty = "dashed", type = "h")
 abline(h = probs, col = "purple", lty = "dashed")
-max(abs(ptobit(Q, m = m, Lower = Lower, Upper = Upper) - probs)) # Should be 0
+max(abs(ptobit(Q, m = m, Lower = Lower, Upper = Upper) - probs))  # Should be 0
 
-endpts <- c(Lower, Upper) # Endpoints have a spike
+endpts <- c(Lower, Upper)  # Endpoints have a spike
 lines(endpts, dtobit(endpts, m = m, Lower = Lower, Upper = Upper),
       col = "blue", lwd = 2, type = "h")
 }

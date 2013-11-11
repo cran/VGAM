@@ -63,7 +63,7 @@ summary(olym12)
 myylim <- c(0, 55)
 with(head(olym08, n = 8),
 barplot(rbind(gold, silver, bronze),
-        col = c("gold", "grey", "brown"), # No "silver" or "bronze"!
+        col = c("gold", "grey", "brown"),  # No "silver" or "bronze"!
 #               "gold", "grey71", "chocolate4",
         names.arg = country, cex.names = 0.5, ylim = myylim,
         beside = TRUE, main = "2008 Summer Olympic Final Medal Count",
@@ -71,7 +71,7 @@ barplot(rbind(gold, silver, bronze),
         sub = "Top 8 countries; 'gold'=gold, 'grey'=silver, 'brown'=bronze"))
 with(head(olym12, n = 8),
 barplot(rbind(gold, silver, bronze),
-        col = c("gold", "grey", "brown"), # No "silver" or "bronze"!
+        col = c("gold", "grey", "brown"),  # No "silver" or "bronze"!
         names.arg = country, cex.names = 0.5, ylim = myylim,
         beside = TRUE, main = "2012 Summer Olympic Final Medal Count",
         ylab = "Medal count", las = 1,

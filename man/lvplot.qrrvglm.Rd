@@ -11,7 +11,7 @@ y-axis are the first and second ordination axes respectively.
 }
 \usage{
 lvplot.qrrvglm(object, varI.latvar = FALSE, reference = NULL,
-    add = FALSE, plot.it = TRUE, 
+    add = FALSE, show.plot = TRUE, 
     rug = TRUE, y = FALSE, type = c("fitted.values", "predictors"), 
     xlab = paste("Latent Variable", if (Rank == 1) "" else " 1", sep = ""), 
     ylab = if (Rank == 1) switch(type, predictors = "Predictors", 
@@ -31,7 +31,12 @@ lvplot.qrrvglm(object, varI.latvar = FALSE, reference = NULL,
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{object}{ A CQO or UQO object. }
+  \item{object}{
+  A CQO object.
+% A CQO or UQO object.
+
+
+  }
   \item{varI.latvar}{
   Logical that is fed into \code{\link{Coef.qrrvglm}}. 
 
@@ -44,7 +49,7 @@ lvplot.qrrvglm(object, varI.latvar = FALSE, reference = NULL,
   plot is made.
 
  }
-  \item{plot.it}{ Logical. Plot it?
+  \item{show.plot}{ Logical. Plot it?
 
  }
   \item{rug}{ Logical. If \code{TRUE}, a rug plot is plotted at the
@@ -364,10 +369,10 @@ lvplot(p2, sites = TRUE, spch = "*", scol = "darkgreen", scex = 1.5,
        C = TRUE, Cadj = c(-.3,-.3,1), Clwd = 2, Ccex = 1.4, Ccol = "red",
        main = paste("Contours at Abundance = 140 with",
                   "convex hull of the site scores")) }
-# vvv var(latvar(p2)) # A diagonal matrix, i.e., uncorrelated latent variables
-# vvv var(latvar(p2, varI.latvar = TRUE)) # Identity matrix
-# vvv Tol(p2)[,,1:2] # Identity matrix
-# vvv Tol(p2, varI.latvar = TRUE)[,,1:2] # A diagonal matrix
+# vvv var(latvar(p2))  # A diagonal matrix, i.e., uncorrelated latent variables
+# vvv var(latvar(p2, varI.latvar = TRUE))  # Identity matrix
+# vvv Tol(p2)[,,1:2]  # Identity matrix
+# vvv Tol(p2, varI.latvar = TRUE)[,,1:2]  # A diagonal matrix
 }
 \keyword{models}
 \keyword{regression}

@@ -241,7 +241,7 @@ data(iris)
 coef(fit, matrix = TRUE) }
 
 # Example 2a: a simple example 
-ycounts <- t(rmultinom(10, size = 20, prob = c(0.1, 0.2, 0.8))) # Counts
+ycounts <- t(rmultinom(10, size = 20, prob = c(0.1, 0.2, 0.8)))  # Counts
 fit <- vglm(ycounts ~ 1, multinomial)
 head(fitted(fit))   # Proportions
 fit@prior.weights   # NOT recommended for extraction of prior weights
@@ -297,11 +297,11 @@ gotowork <- transform(gotowork,
                       Cost.bus   = cost.bus   - cost.walk,
                       Cost.car   = cost.car   - cost.walk,
                       Cost.train = cost.train - cost.walk,
-                      Cost       = cost.train - cost.walk, # for labelling
+                      Cost       = cost.train - cost.walk,  # for labelling
                       Time.bus   = time.bus   - time.walk,
                       Time.car   = time.car   - time.walk,
                       Time.train = time.train - time.walk,
-                      Time       = time.train - time.walk) # for labelling
+                      Time       = time.train - time.walk)  # for labelling
 fit <- vglm(ycounts ~ Cost + Time,
             multinomial(parall = TRUE ~ Cost + Time - 1),
             xij = list(Cost ~ Cost.bus + Cost.train + Cost.car,
@@ -315,7 +315,7 @@ coef(fit)
 coef(fit, matrix = TRUE)
 constraints(fit)
 summary(fit)
-max(abs(predict(fit) - predict(fit, new = gotowork))) # Should be 0
+max(abs(predict(fit) - predict(fit, new = gotowork)))  # Should be 0
 }
 \keyword{models}
 \keyword{regression}
@@ -324,7 +324,7 @@ max(abs(predict(fit) - predict(fit, new = gotowork))) # Should be 0
 
 % 20100915; this no longer works:
 % # Example 2c: Different input to Example 2a but same result
-% w <- apply(ycounts, 1, sum) # Prior weights
+% w <- apply(ycounts, 1, sum)  # Prior weights
 % yprop <- ycounts / w    # Sample proportions
 % fitprop <- vglm(yprop ~ 1, multinomial, weights=w)
 % head(fitted(fitprop))   # Proportions

@@ -10,8 +10,6 @@
 
 
 
-if (TRUE) {
-
 
 
 if (!isGeneric("AIC"))
@@ -23,15 +21,37 @@ if (!isGeneric("AIC"))
 
 
 
+check.omit.constant <- function(object) {
+
+
+
+  if (is.logical(object@misc$needto.omit.constant) &&
+       object@misc$needto.omit.constant &&
+      !object@misc$omit.constant)
+    warning("Probably 'omit.constant = TRUE' should have been set. ",
+            "See the family function '",
+            object@family@vfamily[1],
+            "' help file.")
+
+}
+
+
+
+
 AICvlm <- function(object, ..., 
                    corrected = FALSE,
                    k = 2) {
   estdisp <- object@misc$estimated.dispersion
+
+
+  check.omit.constant(object)
+
+
   no.dpar <- if (length(estdisp) && is.logical(estdisp) && estdisp)
     length(object@misc$dispersion) else 0
 
   tot.par <- length(coefvlm(object)) + no.dpar
-  ans <- -2 * logLik.vlm(object, ...) + k * tot.par
+  ans <- (-2) * logLik.vlm(object, ...) + k * tot.par
 
   if (corrected) {
     ans <- ans + k * tot.par * (tot.par + 1) / (
@@ -48,6 +68,10 @@ AICvgam <- function(object, ...,
 
   estdisp <- object@misc$estimated.dispersion
 
+
+  check.omit.constant(object)
+
+
   no.dpar <- if (length(estdisp) && is.logical(estdisp) && estdisp)
              length(object@misc$dispersion) else 0 
   nldf <- if (is.Numeric(object@nl.df)) sum(object@nl.df) else 0
@@ -59,16 +83,21 @@ AICvgam <- function(object, ...,
 
 
 
+
 AICrrvglm <- function(object, ...,
                       k = 2) {
+
+
+  check.omit.constant(object)
+
 
   estdisp <- object@misc$estimated.dispersion
   no.dpar <- if (length(estdisp) && is.logical(estdisp) && estdisp)
     length(object@misc$dispersion) else 0 
-  szero <- object@control$szero
+  str0 <- object@control$str0
   MMM <- object@misc$M
   Rank <- object@control$Rank
-  elts.tildeA <- (MMM - Rank - length(szero)) * Rank
+  elts.tildeA <- (MMM - Rank - length(str0)) * Rank
 
 
 
@@ -78,17 +107,24 @@ AICrrvglm <- function(object, ...,
 
 
 
+
 AICqrrvglm <- function(object, ...,
                        k = 2) {
+
+
+  check.omit.constant(object)
 
 
   estdisp <- object@misc$estimated.dispersion
   no.dpar <- if (length(estdisp) && is.logical(estdisp) && estdisp)
              length(object@misc$dispersion) else 0 
-  szero <- object@control$szero
+  str0 <- object@control$str0
   MMM <- object@misc$M
   Rank <- object@control$Rank
-  elts.tildeA <- (MMM - Rank - length(szero)) * Rank
+  elts.tildeA <- (MMM - Rank - length(str0)) * Rank
+
+
+
 
   EqualTolerances <- object@control$EqualTolerances
   ITolerances <- object@control$ITolerances
@@ -100,85 +136,151 @@ AICqrrvglm <- function(object, ...,
     stop("could not determine whether the fitted object used an ",
          "equal-tolerances assumption based on argument 'ITolerances'")
 
+
   NOS <- if (length(object@y)) ncol(object@y) else MMM
   MSratio <- MMM / NOS  # First value is g(mean) = quadratic form in l
   if (round(MSratio) != MSratio)
-    stop("'MSratio' is not an integer")
+    stop("variable 'MSratio' is not an integer")
   elts.D <- ifelse(ITolerances || EqualTolerances, 1, NOS) *
             Rank * (Rank + 1) / 2
 
-  deviance(object, ...) +
-  k * (length(coefvlm(object)) + no.dpar + elts.tildeA + elts.D)
+
+
+
+
+
+
+  loglik.try <- logLik.qrrvglm(object, ...)
+  if (!is.numeric(loglik.try))
+    warning("cannot compute the log-likelihood of 'object'. ",
+            "Returning NULL")
+
+
+
+
+  elts.B1 <- length(object@extra$B1)
+  elts.C  <- length(object@extra$Cmat)
+  num.params <- elts.B1 + elts.tildeA  + elts.D + elts.C
+
+
+  if (is.numeric(loglik.try)) {
+    (-2) * loglik.try     + k * num.params
+  } else {
+
+    NULL
+  }
 }
+
+
+
+
+
+ 
+ AICcao    <- function(object, ...,
+                       k = 2) {
+
+
+  check.omit.constant(object)
+
+
+  estdisp <- object@misc$estimated.dispersion
+  no.dpar <- if (length(estdisp) && is.logical(estdisp) && estdisp)
+             length(object@misc$dispersion) else 0 
+  str0 <- object@control$str0
+  MMM <- object@misc$M
+  Rank <- object@control$Rank
+
+
+
+
+  NOS <- if (length(object@y)) ncol(object@y) else MMM
+  MSratio <- MMM / NOS  # First value is g(mean) = quadratic form in l
+  if (round(MSratio) != MSratio)
+    stop("variable 'MSratio' is not an integer")
+
+
+
+
+  loglik.try <- logLik(object, ...)
+  if (!is.numeric(loglik.try))
+    warning("cannot compute the log-likelihood of 'object'. ",
+            "Returning NULL")
+
+
+
+
+  elts.B1     <- length(object@extra$B1)  # 0 since a NULL
+  elts.C      <- length(object@extra$Cmat)
+  elts.df1.nl <-    sum(object@extra$df1.nl)
+
+  num.params <- elts.B1 + elts.C + (
+                2 * length(object@extra$df1.nl) + elts.df1.nl) -
+                (Rank + length(str0)) * Rank
+
+
+  if (is.numeric(loglik.try)) {
+    (-2) * loglik.try     + k * num.params
+  } else {
+
+    NULL
+  }
+}
+
 
 
 
 
 setMethod("AIC", "vlm",
          function(object, ..., k = 2)
-         AICvlm(object, ..., k = k))
+           AICvlm(object, ..., k = k))
 
 setMethod("AIC", "vglm",
          function(object, ..., k = 2)
-         AICvlm(object, ..., k = k))
+           AICvlm(object, ..., k = k))
 
 setMethod("AIC", "vgam",
          function(object, ..., k = 2)
-         AICvgam(object, ..., k = k))
+          AICvgam(object, ..., k = k))
 
 setMethod("AIC", "rrvglm",
-         function(object, ..., k = 2)
-         AICrrvglm(object, ..., k = k))
+           function(object, ..., k = 2)
+          AICrrvglm(object, ..., k = k))
 
 setMethod("AIC", "qrrvglm",
+            function(object, ..., k = 2)
+          AICqrrvglm(object, ..., k = k))
+
+
+setMethod("AIC", "cao",
+          function(object, ..., k = 2)
+            AICcao(object, ..., k = k))
+
+
+
+
+if (!isGeneric("AICc"))
+  setGeneric("AICc", function(object, ..., k = 2)
+             standardGeneric("AICc"),
+             package = "VGAM")
+
+
+setMethod("AICc", "vlm",
          function(object, ..., k = 2)
-         AICqrrvglm(object, ..., k = k))
-}
+         AICvlm(object, ..., corrected = TRUE, k = k))
+
+setMethod("AICc", "vglm",
+         function(object, ..., k = 2)
+         AICvlm(object, ..., corrected = TRUE, k = k))
 
 
 
 
 
-if (FALSE) {
-
-  AICvglm <- function(object, ..., k = 2) {
-    crit <- logLik.vlm(object, ...)
-    -2 * crit + k * length(coef(object))
-  }
 
 
 
 
 
-  AICrrvglm <- function(object, ..., k = 2) {
-  stop("not working yet")
-  crit <- logLik.vlm(object)
-  sign <- -2
-  if (!length(crit) || !is.numeric(crit)) {
-      crit <- deviance(object)
-      sign <- 1
-  }
-  if (!length(crit) || !is.numeric(crit))
-    stop("cannot get at the deviance or loglikelihood of the object")
-
-  sign * crit + 2 * (length(coef(object)) +
-  object@control$rank * (object@misc$M - object@control$rank))
-  }
-
-
-
-
-  setMethod("AIC", signature(object = "vglm"),
-             function(object, ..., k = 2)
-             AICvglm(object, ..., k = k))
-
-
-
-  setMethod("AIC", signature(object = "rrvglm"),
-             function(object, ..., k = 2)
-             AICrrvglm(object, ..., k = k))
-
-}
 
 
 
@@ -197,25 +299,34 @@ BICvlm <- function(object, ..., k = log(nobs(object))) {
 }
 
 
+
 setMethod("BIC", "vlm",
-         function(object, ..., k = log(nobs(object)))
-         BICvlm(object, ..., k = k))
+          function(object, ..., k = log(nobs(object)))
+            BICvlm(object, ..., k = k))
 
 setMethod("BIC", "vglm",
-         function(object, ..., k = log(nobs(object)))
-         BICvlm(object, ..., k = k))
+          function(object, ..., k = log(nobs(object)))
+            BICvlm(object, ..., k = k))
 
 setMethod("BIC", "vgam",
-         function(object, ..., k = log(nobs(object)))
-         AICvgam(object, ..., k = k))
+          function(object, ..., k = log(nobs(object)))
+           AICvgam(object, ..., k = k))
 
 setMethod("BIC", "rrvglm",
-         function(object, ..., k = log(nobs(object)))
-         AICrrvglm(object, ..., k = k))
+           function(object, ..., k = log(nobs(object)))
+          AICrrvglm(object, ..., k = k))
 
 setMethod("BIC", "qrrvglm",
-         function(object, ..., k = log(nobs(object)))
-         AICqrrvglm(object, ..., k = k))
+            function(object, ..., k = log(nobs(object)))
+          AICqrrvglm(object, ..., k = k))
+
+
+setMethod("BIC", "cao",
+          function(object, ..., k = log(nobs(object)))
+            AICcao(object, ..., k = k))
+
+
+
 
 
 

@@ -62,7 +62,7 @@
         extra$rightcensored <- ifelse(temp == 0, TRUE, FALSE)
         extra$leftcensored <- ifelse(temp == 2, TRUE, FALSE)
         extra$intervalcensored <- ifelse(temp == 3, TRUE, FALSE)
-        init.mu <- pmax((y[, 1] + y[, 2])/2, 1/8) # for intervalcensored
+        init.mu <- pmax((y[, 1] + y[, 2])/2, 1/8)  # for intervalcensored
         if (any(extra$uncensored))
         init.mu[extra$uncensored] <- pmax(y[extra$uncensored, 1], 1/8)
         if (any(extra$rightcensored))
@@ -189,7 +189,7 @@
 if (FALSE)
  cexpon <- 
  ecexpon <- function(link = "loge", location = 0) {
-  if (!is.Numeric(location, allowable.length = 1))
+  if (!is.Numeric(location, length.arg = 1))
     stop("bad input for 'location'")
 
   link <- as.list(substitute(link))
@@ -291,9 +291,9 @@ if (FALSE)
     cenL <- extra$leftcensored
     cenU <- extra$rightcensored
     cenI <- extra$interval
-    dl.drate <- 1/rate - (y[, 1]-extra$location) # uncensored
+    dl.drate <- 1/rate - (y[, 1]-extra$location)  # uncensored
     tmp200 <- exp(-rate*(y[, 1]-extra$location))
-    tmp200b <- exp(-rate*(y[, 2]-extra$location)) # for interval censored
+    tmp200b <- exp(-rate*(y[, 2]-extra$location))  # for interval censored
     if (any(cenL))
       dl.drate[cenL] <- (y[cenL, 1]-extra$location) *
                         tmp200[cenL] / (1 - tmp200[cenL])
@@ -309,11 +309,11 @@ if (FALSE)
     c(w) * dl.drate * drate.deta
   }), list( .link = link ) )),
   weight = eval(substitute(expression({
-    A123 <- ((mu-extra$location)^2) # uncensored d2l.drate2
+    A123 <- ((mu-extra$location)^2)  # uncensored d2l.drate2
     Lowpt <- ifelse(cenL, y[, 1], extra$location)
-    Lowpt <- ifelse(cenI, y[, 1], Lowpt) #interval censored
+    Lowpt <- ifelse(cenI, y[, 1], Lowpt)  #interval censored
     Upppt <- ifelse(cenU, y[, 1], Inf)
-    Upppt <- ifelse(cenI, y[, 2], Upppt) #interval censored
+    Upppt <- ifelse(cenI, y[, 2], Upppt)  #interval censored
     tmp300 <- exp(-rate*(Lowpt - extra$location))
 
     d2l.drate2 <- 0 * y[, 1]
@@ -348,7 +348,7 @@ if (FALSE)
 
 
 
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
     imethod > 2)
     stop("argument 'imethod' must be 1 or 2")
@@ -645,7 +645,7 @@ if (FALSE)
       !is.Numeric(zero, integer.valued = TRUE))
     stop("bad input for argument 'zero'")
 
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
       imethod > 2)
     stop("argument 'imethod' must be 1 or 2")
@@ -656,7 +656,7 @@ if (FALSE)
     stop("bad input for argument 'probs.y'")
 
 
-  if (!is.Numeric(nrfs, allowable.length = 1) ||
+  if (!is.Numeric(nrfs, length.arg = 1) ||
       nrfs < 0 ||
       nrfs > 1)
     stop("bad input for argument 'nrfs'")
@@ -845,7 +845,7 @@ if (FALSE)
     EulerM <- -digamma(1.0)
 
 
-    ned2l.dshape <- (6*(EulerM - 1)^2 + pi^2)/(6*Shape^2) # KK (2003)
+    ned2l.dshape <- (6*(EulerM - 1)^2 + pi^2)/(6*Shape^2)  # KK (2003)
     ned2l.dscale <- (Shape / Scale)^2
     ned2l.dshapescale <- (EulerM-1) / Scale
 
@@ -965,7 +965,7 @@ is.SurvS4 <- function(x) inherits(x, "SurvS4")
 
 
 setIs(class1 = "SurvS4",
-      class2 = "matrix") # Forces vglm()@y to be a matrix
+      class2 = "matrix")  # Forces vglm()@y to be a matrix
 
 
 
@@ -1101,7 +1101,7 @@ pgamma.deriv.unscaled <- function(q, shape) {
       !is.Numeric(zero, integer.valued = TRUE))
     stop("bad input for argument 'zero'")
 
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
       imethod > 2)
     stop("argument 'imethod' must be 1 or 2")
@@ -1112,7 +1112,7 @@ pgamma.deriv.unscaled <- function(q, shape) {
     stop("bad input for argument 'probs.y'")
 
 
-  if (!is.Numeric(nrfs, allowable.length = 1) ||
+  if (!is.Numeric(nrfs, length.arg = 1) ||
       nrfs < 0 ||
       nrfs > 1)
     stop("bad input for argument 'nrfs'")

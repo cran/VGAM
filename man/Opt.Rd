@@ -28,7 +28,7 @@ Opt(object, ...)
 
 
   Optima occur in quadratic and additive ordination,
-  e.g., CQO or UQO or CAO.
+  e.g., CQO or CAO.
   For these models the optimum is the value of the latent
   variable where the maximum occurs, i.e., where the fitted value
   achieves its highest value.
@@ -83,7 +83,7 @@ called the \emph{species score}.
 
 \examples{
 set.seed(111)  # This leads to the global solution
-hspider[,1:6] <- scale(hspider[,1:6]) # Standardized environmental vars
+hspider[,1:6] <- scale(hspider[,1:6])  # Standardized environmental vars
 # vvv p1 = cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,
 # vvv                Auloalbi, Pardlugu, Pardmont, Pardnigr, Pardpull,
 # vvv                Trocterr, Zoraspin) ~

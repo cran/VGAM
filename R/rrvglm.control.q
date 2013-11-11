@@ -14,8 +14,8 @@ rrvglm.control <-
            Uncorrelated.latvar = FALSE,
            Wmat = NULL,
            Svd.arg = FALSE,
-           Index.corner = if (length(szero)) 
-           head((1:1000)[-szero], Rank) else 1:Rank,
+           Index.corner = if (length(str0)) 
+           head((1:1000)[-str0], Rank) else 1:Rank,
            Ainit = NULL,
            Alpha = 0.5, 
            Bestof = 1,
@@ -23,12 +23,17 @@ rrvglm.control <-
            Etamat.colmax = 10,
            sd.Ainit = 0.02,
            sd.Cinit = 0.02,
-           szero = NULL,
+           str0 = NULL,
+
            noRRR = ~ 1, 
            Norrr = NA,
+
+           noWarning = FALSE,
+ 
            trace = FALSE,
            Use.Init.Poisson.QO = FALSE,
            checkwz = TRUE,
+           Check.rank = TRUE,
            wzepsilon = .Machine$double.eps^0.75,
            ...) {
 
@@ -52,28 +57,28 @@ rrvglm.control <-
     Corner <- FALSE 
 
   if (!is.Numeric(Rank, positive = TRUE,
-                  allowable.length = 1, integer.valued = TRUE))
+                  length.arg = 1, integer.valued = TRUE))
     stop("bad input for 'Rank'")
   if (!is.Numeric(Alpha, positive = TRUE,
-                  allowable.length = 1) || Alpha > 1)
+                  length.arg = 1) || Alpha > 1)
     stop("bad input for 'Alpha'")
   if (!is.Numeric(Bestof, positive = TRUE,
-                  allowable.length = 1, integer.valued = TRUE))
+                  length.arg = 1, integer.valued = TRUE))
     stop("bad input for 'Bestof'")
   if (!is.Numeric(sd.Ainit, positive = TRUE,
-                  allowable.length = 1))
+                  length.arg = 1))
     stop("bad input for 'sd.Ainit'")
   if (!is.Numeric(sd.Cinit, positive = TRUE,
-                  allowable.length = 1))
+                  length.arg = 1))
     stop("bad input for 'sd.Cinit'")
   if (!is.Numeric(Etamat.colmax, positive = TRUE,
-                  allowable.length = 1) ||
+                  length.arg = 1) ||
       Etamat.colmax < Rank)
     stop("bad input for 'Etamat.colmax'")
 
-  if (length(szero) &&
-     (any(round(szero) != szero) || any(szero < 1)))
-    stop("bad input for the argument 'szero'")
+  if (length(str0) &&
+     (any(round(str0) != str0) || any(str0 < 1)))
+    stop("bad input for the argument 'str0'")
 
 
   Quadratic <- FALSE
@@ -91,8 +96,8 @@ rrvglm.control <-
       stop("cannot have 'Corner = TRUE' and either 'Svd = TRUE' or ",
            "'Uncorrelated.latvar = TRUE' or Wmat")
 
-  if (Corner && length(intersect(szero, Index.corner)))
-    stop("cannot have 'szero' and 'Index.corner' having ",
+  if (Corner && length(intersect(str0, Index.corner)))
+    stop("cannot have arguments 'str0' and 'Index.corner' having ",
          "common values")
 
   if (length(Index.corner) != Rank)
@@ -102,15 +107,23 @@ rrvglm.control <-
       length(checkwz) != 1)
     stop("bad input for 'checkwz'")
 
-  if (!is.Numeric(wzepsilon, allowable.length = 1,
+  if (!is.Numeric(wzepsilon, length.arg = 1,
                   positive = TRUE))
     stop("bad input for 'wzepsilon'")
 
   if (class(noRRR) != "formula" && !is.null(noRRR))
     stop("argument 'noRRR' should be a formula or a NULL")
 
+
   ans <-
-  c(vglm.control(trace = trace, ...),
+  c(vglm.control(
+                 trace = trace,
+                 checkwz = checkwz,
+                 Check.rank = Check.rank,
+                 wzepsilon = wzepsilon,
+                 noWarning = noWarning,
+                 ...),
+
     switch(Algorithm,
            "alternating" = valt.control(...),
            "derivative" = rrvglm.optim.control(...)),
@@ -122,6 +135,7 @@ rrvglm.control <-
          Cinit = Cinit,
          Index.corner = Index.corner,
          noRRR = noRRR,
+
          Corner = Corner,
          Uncorrelated.latvar = Uncorrelated.latvar,
          Wmat = Wmat,
@@ -130,18 +144,18 @@ rrvglm.control <-
          sd.Ainit = sd.Ainit,
          sd.Cinit = sd.Cinit,
          Etamat.colmax = Etamat.colmax,
-         szero = szero,
+         str0 = str0,
          Svd.arg = Svd.arg,
          Use.Init.Poisson.QO = Use.Init.Poisson.QO),
-         checkwz = checkwz,
-         wzepsilon = wzepsilon,
     if (Quadratic) qrrvglm.control(Rank = Rank, ...) else NULL)
+
 
   if (Quadratic && ans$ITolerances) {
       ans$Svd.arg <- FALSE
       ans$Uncorrelated.latvar <- FALSE
       ans$Corner <- FALSE
   }
+
 
   ans$half.stepsizing <- FALSE  # Turn it off 
   ans

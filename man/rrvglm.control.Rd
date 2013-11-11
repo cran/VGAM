@@ -11,14 +11,16 @@
 rrvglm.control(Rank = 1, Algorithm = c("alternating", "derivative"),
     Corner = TRUE, Uncorrelated.latvar = FALSE,
     Wmat = NULL, Svd.arg = FALSE,
-    Index.corner = if (length(szero)) 
-    head((1:1000)[-szero], Rank) else 1:Rank,
+    Index.corner = if (length(str0)) 
+    head((1:1000)[-str0], Rank) else 1:Rank,
     Ainit = NULL, Alpha = 0.5, Bestof = 1, Cinit = NULL,
     Etamat.colmax = 10,
-    sd.Ainit = 0.02, sd.Cinit = 0.02, szero = NULL,
+    sd.Ainit = 0.02, sd.Cinit = 0.02, str0 = NULL,
     noRRR = ~1, Norrr = NA,
+    noWarning = FALSE,
     trace = FALSE, Use.Init.Poisson.QO = FALSE, 
-    checkwz = TRUE, wzepsilon = .Machine$double.eps^0.75, ...)
+    checkwz = TRUE, Check.rank = TRUE,
+    wzepsilon = .Machine$double.eps^0.75, ...)
 }
 %- maybe also `usage' for other objects documented here.
 \arguments{
@@ -115,13 +117,14 @@ rrvglm.control(Rank = 1, Algorithm = c("alternating", "derivative"),
 %   RR-VGLM is to be fitted. If \code{TRUE}, an object of class
 %   \code{"qrrvglm"} will be returned, otherwise \code{"rrvglm"}.
 % }
-  \item{szero}{
+  \item{str0}{
   Integer vector specifying which rows
   of the estimated constraint matrices (\bold{A}) are
   to be all zeros.
   These are called \emph{structural zeros}.
   Must not have any common value with \code{Index.corner}, and
   be a subset of the vector \code{1:M}.
+  The default, \code{str0 = NULL}, means no structural zero rows at all.
 
 
   }
@@ -181,6 +184,12 @@ rrvglm.control(Rank = 1, Algorithm = c("alternating", "derivative"),
     sufficiently positive, i.e., greater than \code{wzepsilon}. If not,
     any values less than \code{wzepsilon} are replaced with this value.
 
+
+  }
+  \item{noWarning, Check.rank}{
+    Same as \code{\link{vglm.control}}.
+
+
   }
   \item{wzepsilon}{
   Small positive number used to test whether the diagonals of the working
@@ -191,6 +200,8 @@ rrvglm.control(Rank = 1, Algorithm = c("alternating", "derivative"),
     Variables in \dots are passed into
     \code{\link{vglm.control}}. If the derivative algorithm is used, then
     \dots are also passed into \code{\link{rrvglm.optim.control}}.
+
+
   }
   In the above, \eqn{R} is the \code{Rank} and 
   \eqn{M} is the number of linear predictors.
@@ -249,13 +260,14 @@ rrvglm.control(Rank = 1, Algorithm = c("alternating", "derivative"),
   \code{\link{vglm.control}},
   \code{\link{cqo}}.
 
+
 }
 
 \examples{
 \dontrun{
 set.seed(111)
 pneumo <- transform(pneumo, let = log(exposure.time),
-                            x3 = runif(nrow(pneumo))) # x3 is random noise
+                            x3 = runif(nrow(pneumo)))  # x3 is random noise
 fit <- rrvglm(cbind(normal, mild, severe) ~ let + x3,
               multinomial, pneumo, Rank = 1, Index.corner = 2)
 constraints(fit)

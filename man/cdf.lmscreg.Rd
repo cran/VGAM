@@ -81,7 +81,7 @@ The CDF values of the model have been placed in
 \examples{
 fit <- vgam(BMI ~ s(age, df=c(4, 2)), lms.bcn(zero = 1), data = bmi.nz)
 head(fit@post$cdf)
-head(cdf(fit)) # Same 
+head(cdf(fit))  # Same 
 head(depvar(fit))
 head(fitted(fit))
 

@@ -152,7 +152,7 @@ quasibinomialff()
 quasibinomialff(link = "probit")
 
 # Nonparametric logistic regression
-hunua <- transform(hunua, a.5 = sqrt(altitude)) # Transformation of altitude
+hunua <- transform(hunua, a.5 = sqrt(altitude))  # Transformation of altitude
 fit1 <- vglm(agaaus ~ poly(a.5, 2), quasibinomialff, hunua)
 fit2 <- vgam(agaaus ~ s(a.5, df = 2), quasibinomialff, hunua)
 \dontrun{

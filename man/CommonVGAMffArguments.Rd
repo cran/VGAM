@@ -445,7 +445,7 @@ coef(fit, mat = TRUE)
 \dontrun{
 ndata <- data.frame(x = runif(nn <- 500))
 ndata <- transform(ndata,
-           y1 = rnbinom(nn, mu = exp(3+x), size = exp(1)), # k is size
+           y1 = rnbinom(nn, mu = exp(3+x), size = exp(1)),  # k is size
            y2 = rnbinom(nn, mu = exp(2-x), size = exp(0)))
 fit <- vglm(cbind(y1, y2) ~ x, negbinomial(zero = -2), ndata)
 coef(fit, matrix = TRUE)
@@ -471,9 +471,9 @@ fit2 <- vglm(y2 ~ x2, uninormal(zero = 2), gdata)  # This is okay
 # This creates potential conflict
 clist <- list("(Intercept)" = diag(2), "x2" = diag(2))
 fit3 <- vglm(y2 ~ x2, uninormal(zero = 2), gdata,
-             constraints = clist) # Conflict!
-coef(fit3, matrix = TRUE) # Shows that clist[["x2"]] was overwritten,
-constraints(fit3) # i.e., 'zero' seems to override the 'constraints' arg
+             constraints = clist)  # Conflict!
+coef(fit3, matrix = TRUE)  # Shows that clist[["x2"]] was overwritten,
+constraints(fit3)  # i.e., 'zero' seems to override the 'constraints' arg
 
 # Example 6 ('whitespace' argument)
 pneumo <- transform(pneumo, let = log(exposure.time))
@@ -481,8 +481,8 @@ fit1 <- vglm(cbind(normal, mild, severe) ~ let,
              sratio(whitespace = FALSE, parallel = TRUE), pneumo)
 fit2 <- vglm(cbind(normal, mild, severe) ~ let,
              sratio(whitespace = TRUE,  parallel = TRUE), pneumo)
-head(predict(fit1), 2) # No white spaces
-head(predict(fit2), 2) # Uses white spaces
+head(predict(fit1), 2)  # No white spaces
+head(predict(fit2), 2)  # Uses white spaces
 }
 
 \keyword{models}

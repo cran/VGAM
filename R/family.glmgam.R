@@ -189,7 +189,7 @@
     dpar <- .dispersion
     if (!dpar) {
         temp87 <- (y-mu)^2 * wz / (dtheta.deta(mu, link = .link ,
-                                  earg = .earg )^2) # w cancel
+                                  earg = .earg )^2)  # w cancel
       if (.mv && ! .onedpar) {
         dpar <- rep(as.numeric(NA), len = M)
         temp87 <- cbind(temp87)
@@ -231,11 +231,11 @@
   loglikelihood = eval(substitute(
     function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
       if (residuals) {
-        w * (y / mu - (1-y) / (1-mu))
+        c(w) * (y / mu - (1-y) / (1-mu))
       } else {
 
         ycounts <- if (is.numeric(extra$orig.w)) y * w / extra$orig.w else
-                   y * w # Convert proportions to counts
+                   y * w  # Convert proportions to counts
         nvec <- if (is.numeric(extra$orig.w)) round(w / extra$orig.w) else
                   round(w)
 
@@ -261,7 +261,7 @@
   deriv = eval(substitute(expression({
     yBRED <- if ( .bred ) {
       Hvector <- hatvaluesbasic(X.vlm = X.vlm.save,
-                                diagWm = c(t(w * mu))) # Handles M>1
+                                diagWm = c(t(w * mu)))  # Handles M>1
 
       varY <- mu * (1 - mu) / w  # Is a matrix if M>1. Seems the most correct.
       d1.ADJ <-   dtheta.deta(mu, .link , earg = .earg )
@@ -589,7 +589,7 @@ pinv.gaussian <- function(q, mu, lambda) {
 rinv.gaussian <- function(n, mu, lambda) {
   use.n <- if ((length.n <- length(n)) > 1) length.n else
            if (!is.Numeric(n, integer.valued = TRUE,
-                           allowable.length = 1, positive = TRUE))
+                           length.arg = 1, positive = TRUE))
               stop("bad input for argument 'n'") else n
 
   mu     <- rep(mu,     len = use.n);
@@ -634,11 +634,11 @@ rinv.gaussian <- function(n, mu, lambda) {
   llambda <- attr(elambda, "function.name")
 
 
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
      imethod > 3)
     stop("argument 'imethod' must be 1 or 2 or 3")
-  if (!is.Numeric(shrinkage.init, allowable.length = 1) ||
+  if (!is.Numeric(shrinkage.init, length.arg = 1) ||
      shrinkage.init < 0 ||
      shrinkage.init > 1)
     stop("bad input for argument 'shrinkage.init'")
@@ -713,7 +713,7 @@ rinv.gaussian <- function(n, mu, lambda) {
           mediany <- apply(y, 2, median)
           matrix(1.1 * mediany + 1/8, n, ncoly, byrow = TRUE)
         } else if ( .imethod == 3) {
-          use.this <- colSums(y * w) / colSums(w) # weighted.mean(y, w)
+          use.this <- colSums(y * w) / colSums(w)  # weighted.mean(y, w)
           (1 - .sinit) * y  + .sinit * use.this
         } else {
           matrix(colSums(y * w) / colSums(w) + 1/8,
@@ -845,7 +845,7 @@ rinv.gaussian <- function(n, mu, lambda) {
 
 
 
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
       imethod > 3)
     stop("argument 'imethod' must be 1 or 2 or 3")
@@ -942,7 +942,7 @@ rinv.gaussian <- function(n, mu, lambda) {
     dpar <- .dispersion
     if (!dpar) {
       temp87 <- (y-mu)^2 *
-          wz / (dtheta.deta(mu, link = .link , earg = .earg )^2) # w cancel
+          wz / (dtheta.deta(mu, link = .link , earg = .earg )^2)  # w cancel
       if (M > 1 && ! .onedpar ) {
         dpar <- rep(as.numeric(NA), length = M)
         temp87 <- cbind(temp87)
@@ -984,15 +984,15 @@ rinv.gaussian <- function(n, mu, lambda) {
 
   loglikelihood =
     function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
-    if (residuals) w * (y / mu - 1) else {
-      sum(w * dpois(x = y, lambda = mu, log = TRUE))
+    if (residuals) c(w) * (y / mu - 1) else {
+      sum(c(w) * dpois(x = y, lambda = mu, log = TRUE))
     }
   },
   vfamily = "poissonff",
   deriv = eval(substitute(expression({
     yBRED <- if ( .bred ) {
       Hvector <- hatvaluesbasic(X.vlm = X.vlm.save,
-                                diagWm = c(t(w * mu))) # Handles M>1
+                                diagWm = c(t(w * mu)))  # Handles M>1
 
 
       varY <- mu # Is a matrix if M>1.
@@ -1187,7 +1187,7 @@ rinv.gaussian <- function(n, mu, lambda) {
   }), list( .lmean = lmean, .emean = emean,
             .ldisp = ldisp, .edisp = edisp ))),
   weight = eval(substitute(expression({
-    wz <- matrix(as.numeric(NA), nrow = n, ncol = 2) # diagonal
+    wz <- matrix(as.numeric(NA), nrow = n, ncol = 2)  # diagonal
     usethis.lambda <- pmax(lambda, .Machine$double.eps / 10000)
     wz[, iam(1, 1, M)] <- (Disper / usethis.lambda) * dlambda.deta^2
     wz[, iam(2, 2, M)] <- (0.5 / Disper^2) * dDisper.deta^2
@@ -1313,8 +1313,8 @@ rinv.gaussian <- function(n, mu, lambda) {
 
 
 
-      temp1 <- y * log(ifelse(y > 0, y, 1)) # y*log(y)
-      temp2 <- (1.0-y) * log1p(ifelse(y < 1, -y, 0)) # (1-y)*log(1-y)
+      temp1 <- y * log(ifelse(y > 0, y, 1))  # y*log(y)
+      temp2 <- (1.0-y) * log1p(ifelse(y < 1, -y, 0))  # (1-y)*log(1-y)
       sum(0.5 * log(Disper) + w * (y * Disper * log(prob) +
          (1-y) * Disper * log1p(-prob) +
          temp1 * (1-Disper) + temp2 * (1 - Disper)))
@@ -1325,8 +1325,8 @@ rinv.gaussian <- function(n, mu, lambda) {
   deriv = eval(substitute(expression({
     prob   <- eta2theta(eta[, 1], link = .lmean, earg = .emean)
     Disper <- eta2theta(eta[, 2], link = .ldisp, earg = .edisp)
-    temp1 <- y * log(ifelse(y > 0, y, 1)) # y*log(y)
-    temp2 <- (1.0-y) * log1p(ifelse(y < 1, -y, 0)) # (1-y)*log(1-y)
+    temp1 <- y * log(ifelse(y > 0, y, 1))  # y*log(y)
+    temp2 <- (1.0-y) * log1p(ifelse(y < 1, -y, 0))  # (1-y)*log(1-y)
     temp3 <- prob * (1.0-prob)
     temp3 <- pmax(temp3, .Machine$double.eps * 10000)
 
@@ -1342,7 +1342,7 @@ rinv.gaussian <- function(n, mu, lambda) {
   }), list( .lmean = lmean, .emean = emean,
             .ldisp = ldisp, .edisp = edisp ))),
   weight = eval(substitute(expression({
-    wz <- matrix(as.numeric(NA), nrow = n, ncol = 2) # diagonal
+    wz <- matrix(as.numeric(NA), nrow = n, ncol = 2)  # diagonal
     wz[, iam(1, 1, M)] <- w * (Disper / temp3) * dprob.deta^2
     wz[, iam(2, 2, M)] <- (0.5 / Disper^2) * dDisper.deta^2
     wz
@@ -1362,7 +1362,7 @@ rinv.gaussian <- function(n, mu, lambda) {
 
 
   if (!is.Numeric(smallno, positive = TRUE,
-                  allowable.length = 1) ||
+                  length.arg = 1) ||
       smallno > 1e-4)
     stop("bad input for 'smallno'")
   if (is.logical(parallel) && !parallel)

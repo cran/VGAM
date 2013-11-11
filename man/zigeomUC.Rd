@@ -74,7 +74,7 @@ rzigeom(n, prob, pstr0 = 0)
 \examples{
 prob <- 0.5; pstr0 <- 0.2; x <- (-1):20
 (ii <- dzigeom(x, prob, pstr0))
-max(abs(cumsum(ii) - pzigeom(x, prob, pstr0))) # Should be 0
+max(abs(cumsum(ii) - pzigeom(x, prob, pstr0)))  # Should be 0
 table(rzigeom(1000, prob, pstr0))
 
 \dontrun{ x <- 0:10

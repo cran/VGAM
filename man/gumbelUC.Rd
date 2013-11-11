@@ -102,8 +102,8 @@ rgumbel(n, location = 0, scale = 1)
 \examples{
 mu <- 1; sigma <- 2;
 y <- rgumbel(n = 100, loc = mu, scale = sigma)
-c(mean(y), mu - sigma * digamma(1)) # Sample and population means
-c(var(y), sigma^2 * pi^2 / 6) # Sample and population variances
+c(mean(y), mu - sigma * digamma(1))  # Sample and population means
+c(var(y), sigma^2 * pi^2 / 6)  # Sample and population variances
 
 \dontrun{ x <- seq(-2.5, 3.5, by = 0.01)
 loc <- 0; sigma <- 1

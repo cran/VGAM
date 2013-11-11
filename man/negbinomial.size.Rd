@@ -76,7 +76,7 @@ Hilbe, J. M. (2011)
 Cambridge: Cambridge University Press.
 
 
-  Yee, T. W. (2013)
+  Yee, T. W. (2014)
   Reduced-rank vector generalized linear models with two linear predictors.
   \emph{Computational Statistics and Data Analysis}.
 
@@ -124,7 +124,7 @@ ndata <- transform(ndata,
 fit1 <- vglm(y1 ~ x2, negbinomial.size(size = size1, lmu = "nbcanlink"),
              ndata, trace = TRUE, crit = "coef")
 coef(fit1, matrix = TRUE)
-head(fit1@misc$size) # size saved here
+head(fit1@misc$size)  # size saved here
 
 fit2 <- vglm(cbind(y2, y3, y4) ~ x2,
              negbinomial.size(size = c(size2, size3, size4)),

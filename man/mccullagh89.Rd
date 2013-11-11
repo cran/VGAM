@@ -110,7 +110,7 @@ all else fails.
 %}
 
 \examples{
-mdata <- data.frame(y = rnorm(n = 1000, sd = 0.2)) # Limit as theta = 0, nu = Inf
+mdata <- data.frame(y = rnorm(n = 1000, sd = 0.2))  # Limit as theta = 0, nu = Inf
 fit <- vglm(y ~ 1, mccullagh89, mdata, trace = TRUE)
 head(fitted(fit))
 with(mdata, mean(y))

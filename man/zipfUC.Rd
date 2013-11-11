@@ -57,8 +57,8 @@ proby <- dzipf(y, N = N, s = s)
 \dontrun{ plot(proby ~ y, type = "h", col = "blue", ylab = "Probability",
      ylim = c(0, 0.2), main = paste("Zipf(N = ",N,", s = ",s,")", sep = ""),
      lwd = 2, las = 1) }
-sum(proby) # Should be 1
-max(abs(cumsum(proby) - pzipf(y, N = N, s = s))) # Should be 0
+sum(proby)  # Should be 1
+max(abs(cumsum(proby) - pzipf(y, N = N, s = s)))  # Should be 0
 }
 \keyword{distribution}
 

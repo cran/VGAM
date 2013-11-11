@@ -9,13 +9,16 @@
 
 
 
+
+
 residualsvlm  <-
   function(object,
            type = c("response", "deviance", "pearson", "working")) {
 
   if (mode(type) != "character" && mode(type) != "name")
     type <- as.character(substitute(type))
-  type <- match.arg(type, c("response", "deviance", "pearson", "working"))[1]
+  type <- match.arg(type,
+                    c("response", "deviance", "pearson", "working"))[1]
 
   na.act <- object@na.action
   object@na.action <- list()
@@ -67,6 +70,7 @@ residualsvlm  <-
     answer
   }
 }
+
 
 
 
@@ -126,7 +130,7 @@ residualsvglm  <-
         w <- rep(1, n)
       eta <- object@predictors
 
-      dev.fn <- object@family@deviance # May not 'exist' for that model
+      dev.fn <- object@family@deviance  # May not 'exist' for that model
       if (length(body(dev.fn)) > 0) {
         extra <- object@extra
         ans <- dev.fn(mu = mu,y = y, w = w,
@@ -159,7 +163,7 @@ residualsvglm  <-
         ans <- ll.fn(mu = mu,y = y,w = w,
                      residuals = TRUE, eta = eta, extra)
         if (!is.null(ans)) {
-          ans <- c(ans) # ldot residuals can only be a vector
+          ans <- c(ans)  # ldot residuals can only be a vector
           names(ans) <- labels(object@residuals)
         }
         ans
@@ -265,8 +269,6 @@ residualsqrrvglm  <- function(object,
     answer
   }
 }
-
-
 
 
 

@@ -252,8 +252,8 @@ fit <- vgam(BMI ~ s(age, df = c(4, 2)), lms.bcn(zero = 1), BMIdata)
 head(predict(fit))
 head(fitted(fit))
 head(BMIdata)
-head(cdf(fit)) # Person 56 is probably overweight, given his age
-100 * colMeans(c(depvar(fit)) < fitted(fit)) # Empirical proportions
+head(cdf(fit))  # Person 56 is probably overweight, given his age
+100 * colMeans(c(depvar(fit)) < fitted(fit))  # Empirical proportions
 
 # Convergence problems? Try this trick: fit0 is a simpler model used for fit1
 fit0 <- vgam(BMI ~ s(age, df = 4), lms.bcn(zero = c(1, 3)), data = BMIdata)

@@ -92,8 +92,8 @@ Constrained additive ordination.
 
 }
 \examples{
-\dontrun{ set.seed(111) # This leads to the global solution
-hspider[,1:6] <- scale(hspider[,1:6]) # Standardized environmental vars
+\dontrun{ set.seed(111)  # This leads to the global solution
+hspider[,1:6] <- scale(hspider[,1:6])  # Standardized environmental vars
 p1 <- cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,
                 Auloalbi, Pardlugu, Pardmont, Pardnigr, Pardpull,
                 Trocterr, Zoraspin) ~

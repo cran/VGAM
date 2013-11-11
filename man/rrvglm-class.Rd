@@ -260,7 +260,7 @@ Vector generalized additive models.
 \examples{
 \dontrun{ # Rank-1 stereotype model of Anderson (1984)
 pneumo <- transform(pneumo, let = log(exposure.time),
-                            x3  = runif(nrow(pneumo))) # x3 is unrelated
+                            x3  = runif(nrow(pneumo)))  # x3 is unrelated
 fit <- rrvglm(cbind(normal, mild, severe) ~ let + x3,
               multinomial, pneumo, Rank = 1)
 Coef(fit)

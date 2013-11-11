@@ -67,7 +67,7 @@ Constrained additive ordination.
 
 \examples{
 \dontrun{
-hspider[,1:6] <- scale(hspider[,1:6]) # Standardized environmental vars
+hspider[,1:6] <- scale(hspider[,1:6])  # Standardized environmental vars
 set.seed(123)
 p1 <- cao(cbind(Pardlugu, Pardmont, Pardnigr, Pardpull, Zoraspin) ~
           WaterCon + BareSand + FallTwig +

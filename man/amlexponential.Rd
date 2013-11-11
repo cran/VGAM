@@ -154,7 +154,7 @@ with(mydat, plot(x, sqrt(y), col = "blue", las = 1, main =
            "percentile curves are orange")))
 with(mydat, matlines(x, sqrt(fitted(fit)), lwd = 2, col = "blue", lty = 1))
 
-for(ii in fit@extra$percentile)
+for (ii in fit@extra$percentile)
   with(mydat, matlines(x, sqrt(qexp(p = ii/100, rate = 1/mu)), col = "orange")) }
 }
 \keyword{models}

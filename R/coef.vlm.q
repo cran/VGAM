@@ -16,7 +16,7 @@ coefvlm <- function(object, matrix.out = FALSE, label = TRUE) {
     return(ans)
 
  
-  ncolx <- object@misc$p   # = length(object@constraints)
+  ncolx <- object@misc$p  # = length(object@constraints)
   M <- object@misc$M
 
   Blist <- object@constraints
@@ -31,7 +31,7 @@ coefvlm <- function(object, matrix.out = FALSE, label = TRUE) {
     ncolBlist <- unlist(lapply(Blist, ncol)) 
     nasgn <- names(Blist)
     temp <- c(0, cumsum(ncolBlist))
-    for(ii in 1:length(nasgn)) {
+    for (ii in 1:length(nasgn)) {
       index <- (temp[ii] + 1):temp[ii + 1]
       cmat <- Blist[[nasgn[ii]]]
       Bmat[ii,] <- cmat %*% ans[index]
@@ -40,12 +40,12 @@ coefvlm <- function(object, matrix.out = FALSE, label = TRUE) {
 
   if (label) {
     d1 <- object@misc$colnames.x
-    d2 <- object@misc$predictors.names # Could be NULL
+    d2 <- object@misc$predictors.names  # Could be NULL
     dimnames(Bmat) <- list(d1, d2)
   }
 
   Bmat
-} # end of coefvlm
+}  # end of coefvlm
 
 
 

@@ -9,7 +9,7 @@
 }
 \usage{
 double.cennormal(r1 = 0, r2 = 0, lmu = "identity", lsd = "loge",
-            imu = NULL, isd = NULL, zero = 2)
+                 imu = NULL, isd = NULL, zero = 2)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -78,16 +78,16 @@ double.cennormal(r1 = 0, r2 = 0, lmu = "identity", lsd = "loge",
 
 
 }
-\examples{\dontrun{# Repeat the simulations described in Harter and Moore (1966)
+\examples{\dontrun{ # Repeat the simulations described in Harter and Moore (1966)
 SIMS <- 100  # Number of simulations (change this to 1000)
 mu.save <- sd.save <- rep(NA, len = SIMS)
 r1 <- 0; r2 <- 4; nn <- 20  
-for(sim in 1:SIMS) {
+for (sim in 1:SIMS) {
   y <- sort(rnorm(nn))
   y <- y[(1+r1):(nn-r2)]  # Delete r1 smallest and r2 largest
   fit <- vglm(y ~ 1, double.cennormal(r1 = r1, r2 = r2))
-  mu.save[sim] <- predict(fit)[1,1]
-  sd.save[sim] <- exp(predict(fit)[1,2])  # Assumes a log link and ~ 1
+  mu.save[sim] <- predict(fit)[1, 1]
+  sd.save[sim] <- exp(predict(fit)[1, 2])  # Assumes a log link and ~ 1
 }
 c(mean(mu.save), mean(sd.save))  # Should be c(0,1)
 c(sd(mu.save), sd(sd.save))

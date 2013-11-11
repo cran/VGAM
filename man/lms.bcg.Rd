@@ -100,7 +100,7 @@ fit0 <- vglm(BMI ~ bs(age, df = 4), lms.bcg, bmi.nz, trace = TRUE)
 coef(fit0, matrix = TRUE)
 \dontrun{
 par(mfrow = c(1, 1))
-plotvgam(fit0, se = TRUE) # Plot mu function (only)
+plotvgam(fit0, se = TRUE)  # Plot mu function (only)
 }
 
 # Use a trick: fit0 is used for initial values for fit1.

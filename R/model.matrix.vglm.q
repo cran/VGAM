@@ -55,7 +55,7 @@ attrassignlm <- function(object, ...)
 
  vlm2lm.model.matrix <-
   function(x.vlm, Blist = NULL,
-           which.lp = 1,
+           which.linpred = 1,
            M = NULL) {
 
  
@@ -80,10 +80,10 @@ attrassignlm <- function(object, ...)
   n.lm <- nrow(x.vlm) / M
   if (round(n.lm) != n.lm)
     stop("'n.lm' does not seem to be an integer")
-    lapred.index <- which.lp
-    vecTF <- Hmatrices[lapred.index, ] != 0
-    X.lm.jay <- x.vlm[(0:(n.lm - 1)) * M + lapred.index, vecTF,
-                      drop = FALSE]
+  linpred.index <- which.linpred
+  vecTF <- Hmatrices[linpred.index, ] != 0
+  X.lm.jay <- x.vlm[(0:(n.lm - 1)) * M + linpred.index, vecTF,
+                    drop = FALSE]
   X.lm.jay
 }
 
@@ -190,7 +190,7 @@ attrassignlm <- function(object, ...)
       if (length(form.xij) != 3) 
         stop("xij[[", ii, "]] is not a formula with a response")
       tform.xij <- terms(form.xij)
-      aterm.form <- attr(tform.xij, "term.labels") # Does not include response
+      aterm.form <- attr(tform.xij, "term.labels")  # Does not include response
       if (length(aterm.form) != M)
         stop("xij[[", ii, "]] does not contain ", M, " terms")
 
@@ -208,14 +208,14 @@ attrassignlm <- function(object, ...)
         } # End of sss
 
       allXk <- Xm2[,use.cols.Xm2,drop=FALSE]
-      cmat.no <- (at.x[[name.term.y]])[1] # First one will do (all the same).
+      cmat.no <- (at.x[[name.term.y]])[1]  # First one will do (all the same).
       cmat <- Blist[[cmat.no]]
       Rsum.k <- ncol(cmat)
       tmp44 <- kronecker(matrix(1, nrow.X.lm, 1), t(cmat)) *
-               kronecker(allXk, matrix(1,ncol(cmat), 1)) # n*Rsum.k x M
+               kronecker(allXk, matrix(1,ncol(cmat), 1))  # n*Rsum.k x M
 
       tmp44 <- array(t(tmp44), c(M, Rsum.k, nrow.X.lm))
-      tmp44 <- aperm(tmp44, c(1,3,2)) # c(M, n, Rsum.k)
+      tmp44 <- aperm(tmp44, c(1,3,2))  # c(M, n, Rsum.k)
       rep.index <- cols.X.vlm[((bbb-1)*Rsum.k+1):(bbb*Rsum.k)]
       X.vlm[,rep.index] <- c(tmp44) 
     } # End of bbb
@@ -236,7 +236,7 @@ attrassignlm <- function(object, ...)
 
  model.matrixvlm <- function(object,
                             type = c("vlm", "lm", "lm2", "bothlmlm2"),
-                            lapred.index = NULL,
+                            linpred.index = NULL,
                             ...) {
 
 
@@ -245,13 +245,13 @@ attrassignlm <- function(object, ...)
     type <- as.character(substitute(type))
   type <- match.arg(type, c("vlm", "lm", "lm2", "bothlmlm2"))[1]
 
-  if (length(lapred.index) &&
+  if (length(linpred.index) &&
       type != "lm")
-    stop("Must set 'type = \"lm\"' when 'lapred.index' is ",
+    stop("Must set 'type = \"lm\"' when 'linpred.index' is ",
          "assigned a value")
-  if (length(lapred.index) &&
+  if (length(linpred.index) &&
       length(object@control$xij))
-    stop("Currently cannot handle 'xij' models when 'lapred.index' is ",
+    stop("Currently cannot handle 'xij' models when 'linpred.index' is ",
          "assigned a value")
 
 
@@ -267,7 +267,7 @@ attrassignlm <- function(object, ...)
     kill.con <- if (length(object@contrasts)) object@contrasts else NULL
 
     x <- vmodel.matrix.default(object, data = data,
-                              contrasts.arg = kill.con)
+                               contrasts.arg = kill.con)
     tt <- terms(object)
     attr(x, "assign") <- attrassigndefault(x, tt)
   }
@@ -278,7 +278,7 @@ attrassignlm <- function(object, ...)
     data <- model.frame(object.copy2, xlev = object.copy2@xlevels, ...) 
 
     kill.con <- if (length(object.copy2@contrasts))
-               object.copy2@contrasts else NULL
+                object.copy2@contrasts else NULL
 
     Xm2 <- vmodel.matrix.default(object.copy2, data = data,
                                  contrasts.arg = kill.con)
@@ -290,7 +290,7 @@ attrassignlm <- function(object, ...)
 
 
 
-  if (type == "lm" && is.null(lapred.index)) {
+  if (type == "lm" && is.null(linpred.index)) {
     return(x)
   } else if (type == "lm2") {
     return(Xm2)
@@ -306,19 +306,19 @@ attrassignlm <- function(object, ...)
 
   if (type == "vlm") {
     return(X.vlm)
-  } else if (type == "lm" && length(lapred.index)) {
-    if (!is.Numeric(lapred.index, integer.valued = TRUE, positive = TRUE,
-                    allowable.length = 1))
-      stop("bad input for argument 'lapred.index'")
-    if (!length(intersect(lapred.index, 1:M)))
-      stop("argument 'lapred.index' should have ",
+  } else if (type == "lm" && length(linpred.index)) {
+    if (!is.Numeric(linpred.index, integer.valued = TRUE, positive = TRUE,
+                    length.arg = 1))
+      stop("bad input for argument 'linpred.index'")
+    if (!length(intersect(linpred.index, 1:M)))
+      stop("argument 'linpred.index' should have ",
            "a single value from the set 1:", M)
 
     Hlist <- Blist
     n.lm <- nobs(object)  # Number of rows of the LM matrix
     M <- object@misc$M  # Number of linear/additive predictors
     Hmatrices <- matrix(c(unlist(Hlist)), nrow = M)
-    jay <- lapred.index
+    jay <- linpred.index
     index0 <- Hmatrices[jay, ] != 0
     X.lm.jay <- X.vlm[(0:(n.lm - 1)) * M + jay, index0, drop = FALSE]
     X.lm.jay
@@ -333,6 +333,20 @@ attrassignlm <- function(object, ...)
 setMethod("model.matrix",  "vlm", function(object, ...)
            model.matrixvlm(object, ...))
 
+
+
+
+ model.matrixvgam <-
+  function(object,
+           type = c("lm", "vlm", "lm", "lm2", "bothlmlm2"),
+           linpred.index = NULL,
+           ...) {
+  model.matrixvlm(object = object, 
+                  type = type[1],
+                  linpred.index = linpred.index, ...)
+}
+setMethod("model.matrix",  "vgam", function(object, ...)
+           model.matrixvgam(object, ...))
 
 
 
@@ -356,7 +370,7 @@ setMethod("model.matrix",  "vlm", function(object, ...)
     }
 
     fcall[names(nargs)] <- nargs
-    env <- environment(object@terms$terms) # @terms or @terms$terms ??
+    env <- environment(object@terms$terms)  # @terms or @terms$terms ??
     if (is.null(env)) 
       env <- parent.frame()
     ans <- eval(fcall, env, parent.frame())
@@ -374,7 +388,7 @@ if (!isGeneric("model.frame"))
         standardGeneric("model.frame"))
 
 setMethod("model.frame",  "vlm", function(formula, ...)
-           model.framevlm(object=formula, ...))
+           model.framevlm(object = formula, ...))
 
 
 
@@ -424,8 +438,8 @@ setMethod("model.frame",  "vlm", function(formula, ...)
       }
     }
   } else {
-      isF <- FALSE
-      data <- list(x = rep(0, nrow(data)))
+    isF <- FALSE
+    data <- list(x = rep(0, nrow(data)))
   }
 
 
@@ -527,7 +541,7 @@ hatvaluesvlm <-
   if (is.empty.list(qrSlot)) {
 
     wzedd <- weights(model, type = "working")
-    UU <- vchol(wzedd, M = M, n = nn, silent = TRUE) # Few rows, many cols
+    UU <- vchol(wzedd, M = M, n = nn, silent = TRUE)  # Few rows, many cols
     X.vlm <- model.matrix(model, type = "vlm")
     UU.X.vlm <- mux111(cc = UU, xmat = X.vlm, M = M)
     qrSlot <- qr(UU.X.vlm)
@@ -794,7 +808,7 @@ hatvaluesbasic <- function(X.vlm,
   XtW <- t(c(diagWm) * X.vlm)
 
 
-  UU <- sqrt(diagWm) # Only for M == 1
+  UU <- sqrt(diagWm)  # Only for M == 1
   UU.X.vlm <- c(UU) * X.vlm # c(UU) okay for M==1
 
   qrSlot <- qr(UU.X.vlm)

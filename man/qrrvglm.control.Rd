@@ -497,13 +497,13 @@ sort(p1@misc$deviance.Bestof)  # A history of all the iterations
 %\dontrun{
 %# 20120221; withdrawn for a while coz it creates a lot of error messages.
 %# Negative binomial CQO; smallest deviance is about 275.389
-%set.seed(1234) # This leads to a reasonable (but not the global) solution?
+%set.seed(1234)  # This leads to a reasonable (but not the global) solution?
 %nb1 <- cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi, Auloalbi, 
 %                Pardlugu, Pardmont, Pardnigr, Pardpull, Trocterr, Zoraspin) ~
 %          WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
-%          ITol = FALSE, EqualTol = TRUE, # A good idea for negbinomial
+%          ITol = FALSE, EqualTol = TRUE,  # A good idea for negbinomial
 %          fam = negbinomial, data = hspider)
-%sort(nb1@misc$deviance.Bestof) # A history of all the iterations
+%sort(nb1@misc$deviance.Bestof)  # A history of all the iterations
 %summary(nb1)
 %}
 %\dontrun{ lvplot(nb1, lcol = 1:12, y = TRUE, pcol = 1:12) }

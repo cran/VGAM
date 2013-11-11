@@ -64,11 +64,11 @@ Lange, K. (2002)
 }
 
 \examples{
-ymat <- cbind(AB=1997, Ab=906, aB=904, ab=32) # Data from Fisher (1925)
+ymat <- cbind(AB=1997, Ab=906, aB=904, ab=32)  # Data from Fisher (1925)
 fit <- vglm(ymat ~ 1, AB.Ab.aB.ab(link = "identity", init.p = 0.9), trace = TRUE)
 fit <- vglm(ymat ~ 1, AB.Ab.aB.ab, trace = TRUE)
 rbind(ymat, sum(ymat)*fitted(fit))
-Coef(fit) # Estimated p
+Coef(fit)  # Estimated p
 p <- sqrt(4*(fitted(fit)[, 4]))
 p*p
 summary(fit)

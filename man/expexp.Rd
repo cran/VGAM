@@ -154,8 +154,8 @@ bbearings <- c(17.88, 28.92, 33.00, 41.52, 42.12, 45.60,
 fit <- vglm(bbearings ~ 1, fam = expexp(iscale = 0.05, ish = 5),
             trace = TRUE, maxit = 300)
 coef(fit, matrix = TRUE)
-Coef(fit)   # Authors get c(shape=5.2589, scale=0.0314)
-logLik(fit) # Authors get -112.9763
+Coef(fit)    # Authors get c(shape=5.2589, scale=0.0314)
+logLik(fit)  # Authors get -112.9763
 
 
 # Failure times of the airconditioning system of an airplane

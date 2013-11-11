@@ -68,10 +68,14 @@ get.arg <- function(string) {
 
 
 
+
+
  eifun <- function(i, n)
     cbind(as.numeric((1:n) == i))
 
- eifun <- function(i, n)
+
+ eifun <-
+ I.col <- function(i, n)
     diag(n)[, i, drop = FALSE]
 
  eijfun <- function(i, n) {
@@ -110,8 +114,7 @@ tapplymat1 <-
   nr <- nrow(mat)
   nc <- ncol(mat)
   fred <- .C("tapplymat1", mat = as.double(mat),
-             as.integer(nr), as.integer(nc), as.integer(type),
-             NAOK = TRUE, DUP = TRUE, PACKAGE = "VGAM")
+      as.integer(nr), as.integer(nc), as.integer(type))
 
   dim(fred$mat) <- c(nr, nc)
   dimnames(fred$mat) <- dimnames(mat)
@@ -141,7 +144,7 @@ matrix.power <- function(wz, M, power, fast = TRUE) {
   }
 
   if (fast) {
-    k <- veigen(t(wz), M = M) # matrix.arg)
+    k <- veigen(t(wz), M = M)  # matrix.arg)
     evals <- k$values           # M x n
     evects <- k$vectors         # M x M x n
   } else {
@@ -213,7 +216,7 @@ veigen <- function(x, M) {
 
   n <- ncol(x)
   index <- iam(NA, NA, M = M, both = TRUE, diag = TRUE)
-  dimm.value <- nrow(x) # usually M or M(M+1)/2
+  dimm.value <- nrow(x)  # usually M or M(M+1)/2
 
   z <- .Fortran("veigen",
       as.integer(M),
@@ -227,8 +230,7 @@ veigen <- function(x, M) {
       wk = double(M*M),
       as.integer(index$row), as.integer(index$col),
       as.integer(dimm.value),
-      error.code = integer(1),
-      NAOK = FALSE, DUP = TRUE, PACKAGE = "VGAM")
+      error.code = integer(1), PACKAGE = "VGAM")
 
   if (z$error.code)
     stop("eigen algorithm (rs) returned error code ", z$error.code)

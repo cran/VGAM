@@ -110,7 +110,7 @@ golf("p", lambda = 1, tag = TRUE)
 p <- seq(0.02, 0.98, len = 201)
 y <- golf(p, lambda = 1)
 y. <- golf(p, lambda = 1, deriv = 1)
-max(abs(golf(y, lambda = 1, inv = TRUE) - p)) # Should be 0
+max(abs(golf(y, lambda = 1, inv = TRUE) - p))  # Should be 0
 
 \dontrun{par(mfrow = c(2, 1), las = 1)
 plot(p, y, type = "l", col = "blue", main = "golf()")

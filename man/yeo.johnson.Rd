@@ -72,11 +72,11 @@ Quantile regression via vector generalized additive models.
 }
 \examples{
 y <- seq(-4, 4, len = (nn <- 200))
-ltry <- c(0, 0.5, 1, 1.5, 2) # Try these values of lambda
+ltry <- c(0, 0.5, 1, 1.5, 2)  # Try these values of lambda
 lltry <- length(ltry)
 psi <- matrix(as.numeric(NA), nn, lltry)
-for(ii in 1:lltry)
-  psi[,ii] <- yeo.johnson(y, lambda = ltry[ii])
+for (ii in 1:lltry)
+  psi[, ii] <- yeo.johnson(y, lambda = ltry[ii])
 
 \dontrun{
 matplot(y, psi, type = "l", ylim = c(-4, 4), lwd = 2, lty = 1:lltry,

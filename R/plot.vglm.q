@@ -29,7 +29,7 @@ plotvgam <-
   x@na.action <- list()
 
   if (!is.Numeric(varxij, integer.valued = TRUE,
-                  allowable.length = 1, positive = TRUE))
+                  length.arg = 1, positive = TRUE))
       stop("bad input for the 'varxij' argument")
   if (any(slotNames(x) == "control")) {
     x@control$varxij <- varxij
@@ -46,7 +46,7 @@ plotvgam <-
 
 
   if (!is.Numeric(deriv.arg, integer.valued = TRUE,
-                  allowable.length = 1) ||
+                  length.arg = 1) ||
       deriv.arg < 0)
     stop("bad input for the 'deriv' argument")
 
@@ -124,7 +124,7 @@ getallresponses <- function(xij) {
 
   allterms <- lapply(xij, terms)
   allres <- NULL
-  for(ii in 1:length(xij))
+  for (ii in 1:length(xij))
     allres <- c(allres,
                 as.character(attr(allterms[[ii]], "variables"))[2])
   allres
@@ -157,7 +157,7 @@ getallresponses <- function(xij) {
   xnames <- as.list(terms)
   names(xnames) <- terms
   modes <- sapply(xvars, mode)
-  for(term in terms[modes != "name"]) {
+  for (term in terms[modes != "name"]) {
     evars <- all.names(xvars[term], functions = FALSE, unique = TRUE)
     if (!length(evars))
       next
@@ -268,7 +268,7 @@ preplotvgam <- function(object, newdata = NULL,
   gamplot <- xnames
 
   loop.var <- names(fred)
-  for(term in loop.var) {
+  for (term in loop.var) {
     .VGAM.x <- xvars[[term]]
 
     myylab <- if (all(substring(term, 1:nchar(term),
@@ -276,9 +276,9 @@ preplotvgam <- function(object, newdata = NULL,
               paste("partial for", term) else term
 
     TT <- list(x = .VGAM.x,
-               y = fits[,(if(is.null(fred)) term else fred[[term]])],
+               y = fits[,(if (is.null(fred)) term else fred[[term]])],
                se.y = if (is.null(se.fit)) NULL else
-                     se.fit[, (if(is.null(fred)) term else fred[[term]])],
+                     se.fit[, (if (is.null(fred)) term else fred[[term]])],
                xlab = xnames[[term]],
                ylab = myylab)
     class(TT) <- "preplotvgam"
@@ -360,7 +360,7 @@ plotvglm <-
     if (is.null(which.term))
       which.term <- TT  # Plot them all
     plot.no <- 0
-    for(ii in TT) {
+    for (ii in TT) {
       plot.no <- plot.no + 1
       if ((is.character(which.term) && any(which.term == ii)) ||
           (is.numeric(which.term) && any(which.term == plot.no)))
@@ -475,7 +475,7 @@ vplot.list <-
   } else {
     default.vals <- plotvgam.control()
     return.list <- list()
-    for(ii in names(default.vals)) {
+    for (ii in names(default.vals)) {
       replace.val <- !((length(ans[[ii]]) == length(default.vals[[ii]])) &&
             (length(default.vals[[ii]]) > 0) &&
             (is.logical(all.equal(ans[[ii]], default.vals[[ii]]))) &&
@@ -558,7 +558,7 @@ vplot.numeric <-
       y <- rbind(y, 0 * y[1,])
       se.y <- rbind(se.y, 0 * se.y[1,])
       if (!is.null(residuals))
-        residuals <- rbind(residuals, NA*residuals[1,]) # NAs not plotted
+        residuals <- rbind(residuals, NA*residuals[1,])  # NAs not plotted
     }
 
     ux <- unique(sort(x))
@@ -634,11 +634,11 @@ vplot.numeric <-
     scol <- rep(scol,  len = ncol(uy))
     slwd <- rep(slwd,  len = ncol(uy))
 
-    for(ii in 1:ncol(uy)) {
+    for (ii in 1:ncol(uy)) {
       if (!length(which.cf) ||
          (length(which.cf) && any(which.cf == ii))) {
 
-          if (is.Numeric(ylim0, allowable.length = 2)) {
+          if (is.Numeric(ylim0, length.arg = 2)) {
             ylim <- ylim0
           } else {
             ylim <- range(ylim0, uy[, ii], na.rm = TRUE)
@@ -692,7 +692,7 @@ vplot.matrix <-
 add.hookey <- function(ch, deriv.arg = 0) {
 
   if (!is.Numeric(deriv.arg, integer.valued = TRUE,
-                  allowable.length = 1) ||
+                  length.arg = 1) ||
       deriv.arg < 0)
       stop("bad input for the 'deriv' argument")
 
@@ -746,7 +746,7 @@ vplot.factor <-
                     rugplot = rugplot, scale = scale,
                     se = se, xlim = xlim, ylim = ylim, ...) 
   } else {
-    for(ii in 1:ncol(y)) {
+    for (ii in 1:ncol(y)) {
       ylab <- rep(ylab, len = ncol(y))
       if (ncol(y) > 1)
         ylab <- dimnames(y)[[2]]
@@ -825,7 +825,7 @@ vvplot.factor <-
     if (M == 1) return(cbind(ux))
     ans <- matrix(as.numeric(NA), length(ux), M)
     grid <- seq(-Delta, Delta, len = M)
-    for(ii in 1:M) {
+    for (ii in 1:M) {
       ans[, ii] <- ux + grid[ii]
     }
     ans
@@ -841,11 +841,11 @@ vvplot.factor <-
   lpos <- par("mar")[3]
   mtext(Levels, side = 3, line = lpos/2, at = ux, adj = 0.5, srt = 45)
 
-  for(ii in 1:M)
+  for (ii in 1:M)
     segments(uxx[, ii] - 1.0 * delta, uy[, ii],
              uxx[, ii] + 1.0 * delta, uy[, ii])
   if (!is.null(residuals)) {
-    for(ii in 1:M) {
+    for (ii in 1:M) {
       jux <- uxx[, ii]
       jux <- jux[codex]
       jux <- jux + runif(length(jux), -0.7*min(delta), 0.7*min(delta))
@@ -856,7 +856,7 @@ vvplot.factor <-
   if (rugplot)
     rug(nnajx)
   if (se) {
-    for(ii in 1:M) {
+    for (ii in 1:M) {
       segments(uxx[, ii] + 0.5*delta, se.upper[, ii],
                uxx[, ii] - 0.5*delta, se.upper[, ii])
       segments(uxx[, ii] + 0.5*delta, se.lower[, ii],
@@ -869,7 +869,7 @@ vvplot.factor <-
 }
 
 
-if(!isGeneric("vplot"))
+if (!isGeneric("vplot"))
   setGeneric("vplot", function(x, ...) standardGeneric("vplot"))
 
 
@@ -904,6 +904,7 @@ setMethod("plot", "vgam",
 
 
 
+
 plotqrrvglm <- function(object,
                rtype = c("response", "pearson", "deviance", "working"), 
                ask = FALSE,
@@ -925,9 +926,10 @@ plotqrrvglm <- function(object,
                   deviance = "Deviance", working = "Working")
 
   done <- 0
-  for(rr in 1:Rank)
-    for(ii in 1:M) {
-      plot(Coef.object@lv[, rr], res[, ii],
+  for (rr in 1:Rank)
+    for (ii in 1:M) {
+      plot(Coef.object@latvar[, rr],
+           res[, ii],
            xlab = paste(xlab, if (Rank == 1) "" else rr, sep = ""),
            ylab = my.ylab[ii],
            main = main, ...)
@@ -939,6 +941,7 @@ plotqrrvglm <- function(object,
     }
   object
 }
+
 
 setMethod("plot", "qrrvglm", function(x, y, ...)
          invisible(plotqrrvglm(object = x, ...)))

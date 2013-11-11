@@ -146,7 +146,8 @@ s.vam <- function(x, zedd, wz, smomat, which, smooth.frame, bf.maxit = 10,
                    maxit =  500)
 
 
-  fit <- .C("Yee_vbfa",  # ---------------------------------
+  fit <-
+    .C("Yee_vbfa",  # ---------------------------------
          npetc = as.integer(c(n.lm, p.lm, length(which), se.fit, 0,
                               bf.maxit, qrank = 0, M, nbig = n.lm * M, pbig,
                               qbig, dim2wz, dim1U, ier = 0,
@@ -179,8 +180,7 @@ s.vam <- function(x, zedd, wz, smomat, which, smooth.frame, bf.maxit = 10,
      bindex = as.integer(smooth.frame$bindex),
      lindex = as.integer(smooth.frame$lindex),
          nknots = as.integer(smooth.frame$nknots),
-         kindex = as.integer(smooth.frame$kindex),
-     NAOK = FALSE, DUP = TRUE, PACKAGE = "VGAM")  # End of .C
+         kindex = as.integer(smooth.frame$kindex), PACKAGE = "VGAM")  # End of dotC
 
 
   if (exists("flush.console"))

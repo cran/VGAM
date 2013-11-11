@@ -143,7 +143,7 @@ elogit(p, min = 1, max = 2,
 \dontrun{ par(mfrow = c(2,2), lwd = (mylwd <- 2))
 y <- seq(-4, 4, length = 100)
 p <- seq(0.01, 0.99, by = 0.01)
-for(d in 0:1) {
+for (d in 0:1) {
   matplot(p, cbind(logit(p, deriv = d), probit(p, deriv = d)),
           type = "n", col = "purple", ylab = "transformation", las = 1,
           main = if (d ==  0) "Some probability link functions"
@@ -160,7 +160,7 @@ for(d in 0:1) {
     abline(v = 0.5, lty = "dashed")
 }
 
-for(d in 0) {
+for (d in 0) {
   matplot(y, cbind(logit(y, deriv = d, inverse = TRUE),
                    probit(y, deriv = d, inverse = TRUE)), las = 1,
           type = "n", col = "purple", xlab = "transformation", ylab = "p",

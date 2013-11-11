@@ -8,7 +8,7 @@
 \usage{
 qtplot.lmscreg(object, newdata = NULL, 
                percentiles = object@misc$percentiles, 
-               plot.it = TRUE, ...)
+               show.plot = TRUE, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -24,7 +24,7 @@ qtplot.lmscreg(object, newdata = NULL,
   that specify the percentiles (quantiles). 
   The default are the percentiles used when the model was fitted. 
   }
-  \item{plot.it}{ Logical. Plot it? If \code{FALSE} no plot will
+  \item{show.plot}{ Logical. Plot it? If \code{FALSE} no plot will
   be done. }
   \item{\dots}{ Graphical parameter that are passed into
   \code{\link{plotqtplot.lmscreg}}.

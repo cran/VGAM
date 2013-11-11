@@ -72,7 +72,7 @@ Thus calibration might be of interest for the data.
   New York, USA: Wiley.
 
 
-  Yee, T. W. (2013)
+  Yee, T. W. (2014)
   Reduced-rank vector generalized linear models with two linear predictors.
   \emph{Computational Statistics and Data Analysis}.
 
@@ -105,7 +105,7 @@ modelII <- vglm(Y ~ 1 + X, data = hormone, trace = TRUE,
                 family = uninormal(zero = NULL))
 
 logLik(modelI)
-logLik(modelII) # Less than logLik(modelI)
+logLik(modelII)  # Less than logLik(modelI)
 
 
 # Reproduce the top 3 equations on p.65 of Carroll and Ruppert (1988).
@@ -117,7 +117,7 @@ clist <- list("(Intercept)" = diag(2), X = diag(2), rX = rbind(0, 1))
 fit1 <- vglm(Y ~ 1 + X + rX, family = uninormal(zero = NULL),
              constraints = clist, data = hormone, trace = TRUE)
 coef(fit1, matrix = TRUE)
-summary(fit1) # Actually, the intercepts do not seem significant
+summary(fit1)  # Actually, the intercepts do not seem significant
 plot(Y ~ X, hormone, col = "blue")
 lines(fitted(fit1) ~ X, hormone, col = "orange")
 
@@ -137,7 +137,7 @@ lines(fitted(fit2) - 2 * exp(predict(fit2)[, "log(sd)"]) ~ X,
 fit3 <- rrvglm(Y ~ 1 + X, maxit = 300, data = hormone, trace = TRUE,
                uninormal(lmean = "loge", zero = NULL))
 coef(fit3, matrix = TRUE)
-plot(Y ~ X, hormone, col = "blue") # Does not look okay.
+plot(Y ~ X, hormone, col = "blue")  # Does not look okay.
 lines(exp(predict(fit3)[, 1]) ~ X, hormone, col = "red")
 # Add +- 2 SEs
 lines(fitted(fit3) + 2 * exp(predict(fit3)[, "log(sd)"]) ~ X,

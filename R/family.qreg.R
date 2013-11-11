@@ -51,7 +51,7 @@ lms.yjn.control <- function(trace = TRUE, ...)
   lsigma <- attr(esigma, "function.name")
 
 
-  if (!is.Numeric(tol0, positive = TRUE, allowable.length = 1))
+  if (!is.Numeric(tol0, positive = TRUE, length.arg = 1))
     stop("bad input for argument 'tol0'")
 
   if (!is.Numeric(ilambda))
@@ -401,13 +401,13 @@ dyj.dy.yeojohnson <- function(y, lambda) {
                         epsilon = sqrt(.Machine$double.eps),
                         inverse = FALSE) {
 
-    if (!is.Numeric(derivative, allowable.length = 1,
+    if (!is.Numeric(derivative, length.arg = 1,
                     integer.valued = TRUE) ||
         derivative < 0)
       stop("argument 'derivative' must be a non-negative integer")
 
     ans <- y
-    if (!is.Numeric(epsilon, allowable.length = 1, positive = TRUE))
+    if (!is.Numeric(epsilon, length.arg = 1, positive = TRUE))
       stop("argument 'epsilon' must be a single positive number")
     L <- max(length(lambda), length(y))
     if (length(y) != L)
@@ -462,11 +462,11 @@ dyj.dy.yeojohnson <- function(y, lambda) {
 dpsi.dlambda.yjn <- function(psi, lambda, mymu, sigma,
                             derivative = 0, smallno = 1.0e-8) {
 
-    if (!is.Numeric(derivative, allowable.length = 1,
+    if (!is.Numeric(derivative, length.arg = 1,
                     integer.valued = TRUE) ||
         derivative < 0)
       stop("argument 'derivative' must be a non-negative integer")
-    if (!is.Numeric(smallno, allowable.length = 1, positive = TRUE))
+    if (!is.Numeric(smallno, length.arg = 1, positive = TRUE))
       stop("argument 'smallno' must be a single positive number")
 
     L <- max(length(psi), length(lambda), length(mymu), length(sigma))
@@ -855,7 +855,7 @@ lms.yjn2.control <- function(save.weight = TRUE, ...) {
 
 
 
-  rule <- rule[1] # Number of points (common) for all the quadrature schemes
+  rule <- rule[1]  # Number of points (common) for all the quadrature schemes
   if (rule != 5 && rule != 10)
     stop("only rule=5 or 10 is supported")
 
@@ -1090,8 +1090,7 @@ lms.yjn2.control <- function(save.weight = TRUE, ...) {
                  as.double(gleg.abs), as.double(gleg.wts), as.integer(n),
                  as.integer(length(gleg.abs)), as.double(lambda),
                  as.double(mymu), as.double(sigma), answer = double(3*n),
-                     eps = as.double(1.0e-5),
-                 NAOK = FALSE, DUP = TRUE, PACKAGE = "VGAM")$ans
+                     eps=as.double(1.0e-5), PACKAGE = "VGAM")$ans
       dim(temp9) <- c(3,n)
       wz[,iam(1, 1, M)] <- temp9[1,]
       wz[,iam(1, 2, M)] <- temp9[2,]
@@ -1202,9 +1201,11 @@ amlnormal.deviance <- function(mu, y, w, residuals = FALSE,
                        imethod = 1, digw = 4) {
 
 
+
+
   if (!is.Numeric(w.aml, positive = TRUE))
     stop("argument 'w.aml' must be a vector of positive values")
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
      imethod > 3)
     stop("argument 'imethod' must be 1, 2 or 3")
@@ -1256,13 +1257,20 @@ amlnormal.deviance <- function(mu, y, w, residuals = FALSE,
                earg = .eexpectile, tag = FALSE))
 
     if (!length(etastart)) {
-        mean.init <- if ( .imethod == 1)
-              rep(median(y), length = n) else
-            if ( .imethod == 2)
-              rep(weighted.mean(y, w), length = n) else {
-                  junk <- lm.wfit(x = x, y = c(y), w = c(w))
-                  junk$fitted
-            }
+      mean.init <-
+        if ( .imethod == 1)
+          rep(median(y), length = n) else
+        if ( .imethod == 2 || .imethod == 3)
+          rep(weighted.mean(y, w), length = n) else {
+              junk <- lm.wfit(x = x, y = c(y), w = c(w))
+              junk$fitted
+        }
+
+
+        if ( .imethod == 3)
+          mean.init <- abs(mean.init) + 0.01
+
+
         if (length( .iexpectile))
           mean.init <- matrix( .iexpectile, n, M, byrow = TRUE)
         etastart <-
@@ -1681,7 +1689,7 @@ amlexponential.deviance <- function(mu, y, w, residuals = FALSE,
                             digw = 4, link = "loge") {
   if (!is.Numeric(w.aml, positive = TRUE))
     stop("'w.aml' must be a vector of positive values")
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
      imethod > 3)
     stop("argument 'imethod' must be 1, 2 or 3")
@@ -1836,7 +1844,7 @@ dalap <- function(x, location = 0, scale = 1, tau = 0.5,
   exponent <- -(sqrt(2) / scale) * abs(x - location) *
              ifelse(x >= location, kappa, 1/kappa)
 
-  indexTF <- (scale > 0) & (tau > 0) & (tau < 1) & (kappa > 0) # &
+  indexTF <- (scale > 0) & (tau > 0) & (tau < 1) & (kappa > 0)  # &
   logconst[!indexTF] <- NaN
 
   if (log.arg) logconst + exponent else exp(logconst + exponent)
@@ -1847,7 +1855,7 @@ ralap <- function(n, location = 0, scale = 1, tau = 0.5,
                  kappa = sqrt(tau/(1-tau))) {
   use.n <- if ((length.n <- length(n)) > 1) length.n else
            if (!is.Numeric(n, integer.valued = TRUE,
-                           allowable.length = 1, positive = TRUE))
+                           length.arg = 1, positive = TRUE))
               stop("bad input for argument 'n'") else n
 
   location <- rep(location, length.out = use.n);
@@ -1856,7 +1864,7 @@ ralap <- function(n, location = 0, scale = 1, tau = 0.5,
   kappa    <- rep(kappa,    length.out = use.n);
   ans <- location + scale *
         log(runif(use.n)^kappa / runif(use.n)^(1/kappa)) / sqrt(2)
-  indexTF <- (scale > 0) & (tau > 0) & (tau < 1) & (kappa > 0) # &
+  indexTF <- (scale > 0) & (tau > 0) & (tau < 1) & (kappa > 0)  # &
   ans[!indexTF] <- NaN
   ans
 }
@@ -1880,7 +1888,7 @@ palap <- function(q, location = 0, scale = 1, tau = 0.5,
   index1 <- (q < location)
   ans[index1] <- (kappa[index1])^2 * temp5[index1]
 
-  indexTF <- (scale > 0) & (tau > 0) & (tau < 1) & (kappa > 0) # &
+  indexTF <- (scale > 0) & (tau > 0) & (tau < 1) & (kappa > 0)  # &
   ans[!indexTF] <- NaN
   ans
 }
@@ -1925,7 +1933,7 @@ rloglap <- function(n, location.ald = 0, scale.ald = 1, tau = 0.5,
                    kappa = sqrt(tau/(1-tau))) {
   use.n <- if ((length.n <- length(n)) > 1) length.n else
            if (!is.Numeric(n, integer.valued = TRUE,
-                           allowable.length = 1, positive = TRUE))
+                           length.arg = 1, positive = TRUE))
             stop("bad input for argument 'n'") else n
   location.ald <- rep(location.ald, length.out = use.n);
   scale.ald    <- rep(scale.ald,    length.out = use.n);
@@ -1933,7 +1941,7 @@ rloglap <- function(n, location.ald = 0, scale.ald = 1, tau = 0.5,
   kappa        <- rep(kappa,        length.out = use.n);
   ans <- exp(location.ald) *
      (runif(use.n)^kappa / runif(use.n)^(1/kappa))^(scale.ald / sqrt(2))
-  indexTF <- (scale.ald > 0) & (tau > 0) & (tau < 1) & (kappa > 0) # &
+  indexTF <- (scale.ald > 0) & (tau > 0) & (tau < 1) & (kappa > 0)  # &
   ans[!indexTF] <- NaN
   ans
 }
@@ -1965,7 +1973,7 @@ dloglap <- function(x, location.ald = 0, scale.ald = 1, tau = 0.5,
              (log(x) - location.ald)
   logdensity <- -location.ald + log(Alpha) + log(Beta) -
                log(Alpha + Beta) + exponent
-  indexTF <- (scale.ald > 0) & (tau > 0) & (tau < 1) & (kappa > 0) # &
+  indexTF <- (scale.ald > 0) & (tau > 0) & (tau < 1) & (kappa > 0)  # &
   logdensity[!indexTF] <- NaN
   logdensity[x <  0 & indexTF] <- -Inf
   if (log.arg) logdensity else exp(logdensity)
@@ -1997,7 +2005,7 @@ qloglap <- function(p, location.ald = 0, scale.ald = 1,
   ans[p == 1] <- Inf
 
   indexTF <- (scale.ald > 0) & (tau > 0) & (tau < 1) & (kappa > 0)
-            (p >= 0) & (p <= 1) # &
+            (p >= 0) & (p <= 1)  # &
   ans[!indexTF] <- NaN
   ans
 }
@@ -2024,7 +2032,7 @@ ploglap <- function(q, location.ald = 0, scale.ald = 1,
   index1 <- (q >= Delta)
   ans[index1] <- (1 - (Beta/temp9) * (Delta/q)^(Alpha))[index1]
 
-  indexTF <- (scale.ald > 0) & (tau > 0) & (tau < 1) & (kappa > 0) # &
+  indexTF <- (scale.ald > 0) & (tau > 0) & (tau < 1) & (kappa > 0)  # &
   ans[!indexTF] <- NaN
   ans
 }
@@ -2036,7 +2044,7 @@ rlogitlap <- function(n, location.ald = 0, scale.ald = 1, tau = 0.5,
                       kappa = sqrt(tau/(1-tau))) {
   logit(ralap(n = n, location = location.ald, scale = scale.ald,
               tau = tau, kappa = kappa),
-        inverse = TRUE) # earg = earg
+        inverse = TRUE)  # earg = earg
 }
 
 
@@ -2058,14 +2066,14 @@ dlogitlap <- function(x, location.ald = 0, scale.ald = 1, tau = 0.5,
 
   Alpha <- sqrt(2) * kappa / scale.ald
   Beta  <- sqrt(2) / (scale.ald * kappa)
-  Delta <- logit(location.ald, inverse = TRUE) # earg = earg
+  Delta <- logit(location.ald, inverse = TRUE)  # earg = earg
 
   exponent <- ifelse(x >= Delta, -Alpha, Beta) *
              (logit(x) - # earg = earg
               location.ald)
   logdensity <- log(Alpha) + log(Beta) - log(Alpha + Beta) -
                log(x) - log1p(-x) + exponent
-  indexTF <- (scale.ald > 0) & (tau > 0) & (tau < 1) & (kappa > 0) # &
+  indexTF <- (scale.ald > 0) & (tau > 0) & (tau < 1) & (kappa > 0)  # &
   logdensity[!indexTF] <- NaN
   logdensity[x <  0 & indexTF] <- -Inf
   logdensity[x >  1 & indexTF] <- -Inf
@@ -2077,7 +2085,7 @@ qlogitlap <- function(p, location.ald = 0, scale.ald = 1,
                      tau = 0.5, kappa = sqrt(tau/(1-tau))) {
   qqq <- qalap(p = p, location = location.ald, scale = scale.ald,
               tau = tau, kappa = kappa)
-  ans <- logit(qqq, inverse = TRUE) # earg = earg
+  ans <- logit(qqq, inverse = TRUE)  # earg = earg
   ans[(p < 0) | (p > 1)] <- NaN
   ans[p == 0] <- 0
   ans[p == 1] <- 1
@@ -2096,7 +2104,7 @@ plogitlap <- function(q, location.ald = 0, scale.ald = 1,
   tau <- rep(tau, length.out = NN);
 
   indexTF <- (q > 0) & (q < 1)
-  qqq <- logit(q[indexTF]) # earg = earg
+  qqq <- logit(q[indexTF])  # earg = earg
   ans <- q
   ans[indexTF] <- palap(q = qqq, location = location.ald[indexTF],
                        scale = scale.ald[indexTF],
@@ -2139,10 +2147,10 @@ dprobitlap <-
 
   logdensity <- x * NaN
   index1 <- (x > 0) & (x < 1)
-  indexTF <- (scale.ald > 0) & (tau > 0) & (tau < 1) & (kappa > 0) # &
+  indexTF <- (scale.ald > 0) & (tau > 0) & (tau < 1) & (kappa > 0)  # &
   if (meth2) {
     dx.dy <- x
-    use.x <- probit(x[index1]) # earg = earg
+    use.x <- probit(x[index1])  # earg = earg
     logdensity[index1] =
       dalap(x = use.x, location = location.ald[index1],
             scale = scale.ald[index1], tau = tau[index1],
@@ -2151,7 +2159,7 @@ dprobitlap <-
     Alpha <- sqrt(2) * kappa / scale.ald
     Beta  <- sqrt(2) / (scale.ald * kappa)
     Delta <- pnorm(location.ald)
-    use.x  <- qnorm(x) # qnorm(x[index1])
+    use.x  <- qnorm(x)  # qnorm(x[index1])
     log.dy.dw <- dnorm(use.x, log = TRUE)
 
     exponent <- ifelse(x >= Delta, -Alpha, Beta) *
@@ -2165,7 +2173,7 @@ dprobitlap <-
   logdensity[x >  1 & indexTF] <- -Inf
 
   if (meth2) {
-    dx.dy[index1] <- probit(x[index1], # earg = earg,
+    dx.dy[index1] <- probit(x[index1],  # earg = earg,
                            inverse = FALSE, deriv = 1)
     dx.dy[!index1] <- 0
     dx.dy[!indexTF] <- NaN
@@ -2181,7 +2189,7 @@ qprobitlap <- function(p, location.ald = 0, scale.ald = 1,
                        tau = 0.5, kappa = sqrt(tau/(1-tau))) {
   qqq <- qalap(p = p, location = location.ald, scale = scale.ald,
               tau = tau, kappa = kappa)
-  ans <- probit(qqq, inverse = TRUE) # , earg = earg
+  ans <- probit(qqq, inverse = TRUE)  # , earg = earg
   ans[(p < 0) | (p > 1)] = NaN
   ans[p == 0] <- 0
   ans[p == 1] <- 1
@@ -2201,7 +2209,7 @@ pprobitlap <- function(q, location.ald = 0, scale.ald = 1,
   tau <- rep(tau, length.out = NN);
 
   indexTF <- (q > 0) & (q < 1)
-  qqq <- probit(q[indexTF]) # earg = earg
+  qqq <- probit(q[indexTF])  # earg = earg
   ans <- q
   ans[indexTF] <- palap(q = qqq, location = location.ald[indexTF],
                        scale = scale.ald[indexTF],
@@ -2217,7 +2225,7 @@ pprobitlap <- function(q, location.ald = 0, scale.ald = 1,
 rclogloglap <- function(n, location.ald = 0, scale.ald = 1, tau = 0.5,
                         kappa = sqrt(tau/(1-tau))) {
   cloglog(ralap(n = n, location = location.ald, scale = scale.ald,
-                tau = tau, kappa = kappa), # earg = earg,
+                tau = tau, kappa = kappa),  # earg = earg,
           inverse = TRUE)
 }
 
@@ -2241,10 +2249,10 @@ dclogloglap <- function(x, location.ald = 0, scale.ald = 1, tau = 0.5,
 
   logdensity <- x * NaN
   index1 <- (x > 0) & (x < 1)
-  indexTF <- (scale.ald > 0) & (tau > 0) & (tau < 1) & (kappa > 0) # &
+  indexTF <- (scale.ald > 0) & (tau > 0) & (tau < 1) & (kappa > 0)  # &
   if (meth2) {
     dx.dy <- x
-    use.w <- cloglog(x[index1]) # earg = earg
+    use.w <- cloglog(x[index1])  # earg = earg
     logdensity[index1] <-
       dalap(x = use.w, location = location.ald[index1],
             scale = scale.ald[index1],
@@ -2266,7 +2274,7 @@ dclogloglap <- function(x, location.ald = 0, scale.ald = 1, tau = 0.5,
   logdensity[x >  1 & indexTF] <- -Inf
 
   if (meth2) {
-    dx.dy[index1] <- cloglog(x[index1], # earg = earg,
+    dx.dy[index1] <- cloglog(x[index1],  # earg = earg,
                             inverse = FALSE, deriv = 1)
     dx.dy[!index1] <- 0
     dx.dy[!indexTF] <- NaN
@@ -2283,7 +2291,7 @@ qclogloglap <- function(p, location.ald = 0, scale.ald = 1,
                        tau = 0.5, kappa = sqrt(tau/(1-tau))) {
   qqq <- qalap(p = p, location = location.ald, scale = scale.ald,
               tau = tau, kappa = kappa)
-  ans <- cloglog(qqq, inverse = TRUE) # , earg = earg
+  ans <- cloglog(qqq, inverse = TRUE)  # , earg = earg
   ans[(p < 0) | (p > 1)] <- NaN
   ans[p == 0] <- 0
   ans[p == 1] <- 1
@@ -2303,7 +2311,7 @@ pclogloglap <- function(q, location.ald = 0, scale.ald = 1,
   tau <- rep(tau, length.out = NN);
 
   indexTF <- (q > 0) & (q < 1)
-  qqq <- cloglog(q[indexTF]) # earg = earg
+  qqq <- cloglog(q[indexTF])  # earg = earg
   ans <- q
   ans[indexTF] <- palap(q = qqq, location = location.ald[indexTF],
                        scale = scale.ald[indexTF],
@@ -2354,14 +2362,14 @@ alaplace2.control <- function(maxit = 100, ...) {
 
   if (!is.Numeric(kappa, positive = TRUE))
     stop("bad input for argument 'kappa'")
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
     imethod > 4)
     stop("argument 'imethod' must be 1, 2 or ... 4")
   if (length(iscale) &&
       !is.Numeric(iscale, positive = TRUE))
     stop("bad input for argument 'iscale'")
-  if (!is.Numeric(shrinkage.init, allowable.length = 1) ||
+  if (!is.Numeric(shrinkage.init, length.arg = 1) ||
     shrinkage.init < 0 ||
     shrinkage.init > 1)
     stop("bad input for argument 'shrinkage.init'")
@@ -2712,7 +2720,7 @@ alaplace1.control <- function(maxit = 100, ...) {
       max(abs(kappa - sqrt(tau/(1-tau)))) > 1.0e-6)
     stop("arguments 'kappa' and 'tau' do not match")
 
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
       imethod > 4)
     stop("argument 'imethod' must be 1, 2 or ... 4")
@@ -2726,7 +2734,7 @@ alaplace1.control <- function(maxit = 100, ...) {
   ilocat <- ilocation
 
 
-  if (!is.Numeric(shrinkage.init, allowable.length = 1) ||
+  if (!is.Numeric(shrinkage.init, length.arg = 1) ||
      shrinkage.init < 0 ||
      shrinkage.init > 1)
     stop("bad input for argument 'shrinkage.init'")
@@ -2824,7 +2832,7 @@ alaplace1.control <- function(maxit = 100, ...) {
 
         extra$M <- M <- max(length( .Scale.arg ),
                           ncoly,
-                          length( .kappa )) # Recycle
+                          length( .kappa ))  # Recycle
         extra$Scale <- rep( .Scale.arg, length = M)
         extra$kappa <- rep( .kappa, length = M)
         extra$tau <- extra$kappa^2 / (1 + extra$kappa^2)
@@ -3009,7 +3017,7 @@ alaplace3.control <- function(maxit = 100, ...) {
   lkappa <- attr(ekappa, "function.name")
 
 
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
      imethod > 2)
     stop("argument 'imethod' must be 1 or 2")
@@ -3098,7 +3106,7 @@ alaplace3.control <- function(maxit = 100, ...) {
     function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
     locat <- eta2theta(eta[, 1], .llocat , earg = .elocat )
     Scale <- eta2theta(eta[, 2], .lscale , earg = .escale )
-    kappa <- eta2theta(eta[, 3], .lkappa , earg = .ekappa ) # a matrix
+    kappa <- eta2theta(eta[, 3], .lkappa , earg = .ekappa )  # a matrix
     if (residuals) {
       stop("loglikelihood residuals not implemented yet")
     } else {
@@ -3200,7 +3208,7 @@ rlaplace <- function(n, location = 0, scale = 1) {
 
   use.n <- if ((length.n <- length(n)) > 1) length.n else
            if (!is.Numeric(n, integer.valued = TRUE,
-                           allowable.length = 1, positive = TRUE))
+                           length.arg = 1, positive = TRUE))
               stop("bad input for argument 'n'") else n
 
   if (!is.Numeric(scale, positive = TRUE))
@@ -3232,7 +3240,7 @@ rlaplace <- function(n, location = 0, scale = 1) {
 
 
 
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
      imethod > 3)
     stop("argument 'imethod' must be 1 or 2 or 3")
@@ -3338,7 +3346,7 @@ rlaplace <- function(n, location = 0, scale = 1) {
             .elocat = elocat, .llocat = llocat ))),
   weight = eval(substitute(expression({
     d2l.dLocat2 <- d2l.dscale2 <- 1 / Scale^2
-    wz <- matrix(0, nrow = n, ncol = M) # diagonal
+    wz <- matrix(0, nrow = n, ncol = M)  # diagonal
     wz[,iam(1, 1, M)] <- d2l.dLocat2 * dLocat.deta^2
     wz[,iam(2, 2, M)] <- d2l.dscale2 * dscale.deta^2
     c(w) * wz
@@ -3354,14 +3362,14 @@ fff.control <- function(save.weight = TRUE, ...) {
 
 
  fff <- function(link = "loge",
-                 idf1 = NULL, idf2 = NULL, nsimEIM = 100, # ncp = 0,
+                 idf1 = NULL, idf2 = NULL, nsimEIM = 100,  # ncp = 0,
                  imethod = 1, zero = NULL) {
   link <- as.list(substitute(link))
   earg <- link2list(link)
   link <- attr(earg, "function.name")
 
 
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
      imethod > 2)
     stop("argument 'imethod' must be 1 or 2")
@@ -3370,7 +3378,7 @@ fff.control <- function(save.weight = TRUE, ...) {
       !is.Numeric(zero, integer.valued = TRUE, positive = TRUE))
     stop("bad input for argument 'zero'")
 
-  if (!is.Numeric(nsimEIM, allowable.length = 1,
+  if (!is.Numeric(nsimEIM, length.arg = 1,
                   integer.valued = TRUE) ||
       nsimEIM <= 10)
     stop("argument 'nsimEIM' should be an integer greater than 10")
@@ -3724,7 +3732,7 @@ rbenini <- function(n, shape, y0) {
   lshape <- attr(eshape, "function.name")
 
 
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
       imethod > 2)
     stop("argument 'imethod' must be 1 or 2")
@@ -3956,7 +3964,7 @@ rtriangle <- function(n, theta, lower = 0, upper = 1) {
 
   use.n <- if ((length.n <- length(n)) > 1) length.n else
            if (!is.Numeric(n, integer.valued = TRUE,
-                           allowable.length = 1, positive = TRUE))
+                           length.arg = 1, positive = TRUE))
               stop("bad input for argument 'n'") else n
 
 
@@ -4210,7 +4218,7 @@ loglaplace1.control <- function(maxit = 300, ...) {
                      shrinkage.init = 0.95,
                      parallelLocation = FALSE, digt = 4,
                      dfmu.init = 3,
-                     rep0 = 0.5, # 0.0001,
+                     rep0 = 0.5,  # 0.0001,
                      minquantile = 0, maxquantile = Inf,
                      imethod = 1, zero = NULL) {
 
@@ -4220,7 +4228,7 @@ loglaplace1.control <- function(maxit = 300, ...) {
     stop("bad input for argument 'maxquantile'")
 
 
-  if (!is.Numeric(rep0, positive = TRUE, allowable.length = 1) ||
+  if (!is.Numeric(rep0, positive = TRUE, length.arg = 1) ||
       rep0 > 1)
     stop("bad input for argument 'rep0'")
   if (!is.Numeric(kappa, positive = TRUE))
@@ -4241,13 +4249,13 @@ loglaplace1.control <- function(maxit = 300, ...) {
   llocat.identity <- attr(elocat.identity, "function.name")
 
 
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
      imethod > 4)
     stop("argument 'imethod' must be 1, 2 or ... 4")
 
 
-  if (!is.Numeric(shrinkage.init, allowable.length = 1) ||
+  if (!is.Numeric(shrinkage.init, length.arg = 1) ||
      shrinkage.init < 0 ||
      shrinkage.init > 1)
     stop("bad input for argument 'shrinkage.init'")
@@ -4291,7 +4299,7 @@ loglaplace1.control <- function(maxit = 300, ...) {
   }), list( .parallelLocation = parallelLocation,
             .Scale.arg = Scale.arg, .zero = zero ))),
   initialize = eval(substitute(expression({
-    extra$M <- M <- max(length( .Scale.arg ), length( .kappa )) # Recycle
+    extra$M <- M <- max(length( .Scale.arg ), length( .kappa ))  # Recycle
     extra$Scale <- rep( .Scale.arg, length = M)
     extra$kappa <- rep( .kappa, length = M)
     extra$tau <- extra$kappa^2 / (1 + extra$kappa^2)
@@ -4415,7 +4423,7 @@ loglaplace1.control <- function(maxit = 300, ...) {
 
     if ( .llocat == "loge")
       ymat <- adjust0.loglaplace1(ymat = ymat, y = y, w = w, rep0= .rep0)
-        w.mat <- theta2eta(ymat, .llocat , earg = .elocat ) # e.g., logoff()
+        w.mat <- theta2eta(ymat, .llocat , earg = .elocat )  # e.g., logoff()
         if (residuals) {
           stop("loglikelihood residuals not implemented yet")
         } else {
@@ -4436,7 +4444,7 @@ loglaplace1.control <- function(maxit = 300, ...) {
     kappamat <- matrix(extra$kappa, n, M, byrow = TRUE)
 
     ymat <- adjust0.loglaplace1(ymat = ymat, y = y, w = w, rep0= .rep0)
-    w.mat <- theta2eta(ymat, .llocat , earg = .elocat ) # e.g., logit()
+    w.mat <- theta2eta(ymat, .llocat , earg = .elocat )  # e.g., logit()
     zedd <- abs(w.mat-locat.w) / Scale.w
     dl.dlocat <- ifelse(w.mat >= locat.w, kappamat, 1/kappamat) *
                    sqrt(2) * sign(w.mat-locat.w) / Scale.w
@@ -4483,11 +4491,11 @@ loglaplace2.control <- function(save.weight = TRUE, ...) {
  warning("it is best to use loglaplace1()")
 
   if (length(nsimEIM) &&
-     (!is.Numeric(nsimEIM, allowable.length = 1,
+     (!is.Numeric(nsimEIM, length.arg = 1,
                   integer.valued = TRUE) ||
       nsimEIM <= 10))
     stop("argument 'nsimEIM' should be an integer greater than 10")
-  if (!is.Numeric(rep0, positive = TRUE, allowable.length = 1) ||
+  if (!is.Numeric(rep0, positive = TRUE, length.arg = 1) ||
       rep0 > 1)
     stop("bad input for argument 'rep0'")
   if (!is.Numeric(kappa, positive = TRUE))
@@ -4508,7 +4516,7 @@ loglaplace2.control <- function(save.weight = TRUE, ...) {
 
 
 
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
      imethod > 4)
     stop("argument 'imethod' must be 1, 2 or ... 4")
@@ -4516,7 +4524,7 @@ loglaplace2.control <- function(save.weight = TRUE, ...) {
     stop("bad input for argument 'iscale'")
 
 
-  if (!is.Numeric(shrinkage.init, allowable.length = 1) ||
+  if (!is.Numeric(shrinkage.init, length.arg = 1) ||
      shrinkage.init < 0 ||
      shrinkage.init > 1)
     stop("bad input for argument 'shrinkage.init'")
@@ -4713,8 +4721,8 @@ loglaplace2.control <- function(save.weight = TRUE, ...) {
     locat.y <- eta2theta(locat.w, .llocat , earg = .elocat )
     kappamat <- matrix(extra$kappa, n, M/2, byrow = TRUE)
     w.mat <- ymat
-    w.mat[w.mat <= 0] <- min(min(w.mat[w.mat > 0]), .rep0) # Adjust for 0s
-    w.mat <- theta2eta(w.mat, .llocat , earg = .elocat ) # w.mat=log(w.mat)
+    w.mat[w.mat <= 0] <- min(min(w.mat[w.mat > 0]), .rep0)  # Adjust for 0s
+    w.mat <- theta2eta(w.mat, .llocat , earg = .elocat )  # w.mat=log(w.mat)
     zedd <- abs(w.mat-locat.w) / Scale.w
     dl.dlocat <- sqrt(2) *
                    ifelse(w.mat >= locat.w, kappamat, 1/kappamat) *
@@ -4801,7 +4809,7 @@ adjust01.logitlaplace1 <- function(ymat, y, w, rep01) {
         rep01 = 0.5,
         imethod = 1, zero = NULL) {
 
-  if (!is.Numeric(rep01, positive = TRUE, allowable.length = 1) ||
+  if (!is.Numeric(rep01, positive = TRUE, length.arg = 1) ||
       rep01 > 0.5)
     stop("bad input for argument 'rep01'")
   if (!is.Numeric(kappa, positive = TRUE))
@@ -4824,12 +4832,12 @@ adjust01.logitlaplace1 <- function(ymat, y, w, rep01) {
 
 
 
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
      imethod > 4)
     stop("argument 'imethod' must be 1, 2 or ... 4")
 
-  if (!is.Numeric(shrinkage.init, allowable.length = 1) ||
+  if (!is.Numeric(shrinkage.init, length.arg = 1) ||
      shrinkage.init < 0 ||
      shrinkage.init > 1)
     stop("bad input for argument 'shrinkage.init'")
@@ -4870,7 +4878,7 @@ adjust01.logitlaplace1 <- function(ymat, y, w, rep01) {
   }), list( .parallelLocation = parallelLocation,
             .Scale.arg = Scale.arg, .zero = zero ))),
   initialize = eval(substitute(expression({
-    extra$M <- M <- max(length( .Scale.arg ), length( .kappa )) # Recycle
+    extra$M <- M <- max(length( .Scale.arg ), length( .kappa ))  # Recycle
     extra$Scale <- rep( .Scale.arg, length = M)
     extra$kappa <- rep( .kappa, length = M)
     extra$tau <- extra$kappa^2 / (1 + extra$kappa^2)
@@ -4985,7 +4993,7 @@ adjust01.logitlaplace1 <- function(ymat, y, w, rep01) {
     ymat <- matrix(y, extra$n, extra$M)
     ymat <- adjust01.logitlaplace1(ymat = ymat, y = y, w = w,
                                   rep01 = .rep01)
-    w.mat <- theta2eta(ymat, .llocat , earg = .elocat ) # e.g., logit()
+    w.mat <- theta2eta(ymat, .llocat , earg = .elocat )  # e.g., logit()
     if (residuals) {
       stop("loglikelihood residuals not implemented yet")
     } else {
@@ -5006,7 +5014,7 @@ adjust01.logitlaplace1 <- function(ymat, y, w, rep01) {
     kappamat <- matrix(extra$kappa, n, M, byrow = TRUE)
     ymat <- adjust01.logitlaplace1(ymat = ymat, y = y, w = w,
                                   rep01 = .rep01)
-    w.mat <- theta2eta(ymat, .llocat , earg = .elocat ) # e.g., logit()
+    w.mat <- theta2eta(ymat, .llocat , earg = .elocat )  # e.g., logit()
     zedd <- abs(w.mat-locat.w) / Scale.w
     dl.dlocat <- ifelse(w.mat >= locat.w, kappamat, 1/kappamat) *
                    sqrt(2) * sign(w.mat-locat.w) / Scale.w

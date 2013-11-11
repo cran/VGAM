@@ -80,18 +80,18 @@ fsqrt(theta, min = 0, max = 1, mux = sqrt(2),
 
 }
 \examples{
-p = seq(0.01, 0.99, by = 0.01)
+p <- seq(0.01, 0.99, by = 0.01)
 fsqrt(p)
-max(abs(fsqrt(fsqrt(p), inverse = TRUE) - p)) # Should be 0
+max(abs(fsqrt(fsqrt(p), inverse = TRUE) - p))  # Should be 0
 
-p = c(seq(-0.02, 0.02, by = 0.01), seq(0.97, 1.02, by = 0.01))
-fsqrt(p) # Has NAs
+p <- c(seq(-0.02, 0.02, by = 0.01), seq(0.97, 1.02, by = 0.01))
+fsqrt(p)  # Has NAs
 
 \dontrun{
-p = seq(0.01, 0.99, by = 0.01)
+p <- seq(0.01, 0.99, by = 0.01)
 par(mfrow = c(2, 2), lwd = (mylwd <- 2))
-y = seq(-4, 4, length = 100)
-for(d in 0:1) {
+y <- seq(-4, 4, length = 100)
+for (d in 0:1) {
   matplot(p, cbind(logit(p, deriv = d), fsqrt(p, deriv = d)),
           type = "n", col = "purple", ylab = "transformation", las = 1,
           main = if (d == 0) "Some probability link functions"
@@ -108,7 +108,7 @@ for(d in 0:1) {
     abline(v = 0.5, lty = "dashed")
 }
 
-for(d in 0) {
+for (d in 0) {
   matplot(y, cbind(logit(y, deriv = d, inverse = TRUE),
                    fsqrt(y, deriv = d, inverse = TRUE)),
           type = "n", col = "purple", xlab = "transformation", ylab = "p",
@@ -130,7 +130,7 @@ par(lwd = 1)
 
 # This is lucky to converge
 fit.h <- vglm(agaaus ~ bs(altitude), binomialff(link = fsqrt(mux = 5)),
-             data = hunua, trace = TRUE)
+              data = hunua, trace = TRUE)
 \dontrun{
 plotvgam(fit.h, se = TRUE, lcol = "orange", scol = "orange",
          main = "Orange is Hunua, Blue is Waitakere") }

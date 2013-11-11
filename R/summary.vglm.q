@@ -166,7 +166,7 @@ show.summary.vglm <- function(x, digits = NULL, quote = TRUE,
 
   if (length(x@criterion)) {
     ncrit <- names(x@criterion)
-    for(ii in ncrit)
+    for (ii in ncrit)
       if (ii != "loglikelihood" && ii != "deviance")
         cat(paste(ii, ":", sep = ""), yformat(x@criterion[[ii]], digits),
             "\n")
@@ -303,7 +303,7 @@ function(object, dispersion = NULL, untransform = FALSE) {
 
   learg <- length(EARG)
   for (ii in 1:M) {
-    TTheta <- etavector[ii] # Transformed theta
+    TTheta <- etavector[ii]  # Transformed theta
 
     use.earg      <-
       if (llink == 1) EARG[[1]] else EARG[[ii]]
@@ -324,7 +324,7 @@ function(object, dispersion = NULL, untransform = FALSE) {
       stop("link functions handled in the new way now")
 
     }
-  } # of for(ii in 1:M)
+  }  # of for (ii in 1:M)
 
   tvector <- abs(tvector)
   answer <- (cbind(tvector) %*% rbind(tvector)) * answer

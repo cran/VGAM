@@ -96,19 +96,19 @@ aux.posbernoulli.t(y, check.y = FALSE, rename = TRUE, name = "bei")
 
 \seealso{ 
   \code{\link{posbernoulli.t}},
-  \code{\link{Perom}}.
+  \code{\link{deermice}}.
 
 }
 
 \examples{
-# Fit a M_tbh model to the Perom data:
-(pdata <- aux.posbernoulli.t(with(Perom, cbind(y1, y2, y3, y4, y5, y6))))
+# Fit a M_tbh model to the deermice data:
+(pdata <- aux.posbernoulli.t(with(deermice, cbind(y1, y2, y3, y4, y5, y6))))
 
-Perom <- data.frame(Perom,
+deermice <- data.frame(deermice,
                     bei = 0,  # Add this
-                    pdata$cap.hist1) # Incorporate these
-head(Perom)  # Augmented with behavioural effect indicator variables
-tail(Perom)
+                    pdata$cap.hist1)  # Incorporate these
+head(deermice)  # Augmented with behavioural effect indicator variables
+tail(deermice)
 }
 \keyword{models}
 \keyword{regression}

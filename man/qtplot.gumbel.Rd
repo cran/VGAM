@@ -7,7 +7,7 @@
   Plots quantiles associated with a Gumbel model.
 }
 \usage{
-qtplot.gumbel(object, plot.it = TRUE,
+qtplot.gumbel(object, show.plot = TRUE,
     y.arg = TRUE, spline.fit = FALSE, label = TRUE,
     R = object@misc$R, percentiles = object@misc$percentiles,
     add.arg = FALSE, mpv = object@misc$mpv,
@@ -25,7 +25,7 @@ qtplot.gumbel(object, plot.it = TRUE,
   \code{"gumbel"} or \code{"egumbel"}.
 
   }
-  \item{plot.it}{
+  \item{show.plot}{
   Logical. Plot it? If \code{FALSE} no plot will be done.
 
 
@@ -86,7 +86,7 @@ qtplot.gumbel(object, plot.it = TRUE,
 \value{
   The object with a list called \code{qtplot} in the \code{post}
   slot of \code{object}.
-  (If \code{plot.it = FALSE} then just the list is returned.)
+  (If \code{show.plot = FALSE} then just the list is returned.)
   The list contains components
   \item{fitted.values}{
   The percentiles of the response,

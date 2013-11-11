@@ -82,11 +82,11 @@ probit(theta, bvalue = NULL, inverse = FALSE, deriv = 0,
 \examples{
 p <- seq(0.01, 0.99, by = 0.01)
 probit(p)
-max(abs(probit(probit(p), inverse = TRUE) - p)) # Should be 0
+max(abs(probit(probit(p), inverse = TRUE) - p))  # Should be 0
 
 p <- c(seq(-0.02, 0.02, by = 0.01), seq(0.97, 1.02, by = 0.01))
-probit(p) # Has NAs
-probit(p, bvalue = .Machine$double.eps) # Has no NAs
+probit(p)  # Has NAs
+probit(p, bvalue = .Machine$double.eps)  # Has no NAs
 
 \dontrun{p <- seq(0.01, 0.99, by = 0.01); par(lwd = (mylwd <- 2))
 plot(p, logit(p), type = "l", col = "limegreen", ylab = "transformation",

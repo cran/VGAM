@@ -14,17 +14,22 @@
 
 
 
+
+
+
+
+
 calibrate.qrrvglm.control <-
   function(object,
            trace = FALSE,  # passed into optim()
            Method.optim = "BFGS",   # passed into optim(method = Method)
            gridSize = if (Rank == 1) 9 else 5,
-         varlvI = FALSE, ...) {
+         varI.latvar = FALSE, ...) {
 
   Rank <- object@control$Rank
   EqualTolerances <- object@control$EqualTolerances
   if (!is.Numeric(gridSize, positive = TRUE,
-                  integer.valued = TRUE, allowable.length = 1))
+                  integer.valued = TRUE, length.arg = 1))
     stop("bad input for 'gridSize'")
   if (gridSize < 2)
     stop("'gridSize' must be >= 2")
@@ -33,19 +38,24 @@ calibrate.qrrvglm.control <-
        trace = as.numeric(trace)[1],
        Method.optim = Method.optim,
        gridSize = gridSize,
-       varlvI = as.logical(varlvI)[1])
+       varI.latvar = as.logical(varI.latvar)[1])
 }
 
 
-if(!isGeneric("calibrate"))
+
+
+if (!isGeneric("calibrate"))
     setGeneric("calibrate",
                function(object, ...) standardGeneric("calibrate"))
 
 
+ 
+ 
+ 
 calibrate.qrrvglm <-
   function(object, 
            newdata = NULL,
-           type = c("lv", "predictors", "response", "vcov", "all3or4"),
+           type = c("latvar", "predictors", "response", "vcov", "all3or4"),
            initial.vals = NULL, ...) {
 
 
@@ -60,7 +70,7 @@ calibrate.qrrvglm <-
 
   if (mode(type) != "character" && mode(type) != "name")
     type <- as.character(substitute(type))
-  type <- match.arg(type, c("lv", "predictors",
+  type <- match.arg(type, c("latvar", "predictors",
                             "response", "vcov", "all3or4"))[1]
 
   if (!Quadratic && type == "vcov")
@@ -71,33 +81,40 @@ calibrate.qrrvglm <-
     newdata <- rbind(newdata)
   if (!is.matrix(newdata))
     newdata <- as.matrix(newdata)
-  newdata <- newdata[,object@misc$ynames,drop = FALSE]
+  newdata <- newdata[, object@misc$ynames, drop = FALSE]
 
   obfunct <- slot(object@family, object@misc$criterion)
-  minimize.obfunct <- if (Quadratic) object@control$min.criterion else
+  minimize.obfunct <-
+    if (Quadratic) object@control$min.criterion else
     TRUE  # Logical; TRUE for CAO objects because deviance is minimized
   if (!is.logical(minimize.obfunct)) 
     stop("object@control$min.criterion is not a logical")
   optim.control <- calibrate.qrrvglm.control(object = object, ...)
 
+  use.optim.control <- optim.control
+  use.optim.control$Method.optim <-
+  use.optim.control$gridSize <-
+  use.optim.control$varI.latvar <- NULL
+
+
   if ((Rank <- object@control$Rank) > 2)
     stop("currently can only handle Rank = 1 and 2")
   Coefobject <- if (Quadratic) {
-    Coef(object, varlvI = optim.control$varlvI)
+    Coef(object, varI.latvar = optim.control$varI.latvar)
   } else {
     Coef(object)
   }
   if (!length(initial.vals)) {
-    L <- apply(Coefobject@lv, 2, min)
-    U <- apply(Coefobject@lv, 2, max)
+    L <- apply(Coefobject@latvar, 2, min)
+    U <- apply(Coefobject@latvar, 2, max)
     initial.vals <- if (Rank == 1)
         cbind(seq(L, U, length = optim.control$gridSize)) else
         expand.grid(seq(L[1], U[1], length = optim.control$gridSize),
                     seq(L[2], U[2], length = optim.control$gridSize))
   }
-  ok <- length(object@control$colx1.index) == 1 &&
-        names(object@control$colx1.index) == "(Intercept)"
-  if (!ok)
+  okay <- length(object@control$colx1.index) == 1 &&
+           names(object@control$colx1.index) == "(Intercept)"
+  if (!okay)
     stop("The x1 vector must be an intercept only")
 
   nn <- nrow(newdata)
@@ -110,26 +127,26 @@ calibrate.qrrvglm <-
     for (ii in 1:nrow(initial.vals)) {
       if (optim.control$trace) {
         cat("Starting from grid-point", ii, ":")
-          flush.console()
+        flush.console()
       }
       ans <- if (Quadratic)
         optim(par = initial.vals[ii, ],
               fn = .my.calib.objfunction.qrrvglm,
               method = optim.control$Method.optim,  # "BFGS" or "CG" or...
-              control = c(fnscale = ifelse(minimize.obfunct, 1,- 1),
-                          optim.control),
+              control = c(fnscale = ifelse(minimize.obfunct, 1, -1),
+                          use.optim.control),
               y = newdata[i1, ],
               extra = object@extra,
               objfun = obfunct,
               Coefs = Coefobject,
               misc.list = object@misc,
               everything = FALSE,
-              mu.function = slot(object@family, "inverse")) else
+              mu.function = slot(object@family, "linkinv")) else
         optim(par = initial.vals[ii, ],
               fn = .my.calib.objfunction.cao,
               method = optim.control$Method.optim,  # "BFGS" or "CG" or...
               control = c(fnscale = ifelse(minimize.obfunct, 1, -1),
-                          optim.control),
+                          use.optim.control),
               y = newdata[i1, ],
               extra = object@extra,
                 objfun = obfunct,
@@ -137,7 +154,7 @@ calibrate.qrrvglm <-
                 Coefs = Coefobject,
                 misc.list = object@misc,
                 everything = FALSE,
-                mu.function = slot(object@family, "inverse"))
+                mu.function = slot(object@family, "linkinv"))
 
         if (optim.control$trace) {
           if (ans$convergence == 0)
@@ -175,12 +192,12 @@ calibrate.qrrvglm <-
     } else
       dimnames(BestOFpar) <-
         list(dimnames(newdata)[[1]],
-             if (Rank == 1) "lv" else
-                            paste("lv", 1:Rank, sep = ""))
+             if (Rank == 1) "latvar" else
+                            paste("latvar", 1:Rank, sep = ""))
     BestOFpar
   }
 
-  if (type == "lv") {
+  if (type == "latvar") {
     BestOFpar <- pretty(BestOFpar, newdata, Rank)
     attr(BestOFpar,"objectiveFunction") <-
       pretty(BestOFvalues,
@@ -199,7 +216,7 @@ calibrate.qrrvglm <-
                     Coefs = Coefobject,
                     misc.list = object@misc,
                     everything = TRUE,
-                    mu.function = slot(object@family, "inverse")) else
+                    mu.function = slot(object@family, "linkinv")) else
             .my.calib.objfunction.cao(BestOFpar[i1, ],
                     y = newdata[i1, ],
                     extra = object@extra,
@@ -208,7 +225,7 @@ calibrate.qrrvglm <-
                     Coefs = Coefobject,
                     misc.list = object@misc,
                     everything = TRUE,
-                    mu.function = slot(object@family, "inverse"))
+                    mu.function = slot(object@family, "linkinv"))
       muValues <- rbind(muValues, matrix(ans$mu, nrow = 1))
       etaValues <- rbind(etaValues, matrix(ans$eta, nrow = 1))
       if (Quadratic)
@@ -219,34 +236,37 @@ calibrate.qrrvglm <-
        muValues
     } else if (type == "predictors") {
        dimnames(etaValues) <- list(dimnames(newdata)[[1]],
-                                  dimnames(object@predictors)[[2]])
+                                   dimnames(object@predictors)[[2]])
        etaValues
     } else if (type == "vcov") {
        if (Quadratic)
-       dimnames(vcValues) <- list(as.character(1:Rank), 
-                                 as.character(1:Rank),
-                                 dimnames(newdata)[[1]])
+         dimnames(vcValues) <- list(as.character(1:Rank), 
+                                    as.character(1:Rank),
+                                    dimnames(newdata)[[1]])
        vcValues
     } else if (type == "all3or4") {
        if (Quadratic)
-       dimnames(vcValues) <- list(as.character(1:Rank), 
-                                 as.character(1:Rank),
-                                 dimnames(newdata)[[1]])
+         dimnames(vcValues) <- list(as.character(1:Rank), 
+                                    as.character(1:Rank),
+                                    dimnames(newdata)[[1]])
        dimnames(muValues) <- dimnames(newdata)
        dimnames(etaValues) <- list(dimnames(newdata)[[1]],
-                                  dimnames(object@predictors)[[2]])
+                                   dimnames(object@predictors)[[2]])
        BestOFpar <- pretty(BestOFpar, newdata, Rank)
        attr(BestOFpar,"objectiveFunction") <-
             pretty(BestOFvalues,newdata,Rank = 1)
-       list(lv = BestOFpar,
+       list(latvar     = BestOFpar,
             predictors = etaValues,
-            response = muValues,
-            vcov = if(Quadratic) vcValues else NULL)
-    } else stop("type not matched")
+            response   = muValues,
+            vcov       = if (Quadratic) vcValues else NULL)
+    } else stop("argument 'type' not matched")
   }
 }
 
 
+
+
+ 
 
 
 .my.calib.objfunction.qrrvglm <-
@@ -291,6 +311,8 @@ calibrate.qrrvglm <-
 
 
 
+ 
+
 .my.calib.objfunction.cao <-
   function(bnu, y, extra = NULL,
            objfun, object, Coefs,
@@ -318,11 +340,10 @@ calibrate.qrrvglm <-
 }
 
 
+
+
 setMethod("calibrate", "qrrvglm", function(object, ...)
           calibrate.qrrvglm(object, ...))
-
-
-
 
 
 

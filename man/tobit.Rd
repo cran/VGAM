@@ -182,12 +182,12 @@ meanfun2 <- function(x) 2 + 2*x
 meanfun3 <- function(x) 2 + 2*x
 meanfun4 <- function(x) 3 + 2*x
 tdata <- transform(tdata,
-  y1 = rtobit(nn, mean = meanfun1(x2)), # Standard Tobit model 
+  y1 = rtobit(nn, mean = meanfun1(x2)),  # Standard Tobit model 
   y2 = rtobit(nn, mean = meanfun2(x2), Lower = Lower, Upper = Upper),
   y3 = rtobit(nn, mean = meanfun3(x2), Lower = Lower.vec, Upper = Upper.vec),
   y4 = rtobit(nn, mean = meanfun3(x2), Lower = Lower.vec, Upper = Upper.vec))
-with(tdata, table(y1 == 0)) # How many censored values?
-with(tdata, table(y2 == Lower | y2 == Upper)) # How many censored values?
+with(tdata, table(y1 == 0))  # How many censored values?
+with(tdata, table(y2 == Lower | y2 == Upper))  # How many censored values?
 with(tdata, table(attr(y2, "cenL")))
 with(tdata, table(attr(y2, "cenU")))
 
@@ -205,7 +205,7 @@ coef(fit2, matrix = TRUE)
 fit3 <- vglm(y3 ~ x2,
             tobit(Lower = with(tdata, Lower.vec),
                   Upper = with(tdata, Upper.vec), type.f = "cens"),
-            tdata, crit = "coeff", trace = TRUE) # ditto
+            tdata, crit = "coeff", trace = TRUE)  # ditto
 table(fit3@extra$censoredL)
 table(fit3@extra$censoredU)
 coef(fit3, matrix = TRUE)
@@ -214,7 +214,7 @@ coef(fit3, matrix = TRUE)
 fit4 <- vglm(cbind(y3, y4) ~ x2,
             tobit(Lower = rep(with(tdata, Lower.vec), each = 2),
                   Upper = rep(with(tdata, Upper.vec), each = 2)),
-            tdata, crit = "coeff", trace = TRUE) # ditto
+            tdata, crit = "coeff", trace = TRUE)  # ditto
 head(fit4@extra$censoredL)  # A matrix
 head(fit4@extra$censoredU)  # A matrix
 head(fit4@misc$Lower)       # A matrix

@@ -40,7 +40,7 @@
 
 
 
-  if (!is.Numeric(mux.offdiagonal, allowable.length = 1) ||
+  if (!is.Numeric(mux.offdiagonal, length.arg = 1) ||
       mux.offdiagonal >= 1 ||
       mux.offdiagonal <  0)
     stop("argument 'mux.offdiagonal' must be in the interval [0, 1)")
@@ -61,7 +61,7 @@
            ))),
 
   initialize = eval(substitute(expression({
-    eval(binomialff(link = .link0 )@initialize) # w, y, mustart are assigned
+    eval(binomialff(link = .link0 )@initialize)  # w, y, mustart are assigned
 
 
     predictors.names <-
@@ -184,9 +184,9 @@
     ned2l.dmu2 <- 1 / (mymu * (1-mymu))
     ned2l.dprob02     <- ned2l.dmu2 * dmu.dprob0^2
     ned2l.dprob12     <- ned2l.dmu2 * dmu.dprob1^2
-    ned2l.dprob1prob2 <-              ( 1) # seems sort of ok but slow cvgc
-    ned2l.dprob1prob2 <-              ( 0) # kill it
-    ned2l.dprob1prob2 <- ned2l.dmu2 * ( 1) # dont seem to work
+    ned2l.dprob1prob2 <-              ( 1)  # seems sort of ok but slow cvgc
+    ned2l.dprob1prob2 <-              ( 0)  # kill it
+    ned2l.dprob1prob2 <- ned2l.dmu2 * ( 1)  # dont seem to work
 
     ned2l.dprob1prob2 <- ned2l.dmu2 * dmu.dprob1 * dmu.dprob0 *
                          .mux.offdiagonal
@@ -218,10 +218,10 @@
 
 
 if (FALSE)
- Abbott <- function(lprob1 = elogit(min = 0, max = 1), # For now, that is
+ Abbott <- function(lprob1 = elogit(min = 0, max = 1),  # For now, that is
                    lprob0 = "logit",
                    iprob0 = NULL, iprob1 = NULL,
-                   nointercept = 2, # NULL,
+                   nointercept = 2,  # NULL,
                    zero = 1) {
 
 
@@ -258,7 +258,7 @@ if (FALSE)
   initialize = eval(substitute(expression({
  print("here1")
 
-    eval(binomialff(link = .lprob1)@initialize) # w, y, mustart are assigned
+    eval(binomialff(link = .lprob1)@initialize)  # w, y, mustart are assigned
 
  print("here2")
  print("summary(mustart)")
@@ -388,19 +388,19 @@ abbott.EM.control <- function(maxit = 1000, ...) {
   link <- attr(earg, "function.name")
 
 
-  if (!is.Numeric(b1.arg, # allowable.length = 1,
+  if (!is.Numeric(b1.arg,  # length.arg = 1,
                   integer.valued = TRUE) ||
       b1.arg < 0)
     stop("argument 'b1.arg' must be a vector of non-negative integers")
 
 
-  if (!is.Numeric(b2.arg, # allowable.length = 1,
+  if (!is.Numeric(b2.arg,  # length.arg = 1,
                   integer.valued = TRUE) ||
       b2.arg < 0)
     stop("argument 'b2.arg' must be a vector of non-negative integers")
 
 
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
      imethod > 3)
     stop("argument 'imethod' must be 1 or 2 or 3")

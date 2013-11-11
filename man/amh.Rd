@@ -1,7 +1,7 @@
 \name{amh}
 \alias{amh}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{ Ali-Mikhail-Haq Distribution Distribution Family Function }
+\title{ Ali-Mikhail-Haq Distribution Family Function }
 \description{
   Estimate the association parameter of
   Ali-Mikhail-Haq's bivariate

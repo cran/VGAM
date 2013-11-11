@@ -1,10 +1,10 @@
 Package: VGAM
-Version: 0.9-2
-Date: 2013-09-20
+Version: 0.9-3
+Date: 2013-11-11
 Title: Vector Generalized Linear and Additive Models
 Author: Thomas W. Yee <t.yee@auckland.ac.nz>
 Maintainer: Thomas Yee <t.yee@auckland.ac.nz>
-Depends: R (>= 2.15.1), methods, splines, stats, stats4
+Depends: R (>= 3.0.0), methods, splines, stats, stats4
 Suggests: VGAMdata, MASS
 Description: Vector generalized linear and additive models, and
     associated models (Reduced-Rank VGLMs, Quadratic RR-VGLMs,
@@ -16,7 +16,7 @@ License: GPL-2
 URL: http://www.stat.auckland.ac.nz/~yee/VGAM
 LazyLoad: yes
 LazyData: yes
-Packaged: 2013-09-20 09:58:29 UTC; tyee001
+Packaged: 2013-11-11 08:56:33 UTC; tyee001
 NeedsCompilation: yes
 Repository: CRAN
-Date/Publication: 2013-09-20 12:37:58
+Date/Publication: 2013-11-11 10:44:08

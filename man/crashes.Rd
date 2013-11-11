@@ -39,7 +39,8 @@ data(alclevels)
 
     }
 
-    \item{0-30, 31-50, 51-80, 81-100, 101-120, 121-150, 151-200, 201-250, 251-300, 301-350, 350+}{
+    \item{0-30, 31-50, 51-80, 81-100, 101-120, 121-150, 151-200,
+          201-250, 251-300, 301-350, 350+}{
     Blood alcohol level (milligrams alcohol per 100 millilitres of blood).
 
 
@@ -59,7 +60,8 @@ data(alclevels)
      
   For crashes,
      \code{chrashi} are the number of injuries by car,
-     \code{crashf}  are the number of fatalities by car (not included in \code{chrashi}),
+     \code{crashf}  are the number of fatalities by car
+     (not included in \code{chrashi}),
      \code{crashtr} are the number of crashes involving trucks, 
      \code{crashmc} are the number of crashes involving motorcyclists,
      \code{crashbc} are the number of crashes involving bicycles,
@@ -80,11 +82,13 @@ data(alclevels)
 
 }
 \references{
+
   Motor Vehicles Crashes in New Zealand 2009;
   Statistical Statement Calendar Year 2009.
   Ministry of Transport, NZ Government;
   Yearly Report 2010.
   ISSN: 1176-3949
+
 
 }
 \seealso{
@@ -108,7 +112,7 @@ abline(v = sort(1 + c((0:7) * 24, (0:6) * 24 + 12)), lty = "dashed",
 
 # Goodmans RC models
 \dontrun{
-fitgrc1 <- grc(alcoff) # Rank-1 model
+fitgrc1 <- grc(alcoff)  # Rank-1 model
 fitgrc2 <- grc(alcoff, Rank = 2, Corner = FALSE, Uncor = TRUE)
 Coef(fitgrc2)
 }

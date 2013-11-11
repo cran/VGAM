@@ -144,7 +144,7 @@ cdata1 <- transform(cdata1, loc = exp(1+0.5*x), scale = exp(1))
 cdata1 <- transform(cdata1, y = rcauchy(nn, loc, scale))
 fit <- vglm(y ~ x, cauchy(lloc = "loge"), cdata1, trace = TRUE)
 coef(fit, matrix = TRUE)
-head(fitted(fit)) # Location estimates
+head(fitted(fit))  # Location estimates
 summary(fit)
 
 # Location parameter unknown

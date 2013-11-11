@@ -102,26 +102,26 @@ rrvglm <- function(formula,
                         Terms = mt, function.name = function.name, ...)
 
     if (control$Bestof > 1) {
-        deviance.Bestof <- rep(fit$crit.list$deviance, len= control$Bestof)
-        for(tries in 2:control$Bestof) {
-             if (control$trace && (control$Bestof>1))
-             cat(paste("\n========================= Fitting model", tries,
-                         "=========================\n\n"))
-             it <- rrvglm.fitter(x = x, y = y, w = w, offset = offset, 
-                       etastart = etastart, mustart = mustart,
-                       coefstart = coefstart,
-                       family = family, 
-                       control = control,
-                       constraints = constraints,
-                       criterion = control$criterion,
-                       extra = extra,
-                       qr.arg = qr.arg,
-                       Terms = mt, function.name = function.name, ...)
-            deviance.Bestof[tries] <- it$crit.list$deviance
-            if (min(deviance.Bestof[1:(tries-1)]) > deviance.Bestof[tries])
-              fit <- it
-        }
-        fit$misc$deviance.Bestof = deviance.Bestof
+      deviance.Bestof <- rep(fit$crit.list$deviance, len= control$Bestof)
+      for (tries in 2:control$Bestof) {
+         if (control$trace && (control$Bestof>1))
+           cat(paste("\n========================= Fitting model", tries,
+                       "=========================\n\n"))
+         it <- rrvglm.fitter(x = x, y = y, w = w, offset = offset, 
+                   etastart = etastart, mustart = mustart,
+                   coefstart = coefstart,
+                   family = family, 
+                   control = control,
+                   constraints = constraints,
+                   criterion = control$criterion,
+                   extra = extra,
+                   qr.arg = qr.arg,
+                   Terms = mt, function.name = function.name, ...)
+        deviance.Bestof[tries] <- it$crit.list$deviance
+        if (min(deviance.Bestof[1:(tries-1)]) > deviance.Bestof[tries])
+          fit <- it
+      }
+      fit$misc$deviance.Bestof = deviance.Bestof
     }
 
     fit$misc$dataname <- dataname
@@ -132,7 +132,7 @@ rrvglm <- function(formula,
     }
 
     answer <-
-    new(if(control$Quadratic) "qrrvglm" else "rrvglm",
+    new(if (control$Quadratic) "qrrvglm" else "rrvglm",
       "assign"       = attr(x, "assign"),
       "call"         = ocall,
       "coefficients" = fit$coefficients,
@@ -182,7 +182,7 @@ rrvglm <- function(formula,
             warning("\"extra\" is not a list, therefore placing \"extra\" into a list")
             list(fit$extra)
         }
-    } else list() # R-1.5.0
+    } else list()  # R-1.5.0
 
     slot(answer, "iter") = fit$iter
     fit$predictors = as.matrix(fit$predictors)  # Must be a matrix 

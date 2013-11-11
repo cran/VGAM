@@ -251,7 +251,7 @@ untransformVGAM <- function(object, pred) {
 
 
 
-  for(ii in 1:M) {
+  for (ii in 1:M) {
     TTheta <- pred[, ii]  # Transformed theta
 
 

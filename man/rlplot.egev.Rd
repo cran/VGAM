@@ -8,7 +8,7 @@
 
 }
 \usage{
-rlplot.egev(object, plot.it = TRUE,
+rlplot.egev(object, show.plot = TRUE,
     probability = c((1:9)/100, (1:9)/10, 0.95, 0.99, 0.995, 0.999),
     add.arg = FALSE, xlab = "Return Period", ylab = "Return Level",
     main = "Return Level Plot",
@@ -26,7 +26,7 @@ rlplot.egev(object, plot.it = TRUE,
     \code{"gev"} or \code{"egev"}.
 
   }
-  \item{plot.it}{
+  \item{show.plot}{
   Logical. Plot it? If \code{FALSE} no plot will be done.
 
   }
@@ -147,8 +147,8 @@ par(mfrow = c(1, 2))
 rlplot(fit) -> i1
 rlplot(fit2, pcol = "darkorange", lcol = "blue", log = FALSE,
        scol = "darkgreen", slty = "dashed", las = 1) -> i2
-range(i2@post$rlplot$upper - i1@post$rlplot$upper) # Should be near 0
-range(i2@post$rlplot$lower - i1@post$rlplot$lower) # Should be near 0
+range(i2@post$rlplot$upper - i1@post$rlplot$upper)  # Should be near 0
+range(i2@post$rlplot$lower - i1@post$rlplot$lower)  # Should be near 0
 }
 }
 \keyword{graphs}

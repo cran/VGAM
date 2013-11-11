@@ -28,7 +28,7 @@ subset.lohi <- function(xvec, yvec,
                         wtvec = rep(1, len = length(xvec))) {
 
 
-  if (!is.Numeric(probs.x, allowable.length = 2))
+  if (!is.Numeric(probs.x, length.arg = 2))
     stop("argument 'probs.x' must be numeric and of length two")
 
   min.q <- quantile(xvec, probs = probs.x[1] )
@@ -93,10 +93,10 @@ micmen.control <- function(save.weight = TRUE, ...) {
 
   firstDeriv <- match.arg(firstDeriv, c("nsimEIM", "rpar"))[1]
 
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE))
     stop("argument 'imethod' must be integer")
-  if (!is.Numeric(probs.x, allowable.length = 2))
+  if (!is.Numeric(probs.x, length.arg = 2))
     stop("argument 'probs.x' must be numeric and of length two")
   if (!is.logical(oim) || length(oim) != 1)
     stop("argument 'oim' must be single logical")
@@ -104,7 +104,7 @@ micmen.control <- function(save.weight = TRUE, ...) {
     stopifnot(nsimEIM > 10, length(nsimEIM) == 1,
               nsimEIM == round(nsimEIM))
 
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
      imethod > 3)
     stop("'imethod' must be 1 or 2 or 3")
@@ -159,7 +159,7 @@ micmen.control <- function(save.weight = TRUE, ...) {
     if (ncol(as.matrix(Xm2)) != 1)
       stop("regressor not found or is not a vector. Use the ",
            "'form2' argument without an intercept")
-    Xm2 <- as.vector(Xm2) # Make sure
+    Xm2 <- as.vector(Xm2)  # Make sure
     extra$Xm2 <- Xm2          # Needed for @linkinv
 
     predictors.names <-
@@ -377,7 +377,7 @@ skira.control <- function(save.weight = TRUE, ...) {
 
   firstDeriv <- match.arg(firstDeriv, c("nsimEIM", "rpar"))[1]
 
-  if (!is.Numeric(probs.x, allowable.length = 2))
+  if (!is.Numeric(probs.x, length.arg = 2))
     stop("argument 'probs.x' must be numeric and of length two")
 
   estimated.dispersion <- dispersion == 0
@@ -386,7 +386,7 @@ skira.control <- function(save.weight = TRUE, ...) {
   if (mode(link2) != "character" && mode(link2) != "name")
     link2 <- as.character(substitute(link2))
 
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE))
     stop("argument 'imethod' must be integer")
 

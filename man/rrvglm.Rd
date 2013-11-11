@@ -145,7 +145,7 @@ Regression and ordered categorical variables.
 \bold{46}, 1--30.
 
 
-  Yee, T. W. (2013)
+  Yee, T. W. (2014)
   Reduced-rank vector generalized linear models with two linear predictors.
   \emph{Computational Statistics and Data Analysis}.
 
@@ -203,10 +203,8 @@ Regression and ordered categorical variables.
 
 \seealso{
     \code{\link{rrvglm.control}},
-%   \code{\link{qrrvglm.control}},
     \code{\link{lvplot.rrvglm}}
     (same as \code{\link{biplot.rrvglm}}),
-%   \code{\link{vcovqrrvglm}},
     \code{\link{rrvglm-class}},
     \code{\link{grc}},
     \code{\link{cqo}},
@@ -219,13 +217,20 @@ Regression and ordered categorical variables.
     \code{\link{negbinomial}}
     \code{\link{zipoisson}}
     and \code{\link{zinegbinomial}}.
-    (see Yee (2012) and \pkg{COZIGAM}).
+    (see Yee (2014) and \pkg{COZIGAM}).
     Methods functions include
     \code{\link{Coef.rrvglm}},
     \code{summary.rrvglm},
     etc.
     Data include
     \code{\link{crashi}}.
+
+
+%   \code{\link{qrrvglm.control}},
+%   \code{\link{vcovqrrvglm}},
+
+
+
 
 }
 
@@ -248,7 +253,7 @@ beta11.hat <- Coef(rrnb2)@B1["(Intercept)", "log(mu)"]
 beta21.hat <- Coef(rrnb2)@B1["(Intercept)", "log(size)"]
 (delta1.hat <- exp(a21.hat * beta11.hat - beta21.hat))
 (delta2.hat <- 2 - a21.hat)
-# exp(a21.hat * predict(rrnb2)[1,1] - predict(rrnb2)[1,2]) # delta1.hat
+# exp(a21.hat * predict(rrnb2)[1,1] - predict(rrnb2)[1,2])  # delta1.hat
 summary(rrnb2)
 
 # Obtain a 95 percent confidence interval for delta2:
@@ -283,7 +288,7 @@ fit <- rrvglm(Country ~ Width + Weight + Disp. + Tank + Price + Frt.Leg.Room,
 fit@misc$deviance  # A history of the fits
 Coef(fit)
 biplot(fit, chull = TRUE, scores = TRUE, clty = 2, Ccex = 2,
-       ccol = "blue", scol = "red", Ccol = "darkgreen", Clwd = 2,
+       ccol = "blue", scol = "orange", Ccol = "darkgreen", Clwd = 2,
        main = "1=Germany, 2=Japan, 3=Korea, 4=USA")
 }
 }

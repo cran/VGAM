@@ -72,7 +72,7 @@ abline(h = 1, col = "grey", lty = "dashed") }
 
 
 % probs <- seq(0.01, 0.99, by = 0.01)
-% max(abs(plind(qlind(p = probs, theta), theta) - probs)) # Should be 0
+% max(abs(plind(qlind(p = probs, theta), theta) - probs))  # Should be 0
 
 
 

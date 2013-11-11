@@ -98,7 +98,7 @@ rgumbelII <- function(n, shape, scale = 1) {
   function(lshape = "loge", lscale = "loge",
            ishape = NULL,   iscale = NULL,
            probs.y = c(0.2, 0.5, 0.8),
-           perc.out = NULL, # 50,
+           perc.out = NULL,  # 50,
            imethod = 1, zero = -2)
 {
 
@@ -115,7 +115,7 @@ rgumbelII <- function(n, shape, scale = 1) {
   if (length(zero) &&
       !is.Numeric(zero, integer.valued = TRUE))
     stop("bad input for argument 'zero'")
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
       imethod > 2)
     stop("argument 'imethod' must be 1 or 2")
@@ -635,7 +635,7 @@ perks.control <- function(save.weight = TRUE, ...) {
   lscale <- attr(escale, "function.name")
 
 
-  if (!is.Numeric(nsimEIM, allowable.length = 1,
+  if (!is.Numeric(nsimEIM, length.arg = 1,
                   integer.valued = TRUE))
     stop("bad input for argument 'nsimEIM'")
   if (nsimEIM <= 50)
@@ -831,7 +831,7 @@ perks.control <- function(save.weight = TRUE, ...) {
     NOS <- M / Musual
     dThetas.detas <- dthetas.detas[, interleave.VGAM(M, M = Musual)]
 
-    wz <- matrix(0.0, n, M + M - 1) # wz is 'tridiagonal' 
+    wz <- matrix(0.0, n, M + M - 1)  # wz is 'tridiagonal' 
 
     ind1 <- iam(NA, NA, M = Musual, both = TRUE, diag = TRUE)
 
@@ -1009,7 +1009,7 @@ makeham.control <- function(save.weight = TRUE, ...) {
 
  makeham <-
   function(lshape = "loge", lscale = "loge", lepsilon = "loge",
-           ishape = NULL,   iscale = NULL,   iepsilon = NULL, # 0.3,
+           ishape = NULL,   iscale = NULL,   iepsilon = NULL,  # 0.3,
            gshape = exp(-5:5),
            gscale = exp(-5:5),
            gepsilon = exp(-4:1),
@@ -1037,7 +1037,7 @@ makeham.control <- function(save.weight = TRUE, ...) {
   eepsil <- link2list(lepsil)
   lepsil <- attr(eepsil, "function.name")
 
-  if (!is.Numeric(nsimEIM, allowable.length = 1,
+  if (!is.Numeric(nsimEIM, length.arg = 1,
                   integer.valued = TRUE))
     stop("bad input for argument 'nsimEIM'")
   if (nsimEIM <= 50)
@@ -1293,7 +1293,7 @@ makeham.control <- function(save.weight = TRUE, ...) {
     NOS <- M / Musual
     dThetas.detas <- dthetas.detas[, interleave.VGAM(M, M = Musual)]
 
-    wz <- matrix(0.0, n, M + M - 1 + M - 2) # wz has half-bw 3
+    wz <- matrix(0.0, n, M + M - 1 + M - 2)  # wz has half-bw 3
 
     ind1 <- iam(NA, NA, M = Musual, both = TRUE, diag = TRUE)
 
@@ -1497,7 +1497,7 @@ gompertz.control <- function(save.weight = TRUE, ...) {
 
 
 
-  if (!is.Numeric(nsimEIM, allowable.length = 1,
+  if (!is.Numeric(nsimEIM, length.arg = 1,
                   integer.valued = TRUE))
     stop("bad input for argument 'nsimEIM'")
   if (nsimEIM <= 50)
@@ -1686,7 +1686,7 @@ gompertz.control <- function(save.weight = TRUE, ...) {
     NOS <- M / Musual
     dThetas.detas <- dthetas.detas[, interleave.VGAM(M, M = Musual)]
 
-    wz <- matrix(0.0, n, M + M - 1) # wz is 'tridiagonal' 
+    wz <- matrix(0.0, n, M + M - 1)  # wz is 'tridiagonal' 
 
     ind1 <- iam(NA, NA, M = Musual, both = TRUE, diag = TRUE)
 
@@ -1827,7 +1827,7 @@ exponential.mo.control <- function(save.weight = TRUE, ...) {
 
 
 
-  if (!is.Numeric(nsimEIM, allowable.length = 1,
+  if (!is.Numeric(nsimEIM, length.arg = 1,
                   integer.valued = TRUE))
     stop("bad input for argument 'nsimEIM'")
   if (nsimEIM <= 50)
@@ -1842,7 +1842,7 @@ exponential.mo.control <- function(save.weight = TRUE, ...) {
       stop("argument 'ilambda' values must be positive")
 
 
-  if (!is.Numeric(imethod, allowable.length = 1,
+  if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
      imethod > 2)
     stop("argument 'imethod' must be 1 or 2")
@@ -2015,7 +2015,7 @@ exponential.mo.control <- function(save.weight = TRUE, ...) {
     NOS <- M / Musual
     dThetas.detas <- dthetas.detas[, interleave.VGAM(M, M = Musual)]
 
-    wz <- matrix(0.0, n, M + M - 1) # wz is 'tridiagonal' 
+    wz <- matrix(0.0, n, M + M - 1)  # wz is 'tridiagonal' 
 
     ind1 <- iam(NA, NA, M = Musual, both = TRUE, diag = TRUE)
 
@@ -2270,7 +2270,7 @@ if (ii < 3) {
     ned2l.dscaleq <- -aa * parg / (scale*(parg+qq))
     ned2l.dpq <- -temp5
 
-    wz <- matrix(as.numeric(NA), n, dimm(M)) # M==4 means 10=dimm(M)
+    wz <- matrix(as.numeric(NA), n, dimm(M))  # M==4 means 10=dimm(M)
     wz[, iam(1, 1, M)] <- ned2l.da * da.deta^2
     wz[, iam(2, 2, M)] <- ned2l.dscale * dscale.deta^2
     wz[, iam(3, 3, M)] <- ned2l.dp * dp.deta^2
@@ -2502,7 +2502,7 @@ dsinmad <- function(x, shape1.a, scale = 1, shape3.q, log = FALSE) {
   shape3.q <- rep(shape3.q,  length.out = LLL)
 
   Loglik <- rep(log(0), length.out = LLL)
-  xok <- (x > 0) & !is.na(x) # Avoids log(x) if x<0, and handles NAs
+  xok <- (x > 0) & !is.na(x)  # Avoids log(x) if x<0, and handles NAs
   Loglik[xok] <- log(shape1.a[xok]) + log(shape3.q[xok]) +
                  (shape1.a[xok]-1) * log(x[xok]) -
                 shape1.a[xok] * log(scale[xok]) -
@@ -2544,7 +2544,7 @@ ddagum <- function(x, shape1.a, scale = 1, shape2.p, log = FALSE) {
   shape2.p <- rep(shape2.p, length.out = LLL)
 
   Loglik <- rep(log(0), length.out = LLL)
-  xok <- (x > 0) & !is.na(x) # Avoids log(x) if x<0, and handles NAs
+  xok <- (x > 0) & !is.na(x)  # Avoids log(x) if x<0, and handles NAs
   Loglik[xok] <- log(shape1.a[xok]) +
                  log(shape2.p[xok]) +
                  (shape1.a[xok] * shape2.p[xok]-1) * log(    x[xok]) -
@@ -2627,7 +2627,7 @@ dinvparalogistic <- function(x, shape1.a, scale = 1, log = FALSE)
     parg <- 1
 
     if (!length( .ishape1.a) || !length( .iscale )) {
-        qvec <- c( .25, .5, .75) # Arbitrary; could be made an argument
+        qvec <- c( .25, .5, .75)  # Arbitrary; could be made an argument
         ishape3.q <- if (length( .ishape3.q)) .ishape3.q else 1
         xvec <- log( (1-qvec)^(-1/ ishape3.q ) - 1 )
         fit0 <- lsfit(x = xvec, y = log(quantile(y, qvec )))
@@ -2745,7 +2745,7 @@ dinvparalogistic <- function(x, shape1.a, scale = 1, log = FALSE)
     ned2l.daq <- -(parg * (temp3b -temp3a) -1) / (aa*(parg+qq))
     ned2l.dscaleq <- -aa * parg / (scale*(parg+qq))
 
-    wz <- matrix(as.numeric(NA), n, dimm(M)) #M==3 means 6=dimm(M)
+    wz <- matrix(as.numeric(NA), n, dimm(M))  #M==3 means 6=dimm(M)
     wz[, iam(1, 1, M)] <- ned2l.da * da.deta^2
     wz[, iam(2, 2, M)] <- ned2l.dscale * dscale.deta^2
     wz[, iam(3, 3, M)] <- ned2l.dq * dq.deta^2
@@ -2811,7 +2811,7 @@ dinvparalogistic <- function(x, shape1.a, scale = 1, log = FALSE)
         namesof("shape2.p", .lshape2.p, earg = .eshape2.p, tag = FALSE))
 
     if (!length( .ishape1.a) || !length( .iscale )) {
-        qvec <- c( .25, .5, .75) # Arbitrary; could be made an argument
+        qvec <- c( .25, .5, .75)  # Arbitrary; could be made an argument
         ishape2.p <- if (length( .ishape2.p)) .ishape2.p else 1
         xvec <- log( qvec^(-1/ ishape2.p ) - 1 )
         fit0 <- lsfit(x = xvec, y = log(quantile(y, qvec )))
@@ -2927,7 +2927,7 @@ dinvparalogistic <- function(x, shape1.a, scale = 1, log = FALSE)
                    ) / (Scale * (1 + parg+qq))
     ned2l.dap= -(qq   * (temp3a -temp3b) -1) / (aa*(parg+qq))
     ned2l.dscalep <-  aa * qq   / (Scale * (parg + qq))
-    wz <- matrix(as.numeric(NA), n, dimm(M)) #M==3 means 6=dimm(M)
+    wz <- matrix(as.numeric(NA), n, dimm(M))  #M==3 means 6=dimm(M)
     wz[, iam(1, 1, M)] <- ned2l.da     * da.deta^2
     wz[, iam(2, 2, M)] <- ned2l.dscale * dscale.deta^2
     wz[, iam(3, 3, M)] <- ned2l.dp     * dp.deta^2
@@ -2993,7 +2993,7 @@ dinvparalogistic <- function(x, shape1.a, scale = 1, log = FALSE)
       namesof("shape3.q", .lshape3.q, earg = .eshape3.q, tag = FALSE))
 
     if (!length( .iscale )) {
-      qvec <- c(0.25, .5, .75) # Arbitrary; could be made an argument
+      qvec <- c(0.25, .5, .75)  # Arbitrary; could be made an argument
       ishape3.q <- if (length( .ishape3.q)) .ishape3.q else 1
       xvec <- log( (1-qvec)^(-1/ ishape3.q ) - 1 )
       fit0 <- lsfit(x = xvec, y = log(quantile(y, qvec )))
@@ -3113,7 +3113,7 @@ dinvparalogistic <- function(x, shape1.a, scale = 1, log = FALSE)
     ned2l.dscaleq <- -aa * parg / (scale*(parg+qq))
     ned2l.dpq <- -temp5
 
-    wz <- matrix(as.numeric(NA), n, dimm(M)) #M==3 means 6=dimm(M)
+    wz <- matrix(as.numeric(NA), n, dimm(M))  #M==3 means 6=dimm(M)
     wz[, iam(1, 1, M)] <- ned2l.dscale * dscale.deta^2
     wz[, iam(2, 2, M)] <- ned2l.dp * dp.deta^2
     wz[, iam(3, 3, M)] <- ned2l.dq * dq.deta^2
@@ -3130,7 +3130,7 @@ dinvparalogistic <- function(x, shape1.a, scale = 1, log = FALSE)
 
 
  lomax <- function(lscale = "loge",    lshape3.q = "loge",
-                   iscale = NULL,      ishape3.q = NULL, # 2.0, 
+                   iscale = NULL,      ishape3.q = NULL,  # 2.0, 
                                        gshape3.q = exp(-5:5),
                    zero = NULL) {
 
@@ -3181,7 +3181,7 @@ dinvparalogistic <- function(x, shape1.a, scale = 1, log = FALSE)
 
                    
     lomax.Loglikfun <- function(shape3.q, y, x, w, extraargs) {
-      qvec <- c(0.25, 0.5, 0.75) # Arbitrary; could be made an argument
+      qvec <- c(0.25, 0.5, 0.75)  # Arbitrary; could be made an argument
       xvec <- log( (1-qvec)^(-1/ shape3.q ) - 1 )
       fit0 <- lsfit(x = xvec, y = log(quantile(y, qvec )))
       init.scale <- exp(fit0$coef[1])
@@ -3204,7 +3204,7 @@ dinvparalogistic <- function(x, shape1.a, scale = 1, log = FALSE)
 
 
     if (!length( .iscale )) {
-      qvec <- c(0.25, 0.5, 0.75) # Arbitrary; could be made an argument
+      qvec <- c(0.25, 0.5, 0.75)  # Arbitrary; could be made an argument
       ishape3.q <- if (length( .ishape3.q )) .ishape3.q else Init.shape3.q
       xvec <- log( (1-qvec)^(-1/ ishape3.q ) - 1 )
       fit0 <- lsfit(x = xvec, y = log(quantile(y, qvec )))
@@ -3350,7 +3350,7 @@ dinvparalogistic <- function(x, shape1.a, scale = 1, log = FALSE)
     qq <- parg <- 1
 
     if (!length( .iscale )) {
-      qvec <- c( 0.25, 0.5, 0.75) # Arbitrary; could be made an argument
+      qvec <- c( 0.25, 0.5, 0.75)  # Arbitrary; could be made an argument
       xvec <- log( 1 / qvec - 1 )
       fit0 <- lsfit(x = xvec, y = log(quantile(y, qvec )))
     }
@@ -3443,7 +3443,7 @@ dinvparalogistic <- function(x, shape1.a, scale = 1, log = FALSE)
     ned2l.dascale <- (parg - qq - parg*qq*(temp3a - temp3b)) / (
                       scale * (1 + parg + qq))
 
-    wz <- matrix(as.numeric(NA), n, dimm(M)) #M == 2 means 3=dimm(M)
+    wz <- matrix(as.numeric(NA), n, dimm(M))  #M == 2 means 3=dimm(M)
     wz[, iam(1, 1, M)] <- ned2l.da * da.deta^2
     wz[, iam(2, 2, M)] <- ned2l.dscale * dscale.deta^2
     wz[, iam(1, 2, M)] <- ned2l.dascale * da.deta * dscale.deta
@@ -3500,7 +3500,7 @@ dinvparalogistic <- function(x, shape1.a, scale = 1, log = FALSE)
     qq <- aa <- 1
 
     if (!length( .iscale )) {
-      qvec <- c(0.25, .5, .75) # Arbitrary; could be made an argument
+      qvec <- c(0.25, .5, .75)  # Arbitrary; could be made an argument
       ishape2.p <- if (length( .ishape2.p)) .ishape2.p else 1
       xvec <- log( qvec^(-1/ ishape2.p ) - 1 )
       fit0 <- lsfit(x = xvec, y = log(quantile(y, qvec )))
@@ -3578,7 +3578,7 @@ dinvparalogistic <- function(x, shape1.a, scale = 1, log = FALSE)
     ned2l.dp <- 1 / parg^2 
     ned2l.dscalep <-  aa * qq   / (scale * (parg + qq))
 
-    wz <- matrix(as.numeric(NA), n, dimm(M)) #M == 2 means 3=dimm(M)
+    wz <- matrix(as.numeric(NA), n, dimm(M))  #M == 2 means 3=dimm(M)
     wz[, iam(1, 1, M)] <- ned2l.dscale * dscale.deta^2
     wz[, iam(2, 2, M)] <- ned2l.dp * dp.deta^2
     wz[, iam(1, 2, M)] <- ned2l.dscalep * dscale.deta * dp.deta
@@ -3635,7 +3635,7 @@ dinvparalogistic <- function(x, shape1.a, scale = 1, log = FALSE)
     parg <- 1
 
     if (!length( .ishape1.a) || !length( .iscale )) {
-      qvec <- c( .25, .5, .75) # Arbitrary; could be made an argument
+      qvec <- c( .25, .5, .75)  # Arbitrary; could be made an argument
       ishape1.a <- if (length( .ishape1.a)) .ishape1.a else 1
       xvec <- log( (1-qvec)^(-1/ ishape1.a ) - 1 )
       fit0 <- lsfit(x = xvec, y = log(quantile(y, qvec )))
@@ -3736,7 +3736,7 @@ dinvparalogistic <- function(x, shape1.a, scale = 1, log = FALSE)
     ned2l.dascale <- (parg - qq - parg*qq*(temp3a -temp3b)) /(
                       scale*(1 + parg+qq))
 
-    wz <- matrix(as.numeric(NA), n, dimm(M)) #M == 2 means 3=dimm(M)
+    wz <- matrix(as.numeric(NA), n, dimm(M))  #M == 2 means 3=dimm(M)
     wz[, iam(1, 1, M)] <- ned2l.da * da.deta^2
     wz[, iam(2, 2, M)] <- ned2l.dscale * dscale.deta^2
     wz[, iam(1, 2, M)] <- ned2l.dascale * da.deta * dscale.deta
@@ -3786,7 +3786,7 @@ dinvparalogistic <- function(x, shape1.a, scale = 1, log = FALSE)
         namesof("scale",    .lscale ,    earg = .escale ,    tag = FALSE))
 
     if (!length( .ishape1.a) || !length( .iscale )) {
-      qvec <- c( .25, .5, .75) # Arbitrary; could be made an argument
+      qvec <- c( .25, .5, .75)  # Arbitrary; could be made an argument
       ishape2.p <- if (length( .ishape1.a )) .ishape1.a else 1
       xvec <- log( qvec^(-1/ ishape2.p ) - 1 )
       fit0 <- lsfit(x = xvec, y = log(quantile(y, qvec )))
@@ -4016,7 +4016,7 @@ warning("20040402; does not work, possibly because first derivs are ",
                  dl.dr * dr.deta)
   }), list( .link.sigma = link.sigma, .link.r = link.r ))),
   weight = expression({
-    wz <- matrix(0, n, 6) # 5 will have small savings of 1 column
+    wz <- matrix(0, n, 6)  # 5 will have small savings of 1 column
 
     B <- log(r) + digamma(ss)
     ned2l.dmymu2 <- (r-1) * gamma(1-1/r) / (sigma^2 * r^(2/r) * gamma(ss))

@@ -7,7 +7,9 @@
 
 }
 \usage{
-posbinomial(link = "logit", mv = FALSE, parallel = FALSE, zero = NULL)
+posbinomial(link = "logit", mv = FALSE, parallel = FALSE,
+            omit.constant = FALSE, p.small = 1e-4, no.warning = FALSE,
+            zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -16,6 +18,35 @@ posbinomial(link = "logit", mv = FALSE, parallel = FALSE, zero = NULL)
 
 
   }
+  \item{omit.constant}{
+    Logical.
+    If \code{TRUE} then the constant (\code{lchoose(size, size * yprop)}
+    is omitted from the \code{loglikelihood} calculation.
+    If the model is to be compared using
+    \code{AIC()} or \code{BIC()}
+    (see \code{\link{AICvlm}} or \code{\link{BICvlm}})
+    to the likes of
+    \code{\link{posbernoulli.tb}} etc. then it is important
+    to set \code{omit.constant = TRUE} because all models then
+    will not have any normalizing constants in the likelihood function.
+    Hence they become comparable.
+    This is because the \eqn{M_0} Otis et al. (1978) model
+    coincides with \code{posbinomial()}.
+    See below for an example.
+    Also see \code{\link{posbernoulli.t}} regarding estimating the
+    population size (\code{N.hat} and \code{SE.N.hat}) if the
+    number of trials is the same for all observations.
+
+
+
+  }
+  \item{p.small, no.warning}{
+  See \code{\link{posbernoulli.t}}.
+
+
+  }
+
+
 }
 \details{
   The positive binomial distribution is the ordinary binomial distribution
@@ -47,6 +78,12 @@ posbinomial(link = "logit", mv = FALSE, parallel = FALSE, zero = NULL)
 
 }
 \references{
+
+  Otis, D. L. et al. (1978)
+  Statistical inference from capture data on closed animal populations,
+  \emph{Wildlife Monographs},
+  \bold{62}, 3--135.
+
 
 Patil, G. P. (1962)
 Maximum likelihood estimation for
@@ -92,7 +129,8 @@ Drapers Company Research Memoirs.
   \code{\link{posbernoulli.b}},
   \code{\link{posbernoulli.t}},
   \code{\link{posbernoulli.tb}},
-  \code{\link{binomialff}}.
+  \code{\link{binomialff}},
+  \code{\link{AICvlm}}, \code{\link{BICvlm}}.
 
 
 }
@@ -107,14 +145,22 @@ Coef(fit1)  # = MLE of p = 0.3088
 head(fitted(fit1))
 sqrt(vcov(fit1, untransform = TRUE))  # SE = 0.0322
 
-# Fit a M_0 model to the Perom data ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-M_0   <- vglm(cbind(    y1 + y2 + y3 + y4 + y5 + y6,
-                    6 - y1 - y2 - y3 - y4 - y5 - y6) ~ 1,
-              posbinomial, data = Perom, trace = TRUE)
-coef(M_0, matrix = TRUE)
-Coef(M_0)
-constraints(M_0, matrix = TRUE)
-summary(M_0)
+# Fit a M_0 model (Otis et al. 1978) to the deermice data ,,,,,,,,,,,,,,,,,,,,,,,
+M.0 <- vglm(cbind(    y1 + y2 + y3 + y4 + y5 + y6,
+                  6 - y1 - y2 - y3 - y4 - y5 - y6) ~ 1, trace = TRUE,
+            posbinomial(omit.constant = TRUE), data = deermice)
+coef(M.0, matrix = TRUE)
+Coef(M.0)
+constraints(M.0, matrix = TRUE)
+summary(M.0)
+c(   N.hat = M.0@extra$N.hat,     # Since tau = 6, i.e., 6 Bernoulli trials per
+  SE.N.hat = M.0@extra$SE.N.hat)  # observation is the same for each observation
+
+# Compare it to the M_b using AIC and BIC
+M.b <- vglm(cbind(y1, y2, y3, y4, y5, y6) ~ 1, trace = TRUE,
+            posbernoulli.b, data = deermice)
+sort(c(M.0 = AIC(M.0), M.b = AIC(M.b)))  # Okay since omit.constant = TRUE
+sort(c(M.0 = BIC(M.0), M.b = BIC(M.b)))  # Okay since omit.constant = TRUE
 }
 \keyword{models}
 \keyword{regression}

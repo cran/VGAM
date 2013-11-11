@@ -198,8 +198,8 @@ TypicalVGAMlinkFunction(theta, someParameter = 0,
   \code{\link{vgam}},
   \code{\link{rrvglm}}.
   \code{\link{cqo}},
-  \code{\link{cao}},
-  \code{\link{uqo}}.
+  \code{\link{cao}}.
+% \code{\link{uqo}}.
 
 
 }

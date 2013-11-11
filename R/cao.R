@@ -54,7 +54,7 @@ cao  <- function(formula,
     xlev[!sapply(xlev, is.null)]
   }
 
-  y <- model.response(mf, "numeric") # model.extract(mf, "response")
+  y <- model.response(mf, "numeric")  # model.extract(mf, "response")
   x <- model.matrix(mt, mf, contrasts)
   attr(x, "assign") <- attrassigndefault(x, mt)
   offset <- model.offset(mf)
@@ -84,7 +84,7 @@ cao  <- function(formula,
 
 
   deviance.Bestof <- rep(as.numeric(NA), len = control$Bestof)
-  for(tries in 1:control$Bestof) {
+  for (tries in 1:control$Bestof) {
     if (control$trace && (control$Bestof > 1)) {
       cat(paste("\n========================= Fitting model",
           tries, "=========================\n"))

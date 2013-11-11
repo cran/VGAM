@@ -14,7 +14,8 @@
 \usage{
 posbernoulli.b(link = "logit", drop.b = FALSE ~ 1,
                type.fitted = c("likelihood.cond", "mean.uncond"), I2 = FALSE,
-               ipcapture = NULL, iprecapture = NULL)
+               ipcapture = NULL, iprecapture = NULL,
+               p.small = 1e-4, no.warning = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 % apply.parint = FALSE,
@@ -60,6 +61,13 @@ posbernoulli.b(link = "logit", drop.b = FALSE ~ 1,
 
 
   }
+  \item{p.small, no.warning}{
+  See \code{\link{posbernoulli.t}}.
+
+
+  }
+
+
 }
 \details{
   This model
@@ -155,11 +163,12 @@ posbernoulli.b(link = "logit", drop.b = FALSE ~ 1,
 \seealso{ 
   \code{\link{posbernoulli.t}} and
   \code{\link{posbernoulli.tb}} (including estimating \eqn{N}),
-  \code{\link{Perom}},
+  \code{\link{deermice}},
   \code{\link{dposbern}},
   \code{\link{rposbern}},
   \code{\link{posbinomial}},
-  \code{\link{aux.posbernoulli.t}}.
+  \code{\link{aux.posbernoulli.t}},
+  \code{\link{prinia}}.
 % \code{\link{huggins91}}.
 % \code{\link{vglm.control}} for \code{xij},
 
@@ -167,11 +176,11 @@ posbernoulli.b(link = "logit", drop.b = FALSE ~ 1,
 }
 
 \examples{
-# Perom data ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# deermice data ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
 # Fit a M_b model
 M.b <- vglm(cbind(y1, y2, y3, y4, y5, y6) ~ 1,
-            posbernoulli.b, data = Perom, trace = TRUE)
+            posbernoulli.b, data = deermice, trace = TRUE)
 coef(M.b)["(Intercept):1"]  # Behavioural effect on the logit scale
 coef(M.b, matrix = TRUE)
 constraints(M.b, matrix = TRUE)
@@ -179,7 +188,7 @@ summary(M.b, presid = FALSE)
 
 # Fit a M_bh model
 M.bh <- vglm(cbind(y1, y2, y3, y4, y5, y6) ~ sex + weight,
-             posbernoulli.b, data = Perom, trace = TRUE)
+             posbernoulli.b, data = deermice, trace = TRUE)
 coef(M.bh, matrix = TRUE)
 coef(M.bh)["(Intercept):1"]  # Behavioural effect on the logit scale
 constraints(M.bh)  # (2,1) element of "(Intercept)" is for the behavioural effect
@@ -191,7 +200,7 @@ coef(M.bh)["(Intercept):1"] + c(-1, 1) * 1.96 * SE.M.bh
 # Fit a M_h model
 M.h <- vglm(cbind(y1, y2, y3, y4, y5, y6) ~ sex + weight,
             posbernoulli.b(drop.b = TRUE ~ sex + weight),
-            data = Perom, trace = TRUE)
+            data = deermice, trace = TRUE)
 coef(M.h, matrix = TRUE)
 constraints(M.h, matrix = TRUE)
 summary(M.h, presid = FALSE)
@@ -199,7 +208,7 @@ summary(M.h, presid = FALSE)
 # Fit a M_0 model
 M.0 <- vglm(cbind(    y1 + y2 + y3 + y4 + y5 + y6,
                   6 - y1 - y2 - y3 - y4 - y5 - y6) ~ 1,
-            posbinomial, data = Perom, trace = TRUE)
+            posbinomial, data = deermice, trace = TRUE)
 coef(M.0, matrix = TRUE)
 summary(M.0, presid = FALSE)
 

@@ -191,8 +191,8 @@ myoffset <- 10
 ndata <- transform(ndata,
            coeff1 = 0.25,  # "mlogit" link
            coeff2 = 0.25,  # "mlogit" link
-           coeff3 = exp(-0.5), # "loge" link
-           coeff4 = logoff(+0.5, offset = myoffset, inverse = TRUE), # "logoff" link
+           coeff3 = exp(-0.5),  # "loge" link
+           coeff4 = logoff(+0.5, offset = myoffset, inverse = TRUE),  # "logoff" link
            coeff5 = 0.50,  # "mlogit" link
            coeff6 = 1.00,  # "identity" link
            v2 = runif(nn),

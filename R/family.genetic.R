@@ -131,7 +131,7 @@
   weight = eval(substitute(expression({
     dPP <- array(c(dP1, dP2, dP3), c(n, 6, 3))
 
-    wz <- matrix(as.numeric(NA), n, dimm(M)) # dimm(M)==6 because M==3
+    wz <- matrix(as.numeric(NA), n, dimm(M))  # dimm(M)==6 because M==3
     for (i1 in 1:M)
       for (i2 in i1:M) {
         index <- iam(i1,i2, M)
@@ -183,7 +183,7 @@
       pA <- if (is.numeric( .ipA )) rep( .ipA , len = n) else
             c(sqrt(mustart[, 1] - mustart[, 2] / 2))
       f <- if (is.numeric( .iF )) rep( .iF , len = n) else
-           rep(0.01, len = n) # 1- mustart[, 2]/(2*pA*(1-pA))
+           rep(0.01, len = n)  # 1- mustart[, 2]/(2*pA*(1-pA))
       if (any(pA <= 0) || any(pA >= 1))
         stop("bad initial value for 'pA'")
       etastart <- cbind(theta2eta(pA, .link , earg = .earg ),
@@ -237,7 +237,7 @@
     dPP <- array(c(dP1, dP2), c(n, 3, 2))
     dPP.deta <- cbind(dtheta.deta(pA, link = .link , earg = .earg ),
                       dtheta.deta(f,  link = "identity"))
-    wz <- matrix(as.numeric(NA), n, dimm(M)) # dimm(M)==3 because M==2
+    wz <- matrix(as.numeric(NA), n, dimm(M))  # dimm(M)==3 because M==2
     for (i1 in 1:M)
       for (i2 in i1:M) {
         index <- iam(i1, i2, M)
@@ -419,7 +419,7 @@
   }), list( .link = link, .earg = earg))),
   weight = eval(substitute(expression({
     qq <- 1-p1-p2
-    wz <- matrix(as.numeric(NA), n, dimm(M)) # dimm(M)==3 because M==2
+    wz <- matrix(as.numeric(NA), n, dimm(M))  # dimm(M)==3 because M==2
     ned2l.dp12  <-  2 * (1/p1 + 1/qq)
     ned2l.dp22  <-  2 * (1/p2 + 1/qq)
     ned2l.dp1dp2 <-  2 / qq
@@ -521,7 +521,7 @@
     ns <- 1-mS-ms-nS
     dP1 <- cbind(2*(mS+ms), 0, 2*(nS+ns-mS), -2*ms, -2*nS, -2*ns)
     dP2 <- cbind(2*mS, 2*ms, 2*(nS-mS), 2*(ns-ms), -2*nS, -2*ns)
-    dP3 <- cbind(0, 0, 2*ms, -2*ms,  2*ns, -2*ns) # n x 6
+    dP3 <- cbind(0, 0, 2*ms, -2*ms,  2*ns, -2*ns)  # n x 6
     dl1 <- rowSums(y * dP1 / mu)
     dl2 <- rowSums(y * dP2 / mu)
     dl3 <- rowSums(y * dP3 / mu)
@@ -530,7 +530,7 @@
   }), list( .link = link, .earg = earg))),
   weight = eval(substitute(expression({
     dPP <- array(c(dP1,dP2,dP3), c(n,6, 3))
-    wz <- matrix(as.numeric(NA), n, dimm(M)) # dimm(M)==6 because M==3
+    wz <- matrix(as.numeric(NA), n, dimm(M))  # dimm(M)==6 because M==3
     for (i1 in 1:M)
       for (i2 in i1:M) {
         index <- iam(i1,i2, M)
@@ -647,7 +647,7 @@
   }), list( .link = link, .earg = earg))),
 
   weight = eval(substitute(expression({
-    wz <- matrix(as.numeric(NA), n, dimm(M)) # dimm(M)==3 because M==2
+    wz <- matrix(as.numeric(NA), n, dimm(M))  # dimm(M)==3 because M==2
 
     ned2l.dp2  <- (1 + 2/ppp + 4*qqq/qbar + ppp/pbar)
     ned2l.dq2  <- (1 + 2/qqq + 4*ppp/pbar + qqq/qbar)

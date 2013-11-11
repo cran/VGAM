@@ -116,8 +116,8 @@ legend(0.1, 4, c("logit", "probit", "cloglog", "cauchit"),
 \dontrun{
 # This example shows that a cloglog link is preferred over the logit
 n <- 500; p <- 5; S <- 3; Rank <- 1  # Species packing model:
-mydata <- rcqo(n, p, S, EqualTol = TRUE, ESOpt = TRUE, EqualMax = TRUE,
-               family = "binomial", hiabundance = 5, seed = 123, Rank = Rank)
+mydata <- rcqo(n, p, S, eq.tol = TRUE, es.opt = TRUE, eq.max = TRUE,
+               family = "binomial", hi.abundance = 5, seed = 123, Rank = Rank)
 fitc <- cqo(attr(mydata, "formula"), ITol = TRUE, data = mydata,
             fam = binomialff(mv = TRUE, link = "cloglog"), Rank = Rank)
 fitl <- cqo(attr(mydata, "formula"), ITol = TRUE, data = mydata,

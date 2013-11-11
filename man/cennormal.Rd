@@ -1,5 +1,6 @@
 \name{cennormal}
 \alias{cennormal}
+% 20131111: just for \pkg{cg}:
 \alias{cennormal1}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Censored Normal Distribution }
@@ -75,8 +76,8 @@ cennormal(lmu = "identity", lsd = "loge", imethod = 1, zero = 2)
 
 
 
-  Function \code{\link{cennormal1}} will be depreciated soon.
-  It is exactly the same as \code{\link{cennormal}}.
+% Function \code{\link{cennormal1}} will be depreciated soon.
+% It is exactly the same as \code{\link{cennormal}}.
 
 
 }
