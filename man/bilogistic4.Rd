@@ -8,7 +8,7 @@
 
 }
 \usage{
-bilogistic4(llocation = "identity", lscale = "loge",
+bilogistic4(llocation = "identitylink", lscale = "loge",
             iloc1 = NULL, iscale1 = NULL, iloc2 = NULL, iscale2 = NULL,
             imethod = 1, zero = NULL)
 }

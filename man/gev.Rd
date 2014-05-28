@@ -9,11 +9,11 @@
 
 }
 \usage{
-gev(llocation = "identity", lscale = "loge", lshape = logoff(offset = 0.5),
+gev(llocation = "identitylink", lscale = "loge", lshape = logoff(offset = 0.5),
     percentiles = c(95, 99), iscale=NULL, ishape = NULL,
     imethod = 1, gshape = c(-0.45, 0.45), tolshape0 = 0.001,
     giveWarning = TRUE, zero = 3)
-egev(llocation = "identity", lscale = "loge", lshape = logoff(offset = 0.5),
+egev(llocation = "identitylink", lscale = "loge", lshape = logoff(offset = 0.5),
      percentiles = c(95, 99), iscale=NULL,  ishape = NULL,
      imethod = 1, gshape = c(-0.45, 0.45), tolshape0 = 0.001,
      giveWarning = TRUE, zero = 3)
@@ -247,8 +247,6 @@ egev(llocation = "identity", lscale = "loge", lshape = logoff(offset = 0.5),
 }
 
 \seealso{ 
-  %\code{\link{egev}},
-  %\code{\link{ogev}},
   \code{\link{rgev}},
   \code{\link{gumbel}},
   \code{\link{egumbel}},
@@ -260,6 +258,10 @@ egev(llocation = "identity", lscale = "loge", lshape = logoff(offset = 0.5),
   \code{\link{elogit}},
   \code{\link{oxtemp}},
   \code{\link{venice}}.
+
+
+  %\code{\link{egev}},
+  %\code{\link{ogev}},
 
 
 }

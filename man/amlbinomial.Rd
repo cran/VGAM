@@ -44,7 +44,6 @@ amlbinomial(w.aml = 1, parallel = FALSE, digw = 4, link = "logit")
 \details{
   The general methodology behind this \pkg{VGAM} family function
   is given in Efron (1992) and full details can be obtained there.
-% Equation numbers below refer to that article.
   This model is essentially a logistic regression model
   (see \code{\link{binomialff}}) but the usual deviance is replaced by an
   asymmetric squared error loss function; it is multiplied by
@@ -54,6 +53,11 @@ amlbinomial(w.aml = 1, parallel = FALSE, digw = 4, link = "logit")
   the \code{weights} argument (so that it can contain frequencies).
   Newton-Raphson estimation is used here.
 
+
+% Equation numbers below refer to that article.
+
+
+
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
@@ -62,11 +66,14 @@ amlbinomial(w.aml = 1, parallel = FALSE, digw = 4, link = "logit")
 
 }
 \references{
+
   Efron, B. (1992)
   Poisson overdispersion estimates based on the method of
   asymmetric maximum likelihood.
   \emph{Journal of the American Statistical Association},
   \bold{87}, 98--107.
+
+
 
 }
 

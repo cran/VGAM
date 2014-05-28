@@ -4,6 +4,11 @@
 %\alias{ccoef-method}
 %
 %
+%
+% 201312
+\alias{simulate,ANY-method}
+\alias{simulate,vlm-method}
+%
 % 20131104
 \alias{family.name,ANY-method}
 \alias{family.name,vlm-method}
@@ -115,7 +120,7 @@
 %
 \alias{deviance,qrrvglm-method}
 \alias{deviance,vlm-method}
-\alias{deviance,vglm-method}
+%\alias{deviance,vglm-method}
 %\alias{deviance,uqo-method}
 \alias{df.residual,vlm-method}
 \alias{effects,vlm-method}

@@ -10,7 +10,7 @@
 }
 \usage{
 lgammaff(link = "loge", init.k = NULL)
-lgamma3ff(llocation = "identity", lscale = "loge", lshape = "loge",
+lgamma3ff(llocation = "identitylink", lscale = "loge", lshape = "loge",
           ilocation = NULL, iscale = NULL, ishape = 1, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -123,7 +123,7 @@ New York: Wiley.
 }
 \examples{
 ldata <- data.frame(y = rlgamma(100, k = exp(1)))
-fit <- vglm(y ~ 1, lgammaff, ldata, trace = TRUE, crit = "coef")
+fit <- vglm(y ~ 1, lgammaff, data = ldata, trace = TRUE, crit = "coef")
 summary(fit)
 coef(fit, matrix = TRUE)
 Coef(fit)
@@ -131,7 +131,7 @@ Coef(fit)
 ldata <- data.frame(x = runif(nn <- 5000))  # Another example
 ldata <- transform(ldata, loc = -1 + 2 * x, Scale = exp(1))
 ldata <- transform(ldata, y = rlgamma(nn, loc, scale = Scale, k = exp(0)))
-fit2 <- vglm(y ~ x, lgamma3ff(zero = 2:3), ldata, trace = TRUE, crit = "c")
+fit2 <- vglm(y ~ x, lgamma3ff(zero = 2:3), data = ldata, trace = TRUE, crit = "c")
 coef(fit2, matrix = TRUE)
 }
 \keyword{models}

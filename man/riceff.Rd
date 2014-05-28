@@ -87,7 +87,8 @@ Mathematical Analysis of Random Noise.
 \seealso{ 
   \code{\link{drice}},
   \code{\link{rayleigh}},
-  \code{\link[base:Bessel]{besselI}}.
+  \code{\link[base:Bessel]{besselI}},
+  \code{\link{simulate.vlm}}.
 
 
 }

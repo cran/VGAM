@@ -11,8 +11,8 @@
 
 }
 \usage{
-logistic1(llocation = "identity", scale.arg = 1, imethod = 1)
-logistic2(llocation = "identity", lscale = "loge",
+logistic1(llocation = "identitylink", scale.arg = 1, imethod = 1)
+logistic2(llocation = "identitylink", lscale = "loge",
           ilocation = NULL, iscale = NULL, imethod = 1, zero = -2)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -119,7 +119,8 @@ A note on Deriving the Information Matrix for a Logistic Distribution,
   \code{\link[stats:Logistic]{rlogis}},
   \code{\link{logit}},
   \code{\link{cumulative}},
-  \code{\link{bilogistic4}}.
+  \code{\link{bilogistic4}},
+  \code{\link{simulate.vlm}}.
 
 
 }
@@ -127,12 +128,12 @@ A note on Deriving the Information Matrix for a Logistic Distribution,
 # Location unknown, scale known
 ldata <- data.frame(x2 = runif(nn <- 500))
 ldata <- transform(ldata, y1 = rlogis(nn, loc = 1 + 5*x2, scale = exp(2)))
-fit1 <- vglm(y1 ~ x2, logistic1(scale = 4), ldata, trace = TRUE, crit = "c")
+fit1 <- vglm(y1 ~ x2, logistic1(scale = exp(2)), data = ldata, trace = TRUE)
 coef(fit1, matrix = TRUE)
 
 # Both location and scale unknown
 ldata <- transform(ldata, y2 = rlogis(nn, loc = 1 + 5*x2, scale = exp(0 + 1*x2)))
-fit2 <- vglm(cbind(y1, y2) ~ x2, logistic2, ldata, trace = TRUE)
+fit2 <- vglm(cbind(y1, y2) ~ x2, logistic2, data = ldata, trace = TRUE)
 coef(fit2, matrix = TRUE)
 vcov(fit2)
 summary(fit2)

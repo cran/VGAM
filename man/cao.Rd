@@ -320,7 +320,8 @@ Constrained additive ordination.
   \code{\link{gamma2}},
   \code{\link{gaussianff}},
   \code{\link[base:Random]{set.seed}},
-  \code{\link[gam]{gam}}.
+  \code{\link[gam]{gam}},
+  \code{\link[VGAMdata]{trapO}}.
 
 }
 

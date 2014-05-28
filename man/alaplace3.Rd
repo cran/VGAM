@@ -12,19 +12,19 @@
 
 }
 \usage{
-alaplace1(tau = NULL, llocation = "identity",
+alaplace1(tau = NULL, llocation = "identitylink",
           ilocation = NULL, kappa = sqrt(tau/(1 - tau)), Scale.arg = 1,
           shrinkage.init = 0.95, parallelLocation = FALSE, digt = 4,
           dfmu.init = 3, intparloc = FALSE, imethod = 1)
 
-alaplace2(tau = NULL,  llocation = "identity", lscale = "loge",
+alaplace2(tau = NULL,  llocation = "identitylink", lscale = "loge",
           ilocation = NULL, iscale = NULL, kappa = sqrt(tau/(1 - tau)),
           shrinkage.init = 0.95,
           parallelLocation = FALSE, digt = 4, eq.scale = TRUE,
           dfmu.init = 3, intparloc = FALSE, 
           imethod = 1, zero = -2)
 
-alaplace3(llocation = "identity", lscale = "loge", lkappa = "loge",
+alaplace3(llocation = "identitylink", lscale = "loge", lkappa = "loge",
           ilocation = NULL, iscale = NULL, ikappa = 1,
           imethod = 1, zero = 2:3)
 }
@@ -284,7 +284,8 @@ alaplace3(llocation = "identity", lscale = "loge", lkappa = "loge",
   \code{\link{laplace}},
   \code{\link{lms.bcn}},
   \code{\link{amlnormal}},
-  \code{\link{koenker}}.
+  \code{\link{koenker}},
+  \code{\link{simulate.vlm}}.
 
 
 }
@@ -299,7 +300,7 @@ mytau <- c(0.25, 0.75); mydof <- 4
 
 fit <- vgam(y ~ s(x, df = mydof),
             alaplace1(tau = mytau, llocation = "loge",
-                      parallelLoc = FALSE), adata, trace = TRUE)
+                      parallelLoc = FALSE), data = adata, trace = TRUE)
 fitp <- vgam(y ~ s(x, df = mydof), data = adata, trace = TRUE,
              alaplace1(tau = mytau, llocation = "loge", parallelLoc = TRUE))
  
@@ -320,15 +321,15 @@ fit@extra  # Contains useful information
 
 # Example 2: regression quantile at a new tau value from an existing fit
 # Nb. regression splines are used here since it is easier.
-fitp2 <- vglm(y ~ bs(x, df = mydof),
+fitp2 <- vglm(y ~ sm.bs(x, df = mydof),
               family = alaplace1(tau = mytau, llocation = "loge",
                                  parallelLoc = TRUE),
-              adata, trace = TRUE)
+              data = adata, trace = TRUE)
 
 newtau <- 0.5  # Want to refit the model with this tau value
 fitp3 <- vglm(y ~ 1 + offset(predict(fitp2)[,1]),
               family = alaplace1(tau = newtau, llocation = "loge"),
-              adata)
+              data = adata)
 with(adata, plot(x, jitter(y, factor = 0.5), col = "orange",
                pch = "o", cex = 0.75, ylab = "y",
                main = "Example 2; parallelLoc = TRUE"))
@@ -352,8 +353,8 @@ for (ii in 1:length(mytau)) {
   adata <- transform(adata, usey = y-offsety)
   iloc <- ifelse(ii == 1, with(adata, median(y)), 1.0)  # Well-chosen!
   mydf <- ifelse(ii == 1, 5, 3)  # Maybe less smoothing will help
-  lloc <- ifelse(ii == 1, "identity", "loge")  # 2nd value must be "loge"
-  fit3 <- vglm(usey ~ ns(x, df = mydf), data = adata, trace = TRUE,
+  lloc <- ifelse(ii == 1, "identitylink", "loge")  # 2nd value must be "loge"
+  fit3 <- vglm(usey ~ sm.ns(x, df = mydf), data = adata, trace = TRUE,
                alaplace1(tau = usetau[ii], lloc = lloc, iloc = iloc))
   answer[,ii] <- (if(ii == 1) 0 else answer[,ii-1]) + fitted(fit3)
   adata <- transform(adata, offsety = answer[,ii])

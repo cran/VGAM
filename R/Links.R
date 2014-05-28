@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2013 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2014 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -17,7 +17,7 @@
 
  dtheta.deta <-
   function(theta,
-           link = "identity",
+           link = "identitylink",
            earg = list(theta = theta,  # Needed
                        inverse = FALSE,
                        deriv = 1,
@@ -46,7 +46,7 @@
 
  d2theta.deta2 <- 
   function(theta,
-           link = "identity",
+           link = "identitylink",
            earg = list(theta = theta,  # Needed
                        inverse = FALSE,
                        deriv = 2,
@@ -71,7 +71,7 @@
 
  theta2eta <-
   function(theta,
-           link = "identity",
+           link = "identitylink",
            earg = list(theta = NULL)) {
 
   function.name  <- link
@@ -90,7 +90,7 @@
 
  eta2theta <-
   function(theta,  # This is really eta.
-           link = "identity",
+           link = "identitylink",
            earg = list(theta = NULL)) {
 
 
@@ -178,7 +178,7 @@
 
 
  namesof <- function(theta,
-                     link = "identity",
+                     link = "identitylink",
                      earg = list(tag = tag, short = short),
                      tag = FALSE,
                      short = TRUE) {
@@ -201,7 +201,7 @@
 
 if (FALSE)
  namesof <- function(theta,
-                     link = "identity",
+                     link = "identitylink",
                      earg = list(tag = tag, short = short),
                      tag = FALSE,
                      short = TRUE) {

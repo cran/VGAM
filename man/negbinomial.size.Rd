@@ -101,8 +101,11 @@ Cambridge: Cambridge University Press.
   \code{\link{nbcanlink}} (NB-C model),
   \code{\link{quasipoissonff}},
   \code{\link{poissonff}},
+  \code{\link[stats:NegBinomial]{rnbinom}},
+  \code{\link{simulate.vlm}}.
+
+
 % \code{\link[MASS]{rnegbin}}.
-  \code{\link[stats:NegBinomial]{rnbinom}}.
 
 
 }
@@ -122,13 +125,13 @@ ndata <- transform(ndata,
 
 # Also known as NB-C with size known (Hilbe, 2011)
 fit1 <- vglm(y1 ~ x2, negbinomial.size(size = size1, lmu = "nbcanlink"),
-             ndata, trace = TRUE, crit = "coef")
+             data = ndata, trace = TRUE, crit = "coef")
 coef(fit1, matrix = TRUE)
 head(fit1@misc$size)  # size saved here
 
 fit2 <- vglm(cbind(y2, y3, y4) ~ x2,
              negbinomial.size(size = c(size2, size3, size4)),
-             ndata, trace = TRUE)
+             data = ndata, trace = TRUE)
 coef(fit2, matrix = TRUE)
 head(fit2@misc$size)  # size saved here
 }

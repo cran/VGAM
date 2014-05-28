@@ -37,7 +37,7 @@ Coef.qrrvglm(object, varI.latvar = FALSE, reference = NULL, ...)
     the sites scores (latent variables) are made uncorrelated.
     See below for further details.
 
-%   If \code{EqualTolerances=FALSE}, then transformations occur so that
+%   If \code{eq.tolerances=FALSE}, then transformations occur so that
 %   the reference species has a tolerance matrix equal to the rank-\eqn{R}
 %   identity matrix.
 
@@ -46,7 +46,7 @@ Coef.qrrvglm(object, varI.latvar = FALSE, reference = NULL, ...)
 }
 \details{
 
-  If \code{ITolerances=TRUE} or \code{EqualTolerances=TRUE} (and its
+  If \code{I.tolerances=TRUE} or \code{eq.tolerances=TRUE} (and its
   estimated tolerance matrix is positive-definite) then all species'
   tolerances are unity by transformation or by definition, and the spread
   of the site scores can be compared to them. Vice versa, if one wishes
@@ -72,9 +72,11 @@ Coef.qrrvglm(object, varI.latvar = FALSE, reference = NULL, ...)
 \value{
   The \bold{A}, \bold{B1}, \bold{C},  \bold{T},  \bold{D} matrices/arrays
   are returned, along with other slots.
-% For UQO, \bold{C} is undefined.
   The returned object has class \code{"Coef.qrrvglm"}
   (see \code{\link{Coef.qrrvglm-class}}).
+
+
+% For UQO, \bold{C} is undefined.
 
 
 

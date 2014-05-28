@@ -128,11 +128,14 @@ posnegbinomial(lmunb = "loge", lsize = "loge",
   \code{\link{pospoisson}},
   \code{\link{negbinomial}},
   \code{\link{zanegbinomial}},
-% \code{\link[MASS]{rnegbin}}.
   \code{\link[stats:NegBinomial]{rnbinom}},
   \code{\link{CommonVGAMffArguments}},
   \code{\link{corbet}},
-  \code{\link{logff}}.
+  \code{\link{logff}},
+  \code{\link{simulate.vlm}}.
+
+
+% \code{\link[MASS]{rnegbin}}.
 
 
 }
@@ -142,7 +145,7 @@ posnegbinomial(lmunb = "loge", lsize = "loge",
 pdata <- data.frame(x2 = runif(nn <- 1000))
 pdata <- transform(pdata, y1 = rposnegbin(nn, munb = exp(0+2*x2), size = exp(1)),
                           y2 = rposnegbin(nn, munb = exp(1+2*x2), size = exp(3)))
-fit <- vglm(cbind(y1, y2) ~ x2, posnegbinomial, pdata, trace = TRUE)
+fit <- vglm(cbind(y1, y2) ~ x2, posnegbinomial, data = pdata, trace = TRUE)
 coef(fit, matrix = TRUE)
 dim(depvar(fit))  # dim(fit@y) is not as good
 

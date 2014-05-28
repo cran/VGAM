@@ -88,6 +88,9 @@
   \code{\link{logff}}.
 
 
+% \code{\link{simulate.vlm}}.
+
+
 }
 
 \examples{

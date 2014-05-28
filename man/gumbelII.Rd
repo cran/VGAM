@@ -127,7 +127,7 @@ U.S. Department of Commerce, National Bureau of Standards, USA.
 }
 \examples{
 gdata <- data.frame(x2 = runif(nn <- 1000))
-gdata <- transform(gdata, eta1  = -1,
+gdata <- transform(gdata, eta1  = +1,
                           eta2  = -1 + 0.1 * x2,
                           ceta1 =  0,
                           ceta2 =  1)
@@ -136,11 +136,11 @@ gdata <- transform(gdata, shape1 = exp(eta1),
                           scale1 = exp(ceta1),
                           scale2 = exp(ceta2))
 gdata <- transform(gdata,
-           y1 = rgumbelII(nn, shape = shape1, scale = scale1),
-           y2 = rgumbelII(nn, shape = shape2, scale = scale2))
+                   y1 = rgumbelII(nn, shape = shape1, scale = scale1),
+                   y2 = rgumbelII(nn, shape = shape2, scale = scale2))
 
 fit <- vglm(cbind(y1, y2) ~ x2,
-            gumbelII(zero = c(1, 2, 4)), gdata, trace = TRUE)
+            gumbelII(zero = c(1, 2, 4)), data = gdata, trace = TRUE)
 coef(fit, matrix = TRUE)
 vcov(fit)
 summary(fit)

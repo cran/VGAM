@@ -34,16 +34,20 @@ recexp1(lrate = "loge", irate = NULL, imethod = 1)
   The response must be a vector or one-column matrix with strictly
   increasing values.
 
+
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}},
   and \code{\link{vgam}}.
+
+
 }
 \references{
     Arnold, B. C. and Balakrishnan, N. and Nagaraja, H. N. (1998)
     \emph{Records},
     New York: John Wiley & Sons.
+
 
 }
 \author{ T. W. Yee }
@@ -52,10 +56,13 @@ recexp1(lrate = "loge", irate = NULL, imethod = 1)
   initial value, therefore convergence may only take one iteration.
   Fisher scoring is used.
 
+
 }
 
 \seealso{
-    \code{\link{exponential}}.
+  \code{\link{exponential}}.
+
+
 }
 \examples{
 rawy <- rexp(n <- 10000, rate = exp(1))

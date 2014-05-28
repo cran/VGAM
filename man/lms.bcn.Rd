@@ -9,7 +9,7 @@
 }
 \usage{
 lms.bcn(percentiles = c(25, 50, 75), zero = c(1, 3),
-        llambda = "identity", lmu = "identity", lsigma = "loge",
+        llambda = "identitylink", lmu = "identitylink", lsigma = "loge",
         dfmu.init = 4, dfsigma.init = 2, ilambda = 1,
         isigma = NULL, tol0 = 0.001, expectiles = FALSE)
 }
@@ -230,16 +230,19 @@ contains further information and examples.
   \code{\link{qtplot.lmscreg}},
   \code{\link{deplot.lmscreg}},
   \code{\link{cdf.lmscreg}},
-% \code{\link{bmi.nz}},
   \code{\link{alaplace1}},
   \code{\link{amlnormal}},
   \code{\link{denorm}},
   \code{\link{CommonVGAMffArguments}}.
 
+
+% \code{\link{bmi.nz}},
+
+
 }
 
 \examples{
-\dontrun{ require(VGAMdata)
+\dontrun{ require("VGAMdata")
 mysubset <- subset(xs.nz, sex == "M" & ethnic == "1" & Study1)
 mysubset <- transform(mysubset, BMI = weight / height^2)
 BMIdata <- na.omit(mysubset)
@@ -247,12 +250,15 @@ BMIdata <- subset(BMIdata, BMI < 80 & age < 65,
                    select = c(age, BMI))  # Delete an outlier
 summary(BMIdata)
 
-fit <- vgam(BMI ~ s(age, df = c(4, 2)), lms.bcn(zero = 1), BMIdata)
+fit <- vgam(BMI ~ s(age, df = c(4, 2)), lms.bcn(zero = 1), data = BMIdata)
+
+par(mfrow = c(1, 2))
+plot(fit, scol = "blue", se = TRUE)  # The two centered smooths
 
 head(predict(fit))
 head(fitted(fit))
 head(BMIdata)
-head(cdf(fit))  # Person 56 is probably overweight, given his age
+head(cdf(fit))  # Person 46 is probably overweight, given his age
 100 * colMeans(c(depvar(fit)) < fitted(fit))  # Empirical proportions
 
 # Convergence problems? Try this trick: fit0 is a simpler model used for fit1

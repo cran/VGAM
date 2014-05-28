@@ -7,10 +7,12 @@
 \title{Poisson Points Distribution}
 \description{
   Density
-% distribution function, quantile function
-% and random generation
   for the
   PoissonPoints distribution.
+
+
+% distribution function, quantile function
+% and random generation
 
 }
 \usage{
@@ -50,6 +52,8 @@ dpois.points(x, lambda, ostatistic, dimension = 2, log = FALSE)
 }
 \value{
   \code{dpois.points} gives the density. % and
+
+
 % \code{ppois.points} gives the distribution function,
 % \code{qpois.points} gives the quantile function, and
 % \code{rpois.points} generates random deviates.

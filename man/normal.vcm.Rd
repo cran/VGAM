@@ -11,7 +11,7 @@
 
 }
 \usage{
-normal.vcm(link.list = list("(Default)" = "identity"),
+normal.vcm(link.list = list("(Default)" = "identitylink"),
            earg.list = list("(Default)" = list()),
            lsd = "loge", lvar = "loge",
            esd = list(), evar = list(),
@@ -177,10 +177,11 @@ of such models have been named \emph{varying-coefficient models} (VCMs).
 
 }
 \seealso{
-    \code{\link{uninormal}},
-    \code{\link[stats:lm]{lm}}.
+  \code{\link{uninormal}},
+  \code{\link[stats:lm]{lm}}.
 
-%    \code{link[locfit]{ethanol}}.
+
+% \code{link[locfit]{ethanol}}.
 
 
 }
@@ -194,7 +195,7 @@ ndata <- transform(ndata,
            coeff3 = exp(-0.5),  # "loge" link
            coeff4 = logoff(+0.5, offset = myoffset, inverse = TRUE),  # "logoff" link
            coeff5 = 0.50,  # "mlogit" link
-           coeff6 = 1.00,  # "identity" link
+           coeff6 = 1.00,  # "identitylink" link
            v2 = runif(nn),
            v3 = runif(nn),
            v4 = runif(nn),
@@ -228,7 +229,7 @@ fit1 <- vglm(y1 ~ 1,
                                          "v2"          = "mlogit",
                                          "v3"          = "loge",
                                          "v4"          = "logoff",
-                                         "(Default)"   = "identity",
+                                         "(Default)"   = "identitylink",
                                          "v5"          = "mlogit"),
                         earg.list = list("(Intercept)" = list(),
                                          "v2"          = list(),
@@ -250,7 +251,7 @@ fit2 <- vglm(y2 ~ 1 + x2,
                                          "v2"          = "mlogit",
                                          "v3"          = "logit",
                                          "v4"          = "loglog",
-                                         "(Default)"   = "identity",
+                                         "(Default)"   = "identitylink",
                                          "v5"          = "mlogit"),
                         earg.list = list("(Intercept)" = list(),
                                          "v2"          = list(),

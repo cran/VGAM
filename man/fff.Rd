@@ -107,7 +107,7 @@ fdata <- data.frame(x2 = runif(nn <- 2000))
 fdata <- transform(fdata, df1 = exp(2+0.5*x2),
                           df2 = exp(2-0.5*x2))
 fdata <- transform(fdata, y   = rf(nn, df1, df2))
-fit <- vglm(y  ~ x2, fff, fdata, trace = TRUE)
+fit <- vglm(y  ~ x2, fff, data = fdata, trace = TRUE)
 coef(fit, matrix = TRUE)
 }
 }

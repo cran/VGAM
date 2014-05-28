@@ -107,14 +107,14 @@ two Poisson variates belonging to different populations.
 sdata <- data.frame(x2 = runif(nn <- 1000))
 sdata <- transform(sdata, mu1 = exp(1 + x2), mu2 = exp(1 + x2))
 sdata <- transform(sdata, y = rskellam(nn, mu1, mu2))
-fit1 <- vglm(y ~ x2, skellam, sdata, trace = TRUE, crit = "coef")
-fit2 <- vglm(y ~ x2, skellam(parallel = TRUE), sdata, trace = TRUE)
+fit1 <- vglm(y ~ x2, skellam, data = sdata, trace = TRUE, crit = "coef")
+fit2 <- vglm(y ~ x2, skellam(parallel = TRUE), data = sdata, trace = TRUE)
 coef(fit1, matrix = TRUE)
 coef(fit2, matrix = TRUE)
 summary(fit1)
 # Likelihood ratio test for equal means:
 pchisq(2 * (logLik(fit1) - logLik(fit2)),
-       df = fit2@df.residual - fit1@df.residual, lower.tail = FALSE)
+       df = df.residual(fit2) - df.residual(fit1), lower.tail = FALSE)
 lrtest(fit1, fit2)  # Alternative
 }
 }

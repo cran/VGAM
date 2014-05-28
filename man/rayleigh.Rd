@@ -62,6 +62,7 @@ cenrayleigh(lscale = "loge", oim = TRUE)
   for \eqn{y > 0} and \eqn{b > 0}.
   The mean of \eqn{Y} is
   \eqn{b \sqrt{\pi / 2}}{b * sqrt(pi / 2)}
+  (returned as the fitted values)
   and its variance is
   \eqn{b^2 (4-\pi)/2}{b^2 (4-pi)/2}.
 
@@ -116,14 +117,15 @@ Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
   \code{\link{genrayleigh}},
   \code{\link{riceff}},
   \code{\link{maxwell}},
-  \code{\link{poisson.points}}.
+  \code{\link{poisson.points}},
+  \code{\link{simulate.vlm}}.
 
 
 }
 \examples{
 nn <- 1000; Scale <- exp(2)
 rdata <- data.frame(ystar = rrayleigh(nn, scale = Scale))
-fit <- vglm(ystar ~ 1, rayleigh, rdata, trace = TRUE, crit = "c")
+fit <- vglm(ystar ~ 1, rayleigh, data = rdata, trace = TRUE, crit = "coef")
 head(fitted(fit))
 with(rdata, mean(ystar))
 coef(fit, matrix = TRUE)
@@ -132,9 +134,10 @@ Coef(fit)
 # Censored data
 rdata <- transform(rdata, U = runif(nn, 5, 15))
 rdata <- transform(rdata, y = pmin(U, ystar))
-\dontrun{ par(mfrow = c(1,2)); hist(with(rdata, ystar)); hist(with(rdata, y)) }
+\dontrun{ par(mfrow = c(1, 2))
+hist(with(rdata, ystar)); hist(with(rdata, y)) }
 extra <- with(rdata, list(rightcensored = ystar > U))
-fit <- vglm(y ~ 1, cenrayleigh, rdata, trace = TRUE, extra = extra)
+fit <- vglm(y ~ 1, cenrayleigh, data = rdata, trace = TRUE, extra = extra)
 table(fit@extra$rightcen)
 coef(fit, matrix = TRUE)
 head(fitted(fit))

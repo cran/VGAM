@@ -77,15 +77,17 @@ rposgeom(n, prob)
 %}
 
 \seealso{ 
-% \code{posgeometric},
   \code{\link{zageometric}},
   \code{\link{zigeometric}},
   \code{\link[stats:Geometric]{rgeom}}.
 
 
+% \code{posgeometric},
+
+
 }
 \examples{
-prob <- 0.75; y = rposgeom(n = 1000, prob)
+prob <- 0.75; y <- rposgeom(n = 1000, prob)
 table(y)
 mean(y)  # Sample mean
 1 / prob  # Population mean

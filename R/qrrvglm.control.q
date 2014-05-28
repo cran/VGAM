@@ -1,6 +1,8 @@
 # These functions are
-# Copyright (C) 1998-2013 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2014 T.W. Yee, University of Auckland.
 # All rights reserved.
+
+
 
 
 
@@ -10,7 +12,8 @@ qrrvglm.control <- function(Rank = 1,
           Cinit = NULL,
           Crow1positive = TRUE,
           epsilon = 1.0e-06,
-          EqualTolerances = TRUE,
+          EqualTolerances = NULL,
+          eq.tolerances = TRUE,  # 20140520; replaces EqualTolerances
           Etamat.colmax = 10,
           FastAlgorithm = TRUE,
           GradientFunction = TRUE,
@@ -19,7 +22,8 @@ qrrvglm.control <- function(Rank = 1,
                            length = Rank),
           iKvector = 0.1,
           iShape = 0.1,
-          ITolerances = FALSE,
+          ITolerances = NULL,
+          I.tolerances = FALSE,  # 20140520; replaces ITolerances
           maxitl = 40,
           imethod = 1,
           Maxit.optim = 250,
@@ -27,13 +31,44 @@ qrrvglm.control <- function(Rank = 1,
           noRRR = ~ 1,
           Norrr = NA,
           optim.maxit = 20,
-          Parscale = if (ITolerances) 0.001 else 1.0,
+          Parscale = if (I.tolerances) 0.001 else 1.0,
           sd.Cinit = 0.02,
           SmallNo = 5.0e-13,
           trace = TRUE,
           Use.Init.Poisson.QO = TRUE,
           wzepsilon = .Machine$double.eps^0.75,
           ...) {
+
+
+
+
+
+
+  if (!is.null(EqualTolerances)) {
+    warning("argument 'EqualTolerances' is depreciated. ",
+            "Use argument 'eq.tolerances'")
+    if (is.logical(EqualTolerances)) {
+      if (eq.tolerances != EqualTolerances)
+        stop("arguments 'eq.tolerances' and 'EqualTolerances' differ")
+    } else {
+      stop("argument 'EqualTolerances' is not a logical")
+    }
+  }
+
+
+
+
+  if (!is.null(ITolerances)) {
+    warning("argument 'ITolerances' is depreciated. ",
+            "Use argument 'I.tolerances'")
+    if (is.logical(ITolerances)) {
+      if (I.tolerances != ITolerances)
+        stop("arguments 'I.tolerances' and 'ITolerances' differ")
+    } else {
+      stop("argument 'ITolerances' is not a logical")
+    }
+  }
+
 
 
 
@@ -90,8 +125,8 @@ qrrvglm.control <- function(Rank = 1,
     if (!is.Numeric(sd.Cinit, positive = TRUE,
                     length.arg = 1)) 
         stop("bad input for 'sd.Cinit'")
-    if (ITolerances && !EqualTolerances)
-        stop("'EqualTolerances' must be TRUE if 'ITolerances' is TRUE")
+    if (I.tolerances && !eq.tolerances)
+        stop("'eq.tolerances' must be TRUE if 'I.tolerances' is TRUE")
     if (!is.Numeric(Bestof, positive = TRUE,
                     length.arg = 1, integer.valued = TRUE)) 
         stop("bad input for 'Bestof'")
@@ -123,7 +158,7 @@ qrrvglm.control <- function(Rank = 1,
            Corner = FALSE,  # Needed for valt.1iter()
            Dzero = NULL,
            epsilon = epsilon,
-           EqualTolerances = EqualTolerances,
+           eq.tolerances = eq.tolerances,
            Etamat.colmax = Etamat.colmax,
            FastAlgorithm = FastAlgorithm,
            GradientFunction = GradientFunction,
@@ -131,7 +166,7 @@ qrrvglm.control <- function(Rank = 1,
            isd.latvar = rep(isd.latvar, len = Rank),
            iKvector = as.numeric(iKvector),
            iShape = as.numeric(iShape),
-           ITolerances = ITolerances,
+           I.tolerances = I.tolerances,
            maxitl = maxitl,
            imethod = imethod,
            Maxit.optim = Maxit.optim,

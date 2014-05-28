@@ -118,14 +118,15 @@ Rayleigh          \eqn{f(y;c\sqrt{2},2,1)}{f(y;c sqrt(2),2,1)} where \eqn{c>0}.
   \code{\link{rgengamma}},
   \code{\link{gamma1}},
   \code{\link{gamma2}},
-  \code{\link{prentice74}}.
+  \code{\link{prentice74}},
+  \code{\link{simulate.vlm}}.
 
 
 }
 \examples{
 \dontrun{ k <- exp(-1); Scale = exp(1)
 gdata <- data.frame(y = rgamma(1000, shape = k, scale = Scale))
-fit <- vglm(y ~ 1, gengamma, gdata, trace = TRUE)
+fit <- vglm(y ~ 1, gengamma, data = gdata, trace = TRUE)
 coef(fit, matrix = TRUE)
 
 # Another example
@@ -134,8 +135,8 @@ gdata <- transform(gdata, Scale = exp(1),
                           d = exp( 0 + 1.2* x2),
                           k = exp(-1 + 2  * x2))
 gdata <- transform(gdata, y = rgengamma(nn, scale = Scale, d = d, k = k))
-fit <- vglm(y ~ x2, gengamma(zero = 1, iscale = 6), gdata, trace = TRUE)
-fit <- vglm(y ~ x2, gengamma(zero = 1), gdata, trace = TRUE, maxit = 50)
+fit <- vglm(y ~ x2, gengamma(zero = 1, iscale = 6), data = gdata, trace = TRUE)
+fit <- vglm(y ~ x2, gengamma(zero = 1), data = gdata, trace = TRUE, maxit = 50)
 coef(fit, matrix = TRUE)
 }
 }

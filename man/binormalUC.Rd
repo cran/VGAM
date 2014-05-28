@@ -57,8 +57,11 @@ rbinorm(n,      mean1 = 0, mean2 = 0, var1 = 1, var2 = 1, cov12 = 0)
 \value{
   \code{dbinorm} gives the density,
   \code{pbinorm} gives the cumulative distribution function,
-% \code{qnorm2} gives the quantile function, and
   \code{rbinorm} generates random deviates (\eqn{n} by 2 matrix).
+
+
+% \code{qnorm2} gives the quantile function, and
+
 
 
 }

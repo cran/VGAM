@@ -94,6 +94,11 @@ mix2poisson(lphi = "logit", llambda = "loge",
 
 
 
+
+  This \pkg{VGAM} family function is experimental and
+  should be used with care.
+
+
 }
 
 \author{ T. W. Yee }
@@ -125,11 +130,11 @@ mix2poisson(lphi = "logit", llambda = "loge",
 \examples{
 \dontrun{ # Example 1: simulated data
 nn <- 1000
-mu1 <- exp(2.5)  # also known as lambda1
+mu1 <- exp(2.5)  # Also known as lambda1
 mu2 <- exp(3)
 (phi <- logit(-0.5, inverse = TRUE))
 mdata <- data.frame(y = rpois(nn, ifelse(runif(nn) < phi, mu1, mu2)))
-fit <- vglm(y ~ 1, mix2poisson, mdata)
+fit <- vglm(y ~ 1, mix2poisson, data = mdata)
 coef(fit, matrix = TRUE)
 
 # Compare the results with the truth

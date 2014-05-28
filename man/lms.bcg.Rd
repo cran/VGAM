@@ -8,7 +8,7 @@
 }
 \usage{
 lms.bcg(percentiles = c(25, 50, 75), zero = c(1, 3), 
-        llambda = "identity", lmu = "identity", lsigma = "loge",
+        llambda = "identitylink", lmu = "identitylink", lsigma = "loge",
         dfmu.init = 4, dfsigma.init = 2, ilambda = 1, isigma = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -54,6 +54,8 @@ lms.bcg(percentiles = c(25, 50, 75), zero = c(1, 3),
   The object is used by modelling functions such as \code{\link{vglm}},
   \code{\link{rrvglm}}
   and \code{\link{vgam}}.
+
+
 }
 \references{
 
@@ -68,10 +70,12 @@ Documentation accompanying the \pkg{VGAM} package at
 \url{http://www.stat.auckland.ac.nz/~yee}
 contains further information and examples.
 
+
 }
 \author{ Thomas W. Yee }
 \note{
  Similar notes can be found at \code{\link{lms.bcn}}.
+
 
 }
 \section{Warning }{
@@ -80,6 +84,7 @@ contains further information and examples.
   Also, the expected value of the second derivative with
   respect to lambda may be incorrect (my calculations do
   not agree with the Lopatatzidis and Green manuscript.)
+
 
 }
 \seealso{
@@ -96,7 +101,7 @@ contains further information and examples.
 
 \examples{
 # This converges, but deplot(fit) and qtplot(fit) do not work
-fit0 <- vglm(BMI ~ bs(age, df = 4), lms.bcg, bmi.nz, trace = TRUE)
+fit0 <- vglm(BMI ~ sm.bs(age, df = 4), lms.bcg, data = bmi.nz, trace = TRUE)
 coef(fit0, matrix = TRUE)
 \dontrun{
 par(mfrow = c(1, 1))

@@ -94,20 +94,22 @@ Natural exponential families with quadratic variance functions.
 
 %}
 \seealso{
-% \code{\link{nefghs}},
   \code{\link{elogit}}.
+
+
+% \code{\link{nefghs}},
 
 
 }
 \examples{
 hdata <- data.frame(x2 = rnorm(nn <- 200))
 hdata <- transform(hdata, y = rnorm(nn))  # Not very good data!
-fit <- vglm(y ~ x2, hypersecant, hdata, trace = TRUE, crit = "coef")
+fit <- vglm(y ~ x2, hypersecant, data = hdata, trace = TRUE, crit = "coef")
 coef(fit, matrix = TRUE)
 fit@misc$earg
 
 # Not recommended:
-fit <- vglm(y ~ x2, hypersecant(link = "identity"), hdata, trace = TRUE)
+fit <- vglm(y ~ x2, hypersecant(link = "identitylink"), data = hdata, trace = TRUE)
 coef(fit, matrix = TRUE)
 fit@misc$earg
 }

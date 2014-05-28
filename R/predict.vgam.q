@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2013 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2014 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -62,13 +62,13 @@ predict.vgam <-
     stop("an intercept is assumed")
 
   M <- object@misc$M
-  Blist <- object@constraints
-  ncolBlist <- unlist(lapply(Blist, ncol))
+  Hlist <- object@constraints
+  ncolHlist <- unlist(lapply(Hlist, ncol))
   if (intercept)
-    ncolBlist <- ncolBlist[-1]
+    ncolHlist <- ncolHlist[-1]
   if (raw) {
-    Blist <- canonical.Blist(Blist)
-    object@constraints <- Blist
+    Hlist <- canonical.Hlist(Hlist)
+    object@constraints <- Hlist
   }
 
   if (!length(newdata)) {
@@ -153,18 +153,18 @@ predict.vgam <-
     if (is.null(tmp6 <- attr(if (se.fit) predictor$fitted.values else
                             predictor, "vterm.assign"))) {
 
-      Blist <- subconstraints(object@misc$orig.assign,
+      Hlist <- subconstraints(object@misc$orig.assign,
                               object@constraints)
-      ncolBlist <- unlist(lapply(Blist, ncol))
+      ncolHlist <- unlist(lapply(Hlist, ncol))
       if (intercept)
-        ncolBlist <- ncolBlist[-1]
+        ncolHlist <- ncolHlist[-1]
     
-      cs <- if (raw) cumsum(c(1, ncolBlist)) else
-                     cumsum(c(1, M + 0 * ncolBlist))
-      tmp6 <- vector("list", length(ncolBlist))
+      cs <- if (raw) cumsum(c(1, ncolHlist)) else
+                     cumsum(c(1, M + 0 * ncolHlist))
+      tmp6 <- vector("list", length(ncolHlist))
       for (ii in 1:length(tmp6))
         tmp6[[ii]] <- cs[ii]:(cs[ii+1]-1)
-      names(tmp6) <- names(ncolBlist)
+      names(tmp6) <- names(ncolHlist)
     }
 
     n.s.xargument <- names(s.xargument)  # e.g., c("s(x)", "s(x2)")
@@ -181,7 +181,7 @@ predict.vgam <-
                                             deriv = deriv.arg)$y
 
 
-        eta.mat <- if (raw) rawMat else (rawMat %*% t(Blist[[ii]]))
+        eta.mat <- if (raw) rawMat else (rawMat %*% t(Hlist[[ii]]))
 
         if (type == "terms") {
           hhh <- tmp6[[ii]]
@@ -347,12 +347,12 @@ varassign <- function(constraints, n.s.xargument) {
 
   ans <- vector("list", length(n.s.xargument))
 
-  ncolBlist <- unlist(lapply(constraints, ncol))
+  ncolHlist <- unlist(lapply(constraints, ncol))
 
   names(ans) <- n.s.xargument
   ptr <- 1
   for (ii in n.s.xargument) {
-    temp <- ncolBlist[[ii]]
+    temp <- ncolHlist[[ii]]
     ans[[ii]] <- ptr:(ptr + temp - 1)
     ptr <- ptr + temp
   }

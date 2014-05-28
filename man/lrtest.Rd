@@ -140,9 +140,9 @@
 \examples{
 set.seed(1)
 pneumo <- transform(pneumo, let = log(exposure.time), x3 = runif(nrow(pneumo)))
-fit1 <- vglm(cbind(normal, mild, severe) ~ let     , propodds, pneumo)
-fit2 <- vglm(cbind(normal, mild, severe) ~ let + x3, propodds, pneumo)
-fit3 <- vglm(cbind(normal, mild, severe) ~ let     , cumulative, pneumo)
+fit1 <- vglm(cbind(normal, mild, severe) ~ let     , propodds, data = pneumo)
+fit2 <- vglm(cbind(normal, mild, severe) ~ let + x3, propodds, data = pneumo)
+fit3 <- vglm(cbind(normal, mild, severe) ~ let     , cumulative, data = pneumo)
 # Various equivalent specifications of the LR test for testing x3
 (ans1 <- lrtest(fit2, fit1))
 ans2 <- lrtest(fit2, 2)

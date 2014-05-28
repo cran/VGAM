@@ -27,7 +27,7 @@ Tol(object, ...)
   Many models have no such notion or definition.
 
 
-  Tolerances occur in quadratic ordination, i.e., CQO. % or UQO.
+  Tolerances occur in quadratic ordination, i.e., CQO and UQO.
   They have ecological meaning because a high tolerance
   for a species means the species can survive over a large
   environmental range (stenoecous species), whereas a
@@ -81,7 +81,7 @@ Constrained additive ordination.
   For rank-\emph{R>1} models it becomes more complicated because
   the latent variables are also uncorrelated. An important
   argument when fitting quadratic ordination models is whether
-  \code{EqualTolerances} is \code{TRUE} or \code{FALSE}.
+  \code{eq.tolerances} is \code{TRUE} or \code{FALSE}.
   See Yee (2004) for details.
 
 
@@ -91,14 +91,17 @@ Constrained additive ordination.
 \seealso{
   \code{Tol.qrrvglm}.
   \code{\link{Max}},
-  \code{\link{Opt}}.
+  \code{\link{Opt}},
+  \code{\link{cqo}},
+  \code{\link{rcim}} for UQO.
 
 
 }
 
 \examples{
+\dontrun{
 set.seed(111)  # This leads to the global solution
-hspider[,1:6] <- scale(hspider[,1:6])  # Standardized environmental vars
+hspider[,1:6] <- scale(hspider[, 1:6])  # Standardized environmental vars
 p1 <- cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,
                Auloalbi, Pardlugu, Pardmont, Pardnigr, Pardpull,
                Trocterr, Zoraspin) ~
@@ -106,6 +109,7 @@ p1 <- cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,
          Bestof = 2, quasipoissonff, data = hspider, Crow1positive = FALSE)
 
 Tol(p1)
+}
 }
 \keyword{models}
 \keyword{regression}

@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2013 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2014 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -176,6 +176,7 @@ N.hat.posbernoulli <-
 rposbern <-
   function(n, nTimePts = 5, pvars = length(xcoeff),
            xcoeff = c(-2, 1, 2),
+           Xmatrix = NULL,  # If is.null(Xmatrix) then it is created
            cap.effect =  1,
            is.popn = FALSE,
            link = "logit",
@@ -212,6 +213,7 @@ rposbern <-
   link <- attr(earg, "function.name")
 
 
+  cap.effect.orig <- cap.effect
 
 
   Ymatrix <- matrix(0, use.n, nTimePts,
@@ -224,13 +226,15 @@ rposbern <-
                                            sep = "")))
 
 
-  Xmatrix <- cbind(x1 = rep(1.0, len = use.n))
-  if (pvars > 1)
-    Xmatrix <- cbind(Xmatrix,
-                     matrix(runif(n = use.n * (pvars-1)),
-                            use.n, pvars - 1,
-                            dimnames = list(as.character(1:use.n),
-                                            paste("x", 2:pvars, sep = ""))))
+  if (is.null(Xmatrix)) {
+    Xmatrix <- cbind(x1 = rep(1.0, len = use.n))
+    if (pvars > 1)
+      Xmatrix <- cbind(Xmatrix,
+                       matrix(runif(n = use.n * (pvars-1)),
+                              use.n, pvars - 1,
+                              dimnames = list(as.character(1:use.n),
+                                              paste("x", 2:pvars, sep = ""))))
+  }
 
 
   lin.pred.baseline <- xcoeff[1]
@@ -239,11 +243,13 @@ rposbern <-
                          Xmatrix[, 2:pvars, drop = FALSE] %*%
                          xcoeff[2:pvars]
   sumrowy <- rep(0, length = use.n)
+  cap.effect <- rep(cap.effect.orig, length = use.n)
 
   for (jlocal in 1:nTimePts) {
     CHmatrix[, jlocal] <- as.numeric(sumrowy > 0)
 
-    lin.pred <- lin.pred.baseline + (CHmatrix[, jlocal] >  0) * cap.effect
+    caught.before.TF <- (CHmatrix[, jlocal] >  0)
+    lin.pred <- lin.pred.baseline + caught.before.TF * cap.effect
 
     Ymatrix[, jlocal] <-
       rbinom(use.n, size = 1,
@@ -273,11 +279,13 @@ rposbern <-
       ans[1:orig.n, ]
     } else {
       rbind(ans,
-            Recall(n = orig.n - nrow(ans),
-                   nTimePts = nTimePts, pvars = pvars,
-                   xcoeff = xcoeff,
-                   cap.effect = cap.effect,
-                   link = earg, earg.link = TRUE))
+            Recall(n            = orig.n - nrow(ans),
+                   nTimePts     = nTimePts,
+                   pvars        = pvars,
+                   xcoeff       = xcoeff,
+                   cap.effect   = cap.effect.orig,
+                   link         = earg,
+                   earg.link    = TRUE))
     }
   }
 
@@ -285,7 +293,7 @@ rposbern <-
 
   attr(ans, "pvars")      <- pvars
   attr(ans, "nTimePts")   <- nTimePts
-  attr(ans, "cap.effect") <- cap.effect
+  attr(ans, "cap.effect") <- cap.effect.orig
   attr(ans, "is.popn")    <- is.popn
   attr(ans, "n")          <- n
 
@@ -457,11 +465,12 @@ posnegbinomial.control <- function(save.weight = TRUE, ...) {
   constraints = eval(substitute(expression({
 
     dotzero <- .zero
-    Musual <- 2
+    M1 <- 2
     eval(negzero.expression)
   }), list( .zero = zero ))),
   infos = eval(substitute(function(...) {
-    list(Musual = 2,
+    list(M1 = 2,
+         Q1 = 1,
          lmunb = .lmunb ,
          emunb = .emunb ,
          lsize = .lsize ,
@@ -472,7 +481,7 @@ posnegbinomial.control <- function(save.weight = TRUE, ...) {
             .imethod = imethod ))),
 
   initialize = eval(substitute(expression({
-    Musual <- 2
+    M1 <- 2
 
     if (any(y == 0))
       stop("there are zero values in the response")
@@ -495,7 +504,7 @@ posnegbinomial.control <- function(save.weight = TRUE, ...) {
 
 
 
-    M <- Musual * ncol(y) 
+    M <- M1 * ncol(y) 
     extra$NOS <- NOS <- ncoly <- ncol(y)  # Number of species
 
     predictors.names <- c(
@@ -505,7 +514,7 @@ posnegbinomial.control <- function(save.weight = TRUE, ...) {
       namesof(if (NOS == 1) "size" else
               paste("size", 1:NOS, sep = ""),
               .lsize, earg = .esize, tag = FALSE))
-    predictors.names <- predictors.names[interleave.VGAM(M, M = Musual)]
+    predictors.names <- predictors.names[interleave.VGAM(M, M = M1)]
 
     if (!length(etastart)) {
       mu.init <- y
@@ -541,18 +550,18 @@ posnegbinomial.control <- function(save.weight = TRUE, ...) {
         cbind(
               theta2eta(mu.init * (1 - p00), .lmunb, earg = .emunb ),
               theta2eta(kmat0,               .lsize, earg = .esize ))
-      etastart <- etastart[,interleave.VGAM(M, M = Musual), drop = FALSE]
+      etastart <- etastart[,interleave.VGAM(M, M = M1), drop = FALSE]
     }
   }), list( .lmunb = lmunb, .lsize = lsize, .isize = isize,
             .emunb = emunb, .esize = esize,
             .sinit = shrinkage.init,
             .imethod = imethod ))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
-    Musual <- 2
-    NOS <- ncol(eta) / Musual
-    munb <- eta2theta(eta[, Musual*(1:NOS)-1, drop = FALSE],
+    M1 <- 2
+    NOS <- ncol(eta) / M1
+    munb <- eta2theta(eta[, M1*(1:NOS)-1, drop = FALSE],
                      .lmunb, earg = .emunb )
-    kmat <- eta2theta(eta[, Musual*(1:NOS),   drop = FALSE],
+    kmat <- eta2theta(eta[, M1*(1:NOS),   drop = FALSE],
                      .lsize, earg = .esize )
     po0 <- (kmat / (kmat + munb))^kmat
     munb / (1 - po0)
@@ -564,14 +573,14 @@ posnegbinomial.control <- function(save.weight = TRUE, ...) {
     names(temp0303) =
        c(if (NOS == 1) "munb" else paste("munb", 1:NOS, sep = ""),
          if (NOS == 1) "size" else paste("size", 1:NOS, sep = ""))
-    temp0303  <- temp0303[interleave.VGAM(M, M = Musual)]
+    temp0303  <- temp0303[interleave.VGAM(M, M = M1)]
     misc$link <- temp0303  # Already named
 
-    misc$earg <- vector("list", Musual*NOS)
+    misc$earg <- vector("list", M1*NOS)
     names(misc$earg) <- names(misc$link)
     for (ii in 1:NOS) {
-      misc$earg[[Musual*ii-1]] <- .emunb
-      misc$earg[[Musual*ii  ]] <- .esize
+      misc$earg[[M1*ii-1]] <- .emunb
+      misc$earg[[M1*ii  ]] <- .esize
     }
 
     misc$nsimEIM <- .nsimEIM
@@ -580,33 +589,66 @@ posnegbinomial.control <- function(save.weight = TRUE, ...) {
             .emunb = emunb, .esize = esize,
             .nsimEIM = nsimEIM, .imethod = imethod ))),
   loglikelihood = eval(substitute(
-    function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
-    Musual <- 2
-    NOS <- ncol(eta) / Musual
-    munb <- eta2theta(eta[, Musual*(1:NOS)-1, drop = FALSE],
+    function(mu, y, w, residuals = FALSE, eta,
+             extra = NULL,
+             summation = TRUE) {
+    M1 <- 2
+    NOS <- ncol(eta) / M1
+    munb <- eta2theta(eta[, M1*(1:NOS)-1, drop = FALSE],
                       .lmunb, earg = .emunb )
-    kmat <- eta2theta(eta[, Musual*(1:NOS)  , drop = FALSE],
+    kmat <- eta2theta(eta[, M1*(1:NOS)  , drop = FALSE],
                       .lsize, earg = .esize )
-    if (residuals)
-      stop("loglikelihood residuals not implemented yet") else {
-      sum(w * dposnegbin(x = y, size = kmat, munb = munb, log = TRUE))
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
+      ll.elts <-
+        c(w) * dposnegbin(x = y, size = kmat, munb = munb, log = TRUE)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
     }
   }, list( .lmunb = lmunb, .lsize = lsize,
            .emunb = emunb, .esize = esize ))),
 
   vfamily = c("posnegbinomial"),
+
+
+
+
+  simslot = eval(substitute(
+  function(object, nsim) {
+
+    pwts <- if (length(pwts <- object@prior.weights) > 0)
+              pwts else weights(object, type = "prior")
+    if (any(pwts != 1)) 
+      warning("ignoring prior weights")
+    eta <- predict(object)
+    munb <- eta2theta(eta[, c(TRUE, FALSE), drop = FALSE],
+                      .lmunb, earg = .emunb )
+    kmat <- eta2theta(eta[, c(FALSE, TRUE), drop = FALSE],
+                      .lsize, earg = .esize )
+    rposnegbin(nsim * length(munb), size = kmat, munb = munb)
+  }, list( .lmunb = lmunb, .lsize = lsize,
+           .emunb = emunb, .esize = esize ))),
+
+
+
+
+
   deriv = eval(substitute(expression({
-    Musual <- 2
+    M1 <- 2
     NOS <- extra$NOS
 
-    munb <- eta2theta(eta[, Musual*(1:NOS)-1, drop = FALSE],
+    munb <- eta2theta(eta[, M1*(1:NOS)-1, drop = FALSE],
                       .lmunb , earg = .emunb )
-    kmat <- eta2theta(eta[, Musual*(1:NOS)  , drop = FALSE],
+    kmat <- eta2theta(eta[, M1*(1:NOS)  , drop = FALSE],
                       .lsize , earg = .esize )
 
     dmunb.deta <- dtheta.deta(munb, .lmunb, earg = .emunb )
     dsize.deta <- dtheta.deta(kmat, .lsize, earg = .esize )
-    NOS <- ncol(eta) / Musual
+    NOS <- ncol(eta) / M1
 
 
     tempk <- kmat / (kmat + munb)
@@ -629,12 +671,12 @@ posnegbinomial.control <- function(save.weight = TRUE, ...) {
 
     myderiv <- c(w) * cbind(dl.dmunb * dmunb.deta,
                             dl.dsize * dsize.deta)
-    myderiv[, interleave.VGAM(M, M = Musual)]
+    myderiv[, interleave.VGAM(M, M = M1)]
   }), list( .lmunb = lmunb, .lsize = lsize,
             .emunb = emunb, .esize = esize ))),
   weight = eval(substitute(expression({
     run.varcov =
-    wz <- matrix(0.0, n, 2 * Musual * NOS - 1)
+    wz <- matrix(0.0, n, 2 * M1 * NOS - 1)
 
 
 
@@ -653,7 +695,7 @@ posnegbinomial.control <- function(save.weight = TRUE, ...) {
 
 
     {
-      ind2 <- iam(NA, NA, M = Musual, both = TRUE, diag = TRUE)
+      ind2 <- iam(NA, NA, M = M1, both = TRUE, diag = TRUE)
       for (ii in 1:( .nsimEIM )) {
         ysim <- rposnegbin(n = n*NOS, mu = c(munb), size = c(kmat))
         dim(ysim) <- c(n, NOS)
@@ -672,14 +714,14 @@ posnegbinomial.control <- function(save.weight = TRUE, ...) {
           small.varcov <- temp2[, ind2$row.index] *
                           temp2[, ind2$col.index]
 
-          run.varcov[, ((kk-1)*Musual+1):(kk*Musual)] =
-          run.varcov[, ((kk-1)*Musual+1):(kk*Musual)] +
-            c(small.varcov[, 1:Musual])
-          run.varcov[, M + (kk-1)*Musual + 1] =
-          run.varcov[, M + (kk-1)*Musual + 1] +
-            c(small.varcov[, Musual + 1])
+          run.varcov[, ((kk-1)*M1+1):(kk*M1)] =
+          run.varcov[, ((kk-1)*M1+1):(kk*M1)] +
+            c(small.varcov[, 1:M1])
+          run.varcov[, M + (kk-1)*M1 + 1] =
+          run.varcov[, M + (kk-1)*M1 + 1] +
+            c(small.varcov[, M1 + 1])
         }
-      } # ii
+      }  # ii
 
       run.varcov <- cbind(run.varcov / .nsimEIM )
       wz <- if (intercept.only)
@@ -688,7 +730,7 @@ posnegbinomial.control <- function(save.weight = TRUE, ...) {
 
     }
 
-    w.wz.merge(w = w, wz = wz, n = n, M = M, ndepy = M / Musual)
+    w.wz.merge(w = w, wz = wz, n = n, M = M, ndepy = M / M1)
   }), list( .nsimEIM = nsimEIM ))))
 }
 
@@ -849,12 +891,13 @@ rposnegbin <- function(n, size, prob = NULL, munb = NULL) {
             namesof("lambda", link, earg = earg, tag = FALSE)),
   constraints = eval(substitute(expression({
     dotzero <- .zero
-    Musual <- 1
+    M1 <- 1
     eval(negzero.expression)
   }), list( .zero = zero ))),
 
   infos = eval(substitute(function(...) {
-    list(Musual = 1,
+    list(M1 = 1,
+         Q1 = 1,
          link = .link ,
          earg = .earg)
   }, list( .link = link, .earg = earg ))),
@@ -874,10 +917,10 @@ rposnegbin <- function(n, size, prob = NULL, munb = NULL) {
     y <- temp5$y
 
     ncoly <- ncol(y)
-    Musual <- 1
+    M1 <- 1
     extra$ncoly <- ncoly
-    extra$Musual <- Musual
-    M <- Musual * ncoly
+    extra$M1 <- M1
+    M <- M1 * ncoly
 
 
 
@@ -915,20 +958,44 @@ rposnegbin <- function(n, size, prob = NULL, munb = NULL) {
     for (ii in 1:M)
       misc$earg[[ii]] <- .earg
 
-    misc$Musual <- Musual
+    misc$M1 <- M1
     misc$expected <- TRUE
     misc$multipleResponses <- TRUE
   }), list( .link = link, .earg = earg, .expected = expected ))),
   loglikelihood = eval(substitute(
-    function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
+    function(mu, y, w, residuals = FALSE, eta,
+             extra = NULL,
+             summation = TRUE) {
     lambda <- eta2theta(eta, .link , earg = .earg ) 
     if (residuals) {
       stop("loglikelihood residuals not implemented yet")
     } else {
-      sum(w * dpospois(x = y, lambda = lambda, log = TRUE))
+      ll.elts <- c(w) * dpospois(x = y, lambda = lambda, log = TRUE)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
     }
   }, list( .link = link, .earg = earg ))),
   vfamily = c("pospoisson"),
+
+
+  simslot = eval(substitute(
+  function(object, nsim) {
+
+    pwts <- if (length(pwts <- object@prior.weights) > 0)
+              pwts else weights(object, type = "prior")
+    if (any(pwts != 1)) 
+      warning("ignoring prior weights")
+    eta <- predict(object)
+    lambda <- eta2theta(eta, .link , earg = .earg ) 
+    rpospois(nsim * length(lambda), lambda)
+  }, list( .link = link, .earg = earg ))),
+
+
+
+
   deriv = eval(substitute(expression({
     lambda <- eta2theta(eta, .link , earg = .earg ) 
 
@@ -1083,11 +1150,12 @@ dposbinom <- function(x, size, prob, log = FALSE) {
                            constraints = constraints)
 
     dotzero <- .zero
-    Musual <- 1
+    M1 <- 1
     eval(negzero.expression)
   }), list( .parallel = parallel, .zero = zero ))),
   infos = eval(substitute(function(...) {
-    list(Musual = 1,
+    list(M1 = 1,
+         Q1 = 1,
          p.small    = .p.small ,
          no.warning = .no.warning ,
          zero = .zero )
@@ -1112,10 +1180,10 @@ dposbinom <- function(x, size, prob, log = FALSE) {
 
 
     ncoly <- ncol(y)
-    Musual <- 1
+    M1 <- 1
     extra$ncoly <- ncoly
-    extra$Musual <- Musual
-    M <- Musual * ncoly
+    extra$M1 <- M1
+    M <- M1 * ncoly
 
 
     extra$p.small    <- .p.small
@@ -1224,7 +1292,9 @@ if (length(extra$tau)) {
             .omit.constant = omit.constant ))),
 
   loglikelihood = eval(substitute(
-    function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
+    function(mu, y, w, residuals = FALSE, eta,
+             extra = NULL,
+             summation = TRUE) {
 
       ycounts <- if ( .mv ) {
                   round(y * extra$orig.w)
@@ -1241,21 +1311,62 @@ if (length(extra$tau)) {
       use.orig.w <- if (is.numeric(extra$orig.w)) extra$orig.w else 1
     binprob <- eta2theta(eta, .link , earg = .earg )
 
-    if (residuals) stop("loglikelihood residuals ",
-                        "not implemented yet") else {
-
-      answer <- sum(use.orig.w * dposbinom(x = ycounts, size = nvec,
-                                           prob = binprob, log = TRUE))
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
+      answer <- c(use.orig.w) * dposbinom(x = ycounts, size = nvec,
+                                          prob = binprob, log = TRUE)
       if ( .omit.constant ) {
-        answer <- answer - sum(use.orig.w * lchoose(n = nvec, k = ycounts))
+        answer <- answer - c(use.orig.w) * lchoose(n = nvec, k = ycounts)
       }
-      answer
+      ll.elts <- answer
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
     }
   }, list( .link = link, .earg = earg,
           .mv = mv,
           .omit.constant = omit.constant ))),
 
   vfamily = c("posbinomial"),
+
+
+
+
+  simslot = eval(substitute(
+  function(object, nsim) {
+
+    pwts <- if (length(pwts <- object@prior.weights) > 0)
+              pwts else weights(object, type = "prior")
+
+    if ( .mv )
+      stop("cannot run simulate() when 'mv = TRUE'")
+
+    eta <- predict(object)
+    binprob <- eta2theta(eta, .link , earg = .earg )
+
+    extra <- object@extra
+    w <- extra$w  # Usual code
+    w <- pwts  # 20140101
+
+
+    nvec <- if ( .mv ) {
+              w
+            } else {
+              if (is.numeric(extra$orig.w)) round(w / extra$orig.w) else
+                round(w)
+            }
+    rposbinom(nsim * length(eta), size = nvec, prob = binprob)
+  }, list( .link = link, .earg = earg,
+          .mv = mv,
+          .omit.constant = omit.constant ))),
+
+
+
+
+
   deriv = eval(substitute(expression({
     use.orig.w <- if (is.numeric(extra$orig.w)) extra$orig.w else
                   rep(1, n)
@@ -1355,7 +1466,7 @@ if (length(extra$tau)) {
   }), list( .parallel.t = parallel.t,
             .apply.parint = apply.parint ))),
   infos = eval(substitute(function(...) {
-    list(Musual = 1,
+    list(M1 = 1,
          multipleResponses = TRUE,
          p.small    = .p.small ,
          no.warning = .no.warning ,
@@ -1367,7 +1478,7 @@ if (length(extra$tau)) {
            .apply.parint = apply.parint ))),
 
   initialize = eval(substitute(expression({
-    Musual <- 1
+    M1 <- 1
 
     mustart.orig <- mustart
     y <- as.matrix(y)
@@ -1474,23 +1585,29 @@ if (length(extra$tau)) {
             .apply.parint = apply.parint,
             .iprob = iprob ))),
   loglikelihood = eval(substitute(
-    function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
+    function(mu, y, w, residuals = FALSE, eta,
+             extra = NULL,
+             summation = TRUE) {
 
     ycounts <- y
     use.orig.w <- if (length(extra$orig.w)) extra$orig.w else 1
 
     probs <- eta2theta(eta, .link , earg = .earg )
 
-    if (residuals) stop("loglikelihood residuals ",
-                        "not implemented yet") else {
-
-      sum(dposbern(x = ycounts,  # size = 1,  # Bernoulli trials
-                   prob = probs, prob0 = probs, log = TRUE))
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
 
 
-      sum(use.orig.w *
+      ll.elts <-
+        c(use.orig.w) *
           dposbern(x = ycounts,  # size = 1,  # Bernoulli trials
-                   prob = probs, prob0 = probs, log = TRUE))
+                   prob = probs, prob0 = probs, log = TRUE)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
     }
   }, list( .link = link, .earg = earg ))),
   vfamily = c("posbernoulli.t"),
@@ -1613,7 +1730,7 @@ if (length(extra$tau)) {
             .apply.parint.b = apply.parint.b ))),
 
   infos = eval(substitute(function(...) {
-    list(Musual = 2,
+    list(M1 = 2,
          p.small    = .p.small ,
          no.warning = .no.warning ,
          type.fitted = .type.fitted ,
@@ -1627,7 +1744,7 @@ if (length(extra$tau)) {
          ))),
 
   initialize = eval(substitute(expression({
-    Musual <- 2
+    M1 <- 2
     if (!is.matrix(y) || ncol(y) == 1)
       stop("the response appears to be univariate")
 
@@ -1799,7 +1916,9 @@ if (length(extra$tau)) {
             .apply.parint.b = apply.parint.b
           ))),
   loglikelihood = eval(substitute(
-    function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
+    function(mu, y, w, residuals = FALSE, eta,
+             extra = NULL,
+             summation = TRUE) {
 
     tau <- extra$ncoly
     ycounts <- y
@@ -1810,19 +1929,38 @@ if (length(extra$tau)) {
     prc <- matrix(cap.probs, nrow(eta), tau)
     prr <- matrix(rec.probs, nrow(eta), tau)
 
-    if (residuals) stop("loglikelihood residuals ",
-                        "not implemented yet") else {
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
       probs.numer <- prr 
       mat.index <- cbind(1:nrow(prc), extra$cap1)
       probs.numer[mat.index] <- prc[mat.index]
       probs.numer[extra$cap.hist1 == 0] <- prc[extra$cap.hist1 == 0]
 
-      sum(use.orig.w *
+      ll.elts <-
+        c(use.orig.w) *
           dposbern(x = ycounts,  # Bernoulli trials
-                   prob = probs.numer, prob0 = prc, log = TRUE))
+                   prob = probs.numer, prob0 = prc, log = TRUE)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
     }
   }, list( .link = link, .earg = earg ))),
   vfamily = c("posbernoulli.b"),
+
+
+
+
+
+
+
+
+
+
+
+
   deriv = eval(substitute(expression({
     cap.probs <- eta2theta(eta[, 1], .link , earg = .earg )
     rec.probs <- eta2theta(eta[, 2], .link , earg = .earg )
@@ -2012,7 +2150,7 @@ if (length(extra$tau)) {
             .apply.parint.d = apply.parint.d,
             .apply.parint.t = apply.parint.t ))),
   infos = eval(substitute(function(...) {
-    list(Musual = 2,
+    list(M1 = 2,
          multipleResponses  = TRUE,
          ridge.constant     = .ridge.constant ,
          ridge.power        = .ridge.power ,
@@ -2038,7 +2176,7 @@ if (length(extra$tau)) {
            .apply.parint.t     = apply.parint.t ))),
 
   initialize = eval(substitute(expression({
-    Musual <- 2  # Not quite true
+    M1 <- 2  # Not quite true
 
 
     if (ncol(cbind(w)) > 1)
@@ -2053,7 +2191,7 @@ if (length(extra$tau)) {
     extra$ycounts <- y
     extra$type.fitted <- .type.fitted
     extra$dimnamesy <- dimnames(y)
-    M <- Musual * tau - 1  # recap.prob.1 is unused
+    M <- M1 * tau - 1  # recap.prob.1 is unused
 
 
     mustart <- (y + matrix(apply(y, 2, weighted.mean, w = w),
@@ -2221,7 +2359,9 @@ if (length(extra$tau)) {
             .ridge.power = ridge.power,
             .iprob = iprob ))),
   loglikelihood = eval(substitute(
-    function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
+    function(mu, y, w, residuals = FALSE, eta,
+             extra = NULL,
+             summation = TRUE) {
 
     tau <- extra$ncoly
     taup1 <- tau + 1
@@ -2235,17 +2375,23 @@ if (length(extra$tau)) {
                  probs[, taup1:ncol(probs)])  # 1st coln ignored
 
 
-    if (residuals) stop("loglikelihood residuals ",
-                        "not implemented yet") else {
-
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
       probs.numer <- prr 
       mat.index <- cbind(1:nrow(prc), extra$cap1)
       probs.numer[mat.index] <- prc[mat.index]
       probs.numer[extra$cap.hist1 == 0] <- prc[extra$cap.hist1 == 0]
 
-      sum(use.orig.w *
+      ll.elts <-
+        c(use.orig.w) *
             dposbern(x = ycounts,  # size = 1,  # Bernoulli trials
-                     prob = probs.numer, prob0 = prc, log = TRUE))
+                     prob = probs.numer, prob0 = prc, log = TRUE)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
     }
   }, list( .link = link, .earg = earg ))),
   vfamily = c("posbernoulli.tb"),

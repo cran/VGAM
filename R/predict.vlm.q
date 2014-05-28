@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2013 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2014 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -95,10 +95,10 @@ predict.vlm <- function(object,
 
   dx1 <- dimnames(X)[[1]]
   M <- object@misc$M
-  Blist <- object@constraints
-  ncolBlist <- unlist(lapply(Blist, ncol))
+  Hlist <- object@constraints
+  ncolHlist <- unlist(lapply(Hlist, ncol))
   if (hasintercept)
-    ncolBlist <- ncolBlist[-1]
+    ncolHlist <- ncolHlist[-1]
 
   xbar <- x2bar <- NULL
   if (type == "terms" && hasintercept) {
@@ -123,13 +123,13 @@ predict.vlm <- function(object,
 
     nn <- if (!is.null(newdata)) nrow(newdata) else object@misc$n
     if (raw) {
-      Blist <- canonical.Blist(Blist)
-      object@constraints <- Blist
+      Hlist <- canonical.Hlist(Hlist)
+      object@constraints <- Hlist
     }
 
 
 
-    X_vlm <- lm2vlm.model.matrix(X, Blist = Blist, M = M,
+    X_vlm <- lm2vlm.model.matrix(X, Hlist = Hlist, M = M,
                                  xij = object@control$xij, Xm2 = Xm2)
 
 
@@ -196,12 +196,12 @@ predict.vlm <- function(object,
 
 
   if (type == "terms") {
-    Blist <- subconstraints(object@misc$orig.assign, object@constraints)
-    ncolBlist <- unlist(lapply(Blist, ncol))
+    Hlist <- subconstraints(object@misc$orig.assign, object@constraints)
+    ncolHlist <- unlist(lapply(Hlist, ncol))
     if (hasintercept)
-      ncolBlist <- ncolBlist[-1]
+      ncolHlist <- ncolHlist[-1]
 
-    cs <- cumsum(c(1, ncolBlist))  # Like a pointer
+    cs <- cumsum(c(1, ncolHlist))  # Like a pointer
     for (ii in 1:(length(cs)-1))
       if (cs[ii+1] - cs[ii] > 1)
         for (kk in (cs[ii]+1):(cs[ii+1]-1))
@@ -239,7 +239,7 @@ predict.vlm <- function(object,
       if (raw) {
         kindex <- NULL
         for (ii in 1:pp) 
-          kindex <- c(kindex, (ii-1)*M + (1:ncolBlist[ii]))
+          kindex <- c(kindex, (ii-1)*M + (1:ncolHlist[ii]))
         if (se.fit) {
           pred$fitted.values <- pred$fitted.values[, kindex, drop = FALSE]
           pred$se.fit <- pred$se.fit[, kindex, drop = FALSE]
@@ -248,8 +248,8 @@ predict.vlm <- function(object,
         }
       } 
 
-      temp <- if (raw) ncolBlist else rep(M, length(ncolBlist))
-      dd <- vlabel(names(ncolBlist), temp, M)
+      temp <- if (raw) ncolHlist else rep(M, length(ncolHlist))
+      dd <- vlabel(names(ncolHlist), temp, M)
       if (se.fit) {
         dimnames(pred$fitted.values) <- 
         dimnames(pred$se.fit) <- list(if (length(newdata))
@@ -269,11 +269,11 @@ predict.vlm <- function(object,
       }
 
     if (!raw)
-      cs <- cumsum(c(1, M + 0 * ncolBlist))
-    fred <- vector("list", length(ncolBlist))
+      cs <- cumsum(c(1, M + 0 * ncolHlist))
+    fred <- vector("list", length(ncolHlist))
     for (ii in 1:length(fred))
       fred[[ii]] <- cs[ii]:(cs[ii+1]-1)
-    names(fred) <- names(ncolBlist)
+    names(fred) <- names(ncolHlist)
     if (se.fit) {
       attr(pred$fitted.values, "vterm.assign") <-
       attr(pred$se.fit,        "vterm.assign") <- fred
@@ -309,7 +309,7 @@ setMethod("predict", "vlm",
 predict.vglm.se <- function(fit, ...) {
 
 
-  H_ss <- hatvalues(fit, type = "centralBlocks")  # diag = FALSE
+  H.ss <- hatvalues(fit, type = "centralBlocks")  # diag = FALSE
 
   M <- npred(fit)
   nn <- nobs(fit, type = "lm")
@@ -317,8 +317,8 @@ predict.vglm.se <- function(fit, ...) {
 
   Uarray <- array(0, c(M, M, nn))
   ind1 <- iam(NA, NA, M = M, both = TRUE, diag = TRUE)
-  MM12 <- M * (M + 1) / 2
-  for (jay in 1:MM12)
+  MMp1d2 <- M * (M + 1) / 2
+  for (jay in 1:MMp1d2)
     Uarray[ind1$row.index[jay],
            ind1$col.index[jay], ] <- U[jay, ]
 
@@ -334,15 +334,15 @@ predict.vglm.se <- function(fit, ...) {
       }
     }
 
-  var.boldeta_i <- mux5(H_ss, Utinv.array, M = M,
+  var.boldeta.i <- mux5(H.ss, Utinv.array, M = M,
                         matrix.arg = TRUE)  # First M cols are SE^2
 
-  sqrt(var.boldeta_i[, 1:M])  # SE(linear.predictor)
+  sqrt(var.boldeta.i[, 1:M])  # SE(linear.predictor)
 
 
 
 
-  sqrt(var.boldeta_i[, 1:M])
+  sqrt(var.boldeta.i[, 1:M])
 }
 
 
@@ -379,13 +379,13 @@ is.linear.term <- function(ch) {
 }
 
 
-canonical.Blist <- function(Blist) {
-  for (ii in 1:length(Blist)) {
-    temp <- Blist[[ii]] * 0
+canonical.Hlist <- function(Hlist) {
+  for (ii in 1:length(Hlist)) {
+    temp <- Hlist[[ii]] * 0
     temp[cbind(1:ncol(temp), 1:ncol(temp))] <- 1
-    Blist[[ii]] <- temp
+    Hlist[[ii]] <- temp
   }
-  Blist
+  Hlist
 }
 
 

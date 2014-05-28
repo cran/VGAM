@@ -123,7 +123,7 @@ quasipoissonff()
 \dontrun{n <- 200; p <- 5; S <- 5
 mydata <- rcqo(n, p, S, fam = "poisson", eq.tol = FALSE)
 myform <- attr(mydata, "formula")
-p1 <- cqo(myform, fam = quasipoissonff, EqualTol = FALSE, data = mydata)
+p1 <- cqo(myform, fam = quasipoissonff, eq.tol = FALSE, data = mydata)
 sort(p1@misc$deviance.Bestof)  # A history of all the iterations
 lvplot(p1, y = TRUE, lcol = 1:S, pch = 1:S, pcol = 1:S)
 summary(p1)  # The dispersion parameters are estimated

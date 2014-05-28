@@ -70,7 +70,8 @@ Hoboken, NJ: Wiley-Interscience.
 }
 \examples{
 sdata <- data.frame(y = rsinmad(n = 3000, exp(1), exp(2), exp(1)))
-fit <- vglm(y ~ 1, sinmad(ishape1.a = 2.1), sdata, trace = TRUE, crit = "coef")
+fit <- vglm(y ~ 1, sinmad(ishape1.a = 2.1), data = sdata,
+            trace = TRUE, crit = "coef")
 coef(fit, matrix = TRUE)
 Coef(fit)
 }

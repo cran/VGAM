@@ -96,16 +96,16 @@ nakagami(lshape = "loge", lscale = "loge", ishape = NULL, iscale = 1)
 \examples{
 nn <- 1000; shape <- exp(0); Scale <- exp(1)
 ndata <- data.frame(y1 = sqrt(rgamma(nn, shape = shape, scale = Scale/shape)))
-fit <- vglm(y1 ~ 1, nakagami, ndata, trace = TRUE, crit = "coef")
+fit <- vglm(y1 ~ 1, nakagami, data = ndata, trace = TRUE, crit = "coef")
 ndata <- transform(ndata, y2 = rnaka(nn, shape = shape, scale = Scale))
-fit <- vglm(y2 ~ 1, nakagami(iscale = 3), ndata, trace = TRUE)
+fit <- vglm(y2 ~ 1, nakagami(iscale = 3), data = ndata, trace = TRUE)
 head(fitted(fit))
 with(ndata, mean(y2))
 coef(fit, matrix = TRUE)
 (Cfit <- Coef(fit))
 \dontrun{ with(ndata,
 hist(sy <- sort(y2), prob = TRUE, main = "", xlab = "y", ylim = c(0, 0.6)))
-lines(dnaka(sy, shape = Cfit[1], scale = Cfit[2]) ~ sy, ndata, col = "orange") }
+lines(dnaka(sy, shape = Cfit[1], scale = Cfit[2]) ~ sy, data = ndata, col = "orange") }
 }
 \keyword{models}
 \keyword{regression}

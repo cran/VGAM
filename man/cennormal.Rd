@@ -11,7 +11,7 @@
 
 }
 \usage{
-cennormal(lmu = "identity", lsd = "loge", imethod = 1, zero = 2)
+cennormal(lmu = "identitylink", lsd = "loge", imethod = 1, zero = 2)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -101,9 +101,9 @@ cdata <- transform(cdata, y = pmin(U, y))      # Right censored
 with(cdata, hist(y))
 Extra <- list(leftcensored = with(cdata, ystar < L),
               rightcensored = with(cdata, ystar > U))
-fit1 <- vglm(y ~ x2, cennormal, cdata, crit = "c", extra = Extra, trace = TRUE)
+fit1 <- vglm(y ~ x2, cennormal, data = cdata, crit = "c", extra = Extra, trace = TRUE)
 fit2 <- vglm(y ~ x2, tobit(Lower = with(cdata, L), Upper = with(cdata, U)),
-            cdata, crit = "c", trace = TRUE)
+            data = cdata, crit = "c", trace = TRUE)
 coef(fit1, matrix = TRUE)
 max(abs(coef(fit1, matrix = TRUE) - coef(fit2, matrix = TRUE)))  # Should be 0
 names(fit1@extra)

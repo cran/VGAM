@@ -11,7 +11,7 @@
 
 }
 \usage{
-amlnormal(w.aml = 1, parallel = FALSE, lexpectile = "identity",
+amlnormal(w.aml = 1, parallel = FALSE, lexpectile = "identitylink",
           iexpectile = NULL, imethod = 1, digw = 4)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -64,11 +64,13 @@ amlnormal(w.aml = 1, parallel = FALSE, lexpectile = "identity",
   \code{weights} argument (so that it can contain frequencies).
   Newton-Raphson estimation is used here.
 
+
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}}
   and \code{\link{vgam}}.
+
 
 }
 \references{
@@ -76,6 +78,7 @@ amlnormal(w.aml = 1, parallel = FALSE, lexpectile = "identity",
   Regression percentiles using asymmetric squared error loss.
   \emph{Statistica Sinica},
   \bold{1}, 93--125.
+
 
 }
 
@@ -142,7 +145,7 @@ amlnormal(w.aml = 1, parallel = FALSE, lexpectile = "identity",
 # Example 1
 ooo <- with(bmi.nz, order(age))
 bmi.nz <- bmi.nz[ooo,]  # Sort by age
-(fit <- vglm(BMI ~ bs(age), fam = amlnormal(w.aml = 0.1), bmi.nz))
+(fit <- vglm(BMI ~ sm.bs(age), fam = amlnormal(w.aml = 0.1), bmi.nz))
 fit@extra # Gives the w value and the percentile
 coef(fit, matrix = TRUE)
 
@@ -155,7 +158,7 @@ with(bmi.nz, lines(age, c(fitted(fit)), col = "black"))
 # Example 2
 # Find the w values that give the 25, 50 and 75 percentiles
 findw <- function(w, percentile = 50) {
-  fit2 <- vglm(BMI ~ bs(age), fam = amlnormal(w = w), data = bmi.nz)
+  fit2 <- vglm(BMI ~ sm.bs(age), fam = amlnormal(w = w), data = bmi.nz)
   fit2@extra$percentile - percentile
 }
 # Quantile plot
@@ -164,7 +167,7 @@ with(bmi.nz, plot(age, BMI, col = "blue", las = 1, main =
 for (myp in c(25, 50, 75)) {
 # Note: uniroot() can only find one root at a time
   bestw <- uniroot(f = findw, interval = c(1/10^4, 10^4), percentile = myp)
-  fit2 <- vglm(BMI ~ bs(age), fam = amlnormal(w = bestw$root), data = bmi.nz)
+  fit2 <- vglm(BMI ~ sm.bs(age), fam = amlnormal(w = bestw$root), data = bmi.nz)
   with(bmi.nz, lines(age, c(fitted(fit2)), col = "red"))
 }
 

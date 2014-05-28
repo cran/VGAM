@@ -93,15 +93,16 @@ Hoboken, NJ, USA: Wiley-Interscience.
     \code{\link{invlomax}},
     \code{\link{lomax}},
     \code{\link{paralogistic}},
-    \code{\link{invparalogistic}}.
+    \code{\link{invparalogistic}},
+    \code{\link{simulate.vlm}}.
 
 
 }
 
 \examples{
 sdata <- data.frame(y = rsinmad(n = 1000, exp(1), exp(2), exp(0)))
-fit <- vglm(y ~ 1, sinmad, sdata, trace = TRUE)
-fit <- vglm(y ~ 1, sinmad(ishape1.a = exp(1)), sdata, trace = TRUE)
+fit <- vglm(y ~ 1, sinmad, data = sdata, trace = TRUE)
+fit <- vglm(y ~ 1, sinmad(ishape1.a = exp(1)), data = sdata, trace = TRUE)
 coef(fit, matrix = TRUE)
 Coef(fit)
 summary(fit)

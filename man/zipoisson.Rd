@@ -176,7 +176,7 @@ zipoissonff(llambda = "loge", lonempstr0 = "logit",
   Although the functions in \code{\link{Zipois}}
   can handle the zero-\emph{deflated} Poisson distribution,
   this family function cannot estimate this very well in general.
-  One sets \code{lpstr0 = identity}, however, the iterations
+  One sets \code{lpstr0 = identitylink}, however, the iterations
   might fall outside the parameter space.
   Practically, it is restricted to intercept-models only
   (see example below).
@@ -184,7 +184,7 @@ zipoissonff(llambda = "loge", lonempstr0 = "logit",
   or using a simpler model to obtain initial values.
 % If there is a covariate then it is best to
 % constrain \code{pstr0} to be intercept-only, e.g.,
-% by \code{zipoisson(lpstr0 = identity, zero = -1)}.
+% by \code{zipoisson(lpstr0 = identitylink, zero = -1)}.
   A (somewhat) similar and more reliable method for
   zero-deflation is to try the zero-altered Poisson model
   (see \code{\link{zapoisson}}).
@@ -226,7 +226,8 @@ zipoissonff(llambda = "loge", lonempstr0 = "logit",
   \code{\link{yip88}},
   \code{\link{rrvglm}},
   \code{\link{zipebcom}},
-  \code{\link[stats:Poisson]{rpois}}.
+  \code{\link[stats:Poisson]{rpois}},
+  \code{\link{simulate.vlm}}.
 
 
 }
@@ -272,7 +273,7 @@ with(cholera, cbind(actual = wfreq,
 abdata <- data.frame(y = 0:7, w = c(182, 41, 12, 2, 2, 0, 0, 1))
 abdata <- subset(abdata, w > 0)
 fit <- vglm(y ~ 1, zipoisson(lpstr0 = probit, ipstr0 = 0.8),
-            abdata, weight = w, trace = TRUE)
+            data = abdata, weight = w, trace = TRUE)
 fitted(fit, type = "pobs0")  # Estimate of P(Y = 0)
 coef(fit, matrix = TRUE)
 Coef(fit)  # Estimate of pstr0 and lambda
@@ -288,7 +289,7 @@ zdata <- transform(zdata, usepstr0 = deflat.limit / 1.5)
 zdata <- transform(zdata, y3 = rzipois(nn, lambda3, pstr0 = usepstr0))
 head(zdata)
 with(zdata, table(y3))  # A lot of deflation
-fit3 <- vglm(y3 ~ 1, zipoisson(zero = -1, lpstr0 = identity),
+fit3 <- vglm(y3 ~ 1, zipoisson(zero = -1, lpstr0 = identitylink),
              data = zdata, trace = TRUE, crit = "coef")
 coef(fit3, matrix = TRUE)
 # Check how accurate it was:
@@ -298,8 +299,8 @@ Coef(fit3)
 
 # Example 5: This RR-ZIP is known as a COZIGAM or COZIVGLM-ZIP
 set.seed(123)
-rrzip <- rrvglm(Alopacce ~ bs(WaterCon, df = 3), zipoisson(zero = NULL),
-                hspider, trace = TRUE, Index.corner = 2)
+rrzip <- rrvglm(Alopacce ~ sm.bs(WaterCon, df = 3), zipoisson(zero = NULL),
+                data = hspider, trace = TRUE, Index.corner = 2)
 coef(rrzip, matrix = TRUE)
 Coef(rrzip)
 summary(rrzip)

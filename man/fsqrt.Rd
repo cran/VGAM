@@ -129,7 +129,7 @@ par(lwd = 1)
 }
 
 # This is lucky to converge
-fit.h <- vglm(agaaus ~ bs(altitude), binomialff(link = fsqrt(mux = 5)),
+fit.h <- vglm(agaaus ~ sm.bs(altitude), binomialff(link = fsqrt(mux = 5)),
               data = hunua, trace = TRUE)
 \dontrun{
 plotvgam(fit.h, se = TRUE, lcol = "orange", scol = "orange",

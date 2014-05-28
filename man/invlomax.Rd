@@ -85,15 +85,16 @@ Hoboken, NJ, USA: Wiley-Interscience.
     \code{\link{fisk}},
     \code{\link{lomax}},
     \code{\link{paralogistic}},
-    \code{\link{invparalogistic}}.
+    \code{\link{invparalogistic}},
+    \code{\link{simulate.vlm}}.
 
 
 }
 
 \examples{
 idata <- data.frame(y = rinvlomax(n = 2000, exp(2), exp(1)))
-fit <- vglm(y ~ 1, invlomax, idata, trace = TRUE)
-fit <- vglm(y ~ 1, invlomax(iscale = exp(2), ishape2.p = exp(1)), idata,
+fit <- vglm(y ~ 1, invlomax, data = idata, trace = TRUE)
+fit <- vglm(y ~ 1, invlomax(iscale = exp(2), ishape2.p = exp(1)), data = idata,
             trace = TRUE, epsilon = 1e-8)
 coef(fit, matrix = TRUE)
 Coef(fit)

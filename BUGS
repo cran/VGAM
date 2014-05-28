@@ -1,6 +1,15 @@
 Here is a list of known bugs.
 
 
+2014-02
+
+The subset argument of vgam() may not work, especially with
+multiple responses. To get around this, use subset() to create
+a smaller data frame and then feed that into vgam().
+
+
+
+
 2013-11
 
 vgam() can only handle constraint matrices cmat, say, such that

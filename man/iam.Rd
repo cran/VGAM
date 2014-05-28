@@ -99,7 +99,9 @@ iam(j, k, M, both = FALSE, diag = TRUE)
 }
 
 \seealso{ 
-\code{\link{vglmff-class}}.
+  \code{\link{vglmff-class}}.
+
+
 %\code{ima}.
 
 

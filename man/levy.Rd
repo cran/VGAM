@@ -92,9 +92,9 @@ ldata <- data.frame(y = delta + mygamma/rnorm(nn)^2)  # Levy(mygamma, delta)
 with(ldata, sum(y > 1) / length(y))  # Should be 0.6827
 with(ldata, sum(y > 2) / length(y))  # Should be 0.5205
 
-fit <- vglm(y ~ 1, levy(delta = delta), ldata, trace = TRUE)  # 1 parameter
+fit <- vglm(y ~ 1, levy(delta = delta), data = ldata, trace = TRUE)  # 1 parameter
 fit <- vglm(y ~ 1, levy(idelta = delta, igamma = mygamma),
-           ldata, trace = TRUE)  # 2 parameters
+           data = ldata, trace = TRUE)  # 2 parameters
 coef(fit, matrix = TRUE)
 Coef(fit)
 summary(fit)

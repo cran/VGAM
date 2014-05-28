@@ -145,7 +145,29 @@ coef(fit3, matrix = TRUE)
 Coef(fit3)  # Estimate of lambda (they get 0.6997 with SE 0.1520)
 head(fitted(fit3))
 mean(yy)  # Compare this with fitted(fit3)
+
+
+
 }
 \keyword{models}
 \keyword{regression}
+
+
+
+
+% 20140101; try to put into a data frame but it gives a numerical
+% problem:
+%# Another example (Angers and Biswas, 2003) ---------------------
+%abdata <- data.frame(y = 0:7, w = c(182, 41, 12, 2, 2, 0, 0, 1))
+%abdata <- subset(abdata, w > 0)
+%abdata <- subset(abdata, y > 0)
+%Abdata <- data.frame(yy = with(abdata, rep(y, w)))
+%fit3 <- vglm(yy ~ 1, yip88(n = nrow(Abdata)), data = Abdata)
+%fit3@misc$pstr0  # Estimate of phi (they get 0.5154 with SE 0.0707)
+%coef(fit3, matrix = TRUE)
+%Coef(fit3)  # Estimate of lambda (they get 0.6997 with SE 0.1520)
+%head(fitted(fit3))
+%with(Abdata, mean(yy))  # Compare this with fitted(fit3)
+
+
 

@@ -147,7 +147,7 @@ The \pkg{VGAM} package for categorical data analysis.
 \examples{
 pneumo <- transform(pneumo, let = log(exposure.time))
 (fit <- vglm(cbind(normal, mild, severe) ~ let,
-             cratio(parallel = TRUE), pneumo))
+             cratio(parallel = TRUE), data = pneumo))
 coef(fit, matrix = TRUE)
 constraints(fit)
 predict(fit)

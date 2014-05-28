@@ -7,9 +7,11 @@
 \title{The Rice Distribution}
 \description{
   Density
-% distribution function, quantile function
   and random generation for the
   Rician distribution.
+
+
+% distribution function, quantile function
 
 }
 
@@ -37,9 +39,11 @@ rrice(n, vee, sigma)
 }
 \value{
   \code{drice} gives the density,
+  \code{rrice} generates random deviates.
+
+
 % \code{price} gives the distribution function,
 % \code{qrice} gives the quantile function, and
-  \code{rrice} generates random deviates.
 
 
 }

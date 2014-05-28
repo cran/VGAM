@@ -68,7 +68,7 @@ Hoboken, NJ, USA: Wiley-Interscience.
 }
 \examples{
 pdata <- data.frame(y = rparalogistic(n = 3000, exp(1), exp(2)))
-fit <- vglm(y ~ 1, paralogistic(ishape1.a = 2.1), pdata, trace = TRUE)
+fit <- vglm(y ~ 1, paralogistic(ishape1.a = 2.1), data = pdata, trace = TRUE)
 coef(fit, matrix = TRUE)
 Coef(fit)
 }

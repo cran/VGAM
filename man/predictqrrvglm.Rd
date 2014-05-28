@@ -76,19 +76,20 @@ canonical Gaussian ordination.
 }
 
 \examples{
-hspider[,1:6]=scale(hspider[,1:6])  # Standardize the environmental variables
+hspider[,1:6] <- scale(hspider[,1:6])  # Standardize the environmental vars
 set.seed(1234)
-# vvv p1 = cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi, Auloalbi,
-# vvv                Pardlugu, Pardmont, Pardnigr, Pardpull, Trocterr, Zoraspin) ~
-# vvv          WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
-# vvv          fam=poissonff, data=hspider, Crow1positive=FALSE, ITol=TRUE)
+# vvv p1 <- cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute,
+# vvv                 Arctperi, Auloalbi, Pardlugu, Pardmont,
+# vvv                 Pardnigr, Pardpull, Trocterr, Zoraspin) ~
+# vvv       WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
+# vvv       poissonff, data = hspider, Crow1positive = FALSE, I.tol = TRUE)
 # vvv sort(p1@misc$deviance.Bestof)  # A history of all the iterations
 
 # vvv head(predict(p1))
 
 # The following should be all zeros
-# vvv max(abs(predict(p1, new=head(hspider)) - head(predict(p1))))
-# vvv max(abs(predict(p1, new=head(hspider), type="res") - head(fitted(p1))))
+# vvv max(abs(predict(p1, new = head(hspider)) - head(predict(p1))))
+# vvv max(abs(predict(p1, new = head(hspider), type = "res")-head(fitted(p1))))
 }
 \keyword{models}
 \keyword{regression}

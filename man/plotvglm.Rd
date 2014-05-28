@@ -95,8 +95,8 @@ plotvglm(x, type = c("vglm", "vgam"),
 }
 \examples{
 coalminers <- transform(coalminers, Age = (age - 42) / 5)
-fit <- vglm(cbind(nBnW, nBW, BnW, BW) ~ bs(Age),
-            binom2.or(zero = NULL), coalminers)
+fit <- vglm(cbind(nBnW, nBW, BnW, BW) ~ sm.bs(Age),
+            binom2.or(zero = NULL), data = coalminers)
 \dontrun{ par(mfrow = c(1, 3))
 plot(fit, type = "vgam", se = TRUE, ylim = c(-3, 2), las = 1)
 plot(fit, type = "vgam", se = TRUE, which.cf = 1:2,

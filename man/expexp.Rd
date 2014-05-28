@@ -141,7 +141,7 @@ expexp(lshape = "loge", lscale = "loge",
 \examples{
 # A special case: exponential data
 edata <- data.frame(y = rexp(n <- 1000))
-fit <- vglm(y ~ 1, fam = expexp, edata, trace = TRUE, maxit = 99)
+fit <- vglm(y ~ 1, fam = expexp, data = edata, trace = TRUE, maxit = 99)
 coef(fit, matrix = TRUE)
 Coef(fit)
 

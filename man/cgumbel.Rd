@@ -10,7 +10,7 @@
 
 }
 \usage{
-cgumbel(llocation = "identity", lscale = "loge",
+cgumbel(llocation = "identitylink", lscale = "loge",
         iscale = NULL, mean = TRUE, percentiles = NULL, zero = 2)
 }
 %- maybe also 'usage' for other objects documented here.

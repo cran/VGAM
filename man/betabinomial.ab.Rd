@@ -181,7 +181,8 @@ betabinomial.ab(lshape12 = "loge", i1 = 1, i2 = NULL,
   \code{\link{binomialff}},
   \code{\link{betaff}},
   \code{\link{dirmultinomial}},
-  \code{\link{lirat}}.
+  \code{\link{lirat}},
+  \code{\link{simulate.vlm}}.
 
 
 }

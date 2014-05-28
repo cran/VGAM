@@ -90,6 +90,7 @@ fraud detection in accounting  and the design computers.
   \code{qbenf} gives the quantile function, and
   \code{rbenf} generates random deviates.
 
+
 }
 \references{ 
 
@@ -119,7 +120,7 @@ dbenf(x <- c(0:10, NA, NaN, -Inf, Inf))
 pbenf(x)
 
 \dontrun{
-xx = 1:9; # par(mfrow=c(2,1))
+xx <- 1:9
 barplot(dbenf(xx), col = "lightblue", las = 1, xlab = "Leading digit",
         ylab = "Probability", names.arg = as.character(xx),
         main = paste("Benford's distribution",  sep = ""))

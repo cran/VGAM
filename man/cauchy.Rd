@@ -9,11 +9,11 @@
 
 }
 \usage{
-cauchy(llocation = "identity", lscale = "loge",
+cauchy(llocation = "identitylink", lscale = "loge",
        ilocation = NULL, iscale = NULL,
        iprobs = seq(0.2, 0.8, by = 0.2),
        imethod = 1, nsimEIM = NULL, zero = 2)
-cauchy1(scale.arg = 1, llocation = "identity",
+cauchy1(scale.arg = 1, llocation = "identitylink",
         ilocation = NULL, imethod = 1)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -133,27 +133,27 @@ Observed versus expected Fisher information.
 \seealso{ 
   \code{\link[stats:Cauchy]{Cauchy}},
   \code{\link{cauchit}},
-  \code{\link{studentt}}.
+  \code{\link{studentt}},
+  \code{\link{simulate.vlm}}.
 
 
 }
 \examples{
 # Both location and scale parameters unknown
-cdata1 <- data.frame(x = runif(nn <- 1000))
-cdata1 <- transform(cdata1, loc = exp(1+0.5*x), scale = exp(1))
-cdata1 <- transform(cdata1, y = rcauchy(nn, loc, scale))
-fit <- vglm(y ~ x, cauchy(lloc = "loge"), cdata1, trace = TRUE)
-coef(fit, matrix = TRUE)
-head(fitted(fit))  # Location estimates
-summary(fit)
+set.seed(123)
+cdata <- data.frame(x2 = runif(nn <- 1000))
+cdata <- transform(cdata, loc = exp(1 + 0.5 * x2), scale = exp(1))
+cdata <- transform(cdata, y2 = rcauchy(nn, loc, scale))
+fit2 <- vglm(y2 ~ x2, cauchy(lloc = "loge"), data = cdata, trace = TRUE)
+coef(fit2, matrix = TRUE)
+head(fitted(fit2))  # Location estimates
+summary(fit2)
 
 # Location parameter unknown
-set.seed(123)
-cdata2 <- data.frame(x = runif(nn <- 500))
-cdata2 <- transform(cdata2, loc = 1 + 0.5 * x, scale = 0.4)
-cdata2 <- transform(cdata2, y = rcauchy(nn, loc, scale))
-fit <- vglm(y ~ x, cauchy1(scale = 0.4), cdata2, trace = TRUE, crit = "coef")
-coef(fit, matrix = TRUE)
+cdata <- transform(cdata, scale1 = 0.4)
+cdata <- transform(cdata, y1 = rcauchy(nn, loc, scale1))
+fit1 <- vglm(y1 ~ x2, cauchy1(scale = 0.4), data = cdata, trace = TRUE)
+coef(fit1, matrix = TRUE)
 }
 \keyword{models}
 \keyword{regression}

@@ -54,6 +54,8 @@ rzibinom(n, size, prob, pstr0 = 0)
   \code{qzibinom} gives the quantile function, and
   \code{rzibinom} generates random deviates.
 
+
+
 }
 %\references{ }
 \author{ T. W. Yee }

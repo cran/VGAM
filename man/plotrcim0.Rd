@@ -201,6 +201,8 @@
   \code{\link{Rcim}}, 
   \code{\link{rcim}}.
 
+
+
 }
 \examples{
 alcoff.e <- moffset(alcoff, "6", "Mon", postfix = "*")  # Effective day

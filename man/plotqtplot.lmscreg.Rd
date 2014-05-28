@@ -95,6 +95,8 @@ contains further information and examples.
 
 \seealso{
 \code{\link{qtplot.lmscreg}}.
+
+
 }
 
 \examples{\dontrun{

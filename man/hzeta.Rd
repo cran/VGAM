@@ -59,7 +59,7 @@ hzeta(link = "loglog", ialpha = NULL, nsimEIM = 100)
 }
 \references{ 
 
-    Page 533 of
+    Pages 533--4 of
     Johnson N. L., Kemp, A. W. and Kotz S. (2005)
     \emph{Univariate Discrete Distributions},
     3rd edition,
@@ -75,14 +75,15 @@ hzeta(link = "loglog", ialpha = NULL, nsimEIM = 100)
   \code{\link{Hzeta}},
   \code{\link{zeta}},
   \code{\link{zetaff}},
-  \code{\link{loglog}}.
+  \code{\link{loglog}},
+  \code{\link{simulate.vlm}}.
 
 
 }
 \examples{
 alpha <- exp(exp(-0.1))  # The parameter
 hdata <- data.frame(y = rhzeta(n = 1000, alpha))
-fit <- vglm(y ~ 1, hzeta, hdata, trace = TRUE, crit = "coef")
+fit <- vglm(y ~ 1, hzeta, data = hdata, trace = TRUE, crit = "coef")
 coef(fit, matrix = TRUE)
 Coef(fit)  # Useful for intercept-only models; should be same as alpha
 c(with(hdata, mean(y)), head(fitted(fit), 1))

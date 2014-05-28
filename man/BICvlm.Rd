@@ -102,11 +102,11 @@ BICvlm(object, \dots, k = log(nobs(object)))
 \examples{
 pneumo <- transform(pneumo, let = log(exposure.time))
 (fit1 <- vglm(cbind(normal, mild, severe) ~ let,
-              cumulative(parallel = TRUE, reverse = TRUE), pneumo))
+              cumulative(parallel = TRUE, reverse = TRUE), data = pneumo))
 coef(fit1, matrix = TRUE)
 BIC(fit1)
 (fit2 <- vglm(cbind(normal, mild, severe) ~ let,
-              cumulative(parallel = FALSE, reverse = TRUE), pneumo))
+              cumulative(parallel = FALSE, reverse = TRUE), data = pneumo))
 coef(fit2, matrix = TRUE)
 BIC(fit2)
 

@@ -131,7 +131,7 @@ cao.control(Rank = 1, all.knots = FALSE, criterion = "deviance", Cinit = NULL,
 %  Numerical and positive-valued vector of length \bold{C}
 %  (recycled if necessary).  Passed into \code{optim(...,
 %  control = list(parscale = Parscale))}; the elements of \bold{C} become
-%  \bold{C} / \code{Parscale}.  Setting \code{ITolerances = TRUE} results
+%  \bold{C} / \code{Parscale}.  Setting \code{I.tolerances = TRUE} results
 %  in line searches that are very large, therefore \bold{C} has to be
 %  scaled accordingly to avoid large step sizes.
 
@@ -282,14 +282,18 @@ cao.control(Rank = 1, all.knots = FALSE, criterion = "deviance", Cinit = NULL,
 
 }
 \references{
+
+
 Yee, T. W. (2006)
 Constrained additive ordination.
 \emph{Ecology}, \bold{87}, 203--213.
 
+
 Green, P. J. and Silverman, B. W. (1994)
-\emph{Nonparametric Regression and Generalized Linear Models: A
-  Roughness Penalty Approach},
+\emph{Nonparametric Regression and Generalized Linear Models:
+      A Roughness Penalty Approach},
 London: Chapman & Hall.
+
 
 }
 \author{T. W. Yee}
@@ -298,15 +302,19 @@ London: Chapman & Hall.
   spp2 = 3, 2.5)}, say, meaning the default value is 2.5, but two species
   have alternative values.
 
+
   If \code{spar1 = 0} and \code{df1.nl = 0} then this represents fitting
   linear functions (CLO). Currently, this is handled in the awkward
   manner of setting \code{df1.nl} to be a small positive value, so that
   the smooth is almost linear but not quite.
   A proper fix to this special case should done in the short future.
 
+
 }
 \seealso{ 
   \code{\link{cao}}.
+
+
 }
 
 \examples{\dontrun{

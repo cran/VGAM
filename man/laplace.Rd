@@ -8,7 +8,7 @@
 
 }
 \usage{
-laplace(llocation = "identity", lscale = "loge",
+laplace(llocation = "identitylink", lscale = "loge",
         ilocation = NULL, iscale = NULL, imethod = 1, zero = 2)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -111,14 +111,14 @@ Boston: Birkhauser.
 
 \examples{
 ldata <- data.frame(y = rlaplace(nn <- 100, loc = 2, scale = exp(1)))
-fit <- vglm(y  ~ 1, laplace, ldata, trace = TRUE, crit = "l")
+fit <- vglm(y  ~ 1, laplace, data = ldata, trace = TRUE, crit = "l")
 coef(fit, matrix = TRUE)
 Coef(fit)
 with(ldata, median(y))
 
 ldata <- data.frame(x = runif(nn <- 1001))
 ldata <- transform(ldata, y = rlaplace(nn, loc = 2, scale = exp(-1 + 1*x)))
-coef(vglm(y ~ x, laplace(iloc = 0.2, imethod = 2, zero = 1), ldata,
+coef(vglm(y ~ x, laplace(iloc = 0.2, imethod = 2, zero = 1), data = ldata,
           trace = TRUE), matrix = TRUE)
 }
 \keyword{models}

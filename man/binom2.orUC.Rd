@@ -11,12 +11,12 @@
 }
 \usage{
 rbinom2.or(n, mu1,
-           mu2 = if(exchangeable) mu1 else stop("argument 'mu2' not specified"),
+           mu2 = if (exchangeable) mu1 else stop("argument 'mu2' not specified"),
            oratio = 1, exchangeable = FALSE, tol = 0.001, twoCols = TRUE,
-           colnames = if(twoCols) c("y1","y2") else c("00", "01", "10", "11"),
+           colnames = if (twoCols) c("y1","y2") else c("00", "01", "10", "11"),
            ErrorCheck = TRUE)
 dbinom2.or(mu1,
-           mu2 = if(exchangeable) mu1 else stop("'mu2' not specified"),
+           mu2 = if (exchangeable) mu1 else stop("'mu2' not specified"),
            oratio = 1, exchangeable = FALSE, tol = 0.001,
            colnames = c("00", "01", "10", "11"), ErrorCheck = TRUE)
 

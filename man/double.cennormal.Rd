@@ -8,7 +8,7 @@
 
 }
 \usage{
-double.cennormal(r1 = 0, r2 = 0, lmu = "identity", lsd = "loge",
+double.cennormal(r1 = 0, r2 = 0, lmu = "identitylink", lsd = "loge",
                  imu = NULL, isd = NULL, zero = 2)
 }
 %- maybe also 'usage' for other objects documented here.

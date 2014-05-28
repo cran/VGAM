@@ -32,8 +32,10 @@ logff(link = "logit", init.c = NULL, zero = NULL)
   }
 }
 \details{
-  The logarithmic distribution is based on the logarithmic series,
-  and is scaled to a probability function.
+  The logarithmic distribution is
+  a generalized power series distribution that is
+  based specifically on the logarithmic series
+  (scaled to a probability function).
   Its probability function is
   \eqn{f(y) = a c^y / y}{f(y) = a * c^y / y}, for
   \eqn{y=1,2,3,\ldots}{y=1,2,3,...},
@@ -77,9 +79,8 @@ Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
 
 
   The logarithmic distribution is sometimes confused with the log-series
-  The logarithmic distribution is sometimes confused with the log-series
   distribution. The latter was used by Fisher et al. for species abundance
-  data, and has two parameters.
+  data and has two parameters.
 
 
 }
@@ -89,13 +90,14 @@ Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
   \code{\link[base:Log]{log}},
   \code{\link{loge}},
   \code{\link{logoff}},
-  \code{\link{explogff}}.
+  \code{\link{explogff}},
+  \code{\link{simulate.vlm}}.
 
 
 }
 \examples{
 ldata <- data.frame(y = rlog(n = 1000, prob = logit(0.2, inverse = TRUE)))
-fit <- vglm(y ~ 1, logff, ldata, trace = TRUE, crit = "c")
+fit <- vglm(y ~ 1, logff, data = ldata, trace = TRUE, crit = "c")
 coef(fit, matrix = TRUE)
 Coef(fit)
 \dontrun{with(ldata,

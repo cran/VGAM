@@ -96,7 +96,7 @@ mlogit(theta, refLevel = "last", M = NULL, whitespace = FALSE,
 \examples{
 pneumo <- transform(pneumo, let = log(exposure.time))
 fit <- vglm(cbind(normal, mild, severe) ~ let,
-            multinomial, trace = TRUE, pneumo)  # For illustration only!
+            multinomial, trace = TRUE, data = pneumo)  # For illustration only!
 fitted(fit)
 predict(fit)
 

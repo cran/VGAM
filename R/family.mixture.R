@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2013 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2014 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -20,7 +20,7 @@ mix2normal.control <- function(trace = TRUE, ...) {
 
  mix2normal <-
     function(lphi = "logit",
-             lmu = "identity",
+             lmu = "identitylink",
              lsd = "loge",
              iphi = 0.5,
              imu1 = NULL, imu2 = NULL,
@@ -116,10 +116,10 @@ mix2normal.control <- function(trace = TRUE, ...) {
 
 
     if (!length(etastart)) {
-      qy <- quantile(y, prob = .qmu)
-      init.phi <- rep(if(length(.iphi)) .iphi else   0.5, length = n)
-      init.mu1 <- rep(if(length(.imu1)) .imu1 else qy[1], length = n)
-      init.mu2 <- rep(if(length(.imu2)) .imu2 else qy[2], length = n)
+      qy <- quantile(y, prob = .qmu )
+      init.phi <- rep(if (length(.iphi)) .iphi else   0.5, length = n)
+      init.mu1 <- rep(if (length(.imu1)) .imu1 else qy[1], length = n)
+      init.mu2 <- rep(if (length(.imu2)) .imu2 else qy[2], length = n)
       ind.1 <- if (init.mu1[1] < init.mu2[1])
                 1:round(n* init.phi[1]) else
                 round(n* init.phi[1]):n
@@ -127,12 +127,13 @@ mix2normal.control <- function(trace = TRUE, ...) {
                 round(n* init.phi[1]):n else
                 1:round(n* init.phi[1])
       sorty <- sort(y)
-      init.sd1 <- rep(if(length( .isd1 )) .isd1 else sd(sorty[ind.1]),
+      init.sd1 <- rep(if (length( .isd1 )) .isd1 else sd(sorty[ind.1]),
                       len = n)
-      init.sd2 <- rep(if(length( .isd2 )) .isd2 else sd(sorty[ind.2]),
+      init.sd2 <- rep(if (length( .isd2 )) .isd2 else sd(sorty[ind.2]),
                       len = n)
       if ( .eq.sd ) {
-        init.sd1 <- init.sd2 = (init.sd1 + init.sd2)/2
+        init.sd1 <-
+        init.sd2 <- (init.sd1 + init.sd2) / 2
         if (!all.equal( .esd1, .esd2 ))
           stop("'esd1' and 'esd2' must be equal if 'eq.sd = TRUE'")
       }
@@ -172,7 +173,9 @@ mix2normal.control <- function(trace = TRUE, ...) {
            .esd1 = esd1, .esd2 = esd2,
            .nsimEIM = nsimEIM ))),
   loglikelihood = eval(substitute(
-    function(mu,y,w,residuals = FALSE,eta,extra = NULL) {
+    function(mu, y, w, residuals = FALSE, eta,
+             extra = NULL,
+             summation = TRUE) {
     phi <- eta2theta(eta[, 1], link = .lphi, earg = .ephi)
     mu1 <- eta2theta(eta[, 2], link = .lmu,  earg = .emu1)
     sd1 <- eta2theta(eta[, 3], link = .lsd,  earg = .esd1)
@@ -180,9 +183,16 @@ mix2normal.control <- function(trace = TRUE, ...) {
     sd2 <- eta2theta(eta[, 5], link = .lsd,  earg = .esd2)
     f1 <- dnorm(y, mean=mu1, sd=sd1)
     f2 <- dnorm(y, mean=mu2, sd=sd2)
-    if (residuals) stop("loglikelihood residuals not ",
-                        "implemented yet") else
-    sum(w * log(phi*f1 + (1 - phi)*f2))
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
+      ll.elts <- c(w) * log(phi*f1 + (1 - phi)*f2)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
+    }
   }, list(.lphi = lphi, .lmu = lmu,
           .ephi = ephi, .emu1 = emu1, .emu2 = emu2,
           .esd1 = esd1, .esd2 = esd2,
@@ -199,8 +209,8 @@ mix2normal.control <- function(trace = TRUE, ...) {
     dmu2.deta <- dtheta.deta(mu2, link = .lmu, earg = .emu2)
     dsd1.deta <- dtheta.deta(sd1, link = .lsd, earg = .esd1)
     dsd2.deta <- dtheta.deta(sd2, link = .lsd, earg = .esd2)
-    f1 <- dnorm(y, mean=mu1, sd=sd1)
-    f2 <- dnorm(y, mean=mu2, sd=sd2)
+    f1 <- dnorm(y, mean = mu1, sd = sd1)
+    f2 <- dnorm(y, mean = mu2, sd = sd2)
     pdf <- phi*f1 + (1 - phi)*f2
     z1 <- (y-mu1) / sd1
     z2 <- (y-mu2) / sd2
@@ -239,8 +249,8 @@ mix2normal.control <- function(trace = TRUE, ...) {
 
       temp3 <- matrix(0, n, dimm(M))
       for (ss in 1:M)
-          for (tt in ss:M)
-              temp3[,iam(ss,tt, M)] <-  -d2l.dthetas2[,ss,tt]
+        for (tt in ss:M)
+          temp3[,iam(ss,tt, M)] <-  -d2l.dthetas2[, ss, tt]
 
       run.mean <- ((ii-1) * run.mean + temp3) / ii
     }
@@ -338,9 +348,9 @@ mix2poisson.control <- function(trace = TRUE, ...) {
 
     if (!length(etastart)) {
       qy <- quantile(y, prob =  .qmu)
-      init.phi <-     rep(if(length(.iphi)) .iphi else 0.5, length = n)
-      init.lambda1 <- rep(if(length(.il1)) .il1 else qy[1], length = n)
-      init.lambda2 <- rep(if(length(.il2)) .il2 else qy[2], length = n)
+      init.phi <-     rep(if (length(.iphi)) .iphi else 0.5, length = n)
+      init.lambda1 <- rep(if (length(.il1)) .il1 else qy[1], length = n)
+      init.lambda2 <- rep(if (length(.il2)) .il2 else qy[2], length = n)
 
       if (!length(etastart))  
         etastart <- cbind(theta2eta(init.phi, .lphi , earg = .ephi ),
@@ -372,15 +382,24 @@ mix2poisson.control <- function(trace = TRUE, ...) {
            .ephi = ephi, .el1 = el1, .el2 = el2,
            .nsimEIM = nsimEIM ))),
   loglikelihood = eval(substitute(
-    function(mu,y,w,residuals = FALSE,eta,extra = NULL) {
+    function(mu, y, w, residuals = FALSE, eta,
+             extra = NULL,
+             summation = TRUE) {
     phi <- eta2theta(eta[, 1], link = .lphi, earg = .ephi)
     lambda1 <- eta2theta(eta[, 2], link = .llambda, earg = .el1)
     lambda2 <- eta2theta(eta[, 3], link = .llambda, earg = .el2)
     f1 <- dpois(y, lam = lambda1)
     f2 <- dpois(y, lam = lambda2)
-    if (residuals) stop("loglikelihood residuals not ",
-                        "implemented yet") else
-    sum(w * log(phi*f1 + (1 - phi)*f2))
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
+      ll.elts <- c(w) * log(phi*f1 + (1 - phi)*f2)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
+    }
   }, list(.lphi = lphi, .llambda = llambda,
            .ephi = ephi, .el1 = el1, .el2 = el2 ))),
   vfamily = c("mix2poisson"),
@@ -543,9 +562,9 @@ mix2exp.control <- function(trace = TRUE, ...) {
 
     if (!length(etastart)) {
       qy <- quantile(y, prob =  .qmu)
-      init.phi <-     rep(if(length(.iphi)) .iphi else 0.5, length = n)
-      init.lambda1 <- rep(if(length(.il1)) .il1 else 1/qy[1], length = n)
-      init.lambda2 <- rep(if(length(.il2)) .il2 else 1/qy[2], length = n)
+      init.phi <-     rep(if (length(.iphi)) .iphi else 0.5, length = n)
+      init.lambda1 <- rep(if (length(.il1)) .il1 else 1/qy[1], length = n)
+      init.lambda2 <- rep(if (length(.il2)) .il2 else 1/qy[2], length = n)
       if (!length(etastart))  
         etastart <- cbind(theta2eta(init.phi,     .lphi,    earg = .ephi),
                           theta2eta(init.lambda1, .llambda, earg = .el1),
@@ -575,16 +594,25 @@ mix2exp.control <- function(trace = TRUE, ...) {
   }), list(.lphi = lphi, .llambda = llambda, .nsimEIM = nsimEIM,
            .ephi = ephi, .el1 = el1, .el2 = el2 ))),
   loglikelihood = eval(substitute(
-      function(mu,y,w,residuals = FALSE,eta,extra = NULL) {
+    function(mu, y, w, residuals = FALSE, eta,
+             extra = NULL,
+             summation = TRUE) {
     phi     <- eta2theta(eta[, 1], link = .lphi,    earg = .ephi)
     lambda1 <- eta2theta(eta[, 2], link = .llambda, earg = .el1)
     lambda2 <- eta2theta(eta[, 3], link = .llambda, earg = .el2)
 
     f1 <- dexp(y, rate=lambda1)
     f2 <- dexp(y, rate=lambda2)
-    if (residuals) stop("loglikelihood residuals not ",
-                        "implemented yet") else
-    sum(w * log(phi*f1 + (1 - phi)*f2))
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
+      ll.elts <- c(w) * log(phi*f1 + (1 - phi)*f2)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
+    }
   }, list(.lphi = lphi, .llambda = llambda,
           .ephi = ephi, .el1 = el1, .el2 = el2 ))),
   vfamily = c("mix2exp"),

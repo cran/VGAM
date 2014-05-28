@@ -7,7 +7,7 @@
 
 }
 \usage{
-tikuv(d, lmean = "identity", lsigma = "loge",
+tikuv(d, lmean = "identitylink", lsigma = "loge",
       isigma = NULL, zero = 2)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -132,7 +132,7 @@ coef(fit, matrix = TRUE)
 (Cfit <- Coef(fit))
 with(tdata, mean(y))
 \dontrun{ with(tdata, hist(y, prob = TRUE))
-lines(dtikuv(sy, d = 1, m = Cfit[1], s = Cfit[2]) ~ sy, tdata, col = "orange") }
+lines(dtikuv(sy, d = 1, m = Cfit[1], s = Cfit[2]) ~ sy, data = tdata, col = "orange") }
 }
 \keyword{models}
 \keyword{regression}

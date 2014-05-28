@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2013 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2014 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -29,7 +29,7 @@
   apply.parint <- TRUE
 
 
-  lmean <- "identity"
+  lmean <- "identitylink"
   lsdev <- "loge"
   emean <- list()
   esdev <- list()
@@ -69,7 +69,7 @@
 
 
   infos = eval(substitute(function(...) {
-    list(Musual = 1,  # zz???
+    list(M1 = 1,  # zz???
          parallel = .parallel ,
          multipleResponses = TRUE )
   }, list( .parallel = parallel ))),
@@ -104,10 +104,10 @@
 
 
     ncoly <- ncol(y)
-    Musual <- 1
+    M1 <- 1
     extra$ncoly <- ncoly
-    extra$Musual <- Musual
-    M <- Musual * ncoly
+    extra$M1 <- M1
+    M <- M1 * ncoly
 
 
     predictors.names <- if (!length(ddd <- dimnames(y)[[2]]))
@@ -125,13 +125,13 @@
       etastart <- matrix(0, n, M)
 
 
-      Blist.early <- process.constraints(constraints, x, M,
+      Hlist.early <- process.constraints(constraints, x, M,
                                          specialCM = specialCM)
-      X.vlm.early  <- lm2vlm.model.matrix(x, Blist.early,
+      X.vlm.early  <- lm2vlm.model.matrix(x, Hlist.early,
                                           xij = control$xij,
                                           Xm2 = Xm2)
 
-      Hmatrices <- matrix(c(unlist(Blist.early)), nrow = M)
+      Hmatrices <- matrix(c(unlist(Hlist.early)), nrow = M)
       jay.index <- 1:ncol(Hmatrices)
 
 
@@ -139,7 +139,7 @@
       for (jay in 1:ncoly) {
 
         X.lm.jay <- vlm2lm.model.matrix(x.vlm = X.vlm.early,
-                                        Blist = Blist.early,
+                                        Hlist = Hlist.early,
                                         which.linpred = jay, M = M)
 
         extra$ncols.X.lm[jay] <- ncol(X.lm.jay)
@@ -155,19 +155,19 @@
   linkinv = function(eta, extra = NULL) eta, 
   last = eval(substitute(expression({
 
-    Musual <- extra$Musual
+    M1 <- extra$M1
     misc$link <- c(rep( .lmean , length = ncoly))
     temp.names <- predictors.names
     names(misc$link) <- temp.names
 
-    misc$earg <- vector("list", Musual * ncoly)
+    misc$earg <- vector("list", M1 * ncoly)
     names(misc$earg) <- temp.names
     for (ii in 1:ncoly) {
-      misc$earg[[Musual*ii]] <- .emean
+      misc$earg[[M1*ii]] <- .emean
     }
     names(misc$earg) <- temp.names
 
-    misc$Musual <- Musual
+    misc$M1 <- M1
     misc$expected <- TRUE
     misc$divisor <- .divisor
     misc$values.divisor <- round(n / ratio.df)
@@ -257,7 +257,13 @@
 
 
     ret.ff@loglikelihood <-
-      function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
+      function(mu, y, w, residuals = FALSE, eta, extra = NULL,
+               summation = TRUE) {
+
+      if (!summation)
+        stop("cannot handle 'summation = FALSE' yet")
+
+
       M <- if (is.matrix(y)) ncol(y) else 1
       n <- if (is.matrix(y)) nrow(y) else length(y)
 

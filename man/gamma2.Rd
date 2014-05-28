@@ -161,21 +161,22 @@ McCullagh, P. and Nelder, J. A. (1989)
   \code{\link{expexp}},
   \code{\link[stats]{GammaDist}},
   \code{\link{golf}},
-  \code{\link{CommonVGAMffArguments}}.
+  \code{\link{CommonVGAMffArguments}},
+  \code{\link{simulate.vlm}}.
 
 
 }
 \examples{
 # Essentially a 1-parameter gamma
 gdata <- data.frame(y = rgamma(n = 100, shape = exp(1)))
-fit1 <- vglm(y ~ 1, gamma1, gdata)
-fit2 <- vglm(y ~ 1, gamma2, gdata, trace = TRUE, crit = "coef")
+fit1 <- vglm(y ~ 1, gamma1, data = gdata)
+fit2 <- vglm(y ~ 1, gamma2, data = gdata, trace = TRUE, crit = "coef")
 coef(fit2, matrix = TRUE)
 Coef(fit2)
 
 # Essentially a 2-parameter gamma
 gdata <- data.frame(y = rgamma(n = 500, rate = exp(1), shape = exp(2)))
-fit2 <- vglm(y ~ 1, gamma2, gdata, trace = TRUE, crit = "coef")
+fit2 <- vglm(y ~ 1, gamma2, data = gdata, trace = TRUE, crit = "coef")
 coef(fit2, matrix = TRUE)
 Coef(fit2)
 summary(fit2)

@@ -80,12 +80,13 @@ Lindley distribution and its application.
 \seealso{
   \code{\link{dlind}},
   \code{\link{gamma2.ab}},
+  \code{\link{simulate.vlm}}.
 
 
 }
 \examples{
 ldata <- data.frame(y = rlind(n = 1000, theta = exp(3)))
-fit <- vglm(y ~ 1, lindley, ldata, trace = TRUE, crit = "coef")
+fit <- vglm(y ~ 1, lindley, data = ldata, trace = TRUE, crit = "coef")
 coef(fit, matrix = TRUE)
 Coef(fit)
 summary(fit)

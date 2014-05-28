@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2013 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2014 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -8,7 +8,7 @@
 
 
 
-formulavlm = function(x, fnumber=1, ...) {
+formulavlm <- function(x, fnumber = 1, ...) {
   if (!is.Numeric(fnumber, integer.valued = TRUE,
                   length.arg = 1, positive = TRUE) ||
       fnumber > 2)
@@ -22,8 +22,8 @@ formulavlm = function(x, fnumber=1, ...) {
 
 
 
-formulaNA.VGAM = function(x, ...) {
-    stop("a formula does not make sense for object 'x'")
+formulaNA.VGAM <- function(x, ...) {
+  stop("a formula does not make sense for object 'x'")
 }
 
 
@@ -66,17 +66,17 @@ setMethod("formula", "grc",
 
 
 variable.namesvlm <- function(object, full = FALSE, ...) {
-    qrslot <- object@qr
-    if (!length(qrslot$qr)) {
-      use.this <- object@x
-      if (!length(use.this))
-        stop("argument 'object' has empty 'qr' and 'x' slots.")
-    } else {
-      use.this = qrslot$qr
-    }
-    if (full) dimnames(use.this)[[2]] else
-    if (object@rank) dimnames(use.this)[[2]][seq_len(object@rank)] else
-    character(0)
+  qrslot <- object@qr
+  if (!length(qrslot$qr)) {
+    use.this <- object@x
+    if (!length(use.this))
+      stop("argument 'object' has empty 'qr' and 'x' slots.")
+  } else {
+    use.this <- qrslot$qr
+  }
+  if (full) dimnames(use.this)[[2]] else
+  if (object@rank) dimnames(use.this)[[2]][seq_len(object@rank)] else
+  character(0)
 }
 
 
@@ -84,15 +84,15 @@ variable.namesvlm <- function(object, full = FALSE, ...) {
 
 variable.namesrrvglm <- function(object, ...) {
 
-    qrslot <- object@qr
-    if (!length(qrslot$qr)) {
-        use.this <- object@x
-        if (!length(use.this))
-            stop("argument 'object' has empty 'qr' and 'x' slots.")
-    } else {
-        use.this = qrslot$qr
-    }
-    dimnames(use.this)[[2]]
+  qrslot <- object@qr
+  if (!length(qrslot$qr)) {
+    use.this <- object@x
+    if (!length(use.this))
+      stop("argument 'object' has empty 'qr' and 'x' slots.")
+  } else {
+    use.this <- qrslot$qr
+  }
+  dimnames(use.this)[[2]]
 }
 
 
@@ -102,42 +102,43 @@ variable.namesrrvglm <- function(object, ...) {
 
 
 case.namesvlm <- function(object, full = FALSE, ...) {
-    w <- weights(object, type="prior")
-    use.this <- residuals(object, type="working")
-    if (!length(use.this))
-        use.this <- object@x
-    if (!length(use.this))
-        use.this <- object@y
-    if (!length(use.this))
-        stop("argument 'object' has empty 'x' and 'y' slots.")
-    dn <- dimnames(use.this)[[1]]
-    if (full || is.null(w) || ncol(cbind(w)) != 1) dn else dn[w!=0]
+  w <- weights(object, type="prior")
+  use.this <- residuals(object, type = "working")
+  if (!length(use.this))
+    use.this <- object@x
+  if (!length(use.this))
+    use.this <- object@y
+  if (!length(use.this))
+    stop("argument 'object' has empty 'x' and 'y' slots.")
+  dn <- dimnames(use.this)[[1]]
+  if (full || is.null(w) || ncol(cbind(w)) != 1)
+    dn else dn[w != 0]
 }
 
 
 setMethod("variable.names", "vlm",
           function(object, ...)
-              variable.namesvlm(object=object, ...))
+              variable.namesvlm(object = object, ...))
 
 setMethod("variable.names", "vglm",
           function(object, ...)
-              variable.namesvlm(object=object, ...))
+              variable.namesvlm(object = object, ...))
 
 setMethod("variable.names", "vgam",
           function(object, ...)
-              variable.namesvlm(object=object, ...))
+              variable.namesvlm(object = object, ...))
 
 setMethod("variable.names", "rrvglm",
           function(object, ...)
-              variable.namesrrvglm(object=object, ...))
+              variable.namesrrvglm(object = object, ...))
 
 setMethod("variable.names", "qrrvglm",
           function(object, ...)
-              variable.namesvlm(object=object, ...))
+              variable.namesvlm(object = object, ...))
 
 setMethod("variable.names", "grc",
           function(object, ...)
-              variable.namesvlm(object=object, ...))
+              variable.namesvlm(object = object, ...))
 
 
 
@@ -146,27 +147,27 @@ setMethod("variable.names", "grc",
 
 setMethod("case.names", "vlm",
           function(object, ...)
-              case.namesvlm(object=object, ...))
+              case.namesvlm(object = object, ...))
 
 setMethod("case.names", "vglm",
           function(object, ...)
-              case.namesvlm(object=object, ...))
+              case.namesvlm(object = object, ...))
 
 setMethod("case.names", "vgam",
           function(object, ...)
-              case.namesvlm(object=object, ...))
+              case.namesvlm(object = object, ...))
 
 setMethod("case.names", "rrvglm",
           function(object, ...)
-              case.namesvlm(object=object, ...))
+              case.namesvlm(object = object, ...))
 
 setMethod("case.names", "qrrvglm",
           function(object, ...)
-              case.namesvlm(object=object, ...))
+              case.namesvlm(object = object, ...))
 
 setMethod("case.names", "grc",
           function(object, ...)
-              case.namesvlm(object=object, ...))
+              case.namesvlm(object = object, ...))
 
 
 

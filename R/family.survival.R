@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2013 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2014 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -14,7 +14,7 @@
 
  double.cennormal <-
   function(r1 = 0, r2 = 0,
-           lmu = "identity",
+           lmu = "identitylink",
            lsd = "loge",
            imu = NULL, isd = NULL, zero = 2) {
   if (!is.Numeric(r1, length.arg = 1, integer.valued = TRUE) ||
@@ -90,15 +90,26 @@
              .emu = emu, .esd = esd,
              .r1 = r1, .r2 = r2 ))),
   loglikelihood = eval(substitute(
-    function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
+    function(mu, y, w, residuals = FALSE, eta, extra = NULL,
+             summation = TRUE) {
     sd <- eta2theta(eta[, 2], .lsd, earg = .esd )
-    if (residuals) stop("loglikelihood residuals not ",
-                        "implemented yet") else
+
+    if (!summation)
+      stop("cannot handle 'summation = FALSE' yet")
+
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
       sum(w * dnorm(y, m = mu, sd = sd, log = TRUE)) +
       (if ( .r1 == 0) 0 else {
-         z1 <- min((y - mu) / sd); Fz1 = pnorm(z1); .r1 * log(Fz1)}) +
+         z1 <- min((y - mu) / sd)
+         Fz1 <- pnorm(z1)
+         .r1 * log(Fz1)}) +
       (if ( .r2 == 0) 0 else {
-         z2 <- max((y - mu) / sd); Fz2 = pnorm(z2); .r2 * log1p(-Fz2)})
+         z2 <- max((y - mu) / sd)
+         Fz2 <- pnorm(z2)
+         .r2 * log1p(-Fz2)})
+    }
   } , list( .lmu = lmu, .lsd = lsd,
             .emu = emu, .esd = esd,
             .r1 = r1, .r2 = r2 ))),
@@ -131,16 +142,16 @@
   weight=expression({
     wz <- matrix(as.numeric(NA), n, dimm(M))
 
-    Q1 <- ifelse(q1 == 0, 1, q1)  # Saves division by 0 below; not elegant
-    Q2 <- ifelse(q2 == 0, 1, q2)  # Saves division by 0 below; not elegant
+    Q.1 <- ifelse(q1 == 0, 1, q1)  # Saves division by 0 below; not elegant
+    Q.2 <- ifelse(q2 == 0, 1, q2)  # Saves division by 0 below; not elegant
 
     ed2l.dmu2 <- 1 / (sd^2) + 
-                 ((fz1*(z1+fz1/Q1) - fz2*(z2-fz2/Q2)) / sd^2) / (pee*w)
-    ed2l.dmusd <- ((fz1-fz2 + z1*fz1*(z1+fz1/Q1) -
-                  z2*fz2*(z2-fz2/Q2)) / sd^2) / (pee*w)
+                 ((fz1*(z1+fz1/Q.1) - fz2*(z2-fz2/Q.2)) / sd^2) / (pee*w)
+    ed2l.dmusd <- ((fz1-fz2 + z1*fz1*(z1+fz1/Q.1) -
+                  z2*fz2*(z2-fz2/Q.2)) / sd^2) / (pee*w)
     ed2l.dsd2 <- 2 / (sd^2) + 
-                 ((z1*fz1-z2*fz2 + z1^2 *fz1 *(z1+fz1/Q1) -
-                 z2^2 *fz2*(z2-fz2/Q2)) / sd^2) / (pee*w)
+                 ((z1*fz1-z2*fz2 + z1^2 *fz1 *(z1+fz1/Q.1) -
+                 z2^2 *fz2*(z2-fz2/Q.2)) / sd^2) / (pee*w)
 
     wz[,iam(1,1,M)] <- w * ed2l.dmu2 * dmu.deta^2
     wz[,iam(2,2,M)] <- w * ed2l.dsd2 * dsd.deta^2
@@ -309,15 +320,24 @@ rbisa <- function(n, shape, scale = 1) {
   }) , list( .lshape = lshape, .lscale = lscale,
              .eshape = eshape, .escale = escale ))),
   loglikelihood = eval(substitute(
-    function(mu,y,w,residuals = FALSE,eta, extra = NULL) {
+    function(mu, y, w, residuals = FALSE, eta,
+             extra = NULL,
+             summation = TRUE) {
     sh <- eta2theta(eta[, 1], .lshape , earg = .eshape )
     sc <- eta2theta(eta[, 2], .lscale , earg = .escale )
-    if (residuals) stop("loglikelihood residuals not ",
-                        "implemented yet") else {
-      sum(w * dbisa(x = y, shape = sh, scale = sc, log = TRUE))
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
+      ll.elts <- c(w) * dbisa(x = y, shape = sh, scale = sc, log = TRUE)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
     }
   }, list( .lshape = lshape, .lscale = lscale,
            .eshape = eshape, .escale = escale ))),
+
   vfamily = c("bisa"),
   deriv = eval(substitute(expression({
     sh <- eta2theta(eta[, 1], .lshape, earg = .eshape)

@@ -8,9 +8,9 @@
 
 }
 \usage{
-mix2normal(lphi = "logit", lmu = "identity", lsd = "loge",
-            iphi = 0.5, imu1 = NULL, imu2 = NULL, isd1 = NULL, isd2 = NULL,
-            qmu = c(0.2, 0.8), eq.sd = TRUE, nsimEIM = 100, zero = 1)
+mix2normal(lphi = "logit", lmu = "identitylink", lsd = "loge",
+           iphi = 0.5, imu1 = NULL, imu2 = NULL, isd1 = NULL, isd2 = NULL,
+           qmu = c(0.2, 0.8), eq.sd = TRUE, nsimEIM = 100, zero = 1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -147,7 +147,8 @@ London: Chapman & Hall.
 % the arguments \code{weights} is used to input prior weights.
 
 
-  This \pkg{VGAM} family function should be used with care.
+  This \pkg{VGAM} family function is experimental and
+  should be used with care.
 
 
 }
@@ -186,7 +187,7 @@ sd1 <- sd2 <- exp(3)
 (phi <- logit(-1, inverse = TRUE))
 mdata <- data.frame(y = ifelse(runif(nn) < phi, rnorm(nn, mu1, sd1),
                                                 rnorm(nn, mu2, sd2)))
-fit <- vglm(y ~ 1, mix2normal(eq.sd = TRUE), mdata)
+fit <- vglm(y ~ 1, mix2normal(eq.sd = TRUE), data = mdata)
 
 # Compare the results
 cfit <- coef(fit)
@@ -197,7 +198,8 @@ round(rbind('Estimated' = c(logit(cfit[1], inverse = TRUE),
 # Plot the results
 xx <- with(mdata, seq(min(y), max(y), len = 200))
 plot(xx, (1-phi) * dnorm(xx, mu2, sd2), type = "l", xlab = "y",
-     main = "Orange = estimate, blue = truth", col = "blue", ylab = "Density")
+     main = "Orange = estimate, blue = truth",
+     col = "blue", ylab = "Density")
 phi.est <- logit(coef(fit)[1], inverse = TRUE)
 sd.est <- exp(coef(fit)[3])
 lines(xx, phi*dnorm(xx, mu1, sd1), col = "blue")

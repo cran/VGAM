@@ -66,6 +66,7 @@ acat(link = "loge", parallel = FALSE, reverse = FALSE,
   \code{\link{rrvglm}}
   and \code{\link{vgam}}.
 
+
 }
 \references{
 Agresti, A. (2002)
@@ -127,7 +128,7 @@ contains further information and examples.
 }
 \examples{
 pneumo <- transform(pneumo, let = log(exposure.time))
-(fit <- vglm(cbind(normal, mild, severe) ~ let, acat, pneumo))
+(fit <- vglm(cbind(normal, mild, severe) ~ let, acat, data = pneumo))
 coef(fit, matrix = TRUE)
 constraints(fit)
 model.matrix(fit)

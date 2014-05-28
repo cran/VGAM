@@ -1,8 +1,60 @@
-    **************************************************
+    *************************************************
     *                                                *
     *           0.9 SERIES NEWS                      *
     *                                                *
     **************************************************
+
+
+
+                CHANGES IN VGAM VERSION 0.9-4
+
+NEW FEATURES
+
+    o   New data sets: cfibrosis, lakeO, wine.
+    o   New functions: Select().
+    o   negbinomial(deviance = TRUE) works, provided criterion = "coef"
+        is used too.
+    o   simulate() works with binomialff(), poissonff(), rayleigh() and
+        several other families. See help(simulate.vlm) for a current listing.
+    o   coef(colon = FALSE) works for VLM objects.
+    o   pslash() has a 'very.negative = -4' argument.
+        Thanks to Tiago Pereira for picking this up.
+    o   Some family functions have a 'summation = TRUE' argument in
+        the loglikelihood slot. Can be accessed using, e.g.,
+        logLik(fit, summation = FALSE). See ?logLik.vlm.
+        Similarly for deviance(fit, summation = FALSE).
+    o   Tested okay on R 3.1.0.
+
+
+BUG FIXES and CHANGES
+
+    o   bs(), ns(), scale() and poly() are no longer smart,
+        but they will handle simple terms such as bs(x) and scale(x).
+        The smart version of those functions have been renamed to
+        sm.bs(), sm.ns(), sm.scale(), sm.poly();
+        these will handle complicated terms such as sm.bs(sm.scale(x)).
+    o   Renamed functions: identity() has become identitylink().
+    o   Argument names changed:
+        'ITolerances' renamed to 'I.tolerances' thoughout,
+        'EqualTolerances' renamed to 'eq.tolerances' thoughout.
+    o   Bug in mix2normal() fixed in @initialize. Thanks to Troels Ring
+        for finding the bug.
+    o   Upon loading the package, no warnings (such as masking) is
+        given.
+    o   multinomial(parallel = TRUE) now applies the parallelism
+        constraint to the intercept.
+    o   If a factor response is ordered then a warning is issued for
+        multinomial().
+    o   predict(fit, newdata = zdata2, type = "response") used
+        to fail for z[ai][poisson][,ff]() and z[ai][negbinomial][,ff]()
+        families. Thanks to Diego Nieto Lugilde for picking this up.
+    o   A bug with offsets and coefstart has been fixed.
+        Thanks to Giuseppe Casalicchio for picking this up.
+    o   Variables "Blist" replaced by "Hlist".
+    o   Expression new.s.call no longer used in vglm.fit() and vgam.fit().
+        Musual has been replaced by M1.
+    o   Variable names changed: prinia, Huggins89table1, Huggins89.t1.
+    o   Memory leaks found by valgrind have been patched.
 
 
 

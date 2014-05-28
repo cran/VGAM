@@ -97,7 +97,8 @@ Frank's family of bivariate distributions.
 
 \seealso{
   \code{\link{rbifrankcop}},
-  \code{\link{fgm}}.
+  \code{\link{fgm}},
+  \code{\link{simulate.vlm}}.
 
 
 }

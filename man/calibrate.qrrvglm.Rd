@@ -154,10 +154,10 @@ Cambridge.
 hspider[,1:6] <- scale(hspider[, 1:6])  # Standardize the environmental variables
 set.seed(123)
 p1 <- cqo(cbind(Pardlugu, Pardmont, Pardnigr, Pardpull, Zoraspin) ~
-         WaterCon + BareSand + FallTwig +
-         CoveMoss + CoveHerb + ReflLux,
-         family = poissonff, data = hspider, Rank = 1,
-         IToler = TRUE, Crow1positive = TRUE)
+          WaterCon + BareSand + FallTwig +
+          CoveMoss + CoveHerb + ReflLux,
+          family = poissonff, data = hspider, Rank = 1,
+          I.toler = TRUE, Crow1positive = TRUE)
 
 siteNos <- 3:4  # Calibrate these sites
 cp1 <- calibrate(p1, new = data.frame(depvar(p1)[siteNos, ]), trace = TRUE)

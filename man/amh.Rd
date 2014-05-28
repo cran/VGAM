@@ -96,7 +96,8 @@ New York: Springer.
 \seealso{
   \code{\link{ramh}},
   \code{\link{fgm}},
-  \code{\link{bigumbelI}}.
+  \code{\link{bigumbelI}},
+  \code{\link{simulate.vlm}}.
 
 
 }

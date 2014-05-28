@@ -42,12 +42,14 @@ rzanegbin(n, size, prob = NULL, munb = NULL, pobs0 = 0)
   negative binomial(\eqn{\mu_{nb}}{munb}, size)
   distribution.
 
+
 }
 \value{
   \code{dzanegbin} gives the density and
   \code{pzanegbin} gives the distribution function,
   \code{qzanegbin} gives the quantile function, and
   \code{rzanegbin} generates random deviates.
+
 
 }
 %\references{ }
@@ -56,11 +58,14 @@ rzanegbin(n, size, prob = NULL, munb = NULL, pobs0 = 0)
     The argument \code{pobs0} is recycled to the required length, and
     must have values which lie in the interval \eqn{[0,1]}.
 
+
 }
 
 \seealso{ 
     \code{\link{zanegbinomial}},
     \code{\link{rposnegbin}}.
+
+
 
 }
 \examples{

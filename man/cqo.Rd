@@ -110,7 +110,7 @@ cqo(formula, family, data = list(), weights = NULL, subset = NULL,
   \item{offset}{ 
   This argument must not be used.
 
-%   especially when \code{ITolerances = TRUE}.
+%   especially when \code{I.tolerances = TRUE}.
 %   a vector or \eqn{M}-column matrix of offset values.
 %   These are \emph{a priori} known and are
 %   added to the linear predictors during fitting.
@@ -259,6 +259,20 @@ cqo(formula, family, data = list(), weights = NULL, subset = NULL,
   \eqn{M=S} for Poisson and binomial species data,
   and \eqn{M=2S} for negative binomial and gamma distributed species data.
 
+
+
+  Incidentally,
+  \emph{Unconstrained quadratic ordination} (UQO)
+  may be performed by, e.g., fitting a Goodman's RC association model;
+  see \code{\link{uqo}} and the Yee and Hadi (2014) referenced there.
+  For UQO, the response is the usual site-by-species matrix and
+  there are no environmental variables;
+  the site scores are free parameters.
+  UQO can be performed under the assumption that all species
+  have the same tolerance matrices.
+
+
+
 }
 \value{
   An object of class \code{"qrrvglm"}. 
@@ -269,6 +283,7 @@ cqo(formula, family, data = list(), weights = NULL, subset = NULL,
 
 }
 \references{
+
 
 Yee, T. W. (2004)
 A new technique for maximum-likelihood
@@ -292,6 +307,7 @@ A theory of gradient analysis.
 Yee, T. W. (2006)
 Constrained additive ordination.
 \emph{Ecology}, \bold{87}, 203--213.
+
 
 }
 \author{
@@ -342,7 +358,7 @@ original FORTRAN code into C.
   \item{(5)}{
   Each explanatory variable should be scaled, e.g.,
   to mean 0 and unit variance.
-  This is especially needed for \code{ITolerance = TRUE}.
+  This is especially needed for \code{I.tolerance = TRUE}.
 
 
   }
@@ -365,11 +381,11 @@ original FORTRAN code into C.
 
   }
   \item{(8)}{
-  Try \code{ITolerance = TRUE} or \code{EqualTolerance = FALSE}
+  Try \code{I.tolerance = TRUE} or \code{eq.tolerance = FALSE}
   if the inputted data set is large,
   so as to reduce the computational expense.
-  That's because the default, \code{ITolerance = FALSE} and 
-  \code{EqualTolerance = TRUE}, is very memory hungry.
+  That's because the default, \code{I.tolerance = FALSE} and 
+  \code{eq.tolerance = TRUE}, is very memory hungry.
 
 
   }
@@ -400,8 +416,8 @@ original FORTRAN code into C.
 
 
   %Convergence of QRR-VGLMs can be difficult, especially for binary
-  %data. If this is so, then setting \code{ITolerances = TRUE} or
-  %\code{EqualTolerances = TRUE} may help, especially when the number of sites,
+  %data. If this is so, then setting \code{I.tolerances = TRUE} or
+  %\code{eq.tolerances = TRUE} may help, especially when the number of sites,
   %\eqn{n}, is small.
 
   %If the negative binomial family function \code{\link{negbinomial}} is 
@@ -416,17 +432,17 @@ original FORTRAN code into C.
   \code{Rank},
   \code{noRRR},
   \code{Bestof}, 
-  \code{ITolerances},
-  \code{EqualTolerances},
+  \code{I.tolerances},
+  \code{eq.tolerances},
   \code{isd.latvar}, and
   \code{MUXfactor}.
 
 
   When fitting a 2-parameter model such as the negative binomial
-  or gamma, it pays to have \code{EqualTolerances = TRUE} and
-  \code{ITolerances = FALSE}. This is because numerical problems can
+  or gamma, it pays to have \code{eq.tolerances = TRUE} and
+  \code{I.tolerances = FALSE}. This is because numerical problems can
   occur when fitting the model far away from the global solution when
-  \code{ITolerances = TRUE}. Setting the two arguments as described will
+  \code{I.tolerances = TRUE}. Setting the two arguments as described will
   slow down the computation considerably, however it is numerically
   more stable.
 
@@ -467,10 +483,10 @@ original FORTRAN code into C.
   if \code{Use.Init.Poisson.QO = TRUE}, else random numbers.
 
 
-  Unless \code{ITolerances = TRUE} or \code{EqualTolerances = FALSE},
+  Unless \code{I.tolerances = TRUE} or \code{eq.tolerances = FALSE},
   CQO is computationally expensive with memory and time.
   It pays to keep the rank down to 1
-  or 2.  If \code{EqualTolerances = TRUE} and \code{ITolerances = FALSE} then
+  or 2.  If \code{eq.tolerances = TRUE} and \code{I.tolerances = FALSE} then
   the cost grows quickly with the number of species and sites (in terms of
   memory requirements and time).  The data needs to conform quite closely
   to the statistical model, and the environmental range of the data should
@@ -499,11 +515,15 @@ original FORTRAN code into C.
   and if the response data for each species is a string of all absences,
   then all presences, then all absences (when enumerated along the latent
   variable) then infinite parameter estimates will occur.  In general,
-  setting \code{ITolerances = TRUE} may help.
+  setting \code{I.tolerances = TRUE} may help.
 
 
   This function was formerly called \code{cgo}. It has been renamed to
   reinforce a new nomenclature described in Yee (2006).
+
+
+
+
 
 }
 
@@ -513,9 +533,8 @@ original FORTRAN code into C.
   \code{\link{predictqrrvglm}},
   \code{\link{rcqo}},
   \code{\link{cao}},
-% \code{\link{uqo}},
+  \code{\link{uqo}},
   \code{\link{rrvglm}},
-% \code{\link{rrvglm.control}},
   \code{\link{poissonff}},
   \code{\link{binomialff}},
   \code{\link{negbinomial}},
@@ -523,10 +542,17 @@ original FORTRAN code into C.
   \code{\link{lvplot.qrrvglm}},
   \code{\link{perspqrrvglm}},
   \code{\link{trplot.qrrvglm}},
-% \code{\link{vcovqrrvglm}},
   \code{\link{vglm}},
   \code{\link[base:Random]{set.seed}},
-  \code{\link{hspider}}.
+  \code{\link{hspider}},
+  \code{\link[VGAMdata]{trapO}}.
+
+
+
+% \code{\link{rrvglm.control}},
+% \code{\link{vcovqrrvglm}},
+
+
 
 
 Documentation accompanying the \pkg{VGAM} package at
@@ -545,21 +571,22 @@ p1ut <- cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,
                   Trocterr, Zoraspin) ~
             WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
             fam = poissonff, data = hspider, Crow1positive = FALSE,
-            EqualTol = FALSE)
+            eq.tol = FALSE)
 sort(p1ut@misc$deviance.Bestof)  # A history of all the iterations
-if(deviance(p1ut) > 1177) warning("suboptimal fit obtained")
+if (deviance(p1ut) > 1177) warning("suboptimal fit obtained")
 
 S <- ncol(depvar(p1ut))  # Number of species
 clr <- (1:(S+1))[-7]  # Omits yellow
-lvplot(p1ut, y = TRUE, lcol = clr, pch = 1:S, pcol = clr, las = 1)  # Ordination diagram
+lvplot(p1ut, y = TRUE, lcol = clr, pch = 1:S, pcol = clr,
+       las = 1)  # Ordination diagram
 legend("topright", leg = colnames(depvar(p1ut)), col = clr,
        pch = 1:S, merge = TRUE, bty = "n", lty = 1:S, lwd = 2)
 (cp <- Coef(p1ut))
 
-(a <- cp@latvar[cp@latvar.order])  # The ordered site scores along the gradient
+(a <- cp@latvar[cp@latvar.order])  # Ordered site scores along the gradient
 # Names of the ordered sites along the gradient:
 rownames(cp@latvar)[cp@latvar.order]
-(aa <- (cp@Optimum)[,cp@Optimum.order])  # The ordered optima along the gradient
+(aa <- (cp@Optimum)[, cp@Optimum.order])  # Ordered optima along the gradient
 aa <- aa[!is.na(aa)]  # Delete the species that is not unimodal
 names(aa)  # Names of the ordered optima along the gradient
 
@@ -589,16 +616,16 @@ persp(p1et, col = clr, label = TRUE, las = 1)
 
 
 # Example 3: A rank-2 equal tolerances CQO model with Poisson data
-# This example is numerically fraught... need IToler = TRUE too.
+# This example is numerically fraught... need I.toler = TRUE too.
 set.seed(555)
 p2 <- cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,
                 Auloalbi, Pardlugu, Pardmont, Pardnigr, Pardpull,
                 Trocterr, Zoraspin) ~
           WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
           poissonff, data = hspider, Crow1positive = FALSE,
-          IToler = TRUE, Rank = 2, Bestof = 3, isd.latvar = c(2.1, 0.9))
+          I.toler = TRUE, Rank = 2, Bestof = 3, isd.latvar = c(2.1, 0.9))
 sort(p2@misc$deviance.Bestof)  # A history of all the iterations
-if(deviance(p2) > 1127) warning("suboptimal fit obtained")
+if (deviance(p2) > 1127) warning("suboptimal fit obtained")
 lvplot(p2, ellips = FALSE, label = TRUE, xlim = c(-3,4),
        C = TRUE, Ccol = "brown", sites = TRUE, scol = "grey", 
        pcol = "blue", pch = "+", chull = TRUE, ccol = "grey")
@@ -626,13 +653,14 @@ p1et <- cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,
                   Auloalbi, Pardlugu, Pardmont, Pardnigr, Pardpull,
                   Trocterr, Zoraspin) ~
             WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
-            poissonff, data = hspider, EqualTol = TRUE, trace = FALSE)
+            poissonff, data = hspider, eq.tol = TRUE, trace = FALSE)
 sort(p1et@misc$deviance.Bestof)  # A history of all the iterations
-if(deviance(p1et) > 1586) warning("suboptimal fit obtained")
+if (deviance(p1et) > 1586) warning("suboptimal fit obtained")
 S <- ncol(depvar(p1et))
 par(mfrow = c(3, 4))
 for (ii in 1:S) {
-  tempdata <- data.frame(latvar1 = c(latvar(p1et)), sppCounts = depvar(p1et)[, ii])
+  tempdata <- data.frame(latvar1 = c(latvar(p1et)),
+                         sppCounts = depvar(p1et)[, ii])
   tempdata <- transform(tempdata, myOffset = -0.5 * latvar1^2)
 
 # For species ii, refit the model to get the deviance residuals
@@ -640,15 +668,15 @@ for (ii in 1:S) {
                data = tempdata, trace = FALSE)
 
 # For checking: this should be 0
-# print("max(abs(c(Coef(p1et)@B1[1,ii], Coef(p1et)@A[ii,1]) - coef(fit1)))")
-# print( max(abs(c(Coef(p1et)@B1[1,ii], Coef(p1et)@A[ii,1]) - coef(fit1))) )
+# print("max(abs(c(Coef(p1et)@B1[1,ii],Coef(p1et)@A[ii,1])-coef(fit1)))")
+# print( max(abs(c(Coef(p1et)@B1[1,ii],Coef(p1et)@A[ii,1])-coef(fit1))) )
 
 # Plot the deviance residuals
   devresid <- resid(fit1, type = "deviance")
   predvalues <- predict(fit1) + fit1@offset
   ooo <- with(tempdata, order(latvar1))
-  with(tempdata, plot(latvar1, predvalues + devresid, col = "darkgreen",
-                      xlab = "latvar1", ylab = "", main = colnames(depvar(p1et))[ii]))
+  plot(predvalues + devresid ~ latvar1, data = tempdata, col = "red",
+       xlab = "latvar1", ylab = "", main = colnames(depvar(p1et))[ii])
   with(tempdata, lines(latvar1[ooo], predvalues[ooo], col = "blue"))
 }
 }

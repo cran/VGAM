@@ -111,9 +111,9 @@ Hoboken, NJ, USA: Wiley-Interscience.
 \examples{
 N <- 1000; mdata <- data.frame(y1 = rexp(N), y2 = rexp(N))
 \dontrun{plot(ymat)}
-fit <- vglm(cbind(y1, y2) ~ 1, morgenstern, mdata, trace = TRUE)
+fit <- vglm(cbind(y1, y2) ~ 1, morgenstern, data = mdata, trace = TRUE)
 # This may fail:
-fit <- vglm(cbind(y1, y2) ~ 1, morgenstern, mdata, trace = TRUE, crit = "coef")
+fit <- vglm(cbind(y1, y2) ~ 1, morgenstern, data = mdata, trace = TRUE, crit = "coef")
 coef(fit, matrix = TRUE)
 Coef(fit)
 head(fitted(fit))

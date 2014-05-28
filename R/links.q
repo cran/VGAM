@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2013 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2014 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -20,8 +20,8 @@ ToString <- function(x)
  TypicalVGAMfamilyFunction <-
   function(lsigma = "loge",
            isigma = NULL,
-           link.list = list("(Default)" = "identity", 
-                            x2          = "loge", 
+           link.list = list("(Default)" = "identitylink",
+                            x2          = "loge",
                             x3          = "logoff",
                             x4          = "mlogit",
                             x5          = "mlogit"),
@@ -186,7 +186,7 @@ care.exp <- function(x,
 
 
 
- identity <- function(theta,
+ identitylink <- function(theta,
                       inverse = FALSE, deriv = 0,
                       short = TRUE, tag = FALSE) {
 
@@ -245,10 +245,11 @@ care.exp <- function(x,
 
 
 
- logit <- function(theta,
-                   bvalue = NULL,  # .Machine$double.eps is an alternative
-                   inverse = FALSE, deriv = 0,
-                   short = TRUE, tag = FALSE) {
+ logit <-
+  function(theta,
+           bvalue = NULL,
+           inverse = FALSE, deriv = 0,
+           short = TRUE, tag = FALSE) {
   if (is.character(theta)) {
     string <- if (short) 
         paste("logit(", theta, ")", sep = "") else
@@ -264,8 +265,7 @@ care.exp <- function(x,
   }
   if (inverse) {
     if (deriv > 0) {
-      1 / Recall(theta = theta,
-                 bvalue = bvalue,
+      1 / Recall(theta = theta, bvalue = bvalue,
                  inverse = FALSE, deriv = deriv)
     } else {
         exp(theta - log1p(exp(theta)))

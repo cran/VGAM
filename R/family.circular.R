@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2013 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2014 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -197,16 +197,39 @@ cardioid.control <- function(save.weight = TRUE, ...) {
   }), list( .lmu = lmu, .lrho = lrho,
             .emu = emu, .erho = erho, .nsimEIM = nsimEIM ))),
   loglikelihood = eval(substitute(
-    function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
+    function(mu, y, w, residuals = FALSE, eta, extra = NULL,
+             summation = TRUE) {
     mu  <- eta2theta(eta[, 1], link = .lmu, earg = .emu)
     rho <- eta2theta(eta[, 2], link = .lrho, earg = .erho)
-    if (residuals) stop("loglikelihood residuals not ",
-                        "implemented yet") else {
-      sum(w * dcard(x = y, mu = mu, rho = rho, log = TRUE))
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
+      ll.elts <- c(w) * dcard(x = y, mu = mu, rho = rho, log = TRUE)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
     }
-  }, list( .lmu = lmu, .lrho=lrho,
-           .emu = emu, .erho=erho ))),
+  }, list( .lmu = lmu, .lrho = lrho,
+           .emu = emu, .erho = erho ))),
   vfamily = c("cardioid"),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   deriv = eval(substitute(expression({
     mu  <- eta2theta(eta[, 1], link = .lmu,  earg = .emu)
     rho <- eta2theta(eta[, 2], link = .lrho, earg = .erho)
@@ -284,7 +307,7 @@ cardioid.control <- function(save.weight = TRUE, ...) {
     constraints <- cm.zero.vgam(constraints, x, .zero, M)
   }), list( .zero = zero ))),
   infos = eval(substitute(function(...) {
-    list(Musual = 2,
+    list(M1 = 2,
          zero = .zero ,
          parameterNames = c("location", "scale"))
   }, list( .zero = zero ))),
@@ -335,14 +358,21 @@ cardioid.control <- function(save.weight = TRUE, ...) {
   }), list( .llocat = llocat, .lscale = lscale,
             .elocat = elocat, .escale = escale ))),
   loglikelihood = eval(substitute(
-    function(mu,y,w,residuals= FALSE,eta, extra = NULL) {
+    function(mu, y, w, residuals = FALSE, eta, extra = NULL,
+             summation = TRUE) {
     locat <- eta2theta(eta[, 1], .llocat, earg = .elocat)
     Scale <- eta2theta(eta[, 2], .lscale, earg = .escale)
 
-    if (residuals) stop("loglikelihood residuals not ",
-                          "implemented yet") else
-      sum(w * (Scale * cos(y - locat) -
-               log(mbesselI0(x = Scale ))))
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
+      ll.elts <- c(w) * (Scale * cos(y - locat) - log(mbesselI0(x = Scale)))
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
+    }
   }, list( .escale = escale, .lscale = lscale,
            .llocat = llocat, .elocat = elocat ))),
   vfamily = c("vonmises"),

@@ -4,9 +4,7 @@
 \description{
 Adds a list to the end of the list \code{.smart.prediction}
 in
-\code{smartpredenv} (\R)
-or
-frame 1 (S-PLUS).
+\code{smartpredenv}.
 
 }
 \usage{
@@ -25,22 +23,16 @@ Nothing is returned.
 }
 \section{Side Effects}{
   The variable \code{.smart.prediction.counter} in
-  \code{smartpredenv} (\R)
-  or
-  frame 1 (S-PLUS)
+  \code{smartpredenv}
   is incremented beforehand,
   and \code{.smart.prediction[[.smart.prediction.counter]]} is
   assigned the list \code{smart}. 
   If the list \code{.smart.prediction} in
-  \code{smartpredenv} (\R)
-  or
-  frame 1 (S-PLUS)
+  \code{smartpredenv}
   is not long enough
   to hold \code{smart}, then it is made larger, and the variable
   \code{.max.smart} in
-  \code{smartpredenv} (\R)
-  or
-  frame 1 (S-PLUS)
+  \code{smartpredenv}
   is adjusted accordingly.
 
 
@@ -60,15 +52,15 @@ Nothing is returned.
 
 }
 \examples{
-"my1" <- function(x, minx=min(x)) { # Here is a smart function
-    x <- x  # Needed for nested calls, e.g., bs(scale(x))
-    if(smart.mode.is("read")) {
-        smart  <- get.smart()
-        minx <- smart$minx          # Overwrite its value
-    } else
-    if(smart.mode.is("write"))
-        put.smart(list(minx=minx))
-    sqrt(x-minx)
+"my1" <- function(x, minx = min(x)) { # Here is a smart function
+  x <- x  # Needed for nested calls, e.g., bs(scale(x))
+  if (smart.mode.is("read")) {
+    smart <- get.smart()
+    minx <- smart$minx  # Overwrite its value
+  } else
+    if (smart.mode.is("write"))
+      put.smart(list(minx = minx))
+  sqrt(x - minx)
 }
 attr(my1, "smart") <- TRUE
 }

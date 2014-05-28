@@ -199,6 +199,8 @@ TypicalVGAMlinkFunction(theta, someParameter = 0,
   \code{\link{rrvglm}}.
   \code{\link{cqo}},
   \code{\link{cao}}.
+
+
 % \code{\link{uqo}}.
 
 
@@ -217,7 +219,7 @@ TypicalVGAMlinkFunction(theta, someParameter = 0,
   vector of choices.
   For example, rather than 
   \code{binomialff(link = c("logit", "probit", "cloglog",
-  "cauchit", "identity"), ...)}
+  "cauchit", "identitylink"), ...)}
   it is now
   \code{binomialff(link = "logit", ...)}
   No checking will be done to see if the user's choice is reasonable.
@@ -273,7 +275,7 @@ fit3 <- vgam(agaaus ~ altitude, binomialff(link = "clog"), hunua)  # not okay
 
 # No matter what the link, the estimated var-cov matrix is the same
 y <- rbeta(n = 1000, shape1 = exp(0), shape2 = exp(1))
-fit1 <- vglm(y ~ 1, beta.ab(lshape1 = "identity", lshape2 = "identity"),
+fit1 <- vglm(y ~ 1, beta.ab(lshape1 = "identitylink", lshape2 = "identitylink"),
              trace = TRUE, crit = "coef")
 fit2 <- vglm(y ~ 1, beta.ab(lshape1 = logoff(offset = 1.1),
                             lshape2 = logoff(offset = 1.1)),

@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2013 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2014 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -198,7 +198,8 @@ betabinomial.control <- function(save.weight = TRUE, ...) {
             .emu = emu, .erho = erho,
             .nsimEIM = nsimEIM, .zero = zero ))),
   loglikelihood = eval(substitute(
-    function(mu,y,w,residuals = FALSE, eta, extra = NULL) {
+    function(mu, y, w, residuals = FALSE, eta, extra = NULL,
+             summation = TRUE) {
     ycounts <- if (is.numeric(extra$orig.w)) y * w / extra$orig.w else
                y * w  # Convert proportions to counts
 
@@ -221,13 +222,48 @@ betabinomial.control <- function(save.weight = TRUE, ...) {
     if (residuals) {
       stop("loglikelihood residuals not implemented yet")
     } else {
-      sum((if (is.numeric(extra$orig.w)) extra$orig.w else 1) *
-          dbetabinom.ab(x = ycounts, size = nvec, shape1 = shape1,
-                        shape2 = shape2, log = TRUE ))
+      ll.elts <-
+        (if (is.numeric(extra$orig.w)) extra$orig.w else 1) *
+         dbetabinom.ab(x = ycounts, size = nvec, shape1 = shape1,
+                       shape2 = shape2, log = TRUE)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
     }
   }, list( .lmu = lmu, .lrho = lrho,
            .emu = emu, .erho = erho  ))),
   vfamily = c("betabinomial"),
+
+
+
+
+  simslot = eval(substitute(
+  function(object, nsim) {
+
+    pwts <- if (length(pwts <- object@prior.weights) > 0)
+              pwts else weights(object, type = "prior")
+    if (any(pwts != 1)) 
+      warning("ignoring prior weights")
+    w <- pwts
+    eta <- predict(object)
+    extra <- object@extra
+
+    mymu <- eta2theta(eta[, 1], .lmu ,  earg = .emu )
+    rho  <- eta2theta(eta[, 2], .lrho , earg = .erho )
+    nvec <- if (is.numeric(extra$orig.w)) round(w / extra$orig.w) else
+              round(w)
+
+    rbetabinom(nsim * length(rho), size = nvec,
+               prob = mymu, rho  = rho)
+  }, list( .lmu = lmu, .lrho = lrho,
+           .emu = emu, .erho = erho  ))),
+
+
+
+
+
   deriv = eval(substitute(expression({
     nvec <- if (is.numeric(extra$orig.w)) round(w / extra$orig.w) else
               round(w)
@@ -542,17 +578,19 @@ rbinom2.or <-
             .emu1 = emu1, .emu2 = emu2, .eoratio = eoratio,
             .tol = tol ))),
   linkfun = eval(substitute(function(mu, extra = NULL) {
-      pmargin <- cbind(mu[, 3]+mu[, 4], mu[, 2]+mu[, 4])
-      oratio <- mu[, 4]*mu[, 1] / (mu[, 2]*mu[, 3])
-      cbind(theta2eta(pmargin[, 1], .lmu1 , earg = .emu1),
-            theta2eta(pmargin[, 2], .lmu2 , earg = .emu2), 
-            theta2eta(oratio,      .loratio, earg = .eoratio))
+    pmargin <- cbind(mu[, 3]+mu[, 4], mu[, 2]+mu[, 4])
+    oratio <- mu[, 4]*mu[, 1] / (mu[, 2]*mu[, 3])
+    cbind(theta2eta(pmargin[, 1], .lmu1 , earg = .emu1),
+          theta2eta(pmargin[, 2], .lmu2 , earg = .emu2), 
+          theta2eta(oratio,      .loratio, earg = .eoratio))
   }, list( .lmu1 = lmu1, .lmu2 = lmu2, .loratio = loratio,
            .emu1 = emu1, .emu2 = emu2, .eoratio = eoratio ))),
   loglikelihood = eval(substitute(
-    function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
-    if (residuals)
-      stop("loglikelihood residuals not implemented yet") else {
+    function(mu, y, w, residuals = FALSE, eta, extra = NULL,
+             summation = TRUE) {
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
       if ( .more.robust) {
         vsmallno <-  1.0e4 * .Machine$double.xmin
         mu[mu < vsmallno] <- vsmallno
@@ -568,13 +606,26 @@ rbinom2.or <-
         warning("converting 'ycounts' to integer in @loglikelihood")
       ycounts <- round(ycounts)
 
-      sum((if (is.numeric(extra$orig.w)) extra$orig.w else 1) *
-          dmultinomial(x = ycounts, size = nvec, prob = mu,
-                       log = TRUE, dochecking = FALSE))
-
+      ll.elts <-
+        (if (is.numeric(extra$orig.w)) extra$orig.w else 1) *
+         dmultinomial(x = ycounts, size = nvec, prob = mu,
+                      log = TRUE, dochecking = FALSE)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
     }
   }, list( .more.robust = more.robust ))),
   vfamily = c("binom2.or", "binom2"),
+
+
+
+
+
+
+
+
   deriv = eval(substitute(expression({
     smallno <- 1.0e4 * .Machine$double.eps
     mu.use <- mu
@@ -789,7 +840,7 @@ binom2.rho.control <- function(save.weight = TRUE, ...) {
   }), list( .exchangeable = exchangeable, .zero = zero ))),
 
   infos = eval(substitute(function(...) {
-    list(Musual = 3,
+    list(M1 = 3,
          multipleResponses = FALSE,
          zero = .zero )
   }, list( .zero = zero ))),
@@ -925,9 +976,11 @@ binom2.rho.control <- function(save.weight = TRUE, ...) {
             .emu12 = emu12, .erho = erho ))),
 
   loglikelihood = eval(substitute(
-    function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
-    if (residuals)
-      stop("loglikelihood residuals not implemented yet") else {
+    function(mu, y, w, residuals = FALSE, eta, extra = NULL,
+             summation = TRUE) {
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
 
       ycounts <- if (is.numeric(extra$orig.w))
                  y * c(w) / extra$orig.w else
@@ -941,12 +994,24 @@ binom2.rho.control <- function(save.weight = TRUE, ...) {
       nvec <- if (is.numeric(extra$orig.w)) round(w / extra$orig.w) else
                 round(w)
 
-      sum((if (is.numeric(extra$orig.w)) extra$orig.w else 1) *
+      ll.elts <-
+        (if (is.numeric(extra$orig.w)) extra$orig.w else 1) *
         dmultinomial(x = ycounts, size = nvec, prob = mu,
-                     log = TRUE, dochecking = FALSE))
+                     log = TRUE, dochecking = FALSE)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
       }
+    }
   }, list( .erho = erho ))),
   vfamily = c("binom2.rho", "binom2"),
+
+
+
+
+
+
   deriv = eval(substitute(expression({
     nvec <- if (is.numeric(extra$orig.w)) round(w / extra$orig.w) else
             round(w)
@@ -1117,7 +1182,7 @@ dnorm2 <- function(x, y, rho = 0, log = FALSE) {
   answer <- .C("pnorm2",
        ah = as.double(-Z1), ak = as.double(-Z2), r = as.double(rho),
        size = as.integer(LLL), singler = as.integer(singler),
-       ans = as.double(ans), PACKAGE = "VGAM")$ans
+       ans = as.double(ans))$ans
   if (any(answer < 0.0))
     warning("some negative values returned")
   answer
@@ -1174,7 +1239,7 @@ dnorm2 <- function(x, y, rho = 0, log = FALSE) {
   answer <- .C("pnorm2",
        ah = as.double(-Z1), ak = as.double(-Z2), r = as.double(rho),
        size = as.integer(LLL), singler = as.integer(singler),
-       ans = as.double(ans), PACKAGE = "VGAM")$ans
+       ans = as.double(ans))$ans
   if (any(answer < 0.0))
     warning("some negative values returned")
   answer
@@ -1241,14 +1306,22 @@ my.dbinom <- function(x,
     theta2eta(nvec, .link)
   }, list( .link = link ))),
   loglikelihood = eval(substitute(
-    function(mu, y, w, res = FALSE,eta, extra = NULL) {
+    function(mu, y, w, residuals = FALSE, eta, extra = NULL,
+             summation = TRUE) {
     nvec <- mu / extra$temp2
-    if (residuals)
-      stop("loglikelihood residuals not implemented yet") else {
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
 
-      sum(c(w) * (lgamma(nvec+1) - lgamma(y+1) - lgamma(nvec-y+1) +
-                  y * log( .prob / (1- .prob )) +
-                  nvec * log1p(- .prob )))
+      ll.elts <-
+        c(w) * (lgamma(nvec+1) - lgamma(y+1) - lgamma(nvec-y+1) +
+                y * log( .prob / (1- .prob )) +
+                nvec * log1p(- .prob ))
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
     }
   }, list( .prob = prob ))),
   vfamily = c("size.binomial"),
@@ -1438,20 +1511,20 @@ my.dbinom <- function(x,
 
 
  dbetabinom <- function(x, size, prob, rho = 0, log = FALSE) {
-    dbetabinom.ab(x = x, size = size, shape1 = prob*(1-rho)/rho,
+  dbetabinom.ab(x = x, size = size, shape1 = prob*(1-rho)/rho,
                 shape2 = (1-prob)*(1-rho)/rho, log = log,
                 .dontuse.prob = prob)
 }
 
 
  pbetabinom <- function(q, size, prob, rho, log.p = FALSE) {
-    pbetabinom.ab(q = q, size = size, shape1 = prob*(1-rho)/rho,
+  pbetabinom.ab(q = q, size = size, shape1 = prob*(1-rho)/rho,
                 shape2 = (1-prob)*(1-rho)/rho, log.p = log.p)
 }
 
 
  rbetabinom <- function(n, size, prob, rho = 0) {
-    rbetabinom.ab(n = n, size = size, shape1 = prob*(1-rho)/rho,
+  rbetabinom.ab(n = n, size = size, shape1 = prob*(1-rho)/rho,
                 shape2 = (1-prob)*(1-rho)/rho,
                 .dontuse.prob = prob)
 }
@@ -1551,8 +1624,8 @@ betabinomial.ab.control <- function(save.weight = TRUE, ...) {
     if (length(mustart.orig))
       mustart <- mustart.orig  # Retain it if inputted
     predictors.names <-
-         c(namesof("shape1", .lshape12, earg = .earg, tag = FALSE),
-           namesof("shape2", .lshape12, earg = .earg, tag = FALSE))
+         c(namesof("shape1", .lshape12 , earg = .earg, tag = FALSE),
+           namesof("shape2", .lshape12 , earg = .earg, tag = FALSE))
 
     if (!length(etastart)) {
 
@@ -1579,16 +1652,16 @@ betabinomial.ab.control <- function(save.weight = TRUE, ...) {
          warning("the response (as counts) does not appear to ",
                  "be integer-valued. Am rounding to integer values.")
       ycounts <- round(ycounts)  # Make sure it is an integer
-      etastart <- cbind(theta2eta(shape1, .lshape12, earg = .earg),
-                        theta2eta(shape2, .lshape12, earg = .earg))
+      etastart <- cbind(theta2eta(shape1, .lshape12 , earg = .earg ),
+                        theta2eta(shape2, .lshape12 , earg = .earg ))
       mustart <- NULL  # Since etastart has been computed.
     }
   }), list( .lshape12 = lshape12, .earg = earg, .i1 = i1, .i2 = i2,
             .nsimEIM = nsimEIM,
             .imethod = imethod, .sinit = shrinkage.init ))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
-    shape1 <- eta2theta(eta[, 1], .lshape12, earg = .earg)
-    shape2 <- eta2theta(eta[, 2], .lshape12, earg = .earg)
+    shape1 <- eta2theta(eta[, 1], .lshape12 , earg = .earg )
+    shape2 <- eta2theta(eta[, 2], .lshape12 , earg = .earg )
     shape1 / (shape1 + shape2)
   }, list( .lshape12 = lshape12, .earg = earg ))),
   last = eval(substitute(expression({
@@ -1596,8 +1669,8 @@ betabinomial.ab.control <- function(save.weight = TRUE, ...) {
 
     misc$earg <- list("shape1" = .earg ,     "shape2" = .earg )
 
-    shape1 <- eta2theta(eta[, 1], .lshape12, earg = .earg)
-    shape2 <- eta2theta(eta[, 2], .lshape12, earg = .earg)
+    shape1 <- eta2theta(eta[, 1], .lshape12 , earg = .earg )
+    shape2 <- eta2theta(eta[, 2], .lshape12 , earg = .earg )
 
     misc$rho <- 1 / (shape1 + shape2 + 1)
     misc$expected <- TRUE
@@ -1606,37 +1679,73 @@ betabinomial.ab.control <- function(save.weight = TRUE, ...) {
   }), list( .lshape12 = lshape12, .earg = earg,
             .nsimEIM = nsimEIM, .zero = zero ))),
   loglikelihood = eval(substitute(
-    function(mu,y,w,residuals = FALSE,eta, extra = NULL) {
+    function(mu, y, w, residuals = FALSE, eta, extra = NULL,
+             summation = TRUE) {
     ycounts <- if (is.numeric(extra$orig.w)) y * w / extra$orig.w else
-              y * w # Convert proportions to counts
+               y * w # Convert proportions to counts
 
     smallno <- 1.0e4 * .Machine$double.eps
     if (max(abs(ycounts - round(ycounts))) > smallno)
       warning("converting 'ycounts' to integer in @loglikelihood")
     ycounts <- round(ycounts)
 
-    shape1 <- eta2theta(eta[, 1], .lshape12, earg = .earg)
-    shape2 <- eta2theta(eta[, 2], .lshape12, earg = .earg)
+    shape1 <- eta2theta(eta[, 1], .lshape12 , earg = .earg )
+    shape2 <- eta2theta(eta[, 2], .lshape12 , earg = .earg )
     nvec <- if (is.numeric(extra$orig.w)) round(w / extra$orig.w) else
               round(w)
-    if (residuals)
-        stop("loglikelihood residuals not implemented yet") else {
-          sum((if (is.numeric(extra$orig.w)) extra$orig.w else 1) *
-              dbetabinom.ab(x = ycounts, size = nvec, shape1 = shape1,
-                          shape2 = shape2, log = TRUE ))
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
+      ll.elts <-
+        (if (is.numeric(extra$orig.w)) extra$orig.w else 1) *
+         dbetabinom.ab(x = ycounts, size = nvec, shape1 = shape1,
+                       shape2 = shape2, log = TRUE)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
     }
   }, list( .lshape12 = lshape12, .earg = earg ))),
   vfamily = c("betabinomial.ab"),
+
+
+
+
+
+  simslot = eval(substitute(
+  function(object, nsim) {
+
+    pwts <- if (length(pwts <- object@prior.weights) > 0)
+              pwts else weights(object, type = "prior")
+    if (any(pwts != 1)) 
+      warning("ignoring prior weights")
+    w <- pwts
+    eta <- predict(object)
+    extra <- object@extra
+    shape1 <- eta2theta(eta[, 1], .lshape12 , earg = .earg )
+    shape2 <- eta2theta(eta[, 2], .lshape12 , earg = .earg )
+    nvec <- if (is.numeric(extra$orig.w)) round(w / extra$orig.w) else
+              round(w)
+    rbetabinom.ab(nsim * length(shape1), size = nvec,
+                  shape1 = shape1,
+                  shape2 = shape2)
+  }, list( .lshape12 = lshape12, .earg = earg ))),
+
+
+
+
+
   deriv = eval(substitute(expression({
     nvec <- if (is.numeric(extra$orig.w)) round(w / extra$orig.w) else
               round(w)
     ycounts <- if (is.numeric(extra$orig.w)) y * w / extra$orig.w else
               y * w # Convert proportions to counts
-    shape1 <- eta2theta(eta[, 1], .lshape12, earg = .earg)
-    shape2 <- eta2theta(eta[, 2], .lshape12, earg = .earg)
+    shape1 <- eta2theta(eta[, 1], .lshape12 , earg = .earg )
+    shape2 <- eta2theta(eta[, 2], .lshape12 , earg = .earg )
 
-    dshape1.deta <- dtheta.deta(shape1, .lshape12, earg = .earg)
-    dshape2.deta <- dtheta.deta(shape2, .lshape12, earg = .earg)
+    dshape1.deta <- dtheta.deta(shape1, .lshape12 , earg = .earg )
+    dshape2.deta <- dtheta.deta(shape2, .lshape12 , earg = .earg )
 
     dl.dshape1 <- digamma(shape1+ycounts) -
                   digamma(shape1+shape2+nvec) -
@@ -1738,8 +1847,8 @@ betabinomial.ab.control <- function(save.weight = TRUE, ...) {
     eval(geometric()@initialize)
 
     predictors.names <-
-         c(namesof("prob",  .lprob,  earg = .eprob,  tag = FALSE),
-           namesof("shape", .lshape, earg = .eshape, short = FALSE))
+         c(namesof("prob",  .lprob ,  earg = .eprob,  tag = FALSE),
+           namesof("shape", .lshape , earg = .eshape, short = FALSE))
 
     if (length( .iprob ))
       prob.init <- rep( .iprob , len = n)
@@ -1748,15 +1857,15 @@ betabinomial.ab.control <- function(save.weight = TRUE, ...) {
       ncol(cbind(etastart)) != 2) {
       shape.init <- rep( .ishape , len = n)
       etastart <-
-        cbind(theta2eta(prob.init,  .lprob,  earg = .eprob),
-              theta2eta(shape.init, .lshape, earg = .eshape))
+        cbind(theta2eta(prob.init,  .lprob ,  earg = .eprob ),
+              theta2eta(shape.init, .lshape , earg = .eshape ))
       }
   }), list( .iprob = iprob, .ishape = ishape, .lprob = lprob,
             .eprob = eprob, .eshape = eshape,
             .lshape = lshape ))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
-    prob  <- eta2theta(eta[, 1], .lprob,  earg = .eprob)
-    shape <- eta2theta(eta[, 2], .lshape, earg = .eshape)
+    prob  <- eta2theta(eta[, 1], .lprob ,  earg = .eprob )
+    shape <- eta2theta(eta[, 2], .lshape , earg = .eshape )
     mymu <- (1-prob) / (prob - shape)
     ifelse(mymu >= 0, mymu, NA)
   }, list( .lprob = lprob, .lshape = lshape,
@@ -1779,13 +1888,15 @@ betabinomial.ab.control <- function(save.weight = TRUE, ...) {
             .tolerance = tolerance,
             .moreSummation = moreSummation, .zero = zero ))),
   loglikelihood = eval(substitute(
-    function(mu,y,w,residuals = FALSE,eta, extra = NULL) {
-    prob  <- eta2theta(eta[, 1], .lprob, earg = .eprob)
-    shape <- eta2theta(eta[, 2], .lshape, earg = .eshape)
+    function(mu, y, w, residuals = FALSE, eta, extra = NULL,
+             summation = TRUE) {
+    prob  <- eta2theta(eta[, 1], .lprob  , earg = .eprob  )
+    shape <- eta2theta(eta[, 2], .lshape , earg = .eshape )
     ans <- log(prob)
     maxy <- max(y)
-    if (residuals)
-      stop("loglikelihood residuals not implemented yet") else {
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
     for (ii in 1:maxy) {
       index <- (ii <= y)
       ans[index] <- ans[index] +
@@ -1797,17 +1908,44 @@ betabinomial.ab.control <- function(save.weight = TRUE, ...) {
 
 
 
-      sum(w * ans)
+      ll.elts <- w * ans
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
     }
   }, list( .lprob = lprob, .lshape = lshape,
            .eprob = eprob, .eshape = eshape ))),
   vfamily = c("betageometric"),
+
+
+
+
+  simslot = eval(substitute(
+  function(object, nsim) {
+
+    pwts <- if (length(pwts <- object@prior.weights) > 0)
+              pwts else weights(object, type = "prior")
+    if (any(pwts != 1)) 
+      warning("ignoring prior weights")
+    eta <- predict(object)
+    prob  <- eta2theta(eta[, 1], .lprob  , earg = .eprob  )
+    shape <- eta2theta(eta[, 2], .lshape , earg = .eshape )
+    rbetageom(nsim * length(shape),
+              shape1 = shape, shape2 = shape)
+  }, list( .lprob = lprob, .lshape = lshape,
+           .eprob = eprob, .eshape = eshape ))),
+
+
+
+
   deriv = eval(substitute(expression({
-    prob  <- eta2theta(eta[, 1], .lprob,  earg = .eprob)
-    shape <- eta2theta(eta[, 2], .lshape, earg = .eshape)
+    prob  <- eta2theta(eta[, 1], .lprob ,  earg = .eprob )
+    shape <- eta2theta(eta[, 2], .lshape , earg = .eshape )
     shape1 <- prob / shape; shape2 <- (1 - prob) / shape;
-    dprob.deta  <- dtheta.deta(prob,  .lprob,  earg = .eprob)
-    dshape.deta <- dtheta.deta(shape, .lshape, earg = .eshape)
+    dprob.deta  <- dtheta.deta(prob,  .lprob ,  earg = .eprob )
+    dshape.deta <- dtheta.deta(shape, .lshape , earg = .eshape )
     dl.dprob <- 1 / prob
     dl.dshape <- 0 * y
     maxy <- max(y)
@@ -1966,7 +2104,8 @@ seq2binomial <- function(lprob1 = "logit", lprob2 = "logit",
             .apply.parint = apply.parint,
             .zero = zero ))),
   loglikelihood = eval(substitute(
-    function(mu,y,w,residuals = FALSE,eta, extra = NULL) {
+    function(mu, y, w, residuals = FALSE, eta, extra = NULL,
+             summation = TRUE) {
     prob1 <- eta2theta(eta[, 1], .lprob1, earg = .eprob1)
     prob2 <- eta2theta(eta[, 2], .lprob2, earg = .eprob2)
 
@@ -1978,13 +2117,19 @@ seq2binomial <- function(lprob1 = "logit", lprob2 = "logit",
     mvector <- w
     rvector <- w * y[, 1]
     svector <- rvector * y[, 2]
-    if (residuals)
-      stop("loglikelihood residuals not implemented yet") else {
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
       ans1 <-
-      sum(dbinom(rvector, size = mvector, prob = prob1, log = TRUE) +
-          dbinom(svector, size = rvector, prob = prob2, log = TRUE))
+        dbinom(rvector, size = mvector, prob = prob1, log = TRUE) +
+        dbinom(svector, size = rvector, prob = prob2, log = TRUE)
 
-      ans1
+      ll.elts <- ans1
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
     }
   }, list( .lprob1 = lprob1, .lprob2 = lprob2,
            .eprob1 = eprob1, .eprob2 = eprob2 ))),
@@ -2129,9 +2274,12 @@ seq2binomial <- function(lprob1 = "logit", lprob2 = "logit",
   }), list( .tol = tol, .addRidge = addRidge,
             .lmu12 = lmu12, .lphi12 = lphi12, .loratio = loratio,
             .emu12 = emu12, .ephi12 = ephi12, .eoratio = eoratio ))),
-  loglikelihood = function(mu, y, w, residuals = FALSE, eta, extra = NULL)
-    if (residuals) stop("loglikelihood residuals ",
-                        "not implemented yet") else {
+  loglikelihood =
+    function(mu, y, w, residuals = FALSE, eta, extra = NULL,
+             summation = TRUE) {
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
 
         ycounts <- if (is.numeric(extra$orig.w)) y * w / extra$orig.w else
                   y * w # Convert proportions to counts
@@ -2143,10 +2291,17 @@ seq2binomial <- function(lprob1 = "logit", lprob2 = "logit",
           warning("converting 'ycounts' to integer in @loglikelihood")
       ycounts <- round(ycounts)
 
-      sum((if (is.numeric(extra$orig.w)) extra$orig.w else 1) *
-          dmultinomial(x = ycounts, size = nvec, prob = mu,
-                       log = TRUE, dochecking = FALSE))
-    },
+      ll.elts <-
+        (if (is.numeric(extra$orig.w)) extra$orig.w else 1) *
+         dmultinomial(x = ycounts, size = nvec, prob = mu,
+                      log = TRUE, dochecking = FALSE)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
+    }
+  },
   vfamily = c("zipebcom"),
   deriv = eval(substitute(expression({
     A1vec  <- eta2theta(eta[, 1], .lmu12 ,  earg = .emu12 )
@@ -2282,7 +2437,8 @@ if (FALSE)
             .erhopos = erhopos, .erhoneg = erhoneg,
             .irhopos = irhopos, .irhoneg = irhoneg ))),
   loglikelihood = eval(substitute(
-    function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
+    function(mu, y, w, residuals = FALSE, eta, extra = NULL,
+             summation = TRUE) {
     rhopos <- eta2theta(eta[, 1], .lrhopos, earg = .erhopos)
     rhoneg <- eta2theta(eta[, 2], .lrhoneg, earg = .erhoneg)
     pee2 <- (1 - rhoneg) / (rhopos - rhoneg)
@@ -2304,8 +2460,9 @@ if (FALSE)
       pee2[pee2 >= 0.5] <- 0.44
     }
 
-    if (residuals)
-      stop("loglikelihood residuals not implemented yet") else {
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
     nnn1 <- round(w * (y[, 1] + y[, 2]))
     nnn2 <- round(w * (y[, 3] + y[, 4]))
     index1 <- nnn1 > 0
@@ -2315,10 +2472,16 @@ if (FALSE)
                  prob = pee1[index1], log = TRUE), 18))
 
 
-      sum(dbinom(round(w[index1] * y[index1, 1]), nnn1[index1],
+      ll.elts <-
+         (dbinom(round(w[index1] * y[index1, 1]), nnn1[index1],
                  prob = pee1[index1], log = TRUE)) +
-      sum(dbinom(round(w[index2] * y[index2, 3]), nnn2[index2],
+         (dbinom(round(w[index2] * y[index2, 3]), nnn2[index2],
                  prob = pee2[index2], log = TRUE))
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
     }
   }, list( .lrhopos = lrhopos, .lrhoneg = lrhoneg,
            .erhopos = erhopos, .erhoneg = erhoneg,
@@ -2452,9 +2615,11 @@ if (FALSE)
             .emu12 = emu12,
             .rho = rho, .nsimEIM = nsimEIM ))),
   loglikelihood = eval(substitute(
-    function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
-      if (residuals)
-        stop("loglikelihood residuals not implemented yet") else {
+    function(mu, y, w, residuals = FALSE, eta, extra = NULL,
+             summation = TRUE) {
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
       ycounts <- if (is.numeric(extra$orig.w)) y * w / extra$orig.w else
                   y * w # Convert proportions to counts
       nvec <- if (is.numeric(extra$orig.w)) round(w / extra$orig.w) else
@@ -2465,9 +2630,15 @@ if (FALSE)
           warning("converting 'ycounts' to integer in @loglikelihood")
       ycounts <- round(ycounts)
 
-      sum((if (is.numeric(extra$orig.w)) extra$orig.w else 1) *
-          dmultinomial(x = ycounts, size = nvec, prob = mu,
-                       log = TRUE, dochecking = FALSE))
+      ll.elts <-
+        (if (is.numeric(extra$orig.w)) extra$orig.w else 1) *
+         dmultinomial(x = ycounts, size = nvec, prob = mu,
+                       log = TRUE, dochecking = FALSE)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
     }
   }, list( .rho = rho ))),
   vfamily = c("binom2.Rho", "binom2"),
@@ -2593,7 +2764,7 @@ if (FALSE)
   }), list( .exchangeable = exchangeable, .zero = zero ))),
 
   infos = eval(substitute(function(...) {
-    list(Musual = 3,
+    list(M1 = 3,
          multipleResponses = FALSE,
          zero = .zero )
   }, list( .zero = zero ))),
@@ -2628,7 +2799,7 @@ if (FALSE)
                  "10" = y[, 1] * (1 - y[, 2]),
                  "11" = y[, 1] *      y[, 2])
     } else {
-      if(!all(rowSums(y) == 1))
+      if (!all(rowSums(y) == 1))
         stop("response matrix must have two 0s and one 1 in each row")
       y1vec <- 1 - y[, 1]  # Not a 0 means a 1.
       y2vec <- ifelse(y1vec == 1, y[, 3], 0)
@@ -2765,9 +2936,11 @@ if (FALSE)
             .emu12 = emu12, .e.rho = e.rho ))),
 
   loglikelihood = eval(substitute(
-    function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
-    if (residuals)
-      stop("loglikelihood residuals not implemented yet") else {
+    function(mu, y, w, residuals = FALSE, eta, extra = NULL,
+             summation = TRUE) {
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
 
       ycounts <- y  # n x 3
       nvec <- 1
@@ -2777,14 +2950,20 @@ if (FALSE)
       p11 <- pmax(smallno, pbinorm(eta[, 1], eta[, 2], cov12 = rhovec))
       p10 <- pmax(smallno, pnorm( eta[, 1]) - p11)
       p0  <- pmax(smallno, pnorm(-eta[, 1]))
-    sumprob <- p11 + p10 + p0
-    p11 <- p11 / sumprob
-    p10 <- p10 / sumprob
-    p0  <- p0  / sumprob
+      sumprob <- p11 + p10 + p0
+      p11 <- p11 / sumprob
+      p10 <- p10 / sumprob
+      p0  <- p0  / sumprob
 
 
-      sum(c(w) * dmultinomial(x = ycounts, size = nvec, prob = mu,  # use.mu,
-                              log = TRUE, dochecking = FALSE))
+      ll.elts <-
+        c(w) * dmultinomial(x = ycounts, size = nvec, prob = mu,  # use.mu,
+                            log = TRUE, dochecking = FALSE)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
     }
   }, list( .l.rho = l.rho, .e.rho = e.rho ))),
   vfamily = c("binom2.rho.ss", "binom2"),
@@ -2839,7 +3018,7 @@ if (FALSE)
     ans.deriv <- c(w) * cbind(dl.dprob1 * dprob1.deta,
                               dl.dprob2 * dprob2.deta,
                               dl.drho   * drho...deta)
- } # else {
+ }  # else {
     eta1 <- eta[, 1]  # dat1 %*% params[1:X1.d2]
     eta2 <- eta[, 2]  # dat2 %*% params[(X1.d2 + 1):(X1.d2 + X2.d2)]
     corr.st <- eta[, 3]  # params[(X1.d2 + X2.d2 + 1)]
@@ -2905,7 +3084,7 @@ if (FALSE)
     wz[, iam(1, 2, M)] <- ned2l.dprob1prob2 * dprob1.deta * dprob2.deta
     wz[, iam(1, 3, M)] <- ned2l.dprob1rho   * dprob1.deta * drho...deta
     wz[, iam(2, 3, M)] <- ned2l.dprob2rho   * dprob2.deta * drho...deta
-  } # else {
+  }  # else {
 
     ned2l.be1.be1 <- (A^2/p11 + A.c^2/p10 + 1/p0)      * d.n1^2
     ned2l.be2.be2 <- (  1/p11 +     1/p10) * B^2       * d.n2^2

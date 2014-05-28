@@ -8,9 +8,11 @@
 \title{ Skew-Normal Distribution }
 \description{
   Density and 
-% , distribution function, quantile function and
   random generation
   for the univariate skew-normal distribution.
+
+
+% , distribution function, quantile function and
 
 
 }
@@ -67,9 +69,11 @@ rskewnorm(n, location = 0, scale = 1, shape = 0)
 }
 \value{
   \code{dskewnorm} gives the density,
+  \code{rskewnorm} generates random deviates.
+
+
 % \code{pskewnorm} gives the distribution function,
 % \code{qskewnorm} gives the quantile function, and
-  \code{rskewnorm} generates random deviates.
 
 
 }

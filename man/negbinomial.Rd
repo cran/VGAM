@@ -16,8 +16,11 @@ negbinomial(lmu = "loge", lsize = "loge",
             parallel = FALSE, shrinkage.init = 0.95, zero = -2)
 polya(lprob = "logit", lsize = "loge",
       iprob = NULL, isize = NULL, probs.y = 0.75, nsimEIM = 100,
-      deviance.arg = FALSE, imethod = 1, shrinkage.init = 0.95, zero = -2)
+      imethod = 1, shrinkage.init = 0.95, zero = -2)
 }
+
+%     deviance.arg = FALSE,
+
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{lmu, lsize, lprob}{
@@ -87,13 +90,28 @@ polya(lprob = "logit", lsize = "loge",
 
   }
   \item{deviance.arg}{
-  Logical. If \code{TRUE}, the deviance function is attached
-  to the object. Under ordinary circumstances, it should be
-  left alone because it really assumes the index parameter
-  is at the maximum likelihood estimate. Consequently,
-  one cannot use that criterion to minimize within the
-  IRLS algorithm. It should be set \code{TRUE} only when
+  Logical.
+
+  If \code{TRUE}, the deviance is computed \emph{after} convergence.
+  It only works in the NB-2 model.
+  It is also necessary to set \code{criterion = "coefficients"}
+  or \code{half.step = FALSE}
+  since
+  one cannot use that criterion properly for the minimization
+  within the IRLS algorithm.
+  It should be set \code{TRUE} when
   used with \code{\link{cqo}} under the fast algorithm.
+
+
+
+% Pre-20131212:
+% If \code{TRUE}, the deviance function is attached
+% to the object. Under ordinary circumstances, it should be
+% left alone because it really assumes the index parameter
+% is at the maximum likelihood estimate. Consequently,
+% one cannot use that criterion to minimize within the
+% IRLS algorithm. It should be set \code{TRUE} only when
+% used with \code{\link{cqo}} under the fast algorithm.
 
 
   }
@@ -320,8 +338,8 @@ Fitting the negative binomial distribution to biological data.
 
 
   The function \code{negbinomial} can be used by the fast algorithm in
-  \code{\link{cqo}}, however, setting \code{EqualTolerances = TRUE} and
-  \code{ITolerances = FALSE} is recommended.
+  \code{\link{cqo}}, however, setting \code{eq.tolerances = TRUE} and
+  \code{I.tolerances = FALSE} is recommended.
 
 
 % For \code{\link{cqo}} and \code{\link{cao}}, taking the square-root
@@ -383,35 +401,42 @@ Fitting the negative binomial distribution to biological data.
   \code{\link{nbcanlink}} (NB-C),
   \code{\link{posnegbinomial}},
   \code{\link{invbinomial}},
-% \code{\link[MASS]{rnegbin}}.
   \code{\link[stats:NegBinomial]{rnbinom}},
   \code{\link{nbolf}},
   \code{\link{rrvglm}},
   \code{\link{cao}},
   \code{\link{cqo}},
-  \code{\link{CommonVGAMffArguments}}.
+  \code{\link{CommonVGAMffArguments}},
+  \code{\link{simulate.vlm}}.
+
+
+% \code{\link[MASS]{rnegbin}}.
 
 
 }
 \examples{
 # Example 1: apple tree data
 appletree <- data.frame(y = 0:7, w = c(70, 38, 17, 10, 9, 3, 2, 1))
-fit <- vglm(y ~ 1, negbinomial, appletree, weights = w)
+fit <- vglm(y ~ 1, negbinomial(deviance = TRUE), data = appletree,
+            weights = w, crit = "coef")
+fit <- vglm(y ~ 1, negbinomial(deviance = TRUE), data = appletree,
+            weights = w, half.step = FALSE)  # Alternative method
 summary(fit)
 coef(fit, matrix = TRUE)
 Coef(fit)
+deviance(fit)  # NB2 only; needs 'crit = "coef"' & 'deviance = TRUE' above
 
 # Example 2: simulated data with multivariate response
 ndata <- data.frame(x2 = runif(nn <- 500))
 ndata <- transform(ndata, y1 = rnbinom(nn, mu = exp(3+x2), size = exp(1)),
                           y2 = rnbinom(nn, mu = exp(2-x2), size = exp(0)))
-fit1 <- vglm(cbind(y1, y2) ~ x2, negbinomial, ndata, trace = TRUE)
+fit1 <- vglm(cbind(y1, y2) ~ x2, negbinomial, data = ndata, trace = TRUE)
 coef(fit1, matrix = TRUE)
 
 # Example 3: large counts so definitely use the nsimEIM argument
 ndata <- transform(ndata, y3 = rnbinom(nn, mu = exp(12+x2), size = exp(1)))
 with(ndata, range(y3))  # Large counts
-fit2 <- vglm(y3 ~ x2, negbinomial(nsimEIM = 100), ndata, trace = TRUE)
+fit2 <- vglm(y3 ~ x2, negbinomial(nsimEIM = 100), data = ndata, trace = TRUE)
 coef(fit2, matrix = TRUE)
 
 # Example 4: a NB-1 to estimate a negative binomial with Var(Y) = phi0 * mu
@@ -425,7 +450,7 @@ mydata <- transform(mydata, y3 = rnbinom(nn, mu = mu, size = delta0 * mu))
 plot(y3 ~ x2, data = mydata, pch = "+", col = 'blue',
      main = paste("Var(Y) = ", phi0, " * mu", sep = ""), las = 1) }
 nb1 <- vglm(y3 ~ x2 + x3, negbinomial(parallel = TRUE, zero = NULL),
-            mydata, trace = TRUE)
+            data = mydata, trace = TRUE)
 # Extracting out some quantities:
 cnb1 <- coef(nb1, matrix = TRUE)
 mydiff <- (cnb1["(Intercept)", "log(size)"] -

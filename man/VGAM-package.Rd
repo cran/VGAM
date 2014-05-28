@@ -192,7 +192,7 @@ contains some further information and examples.
 \examples{
 # Example 1; proportional odds model
 pneumo <- transform(pneumo, let = log(exposure.time))
-(fit1 <- vglm(cbind(normal, mild, severe) ~ let, propodds, pneumo))
+(fit1 <- vglm(cbind(normal, mild, severe) ~ let, propodds, data = pneumo))
 depvar(fit1)  # Better than using fit1@y; dependent variable (response)
 weights(fit1, type = "prior")  # Number of observations
 coef(fit1, matrix = TRUE)      # p.179, in McCullagh and Nelder (1989)
@@ -206,7 +206,7 @@ zdata <- transform(zdata, pstr0  = logit(-0.5 + 1*x2, inverse = TRUE),
                           lambda = loge(  0.5 + 2*x2, inverse = TRUE))
 zdata <- transform(zdata, y = rzipois(nn, lambda, pstr0 = pstr0))
 with(zdata, table(y))
-fit2 <- vglm(y ~ x2, zipoisson, zdata, trace = TRUE)
+fit2 <- vglm(y ~ x2, zipoisson, data = zdata, trace = TRUE)
 coef(fit2, matrix = TRUE)  # These should agree with the above values
 
 

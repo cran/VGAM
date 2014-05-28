@@ -44,8 +44,10 @@ rbetageom(n, shape1, shape2)
 \value{
   \code{dbetageom} gives the density,
   \code{pbetageom} gives the distribution function, and
-% \code{qbetageom} gives the quantile function, and
   \code{rbetageom} generates random deviates.
+
+
+% \code{qbetageom} gives the quantile function, and
 
 
 }

@@ -77,7 +77,7 @@ New York: Wiley.
 }
 \examples{
 wdata <- data.frame(y = rinv.gaussian(n = 1000, mu =  1, lambda = exp(1)))
-fit <- vglm(y ~ 1, waldff(init = 0.2), wdata, trace = TRUE)
+fit <- vglm(y ~ 1, waldff(init = 0.2), data = wdata, trace = TRUE)
 coef(fit, matrix = TRUE)
 Coef(fit)
 summary(fit)

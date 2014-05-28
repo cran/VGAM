@@ -8,7 +8,7 @@
 
 }
 \usage{
-prentice74(llocation = "identity", lscale = "loge", lshape = "identity",
+prentice74(llocation = "identitylink", lscale = "loge", lshape = "identitylink",
            ilocation = NULL, iscale = NULL, ishape = NULL, zero = 2:3)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -115,7 +115,7 @@ else \eqn{q < 0} is right skew.
 pdata <- data.frame(x2 = runif(nn <- 1000))
 pdata <- transform(pdata, loc = -1 + 2*x2, Scale = exp(1))
 pdata <- transform(pdata, y = rlgamma(nn, loc = loc, scale = Scale, k = 1))
-fit <- vglm(y ~ x2, prentice74(zero = 2:3), pdata, trace = TRUE)
+fit <- vglm(y ~ x2, prentice74(zero = 2:3), data = pdata, trace = TRUE)
 coef(fit, matrix = TRUE)  # Note the coefficients for location
 }
 \keyword{models}

@@ -8,7 +8,7 @@
 
 }
 \usage{
-binormal(lmean1 = "identity", lmean2 = "identity",
+binormal(lmean1 = "identitylink", lmean2 = "identitylink",
          lsd1   = "loge",     lsd2   = "loge",
          lrho   = "rhobit",
          imean1 = NULL,       imean2 = NULL,

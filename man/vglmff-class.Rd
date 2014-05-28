@@ -49,10 +49,10 @@ Objects can be created by calls of the form \code{new("vglmff", ...)}.
   }
   \item{\code{infos}:}{
   Object of class \code{"function"} which
-  returns a list with components such as \code{Musual}.
+  returns a list with components such as \code{M1}.
   At present only a very few \pkg{VGAM} family functions have this
   feature implemented.
-  Those that do do not require specifying the \code{Musual}
+  Those that do do not require specifying the \code{M1}
   argument when used with \code{\link{rcim}}.
 
 
@@ -114,6 +114,13 @@ Objects can be created by calls of the form \code{new("vglmff", ...)}.
   Object of class \code{"expression"} to insert
   code at a special position in \code{vglm.fit} or
   \code{vgam.fit}.
+
+
+  }
+  \item{\code{simslot}:}{
+  Object of class \code{"function"} to allow
+  \code{\link[stats]{simulate}} to work.
+
 
 
   }

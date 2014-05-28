@@ -21,15 +21,22 @@
 \details{
   The data were published in Ashford and Sowden (1970).
   A more recent analysis is McCullagh and Nelder (1989, Section 6.6).
+
+
+
 }
 \source{
   Ashford, J. R. and Sowden, R. R. (1970)
   Multi-variate probit analysis.
   \emph{Biometrics}, \bold{26}, 535--546.
+
 }
 \references{
+
   McCullagh, P. and Nelder, J. A. (1989)
   \emph{Generalized Linear Models}. 2nd ed. London: Chapman & Hall.
+
+
 
 }
 \examples{

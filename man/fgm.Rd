@@ -79,7 +79,8 @@ Invariance theorems for Fisher information.
 \seealso{
   \code{\link{rfgm}},
   \code{\link{bifrankcop}},
-  \code{\link{morgenstern}}.
+  \code{\link{morgenstern}},
+  \code{\link{simulate.vlm}}.
 
 
 }

@@ -238,7 +238,7 @@ with(zdata, matplot(x2, tmat2, col = 1:4, type = "l", ylim = 0:1,
      ylab = "Probability", main = "Joint probabilities")) }
 
 # Now fit the model to the data.
-fit <- vglm(cbind(ybin1, ybin2) ~ x2, zipebcom, dat = zdata, trace = TRUE)
+fit <- vglm(cbind(ybin1, ybin2) ~ x2, zipebcom, data = zdata, trace = TRUE)
 coef(fit, matrix = TRUE)
 summary(fit)
 vcov(fit)

@@ -29,9 +29,11 @@ truncgeometric(upper.limit = Inf,
   Logical. 
   Fisher scoring is used if \code{expected = TRUE}, else Newton-Raphson.
 
+
   }
   \item{iprob, imethod, zero}{
   See \code{\link{CommonVGAMffArguments}} for more details.
+
 
   }
 
@@ -59,6 +61,8 @@ truncgeometric(upper.limit = Inf,
   and its variance is \eqn{Var(Y) = (1-p)/p^2}{Var(Y) = (1-prob)/prob^2}.
   The geometric distribution is a special case of the 
   negative binomial distribution (see \code{\link{negbinomial}}).
+  The geometric distribution is also a special case of the 
+  Borel distribution, which is a Lagrangian distribution.
   If \eqn{Y} has a geometric distribution with parameter \eqn{p}{prob} then
   \eqn{Y+1} has a positive-geometric distribution with the same parameter.
   Multiple responses are permitted.
@@ -110,7 +114,8 @@ Help from Viet Hoang Quoc is gratefully acknowledged.
   \code{\link{expgeometric}},
   \code{\link{zageometric}},
   \code{\link{zigeometric}},
-  \code{\link{rbetageom}}.
+  \code{\link{rbetageom}},
+  \code{\link{simulate.vlm}}.
 
 
 }
@@ -122,7 +127,7 @@ gdata <- transform(gdata, eta  = -1.0 - 1.0 * x2 + 2.0 * x3)
 gdata <- transform(gdata, prob = logit(eta, inverse = TRUE))
 gdata <- transform(gdata, y1 = rgeom(nn, prob))
 with(gdata, table(y1))
-fit1 <- vglm(y1 ~ x2 + x3 + x4, geometric, gdata, trace = TRUE)
+fit1 <- vglm(y1 ~ x2 + x3 + x4, geometric, data = gdata, trace = TRUE)
 coef(fit1, matrix = TRUE)
 summary(fit1)
 

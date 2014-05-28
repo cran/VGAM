@@ -9,7 +9,7 @@
 
 }
 \usage{
-bigumbelI(lapar = "identity", iapar = NULL, imethod = 1)
+bigumbelI(lapar = "identitylink", iapar = NULL, imethod = 1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -93,7 +93,7 @@ Hoboken, NJ, USA: Wiley-Interscience.
 nn <- 1000
 gdata <- data.frame(y1 = rexp(nn), y2 = rexp(nn))
 \dontrun{ with(gdata, plot(cbind(y1, y2))) }
-fit <- vglm(cbind(y1, y2) ~ 1, fam = bigumbelI, gdata, trace = TRUE)
+fit <- vglm(cbind(y1, y2) ~ 1, fam = bigumbelI, data = gdata, trace = TRUE)
 coef(fit, matrix = TRUE)
 Coef(fit)
 head(fitted(fit))

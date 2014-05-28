@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2013 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2014 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -910,12 +910,12 @@ plotqrrvglm <- function(object,
                ask = FALSE,
                main = paste(Rtype, "residuals vs latent variable(s)"),
                xlab = "Latent Variable",
-               ITolerances = object@control$EqualTolerances,
+               I.tolerances = object@control$eq.tolerances,
                ...) {
   M <- object@misc$M
   n <- object@misc$n
   Rank <- object@control$Rank
-  Coef.object <- Coef(object, ITolerances = ITolerances)
+  Coef.object <- Coef(object, I.tolerances = I.tolerances)
   rtype <- match.arg(rtype,
                      c("response", "pearson", "deviance", "working"))[1]
   res <- resid(object, type = rtype)

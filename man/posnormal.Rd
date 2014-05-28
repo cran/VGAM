@@ -6,7 +6,7 @@
   Fits a positive (univariate) normal distribution.
 }
 \usage{
-posnormal(lmean = "identity", lsd = "loge",
+posnormal(lmean = "identitylink", lsd = "loge",
           imean = NULL, isd = NULL, nsimEIM = 100, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -119,7 +119,7 @@ pdata <- transform(pdata, y = rposnorm(n <- 1000, m = m, sd = SD))
 
 \dontrun{with(pdata, hist(y, prob = TRUE, border = "blue",
          main = paste("posnorm(m =", m[1], ", sd =", round(SD[1], 2),")"))) }
-fit <- vglm(y ~ 1, fam = posnormal, pdata, trace = TRUE)
+fit <- vglm(y ~ 1, posnormal, data = pdata, trace = TRUE)
 coef(fit, matrix = TRUE)
 (Cfit <- Coef(fit))
 mygrid <- with(pdata, seq(min(y), max(y), len = 200))  # Add the fit to the histogram

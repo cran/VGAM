@@ -127,7 +127,7 @@ zigeometricff(lprob = "logit", lonempstr0 = "logit",
 
 
   The zero-\emph{deflated} geometric distribution might
-  be fitted by setting \code{lpstr0 = identity}, albeit,
+  be fitted by setting \code{lpstr0 = identitylink}, albeit,
   not entirely reliably. See \code{\link{zipoisson}}
   for information that can be applied here. Else
   try the zero-altered geometric distribution (see
@@ -146,7 +146,8 @@ zigeometricff(lprob = "logit", lonempstr0 = "logit",
   \code{\link{rzigeom}},
   \code{\link{geometric}},
   \code{\link{zageometric}},
-  \code{\link[stats]{rgeom}}.
+  \code{\link[stats]{rgeom}},
+  \code{\link{simulate.vlm}}.
 
 
 }

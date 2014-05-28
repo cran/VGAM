@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2013 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2014 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -141,9 +141,9 @@ vsmooth.spline <-
 
 
   contr.sp[(names(control.spar))] <- control.spar
-  if(!all(sapply(contr.sp[1:4], is.numeric)) ||
-     contr.sp$tol < 0 || contr.sp$eps <= 0 || contr.sp$maxit <= 0)
-      stop("invalid 'control.spar'")
+  if (!all(sapply(contr.sp[1:4], is.numeric)) ||
+      contr.sp$tol < 0 || contr.sp$eps <= 0 || contr.sp$maxit <= 0)
+    stop("invalid 'control.spar'")
 
 
   my.call <- match.call()
@@ -235,9 +235,9 @@ vsmooth.spline <-
           wzbar = double(neff * dim2wz),
       uwzbar = double(1), wzybar = double(neff * M), okint = as.integer(0),
       as.integer(M), dim2wz = as.integer(dim2wz), dim1U = as.integer(dim1U),
-      blist = as.double(diag(M)), ncolb = as.integer(M),
+      Hlist1 = as.double(diag(M)), ncolb = as.integer(M),
       trivc = as.integer(1), wuwzbar = as.integer(0),
-      dim1Uwzbar = as.integer(dim1U), dim2wzbar = as.integer(dim2wz), PACKAGE = "VGAM")
+      dim1Uwzbar = as.integer(dim1U), dim2wzbar = as.integer(dim2wz))
 
     if (collaps$okint != 1) {
       stop("some non-positive-definite weight matrices ",
@@ -333,7 +333,7 @@ vsmooth.spline <-
     knot.list <- .C("vknootl2", as.double(xbar),
                       as.integer(neff), knot = double(neff+6),
                       k = as.integer(nknots+4),
-                      chosen = as.integer(chosen), PACKAGE = "VGAM")
+                      chosen = as.integer(chosen))
     if (noround) {
       knot <- valid.vknotl2(knot.list$knot[1:(knot.list$k)])
       knot.list$k <- length(knot)
@@ -368,9 +368,9 @@ vsmooth.spline <-
           wzbar = double(neff * dim2wzbar),
       uwzbar = double(1), wzybar = double(neff * ncb), okint = as.integer(0),
       as.integer(M), as.integer(dim2wz), as.integer(dim1U),
-      blist = as.double(conmat), ncolb = as.integer(ncb),
+      Hlist1 = as.double(conmat), ncolb = as.integer(ncb),
       as.integer(trivc), wuwzbar = as.integer(0),
-      as.integer(dim1Uwzbar), as.integer(dim2wzbar), PACKAGE = "VGAM")
+      as.integer(dim1Uwzbar), as.integer(dim2wzbar))
 
   if (collaps$okint != 1) {
    stop("some non-positive-definite weight matrices ",
@@ -437,7 +437,7 @@ vsmooth.spline <-
      double(1), as.integer(0),
 
      icontrsp = as.integer(contr.sp$maxit),
-      contrsp = as.double(unlist(contr.sp[1:4])), PACKAGE = "VGAM")
+      contrsp = as.double(unlist(contr.sp[1:4])))
 
 
 
@@ -638,7 +638,7 @@ predictvsmooth.spline.fit <- function(object, x, deriv = 0) {
     junk <- .C("Yee_vbvs", as.integer(ngood),
           as.double(object@knots), as.double(object@Bcoefficients),
           as.double(xs[good]), smomat = double(ngood * ncb),
-          as.integer(nknots), as.integer(deriv), as.integer(ncb), PACKAGE = "VGAM")
+          as.integer(nknots), as.integer(deriv), as.integer(ncb))
     y[good,] <- junk$smomat
 
     if (TRUE && deriv > 1) {
@@ -680,7 +680,7 @@ valid.vknotl2 <- function(knot, tol = 1/1024) {
 
   junk <- .C("Yee_pknootl2", knot = as.double(knot),
                as.integer(length(knot)),
-               keep = integer(length(knot)), as.double(tol), PACKAGE = "VGAM")
+               keep = integer(length(knot)), as.double(tol))
   keep <- as.logical(junk$keep)
   knot <- junk$knot[keep]
   if (length(knot) <= 11) {

@@ -10,10 +10,10 @@
 
 }
 \usage{
- studentt(ldf = "loglog", idf = NULL, tol1 = 0.1, imethod = 1)
-studentt2(df = Inf, llocation = "identity", lscale = "loge",
+studentt (ldf = "loglog", idf = NULL, tol1 = 0.1, imethod = 1)
+studentt2(df = Inf, llocation = "identitylink", lscale = "loge",
           ilocation = NULL, iscale = NULL, imethod = 1, zero = -2)
-studentt3(llocation = "identity", lscale = "loge", ldf = "loglog",
+studentt3(llocation = "identitylink", lscale = "loge", ldf = "loglog",
           ilocation = NULL, iscale = NULL, idf = NULL,
           imethod = 1, zero = -(2:3))
 }
@@ -149,7 +149,8 @@ application to financial econometrics.
   \code{\link{logistic}},
   \code{\link{huber2}},
   \code{\link{koenker}},
-  \code{\link[stats]{TDist}}.
+  \code{\link[stats]{TDist}},
+  \code{\link{simulate.vlm}}.
 
 
 }
@@ -157,10 +158,10 @@ application to financial econometrics.
 tdata <- data.frame(x2 = runif(nn <- 1000))
 tdata <- transform(tdata, y1 = rt(nn, df = exp(exp(0.5 - x2))),
                           y2 = rt(nn, df = exp(exp(0.5 - x2))))
-fit1 <- vglm(y1 ~ x2, studentt, tdata, trace = TRUE)
+fit1 <- vglm(y1 ~ x2, studentt, data = tdata, trace = TRUE)
 coef(fit1, matrix = TRUE)
 
-fit2 <- vglm(cbind(y1, y2) ~ x2, studentt3, tdata, trace = TRUE)
+fit2 <- vglm(cbind(y1, y2) ~ x2, studentt3, data = tdata, trace = TRUE)
 coef(fit2, matrix = TRUE)
 }
 \keyword{models}

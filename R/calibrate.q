@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2013 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2014 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -27,7 +27,7 @@ calibrate.qrrvglm.control <-
          varI.latvar = FALSE, ...) {
 
   Rank <- object@control$Rank
-  EqualTolerances <- object@control$EqualTolerances
+  eq.tolerances <- object@control$eq.tolerances
   if (!is.Numeric(gridSize, positive = TRUE,
                   integer.valued = TRUE, length.arg = 1))
     stop("bad input for 'gridSize'")

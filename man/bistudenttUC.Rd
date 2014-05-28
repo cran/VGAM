@@ -5,11 +5,13 @@
 \title{Bivariate Student-t distribution cumulative distribution function}
 \description{
   Density
+  for the bivariate Student-t distribution distribution.
+
 % cumulative distribution function
 % quantile function
 % and
 % random generation
-  for the bivariate Student-t distribution distribution.
+
 
 }
 \usage{
@@ -47,6 +49,8 @@ dbistudentt(x1, x2, df, rho = 0, log = FALSE)
 }
 \value{
   \code{dbistudentt} gives the density.
+
+
 % \code{pnorm2} gives the cumulative distribution function,
 % \code{qnorm2} gives the quantile function, and
 % \code{rbistudentt} generates random deviates (\eqn{n} by 2 matrix).

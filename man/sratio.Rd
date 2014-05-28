@@ -68,6 +68,7 @@ sratio(link = "logit", parallel = FALSE, reverse = FALSE,
   \code{\link{rrvglm}}
   and \code{\link{vgam}}.
 
+
 }
 \references{
 Agresti, A. (2002)

@@ -88,7 +88,7 @@ cdata <- transform(cdata, status = ifelse(rcensored, 0, 1))
 with(cdata, table(cy))
 with(cdata, table(rcensored))
 with(cdata, table(ii <- print(SurvS4(cy, status))))  # Check; U+ means >= U
-fit <- vglm(SurvS4(cy, status) ~ 1, cenpoisson, cdata, trace = TRUE)
+fit <- vglm(SurvS4(cy, status) ~ 1, cenpoisson, data = cdata, trace = TRUE)
 coef(fit, matrix = TRUE)
 table(print(depvar(fit)))  # Another check; U+ means >= U
 
@@ -101,7 +101,7 @@ cdata <- transform(cdata, status = ifelse(lcensored, 0, 1))
 with(cdata, table(cY))
 with(cdata, table(lcensored))
 with(cdata, table(ii <- print(SurvS4(cY, status, type = "left"))))  # Check
-fit <- vglm(SurvS4(cY, status, type = "left") ~ 1, cenpoisson, cdata, trace = TRUE)
+fit <- vglm(SurvS4(cY, status, type = "left") ~ 1, cenpoisson, data = cdata, trace = TRUE)
 coef(fit, matrix = TRUE)
 
 
@@ -121,7 +121,7 @@ cdata$Lvec[with(cdata, rcensored)] <- cdata$Uvec[with(cdata, rcensored)]  # Unch
 with(cdata, table(ii <- print(SurvS4(Lvec, Uvec, status, type = "interval"))))  # Check
 
 fit <- vglm(SurvS4(Lvec, Uvec, status, type = "interval") ~ 1,
-            cenpoisson, cdata, trace = TRUE)
+            cenpoisson, data = cdata, trace = TRUE)
 coef(fit, matrix = TRUE)
 table(print(depvar(fit)))  # Another check
 
@@ -135,7 +135,7 @@ with(cdata, table(ii <- print(SurvS4(Lvec, Uvec, status,
                                      type = "interval"))))  # Check
 
 fit <- vglm(SurvS4(Lvec, Uvec, status, type = "interval") ~ 1,
-            cenpoisson, cdata, trace = TRUE, crit = "c")
+            cenpoisson, data = cdata, trace = TRUE, crit = "c")
 coef(fit, matrix = TRUE)
 table(print(depvar(fit)))  # Another check
 }

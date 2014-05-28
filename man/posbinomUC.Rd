@@ -74,6 +74,8 @@ rposbinom(n, size, prob)
   \code{pposbinom} gives the distribution function,
   \code{qposbinom} gives the quantile function, and
   \code{rposbinom} generates random deviates.
+
+
 }
 %\references{ 
 %None.
@@ -141,7 +143,7 @@ with(pdata, table(y1))
 with(pdata, table(y2))
 # Multivariate response
 fit2 <- vglm(cbind(y1, y2) ~ x2, posbinomial(mv = TRUE),
-             trace  = TRUE, pdata, weight = cbind(sizev1, sizev2))
+             trace  = TRUE, data = pdata, weight = cbind(sizev1, sizev2))
 coef(fit2, matrix = TRUE)
 }
 \keyword{distribution}

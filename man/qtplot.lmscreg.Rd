@@ -57,15 +57,19 @@ contains further information and examples.
 }
 \author{ Thomas W. Yee }
 \note{
- \code{\link{plotqtplot.lmscreg}} does the actual plotting. 
+  \code{\link{plotqtplot.lmscreg}} does the actual plotting. 
+
+
 }
 
 \seealso{ 
-\code{\link{plotqtplot.lmscreg}},
-\code{\link{deplot.lmscreg}},
-\code{\link{lms.bcn}},
-\code{\link{lms.bcg}},
-\code{\link{lms.yjn}}.
+  \code{\link{plotqtplot.lmscreg}},
+  \code{\link{deplot.lmscreg}},
+  \code{\link{lms.bcn}},
+  \code{\link{lms.bcg}},
+  \code{\link{lms.yjn}}.
+
+
 }
 
 \examples{\dontrun{

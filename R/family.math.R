@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2013 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2014 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -111,7 +111,7 @@ lambertW <- function(x, tolerance = 1.0e-10, maxit = 50) {
          as.double(psip1), as.double(psidp), as.double(psidp1),
          ifault = integer(nnn),
          tmax = as.double(tmax),
-         as.integer(nnn), PACKAGE = "VGAM")
+         as.integer(nnn))
   answer <- matrix(fred$d, nnn, 6, byrow = TRUE)
   dimnames(answer) <- list(names(q),
                            c("q", "q^2", "shape", "shape^2",
@@ -137,7 +137,7 @@ expint <- function(x) {
   answer <- .C("sf_C_expint",
                  x = as.double(x),
                  size = as.integer(LLL),
-                 ans = double(LLL), PACKAGE = "VGAM")$ans
+                 ans = double(LLL))$ans
 
   answer[x  < 0] <- NA
   answer[x == 0] <- NA
@@ -156,7 +156,7 @@ expexpint <- function(x) {
   answer <- .C("sf_C_expexpint",
                  x = as.double(x),
                  size = as.integer(LLL),
-                 ans = double(LLL), PACKAGE = "VGAM")$ans
+                 ans = double(LLL))$ans
 
   answer[x  < 0] <- NA
   answer[x == 0] <- NA
@@ -178,7 +178,7 @@ expint.E1 <- function(x) {
   answer <- .C("sf_C_expint_e1",
                  x = as.double(x),
                  size = as.integer(LLL),
-                 ans = double(LLL), PACKAGE = "VGAM")$ans
+                 ans = double(LLL))$ans
 
   answer[x  < 0] <- NA
   answer[x == 0] <- NA

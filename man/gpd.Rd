@@ -227,13 +227,13 @@ gpd(threshold = 0, lscale = "loge", lshape = logoff(offset = 0.5),
 # Simulated data from an exponential distribution (xi = 0)
 threshold <- 0.5
 gdata <- data.frame(y1 = threshold + rexp(n = 3000, rate = 2))
-fit <- vglm(y1 ~ 1, gpd(threshold = threshold), gdata, trace = TRUE)
+fit <- vglm(y1 ~ 1, gpd(threshold = threshold), data = gdata, trace = TRUE)
 head(fitted(fit))
-coef(fit, matrix = TRUE)   # xi should be close to 0
+coef(fit, matrix = TRUE)  # xi should be close to 0
 Coef(fit)
 summary(fit)
 
-fit@extra$threshold # Note the threshold is stored here
+head(fit@extra$threshold)  # Note the threshold is stored here
 
 # Check the 90 percentile
 ii <- depvar(fit) < fitted(fit)[1, "90\%"]
@@ -252,18 +252,18 @@ matlines(1:length(depvar(fit)), fitted(fit), lty = 2:3, lwd = 2) }
 gdata <- data.frame(x2 = runif(nn <- 2000))
 threshold <- 0; xi <- exp(-0.8) - 0.5
 gdata <- transform(gdata, y2 = rgpd(nn, scale = exp(1 + 0.1*x2), shape = xi))
-fit <- vglm(y2 ~ x2, gpd(threshold), gdata, trace = TRUE)
+fit <- vglm(y2 ~ x2, gpd(threshold), data = gdata, trace = TRUE)
 coef(fit, matrix = TRUE)
 
 
 \dontrun{ # Nonparametric fits
 gdata <- transform(gdata, yy = y2 + rnorm(nn, sd = 0.1))
 # Not so recommended:
-fit1 <- vgam(yy ~ s(x2), gpd(threshold), gdata, trace = TRUE)
+fit1 <- vgam(yy ~ s(x2), gpd(threshold), data = gdata, trace = TRUE)
 par(mfrow = c(2,1))
 plotvgam(fit1, se = TRUE, scol = "blue")
 # More recommended:
-fit2 <- vglm(yy ~ bs(x2), gpd(threshold), gdata, trace = TRUE)
+fit2 <- vglm(yy ~ sm.bs(x2), gpd(threshold), data = gdata, trace = TRUE)
 plotvgam(fit2, se = TRUE, scol = "blue") }
 }
 \keyword{models}

@@ -70,7 +70,7 @@ Hoboken, NJ, USA: Wiley-Interscience.
 \examples{
 idata <- data.frame(y = rinvparalogistic(n = 3000, exp(1), exp(2)))
 fit <- vglm(y ~ 1, invparalogistic(ishape1.a = 2.1),
-            idata, trace = TRUE, crit = "coef")
+            data = idata, trace = TRUE, crit = "coef")
 coef(fit, matrix = TRUE)
 Coef(fit)
 }

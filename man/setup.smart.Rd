@@ -18,6 +18,7 @@ setup.smart(mode.arg, smart.prediction = NULL, max.smart = 30)
   \code{object$smart.prediction} where
   \code{object} is the name of the fitted object.
 
+
 }
 
 \item{smart.prediction}{
@@ -34,26 +35,28 @@ setup.smart(mode.arg, smart.prediction = NULL, max.smart = 30)
   \code{.smart.prediction}. It is not important because
   \code{.smart.prediction} is made larger if needed.
 
+
 }}
 \value{
  Nothing is returned.
+
+
 }
 \section{Side Effects}{
   In \code{"write"} mode
   \code{.smart.prediction} in
-  \code{smartpredenv} (\R) or frame 1 (S-PLUS)
+  \code{smartpredenv}
   is assigned an empty list with \code{max.smart} components.
   In \code{"read"} mode
   \code{.smart.prediction} in
-  \code{smartpredenv} (\R) or frame 1 (S-PLUS)
+  \code{smartpredenv}
   is assigned \code{smart.prediction}.
-  In both cases, 
+  Then
   \code{.smart.prediction.counter} in
-  \code{smartpredenv} (\R) or
-  frame 1 (S-PLUS)
+  \code{smartpredenv}
   is assigned the value 0, and
   \code{.smart.prediction.mode} and \code{.max.smart} are written to
-  \code{smartpredenv} (\R) or frame 1 (S-PLUS) too.
+  \code{smartpredenv} too.
 
 
 }
@@ -75,12 +78,12 @@ setup.smart(mode.arg, smart.prediction = NULL, max.smart = 30)
 
 }
 \examples{
-\dontrun{# Put at the beginning of lm
-setup.smart("write")
+\dontrun{
+setup.smart("write")  # Put at the beginning of lm
 }
 
 \dontrun{# Put at the beginning of predict.lm
-setup.smart("read", smart.prediction=object$smart.prediction)
+setup.smart("read", smart.prediction = object$smart.prediction)
 }
 }
 %\keyword{smart}

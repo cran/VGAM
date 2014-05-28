@@ -101,7 +101,7 @@ Chambers, J. M. and T. J. Hastie (eds) (1992)
 \examples{
 # Categorical regression example 1
 pneumo <- transform(pneumo, let = log(exposure.time))
-(fit1 <- vglm(cbind(normal, mild, severe) ~ let, propodds, pneumo))
+(fit1 <- vglm(cbind(normal, mild, severe) ~ let, propodds, data = pneumo))
 fitted(fit1)
 
 # LMS quantile regression example 2

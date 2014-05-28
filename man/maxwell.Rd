@@ -71,7 +71,7 @@ maxwell(link = "loge", zero = NULL)
 }
 \examples{
 mdata <- data.frame(y = rmaxwell(1000, a = exp(2)))
-fit <- vglm(y ~ 1, maxwell, mdata, trace = TRUE, crit = "coef")
+fit <- vglm(y ~ 1, maxwell, data = mdata, trace = TRUE, crit = "coef")
 coef(fit, matrix = TRUE)
 Coef(fit)
 }

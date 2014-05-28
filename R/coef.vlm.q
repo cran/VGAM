@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2013 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2014 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -7,20 +7,39 @@
 
 
 
-coefvlm <- function(object, matrix.out = FALSE, label = TRUE) {
+coefvlm <- function(object, matrix.out = FALSE, label = TRUE,
+                    colon = FALSE) {
 
   ans <- object@coefficients
+
+  if (colon) {
+    if (matrix.out)
+      stop("cannot have 'matrix.out = TRUE' and 'colon = TRUE'")
+    if (!label)
+      stop("cannot have 'label = FALSE' and 'colon = TRUE'")
+    
+    d1 <- object@misc$colnames.x
+    Hlist <- object@constraints
+    M <- object@misc$M
+    ncolHlist <- unlist(lapply(Hlist, ncol)) 
+    new.labs <- vlabel(xn = d1, ncolHlist, M = M, colon = colon)
+    names(ans) <- new.labs
+    return(ans)
+  }
+
+
   if (!label)
     names(ans) <- NULL
   if (!matrix.out)
     return(ans)
 
- 
+
+  
   ncolx <- object@misc$p  # = length(object@constraints)
   M <- object@misc$M
 
-  Blist <- object@constraints
-  if (all(trivial.constraints(Blist) == 1)) {
+  Hlist <- object@constraints
+  if (all(trivial.constraints(Hlist) == 1)) {
     Bmat <- matrix(ans, nrow = ncolx, ncol = M, byrow = TRUE)
   } else {
     Bmat <- matrix(as.numeric(NA), nrow = ncolx, ncol = M)
@@ -28,12 +47,12 @@ coefvlm <- function(object, matrix.out = FALSE, label = TRUE) {
     if (!matrix.out)
       return(ans) 
 
-    ncolBlist <- unlist(lapply(Blist, ncol)) 
-    nasgn <- names(Blist)
-    temp <- c(0, cumsum(ncolBlist))
+    ncolHlist <- unlist(lapply(Hlist, ncol)) 
+    nasgn <- names(Hlist)
+    temp <- c(0, cumsum(ncolHlist))
     for (ii in 1:length(nasgn)) {
       index <- (temp[ii] + 1):temp[ii + 1]
-      cmat <- Blist[[nasgn[ii]]]
+      cmat <- Hlist[[nasgn[ii]]]
       Bmat[ii,] <- cmat %*% ans[index]
     }
   }

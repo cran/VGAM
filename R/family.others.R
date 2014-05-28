@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2013 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2014 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -173,14 +173,22 @@ rexppois <- function(n, lambda, betave = 1) {
   }), list( .llambda = llambda, .lbetave = lbetave,
             .elambda = elambda, .ebetave = ebetave))), 
 
-  loglikelihood = eval(substitute(function(mu, y, w, 
-                  residuals = FALSE, eta, extra = NULL) {
+  loglikelihood = eval(substitute(
+    function(mu, y, w, residuals = FALSE, eta,
+             extra = NULL,
+             summation = TRUE) {
     lambda <- eta2theta(eta[, 1], .llambda , earg = .elambda )
     betave <- eta2theta(eta[, 2], .lbetave , earg = .ebetave )
-    if (residuals) stop("loglikelihood residuals not ",
-                        "implemented yet") else {
-      sum(c(w) * dexppois(x = y, lambda = lambda, betave = betave,
-                          log = TRUE))
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
+      ll.elts <- c(w) * dexppois(x = y, lambda = lambda, betave = betave,
+                                 log = TRUE)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
     }
   }, list( .lbetave = lbetave , .llambda = llambda , 
            .elambda = elambda , .ebetave = ebetave ))), 
@@ -398,16 +406,23 @@ genrayleigh.control <- function(save.weight = TRUE, ...) {
             .eshape = eshape, .escale = escale,
             .nsimEIM = nsimEIM ))),
 
-  loglikelihood = eval(substitute(function(mu, y, w, 
-                  residuals = FALSE, eta, extra = NULL) {
+  loglikelihood = eval(substitute(
+    function(mu, y, w, residuals = FALSE, eta, extra = NULL,
+             summation = TRUE) {
 
     shape <- eta2theta(eta[, 1], .lshape , earg = .eshape )
     Scale <- eta2theta(eta[, 2], .lscale , earg = .escale )
 
-    if (residuals) stop("loglikelihood residuals",
-                        "not implemented yet") else {
-      sum(c(w) * dgenray(x = y, shape = shape,
-                         scale = Scale, log = TRUE))
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
+      ll.elts <- c(w) * dgenray(x = y, shape = shape,
+                                scale = Scale, log = TRUE)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
     }
   }, list( .lshape = lshape , .lscale = lscale , 
            .eshape = eshape , .escale = escale ))), 
@@ -658,16 +673,23 @@ expgeometric.control <- function(save.weight = TRUE, ...) {
             .escale = escale, .eshape = eshape,
             .nsimEIM = nsimEIM ))),
 
-  loglikelihood = eval(substitute(function(mu, y, w, 
-                  residuals = FALSE, eta, extra = NULL) {
+  loglikelihood = eval(substitute(
+    function(mu, y, w, residuals = FALSE, eta, extra = NULL,
+             summation = TRUE) {
 
     Scale <- eta2theta(eta[, 1], .lscale , earg = .escale )
     shape <- eta2theta(eta[, 2], .lshape , earg = .eshape )
     
-    if (residuals) stop("loglikelihood residuals",
-                        "not implemented yet") else {
-      sum(c(w) * dexpgeom(x = y, scale = Scale, shape = shape,
-                          log = TRUE))
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
+      ll.elts <- c(w) * dexpgeom(x = y, scale = Scale, shape = shape,
+                                 log = TRUE)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
     }
   }, list( .lscale = lscale , .lshape = lshape , 
            .escale = escale , .eshape = eshape ))), 
@@ -929,17 +951,25 @@ explogff.control <- function(save.weight = TRUE, ...) {
             .escale = escale, .eshape = eshape,
             .nsimEIM = nsimEIM ))),
 
-  loglikelihood = eval(substitute(function(mu, y, w,
-                  residuals = FALSE, eta, extra = NULL) {
+  loglikelihood = eval(substitute(
+    function(mu, y, w, residuals = FALSE, eta,
+             extra = NULL,
+             summation = TRUE) {
 
     Scale <- eta2theta(eta[, 1], .lscale , earg = .escale )
     shape <- eta2theta(eta[, 2], .lshape , earg = .eshape )
     
 
-    if (residuals) stop("loglikelihood residuals",
-                        "not implemented yet") else {
-      sum(c(w) * dexplog(x = y, scale = Scale,
-                         shape = shape, log = TRUE))
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
+      ll.elts <- c(w) * dexplog(x = y, scale = Scale,
+                                shape = shape, log = TRUE)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
     }
   }, list( .lscale = lscale , .lshape = lshape ,
            .escale = escale , .eshape = eshape ))),
@@ -1155,7 +1185,7 @@ rtpn <- function(n, location = 0, scale = 1, skewpar = 0.5) {
 
 
 
-tpnff <- function(llocation = "identity", lscale = "loge",
+tpnff <- function(llocation = "identitylink", lscale = "loge",
                   pp = 0.5, method.init = 1,  zero = 2)
 {
   if (!is.Numeric(method.init, length.arg = 1,
@@ -1228,20 +1258,20 @@ tpnff <- function(llocation = "identity", lscale = "loge",
         }
       }
       etastart <- cbind(
-           theta2eta(location.init,  .llocat, earg = .elocat),
-           theta2eta(scale.y.est,    .lscale, earg = .escale))
+           theta2eta(location.init,  .llocat , earg = .elocat ),
+           theta2eta(scale.y.est,    .lscale , earg = .escale ))
     }
   }), list( .llocat = llocat, .lscale = lscale,
             .elocat = elocat, .escale = escale,
             .method.init=method.init ))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
-    eta2theta(eta[, 1], .llocat, earg = .elocat)
+    eta2theta(eta[, 1], .llocat , earg = .elocat )
   }, list( .llocat = llocat,
            .elocat = elocat, .escale = escale ))),
   last = eval(substitute(expression({
-    misc$link     <-    c("location" = .llocat, "scale" = .lscale)
+    misc$link     <-    c("location" = .llocat , "scale" = .lscale )
 
-    misc$earg     <- list("location" = .elocat, "scale" = .escale)
+    misc$earg     <- list("location" = .elocat , "scale" = .escale )
 
     misc$expected <- TRUE
     misc$pp       <- .pp
@@ -1250,23 +1280,32 @@ tpnff <- function(llocation = "identity", lscale = "loge",
   }), list( .llocat = llocat, .lscale = lscale,
             .elocat = elocat, .escale = escale,
             .pp     = pp,        .method.init = method.init ))),
+
   loglikelihood = eval(substitute(
-    function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
-    location <- eta2theta(eta[, 1], .llocat, earg = .elocat)
-    myscale  <- eta2theta(eta[, 2], .lscale, earg = .escale)
+    function(mu, y, w, residuals = FALSE, eta,
+             extra = NULL,
+             summation = TRUE) {
+    location <- eta2theta(eta[, 1], .llocat , earg = .elocat )
+    myscale  <- eta2theta(eta[, 2], .lscale , earg = .escale )
     ppay     <- .pp
-    if (residuals) stop("loglikelihood residuals not ",
-                        "implemented yet") else {
-      sum(c(w) * dtpn(y, skewpar = ppay, location = location,
-                      scale = myscale, log.arg = TRUE))
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
+      ll.elts <- c(w) * dtpn(y, skewpar = ppay, location = location,
+                             scale = myscale, log.arg = TRUE)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
     }
   }, list( .llocat = llocat, .lscale = lscale,
            .elocat = elocat, .escale = escale,
            .pp      = pp ))),
   vfamily = c("tpnff"),
   deriv = eval(substitute(expression({
-    mylocat <- eta2theta(eta[, 1], .llocat,  earg = .elocat)
-    myscale <- eta2theta(eta[, 2], .lscale,  earg = .escale)
+    mylocat <- eta2theta(eta[, 1], .llocat ,  earg = .elocat )
+    myscale <- eta2theta(eta[, 2], .lscale ,  earg = .escale )
     mypp    <- .pp
 
     zedd <- (y - mylocat) / myscale
@@ -1314,9 +1353,9 @@ tpnff <- function(llocation = "identity", lscale = "loge",
   ########################################################################
 
 
-tpnff3 <- function(llocation = "identity",
+tpnff3 <- function(llocation = "identitylink",
                     lscale   = "loge",
-                    lskewpar = "identity",
+                    lskewpar = "identitylink",
                     method.init = 1,  zero = 2)
 {
   if (!is.Numeric(method.init, length.arg = 1,
@@ -1413,19 +1452,28 @@ tpnff3 <- function(llocation = "identity",
   }), list( .llocat = llocat, .lscale = lscale, .lskewp = lskewp,
             .elocat = elocat, .escale = escale, .eskewp = eskewp,
                     .method.init = method.init ))),
- loglikelihood = eval(substitute(
-   function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
-   locat <- eta2theta(eta[, 1], .llocat, earg = .elocat)
-   myscale  <- eta2theta(eta[, 2], .lscale, earg = .escale)
-   myskew   <- eta2theta(eta[, 3], .lskewp, earg = .eskewp)
+  loglikelihood = eval(substitute(
+    function(mu, y, w, residuals = FALSE, eta,
+             extra = NULL,
+             summation = TRUE) {
 
-    if (residuals) stop("loglikelihood residuals not ",
-                       "implemented yet") else {
-     sum(c(w) * dtpn(y, location = locat,  scale = myscale,
-                     skewpar = myskew, log.arg = TRUE))
+   locat    <- eta2theta(eta[, 1], .llocat , earg = .elocat )
+   myscale  <- eta2theta(eta[, 2], .lscale , earg = .escale )
+   myskew   <- eta2theta(eta[, 3], .lskewp , earg = .eskewp )
+
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
+      ll.elts <- c(w) * dtpn(y, location = locat,  scale = myscale,
+                             skewpar = myskew, log.arg = TRUE)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
    }
- }, list( .llocat = llocat, .lscale = lscale, .lskewp = lskewp,
-          .elocat = elocat, .escale = escale, .eskewp = eskewp
+  }, list( .llocat = llocat, .lscale = lscale, .lskewp = lskewp,
+           .elocat = elocat, .escale = escale, .eskewp = eskewp
            ))),
   vfamily = c("tpnff3"),
   deriv = eval(substitute(expression({

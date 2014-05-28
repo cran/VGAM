@@ -43,14 +43,16 @@ invbinomial(lrho = elogit(min = 0.5, max = 1),
   \eqn{\frac12 < \rho < 1}{0.5 < rho < 1},
   and \eqn{\lambda > 0}{lambda > 0}.
   The first two moments exist for \eqn{\rho>\frac12}{rho>0.5};
-  then the mean is \eqn{\lambda (1-\rho) /(2 \rho-1)}{lambda*(1-rho)/(2*rho-1)}
+  then the mean
+  is \eqn{\lambda (1-\rho) /(2 \rho-1)}{lambda*(1-rho)/(2*rho-1)}
   (returned as the fitted values) and the
   variance is
   \eqn{\lambda \rho (1-\rho) /(2 \rho-1)^3}{lambda*rho*(1-rho)/(2*rho-1)^3}.
   The inverse binomial distribution is a special
   case of the generalized negative binomial distribution of
   Jain and Consul (1971).
-  It holds that \eqn{Var(Y) > E(Y)} so that the inverse binomial distribution
+  It holds that \eqn{Var(Y) > E(Y)} so that the
+  inverse binomial distribution
   is overdispersed compared with the Poisson distribution.
 
 
@@ -106,7 +108,7 @@ results in a EIM that is diagonal.
 }
 \examples{
 idata <- data.frame(y = rnbinom(n <- 1000, mu = exp(3), size = exp(1)))
-fit <- vglm(y ~ 1, invbinomial, idata, trace = TRUE)
+fit <- vglm(y ~ 1, invbinomial, data = idata, trace = TRUE)
 with(idata, c(mean(y), head(fitted(fit), 1)))
 summary(fit)
 coef(fit, matrix = TRUE)

@@ -95,7 +95,8 @@ The same warnings in \code{\link{makeham}} apply here too.
 
 \seealso{
   \code{\link{dgompertz}},
-  \code{\link{makeham}}.
+  \code{\link{makeham}},
+  \code{\link{simulate.vlm}}.
 
 
 }

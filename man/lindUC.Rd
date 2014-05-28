@@ -7,10 +7,12 @@
 \title{The Lindley Distribution}
 \description{
   Density, cumulative distribution function,
-% quantile function
   and
   random generation for
   the Lindley distribution.
+
+% quantile function
+
 
 }
 \usage{
@@ -41,8 +43,10 @@ rlind(n, theta)
 \value{
   \code{dlind} gives the density,
   \code{plind} gives the cumulative distribution function, and
-% \code{qlind} gives the quantile function, and
   \code{rlind} generates random deviates.
+
+
+% \code{qlind} gives the quantile function, and
 
 
 }

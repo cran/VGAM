@@ -135,7 +135,7 @@ More improvements could be made here.
 \examples{
 \dontrun{
 gdata <- data.frame(y = rsinmad(3000, exp(2), exp(2), exp(1)))  # A special case!
-fit <- vglm(y ~ 1, genbetaII, gdata, trace = TRUE)
+fit <- vglm(y ~ 1, genbetaII, data = gdata, trace = TRUE)
 fit <- vglm(y ~ 1, data = gdata, trace = TRUE,
             genbetaII(ishape1.a = 4, ishape2.p = 2.2, iscale = 7, ishape3.q = 2.3))
 coef(fit, matrix = TRUE)

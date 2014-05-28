@@ -43,14 +43,14 @@ C Output from Public domain Ratfor, version 1.01
       return
       end
       subroutine vm2af(mat, a, dimm, tgiyxdw1, dufozmt7, kuzxj1lo, wy1vq
-     *fzu, upper)
+     *fzu, rb1onzwu)
       implicit logical (a-z)
       integer dimm, tgiyxdw1(dimm), dufozmt7(dimm), kuzxj1lo, wy1vqfzu, 
-     *upper
+     *rb1onzwu
       double precision mat(dimm,kuzxj1lo), a(wy1vqfzu,wy1vqfzu,kuzxj1lo)
       integer ayfnwr1v, yq6lorbx, gp1jxzuh, imk5wjxg
       imk5wjxg = wy1vqfzu * (wy1vqfzu + 1) / 2
-      if(upper .eq. 1 .or. dimm .ne. imk5wjxg)then
+      if(rb1onzwu .eq. 1 .or. dimm .ne. imk5wjxg)then
       ayfnwr1v = 1
 23015 if(.not.(ayfnwr1v .le. kuzxj1lo))goto 23017
       yq6lorbx = 1
@@ -72,7 +72,7 @@ C Output from Public domain Ratfor, version 1.01
       do23026 yq6lorbx=1,dimm 
       a(tgiyxdw1(yq6lorbx),dufozmt7(yq6lorbx),ayfnwr1v) = mat(yq6lorbx,a
      *yfnwr1v)
-      if(upper .eq. 0)then
+      if(rb1onzwu .eq. 0)then
       a(dufozmt7(yq6lorbx),tgiyxdw1(yq6lorbx),ayfnwr1v) = mat(yq6lorbx,a
      *yfnwr1v)
       endif
@@ -82,20 +82,20 @@ C Output from Public domain Ratfor, version 1.01
 23025 continue
       return
       end
-      subroutine nudh6szqf(wpuarq2m, tlgduey8, lfu2qhid, dimu, tgiyxdw1,
-     * dufozmt7, kuzxj1lo, wy1vqfzu, wk1200)
+      subroutine mux22f(wpuarq2m, tlgduey8, lfu2qhid, dimu, tgiyxdw1, du
+     *fozmt7, kuzxj1lo, wy1vqfzu, wk1200)
       implicit logical (a-z)
       integer dimu, tgiyxdw1(*), dufozmt7(*), kuzxj1lo, wy1vqfzu
       double precision wpuarq2m(dimu,kuzxj1lo), tlgduey8(kuzxj1lo,wy1vqf
      *zu), lfu2qhid(wy1vqfzu,kuzxj1lo), wk1200(wy1vqfzu,wy1vqfzu)
       double precision q6zdcwxk
-      integer ayfnwr1v, yq6lorbx, bpvaqm5z, one, upper
+      integer ayfnwr1v, yq6lorbx, bpvaqm5z, one, rb1onzwu
       one = 1
-      upper = 1
+      rb1onzwu = 1
       ayfnwr1v = 1
 23030 if(.not.(ayfnwr1v .le. kuzxj1lo))goto 23032
       call vm2af(wpuarq2m(1,ayfnwr1v), wk1200, dimu, tgiyxdw1, dufozmt7,
-     * one, wy1vqfzu, upper)
+     * one, wy1vqfzu, rb1onzwu)
       yq6lorbx = 1
 23033 if(.not.(yq6lorbx .le. wy1vqfzu))goto 23035
       q6zdcwxk = 0.0d0
@@ -122,13 +122,13 @@ C Output from Public domain Ratfor, version 1.01
       double precision wpuarq2m(dimu,kuzxj1lo), bvecto(wy1vqfzu,kuzxj1lo
      *), wk1200(wy1vqfzu,wy1vqfzu)
       double precision q6zdcwxk
-      integer ayfnwr1v, yq6lorbx, gp1jxzuh, upper, one
-      upper = 1
+      integer ayfnwr1v, yq6lorbx, gp1jxzuh, rb1onzwu, one
+      rb1onzwu = 1
       one = 1
       ayfnwr1v = 1
 23039 if(.not.(ayfnwr1v .le. kuzxj1lo))goto 23041
       call vm2af(wpuarq2m(1,ayfnwr1v), wk1200, dimu, tgiyxdw1, dufozmt7,
-     * one, wy1vqfzu, upper)
+     * one, wy1vqfzu, rb1onzwu)
       yq6lorbx = wy1vqfzu
 23042 if(.not.(yq6lorbx .ge. 1))goto 23044
       q6zdcwxk = bvecto(yq6lorbx,ayfnwr1v)
@@ -216,8 +216,8 @@ C Output from Public domain Ratfor, version 1.01
 23070 continue
       return
       end
-      subroutine mxrbkut0f(wpuarq2m, he7mqnvy, wy1vqfzu, xjc4ywlh, kuzxj
-     *1lo, wk1200, wk3400, tgiyxdw1, dufozmt7, dimu, rutyk8mg)
+      subroutine mux17f(wpuarq2m, he7mqnvy, wy1vqfzu, xjc4ywlh, kuzxj1lo
+     *, wk1200, wk3400, tgiyxdw1, dufozmt7, dimu, rutyk8mg)
       implicit logical (a-z)
       integer dimu, wy1vqfzu, xjc4ywlh, kuzxj1lo, tgiyxdw1(*), dufozmt7(
      **), rutyk8mg

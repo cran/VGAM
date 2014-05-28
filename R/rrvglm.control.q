@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2013 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2014 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -150,7 +150,7 @@ rrvglm.control <-
     if (Quadratic) qrrvglm.control(Rank = Rank, ...) else NULL)
 
 
-  if (Quadratic && ans$ITolerances) {
+  if (Quadratic && ans$I.tolerances) {
       ans$Svd.arg <- FALSE
       ans$Uncorrelated.latvar <- FALSE
       ans$Corner <- FALSE

@@ -73,7 +73,7 @@ p1cqo <- cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,
             quasipoissonff, data = hspider, Crow1positive = FALSE)
 
 nos <- ncol(depvar(p1cqo))
-clr <- 1:nos # OR (1:(nos+1))[-7]  to omit yellow
+clr <- 1:nos  # OR (1:(nos+1))[-7]  to omit yellow
 
 trplot(p1cqo, which.species = 1:3, log = "xy",
        col = c("blue", "orange", "green"), lwd = 2, label = TRUE) -> ii

@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2013 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2014 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -103,18 +103,19 @@ tapplymat1 <-
   function.arg <- match.arg(function.arg,
                             c("cumsum", "diff", "cumprod"))[1]
 
-  type <- switch(function.arg,
-      cumsum = 1,
-      diff = 2,
-      cumprod = 3,
-      stop("function.arg not matched"))
+  type <-
+    switch(function.arg,
+           cumsum = 1,
+           diff = 2,
+           cumprod = 3,
+           stop("function.arg not matched"))
 
   if (!is.matrix(mat))
     mat <- as.matrix(mat)
   nr <- nrow(mat)
   nc <- ncol(mat)
-  fred <- .C("tapplymat1", mat = as.double(mat),
-      as.integer(nr), as.integer(nc), as.integer(type))
+  fred <- .C("tapply_mat1", mat = as.double(mat),
+             as.integer(nr), as.integer(nc), as.integer(type))
 
   dim(fred$mat) <- c(nr, nc)
   dimnames(fred$mat) <- dimnames(mat)
@@ -230,7 +231,7 @@ veigen <- function(x, M) {
       wk = double(M*M),
       as.integer(index$row), as.integer(index$col),
       as.integer(dimm.value),
-      error.code = integer(1), PACKAGE = "VGAM")
+      error.code = integer(1))
 
   if (z$error.code)
     stop("eigen algorithm (rs) returned error code ", z$error.code)

@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2013 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2014 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -104,6 +104,8 @@ vgam.nlchisq <- function(qr, resid, wz, smomat, deriv, U, smooth.labels,
 
   ans <- rep(as.numeric(NA), length = ncol(smomat))
   Uderiv <- vbacksub(U, t(deriv), M = M, n = n)  # \bU_i^{-1} \biu_i
+
+
   ptr <- 0
   for (ii in 1:length(smooth.labels)) {
     cmat <- constraints[[ smooth.labels[ii] ]]

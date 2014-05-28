@@ -1,6 +1,180 @@
 # These functions are
-# Copyright (C) 1998-2013 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2014 T.W. Yee, University of Auckland.
 # All rights reserved.
+
+
+
+
+
+
+
+
+
+
+
+subsetc <-
+Select <-
+  function(
+           data = list(),
+           prefix = "y",
+
+           lhs  = NULL,
+           rhs  = NULL,  # Can be "0" to suppress an intercept, else "".
+           rhs2 = NULL,  # Can be "0" to suppress an intercept, else "".
+           rhs3 = NULL,  # Can be "0" to suppress an intercept, else "".
+
+           as.character = FALSE,
+           as.formula.arg = FALSE,
+           tilde = TRUE,
+           exclude = NULL,
+           sort.arg = TRUE) {
+
+
+
+
+
+  if (is.character(exclude))
+    if (any(nchar(prefix) == 0))
+      stop("bad input for argument 'exclude'")
+  if (!is.logical(sort.arg) || 
+      length(sort.arg) != 1)
+    stop("bad input for argument 'sort.arg'")
+
+
+  col.names <- colnames(data)
+  if (is.logical(prefix)) {
+    index <- if (prefix) 1:length(col.names) else
+             stop("cannot have 'prefix = FALSE'")
+  } else {
+    index <- NULL
+    for (ii in 1:length(prefix)) {
+      small.col.names <- substr(col.names, 1, nchar(prefix[ii]))
+
+      index <- c(index, grep(prefix[ii], small.col.names))
+    }
+  }
+
+
+
+
+
+  temp.col.names <- col.names[index]
+
+
+  if (length(exclude)) {
+    exclude.index <- NULL
+    for (ii in 1:length(exclude)) {
+      exclude.index <- c(exclude.index,
+                         (1:length(col.names))[exclude[ii] == col.names])
+    }
+    exclude.index <- unique(sort(exclude.index))
+    index <- setdiff(index, exclude.index)
+    temp.col.names <- col.names[index]
+  }
+
+
+
+
+  if (sort.arg) {
+    ooo <- order(temp.col.names)
+    index <- index[ooo]
+    temp.col.names <- temp.col.names[ooo]
+  }
+
+
+
+ ltcn.positive <- (length(temp.col.names) > 0)
+
+
+
+  if (as.formula.arg) {
+    form.string <- paste0(ifelse(length(lhs), lhs, ""),
+                          ifelse(tilde, " ~ ", ""),
+                          if (ltcn.positive)
+                            paste(temp.col.names, collapse = " + ") else
+                            "",
+                          ifelse(ltcn.positive && length(rhs ), " + ", ""),
+                          ifelse(length(rhs ), rhs, ""),
+                          ifelse(length(rhs2), paste(" +", rhs2), ""),
+                          ifelse(length(rhs3), paste(" +", rhs3), ""))
+
+    if (as.character) {
+      form.string
+    } else {
+      as.formula(form.string)
+    }
+  } else {
+    if (as.character) {
+      paste0("cbind(",
+             paste(temp.col.names, collapse = ", "),
+             ")")
+    } else {
+      ans <- if (is.matrix(data)) data[, index] else
+             if (is.list(data)) data[index] else
+             stop("argument 'data' is neither a list or a matrix")
+      if (length(ans)) {
+        as.matrix(ans)
+      } else {
+        NULL
+      }
+    }
+  }
+}
+
+
+
+
+
+
+
+
+if (FALSE)
+subsetc <-
+  function(x, select,
+           prefix = NULL,
+           subset = TRUE, drop = FALSE,
+           exclude = NULL,
+           sort.arg = !is.null(prefix),
+           as.character = FALSE) {
+
+  if (!is.null(prefix)) {
+    if (!missing(select))
+      warning("overwriting argument 'select' by something ",
+              "using 'prefix'")
+    select <- grepl(paste0("^", prefix), colnames(x))
+  }
+
+  if (missing(select)) {
+    vars <- TRUE
+  } else {
+    nl <- as.list(seq_along(x))  # as.list(1L:ncol(x))
+    names(nl) <- names(x)  # colnames(x)
+    vars <- eval(substitute(select), nl, parent.frame())
+  }
+
+  ans <- x[subset & !is.na(subset), vars, drop = drop]
+  if (sort.arg) {
+    cna <- colnames(ans)
+    ooo <- order(cna)
+    ans <- ans[, ooo, drop = drop]
+  }
+
+  if (!is.null(exclude)) {
+    cna <- colnames(ans)
+    ooo <- match(exclude, cna)
+    ans <- ans[, -ooo, drop = drop]
+  }
+
+  if (as.character) {
+    cna <- colnames(ans)
+    paste0("cbind(", paste0(cna, collapse = ", "), ")")
+  } else {
+    ans
+  }
+}
+
+
+
 
 
 
@@ -286,7 +460,7 @@ cm.nointercept.vgam <- function(constraints, x, nointercept, M) {
     return(temp)
 
   constraints <- temp
-  Blist <- vector("list", ncol(x))
+  Hlist <- vector("list", ncol(x))
   for (ii in 1:length(asgn)) {
     cols <- asgn[[ii]]
     ictr <- 0
@@ -299,42 +473,42 @@ cm.nointercept.vgam <- function(constraints, x, nointercept, M) {
             } else {
               constraints[[ii]]
             }
-      Blist[[jay]] <- cm 
+      Hlist[[jay]] <- cm 
     }
   }
-  names(Blist) <- dimnames(x)[[2]]
-  Blist
+  names(Hlist) <- dimnames(x)[[2]]
+  Hlist
 }
 
 
 
 
 
- trivial.constraints <- function(Blist, target = diag(M)) {
+ trivial.constraints <- function(Hlist, target = diag(M)) {
 
 
-  if (is.null(Blist))
+  if (is.null(Hlist))
     return(1)
 
-  if (is.matrix(Blist))
-    Blist <- list(Blist)
-  M <- dim(Blist[[1]])[1]
+  if (is.matrix(Hlist))
+    Hlist <- list(Hlist)
+  M <- dim(Hlist[[1]])[1]
 
   if (!is.matrix(target)) 
     stop("target is not a matrix")
   dimtar <- dim(target) 
 
-  trivc <- rep(1, length(Blist))
-  names(trivc) <- names(Blist)
-  for (ii in 1:length(Blist)) {
-    d <- dim(Blist[[ii]])
+  trivc <- rep(1, length(Hlist))
+  names(trivc) <- names(Hlist)
+  for (ii in 1:length(Hlist)) {
+    d <- dim(Hlist[[ii]])
     if (d[1] != dimtar[1]) trivc[ii] <- 0
     if (d[2] != dimtar[2]) trivc[ii] <- 0
     if (d[1] != M)         trivc[ii] <- 0
-    if (length(Blist[[ii]]) != length(target))
+    if (length(Hlist[[ii]]) != length(target))
       trivc[ii] <- 0
     if (trivc[ii] == 0) next
-    if (!all(c(Blist[[ii]]) == c(target)))
+    if (!all(c(Hlist[[ii]]) == c(target)))
       trivc[ii] <- 0
     if (trivc[ii] == 0) next
   }
@@ -481,7 +655,7 @@ cm.nointercept.vgam <- function(constraints, x, nointercept, M) {
       as.integer(index$row-1),  
       as.integer(index$col-1),  
       as.integer(n),  as.integer(M),  
-      as.integer(as.numeric(upper)), NAOK = TRUE, PACKAGE = "VGAM")
+      as.integer(as.numeric(upper)), NAOK = TRUE)
   dim(fred$ans) <- c(M, M, n)
   alpn <- NULL
   dimnames(fred$ans) <- list(alpn, alpn, dimnames(m)[[1]])
@@ -510,7 +684,7 @@ cm.nointercept.vgam <- function(constraints, x, nointercept, M) {
       as.integer(dimm.value),
       as.integer(index$row-1),  
       as.integer(index$col-1),  
-      as.integer(n),  as.integer(M), NAOK = TRUE, PACKAGE = "VGAM")
+      as.integer(n),  as.integer(M), NAOK = TRUE)
   dim(fred$m) <- c(dimm.value,n)
   fred$m <- t(fred$m)
 
@@ -583,7 +757,7 @@ if (!exists("is.R"))
   if (any(slotNames(object) == "predictors"))
     eta <- object@predictors
   mt <- terms(object)  # object@terms$terms; 20030811
-  Blist <- constraints <- object@constraints 
+  Hlist <- constraints <- object@constraints 
   new.coeffs <- object@coefficients
   if (any(slotNames(object) == "iter"))
     iter <- object@iter
@@ -781,7 +955,7 @@ qnupdate <- function(w, wzold, dderiv, deta, M, keeppd = TRUE,
   }
   Bs <- mux22(t(wzold), deta, M = M,
               upper = FALSE, as.matrix = TRUE)  # n x M
-  sBs <- c( (deta * Bs) %*% rep(1, M) )   # should have positive values
+  sBs <- c( (deta * Bs) %*% rep(1, M) )  # should have positive values
   sy <- c( (dderiv * deta) %*% rep(1, M) )
   wznew <- wzold
   index <- iam(NA, NA, M = M, both = TRUE)
@@ -929,7 +1103,7 @@ lerch <- function(x, s, v, tolerance = 1.0e-10, iter = 100) {
            err = integer(L), as.integer(L),
            as.double(x), as.double(s), as.double(v),
            acc=as.double(tolerance), result=double(L),
-           as.integer(iter), PACKAGE = "VGAM")
+           as.integer(iter))
 
   ifelse(ans$err == 0 & xok , ans$result, NA)
 }
@@ -953,11 +1127,11 @@ negzero.expression <- expression({
 
     if (!is.Numeric(-negdotzero, positive = TRUE,
                     integer.valued = TRUE) ||
-        max(-negdotzero) > Musual)
+        max(-negdotzero) > M1)
         stop("bad input for argument 'zero'")
 
     zneg.index <- rep(0:bigUniqInt, rep(length(negdotzero),
-                      1 + bigUniqInt)) * Musual + abs(negdotzero)
+                      1 + bigUniqInt)) * M1 + abs(negdotzero)
     sort(intersect(zneg.index, 1:M))
   } else {
     NULL
@@ -1013,7 +1187,7 @@ w.wz.merge <- function(w, wz, n, M, ndepy,
 
   w  <- matrix(w, n, ndepy)
   w.rep <- matrix(0, n, ncol(wz))
-  Musual <- M / ndepy
+  M1 <- M / ndepy
   all.indices <- iam(NA, NA, M = M, both = TRUE)
 
 
@@ -1021,17 +1195,17 @@ w.wz.merge <- function(w, wz, n, M, ndepy,
   if (FALSE)
   for (ii in 1:ncol(wz)) {
 
-    if ((ind1 <- ceiling(all.indices$row[ii] / Musual)) ==
-                 ceiling(all.indices$col[ii] / Musual)) {
+    if ((ind1 <- ceiling(all.indices$row[ii] / M1)) ==
+                 ceiling(all.indices$col[ii] / M1)) {
       w.rep[, ii] <- w[, ind1]
     }
 
 
-  } # ii
+  }  # ii
 
 
-  res.Ind1 <- ceiling(all.indices$row.index / Musual)
-  Ind1 <- res.Ind1 == ceiling(all.indices$col.index / Musual)
+  res.Ind1 <- ceiling(all.indices$row.index / M1)
+  Ind1 <- res.Ind1 == ceiling(all.indices$col.index / M1)
 
   LLLL <- min(ncol(wz), length(Ind1))
   Ind1 <- Ind1[1:LLLL]
@@ -1040,7 +1214,7 @@ w.wz.merge <- function(w, wz, n, M, ndepy,
   for (ii in 1:ndepy) {
     sub.ind1 <- (1:LLLL)[Ind1 & (res.Ind1 == ii)]
     w.rep[, sub.ind1] <- w[, ii]
-  } # ii
+  }  # ii
 
   w.rep * wz
 }
@@ -1140,7 +1314,7 @@ w.y.check <- function(w, y,
 
 
 
-arwz2wz <- function(arwz, M = 1, Musual = 1) {
+arwz2wz <- function(arwz, M = 1, M1 = 1) {
 
 
 
@@ -1155,14 +1329,14 @@ arwz2wz <- function(arwz, M = 1, Musual = 1) {
     return(arwz)
   }
 
-  wz <- matrix(0.0, nrow = n, ncol = sum(M:(M-Musual+1)))
-  ind1 <- iam(NA, NA, M = Musual, both = TRUE, diag = TRUE)
+  wz <- matrix(0.0, nrow = n, ncol = sum(M:(M-M1+1)))
+  ind1 <- iam(NA, NA, M = M1, both = TRUE, diag = TRUE)
   len.ind1 <- dim.val # length(ind1$col.index)
 
   for (ii in 1:ndepy) {
     for (jlocal in 1:len.ind1) {
-      wz[, iam(Musual * (ii - 1) + ind1$row[jlocal],
-               Musual * (ii - 1) + ind1$col[jlocal],
+      wz[, iam(M1 * (ii - 1) + ind1$row[jlocal],
+               M1 * (ii - 1) + ind1$col[jlocal],
                M = M)] <- arwz[, ii, jlocal]
     }
   }

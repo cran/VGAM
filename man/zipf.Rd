@@ -84,14 +84,15 @@ zipf(N = NULL, link = "loge", init.s = NULL)
 
 \seealso{ 
   \code{\link{dzipf}},
-  \code{\link{zetaff}}.
+  \code{\link{zetaff}},
+  \code{\link{simulate.vlm}}.
 
 
 }
 \examples{
 zdata <- data.frame(y = 1:5, ofreq = c(63, 14, 5, 1, 2))
-fit <- vglm(y ~ 1, zipf, zdata, trace = TRUE, weight = ofreq, crit = "coef")
-fit <- vglm(y ~ 1, zipf(link = identity, init = 3.4), zdata,
+fit <- vglm(y ~ 1, zipf, data = zdata, trace = TRUE, weight = ofreq, crit = "coef")
+fit <- vglm(y ~ 1, zipf(link = identitylink, init = 3.4), data = zdata,
             trace = TRUE, weight = ofreq)
 fit@misc$N
 (shat <- Coef(fit))

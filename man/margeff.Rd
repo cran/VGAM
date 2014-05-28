@@ -101,13 +101,13 @@ margeff(object, subset = NULL)
 # Not a good example for multinomial() because the response is ordinal!!
 ii <- 3; hh <- 1/100
 pneumo <- transform(pneumo, let = log(exposure.time))
-fit <- vglm(cbind(normal, mild, severe) ~ let, multinomial, pneumo)
+fit <- vglm(cbind(normal, mild, severe) ~ let, multinomial, data = pneumo)
 fit <- vglm(cbind(normal, mild, severe) ~ let,
             cumulative(reverse = TRUE,  parallel = TRUE),
             data = pneumo)
 fitted(fit)[ii, ]
 
-mynewdata <- with(pneumo, data.frame(let = let[ii]+hh))
+mynewdata <- with(pneumo, data.frame(let = let[ii] + hh))
 (newp <- predict(fit, newdata = mynewdata, type = "response"))
 
 # Compare the difference. Should be the same as hh --> 0.

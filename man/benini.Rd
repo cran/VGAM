@@ -93,7 +93,7 @@ Hoboken, NJ, USA: Wiley-Interscience.
 \examples{
 y0 <- 1; nn <- 3000
 bdata <- data.frame(y  = rbenini(nn, y0 = y0, shape = exp(2)))
-fit <- vglm(y ~ 1, benini(y0 = y0), bdata, trace = TRUE, crit = "coef")
+fit <- vglm(y ~ 1, benini(y0 = y0), data = bdata, trace = TRUE, crit = "coef")
 coef(fit, matrix = TRUE)
 Coef(fit)
 fit@extra$y0

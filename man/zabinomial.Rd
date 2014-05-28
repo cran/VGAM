@@ -161,7 +161,7 @@ zdata <- transform(zdata,
                    y1 = rzabinom(nn, size = size, prob = prob, pobs0 = pobs0))
 with(zdata, table(y1))
 
-fit <- vglm(cbind(y1, size - y1) ~ x2, zabinomial(zero = NULL), zdata, trace = TRUE)
+fit <- vglm(cbind(y1, size - y1) ~ x2, zabinomial(zero = NULL), data = zdata, trace = TRUE)
 coef(fit, matrix = TRUE)
 head(fitted(fit))
 head(predict(fit))

@@ -140,7 +140,7 @@ lower.limit2 <- with(wdata, quantile(y2, prob = prop.lost))  # Proportion lost
 wdata <- subset(wdata, y2 > lower.limit2)  # Smaller due to truncation
 
 fit1 <- vglm(y2 ~ x2, maxit = 100, trace = TRUE,
-            truncweibull(lower.limit = lower.limit2), data = wdata)
+             truncweibull(lower.limit = lower.limit2), data = wdata)
 coef(fit1, matrix = TRUE)
 summary(fit1)
 vcov(fit1)

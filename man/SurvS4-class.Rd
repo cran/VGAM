@@ -49,7 +49,11 @@ Class \code{"\linkS4class{vector}"}, by class "matrix", distance 4, with explici
 
 \seealso{
   \code{\link{SurvS4}}.
+
+
 % or \code{\linkS4class{CLASSNAME}} for links to other classes
+
+
 
 }
 \examples{

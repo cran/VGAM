@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2013 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2014 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -10,8 +10,30 @@
 
 
  
-logLik.vlm <- function(object, ...)
-  object@criterion$loglikelihood
+logLik.vlm <- function(object,
+                       summation = TRUE,
+                       ...) {
+
+  if (summation) {
+    object@criterion$loglikelihood
+  } else {
+
+
+    Args <- formals(args(object@family@loglikelihood))
+    if (length(Args$summation) == 0)
+      stop("there is no 'summation' argument for the function in the ",
+           "'loglikelihood' slot of the object.")
+
+
+    object@family@loglikelihood(mu = fitted(object),
+                                y = depvar(object),
+                                w = weights(object, type = "prior"),
+                                residuals = FALSE,
+                                eta = predict(object),
+                                extra = object@extra,
+                                summation = summation)
+  }
+}
 
 
 

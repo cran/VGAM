@@ -9,10 +9,14 @@ smart.mode.is(mode.arg=NULL)
 }
 \arguments{
 \item{mode.arg}{
-  a character string, either \code{"read"}, \code{"write"} or \code{"neutral"}.
+  a character string, either \code{"read"}, \code{"write"}
+  or \code{"neutral"}.
+
+
 }}
 \value{
-  If \code{mode.arg} is given, then either \code{TRUE} or \code{FALSE} is returned.
+  If \code{mode.arg} is given, then either \code{TRUE} or \code{FALSE}
+  is returned.
   If \code{mode.arg} is not given, then the mode (\code{"neutral"},
   \code{"read"} or \code{"write"})
   is returned.  Usually, the mode is \code{"neutral"}.
@@ -37,20 +41,23 @@ smart.mode.is(mode.arg=NULL)
   If in \code{"neutral"} mode then the smart function behaves like an
   ordinary function.
 
+
+
 }
 \examples{
 my1 <- function(x, minx = min(x)) { # Here is a smart function
-    x <- x  # Needed for nested calls, e.g., bs(scale(x))
-    if(smart.mode.is("read")) {
-        smart <- get.smart()
-        minx <- smart$minx      # Overwrite its value 
-    } else if(smart.mode.is("write"))
-              put.smart(list(minx = minx))
-    sqrt(x - minx)
+  x <- x  # Needed for nested calls, e.g., bs(scale(x))
+  if (smart.mode.is("read")) {
+    smart <- get.smart()
+    minx <- smart$minx  # Overwrite its value 
+  } else
+  if (smart.mode.is("write"))
+    put.smart(list(minx = minx))
+  sqrt(x - minx)
 }
 attr(my1, "smart") <- TRUE
 
-smart.mode.is()   # Returns "neutral"
+smart.mode.is()  # Returns "neutral"
 smart.mode.is(smart.mode.is())  # Returns TRUE
 }
 %\keyword{smart}

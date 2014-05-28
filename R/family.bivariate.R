@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2013 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2014 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -102,7 +102,7 @@ rbiclaytoncop <- function(n, alpha = 0) {
                                apply.int = .apply.parint )
 
         dotzero <- .zero
-        Musual <- 1
+        M1 <- 1
         Yusual <- 2
         eval(negzero.expression)
   }), list( .zero = zero,
@@ -110,17 +110,18 @@ rbiclaytoncop <- function(n, alpha = 0) {
             .parallel = parallel ))),
 
   infos = eval(substitute(function(...) {
-        list(Musual = 1,
-             Yusual = 2,
-             apply.parint = .apply.parint,
-             parallel = .parallel,
-             zero = .zero )
-      }, list( .zero = zero,
-               .apply.parint = apply.parint, 
-               .parallel = parallel ))),
+    list(M1 = 1,
+         Q1 = 2,
+         Yusual = 2,
+         apply.parint = .apply.parint,
+         parallel = .parallel,
+         zero = .zero )
+    }, list( .zero = zero,
+             .apply.parint = apply.parint, 
+             .parallel = parallel ))),
 
   initialize = eval(substitute(expression({
-    Musual <- 1
+    M1 <- 1
     Yusual <- 2
 
     temp5 <-
@@ -139,10 +140,10 @@ rbiclaytoncop <- function(n, alpha = 0) {
 
     ncoly <- ncol(y)
     extra$ncoly <- ncoly
-    extra$Musual <- Musual
+    extra$M1 <- M1
     extra$Yusual <- Yusual
-    M <- Musual * (ncoly / Yusual)
-    mynames1 <- paste("alpha", if (M / Musual > 1) 1:(M / Musual) else "",
+    M <- M1 * (ncoly / Yusual)
+    mynames1 <- paste("alpha", if (M / M1 > 1) 1:(M / M1) else "",
                       sep = "")
     predictors.names <- c(
       namesof(mynames1, .lalpha , earg = .ealpha , short = TRUE))
@@ -155,10 +156,10 @@ rbiclaytoncop <- function(n, alpha = 0) {
     if (!length(etastart)) {
       
       alpha.init <- matrix(if (length( .ialpha )) .ialpha else 0 + NA,
-                           n, M / Musual, byrow = TRUE)
+                           n, M / M1, byrow = TRUE)
 
       if (!length( .ialpha ))
-        for (spp. in 1:(M / Musual)) {
+        for (spp. in 1:(M / M1)) {
           ymatj <- y[, (Yusual * spp. - 1):(Yusual * spp.)]
 
               
@@ -192,20 +193,20 @@ rbiclaytoncop <- function(n, alpha = 0) {
                 .ialpha = ialpha ))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
 
-        eta <- as.matrix(eta)
-        fv.matrix <- matrix(0.5, nrow(eta), extra$ncoly)
+    eta <- as.matrix(eta)
+    fv.matrix <- matrix(0.5, nrow(eta), extra$ncoly)
         
         
-        if (length(extra$dimnamesy2))
-          dimnames(fv.matrix) <- list(extra$dimnamesy1,
-                                      extra$dimnamesy2)
-        fv.matrix
-      }  , list( .lalpha = lalpha,
-                 .ealpha = ealpha ))),
+    if (length(extra$dimnamesy2))
+      dimnames(fv.matrix) <- list(extra$dimnamesy1,
+                                  extra$dimnamesy2)
+    fv.matrix
+  }  , list( .lalpha = lalpha,
+             .ealpha = ealpha ))),
 
   last = eval(substitute(expression({
         
-    Musual <- extra$Musual
+    M1 <- extra$M1
     Yusual <- extra$Yusual
     misc$link <- rep( .lalpha , length = M)
     temp.names <- mynames1
@@ -217,7 +218,7 @@ rbiclaytoncop <- function(n, alpha = 0) {
       misc$earg[[ii]] <- .ealpha
     }
 
-    misc$Musual <- Musual
+    misc$M1 <- M1
     misc$Yusual <- Yusual
     misc$imethod <- .imethod
     misc$expected <- TRUE
@@ -230,20 +231,49 @@ rbiclaytoncop <- function(n, alpha = 0) {
              .lalpha = lalpha,
              .ealpha = ealpha ))),
   loglikelihood = eval(substitute(
-    function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
-      Alpha <- eta2theta(eta, .lalpha , earg = .ealpha )
+    function(mu, y, w, residuals = FALSE, eta,
+             extra = NULL,
+             summation = TRUE) {
+    Alpha <- eta2theta(eta, .lalpha , earg = .ealpha )
 
-      if (residuals) stop("loglikelihood residuals not ", 
-                          "implemented yet") else {
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
 
-      sum(c(w) * dbiclaytoncop(x1  = c(y[, c(TRUE, FALSE)]),
-                               x2  = c(y[, c(FALSE, TRUE)]),
-                               alpha = c(Alpha), log = TRUE))
+      ll.elts <-
+        c(w) * dbiclaytoncop(x1  = c(y[, c(TRUE, FALSE)]),
+                             x2  = c(y[, c(FALSE, TRUE)]),
+                             alpha = c(Alpha), log = TRUE)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
       }
-    } , list( .lalpha = lalpha,
-              .ealpha = ealpha,
-              .imethod = imethod ))),
+    }
+  } , list( .lalpha = lalpha,
+            .ealpha = ealpha,
+            .imethod = imethod ))),
   vfamily = c("biclaytoncop"),
+
+
+
+  simslot = eval(substitute(
+  function(object, nsim) {
+
+    pwts <- if (length(pwts <- object@prior.weights) > 0)
+              pwts else weights(object, type = "prior")
+    if (any(pwts != 1)) 
+      warning("ignoring prior weights")
+    eta <- predict(object)
+    Alpha <- eta2theta(eta, .lalpha , earg = .ealpha )
+    rbiclaytoncop(nsim * length(Alpha),
+                  alpha = c(Alpha))
+  }  , list( .lalpha = lalpha,
+             .ealpha = ealpha ))),
+
+
+
+
   deriv = eval(substitute(expression({
     Alpha <- eta2theta(eta, .lalpha , earg = .ealpha )
     Yindex1 <- extra$Yusual * (1:(extra$ncoly/extra$Yusual)) - 1
@@ -406,7 +436,7 @@ bistudent.deriv.dof <-  function(u, v, nu, rho) {
                            apply.int = .apply.parint )
 
     dotzero <- .zero
-    Musual <- 2
+    M1 <- 2
     Yusual <- 2
     eval(negzero.expression)
   }), list( .zero = zero,
@@ -414,7 +444,8 @@ bistudent.deriv.dof <-  function(u, v, nu, rho) {
             .parallel = parallel ))),
 
   infos = eval(substitute(function(...) {
-    list(Musual = 2,
+    list(M1 = 2,
+         Q1 = 2,
          Yusual = 2,
          apply.parint = .apply.parint ,
          parallel = .parallel ,
@@ -424,7 +455,7 @@ bistudent.deriv.dof <-  function(u, v, nu, rho) {
            .parallel = parallel ))),
 
   initialize = eval(substitute(expression({
-    Musual <- 2
+    M1 <- 2
     Yusual <- 2
 
     temp5 <-
@@ -442,17 +473,17 @@ bistudent.deriv.dof <-  function(u, v, nu, rho) {
 
     ncoly <- ncol(y)
     extra$ncoly <- ncoly
-    extra$Musual <- Musual
+    extra$M1 <- M1
     extra$Yusual <- Yusual
-    M <- Musual * (ncoly / Yusual)
-    mynames1 <- paste("df",  if (M / Musual > 1) 1:(M / Musual) else "",
+    M <- M1 * (ncoly / Yusual)
+    mynames1 <- paste("df",  if (M / M1 > 1) 1:(M / M1) else "",
                       sep = "")
-    mynames2 <- paste("rho", if (M / Musual > 1) 1:(M / Musual) else "",
+    mynames2 <- paste("rho", if (M / M1 > 1) 1:(M / M1) else "",
                       sep = "")
     predictors.names <- c(
       namesof(mynames1, .ldof , earg = .edof , short = TRUE),
       namesof(mynames2, .lrho , earg = .erho , short = TRUE))[
-              interleave.VGAM(M, M = Musual)]
+              interleave.VGAM(M, M = M1)]
 
 
     extra$dimnamesy1 <- dimnames(y)[[1]]
@@ -462,13 +493,13 @@ bistudent.deriv.dof <-  function(u, v, nu, rho) {
     if (!length(etastart)) {
 
       dof.init <- matrix(if (length( .idof )) .idof else 0 + NA,
-                         n, M / Musual, byrow = TRUE)
+                         n, M / M1, byrow = TRUE)
       rho.init <- matrix(if (length( .irho )) .irho else 0 + NA,
-                         n, M / Musual, byrow = TRUE)
+                         n, M / M1, byrow = TRUE)
 
       if (!length( .idof ) || !length( .irho ))
-      for (spp. in 1:(M / Musual)) {
-        ymatj <- y[, (Musual * spp. - 1):(Musual * spp.)]
+      for (spp. in 1:(M / M1)) {
+        ymatj <- y[, (M1 * spp. - 1):(M1 * spp.)]
 
 
         dof.init0 <- if ( .imethod == 1) {
@@ -498,7 +529,7 @@ bistudent.deriv.dof <-  function(u, v, nu, rho) {
         cbind(theta2eta(dof.init, .ldof , earg = .edof ),
               theta2eta(rho.init, .lrho , earg = .erho ))
 
-      etastart <- etastart[, interleave.VGAM(M, M = Musual)]
+      etastart <- etastart[, interleave.VGAM(M, M = M1)]
 
     }
   }), list( .imethod = imethod,
@@ -520,23 +551,23 @@ bistudent.deriv.dof <-  function(u, v, nu, rho) {
 
   last = eval(substitute(expression({
 
-    Musual <- extra$Musual
+    M1 <- extra$M1
     Yusual <- extra$Yusual
     misc$link <-
-      c(rep( .ldof , length = M / Musual),
-        rep( .lrho , length = M / Musual))[
-                       interleave.VGAM(M, M = Musual)]
-    temp.names <- c(mynames1, mynames2)[interleave.VGAM(M, M = Musual)]
+      c(rep( .ldof , length = M / M1),
+        rep( .lrho , length = M / M1))[
+                       interleave.VGAM(M, M = M1)]
+    temp.names <- c(mynames1, mynames2)[interleave.VGAM(M, M = M1)]
     names(misc$link) <- temp.names
 
     misc$earg <- vector("list", M)
     names(misc$earg) <- temp.names
-    for (ii in 1:(M / Musual)) {
-      misc$earg[[Musual*ii-1]] <- .edof
-      misc$earg[[Musual*ii  ]] <- .erho
+    for (ii in 1:(M / M1)) {
+      misc$earg[[M1*ii-1]] <- .edof
+      misc$earg[[M1*ii  ]] <- .erho
     }
 
-    misc$Musual <- Musual
+    misc$M1 <- M1
     misc$Yusual <- Yusual
     misc$imethod <- .imethod
     misc$expected <- TRUE
@@ -550,27 +581,36 @@ bistudent.deriv.dof <-  function(u, v, nu, rho) {
              .lrho = lrho, .ldof = ldof,
              .erho = erho, .edof = edof ))),
   loglikelihood = eval(substitute(
-    function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
+    function(mu, y, w, residuals = FALSE, eta,
+             extra = NULL,
+             summation = TRUE) {
     Dof <- eta2theta(eta[, c(TRUE, FALSE), drop = FALSE],
                      .ldof , earg = .edof )
     Rho <- eta2theta(eta[, c(FALSE, TRUE), drop = FALSE],
                      .lrho , earg = .erho )
 
-    if (residuals) stop("loglikelihood residuals not ",
-                        "implemented yet") else {
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
       Yindex1 <- extra$Yusual * (1:(extra$ncoly/extra$Yusual)) - 1
       Yindex2 <- extra$Yusual * (1:(extra$ncoly/extra$Yusual))
-      sum(c(w) * dbistudentt(x1  = y[, Yindex1, drop = FALSE],
-                             x2  = y[, Yindex2, drop = FALSE],
-                             df  = Dof,
-                             rho = Rho, log = TRUE))
+      ll.elts <-
+        c(w) * dbistudentt(x1  = y[, Yindex1, drop = FALSE],
+                           x2  = y[, Yindex2, drop = FALSE],
+                           df  = Dof,
+                           rho = Rho, log = TRUE)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
     }
-  } , list( .lrho = lrho, .ldof = ldof,
-            .erho = erho, .edof = edof,
-            .imethod = imethod ))),
+  }, list( .lrho = lrho, .ldof = ldof,
+           .erho = erho, .edof = edof,
+           .imethod = imethod ))),
   vfamily = c("bistudentt"),
   deriv = eval(substitute(expression({
-    Musual <- Yusual <- 2
+    M1 <- Yusual <- 2
     Dof <- eta2theta(eta[, c(TRUE, FALSE), drop = FALSE],
                      .ldof , earg = .edof )
     Rho <- eta2theta(eta[, c(FALSE, TRUE), drop = FALSE],
@@ -627,7 +667,7 @@ bistudent.deriv.dof <-  function(u, v, nu, rho) {
 
     ans <- c(w) * cbind(dl.ddof * ddof.deta,
                         dl.drho * drho.deta)
-    ans <- ans[, interleave.VGAM(M, M = Musual)]
+    ans <- ans[, interleave.VGAM(M, M = M1)]
     ans
   }), list( .lrho = lrho, .ldof = ldof,
             .erho = erho, .edof = edof,
@@ -652,8 +692,8 @@ bistudent.deriv.dof <-  function(u, v, nu, rho) {
     wz <- array(c(c(w) * ned2l.ddof2 * ddof.deta^2,
                   c(w) * ned2l.drho2 * drho.deta^2,
                   c(w) * ned2l.ddofrho * ddof.deta * drho.deta),
-                dim = c(n, M / Musual, 3))
-    wz <- arwz2wz(wz, M = M, Musual = Musual)
+                dim = c(n, M / M1, 3))
+    wz <- arwz2wz(wz, M = M, M1 = M1)
     wz
   }), list( .lrho = lrho, .ldof = ldof,
             .erho = erho, .edof = edof,
@@ -752,7 +792,7 @@ rbinormcop <- function(n, rho = 0) {
                            apply.int = .apply.parint )
 
     dotzero <- .zero
-    Musual <- 1
+    M1 <- 1
     Yusual <- 2
     eval(negzero.expression)
   }), list( .zero = zero,
@@ -760,7 +800,8 @@ rbinormcop <- function(n, rho = 0) {
             .parallel = parallel ))),
 
   infos = eval(substitute(function(...) {
-    list(Musual = 1,
+    list(M1 = 1,
+         Q1 = 2,
          Yusual = 2,
          apply.parint = .apply.parint ,
          parallel = .parallel ,
@@ -770,7 +811,7 @@ rbinormcop <- function(n, rho = 0) {
            .parallel = parallel ))),
 
   initialize = eval(substitute(expression({
-    Musual <- 1
+    M1 <- 1
     Yusual <- 2
 
     temp5 <-
@@ -789,10 +830,10 @@ rbinormcop <- function(n, rho = 0) {
 
     ncoly <- ncol(y)
     extra$ncoly <- ncoly
-    extra$Musual <- Musual
+    extra$M1 <- M1
     extra$Yusual <- Yusual
-    M <- Musual * (ncoly / Yusual)
-    mynames1 <- paste("rho", if (M / Musual > 1) 1:(M / Musual) else "",
+    M <- M1 * (ncoly / Yusual)
+    mynames1 <- paste("rho", if (M / M1 > 1) 1:(M / M1) else "",
                       sep = "")
     predictors.names <- c(
       namesof(mynames1, .lrho , earg = .erho , short = TRUE))
@@ -805,10 +846,10 @@ rbinormcop <- function(n, rho = 0) {
     if (!length(etastart)) {
 
       rho.init <- matrix(if (length( .irho )) .irho else 0 + NA,
-                         n, M / Musual, byrow = TRUE)
+                         n, M / M1, byrow = TRUE)
 
       if (!length( .irho ))
-      for (spp. in 1:(M / Musual)) {
+      for (spp. in 1:(M / M1)) {
         ymatj <- y[, (Yusual * spp. - 1):(Yusual * spp.)]
 
 
@@ -852,7 +893,7 @@ rbinormcop <- function(n, rho = 0) {
 
   last = eval(substitute(expression({
 
-    Musual <- extra$Musual
+    M1 <- extra$M1
     Yusual <- extra$Yusual
     misc$link <- rep( .lrho , length = M)
     temp.names <- mynames1
@@ -864,7 +905,7 @@ rbinormcop <- function(n, rho = 0) {
       misc$earg[[ii]] <- .erho
     }
 
-    misc$Musual <- Musual
+    misc$M1 <- M1
     misc$Yusual <- Yusual
     misc$imethod <- .imethod
     misc$expected <- TRUE
@@ -878,21 +919,49 @@ rbinormcop <- function(n, rho = 0) {
              .lrho = lrho,
              .erho = erho ))),
   loglikelihood = eval(substitute(
-    function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
+    function(mu, y, w, residuals = FALSE, eta,
+             extra = NULL,
+             summation = TRUE) {
     Rho <- eta2theta(eta, .lrho , earg = .erho )
 
-    if (residuals) stop("loglikelihood residuals not ",
-                        "implemented yet") else {
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
       Yindex1 <- extra$Yusual * (1:(extra$ncoly/extra$Yusual)) - 1
       Yindex2 <- extra$Yusual * (1:(extra$ncoly/extra$Yusual))
-      sum(c(w) * dbinormcop(x1  = y[, Yindex1, drop = FALSE],
-                            x2  = y[, Yindex2, drop = FALSE],
-                            rho = Rho, log = TRUE))
+      ll.elts <-
+        c(w) * dbinormcop(x1  = y[, Yindex1, drop = FALSE],
+                          x2  = y[, Yindex2, drop = FALSE],
+                          rho = Rho, log = TRUE)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
     }
   } , list( .lrho = lrho,
             .erho = erho,
             .imethod = imethod ))),
   vfamily = c("binormalcop"),
+
+
+
+  simslot = eval(substitute(
+  function(object, nsim) {
+
+    pwts <- if (length(pwts <- object@prior.weights) > 0)
+              pwts else weights(object, type = "prior")
+    if (any(pwts != 1)) 
+      warning("ignoring prior weights")
+    eta <- predict(object)
+    Rho <- eta2theta(eta, .lrho , earg = .erho )
+    rbinormcop(nsim * length(Rho),
+               rho = c(Rho))
+  }  , list( .lrho = lrho,
+             .erho = erho ))),
+
+
+
   deriv = eval(substitute(expression({
     Rho <- eta2theta(eta, .lrho , earg = .erho )
     Yindex1 <- extra$Yusual * (1:(extra$ncoly/extra$Yusual)) - 1
@@ -933,7 +1002,7 @@ bilogistic4.control <- function(save.weight = TRUE, ...) {
 }
 
 
- bilogistic4 <- function(llocation = "identity",
+ bilogistic4 <- function(llocation = "identitylink",
                          lscale = "loge",
                          iloc1 = NULL, iscale1 = NULL,
                          iloc2 = NULL, iscale2 = NULL,
@@ -1044,7 +1113,9 @@ bilogistic4.control <- function(save.weight = TRUE, ...) {
   }), list( .llocat = llocat, .lscale = lscale,
             .elocat = elocat, .escale = escale ))),
   loglikelihood = eval(substitute(
-    function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
+    function(mu, y, w, residuals = FALSE, eta,
+             extra = NULL,
+             summation = TRUE) {
     locat1 <- eta2theta(eta[, 1], .llocat , .elocat )
     Scale1 <- eta2theta(eta[, 2], .lscale , .escale )
     locat2 <- eta2theta(eta[, 3], .llocat , .elocat )
@@ -1053,14 +1124,45 @@ bilogistic4.control <- function(save.weight = TRUE, ...) {
     zedd1 <- (y[, 1]-locat1) / Scale1
     zedd2 <- (y[, 2]-locat2) / Scale2
 
-    if (residuals) stop("loglikelihood residuals not ",
-                        "implemented yet") else
-    sum(c(w) * (-zedd1 - zedd2 -
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
+      ll.elts <-
+        c(w) * (-zedd1 - zedd2 -
                 3 * log1p(exp(-zedd1) + exp(-zedd2)) -
-                log(Scale1) - log(Scale2)))
+                log(Scale1) - log(Scale2))
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
+    }
   }, list( .llocat = llocat, .lscale = lscale,
            .elocat = elocat, .escale = escale ))),
   vfamily = c("bilogistic4"),
+
+
+  simslot = eval(substitute(
+  function(object, nsim) {
+
+    pwts <- if (length(pwts <- object@prior.weights) > 0)
+              pwts else weights(object, type = "prior")
+    if (any(pwts != 1)) 
+      warning("ignoring prior weights")
+    eta <- predict(object)
+    locat1 <- eta2theta(eta[, 1], .llocat , .elocat )
+    Scale1 <- eta2theta(eta[, 2], .lscale , .escale )
+    locat2 <- eta2theta(eta[, 3], .llocat , .elocat )
+    Scale2 <- eta2theta(eta[, 4], .lscale , .escale )
+    rbilogis4(nsim * length(locat1),
+              loc1 = locat1, scale1 = Scale1,
+              loc2 = locat2, scale2 = Scale2)
+  }, list( .llocat = llocat, .lscale = lscale,
+           .elocat = elocat, .escale = escale ))),
+
+
+
+
   deriv = eval(substitute(expression({
     locat1 <- eta2theta(eta[, 1], .llocat , .elocat )
     Scale1 <- eta2theta(eta[, 2], .lscale , .escale )
@@ -1280,13 +1382,16 @@ rbilogis4 <- function(n, loc1 = 0, scale1 = 1, loc2 = 0, scale2 = 1) {
   }), list( .la = la, .lap = lap, .lb = lb, .lbp = lbp,
             .ea = ea, .eap = eap, .eb = eb, .ebp = ebp ))),
   loglikelihood = eval(substitute(
-        function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
+    function(mu, y, w, residuals = FALSE, eta,
+             extra = NULL,
+             summation = TRUE) {
     alpha  <- eta2theta(eta[, 1], .la,  earg = .ea  )
     alphap <- eta2theta(eta[, 2], .lap, earg = .eap )
     beta   <- eta2theta(eta[, 3], .lb,  earg = .eb  )
     betap  <- eta2theta(eta[, 4], .lbp, earg = .ebp )
-    if (residuals) stop("loglikelihood residuals not ",
-                        "implemented yet") else {
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
       tmp88 <- extra$y1.lt.y2
       ell1 <- log(alpha[tmp88]) + log(betap[tmp88]) -
              betap[tmp88] * y[tmp88, 2] -
@@ -1294,7 +1399,16 @@ rbilogis4 <- function(n, loc1 = 0, scale1 = 1, loc2 = 0, scale2 = 1) {
       ell2 <- log(beta[!tmp88]) + log(alphap[!tmp88]) -
              alphap[!tmp88] * y[!tmp88, 1] -
              (alpha+beta-alphap)[!tmp88] * y[!tmp88, 2]
-    sum(w[tmp88] * ell1) + sum(w[!tmp88] * ell2) }
+      all.vec <- alpha
+      all.vec[ tmp88] <- ell1
+      all.vec[!tmp88] <- ell2
+      ll.elts <- c(w) * all.vec
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
+    }
   }, list( .la = la, .lap = lap, .lb = lb, .lbp = lbp,
            .ea = ea, .eap = eap, .eb = eb, .ebp = ebp ))),
   vfamily = c("freund61"),
@@ -1446,14 +1560,14 @@ rbilogis4 <- function(n, loc1 = 0, scale1 = 1, loc2 = 0, scale2 = 1) {
       ainit <- getMaxMin(a.grid, objfun = mcg2.loglik,
                          y = y, x = x, w = w, maximize = TRUE,
                          extraargs = extraargs)
-      ainit <- rep(if(is.Numeric( .iscale )) .iscale else ainit,
+      ainit <- rep(if (is.Numeric( .iscale )) .iscale else ainit,
                    length.out = n)
       pinit <- (1/ainit) * abs(momentsY[1]) + 0.01
       qinit <- (1/ainit) * abs(momentsY[2] - momentsY[1]) + 0.01
 
-      pinit <- rep(if(is.Numeric( .ishape1 )) .ishape1 else pinit,
+      pinit <- rep(if (is.Numeric( .ishape1 )) .ishape1 else pinit,
                    length.out = n)
-      qinit <- rep(if(is.Numeric( .ishape2 )) .ishape2 else qinit,
+      qinit <- rep(if (is.Numeric( .ishape2 )) .ishape2 else qinit,
                    length.out = n)
 
       etastart <-
@@ -1492,16 +1606,26 @@ rbilogis4 <- function(n, loc1 = 0, scale1 = 1, loc2 = 0, scale2 = 1) {
             .iscale = iscale, .ishape1 = ishape1, .ishape2 = ishape2,
             .imethod = imethod ))),
   loglikelihood = eval(substitute(
-        function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
+    function(mu, y, w, residuals = FALSE, eta,
+             extra = NULL,
+             summation = TRUE) {
     a <- eta2theta(eta[, 1], .lscale  ,  .escale )
     p <- eta2theta(eta[, 2], .lshape1 , .eshape1 )
     q <- eta2theta(eta[, 3], .lshape2 , .eshape2 )
 
-    if (residuals) stop("loglikelihood residuals not ",
-                        "implemented yet") else
-    sum(c(w) * (-(p+q)*log(a) - lgamma(p) - lgamma(q) +
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
+      ll.elts <-
+        c(w) * (-(p+q)*log(a) - lgamma(p) - lgamma(q) +
                (p - 1)*log(y[, 1]) + (q - 1)*log(y[, 2]-y[, 1]) -
-               y[, 2] / a))
+               y[, 2] / a)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
+    }
   }, list( .lscale = lscale, .lshape1 = lshape1, .lshape2 = lshape2,
            .escale = escale, .eshape1 = eshape1, .eshape2 = eshape2 ))),
   vfamily = c("bigamma.mckay"),
@@ -1560,13 +1684,13 @@ rbifrankcop <- function(n, alpha) {
               stop("bad input for argument 'n'") else n
   if (!is.Numeric(alpha, positive = TRUE))
     stop("bad input for argument 'alpha'")
-  alpha <- rep(alpha, length.out = use.n)
+  if (length(alpha) != use.n) alpha <- rep(alpha, length.out = use.n)
   U <- runif(use.n)
   V <- runif(use.n)
 
   T <- alpha^U + (alpha - alpha^U) * V
   X <- U
-  index <- abs(alpha - 1) < .Machine$double.eps
+  index <- (abs(alpha - 1) < .Machine$double.eps)
   Y <- U
   if (any(!index))
     Y[!index] <- logb(T[!index] / (T[!index] +
@@ -1723,15 +1847,41 @@ bifrankcop.control <- function(save.weight = TRUE, ...) {
     misc$multipleResponses <- FALSE
   }), list( .lapar = lapar, .eapar = eapar, .nsimEIM = nsimEIM ))),
   loglikelihood = eval(substitute(
-        function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
+    function(mu, y, w, residuals = FALSE, eta,
+             extra = NULL,
+             summation = TRUE) {
     apar <- eta2theta(eta, .lapar , earg = .eapar )
-    if (residuals) stop("loglikelihood residuals not ",
-                        "implemented yet") else {
-        sum(c(w) * dbifrankcop(x1 = y[, 1], x2 = y[, 2],
-                               alpha = apar, log = TRUE))
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
+      ll.elts <- c(w) * dbifrankcop(x1 = y[, 1], x2 = y[, 2],
+                                    alpha = apar, log = TRUE)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
     }
   }, list( .lapar = lapar, .eapar = eapar ))),
   vfamily = c("bifrankcop"),
+
+
+
+  simslot = eval(substitute(
+  function(object, nsim) {
+
+    pwts <- if (length(pwts <- object@prior.weights) > 0)
+              pwts else weights(object, type = "prior")
+    if (any(pwts != 1)) 
+      warning("ignoring prior weights")
+    eta <- predict(object)
+    apar <- eta2theta(eta, .lapar , earg = .eapar )
+    rbifrankcop(nsim * length(apar), alpha = c(apar))
+  }, list( .lapar = lapar, .eapar = eapar ))),
+
+
+
+
   deriv = eval(substitute(expression({
     apar <- eta2theta(eta, .lapar , earg = .eapar )
     dapar.deta <- dtheta.deta(apar, .lapar , earg = .eapar )
@@ -1859,11 +2009,19 @@ bifrankcop.control <- function(save.weight = TRUE, ...) {
             .etheta = etheta, .expected = expected ))),
 
   loglikelihood = eval(substitute(
-    function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
+    function(mu, y, w, residuals = FALSE, eta,
+             extra = NULL,
+             summation = TRUE) {
     theta <- eta2theta(eta, .ltheta , .etheta )
-    if (residuals) stop("loglikelihood residuals not ",
-                      "implemented yet") else {
-      sum(c(w) * (-exp(-theta) * y[, 1] / theta - theta * y[, 2]))
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
+      ll.elts <- c(w) * (-exp(-theta) * y[, 1] / theta - theta * y[, 2])
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
     }
   }, list( .ltheta = ltheta, .etheta = etheta ))),
   vfamily = c("gammahyp"),
@@ -1970,16 +2128,24 @@ bifrankcop.control <- function(save.weight = TRUE, ...) {
     misc$multipleResponses <- FALSE
   }), list( .lapar = lapar, .earg = earg ))),
   loglikelihood = eval(substitute(
-    function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
+    function(mu, y, w, residuals = FALSE, eta,
+             extra = NULL,
+             summation = TRUE) {
       alpha  <- eta2theta(eta, .lapar , earg = .earg )
       alpha[abs(alpha) < .tola0 ] <- .tola0
-      if (residuals) stop("loglikelihood residuals not ",
-                          "implemented yet") else {
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
       denom <- (1 + alpha - 2*alpha*(exp(-y[, 1]) + exp(-y[, 2])) +
                4*alpha*exp(-y[, 1] - y[, 2]))
-      sum(c(w) * (-y[, 1] - y[, 2] + log(denom)))
+      ll.elts <- c(w) * (-y[, 1] - y[, 2] + log(denom))
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
     }
-  }, list( .lapar = lapar, .earg = earg, .tola0=tola0 ))),
+  }, list( .lapar = lapar, .earg = earg, .tola0 = tola0 ))),
   vfamily = c("morgenstern"),
   deriv = eval(substitute(expression({
     alpha  <- eta2theta(eta, .lapar , earg = .earg )
@@ -2191,15 +2357,43 @@ pfgm <- function(q1, q2, alpha) {
     misc$multipleResponses <- FALSE
   }), list( .lapar = lapar, .earg = earg))),
   loglikelihood = eval(substitute(
-    function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
+    function(mu, y, w, residuals = FALSE, eta,
+             extra = NULL,
+             summation = TRUE) {
     alpha <- eta2theta(eta, .lapar , earg = .earg )
-    if (residuals) stop("loglikelihood residuals not ",
-                        "implemented yet") else {
-      sum(c(w) * dfgm(x1 = y[, 1],
-                      x2 = y[, 2], alpha = alpha, log = TRUE))
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
+      ll.elts <- c(w) * dfgm(x1 = y[, 1],
+                             x2 = y[, 2], alpha = alpha, log = TRUE)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
     }
   }, list( .lapar = lapar, .earg = earg ))),
   vfamily = c("fgm"),
+
+
+
+
+  simslot = eval(substitute(
+  function(object, nsim) {
+
+    pwts <- if (length(pwts <- object@prior.weights) > 0)
+              pwts else weights(object, type = "prior")
+    if (any(pwts != 1)) 
+      warning("ignoring prior weights")
+    eta <- predict(object)
+    alpha <- eta2theta(eta, .lapar , earg = .earg )
+    rfgm(nsim * length(alpha), alpha = c(alpha))
+  }, list( .lapar = lapar, .earg = earg ))),
+
+
+
+
+
   deriv = eval(substitute(expression({
     alpha  <- eta2theta(eta, .lapar , earg = .earg )
 
@@ -2229,7 +2423,7 @@ pfgm <- function(q1, q2, alpha) {
 
 
 
- bigumbelI <- function(lapar = "identity", iapar = NULL, imethod = 1) {
+ bigumbelI <- function(lapar = "identitylink", iapar = NULL, imethod = 1) {
 
   lapar <- as.list(substitute(lapar))
   earg  <- link2list(lapar)
@@ -2295,10 +2489,13 @@ pfgm <- function(q1, q2, alpha) {
     misc$multipleResponses <- FALSE
   }), list( .lapar = lapar, .earg = earg ))),
   loglikelihood = eval(substitute(
-    function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
+    function(mu, y, w, residuals = FALSE, eta,
+             extra = NULL,
+             summation = TRUE) {
     alpha  <- eta2theta(eta, .lapar , earg = .earg )
-    if (residuals) stop("loglikelihood residuals not ",
-                        "implemented yet") else {
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
       denom <- (alpha*y[, 1] - 1) * (alpha*y[, 2] - 1) + alpha
       mytolerance <- .Machine$double.xmin
       bad <- (denom <= mytolerance)  # Range violation
@@ -2306,9 +2503,17 @@ pfgm <- function(q1, q2, alpha) {
         cat("There are some range violations in @deriv\n")
         flush.console()
       }
+
+
+
+
+      if (summation) {
       sum(bad) * (-1.0e10) + 
       sum(w[!bad] * (-y[!bad, 1] - y[!bad, 2] +
           alpha[!bad] * y[!bad, 1] * y[!bad, 2] + log(denom[!bad])))
+      } else {
+        stop("argument 'summation = FALSE' does not work yet")
+      }
     }
   }, list( .lapar = lapar, .earg = earg ))),
   vfamily = c("bigumbelI"),
@@ -2512,15 +2717,39 @@ plackett.control <- function(save.weight = TRUE, ...) {
   }), list( .link = link, .earg = earg,
             .nsimEIM = nsimEIM ))),
   loglikelihood = eval(substitute(
-        function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
+    function(mu, y, w, residuals = FALSE, eta,
+             extra = NULL,
+             summation = TRUE) {
     oratio <- eta2theta(eta, .link , earg = .earg )
-    if (residuals) stop("loglikelihood residuals not ",
-                        "implemented yet") else {
-        sum(c(w) * dplack(x1 = y[, 1], x2 = y[, 2],
-                          oratio = oratio, log = TRUE))
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
+      ll.elts <- c(w) * dplack(x1 = y[, 1], x2 = y[, 2],
+                               oratio = oratio, log = TRUE)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
     }
   }, list( .link = link, .earg = earg ))),
   vfamily = c("plackett"),
+
+
+  simslot = eval(substitute(
+  function(object, nsim) {
+
+    pwts <- if (length(pwts <- object@prior.weights) > 0)
+              pwts else weights(object, type = "prior")
+    if (any(pwts != 1)) 
+      warning("ignoring prior weights")
+    eta <- predict(object)
+    oratio <- eta2theta(eta, .link , earg = .earg )
+    rplack(nsim * length(oratio), oratio = c(oratio))
+  }, list(  .link = link, .earg = earg ))),
+
+
+
   deriv = eval(substitute(expression({
     oratio  <- eta2theta(eta, .link , earg = .earg )
     doratio.deta <- dtheta.deta(oratio, .link , earg = .earg )
@@ -2545,7 +2774,7 @@ plackett.control <- function(save.weight = TRUE, ...) {
                     name = "oratio", hessian = FALSE)
     run.var <- 0
     for (ii in 1:( .nsimEIM )) {
-      ysim <- rplack(n, oratio=oratio)
+      ysim <- rplack(n, oratio = oratio)
       y1sim <- ysim[, 1]
       y2sim <- ysim[, 1]
         eval.sd3 <- eval(sd3)
@@ -2724,15 +2953,40 @@ amh.control <- function(save.weight = TRUE, ...) {
   }), list( .lalpha = lalpha,
             .ealpha = ealpha, .nsimEIM = nsimEIM ))),
   loglikelihood = eval(substitute(
-        function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
+    function(mu, y, w, residuals = FALSE, eta,
+             extra = NULL,
+             summation = TRUE) {
     alpha <- eta2theta(eta, .lalpha, earg = .ealpha )
-    if (residuals) stop("loglikelihood residuals not ",
-                        "implemented yet") else {
-      sum(c(w) * damh(x1 = y[, 1], x2 = y[, 2],
-                      alpha = alpha, log = TRUE))
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
+      ll.elts <- c(w) * damh(x1 = y[, 1], x2 = y[, 2],
+                             alpha = alpha, log = TRUE)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
     }
   }, list( .lalpha = lalpha, .ealpha = ealpha ))),
   vfamily = c("amh"),
+
+
+
+  simslot = eval(substitute(
+  function(object, nsim) {
+
+    pwts <- if (length(pwts <- object@prior.weights) > 0)
+              pwts else weights(object, type = "prior")
+    if (any(pwts != 1)) 
+      warning("ignoring prior weights")
+    eta <- predict(object)
+    alpha <- eta2theta(eta, .lalpha , earg = .ealpha )
+    ramh(nsim * length(alpha), alpha = c(alpha))
+  }, list( .lalpha = lalpha, .ealpha = ealpha ))),
+
+
+
   deriv = eval(substitute(expression({
     alpha <- eta2theta(eta, .lalpha, earg = .ealpha )
 
@@ -2835,8 +3089,8 @@ rbinorm <- function(n, mean1 = 0, mean2 = 0,
 
 
 
- binormal <- function(lmean1 = "identity",
-                      lmean2 = "identity",
+ binormal <- function(lmean1 = "identitylink",
+                      lmean2 = "identitylink",
                       lsd1   = "loge",
                       lsd2   = "loge",
                       lrho   = "rhobit",
@@ -2990,19 +3244,29 @@ rbinorm <- function(n, mean1 = 0, mean2 = 0,
              .lsd1   = lsd1  , .lsd2   = lsd2  , .lrho = lrho,
              .esd1   = esd1  , .esd2   = esd2  , .erho = erho ))),
   loglikelihood = eval(substitute(
-          function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
+    function(mu, y, w, residuals = FALSE, eta,
+             extra = NULL,
+             summation = TRUE) {
     mean1 <- eta2theta(eta[, 1], .lmean1, earg = .emean1)
     mean2 <- eta2theta(eta[, 2], .lmean2, earg = .emean2)
     sd1   <- eta2theta(eta[, 3], .lsd1  , earg = .esd1  )
     sd2   <- eta2theta(eta[, 4], .lsd2  , earg = .esd2  )
     Rho   <- eta2theta(eta[, 5], .lrho  , earg = .erho  )
 
-    if (residuals) stop("loglikelihood residuals not ",
-                          "implemented yet") else {
-      sum(c(w) * dbinorm(x1 = y[, 1], x2 = y[, 2],
-                         mean1 = mean1, mean2 = mean2,
-                         var1 = sd1^2, var2 = sd2^2, cov12 = Rho *sd1*sd2,
-                         log = TRUE))
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
+      ll.elts <-
+        c(w) * dbinorm(x1 = y[, 1], x2 = y[, 2],
+                       mean1 = mean1, mean2 = mean2,
+                       var1 = sd1^2, var2 = sd2^2,
+                       cov12 = Rho * sd1 * sd2,
+                       log = TRUE)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
     }
   } , list( .lmean1 = lmean1, .lmean2 = lmean2,
             .emean1 = emean1, .emean2 = emean2,
@@ -3010,6 +3274,33 @@ rbinorm <- function(n, mean1 = 0, mean2 = 0,
             .esd1   = esd1  , .esd2   = esd2  , .erho = erho,
             .imethod = imethod ))),
   vfamily = c("binormal"),
+
+
+
+  simslot = eval(substitute(
+  function(object, nsim) {
+
+    pwts <- if (length(pwts <- object@prior.weights) > 0)
+              pwts else weights(object, type = "prior")
+    if (any(pwts != 1)) 
+      warning("ignoring prior weights")
+    eta <- predict(object)
+    mean1 <- eta2theta(eta[, 1], .lmean1, earg = .emean1)
+    mean2 <- eta2theta(eta[, 2], .lmean2, earg = .emean2)
+    sd1   <- eta2theta(eta[, 3], .lsd1  , earg = .esd1  )
+    sd2   <- eta2theta(eta[, 4], .lsd2  , earg = .esd2  )
+    Rho   <- eta2theta(eta[, 5], .lrho  , earg = .erho  )
+    rbinorm(nsim * length(sd1),
+            mean1 = mean1, mean2 = mean2,
+            var1 = sd1^2, var2 = sd2^2, cov12 = Rho * sd1 * sd2)
+  } , list( .lmean1 = lmean1, .lmean2 = lmean2,
+            .emean1 = emean1, .emean2 = emean2,
+            .lsd1   = lsd1  , .lsd2   = lsd2  , .lrho = lrho,
+            .esd1   = esd1  , .esd2   = esd2  , .erho = erho ))),
+
+
+
+
   deriv = eval(substitute(expression({
     mean1 <- eta2theta(eta[, 1], .lmean1, earg = .emean1)
     mean2 <- eta2theta(eta[, 2], .lmean2, earg = .emean2)
@@ -3089,7 +3380,7 @@ rbinorm <- function(n, mean1 = 0, mean2 = 0,
 
 
 gumbelI <-
-  function(la = "identity", earg = list(), ia = NULL, imethod = 1) {
+  function(la = "identitylink", earg = list(), ia = NULL, imethod = 1) {
 
   la <- as.list(substitute(la))
   earg  <- link2list(la)
@@ -3143,20 +3434,28 @@ gumbelI <-
     misc$pooled.weight <- pooled.weight
   }), list( .la = la, .earg = earg ))),
   loglikelihood = eval(substitute(
-    function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
+    function(mu, y, w, residuals = FALSE, eta,
+             extra = NULL,
+             summation = TRUE) {
     alpha  <- eta2theta(eta, .la, earg =  .earg )
-    if (residuals) stop("loglikelihood residuals not ",
-                        "implemented yet") else {
-    denom <- (alpha*y[,1] - 1) * (alpha*y[,2] - 1) + alpha
-    mytolerance <- .Machine$double.xmin
-    bad <- (denom <= mytolerance)   # Range violation
-    if (any(bad)) {
-      cat("There are some range violations in @deriv\n")
-          flush.console()
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
+      denom <- (alpha*y[,1] - 1) * (alpha*y[,2] - 1) + alpha
+      mytolerance <- .Machine$double.xmin
+      bad <- (denom <= mytolerance)   # Range violation
+      if (any(bad)) {
+        cat("There are some range violations in @deriv\n")
+        flush.console()
           denom[bad] <- 2 * mytolerance
       }
-      sum(w * (-y[,1] - y[,2] + alpha*y[,1]*y[,2] + log(denom)))
+      ll.elts <- c(w) * (-y[,1] - y[,2] + alpha*y[,1]*y[,2] + log(denom))
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
       }
+    }
   }, list( .la = la, .earg = earg ))),
   vfamily = c("gumbelI"),
   deriv = eval(substitute(expression({
@@ -3208,7 +3507,7 @@ kendall.tau <- function(x, y, exact = FALSE, max.n = 3000) {
     c( .C("VGAM_C_kend_tau",
          as.double(x), as.double(y),
          as.integer(NN), ans = double(3),
-         NAOK = TRUE, PACKAGE = "VGAM")$ans)
+         NAOK = TRUE)$ans)
 
   con <- ans3[1] + ans3[2] / 2  # Ties put half and half
   dis <- ans3[3] + ans3[2] / 2

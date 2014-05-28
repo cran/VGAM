@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2013 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2014 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -42,163 +42,8 @@ rrvglm.fit <-
 
     n <- dim(x)[1]
 
-    new.s.call <- expression({
-      if (c.list$one.more) {
-        fv <- c.list$fit
-        new.coeffs <- c.list$coeff
-
-        if (length(family@middle))
-          eval(family@middle)
-
-        eta <- fv + offset
-
-        mu <- family@linkinv(eta, extra)
-
-        if (length(family@middle2))
-          eval(family@middle2)
-
-        old.crit <- new.crit
-        new.crit <- 
-          switch(criterion,
-                 coefficients = new.coeffs,
-                 tfun(mu = mu, y = y, w = w,
-                      res = FALSE, eta = eta, extra))
 
 
-
-        if (trace && orig.stepsize == 1) {
-          cat(if (control$Quadratic) "QRR-VGLM" else "RR-VGLM",
-              "   linear loop ", iter, ": ", criterion, "= ")
-          UUUU <- switch(criterion,
-                         coefficients =
-                           format(new.crit,
-                                  dig = round(1 - log10(epsilon))),
-                           format(new.crit, 
-                                  dig = max(4, 
-                                            round(-0 - log10(epsilon) +
-                                                  log10(sqrt(eff.n))))))
-
-          switch(criterion,
-              coefficients = {if (length(new.crit) > 2) cat("\n");
-                 cat(UUUU, fill = TRUE, sep = ", ")},
-              cat(UUUU, fill = TRUE, sep = ", "))
-           }
-
-        take.half.step <- (control$half.stepsizing &&
-                           length(old.coeffs)) &&
-                          !control$Quadratic &&
-                           ((orig.stepsize != 1) ||
-                            (criterion != "coefficients" &&
-                            (if (minimize.criterion)
-                               new.crit > old.crit else
-                            new.crit < old.crit)))
-        if (!is.logical(take.half.step))
-          take.half.step <- TRUE
-        if (take.half.step) {
-          stepsize <- 2 * min(orig.stepsize, 2*stepsize)
-          new.coeffs.save <- new.coeffs
-          if (trace) 
-            cat("Taking a modified step")
-          repeat {
-            if (trace) {
-              cat(".")
-              flush.console()
-            }
-            stepsize <- stepsize / 2
-            if (too.small <- stepsize < 0.001)
-              break
-            new.coeffs <- (1 - stepsize) * old.coeffs +
-                               stepsize  * new.coeffs.save
-
-            if (length(family@middle))
-              eval(family@middle)
-
-            fv <- X.vlm.save %*% new.coeffs
-            if (M > 1)
-              fv <- matrix(fv, n, M, byrow = TRUE)
-
-            eta <- fv + offset
-
-            mu <- family@linkinv(eta, extra)
-
-            if (length(family@middle2))
-              eval(family@middle2)
-
-
-            new.crit <- 
-              switch(criterion,
-                     coefficients = new.coeffs,
-                     tfun(mu = mu,y = y,w = w,res = FALSE,
-                          eta = eta,extra))
-
-            if ((criterion == "coefficients") || 
-                ( minimize.criterion && new.crit < old.crit) ||
-                (!minimize.criterion && new.crit > old.crit))
-              break
-            }
-
-            if (trace) 
-              cat("\n")
-            if (too.small) {
-              warning("iterations terminated because ",
-                      "half-step sizes are very small")
-              one.more <- FALSE
-            } else {
-              if (trace) {
-                cat(if (control$Quadratic) "QRR-VGLM" else "RR-VGLM",
-                    "   linear loop ", iter, ": ", criterion, "= ")
-                UUUU <-
-                  switch(criterion,
-                         coefficients =
-                           format(new.crit,
-                                  dig = round(1 - log10(epsilon))),
-                           format(new.crit, 
-                                  dig = max(4, 
-                                            round(-0 - log10(epsilon) +
-                                                  log10(sqrt(eff.n))))))
-
-                switch(criterion,
-                       coefficients = {if (length(new.crit) > 2)
-                                         cat("\n");
-                                       cat(UUUU, fill = TRUE, sep = ", ")},
-                       cat(UUUU, fill = TRUE, sep = ", "))
-              }
-
-              one.more <- eval(control$convergence)
-            }
-          } else {
-            one.more <- eval(control$convergence)
-          }
-        flush.console()
-
-        if (one.more) {
-          iter <- iter + 1
-          deriv.mu <- eval(family@deriv)
-          wz <- eval(family@weight)
-          if (control$checkwz)
-            wz <- checkwz(wz, M = M, trace = trace,
-                          wzepsilon = control$wzepsilon)
-
-
-          wz <- matrix(wz, nrow = n)
-          U <- vchol(wz, M = M, n = n, silent=!trace)
-          tvfor <- vforsub(U, as.matrix(deriv.mu), M = M, n = n)
-          z <- eta + vbacksub(U, tvfor, M, n) - offset  # Contains \bI \bnu
-
-          rrr.expression <- get(RRR.expression)
-          eval(rrr.expression)
-
-          c.list$z <- z  # contains \bI_{Rank} \bnu
-          c.list$U <- U
-          if (copy.X.vlm) c.list$X.vlm <- X.vlm.save
-        }
-
-        c.list$one.more <- one.more
-        c.list$coeff <- runif(length(new.coeffs))  # 12/3/03; twist needed!
-        old.coeffs <- new.coeffs
-      }
-      c.list
-    })  # end of new.s.call
 
 
 
@@ -343,38 +188,38 @@ rrvglm.fit <-
     rrcontrol$Ainit <- control$Ainit <- Amat  # Good for valt()
     rrcontrol$Cinit <- control$Cinit <- Cmat  # Good for valt()
 
-    Blist <- process.constraints(constraints, x, M,
+    Hlist <- process.constraints(constraints, x, M,
                                  specialCM = specialCM)
 
     nice31 <-  control$Quadratic &&
-             (!control$EqualTol || control$ITolerances) &&
-              all(trivial.constraints(Blist) == 1)
+             (!control$eq.tol || control$I.tolerances) &&
+              all(trivial.constraints(Hlist) == 1)
 
-    Blist <- Blist.save <- replace.constraints(Blist, Amat, colx2.index)
+    Hlist <- Hlist.save <- replace.constraints(Hlist, Amat, colx2.index)
 
 
-    ncolBlist <- unlist(lapply(Blist, ncol))
-    dimB <- sum(ncolBlist)
+    ncolHlist <- unlist(lapply(Hlist, ncol))
+    dimB <- sum(ncolHlist)
 
 
     X.vlm.save <- if (control$Quadratic) {
-      tmp500 <- lm2qrrvlm.model.matrix(x = x, Blist = Blist,
+      tmp500 <- lm2qrrvlm.model.matrix(x = x, Hlist = Hlist,
                      C = Cmat, control = control)
       xsmall.qrr <- tmp500$new.latvar.model.matrix 
-      B.list <- tmp500$constraints
+      H.list <- tmp500$constraints
       if (FALSE && modelno == 3) {
-        B.list[[1]] <- (B.list[[1]])[, c(TRUE, FALSE), drop = FALSE]  # Amat
-        B.list[[2]] <- (B.list[[2]])[, c(TRUE, FALSE), drop = FALSE]  # D
+        H.list[[1]] <- (H.list[[1]])[, c(TRUE, FALSE), drop = FALSE]  # Amat
+        H.list[[2]] <- (H.list[[2]])[, c(TRUE, FALSE), drop = FALSE]  # D
       }
 
       latvar.mat <- tmp500$latvar.mat
       if (length(tmp500$offset)) {
         offset <- tmp500$offset 
       }
-      lm2vlm.model.matrix(xsmall.qrr, B.list, xij = control$xij)
+      lm2vlm.model.matrix(xsmall.qrr, H.list, xij = control$xij)
     } else {
       latvar.mat <- x[, colx2.index, drop = FALSE] %*% Cmat 
-      lm2vlm.model.matrix(x, Blist, xij = control$xij)
+      lm2vlm.model.matrix(x, Hlist, xij = control$xij)
     }
 
 
@@ -429,9 +274,9 @@ rrvglm.fit <-
     if (nrow.X.vlm < ncol.X.vlm)
       stop(ncol.X.vlm, " parameters but only ", nrow.X.vlm, " observations")
 
-    bf.call <- expression(vlm.wfit(xmat=X.vlm.save, zedd, 
-            Blist = if (control$Quadratic) B.list else Blist,
-            ncolx=ncol(x), U=U,
+    bf.call <- expression(vlm.wfit(xmat = X.vlm.save, zedd,
+            Hlist = if (control$Quadratic) H.list else Hlist,
+            ncolx = ncol(x), U = U,
             Eta.range = control$Eta.range,
             matrix.out = if (control$Quadratic) FALSE else TRUE,
             is.vlmX = TRUE, qr = qr.arg, xij = control$xij))
@@ -455,7 +300,8 @@ rrvglm.fit <-
         rrcontrol$Cinit <- control$Cinit <- Cmat  # Good for valt()
       }
     
-      if (!nice31) c.list$coeff <- tfit$coefficients 
+      if (!nice31)
+        c.list$coeff <- tfit$coefficients 
     
       if (control$Quadratic) {
         if (control$Corner)
@@ -467,9 +313,168 @@ rrvglm.fit <-
         tfit$predictors <- tfit$fitted.values  # Does not contain the offset
       if (!nice31)
         c.list$fit <- tfit$fitted.values
-      c.list <- eval(new.s.call)
-      NULL
-    }
+
+
+      if (!c.list$one.more) {
+        break
+      }
+
+
+
+      fv <- c.list$fit
+      new.coeffs <- c.list$coeff
+
+      if (length(family@middle))
+        eval(family@middle)
+
+      eta <- fv + offset
+
+      mu <- family@linkinv(eta, extra)
+
+      if (length(family@middle2))
+        eval(family@middle2)
+
+      old.crit <- new.crit
+      new.crit <- 
+        switch(criterion,
+               coefficients = new.coeffs,
+               tfun(mu = mu, y = y, w = w,
+                    res = FALSE, eta = eta, extra))
+
+
+
+      if (trace && orig.stepsize == 1) {
+        cat(if (control$Quadratic) "QRR-VGLM" else "RR-VGLM",
+            "   linear loop ", iter, ": ", criterion, "= ")
+        UUUU <- switch(criterion,
+                       coefficients =
+                         format(new.crit,
+                                dig = round(1 - log10(epsilon))),
+                         format(new.crit, 
+                                dig = max(4, 
+                                          round(-0 - log10(epsilon) +
+                                                log10(sqrt(eff.n))))))
+
+        switch(criterion,
+            coefficients = {if (length(new.crit) > 2) cat("\n");
+               cat(UUUU, fill = TRUE, sep = ", ")},
+            cat(UUUU, fill = TRUE, sep = ", "))
+           }
+
+      take.half.step <- (control$half.stepsizing &&
+                         length(old.coeffs)) &&
+                        !control$Quadratic &&
+                         ((orig.stepsize != 1) ||
+                          (criterion != "coefficients" &&
+                          (if (minimize.criterion)
+                             new.crit > old.crit else
+                          new.crit < old.crit)))
+      if (!is.logical(take.half.step))
+        take.half.step <- TRUE
+      if (take.half.step) {
+        stepsize <- 2 * min(orig.stepsize, 2*stepsize)
+        new.coeffs.save <- new.coeffs
+        if (trace) 
+          cat("Taking a modified step")
+        repeat {
+          if (trace) {
+            cat(".")
+            flush.console()
+          }
+          stepsize <- stepsize / 2
+          if (too.small <- stepsize < 0.001)
+            break
+          new.coeffs <- (1 - stepsize) * old.coeffs +
+                             stepsize  * new.coeffs.save
+
+          if (length(family@middle))
+            eval(family@middle)
+
+          fv <- X.vlm.save %*% new.coeffs
+          if (M > 1)
+            fv <- matrix(fv, n, M, byrow = TRUE)
+
+          eta <- fv + offset
+
+          mu <- family@linkinv(eta, extra)
+
+          if (length(family@middle2))
+            eval(family@middle2)
+
+
+          new.crit <- 
+            switch(criterion,
+                   coefficients = new.coeffs,
+                   tfun(mu = mu,y = y,w = w,res = FALSE,
+                        eta = eta,extra))
+
+          if ((criterion == "coefficients") || 
+              ( minimize.criterion && new.crit < old.crit) ||
+              (!minimize.criterion && new.crit > old.crit))
+            break
+          }
+
+          if (trace) 
+            cat("\n")
+          if (too.small) {
+            warning("iterations terminated because ",
+                    "half-step sizes are very small")
+            one.more <- FALSE
+          } else {
+            if (trace) {
+              cat(if (control$Quadratic) "QRR-VGLM" else "RR-VGLM",
+                  "   linear loop ", iter, ": ", criterion, "= ")
+              UUUU <-
+                switch(criterion,
+                       coefficients =
+                         format(new.crit,
+                                dig = round(1 - log10(epsilon))),
+                         format(new.crit, 
+                                dig = max(4, 
+                                          round(-0 - log10(epsilon) +
+                                                log10(sqrt(eff.n))))))
+
+              switch(criterion,
+                     coefficients = {if (length(new.crit) > 2)
+                                       cat("\n");
+                                     cat(UUUU, fill = TRUE, sep = ", ")},
+                     cat(UUUU, fill = TRUE, sep = ", "))
+            }
+
+            one.more <- eval(control$convergence)
+          }
+        } else {
+          one.more <- eval(control$convergence)
+        }
+      flush.console()
+
+      if (one.more) {
+        iter <- iter + 1
+        deriv.mu <- eval(family@deriv)
+        wz <- eval(family@weight)
+        if (control$checkwz)
+          wz <- checkwz(wz, M = M, trace = trace,
+                        wzepsilon = control$wzepsilon)
+
+
+          wz <- matrix(wz, nrow = n)
+        U <- vchol(wz, M = M, n = n, silent=!trace)
+        tvfor <- vforsub(U, as.matrix(deriv.mu), M = M, n = n)
+        z <- eta + vbacksub(U, tvfor, M, n) - offset  # Contains \bI \bnu
+
+        rrr.expression <- get(RRR.expression)
+        eval(rrr.expression)
+
+        c.list$z <- z  # contains \bI_{Rank} \bnu
+        c.list$U <- U
+        if (copy.X.vlm) c.list$X.vlm <- X.vlm.save
+      }
+
+      c.list$one.more <- one.more
+      c.list$coeff <- runif(length(new.coeffs))  # 12/3/03; twist needed!
+      old.coeffs <- new.coeffs
+
+    }  # End of while()
 
 
   if (maxit > 1 && iter >= maxit && !control$noWarning)
@@ -484,10 +489,10 @@ rrvglm.fit <-
     ynrow.X.vlm <- dnrow.X.vlm[[1]]
 
     if (length(family@fini))
-        eval(family@fini)
+      eval(family@fini)
 
     if (M > 1 && !nice31)
-        tfit$predictors <- matrix(tfit$predictors, n, M)
+      tfit$predictors <- matrix(tfit$predictors, n, M)
 
     asgn <- attr(X.vlm.save, "assign")
     if (nice31) {
@@ -573,7 +578,7 @@ rrvglm.fit <-
 
     fit <- list(assign = asgn,
                 coefficients = coefs,
-                constraints = if (control$Quadratic) B.list else Blist,
+                constraints = if (control$Quadratic) H.list else Hlist,
                 df.residual = df.residual,
                 df.total = n*M,
                 effects = effects, 
@@ -590,7 +595,7 @@ rrvglm.fit <-
     }
 
     if (M == 1) {
-        wz <- as.vector(wz)  # Convert wz into a vector
+      wz <- as.vector(wz)  # Convert wz into a vector
     } # else
     fit$weights <- if (save.weight) wz else NULL
 
@@ -619,7 +624,7 @@ rrvglm.fit <-
     if (criterion != "coefficients")
         crit.list[[criterion]] <- fit[[criterion]] <- new.crit
 
-    for (ii in names(.min.criterion.VGAM)) {
+    for (ii in names( .min.criterion.VGAM )) {
       if (ii != criterion &&
        any(slotNames(family) == ii) &&
            length(body(slot(family, ii)))) {

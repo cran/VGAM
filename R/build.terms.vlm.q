@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2013 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2014 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -64,8 +64,8 @@ Build.terms.vlm <-
     if (cov.true)
       se <- fit
     TL <- sapply(assign, length)
-    simple <- TL == 1
-    complex <- TL > 1
+    simple <- (TL == 1)
+    complex <- (TL > 1)
     if (any(simple)) {
       asss <- unlist(assign[simple])
       ones <- rep(1, nrow(x))
@@ -86,7 +86,10 @@ Build.terms.vlm <-
     }
     attr(fit, "constant") <- constant
     
-    if (cov.true) list(fitted.values = fit, se.fit = se) else fit
+    if (cov.true)
+      list(fitted.values = fit,
+           se.fit        = se) else
+      fit
   }
 }
 

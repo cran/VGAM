@@ -60,16 +60,16 @@ rhzeta(n, alpha)
 
 
 }
-\references{ 
-
-    Page 533 of
-    Johnson N. L., Kemp, A. W. and Kotz S. (2005)
-    \emph{Univariate Discrete Distributions},
-    3rd edition,
-    Hoboken, New Jersey: Wiley.
-
-
-}
+%\references{ 
+%
+%    Pages 533--4 of
+%    Johnson N. L., Kemp, A. W. and Kotz S. (2005)
+%    \emph{Univariate Discrete Distributions},
+%    3rd edition,
+%    Hoboken, New Jersey: Wiley.
+%
+%
+%}
 \author{ T. W. Yee }
 \note{ 
   Given some response data, the \pkg{VGAM} family function
@@ -81,7 +81,8 @@ rhzeta(n, alpha)
 \seealso{
   \code{\link{hzeta}},
   \code{\link{zeta}},
-  \code{\link{zetaff}}.
+  \code{\link{zetaff}},
+  \code{\link{simulate.vlm}}.
 
 
 }
@@ -96,7 +97,8 @@ table(rhzeta(1000, 2))
 plot(x, dhzeta(x, alpha = alpha), type = "h", ylim = 0:1, lwd = 2,
      sub = paste("alpha =", alpha), las = 1, col = "blue", ylab = "Probability",
      main = "Haight's zeta: blue = density; orange = distribution function")
-lines(x+0.1, phzeta(x, alpha = alpha), col = "orange", lty = 3, lwd = 2, type = "h")
+lines(x+0.1, phzeta(x, alpha = alpha), col = "orange", lty = 3, lwd = 2,
+      type = "h")
 }
 }
 \keyword{distribution}

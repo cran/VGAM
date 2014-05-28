@@ -23,11 +23,14 @@ rrayleigh(n, scale = 1)
   \item{p}{vector of probabilities.}
   \item{n}{number of observations.
     Fed into \code{\link[stats]{runif}}.
+
+
   }
   \item{scale}{the scale parameter \eqn{b}.}
   \item{log}{
   Logical.
   If \code{log = TRUE} then the logarithm of the density is returned.
+
 
   }
 

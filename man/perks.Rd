@@ -119,7 +119,8 @@ Also, monitor convergence by setting \code{trace = TRUE}.
 }
 
 \seealso{
-  \code{\link{dperks}}.
+  \code{\link{dperks}},
+  \code{\link{simulate.vlm}}.
 
 
 }

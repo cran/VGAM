@@ -206,6 +206,7 @@ binomialff(link = "logit", dispersion = 1, mv = FALSE,
     \code{\link{amlbinomial}},
     \code{\link{simplex}},
     \code{\link[stats:Binomial]{binomial}},
+   \code{\link{simulate.vlm}},
     \pkg{safeBinaryRegression}.
 
 
@@ -244,8 +245,9 @@ with(shunua, lines(altitude, fitted(fit), col = "orange", lwd = 2)) }
 
 # Fit two species simultaneously
 fit2 <- vgam(cbind(agaaus, kniexc) ~ s(altitude), binomialff(mv = TRUE), shunua)
+\dontrun{
 with(shunua, matplot(altitude, fitted(fit2), type = "l",
-     main = "Two species response curves", las = 1))
+     main = "Two species response curves", las = 1)) }
 
 
 # Shows that Fisher scoring can sometime fail. See Ridout (1990).

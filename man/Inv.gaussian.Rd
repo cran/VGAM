@@ -34,8 +34,10 @@ rinv.gaussian(n, mu, lambda)
 \value{
   \code{dinv.gaussian} gives the density,
   \code{pinv.gaussian} gives the distribution function, and 
-% \code{qinv.gaussian} gives the quantile function, and
   \code{rinv.gaussian} generates random deviates.
+
+
+% \code{qinv.gaussian} gives the quantile function, and
 
 
 }

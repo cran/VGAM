@@ -42,12 +42,14 @@ rzabinom(n, size, prob, pobs0 = 0)
   binomial(size, prob)
   distribution.
 
+
 }
 \value{
   \code{dzabinom} gives the density and
   \code{pzabinom} gives the distribution function,
   \code{qzabinom} gives the quantile function, and
   \code{rzabinom} generates random deviates.
+
 
 }
 %\references{ }
@@ -56,12 +58,16 @@ rzabinom(n, size, prob, pobs0 = 0)
     The argument \code{pobs0} is recycled to the required length, and
     must have values which lie in the interval \eqn{[0,1]}.
 
+
 }
 
 \seealso{ 
-%   \code{\link{zabinomial}},
     \code{\link{zibinomial}},
     \code{\link{rposbinom}}.
+
+
+%   \code{\link{zabinomial}},
+
 
 }
 \examples{

@@ -76,13 +76,14 @@ Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
 \seealso{
   \code{\link{gamma2.ab}} for the 2-parameter gamma distribution,
   \code{\link{lgammaff}},
-  \code{\link{lindley}}.
+  \code{\link{lindley}},
+  \code{\link{simulate.vlm}}.
 
 
 }
 \examples{
 gdata <- data.frame(y = rgamma(n = 100, shape = exp(3)))
-fit <- vglm(y ~ 1, gamma1, gdata, trace = TRUE, crit = "coef")
+fit <- vglm(y ~ 1, gamma1, data = gdata, trace = TRUE, crit = "coef")
 coef(fit, matrix = TRUE)
 Coef(fit)
 summary(fit)

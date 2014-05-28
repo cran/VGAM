@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2013 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2014 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -18,7 +18,8 @@ cao.fit <-
            Terms = Terms, function.name = "cao", ...) {
 
 
-  maxitl <- fv <- NULL
+  maxitl <- NULL
+  fv <- NULL
 
 
   eff.n <- nrow(x)  # + sum(abs(w[1:nrow(x)]))
@@ -143,13 +144,13 @@ cao.fit <-
 
   rrcontrol$Cinit <- control$Cinit <- Cmat  # Good for valt()
 
-  Blist <- process.constraints(constraints, x, M, specialCM = specialCM)
+  Hlist <- process.constraints(constraints, x, M, specialCM = specialCM)
 
-  nice31 <- checkCMCO(Blist, control = control, modelno = modelno)
+  nice31 <- checkCMCO(Hlist, control = control, modelno = modelno)
   if (nice31 != 1)
     stop("not nice")
 
-  ncolBlist <- unlist(lapply(Blist, ncol))
+  ncolHlist <- unlist(lapply(Hlist, ncol))
   latvar.mat <- x[, colx2.index, drop = FALSE] %*% Cmat 
 
 
@@ -167,12 +168,12 @@ cao.fit <-
   lenbeta <- pstar. * ifelse(Nice21, NOS, 1)
 
   othint <-
-        c(Rank, control$EqualTol, pstar. ,
+        c(Rank, control$eq.tol, pstar. ,
                  dim2wz = 1, inited = 0,  # w(, dimw) cols
           modelno, maxitl = control$maxitl,
           actnits = 0, twice = 0, p1star. ,
           p2star. , Nice21, lenbeta,
-          controlITolerances = 0, control$trace,
+          controlI.tolerances = 0, control$trace,
           p1, p2 = p2, imethod = control$imethod, bchat = 0)
   othdbl <- c(small = control$SmallNo, fseps = control$epsilon,
               .Machine$double.eps,
@@ -211,8 +212,11 @@ cao.fit <-
   }
 
   if (!converged) {
-    if (maxitl > 1) {
-      warning("convergence not obtained in", maxitl, "iterations.")
+
+
+    if (control$maxitl > 1) {
+      warning("convergence not obtained in ", control$maxitl,
+              " iterations.")
     } else {
       warning("convergence not obtained")
     }
@@ -450,8 +454,8 @@ cao.control <- function(Rank = 1,
 
     ans <- list(
      Corner = FALSE,  # A constant, not a control parameter; unneeded?
-     EqualTolerances = FALSE,  # A constant, not a control parameter; needed
-     ITolerances = FALSE,  # A constant, not a control parameter; unneeded?
+     eq.tolerances = FALSE,  # A constant, not a control parameter; needed
+     I.tolerances = FALSE,  # A constant, not a control parameter; unneeded?
      Quadratic = FALSE,  # A constant, not a control parameter; unneeded?
         all.knots = as.logical(all.knots)[1],
         Bestof = Bestof,
@@ -496,15 +500,15 @@ create.cms <- function(Rank = 1, M, MSratio = 1, which, p1 = 1) {
   if (!is.Numeric(p1, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE))
     stop("bad input for argument 'p1'")
-  Blist. <- vector("list", p1 + Rank)
+  Hlist. <- vector("list", p1 + Rank)
   for (rr in 1:(p1+Rank))
-    Blist.[[rr]] <- diag(M)
-  names(Blist.) <- if (p1 == 1) c("(Intercept)", names(which)) else stop()
+    Hlist.[[rr]] <- diag(M)
+  names(Hlist.) <- if (p1 == 1) c("(Intercept)", names(which)) else stop()
   if (MSratio == 2) {
     for (r in 1:Rank) 
-      Blist.[[p1+r]] <- eijfun(1, M)
+      Hlist.[[p1+r]] <- eijfun(1, M)
   }
-  Blist.
+  Hlist.
 }
 
 
@@ -595,10 +599,10 @@ callcaoc <- function(cmatrix,
   which <- p1 + (1:Rank)  # These columns are smoothed
   nwhich <- names(which) <- mynames5
 
-  origBlist <-
-  Blist. <- create.cms(Rank = Rank, M = M., MSratio = MSratio,
+  origHlist <-
+  Hlist. <- create.cms(Rank = Rank, M = M., MSratio = MSratio,
                        which = which, p1 = p1)  # For 1 species only
-  ncolBlist. <- unlist(lapply(Blist. , ncol))
+  ncolHlist. <- unlist(lapply(Hlist. , ncol))
   smooth.frame <- s.vam(x = nu1mat, zedd = NULL,
                         wz = NULL, smomat = NULL,
                         which = which,
@@ -606,24 +610,24 @@ callcaoc <- function(cmatrix,
                         bf.maxit = control$bf.maxit,
                         bf.epsilon = control$bf.epsilon,
                         trace = FALSE, se.fit = control$se.fit,
-                        X.vlm.save = bnumat, Blist = Blist. ,
-                        ncolBlist = ncolBlist. ,
+                        X.vlm.save = bnumat, Hlist = Hlist. ,
+                        ncolHlist = ncolHlist. ,
                         M =  M. ,
                         qbig = NULL, Umat = NULL,  # NULL ==> unneeded
                         all.knots = control$all.knots, nk = NULL,
                         sf.only = TRUE)
 
-  ldk <- 3 * max(ncolBlist.[nwhich]) + 1   # 11/7/02
+  ldk <- 3 * max(ncolHlist.[nwhich]) + 1   # 11/7/02
 
   dimw. <- M.   # Smoothing one spp. at a time
   dim1U. <- M.
   wz. <- matrix(0, n, dimw. )
-  if (names(Blist.)[1] != "(Intercept)")
+  if (names(Hlist.)[1] != "(Intercept)")
     stop("something wrong here")
-  Blist.[[1]] <- NULL
+  Hlist.[[1]] <- NULL
 
   trivc <- rep(2 - M. , len = queue)
-  ncbvec <- ncolBlist.[nwhich]
+  ncbvec <- ncolHlist.[nwhich]
   ncolb <- max(ncbvec)
 
   qbig. <- NOS * qbig    # == NOS * Rank; holds all the smooths
@@ -683,7 +687,7 @@ callcaoc <- function(cmatrix,
       which = as.integer(which),
       smomat = as.double(matrix(0, n, qbig. )),
       nu1mat = as.double(nu1mat),
-  blist = as.double(unlist( Blist. )),
+  Hlist = as.double(unlist( Hlist. )),
   as.integer(ncbvec), 
       smap = as.integer(1:(Rank+1)),  # 
       trivc = as.integer(trivc),
@@ -700,7 +704,7 @@ callcaoc <- function(cmatrix,
   bindex = as.integer(smooth.frame$bindex),
   lindex = as.integer(smooth.frame$lindex),
       nknots = as.integer(smooth.frame$nknots),
-      kindex = as.integer(smooth.frame$kindex), PACKAGE = "VGAM")
+      kindex = as.integer(smooth.frame$kindex))
 flush.console()
 
 
@@ -719,7 +723,7 @@ flush.console()
 
   returnans <- if (alldump) {
       bindex <- ans1$bindex
-      ncolBlist <- ncbvec
+      ncolHlist <- ncbvec
       Bspline2 <- vector("list", NOS)
       names(Bspline2) <- dimnames(ymat)[[2]]
       Bspline <- vector("list", length(nwhich))
@@ -729,7 +733,7 @@ flush.console()
         for (ii in 1:length(nwhich)) {
           ind7 <- (smooth.frame$bindex[ii]):(smooth.frame$bindex[ii+1]-1)
           ans <- ans1$bcoeff[ind9+ind7]
-          ans <- matrix(ans, ncol = ncolBlist[nwhich[ii]])
+          ans <- matrix(ans, ncol = ncolHlist[nwhich[ii]])
           Bspline[[ii]] <-
             new(Class = "vsmooth.spline.fit",
                 "Bcoefficients" = ans,
@@ -865,10 +869,10 @@ calldcaoc <- function(cmatrix,
   which <- p1 + (1:Rank)  # The first 1 is the intercept term
   nwhich <- names(which) <- mynames5
 
-  origBlist <- Blist. <-
+  origHlist <- Hlist. <-
     create.cms(Rank = Rank, M = M., MSratio = MSratio,
                which = which, p1 = p1)  # For 1 species
-  ncolBlist. <- unlist(lapply(Blist. , ncol))
+  ncolHlist. <- unlist(lapply(Hlist. , ncol))
     nu1mat <- cbind("(Intercept)" = 1, latvar = numat)
     dimnames(nu1mat) <- list(dimnames(xmat)[[1]],
                              c("(Intercept)", "latvar"))
@@ -879,16 +883,16 @@ calldcaoc <- function(cmatrix,
                           bf.maxit = control$bf.maxit,
                           bf.epsilon = control$bf.epsilon,
                           trace = FALSE, se.fit = control$se.fit,
-                          X.vlm.save = bnumat, Blist = Blist.,
-                          ncolBlist = ncolBlist. ,
+                          X.vlm.save = bnumat, Hlist = Hlist.,
+                          ncolHlist = ncolHlist. ,
                           M = M. , qbig = NULL,
 
                           Umat = U,  # NULL value ==> not needed
                           all.knots = control$all.knots, nk = NULL,
                           sf.only = TRUE)
 
-    ldk <- 4 * max(ncolBlist.[nwhich])   # was M;     # Prior to 11/7/02
-    ldk <- 3 * max(ncolBlist.[nwhich]) + 1   # 11/7/02
+    ldk <- 4 * max(ncolHlist.[nwhich])   # was M;     # Prior to 11/7/02
+    ldk <- 3 * max(ncolHlist.[nwhich]) + 1   # 11/7/02
 
 
 
@@ -905,9 +909,9 @@ calldcaoc <- function(cmatrix,
 
 
 
-    Blist.[[1]] <- NULL
+    Hlist.[[1]] <- NULL
     trivc <- rep(2 - M. , len = queue)
-    ncbvec <- ncolBlist.[nwhich]
+    ncbvec <- ncolHlist.[nwhich]
     ncolb <- max(ncbvec)
 
 
@@ -944,7 +948,7 @@ warning("20100405; this is old:")
     npetc <-
       c(n = n, p = 1+Rank, length(which), se.fit = control$se.fit, 0,
         maxitl = control$maxitl, qrank = 0, M =  M. , n.M = n* M. ,
-          pbig = sum( ncolBlist.),
+          pbig = sum( ncolHlist.),
         qbig = qbig, dimw =  dimw. , dim1U =  dim1U. ,
           ierror = 0, ldk = ldk)
 
@@ -986,7 +990,7 @@ warning("20100405; this is new:")
     as.integer(which),
     smomat = as.double(matrix(0, n, qbig. )),
         nu1mat = as.double(nu1mat),
-    as.double(unlist( Blist. )),
+    as.double(unlist( Hlist. )),
     as.integer(ncbvec), smap = as.integer(1:(Rank+1)),
     trivc = as.integer(trivc),
 
@@ -1002,7 +1006,7 @@ warning("20100405; this is new:")
     bindex = as.integer(smooth.frame$bindex),
     lindex = as.integer(smooth.frame$lindex),
     nknots = as.integer(smooth.frame$nknots),
-    kindex = as.integer(smooth.frame$kindex), PACKAGE = "VGAM")
+    kindex = as.integer(smooth.frame$kindex))
         flush.console()
 
          assign(".VGAM.CAO.etamat", ans1$etamat, envir = VGAMenv)
@@ -1016,7 +1020,7 @@ warning("20100405; this is new:")
 
   returnans <- if (alldump) {
     bindex <- ans1$bindex
-    ncolBlist <- ncbvec
+    ncolHlist <- ncbvec
     Bspline2 <- vector("list", NOS)
     names(Bspline2) <- dimnames(ymat)[[2]]
     Bspline <- vector("list", length(nwhich))
@@ -1026,7 +1030,7 @@ warning("20100405; this is new:")
       for (ii in 1:length(nwhich)) {
         ind9 <- ind9[length(ind9)] + (bindex[ii]):(bindex[ii+1]-1)
         ans <- ans1$bcoeff[ind9]
-        ans <- matrix(ans, ncol = ncolBlist[nwhich[ii]])
+        ans <- matrix(ans, ncol = ncolHlist[nwhich[ii]])
         Bspline[[ii]] <-
           new(Class = "vsmooth.spline.fit",
               "Bcoefficients" = ans,
@@ -1180,10 +1184,10 @@ Coef.cao <- function(object,
       if (is.na(indexSpecies))
         stop("mismatch found in 'which.species'")
 
-      while(griditer == 1 ||
-            ((griditer <= maxgriditer) &&
-            ((gridres1 > epsOptimum) ||
-             (gridres2 > epsOptimum)))) {
+      while (griditer == 1 ||
+             ((griditer <= maxgriditer) &&
+             ((gridres1 > epsOptimum) ||
+              (gridres2 > epsOptimum)))) {
         temp <- predictcao(object, grid = gridd, sppno = thisSpecies,
                            Rank = Rank, deriv = 0, MSratio = MSratio)
         yvals <- temp$yvals  # gridlen-vector
@@ -1915,7 +1919,7 @@ persp.cao <-
 }
 
 
-if(!isGeneric("persp"))
+if (!isGeneric("persp"))
   setGeneric("persp", function(x, ...) standardGeneric("persp"))
 setMethod("persp", "cao", function(x, ...) persp.cao(x = x, ...))
 
@@ -1928,7 +1932,7 @@ latvar.cao <- function(object, ...) {
 
 
 
-if(!isGeneric("lv"))
+if (!isGeneric("lv"))
   setGeneric("lv",
              function(object, ...) {
     .Deprecated("latvar")
@@ -2054,7 +2058,7 @@ setMethod("concoef", "Coef.cao", function(object, ...)
 
 
 
-if(!isGeneric("calibrate"))
+if (!isGeneric("calibrate"))
   setGeneric("calibrate", function(object, ...)
   standardGeneric("calibrate"))
 
@@ -2071,7 +2075,7 @@ Tol.cao <- function(object, ...) {
   stop("The tolerance for a 'cao' object is undefined")
 }
 
-if(!isGeneric("Tol"))
+if (!isGeneric("Tol"))
   setGeneric("Tol", function(object, ...) standardGeneric("Tol"))
 setMethod("Tol", "cao", function(object, ...)
           Tol.cao(object, ...))

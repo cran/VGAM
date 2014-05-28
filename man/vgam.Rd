@@ -45,6 +45,11 @@ vgam(formula, family, data = list(), weights = NULL, subset = NULL,
   }
   \item{weights, subset, na.action}{
   Same as for \code{\link{vglm}}.
+  Note that \code{subset} may be unreliable and to get around
+  this problem it is best to use \code{\link[base]{subset}} to create
+  a new smaller data frame and feed in the smaller data frame.
+  See below for an example.
+  This is a bug that needs fixing.
 
 
   }
@@ -234,7 +239,7 @@ The \code{VGAM} Package.
 \examples{ # Nonparametric proportional odds model 
 pneumo <- transform(pneumo, let = log(exposure.time))
 vgam(cbind(normal, mild, severe) ~ s(let),
-     cumulative(parallel = TRUE), data = pneumo)
+     cumulative(parallel = TRUE), data = pneumo, trace = TRUE)
 
 # Nonparametric logistic regression 
 fit <- vgam(agaaus ~ s(altitude, df = 2), binomialff, data = hunua)
@@ -257,6 +262,18 @@ with(hunua, matplot(altitude[ooo], fitted(fit2)[ooo,], ylim = c(0, 0.8),
      xlab = "Altitude (m)", ylab = "Probability of presence", las = 1,
      main = "Two plant species' response curves", type = "l", lwd = 2))
 with(hunua, rug(altitude)) }
+
+# The subset argument does not work here. Use subset() instead.
+set.seed(1)
+zdata <- data.frame(x2 = runif(nn <- 100))
+zdata <- transform(zdata, y = rbinom(nn, 1, 0.5))
+zdata <- transform(zdata, subS = runif(nn) < 0.7)
+sub.zdata <- subset(zdata, subS)  # Use this instead
+if (FALSE)
+  fit4a <- vgam(cbind(y, y) ~ s(x2, df = 2), binomialff(mv = TRUE), 
+                data = zdata, subset = subS)  # This fails!!!
+fit4b <- vgam(cbind(y, y) ~ s(x2, df = 2), binomialff(mv = TRUE), 
+              data = sub.zdata)  # This succeeds!!!
 }
 \keyword{models}
 \keyword{regression}

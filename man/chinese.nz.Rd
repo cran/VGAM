@@ -62,9 +62,12 @@ plot(female / (male + female) ~ year, chinese.nz, type = "b",
      main = "Proportion of NZ Chinese that are female")
 abline(h = 0.5, lty = "dashed", col = "gray")
 
-fit1.cnz <- vglm(cbind(female, male) ~ year,          binomialff, chinese.nz)
-fit2.cnz <- vglm(cbind(female, male) ~ poly(year, 2), binomialff, chinese.nz)
-fit4.cnz <- vglm(cbind(female, male) ~   bs(year, 5), binomialff, chinese.nz)
+fit1.cnz <- vglm(cbind(female, male) ~ year,             binomialff,
+                 data = chinese.nz)
+fit2.cnz <- vglm(cbind(female, male) ~ sm.poly(year, 2), binomialff,
+                 data = chinese.nz)
+fit4.cnz <- vglm(cbind(female, male) ~   sm.bs(year, 5), binomialff,
+                 data = chinese.nz)
 
 lines(fitted(fit1.cnz) ~ year, chinese.nz, col = "purple", lty = 1)
 lines(fitted(fit2.cnz) ~ year, chinese.nz, col = "green", lty = 2)

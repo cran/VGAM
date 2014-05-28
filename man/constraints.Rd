@@ -160,23 +160,22 @@ information.
 \examples{
 # Fit the proportional odds model:
 pneumo <- transform(pneumo, let = log(exposure.time))
-(fit1 <- vglm(cbind(normal, mild, severe) ~ bs(let, 3),
-              cumulative(parallel = TRUE, reverse = TRUE), pneumo))
+(fit1 <- vglm(cbind(normal, mild, severe) ~ sm.bs(let, 3),
+              cumulative(parallel = TRUE, reverse = TRUE), data = pneumo))
 coef(fit1, matrix = TRUE)
 constraints(fit1)  # Parallel assumption results in this
-constraints(fit1, type = "term")  # This is the same as the default ("vlm"-type)
+constraints(fit1, type = "term")  # Same as the default ("vlm"-type)
 is.parallel(fit1)
 
 # An equivalent model to fit1 (needs the type "term" constraints):
-clist.term <- constraints(fit1, type = "term")  # The "term"-type constraints
-(fit2 <- vglm(cbind(normal, mild, severe) ~ bs(let, 3),
-              cumulative(reverse = TRUE), pneumo, constraints = clist.term))
+clist.term <- constraints(fit1, type = "term")  # "term"-type constraints
+(fit2 <- vglm(cbind(normal, mild, severe) ~ sm.bs(let, 3), data = pneumo,
+              cumulative(reverse = TRUE), constraints = clist.term))
 abs(max(coef(fit1, matrix = TRUE) -
         coef(fit2, matrix = TRUE)))  # Should be zero
 
 # Fit a rank-1 stereotype (RR-multinomial logit) model:
-data(car.all)
-fit <- rrvglm(Country ~ Width + Height + HP, multinomial, car.all, Rank = 1)
+fit <- rrvglm(Country ~ Width + Height + HP, multinomial, data = car.all)
 constraints(fit)  # All except the first are the estimated A matrix 
 }
 \keyword{models}

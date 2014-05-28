@@ -37,6 +37,8 @@ rinvlomax(n, scale = 1, shape2.p)
   \code{qinvlomax} gives the quantile function, and
   \code{rinvlomax} generates random deviates.
 
+
+
 }
 \references{
 
@@ -67,7 +69,7 @@ Hoboken, NJ, USA: Wiley-Interscience.
 }
 \examples{
 idata <- data.frame(y = rinvlomax(n = 1000, exp(2), exp(1)))
-fit <- vglm(y ~ 1, invlomax, idata, trace = TRUE, crit = "coef")
+fit <- vglm(y ~ 1, invlomax, data = idata, trace = TRUE, crit = "coef")
 coef(fit, matrix = TRUE)
 Coef(fit)
 }

@@ -169,6 +169,8 @@ posbernoulli.b(link = "logit", drop.b = FALSE ~ 1,
   \code{\link{posbinomial}},
   \code{\link{aux.posbernoulli.t}},
   \code{\link{prinia}}.
+
+
 % \code{\link{huggins91}}.
 % \code{\link{vglm.control}} for \code{xij},
 

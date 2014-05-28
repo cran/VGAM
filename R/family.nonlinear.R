@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2013 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2014 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -34,7 +34,7 @@ subset.lohi <- function(xvec, yvec,
   min.q <- quantile(xvec, probs = probs.x[1] )
   max.q <- quantile(xvec, probs = probs.x[2] )
 
-  if(mode(type) != "character" && mode(type) != "name")
+  if (mode(type) != "character" && mode(type) != "name")
     type <- as.character(substitute(type))
   type <- match.arg(type, c("median", "wtmean", "unwtmean"))[1]
 
@@ -83,7 +83,7 @@ micmen.control <- function(save.weight = TRUE, ...) {
                     init1 = NULL, init2 = NULL,
                     imethod = 1,
                     oim = TRUE,
-                    link1 = "identity", link2 = "identity",
+                    link1 = "identitylink", link2 = "identitylink",
                     firstDeriv = c("nsimEIM", "rpar"),
                     probs.x = c(0.15, 0.85),
                     nsimEIM = 500,
@@ -364,7 +364,7 @@ skira.control <- function(save.weight = TRUE, ...) {
 
  skira <- function(rpar = 0.1, divisor = 10,
            init1 = NULL, init2 = NULL,
-           link1 = "identity", link2 = "identity",
+           link1 = "identitylink", link2 = "identitylink",
            earg1 = list(),
            earg2 = list(),
            imethod = 1,
@@ -416,7 +416,9 @@ skira.control <- function(save.weight = TRUE, ...) {
       ncol(y) else 1
     if (residuals) {
       if (M > 1) NULL else (y - mu) * sqrt(w)
-    } else ResSS.vgam(y - mu, w, M = M)
+    } else {
+      ResSS.vgam(y - mu, w, M = M)
+    }
   },
   initialize = eval(substitute(expression({
 

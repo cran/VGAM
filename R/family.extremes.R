@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2013 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2014 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -178,7 +178,7 @@ qgev <- function(p, location = 0, scale = 1, shape = 0) {
 
 
  gev <- function(
-          llocation = "identity",
+          llocation = "identitylink",
           lscale = "loge",
           lshape = logoff(offset = 0.5),
           percentiles = c(95, 99),
@@ -248,17 +248,17 @@ qgev <- function(p, location = 0, scale = 1, shape = 0) {
     constraints <- cm.zero.vgam(constraints, x, .zero, M)
   }), list( .zero = zero ))),
   infos = eval(substitute(function(...) {
-    list(Musual = 3,
+    list(M1 = 3,
          multipleResponses = FALSE,
          zero = .zero )
   }, list( .zero = zero ))),
 
 
   initialize = eval(substitute(expression({
-    Musual <- extra$Musual <- 3
+    M1 <- extra$M1 <- 3
     ncoly <- ncol(y)
     extra$ncoly <- ncoly
-    extra$Musual <- Musual
+    extra$M1 <- M1
 
 
     mynames1  <- "location"
@@ -418,7 +418,7 @@ qgev <- function(p, location = 0, scale = 1, shape = 0) {
     misc$link <-       c( .llocat , .lscale , .lshape )
     names(misc$link) <- c(mynames1, mynames2, mynames3)
 
-    misc$Musual <- Musual
+    misc$M1 <- M1
     misc$expected <- TRUE
     misc$multipleResponses <- FALSE
 
@@ -485,7 +485,7 @@ qgev <- function(p, location = 0, scale = 1, shape = 0) {
            .giveWarning = giveWarning, .tolshape0 = tolshape0 ))),
   vfamily = c("gev", "vextremes"),
   deriv = eval(substitute(expression({
-    Musual <- 3
+    M1 <- 3
     r.vec <- rowSums(cbind(!is.na(y)))
 
     Locat <- eta2theta(eta[, 1], .llocat , .elocat )
@@ -628,7 +628,7 @@ dgammadx <- function(x, deriv.arg = 1) {
 
 
 
- egev <- function(llocation = "identity",
+ egev <- function(llocation = "identitylink",
                   lscale = "loge",
                   lshape = logoff(offset = 0.5),
                   percentiles = c(95, 99),
@@ -824,18 +824,25 @@ dgammadx <- function(x, deriv.arg = 1) {
             .elocat = elocat, .escale = escale, .eshape = eshape,
             .tolshape0 = tolshape0,  .percentiles = percentiles ))),
   loglikelihood = eval(substitute(
-  function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
+    function(mu, y, w, residuals = FALSE, eta, extra = NULL,
+             summation = TRUE) {
     mmu   <- eta2theta(eta[, 1], .llocat , earg = .elocat )
     sigma <- eta2theta(eta[, 2], .lscale , earg = .escale )
     xi    <- eta2theta(eta[, 3], .lshape , earg = .eshape )
 
-      if (residuals) stop("loglikelihood residuals not ",
-                          "implemented yet") else {
-          sum(w * dgev(x=y, location=mmu, scale=sigma, shape=xi,
-                       tolshape0 = .tolshape0,
-                       log = TRUE, oobounds.log = -1.0e04,
-                       giveWarning= .giveWarning))
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
+      ll.elts <- c(w) * dgev(x = y, location = mmu, scale = sigma,
+                             shape = xi, tolshape0 = .tolshape0,
+                             log = TRUE, oobounds.log = -1.0e04,
+                             giveWarning = .giveWarning)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
       }
+    }
   }, list( .llocat = llocat,  .lscale = lscale, .lshape = lshape,
            .elocat = elocat, .escale = escale, .eshape = eshape,
            .giveWarning= giveWarning, .tolshape0 = tolshape0 ))),
@@ -961,7 +968,7 @@ pgumbel <- function(q, location = 0, scale = 1) {
 }
 
 
- gumbel <- function(llocation = "identity",
+ gumbel <- function(llocation = "identitylink",
                     lscale = "loge",
                     iscale = NULL,
                     R = NA, percentiles = c(95, 99),
@@ -1095,7 +1102,8 @@ pgumbel <- function(q, location = 0, scale = 1) {
             .mpv = mpv, .R = R ))),
   vfamily = c("gumbel", "vextremes"),
   loglikelihood = eval(substitute(
-  function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
+    function(mu, y, w, residuals = FALSE, eta, extra = NULL,
+             summation = TRUE) {
     loc   <- eta2theta(eta[, 1], .llocat,  earg = .elocat )
     sigma <- eta2theta(eta[, 2], .lscale , earg = .escale )
 
@@ -1107,12 +1115,18 @@ pgumbel <- function(q, location = 0, scale = 1) {
       index <- (jay <= r.vec)
       ans[index] <- ans[index] - (y[index,jay]-loc[index]) / sigma[index]
     }
-    if (residuals) stop("loglikelihood residuals not ",
-                        "implemented yet") else {
 
 
-        sum(c(w) * ans)
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
+      ll.elts <- c(w) * ans
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
       }
+    }
   }, list( .llocat = llocat,  .lscale = lscale,
            .elocat = elocat, .escale = escale ))),
   deriv = eval(substitute(expression({
@@ -1387,12 +1401,13 @@ qgpd <- function(p, location = 0, scale = 1, shape = 0) {
           namesof("shape", link = lshape, earg = eshape )),
  constraints = eval(substitute(expression({
     dotzero <- .zero
-    Musual <- 2
+    M1 <- 2
     eval(negzero.expression)
   }), list( .zero = zero ))),
 
   infos = eval(substitute(function(...) {
-    list(Musual = 2,
+    list(M1 = 2,
+         Q1 = 1,
          zero = .zero )
   }, list( .zero = zero
          ))),
@@ -1413,10 +1428,10 @@ qgpd <- function(p, location = 0, scale = 1, shape = 0) {
 
 
     ncoly <- ncol(y)
-    Musual <- 2
+    M1 <- 2
     extra$ncoly <- ncoly
-    extra$Musual <- Musual
-    M <- Musual * ncoly
+    extra$M1 <- M1
+    M <- M1 * ncoly
     y.names <- dimnames(y)[[2]]
     if (length(y.names) != ncoly)
       y.names <- paste("Y", 1:ncoly, sep = "")
@@ -1438,7 +1453,7 @@ qgpd <- function(p, location = 0, scale = 1, shape = 0) {
     predictors.names <-
         c(namesof(mynames1, .lscale , earg = .escale , tag = FALSE),
           namesof(mynames2, .lshape , earg = .eshape , tag = FALSE))[
-          interleave.VGAM(M, M = Musual)]
+          interleave.VGAM(M, M = M1)]
 
 
 
@@ -1475,7 +1490,7 @@ qgpd <- function(p, location = 0, scale = 1, shape = 0) {
       etastart <-
         cbind(theta2eta(init.sig, .lscale , earg = .escale ),
               theta2eta(init.xii, .lshape , earg = .eshape ))[,
-              interleave.VGAM(M, M = Musual)]
+              interleave.VGAM(M, M = M1)]
     }
   }), list( .lscale = lscale, .lshape = lshape,
             .iscale = iscale, .ishape = ishape,
@@ -1495,10 +1510,10 @@ qgpd <- function(p, location = 0, scale = 1, shape = 0) {
       shape <- as.matrix(shape)
 
 
-    Musual <- 2
+    M1 <- 2
     pcent <- .percentiles
     LP <- length(pcent)  # NULL means LP == 0 and the mean is returned
-    ncoly <- ncol(eta) / Musual
+    ncoly <- ncol(eta) / M1
     if (!length(y.names <- extra$y.names))
       y.names <- paste("Y", 1:ncoly, sep = "")
 
@@ -1575,21 +1590,21 @@ qgpd <- function(p, location = 0, scale = 1, shape = 0) {
 
 
   last = eval(substitute(expression({
-    Musual <- extra$Musual
+    M1 <- extra$M1
     misc$link <-
       c(rep( .lscale , length = ncoly),
-        rep( .lshape , length = ncoly))[interleave.VGAM(M, M = Musual)]
-    temp.names <- c(mynames1, mynames2)[interleave.VGAM(M, M = Musual)]
+        rep( .lshape , length = ncoly))[interleave.VGAM(M, M = M1)]
+    temp.names <- c(mynames1, mynames2)[interleave.VGAM(M, M = M1)]
     names(misc$link) <- temp.names
 
     misc$earg <- vector("list", M)
     names(misc$earg) <- temp.names
     for (ii in 1:ncoly) {
-      misc$earg[[Musual*ii-1]] <- .escale
-      misc$earg[[Musual*ii  ]] <- .eshape
+      misc$earg[[M1*ii-1]] <- .escale
+      misc$earg[[M1*ii  ]] <- .eshape
     }
 
-    misc$Musual <- Musual
+    misc$M1 <- M1
     misc$expected <- TRUE
     misc$multipleResponses <- TRUE
 
@@ -1603,23 +1618,32 @@ qgpd <- function(p, location = 0, scale = 1, shape = 0) {
             .threshold = threshold,
             .tolshape0 = tolshape0, .percentiles = percentiles ))),
   loglikelihood = eval(substitute(
-    function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
+    function(mu, y, w, residuals = FALSE, eta, extra = NULL,
+             summation = TRUE) {
     sigma <- eta2theta(eta[, c(TRUE, FALSE)], .lscale , earg = .escale )
     Shape <- eta2theta(eta[, c(FALSE, TRUE)], .lshape , earg = .eshape )
     Threshold <- extra$threshold
-    if (residuals) stop("loglikelihood residuals not ",
-                        "implemented yet") else {
-      sum(c(w) * dgpd(x = y, location = Threshold, scale = sigma,
-                      shape = Shape, tolshape0 = .tolshape0,
-                      giveWarning = .giveWarning,
-                      log = TRUE, oobounds.log = -1.0e04))
+
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
+      ll.elts <- 
+        c(w) * dgpd(x = y, location = Threshold, scale = sigma,
+                    shape = Shape, tolshape0 = .tolshape0,
+                    giveWarning = .giveWarning,
+                    log = TRUE, oobounds.log = -1.0e04)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
     }
   }, list( .tolshape0 = tolshape0, .giveWarning= giveWarning,
            .escale = escale, .eshape = eshape,
            .lscale = lscale, .lshape = lshape ))),
   vfamily = c("gpd", "vextremes"),
   deriv = eval(substitute(expression({
-    Musual <- 2
+    M1 <- 2
     sigma <- eta2theta(eta[, c(TRUE, FALSE)], .lscale , earg = .escale )
     Shape <- eta2theta(eta[, c(FALSE, TRUE)], .lshape , earg = .eshape )
 
@@ -1654,7 +1678,7 @@ qgpd <- function(p, location = 0, scale = 1, shape = 0) {
     myderiv <- 
     c(w) * cbind(dl.dsigma * dsigma.deta,
                  dl.dShape * dShape.deta)
-    myderiv[, interleave.VGAM(M, M = Musual)]
+    myderiv[, interleave.VGAM(M, M = M1)]
   }), list( .tolshape0 = tolshape0,
             .lscale = lscale, .escale = escale,
             .lshape = lshape, .eshape = eshape ))),
@@ -1665,19 +1689,18 @@ qgpd <- function(p, location = 0, scale = 1, shape = 0) {
     ned2l.dshape2 <- 2 / ((1+2*Shape) * (1+Shape))
     ned2l.dshapescale <- 1 / ((1+2*Shape) * (1+Shape) * sigma)  # > 0 !
 
-    NOS <- M / Musual
-
+    S <- M / M1
 
     wz <- array(c(c(w) * ned2l.dscale2 * dsigma.deta^2,
                   c(w) * ned2l.dshape2 * dShape.deta^2,
                   c(w) * ned2l.dshapescale * dsigma.deta * dShape.deta),
-                dim = c(n, M / Musual, 3))
-    wz <- arwz2wz(wz, M = M, Musual = Musual)
-
+                dim = c(n, S, 3))
+    wz <- arwz2wz(wz, M = M, M1 = M1)
 
     wz
   }), list( .lscale = lscale ))))
 }
+
 
 
 
@@ -1791,7 +1814,7 @@ setMethod("guplot", "vlm",
 
 
 
- egumbel <- function(llocation = "identity",
+ egumbel <- function(llocation = "identitylink",
                      lscale = "loge",
                      iscale = NULL,
                      R = NA, percentiles = c(95, 99),
@@ -1903,12 +1926,20 @@ setMethod("guplot", "vlm",
             .elocat = elocat, .escale = escale,
             .R = R, .percentiles = percentiles ))),
   loglikelihood = eval(substitute(
-        function(mu, y, w, residuals = FALSE,eta,extra = NULL) {
+    function(mu, y, w, residuals = FALSE, eta, extra = NULL,
+             summation = TRUE) {
     loc <- eta2theta(eta[, 1], .llocat , earg = .elocat )
     sca <- eta2theta(eta[, 2], .lscale , earg = .escale )
-    if (residuals) stop("loglikelihood residuals not ",
-                        "implemented yet") else {
-       sum(w * dgumbel(x = y, location = loc, scale = sca, log = TRUE))
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
+      ll.elts <- c(w) *
+                 dgumbel(x = y, location = loc, scale = sca, log = TRUE)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
     }
   }, list( .llocat = llocat,  .lscale = lscale,
            .elocat = elocat, .escale = escale ))),
@@ -1944,7 +1975,7 @@ setMethod("guplot", "vlm",
 
 
 
- cgumbel <- function(llocation = "identity",
+ cgumbel <- function(llocation = "identitylink",
                      lscale = "loge",
                      iscale = NULL,
                      mean = TRUE, percentiles = NULL, zero = 2) {
@@ -2045,7 +2076,8 @@ setMethod("guplot", "vlm",
             .elocat = elocat, .escale = escale ,
             .percentiles = percentiles ))),
   loglikelihood = eval(substitute(
-            function(mu, y, w, residuals = FALSE,eta,extra = NULL) {
+    function(mu, y, w, residuals = FALSE, eta, extra = NULL,
+             summation = TRUE) {
     loc <- eta2theta(eta[, 1], .llocat , earg = .elocat )
     sc  <- eta2theta(eta[, 2], .lscale , earg = .escale )
     zedd <- (y-loc) / sc
@@ -2321,14 +2353,23 @@ frechet2.control <- function(save.weight = TRUE, ...) {
             .escale = escale, .eshape = eshape,
             .nsimEIM = nsimEIM ))),
   loglikelihood = eval(substitute(
-    function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
+    function(mu, y, w, residuals = FALSE, eta, extra = NULL,
+             summation = TRUE) {
     loctn <- extra$location
     Scale <- eta2theta(eta[, 1], .lscale , earg = .escale )
     shape <- eta2theta(eta[, 2], .lshape , earg = .eshape )
-    if (residuals) stop("loglikelihood residuals not ",
-                        "implemented yet") else
-        sum(w * dfrechet(x = y, location = loctn, scale = Scale,
-                         shape = shape, log = TRUE))
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
+      ll.elts <- c(w) *
+                 dfrechet(x = y, location = loctn, scale = Scale,
+                          shape = shape, log = TRUE)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
+    }
   }, list( .lscale = lscale, .lshape = lshape,
            .escale = escale, .eshape = eshape ))),
   vfamily = c("frechet2", "vextremes"),
@@ -2546,15 +2587,22 @@ if (FALSE)
             .ediffr = ediffr, .escale = escale, .eshape = eshape,
             .nsimEIM = nsimEIM ))),  
   loglikelihood = eval(substitute(
-    function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
+    function(mu, y, w, residuals = FALSE, eta, extra = NULL,
+             summation = TRUE) {
     loctn <- extra$LHSanchor -
-            eta2theta(eta[, 1], .ldiffr , earg = .ediffr)
+             eta2theta(eta[, 1], .ldiffr , earg = .ediffr)
     Scale <- eta2theta(eta[, 2], .lscale , earg = .escale )
     shape <- eta2theta(eta[, 3], .lshape , earg = .eshape )
-    if (residuals) stop("loglikelihood residuals not ",
-                        "implemented yet") else {
-        sum(w * dfrechet(x = y, location = loctn, scale = Scale,
-                         shape = shape, log = TRUE))
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
+      ll.elts <- c(w) * dfrechet(x = y, location = loctn, scale = Scale,
+                                 shape = shape, log = TRUE)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
     }
   }, list( .ldiffr = ldiffr, .lscale = lscale, .lshape = lshape,
            .ediffr = ediffr, .escale = escale, .eshape = eshape ))),
@@ -2638,7 +2686,7 @@ recnormal.control <- function(save.weight = TRUE, ...) {
 }
 
 
- recnormal <- function(lmean = "identity", lsd = "loge",
+ recnormal <- function(lmean = "identitylink", lsd = "loge",
                        imean = NULL, isd = NULL, imethod = 1,
                        zero = NULL) {
   lmean <- as.list(substitute(lmean))
@@ -2715,15 +2763,21 @@ recnormal.control <- function(save.weight = TRUE, ...) {
   }), list( .lmean = lmean, .lsdev = lsdev,
             .emean = emean, .esdev = esdev ))),
   loglikelihood = eval(substitute(
-    function(mu, y, w, residuals = FALSE,eta, extra = NULL) {
-    sdev <- eta2theta(eta[, 2], .lsdev)
-    if (residuals) stop("loglikelihood residuals not ",
-                        "implemented yet") else {
-        zedd <- (y - mu) / sdev
-        NN <- nrow(eta)
+    function(mu, y, w, residuals = FALSE, eta, extra = NULL,
+             summation = TRUE) {
+    sdev <- eta2theta(eta[, 2], .lsdev )
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
+      zedd <- (y - mu) / sdev
+      NN <- nrow(eta)
+      if (summation) {
         sum(w * (-log(sdev) - 0.5 * zedd^2)) -
         sum(w[-NN] * pnorm(zedd[-NN], lower.tail = FALSE, log.p = TRUE))
+      } else {
+        stop("cannot handle 'summation = FALSE' yet")
       }
+    }
   }, list( .lsdev = lsdev, .esdev = esdev ))),
   vfamily = c("recnormal"),
   deriv = eval(substitute(expression({
@@ -2831,13 +2885,19 @@ recexp1.control <- function(save.weight = TRUE, ...) {
     misc$expected = TRUE
   }), list( .lrate = lrate, .erate = erate ))),
   loglikelihood = eval(substitute(
-    function(mu, y, w, residuals = FALSE,eta, extra = NULL) {
-    rate = eta2theta(eta, .lrate , .erate )
-    if (residuals) stop("loglikelihood residuals not ",
-                        "implemented yet") else {
-        NN <- length(eta)
-        y <- cbind(y)
+    function(mu, y, w, residuals = FALSE, eta, extra = NULL,
+             summation = TRUE) {
+    rate <- eta2theta(eta, .lrate , .erate )
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
+      NN <- length(eta)
+      y <- cbind(y)
+      if (summation) {
         sum(w * log(rate)) - w[NN] * rate[NN] * y[NN, 1]
+      } else {
+        stop("cannot handle 'summation = FALSE' yet")
+      }
     }
   }, list( .lrate = lrate, .erate = erate ))),
   vfamily = c("recexp1"),
@@ -3001,13 +3061,21 @@ dpois.points <- function(x, lambda, ostatistic,
             .ostatistic = ostatistic,
             .dimension = dimension ))),
   loglikelihood = eval(substitute(
-    function(mu, y, w, residuals = FALSE,eta, extra = NULL) {
+    function(mu, y, w, residuals = FALSE, eta,
+             extra = NULL,
+             summation = TRUE) {
     density <- eta2theta(eta, .link, earg = .earg)
-    if (residuals) stop("loglikelihood residuals not ",
-                        "implemented yet") else {
-      sum(c(w) * dpois.points(y, lambda = density,
-                              ostatistic = .ostatistic ,
-                              dimension = .dimension , log = TRUE))
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
+      ll.elts <- c(w) * dpois.points(y, lambda = density,
+                                     ostatistic = .ostatistic ,
+                                     dimension = .dimension , log = TRUE)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
     }
   }, list( .link = link, .earg = earg,
            .ostatistic = ostatistic,

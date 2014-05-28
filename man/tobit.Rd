@@ -7,7 +7,7 @@
 
 }
 \usage{
-tobit(Lower = 0, Upper = Inf, lmu = "identity", lsd = "loge",
+tobit(Lower = 0, Upper = Inf, lmu = "identitylink", lsd = "loge",
       nsimEIM = 250, imu = NULL, isd = NULL, 
       type.fitted = c("uncensored", "censored", "mean.obs"),
       imethod = 1, zero = -2)
@@ -191,13 +191,13 @@ with(tdata, table(y2 == Lower | y2 == Upper))  # How many censored values?
 with(tdata, table(attr(y2, "cenL")))
 with(tdata, table(attr(y2, "cenU")))
 
-fit1 <- vglm(y1 ~ x2, tobit, tdata, trace = TRUE,
+fit1 <- vglm(y1 ~ x2, tobit, data = tdata, trace = TRUE,
              crit = "coeff")  # crit = "coeff" is recommended
 coef(fit1, matrix = TRUE)
 summary(fit1)
 
 fit2 <- vglm(y2 ~ x2, tobit(Lower = Lower, Upper = Upper, type.f = "cens"),
-            tdata, crit = "coeff", trace = TRUE)  # ditto
+            data = tdata, crit = "coeff", trace = TRUE)  # ditto
 table(fit2@extra$censoredL)
 table(fit2@extra$censoredU)
 coef(fit2, matrix = TRUE)
@@ -205,7 +205,7 @@ coef(fit2, matrix = TRUE)
 fit3 <- vglm(y3 ~ x2,
             tobit(Lower = with(tdata, Lower.vec),
                   Upper = with(tdata, Upper.vec), type.f = "cens"),
-            tdata, crit = "coeff", trace = TRUE)  # ditto
+            data = tdata, crit = "coeff", trace = TRUE)  # ditto
 table(fit3@extra$censoredL)
 table(fit3@extra$censoredU)
 coef(fit3, matrix = TRUE)
@@ -214,7 +214,7 @@ coef(fit3, matrix = TRUE)
 fit4 <- vglm(cbind(y3, y4) ~ x2,
             tobit(Lower = rep(with(tdata, Lower.vec), each = 2),
                   Upper = rep(with(tdata, Upper.vec), each = 2)),
-            tdata, crit = "coeff", trace = TRUE)  # ditto
+            data = tdata, crit = "coeff", trace = TRUE)  # ditto
 head(fit4@extra$censoredL)  # A matrix
 head(fit4@extra$censoredU)  # A matrix
 head(fit4@misc$Lower)       # A matrix
@@ -238,7 +238,7 @@ lines(fitted(lm(y1 ~ x2, tdata)) ~ x2, tdata, col = "black",
       lty = 2, lwd = 2)  # This is simplest but wrong!
 
 # Plot fit2
-plot(y2 ~ x2, tdata, las = 1, main = "Tobit model",
+plot(y2 ~ x2, data = tdata, las = 1, main = "Tobit model",
      col = as.numeric(attr(y2, "cenL")) + 3 +
            as.numeric(attr(y2, "cenU")),
      pch = as.numeric(attr(y2, "cenL")) + 1 +
@@ -253,7 +253,7 @@ lines(fitted(lm(y2 ~ x2, tdata)) ~ x2, tdata, col = "black",
       lty = 2, lwd = 2)  # This is simplest but wrong!
 
 # Plot fit3
-plot(y3 ~ x2, tdata, las = 1,
+plot(y3 ~ x2, data = tdata, las = 1,
      main = "Tobit model with nonconstant censor levels",
      col = as.numeric(attr(y3, "cenL")) + 3 +
            as.numeric(attr(y3, "cenU")),
@@ -269,7 +269,7 @@ lines(fitted(lm(y3 ~ x2, tdata)) ~ x2, tdata, col = "black",
       lty = 2, lwd = 2)  # This is simplest but wrong!
 
 # Plot fit4
-plot(y3 ~ x2, tdata, las = 1,
+plot(y3 ~ x2, data = tdata, las = 1,
      main = "Tobit model with nonconstant censor levels",
      col = as.numeric(attr(y3, "cenL")) + 3 +
            as.numeric(attr(y3, "cenU")),
@@ -279,9 +279,9 @@ legend(x = "topleft", leg = c("censored", "uncensored"),
        pch = c(2, 1), col = c("blue", "green"))
 legend(-1.0, 3.5, c("Truth", "Estimate", "Naive"),
        col = c("purple", "orange", "black"), lwd = 2, lty = c(1, 2, 2))
-lines(meanfun3(x2) ~ x2, tdata, col = "purple", lwd = 2)
+lines(meanfun3(x2) ~ x2, data = tdata, col = "purple", lwd = 2)
 lines(fitted(fit4)[, 1] ~ x2, tdata, col = "orange", lwd = 2, lty = 2)
-lines(fitted(lm(y3 ~ x2, tdata)) ~ x2, tdata, col = "black",
+lines(fitted(lm(y3 ~ x2, tdata)) ~ x2, data = tdata, col = "black",
       lty = 2, lwd = 2)  # This is simplest but wrong!
 }
 }

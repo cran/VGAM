@@ -223,6 +223,7 @@ capture--recapture experiments.
 \seealso{ 
   \code{\link{posbernoulli.b}},
   \code{\link{posbernoulli.tb}},
+  \code{\link{Select}},
   \code{\link{deermice}},
   \code{\link{Huggins89table1}},
   \code{\link{Huggins89.t1}},
@@ -232,6 +233,8 @@ capture--recapture experiments.
   \code{\link{AICvlm}},
   \code{\link{BICvlm}},
   \code{\link{prinia}}.
+
+
 % \code{\link{aux.posbernoulli.t}},
 % \code{\link{vglm.control}} for \code{xij},
 % \code{\link{huggins91}}.
@@ -246,7 +249,7 @@ coef(M.t, matrix = TRUE)
 constraints(M.t, matrix = TRUE)
 summary(M.t, presid = FALSE)
 
-M.h.1 <- vglm(cbind(y1, y2, y3, y4, y5, y6) ~ sex + weight, trace = TRUE,
+M.h.1 <- vglm(Select(deermice, "y") ~ sex + weight, trace = TRUE,
               posbernoulli.t(parallel.t = FALSE ~ -1), data = deermice)
 coef(M.h.1, matrix = TRUE)
 constraints(M.h.1)
@@ -270,7 +273,7 @@ round(M.th.2@extra$N.hat + c(-1, 1) * 1.96 *  M.th.2@extra$SE.N.hat, 1)
 
 # Fit a M_h model, effectively the parallel M_t model, using posbinomial()
 deermice <- transform(deermice, ysum = y1 + y2 + y3 + y4 + y5 + y6,
-                          tau  = 6)
+                                tau  = 6)
 M.h.3 <- vglm(cbind(ysum, tau - ysum) ~ sex + weight,
               posbinomial(omit.constant = TRUE), data = deermice, trace = TRUE)
 max(abs(coef(M.h.1) - coef(M.h.3)))  # Should be zero

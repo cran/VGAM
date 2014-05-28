@@ -187,7 +187,8 @@ betabinomial(lmu = "logit", lrho = "logit",
   \code{\link{binomialff}},
   \code{\link{betaff}},
   \code{\link{dirmultinomial}},
-  \code{\link{lirat}}.
+  \code{\link{lirat}},
+  \code{\link{simulate.vlm}}.
 
 
 }
@@ -196,7 +197,7 @@ betabinomial(lmu = "logit", lrho = "logit",
 bdata <- data.frame(N = 10, mu = 0.5, rho = 0.8)
 bdata <- transform(bdata,
                    y = rbetabinom(n = 100, size = N, prob = mu, rho = rho))
-fit <- vglm(cbind(y, N-y) ~ 1, betabinomial, bdata, trace = TRUE)
+fit <- vglm(cbind(y, N-y) ~ 1, betabinomial, data = bdata, trace = TRUE)
 coef(fit, matrix = TRUE)
 Coef(fit)
 head(cbind(depvar(fit), weights(fit, type = "prior")))

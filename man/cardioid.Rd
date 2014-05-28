@@ -100,7 +100,7 @@ Singapore: World Scientific.
 \examples{
 \dontrun{
 cdata <- data.frame(y = rcard(n = 1000, mu = 4, rho = 0.45))
-fit <- vglm(y ~ 1, cardioid, cdata, trace = TRUE)
+fit <- vglm(y ~ 1, cardioid, data = cdata, trace = TRUE)
 coef(fit, matrix=TRUE)
 Coef(fit)
 c(with(cdata, mean(y)), head(fitted(fit), 1))

@@ -219,7 +219,10 @@ for counts with extra zeros.
   \code{\link{zinegbinomial}},
   \code{\link{zipoisson}},
   \code{\link[stats:NegBinomial]{dnbinom}},
-  \code{\link{CommonVGAMffArguments}}.
+  \code{\link{CommonVGAMffArguments}},
+  \code{\link{simulate.vlm}}.
+
+
 
 }
 

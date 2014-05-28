@@ -55,8 +55,8 @@ dirichlet(link = "loge", parallel = FALSE, zero = NULL)
   y_1 > 0, \dots, y_M > 0,
   \sum_{j=1}^M y_j = 1 }.
   }
-  One has \eqn{E(Y_j) = \alpha_j / \alpha_{+}}{E(Y_j) = alpha_j /
-  alpha_{+}}, which are returned as the fitted values.
+  One has \eqn{E(Y_j) = \alpha_j / \alpha_{+}}{E(Y_j) = alpha_j / alpha_{+}},
+  which are returned as the fitted values.
   For this distribution Fisher scoring corresponds to Newton-Raphson.
 
 
@@ -118,13 +118,18 @@ Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
 
 }
 \examples{
-ydata <- data.frame(rdiric(n = 1000, shape = exp(c(-1, 1, 0))))
-colnames(ydata) <- paste("y", 1:3, sep = "")
-fit <- vglm(cbind(y1, y2, y3)  ~ 1, dirichlet, ydata, trace = TRUE, crit = "coef")
+ydata <- data.frame(rdiric(n = 1000,
+                           shape = exp(c(y1 = -1, y2 = 1, y3 = 0))))
+fit <- vglm(cbind(y1, y2, y3)  ~ 1, dirichlet,
+            data = ydata, trace = TRUE, crit = "coef")
 Coef(fit)
 coef(fit, matrix = TRUE)
 head(fitted(fit))
 }
 \keyword{models}
 \keyword{regression}
+
+% colnames(ydata) <- paste("y", 1:3, sep = "")
+
+
 

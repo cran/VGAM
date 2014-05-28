@@ -172,7 +172,7 @@ Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
 \examples{
 alpha <- 2; kay <- exp(3)
 pdata <- data.frame(y = rpareto(n = 1000, location = alpha, shape = kay))
-fit <- vglm(y ~ 1, paretoff, pdata, trace = TRUE)
+fit <- vglm(y ~ 1, paretoff, data = pdata, trace = TRUE)
 fit@extra  # The estimate of alpha is here
 head(fitted(fit))
 with(pdata, mean(y))
@@ -180,7 +180,7 @@ coef(fit, matrix = TRUE)
 summary(fit)  # Standard errors are incorrect!!
 
 # Here, alpha is assumed known
-fit2 <- vglm(y ~ 1, paretoff(location = alpha), pdata, trace = TRUE)
+fit2 <- vglm(y ~ 1, paretoff(location = alpha), data = pdata, trace = TRUE)
 fit2@extra  # alpha stored here
 head(fitted(fit2))
 coef(fit2, matrix = TRUE)

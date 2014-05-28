@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2013 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2014 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -20,7 +20,7 @@
   function(y,
            family = poissonff,
            Rank = 0,
-           Musual = NULL,
+           M1 = NULL,
            weights = NULL,
            which.linpred = 1,
            Index.corner = ifelse(is.null(str0), 0, max(str0)) + 1:Rank,
@@ -84,26 +84,26 @@
   efamily <- family
 
 
-  if (!is.Numeric(Musual)) {
+  if (!is.Numeric(M1)) {
     iefamily <- efamily@infos
 
     if (is.function(iefamily))
-      Musual <- (iefamily())$Musual
-      if (is.Numeric(Musual))
-        Musual <- abs(Musual)
+      M1 <- (iefamily())$M1
+      if (is.Numeric(M1))
+        M1 <- abs(M1)
   }
-  if (!is.Numeric(Musual)) {
+  if (!is.Numeric(M1)) {
     if (!is.Numeric(M))
-      warning("cannot determine the value of 'Musual'.",
+      warning("cannot determine the value of 'M1'.",
               "Assuming the value one.")
-    Musual <- 1
+    M1 <- 1
   }
 
 
 
-  M <- if (is.null(M)) Musual * ncol(y) else M
+  M <- if (is.null(M)) M1 * ncol(y) else M
 
-  special <- (M > 1) && (Musual == 1)
+  special <- (M > 1) && (M1 == 1)
 
 
 
@@ -264,12 +264,12 @@
   }
 
 
-  if (Musual > 1) {
+  if (M1 > 1) {
     orig.Hlist <- Hlist
 
-    kmat1 <- matrix(0, nrow = Musual, ncol = 1)
+    kmat1 <- matrix(0, nrow = M1, ncol = 1)
     kmat1[which.linpred, 1] <- 1
-    kmat0 <- (diag(Musual))[, -which.linpred, drop = FALSE]
+    kmat0 <- (diag(M1))[, -which.linpred, drop = FALSE]
 
     for (ii in 1:length(Hlist)) {
       Hlist[[ii]] <- kronecker(Hlist[[ii]], kmat1)
@@ -462,8 +462,8 @@ setMethod("summary", "rcim",
      ...) {
 
  
-  nparff <- if (is.numeric(object@family@infos()$Musual)) {
-    object@family@infos()$Musual
+  nparff <- if (is.numeric(object@family@infos()$M1)) {
+    object@family@infos()$M1
   } else {
     1
   }
@@ -932,7 +932,7 @@ plota21 <- function(rrvglm2, show.plot = TRUE, nseq.a21 = 31,
 
         row.index <- (1:Mdot)[Hk.row != 0]
 
-        all.labels <- vlabel(factorname, ncolBlist = Mdot, M = M)
+        all.labels <- vlabel(factorname, ncolHlist = Mdot, M = M)
         all.labels[row.index]
       } else {
         factorname
@@ -1006,7 +1006,7 @@ plota21 <- function(rrvglm2, show.plot = TRUE, nseq.a21 = 31,
           covmat <- covmat[perm, perm, drop = FALSE]
         }
       }
-    } # ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+    }  # ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
 
     return(Recall(covmat,
@@ -1026,7 +1026,7 @@ plota21 <- function(rrvglm2, show.plot = TRUE, nseq.a21 = 31,
     if ((LLL <- dim(covmat)[1]) <= 2)
       stop("This function works only for factors with 3 ",
            "or more levels")
-  } # ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  }  # ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
 

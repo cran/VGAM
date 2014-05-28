@@ -21,14 +21,14 @@
 
 }
 \examples{
-"my2" <- function(x, minx=min(x)) { # Here is a smart function
-    x <- x  # Needed for nested calls, e.g., bs(scale(x))
-    if(smart.mode.is("read")) {
-        return(eval(smart.expression))
-    } else
-    if(smart.mode.is("write"))
-        put.smart(list(minx=minx, match.call=match.call()))
-    (x-minx)^2
+"my2" <- function(x, minx = min(x)) { # Here is a smart function
+  x <- x  # Needed for nested calls, e.g., sm.bs(sm.scale(x))
+  if (smart.mode.is("read")) {
+    return(eval(smart.expression))
+  } else
+  if (smart.mode.is("write"))
+    put.smart(list(minx = minx, match.call = match.call()))
+  (x - minx)^2
 }
 attr(my2, "smart") <- TRUE
 }

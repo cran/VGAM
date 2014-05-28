@@ -38,6 +38,7 @@ felix(link = elogit(min = 0, max = 0.5), imethod = 1)
   The mean is \eqn{1/(1-2a)} (returned as the fitted values).
   Fisher scoring is implemented.
 
+
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
@@ -50,7 +51,8 @@ felix(link = elogit(min = 0, max = 0.5), imethod = 1)
 
 Consul, P. C. and Famoye, F. (2006)
 \emph{Lagrangian Probability Distributions},
-Boston: Birkhauser.
+Boston, USA: Birkhauser.
+
 
 }
 \author{ T. W. Yee }
@@ -66,7 +68,7 @@ Boston: Birkhauser.
 }
 \examples{
 fdata <- data.frame(y = 2 * rpois(n = 200, 1) + 1)  # Not real data!
-fit <- vglm(y ~ 1, felix, fdata, trace = TRUE, crit = "coef")
+fit <- vglm(y ~ 1, felix, data = fdata, trace = TRUE, crit = "coef")
 coef(fit, matrix = TRUE)
 Coef(fit)
 summary(fit)

@@ -229,7 +229,7 @@ legend(x = -4, y = 0.5, lty = 1:4, col = 1:4, lwd = 2,
 
 
 # Another model: pet ownership
-\dontrun{ require(VGAMdata)
+\dontrun{ require("VGAMdata")
 # More homogeneous:
 petdata <- subset(xs.nz, ethnic == "0" & age < 70 & sex == "M")
 petdata <- na.omit(petdata[, c("cat", "dog", "age")])

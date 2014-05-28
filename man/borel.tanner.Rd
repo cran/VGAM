@@ -6,6 +6,7 @@
   Estimates the parameter of a Borel-Tanner distribution
   by maximum likelihood estimation.
 
+
 }
 \usage{
 borel.tanner(Qsize = 1, link = "logit", imethod = 1)
@@ -13,18 +14,22 @@ borel.tanner(Qsize = 1, link = "logit", imethod = 1)
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{Qsize}{
-  A positive integer. It is called \eqn{Q} below and is the initial
-  queue size.
+  A positive integer.
+  It is called \eqn{Q} below and is the initial queue size.
+  The default value \eqn{Q = 1} corresponds to the Borel distribution.
+
 
   }
   \item{link}{
   Link function for the parameter;
   see \code{\link{Links}} for more choices and for general information.
 
+
   }
   \item{imethod}{
   See \code{\link{CommonVGAMffArguments}}.
   Valid values are 1, 2, 3 or 4.
+
 
   }
 }
@@ -60,6 +65,7 @@ borel.tanner(Qsize = 1, link = "logit", imethod = 1)
   variance is \eqn{Q a / (1-a)^3}{Q*a/(1-a)^3}.
   The distribution has a very long tail unless \eqn{a} is small.
   Fisher scoring is implemented.
+
 
 }
 \value{
@@ -110,7 +116,7 @@ Boston: Birkhauser.
 }
 \examples{
 bdata <- data.frame(y = rbort(n <- 200))
-fit <- vglm(y ~ 1, borel.tanner, bdata, trace = TRUE, crit = "c")
+fit <- vglm(y ~ 1, borel.tanner, data = bdata, trace = TRUE, crit = "c")
 coef(fit, matrix = TRUE)
 Coef(fit)
 summary(fit)

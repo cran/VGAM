@@ -59,8 +59,11 @@ rlog(n, prob, Smallno = 1.0e-6)
 \value{
   \code{dlog} gives the density,
   \code{plog} gives the distribution function, and
-% \code{qlog} gives the quantile function, and
   \code{rlog} generates random deviates.
+
+
+% \code{qlog} gives the quantile function, and
+
 
 }
 \references{ 

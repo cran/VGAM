@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2013 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2014 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -7,17 +7,18 @@
 
 
 
-vglm.fit <- function(x, y, w = rep(1, length(x[, 1])),
-    X.vlm.arg = NULL,
-    Xm2 = NULL, Ym2 = NULL,
-    etastart = NULL, mustart = NULL, coefstart = NULL,
-    offset = 0, family,
-    control = vglm.control(),
-    criterion = "coefficients",
-    qr.arg = FALSE,
-    constraints = NULL,
-    extra = NULL,
-    Terms = Terms, function.name = "vglm", ...) {
+vglm.fit <-
+  function(x, y, w = rep(1, length(x[, 1])),
+           X.vlm.arg = NULL,
+           Xm2 = NULL, Ym2 = NULL,
+           etastart = NULL, mustart = NULL, coefstart = NULL,
+           offset = 0, family,
+           control = vglm.control(),
+           criterion = "coefficients",
+           qr.arg = FALSE,
+           constraints = NULL,
+           extra = NULL,
+           Terms = Terms, function.name = "vglm", ...) {
 
   eff.n <- nrow(x)  # + sum(abs(w[1:nrow(x)]))
 
@@ -41,164 +42,12 @@ vglm.fit <- function(x, y, w = rep(1, length(x[, 1])),
 
   n <- dim(x)[1]
 
-  new.s.call <- expression({
-    if (c.list$one.more) {
-      fv <- c.list$fit
-      new.coeffs <- c.list$coeff
-
-      if (length(slot(family, "middle")))
-        eval(slot(family, "middle"))
-
-      eta <- fv + offset
-      mu <- slot(family, "linkinv")(eta, extra)
-
-      if (length(slot(family, "middle2")))
-        eval(slot(family, "middle2"))
-
-      old.crit <- new.crit
-      new.crit <- 
-          switch(criterion,
-              coefficients = new.coeffs,
-              tfun(mu = mu, y = y, w = w,
-                   res = FALSE, eta = eta, extra))
-
-
-      if (trace && orig.stepsize == 1) {
-        cat("VGLM    linear loop ", iter, ": ", criterion, "= ")
-        UUUU <- switch(criterion,
-                       coefficients =
-                         format(new.crit,
-                                dig = round(1 - log10(epsilon))),
-                         format(new.crit,
-                                dig = max(4,
-                                          round(-0 - log10(epsilon) +
-                                                log10(sqrt(eff.n))))))
-
-        switch(criterion,
-               coefficients = {if (length(new.crit) > 2) cat("\n");
-               cat(UUUU, fill = TRUE, sep = ", ")},
-               cat(UUUU, fill = TRUE, sep = ", "))
-      }
-
-
-
-
-      take.half.step <- (control$half.stepsizing &&
-                         length(old.coeffs)) &&
-                         ((orig.stepsize != 1) ||
-                          (criterion != "coefficients" &&
-                          (if (minimize.criterion) new.crit > old.crit else
-                                                   new.crit < old.crit)))
-      if (!is.logical(take.half.step))
-        take.half.step <- TRUE
-      if (take.half.step) {
-        stepsize <- 2 * min(orig.stepsize, 2*stepsize)
-        new.coeffs.save <- new.coeffs
-        if (trace) 
-          cat("Taking a modified step")
-        repeat {
-            if (trace) {
-              cat(".")
-              flush.console()
-            }
-            stepsize <- stepsize / 2
-            if (too.small <- stepsize < 0.001)
-              break
-            new.coeffs <- (1-stepsize) * old.coeffs +
-                             stepsize  * new.coeffs.save
-
-            if (length(slot(family, "middle")))
-              eval(slot(family, "middle"))
-
-            fv <- X.vlm.save %*% new.coeffs
-            if (M > 1)
-              fv <- matrix(fv, n, M, byrow = TRUE)
-
-            eta <- fv + offset
-            mu <- slot(family, "linkinv")(eta, extra)
-
-            if (length(slot(family, "middle2")))
-              eval(slot(family, "middle2"))
-
-
-            new.crit <- 
-              switch(criterion,
-                     coefficients = new.coeffs,
-                     tfun(mu = mu, y = y, w = w,
-                          res = FALSE, eta = eta, extra))
-
-            if ((criterion == "coefficients") || 
-               ( minimize.criterion && new.crit < old.crit) ||
-               (!minimize.criterion && new.crit > old.crit))
-              break
-        }  # of repeat
-
-        if (trace) 
-          cat("\n")
-        if (too.small) {
-          warning("iterations terminated because ",
-                  "half-step sizes are very small")
-          one.more <- FALSE
-        } else {
-          if (trace) {
-            cat("VGLM    linear loop ",
-                iter, ": ", criterion, "= ")
-
-            UUUU <- switch(criterion,
-                           coefficients =
-                             format(new.crit,
-                                    dig = round(1 - log10(epsilon))),
-                             format(new.crit, 
-                                    dig = max(4,
-                                              round(-0 - log10(epsilon) +
-                                                    log10(sqrt(eff.n))))))
-
-            switch(criterion,
-                   coefficients = {
-                   if (length(new.crit) > 2) cat("\n");
-                   cat(UUUU, fill = TRUE, sep = ", ")},
-                   cat(UUUU, fill = TRUE, sep = ", "))
-          }
-
-          one.more <- eval(control$convergence)
-        }
-      } else {
-        one.more <- eval(control$convergence)
-      }
-      flush.console()
-
-      if (!is.logical(one.more))
-        one.more <- FALSE
-      if (one.more) {
-        iter <- iter + 1
-        deriv.mu <- eval(slot(family, "deriv"))
-        wz <- eval(slot(family, "weight"))
-        if (control$checkwz)
-          wz <- checkwz(wz, M = M, trace = trace,
-                        wzepsilon = control$wzepsilon)
-
-        U <- vchol(wz, M = M, n = n, silent = !trace)
-        tvfor <- vforsub(U, as.matrix(deriv.mu), M = M, n = n)
-        z <- eta + vbacksub(U, tvfor, M = M, n = n) - offset
-
-        c.list$z <- z
-        c.list$U <- U
-        if (copy.X.vlm)
-          c.list$X.vlm <- X.vlm.save
-      }
-
-      c.list$one.more <- one.more
-      c.list$coeff <- runif(length(new.coeffs))  # 20030312; twist needed!
-      old.coeffs <- new.coeffs
-    }
-    c.list
-  })
 
 
 
 
 
-  copy.X.vlm <- FALSE    # May be overwritten in @initialize
+  copy.X.vlm <- FALSE  # May be overwritten in @initialize
   stepsize <- orig.stepsize
   old.coeffs <- coefstart
 
@@ -241,12 +90,12 @@ vglm.fit <- function(x, y, w = rep(1, length(x[, 1])),
     eval(slot(family, "constraints"))
 
 
-  Blist <- process.constraints(constraints, x, M,
+  Hlist <- process.constraints(constraints, x, M,
                                specialCM = specialCM)
 
 
-  ncolBlist <- unlist(lapply(Blist, ncol))
-  dimB <- sum(ncolBlist)
+  ncolHlist <- unlist(lapply(Hlist, ncol))
+  dimB <- sum(ncolHlist)
 
 
 
@@ -255,7 +104,7 @@ vglm.fit <- function(x, y, w = rep(1, length(x[, 1])),
   X.vlm.save <- if (length(X.vlm.arg)) {
                   X.vlm.arg
                 } else {
-                  lm2vlm.model.matrix(x, Blist, xij = control$xij,
+                  lm2vlm.model.matrix(x, Hlist, xij = control$xij,
                                                 Xm2 = Xm2)
                 }
 
@@ -263,11 +112,12 @@ vglm.fit <- function(x, y, w = rep(1, length(x[, 1])),
 
   if (length(coefstart)) {
     eta <- if (ncol(X.vlm.save) > 1) {
-             X.vlm.save %*% coefstart + offset
+             matrix(X.vlm.save %*% coefstart, n, M, byrow = TRUE) + offset
            } else {
-             X.vlm.save  *  coefstart + offset
+             matrix(X.vlm.save * coefstart, n, M, byrow = TRUE) + offset
            }
-    eta <- if (M > 1) matrix(eta, ncol = M, byrow = TRUE) else c(eta) 
+    if (M == 1)
+      eta <- c(eta) 
     mu <- slot(family, "linkinv")(eta, extra)
   }
 
@@ -309,29 +159,176 @@ vglm.fit <- function(x, y, w = rep(1, length(x[, 1])),
   ncol.X.vlm <- dX.vlm[[2]]
 
   if (nrow.X.vlm < ncol.X.vlm)
-    stop(ncol.X.vlm, "parameters but only ", nrow.X.vlm, " observations")
+    stop(ncol.X.vlm, " parameters but only ", nrow.X.vlm, " observations")
 
 
 
-  bf.call <- expression(vlm.wfit(xmat = X.vlm.save, z,
-                                 Blist = NULL, U = U,
-                                 matrix.out = FALSE,
-                                 is.vlmX = TRUE,
-                                 qr = qr.arg, xij = NULL))
 
 
 
   while (c.list$one.more) {
-      tfit <- eval(bf.call)  # fit$smooth.frame is new
+    tfit <- vlm.wfit(xmat = X.vlm.save, z,
+                     Hlist = NULL, U = U,
+                     matrix.out = FALSE,
+                     is.vlmX = TRUE,
+                     qr = qr.arg, xij = NULL)  # fit$smooth.frame is new
     
-      c.list$coeff <- tfit$coefficients 
+    c.list$coeff <- tfit$coefficients 
     
-      tfit$predictors <- tfit$fitted.values
-    
-      c.list$fit <- tfit$fitted.values
-      c.list <- eval(new.s.call)
-      NULL
-  }
+    tfit$predictors <- tfit$fitted.values
+    c.list$fit <- tfit$fitted.values
+
+
+    if (!c.list$one.more) {
+      break
+    }
+
+
+
+    fv <- c.list$fit
+    new.coeffs <- c.list$coeff
+
+    if (length(slot(family, "middle")))
+      eval(slot(family, "middle"))
+
+    eta <- fv + offset
+    mu <- slot(family, "linkinv")(eta, extra)
+
+    if (length(slot(family, "middle2")))
+      eval(slot(family, "middle2"))
+
+    old.crit <- new.crit
+    new.crit <- 
+        switch(criterion,
+            coefficients = new.coeffs,
+            tfun(mu = mu, y = y, w = w,
+                 res = FALSE, eta = eta, extra))
+
+
+    if (trace && orig.stepsize == 1) {
+      cat("VGLM    linear loop ", iter, ": ", criterion, "= ")
+      UUUU <- switch(criterion,
+                     coefficients =
+                       format(new.crit,
+                              dig = round(1 - log10(epsilon))),
+                       format(new.crit,
+                              dig = max(4,
+                                        round(-0 - log10(epsilon) +
+                                              log10(sqrt(eff.n))))))
+      switch(criterion,
+             coefficients = {if (length(new.crit) > 2) cat("\n");
+             cat(UUUU, fill = TRUE, sep = ", ")},
+             cat(UUUU, fill = TRUE, sep = ", "))
+    }
+
+
+    take.half.step <- (control$half.stepsizing &&
+                       length(old.coeffs)) &&
+                       ((orig.stepsize != 1) ||
+                        (criterion != "coefficients" &&
+                        (if (minimize.criterion) new.crit > old.crit else
+                                                 new.crit < old.crit)))
+    if (!is.logical(take.half.step))
+      take.half.step <- TRUE
+    if (take.half.step) {
+      stepsize <- 2 * min(orig.stepsize, 2*stepsize)
+      new.coeffs.save <- new.coeffs
+      if (trace) 
+        cat("Taking a modified step")
+      repeat {
+          if (trace) {
+            cat(".")
+            flush.console()
+          }
+          stepsize <- stepsize / 2
+          if (too.small <- stepsize < 0.001)
+            break
+          new.coeffs <- (1-stepsize) * old.coeffs +
+                           stepsize  * new.coeffs.save
+
+          if (length(slot(family, "middle")))
+            eval(slot(family, "middle"))
+
+          fv <- X.vlm.save %*% new.coeffs
+          if (M > 1)
+            fv <- matrix(fv, n, M, byrow = TRUE)
+
+          eta <- fv + offset
+          mu <- slot(family, "linkinv")(eta, extra)
+
+          if (length(slot(family, "middle2")))
+            eval(slot(family, "middle2"))
+
+          new.crit <- 
+            switch(criterion,
+                   coefficients = new.coeffs,
+                   tfun(mu = mu, y = y, w = w,
+                        res = FALSE, eta = eta, extra))
+
+          if ((criterion == "coefficients") || 
+             ( minimize.criterion && new.crit < old.crit) ||
+             (!minimize.criterion && new.crit > old.crit))
+            break
+      }  # of repeat
+
+      if (trace) 
+        cat("\n")
+      if (too.small) {
+        warning("iterations terminated because ",
+                "half-step sizes are very small")
+        one.more <- FALSE
+      } else {
+        if (trace) {
+          cat("VGLM    linear loop ",
+              iter, ": ", criterion, "= ")
+
+          UUUU <- switch(criterion,
+                         coefficients =
+                           format(new.crit,
+                                  dig = round(1 - log10(epsilon))),
+                           format(new.crit, 
+                                  dig = max(4,
+                                            round(-0 - log10(epsilon) +
+                                                  log10(sqrt(eff.n))))))
+
+          switch(criterion,
+                 coefficients = {
+                 if (length(new.crit) > 2) cat("\n");
+                 cat(UUUU, fill = TRUE, sep = ", ")},
+                 cat(UUUU, fill = TRUE, sep = ", "))
+        }
+
+        one.more <- eval(control$convergence)
+      }
+    } else {
+      one.more <- eval(control$convergence)
+    }
+    flush.console()
+
+    if (!is.logical(one.more))
+      one.more <- FALSE
+    if (one.more) {
+      iter <- iter + 1
+      deriv.mu <- eval(slot(family, "deriv"))
+      wz <- eval(slot(family, "weight"))
+      if (control$checkwz)
+        wz <- checkwz(wz, M = M, trace = trace,
+                      wzepsilon = control$wzepsilon)
+
+      U <- vchol(wz, M = M, n = n, silent = !trace)
+      tvfor <- vforsub(U, as.matrix(deriv.mu), M = M, n = n)
+      z <- eta + vbacksub(U, tvfor, M = M, n = n) - offset
+
+      c.list$z <- z
+      c.list$U <- U
+      if (copy.X.vlm)
+        c.list$X.vlm <- X.vlm.save
+    }
+
+    c.list$one.more <- one.more
+    c.list$coeff <- runif(length(new.coeffs))  # 20030312; twist needed!
+    old.coeffs <- new.coeffs
+  }  # End of while()
 
   if (maxit > 1 && iter >= maxit && !control$noWarning)
     warning("convergence not obtained in ", maxit, " iterations")
@@ -402,7 +399,7 @@ vglm.fit <- function(x, y, w = rep(1, length(x[, 1])),
   df.residual <- nrow.X.vlm - rank
   fit <- list(assign = asgn,
               coefficients = coefs,
-              constraints = Blist, 
+              constraints = Hlist, 
               df.residual = df.residual,
               df.total = n * M,
               effects = effects, 

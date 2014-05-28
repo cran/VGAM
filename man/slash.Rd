@@ -7,7 +7,7 @@
   slash distribution by maximum likelihood estimation.
 }
 \usage{
-slash(lmu = "identity", lsigma = "loge",
+slash(lmu = "identitylink", lsigma = "loge",
       imu = NULL, isigma = NULL, iprobs  =  c(0.1, 0.9), nsimEIM = 250,
       zero = NULL, smallno = .Machine$double.eps*1000)
 }
@@ -77,6 +77,8 @@ f(y) = 1/(2*sigma*sqrt(2*pi)) if y=mu
   The object is used by modelling functions such as \code{\link{vglm}},
   and \code{\link{vgam}}.
 
+
+
 }
 \references{ 
   Johnson, N. L. and Kotz, S. and Balakrishnan, N. (1994) 
@@ -103,14 +105,15 @@ f(y) = 1/(2*sigma*sqrt(2*pi)) if y=mu
 
 
 \seealso{
-  \code{\link{rslash}}.
+  \code{\link{rslash}},
+  \code{\link{simulate.vlm}}.
 
 
 }
 \examples{
 \dontrun{
 sdata <- data.frame(y = rslash(n = 1000, mu = 4, sigma = exp(2)))
-fit <- vglm(y ~ 1, slash, sdata, trace = TRUE) 
+fit <- vglm(y ~ 1, slash, data = sdata, trace = TRUE) 
 coef(fit, matrix = TRUE)
 Coef(fit)
 summary(fit)

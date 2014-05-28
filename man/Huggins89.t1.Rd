@@ -56,22 +56,22 @@ On the statistical analysis of capture experiments.
 %%  ~~ possibly secondary sources and usages ~~
 }
 \examples{
-Huggins89table1 <- transform(Huggins89table1, x3.tij = t1,
-                             T2 = t2, T3 = t3, T4 = t4,  T5 =  t5, T6 = t6,
-                             T7 = t7, T8 = t8, T9 = t9, T10 = t10)
+Huggins89table1 <- transform(Huggins89table1, x3.tij = t01,
+                             T02 = t02, T03 = t03, T04 = t04, T05 = t05, T06 = t06,
+                             T07 = t07, T08 = t08, T09 = t09, T10 = t10)
 small.table1 <- subset(Huggins89table1,
-                       y1 + y2 + y3 + y4 + y5 + y6 + y7 + y8 + y9 + y10 > 0)
+                       y01 + y02 + y03 + y04 + y05 + y06 + y07 + y08 + y09 + y10 > 0)
 # fit.tbh is the bottom equation on p.133.
 # It is a M_tbh model.
 fit.tbh <-
-  vglm(cbind(y1, y2, y3, y4, y5, y6, y7, y8, y9, y10) ~  x2 + x3.tij,
-       xij = list(x3.tij ~ t1 + t2 + t3 + t4 + t5 + t6 + t7 + t8 + t9 + t10 +
-                           T2 + T3 + T4 + T5 + T6 + T7 + T8 + T9 + T10 - 1),
+  vglm(cbind(y01, y02, y03, y04, y05, y06, y07, y08, y09, y10) ~  x2 + x3.tij,
+       xij = list(x3.tij ~ t01 + t02 + t03 + t04 + t05 + t06 + t07 + t08 + t09 + t10 +
+                                 T02 + T03 + T04 + T05 + T06 + T07 + T08 + T09 + T10 - 1),
        posbernoulli.tb(parallel.t = TRUE ~ x2 + x3.tij),
        data = small.table1, trace = TRUE,
        form2 = ~  x2 + x3.tij +
-                  t1 + t2 + t3 + t4 + t5 + t6 + t7 + t8 + t9 + t10 +
-                       T2 + T3 + T4 + T5 + T6 + T7 + T8 + T9 + T10)
+                  t01 + t02 + t03 + t04 + t05 + t06 + t07 + t08 + t09 + t10 +
+                        T02 + T03 + T04 + T05 + T06 + T07 + T08 + T09 + T10)
 
 # These results differ a bit from Huggins (1989), probably because
 # two animals had to be removed here (they were never caught):
@@ -82,7 +82,7 @@ summary(fit.tbh, presid = FALSE)
 fit.tbh@extra$N.hat     # Estimate of the population site N; cf. 20.86
 fit.tbh@extra$SE.N.hat  # Its standard error; cf. 1.87 or 4.51
 
-fit.th <- vglm(cbind(y1, y2, y3, y4, y5, y6, y7, y8, y9, y10) ~ x2,
+fit.th <- vglm(cbind(y01, y02, y03, y04, y05, y06, y07, y08, y09, y10) ~ x2,
                posbernoulli.t, data = small.table1, trace = TRUE)
 coef(fit.th)
 constraints(fit.th)
@@ -91,7 +91,7 @@ summary(fit.th, presid = FALSE)
 fit.th@extra$N.hat     # Estimate of the population size N
 fit.th@extra$SE.N.hat  # Its standard error
 
-fit.bh <- vglm(cbind(y1, y2, y3, y4, y5, y6, y7, y8, y9, y10) ~ x2,
+fit.bh <- vglm(cbind(y01, y02, y03, y04, y05, y06, y07, y08, y09, y10) ~ x2,
                posbernoulli.b(I2 = FALSE), data = small.table1, trace = TRUE)
 coef(fit.bh)
 constraints(fit.bh)
@@ -100,7 +100,7 @@ summary(fit.bh, presid = FALSE)
 fit.bh@extra$N.hat
 fit.bh@extra$SE.N.hat
 
-fit.h <- vglm(cbind(y1, y2, y3, y4, y5, y6, y7, y8, y9, y10) ~ x2,
+fit.h <- vglm(cbind(y01, y02, y03, y04, y05, y06, y07, y08, y09, y10) ~ x2,
              posbernoulli.b, data = small.table1, trace = TRUE)
 coef(fit.h, matrix = TRUE)  # M_h model (version 1)
 coef(fit.h)
@@ -108,7 +108,7 @@ summary(fit.h, presid = FALSE)
 fit.h@extra$N.hat
 fit.h@extra$SE.N.hat
 
-Fit.h <- vglm(cbind(y1, y2, y3, y4, y5, y6, y7, y8, y9, y10) ~ x2,
+Fit.h <- vglm(cbind(y01, y02, y03, y04, y05, y06, y07, y08, y09, y10) ~ x2,
               posbernoulli.t(parallel.t = TRUE ~ x2),
               data = small.table1, trace = TRUE)
 coef(Fit.h)
@@ -141,13 +141,13 @@ Fit.h@extra$SE.N.hat
 %             x2            = cbind(rep(1, len = 2*tau-1)),
 %             Zedd          = cbind(rep(1, len = 2*tau-1)))
 %fit.tbh <-
-%  vglm(cbind(y1, y2, y3, y4, y5, y6, y7, y8, y9, y10) ~  x2 + Zedd,
-%       xij = list(Zedd ~ z1 + z2 + z3 + z4 + z5 + z6 + z7 + z8 + z9 + z10 +
-%                              Z2 + Z3 + Z4 + Z5 + Z6 + Z7 + Z8 + Z9 + Z10 - 1),
+%  vglm(cbind(y01, y02, y03, y04, y05, y06, y07, y08, y09, y10) ~  x2 + Zedd,
+%       xij = list(Zedd ~ z01 + z02 + z03 + z04 + z05 + z06 + z07 + z08 + z09 + z10 +
+%                               Z02 + Z03 + Z04 + Z05 + Z06 + Z07 + Z08 + Z09 + Z10 - 1),
 %       posbernoulli.tb, data = small.t1, trace = TRUE,
 %       constraints = Hlist,
 %       form2 = ~  x2 + Zedd +
-%                 z1 + z2 + z3 + z4 + z5 + z6 + z7 + z8 + z9 + z10 +
-%                      Z2 + Z3 + Z4 + Z5 + Z6 + Z7 + Z8 + Z9 + Z10)
+%                 z01 + z02 + z03 + z04 + z05 + z06 + z07 + z08 + z09 + z10 +
+%                       Z02 + Z03 + Z04 + Z05 + Z06 + Z07 + Z08 + Z09 + Z10)
 
 

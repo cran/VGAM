@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2013 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2014 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -42,8 +42,146 @@ vgam.fit <-
 
 
 
-  new.s.call <- expression({
-    if (c.list$one.more) {
+
+
+
+
+
+
+
+  old.coeffs <- coefstart
+
+  intercept.only <- ncol(x) == 1 && dimnames(x)[[2]] == "(Intercept)"
+  y.names <- predictors.names <- NULL  # May be overwritten in @initialize
+
+  n.save <- n
+  if (length(slot(family, "initialize")))
+    eval(slot(family, "initialize"))  # Initialize mu & M (& optionally w)
+
+  if (length(etastart)) {
+    eta <- etastart
+    mu <- if (length(mustart)) mustart else
+          if (length(body(slot(family, "linkinv"))))
+            slot(family, "linkinv")(eta, extra) else
+            warning("argument 'etastart' assigned a value ",
+                    "but there is no 'linkinv' slot to use it")
+  }
+
+  if (length(mustart)) {
+    mu <- mustart
+    if (length(body(slot(family, "linkfun")))) {
+      eta <- slot(family, "linkfun")(mu, extra)
+    } else {
+      warning("argument 'mustart' assigned a value ",
+              "but there is no 'link' slot to use it")
+    }
+  }
+
+  M <- if (is.matrix(eta)) ncol(eta) else 1
+
+
+  if (length(family@constraints))
+    eval(family@constraints)
+  Hlist <- process.constraints(constraints, x, M, specialCM = specialCM)
+
+  ncolHlist <- unlist(lapply(Hlist, ncol))
+  dimB <- sum(ncolHlist)
+
+
+    if (nonparametric) {
+
+
+      smooth.frame <- mf
+      assignx <- attr(x, "assign")
+      which <- assignx[smooth.labels]
+
+      bf <- "s.vam"
+      bf.call <- parse(text = paste(
+              "s.vam(x, z, wz, tfit$smomat, which, tfit$smooth.frame,",
+              "bf.maxit, bf.epsilon, trace, se = se.fit, X.vlm.save, ",
+              "Hlist, ncolHlist, M = M, qbig = qbig, Umat = U, ",
+              "all.knots = control$all.knots, nk = control$nk)",
+              sep = ""))[[1]]
+
+      qbig <- sum(ncolHlist[smooth.labels])  # Number of component funs
+      smomat <- matrix(0, n, qbig)
+      dy <- if (is.matrix(y)) dimnames(y)[[1]] else names(y)
+      d2 <- if (is.null(predictors.names))
+              paste("(Additive predictor ",1:M,")", sep = "") else
+              predictors.names
+      dimnames(smomat) <- list(dy, vlabel(smooth.labels,
+                                          ncolHlist[smooth.labels], M))
+
+      tfit <- list(smomat = smomat, smooth.frame = smooth.frame)
+    } else {
+      bf.call <- expression(vlm.wfit(xmat = X.vlm.save, z,
+                                     Hlist = NULL, U = U,
+                                     matrix.out = FALSE, is.vlmX = TRUE,
+                                     qr = qr.arg, xij = NULL))
+      bf <- "vlm.wfit"
+    }
+
+    X.vlm.save <- lm2vlm.model.matrix(x, Hlist, xij = control$xij)
+
+
+    if (length(coefstart)) {
+      eta <- if (ncol(X.vlm.save) > 1) X.vlm.save %*% coefstart +
+               offset else X.vlm.save * coefstart + offset
+      eta <- if (M > 1) matrix(eta, ncol = M, byrow = TRUE) else c(eta)
+      mu <- family@linkinv(eta, extra)
+    }
+
+
+    if (criterion != "coefficients") {
+      tfun <- slot(family, criterion)  # Needed 4 R so have to follow suit
+    }
+
+    iter <- 1
+    new.crit <- switch(criterion,
+                       coefficients = 1,
+                       tfun(mu = mu, y = y, w = w, res = FALSE,
+                            eta = eta, extra))
+    old.crit <- ifelse(minimize.criterion,  10 * new.crit + 10,
+                                           -10 * new.crit - 10)
+
+    deriv.mu <- eval(family@deriv)
+    wz <- eval(family@weight)
+    if (control$checkwz)
+      wz <- checkwz(wz, M = M, trace = trace,
+                    wzepsilon = control$wzepsilon)
+
+    U <- vchol(wz, M = M, n = n, silent = !trace)
+    tvfor <- vforsub(U, as.matrix(deriv.mu), M = M, n = n)
+    z <- eta + vbacksub(U, tvfor, M = M, n = n) - offset
+
+    c.list <- list(wz = as.double(wz), z = as.double(z),
+                   fit = as.double(t(eta)),
+                   one.more = TRUE, U = as.double(U),
+                   coeff = as.double(rep(1, ncol(X.vlm.save))))
+
+
+    dX.vlm <- as.integer(dim(X.vlm.save))
+    nrow.X.vlm <- dX.vlm[[1]]
+    ncol.X.vlm <- dX.vlm[[2]]
+    if (nrow.X.vlm < ncol.X.vlm)
+      stop(ncol.X.vlm, " parameters but only ", nrow.X.vlm, " observations")
+
+
+    while (c.list$one.more) {
+      tfit <- eval(bf.call)  # fit$smooth.frame is new
+
+      c.list$coeff <- tfit$coefficients
+      tfit$predictors <- tfit$fitted.values + offset
+
+      c.list$fit <- tfit$fitted.values
+
+      if (!c.list$one.more) {
+        break
+      }
+
+
+
+
       fv <- c.list$fit
       new.coeffs <- c.list$coeff
 
@@ -106,142 +244,8 @@ vgam.fit <-
       c.list$one.more <- one.more
       c.list$coeff <- runif(length(new.coeffs))  # 20030312; twist needed!
       old.coeffs <- new.coeffs
-    }
-    c.list
-  })
 
-
-
-
-
-  old.coeffs <- coefstart
-
-  intercept.only <- ncol(x) == 1 && dimnames(x)[[2]] == "(Intercept)"
-  y.names <- predictors.names <- NULL  # May be overwritten in @initialize
-
-  n.save <- n
-  if (length(slot(family, "initialize")))
-    eval(slot(family, "initialize"))  # Initialize mu & M (& optionally w)
-
-  if (length(etastart)) {
-    eta <- etastart
-    mu <- if (length(mustart)) mustart else
-          if (length(body(slot(family, "linkinv"))))
-            slot(family, "linkinv")(eta, extra) else
-            warning("argument 'etastart' assigned a value ",
-                    "but there is no 'linkinv' slot to use it")
-  }
-
-  if (length(mustart)) {
-    mu <- mustart
-    if (length(body(slot(family, "linkfun")))) {
-      eta <- slot(family, "linkfun")(mu, extra)
-    } else {
-      warning("argument 'mustart' assigned a value ",
-              "but there is no 'link' slot to use it")
-    }
-  }
-
-  M <- if (is.matrix(eta)) ncol(eta) else 1
-
-
-  if (length(family@constraints))
-    eval(family@constraints)
-  Blist <- process.constraints(constraints, x, M, specialCM = specialCM)
-
-  ncolBlist <- unlist(lapply(Blist, ncol))
-  dimB <- sum(ncolBlist)
-
-
-    if (nonparametric) {
-
-
-      smooth.frame <- mf
-      assignx <- attr(x, "assign")
-      which <- assignx[smooth.labels]
-
-      bf <- "s.vam"
-      bf.call <- parse(text = paste(
-              "s.vam(x, z, wz, tfit$smomat, which, tfit$smooth.frame,",
-              "bf.maxit, bf.epsilon, trace, se = se.fit, X.vlm.save, ",
-              "Blist, ncolBlist, M = M, qbig = qbig, Umat = U, ",
-              "all.knots = control$all.knots, nk = control$nk)",
-              sep = ""))[[1]]
-
-      qbig <- sum(ncolBlist[smooth.labels])  # Number of component funs
-      smomat <- matrix(0, n, qbig)
-      dy <- if (is.matrix(y)) dimnames(y)[[1]] else names(y)
-      d2 <- if (is.null(predictors.names))
-              paste("(Additive predictor ",1:M,")", sep = "") else
-              predictors.names
-      dimnames(smomat) <- list(dy, vlabel(smooth.labels,
-                                          ncolBlist[smooth.labels], M))
-
-      tfit <- list(smomat = smomat, smooth.frame = smooth.frame)
-    } else {
-      bf.call <- expression(vlm.wfit(xmat = X.vlm.save, z,
-                                     Blist = NULL, U = U,
-                                     matrix.out = FALSE, is.vlmX = TRUE,
-                                     qr = qr.arg, xij = NULL))
-      bf <- "vlm.wfit"
-    }
-
-    X.vlm.save <- lm2vlm.model.matrix(x, Blist, xij = control$xij)
-
-
-    if (length(coefstart)) {
-      eta <- if (ncol(X.vlm.save) > 1) X.vlm.save %*% coefstart +
-               offset else X.vlm.save * coefstart + offset
-      eta <- if (M > 1) matrix(eta, ncol = M, byrow = TRUE) else c(eta)
-      mu <- family@linkinv(eta, extra)
-    }
-
-
-    if (criterion != "coefficients") {
-      tfun <- slot(family, criterion)  # Needed 4 R so have to follow suit
-    }
-
-    iter <- 1
-    new.crit <- switch(criterion,
-                       coefficients = 1,
-                       tfun(mu = mu, y = y, w = w, res = FALSE,
-                            eta = eta, extra))
-    old.crit <- ifelse(minimize.criterion,  10 * new.crit + 10,
-                                           -10 * new.crit - 10)
-
-    deriv.mu <- eval(family@deriv)
-    wz <- eval(family@weight)
-    if (control$checkwz)
-      wz <- checkwz(wz, M = M, trace = trace,
-                    wzepsilon = control$wzepsilon)
-
-    U <- vchol(wz, M = M, n = n, silent = !trace)
-    tvfor <- vforsub(U, as.matrix(deriv.mu), M = M, n = n)
-    z <- eta + vbacksub(U, tvfor, M = M, n = n) - offset
-
-    c.list <- list(wz = as.double(wz), z = as.double(z),
-                   fit = as.double(t(eta)),
-                   one.more = TRUE, U = as.double(U),
-                   coeff = as.double(rep(1, ncol(X.vlm.save))))
-
-
-    dX.vlm <- as.integer(dim(X.vlm.save))
-    nrow.X.vlm <- dX.vlm[[1]]
-    ncol.X.vlm <- dX.vlm[[2]]
-    if (nrow.X.vlm < ncol.X.vlm)
-      stop(ncol.X.vlm, " parameters but only ", nrow.X.vlm, " observations")
-
-    while (c.list$one.more) {
-      tfit <- eval(bf.call)  # fit$smooth.frame is new
-
-      c.list$coeff <- tfit$coefficients
-
-      tfit$predictors <- tfit$fitted.values + offset
-
-      c.list$fit <- tfit$fitted.values
-      c.list <- eval(new.s.call)
-      NULL
-    }
+    }  # End of while()
 
     if (maxit > 1 && iter >= maxit)
       warning("convergence not obtained in ", maxit, " iterations")
@@ -293,7 +297,7 @@ vgam.fit <-
     tfit$fitted.values <- NULL  # Have to kill it off  3/12/01
     fit <- structure(c(tfit,
            list(assign = asgn,
-                constraints = Blist,
+                constraints = Hlist,
                 control = control,
                 fitted.values = mu,
                 formula = as.vector(attr(Terms, "formula")),
@@ -325,7 +329,7 @@ vgam.fit <-
       dimnames(fit$predictors) <- list(yn, predictors.names)
     }
 
-    NewBlist <- process.constraints(constraints, x, M,
+    NewHlist <- process.constraints(constraints, x, M,
                                     specialCM = specialCM, by.col = FALSE)
 
     misc <- list(
@@ -337,7 +341,7 @@ vgam.fit <-
         predictors.names = predictors.names,
         M = M,
         n = n,
-        new.assign = new.assign(x, NewBlist),
+        new.assign = new.assign(x, NewHlist),
         nonparametric = nonparametric,
         nrow.X.vlm = nrow.X.vlm,
         orig.assign = attr(x, "assign"),
@@ -352,7 +356,7 @@ vgam.fit <-
 
 
     if (se.fit && length(fit$s.xargument)) {
-      misc$varassign <- varassign(Blist, names(fit$s.xargument))
+      misc$varassign <- varassign(Hlist, names(fit$s.xargument))
     }
 
 
@@ -404,7 +408,7 @@ vgam.fit <-
                                    smomat = fit$smomat,
                                    deriv = deriv.mu, U = U,
                                    smooth.labels, attr(x, "assign"),
-                                   M = M, n = n, constraints = Blist)
+                                   M = M, n = n, constraints = Hlist)
     }
 
 
@@ -434,9 +438,9 @@ vgam.fit <-
 
 
 
-new.assign <- function(X, Blist) {
+new.assign <- function(X, Hlist) {
 
-  M <- nrow(Blist[[1]])
+  M <- nrow(Hlist[[1]])
   dn <- labels(X)
   xn <- dn[[2]]
 
@@ -444,22 +448,22 @@ new.assign <- function(X, Blist) {
   nasgn <- names(asgn)
   lasgn <- unlist(lapply(asgn, length))
 
-  ncolBlist <- unlist(lapply(Blist, ncol))
-  names(ncolBlist) <- NULL  # This is necessary for below to work 
+  ncolHlist <- unlist(lapply(Hlist, ncol))
+  names(ncolHlist) <- NULL  # This is necessary for below to work 
 
-  temp2 <- vlabel(nasgn, ncolBlist, M)
+  temp2 <- vlabel(nasgn, ncolHlist, M)
   L <- length(temp2)
   newasgn <- vector("list", L)
 
   kk <- 0
   low <- 1
   for (ii in 1:length(asgn)) {
-    len  <- low:(low  + ncolBlist[ii] * lasgn[ii] -1)
-    temp <- matrix(len, ncolBlist[ii],  lasgn[ii])
-    for (mm in 1:ncolBlist[ii])
+    len  <- low:(low  + ncolHlist[ii] * lasgn[ii] -1)
+    temp <- matrix(len, ncolHlist[ii],  lasgn[ii])
+    for (mm in 1:ncolHlist[ii])
       newasgn[[kk + mm]] <- temp[mm, ]
-    low <- low + ncolBlist[ii] * lasgn[ii]
-    kk <- kk + ncolBlist[ii]
+    low <- low + ncolHlist[ii] * lasgn[ii]
+    kk <- kk + ncolHlist[ii]
   }
 
   names(newasgn) <- temp2

@@ -36,12 +36,16 @@ rzapois(n, lambda, pobs0 = 0)
   The probability function of \eqn{Y} is 0 with probability
   \code{pobs0}, else a positive \eqn{Poisson(\lambda)}{Poisson(lambda)}.
 
+
+
 }
 \value{
   \code{dzapois} gives the density,
   \code{pzapois} gives the distribution function,
   \code{qzapois} gives the quantile function, and
   \code{rzapois} generates random deviates.
+
+
 }
 %\references{ }
 \author{ T. W. Yee }

@@ -13,9 +13,9 @@
 \usage{
 dyules(x, rho, log = FALSE)
 pyules(q, rho)
-%qyules(p, rho)
 ryules(n, rho)
 }
+%qyules(p, rho)
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{x, q}{
@@ -44,8 +44,11 @@ ryules(n, rho)
 \value{
   \code{dyules} gives the density,
   \code{pyules} gives the distribution function, and
-% \code{qyules} gives the quantile function, and
   \code{ryules} generates random deviates.
+
+
+% \code{qyules} gives the quantile function, and
+
 
 }
 %\references{ 

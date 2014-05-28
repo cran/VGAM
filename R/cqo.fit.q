@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2013 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2014 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -23,7 +23,7 @@ callcqoc <- function(cmatrix, etamat, xmat, ymat, wvec,
   NOS <- ifelse(modelno %in% c(3, 5), M/2, M)
   lenbeta <- pstar * ifelse(nice31, NOS, 1)
 
-  if (itol <- control$ITolerances) {
+  if (I.tol <- control$I.tolerances) {
     if (Rank > 1) {
       numat <- xmat[, control$colx2.index, drop = FALSE] %*% cmatrix
       evnu <- eigen(var(numat))
@@ -66,23 +66,22 @@ callcqoc <- function(cmatrix, etamat, xmat, ymat, wvec,
   usethisbeta <- if (inited == 2) 
     getfromVGAMenv("beta", prefix = ".VGAM.CQO.") else double(lenbeta)
 
-  othint <- c(Rank = Rank, control$EqualTol, pstar = pstar,
+  othint <- c(Rank = Rank, control$eq.tol, pstar = pstar,
               dimw = 1, inited = inited, modelno = modelno,
               maxitl = control$maxitl, actnits = 0, twice = 0,
               p1star = p1star, p2star = p2star, nice31 = nice31,
-              lenbeta = lenbeta, itol = itol, control$trace,
+              lenbeta = lenbeta, I.tol = I.tol, control$trace,
               p1 = p1, p2 = p2, control$imethod)
   bnumat <- if (nice31) matrix(0,nstar,pstar) else
             cbind(matrix(0, nstar, p2star), X.vlm.1save)
 
  
 
-  ans1 <- if (nice31)
-  .C("cqo_1",
+  ans1 <- if (nice31) .C("cqo_1",
      numat = as.double(numat), as.double(ymat), 
-     as.double(if (p1) xmat[,control$colx1.index] else 999),
+     as.double(if (p1) xmat[, control$colx1.index] else 999),
      as.double(wvec), etamat = as.double(usethiseta),
-     moff = double(if (itol) n else 1),
+     moff = double(if (I.tol) n else 1),
      fv = double(NOS*n), z = double(n*M), wz = double(n*M),
      U = double(M*n), bnumat = as.double(bnumat),
      qr = double(nstar*pstar), qraux = double(pstar),
@@ -94,12 +93,12 @@ callcqoc <- function(cmatrix, etamat, xmat, ymat, wvec,
          othdbl = as.double(c(small = control$SmallNo,
                 epsilon = control$epsilon, .Machine$double.eps,
                 iKvector = rep(control$iKvector, len = NOS),
-                iShape = rep(control$iShape, len = NOS))), PACKAGE = "VGAM") else
+                iShape = rep(control$iShape, len = NOS)))) else
   .C("cqo_2",
      numat = as.double(numat), as.double(ymat), 
-     as.double(if (p1) xmat[,control$colx1.index] else 999),
+     as.double(if (p1) xmat[, control$colx1.index] else 999),
      as.double(wvec), etamat = as.double(usethiseta),
-     moff = double(if (itol) n else 1),
+     moff = double(if (I.tol) n else 1),
      fv = double(NOS*n), z = double(n*M), wz = double(n*M),
      U = double(M*n), bnumat = as.double(bnumat),
      qr = double(nstar*pstar), qraux = double(pstar),
@@ -111,7 +110,7 @@ callcqoc <- function(cmatrix, etamat, xmat, ymat, wvec,
          othdbl = as.double(c(small = control$SmallNo,
                 epsilon = control$epsilon, .Machine$double.eps,
                 iKvector = rep(control$iKvector, len = NOS),
-                iShape = rep(control$iShape, len = NOS))), PACKAGE = "VGAM")
+                iShape = rep(control$iShape, len = NOS))))
 
 
 
@@ -142,6 +141,7 @@ callcqoc <- function(cmatrix, etamat, xmat, ymat, wvec,
 
 
 
+
 calldcqo <- function(cmatrix, etamat, xmat, ymat, wvec,
                      X.vlm.1save, modelno, Control,
                      n, M, p1star, p2star, nice31, allofit = FALSE) {
@@ -159,7 +159,7 @@ calldcqo <- function(cmatrix, etamat, xmat, ymat, wvec,
   NOS <- ifelse(modelno == 3 || modelno == 5, M/2, M)
   lenbeta <- pstar * ifelse(nice31, NOS, 1)
 
-  if (itol <- control$ITolerances) {
+  if (I.tol <- control$I.tolerances) {
     if (Rank > 1) {
       numat <- xmat[, control$colx2.index, drop=FALSE] %*% cmatrix
       evnu <- eigen(var(numat))
@@ -203,11 +203,11 @@ calldcqo <- function(cmatrix, etamat, xmat, ymat, wvec,
     usethisbeta <- if (inited == 2) 
       getfromVGAMenv("beta", prefix = ".VGAM.CQO.") else double(lenbeta)
 
-    othint <- c(Rank, control$EqualTol, pstar, dimw = 1, inited = inited,
+    othint <- c(Rank, control$eq.tol, pstar, dimw = 1, inited = inited,
                 modelno, maxitl = control$maxitl, actnits = 0, twice = 0,
                 p1star = p1star, p2star = p2star,
                 nice31 = nice31, lenbeta,
-                itol = itol, control$trace,
+                I.tol = I.tol, control$trace,
                 p1, p2, control$imethod)  # other ints
     bnumat <- if (nice31) matrix(0,nstar,pstar) else
              cbind(matrix(0,nstar,p2star), X.vlm.1save)
@@ -218,7 +218,7 @@ calldcqo <- function(cmatrix, etamat, xmat, ymat, wvec,
        numat = as.double(numat), as.double(ymat), 
        as.double(if (p1) xmat[,control$colx1.index] else 999),
        as.double(wvec), etamat = as.double(usethiseta),
-           moff = double(if (itol) n else 1),
+           moff = double(if (I.tol) n else 1),
            fv = double(NOS*n), z = double(n*M), wz = double(n*M),
            U = double(M*n), bnumat = as.double(bnumat),
        qr = double(nstar * pstar), qraux = double(pstar),
@@ -234,7 +234,7 @@ calldcqo <- function(cmatrix, etamat, xmat, ymat, wvec,
        xmat2 = as.double(xmat2),
            cmat = as.double(cmatrix),
        p2 = as.integer(p2), deriv = double(p2*Rank),
-           hstep = as.double(control$Hstep), PACKAGE = "VGAM")
+           hstep = as.double(control$Hstep))
 
     if (ans1$errcode[1] != 0) {
       warning("error code in calldcqo = ", ans1$errcode[1])
@@ -245,45 +245,46 @@ calldcqo <- function(cmatrix, etamat, xmat, ymat, wvec,
 }
 
 
-checkCMCO <- function(Blist, control, modelno) {
+
+checkCMCO <- function(Hlist, control, modelno) {
 
   p1 <- length(colx1.index <- control$colx1.index)
   p2 <- length(colx2.index <- control$colx2.index)
-  if (p1 + p2 != length(Blist))
-    stop("'Blist' is the wrong length")
+  if (p1 + p2 != length(Hlist))
+    stop("'Hlist' is the wrong length")
   if (p1 == 0 || p2 == 0)
     stop("Some variables are needed in noRRR and non-noRRR arguments")
   if (all(names(colx1.index) != "(Intercept)"))
     stop("an intercept term must be in the argument 'noRRR' formula")
-  Blist1 <- vector("list", p1) 
-  Blist2 <- vector("list", p2)
+  Hlist1 <- vector("list", p1) 
+  Hlist2 <- vector("list", p2)
   for (kk in 1:p1)
-    Blist1[[kk]] <- Blist[[(colx1.index[kk])]]
+    Hlist1[[kk]] <- Hlist[[(colx1.index[kk])]]
   for (kk in 1:p2)
-    Blist2[[kk]] <- Blist[[(colx2.index[kk])]]
+    Hlist2[[kk]] <- Hlist[[(colx2.index[kk])]]
 
   if (modelno == 3 || modelno == 5) {
     if (p1 > 1)
       for (kk in 2:p1)
-        Blist1[[kk]] <- (Blist1[[kk]])[c(TRUE,FALSE),,drop = FALSE]
+        Hlist1[[kk]] <- (Hlist1[[kk]])[c(TRUE,FALSE),,drop = FALSE]
     for (kk in 1:p2)
-      Blist2[[kk]] <- (Blist2[[kk]])[c(TRUE,FALSE),,drop = FALSE]
+      Hlist2[[kk]] <- (Hlist2[[kk]])[c(TRUE,FALSE),,drop = FALSE]
   }
 
-  if (!all(trivial.constraints(Blist2) == 1))
+  if (!all(trivial.constraints(Hlist2) == 1))
       stop("the constraint matrices for the non-noRRR terms ",
            "are not trivial")
-    if (!trivial.constraints(Blist1[[1]]))
+    if (!trivial.constraints(Hlist1[[1]]))
         stop("the constraint matrices for intercept term is ",
              "not trivial")
     if (p1 > 1)
-        for (kk in 2:p1)
-            if (!trivial.constraints(list(Blist1[[kk]])))
-                stop("the constraint matrices for some 'noRRR' ",
-                     "terms is not trivial")
+      for (kk in 2:p1)
+        if (!trivial.constraints(list(Hlist1[[kk]])))
+          stop("the constraint matrices for some 'noRRR' ",
+               "terms is not trivial")
             
   nice31 <- if (control$Quadratic)
-              (!control$EqualTol || control$ITolerances) else TRUE
+              (!control$eq.tol || control$I.tolerances) else TRUE
   as.numeric(nice31)
 }
 
@@ -320,6 +321,7 @@ cqo.fit <- function(x, y, w = rep(1, length(x[, 1])),
   trace <- control$trace
   orig.stepsize <- control$stepsize
 
+ny <- names(y)
 
   n <- dim(x)[1]
 
@@ -439,11 +441,11 @@ cqo.fit <- function(x, y, w = rep(1, length(x[, 1])),
               }
           }
 
-    if (rrcontrol$ITolerances) {
+    if (rrcontrol$I.tolerances) {
       latvarmat <- x[, rrcontrol$colx2.index, drop = FALSE] %*% Cmat
       latvarmatmeans <- t(latvarmat) %*% matrix(1/n, n, 1)
       if (!all(abs(latvarmatmeans) < 4))
-        warning("ITolerances = TRUE but the variables making up the ",
+        warning("I.tolerances = TRUE but the variables making up the ",
                 "latent variable(s) do not appear to be centered.")
     }
     if (modelno %in% c(3, 5))
@@ -455,23 +457,23 @@ cqo.fit <- function(x, y, w = rep(1, length(x[, 1])),
     rrcontrol$Ainit <- control$Ainit <- Amat  # Good for valt()
     rrcontrol$Cinit <- control$Cinit <- Cmat  # Good for valt()
 
-    Blist <- process.constraints(constraints, x, M, specialCM = specialCM)
-    nice31 <- checkCMCO(Blist, control = control, modelno = modelno)
-    ncolBlist <- unlist(lapply(Blist, ncol))
-    dimB <- sum(ncolBlist)
+    Hlist <- process.constraints(constraints, x, M, specialCM = specialCM)
+    nice31 <- checkCMCO(Hlist, control = control, modelno = modelno)
+    ncolHlist <- unlist(lapply(Hlist, ncol))
+    dimB <- sum(ncolHlist)
 
     X.vlm.save <- if (nice31) {
       NULL 
     } else {
-      tmp500 <- lm2qrrvlm.model.matrix(x = x, Blist = Blist,
+      tmp500 <- lm2qrrvlm.model.matrix(x = x, Hlist = Hlist,
                                        C = Cmat, control = control)
       xsmall.qrr <- tmp500$new.latvar.model.matrix 
-      B.list <- tmp500$constraints
+      H.list <- tmp500$constraints
       latvar.mat <- tmp500$latvar.mat
       if (length(tmp500$offset)) {
         offset <- tmp500$offset 
       }
-      lm2vlm.model.matrix(xsmall.qrr, B.list, xij = control$xij)
+      lm2vlm.model.matrix(xsmall.qrr, H.list, xij = control$xij)
     }
 
     if (length(coefstart) && length(X.vlm.save)) {
@@ -498,7 +500,7 @@ cqo.fit <- function(x, y, w = rep(1, length(x[, 1])),
 
     asgn <- attr(x, "assign")
     coefs <- getfromVGAMenv("beta", prefix = ".VGAM.CQO.")
-    if (control$ITolerances) {
+    if (control$I.tolerances) {
       if (NOS == M) {
         coefs <- c(t(matrix(coefs, ncol = M)))  # Get into right order
       } else {
@@ -533,7 +535,7 @@ cqo.fit <- function(x, y, w = rep(1, length(x[, 1])),
     df.residual <- 55 - 8 - Rank*p2
     fit <- list(assign = asgn,
                 coefficients = coefs,
-                constraints = Blist,
+                constraints = Hlist,
                 df.residual = df.residual,
                 df.total = n*M,
                 fitted.values = mu,
@@ -659,7 +661,7 @@ cqo.fit <- function(x, y, w = rep(1, length(x[, 1])),
   if (length(X2)) {
     alt <- valt(x = cbind(X1, X2), z = etamat,
                 U = sqrt(t(wts)), Rank = effrank,
-                Blist = NULL, Cinit = NULL, trace = FALSE,
+                Hlist = NULL, Cinit = NULL, trace = FALSE,
                 colx1.index = 1:ncol(X1), Criterion = "res.ss")
     temp.control <- list(Rank = effrank, colx1.index = 1:ncol(X1),
                          Alpha = 0.5,
@@ -685,7 +687,7 @@ cqo.fit <- function(x, y, w = rep(1, length(x[, 1])),
   } else {
     xij <- NULL # temporary measure
     U <- t(sqrt(wts))
-    tmp <- vlm.wfit(xmat = X1, zmat = etamat, Blist = NULL, U = U,
+    tmp <- vlm.wfit(xmat = X1, zmat = etamat, Hlist = NULL, U = U,
                     matrix.out = TRUE,
                     is.vlmX = FALSE, res.ss = TRUE, qr = FALSE, xij = xij)
     ans <- crow1C(as.matrix(tmp$resid),
@@ -736,7 +738,7 @@ cqo.init.derivative.expression <- expression({
     constraints <- replace.constraints(constraints, diag(M),
                                        rrcontrol$colx2.index)
 
-    nice31 <- (!control$EqualTol || control$ITolerances) &&
+    nice31 <- (!control$eq.tol || control$I.tolerances) &&
                all(trivial.constraints(constraints) == 1)
   }
 
@@ -747,8 +749,8 @@ cqo.init.derivative.expression <- expression({
     stop("cannot fit this model using fast algorithm")
 
   p2star <- if (nice31) 
-    ifelse(control$IToleran, Rank, Rank + Rank*(Rank+1)/2) else
-    (NOS*Rank + Rank*(Rank+1)/2 * ifelse(control$EqualTol, 1, NOS))
+    ifelse(control$I.toleran, Rank, Rank + Rank*(Rank+1)/2) else
+    (NOS*Rank + Rank*(Rank+1)/2 * ifelse(control$eq.tol, 1, NOS))
 
   p1star <- if (nice31) ifelse(modelno %in% c(3, 5), 1+p1, p1) else
             (ncol(X.vlm.save) - p2star)
@@ -788,7 +790,7 @@ cqo.derivative.expression <- expression({
     warning("solution does not correspond to .VGAM.CQO.cmatrix")
   }
 
-  alt <- valt.1iter(x = x, z = z, U = U, Blist = Blist,
+  alt <- valt.1iter(x = x, z = z, U = U, Hlist = Hlist,
                     C = Cmat, nice31 = nice31,
                     control = rrcontrol, lp.names = predictors.names,
                     MSratio = M / NOS)
@@ -837,7 +839,7 @@ cqo.end.expression <- expression({
     extra$Dmat <- Dmat     # Not the latest iteration
     extra$B1   <- B1.save  # Not the latest iteration (not good)
   } else {
-    Blist <- replace.constraints(Blist.save, Amat, colx2.index)
+    Hlist <- replace.constraints(Hlist.save, Amat, colx2.index)
   }
 
 

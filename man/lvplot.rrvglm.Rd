@@ -162,10 +162,11 @@ nn <- nrow(pneumo)  # x1, x2 and x3 are some unrelated covariates
 pneumo <- transform(pneumo, slet = scale(log(exposure.time)),
                               x1 = rnorm(nn), x2 = rnorm(nn), x3 = rnorm(nn))
 fit <- rrvglm(cbind(normal, mild, severe) ~ slet + x1 + x2 + x3,
-              multinomial, pneumo, Rank=2, Corner=FALSE, Uncorrel=TRUE)
+              multinomial, data = pneumo, Rank = 2,
+              Corner = FALSE, Uncorrel = TRUE)
 \dontrun{
-lvplot(fit, chull = TRUE, scores = TRUE, clty = 2, ccol = "blue", scol = "red",
-       Ccol = "darkgreen", Clwd = 2, Ccex = 2,
+lvplot(fit, chull = TRUE, scores = TRUE, clty = 2, ccol = "blue",
+       scol = "red", Ccol = "darkgreen", Clwd = 2, Ccex = 2,
        main = "Biplot of some fictitional data") }
 }
 \keyword{models}

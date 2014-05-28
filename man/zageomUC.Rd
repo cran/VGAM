@@ -63,6 +63,7 @@ rzageom(n, prob, pobs0 = 0)
     \code{\link{zigeometric}},
     \code{\link{rposgeom}}.
 
+
 }
 \examples{
 prob <- 0.35; pobs0 <- 0.05; x <- (-1):7

@@ -8,7 +8,7 @@
 }
 \usage{
 micmen(rpar = 0.001, divisor = 10, init1 = NULL, init2 = NULL,
-       imethod = 1, oim = TRUE,    link1 = "identity", link2 = "identity",
+       imethod = 1, oim = TRUE,    link1 = "identitylink", link2 = "identitylink",
        firstDeriv = c("nsimEIM", "rpar"), probs.x = c(0.15, 0.85),
        nsimEIM = 500, dispersion = 0, zero = NULL)
 }
@@ -137,7 +137,10 @@ micmen(rpar = 0.001, divisor = 10, init1 = NULL, init2 = NULL,
 
 \seealso{
   \code{\link{enzyme}}.
+
+
 % \code{skira}.
+
 
 }
 \section{Warning }{

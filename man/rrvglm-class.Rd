@@ -262,7 +262,7 @@ Vector generalized additive models.
 pneumo <- transform(pneumo, let = log(exposure.time),
                             x3  = runif(nrow(pneumo)))  # x3 is unrelated
 fit <- rrvglm(cbind(normal, mild, severe) ~ let + x3,
-              multinomial, pneumo, Rank = 1)
+              multinomial, data = pneumo, Rank = 1)
 Coef(fit)
 }
 }

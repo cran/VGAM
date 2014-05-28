@@ -104,13 +104,14 @@ Hoboken, NJ, USA: Wiley-Interscience.
     \code{\link{fisk}},
     \code{\link{invlomax}},
     \code{\link{paralogistic}},
-    \code{\link{invparalogistic}}.
+    \code{\link{invparalogistic}},
+    \code{\link{simulate.vlm}}.
 
 }
 
 \examples{
 ldata <- data.frame(y = rlomax(n = 1000, scale =  exp(1), exp(2)))
-fit <- vglm(y ~ 1, lomax, ldata, trace = TRUE)
+fit <- vglm(y ~ 1, lomax, data = ldata, trace = TRUE)
 coef(fit, matrix = TRUE)
 Coef(fit)
 summary(fit)

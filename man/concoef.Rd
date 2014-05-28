@@ -73,11 +73,11 @@ Constrained additive ordination.
   scaling of the latent variables (site scores) and the tolerances.
   One normalization is for the latent variables to have unit variance.
   Another normalization is for all the species' tolerances to be
-  unit (provided \code{EqualTolerances} is \code{TRUE}).  These two
+  unit (provided \code{eq.tolerances} is \code{TRUE}).  These two
   normalizations cannot simultaneously hold in general.  For rank
   \eqn{R} models with \eqn{R>1} it becomes more complicated because
   the latent variables are also uncorrelated. An important argument when
-  fitting quadratic ordination models is whether \code{EqualTolerances}
+  fitting quadratic ordination models is whether \code{eq.tolerances}
   is \code{TRUE} or \code{FALSE}.  See Yee (2004) for details.
 
 

@@ -30,6 +30,9 @@ The new CLO/CQO/CAO nomenclature described in Yee (2006).
 }
 \value{
   Nothing is returned; an error message is issued.
+
+
+
 }
 \references{ 
 

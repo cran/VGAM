@@ -103,8 +103,8 @@ cloglog(p, bvalue = .Machine$double.eps)  # Has no NAs
 
 \dontrun{
 p <- seq(0.01, 0.99, by = 0.01)
-plot(p, logit(p), type = "l", col = "limegreen", ylab = "transformation",
-     lwd = 2, las = 1, main = "Some probability link functions")
+plot(p, logit(p), type = "l", col = "limegreen", lwd = 2, las = 1,
+     main = "Some probability link functions", ylab = "transformation")
 lines(p, probit(p), col = "purple", lwd = 2)
 lines(p, cloglog(p), col = "chocolate", lwd = 2)
 lines(p, cauchit(p), col = "tan", lwd = 2)
@@ -117,14 +117,15 @@ legend(0.1, 4, c("logit", "probit", "cloglog", "cauchit"),
 # This example shows that a cloglog link is preferred over the logit
 n <- 500; p <- 5; S <- 3; Rank <- 1  # Species packing model:
 mydata <- rcqo(n, p, S, eq.tol = TRUE, es.opt = TRUE, eq.max = TRUE,
-               family = "binomial", hi.abundance = 5, seed = 123, Rank = Rank)
-fitc <- cqo(attr(mydata, "formula"), ITol = TRUE, data = mydata,
+               family = "binomial", hi.abundance = 5, seed = 123,
+               Rank = Rank)
+fitc <- cqo(attr(mydata, "formula"), I.tol = TRUE, data = mydata,
             fam = binomialff(mv = TRUE, link = "cloglog"), Rank = Rank)
-fitl <- cqo(attr(mydata, "formula"), ITol = TRUE, data = mydata,
+fitl <- cqo(attr(mydata, "formula"), I.tol = TRUE, data = mydata,
             fam = binomialff(mv = TRUE, link = "logit"), Rank = Rank)
 
 # Compare the fitted models (cols 1 and 3) with the truth (col 2)
-cbind(concoef(fitc), attr(mydata, "ccoefficients"), concoef(fitl))
+cbind(concoef(fitc), attr(mydata, "concoefficients"), concoef(fitl))
 }
 }
 \keyword{math}

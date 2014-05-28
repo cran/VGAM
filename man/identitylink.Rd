@@ -1,5 +1,5 @@
-\name{identity}
-\alias{identity}
+\name{identitylink}
+\alias{identitylink}
 \alias{negidentity}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Identity Link Function }
@@ -9,8 +9,8 @@
 
 }
 \usage{
-   identity(theta, inverse = FALSE, deriv = 0, short = TRUE, tag = FALSE)
-negidentity(theta, inverse = FALSE, deriv = 0, short = TRUE, tag = FALSE)
+identitylink(theta, inverse = FALSE, deriv = 0, short = TRUE, tag = FALSE)
+ negidentity(theta, inverse = FALSE, deriv = 0, short = TRUE, tag = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -47,7 +47,7 @@ negidentity(theta, inverse = FALSE, deriv = 0, short = TRUE, tag = FALSE)
 
 }
 \value{
-  For \code{identity()}:
+  For \code{identitylink()}:
   for \code{deriv = 0}, the identity of \code{theta}, i.e.,
   \code{theta} when \code{inverse = FALSE},
   and if \code{inverse = TRUE} then \code{theta}.
@@ -57,7 +57,7 @@ negidentity(theta, inverse = FALSE, deriv = 0, short = TRUE, tag = FALSE)
   else if \code{inverse = TRUE} then it returns the reciprocal.
 
 
-  For \code{negidentity()}: the results are similar to \code{identity()}
+  For \code{negidentity()}: the results are similar to \code{identitylink()}
   except for a sign change in most cases.
 
 
@@ -80,9 +80,9 @@ negidentity(theta, inverse = FALSE, deriv = 0, short = TRUE, tag = FALSE)
 
 }
 \examples{
-identity((-5):5) 
-identity((-5):5, deriv = 1)
-identity((-5):5, deriv = 2)
+identitylink((-5):5) 
+identitylink((-5):5, deriv = 1)
+identitylink((-5):5, deriv = 2)
 negidentity((-5):5) 
 negidentity((-5):5, deriv = 1)
 negidentity((-5):5, deriv = 2)

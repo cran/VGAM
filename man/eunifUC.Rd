@@ -108,6 +108,8 @@ very close to 0 or 1.
   the expectile \eqn{y} such that \eqn{G(y) = p}.
   \code{reunif(n)} gives \eqn{n} random variates from \eqn{G}.
 
+
+
 }
 \references{ 
 

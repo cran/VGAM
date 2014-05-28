@@ -238,18 +238,18 @@ fit3 <- rcim(Qvar(cbind(0, rbind(0, vcov(Shipmodel)[2:5, 2:5])),
 
 
 # Example 2: a model with M > 1 linear predictors
-\dontrun{ require(VGAMdata)
+\dontrun{ require("VGAMdata")
 xs.nz.f <- subset(xs.nz, sex == "F")
 xs.nz.f <- subset(xs.nz.f, !is.na(babies)  & !is.na(age) & !is.na(ethnic))
 xs.nz.f$babies <- as.numeric(as.character(xs.nz.f$babies))
 xs.nz.f <- subset(xs.nz.f, babies >=  0)
 xs.nz.f <- subset(xs.nz.f, as.numeric(as.character(ethnic)) <=  2)
 
-clist <- list("bs(age, df = 4)" = rbind(1, 0),
-              "bs(age, df = 3)" = rbind(0, 1),
+clist <- list("sm.bs(age, df = 4)" = rbind(1, 0),
+              "sm.bs(age, df = 3)" = rbind(0, 1),
               "ethnic" = diag(2),
               "(Intercept)" = diag(2))
-fit1 <- vglm(babies ~ bs(age, df = 4) + bs(age, df = 3) + ethnic,
+fit1 <- vglm(babies ~ sm.bs(age, df = 4) + sm.bs(age, df = 3) + ethnic,
             zipoissonff(zero = NULL), xs.nz.f,
             constraints = clist, trace = TRUE)
 Fit1 <- rcim(Qvar(fit1, "ethnic", which.linpred = 1),

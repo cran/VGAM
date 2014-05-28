@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2013 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2014 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -156,7 +156,7 @@
   blurb = c("AA-Aa-aa phenotype (without Hardy-Weinberg assumption)\n\n",
             "Links:    ",
             namesof("pA", link, earg = earg), ", ", 
-            namesof("f",  "identity", tag = FALSE)),
+            namesof("f",  "identitylink", tag = FALSE)),
   deviance = Deviance.categorical.data.vgam,
   initialize = eval(substitute(expression({
     mustart.orig <- mustart
@@ -177,7 +177,7 @@
 
     predictors.names <-
         c(namesof("pA", .link , earg = .earg , tag = FALSE),
-          namesof("f",  "identity", earg = list(), tag = FALSE))
+          namesof("f",  "identitylink", earg = list(), tag = FALSE))
 
     if (is.null(etastart)) {
       pA <- if (is.numeric( .ipA )) rep( .ipA , len = n) else
@@ -187,21 +187,21 @@
       if (any(pA <= 0) || any(pA >= 1))
         stop("bad initial value for 'pA'")
       etastart <- cbind(theta2eta(pA, .link , earg = .earg ),
-                        theta2eta(f,  "identity"))
+                        theta2eta(f,  "identitylink"))
       mustart <- NULL  # Since etastart has been computed.
     }
   }), list( .link = link, .ipA = ipA, .iF = iF, .earg = earg))),
 
   linkinv = eval(substitute(function(eta, extra = NULL) {
     pA <- eta2theta(eta[, 1], link = .link , earg = .earg )
-    f  <- eta2theta(eta[, 2], link = "identity", earg = list())
+    f  <- eta2theta(eta[, 2], link = "identitylink", earg = list())
     cbind(AA = pA^2+pA*(1-pA)*f,
           Aa = 2*pA*(1-pA)*(1-f),
           aa = (1-pA)^2 + pA*(1-pA)*f)
   }, list( .link = link, .earg = earg))),
 
   last = eval(substitute(expression({
-    misc$link <-    c(pA = .link , f = "identity")
+    misc$link <-    c(pA = .link , f = "identitylink")
 
     misc$earg <- list(pA = .earg , f = list() )
 
@@ -218,7 +218,7 @@
   vfamily = c("AAaa.nohw", "vgenetic"),
   deriv = eval(substitute(expression({
     pA <- eta2theta(eta[, 1], link = .link , earg = .earg )
-    f  <- eta2theta(eta[, 2], link = "identity")
+    f  <- eta2theta(eta[, 2], link = "identitylink")
     dP1 <- cbind(f + 2*pA*(1-f),
                  2*(1-f)*(1-2*pA),
                  -2*(1-pA) +f*(1-2*pA))
@@ -236,7 +236,7 @@
   weight = eval(substitute(expression({
     dPP <- array(c(dP1, dP2), c(n, 3, 2))
     dPP.deta <- cbind(dtheta.deta(pA, link = .link , earg = .earg ),
-                      dtheta.deta(f,  link = "identity"))
+                      dtheta.deta(f,  link = "identitylink"))
     wz <- matrix(as.numeric(NA), n, dimm(M))  # dimm(M)==3 because M==2
     for (i1 in 1:M)
       for (i2 in i1:M) {

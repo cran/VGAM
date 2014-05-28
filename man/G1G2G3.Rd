@@ -75,7 +75,7 @@ ymat <- cbind(108, 196, 429, 143, 513, 559)
 fit <- vglm(ymat ~ 1, G1G2G3(link = probit), trace = TRUE, crit = "coef")
 fit <- vglm(ymat ~ 1, G1G2G3(link = logit, ip1 = 0.3, ip2 = 0.3, iF = 0.02),
            trace = TRUE, crit = "coef")
-fit <- vglm(ymat ~ 1, G1G2G3(link = "identity"), trace = TRUE)
+fit <- vglm(ymat ~ 1, G1G2G3(link = "identitylink"), trace = TRUE)
 Coef(fit)  # Estimated p1, p2 and f
 rbind(ymat, sum(ymat)*fitted(fit))
 sqrt(diag(vcov(fit)))

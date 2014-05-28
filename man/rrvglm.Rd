@@ -123,6 +123,7 @@ rrvglm(formula, family, data = list(), weights = NULL, subset = NULL,
   same internally. The slots of \code{"vglm"} objects are
   described in \code{\link{vglm-class}}.
 
+
 }
 \references{
 
@@ -236,17 +237,19 @@ Regression and ordered categorical variables.
 
 \examples{
 \dontrun{
-# Example 1: RR negative binomial (RR-NB) with Var(Y) = mu + delta1 * mu^delta2
+# Example 1: RR negative binomial with Var(Y) = mu + delta1 * mu^delta2
 nn <- 1000       # Number of observations
 delta1 <- 3.0    # Specify this
 delta2 <- 1.5    # Specify this; should be greater than unity
 a21 <- 2 - delta2
 mydata <- data.frame(x2 = runif(nn), x3 = runif(nn))
 mydata <- transform(mydata, mu = exp(2 + 3 * x2 + 0 * x3))
-mydata <- transform(mydata, y2 = rnbinom(nn, mu=mu, size=(1/delta1)*mu^a21))
+mydata <- transform(mydata,
+                    y2 = rnbinom(nn, mu = mu, size = (1/delta1)*mu^a21))
 plot(y2 ~ x2, data = mydata, pch = "+", col = 'blue', las = 1,
      main = paste("Var(Y) = mu + ", delta1, " * mu^", delta2, sep = ""))
-rrnb2 <- rrvglm(y2 ~ x2 + x3, negbinomial(zero = NULL), mydata, trace = TRUE)
+rrnb2 <- rrvglm(y2 ~ x2 + x3, negbinomial(zero = NULL),
+                data = mydata, trace = TRUE)
 
 a21.hat <- (Coef(rrnb2)@A)["log(size)", 1]
 beta11.hat <- Coef(rrnb2)@B1["(Intercept)", "log(mu)"]
@@ -267,7 +270,7 @@ Confint.rrnb(rrnb2)  # Quick way to get it
 plot(y2 ~ latvar(rrnb2), data = mydata, col = "blue",
      xlab = "Latent variable", las = 1) 
 ooo <- order(latvar(rrnb2))
-lines(fitted(rrnb2)[ooo] ~ latvar(rrnb2)[ooo], col = "red")
+lines(fitted(rrnb2)[ooo] ~ latvar(rrnb2)[ooo], col = "orange")
 
 # Example 2: stereotype model (reduced-rank multinomial logit model)
 data(car.all)
@@ -275,14 +278,15 @@ index <- with(car.all, Country == "Germany" | Country == "USA" |
                        Country == "Japan"   | Country == "Korea")
 scar <- car.all[index, ]  # standardized car data
 fcols <- c(13,14,18:20,22:26,29:31,33,34,36)  # These are factors
-scar[,-fcols] = scale(scar[, -fcols])  # Standardize all numerical vars
+scar[, -fcols] <- scale(scar[, -fcols])  # Standardize all numerical vars
 ones <- matrix(1, 3, 1)
 clist <- list("(Intercept)" = diag(3), Width = ones, Weight = ones,
               Disp. = diag(3), Tank = diag(3), Price = diag(3),
               Frt.Leg.Room = diag(3))
 set.seed(111)
-fit <- rrvglm(Country ~ Width + Weight + Disp. + Tank + Price + Frt.Leg.Room,
-              multinomial, data =  scar, Rank = 2, trace = TRUE,
+fit <- rrvglm(Country ~ Width + Weight + Disp. + Tank +
+              Price + Frt.Leg.Room,
+              multinomial, data = scar, Rank = 2, trace = TRUE,
               constraints = clist, noRRR = ~ 1 + Width + Weight,
               Uncor = TRUE, Corner = FALSE, Bestof = 2)
 fit@misc$deviance  # A history of the fits

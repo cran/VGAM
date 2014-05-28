@@ -88,8 +88,11 @@ Log-Laplace distributions.
 \seealso{
   \code{\link{dalap}},
   \code{\link{alaplace3}},
-% \code{\link{loglaplace3}}.
   \code{\link{loglaplace1}}.
+
+
+% \code{\link{loglaplace3}}.
+
 
 
 }

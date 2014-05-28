@@ -102,8 +102,10 @@ canonical Gaussian ordination.
 \seealso{ 
     \code{\link{Coef.qrrvglm}},
     \code{\link{cqo}},
-% \code{qrrvglm-class},
     \code{print.Coef.qrrvglm}.
+
+
+% \code{qrrvglm-class},
 
 
 }

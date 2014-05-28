@@ -162,7 +162,7 @@ Hoboken, NJ, USA: Wiley-Interscience.
 set.seed(123)
 fdata <- data.frame(y1 = rfrechet(nn <- 1000, shape = 2 + exp(1)))
 with(fdata, hist(y1))
-fit2 <- vglm(y1 ~ 1, frechet2, fdata, trace = TRUE)
+fit2 <- vglm(y1 ~ 1, frechet2, data = fdata, trace = TRUE)
 coef(fit2, matrix = TRUE)
 Coef(fit2)
 head(fitted(fit2))

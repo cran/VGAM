@@ -9,10 +9,10 @@
 
 }
 \usage{
-gumbel(llocation = "identity", lscale = "loge",
+gumbel(llocation = "identitylink", lscale = "loge",
        iscale = NULL, R = NA, percentiles = c(95, 99),
        mpv = FALSE, zero = NULL)
-egumbel(llocation = "identity", lscale = "loge",
+egumbel(llocation = "identitylink", lscale = "loge",
         iscale = NULL, R = NA, percentiles = c(95, 99),
         mpv = FALSE, zero = NULL)
 }
@@ -71,6 +71,9 @@ egumbel(llocation = "identity", lscale = "loge",
   be from the set \{1, 2\} corresponding respectively to \eqn{\mu}{mu}
   and \eqn{\sigma}{sigma}.  By default all linear/additive predictors
   are modelled as a linear combination of the explanatory variables.
+  See \code{\link{CommonVGAMffArguments}} for more details.
+
+  
 
   }
 }
@@ -88,10 +91,10 @@ egumbel(llocation = "identity", lscale = "loge",
   The MPV is the value of the response such that the probability
   of obtaining a value greater than the MPV is 0.5 out of
   \eqn{R} observations.
-  For  the Venice data, the MPV is the sea level such that there
+  For the Venice data, the MPV is the sea level such that there
   is an even chance that the highest level for a particular year
   exceeds the MPV.
-  When \code{mpv = TRUE}, the column labelled  \code{"MPV"} contains
+  If \code{mpv = TRUE} then the column labelled  \code{"MPV"} contains
   the MPVs when \code{fitted()} is applied to the fitted object.
 
 
@@ -152,6 +155,7 @@ egumbel(llocation = "identity", lscale = "loge",
   however, the data are the highest sea level measurements recorded each
   year (it therefore equates to the median predicted value or MPV).
 
+  
 }
 
 \note{ 
@@ -166,13 +170,16 @@ egumbel(llocation = "identity", lscale = "loge",
   \code{na.action = na.pass}. The response matrix needs to be
   padded with any missing values. With a multivariate response
   one has a matrix \code{y}, say, where
-  \code{y[, 2]} contains the second order statistics etc. 
+  \code{y[, 2]} contains the second order statistics, etc. 
 
+  
 % If a random variable \eqn{Y} has a \emph{reverse}
 % \eqn{Gumbel(\mu,\sigma)}{Gumbel(mu,sigma)} distribution then \eqn{-Y}
 % has a \eqn{Gumbel(-\mu,\sigma)}{Gumbel(-mu,sigma)} distribution.
 % It appears that some definite the reverse Gumbel the same as others
 % who define the ordinary Gumbel distribution, e.g., in \pkg{gamlss}.
+
+
 
 }
 
@@ -183,64 +190,61 @@ egumbel(llocation = "identity", lscale = "loge",
   \code{\link{guplot}},
   \code{\link{gev}},
   \code{\link{egev}},
-% \code{\link{ogev}},
   \code{\link{venice}}.
+
+  
+% \code{\link{ogev}},
 
 
 }
 
 \examples{
 # Example 1: Simulated data
-gdata <- data.frame(y = rgumbel(n = 1000, loc = 100, scale = exp(1)))
-fit <- vglm(y ~ 1, egumbel(perc = NULL), gdata, trace = TRUE)
-coef(fit, matrix = TRUE)
-Coef(fit)
-head(fitted(fit))
-with(gdata, mean(y))
+gdata <- data.frame(y1 = rgumbel(n = 1000, loc = 100, scale = exp(1)))
+fit1 <- vglm(y1 ~ 1, egumbel(perc = NULL), data = gdata, trace = TRUE)
+coef(fit1, matrix = TRUE)
+Coef(fit1)
+head(fitted(fit1))
+with(gdata, mean(y1))
 
 # Example 2: Venice data
-(fit <- vglm(cbind(r1,r2,r3,r4,r5) ~ year, data = venice,
-             gumbel(R = 365, mpv = TRUE), trace = TRUE))
-head(fitted(fit))
-coef(fit, matrix = TRUE)
-vcov(summary(fit))  
-sqrt(diag(vcov(summary(fit))))   # Standard errors
-
+(fit2 <- vglm(cbind(r1, r2, r3, r4, r5) ~ year, data = venice,
+              gumbel(R = 365, mpv = TRUE), trace = TRUE))
+head(fitted(fit2))
+coef(fit2, matrix = TRUE)
+sqrt(diag(vcov(summary(fit2))))   # Standard errors
 
 # Example 3: Try a nonparametric fit ---------------------
 # Use the entire data set, including missing values
-y <- as.matrix(venice[, paste("r", 1:10, sep = "")])
-fit1 <- vgam(y ~ s(year, df = 3), gumbel(R = 365, mpv = TRUE),
+# Same as as.matrix(venice[, paste0("r", 1:10)]):
+Y <- Select(venice, "r", sort = FALSE) 
+fit3 <- vgam(Y ~ s(year, df = 3), gumbel(R = 365, mpv = TRUE),
              data = venice, trace = TRUE, na.action = na.pass)
-depvar(fit1)[4:5, ]  # NAs used to pad the matrix
+depvar(fit3)[4:5, ]  # NAs used to pad the matrix
 
-\dontrun{
-# Plot the component functions
-par(mfrow = c(2, 1), mar = c(5, 4, 0.2, 1) + 0.1, xpd = TRUE)
-plot(fit1, se = TRUE, lcol = "blue", scol = "green", lty = 1,
+\dontrun{  # Plot the component functions
+par(mfrow = c(2, 3), mar = c(6, 4, 1, 2) + 0.3, xpd = TRUE)
+plot(fit3, se = TRUE, lcol = "blue", scol = "limegreen", lty = 1,
      lwd = 2, slwd = 2, slty = "dashed")
 
 # Quantile plot --- plots all the fitted values
-par(mfrow = c(1, 1), bty = "l", mar = c(4, 4, 0.2, 3) + 0.1, xpd = TRUE, las = 1)
-qtplot(fit1, mpv = TRUE, lcol = c(1, 2,5), tcol = c(1, 2,5), lwd = 2,
+qtplot(fit3, mpv = TRUE, lcol = c(1, 2, 5), tcol = c(1, 2, 5), lwd = 2,
        pcol = "blue", tadj = 0.1, ylab = "Sea level (cm)")
 
 # Plot the 99 percentile only
-par(mfrow = c(1, 1), mar = c(3, 4, 0.2, 1) + 0.1, xpd = TRUE)
-year = venice[["year"]]
-matplot(year, y, ylab = "Sea level (cm)", type = "n")
-matpoints(year, y, pch = "*", col = "blue")
-lines(year, fitted(fit1)[,"99\%"], lwd = 2, col = "red")
+year <- venice[["year"]]
+matplot(year, Y, ylab = "Sea level (cm)", type = "n")
+matpoints(year, Y, pch = "*", col = "blue")
+lines(year, fitted(fit3)[, "99\%"], lwd = 2, col = "orange")
 
 # Check the 99 percentiles with a smoothing spline.
 # Nb. (1-0.99) * 365 = 3.65 is approx. 4, meaning the 4th order 
 # statistic is approximately the 99 percentile.
-par(mfrow = c(1, 1), mar = c(3, 4, 2, 1) + 0.1, xpd = TRUE, lwd = 2)
-plot(year, y[, 4], ylab = "Sea level (cm)", type = "n",
-     main = "Red is 99 percentile, Green is a smoothing spline")
-points(year, y[, 4], pch = "4", col = "blue")
-lines(year, fitted(fit1)[,"99\%"], lty = 1, col = "red")
-lines(smooth.spline(year, y[, 4], df = 4), col = "darkgreen", lty = 2)
+plot(year, Y[, 4], ylab = "Sea level (cm)", type = "n",
+     main = "Orange is 99 percentile, Green is a smoothing spline")
+points(year, Y[, 4], pch = "4", col = "blue")
+lines(year, fitted(fit3)[, "99\%"], lty = 1, col = "orange")
+lines(smooth.spline(year, Y[, 4], df = 4), col = "limegreen", lty = 2)
 }
 }
 \keyword{models}

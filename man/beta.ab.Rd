@@ -126,20 +126,21 @@ beta.ab(lshape1 = "loge", lshape2 = "loge",
   \code{\link{betaprime}},
   \code{\link{rbetageom}},
   \code{\link{rbetanorm}},
-  \code{\link{kumar}}.
+  \code{\link{kumar}},
+  \code{\link{simulate.vlm}}.
 
 
 }
 \examples{
 bdata <- data.frame(y = rbeta(n = 1000, shape1 = exp(0), shape2 = exp(1)))
-fit <- vglm(y ~ 1, beta.ab(lshape1 = "identity", lshape2 = "identity"),
+fit <- vglm(y ~ 1, beta.ab(lshape1 = "identitylink", lshape2 = "identitylink"),
             data = bdata, trace = TRUE, crit = "coef")
-fit <- vglm(y ~ 1, beta.ab, bdata, trace = TRUE, crit = "coef")
+fit <- vglm(y ~ 1, beta.ab, data = bdata, trace = TRUE, crit = "coef")
 coef(fit, matrix = TRUE)
 Coef(fit)  # Useful for intercept-only models
 
 bdata <- transform(bdata, Y = 5 + 8 * y)  # From 5 to 13, not 0 to 1
-fit <- vglm(Y ~ 1, beta.ab(A = 5, B = 13), bdata, trace = TRUE)
+fit <- vglm(Y ~ 1, beta.ab(A = 5, B = 13), data = bdata, trace = TRUE)
 Coef(fit)
 c(meanY = with(bdata, mean(Y)), head(fitted(fit),2))
 }

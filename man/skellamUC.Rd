@@ -7,9 +7,12 @@
 \title{The Skellam Distribution}
 \description{
   Density
-% distribution function, quantile function
   and random generation for the
   Skellam distribution.
+
+
+% distribution function, quantile function
+
 
 }
 \usage{
@@ -39,9 +42,11 @@ rskellam(n, mu1, mu2)
 }
 \value{
   \code{dskellam} gives the density, and
+  \code{rskellam} generates random deviates.
+
+
 % \code{pskellam} gives the distribution function,
 % \code{qskellam} gives the quantile function, and
-  \code{rskellam} generates random deviates.
 
 
 }

@@ -16,7 +16,7 @@
 \usage{
 TypicalVGAMfamilyFunction(lsigma = "loge",
                           isigma = NULL,
-                          link.list = list("(Default)" = "identity",
+                          link.list = list("(Default)" = "identitylink",
                                            x2          = "loge",
                                            x3          = "logoff",
                                            x4          = "mlogit",
@@ -67,7 +67,7 @@ TypicalVGAMfamilyFunction(lsigma = "loge",
   These two arguments allow many such links and extra arguments
   to be inputted more easily.
   One has something like
-  \code{link.list = list("(Default)" = "identity", x2 = "loge", x3 = "logoff")}
+  \code{link.list = list("(Default)" = "identitylink", x2 = "loge", x3 = "logoff")}
   and 
   \code{earg.list = list("(Default)" = list(), x2 = list(), x3 = "list(offset = -1)")}.
   Then any unnamed terms will have the default link with its
@@ -438,7 +438,7 @@ cumulative(link = "probit", reverse = TRUE, parallel = TRUE)
 wdata <- data.frame(x2 = runif(nn <- 1000))
 wdata <- transform(wdata,
          y = rweibull(nn, shape = 2 + exp(1 + x2), scale = exp(-0.5)))
-fit <- vglm(y ~ x2, weibull(lshape = logoff(offset = -2), zero = 2), wdata)
+fit <- vglm(y ~ x2, weibull(lshape = logoff(offset = -2), zero = 2), data = wdata)
 coef(fit, mat = TRUE)
 
 # Example 3; multivariate (multiple) response
@@ -447,30 +447,30 @@ ndata <- data.frame(x = runif(nn <- 500))
 ndata <- transform(ndata,
            y1 = rnbinom(nn, mu = exp(3+x), size = exp(1)),  # k is size
            y2 = rnbinom(nn, mu = exp(2-x), size = exp(0)))
-fit <- vglm(cbind(y1, y2) ~ x, negbinomial(zero = -2), ndata)
+fit <- vglm(cbind(y1, y2) ~ x, negbinomial(zero = -2), data = ndata)
 coef(fit, matrix = TRUE)
 }
 # Example 4
 \dontrun{
 # fit1 and fit2 are equivalent
 fit1 <- vglm(ymatrix ~ x2 + x3 + x4 + x5,
-             cumulative(parallel = FALSE ~ 1 + x3 + x5), mydataframe)
+             cumulative(parallel = FALSE ~ 1 + x3 + x5), data = cdata)
 fit2 <- vglm(ymatrix ~ x2 + x3 + x4 + x5,
-             cumulative(parallel = TRUE ~ x2 + x4), mydataframe)
+             cumulative(parallel = TRUE ~ x2 + x4), data = cdata)
 }
 
 # Example 5
-gdata <- data.frame(x2 = rnorm(nn <- 200))
-gdata <- transform(gdata,
+udata <- data.frame(x2 = rnorm(nn <- 200))
+udata <- transform(udata,
            y1 = rnorm(nn, mean = 1 - 3*x2, sd = exp(1 + 0.2*x2)),
            y2 = rnorm(nn, mean = 1 - 3*x2, sd = exp(1)))
 args(uninormal)
-fit1 <- vglm(y1 ~ x2, uninormal, gdata)            # This is okay
-fit2 <- vglm(y2 ~ x2, uninormal(zero = 2), gdata)  # This is okay
+fit1 <- vglm(y1 ~ x2, uninormal, data = udata)            # This is okay
+fit2 <- vglm(y2 ~ x2, uninormal(zero = 2), data = udata)  # This is okay
 
 # This creates potential conflict
 clist <- list("(Intercept)" = diag(2), "x2" = diag(2))
-fit3 <- vglm(y2 ~ x2, uninormal(zero = 2), gdata,
+fit3 <- vglm(y2 ~ x2, uninormal(zero = 2), data = udata,
              constraints = clist)  # Conflict!
 coef(fit3, matrix = TRUE)  # Shows that clist[["x2"]] was overwritten,
 constraints(fit3)  # i.e., 'zero' seems to override the 'constraints' arg
@@ -478,9 +478,9 @@ constraints(fit3)  # i.e., 'zero' seems to override the 'constraints' arg
 # Example 6 ('whitespace' argument)
 pneumo <- transform(pneumo, let = log(exposure.time))
 fit1 <- vglm(cbind(normal, mild, severe) ~ let,
-             sratio(whitespace = FALSE, parallel = TRUE), pneumo)
+             sratio(whitespace = FALSE, parallel = TRUE), data = pneumo)
 fit2 <- vglm(cbind(normal, mild, severe) ~ let,
-             sratio(whitespace = TRUE,  parallel = TRUE), pneumo)
+             sratio(whitespace = TRUE,  parallel = TRUE), data = pneumo)
 head(predict(fit1), 2)  # No white spaces
 head(predict(fit2), 2)  # Uses white spaces
 }

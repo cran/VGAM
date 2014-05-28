@@ -195,9 +195,10 @@ posbernoulli.tb(link = "logit",
   \code{\link{posbernoulli.b}} (including \code{N.hat}),
   \code{\link{posbernoulli.t}},
   \code{\link{posbinomial}},
+  \code{\link{Select}},
   \code{\link{Huggins89table1}},
   \code{\link{Huggins89.t1}},
-  \code{\link{deermice}}.
+  \code{\link{deermice}},
   \code{\link{prinia}}.
 
 

@@ -32,6 +32,7 @@ rfgm(n, alpha)
   \code{pfgm} gives the distribution function, and
   \code{rfgm} generates random deviates (a two-column matrix).
 
+
 }
 %\references{
 %

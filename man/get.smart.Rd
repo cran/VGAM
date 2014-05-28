@@ -3,8 +3,8 @@
 \title{ Retrieve One Component of ``.smart.prediction'' }
 \description{
 Retrieve one component of the list \code{.smart.prediction} from
-\code{smartpredenv} (\R) or 
-frame 1 (S-PLUS).
+\code{smartpredenv}.
+
 
 }
 \usage{
@@ -12,23 +12,20 @@ get.smart()
 }
 \value{
 Returns with one list component of \code{.smart.prediction} from
-\code{smartpredenv} (\R)
-or
-frame 1 (S-PLUS),
+\code{smartpredenv},
 in fact, \code{.smart.prediction[[.smart.prediction.counter]]}.
 The whole procedure mimics a first-in first-out stack (better known
 as a \emph{queue}).
 
+
 }
 \section{Side Effects}{
 The variable \code{.smart.prediction.counter} in
-\code{smartpredenv} (\R)
-or
-frame 1 (S-PLUS)
+\code{smartpredenv}
 is incremented beforehand, and then written back to
-\code{smartpredenv} (\R)
-or
-frame 1 (S-PLUS).
+\code{smartpredenv}.
+
+
 
 }
 \details{
@@ -36,7 +33,7 @@ frame 1 (S-PLUS).
   it retrieves parameters saved at the time of fitting, and
   is used for prediction.
   \code{get.smart} is only used in smart functions such as 
-  \code{\link[stats]{poly}};
+  \code{\link[VGAM]{sm.poly}};
   \code{get.smart.prediction} is only used in modelling functions
   such as \code{\link[stats]{lm}} and \code{\link[stats]{glm}}.
   The function
@@ -47,17 +44,19 @@ frame 1 (S-PLUS).
 }
 \seealso{
   \code{\link{get.smart.prediction}}.
+
+
 }
 \examples{
 "my1" <- function(x, minx = min(x)) { # Here is a smart function
-    x <- x  # Needed for nested calls, e.g., bs(scale(x))
-    if(smart.mode.is("read")) {
-        smart  <- get.smart()
-        minx <- smart$minx          # Overwrite its value
-    } else
+  x <- x  # Needed for nested calls, e.g., sm.bs(sm.scale(x))
+  if (smart.mode.is("read")) {
+    smart  <- get.smart()
+    minx <- smart$minx  # Overwrite its value
+  } else
     if(smart.mode.is("write"))
         put.smart(list(minx = minx))
-    sqrt(x-minx)
+    sqrt(x - minx)
 }
 attr(my1, "smart") <- TRUE 
 }

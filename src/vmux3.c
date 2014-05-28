@@ -9,14 +9,14 @@
 void fvlmz9iyC_qpsedg8x(int tgiyxdw1[], int dufozmt7[], int *wy1vqfzu);
 int  fvlmz9iyC_VIAM(int *cz8qdfyj, int *rvy1fpli, int *wy1vqfzu);
 void fvlmz9iyC_vm2a(double mtlgduey8[], double bzmd6ftvmat[], int *dim1m, int *f8yswcat,
-         int *wy1vqfzu, int *iupper, int tgiyxdw1[], int dufozmt7[], int *oey3ckps);
-void fvlmz9iyC_nudh6szq(double wpuarq2m[], double tlgduey8[], double bzmd6ftvmat[],
+         int *wy1vqfzu, int *irb1onzwu, int tgiyxdw1[], int dufozmt7[], int *oey3ckps);
+void fvlmz9iyC_mux22(double wpuarq2m[], double tlgduey8[], double bzmd6ftvmat[],
                   int *npjlv3mr, int *f8yswcat, int *wy1vqfzu);
 void fvlmz9iyC_vbks(double wpuarq2m[], double unvxka0m[],
                  int *wy1vqfzu, int *f8yswcat, int *dimu);
 void fvlmz9iyjdbomp0g(double rbne6ouj[], double unvxka0m[],
                   int *wy1vqfzu, int *dvhw1ulq, int *i_solve);
-void fvlmz9iyC_mxrbkut0(double wpuarq2m[], double he7mqnvy[],
+void fvlmz9iyC_mux17(double wpuarq2m[], double he7mqnvy[],
                   int *wy1vqfzu, int *xjc4ywlh, int *f8yswcat, int *dimu, int *rutyk8mg);
 void fvlmz9iyC_lkhnw9yq(double wpuarq2m[], double ks3wejcv[],
                    int *npjlv3mr, int *wy1vqfzu, int *dvhw1ulq);
@@ -80,7 +80,7 @@ int fvlmz9iyC_VIAM(int *cz8qdfyj, int *rvy1fpli, int *wy1vqfzu) {
 
 
 void fvlmz9iyC_vm2a(double mtlgduey8[], double bzmd6ftvmat[], int *dim1m, int *f8yswcat,
-         int *wy1vqfzu, int *iupper, int tgiyxdw1[], int dufozmt7[], int *oey3ckps) {
+         int *wy1vqfzu, int *irb1onzwu, int tgiyxdw1[], int dufozmt7[], int *oey3ckps) {
 
 
 
@@ -90,7 +90,7 @@ void fvlmz9iyC_vm2a(double mtlgduey8[], double bzmd6ftvmat[], int *dim1m, int *f
   double   *qnwamo0e;
 
   if (*oey3ckps == 1) {
-      if (*iupper == 1 || *dim1m != imk5wjxg) {
+      if (*irb1onzwu == 1 || *dim1m != imk5wjxg) {
           i_size_bzmd6ftvmat = zyojx5hw * *f8yswcat;
           qnwamo0e = bzmd6ftvmat;
           for (ayfnwr1v = 0; ayfnwr1v < i_size_bzmd6ftvmat; ayfnwr1v++) {
@@ -99,7 +99,7 @@ void fvlmz9iyC_vm2a(double mtlgduey8[], double bzmd6ftvmat[], int *dim1m, int *f
       }
   }
 
-  if (iupper == 0) {
+  if (irb1onzwu == 0) {
       for (ayfnwr1v = 1; ayfnwr1v <= *f8yswcat; ayfnwr1v++) {
           urohxe6t = (ayfnwr1v-1) *  zyojx5hw;
           for (yq6lorbx = 1; yq6lorbx <= *dim1m; yq6lorbx++) {
@@ -126,7 +126,7 @@ void fvlmz9iyC_vm2a(double mtlgduey8[], double bzmd6ftvmat[], int *dim1m, int *f
 }
 
 
-void fvlmz9iyC_nudh6szq(double wpuarq2m[], double tlgduey8[], double bzmd6ftvmat[],
+void fvlmz9iyC_mux22(double wpuarq2m[], double tlgduey8[], double bzmd6ftvmat[],
                   int *npjlv3mr, int *f8yswcat, int *wy1vqfzu) {
 
 
@@ -268,7 +268,7 @@ void fvlmz9iyjdbomp0g(double rbne6ouj[], double unvxka0m[],
 }
 
 
-void fvlmz9iyC_mxrbkut0(double wpuarq2m[], double he7mqnvy[],
+void fvlmz9iyC_mux17(double wpuarq2m[], double he7mqnvy[],
                   int *wy1vqfzu, int *xjc4ywlh, int *f8yswcat,
                   int *npjlv3mr, int *rutyk8mg) {
 

@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2013 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2014 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -45,31 +45,32 @@ VGAMenv <- new.env()
 
 
 setClass("vglmff", representation(
-      "blurb"        = "character",
-      "constraints"  = "expression",
-      "deviance"     = "function",
-      "fini"         = "expression",
-      "first"        = "expression",
-      "infos"        = "function",  # Added 20101203
-      "initialize"   = "expression",
-      "last"         = "expression",
-      "linkfun"      = "function",
-      "linkinv"      = "function",
-      "loglikelihood"= "function",
-      "middle"       = "expression",
-      "middle2"      = "expression",
+      "blurb"         = "character",
+      "constraints"   = "expression",
+      "deviance"      = "function",
+      "fini"          = "expression",
+      "first"         = "expression",
+      "infos"         = "function",  # Added 20101203
+      "initialize"    = "expression",
+      "last"          = "expression",
+      "linkfun"       = "function",
+      "linkinv"       = "function",
+      "loglikelihood" = "function",
+      "middle"        = "expression",
+      "middle2"       = "expression",
       "summary.dispersion"  = "logical",
-      "vfamily"      = "character",
-      "deriv"        = "expression",
-      "weight"       = "expression"),  #  "call"
-prototype = .VGAM.prototype.list)
+      "vfamily"       = "character",
+      "simslot"       = "function",
+      "deriv"         = "expression",
+      "weight"        = "expression"),  #  "call"
+         prototype = .VGAM.prototype.list )
 
 
 valid.vglmff <- function(object) {
   compulsory <- c("initialize", "weight", "deriv", "linkinv")
   for (ii in compulsory) {
     if (!length(slot(object, ii)))
-        stop("slot ", ii, " is empty")
+      stop("slot ", ii, " is empty")
   }
 
   if (length(as.list(object@linkinv)) != 3)
@@ -78,7 +79,7 @@ valid.vglmff <- function(object) {
 
 
 if (FALSE) 
-    setValidity("vglmff", valid.vglmff)
+  setValidity("vglmff", valid.vglmff)
 
 
 
@@ -136,22 +137,22 @@ setMethod("show", "vglmff",
 
 
 setClass("vlmsmall", representation(
-      "call"         = "call",
-      "coefficients" = "numeric",
-      "constraints"  = "list",
-      "control"      = "list",
-      "criterion"    = "list",
-      "fitted.values"= "matrix",
-      "misc"         = "list",
-      "model"        = "data.frame",
-      "na.action"    = "list",
-      "post"         = "list",
-      "preplot"      = "list",
-      "prior.weights"= "matrix",
-      "residuals"    = "matrix",
-      "weights"      = "matrix",
-      "x"            = "matrix",
-      "y"            = "matrix"),
+      "call"          = "call",
+      "coefficients"  = "numeric",
+      "constraints"   = "list",
+      "control"       = "list",
+      "criterion"     = "list",
+      "fitted.values" = "matrix",
+      "misc"          = "list",
+      "model"         = "data.frame",
+      "na.action"     = "list",
+      "post"          = "list",
+      "preplot"       = "list",
+      "prior.weights" = "matrix",
+      "residuals"     = "matrix",
+      "weights"       = "matrix",
+      "x"             = "matrix",
+      "y"             = "matrix"),
 )
 
 
@@ -418,30 +419,17 @@ setGeneric("lvplot", function(object, ...) standardGeneric("lvplot"),
 
 
 
-    setGeneric("coef", function(object, ...) standardGeneric("coef"),
-           package = "VGAM")
 
 
-    setGeneric("coefficients", function(object, ...)
-                               standardGeneric("coefficients"),
-               package = "VGAM")
 
 
-if (!isGeneric("df.residual"))
-    setGeneric("df.residual", function(object, ...)
-                              standardGeneric("df.residual"),
-           package = "VGAM")
 
 
-if (!isGeneric("fitted"))
-    setGeneric("fitted", function(object, ...) standardGeneric("fitted"),
-           package = "VGAM")
 
 
- if (!isGeneric("fitted.values"))
-     setGeneric("fitted.values", function(object, ...)
-                                 standardGeneric("fitted.values"),
-           package = "VGAM")
+
+
+
 
 
 if (!isGeneric("model.matrix"))
@@ -465,19 +453,15 @@ if (!isGeneric("predict"))
 
 
 
+
+
 if (!isGeneric("resid"))
   setGeneric("resid", function(object, ...) standardGeneric("resid"))
 
 
-if (!isGeneric("residuals"))
-  setGeneric("residuals", function(object, ...)
-             standardGeneric("residuals"),
-             package = "VGAM")
 
 
-if (!isGeneric("weights"))
-  setGeneric("weights", function(object, ...)
-  standardGeneric("weights"), package = "VGAM")
+
 
 
 
@@ -489,21 +473,15 @@ if (!isGeneric("AIC"))
 
 
 
-if (!isGeneric("formula"))
-  setGeneric("formula", function(x, ...) standardGeneric("formula"),
-             package = "VGAM")
 
 
-if (!isGeneric("case.names"))
-  setGeneric("case.names", function(object, ...)
-             standardGeneric("case.names"),
-             package = "VGAM")
 
 
-if (!isGeneric("variable.names"))
-  setGeneric("variable.names", function(object, ...)
-             standardGeneric("variable.names"),
-             package = "VGAM")
+
+
+
+
+
 
 
 

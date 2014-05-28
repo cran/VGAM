@@ -96,7 +96,8 @@ seq2binomial(lprob1 = "logit", lprob2 = "logit",
 }
 
 \seealso{ 
-  \code{\link{binomialff}}.
+  \code{\link{binomialff}},
+  \code{\link{cfibrosis}}.
 
 
 }

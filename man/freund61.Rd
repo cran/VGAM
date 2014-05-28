@@ -177,7 +177,7 @@ A bivariate extension of the exponential distribution.
 \examples{
 fdata <- data.frame(y1 = rexp(nn <- 1000, rate = exp(1)))
 fdata <- transform(fdata, y2 = rexp(nn, rate = exp(2)))
-fit1 <- vglm(cbind(y1, y2) ~ 1, fam = freund61, fdata, trace = TRUE)
+fit1 <- vglm(cbind(y1, y2) ~ 1, fam = freund61, data = fdata, trace = TRUE)
 coef(fit1, matrix = TRUE)
 Coef(fit1)
 vcov(fit1)

@@ -266,9 +266,8 @@ coef(fit3b, matrix = TRUE)  # "Treatment1" is the reference level
 margeff(fit3b)
 
 # Example 4: Fit a rank-1 stereotype model 
-data(car.all)
-fit4 <- rrvglm(Country ~ Width + Height + HP, multinomial, car.all)
-coef(fit4)   # Contains the C matrix
+fit4 <- rrvglm(Country ~ Width + Height + HP, multinomial, data = car.all)
+coef(fit4)  # Contains the C matrix
 constraints(fit4)$HP       # The A matrix 
 coef(fit4, matrix = TRUE)  # The B matrix
 Coef(fit4)@C               # The C matrix 
@@ -277,8 +276,8 @@ Coef(fit4)@A               # The A matrix
 svd(coef(fit4, matrix = TRUE)[-1, ])$d  # This has rank 1; = C %*% t(A) 
 # Classification (but watch out for NAs in some of the variables):
 apply(fitted(fit4), 1, which.max)  # Classification
-apply(predict(fit4, car.all, type = "response"), 1, which.max)  # Classification
 colnames(fitted(fit4))[apply(fitted(fit4), 1, which.max)]  # Classification
+apply(predict(fit4, car.all, type = "response"), 1, which.max)  # Ditto
 
 
 # Example 5: The use of the xij argument (aka conditional logit model)

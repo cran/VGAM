@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2013 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2014 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -344,7 +344,7 @@ rkoenker <- function(n, location = 0, scale = 1) {
 
 
  koenker <- function(percentile = 50,
-                     llocation = "identity", lscale = "loge",
+                     llocation = "identitylink", lscale = "loge",
                      ilocation = NULL,   iscale = NULL,
                      imethod = 1,
                      zero = 2) {
@@ -456,14 +456,20 @@ rkoenker <- function(n, location = 0, scale = 1) {
             .elocat = elocat, .escale = escale,
             .imethod = imethod, .percentile = percentile ))),
   loglikelihood = eval(substitute(
-    function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
+    function(mu, y, w, residuals = FALSE, eta, extra = NULL,
+             summation = TRUE) {
     locat <- eta2theta(eta[, 1], link = .llocat, earg = .elocat)
     Scale <- eta2theta(eta[, 2], link = .lscale, earg = .escale)
     if (residuals) {
       stop("loglikelihood residuals not implemented yet")
     } else {
-      sum(w * dkoenker(x = y, location = locat, scale = Scale,
-                       log = TRUE))
+      ll.elts <- c(w) * dkoenker(x = y, location = locat, scale = Scale,
+                                 log = TRUE)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
     }
   }, list( .llocat = llocat, .lscale = lscale,
            .elocat = elocat, .escale = escale ))),

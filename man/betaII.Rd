@@ -94,9 +94,9 @@ Hoboken, NJ, USA: Wiley-Interscience.
 
 \examples{
 bdata <- data.frame(y = rsinmad(2000, shape1.a = 1, exp(2), exp(1)))  # Not genuine data!
-fit <- vglm(y ~ 1, betaII, bdata, trace = TRUE)
+fit <- vglm(y ~ 1, betaII, data = bdata, trace = TRUE)
 fit <- vglm(y ~ 1, betaII(ishape2.p = 0.7, ishape3.q = 0.7),
-            bdata, trace = TRUE)
+            data = bdata, trace = TRUE)
 coef(fit, matrix = TRUE)
 Coef(fit)
 summary(fit)

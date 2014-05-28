@@ -26,6 +26,7 @@
   A support function for the argument \code{xij}, it generates a matrix
   of an appropriate dimension.
 
+
 }
 \usage{
 fill(x, values = 0, ncolx = ncol(x))
@@ -38,6 +39,7 @@ fill(x, values = 0, ncolx = ncol(x))
     to a matrix if necessary, the answer is a matrix of \code{values}
     values, of dimension \code{nrow(x)} by \code{ncolx}.
 
+
   }
   \item{values}{ 
     Numeric.
@@ -45,10 +47,12 @@ fill(x, values = 0, ncolx = ncol(x))
     which are recycled \emph{columnwise} if necessary, i.e.,
     as \code{matrix(values, ..., byrow=TRUE)}.
 
+
   }
   \item{ncolx}{ 
     The number of columns of the returned matrix.
     The default is the number of columns of \code{x}.
+
 
   }
 }
@@ -67,9 +71,11 @@ fill(x, values = 0, ncolx = ncol(x))
   these data into \code{\link{vglm}} one often finds that functions
   \code{fill}, \code{fill1}, etc. are useful.
 
+
   All terms in the \code{xij}
   and \code{formula} arguments in \code{\link{vglm}}
   must appear in the \code{form2} argument too.
+
 
 }
 \value{
@@ -78,10 +84,12 @@ fill(x, values = 0, ncolx = ncol(x))
   \code{x}, and the default number of columns is the number of columns
   of \code{x}.
 
+
 }
 \references{ 
   More information can be found at
   \url{http://www.stat.auckland.ac.nz/~yee}.
+
 
 }
 
@@ -97,6 +105,7 @@ fill(x, values = 0, ncolx = ncol(x))
   \code{exchangeable} and \code{zero}.
   Hence \code{xij} does not affect constraint matrices.
 
+
   Additionally, there are currently 3 other identical \code{fill}
   functions, called \code{fill1}, \code{fill2} and \code{fill3};
   if you need more then assign \code{fill4 = fill5 = fill1} etc.
@@ -108,8 +117,10 @@ fill(x, values = 0, ncolx = ncol(x))
   \code{xij = op ~ lop + rop + fill1(mop) + fill2(mop)} would retain
   all \eqn{M} terms, which is needed.
 
+
 % The constraint matrices, as returned by \code{constraints}, do not
 % have a different meaning when \code{xij} is used.
+
 
   In Examples 1 to 3 below, the \code{xij} argument illustrates covariates
   that are specific to a linear predictor. Here, \code{lop}/\code{rop} are
@@ -117,11 +128,13 @@ fill(x, values = 0, ncolx = ncol(x))
   and \code{mop} is their mean. Variables \code{leye} and \code{reye}
   might be the presence/absence of a particular disease on the LHS/RHS
   eye respectively.
+
 %
 % Examples 1 and 2 are deliberately misspecified.
 % The output from, e.g., \code{coef(fit, matrix=TRUE)}, looks wrong but
 % is correct because the coefficients are multiplied by the zeros 
 % produced from \code{fill}.
+
 
   In Example 3,
   the \code{xij} argument illustrates fitting the (exchangeable) model
@@ -136,12 +149,15 @@ fill(x, values = 0, ncolx = ncol(x))
   in the model matrix, \code{fill(BS(lop,rop))} creates the required
   (same) number of columns.
 
+
 }
 
 \seealso{ 
   \code{\link{vglm.control}},
   \code{\link{vglm}},
-  \code{\link{multinomial}}.
+  \code{\link{multinomial}},
+  \code{\link{Select}}.
+
 
 }
 \examples{
@@ -151,42 +167,43 @@ fill(runif(5), val = 1, ncol = 3)
 
 # Generate eyes data for the examples below. Eyes are independent (OR=1).
 nn <- 1000  # Number of people
-eyesdat = data.frame(lop = round(runif(nn), 2),
-                     rop = round(runif(nn), 2),
-                     age = round(rnorm(nn, 40, 10)))
-eyesdat <- transform(eyesdat,
+eyesdata <- data.frame(lop = round(runif(nn), 2),
+                       rop = round(runif(nn), 2),
+                       age = round(rnorm(nn, 40, 10)))
+eyesdata <- transform(eyesdata,
     mop = (lop + rop) / 2,        # Mean ocular pressure
     op  = (lop + rop) / 2,        # Value unimportant unless plotting
 #   op  =  lop,                   # Choose this if plotting
     eta1 = 0 - 2*lop + 0.04*age,  # Linear predictor for left eye
     eta2 = 0 - 2*rop + 0.04*age)  # Linear predictor for right eye
-eyesdat <- transform(eyesdat,
+eyesdata <- transform(eyesdata,
     leye = rbinom(nn, size = 1, prob = logit(eta1, inverse = TRUE)),
     reye = rbinom(nn, size = 1, prob = logit(eta2, inverse = TRUE)))
 
 # Example 1
 # All effects are linear
 fit1 <- vglm(cbind(leye,reye) ~ op + age,
-             family = binom2.or(exchangeable=TRUE, zero=3),
-             data=eyesdat, trace=TRUE,
+             family = binom2.or(exchangeable = TRUE, zero = 3),
+             data = eyesdata, trace = TRUE,
              xij = list(op ~ lop + rop + fill(lop)),
              form2 =  ~ op + lop + rop + fill(lop) + age)
-head(model.matrix(fit1, type="lm"))   # LM model matrix
-head(model.matrix(fit1, type="vlm"))  # Big VLM model matrix
+head(model.matrix(fit1, type = "lm"))   # LM model matrix
+head(model.matrix(fit1, type = "vlm"))  # Big VLM model matrix
 coef(fit1)
 coef(fit1, matrix = TRUE)  # Unchanged with 'xij'
 constraints(fit1)
-max(abs(predict(fit1)-predict(fit1, new = eyesdat)))  # Predicts correctly
+max(abs(predict(fit1)-predict(fit1, new = eyesdata)))  # Predicts correctly
 summary(fit1)
-\dontrun{ plotvgam(fit1, se = TRUE)  # Wrong, e.g., because it plots against op, not lop.
-# So set op=lop in the above for a correct plot.
+\dontrun{
+plotvgam(fit1, se = TRUE)  # Wrong, e.g., because it plots against op, not lop.
+# So set op = lop in the above for a correct plot.
 }
 
 
 
 # Example 2
 # Model OR as a linear function of mop
-fit2 <- vglm(cbind(leye,reye) ~ op + age, data = eyesdat, trace = TRUE,
+fit2 <- vglm(cbind(leye,reye) ~ op + age, data = eyesdata, trace = TRUE,
             binom2.or(exchangeable = TRUE, zero = NULL),
             xij   = list(op ~ lop + rop + mop),
             form2 =    ~ op + lop + rop + mop + age)
@@ -194,20 +211,21 @@ head(model.matrix(fit2, type = "lm"))   # LM model matrix
 head(model.matrix(fit2, type = "vlm"))  # Big VLM model matrix
 coef(fit2)
 coef(fit2, matrix = TRUE)  # Unchanged with 'xij'
-max(abs(predict(fit2) - predict(fit2, new = eyesdat)))  # Predicts correctly
+max(abs(predict(fit2) - predict(fit2, new = eyesdata)))  # Predicts correctly
 summary(fit2)
-\dontrun{ plotvgam(fit2, se = TRUE)  # Wrong because it plots against op, not lop.
+\dontrun{
+plotvgam(fit2, se = TRUE)  # Wrong because it plots against op, not lop.
 }
 
 
 # Example 3. This model uses regression splines on ocular pressure.
 # It uses a trick to ensure common basis functions.
 BS <- function(x, ...)
-  bs(c(x,...), df = 3)[1:length(x), , drop = FALSE]  # trick
+  sm.bs(c(x,...), df = 3)[1:length(x), , drop = FALSE]  # trick
 
 fit3 <- vglm(cbind(leye,reye) ~ BS(lop,rop) + age,
              family = binom2.or(exchangeable = TRUE, zero = 3),
-             data = eyesdat, trace = TRUE,
+             data = eyesdata, trace = TRUE,
              xij = list(BS(lop,rop) ~ BS(lop,rop) +
                                       BS(rop,lop) +
                                       fill(BS(lop,rop))),
@@ -219,9 +237,10 @@ coef(fit3)
 coef(fit3, matrix = TRUE)
 summary(fit3)
 fit3@smart.prediction
-max(abs(predict(fit3) - predict(fit3, new = eyesdat)))  # Predicts correctly
-predict(fit3, new = head(eyesdat))  # Note the 'scalar' OR, i.e., zero=3
-max(abs(head(predict(fit3)) - predict(fit3, new = head(eyesdat))))  # Should be 0
+max(abs(predict(fit3) - predict(fit3, new = eyesdata)))  # Predicts correctly
+predict(fit3, new = head(eyesdata))  # Note the 'scalar' OR, i.e., zero=3
+max(abs(head(predict(fit3)) -
+             predict(fit3, new = head(eyesdata))))  # Should be 0
 \dontrun{
 plotvgam(fit3, se = TRUE, xlab = "lop")  # Correct
 }
@@ -235,13 +254,13 @@ plotvgam(fit3, se = TRUE, xlab = "lop")  # Correct
 %\code{fill1(x, value=0, ncolx=ncol(x))} and create .Rd file for
 %\code{zero} argument.]
 
-%eyesdat$leye <- ifelse(runif(n) < exp(eta1)/(1+exp(eta1)), 1, 0)
-%eyesdat$reye <- ifelse(runif(n) < exp(eta2)/(1+exp(eta2)), 1, 0)
+%eyesdata$leye <- ifelse(runif(n) < exp(eta1)/(1+exp(eta1)), 1, 0)
+%eyesdata$reye <- ifelse(runif(n) < exp(eta2)/(1+exp(eta2)), 1, 0)
 
 %   \deqn{logit P(Y_k=1) = f_k(x_{ijk}) }{%
 %         logit P(Y_k=1) = f_k(x_{ijk}) }
 % for \code{k=1,2}.
-%                 fill1(lop, ncol=ncol(BS(lop,rop,mop))), data=eyesdat)
+%                 fill1(lop, ncol=ncol(BS(lop,rop,mop))), data=eyesdata)
 
 % Models using the \code{xij} argument may or may not predict correctly,
 % and inference obtained using \code{summary} may be incorrect.

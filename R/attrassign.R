@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2013 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2014 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -26,7 +26,7 @@ attrassigndefault <- function(mmat,tt) {
 }
 
 
-if(!isGeneric("attrassign"))
+if (!isGeneric("attrassign"))
     setGeneric("attrassign", function(object, ...)
         standardGeneric("attrassign"))
 

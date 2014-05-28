@@ -153,7 +153,7 @@ zinegbinomialff(lmunb = "loge", lsize = "loge", lonempstr0 = "logit",
 
 
   The zero-\emph{deflated} negative binomial distribution
-  might be fitted by setting \code{lpstr0 = identity},
+  might be fitted by setting \code{lpstr0 = identitylink},
   albeit, not entirely reliably. See \code{\link{zipoisson}}
   for information that can be applied here. Else try
   the zero-altered negative binomial distribution (see

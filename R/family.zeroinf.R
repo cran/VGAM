@@ -1,6 +1,7 @@
 # These functions are
-# Copyright (C) 1998-2013 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2014 T.W. Yee, University of Auckland.
 # All rights reserved.
+
 
 
 
@@ -435,14 +436,23 @@ rzipois <- function(n, lambda, pstr0 = 0) {
     }
   }), list( .link = link, .earg = earg ))),
 
-  loglikelihood = eval(substitute(function(mu, y, w, residuals = FALSE,
-                                           eta, extra = NULL) {
+  loglikelihood = eval(substitute(
+    function(mu, y, w, residuals = FALSE, eta,
+             extra = NULL,
+             summation = TRUE) {
     lambda <- eta2theta(eta, .link)
     temp5 <- exp(-lambda)
     pstr0 <- (1 - temp5 - extra$sumw / extra$narg) / (1 - temp5)
-    if (residuals) stop("loglikelihood residuals not ",
-                        "implemented yet") else {
-      sum(c(w) * dzipois(x = y, pstr0 = pstr0, lambda = lambda, log = TRUE))
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
+      ll.elts <- c(w) *
+                 dzipois(x = y, pstr0 = pstr0, lambda = lambda, log = TRUE)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
     }
   }, list( .link = link, .earg = earg ))),
 
@@ -497,12 +507,13 @@ rzipois <- function(n, lambda, pstr0 = 0) {
   constraints = eval(substitute(expression({
 
     dotzero <- .zero
-    Musual <- 2
+    M1 <- 2
     eval(negzero.expression)
   }), list( .zero = zero ))),
 
   infos = eval(substitute(function(...) {
-    list(Musual = 2,
+    list(M1 = 2,
+         Q1 = 1,
          type.fitted  = .type.fitted ,
          zero = .zero )
   }, list( .zero = zero,
@@ -510,7 +521,7 @@ rzipois <- function(n, lambda, pstr0 = 0) {
          ))),
 
   initialize = eval(substitute(expression({
-    Musual <- 2
+    M1 <- 2
     if (any(y < 0))
       stop("the response must not have negative values")
 
@@ -539,7 +550,7 @@ rzipois <- function(n, lambda, pstr0 = 0) {
     predictors.names <-
         c(namesof(mynames1, .lpobs.0, earg = .epobs.0, tag = FALSE),
           namesof(mynames2, .llambda, earg = .elambda, tag = FALSE))[
-          interleave.VGAM(Musual*NOS, M = Musual)]
+          interleave.VGAM(M1*NOS, M = M1)]
 
     if (!length(etastart)) {
       etastart <-
@@ -552,7 +563,7 @@ rzipois <- function(n, lambda, pstr0 = 0) {
           theta2eta(y[!sthese, spp.] / (-expm1(-y[!sthese, spp.])),
                     .llambda, earg = .elambda )
       }
-      etastart <- etastart[, interleave.VGAM(ncol(etastart), M = Musual)]
+      etastart <- etastart[, interleave.VGAM(ncol(etastart), M = M1)]
     }
   }), list( .lpobs.0 = lpobs.0, .llambda = llambda,
             .epobs.0 = epobs.0, .elambda = elambda,
@@ -568,12 +579,12 @@ rzipois <- function(n, lambda, pstr0 = 0) {
                              c("mean", "pobs0", "onempobs0"))[1]
 
     NOS <- extra$NOS
-    Musual <- 2
+    M1 <- 2
 
 
-    pobs.0 <- cbind(eta2theta(eta[, Musual*(1:NOS)-1, drop = FALSE],
+    pobs.0 <- cbind(eta2theta(eta[, M1*(1:NOS)-1, drop = FALSE],
                               .lpobs.0, earg = .epobs.0 ))
-    lambda <- cbind(eta2theta(eta[, Musual*(1:NOS)-0, drop = FALSE],
+    lambda <- cbind(eta2theta(eta[, M1*(1:NOS)-0, drop = FALSE],
                               .llambda, earg = .elambda ))
 
 
@@ -585,7 +596,8 @@ rzipois <- function(n, lambda, pstr0 = 0) {
         is.matrix(ans) &&
         length(extra$dimnamesy[[2]]) == ncol(ans) &&
         length(extra$dimnamesy[[2]]) > 0) {
-      dimnames(ans) <- extra$dimnamesy
+      if (length(extra$dimnamesy[[1]]) == nrow(ans))       
+        dimnames(ans) <- extra$dimnamesy
     } else
     if (NCOL(ans) == 1 &&
         is.matrix(ans)) {
@@ -600,47 +612,74 @@ rzipois <- function(n, lambda, pstr0 = 0) {
 
     temp.names <- c(rep( .lpobs.0 , len = NOS),
                     rep( .llambda , len = NOS))
-    temp.names <- temp.names[interleave.VGAM(Musual*NOS, M = Musual)]
+    temp.names <- temp.names[interleave.VGAM(M1*NOS, M = M1)]
     misc$link  <- temp.names
     names(misc$link) <-
-      c(mynames1, mynames2)[interleave.VGAM(Musual*NOS, M = Musual)]
+      c(mynames1, mynames2)[interleave.VGAM(M1*NOS, M = M1)]
 
-    misc$earg <- vector("list", Musual * NOS)
+    misc$earg <- vector("list", M1 * NOS)
     names(misc$earg) <- names(misc$link)
     for (ii in 1:NOS) {
-      misc$earg[[Musual*ii-1]] <- .epobs.0
-      misc$earg[[Musual*ii  ]] <- .elambda
+      misc$earg[[M1*ii-1]] <- .epobs.0
+      misc$earg[[M1*ii  ]] <- .elambda
     }
   }), list( .lpobs.0 = lpobs.0, .llambda = llambda,
             .epobs.0 = epobs.0, .elambda = elambda ))),
   loglikelihood = eval(substitute(
-    function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
+    function(mu, y, w, residuals = FALSE, eta,
+             extra = NULL,
+             summation = TRUE) {
     NOS <- extra$NOS
-    Musual <- 2
+    M1 <- 2
 
-    pobs0  <- cbind(eta2theta(eta[, Musual*(1:NOS)-1, drop = FALSE],
+    pobs0  <- cbind(eta2theta(eta[, M1*(1:NOS)-1, drop = FALSE],
                               .lpobs.0, earg = .epobs.0))
-    lambda <- cbind(eta2theta(eta[, Musual*(1:NOS)-0, drop = FALSE],
+    lambda <- cbind(eta2theta(eta[, M1*(1:NOS)-0, drop = FALSE],
                               .llambda, earg = .elambda ))
 
     if (residuals) {
       stop("loglikelihood residuals not implemented yet")
     } else {
-      sum(c(w) * dzapois(x = y, pobs0 = pobs0, lambda = lambda,
-                         log = TRUE))
+      ll.elts <- c(w) * dzapois(x = y, pobs0 = pobs0, lambda = lambda,
+                                log = TRUE)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
     }
   }, list( .lpobs.0 = lpobs.0, .llambda = llambda,
            .epobs.0 = epobs.0, .elambda = elambda ))),
   vfamily = c("zapoisson"),
+
+
+
+
+  simslot = eval(substitute(
+  function(object, nsim) {
+
+    pwts <- if (length(pwts <- object@prior.weights) > 0)
+              pwts else weights(object, type = "prior")
+    if (any(pwts != 1)) 
+      warning("ignoring prior weights")
+    eta <- predict(object)
+    pobs0  <- eta2theta(eta[, c(TRUE, FALSE)], .lpobs.0 , earg = .epobs.0 )
+    lambda <- eta2theta(eta[, c(FALSE, TRUE)], .llambda , earg = .elambda )
+    rzapois(nsim * length(lambda), lambda = lambda, pobs0 = pobs0)
+  }, list( .lpobs.0 = lpobs.0, .llambda = llambda,
+           .epobs.0 = epobs.0, .elambda = elambda ))),
+
+
+
   deriv = eval(substitute(expression({
-    Musual <- 2
+    M1 <- 2
     NOS <- extra$NOS
     y0 <- extra$y0
     skip <- extra$skip.these
 
-    phimat <- cbind(eta2theta(eta[, Musual*(1:NOS)-1, drop = FALSE],
+    phimat <- cbind(eta2theta(eta[, M1*(1:NOS)-1, drop = FALSE],
                               .lpobs.0, earg = .epobs.0 ))
-    lambda <- cbind(eta2theta(eta[, Musual*(1:NOS)-0, drop = FALSE],
+    lambda <- cbind(eta2theta(eta[, M1*(1:NOS)-0, drop = FALSE],
                               .llambda, earg = .elambda ))
 
     dl.dlambda <- y / lambda + 1 / expm1(-lambda)
@@ -662,13 +701,13 @@ rzipois <- function(n, lambda, pstr0 = 0) {
 
     ans <- cbind(temp3,
                  c(w) * dl.dlambda * dlambda.deta)
-    ans <- ans[, interleave.VGAM(ncol(ans), M = Musual)]
+    ans <- ans[, interleave.VGAM(ncol(ans), M = M1)]
     ans
   }), list( .lpobs.0 = lpobs.0, .llambda = llambda,
             .epobs.0 = epobs.0, .elambda = elambda ))),
   weight = eval(substitute(expression({
 
-    wz <- matrix(0.0, n, Musual * NOS)
+    wz <- matrix(0.0, n, M1 * NOS)
 
 
 
@@ -698,7 +737,7 @@ rzipois <- function(n, lambda, pstr0 = 0) {
 
     wz[, 1:NOS] <-  tmp200
 
-    wz <- wz[, interleave.VGAM(ncol(wz), M = Musual)]
+    wz <- wz[, interleave.VGAM(ncol(wz), M = M1)]
 
 
 
@@ -734,19 +773,22 @@ rzipois <- function(n, lambda, pstr0 = 0) {
   blurb = c("Zero-altered Poisson ",
             "(Bernoulli and positive-Poisson conditional model)\n\n",
             "Links:    ",
-            namesof("lambda",     llambda,    earg = elambda,    tag = FALSE), ", ",
-            namesof("onempobs0",  lonempobs0, earg = eonempobs0, tag = FALSE), "\n",
+            namesof("lambda",     llambda,    earg = elambda,
+                    tag = FALSE), ", ",
+            namesof("onempobs0",  lonempobs0, earg = eonempobs0,
+                    tag = FALSE), "\n",
             "Mean:     onempobs0 * lambda / (1 - exp(-lambda))"),
 
   constraints = eval(substitute(expression({
 
     dotzero <- .zero
-    Musual <- 2
+    M1 <- 2
     eval(negzero.expression)
   }), list( .zero = zero ))),
 
   infos = eval(substitute(function(...) {
-    list(Musual = 2,
+    list(M1 = 2,
+         Q1 = 1,
          type.fitted  = .type.fitted ,
          zero = .zero )
   }, list( .zero = zero,
@@ -754,7 +796,7 @@ rzipois <- function(n, lambda, pstr0 = 0) {
          ))),
 
   initialize = eval(substitute(expression({
-    Musual <- 2
+    M1 <- 2
     if (any(y < 0))
       stop("the response must not have negative values")
 
@@ -785,7 +827,7 @@ rzipois <- function(n, lambda, pstr0 = 0) {
     predictors.names <-
         c(namesof(mynames1, .llambda,     earg = .elambda    , tag = FALSE),
           namesof(mynames2, .lonempobs0 , earg = .eonempobs0 , tag = FALSE))[
-          interleave.VGAM(Musual*NOS, M = Musual)]
+          interleave.VGAM(M1*NOS, M = M1)]
 
     if (!length(etastart)) {
       etastart <-
@@ -798,7 +840,7 @@ rzipois <- function(n, lambda, pstr0 = 0) {
           theta2eta(y[!sthese, spp.] / (-expm1(-y[!sthese, spp.])),
                     .llambda, earg = .elambda )
       }
-      etastart <- etastart[, interleave.VGAM(ncol(etastart), M = Musual)]
+      etastart <- etastart[, interleave.VGAM(ncol(etastart), M = M1)]
     }
   }), list( .lonempobs0 = lonempobs0, .llambda = llambda,
             .eonempobs0 = eonempobs0, .elambda = elambda,
@@ -814,11 +856,11 @@ rzipois <- function(n, lambda, pstr0 = 0) {
                              c("mean", "pobs0", "onempobs0"))[1]
 
     NOS <- extra$NOS
-    Musual <- 2
+    M1 <- 2
 
-    lambda    <- cbind(eta2theta(eta[, Musual*(1:NOS)-1, drop = FALSE],
+    lambda    <- cbind(eta2theta(eta[, M1*(1:NOS)-1, drop = FALSE],
                                  .llambda    , earg = .elambda    ))
-    onempobs0 <- cbind(eta2theta(eta[, Musual*(1:NOS)-0, drop = FALSE],
+    onempobs0 <- cbind(eta2theta(eta[, M1*(1:NOS)-0, drop = FALSE],
                                  .lonempobs0 , earg = .eonempobs0 ))
 
 
@@ -830,7 +872,8 @@ rzipois <- function(n, lambda, pstr0 = 0) {
         is.matrix(ans) &&
         length(extra$dimnamesy[[2]]) == ncol(ans) &&
         length(extra$dimnamesy[[2]]) > 0) {
-      dimnames(ans) <- extra$dimnamesy
+      if (length(extra$dimnamesy[[1]]) == nrow(ans))
+        dimnames(ans) <- extra$dimnamesy
     } else
     if (NCOL(ans) == 1 &&
         is.matrix(ans)) {
@@ -845,47 +888,77 @@ rzipois <- function(n, lambda, pstr0 = 0) {
 
     temp.names <- c(rep( .llambda    , len = NOS),
                     rep( .lonempobs0 , len = NOS))
-    temp.names <- temp.names[interleave.VGAM(Musual*NOS, M = Musual)]
+    temp.names <- temp.names[interleave.VGAM(M1*NOS, M = M1)]
     misc$link  <- temp.names
     names(misc$link) <-
-      c(mynames1, mynames2)[interleave.VGAM(Musual*NOS, M = Musual)]
+      c(mynames1, mynames2)[interleave.VGAM(M1*NOS, M = M1)]
 
-    misc$earg <- vector("list", Musual * NOS)
+    misc$earg <- vector("list", M1 * NOS)
     names(misc$earg) <- names(misc$link)
     for (ii in 1:NOS) {
-      misc$earg[[Musual*ii-1]] <- .elambda
-      misc$earg[[Musual*ii  ]] <- .eonempobs0
+      misc$earg[[M1*ii-1]] <- .elambda
+      misc$earg[[M1*ii  ]] <- .eonempobs0
     }
   }), list( .lonempobs0 = lonempobs0, .llambda = llambda,
             .eonempobs0 = eonempobs0, .elambda = elambda ))),
   loglikelihood = eval(substitute(
-    function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
+    function(mu, y, w, residuals = FALSE, eta,
+             extra = NULL,
+             summation = TRUE) {
     NOS <- extra$NOS
-    Musual <- 2
+    M1 <- 2
 
-    lambda     <- cbind(eta2theta(eta[, Musual*(1:NOS)-1, drop = FALSE],
+    lambda     <- cbind(eta2theta(eta[, M1*(1:NOS)-1, drop = FALSE],
                                   .llambda    , earg = .elambda    ))
-    onempobs0  <- cbind(eta2theta(eta[, Musual*(1:NOS)-0, drop = FALSE],
+    onempobs0  <- cbind(eta2theta(eta[, M1*(1:NOS)-0, drop = FALSE],
                                   .lonempobs0 , earg = .eonempobs0 ))
 
     if (residuals) {
       stop("loglikelihood residuals not implemented yet")
     } else {
-      sum(c(w) * dzapois(x = y, lambda = lambda, pobs0 = 1 - onempobs0,
-                         log = TRUE))
+      ll.elts <-
+        c(w) * dzapois(x = y, lambda = lambda, pobs0 = 1 - onempobs0,
+                       log = TRUE)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
     }
   }, list( .lonempobs0 = lonempobs0, .llambda = llambda,
            .eonempobs0 = eonempobs0, .elambda = elambda ))),
   vfamily = c("zapoissonff"),
+
+
+
+
+  simslot = eval(substitute(
+  function(object, nsim) {
+
+    pwts <- if (length(pwts <- object@prior.weights) > 0)
+              pwts else weights(object, type = "prior")
+    if (any(pwts != 1)) 
+      warning("ignoring prior weights")
+    eta <- predict(object)
+    lambda    <- eta2theta(eta[, c(TRUE, FALSE)], .llambda    ,
+                           earg = .elambda    )
+    onempobs0 <- eta2theta(eta[, c(FALSE, TRUE)], .lonempobs0 ,
+                           earg = .eonempobs0 )
+    rzapois(nsim * length(lambda), lambda = lambda, pobs0 = 1 - onempobs0)
+  }, list( .lonempobs0 = lonempobs0, .llambda = llambda,
+           .eonempobs0 = eonempobs0, .elambda = elambda ))),
+
+
+
   deriv = eval(substitute(expression({
-    Musual <- 2
+    M1 <- 2
     NOS <- extra$NOS
     y0 <- extra$y0
     skip <- extra$skip.these
 
-    lambda   <- cbind(eta2theta(eta[, Musual*(1:NOS)-1, drop = FALSE],
+    lambda   <- cbind(eta2theta(eta[, M1*(1:NOS)-1, drop = FALSE],
                                 .llambda, earg = .elambda ))
-    omphimat <- cbind(eta2theta(eta[, Musual*(1:NOS)-0, drop = FALSE],
+    omphimat <- cbind(eta2theta(eta[, M1*(1:NOS)-0, drop = FALSE],
                                 .lonempobs0, earg = .eonempobs0 ))
     phimat <- 1 - omphimat
 
@@ -908,13 +981,13 @@ rzipois <- function(n, lambda, pstr0 = 0) {
 
     ans <- cbind(c(w) * dl.dlambda * dlambda.deta,
                  temp3)
-    ans <- ans[, interleave.VGAM(ncol(ans), M = Musual)]
+    ans <- ans[, interleave.VGAM(ncol(ans), M = M1)]
     ans
   }), list( .lonempobs0 = lonempobs0, .llambda = llambda,
             .eonempobs0 = eonempobs0, .elambda = elambda ))),
   weight = eval(substitute(expression({
 
-    wz <- matrix(0.0, n, Musual * NOS)
+    wz <- matrix(0.0, n, M1 * NOS)
 
     temp5 <- expm1(lambda)
 
@@ -936,7 +1009,7 @@ rzipois <- function(n, lambda, pstr0 = 0) {
 
     wz[, 1 * NOS + (1:NOS)] <-  tmp200
 
-    wz <- wz[, interleave.VGAM(ncol(wz), M = Musual)]
+    wz <- wz[, interleave.VGAM(ncol(wz), M = M1)]
 
 
 
@@ -1025,13 +1098,14 @@ zanegbinomial.control <- function(save.weight = TRUE, ...) {
   constraints = eval(substitute(expression({
 
     dotzero <- .zero
-    Musual <- 3
+    M1 <- 3
     eval(negzero.expression)
   }), list( .zero = zero ))),
 
 
   infos = eval(substitute(function(...) {
-    list(Musual = 3,
+    list(M1 = 3,
+         Q1 = 1,
          type.fitted  = .type.fitted ,
          zero = .zero )
   }, list( .zero = zero,
@@ -1039,7 +1113,7 @@ zanegbinomial.control <- function(save.weight = TRUE, ...) {
          ))),
 
   initialize = eval(substitute(expression({
-    Musual <- 3
+    M1 <- 3
 
     if (any(y < 0))
       stop("the response must not have negative values")
@@ -1057,7 +1131,7 @@ zanegbinomial.control <- function(save.weight = TRUE, ...) {
 
 
     extra$NOS <- NOS <- ncoly <- ncol(y)  # Number of species
-    M <- Musual * ncoly
+    M <- M1 * ncoly
 
     extra$dimnamesy   <- dimnames(y)
     extra$type.fitted <- .type.fitted
@@ -1069,7 +1143,7 @@ zanegbinomial.control <- function(save.weight = TRUE, ...) {
         c(namesof(mynames1, .lpobs0 , earg = .epobs0 , tag = FALSE),
           namesof(mynames2, .lmunb  , earg = .emunb  , tag = FALSE),
           namesof(mynames3, .lsize  , earg = .esize  , tag = FALSE))[
-          interleave.VGAM(Musual*NOS, M = Musual)]
+          interleave.VGAM(M1*NOS, M = M1)]
 
 
     extra$y0 <- y0 <- ifelse(y == 0, 1, 0)
@@ -1133,7 +1207,7 @@ zanegbinomial.control <- function(save.weight = TRUE, ...) {
       etastart <- cbind(theta2eta(pnb0,    .lpobs0 , earg = .epobs0 ),
                         theta2eta(mu.init, .lmunb  , earg = .emunb  ),
                         theta2eta(kmat0,   .lsize  , earg = .esize  ))
-      etastart <- etastart[, interleave.VGAM(ncol(etastart), M = Musual)]
+      etastart <- etastart[, interleave.VGAM(ncol(etastart), M = M1)]
     }  # End of if (!length(etastart))
 
 
@@ -1152,11 +1226,11 @@ zanegbinomial.control <- function(save.weight = TRUE, ...) {
     type.fitted <- match.arg(type.fitted,
                              c("mean", "pobs0"))[1]
 
-    Musual <- 3
+    M1 <- 3
     NOS <- extra$NOS
-    phi0 <- eta2theta(eta[, Musual*(1:NOS)-2], .lpobs0 , earg = .epobs0 )
-    munb <- eta2theta(eta[, Musual*(1:NOS)-1], .lmunb  , earg = .emunb  )
-    kmat <- eta2theta(eta[, Musual*(1:NOS)  ], .lsize  , earg = .esize  )
+    phi0 <- eta2theta(eta[, M1*(1:NOS)-2], .lpobs0 , earg = .epobs0 )
+    munb <- eta2theta(eta[, M1*(1:NOS)-1], .lmunb  , earg = .emunb  )
+    kmat <- eta2theta(eta[, M1*(1:NOS)  ], .lsize  , earg = .esize  )
     pnb0 <- (kmat / (kmat + munb))^kmat # p(0) from negative binomial
 
 
@@ -1167,7 +1241,8 @@ zanegbinomial.control <- function(save.weight = TRUE, ...) {
         is.matrix(ans) &&
         length(extra$dimnamesy[[2]]) == ncol(ans) &&
         length(extra$dimnamesy[[2]]) > 0) {
-      dimnames(ans) <- extra$dimnamesy
+      if (length(extra$dimnamesy[[1]]) == nrow(ans))
+        dimnames(ans) <- extra$dimnamesy
     } else
     if (NCOL(ans) == 1 &&
         is.matrix(ans)) {
@@ -1180,19 +1255,19 @@ zanegbinomial.control <- function(save.weight = TRUE, ...) {
     misc$link =
       c(rep( .lpobs0 , length = NOS),
         rep( .lmunb  , length = NOS),
-        rep( .lsize  , length = NOS))[interleave.VGAM(Musual*NOS,
-                                                      M = Musual)]
+        rep( .lsize  , length = NOS))[interleave.VGAM(M1*NOS,
+                                                      M = M1)]
     temp.names <- c(mynames1,
                    mynames2,
-                   mynames3)[interleave.VGAM(Musual*NOS, M = Musual)]
+                   mynames3)[interleave.VGAM(M1*NOS, M = M1)]
     names(misc$link) <- temp.names
 
-    misc$earg <- vector("list", Musual*NOS)
+    misc$earg <- vector("list", M1*NOS)
     names(misc$earg) <- temp.names
     for (ii in 1:NOS) {
-      misc$earg[[Musual*ii-2]] <- .epobs0
-      misc$earg[[Musual*ii-1]] <- .emunb
-      misc$earg[[Musual*ii  ]] <- .esize
+      misc$earg[[M1*ii-2]] <- .epobs0
+      misc$earg[[M1*ii-1]] <- .emunb
+      misc$earg[[M1*ii  ]] <- .esize
     }
 
     misc$nsimEIM <- .nsimEIM
@@ -1206,30 +1281,63 @@ zanegbinomial.control <- function(save.weight = TRUE, ...) {
             .nsimEIM = nsimEIM,
             .imethod = imethod ))),
   loglikelihood = eval(substitute(
-    function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
+    function(mu, y, w, residuals = FALSE, eta,
+             extra = NULL,
+             summation = TRUE) {
     NOS <- extra$NOS
-    Musual <- 3
-    phi0 <- eta2theta(eta[, Musual*(1:NOS)-2], .lpobs0 , earg = .epobs0 )
-    munb <- eta2theta(eta[, Musual*(1:NOS)-1], .lmunb  , earg = .emunb  )
-    kmat <- eta2theta(eta[, Musual*(1:NOS)  ], .lsize  , earg = .esize  )
-    if (residuals) stop("loglikelihood residuals not ",
-                        "implemented yet") else {
-      sum(c(w) * dzanegbin(x = y, pobs0 = phi0, munb = munb, size = kmat,
-                           log = TRUE))
+    M1 <- 3
+    phi0 <- eta2theta(eta[, M1*(1:NOS)-2], .lpobs0 , earg = .epobs0 )
+    munb <- eta2theta(eta[, M1*(1:NOS)-1], .lmunb  , earg = .emunb  )
+    kmat <- eta2theta(eta[, M1*(1:NOS)  ], .lsize  , earg = .esize  )
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
+      ll.elts <-
+        c(w) * dzanegbin(x = y, pobs0 = phi0, munb = munb, size = kmat,
+                         log = TRUE)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
     }
   }, list( .lpobs0 = lpobs0, .lmunb = lmunb, .lsize = lsize,
            .epobs0 = epobs0, .emunb = emunb, .esize = esize ))),
   vfamily = c("zanegbinomial"),
+
+
+
+
+  simslot = eval(substitute(
+  function(object, nsim) {
+
+    pwts <- if (length(pwts <- object@prior.weights) > 0)
+              pwts else weights(object, type = "prior")
+    if (any(pwts != 1)) 
+      warning("ignoring prior weights")
+    eta <- predict(object)
+    phi0 <- eta2theta(eta[, c(TRUE, FALSE, FALSE)], .lpobs0 , earg = .epobs0 )
+    munb <- eta2theta(eta[, c(FALSE, TRUE, FALSE)], .lmunb  , earg = .emunb  )
+    kmat <- eta2theta(eta[, c(FALSE, FALSE, TRUE)], .lsize  , earg = .esize  )
+    rzanegbin(nsim * length(munb),
+              pobs0 = phi0, munb = munb, size = kmat)
+  }, list( .lpobs0 = lpobs0, .lmunb = lmunb, .lsize = lsize,
+           .epobs0 = epobs0, .emunb = emunb, .esize = esize ))),
+
+
+
+
+
   deriv = eval(substitute(expression({
-    Musual <- 3
+    M1 <- 3
     NOS <- extra$NOS
     y0 <- extra$y0
 
-    phi0 <- eta2theta(eta[, Musual*(1:NOS)-2, drop = FALSE],
+    phi0 <- eta2theta(eta[, M1*(1:NOS)-2, drop = FALSE],
                      .lpobs0 , earg = .epobs0 )
-    munb <- eta2theta(eta[, Musual*(1:NOS)-1, drop = FALSE],
+    munb <- eta2theta(eta[, M1*(1:NOS)-1, drop = FALSE],
                      .lmunb , earg = .emunb )
-    kmat <- eta2theta(eta[, Musual*(1:NOS)  , drop = FALSE],
+    kmat <- eta2theta(eta[, M1*(1:NOS)  , drop = FALSE],
                      .lsize , earg = .esize )
     skip <- extra$skip.these
 
@@ -1273,23 +1381,23 @@ zanegbinomial.control <- function(save.weight = TRUE, ...) {
       c(w) * dphi0.deta * (y0 / muphi0 - 1) / (1 - muphi0)
     }
     ans <- cbind(dl.deta1, dl.deta23)
-    ans <- ans[, interleave.VGAM(ncol(ans), M = Musual)]
+    ans <- ans[, interleave.VGAM(ncol(ans), M = M1)]
     ans
   }), list( .lpobs0 = lpobs0 , .lmunb = lmunb , .lsize = lsize ,
             .epobs0 = epobs0 , .emunb = emunb , .esize = esize  ))),
 
   weight = eval(substitute(expression({
 
-    six <- dimm(Musual)
+    six <- dimm(M1)
     wz <- run.varcov <- matrix(0.0, n, six*NOS-1)
-    Musualm1 <- Musual - 1
+    M1m1 <- M1 - 1
 
 
 
 
 
 
-    ind2 <- iam(NA, NA, M = Musual - 1, both = TRUE, diag = TRUE)
+    ind2 <- iam(NA, NA, M = M1 - 1, both = TRUE, diag = TRUE)
 
 
     for (ii in 1:( .nsimEIM )) {
@@ -1328,12 +1436,12 @@ zanegbinomial.control <- function(save.weight = TRUE, ...) {
 
 
 
-        run.varcov[, ((kk-1)*Musual+2):(kk*Musual)] <-
-        run.varcov[, ((kk-1)*Musual+2):(kk*Musual)] +
-          c(small.varcov[, 1:Musualm1])
-        run.varcov[, M + (kk-1)*Musual + 2] <-
-        run.varcov[, M + (kk-1)*Musual + 2] +
-          c(small.varcov[, Musualm1 + 1])
+        run.varcov[, ((kk-1)*M1+2):(kk*M1)] <-
+        run.varcov[, ((kk-1)*M1+2):(kk*M1)] +
+          c(small.varcov[, 1:M1m1])
+        run.varcov[, M + (kk-1)*M1 + 2] <-
+        run.varcov[, M + (kk-1)*M1 + 2] +
+          c(small.varcov[, M1m1 + 1])
       }  # kk; end of NOS
     }  # ii; end of nsimEIM
 
@@ -1346,9 +1454,9 @@ zanegbinomial.control <- function(save.weight = TRUE, ...) {
 
 
 
-    wzind1 <- sort(c(    Musual*(1:NOS) - 1,
-                         Musual*(1:NOS) - 0,
-                     M + Musual*(1:NOS) - 1))
+    wzind1 <- sort(c(    M1*(1:NOS) - 1,
+                         M1*(1:NOS) - 0,
+                     M + M1*(1:NOS) - 1))
     wz[, wzind1] <- c(w) * run.varcov[, wzind1]
 
 
@@ -1366,7 +1474,7 @@ zanegbinomial.control <- function(save.weight = TRUE, ...) {
         tmp200[index200, ii] <- .Machine$double.eps  # Diagonal 0's are bad 
       }
     }
-    wz[, Musual*(1:NOS)-2] <- tmp200
+    wz[, M1*(1:NOS)-2] <- tmp200
 
 
 
@@ -1450,13 +1558,14 @@ zanegbinomialff.control <- function(save.weight = TRUE, ...) {
   constraints = eval(substitute(expression({
 
     dotzero <- .zero
-    Musual <- 3
+    M1 <- 3
     eval(negzero.expression)
   }), list( .zero = zero ))),
 
 
   infos = eval(substitute(function(...) {
-    list(Musual = 3,
+    list(M1 = 3,
+         Q1 = 1,
          type.fitted  = .type.fitted ,
          zero = .zero )
   }, list( .zero = zero,
@@ -1464,7 +1573,7 @@ zanegbinomialff.control <- function(save.weight = TRUE, ...) {
          ))),
 
   initialize = eval(substitute(expression({
-    Musual <- 3
+    M1 <- 3
 
     if (any(y < 0))
       stop("the response must not have negative values")
@@ -1482,7 +1591,7 @@ zanegbinomialff.control <- function(save.weight = TRUE, ...) {
 
 
     extra$NOS <- NOS <- ncoly <- ncol(y)  # Number of species
-    M <- Musual * ncoly
+    M <- M1 * ncoly
 
     extra$dimnamesy   <- dimnames(y)
     extra$type.fitted <- .type.fitted
@@ -1496,7 +1605,7 @@ zanegbinomialff.control <- function(save.weight = TRUE, ...) {
           namesof(mynames2, .lsize  , earg = .esize  , tag = FALSE),
           namesof(mynames3, .lonempobs0 , earg = .eonempobs0 ,
                   tag = FALSE))[
-          interleave.VGAM(Musual*NOS, M = Musual)]
+          interleave.VGAM(M1*NOS, M = M1)]
 
 
     extra$y0 <- y0 <- ifelse(y == 0, 1, 0)
@@ -1561,7 +1670,7 @@ zanegbinomialff.control <- function(save.weight = TRUE, ...) {
         cbind(theta2eta(mu.init , .lmunb      , earg = .emunb      ),
               theta2eta(kmat0   , .lsize      , earg = .esize      ),
               theta2eta(1 - pnb0, .lonempobs0 , earg = .eonempobs0 ))
-      etastart <- etastart[, interleave.VGAM(ncol(etastart), M = Musual)]
+      etastart <- etastart[, interleave.VGAM(ncol(etastart), M = M1)]
     }  # End of if (!length(etastart))
 
 
@@ -1580,11 +1689,11 @@ zanegbinomialff.control <- function(save.weight = TRUE, ...) {
     type.fitted <- match.arg(type.fitted,
                              c("mean", "pobs0", "onempobs0"))[1]
 
-    Musual <- 3
+    M1 <- 3
     NOS <- extra$NOS
-    munb <- eta2theta(eta[, Musual*(1:NOS)-2], .lmunb  , earg = .emunb  )
-    kmat <- eta2theta(eta[, Musual*(1:NOS)-1], .lsize  , earg = .esize  )
-    onempobs0 <- eta2theta(eta[, Musual*(1:NOS)  ], .lonempobs0 ,
+    munb <- eta2theta(eta[, M1*(1:NOS)-2], .lmunb  , earg = .emunb  )
+    kmat <- eta2theta(eta[, M1*(1:NOS)-1], .lsize  , earg = .esize  )
+    onempobs0 <- eta2theta(eta[, M1*(1:NOS)  ], .lonempobs0 ,
                            earg = .eonempobs0 )
     pnb0 <- (kmat / (kmat + munb))^kmat  # p(0) from negative binomial
 
@@ -1597,7 +1706,8 @@ zanegbinomialff.control <- function(save.weight = TRUE, ...) {
         is.matrix(ans) &&
         length(extra$dimnamesy[[2]]) == ncol(ans) &&
         length(extra$dimnamesy[[2]]) > 0) {
-      dimnames(ans) <- extra$dimnamesy
+      if (length(extra$dimnamesy[[1]]) == nrow(ans))        
+        dimnames(ans) <- extra$dimnamesy
     } else
     if (NCOL(ans) == 1 &&
         is.matrix(ans)) {
@@ -1611,18 +1721,18 @@ zanegbinomialff.control <- function(save.weight = TRUE, ...) {
       c(rep( .lmunb      , length = NOS),
         rep( .lsize      , length = NOS),
         rep( .lonempobs0 , length = NOS))[
-        interleave.VGAM(Musual*NOS, M = Musual)]
+        interleave.VGAM(M1*NOS, M = M1)]
     temp.names <- c(mynames1,
                     mynames2,
-                    mynames3)[interleave.VGAM(Musual*NOS, M = Musual)]
+                    mynames3)[interleave.VGAM(M1*NOS, M = M1)]
     names(misc$link) <- temp.names
 
-    misc$earg <- vector("list", Musual*NOS)
+    misc$earg <- vector("list", M1*NOS)
     names(misc$earg) <- temp.names
     for (ii in 1:NOS) {
-      misc$earg[[Musual*ii-2]] <- .emunb
-      misc$earg[[Musual*ii-1]] <- .esize
-      misc$earg[[Musual*ii  ]] <- .eonempobs0
+      misc$earg[[M1*ii-2]] <- .emunb
+      misc$earg[[M1*ii-1]] <- .esize
+      misc$earg[[M1*ii  ]] <- .eonempobs0
     }
 
     misc$nsimEIM <- .nsimEIM
@@ -1636,32 +1746,65 @@ zanegbinomialff.control <- function(save.weight = TRUE, ...) {
             .nsimEIM = nsimEIM,
             .imethod = imethod ))),
   loglikelihood = eval(substitute(
-    function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
+    function(mu, y, w, residuals = FALSE, eta,
+             extra = NULL,
+             summation = TRUE) {
     NOS <- extra$NOS
-    Musual <- 3
-    munb <- eta2theta(eta[, Musual*(1:NOS)-2], .lmunb  , earg = .emunb  )
-    kmat <- eta2theta(eta[, Musual*(1:NOS)-1], .lsize  , earg = .esize  )
-    onempobs0 <- eta2theta(eta[, Musual*(1:NOS)  ], .lonempobs0 ,
+    M1 <- 3
+    munb <- eta2theta(eta[, M1*(1:NOS)-2], .lmunb  , earg = .emunb  )
+    kmat <- eta2theta(eta[, M1*(1:NOS)-1], .lsize  , earg = .esize  )
+    onempobs0 <- eta2theta(eta[, M1*(1:NOS)  ], .lonempobs0 ,
                            earg = .eonempobs0 )
-    if (residuals) stop("loglikelihood residuals not ",
-                        "implemented yet") else {
-      sum(c(w) * dzanegbin(x = y, pobs0 = 1 - onempobs0,
-                           munb = munb, size = kmat,
-                           log = TRUE))
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
+      ll.elts <-
+        c(w) * dzanegbin(x = y, pobs0 = 1 - onempobs0,
+                         munb = munb, size = kmat,
+                         log = TRUE)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
     }
   }, list( .lonempobs0 = lonempobs0, .lmunb = lmunb, .lsize = lsize,
            .eonempobs0 = eonempobs0, .emunb = emunb, .esize = esize ))),
   vfamily = c("zanegbinomialff"),
+
+
+
+  simslot = eval(substitute(
+  function(object, nsim) {
+
+    pwts <- if (length(pwts <- object@prior.weights) > 0)
+              pwts else weights(object, type = "prior")
+    if (any(pwts != 1)) 
+      warning("ignoring prior weights")
+    eta <- predict(object)
+    munb      <- eta2theta(eta[, c(TRUE, FALSE, FALSE)], .lmunb  , earg = .emunb  )
+    kmat      <- eta2theta(eta[, c(FALSE, TRUE, FALSE)], .lsize  , earg = .esize  )
+    onempobs0 <- eta2theta(eta[, c(FALSE, FALSE, TRUE)], .lonempobs0 ,
+                           earg = .eonempobs0 )
+
+    rzanegbin(nsim * length(munb),
+              pobs0 = 1 - onempobs0, munb = munb, size = kmat)
+  }, list( .lonempobs0 = lonempobs0, .lmunb = lmunb, .lsize = lsize,
+           .eonempobs0 = eonempobs0, .emunb = emunb, .esize = esize ))),
+
+
+
+
   deriv = eval(substitute(expression({
-    Musual <- 3
+    M1 <- 3
     NOS <- extra$NOS
     y0 <- extra$y0
 
-    munb      <- eta2theta(eta[, Musual*(1:NOS)-2, drop = FALSE],
+    munb      <- eta2theta(eta[, M1*(1:NOS)-2, drop = FALSE],
                            .lmunb      , earg = .emunb )
-    kmat      <- eta2theta(eta[, Musual*(1:NOS)-1, drop = FALSE],
+    kmat      <- eta2theta(eta[, M1*(1:NOS)-1, drop = FALSE],
                            .lsize      , earg = .esize )
-    onempobs0 <- eta2theta(eta[, Musual*(1:NOS)  , drop = FALSE],
+    onempobs0 <- eta2theta(eta[, M1*(1:NOS)  , drop = FALSE],
                            .lonempobs0 , earg = .eonempobs0 )
     skip <- extra$skip.these
     phi0 <- 1 - onempobs0
@@ -1709,22 +1852,22 @@ zanegbinomialff.control <- function(save.weight = TRUE, ...) {
       c(w) * donempobs0.deta * dl.donempobs0
     }
     ans <- cbind(dl.deta12, dl.deta3)
-    ans <- ans[, interleave.VGAM(ncol(ans), M = Musual)]
+    ans <- ans[, interleave.VGAM(ncol(ans), M = M1)]
     ans
   }), list( .lonempobs0 = lonempobs0 , .lmunb = lmunb , .lsize = lsize ,
             .eonempobs0 = eonempobs0 , .emunb = emunb , .esize = esize  ))),
 
   weight = eval(substitute(expression({
 
-    six <- dimm(Musual)
+    six <- dimm(M1)
     wz <- run.varcov <- matrix(0.0, n, six*NOS-1)
-    Musualm1 <- Musual - 1
+    M1m1 <- M1 - 1
 
 
 
 
 
-    ind2 <- iam(NA, NA, M = Musual - 1, both = TRUE, diag = TRUE)
+    ind2 <- iam(NA, NA, M = M1 - 1, both = TRUE, diag = TRUE)
 
 
     for (ii in 1:( .nsimEIM )) {
@@ -1759,12 +1902,12 @@ zanegbinomialff.control <- function(save.weight = TRUE, ...) {
                         temp2[, ind2$col.index]
 
 
-        run.varcov[, ((kk-1)*Musual+2-1):(kk*Musual-1)] <-
-        run.varcov[, ((kk-1)*Musual+2-1):(kk*Musual-1)] +
-          c(small.varcov[, 1:Musualm1])
-        run.varcov[, M + (kk-1)*Musual + 2-1] <-
-        run.varcov[, M + (kk-1)*Musual + 2-1] +
-          c(small.varcov[, Musualm1 + 1])
+        run.varcov[, ((kk-1)*M1+2-1):(kk*M1-1)] <-
+        run.varcov[, ((kk-1)*M1+2-1):(kk*M1-1)] +
+          c(small.varcov[, 1:M1m1])
+        run.varcov[, M + (kk-1)*M1 + 2-1] <-
+        run.varcov[, M + (kk-1)*M1 + 2-1] +
+          c(small.varcov[, M1m1 + 1])
       }  # kk; end of NOS
     }  # ii; end of nsimEIM
 
@@ -1776,9 +1919,9 @@ zanegbinomialff.control <- function(save.weight = TRUE, ...) {
 
 
 
-    wzind1 <- sort(c(    Musual*(1:NOS) - 1 - 1,
-                         Musual*(1:NOS) - 0 - 1,
-                     M + Musual*(1:NOS) - 1 - 1))
+    wzind1 <- sort(c(    M1*(1:NOS) - 1 - 1,
+                         M1*(1:NOS) - 0 - 1,
+                     M + M1*(1:NOS) - 1 - 1))
     wz[, wzind1] <- c(w) * run.varcov[, wzind1]
 
 
@@ -1794,7 +1937,7 @@ zanegbinomialff.control <- function(save.weight = TRUE, ...) {
         tmp200[index200, ii] <- .Machine$double.eps  # Diagonal 0's are bad 
       }
     }
-    wz[, Musual*(1:NOS)  ] <- tmp200
+    wz[, M1*(1:NOS)  ] <- tmp200
 
 
 
@@ -1821,7 +1964,7 @@ rposnegbin <- function(n, munb, size) {
   munb <- rep(munb, length = n)
   size <- rep(size, length = n)
   index <- ans == 0
-  while(any(index)) {
+  while (any(index)) {
     more <- rnbinom(n = sum(index), mu = munb[index], size = size[index])
     ans[index] <- more
     index <- ans == 0
@@ -1852,11 +1995,12 @@ dposnegbin <- function(x, munb, size, log = FALSE) {
 
 
 
- zipoisson <- function(lpstr0 = "logit", llambda = "loge",
-                       type.fitted = c("mean", "pobs0", "pstr0", "onempstr0"),
-                       ipstr0 = NULL,    ilambda = NULL,
-                       imethod = 1,
-                       shrinkage.init = 0.8, zero = NULL) {
+ zipoisson <-
+  function(lpstr0 = "logit", llambda = "loge",
+           type.fitted = c("mean", "pobs0", "pstr0", "onempstr0"),
+           ipstr0 = NULL,    ilambda = NULL,
+           imethod = 1,
+           shrinkage.init = 0.8, zero = NULL) {
   ipstr00 <- ipstr0
 
 
@@ -1903,12 +2047,13 @@ dposnegbin <- function(x, munb, size, log = FALSE) {
 
   constraints = eval(substitute(expression({
     dotzero <- .zero
-    Musual <- 2
+    M1 <- 2
     eval(negzero.expression)
   }), list( .zero = zero ))),
 
   infos = eval(substitute(function(...) {
-    list(Musual = 2,
+    list(M1 = 2,
+         Q1 = 1,
          type.fitted  = .type.fitted ,
          zero = .zero )
   }, list( .zero = zero,
@@ -1930,11 +2075,11 @@ dposnegbin <- function(x, munb, size, log = FALSE) {
 
 
     ncoly <- ncol(y)
-    Musual <- 2
+    M1 <- 2
     extra$ncoly <- ncoly
-    extra$Musual <- Musual
+    extra$M1 <- M1
     extra$dimnamesy <- dimnames(y)
-    M <- Musual * ncoly
+    M <- M1 * ncoly
     extra$type.fitted      <- .type.fitted
 
 
@@ -1947,7 +2092,7 @@ dposnegbin <- function(x, munb, size, log = FALSE) {
     predictors.names <-
         c(namesof(mynames1, .lpstr00 , earg = .epstr00 , tag = FALSE),
           namesof(mynames2, .llambda , earg = .elambda , tag = FALSE))[
-          interleave.VGAM(M, M = Musual)]
+          interleave.VGAM(M, M = M1)]
 
 
 
@@ -1997,13 +2142,13 @@ dposnegbin <- function(x, munb, size, log = FALSE) {
           matP[, spp.] <- Phimat.init
         if (!length( .ilambda ))
           matL[, spp.] <- Lambda.init
-      } # spp.
+      }  # spp.
 
       etastart <- cbind(theta2eta(matP, .lpstr00, earg = .epstr00 ),
                         theta2eta(matL, .llambda, earg = .elambda ))[,
-                        interleave.VGAM(M, M = Musual)]
+                        interleave.VGAM(M, M = M1)]
       mustart <- NULL  # Since etastart has been computed.
-    } # End of !length(etastart)
+    }  # End of !length(etastart)
   }), list( .lpstr00 = lpstr00, .llambda = llambda,
             .epstr00 = epstr00, .elambda = elambda,
             .ipstr00 = ipstr00, .ilambda = ilambda,
@@ -2033,7 +2178,8 @@ dposnegbin <- function(x, munb, size, log = FALSE) {
         is.matrix(ans) &&
         length(extra$dimnamesy[[2]]) == ncol(ans) &&
         length(extra$dimnamesy[[2]]) > 0) {
-      dimnames(ans) <- extra$dimnamesy
+      if (length(extra$dimnamesy[[1]]) == nrow(ans)) 
+        dimnames(ans) <- extra$dimnamesy
     } else
     if (NCOL(ans) == 1 &&
         is.matrix(ans)) {
@@ -2045,21 +2191,21 @@ dposnegbin <- function(x, munb, size, log = FALSE) {
            .type.fitted = type.fitted
          ))),
   last = eval(substitute(expression({
-    Musual <- extra$Musual
+    M1 <- extra$M1
     misc$link <-
       c(rep( .lpstr00 , length = ncoly),
-        rep( .llambda , length = ncoly))[interleave.VGAM(M, M = Musual)]
-    temp.names <- c(mynames1, mynames2)[interleave.VGAM(M, M = Musual)]
+        rep( .llambda , length = ncoly))[interleave.VGAM(M, M = M1)]
+    temp.names <- c(mynames1, mynames2)[interleave.VGAM(M, M = M1)]
     names(misc$link) <- temp.names
 
     misc$earg <- vector("list", M)
     names(misc$earg) <- temp.names
     for (ii in 1:ncoly) {
-      misc$earg[[Musual*ii-1]] <- .epstr00
-      misc$earg[[Musual*ii  ]] <- .elambda
+      misc$earg[[M1*ii-1]] <- .epstr00
+      misc$earg[[M1*ii  ]] <- .elambda
     }
 
-    misc$Musual <- Musual
+    misc$M1 <- M1
     misc$imethod <- .imethod
     misc$expected <- TRUE
     misc$multipleResponses <- TRUE
@@ -2075,19 +2221,47 @@ dposnegbin <- function(x, munb, size, log = FALSE) {
             .epstr00 = epstr00, .elambda = elambda,
             .imethod = imethod ))),
   loglikelihood = eval(substitute( 
-    function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
+    function(mu, y, w, residuals = FALSE, eta,
+             extra = NULL,
+             summation = TRUE) {
     phimat <- eta2theta(eta[, c(TRUE, FALSE)], .lpstr00 , earg = .epstr00 )
     lambda <- eta2theta(eta[, c(FALSE, TRUE)], .llambda , earg = .elambda )
-    if (residuals) stop("loglikelihood residuals not ",
-                        "implemented yet") else {
-      sum(c(w) * dzipois(x = y, pstr0 = phimat, lambda = lambda,
-                         log = TRUE))
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
+      ll.elts <- c(w) * dzipois(x = y, pstr0 = phimat, lambda = lambda,
+                                log = TRUE)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
     }
   }, list( .lpstr00 = lpstr00, .llambda = llambda,
            .epstr00 = epstr00, .elambda = elambda ))),
   vfamily = c("zipoisson"),
+
+
+
+  simslot = eval(substitute(
+  function(object, nsim) {
+
+    pwts <- if (length(pwts <- object@prior.weights) > 0)
+              pwts else weights(object, type = "prior")
+    if (any(pwts != 1)) 
+      warning("ignoring prior weights")
+    eta <- predict(object)
+    phimat <- eta2theta(eta[, c(TRUE, FALSE)], .lpstr00 , earg = .epstr00 )
+    lambda <- eta2theta(eta[, c(FALSE, TRUE)], .llambda , earg = .elambda )
+    rzipois(nsim * length(lambda), lambda = lambda, pstr0 = phimat)
+  }, list( .lpstr00 = lpstr00, .llambda = llambda,
+           .epstr00 = epstr00, .elambda = elambda ))),
+
+
+
+
   deriv = eval(substitute(expression({
-    Musual <- 2
+    M1 <- 2
     phimat <- eta2theta(eta[, c(TRUE, FALSE), drop = FALSE], .lpstr00 ,
                         earg = .epstr00 )
     lambda <- eta2theta(eta[, c(FALSE, TRUE), drop = FALSE], .llambda ,
@@ -2108,13 +2282,13 @@ dposnegbin <- function(x, munb, size, log = FALSE) {
 
     ans <- c(w) * cbind(dl.dphimat * dphimat.deta,
                         dl.dlambda * dlambda.deta)
-    ans <- ans[, interleave.VGAM(M, M = Musual)]
+    ans <- ans[, interleave.VGAM(M, M = M1)]
 
 
     if ( .llambda == "loge" && is.empty.list( .elambda ) &&
        any(lambda[!index0] < .Machine$double.eps)) {
-      for (spp. in 1:(M / Musual)) {
-        ans[!index0[, spp.], Musual * spp.] <-
+      for (spp. in 1:(M / M1)) {
+        ans[!index0[, spp.], M1 * spp.] <-
           w[!index0[, spp.]] *
          (y[!index0[, spp.], spp.] - lambda[!index0[, spp.], spp.])
       }
@@ -2136,8 +2310,8 @@ dposnegbin <- function(x, munb, size, log = FALSE) {
     wz <- array(c(c(w) * ned2l.dphimat2 * dphimat.deta^2,
                   c(w) * ned2l.dlambda2 * dlambda.deta^2,
                   c(w) * ned2l.dphimatlambda * dphimat.deta * dlambda.deta),
-                dim = c(n, M / Musual, 3))
-    wz <- arwz2wz(wz, M = M, Musual = Musual)
+                dim = c(n, M / M1, 3))
+    wz <- arwz2wz(wz, M = M, M1 = M1)
 
 
 
@@ -2198,7 +2372,7 @@ dposnegbin <- function(x, munb, size, log = FALSE) {
 
 
   infos = eval(substitute(function(...) {
-    list(Musual = 2,
+    list(M1 = 2,
          type.fitted  = .type.fitted ,
          zero = .zero )
   }, list( .zero = zero,
@@ -2341,13 +2515,22 @@ dposnegbin <- function(x, munb, size, log = FALSE) {
   }, list( .lpstr0 = lpstr0, .lprob = lprob,
            .epstr0 = epstr0, .eprob = eprob ))),
   loglikelihood = eval(substitute( 
-    function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
+    function(mu, y, w, residuals = FALSE, eta,
+             extra = NULL,
+             summation = TRUE) {
     pstr0 <- eta2theta(eta[, 1], .lpstr0 , earg = .epstr0 )
     mubin <- eta2theta(eta[, 2], .lprob  , earg = .eprob  )
-    if (residuals) stop("loglikelihood residuals not ",
-                        "implemented yet") else {
-      sum(dzibinom(x = round(w * y), size = w, prob = mubin,
-                   log = TRUE, pstr0 = pstr0))
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
+      ll.elts <-
+        dzibinom(x = round(w * y), size = w, prob = mubin,
+                 log = TRUE, pstr0 = pstr0)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
     }
   }, list( .lpstr0 = lpstr0, .lprob = lprob,
            .epstr0 = epstr0, .eprob = eprob ))),
@@ -2470,7 +2653,7 @@ dposnegbin <- function(x, munb, size, log = FALSE) {
 
 
   infos = eval(substitute(function(...) {
-    list(Musual = 2,
+    list(M1 = 2,
          type.fitted  = .type.fitted ,
          zero = .zero )
   }, list( .zero = zero,
@@ -2616,13 +2799,22 @@ dposnegbin <- function(x, munb, size, log = FALSE) {
   }, list( .lonempstr0 = lonempstr0, .lprob = lprob,
            .eonempstr0 = eonempstr0, .eprob = eprob ))),
   loglikelihood = eval(substitute( 
-    function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
+    function(mu, y, w, residuals = FALSE, eta,
+             extra = NULL,
+             summation = TRUE) {
     mubin     <- eta2theta(eta[, 1], .lprob      , earg = .eprob      )
     onempstr0 <- eta2theta(eta[, 2], .lonempstr0 , earg = .eonempstr0 )
-    if (residuals) stop("loglikelihood residuals not ",
-                        "implemented yet") else {
-      sum(dzibinom(x = round(w * y), size = w, prob = mubin,
-                   log = TRUE, pstr0 = 1 - onempstr0))
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
+      ll.elts <-
+        dzibinom(x = round(w * y), size = w, prob = mubin,
+                 log = TRUE, pstr0 = 1 - onempstr0)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
     }
   }, list( .lonempstr0 = lonempstr0, .lprob = lprob,
            .eonempstr0 = eonempstr0, .eprob = eprob ))),
@@ -3061,13 +3253,14 @@ zinegbinomial.control <- function(save.weight = TRUE, ...) {
   constraints = eval(substitute(expression({
 
     dotzero <- .zero
-    Musual <- 3
+    M1 <- 3
     eval(negzero.expression)
   }), list( .zero = zero ))),
 
 
   infos = eval(substitute(function(...) {
-    list(Musual = 3,
+    list(M1 = 3,
+         Q1 = 1,
          type.fitted  = .type.fitted ,
          zero = .zero )
   }, list( .zero = zero,
@@ -3076,7 +3269,7 @@ zinegbinomial.control <- function(save.weight = TRUE, ...) {
 
       
   initialize = eval(substitute(expression({
-    Musual <- 3
+    M1 <- 3
 
     temp5 <-
     w.y.check(w = w, y = y,
@@ -3105,7 +3298,7 @@ zinegbinomial.control <- function(save.weight = TRUE, ...) {
       c(namesof(mynames1, .lpstr0 , earg = .epstr0 , tag = FALSE),
         namesof(mynames2, .lmunb  , earg = .emunb  , tag = FALSE),
         namesof(mynames3, .lsize  , earg = .esize  , tag = FALSE))[
-        interleave.VGAM(Musual*NOS, M = Musual)]
+        interleave.VGAM(M1*NOS, M = M1)]
 
     if (!length(etastart)) {
       mum.init <- if ( .imethod == 3) {
@@ -3172,7 +3365,7 @@ zinegbinomial.control <- function(save.weight = TRUE, ...) {
                 theta2eta(mum.init,   .lmunb  , earg = .emunb  ),
                 theta2eta(kay.init,   .lsize  , earg = .esize  ))
         etastart <-
-          etastart[, interleave.VGAM(ncol(etastart), M = Musual)]
+          etastart[, interleave.VGAM(ncol(etastart), M = M1)]
     }
   }), list( .lpstr0 = lpstr0, .lmunb = lmunb, .lsize = lsize,
             .epstr0 = epstr0, .emunb = emunb, .esize = esize,
@@ -3191,15 +3384,15 @@ zinegbinomial.control <- function(save.weight = TRUE, ...) {
     type.fitted <- match.arg(type.fitted,
                              c("mean", "pobs0", "pstr0", "onempstr0"))[1]
 
-    Musual <- 3
+    M1 <- 3
     NOS <- extra$NOS
-    pstr0 <- eta2theta(eta[, Musual*(1:NOS)-2, drop = FALSE],
+    pstr0 <- eta2theta(eta[, M1*(1:NOS)-2, drop = FALSE],
                        .lpstr0 , earg = .epstr0 )
     if (type.fitted %in% c("mean", "pobs0"))
-      munb  <- eta2theta(eta[, Musual*(1:NOS)-1, drop = FALSE],
+      munb  <- eta2theta(eta[, M1*(1:NOS)-1, drop = FALSE],
                          .lmunb  , earg = .emunb  )
     if (type.fitted %in% c("pobs0"))
-      kmat  <- eta2theta(eta[, Musual*(1:NOS)  , drop = FALSE],
+      kmat  <- eta2theta(eta[, M1*(1:NOS)  , drop = FALSE],
                         .lsize , earg = .esize )
 
     ans <- switch(type.fitted,
@@ -3212,7 +3405,8 @@ zinegbinomial.control <- function(save.weight = TRUE, ...) {
         is.matrix(ans) &&
         length(extra$dimnamesy[[2]]) == ncol(ans) &&
         length(extra$dimnamesy[[2]]) > 0) {
-      dimnames(ans) <- extra$dimnamesy
+      if (length(extra$dimnamesy[[1]]) == nrow(ans))        
+        dimnames(ans) <- extra$dimnamesy
     } else
     if (NCOL(ans) == 1 &&
         is.matrix(ans)) {
@@ -3227,26 +3421,26 @@ zinegbinomial.control <- function(save.weight = TRUE, ...) {
     misc$link <-
       c(rep( .lpstr0 , length = NOS),
         rep( .lmunb  , length = NOS),
-        rep( .lsize  , length = NOS))[interleave.VGAM(Musual*NOS,
-                                                      M = Musual)]
+        rep( .lsize  , length = NOS))[interleave.VGAM(M1*NOS,
+                                                      M = M1)]
     temp.names <-
       c(mynames1,
         mynames2,
-        mynames3)[interleave.VGAM(Musual*NOS, M = Musual)]
+        mynames3)[interleave.VGAM(M1*NOS, M = M1)]
     names(misc$link) <- temp.names
 
-    misc$earg <- vector("list", Musual*NOS)
+    misc$earg <- vector("list", M1*NOS)
     names(misc$earg) <- temp.names
     for (ii in 1:NOS) {
-      misc$earg[[Musual*ii-2]] <- .epstr0
-      misc$earg[[Musual*ii-1]] <- .emunb
-      misc$earg[[Musual*ii  ]] <- .esize
+      misc$earg[[M1*ii-2]] <- .epstr0
+      misc$earg[[M1*ii-1]] <- .emunb
+      misc$earg[[M1*ii  ]] <- .esize
     }
 
     misc$imethod <- .imethod
     misc$nsimEIM <- .nsimEIM
     misc$expected <- TRUE
-    misc$Musual <- Musual
+    misc$M1 <- M1
     misc$ipstr0  <- .ipstr0
     misc$isize <- .isize
     misc$multipleResponses <- TRUE
@@ -3257,32 +3451,66 @@ zinegbinomial.control <- function(save.weight = TRUE, ...) {
             .ipstr0 = ipstr0,                 .isize = isize,
             .nsimEIM = nsimEIM, .imethod = imethod ))),
   loglikelihood = eval(substitute(
-    function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
-    Musual <- 3
+    function(mu, y, w, residuals = FALSE, eta,
+             extra = NULL,
+             summation = TRUE) {
+    M1 <- 3
     NOS <- extra$NOS
-    pstr0 <- eta2theta(eta[, Musual*(1:NOS)-2, drop = FALSE],
-                      .lpstr0 , earg = .epstr0 )
-    munb  <- eta2theta(eta[, Musual*(1:NOS)-1, drop = FALSE],
-                      .lmunb , earg = .emunb )
-    kmat  <- eta2theta(eta[, Musual*(1:NOS)  , drop = FALSE],
-                      .lsize , earg = .esize )
-    if (residuals) stop("loglikelihood residuals not ",
-                        "implemented yet") else {
-      sum(c(w) * dzinegbin(x = y, size = kmat, munb = munb,
-                           pstr0 = pstr0, log = TRUE))
+    pstr0 <- eta2theta(eta[, M1*(1:NOS)-2, drop = FALSE],
+                       .lpstr0 , earg = .epstr0 )
+    munb  <- eta2theta(eta[, M1*(1:NOS)-1, drop = FALSE],
+                       .lmunb , earg = .emunb )
+    kmat  <- eta2theta(eta[, M1*(1:NOS)  , drop = FALSE],
+                       .lsize , earg = .esize )
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
+      ll.elts <-
+        c(w) * dzinegbin(x = y, size = kmat, munb = munb,
+                         pstr0 = pstr0, log = TRUE)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
     }
   }, list( .lpstr0 = lpstr0, .lmunb = lmunb, .lsize = lsize,
            .epstr0 = epstr0, .emunb = emunb, .esize = esize ))),
   vfamily = c("zinegbinomial"),
+
+
+
+  simslot = eval(substitute(
+  function(object, nsim) {
+
+    pwts <- if (length(pwts <- object@prior.weights) > 0)
+              pwts else weights(object, type = "prior")
+    if (any(pwts != 1)) 
+      warning("ignoring prior weights")
+    eta <- predict(object)
+    pstr0 <- eta2theta(eta[, c(TRUE, FALSE, FALSE)],
+                       .lpstr0 , earg = .epstr0 )
+    munb  <- eta2theta(eta[, c(FALSE, TRUE, FALSE)], .lmunb  , earg = .emunb  )
+    kmat  <- eta2theta(eta[, c(FALSE, FALSE, TRUE)], .lsize  , earg = .esize  )
+    rzinegbin(nsim * length(munb),
+              size = kmat, munb = munb, pstr0 = pstr0)
+  }, list( .lpstr0 = lpstr0, .lmunb = lmunb, .lsize = lsize,
+           .epstr0 = epstr0, .emunb = emunb, .esize = esize ))),
+
+
+
+
+
+
   deriv = eval(substitute(expression({
-    Musual <- 3
+    M1 <- 3
     NOS <- extra$NOS
 
-    pstr0 <- eta2theta(eta[, Musual*(1:NOS)-2, drop = FALSE],
+    pstr0 <- eta2theta(eta[, M1*(1:NOS)-2, drop = FALSE],
                       .lpstr0 , earg = .epstr0 )
-    munb  <- eta2theta(eta[, Musual*(1:NOS)-1, drop = FALSE],
+    munb  <- eta2theta(eta[, M1*(1:NOS)-1, drop = FALSE],
                       .lmunb  , earg = .emunb  )
-    kmat  <- eta2theta(eta[, Musual*(1:NOS)  , drop = FALSE],
+    kmat  <- eta2theta(eta[, M1*(1:NOS)  , drop = FALSE],
                       .lsize  , earg = .esize  )
 
     dpstr0.deta <- dtheta.deta(pstr0, .lpstr0 , earg = .epstr0 )
@@ -3291,7 +3519,7 @@ zinegbinomial.control <- function(save.weight = TRUE, ...) {
     dthetas.detas <-
         (cbind(dpstr0.deta,
                dmunb.deta,
-               dsize.deta))[, interleave.VGAM(Musual*NOS, M = Musual)]
+               dsize.deta))[, interleave.VGAM(M1*NOS, M = M1)]
 
 
 
@@ -3329,7 +3557,7 @@ zinegbinomial.control <- function(save.weight = TRUE, ...) {
     dl.dthetas <-
       cbind(dl.dpstr0,
             dl.dmunb,
-            dl.dsize)[, interleave.VGAM(Musual*NOS, M = Musual)]
+            dl.dsize)[, interleave.VGAM(M1*NOS, M = M1)]
 
 
       c(w) * dl.dthetas * dthetas.detas
@@ -3340,9 +3568,9 @@ zinegbinomial.control <- function(save.weight = TRUE, ...) {
 
 
 
-    wz <- matrix(0, n, Musual*M - Musual)
+    wz <- matrix(0, n, M1*M - M1)
 
-    ind3 <- iam(NA, NA, M = Musual, both = TRUE, diag = TRUE)
+    ind3 <- iam(NA, NA, M = M1, both = TRUE, diag = TRUE)
 
     run.varcov <- array(0.0, c(n, length(ind3$row.index), NOS))
 
@@ -3418,23 +3646,23 @@ zinegbinomial.control <- function(save.weight = TRUE, ...) {
 
     for (spp. in 1:NOS) {
       wz1[,, spp.] <- wz1[,, spp.] *
-                     dthetas.detas[, Musual * (spp. - 1) + ind3$row] *
-                     dthetas.detas[, Musual * (spp. - 1) + ind3$col]
+                     dthetas.detas[, M1 * (spp. - 1) + ind3$row] *
+                     dthetas.detas[, M1 * (spp. - 1) + ind3$col]
     }
 
     for (spp. in 1:NOS) {
-      for (jay in 1:Musual) {
-        for (kay in jay:Musual) {
-          cptr <- iam((spp. - 1) * Musual + jay,
-                     (spp. - 1) * Musual + kay, M = M)
+      for (jay in 1:M1) {
+        for (kay in jay:M1) {
+          cptr <- iam((spp. - 1) * M1 + jay,
+                     (spp. - 1) * M1 + kay, M = M)
           temp.wz1 <- wz1[,, spp.]
-          wz[, cptr] <- temp.wz1[, iam(jay, kay, M = Musual)]
+          wz[, cptr] <- temp.wz1[, iam(jay, kay, M = M1)]
         }
       }
     }
 
 
-    w.wz.merge(w = w, wz = wz, n = n, M = M, ndepy = M / Musual)
+    w.wz.merge(w = w, wz = wz, n = n, M = M, ndepy = M / M1)
   }), list( .lpstr0 = lpstr0,
             .epstr0 = epstr0, .nsimEIM = nsimEIM ))))
 }  # End of zinegbinomial
@@ -3515,13 +3743,14 @@ zinegbinomialff.control <- function(save.weight = TRUE, ...) {
   constraints = eval(substitute(expression({
 
     dotzero <- .zero
-    Musual <- 3
+    M1 <- 3
     eval(negzero.expression)
   }), list( .zero = zero ))),
 
 
   infos = eval(substitute(function(...) {
-    list(Musual = 3,
+    list(M1 = 3,
+         Q1 = 1,
          type.fitted  = .type.fitted ,
          zero = .zero )
   }, list( .zero = zero,
@@ -3530,7 +3759,7 @@ zinegbinomialff.control <- function(save.weight = TRUE, ...) {
 
       
   initialize = eval(substitute(expression({
-    Musual <- 3
+    M1 <- 3
 
     temp5 <-
     w.y.check(w = w, y = y,
@@ -3558,7 +3787,7 @@ zinegbinomialff.control <- function(save.weight = TRUE, ...) {
       c(namesof(mynames1, .lmunb  , earg = .emunb  , tag = FALSE),
         namesof(mynames2, .lsize  , earg = .esize  , tag = FALSE),
         namesof(mynames3, .lonempstr0 , earg = .eonempstr0 , tag = FALSE))[
-        interleave.VGAM(Musual*NOS, M = Musual)]
+        interleave.VGAM(M1*NOS, M = M1)]
 
     if (!length(etastart)) {
       mum.init <- if ( .imethod == 3) {
@@ -3626,7 +3855,7 @@ zinegbinomialff.control <- function(save.weight = TRUE, ...) {
                 theta2eta(onempstr0.init, .lonempstr0 ,
                           earg = .eonempstr0 ))
         etastart <-
-          etastart[, interleave.VGAM(ncol(etastart), M = Musual)]
+          etastart[, interleave.VGAM(ncol(etastart), M = M1)]
     }
   }), list( .lonempstr0 = lonempstr0, .lmunb = lmunb, .lsize = lsize,
             .eonempstr0 = eonempstr0, .emunb = emunb, .esize = esize,
@@ -3645,15 +3874,15 @@ zinegbinomialff.control <- function(save.weight = TRUE, ...) {
     type.fitted <- match.arg(type.fitted,
                              c("mean", "pobs0", "pstr0", "onempstr0"))[1]
 
-    Musual <- 3
+    M1 <- 3
     NOS <- extra$NOS
     if (type.fitted %in% c("mean", "pobs0"))
-      munb    <- eta2theta(eta[, Musual*(1:NOS)-2, drop = FALSE],
+      munb    <- eta2theta(eta[, M1*(1:NOS)-2, drop = FALSE],
                            .lmunb  , earg = .emunb  )
     if (type.fitted %in% c("pobs0"))
-      kmat    <- eta2theta(eta[, Musual*(1:NOS)-1, drop = FALSE],
+      kmat    <- eta2theta(eta[, M1*(1:NOS)-1, drop = FALSE],
                            .lsize , earg = .esize )
-    onempstr0 <- eta2theta(eta[, Musual*(1:NOS)  , drop = FALSE],
+    onempstr0 <- eta2theta(eta[, M1*(1:NOS)  , drop = FALSE],
                            .lonempstr0 , earg = .eonempstr0 )
 
     ans <- switch(type.fitted,
@@ -3666,7 +3895,8 @@ zinegbinomialff.control <- function(save.weight = TRUE, ...) {
         is.matrix(ans) &&
         length(extra$dimnamesy[[2]]) == ncol(ans) &&
         length(extra$dimnamesy[[2]]) > 0) {
-      dimnames(ans) <- extra$dimnamesy
+      if (length(extra$dimnamesy[[1]]) == nrow(ans))        
+        dimnames(ans) <- extra$dimnamesy
     } else
     if (NCOL(ans) == 1 &&
         is.matrix(ans)) {
@@ -3681,26 +3911,26 @@ zinegbinomialff.control <- function(save.weight = TRUE, ...) {
     misc$link <-
       c(rep( .lmunb      , length = NOS),
         rep( .lsize      , length = NOS),
-        rep( .lonempstr0 , length = NOS))[interleave.VGAM(Musual*NOS,
-                                                          M = Musual)]
+        rep( .lonempstr0 , length = NOS))[interleave.VGAM(M1*NOS,
+                                                          M = M1)]
     temp.names <-
       c(mynames1,
         mynames2,
-        mynames3)[interleave.VGAM(Musual*NOS, M = Musual)]
+        mynames3)[interleave.VGAM(M1*NOS, M = M1)]
     names(misc$link) <- temp.names
 
-    misc$earg <- vector("list", Musual*NOS)
+    misc$earg <- vector("list", M1*NOS)
     names(misc$earg) <- temp.names
     for (ii in 1:NOS) {
-      misc$earg[[Musual*ii-2]] <- .emunb
-      misc$earg[[Musual*ii-1]] <- .esize
-      misc$earg[[Musual*ii  ]] <- .eonempstr0
+      misc$earg[[M1*ii-2]] <- .emunb
+      misc$earg[[M1*ii-1]] <- .esize
+      misc$earg[[M1*ii  ]] <- .eonempstr0
     }
 
     misc$imethod <- .imethod
     misc$nsimEIM <- .nsimEIM
     misc$expected <- TRUE
-    misc$Musual <- Musual
+    misc$M1 <- M1
     misc$ionempstr0  <- .ionempstr0
     misc$isize <- .isize
     misc$multipleResponses <- TRUE
@@ -3710,32 +3940,64 @@ zinegbinomialff.control <- function(save.weight = TRUE, ...) {
             .ionempstr0 = ionempstr0,                 .isize = isize,
             .nsimEIM = nsimEIM, .imethod = imethod ))),
   loglikelihood = eval(substitute(
-    function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
-    Musual <- 3
+    function(mu, y, w, residuals = FALSE, eta,
+             extra = NULL,
+             summation = TRUE) {
+    M1 <- 3
     NOS <- extra$NOS
-    munb      <- eta2theta(eta[, Musual*(1:NOS)-2, drop = FALSE],
+    munb      <- eta2theta(eta[, M1*(1:NOS)-2, drop = FALSE],
                            .lmunb , earg = .emunb )
-    kmat      <- eta2theta(eta[, Musual*(1:NOS)-1, drop = FALSE],
+    kmat      <- eta2theta(eta[, M1*(1:NOS)-1, drop = FALSE],
                            .lsize , earg = .esize )
-    onempstr0 <- eta2theta(eta[, Musual*(1:NOS)  , drop = FALSE],
+    onempstr0 <- eta2theta(eta[, M1*(1:NOS)  , drop = FALSE],
                            .lonempstr0 , earg = .eonempstr0 )
-    if (residuals) stop("loglikelihood residuals not ",
-                        "implemented yet") else {
-      sum(c(w) * dzinegbin(x = y, size = kmat, munb = munb,
-                           pstr0 = 1 - onempstr0, log = TRUE))
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
+      ll.elts <-
+        c(w) * dzinegbin(x = y, size = kmat, munb = munb,
+                         pstr0 = 1 - onempstr0, log = TRUE)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
     }
   }, list( .lonempstr0 = lonempstr0, .lmunb = lmunb, .lsize = lsize,
            .eonempstr0 = eonempstr0, .emunb = emunb, .esize = esize ))),
   vfamily = c("zinegbinomialff"),
+
+
+
+  simslot = eval(substitute(
+  function(object, nsim) {
+
+    pwts <- if (length(pwts <- object@prior.weights) > 0)
+              pwts else weights(object, type = "prior")
+    if (any(pwts != 1)) 
+      warning("ignoring prior weights")
+    eta <- predict(object)
+    munb <- eta2theta(eta[, c(TRUE, FALSE, FALSE)], .lmunb , earg = .emunb )
+    kmat <- eta2theta(eta[, c(FALSE, TRUE, FALSE)], .lsize , earg = .esize )
+    onempstr0 <- eta2theta(eta[, c(FALSE, FALSE, TRUE)],
+                       .lpstr0 , earg = .epstr0 )
+    rzinegbin(nsim * length(munb),
+              size = kmat, munb = munb, pstr0 = 1 - onempstr0)
+  }, list( .lonempstr0 = lonempstr0, .lmunb = lmunb, .lsize = lsize,
+           .eonempstr0 = eonempstr0, .emunb = emunb, .esize = esize ))),
+
+
+
+
   deriv = eval(substitute(expression({
-    Musual <- 3
+    M1 <- 3
     NOS <- extra$NOS
 
-    munb      <- eta2theta(eta[, Musual*(1:NOS)-2, drop = FALSE],
+    munb      <- eta2theta(eta[, M1*(1:NOS)-2, drop = FALSE],
                            .lmunb  , earg = .emunb  )
-    kmat      <- eta2theta(eta[, Musual*(1:NOS)-1, drop = FALSE],
+    kmat      <- eta2theta(eta[, M1*(1:NOS)-1, drop = FALSE],
                            .lsize  , earg = .esize  )
-    onempstr0 <- eta2theta(eta[, Musual*(1:NOS)  , drop = FALSE],
+    onempstr0 <- eta2theta(eta[, M1*(1:NOS)  , drop = FALSE],
                            .lonempstr0 , earg = .eonempstr0 )
 
     donempstr0.deta <- dtheta.deta(onempstr0, .lonempstr0 ,
@@ -3745,8 +4007,8 @@ zinegbinomialff.control <- function(save.weight = TRUE, ...) {
     dthetas.detas <-
         (cbind(dmunb.deta,
                dsize.deta,
-               donempstr0.deta))[, interleave.VGAM(Musual*NOS,
-                                                   M = Musual)]
+               donempstr0.deta))[, interleave.VGAM(M1*NOS,
+                                                   M = M1)]
 
 
 
@@ -3784,7 +4046,7 @@ zinegbinomialff.control <- function(save.weight = TRUE, ...) {
     dl.dthetas <-
       cbind(dl.dmunb,
             dl.dsize,
-            dl.donempstr0)[, interleave.VGAM(Musual*NOS, M = Musual)]
+            dl.donempstr0)[, interleave.VGAM(M1*NOS, M = M1)]
 
 
       c(w) * dl.dthetas * dthetas.detas
@@ -3795,9 +4057,9 @@ zinegbinomialff.control <- function(save.weight = TRUE, ...) {
 
 
 
-    wz <- matrix(0, n, Musual*M - Musual)
+    wz <- matrix(0, n, M1*M - M1)
 
-    ind3 <- iam(NA, NA, M = Musual, both = TRUE, diag = TRUE)
+    ind3 <- iam(NA, NA, M = M1, both = TRUE, diag = TRUE)
 
     run.varcov <- array(0.0, c(n, length(ind3$row.index), NOS))
 
@@ -3873,23 +4135,23 @@ zinegbinomialff.control <- function(save.weight = TRUE, ...) {
 
     for (spp. in 1:NOS) {
       wz1[,, spp.] <- wz1[,, spp.] *
-                     dthetas.detas[, Musual * (spp. - 1) + ind3$row] *
-                     dthetas.detas[, Musual * (spp. - 1) + ind3$col]
+                     dthetas.detas[, M1 * (spp. - 1) + ind3$row] *
+                     dthetas.detas[, M1 * (spp. - 1) + ind3$col]
     }
 
     for (spp. in 1:NOS) {
-      for (jay in 1:Musual) {
-        for (kay in jay:Musual) {
-          cptr <- iam((spp. - 1) * Musual + jay,
-                      (spp. - 1) * Musual + kay, M = M)
+      for (jay in 1:M1) {
+        for (kay in jay:M1) {
+          cptr <- iam((spp. - 1) * M1 + jay,
+                      (spp. - 1) * M1 + kay, M = M)
           temp.wz1 <- wz1[,, spp.]
-          wz[, cptr] <- temp.wz1[, iam(jay, kay, M = Musual)]
+          wz[, cptr] <- temp.wz1[, iam(jay, kay, M = M1)]
         }
       }
     }
 
 
-    w.wz.merge(w = w, wz = wz, n = n, M = M, ndepy = M / Musual)
+    w.wz.merge(w = w, wz = wz, n = n, M = M, ndepy = M / M1)
   }), list( .lonempstr0 = lonempstr0,
             .eonempstr0 = eonempstr0, .nsimEIM = nsimEIM ))))
 }  # End of zinegbinomialff
@@ -3954,12 +4216,13 @@ zinegbinomialff.control <- function(save.weight = TRUE, ...) {
             "Mean:     onempstr0 * lambda"),
   constraints = eval(substitute(expression({
     dotzero <- .zero
-    Musual <- 2
+    M1 <- 2
     eval(negzero.expression)
   }), list( .zero = zero ))),
 
   infos = eval(substitute(function(...) {
-    list(Musual = 2,
+    list(M1 = 2,
+         Q1 = 1,
          type.fitted  = .type.fitted ,
          zero = .zero )
   }, list( .zero = zero,
@@ -3984,10 +4247,10 @@ zinegbinomialff.control <- function(save.weight = TRUE, ...) {
 
 
     ncoly <- ncol(y)
-    Musual <- 2
+    M1 <- 2
     extra$ncoly <- ncoly
-    extra$Musual <- Musual
-    M <- Musual * ncoly
+    extra$M1 <- M1
+    M <- M1 * ncoly
     extra$type.fitted      <- .type.fitted
     extra$dimnamesy <- dimnames(y)
 
@@ -3997,7 +4260,7 @@ zinegbinomialff.control <- function(save.weight = TRUE, ...) {
     predictors.names <-
       c(namesof(mynames1, .llambda    , earg = .elambda    , tag = FALSE),
         namesof(mynames2, .lonempstr0 , earg = .eonempstr0 , tag = FALSE))[
-          interleave.VGAM(M, M = Musual)]
+          interleave.VGAM(M, M = M1)]
 
 
       if (!length(etastart)) {
@@ -4049,7 +4312,7 @@ zinegbinomialff.control <- function(save.weight = TRUE, ...) {
       etastart <-
         cbind(theta2eta(    matL, .llambda    , earg = .elambda    ),
               theta2eta(1 - matP, .lonempstr0 , earg = .eonempstr0 ))[,
-                        interleave.VGAM(M, M = Musual)]
+                        interleave.VGAM(M, M = M1)]
 
       mustart <- NULL  # Since etastart has been computed.
     }
@@ -4069,11 +4332,11 @@ zinegbinomialff.control <- function(save.weight = TRUE, ...) {
     type.fitted <- match.arg(type.fitted,
                              c("mean", "pobs0", "pstr0", "onempstr0"))[1]
 
-    Musual <- 2
+    M1 <- 2
     ncoly <- extra$ncoly
-    lambda    <- eta2theta(eta[, Musual*(1:ncoly) - 1], .llambda ,
+    lambda    <- eta2theta(eta[, M1*(1:ncoly) - 1], .llambda ,
                            earg = .elambda )
-    onempstr0 <- eta2theta(eta[, Musual*(1:ncoly)    ], .lonempstr0 ,
+    onempstr0 <- eta2theta(eta[, M1*(1:ncoly)    ], .lonempstr0 ,
                            earg = .eonempstr0 )
 
 
@@ -4086,7 +4349,8 @@ zinegbinomialff.control <- function(save.weight = TRUE, ...) {
         is.matrix(ans) &&
         length(extra$dimnamesy[[2]]) == ncol(ans) &&
         length(extra$dimnamesy[[2]]) > 0) {
-      dimnames(ans) <- extra$dimnamesy
+      if (length(extra$dimnamesy[[1]]) == nrow(ans))
+        dimnames(ans) <- extra$dimnamesy
     } else
     if (NCOL(ans) == 1 &&
         is.matrix(ans)) {
@@ -4097,22 +4361,22 @@ zinegbinomialff.control <- function(save.weight = TRUE, ...) {
            .eonempstr0 = eonempstr0, .elambda = elambda,
            .type.fitted = type.fitted ))),
   last = eval(substitute(expression({
-    Musual <- extra$Musual
+    M1 <- extra$M1
     misc$link <-
       c(rep( .llambda    , length = ncoly),
-        rep( .lonempstr0 , length = ncoly))[interleave.VGAM(M, M = Musual)]
-    temp.names <- c(mynames1, mynames2)[interleave.VGAM(M, M = Musual)]
+        rep( .lonempstr0 , length = ncoly))[interleave.VGAM(M, M = M1)]
+    temp.names <- c(mynames1, mynames2)[interleave.VGAM(M, M = M1)]
     names(misc$link) <- temp.names
 
 
-    misc$earg <- vector("list", Musual * ncoly)
+    misc$earg <- vector("list", M1 * ncoly)
     names(misc$earg) <- temp.names
     for (ii in 1:ncoly) {
-      misc$earg[[Musual*ii-1]] <- .elambda
-      misc$earg[[Musual*ii  ]] <- .eonempstr0
+      misc$earg[[M1*ii-1]] <- .elambda
+      misc$earg[[M1*ii  ]] <- .eonempstr0
     }
 
-    misc$Musual <- Musual
+    misc$M1 <- M1
     misc$imethod <- .imethod
     misc$expected <- TRUE
     misc$multipleResponses <- TRUE
@@ -4130,29 +4394,59 @@ zinegbinomialff.control <- function(save.weight = TRUE, ...) {
             .eonempstr0 = eonempstr0, .elambda = elambda,
             .imethod = imethod ))),
   loglikelihood = eval(substitute( 
-    function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
-    Musual <- 2
+    function(mu, y, w, residuals = FALSE, eta,
+             extra = NULL,
+             summation = TRUE) {
+    M1 <- 2
     ncoly <- extra$ncoly
-    lambda    <- eta2theta(eta[, Musual*(1:ncoly) - 1], .llambda    ,
+    lambda    <- eta2theta(eta[, M1*(1:ncoly) - 1], .llambda    ,
                            earg = .elambda )
-    onempstr0 <- eta2theta(eta[, Musual*(1:ncoly)    ], .lonempstr0 ,
+    onempstr0 <- eta2theta(eta[, M1*(1:ncoly)    ], .lonempstr0 ,
                            earg = .eonempstr0 )
 
 
-    if (residuals) stop("loglikelihood residuals not ",
-                        "implemented yet") else {
-      sum(c(w) * dzipois(x = y, pstr0 = 1 - onempstr0, lambda = lambda,
-                         log = TRUE))
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
+      ll.elts <- c(w) *
+                 dzipois(x = y, pstr0 = 1 - onempstr0, lambda = lambda,
+                         log = TRUE)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
     }
   }, list( .lonempstr0 = lonempstr0, .llambda = llambda,
            .eonempstr0 = eonempstr0, .elambda = elambda ))),
   vfamily = c("zipoissonff"),
+
+
+
+  simslot = eval(substitute(
+  function(object, nsim) {
+
+    pwts <- if (length(pwts <- object@prior.weights) > 0)
+              pwts else weights(object, type = "prior")
+    if (any(pwts != 1)) 
+      warning("ignoring prior weights")
+    eta <- predict(object)
+    onempstr0 <- eta2theta(eta[, c(FALSE, TRUE)], .lonempstr0 ,
+                           earg = .eonempstr0 )
+    lambda    <- eta2theta(eta[, c(TRUE, FALSE)], .llambda ,
+                           earg = .elambda    )
+    rzipois(nsim * length(lambda), lambda = lambda, pstr0 = 1 - onempstr0)
+  }, list( .lonempstr0 = lonempstr0, .llambda = llambda,
+           .eonempstr0 = eonempstr0, .elambda = elambda ))),
+
+
+
   deriv = eval(substitute(expression({
-    Musual <- 2
+    M1 <- 2
     ncoly <- extra$ncoly
-    lambda    <- eta2theta(eta[, Musual*(1:ncoly) - 1], .llambda    ,
+    lambda    <- eta2theta(eta[, M1*(1:ncoly) - 1], .llambda    ,
                            earg = .elambda )
-    onempstr0 <- eta2theta(eta[, Musual*(1:ncoly)    ], .lonempstr0 ,
+    onempstr0 <- eta2theta(eta[, M1*(1:ncoly)    ], .lonempstr0 ,
                            earg = .eonempstr0 )
 
 
@@ -4170,13 +4464,13 @@ zinegbinomialff.control <- function(save.weight = TRUE, ...) {
 
     ans <- c(w) * cbind(dl.dlambda    * dlambda.deta,
                         dl.donempstr0 * donempstr0.deta)
-    ans <- ans[, interleave.VGAM(ncol(ans), M = Musual)]
+    ans <- ans[, interleave.VGAM(ncol(ans), M = M1)]
 
 
     if ( .llambda == "loge" && is.empty.list( .elambda ) &&
        any(lambda[!ind0] < .Machine$double.eps)) {
       for (spp. in 1:ncoly) {
-        ans[!ind0[, spp.], Musual * spp.] <-
+        ans[!ind0[, spp.], M1 * spp.] <-
           w[!ind0[, spp.]] *
          (y[!ind0[, spp.], spp.] - lambda[!ind0[, spp.], spp.])
       }
@@ -4199,8 +4493,8 @@ zinegbinomialff.control <- function(save.weight = TRUE, ...) {
     wz <- array(c(c(w) * ned2l.dlambda2 * dlambda.deta^2,
                   c(w) * ned2l.donempstr0.2 * donempstr0.deta^2,
                   c(w) * ned2l.dphilambda * donempstr0.deta * dlambda.deta),
-                dim = c(n, M / Musual, 3))
-    wz <- arwz2wz(wz, M = M, Musual = Musual)
+                dim = c(n, M / M1, 3))
+    wz <- arwz2wz(wz, M = M, M1 = M1)
 
     wz
   }), list( .llambda = llambda ))))
@@ -4394,19 +4688,20 @@ rzigeom <- function(n, prob, pstr0 = 0) {
   constraints = eval(substitute(expression({
 
     dotzero <- .zero
-    Musual <- 2
+    M1 <- 2
     eval(negzero.expression)
   }), list( .zero = zero ))),
 
   infos = eval(substitute(function(...) {
-    list(Musual = 2,
+    list(M1 = 2,
+         Q1 = 1,
          type.fitted  = .type.fitted ,
          zero = .zero )
   }, list( .zero = zero,
            .type.fitted  = type.fitted ))),
   initialize = eval(substitute(expression({
 
-    Musual <- 2
+    M1 <- 2
     if (any(y < 0))
       stop("the response must not have negative values")
 
@@ -4434,7 +4729,7 @@ rzigeom <- function(n, prob, pstr0 = 0) {
     predictors.names <-
             c(namesof(mynames1, .lpstr0,  earg = .epstr0, tag = FALSE),
               namesof(mynames2, .lprob,   earg = .eprob,  tag = FALSE))[
-          interleave.VGAM(Musual * NOS, M = Musual)]
+          interleave.VGAM(M1 * NOS, M = M1)]
 
 
     if (!length(etastart)) {
@@ -4477,7 +4772,7 @@ rzigeom <- function(n, prob, pstr0 = 0) {
       etastart <-
         cbind(theta2eta(psze.init, .lpstr0, earg = .epstr0),
               theta2eta(prob.init, .lprob , earg = .eprob ))
-      etastart <- etastart[, interleave.VGAM(ncol(etastart), M = Musual)]
+      etastart <- etastart[, interleave.VGAM(ncol(etastart), M = M1)]
     }
   }), list( .lprob = lprob, .lpstr0 = lpstr0,
             .eprob = eprob, .epstr0 = epstr0,
@@ -4520,18 +4815,18 @@ rzigeom <- function(n, prob, pstr0 = 0) {
   last = eval(substitute(expression({
     temp.names <- c(rep( .lpstr0 , len = NOS),
                     rep( .lprob  , len = NOS))
-    temp.names <- temp.names[interleave.VGAM(Musual*NOS, M = Musual)]
+    temp.names <- temp.names[interleave.VGAM(M1*NOS, M = M1)]
     misc$link  <- temp.names
 
 
-    misc$earg <- vector("list", Musual * NOS)
+    misc$earg <- vector("list", M1 * NOS)
     names(misc$link) <-
     names(misc$earg) <-
-        c(mynames1, mynames2)[interleave.VGAM(Musual*NOS, M = Musual)]
+        c(mynames1, mynames2)[interleave.VGAM(M1*NOS, M = M1)]
 
     for (ii in 1:NOS) {
-      misc$earg[[Musual*ii-1]] <- .epstr0
-      misc$earg[[Musual*ii  ]] <- .eprob
+      misc$earg[[M1*ii-1]] <- .epstr0
+      misc$earg[[M1*ii  ]] <- .eprob
     }
 
 
@@ -4558,19 +4853,48 @@ rzigeom <- function(n, prob, pstr0 = 0) {
             .bias.red = bias.red,
             .imethod = imethod ))),
   loglikelihood = eval(substitute(
-    function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
+    function(mu, y, w, residuals = FALSE, eta,
+             extra = NULL,
+             summation = TRUE) {
     pstr0  <- eta2theta(eta[, c(TRUE, FALSE)], .lpstr0 , earg = .epstr0 )
     prob   <- eta2theta(eta[, c(FALSE, TRUE)], .lprob  , earg = .eprob  )
-    if (residuals) stop("loglikelihood residuals not ",
-                        "implemented yet") else {
-      sum(c(w) * dzigeom(x = y, prob = prob, pstr0 = pstr0, log = TRUE))
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
+      ll.elts <-
+        c(w) * dzigeom(x = y, prob = prob, pstr0 = pstr0, log = TRUE)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
     }
   }, list( .lprob = lprob, .lpstr0 = lpstr0,
            .eprob = eprob, .epstr0 = epstr0 ))),
   vfamily = c("zigeometric"),
 
+
+
+
+  simslot = eval(substitute(
+  function(object, nsim) {
+
+    pwts <- if (length(pwts <- object@prior.weights) > 0)
+              pwts else weights(object, type = "prior")
+    if (any(pwts != 1)) 
+      warning("ignoring prior weights")
+    eta <- predict(object)
+    pstr0  <- eta2theta(eta[, c(TRUE, FALSE)], .lpstr0 , earg = .epstr0 )
+    prob   <- eta2theta(eta[, c(FALSE, TRUE)], .lprob  , earg = .eprob  )
+    rzigeom(nsim * length(pstr0), prob = prob, pstr0 = pstr0)
+  }, list( .lprob = lprob, .lpstr0 = lpstr0,
+           .eprob = eprob, .epstr0 = epstr0 ))),
+
+
+
+
   deriv = eval(substitute(expression({
-    Musual <- 2
+    M1 <- 2
     pstr0  <- eta2theta(eta[, c(TRUE, FALSE)], .lpstr0 , earg = .epstr0 )
     prob   <- eta2theta(eta[, c(FALSE, TRUE)], .lprob  , earg = .eprob  )
 
@@ -4592,7 +4916,7 @@ rzigeom <- function(n, prob, pstr0 = 0) {
     dl.deta12 <- c(w) * cbind(dl.dpstr0 * dpstr0.deta,
                               dl.dprob  * dprob.deta)
 
-    dl.deta12 <- dl.deta12[, interleave.VGAM(ncol(dl.deta12), M = Musual)]
+    dl.deta12 <- dl.deta12[, interleave.VGAM(ncol(dl.deta12), M = M1)]
     dl.deta12
   }), list( .lprob = lprob, .lpstr0 = lpstr0,
             .eprob = eprob, .epstr0 = epstr0 ))),
@@ -4621,8 +4945,8 @@ rzigeom <- function(n, prob, pstr0 = 0) {
                  c(c(w) *  od2l.dpstr02 * dpstr0.deta^2,
                    c(w) *  od2l.dprob2  *  dprob.deta^2,
                    c(w) *  od2l.dpstr0.prob * dprob.deta * dpstr0.deta)
-    wz <- array(allvals, dim = c(n, M / Musual, 3))
-    wz <- arwz2wz(wz, M = M, Musual = Musual)
+    wz <- array(allvals, dim = c(n, M / M1, 3))
+    wz <- arwz2wz(wz, M = M, M1 = M1)
 
 
     wz
@@ -4694,19 +5018,20 @@ rzigeom <- function(n, prob, pstr0 = 0) {
   constraints = eval(substitute(expression({
 
     dotzero <- .zero
-    Musual <- 2
+    M1 <- 2
     eval(negzero.expression)
   }), list( .zero = zero ))),
 
   infos = eval(substitute(function(...) {
-    list(Musual = 2,
+    list(M1 = 2,
+         Q1 = 1,
          type.fitted  = .type.fitted ,
          zero = .zero )
   }, list( .zero = zero,
            .type.fitted  = type.fitted ))),
   initialize = eval(substitute(expression({
 
-    Musual <- 2
+    M1 <- 2
     if (any(y < 0))
       stop("the response must not have negative values")
 
@@ -4734,7 +5059,7 @@ rzigeom <- function(n, prob, pstr0 = 0) {
     predictors.names <-
       c(namesof(mynames1, .lprob      , earg = .eprob      , tag = FALSE),
         namesof(mynames2, .lonempstr0 , earg = .eonempstr0 , tag = FALSE))[
-        interleave.VGAM(Musual*NOS, M = Musual)]
+        interleave.VGAM(M1*NOS, M = M1)]
 
 
     if (!length(etastart)) {
@@ -4777,7 +5102,7 @@ rzigeom <- function(n, prob, pstr0 = 0) {
       etastart <-
         cbind(theta2eta(    prob.init, .lprob      , earg = .eprob      ),
               theta2eta(1 - psze.init, .lonempstr0 , earg = .eonempstr0 ))
-      etastart <- etastart[, interleave.VGAM(ncol(etastart), M = Musual)]
+      etastart <- etastart[, interleave.VGAM(ncol(etastart), M = M1)]
     }
   }), list( .lprob = lprob, .lonempstr0 = lonempstr0,
             .eprob = eprob, .eonempstr0 = eonempstr0,
@@ -4822,18 +5147,18 @@ rzigeom <- function(n, prob, pstr0 = 0) {
   last = eval(substitute(expression({
     temp.names <- c(rep( .lprob  , len = NOS),
                     rep( .lonempstr0 , len = NOS))
-    temp.names <- temp.names[interleave.VGAM(Musual*NOS, M = Musual)]
+    temp.names <- temp.names[interleave.VGAM(M1*NOS, M = M1)]
     misc$link  <- temp.names
 
 
-    misc$earg <- vector("list", Musual * NOS)
+    misc$earg <- vector("list", M1 * NOS)
     names(misc$link) <-
     names(misc$earg) <-
-        c(mynames1, mynames2)[interleave.VGAM(Musual*NOS, M = Musual)]
+        c(mynames1, mynames2)[interleave.VGAM(M1*NOS, M = M1)]
 
     for (ii in 1:NOS) {
-      misc$earg[[Musual*ii-1]] <- .eprob
-      misc$earg[[Musual*ii  ]] <- .eonempstr0
+      misc$earg[[M1*ii-1]] <- .eprob
+      misc$earg[[M1*ii  ]] <- .eonempstr0
     }
 
 
@@ -4858,22 +5183,54 @@ rzigeom <- function(n, prob, pstr0 = 0) {
             .bias.red = bias.red,
             .imethod = imethod ))),
   loglikelihood = eval(substitute(
-    function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
+    function(mu, y, w, residuals = FALSE, eta,
+             extra = NULL,
+             summation = TRUE) {
     prob       <- eta2theta(eta[, c(TRUE, FALSE)], .lprob      ,
                             earg = .eprob )
     onempstr0  <- eta2theta(eta[, c(FALSE, TRUE)], .lonempstr0 ,
                             earg = .eonempstr0 )
-    if (residuals) stop("loglikelihood residuals not ",
-                        "implemented yet") else {
-      sum(c(w) * dzigeom(x = y, prob = prob, pstr0 = 1 - onempstr0,
-                         log = TRUE))
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
+      ll.elts <-
+        c(w) * dzigeom(x = y, prob = prob, pstr0 = 1 - onempstr0,
+                       log = TRUE)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
     }
   }, list( .lprob = lprob, .lonempstr0 = lonempstr0,
            .eprob = eprob, .eonempstr0 = eonempstr0 ))),
   vfamily = c("zigeometricff"),
 
+
+
+
+  simslot = eval(substitute(
+  function(object, nsim) {
+
+    pwts <- if (length(pwts <- object@prior.weights) > 0)
+              pwts else weights(object, type = "prior")
+    if (any(pwts != 1)) 
+      warning("ignoring prior weights")
+    eta <- predict(object)
+    prob       <- eta2theta(eta[, c(TRUE, FALSE)], .lprob      ,
+                            earg = .eprob )
+    onempstr0  <- eta2theta(eta[, c(FALSE, TRUE)], .lonempstr0 ,
+                            earg = .eonempstr0 )
+    rzigeom(nsim * length(onempstr0), prob = prob, pstr0 = 1 - onempstr0)
+  }, list( .lprob = lprob, .lonempstr0 = lonempstr0,
+           .eprob = eprob, .eonempstr0 = eonempstr0 ))),
+
+
+
+
+
   deriv = eval(substitute(expression({
-    Musual <- 2
+    M1 <- 2
     prob      <- eta2theta(eta[, c(TRUE, FALSE)], .lprob      ,
                            earg = .eprob  )
     onempstr0 <- eta2theta(eta[, c(FALSE, TRUE)], .lonempstr0 ,
@@ -4900,7 +5257,7 @@ rzigeom <- function(n, prob, pstr0 = 0) {
     dl.deta12 <- c(w) * cbind(dl.dprob      * dprob.deta,
                               dl.donempstr0 *  donempstr0.deta)
 
-    dl.deta12 <- dl.deta12[, interleave.VGAM(ncol(dl.deta12), M = Musual)]
+    dl.deta12 <- dl.deta12[, interleave.VGAM(ncol(dl.deta12), M = M1)]
     dl.deta12
   }), list( .lprob = lprob, .lonempstr0 = lonempstr0,
             .eprob = eprob, .eonempstr0 = eonempstr0 ))),
@@ -4931,8 +5288,8 @@ rzigeom <- function(n, prob, pstr0 = 0) {
                    c(w) *  od2l.donempstr02 * donempstr0.deta^2,
                    c(w) *  od2l.donempstr0.prob * dprob.deta *
                                                   donempstr0.deta)
-    wz <- array(allvals, dim = c(n, M / Musual, 3))
-    wz <- arwz2wz(wz, M = M, Musual = Musual)
+    wz <- array(allvals, dim = c(n, M / M1, 3))
+    wz <- arwz2wz(wz, M = M, M1 = M1)
 
 
     wz
@@ -5183,7 +5540,7 @@ rzabinom <- function(n, size, prob, pobs0 = 0) {
   }), list( .zero = zero ))),
 
   infos = eval(substitute(function(...) {
-    list(Musual = 2,
+    list(M1 = 2,
          type.fitted  = .type.fitted ,
          zero = .zero )
   }, list( .zero = zero,
@@ -5332,17 +5689,26 @@ rzabinom <- function(n, size, prob, pobs0 = 0) {
             .imethod = imethod ))),
 
   loglikelihood = eval(substitute(
-    function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
+    function(mu, y, w, residuals = FALSE, eta,
+             extra = NULL,
+             summation = TRUE) {
     orig.w <- if (length(extra$orig.w)) extra$orig.w else 1
     new.w  <- if (length(extra$new.w))  extra$new.w  else 1
     Size <- new.w / orig.w
     pobs0 <- eta2theta(eta[, 1], .lpobs0 , earg = .epobs0 )
     prob  <- eta2theta(eta[, 2], .lprob  , earg = .eprob  )
-    if (residuals) stop("loglikelihood residuals not ",
-                        "implemented yet") else {
-      sum(orig.w * dzabinom(x = round(y * Size), size = Size,
-                            prob = prob, pobs0 = pobs0,
-                            log = TRUE))
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
+      ll.elts <-
+        orig.w * dzabinom(x = round(y * Size), size = Size,
+                          prob = prob, pobs0 = pobs0,
+                          log = TRUE)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
     }
   }, list( .lprob = lprob, .lpobs0 = lpobs0,
            .eprob = eprob, .epobs0 = epobs0 ))),
@@ -5350,7 +5716,7 @@ rzabinom <- function(n, size, prob, pobs0 = 0) {
 
   deriv = eval(substitute(expression({
     NOS <- if (length(extra$NOS)) extra$NOS else 1
-    Musual <- 2
+    M1 <- 2
 
     orig.w <- if (length(extra$orig.w)) extra$orig.w else 1
     new.w  <- if (length(extra$new.w))  extra$new.w  else 1
@@ -5390,7 +5756,7 @@ rzabinom <- function(n, size, prob, pobs0 = 0) {
 
 
   weight = eval(substitute(expression({
-    wz <- matrix(0.0, n, Musual)
+    wz <- matrix(0.0, n, M1)
 
     usualmeanY <-  prob
     meanY <- (1 - phi0) * usualmeanY / oneminusf0
@@ -5478,7 +5844,7 @@ rzabinom <- function(n, size, prob, pobs0 = 0) {
   }), list( .zero = zero ))),
 
   infos = eval(substitute(function(...) {
-    list(Musual = 2,
+    list(M1 = 2,
          type.fitted  = .type.fitted ,
          zero = .zero )
   }, list( .zero = zero,
@@ -5626,17 +5992,26 @@ rzabinom <- function(n, size, prob, pobs0 = 0) {
             .imethod = imethod ))),
 
   loglikelihood = eval(substitute(
-    function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
+    function(mu, y, w, residuals = FALSE, eta,
+             extra = NULL,
+             summation = TRUE) {
     orig.w <- if (length(extra$orig.w)) extra$orig.w else 1
     new.w  <- if (length(extra$new.w))  extra$new.w  else 1
     Size <- new.w / orig.w
     prob      <- eta2theta(eta[, 1], .lprob      , earg = .eprob      )
     onempobs0 <- eta2theta(eta[, 2], .lonempobs0 , earg = .eonempobs0 )
-    if (residuals) stop("loglikelihood residuals not ",
-                        "implemented yet") else {
-      sum(orig.w * dzabinom(x = round(y * Size), size = Size,
-                            prob = prob, pobs0 = 1 - onempobs0,
-                            log = TRUE))
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
+      ll.elts <-
+        orig.w * dzabinom(x = round(y * Size), size = Size,
+                          prob = prob, pobs0 = 1 - onempobs0,
+                          log = TRUE)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
     }
   }, list( .lprob = lprob, .lonempobs0 = lonempobs0,
            .eprob = eprob, .eonempobs0 = eonempobs0 ))),
@@ -5644,7 +6019,7 @@ rzabinom <- function(n, size, prob, pobs0 = 0) {
 
   deriv = eval(substitute(expression({
     NOS <- if (length(extra$NOS)) extra$NOS else 1
-    Musual <- 2
+    M1 <- 2
 
     orig.w <- if (length(extra$orig.w)) extra$orig.w else 1
     new.w  <- if (length(extra$new.w))  extra$new.w  else 1
@@ -5687,7 +6062,7 @@ rzabinom <- function(n, size, prob, pobs0 = 0) {
 
 
   weight = eval(substitute(expression({
-    wz <- matrix(0.0, n, Musual)
+    wz <- matrix(0.0, n, M1)
 
     usualmeanY <-  prob
     meanY <- (1 - phi0) * usualmeanY / oneminusf0
@@ -5770,12 +6145,13 @@ rzabinom <- function(n, size, prob, pobs0 = 0) {
   constraints = eval(substitute(expression({
 
     dotzero <- .zero
-    Musual <- 2
+    M1 <- 2
     eval(negzero.expression)
   }), list( .zero = zero ))),
 
   infos = eval(substitute(function(...) {
-    list(Musual = 2,
+    list(M1 = 2,
+         Q1 = 1,
          type.fitted  = .type.fitted ,
          zero = .zero )
   }, list( .zero = zero,
@@ -5783,7 +6159,7 @@ rzabinom <- function(n, size, prob, pobs0 = 0) {
          ))),
 
   initialize = eval(substitute(expression({
-    Musual <- 2
+    M1 <- 2
     if (any(y < 0))
       stop("the response must not have negative values")
 
@@ -5816,7 +6192,7 @@ rzabinom <- function(n, size, prob, pobs0 = 0) {
     predictors.names <-
         c(namesof(mynames1, .lpobs0 , earg = .epobs0 , tag = FALSE),
           namesof(mynames2, .lprob  , earg = .eprob  , tag = FALSE))[
-          interleave.VGAM(Musual*NOS, M = Musual)]
+          interleave.VGAM(M1*NOS, M = M1)]
 
     if (!length(etastart)) {
 
@@ -5844,7 +6220,7 @@ rzabinom <- function(n, size, prob, pobs0 = 0) {
 
       etastart <- cbind(theta2eta(phi0.init, .lpobs0 , earg = .epobs0 ),
                        theta2eta(prob.init, .lprob ,  earg = .eprob ))
-      etastart <- etastart[, interleave.VGAM(ncol(etastart), M = Musual)]
+      etastart <- etastart[, interleave.VGAM(ncol(etastart), M = M1)]
     }
   }), list( .lpobs0 = lpobs0, .lprob = lprob,
             .epobs0 = epobs0, .eprob = eprob,
@@ -5862,11 +6238,11 @@ rzabinom <- function(n, size, prob, pobs0 = 0) {
                              c("mean", "pobs0", "onempobs0"))[1]
 
     NOS <- extra$NOS
-    Musual <- 2
+    M1 <- 2
 
-    phi0 <- cbind(eta2theta(eta[, Musual*(1:NOS)-1, drop = FALSE],
+    phi0 <- cbind(eta2theta(eta[, M1*(1:NOS)-1, drop = FALSE],
                              .lpobs0 , earg = .epobs0 ))
-    prob <- cbind(eta2theta(eta[, Musual*(1:NOS)-0, drop = FALSE],
+    prob <- cbind(eta2theta(eta[, M1*(1:NOS)-0, drop = FALSE],
                              .lprob  , earg = .eprob ))
 
 
@@ -5890,18 +6266,18 @@ rzabinom <- function(n, size, prob, pobs0 = 0) {
   last = eval(substitute(expression({
     temp.names <- c(rep( .lpobs0 , len = NOS),
                     rep( .lprob  , len = NOS))
-    temp.names <- temp.names[interleave.VGAM(Musual*NOS, M = Musual)]
+    temp.names <- temp.names[interleave.VGAM(M1*NOS, M = M1)]
     misc$link  <- temp.names
 
-    misc$earg <- vector("list", Musual * NOS)
+    misc$earg <- vector("list", M1 * NOS)
 
     names(misc$link) <-
     names(misc$earg) <-
-        c(mynames1, mynames2)[interleave.VGAM(Musual*NOS, M <- Musual)]
+        c(mynames1, mynames2)[interleave.VGAM(M1*NOS, M = M1)]
 
     for (ii in 1:NOS) {
-      misc$earg[[Musual*ii-1]] <- .epobs0
-      misc$earg[[Musual*ii  ]] <- .eprob
+      misc$earg[[M1*ii-1]] <- .epobs0
+      misc$earg[[M1*ii  ]] <- .eprob
     }
 
 
@@ -5915,31 +6291,63 @@ rzabinom <- function(n, size, prob, pobs0 = 0) {
             .ipobs0 = ipobs0, .iprob = iprob,
             .imethod = imethod ))),
   loglikelihood = eval(substitute(
-    function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
+    function(mu, y, w, residuals = FALSE, eta,
+             extra = NULL,
+             summation = TRUE) {
     NOS <- extra$NOS
-    Musual <- 2
+    M1 <- 2
 
-    phi0 <- cbind(eta2theta(eta[, Musual*(1:NOS)-1, drop = FALSE],
+    phi0 <- cbind(eta2theta(eta[, M1*(1:NOS)-1, drop = FALSE],
                             .lpobs0 , earg = .epobs0 ))
-    prob <- cbind(eta2theta(eta[, Musual*(1:NOS)-0, drop = FALSE],
+    prob <- cbind(eta2theta(eta[, M1*(1:NOS)-0, drop = FALSE],
                             .lprob  , earg = .eprob  ))
 
-    if (residuals)
-      stop("loglikelihood residuals not implemented yet") else {
-      sum(c(w) * dzageom(x = y, pobs0 = phi0, prob = prob, log = TRUE))
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
+      ll.elts <-
+        c(w) * dzageom(x = y, pobs0 = phi0, prob = prob, log = TRUE)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
     }
   }, list( .lpobs0 = lpobs0, .lprob = lprob,
            .epobs0 = epobs0, .eprob = eprob ))),
   vfamily = c("zageometric"),
+
+
+
+
+  simslot = eval(substitute(
+  function(object, nsim) {
+
+    pwts <- if (length(pwts <- object@prior.weights) > 0)
+              pwts else weights(object, type = "prior")
+    if (any(pwts != 1)) 
+      warning("ignoring prior weights")
+    eta <- predict(object)
+    phi0 <- cbind(eta2theta(eta[, c(TRUE, FALSE), drop = FALSE],
+                            .lpobs0 , earg = .epobs0 ))
+    prob <- cbind(eta2theta(eta[, c(FALSE, TRUE), drop = FALSE],
+                            .lprob  , earg = .eprob  ))
+    rzageom(nsim * length(prob), prob = prob, pobs0 = phi0)
+  }, list( .lpobs0 = lpobs0, .lprob = lprob,
+           .epobs0 = epobs0, .eprob = eprob ))),
+
+
+
+
   deriv = eval(substitute(expression({
-    Musual <- 2
+    M1 <- 2
     NOS <- extra$NOS
     y0 <- extra$y0
     skip <- extra$skip.these
 
-    phi0 <- cbind(eta2theta(eta[, Musual*(1:NOS)-1, drop = FALSE],
+    phi0 <- cbind(eta2theta(eta[, M1*(1:NOS)-1, drop = FALSE],
                             .lpobs0 , earg = .epobs0 ))
-    prob <- cbind(eta2theta(eta[, Musual*(1:NOS)-0, drop = FALSE],
+    prob <- cbind(eta2theta(eta[, M1*(1:NOS)-0, drop = FALSE],
                             .lprob  , earg = .eprob  ))
 
 
@@ -5957,13 +6365,13 @@ rzabinom <- function(n, size, prob, pobs0 = 0) {
 
     ans <- c(w) * cbind(dl.dphi0 * dphi0.deta,
                         dl.dprob * dprob.deta)
-    ans <- ans[, interleave.VGAM(ncol(ans), M = Musual)]
+    ans <- ans[, interleave.VGAM(ncol(ans), M = M1)]
     ans
   }), list( .lpobs0 = lpobs0, .lprob = lprob,
             .epobs0 = epobs0, .eprob = eprob ))),
   weight = eval(substitute(expression({
 
-    wz <- matrix(0.0, n, Musual*NOS)
+    wz <- matrix(0.0, n, M1*NOS)
 
 
     ned2l.dprob2 <- (1 - phi0) / (prob^2 * (1 - prob))
@@ -5981,7 +6389,7 @@ rzabinom <- function(n, size, prob, pobs0 = 0) {
     wz[, 1:NOS] <-  tmp200
 
 
-    wz <- wz[, interleave.VGAM(ncol(wz), M = Musual)]
+    wz <- wz[, interleave.VGAM(ncol(wz), M = M1)]
 
 
     wz
@@ -6038,12 +6446,13 @@ rzabinom <- function(n, size, prob, pobs0 = 0) {
   constraints = eval(substitute(expression({
 
     dotzero <- .zero
-    Musual <- 2
+    M1 <- 2
     eval(negzero.expression)
   }), list( .zero = zero ))),
 
   infos = eval(substitute(function(...) {
-    list(Musual = 2,
+    list(M1 = 2,
+         Q1 = 1,
          type.fitted  = .type.fitted ,
          zero = .zero )
   }, list( .zero = zero,
@@ -6051,7 +6460,7 @@ rzabinom <- function(n, size, prob, pobs0 = 0) {
          ))),
 
   initialize = eval(substitute(expression({
-    Musual <- 2
+    M1 <- 2
     if (any(y < 0))
       stop("the response must not have negative values")
 
@@ -6084,7 +6493,7 @@ rzabinom <- function(n, size, prob, pobs0 = 0) {
     predictors.names <-
         c(namesof(mynames1, .lprob      , earg = .eprob      , tag = FALSE),
           namesof(mynames2, .lonempobs0 , earg = .eonempobs0 , tag = FALSE))[
-          interleave.VGAM(Musual*NOS, M = Musual)]
+          interleave.VGAM(M1*NOS, M = M1)]
 
     if (!length(etastart)) {
 
@@ -6114,7 +6523,7 @@ rzabinom <- function(n, size, prob, pobs0 = 0) {
         cbind(theta2eta(    prob.init, .lprob      , earg = .eprob      ),
               theta2eta(1 - phi0.init, .lonempobs0 , earg = .eonempobs0 ))
                         
-      etastart <- etastart[, interleave.VGAM(ncol(etastart), M = Musual)]
+      etastart <- etastart[, interleave.VGAM(ncol(etastart), M = M1)]
     }
   }), list( .lonempobs0 = lonempobs0, .lprob = lprob,
             .eonempobs0 = eonempobs0, .eprob = eprob,
@@ -6132,11 +6541,11 @@ rzabinom <- function(n, size, prob, pobs0 = 0) {
                              c("mean", "pobs0", "onempobs0"))[1]
 
     NOS <- extra$NOS
-    Musual <- 2
+    M1 <- 2
 
-    prob      <- cbind(eta2theta(eta[, Musual*(1:NOS)-1, drop = FALSE],
+    prob      <- cbind(eta2theta(eta[, M1*(1:NOS)-1, drop = FALSE],
                                  .lprob  , earg = .eprob ))
-    onempobs0 <- cbind(eta2theta(eta[, Musual*(1:NOS)-0, drop = FALSE],
+    onempobs0 <- cbind(eta2theta(eta[, M1*(1:NOS)-0, drop = FALSE],
                                  .lonempobs0 , earg = .eonempobs0 ))
 
 
@@ -6160,18 +6569,18 @@ rzabinom <- function(n, size, prob, pobs0 = 0) {
   last = eval(substitute(expression({
     temp.names <- c(rep( .lprob      , len = NOS),
                     rep( .lonempobs0 , len = NOS))
-    temp.names <- temp.names[interleave.VGAM(Musual*NOS, M = Musual)]
+    temp.names <- temp.names[interleave.VGAM(M1*NOS, M = M1)]
     misc$link  <- temp.names
 
-    misc$earg <- vector("list", Musual * NOS)
+    misc$earg <- vector("list", M1 * NOS)
 
     names(misc$link) <-
     names(misc$earg) <-
-        c(mynames1, mynames2)[interleave.VGAM(Musual*NOS, M = Musual)]
+        c(mynames1, mynames2)[interleave.VGAM(M1*NOS, M = M1)]
 
     for (ii in 1:NOS) {
-      misc$earg[[Musual*ii-1]] <- .eprob
-      misc$earg[[Musual*ii  ]] <- .eonempobs0
+      misc$earg[[M1*ii-1]] <- .eprob
+      misc$earg[[M1*ii  ]] <- .eonempobs0
     }
 
 
@@ -6185,32 +6594,64 @@ rzabinom <- function(n, size, prob, pobs0 = 0) {
             .ionempobs0 = ionempobs0, .iprob = iprob,
             .imethod = imethod ))),
   loglikelihood = eval(substitute(
-    function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
+    function(mu, y, w, residuals = FALSE, eta,
+             extra = NULL,
+             summation = TRUE) {
     NOS <- extra$NOS
-    Musual <- 2
+    M1 <- 2
 
-    prob      <- cbind(eta2theta(eta[, Musual*(1:NOS)-1, drop = FALSE],
+    prob      <- cbind(eta2theta(eta[, M1*(1:NOS)-1, drop = FALSE],
                                  .lprob      , earg = .eprob      ))
-    onempobs0 <- cbind(eta2theta(eta[, Musual*(1:NOS)-0, drop = FALSE],
+    onempobs0 <- cbind(eta2theta(eta[, M1*(1:NOS)-0, drop = FALSE],
                                  .lonempobs0 , earg = .eonempobs0 ))
 
-    if (residuals)
-      stop("loglikelihood residuals not implemented yet") else {
-      sum(c(w) * dzageom(x = y, pobs0 = 1 - onempobs0, prob = prob,
-                         log = TRUE))
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
+      ll.elts <-
+        c(w) * dzageom(x = y, pobs0 = 1 - onempobs0, prob = prob,
+                       log = TRUE)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
     }
   }, list( .lonempobs0 = lonempobs0, .lprob = lprob,
            .eonempobs0 = eonempobs0, .eprob = eprob ))),
   vfamily = c("zageometricff"),
+
+
+
+
+  simslot = eval(substitute(
+  function(object, nsim) {
+
+    pwts <- if (length(pwts <- object@prior.weights) > 0)
+              pwts else weights(object, type = "prior")
+    if (any(pwts != 1)) 
+      warning("ignoring prior weights")
+    eta <- predict(object)
+    onempobs0 <- cbind(eta2theta(eta[, c(FALSE, TRUE), drop = FALSE],
+                                 .lonempobs0 , earg = .eonempobs0 ))
+    prob      <- cbind(eta2theta(eta[, c(TRUE, FALSE), drop = FALSE],
+                                 .lprob      , earg = .eprob      ))
+    rzageom(nsim * length(prob), pobs0 = 1 - onempobs0, prob = prob)
+  }, list( .lonempobs0 = lonempobs0, .lprob = lprob,
+           .eonempobs0 = eonempobs0, .eprob = eprob ))),
+
+
+
+
   deriv = eval(substitute(expression({
-    Musual <- 2
+    M1 <- 2
     NOS <- extra$NOS
     y0 <- extra$y0
     skip <- extra$skip.these
 
-    prob      <- cbind(eta2theta(eta[, Musual*(1:NOS)-1, drop = FALSE],
+    prob      <- cbind(eta2theta(eta[, M1*(1:NOS)-1, drop = FALSE],
                        .lprob      , earg = .eprob      ))
-    onempobs0 <- cbind(eta2theta(eta[, Musual*(1:NOS)-0, drop = FALSE],
+    onempobs0 <- cbind(eta2theta(eta[, M1*(1:NOS)-0, drop = FALSE],
                        .lonempobs0 , earg = .eonempobs0 ))
     pobs0 <- 1 - onempobs0
 
@@ -6230,13 +6671,13 @@ rzabinom <- function(n, size, prob, pobs0 = 0) {
 
     ans <- c(w) * cbind(dl.dprob      * dprob.deta,
                         dl.donempobs0 * donempobs0.deta)
-    ans <- ans[, interleave.VGAM(ncol(ans), M = Musual)]
+    ans <- ans[, interleave.VGAM(ncol(ans), M = M1)]
     ans
   }), list( .lonempobs0 = lonempobs0, .lprob = lprob,
             .eonempobs0 = eonempobs0, .eprob = eprob ))),
   weight = eval(substitute(expression({
 
-    wz <- matrix(0.0, n, Musual*NOS)
+    wz <- matrix(0.0, n, M1*NOS)
 
 
     ned2l.dprob2 <- (1 - pobs0) / (prob^2 * (1 - prob))
@@ -6257,7 +6698,7 @@ rzabinom <- function(n, size, prob, pobs0 = 0) {
     wz[, NOS+(1:NOS)] <- tmp200
 
 
-    wz <- wz[, interleave.VGAM(ncol(wz), M = Musual)]
+    wz <- wz[, interleave.VGAM(ncol(wz), M = M1)]
 
 
     wz

@@ -194,7 +194,9 @@ contains further information and examples.
   \code{\link{posnegbinomial}},
   \code{\link{binomialff}},
   \code{\link{rpospois}},
-  \code{\link{CommonVGAMffArguments}}.
+  \code{\link{CommonVGAMffArguments}},
+  \code{\link{simulate.vlm}}.
+
 
 }
 
@@ -213,17 +215,16 @@ head(predict(fit, untransform = TRUE))
 coef(fit, matrix = TRUE)
 summary(fit)
 
-
 # Another example ------------------------------
 # Data from Angers and Biswas (2003)
 abdata <- data.frame(y = 0:7, w = c(182, 41, 12, 2, 2, 0, 0, 1))
 abdata <- subset(abdata, w > 0)
-yy <- with(abdata, rep(y, w))
-fit3 <- vglm(yy ~ 1, zapoisson, trace = TRUE, crit = "coef")
+Abdata <- data.frame(yy = with(abdata, rep(y, w)))
+fit3 <- vglm(yy ~ 1, zapoisson, data = Abdata, trace = TRUE, crit = "coef")
 coef(fit3, matrix = TRUE)
 Coef(fit3)  # Estimate lambda (they get 0.6997 with SE 0.1520)
 head(fitted(fit3), 1)
-mean(yy)  # Compare this with fitted(fit3)
+with(Abdata, mean(yy))  # Compare this with fitted(fit3)
 }
 \keyword{models}
 \keyword{regression}

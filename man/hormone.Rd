@@ -94,11 +94,11 @@ data(hormone)
 summary(hormone)
 
 modelI <-rrvglm(Y ~ 1 + X, data = hormone, trace = TRUE,
-                uninormal(zero = NULL, lsd = "identity", imethod = 2))
+                uninormal(zero = NULL, lsd = "identitylink", imethod = 2))
 
 # Alternative way to fit modelI
 modelI.other <- vglm(Y ~ 1 + X, data = hormone, trace = TRUE,
-                     uninormal(zero = NULL, lsd = "identity"))
+                     uninormal(zero = NULL, lsd = "identitylink"))
 
 # Inferior to modelI
 modelII <- vglm(Y ~ 1 + X, data = hormone, trace = TRUE,

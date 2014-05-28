@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2013 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2014 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -94,9 +94,9 @@ rhuber <- function(n, k = 0.862, mu = 0, sigma = 1) {
 
 
 qhuber <- function (p, k = 0.862, mu = 0, sigma = 1) {
-  if(min(sigma) <= 0)
+  if (min(sigma) <= 0)
     stop("argument 'sigma' must be positive")
-  if(min(k)     <= 0)
+  if (min(k)     <= 0)
     stop("argument 'k' must be positive")
 
   cnorm <- sqrt(2 * pi) * ((2 * pnorm(k) - 1) + 2 * dnorm(k) / k)
@@ -131,7 +131,7 @@ phuber <- function(q, k = 0.862, mu = 0, sigma = 1) {
 
 
 
- huber2 <- function(llocation = "identity", lscale = "loge",
+ huber2 <- function(llocation = "identitylink", lscale = "loge",
                     k = 0.862, imethod = 1, zero = 2) {
 
 
@@ -222,19 +222,26 @@ phuber <- function(q, k = 0.862, mu = 0, sigma = 1) {
   }), list( .llocat = llocat, .lscale = lscale,
             .elocat = elocat, .escale = escale,
             .k      = k,         .imethod = imethod ))),
- loglikelihood = eval(substitute(
-   function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
-   location <- eta2theta(eta[, 1], .llocat, earg = .elocat)
-   myscale  <- eta2theta(eta[, 2], .lscale, earg = .escale)
-   kay      <- .k
-   if (residuals) stop("loglikelihood residuals not ",
-                       "implemented yet") else {
-     sum(c(w) * dhuber(y, k = kay, mu = location,  sigma = myscale,
-                    log = TRUE))
-   }
- }, list( .llocat = llocat, .lscale = lscale,
-          .elocat = elocat, .escale = escale,
-          .k      = k ))),
+  loglikelihood = eval(substitute(
+    function(mu, y, w, residuals = FALSE, eta, extra = NULL,
+             summation = TRUE) {
+    location <- eta2theta(eta[, 1], .llocat , earg = .elocat )
+    myscale  <- eta2theta(eta[, 2], .lscale , earg = .escale )
+    kay      <- .k
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
+      ll.elts <- c(w) * dhuber(y, k = kay, mu = location,  sigma = myscale,
+                               log = TRUE)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
+    }
+  }, list( .llocat = llocat, .lscale = lscale,
+           .elocat = elocat, .escale = escale,
+           .k      = k ))),
   vfamily = c("huber2"),
   deriv = eval(substitute(expression({
     mylocat <- eta2theta(eta[, 1], .llocat,  earg = .elocat)
@@ -286,7 +293,7 @@ phuber <- function(q, k = 0.862, mu = 0, sigma = 1) {
 
 
 
- huber1 <- function(llocation = "identity",
+ huber1 <- function(llocation = "identitylink",
                     k = 0.862,
                     imethod = 1) {
 
@@ -363,18 +370,26 @@ phuber <- function(q, k = 0.862, mu = 0, sigma = 1) {
   }), list( .llocat = llocat,
             .elocat = elocat,
             .k      = k,         .imethod = imethod ))),
- loglikelihood = eval(substitute(
-   function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
-   location <- eta2theta(eta, .llocat, earg = .elocat)
-   kay      <- .k
-   if (residuals) stop("loglikelihood residuals not ",
-                       "implemented yet") else {
-     sum(c(w) * dhuber(y, k = kay, mu = location,  sigma = 1,
-                    log = TRUE))
-   }
- }, list( .llocat = llocat,
-          .elocat = elocat,
-          .k      = k ))),
+
+  loglikelihood = eval(substitute(
+    function(mu, y, w, residuals = FALSE, eta, extra = NULL,
+             summation = TRUE) {
+    location <- eta2theta(eta, .llocat , earg = .elocat )
+    kay      <- .k
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
+      ll.elts <- c(w) * dhuber(y, k = kay, mu = location,  sigma = 1,
+                               log = TRUE)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
+    }
+  }, list( .llocat = llocat,
+           .elocat = elocat,
+           .k      = k ))),
   vfamily = c("huber1"),
   deriv = eval(substitute(expression({
     mylocat <- eta2theta(eta, .llocat,  earg = .elocat)

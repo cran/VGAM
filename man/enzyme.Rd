@@ -35,6 +35,8 @@ Watts, D. G. (1981)
 }
 \seealso{
 \code{\link[VGAM]{micmen}}.
+
+
 }
 \examples{
 \dontrun{

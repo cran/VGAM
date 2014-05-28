@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2013 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2014 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -12,7 +12,7 @@
 
 s.vam <- function(x, zedd, wz, smomat, which, smooth.frame, bf.maxit = 10,
                   bf.epsilon = 0.001, trace = FALSE, se.fit = TRUE,
-                  X.vlm.save, Blist, ncolBlist, M, qbig, Umat,
+                  X.vlm.save, Hlist, ncolHlist, M, qbig, Umat,
                   all.knots = FALSE, nk = NULL,
                   sf.only = FALSE) {
   nwhich <- names(which)
@@ -43,21 +43,21 @@ s.vam <- function(x, zedd, wz, smomat, which, smooth.frame, bf.maxit = 10,
       if (!is.numeric(temp) || any(temp < 0)) {
         stop("spar cannot be negative or non-numeric")
       }
-      if (length(temp) > ncolBlist[ii]) {
-        warning("only the first ", ncolBlist[ii], " values of ",
+      if (length(temp) > ncolHlist[ii]) {
+        warning("only the first ", ncolHlist[ii], " values of ",
                 "'spar' are used for variable '", s.xargument, "'")
       }
-      osparv[[ii]] <- rep(temp, length = ncolBlist[ii])  # Recycle
+      osparv[[ii]] <- rep(temp, length = ncolHlist[ii])  # Recycle
     
       temp <- odfvec[[ii]]
       if (!is.numeric(temp) || any(temp < 1)) {
         stop("argument 'df' is non-numeric or less than 1")
       }
-      if (length(temp) > ncolBlist[ii]) {
-        warning("only the first ", ncolBlist[ii], " value(s) of 'df' ",
+      if (length(temp) > ncolHlist[ii]) {
+        warning("only the first ", ncolHlist[ii], " value(s) of 'df' ",
                 "are used for variable '", s.xargument, "'")
       }
-      odfvec[[ii]] <- rep(temp, length = ncolBlist[ii])  # Recycle
+      odfvec[[ii]] <- rep(temp, length = ncolHlist[ii])  # Recycle
       if (max(temp) > smooth.frame$neffec[kk]-1) {
         stop("'df' value too high for variable '", s.xargument, "'")
       }
@@ -75,7 +75,7 @@ s.vam <- function(x, zedd, wz, smomat, which, smooth.frame, bf.maxit = 10,
     smooth.frame$odfvec <- odfvec  # Original
     
     if (sum(smooth.frame$dfvec[smooth.frame$osparv == 0]) + pbig >
-      smooth.frame$n.lm * sum(ncolBlist[nwhich])) {
+      smooth.frame$n.lm * sum(ncolHlist[nwhich])) {
       stop("too many parameters/dof for data on hand")
     }
     
@@ -90,17 +90,17 @@ s.vam <- function(x, zedd, wz, smomat, which, smooth.frame, bf.maxit = 10,
     smooth.frame$s.xargument <- s.xargument    # Stored here
 
     smooth.frame$smap <-
-      as.vector(cumsum(c(1, ncolBlist[nwhich]))[1:length(nwhich)])
+      as.vector(cumsum(c(1, ncolHlist[nwhich]))[1:length(nwhich)])
 
     smooth.frame$try.sparv <- osparv
 
 
     smooth.frame$bindex <-
-      as.integer(cumsum(c(1, smooth.frame$nknots * ncolBlist[nwhich])))
+      as.integer(cumsum(c(1, smooth.frame$nknots * ncolHlist[nwhich])))
 
 
     smooth.frame$lindex <-
-      as.integer(cumsum(c(1, smooth.frame$neffec * ncolBlist[nwhich])))
+      as.integer(cumsum(c(1, smooth.frame$neffec * ncolHlist[nwhich])))
 
 
     smooth.frame$kindex <-
@@ -118,7 +118,7 @@ s.vam <- function(x, zedd, wz, smomat, which, smooth.frame, bf.maxit = 10,
 
 
 
-  ldk <- 3 * max(ncolBlist[nwhich]) + 1  # 20020711
+  ldk <- 3 * max(ncolHlist[nwhich]) + 1  # 20020711
 
   which <- unlist(which)
   p.lm <- smooth.frame$p.lm
@@ -127,15 +127,15 @@ s.vam <- function(x, zedd, wz, smomat, which, smooth.frame, bf.maxit = 10,
 
   dim1U <- if (is.matrix(Umat)) nrow(Umat) else 1
 
-  nBlist <- names(Blist)
-  for (ii in length(nBlist):1) {
-    if (!any(nBlist[ii] == nwhich)) {
-      Blist[[ii]] <- NULL
+  nHlist <- names(Hlist)
+  for (ii in length(nHlist):1) {
+    if (!any(nHlist[ii] == nwhich)) {
+      Hlist[[ii]] <- NULL
     }
   }
-  trivc <- trivial.constraints(Blist)
+  trivc <- trivial.constraints(Hlist)
 
-  ncbvec <- ncolBlist[nwhich]
+  ncbvec <- ncolHlist[nwhich]
   ncolbmax <- max(ncbvec)
 
 
@@ -168,7 +168,7 @@ s.vam <- function(x, zedd, wz, smomat, which, smooth.frame, bf.maxit = 10,
      qr = as.double(X.vlm.save), qraux = double(pbig),
      qpivot = as.integer(1:pbig),
          as.double(Umat),
-         as.double(unlist(Blist)),
+         as.double(unlist(Hlist)),
      as.integer(ncbvec), as.integer(smooth.frame$smap),
       trivc = as.integer(trivc),
 
@@ -180,7 +180,7 @@ s.vam <- function(x, zedd, wz, smomat, which, smooth.frame, bf.maxit = 10,
      bindex = as.integer(smooth.frame$bindex),
      lindex = as.integer(smooth.frame$lindex),
          nknots = as.integer(smooth.frame$nknots),
-         kindex = as.integer(smooth.frame$kindex), PACKAGE = "VGAM")  # End of dotC
+         kindex = as.integer(smooth.frame$kindex))  # End of dotC
 
 
   if (exists("flush.console"))
@@ -233,7 +233,7 @@ s.vam <- function(x, zedd, wz, smomat, which, smooth.frame, bf.maxit = 10,
   for (ii in 1:length(nwhich)) {
     b.coefs <- fit$bcoeff[(smooth.frame$bindex[ii]):
                           (smooth.frame$bindex[ii + 1] - 1)]
-    b.coefs <- matrix(b.coefs, ncol = ncolBlist[nwhich[ii]])
+    b.coefs <- matrix(b.coefs, ncol = ncolHlist[nwhich[ii]])
     Bspline[[ii]] <-
         new("vsmooth.spline.fit",
             "Bcoefficients" = b.coefs,
@@ -252,7 +252,7 @@ s.vam <- function(x, zedd, wz, smomat, which, smooth.frame, bf.maxit = 10,
                          (smooth.frame$lindex[ii+1]-1)]
     levmat <- matrix(levvec,
                      nrow = smooth.frame$neffec[ii],
-                     ncol = ncolBlist[nwhich[ii]])
+                     ncol = ncolHlist[nwhich[ii]])
     Leverages[[ii]] <- levmat
   }
 

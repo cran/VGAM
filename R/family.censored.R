@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2013 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2014 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -334,7 +334,7 @@ if (FALSE)
 
 
  cennormal1 <-
- cennormal <- function(lmu = "identity", lsd = "loge",
+ cennormal <- function(lmu = "identitylink", lsd = "loge",
                        imethod = 1, zero = 2) {
 
 
@@ -681,12 +681,13 @@ if (FALSE)
                       "gamma(1 + 1/shape)^2)"),
  constraints = eval(substitute(expression({
     dotzero <- .zero
-    Musual <- 2
+    M1 <- 2
     eval(negzero.expression)
   }), list( .zero = zero ))),
 
   infos = eval(substitute(function(...) {
-    list(Musual = 2,
+    list(M1 = 2,
+         Q1 = 1,
          zero = .zero )
   }, list( .zero = zero
          ))),
@@ -705,10 +706,10 @@ if (FALSE)
     y <- temp5$y
 
     ncoly <- ncol(y)
-    Musual <- 2
+    M1 <- 2
     extra$ncoly <- ncoly
-    extra$Musual <- Musual
-    M <- Musual * ncoly
+    extra$M1 <- M1
+    M <- M1 * ncoly
 
 
     if (is.SurvS4(y))
@@ -721,12 +722,12 @@ if (FALSE)
     predictors.names <-
         c(namesof(mynames1, .lshape , earg = .eshape , tag = FALSE),
           namesof(mynames2, .lscale , earg = .escale , tag = FALSE))[
-          interleave.VGAM(M, M = Musual)]
+          interleave.VGAM(M, M = M1)]
 
 
-    Shape.init <- matrix(if(length( .ishape )) .ishape else 0 + NA,
+    Shape.init <- matrix(if (length( .ishape )) .ishape else 0 + NA,
                          n, ncoly, byrow = TRUE)
-    Scale.init <- matrix(if(length( .iscale )) .iscale else 0 + NA,
+    Scale.init <- matrix(if (length( .iscale )) .iscale else 0 + NA,
                          n, ncoly, byrow = TRUE)
 
     if (!length(etastart)) {
@@ -747,12 +748,12 @@ if (FALSE)
             Shape.init[, ilocal] <- 1 / fit0$coef["X"]
           if (!is.Numeric(Scale.init[, ilocal]))
             Scale.init[, ilocal] <- exp(fit0$coef["Intercept"])
-        } # ilocal
+        }  # ilocal
 
         etastart <-
           cbind(theta2eta(Shape.init, .lshape , earg = .eshape ),
                 theta2eta(Scale.init, .lscale , earg = .escale ))[,
-                interleave.VGAM(M, M = Musual)]
+                interleave.VGAM(M, M = M1)]
       }
     }
   }), list( .lscale = lscale, .lshape = lshape,
@@ -786,21 +787,21 @@ if (FALSE)
 
 
 
-    Musual <- extra$Musual
+    M1 <- extra$M1
     misc$link <-
       c(rep( .lshape , length = ncoly),
-        rep( .lscale , length = ncoly))[interleave.VGAM(M, M = Musual)]
-    temp.names <- c(mynames1, mynames2)[interleave.VGAM(M, M = Musual)]
+        rep( .lscale , length = ncoly))[interleave.VGAM(M, M = M1)]
+    temp.names <- c(mynames1, mynames2)[interleave.VGAM(M, M = M1)]
     names(misc$link) <- temp.names
 
     misc$earg <- vector("list", M)
     names(misc$earg) <- temp.names
     for (ii in 1:ncoly) {
-      misc$earg[[Musual*ii-1]] <- .eshape
-      misc$earg[[Musual*ii  ]] <- .escale
+      misc$earg[[M1*ii-1]] <- .eshape
+      misc$earg[[M1*ii  ]] <- .escale
     }
 
-    misc$Musual <- Musual
+    misc$M1 <- M1
     misc$imethod <- .imethod
     misc$expected <- TRUE
     misc$multipleResponses <- TRUE
@@ -825,7 +826,7 @@ if (FALSE)
            .escale = escale, .eshape = eshape ) )),
   vfamily = c("weibull"),
   deriv = eval(substitute(expression({
-    Musual <- 2
+    M1 <- 2
     Shape <- eta2theta(eta[, c(TRUE, FALSE)], .lshape , earg = .eshape )
     Scale <- eta2theta(eta[, c(FALSE, TRUE)], .lscale , earg = .escale )
 
@@ -838,7 +839,7 @@ if (FALSE)
 
     myderiv <- c(w) * cbind(dl.dshape * dshape.deta,
                             dl.dscale * dscale.deta)
-    myderiv[, interleave.VGAM(M, M = Musual)]
+    myderiv[, interleave.VGAM(M, M = M1)]
   }), list( .lscale = lscale, .lshape = lshape,
             .escale = escale, .eshape = eshape ) )),
   weight = eval(substitute(expression({
@@ -852,8 +853,8 @@ if (FALSE)
     wz <- array(c(c(w) * ned2l.dshape * dshape.deta^2,
                   c(w) * ned2l.dscale * dscale.deta^2,
                   c(w) * ned2l.dshapescale * dscale.deta * dshape.deta),
-                dim = c(n, M / Musual, 3))
-    wz <- arwz2wz(wz, M = M, Musual = Musual)
+                dim = c(n, M / M1, 3))
+    wz <- arwz2wz(wz, M = M, M1 = M1)
 
 
     wz
@@ -1138,12 +1139,13 @@ pgamma.deriv.unscaled <- function(q, shape) {
               ""),
  constraints = eval(substitute(expression({
     dotzero <- .zero
-    Musual <- 2
+    M1 <- 2
     eval(negzero.expression)
   }), list( .zero = zero ))),
 
   infos = eval(substitute(function(...) {
-    list(Musual = 2,
+    list(M1 = 2,
+         Q1 = 1,
          lower.limit = .lower.limit ,
          zero = .zero )
   }, list( .zero = zero,
@@ -1164,10 +1166,10 @@ pgamma.deriv.unscaled <- function(q, shape) {
     y <- temp5$y
 
     ncoly <- ncol(y)
-    Musual <- 2
+    M1 <- 2
     extra$ncoly <- ncoly
-    extra$Musual <- Musual
-    M <- Musual * ncoly
+    extra$M1 <- M1
+    M <- M1 * ncoly
 
     extra$lower.limit <- matrix( .lower.limit , n, ncoly, byrow = TRUE)
 
@@ -1187,7 +1189,7 @@ pgamma.deriv.unscaled <- function(q, shape) {
     predictors.names <-
         c(namesof(mynames1, .lAlpha , earg = .eAlpha , tag = FALSE),
           namesof(mynames2, .lBetaa , earg = .eBetaa , tag = FALSE))[
-          interleave.VGAM(M, M = Musual)]
+          interleave.VGAM(M, M = M1)]
 
 
     Alpha.init <- matrix(if (length( .iAlpha )) .iAlpha else 0 + NA,
@@ -1214,7 +1216,7 @@ pgamma.deriv.unscaled <- function(q, shape) {
             Betaa.init[, ilocal] <- aaa.init
           if (!is.Numeric(Alpha.init[, ilocal]))
             Alpha.init[, ilocal] <- (1 / bbb.init)^aaa.init
-        } # ilocal
+        }  # ilocal
       } else {
         Alpha.init <- rep( .iAlpha , length = n)
         Betaa.init <- rep( .iBetaa , length = n)
@@ -1223,7 +1225,7 @@ pgamma.deriv.unscaled <- function(q, shape) {
       etastart <-
         cbind(theta2eta(Alpha.init, .lAlpha , earg = .eAlpha ),
               theta2eta(Betaa.init, .lBetaa , earg = .eBetaa ))[,
-              interleave.VGAM(M, M = Musual)]
+              interleave.VGAM(M, M = M1)]
     }
   }), list( .lBetaa = lBetaa, .lAlpha = lAlpha,
             .eBetaa = eBetaa, .eAlpha = eAlpha,
@@ -1267,21 +1269,21 @@ pgamma.deriv.unscaled <- function(q, shape) {
 
 
 
-    Musual <- extra$Musual
+    M1 <- extra$M1
     misc$link <-
       c(rep( .lAlpha , length = ncoly),
-        rep( .lBetaa , length = ncoly))[interleave.VGAM(M, M = Musual)]
-    temp.names <- c(mynames1, mynames2)[interleave.VGAM(M, M = Musual)]
+        rep( .lBetaa , length = ncoly))[interleave.VGAM(M, M = M1)]
+    temp.names <- c(mynames1, mynames2)[interleave.VGAM(M, M = M1)]
     names(misc$link) <- temp.names
 
     misc$earg <- vector("list", M)
     names(misc$earg) <- temp.names
     for (ii in 1:ncoly) {
-      misc$earg[[Musual*ii-1]] <- .eAlpha
-      misc$earg[[Musual*ii  ]] <- .eBetaa
+      misc$earg[[M1*ii-1]] <- .eAlpha
+      misc$earg[[M1*ii  ]] <- .eBetaa
     }
 
-    misc$Musual <- Musual
+    misc$M1 <- M1
     misc$imethod <- .imethod
     misc$expected <- TRUE
     misc$multipleResponses <- TRUE
@@ -1320,7 +1322,7 @@ pgamma.deriv.unscaled <- function(q, shape) {
   vfamily = c("truncweibull"),
 
   deriv = eval(substitute(expression({
-    Musual <- 2
+    M1 <- 2
     Alpha <- eta2theta(eta[, c(TRUE, FALSE)], .lAlpha , earg = .eAlpha )
     Betaa <- eta2theta(eta[, c(FALSE, TRUE)], .lBetaa , earg = .eBetaa )
 
@@ -1337,7 +1339,7 @@ pgamma.deriv.unscaled <- function(q, shape) {
 
     myderiv <- c(w) * cbind(dl.dAlpha * dAlpha.deta,
                             dl.dBetaa * dBetaa.deta)
-    myderiv[, interleave.VGAM(M, M = Musual)]
+    myderiv[, interleave.VGAM(M, M = M1)]
   }), list( .lBetaa = lBetaa, .lAlpha = lAlpha,
             .eBetaa = eBetaa, .eAlpha = eAlpha,
             .lower.limit = lower.limit ) )),
@@ -1373,8 +1375,8 @@ pgamma.deriv.unscaled <- function(q, shape) {
     wz <- array(c(c(w) * ned2l.daa * dAlpha.deta^2,
                   c(w) * ned2l.dbb * dBetaa.deta^2,
                   c(w) * ned2l.dab * dBetaa.deta * dAlpha.deta),
-                dim = c(n, M / Musual, 3))
-    wz <- arwz2wz(wz, M = M, Musual = Musual)
+                dim = c(n, M / M1, 3))
+    wz <- arwz2wz(wz, M = M, M1 = M1)
     wz
   }), list( .nrfs = nrfs ))))
 }

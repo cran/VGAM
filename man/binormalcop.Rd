@@ -126,7 +126,7 @@ ymat <- rbinormcop(n = nn, rho = with(bdata, rho))
 bdata <- transform(bdata, y5 = ymat[, 1],
                           y6 = ymat[, 2])
 fit2 <- vgam(cbind(y5, y6) ~ s(x2), data = bdata,
-             binormalcop(lrho = "identity"), trace = TRUE)
+             binormalcop(lrho = "identitylink"), trace = TRUE)
 \dontrun{ plot(fit2, lcol = "blue", scol = "orange", se = TRUE, las = 1) }
 }
 \keyword{models}

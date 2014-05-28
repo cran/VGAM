@@ -160,10 +160,12 @@ coding in this case.
 \seealso{
   \code{\link{SurvS4-class}},
   \code{\link{cenpoisson}},
-% \code{\link[survival]{coxph}},
-% \code{\link[survival]{survfit}},
   \code{\link[survival]{survreg}},
   \code{\link{leukemia}}.
+
+
+% \code{\link[survival]{coxph}},
+% \code{\link[survival]{survfit}},
 
 
 }

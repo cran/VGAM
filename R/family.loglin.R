@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2013 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2014 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -70,8 +70,8 @@
           "11" = exp(u1+u2+u12) / denom)
   },
   last = expression({
-    misc$link <-    c("u1" = "identity", "u2" = "identity",
-                      "u12" = "identity")
+    misc$link <-    c("u1" = "identitylink", "u2" = "identitylink",
+                      "u12" = "identitylink")
     misc$earg <- list("u1"  = list(),    "u2"  = list(),
                       "u12"  = list())
 
@@ -85,15 +85,25 @@
     u12 <- log(mu[,4]) - u0 - u1 - u2 
     cbind(u1, u2, u12)
   },
-  loglikelihood = function(mu,y,w,residuals = FALSE,eta,extra = NULL) {
+  loglikelihood =
+    function(mu, y, w, residuals = FALSE, eta,
+             extra = NULL,
+             summation = TRUE) {
     u1 <-  eta[,1]
     u2 <-  eta[,2]
     u12 <- eta[,3]
     denom <- 1 + exp(u1) + exp(u2) + exp(u1 + u2 + u12)
     u0 <- -log(denom)
-    if (residuals)
-      stop("loglikelihood residuals not implemented yet") else
-      sum(c(w) *(u0 + u1*y[,1] + u2*y[,2] + u12*y[,1]*y[,2]))
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
+      ll.elts <- c(w) * (u0 + u1*y[,1] + u2*y[,2] + u12*y[,1]*y[,2])
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
+    }
   },
   vfamily = c("loglinb2"),
   deriv = expression({
@@ -226,7 +236,7 @@
           "111" = exp(u1+u2+u3+u12+u13+u23)) / denom
   },
   last = expression({
-    misc$link <- rep("identity", length = M)
+    misc$link <- rep("identitylink", length = M)
     names(misc$link) <- predictors.names
 
     misc$earg <- list(u1  = list(), u2  = list(), u3  = list(),
@@ -246,47 +256,58 @@
     u12 <- log(mu[,7]) - u0 - u1 - u2
     cbind(u1, u2, u3, u12, u13, u23)
   },
-  loglikelihood = function(mu,y,w,residuals = FALSE,eta,extra = NULL) {
-      u1  <- eta[, 1]
-      u2  <- eta[, 2]
-      u3  <- eta[, 3]
-      u12 <- eta[, 4]
-      u13 <- eta[, 5]
-      u23 <- eta[, 6]
-      denom <- 1 + exp(u1) + exp(u2) + exp(u3) + exp(u1 + u2 + u12) +
-               exp(u1 + u3 + u13) + exp(u2 + u3 + u23) +
-               exp(u1 + u2 + u3 + u12 + u13 + u23)
+  loglikelihood =
+    function(mu, y, w, residuals = FALSE, eta,
+             extra = NULL,
+             summation = TRUE) {
+    u1  <- eta[, 1]
+    u2  <- eta[, 2]
+    u3  <- eta[, 3]
+    u12 <- eta[, 4]
+    u13 <- eta[, 5]
+    u23 <- eta[, 6]
+    denom <- 1 + exp(u1) + exp(u2) + exp(u3) + exp(u1 + u2 + u12) +
+             exp(u1 + u3 + u13) + exp(u2 + u3 + u23) +
+             exp(u1 + u2 + u3 + u12 + u13 + u23)
 
     u0 <- -log(denom)
-    if (residuals)
-      stop("loglikelihood residuals not implemented yet") else
-    sum(c(w) *(u0 + u1*y[,1] + u2*y[,2] + u3*y[,3] +u12*y[,1]*y[,2] +
-           u13*y[,1]*y[,3] + u23*y[,2]*y[,3]))
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
+      ll.elts <-
+        c(w) * (u0 + u1*y[,1] + u2*y[,2] + u3*y[,3] +u12*y[,1]*y[,2] +
+                u13*y[,1]*y[,3] + u23*y[,2]*y[,3])
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
+    }
   },
   vfamily = c("loglinb3"),
   deriv = expression({
-      u1  <- eta[, 1]
-      u2  <- eta[, 2]
-      u3  <- eta[, 3]
-      u12 <- eta[, 4]
-      u13 <- eta[, 5]
-      u23 <- eta[, 6]
-      denom <- 1 + exp(u1) + exp(u2) + exp(u3) + exp(u1 + u2 + u12) +
-               exp(u1 + u3 + u13) + exp(u2 + u3 + u23) +
-               exp(u1 + u2 + u3 + u12 + u13 + u23)
+    u1  <- eta[, 1]
+    u2  <- eta[, 2]
+    u3  <- eta[, 3]
+    u12 <- eta[, 4]
+    u13 <- eta[, 5]
+    u23 <- eta[, 6]
+    denom <- 1 + exp(u1) + exp(u2) + exp(u3) + exp(u1 + u2 + u12) +
+             exp(u1 + u3 + u13) + exp(u2 + u3 + u23) +
+             exp(u1 + u2 + u3 + u12 + u13 + u23)
 
 
 
-      allterms <- exp(u1+u2+u3+u12+u13+u23)
-      A1 <- exp(u1) + exp(u1 + u2 + u12) + exp(u1 + u3 + u13) +
-            allterms
-      A2 <- exp(u2) + exp(u1 + u2 + u12) + exp(u2 + u3 + u23) +
-            allterms
-      A3 <- exp(u3) + exp(u3 + u2 + u23) + exp(u1 + u3 + u13) +
-            allterms
-      A12 <- exp(u1 + u2 + u12) + allterms
-      A13 <- exp(u1 + u3 + u13) + allterms
-      A23 <- exp(u2 + u3 + u23) + allterms
+    allterms <- exp(u1+u2+u3+u12+u13+u23)
+    A1 <- exp(u1) + exp(u1 + u2 + u12) + exp(u1 + u3 + u13) +
+          allterms
+    A2 <- exp(u2) + exp(u1 + u2 + u12) + exp(u2 + u3 + u23) +
+          allterms
+    A3 <- exp(u3) + exp(u3 + u2 + u23) + exp(u1 + u3 + u13) +
+          allterms
+    A12 <- exp(u1 + u2 + u12) + allterms
+    A13 <- exp(u1 + u3 + u13) + allterms
+    A23 <- exp(u2 + u3 + u23) + allterms
 
 
     c(w) * cbind(-A1/denom + y[,1], 

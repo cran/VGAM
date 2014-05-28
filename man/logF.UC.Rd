@@ -3,7 +3,7 @@
 % \alias{qnefghs}
 \title{ log F Distribution }
 \description{
-  Density, 
+  Density
   for the log F distribution.
 
 % quantile function
@@ -42,6 +42,8 @@ dlogF(x, shape1, shape2, log = FALSE)
 }
 \value{
   \code{dlogF} gives the density.
+
+
 % \code{pnefghs} gives the distribution function, and
 % \code{qnefghs} gives the quantile function, and
 % \code{rnefghs} generates random deviates.
@@ -62,6 +64,9 @@ dlogF(x, shape1, shape2, log = FALSE)
 
 \seealso{
   \code{\link{hypersecant}}.
+
+
+% \code{\link{simulate.vlm}}.
 
 
 }

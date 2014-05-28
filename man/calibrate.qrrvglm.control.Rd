@@ -101,13 +101,13 @@ On constrained and unconstrained quadratic ordination.
 
 }
 \examples{
-\dontrun{ hspider[, 1:6] <- scale(hspider[, 1:6])  # Needed when ITol = TRUE
+\dontrun{ hspider[, 1:6] <- scale(hspider[, 1:6])  # Needed when I.tol = TRUE
 set.seed(123)
 p1 <- cqo(cbind(Alopacce, Alopcune, Pardlugu, Pardnigr, 
                 Pardpull, Trocterr, Zoraspin) ~
           WaterCon + BareSand + FallTwig +
           CoveMoss + CoveHerb + ReflLux,
-          family = poissonff, data = hspider, ITol = TRUE)
+          family = poissonff, data = hspider, I.tol = TRUE)
 sort(p1@misc$deviance.Bestof)  # A history of all the iterations
 
 siteNos <- 3:4  # Calibrate these sites

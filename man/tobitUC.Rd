@@ -40,6 +40,7 @@ rtobit(n, mean = 0, sd = 1, Lower = 0, Upper = Inf)
   \code{qtobit} gives the quantile function, and
   \code{rtobit} generates random deviates.
 
+
 }
 \author{ T. W. Yee }
 \details{
@@ -57,6 +58,7 @@ rtobit(n, mean = 0, sd = 1, Lower = 0, Upper = Inf)
 %}
 \seealso{
   \code{\link{tobit}}.
+
 
 }
 \examples{

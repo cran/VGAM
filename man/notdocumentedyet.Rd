@@ -2,6 +2,18 @@
 \alias{notdocumentedyet}
 %
 %
+% 201405;
+%\alias{sm.bs}
+%\alias{sm.ns}
+%\alias{sm.poly}
+%\alias{sm.scale}
+%\alias{sm.scale.default}
+%
+%
+%
+%
+% 201312;
+% \alias{simulate.vlm}
 % 201311;
 \alias{family.name}
 \alias{family.name.vlm}
@@ -267,14 +279,13 @@
 \alias{biplot.qrrvglm}
 % \alias{block.diag}
 % \alias{borel.tanner}
-\alias{bs}
 % \alias{callcaof}
 % \alias{callcqof}
 % \alias{calldcaof}
 % \alias{calldcqof}
 % \alias{callduqof}
 % \alias{calluqof}
-% \alias{canonical.Blist}
+% \alias{canonical.Hlist}
 % \alias{cao.fit}
 \alias{car.all}
 \alias{care.exp}
@@ -294,7 +305,7 @@
 % \alias{cm.zero.vgam}
 \alias{coefficients}
 \alias{coefqrrvglm}
-\alias{coefvlm}
+% \alias{coefvlm}  % 20140124
 \alias{coefvsmooth.spline}
 \alias{coefvsmooth.spline.fit}
 % \alias{constraints.vlm}
@@ -311,7 +322,7 @@
 \alias{deplot.vglm}
 \alias{deviance}
 %\alias{deviance.uqo}
-\alias{deviance.vglm}
+%\alias{deviance.vglm}
 \alias{deviance.vlm}
 %\alias{df.residual}
 %\alias{df.residual_vlm}
@@ -390,7 +401,7 @@
 \alias{lms.bcn.control}
 \alias{lms.yjn.control}
 \alias{lmscreg.control}
-\alias{logLik.vlm}
+% \alias{logLik.vlm}
 \alias{logLik.qrrvglm}
 % \alias{lv.Coef.cao} 20090505
 \alias{latvar.Coef.qrrvglm}
@@ -435,7 +446,6 @@
 \alias{nvar.qrrvglm}
 \alias{nvar.cao}
 \alias{nvar.rcim}
-\alias{ns}
 % \alias{num.deriv.rrr}
 \alias{persp}
 \alias{persp.cao}
@@ -446,7 +456,6 @@
 \alias{plotvsmooth.spline}
 % \alias{pnorm2} done 20120910
 % \alias{poissonqn}
-\alias{poly}
 \alias{predict}
 \alias{predict.cao}
 \alias{predict.glm}
@@ -519,7 +528,6 @@
 % \alias{rrvglm.fit}
 \alias{ResSS.vgam}
 \alias{s.vam}
-\alias{scale.default}
 \alias{simple.exponential}
 \alias{simple.poisson}
 \alias{size.binomial}
@@ -631,7 +639,7 @@
 
 }
 %\usage{
-%uninormal(lmean = "identity", lsd = "loge", zero = NULL)
+%uninormal(lmean = "identitylink", lsd = "loge", zero = NULL)
 %}
 %- maybe also 'usage' for other objects documented here.
 %\arguments{
@@ -652,6 +660,7 @@
   Each objects/methods/classes may or may not have its own individual value.
   These will be documented over time.
 
+
 }
 %\references{
 %}
@@ -661,8 +670,9 @@
 %
 %}
 %\seealso{
-%    \code{gaussianff},
-%    \code{\link{posnormal}}.
+% \code{gaussianff},
+% \code{\link{posnormal}}.
+%
 %}
 %\examples{
 %}

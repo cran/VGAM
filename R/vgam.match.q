@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2013 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2014 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -72,7 +72,7 @@ vgam.match <- function(x, all.knots = FALSE, nk = NULL) {
     knot.list <- .C("vknootl2",
                     as.double(xbar),
                     as.integer(neffec), knot = double(neffec+6),
-                    k = as.integer(nk+4), chosen = as.integer(chosen), PACKAGE = "VGAM")
+                    k = as.integer(nk+4), chosen = as.integer(chosen))
     if (noround) {
       knot <- valid.vknotl2(knot.list$knot[1:(knot.list$k)])
       knot.list$k <- length(knot)

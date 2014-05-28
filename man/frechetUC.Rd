@@ -67,6 +67,8 @@ Hoboken, NJ, USA: Wiley-Interscience.
 %}
 \seealso{
   \code{\link{frechet2}}.
+
+
 % \code{\link{frechet3}}.
 
 

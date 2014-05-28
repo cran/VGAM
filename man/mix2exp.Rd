@@ -83,6 +83,11 @@ mix2exp(lphi = "logit", llambda = "loge", iphi = 0.5, il1 = NULL,
   as \code{\link[graphics]{hist}} can be used as an aid.
 
 
+  This \pkg{VGAM} family function is experimental and
+  should be used with care.
+
+
+
 }
 
 \author{ T. W. Yee }
@@ -113,7 +118,7 @@ mix2exp(lphi = "logit", llambda = "loge", iphi = 0.5, il1 = NULL,
 mdata <- data.frame(y1 = rexp(nn <- 1000, lambda1))
 mdata <- transform(mdata, y2 = rexp(nn, lambda2))
 mdata <- transform(mdata, Y  = ifelse(runif(nn) < phi, y1, y2))
-fit <- vglm(Y ~ 1, mix2exp, mdata, trace = TRUE)
+fit <- vglm(Y ~ 1, mix2exp, data = mdata, trace = TRUE)
 coef(fit, matrix = TRUE)
 
 # Compare the results with the truth

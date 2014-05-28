@@ -98,15 +98,16 @@ while estimates for \eqn{a} and \eqn{p} can be considered unbiased for
     \code{\link{invlomax}},
     \code{\link{lomax}},
     \code{\link{paralogistic}},
-    \code{\link{invparalogistic}}.
+    \code{\link{invparalogistic}},
+    \code{\link{simulate.vlm}}.
 
 
 }
 
 \examples{
 ddata <- data.frame(y = rdagum(n = 3000, exp(1), exp(2), exp(1)))
-fit <- vglm(y ~ 1, dagum, ddata, trace = TRUE)
-fit <- vglm(y ~ 1, dagum(ishape1.a = exp(1)), ddata, trace = TRUE)
+fit <- vglm(y ~ 1, dagum, data = ddata, trace = TRUE)
+fit <- vglm(y ~ 1, dagum(ishape1.a = exp(1)), data = ddata, trace = TRUE)
 coef(fit, matrix = TRUE)
 Coef(fit)
 summary(fit)

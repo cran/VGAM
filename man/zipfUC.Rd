@@ -29,19 +29,25 @@ pzipf(q, N, s)
   Logical.
   If \code{log = TRUE} then the logarithm of the density is returned.
 
+
   }
 
 }
 \value{
   \code{dzipf} gives the density, and
   \code{pzipf} gives the cumulative distribution function.
+
+
 % \code{qzipf} gives the quantile function, and
 % \code{rzipf} generates random deviates.
+
+
 }
 \author{ T. W. Yee }
 \details{
   This is a finite version of the zeta distribution.
   See \code{\link{zipf}} for more details.
+
 
 }
 %\note{
@@ -49,6 +55,8 @@ pzipf(q, N, s)
 %}
 \seealso{
   \code{\link{zipf}}.
+
+
 
 }
 \examples{

@@ -11,12 +11,12 @@
 }
 \usage{
 rbinom2.rho(n, mu1,
-           mu2 = if(exchangeable) mu1 else stop("argument 'mu2' not specified"),
+           mu2 = if (exchangeable) mu1 else stop("argument 'mu2' not specified"),
            rho = 0, exchangeable = FALSE, twoCols = TRUE,
-           colnames = if(twoCols) c("y1","y2") else c("00", "01", "10", "11"),
+           colnames = if (twoCols) c("y1","y2") else c("00", "01", "10", "11"),
            ErrorCheck = TRUE)
 dbinom2.rho(mu1,
-           mu2 = if(exchangeable) mu1 else stop("'mu2' not specified"),
+           mu2 = if (exchangeable) mu1 else stop("'mu2' not specified"),
            rho = 0, exchangeable = FALSE,
            colnames = c("00", "01", "10", "11"), ErrorCheck = TRUE)
 
@@ -109,7 +109,7 @@ bdata <- transform(bdata, mu1 = probit(-2+4*x2, inverse = TRUE),
                           mu2 = probit(-1+3*x2, inverse = TRUE))
 dmat <- with(bdata, dbinom2.rho(mu1, mu2, myrho))
 ymat <- with(bdata, rbinom2.rho(nn, mu1, mu2, myrho))
-fit2 <- vglm(ymat ~ x2, binom2.rho, bdata)
+fit2 <- vglm(ymat ~ x2, binom2.rho, data = bdata)
 coef(fit2, matrix = TRUE)
 \dontrun{ matplot(with(bdata, x2), dmat, lty = 1:4, col = 1:4,
         type = "l", main = "Joint probabilities",

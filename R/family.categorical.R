@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2013 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2014 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -49,10 +49,10 @@ process.categorical.data.vgam <- expression({
     stop("the response must be non-negative counts (integers)")
 
   if (!exists("delete.zero.colns") ||
-     (exists("delete.zero.colns") && delete.zero.colns)) {
+      (exists("delete.zero.colns") && delete.zero.colns)) {
     sumy2 <- colSums(y)
     if (any(index <- sumy2 == 0)) {
-      y <- y[,!index, drop = FALSE]
+      y <- y[, !index, drop = FALSE]
       sumy2 <- sumy2[!index]
       if (all(index) || ncol(y) <= 1)
         stop("'y' matrix has 0 or 1 columns")
@@ -91,7 +91,8 @@ process.categorical.data.vgam <- expression({
 
 
 Deviance.categorical.data.vgam <-
-    function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
+  function(mu, y, w, residuals = FALSE, eta, extra = NULL,
+           summation = TRUE) {
 
 
 
@@ -109,7 +110,7 @@ Deviance.categorical.data.vgam <-
   nonz <- (y != 0)
   devy[nonz] <- y[nonz] * log(y[nonz])
 
-  devmu <- 0 * y # filler; y*log(mu) gives a warning (fixed up anyway).
+  devmu <- 0 * y  # filler; y*log(mu) gives a warning (fixed up anyway).
   if (any(smallmu <- (mu * (1 - mu) < double.eps))) {
     warning("fitted values close to 0 or 1")
     smu <- mu[smallmu]
@@ -131,7 +132,12 @@ Deviance.categorical.data.vgam <-
     devi <- devi %*% rep(1, ncol(devi))  # deviance = \sum_i devi[i]
     return(c(sign(y[, 1] - mu[, 1]) * sqrt(abs(devi) * w)))
   } else {
-    sum(w * devi)
+    dev.elts <- c(w) * devi
+    if (summation) {
+      sum(dev.elts)
+    } else {
+      dev.elts
+    }
   }
 }
 
@@ -297,9 +303,11 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
     }
   }, list( .earg = earg, .link = link, .reverse = reverse) )),
   loglikelihood =
-    function(mu, y, w, residuals = FALSE, eta, extra = NULL)
-    if (residuals) stop("loglikelihood residuals ",
-                        "not implemented yet") else {
+    function(mu, y, w, residuals = FALSE, eta, extra = NULL,
+             summation = TRUE)
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
       ycounts <- if (is.numeric(extra$orig.w)) y * w / extra$orig.w else
                  y * w # Convert proportions to counts
       nvec <- if (is.numeric(extra$orig.w)) round(w / extra$orig.w) else
@@ -310,9 +318,15 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
         warning("converting 'ycounts' to integer in @loglikelihood")
       ycounts <- round(ycounts)
 
-      sum((if (is.numeric(extra$orig.w)) extra$orig.w else 1) *
-          dmultinomial(x = ycounts, size = nvec, prob = mu,
-                       log = TRUE, dochecking = FALSE))
+      ll.elts <-
+        (if (is.numeric(extra$orig.w)) extra$orig.w else 1) *
+         dmultinomial(x = ycounts, size = nvec, prob = mu,
+                      log = TRUE, dochecking = FALSE)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
     },
   vfamily = c("sratio", "vcategorical"),
   deriv = eval(substitute(expression({
@@ -469,24 +483,32 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
     }
   }, list( .earg = earg, .link = link, .reverse = reverse) )),
   loglikelihood =
-    function(mu, y, w, residuals = FALSE, eta, extra = NULL)
-      if (residuals) stop("loglikelihood residuals ",
-                          "not implemented yet") else {
-        ycounts <- if (is.numeric(extra$orig.w)) y * w / extra$orig.w else
-                   y * w # Convert proportions to counts
-        nvec <- if (is.numeric(extra$orig.w)) round(w / extra$orig.w) else
-                round(w)
+    function(mu, y, w, residuals = FALSE, eta, extra = NULL,
+             summation = TRUE) {
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
+      ycounts <- if (is.numeric(extra$orig.w)) y * w / extra$orig.w else
+                 y * w # Convert proportions to counts
+      nvec <- if (is.numeric(extra$orig.w)) round(w / extra$orig.w) else
+              round(w)
 
-        smallno <- 1.0e4 * .Machine$double.eps
-        if (max(abs(ycounts - round(ycounts))) > smallno)
-          warning("converting 'ycounts' to integer in @loglikelihood")
-        ycounts <- round(ycounts)
+      smallno <- 1.0e4 * .Machine$double.eps
+      if (max(abs(ycounts - round(ycounts))) > smallno)
+        warning("converting 'ycounts' to integer in @loglikelihood")
+      ycounts <- round(ycounts)
 
-        sum((if (is.numeric(extra$orig.w)) extra$orig.w else 1) *
-            dmultinomial(x = ycounts, size = nvec, prob = mu,
-                         log = TRUE, dochecking = FALSE))
-      },
-
+      ll.elts <-
+        (if (is.numeric(extra$orig.w)) extra$orig.w else 1) *
+         dmultinomial(x = ycounts, size = nvec, prob = mu,
+                      log = TRUE, dochecking = FALSE)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
+    }
+  },
   vfamily = c("cratio", "vcategorical"),
 
   deriv = eval(substitute(expression({
@@ -557,11 +579,12 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
 
 
  vglm.vcategorical.control <-
-  function(maxit = 30, trace = FALSE,
+  function(maxit = 30,
+           trace = FALSE,
            panic = TRUE, ...) {
   if (maxit < 1) {
     warning("bad value of maxit; using 200 instead")
-    maxit = 200
+    maxit <- 200
   }
   list(maxit = maxit,
        trace = as.logical(trace)[1],
@@ -578,6 +601,8 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
                          nointercept = NULL, refLevel = "last",
                          whitespace = FALSE) {
 
+
+
   if (length(refLevel) != 1)
     stop("the length of 'refLevel' must be one")
 
@@ -589,6 +614,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
   if (is.factor(refLevel)) {
     if (is.ordered(refLevel))
       warning("'refLevel' is from an ordered factor")
+
     refLevel <- as.character(refLevel) == levels(refLevel)
     refLevel <- (1:length(refLevel))[refLevel]
     if (!is.Numeric(refLevel, length.arg = 1,
@@ -639,8 +665,8 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
 
     constraints <- cm.vgam(matrix(1, M, 1), x = x,
                            bool = .parallel, 
-                           constraints = constraints,
-                           apply.int = FALSE)
+                           apply.int = TRUE,
+                           constraints = constraints)
     constraints <- cm.zero.vgam(constraints, x, .zero, M)
     constraints <- cm.nointercept.vgam(constraints, x, .nointercept, M)
   }), list( .parallel = parallel, .zero = zero,
@@ -652,7 +678,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
   infos = eval(substitute(function(...) {
     list(parallel = .parallel ,
          refLevel = .refLevel ,
-         Musual = -1,
+         M1 = -1,
          multipleResponses = FALSE,
          zero = .zero )
   }, list( .zero = zero,
@@ -661,6 +687,12 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
          ))),
 
   initialize = eval(substitute(expression({
+
+    if (is.factor(y) && is.ordered(y))
+      warning("response should be nominal, not ordinal")
+
+
+
     delete.zero.colns <- TRUE 
     eval(process.categorical.data.vgam)
 
@@ -725,9 +757,11 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
   }), list( .refLevel = refLevel )),
 
   loglikelihood =
-    function(mu, y, w, residuals = FALSE, eta, extra = NULL)
-    if (residuals) stop("loglikelihood residuals ",
-                        "not implemented yet") else {
+    function(mu, y, w, residuals = FALSE, eta, extra = NULL,
+             summation = TRUE) {
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
       ycounts <- if (is.numeric(extra$orig.w)) y * w / extra$orig.w else
                  y * w # Convert proportions to counts
       nvec <- if (is.numeric(extra$orig.w)) round(w / extra$orig.w) else
@@ -738,10 +772,17 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
         warning("converting 'ycounts' to integer in @loglikelihood")
       ycounts <- round(ycounts)
 
-      sum((if (is.numeric(extra$orig.w)) extra$orig.w else 1) *
-        dmultinomial(x = ycounts, size = nvec, prob = mu,
-                     log = TRUE, dochecking = FALSE))
-    },
+      ll.elts <-
+        (if (is.numeric(extra$orig.w)) extra$orig.w else 1) *
+         dmultinomial(x = ycounts, size = nvec, prob = mu,
+                      log = TRUE, dochecking = FALSE)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
+    }
+  },
   vfamily = c("multinomial", "vcategorical"),
   deriv = eval(substitute(expression({
     if ( .refLevel < 0) {
@@ -836,14 +877,14 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
           Hk.matrix <- kronecker(diag(NOS), matrix(1,Llevels-1,1))
           constraints <- cm.vgam(Hk.matrix, x = x,
                                  bool = .parallel ,
-                                 constraints = constraints,
-                                 apply.int = .apply.parint )
+                                 apply.int = .apply.parint ,
+                                 constraints = constraints)
       }
     } else {
       constraints <- cm.vgam(matrix(1, M, 1), x = x,
                              bool = .parallel ,
-                             constraints = constraints,
-                             apply.int = .apply.parint )
+                             apply.int = .apply.parint ,
+                             constraints = constraints)
     }
   }), list( .parallel = parallel, .mv = mv,
             .apply.parint = apply.parint ))),
@@ -856,20 +897,23 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
       NOS <- extra$NOS
       Llevels <- extra$Llevels
       for (iii in 1:NOS) {
-          cindex <- (iii-1)*(Llevels-1) + 1:(Llevels-1)
-          aindex <- (iii-1)*(Llevels) + 1:(Llevels)
-          totdev <- totdev + Deviance.categorical.data.vgam(
-                   mu = mu[, aindex, drop = FALSE],
-                   y = y[, aindex, drop = FALSE], w = w,
-                   residuals = residuals,
-                   eta = eta[, cindex, drop = FALSE],
-                   extra = extra)
+        cindex <- (iii-1)*(Llevels-1) + 1:(Llevels-1)
+        aindex <- (iii-1)*(Llevels) + 1:(Llevels)
+        totdev <- totdev +
+                  Deviance.categorical.data.vgam(
+                    mu = mu[, aindex, drop = FALSE],
+                    y = y[, aindex, drop = FALSE], w = w,
+                    residuals = residuals,
+                    eta = eta[, cindex, drop = FALSE],
+                    extra = extra,
+                    summation = TRUE)
       }
       totdev
     } else {
       Deviance.categorical.data.vgam(mu = mu, y = y, w = w,
                                      residuals = residuals,
-                                     eta = eta, extra = extra)
+                                     eta = eta, extra = extra,
+                                     summation = TRUE)
     }
     answer
   }, list( .earg = earg, .link = link, .mv = mv ) )),
@@ -1050,9 +1094,11 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
            .link = link, .earg = earg,
            .reverse = reverse, .mv = mv ))),
   loglikelihood =
-  function(mu, y, w, residuals = FALSE, eta, extra = NULL)
-    if (residuals) stop("loglikelihood residuals ",
-                        "not implemented yet") else {
+    function(mu, y, w, residuals = FALSE, eta, extra = NULL,
+             summation = TRUE) {
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
       ycounts <- if (is.numeric(extra$orig.w)) y * w / extra$orig.w else
                  y * w # Convert proportions to counts
       nvec <- if (is.numeric(extra$orig.w)) round(w / extra$orig.w) else
@@ -1063,10 +1109,17 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
         warning("converting 'ycounts' to integer in @loglikelihood")
       ycounts <- round(ycounts)
 
-      sum((if (is.numeric(extra$orig.w)) extra$orig.w else 1) *
-          dmultinomial(x = ycounts, size = nvec, prob = mu,
-                       log = TRUE, dochecking = FALSE))
-    },
+      ll.elts <-
+        (if (is.numeric(extra$orig.w)) extra$orig.w else 1) *
+         dmultinomial(x = ycounts, size = nvec, prob = mu,
+                      log = TRUE, dochecking = FALSE)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
+    }
+  },
   vfamily = c("cumulative", "vcategorical"),
   deriv = eval(substitute(expression({
     mu.use <- pmax(mu, .Machine$double.eps * 1.0e-0)
@@ -1148,7 +1201,8 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
 
 
  propodds <- function(reverse = TRUE, whitespace = FALSE) {
-  if (!is.logical(reverse) || length(reverse) != 1)
+  if (!is.logical(reverse) ||
+      length(reverse) != 1)
     stop("argument 'reverse' must be a single logical")
 
    cumulative(parallel = TRUE, reverse = reverse,
@@ -1265,9 +1319,11 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
               .link , earg = .earg )
   }, list( .earg = earg, .link = link, .reverse = reverse) )),
   loglikelihood =
-    function(mu, y, w, residuals = FALSE, eta, extra = NULL)
-    if (residuals) stop("loglikelihood residuals ",
-                        "not implemented yet") else {
+    function(mu, y, w, residuals = FALSE, eta, extra = NULL,
+             summation = TRUE) {
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
       ycounts <- if (is.numeric(extra$orig.w)) y * w / extra$orig.w else
                  y * w # Convert proportions to counts
       nvec <- if (is.numeric(extra$orig.w)) round(w / extra$orig.w) else
@@ -1278,10 +1334,17 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
         warning("converting 'ycounts' to integer in @loglikelihood")
       ycounts <- round(ycounts)
 
-      sum((if (is.numeric(extra$orig.w)) extra$orig.w else 1) *
-        dmultinomial(x = ycounts, size = nvec, prob = mu,
-                     log = TRUE, dochecking = FALSE))
-    },
+      ll.elts <-
+        (if (is.numeric(extra$orig.w)) extra$orig.w else 1) *
+         dmultinomial(x = ycounts, size = nvec, prob = mu,
+                      log = TRUE, dochecking = FALSE)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
+    }
+  },
   vfamily = c("acat", "vcategorical"),
   deriv = eval(substitute(expression({
     zeta <- eta2theta(eta, .link , earg = .earg )  # May be zetar
@@ -1425,9 +1488,11 @@ acat.deriv <- function(zeta, reverse, M, n) {
   }), list( .refgp = refgp, .refvalue = refvalue ))),
 
   loglikelihood =
-    function(mu, y, w, residuals = FALSE, eta, extra = NULL)
-    if (residuals) stop("loglikelihood residuals ",
-                        "not implemented yet") else {
+    function(mu, y, w, residuals = FALSE, eta, extra = NULL,
+             summation = TRUE) {
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
       ycounts <- if (is.numeric(extra$orig.w)) y * w / extra$orig.w else
                  y * w # Convert proportions to counts
       nvec <- if (is.numeric(extra$orig.w)) round(w / extra$orig.w) else
@@ -1438,10 +1503,17 @@ acat.deriv <- function(zeta, reverse, M, n) {
           warning("converting 'ycounts' to integer in @loglikelihood")
       ycounts <- round(ycounts)
 
-      sum((if (is.numeric(extra$orig.w)) extra$orig.w else 1) *
-          dmultinomial(x = ycounts, size = nvec, prob = mu,
-                       log = TRUE, dochecking = FALSE))
-    },
+      ll.elts <-
+        (if (is.numeric(extra$orig.w)) extra$orig.w else 1) *
+         dmultinomial(x = ycounts, size = nvec, prob = mu,
+                      log = TRUE, dochecking = FALSE)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
+    }
+  },
   vfamily = c("brat"),
   deriv = eval(substitute(expression({
     ans <- NULL
@@ -1591,12 +1663,20 @@ acat.deriv <- function(zeta, reverse, M, n) {
     misc$alpha0 <- alpha0
   }), list( .refgp = refgp, .refvalue = refvalue ))),
   loglikelihood =
-    function(mu, y, w, residuals = FALSE, eta, extra = NULL)
-    if (residuals) stop("loglikelihood residuals not ",
-                        "implemented yet") else {
-      sum(c(w) * (y * log(mu) +
-                  0.5 * extra$ties * log(attr(mu, "probtie"))))
-    },
+    function(mu, y, w, residuals = FALSE, eta, extra = NULL,
+             summation = TRUE) {
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
+      ll.elts <- c(w) * (y * log(mu) +
+                         0.5 * extra$ties * log(attr(mu, "probtie")))
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
+    }
+  },
   vfamily = c("bratt"),
   deriv = eval(substitute(expression({
     ans <- NULL
@@ -1876,8 +1956,8 @@ tapplymat1 <- function(mat,
   constraints = eval(substitute(expression({
     constraints <- cm.vgam(matrix(1, M, 1), x = x,
                            bool = .parallel ,
-                           constraints = constraints,
-                           apply.int = TRUE)
+                           apply.int = TRUE,
+                           constraints = constraints)
     constraints <- cm.zero.vgam(constraints, x, .zero, M)
   }), list( .parallel = parallel, .zero = zero ))),
   initialize = eval(substitute(expression({
@@ -1964,53 +2044,59 @@ print("y.names")
     misc$true.mu = FALSE    # $fitted is not a true mu
   }), list( .link = link, .countdata = countdata, .earg = earg ))),
     loglikelihood =
-      function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
-        if (residuals) stop("loglikelihood residuals not ",
-                            "implemented yet") else {
-            probs <- ordpoissonProbs(extra, mu)
-            index0 <- y == 0
-            probs[index0] <- 1
-            pindex0 <- probs == 0
-            probs[pindex0] <- 1
-            sum(pindex0) * (-1.0e+10) + sum(w * y * log(probs))
-        }
-    },
-    vfamily = c("ordpoisson", "vcategorical"),
-    deriv = eval(substitute(expression({
-        probs <- ordpoissonProbs(extra, mu)
-        probs.use <- pmax(probs, .Machine$double.eps * 1.0e-0)
+      function(mu, y, w, residuals = FALSE, eta, extra = NULL,
+               summation = TRUE) {
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
+      probs <- ordpoissonProbs(extra, mu)
+      index0 <- y == 0
+      probs[index0] <- 1
+      pindex0 <- probs == 0
+      probs[pindex0] <- 1
+      if (summation) {
+        sum(pindex0) * (-1.0e+10) + sum(w * y * log(probs))
+      } else {
+        stop("20140311; 'summation=F' not done yet")
+      }
+      }
+  },
+  vfamily = c("ordpoisson", "vcategorical"),
+  deriv = eval(substitute(expression({
+    probs <- ordpoissonProbs(extra, mu)
+    probs.use <- pmax(probs, .Machine$double.eps * 1.0e-0)
 
-        cp.vector <- extra$cutpoints
-        NOS <- extra$NOS
-        Levels <- extra$Levels
-        resmat <- matrix(0, n, M)
-        dl.dprob <- y / probs.use
-        dmu.deta <- dtheta.deta(mu, .link , earg = .earg )
-        dprob.dmu <- ordpoissonProbs(extra, mu, deriv = 1)
-        cptr <- 1
-        for (iii in 1:NOS) {
-          for (kkk in 1:Levels[iii]) {
-           resmat[,iii] <- resmat[,iii] +
-                          dl.dprob[,cptr] * dprob.dmu[,cptr]
-           cptr <- cptr + 1
-          }
-        }
-        resmat <- c(w) * resmat * dmu.deta
-        resmat
-    }), list( .link = link, .earg = earg, .countdata=countdata ))),
-    weight = eval(substitute(expression({
-        d2l.dmu2 <- matrix(0, n, M)  # Diagonal matrix
-        cptr <- 1
-        for (iii in 1:NOS) {
-            for (kkk in 1:Levels[iii]) {
-                d2l.dmu2[,iii] <- d2l.dmu2[,iii] + 
-                    dprob.dmu[,cptr]^2 / probs.use[,cptr]
-                cptr <- cptr + 1
-            }
-        }
-        wz <- c(w) * d2l.dmu2 * dmu.deta^2
-        wz
-    }), list( .earg = earg, .link = link, .countdata = countdata ))))
+    cp.vector <- extra$cutpoints
+    NOS <- extra$NOS
+    Levels <- extra$Levels
+    resmat <- matrix(0, n, M)
+    dl.dprob <- y / probs.use
+    dmu.deta <- dtheta.deta(mu, .link , earg = .earg )
+    dprob.dmu <- ordpoissonProbs(extra, mu, deriv = 1)
+    cptr <- 1
+    for (iii in 1:NOS) {
+      for (kkk in 1:Levels[iii]) {
+       resmat[,iii] <- resmat[,iii] +
+                      dl.dprob[,cptr] * dprob.dmu[,cptr]
+       cptr <- cptr + 1
+      }
+    }
+    resmat <- c(w) * resmat * dmu.deta
+    resmat
+  }), list( .link = link, .earg = earg, .countdata=countdata ))),
+  weight = eval(substitute(expression({
+    d2l.dmu2 <- matrix(0, n, M)  # Diagonal matrix
+    cptr <- 1
+    for (iii in 1:NOS) {
+      for (kkk in 1:Levels[iii]) {
+        d2l.dmu2[,iii] <- d2l.dmu2[,iii] + 
+            dprob.dmu[,cptr]^2 / probs.use[,cptr]
+        cptr <- cptr + 1
+      }
+    }
+    wz <- c(w) * d2l.dmu2 * dmu.deta^2
+    wz
+  }), list( .earg = earg, .link = link, .countdata = countdata ))))
 }
 
 
@@ -2032,7 +2118,7 @@ ordpoissonProbs <- function(extra, mu, deriv = 0) {
       probs[,cptr] <- ppois(q = cp.vector[cptr], lambda = mu[,iii])
     }
     cptr <- cptr + 1
-    while(is.finite(cp.vector[cptr])) {
+    while (is.finite(cp.vector[cptr])) {
       if (deriv == 1) {
         dprob.dmu[,cptr] <-
                 dpois(x = cp.vector[cptr-1], lambda = mu[,iii]) -
@@ -2095,34 +2181,36 @@ ordpoissonProbs <- function(extra, mu, deriv = 0) {
               namesof("scale_j", lscale, escale)),
     constraints = eval(substitute(expression({
         J <- M / 2
-        constraints <- cm.vgam(matrix(1,J,1), x = x,
+        constraints <- cm.vgam(matrix(1, J, 1), x = x,
                                bool = .parallel ,
-                               constraints = constraints,
-                               apply.int = FALSE)
+                               apply.int = FALSE,
+                               constraints = constraints)
         constraints[["(Intercept)"]] = rbind(constraints[["(Intercept)"]],
             matrix(0, J, ncol(constraints[["(Intercept)"]])))
 
-        cm2 <- cm.vgam(matrix(1,J,1), x = x,
+        cm2 <- cm.vgam(matrix(1, J, 1), x = x,
                            bool = .sparallel ,
-                           constraints = NULL,
-                           apply.int = FALSE)
+                           apply.int = FALSE,
+                           constraints = NULL)
 
         for (ii in 2:length(constraints))
-            constraints[[ii]] =
+            constraints[[ii]] <-
                 cbind(rbind(constraints[[ii]],
                             matrix(0, J, ncol(constraints[[ii]]))),
                       rbind(matrix(0, J, ncol(cm2[[ii]])), cm2[[ii]]))
 
     for (ii in 1:length(constraints))
-      constraints[[ii]] =
+      constraints[[ii]] <-
         (constraints[[ii]])[interleave.VGAM(M, M = 2),, drop = FALSE]
   }), list( .parallel = parallel, .sparallel=sparallel ))),
   deviance = eval(substitute(
-      function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
-      answer =
+      function(mu, y, w, residuals = FALSE, eta, extra = NULL,
+               summation = TRUE) {
+      answer <-
         Deviance.categorical.data.vgam(mu = mu,
                 y = y, w = w, residuals = residuals,
-                eta = eta, extra = extra)
+                eta = eta, extra = extra,
+                summation = summation)
       answer
   }, list( .earg = earg, .link = link ) )),
   initialize = eval(substitute(expression({
@@ -2139,10 +2227,10 @@ ordpoissonProbs <- function(extra, mu, deriv = 0) {
     eval(process.categorical.data.vgam)
 
 
-    M = 2*(ncol(y)-1)
-    J = M / 2
-    extra$J = J
-    mynames = if ( .reverse )
+    M <- 2*(ncol(y)-1)
+    J <- M / 2
+    extra$J <- J
+    mynames <- if ( .reverse )
       paste("P[Y>=", 2:(1+J), "]", sep = "") else
       paste("P[Y<=", 1:J,     "]", sep = "")
     predictors.names <- c(
@@ -2151,109 +2239,118 @@ ordpoissonProbs <- function(extra, mu, deriv = 0) {
                 .lscale, short = TRUE, earg = .escale ))
 
 
-    y.names = paste("mu", 1:(J+1), sep = "")
+    y.names <- paste("mu", 1:(J+1), sep = "")
 
     if (length(dimnames(y)))
-      extra$dimnamesy2 = dimnames(y)[[2]]
+      extra$dimnamesy2 <- dimnames(y)[[2]]
 
     predictors.names <- predictors.names[interleave.VGAM(M, M = 2)]
 
   }), list( .link = link, .lscale = lscale, .reverse = reverse,
             .earg = earg, .escale = escale ))),
   linkinv = eval(substitute( function(eta, extra = NULL) {
-    J = extra$J
-    M = 2*J
-    etamat1 = eta[, 2*(1:J)-1, drop = FALSE]
-    etamat2 = eta[, 2*(1:J),  drop = FALSE]
-    scalemat = eta2theta(etamat2, .lscale, earg = .escale )
-    fv.matrix =
+    J <- extra$J
+    M <- 2*J
+    etamat1 <- eta[, 2*(1:J)-1, drop = FALSE]
+    etamat2 <- eta[, 2*(1:J),  drop = FALSE]
+    scalemat <- eta2theta(etamat2, .lscale, earg = .escale )
+    fv.matrix <-
     if ( .reverse ) {
-        ccump = cbind(1,
+        ccump <- cbind(1,
                       eta2theta(etamat1 / scalemat,
                                 .link , earg = .earg ))
         cbind(-tapplymat1(ccump, "diff"), ccump[, ncol(ccump)])
     } else {
-        cump = cbind(eta2theta(etamat1 / scalemat,
+        cump <- cbind(eta2theta(etamat1 / scalemat,
                                .link , earg = .earg ),
                      1)
         cbind(cump[, 1], tapplymat1(cump, "diff"))
     }
     if (length(extra$dimnamesy2))
-      dimnames(fv.matrix) = list(dimnames(eta)[[1]],
+      dimnames(fv.matrix) <- list(dimnames(eta)[[1]],
                                  extra$dimnamesy2)
     fv.matrix
   }, list( .link = link, .lscale = lscale, .reverse = reverse,
            .earg = earg, .escale = escale ))),
   last = eval(substitute(expression({
-    J = extra$J
-    misc$link =
+    J <- extra$J
+    misc$link <-
       c(rep( .link , length = J),
         rep( .lscale, length = J))[interleave.VGAM(M, M = 2)]
-    names(misc$link) = predictors.names
+    names(misc$link) <- predictors.names
     misc$earg <- vector("list", M)
     names(misc$earg) <- names(misc$link)
     for (ii in 1:J) misc$earg[[2*ii-1]] <- .earg
     for (ii in 1:J) misc$earg[[2*ii  ]] <- .escale
-    misc$parameters = mynames
-    misc$reverse = .reverse
-    misc$parallel = .parallel
-    misc$sparallel = .sparallel
+    misc$parameters <- mynames
+    misc$reverse <- .reverse
+    misc$parallel <- .parallel
+    misc$sparallel <- .sparallel
   }), list( .link = link, .lscale = lscale,
             .reverse = reverse, .parallel = parallel,
             .sparallel = sparallel,
             .earg = earg, .escale = escale ))),
   linkfun = eval(substitute( function(mu, extra = NULL) {
-    cump = tapplymat1(as.matrix(mu), "cumsum")
-    J = ncol(as.matrix(mu)) - 1
-    M = 2 * J
-    answer =  cbind(
+    cump <- tapplymat1(as.matrix(mu), "cumsum")
+    J <- ncol(as.matrix(mu)) - 1
+    M <- 2 * J
+    answer <-  cbind(
         theta2eta(if ( .reverse ) 1-cump[, 1:J] else cump[, 1:J],
                   .link ,
                   earg = .earg ),
         matrix(theta2eta( .iscale, .lscale , earg = .escale ),
                nrow(as.matrix(mu)), J, byrow = TRUE))
-    answer = answer[,interleave.VGAM(M, M = 2)]
+    answer <- answer[,interleave.VGAM(M, M = 2)]
     answer
   }, list( .link = link, .lscale = lscale, .reverse = reverse,
            .iscale = iscale, .earg = earg, .escale = escale ))),
   loglikelihood =
-    function(mu, y, w, residuals = FALSE, eta, extra = NULL)
-    if (residuals) stop("loglikelihood residuals ",
-                        "not implemented yet") else {
-      ycounts = if (is.numeric(extra$orig.w)) y * w / extra$orig.w else
+    function(mu, y, w, residuals = FALSE, eta, extra = NULL,
+             summation = TRUE) {
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
+      ycounts <- if (is.numeric(extra$orig.w)) y * w / extra$orig.w else
                 y * w # Convert proportions to counts
-      nvec = if (is.numeric(extra$orig.w)) round(w / extra$orig.w) else
+      nvec <- if (is.numeric(extra$orig.w)) round(w / extra$orig.w) else
                 round(w)
 
-      smallno = 1.0e4 * .Machine$double.eps
+      smallno <- 1.0e4 * .Machine$double.eps
       if (max(abs(ycounts - round(ycounts))) > smallno)
         warning("converting 'ycounts' to integer in @loglikelihood")
-      ycounts = round(ycounts)
+      ycounts <- round(ycounts)
 
-      sum((if (is.numeric(extra$orig.w)) extra$orig.w else 1) *
-          dmultinomial(x = ycounts, size = nvec, prob = mu,
-                       log = TRUE, dochecking = FALSE))
-      },
+      ll.elts <-
+        (if (is.numeric(extra$orig.w)) extra$orig.w else 1) *
+         dmultinomial(x = ycounts, size = nvec, prob = mu,
+                      log = TRUE, dochecking = FALSE)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
+    }
+  },
   vfamily = c("scumulative", "vcategorical"),
   deriv = eval(substitute(expression({
-        ooz = iter %% 2
+        ooz <- iter %% 2
 
-        J = extra$J
+        J <- extra$J
         mu.use = pmax(mu, .Machine$double.eps * 1.0e-0)
 
-        etamat1 = eta[, 2*(1:J)-1, drop = FALSE]
-        etamat2 = eta[, 2*(1:J)  , drop = FALSE]
-        scalemat = eta2theta(etamat2, .lscale, earg = .escale )
+        etamat1 <- eta[, 2*(1:J)-1, drop = FALSE]
+        etamat2 <- eta[, 2*(1:J)  , drop = FALSE]
+        scalemat <- eta2theta(etamat2, .lscale, earg = .escale )
 
-        cump = eta2theta(etamat1 / scalemat, .link , earg = .earg )
-        dcump.deta = dtheta.deta(cump, .link , earg = .earg )
-        dscale.deta = dtheta.deta(scalemat, .lscale, earg = .escale )
-        dl.dcump = (if ( .reverse ) -w  else w) * 
+        cump <- eta2theta(etamat1 / scalemat, .link , earg = .earg )
+        dcump.deta <- dtheta.deta(cump, .link , earg = .earg )
+        dscale.deta <- dtheta.deta(scalemat, .lscale, earg = .escale )
+        dl.dcump <- (if ( .reverse ) -w  else w) * 
                 (y[, 1:J]/mu.use[, 1:J] - y[, -1]/mu.use[, -1])
-        dcump.dscale = -dcump.deta * etamat1 / scalemat^2
-        ans = cbind(dl.dcump * dcump.deta / scalemat,
+        dcump.dscale <- -dcump.deta * etamat1 / scalemat^2
+        ans <- cbind(dl.dcump * dcump.deta / scalemat,
                     dl.dcump * dcump.dscale * dscale.deta)
-        ans = ans[,interleave.VGAM(M, M = 2)]
+        ans <- ans[,interleave.VGAM(M, M = 2)]
         if (ooz) ans[, c(TRUE, FALSE)] = 0 else
                  ans[, c(FALSE, TRUE)] = 0
         ans
@@ -2261,48 +2358,48 @@ ordpoissonProbs <- function(extra, mu, deriv = 0) {
               .earg = earg, .escale = escale ))),
     weight = eval(substitute(expression({
 
-        wz = matrix(0, n, 2*(2*M-3))
+        wz <- matrix(0, n, 2*(2*M-3))
 
-        wz[, 2*(1:J)-1] = if (ooz) c(w) * (dcump.deta / scalemat)^2 *
+        wz[, 2*(1:J)-1] <- if (ooz) c(w) * (dcump.deta / scalemat)^2 *
                          (1/mu.use[, 1:J] + 1/mu.use[, -1]) else 1
-        wz[, 2*(1:J)] = if (ooz) 1 else
+        wz[, 2*(1:J)] <- if (ooz) 1 else
                         c(w) * (dcump.dscale * dscale.deta)^2 *
                        (1/mu.use[, 1:J] + 1/mu.use[, -1])
-        wz0 = c(w) * (dcump.deta / scalemat) * 
+        wz0 <- c(w) * (dcump.deta / scalemat) * 
                   (dcump.dscale * dscale.deta) *
                   (1/mu.use[, 1:J] + 1/mu.use[, -1])
-        wz0 = as.matrix(wz0)
+        wz0 <- as.matrix(wz0)
         for (ii in 1:J)
-            wz[,iam(2*ii-1,2*ii,M = M)] = if (ooz) wz0[, ii] else 0
+            wz[,iam(2*ii-1,2*ii,M = M)] <- if (ooz) wz0[, ii] else 0
 
         if (J > 1) {
-            wz0 = -c(w) *
+            wz0 <- -c(w) *
                   (dcump.deta[, -J] / scalemat[, -J]) *
                   (dcump.deta[, -1]  / scalemat[, -1]) / mu.use[, 2:J]
-            wz0 = as.matrix(wz0)  # Just in case J=2
+            wz0 <- as.matrix(wz0)  # Just in case J=2
             for (ii in 1:(J-1))
-              wz[, iam(2*ii-1, 2*ii+1, M = M)] = if (ooz) wz0[, ii] else 0
-            wz0 = -c(w) * (dcump.dscale[, -1] * dscale.deta[, -1]) *
+              wz[, iam(2*ii-1, 2*ii+1, M = M)] <- if (ooz) wz0[, ii] else 0
+            wz0 <- -c(w) * (dcump.dscale[, -1] * dscale.deta[, -1]) *
                        (dcump.dscale[, -J] *
                         dscale.deta[, -J]) / mu.use[, 2:J]
-            wz0 = as.matrix(wz0)
+            wz0 <- as.matrix(wz0)
             for (ii in 1:(J-1))
-                wz[,iam(2*ii,2*ii+2,M = M)] = if (ooz) wz0[, ii] else 0
+                wz[,iam(2*ii,2*ii+2,M = M)] <- if (ooz) wz0[, ii] else 0
 
 
 
-            wz0 = -c(w) * (dcump.deta[, -J] / scalemat[, -J]) *
+            wz0 <- -c(w) * (dcump.deta[, -J] / scalemat[, -J]) *
                           (dcump.dscale[, -1] *
                            dscale.deta[, -1]) / mu.use[, 2:J]
-            wz0 = as.matrix(wz0)
+            wz0 <- as.matrix(wz0)
             for (ii in 1:(J-1))
-              wz[,iam(2*ii-1,2*ii+2,M = M)] = if (ooz) wz0[, ii] else 0
-            wz0 = -c(w) * (dcump.deta[, -1] / scalemat[, -1]) *
+              wz[,iam(2*ii-1,2*ii+2,M = M)] <- if (ooz) wz0[, ii] else 0
+            wz0 <- -c(w) * (dcump.deta[, -1] / scalemat[, -1]) *
                           (dcump.dscale[, -J] *
                           dscale.deta[, -J]) / mu.use[, 2:J]
-            wz0 = as.matrix(wz0)
+            wz0 <- as.matrix(wz0)
             for (ii in 1:(J-1))
-                wz[,iam(2*ii,2*ii+1,M = M)] = if (ooz) wz0[, ii] else 0
+                wz[,iam(2*ii,2*ii+1,M = M)] <- if (ooz) wz0[, ii] else 0
         }
         wz
     }), list( .link = link, .lscale = lscale, .earg = earg,

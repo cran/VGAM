@@ -8,7 +8,7 @@
 
 }
 \usage{
-lqnorm(qpower = 2, link = "identity",
+lqnorm(qpower = 2, link = "identitylink",
        imethod = 1, imu = NULL, shrinkage.init = 0.95)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -116,7 +116,7 @@ realfun <- function(x) 4 + 5*x
 ldata <- transform(ldata, y = realfun(x) + rnorm(nn, sd = exp(-1)))
 # Make the first observation an outlier
 ldata <- transform(ldata, y = c(4*y[1], y[-1]), x = c(-1, x[-1]))
-fit <- vglm(y ~ x, fam = lqnorm(qpower = 1.2), data = ldata)
+fit <- vglm(y ~ x, lqnorm(qpower = 1.2), data = ldata)
 coef(fit, matrix = TRUE)
 head(fitted(fit))
 fit@misc$qpower 

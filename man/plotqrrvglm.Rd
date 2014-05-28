@@ -10,7 +10,7 @@ plotqrrvglm(object, rtype = c("response", "pearson", "deviance", "working"),
             ask = FALSE, 
             main = paste(Rtype, "residuals vs latent variable(s)"), 
             xlab = "Latent Variable", 
-            ITolerances = object@control$EqualTolerances, ...)
+            I.tolerances = object@control$eq.tolerances, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -21,8 +21,8 @@ plotqrrvglm(object, rtype = c("response", "pearson", "deviance", "working"),
   key for the next plot. }
   \item{main}{ Character string giving the title of the plot. }
   \item{xlab}{ Character string giving the x-axis caption. }
-  \item{ITolerances}{ Logical. This argument is fed into
-    \code{Coef(object, ITolerances = ITolerances)}.
+  \item{I.tolerances}{ Logical. This argument is fed into
+    \code{Coef(object, I.tolerances = I.tolerances)}.
   }
   \item{\dots}{ Other plotting arguments (see \code{\link[graphics]{par}}). }
 }

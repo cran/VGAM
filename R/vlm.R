@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2013 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2014 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -91,10 +91,10 @@ vlm <- function(formula,
   }
 
   control <- control
-  Blist <- process.constraints(constraints, x, M)
+  Hlist <- process.constraints(constraints, x, M)
   intercept.only <- ncol(x) == 1 && dimnames(x)[[2]] == "(Intercept)"
 
-  fit <- vlm.wfit(xmat = x, zmat = y, Blist = Blist, wz = wz, U = NULL,
+  fit <- vlm.wfit(xmat = x, zmat = y, Hlist = Hlist, wz = wz, U = NULL,
                  matrix.out = FALSE, is.vlmX = FALSE,
                  res.ss = TRUE, qr = qr.arg,
                  x.ret = TRUE, offset = offset)
@@ -106,7 +106,7 @@ vlm <- function(formula,
 
 
 
-    fit$constraints <- Blist
+    fit$constraints <- Hlist
 
     dnrow.X.vlm <- labels(fit$X.vlm)
     xnrow.X.vlm <- dnrow.X.vlm[[2]]

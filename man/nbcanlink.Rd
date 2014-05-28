@@ -158,7 +158,7 @@ head(ndata)
 summary(ndata)
 
 fit <- vglm(cbind(y1, y2) ~ x2, negbinomial("nbcanlink", imethod = 3),
-            stepsize = 0.5, ndata,  # Deliberately slow the convergence rate
+            stepsize = 0.5, data = ndata,  # Deliberately slow the convergence rate
             maxit = 100, trace = TRUE)  # Warning: may converge to a local soln
 coef(fit, matrix = TRUE)
 summary(fit)

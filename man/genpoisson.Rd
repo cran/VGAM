@@ -91,7 +91,7 @@ and the variance is \eqn{\theta / (1 - \lambda)^3}.
 
 Consul, P. C. and Famoye, F. (2006)
 \emph{Lagrangian Probability Distributions},
-Boston: Birkhauser.
+Boston, USA: Birkhauser.
 
 
 Jorgensen, B. (1997)
@@ -101,7 +101,7 @@ London: Chapman & Hall
 
 Consul, P. C. (1989)
 \emph{Generalized Poisson Distributions: Properties and Applications}.
-New York: Marcel Dekker.
+New York, USA: Marcel Dekker.
 
 
 }
@@ -121,7 +121,7 @@ New York: Marcel Dekker.
 \examples{
 gdata <- data.frame(x2 = runif(nn <- 200))
 gdata <- transform(gdata, y = rpois(nn, exp(2 - x2)))  # Ordinary Poisson data
-fit <- vglm(y ~ x2, genpoisson(zero = 1), gdata, trace = TRUE)
+fit <- vglm(y ~ x2, genpoisson(zero = 1), data = gdata, trace = TRUE)
 coef(fit, matrix = TRUE)
 summary(fit)
 }
@@ -131,3 +131,7 @@ summary(fit)
 % yettodo: see csda 2009, 53(9): 3478--3489.
 
 %{% f(y) = theta*(theta+lambda*y)^(y-1) exp(-theta-lambda*y) / y!}
+
+
+
+

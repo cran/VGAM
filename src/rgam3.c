@@ -719,10 +719,14 @@ void n5aioudkgt9iulbf(double sjwyig9t[], double ghz9vuba[], double po8rwsmy[],
 
 
 
-  double g9fvdrbw[4], ms0qypiw[16], wsvdbx3tk, wv2svdbx3tk, qaltf0nz = 0.1e-9;
+
+  double g9fvdrbw[12];  /* 20140522 Effectively g9fvdrbw(4,3), just in case     */
+
+  double ms0qypiw[16], wsvdbx3tk, wv2svdbx3tk, qaltf0nz = 0.1e-9;
   int    ayfnwr1v, yq6lorbx, dqlr5bse, pqzfxw4i, nhnpt1zym1 = *kuzxj1lo + 1,
          pqneb2ra = 1, h2dpsbkr = 4;
   double *qnwamo0e0, *qnwamo0e1,  *qnwamo0e2, *qnwamo0e3, *qnwamo0e4;
+
 
   qnwamo0e0 = zvau2lct; qnwamo0e1 = f6lsuzax;  qnwamo0e2 = fvh2rwtc; qnwamo0e3 = dcfir2no; qnwamo0e4 = zyupcmk6;
   for (ayfnwr1v = 0; ayfnwr1v < *kuzxj1lo; ayfnwr1v++) {
@@ -752,7 +756,13 @@ void n5aioudkgt9iulbf(double sjwyig9t[], double ghz9vuba[], double po8rwsmy[],
     yq6lorbx = dqlr5bse - 4 + 1;
     wsvdbx3tk =     po8rwsmy[ayfnwr1v-1];
     wv2svdbx3tk = wsvdbx3tk * g9fvdrbw[0];
+
+
+
+
     zyupcmk6[yq6lorbx-1] += wv2svdbx3tk * ghz9vuba[ayfnwr1v-1];
+
+
     zvau2lct[yq6lorbx-1]     += wv2svdbx3tk * g9fvdrbw[0];
     f6lsuzax[yq6lorbx-1]     += wv2svdbx3tk * g9fvdrbw[1];
     fvh2rwtc[yq6lorbx-1]     += wv2svdbx3tk * g9fvdrbw[2];

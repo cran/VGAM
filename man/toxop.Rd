@@ -35,7 +35,8 @@
 }
 
 \seealso{
-    \code{\link[VGAM]{double.expbinomial}}.
+  \code{\link[VGAM]{double.expbinomial}}.
+
 
 }
 

@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2013 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2014 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -30,8 +30,8 @@ lms.yjn.control <- function(trace = TRUE, ...)
 
  lms.bcn <- function(percentiles = c(25, 50, 75),
                       zero = c(1, 3),
-                      llambda = "identity",
-                      lmu = "identity",
+                      llambda = "identitylink",
+                      lmu = "identitylink",
                       lsigma = "loge",
                       dfmu.init = 4,
                       dfsigma.init = 2,
@@ -148,10 +148,13 @@ lms.yjn.control <- function(trace = TRUE, ...)
             .percentiles = percentiles, .expectiles = expectiles,
             .tol0 = tol0 ))),
   loglikelihood = eval(substitute(
-  function(mu,y, w, residuals= FALSE, eta, extra = NULL) {
-    lambda <- eta2theta(eta[, 1], .llambda, earg = .elambda)
-    muvec  <- eta2theta(eta[, 2], .lmu, earg = .emu)
-    sigma  <- eta2theta(eta[, 3], .lsigma, earg = .esigma)
+    function(mu, y, w, residuals = FALSE, eta,
+             extra = NULL,
+             summation = TRUE) {
+
+    lambda <- eta2theta(eta[, 1], .llambda , earg = .elambda )
+    muvec  <- eta2theta(eta[, 2], .lmu     , earg = .emu )
+    sigma  <- eta2theta(eta[, 3], .lsigma  , earg = .esigma )
 
     zedd   <- ((y/muvec)^lambda - 1) / (lambda * sigma)
     log.dz.dy <- (lambda - 1) * log(y/muvec) - log(muvec * sigma)
@@ -162,9 +165,15 @@ lms.yjn.control <- function(trace = TRUE, ...)
       log.dz.dy[is.eff.0] <- -log(y[is.eff.0] * sigma[is.eff.0])
     }
 
-    if (residuals) stop("loglikelihood residuals not ",
-                        "implemented") else {
-      sum(c(w) * (dnorm(zedd, log = TRUE) + log.dz.dy))
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
+      ll.elts <- c(w) * (dnorm(zedd, log = TRUE) + log.dz.dy)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
     }
   }, list( .llambda = llambda, .lmu = lmu, .lsigma = lsigma,
            .elambda = elambda, .emu = emu, .esigma = esigma,
@@ -211,8 +220,8 @@ lms.yjn.control <- function(trace = TRUE, ...)
 
  lms.bcg <- function(percentiles = c(25, 50, 75),
                      zero = c(1, 3),
-                     llambda = "identity",
-                     lmu = "identity",
+                     llambda = "identitylink",
+                     lmu = "identitylink",
                      lsigma = "loge",
                      dfmu.init=4,
                      dfsigma.init = 2,
@@ -244,7 +253,7 @@ lms.yjn.control <- function(trace = TRUE, ...)
             namesof("mu", link = lmu, earg = emu), ", ",
             namesof("sigma", link = lsigma, earg = esigma)),
   constraints = eval(substitute(expression({
-      constraints <- cm.zero.vgam(constraints, x, .zero, M)
+    constraints <- cm.zero.vgam(constraints, x, .zero, M)
   }), list(.zero = zero))),
   initialize = eval(substitute(expression({
 
@@ -259,28 +268,29 @@ lms.yjn.control <- function(trace = TRUE, ...)
 
         if (!length(etastart)) {
 
-            Fit5 = vsmooth.spline(x = x[, min(ncol(x), 2)],
-                                  y = y, w = w, df = .dfmu.init)
-            fv.init = c(predict(Fit5, x = x[, min(ncol(x), 2)])$y)
+          Fit5 <- vsmooth.spline(x = x[, min(ncol(x), 2)],
+                                 y = y, w = w, df = .dfmu.init)
+          fv.init <- c(predict(Fit5, x = x[, min(ncol(x), 2)])$y)
 
-            lambda.init = if (is.Numeric( .ilambda )) .ilambda else 1.0
+          lambda.init <- if (is.Numeric( .ilambda )) .ilambda else 1.0
 
-            sigma.init = if (is.null(.isigma)) {
-              myratio = ((y/fv.init)^lambda.init-1) / lambda.init
-                if (is.numeric( .dfsigma.init ) &&
-                    is.finite( .dfsigma.init )) {
-                    fit600 = vsmooth.spline(x = x[, min(ncol(x), 2)],
-                                            y=(myratio)^2,
-                                            w = w, df = .dfsigma.init)
-                    sqrt(c(abs(predict(fit600, x = x[, min(ncol(x), 2)])$y)))
-                } else 
-                    sqrt(var(myratio))
+          sigma.init <- if (is.null( .isigma )) {
+            myratio <- ((y/fv.init)^lambda.init-1) / lambda.init
+            if (is.numeric( .dfsigma.init ) &&
+                is.finite( .dfsigma.init )) {
+              fit600 <- vsmooth.spline(x = x[, min(ncol(x), 2)],
+                                       y = (myratio)^2,
+                                       w = w, df = .dfsigma.init )
+              sqrt(c(abs(predict(fit600, x = x[, min(ncol(x), 2)])$y)))
+            } else {
+              sqrt(var(myratio))
+            }
             } else .isigma
 
             etastart <-
-              cbind(theta2eta(lambda.init,  .llambda, earg = .elambda),
-                    theta2eta(fv.init,      .lmu,     earg = .emu),
-                    theta2eta(sigma.init,   .lsigma,  earg = .esigma))
+              cbind(theta2eta(lambda.init,  .llambda , earg = .elambda ),
+                    theta2eta(fv.init,      .lmu ,     earg = .emu ),
+                    theta2eta(sigma.init,   .lsigma ,  earg = .esigma ))
         }
   }), list( .llambda = llambda, .lmu = lmu, .lsigma = lsigma,
             .elambda = elambda, .emu = emu, .esigma = esigma, 
@@ -288,40 +298,49 @@ lms.yjn.control <- function(trace = TRUE, ...)
             .dfsigma.init = dfsigma.init,
             .ilambda = ilambda, .isigma = isigma ))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
-    eta[, 1] <- eta2theta(eta[, 1], .llambda, earg = .elambda)
-    eta[, 2] <- eta2theta(eta[, 2], .lmu,     earg = .emu)
-    eta[, 3] <- eta2theta(eta[, 3], .lsigma,  earg = .esigma)
+    eta[, 1] <- eta2theta(eta[, 1], .llambda , earg = .elambda )
+    eta[, 2] <- eta2theta(eta[, 2], .lmu ,     earg = .emu )
+    eta[, 3] <- eta2theta(eta[, 3], .lsigma ,  earg = .esigma )
     qtplot.lms.bcg(percentiles = .percentiles, eta = eta)
   }, list( .llambda = llambda, .lmu = lmu, .lsigma = lsigma,
            .elambda = elambda, .emu = emu, .esigma = esigma, 
            .percentiles = percentiles ))),
   last = eval(substitute(expression({
-    misc$link <-    c(lambda = .llambda, mu = .lmu, sigma = .lsigma)
+    misc$link <-    c(lambda = .llambda, mu = .lmu, sigma = .lsigma )
 
-    misc$earg <- list(lambda = .elambda, mu = .emu, sigma = .esigma)
+    misc$earg <- list(lambda = .elambda, mu = .emu, sigma = .esigma )
 
     misc$percentiles <- .percentiles
     misc$true.mu <- FALSE    # $fitted is not a true mu
     if (control$cdf) {
-      post$cdf <- cdf.lms.bcg(y, eta0=matrix(c(lambda,mymu,sigma), 
-          ncol=3, dimnames = list(dimnames(x)[[1]], NULL)))
+      post$cdf <- cdf.lms.bcg(y, eta0 = matrix(c(lambda, mymu, sigma),
+          ncol = 3, dimnames = list(dimnames(x)[[1]], NULL)))
     }
   }), list( .llambda = llambda, .lmu = lmu, .lsigma = lsigma,
             .elambda = elambda, .emu = emu, .esigma = esigma, 
             .percentiles = percentiles ))),
   loglikelihood = eval(substitute(
-    function(mu,y, w, residuals= FALSE, eta, extra = NULL) {
-      lambda <- eta2theta(eta[, 1], .llambda, earg = .elambda)
-      mu     <- eta2theta(eta[, 2], .lmu, earg = .emu)
-      sigma  <- eta2theta(eta[, 3], .lsigma, earg = .esigma)
-      Gee <- (y / mu)^lambda
-        theta <- 1 / (sigma * lambda)^2
-      if (residuals) stop("loglikelihood residuals not ",
-                        "implemented yet") else
-        sum(c(w) * (log(abs(lambda)) + theta * (log(theta) +
-                 log(Gee)-Gee) - lgamma(theta) - log(y)))
-    }, list( .llambda = llambda, .lmu = lmu, .lsigma = lsigma,
-             .elambda = elambda, .emu = emu, .esigma = esigma ))),
+    function(mu, y, w, residuals = FALSE, eta,
+             extra = NULL,
+             summation = TRUE) {
+    lambda <- eta2theta(eta[, 1], .llambda, earg = .elambda)
+    mu     <- eta2theta(eta[, 2], .lmu, earg = .emu)
+    sigma  <- eta2theta(eta[, 3], .lsigma, earg = .esigma)
+    Gee <- (y / mu)^lambda
+    theta <- 1 / (sigma * lambda)^2
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
+      ll.elts <- c(w) * (log(abs(lambda)) + theta * (log(theta) +
+                         log(Gee)-Gee) - lgamma(theta) - log(y))
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
+    }
+  }, list( .llambda = llambda, .lmu = lmu, .lsigma = lsigma,
+           .elambda = elambda, .emu = emu, .esigma = esigma ))),
   vfamily = c("lms.bcg", "lmscreg"),
   deriv = eval(substitute(expression({
     lambda <- eta2theta(eta[, 1], .llambda, earg = .elambda)
@@ -634,8 +653,8 @@ lms.yjn2.control <- function(save.weight = TRUE, ...) {
 
  lms.yjn2 <- function(percentiles = c(25, 50, 75),
                       zero = c(1, 3),
-                      llambda = "identity",
-                      lmu = "identity",
+                      llambda = "identitylink",
+                      lmu = "identitylink",
                       lsigma = "loge",
                       dfmu.init=4,
                       dfsigma.init = 2,
@@ -674,7 +693,7 @@ lms.yjn2.control <- function(save.weight = TRUE, ...) {
             ", ",
             namesof("sigma", link = lsigma, earg = esigma)),
   constraints = eval(substitute(expression({
-      constraints <- cm.zero.vgam(constraints, x, .zero, M)
+    constraints <- cm.zero.vgam(constraints, x, .zero, M)
   }), list(.zero = zero))),
   initialize = eval(substitute(expression({
 
@@ -755,27 +774,36 @@ lms.yjn2.control <- function(save.weight = TRUE, ...) {
     y <- y.save   # Restore back the value; to be attached to object
 
     if (control$cdf) {
-            post$cdf <- cdf.lms.yjn(y + misc$yoffset,
-                eta0=matrix(c(lambda,mymu,sigma), 
-                ncol=3, dimnames = list(dimnames(x)[[1]], NULL)))
-        }
-    }), list(.percentiles = percentiles,
-             .elambda = elambda, .emu = emu, .esigma = esigma, 
-             .nsimEIM=nsimEIM,
-             .llambda = llambda, .lmu = lmu, .lsigma = lsigma ))),
-    loglikelihood = eval(substitute(
-        function(mu,y, w, residuals= FALSE, eta, extra = NULL) {
-            lambda <- eta2theta(eta[, 1], .llambda, earg = .elambda)
-            mu <- eta2theta(eta[, 2], .lmu, earg = .emu)
-            sigma <- eta2theta(eta[, 3], .lsigma, earg = .esigma)
-            psi <- yeo.johnson(y, lambda)
-         if (residuals) stop("loglikelihood residuals not ",
-                            "implemented yet") else
-            sum(c(w) * (-log(sigma) - 0.5 * ((psi-mu)/sigma)^2 +
-                     (lambda-1) * sign(y) * log1p(abs(y))))
-        }, list( .elambda = elambda, .emu = emu, .esigma = esigma, 
-                 .llambda = llambda, .lmu = lmu,
-                 .lsigma = lsigma ))),
+        post$cdf <- cdf.lms.yjn(y + misc$yoffset,
+            eta0=matrix(c(lambda,mymu,sigma), 
+            ncol=3, dimnames = list(dimnames(x)[[1]], NULL)))
+    }
+  }), list(.percentiles = percentiles,
+           .elambda = elambda, .emu = emu, .esigma = esigma, 
+           .nsimEIM=nsimEIM,
+           .llambda = llambda, .lmu = lmu, .lsigma = lsigma ))),
+  loglikelihood = eval(substitute(
+    function(mu, y, w, residuals = FALSE, eta,
+             extra = NULL,
+             summation = TRUE) {
+    lambda <- eta2theta(eta[, 1], .llambda , earg = .elambda )
+    mu     <- eta2theta(eta[, 2], .lmu     , earg = .emu )
+    sigma  <- eta2theta(eta[, 3], .lsigma  , earg = .esigma )
+    psi <- yeo.johnson(y, lambda)
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
+      ll.elts <- c(w) * (-log(sigma) - 0.5 * ((psi-mu)/sigma)^2 +
+                        (lambda-1) * sign(y) * log1p(abs(y)))
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
+    }
+  }, list( .elambda = elambda, .emu = emu, .esigma = esigma, 
+           .llambda = llambda, .lmu = lmu,
+           .lsigma = lsigma ))),
   vfamily = c("lms.yjn2", "lmscreg"),
   deriv = eval(substitute(expression({
     lambda <- eta2theta(eta[, 1], .llambda, earg = .elambda)
@@ -832,11 +860,11 @@ lms.yjn2.control <- function(save.weight = TRUE, ...) {
 
  lms.yjn <- function(percentiles = c(25, 50, 75),
                     zero = c(1, 3),
-                    llambda = "identity",
+                    llambda = "identitylink",
                     lsigma = "loge",
-                    dfmu.init=4,
+                    dfmu.init = 4,
                     dfsigma.init = 2,
-                    ilambda=1.0,
+                    ilambda = 1.0,
                     isigma = NULL,
                     rule = c(10, 5),
                     yoffset = NULL,
@@ -877,9 +905,9 @@ lms.yjn2.control <- function(save.weight = TRUE, ...) {
 
 
     predictors.names <-
-      c(namesof("lambda", .llambda, earg = .elambda, short= TRUE),
+      c(namesof("lambda", .llambda, earg = .elambda , short = TRUE),
                 "mu",
-        namesof("sigma",  .lsigma, earg = .esigma,  short= TRUE))
+        namesof("sigma",  .lsigma, earg = .esigma ,  short = TRUE))
 
     y.save <- y
     yoff <- if (is.Numeric( .yoffset )) .yoffset else -median(y) 
@@ -939,7 +967,7 @@ lms.yjn2.control <- function(save.weight = TRUE, ...) {
           .llambda = llambda,
           .lsigma = lsigma))),
   last = eval(substitute(expression({
-    misc$link <-    c(lambda = .llambda, mu = "identity",
+    misc$link <-    c(lambda = .llambda, mu = "identitylink",
                      sigma = .lsigma)
 
     misc$earg <- list(lambda = .elambda, mu = list(theta = NULL),
@@ -963,17 +991,27 @@ lms.yjn2.control <- function(save.weight = TRUE, ...) {
           .llambda = llambda,
           .lsigma = lsigma))),
   loglikelihood = eval(substitute(
-      function(mu,y, w, residuals= FALSE, eta, extra = NULL) {
-          lambda <- eta2theta(eta[, 1], .llambda, earg = .elambda)
-          mu <- eta[, 2]
-          sigma <- eta2theta(eta[, 3], .lsigma, earg = .esigma)
-          psi <- yeo.johnson(y, lambda)
-       if (residuals) stop("loglikelihood residuals not ",
-                          "implemented yet") else
-          sum(c(w) * (-log(sigma) - 0.5 * ((psi-mu)/sigma)^2 +
-                   (lambda-1) * sign(y) * log1p(abs(y))))
-      }, list( .esigma = esigma, .elambda = elambda,
-               .lsigma = lsigma, .llambda = llambda))),
+    function(mu, y, w, residuals = FALSE, eta,
+             extra = NULL,
+             summation = TRUE) {
+
+    lambda <- eta2theta(eta[, 1], .llambda , earg = .elambda )
+    mu <- eta[, 2]
+    sigma <- eta2theta(eta[, 3], .lsigma , earg = .esigma )
+    psi <- yeo.johnson(y, lambda)
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
+      ll.elts <- c(w) * (-log(sigma) - 0.5 * ((psi-mu)/sigma)^2 +
+                        (lambda-1) * sign(y) * log1p(abs(y)))
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
+    }
+  }, list( .esigma = esigma, .elambda = elambda,
+           .lsigma = lsigma, .llambda = llambda))),
   vfamily = c("lms.yjn", "lmscreg"),
   deriv = eval(substitute(expression({
     lambda <- eta2theta(eta[, 1], .llambda, earg = .elambda)
@@ -1090,7 +1128,7 @@ lms.yjn2.control <- function(save.weight = TRUE, ...) {
                  as.double(gleg.abs), as.double(gleg.wts), as.integer(n),
                  as.integer(length(gleg.abs)), as.double(lambda),
                  as.double(mymu), as.double(sigma), answer = double(3*n),
-                     eps=as.double(1.0e-5), PACKAGE = "VGAM")$ans
+                     eps=as.double(1.0e-5))$ans
       dim(temp9) <- c(3,n)
       wz[,iam(1, 1, M)] <- temp9[1,]
       wz[,iam(1, 2, M)] <- temp9[2,]
@@ -1171,7 +1209,7 @@ Wr2 <- function(r, w) (r <= 0) * 1 + (r > 0) * w
 
 
 amlnormal.deviance <- function(mu, y, w, residuals = FALSE,
-                              eta, extra = NULL) {
+                               eta, extra = NULL) {
 
   M <- length(extra$w.aml)
 
@@ -1186,8 +1224,9 @@ amlnormal.deviance <- function(mu, y, w, residuals = FALSE,
     all.deviances <- numeric(M)
     myresid <- matrix(y,extra$n,extra$M) - cbind(mu)
     for (ii in 1:M)
-        all.deviances[ii] <- sum(c(w) * devi[, ii] *
-                                 Wr1(myresid[, ii], w=extra$w.aml[ii]))
+      all.deviances[ii] <- sum(c(w) * devi[, ii] *
+                               Wr1(myresid[, ii],
+                                   w = extra$w.aml[ii]))
   }
   if (is.logical(extra$individual) && extra$individual)
     all.deviances else sum(all.deviances)
@@ -1196,7 +1235,7 @@ amlnormal.deviance <- function(mu, y, w, residuals = FALSE,
 
 
  amlnormal <- function(w.aml = 1, parallel = FALSE,
-                       lexpectile = "identity",
+                       lexpectile = "identitylink",
                        iexpectile = NULL,
                        imethod = 1, digw = 4) {
 
@@ -1229,7 +1268,8 @@ amlnormal.deviance <- function(mu, y, w, residuals = FALSE,
                            bool = .parallel ,
                            constraints = constraints)
   }), list( .parallel = parallel ))),
-  deviance = function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
+  deviance = function(mu, y, w, residuals = FALSE, eta,
+                      extra = NULL) {
     amlnormal.deviance(mu = mu, y = y, w = w, residuals = residuals,
                        eta = eta, extra = extra)
   },
@@ -1311,8 +1351,9 @@ amlnormal.deviance <- function(mu, y, w, residuals = FALSE,
 
     extra$individual <- TRUE
     if (!(M > 1 && ncol(cbind(w)) == M)) {
-      extra$deviance <- amlnormal.deviance(mu = mu, y = y, w = w,
-                             residuals = FALSE, eta = eta, extra = extra)
+      extra$deviance <-
+        amlnormal.deviance(mu = mu, y = y, w = w,
+                           residuals = FALSE, eta = eta, extra = extra)
       names(extra$deviance) <- extra$y.names
     }
   }), list( .lexpectile = lexpectile,
@@ -1824,7 +1865,7 @@ rho1check <- function(u, tau = 0.5)
 
 
 dalap <- function(x, location = 0, scale = 1, tau = 0.5,
-                 kappa = sqrt(tau/(1-tau)), log = FALSE) {
+                  kappa = sqrt(tau/(1-tau)), log = FALSE) {
   if (!is.logical(log.arg <- log) || length(log) != 1)
     stop("bad input for argument 'log'")
   rm(log)
@@ -1852,7 +1893,7 @@ dalap <- function(x, location = 0, scale = 1, tau = 0.5,
 
 
 ralap <- function(n, location = 0, scale = 1, tau = 0.5,
-                 kappa = sqrt(tau/(1-tau))) {
+                  kappa = sqrt(tau/(1-tau))) {
   use.n <- if ((length.n <- length(n)) > 1) length.n else
            if (!is.Numeric(n, integer.valued = TRUE,
                            length.arg = 1, positive = TRUE))
@@ -1871,7 +1912,7 @@ ralap <- function(n, location = 0, scale = 1, tau = 0.5,
 
 
 palap <- function(q, location = 0, scale = 1, tau = 0.5,
-                 kappa = sqrt(tau/(1-tau))) {
+                  kappa = sqrt(tau/(1-tau))) {
 
   NN <- max(length(q), length(location), length(scale), length(kappa),
             length(tau))
@@ -1895,7 +1936,7 @@ palap <- function(q, location = 0, scale = 1, tau = 0.5,
 
 
 qalap <- function(p, location = 0, scale = 1, tau = 0.5,
-                 kappa = sqrt(tau / (1 - tau))) {
+                  kappa = sqrt(tau / (1 - tau))) {
 
   NN <- max(length(p), length(location), length(scale), length(kappa),
             length(tau))
@@ -1930,7 +1971,7 @@ qalap <- function(p, location = 0, scale = 1, tau = 0.5,
 
 
 rloglap <- function(n, location.ald = 0, scale.ald = 1, tau = 0.5,
-                   kappa = sqrt(tau/(1-tau))) {
+                    kappa = sqrt(tau/(1-tau))) {
   use.n <- if ((length.n <- length(n)) > 1) length.n else
            if (!is.Numeric(n, integer.valued = TRUE,
                            length.arg = 1, positive = TRUE))
@@ -1948,7 +1989,7 @@ rloglap <- function(n, location.ald = 0, scale.ald = 1, tau = 0.5,
 
 
 dloglap <- function(x, location.ald = 0, scale.ald = 1, tau = 0.5,
-                   kappa = sqrt(tau/(1-tau)), log = FALSE) {
+                    kappa = sqrt(tau/(1-tau)), log = FALSE) {
   if (!is.logical(log.arg <- log) || length(log) != 1)
     stop("bad input for argument 'log'")
   rm(log)
@@ -1983,7 +2024,7 @@ dloglap <- function(x, location.ald = 0, scale.ald = 1, tau = 0.5,
 
 
 qloglap <- function(p, location.ald = 0, scale.ald = 1,
-                   tau = 0.5, kappa = sqrt(tau/(1-tau))) {
+                    tau = 0.5, kappa = sqrt(tau/(1-tau))) {
   NN <- max(length(p), length(location.ald), length(scale.ald),
             length(kappa))
   p        <- rep(p,            length.out = NN)
@@ -2049,7 +2090,7 @@ rlogitlap <- function(n, location.ald = 0, scale.ald = 1, tau = 0.5,
 
 
 dlogitlap <- function(x, location.ald = 0, scale.ald = 1, tau = 0.5,
-                     kappa = sqrt(tau/(1-tau)), log = FALSE) {
+                      kappa = sqrt(tau/(1-tau)), log = FALSE) {
   if (!is.logical(log.arg <- log) || length(log) != 1)
     stop("bad input for argument 'log'")
   rm(log)
@@ -2082,7 +2123,7 @@ dlogitlap <- function(x, location.ald = 0, scale.ald = 1, tau = 0.5,
 
 
 qlogitlap <- function(p, location.ald = 0, scale.ald = 1,
-                     tau = 0.5, kappa = sqrt(tau/(1-tau))) {
+                      tau = 0.5, kappa = sqrt(tau/(1-tau))) {
   qqq <- qalap(p = p, location = location.ald, scale = scale.ald,
               tau = tau, kappa = kappa)
   ans <- logit(qqq, inverse = TRUE)  # earg = earg
@@ -2095,7 +2136,7 @@ qlogitlap <- function(p, location.ald = 0, scale.ald = 1,
 
 
 plogitlap <- function(q, location.ald = 0, scale.ald = 1,
-                     tau = 0.5, kappa = sqrt(tau/(1-tau))) {
+                      tau = 0.5, kappa = sqrt(tau/(1-tau))) {
   NN <- max(length(q), length(location.ald), length(scale.ald),
            length(kappa))
   location.ald <- rep(location.ald, length.out = NN);
@@ -2336,7 +2377,7 @@ alaplace2.control <- function(maxit = 100, ...) {
 
 
  alaplace2 <- function(tau = NULL,
-              llocation = "identity", lscale = "loge",
+              llocation = "identitylink", lscale = "loge",
               ilocation = NULL,       iscale = NULL,
               kappa = sqrt(tau / (1-tau)),
               shrinkage.init = 0.95,
@@ -2437,7 +2478,7 @@ alaplace2.control <- function(maxit = 100, ...) {
 
 
       dotzero <- .zero
-      Musual <- 2
+      M1 <- 2
       eval(negzero.expression)
       constraints <- cm.zero.vgam(constraints, x, z.Index, M)
 
@@ -2458,11 +2499,11 @@ alaplace2.control <- function(maxit = 100, ...) {
             .intparloc = intparloc,
             .zero = zero ))),
   infos = eval(substitute(function(...) {
-    list(Musual = 2,
+    list(M1 = 2,
          zero = .zero)
   }, list( .zero = zero ))),
   initialize = eval(substitute(expression({
-    extra$Musual <- Musual <- 2
+    extra$M1 <- M1 <- 2
 
 
     temp5 <-
@@ -2486,7 +2527,7 @@ alaplace2.control <- function(maxit = 100, ...) {
     extra$tau <- extra$kappa^2 / (1 + extra$kappa^2)
 
     extra$Mdiv2 <- Mdiv2 <- max(ncoly, length( .kappa ))
-    extra$M <- M <- Musual * Mdiv2
+    extra$M <- M <- M1 * Mdiv2
     extra$n <- n
 
 
@@ -2508,7 +2549,7 @@ alaplace2.control <- function(maxit = 100, ...) {
         c(namesof(mynames1, .llocat , earg = .elocat, tag = FALSE),
           namesof(mynames2, .lscale , earg = .escale, tag = FALSE))
     predictors.names <-
-    predictors.names[interleave.VGAM(M, M = Musual)]
+    predictors.names[interleave.VGAM(M, M = M1)]
 
 
 
@@ -2553,7 +2594,7 @@ alaplace2.control <- function(maxit = 100, ...) {
       etastart <-
           cbind(theta2eta(locat.init, .llocat , earg = .elocat ),
                 theta2eta(scale.init, .lscale , earg = .escale ))
-      etastart <- etastart[, interleave.VGAM(M, M = Musual), drop = FALSE]
+      etastart <- etastart[, interleave.VGAM(M, M = M1), drop = FALSE]
     }
   }), list( .imethod = imethod,
             .dfmu.init = dfmu.init,
@@ -2582,19 +2623,19 @@ alaplace2.control <- function(maxit = 100, ...) {
            .fittedMean = fittedMean,
            .kappa = kappa ))),
   last = eval(substitute(expression({
-    Musual <- extra$Musual
+    M1 <- extra$M1
 
     tmp34 <- c(rep( .llocat , length = Mdiv2),
               rep( .lscale , length = Mdiv2))
     names(tmp34) <- c(mynames1, mynames2) 
-    tmp34 <- tmp34[interleave.VGAM(M, M = Musual)]
+    tmp34 <- tmp34[interleave.VGAM(M, M = M1)]
     misc$link <- tmp34 # Already named
 
     misc$earg <- vector("list", M)
-    misc$Musual <- Musual
+    misc$M1 <- M1
     for (ii in 1:Mdiv2) {
-      misc$earg[[Musual * ii - 1]] <- .elocat
-      misc$earg[[Musual * ii    ]] <- .escale
+      misc$earg[[M1 * ii - 1]] <- .elocat
+      misc$earg[[M1 * ii    ]] <- .escale
     }
     names(misc$earg) <- names(misc$link)
 
@@ -2620,36 +2661,71 @@ alaplace2.control <- function(maxit = 100, ...) {
             .fittedMean = fittedMean,
             .intparloc = intparloc,
             .kappa = kappa ))),
+
   loglikelihood = eval(substitute(
-    function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
-    Musual <- 2
+    function(mu, y, w, residuals = FALSE, eta,
+             extra = NULL,
+             summation = TRUE) {
+    M1 <- 2
     Mdiv2 <- extra$Mdiv2
     ymat <- matrix(y, extra$n, extra$Mdiv2)
     kappamat <- matrix(extra$kappa, extra$n, extra$Mdiv2, byrow = TRUE)
 
     locat <- eta2theta(eta[, 2 * (1:Mdiv2) - 1, drop = FALSE],
-                      .llocat , earg = .elocat )
+                       .llocat , earg = .elocat )
     Scale <- eta2theta(eta[, 2 * (1:Mdiv2)    , drop = FALSE],
-                      .lscale , earg = .escale )
+                       .lscale , earg = .escale )
     if (residuals) {
       stop("loglikelihood residuals not implemented yet")
     } else {
-      sum(c(w) * dalap(x = c(ymat), location = c(locat),
-                    scale = c(Scale), kappa = c(kappamat),
-                    log = TRUE))
+      ll.elts <- c(w) * dalap(x = c(ymat), location = c(locat),
+                              scale = c(Scale), kappa = c(kappamat),
+                              log = TRUE)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
     }
   }, list( .elocat = elocat, .llocat = llocat,
            .escale = escale, .lscale = lscale,
            .kappa = kappa ))),
   vfamily = c("alaplace2"),
+
+
+
+
+  simslot = eval(substitute(
+  function(object, nsim) {
+
+    pwts <- if (length(pwts <- object@prior.weights) > 0)
+              pwts else weights(object, type = "prior")
+    if (any(pwts != 1)) 
+      warning("ignoring prior weights")
+    eta <- predict(object)
+    extra    <- object@extra
+    locat    <- eta2theta(eta[, c(TRUE, FALSE)], .llocat , .elocat )
+    Scale    <- eta2theta(eta[, c(FALSE, TRUE)], .lscale , .escale )
+    kappamat <- matrix(extra$kappa, extra$n, extra$Mdiv2, byrow = TRUE)
+    ralap(nsim * length(Scale), location = c(locat),
+          scale = c(Scale), kappa = c(kappamat))
+  }, list( .elocat = elocat, .llocat = llocat,
+           .escale = escale, .lscale = lscale,
+           .kappa = kappa ))),
+
+
+
+
+
+
   deriv = eval(substitute(expression({
-    Musual <- 2
+    M1 <- 2
     Mdiv2 <- extra$Mdiv2
     ymat <- matrix(y, n, Mdiv2)
 
-    locat <- eta2theta(eta[, Musual * (1:(Mdiv2)) - 1, drop = FALSE],
+    locat <- eta2theta(eta[, M1 * (1:(Mdiv2)) - 1, drop = FALSE],
                       .llocat , earg = .elocat )
-    Scale <- eta2theta(eta[, Musual * (1:(Mdiv2))    , drop = FALSE],
+    Scale <- eta2theta(eta[, M1 * (1:(Mdiv2))    , drop = FALSE],
                       .lscale , earg = .escale )
 
 
@@ -2664,7 +2740,7 @@ alaplace2.control <- function(maxit = 100, ...) {
 
     ans <- c(w) * cbind(dl.dlocat * dlocat.deta,
                         dl.dscale * dscale.deta)
-    ans <- ans[, interleave.VGAM(ncol(ans), M = Musual)]
+    ans <- ans[, interleave.VGAM(ncol(ans), M = M1)]
     ans
   }), list( .escale = escale, .lscale = lscale,
             .elocat = elocat, .llocat = llocat,
@@ -2675,8 +2751,8 @@ alaplace2.control <- function(maxit = 100, ...) {
     d2l.dlocat2 <- 2 / Scale^2
     d2l.dscale2 <- 1 / Scale^2
 
-    wz[, Musual*(1:Mdiv2) - 1] <- d2l.dlocat2 * dlocat.deta^2
-    wz[, Musual*(1:Mdiv2)    ] <- d2l.dscale2 * dscale.deta^2
+    wz[, M1*(1:Mdiv2) - 1] <- d2l.dlocat2 * dlocat.deta^2
+    wz[, M1*(1:Mdiv2)    ] <- d2l.dscale2 * dscale.deta^2
 
     c(w) * wz
   }), list( .escale = escale, .lscale = lscale,
@@ -2702,7 +2778,7 @@ alaplace1.control <- function(maxit = 100, ...) {
 
 
  alaplace1 <- function(tau = NULL,
-                      llocation = "identity",
+                      llocation = "identitylink",
                       ilocation = NULL,
                       kappa = sqrt(tau/(1-tau)),
                       Scale.arg = 1,
@@ -2800,13 +2876,13 @@ alaplace1.control <- function(maxit = 100, ...) {
   }), list( .parallelLocation = parallelLocation,
             .intparloc = intparloc ))),
   infos = eval(substitute(function(...) {
-    list(Musual = 1,
+    list(M1 = 1,
          tau   = .tau,
          kappa = .kappa)
   }, list( .kappa = kappa,
            .tau   = tau ))),
   initialize = eval(substitute(expression({
-    extra$Musual <- Musual <- 1
+    extra$M1 <- M1 <- 1
 
 
     temp5 <-
@@ -2906,8 +2982,8 @@ alaplace1.control <- function(maxit = 100, ...) {
            .fittedMean = fittedMean, .Scale.arg = Scale.arg,
            .kappa = kappa ))),
   last = eval(substitute(expression({
-    Musual <- extra$Musual
-    misc$Musual <- Musual
+    M1 <- extra$M1
+    misc$M1 <- M1
     misc$multipleResponses <- TRUE
 
     tmp34 <- c(rep( .llocat , length = M))
@@ -2940,23 +3016,54 @@ alaplace1.control <- function(maxit = 100, ...) {
               .llocat = llocat,
               .Scale.arg = Scale.arg, .fittedMean = fittedMean,
               .kappa = kappa ))),
+
   loglikelihood = eval(substitute(
-    function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
+    function(mu, y, w, residuals = FALSE, eta,
+             extra = NULL,
+             summation = TRUE) {
+
     ymat <- matrix(y, extra$n, extra$M)
-    kappamat <- matrix(extra$kappa, extra$n, extra$M, byrow = TRUE)
     locat <- eta2theta(eta, .llocat , earg = .elocat )
-    Scale <- matrix(extra$Scale, extra$n, extra$M, byrow = TRUE)
+    kappamat <- matrix(extra$kappa, extra$n, extra$M, byrow = TRUE)
+    Scale    <- matrix(extra$Scale, extra$n, extra$M, byrow = TRUE)
 
     if (residuals) {
       stop("loglikelihood residuals not implemented yet")
     } else {
-      sum(c(w) * dalap(x = c(ymat), locat = c(locat),
-                       scale = c(Scale), kappa = c(kappamat), log = TRUE))
+      ll.elts <- c(w) * dalap(x = c(ymat), locat = c(locat),
+                              scale = c(Scale), kappa = c(kappamat),
+                              log = TRUE)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
     }
   }, list( .elocat = elocat,
            .llocat = llocat,
            .Scale.arg = Scale.arg, .kappa = kappa ))),
   vfamily = c("alaplace1"),
+
+
+  simslot = eval(substitute(
+  function(object, nsim) {
+
+    pwts <- if (length(pwts <- object@prior.weights) > 0)
+              pwts else weights(object, type = "prior")
+    if (any(pwts != 1)) 
+      warning("ignoring prior weights")
+    eta <- predict(object)
+    extra    <- object@extra
+    locat    <- eta2theta(eta, .llocat , .elocat )
+    Scale    <- matrix(extra$Scale, extra$n, extra$M, byrow = TRUE)
+    kappamat <- matrix(extra$kappa, extra$n, extra$M, byrow = TRUE)
+    ralap(nsim * length(Scale), location = c(locat),
+          scale = c(Scale), kappa = c(kappamat))
+  }, list( .elocat = elocat, .llocat = llocat,
+           .Scale.arg = Scale.arg, .kappa = kappa ))),
+
+
+
   deriv = eval(substitute(expression({
     ymat <- matrix(y, n, M)
     Scale <- matrix(extra$Scale, extra$n, extra$M, byrow = TRUE)
@@ -2999,7 +3106,7 @@ alaplace3.control <- function(maxit = 100, ...) {
 
 
  alaplace3 <- function(
-          llocation = "identity", lscale = "loge", lkappa = "loge",
+          llocation = "identitylink", lscale = "loge", lkappa = "loge",
           ilocation = NULL,       iscale = NULL,   ikappa = 1.0,
           imethod = 1, zero = 2:3) {
 
@@ -3103,15 +3210,22 @@ alaplace3.control <- function(maxit = 100, ...) {
             .escale = escale, .lscale = lscale,
             .ekappa = ekappa, .lkappa = lkappa ))),
   loglikelihood = eval(substitute(
-    function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
+    function(mu, y, w, residuals = FALSE, eta,
+             extra = NULL,
+             summation = TRUE) {
     locat <- eta2theta(eta[, 1], .llocat , earg = .elocat )
     Scale <- eta2theta(eta[, 2], .lscale , earg = .escale )
     kappa <- eta2theta(eta[, 3], .lkappa , earg = .ekappa )  # a matrix
     if (residuals) {
       stop("loglikelihood residuals not implemented yet")
     } else {
-      sum(c(w) * dalap(x = y, locat = locat,
-                      scale = Scale, kappa = kappa, log = TRUE))
+      ll.elts <- c(w) * dalap(x = y, locat = locat,
+                              scale = Scale, kappa = kappa, log = TRUE)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
     }
   }, list( .elocat = elocat, .llocat = llocat,
            .escale = escale, .lscale = lscale,
@@ -3225,7 +3339,7 @@ rlaplace <- function(n, location = 0, scale = 1) {
 }
 
 
- laplace <- function(llocation = "identity", lscale = "loge",
+ laplace <- function(llocation = "identitylink", lscale = "loge",
                      ilocation = NULL, iscale = NULL,
                      imethod = 1, zero = 2) {
 
@@ -3317,14 +3431,22 @@ rlaplace <- function(n, location = 0, scale = 1) {
   }), list( .escale = escale, .lscale = lscale,
             .elocat = elocat, .llocat = llocat ))),
   loglikelihood = eval(substitute(
-    function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
+    function(mu, y, w, residuals = FALSE, eta,
+             extra = NULL,
+             summation = TRUE) {
+
     locat <- eta2theta(eta[, 1], .llocat , earg = .elocat )
     Scale <- eta2theta(eta[, 2], .lscale , earg = .escale )
     if (residuals) {
       stop("loglikelihood residuals not implemented yet")
     } else {
-      sum(c(w) * dlaplace(x = y, locat = locat,
-                          scale = Scale, log = TRUE))
+      ll.elts <- c(w) * dlaplace(x = y, locat = locat,
+                                 scale = Scale, log = TRUE)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
     }
   }, list( .escale = escale, .lscale = lscale,
            .elocat = elocat, .llocat = llocat ))),
@@ -3454,32 +3576,40 @@ fff.control <- function(save.weight = TRUE, ...) {
   }), list( .link = link, .earg = earg,
             .ncp = ncp,
             .nsimEIM = nsimEIM ))),
-    loglikelihood = eval(substitute(
-        function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
-        df1 <- eta2theta(eta[, 1], .link , earg = .earg )
-        df2 <- eta2theta(eta[, 2], .link , earg = .earg )
-        if (residuals) {
-          stop("loglikelihood residuals not implemented yet")
-        } else {
-          sum(c(w) * df(x = y, df1 = df1, df2 = df2,
-                        ncp = .ncp, log = TRUE))
-        }
-    }, list( .link = link, .earg = earg, .ncp=ncp ))),
-    vfamily = c("fff"),
-    deriv = eval(substitute(expression({
-      df1 <- eta2theta(eta[, 1], .link , earg = .earg )
-      df2 <- eta2theta(eta[, 2], .link , earg = .earg )
-      dl.ddf1 <- 0.5*digamma(0.5*(df1+df2)) + 0.5 + 0.5*log(df1/df2) +
-                0.5*log(y) - 0.5*digamma(0.5*df1) -
-                0.5*(df1+df2)*(y/df2) / (1 + df1*y/df2) -
-                0.5*log1p(df1*y/df2)
-      dl.ddf2 <- 0.5*digamma(0.5*(df1+df2)) - 0.5*df1/df2 - 
-                0.5*digamma(0.5*df2) -
-                0.5*(df1+df2) * (-df1*y/df2^2) / (1 + df1*y/df2) -
-                0.5*log1p(df1*y/df2)
-      ddf1.deta <- dtheta.deta(df1, .link , earg = .earg )
-      ddf2.deta <- dtheta.deta(df2, .link , earg = .earg )
-      dthetas.detas <- cbind(ddf1.deta, ddf2.deta)
+  loglikelihood = eval(substitute(
+    function(mu, y, w, residuals = FALSE, eta,
+             extra = NULL,
+             summation = TRUE) {
+
+    df1 <- eta2theta(eta[, 1], .link , earg = .earg )
+    df2 <- eta2theta(eta[, 2], .link , earg = .earg )
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
+      ll.elts <- c(w) * df(x = y, df1 = df1, df2 = df2,
+                           ncp = .ncp , log = TRUE)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
+    }
+  }, list( .link = link, .earg = earg, .ncp=ncp ))),
+  vfamily = c("fff"),
+  deriv = eval(substitute(expression({
+    df1 <- eta2theta(eta[, 1], .link , earg = .earg )
+    df2 <- eta2theta(eta[, 2], .link , earg = .earg )
+    dl.ddf1 <- 0.5*digamma(0.5*(df1+df2)) + 0.5 + 0.5*log(df1/df2) +
+              0.5*log(y) - 0.5*digamma(0.5*df1) -
+              0.5*(df1+df2)*(y/df2) / (1 + df1*y/df2) -
+              0.5*log1p(df1*y/df2)
+    dl.ddf2 <- 0.5*digamma(0.5*(df1+df2)) - 0.5*df1/df2 - 
+              0.5*digamma(0.5*df2) -
+              0.5*(df1+df2) * (-df1*y/df2^2) / (1 + df1*y/df2) -
+              0.5*log1p(df1*y/df2)
+    ddf1.deta <- dtheta.deta(df1, .link , earg = .earg )
+    ddf2.deta <- dtheta.deta(df2, .link , earg = .earg )
+    dthetas.detas <- cbind(ddf1.deta, ddf2.deta)
       c(w) * dthetas.detas * cbind(dl.ddf1, dl.ddf2)
   }), list( .link = link, .earg = earg ))),
   weight = eval(substitute(expression({
@@ -3590,7 +3720,8 @@ fff.control <- function(save.weight = TRUE, ...) {
     theta2eta(mu, .lprob, earg = .earg )
   }, list( .lprob = lprob, .earg = earg ))),
   loglikelihood = eval(substitute(
-    function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
+    function(mu, y, w, residuals = FALSE, eta, extra = NULL,
+             summation = TRUE) {
     N <- extra$Nvector
     Dvec <- extra$Dvector
     prob <- mu
@@ -3598,19 +3729,24 @@ fff.control <- function(save.weight = TRUE, ...) {
     if (residuals) {
       stop("loglikelihood residuals not implemented yet")
     } else {
+      ll.elts <-
       if (extra$Nunknown) {
         tmp12 <- Dvec * (1-prob) / prob
 
 
-        sum(lgamma(1+tmp12) + lgamma(1+Dvec/prob-w) -
-            lgamma(1+tmp12-w+yvec) - lgamma(1+Dvec/prob))
-
+        (lgamma(1+tmp12) + lgamma(1+Dvec/prob-w) -
+         lgamma(1+tmp12-w+yvec) - lgamma(1+Dvec/prob))
       } else {
 
 
-            sum(lgamma(1+N*prob) + lgamma(1+N*(1-prob)) -
-                   lgamma(1+N*prob-yvec) -
-                   lgamma(1+N*(1-prob) -w + yvec))
+        (lgamma(1+N*prob) + lgamma(1+N*(1-prob)) -
+         lgamma(1+N*prob-yvec) -
+         lgamma(1+N*(1-prob) -w + yvec))
+      }
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
       }
     }
   }, list( .lprob = lprob, .earg = earg ))), 
@@ -3753,12 +3889,12 @@ rbenini <- function(n, shape, y0) {
             "Median:     qbenini(p = 0.5, shape, y0)"),
   constraints = eval(substitute(expression({
     dotzero <- .zero
-    Musual <- 1
+    M1 <- 1
     eval(negzero.expression)
   }), list( .zero = zero ))),
 
   infos = eval(substitute(function(...) {
-    list(Musual = 1,
+    list(M1 = 1,
          lshape = .lshape ,
          eshape = .eshape)
   }, list( .eshape = eshape,
@@ -3779,10 +3915,10 @@ rbenini <- function(n, shape, y0) {
 
 
     ncoly <- ncol(y)
-    Musual <- 1
+    M1 <- 1
     extra$ncoly <- ncoly
-    extra$Musual <- Musual
-    M <- Musual * ncoly
+    extra$M1 <- M1
+    M <- M1 * ncoly
 
 
     mynames1 <- paste("shape", if (ncoly > 1) 1:ncoly else "", sep = "")
@@ -3817,7 +3953,7 @@ rbenini <- function(n, shape, y0) {
     qbenini(p = 0.5, shape, y0 = extra$y0)
   }, list( .lshape = lshape, .eshape = eshape ))),
   last = eval(substitute(expression({
-    Musual <- extra$Musual
+    M1 <- extra$M1
     misc$link <- c(rep( .lshape , length = ncoly))
     names(misc$link) <- mynames1
 
@@ -3827,7 +3963,7 @@ rbenini <- function(n, shape, y0) {
       misc$earg[[ii]] <- .eshape
     }
 
-    misc$Musual <- Musual
+    misc$M1 <- M1
     misc$expected <- TRUE
     misc$multipleResponses <- TRUE
 
@@ -3837,16 +3973,45 @@ rbenini <- function(n, shape, y0) {
   }), list( .lshape = lshape,
             .eshape = eshape, .y0 = y0 ))),
   loglikelihood = eval(substitute(
-    function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
+    function(mu, y, w, residuals = FALSE, eta, extra = NULL,
+             summation = TRUE) {
     shape <- eta2theta(eta, .lshape , earg = .eshape )
     y0 <- extra$y0
     if (residuals) {
       stop("loglikelihood residuals not implemented yet")
     } else {
-      sum(c(w) * dbenini(x = y, shape=shape, y0 = y0, log = TRUE))
+      ll.elts <- c(w) * dbenini(x = y, shape = shape, y0 = y0, log = TRUE)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
     }
   }, list( .lshape = lshape, .eshape = eshape ))),
   vfamily = c("benini"),
+
+
+
+
+
+  simslot = eval(substitute(
+  function(object, nsim) {
+
+    pwts <- if (length(pwts <- object@prior.weights) > 0)
+              pwts else weights(object, type = "prior")
+    if (any(pwts != 1)) 
+      warning("ignoring prior weights")
+    eta <- predict(object)
+    extra <- object@extra
+    shape <- eta2theta(eta, .lshape , earg = .eshape )
+    y0 <- extra$y0
+    rbenini(nsim * length(shape), shape = shape, y0 = y0)
+  }, list( .lshape = lshape, .eshape = eshape ))),
+
+
+
+
+
   deriv = eval(substitute(expression({
     shape <- eta2theta(eta, .lshape , earg = .eshape )
 
@@ -4109,7 +4274,7 @@ ptriangle <- function(q, theta, lower = 0, upper = 1) {
             "Link:    ",
             namesof("theta", link, earg = earg)),
   infos = eval(substitute(function(...) {
-    list(Musual = 1,
+    list(M1 = 1,
          link = .link )
   }, list( .link = link ))),
 
@@ -4158,18 +4323,46 @@ ptriangle <- function(q, theta, lower = 0, upper = 1) {
     misc$expected <- TRUE
   }), list( .link = link, .earg = earg ))),
   loglikelihood = eval(substitute(
-    function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
+    function(mu, y, w, residuals = FALSE, eta, extra = NULL,
+             summation = TRUE) {
     Theta <- eta2theta(eta, .link , earg = .earg )
     lower <- extra$lower
     upper <- extra$upper
     if (residuals) {
       stop("loglikelihood residuals not implemented yet")
     } else {
-      sum(c(w) * dtriangle(x = y, theta = Theta, lower = lower,
-                           upper = upper, log = TRUE))
+      ll.elts <- c(w) * dtriangle(x = y, theta = Theta, lower = lower,
+                                  upper = upper, log = TRUE)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
     }
   }, list( .link = link, .earg = earg ))),
   vfamily = c("triangle"),
+
+
+
+  simslot = eval(substitute(
+  function(object, nsim) {
+
+    pwts <- if (length(pwts <- object@prior.weights) > 0)
+              pwts else weights(object, type = "prior")
+    if (any(pwts != 1)) 
+      warning("ignoring prior weights")
+    eta <- predict(object)
+    extra <- object@extra
+    Theta <- eta2theta(eta, .link , earg = .earg )
+    lower <- extra$lower
+    upper <- extra$upper
+    rtriangle(nsim * length(Theta),
+              theta = Theta, lower = lower, upper = upper)
+  }, list( .link = link, .earg = earg ))),
+
+
+
+
   deriv = eval(substitute(expression({
     Theta <- eta2theta(eta, .link , earg = .earg ) 
 
@@ -4244,7 +4437,7 @@ loglaplace1.control <- function(maxit = 300, ...) {
   ilocat <- ilocation
 
 
-  llocat.identity <- as.list(substitute("identity"))
+  llocat.identity <- as.list(substitute("identitylink"))
   elocat.identity <- link2list(llocat.identity)
   llocat.identity <- attr(elocat.identity, "function.name")
 
@@ -4414,24 +4607,35 @@ loglaplace1.control <- function(maxit = 300, ...) {
             .Scale.arg = Scale.arg, .fittedMean = fittedMean,
             .minquantile = minquantile, .maxquantile = maxquantile,
             .rep0 = rep0, .kappa = kappa ))),
+
   loglikelihood = eval(substitute(
-    function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
+    function(mu, y, w, residuals = FALSE, eta,
+             extra = NULL,
+             summation = TRUE) {
+
     kappamat <- matrix(extra$kappa, extra$n, extra$M, byrow = TRUE)
     Scale.w <- matrix(extra$Scale, extra$n, extra$M, byrow = TRUE)
     ymat <- matrix(y, extra$n, extra$M)
 
-
     if ( .llocat == "loge")
-      ymat <- adjust0.loglaplace1(ymat = ymat, y = y, w = w, rep0= .rep0)
+      ymat <- adjust0.loglaplace1(ymat = ymat, y = y, w = w, rep0 = .rep0)
+
         w.mat <- theta2eta(ymat, .llocat , earg = .elocat )  # e.g., logoff()
-        if (residuals) {
-          stop("loglikelihood residuals not implemented yet")
-        } else {
-          ALDans <- sum(c(w) * dalap(x = c(w.mat), locat = c(eta),
-                                 scale = c(Scale.w), kappa = c(kappamat),
-                                 log = TRUE))
-            ALDans
-        }
+
+
+
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
+      ll.elts <- c(w) * dalap(x = c(w.mat), locat = c(eta),
+                              scale = c(Scale.w), kappa = c(kappamat),
+                              log = TRUE)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
+    }
   }, list( .elocat = elocat, .llocat = llocat,
            .rep0 = rep0,
            .Scale.arg = Scale.arg, .kappa = kappa ))),
@@ -4692,26 +4896,36 @@ loglaplace2.control <- function(save.weight = TRUE, ...) {
             .fittedMean = fittedMean,
             .nsimEIM = nsimEIM, .rep0 = rep0,
             .kappa = kappa ))),
+
   loglikelihood = eval(substitute(
-    function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
+    function(mu, y, w, residuals = FALSE, eta, extra = NULL,
+             summation = TRUE) {
+
     kappamat <- matrix(extra$kappa, extra$n, extra$M/2, byrow = TRUE)
-    Scale.w <- eta2theta(eta[,(1+extra$M/2):extra$M],
-                        .lscale , earg = .escale )
+    Scale.w <- eta2theta(eta[, (1+extra$M/2):extra$M],
+                         .lscale , earg = .escale )
     ymat <- matrix(y, extra$n, extra$M/2)
-    ymat[ymat <= 0] <- min(min(y[y > 0]), .rep0)  # Adjust for 0s
+    ymat[ymat <= 0] <- min(min(y[y > 0]), .rep0 )  # Adjust for 0s
     ell.mat <- matrix(c(dloglaplace(x = c(ymat),
-                         locat.ald = c(eta[,1:(extra$M/2)]),
-                         scale.ald = c(Scale.w),
-                         kappa = c(kappamat), log = TRUE)),
-                     extra$n, extra$M/2)
+                                    locat.ald = c(eta[, 1:(extra$M/2)]),
+                                    scale.ald = c(Scale.w),
+                                    kappa = c(kappamat), log = TRUE)),
+                      extra$n, extra$M/2)
       if (residuals) {
         stop("loglikelihood residuals not implemented yet")
       } else {
-        sum(c(w) * ell.mat)
+      ll.elts <- c(w) * ell.mat
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
       }
+    }
   }, list( .elocat = elocat, .llocat = llocat,
            .escale = escale, .lscale = lscale,
            .rep0 = rep0, .kappa = kappa ))),
+
+
   vfamily = c("loglaplace2"),
   deriv = eval(substitute(expression({
     ymat <- matrix(y, n, M/2)
@@ -4825,7 +5039,7 @@ adjust01.logitlaplace1 <- function(ymat, y, w, rep01) {
   ilocat <- ilocation
 
 
-  llocat.identity <- as.list(substitute("identity"))
+  llocat.identity <- as.list(substitute("identitylink"))
   elocat.identity <- link2list(llocat.identity)
   llocat.identity <- attr(elocat.identity, "function.name")
 
@@ -4986,26 +5200,37 @@ adjust01.logitlaplace1 <- function(ymat, y, w, rep01) {
             .Scale.arg = Scale.arg, .fittedMean = fittedMean,
             .rep01 = rep01,
             .kappa = kappa ))),
+
+
   loglikelihood = eval(substitute(
-    function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
+    function(mu, y, w, residuals = FALSE, eta,
+             extra = NULL,
+             summation = TRUE) {
+
     kappamat <- matrix(extra$kappa, extra$n, extra$M, byrow = TRUE)
     Scale.w  <- matrix(extra$Scale, extra$n, extra$M, byrow = TRUE)
-    ymat <- matrix(y, extra$n, extra$M)
+    ymat     <- matrix(y,           extra$n, extra$M)
     ymat <- adjust01.logitlaplace1(ymat = ymat, y = y, w = w,
-                                  rep01 = .rep01)
+                                   rep01 = .rep01)
     w.mat <- theta2eta(ymat, .llocat , earg = .elocat )  # e.g., logit()
     if (residuals) {
       stop("loglikelihood residuals not implemented yet")
     } else {
-      ALDans =
-          sum(c(w) * dalap(x = c(w.mat), location = c(eta),
-                        scale = c(Scale.w), kappa = c(kappamat),
-                        log = TRUE))
-          ALDans
+      ll.elts <-
+        c(w) * dalap(x = c(w.mat), location = c(eta),
+                     scale = c(Scale.w), kappa = c(kappamat),
+                     log = TRUE)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
       }
+    }
   }, list( .elocat = elocat, .llocat = llocat,
            .rep01 = rep01,
            .Scale.arg = Scale.arg, .kappa = kappa ))),
+
+
   vfamily = c("logitlaplace1"),
   deriv = eval(substitute(expression({
     ymat <- matrix(y, n, M)
@@ -5021,7 +5246,7 @@ adjust01.logitlaplace1 <- function(ymat, y, w, rep01) {
 
 
     dlocat.deta <- dtheta.deta(locat.w,
-                              "identity",
+                              "identitylink",
                               earg = .elocat.identity )
 
 

@@ -163,7 +163,8 @@ zageometricff(lprob = "logit", lonempobs0 = "logit",
   \code{\link{geometric}},
   \code{\link{zigeometric}},
   \code{\link[stats:Geometric]{dgeom}},
-  \code{\link{CommonVGAMffArguments}}.
+  \code{\link{CommonVGAMffArguments}},
+  \code{\link{simulate.vlm}}.
 
 
 }

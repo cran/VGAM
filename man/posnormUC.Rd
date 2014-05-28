@@ -34,6 +34,7 @@ rposnorm(n, mean = 0, sd = 1)
   \code{qposnorm} gives the quantile function, and
   \code{rposnorm} generates random deviates.
 
+
 }
 \author{ T. W. Yee }
 \details{

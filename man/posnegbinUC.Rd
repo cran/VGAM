@@ -69,8 +69,10 @@ rposnegbin(n, size, prob = NULL, munb = NULL)
   \code{qposnegbin} gives the quantile function, and
   \code{rposnegbin} generates \eqn{n} random deviates.
 
+
 }
 \references{ 
+
 Welsh, A. H., Cunningham, R. B., Donnelly, C. F. and Lindenmayer,
 D. B. (1996)
 Modelling the abundances of rare species: statistical models
@@ -78,6 +80,7 @@ for counts with extra zeros.
 \emph{Ecological Modelling},
 \bold{88},
 297--308.
+
 
 
 }

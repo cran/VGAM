@@ -205,18 +205,18 @@ canonical Gaussian ordination.
 
 }
 \examples{\dontrun{
-hspider[, 1:6] <- scale(hspider[, 1:6])  # Good idea when ITolerances = TRUE
+hspider[, 1:6] <- scale(hspider[, 1:6])  # Good idea when I.tolerances = TRUE
 set.seed(111)
 r1 <- cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,
                 Auloalbi, Pardmont, Pardnigr, Pardpull, Trocterr) ~
           WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
-          poissonff, data = hspider, trace = FALSE, ITolerances = TRUE)
+          poissonff, data = hspider, trace = FALSE, I.tolerances = TRUE)
 set.seed(111)  # r2 below is an ill-conditioned model
 r2 <- cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,
                 Auloalbi, Pardmont, Pardnigr, Pardpull, Trocterr) ~
           WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
           isd.lv = c(2.4, 1.0), Muxfactor = 3.0, trace = FALSE,
-          poissonff, data = hspider, Rank = 2, EqualTolerances = TRUE)
+          poissonff, data = hspider, Rank = 2, eq.tolerances = TRUE)
 
 sort(r1@misc$deviance.Bestof)  # A history of the fits
 sort(r2@misc$deviance.Bestof)  # A history of the fits

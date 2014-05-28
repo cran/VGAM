@@ -136,6 +136,10 @@ vglm.control(checkwz = TRUE, Check.rank = TRUE,
   to give \emph{every} term used by the model.
 
 
+  The function \code{\link{Select}} can be used to
+  select variables beginning with the same character string.
+
+
   }
 % \item{jix}{
 % A formula or a list of formulas specifying
@@ -224,7 +228,8 @@ vglm.control(checkwz = TRUE, Check.rank = TRUE,
   \code{\link{vglm}},
   \code{\link{fill}}.
   The author's homepage has further documentation about
-  the \code{xij} argument.
+  the \code{xij} argument;
+  see also \code{\link{Select}}.
 
 
 }
@@ -270,12 +275,14 @@ coalminers <- transform(coalminers,
                         dum2 = round(runif(nrow(coalminers)), digits = 2),
                         dum3 = round(runif(nrow(coalminers)), digits = 2),
                         dumm = round(runif(nrow(coalminers)), digits = 2))
-BS <- function(x, ..., df = 3) bs(c(x,...), df = df)[1:length(x),,drop = FALSE]
-NS <- function(x, ..., df = 3) ns(c(x,...), df = df)[1:length(x),,drop = FALSE]
+BS <- function(x, ..., df = 3) sm.bs(c(x,...), df = df)[1:length(x),,drop = FALSE]
+NS <- function(x, ..., df = 3) sm.ns(c(x,...), df = df)[1:length(x),,drop = FALSE]
 
 # Equivalently...
-BS <- function(x, ..., df = 3) head(bs(c(x,...), df = df), length(x), drop = FALSE)
-NS <- function(x, ..., df = 3) head(ns(c(x,...), df = df), length(x), drop = FALSE)
+BS <- function(x, ..., df = 3)
+  head(sm.bs(c(x,...), df = df), length(x), drop = FALSE)
+NS <- function(x, ..., df = 3)
+  head(sm.ns(c(x,...), df = df), length(x), drop = FALSE)
 
 fit3 <- vglm(cbind(nBnW,nBW,BnW,BW) ~ Age + NS(dum1, dum2),
              fam = binom2.or(exchangeable = TRUE, zero = 3),

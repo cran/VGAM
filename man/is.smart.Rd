@@ -12,11 +12,15 @@
 \arguments{
 \item{object}{
   a function or a fitted model.
+
+
 }
 }
 \value{
   Returns \code{TRUE} or \code{FALSE}, according to whether the \code{object}
   is smart or not.
+
+
 
 }
 \details{
@@ -41,18 +45,16 @@
 }
 \examples{
 is.smart(my1)  # TRUE
-is.smart(poly) # TRUE
+is.smart(sm.poly) # TRUE
 library(splines)
-is.smart(bs)   # TRUE
-is.smart(ns)   # TRUE
+is.smart(sm.bs)   # TRUE
+is.smart(sm.ns)   # TRUE
 is.smart(tan)  # FALSE
-if(!is.R()) is.smart(lm)   # TRUE
 \dontrun{
-library(VGAM)
 x <- rnorm(9)
-fit1 <- vglm(rnorm(9) ~ x, normal1)
+fit1 <- vglm(rnorm(9) ~ x, uninormal)
 is.smart(fit1)   # TRUE
-fit2 <- vglm(rnorm(9) ~ x, normal1, smart = FALSE)
+fit2 <- vglm(rnorm(9) ~ x, uninormal, smart = FALSE)
 is.smart(fit2)   # FALSE
 fit2@smart.prediction
 }

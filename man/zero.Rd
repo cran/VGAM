@@ -15,6 +15,8 @@
   It is simply a convenient argument for constraining
   certain linear/additive predictors to be an intercept only. 
 
+
+
 }
 \section{Warning }{
   The use of other arguments may conflict with the \code{zero}
@@ -92,7 +94,9 @@ Reduced-rank vector generalized linear models.
 }
 
 \seealso{
-    \code{\link{constraints}}.
+  \code{\link{constraints}}.
+
+
 }
 
 \examples{
@@ -101,8 +105,8 @@ args(binom2.or)
 args(gpd)
 
 #LMS quantile regression example
-fit <- vglm(BMI ~ bs(age, df = 4), lms.bcg(zero = c(1,3)),
-            bmi.nz, trace = TRUE)
+fit <- vglm(BMI ~ sm.bs(age, df = 4), lms.bcg(zero = c(1,3)),
+            data = bmi.nz, trace = TRUE)
 coef(fit, matrix = TRUE)
 }
 \keyword{models}

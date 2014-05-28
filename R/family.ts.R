@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2013 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2014 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -147,7 +147,7 @@ rrar.control <- function(stepsize = 0.5, save.weight = TRUE, ...) {
   blurb = c("Nested reduced-rank vector autoregressive model AR(",
             lag.p, ")\n\n",
             "Link:     ",
-            namesof("mu_t", "identity"),
+            namesof("mu_t", "identitylink"),
             ", t = ", paste(paste(1:lag.p, coll = ",", sep = ""))),
   initialize = eval(substitute(expression({
       Ranks. <- .Ranks
@@ -287,7 +287,7 @@ vglm.garma.control <- function(save.weight = TRUE, ...) {
 }
 
 
- garma <- function(link = "identity",
+ garma <- function(link = "identitylink",
                    p.ar.lag = 1,
                    q.ma.lag = 0,
                    coefstart = NULL,
@@ -372,21 +372,33 @@ vglm.garma.control <- function(save.weight = TRUE, ...) {
 
     misc$plag <- plag
   }), list( .link = link, .earg = earg ))),
+
   loglikelihood = eval(substitute(
-    function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
-    if (residuals) switch( .link ,
-        identity = y - mu,
-        loge       = w * (y / mu - 1),
-        reciprocal = w * (y / mu - 1),
-        inverse    = w * (y / mu - 1),
-        w * (y / mu - (1-y) / (1 - mu))) else
-    switch( .link ,
-        identity = sum(w * (y - mu)^2),
-        loge       = sum(w * (-mu + y * log(mu))),
-        reciprocal = sum(w * (-mu + y * log(mu))),
-        inverse    = sum(w * (-mu + y * log(mu))),
-        sum(w * (y * log(mu) + (1-y) * log1p(-mu))))
+    function(mu, y, w, residuals = FALSE, eta, extra = NULL,
+             summation = TRUE) {
+    if (residuals) {
+      switch( .link ,
+              identitylink   = y - mu,
+              loge       = w * (y / mu - 1),
+              reciprocal = w * (y / mu - 1),
+              inverse    = w * (y / mu - 1),
+              w * (y / mu - (1-y) / (1 - mu)))
+    } else {
+      ll.elts <-
+      switch( .link ,
+              identitylink   = c(w) * (y - mu)^2,
+              loge       = c(w) * (-mu + y * log(mu)),
+              reciprocal = c(w) * (-mu + y * log(mu)),
+              inverse    = c(w) * (-mu + y * log(mu)),
+                           c(w) * (y * log(mu) + (1-y) * log1p(-mu)))
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
+    }
   }, list( .link = link, .earg = earg ))),
+
   middle2 = eval(substitute(expression({
     realfv <- fv
     for (ii in 1:plag) {
@@ -401,7 +413,7 @@ vglm.garma.control <- function(save.weight = TRUE, ...) {
   vfamily = c("garma", "vglmgam"),
   deriv = eval(substitute(expression({
     dl.dmu <- switch( .link ,
-                  identity = y-mu,
+                  identitylink = y-mu,
                   loge       = (y - mu) / mu,
                   reciprocal = (y - mu) / mu,
                   inverse    = (y - mu) / mu,
@@ -430,10 +442,10 @@ vglm.garma.control <- function(save.weight = TRUE, ...) {
     if (iter == 1)
       old.coeffs <- new.coeffs 
 
-    X.vlm.save <- lm2vlm.model.matrix(x, Blist, xij = control$xij)
+    X.vlm.save <- lm2vlm.model.matrix(x, Hlist, xij = control$xij)
 
     vary <- switch( .link ,
-                   identity = 1,
+                   identitylink = 1,
                    loge       = mu,
                    reciprocal = mu^2,
                    inverse    = mu^2,

@@ -130,7 +130,8 @@ However, this family function is currently numerically fraught.
 
 \seealso{
   \code{\link{dmakeham}},
-  \code{\link{gompertz}}.
+  \code{\link{gompertz}},
+  \code{\link{simulate.vlm}}.
 
 
 }

@@ -8,7 +8,7 @@
 
 }
 \usage{
-rigff(lmu = "identity", llambda = "loge", imu = NULL, ilambda = 1)
+rigff(lmu = "identitylink", llambda = "loge", imu = NULL, ilambda = 1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -58,8 +58,8 @@ London: Chapman & Hall
 }
 \examples{
 rdata <- data.frame(y = rchisq(n = 100, df = 14))  # Not 'proper' data!!
-fit <- vglm(y ~ 1, rigff, rdata, trace = TRUE)
-fit <- vglm(y ~ 1, rigff, rdata, trace = TRUE, eps = 1e-9, crit = "coef")
+fit <- vglm(y ~ 1, rigff, data = rdata, trace = TRUE)
+fit <- vglm(y ~ 1, rigff, data = rdata, trace = TRUE, eps = 1e-9, crit = "coef")
 summary(fit)
 }
 \keyword{models}

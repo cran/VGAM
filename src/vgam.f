@@ -828,8 +828,8 @@ C Output from Public domain Ratfor, version 1.01
       info = 1
       call x6kanjdh(xin, work3, nef, kgwmz4ip)
       call qpsedg8xf(tgiyxdw1, dufozmt7, kgwmz4ip)
-      call mxrbkut0f(uwin, work3, kgwmz4ip, xjc4ywlh, nef, wkmm(1,1,1), 
-     *wkmm(1,1,2), tgiyxdw1, dufozmt7, dimwin, rutyk8mg)
+      call mux17f(uwin, work3, kgwmz4ip, xjc4ywlh, nef, wkmm(1,1,1), wkm
+     *m(1,1,2), tgiyxdw1, dufozmt7, dimwin, rutyk8mg)
       do23284 gp1jxzuh=1,xjc4ywlh 
       ges1xpkr(gp1jxzuh) = gp1jxzuh
 23284 continue
@@ -837,8 +837,8 @@ C Output from Public domain Ratfor, version 1.01
       call vqrdca(work3,rutyk8mg,rutyk8mg,xjc4ywlh,fasrkub3,ges1xpkr,wor
      *k1,qemj9asg,pvofyg8z)
       call qpsedg8xf(tgiyxdw1, dufozmt7, kgwmz4ip)
-      call nudh6szqf(uwin,sout,r0oydcxb,dimwin,tgiyxdw1,dufozmt7,nef,kgw
-     *mz4ip,wkmm)
+      call mux22f(uwin,sout,r0oydcxb,dimwin,tgiyxdw1,dufozmt7,nef,kgwmz4
+     *ip,wkmm)
       call vdqrsl(work3,rutyk8mg,rutyk8mg,qemj9asg,fasrkub3,r0oydcxb,wor
      *k1(1),effect,beta, work1(1),ub4xioar,job,info)
       call vbksf(uwin,ub4xioar,kgwmz4ip,nef,wkmm,tgiyxdw1,dufozmt7,dimwi
@@ -1017,8 +1017,8 @@ C Output from Public domain Ratfor, version 1.01
       endif
       if(qemj9asg.eq.0)then
       call qpsedg8xf(tgiyxdw1,dufozmt7,wy1vqfzu)
-      call mxrbkut0f(wpuarq2m, vc6hatuj, wy1vqfzu, xjc4ywlh, kuzxj1lo, w
-     *kmm(1,1,1), wkmm(1,1,2), tgiyxdw1, dufozmt7, dimu, rutyk8mg)
+      call mux17f(wpuarq2m, vc6hatuj, wy1vqfzu, xjc4ywlh, kuzxj1lo, wkmm
+     *(1,1,1), wkmm(1,1,2), tgiyxdw1, dufozmt7, dimu, rutyk8mg)
       do23330 gp1jxzuh=1,xjc4ywlh 
       ges1xpkr(gp1jxzuh) = gp1jxzuh
 23330 continue
@@ -1069,8 +1069,8 @@ C Output from Public domain Ratfor, version 1.01
 23350 continue
 23351 continue
       call qpsedg8xf(tgiyxdw1,dufozmt7,wy1vqfzu)
-      call nudh6szqf(wpuarq2m,ghz9vuba, twk, dimu,tgiyxdw1,dufozmt7,kuzx
-     *j1lo,wy1vqfzu,wkmm)
+      call mux22f(wpuarq2m,ghz9vuba, twk, dimu,tgiyxdw1,dufozmt7,kuzxj1l
+     *o,wy1vqfzu,wkmm)
       call vdqrsl(vc6hatuj,rutyk8mg,rutyk8mg,qemj9asg,fasrkub3, twk, wk2
      *,wk2, beta, wk2,ub4xioar,job,info)
       resss=0.0d0
@@ -1180,8 +1180,8 @@ C Output from Public domain Ratfor, version 1.01
 23392 continue
 23393 continue
       call qpsedg8xf(tgiyxdw1,dufozmt7,wy1vqfzu)
-      call nudh6szqf(wpuarq2m,ghz9vuba, twk, dimu,tgiyxdw1,dufozmt7,kuzx
-     *j1lo,wy1vqfzu,wkmm)
+      call mux22f(wpuarq2m,ghz9vuba, twk, dimu,tgiyxdw1,dufozmt7,kuzxj1l
+     *o,wy1vqfzu,wkmm)
       call vdqrsl(vc6hatuj,rutyk8mg,rutyk8mg,qemj9asg,fasrkub3, twk, wk2
      *,wk2, beta, wk2,ub4xioar,job,info)
       call vbksf(wpuarq2m,ub4xioar,wy1vqfzu,kuzxj1lo,wkmm,tgiyxdw1,dufoz

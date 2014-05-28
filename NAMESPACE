@@ -1,10 +1,35 @@
 # These functions are
-# Copyright (C) 1998-2013 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2014 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
 
 useDynLib(VGAM)
+
+
+export(sm.bs, sm.ns, sm.scale.default, sm.poly, sm.scale)
+exportMethods(coefficients, coef)
+importFrom("stats", coefficients, coef)
+export(case.names,
+       coef,
+       coefficients,
+       df.residual,
+       fitted,
+       fitted.values,
+       formula,
+       residuals,
+       variable.names,
+       weights)
+
+
+
+export(Select, subsetc)
+
+
+export(simulate.vlm)
+importFrom("stats", simulate)
+
+
 
 
 export(family.name.vlm)
@@ -83,6 +108,7 @@ exportMethods(hatvalues)
 importFrom("stats", hatvalues)
 
 
+importFrom("stats", dfbeta)  # Added 20140509
 export(dfbeta, dfbetavlm)
 exportMethods(dfbeta)
 
@@ -186,7 +212,6 @@ export(pnorm2, dnorm2)
 
 
 
-export( bs, ns, scale.default, poly ) 
 
 
 
@@ -250,7 +275,7 @@ coefvsmooth.spline, coefvsmooth.spline.fit,
 constraints, constraints.vlm, 
 deplot, deplot.default, deplot.lms.bcg, deplot.lms.bcn,
 deplot.lms.yjn, deplot.lms.yjn2, deplot.vglm, 
-deviance.vglm, deviance.vlm,
+deviance.vlm,
 df.residual_vlm,
 dirmultinomial, dirmul.old,
 dtheta.deta)
@@ -488,7 +513,7 @@ geometric, truncgeometric,
 dlino, plino, qlino, rlino, lino, 
 grc,
 dhzeta, phzeta, qhzeta, rhzeta, hzeta, 
-negidentity, identity,
+negidentity, identitylink,
 prentice74,
 amlnormal, amlbinomial, amlexponential, amlpoisson, Wr1, Wr2,
 dkumar, pkumar, qkumar, rkumar, kumar,

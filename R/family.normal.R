@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2013 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2014 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -48,7 +48,7 @@ VGAM.weights.function <- function(w, M, n) {
 
   new("vglmff",
   blurb = c("Vector linear/additive model\n",
-            "Links:    identity for Y1,...,YM"),
+            "Links:    identitylink for Y1,...,YM"),
   constraints = eval(substitute(expression({
     constraints <- cm.vgam(matrix(1, M, 1), x = x,
                            bool = .parallel , 
@@ -72,7 +72,8 @@ VGAM.weights.function <- function(w, M, n) {
   },
 
   infos = eval(substitute(function(...) {
-    list(Musual = 1,
+    list(M1 = 1,
+         Q1 = 1,
          zero = .zero)
   }, list( .zero = zero ))),
 
@@ -121,7 +122,7 @@ VGAM.weights.function <- function(w, M, n) {
     misc$default.dispersion <- 0
     misc$estimated.dispersion <- .estimated.dispersion
 
-    misc$link <- rep("identity", length = M)
+    misc$link <- rep("identitylink", length = M)
     names(misc$link) <- predictors.names
 
     misc$earg <- vector("list", M)
@@ -143,39 +144,57 @@ VGAM.weights.function <- function(w, M, n) {
   }), list( .dispersion = dispersion,
             .estimated.dispersion = estimated.dispersion ))),
   loglikelihood =
-    function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
+    function(mu, y, w, residuals = FALSE, eta,
+             extra = NULL,
+             summation = TRUE) {
     M <- if (is.matrix(y)) ncol(y) else 1
     n <- if (is.matrix(y)) nrow(y) else length(y)
     wz <- VGAM.weights.function(w = w, M = M, n = n)
-    temp1 <- ResSS.vgam(y-mu, wz = wz, M = M)
 
 
-
-    if (M == 1 || ncol(wz) == M) {
-      -0.5 * temp1 + 0.5 * sum(log(wz)) - n * (M / 2) * log(2*pi)
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
     } else {
-      if (all(wz[1, ] == apply(wz, 2, min)) &&
-          all(wz[1, ] == apply(wz, 2, max))) {
-        onewz <- m2adefault(wz[1, , drop = FALSE], M = M)
-        onewz <- onewz[,, 1]  # M x M
+
+      temp1 <- ResSS.vgam(y-mu, wz = wz, M = M)
 
 
-        logdet <- determinant(onewz)$modulus
-        logretval <- -0.5 * temp1 + 0.5 * n * logdet -
-                     n * (M / 2) * log(2*pi)
 
-      distval <- stop("variable 'distval' not computed yet")
-      logretval <- -(ncol(onewz) * log(2 * pi) + logdet + distval)/2
-      logretval
-    } else {
-      logretval <- -0.5 * temp1 - n * (M / 2) * log(2*pi)
-      for (ii in 1:n) {
-        onewz <- m2adefault(wz[ii, , drop = FALSE], M = M)
-        onewz <- onewz[,, 1]  # M x M
-        logdet <- determinant(onewz)$modulus
-          logretval <- logretval + 0.5 * logdet
-        }
+
+      ll.elts <-
+      if (M == 1 || ncol(wz) == M) {
+
+        -0.5 * temp1 + 0.5 *    (log(wz)) - n * (M / 2) * log(2*pi)
+      } else {
+        if (all(wz[1, ] == apply(wz, 2, min)) &&
+            all(wz[1, ] == apply(wz, 2, max))) {
+          onewz <- m2adefault(wz[1, , drop = FALSE], M = M)
+          onewz <- onewz[,, 1]  # M x M
+
+
+          logdet <- determinant(onewz)$modulus
+          logretval <- -0.5 * temp1 + 0.5 * n * logdet -
+                       n * (M / 2) * log(2*pi)
+
+        distval <- stop("variable 'distval' not computed yet")
+        logretval <- -(ncol(onewz) * log(2 * pi) + logdet + distval)/2
         logretval
+      } else {
+        logretval <- -0.5 * temp1 - n * (M / 2) * log(2*pi)
+        for (ii in 1:n) {
+          onewz <- m2adefault(wz[ii, , drop = FALSE], M = M)
+          onewz <- onewz[,, 1]  # M x M
+          logdet <- determinant(onewz)$modulus
+            logretval <- logretval + 0.5 * logdet
+          }
+          logretval
+        }
+      }
+
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
       }
     }
   },
@@ -250,7 +269,7 @@ rposnorm <- function(n, mean = 0, sd = 1) {
 
 
 
- posnormal <- function(lmean = "identity", lsd = "loge",
+ posnormal <- function(lmean = "identitylink", lsd = "loge",
                         imean = NULL, isd = NULL,
                         nsimEIM = 100, zero = NULL) {
  warning("this VGAM family function is not working properly yet")
@@ -290,7 +309,7 @@ rposnorm <- function(n, mean = 0, sd = 1) {
     constraints <- cm.zero.vgam(constraints, x, .zero , M)
   }), list( .zero = zero ))),
   infos = eval(substitute(function(...) {
-    list(Musual = 2,
+    list(M1 = 2,
          par.names = c("mean", "sd"),
          zero = .zero )
   }, list( .zero = zero
@@ -313,8 +332,8 @@ rposnorm <- function(n, mean = 0, sd = 1) {
 
 
     predictors.names <-
-      c(namesof("mean", .lmean, earg = .emean, tag = FALSE),
-        namesof("sd",   .lsd,   earg = .esd,   tag = FALSE))
+      c(namesof("mean", .lmean , earg = .emean, tag = FALSE),
+        namesof("sd",   .lsd ,   earg = .esd,   tag = FALSE))
 
     if (!length(etastart)) {
       init.me <- if (length( .imean)) rep( .imean, len = n) else NULL
@@ -323,16 +342,16 @@ rposnorm <- function(n, mean = 0, sd = 1) {
         init.me <- rep(quantile(y, probs = 0.40), len = n)
       if (!length(init.sd))
         init.sd <- rep(sd(c(y)) * 1.2, len = n)
-      etastart <- cbind(theta2eta(init.me, .lmean, earg = .emean ),
-                        theta2eta(init.sd, .lsd,   earg = .esd ))
+      etastart <- cbind(theta2eta(init.me, .lmean , earg = .emean ),
+                        theta2eta(init.sd, .lsd ,   earg = .esd ))
     }
   }), list( .lmean = lmean, .lsd = lsd,
             .imean = imean, .isd = isd,
             .emean = emean, .esd = esd
            ))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
-    mymu <- eta2theta(eta[, 1], .lmean, earg = .emean )
-    mysd <- eta2theta(eta[, 2], .lsd,   earg = .esd )
+    mymu <- eta2theta(eta[, 1], .lmean , earg = .emean )
+    mysd <- eta2theta(eta[, 2], .lsd ,   earg = .esd )
     mymu + mysd * dnorm(-mymu/mysd) / pnorm(mymu/mysd)
   }, list( .lmean = lmean, .lsd = lsd,
            .emean = emean, .esd = esd
@@ -348,20 +367,51 @@ rposnorm <- function(n, mean = 0, sd = 1) {
             .emean = emean, .esd = esd,
             .nsimEIM = nsimEIM ))),
   loglikelihood = eval(substitute(
-    function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
-    mymu <- eta2theta(eta[, 1], .lmean, earg = .emean )
-    mysd <- eta2theta(eta[, 2], .lsd,   earg = .esd )
-    if (residuals) stop("loglikelihood residuals ",
-                        "not implemented yet") else {
+    function(mu, y, w, residuals = FALSE, eta,
+             extra = NULL,
+             summation = TRUE) {
+    mymu <- eta2theta(eta[, 1], .lmean , earg = .emean )
+    mysd <- eta2theta(eta[, 2], .lsd ,   earg = .esd )
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
 
-      sum(c(w) * dposnorm(x = y, m = mymu, sd = mysd, log = TRUE))
+      ll.elts <- c(w) * dposnorm(x = y, m = mymu, sd = mysd, log = TRUE)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
     }
   }, list( .lmean = lmean, .lsd = lsd,
            .emean = emean, .esd = esd ))),
   vfamily = c("posnormal"),
+
+
+
+  simslot = eval(substitute(
+  function(object, nsim) {
+
+    pwts <- if (length(pwts <- object@prior.weights) > 0)
+              pwts else weights(object, type = "prior")
+    if (any(pwts != 1)) 
+      warning("ignoring prior weights")
+    eta <- predict(object)
+    mymu <- eta2theta(eta[, 1], .lmean , earg = .emean )
+    mysd <- eta2theta(eta[, 2], .lsd   , earg = .esd   )
+    rposnorm(nsim * length(mymu), mean = mymu, sd = mysd)
+  }, list( .lmean = lmean, .lsd = lsd,
+           .emean = emean, .esd = esd ))),
+
+
+
+
+
+
+
   deriv = eval(substitute(expression({
-    mymu <- eta2theta(eta[, 1], .lmean, earg = .emean )
-    mysd <- eta2theta(eta[, 2], .lsd,  earg = .esd )
+    mymu <- eta2theta(eta[, 1], .lmean , earg = .emean )
+    mysd <- eta2theta(eta[, 2], .lsd ,  earg = .esd )
 
     zedd <- (y-mymu) / mysd
     temp7 <- dnorm(-mymu/mysd)
@@ -370,8 +420,8 @@ rposnorm <- function(n, mean = 0, sd = 1) {
     dl.dmu <- zedd / mysd^2 - temp7 / temp8
     dl.dsd <- (mymu*temp7/temp8 + zedd^3 / mysd - 1) / mysd
 
-    dmu.deta <- dtheta.deta(mymu, .lmean, earg = .emean )
-    dsd.deta <- dtheta.deta(mysd, .lsd,   earg = .esd )
+    dmu.deta <- dtheta.deta(mymu, .lmean , earg = .emean )
+    dsd.deta <- dtheta.deta(mysd, .lsd ,   earg = .esd )
     dthetas.detas <- cbind(dmu.deta, dsd.deta)
     c(w) * dthetas.detas * cbind(dl.dmu, dl.dsd)
   }), list( .lmean = lmean, .lsd = lsd,
@@ -604,7 +654,7 @@ rtikuv <- function(n, d, mean = 0, sigma = 1, Smallno = 1.0e-6) {
 
 
 
- tikuv <- function(d, lmean = "identity", lsigma = "loge",
+ tikuv <- function(d, lmean = "identitylink", lsigma = "loge",
                    isigma = NULL, zero = 2) {
 
 
@@ -640,7 +690,7 @@ rtikuv <- function(n, d, mean = 0, sigma = 1, Smallno = 1.0e-6) {
   }), list( .zero = zero ))),
 
   infos = eval(substitute(function(...) {
-    list(Musual = 2,
+    list(M1 = 2,
          zero = .zero)
   }, list( .zero = zero ))),
 
@@ -650,7 +700,7 @@ rtikuv <- function(n, d, mean = 0, sigma = 1, Smallno = 1.0e-6) {
 
 
     predictors.names <- 
-      c(namesof("mean",  .lmean,  earg = .emean,  tag = FALSE),
+      c(namesof("mean",  .lmean ,  earg = .emean,  tag = FALSE),
         namesof("sigma", .lsigma, earg = .esigma, tag = FALSE))
 
 
@@ -663,14 +713,14 @@ rtikuv <- function(n, d, mean = 0, sigma = 1, Smallno = 1.0e-6) {
       }
       mean.init <- rep(weighted.mean(y, w), len = n) 
       etastart <-
-        cbind(theta2eta(mean.init,  .lmean,  earg = .emean ),
+        cbind(theta2eta(mean.init,  .lmean ,  earg = .emean ),
               theta2eta(sigma.init, .lsigma, earg = .esigma))
     }
   }),list( .lmean = lmean, .lsigma = lsigma,
                            .isigma = isigma, .d = d,
            .emean = emean, .esigma = esigma ))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
-    eta2theta(eta[, 1], .lmean, earg = .emean )
+    eta2theta(eta[, 1], .lmean , earg = .emean )
   }, list( .lmean = lmean,
            .emean = emean, .esigma = esigma ))),
   last = eval(substitute(expression({
@@ -683,22 +733,45 @@ rtikuv <- function(n, d, mean = 0, sigma = 1, Smallno = 1.0e-6) {
   }), list( .lmean = lmean, .lsigma = lsigma, .d = d,
             .emean = emean, .esigma = esigma ))),
   loglikelihood = eval(substitute(
-    function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
-    mymu  <- eta2theta(eta[, 1], .lmean,  earg = .emean )
-    sigma <- eta2theta(eta[, 2], .lsigma, earg = .esigma)
-    if (residuals) stop("loglikelihood residuals ",
-                        "not implemented yet") else {
-      sum(c(w) * dtikuv(x = y, d = .d , mean = mymu,
-                        sigma = sigma, log = TRUE))
+    function(mu, y, w, residuals = FALSE, eta,
+             extra = NULL,
+             summation = TRUE) {
+    mymu  <- eta2theta(eta[, 1], .lmean  , earg = .emean  )
+    sigma <- eta2theta(eta[, 2], .lsigma , earg = .esigma )
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
+      ll.elts <- c(w) * dtikuv(x = y, d = .d , mean = mymu,
+                               sigma = sigma, log = TRUE)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
     }
   }, list( .lmean = lmean, .lsigma = lsigma, .d = d,
            .emean = emean, .esigma = esigma ))),
   vfamily = c("tikuv"),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   deriv = eval(substitute(expression({
-    mymu  <- eta2theta(eta[, 1], .lmean,  earg = .emean )
+    mymu  <- eta2theta(eta[, 1], .lmean ,  earg = .emean )
     sigma <- eta2theta(eta[, 2], .lsigma, earg = .esigma)
 
-    dmu.deta <- dtheta.deta(mymu, .lmean, earg = .emean )
+    dmu.deta <- dtheta.deta(mymu, .lmean , earg = .emean )
     dsigma.deta <- dtheta.deta(sigma, .lsigma, earg = .esigma)
 
     zedd <- (y - mymu) / sigma
@@ -813,7 +886,7 @@ rfoldnorm <- function(n, mean = 0, sd = 1, a1 = 1, a2=1) {
 
 
 
- foldnormal <- function(lmean = "identity", lsd = "loge",
+ foldnormal <- function(lmean = "identitylink", lsd = "loge",
                       imean = NULL,       isd = NULL,
                       a1 = 1, a2 = 1,
                       nsimEIM = 500, imethod = 1, zero = NULL) {
@@ -861,7 +934,7 @@ rfoldnorm <- function(n, mean = 0, sd = 1, a1 = 1, a2=1) {
             namesof("mean", lmean, earg = emean, tag = TRUE), "; ",
             namesof("sd",   lsd,   earg = esd,   tag = TRUE)),
   infos = eval(substitute(function(...) {
-    list(Musual = 2,
+    list(M1 = 2,
          a1 = .a1 ,
          a2 = .a2 ,
          zero = .zero ,
@@ -884,8 +957,8 @@ rfoldnorm <- function(n, mean = 0, sd = 1, a1 = 1, a2=1) {
 
 
     predictors.names <-
-        c(namesof("mean", .lmean, earg = .emean, tag = FALSE),
-          namesof("sd",   .lsd,   earg = .esd,   tag = FALSE))
+        c(namesof("mean", .lmean , earg = .emean, tag = FALSE),
+          namesof("sd",   .lsd ,   earg = .esd,   tag = FALSE))
 
     if (!length(etastart)) {
       junk <- lm.wfit(x = x, y = c(y), w = c(w))
@@ -913,16 +986,16 @@ rfoldnorm <- function(n, mean = 0, sd = 1, a1 = 1, a2=1) {
           {if ( .imethod == 1) median(y) else meany}, len = n)
       sd.init <- rep(if (length( .isd )) .isd else
           {if ( .imethod == 1)  stddev else 1.2*sd(c(y))}, len = n)
-      etastart <- cbind(theta2eta(mean.init, .lmean, earg = .emean ),
-                        theta2eta(sd.init,   .lsd,   earg = .esd ))
+      etastart <- cbind(theta2eta(mean.init, .lmean , earg = .emean ),
+                        theta2eta(sd.init,   .lsd ,   earg = .esd ))
     }
   }), list( .lmean = lmean, .lsd = lsd,
             .emean = emean, .esd = esd,
             .imean = imean, .isd = isd,
             .a1 = a1, .a2 = a2, .imethod = imethod ))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
-    mymu <- eta2theta(eta[, 1], .lmean, earg = .emean )
-    mysd <- eta2theta(eta[, 2], .lsd, earg = .esd )
+    mymu <- eta2theta(eta[, 1], .lmean , earg = .emean )
+    mysd <- eta2theta(eta[, 2], .lsd , earg = .esd )
     mytheta <- mymu / mysd
     mysd * (( .a1 + .a2 ) * (mytheta * pnorm(mytheta) +
         dnorm(mytheta)) - .a2 * mytheta)
@@ -946,28 +1019,37 @@ rfoldnorm <- function(n, mean = 0, sd = 1, a1 = 1, a2=1) {
             .imethod = imethod, .nsimEIM = nsimEIM,
             .a1 = a1, .a2 = a2 ))),
   loglikelihood = eval(substitute(
-    function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
-    mymu <- eta2theta(eta[, 1], .lmean, earg = .emean )
-    mysd <- eta2theta(eta[, 2], .lsd,   earg = .esd )
+    function(mu, y, w, residuals = FALSE, eta,
+             extra = NULL,
+             summation = TRUE) {
+    mymu <- eta2theta(eta[, 1], .lmean , earg = .emean )
+    mysd <- eta2theta(eta[, 2], .lsd ,   earg = .esd )
     a1vec <- .a1
     a2vec <- .a2
-    if (residuals) stop("loglikelihood residuals ",
-                        "not implemented yet") else {
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
 
-        sum(c(w) * dfoldnorm(y, mean = mymu, sd = mysd,
-                             a1 = a1vec, a2 = a2vec, log = TRUE))
+      ll.elts <-
+        c(w) * dfoldnorm(y, mean = mymu, sd = mysd,
+                         a1 = a1vec, a2 = a2vec, log = TRUE)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
       }
+    }
   }, list( .lmean = lmean, .lsd = lsd,
            .emean = emean, .esd = esd,
            .a1 = a1, .a2 = a2 ))),
   vfamily = c("foldnormal"),
   deriv = eval(substitute(expression({
-    Musual <- 2
-    mymu <- eta2theta(eta[, 1], .lmean, earg = .emean )
-    mysd <- eta2theta(eta[, 2], .lsd,   earg = .esd )
+    M1 <- 2
+    mymu <- eta2theta(eta[, 1], .lmean , earg = .emean )
+    mysd <- eta2theta(eta[, 2], .lsd ,   earg = .esd )
 
-    dmu.deta <- dtheta.deta(mymu, .lmean, earg = .emean )
-    dsd.deta <- dtheta.deta(mysd, .lsd,   earg = .esd )
+    dmu.deta <- dtheta.deta(mymu, .lmean , earg = .emean )
+    dsd.deta <- dtheta.deta(mysd, .lsd ,   earg = .esd )
 
     a1vec <- .a1
     a2vec <- .a2
@@ -1027,7 +1109,7 @@ lqnorm.control <- function(trace = TRUE, ...) {
 
 
 lqnorm <- function(qpower = 2,
-                   link = "identity",
+                   link = "identitylink",
                    imethod = 1, imu = NULL, shrinkage.init = 0.95) {
 
 
@@ -1237,8 +1319,7 @@ qtobit <- function(p, mean = 0, sd = 1,
 
 
 
-rtobit <- function(n, mean = 0, sd = 1,
-                   Lower = 0, Upper = Inf) {
+rtobit <- function(n, mean = 0, sd = 1, Lower = 0, Upper = Inf) {
 
   use.n <- if ((length.n <- length(n)) > 1) length.n else
            if (!is.Numeric(n, integer.valued = TRUE,
@@ -1272,7 +1353,7 @@ tobit.control <- function(save.weight = TRUE, ...) {
 
 
  tobit <- function(Lower = 0, Upper = Inf,
-                   lmu = "identity",  lsd = "loge",
+                   lmu = "identitylink",  lsd = "loge",
                    nsimEIM = 250,
                    imu = NULL,        isd = NULL,
                    type.fitted = c("uncensored", "censored", "mean.obs"),
@@ -1322,7 +1403,7 @@ tobit.control <- function(save.weight = TRUE, ...) {
 
   stdTobit <- all(Lower == 0.0) &&
               all(!is.finite(Upper)) &&
-              all(lmu == "identity")
+              all(lmu == "identitylink")
 
 
   new("vglmff",
@@ -1335,19 +1416,19 @@ tobit.control <- function(save.weight = TRUE, ...) {
   constraints = eval(substitute(expression({
 
     dotzero <- .zero
-    Musual <- 2
+    M1 <- 2
     eval(negzero.expression)
 
   }), list( .zero = zero ))),
 
   infos = eval(substitute(function(...) {
-    list(Musual = 2,
+    list(M1 = 2,
          zero = .zero ,
          nsimEIM = .nsimEIM )
   }, list( .zero = zero, .nsimEIM = nsimEIM ))),
 
   initialize = eval(substitute(expression({
-    Musual <- 2
+    M1 <- 2
 
 
     temp5 <-
@@ -1363,7 +1444,7 @@ tobit.control <- function(save.weight = TRUE, ...) {
 
 
     ncoly <- ncol(y)
-    M <- Musual * ncoly
+    M <- M1 * ncoly
 
     Lowmat <- matrix( .Lower , nrow = n, ncol = ncoly, byrow = TRUE)
     Uppmat <- matrix( .Upper , nrow = n, ncol = ncoly, byrow = TRUE)
@@ -1387,8 +1468,8 @@ tobit.control <- function(save.weight = TRUE, ...) {
       if (ncoly == 1) "sd" else paste("sd", 1:ncoly, sep = "")
     predictors.names <-
         c(namesof(temp1.names, .lmu, earg = .emu, tag = FALSE),
-          namesof(temp2.names, .lsd, earg = .esd, tag = FALSE))
-    predictors.names <- predictors.names[interleave.VGAM(M, M = Musual)]
+          namesof(temp2.names, .lsd , earg = .esd, tag = FALSE))
+    predictors.names <- predictors.names[interleave.VGAM(M, M = M1)]
 
     if (!length(etastart)) {
       anyc <- cbind(extra$censoredL | extra$censoredU)
@@ -1414,9 +1495,9 @@ tobit.control <- function(save.weight = TRUE, ...) {
         sd.init <- matrix( .isd , n, ncoly, byrow = TRUE)
 
       etastart <- cbind(theta2eta(mu.init, .lmu, earg = .emu ),
-                       theta2eta(sd.init, .lsd, earg = .esd ))
+                       theta2eta(sd.init, .lsd , earg = .esd ))
 
-      etastart <- etastart[, interleave.VGAM(M, M = Musual), drop = FALSE]
+      etastart <- etastart[, interleave.VGAM(M, M = M1), drop = FALSE]
     }
  }), list( .Lower = Lower, .Upper = Upper,
            .lmu = lmu, .lsd = lsd,
@@ -1424,9 +1505,9 @@ tobit.control <- function(save.weight = TRUE, ...) {
            .i.mu = imu, .isd = isd,
            .imethod = imethod ))),
   linkinv = eval(substitute( function(eta, extra = NULL) {
-    Musual <- 2
-    ncoly <- ncol(eta) / Musual
-    mum <- eta2theta(eta[, Musual*(1:ncoly)-1, drop=FALSE], .lmu, earg = .emu )
+    M1 <- 2
+    ncoly <- ncol(eta) / M1
+    mum <- eta2theta(eta[, M1*(1:ncoly)-1, drop=FALSE], .lmu, earg = .emu )
     if ( .type.fitted == "uncensored")
       return(mum)
 
@@ -1438,7 +1519,7 @@ tobit.control <- function(save.weight = TRUE, ...) {
       mum
     } else {
 
-      sdm <- eta2theta(eta[, Musual*(1:ncoly)-0, drop = FALSE],
+      sdm <- eta2theta(eta[, M1*(1:ncoly)-0, drop = FALSE],
                       .lsd , earg = .esd )
       zeddL <- (Lowmat - mum) / sdm
       zeddU <- (Uppmat - mum) / sdm
@@ -1458,25 +1539,25 @@ tobit.control <- function(save.weight = TRUE, ...) {
   last = eval(substitute(expression({
 
     temp0303 <- c(rep( .lmu, length = ncoly),
-                  rep( .lsd, length = ncoly))
+                  rep( .lsd , length = ncoly))
     names(temp0303) =
       c(if (ncoly == 1) "mu" else paste("mu", 1:ncoly, sep = ""),
         if (ncoly == 1) "sd" else paste("sd", 1:ncoly, sep = ""))
-    temp0303 <- temp0303[interleave.VGAM(M, M = Musual)]
+    temp0303 <- temp0303[interleave.VGAM(M, M = M1)]
     misc$link <- temp0303 # Already named
 
     misc$earg <- vector("list", M)
     names(misc$earg) <- names(misc$link)
     for (ii in 1:ncoly) {
-      misc$earg[[Musual*ii-1]] <- .emu
-      misc$earg[[Musual*ii  ]] <- .esd
+      misc$earg[[M1*ii-1]] <- .emu
+      misc$earg[[M1*ii  ]] <- .esd
     }
 
     misc$multipleResponses <- TRUE
     misc$expected <- TRUE
     misc$imethod <- .imethod
     misc$nsimEIM <- .nsimEIM
-    misc$Musual <- Musual
+    misc$M1 <- M1
     misc$stdTobit <- .stdTobit
     misc$Lower <- Lowmat
     misc$Upper <- Uppmat
@@ -1495,8 +1576,10 @@ tobit.control <- function(save.weight = TRUE, ...) {
             .Lower = Lower,
             .Upper = Upper ))),
   loglikelihood = eval(substitute(
-    function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
-    Musual <- 2
+    function(mu, y, w, residuals = FALSE, eta,
+             extra = NULL,
+             summation = TRUE) {
+    M1 <- 2
     y <- cbind(y)
     ncoly <- ncol(y)
 
@@ -1507,9 +1590,9 @@ tobit.control <- function(save.weight = TRUE, ...) {
     Uppmat <- matrix( .Upper , nrow = nrow(eta), ncol = ncoly, byrow = TRUE)
 
 
-    mum <- eta2theta(eta[, Musual*(1:ncoly)-1, drop = FALSE],
+    mum <- eta2theta(eta[, M1*(1:ncoly)-1, drop = FALSE],
                      .lmu , earg = .emu )
-    sdm <- eta2theta(eta[, Musual*(1:ncoly)-0, drop = FALSE],
+    sdm <- eta2theta(eta[, M1*(1:ncoly)-0, drop = FALSE],
                      .lsd , earg = .esd )
 
     ell0 <- dnorm(  y[cen0], mean = mum[cen0], sd = sdm[cen0],
@@ -1521,19 +1604,33 @@ tobit.control <- function(save.weight = TRUE, ...) {
 
     wmat <- matrix(w, nrow = nrow(eta), ncol = ncoly)
     if (residuals) {
-      stop("loglikelihood residuals not ",
-           "implemented yet") 
+      stop("loglikelihood residuals not implemented yet")
     } else {
-      sum(wmat[cen0] * ell0) +
-      sum(wmat[cenL] * ellL) +
-      sum(wmat[cenU] * ellU)
+      ll.elts <- y  # Right dimension only
+      ll.elts[cen0]<- wmat[cen0] * ell0
+      ll.elts[cenL]<- wmat[cenL] * ellL
+      ll.elts[cenU]<- wmat[cenU] * ellU
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
     }
   }, list( .lmu = lmu, .lsd = lsd,
            .emu = emu, .esd = esd,
            .Lower = Lower, .Upper = Upper ))),
   vfamily = c("tobit"),
+
+
+
+
+
+
+
+
+
   deriv = eval(substitute(expression({
-    Musual <- 2
+    M1 <- 2
     y <- cbind(y)
     ncoly <- ncol(y)
 
@@ -1544,17 +1641,17 @@ tobit.control <- function(save.weight = TRUE, ...) {
     cenU <- extra$censoredU
     cen0 <- !cenL & !cenU   # uncensored obsns
 
-    mum <- eta2theta(eta[, Musual*(1:ncoly)-1, drop = FALSE],
+    mum <- eta2theta(eta[, M1*(1:ncoly)-1, drop = FALSE],
                      .lmu, earg = .emu )
-    sdm <- eta2theta(eta[, Musual*(1:ncoly)-0, drop = FALSE],
-                     .lsd, earg = .esd )
+    sdm <- eta2theta(eta[, M1*(1:ncoly)-0, drop = FALSE],
+                     .lsd , earg = .esd )
 
     zedd <- (y - mum) / sdm
     dl.dmu <- zedd / sdm
     dl.dsd <- (zedd^2 - 1) / sdm
 
     dmu.deta <- dtheta.deta(mum, .lmu, earg = .emu )
-    dsd.deta <- dtheta.deta(sdm, .lsd, earg = .esd )
+    dsd.deta <- dtheta.deta(sdm, .lsd , earg = .esd )
 
     if (any(cenL)) {
       mumL <- Lowmat - mum
@@ -1576,18 +1673,18 @@ tobit.control <- function(save.weight = TRUE, ...) {
     }
 
     dthetas.detas <- cbind(dmu.deta, dsd.deta)
-    dThetas.detas <- dthetas.detas[, interleave.VGAM(M, M = Musual)]
+    dThetas.detas <- dthetas.detas[, interleave.VGAM(M, M = M1)]
 
     myderiv <- cbind(c(w) * dl.dmu,
                      c(w) * dl.dsd) * dthetas.detas
-    myderiv[, interleave.VGAM(M, M = Musual)]
+    myderiv[, interleave.VGAM(M, M = M1)]
   }), list( .lmu = lmu, .lsd = lsd,
             .emu = emu, .esd = esd,
             .Lower = Lower, .Upper = Upper ))),
   weight = eval(substitute(expression({
 
     wz <- matrix(0.0, n, M + M - 1)  # wz is 'tridiagonal'
-    ind1 <- iam(NA, NA, M = Musual, both = TRUE, diag = TRUE)
+    ind1 <- iam(NA, NA, M = M1, both = TRUE, diag = TRUE)
 
 
     if (is.numeric( .nsimEIM ) &&
@@ -1644,53 +1741,53 @@ tobit.control <- function(save.weight = TRUE, ...) {
         run.varcov
 
 
-      wz1 <- wz1 * dThetas.detas[, Musual * (spp. - 1) + ind1$row] *
-                   dThetas.detas[, Musual * (spp. - 1) + ind1$col]
+      wz1 <- wz1 * dThetas.detas[, M1 * (spp. - 1) + ind1$row] *
+                   dThetas.detas[, M1 * (spp. - 1) + ind1$col]
 
 
-      for (jay in 1:Musual)
-        for (kay in jay:Musual) {
-          cptr <- iam((spp. - 1) * Musual + jay,
-                      (spp. - 1) * Musual + kay,
+      for (jay in 1:M1)
+        for (kay in jay:M1) {
+          cptr <- iam((spp. - 1) * M1 + jay,
+                      (spp. - 1) * M1 + kay,
                       M = M)
-          wz[, cptr] = wz1[, iam(jay, kay, M = Musual)]
+          wz[, cptr] = wz1[, iam(jay, kay, M = M1)]
         }
-    } # End of for (spp.) loop
+    }  # End of for (spp.) loop
 
     } else {
 
-      wz1 <- matrix(0.0, n, dimm(Musual))
+      wz1 <- matrix(0.0, n, dimm(M1))
       for (spp. in 1:ncoly) {
         zedd  <- (y[, spp.] - mum[, spp.]) / sdm[, spp.]
         zedd0 <- (            mum[, spp.]) / sdm[, spp.]
         phivec <- dnorm(zedd0)
         Phivec <- pnorm(zedd0)
 
-        wz1[, iam(1, 1, M = Musual)] <-   -(phivec * zedd0 -
+        wz1[, iam(1, 1, M = M1)] <-   -(phivec * zedd0 -
                                         phivec^2 / (1 - Phivec) -
                                         Phivec)
-        wz1[, iam(2, 2, M = Musual)] <-   -(phivec   * zedd0^3 +
+        wz1[, iam(2, 2, M = M1)] <-   -(phivec   * zedd0^3 +
                                         phivec   * zedd0 -
                                         phivec^2 * zedd0^2 / (1 - Phivec) -
                                         2 * Phivec)
-        wz1[, iam(1, 2, M = Musual)] <- +(phivec   * zedd0^2 +
+        wz1[, iam(1, 2, M = M1)] <- +(phivec   * zedd0^2 +
                                         phivec   -
                                         phivec^2 * zedd0 / (1 - Phivec))
 
         wz1 <- wz1 / sdm[, spp.]^2
-      wz1 <- wz1 * dThetas.detas[, Musual * (spp. - 1) + ind1$row] *
-                   dThetas.detas[, Musual * (spp. - 1) + ind1$col]
+      wz1 <- wz1 * dThetas.detas[, M1 * (spp. - 1) + ind1$row] *
+                   dThetas.detas[, M1 * (spp. - 1) + ind1$col]
 
-      for (jay in 1:Musual)
-          for (kay in jay:Musual) {
-              cptr <- iam((spp. - 1) * Musual + jay,
-                          (spp. - 1) * Musual + kay,
+      for (jay in 1:M1)
+          for (kay in jay:M1) {
+              cptr <- iam((spp. - 1) * M1 + jay,
+                          (spp. - 1) * M1 + kay,
                           M = M)
-              wz[, cptr] <- wz1[, iam(jay, kay, M = Musual)]
+              wz[, cptr] <- wz1[, iam(jay, kay, M = M1)]
       }
-      } # End of for (spp.) loop
+      }  # End of for (spp.) loop
 
-    } # End of EIM
+    }  # End of EIM
 
 
     temp <- w.wz.merge(w = w, wz = wz, n = n, M = M, ndepy = ncoly)
@@ -1701,7 +1798,7 @@ tobit.control <- function(save.weight = TRUE, ...) {
             .lsd = lsd,
             .stdTobit = stdTobit,
             .nsimEIM = nsimEIM ))))
-} # End of tobit()
+}  # End of tobit()
 
 
 
@@ -1710,7 +1807,7 @@ tobit.control <- function(save.weight = TRUE, ...) {
 
 
  normal1 <-
- uninormal <- function(lmean = "identity", lsd = "loge", lvar = "loge",
+ uninormal <- function(lmean = "identitylink", lsd = "loge", lvar = "loge",
                        var.arg = FALSE,
                        imethod = 1,
                        isd = NULL,
@@ -1792,14 +1889,15 @@ tobit.control <- function(save.weight = TRUE, ...) {
               apply.int = .apply.parint )
 
     dotzero <- .zero
-    Musual <- 2
+    M1 <- 2
     eval(negzero.expression)
   }), list( .zero = zero,
             .parallel = parallel, .apply.parint = apply.parint ))),
 
 
   infos = eval(substitute(function(...) {
-    list(Musual = 2,
+    list(M1 = 2,
+         Q1 = 1,
          zero = .zero)
   }, list( .zero = zero ))),
 
@@ -1845,10 +1943,10 @@ tobit.control <- function(save.weight = TRUE, ...) {
 
 
     ncoly <- ncol(y)
-    Musual <- 2
+    M1 <- 2
     extra$ncoly <- ncoly
-    extra$Musual <- Musual
-    M <- Musual * ncoly
+    extra$M1 <- M1
+    M <- M1 * ncoly
 
 
 
@@ -1861,7 +1959,7 @@ tobit.control <- function(save.weight = TRUE, ...) {
           if ( .var.arg ) 
           namesof(mynames2, .lvare , earg = .evare , tag = FALSE) else
           namesof(mynames2, .lsdev , earg = .esdev , tag = FALSE))
-    predictors.names <- predictors.names[interleave.VGAM(M, M = Musual)]
+    predictors.names <- predictors.names[interleave.VGAM(M, M = M1)]
     extra$predictors.names <- predictors.names
 
 
@@ -1910,7 +2008,7 @@ tobit.control <- function(save.weight = TRUE, ...) {
               theta2eta(sdev.init^2, .lvare , earg = .evare ) else
               theta2eta(sdev.init  , .lsdev , earg = .esdev ))
       etastart <-
-        etastart[, interleave.VGAM(ncol(etastart), M = Musual)]
+        etastart[, interleave.VGAM(ncol(etastart), M = M1)]
 
       colnames(etastart) <- predictors.names
     }
@@ -1920,45 +2018,45 @@ tobit.control <- function(save.weight = TRUE, ...) {
             .var.arg = var.arg, .imethod = imethod ))),
 
   linkinv = eval(substitute(function(eta, extra = NULL) {
-    Musual <- extra$Musual
+    M1 <- extra$M1
     ncoly <- extra$ncoly
 
 
 
     if ( .lmean == "explink") {
-      if (any(eta[, Musual*(1:ncoly) - 1] < 0)) {
+      if (any(eta[, M1*(1:ncoly) - 1] <= 0)) {
         warning("turning some columns of 'eta' positive in @linkinv")
         for (ii in 1:ncoly)
-          eta[, Musual*ii - 1] <- pmax( .smallno , eta[, Musual*ii - 1])
+          eta[, M1*ii - 1] <- pmax( .smallno , eta[, M1*ii - 1])
       }
     }
 
 
-    eta2theta(eta[, Musual*(1:ncoly) - 1], .lmean , earg = .emean )
+    eta2theta(eta[, M1*(1:ncoly) - 1], .lmean , earg = .emean )
   }, list( .lmean = lmean,
            .emean = emean, .esdev = esdev , .evare = evare,
            .smallno = smallno ))),
 
   last = eval(substitute(expression({
-    Musual <- extra$Musual
+    M1 <- extra$M1
     misc$link <- c(rep( .lmean , length = ncoly),
                    rep( .lsdev , length = ncoly))
-    misc$link <- misc$link  [interleave.VGAM(Musual * ncoly, M = Musual)]
+    misc$link <- misc$link  [interleave.VGAM(M1 * ncoly, M = M1)]
     temp.names <- c(mynames1, mynames2)
-    temp.names <- temp.names[interleave.VGAM(Musual * ncoly, M = Musual)]
+    temp.names <- temp.names[interleave.VGAM(M1 * ncoly, M = M1)]
     names(misc$link) <- temp.names
 
 
-    misc$earg <- vector("list", Musual * ncoly)
+    misc$earg <- vector("list", M1 * ncoly)
     names(misc$earg) <- temp.names
     for (ii in 1:ncoly) {
-      misc$earg[[Musual*ii-1]] <- .emean
-      misc$earg[[Musual*ii  ]] <- if ( .var.arg ) .evare else .esdev
+      misc$earg[[M1*ii-1]] <- .emean
+      misc$earg[[M1*ii  ]] <- if ( .var.arg ) .evare else .esdev
     }
     names(misc$earg) <- temp.names
 
     misc$var.arg <- .var.arg
-    misc$Musual <- Musual
+    misc$M1 <- M1
     misc$expected <- TRUE
     misc$imethod <- .imethod
     misc$multipleResponses <- TRUE
@@ -1972,27 +2070,35 @@ tobit.control <- function(save.weight = TRUE, ...) {
             .var.arg = var.arg, .imethod = imethod ))),
 
   loglikelihood = eval(substitute(
-    function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
+    function(mu, y, w, residuals = FALSE, eta,
+             extra = NULL,
+             summation = TRUE) {
     ncoly <- extra$ncoly
-    Musual <- extra$Musual
+    M1 <- extra$M1
 
     if ( .lmean == "explink") {
-      if (any(eta[, Musual*(1:ncoly) - 1] < 0)) {
+      if (any(eta[, M1*(1:ncoly) - 1] <= 0)) {
         warning("turning some columns of 'eta' positive in @loglikelihood")
         for (ii in 1:ncoly)
-          eta[, Musual*ii - 1] <- pmax( .smallno , eta[, Musual*ii - 1])
+          eta[, M1*ii - 1] <- pmax( .smallno , eta[, M1*ii - 1])
       }
     }
 
     if ( .var.arg ) {
-      Varm <- eta2theta(eta[, Musual*(1:ncoly)], .lvare , earg = .evare )
+      Varm <- eta2theta(eta[, M1*(1:ncoly)], .lvare , earg = .evare )
       sdev <- sqrt(Varm)
     } else {
-      sdev <- eta2theta(eta[, Musual*(1:ncoly)], .lsdev , earg = .esdev )
+      sdev <- eta2theta(eta[, M1*(1:ncoly)], .lsdev , earg = .esdev )
     }
-    if (residuals) stop("loglikelihood residuals not ",
-                        "implemented yet") else {
-      sum(c(w) * dnorm(y, m = mu, sd = sdev, log = TRUE))
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
+      ll.elts <- c(w) * dnorm(y, m = mu, sd = sdev, log = TRUE)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
     }
   }, list( .lsdev = lsdev, .lvare = lvare,
            .esdev = esdev, .evare = evare,
@@ -2000,26 +2106,55 @@ tobit.control <- function(save.weight = TRUE, ...) {
            .smallno = smallno,
            .var.arg = var.arg ))),
   vfamily = c("uninormal"),
+
+
+
+
+  simslot = eval(substitute(
+  function(object, nsim) {
+
+    pwts <- if (length(pwts <- object@prior.weights) > 0)
+              pwts else weights(object, type = "prior")
+    if (any(pwts != 1)) 
+      warning("ignoring prior weights")
+    mymu <- fitted(object)
+    eta <- predict(object)
+    if ( .var.arg ) {
+      Varm <- eta2theta(eta[, c(FALSE, TRUE)], .lvare , earg = .evare )
+      sdev <- sqrt(Varm)
+    } else {
+      sdev <- eta2theta(eta[, c(FALSE, TRUE)], .lsdev , earg = .esdev )
+    }
+    rnorm(nsim * length(mymu), mean = mymu, sd = sdev)
+  }, list( .lsdev = lsdev, .lvare = lvare,
+           .esdev = esdev, .evare = evare,
+           .lmean = lmean,
+           .smallno = smallno,
+           .var.arg = var.arg ))),
+
+
+
+
   deriv = eval(substitute(expression({
     ncoly <- extra$ncoly
-    Musual <- extra$Musual
+    M1 <- extra$M1
 
 
     if ( .lmean == "explink") {
-      if (any(eta[, Musual*(1:ncoly) - 1] < 0)) {
+      if (any(eta[, M1*(1:ncoly) - 1] <= 0)) {
         warning("turning some columns of 'eta' positive in @deriv")
         for (ii in 1:ncoly)
-          eta[, Musual*ii - 1] <- pmax( .smallno , eta[, Musual*ii - 1])
+          eta[, M1*ii - 1] <- pmax( .smallno , eta[, M1*ii - 1])
       }
     }
 
 
-    mymu <- eta2theta(  eta[, Musual*(1:ncoly) - 1], .lmean , earg = .emean )
+    mymu <- eta2theta(  eta[, M1*(1:ncoly) - 1], .lmean , earg = .emean )
     if ( .var.arg ) {
-      Varm <- eta2theta(eta[, Musual*(1:ncoly)    ], .lvare , earg = .evare )
+      Varm <- eta2theta(eta[, M1*(1:ncoly)    ], .lvare , earg = .evare )
       sdev <- sqrt(Varm)
     } else {
-      sdev <- eta2theta(eta[, Musual*(1:ncoly)    ], .lsdev , earg = .esdev )
+      sdev <- eta2theta(eta[, M1*(1:ncoly)    ], .lsdev , earg = .esdev )
     }
 
     dl.dmu <- (y - mymu) / sdev^2
@@ -2040,7 +2175,7 @@ tobit.control <- function(save.weight = TRUE, ...) {
            cbind(dl.dmu * dmu.deta,
                  if ( .var.arg ) dl.dva * dva.deta else
                                  dl.dsd * dsd.deta)
-    ans <- ans[, interleave.VGAM(ncol(ans), M = Musual)]
+    ans <- ans[, interleave.VGAM(ncol(ans), M = M1)]
 
 
 
@@ -2066,8 +2201,8 @@ tobit.control <- function(save.weight = TRUE, ...) {
       ned2l.dsd2 <- 2 / sdev^2
     }
 
-    wz[, Musual*(1:ncoly) - 1] <- ned2l.dmu2 * dmu.deta^2
-    wz[, Musual*(1:ncoly)    ] <- if ( .var.arg ) {
+    wz[, M1*(1:ncoly) - 1] <- ned2l.dmu2 * dmu.deta^2
+    wz[, M1*(1:ncoly)    ] <- if ( .var.arg ) {
       ned2l.dva2 * dva.deta^2
     } else {
       ned2l.dsd2 * dsd.deta^2
@@ -2086,7 +2221,7 @@ tobit.control <- function(save.weight = TRUE, ...) {
 
 
  normal.vcm <-
-  function(link.list = list("(Default)" = "identity"),
+  function(link.list = list("(Default)" = "identitylink"),
            earg.list = list("(Default)" = list()),
            lsd = "loge", lvar = "loge",
            esd = list(), evar = list(),
@@ -2148,13 +2283,14 @@ tobit.control <- function(save.weight = TRUE, ...) {
     if (is.character(dotzero) && dotzero == "M")
       dotzero <- M
 
-    Musual <- NA
+    M1 <- NA
     eval(negzero.expression)
   }), list( .zero = zero 
           ))),
 
   infos = eval(substitute(function(...) {
-    list(Musual = NA,
+    list(M1 = NA,
+         Q1 = 1,
          zero = .zero )
   }, list( .zero = zero ))),
 
@@ -2195,7 +2331,7 @@ tobit.control <- function(save.weight = TRUE, ...) {
   if (sum(names(earg.list) == "(Default)") > 1)
     stop("only one default allowed in argument 'earg.list'!")
   default.link <- if (any(names(link.list) == "(Default)"))
-    link.list[["(Default)"]] else "identity"
+    link.list[["(Default)"]] else "identitylink"
   default.earg <- if (any(names(earg.list) == "(Default)"))
     earg.list[["(Default)"]] else list()
 
@@ -2250,9 +2386,9 @@ tobit.control <- function(save.weight = TRUE, ...) {
     extra$ncoly <- ncoly <- ncol(y)
     extra$M <- M <- ncol(Xm2) + 1 -
                     (length(extra$is.mlogit) > 0)
-    Musual <- NA  # Since this cannot be determined apriori.
+    M1 <- NA  # Since this cannot be determined apriori.
 
-    extra$Musual <- Musual
+    extra$M1 <- M1
     extra$Xm2 <- Xm2  # Needed for @linkinv
     extra$depvar <- y
 
@@ -2441,7 +2577,7 @@ tobit.control <- function(save.weight = TRUE, ...) {
            .esd = esd , .evar = evar ))),
 
   last = eval(substitute(expression({
-    Musual <- extra$Musual
+    M1 <- extra$M1
 
 
     misc$link <- c(link.list.ordered,
@@ -2455,7 +2591,7 @@ tobit.control <- function(save.weight = TRUE, ...) {
 
 
     misc$var.arg <- .var.arg
-    misc$Musual <- Musual
+    misc$M1 <- M1
     misc$expected <- TRUE
     misc$imethod <- .imethod
     misc$multipleResponses <- FALSE
@@ -2470,16 +2606,24 @@ tobit.control <- function(save.weight = TRUE, ...) {
 
 
   loglikelihood = eval(substitute(
-    function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
+    function(mu, y, w, residuals = FALSE, eta,
+             extra = NULL,
+             summation = TRUE) {
     if ( .var.arg ) {
       Varm <- eta2theta(eta[, ncol(eta)], .lvar , earg = .evar )
       sdev <- sqrt(Varm)
     } else {
       sdev <- eta2theta(eta[, ncol(eta)], .lsd  , earg = .esd  )
     }
-    if (residuals) stop("loglikelihood residuals not ",
-                        "implemented yet") else {
-      sum(c(w) * dnorm(y, m = mu, sd = sdev, log = TRUE))
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
+      ll.elts <- c(w) * dnorm(y, m = mu, sd = sdev, log = TRUE)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
     }
   }, list( .lsd = lsd, .lvar = lvar,
            .esd = esd, .evar = evar,
@@ -2665,7 +2809,7 @@ tobit.control <- function(save.weight = TRUE, ...) {
 
 
 
- lognormal <- function(lmeanlog = "identity", lsdlog = "loge",
+ lognormal <- function(lmeanlog = "identitylink", lsdlog = "loge",
                        zero = 2) {
 
 
@@ -2704,17 +2848,17 @@ tobit.control <- function(save.weight = TRUE, ...) {
 
 
     predictors.names <-
-        c(namesof("meanlog", .lmulog, earg = .emulog, tag = FALSE),
-          namesof("sdlog",   .lsdlog, earg = .esdlog, tag = FALSE))
+        c(namesof("meanlog", .lmulog , earg = .emulog, tag = FALSE),
+          namesof("sdlog",   .lsdlog , earg = .esdlog, tag = FALSE))
 
     if (!length(etastart)) {
       mylm <- lm.wfit(x = x, y = c(log(y)), w = c(w))
       sdlog.y.est <- sqrt( sum(c(w) * mylm$resid^2) / mylm$df.residual )
       etastart <- cbind(
-        meanlog = rep(theta2eta(log(median(y)), .lmulog,
-                                earg = .emulog), length = n),
-        sdlog   = rep(theta2eta(sdlog.y.est, .lsdlog,
-                                earg = .esdlog), length = n))
+        meanlog = rep(theta2eta(log(median(y)), .lmulog ,
+                                earg = .emulog ), length = n),
+        sdlog   = rep(theta2eta(sdlog.y.est, .lsdlog ,
+                                earg = .esdlog ), length = n))
     }
   }), list( .lmulog = lmulog, .lsdlog = lsdlog,
             .emulog = emulog, .esdlog = esdlog ))),
@@ -2733,22 +2877,51 @@ tobit.control <- function(save.weight = TRUE, ...) {
   }), list( .lmulog = lmulog, .lsdlog = lsdlog,
             .emulog = emulog, .esdlog = esdlog ))),
   loglikelihood = eval(substitute(
-    function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
-    mulog <- eta2theta(eta[, 1], .lmulog, earg = .emulog)
-    sdlog <- eta2theta(eta[, 2], .lsdlog,   earg = .esdlog)
-    if (residuals) stop("loglikelihood residuals not ",
-                        "implemented yet") else {
-      sum(c(w) * dlnorm(y, meanlog = mulog, sdlog = sdlog, log = TRUE))
+    function(mu, y, w, residuals = FALSE, eta,
+             extra = NULL,
+             summation = TRUE) {
+    mulog <- eta2theta(eta[, 1], .lmulog , earg = .emulog )
+    sdlog <- eta2theta(eta[, 2], .lsdlog , earg = .esdlog )
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
+      ll.elts <- c(w) * dlnorm(y, meanlog = mulog, sdlog = sdlog, log = TRUE)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
     }
   }, list( .lmulog = lmulog, .lsdlog = lsdlog,
            .emulog = emulog, .esdlog = esdlog ))),
   vfamily = c("lognormal"),
-  deriv = eval(substitute(expression({
-    mulog <- eta2theta(eta[, 1], .lmulog, earg = .emulog)
-    sdlog <- eta2theta(eta[, 2], .lsdlog, earg = .esdlog)
 
-    dmulog.deta <- dtheta.deta(mulog, .lmulog, earg = .emulog)
-    dsdlog.deta <- dtheta.deta(sdlog, .lsdlog,   earg = .esdlog)
+
+
+
+  simslot = eval(substitute(
+  function(object, nsim) {
+
+    pwts <- if (length(pwts <- object@prior.weights) > 0)
+              pwts else weights(object, type = "prior")
+    if (any(pwts != 1)) 
+      warning("ignoring prior weights")
+    eta <- predict(object)
+    mulog <- eta2theta(eta[, c(TRUE, FALSE)], .lmulog , earg = .emulog )
+    sdlog <- eta2theta(eta[, c(FALSE, TRUE)], .lsdlog , earg = .esdlog )
+    rlnorm(nsim * length(mulog),
+           meanlog = mulog, sdlog = sdlog)
+  }, list( .lmulog = lmulog, .lsdlog = lsdlog,
+           .emulog = emulog, .esdlog = esdlog ))),
+
+
+
+  deriv = eval(substitute(expression({
+    mulog <- eta2theta(eta[, 1], .lmulog , earg = .emulog )
+    sdlog <- eta2theta(eta[, 2], .lsdlog , earg = .esdlog )
+
+    dmulog.deta <- dtheta.deta(mulog, .lmulog , earg = .emulog )
+    dsdlog.deta <- dtheta.deta(sdlog, .lsdlog ,   earg = .esdlog )
 
     dl.dmulog <- (log(y) - mulog) / sdlog^2
     dl.dsdlog <- -1 / sdlog + (log(y) - mulog)^2 / sdlog^3
@@ -2775,7 +2948,7 @@ tobit.control <- function(save.weight = TRUE, ...) {
 
 
 
- lognormal3 <- function(lmeanlog = "identity", lsdlog = "loge",
+ lognormal3 <- function(lmeanlog = "identitylink", lsdlog = "loge",
                         powers.try = (-3):3,
                         delta = NULL, zero = 2) {
 
@@ -2811,7 +2984,7 @@ tobit.control <- function(save.weight = TRUE, ...) {
           "Links:    ",
           namesof("meanlog", lmulog, earg = emulog, tag = TRUE), "; ",
           namesof("sdlog",   lsdlog, earg = esdlog, tag = TRUE), "; ",
-          namesof("lambda", "identity", earg = list(), tag = TRUE)),
+          namesof("lambda", "identitylink", earg = list(), tag = TRUE)),
   constraints = eval(substitute(expression({
     constraints <- cm.zero.vgam(constraints, x, .zero , M)
   }), list( .zero = zero ))),
@@ -2822,8 +2995,8 @@ tobit.control <- function(save.weight = TRUE, ...) {
 
 
     predictors.names <- 
-       c(namesof("meanlog", .lmulog, earg = .emulog, tag = FALSE), 
-         namesof("sdlog",   .lsdlog, earg = .esdlog, tag = FALSE),
+       c(namesof("meanlog", .lmulog , earg = .emulog, tag = FALSE), 
+         namesof("sdlog",   .lsdlog , earg = .esdlog, tag = FALSE),
          "lambda")
 
     if (!length(etastart)) {
@@ -2854,16 +3027,16 @@ tobit.control <- function(save.weight = TRUE, ...) {
             .emulog = emulog, .esdlog = esdlog,
             .delta = delta, .powers.try = powers.try ))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
-    mymu    <- eta2theta(eta[, 1], .lmulog, earg = .emulog)
-    sdlog   <- eta2theta(eta[, 2], .lsdlog, earg = .esdlog)
-    lambda  <- eta2theta(eta[, 3], "identity", earg = list(theta = NULL))
+    mymu    <- eta2theta(eta[, 1], .lmulog , earg = .emulog )
+    sdlog   <- eta2theta(eta[, 2], .lsdlog , earg = .esdlog )
+    lambda  <- eta2theta(eta[, 3], "identitylink", earg = list(theta = NULL))
     lambda + exp(mymu + 0.5 * sdlog^2)
   }, list( .lmulog = lmulog, .lsdlog = lsdlog,
            .emulog = emulog, .esdlog = esdlog ))),
   last = eval(substitute(expression({
-    misc$link <-    c("meanlog" = .lmulog,
-                      "sdlog"   = .lsdlog,
-                      "lambda"  = "identity")
+    misc$link <-    c("meanlog" = .lmulog ,
+                      "sdlog"   = .lsdlog ,
+                      "lambda"  = "identitylink")
 
     misc$earg <- list("meanlog" = .emulog,
                       "sdlog"   = .esdlog,
@@ -2873,24 +3046,53 @@ tobit.control <- function(save.weight = TRUE, ...) {
   }), list( .lmulog = lmulog, .lsdlog = lsdlog,
             .emulog = emulog, .esdlog = esdlog ))),
   loglikelihood = eval(substitute(
-    function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
-    mymu   <- eta2theta(eta[, 1], .lmulog , earg = .emulog)
-    sdlog  <- eta2theta(eta[, 2], .lsdlog , earg = .esdlog)
-    lambda <- eta2theta(eta[, 3], "identity", earg = list(theta = NULL))
+    function(mu, y, w, residuals = FALSE, eta,
+             extra = NULL,
+             summation = TRUE) {
+    mymu   <- eta2theta(eta[, 1], .lmulog , earg = .emulog )
+    sdlog  <- eta2theta(eta[, 2], .lsdlog , earg = .esdlog )
+    lambda <- eta2theta(eta[, 3], "identitylink", earg = list(theta = NULL))
     if (any(y < lambda))
       warning("bad 'y'")
-    if (residuals) stop("loglikelihood residuals not ",
-                        "implemented yet") else {
-          sum(c(w) * dlnorm(y - lambda, meanlog = mymu,
-                            sdlog = sdlog, log = TRUE))
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
+      ll.elts <- c(w) * dlnorm(y - lambda, meanlog = mymu,
+                               sdlog = sdlog, log = TRUE)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
       }
+    }
   }, list( .lmulog = lmulog, .lsdlog = lsdlog,
            .emulog = emulog, .esdlog = esdlog ))),
   vfamily = c("lognormal3"),
+
+
+
+  simslot = eval(substitute(
+  function(object, nsim) {
+
+    pwts <- if (length(pwts <- object@prior.weights) > 0)
+              pwts else weights(object, type = "prior")
+    if (any(pwts != 1)) 
+      warning("ignoring prior weights")
+    eta <- predict(object)
+    mymu   <- eta2theta(eta[, 1], .lmulog , earg = .emulog )
+    sdlog  <- eta2theta(eta[, 2], .lsdlog , earg = .esdlog )
+    lambda <- eta2theta(eta[, 3], "identitylink", earg = list(theta = NULL))
+    rlnorm(nsim * length(mymu),
+           meanlog = mymu, sdlog = sdlog) + lambda
+  }, list( .lmulog = lmulog, .lsdlog = lsdlog,
+           .emulog = emulog, .esdlog = esdlog ))),
+
+
+
   deriv = eval(substitute(expression({
-    mymu   <- eta2theta(eta[, 1], .lmulog,    earg = .emulog)
-    sdlog  <- eta2theta(eta[, 2], .lsdlog,    earg = .esdlog)
-    lambda <- eta2theta(eta[, 3], "identity", earg = list(theta = NULL))
+    mymu   <- eta2theta(eta[, 1], .lmulog ,    earg = .emulog )
+    sdlog  <- eta2theta(eta[, 2], .lsdlog ,    earg = .esdlog )
+    lambda <- eta2theta(eta[, 3], "identitylink", earg = list(theta = NULL))
 
     if (any(y < lambda))
         warning("bad 'y'")
@@ -2899,9 +3101,9 @@ tobit.control <- function(save.weight = TRUE, ...) {
     dl.dsdlog <- -1/sdlog + (log(y-lambda)-mymu)^2 / sdlog^3
     dl.dlambda <- (1 + (log(y-lambda)-mymu) / sdlog^2) / (y-lambda)
 
-    dmymu.deta <- dtheta.deta(mymu, .lmulog, earg = .emulog)
-    dsdlog.deta <- dtheta.deta(sdlog, .lsdlog, earg = .esdlog)
-    dlambda.deta <- dtheta.deta(lambda, "identity", earg = list())
+    dmymu.deta <- dtheta.deta(mymu, .lmulog , earg = .emulog )
+    dsdlog.deta <- dtheta.deta(sdlog, .lsdlog , earg = .esdlog )
+    dlambda.deta <- dtheta.deta(lambda, "identitylink", earg = list())
 
     c(w) * cbind(dl.dmymu   *   dmymu.deta, 
                  dl.dsdlog  *  dsdlog.deta, 
@@ -2953,11 +3155,22 @@ dskewnorm <- function(x, location = 0, scale = 1, shape = 0, log = FALSE) {
 
 rskewnorm <- function(n, location = 0, scale = 1, shape = 0) {
 
+
+  use.n <- if ((length.n <- length(n)) > 1) length.n else
+           if (!is.Numeric(n, integer.valued = TRUE,
+                           length.arg = 1, positive = TRUE))
+            stop("bad input for argument 'n'") else n
+
   rho <- shape / sqrt(1 + shape^2)
-  u0 <- rnorm(n)
-  v  <- rnorm(n)
+  u0 <- rnorm(use.n)
+  v  <- rnorm(use.n)
   u1 <- rho * u0 + sqrt(1 - rho^2) * v
-  ans <- location + scale * ifelse(u0 >= 0, u1, -u1)
+
+
+
+
+  ans <- location + scale * sign(u0) * u1
+
   ans[scale <= 0] <- NA
   ans
 }
@@ -2967,7 +3180,7 @@ rskewnorm <- function(n, location = 0, scale = 1, shape = 0) {
 
 
 
- skewnormal <- function(lshape = "identity",
+ skewnormal <- function(lshape = "identitylink",
                         ishape = NULL,
                         nsimEIM = NULL) {
 
@@ -2991,7 +3204,7 @@ rskewnorm <- function(n, location = 0, scale = 1, shape = 0) {
           "Mean:     shape * sqrt(2 / (pi * (1 + shape^2 )))\n",
           "Variance: 1-mu^2"),
   infos = eval(substitute(function(...) {
-    list(Musual = 1,
+    list(M1 = 1,
          nsimEIM = .nsimEIM)
   }, list( .nsimEIM = nsimEIM ))),
   initialize = eval(substitute(expression({
@@ -3045,15 +3258,45 @@ rskewnorm <- function(n, location = 0, scale = 1, shape = 0) {
     theta2eta(alpha, .lshape , earg = .eshape )
   }, list( .eshape = eshape, .lshape = lshape ))),
   loglikelihood = eval(substitute(
-    function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
+    function(mu, y, w, residuals = FALSE, eta,
+             extra = NULL,
+             summation = TRUE) {
       alpha <- eta2theta(eta, .lshape , earg = .eshape )
-      if (residuals) stop("loglikelihood residuals not ",
-                          "implemented yet") else {
-        sum(c(w) * dskewnorm(x = y, location = 0, scale = 1,
-                             shape = alpha, log = TRUE))
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
+      ll.elts <- c(w) * dskewnorm(x = y, location = 0, scale = 1,
+                                  shape = alpha, log = TRUE)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
       }
+    }
   }, list( .eshape = eshape, .lshape = lshape ))), 
   vfamily = c("skewnormal"),
+
+
+
+
+  simslot = eval(substitute(
+  function(object, nsim) {
+
+    pwts <- if (length(pwts <- object@prior.weights) > 0)
+              pwts else weights(object, type = "prior")
+    if (any(pwts != 1)) 
+      warning("ignoring prior weights")
+    eta <- predict(object)
+    alpha <- eta2theta(eta, .lshape , earg = .eshape )
+    rskewnorm(nsim * length(alpha), location = 0, scale = 1,
+              shape = alpha)
+  }, list( .eshape = eshape, .lshape = lshape ))), 
+
+
+
+
+
+
   deriv = eval(substitute(expression({
     alpha <- eta2theta(eta, .lshape , earg = .eshape )
 
@@ -3121,7 +3364,7 @@ if (FALSE)
   emean <- list()
 
 
-  lmean <- "identity"
+  lmean <- "identitylink"
 
 
 
@@ -3165,13 +3408,13 @@ if (FALSE)
                            apply.int = .apply.parint )
 
     dotzero <- .zero
-    Musual <- 2
+    M1 <- 2
     eval(negzero.expression)
   }), list( .zero = zero,
             .parallel = parallel, .apply.parint = apply.parint ))),
 
   infos = eval(substitute(function(...) {
-    list(Musual = 1,
+    list(M1 = 1,
          zero = .zero)
   }, list( .zero = zero ))),
 
@@ -3217,10 +3460,10 @@ if (FALSE)
 
 
     ncoly <- ncol(y)
-    Musual <- 1
+    M1 <- 1
     extra$ncoly <- ncoly
-    extra$Musual <- Musual
-    M <- Musual * ncoly
+    extra$M1 <- M1
+    M <- M1 * ncoly
 
 
 
@@ -3286,29 +3529,29 @@ if (FALSE)
             .var.arg = var.arg, .imethod = imethod ))),
 
   linkinv = eval(substitute(function(eta, extra = NULL) {
-    Musual <- extra$Musual
+    M1 <- extra$M1
     ncoly <- extra$ncoly
-    eta2theta(eta[, Musual*(1:ncoly) - 1], .lmean , earg = .emean )
+    eta2theta(eta[, M1*(1:ncoly) - 1], .lmean , earg = .emean )
   }, list( .esd = esd , .evar = evar,
            .emean = emean,
            .lmean = lmean ))),
 
   last = eval(substitute(expression({
-    Musual <- extra$Musual
+    M1 <- extra$M1
     misc$link <- c(rep( .lsd , length = ncoly))
     temp.names <- c(mynames2)
     names(misc$link) <- temp.names
 
 
-    misc$earg <- vector("list", Musual * ncoly)
+    misc$earg <- vector("list", M1 * ncoly)
     names(misc$earg) <- temp.names
     for (ii in 1:ncoly) {
-      misc$earg[[Musual*ii  ]] <- if ( .var.arg ) .evar else .esd
+      misc$earg[[M1*ii  ]] <- if ( .var.arg ) .evar else .esd
     }
     names(misc$earg) <- temp.names
 
     misc$var.arg <- .var.arg
-    misc$Musual <- Musual
+    misc$M1 <- M1
     misc$expected <- TRUE
     misc$imethod <- .imethod
     misc$multipleResponses <- TRUE
@@ -3320,18 +3563,26 @@ if (FALSE)
             .var.arg = var.arg, .imethod = imethod ))),
 
   loglikelihood = eval(substitute(
-    function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
+    function(mu, y, w, residuals = FALSE, eta,
+             extra = NULL,
+             summation = TRUE) {
     ncoly <- extra$ncoly
-    Musual <- extra$Musual
+    M1 <- extra$M1
     if ( .var.arg ) {
-      Varm <- eta2theta(eta[, Musual*(1:ncoly)], .lvar , earg = .evar )
+      Varm <- eta2theta(eta[, M1*(1:ncoly)], .lvar , earg = .evar )
       sdev <- sqrt(Varm)
     } else {
-      sdev <- eta2theta(eta[, Musual*(1:ncoly)], .lsd  , earg = .esd  )
+      sdev <- eta2theta(eta[, M1*(1:ncoly)], .lsd  , earg = .esd  )
     }
-    if (residuals) stop("loglikelihood residuals not ",
-                        "implemented yet") else {
-      sum(c(w) * dnorm(y, m = mu, sd = sdev, log = TRUE))
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
+      ll.elts <- c(w) * dnorm(y, m = mu, sd = sdev, log = TRUE)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
     }
   }, list( .lsd = lsd, .lvar = lvar,
            .esd = esd, .evar = evar,
@@ -3339,14 +3590,14 @@ if (FALSE)
   vfamily = c("halfuninormal"),
   deriv = eval(substitute(expression({
     ncoly <- extra$ncoly
-    Musual <- extra$Musual
+    M1 <- extra$M1
 
     mymu <- zz
     if ( .var.arg ) {
-      Varm <- eta2theta(eta[, Musual*(1:ncoly)    ], .lvar , earg = .evar )
+      Varm <- eta2theta(eta[, M1*(1:ncoly)    ], .lvar , earg = .evar )
       sdev <- sqrt(Varm)
     } else {
-      sdev <- eta2theta(eta[, Musual*(1:ncoly)    ], .lsd  , earg = .esd  )
+      sdev <- eta2theta(eta[, M1*(1:ncoly)    ], .lsd  , earg = .esd  )
     }
 
     dl.dmu <- zz * (y - mymu) / sdev^2
@@ -3380,7 +3631,7 @@ if (FALSE)
       ned2l.dsd2 <- 2 / sdev^2
     }
 
-    wz[, Musual*(1:ncoly)    ] <- if ( .var.arg ) {
+    wz[, M1*(1:ncoly)    ] <- if ( .var.arg ) {
       ned2l.dva2 * dva.deta^2
     } else {
       ned2l.dsd2 * dsd.deta^2

@@ -127,13 +127,14 @@ betaff(A = 0, B = 1, lmu = "logit", lphi = "loge",
   \code{\link{rbetageom}},
   \code{\link{rbetanorm}},
   \code{\link{kumar}},
-  \code{\link{elogit}}.
+  \code{\link{elogit}},
+  \code{\link{simulate.vlm}}.
 
 
 }
 \examples{
 bdata <- data.frame(y = rbeta(nn <- 1000, shape1 = exp(0), shape2 = exp(1)))
-fit1 <- vglm(y ~ 1, betaff, bdata, trace = TRUE)
+fit1 <- vglm(y ~ 1, betaff, data = bdata, trace = TRUE)
 coef(fit1, matrix = TRUE)
 Coef(fit1)  # Useful for intercept-only models
 

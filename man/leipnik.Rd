@@ -86,7 +86,7 @@ leipnik(lmu = "logit", llambda = "loge", imu = NULL, ilambda = NULL)
 }
 
 \section{Warning }{
-  If \code{llambda="identity"} then it is possible that the
+  If \code{llambda="identitylink"} then it is possible that the
   \code{lambda} estimate becomes less than \eqn{-1}, i.e., out of
   bounds. One way to stop this is to choose \code{llambda = "loge"},
   however, \code{lambda} is then constrained to be positive.
@@ -101,9 +101,9 @@ leipnik(lmu = "logit", llambda = "loge", imu = NULL, ilambda = NULL)
 }
 \examples{
 ldata <- data.frame(y = rnorm(n = 2000, mean = 0.5, sd = 0.1))  # Not proper data
-fit <- vglm(y ~ 1, leipnik(ilambda = 1), ldata, trace = TRUE, checkwz = FALSE)
+fit <- vglm(y ~ 1, leipnik(ilambda = 1), data = ldata, trace = TRUE, checkwz = FALSE)
 fit <- vglm(y ~ 1, leipnik(ilambda = 1, llambda = logoff(offset = 1)),
-            ldata, trace = TRUE, crit = "coef")
+            data = ldata, trace = TRUE, crit = "coef")
 head(fitted(fit))
 with(ldata, mean(y))
 summary(fit)

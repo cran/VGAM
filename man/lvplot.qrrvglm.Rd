@@ -33,6 +33,8 @@ lvplot.qrrvglm(object, varI.latvar = FALSE, reference = NULL,
 \arguments{
   \item{object}{
   A CQO object.
+
+
 % A CQO or UQO object.
 
 
@@ -87,10 +89,13 @@ For rank-2 models, points are the optima.
   See the \code{col} argument in \code{\link[graphics]{par}}.
 
  }
-  \item{pch}{ Either an integer specifying a symbol or a single character
-      to be used as the default in plotting points.
-      See \code{\link[graphics]{par}}.
-      The \code{pch} argument can be of length \eqn{M}, the number of species.
+ \item{pch}{ Either an integer specifying a symbol or a single character
+    to be used as the default in plotting points.
+    See \code{\link[graphics]{par}}.
+    The \code{pch} argument can be of length \eqn{M},
+    the number of species.
+
+
   }
   \item{llty}{ Line type.
   Rank-1 models only.
@@ -132,6 +137,7 @@ For rank-2 models, points are the optima.
       will result in circular contours that have unit radius (in latent
       variable units).  If \code{ellipse} is \code{NULL} or \code{FALSE}
       then no ellipse is drawn around the optima.
+
 
   }
   \item{Absolute}{ Logical.
@@ -222,7 +228,7 @@ For rank-2 models, points are the optima.
 % See \code{\link{Coef.qrrvglm}} for details. 
 % }
 
-% \item{ITolerances}{
+% \item{I.tolerances}{
 % Logical.
 % If \code{TRUE}, the tolerances matrices are transformed so that they are
 % the order-\code{Rank} identity matrix. This means that a rank-2 
@@ -337,11 +343,10 @@ canonical Gaussian ordination.
 }
 
 \examples{
-set.seed(123)
-nn <- 200
-cdata <- data.frame(x2 = rnorm(nn),   # Has mean 0 (needed when ITol=TRUE)
-                    x3 = rnorm(nn),   # Has mean 0 (needed when ITol=TRUE)
-                    x4 = rnorm(nn))   # Has mean 0 (needed when ITol=TRUE)
+set.seed(123); nn <- 200
+cdata <- data.frame(x2 = rnorm(nn),  # Has mean 0 (needed when I.tol=TRUE)
+                    x3 = rnorm(nn),  # Has mean 0 (needed when I.tol=TRUE)
+                    x4 = rnorm(nn))  # Has mean 0 (needed when I.tol=TRUE)
 cdata <- transform(cdata, latvar1 =  x2 + x3 - 2*x4,
                           latvar2 = -x2 + x3 + 0*x4)
 # Nb. latvar2 is weakly correlated with latvar1
@@ -356,8 +361,8 @@ cdata <- transform(cdata,
 set.seed(111)
 # vvv p2 <- cqo(cbind(spp1,spp2,spp3) ~ x2 + x3 + x4, poissonff, 
 # vvv          data = cdata,
-# vvv          Rank=2, ITolerances=TRUE,
-# vvv          Crow1positive=c(TRUE,FALSE))   # deviance = 505.81
+# vvv          Rank = 2, I.tolerances = TRUE,
+# vvv          Crow1positive = c(TRUE, FALSE))   # deviance = 505.81
 # vvv if (deviance(p2) > 506) stop("suboptimal fit obtained")
 # vvv sort(p2@misc$deviance.Bestof)  # A history of the fits
 # vvv Coef(p2)
@@ -369,10 +374,10 @@ lvplot(p2, sites = TRUE, spch = "*", scol = "darkgreen", scex = 1.5,
        C = TRUE, Cadj = c(-.3,-.3,1), Clwd = 2, Ccex = 1.4, Ccol = "red",
        main = paste("Contours at Abundance = 140 with",
                   "convex hull of the site scores")) }
-# vvv var(latvar(p2))  # A diagonal matrix, i.e., uncorrelated latent variables
+# vvv var(latvar(p2))  # A diagonal matrix, i.e., uncorrelated latent vars
 # vvv var(latvar(p2, varI.latvar = TRUE))  # Identity matrix
-# vvv Tol(p2)[,,1:2]  # Identity matrix
-# vvv Tol(p2, varI.latvar = TRUE)[,,1:2]  # A diagonal matrix
+# vvv Tol(p2)[, , 1:2]  # Identity matrix
+# vvv Tol(p2, varI.latvar = TRUE)[, , 1:2]  # A diagonal matrix
 }
 \keyword{models}
 \keyword{regression}

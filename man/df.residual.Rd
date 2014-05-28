@@ -64,7 +64,7 @@ df.residual_vlm(object, type = c("vlm", "lm"), \dots)
 
 \examples{
 pneumo <- transform(pneumo, let = log(exposure.time))
-(fit <- vglm(cbind(normal, mild, severe) ~ let, propodds, pneumo))
+(fit <- vglm(cbind(normal, mild, severe) ~ let, propodds, data = pneumo))
 head(model.matrix(fit, type = "vlm"))
 head(model.matrix(fit, type = "lm"))
 

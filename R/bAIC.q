@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2013 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2014 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -126,22 +126,22 @@ AICqrrvglm <- function(object, ...,
 
 
 
-  EqualTolerances <- object@control$EqualTolerances
-  ITolerances <- object@control$ITolerances
-  if (!(length(EqualTolerances) == 1 && is.logical(EqualTolerances)))
+  eq.tolerances <- object@control$eq.tolerances
+  I.tolerances <- object@control$I.tolerances
+  if (!(length(eq.tolerances) == 1 && is.logical(eq.tolerances)))
     stop("could not determine whether the fitted object used an ",
          "equal-tolerances assumption based on ",
-         "argument 'EqualTolerances'")
-  if (!(length(ITolerances) == 1 && is.logical(ITolerances)))
+         "argument 'eq.tolerances'")
+  if (!(length(I.tolerances) == 1 && is.logical(I.tolerances)))
     stop("could not determine whether the fitted object used an ",
-         "equal-tolerances assumption based on argument 'ITolerances'")
+         "equal-tolerances assumption based on argument 'I.tolerances'")
 
 
   NOS <- if (length(object@y)) ncol(object@y) else MMM
   MSratio <- MMM / NOS  # First value is g(mean) = quadratic form in l
   if (round(MSratio) != MSratio)
     stop("variable 'MSratio' is not an integer")
-  elts.D <- ifelse(ITolerances || EqualTolerances, 1, NOS) *
+  elts.D <- ifelse(I.tolerances || eq.tolerances, 1, NOS) *
             Rank * (Rank + 1) / 2
 
 

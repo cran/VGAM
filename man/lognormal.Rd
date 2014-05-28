@@ -9,8 +9,8 @@
 
 }
 \usage{
-lognormal(lmeanlog = "identity", lsdlog = "loge", zero = 2)
-lognormal3(lmeanlog = "identity", lsdlog = "loge",
+lognormal(lmeanlog = "identitylink", lsdlog = "loge", zero = 2)
+lognormal3(lmeanlog = "identitylink", lsdlog = "loge",
            powers.try = (-3):3, delta = NULL, zero = 2)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -122,29 +122,31 @@ Hoboken, NJ, USA: Wiley-Interscience.
 
 
 \seealso{
-% \code{\link{lognormal3}},
   \code{\link[stats]{rlnorm}},
   \code{\link{uninormal}},
-  \code{\link{CommonVGAMffArguments}}.
+  \code{\link{CommonVGAMffArguments}},
+  \code{\link{simulate.vlm}}.
+
+
+% \code{\link{lognormal3}},
 
 
 }
 
 \examples{
 ldata <- data.frame(y1 = rlnorm(nn <- 1000, meanlog = 1.5, sdlog = exp(-0.8)))
-fit1 <- vglm(y1 ~ 1, lognormal, ldata, trace = TRUE)
+fit1 <- vglm(y1 ~ 1, lognormal, data = ldata, trace = TRUE, crit = "c")
 coef(fit1, matrix = TRUE)
 Coef(fit1)
 
 ldata2 <- data.frame(x2 = runif(nn <- 1000))
 ldata2 <- transform(ldata2, y2 = rlnorm(nn, mean = 0.5, sd = exp(x2)))
-fit2 <- vglm(y2 ~ x2, lognormal(zero = 1), ldata2, trace = TRUE, crit = "c")
+fit2 <- vglm(y2 ~ x2, lognormal(zero = 1), data = ldata2, trace = TRUE)
 coef(fit2, matrix = TRUE)
-Coef(fit2)
 
 lambda <- 4
-ldata3 <- data.frame(y3 = lambda + rlnorm(n = 1000, mean = 1.5, sd = exp(-0.8)))
-fit3 <- vglm(y3 ~ 1, lognormal3, ldata3, trace = TRUE, crit = "c")
+ldata3 <- data.frame(y3 = lambda + rlnorm(1000, m = 1.5, sd = exp(-0.8)))
+fit3 <- vglm(y3 ~ 1, lognormal3, data = ldata3, trace = TRUE, crit = "c")
 coef(fit3, matrix = TRUE)
 summary(fit3)
 }

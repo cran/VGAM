@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2013 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2014 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -115,29 +115,37 @@
            .type.fitted = type.fitted ))),
 
   loglikelihood = eval(substitute(
-    function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
+    function(mu, y, w, residuals = FALSE, eta, extra = NULL,
+             summation = TRUE) {
 
 
-      prob0 <- eta2theta(eta[, 1], .link0 , earg = .earg0 )
-      prob1 <- eta2theta(eta[, 2], .link1 , earg = .earg1 )
-      mymu <- prob0 + (1 - prob0) * prob1
+    prob0 <- eta2theta(eta[, 1], .link0 , earg = .earg0 )
+    prob1 <- eta2theta(eta[, 2], .link1 , earg = .earg1 )
+    mymu <- prob0 + (1 - prob0) * prob1
 
 
-      if (residuals) {
-        w * (y / mymu - (1 - y) / (1 - mymu))
+    if (residuals) {
+      w * (y / mymu - (1 - y) / (1 - mymu))
+    } else {
+      ycounts <- if (is.numeric(extra$orig.w)) y * w / extra$orig.w else
+                  y * w # Convert proportions to counts
+      nvec <- if (is.numeric(extra$orig.w)) round(w / extra$orig.w) else
+                  round(w)
+      smallno <- 1.0e6 * .Machine$double.eps
+      smallno <- sqrt(.Machine$double.eps)
+      if (max(abs(ycounts - round(ycounts))) > smallno)
+        warning("converting 'ycounts' to integer in @loglikelihood")
+      ycounts <- round(ycounts)
+
+      ll.elts <-
+        (if (is.numeric(extra$orig.w)) extra$orig.w else 1) *
+        dbinom(x = ycounts, size = nvec, prob = mymu, log = TRUE)
+      if (summation) {
+        sum(ll.elts)
       } else {
-        ycounts <- if (is.numeric(extra$orig.w)) y * w / extra$orig.w else
-                    y * w # Convert proportions to counts
-        nvec <- if (is.numeric(extra$orig.w)) round(w / extra$orig.w) else
-                    round(w)
-        smallno <- 1.0e6 * .Machine$double.eps
-        smallno <- sqrt(.Machine$double.eps)
-        if (max(abs(ycounts - round(ycounts))) > smallno)
-          warning("converting 'ycounts' to integer in @loglikelihood")
-        ycounts <- round(ycounts)
-        sum((if (is.numeric(extra$orig.w)) extra$orig.w else 1) *
-            dbinom(x = ycounts, size = nvec, prob = mymu, log = TRUE))
+        ll.elts
       }
+    }
   }, list( .link0 = link0, .earg0 = earg0,
            .link1 = link1, .earg1 = earg1 ))),
 
@@ -420,12 +428,13 @@ abbott.EM.control <- function(maxit = 1000, ...) {
             "Mean:     mu"),
   constraints = eval(substitute(expression({
     dotzero <- .zero
-    Musual <- 1
+    M1 <- 1
     eval(negzero.expression)
   }), list( .zero = zero ))),
 
   infos = eval(substitute(function(...) {
-    list(Musual = 1,
+    list(M1 = 1,
+         Q1 = 1,
          zero = .zero )
   }, list( .zero = zero ))),
 
@@ -449,10 +458,10 @@ abbott.EM.control <- function(maxit = 1000, ...) {
 
 
     ncoly <- ncol(y)
-    Musual <- 1
+    M1 <- 1
     extra$ncoly <- ncoly
-    extra$Musual <- Musual
-    M <- Musual * ncoly
+    extra$M1 <- M1
+    M <- M1 * ncoly
     extra$lambda <- matrix( .ilambda , n, M, byrow = TRUE)
     extra$orig.w <- w
 
@@ -490,7 +499,7 @@ abbott.EM.control <- function(maxit = 1000, ...) {
   }, list( .link = link, .earg = earg ))),
 
   last = eval(substitute(expression({
-    Musual <- extra$Musual
+    M1 <- extra$M1
     misc$link <- c(rep( .link , length = ncoly))
     names(misc$link) <- mynames1
 
@@ -500,7 +509,7 @@ abbott.EM.control <- function(maxit = 1000, ...) {
       misc$earg[[ii]] <- .earg
     }
 
-    misc$Musual <- Musual
+    misc$M1 <- M1
     misc$multipleResponses <- TRUE
     misc$imethod <- .imethod
     misc$iprob <- .iprob
@@ -513,15 +522,23 @@ abbott.EM.control <- function(maxit = 1000, ...) {
             .b1.arg = b1.arg, .b2.arg = b2.arg,
             .imethod = imethod ))),
   loglikelihood = eval(substitute(
-    function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
+    function(mu, y, w, residuals = FALSE, eta, extra = NULL,
+             summation = TRUE) {
     prob <- eta2theta(eta, .link , earg = .earg )
     mymu <- extra$lambda + (1 - extra$lambda) * prob  # Eqn (3)
-    if (residuals) stop("loglikelihood residuals not ",
-                        "implemented yet") else {
-        nvec <- if (is.numeric(extra$orig.w)) round(w / extra$orig.w) else
-                    round(w)
-        sum(c(w) * dbinom(x = y, prob = mymu,
-                          size = nvec, log = TRUE))
+
+   if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
+      nvec <- if (is.numeric(extra$orig.w)) round(w / extra$orig.w) else
+              round(w)
+      ll.elts <- c(w) * dbinom(x = y, prob = mymu,
+                               size = nvec, log = TRUE)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
     }
   }, list( .link = link, .earg = earg ))),
   vfamily = c("abbott.EM"),

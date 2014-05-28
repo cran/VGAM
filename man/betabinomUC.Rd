@@ -71,8 +71,10 @@ rbetabinom.ab(n, size, shape1, shape2, .dontuse.prob = NULL)
 \value{
   \code{dbetabinom} and \code{dbetabinom.ab} give the density,
   \code{pbetabinom} and \code{pbetabinom.ab} give the distribution function, and
-% \code{qbetabinom} and \code{qbetabinom.ab} gives the quantile function, and
   \code{rbetabinom} and \code{rbetabinom.ab} generate random deviates.
+
+
+% \code{qbetabinom} and \code{qbetabinom.ab} gives the quantile function, and
 
 
 }

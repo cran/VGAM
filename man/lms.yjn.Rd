@@ -9,12 +9,12 @@
 }
 \usage{
 lms.yjn(percentiles = c(25, 50, 75), zero = c(1,3),
-        llambda = "identity", lsigma = "loge",
+        llambda = "identitylink", lsigma = "loge",
         dfmu.init = 4, dfsigma.init = 2,
         ilambda = 1, isigma = NULL, rule = c(10, 5),
         yoffset = NULL, diagW = FALSE, iters.diagW = 6)
 lms.yjn2(percentiles=c(25,50,75), zero=c(1,3),
-         llambda = "identity", lmu = "identity", lsigma = "loge",
+         llambda = "identitylink", lmu = "identitylink", lsigma = "loge",
          dfmu.init = 4, dfsigma.init = 2, ilambda = 1.0,
          isigma = NULL, yoffset = NULL, nsimEIM = 250)
 }
@@ -99,6 +99,8 @@ lms.yjn2(percentiles=c(25,50,75), zero=c(1,3),
   The object is used by modelling functions such as \code{\link{vglm}}
   and \code{\link{vgam}}.
 
+
+
 }
 \references{ 
 Yeo, I.-K. and Johnson, R. A. (2000)
@@ -132,24 +134,28 @@ Box-Cox transformation cannot handle negative values.
 
 Some other notes can be found at \code{\link{lms.bcn}}.
 
+
 }
 
 \section{Warning }{
 The computations are not simple, therefore convergence may fail.
 In that case, try different starting values.
 
+
 The generic function \code{predict}, when applied to a
 \code{lms.yjn} fit, does not add back the \code{yoffset} value. 
 
+
 } 
 \seealso{ 
-\code{\link{lms.bcn}}, 
-\code{\link{lms.bcg}},
-\code{\link{qtplot.lmscreg}},
-\code{\link{deplot.lmscreg}},
-\code{\link{cdf.lmscreg}},
-\code{\link{bmi.nz}},
-\code{\link{amlnormal}}.
+  \code{\link{lms.bcn}}, 
+  \code{\link{lms.bcg}},
+  \code{\link{qtplot.lmscreg}},
+  \code{\link{deplot.lmscreg}},
+  \code{\link{cdf.lmscreg}},
+  \code{\link{bmi.nz}},
+  \code{\link{amlnormal}}.
+
 
 }
 \examples{
@@ -172,7 +178,8 @@ par(mfrow = c(1, 1), lwd = 2)
 (aa <- deplot(fit, x0 = 20, y = ygrid, xlab = "BMI", col = "black",
     main = "Density functions at Age = 20 (black), 42 (red) and 55 (blue)"))
 aa <- deplot(fit, x0 = 42, y = ygrid, add = TRUE, llty = 2, col = "red")
-aa <- deplot(fit, x0 = 55, y = ygrid, add = TRUE, llty = 4, col = "blue", Attach = TRUE)
+aa <- deplot(fit, x0 = 55, y = ygrid, add = TRUE, llty = 4, col = "blue",
+             Attach = TRUE)
 with(aa@post, deplot)  # Contains density function values; == a@post$deplot
 }
 }

@@ -388,7 +388,7 @@ c(apply(attr(mydata, "latvar"), 2, sd),
 n <- 200; p <- 5; S <- 5
 mydata <- rcqo(n, p, S, fam = "negbin", sqrt = TRUE)
 myform <- attr(mydata, "formula")
-fit <- cqo(myform, fam = poissonff, dat = mydata)  # ITol = TRUE,
+fit <- cqo(myform, fam = poissonff, dat = mydata)  # I.tol = TRUE,
 lvplot(fit, lcol = 1:S, y = TRUE, pcol = 1:S)
 # Compare the fitted model with the 'truth'
 concoef(fit)  # The fitted model
@@ -399,7 +399,7 @@ attr(mydata, "concoefficients")  # The 'truth'
 n <- 200; p <- 5; S <- 3
 mydata <- rcqo(n, p, S, fam = "gamma2", Log = TRUE)
 fit <- cqo(attr(mydata, "formula"),
-           fam = gaussianff, data = mydata)  # ITol = TRUE,
+           fam = gaussianff, data = mydata)  # I.tol = TRUE,
 matplot(attr(mydata, "latvar"),
         exp(mydata[, -(1:(p-1))]), col = 1:S)  # 'raw' data
 # Fitted model to transformed data:

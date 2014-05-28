@@ -50,6 +50,8 @@ model.framevlm(object, setupsmart = TRUE, wrapupsmart = TRUE, \dots)
   A \code{\link{data.frame}} containing the variables used in
   the \code{object} plus those specified in \code{\dots}.
 
+
+
 }
 \seealso{
   \code{\link[stats]{model.frame}},

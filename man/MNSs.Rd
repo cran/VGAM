@@ -38,6 +38,7 @@ MNSs(link = "logit", imS = NULL, ims = NULL, inS = NULL)
   The object is used by modelling functions such as \code{\link{vglm}}
   and \code{\link{vgam}}.
 
+
 }
 \references{ 
   Elandt-Johnson, R. C. (1971)

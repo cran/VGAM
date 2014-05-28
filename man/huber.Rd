@@ -10,8 +10,8 @@
 
 }
 \usage{
-huber1(llocation = "identity", k = 0.862, imethod = 1)
-huber2(llocation = "identity", lscale = "loge",
+huber1(llocation = "identitylink", k = 0.862, imethod = 1)
+huber2(llocation = "identitylink", lscale = "loge",
        k = 0.862, imethod = 1, zero = 2)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -102,22 +102,22 @@ hdata <- transform(hdata, y  = rhuber(NN, mu = coef1 + coef2 * x2))
 hdata$x2[1] <- 0.0  # Add an outlier
 hdata$y[1] <- 10  
 
-fit.huber2 <- vglm(y ~ x2, huber2(imethod = 3), hdata, trace = TRUE)
-fit.huber1 <- vglm(y ~ x2, huber1(imethod = 3), hdata, trace = TRUE)
+fit.huber2 <- vglm(y ~ x2, huber2(imethod = 3), data = hdata, trace = TRUE)
+fit.huber1 <- vglm(y ~ x2, huber1(imethod = 3), data = hdata, trace = TRUE)
 
 coef(fit.huber2, matrix = TRUE)
 summary(fit.huber2)
 
 
 \dontrun{ # Plot the results
-plot(y ~ x2, hdata, col = "blue", las = 1)
-lines(fitted(fit.huber2) ~ x2, hdata, col = "darkgreen", lwd = 2)
+plot(y ~ x2, data = hdata, col = "blue", las = 1)
+lines(fitted(fit.huber2) ~ x2, data = hdata, col = "darkgreen", lwd = 2)
 
 fit.lm <- lm(y ~ x2, hdata)  # Compare to a LM:
-lines(fitted(fit.lm) ~ x2, hdata, col = "lavender", lwd = 3)
+lines(fitted(fit.lm) ~ x2, data = hdata, col = "lavender", lwd = 3)
 
 # Compare to truth:
-lines(coef1 + coef2 * x2 ~ x2, hdata, col = "orange", lwd = 2, lty = "dashed")
+lines(coef1 + coef2 * x2 ~ x2, data = hdata, col = "orange", lwd = 2, lty = "dashed")
 
 legend("bottomright", legend = c("truth", "huber", "lm"),
        col = c("orange", "darkgreen", "lavender"),

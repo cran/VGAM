@@ -6,6 +6,7 @@
   Estimation of the two shape parameters of the beta-prime distribution
   by maximum likelihood estimation.
 
+
 }
 \usage{
 betaprime(link = "loge", i1 = 2, i2 = NULL, zero = NULL)

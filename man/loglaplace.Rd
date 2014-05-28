@@ -199,19 +199,23 @@ Log-Laplace distributions.
 \examples{
 # Example 1: quantile regression of counts with regression splines
 set.seed(123); my.k <- exp(0)
-alldat <- data.frame(x2 = sort(runif(n <- 500)))
+adata <- data.frame(x2 = sort(runif(n <- 500)))
 mymu <- function(x) exp( 1 + 3*sin(2*x) / (x+0.5)^2)
-alldat <- transform(alldat, y = rnbinom(n, mu = mymu(x2), size = my.k))
+adata <- transform(adata, y = rnbinom(n, mu = mymu(x2), size = my.k))
 mytau <- c(0.1, 0.25, 0.5, 0.75, 0.9); mydof = 3
-fitp <- vglm(y ~ bs(x2, df = mydof), data=alldat, trace = TRUE,
-            loglaplace1(tau = mytau, parallelLoc = TRUE))  # halfstepping is usual
+# halfstepping is usual:
+fitp <- vglm(y ~ sm.bs(x2, df = mydof), data = adata, trace = TRUE,
+            loglaplace1(tau = mytau, parallelLoc = TRUE))
  
 \dontrun{
 par(las = 1)  # Plot on a log1p() scale
 mylwd <- 1.5
-with(alldat, plot(x2, jitter(log1p(y), factor = 1.5), col = "red", pch = "o",
-     main = "Example 1; darkgreen=truth, blue=estimated", cex = 0.75))
-with(alldat, matlines(x2, log1p(fitted(fitp)), col = "blue", lty = 1, lwd = mylwd))
+
+
+plot(jitter(log1p(y), factor = 1.5) ~ x2, adata, col = "red", pch = "o",
+     main = "Example 1; darkgreen=truth, blue=estimated", cex = 0.75)
+with(adata, matlines(x2, log1p(fitted(fitp)), col = "blue",
+                      lty = 1, lwd = mylwd))
 finexgrid <- seq(0, 1, len = 201)
 for (ii in 1:length(mytau))
   lines(finexgrid, col = "darkgreen", lwd = mylwd,
@@ -222,38 +226,41 @@ fitp@extra  # Contains useful information
 
 # Example 2: sample proportions
 set.seed(123); nnn <- 1000; ssize <- 100  # ssize = 1 will not work!
-alldat <- data.frame(x2 = sort(runif(nnn)))
+adata <- data.frame(x2 = sort(runif(nnn)))
 mymu <- function(x) logit( 1.0 + 4*x, inv = TRUE)
-alldat <- transform(alldat, ssize = ssize,
-                   y2 = rbinom(nnn, size=ssize, prob = mymu(x2)) / ssize)
+adata <- transform(adata, ssize = ssize,
+                    y2 = rbinom(nnn, size = ssize, prob = mymu(x2)) / ssize)
 
 mytau <- c(0.25, 0.50, 0.75)
-fit1 <- vglm(y2 ~ bs(x2, df = 3), data=alldat, weights=ssize, trace = TRUE,
-            logitlaplace1(tau = mytau, lloc = "cloglog", paral = TRUE))
+fit1 <- vglm(y2 ~ sm.bs(x2, df = 3), data = adata,
+             weights = ssize, trace = TRUE,
+             logitlaplace1(tau = mytau, lloc = "cloglog", paral = TRUE))
 
 \dontrun{
 # Check the solution.  Note: this may be like comparing apples with oranges.
-plotvgam(fit1, se = TRUE, scol = "red", lcol = "blue", main = "Truth = 'darkgreen'")
+plotvgam(fit1, se = TRUE, scol = "red", lcol = "blue",
+         main = "Truth = 'darkgreen'")
 # Centered approximately !
-linkFunctionChar = as.character(fit1@misc$link)
-alldat = transform(alldat, trueFunction=
+linkFunctionChar <- as.character(fit1@misc$link)
+adata <- transform(adata, trueFunction=
                    theta2eta(theta = mymu(x2), link=linkFunctionChar))
-with(alldat, lines(x2, trueFunction - mean(trueFunction), col = "darkgreen"))
+with(adata, lines(x2, trueFunction - mean(trueFunction), col = "darkgreen"))
 
 
 # Plot the data + fitted quantiles (on the original scale)
-myylim <- with(alldat, range(y2))
-with(alldat, plot(x2, y2, col = "blue", ylim = myylim, las = 1, pch = ".", cex = 2.5))
-with(alldat, matplot(x2, fitted(fit1), add = TRUE, lwd = 3, type = "l"))
+myylim <- with(adata, range(y2))
+plot(y2 ~ x2, adata, col = "blue", ylim = myylim, las = 1,
+     pch = ".", cex = 2.5)
+with(adata, matplot(x2, fitted(fit1), add = TRUE, lwd = 3, type = "l"))
 truecol <- rep(1:3, len = fit1@misc$M)  # Add the 'truth'
 smallxgrid <- seq(0, 1, len = 501)
 for (ii in 1:length(mytau))
-    lines(smallxgrid, col = truecol[ii], lwd = 2,
-          qbinom(p = mytau[ii], prob = mymu(smallxgrid), size = ssize) / ssize)
+  lines(smallxgrid, col = truecol[ii], lwd = 2,
+        qbinom(p = mytau[ii], prob = mymu(smallxgrid), size = ssize) / ssize)
 
 
 # Plot on the eta (== logit()/probit()/...) scale
-with(alldat, matplot(x2, predict(fit1), add = FALSE, lwd = 3, type = "l"))
+with(adata, matplot(x2, predict(fit1), add = FALSE, lwd = 3, type = "l"))
 # Add the 'truth'
 for (ii in 1:length(mytau)) {
   true.quant <- qbinom(p = mytau[ii], pr = mymu(smallxgrid), si = ssize) / ssize

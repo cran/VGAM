@@ -7,7 +7,7 @@
 
 }
 \usage{
-garma(link = "identity", p.ar.lag = 1, q.ma.lag = 0,
+garma(link = "identitylink", p.ar.lag = 1, q.ma.lag = 0,
       coefstart = NULL, step = 1)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -165,16 +165,19 @@ garma(link = "identity", p.ar.lag = 1, q.ma.lag = 0,
 
 
 }
-\seealso{
+%\seealso{
+
+%  The site \url{http://www.stat.auckland.ac.nz/~yee} contains
+%  more documentation about this family function.
+
+
 % \code{\link{identity}},
 % \code{\link{logit}}.
 
 
-  The site \url{http://www.stat.auckland.ac.nz/~yee} contains
-  more documentation about this family function.
+%}
 
 
-}
 
 \examples{
 gdata <- data.frame(interspike = c(68, 41, 82, 66, 101, 66, 57,  41,  27, 78,
@@ -191,7 +194,7 @@ gdata <- transform(gdata, spikenum = seq(interspike))
 bvalue <- 0.1  # .Machine$double.xmin # Boundary value
 fit <- vglm(interspike ~ 1, trace = TRUE, data = gdata,
             garma(loge(bvalue = bvalue),
-                 p = 2, coefstart = c(4, 0.3, 0.4)))
+                  p = 2, coefstart = c(4, 0.3, 0.4)))
 summary(fit)
 coef(fit, matrix = TRUE)
 Coef(fit)  # A bug here

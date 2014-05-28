@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2013 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2014 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -7,16 +7,49 @@
 
 
 
-deviance.vlm <- function(object, ...)
+deviance.vlm <- function(object,
+                         summation = TRUE,
+                         ...) {
+  if (summation) {
+    object@criterion$deviance
+  } else {
+
+
+    Args <- formals(args(object@family@deviance))
+    if (length(Args$summation) == 0)
+      stop("there is no 'summation' argument for the function in the ",
+           "'deviance' slot of the object.")
+
+
+    object@family@deviance(mu = fitted(object),
+                           y = depvar(object),
+                           w = weights(object, type = "prior"),
+                           residuals = FALSE,
+                           eta = predict(object),
+                           extra = object@extra,
+                           summation = summation)
+  }
+}
+
+
+
+if (FALSE)
+deviance.vglm <- function(object,
+                          summation = TRUE,
+                          ...)
   object@criterion$deviance
 
 
-deviance.vglm <- function(object, ...)
-  object@criterion$deviance
 
 
 
-if(!isGeneric("deviance"))
+
+
+
+
+
+
+if (!isGeneric("deviance"))
   setGeneric("deviance", function(object, ...)
   standardGeneric("deviance"))
 
@@ -25,6 +58,7 @@ setMethod("deviance", "vlm", function(object, ...)
            deviance.vlm(object, ...))
 
 
+if (FALSE)
 setMethod("deviance", "vglm", function(object, ...)
            deviance.vglm(object, ...))
 

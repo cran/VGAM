@@ -12,7 +12,8 @@
 }
 \usage{
 rposbern(n, nTimePts = 5, pvars = length(xcoeff), xcoeff = c(-2, 1, 2),
-         cap.effect = 1, is.popn = FALSE, link = "logit", earg.link = FALSE)
+         Xmatrix = NULL, cap.effect = 1, is.popn = FALSE,
+         link = "logit", earg.link = FALSE)
 dposbern(x, prob, prob0 = prob, log = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -47,6 +48,12 @@ dposbern(x, prob, prob0 = prob, log = FALSE)
   never was captured.
 % Put in other words, only animals captured at least once are
 % returned in the sample.
+
+
+  }
+  \item{Xmatrix}{
+  Optional \bold{X} matrix.
+  If given, the \bold{X} matrix is not generated internally.
 
 
   }
@@ -157,10 +164,12 @@ dposbern(x, prob, prob0 = prob, log = FALSE)
 }
 
 \seealso{ 
-% \code{\link{huggins91}},
   \code{\link{posbernoulli.tb}},
   \code{\link{posbernoulli.b}},
   \code{\link{posbernoulli.t}}.
+
+
+% \code{\link{huggins91}},
 
 
 }

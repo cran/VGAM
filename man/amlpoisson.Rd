@@ -66,6 +66,7 @@ amlpoisson(w.aml = 1, parallel = FALSE, imethod = 1, digw = 4,
   The object is used by modelling functions such as \code{\link{vglm}}
   and \code{\link{vgam}}.
 
+
 }
 \references{
   Efron, B. (1991)

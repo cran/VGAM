@@ -168,7 +168,7 @@ Fitting and interpreting occupancy models.
 
 
   The zero-\emph{deflated} binomial distribution might
-  be fitted by setting \code{lpstr0 = identity}, albeit,
+  be fitted by setting \code{lpstr0 = identitylink}, albeit,
   not entirely reliably. See \code{\link{zipoisson}}
   for information that can be applied here. Else
   try the zero-altered binomial distribution (see
@@ -204,8 +204,8 @@ zdata <- data.frame(pstr0 = logit( 0, inverse = TRUE),  # 0.50
 zdata <- transform(zdata, 
                    y = rzibinom(nn, size = sv, prob = mubin, pstr0 = pstr0))
 with(zdata, table(y))
-fit <- vglm(cbind(y, sv - y) ~ 1, zibinomialff, zdata, trace = TRUE)
-fit <- vglm(cbind(y, sv - y) ~ 1, zibinomialff, zdata, trace = TRUE, stepsize = 0.5)
+fit <- vglm(cbind(y, sv - y) ~ 1, zibinomialff, data = zdata, trace = TRUE)
+fit <- vglm(cbind(y, sv - y) ~ 1, zibinomialff, data = zdata, trace = TRUE, stepsize = 0.5)
 
 coef(fit, matrix = TRUE)
 Coef(fit)  # Useful for intercept-only models

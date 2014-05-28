@@ -154,6 +154,7 @@ poissonff(link = "loge", dispersion = 1, onedpar = FALSE, imu = NULL,
     \code{\link{ordpoisson}},
     \code{\link{amlpoisson}},
     \code{\link{invbinomial}},
+    \code{\link{simulate.vlm}},
     \code{\link{loge}},
     \code{\link{polf}},
     \code{\link{rrvglm}},
@@ -175,8 +176,8 @@ set.seed(123)
 pdata <- data.frame(x2 = rnorm(nn <- 100))
 pdata <- transform(pdata, y1 = rpois(nn, exp(1 + x2)),
                           y2 = rpois(nn, exp(1 + x2)))
-(fit1 <- vglm(cbind(y1, y2) ~ x2, family = poissonff, pdata))
-(fit2 <- vglm(y1 ~ x2, family = poissonff(bred = TRUE), pdata))
+(fit1 <- vglm(cbind(y1, y2) ~ x2, poissonff, data = pdata))
+(fit2 <- vglm(y1 ~ x2, poissonff(bred = TRUE), data = pdata))
 coef(fit1, matrix = TRUE)
 coef(fit2, matrix = TRUE)
 
@@ -194,6 +195,6 @@ cdata <- transform(cdata, y1 = rpois(nn, lambda1),
 \keyword{models}
 \keyword{regression}
 
-%# vvv p1 = cqo(cbind(y1,y2,y3) ~ x2 + x3 + x4, poissonff, cdata,
-%# vvv          EqualTol = FALSE, ITol = FALSE)
+%# vvv p1 <- cqo(cbind(y1,y2,y3) ~ x2 + x3 + x4, poissonff, data = cdata,
+%# vvv           eq.tol = FALSE, I.tol = FALSE)
 %# vvv summary(p1)  # # Three dispersion parameters are all unity

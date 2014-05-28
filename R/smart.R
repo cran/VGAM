@@ -1,6 +1,7 @@
 # These functions are
-# Copyright (C) 1998-2013 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2014 T.W. Yee, University of Auckland.
 # All rights reserved.
+
 
 
 
@@ -179,7 +180,7 @@ is.smart <- function(object) {
 
 
 
-bs <-
+ sm.bs <-
 function (x, df = NULL, knots = NULL, degree = 3, intercept = FALSE, 
     Boundary.knots = range(x)) {
     x <- x  # Evaluate x
@@ -266,14 +267,14 @@ function (x, df = NULL, knots = NULL, degree = 3, intercept = FALSE,
 
     basis
 }
-attr(bs, "smart") <- TRUE
+attr( sm.bs, "smart") <- TRUE
 
 
 
 
 
 
-ns <-
+ sm.ns <-
   function (x, df = NULL, knots = NULL, intercept = FALSE,
             Boundary.knots = range(x)) {
     x <- x  # Evaluate x
@@ -355,7 +356,7 @@ ns <-
 
     basis
 }
-attr(ns, "smart") <- TRUE
+attr( sm.ns, "smart") <- TRUE
 
 
 
@@ -364,7 +365,7 @@ attr(ns, "smart") <- TRUE
 
 
 
-poly <-
+ sm.poly <-
   function (x, ..., degree = 1, coefs = NULL, raw = FALSE) {
     x <- x  # Evaluate x
     if (!raw && smart.mode.is("read")) {
@@ -457,14 +458,14 @@ poly <-
 
     Z
 }
-attr(poly, "smart") <- TRUE
+attr(sm.poly, "smart") <- TRUE
 
 
 
 
 
 
-scale.default <-
+ sm.scale.default <-
   function (x, center = TRUE, scale = TRUE) {
     x <- as.matrix(x)
 
@@ -505,10 +506,29 @@ scale.default <-
 
     x
 }
-attr(scale.default, "smart") <- TRUE
+attr(sm.scale.default, "smart") <- TRUE
 
 
-attr(scale, "smart") <- TRUE
+
+
+
+
+ sm.scale <- function (x, center = TRUE, scale = TRUE) 
+  UseMethod("sm.scale")
+
+
+
+attr(sm.scale, "smart") <- TRUE
+
+
+
+
+
+
+
+
+
+
 
 
 

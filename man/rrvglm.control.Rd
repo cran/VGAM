@@ -213,8 +213,8 @@ rrvglm.control(Rank = 1, Algorithm = c("alternating", "derivative"),
 %   likelihood solution to constrained quadratic ordination (CQO;
 %   formerly called canonical Gaussian ordination) models.
 
-%   For QRR-VGLMs, if \code{EqualTolerances=TRUE} and
-%   \code{ITolerances=FALSE} then the default is that the \bold{C}
+%   For QRR-VGLMs, if \code{eq.tolerances=TRUE} and
+%   \code{I.tolerances=FALSE} then the default is that the \bold{C}
 %   matrix is constrained by forcing the latent variables to have sample
 %   variance-covariance matrix equalling \code{diag(Rank)}, i.e., unit
 %   variance and uncorrelated.
@@ -227,6 +227,8 @@ rrvglm.control(Rank = 1, Algorithm = c("alternating", "derivative"),
 \value{
   A list with components matching the input names.
   Some error checking is done, but not much.
+
+
 }
 \references{
   Yee, T. W. and Hastie, T. J. (2003)
@@ -269,7 +271,7 @@ set.seed(111)
 pneumo <- transform(pneumo, let = log(exposure.time),
                             x3 = runif(nrow(pneumo)))  # x3 is random noise
 fit <- rrvglm(cbind(normal, mild, severe) ~ let + x3,
-              multinomial, pneumo, Rank = 1, Index.corner = 2)
+              multinomial, data = pneumo, Rank = 1, Index.corner = 2)
 constraints(fit)
 vcov(fit)
 summary(fit)

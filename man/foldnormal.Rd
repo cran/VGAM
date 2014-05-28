@@ -7,7 +7,7 @@
 
 }
 \usage{
-foldnormal(lmean = "identity", lsd = "loge", imean = NULL, isd = NULL,
+foldnormal(lmean = "identitylink", lsd = "loge", imean = NULL, isd = NULL,
            a1 = 1, a2 = 1, nsimEIM = 500, imethod = 1, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -100,6 +100,15 @@ foldnormal(lmean = "identity", lsd = "loge", imean = NULL, isd = NULL,
   \bold{26}, 825--830.
 
 
+  Johnson, N. L. (1962)
+  The folded normal distribution: 
+  accuracy of estimation by maximum likelihood.
+  \emph{Technometrics},
+  \bold{4}, 249--256.
+
+
+
+
 }
 \author{ Thomas W. Yee }
 \note{
@@ -111,6 +120,12 @@ foldnormal(lmean = "identity", lsd = "loge", imean = NULL, isd = NULL,
 
   See \code{\link{CommonVGAMffArguments}} for general information about
   many of these arguments.
+
+
+  Yet to do: implement the results of Johnson (1962) which gives
+  expressions for the EIM, albeit, under a different parameterization.
+  Also, one element of the EIM appears to require numerical integration.
+
 
 
 }
@@ -136,7 +151,7 @@ foldnormal(lmean = "identity", lsd = "loge", imean = NULL, isd = NULL,
 fdata <- data.frame(y = rfoldnorm(n <- 1000, m = m, sd = SD))
 hist(with(fdata, y), prob = TRUE, main = paste("foldnormal(m = ", m,
      ", sd = ", round(SD, 2), ")"))
-fit <- vglm(y ~ 1, fam = foldnormal, fdata, trace = TRUE)
+fit <- vglm(y ~ 1, foldnormal, data = fdata, trace = TRUE)
 coef(fit, matrix = TRUE)
 (Cfit <- Coef(fit))
 mygrid <- with(fdata, seq(min(y), max(y), len = 200))  # Add the fit to the histogram

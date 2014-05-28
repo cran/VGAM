@@ -34,6 +34,13 @@ vglm(formula, family, data = list(), weights = NULL, subset = NULL,
   ``\pkg{VGAM} family function''.  See \code{\link{CommonVGAMffArguments}}
   for general information about many types of arguments found in this
   type of function.
+  The argument name \code{"family"} is used loosely and for
+  the ease of existing \code{\link[stats]{glm}} users;
+  there is no concept of a formal ``error distribution'' for VGLMs.
+  Possibly the argument name should be better \code{"model"}
+  but unfortunately
+  that name has already been taken.
+
 
 
   }
@@ -48,17 +55,32 @@ vglm(formula, family, data = list(), weights = NULL, subset = NULL,
 
   }
   \item{weights}{
-  an optional vector or matrix of (prior) weights to be used
-  in the fitting process.
+  an optional vector or matrix of (prior fixed and known) weights
+  to be used in the fitting process.
   If the \pkg{VGAM} family function handles multiple responses 
-  (\eqn{q > 1} of them, say) then
-  \code{weights} can be a matrix with \eqn{q} columns.
+  (\eqn{Q > 1} of them, say) then
+  \code{weights} can be a matrix with \eqn{Q} columns.
   Each column matches the respective response.
   If it is a vector (the usually case) then it is recycled into a
-  matrix with \eqn{q} columns.
+  matrix with \eqn{Q} columns.
   The values of \code{weights} must be positive; try setting
   a very small value such as \code{1.0e-8} to effectively
   delete an observation.
+
+
+
+
+% 20140507:
+
+  Currently the \code{weights} argument does not support sampling
+  weights from complex sampling designs.
+  And currently sandwich estimators are not computed in any shape or form.
+  The present weights are multiplied by the corresponding
+  log-likelihood contributions.
+
+
+
+
 
 
 % If \code{weights} is a matrix,
@@ -388,6 +410,8 @@ The \code{VGAM} Package.
 %~Make other sections like WARNING with \section{WARNING }{....} ~
 \section{WARNING}{
   See warnings in \code{\link{vglm.control}}.
+  Also, see warnings under \code{weights} above regarding
+  sampling weights from complex sampling designs.
 
 
 }
@@ -428,11 +452,11 @@ summary(vglm.D93)
 
 # Example 2. Multinomial logit model
 pneumo <- transform(pneumo, let = log(exposure.time))
-vglm(cbind(normal, mild, severe) ~ let, multinomial, pneumo)
+vglm(cbind(normal, mild, severe) ~ let, multinomial, data = pneumo)
 
 
 # Example 3. Proportional odds model
-fit3 <- vglm(cbind(normal, mild, severe) ~ let, propodds, pneumo)
+fit3 <- vglm(cbind(normal, mild, severe) ~ let, propodds, data = pneumo)
 coef(fit3, matrix = TRUE) 
 constraints(fit3)
 model.matrix(fit3, type = "lm")  # LM model matrix

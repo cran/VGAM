@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2013 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2014 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -11,7 +11,7 @@
 
 
 vlm.wfit <-
-  function(xmat, zmat, Blist, wz = NULL, U = NULL, 
+  function(xmat, zmat, Hlist, wz = NULL, U = NULL, 
            matrix.out = FALSE, is.vlmX = FALSE, res.ss = TRUE, qr = FALSE,
            x.ret = FALSE,
            offset = NULL,
@@ -25,7 +25,7 @@ vlm.wfit <-
            lp.names = NULL, Eta.range = NULL, Xm2 = NULL, ...) {
 
 
-  missing.Blist <- missing(Blist)
+  missing.Hlist <- missing(Hlist)
   zmat <- as.matrix(zmat)
   n <- nrow(zmat)
   M <- ncol(zmat)
@@ -48,11 +48,11 @@ vlm.wfit <-
   X.vlm.save <- if (is.vlmX) {
         xmat 
       } else {
-        if (missing.Blist || !length(Blist)) {
-          Blist <- replace.constraints(vector("list", ncol(xmat)),
+        if (missing.Hlist || !length(Hlist)) {
+          Hlist <- replace.constraints(vector("list", ncol(xmat)),
                                        diag(M), 1:ncol(xmat))  # NULL
         }
-        lm2vlm.model.matrix(x = xmat, Blist = Blist, M = M,
+        lm2vlm.model.matrix(x = xmat, Hlist = Hlist, M = M,
                             assign.attributes = FALSE,
                             xij = xij,
                             Xm2 = Xm2)
@@ -108,7 +108,7 @@ vlm.wfit <-
   ans$misc <- list(M = M, n = n)
   ans$call <- match.call()
 
-  ans$constraints <- Blist
+  ans$constraints <- Hlist
   ans$contrasts <- contrast.save
   if (x.ret) {
     ans$X.vlm <- X.vlm.save
@@ -129,14 +129,14 @@ vlm.wfit <-
   dx2 <- if (is.vlmX) NULL else dimnames(xmat)[[2]]
   B <- matrix(as.numeric(NA),
              nrow = M, ncol = ncolx, dimnames = list(lp.names, dx2))
-  if (is.null(Blist)) {
-      Blist <- replace.constraints(vector("list", ncolx), diag(M), 1:ncolx)
+  if (is.null(Hlist)) {
+    Hlist <- replace.constraints(vector("list", ncolx), diag(M), 1:ncolx)
   }
-  ncolBlist <- unlist(lapply(Blist, ncol)) 
-  temp <- c(0, cumsum(ncolBlist))
+  ncolHlist <- unlist(lapply(Hlist, ncol)) 
+  temp <- c(0, cumsum(ncolHlist))
   for (ii in 1:ncolx) {
     index <- (temp[ii]+1):temp[ii+1]
-    cm <- Blist[[ii]]
+    cm <- Hlist[[ii]]
     B[, ii] <- cm %*% ans$coef[index]
   }
   ans$mat.coefficients <- t(B)

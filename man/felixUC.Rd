@@ -7,17 +7,23 @@
 \title{The Felix Distribution}
 \description{
   Density
-% distribution function, quantile function
-% and random generation for the
+  for the
   Felix distribution.
+
+
+% distribution function, quantile function
+% and random generation
+
 
 }
 \usage{
 dfelix(x, a = 0.25, log = FALSE)
+}
+
+
 %pfelix(q, a = 0.25)
 %qfelix(p, a = 0.25)
 %rfelix(n, a = 0.25)
-}
 \arguments{
   \item{x}{vector of quantiles.}
 % \item{p}{vector of probabilities.}
@@ -34,9 +40,13 @@ dfelix(x, a = 0.25, log = FALSE)
 }
 \value{
   \code{dfelix} gives the density.
+
+
 % \code{pfelix} gives the distribution function,
 % \code{qfelix} gives the quantile function, and
 % \code{rfelix} generates random deviates.
+
+
 
 }
 \author{ T. W. Yee }

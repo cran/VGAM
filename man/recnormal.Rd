@@ -9,7 +9,7 @@
 
 }
 \usage{
-recnormal(lmean = "identity", lsd = "loge",
+recnormal(lmean = "identitylink", lsd = "loge",
           imean = NULL, isd = NULL, imethod = 1, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -91,7 +91,7 @@ Rdata <- data.frame(rawy = c(mymean, rnorm(nn, me = mymean, sd = exp(3))))
 # Keep only observations that are records:
 rdata <- data.frame(y = unique(cummax(with(Rdata, rawy))))
 
-fit <- vglm(y ~ 1, recnormal, rdata, trace = TRUE, maxit = 200)
+fit <- vglm(y ~ 1, recnormal, data = rdata, trace = TRUE, maxit = 200)
 coef(fit, matrix = TRUE)
 Coef(fit)
 summary(fit)

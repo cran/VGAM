@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2013 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2014 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -27,14 +27,14 @@ summaryvlm <-
   nrow.X.vlm <- object@misc$nrow.X.vlm 
   ncol.X.vlm <- object@misc$ncol.X.vlm  # May be NULL for CQO objects
 
-  coef <- object@coefficients
-  cnames <- names(coef)
+  Coefs <- object@coefficients
+  cnames <- names(Coefs)
 
   if (presid) {
     Presid <- residualsvlm(object, type = "pearson")  # NULL if pooled.weight
   }
 
-  if (any(is.na(coef))) {
+  if (any(is.na(Coefs))) {
     warning(paste("Some NAs in the coefficients---no summary",
                   " provided; returning object\n"))
     return(object)
@@ -72,22 +72,28 @@ summaryvlm <-
     if (ncol.X.vlm < max(dim(R)))
       stop("R is rank deficient")
 
-    rinv <- diag(ncol.X.vlm)
-    rinv <- backsolve(R, rinv)
-    rowlen <- drop(((rinv^2) %*% rep(1, ncol.X.vlm))^0.5)
-    covun <- rinv %*% t(rinv)
+
+
+
+
+    covun <- chol2inv(R)
+
     dimnames(covun) <- list(cnames, cnames)
   }
-  coef <- matrix(rep(coef, 3), ncol = 3)
-  dimnames(coef) <- list(cnames, Colnames)
+  coef3 <- matrix(rep(Coefs, 3), ncol = 3)
+  dimnames(coef3) <- list(cnames, Colnames)
+  SEs <- sqrt(diag(covun))
   if (length(sigma) == 1 && is.Numeric(ncol.X.vlm)) {
-    coef[, 2] <- rowlen %o% sigma  # Fails here when sigma is a vector 
-    coef[, 3] <- coef[, 1] / coef[, 2]
+    coef3[, 2] <- SEs %o% sigma  # Fails here when sigma is a vector 
+    coef3[, 3] <- coef3[, 1] / coef3[, 2]
   } else {
-    coef[, 1] <- coef[, 2] <- coef[, 3] <- NA
+    coef3[, 1] <- coef3[, 2] <- coef3[, 3] <- NA
   }
   if (correlation) {
-    correl <- covun * outer(1 / rowlen, 1 / rowlen)
+    correl <- covun * outer(1 / SEs, 1 / SEs)
+
+    diag(correl) <- 1.0
+
     dimnames(correl) <- list(cnames, cnames)
   } else {
     correl <- matrix(0, 0, 0)  # was NULL, but now a special matrix
@@ -99,10 +105,10 @@ summaryvlm <-
   answer <-
   new("summary.vlm",
       object,
-      coef3 = coef, 
+      coef3       = coef3,
       correlation = correl,
-      df = c(ncol.X.vlm, rdf),
-      sigma = sigma)
+      df          = c(ncol.X.vlm, rdf),
+      sigma       = sigma)
 
   if (is.Numeric(ncol.X.vlm))
     answer@cov.unscaled <- covun

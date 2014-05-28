@@ -74,14 +74,17 @@ Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
 
 }
 \seealso{
-%   \code{\link{cexpon}},
     \code{\link{amlexponential}},
     \code{\link{laplace}},
     \code{\link{expgeometric}},
     \code{\link{explogff}},
     \code{\link{poissonff}},
     \code{\link{mix2exp}},
-    \code{\link{freund61}}.
+    \code{\link{freund61}},
+    \code{\link{simulate.vlm}}.
+
+
+%   \code{\link{cexpon}},
 
 
 }
@@ -94,8 +97,8 @@ edata <- transform(edata, rate = exp(eta))
 edata <- transform(edata, y = rexp(nn, rate = rate))
 with(edata, stem(y))
 
-fit.slow <- vglm(y ~ x2 + x3, exponential, edata, trace = TRUE, crit = "c")
-fit.fast <- vglm(y ~ x2 + x3, exponential(exp = FALSE), edata,
+fit.slow <- vglm(y ~ x2 + x3, exponential, data = edata, trace = TRUE, crit = "c")
+fit.fast <- vglm(y ~ x2 + x3, exponential(exp = FALSE), data = edata,
                  trace = TRUE, crit = "coef")
 coef(fit.slow, mat = TRUE)
 summary(fit.slow)
