@@ -57,6 +57,7 @@ Qvar(object, factorname = NULL, which.linpred = 1,
   Character.
   Optional, for labelling the variance-covariance matrix.
 
+
 }
 \item{dispersion}{
   Numeric.
@@ -147,7 +148,13 @@ Qvar(object, factorname = NULL, which.linpred = 1,
   Quasi-variances.
   \emph{Biometrika} \bold{91}, 65--80.
 
-  
+
+Yee, T. W. and Hadi, A. F. (2014)
+Row-column interaction models, with an R implementation.
+\emph{Computational Statistics},
+\bold{29}, in press.
+
+
 }
 
 \author{
@@ -222,9 +229,9 @@ qvar(fit1, se = TRUE)   # Easy method to get the quasi-standard errors
 (quasiSE  <- sqrt(quasiVar))
 
 # Another form of input
-fit2 <- rcim(Qvar(Shipmodel, coef.ind = c(0,2:5), reference.name = "typeA"),
+fit2 <- rcim(Qvar(Shipmodel, coef.ind = c(0, 2:5), reference.name = "typeA"),
              uninormal("explink"), maxit = 99)
-\dontrun{ plotqvar(fit2, col = "green", lwd = 3, scol = "blue", slwd = 2, las = 1) }
+\dontrun{ qvplot(fit2, col = "green", lwd = 3, scol = "blue", slwd = 2, las = 1) }
 
 # The variance-covariance matrix is another form of input (not recommended)
 fit3 <- rcim(Qvar(cbind(0, rbind(0, vcov(Shipmodel)[2:5, 2:5])),
@@ -234,36 +241,32 @@ fit3 <- rcim(Qvar(cbind(0, rbind(0, vcov(Shipmodel)[2:5, 2:5])),
 (QuasiVar <- exp(diag(fitted(fit3))) / 2)                 # Version 1
 (QuasiVar <- diag(predict(fit3)[, c(TRUE, FALSE)]) / 2)   # Version 2
 (QuasiSE  <- sqrt(quasiVar))
-\dontrun{ plotqvar(fit3) }
+\dontrun{ qvplot(fit3) }
 
 
 # Example 2: a model with M > 1 linear predictors
 \dontrun{ require("VGAMdata")
 xs.nz.f <- subset(xs.nz, sex == "F")
-xs.nz.f <- subset(xs.nz.f, !is.na(babies)  & !is.na(age) & !is.na(ethnic))
-xs.nz.f$babies <- as.numeric(as.character(xs.nz.f$babies))
-xs.nz.f <- subset(xs.nz.f, babies >=  0)
-xs.nz.f <- subset(xs.nz.f, as.numeric(as.character(ethnic)) <=  2)
+xs.nz.f <- subset(xs.nz.f, !is.na(babies)  & !is.na(age) & !is.na(ethnicity))
+xs.nz.f <- subset(xs.nz.f, ethnicity != "Other")
 
 clist <- list("sm.bs(age, df = 4)" = rbind(1, 0),
               "sm.bs(age, df = 3)" = rbind(0, 1),
-              "ethnic" = diag(2),
-              "(Intercept)" = diag(2))
-fit1 <- vglm(babies ~ sm.bs(age, df = 4) + sm.bs(age, df = 3) + ethnic,
+              "ethnicity"          = diag(2),
+              "(Intercept)"        = diag(2))
+fit1 <- vglm(babies ~ sm.bs(age, df = 4) + sm.bs(age, df = 3) + ethnicity,
             zipoissonff(zero = NULL), xs.nz.f,
             constraints = clist, trace = TRUE)
-Fit1 <- rcim(Qvar(fit1, "ethnic", which.linpred = 1),
+Fit1 <- rcim(Qvar(fit1, "ethnicity", which.linpred = 1),
              uninormal("explink", imethod = 1), maxit = 99, trace = TRUE)
-Fit2 <- rcim(Qvar(fit1, "ethnic", which.linpred = 2),
+Fit2 <- rcim(Qvar(fit1, "ethnicity", which.linpred = 2),
              uninormal("explink", imethod = 1), maxit = 99, trace = TRUE)
 }
 \dontrun{ par(mfrow = c(1, 2))
-plotqvar(Fit1, scol = "blue", pch = 16,
-         main = expression(eta[1]),
-         slwd = 1.5, las = 1, length.arrows = 0.07)
-plotqvar(Fit2, scol = "blue", pch = 16,
-         main = expression(eta[2]),
-         slwd = 1.5, las = 1, length.arrows = 0.07)
+qvplot(Fit1, scol = "blue", pch = 16, main = expression(eta[1]),
+       slwd = 1.5, las = 1, length.arrows = 0.07)
+qvplot(Fit2, scol = "blue", pch = 16, main = expression(eta[2]),
+       slwd = 1.5, las = 1, length.arrows = 0.07)
 }
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the

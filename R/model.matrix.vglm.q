@@ -301,7 +301,7 @@ attrassignlm <- function(object, ...)
 
 
   M <- object@misc$M  
-  Hlist <- object@constraints # == constraints(object, type = "lm")
+  Hlist <- object@constraints  # == constraints(object, type = "lm")
   X.vlm <- lm2vlm.model.matrix(x = x, Hlist = Hlist,
                                xij = object@control$xij, Xm2 = Xm2)
 
@@ -459,13 +459,18 @@ setMethod("model.frame",  "vlm", function(formula, ...)
 
 
 
-depvar.vlm <- function(object, type = c("lm", "lm2"), ...) {
+depvar.vlm <-
+  function(object,
+           type = c("lm", "lm2"),
+           drop = FALSE,
+           ...) {
   type <- match.arg(type, c("lm", "lm2"))[1]
-  if (type == "lm") {
+  ans <- if (type == "lm") {
     object@y
   } else {
     object@Ym2
   }
+  ans[, , drop = drop]
 }
 
 
@@ -483,7 +488,7 @@ setMethod("depvar",  "rrvglm", function(object, ...)
            depvar.vlm(object, ...))
 setMethod("depvar",  "qrrvglm", function(object, ...)
            depvar.vlm(object, ...))
-setMethod("depvar",  "cao", function(object, ...)
+setMethod("depvar",  "rrvgam", function(object, ...)
            depvar.vlm(object, ...))
 setMethod("depvar",  "rcim", function(object, ...)
            depvar.vlm(object, ...))
@@ -491,12 +496,45 @@ setMethod("depvar",  "rcim", function(object, ...)
 
 
 
-npred.vlm <- function(object, ...) {
-  if (length(object@misc$M))
-    object@misc$M else
-  if (ncol(as.matrix(predict(object))) > 0)
-    ncol(as.matrix(predict(object))) else
-  stop("cannot seem to obtain 'M'")
+
+npred.vlm <- function(object,
+                      type = c("total", "one.response"),
+                      ...) {
+  if (!missing(type))
+    type <- as.character(substitute(type))
+  type.arg <- match.arg(type, c("total", "one.response"))[1]
+
+
+  ans <- 
+    if (length(object@misc$M))
+      object@misc$M else
+    if (ncol(as.matrix(predict(object))) > 0)
+      ncol(as.matrix(predict(object))) else
+    stop("cannot seem to obtain 'M'")
+
+
+  ans <-
+  if (type.arg == "one.response") {
+    ans.infos <- ans.y <- NULL
+    infos.fun <- object@family@infos
+    Ans.infos <- infos.fun()
+    if (is.list(Ans.infos) && length(Ans.infos$M1))
+      ans.infos <- Ans.infos$M1
+
+    Q1 <- Ans.infos$Q1
+    if (is.numeric(Q1)) {
+      ans.y <- ncol(depvar(object)) / Q1
+      if (is.numeric(ans.infos) && ans.infos != ans.y)
+        warning("contradiction in values after computing it two ways")
+    }
+
+
+    if (is.numeric(ans.infos)) ans.infos else
+    if (is.numeric(ans.y    )) ans.y     else
+    ans
+  } else ans
+
+  ans
 }
 
 
@@ -511,7 +549,7 @@ setMethod("npred",  "rrvglm", function(object, ...)
            npred.vlm(object, ...))
 setMethod("npred",  "qrrvglm", function(object, ...)
            npred.vlm(object, ...))
-setMethod("npred",  "cao", function(object, ...)
+setMethod("npred",  "rrvgam", function(object, ...)
            npred.vlm(object, ...))
 setMethod("npred",  "rcim", function(object, ...)
            npred.vlm(object, ...))
@@ -604,7 +642,7 @@ setMethod("hatvalues",  "rrvglm", function(model, ...)
            hatvaluesvlm(model, ...))
 setMethod("hatvalues",  "qrrvglm", function(model, ...)
            hatvaluesvlm(model, ...))
-setMethod("hatvalues",  "cao", function(model, ...)
+setMethod("hatvalues",  "rrvgam", function(model, ...)
            hatvaluesvlm(model, ...))
 setMethod("hatvalues",  "rcim", function(model, ...)
            hatvaluesvlm(model, ...))
@@ -678,7 +716,7 @@ setMethod("hatplot",  "rrvglm", function(model, ...)
            hatplot.vlm(model, ...))
 setMethod("hatplot",  "qrrvglm", function(model, ...)
            hatplot.vlm(model, ...))
-setMethod("hatplot",  "cao", function(model, ...)
+setMethod("hatplot",  "rrvgam", function(model, ...)
            hatplot.vlm(model, ...))
 setMethod("hatplot",  "rcim", function(model, ...)
            hatplot.vlm(model, ...))
@@ -705,7 +743,6 @@ dfbetavlm <-
   X.vlm <- model.matrix(model, type = "vlm")
   p.vlm <- ncol(X.vlm)  # nvar(model, type = "vlm")
   M    <- npred(model)
-  wz <- weights(model, type = "work")  # zz unused!!!!!!!
   etastart <- predict(model)
   offset <- matrix(model@offset, n.lm, M)
   new.control <- model@control
@@ -714,6 +751,7 @@ dfbetavlm <-
               model@extra$orig.w else 1
   y.integer <- if (is.logical(model@extra$y.integer))
                  model@extra$y.integer else FALSE
+  coef.model <- coef(model)
 
 
   new.control$trace <- trace.new
@@ -736,7 +774,7 @@ dfbetavlm <-
     w.orig <- if (length(orig.w) != n.lm)
                 rep(orig.w, length.out = n.lm) else
                 orig.w
-    w.orig[ii] <- w.orig[ii] * smallno # Relative
+    w.orig[ii] <- w.orig[ii] * smallno  # Relative
 
     fit <- vglm.fit(x = X.lm,
                     X.vlm.arg = X.vlm,  # Should be more efficient
@@ -756,11 +794,11 @@ dfbetavlm <-
                     Terms = Terms.zz,
                     function.name = "vglm")
 
-    dfbeta[ii, ] <- fit$coeff
+    dfbeta[ii, ] <- coef.model - fit$coeff
   }
 
 
-  dimnames(dfbeta) <- list(rownames(X.lm), names(coef(model)))
+  dimnames(dfbeta) <- list(rownames(X.lm), names(coef.model))
   dfbeta
 }
 
@@ -783,7 +821,7 @@ setMethod("dfbeta",  "rrvglm", function(model, ...)
            dfbetavlm(model, ...))
 setMethod("dfbeta",  "qrrvglm", function(model, ...)
            dfbetavlm(model, ...))
-setMethod("dfbeta",  "cao", function(model, ...)
+setMethod("dfbeta",  "rrvgam", function(model, ...)
            dfbetavlm(model, ...))
 setMethod("dfbeta",  "rcim", function(model, ...)
            dfbetavlm(model, ...))

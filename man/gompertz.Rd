@@ -8,12 +8,15 @@
 
 }
 \usage{
-gompertz(lshape = "loge", lscale = "loge",
-         ishape = NULL,   iscale = NULL,
-         nsimEIM = 500, zero = NULL)
+gompertz(lscale = "loge", lshape = "loge",
+         iscale = NULL,   ishape = NULL,
+         nsimEIM = 500, zero = NULL, nowarning = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
+  \item{nowarning}{ Logical. Suppress a warning? }
+
+
   \item{lshape, lscale}{
   Parameter link functions applied to the
   shape parameter \code{a},
@@ -112,8 +115,8 @@ gdata <- transform(gdata, shape1 = exp(eta1),
                           shape2 = exp(eta2),
                           scale1 = exp(ceta1),
                           scale2 = exp(ceta2))
-gdata <- transform(gdata, y1 = rgompertz(nn, shape = shape1, scale = scale1),
-                          y2 = rgompertz(nn, shape = shape2, scale = scale2))
+gdata <- transform(gdata, y1 = rgompertz(nn, scale = scale1, shape = shape1),
+                          y2 = rgompertz(nn, scale = scale2, shape = shape2))
 
 fit1 <- vglm(y1 ~ 1,  gompertz, data = gdata, trace = TRUE)
 fit2 <- vglm(y2 ~ x2, gompertz, data = gdata, trace = TRUE)

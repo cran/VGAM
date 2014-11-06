@@ -1,5 +1,5 @@
-\name{gengamma}
-\alias{gengamma}
+\name{gengamma.stacy}
+\alias{gengamma.stacy}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Generalized Gamma distribution family function }
 \description{
@@ -8,8 +8,8 @@
 
 }
 \usage{
-gengamma(lscale = "loge", ld = "loge", lk = "loge",
-         iscale = NULL, id = NULL, ik = NULL, zero = NULL)
+gengamma.stacy(lscale = "loge", ld = "loge", lk = "loge",
+               iscale = NULL, id = NULL, ik = NULL, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -101,6 +101,8 @@ Rayleigh          \eqn{f(y;c\sqrt{2},2,1)}{f(y;c sqrt(2),2,1)} where \eqn{c>0}.
   even with two or three hundred observations.
   With covariates, even more observations are needed to increase the
   chances of convergence.
+  Using covariates is not advised unless the sample size is at least
+  a few thousand.
 
 
 }
@@ -115,7 +117,7 @@ Rayleigh          \eqn{f(y;c\sqrt{2},2,1)}{f(y;c sqrt(2),2,1)} where \eqn{c>0}.
 
 }
 \seealso{
-  \code{\link{rgengamma}},
+  \code{\link{rgengamma.stacy}},
   \code{\link{gamma1}},
   \code{\link{gamma2}},
   \code{\link{prentice74}},
@@ -124,21 +126,20 @@ Rayleigh          \eqn{f(y;c\sqrt{2},2,1)}{f(y;c sqrt(2),2,1)} where \eqn{c>0}.
 
 }
 \examples{
-\dontrun{ k <- exp(-1); Scale = exp(1)
+k <- exp(-1); Scale = exp(1)
 gdata <- data.frame(y = rgamma(1000, shape = k, scale = Scale))
-fit <- vglm(y ~ 1, gengamma, data = gdata, trace = TRUE)
+fit <- vglm(y ~ 1, gengamma.stacy, data = gdata, trace = TRUE)
 coef(fit, matrix = TRUE)
-
-# Another example
-gdata <- data.frame(x2 = runif(nn <- 5000))
-gdata <- transform(gdata, Scale = exp(1),
-                          d = exp( 0 + 1.2* x2),
-                          k = exp(-1 + 2  * x2))
-gdata <- transform(gdata, y = rgengamma(nn, scale = Scale, d = d, k = k))
-fit <- vglm(y ~ x2, gengamma(zero = 1, iscale = 6), data = gdata, trace = TRUE)
-fit <- vglm(y ~ x2, gengamma(zero = 1), data = gdata, trace = TRUE, maxit = 50)
-coef(fit, matrix = TRUE)
-}
 }
 \keyword{models}
 \keyword{regression}
+
+%# Another example
+%gdata <- data.frame(x2 = runif(nn <- 5000))
+%gdata <- transform(gdata, Scale = exp(1),
+%                          d = exp( 0 + 1.2* x2),
+%                          k = exp(-1 + 2  * x2))
+%gdata <- transform(gdata, y = rgengamma.stacy(nn, scale = Scale, d = d, k = k))
+%fit <- vglm(y ~ x2, gengamma.stacy(zero = 1, iscale = 6), data = gdata, trace = TRUE)
+%fit <- vglm(y ~ x2, gengamma.stacy(zero = 1), data = gdata, trace = TRUE, maxit = 50)
+%coef(fit, matrix = TRUE)

@@ -23,10 +23,12 @@ cauchy1(scale.arg = 1, llocation = "identitylink",
   and the scale parameter \eqn{b}{b}.
   See \code{\link{Links}} for more choices.
 
+
   }
   \item{ilocation, iscale}{ 
   Optional initial value for \eqn{a}{a} and \eqn{b}{b}.
   By default, an initial value is chosen internally for each.
+
 
   }
   \item{imethod}{ 
@@ -37,18 +39,22 @@ cauchy1(scale.arg = 1, llocation = "identitylink",
   Also, choose the another value if convergence fails, or use
   \code{ilocation} and/or \code{iscale}.
 
+
   }
   \item{iprobs}{
   Probabilities used to find the respective sample quantiles;
   used to compute \code{iscale}.
 
+
   }
   \item{zero, nsimEIM}{
   See \code{\link{CommonVGAMffArguments}} for more information.
 
+
   }
   \item{scale.arg}{
   Known (positive) scale parameter, called \eqn{b}{b} below.
+
 
   }
 }
@@ -59,7 +65,7 @@ cauchy1(scale.arg = 1, llocation = "identitylink",
   where \eqn{y} and \eqn{a} are real and finite,
   and \eqn{b>0}{b>0}.
   The distribution is symmetric about \eqn{a} and has a heavy tail.
-  Its median and mode are \eqn{a} but the mean does not exist.
+  Its median and mode are \eqn{a}, but the mean does not exist.
   The fitted values are the estimates of \eqn{a}.
   Fisher scoring is the default but if \code{nsimEIM} is specified then
   Fisher scoring with simulation is used.
@@ -83,7 +89,7 @@ cauchy1(scale.arg = 1, llocation = "identitylink",
 }
 \section{Warning }{
   It is well-known that the Cauchy distribution may have local
-  maxima in its likelihood function;
+  maximums in its likelihood function;
   make full use of \code{imethod}, \code{ilocation}, \code{iscale}
   etc.
 

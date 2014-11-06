@@ -1,6 +1,6 @@
 \name{frechet}
-% \alias{frechet}
-\alias{frechet2}
+\alias{frechet}
+%\alias{frechet2}
 %\alias{frechet3}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Frechet Distribution Family Function }
@@ -12,8 +12,8 @@
 
 }
 \usage{
-frechet2(location = 0, lscale = "loge", lshape = logoff(offset = -2),
-         iscale = NULL, ishape = NULL, nsimEIM = 250, zero = NULL)
+frechet(location = 0, lscale = "loge", lshape = logoff(offset = -2),
+        iscale = NULL, ishape = NULL, nsimEIM = 250, zero = NULL)
 %frechet3(anchor = NULL, ldifference = "loge", lscale = "loge",
 %         lshape = "loglog",
 %         ilocation = NULL, iscale = NULL, ishape = NULL,
@@ -86,7 +86,7 @@ frechet2(location = 0, lscale = "loge", lshape = logoff(offset = -2),
   for \eqn{s > 2}.
 
 
-  Family \code{frechet2} has \eqn{a} known, and
+  Family \code{frechet} has \eqn{a} known, and
   \eqn{\log(b)}{log(b)} and
   \eqn{\log(s - 2)}{log(s - 2)} are the default linear/additive predictors.
   The working weights are estimated by simulated Fisher scoring.
@@ -128,7 +128,7 @@ Hoboken, NJ, USA: Wiley-Interscience.
 %  like \code{maxit = 200, trace = TRUE} is a good idea.
 
 
-  Family function \code{frechet2} may fail for low values of
+  Family function \code{frechet} may fail for low values of
   the shape parameter, e.g., near 2 or lower.
 
 
@@ -162,7 +162,7 @@ Hoboken, NJ, USA: Wiley-Interscience.
 set.seed(123)
 fdata <- data.frame(y1 = rfrechet(nn <- 1000, shape = 2 + exp(1)))
 with(fdata, hist(y1))
-fit2 <- vglm(y1 ~ 1, frechet2, data = fdata, trace = TRUE)
+fit2 <- vglm(y1 ~ 1, frechet, data = fdata, trace = TRUE)
 coef(fit2, matrix = TRUE)
 Coef(fit2)
 head(fitted(fit2))

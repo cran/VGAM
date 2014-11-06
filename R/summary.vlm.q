@@ -10,9 +10,12 @@
 
 
 
+
+
+
 summaryvlm <-
   function(object, correlation = FALSE, dispersion = NULL,
-           Colnames = c("Estimate", "Std. Error", "z value"),
+           Colnames = c("Estimate", "Std. Error", "z value", "Pr(>|z|)"),
            presid = TRUE) {
                          
 
@@ -64,7 +67,7 @@ summaryvlm <-
       warning("overriding the value of object@misc$dispersion")
     object@misc$estimated.dispersion <- FALSE
   }
-  sigma <- dispersion^0.5  # Can be a vector 
+  sigma <- sqrt(dispersion)  # Can be a vector 
 
   if (is.Numeric(ncol.X.vlm)) {
     R <- object@R
@@ -80,15 +83,23 @@ summaryvlm <-
 
     dimnames(covun) <- list(cnames, cnames)
   }
-  coef3 <- matrix(rep(Coefs, 3), ncol = 3)
+  coef3 <- matrix(rep(Coefs, 4), ncol = 4)
   dimnames(coef3) <- list(cnames, Colnames)
   SEs <- sqrt(diag(covun))
   if (length(sigma) == 1 && is.Numeric(ncol.X.vlm)) {
     coef3[, 2] <- SEs %o% sigma  # Fails here when sigma is a vector 
     coef3[, 3] <- coef3[, 1] / coef3[, 2]
+    pvalue <- 2 * pnorm(-abs(coef3[, 3]))
+    coef3[, 4] <- pvalue
+
+    if (is.logical(object@misc$estimated.dispersion) &&
+        object@misc$estimated.dispersion)
+      coef3 <- coef3[, -4]  # Delete the pvalues column
   } else {
-    coef3[, 1] <- coef3[, 2] <- coef3[, 3] <- NA
+    coef3[, 1] <- coef3[, 2] <- coef3[, 3] <- coef3[, 4] <- NA
+    coef3 <- coef3[, -4]  # Delete the pvalues column
   }
+
   if (correlation) {
     correl <- covun * outer(1 / SEs, 1 / SEs)
 
@@ -120,6 +131,7 @@ summaryvlm <-
 
   answer
 }
+
 
 
 

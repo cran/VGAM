@@ -13,11 +13,11 @@
 zanegbinomial(lpobs0 = "logit", lmunb = "loge", lsize = "loge",
               type.fitted = c("mean", "pobs0"),
               ipobs0 = NULL, isize = NULL, zero = -3, imethod = 1,
-              nsimEIM = 250, shrinkage.init = 0.95)
+              nsimEIM = 250, ishrinkage = 0.95)
 zanegbinomialff(lmunb = "loge", lsize = "loge", lonempobs0 = "logit",
                 type.fitted = c("mean", "pobs0", "onempobs0"),
                 isize = NULL, ionempobs0 = NULL, zero = c(-2, -3),
-                imethod = 1, nsimEIM = 250, shrinkage.init = 0.95)
+                imethod = 1, nsimEIM = 250, ishrinkage = 0.95)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -95,7 +95,7 @@ zanegbinomialff(lmunb = "loge", lsize = "loge", lonempobs0 = "logit",
   See \code{\link{CommonVGAMffArguments}}.
 
   }
-  \item{shrinkage.init}{
+  \item{ishrinkage}{
   See \code{\link{negbinomial}}
   and \code{\link{CommonVGAMffArguments}}.
 

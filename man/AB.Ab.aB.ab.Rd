@@ -55,17 +55,20 @@ Lange, K. (2002)
 
 \seealso{
   \code{\link{AA.Aa.aa}},
-  \code{\link{AB.Ab.aB.ab2}},
   \code{\link{ABO}},
-  \code{\link{G1G2G3}},
+  \code{\link{A1A2A3}},
   \code{\link{MNSs}}.
+
+
+% \code{\link{AB.Ab.aB.ab2}},
+
 
 
 }
 
 \examples{
 ymat <- cbind(AB=1997, Ab=906, aB=904, ab=32)  # Data from Fisher (1925)
-fit <- vglm(ymat ~ 1, AB.Ab.aB.ab(link = "identitylink", init.p = 0.9), trace = TRUE)
+fit <- vglm(ymat ~ 1, AB.Ab.aB.ab(link = "identitylink"), trace = TRUE)
 fit <- vglm(ymat ~ 1, AB.Ab.aB.ab, trace = TRUE)
 rbind(ymat, sum(ymat)*fitted(fit))
 Coef(fit)  # Estimated p

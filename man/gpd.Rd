@@ -10,7 +10,8 @@
 \usage{
 gpd(threshold = 0, lscale = "loge", lshape = logoff(offset = 0.5),
     percentiles = c(90, 95), iscale = NULL, ishape = NULL,
-    tolshape0 = 0.001, giveWarning = TRUE, imethod = 1, zero = -2)
+    tolshape0 = 0.001, type.fitted = c("percentiles", "mean"),
+    giveWarning = TRUE, imethod = 1, zero = -2)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -18,10 +19,12 @@ gpd(threshold = 0, lscale = "loge", lshape = logoff(offset = 0.5),
   Numeric, values are recycled if necessary.
   The threshold value(s), called \eqn{\mu}{mu} below.
 
+
   }
   \item{lscale}{
   Parameter link function for the scale parameter \eqn{\sigma}{sigma}.
   See \code{\link{Links}} for more choices.
+
 
   }
   \item{lshape}{
@@ -40,6 +43,7 @@ gpd(threshold = 0, lscale = "loge", lshape = logoff(offset = 0.5),
   \eqn{\xi > -A}{xi > -A}.
   The working weight matrices are positive definite if \eqn{A = 0.5}.
 
+
   }
 
 % \item{Offset}{
@@ -56,11 +60,28 @@ gpd(threshold = 0, lscale = "loge", lshape = logoff(offset = 0.5),
   Numeric vector of percentiles used
   for the fitted values. Values should be between 0 and 100.
   See the example below for illustration.
-  However, if \code{percentiles = NULL} then the mean
-  \eqn{\mu + \sigma / (1-\xi)}{mu + sigma / (1-xi)} is returned;
-  this is only defined if \eqn{\xi<1}{xi<1}.
+  This argument is ignored if \code{type.fitted = "mean"}.
+
+
+
+% However, if \code{percentiles = NULL} then the mean
+% \eqn{\mu + \sigma / (1-\xi)}{mu + sigma / (1-xi)} is returned;
+% this is only defined if \eqn{\xi<1}{xi<1}.
+
 
   }
+  \item{type.fitted}{
+  See \code{\link{CommonVGAMffArguments}} for information.
+  The default is to use the \code{percentiles} argument.
+  If \code{"mean"} is chosen, then the mean
+  \eqn{\mu + \sigma / (1-\xi)}{mu + sigma / (1-xi)}
+  is returned as the fitted values,
+  and these are only defined for \eqn{\xi<1}{xi<1}.
+
+
+
+  }
+
   \item{iscale, ishape}{
   Numeric. Optional initial values for \eqn{\sigma}{sigma}
   and \eqn{\xi}{xi}.
@@ -69,6 +90,7 @@ gpd(threshold = 0, lscale = "loge", lshape = logoff(offset = 0.5),
   Values of \code{ishape} should be between \eqn{-0.5} and \eqn{1}.
   Values of \code{iscale} should be positive.
 
+
   }
 % \item{rshape}{ 
 % Numeric, of length 2.
@@ -76,9 +98,11 @@ gpd(threshold = 0, lscale = "loge", lshape = logoff(offset = 0.5),
 % The default values ensures the algorithm works (\eqn{\xi > -0.5}{xi > -0.5})
 % and the variance exists (\eqn{\xi < 0.5}{xi < 0.5}).
 
+
 % }
   \item{tolshape0, giveWarning}{
   Passed into \code{\link{dgpd}} when computing the log-likelihood.
+
 
   }
 
@@ -89,11 +113,13 @@ gpd(threshold = 0, lscale = "loge", lshape = logoff(offset = 0.5),
 % this value then it will be assumed zero and exponential distribution
 % derivatives etc. will be used.
 
+
 % }
   \item{imethod}{
    Method of initialization, either 1 or 2. The first is the method of
    moments, and the second is a variant of this.  If neither work, try
    assigning values to arguments \code{ishape} and/or \code{iscale}.
+
 
   }
   \item{zero}{
@@ -164,6 +190,7 @@ gpd(threshold = 0, lscale = "loge", lshape = logoff(offset = 0.5),
   Internally, \eqn{y-\mu}{y-mu} is computed.
   This \pkg{VGAM} family function can handle a multiple
   responses, which is inputted as a matrix.
+  The response stored on the object is the original uncentred data.
 
 
 
@@ -183,6 +210,7 @@ gpd(threshold = 0, lscale = "loge", lshape = logoff(offset = 0.5),
   or \code{\link[splines]{ns}}) because \code{\link{vglm}} implements
   half-stepsizing whereas \code{\link{vgam}} doesn't. Half-stepsizing
   helps handle the problem of straying outside the parameter space.
+
 
 }  
 \value{
@@ -225,10 +253,11 @@ gpd(threshold = 0, lscale = "loge", lshape = logoff(offset = 0.5),
 
 \examples{
 # Simulated data from an exponential distribution (xi = 0)
-threshold <- 0.5
-gdata <- data.frame(y1 = threshold + rexp(n = 3000, rate = 2))
-fit <- vglm(y1 ~ 1, gpd(threshold = threshold), data = gdata, trace = TRUE)
+Threshold <- 0.5
+gdata <- data.frame(y1 = Threshold + rexp(n = 3000, rate = 2))
+fit <- vglm(y1 ~ 1, gpd(threshold = Threshold), data = gdata, trace = TRUE)
 head(fitted(fit))
+summary(depvar(fit))  # The original uncentred data
 coef(fit, matrix = TRUE)  # xi should be close to 0
 Coef(fit)
 summary(fit)
@@ -250,22 +279,24 @@ matlines(1:length(depvar(fit)), fitted(fit), lty = 2:3, lwd = 2) }
 
 # Another example
 gdata <- data.frame(x2 = runif(nn <- 2000))
-threshold <- 0; xi <- exp(-0.8) - 0.5
+Threshold <- 0; xi <- exp(-0.8) - 0.5
 gdata <- transform(gdata, y2 = rgpd(nn, scale = exp(1 + 0.1*x2), shape = xi))
-fit <- vglm(y2 ~ x2, gpd(threshold), data = gdata, trace = TRUE)
+fit <- vglm(y2 ~ x2, gpd(Threshold), data = gdata, trace = TRUE)
 coef(fit, matrix = TRUE)
 
 
 \dontrun{ # Nonparametric fits
-gdata <- transform(gdata, yy = y2 + rnorm(nn, sd = 0.1))
 # Not so recommended:
-fit1 <- vgam(yy ~ s(x2), gpd(threshold), data = gdata, trace = TRUE)
-par(mfrow = c(2,1))
-plotvgam(fit1, se = TRUE, scol = "blue")
+fit1 <- vgam(y2 ~ s(x2), gpd(Threshold), data = gdata, trace = TRUE)
+par(mfrow = c(2, 1))
+plot(fit1, se = TRUE, scol = "blue")
 # More recommended:
-fit2 <- vglm(yy ~ sm.bs(x2), gpd(threshold), data = gdata, trace = TRUE)
-plotvgam(fit2, se = TRUE, scol = "blue") }
+fit2 <- vglm(y2 ~ sm.bs(x2), gpd(Threshold), data = gdata, trace = TRUE)
+plot(as(fit2, "vgam"), se = TRUE, scol = "blue") }
 }
 \keyword{models}
 \keyword{regression}
 
+%
+% # gdata <- transform(gdata, yy = y2 + rnorm(nn, sd = 0.1))
+%

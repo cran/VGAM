@@ -46,10 +46,10 @@ borel.tanner(Qsize = 1, link = "logit", imethod = 1)
   parameter to be estimated.
   The density function is
   \deqn{f(y;a) =
-  \frac{ Q! }{(y-Q)!} y^{y-Q-1} a^{y-Q}  \exp(-ay)
+  \frac{ Q }{(y-Q)!} y^{y-Q-1} a^{y-Q}  \exp(-ay)
   }{%
   f(y;a) = 
-  (Q! / (y-Q)!) * y^(y-Q-1) * a^(y-Q) * exp(-ay)}
+  (Q / (y-Q)!) * y^(y-Q-1) * a^(y-Q) * exp(-ay)}
   where \eqn{y=Q,Q+1,Q+2,\ldots}{y=Q,Q+1,Q+2,...}.
   The case \eqn{Q=1} corresponds to the \emph{Borel} distribution
   (Borel, 1942).
@@ -98,7 +98,7 @@ Application au probleme de l'attente a un guichet.
 
 Consul, P. C. and Famoye, F. (2006)
 \emph{Lagrangian Probability Distributions},
-Boston: Birkhauser.
+Boston, MA, USA: Birkhauser.
 
 
 }

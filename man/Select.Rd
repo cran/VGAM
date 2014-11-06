@@ -1,6 +1,7 @@
 \name{Select}
 \alias{Select}
-\alias{subsetc}
+\alias{subsetcol}
+% \alias{subsetc}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
   Select variables for a formula response or the RHS of a formula
@@ -20,10 +21,6 @@ Select(data = list(), prefix = "y",
        lhs = NULL, rhs = NULL, rhs2 = NULL, rhs3 = NULL,
        as.character = FALSE, as.formula.arg = FALSE, tilde = TRUE,
        exclude = NULL, sort.arg = TRUE)
-subsetc(data = list(), prefix = "y",
-        lhs = NULL, rhs = NULL, rhs2 = NULL, rhs3 = NULL,
-        as.character = FALSE, as.formula.arg = FALSE, tilde = TRUE,
-        exclude = NULL, sort.arg = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -182,7 +179,7 @@ subsetc(data = list(), prefix = "y",
 
 
 
-  Currently \code{subsetc()} and \code{Select()} are identical.
+  Currently \code{subsetcol()} and \code{Select()} are identical.
   One of these functions might be withdrawn in the future.
 
 
@@ -240,7 +237,7 @@ fit.th <-
         form2 = ~ x2 + x3.tij + t01 + t02 + t03 + t04 + t05 + t06 + t07 + t08 +
                                 t09 + t10)
 # Short way to do it:
-Fit.th <- vglm(Select(tab1, "y", sort = FALSE) ~ x2 + x3.tij,
+Fit.th <- vglm(Select(tab1, "y") ~ x2 + x3.tij,
                xij = list(Select(tab1, "t", as.formula = TRUE,
                                  sort = FALSE, lhs = "x3.tij", rhs = "0")),
                posbernoulli.t(parallel.t = TRUE ~ x2 + x3.tij),
@@ -259,4 +256,5 @@ Fit.th <- vglm(Select(tab1, "y", sort = FALSE) ~ x2 + x3.tij,
 %                             rhs = "x2 + x3.tij"))
 
 
+% dim(subset(prinia, TRUE, select = grepl("^y", colnames(prinia))))
 

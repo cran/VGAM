@@ -1,5 +1,5 @@
-\name{benini}
-\alias{benini}
+\name{benini1}
+\alias{benini1}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{Benini Distribution Family Function }
 \description{
@@ -8,8 +8,8 @@
 
 }
 \usage{
-benini(y0 = stop("argument 'y0' must be specified"), lshape = "loge",
-       ishape = NULL, imethod = 1, zero = NULL)
+benini1(y0 = stop("argument 'y0' must be specified"), lshape = "loge",
+        ishape = NULL, imethod = 1, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -37,20 +37,21 @@ benini(y0 = stop("argument 'y0' must be specified"), lshape = "loge",
 \details{
   The Benini distribution
   has a probability density function that can be written
-  \deqn{f(y) = 2 b \exp(-b[(\log(y/y_0))^2]) \log(y/y_0) / y }{%
-        f(y) = 2*b*exp(-b * [(log(y/y0))^2]) * log(y/y0) / y}
-  for \eqn{0 < y_0 < y}{0 < y0 < y}, and \eqn{b > 0}.
+  \deqn{f(y) = 2 s \exp(-s[(\log(y/y_0))^2]) \log(y/y_0) / y }{%
+        f(y) = 2*s*exp(-s * [(log(y/y0))^2]) * log(y/y0) / y}
+  for \eqn{0 < y_0 < y}{0 < y0 < y}, and shape \eqn{s > 0}.
   The cumulative distribution function for \eqn{Y} is
-  \deqn{F(y) = 1 - \exp(-b[(\log(y/y_0))^2]).}{%
-        F(y) = 1 - exp(-b * [(log(y / y0))^2]). }
+  \deqn{F(y) = 1 - \exp(-s[(\log(y/y_0))^2]).}{%
+        F(y) = 1 - exp(-s * [(log(y / y0))^2]). }
   Here, Newton-Raphson and Fisher scoring coincide.
-  The median of \eqn{Y} is now returned as the fitted values.
+  The median of \eqn{Y} is now returned as the fitted values, by default.
   This \pkg{VGAM} family function can handle a multiple
   responses, which is inputted as a matrix.
 
 
-  On fitting, the \code{extra}  slot has a component called \code{y0} which 
-  contains the value of the \code{y0} argument.
+  On fitting, the \code{extra} slot has a component called
+  \code{y0} which contains the value of the \code{y0}
+  argument.
 
 
 }
@@ -76,12 +77,15 @@ Kleiber, C. and Kotz, S. (2003)
 Hoboken, NJ, USA: Wiley-Interscience.
 
 
+% Section 7.1, pp.235--8
+
+
 }
 \author{ T. W. Yee }
 \note{
-  Yet to do: the 2-parameter Benini distribution estimates \eqn{y_0}{y0}
-  as well, and the 3-parameter Benini distribution estimates another
+  Yet to do: the 2-parameter Benini distribution estimates another
   shape parameter \eqn{a}{a} too.
+  Hence, the code may change in the future.
 
 
 }
@@ -93,7 +97,7 @@ Hoboken, NJ, USA: Wiley-Interscience.
 \examples{
 y0 <- 1; nn <- 3000
 bdata <- data.frame(y  = rbenini(nn, y0 = y0, shape = exp(2)))
-fit <- vglm(y ~ 1, benini(y0 = y0), data = bdata, trace = TRUE, crit = "coef")
+fit <- vglm(y ~ 1, benini1(y0 = y0), data = bdata, trace = TRUE)
 coef(fit, matrix = TRUE)
 Coef(fit)
 fit@extra$y0

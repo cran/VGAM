@@ -14,10 +14,10 @@ rrvglm.control <-
            Uncorrelated.latvar = FALSE,
            Wmat = NULL,
            Svd.arg = FALSE,
-           Index.corner = if (length(str0)) 
+           Index.corner = if (length(str0))
            head((1:1000)[-str0], Rank) else 1:Rank,
            Ainit = NULL,
-           Alpha = 0.5, 
+           Alpha = 0.5,
            Bestof = 1,
            Cinit = NULL,
            Etamat.colmax = 10,
@@ -25,7 +25,7 @@ rrvglm.control <-
            sd.Cinit = 0.02,
            str0 = NULL,
 
-           noRRR = ~ 1, 
+           noRRR = ~ 1,
            Norrr = NA,
 
            noWarning = FALSE,
@@ -34,6 +34,7 @@ rrvglm.control <-
            Use.Init.Poisson.QO = FALSE,
            checkwz = TRUE,
            Check.rank = TRUE,
+           Check.cm.rank = TRUE,
            wzepsilon = .Machine$double.eps^0.75,
            ...) {
 
@@ -120,13 +121,14 @@ rrvglm.control <-
                  trace = trace,
                  checkwz = checkwz,
                  Check.rank = Check.rank,
+                 Check.cm.rank = Check.cm.rank,
                  wzepsilon = wzepsilon,
                  noWarning = noWarning,
                  ...),
 
     switch(Algorithm,
            "alternating" = valt.control(...),
-           "derivative" = rrvglm.optim.control(...)),
+           "derivative"  = rrvglm.optim.control(...)),
     list(Rank = Rank,
          Ainit = Ainit,
          Algorithm = Algorithm,

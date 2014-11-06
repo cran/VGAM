@@ -19,7 +19,7 @@ rrvglm.control(Rank = 1, Algorithm = c("alternating", "derivative"),
     noRRR = ~1, Norrr = NA,
     noWarning = FALSE,
     trace = FALSE, Use.Init.Poisson.QO = FALSE, 
-    checkwz = TRUE, Check.rank = TRUE,
+    checkwz = TRUE, Check.rank = TRUE, Check.cm.rank = TRUE,
     wzepsilon = .Machine$double.eps^0.75, ...)
 }
 %- maybe also `usage' for other objects documented here.
@@ -122,8 +122,8 @@ rrvglm.control(Rank = 1, Algorithm = c("alternating", "derivative"),
   of the estimated constraint matrices (\bold{A}) are
   to be all zeros.
   These are called \emph{structural zeros}.
-  Must not have any common value with \code{Index.corner}, and
-  be a subset of the vector \code{1:M}.
+  Must not have any common value with \code{Index.corner},
+  and be a subset of the vector \code{1:M}.
   The default, \code{str0 = NULL}, means no structural zero rows at all.
 
 
@@ -186,7 +186,7 @@ rrvglm.control(Rank = 1, Algorithm = c("alternating", "derivative"),
 
 
   }
-  \item{noWarning, Check.rank}{
+  \item{noWarning, Check.rank, Check.cm.rank}{
     Same as \code{\link{vglm.control}}.
 
 
@@ -198,8 +198,12 @@ rrvglm.control(Rank = 1, Algorithm = c("alternating", "derivative"),
   }
   \item{\dots}{
     Variables in \dots are passed into
-    \code{\link{vglm.control}}. If the derivative algorithm is used, then
-    \dots are also passed into \code{\link{rrvglm.optim.control}}.
+    \code{\link{vglm.control}}.
+    If the derivative algorithm is used then \dots are also passed
+    into \code{\link{rrvglm.optim.control}};
+    and
+    if the alternating algorithm is used then \dots are also passed
+    into \code{\link{valt.control}}.
 
 
   }

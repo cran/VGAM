@@ -39,6 +39,7 @@ bistudentt(ldf = "loglog", lrho = "rhobit",
   for \eqn{-1 < \rho < 1}{-1 < rho < 1},
   and real \eqn{y_1}{y1} and \eqn{y_2}{y2}.
 
+
 % The support of the function is the interior of the unit square;
 % however, values of 0 and/or 1 are not allowed.
 % The marginal distributions are the standard uniform distributions.
@@ -80,10 +81,13 @@ with help from Thibault Vatter.
   Currently, the fitted
   value is a matrix with the same number of columns and values equal to 0.0.
 
+
 }
 \section{Warning }{
 
+
   The working weight matrices have not been fully checked.
+
 
 }
 
@@ -98,18 +102,12 @@ with help from Thibault Vatter.
 nn <- 1000
 mydof <- loglog(1, inverse = TRUE)
 ymat <- cbind(rt(nn, df = mydof), rt(nn, df = mydof))
-
-bdata <- data.frame(y1 = ymat[, 1],
-                    y2 = ymat[, 2],
-                    y3 = ymat[, 1],
-                    y4 = ymat[, 2],
-                    x2 = runif(nn))
-
+bdata <- data.frame(y1 = ymat[, 1], y2 = ymat[, 2],
+                    y3 = ymat[, 1], y4 = ymat[, 2], x2 = runif(nn))
 summary(bdata)
 \dontrun{ plot(ymat, col = "blue") }
-fit1 <- vglm(cbind(y1, y2, y3, y4) ~ 1,  # 2 responses, e.g., (y1,y2) is the first
-             fam = bistudentt,
-#            crit = "coef",  # Sometimes a good idea
+fit1 <- vglm(cbind(y1, y2, y3, y4) ~ 1,  # 2 responses, e.g., (y1,y2) is the 1st
+             fam = bistudentt,  # crit = "coef",  # Sometimes a good idea
              data = bdata, trace = TRUE)
 
 coef(fit1, matrix = TRUE)

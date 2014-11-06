@@ -1,6 +1,6 @@
 \name{lognormal}
 \alias{lognormal}
-\alias{lognormal3}
+%\alias{lognormal3}
 %%- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Lognormal Distribution }
 \description{
@@ -10,8 +10,6 @@
 }
 \usage{
 lognormal(lmeanlog = "identitylink", lsdlog = "loge", zero = 2)
-lognormal3(lmeanlog = "identitylink", lsdlog = "loge",
-           powers.try = (-3):3, delta = NULL, zero = 2)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -39,26 +37,33 @@ lognormal3(lmeanlog = "identitylink", lsdlog = "loge",
   For \code{lognormal()},
   the values must be from the set \{1,2\} which correspond to
   \code{mu}, \code{sigma}, respectively.
-  For \code{lognormal3()},
-  the values must be from the set \{1,2,3\} where 3 is for
-  \eqn{\lambda}{\lambda}.
   See \code{\link{CommonVGAMffArguments}} for more information.
 
 
-  }
-  \item{powers.try}{
-  Numerical vector. The initial \eqn{lambda} is chosen
-  as the best value from \code{min(y) - 10^powers.try} where
-  \code{y} is the response.
+% For \code{lognormal3()},
+% the values must be from the set \{1,2,3\} where 3 is for
+% \eqn{\lambda}{\lambda}.
+
+
 
   }
-  \item{delta}{
-  Numerical vector. An alternative method for
-  obtaining an initial \eqn{lambda}. Here, \code{delta = min(y)-lambda}.
-  If given, this supersedes the \code{powers.try} argument.
-  The value must be positive.
 
-  }
+
+% \item{powers.try}{
+% Numerical vector. The initial \eqn{lambda} is chosen
+% as the best value from \code{min(y) - 10^powers.try} where
+% \code{y} is the response.
+
+% }
+
+
+% \item{delta}{
+% Numerical vector. An alternative method for
+% obtaining an initial \eqn{lambda}. Here, \code{delta = min(y)-lambda}.
+% If given, this supersedes the \code{powers.try} argument.
+% The value must be positive.
+
+% }
 }
 \details{
   A random variable \eqn{Y} has a 2-parameter lognormal distribution
@@ -70,19 +75,19 @@ lognormal3(lmeanlog = "identitylink", lsdlog = "loge",
   and not \eqn{\mu}{mu}, make up the fitted values.
 
 
-  A random variable \eqn{Y} has a 3-parameter lognormal distribution
-  if \eqn{\log(Y-\lambda)}{log(Y-lambda)}
-  is distributed \eqn{N(\mu, \sigma^2)}{N(mu, sigma^2)}. Here,
-  \eqn{\lambda < Y}{lambda < Y}.
-  The expected value of \eqn{Y}, which is
-  \deqn{E(Y) = \lambda + \exp(\mu + 0.5 \sigma^2)}{%
-        E(Y) =  lambda + exp(mu + 0.5 sigma^2)}
-  and not \eqn{\mu}{mu}, make up the fitted values.
+% A random variable \eqn{Y} has a 3-parameter lognormal distribution
+% if \eqn{\log(Y-\lambda)}{log(Y-lambda)}
+% is distributed \eqn{N(\mu, \sigma^2)}{N(mu, sigma^2)}. Here,
+% \eqn{\lambda < Y}{lambda < Y}.
+% The expected value of \eqn{Y}, which is
+% \deqn{E(Y) = \lambda + \exp(\mu + 0.5 \sigma^2)}{%
+%       E(Y) =  lambda + exp(mu + 0.5 sigma^2)}
+% and not \eqn{\mu}{mu}, make up the fitted values.
 
 
-  \code{lognormal()} and \code{lognormal3()} fit the 2- and 3-parameter
-  lognormal distribution respectively. Clearly, if the location
-  parameter \eqn{\lambda=0}{lambda=0} then both distributions coincide.
+% \code{lognormal()} and \code{lognormal3()} fit the 2- and 3-parameter
+% lognormal distribution respectively. Clearly, if the location
+% parameter \eqn{\lambda=0}{lambda=0} then both distributions coincide.
 
 
 }
@@ -112,13 +117,13 @@ Hoboken, NJ, USA: Wiley-Interscience.
 %}
 
 
-\section{Warning}{
-  Regularity conditions are not satisfied for the 3-parameter case:
-  results may be erroneous.
-  May withdraw it in later versions.
-
-
-}
+%\section{Warning}{
+%  Regularity conditions are not satisfied for the 3-parameter case:
+%  results may be erroneous.
+%  May withdraw it in later versions.
+%
+%
+%}
 
 
 \seealso{
@@ -134,21 +139,32 @@ Hoboken, NJ, USA: Wiley-Interscience.
 }
 
 \examples{
-ldata <- data.frame(y1 = rlnorm(nn <- 1000, meanlog = 1.5, sdlog = exp(-0.8)))
-fit1 <- vglm(y1 ~ 1, lognormal, data = ldata, trace = TRUE, crit = "c")
-coef(fit1, matrix = TRUE)
-Coef(fit1)
-
 ldata2 <- data.frame(x2 = runif(nn <- 1000))
-ldata2 <- transform(ldata2, y2 = rlnorm(nn, mean = 0.5, sd = exp(x2)))
+ldata2 <- transform(ldata2, y1 = rlnorm(nn, mean = 1 + 2 * x2, sd = exp(-1)),
+                            y2 = rlnorm(nn, mean = 1, sd = exp(-1 + x2)))
+fit1 <- vglm(y1 ~ x2, lognormal(zero = 2), data = ldata2, trace = TRUE)
 fit2 <- vglm(y2 ~ x2, lognormal(zero = 1), data = ldata2, trace = TRUE)
+coef(fit1, matrix = TRUE)
 coef(fit2, matrix = TRUE)
-
-lambda <- 4
-ldata3 <- data.frame(y3 = lambda + rlnorm(1000, m = 1.5, sd = exp(-0.8)))
-fit3 <- vglm(y3 ~ 1, lognormal3, data = ldata3, trace = TRUE, crit = "c")
-coef(fit3, matrix = TRUE)
-summary(fit3)
 }
 \keyword{models}
 \keyword{regression}
+
+
+
+%lognormal3(lmeanlog = "identitylink", lsdlog = "loge",
+%           powers.try = (-3):3, delta = NULL, zero = 2)
+
+%lambda <- 4
+%ldata3 <- data.frame(y3 = lambda + rlnorm(1000, m = 1.5, sd = exp(-0.8)))
+%fit3 <- vglm(y3 ~ 1, lognormal3, data = ldata3, trace = TRUE, crit = "c")
+%coef(fit3, matrix = TRUE)
+%summary(fit3)
+
+
+%ldata <- data.frame(y1 = rlnorm(nn <- 1000, meanlog = 1.5, sdlog = exp(-0.8)))
+%fit1 <- vglm(y1 ~ 1, lognormal, data = ldata, trace = TRUE, crit = "c")
+%coef(fit1, matrix = TRUE)
+%Coef(fit1)
+
+

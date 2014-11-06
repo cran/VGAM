@@ -88,7 +88,7 @@ rbetabinom.ab(n, size, shape1, shape2, .dontuse.prob = NULL)
   mean or the probability of success.
 
 
-  See \code{\link{betabinomial}} and \code{\link{betabinomial.ab}},
+  See \code{\link{betabinomial}} and \code{\link{betabinomialff}},
   the \pkg{VGAM} family functions for
   estimating the parameters, for the formula of the probability density
   function and other details.
@@ -109,7 +109,7 @@ rbetabinom.ab(n, size, shape1, shape2, .dontuse.prob = NULL)
 }
 \seealso{
   \code{\link{betabinomial}},
-  \code{\link{betabinomial.ab}}.
+  \code{\link{betabinomialff}}.
 
 
 }

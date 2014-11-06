@@ -37,6 +37,7 @@ cauchit(theta, bvalue = .Machine$double.eps,
   link function is that the tail is heavier relative to the other links
   (see examples below).
 
+
   Numerical values of \code{theta} close to 0 or 1 or out of range result
   in \code{Inf}, \code{-Inf}, \code{NA} or \code{NaN}.
 
@@ -48,15 +49,19 @@ cauchit(theta, bvalue = .Machine$double.eps,
   and if \code{inverse = TRUE} then
   \code{0.5 + atan(theta)/pi}.
 
+
   For \code{deriv = 1}, then the function returns
   \emph{d} \code{theta} / \emph{d} \code{eta} as a function of
   \code{theta} if \code{inverse = FALSE}, else if \code{inverse = TRUE}
   then it returns the reciprocal.
 
+
 }
 \references{
   McCullagh, P. and Nelder, J. A. (1989)
   \emph{Generalized Linear Models}, 2nd ed. London: Chapman & Hall.
+
+
 }
 \author{ Thomas W. Yee }
 
@@ -69,6 +74,7 @@ cauchit(theta, bvalue = .Machine$double.eps,
   in terms of the threshold approach with cumulative probabilities for
   an ordinal response this link function corresponds to the
   Cauchy distribution (see \code{\link{cauchy1}}).
+
 
 }
 

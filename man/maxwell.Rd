@@ -13,7 +13,8 @@ maxwell(link = "loge", zero = NULL)
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{link, zero}{
-  Parameter link function applied to \eqn{a}. 
+  Parameter link function applied to \eqn{a},
+  which is called the parameter \code{rate}.
   See \code{\link{Links}} for more choices and information;
   a log link is the default because the parameter is positive.
   More information is at \code{\link{CommonVGAMffArguments}}.
@@ -70,7 +71,7 @@ maxwell(link = "loge", zero = NULL)
 
 }
 \examples{
-mdata <- data.frame(y = rmaxwell(1000, a = exp(2)))
+mdata <- data.frame(y = rmaxwell(1000, rate = exp(2)))
 fit <- vglm(y ~ 1, maxwell, data = mdata, trace = TRUE, crit = "coef")
 coef(fit, matrix = TRUE)
 Coef(fit)

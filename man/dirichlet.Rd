@@ -83,6 +83,7 @@ dirichlet(link = "loge", parallel = FALSE, zero = NULL)
 
 }
 \references{
+
 Lange, K. (2002)
 \emph{Mathematical and Statistical Methods for Genetic Analysis},
 2nd ed. New York: Springer-Verlag.
@@ -117,6 +118,12 @@ Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
 
 
 }
+
+
+% yettodo: use the data of \citet[p.81]{mosi:1962}. See
+% See also \citet[pp.8--9]{macd:2014}.
+
+
 \examples{
 ydata <- data.frame(rdiric(n = 1000,
                            shape = exp(c(y1 = -1, y2 = 1, y3 = 0))))

@@ -10,12 +10,13 @@
 \usage{
 rlplot.egev(object, show.plot = TRUE,
     probability = c((1:9)/100, (1:9)/10, 0.95, 0.99, 0.995, 0.999),
-    add.arg = FALSE, xlab = "Return Period", ylab = "Return Level",
+    add.arg = FALSE, xlab = if(log.arg) "Return Period (log-scale)" else
+    "Return Period", ylab = "Return Level",
     main = "Return Level Plot",
     pch = par()$pch, pcol.arg = par()$col, pcex = par()$cex,
     llty.arg = par()$lty, lcol.arg = par()$col, llwd.arg = par()$lwd,
     slty.arg = par()$lty, scol.arg = par()$col, slwd.arg = par()$lwd,
-    ylim = NULL, log = TRUE, CI = TRUE, epsilon = 1e-05, ...)
+    ylim = NULL, log.arg = TRUE, CI = TRUE, epsilon = 1e-05, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -59,7 +60,7 @@ rlplot.egev(object, show.plot = TRUE,
 
   }
   \item{ylim}{ Limits for the y-axis. Numeric of length 2. }
-  \item{log}{ Logical. If \code{TRUE} then \code{log=""} otherwise
+  \item{log.arg}{ Logical. If \code{TRUE} then \code{log=""} otherwise
     \code{log="x"}. This changes the labelling of the x-axis only.
 
   }
@@ -145,7 +146,7 @@ coef(fit2, matrix = TRUE)
 \dontrun{
 par(mfrow = c(1, 2))
 rlplot(fit) -> i1
-rlplot(fit2, pcol = "darkorange", lcol = "blue", log = FALSE,
+rlplot(fit2, pcol = "darkorange", lcol = "blue", log.arg = FALSE,
        scol = "darkgreen", slty = "dashed", las = 1) -> i2
 range(i2@post$rlplot$upper - i1@post$rlplot$upper)  # Should be near 0
 range(i2@post$rlplot$lower - i1@post$rlplot$lower)  # Should be near 0

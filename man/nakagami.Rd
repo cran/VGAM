@@ -8,20 +8,24 @@
 
 }
 \usage{
-nakagami(lshape = "loge", lscale = "loge", ishape = NULL, iscale = 1)
+nakagami(lscale = "loge", lshape = "loge", iscale = 1, ishape = NULL,
+         nowarning = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{lshape, lscale}{
+  \item{nowarning}{ Logical. Suppress a warning? }
+
+
+  \item{lscale, lshape}{
   Parameter link functions applied to the
-  \emph{shape} and \emph{scale} parameters.
+  \emph{scale} and \emph{shape} parameters.
   Log links ensure they are positive.
   See \code{\link{Links}} for more choices
   and information.
 
 
   }
-  \item{ishape, iscale}{
+  \item{iscale, ishape}{
   Optional initial values for the shape and scale parameters.
   For \code{ishape}, a \code{NULL} value means it is obtained in the
   \code{initialize} slot based on the value of \code{iscale}.
@@ -46,8 +50,8 @@ nakagami(lshape = "loge", lscale = "loge", ishape = NULL, iscale = 1)
        \Gamma(shape)}{sqrt(scale/shape) * gamma(shape+0.5) / gamma(shape)} and
   these are returned as the fitted values.
   By default, the linear/additive predictors are
-  \eqn{\eta_1=\log(shape)}{eta1=log(shape)} and
-  \eqn{\eta_2=\log(scale)}{eta2=log(scale)}.  
+  \eqn{\eta_1=\log(scale)}{eta1=log(scale)} and
+  \eqn{\eta_2=\log(shape)}{eta2=log(shape)}.
   Fisher scoring is implemented.
 
 
@@ -97,15 +101,17 @@ nakagami(lshape = "loge", lscale = "loge", ishape = NULL, iscale = 1)
 nn <- 1000; shape <- exp(0); Scale <- exp(1)
 ndata <- data.frame(y1 = sqrt(rgamma(nn, shape = shape, scale = Scale/shape)))
 fit <- vglm(y1 ~ 1, nakagami, data = ndata, trace = TRUE, crit = "coef")
-ndata <- transform(ndata, y2 = rnaka(nn, shape = shape, scale = Scale))
+ndata <- transform(ndata, y2 = rnaka(nn, scale = Scale, shape = shape))
 fit <- vglm(y2 ~ 1, nakagami(iscale = 3), data = ndata, trace = TRUE)
 head(fitted(fit))
 with(ndata, mean(y2))
 coef(fit, matrix = TRUE)
 (Cfit <- Coef(fit))
-\dontrun{ with(ndata,
-hist(sy <- sort(y2), prob = TRUE, main = "", xlab = "y", ylim = c(0, 0.6)))
-lines(dnaka(sy, shape = Cfit[1], scale = Cfit[2]) ~ sy, data = ndata, col = "orange") }
+\dontrun{ sy <- with(ndata, sort(y2))
+hist(with(ndata, y2), prob = TRUE, main = "", xlab = "y", ylim = c(0, 0.6),
+     col = "lightblue")
+lines(dnaka(sy, scale = Cfit["scale"], shape = Cfit["shape"]) ~ sy,
+      data = ndata, col = "orange") }
 }
 \keyword{models}
 \keyword{regression}

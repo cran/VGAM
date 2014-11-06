@@ -11,7 +11,7 @@
 predictqrrvglm(object, newdata=NULL,
                type = c("link", "response", "latvar", "terms"),
                se.fit = FALSE, deriv = 0, dispersion = NULL,
-               extra = object@extra, varI.latvar = FALSE, reference = NULL, ...)
+               extra = object@extra, varI.latvar = FALSE, refResponse = NULL, ...)
 
 }
 %- maybe also 'usage' for other objects documented here.
@@ -29,7 +29,7 @@ predictqrrvglm(object, newdata=NULL,
 
   }
   \item{deriv}{ Derivative. Currently only 0 is handled. }
-  \item{varI.latvar, reference}{
+  \item{varI.latvar, refResponse}{
   Arguments passed into \code{\link{Coef.qrrvglm}}.
 
 
@@ -83,7 +83,7 @@ set.seed(1234)
 # vvv                 Pardnigr, Pardpull, Trocterr, Zoraspin) ~
 # vvv       WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
 # vvv       poissonff, data = hspider, Crow1positive = FALSE, I.tol = TRUE)
-# vvv sort(p1@misc$deviance.Bestof)  # A history of all the iterations
+# vvv sort(deviance(p1, history = TRUE))  # A history of all the iterations
 
 # vvv head(predict(p1))
 

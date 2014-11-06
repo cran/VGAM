@@ -131,7 +131,7 @@ micmen.control <- function(save.weight = TRUE, ...) {
             "Variance: constant"),
 
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.vgam(constraints, x, .zero, M = 2)
+    constraints <- cm.zero.VGAM(constraints, x, .zero, M = 2)
   }), list( .zero = zero))),
 
   deviance = function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
@@ -409,7 +409,7 @@ skira.control <- function(save.weight = TRUE, ...) {
             namesof("theta1", link1, earg = earg1), ", ",
             namesof("theta2", link2, earg = earg2)),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.vgam(constraints, x, .zero, M = 2)
+    constraints <- cm.zero.VGAM(constraints, x, .zero, M = 2)
   }), list( .zero = zero ))),
   deviance = function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
     M <- if (is.matrix(y))

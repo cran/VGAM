@@ -11,7 +11,7 @@
 
 }
 \usage{
-fittedvlm(object, matrix.arg = TRUE, type.fitted = NULL, ...)
+fittedvlm(object, drop = FALSE, type.fitted = NULL, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -20,12 +20,19 @@ fittedvlm(object, matrix.arg = TRUE, type.fitted = NULL, ...)
 
 
   }
-  \item{matrix.arg}{
-  Logical. Return the answer as a matrix?
-  If \code{FALSE} then it will be a vector.
+  \item{drop}{
+  Logical.
+  If \code{FALSE} then the answer is a matrix.
+  If \code{TRUE} then the answer is a vector.
 
 
   }
+% \item{matrix.arg}{
+% Logical. Return the answer as a matrix?
+% If \code{FALSE} then it will be a vector.
+
+
+% }
   \item{type.fitted}{
   Character.
   Some \pkg{VGAM} family functions have a \code{type.fitted} argument.

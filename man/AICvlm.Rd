@@ -4,7 +4,7 @@
 \alias{AICvgam}
 \alias{AICrrvglm}
 \alias{AICqrrvglm}
-\alias{AICcao}
+\alias{AICrrvgam}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Akaike's Information Criterion }
 \description{
@@ -17,7 +17,7 @@
    AICvgam(object, \dots, k = 2)
  AICrrvglm(object, \dots, k = 2)
 AICqrrvglm(object, \dots, k = 2)
-    AICcao(object, \dots, k = 2)
+ AICrrvgam(object, \dots, k = 2)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

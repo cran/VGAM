@@ -48,9 +48,11 @@ mix2poisson(lphi = "logit", llambda = "loge",
     The two values are fed in as the \code{probs} argument into
     \code{\link[stats]{quantile}}.
 
+
   }
   \item{nsimEIM, zero}{
   See \code{\link{CommonVGAMffArguments}}.
+
 
   }
 }
@@ -134,16 +136,16 @@ mu1 <- exp(2.5)  # Also known as lambda1
 mu2 <- exp(3)
 (phi <- logit(-0.5, inverse = TRUE))
 mdata <- data.frame(y = rpois(nn, ifelse(runif(nn) < phi, mu1, mu2)))
-fit <- vglm(y ~ 1, mix2poisson, data = mdata)
-coef(fit, matrix = TRUE)
+mfit <- vglm(y ~ 1, mix2poisson, data = mdata)
+coef(mfit, matrix = TRUE)
 
 # Compare the results with the truth
-round(rbind('Estimated' = Coef(fit), 'Truth' = c(phi, mu1, mu2)), digits = 2)
+round(rbind('Estimated' = Coef(mfit), 'Truth' = c(phi, mu1, mu2)), digits = 2)
 
 ty <- with(mdata, table(y))
 plot(names(ty), ty, type = "h", main = "Orange=estimate, blue=truth",
      ylab = "Frequency", xlab = "y")
-abline(v = Coef(fit)[-1], lty = 2, col = "orange", lwd = 2)
+abline(v = Coef(mfit)[-1], lty = 2, col = "orange", lwd = 2)
 abline(v = c(mu1, mu2), lty = 2, col = "blue", lwd = 2)
 
 # Example 2: London Times data (Lange, 1997, p.31)
@@ -152,13 +154,13 @@ ltdata1 <- data.frame(deaths = 0:9,
 ltdata2 <- data.frame(y = with(ltdata1, rep(deaths, freq)))
 
 # Usually this does not work well unless nsimEIM is large
-fit <- vglm(deaths ~ 1, weight = freq, data = ltdata1,
+Mfit <- vglm(deaths ~ 1, weight = freq, data = ltdata1,
             mix2poisson(iphi = 0.3, il1 = 1, il2 = 2.5, nsimEIM = 5000))
 
 # This works better in general
-fit <- vglm(y ~ 1, mix2poisson(iphi = 0.3, il1 = 1, il2 = 2.5), ltdata2)
-coef(fit, matrix = TRUE)
-Coef(fit)
+Mfit <- vglm(y ~ 1, mix2poisson(iphi = 0.3, il1 = 1, il2 = 2.5), data = ltdata2)
+coef(Mfit, matrix = TRUE)
+Coef(Mfit)
 }
 }
 \keyword{models}

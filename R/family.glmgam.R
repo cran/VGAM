@@ -48,15 +48,15 @@
          "Link:     ", namesof("mu[,j]", link, earg = earg), "\n",
          "Variance: mu[,j]*(1-mu[,j])") else
          c("Binomial model\n\n", 
-         "Link:     ", namesof("mu", link, earg = earg), "\n",
+         "Link:     ", namesof("prob", link, earg = earg), "\n",
          "Variance: mu * (1 - mu)"),
   constraints = eval(substitute(expression({
-    constraints <- cm.vgam(matrix(1, M, 1), x = x, 
+    constraints <- cm.VGAM(matrix(1, M, 1), x = x, 
                            bool = .parallel , 
                            constraints = constraints,
                            apply.int = .apply.parint )
 
-    constraints <- cm.zero.vgam(constraints, x, .zero , M)
+    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
   }), list( .zero = zero,
             .parallel = parallel, .apply.parint = apply.parint ))),
   infos = eval(substitute(function(...) {
@@ -77,6 +77,10 @@
 
 
 
+    old.name <- "mu"
+    new.name <- "prob"
+
+
 
     if ( .mv ) {
       temp5 <-
@@ -91,7 +95,16 @@
       y <- temp5$y
 
 
+      y.counts <- y
+      y <- y / w
+
+
+
+
+
       M <- ncol(y)
+
+  if (FALSE)
       if (!all(y == 0 | y == 1))
         stop("response must contain 0s and 1s only")
 
@@ -101,18 +114,19 @@
       dn2 <- if (length(dn2)) {
         paste("E[", dn2, "]", sep = "") 
       } else {
-        paste("mu", 1:M, sep = "") 
+        paste(new.name, 1:M, sep = "") 
       }
       predictors.names <-
-          namesof(if (M > 1) dn2 else
-                  "mu", .link , earg = .earg , short = TRUE)
+          namesof(if (M > 1) dn2 else new.name,
+                  .link , earg = .earg , short = TRUE)
 
       if (!length(mustart) && !length(etastart))
-        mustart <- matrix(colMeans(y), nrow = nrow(y), ncol = ncol(y),
+        mustart <- matrix(colMeans(y.counts), nrow = nrow(y), ncol = ncol(y),
+                         byrow = TRUE) /
+                   matrix(colMeans(w), nrow = nrow(w), ncol = ncol(w),
                          byrow = TRUE)
 
-      if (!all(w == 1))
-        extra$orig.w <- w
+
 
       extra$mv <- TRUE
 
@@ -159,7 +173,7 @@
                "successes and col 2 is the no. of failures")
         }
         predictors.names <-
-          namesof("mu", .link , earg = .earg , short = TRUE)
+          namesof(new.name, .link , earg = .earg , short = TRUE)
     }
 
 
@@ -194,7 +208,7 @@
       temp87 <- (y-mu)^2 * wz / (
                 dtheta.deta(mu, link = .link ,
                             earg = .earg )^2)  # w cancel
-      if (.mv && ! .onedpar) {
+      if (.mv && ! .onedpar ) {
         dpar <- rep(as.numeric(NA), len = M)
         temp87 <- cbind(temp87)
         nrow.mu <- if (is.matrix(mu)) nrow(mu) else length(mu)
@@ -215,7 +229,7 @@
     misc$expected <- TRUE
 
     misc$link <- rep( .link , length = M)
-    names(misc$link) <- if (M > 1) dn2 else "mu"
+    names(misc$link) <- if (M > 1) dn2 else new.name  # Was old.name=="mu"
 
     misc$earg <- vector("list", M)
     names(misc$earg) <- names(misc$link)
@@ -527,7 +541,7 @@
   deviance =
     function(mu, y, w, residuals = FALSE, eta, extra = NULL,
              summation = TRUE) {
-    pow <- 3 # Use Quasi()$deviance with pow==3
+    pow <- 3  # Use Quasi()$deviance with pow==3
     devy  <- y^(2-pow) / (1-pow) - y^(2-pow) / (2-pow)
     devmu <- y * mu^(1-pow) / (1-pow) - mu^(2-pow) / (2-pow)
     devi <- 2 * (devy - devmu)
@@ -700,7 +714,7 @@ rinv.gaussian <- function(n, mu, lambda) {
  inv.gaussianff <- function(lmu = "loge", llambda = "loge",
                             imethod = 1,  ilambda = NULL,
                             parallel = FALSE,
-                            shrinkage.init = 0.99,
+                            ishrinkage = 0.99,
                             zero = NULL) {
 
 
@@ -720,10 +734,10 @@ rinv.gaussian <- function(n, mu, lambda) {
                   integer.valued = TRUE, positive = TRUE) ||
      imethod > 3)
     stop("argument 'imethod' must be 1 or 2 or 3")
-  if (!is.Numeric(shrinkage.init, length.arg = 1) ||
-     shrinkage.init < 0 ||
-     shrinkage.init > 1)
-    stop("bad input for argument 'shrinkage.init'")
+  if (!is.Numeric(ishrinkage, length.arg = 1) ||
+     ishrinkage < 0 ||
+     ishrinkage > 1)
+    stop("bad input for argument 'ishrinkage'")
 
   if (length(zero) &&
       !is.Numeric(zero, integer.valued = TRUE, positive = TRUE))
@@ -745,12 +759,12 @@ rinv.gaussian <- function(n, mu, lambda) {
             "Mean:     ", "mu\n",
             "Variance: mu^3 / lambda"),
   constraints = eval(substitute(expression({
-    constraints <- cm.vgam(matrix(1, M, 1), x = x, 
+    constraints <- cm.VGAM(matrix(1, M, 1), x = x, 
                            bool = .parallel , 
                            constraints = constraints,
                            apply.int = .apply.parint )
 
-    constraints <- cm.zero.vgam(constraints, x, .zero , M)
+    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
   }), list( .zero = zero,
             .parallel = parallel, .apply.parint = apply.parint ))),
   infos = eval(substitute(function(...) {
@@ -797,7 +811,7 @@ rinv.gaussian <- function(n, mu, lambda) {
           matrix(1.1 * mediany + 1/8, n, ncoly, byrow = TRUE)
         } else if ( .imethod == 3) {
           use.this <- colSums(y * w) / colSums(w)  # weighted.mean(y, w)
-          (1 - .sinit) * y  + .sinit * use.this
+          (1 - .ishrinkage ) * y  + .ishrinkage * use.this
         } else {
           matrix(colSums(y * w) / colSums(w) + 1/8,
                  n, ncoly, byrow = TRUE)
@@ -815,7 +829,7 @@ rinv.gaussian <- function(n, mu, lambda) {
     }
   }), list( .lmu = lmu, .llambda = llambda,
             .emu = emu, .elambda = elambda,
-            .sinit = shrinkage.init,
+            .ishrinkage = ishrinkage,
             .imethod = imethod, .ilambda = ilambda ))),
 
   linkinv = eval(substitute(function(eta, extra = NULL) {
@@ -839,7 +853,7 @@ rinv.gaussian <- function(n, mu, lambda) {
 
     misc$M1 <- M1
     misc$imethod <- .imethod
-    misc$shrinkage.init <- .sinit 
+    misc$ishrinkage <- .ishrinkage 
     misc$expected <- TRUE
     misc$multipleResponses <- FALSE
     misc$parallel <- .parallel
@@ -847,7 +861,7 @@ rinv.gaussian <- function(n, mu, lambda) {
   }), list( .lmu = lmu, .llambda = llambda,
             .emu = emu, .elambda = elambda,
             .parallel = parallel, .apply.parint = apply.parint,
-            .sinit = shrinkage.init,
+            .ishrinkage = ishrinkage,
             .imethod = imethod ))),
 
   loglikelihood = eval(substitute(
@@ -946,13 +960,13 @@ rinv.gaussian <- function(n, mu, lambda) {
 
   new("vglmff",
   blurb = c("Poisson distribution\n\n",
-            "Link:     ", namesof("mu", link, earg = earg), "\n",
-            "Variance: mu"),
+            "Link:     ", namesof("lambda", link, earg = earg), "\n",
+            "Variance: lambda"),
   constraints = eval(substitute(expression({
-    constraints <- cm.vgam(matrix(1, M, 1), x = x, 
+    constraints <- cm.VGAM(matrix(1, M, 1), x = x, 
                            bool = .parallel , 
                            constraints = constraints)
-    constraints <- cm.zero.vgam(constraints, x, .zero , M)
+    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
   }), list( .parallel = parallel, .zero = zero ))),
 
   deviance =
@@ -999,14 +1013,19 @@ rinv.gaussian <- function(n, mu, lambda) {
 
     assign("CQO.FastAlgorithm", ( .link == "loge"), envir = VGAMenv)
 
+
+
+    old.name <- "mu"
+    new.name <- "lambda"
     dn2 <- if (is.matrix(y)) dimnames(y)[[2]] else NULL
     dn2 <- if (length(dn2)) {
       paste("E[", dn2, "]", sep = "") 
     } else {
-      paste("mu", 1:M, sep = "") 
+      paste(new.name, 1:M, sep = "") 
     }
     predictors.names <-
-      namesof(if (M > 1) dn2 else "mu", .link ,
+      namesof(if (M > 1) dn2 else new.name, # was "mu" == old.name
+              .link ,
               earg = .earg , short = TRUE)
 
 
@@ -1069,7 +1088,7 @@ rinv.gaussian <- function(n, mu, lambda) {
 
 
     misc$link <- rep( .link , length = M)
-    names(misc$link) <- if (M > 1) dn2 else "mu"
+    names(misc$link) <- if (M > 1) dn2 else new.name  # Was old.name=="mu"
 
     misc$earg <- vector("list", M)
     names(misc$earg) <- names(misc$link)
@@ -1164,10 +1183,11 @@ rinv.gaussian <- function(n, mu, lambda) {
 
 
 
- quasibinomialff <- function(
-                             link = "logit",
-                             mv = FALSE, onedpar = !mv,
-                             parallel = FALSE, zero = NULL) {
+ quasibinomialff <-
+  function(
+           link = "logit",
+           mv = FALSE, onedpar = !mv,
+           parallel = FALSE, zero = NULL) {
 
 
   link <- as.list(substitute(link))
@@ -1180,8 +1200,17 @@ rinv.gaussian <- function(n, mu, lambda) {
                     mv = mv, onedpar = onedpar,
                     parallel = parallel, zero = zero)
   ans@vfamily <- "quasibinomialff"
+  ans@infos <- eval(substitute(function(...) {
+    list(M1 = 1,
+         Q1 = 1,
+         zero = .zero )
+  }, list( .zero = zero )))
+
   ans
 }
+
+
+
 
 
 
@@ -1199,8 +1228,15 @@ rinv.gaussian <- function(n, mu, lambda) {
                    dispersion = dispersion, onedpar = onedpar,
                    parallel = parallel, zero = zero)
   ans@vfamily <- "quasipoissonff"
+  ans@infos <- eval(substitute(function(...) {
+    list(M1 = 1,
+         Q1 = 1,
+         zero = .zero )
+  }, list( .zero = zero )))
+
   ans
 }
+
 
 
 
@@ -1233,7 +1269,7 @@ rinv.gaussian <- function(n, mu, lambda) {
             "Mean:     ", "mean\n",
             "Variance: mean / dispersion"),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.vgam(constraints, x, .zero , M)
+    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
   }), list( .zero = zero ))),
 
   infos = eval(substitute(function(...) {
@@ -1359,7 +1395,7 @@ rinv.gaussian <- function(n, mu, lambda) {
             namesof("dispersion", ldisp, earg = edisp), "\n",
             "Mean:     ", "mean\n"),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.vgam(constraints, x, .zero , M)
+    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
   }), list( .zero = zero ))),
   initialize = eval(substitute(expression({
     if (!all(w == 1))
@@ -1499,6 +1535,8 @@ rinv.gaussian <- function(n, mu, lambda) {
 
 
 
+
+if (FALSE)
  matched.binomial <- function(mvar = NULL, link = "logit",
                               parallel = TRUE,
                               smallno = .Machine$double.eps^(3/4)) {
@@ -1525,7 +1563,7 @@ rinv.gaussian <- function(n, mu, lambda) {
     blurb = c("Matched binomial model (intercepts fitted)\n\n", 
               "Link:     ", namesof("mu[,j]", link, earg = earg)),
     constraints = eval(substitute(expression({
-        constraints <- cm.vgam(matrix(1, M, 1), x = x,
+        constraints <- cm.VGAM(matrix(1, M, 1), x = x,
                                bool = .parallel ,
                                constraints = constraints,
                                apply.int = TRUE)
@@ -1708,7 +1746,7 @@ mypool <- function(x, index) {
     blurb = c("Matched binomial model (intercepts not fitted)\n\n", 
               "Link:     ", namesof("mu[,j]", link, earg = earg)),
     constraints = eval(substitute(expression({
-        constraints <- cm.vgam(matrix(1, M, 1), x = x,
+        constraints <- cm.VGAM(matrix(1, M, 1), x = x,
                            bool = .parallel , 
                            constraints = constraints,
                                apply.int = FALSE)

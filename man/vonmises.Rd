@@ -106,7 +106,7 @@ Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
 }
 \section{Warning }{
   Numerically, the von Mises can be difficult to fit because of a
-  log-likelihood having multiple maxima.
+  log-likelihood having multiple maximums.
   The user is therefore encouraged to try different starting values,
   i.e., make use of \code{ilocation} and \code{iscale}.
 

@@ -1,7 +1,7 @@
 \name{logistic}
 \alias{logistic}
 \alias{logistic1}
-\alias{logistic2}
+\alias{logistic}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Logistic Distribution Family Function }
 \description{
@@ -12,8 +12,8 @@
 }
 \usage{
 logistic1(llocation = "identitylink", scale.arg = 1, imethod = 1)
-logistic2(llocation = "identitylink", lscale = "loge",
-          ilocation = NULL, iscale = NULL, imethod = 1, zero = -2)
+logistic(llocation = "identitylink", lscale = "loge",
+         ilocation = NULL, iscale = NULL, imethod = 1, zero = -2)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -64,13 +64,13 @@ logistic2(llocation = "identitylink", lscale = "loge",
 
 
   \code{logistic1} estimates the location parameter only while
-  \code{logistic2} estimates both parameters.
+  \code{logistic} estimates both parameters.
   By default,
   \eqn{\eta_1 = l}{eta1 = l} and \eqn{\eta_2 = \log(s)}{eta2 = log(s)} for
-  \code{logistic2}.
+  \code{logistic}.
 
 
-  \code{logistic2} can handle multiple responses.
+  \code{logistic} can handle multiple responses.
 
 
 }
@@ -100,7 +100,7 @@ Hoboken, NJ, USA: Wiley-Interscience, p.130.
 
 
 deCani, J. S. and Stine, R. A. (1986)
-A note on Deriving the Information Matrix for a Logistic Distribution,
+A Note on Deriving the Information Matrix for a Logistic Distribution,
 \emph{The American Statistician},
 \bold{40}, 220--222.
 
@@ -119,7 +119,7 @@ A note on Deriving the Information Matrix for a Logistic Distribution,
   \code{\link[stats:Logistic]{rlogis}},
   \code{\link{logit}},
   \code{\link{cumulative}},
-  \code{\link{bilogistic4}},
+  \code{\link{bilogistic}},
   \code{\link{simulate.vlm}}.
 
 
@@ -133,7 +133,7 @@ coef(fit1, matrix = TRUE)
 
 # Both location and scale unknown
 ldata <- transform(ldata, y2 = rlogis(nn, loc = 1 + 5*x2, scale = exp(0 + 1*x2)))
-fit2 <- vglm(cbind(y1, y2) ~ x2, logistic2, data = ldata, trace = TRUE)
+fit2 <- vglm(cbind(y1, y2) ~ x2, logistic, data = ldata, trace = TRUE)
 coef(fit2, matrix = TRUE)
 vcov(fit2)
 summary(fit2)

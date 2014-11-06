@@ -9,7 +9,7 @@
 }
 \usage{
 lqnorm(qpower = 2, link = "identitylink",
-       imethod = 1, imu = NULL, shrinkage.init = 0.95)
+       imethod = 1, imu = NULL, ishrinkage = 0.95)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -36,7 +36,7 @@ lqnorm(qpower = 2, link = "identitylink",
   The default is to use \code{imethod = 1}.
 
   }
-  \item{shrinkage.init}{
+  \item{ishrinkage}{
   How much shrinkage is used when initializing the fitted values.
   The value must be between 0 and 1 inclusive, and
   a value of 0 means the individual response values are used,

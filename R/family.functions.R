@@ -93,9 +93,8 @@ dneg.binomial <- function(x, k, prob) {
 }
 
 
-tapplymat1 <-
-  function(mat,
-           function.arg = c("cumsum", "diff", "cumprod")) {
+
+tapplymat1 <- function(mat, function.arg = c("cumsum", "diff", "cumprod")) {
 
 
   if (!missing(function.arg))
@@ -103,26 +102,21 @@ tapplymat1 <-
   function.arg <- match.arg(function.arg,
                             c("cumsum", "diff", "cumprod"))[1]
 
-  type <-
-    switch(function.arg,
-           cumsum = 1,
-           diff = 2,
-           cumprod = 3,
-           stop("function.arg not matched"))
+  type <- switch(function.arg, cumsum = 1, diff = 2, cumprod = 3,
+           stop("argument 'function.arg' not matched"))
 
   if (!is.matrix(mat))
     mat <- as.matrix(mat)
-  nr <- nrow(mat)
-  nc <- ncol(mat)
-  fred <- .C("tapply_mat1", mat = as.double(mat),
-             as.integer(nr), as.integer(nc), as.integer(type))
-
-  dim(fred$mat) <- c(nr, nc)
+  NR <- nrow(mat)
+  NC <- ncol(mat)
+  fred <- .C("tapply_mat1", mat = as.double(mat), as.integer(NR),
+             as.integer(NC), as.integer(type), PACKAGE = "VGAM")
+  dim(fred$mat) <- c(NR, NC)
   dimnames(fred$mat) <- dimnames(mat)
   switch(function.arg,
-      cumsum = fred$mat,
-      diff = fred$mat[, -1, drop = FALSE],
-      cumprod = fred$mat)
+         cumsum  = fred$mat,
+         diff    = fred$mat[, -1, drop = FALSE],
+         cumprod = fred$mat)
 }
 
 
@@ -203,7 +197,7 @@ wweighted.mean <- function(y, w = NULL, matrix.arg = TRUE) {
       denom <- t(w) %*% rep(1, n)
       denom <- matrix(denom, 1, length(denom))
       if (matrix.arg)
-        denom <- m2adefault(denom, M = M)[,,1]
+        denom <- m2a(denom, M = M)[, , 1]
       c(solve(denom, numer))
     }
   }

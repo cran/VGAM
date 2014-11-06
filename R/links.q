@@ -23,8 +23,8 @@ ToString <- function(x)
            link.list = list("(Default)" = "identitylink",
                             x2          = "loge",
                             x3          = "logoff",
-                            x4          = "mlogit",
-                            x5          = "mlogit"),
+                            x4          = "multilogit",
+                            x5          = "multilogit"),
            earg.list = list("(Default)" = list(),
                             x2          = list(),
                             x3          = list(offset = -1),
@@ -32,13 +32,13 @@ ToString <- function(x)
                             x5          = list()),
            gsigma = exp(-5:5),
            parallel = TRUE,
-           shrinkage.init = 0.95,
+           ishrinkage = 0.95,
            nointercept = NULL, imethod = 1,
            type.fitted = c("mean", "pobs0", "pstr0", "onempstr0"),
            probs.x = c(0.15, 0.85),
            probs.y = c(0.25, 0.50, 0.75),
            mv = FALSE, earg.link = FALSE,
-           whitespace = FALSE, bred = FALSE,
+           whitespace = FALSE, bred = FALSE, lss = TRUE,
            oim = FALSE, nsimEIM = 100,
            zero = NULL) {
   NULL
@@ -80,8 +80,8 @@ care.exp <- function(x,
 
   if (is.character(theta)) {
     string <- if (short)
-        paste("log(",  theta, ")", sep = "") else
-        paste("log(",  theta, ")", sep = "")
+        paste("loge(",  theta, ")", sep = "") else
+        paste("loge(",  theta, ")", sep = "")
     if (tag)
       string <- paste("Log:", string)
     return(string)
@@ -268,12 +268,17 @@ care.exp <- function(x,
       1 / Recall(theta = theta, bvalue = bvalue,
                  inverse = FALSE, deriv = deriv)
     } else {
-        exp(theta - log1p(exp(theta)))
+        yy <- theta
+        Neg <- (theta <  0) & !is.na(theta)
+        yy[ Neg] <- exp(theta[Neg]) / (1 + exp(theta[Neg]))
+        Pos <- (theta >= 0) & !is.na(theta)
+        yy[Pos] <- 1 / (1 + exp(-theta[Pos]))
+        yy
       }
   } else {
     switch(deriv+1, {
        temp2 <- log(theta) - log1p(-theta)
-       if (any(near0.5 <- (abs(theta - 0.5) < 0.000125)))
+       if (any(near0.5 <- (abs(theta - 0.5) < 0.000125) & !is.na(theta)))
          temp2[near0.5] <- log(theta[near0.5] / (1 - theta[near0.5]))
        temp2
        },
@@ -685,7 +690,7 @@ care.exp <- function(x,
 
 
 
- mlogit <-
+ multilogit <-
   function(theta,
            refLevel = "last",
            M = NULL,  # stop("argument 'M' not specified"),
@@ -724,7 +729,7 @@ care.exp <- function(x,
   if (is.character(theta)) {
     is.M <- is.finite(M) && is.numeric(M)
     string <- if (short)
-        paste("mlogit(", theta, ")", sep = "") else {
+        paste("multilogit(", theta, ")", sep = "") else {
          if (refLevel < 0) {
            ifelse(whitespace,
              paste("log(", theta, "[,j] / ",
@@ -826,7 +831,7 @@ care.exp <- function(x,
       care.exp(log(theta) + log1p(-theta)),
       care.exp(log(theta) + log1p(-theta)) * (1 - 2 * theta))
   }
-}  # end of mlogit
+}  # end of multilogit
 
 
 

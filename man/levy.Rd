@@ -3,37 +3,32 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Levy Distribution Family Function }
 \description{
-Estimates the two parameters of the Levy distribution
+Estimates the scale parameter of the Levy distribution
 by maximum likelihood estimation.
 
 
 }
 \usage{
-levy(delta = NULL, link.gamma = "loge", idelta = NULL, igamma = NULL)
+levy(location = 0, lscale = "loge", iscale = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{delta}{
-  Location parameter. May be assigned a known value,
-  otherwise it is estimated (the default).
+  \item{location}{
+  Location parameter. Must have a known value.
+  Called \eqn{a} below.
+
+% otherwise it is estimated (the default).
 
 
   }
-  \item{link.gamma}{
-  Parameter link function for the (positive) \eqn{\gamma}{gamma} parameter. 
+  \item{lscale}{
+  Parameter link function for the (positive) scale parameter \eqn{b}.
   See \code{\link{Links}} for more choices.
 
 
   }
-  \item{idelta}{
-  Initial value for the \eqn{\delta}{delta} parameter
-  (if it is to be estimated).
-  By default, an initial value is chosen internally.
-
-
-  }
-  \item{igamma}{
-  Initial value for the \eqn{\gamma}{gamma} parameter.
+  \item{iscale}{
+  Initial value for the \eqn{b} parameter.
   By default, an initial value is chosen internally.
 
 
@@ -43,13 +38,16 @@ levy(delta = NULL, link.gamma = "loge", idelta = NULL, igamma = NULL)
   The Levy distribution is one of three stable distributions
   whose density function has a tractable form. 
   The formula for the density is
- \deqn{f(y;\gamma,\delta) = \sqrt{\frac{\gamma}{2\pi}}
-       \exp \left( \frac{-\gamma}{2(y - \delta)}
-            \right) / (y - \delta)^{3/2} }{%
-  f(y;gamma,delta) = sqrt(gamma / (2 pi))
-       exp( -gamma / (2(y - delta))) / (y - \delta)^{3/2} }
-  where \eqn{\delta<y<\infty}{delta<y<Inf} and \eqn{\gamma>0}{gamma>0}.
+ \deqn{f(y;b) = \sqrt{\frac{b}{2\pi}}
+       \exp \left( \frac{-b}{2(y - a)}
+            \right) / (y - a)^{3/2} }{%
+  f(y;b) = sqrt(b / (2 pi))
+       exp( -b / (2(y - a))) / (y - a)^{3/2} }
+  where \eqn{a<y<\infty}{a<y<Inf} and \eqn{b>0}.
+  Note that if \eqn{a} is very close to \code{min(y)} 
+  (where \code{y} is the response), then numerical problem will occur.
   The mean does not exist.
+  The median is returned as the fitted values.
 
 
 }
@@ -65,40 +63,52 @@ levy(delta = NULL, link.gamma = "loge", idelta = NULL, igamma = NULL)
   \emph{Stable Distributions: Models for Heavy Tailed Data}.
 
 
+% p.5
+
+
+
 }
 \author{ T. W. Yee }
-\note{
-  If \eqn{\delta}{delta} is given, then only one parameter is estimated
-  and the default is \eqn{\eta_1=\log(\gamma)}{eta1=log(gamma)}.
-  If \eqn{\delta}{delta} is not given, then \eqn{\eta_2=\delta}{eta2=delta}.
 
 
-}
+%\note{
+%  If \eqn{\delta}{delta} is given, then only one parameter is estimated
+%  and the default is \eqn{\eta_1=\log(\gamma)}{eta1=log(gamma)}.
+%  If \eqn{\delta}{delta} is not given, then \eqn{\eta_2=\delta}{eta2=delta}.
+%
+%
+%}
 
 
 \seealso{ 
-
   The Nolan article is at
   \url{http://academic2.american.edu/~jpnolan/stable/chap1.pdf}.
 
 
+% \code{\link{dlevy}}.
+
+
 }
 \examples{
-nn <- 1000; delta <- 0
-mygamma <- 1  # log link ==> 0 is the answer
-ldata <- data.frame(y = delta + mygamma/rnorm(nn)^2)  # Levy(mygamma, delta)
+nn <- 1000; loc1 <- 0; loc2 <- 10
+myscale <- 1  # log link ==> 0 is the answer
+ldata <- data.frame(y1 = loc1 + myscale/rnorm(nn)^2,  # Levy(myscale, a)
+                    y2 = rlevy(nn, loc = loc2, scale = exp(+2)))
 
 # Cf. Table 1.1 of Nolan for Levy(1,0)
-with(ldata, sum(y > 1) / length(y))  # Should be 0.6827
-with(ldata, sum(y > 2) / length(y))  # Should be 0.5205
+with(ldata, sum(y1 > 1) / length(y1))  # Should be 0.6827
+with(ldata, sum(y1 > 2) / length(y1))  # Should be 0.5205
 
-fit <- vglm(y ~ 1, levy(delta = delta), data = ldata, trace = TRUE)  # 1 parameter
-fit <- vglm(y ~ 1, levy(idelta = delta, igamma = mygamma),
-           data = ldata, trace = TRUE)  # 2 parameters
-coef(fit, matrix = TRUE)
-Coef(fit)
-summary(fit)
-head(weights(fit, type = "work"))
+fit1 <- vglm(y1 ~ 1, levy(location = loc1), data = ldata, trace = TRUE)
+coef(fit1, matrix = TRUE)
+Coef(fit1)
+summary(fit1)
+head(weights(fit1, type = "work"))
+
+fit2 <- vglm(y2 ~ 1, levy(location = loc2), data = ldata, trace = TRUE)
+coef(fit2, matrix = TRUE)
+Coef(fit2)
+c(median = with(ldata, median(y2)), fitted.median = head(fitted(fit2), 1))
 }
 \keyword{models}
 \keyword{regression}
@@ -120,4 +130,10 @@ head(weights(fit, type = "work"))
 %%sum(y > 3) / length(y)  # Should be 0.4363
 %%sum(y > 4) / length(y)  # Should be 0.3829
 %%sum(y > 5) / length(y)  # Should be 0.3453
+
+%fit <- vglm(y ~ 1, levy(idelta = delta, igamma = mygamma),
+%           data = ldata, trace = TRUE)  # 2 parameters
+
+
+
 

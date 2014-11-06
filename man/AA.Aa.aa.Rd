@@ -4,24 +4,54 @@
 \title{ The AA-Aa-aa Blood Group System }
 \description{
    Estimates the parameter of the 
-   AA-Aa-aa blood group system.
+   AA-Aa-aa blood group system,
+   with or without Hardy Weinberg equilibrium.
+
 }
 \usage{
-AA.Aa.aa(link = "logit", init.pA = NULL)
+AA.Aa.aa(linkp = "logit", linkf = "logit", inbreeding = TRUE,
+         ipA = NULL, ifp = NULL, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{link}{
-  Link function applied to \code{pA}.
+  \item{linkp, linkf}{
+  Link functions applied to \code{pA} and \code{f}.
   See \code{\link{Links}} for more choices.
 
   }
-  \item{init.pA}{ Optional initial value for \code{pA}. }
+  \item{ipA, ifp}{
+  Optional initial values for \code{pA} and \code{f}.
+
+
+  }
+  \item{inbreeding}{
+    Logical. Is the inbreeding coefficient \eqn{f} equal to 0?
+
+
+%HWE assumption to be made?
+
+
+
+
+  }
+  \item{zero}{
+    See \code{\link{CommonVGAMffArguments}} for information.
+
+
+  }
 }
 \details{
-  This one parameter model involves a probability called \code{pA}.
+  This one or two parameter model involves a probability called \code{pA}.
   The probability of getting a count in the first column of the
   input (an AA) is \code{pA*pA}.
+  When \code{inbreeding = TRUE}, an additional parameter \code{f} is used.
+  If \code{inbreeding = FALSE} then \eqn{f = 0}.
+
+
+
+% With Hardy Weinberg equilibrium (HWE),
+% Without the HWE assumption, an additional parameter \code{f} is used.
+
 
 
 }
@@ -53,21 +83,36 @@ Sunderland, MA: Sinauer Associates, Inc.
 
 
 }
+
+\section{Warning }{
+  Setting \code{inbreeding = FALSE} makes estimation difficult
+  with non-intercept-only models.
+  Currently, this code seems to work with intercept-only models.
+
+
+}
+
+
 \seealso{
   \code{\link{AB.Ab.aB.ab}},
-  \code{\link{AB.Ab.aB.ab2}},
   \code{\link{ABO}},
-  \code{\link{G1G2G3}},
+  \code{\link{A1A2A3}},
   \code{\link{MNSs}}.
+
+
+% \code{\link{AB.Ab.aB.ab2}},
+
 
 
 }
 \examples{
 y <- cbind(53, 95, 38)
-fit <- vglm(y ~ 1, AA.Aa.aa(link = "probit"), trace = TRUE)
-rbind(y, sum(y) * fitted(fit))
-Coef(fit)  # Estimated pA
-summary(fit)
+fit1 <- vglm(y ~ 1, AA.Aa.aa(linkp = "probit"), trace = TRUE)
+fit2 <- vglm(y ~ 1, AA.Aa.aa(inbreeding = FALSE), trace = TRUE)
+rbind(y, sum(y) * fitted(fit1))
+Coef(fit1)  # Estimated pA
+Coef(fit2)  # Estimated pA and f
+summary(fit1)
 }
 \keyword{models}
 \keyword{regression}

@@ -44,7 +44,8 @@ dollars deflated by \eqn{P_2}.
   These data are a subset of a table in Boot and de Wit (1960),
   also known as the Grunfeld data.
   It is used a lot in econometrics,
-  e.g., for seemingly unrelated regressions (see \code{SUR}).
+  e.g., for seemingly unrelated regressions
+  (see \code{\link[VGAM:SURff]{SURff}}).
 
 
   Here,
@@ -77,7 +78,7 @@ dollars deflated by \eqn{P_2}.
 
 }
 \seealso{
-  \code{\link[VGAM:SUR]{SUR}},
+  \code{\link[VGAM:SURff]{SURff}},
   \url{http://statmath.wu.ac.at/~zeileis/grunfeld}.
 
 

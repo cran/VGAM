@@ -22,13 +22,13 @@
   constraints = eval(substitute(expression({
     cm.intercept.default <- diag(3)
 
-    constraints <- cm.vgam(matrix(c(1,1,0, 0,0,1), 3, 2), x = x,
+    constraints <- cm.VGAM(matrix(c(1,1,0, 0,0,1), 3, 2), x = x,
                            bool = .exchangeable ,
                            constraints = constraints,
                            apply.int = TRUE,
                            cm.default           = cm.intercept.default,
                            cm.intercept.default = cm.intercept.default)
-    constraints <- cm.zero.vgam(constraints, x, .zero , M)
+    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
   }), list( .exchangeable = exchangeable, .zero = zero ))),
   initialize = expression({
 
@@ -155,13 +155,13 @@
   constraints = eval(substitute(expression({
     cm.intercept.default <- diag(6)
 
-    constraints <- cm.vgam(matrix(c(1,1,1,0,0,0, 0,0,0,1,1,1), 6, 2), x = x,
+    constraints <- cm.VGAM(matrix(c(1,1,1,0,0,0, 0,0,0,1,1,1), 6, 2), x = x,
                            bool = .exchangeable ,
                            constraints = constraints,
                            apply.int = TRUE,
                            cm.default           = cm.intercept.default,
                            cm.intercept.default = cm.intercept.default)
-    constraints <- cm.zero.vgam(constraints, x, .zero, M)
+    constraints <- cm.zero.VGAM(constraints, x, .zero, M)
   }), list( .exchangeable = exchangeable, .zero = zero ))),
   initialize = expression({
     predictors.names <- c("u1", "u2", "u3", "u12", "u13", "u23")

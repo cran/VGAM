@@ -131,7 +131,8 @@ Fisher information matrix of the Dirichlet-multinomial distribution.
 
 
 Tvedebrink, T. (2010)
-Overdispersion in allelic counts and \eqn{\theta}-correction in forensic genetics.
+Overdispersion in allelic counts and \eqn{\theta}-correction in
+forensic genetics.
 \emph{Theoretical Population Biology}, \bold{78}, 200--210.
 
 
@@ -184,7 +185,7 @@ in press;
 \seealso{
   \code{\link{dirmul.old}},
   \code{\link{betabinomial}},
-  \code{\link{betabinomial.ab}},
+  \code{\link{betabinomialff}},
   \code{\link{dirichlet}},
   \code{\link{multinomial}}.
 
@@ -196,13 +197,15 @@ nn <- 10; M <- 5
 ydata <- data.frame(round(matrix(runif(nn * M, max = 10), nn, M)))  # Integer counts
 colnames(ydata) <- paste("y", 1:M, sep = "")
 
-fit <- vglm(cbind(y1, y2, y3, y4, y5) ~ 1, dirmultinomial, data = ydata, trace = TRUE)
+fit <- vglm(cbind(y1, y2, y3, y4, y5) ~ 1, dirmultinomial,
+            data = ydata, trace = TRUE)
 head(fitted(fit))
 depvar(fit)  # Sample proportions
 weights(fit, type = "prior", matrix = FALSE)  # Total counts per row
 
 ydata <- transform(ydata, x2 = runif(nn))
-fit <- vglm(cbind(y1, y2, y3, y4, y5) ~ x2, dirmultinomial, data = ydata, trace = TRUE)
+fit <- vglm(cbind(y1, y2, y3, y4, y5) ~ x2, dirmultinomial,
+            data = ydata, trace = TRUE)
 \dontrun{ # This does not work:
 Coef(fit) }
 coef(fit, matrix = TRUE)

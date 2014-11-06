@@ -10,12 +10,12 @@
 \usage{
 lms.yjn(percentiles = c(25, 50, 75), zero = c(1,3),
         llambda = "identitylink", lsigma = "loge",
-        dfmu.init = 4, dfsigma.init = 2,
+        idf.mu = 4, idf.sigma = 2,
         ilambda = 1, isigma = NULL, rule = c(10, 5),
         yoffset = NULL, diagW = FALSE, iters.diagW = 6)
 lms.yjn2(percentiles=c(25,50,75), zero=c(1,3),
          llambda = "identitylink", lmu = "identitylink", lsigma = "loge",
-         dfmu.init = 4, dfsigma.init = 2, ilambda = 1.0,
+         idf.mu = 4, idf.sigma = 2, ilambda = 1.0,
          isigma = NULL, yoffset = NULL, nsimEIM = 250)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -34,7 +34,7 @@ lms.yjn2(percentiles=c(25,50,75), zero=c(1,3),
   See \code{\link{lms.bcn}}.
 
   }
-  \item{dfmu.init, dfsigma.init}{
+  \item{idf.mu, idf.sigma}{
   See \code{\link{lms.bcn}}.
 
   }

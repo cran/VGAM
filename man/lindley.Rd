@@ -79,7 +79,7 @@ Lindley distribution and its application.
 
 \seealso{
   \code{\link{dlind}},
-  \code{\link{gamma2.ab}},
+  \code{\link{gammaR}},
   \code{\link{simulate.vlm}}.
 
 

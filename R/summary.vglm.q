@@ -20,9 +20,13 @@ yformat <- function(x, digits = options()$digits) {
 
 
 
-summaryvglm <- function(object, correlation = FALSE,
-                        dispersion = NULL, digits = NULL,
-                        presid = TRUE) {
+
+summaryvglm <-
+  function(object, correlation = FALSE,
+           dispersion = NULL, digits = NULL,
+           presid = TRUE,
+           signif.stars = getOption("show.signif.stars")
+          ) {
 
 
 
@@ -38,9 +42,30 @@ summaryvglm <- function(object, correlation = FALSE,
          "sum of squares) for computing the dispersion parameter")
   }
 
-  stuff <- summaryvlm(as(object, "vlm"),
+
+
+  stuff <- summaryvlm(
+                      object,
+
                       correlation = correlation,
                       dispersion = dispersion)
+
+
+
+
+
+  infos.fun <- object@family@infos
+  infos.list <- infos.fun()
+  summary.pvalues <- if (is.logical(infos.list$summary.pvalues))
+    infos.list$summary.pvalues else TRUE
+  if (!summary.pvalues && ncol(stuff@coef3) == 4)
+    stuff@coef3 <- stuff@coef3[, -4]  # Delete the pvalues column
+
+
+
+
+
+
 
 
 
@@ -61,6 +86,10 @@ summaryvglm <- function(object, correlation = FALSE,
 
   slot(answer, "misc") <- stuff@misc  # Replace
 
+
+  answer@misc$signif.stars <- signif.stars  # 20140728
+
+
   if (is.numeric(stuff@dispersion))
     slot(answer, "dispersion") <- stuff@dispersion
 
@@ -77,13 +106,17 @@ setMethod("logLik",  "summary.vglm", function(object, ...)
   logLik.vlm(object, ...))
 
 
-show.summary.vglm <- function(x, digits = NULL, quote = TRUE,
-                              prefix = "",
-                              presid = TRUE,
-                              nopredictors = FALSE) {
+show.summary.vglm <-
+  function(x,
+           digits = max(3L, getOption("digits") - 3L),  # Same as glm()
+           quote = TRUE,
+           prefix = "",
+           presid = TRUE,
+           signif.stars = NULL,  # Use this if logical; 20140728
+           nopredictors = FALSE) {
 
   M <- x@misc$M
-  coef <- x@coef3   # icients
+  coef <- x@coef3  # icients
   correl <- x@correlation
 
   digits <- if (is.null(digits)) options()$digits - 2 else digits
@@ -111,8 +144,19 @@ show.summary.vglm <- function(x, digits = NULL, quote = TRUE,
     }
   }
 
+
+  use.signif.stars <- if (is.logical(signif.stars))
+    signif.stars else x@misc$signif.stars  # 20140728
+  if (!is.logical(use.signif.stars))
+    use.signif.stars <- getOption("show.signif.stars")
+
+
   cat("\nCoefficients:\n")
-  print.default(coef, digits = digits)
+  printCoefmat(coef, digits = digits,
+               signif.stars = use.signif.stars,
+               na.print = "NA")
+
+
 
   cat("\nNumber of linear predictors: ", M, "\n")
 
@@ -194,6 +238,7 @@ show.summary.vglm <- function(x, digits = NULL, quote = TRUE,
 setMethod("summary", "vglm",
           function(object, ...)
           summaryvglm(object, ...))
+
 
 
 

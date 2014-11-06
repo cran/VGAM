@@ -8,11 +8,14 @@
 
 }
 \usage{
-bisa(lshape = "loge", lscale = "loge",
-     ishape = NULL, iscale = 1, imethod = 1, zero = NULL)
+bisa(lscale = "loge", lshape = "loge",
+     iscale = 1, ishape = NULL, imethod = 1, zero = NULL, nowarning = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
+  \item{nowarning}{ Logical. Suppress a warning? }
+
+
   \item{lscale, lshape}{
   Parameter link functions applied to the shape and scale parameters
   (\eqn{a} and \eqn{b} below).
@@ -128,20 +131,21 @@ New York: Wiley.
 \examples{
 bdata1 <- data.frame(x2 = runif(nn <- 1000))
 bdata1 <- transform(bdata1, shape = exp(-0.5 + x2), scale = exp(1.5))
-bdata1 <- transform(bdata1, y = rbisa(nn, shape, scale))
-fit1 <- vglm(y ~ x2, bisa(zero = 2), bdata1, trace = TRUE)
+bdata1 <- transform(bdata1, y = rbisa(nn, scale, shape))
+fit1 <- vglm(y ~ x2, bisa(zero = 1), data = bdata1, trace = TRUE)
 coef(fit1, matrix = TRUE)
 
 \dontrun{
 bdata2 <- data.frame(shape = exp(-0.5), scale = exp(0.5))
-bdata2 <- transform(bdata2, y = rbisa(nn, shape, scale))
-fit <- vglm(y ~ 1, bisa, bdata2, trace = TRUE)
+bdata2 <- transform(bdata2, y = rbisa(nn, scale, shape))
+fit <- vglm(y ~ 1, bisa, data = bdata2, trace = TRUE)
 with(bdata2, hist(y, prob = TRUE, ylim = c(0, 0.5), col = "lightblue"))
 coef(fit, matrix = TRUE)
 with(bdata2, mean(y))
 head(fitted(fit))
 x <- with(bdata2, seq(0, max(y), len = 200))
-lines(dbisa(x, Coef(fit)[1], Coef(fit)[2]) ~ x, bdata2, col = "orange", lwd = 2) }
+lines(dbisa(x, Coef(fit)[1], Coef(fit)[2]) ~ x, data = bdata2,
+      col = "orange", lwd = 2) }
 }
 \keyword{models}
 \keyword{regression}

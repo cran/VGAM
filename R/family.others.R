@@ -17,34 +17,38 @@
 
 
 
-dexppois <- function(x, lambda, betave = 1, log = FALSE) {
+
+
+
+
+dexppois <- function(x, rate = 1, shape, log = FALSE) {
   if (!is.logical(log.arg <- log) || length(log) != 1)
     stop("bad input for argument 'log'")
   rm(log)
 
 
-  N <- max(length(x), length(lambda), length(betave))
-  x <- rep(x, len = N); lambda = rep(lambda, len = N);
-  betave <- rep(betave, len = N)
+  N <- max(length(x), length(shape), length(rate))
+  x     <- rep(x,     len = N)
+  shape <- rep(shape, len = N)
+  rate  <- rep(rate,  len = N)
 
   logdensity <- rep(log(0), len = N)
   xok <- (0 < x)
  
-  logdensity[xok] <- log(lambda[xok]) + log(betave[xok]) -
-                     log1p(-exp(-lambda[xok])) - lambda[xok] - 
-                     betave[xok] * x[xok] + lambda[xok] * 
-                     exp(-betave[xok] * x[xok])
+  logdensity[xok] <- log(shape[xok]) + log(rate[xok]) -
+                     log1p(-exp(-shape[xok])) - shape[xok] - 
+                     rate[xok] * x[xok] + shape[xok] * 
+                     exp(-rate[xok] * x[xok])
    
-  logdensity[lambda <= 0] <- NaN
-  logdensity[betave <= 0] <- NaN
+  logdensity[shape <= 0] <- NaN
+  logdensity[rate <= 0] <- NaN
   if (log.arg) logdensity else exp(logdensity)
 }
 
 
-qexppois<- function(p, lambda, betave = 1) {
-  ans <- -log(log(p * -(expm1(lambda)) +
-         exp(lambda)) / lambda) / betave
-  ans[(lambda <= 0) | (betave <= 0)] = NaN
+qexppois<- function(p, rate = 1, shape) {
+  ans <- -log(log(p * -(expm1(shape)) + exp(shape)) / shape) / rate
+  ans[(shape <= 0) | (rate <= 0)] = NaN
   ans[p < 0] <- NaN
   ans[p > 1] <- NaN
   ans
@@ -52,20 +56,20 @@ qexppois<- function(p, lambda, betave = 1) {
 
 
 
-pexppois<- function(q, lambda, betave = 1) {
-  ans <-(exp(lambda * exp(-betave * q)) -
-         exp(lambda)) / -expm1(lambda)  
+pexppois<- function(q, rate = 1, shape) {
+  ans <-(exp(shape * exp(-rate * q)) -
+         exp(shape)) / -expm1(shape)  
   ans[q <= 0] <- 0
-  ans[(lambda <= 0) | (betave <= 0)] <- NaN
+  ans[(shape <= 0) | (rate <= 0)] <- NaN
   ans
 }
 
 
 
-rexppois <- function(n, lambda, betave = 1) {
-  ans <- -log(log(runif(n) * -(expm1(lambda)) +
-         exp(lambda)) / lambda) / betave
-  ans[(lambda <= 0) | (betave <= 0)] <- NaN
+rexppois <- function(n, rate = 1, shape) {
+  ans <- -log(log(runif(n) * -(expm1(shape)) +
+         exp(shape)) / shape) / rate
+  ans[(shape <= 0) | (rate <= 0)] <- NaN
   ans
 }
 
@@ -75,19 +79,22 @@ rexppois <- function(n, lambda, betave = 1) {
 
 
 
- exppoisson <- function(llambda = "loge", lbetave = "loge",
-                        ilambda = 1.1,   ibetave = 2.0,
+
+
+ exppoisson <- function(lrate = "loge", lshape = "loge",
+                        irate = 2.0, ishape = 1.1,   
                         zero = NULL) {
 
-  llambda <- as.list(substitute(llambda))
-  elambda <- link2list(llambda)
-  llambda <- attr(elambda, "function.name")
+  lshape <- as.list(substitute(lshape))
+  eshape <- link2list(lshape)
+  lshape <- attr(eshape, "function.name")
 
-  lbetave <- as.list(substitute(lbetave))
-  ebetave <- link2list(lbetave)
-  lbetave <- attr(ebetave, "function.name")
+  lratee <- as.list(substitute(lrate))
+  eratee <- link2list(lratee)
+  lratee <- attr(eratee, "function.name")
 
 
+  iratee <- irate
 
 
 
@@ -95,28 +102,28 @@ rexppois <- function(n, lambda, betave = 1) {
       !is.Numeric(zero, integer.valued = TRUE, positive = TRUE))
     stop("bad input for argument 'zero'")
 
-  if (length(ilambda) &&
-      !is.Numeric(ilambda, positive = TRUE))
-    stop("bad input for argument 'ilambda'")
-  if (length(ibetave) &&
-      !is.Numeric(ibetave, positive = TRUE))
-    stop("bad input for argument 'ibetave'")
+  if (length(ishape) &&
+      !is.Numeric(ishape, positive = TRUE))
+    stop("bad input for argument 'ishape'")
+  if (length(iratee) &&
+      !is.Numeric(iratee, positive = TRUE))
+    stop("bad input for argument 'irate'")
 
-  ilambda[abs(ilambda - 1) < 0.01] = 1.1
+  ishape[abs(ishape - 1) < 0.01] = 1.1
 
 
   new("vglmff",
   blurb = c("Exponential Poisson distribution \n \n",
             "Links:    ",
-            namesof("lambda", llambda, earg = elambda), ", ",
-            namesof("betave", lbetave, earg = ebetave), "\n",
-            "Mean:     lambda/(expm1(lambda) * betave)) * ",
-                      "genhypergeo(c(1, 1),c(2, 2),lambda)"),
+            namesof("rate",  lratee, earg = eratee), ", ",
+            namesof("shape", lshape, earg = eshape), "\n",
+            "Mean:     shape/(expm1(shape) * rate)) * ",
+                      "genhypergeo(c(1, 1), c(2, 2), shape)"),
 
 
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.vgam(constraints, x, .zero , M)
-    }), list( .zero = zero))),
+    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
+  }), list( .zero = zero))),
 
   initialize = eval(substitute(expression({
 
@@ -129,60 +136,63 @@ rexppois <- function(n, lambda, betave = 1) {
 
 
     predictors.names <- c(
-      namesof("lambda", .llambda, earg = .elambda, short = TRUE),
-      namesof("betave", .lbetave, earg = .ebetave, short = TRUE))
+      namesof("rate",  .lratee, earg = .eratee, short = TRUE),
+      namesof("shape", .lshape, earg = .eshape, short = TRUE))
 
     if (!length(etastart)) {
-      betave.init <- if (length( .ibetave ))
-              rep( .ibetave , len = n) else
-              stop("Need to input a value into argument 'ibetave'")
-      lambda.init <- if (length( .ilambda ))
-                      rep( .ilambda , len = n) else
-                      (1/betave.init - mean(y)) / ((y * 
-                      exp(-betave.init * y))/n)
+      ratee.init <- if (length( .iratee ))
+              rep( .iratee , len = n) else
+              stop("Need to input a value into argument 'iratee'")
+      shape.init <- if (length( .ishape ))
+                      rep( .ishape , len = n) else
+                      (1/ratee.init - mean(y)) / ((y * 
+                      exp(-ratee.init * y))/n)
 
 
-      betave.init <- rep(weighted.mean(betave.init, w = w), len = n)
+      ratee.init <- rep(weighted.mean(ratee.init, w = w), len = n)
       
       etastart <-
-        cbind(theta2eta(lambda.init, .llambda ,earg = .elambda ),
-              theta2eta(betave.init, .lbetave ,earg = .ebetave ))
+        cbind(theta2eta(ratee.init, .lratee , earg = .eratee ),
+              theta2eta(shape.init, .lshape , earg = .eshape ))
+              
 
     }
-  }), list( .llambda = llambda, .lbetave = lbetave, 
-            .ilambda = ilambda, .ibetave = ibetave, 
-            .elambda = elambda, .ebetave = ebetave))), 
+  }), list( .lshape = lshape, .lratee = lratee, 
+            .ishape = ishape, .iratee = iratee, 
+            .eshape = eshape, .eratee = eratee))), 
 
   linkinv = eval(substitute(function(eta, extra = NULL) {
-    lambda <- eta2theta(eta[, 1], .llambda , earg = .elambda )
-    betave <- eta2theta(eta[, 2], .lbetave , earg = .ebetave )
+    ratee <- eta2theta(eta[, 1], .lratee , earg = .eratee )
+    shape <- eta2theta(eta[, 2], .lshape , earg = .eshape )
 
 
-    -lambda * genhypergeo(c(1, 1), c(2, 2), lambda) / (expm1(-lambda) *
-    betave)
-  }, list( .llambda = llambda, .lbetave = lbetave, 
-           .elambda = elambda, .ebetave = ebetave))), 
+
+
+
+    qexppois(p = 0.5, rate = ratee, shape = shape)
+  }, list( .lshape = lshape, .lratee = lratee, 
+           .eshape = eshape, .eratee = eratee))), 
 
   last = eval(substitute(expression({
-    misc$link <-    c(lambda = .llambda , betave = .lbetave )
-
-    misc$earg <- list(lambda = .elambda , betave = .ebetave )
+    misc$link <-    c( rate = .lratee , shape = .lshape )
+    misc$earg <- list( rate = .eratee , shape = .eshape )
 
     misc$expected <- TRUE
     misc$multipleResponses <- FALSE
-  }), list( .llambda = llambda, .lbetave = lbetave,
-            .elambda = elambda, .ebetave = ebetave))), 
+  }), list( .lshape = lshape, .lratee = lratee,
+            .eshape = eshape, .eratee = eratee))), 
 
   loglikelihood = eval(substitute(
     function(mu, y, w, residuals = FALSE, eta,
              extra = NULL,
              summation = TRUE) {
-    lambda <- eta2theta(eta[, 1], .llambda , earg = .elambda )
-    betave <- eta2theta(eta[, 2], .lbetave , earg = .ebetave )
+    ratee <- eta2theta(eta[, 1], .lratee , earg = .eratee )
+    shape <- eta2theta(eta[, 2], .lshape , earg = .eshape )
+
     if (residuals) {
       stop("loglikelihood residuals not implemented yet")
     } else {
-      ll.elts <- c(w) * dexppois(x = y, lambda = lambda, betave = betave,
+      ll.elts <- c(w) * dexppois(x = y, shape = shape, rate = ratee,
                                  log = TRUE)
       if (summation) {
         sum(ll.elts)
@@ -190,42 +200,43 @@ rexppois <- function(n, lambda, betave = 1) {
         ll.elts
       }
     }
-  }, list( .lbetave = lbetave , .llambda = llambda , 
-           .elambda = elambda , .ebetave = ebetave ))), 
+  }, list( .lratee = lratee , .lshape = lshape , 
+           .eshape = eshape , .eratee = eratee ))), 
 
   vfamily = c("exppoisson"),
 
   deriv = eval(substitute(expression({
-    lambda <- eta2theta(eta[, 1], .llambda , earg = .elambda )
-    betave <- eta2theta(eta[, 2], .lbetave , earg = .ebetave )
-    dl.dbetave <- 1/betave - y - y * lambda * exp(-betave * y)
-    dl.dlambda <- 1/lambda - 1/expm1(lambda) - 1 + exp(-betave * y)
-    dbetave.deta <- dtheta.deta(betave, .lbetave , earg = .ebetave )
-    dlambda.deta <- dtheta.deta(lambda, .llambda , earg = .elambda )
-    c(w) * cbind(dl.dlambda * dlambda.deta,
-                 dl.dbetave * dbetave.deta)
-  }), list( .llambda = llambda, .lbetave = lbetave,
-            .elambda = elambda, .ebetave = ebetave ))), 
+    ratee <- eta2theta(eta[, 1], .lratee , earg = .eratee )
+    shape <- eta2theta(eta[, 2], .lshape , earg = .eshape )
+
+    dl.dratee <- 1/ratee - y - y * shape * exp(-ratee * y)
+    dl.dshape <- 1/shape - 1/expm1(shape) - 1 + exp(-ratee * y)
+    dratee.deta <- dtheta.deta(ratee, .lratee , earg = .eratee )
+    dshape.deta <- dtheta.deta(shape, .lshape , earg = .eshape )
+    c(w) * cbind(dl.dratee * dratee.deta,
+                 dl.dshape * dshape.deta)
+  }), list( .lshape = lshape, .lratee = lratee,
+            .eshape = eshape, .eratee = eratee ))), 
 
   weight = eval(substitute(expression({
     
-    temp1 <- -expm1(-lambda)
+    temp1 <- -expm1(-shape)
     
-    ned2l.dlambda2 <- (1 + exp(2 * lambda) - lambda^2 * exp(lambda) - 2 *
-                    exp(lambda)) / (lambda * temp1)^2
+    ned2l.dshape2 <- (1 + exp(2 * shape) - shape^2 * exp(shape) - 2 *
+                      exp(shape)) / (shape * temp1)^2
 
 
-    ned2l.dbetave2 <- 1 / betave^2 - (lambda^2 * exp(-lambda) / (4 * 
-                    betave^2 * temp1)) * 
-                    genhypergeo(c(2, 2, 2),c(3, 3, 3),lambda) 
+    ned2l.dratee2 <- 1 / ratee^2 - (shape^2 * exp(-shape) / (4 * 
+                    ratee^2 * temp1)) * 
+                    genhypergeo(c(2, 2, 2), c(3, 3, 3), shape) 
 
-    ned2l.dbetavelambda <- (lambda * exp(-lambda) / (4 * betave * temp1)) *
-                         genhypergeo(c(2, 2),c(3, 3),lambda)   
+    ned2l.drateeshape <- (shape * exp(-shape) / (4 * ratee * temp1)) *
+                           genhypergeo(c(2, 2), c(3, 3), shape)   
 
     wz <- matrix(0, n, dimm(M))
-    wz[, iam(1, 1, M)] <- dlambda.deta^2 * ned2l.dlambda2
-    wz[, iam(2, 2, M)] <- dbetave.deta^2 * ned2l.dbetave2
-    wz[, iam(1, 2, M)] <- dbetave.deta * dlambda.deta * ned2l.dbetavelambda
+    wz[, iam(1, 1, M)] <- dratee.deta^2 * ned2l.dratee2
+    wz[, iam(1, 2, M)] <- dratee.deta * dshape.deta * ned2l.drateeshape
+    wz[, iam(2, 2, M)] <- dshape.deta^2 * ned2l.dshape2
     c(w) * wz
   }), list( .zero = zero ))))
 }
@@ -239,7 +250,7 @@ rexppois <- function(n, lambda, betave = 1) {
 
 
 
-dgenray <- function(x, shape, scale = 1, log = FALSE) {
+dgenray <- function(x, scale = 1, shape, log = FALSE) {
   if (!is.logical(log.arg <- log) || length(log) != 1)
     stop("bad input for argument 'log'")
   rm(log)
@@ -267,7 +278,7 @@ dgenray <- function(x, shape, scale = 1, log = FALSE) {
 }
 
 
-pgenray <- function(q, shape, scale = 1) {
+pgenray <- function(q, scale = 1, shape) {
   ans <- (-expm1(-(q/scale)^2))^shape
   ans[q <= 0] <- 0
   ans[(shape <= 0) | (scale <= 0)] <- NaN
@@ -275,7 +286,7 @@ pgenray <- function(q, shape, scale = 1) {
 }
 
 
-qgenray <- function(p, shape, scale = 1) {
+qgenray <- function(p, scale = 1, shape) {
   ans <- scale * sqrt(-log1p(-(p^(1/shape))))
   ans[(shape <= 0) | (scale <= 0)] <- NaN
   ans[p < 0] <- NaN
@@ -288,7 +299,7 @@ qgenray <- function(p, shape, scale = 1) {
 
 
 
-rgenray <- function(n, shape, scale = 1) {
+rgenray <- function(n, scale = 1, shape) {
   ans <- qgenray(runif(n), shape = shape, scale = scale)
   ans[(shape <= 0) | (scale <= 0)] <- NaN
   ans
@@ -302,10 +313,11 @@ genrayleigh.control <- function(save.weight = TRUE, ...) {
 }
 
 
- genrayleigh <- function(lshape = "loge", lscale = "loge",
-                         ishape = NULL,   iscale = NULL,
-                         tol12 = 1.0e-05, 
-                         nsimEIM = 300, zero = 1) {
+ genrayleigh <-
+  function(lscale = "loge", lshape = "loge",
+           iscale = NULL,   ishape = NULL,
+           tol12 = 1.0e-05, 
+           nsimEIM = 300, zero = 2) {
 
   lshape <- as.list(substitute(lshape))
   eshape <- link2list(lshape)
@@ -335,10 +347,10 @@ genrayleigh.control <- function(save.weight = TRUE, ...) {
   new("vglmff",
   blurb = c("Generalized Rayleigh distribution\n",
             "Links:    ",
-            namesof("shape", lshape, earg = eshape), ", ",
-            namesof("scale", lscale, earg = escale), "\n"),
+            namesof("scale", lscale, earg = escale), ", ",
+            namesof("shape", lshape, earg = eshape), "\n"),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.vgam(constraints, x, .zero, M)
+    constraints <- cm.zero.VGAM(constraints, x, .zero, M)
   }), list( .zero = zero ))),
 
   initialize = eval(substitute(expression({
@@ -355,8 +367,8 @@ genrayleigh.control <- function(save.weight = TRUE, ...) {
 
 
     predictors.names <- c(
-      namesof("shape", .lshape , earg = .eshape , short = TRUE),
-      namesof("scale", .lscale , earg = .escale , short = TRUE))
+      namesof("scale", .lscale , earg = .escale , short = TRUE),
+      namesof("shape", .lshape , earg = .eshape , short = TRUE))
 
     if (!length(etastart)) {
       genrayleigh.Loglikfun <- function(scale, y, x, w, extraargs) {
@@ -371,8 +383,8 @@ genrayleigh.control <- function(save.weight = TRUE, ...) {
       scale.grid <- seq(0.2 * stats::sd(c(y)),
                         5.0 * stats::sd(c(y)), len = 29)
       scale.init <- if (length( .iscale )) .iscale else
-                    getMaxMin(scale.grid, objfun = genrayleigh.Loglikfun,
-                               y = y, x = x, w = w)
+                    grid.search(scale.grid, objfun = genrayleigh.Loglikfun,
+                                y = y, x = x, w = w)
       scale.init <- rep(scale.init, length = length(y))
  
       shape.init <- if (length( .ishape )) .ishape else
@@ -380,24 +392,25 @@ genrayleigh.control <- function(save.weight = TRUE, ...) {
                      w = w)
       shape.init <- rep(shape.init, length = length(y))
 
-      etastart <- cbind(theta2eta(shape.init, .lshape, earg = .eshape),
-                        theta2eta(scale.init, .lscale, earg = .escale))
+      etastart <- cbind(theta2eta(scale.init, .lscale , earg = .escale ),
+                        theta2eta(shape.init, .lshape , earg = .eshape ))
+                        
         }
     }), list( .lscale = lscale, .lshape = lshape,
               .iscale = iscale, .ishape = ishape,
               .escale = escale, .eshape = eshape))), 
 
   linkinv = eval(substitute(function(eta, extra = NULL) {
-    shape <- eta2theta(eta[, 1], .lshape , earg = .eshape )
-    Scale <- eta2theta(eta[, 2], .lscale , earg = .escale )
+    Scale <- eta2theta(eta[, 1], .lscale , earg = .escale )
+    shape <- eta2theta(eta[, 2], .lshape , earg = .eshape )
     qgenray(p = 0.5, shape = shape, scale = Scale)
   }, list( .lshape = lshape, .lscale = lscale, 
            .eshape = eshape, .escale = escale ))),
 
   last = eval(substitute(expression({
-    misc$link <-    c(shape = .lshape , scale = .lscale )
+    misc$link <-    c(scale = .lscale, shape = .lshape )
 
-    misc$earg <- list(shape = .eshape , scale = .escale )
+    misc$earg <- list(scale = .escale, shape = .eshape )
 
     misc$expected <- TRUE
     misc$nsimEIM <- .nsimEIM
@@ -410,8 +423,8 @@ genrayleigh.control <- function(save.weight = TRUE, ...) {
     function(mu, y, w, residuals = FALSE, eta, extra = NULL,
              summation = TRUE) {
 
-    shape <- eta2theta(eta[, 1], .lshape , earg = .eshape )
-    Scale <- eta2theta(eta[, 2], .lscale , earg = .escale )
+    Scale <- eta2theta(eta[, 1], .lscale , earg = .escale )
+    shape <- eta2theta(eta[, 2], .lshape , earg = .eshape )
 
     if (residuals) {
       stop("loglikelihood residuals not implemented yet")
@@ -430,11 +443,11 @@ genrayleigh.control <- function(save.weight = TRUE, ...) {
   vfamily = c("genrayleigh"),
 
   deriv = eval(substitute(expression({
-    shape <- eta2theta(eta[, 1], .lshape , earg = .eshape )
-    Scale <- eta2theta(eta[, 2], .lscale , earg = .escale )
-    dshape.deta <- dtheta.deta(shape, .lshape , earg = .eshape )
+    Scale <- eta2theta(eta[, 1], .lscale , earg = .escale )
+    shape <- eta2theta(eta[, 2], .lshape , earg = .eshape )
     dscale.deta <- dtheta.deta(Scale, .lscale , earg = .escale )
-    dthetas.detas <- cbind(dshape.deta, dscale.deta)
+    dshape.deta <- dtheta.deta(shape, .lshape , earg = .eshape )
+    dthetas.detas <- cbind(dscale.deta, dshape.deta)
 
     temp1 <- y / Scale
     temp2 <- exp(-temp1^2)
@@ -447,7 +460,7 @@ genrayleigh.control <- function(save.weight = TRUE, ...) {
     dl.dshape[!is.finite(dl.dshape)] =
       max(dl.dshape[is.finite(dl.dshape)])
 
-    answer <- c(w) * cbind(dl.dshape, dl.dscale) * dthetas.detas
+    answer <- c(w) * cbind(dl.dscale, dl.dshape) * dthetas.detas
     answer
   }), list( .lshape = lshape , .lscale = lscale,
             .eshape = eshape,  .escale = escale ))),
@@ -458,22 +471,22 @@ genrayleigh.control <- function(save.weight = TRUE, ...) {
     run.varcov <- 0
     ind1 <- iam(NA, NA, M = M, both = TRUE, diag = TRUE)
     for (ii in 1:( .nsimEIM )) {
-        ysim <- rgenray(n = n, shape = shape, scale = Scale)
+      ysim <- rgenray(n = n, shape = shape, scale = Scale)
 
-        temp1 <- ysim / Scale
-        temp2 <- exp(-temp1^2)  # May be 1 if ysim is very close to 0.
-        temp3 <- temp1^2 / Scale
-        AAA   <- 2 * temp1^2 / Scale  # 2 * y^2 / Scale^3
-        BBB   <- -expm1(-temp1^2)     # denominator
-        dl.dshape <- 1/shape + log1p(-temp2)
-        dl.dscale <- -2 / Scale + AAA * (1 - (shape - 1) * temp2 / BBB)
+      temp1 <- ysim / Scale
+      temp2 <- exp(-temp1^2)  # May be 1 if ysim is very close to 0.
+      temp3 <- temp1^2 / Scale
+      AAA   <- 2 * temp1^2 / Scale  # 2 * y^2 / Scale^3
+      BBB   <- -expm1(-temp1^2)     # denominator
+      dl.dshape <- 1/shape + log1p(-temp2)
+      dl.dscale <- -2 / Scale + AAA * (1 - (shape - 1) * temp2 / BBB)
 
-        dl.dshape[!is.finite(dl.dshape)] <- max(
-        dl.dshape[is.finite(dl.dshape)])
+      dl.dshape[!is.finite(dl.dshape)] <- max(
+      dl.dshape[is.finite(dl.dshape)])
 
-        temp3 <- cbind(dl.dshape, dl.dscale)
-        run.varcov <- run.varcov + temp3[, ind1$row.index] *
-                                   temp3[, ind1$col.index]
+      temp3 <- cbind(dl.dscale, dl.dshape)
+      run.varcov <- run.varcov + temp3[, ind1$row.index] *
+                                 temp3[, ind1$col.index]
     }
     run.varcov <- run.varcov / .nsimEIM
 
@@ -553,6 +566,7 @@ rexpgeom <- function(n, scale = 1, shape) {
 
 
 
+
 expgeometric.control <- function(save.weight = TRUE, ...) {
   list(save.weight = save.weight)
 }
@@ -597,13 +611,13 @@ expgeometric.control <- function(save.weight = TRUE, ...) {
   new("vglmff",
   blurb = c("Exponential geometric distribution\n\n",
             "Links:    ",
-            namesof("Scale", lscale, earg = escale), ", ",
+            namesof("scale", lscale, earg = escale), ", ",
             namesof("shape", lshape, earg = eshape), "\n",
             "Mean:     ", "(shape - 1) * log(1 - ",
-            "shape) / (shape / Scale)"), 
+            "shape) / (shape / scale)"), 
                            
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.vgam(constraints, x, .zero, M)
+    constraints <- cm.zero.VGAM(constraints, x, .zero, M)
   }), list( .zero = zero ))),
  
 
@@ -618,12 +632,8 @@ expgeometric.control <- function(save.weight = TRUE, ...) {
 
 
 
-
-
-
-
     predictors.names <- c(
-      namesof("Scale", .lscale , earg = .escale , short = TRUE),
+      namesof("scale", .lscale , earg = .escale , short = TRUE),
       namesof("shape", .lshape , earg = .eshape , short = TRUE))
 
     if (!length(etastart)) {
@@ -662,9 +672,9 @@ expgeometric.control <- function(save.weight = TRUE, ...) {
            .escale = escale, .eshape = eshape ))),
 
   last = eval(substitute(expression({
-    misc$link <-    c(Scale = .lscale , shape = .lshape )
+    misc$link <-    c(scale = .lscale , shape = .lshape )
 
-    misc$earg <- list(Scale = .escale , shape = .eshape )
+    misc$earg <- list(scale = .escale , shape = .eshape )
 
     misc$expected <- TRUE
     misc$nsimEIM <- .nsimEIM
@@ -725,35 +735,35 @@ expgeometric.control <- function(save.weight = TRUE, ...) {
 
 
 
-        run.varcov <- 0
-        ind1 <- iam(NA, NA, M = M, both = TRUE, diag = TRUE)
+      run.varcov <- 0
+      ind1 <- iam(NA, NA, M = M, both = TRUE, diag = TRUE)
 
-        if (length( .nsimEIM )) {
-            for (ii in 1:( .nsimEIM )) {
-                ysim <- rexpgeom(n, scale=Scale, shape=shape)
+      if (length( .nsimEIM )) {
+        for (ii in 1:( .nsimEIM )) {
+          ysim <- rexpgeom(n, scale=Scale, shape=shape)
 
-                temp2 <- exp(-ysim / Scale)
-                temp3 <- shape * temp2
-                temp4 <- ysim / Scale^2
-                dl.dscale <-  -1 / Scale + temp4 + 
-                             2 * temp4 * temp3 / (1 - temp3)
-                dl.dshape <- -1 / (1 - shape) + 
-                             2 * temp2 / (1 - temp3)
+          temp2 <- exp(-ysim / Scale)
+          temp3 <- shape * temp2
+          temp4 <- ysim / Scale^2
+          dl.dscale <-  -1 / Scale + temp4 + 
+                       2 * temp4 * temp3 / (1 - temp3)
+          dl.dshape <- -1 / (1 - shape) + 
+                       2 * temp2 / (1 - temp3)
 
-                temp6 <- cbind(dl.dscale, dl.dshape)
-                run.varcov <- run.varcov +
-                    temp6[,ind1$row.index] * temp6[,ind1$col.index]
-            }
+          temp6 <- cbind(dl.dscale, dl.dshape)
+          run.varcov <- run.varcov +
+              temp6[,ind1$row.index] * temp6[,ind1$col.index]
+      }
 
-            run.varcov <- run.varcov / .nsimEIM
+      run.varcov <- run.varcov / .nsimEIM
 
-            wz <- if (intercept.only)
-                matrix(colMeans(run.varcov),
-                       n, ncol(run.varcov), byrow = TRUE) else run.varcov
+      wz <- if (intercept.only)
+              matrix(colMeans(run.varcov),
+                     n, ncol(run.varcov), byrow = TRUE) else run.varcov
 
-            wz <- wz * dthetas.detas[, ind1$row] *
-                      dthetas.detas[, ind1$col]
-        }
+      wz <- wz * dthetas.detas[, ind1$row] *
+                 dthetas.detas[, ind1$col]
+    }
 
     c(w) * wz      
   }), list( .nsimEIM = nsimEIM ))))
@@ -879,12 +889,12 @@ explogff.control <- function(save.weight = TRUE, ...) {
   new("vglmff",
   blurb = c("Exponential logarithmic distribution\n\n",
             "Links:    ",
-            namesof("Scale", lscale, earg = escale), ", ",
+            namesof("scale", lscale, earg = escale), ", ",
             namesof("shape", lshape, earg = eshape), "\n",
-            "Mean:     ", "(-polylog(2, 1 - p) * Scale) / log(shape)"),
+            "Mean:     ", "(-polylog(2, 1 - p) * scale) / log(shape)"),
 
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.vgam(constraints, x, .zero, M)
+    constraints <- cm.zero.VGAM(constraints, x, .zero, M)
   }), list( .zero = zero ))),
 
   initialize = eval(substitute(expression({
@@ -899,7 +909,7 @@ explogff.control <- function(save.weight = TRUE, ...) {
 
 
     predictors.names <- c(
-      namesof("Scale", .lscale , earg = .escale , short = TRUE),
+      namesof("scale", .lscale , earg = .escale , short = TRUE),
       namesof("shape", .lshape , earg = .eshape , short = TRUE))
 
     if (!length(etastart)) {
@@ -929,20 +939,20 @@ explogff.control <- function(save.weight = TRUE, ...) {
              .escale = escale, .eshape = eshape))),
 
   linkinv = eval(substitute(function(eta, extra = NULL) {
-    Scale <- eta2theta(eta[, 1], .lscale , earg = .escale )
+    scale <- eta2theta(eta[, 1], .lscale , earg = .escale )
     shape <- eta2theta(eta[, 2], .lshape , earg = .eshape )
 
 
 
-    qexplog(p = 0.5, shape = shape, scale = Scale)  
+    qexplog(p = 0.5, shape = shape, scale = scale)  
 
   }, list( .lscale = lscale, .lshape = lshape,
            .escale = escale, .eshape = eshape ))),
 
   last = eval(substitute(expression({
-    misc$link <-    c(Scale = .lscale , shape = .lshape )
+    misc$link <-    c(scale = .lscale , shape = .lshape )
 
-    misc$earg <- list(Scale = .escale , shape = .eshape )
+    misc$earg <- list(scale = .escale , shape = .eshape )
 
     misc$expected <- TRUE
     misc$nsimEIM <- .nsimEIM
@@ -1220,7 +1230,7 @@ tpnff <- function(llocation = "identitylink", lscale = "loge",
             namesof("scale",     lscale,  earg = escale), "\n\n",
             "Mean: "),
   constraints = eval(substitute(expression({
-          constraints <- cm.zero.vgam(constraints, x, .zero, M)
+          constraints <- cm.zero.VGAM(constraints, x, .zero, M)
   }), list( .zero = zero ))),
   initialize = eval(substitute(expression({
 
@@ -1393,7 +1403,7 @@ tpnff3 <- function(llocation = "identitylink",
             namesof("skewpar",  lscale, earg = eskewp),  "\n\n",
             "Mean: "),
   constraints = eval(substitute(expression({
-          constraints <- cm.zero.vgam(constraints, x, .zero, M)
+          constraints <- cm.zero.VGAM(constraints, x, .zero, M)
   }), list( .zero = zero ))),
   initialize = eval(substitute(expression({
 

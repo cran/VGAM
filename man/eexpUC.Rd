@@ -99,9 +99,9 @@ very close to 0 or 1.
 }
 
 \examples{
-my_p <- 0.25; y <- rexp(nn <- 1000)
-(myexp <- qeexp(my_p))
-sum(myexp - y[y <= myexp]) / sum(abs(myexp - y))  # Should be my_p
+my.p <- 0.25; y <- rexp(nn <- 1000)
+(myexp <- qeexp(my.p))
+sum(myexp - y[y <= myexp]) / sum(abs(myexp - y))  # Should be my.p
 
 \dontrun{ par(mfrow = c(2,1))
 yy <- seq(-0, 4, len = nn)
@@ -119,7 +119,7 @@ lines(yy, pexp(yy), col = "darkgreen", lty = "dotted", lwd = 2) }
 %# Equivalently:
 %I1 <- mean(y <= myexp) * mean( myexp - y[y <= myexp])
 %I2 <- mean(y >  myexp) * mean(-myexp + y[y >  myexp])
-%I1 / (I1 + I2)  # Should be my_p
+%I1 / (I1 + I2)  # Should be my.p
 %# Or:
 %I1 <- sum( myexp - y[y <= myexp])
 %I2 <- sum(-myexp + y[y >  myexp])
@@ -128,13 +128,13 @@ lines(yy, pexp(yy), col = "darkgreen", lty = "dotted", lwd = 2) }
 %# Non-standard exponential
 %myrate <- 8
 %yy <- rexp(nn, rate = myrate)
-%(myexp <- qeexp(my_p, rate = myrate))
-%sum(myexp - yy[yy <= myexp]) / sum(abs(myexp - yy))  # Should be my_p
+%(myexp <- qeexp(my.p, rate = myrate))
+%sum(myexp - yy[yy <= myexp]) / sum(abs(myexp - yy))  # Should be my.p
 %peexp(-Inf, rate = myrate)      #  Should be 0
 %peexp( Inf, rate = myrate)      #  Should be 1
 %peexp(mean(yy), rate = myrate)  #  Should be 0.5
 %abs(qeexp(0.5, rate = myrate) - mean(yy))  #  Should be 0
-%abs(peexp(myexp, rate = myrate) - my_p)  #  Should be 0
+%abs(peexp(myexp, rate = myrate) - my.p)  #  Should be 0
 %integrate(f = deexp, lower = -1, upper = Inf, rate = myrate)  #  Should be 1
 
 

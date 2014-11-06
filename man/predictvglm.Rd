@@ -80,6 +80,12 @@ predictvglm(object, newdata = NULL,
   Logical. Reverses any parameter link function.
   This argument only works if
   \code{type = "link", se.fit = FALSE, deriv = 0}.
+  Setting \code{untransform = TRUE} does not work for
+  all \pkg{VGAM} family functions; only ones where there
+  is a one-to-one correspondence between a simple link function
+  and a simple parameter might work.
+
+
 
 
   }

@@ -122,7 +122,7 @@ elogit(theta, min = 0, max = 1, bminvalue = NULL, bmaxvalue = NULL,
     \code{\link{cauchit}},
     \code{\link{logistic1}},
     \code{\link{loge}},
-    \code{\link{mlogit}}.
+    \code{\link{multilogit}}.
 
 
  }

@@ -110,8 +110,8 @@ constraints(fit1)
 summary(fit1)
 
 # Estimated P(Y1 <= y1, Y2 <= y2) under the fitted model
-var1  <- loge(2 * predict(fit1)[, "log(sd1)"], inverse = TRUE)
-var2  <- loge(2 * predict(fit1)[, "log(sd2)"], inverse = TRUE)
+var1  <- loge(2 * predict(fit1)[, "loge(sd1)"], inverse = TRUE)
+var2  <- loge(2 * predict(fit1)[, "loge(sd2)"], inverse = TRUE)
 cov12 <- rhobit(predict(fit1)[, "rhobit(rho)"], inverse = TRUE)
 head(with(bdata, pnorm2(y1, y2,
                         mean1 = predict(fit1)[, "mean1"],

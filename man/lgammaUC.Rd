@@ -15,10 +15,10 @@
 
 }
 \usage{
-dlgamma(x, location = 0, scale = 1, k = 1, log = FALSE)
-plgamma(q, location = 0, scale = 1, k = 1)
-qlgamma(p, location = 0, scale = 1, k = 1)
-rlgamma(n, location = 0, scale = 1, k = 1)
+dlgamma(x, location = 0, scale = 1, shape = 1, log = FALSE)
+plgamma(q, location = 0, scale = 1, shape = 1)
+qlgamma(p, location = 0, scale = 1, shape = 1)
+rlgamma(n, location = 0, scale = 1, shape = 1)
 }
 \arguments{
   \item{x, q}{vector of quantiles.}
@@ -26,7 +26,7 @@ rlgamma(n, location = 0, scale = 1, k = 1)
   \item{n}{number of observations. Positive integer of length 1.}
   \item{location}{the location parameter \eqn{a}.}
   \item{scale}{the (positive) scale parameter \eqn{b}.}
-  \item{k}{the (positive) shape parameter \eqn{k}.}
+  \item{shape}{the (positive) shape parameter \eqn{k}.}
   \item{log}{
   Logical.
   If \code{log = TRUE} then the logarithm of the density is returned.
@@ -54,7 +54,7 @@ London: Imperial College Press.
 }
 \author{ T. W. Yee }
 \details{
-  See \code{\link{lgammaff}}, the \pkg{VGAM} family function for
+  See \code{\link{lgamma1}}, the \pkg{VGAM} family function for
   estimating the one parameter standard log-gamma distribution by maximum
   likelihood estimation, for formulae and other details.  Apart from
   \code{n}, all the above arguments may be vectors and are recyled to
@@ -63,28 +63,30 @@ London: Imperial College Press.
 
 }
 \note{
-  The \pkg{VGAM} family function \code{\link{lgamma3ff}} is
+  The \pkg{VGAM} family function \code{\link{lgamma3}} is
   for the three parameter (nonstandard) log-gamma distribution.
 
 
 }
 \seealso{
-  \code{\link{lgammaff}},
+  \code{\link{lgamma1}},
   \code{\link{prentice74}}.
 
 
 }
 \examples{
-\dontrun{ loc <- 1; Scale <- 1.5; k <- 1.4
+\dontrun{ loc <- 1; Scale <- 1.5; shape <- 1.4
 x <- seq(-3.2, 5, by = 0.01)
-plot(x, dlgamma(x, loc, Scale, k), type = "l", col = "blue", ylim = 0:1,
+plot(x, dlgamma(x, loc = loc, Scale, shape = shape), type = "l",
+     col = "blue", ylim = 0:1,
      main = "Blue is density, orange is cumulative distribution function",
      sub = "Purple are 5,10,...,95 percentiles", las = 1, ylab = "")
 abline(h = 0, col = "blue", lty = 2)
-lines(qlgamma(seq(0.05, 0.95, by = 0.05), loc, Scale, k),
-      dlgamma(qlgamma(seq(0.05, 0.95, by = 0.05), loc, Scale, k),
-              loc, Scale, k), col = "purple", lty = 3, type = "h")
-lines(x, plgamma(x, loc, Scale, k), type = "l", col = "orange")
+lines(qlgamma(seq(0.05, 0.95, by = 0.05), loc = loc, Scale, shape = shape),
+      dlgamma(qlgamma(seq(0.05, 0.95, by = 0.05), loc = loc, scale = Scale,
+                      shape = shape),
+      loc = loc, Scale, shape = shape), col = "purple", lty = 3, type = "h")
+lines(x, plgamma(x, loc = loc, Scale, shape = shape), col = "orange")
 abline(h = 0, lty = 2) }
 }
 \keyword{distribution}

@@ -1,6 +1,6 @@
 \name{concoef}
 \alias{concoef}
-\alias{ccoef}
+%\alias{ccoef}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Extract Model Constrained/Canonical Coefficients }
 \description{
@@ -65,8 +65,13 @@ Constrained additive ordination.
 %}
 
 \section{Warning }{
-  \code{\link{concoef}} and \code{\link{ccoef}} are identical,
-  but the latter will be deprecated soon.
+  \code{\link{concoef}} replaces \code{ccoef};
+  the latter is deprecated.
+
+
+% \code{\link{concoef}} and \code{\link{ccoef}} are identical,
+% but the latter will be deprecated soon.
+
 
 
   For QO models, there is a direct inverse relationship between the

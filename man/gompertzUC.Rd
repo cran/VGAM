@@ -15,10 +15,10 @@
 
 }
 \usage{
-dgompertz(x, shape, scale = 1, log = FALSE)
-pgompertz(q, shape, scale = 1)
-qgompertz(p, shape, scale = 1)
-rgompertz(n, shape, scale = 1)
+dgompertz(x, scale = 1, shape, log = FALSE)
+pgompertz(q, scale = 1, shape)
+qgompertz(p, scale = 1, shape)
+rgompertz(n, scale = 1, shape)
 }
 \arguments{
   \item{x, q}{vector of quantiles.}
@@ -30,7 +30,7 @@ rgompertz(n, shape, scale = 1)
 
 
   }
-  \item{shape, scale}{positive shape and scale parameters. }
+  \item{scale, shape}{positive scale and shape parameters. }
 
 }
 \value{
@@ -60,20 +60,21 @@ rgompertz(n, shape, scale = 1)
 \examples{
 probs <- seq(0.01, 0.99, by = 0.01)
 Shape <- exp(1); Scale <- exp(1)
-max(abs(pgompertz(qgompertz(p = probs, Shape, Scale),
-                  Shape, Scale) - probs))  # Should be 0
+max(abs(pgompertz(qgompertz(p = probs, Scale, shape = Shape),
+                  Scale, shape = Shape) - probs))  # Should be 0
 
-\dontrun{ x <- seq(-0.1, 1.0, by = 0.01)
-plot(x, dgompertz(x, Shape, Scale), type = "l", col = "blue", las = 1,
+\dontrun{ x <- seq(-0.1, 1.0, by = 0.001)
+plot(x, dgompertz(x, Scale,shape = Shape), type = "l", col = "blue", las = 1,
      main = "Blue is density, orange is cumulative distribution function",
      sub = "Purple lines are the 10,20,...,90 percentiles",
      ylab = "")
 abline(h = 0, col = "blue", lty = 2)
-lines(x, pgompertz(x, Shape, Scale), col = "orange")
+lines(x, pgompertz(x, Scale, shape = Shape), col = "orange")
 probs <- seq(0.1, 0.9, by = 0.1)
-Q <- qgompertz(probs, Shape, Scale)
-lines(Q, dgompertz(Q, Shape, Scale), col = "purple", lty = 3, type = "h")
-pgompertz(Q, Shape, Scale) - probs  # Should be all zero
+Q <- qgompertz(probs, Scale, shape = Shape)
+lines(Q, dgompertz(Q, Scale, shape = Shape), col = "purple",
+      lty = 3, type = "h")
+pgompertz(Q, Scale, shape = Shape) - probs  # Should be all zero
 abline(h = probs, col = "purple", lty = 3) }
 }
 \keyword{distribution}

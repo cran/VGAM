@@ -13,7 +13,7 @@
 }
 \usage{
  logF(lshape1 = "loge", lshape2 = "loge",
-      ishape1 = NULL, ishape2 = 1, imethod = 1) 
+      ishape1 = NULL, ishape2 = 1, imethod = 1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

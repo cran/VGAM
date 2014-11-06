@@ -112,7 +112,7 @@ rrvglm.fit <-
 
 
     special.matrix <- matrix(-34956.125, M, M)  # An unlikely used matrix 
-    just.testing <- cm.vgam(special.matrix, x, rrcontrol$noRRR,
+    just.testing <- cm.VGAM(special.matrix, x, rrcontrol$noRRR,
                             constraints)
 
     findex <- trivial.constraints(just.testing, special.matrix)

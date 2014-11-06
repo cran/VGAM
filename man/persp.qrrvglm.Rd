@@ -8,7 +8,7 @@ applicable for rank-1 or rank-2 models with argument \code{noRRR = ~ 1}.
 
 }
 \usage{
-perspqrrvglm(x, varI.latvar = FALSE, reference = NULL, show.plot = TRUE, 
+perspqrrvglm(x, varI.latvar = FALSE, refResponse = NULL, show.plot = TRUE, 
              xlim = NULL, ylim = NULL, zlim = NULL,
              gridlength = if (Rank == 1) 301 else c(51,51),
              which.species = NULL,
@@ -31,7 +31,7 @@ perspqrrvglm(x, varI.latvar = FALSE, reference = NULL, show.plot = TRUE,
   Logical that is fed into \code{\link{Coef.qrrvglm}}.
 
   }
-  \item{reference}{
+  \item{refResponse}{
   Integer or character that is fed into \code{\link{Coef.qrrvglm}}.
 
   }
@@ -218,16 +218,16 @@ r2 <- cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,
           isd.lv = c(2.4, 1.0), Muxfactor = 3.0, trace = FALSE,
           poissonff, data = hspider, Rank = 2, eq.tolerances = TRUE)
 
-sort(r1@misc$deviance.Bestof)  # A history of the fits
-sort(r2@misc$deviance.Bestof)  # A history of the fits
+sort(deviance(r1, history = TRUE))  # A history of all the fits
+sort(deviance(r2, history = TRUE))  # A history of all the fits
 if (deviance(r2) > 857) stop("suboptimal fit obtained")
 
-persp(r1, xlim = c(-6,5), col = 1:4, label = TRUE)
+persp(r1, xlim = c(-6, 5), col = 1:4, label = TRUE)
 
 # Involves all species 
-persp(r2, xlim = c(-6,5), ylim = c(-4, 5), theta = 10, phi = 20, zlim = c(0, 220))
+persp(r2, xlim = c(-6, 5), ylim = c(-4, 5), theta = 10, phi = 20, zlim = c(0, 220))
 # Omit the two dominant species to see what is behind them
-persp(r2, xlim = c(-6,5), ylim = c(-4, 5), theta = 10, phi = 20, zlim = c(0, 220),
+persp(r2, xlim = c(-6, 5), ylim = c(-4, 5), theta = 10, phi = 20, zlim = c(0, 220),
       which = (1:10)[-c(8, 10)])  # Use zlim to retain the original z-scale
 }
 }

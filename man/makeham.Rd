@@ -8,13 +8,17 @@
 
 }
 \usage{
-makeham(lshape = "loge", lscale = "loge", lepsilon = "loge",
-        ishape = NULL,   iscale = NULL,   iepsilon = NULL,
-        gshape = exp(-5:5), gscale = exp(-5:5), gepsilon = exp(-4:1),
-        nsimEIM = 500, oim.mean = TRUE, zero = NULL)
+makeham(lscale = "loge", lshape = "loge", lepsilon = "loge",
+        iscale = NULL,   ishape = NULL,   iepsilon = NULL,
+        gscale = exp(-5:5),gshape = exp(-5:5), gepsilon = exp(-4:1),
+        nsimEIM = 500, oim.mean = TRUE, zero = NULL, nowarning = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
+
+  \item{nowarning}{ Logical. Suppress a warning? }
+
+
   \item{lshape, lscale, lepsilon}{
   Parameter link functions applied to the
   shape parameter \code{shape},

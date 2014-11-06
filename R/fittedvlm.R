@@ -13,25 +13,25 @@
 
 
 
-fittedvlm <- function(object, matrix.arg = TRUE,
+fittedvlm <- function(object,
+                      drop = FALSE,
                       type.fitted = NULL,
                       ...) {
 
 
   if (is.null(type.fitted)) {
-    answer <- if (matrix.arg) {
-        object@fitted.values
-    } else {
+    answer <- if (drop) {
       if (!is.matrix(object@fitted.values) ||
           !length(object@fitted.values))
         stop("object@fitted.values is not a matrix or is empty")
-  
       if (ncol(object@fitted.values) == 1) {
         c(object@fitted.values)
       } else {
         warning("ncol(object@fitted.values) is not 1")
         c(object@fitted.values)
       }
+    } else {
+        object@fitted.values
     }
   } else {
     linkinv <- object@family@linkinv
@@ -39,10 +39,10 @@ fittedvlm <- function(object, matrix.arg = TRUE,
     new.extra$type.fitted <- type.fitted
     answer <- linkinv(eta = predict(object), extra = new.extra)
 
-    answer <- if (matrix.arg) {
-      as.matrix(answer)
-    } else {
+    answer <- if (drop) {
       c(answer)
+    } else {
+      as.matrix(answer)
     }
   }
 

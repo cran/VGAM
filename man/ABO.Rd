@@ -68,9 +68,12 @@ ABO(link = "logit", ipA = NULL, ipO = NULL)
 \seealso{
   \code{\link{AA.Aa.aa}},
   \code{\link{AB.Ab.aB.ab}},
-  \code{\link{AB.Ab.aB.ab2}},
-  \code{\link{G1G2G3}},
+  \code{\link{A1A2A3}},
   \code{\link{MNSs}}.
+
+
+% \code{\link{AB.Ab.aB.ab2}},
+
 
 
 }

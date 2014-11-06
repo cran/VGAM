@@ -1,9 +1,9 @@
 \name{gengammaUC}
 \alias{gengammaUC}
-\alias{dgengamma}
-\alias{pgengamma}
-\alias{qgengamma}
-\alias{rgengamma}
+\alias{dgengamma.stacy}
+\alias{pgengamma.stacy}
+\alias{qgengamma.stacy}
+\alias{rgengamma.stacy}
 \title{The Generalized Gamma Distribution }
 \description{
   Density, distribution function, quantile function and random
@@ -14,10 +14,10 @@
 
 }
 \usage{
-dgengamma(x, scale = 1, d = 1, k = 1, log = FALSE)
-pgengamma(q, scale = 1, d = 1, k = 1)
-qgengamma(p, scale = 1, d = 1, k = 1)
-rgengamma(n, scale = 1, d = 1, k = 1)
+dgengamma.stacy(x, scale = 1, d = 1, k = 1, log = FALSE)
+pgengamma.stacy(q, scale = 1, d = 1, k = 1)
+qgengamma.stacy(p, scale = 1, d = 1, k = 1)
+rgengamma.stacy(n, scale = 1, d = 1, k = 1)
 }
 \arguments{
   \item{x, q}{vector of quantiles.}
@@ -34,10 +34,10 @@ rgengamma(n, scale = 1, d = 1, k = 1)
 
 }
 \value{
-  \code{dgengamma} gives the density,
-  \code{pgengamma} gives the distribution function,
-  \code{qgengamma} gives the quantile function, and
-  \code{rgengamma} generates random deviates.
+  \code{dgengamma.stacy} gives the density,
+  \code{pgengamma.stacy} gives the distribution function,
+  \code{qgengamma.stacy} gives the quantile function, and
+  \code{rgengamma.stacy} generates random deviates.
 
 
 }
@@ -51,7 +51,7 @@ Parameter estimation for a generalized gamma distribution.
 }
 \author{ T. W. Yee }
 \details{
-  See \code{\link{gengamma}}, the \pkg{VGAM} family function
+  See \code{\link{gengamma.stacy}}, the \pkg{VGAM} family function
   for estimating the generalized gamma distribution
   by maximum likelihood estimation,
   for formulae and other details.
@@ -63,20 +63,20 @@ Parameter estimation for a generalized gamma distribution.
 % \note{
 % }
 \seealso{
-  \code{\link{gengamma}}.
+  \code{\link{gengamma.stacy}}.
 
 
 }
 \examples{
 \dontrun{ x <- seq(0, 14, by = 0.01); d <- 1.5; Scale <- 2; k <- 6
-plot(x, dgengamma(x, Scale, d, k), type = "l", col = "blue", ylim = 0:1,
+plot(x, dgengamma.stacy(x, Scale, d = d, k = k), type = "l", col = "blue", ylim = 0:1,
      main = "Blue is density, orange is cumulative distribution function",
      sub = "Purple are 5,10,...,95 percentiles", las = 1, ylab = "")
 abline(h = 0, col = "blue", lty = 2)
-lines(qgengamma(seq(0.05,0.95,by = 0.05), Scale, d, k),
-      dgengamma(qgengamma(seq(0.05,0.95,by = 0.05), Scale, d, k),
-                Scale, d, k), col = "purple", lty = 3, type = "h")
-lines(x, pgengamma(x, Scale, d, k), type = "l", col = "orange")
+lines(qgengamma.stacy(seq(0.05, 0.95, by = 0.05), Scale, d = d, k = k),
+      dgengamma.stacy(qgengamma.stacy(seq(0.05,0.95,by = 0.05), Scale, d = d, k = k),
+                      Scale, d = d, k = k), col = "purple", lty = 3, type = "h")
+lines(x, pgengamma.stacy(x, Scale, d = d, k = k), type = "l", col = "orange")
 abline(h = 0, lty = 2) }
 }
 \keyword{distribution}

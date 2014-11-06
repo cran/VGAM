@@ -10,7 +10,7 @@
 \usage{
 posnegbinomial(lmunb = "loge", lsize = "loge",
                isize = NULL, zero = -2, nsimEIM = 250,
-               shrinkage.init = 0.95, imethod = 1)
+               ishrinkage = 0.95, imethod = 1)
 
 }
 %- maybe also 'usage' for other objects documented here.
@@ -46,7 +46,7 @@ posnegbinomial(lmunb = "loge", lsize = "loge",
 
 
   }
-  \item{shrinkage.init, imethod}{
+  \item{ishrinkage, imethod}{
   See \code{\link{negbinomial}}.
 
   }

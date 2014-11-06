@@ -275,10 +275,10 @@ fit3 <- vgam(agaaus ~ altitude, binomialff(link = "clog"), hunua)  # not okay
 
 # No matter what the link, the estimated var-cov matrix is the same
 y <- rbeta(n = 1000, shape1 = exp(0), shape2 = exp(1))
-fit1 <- vglm(y ~ 1, beta.ab(lshape1 = "identitylink", lshape2 = "identitylink"),
+fit1 <- vglm(y ~ 1, betaR(lshape1 = "identitylink", lshape2 = "identitylink"),
              trace = TRUE, crit = "coef")
-fit2 <- vglm(y ~ 1, beta.ab(lshape1 = logoff(offset = 1.1),
-                            lshape2 = logoff(offset = 1.1)),
+fit2 <- vglm(y ~ 1, betaR(lshape1 = logoff(offset = 1.1),
+                          lshape2 = logoff(offset = 1.1)),
             trace = TRUE, crit = "coef")
 vcov(fit1, untransform = TRUE)
 vcov(fit1, untransform = TRUE) - vcov(fit2, untransform = TRUE)  # Should be all 0s

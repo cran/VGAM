@@ -60,9 +60,11 @@ MNSs(link = "logit", imS = NULL, ims = NULL, inS = NULL)
 \seealso{
   \code{\link{AA.Aa.aa}},
   \code{\link{AB.Ab.aB.ab}},
-  \code{\link{AB.Ab.aB.ab2}},
   \code{\link{ABO}},
-  \code{\link{G1G2G3}}.
+  \code{\link{A1A2A3}}.
+
+
+% \code{\link{AB.Ab.aB.ab2}},
 
 
 }

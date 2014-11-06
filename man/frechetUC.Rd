@@ -55,7 +55,7 @@ Hoboken, NJ, USA: Wiley-Interscience.
 }
 \author{ T. W. Yee }
 \details{
-  See \code{\link{frechet2}}, the \pkg{VGAM}
+  See \code{\link{frechet}}, the \pkg{VGAM}
   family function for estimating the 2 parameters (without location
   parameter) by maximum likelihood estimation, for the formula
   of the probability density function and range restrictions on
@@ -66,7 +66,7 @@ Hoboken, NJ, USA: Wiley-Interscience.
 %\note{
 %}
 \seealso{
-  \code{\link{frechet2}}.
+  \code{\link{frechet}}.
 
 
 % \code{\link{frechet3}}.

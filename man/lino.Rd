@@ -89,8 +89,14 @@ lino(lshape1 = "loge", lshape2 = "loge", llambda = "loge",
 
 \author{ T. W. Yee }
 \note{
-  The fitted values, which is usually the mean, have not been implemented
-  yet and consequently are \code{NA}s.
+  The fitted values, which is usually the mean, have not
+  been implemented yet.
+  Currently the median is returned as the fitted values.
+
+
+% and consequently are \code{NA}s.
+
+
 
 
   Although Fisher scoring is used, the working weight matrices
@@ -116,18 +122,17 @@ lino(lshape1 = "loge", lshape2 = "loge", llambda = "loge",
 
 \examples{
 ldata <- data.frame(y1 = rbeta(n = 1000, exp(0.5), exp(1)))  # ~ standard beta
-fit <- vglm(y1 ~ 1, lino, ldata, trace = TRUE)
+fit <- vglm(y1 ~ 1, lino, data = ldata, trace = TRUE)
 coef(fit, matrix = TRUE)
 Coef(fit)
 head(fitted(fit))
 summary(fit)
 
 # Nonstandard beta distribution
-ldata <-
-  transform(ldata, y2 = rlino(n = 1000, shape1 = 2, shape2 = 3, lambda = exp(1)))
-fit2 <- vglm(y2 ~ 1, lino(lshape1 = identitylink,
-                          lshape2 = identitylink, ilamb = 10),
-             data = ldata)
+ldata <- transform(ldata, y2 = rlino(n = 1000, shape1 = exp(1),
+                                     shape2 = exp(2), lambda = exp(1)))
+fit2 <- vglm(y2 ~ 1, lino(lshape1 = "identitylink", lshape2 = "identitylink",
+             ilamb = 10), data = ldata, trace = TRUE)
 coef(fit2, matrix = TRUE)
 }
 \keyword{models}

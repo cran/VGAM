@@ -154,7 +154,8 @@ hist(with(fdata, y), prob = TRUE, main = paste("foldnormal(m = ", m,
 fit <- vglm(y ~ 1, foldnormal, data = fdata, trace = TRUE)
 coef(fit, matrix = TRUE)
 (Cfit <- Coef(fit))
-mygrid <- with(fdata, seq(min(y), max(y), len = 200))  # Add the fit to the histogram
+# Add the fit to the histogram:
+mygrid <- with(fdata, seq(min(y), max(y), len = 200))
 lines(mygrid, dfoldnorm(mygrid, Cfit[1], Cfit[2]), col = "orange")
 }
 }

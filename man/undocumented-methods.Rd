@@ -5,6 +5,19 @@
 %
 %
 %
+% 201407
+\alias{concoef,ANY-method}
+\alias{concoef,rrvgam-method}
+\alias{concoef,Coef.rrvgam-method}
+%
+%
+% 201406
+\alias{QR.R,ANY-method}
+\alias{QR.R,vglm-method}
+\alias{QR.Q,ANY-method}
+\alias{QR.Q,vglm-method}
+%
+%
 % 201312
 \alias{simulate,ANY-method}
 \alias{simulate,vlm-method}
@@ -20,12 +33,12 @@
 \alias{BIC,vgam-method}
 \alias{BIC,rrvglm-method}
 \alias{BIC,qrrvglm-method}
-\alias{BIC,cao-method}
+\alias{BIC,rrvgam-method}
 %
 % 20121105
 \alias{Rank,qrrvglm-method}
 \alias{Rank,rrvglm-method}
-\alias{Rank,cao-method}
+\alias{Rank,rrvgam-method}
 % 20120821
 \alias{model.matrix,vsmooth.spline-method}
 %
@@ -51,7 +64,7 @@
 \alias{logLik,ANY-method}
 \alias{plot,ANY-method}
 \alias{vcov,ANY-method}
-\alias{plot,cao,ANY-method}
+\alias{plot,rrvgam,ANY-method}
 \alias{plot,qrrvglm,ANY-method}
 \alias{plot,rcim,ANY-method}
 \alias{plot,rcim0,ANY-method}
@@ -70,7 +83,7 @@
 \alias{AIC,vgam-method}
 \alias{AIC,rrvglm-method}
 \alias{AIC,qrrvglm-method}
-\alias{AIC,cao-method}
+\alias{AIC,rrvgam-method}
 \alias{AICc,vlm-method}
 \alias{AICc,vglm-method}
 %\alias{AICc,vgam-method}
@@ -78,11 +91,11 @@
 %\alias{AICc,qrrvglm-method}
 \alias{attrassign,lm-method}
 \alias{calibrate,qrrvglm-method}
-\alias{calibrate,cao-method}
+\alias{calibrate,rrvgam-method}
 %\alias{calibrate,uqo-method}
 \alias{cdf,vglm-method}
 \alias{cdf,vgam-method}
-\alias{coefficients,cao-method}
+\alias{coefficients,rrvgam-method}
 \alias{coefficients,vlm-method}
 \alias{coefficients,vglm-method}
 \alias{coefficients,qrrvglm-method}
@@ -92,7 +105,7 @@
 \alias{coefficients,summary.vglm-method}
 \alias{coefficients,summary.rrvglm-method}
 \alias{Coefficients,vlm-method}
-\alias{coef,cao-method}
+\alias{coef,rrvgam-method}
 \alias{coef,vlm-method}
 \alias{coef,vglm-method}
 \alias{coef,qrrvglm-method}
@@ -101,7 +114,7 @@
 \alias{coef,vsmooth.spline.fit-method}
 \alias{coef,summary.vglm-method}
 \alias{coef,summary.rrvglm-method}
-\alias{Coef,cao-method}
+\alias{Coef,rrvgam-method}
 \alias{Coef,vlm-method}
 \alias{Coef,qrrvglm-method}
 \alias{Coef,rrvglm-method}
@@ -111,13 +124,14 @@
 \alias{deplot,vgam-method}
 %
 \alias{depvar,ANY-method}
-\alias{depvar,cao-method}
+\alias{depvar,rrvgam-method}
 \alias{depvar,qrrvglm-method}
 \alias{depvar,rcim-method}
 \alias{depvar,rrvglm-method}
 \alias{depvar,vlm-method}
 \alias{depvar,vsmooth.spline-method}
 %
+\alias{deviance,rrvgam-method}
 \alias{deviance,qrrvglm-method}
 \alias{deviance,vlm-method}
 %\alias{deviance,vglm-method}
@@ -168,7 +182,7 @@
 \alias{hatvalues,ANY-method}
 \alias{hatvalues,vlm-method}
 \alias{hatvalues,vglm-method}
-\alias{hatvalues,cao-method}
+\alias{hatvalues,rrvgam-method}
 \alias{hatvalues,qrrvglm-method}
 \alias{hatvalues,rcim-method}
 \alias{hatvalues,rrvglm-method}
@@ -178,7 +192,7 @@
 \alias{hatplot,matrix-method}
 \alias{hatplot,vlm-method}
 \alias{hatplot,vglm-method}
-\alias{hatplot,cao-method}
+\alias{hatplot,rrvgam-method}
 \alias{hatplot,qrrvglm-method}
 \alias{hatplot,rcim-method}
 \alias{hatplot,rrvglm-method}
@@ -188,7 +202,7 @@
 \alias{dfbeta,matrix-method}
 \alias{dfbeta,vlm-method}
 \alias{dfbeta,vglm-method}
-\alias{dfbeta,cao-method}
+\alias{dfbeta,rrvgam-method}
 \alias{dfbeta,qrrvglm-method}
 \alias{dfbeta,rcim-method}
 \alias{dfbeta,rrvglm-method}
@@ -201,7 +215,7 @@
 \alias{model.frame,vlm-method}
 %\alias{plot,rcim0,ANY-method}
 %\alias{plot,rcim,ANY-method}
-%\alias{plot,cao,ANY-method}
+%\alias{plot,rrvgam,ANY-method}
 %\alias{plot,vlm,ANY-method}
 %\alias{plot,vglm,ANY-method}
 %\alias{plot,vgam,ANY-method}
@@ -215,29 +229,29 @@
 \alias{is.bell,qrrvglm-method}
 \alias{is.bell,rrvglm-method}
 \alias{is.bell,vlm-method}
-\alias{is.bell,cao-method}
+\alias{is.bell,rrvgam-method}
 \alias{is.bell,Coef.qrrvglm-method}
 \alias{logLik,vlm-method}
 \alias{logLik,summary.vglm-method}
 \alias{logLik,vglm-method}
 \alias{logLik,vgam-method}
 \alias{logLik,qrrvglm-method}
-\alias{logLik,cao-method}
+\alias{logLik,rrvgam-method}
 %
-\alias{lvplot,cao-method}
+\alias{lvplot,rrvgam-method}
 \alias{lvplot,qrrvglm-method}
 \alias{lvplot,rrvglm-method}
 %\alias{lvplot,uqo-method}
 %
 \alias{lv,rrvglm-method}
 \alias{lv,qrrvglm-method}
-\alias{lv,cao-method}
+\alias{lv,rrvgam-method}
 \alias{lv,Coef.rrvglm-method}
 \alias{lv,Coef.qrrvglm-method}
-\alias{lv,Coef.cao-method}
+\alias{lv,Coef.rrvgam-method}
 % \alias{lv,uqo-method} defunct
 %\alias{latvar,uqo-method}
-\alias{latvar,cao-method}
+\alias{latvar,rrvgam-method}
 \alias{latvar,Coef.qrrvglm-method}
 \alias{latvar,Coef.rrvglm-method}
 \alias{latvar,rrvglm-method}
@@ -246,7 +260,7 @@
 \alias{Max,qrrvglm-method}
 \alias{Max,Coef.qrrvglm-method}
 %\alias{Max,uqo-method}
-\alias{Max,cao-method}
+\alias{Max,rrvgam-method}
 \alias{meplot,numeric-method}
 \alias{meplot,vlm-method}
 %\alias{model.matrix,ANY-method}
@@ -257,7 +271,7 @@
 \alias{nobs,vlm-method}
 \alias{npred,ANY-method}
 \alias{npred,vlm-method}
-\alias{npred,cao-method}
+\alias{npred,rrvgam-method}
 \alias{npred,qrrvglm-method}
 \alias{npred,rcim-method}
 \alias{npred,rrvglm-method}
@@ -266,17 +280,17 @@
 \alias{nvar,vgam-method}
 \alias{nvar,rrvglm-method}
 \alias{nvar,qrrvglm-method}
-\alias{nvar,cao-method}
+\alias{nvar,rrvgam-method}
 \alias{nvar,vlm-method}
 \alias{nvar,rcim-method}
 \alias{Opt,qrrvglm-method}
 \alias{Opt,Coef.qrrvglm-method}
 %\alias{Opt,uqo-method}
-\alias{Opt,cao-method}
-\alias{persp,cao-method}
+\alias{Opt,rrvgam-method}
+\alias{persp,rrvgam-method}
 \alias{persp,qrrvglm-method}
 %\alias{persp,uqo-method}
-\alias{predict,cao-method}
+\alias{predict,rrvgam-method}
 \alias{predict,qrrvglm-method}
 \alias{predict,vgam-method}
 \alias{predict,vglm-method}
@@ -300,8 +314,8 @@
 %
 %
 %
-\alias{print,Coef.cao-method}
-\alias{print,summary.cao-method}
+\alias{print,Coef.rrvgam-method}
+\alias{print,summary.rrvgam-method}
 \alias{print,qrrvglm-method}
 \alias{print,Coef.qrrvglm-method}
 \alias{print,rrvglm-method}
@@ -319,7 +333,7 @@
 %\alias{print,Coef.uqo-method}
 %\alias{print,summary.uqo-method}
 \alias{print,vsmooth.spline-method}
-\alias{print,cao-method}
+\alias{print,rrvgam-method}
 \alias{qtplot,vglm-method}
 \alias{qtplot,vgam-method}
 \alias{residuals,qrrvglm-method}
@@ -334,8 +348,8 @@
 \alias{resid,vgam-method}
 %\alias{resid,uqo-method}
 \alias{resid,vsmooth.spline-method}
-\alias{show,Coef.cao-method}
-\alias{show,summary.cao-method}
+\alias{show,Coef.rrvgam-method}
+\alias{show,summary.rrvgam-method}
 \alias{show,qrrvglm-method}
 \alias{show,Coef.qrrvglm-method}
 \alias{show,rrvglm-method}
@@ -353,9 +367,9 @@
 %\alias{show,Coef.uqo-method}
 %\alias{show,summary.uqo-method}
 \alias{show,vsmooth.spline-method}
-\alias{show,cao-method}
+\alias{show,rrvgam-method}
 \alias{summary,grc-method}
-\alias{summary,cao-method}
+\alias{summary,rrvgam-method}
 \alias{summary,qrrvglm-method}
 \alias{summary,rcim-method}
 \alias{summary,rcim0-method}
@@ -364,14 +378,14 @@
 \alias{summary,vglm-method}
 \alias{summary,vlm-method}
 %\alias{summary,uqo-method}
-\alias{Tol,cao-method}
+\alias{Tol,rrvgam-method}
 \alias{Tol,qrrvglm-method}
 \alias{Tol,Coef.qrrvglm-method}
 %\alias{Tol,uqo-method}
 %\alias{Tol,Coef.uqo-method}
 \alias{trplot,qrrvglm-method}
 %\alias{trplot,uqo-method}
-\alias{trplot,cao-method}
+\alias{trplot,rrvgam-method}
 \alias{vcov,rrvglm-method}
 \alias{vcov,qrrvglm-method}
 \alias{vcov,vlm-method}
@@ -399,7 +413,7 @@
 
 }
 %\usage{
-%  \S4method{ccoef}{cao,Coef.cao,rrvglm,qrrvglm,
+%  \S4method{ccoef}{rrvgam,Coef.rrvgam,rrvglm,qrrvglm,
 %                   Coef.rrvglm,Coef.qrrvglm}(object, ...)
 %}
 

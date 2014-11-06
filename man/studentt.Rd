@@ -73,8 +73,8 @@ studentt3(llocation = "identitylink", lscale = "loge", ldf = "loglog",
   \code{\link{cauchy1}}.
   When \eqn{\nu=2}{nu=2} with a scale parameter of \code{sqrt(2)} then
   the Student \eqn{t}-distribution 
-  corresponds to the standard Koenker distribution,
-  \code{\link{koenker}}.
+  corresponds to the standard (Koenker) distribution,
+  \code{\link{sc.studentt2}}.
   The degrees of freedom can be treated as a parameter to be estimated,
   and as a real and not an integer.
   The Student t distribution is used for a variety of reasons
@@ -148,7 +148,7 @@ application to financial econometrics.
   \code{\link{cauchy1}},
   \code{\link{logistic}},
   \code{\link{huber2}},
-  \code{\link{koenker}},
+  \code{\link{sc.studentt2}},
   \code{\link[stats]{TDist}},
   \code{\link{simulate.vlm}}.
 
@@ -161,8 +161,11 @@ tdata <- transform(tdata, y1 = rt(nn, df = exp(exp(0.5 - x2))),
 fit1 <- vglm(y1 ~ x2, studentt, data = tdata, trace = TRUE)
 coef(fit1, matrix = TRUE)
 
-fit2 <- vglm(cbind(y1, y2) ~ x2, studentt3, data = tdata, trace = TRUE)
-coef(fit2, matrix = TRUE)
+fit2 <- vglm(y1 ~ x2, studentt2(df = exp(exp(0.5))), data = tdata)
+coef(fit2, matrix = TRUE)  # df inputted into studentt2() not quite right
+
+fit3 <- vglm(cbind(y1, y2) ~ x2, studentt3, data = tdata, trace = TRUE)
+coef(fit3, matrix = TRUE)
 }
 \keyword{models}
 \keyword{regression}

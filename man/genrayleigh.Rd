@@ -8,20 +8,20 @@
 
 }
 \usage{
-genrayleigh(lshape = "loge", lscale = "loge",
-            ishape = NULL,   iscale = NULL,
-            tol12 = 1e-05, nsimEIM = 300, zero = 1)
+genrayleigh(lscale = "loge", lshape = "loge",
+            iscale = NULL,   ishape = NULL,
+            tol12 = 1e-05, nsimEIM = 300, zero = 2)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{lshape, lscale}{
-  Link function for the two positive parameters, shape and scale.
+  \item{lscale, lshape}{
+  Link function for the two positive parameters, scale and shape.
   See \code{\link{Links}} for more choices.
 
   }
-  \item{ishape, iscale}{
+  \item{iscale, ishape}{
   Numeric.
-  Optional initial values for the shape and scale parameters.
+  Optional initial values for the scale and shape parameters.
 
   }
   \item{nsimEIM, zero}{
@@ -37,11 +37,11 @@ genrayleigh(lshape = "loge", lscale = "loge",
 }
 \details{
   The generalized Rayleigh distribution has density function
-  \deqn{f(y;a = shape,b = scale)  =
-  (2 a y/b^{2}) e^{-(y/b)^{2}} (1 - e^{-(y/b)^{2}})^{a-1}}{%
-  (2*a*y/b^2) * e^(-(y/b)^2) * (1 - e^(-(y/b)^2))^(a-1)}
+  \deqn{f(y;b = scale,s = shape)  =
+  (2 s y/b^{2}) e^{-(y/b)^{2}} (1 - e^{-(y/b)^{2}})^{s-1}}{%
+  (2*s*y/b^2) * e^(-(y/b)^2) * (1 - e^(-(y/b)^2))^(s-1)}
   where \eqn{y > 0} and the two parameters,
-  \eqn{a} and \eqn{b}, are positive.
+  \eqn{b} and \eqn{s}, are positive.
   The mean cannot be expressed nicely so the median is returned as 
   the fitted values.
   Applications of the generalized Rayleigh distribution include modeling
@@ -59,8 +59,7 @@ genrayleigh(lshape = "loge", lscale = "loge",
 }
 \references{
   Kundu, D., Raqab, M. C. (2005).
-  Generalized Rayleigh distribution: different 
-  methods of estimations.
+  Generalized Rayleigh distribution: different methods of estimations.
   \emph{Computational Statistics and Data Analysis},
   \bold{49}, 187--200.
 
@@ -81,9 +80,9 @@ genrayleigh(lshape = "loge", lscale = "loge",
 
 }
 \examples{
-shape <- exp(1); scale <- exp(1)
-rdata <- data.frame(y = rgenray(n = 1000, shape, scale))
-fit <- vglm(y ~ 1, genrayleigh, rdata, trace = TRUE)
+Scale <- exp(1); shape <- exp(1)
+rdata <- data.frame(y = rgenray(n = 1000, scale = Scale, shape = shape))
+fit <- vglm(y ~ 1, genrayleigh, data = rdata, trace = TRUE)
 c(with(rdata, mean(y)), head(fitted(fit), 1))
 coef(fit, matrix = TRUE)
 Coef(fit)

@@ -83,9 +83,9 @@ of such models have been named \emph{varying-coefficient models} (VCMs).
   through argument \code{formula}.
 
 
-  The \code{\link{mlogit}} link allows a subset of the
+  The \code{\link{multilogit}} link allows a subset of the
   coefficients to be positive and add to unity.  Either
-  none or more than one call to \code{\link{mlogit}}
+  none or more than one call to \code{\link{multilogit}}
   is allowed. The last variable will be used as the
   baseline/reference group, and therefore excluded from
   the estimation.
@@ -187,14 +187,14 @@ of such models have been named \emph{varying-coefficient models} (VCMs).
 }
 \examples{
 ndata <- data.frame(x2 = runif(nn <- 2000))
-# Note that coeff1 + coeff2 + coeff5 == 1. So try a "mlogit" link.
+# Note that coeff1 + coeff2 + coeff5 == 1. So try a "multilogit" link.
 myoffset <- 10
 ndata <- transform(ndata,
-           coeff1 = 0.25,  # "mlogit" link
-           coeff2 = 0.25,  # "mlogit" link
+           coeff1 = 0.25,  # "multilogit" link
+           coeff2 = 0.25,  # "multilogit" link
            coeff3 = exp(-0.5),  # "loge" link
            coeff4 = logoff(+0.5, offset = myoffset, inverse = TRUE),  # "logoff" link
-           coeff5 = 0.50,  # "mlogit" link
+           coeff5 = 0.50,  # "multilogit" link
            coeff6 = 1.00,  # "identitylink" link
            v2 = runif(nn),
            v3 = runif(nn),
@@ -225,12 +225,12 @@ ndata <- transform(ndata,
 # An intercept-only model
 fit1 <- vglm(y1 ~ 1,
              form2 = ~ 1 + v2 + v3 + v4 + v5 + v6,
-             normal.vcm(link.list = list("(Intercept)" = "mlogit",
-                                         "v2"          = "mlogit",
+             normal.vcm(link.list = list("(Intercept)" = "multilogit",
+                                         "v2"          = "multilogit",
                                          "v3"          = "loge",
                                          "v4"          = "logoff",
                                          "(Default)"   = "identitylink",
-                                         "v5"          = "mlogit"),
+                                         "v5"          = "multilogit"),
                         earg.list = list("(Intercept)" = list(),
                                          "v2"          = list(),
                                          "v4"          = list(offset = myoffset),
@@ -242,17 +242,17 @@ fit1 <- vglm(y1 ~ 1,
 coef(fit1, matrix = TRUE)
 summary(fit1)
 # This works only for intercept-only models:
-mlogit(rbind(coef(fit1, matrix = TRUE)[1, c(1, 2)]), inverse = TRUE)
+multilogit(rbind(coef(fit1, matrix = TRUE)[1, c(1, 2)]), inverse = TRUE)
 
 # A model with covariate x2 for the regression coefficients
 fit2 <- vglm(y2 ~ 1 + x2,
              form2 = ~ 1 + v2 + v3 + v4 + v5 + v6,
-             normal.vcm(link.list = list("(Intercept)" = "mlogit",
-                                         "v2"          = "mlogit",
+             normal.vcm(link.list = list("(Intercept)" = "multilogit",
+                                         "v2"          = "multilogit",
                                          "v3"          = "logit",
                                          "v4"          = "loglog",
                                          "(Default)"   = "identitylink",
-                                         "v5"          = "mlogit"),
+                                         "v5"          = "multilogit"),
                         earg.list = list("(Intercept)" = list(),
                                          "v2"          = list(),
                                          "v3"          = list(),

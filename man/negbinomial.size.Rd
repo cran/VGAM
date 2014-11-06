@@ -10,7 +10,7 @@
 \usage{
 negbinomial.size(size = Inf, lmu = "loge", imu = NULL,
                  probs.y = 0.75, imethod = 1,
-                 shrinkage.init = 0.95, zero = NULL)
+                 ishrinkage = 0.95, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -39,7 +39,7 @@ negbinomial.size(size = Inf, lmu = "loge", imu = NULL,
 
 
   }
-  \item{shrinkage.init}{
+  \item{ishrinkage}{
   Same as \code{\link{negbinomial}}.
 
 

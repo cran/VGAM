@@ -208,11 +208,11 @@
 alcoff.e <- moffset(alcoff, "6", "Mon", postfix = "*")  # Effective day
 fit0 <- rcim(alcoff.e, family = poissonff)
 \dontrun{par(oma = c(0, 0, 4, 0), mfrow = 1:2)  # For all plots below too
-ii = plot(fit0, rcol = "blue", ccol = "orange",
-          lwd = 4, ylim = c(-2, 2),  # A common ylim
-          cylab = "Effective daily effects", rylab = "Hourly effects",
-          rxlab = "Hour", cxlab = "Effective day")
-ii@post # Endowed with additional information
+ii <- plot(fit0, rcol = "blue", ccol = "orange",
+           lwd = 4, ylim = c(-2, 2),  # A common ylim
+           cylab = "Effective daily effects", rylab = "Hourly effects",
+           rxlab = "Hour", cxlab = "Effective day")
+ii@post  # Endowed with additional information
 }
 
 # Negative binomial example
@@ -224,9 +224,9 @@ fit2 <- rcim(alcoff.e, uninormal, trace = TRUE)
 \dontrun{ plot(fit2, ylim = c(-200, 400)) }
 
 # Median-polish example
-fit3 <- rcim(alcoff.e, alaplace2(tau  =  0.5, intparloc  =  TRUE),
-             trace = TRUE)
-\dontrun{ plot(fit3, ylim = c(-200, 250)) }
+\dontrun{
+fit3 <- rcim(alcoff.e, alaplace1(tau = 0.5), maxit = 1000, trace = FALSE)
+plot(fit3, ylim = c(-200, 250)) }
 
 # Zero-inflated Poisson example on "crashp" (no 0s in alcoff)
 cbind(rowSums(crashp))  # Easy to see the data

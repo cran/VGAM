@@ -78,7 +78,7 @@ data(prats)
 }
 \seealso{
   \code{\link[VGAM]{betabinomial}},
-  \code{\link[VGAM]{betabinomial.ab}}.
+  \code{\link[VGAM]{betabinomialff}}.
 
 
 }

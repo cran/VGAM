@@ -50,10 +50,10 @@ VGAM.weights.function <- function(w, M, n) {
   blurb = c("Vector linear/additive model\n",
             "Links:    identitylink for Y1,...,YM"),
   constraints = eval(substitute(expression({
-    constraints <- cm.vgam(matrix(1, M, 1), x = x,
+    constraints <- cm.VGAM(matrix(1, M, 1), x = x,
                            bool = .parallel , 
                            constraints = constraints)
-    constraints <- cm.zero.vgam(constraints, x, .zero , M)
+    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
   }), list( .parallel = parallel, .zero = zero ))),
   deviance = function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
     M <- if (is.matrix(y)) ncol(y) else 1
@@ -168,7 +168,7 @@ VGAM.weights.function <- function(w, M, n) {
       } else {
         if (all(wz[1, ] == apply(wz, 2, min)) &&
             all(wz[1, ] == apply(wz, 2, max))) {
-          onewz <- m2adefault(wz[1, , drop = FALSE], M = M)
+          onewz <- m2a(wz[1, , drop = FALSE], M = M)
           onewz <- onewz[,, 1]  # M x M
 
 
@@ -182,7 +182,7 @@ VGAM.weights.function <- function(w, M, n) {
       } else {
         logretval <- -0.5 * temp1 - n * (M / 2) * log(2*pi)
         for (ii in 1:n) {
-          onewz <- m2adefault(wz[ii, , drop = FALSE], M = M)
+          onewz <- m2a(wz[ii, , drop = FALSE], M = M)
           onewz <- onewz[,, 1]  # M x M
           logdet <- determinant(onewz)$modulus
             logretval <- logretval + 0.5 * logdet
@@ -306,7 +306,7 @@ rposnorm <- function(n, mean = 0, sd = 1) {
           namesof("mean", lmean, earg = emean, tag = TRUE), "; ",
           namesof("sd",   lsd,   earg = esd,   tag = TRUE)),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.vgam(constraints, x, .zero , M)
+    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
   }), list( .zero = zero ))),
   infos = eval(substitute(function(...) {
     list(M1 = 2,
@@ -686,7 +686,7 @@ rtikuv <- function(n, d, mean = 0, sigma = 1, Smallno = 1.0e-6) {
           "\n", "\n",
           "Mean:     mean"),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.vgam(constraints, x, .zero , M)
+    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
   }), list( .zero = zero ))),
 
   infos = eval(substitute(function(...) {
@@ -995,7 +995,7 @@ rfoldnorm <- function(n, mean = 0, sd = 1, a1 = 1, a2=1) {
             .a1 = a1, .a2 = a2, .imethod = imethod ))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
     mymu <- eta2theta(eta[, 1], .lmean , earg = .emean )
-    mysd <- eta2theta(eta[, 2], .lsd , earg = .esd )
+    mysd <- eta2theta(eta[, 2], .lsd   , earg = .esd   )
     mytheta <- mymu / mysd
     mysd * (( .a1 + .a2 ) * (mytheta * pnorm(mytheta) +
         dnorm(mytheta)) - .a2 * mytheta)
@@ -1023,7 +1023,7 @@ rfoldnorm <- function(n, mean = 0, sd = 1, a1 = 1, a2=1) {
              extra = NULL,
              summation = TRUE) {
     mymu <- eta2theta(eta[, 1], .lmean , earg = .emean )
-    mysd <- eta2theta(eta[, 2], .lsd ,   earg = .esd )
+    mysd <- eta2theta(eta[, 2], .lsd   , earg = .esd   )
     a1vec <- .a1
     a2vec <- .a2
     if (residuals) {
@@ -1110,7 +1110,7 @@ lqnorm.control <- function(trace = TRUE, ...) {
 
 lqnorm <- function(qpower = 2,
                    link = "identitylink",
-                   imethod = 1, imu = NULL, shrinkage.init = 0.95) {
+                   imethod = 1, imu = NULL, ishrinkage = 0.95) {
 
 
   link <- as.list(substitute(link))
@@ -1126,10 +1126,10 @@ lqnorm <- function(qpower = 2,
       imethod > 3)
     stop("argument 'imethod' must be 1 or 2 or 3")
 
-  if (!is.Numeric(shrinkage.init, length.arg = 1) ||
-      shrinkage.init < 0 ||
-      shrinkage.init > 1)
-    stop("bad input for argument 'shrinkage.init'")
+  if (!is.Numeric(ishrinkage, length.arg = 1) ||
+      ishrinkage < 0 ||
+      ishrinkage > 1)
+    stop("bad input for argument 'ishrinkage'")
 
 
 
@@ -1154,26 +1154,26 @@ lqnorm <- function(qpower = 2,
 
 
     predictors.names <- if (!is.null(dy[[2]])) dy[[2]] else
-                       paste("mu", 1:M, sep = "")
+                        paste("mu", 1:M, sep = "")
     predictors.names <- namesof(predictors.names, link = .link,
-                               earg = .earg, short = TRUE)
+                                earg = .earg, short = TRUE)
 
 
     if (!length(etastart))  {
-        meany <- weighted.mean(y, w)
-        mean.init <- rep(if (length( .i.mu )) .i.mu else {
-          if ( .imethod == 2) median(y) else 
-          if ( .imethod == 1) meany else
-            .sinit * meany + (1 - .sinit) * y
-        }, len = n)
-        etastart <- theta2eta(mean.init, link = .link, earg = .earg)
+      meany <- weighted.mean(y, w)
+      mean.init <- rep(if (length( .i.mu )) .i.mu else {
+        if ( .imethod == 2) median(y) else 
+        if ( .imethod == 1) meany else
+          .ishrinkage * meany + (1 - .ishrinkage ) * y
+      }, len = n)
+      etastart <- theta2eta(mean.init, link = .link, earg = .earg)
     }
   }), list( .imethod = imethod, .i.mu = imu,
-            .sinit = shrinkage.init,
+            .ishrinkage = ishrinkage,
             .link = link, .earg = earg ))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
-      mu <- eta2theta(eta, link = .link, earg = .earg)
-      mu
+    mu <- eta2theta(eta, link = .link , earg = .earg )
+    mu
   }, list( .link = link, .earg = earg ))),
   last = eval(substitute(expression({
     dy <- dimnames(y)
@@ -1381,9 +1381,9 @@ tobit.control <- function(save.weight = TRUE, ...) {
     imethod > 2)
     stop("argument 'imethod' must be 1 or 2")
   if ( # length(Lower) != 1 || length(Upper) != 1 ||
-    !is.numeric(Lower) ||
-    !is.numeric(Upper) ||
-    any(Lower >= Upper))
+      !is.numeric(Lower) ||
+      !is.numeric(Upper) ||
+      any(Lower >= Upper))
     stop("Lower and Upper must ",
          "be numeric with Lower < Upper")
 
@@ -1396,7 +1396,7 @@ tobit.control <- function(save.weight = TRUE, ...) {
     stop("argument 'nsimEIM' should be an integer greater than 10")
 
   if (mode(type.fitted) != "character" && mode(type.fitted) != "name")
-        type.fitted <- as.character(substitute(type.fitted))
+    type.fitted <- as.character(substitute(type.fitted))
   type.fitted <- match.arg(type.fitted,
                            c("uncensored", "censored", "mean.obs"))[1]
 
@@ -1417,15 +1417,17 @@ tobit.control <- function(save.weight = TRUE, ...) {
 
     dotzero <- .zero
     M1 <- 2
-    eval(negzero.expression)
+    eval(negzero.expression.VGAM)
 
   }), list( .zero = zero ))),
 
   infos = eval(substitute(function(...) {
     list(M1 = 2,
+         type.fitted = .type.fitted ,
          zero = .zero ,
          nsimEIM = .nsimEIM )
-  }, list( .zero = zero, .nsimEIM = nsimEIM ))),
+  }, list( .zero = zero, .nsimEIM = nsimEIM,
+           .type.fitted = type.fitted ))),
 
   initialize = eval(substitute(expression({
     M1 <- 2
@@ -1449,6 +1451,7 @@ tobit.control <- function(save.weight = TRUE, ...) {
     Lowmat <- matrix( .Lower , nrow = n, ncol = ncoly, byrow = TRUE)
     Uppmat <- matrix( .Upper , nrow = n, ncol = ncoly, byrow = TRUE)
 
+    extra$type.fitted <- .type.fitted
     extra$censoredL <- (y <= Lowmat)
     extra$censoredU <- (y >= Uppmat)
     if (any(y < Lowmat)) {
@@ -1467,75 +1470,90 @@ tobit.control <- function(save.weight = TRUE, ...) {
     temp2.names <-
       if (ncoly == 1) "sd" else paste("sd", 1:ncoly, sep = "")
     predictors.names <-
-        c(namesof(temp1.names, .lmu, earg = .emu, tag = FALSE),
-          namesof(temp2.names, .lsd , earg = .esd, tag = FALSE))
+      c(namesof(temp1.names, .lmu , earg = .emu , tag = FALSE),
+        namesof(temp2.names, .lsd , earg = .esd , tag = FALSE))
     predictors.names <- predictors.names[interleave.VGAM(M, M = M1)]
 
     if (!length(etastart)) {
       anyc <- cbind(extra$censoredL | extra$censoredU)
-      i11 <- if ( .imethod == 1) anyc else FALSE # can be all data
+      i11 <- if ( .imethod == 1) anyc else FALSE  # can be all data
 
       mu.init <-
       sd.init <- matrix(0.0, n, ncoly)
       for (ii in 1:ncol(y)) {
         use.i11 <- i11[, ii]
         mylm <- lm.wfit(x = cbind(x[!use.i11, ]),
-                       y = y[!use.i11, ii], w = w[!use.i11, ii])
+                        y = y[!use.i11, ii], w = w[!use.i11, ii])
         sd.init[, ii] <- sqrt( sum(w[!use.i11, ii] * mylm$resid^2)
                               / mylm$df.residual ) * 1.5
         mu.init[!use.i11, ii] <- mylm$fitted.values
         if (any(anyc[, ii]))
           mu.init[anyc[, ii], ii] <- x[anyc[, ii],, drop = FALSE] %*%
-                                    mylm$coeff
+                                     mylm$coeff
       }
 
-      if (length( .i.mu ))
-        mu.init <- matrix( .i.mu , n, ncoly, byrow = TRUE)
+      if (length( .Imu ))
+        mu.init <- matrix( .Imu , n, ncoly, byrow = TRUE)
       if (length( .isd ))
         sd.init <- matrix( .isd , n, ncoly, byrow = TRUE)
 
-      etastart <- cbind(theta2eta(mu.init, .lmu, earg = .emu ),
-                       theta2eta(sd.init, .lsd , earg = .esd ))
+      etastart <- cbind(theta2eta(mu.init, .lmu , earg = .emu ),
+                        theta2eta(sd.init, .lsd , earg = .esd ))
 
       etastart <- etastart[, interleave.VGAM(M, M = M1), drop = FALSE]
     }
  }), list( .Lower = Lower, .Upper = Upper,
            .lmu = lmu, .lsd = lsd,
            .emu = emu, .esd = esd,
-           .i.mu = imu, .isd = isd,
+           .Imu = imu, .isd = isd,
+           .type.fitted = type.fitted,
            .imethod = imethod ))),
   linkinv = eval(substitute( function(eta, extra = NULL) {
     M1 <- 2
     ncoly <- ncol(eta) / M1
-    mum <- eta2theta(eta[, M1*(1:ncoly)-1, drop=FALSE], .lmu, earg = .emu )
-    if ( .type.fitted == "uncensored")
+    mum <- eta2theta(eta[, M1*(1:ncoly)-1, drop = FALSE],
+                     .lmu , earg = .emu )
+
+
+
+    type.fitted <- if (length(extra$type.fitted)) extra$type.fitted else {
+                     warning("cannot find 'type.fitted'. ",
+                             "Returning 'uncensored'.")
+                     "uncensored"
+                   }
+
+    type.fitted <- match.arg(type.fitted,
+                             c("uncensored", "censored", "mean.obs"))[1]
+
+    if ( type.fitted == "uncensored")
       return(mum)
 
-    Lowmat <- matrix( .Lower, nrow = nrow(eta), ncol = ncoly, byrow = TRUE)
-    Uppmat <- matrix( .Upper, nrow = nrow(eta), ncol = ncoly, byrow = TRUE)
-    if ( .type.fitted == "censored") {
+    Lowmat <- matrix( .Lower , nrow = nrow(eta), ncol = ncoly, byrow = TRUE)
+    Uppmat <- matrix( .Upper , nrow = nrow(eta), ncol = ncoly, byrow = TRUE)
+    if ( type.fitted == "censored") {
       mum[mum < Lowmat] <- Lowmat[mum < Lowmat]
       mum[mum > Uppmat] <- Uppmat[mum > Uppmat]
       mum
     } else {
 
+
       sdm <- eta2theta(eta[, M1*(1:ncoly)-0, drop = FALSE],
-                      .lsd , earg = .esd )
+                       .lsd , earg = .esd )
       zeddL <- (Lowmat - mum) / sdm
       zeddU <- (Uppmat - mum) / sdm
       Phi.L <- pnorm(zeddL)
       phi.L <- dnorm(zeddL)
       Phi.U <- pnorm(zeddU)
       phi.U <- dnorm(zeddU)
+
       mum * (Phi.U - Phi.L) +
       sdm * (phi.L - phi.U) +
-      Lowmat *      Phi.L +
-      Uppmat * (1 - Phi.U)
+      ifelse(is.infinite(Lowmat), 0, Lowmat *      Phi.U ) +
+      ifelse(is.infinite(Uppmat), 0, Uppmat * (1 - Phi.U))
     }
   }, list( .lmu = lmu, .lsd = lsd,
            .emu = emu, .esd = esd,
-           .Lower = Lower, .Upper = Upper,
-           .type.fitted = type.fitted ))),
+           .Lower = Lower, .Upper = Upper ))),
   last = eval(substitute(expression({
 
     temp0303 <- c(rep( .lmu, length = ncoly),
@@ -1585,7 +1603,7 @@ tobit.control <- function(save.weight = TRUE, ...) {
 
     cenL <- extra$censoredL
     cenU <- extra$censoredU
-    cen0 <- !cenL & !cenU   # uncensored obsns
+    cen0 <- !cenL & !cenU  # uncensored obsns
     Lowmat <- matrix( .Lower , nrow = nrow(eta), ncol = ncoly, byrow = TRUE)
     Uppmat <- matrix( .Upper , nrow = nrow(eta), ncol = ncoly, byrow = TRUE)
 
@@ -1595,7 +1613,7 @@ tobit.control <- function(save.weight = TRUE, ...) {
     sdm <- eta2theta(eta[, M1*(1:ncoly)-0, drop = FALSE],
                      .lsd , earg = .esd )
 
-    ell0 <- dnorm(  y[cen0], mean = mum[cen0], sd = sdm[cen0],
+    ell0 <- dnorm(     y[cen0], mean = mum[cen0], sd = sdm[cen0],
                   log = TRUE)
     ellL <- pnorm(Lowmat[cenL], mean = mum[cenL], sd = sdm[cenL],
                   log.p = TRUE, lower.tail = TRUE)
@@ -1639,10 +1657,10 @@ tobit.control <- function(save.weight = TRUE, ...) {
 
     cenL <- extra$censoredL
     cenU <- extra$censoredU
-    cen0 <- !cenL & !cenU   # uncensored obsns
+    cen0 <- !cenL & !cenU  # uncensored obsns
 
     mum <- eta2theta(eta[, M1*(1:ncoly)-1, drop = FALSE],
-                     .lmu, earg = .emu )
+                     .lmu , earg = .emu )
     sdm <- eta2theta(eta[, M1*(1:ncoly)-0, drop = FALSE],
                      .lsd , earg = .esd )
 
@@ -1650,7 +1668,7 @@ tobit.control <- function(save.weight = TRUE, ...) {
     dl.dmu <- zedd / sdm
     dl.dsd <- (zedd^2 - 1) / sdm
 
-    dmu.deta <- dtheta.deta(mum, .lmu, earg = .emu )
+    dmu.deta <- dtheta.deta(mum, .lmu , earg = .emu )
     dsd.deta <- dtheta.deta(sdm, .lsd , earg = .esd )
 
     if (any(cenL)) {
@@ -1668,7 +1686,7 @@ tobit.control <- function(save.weight = TRUE, ...) {
       PhiU <- pnorm(temp21U, lower.tail = FALSE)
       phiU <- dnorm(temp21U)
       fred21 <- -phiU / PhiU
-      dl.dmu[cenU] <- -fred21 / sdm[cenU]   # Negated
+      dl.dmu[cenU] <- -fred21 / sdm[cenU]  # Negated
       dl.dsd[cenU] <-  fred21 * (-mumU[cenU] / sdm[cenU]^2)
     }
 
@@ -1688,7 +1706,7 @@ tobit.control <- function(save.weight = TRUE, ...) {
 
 
     if (is.numeric( .nsimEIM ) &&
-        ! .stdTobit ) {
+      ! .stdTobit ) {
 
 
     run.varcov <- 0
@@ -1723,7 +1741,7 @@ tobit.control <- function(save.weight = TRUE, ...) {
         PhiU <- pnorm(temp21U, lower.tail = FALSE)
         phiU <- dnorm(temp21U)
         fred21 <- -phiU / PhiU
-        dl.dmu[cenU] <- -fred21 / sdvec[cenU]   # Negated
+        dl.dmu[cenU] <- -fred21 / sdvec[cenU]  # Negated
         dl.dsd[cenU] <-  fred21 * (-mumU[cenU] / sdvec[cenU]^2)
       }
 
@@ -1779,11 +1797,11 @@ tobit.control <- function(save.weight = TRUE, ...) {
                    dThetas.detas[, M1 * (spp. - 1) + ind1$col]
 
       for (jay in 1:M1)
-          for (kay in jay:M1) {
-              cptr <- iam((spp. - 1) * M1 + jay,
-                          (spp. - 1) * M1 + kay,
-                          M = M)
-              wz[, cptr] <- wz1[, iam(jay, kay, M = M1)]
+        for (kay in jay:M1) {
+          cptr <- iam((spp. - 1) * M1 + jay,
+                      (spp. - 1) * M1 + kay,
+                      M = M)
+          wz[, cptr] <- wz1[, iam(jay, kay, M = M1)]
       }
       }  # End of for (spp.) loop
 
@@ -1883,14 +1901,14 @@ tobit.control <- function(save.weight = TRUE, ...) {
   constraints = eval(substitute(expression({
 
     constraints <-
-      cm.vgam(matrix(1, M, 1), x = x,
+      cm.VGAM(matrix(1, M, 1), x = x,
               bool = .parallel ,
               constraints = constraints,
               apply.int = .apply.parint )
 
     dotzero <- .zero
     M1 <- 2
-    eval(negzero.expression)
+    eval(negzero.expression.VGAM)
   }), list( .zero = zero,
             .parallel = parallel, .apply.parint = apply.parint ))),
 
@@ -1898,6 +1916,8 @@ tobit.control <- function(save.weight = TRUE, ...) {
   infos = eval(substitute(function(...) {
     list(M1 = 2,
          Q1 = 1,
+         expected = TRUE,
+         multipleResponses = TRUE,
          zero = .zero)
   }, list( .zero = zero ))),
 
@@ -1972,8 +1992,8 @@ tobit.control <- function(save.weight = TRUE, ...) {
           if ( .imethod == 1) median(y[, jay]) else
           if ( .imethod == 2) weighted.mean(y[, jay], w = w[, jay]) else
           if ( .imethod == 3) weighted.mean(y[, jay], w = w[, jay]) *
-                             0.5 + y[, jay] * 0.5 else
-                                 mean(jfit$fitted)
+                              0.5 + y[, jay] * 0.5 else
+                              mean(jfit$fitted)
 
         sdev.init[, jay] <-
           if ( .imethod == 1) {
@@ -2188,9 +2208,7 @@ tobit.control <- function(save.weight = TRUE, ...) {
             .smallno = smallno,
             .var.arg = var.arg ))),
   weight = eval(substitute(expression({
-    wz <- matrix(as.numeric(NA), n, M)  # diag matrix; y is 1-column too
-
-
+    wz <- matrix(as.numeric(NA), n, M)  # Diagonal matrix
 
 
     ned2l.dmu2 <- 1 / sdev^2
@@ -2284,7 +2302,7 @@ tobit.control <- function(save.weight = TRUE, ...) {
       dotzero <- M
 
     M1 <- NA
-    eval(negzero.expression)
+    eval(negzero.expression.VGAM)
   }), list( .zero = zero 
           ))),
 
@@ -2360,12 +2378,13 @@ tobit.control <- function(save.weight = TRUE, ...) {
 
     
 
-  if (any(is.mlogit <- (unlist(link.list.ordered) == "mlogit"))) {
-    if (sum(is.mlogit) < 2)
-      stop("at least two 'mlogit' links need to be specified, else none")
-    col.index.is.mlogit <- (1:length(is.mlogit))[is.mlogit]
-    extra$col.index.is.mlogit <- col.index.is.mlogit
-    extra$is.mlogit <- is.mlogit
+  if (any(is.multilogit <- (unlist(link.list.ordered) == "multilogit"))) {
+    if (sum(is.multilogit) < 2)
+      stop("at least two 'multilogit' links need to be specified, ",
+           "else none")
+    col.index.is.multilogit <- (1:length(is.multilogit))[is.multilogit]
+    extra$col.index.is.multilogit <- col.index.is.multilogit
+    extra$is.multilogit <- is.multilogit
   }
 
     
@@ -2385,7 +2404,7 @@ tobit.control <- function(save.weight = TRUE, ...) {
 
     extra$ncoly <- ncoly <- ncol(y)
     extra$M <- M <- ncol(Xm2) + 1 -
-                    (length(extra$is.mlogit) > 0)
+                    (length(extra$is.multilogit) > 0)
     M1 <- NA  # Since this cannot be determined apriori.
 
     extra$M1 <- M1
@@ -2406,8 +2425,8 @@ tobit.control <- function(save.weight = TRUE, ...) {
   }
   extra$all.mynames1 <- all.mynames1 <- mynames1
 
-  if (LLL <- length(extra$is.mlogit)) {
-    mynames1 <- mynames1[-max(extra$col.index.is.mlogit)]
+  if (LLL <- length(extra$is.multilogit)) {
+    mynames1 <- mynames1[-max(extra$col.index.is.multilogit)]
   }
 
     mynames2 <- paste(if ( .var.arg ) "var" else "sd",
@@ -2463,10 +2482,10 @@ tobit.control <- function(save.weight = TRUE, ...) {
       }
 
       if (!icoefficients.given)
-      if (LLL <- length(extra$is.mlogit)) {
-        raw.coeffs <- jfit.coeff[extra$col.index.is.mlogit]
+      if (LLL <- length(extra$is.multilogit)) {
+        raw.coeffs <- jfit.coeff[extra$col.index.is.multilogit]
         possum1 <- (0.01 + abs(raw.coeffs)) / sum(0.01 + abs(raw.coeffs))
-        jfit.coeff[extra$is.mlogit] <- possum1
+        jfit.coeff[extra$is.multilogit] <- possum1
       }
 
 
@@ -2480,17 +2499,17 @@ tobit.control <- function(save.weight = TRUE, ...) {
           extra$earg.list[[jlocal]]
         }
 
-        if (length(extra$is.mlogit) && !extra$is.mlogit[jlocal])
+        if (length(extra$is.multilogit) && !extra$is.multilogit[jlocal])
           etamat.init[, jlocal] <-
             theta2eta(thetamat.init[, jlocal],
                       link = extra$link.list[[jlocal]],
                       earg = earg.use)
       }
 
-      if (LLL <- length(extra$col.index.is.mlogit)) {
-        etamat.init[, extra$col.index.is.mlogit[-LLL]] <-
-          mlogit(thetamat.init[, extra$col.index.is.mlogit])
-        etamat.init <- etamat.init[, -max(extra$col.index.is.mlogit)]
+      if (LLL <- length(extra$col.index.is.multilogit)) {
+        etamat.init[, extra$col.index.is.multilogit[-LLL]] <-
+          multilogit(thetamat.init[, extra$col.index.is.multilogit])
+        etamat.init <- etamat.init[, -max(extra$col.index.is.multilogit)]
       }
       
 
@@ -2539,10 +2558,10 @@ tobit.control <- function(save.weight = TRUE, ...) {
 
   coffs <- eta[, -M, drop = FALSE]
 
-  if (LLL <- length(extra$col.index.is.mlogit)) {
-    last.one <- extra$col.index.is.mlogit[LLL]
+  if (LLL <- length(extra$col.index.is.multilogit)) {
+    last.one <- extra$col.index.is.multilogit[LLL]
     coffs <- cbind(coffs[, 1:(last.one-1)],
-                   probs.last.mlogit = 0,  # \eta_j\equiv0 for last "mlogit"
+                   probs.last.multilogit = 0,
                    if (last.one == M) NULL else
                    coffs[, last.one:ncol(coffs)])
     colnames(coffs) <- extra$all.mynames1 
@@ -2556,8 +2575,8 @@ tobit.control <- function(save.weight = TRUE, ...) {
       extra$earg.list[[jlocal]]
     }
 
-    if (length(extra$is.mlogit) && !extra$is.mlogit[jlocal]) {
-      iskip <- (jlocal > max(extra$col.index.is.mlogit))
+    if (length(extra$is.multilogit) && !extra$is.multilogit[jlocal]) {
+      iskip <- (jlocal > max(extra$col.index.is.multilogit))
       coffs[, jlocal] <- eta2theta(eta[, jlocal - iskip],
                                    link = extra$link.list[[jlocal]],
                                    earg = earg.use)
@@ -2565,9 +2584,9 @@ tobit.control <- function(save.weight = TRUE, ...) {
   }
 
 
-    if (LLL <- length(extra$col.index.is.mlogit)) {
-      coffs[, extra$col.index.is.mlogit] <-
-        mlogit(eta[, extra$col.index.is.mlogit[-LLL], drop = FALSE],
+    if (LLL <- length(extra$col.index.is.multilogit)) {
+      coffs[, extra$col.index.is.multilogit] <-
+        multilogit(eta[, extra$col.index.is.multilogit[-LLL], drop = FALSE],
                inverse = TRUE)
     }
 
@@ -2651,16 +2670,16 @@ tobit.control <- function(save.weight = TRUE, ...) {
 
     coffs <- eta[, -M, drop = FALSE]  # Exclude log(sdev) or log(var)
 
-    if (LLL <- length(extra$is.mlogit)) {
-      last.one <- max(extra$col.index.is.mlogit)
+    if (LLL <- length(extra$is.multilogit)) {
+      last.one <- max(extra$col.index.is.multilogit)
       coffs <- cbind(coffs[, 1:(last.one-1)],
-                     probsLastmlogit = 0,  # \eta_j\equiv0 for last "mlogit"
+                     probsLastmultilogit = 0,
                      if (last.one == M) NULL else
                      coffs[, last.one:ncol(coffs)])
       colnames(coffs) <- extra$all.mynames1
     }
 
-    dcoffs.deta <- coffs  # Includes any last "mlogit"
+    dcoffs.deta <- coffs  # Includes any last "multilogit"
 
     for (jlocal in 1:ncol(coffs)) {
       earg.use <- if (!length(extra$earg.list[[jlocal]])) {
@@ -2669,26 +2688,26 @@ tobit.control <- function(save.weight = TRUE, ...) {
         extra$earg.list[[jlocal]]
       }
 
-      if (!length(extra$is.mlogit) ||
-          !extra$is.mlogit[jlocal]) {
-        iskip <- length(extra$is.mlogit) &&
-                 (jlocal  > max(extra$col.index.is.mlogit))
+      if (!length(extra$is.multilogit) ||
+          !extra$is.multilogit[jlocal]) {
+        iskip <- length(extra$is.multilogit) &&
+                 (jlocal  > max(extra$col.index.is.multilogit))
         coffs[, jlocal] <- eta2theta(eta[, jlocal - iskip],
                                      link = extra$link.list[[jlocal]],
                                      earg = earg.use)
       }
     }
 
-    if (LLL <- length(extra$col.index.is.mlogit)) {
-      coffs[, extra$col.index.is.mlogit] <-
-        mlogit(eta[, extra$col.index.is.mlogit[-LLL], drop = FALSE],
+    if (LLL <- length(extra$col.index.is.multilogit)) {
+      coffs[, extra$col.index.is.multilogit] <-
+        multilogit(eta[, extra$col.index.is.multilogit[-LLL], drop = FALSE],
                inverse = TRUE)
     }
 
 
   for (jlocal in 1:ncol(coffs)) {
-    if (!length(extra$is.mlogit) ||
-        !extra$is.mlogit[jlocal]) {
+    if (!length(extra$is.multilogit) ||
+        !extra$is.multilogit[jlocal]) {
       earg.use <- if (!length(extra$earg.list[[jlocal]])) {
         list(theta = NULL)
       } else {
@@ -2717,13 +2736,13 @@ tobit.control <- function(save.weight = TRUE, ...) {
 
     
     dMu.deta <- dmu.dcoffs * dcoffs.deta  # n x pLM, but may change below
-    if (LLL <- length(extra$col.index.is.mlogit)) {
-      dMu.deta[, extra$col.index.is.mlogit[-LLL]] <-
-         coffs[, extra$col.index.is.mlogit[-LLL]] *
-        (dmu.dcoffs[, extra$col.index.is.mlogit[-LLL]] -
-         rowSums(dmu.dcoffs[, extra$col.index.is.mlogit]  *
-                      coffs[, extra$col.index.is.mlogit]))
-      dMu.deta <- dMu.deta[, -extra$col.index.is.mlogit[LLL]]
+    if (LLL <- length(extra$col.index.is.multilogit)) {
+      dMu.deta[, extra$col.index.is.multilogit[-LLL]] <-
+         coffs[, extra$col.index.is.multilogit[-LLL]] *
+        (dmu.dcoffs[, extra$col.index.is.multilogit[-LLL]] -
+         rowSums(dmu.dcoffs[, extra$col.index.is.multilogit]  *
+                      coffs[, extra$col.index.is.multilogit]))
+      dMu.deta <- dMu.deta[, -extra$col.index.is.multilogit[LLL]]
     }
     
 
@@ -2756,8 +2775,8 @@ tobit.control <- function(save.weight = TRUE, ...) {
 
 
 
-    if (length(extra$col.index.is.mlogit)) {
-      LLL <- max(extra$col.index.is.mlogit)
+    if (length(extra$col.index.is.multilogit)) {
+      LLL <- max(extra$col.index.is.multilogit)
       dmu.dcoffs <- dmu.dcoffs[, -LLL]
       dcoffs.deta <- dcoffs.deta[, -LLL]
     }
@@ -2772,10 +2791,10 @@ tobit.control <- function(save.weight = TRUE, ...) {
 
 
  
-    if ((LLL <- length(extra$col.index.is.mlogit))) {
-       dmu.dcoffs[, extra$col.index.is.mlogit[-LLL]] <-
-         dMu.deta[, extra$col.index.is.mlogit[-LLL]]
-      dcoffs.deta[, extra$col.index.is.mlogit[-LLL]] <- 1
+    if ((LLL <- length(extra$col.index.is.multilogit))) {
+       dmu.dcoffs[, extra$col.index.is.multilogit[-LLL]] <-
+         dMu.deta[, extra$col.index.is.multilogit[-LLL]]
+      dcoffs.deta[, extra$col.index.is.multilogit[-LLL]] <- 1
      }
   
     twz  <- crossprod(dmu.dcoffs * sqrt(c(w))) / sum(w)
@@ -2838,7 +2857,7 @@ tobit.control <- function(save.weight = TRUE, ...) {
           namesof("meanlog", lmulog, earg = emulog, tag = TRUE), ", ",
           namesof("sdlog",   lsdlog, earg = esdlog, tag = TRUE)),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.vgam(constraints, x, .zero , M)
+    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
   }), list( .zero = zero ))),
   initialize = eval(substitute(expression({
 
@@ -2948,6 +2967,7 @@ tobit.control <- function(save.weight = TRUE, ...) {
 
 
 
+if (FALSE)
  lognormal3 <- function(lmeanlog = "identitylink", lsdlog = "loge",
                         powers.try = (-3):3,
                         delta = NULL, zero = 2) {
@@ -2986,7 +3006,7 @@ tobit.control <- function(save.weight = TRUE, ...) {
           namesof("sdlog",   lsdlog, earg = esdlog, tag = TRUE), "; ",
           namesof("lambda", "identitylink", earg = list(), tag = TRUE)),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.vgam(constraints, x, .zero , M)
+    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
   }), list( .zero = zero ))),
   initialize = eval(substitute(expression({
 
@@ -3402,14 +3422,14 @@ if (FALSE)
 
   constraints = eval(substitute(expression({
 
-    constraints <- cm.vgam(matrix(1, M, 1), x = x,
+    constraints <- cm.VGAM(matrix(1, M, 1), x = x,
                            bool = .parallel , 
                            constraints = constraints,
                            apply.int = .apply.parint )
 
     dotzero <- .zero
     M1 <- 2
-    eval(negzero.expression)
+    eval(negzero.expression.VGAM)
   }), list( .zero = zero,
             .parallel = parallel, .apply.parint = apply.parint ))),
 

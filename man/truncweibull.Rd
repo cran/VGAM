@@ -23,7 +23,7 @@ truncweibull(lower.limit = 1e-5,
     Recycled to the same dimension as the response, going
     across rows first.
     The default, being close to 0, should mean effectively the same
-    results as \code{\link{weibull}} if there are no response
+    results as \code{\link{weibullR}} if there are no response
     values that are smaller.
 
 
@@ -44,7 +44,7 @@ truncweibull(lower.limit = 1e-5,
 
   }
   \item{imethod, nrfs, zero, probs.y}{
-  Details at \code{\link{weibull}}.
+  Details at \code{\link{weibullR}}.
 
   }
 }
@@ -56,14 +56,14 @@ truncweibull(lower.limit = 1e-5,
   For a particular observation this is any known positive value.
   This function is currently based directly on
   Wingo (1989) and his parameterization is used (it differs
-  from \code{\link{weibull}}.)
+  from \code{\link{weibullR}}.)
   In particular,
   \eqn{\beta = a} and \eqn{\alpha = (1/b)^a}
-  where \eqn{a} and \eqn{b} are as in \code{\link{weibull}} and
+  where \eqn{a} and \eqn{b} are as in \code{\link{weibullR}} and
   \code{\link[stats:Weibull]{dweibull}}.
 
 
-% More details about the Weibull density are \code{\link{weibull}}.
+% More details about the Weibull density are \code{\link{weibullR}}.
 
   
   Upon fitting the \code{extra} slot has a component called
@@ -101,7 +101,7 @@ truncweibull(lower.limit = 1e-5,
 }
 \section{Warning}{
   This function may be converted to the same parameterization as
-  \code{\link{weibull}} at any time.
+  \code{\link{weibullR}} at any time.
   Yet to do: one element of the EIM may be wrong (due to
   two interpretations of a formula; but it seems to work).
   Convergence is slower than usual and this may imply something
@@ -116,7 +116,7 @@ truncweibull(lower.limit = 1e-5,
 }
 
 \seealso{
-  \code{\link{weibull}},
+  \code{\link{weibullR}},
   \code{\link[stats:Weibull]{dweibull}},
   \code{\link{pgamma.deriv}},
   \code{\link{pgamma.deriv.unscaled}}.

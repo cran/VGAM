@@ -1,6 +1,7 @@
 \name{negbinomial}
 \alias{negbinomial}
 \alias{polya}
+\alias{polyaR}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Negative Binomial Distribution Family Function }
 \description{
@@ -13,10 +14,13 @@ negbinomial(lmu = "loge", lsize = "loge",
             imu = NULL, isize = NULL, probs.y = 0.75,
             nsimEIM = 100, cutoff = 0.995,
             Maxiter = 5000, deviance.arg = FALSE, imethod = 1,
-            parallel = FALSE, shrinkage.init = 0.95, zero = -2)
+            parallel = FALSE, ishrinkage = 0.95, zero = -2)
 polya(lprob = "logit", lsize = "loge",
       iprob = NULL, isize = NULL, probs.y = 0.75, nsimEIM = 100,
-      imethod = 1, shrinkage.init = 0.95, zero = -2)
+      imethod = 1, ishrinkage = 0.95, zero = -2)
+polyaR(lsize = "loge", lprob = "logit", 
+       isize = NULL, iprob = NULL, probs.y = 0.75, nsimEIM = 100,
+       imethod = 1, ishrinkage = 0.95, zero = -1)
 }
 
 %     deviance.arg = FALSE,
@@ -119,7 +123,7 @@ polya(lprob = "logit", lsize = "loge",
   An integer with value \code{1} or \code{2} or \code{3} which
   specifies the initialization method for the \eqn{\mu}{mu} parameter.
   If failure to converge occurs try another value
-  and/or else specify a value for \code{shrinkage.init}
+  and/or else specify a value for \code{ishrinkage}
   and/or else specify a value for \code{isize}.
 
 
@@ -135,7 +139,7 @@ polya(lprob = "logit", lsize = "loge",
 
 
   }
-  \item{shrinkage.init}{
+  \item{ishrinkage}{
   How much shrinkage is used when initializing \eqn{\mu}{mu}.
   The value must be between 0 and 1 inclusive, and
   a value of 0 means the individual response values are used,
@@ -196,10 +200,22 @@ polya(lprob = "logit", lsize = "loge",
   \deqn{f(y;p,k) ~=~ {y + k - 1 \choose y} \,
     \left( 1 - p \right)^y\,
     p^k }{%
-    f(y;p,k) = C_{y}^{y + k - 1}
+    f(y;k,p) = C_{y}^{y + k - 1}
     [1 - p]^y p^k}
   where \eqn{y=0,1,2,\ldots},
-  and \eqn{0 < p < 1}{0 < p < 1} and \eqn{k > 0}.
+  and \eqn{k > 0} and \eqn{0 < p < 1}{0 < p < 1}. 
+
+
+  Family function \code{polyaR()} is the same as \code{polya()} except
+  the order of the two parameters are switched.
+  The reason is that \code{polyaR()} tries to match with
+  \code{\link[stats:NegBinomial]{rnbinom}} closely
+  in terms of the argument order, etc.
+  Should the probability parameter be of primary interest,
+  probably, users will prefer using  \code{polya()} rather than
+  \code{polyaR()}.
+  Possibly \code{polyaR()} will be decommissioned one day.
+
 
 
   The negative binomial distribution can be coerced into the
@@ -294,7 +310,7 @@ Fitting the negative binomial distribution to biological data.
 % very well.
 
 
-  These two functions implement two common parameterizations
+  These 3 functions implement 2 common parameterizations
   of the negative binomial (NB). Some people called the
   NB with integer \eqn{k} the \emph{Pascal} distribution,
   whereas if \eqn{k} is real then this is the \emph{Polya}
@@ -306,6 +322,7 @@ Fitting the negative binomial distribution to biological data.
   For \code{polya()} the code may fail when \eqn{p} is close
   to 0 or 1. It is not yet compatible with \code{\link{cqo}}
   or \code{\link{cao}}.
+
 
 
   Suppose the response is called \code{ymat}.
@@ -329,7 +346,7 @@ Fitting the negative binomial distribution to biological data.
   If convergence failure occurs, try using arguments
   (in recommended decreasing order)
   \code{nsimEIM},
-  \code{shrinkage.init},
+  \code{ishrinkage},
   \code{imethod},
   \code{Maxiter}, 
   \code{cutoff},
@@ -400,7 +417,7 @@ Fitting the negative binomial distribution to biological data.
   \code{\link{negbinomial.size}} (e.g., NB-G),
   \code{\link{nbcanlink}} (NB-C),
   \code{\link{posnegbinomial}},
-  \code{\link{invbinomial}},
+  \code{\link{inv.binomial}},
   \code{\link[stats:NegBinomial]{rnbinom}},
   \code{\link{nbolf}},
   \code{\link{rrvglm}},
@@ -453,8 +470,8 @@ nb1 <- vglm(y3 ~ x2 + x3, negbinomial(parallel = TRUE, zero = NULL),
             data = mydata, trace = TRUE)
 # Extracting out some quantities:
 cnb1 <- coef(nb1, matrix = TRUE)
-mydiff <- (cnb1["(Intercept)", "log(size)"] -
-           cnb1["(Intercept)", "log(mu)"])
+mydiff <- (cnb1["(Intercept)", "loge(size)"] -
+           cnb1["(Intercept)", "loge(mu)"])
 delta0.hat <- exp(mydiff)
 (phi.hat <- 1 + 1 / delta0.hat)  # MLE of phi
 summary(nb1)

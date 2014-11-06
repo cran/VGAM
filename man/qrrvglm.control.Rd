@@ -513,7 +513,7 @@ p1 <- cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi, Auloalbi,
                Pardlugu, Pardmont, Pardnigr, Pardpull, Trocterr, Zoraspin) ~
           WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
           quasipoissonff, data = hspider, eq.tolerances = TRUE)
-sort(p1@misc$deviance.Bestof)  # A history of all the iterations
+sort(deviance(p1, history = TRUE))  # A history of all the iterations
 
 (isd.latvar <- apply(latvar(p1), 2, sd))  # Should be approx isd.latvar
  
@@ -524,7 +524,7 @@ p1 <- cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi, Auloalbi,
           WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
           I.tolerances = TRUE, quasipoissonff, data = hspider,
           isd.latvar = isd.latvar)  # Note the use of isd.latvar here
-sort(p1@misc$deviance.Bestof)  # A history of all the iterations
+sort(deviance(p1, history = TRUE))  # A history of all the iterations
 }
 }
 \keyword{models}
@@ -541,7 +541,7 @@ sort(p1@misc$deviance.Bestof)  # A history of all the iterations
 %          WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
 %          I.tol = FALSE, eq.tol = TRUE,  # A good idea for negbinomial
 %          fam = negbinomial, data = hspider)
-%sort(nb1@misc$deviance.Bestof)  # A history of all the iterations
+%sort(deviance(nb1, history = TRUE))  # A history of all the iterations
 %summary(nb1)
 %}
 %\dontrun{ lvplot(nb1, lcol = 1:12, y = TRUE, pcol = 1:12) }

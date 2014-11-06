@@ -9,7 +9,7 @@
 \usage{
 lms.bcg(percentiles = c(25, 50, 75), zero = c(1, 3), 
         llambda = "identitylink", lmu = "identitylink", lsigma = "loge",
-        dfmu.init = 4, dfsigma.init = 2, ilambda = 1, isigma = NULL)
+        idf.mu = 4, idf.sigma = 2, ilambda = 1, isigma = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -30,7 +30,7 @@ lms.bcg(percentiles = c(25, 50, 75), zero = c(1, 3),
 
   }
 
-  \item{dfmu.init, dfsigma.init}{
+  \item{idf.mu, idf.sigma}{
   See \code{\link{lms.bcn}}.
   
   }

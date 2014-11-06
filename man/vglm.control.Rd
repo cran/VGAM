@@ -8,11 +8,11 @@
 
 }
 \usage{
-vglm.control(checkwz = TRUE, Check.rank = TRUE,
+vglm.control(checkwz = TRUE, Check.rank = TRUE, Check.cm.rank = TRUE,
              criterion = names(.min.criterion.VGAM),
              epsilon = 1e-07, half.stepsizing = TRUE,
              maxit = 30, noWarning = FALSE,
-             stepsize = 1, save.weight = FALSE,
+             stepsize = 1, save.weights = FALSE,
              trace = FALSE, wzepsilon = .Machine$double.eps^0.75, 
              xij = NULL, ...)
 }
@@ -33,6 +33,15 @@ vglm.control(checkwz = TRUE, Check.rank = TRUE,
   the results are not to be trusted.
   The default is to give an error message if the VLM
   matrix is not of full column rank.
+
+
+  }
+  \item{Check.cm.rank}{
+  logical indicating whether the rank of each constraint matrix
+  should be checked. If this is not of full column rank then
+  an error will occur. Under no circumstances should any
+  constraint matrix have a rank less than the number of columns.
+
 
 
   }
@@ -90,12 +99,12 @@ vglm.control(checkwz = TRUE, Check.rank = TRUE,
 
 
   }
-  \item{save.weight}{
+  \item{save.weights}{
   logical indicating whether the \code{weights} slot of a
   \code{"vglm"} object will be saved on the object. If not,
   it will be reconstructed when needed, e.g., \code{summary}.
-  Some family functions have \code{save.weight = TRUE} and
-  others have \code{save.weight = FALSE} in their control
+  Some family functions have \code{save.weights = TRUE} and
+  others have \code{save.weights = FALSE} in their control
   functions.
 
 
@@ -171,10 +180,10 @@ vglm.control(checkwz = TRUE, Check.rank = TRUE,
   understand the full details.
 
 
-  Setting \code{save.weight = FALSE} is useful for some models because
+  Setting \code{save.weights = FALSE} is useful for some models because
   the \code{weights} slot of the object is the largest and so less
   memory is used to store the object. However, for some \pkg{VGAM}
-  family function, it is necessary to set \code{save.weight = TRUE}
+  family function, it is necessary to set \code{save.weights = TRUE}
   because the \code{weights} slot cannot be reconstructed later.
 
 

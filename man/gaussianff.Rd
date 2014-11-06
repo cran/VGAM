@@ -120,7 +120,7 @@ gaussianff(dispersion = 0, parallel = FALSE, zero = NULL)
   \code{\link{huber2}},
   \code{\link{lqnorm}},
   \code{\link{binormal}},
-  \code{\link{SUR}}.
+  \code{\link{SURff}}.
   \code{vlm},
   \code{\link{vglm}},
   \code{\link{vgam}},

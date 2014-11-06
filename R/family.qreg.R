@@ -19,12 +19,16 @@
 
 
 
+
+
+
+
+
+
 lms.bcn.control <-
 lms.bcg.control <-
 lms.yjn.control <- function(trace = TRUE, ...)
    list(trace = trace) 
-
-
 
 
 
@@ -33,14 +37,15 @@ lms.yjn.control <- function(trace = TRUE, ...)
                       llambda = "identitylink",
                       lmu = "identitylink",
                       lsigma = "loge",
-                      dfmu.init = 4,
-                      dfsigma.init = 2,
+                      idf.mu = 4,
+                      idf.sigma = 2,
                       ilambda = 1,
                       isigma = NULL,
-                      tol0 = 0.001, expectiles = FALSE) {
+                      tol0 = 0.001) {
   llambda <- as.list(substitute(llambda))
   elambda <- link2list(llambda)
   llambda <- attr(elambda, "function.name")
+
 
   lmu <- as.list(substitute(lmu))
   emu <- link2list(lmu)
@@ -59,20 +64,19 @@ lms.yjn.control <- function(trace = TRUE, ...)
   if (length(isigma) &&
       !is.Numeric(isigma, positive = TRUE))
     stop("bad input for argument 'isigma'")
-  if (length(expectiles) != 1 || !is.logical(expectiles))
-    stop("bad input for argument 'expectiles'")
 
 
 
   new("vglmff",
-  blurb = c("LMS ", if (expectiles) "Expectile" else "Quantile",
-            " Regression (Box-Cox transformation to normality)\n",
+  blurb = c("LMS ",
+            "quantile",
+            " regression (Box-Cox transformation to normality)\n",
             "Links:    ",
             namesof("lambda", link = llambda, earg = elambda), ", ",
             namesof("mu",     link = lmu,     earg = emu), ", ",
             namesof("sigma",  link = lsigma,  earg = esigma)),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.vgam(constraints, x, .zero, M)
+    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
   }), list( .zero = zero))),
   initialize = eval(substitute(expression({
 
@@ -89,16 +93,16 @@ lms.yjn.control <- function(trace = TRUE, ...)
     if (!length(etastart)) {
 
         Fit5 <- vsmooth.spline(x = x[, min(ncol(x), 2)],
-                               y = y, w = w, df = .dfmu.init)
+                               y = y, w = w, df = .idf.mu )
         fv.init <- c(predict(Fit5, x = x[, min(ncol(x), 2)])$y)
 
         lambda.init <- if (is.Numeric( .ilambda )) .ilambda else 1.0
         sigma.init <- if (is.null(.isigma)) {
           myratio <- ((y/fv.init)^lambda.init - 1) / lambda.init
-          if (is.Numeric( .dfsigma.init )) {
+          if (is.Numeric( .idf.sigma )) {
             fit600 <- vsmooth.spline(x = x[, min(ncol(x), 2)],
                                        y = myratio^2,
-                                       w = w, df = .dfsigma.init)
+                                       w = w, df = .idf.sigma)
             sqrt(c(abs(predict(fit600, x = x[, min(ncol(x), 2)])$y)))
           } else {
             sqrt(var(myratio))
@@ -114,38 +118,34 @@ lms.yjn.control <- function(trace = TRUE, ...)
     }
   }), list( .llambda = llambda, .lmu = lmu, .lsigma = lsigma,
             .elambda = elambda, .emu = emu, .esigma = esigma, 
-            .dfmu.init = dfmu.init,
-            .dfsigma.init = dfsigma.init,
+            .idf.mu = idf.mu,
+            .idf.sigma = idf.sigma,
             .ilambda = ilambda, .isigma = isigma ))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
       eta[, 1] <- eta2theta(eta[, 1], .llambda, earg = .elambda)
       eta[, 2] <- eta2theta(eta[, 2], .lmu,     earg = .emu)
       eta[, 3] <- eta2theta(eta[, 3], .lsigma,  earg = .esigma)
-      if ( .expectiles ) {
-        explot.lms.bcn(percentiles = .percentiles, eta = eta)
-      } else {
-        qtplot.lms.bcn(percentiles = .percentiles, eta = eta)
-      }
+      qtplot.lms.bcn(percentiles = .percentiles, eta = eta)
   }, list( .llambda = llambda, .lmu = lmu, .lsigma = lsigma,
            .elambda = elambda, .emu = emu, .esigma = esigma, 
-           .percentiles = percentiles, .expectiles = expectiles ))),
+           .percentiles = percentiles ))),
   last = eval(substitute(expression({
     misc$links <-    c(lambda = .llambda, mu = .lmu, sigma = .lsigma )
 
     misc$earg  <- list(lambda = .elambda, mu = .emu, sigma = .esigma )
 
     misc$tol0 <- .tol0
-    misc$percentiles <- .percentiles
-    misc$true.mu <- FALSE # @fitted is not a true mu
-    misc$expectiles <- .expectiles
+    misc$percentiles  <- .percentiles  # These are argument values
+    misc$true.mu <- FALSE  # @fitted is not a true mu
     if (control$cdf) {
-      post$cdf <- cdf.lms.bcn(y,
-                  eta0 = matrix(c(lambda, mymu, sigma), ncol = 3,
-                                dimnames = list(dimnames(x)[[1]], NULL)))
+      post$cdf <-
+        cdf.lms.bcn(y,
+                    eta0 = matrix(c(lambda, mymu, sigma), ncol = 3,
+                                  dimnames = list(dimnames(x)[[1]], NULL)))
     }
   }), list( .llambda = llambda, .lmu = lmu, .lsigma = lsigma,
             .elambda = elambda, .emu = emu, .esigma = esigma, 
-            .percentiles = percentiles, .expectiles = expectiles,
+            .percentiles = percentiles,
             .tol0 = tol0 ))),
   loglikelihood = eval(substitute(
     function(mu, y, w, residuals = FALSE, eta,
@@ -192,13 +192,13 @@ lms.yjn.control <- function(trace = TRUE, ...)
     dl.dmu <- zedd / (mymu * sigma) + z2m1 * lambda / mymu
     dl.dsigma <- z2m1 / sigma
 
-    dlambda.deta <- dtheta.deta(lambda, .llambda, earg = .elambda)
-    dmu.deta     <- dtheta.deta(mymu,   .lmu, earg = .emu)
-    dsigma.deta  <- dtheta.deta(sigma,  .lsigma, earg = .esigma)
+    dlambda.deta <- dtheta.deta(lambda, .llambda , earg = .elambda )
+    dmu.deta     <- dtheta.deta(mymu,   .lmu     , earg = .emu )
+    dsigma.deta  <- dtheta.deta(sigma,  .lsigma  , earg = .esigma )
 
     c(w) * cbind(dl.dlambda  * dlambda.deta,
-                 dl.dmu    * dmu.deta,
-                 dl.dsigma * dsigma.deta)
+                 dl.dmu      * dmu.deta,
+                 dl.dsigma   * dsigma.deta)
   }), list( .llambda = llambda, .lmu = lmu, .lsigma = lsigma,
             .elambda = elambda, .emu = emu, .esigma = esigma ))),
   weight = eval(substitute(expression({
@@ -214,7 +214,10 @@ lms.yjn.control <- function(trace = TRUE, ...)
     c(w) * wz
   }), list( .llambda = llambda, .lmu = lmu, .lsigma = lsigma,
             .elambda = elambda, .emu = emu, .esigma = esigma ))))
-}
+}  # End of lms.bcn
+
+
+
 
 
 
@@ -223,8 +226,8 @@ lms.yjn.control <- function(trace = TRUE, ...)
                      llambda = "identitylink",
                      lmu = "identitylink",
                      lsigma = "loge",
-                     dfmu.init=4,
-                     dfsigma.init = 2,
+                     idf.mu = 4,
+                     idf.sigma = 2,
                      ilambda = 1,
                      isigma = NULL) {
   llambda <- as.list(substitute(llambda))
@@ -253,7 +256,7 @@ lms.yjn.control <- function(trace = TRUE, ...)
             namesof("mu", link = lmu, earg = emu), ", ",
             namesof("sigma", link = lsigma, earg = esigma)),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.vgam(constraints, x, .zero, M)
+    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
   }), list(.zero = zero))),
   initialize = eval(substitute(expression({
 
@@ -269,18 +272,18 @@ lms.yjn.control <- function(trace = TRUE, ...)
         if (!length(etastart)) {
 
           Fit5 <- vsmooth.spline(x = x[, min(ncol(x), 2)],
-                                 y = y, w = w, df = .dfmu.init)
+                                 y = y, w = w, df = .idf.mu )
           fv.init <- c(predict(Fit5, x = x[, min(ncol(x), 2)])$y)
 
           lambda.init <- if (is.Numeric( .ilambda )) .ilambda else 1.0
 
           sigma.init <- if (is.null( .isigma )) {
             myratio <- ((y/fv.init)^lambda.init-1) / lambda.init
-            if (is.numeric( .dfsigma.init ) &&
-                is.finite( .dfsigma.init )) {
+            if (is.numeric( .idf.sigma ) &&
+                is.finite( .idf.sigma )) {
               fit600 <- vsmooth.spline(x = x[, min(ncol(x), 2)],
                                        y = (myratio)^2,
-                                       w = w, df = .dfsigma.init )
+                                       w = w, df = .idf.sigma )
               sqrt(c(abs(predict(fit600, x = x[, min(ncol(x), 2)])$y)))
             } else {
               sqrt(var(myratio))
@@ -294,8 +297,8 @@ lms.yjn.control <- function(trace = TRUE, ...)
         }
   }), list( .llambda = llambda, .lmu = lmu, .lsigma = lsigma,
             .elambda = elambda, .emu = emu, .esigma = esigma, 
-            .dfmu.init = dfmu.init,
-            .dfsigma.init = dfsigma.init,
+            .idf.mu = idf.mu,
+            .idf.sigma = idf.sigma,
             .ilambda = ilambda, .isigma = isigma ))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
     eta[, 1] <- eta2theta(eta[, 1], .llambda , earg = .elambda )
@@ -310,7 +313,7 @@ lms.yjn.control <- function(trace = TRUE, ...)
 
     misc$earg <- list(lambda = .elambda, mu = .emu, sigma = .esigma )
 
-    misc$percentiles <- .percentiles
+     misc$percentiles <- .percentiles  # These are argument values
     misc$true.mu <- FALSE    # $fitted is not a true mu
     if (control$cdf) {
       post$cdf <- cdf.lms.bcg(y, eta0 = matrix(c(lambda, mymu, sigma),
@@ -656,9 +659,9 @@ lms.yjn2.control <- function(save.weight = TRUE, ...) {
                       llambda = "identitylink",
                       lmu = "identitylink",
                       lsigma = "loge",
-                      dfmu.init=4,
-                      dfsigma.init = 2,
-                      ilambda=1.0,
+                      idf.mu = 4,
+                      idf.sigma = 2,
+                      ilambda = 1.0,
                       isigma = NULL,
                       yoffset = NULL,
                       nsimEIM = 250) {
@@ -693,7 +696,7 @@ lms.yjn2.control <- function(save.weight = TRUE, ...) {
             ", ",
             namesof("sigma", link = lsigma, earg = esigma)),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.vgam(constraints, x, .zero, M)
+    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
   }), list(.zero = zero))),
   initialize = eval(substitute(expression({
 
@@ -719,17 +722,17 @@ lms.yjn2.control <- function(save.weight = TRUE, ...) {
         if (smoothok <-
          (length(unique(sort(x[, min(ncol(x), 2)]))) > 7)) {
           fit700 <- vsmooth.spline(x = x[, min(ncol(x), 2)],
-                                   y = y.tx, w = w, df = .dfmu.init)
+                                   y = y.tx, w = w, df = .idf.mu )
           c(predict(fit700, x = x[, min(ncol(x), 2)])$y)
         } else {
           rep(weighted.mean(y, w), length.out = n)
         }
 
         sigma.init <- if (!is.Numeric(.isigma)) {
-                     if (is.Numeric( .dfsigma.init) && smoothok) {
+                     if (is.Numeric( .idf.sigma) && smoothok) {
                      fit710 = vsmooth.spline(x = x[, min(ncol(x), 2)],
                                       y = (y.tx - fv.init)^2,
-                                      w = w, df = .dfsigma.init)
+                                      w = w, df = .idf.sigma)
                           sqrt(c(abs(predict(fit710,
                                x = x[, min(ncol(x), 2)])$y)))
                    } else {
@@ -746,8 +749,8 @@ lms.yjn2.control <- function(save.weight = TRUE, ...) {
       }
   }), list(.llambda = llambda, .lmu = lmu, .lsigma = lsigma,
            .elambda = elambda, .emu = emu, .esigma = esigma, 
-           .dfmu.init = dfmu.init,
-           .dfsigma.init = dfsigma.init,
+           .idf.mu = idf.mu,
+           .idf.sigma = idf.sigma,
            .ilambda = ilambda,
            .yoffset=yoffset,
            .isigma = isigma))),
@@ -766,7 +769,7 @@ lms.yjn2.control <- function(save.weight = TRUE, ...) {
 
     misc$expected <- TRUE
     misc$nsimEIM <- .nsimEIM
-    misc$percentiles <- .percentiles
+    misc$percentiles  <- .percentiles  # These are argument values
 
     misc$true.mu <- FALSE # $fitted is not a true mu
     misc[["yoffset"]] <- extra$yoffset
@@ -862,8 +865,8 @@ lms.yjn2.control <- function(save.weight = TRUE, ...) {
                     zero = c(1, 3),
                     llambda = "identitylink",
                     lsigma = "loge",
-                    dfmu.init = 4,
-                    dfsigma.init = 2,
+                    idf.mu = 4,
+                    idf.sigma = 2,
                     ilambda = 1.0,
                     isigma = NULL,
                     rule = c(10, 5),
@@ -895,7 +898,7 @@ lms.yjn2.control <- function(save.weight = TRUE, ...) {
             ", mu, ",
             namesof("sigma", link = lsigma, earg = esigma)),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.vgam(constraints, x, .zero, M)
+    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
   }), list(.zero = zero))),
   initialize = eval(substitute(expression({
 
@@ -922,18 +925,18 @@ lms.yjn2.control <- function(save.weight = TRUE, ...) {
             if (smoothok <-
                (length(unique(sort(x[, min(ncol(x), 2)]))) > 7)) {
                 fit700 <- vsmooth.spline(x = x[, min(ncol(x), 2)],
-                                        y = y.tx, w = w, df = .dfmu.init)
+                                        y = y.tx, w = w, df = .idf.mu )
                 fv.init <- c(predict(fit700, x = x[, min(ncol(x), 2)])$y)
             } else {
                 fv.init <- rep(weighted.mean(y, w), length.out = n)
             }
 
             sigma.init <- if (!is.Numeric( .isigma )) {
-                           if (is.Numeric( .dfsigma.init) &&
+                           if (is.Numeric( .idf.sigma) &&
                                smoothok) {
                            fit710 = vsmooth.spline(x = x[, min(ncol(x), 2)],
                                       y = (y.tx - fv.init)^2,
-                                      w = w, df = .dfsigma.init)
+                                      w = w, df = .idf.sigma)
                              sqrt(c(abs(predict(fit710,
                                         x = x[, min(ncol(x), 2)])$y)))
                            } else {
@@ -951,8 +954,8 @@ lms.yjn2.control <- function(save.weight = TRUE, ...) {
   }), list(.lsigma = lsigma,
            .llambda = llambda,
            .esigma = esigma, .elambda = elambda,
-           .dfmu.init = dfmu.init,
-           .dfsigma.init = dfsigma.init,
+           .idf.mu = idf.mu,
+           .idf.sigma = idf.sigma,
            .ilambda = ilambda,
            .yoffset=yoffset,
            .isigma = isigma))),
@@ -968,12 +971,12 @@ lms.yjn2.control <- function(save.weight = TRUE, ...) {
           .lsigma = lsigma))),
   last = eval(substitute(expression({
     misc$link <-    c(lambda = .llambda, mu = "identitylink",
-                     sigma = .lsigma)
+                      sigma = .lsigma)
 
     misc$earg <- list(lambda = .elambda, mu = list(theta = NULL),
-                     sigma = .esigma)
+                      sigma = .esigma)
 
-    misc$percentiles <- .percentiles
+    misc$percentiles  <- .percentiles  # These are argument values
     misc$true.mu <- FALSE    # $fitted is not a true mu
     misc[["yoffset"]] <- extra$yoff
 
@@ -1264,7 +1267,7 @@ amlnormal.deviance <- function(mu, y, w, residuals = FALSE,
             "Links:    ",
             namesof("expectile", link = lexpectile, earg = eexpectile)),
   constraints = eval(substitute(expression({
-    constraints <- cm.vgam(matrix(1, M, 1), x = x,
+    constraints <- cm.VGAM(matrix(1, M, 1), x = x,
                            bool = .parallel ,
                            constraints = constraints)
   }), list( .parallel = parallel ))),
@@ -1328,7 +1331,7 @@ amlnormal.deviance <- function(mu, y, w, residuals = FALSE,
     ans
   }, list( .lexpectile = lexpectile, .eexpectile = eexpectile ))),
   last = eval(substitute(expression({
-    misc$link <- rep(.lexpectile, length = M)
+    misc$link <- rep(.lexpectile , length = M)
     names(misc$link) <- extra$y.names
 
     misc$earg <- vector("list", M)
@@ -1338,14 +1341,14 @@ amlnormal.deviance <- function(mu, y, w, residuals = FALSE,
 
     misc$parallel <- .parallel
     misc$expected <- TRUE
-    extra$percentile <- numeric(M)
+    extra$percentile <- numeric(M)  # These are estimates (empirical)
     misc$multipleResponses <- TRUE
 
 
     for (ii in 1:M) {
-        use.w <- if (M > 1 && ncol(cbind(w)) == M) w[, ii] else w
-        extra$percentile[ii] <- 100 *
-          weighted.mean(myresid[, ii] <= 0, use.w)
+      use.w <- if (M > 1 && ncol(cbind(w)) == M) w[, ii] else w
+      extra$percentile[ii] <- 100 *
+        weighted.mean(myresid[, ii] <= 0, use.w)
     }
     names(extra$percentile) <- names(misc$link)
 
@@ -1427,7 +1430,7 @@ amlpoisson.deviance <- function(mu, y, w, residuals = FALSE, eta,
             " asymmetric maximum likelihood estimation\n\n",
             "Link:     ", namesof("expectile", link, earg = earg)),
   constraints = eval(substitute(expression({
-    constraints <- cm.vgam(matrix(1, M, 1), x = x,
+    constraints <- cm.VGAM(matrix(1, M, 1), x = x,
                            bool = .parallel ,
                            constraints = constraints)
   }), list( .parallel = parallel ))),
@@ -1491,7 +1494,7 @@ amlpoisson.deviance <- function(mu, y, w, residuals = FALSE, eta,
       misc$earg[[ilocal]] <- list(theta = NULL)
     names(misc$earg) <- names(misc$link)
 
-    extra$percentile <- numeric(M)
+    extra$percentile <- numeric(M)  # These are estimates (empirical)
     for (ii in 1:M)
       extra$percentile[ii] <- 100 * weighted.mean(myresid[, ii] <= 0, w)
     names(extra$percentile) <- names(misc$link)
@@ -1583,7 +1586,7 @@ amlbinomial.deviance <- function(mu, y, w, residuals = FALSE,
             "asymmetric maximum likelihood estimation\n\n",
             "Link:     ", namesof("expectile", link, earg = earg)),
   constraints = eval(substitute(expression({
-    constraints <- cm.vgam(matrix(1, M, 1), x = x,
+    constraints <- cm.VGAM(matrix(1, M, 1), x = x,
                            bool = .parallel ,
                            constraints = constraints)
   }), list( .parallel = parallel ))),
@@ -1660,7 +1663,7 @@ amlbinomial.deviance <- function(mu, y, w, residuals = FALSE,
     misc$parallel <- .parallel
     misc$expected <- TRUE
 
-    extra$percentile <- numeric(M)
+    extra$percentile <- numeric(M)  # These are estimates (empirical)
     for (ii in 1:M)
       extra$percentile[ii] <- 100 * weighted.mean(myresid[, ii] <= 0, w)
     names(extra$percentile) <- names(misc$link)
@@ -1752,7 +1755,7 @@ amlexponential.deviance <- function(mu, y, w, residuals = FALSE,
             " asymmetric maximum likelihood estimation\n\n",
             "Link:     ", predictors.names),
   constraints = eval(substitute(expression({
-    constraints <- cm.vgam(matrix(1, M, 1), x = x,
+    constraints <- cm.VGAM(matrix(1, M, 1), x = x,
                            bool = .parallel ,
                            constraints = constraints)
   }), list( .parallel = parallel ))),
@@ -1820,7 +1823,7 @@ amlexponential.deviance <- function(mu, y, w, residuals = FALSE,
     names(misc$earg) <- names(misc$link)
 
 
-    extra$percentile <- numeric(M)
+    extra$percentile <- numeric(M)  # These are estimates (empirical)
     for (ii in 1:M)
       extra$percentile[ii] <- 100 * weighted.mean(myresid[, ii] <= 0, w)
     names(extra$percentile) <- names(misc$link)
@@ -2371,22 +2374,34 @@ pclogloglap <- function(q, location.ald = 0, scale.ald = 1,
 
 
 
+
+
 alaplace2.control <- function(maxit = 100, ...) {
   list(maxit = maxit)
 }
 
 
- alaplace2 <- function(tau = NULL,
-              llocation = "identitylink", lscale = "loge",
-              ilocation = NULL,       iscale = NULL,
-              kappa = sqrt(tau / (1-tau)),
-              shrinkage.init = 0.95,
-              parallelLocation = FALSE, digt = 4,
-              eq.scale = TRUE,
-              dfmu.init = 3,
-              intparloc = FALSE,
-              imethod = 1,
-              zero = -2) {
+ alaplace2 <-
+  function(tau = NULL,
+           llocation = "identitylink", lscale = "loge",
+           ilocation = NULL,           iscale = NULL,
+           kappa = sqrt(tau / (1-tau)),
+           ishrinkage = 0.95,
+
+           parallel.locat = TRUE  ~ 0,
+           parallel.scale = FALSE ~ 0,
+
+           digt = 4,
+           idf.mu = 3,
+           imethod = 1,
+           zero = -2) {
+
+
+
+  apply.parint.locat <- FALSE
+  apply.parint.scale <- TRUE
+
+
 
 
   llocat <- as.list(substitute(llocation))
@@ -2410,10 +2425,10 @@ alaplace2.control <- function(maxit = 100, ...) {
   if (length(iscale) &&
       !is.Numeric(iscale, positive = TRUE))
     stop("bad input for argument 'iscale'")
-  if (!is.Numeric(shrinkage.init, length.arg = 1) ||
-    shrinkage.init < 0 ||
-    shrinkage.init > 1)
-    stop("bad input for argument 'shrinkage.init'")
+  if (!is.Numeric(ishrinkage, length.arg = 1) ||
+    ishrinkage < 0 ||
+    ishrinkage > 1)
+    stop("bad input for argument 'ishrinkage'")
   if (length(zero) &&
      !(is.Numeric(zero, integer.valued = TRUE) ||
        is.character(zero )))
@@ -2425,82 +2440,86 @@ alaplace2.control <- function(maxit = 100, ...) {
 
 
 
-  if (!is.logical(intparloc) || length(intparloc) != 1)
-    stop("argument 'intparloc' must be a single logical")
-  if (!is.logical(eq.scale) || length(eq.scale) != 1)
-    stop("argument 'eq.scale' must be a single logical")
-  if (!is.logical(parallelLocation) || length(parallelLocation) != 1)
-    stop("argument 'parallelLocation' must be a single logical")
+
+
   fittedMean <- FALSE
   if (!is.logical(fittedMean) || length(fittedMean) != 1)
     stop("bad input for argument 'fittedMean'")
 
+
+
+
+
   new("vglmff",
   blurb = c("Two-parameter asymmetric Laplace distribution\n\n",
             "Links:      ",
-            namesof("location", llocat, earg = elocat), ", ",
-            namesof("scale",    lscale, earg = escale), "\n\n",
+            namesof("location1", llocat, earg = elocat), ", ",
+            namesof("scale1",    lscale, earg = escale), ", ",
+            namesof("location2", llocat, earg = elocat), ", ",
+            namesof("scale2",    lscale, earg = escale),
+            ", ..., ",
+            "\n\n",
             "Mean:       ",
             "location + scale * (1/kappa - kappa) / sqrt(2)", "\n",
             "Quantiles:  location", "\n",
             "Variance:   scale^2 * (1 + kappa^4) / (2 * kappa^2)"),
+
+
+
+
   constraints = eval(substitute(expression({
-
-
-
-    orig.constraints <- constraints
-
-
-
-    .PARALLEL <- .parallelLocation
-
+ 
 
     onemat <- matrix(1, Mdiv2, 1)
-    locatHmat1 <- kronecker(if ( .intparloc ) onemat else
-                           diag(Mdiv2), rbind(1, 0))
-    scaleHmat1 <- kronecker(if ( .eq.scale ) onemat else
-                           diag(Mdiv2), rbind(0, 1))
-
-    locatHmatk <- kronecker(if ( .PARALLEL ) onemat else
-                           diag(Mdiv2), rbind(1, 0))
-    scaleHmatk <- scaleHmat1
+    constraints.orig <- constraints
 
 
-    constraints <- cm.vgam(cbind(locatHmatk, scaleHmatk),
-                           x = x,
-                           bool = .PARALLEL , 
-                           constraints = constraints,
-                           apply.int = FALSE)
+    cm1.locat <- kronecker(diag(Mdiv2), rbind(1, 0))
+    cmk.locat <- kronecker(onemat,      rbind(1, 0))
+    con.locat <- cm.VGAM(cmk.locat,
+                         x = x, bool = .parallel.locat ,
+                         constraints = constraints.orig,
+                         apply.int = .apply.parint.locat ,
+                         cm.default           = cm1.locat,
+                         cm.intercept.default = cm1.locat)
+   
+    
 
-      if (names(constraints)[1] == "(Intercept)") {
-        constraints[["(Intercept)"]] = cbind(locatHmat1, scaleHmat1)
-      }
-
-
-      dotzero <- .zero
-      M1 <- 2
-      eval(negzero.expression)
-      constraints <- cm.zero.vgam(constraints, x, z.Index, M)
-
-
-
-
-  if (length(orig.constraints)) {
-    if (!identical(orig.constraints, constraints)) {
-      warning("the inputted 'constraints' argument does not match with ",
-              "the 'zero', 'parallel', 'eq.scale' arguments. ",
-              "Using the inputted 'constraints'.")
-      constraints <- orig.constraints
+    cm1.scale <- kronecker(diag(Mdiv2), rbind(0, 1))
+    cmk.scale <- kronecker(onemat,      rbind(0, 1))
+    con.scale <- cm.VGAM(cmk.scale,
+                         x = x, bool = .parallel.scale ,
+                         constraints = constraints.orig,
+                         apply.int = .apply.parint.scale ,
+                         cm.default           = cm1.scale,
+                         cm.intercept.default = cm1.scale)
+   
+    con.use <- con.scale
+    for (klocal in 1:length(con.scale)) {
+      con.use[[klocal]] <- cbind(con.locat[[klocal]],
+                                 con.scale[[klocal]])
     }
-  }
 
-  }), list( .eq.scale = eq.scale,
-            .parallelLocation = parallelLocation,
-            .intparloc = intparloc,
-            .zero = zero ))),
+    
+    constraints <- con.use
+
+    dotzero <- .zero
+    M1 <- 2
+    eval(negzero.expression.VGAM)
+    constraints <- cm.zero.VGAM(constraints, x, z.Index, M)
+  }), list( .parallel.locat = parallel.locat,
+            .parallel.scale = parallel.scale,
+            .zero = zero,
+            .apply.parint.scale = apply.parint.scale,
+            .apply.parint.locat = apply.parint.locat ))),
+
+
+
+
   infos = eval(substitute(function(...) {
     list(M1 = 2,
-         zero = .zero)
+         summary.pvalues = FALSE,
+         zero = .zero )
   }, list( .zero = zero ))),
   initialize = eval(substitute(expression({
     extra$M1 <- M1 <- 2
@@ -2508,9 +2527,10 @@ alaplace2.control <- function(maxit = 100, ...) {
 
     temp5 <-
     w.y.check(w = w, y = y,
-              ncol.w.max = 1,
+              ncol.w.max = if (length( .kappa ) > 1) 1 else Inf,
               ncol.y.max = if (length( .kappa ) > 1) 1 else Inf,
               out.wy = TRUE,
+              colsyperw = 1,  # Uncommented out 20140621
               maximize = TRUE)
     w <- temp5$w
     y <- temp5$y
@@ -2558,27 +2578,28 @@ alaplace2.control <- function(maxit = 100, ...) {
     if (!length(etastart)) {
       for (jay in 1:Mdiv2) {
         y.use <- if (ncoly > 1) y[, jay] else y
+        Jay   <- if (ncoly > 1) jay else 1
         if ( .imethod == 1) {
-          locat.init[, jay] <- weighted.mean(y.use, w[, jay])
+          locat.init[, jay] <- weighted.mean(y.use, w[, Jay])
           scale.init[, jay] <- sqrt(var(y.use) / 2)
         } else if ( .imethod == 2) {
           locat.init[, jay] <- median(y.use)
-          scale.init[, jay] <- sqrt(sum(c(w[, jay]) *
-             abs(y - median(y.use))) / (sum(w[, jay]) * 2))
+          scale.init[, jay] <- sqrt(sum(c(w[, Jay]) *
+             abs(y - median(y.use))) / (sum(w[, Jay]) * 2))
         } else if ( .imethod == 3) {
           Fit5 <- vsmooth.spline(x = x[, min(ncol(x), 2)],
-                                y = y.use, w = w[, jay],
-                                df = .dfmu.init )
+                                 y = y.use, w = w[, Jay],
+                                 df = .idf.mu )
           locat.init[, jay] <- predict(Fit5, x = x[, min(ncol(x), 2)])$y
-          scale.init[, jay] <-
-            sqrt(sum(c(w[, jay]) *
-            abs(y.use - median(y.use))) / (sum(w[, jay]) * 2))
+          scale.init[, jay] <- sqrt(sum(c(w[, Jay]) *
+                                    abs(y.use - median(y.use))) / (
+                                        sum(w[, Jay]) * 2))
         } else {
-          use.this <- weighted.mean(y.use, w[, jay])
-          locat.init[, jay] <- (1 - .sinit) * y.use + .sinit * use.this
-          scale.init[, jay] =
-            sqrt(sum(c(w[, jay]) *
-            abs(y.use - median(y.use ))) / (sum(w[, jay]) * 2))
+          use.this <- weighted.mean(y.use, w[, Jay])
+          locat.init[, jay] <- (1 - .ishrinkage ) * y.use + .ishrinkage * use.this
+          scale.init[, jay] <-
+            sqrt(sum(c(w[, Jay]) *
+            abs(y.use - median(y.use ))) / (sum(w[, Jay]) * 2))
         }
       }
 
@@ -2597,8 +2618,8 @@ alaplace2.control <- function(maxit = 100, ...) {
       etastart <- etastart[, interleave.VGAM(M, M = M1), drop = FALSE]
     }
   }), list( .imethod = imethod,
-            .dfmu.init = dfmu.init,
-            .sinit = shrinkage.init, .digt = digt,
+            .idf.mu = idf.mu,
+            .ishrinkage = ishrinkage, .digt = digt,
             .elocat = elocat, .escale = escale,
             .llocat = llocat, .lscale = lscale, .kappa = kappa,
             .ilocat = ilocat, .iscale = iscale ))),
@@ -2609,9 +2630,9 @@ alaplace2.control <- function(maxit = 100, ...) {
     dimnames(locat) <- list(dimnames(eta)[[1]], extra$y.names)
     myans <- if ( .fittedMean ) {
       kappamat <- matrix(extra$kappa, extra$n, extra$Mdiv2,
-                        byrow = TRUE)
+                         byrow = TRUE)
       Scale <- eta2theta(eta[, 2 * (1:Mdiv2)    , drop = FALSE],
-                        .lscale , earg = .escale )
+                         .lscale , earg = .escale )
       locat + Scale * (1/kappamat - kappamat)
     } else {
       locat
@@ -2626,10 +2647,10 @@ alaplace2.control <- function(maxit = 100, ...) {
     M1 <- extra$M1
 
     tmp34 <- c(rep( .llocat , length = Mdiv2),
-              rep( .lscale , length = Mdiv2))
+               rep( .lscale , length = Mdiv2))
     names(tmp34) <- c(mynames1, mynames2) 
     tmp34 <- tmp34[interleave.VGAM(M, M = M1)]
-    misc$link <- tmp34 # Already named
+    misc$link <- tmp34  # Already named
 
     misc$earg <- vector("list", M)
     misc$M1 <- M1
@@ -2644,22 +2665,20 @@ alaplace2.control <- function(maxit = 100, ...) {
     misc$expected <- TRUE
     extra$kappa <- misc$kappa <- .kappa
     extra$tau <- misc$tau <- misc$kappa^2 / (1 + misc$kappa^2)
-    misc$true.mu <- .fittedMean # @fitted is not a true mu?
-    misc$intparloc <- .intparloc
+    misc$true.mu <- .fittedMean  # @fitted is not a true mu?
 
     extra$percentile <- numeric(Mdiv2)  # length(misc$kappa)
     locat <- as.matrix(locat)
     for (ii in 1:Mdiv2) {
       y.use <- if (ncoly > 1) y[, ii] else y
+      Jay   <- if (ncoly > 1) ii else 1
       extra$percentile[ii] <- 100 * weighted.mean(y.use <= locat[, ii],
-                                                 w[, ii])
+                                                  w[, Jay])
     }
-    # if (ncoly > 1) names(misc$link) else zz:
     names(extra$percentile) <- y.names
   }), list( .elocat = elocat, .llocat = llocat,
             .escale = escale, .lscale = lscale,
             .fittedMean = fittedMean,
-            .intparloc = intparloc,
             .kappa = kappa ))),
 
   loglikelihood = eval(substitute(
@@ -2732,9 +2751,9 @@ alaplace2.control <- function(maxit = 100, ...) {
     kappamat <- matrix(extra$kappa, n, Mdiv2, byrow = TRUE)
     zedd <- abs(ymat - locat) / Scale
     dl.dlocat <- sqrt(2) * ifelse(ymat >= locat, kappamat, 1/kappamat) *
-                sign(ymat - locat) / Scale
+                 sign(ymat - locat) / Scale
     dl.dscale <- sqrt(2) * ifelse(ymat >= locat, kappamat, 1/kappamat) *
-                zedd / Scale - 1 / Scale
+                 zedd / Scale - 1 / Scale
     dlocat.deta <- dtheta.deta(locat, .llocat , earg = .elocat )
     dscale.deta <- dtheta.deta(Scale, .lscale , earg = .escale )
 
@@ -2757,8 +2776,7 @@ alaplace2.control <- function(maxit = 100, ...) {
     c(w) * wz
   }), list( .escale = escale, .lscale = lscale,
             .elocat = elocat, .llocat = llocat ))))
-}
-
+}  # End of alaplace2().
 
 
 
@@ -2777,19 +2795,31 @@ alaplace1.control <- function(maxit = 100, ...) {
 
 
 
- alaplace1 <- function(tau = NULL,
-                      llocation = "identitylink",
-                      ilocation = NULL,
-                      kappa = sqrt(tau/(1-tau)),
-                      Scale.arg = 1,
-                      shrinkage.init = 0.95,
-                      parallelLocation = FALSE, digt = 4,
-                      dfmu.init = 3,
-                      intparloc = FALSE,
-                      imethod = 1) {
 
 
 
+
+
+ alaplace1 <-
+  function(tau = NULL,
+           llocation = "identitylink",
+           ilocation = NULL,
+           kappa = sqrt(tau/(1-tau)),
+           Scale.arg = 1,
+           ishrinkage = 0.95,
+           parallel.locat = TRUE  ~ 0,  # FALSE,
+           digt = 4,
+           idf.mu = 3,
+           zero = NULL,
+           imethod = 1) {
+
+
+
+  apply.parint.locat <- FALSE
+
+
+
+  
   if (!is.Numeric(kappa, positive = TRUE))
     stop("bad input for argument 'kappa'")
   if (length(tau) &&
@@ -2810,17 +2840,17 @@ alaplace1.control <- function(maxit = 100, ...) {
   ilocat <- ilocation
 
 
-  if (!is.Numeric(shrinkage.init, length.arg = 1) ||
-     shrinkage.init < 0 ||
-     shrinkage.init > 1)
-    stop("bad input for argument 'shrinkage.init'")
+  if (!is.Numeric(ishrinkage, length.arg = 1) ||
+     ishrinkage < 0 ||
+     ishrinkage > 1)
+    stop("bad input for argument 'ishrinkage'")
   if (!is.Numeric(Scale.arg, positive = TRUE))
     stop("bad input for argument 'Scale.arg'")
 
-
-  if (!is.logical(parallelLocation) ||
-      length(parallelLocation) != 1)
-    stop("bad input for argument 'parallelLocation'")
+  if (length(zero) &&
+     !(is.Numeric(zero, integer.valued = TRUE) ||
+       is.character(zero )))
+      stop("bad input for argument 'zero'")
 
 
 
@@ -2841,42 +2871,38 @@ alaplace1.control <- function(maxit = 100, ...) {
                          "sqrt(2)", "\n",
             "Quantiles:  location", "\n",
             "Variance:   scale^2 * (1 + kappa^4) / (2 * kappa^2)"),
+
+
+
+
   constraints = eval(substitute(expression({
 
-    orig.constraints <- constraints
-
-    
-
-
     onemat <- matrix(1, M, 1)
-    locatHmat1 <- if ( .intparloc ) onemat else diag(M)
-    locatHmatk <- if ( .parallelLocation ) onemat else diag(M)
-
-      constraints <- cm.vgam(locatHmatk, x = x,
-                             bool = .parallelLocation, 
-                             constraints = constraints,
-                             apply.int = FALSE)
-
-      if (names(constraints)[1] == "(Intercept)") {
-          constraints[["(Intercept)"]] = locatHmat1
-      }
+    constraints.orig <- constraints
 
 
+    cm1.locat <- diag(M)
+    cmk.locat <- onemat
+    con.locat <- cm.VGAM(cmk.locat,
+                         x = x, bool = .parallel.locat ,
+                         constraints = constraints.orig,
+                         apply.int = .apply.parint.locat ,
+                         cm.default           = cm1.locat,
+                         cm.intercept.default = cm1.locat)
+   
+    
+    constraints <- con.locat
+
+    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
+  }), list( .parallel.locat = parallel.locat,
+            .zero = zero,
+            .apply.parint.locat = apply.parint.locat ))),
 
 
-  if (length(orig.constraints)) {
-    if (!identical(orig.constraints, constraints)) {
-      warning("the inputted 'constraints' argument does not match with ",
-              "the 'parallel', 'eq.scale' arguments. ",
-              "Using the inputted 'constraints'.")
-      constraints <- orig.constraints
-    }
-  }
 
-  }), list( .parallelLocation = parallelLocation,
-            .intparloc = intparloc ))),
   infos = eval(substitute(function(...) {
     list(M1 = 1,
+         summary.pvalues = FALSE,
          tau   = .tau,
          kappa = .kappa)
   }, list( .kappa = kappa,
@@ -2887,7 +2913,7 @@ alaplace1.control <- function(maxit = 100, ...) {
 
     temp5 <-
     w.y.check(w = w, y = y,
-              ncol.w.max = 1,
+              ncol.w.max = if (length( .kappa ) > 1) 1 else Inf,
               ncol.y.max = if (length( .kappa ) > 1) 1 else Inf,
               out.wy = TRUE,
               maximize = TRUE)
@@ -2906,13 +2932,13 @@ alaplace1.control <- function(maxit = 100, ...) {
     extra$tau <- extra$kappa^2 / (1 + extra$kappa^2)
 
 
-        extra$M <- M <- max(length( .Scale.arg ),
-                          ncoly,
-                          length( .kappa ))  # Recycle
-        extra$Scale <- rep( .Scale.arg, length = M)
-        extra$kappa <- rep( .kappa, length = M)
-        extra$tau <- extra$kappa^2 / (1 + extra$kappa^2)
-        extra$n <- n
+    extra$M <- M <- max(length( .Scale.arg ),
+                        ncoly,
+                        length( .kappa ))  # Recycle
+    extra$Scale <- rep( .Scale.arg , length = M)
+    extra$kappa <- rep( .kappa , length = M)
+    extra$tau <- extra$kappa^2 / (1 + extra$kappa^2)
+    extra$n <- n
 
 
 
@@ -2929,7 +2955,7 @@ alaplace1.control <- function(maxit = 100, ...) {
 
     mynames1 <- paste("location", if (M > 1) 1:M else "", sep = "")
     predictors.names <-
-        c(namesof(mynames1, .llocat , earg = .elocat, tag = FALSE))
+        c(namesof(mynames1, .llocat , earg = .elocat , tag = FALSE))
 
 
     locat.init <- matrix(0, n, M)
@@ -2938,16 +2964,16 @@ alaplace1.control <- function(maxit = 100, ...) {
       for (jay in 1:M) {
         y.use <- if (ncoly > 1) y[, jay] else y
         if ( .imethod == 1) {
-          locat.init[, jay] <- weighted.mean(y.use, w)
+          locat.init[, jay] <- weighted.mean(y.use, w[, min(jay, ncol(w))])
         } else if ( .imethod == 2) {
           locat.init[, jay] <- median(y.use)
         } else if ( .imethod == 3) {
-          Fit5 = vsmooth.spline(x = x[, min(ncol(x), 2)],
-                                y = y.use, w = w, df = .dfmu.init)
+          Fit5 <- vsmooth.spline(x = x[, min(ncol(x), 2)],
+                                 y = y.use, w = w, df = .idf.mu )
           locat.init[, jay] <- c(predict(Fit5, x = x[, min(ncol(x), 2)])$y)
         } else {
-          use.this <- weighted.mean(y.use, w)
-          locat.init[, jay] <- (1- .sinit) * y.use + .sinit * use.this
+          use.this <- weighted.mean(y.use, w[, min(jay, ncol(w))])
+          locat.init[, jay] <- (1- .ishrinkage ) * y.use + .ishrinkage * use.this
         }
 
 
@@ -2961,8 +2987,8 @@ alaplace1.control <- function(maxit = 100, ...) {
       }
     }
     }), list( .imethod = imethod,
-              .dfmu.init = dfmu.init,
-              .sinit = shrinkage.init, .digt = digt,
+              .idf.mu = idf.mu,
+              .ishrinkage = ishrinkage, .digt = digt,
               .elocat = elocat, .Scale.arg = Scale.arg,
               .llocat = llocat, .kappa = kappa,
               .ilocat = ilocat ))),
@@ -3006,8 +3032,8 @@ alaplace1.control <- function(maxit = 100, ...) {
     locat <- as.matrix(locat)
     for (ii in 1:M) {
       y.use <- if (ncoly > 1) y[, ii] else y
-      extra$percentile[ii] =
-        100 * weighted.mean(y.use <= locat[, ii], w)
+      extra$percentile[ii] <-
+        100 * weighted.mean(y.use <= locat[, ii], w[, min(ii, ncol(w))])
     }
     names(extra$percentile) <- y.names
 
@@ -3105,10 +3131,10 @@ alaplace3.control <- function(maxit = 100, ...) {
 
 
 
- alaplace3 <- function(
-          llocation = "identitylink", lscale = "loge", lkappa = "loge",
-          ilocation = NULL,       iscale = NULL,   ikappa = 1.0,
-          imethod = 1, zero = 2:3) {
+ alaplace3 <-
+  function(llocation = "identitylink", lscale = "loge", lkappa = "loge",
+           ilocation = NULL,           iscale = NULL,   ikappa = 1.0,
+           imethod = 1, zero = 2:3) {
 
   llocat <- as.list(substitute(llocation))
   elocat <- link2list(llocat)
@@ -3147,8 +3173,14 @@ alaplace3.control <- function(maxit = 100, ...) {
             "\n",
             "Variance: Scale^2 * (1 + kappa^4) / (2 * kappa^2)"),
   constraints = eval(substitute(expression({
-      constraints <- cm.zero.vgam(constraints, x, .zero, M)
+    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
   }), list( .zero = zero ))),
+  infos = eval(substitute(function(...) {
+    list(M1 = 3,
+         summary.pvalues = FALSE,
+         zero = .zero )
+  }, list( .zero = zero ))),
+
   initialize = eval(substitute(expression({
 
     w.y.check(w = w, y = y,
@@ -3339,6 +3371,9 @@ rlaplace <- function(n, location = 0, scale = 1) {
 }
 
 
+
+
+  
  laplace <- function(llocation = "identitylink", lscale = "loge",
                      ilocation = NULL, iscale = NULL,
                      imethod = 1, zero = 2) {
@@ -3377,7 +3412,7 @@ rlaplace <- function(n, location = 0, scale = 1) {
             "Mean:     location", "\n",
             "Variance: 2*scale^2"),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.vgam(constraints, x, .zero, M)
+    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
   }), list( .zero = zero ))),
   initialize = eval(substitute(expression({
 
@@ -3522,7 +3557,7 @@ fff.control <- function(save.weight = TRUE, ...) {
             "2*df2^2*(df1+df2-2)/(df1*(df2-2)^2*(df2-4)) ",
             "provided df2>4 and ncp = 0"),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.vgam(constraints, x, .zero, M)
+    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
   }), list( .zero = zero ))),
   initialize = eval(substitute(expression({
 
@@ -3800,7 +3835,8 @@ fff.control <- function(save.weight = TRUE, ...) {
 
 
 
-dbenini <- function(x, shape, y0, log = FALSE) {
+
+dbenini <- function(x, y0, shape, log = FALSE) {
   if (!is.logical(log.arg <- log) || length(log) != 1)
     stop("bad input for argument 'log'")
   rm(log)
@@ -3821,7 +3857,7 @@ dbenini <- function(x, shape, y0, log = FALSE) {
 }
 
 
-pbenini <- function(q, shape, y0) {
+pbenini <- function(q, y0, shape) {
   if (!is.Numeric(q))
     stop("bad input for argument 'q'")
   if (!is.Numeric(shape, positive = TRUE))
@@ -3840,7 +3876,7 @@ pbenini <- function(q, shape, y0) {
 }
 
 
-qbenini <- function(p, shape, y0) {
+qbenini <- function(p, y0, shape) {
   if (!is.Numeric(p, positive = TRUE) ||
       any(p >= 1)) 
     stop("bad input for argument 'p'")
@@ -3852,16 +3888,17 @@ qbenini <- function(p, shape, y0) {
 }
 
 
-rbenini <- function(n, shape, y0) {
+rbenini <- function(n, y0, shape) {
   y0 * exp(sqrt(-log(runif(n)) / shape))
 }
 
 
 
 
- benini <- function(y0 = stop("argument 'y0' must be specified"),
-                   lshape = "loge",
-                   ishape = NULL, imethod = 1, zero = NULL) {
+
+ benini1 <- function(y0 = stop("argument 'y0' must be specified"),
+                     lshape = "loge",
+                     ishape = NULL, imethod = 1, zero = NULL) {
 
   lshape <- as.list(substitute(lshape))
   eshape <- link2list(lshape)
@@ -3886,11 +3923,11 @@ rbenini <- function(n, shape, y0) {
             "Link:    ",
             namesof("shape", lshape, earg = eshape),
             "\n", "\n",
-            "Median:     qbenini(p = 0.5, shape, y0)"),
+            "Median:     qbenini(p = 0.5, y0, shape)"),
   constraints = eval(substitute(expression({
     dotzero <- .zero
     M1 <- 1
-    eval(negzero.expression)
+    eval(negzero.expression.VGAM)
   }), list( .zero = zero ))),
 
   infos = eval(substitute(function(...) {
@@ -3950,7 +3987,7 @@ rbenini <- function(n, shape, y0) {
     shape <- eta2theta(eta, .lshape , earg = .eshape )
 
 
-    qbenini(p = 0.5, shape, y0 = extra$y0)
+    qbenini(p = 0.5, y0 = extra$y0, shape)
   }, list( .lshape = lshape, .eshape = eshape ))),
   last = eval(substitute(expression({
     M1 <- extra$M1
@@ -3980,7 +4017,7 @@ rbenini <- function(n, shape, y0) {
     if (residuals) {
       stop("loglikelihood residuals not implemented yet")
     } else {
-      ll.elts <- c(w) * dbenini(x = y, shape = shape, y0 = y0, log = TRUE)
+      ll.elts <- c(w) * dbenini(x = y, y0 = y0, shape = shape, log = TRUE)
       if (summation) {
         sum(ll.elts)
       } else {
@@ -3988,7 +4025,7 @@ rbenini <- function(n, shape, y0) {
       }
     }
   }, list( .lshape = lshape, .eshape = eshape ))),
-  vfamily = c("benini"),
+  vfamily = c("benini1"),
 
 
 
@@ -4005,7 +4042,7 @@ rbenini <- function(n, shape, y0) {
     extra <- object@extra
     shape <- eta2theta(eta, .lshape , earg = .eshape )
     y0 <- extra$y0
-    rbenini(nsim * length(shape), shape = shape, y0 = y0)
+    rbenini(nsim * length(shape), y0 = y0, shape = shape)
   }, list( .lshape = lshape, .eshape = eshape ))),
 
 
@@ -4408,9 +4445,9 @@ loglaplace1.control <- function(maxit = 300, ...) {
                      ilocation = NULL,
                      kappa = sqrt(tau/(1-tau)),
                      Scale.arg = 1,
-                     shrinkage.init = 0.95,
-                     parallelLocation = FALSE, digt = 4,
-                     dfmu.init = 3,
+                     ishrinkage = 0.95,
+                     parallel.locat = FALSE, digt = 4,
+                     idf.mu = 3,
                      rep0 = 0.5,  # 0.0001,
                      minquantile = 0, maxquantile = Inf,
                      imethod = 1, zero = NULL) {
@@ -4448,10 +4485,10 @@ loglaplace1.control <- function(maxit = 300, ...) {
     stop("argument 'imethod' must be 1, 2 or ... 4")
 
 
-  if (!is.Numeric(shrinkage.init, length.arg = 1) ||
-     shrinkage.init < 0 ||
-     shrinkage.init > 1)
-    stop("bad input for argument 'shrinkage.init'")
+  if (!is.Numeric(ishrinkage, length.arg = 1) ||
+     ishrinkage < 0 ||
+     ishrinkage > 1)
+    stop("bad input for argument 'ishrinkage'")
 
   if (length(zero) &&
      !(is.Numeric(zero, integer.valued = TRUE, positive = TRUE) ||
@@ -4459,9 +4496,9 @@ loglaplace1.control <- function(maxit = 300, ...) {
     stop("bad input for argument 'zero'")
   if (!is.Numeric(Scale.arg, positive = TRUE))
     stop("bad input for argument 'Scale.arg'")
-  if (!is.logical(parallelLocation) ||
-      length(parallelLocation) != 1)
-    stop("bad input for argument 'parallelLocation'")
+  if (!is.logical(parallel.locat) ||
+      length(parallel.locat) != 1)
+    stop("bad input for argument 'parallel.locat'")
 
   fittedMean <- FALSE
   if (!is.logical(fittedMean) || length(fittedMean) != 1)
@@ -4485,11 +4522,11 @@ loglaplace1.control <- function(maxit = 300, ...) {
             "Links:      ", mystring0, "\n", "\n",
           "Quantiles:  ", mystring1),
   constraints = eval(substitute(expression({
-    constraints <- cm.vgam(matrix(1, M, 1), x = x,
-                           bool = .parallelLocation ,
+    constraints <- cm.VGAM(matrix(1, M, 1), x = x,
+                           bool = .parallel.locat ,
                            constraints = constraints, apply.int = FALSE)
-    constraints <- cm.zero.vgam(constraints, x, .zero, M)
-  }), list( .parallelLocation = parallelLocation,
+    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
+  }), list( .parallel.locat = parallel.locat,
             .Scale.arg = Scale.arg, .zero = zero ))),
   initialize = eval(substitute(expression({
     extra$M <- M <- max(length( .Scale.arg ), length( .kappa ))  # Recycle
@@ -4536,18 +4573,19 @@ loglaplace1.control <- function(maxit = 300, ...) {
 
         if (!length(etastart)) {
             if ( .imethod == 1) {
-                locat.init <- quantile(rep(y, w), probs= extra$tau) + 1/16
+              locat.init <- quantile(rep(y, w), probs= extra$tau) + 1/16
             } else if ( .imethod == 2) {
-                locat.init <- weighted.mean(y, w)
+              locat.init <- weighted.mean(y, w)
             } else if ( .imethod == 3) {
-                locat.init <- median(y)
+              locat.init <- median(y)
             } else if ( .imethod == 4) {
-                Fit5 <- vsmooth.spline(x = x[, min(ncol(x), 2)], y = y, w = w,
-                                        df = .dfmu.init)
-                locat.init <- c(predict(Fit5, x = x[, min(ncol(x), 2)])$y)
+              Fit5 <- vsmooth.spline(x = x[, min(ncol(x), 2)],
+                                     y = y, w = w,
+                                     df = .idf.mu )
+              locat.init <- c(predict(Fit5, x = x[, min(ncol(x), 2)])$y)
             } else {
-                use.this <- weighted.mean(y, w)
-                locat.init <- (1- .sinit)*y + .sinit * use.this
+              use.this <- weighted.mean(y, w)
+              locat.init <- (1- .ishrinkage )*y + .ishrinkage * use.this
             }
             locat.init <- if (length( .ilocat))
                              rep( .ilocat, length.out = M) else
@@ -4559,8 +4597,8 @@ loglaplace1.control <- function(maxit = 300, ...) {
                 cbind(theta2eta(locat.init, .llocat , earg = .elocat ))
         }
     }), list( .imethod = imethod,
-              .dfmu.init = dfmu.init, .rep0 = rep0,
-              .sinit = shrinkage.init, .digt = digt,
+              .idf.mu = idf.mu, .rep0 = rep0,
+              .ishrinkage = ishrinkage, .digt = digt,
               .elocat = elocat, .Scale.arg = Scale.arg,
               .llocat = llocat, .kappa = kappa,
               .ilocat = ilocat ))),
@@ -4686,10 +4724,10 @@ loglaplace2.control <- function(save.weight = TRUE, ...) {
                          llocation = "loge", lscale = "loge",
                          ilocation = NULL, iscale = NULL,
                          kappa = sqrt(tau/(1-tau)),
-                         shrinkage.init = 0.95,
-                         parallelLocation = FALSE, digt = 4,
+                         ishrinkage = 0.95,
+                         parallel.locat = FALSE, digt = 4,
                          eq.scale = TRUE,
-                         dfmu.init = 3,
+                         idf.mu = 3,
                          rep0 = 0.5, nsimEIM = NULL,
                          imethod = 1, zero = "(1 + M/2):M") {
  warning("it is best to use loglaplace1()")
@@ -4728,19 +4766,19 @@ loglaplace2.control <- function(save.weight = TRUE, ...) {
     stop("bad input for argument 'iscale'")
 
 
-  if (!is.Numeric(shrinkage.init, length.arg = 1) ||
-     shrinkage.init < 0 ||
-     shrinkage.init > 1)
-    stop("bad input for argument 'shrinkage.init'")
+  if (!is.Numeric(ishrinkage, length.arg = 1) ||
+     ishrinkage < 0 ||
+     ishrinkage > 1)
+    stop("bad input for argument 'ishrinkage'")
   if (length(zero) &&
      !(is.Numeric(zero, integer.valued = TRUE, positive = TRUE) ||
        is.character(zero )))
     stop("bad input for argument 'zero'")
   if (!is.logical(eq.scale) || length(eq.scale) != 1)
     stop("bad input for argument 'eq.scale'")
-  if (!is.logical(parallelLocation) ||
-      length(parallelLocation) != 1)
-    stop("bad input for argument 'parallelLocation'")
+  if (!is.logical(parallel.locat) ||
+      length(parallel.locat) != 1)
+    stop("bad input for argument 'parallel.locat'")
   fittedMean <- FALSE
   if (!is.logical(fittedMean) || length(fittedMean) != 1)
     stop("bad input for argument 'fittedMean'")
@@ -4762,18 +4800,18 @@ loglaplace2.control <- function(save.weight = TRUE, ...) {
   constraints = eval(substitute(expression({
       .ZERO <- .zero
       if (is.character( .ZERO)) .ZERO <- eval(parse(text = .ZERO))
-      .PARALLEL <- .parallelLocation
+      .PARALLEL <- .parallel.locat
       parelHmat <- if (is.logical( .PARALLEL ) && .PARALLEL )
                   matrix(1, M/2, 1) else diag(M/2)
       scaleHmat <- if (is.logical( .eq.scale ) && .eq.scale )
                   matrix(1, M/2, 1) else diag(M/2)
       mycmatrix <- cbind(rbind(  parelHmat, 0*parelHmat),
                         rbind(0*scaleHmat,   scaleHmat))
-      constraints <- cm.vgam(mycmatrix, x = x,
+      constraints <- cm.VGAM(mycmatrix, x = x,
                              bool = .PARALLEL ,
                              constraints = constraints,
                              apply.int = FALSE)
-      constraints <- cm.zero.vgam(constraints, x, .ZERO, M)
+      constraints <- cm.zero.VGAM(constraints, x, .ZERO, M)
 
       if ( .PARALLEL && names(constraints)[1] == "(Intercept)") {
           parelHmat <- diag(M/2)
@@ -4787,7 +4825,7 @@ loglaplace2.control <- function(save.weight = TRUE, ...) {
         temp3 <- cbind(temp3[,1:(M/2)], rbind(0*scaleHmat, scaleHmat))
         constraints[["(Intercept)"]] = temp3
       }
-    }), list( .eq.scale = eq.scale, .parallelLocation = parallelLocation,
+    }), list( .eq.scale = eq.scale, .parallel.locat = parallel.locat,
               .zero = zero ))),
   initialize = eval(substitute(expression({
     extra$kappa <- .kappa
@@ -4824,37 +4862,38 @@ loglaplace2.control <- function(save.weight = TRUE, ...) {
                "Choose larger values for 'tau'.")
 
         if (!length(etastart)) {
-            if ( .imethod == 1) {
-                locat.init.y <- weighted.mean(y, w)
-                scale.init <- sqrt(var(y) / 2)
-            } else if ( .imethod == 2) {
-                locat.init.y <- median(y)
-                scale.init <- sqrt(sum(c(w)*abs(y-median(y))) / (sum(w) *2))
-            } else if ( .imethod == 3) {
-                Fit5 <- vsmooth.spline(x = x[, min(ncol(x), 2)], y = y, w = w,
-                                        df = .dfmu.init)
-                locat.init.y <- c(predict(Fit5, x = x[, min(ncol(x), 2)])$y)
-                scale.init <- sqrt(sum(c(w)*abs(y-median(y))) / (sum(w) *2))
-            } else {
-                use.this <- weighted.mean(y, w)
-                locat.init.y <- (1- .sinit)*y + .sinit * use.this
-                scale.init <- sqrt(sum(c(w)*abs(y-median(y ))) / (sum(w) *2))
-            }
-            locat.init.y <- if (length( .ilocat ))
-                             rep( .ilocat , length.out = n) else
-                             rep(locat.init.y, length.out = n)
-            locat.init.y <- matrix(locat.init.y, n, M/2)
-            scale.init <- if (length( .iscale))
-                             rep( .iscale, length.out = n) else
-                             rep(scale.init, length.out = n)
-            scale.init <- matrix(scale.init, n, M/2)
-            etastart <-
-                cbind(theta2eta(locat.init.y, .llocat , earg = .elocat ),
-                      theta2eta(scale.init, .lscale , earg = .escale ))
+          if ( .imethod == 1) {
+            locat.init.y <- weighted.mean(y, w)
+            scale.init <- sqrt(var(y) / 2)
+          } else if ( .imethod == 2) {
+            locat.init.y <- median(y)
+            scale.init <- sqrt(sum(c(w)*abs(y-median(y))) / (sum(w) *2))
+          } else if ( .imethod == 3) {
+            Fit5 <- vsmooth.spline(x = x[, min(ncol(x), 2)],
+                                   y = y, w = w,
+                                   df = .idf.mu )
+            locat.init.y <- c(predict(Fit5, x = x[, min(ncol(x), 2)])$y)
+            scale.init <- sqrt(sum(c(w)*abs(y-median(y))) / (sum(w) *2))
+          } else {
+            use.this <- weighted.mean(y, w)
+            locat.init.y <- (1- .ishrinkage )*y + .ishrinkage * use.this
+            scale.init <- sqrt(sum(c(w)*abs(y-median(y ))) / (sum(w) *2))
+          }
+          locat.init.y <- if (length( .ilocat ))
+                           rep( .ilocat , length.out = n) else
+                           rep(locat.init.y, length.out = n)
+          locat.init.y <- matrix(locat.init.y, n, M/2)
+          scale.init <- if (length( .iscale))
+                           rep( .iscale, length.out = n) else
+                           rep(scale.init, length.out = n)
+          scale.init <- matrix(scale.init, n, M/2)
+          etastart <-
+            cbind(theta2eta(locat.init.y, .llocat , earg = .elocat ),
+                  theta2eta(scale.init, .lscale , earg = .escale ))
         }
     }), list( .imethod = imethod,
-              .dfmu.init = dfmu.init, .kappa = kappa,
-              .sinit = shrinkage.init, .digt = digt,
+              .idf.mu = idf.mu, .kappa = kappa,
+              .ishrinkage = ishrinkage, .digt = digt,
               .llocat = llocat, .lscale = lscale,
               .elocat = elocat, .escale = escale,
               .ilocat = ilocat, .iscale = iscale ))),
@@ -5018,8 +5057,8 @@ adjust01.logitlaplace1 <- function(ymat, y, w, rep01) {
         ilocation = NULL,
         kappa = sqrt(tau/(1-tau)),
         Scale.arg = 1,
-        shrinkage.init = 0.95, parallelLocation = FALSE, digt = 4,
-        dfmu.init = 3,
+        ishrinkage = 0.95, parallel.locat = FALSE, digt = 4,
+        idf.mu = 3,
         rep01 = 0.5,
         imethod = 1, zero = NULL) {
 
@@ -5051,10 +5090,10 @@ adjust01.logitlaplace1 <- function(ymat, y, w, rep01) {
      imethod > 4)
     stop("argument 'imethod' must be 1, 2 or ... 4")
 
-  if (!is.Numeric(shrinkage.init, length.arg = 1) ||
-     shrinkage.init < 0 ||
-     shrinkage.init > 1)
-    stop("bad input for argument 'shrinkage.init'")
+  if (!is.Numeric(ishrinkage, length.arg = 1) ||
+     ishrinkage < 0 ||
+     ishrinkage > 1)
+    stop("bad input for argument 'ishrinkage'")
   if (length(zero) &&
      !(is.Numeric(zero, integer.valued = TRUE, positive = TRUE) ||
        is.character(zero )))
@@ -5062,9 +5101,9 @@ adjust01.logitlaplace1 <- function(ymat, y, w, rep01) {
 
   if (!is.Numeric(Scale.arg, positive = TRUE))
     stop("bad input for argument 'Scale.arg'")
-  if (!is.logical(parallelLocation) ||
-      length(parallelLocation) != 1)
-    stop("bad input for argument 'parallelLocation'")
+  if (!is.logical(parallel.locat) ||
+      length(parallel.locat) != 1)
+    stop("bad input for argument 'parallel.locat'")
   fittedMean <- FALSE
   if (!is.logical(fittedMean) ||
       length(fittedMean) != 1)
@@ -5085,11 +5124,11 @@ adjust01.logitlaplace1 <- function(ymat, y, w, rep01) {
             "Links:      ", mystring0, "\n", "\n",
           "Quantiles:  ", mystring1),
   constraints = eval(substitute(expression({
-    constraints <- cm.vgam(matrix(1, M, 1), x = x,
-                           bool = .parallelLocation ,
+    constraints <- cm.VGAM(matrix(1, M, 1), x = x,
+                           bool = .parallel.locat ,
                            constraints = constraints, apply.int = FALSE)
-    constraints <- cm.zero.vgam(constraints, x, .zero, M)
-  }), list( .parallelLocation = parallelLocation,
+    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
+  }), list( .parallel.locat = parallel.locat,
             .Scale.arg = Scale.arg, .zero = zero ))),
   initialize = eval(substitute(expression({
     extra$M <- M <- max(length( .Scale.arg ), length( .kappa ))  # Recycle
@@ -5141,7 +5180,7 @@ adjust01.logitlaplace1 <- function(ymat, y, w, rep01) {
           locat.init <- median(rep(y, w))
         } else if ( .imethod == 3) {
           use.this <- weighted.mean(y, w)
-          locat.init <- (1- .sinit)*y + use.this * .sinit
+          locat.init <- (1- .ishrinkage )*y + use.this * .ishrinkage
         } else {
           stop("this option not implemented")
         }
@@ -5156,8 +5195,8 @@ adjust01.logitlaplace1 <- function(ymat, y, w, rep01) {
           cbind(theta2eta(locat.init, .llocat , earg = .elocat ))
     }
   }), list( .imethod = imethod,
-            .dfmu.init = dfmu.init,
-            .sinit = shrinkage.init, .digt = digt,
+            .idf.mu = idf.mu,
+            .ishrinkage = ishrinkage, .digt = digt,
             .elocat = elocat, .Scale.arg = Scale.arg,
             .llocat = llocat, .kappa = kappa,
             .ilocat = ilocat ))),

@@ -212,7 +212,8 @@ binom2.or(lmu = "logit", lmu1 = lmu, lmu2 = lmu, loratio = "loge",
 \examples{
 # Fit the model in Table 6.7 in McCullagh and Nelder (1989)
 coalminers <- transform(coalminers, Age = (age - 42) / 5)
-fit <- vglm(cbind(nBnW, nBW, BnW, BW) ~ Age, binom2.or(zero = NULL), coalminers)
+fit <- vglm(cbind(nBnW, nBW, BnW, BW) ~ Age,
+            binom2.or(zero = NULL), data = coalminers)
 fitted(fit)
 summary(fit)
 coef(fit, matrix = TRUE)
@@ -229,9 +230,9 @@ legend(x = -4, y = 0.5, lty = 1:4, col = 1:4, lwd = 2,
 
 
 # Another model: pet ownership
-\dontrun{ require("VGAMdata")
+\dontrun{ data(xs.nz, package = "VGAMdata")
 # More homogeneous:
-petdata <- subset(xs.nz, ethnic == "0" & age < 70 & sex == "M")
+petdata <- subset(xs.nz, ethnicity == "European" & age < 70 & sex == "M")
 petdata <- na.omit(petdata[, c("cat", "dog", "age")])
 summary(petdata)
 with(petdata, table(cat, dog))  # Can compute the odds ratio

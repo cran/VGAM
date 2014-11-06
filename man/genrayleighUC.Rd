@@ -12,10 +12,10 @@
 
 }
 \usage{
-dgenray(x, shape, scale = 1, log = FALSE)
-pgenray(q, shape, scale = 1)
-qgenray(p, shape, scale = 1)
-rgenray(n, shape, scale = 1)
+dgenray(x, scale = 1, shape, log = FALSE)
+pgenray(q, scale = 1, shape)
+qgenray(p, scale = 1, shape)
+rgenray(n, scale = 1, shape)
 }
 \arguments{
   \item{x, q}{vector of quantiles.}
@@ -61,20 +61,20 @@ rgenray(n, shape, scale = 1)
 }
 \examples{
 \dontrun{
-shape <- 0.5; scale <- 1; nn <- 501
+shape <- 0.5; Scale <- 1; nn <- 501
 x <- seq(-0.10, 3.0, len = nn)
-plot(x, dgenray(x, shape, scale), type = "l", las = 1, ylim = c(0, 1.2),
-     ylab = paste("[dp]genray(shape = ", shape, ", scale = ", scale, ")"),
+plot(x, dgenray(x, shape, scale = Scale), type = "l", las = 1, ylim = c(0, 1.2),
+     ylab = paste("[dp]genray(shape = ", shape, ", scale = ", Scale, ")"),
      col = "blue", cex.main = 0.8,
      main = "Blue is density, orange is cumulative distribution function",
      sub = "Purple lines are the 10,20,...,90 percentiles")
-lines(x, pgenray(x, shape, scale), col = "orange")
+lines(x, pgenray(x, shape, scale = Scale), col = "orange")
 probs <- seq(0.1, 0.9, by = 0.1)
-Q <- qgenray(probs, shape, scale)
-lines(Q, dgenray(Q, shape, scale), col = "purple", lty = 3, type = "h")
-lines(Q, pgenray(Q, shape, scale), col = "purple", lty = 3, type = "h")
+Q <- qgenray(probs, shape, scale = Scale)
+lines(Q, dgenray(Q, shape, scale = Scale), col = "purple", lty = 3, type = "h")
+lines(Q, pgenray(Q, shape, scale = Scale), col = "purple", lty = 3, type = "h")
 abline(h = probs, col = "purple", lty = 3)
-max(abs(pgenray(Q, shape, scale) - probs))  # Should be 0
+max(abs(pgenray(Q, shape, scale = Scale) - probs))  # Should be 0
 }
 }
 \keyword{distribution}

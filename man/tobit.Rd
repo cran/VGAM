@@ -153,16 +153,16 @@ tobit(Lower = 0, Upper = Inf, lmu = "identitylink", lsd = "loge",
   The fitted object has components \code{censoredL} and \code{censoredU}
   in the \code{extra} slot which specifies whether observations
   are censored in that direction.
-  The function \code{\link{cennormal}} is an alternative
+  The function \code{\link{cens.normal}} is an alternative
   to \code{tobit()}.
 
 
 }
 \seealso{
   \code{\link{rtobit}},
-  \code{\link{cennormal}},
+  \code{\link{cens.normal}},
   \code{\link{uninormal}},
-  \code{\link{double.cennormal}},
+  \code{\link{double.cens.normal}},
   \code{\link{posnormal}},
   \code{\link[stats:Normal]{rnorm}}.
 

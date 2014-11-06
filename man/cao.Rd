@@ -233,7 +233,7 @@ cao(formula, family, data = list(),
 
   The fitted latent variables (site scores) are scaled to have
   unit variance.  The concept of a tolerance is undefined for
-  CAO models, but the optima and maxima are defined. The generic
+  CAO models, but the optimums and maximums are defined. The generic
   functions \code{\link{Max}} and \code{\link{Opt}} should work for
   CAO objects, but note that if the maximum occurs at the boundary then
   \code{\link{Max}} will return a \code{NA}.  Inference for CAO models
@@ -334,7 +334,7 @@ ap1 <- cao(cbind(Pardlugu, Pardmont, Pardnigr, Pardpull) ~
            family = poissonff, data = hspider, Rank = 1,
            df1.nl = c(Pardpull= 2.7, 2.5),
            Bestof = 7, Crow1positive = FALSE)
-sort(ap1@misc$deviance.Bestof)  # A history of all the iterations
+sort(deviance(ap1, history = TRUE))  # A history of all the iterations
 
 Coef(ap1)
 concoef(ap1)

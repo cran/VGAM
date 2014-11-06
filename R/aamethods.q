@@ -392,7 +392,7 @@ setClass("uqo", representation(
     contains = "vlmsmall")
 
 
-setClass(Class = "cao",
+setClass(Class = "rrvgam",
          contains = "vgam")
 
 
@@ -402,12 +402,16 @@ setGeneric("lvplot", function(object, ...) standardGeneric("lvplot"),
 
 
 
+ if (FALSE) {
  if (!isGeneric("ccoef"))
     setGeneric("ccoef", function(object, ...) {
     .Deprecated("concoef")
 
     standardGeneric("ccoef")
     })
+}
+
+
 
  if (!isGeneric("concoef"))
     setGeneric("concoef", function(object, ...) {
@@ -495,6 +499,45 @@ if (!isGeneric("summary"))
   setGeneric("summary", function(object, ...)
              standardGeneric("summary"),
              package = "VGAM")
+
+
+
+
+if (!isGeneric("QR.R"))
+  setGeneric("QR.R", function(object, ...)
+             standardGeneric("QR.R"),
+             package = "VGAM")
+
+
+setMethod("QR.R", "vglm",
+          function(object, ...) {
+  if (length(object@R)) object@R else {
+    warning("empty 'R' slot on object. Returning a NULL")
+    NULL
+  }
+})
+
+
+
+if (!isGeneric("QR.Q"))
+  setGeneric("QR.Q", function(object, ...)
+             standardGeneric("QR.Q"),
+             package = "VGAM")
+
+
+setMethod("QR.Q", "vglm",
+          function(object, ...) {
+  qr.list <- object@qr
+  if (length(qr.list)) {
+    class(qr.list) <- "qr"
+    qr.Q(qr.list)
+  } else {
+    warning("empty 'qr' slot on object. Returning a NULL")
+    NULL
+  }
+})
+
+
 
 
 

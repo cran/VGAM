@@ -7,22 +7,24 @@
 \description{
    Maximum likelihood estimation of
    the 1, 2 and 3-parameter asymmetric Laplace distributions (ALDs).
-   The 1-parameter ALD may be used for quantile regression.
+   The 2-parameter ALD may,
+   with trepidation and lots of skill,
+   sometimes be used as an approximation of quantile regression.
 
 
 }
 \usage{
 alaplace1(tau = NULL, llocation = "identitylink",
           ilocation = NULL, kappa = sqrt(tau/(1 - tau)), Scale.arg = 1,
-          shrinkage.init = 0.95, parallelLocation = FALSE, digt = 4,
-          dfmu.init = 3, intparloc = FALSE, imethod = 1)
+          ishrinkage = 0.95, parallel.locat = TRUE  ~ 0, digt = 4,
+          idf.mu = 3, zero = NULL, imethod = 1)
 
 alaplace2(tau = NULL,  llocation = "identitylink", lscale = "loge",
           ilocation = NULL, iscale = NULL, kappa = sqrt(tau/(1 - tau)),
-          shrinkage.init = 0.95,
-          parallelLocation = FALSE, digt = 4, eq.scale = TRUE,
-          dfmu.init = 3, intparloc = FALSE, 
-          imethod = 1, zero = -2)
+          ishrinkage = 0.95,
+          parallel.locat =  TRUE ~ 0,
+          parallel.scale = FALSE ~ 0,
+          digt = 4, idf.mu = 3, imethod = 1, zero = -2)
 
 alaplace3(llocation = "identitylink", lscale = "loge", lkappa = "loge",
           ilocation = NULL, iscale = NULL, ikappa = 1,
@@ -61,30 +63,41 @@ alaplace3(llocation = "identitylink", lscale = "loge", lkappa = "loge",
 
 
   }
-  \item{parallelLocation, intparloc}{ Logical.
-    Should the quantiles be parallel on the transformed scale
-    (argument \code{llocation})?
-    Assigning this argument to \code{TRUE} circumvents the
-    seriously embarrassing quantile crossing problem.
-    The argument \code{intparloc} applies to intercept term;
-    the argument \code{parallelLocation} applies to other terms.
-
-  }
-  \item{eq.scale}{ Logical.
-    Should the scale parameters be equal? It is advised
-    to keep \code{eq.scale = TRUE} unchanged because it
-    does not make sense to have different values for each
-    \code{tau} value.
+  \item{parallel.locat, parallel.scale}{
+  See the \code{parallel} argument of \code{\link{CommonVGAMffArguments}}.
+  These arguments apply to the location and scale parameters.
+  It generally only makes sense for the scale parameters
+  to be equal, hence set \code{parallel.scale = TRUE}.
+  Note that
+  assigning \code{parallel.locat} the value \code{TRUE} circumvents the
+  seriously embarrassing quantile crossing problem because all
+  constraint matrices except for the intercept correspond to a
+  parallelism assumption.
 
 
   }
+
+
+% \item{intparloc}{ Logical.
+%   Defunct.
+% }
+
+
+% \item{eq.scale}{ Logical.
+%   Should the scale parameters be equal? It is advised
+%   to keep \code{eq.scale = TRUE} unchanged because it
+%   does not make sense to have different values for each
+%   \code{tau} value.
+% }
+
+
   \item{imethod}{
   Initialization method.
   Either the value 1, 2, 3 or 4.
 
 
   }
-  \item{dfmu.init}{
+  \item{idf.mu}{
   Degrees of freedom for the cubic smoothing spline fit applied to
   get an initial estimate of the location parameter.
   See \code{\link{vsmooth.spline}}.
@@ -92,7 +105,7 @@ alaplace3(llocation = "identitylink", lscale = "loge", lkappa = "loge",
 
 
   }
-  \item{shrinkage.init}{
+  \item{ishrinkage}{
   How much shrinkage is used when initializing \eqn{\xi}{xi}.
   The value must be between 0 and 1 inclusive, and
   a value of 0 means the individual response values are used,
@@ -108,7 +121,7 @@ alaplace3(llocation = "identitylink", lscale = "loge", lkappa = "loge",
   different \eqn{\tau}{tau} values from an existing fitted
   \code{alaplace2()} model (practical only if it has a
   single value).
-  If the model has \code{parallelLocation = TRUE} then
+  If the model has \code{parallel.locat = TRUE} then
   only the intercept need be estimated; use an offset.
   See below for an example.
 
@@ -180,16 +193,17 @@ alaplace3(llocation = "identitylink", lscale = "loge", lkappa = "loge",
    \eqn{\tau = \kappa^2 / (1 + \kappa^2)}{tau = kappa^2 / (1 + kappa^2)}
    so that
    \eqn{\kappa =  \sqrt{\tau / (1-\tau)}}{kappa = sqrt(tau / (1-tau))}.
-   Thus \code{alaplace1()} might be used as an alternative to \code{rq}
+   Thus \code{alaplace2()} might be used as an alternative to \code{rq}
    in the \pkg{quantreg} package.
 
 
    Both \code{alaplace1()} and \code{alaplace2()} can handle
    multiple responses, and the number of linear/additive
    predictors is dictated by the length of \code{tau} or
-   \code{kappa}.  The function \code{alaplace2()} can also
-   handle a matrix response with a single-valued \code{tau}
-   or \code{kappa}.
+   \code{kappa}.  The functions \code{alaplace1()}
+   and \code{alaplace2()} can also
+   handle multiple responses (i.e., a matrix response)
+   but only with a \emph{single-valued} \code{tau} or \code{kappa}.
 
 
 }
@@ -219,17 +233,28 @@ alaplace3(llocation = "identitylink", lscale = "loge", lkappa = "loge",
   Boston: Birkhauser.
 
 
-  Yee, T. W. (2012)
-  Quantile regression for counts and proportions.
-  In preparation.
+Yee, T. W. (2014)
+Vector Generalized Linear and Additive Models.
+\emph{Monograph in preparation}.
+
+
+
+
+%  Yee, T. W. (2014)
+%  Quantile regression for counts and proportions.
+%  In preparation.
 
 
 }
 \author{ Thomas W. Yee }
 \section{Warning}{
+  These functions are experimental and especially subject to
+  change or withdrawal.
   The MLE regularity conditions do not hold for this distribution
   so that misleading inferences may result,
   e.g., in the \code{summary} and \code{vcov} of the object.
+
+
 
 
   Care is needed with \code{tau} values which are too small, e.g.,
@@ -253,15 +278,18 @@ alaplace3(llocation = "identitylink", lscale = "loge", lkappa = "loge",
   is the best model and then use \code{maxit} to choose
   that model)
   due to the regularity conditions not holding.
+  Often the iterations slowly crawl towards the solution so
+  monitoring the convergence (set \code{trace = TRUE}) is highly
+  recommended.
 
 
   For large data sets it is a very good idea to keep the length of
   \code{tau}/\code{kappa} low to avoid large memory requirements.
   Then
-  for \code{parallelLoc = FALSE} one can repeatedly fit a model with
+  for \code{parallel.locat = FALSE} one can repeatedly fit a model with
   \code{alaplace1()} with one \eqn{\tau}{tau} at a time;
   and
-  for \code{parallelLoc = TRUE} one can refit a model with
+  for \code{parallel.locat = TRUE} one can refit a model with
   \code{alaplace1()} with one \eqn{\tau}{tau} at a time but
   using offsets and an intercept-only model.
 
@@ -269,7 +297,7 @@ alaplace3(llocation = "identitylink", lscale = "loge", lkappa = "loge",
   A second method for solving the noncrossing quantile problem is
   illustrated below in Example 3.
   This is called the \emph{accumulative quantile method} (AQM)
-  and details are in Yee (2012).
+  and details are in Yee (2014).
   It does not make the strong parallelism assumption.
 
 
@@ -282,62 +310,64 @@ alaplace3(llocation = "identitylink", lscale = "loge", lkappa = "loge",
 \seealso{
   \code{\link{ralap}},
   \code{\link{laplace}},
+  \code{\link{CommonVGAMffArguments}},
   \code{\link{lms.bcn}},
   \code{\link{amlnormal}},
-  \code{\link{koenker}},
+  \code{\link{sc.studentt2}},
   \code{\link{simulate.vlm}}.
 
 
 }
 
+
+% set.seed(1)
+
+
 \examples{
 \dontrun{
 # Example 1: quantile regression with smoothing splines
-adata <- data.frame(x = sort(runif(n <- 500)))
+set.seed(123); adata <- data.frame(x2 = sort(runif(n <- 500)))
 mymu <- function(x) exp(-2 + 6*sin(2*x-0.2) / (x+0.5)^2)
-adata <- transform(adata, y = rpois(n, lambda = mymu(x)))
+adata <- transform(adata, y = rpois(n, lambda = mymu(x2)))
 mytau <- c(0.25, 0.75); mydof <- 4
 
-fit <- vgam(y ~ s(x, df = mydof),
-            alaplace1(tau = mytau, llocation = "loge",
-                      parallelLoc = FALSE), data = adata, trace = TRUE)
-fitp <- vgam(y ~ s(x, df = mydof), data = adata, trace = TRUE,
-             alaplace1(tau = mytau, llocation = "loge", parallelLoc = TRUE))
+fit <- vgam(y ~ s(x2, df = mydof), data = adata, trace = TRUE, maxit = 900,
+            alaplace2(tau = mytau, llocat = "loge",
+                      parallel.locat = FALSE))
+fitp <- vgam(y ~ s(x2, df = mydof), data = adata, trace = TRUE, maxit = 900,
+             alaplace2(tau = mytau, llocat = "loge", parallel.locat = TRUE))
  
-par(las = 1); mylwd = 1.5
-with(adata, plot(x, jitter(y, factor = 0.5), col = "orange",
-                 main = "Example 1; green: parallelLoc = TRUE",
+par(las = 1); mylwd <- 1.5
+with(adata, plot(x2, jitter(y, factor = 0.5), col = "orange",
+                 main = "Example 1; green: parallel.locat = TRUE",
                  ylab = "y", pch = "o", cex = 0.75))
-with(adata, matlines(x, fitted(fit ), col = "blue",
+with(adata, matlines(x2, fitted(fit ), col = "blue",
                      lty = "solid", lwd = mylwd))
-with(adata, matlines(x, fitted(fitp), col = "green",
+with(adata, matlines(x2, fitted(fitp), col = "green",
                      lty = "solid", lwd = mylwd))
 finexgrid <- seq(0, 1, len = 1001)
 for (ii in 1:length(mytau))
-    lines(finexgrid, qpois(p = mytau[ii], lambda = mymu(finexgrid)),
-          col = "blue", lwd = mylwd)
+  lines(finexgrid, qpois(p = mytau[ii], lambda = mymu(finexgrid)),
+        col = "blue", lwd = mylwd)
 fit@extra  # Contains useful information
 
 
 # Example 2: regression quantile at a new tau value from an existing fit
 # Nb. regression splines are used here since it is easier.
-fitp2 <- vglm(y ~ sm.bs(x, df = mydof),
-              family = alaplace1(tau = mytau, llocation = "loge",
-                                 parallelLoc = TRUE),
-              data = adata, trace = TRUE)
+fitp2 <- vglm(y ~ sm.bs(x2, df = mydof), data = adata, trace = TRUE,
+              alaplace1(tau = mytau, llocation = "loge",
+                        parallel.locat = TRUE))
 
 newtau <- 0.5  # Want to refit the model with this tau value
-fitp3 <- vglm(y ~ 1 + offset(predict(fitp2)[,1]),
-              family = alaplace1(tau = newtau, llocation = "loge"),
-              data = adata)
-with(adata, plot(x, jitter(y, factor = 0.5), col = "orange",
+fitp3 <- vglm(y ~ 1 + offset(predict(fitp2)[, 1]),
+              alaplace1(tau = newtau, llocation = "loge"), data = adata)
+with(adata, plot(x2, jitter(y, factor = 0.5), col = "orange",
                pch = "o", cex = 0.75, ylab = "y",
-               main = "Example 2; parallelLoc = TRUE"))
-with(adata, matlines(x, fitted(fitp2), col = "blue", 
+               main = "Example 2; parallel.locat = TRUE"))
+with(adata, matlines(x2, fitted(fitp2), col = "blue", 
                      lty = 1, lwd = mylwd))
-with(adata, matlines(x, fitted(fitp3), col = "black",
+with(adata, matlines(x2, fitted(fitp3), col = "black",
                      lty = 1, lwd = mylwd))
-
 
 
 # Example 3: noncrossing regression quantiles using a trick: obtain
@@ -349,28 +379,28 @@ answer <- matrix(0, nrow(adata), length(mytau))  # Stores the quantiles
 adata <- transform(adata, offsety = y*0)
 usetau <- mytau
 for (ii in 1:length(mytau)) {
-#   cat("\n\nii  = ", ii, "\n")
+# cat("\n\nii  = ", ii, "\n")
   adata <- transform(adata, usey = y-offsety)
   iloc <- ifelse(ii == 1, with(adata, median(y)), 1.0)  # Well-chosen!
   mydf <- ifelse(ii == 1, 5, 3)  # Maybe less smoothing will help
-  lloc <- ifelse(ii == 1, "identitylink", "loge")  # 2nd value must be "loge"
-  fit3 <- vglm(usey ~ sm.ns(x, df = mydf), data = adata, trace = TRUE,
-               alaplace1(tau = usetau[ii], lloc = lloc, iloc = iloc))
-  answer[,ii] <- (if(ii == 1) 0 else answer[,ii-1]) + fitted(fit3)
-  adata <- transform(adata, offsety = answer[,ii])
+# lloc <- ifelse(ii == 1, "loge", "loge")  # 2nd value must be "loge"
+  fit3 <- vglm(usey ~ sm.ns(x2, df = mydf), data = adata, trace = TRUE,
+               alaplace2(tau = usetau[ii], lloc = "loge", iloc = iloc))
+  answer[, ii] <- (if(ii == 1) 0 else answer[, ii-1]) + fitted(fit3)
+  adata <- transform(adata, offsety = answer[, ii])
 }
 
 # Plot the results.
-with(adata, plot(x, y, col = "blue",
+with(adata, plot(x2, y, col = "blue",
      main = paste("Noncrossing and nonparallel; tau  = ",
                 paste(mytau, collapse = ", "))))
-with(adata, matlines(x, answer, col = "orange", lty = 1))
+with(adata, matlines(x2, answer, col = "orange", lty = 1))
 
 # Zoom in near the origin.
-with(adata, plot(x, y, col = "blue", xlim = c(0, 0.2), ylim = 0:1,
+with(adata, plot(x2, y, col = "blue", xlim = c(0, 0.2), ylim = 0:1,
      main = paste("Noncrossing and nonparallel; tau  = ",
                 paste(mytau, collapse = ", "))))
-with(adata, matlines(x, answer, col = "orange", lty = 1))
+with(adata, matlines(x2, answer, col = "orange", lty = 1))
 }
 }
 \keyword{models}

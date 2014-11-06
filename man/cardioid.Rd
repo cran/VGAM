@@ -79,7 +79,7 @@ Singapore: World Scientific.
 }
 \section{Warning }{
   Numerically, this distribution can be difficult to fit because of a
-  log-likelihood having multiple maxima.
+  log-likelihood having multiple maximums.
   The user is therefore encouraged to try different starting values,
   i.e., make use of \code{imu} and \code{irho}.
 

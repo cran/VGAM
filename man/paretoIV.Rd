@@ -12,8 +12,7 @@
 
 }
 \usage{
-paretoIV(location = 0, lscale = "loge", linequality = "loge",
-         lshape = "loge",
+paretoIV(location = 0, lscale = "loge", linequality = "loge", lshape = "loge",
          iscale = 1, iinequality = 1, ishape = NULL, imethod = 1)
 paretoIII(location = 0, lscale = "loge", linequality = "loge",
           iscale = NULL, iinequality = NULL)
@@ -84,8 +83,13 @@ paretoII(location = 0, lscale = "loge", lshape = "loge",
   inequality, provided \eqn{g \leq 1}{g<=1}.
 
 
-  The fitted values are currently \code{NA} because I
-  haven't worked out what the mean of \eqn{Y} is yet.
+  The fitted values are currently the median, e.g.,
+  \code{\link{qparetoIV}} is used for \code{paretoIV()}.
+
+
+
+% The fitted values are currently \code{NA} because I
+% haven't worked out what the mean of \eqn{Y} is yet.
 
 
 % The mean of \eqn{Y} is
@@ -126,6 +130,14 @@ paretoII(location = 0, lscale = "loge", lshape = "loge",
 }
 \references{ 
 
+
+Johnson N. L., Kotz S., and Balakrishnan N. (1994)
+\emph{Continuous Univariate Distributions, Volume 1},
+2nd ed.
+New York: Wiley.
+
+
+
 Brazauskas, V. (2003)
 Information matrix for Pareto(IV), Burr, and related distributions.
 \emph{Comm. Statist. Theory and Methods}
@@ -145,16 +157,22 @@ Fairland, Maryland: International Cooperative Publishing House.
 
 
 }
-%\section{Warning }{
-%  The Pareto(IV) distribution is very general,
-%  for example, special cases include the Pareto(I), Pareto(II),
-%  Pareto(III), and Burr family of distributions. Consequently, reasonably
-%  good initial values are recommended, and convergence to a local solution
-%  may occur. For this reason setting \code{trace=TRUE} is a good idea
-%  for monitoring the convergence.
-%  Large samples are ideally required to get reasonable results.
-%
-%}
+\section{Warning }{
+   The Pareto(IV) distribution is very general,
+   for example, special cases include the Pareto(I), Pareto(II),
+   Pareto(III), and Burr family of distributions.
+   [Johnson et al. (1994) says on p.19 that fitting Type IV by ML is
+   very difficult and rarely attempted].
+   Consequently, reasonably good initial values are recommended,
+   and convergence to a local solution may occur. For this
+   reason setting \code{trace=TRUE} is a good idea for monitoring
+   the convergence.  Large samples are ideally required to get
+   reasonable results.
+
+
+
+ 
+ }
 \seealso{
   \code{\link{ParetoIV}},
   \code{\link{paretoff}},
@@ -168,6 +186,8 @@ pdata <- data.frame(y = rparetoIV(2000, scale = exp(1),
 \dontrun{par(mfrow = c(2, 1))
 with(pdata, hist(y)); with(pdata, hist(log(y))) }
 fit <- vglm(y ~ 1, paretoIV, data = pdata, trace = TRUE)
+head(fitted(fit))
+summary(pdata)
 coef(fit, matrix = TRUE)
 Coef(fit)
 summary(fit)

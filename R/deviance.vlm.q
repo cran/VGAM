@@ -65,6 +65,38 @@ setMethod("deviance", "vglm", function(object, ...)
 
 
 
+
+
+
+
+
+deviance.qrrvglm <- function(object,
+                             summation = TRUE,
+                             history = FALSE,
+                             ...) {
+  if (history) {
+    if (summation) {
+      return(object@misc$deviance.Bestof)
+    } else {
+      stop("cannot handle 'history = TRUE' when 'summation = FALSE'")
+    }
+  }
+
+  deviance.vlm(object, summation = summation, ...)
+}
+
+
+setMethod("deviance", "qrrvglm", function(object, ...)
+           deviance.qrrvglm(object, ...))
+
+setMethod("deviance", "rrvgam",  function(object, ...)
+           deviance.qrrvglm(object, ...))
+
+
+
+
+
+
 df.residual_vlm <- function(object, type = c("vlm", "lm"), ...) {
   type <- type[1]
 

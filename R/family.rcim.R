@@ -689,9 +689,9 @@ Confint.rrnb <- function(rrnb2, level = 0.95) {
   if (!all(rrnb2@misc$link == "loge"))
     stop("argument 'rrnb2' does not have log links for both parameters")
 
-  a21.hat <- (Coef(rrnb2)@A)["log(size)", 1]
-  beta11.hat <- Coef(rrnb2)@B1["(Intercept)", "log(mu)"]
-  beta21.hat <- Coef(rrnb2)@B1["(Intercept)", "log(size)"]
+  a21.hat <- (Coef(rrnb2)@A)["loge(size)", 1]
+  beta11.hat <- Coef(rrnb2)@B1["(Intercept)", "loge(mu)"]
+  beta21.hat <- Coef(rrnb2)@B1["(Intercept)", "loge(size)"]
   delta1.hat <- exp(a21.hat * beta11.hat - beta21.hat)
   delta2.hat <- 2 - a21.hat
 
@@ -740,8 +740,8 @@ Confint.nb1 <- function(nb1, level = 0.95) {
     stop("argument 'nb1' does not have log links for both parameters")
 
   cnb1 <- coefficients(as(nb1, "vglm"), matrix = TRUE)
-  mydiff <- (cnb1["(Intercept)", "log(size)"] -
-             cnb1["(Intercept)", "log(mu)"])
+  mydiff <- (cnb1["(Intercept)", "loge(size)"] -
+             cnb1["(Intercept)", "loge(mu)"])
   delta0.hat <- exp(mydiff)
   (phi0.hat <- 1 + 1 / delta0.hat)  # MLE of phi0
 
@@ -811,28 +811,28 @@ plota21 <- function(rrvglm2, show.plot = TRUE, nseq.a21 = 31,
   if (!alreadyComputed)
   for (ii in 1:nseq.a21) {
     if (trace.arg)
+      print(ii)
+    argslist <- vector("list", length(listcall) - 1)
+    for (kay in 2:(length(listcall)))
+      argslist[[kay - 1]] <- listcall[[kay]]
 
-       argslist <- vector("list", length(listcall) - 1)
-       for (kay in 2:(length(listcall)))
-         argslist[[kay - 1]] <- listcall[[kay]]
+    names(argslist) <- c(names(listcall)[-1])
 
-       names(argslist) <- c(names(listcall)[-1])
-
-       argslist$trace       <- trace.arg
-       argslist$etastart    <- prev.etastart
-       argslist$constraints <- Hlist.orig
-
-
-       for (kay in 2:length(argslist[["constraints"]])) {
-         argslist[["constraints"]][[kay]] <- rbind(1, a21.matrix[ii, 1])
-       }
+    argslist$trace       <- trace.arg
+    argslist$etastart    <- prev.etastart
+    argslist$constraints <- Hlist.orig
 
 
-       fitnew <- do.call(what = funname, args = argslist)
+    for (kay in 2:length(argslist[["constraints"]])) {
+       argslist[["constraints"]][[kay]] <- rbind(1, a21.matrix[ii, 1])
+    }
 
-       a21.matrix[ii, 2] <- logLik(fitnew)
 
-       prev.etastart <- predict(fitnew)
+    fitnew <- do.call(what = funname, args = argslist)
+
+    a21.matrix[ii, 2] <- logLik(fitnew)
+
+    prev.etastart <- predict(fitnew)
   }
 
 
@@ -1055,7 +1055,7 @@ plota21 <- function(rrvglm2, show.plot = TRUE, nseq.a21 = 31,
   attr(logAllvcov, "which.linpred") <- which.linpred
 
   logAllvcov
-}
+}  # End of Qvar()
 
 
 
@@ -1220,23 +1220,24 @@ qvar <- function(object, se = FALSE, ...) {
 
 
 
-plotqvar <- function(object,
-                     interval.width = 2,
-                     ylab = "Estimate",
-                     xlab = NULL,  # x$factorname,
-                     ylim = NULL,
-                     main = "",
-                     level.names = NULL,
-                     conf.level = 0.95,
-                     warn.ratio = 10,
-                     border = "transparent",  # None
-                     points.arg = TRUE,
-                     length.arrows = 0.25, angle = 30,
-                     lwd = par()$lwd,
-                     scol = par()$col,
-                     slwd = par()$lwd,
-                     slty = par()$lty,
-                     ...) {
+plotqvar <-
+qvplot   <-  function(object,
+                      interval.width = 2,
+                      ylab = "Estimate",
+                      xlab = NULL,  # x$factorname,
+                      ylim = NULL,
+                      main = "",
+                      level.names = NULL,
+                      conf.level = 0.95,
+                      warn.ratio = 10,
+                      border = "transparent",  # None
+                      points.arg = TRUE,
+                      length.arrows = 0.25, angle = 30,
+                      lwd = par()$lwd,
+                      scol = par()$col,
+                      slwd = par()$lwd,
+                      slty = par()$lty,
+                      ...) {
 
 
 

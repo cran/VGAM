@@ -127,9 +127,9 @@ coef(fit2, matrix = TRUE)
 plot(Y ~ X, hormone, col = "blue")
 lines(fitted(fit2) ~ X, hormone, col = "red")
 # Add +- 2 SEs
-lines(fitted(fit2) + 2 * exp(predict(fit2)[, "log(sd)"]) ~ X,
+lines(fitted(fit2) + 2 * exp(predict(fit2)[, "loge(sd)"]) ~ X,
       hormone, col = "orange")
-lines(fitted(fit2) - 2 * exp(predict(fit2)[, "log(sd)"]) ~ X,
+lines(fitted(fit2) - 2 * exp(predict(fit2)[, "loge(sd)"]) ~ X,
       hormone, col = "orange")
 
 # Equation (3)
@@ -140,9 +140,9 @@ coef(fit3, matrix = TRUE)
 plot(Y ~ X, hormone, col = "blue")  # Does not look okay.
 lines(exp(predict(fit3)[, 1]) ~ X, hormone, col = "red")
 # Add +- 2 SEs
-lines(fitted(fit3) + 2 * exp(predict(fit3)[, "log(sd)"]) ~ X,
+lines(fitted(fit3) + 2 * exp(predict(fit3)[, "loge(sd)"]) ~ X,
       hormone, col = "orange")
-lines(fitted(fit3) - 2 * exp(predict(fit3)[, "log(sd)"]) ~ X,
+lines(fitted(fit3) - 2 * exp(predict(fit3)[, "loge(sd)"]) ~ X,
       hormone, col = "orange")
 }
 }

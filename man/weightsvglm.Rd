@@ -128,12 +128,12 @@ weights(fit, type = "prior", matrix = FALSE)  # Number of observations
 nn <- nrow(model.matrix(fit, type = "lm"))
 M <- ncol(predict(fit))
 
-temp <- weights(fit, type = "working", deriv = TRUE)
-wz <- m2adefault(temp$weights, M = M)  # In array format
+wwt <- weights(fit, type = "working", deriv = TRUE)  # In matrix-band format
+wz <- m2a(wwt$weights, M = M)  # In array format
 wzinv <- array(apply(wz, 3, solve), c(M, M, nn))
 wresid <- matrix(NA, nn, M)  # Working residuals 
 for (ii in 1:nn)
-  wresid[ii,] <- wzinv[, , ii, drop = TRUE] \%*\% temp$deriv[ii, ]
+  wresid[ii, ] <- wzinv[, , ii, drop = TRUE] \%*\% wwt$deriv[ii, ]
 max(abs(c(resid(fit, type = "work")) - c(wresid)))  # Should be 0
 
 (zedd <- predict(fit) + wresid)  # Adjusted dependent vector

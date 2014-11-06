@@ -108,7 +108,7 @@ p1 <- cqo(cbind(Alopacce, Alopcune, Pardlugu, Pardnigr,
           WaterCon + BareSand + FallTwig +
           CoveMoss + CoveHerb + ReflLux,
           family = poissonff, data = hspider, I.tol = TRUE)
-sort(p1@misc$deviance.Bestof)  # A history of all the iterations
+sort(deviance(p1, history = TRUE))  # A history of all the iterations
 
 siteNos <- 3:4  # Calibrate these sites
 cp1 <- calibrate(p1, new = data.frame(depvar(p1)[siteNos, ]), trace = TRUE)

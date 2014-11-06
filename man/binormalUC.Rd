@@ -16,13 +16,13 @@
 % quantile function
 \usage{
 dbinorm(x1, x2, mean1 = 0, mean2 = 0, var1 = 1, var2 = 1, cov12 = 0, log = FALSE)
-pbinorm(x1, x2, mean1 = 0, mean2 = 0, var1 = 1, var2 = 1, cov12 = 0)
+pbinorm(q1, q2, mean1 = 0, mean2 = 0, var1 = 1, var2 = 1, cov12 = 0)
 rbinorm(n,      mean1 = 0, mean2 = 0, var1 = 1, var2 = 1, cov12 = 0)
  pnorm2(x1, x2, mean1 = 0, mean2 = 0, var1 = 1, var2 = 1, cov12 = 0)
 }
 % dbinorm(x1, x2, mean1 = 0, mean2 = 0,  sd1 = 1,  sd2 = 1,   rho = 0, log = FALSE)
 \arguments{
-  \item{x1, x2}{vector of quantiles.}
+  \item{x1, x2, q1, q2}{vector of quantiles.}
   \item{mean1, mean2, var1, var2, cov12}{
   vector of means, variances and the covariance.
 

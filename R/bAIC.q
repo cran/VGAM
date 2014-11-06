@@ -176,7 +176,7 @@ AICqrrvglm <- function(object, ...,
 
 
  
- AICcao    <- function(object, ...,
+ AICrrvgam <- function(object, ...,
                        k = 2) {
 
 
@@ -251,9 +251,9 @@ setMethod("AIC", "qrrvglm",
           AICqrrvglm(object, ..., k = k))
 
 
-setMethod("AIC", "cao",
+setMethod("AIC", "rrvgam",
           function(object, ..., k = 2)
-            AICcao(object, ..., k = k))
+            AICrrvgam(object, ..., k = k))
 
 
 
@@ -321,9 +321,9 @@ setMethod("BIC", "qrrvglm",
           AICqrrvglm(object, ..., k = k))
 
 
-setMethod("BIC", "cao",
+setMethod("BIC", "rrvgam",
           function(object, ..., k = log(nobs(object)))
-            AICcao(object, ..., k = k))
+            AICrrvgam(object, ..., k = k))
 
 
 

@@ -95,10 +95,10 @@ while estimates for \eqn{a} and \eqn{p} can be considered unbiased for
     \code{\link{betaII}},
     \code{\link{sinmad}},
     \code{\link{fisk}},
-    \code{\link{invlomax}},
+    \code{\link{inv.lomax}},
     \code{\link{lomax}},
     \code{\link{paralogistic}},
-    \code{\link{invparalogistic}},
+    \code{\link{inv.paralogistic}},
     \code{\link{simulate.vlm}}.
 
 

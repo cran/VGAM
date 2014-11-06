@@ -324,7 +324,7 @@ vglm.garma.control <- function(save.weight = TRUE, ...) {
     if ( .link == "logit"   || .link == "probit" ||
          .link == "cloglog" || .link == "cauchit") {
         delete.zero.colns <- TRUE
-        eval(process.categorical.data.vgam)
+        eval(process.categorical.data.VGAM)
         mustart <- mustart[tt.index, 2]
         y <- y[, 2]
     } else {

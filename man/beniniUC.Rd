@@ -13,10 +13,10 @@
 
 }
 \usage{
-dbenini(x, shape, y0, log = FALSE)
-pbenini(q, shape, y0)
-qbenini(p, shape, y0)
-rbenini(n, shape, y0)
+dbenini(x, y0, shape, log = FALSE)
+pbenini(q, y0, shape)
+qbenini(p, y0, shape)
+rbenini(n, y0, shape)
 }
 \arguments{
   \item{x, q}{vector of quantiles.}
@@ -26,11 +26,11 @@ rbenini(n, shape, y0)
 
 
   }
-  \item{shape}{the shape parameter \eqn{b}.
+  \item{y0}{the scale parameter \eqn{y_0}{y0}.
 
 
   }
-  \item{y0}{the scale parameter \eqn{y_0}{y0}.
+  \item{shape}{the shape parameter \eqn{b}.
 
 
   }
@@ -61,8 +61,8 @@ Hoboken, NJ, USA: Wiley-Interscience.
 }
 \author{ T. W. Yee }
 \details{
-  See \code{\link{benini}}, the \pkg{VGAM} family function
-  for estimating the parameter \eqn{b} by maximum likelihood estimation,
+  See \code{\link{benini1}}, the \pkg{VGAM} family function
+  for estimating the parameter \eqn{s} by maximum likelihood estimation,
   for the formula of the probability density function and other details.
 
 
@@ -71,7 +71,7 @@ Hoboken, NJ, USA: Wiley-Interscience.
 %  
 %}
 \seealso{
-  \code{\link{benini}}.
+  \code{\link{benini1}}.
 
 
 }
@@ -79,7 +79,7 @@ Hoboken, NJ, USA: Wiley-Interscience.
 \dontrun{
 y0 <- 1; shape <- exp(1)
 xx <- seq(0.0, 4, len = 101)
-plot(xx, dbenini(xx, y0 = y0,shape = shape), type = "l", col = "blue",
+plot(xx, dbenini(xx, y0 = y0, shape = shape), type = "l", col = "blue",
      main = "Blue is density, orange is cumulative distribution function",
      sub = "Purple lines are the 10,20,...,90 percentiles", ylim = 0:1,
      las = 1, ylab = "", xlab = "x")

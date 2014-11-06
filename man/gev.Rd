@@ -12,11 +12,11 @@
 gev(llocation = "identitylink", lscale = "loge", lshape = logoff(offset = 0.5),
     percentiles = c(95, 99), iscale=NULL, ishape = NULL,
     imethod = 1, gshape = c(-0.45, 0.45), tolshape0 = 0.001,
-    giveWarning = TRUE, zero = 3)
+    type.fitted = c("percentiles", "mean"), giveWarning = TRUE, zero = 2:3)
 egev(llocation = "identitylink", lscale = "loge", lshape = logoff(offset = 0.5),
      percentiles = c(95, 99), iscale=NULL,  ishape = NULL,
      imethod = 1, gshape = c(-0.45, 0.45), tolshape0 = 0.001,
-     giveWarning = TRUE, zero = 3)
+     type.fitted = c("percentiles", "mean"), giveWarning = TRUE, zero = 2:3)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -53,11 +53,27 @@ egev(llocation = "identitylink", lscale = "loge", lshape = logoff(offset = 0.5),
 
 
   \item{percentiles}{
-  Numeric vector of percentiles used
-  for the fitted values. Values should be between 0 and 100.
-  However, if \code{percentiles = NULL}, then the mean
+  Numeric vector of percentiles used for the fitted values.
+  Values should be between 0 and 100.
+  This argument is ignored if \code{type.fitted = "mean"}.
+
+
+
+% 20140912: this is still true, but using 'type.fitted' is better.
+% However, if \code{percentiles = NULL}, then the mean
+% \eqn{\mu + \sigma (\Gamma(1-\xi)-1) / \xi}{mu + sigma * (gamma(1-xi)-1)/xi}
+% is returned, and this is only defined if \eqn{\xi<1}{xi<1}.
+
+
+  }
+  \item{type.fitted}{
+  See \code{\link{CommonVGAMffArguments}} for information.
+  The default is to use the \code{percentiles} argument.
+  If \code{"mean"} is chosen, then the mean
   \eqn{\mu + \sigma (\Gamma(1-\xi)-1) / \xi}{mu + sigma * (gamma(1-xi)-1)/xi}
-  is returned, and this is only defined if \eqn{\xi<1}{xi<1}.
+  is returned as the fitted values,
+  and these are only defined for \eqn{\xi<1}{xi<1}.
+
 
 
   }
@@ -253,8 +269,8 @@ egev(llocation = "identitylink", lscale = "loge", lshape = logoff(offset = 0.5),
   \code{\link{guplot}},
   \code{\link{rlplot.egev}},
   \code{\link{gpd}},
-  \code{\link{weibull}},
-  \code{\link{frechet2}},
+  \code{\link{weibullR}},
+  \code{\link{frechet}},
   \code{\link{elogit}},
   \code{\link{oxtemp}},
   \code{\link{venice}}.
@@ -282,7 +298,7 @@ with(venice, lines(year, fitted(fit1)[,1], lty = "dashed", col = "blue"))
 legend("topleft", lty = "dashed", col = "blue", "Fitted 95 percentile")
 
 # Univariate example
-(fit <- vglm(maxtemp ~ 1, egev, oxtemp, trace = TRUE))
+(fit <- vglm(maxtemp ~ 1, egev, data = oxtemp, trace = TRUE))
 head(fitted(fit))
 coef(fit, matrix = TRUE)
 Coef(fit)

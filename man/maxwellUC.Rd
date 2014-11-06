@@ -13,10 +13,10 @@
 
 }
 \usage{
-dmaxwell(x, a, log = FALSE)
-pmaxwell(q, a)
-qmaxwell(p, a)
-rmaxwell(n, a)
+dmaxwell(x, rate, log = FALSE)
+pmaxwell(q, rate)
+qmaxwell(p, rate)
+rmaxwell(n, rate)
 }
 \arguments{
   \item{x, q, p, n}{
@@ -24,7 +24,7 @@ rmaxwell(n, a)
 
 
   }
-  \item{a}{the parameter.}
+  \item{rate}{the (rate) parameter.}
   \item{log}{
   Logical.
   If \code{log = TRUE} then the logarithm of the density is returned.
@@ -50,9 +50,9 @@ rmaxwell(n, a)
 }
 \author{ T. W. Yee }
 \details{
-  See \code{\link{maxwell}}, the \pkg{VGAM} family function
-  for estimating the parameter \eqn{a} by maximum likelihood estimation,
-  for the formula of the probability density function.
+  See \code{\link{maxwell}}, the \pkg{VGAM} family function for
+  estimating the (rate) parameter \eqn{a} by maximum likelihood
+  estimation, for the formula of the probability density function.
 
 
 }
@@ -69,18 +69,18 @@ rmaxwell(n, a)
 
 }
 \examples{
-\dontrun{ a <- 3; x <- seq(-0.5, 3, length = 100)
-plot(x, dmaxwell(x, a = a), type = "l", col = "blue", las = 1, ylab = "",
+\dontrun{ rate <- 3; x <- seq(-0.5, 3, length = 100)
+plot(x, dmaxwell(x, rate = rate), type = "l", col = "blue", las = 1, ylab = "",
      main = "Blue is density, orange is cumulative distribution function",
      sub = "Purple lines are the 10,20,...,90 percentiles")
 abline(h = 0, col = "blue", lty = 2)
-lines(x, pmaxwell(x, a = a), type = "l", col = "orange")
+lines(x, pmaxwell(x, rate = rate), type = "l", col = "orange")
 probs <- seq(0.1, 0.9, by = 0.1)
-Q <- qmaxwell(probs, a = a)
-lines(Q, dmaxwell(Q, a), col = "purple", lty = 3, type = "h")
-lines(Q, pmaxwell(Q, a), col = "purple", lty = 3, type = "h")
+Q <- qmaxwell(probs, rate = rate)
+lines(Q, dmaxwell(Q, rate), col = "purple", lty = 3, type = "h")
+lines(Q, pmaxwell(Q, rate), col = "purple", lty = 3, type = "h")
 abline(h = probs, col = "purple", lty = 3)
-max(abs(pmaxwell(Q, a) - probs))  # Should be zero
+max(abs(pmaxwell(Q, rate) - probs))  # Should be zero
 }
 }
 \keyword{distribution}

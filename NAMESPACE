@@ -7,6 +7,10 @@
 useDynLib(VGAM)
 
 
+importMethodsFrom("splines")
+importFrom("splines", splineDesign, bs, ns)
+
+
 export(sm.bs, sm.ns, sm.scale.default, sm.poly, sm.scale)
 exportMethods(coefficients, coef)
 importFrom("stats", coefficients, coef)
@@ -22,8 +26,11 @@ export(case.names,
        weights)
 
 
+export(expected.betabin.ab, grid.search)
 
-export(Select, subsetc)
+exportMethods(QR.Q, QR.R)
+export(QR.Q, QR.R)
+export(Select, subsetcol)
 
 
 export(simulate.vlm)
@@ -70,7 +77,7 @@ export(arwz2wz)
 
 
 export(link2list)
-export(mlogit)
+export(multilogit)
 
 
 export(perks, dperks, pperks, qperks, rperks)
@@ -124,7 +131,7 @@ export(lrtest, lrtest_vglm)
 export(update_default, update_formula)
 
 
-export(nvar, nvar.vlm, nvar.vgam, nvar.rrvglm, nvar.qrrvglm, nvar.cao, nvar.rcim)
+export(nvar, nvar.vlm, nvar.vgam, nvar.rrvglm, nvar.qrrvglm, nvar.rrvgam, nvar.rcim)
 export(      nobs.vlm)
 
 
@@ -152,8 +159,10 @@ export(is.empty.list)
 
 export(
 Build.terms.vlm,
+interleave.VGAM,
 procVec,
 ResSS.vgam,
+valt.control,
 vcontrol.expression, 
 vplot, vplot.default, vplot.factor, vplot.list,
 vplot.matrix, vplot.numeric, vvplot.factor)
@@ -176,7 +185,7 @@ explogff, dexplog, pexplog, qexplog, rexplog)
 export(Rcim, plotrcim0,
 rcim, summaryrcim)
 export(moffset)
-export(plotqvar, Qvar, qvar)
+export(plotqvar, qvplot, Qvar, qvar)
 export(depvar, depvar.vlm)
 
 
@@ -190,14 +199,15 @@ export(put.caption)
 
 
 export(
-d2theta.deta2, Deviance.categorical.data.vgam, 
+cm.VGAM, cm.nointercept.VGAM, cm.zero.VGAM,
+Deviance.categorical.data.vgam, 
 lm2qrrvlm.model.matrix,
-m2avglm, 
 dimm)
 
 
 
-export(is.smart, smart.mode.is, wrapup.smart, setup.smart, my1, my2)
+export(is.smart, smart.mode.is, wrapup.smart, setup.smart,
+sm.min1, sm.min2)
 export(
 smart.expression,
 get.smart, get.smart.prediction,
@@ -219,17 +229,17 @@ export(pnorm2, dnorm2)
 export(iam,
 fill, fill1, fill2, fill3,
 abbott,
-amh, damh, pamh, ramh, 
+biamhcop, dbiamhcop, pbiamhcop, rbiamhcop, 
 bigamma.mckay,
 freund61,
-frechet2, dfrechet, pfrechet, qfrechet, rfrechet,
+frechet, dfrechet, pfrechet, qfrechet, rfrechet,
 bifrankcop, dbifrankcop, pbifrankcop, rbifrankcop, 
-plackett, dplack, pplack, rplack, 
-benini, dbenini, pbenini, qbenini, rbenini, 
+biplackettcop, dbiplackcop, pbiplackcop, rbiplackcop,
+benini1, dbenini, pbenini, qbenini, rbenini, 
 maxwell, dmaxwell, pmaxwell, qmaxwell, rmaxwell,
-morgenstern,
-fgm, dfgm, pfgm, rfgm,
-bigumbelI,
+bifgmexp,
+bifgmcop, dbifgmcop, pbifgmcop, rbifgmcop,
+bigumbelIexp,
 erf, erfc, lerch, lambertW, log1pexp,
 truncpareto, dtruncpareto, qtruncpareto, rtruncpareto, ptruncpareto,
 paretoff, dpareto, qpareto, rpareto, ppareto,
@@ -237,27 +247,28 @@ paretoIV, dparetoIV, qparetoIV, rparetoIV, pparetoIV,
 paretoIII, dparetoIII, qparetoIII, rparetoIII, pparetoIII,
 paretoII, dparetoII, qparetoII, rparetoII, pparetoII,
 dparetoI, qparetoI, rparetoI, pparetoI,
-cgumbel, egumbel, gumbel,
+cens.gumbel, egumbel, gumbel,
 dgumbel, pgumbel, qgumbel, rgumbel, 
 foldnormal, dfoldnorm, pfoldnorm, qfoldnorm, rfoldnorm,
-cennormal1,
-cennormal, double.cennormal,
-recnormal, recnormal.control, recexp1,
-cenrayleigh, rayleigh, drayleigh, prayleigh, qrayleigh, rrayleigh, 
-drice, rrice, riceff,
+cennormal,
+cens.normal, double.cens.normal,
+rec.normal, rec.normal.control,
+rec.exp1,   rec.exp1.control,
+cens.rayleigh, rayleigh, drayleigh, prayleigh, qrayleigh, rrayleigh, 
+drice, price, qrice, rrice, riceff, marcumQ,
 dskellam, rskellam, skellam,
 inv.gaussianff, dinv.gaussian, pinv.gaussian, rinv.gaussian, waldff,
-expexp1, expexp)
+expexpff1, expexpff)
 
 
 
 
-export(A1A2A3, a2m, AAaa.nohw,
+export(a2m,
 AICvlm, AICvgam, AICrrvglm, AICqrrvglm, # AICvglm, 
 anova.vgam,
 anova.vglm, 
 bisa, dbisa, pbisa, qbisa, rbisa,
-betabinomial.ab, betabinomial,
+betabinomialff, betabinomial,
 double.expbinomial,
 dbetabinom,    pbetabinom,    rbetabinom,
 dbetabinom.ab, pbetabinom.ab, rbetabinom.ab,
@@ -265,20 +276,20 @@ biplot.qrrvglm,
 dbort, rbort, borel.tanner,
 care.exp,
 cauchy, cauchy1,
-concoef.cao, concoef.Coef.cao, concoef.Coef.qrrvglm, concoef.qrrvglm,
+concoef.rrvgam, concoef.Coef.rrvgam, concoef.Coef.qrrvglm, concoef.qrrvglm,
 cdf, cdf.lms.bcg, cdf.lms.bcn,
 cdf.lms.yjn, cdf.vglm, 
-Coef.cao, Coefficients,
+Coef.rrvgam, Coefficients,
 coefqrrvglm, 
 coefvlm,
 coefvsmooth.spline, coefvsmooth.spline.fit,
 constraints, constraints.vlm, 
 deplot, deplot.default, deplot.lms.bcg, deplot.lms.bcn,
 deplot.lms.yjn, deplot.lms.yjn2, deplot.vglm, 
-deviance.vlm,
+deviance.vlm, deviance.qrrvglm,
 df.residual_vlm,
 dirmultinomial, dirmul.old,
-dtheta.deta)
+dtheta.deta, d2theta.deta2)
 
 
 export(cloglog,cauchit,elogit,explink,fisherz,logc,loge,logneg,logit,
@@ -291,54 +302,55 @@ export(poisson.points, dpois.points)
 
 
 
-export(m2adefault, 
+export(m2a, 
 erlang,
 dfelix, felix,
 fittedvlm, fittedvsmooth.spline, fsqrt,
 formulavlm, formulaNA.VGAM,
 garma, gaussianff,
-hypersecant, hypersecant.1, 
+hypersecant, hypersecant01, 
 hyperg,
-invbinomial, InverseBrat, inverse.gaussianff,
+inv.binomial, InverseBrat, inverse.gaussianff,
 is.Numeric,
-mccullagh89, leipnik, levy,
+mccullagh89, leipnik,
+dlevy, plevy, qlevy, rlevy, levy,
 lms.bcg.control, lms.bcn.control, lmscreg.control,
 lms.yjn.control, 
 lms.bcg, lms.bcn, lms.yjn, lms.yjn2,
 lqnorm,
-dbilogis4, pbilogis4, rbilogis4, bilogistic4,
-logistic1, logistic2,
+dbilogis, pbilogis, rbilogis, bilogistic,
+logistic1, logistic,
 logLik.vlm,
-latvar.cao, latvar.Coef.qrrvglm, latvar.rrvglm, latvar.qrrvglm,
-lvplot.cao,
-Rank, Rank.rrvglm, Rank.qrrvglm, Rank.cao,
+latvar.rrvgam, latvar.Coef.qrrvglm, latvar.rrvglm, latvar.qrrvglm,
+lvplot.rrvgam,
+Rank, Rank.rrvglm, Rank.qrrvglm, Rank.rrvgam,
 Max.Coef.qrrvglm, Max.qrrvglm,
-is.bell.vlm, is.bell.rrvglm, is.bell.qrrvglm, is.bell.cao, is.bell,
+is.bell.vlm, is.bell.rrvglm, is.bell.qrrvglm, is.bell.rrvgam, is.bell,
 model.matrix.qrrvglm,
 model.matrixvlm,
 model.framevlm,
 nakagami, dnaka, pnaka, qnaka, rnaka,
 namesof,
 nlminbcontrol, negloge,
-Opt.Coef.qrrvglm, Opt.qrrvglm, persp.cao)
+Opt.Coef.qrrvglm, Opt.qrrvglm, persp.rrvgam)
 
 
 export( micmen )
 
 
-export( plot.cao,
+export( plot.rrvgam,
 plotpreplotvgam,
 plotvglm, plotvlm,
 plotvsmooth.spline, powerlink,
-predict.cao, predictcao,
+predict.rrvgam, predictrrvgam,
 predictors, predictors.vglm,
 predictqrrvglm, predict.rrvglm,
 predict.vgam,
 predictvglm, predict.vlm, predictvsmooth.spline,
 predictvsmooth.spline.fit,
-  show.Coef.cao,
+  show.Coef.rrvgam,
   show.Coef.qrrvglm, show.Coef.rrvglm, show.rrvglm,
-  show.summary.cao, show.summary.qrrvglm,
+  show.summary.rrvgam, show.summary.qrrvglm,
   show.summary.rrvglm,
   show.summary.vgam,
   show.summary.vglm,
@@ -347,8 +359,8 @@ predictvsmooth.spline.fit,
 show.vgam, show.vglm, show.vlm,
  show.vglmff,
 show.vsmooth.spline,
-process.binomial2.data.vgam, process.categorical.data.vgam,
-negzero.expression,
+process.binomial2.data.VGAM, process.categorical.data.VGAM,
+negzero.expression.VGAM,
 qtplot,
 qtplot.default, qtplot.gumbel, qtplot.lms.bcg,
 qtplot.lms.bcn, qtplot.lms.yjn, qtplot.lms.yjn2, qtplot.vextremes, qtplot.vglm,
@@ -362,16 +374,16 @@ rlplot, rlplot.vglm, rrar.control)
 export(
 SurvS4, is.SurvS4, as.character.SurvS4,
 show.SurvS4,
-simple.exponential, simple.poisson,
-matched.binomial,
+simple.exponential, better.exponential,
+simple.poisson,
 seq2binomial, size.binomial,
-stdze1, stdze2,
-summary.cao, summary.grc,
+sm.scale1, sm.scale2,
+summary.rrvgam, summary.grc,
   summary.qrrvglm,
 summary.rrvglm,
 summaryvgam, summaryvglm, summaryvlm,
 s.vam, terms.vlm, 
-theta2eta, Tol.Coef.qrrvglm, Tol.qrrvglm,
+Tol.Coef.qrrvglm, Tol.qrrvglm,
 triangle, dtriangle, ptriangle, qtriangle, rtriangle, 
   vcovvlm,
 vglm.fit, vgam.fit,
@@ -383,7 +395,6 @@ wweights, yeo.johnson,
 dzipf, pzipf, zipf,
 zeta, zetaff,
 dzeta)
-
 
 
 
@@ -445,11 +456,11 @@ export(vlm2lm.model.matrix)
 export(ddagum, rdagum, qdagum, pdagum, dagum)
 export(dfisk, pfisk, qfisk, rfisk, fisk)
 export(dlomax, plomax, qlomax, rlomax, lomax)
-export(dinvlomax, pinvlomax, qinvlomax, rinvlomax, invlomax)
+export(dinv.lomax, pinv.lomax, qinv.lomax, rinv.lomax, inv.lomax)
 export(dparalogistic, pparalogistic, qparalogistic, rparalogistic,
        paralogistic)
-export(dinvparalogistic, pinvparalogistic, qinvparalogistic, rinvparalogistic,
-       invparalogistic)
+export(dinv.paralogistic, pinv.paralogistic, qinv.paralogistic, rinv.paralogistic,
+       inv.paralogistic)
 export(dsinmad, psinmad, qsinmad, rsinmad, sinmad)
 export(lognormal)
 export(dpolono, ppolono, rpolono)
@@ -474,8 +485,8 @@ export(fff, fff.control,
 
 
 export(
-AA.Aa.aa, AB.Ab.aB.ab2, AB.Ab.aB.ab, ABO, acat,
-beta.ab, betaff,
+AA.Aa.aa, AB.Ab.aB.ab, ABO, acat,
+betaR, betaff,
 dbetageom, pbetageom, rbetageom, betageometric, 
 dbetanorm, pbetanorm, qbetanorm, rbetanorm, # betanorm,
 betaprime,
@@ -488,22 +499,21 @@ bratt, Brat, calibrate.qrrvglm.control, calibrate.qrrvglm,
 calibrate, cao.control,
 cao,
 cdf.lmscreg, cgo, chisq, clo, 
-ccoef, concoef,
+concoef,
 Coef, Coef.qrrvglm, Coef.rrvglm, Coef.vlm,
 predictqrrvglm,
 cratio, cumulative, propodds, prplot, prplot.control)
 export(
 deplot.lmscreg, dirichlet,
-exponential, G1G2G3)
-
+exponential, A1A2A3)
 
 export(
-lgammaff, lgamma3ff)
+lgamma1, lgamma3)
 export(
-gammahyp,
-gengamma, gamma1, gamma2, gamma2.ab, gammaff)
+gammahyperbola,
+gengamma.stacy, gamma1, gamma2, gammaR, gammaff)
 export(dlgamma, plgamma, qlgamma, rlgamma)
-export(dgengamma, pgengamma, qgengamma, rgengamma)
+export(dgengamma.stacy, pgengamma.stacy, qgengamma.stacy, rgengamma.stacy)
 
 
 export(
@@ -521,7 +531,7 @@ dyules, pyules, ryules, yulesimon,
 logff, dlog, plog, rlog,
 logF, dlogF,
 loglinb2, loglinb3,
-loglog, lognormal3,
+loglog,
 lvplot.qrrvglm, lvplot.rrvglm,
 Max, MNSs,
 dmultinomial, multinomial, margeff)
@@ -538,21 +548,22 @@ slash, dslash, pslash, rslash)
 export(
 deunif, peunif, qeunif, reunif,
 denorm, penorm, qenorm, renorm,
-koenker, dkoenker, pkoenker, qkoenker, rkoenker,
+sc.studentt2, dsc.t2, psc.t2, qsc.t2, rsc.t2,
 deexp, peexp, qeexp, reexp)
 
 
 export(
 meplot, meplot.default, meplot.vlm,
 guplot, guplot.default, guplot.vlm,
-negbinomial, negbinomial.size, polya,
-uninormal, SUR, normal.vcm,
+negbinomial, negbinomial.size, polya, polyaR,
+uninormal, SURff, normal.vcm,
 nbcanlink,
 tobit, dtobit, ptobit, qtobit, rtobit,
 Opt, 
 perspqrrvglm, plotdeplot.lmscreg, plotqrrvglm, plotqtplot.lmscreg,
 plotvgam.control, plotvgam, 
-cenpoisson,
+plot.vgam, 
+cens.poisson,
 poissonff,
 dposbinom, pposbinom, qposbinom, rposbinom, posbinomial,
 dposgeom, pposgeom, qposgeom, rposgeom, # posgeometric,
@@ -564,7 +575,7 @@ rrar, rrvglm.control,
 rrvglm.optim.control)
 
 
-export(eta2theta, 
+export(eta2theta, theta2eta,
 rrvglm,
 simplex, dsimplex, rsimplex, 
 sratio, s,
@@ -576,7 +587,7 @@ cqo,
 qrrvglm.control,
 vgam.control, vgam, vglm.control, vglm,
 vsmooth.spline,
-weibull, yip88,
+weibullR, yip88,
 dzabinom, pzabinom, qzabinom, rzabinom, zabinomial, zabinomialff,
 dzageom, pzageom, qzageom, rzageom, zageometric, zageometricff,
 dzanegbin, pzanegbin, qzanegbin, rzanegbin, zanegbinomial, zanegbinomialff,
@@ -601,11 +612,11 @@ tikuv, dtikuv, ptikuv, qtikuv, rtikuv)
 
 exportClasses(vglmff, vlm, vglm, vgam,
 rrvglm, qrrvglm, grc,  rcim, 
-vlmsmall, cao,
+vlmsmall, rrvgam,
 summary.vgam, summary.vglm, summary.vlm,
 summary.qrrvglm,
-summary.cao, summary.rrvglm, 
-Coef.rrvglm, Coef.qrrvglm, Coef.cao,
+summary.rrvgam, summary.rrvglm, 
+Coef.rrvglm, Coef.qrrvglm, Coef.rrvgam,
 vcov.qrrvglm,
 vsmooth.spline.fit, vsmooth.spline)
 

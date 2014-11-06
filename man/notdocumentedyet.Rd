@@ -2,7 +2,20 @@
 \alias{notdocumentedyet}
 %
 %
-% 201405;
+% 201408;
+\alias{dlevy}
+\alias{plevy}
+\alias{qlevy}
+\alias{rlevy}
+% 201407; expected.betabin.ab is needed for zibetabinomialff() in YBook.
+\alias{grid.search}
+\alias{expected.betabin.ab}
+% 201406;
+\alias{interleave.VGAM}
+\alias{marcumQ}
+\alias{QR.Q}
+\alias{QR.R}
+%
 %\alias{sm.bs}
 %\alias{sm.ns}
 %\alias{sm.poly}
@@ -30,7 +43,8 @@
 %
 % 201307;
 \alias{posnormal.control}
-\alias{recnormal.control}
+\alias{rec.normal.control}
+\alias{rec.exp1.control}
 %\alias{kendall.tau}
 %\alias{binormalcop}
 %\alias{dbinormcop}
@@ -52,7 +66,7 @@
 \alias{Rank}
 \alias{Rank.rrvglm}
 \alias{Rank.qrrvglm}
-\alias{Rank.cao}
+\alias{Rank.rrvgam}
 % 20121015; delete this later
 %\alias{huggins91.old}
 %
@@ -116,11 +130,11 @@
 \alias{vcovvlm}
 \alias{VGAMenv}
 \alias{nobs}
-\alias{show.Coef.cao}
+\alias{show.Coef.rrvgam}
 \alias{show.Coef.qrrvglm}
 \alias{show.Coef.rrvglm}
 \alias{show.rrvglm}
-\alias{show.summary.cao}
+\alias{show.summary.rrvgam}
 % \alias{show.summary.lms}
 \alias{show.summary.qrrvglm}
 % \alias{show.summary.rc.exponential}
@@ -185,7 +199,7 @@
 \alias{Confint.rrnb}
 \alias{Confint.nb1}
 %\alias{gala}
-% \alias{mmt}
+% \alias{melbmaxtemp}
 %
 %
 %
@@ -201,6 +215,7 @@
 %\alias{moffset}     % Has been written
 % \alias{Qvar}
 \alias{plotqvar}
+\alias{qvplot}
 \alias{depvar.vlm}
 %
 %
@@ -228,7 +243,7 @@
 %
 %
 %
-\alias{A1A2A3}
+% \alias{A1A2A3.orig}  20140909; same as A1A2A3(hwe = TRUE)
 \alias{AAaa.nohw}
 %\alias{AIC}
 %\alias{AIC.qrrvglm}
@@ -238,7 +253,7 @@
 %\alias{AIC.vlm}
 % \alias{Build.terms}
 \alias{Build.terms.vlm}
-\alias{Coef.cao}
+\alias{Coef.rrvgam}
 \alias{Coefficients}
 \alias{Cut}
 \alias{Deviance.categorical.data.vgam}
@@ -290,9 +305,9 @@
 \alias{car.all}
 \alias{care.exp}
 %
-\alias{concoef.Coef.cao}
+\alias{concoef.Coef.rrvgam}
 \alias{concoef.Coef.qrrvglm}
-\alias{concoef.cao}
+\alias{concoef.rrvgam}
 \alias{concoef.qrrvglm}
 %
 \alias{cdf}
@@ -300,9 +315,9 @@
 \alias{cdf.lms.bcn}
 \alias{cdf.lms.yjn}
 \alias{cdf.vglm}
-% \alias{cm.nointercept.vgam}
-% \alias{cm.vgam}
-% \alias{cm.zero.vgam}
+\alias{cm.VGAM}
+\alias{cm.zero.VGAM}
+\alias{cm.nointercept.VGAM}
 \alias{coefficients}
 \alias{coefqrrvglm}
 % \alias{coefvlm}  % 20140124
@@ -324,6 +339,7 @@
 %\alias{deviance.uqo}
 %\alias{deviance.vglm}
 \alias{deviance.vlm}
+\alias{deviance.qrrvglm}
 %\alias{df.residual}
 %\alias{df.residual_vlm}
 \alias{dimm}
@@ -342,7 +358,6 @@
 % \alias{effects.vlm}
 % \alias{eifun}
 % \alias{eijfun}
-\alias{erfc}
 \alias{eta2theta}
 %\alias{explink}
 % \alias{extract.arg}
@@ -379,14 +394,13 @@
 % \alias{gleg.weight.yjn.13}
 \alias{glm}
 % \alias{hypersecant}
-% \alias{hypersecant.1}
+% \alias{hypersecant01}
 % \alias{ima}
-% \alias{interleave.VGAM}
-% \alias{invbinomial}
+% \alias{inv.binomial}
 \alias{inverse.gaussianff}
 \alias{is.Numeric}
 \alias{is.bell}
-\alias{is.bell.cao}
+\alias{is.bell.rrvgam}
 \alias{is.bell.qrrvglm}
 \alias{is.bell.rrvglm}
 \alias{is.bell.vlm}
@@ -403,14 +417,14 @@
 \alias{lmscreg.control}
 % \alias{logLik.vlm}
 \alias{logLik.qrrvglm}
-% \alias{lv.Coef.cao} 20090505
+% \alias{lv.Coef.rrvgam} 20090505
 \alias{latvar.Coef.qrrvglm}
-\alias{latvar.cao}
+\alias{latvar.rrvgam}
 \alias{latvar.rrvglm}
 \alias{latvar.qrrvglm}
-\alias{lvplot.cao}
-\alias{m2adefault}
-\alias{m2avglm}
+\alias{lvplot.rrvgam}
+\alias{m2a}
+%\alias{m2avglm}
 % \alias{matrix.power}
 \alias{mbesselI0}
 \alias{mix2exp.control}
@@ -444,12 +458,12 @@
 \alias{nvar.vgam}
 \alias{nvar.rrvglm}
 \alias{nvar.qrrvglm}
-\alias{nvar.cao}
+\alias{nvar.rrvgam}
 \alias{nvar.rcim}
 % \alias{num.deriv.rrr}
 \alias{persp}
-\alias{persp.cao}
-\alias{plot.cao}
+\alias{persp.rrvgam}
+\alias{plot.rrvgam}
 \alias{plotpreplotvgam}
 %\alias{plotvglm}
 \alias{plotvlm}
@@ -457,7 +471,7 @@
 % \alias{pnorm2} done 20120910
 % \alias{poissonqn}
 \alias{predict}
-\alias{predict.cao}
+\alias{predict.rrvgam}
 \alias{predict.glm}
 \alias{predict.lm}
 \alias{predict.mlm}
@@ -466,7 +480,7 @@
 %\alias{predict.uqo}
 \alias{predict.vgam}
 \alias{predict.vlm}
-\alias{predictcao}
+\alias{predictrrvgam}
 \alias{predictors}
 \alias{predictors.vglm}
 \alias{predictvsmooth.spline}
@@ -474,9 +488,9 @@
 % \alias{preplotvgam}
 \alias{print}
 \alias{procVec}
-\alias{negzero.expression}
-\alias{process.binomial2.data.vgam}
-\alias{process.categorical.data.vgam}
+\alias{negzero.expression.VGAM}
+\alias{process.binomial2.data.VGAM}
+\alias{process.categorical.data.VGAM}
 % \alias{process.constraints}
 % \alias{proj.vgam}
 % \alias{proj.vglm}
@@ -529,14 +543,23 @@
 \alias{ResSS.vgam}
 \alias{s.vam}
 \alias{simple.exponential}
+\alias{better.exponential}
 \alias{simple.poisson}
 \alias{size.binomial}
-\alias{stdze1}
-\alias{stdze2}
+%
+%
+\alias{sm.min1}
+\alias{sm.min2}
+\alias{sm.scale1}
+\alias{sm.scale2}
+%\alias{stdze1}
+%\alias{stdze2}
+%
+%
 % \alias{step.vgam}
 % \alias{step.vglm}
 % \alias{subconstraints}
-\alias{summary.cao}
+\alias{summary.rrvgam}
 \alias{summary.grc}
 \alias{summary.lms}
 \alias{summary.qrrvglm}
@@ -556,6 +579,7 @@
 % \alias{uqo.fit}
 % \alias{valid.vglmff}
 % \alias{valid.vknotl2}
+\alias{valt.control}
 % \alias{valt}
 % \alias{valt.1iter}
 % \alias{valt.2iter}
@@ -607,7 +631,7 @@
 %
 %
 %\alias{Coef.uqo-class}
-\alias{cao-class}
+\alias{rrvgam-class}
 \alias{rcim0-class}
 \alias{rcim-class}
 \alias{grc-class}
@@ -626,8 +650,8 @@
 \alias{vlmsmall-class}
 \alias{vsmooth.spline-class}
 \alias{vsmooth.spline.fit-class}
-\alias{Coef.cao-class}
-\alias{summary.cao-class}
+\alias{Coef.rrvgam-class}
+\alias{summary.rrvgam-class}
 %
 %
 %- Also NEED an '\alias' for EACH other topic documented here.

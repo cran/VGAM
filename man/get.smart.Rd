@@ -48,17 +48,7 @@ is incremented beforehand, and then written back to
 
 }
 \examples{
-"my1" <- function(x, minx = min(x)) { # Here is a smart function
-  x <- x  # Needed for nested calls, e.g., sm.bs(sm.scale(x))
-  if (smart.mode.is("read")) {
-    smart  <- get.smart()
-    minx <- smart$minx  # Overwrite its value
-  } else
-    if(smart.mode.is("write"))
-        put.smart(list(minx = minx))
-    sqrt(x - minx)
-}
-attr(my1, "smart") <- TRUE 
+print(sm.min1)
 }
 %\keyword{smart}
 \keyword{models}

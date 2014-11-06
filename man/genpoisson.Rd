@@ -120,8 +120,8 @@ New York, USA: Marcel Dekker.
 }
 \examples{
 gdata <- data.frame(x2 = runif(nn <- 200))
-gdata <- transform(gdata, y = rpois(nn, exp(2 - x2)))  # Ordinary Poisson data
-fit <- vglm(y ~ x2, genpoisson(zero = 1), data = gdata, trace = TRUE)
+gdata <- transform(gdata, y1 = rpois(nn, exp(2 - x2)))  # Ordinary Poisson data
+fit <- vglm(y1 ~ x2, genpoisson(zero = 1), data = gdata, trace = TRUE)
 coef(fit, matrix = TRUE)
 summary(fit)
 }

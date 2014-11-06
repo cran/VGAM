@@ -326,7 +326,7 @@ ap1 <- cao(cbind(Pardlugu, Pardmont, Pardnigr, Pardpull, Zoraspin) ~
            family = poissonff, data = hspider,
            df1.nl = c(Zoraspin = 2.3, 2.1),
            Bestof = 10, Crow1positive = FALSE)
-sort(ap1@misc$deviance.Bestof)  # A history of all the iterations
+sort(deviance(ap1, history = TRUE))  # A history of all the iterations
 
 Coef(ap1)
 

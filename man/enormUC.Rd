@@ -100,20 +100,20 @@ very close to 0 or 1.
 }
 
 \examples{
-my_p <- 0.25; y <- rnorm(nn <- 1000)
-(myexp <- qenorm(my_p))
-sum(myexp - y[y <= myexp]) / sum(abs(myexp - y))  # Should be my_p
+my.p <- 0.25; y <- rnorm(nn <- 1000)
+(myexp <- qenorm(my.p))
+sum(myexp - y[y <= myexp]) / sum(abs(myexp - y))  # Should be my.p
 
 # Non-standard normal
 mymean <- 1; mysd <- 2
 yy <- rnorm(nn, mymean, mysd)
-(myexp <- qenorm(my_p, mymean, mysd))
-sum(myexp - yy[yy <= myexp]) / sum(abs(myexp - yy))  # Should be my_p
+(myexp <- qenorm(my.p, mymean, mysd))
+sum(myexp - yy[yy <= myexp]) / sum(abs(myexp - yy))  # Should be my.p
 penorm(-Inf, mymean, mysd)      #  Should be 0
 penorm( Inf, mymean, mysd)      #  Should be 1
 penorm(mean(yy), mymean, mysd)  #  Should be 0.5
 abs(qenorm(0.5, mymean, mysd) - mean(yy))  #  Should be 0
-abs(penorm(myexp, mymean, mysd) - my_p)    #  Should be 0
+abs(penorm(myexp, mymean, mysd) - my.p)    #  Should be 0
 integrate(f = denorm, lower = -Inf, upper = Inf,
           mymean, mysd)  #  Should be 1
 
@@ -134,7 +134,7 @@ lines(yy, pnorm(yy), col = "darkgreen", lty = "dotted", lwd = 2) }
 %# Equivalently:
 %I1 = mean(y <= myexp) * mean( myexp - y[y <= myexp])
 %I2 = mean(y >  myexp) * mean(-myexp + y[y >  myexp])
-%I1 / (I1 + I2)  # Should be my_p
+%I1 / (I1 + I2)  # Should be my.p
 %# Or:
 %I1 = sum( myexp - y[y <= myexp])
 %I2 = sum(-myexp + y[y >  myexp])

@@ -11,7 +11,7 @@
 \usage{
 inv.gaussianff(lmu = "loge", llambda = "loge",
                imethod = 1, ilambda = NULL,
-               parallel = FALSE, shrinkage.init = 0.99, zero = NULL)
+               parallel = FALSE, ishrinkage = 0.99, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 %apply.parint = FALSE,
@@ -30,7 +30,7 @@ inv.gaussianff(lmu = "loge", llambda = "loge",
 
 
   }
-  \item{imethod, shrinkage.init, zero}{ 
+  \item{imethod, ishrinkage, zero}{ 
   See \code{\link{CommonVGAMffArguments}} for more information.
 
 

@@ -1,6 +1,6 @@
 \name{rayleigh}
 \alias{rayleigh}
-\alias{cenrayleigh}
+\alias{cens.rayleigh}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{Rayleigh Distribution Family Function }
 \description{
@@ -11,7 +11,7 @@
 \usage{
    rayleigh(lscale = "loge", nrfs = 1/3 + 0.01,
             oim.mean = TRUE, zero = NULL)
-cenrayleigh(lscale = "loge", oim = TRUE)
+cens.rayleigh(lscale = "loge", oim = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -67,7 +67,7 @@ cenrayleigh(lscale = "loge", oim = TRUE)
   \eqn{b^2 (4-\pi)/2}{b^2 (4-pi)/2}.
 
 
-  The \pkg{VGAM} family function \code{cenrayleigh} handles right-censored
+  The \pkg{VGAM} family function \code{cens.rayleigh} handles right-censored
   data (the true value is greater than the observed value). To indicate
   which type of censoring, input \code{extra = list(rightcensored = vec2)}
   where \code{vec2} is a logical vector the same length as the response.
@@ -106,7 +106,16 @@ Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
   The  \code{\link{poisson.points}} family function is
   more general so that if \code{ostatistic = 1} and \code{dimension = 2}
   then it coincides with \code{\link{rayleigh}}.
-  Another related distribution is the Maxwell distribution.
+  Other related distributions are the Maxwell
+  and Weibull distributions.
+
+
+
+
+% http://www.math.uah.edu/stat/special/MultiNormal.html
+% The distribution of R is known as the Rayleigh distribution,
+%named for William Strutt, Lord Rayleigh. It is a member of the
+%family of Weibull distributions, named in turn for Wallodi Weibull.
 
 
 
@@ -117,6 +126,7 @@ Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
   \code{\link{genrayleigh}},
   \code{\link{riceff}},
   \code{\link{maxwell}},
+  \code{\link{weibullR}},
   \code{\link{poisson.points}},
   \code{\link{simulate.vlm}}.
 
@@ -137,7 +147,7 @@ rdata <- transform(rdata, y = pmin(U, ystar))
 \dontrun{ par(mfrow = c(1, 2))
 hist(with(rdata, ystar)); hist(with(rdata, y)) }
 extra <- with(rdata, list(rightcensored = ystar > U))
-fit <- vglm(y ~ 1, cenrayleigh, data = rdata, trace = TRUE, extra = extra)
+fit <- vglm(y ~ 1, cens.rayleigh, data = rdata, trace = TRUE, extra = extra)
 table(fit@extra$rightcen)
 coef(fit, matrix = TRUE)
 head(fitted(fit))

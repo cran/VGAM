@@ -80,9 +80,9 @@ explogff(lscale = "loge", lshape = "logit",
 
 }
 \examples{
-\dontrun{ scale <- exp(2); shape <- logit(-1, inverse = TRUE)
-edata <- data.frame(y = rexplog(n = 2000, scale = scale, shape = shape))
-fit <- vglm(y ~ 1, explogff, edata, trace = TRUE)
+\dontrun{ Scale <- exp(2); shape <- logit(-1, inverse = TRUE)
+edata <- data.frame(y = rexplog(n = 2000, scale = Scale, shape = shape))
+fit <- vglm(y ~ 1, explogff, data = edata, trace = TRUE)
 c(with(edata, median(y)), head(fitted(fit), 1))
 coef(fit, matrix = TRUE)
 Coef(fit)

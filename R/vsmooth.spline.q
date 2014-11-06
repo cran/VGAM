@@ -391,7 +391,7 @@ vsmooth.spline <-
   Wmat.c <- array(0, c(ncb, ncb, neff))
  if (FALSE)
   for (ii in 1:neff) {
-    Wi.indiv <- m2adefault(wzmat[ii, , drop = FALSE], M = ncb)
+    Wi.indiv <- m2a(wzmat[ii, , drop = FALSE], M = ncb)
     Wi.indiv <- Wi.indiv[,, 1]  # Drop the 3rd dimension
     Wmat.c[,, ii] <- t(conmat) %*% Wi.indiv %*% conmat
     one.Wmat.c <- matrix(Wmat.c[,, ii], ncb, ncb)

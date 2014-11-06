@@ -25,7 +25,7 @@ edhuber <- function(x, k = 0.862, mu = 0, sigma = 1, log = FALSE) {
 
   zedd <- (x - mu) / sigma
   fk <- dnorm(k)
-   eps <- 1 - 1 / (pnorm(k) - pnorm(-k) + 2 * fk /k)
+   eps <- 1 - 1 / (pnorm(k) - pnorm(-k) + 2 * fk / k)
   ceps <-     1 / (pnorm(k) - pnorm(-k) + 2 * fk / k)
 
   if (log.arg) {
@@ -168,7 +168,7 @@ phuber <- function(q, k = 0.862, mu = 0, sigma = 1) {
             namesof("scale",     lscale,  earg = escale), "\n\n",
             "Mean: location"),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.vgam(constraints, x, .zero, M)
+    constraints <- cm.zero.VGAM(constraints, x, .zero, M)
   }), list( .zero = zero ))),
   initialize = eval(substitute(expression({
 
@@ -182,8 +182,8 @@ phuber <- function(q, k = 0.862, mu = 0, sigma = 1) {
 
 
     predictors.names <-
-       c(namesof("location", .llocat, earg = .elocat, tag = FALSE),
-         namesof("scale",    .lscale, earg = .escale, tag = FALSE))
+       c(namesof("location", .llocat , earg = .elocat, tag = FALSE),
+         namesof("scale",    .lscale , earg = .escale, tag = FALSE))
 
     if (!length(etastart)) {
       junk <- lm.wfit(x = x, y = c(y), w = c(w))
@@ -200,14 +200,14 @@ phuber <- function(q, k = 0.862, mu = 0, sigma = 1) {
         }
       }
       etastart <- cbind(
-           theta2eta(location.init,  .llocat, earg = .elocat),
-           theta2eta(scale.y.est,    .lscale, earg = .escale))
+           theta2eta(location.init,  .llocat , earg = .elocat ),
+           theta2eta(scale.y.est,    .lscale , earg = .escale ))
     }
   }), list( .llocat = llocat, .lscale = lscale,
             .elocat = elocat, .escale = escale,
             .imethod = imethod ))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
-    eta2theta(eta[, 1], .llocat, earg = .elocat)
+    eta2theta(eta[, 1], .llocat , earg = .elocat )
   }, list( .llocat = llocat,
            .elocat = elocat, .escale = escale ))),
   last = eval(substitute(expression({
@@ -244,8 +244,8 @@ phuber <- function(q, k = 0.862, mu = 0, sigma = 1) {
            .k      = k ))),
   vfamily = c("huber2"),
   deriv = eval(substitute(expression({
-    mylocat <- eta2theta(eta[, 1], .llocat,  earg = .elocat)
-    myscale <- eta2theta(eta[, 2], .lscale,  earg = .escale)
+    mylocat <- eta2theta(eta[, 1], .llocat ,  earg = .elocat )
+    myscale <- eta2theta(eta[, 2], .lscale ,  earg = .escale )
     myk     <- .k
 
     zedd <- (y - mylocat) / myscale
@@ -263,8 +263,8 @@ phuber <- function(q, k = 0.862, mu = 0, sigma = 1) {
     dl.dscale[cond3] <- ( myk * zedd)[cond3]
     dl.dscale <- (-1 + dl.dscale) / myscale
 
-    dlocat.deta <- dtheta.deta(mylocat, .llocat, earg = .elocat)
-    dscale.deta <- dtheta.deta(myscale, .lscale, earg = .escale)
+    dlocat.deta <- dtheta.deta(mylocat, .llocat , earg = .elocat )
+    dscale.deta <- dtheta.deta(myscale, .lscale , earg = .escale )
     ans <- c(w) * cbind(dl.dlocat * dlocat.deta,
                         dl.dscale * dscale.deta)
     ans
@@ -332,7 +332,7 @@ phuber <- function(q, k = 0.862, mu = 0, sigma = 1) {
 
 
     predictors.names <-
-       c(namesof("location", .llocat, earg = .elocat, tag = FALSE))
+       c(namesof("location", .llocat , earg = .elocat, tag = FALSE))
 
 
     if (!length(etastart)) {
@@ -349,13 +349,13 @@ phuber <- function(q, k = 0.862, mu = 0, sigma = 1) {
         }
       }
       etastart <- cbind(
-           theta2eta(location.init,  .llocat, earg = .elocat))
+           theta2eta(location.init,  .llocat , earg = .elocat ))
     }
   }), list( .llocat = llocat,
             .elocat = elocat,
             .imethod = imethod ))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
-    eta2theta(eta, .llocat, earg = .elocat)
+    eta2theta(eta, .llocat , earg = .elocat )
   }, list( .llocat = llocat,
            .elocat = elocat ))),
   last = eval(substitute(expression({
@@ -392,7 +392,7 @@ phuber <- function(q, k = 0.862, mu = 0, sigma = 1) {
            .k      = k ))),
   vfamily = c("huber1"),
   deriv = eval(substitute(expression({
-    mylocat <- eta2theta(eta, .llocat,  earg = .elocat)
+    mylocat <- eta2theta(eta, .llocat ,  earg = .elocat )
     myk     <- .k
 
     zedd <- (y - mylocat)  # / myscale
@@ -412,7 +412,7 @@ phuber <- function(q, k = 0.862, mu = 0, sigma = 1) {
       dl.dscale <- (-1 + dl.dscale) / myscale
     }
 
-    dlocat.deta <- dtheta.deta(mylocat, .llocat, earg = .elocat)
+    dlocat.deta <- dtheta.deta(mylocat, .llocat , earg = .elocat )
     ans <- c(w) * cbind(dl.dlocat * dlocat.deta)
     ans
   }), list( .llocat = llocat,

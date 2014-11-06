@@ -1,6 +1,6 @@
-\name{lgammaff}
-\alias{lgammaff}
-\alias{lgamma3ff}
+\name{lgamma1}
+\alias{lgamma1}
+\alias{lgamma3}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Log-gamma Distribution Family Function }
 \description{
@@ -9,9 +9,9 @@
 
 }
 \usage{
-lgammaff(link = "loge", init.k = NULL)
-lgamma3ff(llocation = "identitylink", lscale = "loge", lshape = "loge",
-          ilocation = NULL, iscale = NULL, ishape = 1, zero = NULL)
+lgamma1(lshape = "loge", ishape = NULL)
+lgamma3(llocation = "identitylink", lscale = "loge", lshape = "loge",
+        ilocation = NULL, iscale = NULL, ishape = 1, zero = 2:3)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -23,14 +23,14 @@ lgamma3ff(llocation = "identitylink", lscale = "loge", lshape = "loge",
 
 
   }
-  \item{link, lshape}{
+  \item{lshape}{
   Parameter link function applied to 
   the positive shape parameter \eqn{k}. 
   See \code{\link{Links}} for more choices.
 
 
   }
-  \item{init.k, ishape}{
+  \item{ishape}{
   Initial value for \eqn{k}.
   If given, it must be positive. 
   If failure to converge occurs, try some other value.
@@ -106,15 +106,15 @@ New York: Wiley.
   type 1 extreme value distribution.
 
 
-  The standard log-gamma distribution is fitted with \code{lgammaff}
+  The standard log-gamma distribution is fitted with \code{lgamma1}
   and the non-standard (3-parameter) log-gamma distribution is fitted
-  with \code{lgamma3ff}.
+  with \code{lgamma3}.
 
 
 }
 \seealso{
   \code{\link{rlgamma}},
-  \code{\link{gengamma}},
+  \code{\link{gengamma.stacy}},
   \code{\link{prentice74}},
   \code{\link{gamma1}},
   \code{\link[base:Special]{lgamma}}.
@@ -122,16 +122,16 @@ New York: Wiley.
 
 }
 \examples{
-ldata <- data.frame(y = rlgamma(100, k = exp(1)))
-fit <- vglm(y ~ 1, lgammaff, data = ldata, trace = TRUE, crit = "coef")
+ldata <- data.frame(y = rlgamma(100, shape = exp(1)))
+fit <- vglm(y ~ 1, lgamma1, data = ldata, trace = TRUE, crit = "coef")
 summary(fit)
 coef(fit, matrix = TRUE)
 Coef(fit)
 
-ldata <- data.frame(x = runif(nn <- 5000))  # Another example
-ldata <- transform(ldata, loc = -1 + 2 * x, Scale = exp(1))
-ldata <- transform(ldata, y = rlgamma(nn, loc, scale = Scale, k = exp(0)))
-fit2 <- vglm(y ~ x, lgamma3ff(zero = 2:3), data = ldata, trace = TRUE, crit = "c")
+ldata <- data.frame(x2 = runif(nn <- 5000))  # Another example
+ldata <- transform(ldata, loc = -1 + 2 * x2, Scale = exp(1))
+ldata <- transform(ldata, y = rlgamma(nn, loc, scale = Scale, shape = exp(0)))
+fit2 <- vglm(y ~ x2, lgamma3, data = ldata, trace = TRUE, crit = "c")
 coef(fit2, matrix = TRUE)
 }
 \keyword{models}

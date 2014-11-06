@@ -44,18 +44,18 @@
 
 }
 \examples{
-is.smart(my1)  # TRUE
-is.smart(sm.poly) # TRUE
+is.smart(sm.min1)  # TRUE
+is.smart(sm.poly)  # TRUE
 library(splines)
-is.smart(sm.bs)   # TRUE
-is.smart(sm.ns)   # TRUE
+is.smart(sm.bs)  # TRUE
+is.smart(sm.ns)  # TRUE
 is.smart(tan)  # FALSE
 \dontrun{
-x <- rnorm(9)
-fit1 <- vglm(rnorm(9) ~ x, uninormal)
-is.smart(fit1)   # TRUE
-fit2 <- vglm(rnorm(9) ~ x, uninormal, smart = FALSE)
-is.smart(fit2)   # FALSE
+udata <- data.frame(x2 = rnorm(9))
+fit1 <- vglm(rnorm(9) ~ x2, uninormal, data = udata)
+is.smart(fit1)  # TRUE
+fit2 <- vglm(rnorm(9) ~ x2, uninormal, data = udata, smart = FALSE)
+is.smart(fit2)  # FALSE
 fit2@smart.prediction
 }
 }

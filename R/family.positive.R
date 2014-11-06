@@ -426,7 +426,7 @@ posnegbinomial.control <- function(save.weight = TRUE, ...) {
  posnegbinomial <- function(lmunb = "loge", lsize = "loge",
                             isize = NULL, zero = -2,
                             nsimEIM = 250,
-                            shrinkage.init = 0.95, imethod = 1) {
+                            ishrinkage = 0.95, imethod = 1) {
 
   if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
@@ -434,10 +434,10 @@ posnegbinomial.control <- function(save.weight = TRUE, ...) {
     stop("argument 'imethod' must be 1 or 2")
   if (length(isize) && !is.Numeric(isize, positive = TRUE))
       stop("bad input for argument 'isize'")
-  if (!is.Numeric(shrinkage.init, length.arg = 1) ||
-     shrinkage.init < 0 ||
-     shrinkage.init > 1)
-    stop("bad input for argument 'shrinkage.init'")
+  if (!is.Numeric(ishrinkage, length.arg = 1) ||
+     ishrinkage < 0 ||
+     ishrinkage > 1)
+    stop("bad input for argument 'ishrinkage'")
 
 
   lmunb <- as.list(substitute(lmunb))
@@ -466,7 +466,7 @@ posnegbinomial.control <- function(save.weight = TRUE, ...) {
 
     dotzero <- .zero
     M1 <- 2
-    eval(negzero.expression)
+    eval(negzero.expression.VGAM)
   }), list( .zero = zero ))),
   infos = eval(substitute(function(...) {
     list(M1 = 2,
@@ -477,7 +477,7 @@ posnegbinomial.control <- function(save.weight = TRUE, ...) {
          esize = .esize )
   }, list( .lmunb = lmunb, .lsize = lsize, .isize = isize,
             .emunb = emunb, .esize = esize,
-            .sinit = shrinkage.init,
+            .ishrinkage = ishrinkage,
             .imethod = imethod ))),
 
   initialize = eval(substitute(expression({
@@ -524,7 +524,7 @@ posnegbinomial.control <- function(save.weight = TRUE, ...) {
         } else {
           median(y[,iii])
         }
-        mu.init[, iii] <- (1 - .sinit) * y[, iii] + .sinit * use.this
+        mu.init[, iii] <- (1 - .ishrinkage ) * y[, iii] + .ishrinkage * use.this
       }
 
       if ( is.Numeric( .isize )) {
@@ -539,10 +539,11 @@ posnegbinomial.control <- function(save.weight = TRUE, ...) {
             k.grid <- 2^((-6):6)
             kmat0 <- matrix(0, nrow = n, ncol = NOS)
             for (spp. in 1:NOS) {
-              kmat0[, spp.] <- getMaxMin(k.grid,
-                                objfun = posnegbinomial.Loglikfun,
-                                y = y[, spp.], x = x, w = w[, spp.],
-                                extraargs = mu.init[, spp.])
+              kmat0[, spp.] <-
+                grid.search(k.grid,
+                            objfun = posnegbinomial.Loglikfun,
+                            y = y[, spp.], x = x, w = w[, spp.],
+                            extraargs = mu.init[, spp.])
             }
       }
       p00 <- (kmat0 / (kmat0 + mu.init))^kmat0
@@ -554,7 +555,7 @@ posnegbinomial.control <- function(save.weight = TRUE, ...) {
     }
   }), list( .lmunb = lmunb, .lsize = lsize, .isize = isize,
             .emunb = emunb, .esize = esize,
-            .sinit = shrinkage.init,
+            .ishrinkage = ishrinkage,
             .imethod = imethod ))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
     M1 <- 2
@@ -892,7 +893,7 @@ rposnegbin <- function(n, size, prob = NULL, munb = NULL) {
   constraints = eval(substitute(expression({
     dotzero <- .zero
     M1 <- 1
-    eval(negzero.expression)
+    eval(negzero.expression.VGAM)
   }), list( .zero = zero ))),
 
   infos = eval(substitute(function(...) {
@@ -1145,13 +1146,13 @@ dposbinom <- function(x, size, prob, log = FALSE) {
             namesof("prob", link, earg = earg, tag = FALSE),
             "\n"),
   constraints = eval(substitute(expression({
-    constraints <- cm.vgam(matrix(1, M, 1), x = x, 
+    constraints <- cm.VGAM(matrix(1, M, 1), x = x, 
                            bool = .parallel , 
                            constraints = constraints)
 
     dotzero <- .zero
     M1 <- 1
-    eval(negzero.expression)
+    eval(negzero.expression.VGAM)
   }), list( .parallel = parallel, .zero = zero ))),
   infos = eval(substitute(function(...) {
     list(M1 = 1,
@@ -1457,7 +1458,7 @@ if (length(extra$tau)) {
             namesof("probM", link, earg = earg, tag = FALSE),
             "\n"),
   constraints = eval(substitute(expression({
-    constraints <- cm.vgam(matrix(1, M, 1), x = x, 
+    constraints <- cm.VGAM(matrix(1, M, 1), x = x, 
                            bool = .parallel.t , 
                            constraints = constraints,
                            apply.int = .apply.parint ,  #  TRUE,
@@ -1719,7 +1720,7 @@ if (length(extra$tau)) {
 
     cm.intercept.default <- if ( .I2 ) diag(2) else cbind(0:1, 1)
 
-    constraints <- cm.vgam(matrix(1, 2, 1), x = x,
+    constraints <- cm.VGAM(matrix(1, 2, 1), x = x,
                            bool = .drop.b ,
                            constraints = constraints,
                            apply.int = .apply.parint.b ,  # TRUE, 
@@ -2100,7 +2101,7 @@ if (length(extra$tau)) {
     constraints.orig <- constraints
     cm1.d <-
     cmk.d <- matrix(0, M, 1)  # All 0s inside
-    con.d <- cm.vgam(matrix(1, M, 1), x = x,
+    con.d <- cm.VGAM(matrix(1, M, 1), x = x,
                            bool = .drop.b ,
                            constraints = constraints.orig,
                            apply.int = .apply.parint.d ,  # FALSE,  
@@ -2111,7 +2112,7 @@ if (length(extra$tau)) {
 
     cm1.t <-
     cmk.t <- rbind(diag(tau), diag(tau)[-1, ])  # More readable
-    con.t <- cm.vgam(matrix(1, M, 1), x = x,
+    con.t <- cm.VGAM(matrix(1, M, 1), x = x,
                            bool = .parallel.t ,  # Same as .parallel.b
                            constraints = constraints.orig,
                            apply.int = .apply.parint.t ,  # FALSE,  
@@ -2122,7 +2123,7 @@ if (length(extra$tau)) {
 
     cm1.b <-
     cmk.b <- rbind(matrix(0, tau, tau-1), diag(tau-1))
-    con.b <- cm.vgam(matrix(c(rep(0, len = tau  ),
+    con.b <- cm.VGAM(matrix(c(rep(0, len = tau  ),
                               rep(1, len = tau-1)), M, 1), x = x,
                            bool = .parallel.b ,  # Same as .parallel.b
                            constraints = constraints.orig,
@@ -2131,7 +2132,6 @@ if (length(extra$tau)) {
                            cm.intercept.default = cm1.b)
    
     con.use <- con.b
-    con.names <- names(con.use)
     for (klocal in 1:length(con.b)) {
       con.use[[klocal]] <-
         cbind(if (any(con.d[[klocal]] == 1)) NULL else con.b[[klocal]],

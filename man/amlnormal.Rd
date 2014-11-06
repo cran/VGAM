@@ -144,9 +144,9 @@ amlnormal(w.aml = 1, parallel = FALSE, lexpectile = "identitylink",
 \dontrun{
 # Example 1
 ooo <- with(bmi.nz, order(age))
-bmi.nz <- bmi.nz[ooo,]  # Sort by age
-(fit <- vglm(BMI ~ sm.bs(age), fam = amlnormal(w.aml = 0.1), bmi.nz))
-fit@extra # Gives the w value and the percentile
+bmi.nz <- bmi.nz[ooo, ]  # Sort by age
+(fit <- vglm(BMI ~ sm.bs(age), amlnormal(w.aml = 0.1), data = bmi.nz))
+fit@extra  # Gives the w value and the percentile
 coef(fit, matrix = TRUE)
 
 # Quantile plot
@@ -157,8 +157,8 @@ with(bmi.nz, lines(age, c(fitted(fit)), col = "black"))
 
 # Example 2
 # Find the w values that give the 25, 50 and 75 percentiles
-findw <- function(w, percentile = 50) {
-  fit2 <- vglm(BMI ~ sm.bs(age), fam = amlnormal(w = w), data = bmi.nz)
+find.w <- function(w, percentile = 50) {
+  fit2 <- vglm(BMI ~ sm.bs(age), amlnormal(w = w), data = bmi.nz)
   fit2@extra$percentile - percentile
 }
 # Quantile plot
@@ -166,18 +166,18 @@ with(bmi.nz, plot(age, BMI, col = "blue", las = 1, main =
      "25, 50 and 75 expectile-percentile curves"))
 for (myp in c(25, 50, 75)) {
 # Note: uniroot() can only find one root at a time
-  bestw <- uniroot(f = findw, interval = c(1/10^4, 10^4), percentile = myp)
-  fit2 <- vglm(BMI ~ sm.bs(age), fam = amlnormal(w = bestw$root), data = bmi.nz)
-  with(bmi.nz, lines(age, c(fitted(fit2)), col = "red"))
+  bestw <- uniroot(f = find.w, interval = c(1/10^4, 10^4), percentile = myp)
+  fit2 <- vglm(BMI ~ sm.bs(age), amlnormal(w = bestw$root), data = bmi.nz)
+  with(bmi.nz, lines(age, c(fitted(fit2)), col = "orange"))
 }
 
 # Example 3; this is Example 1 but with smoothing splines and
 # a vector w and a parallelism assumption.
 ooo <- with(bmi.nz, order(age))
-bmi.nz <- bmi.nz[ooo,]  # Sort by age
-fit3 <- vgam(BMI ~ s(age, df = 4), bmi.nz, trace = TRUE,
-             fam = amlnormal(w = c(0.1, 1, 10), parallel = TRUE))
-fit3@extra # The w values, percentiles and weighted deviances
+bmi.nz <- bmi.nz[ooo, ]  # Sort by age
+fit3 <- vgam(BMI ~ s(age, df = 4), data = bmi.nz, trace = TRUE,
+             amlnormal(w = c(0.1, 1, 10), parallel = TRUE))
+fit3@extra  # The w values, percentiles and weighted deviances
 
 # The linear components of the fit; not for human consumption:
 coef(fit3, matrix = TRUE)

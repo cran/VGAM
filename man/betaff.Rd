@@ -66,7 +66,7 @@ betaff(A = 0, B = 1, lmu = "logit", lphi = "loge",
 
 
   Another parameterization of the beta distribution involving the raw
-  shape parameters is implemented in \code{\link{beta.ab}}.
+  shape parameters is implemented in \code{\link{betaR}}.
 
 
   For general \eqn{A} and \eqn{B}, the variance of \eqn{Y} is
@@ -117,11 +117,11 @@ betaff(A = 0, B = 1, lmu = "logit", lphi = "loge",
 }
 
 \seealso{ 
-  \code{\link{beta.ab}},
+  \code{\link{betaR}},
   \code{\link[stats:Beta]{Beta}},
   \code{\link{genbetaII}},
   \code{\link{betaII}},
-  \code{\link{betabinomial.ab}},
+  \code{\link{betabinomialff}},
   \code{\link{betageometric}},
   \code{\link{betaprime}},
   \code{\link{rbetageom}},

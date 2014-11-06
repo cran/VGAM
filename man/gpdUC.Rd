@@ -97,7 +97,8 @@ London: Springer-Verlag.
 
 }
 \seealso{
-  \code{\link{gpd}}.
+  \code{\link{gpd}},
+  \code{\link[stats]{Exponential}}.
 
 
 }

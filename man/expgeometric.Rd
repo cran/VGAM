@@ -81,8 +81,8 @@ expgeometric(lscale = "loge", lshape = "logit",
 }
 \examples{
 \dontrun{
-scale <- exp(2); shape = logit(-1, inverse = TRUE);
-edata <- data.frame(y = rexpgeom(n = 2000, scale = scale, shape = shape))
+Scale <- exp(2); shape = logit(-1, inverse = TRUE);
+edata <- data.frame(y = rexpgeom(n = 2000, scale = Scale, shape = shape))
 fit <- vglm(y ~ 1, expgeometric, edata, trace = TRUE)
 c(with(edata, mean(y)), head(fitted(fit), 1))
 coef(fit, matrix = TRUE)

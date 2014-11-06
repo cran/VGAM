@@ -56,7 +56,7 @@
             namesof("prob0", link0, earg = earg0), ",  ",
             namesof("prob1", link1, earg = earg1)),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.vgam(constraints, x, .zero, M)
+    constraints <- cm.zero.VGAM(constraints, x, .zero, M)
   }), list( .zero = zero # ,
            ))),
 
@@ -257,8 +257,8 @@ if (FALSE)
             namesof("prob0", lprob0, earg = eprob0), ",  ",
             namesof("prob1", lprob1, earg = eprob1)),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.vgam(constraints, x, .zero, M)
-    constraints <- cm.nointercept.vgam(constraints, x, .nointercept, M)
+    constraints <- cm.zero.VGAM(constraints, x, .zero, M)
+    constraints <- cm.nointercept.VGAM(constraints, x, .nointercept, M)
   }), list( .zero = zero,
             .nointercept = nointercept ))),
 
@@ -429,7 +429,7 @@ abbott.EM.control <- function(maxit = 1000, ...) {
   constraints = eval(substitute(expression({
     dotzero <- .zero
     M1 <- 1
-    eval(negzero.expression)
+    eval(negzero.expression.VGAM)
   }), list( .zero = zero ))),
 
   infos = eval(substitute(function(...) {

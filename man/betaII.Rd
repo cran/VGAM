@@ -84,10 +84,10 @@ Hoboken, NJ, USA: Wiley-Interscience.
     \code{\link{dagum}},
     \code{\link{sinmad}},
     \code{\link{fisk}},
-    \code{\link{invlomax}},
+    \code{\link{inv.lomax}},
     \code{\link{lomax}},
     \code{\link{paralogistic}},
-    \code{\link{invparalogistic}}.
+    \code{\link{inv.paralogistic}}.
 
 
 }

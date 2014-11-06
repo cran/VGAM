@@ -12,23 +12,23 @@ rcqo <- function(n, p, S,
                  family = c("poisson", "negbinomial", "binomial-poisson",
                             "Binomial-negbinomial", "ordinal-poisson",
                             "Ordinal-negbinomial", "gamma2"),
-                 eq.maxima = FALSE,
+                 eq.maximums = FALSE,
                  eq.tolerances = TRUE,
-                 es.optima = FALSE,
-                 lo.abundance = if (eq.maxima) hi.abundance else 10,
+                 es.optimums = FALSE,
+                 lo.abundance = if (eq.maximums) hi.abundance else 10,
                  hi.abundance = 100,
                  sd.latvar = head(1.5/2^(0:3), Rank),
-                 sd.optima = ifelse(es.optima, 1.5/Rank, 1) *
+                 sd.optimums = ifelse(es.optimums, 1.5/Rank, 1) *
                             ifelse(scale.latvar, sd.latvar, 1),
                  sd.tolerances = 0.25,
                  Kvector = 1,
                  Shape = 1,
                  sqrt.arg = FALSE,
-                 Log = FALSE,
+                 log.arg = FALSE,
                  rhox = 0.5,
                  breaks = 4,  # ignored unless family = "ordinal"
                  seed = NULL,
-                 optima1.arg = NULL,
+                 optimums1.arg = NULL,
                  Crow1positive = TRUE,
                  xmat = NULL,  # Can be input
                  scale.latvar = TRUE) {
@@ -71,9 +71,9 @@ rcqo <- function(n, p, S,
     stop("bad input for argument 'lo.abundance'")
   if (!is.Numeric(sd.latvar, positive = TRUE))
     stop("bad input for argument 'sd.latvar'")
-  if (!is.Numeric(sd.optima, positive = TRUE))
-    stop("bad input for argument 'sd.optima'")
-  if (eq.maxima && lo.abundance != hi.abundance)
+  if (!is.Numeric(sd.optimums, positive = TRUE))
+    stop("bad input for argument 'sd.optimums'")
+  if (eq.maximums && lo.abundance != hi.abundance)
     stop("arguments 'lo.abundance' and 'hi.abundance' must ",
          "be equal when 'eq.tolerances = TRUE'")
   if (any(lo.abundance > hi.abundance))
@@ -85,9 +85,9 @@ rcqo <- function(n, p, S,
   }
   Shape <- rep(Shape, len = S)
   sd.latvar <- rep(sd.latvar, len = Rank)
-  sd.optima <- rep(sd.optima, len = Rank)
+  sd.optimums <- rep(sd.optimums, len = Rank)
   sd.tolerances <- rep(sd.tolerances, len = Rank)
-  AA <- sd.optima / 3^0.5
+  AA <- sd.optimums / 3^0.5
   if (Rank > 1 && any(diff(sd.latvar) > 0))
    stop("argument 'sd.latvar)' must be a vector with decreasing values")
 
@@ -123,18 +123,18 @@ rcqo <- function(n, p, S,
     dimnames(xmat) <- list(as.character(1:n), xnames)
   }
   eval(change.seed.expression)
-  ccoefs <- matrix(rnorm((p-1)*Rank), p-1, Rank)
-  latvarmat <- cbind(xmat %*% ccoefs)
+  Ccoefs <- matrix(rnorm((p-1)*Rank), p-1, Rank)
+  latvarmat <- cbind(xmat %*% Ccoefs)
   if (Rank > 1) {
     Rmat <- chol(var(latvarmat))
     iRmat <- solve(Rmat)
     latvarmat <- latvarmat %*% iRmat  # var(latvarmat) == diag(Rank)
-    ccoefs <- ccoefs %*% iRmat
+    Ccoefs <- Ccoefs %*% iRmat
   }
   for (r in 1:Rank)
-    if (( Crow1positive[r] && ccoefs[1, r] < 0) ||
-        (!Crow1positive[r] && ccoefs[1, r] > 0)) {
-      ccoefs[ , r] <- -ccoefs[ , r]
+    if (( Crow1positive[r] && Ccoefs[1, r] < 0) ||
+        (!Crow1positive[r] && Ccoefs[1, r] > 0)) {
+      Ccoefs[ , r] <- -Ccoefs[ , r]
       latvarmat[ , r] <- -latvarmat[ , r]
     }
 
@@ -142,7 +142,7 @@ rcqo <- function(n, p, S,
     for (r in 1:Rank) {
       sd.latvarr <- sd(latvarmat[, r])
       latvarmat[, r] <- latvarmat[, r] * sd.latvar[r] / sd.latvarr
-      ccoefs[, r]  <- ccoefs[, r] * sd.latvar[r] / sd.latvarr
+      Ccoefs[, r]  <- Ccoefs[, r] * sd.latvar[r] / sd.latvarr
     }
   } else {
     sd.latvarr <- NULL
@@ -150,44 +150,44 @@ rcqo <- function(n, p, S,
       sd.latvarr <- c(sd.latvarr, sd(latvarmat[, r]))
     }
   }
-  if (es.optima) {
+  if (es.optimums) {
     if (!is.Numeric(S^(1/Rank), integer.valued = TRUE) ||
         S^(1/Rank) < 2)
       stop("S^(1/Rank) must be an integer greater or equal to 2")
     if (Rank == 1) {
-      optima <- matrix(as.numeric(NA), S, Rank)
+      optimums <- matrix(as.numeric(NA), S, Rank)
       for (r in 1:Rank) {
-        optima[, r] <- seq(-AA, AA, len = S^(1/Rank))
+        optimums[, r] <- seq(-AA, AA, len = S^(1/Rank))
       }
     } else if (Rank == 2) {
-      optima <- expand.grid(latvar1 = seq(-AA[1], AA[1], len = S^(1/Rank)),
+      optimums <- expand.grid(latvar1 = seq(-AA[1], AA[1], len = S^(1/Rank)),
                             latvar2 = seq(-AA[2], AA[2], len = S^(1/Rank)))
     } else if (Rank == 3) {
-      optima <- expand.grid(latvar1 = seq(-AA[1], AA[1], len = S^(1/Rank)),
+      optimums <- expand.grid(latvar1 = seq(-AA[1], AA[1], len = S^(1/Rank)),
                             latvar2 = seq(-AA[2], AA[2], len = S^(1/Rank)),
                             latvar3 = seq(-AA[3], AA[3], len = S^(1/Rank)))
     } else {
-      optima <- expand.grid(latvar1 = seq(-AA[1], AA[1], len = S^(1/Rank)),
+      optimums <- expand.grid(latvar1 = seq(-AA[1], AA[1], len = S^(1/Rank)),
                             latvar2 = seq(-AA[2], AA[2], len = S^(1/Rank)),
                             latvar3 = seq(-AA[3], AA[3], len = S^(1/Rank)),
                             latvar4 = seq(-AA[4], AA[4], len = S^(1/Rank)))
     }
     if (Rank > 1)
-      optima <- matrix(unlist(optima), S, Rank)  # Make sure its a matrix
+      optimums <- matrix(unlist(optimums), S, Rank)  # Make sure its a matrix
   } else {
-    optima <- matrix(1, S, Rank)
+    optimums <- matrix(1, S, Rank)
     eval(change.seed.expression)
     for (r in 1:Rank) {
-      optima[, r] <- rnorm(n = S, sd = sd.optima[r])
+      optimums[, r] <- rnorm(n = S, sd = sd.optimums[r])
     }
   }
   for (r in 1:Rank)
-    optima[, r] <- optima[, r] * sd.optima[r] / sd(optima[, r])
+    optimums[, r] <- optimums[, r] * sd.optimums[r] / sd(optimums[, r])
 
 
-  if (length(optima1.arg) && Rank == 1)
+  if (length(optimums1.arg) && Rank == 1)
   for (r in 1:Rank)
-    optima[, r] <- optima1.arg
+    optimums[, r] <- optimums1.arg
 
 
 
@@ -211,16 +211,16 @@ rcqo <- function(n, p, S,
   }
 
   dimnames(Tols)   <- list(ynames, latvarnames)
-  dimnames(ccoefs) <- list(xnames, latvarnames)
-  dimnames(optima) <- list(ynames, latvarnames)
+  dimnames(Ccoefs) <- list(xnames, latvarnames)
+  dimnames(optimums) <- list(ynames, latvarnames)
   loeta <- log(lo.abundance)   # May be a vector
   hieta <- log(hi.abundance)
   eval(change.seed.expression)
-  logmaxima <- runif(S, min = loeta, max = hieta)
-  names(logmaxima) <- ynames
-  etamat <- matrix(logmaxima, n, S, byrow = TRUE)
+  log.maximums <- runif(S, min = loeta, max = hieta)
+  names(log.maximums) <- ynames
+  etamat <- matrix(log.maximums, n, S, byrow = TRUE)
   for (jay in 1:S) {
-      optmat <- matrix(optima[jay, ], nrow = n, ncol = Rank, byrow = TRUE)
+      optmat <- matrix(optimums[jay, ], nrow = n, ncol = Rank, byrow = TRUE)
       tolmat <- matrix(  Tols[jay, ], nrow = n, ncol = Rank, byrow = TRUE)
       temp <- cbind((latvarmat - optmat) / tolmat)
       for (r in 1:Rank)
@@ -247,7 +247,7 @@ rcqo <- function(n, p, S,
     ymat <- matrix(rgamma(n * S, shape = Shape,
                                  scale = exp(etamat) / Shape),
                    n, S)
-    if (Log) ymat <- log(ymat)
+    if (log.arg) ymat <- log(ymat)
   } else {
     stop("argument 'rootdist' unmatched")
   }
@@ -268,28 +268,28 @@ rcqo <- function(n, p, S,
 
   dimnames(ymat) <- list(as.character(1:n), ynames)
   ans <- data.frame(xmat, ymat)
-  attr(ans, "concoefficients") <- ccoefs
+  attr(ans, "concoefficients") <- Ccoefs
   attr(ans, "Crow1positive") <- Crow1positive
   attr(ans, "family") <- family
   attr(ans, "formula") <- myform # Useful for running cqo() on the data
   attr(ans, "Rank") <- Rank
   attr(ans, "family") <- family
   attr(ans, "Kvector") <- Kvector
-  attr(ans, "logmaxima") <- logmaxima
+  attr(ans, "log.maximums") <- log.maximums
   attr(ans, "lo.abundance") <- lo.abundance
   attr(ans, "hi.abundance") <- hi.abundance
-  attr(ans, "optima") <- optima
-  attr(ans, "Log") <- Log
+  attr(ans, "optimums") <- optimums
+  attr(ans, "log.arg") <- log.arg
   attr(ans, "latvar") <- latvarmat
   attr(ans, "eta") <- etamat
   attr(ans, "eq.tolerances") <- eq.tolerances
-  attr(ans, "eq.maxima") <- eq.maxima ||
+  attr(ans, "eq.maximums") <- eq.maximums ||
                               all(lo.abundance == hi.abundance)
-  attr(ans, "es.optima") <- es.optima
+  attr(ans, "es.optimums") <- es.optimums
   attr(ans, "seed") <- seed # RNGstate
   attr(ans, "sd.tolerances") <- sd.tolerances
   attr(ans, "sd.latvar") <- if (scale.latvar) sd.latvar else sd.latvarr
-  attr(ans, "sd.optima") <- sd.optima
+  attr(ans, "sd.optimums") <- sd.optimums
   attr(ans, "Shape") <- Shape
   attr(ans, "sqrt") <- sqrt.arg
   attr(ans, "tolerances") <- Tols^0.5  # Like a standard deviation
@@ -306,12 +306,12 @@ dcqo <-
            family = c("poisson", "binomial", "negbinomial", "ordinal"),
            Rank = 1,
            eq.tolerances = TRUE,
-           eq.maxima = FALSE,
+           eq.maximums = FALSE,
            EquallySpacedOptima = FALSE,
-           lo.abundance = if (eq.maxima) 100 else 10,
+           lo.abundance = if (eq.maximums) 100 else 10,
            hi.abundance = 100,
            sd.tolerances = 1,
-           sd.optima = 1,
+           sd.optimums = 1,
            nlevels = 4,  # ignored unless family = "ordinal"
            seed = NULL) {
  warning("12/6/06; needs a lot of work based on rcqo()")
@@ -338,7 +338,7 @@ dcqo <-
     stop("bad input for argument 'seed'")
   if (!is.logical(eq.tolerances) || length(eq.tolerances)>1)
     stop("bad input for argument 'eq.tolerances)'")
-  if (eq.maxima && lo.abundance != hi.abundance)
+  if (eq.maximums && lo.abundance != hi.abundance)
     stop("'lo.abundance' and 'hi.abundance' must ",
          "be equal when 'eq.tolerances = TRUE'")
   if (length(seed)) set.seed(seed)
@@ -346,18 +346,18 @@ dcqo <-
   xmat <- matrix(rnorm(n*(p-1)), n, p-1,
                  dimnames = list(as.character(1:n),
                                  paste("x", 2:p, sep = "")))
-  ccoefs <- matrix(rnorm((p-1)*Rank), p-1, Rank)
-  latvarmat <- xmat %*% ccoefs
-  optima <- matrix(rnorm(Rank*S, sd = sd.optima), S, Rank)
+  Ccoefs <- matrix(rnorm((p-1)*Rank), p-1, Rank)
+  latvarmat <- xmat %*% Ccoefs
+  optimums <- matrix(rnorm(Rank*S, sd = sd.optimums), S, Rank)
   Tols <- if (eq.tolerances) matrix(1, S, Rank) else
          matrix(rnorm(Rank*S, mean = 1, sd = 1), S, Rank)
   loeta <- log(lo.abundance)
   hieta <- log(hi.abundance)
-  logmaxima <- runif(S, min = loeta, max = hieta)
+  log.maximums <- runif(S, min = loeta, max = hieta)
 
-  etamat <- matrix(logmaxima, n, S, byrow = TRUE)
+  etamat <- matrix(log.maximums, n, S, byrow = TRUE)
   for (jay in 1:S) {
-    optmat <- matrix(optima[jay, ], n, Rank, byrow = TRUE)
+    optmat <- matrix(optimums[jay, ], n, Rank, byrow = TRUE)
     tolmat <- matrix(  Tols[jay, ], n, Rank, byrow = TRUE)
     temp <- cbind((latvarmat - optmat) * tolmat)
     for (r in 1:Rank)
@@ -378,7 +378,7 @@ dcqo <-
   dimnames(ymat) <- list(as.character(1:n),
                          paste("y", 1:S, sep = ""))
   ans <- data.frame(xmat, ymat)
-  attr(ans, "concoefficients") <- ccoefs
+  attr(ans, "concoefficients") <- Ccoefs
   attr(ans, "family") <- family
   ans
 }

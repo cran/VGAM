@@ -9,11 +9,14 @@
 
 }
 \usage{
-riceff(lvee = "loge", lsigma = "loge",
-       ivee = NULL, isigma = NULL, nsimEIM = 100, zero = NULL)
+riceff(lsigma = "loge", lvee = "loge", isigma = NULL,
+       ivee = NULL, nsimEIM = 100, zero = NULL, nowarning = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
+  \item{nowarning}{ Logical. Suppress a warning? }
+
+
   \item{lvee, lsigma}{
   Link functions for the \eqn{v} and \eqn{\sigma}{sigma} parameters.
   See \code{\link{Links}} for more choices and for general information.
@@ -93,8 +96,8 @@ Mathematical Analysis of Random Noise.
 
 }
 \examples{
-\dontrun{ vee <- exp(2); sigma <- exp(1)
-rdata <- data.frame(y = rrice(n <- 1000, vee, sigma))
+\dontrun{ sigma <- exp(1); vee <- exp(2)
+rdata <- data.frame(y = rrice(n <- 1000, sigma, vee = vee))
 fit <- vglm(y ~ 1, riceff, data = rdata, trace = TRUE, crit = "coef")
 c(with(rdata, mean(y)), fitted(fit)[1])
 coef(fit, matrix = TRUE)

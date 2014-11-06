@@ -11,7 +11,7 @@
 
 }
 \usage{
-paretoff(lshape = "loge", location = NULL)
+paretoff(scale = NULL, lshape = "loge")
 truncpareto(lower, upper, lshape = "loge", ishape = NULL, imethod = 1)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -23,7 +23,7 @@ truncpareto(lower, upper, lshape = "loge", ishape = NULL, imethod = 1)
 
 
   }
-  \item{location}{
+  \item{scale}{
   Numeric.
   The parameter \eqn{\alpha}{alpha} below.
   If the user inputs a number then it is assumed known with this value.
@@ -68,12 +68,12 @@ truncpareto(lower, upper, lshape = "loge", ishape = NULL, imethod = 1)
 
   The Pareto distribution, which is used a lot in economics,
   has a probability density function that can be written
-  \deqn{f(y;k,\alpha) = k  \alpha^k / y^{k+1}}{%
-        f(y;k,alpha) = k * alpha^k / y^(k+1)}
-  for \eqn{0<k} and \eqn{0 < \alpha < y}{0< alpha < y}.
-  The \eqn{\alpha}{alpha} is called the location parameter, and
+  \deqn{f(y;\alpha,k) = k  \alpha^k / y^{k+1}}{%
+        f(y;alpha,k) = k * alpha^k / y^(k+1)}
+  for \eqn{0 < \alpha < y}{0< alpha < y} and \eqn{0<k}.
+  The \eqn{\alpha}{alpha} is called the \emph{scale} parameter, and
   it is either assumed \emph{known} or else \code{min(y)} is used.
-  The parameter \eqn{k} is called the shape parameter.
+  The parameter \eqn{k} is called the \emph{shape} parameter.
   The mean of \eqn{Y} is
   \eqn{\alpha k/(k-1)}{alpha*k/(k-1)} provided \eqn{k > 1}.
   Its variance is
@@ -148,8 +148,8 @@ Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
   The usual or unbounded Pareto distribution has two
   parameters (called \eqn{\alpha}{alpha} and \eqn{k} here)
   but the family function \code{paretoff} estimates only
-  \eqn{k} using iteratively reweighted least squares. The
-  MLE of the \eqn{\alpha}{alpha} parameter lies on the
+  \eqn{k} using iteratively reweighted least squares.
+  The MLE of the \eqn{\alpha}{alpha} parameter lies on the
   boundary and is \code{min(y)} where \code{y} is the
   response. Consequently, using the default argument
   values, the standard errors are incorrect when one does a
@@ -165,13 +165,14 @@ Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
   \code{\link{Pareto}},
   \code{\link{Truncpareto}},
   \code{\link{paretoIV}},
-  \code{\link{gpd}}.
+  \code{\link{gpd}},
+  \code{\link{benini1}}.
 
 
 }
 \examples{
 alpha <- 2; kay <- exp(3)
-pdata <- data.frame(y = rpareto(n = 1000, location = alpha, shape = kay))
+pdata <- data.frame(y = rpareto(n = 1000, scale = alpha, shape = kay))
 fit <- vglm(y ~ 1, paretoff, data = pdata, trace = TRUE)
 fit@extra  # The estimate of alpha is here
 head(fitted(fit))
@@ -180,7 +181,7 @@ coef(fit, matrix = TRUE)
 summary(fit)  # Standard errors are incorrect!!
 
 # Here, alpha is assumed known
-fit2 <- vglm(y ~ 1, paretoff(location = alpha), data = pdata, trace = TRUE)
+fit2 <- vglm(y ~ 1, paretoff(scale = alpha), data = pdata, trace = TRUE)
 fit2@extra  # alpha stored here
 head(fitted(fit2))
 coef(fit2, matrix = TRUE)
@@ -190,7 +191,7 @@ summary(fit2)  # Standard errors are okay
 lower <- 2; upper <- 8; kay <- exp(2)
 pdata3 <- data.frame(y = rtruncpareto(n = 100, lower = lower,
                                       upper = upper, shape = kay))
-fit3 <- vglm(y ~ 1, truncpareto(lower, upper), pdata3, trace = TRUE)
+fit3 <- vglm(y ~ 1, truncpareto(lower, upper), data = pdata3, trace = TRUE)
 coef(fit3, matrix = TRUE)
 c(fit3@misc$lower, fit3@misc$upper)
 }

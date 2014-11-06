@@ -95,7 +95,7 @@ cao.fit <-
 
 
   special.matrix <- matrix(-34956.125, M, M)  # An unlikely used matrix
-  just.testing <- cm.vgam(special.matrix, x, rrcontrol$noRRR, constraints)
+  just.testing <- cm.VGAM(special.matrix, x, rrcontrol$noRRR, constraints)
   findex <- trivial.constraints(just.testing, special.matrix)
   tc1 <- trivial.constraints(constraints)
 
@@ -432,6 +432,9 @@ cao.control <- function(Rank = 1,
   if (any(df1.nl >= 0 & df1.nl < 0.05)) {
     warning("'df1.nl' values between 0 and 0.05 converted to 0.05")
     df1.nl[df1.nl < 0.05] <- 0.05
+  }
+  if (any(df1.nl > 3.5)) {
+    warning("'df1.nl' values > 3.5 are excessive")
   }
   if (!is.Numeric(df2.nl) || any(df2.nl < 0))
     stop("Bad input for argument 'df2.nl'")
@@ -1074,7 +1077,7 @@ warning("20100405; this is new:")
 
 
 
-setClass(Class = "Coef.cao", representation(
+setClass(Class = "Coef.rrvgam", representation(
       "Bspline"      = "list",
       "C"            = "matrix",
       "Constrained"  = "logical",
@@ -1099,7 +1102,7 @@ setClass(Class = "Coef.cao", representation(
 
 
 
-Coef.cao <- function(object,
+Coef.rrvgam <- function(object,
     epsOptimum = 0.00001,  # Determines how accurately Optimum is estimated
     gridlen = 40,      # Number of points on the grid (one level at a time)
     maxgriditer = 10,  # Maximum number of iters allowed for grid search
@@ -1164,10 +1167,11 @@ Coef.cao <- function(object,
 
     which.species <- 1:NOS  # Do it for all species
     if (Rank == 1) {
-      gridd <- cbind(seq(extents[1,1], extents[2,1], len = gridlen))
+      gridd <- cbind(seq(extents[1, 1], extents[2, 1], len = gridlen))
     } else {
-      gridd <- expand.grid(seq(extents[1,1], extents[2,1], len = gridlen[1]),
-                           seq(extents[1,2], extents[2,2], len = gridlen[2]))
+      gridd <-
+        expand.grid(seq(extents[1, 1], extents[2, 1], len = gridlen[1]),
+                    seq(extents[1, 2], extents[2, 2], len = gridlen[2]))
       eta2matrix <- matrix(0, NOS, 1)
     }
     gridd.orig <- gridd
@@ -1188,7 +1192,7 @@ Coef.cao <- function(object,
              ((griditer <= maxgriditer) &&
              ((gridres1 > epsOptimum) ||
               (gridres2 > epsOptimum)))) {
-        temp <- predictcao(object, grid = gridd, sppno = thisSpecies,
+        temp <- predictrrvgam(object, grid = gridd, sppno = thisSpecies,
                            Rank = Rank, deriv = 0, MSratio = MSratio)
         yvals <- temp$yvals  # gridlen-vector
         xvals <- temp$xvals  # gridlen x Rank; gridd
@@ -1211,26 +1215,26 @@ Coef.cao <- function(object,
           break
         }
         if (index == 1 || index == nnn) {
-          maximum[sppno] <- optimum[1,sppno] <- NA
+          maximum[sppno] <- optimum[1, sppno] <- NA
           gridres1 <- epsOptimum + 1  # equivalent to a break
           break  # just in case
         } else {
-          maximum[sppno] <- yvals[index]  # on the eta scale
-          optimum[1,sppno] <- xvals[index,1]
-          gridd[,1] <- seq(
-                  max(extents[1, 1], optimum[1,sppno] - gridres1),
-                  min(extents[2, 1], optimum[1,sppno] + gridres1),
+          maximum[sppno] <- yvals[index]  # On the eta scale
+          optimum[1, sppno] <- xvals[index, 1]
+          gridd[, 1] <- seq(
+                  max(extents[1, 1], optimum[1, sppno] - gridres1),
+                  min(extents[2, 1], optimum[1, sppno] + gridres1),
                   len = gridlen)
           gridres1 <- gridd[2, 1] - gridd[1, 1]
           griditer <- griditer + 1
         }
-      } # of while 
+      }  # of while 
 
       if (Rank == 2) {
         myfun <- function(x, object, sppno, Rank = 1,
                           deriv = 0, MSratio = 1) {
           x <- matrix(x, 1, length(x))
-          temp <- predictcao(object, grid = x, sppno = sppno,
+          temp <- predictrrvgam(object, grid = x, sppno = sppno,
                              Rank = Rank, deriv = deriv, MSratio = MSratio)
           temp$yval
         }
@@ -1254,7 +1258,7 @@ Coef.cao <- function(object,
     maximum <- c(maximum)  # Convert from matrix to vector 
     names(maximum) <- ynames
 
-    ans <- new(Class = "Coef.cao",
+    ans <- new(Class = "Coef.rrvgam",
                Bspline = object@Bspline,
                Constrained = ConstrainedO,
                df1.nl = object@extra$df1.nl,
@@ -1308,7 +1312,7 @@ Coef.cao <- function(object,
 
 
 
-show.Coef.cao <- function(object,
+show.Coef.rrvgam <- function(object,
                           digits = max(2, options()$digits-2), ...) {
   Rank <- object@Rank
   NOS <- object@NOS
@@ -1327,7 +1331,7 @@ show.Coef.cao <- function(object,
     cat("\nC matrix (constrained/canonical coefficients)\n")
     print(object@C, digits = digits, ...)
   }
-  cat("\nOptima and maxima\n")
+  cat("\nOptimums and maximums\n")
   print(cbind(Optimum = optmat,
               Maximum), digits = max(1, digits-1))
   cat("\nNonlinear degrees of freedom\n")
@@ -1344,22 +1348,22 @@ show.Coef.cao <- function(object,
 
 
 
-setMethod("show", "Coef.cao", function(object)
-  show.Coef.cao(object))
+setMethod("show", "Coef.rrvgam", function(object)
+  show.Coef.rrvgam(object))
 
 
 
 
 
-setMethod("coef", "cao", function(object, ...) Coef.cao(object, ...))
-setMethod("coefficients", "cao", function(object, ...)
-    Coef.cao(object, ...))
-setMethod("Coef", "cao", function(object, ...) Coef.cao(object, ...))
+setMethod("coef", "rrvgam", function(object, ...) Coef.rrvgam(object, ...))
+setMethod("coefficients", "rrvgam", function(object, ...)
+    Coef.rrvgam(object, ...))
+setMethod("Coef", "rrvgam", function(object, ...) Coef.rrvgam(object, ...))
 
 
 
 
-lvplot.cao <- function(object,
+lvplot.rrvgam <- function(object,
           add = FALSE, show.plot = TRUE, rugplot = TRUE, y = FALSE, 
           type = c("fitted.values", "predictors"),
           xlab = paste("Latent Variable",
@@ -1488,13 +1492,13 @@ lvplot.cao <- function(object,
 }
 
 
-setMethod("lvplot", "cao",
+setMethod("lvplot", "rrvgam",
            function(object, ...) {
-           invisible(lvplot.cao(object, ...))})
+           invisible(lvplot.rrvgam(object, ...))})
 
 
 
-predict.cao <- function (object, newdata = NULL,
+predict.rrvgam <- function (object, newdata = NULL,
                          type = c("link", "response", "terms"), 
                          deriv = 0, ...) {
   type <- match.arg(type, c("link", "response", "terms"))[1]
@@ -1582,7 +1586,7 @@ predict.cao <- function (object, newdata = NULL,
         stop("mismatch found in 'which.species'")
 
      temp345 <-
-       predictcao(object, grid = latvarmat, sppno = thisSpecies,
+       predictrrvgam(object, grid = latvarmat, sppno = thisSpecies,
                   Rank = Rank, deriv = deriv, MSratio = MSratio,
                   type = ifelse(type == "response", "link", type))
      if (MSratio == 2) {
@@ -1626,11 +1630,11 @@ predict.cao <- function (object, newdata = NULL,
 
 
 
-setMethod("predict", "cao", function(object, ...)
-           predict.cao(object, ...))
+setMethod("predict", "rrvgam", function(object, ...)
+           predict.rrvgam(object, ...))
 
 
-predictcao <- function(object, grid, sppno, Rank = 1,
+predictrrvgam <- function(object, grid, sppno, Rank = 1,
                        deriv = 0, MSratio = 1, type = "link") {
   if (type != "link" && type != "terms")
     stop("'link' must be \"link\" or \"terms\"")
@@ -1693,7 +1697,8 @@ predictcao <- function(object, grid, sppno, Rank = 1,
 
 
 
-plot.cao <- function(x,
+
+plot.rrvgam <- function(x,
                      xlab = if (Rank == 1) "Latent Variable" else 
                             paste("Latent Variable", 1:Rank),
                      ylab = NULL, residuals.arg = FALSE,
@@ -1745,10 +1750,11 @@ plot.cao <- function(x,
     indexSpecies <- if (is.character(which.species))
         match(which.species[sppno], sppnames) else which.species[sppno]
     if (is.na(indexSpecies))
-        stop("mismatch found in 'which.species'")
-    terms.mat <- predictcao(object = x, grid = latvarmat, type = "terms",
-                            sppno = indexSpecies, Rank = Rank,
-                            deriv = deriv, MSratio = MSratio)
+      stop("mismatch found in 'which.species'")
+    terms.mat <- predictrrvgam(object = x, grid = latvarmat,
+                               type = "terms",
+                               sppno = indexSpecies, Rank = Rank,
+                               deriv = deriv, MSratio = MSratio)
     for (rindex in WhichRank) {
       xvals <- latvarmat[, rindex]
       yvals <- terms.mat[, rindex]
@@ -1786,14 +1792,14 @@ plot.cao <- function(x,
 
 
 
-setMethod("plot", "cao",
+setMethod("plot", "rrvgam",
            function(x, y, ...) {
            if (!missing(y)) stop("cannot process the 'y' argument")
-           invisible(plot.cao(x, ...))})
+           invisible(plot.rrvgam(x, ...))})
 
 
 
-persp.cao <-
+persp.rrvgam <-
   function(x,
            show.plot = TRUE,
            xlim = NULL, ylim = NULL, zlim = NULL,  # zlim ignored if Rank == 1
@@ -1855,7 +1861,7 @@ persp.cao <-
 
   LP <- matrix(as.numeric(NA), nrow(latvarmat), NOS)
   for (sppno in 1:NOS) {
-    temp <- predictcao(object = object, grid = latvarmat, sppno = sppno,
+    temp <- predictrrvgam(object = object, grid = latvarmat, sppno = sppno,
                        Rank = Rank, deriv = 0, MSratio = MSratio)
     LP[, sppno] <- temp$yval
   }
@@ -1921,11 +1927,11 @@ persp.cao <-
 
 if (!isGeneric("persp"))
   setGeneric("persp", function(x, ...) standardGeneric("persp"))
-setMethod("persp", "cao", function(x, ...) persp.cao(x = x, ...))
+setMethod("persp", "rrvgam", function(x, ...) persp.rrvgam(x = x, ...))
 
 
 
-latvar.cao <- function(object, ...) {
+latvar.rrvgam <- function(object, ...) {
   Coef(object, ...)@latvar
 }
 
@@ -1941,8 +1947,8 @@ if (!isGeneric("lv"))
              },
              package = "VGAM")
 
- setMethod("lv", "cao",
-           function(object, ...) latvar.cao(object, ...))
+ setMethod("lv", "rrvgam",
+           function(object, ...) latvar.rrvgam(object, ...))
 
 
 
@@ -1950,8 +1956,8 @@ if (!isGeneric("lv"))
     setGeneric("latvar",
   function(object, ...) standardGeneric("latvar"))
 
-setMethod("latvar", "cao",
-  function(object, ...) latvar.cao(object, ...))
+setMethod("latvar", "rrvgam",
+  function(object, ...) latvar.rrvgam(object, ...))
 
 
 
@@ -1964,20 +1970,20 @@ setMethod("latvar", "cao",
 
 
 
-setClass(Class = "summary.cao",
+setClass(Class = "summary.rrvgam",
          representation("misc" = "list",
                         "call" = "call"),
-         contains = "Coef.cao")
+         contains = "Coef.rrvgam")
 
 
 
 
 
-summary.cao <- function(object, ...) {
+summary.rrvgam <- function(object, ...) {
   answer <- Coef(object, ...)
 
 
-  answer <- as(answer, "summary.cao")
+  answer <- as(answer, "summary.rrvgam")
 
 
   answer@misc <- object@misc
@@ -1986,17 +1992,17 @@ summary.cao <- function(object, ...) {
 }
 
 
-setMethod("summary", "cao", function(object, ...)
-  summary.cao(object, ...))
+setMethod("summary", "rrvgam", function(object, ...)
+  summary.rrvgam(object, ...))
 
 
 
 
-show.summary.cao <- function(x, ...) {
+show.summary.rrvgam <- function(x, ...) {
   cat("\nCall:\n")
   dput(x@call)
 
-  show.Coef.cao(x, ...)
+  show.Coef.rrvgam(x, ...)
 
   cat("\nNumber of species: ", x@NOS, "\n")
 
@@ -2013,25 +2019,26 @@ show.summary.cao <- function(x, ...) {
 
 
 
-setMethod("show", "summary.cao",
+setMethod("show", "summary.rrvgam",
           function(object)
-          show.summary.cao(object))
+          show.summary.rrvgam(object))
 
 
 
 
-concoef.cao <- function(object, ...) {
+concoef.rrvgam <- function(object, ...) {
   Coef(object, ...)@C
 }
 
 
-concoef.Coef.cao <- function(object, ...) {
+concoef.Coef.rrvgam <- function(object, ...) {
   if (length(list(...)))
     warning("Too late! Ignoring the extra arguments")
   object@C
 }
 
 
+if (FALSE) {
  if (!isGeneric("ccoef"))
      setGeneric("ccoef", function(object, ...) {
     .Deprecated("concoef")
@@ -2039,15 +2046,19 @@ concoef.Coef.cao <- function(object, ...) {
     standardGeneric("ccoef")
     })
 
-setMethod("ccoef", "cao", function(object, ...)
-    concoef.cao(object, ...))
-setMethod("ccoef", "Coef.cao", function(object, ...)
-    concoef.Coef.cao(object, ...))
 
-setMethod("concoef", "cao", function(object, ...)
-    concoef.cao(object, ...))
-setMethod("concoef", "Coef.cao", function(object, ...)
-    concoef.Coef.cao(object, ...))
+setMethod("ccoef", "rrvgam", function(object, ...)
+    concoef.rrvgam(object, ...))
+setMethod("ccoef", "Coef.rrvgam", function(object, ...)
+    concoef.Coef.rrvgam(object, ...))
+}
+
+
+
+setMethod("concoef", "rrvgam", function(object, ...)
+    concoef.rrvgam(object, ...))
+setMethod("concoef", "Coef.rrvgam", function(object, ...)
+    concoef.Coef.rrvgam(object, ...))
 
 
 
@@ -2063,7 +2074,7 @@ if (!isGeneric("calibrate"))
   standardGeneric("calibrate"))
 
 
-setMethod("calibrate", "cao", function(object, ...)
+setMethod("calibrate", "rrvgam", function(object, ...)
           calibrate.qrrvglm(object, ...))
 
     
@@ -2071,14 +2082,14 @@ setMethod("calibrate", "qrrvglm", function(object, ...)
           calibrate.qrrvglm(object, ...))
 
 
-Tol.cao <- function(object, ...) {
-  stop("The tolerance for a 'cao' object is undefined")
+Tol.rrvgam <- function(object, ...) {
+  stop("The tolerance for a 'rrvgam' object is undefined")
 }
 
 if (!isGeneric("Tol"))
   setGeneric("Tol", function(object, ...) standardGeneric("Tol"))
-setMethod("Tol", "cao", function(object, ...)
-          Tol.cao(object, ...))
+setMethod("Tol", "rrvgam", function(object, ...)
+          Tol.rrvgam(object, ...))
 
 
 
@@ -2087,7 +2098,7 @@ setMethod("Tol", "cao", function(object, ...)
 
 
 
-setMethod("show",  "cao", function(object) show.vgam(object))
+setMethod("show",  "rrvgam", function(object) show.vgam(object))
 
 
 

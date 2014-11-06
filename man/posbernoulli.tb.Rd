@@ -13,10 +13,8 @@
 
 }
 \usage{
-posbernoulli.tb(link = "logit",
-                parallel.t = FALSE ~ 1,
-                parallel.b = FALSE ~ 0,
-                drop.b     = FALSE ~ 1,
+posbernoulli.tb(link = "logit", parallel.t = FALSE ~ 1,
+                parallel.b = FALSE ~ 0, drop.b = FALSE ~ 1,
                 type.fitted = c("likelihood.cond", "mean.uncond"),
                 imethod = 1, iprob = NULL,
                 p.small = 1e-4, no.warning = FALSE,
@@ -187,6 +185,15 @@ posbernoulli.tb(link = "logit",
   are best fitted with \code{\link{posbernoulli.t}} or
   \code{\link{posbernoulli.b}} or
   \code{\link{posbinomial}}.
+
+
+
+% yettodo:
+% Some time in the future it might be possible to allow for a
+% different tau value for each row.
+% Then the response would be a matrix padded with NAs on the RHS.
+
+
 
 }
 

@@ -142,19 +142,19 @@ quantile and expectile regression.
   \code{\link{deexp}},
   \code{\link{denorm}},
   \code{\link{dunif}},
-  \code{\link{dkoenker}}.
+  \code{\link{dsc.t2}}.
 
 
 }
 
 \examples{
-my_p <- 0.25; y <- runif(nn <- 1000)
-(myexp <- qeunif(my_p))
-sum(myexp - y[y <= myexp]) / sum(abs(myexp - y))  # Should be my_p
+my.p <- 0.25; y <- runif(nn <- 1000)
+(myexp <- qeunif(my.p))
+sum(myexp - y[y <= myexp]) / sum(abs(myexp - y))  # Should be my.p
 # Equivalently:
 I1 <- mean(y <= myexp) * mean( myexp - y[y <= myexp])
 I2 <- mean(y >  myexp) * mean(-myexp + y[y >  myexp])
-I1 / (I1 + I2)  # Should be my_p
+I1 / (I1 + I2)  # Should be my.p
 # Or:
 I1 <- sum( myexp - y[y <= myexp])
 I2 <- sum(-myexp + y[y >  myexp])
@@ -162,14 +162,14 @@ I2 <- sum(-myexp + y[y >  myexp])
 # Non-standard uniform
 mymin <- 1; mymax <- 8
 yy <- runif(nn, mymin, mymax)
-(myexp <- qeunif(my_p, mymin, mymax))
-sum(myexp - yy[yy <= myexp]) / sum(abs(myexp - yy))  # Should be my_p
+(myexp <- qeunif(my.p, mymin, mymax))
+sum(myexp - yy[yy <= myexp]) / sum(abs(myexp - yy))  # Should be my.p
 peunif(mymin, mymin, mymax)     #  Should be 0
 peunif(mymax, mymin, mymax)     #  Should be 1
 peunif(mean(yy), mymin, mymax)  #  Should be 0.5
 abs(qeunif(0.5, mymin, mymax) - mean(yy))  #  Should be 0
 abs(qeunif(0.5, mymin, mymax) - (mymin+mymax)/2)  #  Should be 0
-abs(peunif(myexp, mymin, mymax) - my_p)  #  Should be 0
+abs(peunif(myexp, mymin, mymax) - my.p)  #  Should be 0
 integrate(f = deunif, lower = mymin - 3, upper = mymax + 3,
           min = mymin, max = mymax)  # Should be 1
 

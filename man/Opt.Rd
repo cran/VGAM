@@ -1,9 +1,9 @@
 \name{Opt}
 \alias{Opt}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{ Maxima }
+\title{ Optimums }
 \description{
-  Generic function for the \emph{optima} (or optimums) of a model.
+  Generic function for the \emph{optimums} (or optima) of a model.
 }
 \usage{
 Opt(object, ...)
@@ -11,7 +11,7 @@ Opt(object, ...)
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{object}{ An object for which the computation or
-    extraction of an optimum (or optima) is meaningful.
+    extraction of an optimum (or optimums) is meaningful.
 
 
   }
@@ -27,7 +27,7 @@ Opt(object, ...)
   Many models have no such notion or definition.
 
 
-  Optima occur in quadratic and additive ordination,
+  Optimums occur in quadratic and additive ordination,
   e.g., CQO or CAO.
   For these models the optimum is the value of the latent
   variable where the maximum occurs, i.e., where the fitted value
@@ -94,7 +94,7 @@ hspider[,1:6] <- scale(hspider[,1:6])  # Standardized environmental vars
 
 \dontrun{
 index <- 1:ncol(depvar(p1))
-persp(p1, col = index, las = 1, lwd = 2, main = "Vertical lines at the optima")
+persp(p1, col = index, las = 1, lwd = 2, main = "Vertical lines at the optimums")
 abline(v = Opt(p1), lty = 2, col = index)
 }
 }

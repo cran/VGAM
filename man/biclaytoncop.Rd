@@ -9,12 +9,12 @@
 
 }
 \usage{
-biclaytoncop(lalpha = "loge", ialpha = NULL, imethod = 1,
+biclaytoncop(lapar = "loge", iapar = NULL, imethod = 1,
              parallel = FALSE, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{lalpha, ialpha, imethod}{
+  \item{lapar, iapar, imethod}{
   Details at \code{\link{CommonVGAMffArguments}}.
   See \code{\link{Links}} for more link function choices.
 
@@ -34,6 +34,7 @@ biclaytoncop(lalpha = "loge", ialpha = NULL, imethod = 1,
   \deqn{P(u_1, u_2;\alpha) = (u_1^{-\alpha} + u_2^{-\alpha}-1)^{-1/\alpha}}{%
         P(u1,u2,alpha) = (u1^(-alpha) + u2^(-alpha)-1)^(-1/alpha)}
   for \eqn{0 \leq \alpha }{0 <= alpha}.
+  Here, \eqn{\alpha}{alpha} is the association parameter.
   The support of the function is the interior of the unit square;
   however, values of 0 and/or 1 are not allowed (currently).
   The marginal distributions are the standard uniform distributions.
@@ -99,7 +100,7 @@ Derivatives and Fisher information of bivariate copulas.
 
 }
 \examples{
-ymat <- rbiclaytoncop(n = (nn <- 1000), alpha = exp(2))
+ymat <- rbiclaytoncop(n = (nn <- 1000), apar = exp(2))
 bdata <- data.frame(y1 = ymat[, 1],
                     y2 = ymat[, 2],
                     y3 = ymat[, 1],
@@ -117,13 +118,13 @@ Coef(fit1)
 head(fitted(fit1))
 summary(fit1)
 
-# Another example; alpha is a function of x2
-bdata <- transform(bdata, alpha = exp(-0.5 + x2))
-ymat <- rbiclaytoncop(n = nn, alpha = with(bdata, alpha))
+# Another example; apar is a function of x2
+bdata <- transform(bdata, apar = exp(-0.5 + x2))
+ymat <- rbiclaytoncop(n = nn, apar = with(bdata, apar))
 bdata <- transform(bdata, y5 = ymat[, 1],
                           y6 = ymat[, 2])
 fit2 <- vgam(cbind(y5, y6) ~ s(x2), data = bdata,
-             biclaytoncop(lalpha = "loge"), trace = TRUE)
+             biclaytoncop(lapar = "loge"), trace = TRUE)
 \dontrun{ plot(fit2, lcol = "blue", scol = "orange", se = TRUE, las = 1) }
 }
 \keyword{models}

@@ -282,7 +282,7 @@ reexp <- function(n, rate = 1) {
 
 
 
-dkoenker <- function(x, location = 0, scale = 1, log = FALSE) {
+dsc.t2 <- function(x, location = 0, scale = 1, log = FALSE) {
   if (!is.logical(log.arg <- log) || length(log) != 1)
     stop("bad input for argument 'log'")
   rm(log)
@@ -299,7 +299,7 @@ dkoenker <- function(x, location = 0, scale = 1, log = FALSE) {
 
 
 
-pkoenker <- function(q, location = 0, scale = 1, log = FALSE) {
+psc.t2 <- function(q, location = 0, scale = 1, log = FALSE) {
   if (!is.logical(log.arg <- log) || length(log) != 1)
     stop("bad input for argument 'log'")
   rm(log)
@@ -317,7 +317,7 @@ pkoenker <- function(q, location = 0, scale = 1, log = FALSE) {
 
 
 
-qkoenker <- function(p, location = 0, scale = 1) {
+qsc.t2 <- function(p, location = 0, scale = 1) {
 
   answer <- -2 * (1 - 2*p) / sqrt(1 - (1 - 2*p)^2)
   answer[p  < 0] <- NaN
@@ -333,8 +333,8 @@ qkoenker <- function(p, location = 0, scale = 1) {
 
 
 
-rkoenker <- function(n, location = 0, scale = 1) {
-  answer <- qkoenker(runif(n)) * scale + location
+rsc.t2 <- function(n, location = 0, scale = 1) {
+  answer <- qsc.t2(runif(n)) * scale + location
   answer[scale <= 0] <- NaN
   answer
 }
@@ -343,7 +343,7 @@ rkoenker <- function(n, location = 0, scale = 1) {
 
 
 
- koenker <- function(percentile = 50,
+ sc.studentt2 <- function(percentile = 50,
                      llocation = "identitylink", lscale = "loge",
                      ilocation = NULL,   iscale = NULL,
                      imethod = 1,
@@ -379,14 +379,14 @@ rkoenker <- function(n, location = 0, scale = 1) {
 
 
   new("vglmff",
-  blurb = c("Koenker distribution\n\n",
+  blurb = c("Scaled Student t distribution with 2 degrees of freedom\n\n",
             "Links:    ",
             namesof("location", llocat, earg = elocat, tag = FALSE), ", ",
             namesof("scale",    lscale, earg = escale, tag = FALSE), "\n\n",
             "Mean:     location\n",
             "Variance: infinite"),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.vgam(constraints, x, .zero, M)
+    constraints <- cm.zero.VGAM(constraints, x, .zero, M)
   }), list( .zero = zero ))),
   initialize = eval(substitute(expression({
 
@@ -428,7 +428,7 @@ rkoenker <- function(n, location = 0, scale = 1) {
     Scale <- eta2theta(eta[, 2], link = .lscale, earg = .escale)
     answer <- matrix(locat, nrow(eta), length(Perce))
     for (ii in 1:length(Perce))
-      answer[, ii] <- qkoenker(Perce[ii] / 100, loc = locat, sc = Scale)
+      answer[, ii] <- qsc.t2(Perce[ii] / 100, loc = locat, sc = Scale)
     dimnames(answer) <- list(dimnames(eta)[[1]],
                              paste(as.character(Perce), "%", sep = ""))
     answer
@@ -463,7 +463,7 @@ rkoenker <- function(n, location = 0, scale = 1) {
     if (residuals) {
       stop("loglikelihood residuals not implemented yet")
     } else {
-      ll.elts <- c(w) * dkoenker(x = y, location = locat, scale = Scale,
+      ll.elts <- c(w) * dsc.t2(x = y, location = locat, scale = Scale,
                                  log = TRUE)
       if (summation) {
         sum(ll.elts)
@@ -473,7 +473,7 @@ rkoenker <- function(n, location = 0, scale = 1) {
     }
   }, list( .llocat = llocat, .lscale = lscale,
            .elocat = elocat, .escale = escale ))),
-  vfamily = c("koenker"),
+  vfamily = c("sc.studentt2"),
   deriv = eval(substitute(expression({
     locat <- eta2theta(eta[, 1], link = .llocat, earg = .elocat)
     Scale <- eta2theta(eta[, 2], link = .lscale, earg = .escale)

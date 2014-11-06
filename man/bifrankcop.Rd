@@ -97,14 +97,14 @@ Frank's family of bivariate distributions.
 
 \seealso{
   \code{\link{rbifrankcop}},
-  \code{\link{fgm}},
+  \code{\link{bifgmcop}},
   \code{\link{simulate.vlm}}.
 
 
 }
 \examples{
 \dontrun{
-ymat <- rbifrankcop(n = 2000, alpha = exp(4))
+ymat <- rbifrankcop(n = 2000, apar = exp(4))
 plot(ymat, col = "blue")
 fit <- vglm(ymat ~ 1, fam = bifrankcop, trace = TRUE)
 coef(fit, matrix = TRUE)

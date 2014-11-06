@@ -11,10 +11,10 @@
 
 }
 \usage{
-dbisa(x, shape, scale = 1, log = FALSE)
-pbisa(q, shape, scale = 1)
-qbisa(p, shape, scale = 1)
-rbisa(n, shape, scale = 1)
+dbisa(x, scale = 1, shape, log = FALSE)
+pbisa(q, scale = 1, shape)
+qbisa(p, scale = 1, shape)
+rbisa(n, scale = 1, shape)
 }
 \arguments{
   \item{x, q}{vector of quantiles.}
@@ -24,8 +24,8 @@ rbisa(n, shape, scale = 1)
 
 
   }
-  \item{shape, scale}{
-  the (positive) shape and scale parameters.
+  \item{scale, shape}{
+  the (positive) scale and shape parameters.
 
 
   }
@@ -83,7 +83,7 @@ Q <- qbisa(probs, shape = shape)
 lines(Q, dbisa(Q, shape = shape), col = "purple", lty = 3, type = "h")
 pbisa(Q, shape = shape) - probs  # Should be all zero
 abline(h = probs, col = "purple", lty = 3)
-lines(Q, pbisa(Q, shape), col = "purple", lty = 3, type = "h")
+lines(Q, pbisa(Q, shape = shape), col = "purple", lty = 3, type = "h")
 }
 }
 \keyword{distribution}

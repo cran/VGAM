@@ -9,9 +9,8 @@
 
 }
 \usage{
-betabinomial(lmu = "logit", lrho = "logit",
-             irho = NULL, imethod = 1, shrinkage.init = 0.95,
-             nsimEIM = NULL, zero = 2)
+betabinomial(lmu = "logit", lrho = "logit", irho = NULL, imethod = 1,
+             ishrinkage = 0.95, nsimEIM = NULL, zero = 2)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -51,9 +50,9 @@ betabinomial(lmu = "logit", lrho = "logit",
 
 
   }
-  \item{shrinkage.init, nsimEIM}{ 
+  \item{ishrinkage, nsimEIM}{ 
   See \code{\link{CommonVGAMffArguments}} for more information.
-  The argument \code{shrinkage.init} is used only if \code{imethod = 2}.
+  The argument \code{ishrinkage} is used only if \code{imethod = 2}.
   Using the argument \code{nsimEIM} may offer large advantages for large
   values of \eqn{N} and/or large data sets.
 
@@ -84,11 +83,11 @@ betabinomial(lmu = "logit", lrho = "logit",
   \deqn{P(T=t) = {N \choose t} \frac{B(\alpha+t, \beta+N-t)}
                   {B(\alpha, \beta)}}{%
         P(T=t) = choose(N,t) B(alpha+t, beta+N-t) / B(alpha, beta)}
-   where \eqn{t=0,1,\ldots,N}, and \eqn{B} is the
-   \code{\link[base:Special]{beta}} function
-   with shape parameters \eqn{\alpha}{alpha} and \eqn{\beta}{beta}.
-   Recall \eqn{Y = T/N} is the real response being modelled.
-   
+  where \eqn{t=0,1,\ldots,N}, and \eqn{B} is the
+  \code{\link[base:Special]{beta}} function
+  with shape parameters \eqn{\alpha}{alpha} and \eqn{\beta}{beta}.
+  Recall \eqn{Y = T/N} is the real response being modelled.
+
 
   The default model is \eqn{\eta_1 = logit(\mu)}{eta1 =logit(mu)}
   and \eqn{\eta_2 = logit(\rho)}{eta2 = logit(rho)} because both
@@ -182,7 +181,7 @@ betabinomial(lmu = "logit", lrho = "logit",
 
 }
 \seealso{
-  \code{\link{betabinomial.ab}},
+  \code{\link{betabinomialff}},
   \code{\link{Betabinom}},
   \code{\link{binomialff}},
   \code{\link{betaff}},

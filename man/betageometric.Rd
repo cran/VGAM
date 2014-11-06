@@ -67,7 +67,9 @@ betageometric(lprob = "logit", lshape = "loge",
   of the parameters is maintained.
   The mean of \eqn{Y} is
   \eqn{E(Y) = shape2 / (shape1-1) = (1-p) / (p-\phi)}{E(Y) = 
-       shape2 / (shape1-1) = (1-prob) / (prob-phi)}.
+       shape2 / (shape1-1) = (1-prob) / (prob-phi)}
+  if \code{shape1 > 1}, and if so, then this is returned as
+  the fitted values.
 
 
   The geometric distribution is a special case of the beta-geometric

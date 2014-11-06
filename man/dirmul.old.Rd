@@ -120,7 +120,7 @@ contains further information and examples.
 \seealso{
   \code{\link{dirmultinomial}},
   \code{\link{dirichlet}},
-  \code{\link{betabinomial.ab}},
+  \code{\link{betabinomialff}},
   \code{\link{multinomial}}.
 
 

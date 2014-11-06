@@ -115,14 +115,14 @@ nvar.qrrvglm <- function(object, type = c("qrrvglm", "zz"), ...) {
 
 
 
-nvar.cao <- function(object, type = c("cao", "zz"), ...) {
+nvar.rrvgam <- function(object, type = c("cao", "zz"), ...) {
 
   if (mode(type) != "character" && mode(type) != "name")
     type <- as.character(substitute(type))
   type <- match.arg(type,
                     c("rrvglm", "zz"))[1]
 
-  stop("function nvar.cao() has not been written yet")
+  stop("function nvar.rrvgam() has not been written yet")
 
   if (type == "cao") {
     object@misc$p
@@ -182,9 +182,9 @@ setMethod("nvar", "qrrvglm",
 
 
 
-setMethod("nvar", "cao",
+setMethod("nvar", "rrvgam",
          function(object, ...)
-         nvar.cao(object, ...))
+         nvar.rrvgam(object, ...))
 
 
 

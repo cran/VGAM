@@ -12,11 +12,11 @@
 zinegbinomial(lpstr0 = "logit", lmunb = "loge", lsize = "loge",
               type.fitted = c("mean", "pobs0", "pstr0", "onempstr0"),
               ipstr0 = NULL, isize = NULL, zero = -3,
-              imethod = 1, shrinkage.init = 0.95, nsimEIM = 250)
+              imethod = 1, ishrinkage = 0.95, nsimEIM = 250)
 zinegbinomialff(lmunb = "loge", lsize = "loge", lonempstr0 = "logit",
                 type.fitted = c("mean", "pobs0", "pstr0", "onempstr0"),
                 isize = NULL, ionempstr0 = NULL, zero = c(-2, -3),
-                imethod = 1, shrinkage.init = 0.95, nsimEIM = 250)
+                imethod = 1, ishrinkage = 0.95, nsimEIM = 250)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -61,7 +61,7 @@ zinegbinomialff(lmunb = "loge", lsize = "loge", lonempstr0 = "logit",
   An integer with value \code{1} or \code{2} or \code{3} which
   specifies the initialization method for the mean parameter.
   If failure to converge occurs try another value
-  and/or else specify a value for \code{shrinkage.init}.
+  and/or else specify a value for \code{ishrinkage}.
 
   }
   \item{zero}{ 
@@ -73,7 +73,7 @@ zinegbinomialff(lmunb = "loge", lsize = "loge", lonempstr0 = "logit",
   See \code{\link{CommonVGAMffArguments}} for more information.
 
   }
-  \item{shrinkage.init, nsimEIM}{ 
+  \item{ishrinkage, nsimEIM}{ 
   See \code{\link{CommonVGAMffArguments}} for information.
 
   }
@@ -171,7 +171,7 @@ zinegbinomialff(lmunb = "loge", lsize = "loge", lonempstr0 = "logit",
   If failure to converge occurs, try using combinations of arguments
   \code{stepsize} (in \code{\link{vglm.control}}),
   \code{imethod},
-  \code{shrinkage.init},
+  \code{ishrinkage},
   \code{ipstr0},
   \code{isize}, and/or
   \code{zero} if there are explanatory variables.

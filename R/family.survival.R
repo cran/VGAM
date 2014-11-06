@@ -12,7 +12,7 @@
 
 
 
- double.cennormal <-
+ double.cens.normal <-
   function(r1 = 0, r2 = 0,
            lmu = "identitylink",
            lsd = "loge",
@@ -41,7 +41,7 @@
             "\n",
             "Variance: sd^2"),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.vgam(constraints, x, .zero , M)
+    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
   }) , list( .zero = zero))),
 
 
@@ -113,7 +113,7 @@
   } , list( .lmu = lmu, .lsd = lsd,
             .emu = emu, .esd = esd,
             .r1 = r1, .r2 = r2 ))),
-  vfamily = c("double.cennormal"),
+  vfamily = c("double.cens.normal"),
   deriv = eval(substitute(expression({
     sd <- eta2theta(eta[, 2], .lsd, earg =.esd)
 
@@ -165,7 +165,7 @@
 
 
 
-dbisa <- function(x, shape, scale = 1, log = FALSE) {
+dbisa <- function(x, scale = 1, shape, log = FALSE) {
   if (!is.logical(log.arg <- log) || length(log) != 1)
     stop("bad input for argument 'log'")
   rm(log)
@@ -193,7 +193,7 @@ dbisa <- function(x, shape, scale = 1, log = FALSE) {
 }
 
 
-pbisa <- function(q, shape, scale = 1) {
+pbisa <- function(q, scale = 1, shape) {
   if (!is.Numeric(q))
     stop("bad input for argument 'q'")
   if (!is.Numeric(shape, positive = TRUE))
@@ -207,7 +207,7 @@ pbisa <- function(q, shape, scale = 1) {
 }
 
 
-qbisa <- function(p, shape, scale = 1) {
+qbisa <- function(p, scale = 1, shape) {
   if (!is.Numeric(p, positive = TRUE) || any(p >= 1))
       stop("argument 'p' must have values inside the interval (0,1)")
   if (!is.Numeric(shape, positive = TRUE))
@@ -222,7 +222,7 @@ qbisa <- function(p, shape, scale = 1) {
 }
 
 
-rbisa <- function(n, shape, scale = 1) {
+rbisa <- function(n, scale = 1, shape) {
 
   A <- rnorm(n)
   temp1 <- A * shape
@@ -245,9 +245,15 @@ rbisa <- function(n, shape, scale = 1) {
 
 
 
- bisa <- function(lshape = "loge", lscale = "loge",
-                  ishape = NULL,   iscale = 1,
-                  imethod = 1, zero = NULL) {
+ bisa <- function(lscale = "loge", lshape = "loge",
+                  iscale = 1,      ishape = NULL,
+                  imethod = 1, zero = NULL, nowarning = FALSE) {
+
+  if (!nowarning)
+    warning("order of the linear/additive predictors has been changed",
+            " in VGAM version 0.9-5")
+
+
   lshape <- as.list(substitute(lshape))
   eshape <- link2list(lshape)
   lshape <- attr(eshape, "function.name")
@@ -270,22 +276,22 @@ rbisa <- function(n, shape, scale = 1) {
   new("vglmff",
   blurb = c("Birnbaum-Saunders distribution\n\n",
             "Links:    ",
-            namesof("shape", lshape, earg = eshape, tag = TRUE), "; ",
-            namesof("scale", lscale, earg = escale, tag = TRUE)),
+            namesof("scale", lscale, earg = escale, tag = TRUE), "; ",
+            namesof("shape", lshape, earg = eshape, tag = TRUE)),
   constraints = eval(substitute(expression({
-      constraints <- cm.zero.vgam(constraints, x, .zero , M)
+      constraints <- cm.zero.VGAM(constraints, x, .zero , M)
   }) , list( .zero = zero))),
   initialize = eval(substitute(expression({
     if (ncol(y <- cbind(y)) != 1)
       stop("the response must be a vector or a one-column matrix")
 
     predictors.names <-
-      c(namesof("shape", .lshape, earg = .eshape, tag = FALSE),
-        namesof("scale", .lscale, earg = .escale, tag = FALSE))
+      c(namesof("scale", .lscale , earg = .escale, tag = FALSE),
+        namesof("shape", .lshape , earg = .eshape, tag = FALSE))
 
     if (!length(etastart)) {
-      scale.init <- rep( .iscale, len = n)
-      shape.init <- if (is.Numeric( .ishape)) rep( .ishape, len = n) else {
+      scale.init <- rep( .iscale , len = n)
+      shape.init <- if (is.Numeric( .ishape)) rep( .ishape , len = n) else {
       if ( .imethod == 1) {
         ybar <- rep(weighted.mean(y, w), len = n)
         ybarr <- rep(1 / weighted.mean(1/y, w), len = n)  # Reqrs y > 0
@@ -297,23 +303,23 @@ rbisa <- function(n, shape, scale = 1) {
         sqrt(2*(pmax(ybar, scale.init + 0.1) / scale.init - 1))
       }
     }
-      etastart <- cbind(theta2eta(shape.init, .lshape, earg = .eshape),
-                        theta2eta(scale.init, .lscale, earg = .escale))
+      etastart <- cbind(theta2eta(scale.init, .lscale , earg = .escale ),
+                        theta2eta(shape.init, .lshape , earg = .eshape ))
     }
   }) , list( .lshape = lshape, .lscale = lscale,
              .ishape = ishape, .iscale = iscale,
              .eshape = eshape, .escale = escale,
              .imethod = imethod ))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
-    sh <- eta2theta(eta[, 1], .lshape, earg = .eshape)
-    sc <- eta2theta(eta[, 2], .lscale, earg = .escale)
+    sc <- eta2theta(eta[, 1], .lscale , earg = .escale )
+    sh <- eta2theta(eta[, 2], .lshape , earg = .eshape )
     sc * (1 + sh^2 / 2)
   }, list( .lshape = lshape, .lscale = lscale,
            .eshape = eshape, .escale = escale ))),
   last = eval(substitute(expression({
-    misc$link <-    c(shape = .lshape, scale = .lscale)
+    misc$link <-    c(scale = .lscale , shape = .lshape )
 
-    misc$earg <- list(shape = .eshape, scale = .escale)
+    misc$earg <- list(scale = .escale , shape = .eshape )
 
     misc$expected <- TRUE
     misc$multipleResponses <- FALSE
@@ -323,12 +329,12 @@ rbisa <- function(n, shape, scale = 1) {
     function(mu, y, w, residuals = FALSE, eta,
              extra = NULL,
              summation = TRUE) {
-    sh <- eta2theta(eta[, 1], .lshape , earg = .eshape )
-    sc <- eta2theta(eta[, 2], .lscale , earg = .escale )
+    sc <- eta2theta(eta[, 1], .lscale , earg = .escale )
+    sh <- eta2theta(eta[, 2], .lshape , earg = .eshape )
     if (residuals) {
       stop("loglikelihood residuals not implemented yet")
     } else {
-      ll.elts <- c(w) * dbisa(x = y, shape = sh, scale = sc, log = TRUE)
+      ll.elts <- c(w) * dbisa(x = y, scale = sc, shape = sh, log = TRUE)
       if (summation) {
         sum(ll.elts)
       } else {
@@ -340,28 +346,28 @@ rbisa <- function(n, shape, scale = 1) {
 
   vfamily = c("bisa"),
   deriv = eval(substitute(expression({
-    sh <- eta2theta(eta[, 1], .lshape, earg = .eshape)
-    sc <- eta2theta(eta[, 2], .lscale, earg = .escale)
+    sc <- eta2theta(eta[, 1], .lscale , earg = .escale )
+    sh <- eta2theta(eta[, 2], .lshape , earg = .eshape )
 
     dl.dsh <- ((y/sc - 2 + sc/y) / sh^2 - 1) / sh 
     dl.dsc <- -0.5 / sc + 1/(y+sc) + sqrt(y) * ((y+sc)/y) *
              (sqrt(y/sc) - sqrt(sc/y)) / (2 * sh^2 * sc^1.5)
 
-    dsh.deta <- dtheta.deta(sh, .lshape, earg = .eshape)
-    dsc.deta <- dtheta.deta(sc, .lscale, earg = .escale)
+    dsh.deta <- dtheta.deta(sh, .lshape , earg = .eshape )
+    dsc.deta <- dtheta.deta(sc, .lscale , earg = .escale )
 
-    c(w) * cbind(dl.dsh * dsh.deta,
-                 dl.dsc * dsc.deta)
+    c(w) * cbind(dl.dsc * dsc.deta,
+                 dl.dsh * dsh.deta)
   }) , list( .lshape = lshape, .lscale = lscale,
              .eshape = eshape, .escale = escale ))),
   weight = eval(substitute(expression({
     wz <- matrix(as.numeric(NA), n, M)  # Diagonal!!
-    wz[,iam(1,1,M)] <- 2 * dsh.deta^2 / sh^2
+    wz[, iam(2, 2, M)] <- 2 * dsh.deta^2 / sh^2
     hfunction <- function(alpha)
       alpha * sqrt(pi/2) - pi * exp(2/alpha^2) *
                            pnorm(2/alpha, lower.tail = FALSE)
-    wz[,iam(2,2,M)] <- dsc.deta^2 *
-                       (sh * hfunction(sh)  / sqrt(2*pi) + 1) / (sh*sc)^2
+    wz[, iam(1, 1, M)] <- dsc.deta^2 *
+                          (sh * hfunction(sh) / sqrt(2*pi) + 1) / (sh*sc)^2
     c(w) * wz
   }), list( .zero = zero ))))
 }

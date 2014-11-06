@@ -87,11 +87,11 @@ mix2normal.control <- function(trace = TRUE, ...) {
             "Variance: phi*sd1^2 + (1 - phi)*sd2^2 + ",
                       "phi*(1 - phi)*(mu1-mu2)^2"),
   constraints = eval(substitute(expression({
-    constraints <- cm.vgam(rbind(diag(4), c(0, 0, 1,0)), x = x,
+    constraints <- cm.VGAM(rbind(diag(4), c(0, 0, 1, 0)), x = x,
                            bool = .eq.sd ,
                            constraints = constraints,
                            apply.int = TRUE)
-    constraints <- cm.zero.vgam(constraints, x, .zero , M)
+    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
   }), list( .zero = zero, .eq.sd = eq.sd ))),
   initialize = eval(substitute(expression({
 
@@ -234,10 +234,9 @@ mix2normal.control <- function(trace = TRUE, ...) {
            .nsimEIM = nsimEIM ))),
   weight = eval(substitute(expression({
 
-    d3 <- deriv3(~ log(
-        phi * dnorm((ysim-mu1)/sd1) / sd1 +
-        (1 - phi) * dnorm((ysim-mu2)/sd2) / sd2),
-        c("phi","mu1","sd1","mu2","sd2"), hessian= TRUE)
+    d3 <- deriv3(~ log(     phi  * dnorm((ysim-mu1)/sd1) / sd1 +
+                       (1 - phi) * dnorm((ysim-mu2)/sd2) / sd2),
+        c("phi","mu1","sd1","mu2","sd2"), hessian = TRUE)
     run.mean <- 0
     for (ii in 1:( .nsimEIM )) {
       ysim <- ifelse(runif(n) < phi, rnorm(n, mu1, sd1),
@@ -321,7 +320,7 @@ mix2poisson.control <- function(trace = TRUE, ...) {
             namesof("lambda2", llambda, earg = el2, tag = FALSE), "\n",
             "Mean:     phi*lambda1 + (1 - phi)*lambda2"),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.vgam(constraints, x, .zero, M)
+    constraints <- cm.zero.VGAM(constraints, x, .zero, M)
   }), list( .zero = zero ))),
   initialize = eval(substitute(expression({
 
@@ -354,8 +353,8 @@ mix2poisson.control <- function(trace = TRUE, ...) {
 
       if (!length(etastart))  
         etastart <- cbind(theta2eta(init.phi, .lphi , earg = .ephi ),
-                         theta2eta(init.lambda1, .llambda , earg = .el1 ),
-                         theta2eta(init.lambda2, .llambda , earg = .el2 ))
+                          theta2eta(init.lambda1, .llambda , earg = .el1 ),
+                          theta2eta(init.lambda2, .llambda , earg = .el2 ))
     }
   }), list(.lphi = lphi, .llambda = llambda,
            .ephi = ephi, .el1 = el1, .el2 = el2,
@@ -536,7 +535,7 @@ mix2exp.control <- function(trace = TRUE, ...) {
             "Mean:     phi / lambda1 + (1 - phi) / lambda2\n"),
 
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.vgam(constraints, x, .zero, M)
+    constraints <- cm.zero.VGAM(constraints, x, .zero, M)
   }), list( .zero = zero ))),
 
   initialize = eval(substitute(expression({

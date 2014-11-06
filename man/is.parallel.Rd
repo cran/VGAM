@@ -61,8 +61,8 @@ is.parallel.vglm(object, type = c("term", "lm"), \dots)
 
 \examples{
 \dontrun{ require("VGAMdata")
-fit <- vglm(educ ~ sm.bs(age) * sex + ethnic,
-            cumulative(parallel = TRUE), xs.nz[1:200, ])
+fit <- vglm(educ ~ sm.bs(age) * sex + ethnicity,
+            cumulative(parallel = TRUE), head(xs.nz, 200))
 is.parallel(fit)
 is.parallel(fit, type = "lm")  # For each column of the LM matrix
 }

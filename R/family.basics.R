@@ -12,7 +12,7 @@
 
 
 
-subsetc <-
+subsetcol <-
 Select <-
   function(
            data = list(),
@@ -177,6 +177,29 @@ subsetc <-
 
 
 
+ grid.search <- function(vov, objfun, y, x, w, extraargs = NULL,
+                         maximize = TRUE, abs.arg = FALSE,
+                         ret.objfun = FALSE, ...) {
+  if (!is.vector(vov))
+    stop("argument 'vov' must be a vector")
+  objvals <- vov
+  for (ii in 1:length(vov))
+    objvals[ii] <- objfun(vov[ii], y = y, x = x, w = w,
+                          extraargs = extraargs, ...)
+  try.this <- if (abs.arg) {
+               if (maximize) vov[abs(objvals) == max(abs(objvals))] else
+               vov[abs(objvals) == min(abs(objvals))]
+             } else {
+               if (maximize) vov[objvals == max(objvals)] else
+               vov[objvals == min(objvals)]
+             }
+  if (!length(try.this))
+    stop("something has gone wrong!")
+  ans <- if (length(try.this) == 1)
+    try.this else sample(try.this, size = 1)
+  if (ret.objfun) c(ans, objvals[ans == vov]) else ans
+}
+
 
 
 
@@ -218,11 +241,13 @@ subsetc <-
 
 
 
- cm.vgam <- function(cm, x, bool, constraints,
-                     apply.int = FALSE, overwrite = FALSE,
-                     cm.default = diag(nrow(cm)),  # 20121226
-                     cm.intercept.default = diag(nrow(cm))  # 20121226
-                    ) {
+
+ cm.VGAM <-
+  function(cm, x, bool, constraints,
+           apply.int = FALSE, 
+           cm.default = diag(nrow(cm)),  # 20121226
+           cm.intercept.default = diag(nrow(cm))  # 20121226
+          ) {
 
 
 
@@ -280,26 +305,26 @@ subsetc <-
       return(constraints)
     }
   } else {
-      tbool <- terms(bool)
-      if (attr(tbool, "response")) {
-        ii <- attr(tbool, "factors")
-        default <- dimnames(ii)[[1]]
-        default <- default[1]
-        default <- if (is.null(default[1])) {
-          t.or.f <- attr(tbool, "variables")
+    tbool <- terms(bool)
+    if (attr(tbool, "response")) {
+      ii <- attr(tbool, "factors")
+      default <- dimnames(ii)[[1]]
+      default <- default[1]
+      default <- if (is.null(default[1])) {
+        t.or.f <- attr(tbool, "variables")
 
-          t.or.f <- as.character( t.or.f )
-          if (t.or.f[1] == "list" && length(t.or.f) == 2 &&
-             (t.or.f[2] == "TRUE" || t.or.f[2] == "FALSE")) {
-            t.or.f <- as.character( t.or.f[2] )
-            parse(text = t.or.f)[[1]]
-          } else {
-            stop("something gone awry")
-          }
+        t.or.f <- as.character( t.or.f )
+        if (t.or.f[1] == "list" && length(t.or.f) == 2 &&
+           (t.or.f[2] == "TRUE" || t.or.f[2] == "FALSE")) {
+          t.or.f <- as.character( t.or.f[2] )
+          parse(text = t.or.f)[[1]]
         } else {
-          parse(text = default[1])[[1]]  # Original
+          stop("something gone awry")
         }
-        default <- as.logical(eval(default))
+      } else {
+        parse(text = default[1])[[1]]  # Original
+      }
+      default <- as.logical(eval(default))
     } else {
       default <- TRUE
     }
@@ -321,7 +346,7 @@ subsetc <-
 
 
 
-cm.nointercept.vgam <- function(constraints, x, nointercept, M) {
+cm.nointercept.VGAM <- function(constraints, x, nointercept, M) {
 
   asgn <- attr(x, "assign")
   nasgn <- names(asgn)
@@ -361,7 +386,7 @@ cm.nointercept.vgam <- function(constraints, x, nointercept, M) {
 
 
 
- cm.zero.vgam <- function(constraints, x, zero, M) {
+ cm.zero.VGAM <- function(constraints, x, zero, M) {
 
   asgn <- attr(x, "assign")
   nasgn <- names(asgn)
@@ -392,7 +417,7 @@ cm.nointercept.vgam <- function(constraints, x, nointercept, M) {
       Hmatk[zero, ] <- 0
       index <- NULL
       for (kk in 1:ncol(Hmatk))
-        if (all(Hmatk[,kk] == 0)) index <- c(index, kk)
+        if (all(Hmatk[, kk] == 0)) index <- c(index, kk)
       if (length(index) == ncol(Hmatk)) 
         stop("constraint matrix has no columns!")
       if (!is.null(index))
@@ -404,8 +429,14 @@ cm.nointercept.vgam <- function(constraints, x, nointercept, M) {
 
 
 
- process.constraints <- function(constraints, x, M,
-                                 by.col = TRUE, specialCM = NULL) {
+ process.constraints <-
+  function(constraints, x, M,
+           by.col = TRUE, specialCM = NULL,
+           Check.cm.rank = TRUE  # 20140626
+          ) {
+
+
+
 
 
 
@@ -429,31 +460,34 @@ cm.nointercept.vgam <- function(constraints, x, nointercept, M) {
   lenconstraints <- length(constraints)
   if (lenconstraints > 0)
     for (ii in 1:lenconstraints) {
-      constraints[[ii]] <- eval(constraints[[ii]])
+      list.elt <- constraints[[ii]]
+
+      if (is.function(list.elt)) {
+        list.elt <- list.elt()
+      }
+
+      constraints[[ii]] <- eval(list.elt)
       if (!is.null  (constraints[[ii]]) &&
           !is.matrix(constraints[[ii]]))
-          stop("'constraints[[", ii, "]]' is not a matrix")
+        stop("'constraints[[", ii, "]]' is not a matrix")
     }
 
   if (is.null(names(constraints))) 
     names(constraints) <- rep(nasgn, length.out = lenconstraints) 
 
-  temp <- if (!is.R()) list() else {
-    junk <- vector("list", length(nasgn))
-    names(junk) <- nasgn
-    junk
-  }
+  temp <- vector("list", length(nasgn))
+  names(temp) <- nasgn
   for (ii in 1:length(nasgn))
     temp[[nasgn[ii]]] <-
       if (is.null(constraints[[nasgn[ii]]])) diag(M) else
              eval(constraints[[nasgn[ii]]])
 
   for (ii in 1:length(asgn)) {
-      if (!is.matrix(temp[[ii]])) {
-        stop("not a constraint matrix")
-      }
-      if (ncol(temp[[ii]]) > M)
-        stop("constraint matrix has too many columns")
+    if (!is.matrix(temp[[ii]])) {
+      stop("not a constraint matrix")
+    }
+    if (ncol(temp[[ii]]) > M)
+      stop("constraint matrix has too many columns")
   }
 
   if (!by.col)
@@ -477,6 +511,24 @@ cm.nointercept.vgam <- function(constraints, x, nointercept, M) {
     }
   }
   names(Hlist) <- dimnames(x)[[2]]
+
+
+
+  if (Check.cm.rank) {
+    all.svd.d <- function(x) svd(x)$d
+    mylist <- lapply(Hlist, all.svd.d)
+
+    if (max(unlist(lapply(mylist, length))) > M)
+      stop("some constraint matrices have more than ", M,
+           "columns")
+
+    MyVector <- unlist(mylist)
+    if (min(MyVector) < 1.0e-10)
+      stop("some constraint matrices are not of ",
+           "full column-rank: ",
+           paste(names(MyVector)[MyVector < 1.0e-10], collapse = ", "))
+  }
+
   Hlist
 }
 
@@ -629,13 +681,9 @@ cm.nointercept.vgam <- function(constraints, x, nointercept, M) {
 
 
 
- m2avglm <- function(object, upper = FALSE, allow.vector = FALSE)  {
-  m2adefault(wweights(object), M = object@misc$M,
-             upper = upper, allow.vector = allow.vector)
-}
+ m2a <- function(m, M, upper = FALSE, allow.vector = FALSE) {
 
 
- m2adefault <- function(m, M, upper = FALSE, allow.vector = FALSE) {
   if (!is.numeric(m))
       stop("argument 'm' is not numeric")
 
@@ -682,8 +730,7 @@ cm.nointercept.vgam <- function(constraints, x, nointercept, M) {
   fred <- .C("a2m",
              as.double(a), m = double(dimm.value * n),
       as.integer(dimm.value),
-      as.integer(index$row-1),  
-      as.integer(index$col-1),  
+      as.integer(index$row-1),  as.integer(index$col-1),  
       as.integer(n),  as.integer(M), NAOK = TRUE)
   dim(fred$m) <- c(dimm.value,n)
   fred$m <- t(fred$m)
@@ -724,18 +771,11 @@ cm.nointercept.vgam <- function(constraints, x, nointercept, M) {
 
 
 
-if (!exists("is.R"))
-  is.R <- function()
-    exists("version") &&
-    !is.null(version$language) &&
-    version$language == "R"
-
-
-
-
-
  wweights <- function(object, matrix.arg = TRUE, deriv.arg = FALSE,
                       ignore.slot = FALSE, checkwz = TRUE) {
+
+
+
 
 
 
@@ -787,9 +827,20 @@ if (!exists("is.R"))
 
 
 
+
+  if (any(slotNames(object) == "family")) {
+    infos.list <- object@family@infos()
+    if (length(infos.list))
+      for (ii in names(infos.list)) {
+        assign(ii, infos.list[[ii]])
+      }
+  }
+
+
+
   if (any(slotNames(object) == "control"))
     for (ii in names(object@control)) {
-      assign(ii, object@control[[ii]]) 
+      assign(ii, object@control[[ii]])
     } 
 
   if (length(object@misc))
@@ -877,13 +928,7 @@ procVec <- function(vec, yn, Default) {
 
 if (FALSE) {
 
-if (!isGeneric("m2a"))
-    setGeneric("m2a",
-  function(object, ...) standardGeneric("m2a"))
 
-setMethod("m2a", "vglm",
-         function(object, ...)
-         m2avglm(object, ...))
 }
 
 
@@ -979,6 +1024,7 @@ qnupdate <- function(w, wzold, dderiv, deta, M, keeppd = TRUE,
   }
   wznew
 }
+
 
 
 
@@ -1111,7 +1157,7 @@ lerch <- function(x, s, v, tolerance = 1.0e-10, iter = 100) {
 
 
 
-negzero.expression <- expression({
+negzero.expression.VGAM <- expression({
 
 
 
@@ -1141,7 +1187,7 @@ negzero.expression <- expression({
   z.Index <- if (!length(dotzero)) NULL else
                    unique(sort(c(zneg.index, zpos.index)))
 
-  constraints <- cm.zero.vgam(constraints, x, z.Index, M)
+  constraints <- cm.zero.VGAM(constraints, x, z.Index, M)
 })
 
 

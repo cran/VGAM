@@ -47,11 +47,11 @@ mix2exp(lphi = "logit", llambda = "loge", iphi = 0.5, il1 = NULL,
   }
 }
 \details{
-  The probability function can be loosely written as 
-  \deqn{P(Y=y) = \phi\,Exponential(\lambda_1) +
+  The probability density function can be loosely written as 
+  \deqn{f(y) = \phi\,Exponential(\lambda_1) +
               (1-\phi)\,Exponential(\lambda_2)}{%
-        P(Y=y) = phi * Exponential(lambda1) +
-                (1-phi) * Exponential(lambda2)}
+        f(y) = phi * Exponential(lambda1) +
+              (1-phi) * Exponential(lambda2)}
   where \eqn{\phi}{phi} is the probability an observation belongs
   to the first group, and \eqn{y>0}.
   The parameter \eqn{\phi}{phi} satisfies \eqn{0 < \phi < 1}{0 < phi < 1}.

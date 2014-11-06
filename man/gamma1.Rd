@@ -68,14 +68,14 @@ Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
 
 
   If \eqn{rate} is unknown use the family function
-  \code{\link{gamma2.ab}} to estimate it too.
+  \code{\link{gammaR}} to estimate it too.
 
 
 }
 
 \seealso{
-  \code{\link{gamma2.ab}} for the 2-parameter gamma distribution,
-  \code{\link{lgammaff}},
+  \code{\link{gammaR}} for the 2-parameter gamma distribution,
+  \code{\link{lgamma1}},
   \code{\link{lindley}},
   \code{\link{simulate.vlm}}.
 

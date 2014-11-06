@@ -19,8 +19,8 @@ TypicalVGAMfamilyFunction(lsigma = "loge",
                           link.list = list("(Default)" = "identitylink",
                                            x2          = "loge",
                                            x3          = "logoff",
-                                           x4          = "mlogit",
-                                           x5          = "mlogit"),
+                                           x4          = "multilogit",
+                                           x5          = "multilogit"),
                           earg.list = list("(Default)" = list(),
                                            x2          = list(),
                                            x3          = list(offset = -1),
@@ -28,13 +28,13 @@ TypicalVGAMfamilyFunction(lsigma = "loge",
                                            x5          = list()),
                           gsigma = exp(-5:5),
                           parallel = TRUE,
-                          shrinkage.init = 0.95,
+                          ishrinkage = 0.95,
                           nointercept = NULL, imethod = 1,
                           type.fitted = c("mean", "pobs0", "pstr0", "onempstr0"),
                           probs.x = c(0.15, 0.85),
                           probs.y = c(0.25, 0.50, 0.75),
                           mv = FALSE, earg.link = FALSE,
-                          whitespace = FALSE, bred = FALSE,
+                          whitespace = FALSE, bred = FALSE, lss = TRUE,
                           oim = FALSE, nsimEIM = 100, zero = NULL)
 }
 \arguments{
@@ -72,7 +72,7 @@ TypicalVGAMfamilyFunction(lsigma = "loge",
   \code{earg.list = list("(Default)" = list(), x2 = list(), x3 = "list(offset = -1)")}.
   Then any unnamed terms will have the default link with its
   corresponding extra argument.
-  Note: the \code{\link{mlogit}} link is also possible, and if so,
+  Note: the \code{\link{multilogit}} link is also possible, and if so,
   at least two instances of it are necessary.
   Then the last term is the baseline/reference group.
 
@@ -226,6 +226,19 @@ except for \eqn{X_2}.
 
 
   }
+  \item{lss}{
+  Logical.
+  This stands for the ordering: location, scale and shape.
+  Should the ordering of the parameters be in this order?
+  Almost all \pkg{VGAM} family functions have this order by default,
+  but in order to match the arguments of existing R functions, one
+  might need to set \code{lss = FALSE}.
+  For example, the arguments of \code{\link{weibullR}} are
+  scale and shape, whereas \code{\link[stats]{rweibull}}
+  are shape and scale.
+
+
+  }
   \item{whitespace}{
   Logical.
   Should white spaces (\code{" "}) be used in the
@@ -291,7 +304,7 @@ except for \eqn{X_2}.
 
 
   }
-  \item{shrinkage.init}{
+  \item{ishrinkage}{
   Shrinkage factor \eqn{s} used for obtaining initial values.
   Numeric, between 0 and 1.
   In general, the formula used is something like
@@ -414,7 +427,7 @@ Bias reduction in exponential family nonlinear models.
   \code{\link{Links}},
   \code{\link{vglmff-class}},
   \code{\link{normal.vcm}},
-  \code{\link{mlogit}}.
+  \code{\link{multilogit}}.
 
 
 }
@@ -438,7 +451,7 @@ cumulative(link = "probit", reverse = TRUE, parallel = TRUE)
 wdata <- data.frame(x2 = runif(nn <- 1000))
 wdata <- transform(wdata,
          y = rweibull(nn, shape = 2 + exp(1 + x2), scale = exp(-0.5)))
-fit <- vglm(y ~ x2, weibull(lshape = logoff(offset = -2), zero = 2), data = wdata)
+fit <- vglm(y ~ x2, weibullR(lshape = logoff(offset = -2), zero = 2), data = wdata)
 coef(fit, mat = TRUE)
 
 # Example 3; multivariate (multiple) response

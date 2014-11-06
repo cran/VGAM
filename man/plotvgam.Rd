@@ -1,5 +1,6 @@
 \name{plotvgam}
 \alias{plotvgam}
+\alias{plot.vgam}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Default VGAM Plotting }
 \description{

@@ -10,14 +10,14 @@ rcqo(n, p, S, Rank = 1,
      family = c("poisson", "negbinomial", "binomial-poisson",
                 "Binomial-negbinomial", "ordinal-poisson",
                 "Ordinal-negbinomial", "gamma2"),
-     eq.maxima = FALSE, eq.tolerances = TRUE, es.optima = FALSE,
-     lo.abundance = if (eq.maxima) hi.abundance else 10,
+     eq.maximums = FALSE, eq.tolerances = TRUE, es.optimums = FALSE,
+     lo.abundance = if (eq.maximums) hi.abundance else 10,
      hi.abundance = 100, sd.latvar = head(1.5/2^(0:3), Rank),
-     sd.optima = ifelse(es.optima, 1.5/Rank, 1) *
+     sd.optimums = ifelse(es.optimums, 1.5/Rank, 1) *
                        ifelse(scale.latvar, sd.latvar, 1),
      sd.tolerances = 0.25, Kvector = 1, Shape = 1,
-     sqrt.arg = FALSE, Log = FALSE, rhox = 0.5, breaks = 4,
-     seed = NULL, optima1.arg = NULL, Crow1positive = TRUE,
+     sqrt.arg = FALSE, log.arg = FALSE, rhox = 0.5, breaks = 4,
+     seed = NULL, optimums1.arg = NULL, Crow1positive = TRUE,
      xmat = NULL, scale.latvar = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -62,8 +62,8 @@ rcqo(n, p, S, Rank = 1,
 %    else zz.
     
   }
-  \item{eq.maxima}{
-    Logical. Does each species have the same maxima?
+  \item{eq.maximums}{
+    Logical. Does each species have the same maximum?
     See arguments \code{lo.abundance} and \code{hi.abundance}.
 
 
@@ -76,15 +76,15 @@ rcqo(n, p, S, Rank = 1,
 
 
   }
-  \item{es.optima}{
-    Logical. Do the species have equally spaced optima?
+  \item{es.optimums}{
+    Logical. Do the species have equally spaced optimums?
     If \code{TRUE} then the quantity
     \eqn{S^{1/R}}{S^(1/R)} must be an
     integer with value 2 or more. That is, there has to be an
     appropriate number of species in total. This is so that a grid
     of optimum values is possible in \eqn{R}-dimensional
     latent variable space
-    in order to place the species' optima.
+    in order to place the species' optimums.
     Also see the argument \code{sd.tolerances}.
     
     
@@ -94,11 +94,11 @@ rcqo(n, p, S, Rank = 1,
     The species have a maximum
     between \code{lo.abundance} and \code{hi.abundance}. That is,
     at their optimal environment, the mean abundance of each
-    species is between the two componentwise values. If \code{eq.maxima}
+    species is between the two componentwise values. If \code{eq.maximums}
     is \code{TRUE} then \code{lo.abundance} and \code{hi.abundance}
     must have the same values.
-    If \code{eq.maxima} is \code{FALSE} then the
-    logarithm of the maxima are uniformly distributed between
+    If \code{eq.maximums} is \code{FALSE} then the
+    logarithm of the maximums are uniformly distributed between
     \code{log(lo.abundance)} and \code{log(hi.abundance)}.
     
   }
@@ -112,16 +112,16 @@ rcqo(n, p, S, Rank = 1,
     axis, etc.
         
   }
-  \item{sd.optima}{
+  \item{sd.optimums}{
     Numeric, of length \eqn{R} (recycled if necessary).
-    If \code{es.optima = FALSE} then,
+    If \code{es.optimums = FALSE} then,
     for the \eqn{r}th latent variable axis,
-    the optima of the species are generated from a
+    the optimums of the species are generated from a
     normal distribution centered about 0.
-    If \code{es.optima = TRUE} then the \eqn{S} optima
+    If \code{es.optimums = TRUE} then the \eqn{S} optimums
     are equally spaced about 0 along every latent variable axis.
-    Regardless of the value of \code{es.optima}, the optima
-    are then scaled to give standard deviation \code{sd.optima[r]}.
+    Regardless of the value of \code{es.optimums}, the optimums
+    are then scaled to give standard deviation \code{sd.optimums[r]}.
     
   }
   \item{sd.tolerances}{
@@ -165,9 +165,9 @@ rcqo(n, p, S, Rank = 1,
     problems) to estimate using something like \code{cqo(..., family="poissonff")}.
 
   }
-  \item{Log}{
+  \item{log.arg}{
     Logical. Take the logarithm of the gamma random variates?
-    Assigning \code{Log = TRUE} when \code{family="gamma2"} means
+    Assigning \code{log.arg = TRUE} when \code{family="gamma2"} means
     that the resulting species data can be considered very crudely to be
     approximately Gaussian distributed about its (quadratic) mean.
     The result is that it is much easier (less numerical
@@ -200,8 +200,8 @@ rcqo(n, p, S, Rank = 1,
     \code{\link[base:Random]{.Random.seed}} as \code{"seed"} attribute.
 
   }
-  \item{optima1.arg}{
-    If assigned and \code{Rank = 1} then these are the explicity optima.
+  \item{optimums1.arg}{
+    If assigned and \code{Rank = 1} then these are the explicity optimums.
     Recycled to length \code{S}.
 
 
@@ -229,9 +229,9 @@ rcqo(n, p, S, Rank = 1,
   data coming from a \emph{species packing model} can be generated
   with this function.
   The species packing model states that species have equal tolerances,
-  equal maxima, and optima which are uniformly distributed over
+  equal maximums, and optimums which are uniformly distributed over
   the latent variable space. This can be achieved by assigning
-  the arguments \code{es.optima = TRUE}, \code{eq.maxima = TRUE},
+  the arguments \code{es.optimums = TRUE}, \code{eq.maximums = TRUE},
   \code{eq.tolerances = TRUE}.
 
   At present, the Poisson and negative binomial abundances are
@@ -283,8 +283,8 @@ rcqo(n, p, S, Rank = 1,
     \code{\link{cqo}}.
     
   }
-  \item{"logmaxima"}{
-    The \eqn{S}-vector of species' maxima, on a log scale.
+  \item{"log.maximums"}{
+    The \eqn{S}-vector of species' maximums, on a log scale.
     These are uniformly distributed between
     \code{log(lo.abundance)} and \code{log(hi.abundance)}.
     
@@ -301,8 +301,8 @@ rcqo(n, p, S, Rank = 1,
     The linear/additive predictor value.
     
   }
-  \item{"optima"}{
-    The \eqn{S} by \eqn{R} matrix of species' optima.
+  \item{"optimums"}{
+    The \eqn{S} by \eqn{R} matrix of species' optimums.
 
   }
   \item{"tolerances"}{
@@ -316,7 +316,7 @@ rcqo(n, p, S, Rank = 1,
   Other attributes are \code{"break"},
   \code{"family"}, \code{"Rank"},
   \code{"lo.abundance"}, \code{"hi.abundance"},
-  \code{"eq.tolerances"}, \code{"eq.maxima"},
+  \code{"eq.tolerances"}, \code{"eq.maximums"},
   \code{"seed"} as used.
 
 }
@@ -397,7 +397,7 @@ attr(mydata, "concoefficients")  # The 'truth'
 
 # Example 3: gamma2 data fitted using a Gaussian model:
 n <- 200; p <- 5; S <- 3
-mydata <- rcqo(n, p, S, fam = "gamma2", Log = TRUE)
+mydata <- rcqo(n, p, S, fam = "gamma2", log.arg = TRUE)
 fit <- cqo(attr(mydata, "formula"),
            fam = gaussianff, data = mydata)  # I.tol = TRUE,
 matplot(attr(mydata, "latvar"),

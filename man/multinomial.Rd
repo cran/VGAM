@@ -224,7 +224,7 @@ by the \pkg{VGAM} package can be found at
     \code{\link{rrvglm}},
     \code{\link{fill1}},
     \code{\link[stats:Multinom]{Multinomial}},
-    \code{\link{mlogit}},
+    \code{\link{multilogit}},
     \code{\link[datasets]{iris}}.
   The author's homepage has further documentation about
   categorical data analysis using \pkg{VGAM}.

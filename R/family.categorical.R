@@ -15,7 +15,7 @@
 
 
 
-process.categorical.data.vgam <- expression({
+process.categorical.data.VGAM <- expression({
 
 
 
@@ -216,10 +216,10 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
                    "mu[,j] * (1 - mu[,j]); -mu[,j] * mu[,k]",
                    "mu[,j]*(1-mu[,j]); -mu[,j]*mu[,k]")),
   constraints = eval(substitute(expression({
-    constraints <- cm.vgam(matrix(1, M, 1), x = x,
+    constraints <- cm.VGAM(matrix(1, M, 1), x = x,
                            bool = .parallel ,
                            constraints = constraints)
-    constraints <- cm.zero.vgam(constraints, x, .zero , M)
+    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
   }), list( .parallel = parallel, .zero = zero ))),
   deviance = Deviance.categorical.data.vgam,
 
@@ -231,7 +231,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
 
 
     delete.zero.colns <- TRUE 
-    eval(process.categorical.data.vgam)
+    eval(process.categorical.data.VGAM)
     extra$wy.prod <- TRUE
     M <- ncol(y) - 1 
 
@@ -395,10 +395,10 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
                    "mu[,j]*(1-mu[,j]); -mu[,j]*mu[,k]")),
 
   constraints = eval(substitute(expression({
-    constraints <- cm.vgam(matrix(1, M, 1), x = x,
+    constraints <- cm.VGAM(matrix(1, M, 1), x = x,
                            bool = .parallel ,
                            constraints = constraints)
-    constraints <- cm.zero.vgam(constraints, x, .zero , M)
+    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
   }), list( .parallel = parallel, .zero = zero ))),
   deviance = Deviance.categorical.data.vgam,
 
@@ -410,7 +410,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
 
 
     delete.zero.colns <- TRUE 
-    eval(process.categorical.data.vgam)
+    eval(process.categorical.data.VGAM)
     M <- ncol(y) - 1 
 
     mynames <- if ( .reverse )
@@ -663,12 +663,12 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
 
 
 
-    constraints <- cm.vgam(matrix(1, M, 1), x = x,
-                           bool = .parallel, 
+    constraints <- cm.VGAM(matrix(1, M, 1), x = x,
+                           bool = .parallel ,
                            apply.int = TRUE,
                            constraints = constraints)
-    constraints <- cm.zero.vgam(constraints, x, .zero, M)
-    constraints <- cm.nointercept.vgam(constraints, x, .nointercept, M)
+    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
+    constraints <- cm.nointercept.VGAM(constraints, x, .nointercept , M)
   }), list( .parallel = parallel, .zero = zero,
             .nointercept = nointercept,
             .refLevel = refLevel ))),
@@ -694,7 +694,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
 
 
     delete.zero.colns <- TRUE 
-    eval(process.categorical.data.vgam)
+    eval(process.categorical.data.VGAM)
 
     M <- ncol(y)-1
     use.refLevel <- if ( .refLevel < 0) M+1 else .refLevel
@@ -718,7 +718,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
     if (any(is.na(eta)))
       warning("there are NAs in eta in slot inverse")
 
-    ans <- mlogit(eta, refLevel = .refLevel , inverse = TRUE)
+    ans <- multilogit(eta, refLevel = .refLevel , inverse = TRUE)
     if (any(is.na(ans)))
       warning("there are NAs here in slot linkinv")
     if (min(ans) == 0 || max(ans) == 1)
@@ -729,9 +729,9 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
 
   last = eval(substitute(expression({
     misc$refLevel <- if ( .refLevel < 0) M+1 else .refLevel
-    misc$link <- "mlogit"
+    misc$link <- "multilogit"
 
-    misc$earg <- list(mlogit = list(
+    misc$earg <- list(multilogit = list(
       M = M,
       refLevel = use.refLevel
     ))
@@ -753,7 +753,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
           ))),
 
   linkfun = eval(substitute( function(mu, extra = NULL) {
-    mlogit(mu, refLevel = .refLevel )
+    multilogit(mu, refLevel = .refLevel )
   }), list( .refLevel = refLevel )),
 
   loglikelihood =
@@ -875,13 +875,13 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
           Llevels <- extra$Llevels
           NOS <- extra$NOS
           Hk.matrix <- kronecker(diag(NOS), matrix(1,Llevels-1,1))
-          constraints <- cm.vgam(Hk.matrix, x = x,
+          constraints <- cm.VGAM(Hk.matrix, x = x,
                                  bool = .parallel ,
                                  apply.int = .apply.parint ,
                                  constraints = constraints)
       }
     } else {
-      constraints <- cm.vgam(matrix(1, M, 1), x = x,
+      constraints <- cm.VGAM(matrix(1, M, 1), x = x,
                              bool = .parallel ,
                              apply.int = .apply.parint ,
                              constraints = constraints)
@@ -940,7 +940,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
       use.y <- use.mustart <- NULL
       for (iii in 1:NOS) {
         y <- as.factor(orig.y[,iii])
-        eval(process.categorical.data.vgam)
+        eval(process.categorical.data.VGAM)
         use.y <- cbind(use.y, y)
         use.mustart <- cbind(use.mustart, mustart)
       }
@@ -966,7 +966,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
 
       delete.zero.colns <- TRUE
 
-      eval(process.categorical.data.vgam)
+      eval(process.categorical.data.VGAM)
       M <- ncol(y) - 1
       mynames <- if ( .reverse )
         paste("P[Y", .fillerChar , ">=", .fillerChar,
@@ -1240,10 +1240,10 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
             "mu[,j] * (1 - mu[,j]); -mu[,j] * mu[,k]",
             "mu[,j]*(1-mu[,j]); -mu[,j]*mu[,k]")),
   constraints = eval(substitute(expression({
-    constraints <- cm.vgam(matrix(1, M, 1), x = x,
+    constraints <- cm.VGAM(matrix(1, M, 1), x = x,
                            bool = .parallel ,
                            constraints = constraints)
-    constraints <- cm.zero.vgam(constraints, x, .zero, M)
+    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
   }), list( .parallel = parallel, .zero = zero ))),
 
   deviance = Deviance.categorical.data.vgam,
@@ -1256,7 +1256,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
 
 
     delete.zero.colns <- TRUE 
-    eval(process.categorical.data.vgam)
+    eval(process.categorical.data.VGAM)
     M <- ncol(y) - 1
     mynames <- if ( .reverse )
       paste("P[Y", .fillerChar , "=",
@@ -1457,25 +1457,25 @@ acat.deriv <- function(zeta, reverse, M, n) {
     predictors.names <-
       namesof(paste("alpha", uindex, sep = ""), "loge", short = TRUE)
 
-  }), list( .refgp = refgp, .init.alpha=init.alpha ))),
+  }), list( .refgp = refgp, .init.alpha = init.alpha ))),
 
   linkinv = eval(substitute( function(eta, extra = NULL) {
     probs <- NULL
     eta <- as.matrix(eta)  # in case M = 1
     for (ii in 1:nrow(eta)) {
-        alpha <- .brat.alpha(eta2theta(eta[ii,], "loge",
-                                       earg = list(theta = NULL)),
-                             .refvalue , .refgp )
-        alpha1 <- alpha[extra$ybrat.indices[, "rindex"]]
-        alpha2 <- alpha[extra$ybrat.indices[, "cindex"]]
-        probs <- rbind(probs, alpha1 / (alpha1 + alpha2))
+      alpha <- .brat.alpha(eta2theta(eta[ii, ], "loge",
+                                     earg = list(theta = NULL)),
+                           .refvalue , .refgp )
+      alpha1 <- alpha[extra$ybrat.indices[, "rindex"]]
+      alpha2 <- alpha[extra$ybrat.indices[, "cindex"]]
+      probs <- rbind(probs, alpha1 / (alpha1 + alpha2))
     }
     dimnames(probs) <- dimnames(eta)
     probs
   }, list( .refgp = refgp, .refvalue = refvalue) )),
 
   last = eval(substitute(expression({
-    misc$link <- rep( "loge", length = M)
+    misc$link <- rep("loge", length = M)
     names(misc$link) <- paste("alpha", uindex, sep = "")
 
     misc$earg <- vector("list", M)
@@ -1494,7 +1494,7 @@ acat.deriv <- function(zeta, reverse, M, n) {
       stop("loglikelihood residuals not implemented yet")
     } else {
       ycounts <- if (is.numeric(extra$orig.w)) y * w / extra$orig.w else
-                 y * w # Convert proportions to counts
+                 y * w  # Convert proportions to counts
       nvec <- if (is.numeric(extra$orig.w)) round(w / extra$orig.w) else
               round(w)
 
@@ -1518,16 +1518,16 @@ acat.deriv <- function(zeta, reverse, M, n) {
   deriv = eval(substitute(expression({
     ans <- NULL
     uindex <- if ( .refgp == "last") 1:M else (1:(M+1))[-( .refgp ) ]
-    eta <- as.matrix(eta)   # in case M = 1
+    eta <- as.matrix(eta)  # in case M = 1
     for (ii in 1:nrow(eta)) {
-      alpha <- .brat.alpha(eta2theta(eta[ii,], "loge",
+      alpha <- .brat.alpha(eta2theta(eta[ii, ], "loge",
                                      earg = list(theta = NULL)),
-                          .refvalue, .refgp)
-      ymat <- InverseBrat(y[ii,], NCo = M+1, diag = 0)
+                           .refvalue, .refgp )
+      ymat <- InverseBrat(y[ii, ], NCo = M+1, diag = 0)
       answer <- rep(0, len = M)
       for (aa in 1:(M+1)) {
         answer <- answer + (1 - (aa == uindex)) *
-                  (ymat[uindex,aa] * alpha[aa] - ymat[aa,uindex] *
+                  (ymat[uindex, aa] * alpha[aa] - ymat[aa, uindex] *
                   alpha[uindex]) / (alpha[aa] + alpha[uindex])
       }
       ans <- rbind(ans, w[ii] * answer)
@@ -1538,21 +1538,21 @@ acat.deriv <- function(zeta, reverse, M, n) {
   weight = eval(substitute(expression({
     wz <- matrix(0, n, dimm(M))
     for (ii in 1:nrow(eta)) {
-      alpha <- .brat.alpha(eta2theta(eta[ii,], "loge",
+      alpha <- .brat.alpha(eta2theta(eta[ii, ], "loge",
                                      earg = list(theta = NULL)),
                           .refvalue, .refgp)
-      ymat <- InverseBrat(y[ii,], NCo = M+1, diag = 0)
+      ymat <- InverseBrat(y[ii, ], NCo = M+1, diag = 0)
       for (aa in 1:(M+1)) {
         wz[ii, 1:M] <- wz[ii, 1:M] + (1 - (aa == uindex)) *
-                       (ymat[aa,uindex] + ymat[uindex,aa]) * alpha[aa] *
+                       (ymat[aa, uindex] + ymat[uindex, aa]) * alpha[aa] *
                        alpha[uindex] / (alpha[aa] + alpha[uindex])^2
       }
       if (M > 1) {
         ind5 <- iam(1, 1, M, both = TRUE, diag = FALSE)
-        wz[ii,(M+1):ncol(wz)] =
-          -(ymat[cbind(uindex[ind5$row],uindex[ind5$col])] +
-            ymat[cbind(uindex[ind5$col],uindex[ind5$row])]) *
-            alpha[uindex[ind5$col]] * alpha[uindex[ind5$row]] /
+        wz[ii, (M+1):ncol(wz)] <-
+          -(ymat[cbind(uindex[ind5$row], uindex[ind5$col])] +
+            ymat[cbind(uindex[ind5$col], uindex[ind5$row])]) *
+             alpha[uindex[ind5$col]] * alpha[uindex[ind5$row]] /
             (alpha[uindex[ind5$row]] + alpha[uindex[ind5$col]])^2
       }
     }
@@ -1560,6 +1560,8 @@ acat.deriv <- function(zeta, reverse, M, n) {
     wz
   }), list( .refvalue = refvalue, .refgp = refgp ))))
 }
+
+
 
 
 
@@ -1886,36 +1888,6 @@ InverseBrat <-
 
 
 
-tapplymat1 <- function(mat,
-                      function.arg = c("cumsum", "diff", "cumprod")) {
-
-
-  if (!missing(function.arg))
-    function.arg <- as.character(substitute(function.arg))
-  function.arg <- match.arg(function.arg,
-                            c("cumsum", "diff", "cumprod"))[1]
-
-  type <- switch(function.arg, cumsum = 1, diff = 2, cumprod = 3,
-                 stop("function.arg not matched"))
-
-  if (!is.matrix(mat))
-    mat <- as.matrix(mat)
-  NR <- nrow(mat)
-  NC <- ncol(mat)
-  fred <- .C("tapplymat1",
-               mat = as.double(mat),
-               as.integer(NR), as.integer(NC), as.integer(type), PACKAGE = "VGAM")
-
-  dim(fred$mat) <- c(NR, NC)
-  dimnames(fred$mat) <- dimnames(mat)
-  switch(function.arg,
-         cumsum = fred$mat,
-         diff   = fred$mat[, -1, drop = FALSE],
-         cumprod= fred$mat)
-}
-
-
-
 
  ordpoisson <- function(cutpoints,
                        countdata = FALSE, NOS = NULL, Levels = NULL,
@@ -1954,11 +1926,11 @@ tapplymat1 <- function(mat,
   blurb = c(paste("Ordinal Poisson model\n\n"), 
             "Link:     ", namesof("mu", link, earg = earg)),
   constraints = eval(substitute(expression({
-    constraints <- cm.vgam(matrix(1, M, 1), x = x,
+    constraints <- cm.VGAM(matrix(1, M, 1), x = x,
                            bool = .parallel ,
                            apply.int = TRUE,
                            constraints = constraints)
-    constraints <- cm.zero.vgam(constraints, x, .zero, M)
+    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
   }), list( .parallel = parallel, .zero = zero ))),
   initialize = eval(substitute(expression({
     orig.y <- cbind(y)  # Convert y into a matrix if necessary
@@ -1991,7 +1963,7 @@ tapplymat1 <- function(mat,
     for (iii in 1:NOS) {
         y <- factor(orig.y[,iii], levels=(1:Levels[iii]))
         if ( !( .countdata )) {
-            eval(process.categorical.data.vgam)  # Creates mustart and y
+            eval(process.categorical.data.VGAM)  # Creates mustart and y
             use.y[,cptr:(cptr+Levels[iii]-1)] <- y
         }
         use.etastart[,iii] <- if (is.Numeric(initmu))
@@ -2181,14 +2153,14 @@ ordpoissonProbs <- function(extra, mu, deriv = 0) {
               namesof("scale_j", lscale, escale)),
     constraints = eval(substitute(expression({
         J <- M / 2
-        constraints <- cm.vgam(matrix(1, J, 1), x = x,
+        constraints <- cm.VGAM(matrix(1, J, 1), x = x,
                                bool = .parallel ,
                                apply.int = FALSE,
                                constraints = constraints)
         constraints[["(Intercept)"]] = rbind(constraints[["(Intercept)"]],
             matrix(0, J, ncol(constraints[["(Intercept)"]])))
 
-        cm2 <- cm.vgam(matrix(1, J, 1), x = x,
+        cm2 <- cm.VGAM(matrix(1, J, 1), x = x,
                            bool = .sparallel ,
                            apply.int = FALSE,
                            constraints = NULL)
@@ -2224,7 +2196,7 @@ ordpoissonProbs <- function(extra, mu, deriv = 0) {
 
 
     delete.zero.colns = TRUE # Cannot have FALSE since then prob(Y=jay)=0
-    eval(process.categorical.data.vgam)
+    eval(process.categorical.data.VGAM)
 
 
     M <- 2*(ncol(y)-1)
@@ -2565,7 +2537,7 @@ prplot <- function(object,
     control <- prplot.control(...)
 
 
-  object <- plotvgam(object, plot.arg = FALSE, raw = FALSE)  # , ...
+  object <- plot.vgam(object, plot.arg = FALSE, raw = FALSE)  # , ...
 
   if (length(names(object@preplot)) != 1)
       stop("object needs to have only one term")

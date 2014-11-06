@@ -10,7 +10,7 @@ y-axis are the first and second ordination axes respectively.
 
 }
 \usage{
-lvplot.qrrvglm(object, varI.latvar = FALSE, reference = NULL,
+lvplot.qrrvglm(object, varI.latvar = FALSE, refResponse = NULL,
     add = FALSE, show.plot = TRUE, 
     rug = TRUE, y = FALSE, type = c("fitted.values", "predictors"), 
     xlab = paste("Latent Variable", if (Rank == 1) "" else " 1", sep = ""), 
@@ -42,16 +42,20 @@ lvplot.qrrvglm(object, varI.latvar = FALSE, reference = NULL,
   \item{varI.latvar}{
   Logical that is fed into \code{\link{Coef.qrrvglm}}. 
 
+
   }
-  \item{reference}{
+  \item{refResponse}{
     Integer or character that is fed into \code{\link{Coef.qrrvglm}}.
+
 
   }
   \item{add}{ Logical. Add to an existing plot? If \code{FALSE}, a new
   plot is made.
 
+
  }
   \item{show.plot}{ Logical. Plot it?
+
 
  }
   \item{rug}{ Logical. If \code{TRUE}, a rug plot is plotted at the
@@ -81,7 +85,7 @@ lvplot.qrrvglm(object, varI.latvar = FALSE, reference = NULL,
  }
   \item{pcex}{ Character expansion of the points.
 Here, for rank-1 models, points are the response \emph{y} data. 
-For rank-2 models, points are the optima.
+For rank-2 models, points are the optimums.
   See the \code{cex} argument in \code{\link[graphics]{par}}.
 
  }
@@ -112,11 +116,11 @@ For rank-2 models, points are the optima.
   See the \code{lwd} argument of \code{\link[graphics]{par}}.
 
  }
-  \item{label.arg}{ Logical. Label the optima and \bold{C}? 
+  \item{label.arg}{ Logical. Label the optimums and \bold{C}? 
   (applies only to rank-2 models only).
 
  }
-  \item{adj.arg}{ Justification of text strings for labelling the optima
+  \item{adj.arg}{ Justification of text strings for labelling the optimums
   (applies only to rank-2 models only). 
   See the \code{adj} argument of \code{\link[graphics]{par}}.
 
@@ -136,7 +140,7 @@ For rank-2 models, points are the optima.
       radius \code{-ellipse}. For example, setting \code{ellipse = -1}
       will result in circular contours that have unit radius (in latent
       variable units).  If \code{ellipse} is \code{NULL} or \code{FALSE}
-      then no ellipse is drawn around the optima.
+      then no ellipse is drawn around the optimums.
 
 
   }
@@ -262,7 +266,7 @@ For rank-2 models, points are the optima.
   \code{pcex} and \code{pcol} correspond to the size and color of the
   points. Such ``\code{p}'' arguments should be vectors of length 1,
   or \eqn{n}, the number of sites.  For the rank-2 model, arguments
-  beginning with ``\code{p}'' correspond to the optima.
+  beginning with ``\code{p}'' correspond to the optimums.
 
 
 }
@@ -359,25 +363,28 @@ cdata <- transform(cdata,
             spp2 = rpois(nn, lambda2),
             spp3 = rpois(nn, lambda3))
 set.seed(111)
-# vvv p2 <- cqo(cbind(spp1,spp2,spp3) ~ x2 + x3 + x4, poissonff, 
-# vvv          data = cdata,
-# vvv          Rank = 2, I.tolerances = TRUE,
-# vvv          Crow1positive = c(TRUE, FALSE))   # deviance = 505.81
-# vvv if (deviance(p2) > 506) stop("suboptimal fit obtained")
-# vvv sort(p2@misc$deviance.Bestof)  # A history of the fits
-# vvv Coef(p2)
+\dontrun{
+p2 <- cqo(cbind(spp1, spp2, spp3) ~ x2 + x3 + x4, poissonff,
+          data = cdata, Rank = 2, I.tolerances = TRUE,
+          Crow1positive = c(TRUE, FALSE))  # deviance = 505.81
+if (deviance(p2) > 506) stop("suboptimal fit obtained")
+sort(deviance(p2, history = TRUE))  # A history of all the iterations
+Coef(p2)
+}
 
 \dontrun{
 lvplot(p2, sites = TRUE, spch = "*", scol = "darkgreen", scex = 1.5,
        chull = TRUE, label = TRUE, Absolute = TRUE, ellipse = 140,
-       adj = -0.5, pcol = "blue", pcex = 1.3, las = 1,
-       C = TRUE, Cadj = c(-.3,-.3,1), Clwd = 2, Ccex = 1.4, Ccol = "red",
+       adj = -0.5, pcol = "blue", pcex = 1.3, las = 1, Ccol = "orange",
+       C = TRUE, Cadj = c(-0.3, -0.3, 1), Clwd = 2, Ccex = 1.4,
        main = paste("Contours at Abundance = 140 with",
                   "convex hull of the site scores")) }
-# vvv var(latvar(p2))  # A diagonal matrix, i.e., uncorrelated latent vars
-# vvv var(latvar(p2, varI.latvar = TRUE))  # Identity matrix
-# vvv Tol(p2)[, , 1:2]  # Identity matrix
-# vvv Tol(p2, varI.latvar = TRUE)[, , 1:2]  # A diagonal matrix
+\dontrun{
+var(latvar(p2))  # A diagonal matrix, i.e., uncorrelated latent vars
+var(latvar(p2, varI.latvar = TRUE))  # Identity matrix
+Tol(p2)[, , 1:2]  # Identity matrix
+Tol(p2, varI.latvar = TRUE)[, , 1:2]  # A diagonal matrix
+}
 }
 \keyword{models}
 \keyword{regression}

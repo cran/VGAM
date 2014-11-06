@@ -135,7 +135,7 @@ coding in this case.
   \code{(start, end]} and not
   \code{[start, end]} as previously.
   (This makes a difference for discrete data, such as for
-  \code{\link{cenpoisson}}).
+  \code{\link{cens.poisson}}).
   All \pkg{VGAM} family functions beginning with \code{"cen"} require
   the packaging function \code{Surv} to format the input.
 
@@ -159,7 +159,7 @@ coding in this case.
 
 \seealso{
   \code{\link{SurvS4-class}},
-  \code{\link{cenpoisson}},
+  \code{\link{cens.poisson}},
   \code{\link[survival]{survreg}},
   \code{\link{leukemia}}.
 

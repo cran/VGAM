@@ -12,11 +12,11 @@
 zipoisson(lpstr0 = "logit", llambda = "loge",
           type.fitted = c("mean", "pobs0", "pstr0", "onempstr0"),
           ipstr0 = NULL, ilambda = NULL,
-          imethod = 1, shrinkage.init = 0.8, zero = NULL)
+          imethod = 1, ishrinkage = 0.8, zero = NULL)
 zipoissonff(llambda = "loge", lonempstr0 = "logit",
             type.fitted = c("mean", "pobs0", "pstr0", "onempstr0"),
             ilambda = NULL,   ionempstr0 = NULL,
-            imethod = 1, shrinkage.init = 0.8, zero = -2)
+            imethod = 1, ishrinkage = 0.8, zero = -2)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -63,13 +63,13 @@ zipoissonff(llambda = "loge", lonempstr0 = "logit",
   An integer with value \code{1} or \code{2} which
   specifies the initialization method for \eqn{\lambda}{lambda}.
   If failure to converge occurs try another value
-  and/or else specify a value for \code{shrinkage.init}
+  and/or else specify a value for \code{ishrinkage}
   and/or else specify a value for \code{ipstr0}.
   See \code{\link{CommonVGAMffArguments}} for more information.
 
 
   }
-  \item{shrinkage.init}{
+  \item{ishrinkage}{
   How much shrinkage is used when initializing \eqn{\lambda}{lambda}.
   The value must be between 0 and 1 inclusive, and 
   a value of 0 means the individual response values are used,
@@ -212,7 +212,7 @@ zipoissonff(llambda = "loge", lonempstr0 = "logit",
   Half-stepping is not uncommon.
   If failure to converge occurs, try using combinations of
   \code{imethod},
-  \code{shrinkage.init},
+  \code{ishrinkage},
   \code{ipstr0}, and/or
   \code{zipoisson(zero = 1)} if there are explanatory variables.
   The default for \code{zipoissonff()} is to model the

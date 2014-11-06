@@ -38,7 +38,9 @@ logLik.vlm <- function(object,
 
 
  
-logLik.qrrvglm <- function(object, ...) {
+logLik.qrrvglm <- function(object,
+                           summation = TRUE,
+                           ...) {
 
   ff.code <- object@family
   ll.ff.code <- ff.code@loglikelihood
@@ -54,7 +56,8 @@ logLik.qrrvglm <- function(object, ...) {
                w = prior.weights,
                residuals = FALSE,
                eta = predict(object),
-               extra = object@extra)
+               extra = object@extra,
+               summation = summation)
   if (!is.numeric(loglik.try))
     loglik.try <- NULL
 
@@ -75,26 +78,26 @@ if (!isGeneric("logLik"))
 
 
 setMethod("logLik",  "vlm", function(object, ...)
-    logLik.vlm(object, ...))
+  logLik.vlm(object, ...))
 
 
 setMethod("logLik",  "vglm", function(object, ...)
-    logLik.vlm(object, ...))
+  logLik.vlm(object, ...))
 
 
 setMethod("logLik",  "vgam", function(object, ...)
-    logLik.vlm(object, ...))
+  logLik.vlm(object, ...))
 
 
 
 
 
 setMethod("logLik",  "qrrvglm", function(object, ...)
-    logLik.qrrvglm(object, ...))
+  logLik.qrrvglm(object, ...))
 
 
-setMethod("logLik",  "cao", function(object, ...)
-    logLik.qrrvglm(object, ...))
+setMethod("logLik",  "rrvgam", function(object, ...)
+  logLik.qrrvglm(object, ...))
 
 
 

@@ -1,9 +1,9 @@
 \name{Max}
 \alias{Max}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{ Maxima }
+\title{ Maximums }
 \description{
-  Generic function for the \emph{maxima} (maximums) of a model.
+  Generic function for the \emph{maximums} (maxima) of a model.
 
 }
 \usage{
@@ -13,7 +13,7 @@ Max(object, ...)
 \arguments{
   \item{object}{ An object for which the computation or
     extraction of
-    a maximum (or maxima) is meaningful.
+    a maximum (or maximums) is meaningful.
 
   }
   \item{\dots}{ Other arguments fed into the specific
@@ -27,7 +27,7 @@ Max(object, ...)
   Many models have no such notion or definition.
 
 
-  Maxima occur in quadratic and additive ordination,
+  Maximums occur in quadratic and additive ordination,
   e.g., CQO or CAO.
   For these models the maximum is the fitted value at the
   optimum. For quadratic ordination models there is a formula

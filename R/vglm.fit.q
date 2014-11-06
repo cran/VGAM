@@ -91,7 +91,8 @@ vglm.fit <-
 
 
   Hlist <- process.constraints(constraints, x, M,
-                               specialCM = specialCM)
+                               specialCM = specialCM,
+                               Check.cm.rank = control$Check.cm.rank)
 
 
   ncolHlist <- unlist(lapply(Hlist, ncol))

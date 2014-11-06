@@ -111,7 +111,7 @@ Maintainer: Thomas Yee \email{t.yee@auckland.ac.nz}.
 \references{
 
 
-Yee, T. W.
+Yee, T. W. (2014)
 Vector Generalized Linear and Additive Models.
 \emph{Monograph in preparation}.
 

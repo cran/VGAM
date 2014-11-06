@@ -117,7 +117,7 @@ cao  <- function(formula,
   }
 
   answer <-
-  new("cao",
+  new("rrvgam",
     "assign"       = attr(x, "assign"),
     "Bspline"      = fit$Bspline,
     "call"         = ocall,

@@ -132,11 +132,11 @@ toxop <- transform(toxop,
 # A fit similar (should be identical) to Section 6 of Efron (1986).
 # But does not use poly(), and M = 1.25 here, as in (5.3)
 cmlist <- list("(Intercept)"    = diag(2),
-               "I(srainfall)"   = rbind(1,0),
-               "I(srainfall^2)" = rbind(1,0),
-               "I(srainfall^3)" = rbind(1,0),
-               "I(sN)" = rbind(0,1),
-               "I(sN^2)" = rbind(0,1))
+               "I(srainfall)"   = rbind(1, 0),
+               "I(srainfall^2)" = rbind(1, 0),
+               "I(srainfall^3)" = rbind(1, 0),
+               "I(sN)" = rbind(0, 1),
+               "I(sN^2)" = rbind(0, 1))
 fit <- vglm(cbind(phat, 1 - phat) * ssize ~
             I(srainfall) + I(srainfall^2) + I(srainfall^3) +
             I(sN) + I(sN^2),
@@ -173,7 +173,7 @@ fit2 <- vglm(cbind(phat, 1 - phat) * ssize ~
                           idisp = 0.2, zero = NULL),
              toxop, trace = TRUE, constraints = cmlist2)
 \dontrun{ par(mfrow = c(1, 2))
-plotvgam(fit2, se = TRUE, lcol = "blue", scol = "orange")  # Cf. Figure 1
+plot(as(fit2, "vgam"), se = TRUE, lcol = "blue", scol = "orange")  # Cf. Figure 1
 
 # Cf. Figure 1(a)
 par(mfrow = c(1,2))

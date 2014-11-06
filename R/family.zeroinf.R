@@ -508,7 +508,7 @@ rzipois <- function(n, lambda, pstr0 = 0) {
 
     dotzero <- .zero
     M1 <- 2
-    eval(negzero.expression)
+    eval(negzero.expression.VGAM)
   }), list( .zero = zero ))),
 
   infos = eval(substitute(function(...) {
@@ -783,7 +783,7 @@ rzipois <- function(n, lambda, pstr0 = 0) {
 
     dotzero <- .zero
     M1 <- 2
-    eval(negzero.expression)
+    eval(negzero.expression.VGAM)
   }), list( .zero = zero ))),
 
   infos = eval(substitute(function(...) {
@@ -1037,7 +1037,7 @@ zanegbinomial.control <- function(save.weight = TRUE, ...) {
            zero = -3,  # Prior to 20130917 the default was: c(-1, -3),
            imethod = 1,
            nsimEIM = 250,
-           shrinkage.init = 0.95) {
+           ishrinkage = 0.95) {
 
 
 
@@ -1063,10 +1063,10 @@ zanegbinomial.control <- function(save.weight = TRUE, ...) {
      imethod > 2)
     stop("argument 'imethod' must be 1 or 2")
 
-  if (!is.Numeric(shrinkage.init, length.arg = 1) ||
-     shrinkage.init < 0 ||
-     shrinkage.init > 1)
-    stop("bad input for argument 'shrinkage.init'")
+  if (!is.Numeric(ishrinkage, length.arg = 1) ||
+     ishrinkage < 0 ||
+     ishrinkage > 1)
+    stop("bad input for argument 'ishrinkage'")
 
 
   lpobs0 <- as.list(substitute(lpobs0))
@@ -1099,7 +1099,7 @@ zanegbinomial.control <- function(save.weight = TRUE, ...) {
 
     dotzero <- .zero
     M1 <- 3
-    eval(negzero.expression)
+    eval(negzero.expression.VGAM)
   }), list( .zero = zero ))),
 
 
@@ -1157,8 +1157,8 @@ zanegbinomial.control <- function(save.weight = TRUE, ...) {
         if ( .imethod == 1) {
           use.this <- weighted.mean(y[index.posy, iii],
                                     w[index.posy, iii])
-          mu.init[ index.posy, iii] <- (1 - .sinit ) * y[index.posy, iii] +
-                                            .sinit   * use.this
+          mu.init[ index.posy, iii] <- (1 - .ishrinkage ) * y[index.posy, iii] +
+                                            .ishrinkage   * use.this
           mu.init[!index.posy, iii] <- use.this
         } else {
           use.this <-
@@ -1196,11 +1196,10 @@ zanegbinomial.control <- function(save.weight = TRUE, ...) {
           index.posy <- (y[, spp.] > 0)
           posy <- y[index.posy, spp.]
           kmat0[, spp.] <-
-            getMaxMin(k.grid,
-                      objfun = posnegbinomial.Loglikfun,
-                      y = posy, x = x[index.posy, ],
-                      w = w[index.posy, spp.],
-                      extraargs = mu.init[index.posy, spp.])
+            grid.search(k.grid, objfun = posnegbinomial.Loglikfun,
+                        y = posy, x = x[index.posy, ],
+                        w = w[index.posy, spp.],
+                        extraargs = mu.init[index.posy, spp.])
         }
       }
 
@@ -1214,7 +1213,7 @@ zanegbinomial.control <- function(save.weight = TRUE, ...) {
   }), list( .lpobs0 = lpobs0, .lmunb = lmunb, .lsize = lsize,
             .epobs0 = epobs0, .emunb = emunb, .esize = esize,
             .ipobs0 = ipobs0,                 .isize = isize,
-            .imethod = imethod, .sinit = shrinkage.init,
+            .imethod = imethod, .ishrinkage = ishrinkage,
             .type.fitted = type.fitted ))), 
   linkinv = eval(substitute(function(eta, extra = NULL) {
    type.fitted <- if (length(extra$type.fitted)) extra$type.fitted else {
@@ -1500,7 +1499,7 @@ zanegbinomialff.control <- function(save.weight = TRUE, ...) {
            zero = c(-2, -3),
            imethod = 1,
            nsimEIM = 250,
-           shrinkage.init = 0.95) {
+           ishrinkage = 0.95) {
 
 
 
@@ -1523,10 +1522,10 @@ zanegbinomialff.control <- function(save.weight = TRUE, ...) {
      imethod > 2)
     stop("argument 'imethod' must be 1 or 2")
 
-  if (!is.Numeric(shrinkage.init, length.arg = 1) ||
-     shrinkage.init < 0 ||
-     shrinkage.init > 1)
-    stop("bad input for argument 'shrinkage.init'")
+  if (!is.Numeric(ishrinkage, length.arg = 1) ||
+     ishrinkage < 0 ||
+     ishrinkage > 1)
+    stop("bad input for argument 'ishrinkage'")
 
   lmunb <- as.list(substitute(lmunb))
   emunb <- link2list(lmunb)
@@ -1559,7 +1558,7 @@ zanegbinomialff.control <- function(save.weight = TRUE, ...) {
 
     dotzero <- .zero
     M1 <- 3
-    eval(negzero.expression)
+    eval(negzero.expression.VGAM)
   }), list( .zero = zero ))),
 
 
@@ -1619,8 +1618,8 @@ zanegbinomialff.control <- function(save.weight = TRUE, ...) {
         if ( .imethod == 1) {
           use.this <- weighted.mean(y[index.posy, iii],
                                     w[index.posy, iii])
-          mu.init[ index.posy, iii] <- (1 - .sinit ) * y[index.posy, iii] +
-                                            .sinit   * use.this
+          mu.init[ index.posy, iii] <- (1 - .ishrinkage ) * y[index.posy, iii] +
+                                            .ishrinkage   * use.this
           mu.init[!index.posy, iii] <- use.this
         } else {
           use.this <-
@@ -1658,11 +1657,10 @@ zanegbinomialff.control <- function(save.weight = TRUE, ...) {
           index.posy <- (y[, spp.] > 0)
           posy <- y[index.posy, spp.]
           kmat0[, spp.] <-
-            getMaxMin(k.grid,
-                      objfun = posnegbinomial.Loglikfun,
-                      y = posy, x = x[index.posy, ],
-                      w = w[index.posy, spp.],
-                      extraargs = mu.init[index.posy, spp.])
+            grid.search(k.grid, objfun = posnegbinomial.Loglikfun,
+                        y = posy, x = x[index.posy, ],
+                        w = w[index.posy, spp.],
+                        extraargs = mu.init[index.posy, spp.])
         }
       }
 
@@ -1677,7 +1675,7 @@ zanegbinomialff.control <- function(save.weight = TRUE, ...) {
   }), list( .lonempobs0 = lonempobs0, .lmunb = lmunb, .lsize = lsize,
             .eonempobs0 = eonempobs0, .emunb = emunb, .esize = esize,
             .ionempobs0 = ionempobs0,                 .isize = isize,
-            .imethod = imethod, .sinit = shrinkage.init,
+            .imethod = imethod, .ishrinkage = ishrinkage,
             .type.fitted = type.fitted ))), 
   linkinv = eval(substitute(function(eta, extra = NULL) {
    type.fitted <- if (length(extra$type.fitted)) extra$type.fitted else {
@@ -2000,7 +1998,7 @@ dposnegbin <- function(x, munb, size, log = FALSE) {
            type.fitted = c("mean", "pobs0", "pstr0", "onempstr0"),
            ipstr0 = NULL,    ilambda = NULL,
            imethod = 1,
-           shrinkage.init = 0.8, zero = NULL) {
+           ishrinkage = 0.8, zero = NULL) {
   ipstr00 <- ipstr0
 
 
@@ -2032,10 +2030,10 @@ dposnegbin <- function(x, munb, size, log = FALSE) {
      imethod > 2)
     stop("argument 'imethod' must be 1 or 2")
 
-  if (!is.Numeric(shrinkage.init, length.arg = 1) ||
-     shrinkage.init < 0 ||
-     shrinkage.init > 1)
-    stop("bad input for argument 'shrinkage.init'")
+  if (!is.Numeric(ishrinkage, length.arg = 1) ||
+     ishrinkage < 0 ||
+     ishrinkage > 1)
+    stop("bad input for argument 'ishrinkage'")
 
 
   new("vglmff",
@@ -2048,7 +2046,7 @@ dposnegbin <- function(x, munb, size, log = FALSE) {
   constraints = eval(substitute(expression({
     dotzero <- .zero
     M1 <- 2
-    eval(negzero.expression)
+    eval(negzero.expression.VGAM)
   }), list( .zero = zero ))),
 
   infos = eval(substitute(function(...) {
@@ -2117,10 +2115,10 @@ dposnegbin <- function(x, munb, size, log = FALSE) {
         } else if ( .imethod == 2) {
           mymean <- weighted.mean(yvec[yvec > 0],
                                      w[yvec > 0]) + 1/16
-          Lambda.init <- (1 - .sinit) * (yvec + 1/8) + .sinit * mymean
+          Lambda.init <- (1 - .ishrinkage ) * (yvec + 1/8) + .ishrinkage * mymean
         } else {
           use.this <- median(yvec[yvec > 0]) + 1 / 16
-          Lambda.init <- (1 - .sinit) * (yvec + 1/8) + .sinit * use.this
+          Lambda.init <- (1 - .ishrinkage ) * (yvec + 1/8) + .ishrinkage * use.this
         }
 
         zipois.Loglikfun <- function(phival, y, x, w, extraargs) {
@@ -2129,10 +2127,9 @@ dposnegbin <- function(x, munb, size, log = FALSE) {
                           log = TRUE))
         }
         phi.grid <- seq(0.02, 0.98, len = 21)
-        Phimat.init <- getMaxMin(phi.grid,
-                                 objfun = zipois.Loglikfun,
-                                 y = y, x = x, w = w,
-                                 extraargs = list(lambda = Lambda.init))
+        Phimat.init <- grid.search(phi.grid, objfun = zipois.Loglikfun,
+                                   y = y, x = x, w = w,
+                                   extraargs = list(lambda = Lambda.init))
 
         if (length(mustart)) {
           Lambda.init <- Lambda.init / (1 - Phimat.init)
@@ -2154,7 +2151,7 @@ dposnegbin <- function(x, munb, size, log = FALSE) {
             .ipstr00 = ipstr00, .ilambda = ilambda,
             .imethod = imethod,
             .type.fitted = type.fitted,
-            .sinit = shrinkage.init ))),
+            .ishrinkage = ishrinkage ))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
     type.fitted <- if (length(extra$type.fitted)) extra$type.fitted else {
                      warning("cannot find 'type.fitted'. ",
@@ -2367,7 +2364,7 @@ dposnegbin <- function(x, munb, size, log = FALSE) {
             namesof("prob" , lprob , earg = eprob ), "\n",
             "Mean:     (1 - pstr0) * prob"),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.vgam(constraints, x, .zero , M)
+    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
   }), list( .zero = zero ))),
 
 
@@ -2648,7 +2645,7 @@ dposnegbin <- function(x, munb, size, log = FALSE) {
             namesof("onempstr0", lonempstr0, earg = eonempstr0), "\n",
             "Mean:     onempstr0 * prob"),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.vgam(constraints, x, .zero , M)
+    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
   }), list( .zero = zero ))),
 
 
@@ -3196,7 +3193,7 @@ zinegbinomial.control <- function(save.weight = TRUE, ...) {
            type.fitted = c("mean", "pobs0", "pstr0", "onempstr0"),
            ipstr0 = NULL,                    isize = NULL,
            zero = -3,  # 20130917; used to be c(-1, -3)
-           imethod = 1, shrinkage.init = 0.95,
+           imethod = 1, ishrinkage = 0.95,
            nsimEIM = 250) {
 
 
@@ -3235,10 +3232,10 @@ zinegbinomial.control <- function(save.weight = TRUE, ...) {
   if (nsimEIM <= 50)
     warning("argument 'nsimEIM' should be greater than 50, say")
 
-  if (!is.Numeric(shrinkage.init, length.arg = 1) ||
-      shrinkage.init < 0 ||
-      shrinkage.init > 1)
-    stop("bad input for argument 'shrinkage.init'")
+  if (!is.Numeric(ishrinkage, length.arg = 1) ||
+      ishrinkage < 0 ||
+      ishrinkage > 1)
+    stop("bad input for argument 'ishrinkage'")
 
 
 
@@ -3254,7 +3251,7 @@ zinegbinomial.control <- function(save.weight = TRUE, ...) {
 
     dotzero <- .zero
     M1 <- 3
-    eval(negzero.expression)
+    eval(negzero.expression.VGAM)
   }), list( .zero = zero ))),
 
 
@@ -3311,7 +3308,7 @@ zinegbinomial.control <- function(save.weight = TRUE, ...) {
               weighted.mean(y[index, iii], w     = w[index, iii]) else
                  median(rep(y[index, iii], times = w[index, iii])) + 1/8
         }
-        (1 - .sinit) * (y + 1/16) + .sinit * mum.init
+        (1 - .ishrinkage ) * (y + 1/16) + .ishrinkage * mum.init
       }
 
 
@@ -3351,11 +3348,11 @@ zinegbinomial.control <- function(save.weight = TRUE, ...) {
           k.grid <- 2^((-6):6)
           kay.init <- matrix(0, nrow = n, ncol = NOS)
           for (spp. in 1:NOS) {
-            kay.init[, spp.] <- getMaxMin(k.grid,
-                              objfun = zinegbin.Loglikfun,
-                              y = y[, spp.], x = x, w = w[, spp.],
-                              extraargs = list(pstr0 = pstr0.init[, spp.],
-                                               mu  = mum.init[, spp.]))
+            kay.init[, spp.] <-
+              grid.search(k.grid, objfun = zinegbin.Loglikfun,
+                          y = y[, spp.], x = x, w = w[, spp.],
+                          extraargs = list(pstr0 = pstr0.init[, spp.],
+                          mu  = mum.init[, spp.]))
           }
           kay.init
         }
@@ -3371,7 +3368,7 @@ zinegbinomial.control <- function(save.weight = TRUE, ...) {
             .epstr0 = epstr0, .emunb = emunb, .esize = esize,
             .ipstr0 = ipstr0,                 .isize = isize,
             .type.fitted = type.fitted,
-            .sinit = shrinkage.init,
+            .ishrinkage = ishrinkage,
             .imethod = imethod ))),
       
   linkinv = eval(substitute(function(eta, extra = NULL) {
@@ -3684,7 +3681,7 @@ zinegbinomialff.control <- function(save.weight = TRUE, ...) {
            type.fitted = c("mean", "pobs0", "pstr0", "onempstr0"),
            isize = NULL, ionempstr0 = NULL,  
            zero = c(-2, -3),
-           imethod = 1, shrinkage.init = 0.95,
+           imethod = 1, ishrinkage = 0.95,
            nsimEIM = 250) {
 
 
@@ -3724,10 +3721,10 @@ zinegbinomialff.control <- function(save.weight = TRUE, ...) {
   if (nsimEIM <= 50)
     warning("argument 'nsimEIM' should be greater than 50, say")
 
-  if (!is.Numeric(shrinkage.init, length.arg = 1) ||
-      shrinkage.init < 0 ||
-      shrinkage.init > 1)
-    stop("bad input for argument 'shrinkage.init'")
+  if (!is.Numeric(ishrinkage, length.arg = 1) ||
+      ishrinkage < 0 ||
+      ishrinkage > 1)
+    stop("bad input for argument 'ishrinkage'")
 
 
 
@@ -3744,7 +3741,7 @@ zinegbinomialff.control <- function(save.weight = TRUE, ...) {
 
     dotzero <- .zero
     M1 <- 3
-    eval(negzero.expression)
+    eval(negzero.expression.VGAM)
   }), list( .zero = zero ))),
 
 
@@ -3800,7 +3797,7 @@ zinegbinomialff.control <- function(save.weight = TRUE, ...) {
               weighted.mean(y[index, iii], w     = w[index, iii]) else
                  median(rep(y[index, iii], times = w[index, iii])) + 1/8
         }
-        (1 - .sinit) * (y + 1/16) + .sinit * mum.init
+        (1 - .ishrinkage ) * (y + 1/16) + .ishrinkage * mum.init
       }
 
 
@@ -3840,11 +3837,11 @@ zinegbinomialff.control <- function(save.weight = TRUE, ...) {
           k.grid <- 2^((-6):6)
           kay.init <- matrix(0, nrow = n, ncol = NOS)
           for (spp. in 1:NOS) {
-            kay.init[, spp.] <- getMaxMin(k.grid,
-                  objfun = zinegbin.Loglikfun,
-                  y = y[, spp.], x = x, w = w[, spp.],
-                  extraargs = list(pstr0 = 1 - onempstr0.init[, spp.],
-                                   mu    = mum.init[, spp.]))
+            kay.init[, spp.] <-
+              grid.search(k.grid, objfun = zinegbin.Loglikfun,
+                          y = y[, spp.], x = x, w = w[, spp.],
+                         extraargs = list(pstr0 = 1 - onempstr0.init[, spp.],
+                                          mu    = mum.init[, spp.]))
           }
           kay.init
         }
@@ -3861,7 +3858,7 @@ zinegbinomialff.control <- function(save.weight = TRUE, ...) {
             .eonempstr0 = eonempstr0, .emunb = emunb, .esize = esize,
             .ionempstr0 = ionempstr0,                 .isize = isize,
             .type.fitted = type.fitted,
-            .sinit = shrinkage.init,
+            .ishrinkage = ishrinkage,
             .imethod = imethod ))),
       
   linkinv = eval(substitute(function(eta, extra = NULL) {
@@ -4169,7 +4166,7 @@ zinegbinomialff.control <- function(save.weight = TRUE, ...) {
   function(llambda = "loge", lonempstr0 = "logit",
            type.fitted = c("mean", "pobs0", "pstr0", "onempstr0"),
            ilambda = NULL,   ionempstr0 = NULL, imethod = 1,
-           shrinkage.init = 0.8, zero = -2) {
+           ishrinkage = 0.8, zero = -2) {
 
 
   type.fitted <- match.arg(type.fitted,
@@ -4201,10 +4198,10 @@ zinegbinomialff.control <- function(save.weight = TRUE, ...) {
     imethod > 2)
     stop("argument 'imethod' must be 1 or 2")
 
-  if (!is.Numeric(shrinkage.init, length.arg = 1) ||
-    shrinkage.init < 0 ||
-    shrinkage.init > 1)
-    stop("bad input for argument 'shrinkage.init'")
+  if (!is.Numeric(ishrinkage, length.arg = 1) ||
+    ishrinkage < 0 ||
+    ishrinkage > 1)
+    stop("bad input for argument 'ishrinkage'")
 
 
 
@@ -4217,7 +4214,7 @@ zinegbinomialff.control <- function(save.weight = TRUE, ...) {
   constraints = eval(substitute(expression({
     dotzero <- .zero
     M1 <- 2
-    eval(negzero.expression)
+    eval(negzero.expression.VGAM)
   }), list( .zero = zero ))),
 
   infos = eval(substitute(function(...) {
@@ -4283,10 +4280,10 @@ zinegbinomialff.control <- function(save.weight = TRUE, ...) {
           } else if ( .imethod == 2) {
             mymean <- weighted.mean(yjay[yjay > 0],
                                        w[yjay > 0]) + 1/16
-            Lambda.init <- (1 - .sinit) * (yjay + 1/8) + .sinit * mymean
+            Lambda.init <- (1 - .ishrinkage ) * (yjay + 1/8) + .ishrinkage * mymean
           } else {
             use.this <- median(yjay[yjay > 0]) + 1 / 16
-            Lambda.init <- (1 - .sinit) * (yjay + 1/8) + .sinit * use.this
+            Lambda.init <- (1 - .ishrinkage ) * (yjay + 1/8) + .ishrinkage * use.this
           }
 
           zipois.Loglikfun <- function(phival, y, x, w, extraargs) {
@@ -4295,10 +4292,10 @@ zinegbinomialff.control <- function(save.weight = TRUE, ...) {
                             log = TRUE))
           }
           phi0.grid <- seq(0.02, 0.98, len = 21)
-          Phi0mat.init <- getMaxMin(phi0.grid,
-                                   objfun = zipois.Loglikfun,
-                                   y = y, x = x, w = w,
-                                   extraargs = list(lambda = Lambda.init))
+          Phi0mat.init <- grid.search(phi0.grid,
+                                      objfun = zipois.Loglikfun,
+                                      y = y, x = x, w = w,
+                                      extraargs = list(lambda = Lambda.init))
           if (length(mustart)) {
             Lambda.init <- Lambda.init / (1 - Phi0mat.init)
           }
@@ -4320,7 +4317,7 @@ zinegbinomialff.control <- function(save.weight = TRUE, ...) {
             .eonempstr0 = eonempstr0, .elambda = elambda,
             .ionempstr0 = ionempstr0, .ilambda = ilambda,
             .type.fitted = type.fitted,
-            .imethod = imethod, .sinit = shrinkage.init ))),
+            .imethod = imethod, .ishrinkage = ishrinkage ))),
 
   linkinv = eval(substitute(function(eta, extra = NULL) {
     type.fitted <- if (length(extra$type.fitted)) extra$type.fitted else {
@@ -4431,10 +4428,10 @@ zinegbinomialff.control <- function(save.weight = TRUE, ...) {
     if (any(pwts != 1)) 
       warning("ignoring prior weights")
     eta <- predict(object)
-    onempstr0 <- eta2theta(eta[, c(FALSE, TRUE)], .lonempstr0 ,
-                           earg = .eonempstr0 )
     lambda    <- eta2theta(eta[, c(TRUE, FALSE)], .llambda ,
                            earg = .elambda    )
+    onempstr0 <- eta2theta(eta[, c(FALSE, TRUE)], .lonempstr0 ,
+                           earg = .eonempstr0 )
     rzipois(nsim * length(lambda), lambda = lambda, pstr0 = 1 - onempstr0)
   }, list( .lonempstr0 = lonempstr0, .llambda = llambda,
            .eonempstr0 = eonempstr0, .elambda = elambda ))),
@@ -4689,7 +4686,7 @@ rzigeom <- function(n, prob, pstr0 = 0) {
 
     dotzero <- .zero
     M1 <- 2
-    eval(negzero.expression)
+    eval(negzero.expression.VGAM)
   }), list( .zero = zero ))),
 
   infos = eval(substitute(function(...) {
@@ -5019,7 +5016,7 @@ rzigeom <- function(n, prob, pstr0 = 0) {
 
     dotzero <- .zero
     M1 <- 2
-    eval(negzero.expression)
+    eval(negzero.expression.VGAM)
   }), list( .zero = zero ))),
 
   infos = eval(substitute(function(...) {
@@ -5536,7 +5533,7 @@ rzabinom <- function(n, size, prob, pobs0 = 0) {
             namesof("prob" ,   lprob,  earg = eprob),  "\n",
             "Mean:     (1 - pobs0) * prob / (1 - (1 - prob)^size)"),
   constraints = eval(substitute(expression({
-      constraints <- cm.zero.vgam(constraints, x, .zero , M)
+      constraints <- cm.zero.VGAM(constraints, x, .zero , M)
   }), list( .zero = zero ))),
 
   infos = eval(substitute(function(...) {
@@ -5840,7 +5837,7 @@ rzabinom <- function(n, size, prob, pobs0 = 0) {
             namesof("onempobs0", lonempobs0, earg = eonempobs0), "\n",
             "Mean:     onempobs0 * prob / (1 - (1 - prob)^size)"),
   constraints = eval(substitute(expression({
-      constraints <- cm.zero.vgam(constraints, x, .zero , M)
+      constraints <- cm.zero.VGAM(constraints, x, .zero , M)
   }), list( .zero = zero ))),
 
   infos = eval(substitute(function(...) {
@@ -6146,7 +6143,7 @@ rzabinom <- function(n, size, prob, pobs0 = 0) {
 
     dotzero <- .zero
     M1 <- 2
-    eval(negzero.expression)
+    eval(negzero.expression.VGAM)
   }), list( .zero = zero ))),
 
   infos = eval(substitute(function(...) {
@@ -6447,7 +6444,7 @@ rzabinom <- function(n, size, prob, pobs0 = 0) {
 
     dotzero <- .zero
     M1 <- 2
-    eval(negzero.expression)
+    eval(negzero.expression.VGAM)
   }), list( .zero = zero ))),
 
   infos = eval(substitute(function(...) {

@@ -56,12 +56,12 @@ Here, \eqn{w = (y-a)q/b+\psi(1/q^2)}{w = (y-a)*q/b+psi(1/q^2)}
 where \eqn{\psi}{psi} is the digamma function,
 \code{\link[base:Special]{digamma}}.
 The mean of \eqn{Y} is \eqn{a} (returned as the fitted values).
-This is a different parameterization compared to \code{\link{lgamma3ff}}.
+This is a different parameterization compared to \code{\link{lgamma3}}.
 
 
 Special cases: 
 \eqn{q = 0} is the normal distribution with standard deviation \eqn{b},
-\eqn{q = -1} is the extreme value distribution for maxima,
+\eqn{q = -1} is the extreme value distribution for maximums,
 \eqn{q = 1} is the extreme value distribution for minima (Weibull).
 If \eqn{q > 0} then the distribution is left skew,
 else \eqn{q < 0} is right skew.
@@ -105,16 +105,16 @@ else \eqn{q < 0} is right skew.
 
 }
 \seealso{
-  \code{\link{lgamma3ff}},
+  \code{\link{lgamma3}},
   \code{\link[base:Special]{lgamma}},
-  \code{\link{gengamma}}.
+  \code{\link{gengamma.stacy}}.
 
 
 }
 \examples{
 pdata <- data.frame(x2 = runif(nn <- 1000))
 pdata <- transform(pdata, loc = -1 + 2*x2, Scale = exp(1))
-pdata <- transform(pdata, y = rlgamma(nn, loc = loc, scale = Scale, k = 1))
+pdata <- transform(pdata, y = rlgamma(nn, loc = loc, scale = Scale, shape = 1))
 fit <- vglm(y ~ x2, prentice74(zero = 2:3), data = pdata, trace = TRUE)
 coef(fit, matrix = TRUE)  # Note the coefficients for location
 }

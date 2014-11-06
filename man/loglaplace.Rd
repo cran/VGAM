@@ -16,13 +16,13 @@
 \usage{
 loglaplace1(tau = NULL, llocation = "loge",
     ilocation = NULL, kappa = sqrt(tau/(1 - tau)), Scale.arg = 1,
-    shrinkage.init = 0.95, parallelLocation = FALSE, digt = 4,
-    dfmu.init = 3, rep0 = 0.5, minquantile = 0, maxquantile = Inf,
+    ishrinkage = 0.95, parallel.locat = FALSE, digt = 4,
+    idf.mu = 3, rep0 = 0.5, minquantile = 0, maxquantile = Inf,
     imethod = 1, zero = NULL)
 logitlaplace1(tau = NULL, llocation = "logit",
     ilocation = NULL, kappa = sqrt(tau/(1 - tau)),
-    Scale.arg = 1, shrinkage.init = 0.95, parallelLocation = FALSE,
-    digt = 4, dfmu.init = 3, rep01 = 0.5, imethod = 1, zero = NULL)
+    Scale.arg = 1, ishrinkage = 0.95, parallel.locat = FALSE,
+    digt = 4, idf.mu = 3, rep01 = 0.5, imethod = 1, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -53,7 +53,7 @@ logitlaplace1(tau = NULL, llocation = "logit",
 
 
   }
-  \item{parallelLocation}{ Logical.
+  \item{parallel.locat}{ Logical.
     Should the quantiles be parallel on the transformed scale
     (argument \code{llocation})?
     Assigning this argument to \code{TRUE} circumvents the
@@ -74,7 +74,7 @@ logitlaplace1(tau = NULL, llocation = "logit",
 
 
   }
-  \item{dfmu.init, shrinkage.init, Scale.arg, digt, zero}{
+  \item{idf.mu, ishrinkage, Scale.arg, digt, zero}{
   See \code{\link{alaplace1}}.
 
 
@@ -205,7 +205,7 @@ adata <- transform(adata, y = rnbinom(n, mu = mymu(x2), size = my.k))
 mytau <- c(0.1, 0.25, 0.5, 0.75, 0.9); mydof = 3
 # halfstepping is usual:
 fitp <- vglm(y ~ sm.bs(x2, df = mydof), data = adata, trace = TRUE,
-            loglaplace1(tau = mytau, parallelLoc = TRUE))
+            loglaplace1(tau = mytau, parallel.locat = TRUE))
  
 \dontrun{
 par(las = 1)  # Plot on a log1p() scale

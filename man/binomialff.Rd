@@ -37,7 +37,13 @@ binomialff(link = "logit", dispersion = 1, mv = FALSE,
   Multivariate response? If \code{TRUE}, then the response is interpreted
   as \eqn{M} independent binary responses, where \eqn{M} is the number
   of columns of the response matrix. In this case, the response matrix
-  should have zero/one values only.
+  should have \eqn{Q} columns consisting of counts (successes),
+  and the \code{weights} argument should have \eqn{Q} columns
+  consisting of the number of trials (successes plus failures).
+
+
+% zero/one values only.
+
 
 
   If \code{FALSE} and the response is a (2-column) matrix, then the number
@@ -201,13 +207,17 @@ binomialff(link = "logit", dispersion = 1, mv = FALSE,
     \code{\link{posbinomial}},
     \code{\link{zibinomial}},
     \code{\link{double.expbinomial}},
-    \code{\link{matched.binomial}},
     \code{\link{seq2binomial}},
     \code{\link{amlbinomial}},
     \code{\link{simplex}},
     \code{\link[stats:Binomial]{binomial}},
-   \code{\link{simulate.vlm}},
+    \code{\link{simulate.vlm}},
     \pkg{safeBinaryRegression}.
+
+
+
+%   \code{\link{matched.binomial}},
+
 
 
 }

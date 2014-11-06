@@ -6,14 +6,15 @@
 
 
 
-predictvglm <- function(object,
-                        newdata = NULL,
-                        type = c("link", "response", "terms"),
-                        se.fit = FALSE,
-                        deriv = 0,
-                        dispersion = NULL,
-                        untransform = FALSE,
-                        extra = object@extra, ...) {
+predictvglm <-
+  function(object,
+           newdata = NULL,
+           type = c("link", "response", "terms"),  # "parameters",
+           se.fit = FALSE,
+           deriv = 0,
+           dispersion = NULL,
+           untransform = FALSE,
+           extra = object@extra, ...) {
   na.act <- object@na.action
   object@na.action <- list()
 
@@ -27,14 +28,16 @@ predictvglm <- function(object,
     type <- as.character(substitute(type))
   type <- match.arg(type, c("link", "response", "terms"))[1]
 
-  if (untransform && (type!="link" || se.fit || deriv != 0))
+  if (untransform &&
+     (type == "response" || type == "terms" || se.fit || deriv != 0))
     stop("argument 'untransform=TRUE' only if 'type=\"link\", ",
          "se.fit = FALSE, deriv=0'")
 
 
 
 
-  pred <- if (se.fit) {
+  pred <-
+    if (se.fit) {
       switch(type,
              response = {
                warning("'type=\"response\"' and 'se.fit=TRUE' not valid ",
@@ -45,8 +48,16 @@ predictvglm <- function(object,
                                         deriv = deriv, 
                                         dispersion = dispersion, ...) 
                fv <- object@family@linkinv(predictor, extra)
-               dimnames(fv) <- list(dimnames(fv)[[1]],
-                                    dimnames(object@fitted.values)[[2]])
+
+
+               fv <- as.matrix(fv)
+               dn1 <- dimnames(fv)[[1]]
+               dn2 <- dimnames(object@fitted.values)[[2]]
+               if (nrow(fv) == length(dn1) &&
+                   ncol(fv) == length(dn2))
+                 dimnames(fv) <- list(dn1, dn2)
+
+
                fv
              },
              link = {
@@ -89,22 +100,21 @@ predictvglm <- function(object,
 
                fv <- object@family@linkinv(predictor, extra)
                if (M > 1 && is.matrix(fv)) {
-                 dimnames(fv) <- list(dimnames(fv)[[1]],
-                                      dimnames(object@fitted.values)[[2]])
+
+               fv <- as.matrix(fv)
+               dn1 <- dimnames(fv)[[1]]
+               dn2 <- dimnames(object@fitted.values)[[2]]
+               if (nrow(fv) == length(dn1) &&
+                   ncol(fv) == length(dn2))
+                 dimnames(fv) <- list(dn1, dn2)
                } else {
                }
                  fv
                },
                link = {
-
-
-
                  predict.vlm(object, newdata = newdata,
                              type = "response", se.fit = se.fit,
                              deriv = deriv, dispersion = dispersion, ...)
-
-
-
                },
                terms = {
                  predict.vlm(object, newdata = newdata,
@@ -124,7 +134,9 @@ predictvglm <- function(object,
   }
   
   if (untransform) untransformVGAM(object, pred) else pred
-}
+} # predictvglm
+
+
 
 
 setMethod("predict", "vglm", function(object, ...) 
@@ -156,8 +168,16 @@ predict.rrvglm <- function(object,
                                         deriv = deriv, 
                                         dispersion = dispersion, ...) 
              fv <- object@family@linkinv(predictor, extra)
-             dimnames(fv) <- list(dimnames(fv)[[1]],
-                                  dimnames(object@fitted.values)[[2]])
+
+
+             fv <- as.matrix(fv)
+             dn1 <- dimnames(fv)[[1]]
+             dn2 <- dimnames(object@fitted.values)[[2]]
+             if (nrow(fv) == length(dn1) &&
+                 ncol(fv) == length(dn2))
+               dimnames(fv) <- list(dn1, dn2)
+
+
              fv
            },
            link = {
@@ -200,6 +220,8 @@ setMethod("predict", "rrvglm", function(object, ...)
 
 
 untransformVGAM <- function(object, pred) {
+ 
+
   M <- object@misc$M
   Links <- object@misc$link
   if (length(Links) != M && length(Links) != 1)
@@ -207,7 +229,6 @@ untransformVGAM <- function(object, pred) {
 
   upred <- pred
   earg <- object@misc$earg
-
 
 
 
@@ -255,16 +276,13 @@ untransformVGAM <- function(object, pred) {
     TTheta <- pred[, ii]  # Transformed theta
 
 
-    use.earg      <-
-      if (llink == 1) EARG[[1]] else EARG[[ii]]
-   function.name <-
-      if (llink == 1) LINK else LINK[ii]
+    use.earg <- if (llink == 1) EARG[[1]] else EARG[[ii]]
+    function.name <- if (llink == 1) LINK else LINK[ii]
 
 
-      use.earg[["inverse"]] <- TRUE  # New
-      use.earg[["theta"]] <- TTheta  # New
-      Theta <- do.call(function.name, use.earg)
-
+    use.earg[["inverse"]] <- TRUE  # New
+    use.earg[["theta"]] <- TTheta  # New
+    Theta <- do.call(function.name, use.earg)
 
 
 

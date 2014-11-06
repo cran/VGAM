@@ -138,7 +138,7 @@ cardioid.control <- function(save.weight = TRUE, ...) {
             "pi + (rho/pi) *",
             "((2*pi-mu)*sin(2*pi-mu)+cos(2*pi-mu)-mu*sin(mu)-cos(mu))"),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.vgam(constraints, x, .zero, M)
+    constraints <- cm.zero.VGAM(constraints, x, .zero, M)
   }), list( .zero = zero ))),
   initialize = eval(substitute(expression({
 
@@ -169,9 +169,9 @@ cardioid.control <- function(save.weight = TRUE, ...) {
       }
       mu.grid <- seq(0.1, 6.0, len=19)
       mu.init <- if (length( .imu )) .imu else
-          getMaxMin(mu.grid, objfun = cardioid.Loglikfun,
-                    y = y,  x = x, w = w,
-                    extraargs = list(irho = rho.init))
+          grid.search(mu.grid, objfun = cardioid.Loglikfun,
+                      y = y,  x = x, w = w,
+                      extraargs = list(irho = rho.init))
       mu.init <- rep(mu.init, length=length(y))
       etastart <-
         cbind(theta2eta( mu.init, .lmu,  earg = .emu),
@@ -304,7 +304,7 @@ cardioid.control <- function(save.weight = TRUE, ...) {
             "\n", "\n",
             "Mean:     location"),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.vgam(constraints, x, .zero, M)
+    constraints <- cm.zero.VGAM(constraints, x, .zero, M)
   }), list( .zero = zero ))),
   infos = eval(substitute(function(...) {
     list(M1 = 2,

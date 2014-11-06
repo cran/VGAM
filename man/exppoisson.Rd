@@ -8,20 +8,20 @@
 
 }
 \usage{
-exppoisson(llambda = "loge", lbetave = "loge",
-           ilambda = 1.1, ibetave = 2, zero = NULL)
+exppoisson(lrate = "loge", lshape = "loge",
+           irate = 2, ishape = 1.1,  zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{llambda, lbetave}{
+  \item{lshape, lrate}{
   Link function for the two positive parameters.
   See \code{\link{Links}} for more choices.
 
 
   }
-  \item{ilambda, ibetave}{
+  \item{ishape, irate}{
   Numeric.
-  Initial values for the \code{lambda} and \code{betave} parameters.
+  Initial values for the \code{shape} and \code{rate} parameters.
   Currently this function is not intelligent enough to
   obtain better initial values.
 
@@ -35,18 +35,23 @@ exppoisson(llambda = "loge", lbetave = "loge",
 }
 \details{
   The exponential Poisson distribution has density function
-  \deqn{f(y; \lambda = shape, \beta = scale)  =
+  \deqn{f(y; \beta = rate, \lambda = shape)  =
   \frac{\lambda \beta}{1 - e^{-\lambda}} \,
   e^{-\lambda - \beta y + \lambda \exp{(-\beta y)}}}{%
-  f(y; a = shape, b = scale)  =
+  f(y; a = shape, b = rate)  =
   (a*b/(1 - e^(-a))) * e^{-a - b*y + a * e^(-b*y)}}
-  where \eqn{y > 0} and the
-  parameters shape, \eqn{\lambda}{a},
-  and scale, \eqn{\beta}{b}, are positive.
+  where \eqn{y > 0},
+  and the parameters shape, \eqn{\lambda}{a},
+  and rate, \eqn{\beta}{b}, are positive.
   The distribution implies a population facing discrete
   hazard rates which are multiples of a base hazard.
   This \pkg{VGAM} family function requires the \code{hypergeo} package
   (to use their \code{genhypergeo} function).
+  The median is returned as the fitted value.
+
+
+
+
 
 
 % This \pkg{VGAM} family function requires the \pkg{hypergeo} package
@@ -87,11 +92,11 @@ exppoisson(llambda = "loge", lbetave = "loge",
 }
 \examples{
 \dontrun{
-lambda <- exp(1); betave <- exp(2)
-rdata <- data.frame(y = rexppois(n = 1000, lambda, betave))
-library(hypergeo)
-fit <- vglm(y ~ 1, exppoisson, rdata, trace = TRUE)
-c(with(rdata, mean(y)), head(fitted(fit), 1))
+shape <- exp(1); rate <- exp(2)
+rdata <- data.frame(y = rexppois(n = 1000, rate = rate, shape = shape))
+library("hypergeo")  # Required!
+fit <- vglm(y ~ 1, exppoisson, data = rdata, trace = FALSE, maxit = 1200)
+c(with(rdata, median(y)), head(fitted(fit), 1))
 coef(fit, matrix = TRUE)
 Coef(fit)
 summary(fit)

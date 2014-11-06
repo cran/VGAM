@@ -12,12 +12,12 @@
 
 
 
- SUR <- function(
-                 mle.normal = FALSE,
-                 divisor = c("n", "n-max(pj,pk)", "sqrt((n-pj)*(n-pk))"),
-                 parallel = FALSE, 
-                 Varcov = NULL,
-                 matrix.arg = FALSE) {
+ SURff <-
+  function(mle.normal = FALSE,
+           divisor = c("n", "n-max(pj,pk)", "sqrt((n-pj)*(n-pk))"),
+           parallel = FALSE, 
+           Varcov = NULL,
+           matrix.arg = FALSE) {
 
 
 
@@ -58,7 +58,7 @@
   new("vglmff",
   blurb = c("Seemingly unrelated regressions"),
   constraints = eval(substitute(expression({
-    constraints <- cm.vgam(matrix(1, M, 1), x = x,
+    constraints <- cm.VGAM(matrix(1, M, 1), x = x,
                            bool = .parallel , 
                            constraints = constraints,
                            apply.int = .apply.parint )
@@ -177,7 +177,7 @@
             .divisor = divisor
           ))),
 
-  vfamily = "SUR",
+  vfamily = "SURff",
 
 
   deriv = eval(substitute(expression({
@@ -272,7 +272,7 @@
       temp1 <- ResSS.vgam(y-mu, wz = wz, M = M)
       onewz <- if (length(extra$invSigma.mat))
                  extra$invSigma.mat else
-                 (m2adefault(wz[1, , drop = FALSE], M = M))[,, 1]  # M x M
+                 (m2a(wz[1, , drop = FALSE], M = M))[,, 1]  # M x M
 
 
       logdet <- determinant(onewz)$modulus

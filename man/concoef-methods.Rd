@@ -9,13 +9,13 @@
 \alias{concoef,Coef.rrvglm-method}
 \alias{concoef,Coef.qrrvglm-method}
 %
-\alias{ccoef-method}
-\alias{ccoef,cao-method}
-\alias{ccoef,Coef.cao-method}
-\alias{ccoef,rrvglm-method}
-\alias{ccoef,qrrvglm-method}
-\alias{ccoef,Coef.rrvglm-method}
-\alias{ccoef,Coef.qrrvglm-method}
+%%\alias{ccoef-method}
+%%\alias{ccoef,cao-method}
+%%\alias{ccoef,Coef.cao-method}
+%%\alias{ccoef,rrvglm-method}
+%%\alias{ccoef,qrrvglm-method}
+%%\alias{ccoef,Coef.rrvglm-method}
+%%\alias{ccoef,Coef.qrrvglm-method}
 %
 % This does not work:
 %\alias{ccoef,cao,Coef.cao,rrvglm,qrrvglm,Coef.rrvglm,Coef.qrrvglm-method}

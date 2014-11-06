@@ -75,7 +75,7 @@ rbort(n, Qsize = 1, a = 0.5)
 \examples{
 \dontrun{ qsize <- 1; a <- 0.5; x <- qsize:(qsize+10)
 plot(x, dbort(x, qsize, a), type = "h", las = 1, col = "blue",
-     ylab = paste("fbort(qsize=", qsize, ", a=", a, ")"),
+     ylab = paste("fbort(qsize=", qsize, ", a=", a, ")"), log = "y",
      main = "Borel-Tanner density function") }
 }
 \keyword{distribution}

@@ -8,14 +8,17 @@
 
 }
 \usage{
-perks(lshape = "loge", lscale = "loge",
-      ishape = NULL,   iscale = NULL,
-      gshape = exp(-5:5), gscale = exp(-5:5),
-      nsimEIM = 500, oim.mean = FALSE, zero = NULL)
+perks(lscale = "loge", lshape = "loge",
+      iscale = NULL,   ishape = NULL,
+      gscale = exp(-5:5), gshape = exp(-5:5), 
+      nsimEIM = 500, oim.mean = FALSE, zero = NULL, nowarning = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{lshape, lscale}{
+  \item{nowarning}{ Logical. Suppress a warning? }
+
+
+  \item{lscale, lshape}{
   Parameter link functions applied to the
   shape parameter \code{shape},
   scale parameter \code{scale}.
@@ -31,13 +34,13 @@ perks(lshape = "loge", lscale = "loge",
 % }
 
 
-  \item{ishape, iscale}{
+  \item{iscale, ishape}{
   Optional initial values.
   A \code{NULL} means a value is computed internally.
 
 
   }
-  \item{gshape, gscale}{
+  \item{gscale, gshape}{
   See \code{\link{CommonVGAMffArguments}}.
 
 
@@ -132,9 +135,7 @@ pdata <- transform(pdata, eta1  = -1,
                           ceta1 =  1)
 pdata <- transform(pdata, shape1 = exp(eta1),
                           scale1 = exp(ceta1))
-pdata <- transform(pdata,
-                   y1 = rperks(nn, shape = shape1, scale = scale1))
-
+pdata <- transform(pdata, y1 = rperks(nn, shape = shape1, scale = scale1))
 fit1 <- vglm(y1 ~ 1, perks, data = pdata, trace = TRUE)
 coef(fit1, matrix = TRUE)
 summary(fit1)

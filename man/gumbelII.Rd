@@ -10,16 +10,19 @@
 
 }
 \usage{
-gumbelII(lshape = "loge", lscale = "loge",
-         ishape = NULL,   iscale = NULL,
-         probs.y = c(0.2, 0.5, 0.8),
-         perc.out = NULL, imethod = 1, zero = -2)
+gumbelII(lscale = "loge", lshape = "loge", iscale = NULL, ishape = NULL,
+         probs.y = c(0.2, 0.5, 0.8), perc.out = NULL, imethod = 1,
+         zero = -1, nowarning = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
+
+  \item{nowarning}{ Logical. Suppress a warning? }
+
+
   \item{lshape, lscale}{
   Parameter link functions applied to the 
-  (positive) shape parameter (called \eqn{a} below) and
+  (positive) shape parameter (called \eqn{s} below) and
   (positive) scale parameter (called \eqn{b} below).
   See \code{\link{Links}} for more choices.
 
@@ -39,12 +42,13 @@ gumbelII(lshape = "loge", lscale = "loge",
 
   }
   \item{imethod}{
-  See \code{\link{weibull}}.
+  See \code{\link{weibullR}}.
 
 
   }
   \item{zero, probs.y}{
   Details at \code{\link{CommonVGAMffArguments}}.
+
 
   }
   \item{perc.out}{
@@ -56,18 +60,18 @@ gumbelII(lshape = "loge", lscale = "loge",
 }
 \details{
   The Gumbel-II density for a response \eqn{Y} is 
-  \deqn{f(y;a,b) = a y^{a-1} \exp[-(y/b)^a] / (b^a)}{%
-        f(y;a,b) = a y^(a-1) * exp(-(y/b)^a) / [b^a]}
-  for \eqn{a > 0}, \eqn{b > 0}, \eqn{y > 0}.
+  \deqn{f(y;b,s) = s y^{s-1} \exp[-(y/b)^s] / (b^s)}{%
+        f(y;b,s) = s y^(s-1) * exp(-(y/b)^s) / [b^s]}
+  for \eqn{b > 0}, \eqn{s > 0}, \eqn{y > 0}.
   The cumulative distribution function is 
-  \deqn{F(y;a,b) = \exp[-(y/b)^{-a}].}{%
-        F(y;a,b) = exp(-(y/b)^(-a)).}
-  The mean of \eqn{Y} is \eqn{b \, \Gamma(1 - 1/a)}{b * gamma(1 - 1/a)}
+  \deqn{F(y;b,s) = \exp[-(y/b)^{-s}].}{%
+        F(y;b,s) = exp(-(y/b)^(-s)).}
+  The mean of \eqn{Y} is \eqn{b \, \Gamma(1 - 1/s)}{b * gamma(1 - 1/s)}
   (returned as the fitted values)
-  when \eqn{a>1},
-  and the variance is \eqn{b^2\,\Gamma(1-2/a)}{b^2 * Gamma(1-2/a)} when
-  \eqn{a>2}.
-  This distribution looks similar to \code{\link{weibull}}, and is
+  when \eqn{s>1},
+  and the variance is \eqn{b^2\,\Gamma(1-2/s)}{b^2 * Gamma(1-2/s)} when
+  \eqn{s>2}.
+  This distribution looks similar to \code{\link{weibullR}}, and is
   due to Gumbel (1954).
 
 
@@ -98,7 +102,7 @@ U.S. Department of Commerce, National Bureau of Standards, USA.
 }
 \author{ T. W. Yee }
 \note{
-  See \code{\link{weibull}}.
+  See \code{\link{weibullR}}.
   This \pkg{VGAM} family function handles multiple responses.
 
 
@@ -127,20 +131,20 @@ U.S. Department of Commerce, National Bureau of Standards, USA.
 }
 \examples{
 gdata <- data.frame(x2 = runif(nn <- 1000))
-gdata <- transform(gdata, eta1  = +1,
-                          eta2  = -1 + 0.1 * x2,
+gdata <- transform(gdata, heta1  = +1,
+                          heta2  = -1 + 0.1 * x2,
                           ceta1 =  0,
                           ceta2 =  1)
-gdata <- transform(gdata, shape1 = exp(eta1),
-                          shape2 = exp(eta2),
+gdata <- transform(gdata, shape1 = exp(heta1),
+                          shape2 = exp(heta2),
                           scale1 = exp(ceta1),
                           scale2 = exp(ceta2))
 gdata <- transform(gdata,
-                   y1 = rgumbelII(nn, shape = shape1, scale = scale1),
-                   y2 = rgumbelII(nn, shape = shape2, scale = scale2))
+                   y1 = rgumbelII(nn, scale = scale1, shape = shape1),
+                   y2 = rgumbelII(nn, scale = scale2, shape = shape2))
 
 fit <- vglm(cbind(y1, y2) ~ x2,
-            gumbelII(zero = c(1, 2, 4)), data = gdata, trace = TRUE)
+            gumbelII(zero = c(1, 2, 3)), data = gdata, trace = TRUE)
 coef(fit, matrix = TRUE)
 vcov(fit)
 summary(fit)

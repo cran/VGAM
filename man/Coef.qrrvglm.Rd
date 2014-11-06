@@ -9,7 +9,7 @@
 
 }
 \usage{
-Coef.qrrvglm(object, varI.latvar = FALSE, reference = NULL, ...)
+Coef.qrrvglm(object, varI.latvar = FALSE, refResponse = NULL, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -17,6 +17,8 @@ Coef.qrrvglm(object, varI.latvar = FALSE, reference = NULL, ...)
 % A CQO or UQO object.
   A CQO object.
   The former has class \code{"qrrvglm"}.
+
+
   }
 
 
@@ -27,19 +29,24 @@ Coef.qrrvglm(object, varI.latvar = FALSE, reference = NULL, ...)
   and this option stretches or shrinks the ordination axes if \code{TRUE}.
   See below for further details.
 
+
+
   }
-  \item{reference}{
+  \item{refResponse}{
     Integer or character.
-    Specifies the \emph{reference species}. By default, the reference
+    Specifies the \emph{reference response} or \emph{reference species}.
+    By default, the reference
     species is found by searching sequentially starting from the first
     species until a positive-definite tolerance matrix is found. Then
     this tolerance matrix is transformed to the identity matrix. Then
     the sites scores (latent variables) are made uncorrelated.
     See below for further details.
 
+
 %   If \code{eq.tolerances=FALSE}, then transformations occur so that
 %   the reference species has a tolerance matrix equal to the rank-\eqn{R}
 %   identity matrix.
+
 
   }
   \item{\dots}{ Currently unused. }
@@ -58,11 +65,11 @@ Coef.qrrvglm(object, varI.latvar = FALSE, reference = NULL, ...)
   angle of its major axis and minor axis is zero, i.e., parallel to
   the ordination axes.  This means the effect on the latent vars is
   independent on that species, and that its tolerance matrix is diagonal.
-  The argument \code{reference} allows one to choose which is the reference
+  The argument \code{refResponse} allows one to choose which is the reference
   species, which must have a positive-definite tolerance matrix, i.e.,
-  is bell-shaped.  If \code{reference} is not specified, then the code will
+  is bell-shaped.  If \code{refResponse} is not specified, then the code will
   try to choose some reference species starting from the first species.
-  Although the \code{reference} argument could possibly be offered as
+  Although the \code{refResponse} argument could possibly be offered as
   an option when fitting the model, it is currently available after
   fitting the model, e.g., in the functions \code{\link{Coef.qrrvglm}} and
   \code{\link{lvplot.qrrvglm}}.

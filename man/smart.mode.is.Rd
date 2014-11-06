@@ -5,7 +5,7 @@
 Determine which of three modes the smart prediction is currently in.
 }
 \usage{
-smart.mode.is(mode.arg=NULL)
+smart.mode.is(mode.arg = NULL)
 }
 \arguments{
 \item{mode.arg}{
@@ -45,18 +45,7 @@ smart.mode.is(mode.arg=NULL)
 
 }
 \examples{
-my1 <- function(x, minx = min(x)) { # Here is a smart function
-  x <- x  # Needed for nested calls, e.g., bs(scale(x))
-  if (smart.mode.is("read")) {
-    smart <- get.smart()
-    minx <- smart$minx  # Overwrite its value 
-  } else
-  if (smart.mode.is("write"))
-    put.smart(list(minx = minx))
-  sqrt(x - minx)
-}
-attr(my1, "smart") <- TRUE
-
+print(sm.min1)
 smart.mode.is()  # Returns "neutral"
 smart.mode.is(smart.mode.is())  # Returns TRUE
 }

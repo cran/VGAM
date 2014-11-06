@@ -17,7 +17,7 @@ gamma2(lmu = "loge", lshape = "loge",
 \arguments{
   \item{lmu, lshape}{
   Link functions applied to the (positive) \emph{mu} and \emph{shape}
-  parameters (called \eqn{\mu}{mu} and \eqn{\lambda}{shape} respectively).
+  parameters (called \eqn{\mu}{mu} and \eqn{a}{shape} respectively).
   See \code{\link{Links}} for more choices.
 
 
@@ -80,32 +80,32 @@ gamma2(lmu = "loge", lshape = "loge",
 \details{
   This distribution can model continuous skewed responses.
   The density function is given by
-  \deqn{f(y;\mu,\lambda) = \frac{\exp(-\lambda y / \mu) \times
-               (\lambda y / \mu)^{\lambda-1}
-               \times \lambda}{
-               \mu \times \Gamma(\lambda)}}{%
+  \deqn{f(y;\mu,a) = \frac{\exp(-a y / \mu) \times
+               (a y / \mu)^{a-1}
+               \times a}{
+               \mu \times \Gamma(a)}}{%
    f(y;mu,shape) = exp(-shape * y / mu) y^(shape-1) shape^(shape) / 
           [mu^(shape) * gamma(shape)]}
   for
   \eqn{\mu > 0}{mu > 0},
-  \eqn{\lambda > 0}{shape > 0}
+  \eqn{a > 0}{shape > 0}
   and \eqn{y > 0}.
   Here,
   \eqn{\Gamma(\cdot)}{gamma()} is the gamma
   function, as in \code{\link[base:Special]{gamma}}.
   The mean of \emph{Y} is \eqn{\mu=\mu}{mu=mu} (returned as the fitted
-  values) with variance \eqn{\sigma^2 = \mu^2 / \lambda}{sigma^2 =
-  mu^2 / shape}.  If \eqn{0<\lambda<1}{0<shape<1} then the density has a
+  values) with variance \eqn{\sigma^2 = \mu^2 / a}{sigma^2 =
+  mu^2 / shape}.  If \eqn{0<a<1}{0<shape<1} then the density has a
   pole at the origin and decreases monotonically as \eqn{y} increases.
-  If \eqn{\lambda=1}{shape=1} then this corresponds to the exponential
-  distribution.  If \eqn{\lambda>1}{shape>1} then the density is zero at the
-  origin and is unimodal with mode at \eqn{y = \mu - \mu / \lambda}{y =
+  If \eqn{a=1}{shape=1} then this corresponds to the exponential
+  distribution.  If \eqn{a>1}{shape>1} then the density is zero at the
+  origin and is unimodal with mode at \eqn{y = \mu - \mu / a}{y =
   mu - mu / shape}; this can be achieved with \code{lshape="loglog"}.
 
 
   By default, the two linear/additive predictors are
   \eqn{\eta_1=\log(\mu)}{eta1=log(mu)} and
-  \eqn{\eta_2=\log(\lambda)}{eta2=log(shape)}.
+  \eqn{\eta_2=\log(a)}{eta2=log(shape)}.
   This family function implements Fisher scoring and the working
   weight matrices are diagonal.
 
@@ -121,6 +121,7 @@ gamma2(lmu = "loge", lshape = "loge",
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}}
   and \code{\link{vgam}}.
+
 
 }
 \references{
@@ -155,14 +156,16 @@ McCullagh, P. and Nelder, J. A. (1989)
 
 \seealso{
   \code{\link{gamma1}} for the 1-parameter gamma distribution,
-  \code{\link{gamma2.ab}} for another parameterization of
-  the 2-parameter gamma distribution,
+  \code{\link{gammaR}} for another parameterization of
+  the 2-parameter gamma distribution that is directly matched
+  with \code{\link[stats]{rgamma}},
   \code{\link{bigamma.mckay}} for \emph{a} bivariate gamma distribution,
-  \code{\link{expexp}},
+  \code{\link{expexpff}},
   \code{\link[stats]{GammaDist}},
   \code{\link{golf}},
   \code{\link{CommonVGAMffArguments}},
-  \code{\link{simulate.vlm}}.
+  \code{\link{simulate.vlm}},
+  \code{\link{negloge}}.
 
 
 }
@@ -172,13 +175,13 @@ gdata <- data.frame(y = rgamma(n = 100, shape = exp(1)))
 fit1 <- vglm(y ~ 1, gamma1, data = gdata)
 fit2 <- vglm(y ~ 1, gamma2, data = gdata, trace = TRUE, crit = "coef")
 coef(fit2, matrix = TRUE)
-Coef(fit2)
+c(Coef(fit2), colMeans(gdata))
 
 # Essentially a 2-parameter gamma
-gdata <- data.frame(y = rgamma(n = 500, rate = exp(1), shape = exp(2)))
+gdata <- data.frame(y = rgamma(n = 500, rate = exp(-1), shape = exp(2)))
 fit2 <- vglm(y ~ 1, gamma2, data = gdata, trace = TRUE, crit = "coef")
 coef(fit2, matrix = TRUE)
-Coef(fit2)
+c(Coef(fit2), colMeans(gdata))
 summary(fit2)
 }
 \keyword{models}

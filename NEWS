@@ -6,6 +6,165 @@
 
 
 
+                CHANGES IN VGAM VERSION 0.9-5
+
+NEW FEATURES
+
+    o   Tested okay on R 3.1.2.
+    o   New argument 'lss' appears on some family functions.
+        This is important because it changes the order of the
+        parameters.
+    o   New functions: QR.Q(), QR.R(), [pq]rice() (thanks
+        to Benjamin Hall for pointing that these are based on the
+        Marcum-Q function).
+    o   exponential() has a new loglikelihood slot. Thanks to
+        Neyko Neykov for picking this up this omission.
+    o   Constraint matrices in process.constraints() are checked
+        that they are of full column-rank.
+    o   New family functions: better.exponential(), polyaR().
+    o   New functions: qvplot() is preferred over plotqvar(),
+        [dpqr]levy().
+    o   summary() applied to a "vglm" object now prints out
+        the table of estimates, SEs, test statistics
+        and p-values very similarly to glm() objects. In
+        particular, two-tailed p-values in the 4th column
+        are new; these correspond to the z ratio based on
+        a normal reference distribution.
+    o   gev(), egev(), and gpd() have a 'type.fitted' argument, which
+        should be set to "mean" if the mean is desired as
+        the fitted values.
+        gpd() has a stop() if the data is negative.
+    o   AA.Aa.aa() and A1A2A3() have a 'inbreeding = TRUE' argument.
+        If 'inbreeding = TRUE' then an extra parameter is estimated.
+        If 'inbreeding = FALSE' then the inbreeding coefficient is 0
+        by definition, and not estimated.
+        G1G2G3() is now renamed to A1A2A3().
+    o   Decommissioned VGAM family functions:
+        AAaa.nohw(), matched.binomial().
+    o   deviance() applied to a "qrrvglm" or "rrvgam" object
+        now has a 'history' argument.
+    o   binomialff(mv = TRUE) is no longer restricted to responses
+        having 0 and 1 values.
+    o   New data sets: flourbeetle.
+    o   The 'constraints' argument accepts a list with functions
+        as components, that compute the constraint matrices.
+
+
+BUG FIXES and CHANGES
+
+    o   Renamed the order of arguments and linear predictors (now,
+        'location'-type precedes 'scale'-type, and 'scale'-type precedes
+        'shape'-type parameters):
+          benini1(dpqr)
+          bisa(dpqr)
+          gumbelII(dpqr)
+          makeham(dpqr)
+          nakagami(dpqr)
+          perks(dpqr)
+          riceff(dpqr)
+          genrayleigh(dpqr)
+          expexpff1(), expexpff()
+          exppoisson(dpqr)
+          gammaR()
+    o   Renamed parameter names: poissonff() has "lambda", not "mu",
+        binomialff() has "prob", not "mu".
+    o   Renamed functions:
+        plot.vgam() plots "vgam" objects, not plotvgam().
+        Use plot(as(vglmObject, "vgam")) to plot vglm() objects as
+        if they were vgam() objects.
+        plot.vgam(): the user has total control over 'xlim' and 'ylim'
+        if specified.
+    o   Renamed functions: cm.zero.vgam() has become cm.zero.VGAM(),
+        cm.nointercept.vgam() has become cm.nointercept.VGAM(),
+        cm.vgam() has become cm.VGAM(),
+        process.categorical.data.vgam to process.categorical.data.VGAM,
+        process.binomial2.data.vgam to process.binomial2.data.VGAM.
+    o   Link loge() returns "loge" as its tag, not "log" anymore.
+    o   Class "cao" changed to "rrvgam".
+    o   dbilogis4() was faulty.
+    o   Renamed arguments: 'location' is now 'scale' in [dpqr]pareto(),
+        and paretoff().
+    o   gev() and egev() handle working weights better when sigma is close
+    o   gev(zero = 3) has changed to gev(zero = 2:3), by default, and
+        egev(zero = 3) has changed to egev(zero = 2:3), by default.
+        That is, only the location parameter is now modelled as
+        functions of covariates, by default;
+        the scale and shape parameters are intercept-only.
+    o   bigamma.mckay(zero = 1) has changed to bigamma.mckay(zero = 2:3),
+        by default.
+    o   rlplot() works for gev() model fits now.
+    o   Renamed functions: subsetc() has become subsetcol(),
+        my1 has become sc.min1(),
+        my2 has become sc.min2(),
+        stdze1() has become sc.scale1(),
+        stdze2() has become sc.scale2(),
+        mlogit() has become multilogit().
+    o   Decommissioned VGAM family functions:
+        AB.Ab.aB.ab2()
+    o   Renamed VGAM family functions:
+        OLD NAME:            NEW NAME:
+        amh()                biamhcop()
+        bigumbelI()          bigumbelIexp()
+        fgm()                bifgmcop()
+        gammahyp()           gammahyperbola()
+        morgenstern()        bifgmexp()
+        plackett()           biplackettcop()
+        benini()             benini1()
+        cgumbel()            cens.gumbel()
+        cenpoisson()         cens.poisson()
+        cennormal()          cens.normal()
+        double.cennormal()   double.cens.normal()
+        recnormal()          rec.normal()
+        recexp1()            rec.exp1()
+        invbinomial()        inv.binomial.exp1()
+        invlomax()           inv.lomax.exp1()
+        invparalogistic()    inv.paralogistic.exp1()
+        koenker()            sc.studentt2()
+        frechet2()           frechet()
+        hypersecant.1()      hypersecant01()
+        gengamma()           gengamma.stacy()
+        beta.ab()            betaR()
+        betabinom.ab()       betabinomialR()
+        gamma2.ab()          gammaR() [see note about reordered arguments]
+        logistic2()          logistic()
+        lgammaff()           lgamma1()
+        lgamma3ff()          lgamma3()
+        SUR()                SURff()
+        expexp()             expexpff()
+        expexp1()            expexpff1()
+        weibull()            weibullR(lss = FALSE). Also 'zero' has changed.
+    o   Functionality has changed:
+        weibull()            weibullR(lss = FALSE). Also 'zero' has changed.
+    o   Data sets renamed:
+        mmt renamed to melbmaxtemp.
+    o   lms.bcn(): changes in the arguments.
+    o   [log]alaplace[123](): changes in the arguments, e.g.,
+        'parallelLocation' changed to 'parallel.locat'.
+    o   Argument 'reference' has been changed to 'refResponse' for
+        CQO objects.
+    o   Argument 'shrinkage.init' has been changed to 'ishrinkage'.
+    o   Argument 'matrix.arg = TRUE' has been changed to
+        'drop = FALSE' in fittedvlm().
+    o   Bug in dbort(). Thanks to Benjamin Kjellson for picking this up.
+    o   vglm.control()$save.weight changed to vglm.control()$save.weights.
+        vgam.control()$save.weight changed to vgam.control()$save.weights.
+    o   "ccoef" has been replaced by "concoef".
+    o   Some documentation regarding qvar(se = TRUE) was wrong.
+    o   Argument "alpha" in several bivariate distributions have
+        been replaced by "apar", for association parameter.
+    o   Arguments "optima" replaced by "optimums",
+        "maxima" replaced by "maximums",
+        "logmaxima" replaced by "log.maximums".
+    o   Function getMaxMin() renamed to grid.search().
+    o   lognormal3() withdrawn.
+    o   dfbeta() returns the difference between the coeffs.
+    o   negbinomial(deviance = TRUE) works when fitting the NB-2,
+        provided criterion = "coef" or half.step = FALSE.
+    o   Argument "a" replaced by "rate" in maxwell(dpqr).
+    o   Arguments "x1" and "x2" replaced by "q1" and "q2" in pbinorm().
+
+
+
                 CHANGES IN VGAM VERSION 0.9-4
 
 NEW FEATURES
@@ -633,9 +792,9 @@ NEW FEATURES
     o    vchol() takes drastic action to avoid infinite looping: it sets
         the working weights to be proportional to the order-M diagonal
         matrix.
-    o    lognormal() and lognormal3() now have zero = 2 as the default
+    o   lognormal() and lognormal3() now have zero = 2 as the default
         (was zero = NULL).
-    o    Some variable names within grc() changed, e.g., Row. and not Row.
+    o   Some variable names within grc() changed, e.g., Row. and not Row.
     o   The smartpred package within VGAM has updated poly(), ns(),
         bs() and scale() for R version 2.12.0 (2010-10-15).
         Calls to smartpredenv are now VGAM:::smartpredenv.

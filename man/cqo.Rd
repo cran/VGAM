@@ -276,9 +276,11 @@ cqo(formula, family, data = list(), weights = NULL, subset = NULL,
 }
 \value{
   An object of class \code{"qrrvglm"}. 
-  Note that the slot \code{misc} has a list component called
-  \code{deviance.Bestof} which gives the history of deviances over all
-  the iterations.
+
+
+% Note that the slot \code{misc} has a list component called
+% \code{deviance.Bestof} which gives the history of deviances over all
+% the iterations.
 
 
 }
@@ -572,7 +574,7 @@ p1ut <- cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,
             WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
             fam = poissonff, data = hspider, Crow1positive = FALSE,
             eq.tol = FALSE)
-sort(p1ut@misc$deviance.Bestof)  # A history of all the iterations
+sort(deviance(p1ut, history = TRUE))  # A history of all the iterations
 if (deviance(p1ut) > 1177) warning("suboptimal fit obtained")
 
 S <- ncol(depvar(p1ut))  # Number of species
@@ -583,12 +585,12 @@ legend("topright", leg = colnames(depvar(p1ut)), col = clr,
        pch = 1:S, merge = TRUE, bty = "n", lty = 1:S, lwd = 2)
 (cp <- Coef(p1ut))
 
-(a <- cp@latvar[cp@latvar.order])  # Ordered site scores along the gradient
+(a <- latvar(cp)[cp@latvar.order])  # Ordered site scores along the gradient
 # Names of the ordered sites along the gradient:
-rownames(cp@latvar)[cp@latvar.order]
-(aa <- (cp@Optimum)[, cp@Optimum.order])  # Ordered optima along the gradient
+rownames(latvar(cp))[cp@latvar.order]
+(aa <- Opt(cp)[, cp@Optimum.order])  # Ordered optimums along the gradient
 aa <- aa[!is.na(aa)]  # Delete the species that is not unimodal
-names(aa)  # Names of the ordered optima along the gradient
+names(aa)  # Names of the ordered optimums along the gradient
 
 trplot(p1ut, which.species = 1:3, log = "xy", type = "b", lty = 1, lwd = 2,
        col = c("blue","red","green"), label = TRUE) -> ii  # Trajectory plot
@@ -608,7 +610,7 @@ p1et <- cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,
                   Trocterr, Zoraspin) ~
             WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
             poissonff, data = hspider, Crow1positive = FALSE)
-sort(p1et@misc$deviance.Bestof)  # A history of all the iterations
+sort(deviance(p1et, history = TRUE))  # A history of all the iterations
 if (deviance(p1et) > 1586) warning("suboptimal fit obtained")
 S <- ncol(depvar(p1et))  # Number of species
 clr <- (1:(S+1))[-7]  # Omits yellow
@@ -624,7 +626,7 @@ p2 <- cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,
           WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
           poissonff, data = hspider, Crow1positive = FALSE,
           I.toler = TRUE, Rank = 2, Bestof = 3, isd.latvar = c(2.1, 0.9))
-sort(p2@misc$deviance.Bestof)  # A history of all the iterations
+sort(deviance(p2, history = TRUE))  # A history of all the iterations
 if (deviance(p2) > 1127) warning("suboptimal fit obtained")
 lvplot(p2, ellips = FALSE, label = TRUE, xlim = c(-3,4),
        C = TRUE, Ccol = "brown", sites = TRUE, scol = "grey", 
@@ -639,7 +641,7 @@ mydata <- rcqo(n, p, S, fam = "binomial", hi.abundance = 4,
 myform <- attr(mydata, "formula")
 set.seed(1234)
 b1et <- cqo(myform, binomialff(mv = TRUE, link = "cloglog"), data = mydata)
-sort(b1et@misc$deviance.Bestof)  # A history of all the iterations
+sort(deviance(b1et, history = TRUE))  # A history of all the iterations
 lvplot(b1et, y = TRUE, lcol = 1:S, pch = 1:S, pcol = 1:S, las = 1)
 Coef(b1et)
 
@@ -654,7 +656,7 @@ p1et <- cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,
                   Trocterr, Zoraspin) ~
             WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
             poissonff, data = hspider, eq.tol = TRUE, trace = FALSE)
-sort(p1et@misc$deviance.Bestof)  # A history of all the iterations
+sort(deviance(p1et, history = TRUE))  # A history of all the iterations
 if (deviance(p1et) > 1586) warning("suboptimal fit obtained")
 S <- ncol(depvar(p1et))
 par(mfrow = c(3, 4))

@@ -26,11 +26,36 @@ log1pexp <- function(x) {
 
 
 
-erf <- function(x)
-  2 * pnorm(x * sqrt(2)) - 1
+erf <- function(x, inverse = FALSE) {
+  if (inverse) {
+    ans <- qnorm((x+1)/2) / sqrt(2)
+    ans[x <  -1] <- NA
+    ans[x >  +1] <- NA
+    ans[x == -1] <- -Inf
+    ans[x == +1] <-  Inf
+    ans
+  } else {
+    2 * pnorm(x * sqrt(2)) - 1
+  }
+}
 
-erfc <- function(x)
-  2 * pnorm(x * sqrt(2), lower.tail = FALSE)
+
+
+erfc <- function(x, inverse = FALSE) {
+  if (inverse) {
+    ans <- qnorm(x/2, lower.tail = FALSE) / sqrt(2)
+    ans[x <  0] <- NA
+    ans[x >  2] <- NA
+    ans[x == 0] <-  Inf
+    ans[x == 2] <- -Inf
+    ans
+  } else {
+    2 * pnorm(x * sqrt(2), lower.tail = FALSE)
+  }
+}
+
+
+
 
 
 

@@ -10,8 +10,8 @@
 \usage{
 lms.bcn(percentiles = c(25, 50, 75), zero = c(1, 3),
         llambda = "identitylink", lmu = "identitylink", lsigma = "loge",
-        dfmu.init = 4, dfsigma.init = 2, ilambda = 1,
-        isigma = NULL, tol0 = 0.001, expectiles = FALSE)
+        idf.mu = 4, idf.sigma = 2, ilambda = 1,
+        isigma = NULL, tol0 = 0.001)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -21,7 +21,13 @@ lms.bcn(percentiles = c(25, 50, 75), zero = c(1, 3),
   which are the quantiles.
   They will be returned as `fitted values'.
 
+
+
 % or expectiles.
+% 20140624; withdrawn 'expectiles'.
+%       isigma = NULL, tol0 = 0.001, expectiles = FALSE
+
+
 
 
   }
@@ -44,14 +50,14 @@ lms.bcn(percentiles = c(25, 50, 75), zero = c(1, 3),
 
 
   }
-  \item{dfmu.init}{
+  \item{idf.mu}{
   Degrees of freedom for the cubic smoothing spline fit applied to
   get an initial estimate of mu.
   See \code{\link{vsmooth.spline}}.
 
 
   }
-  \item{dfsigma.init}{
+  \item{idf.sigma}{
   Degrees of freedom for the cubic smoothing spline fit applied to
   get an initial estimate of sigma.
   See \code{\link{vsmooth.spline}}.
@@ -81,15 +87,15 @@ lms.bcn(percentiles = c(25, 50, 75), zero = c(1, 3),
 
 
   }
-  \item{expectiles}{
-  Experimental; please do not use.
+% \item{expectiles}{
+% Experimental; please do not use.
 
 % A single logical. If \code{TRUE} then the method is LMS-expectile
 % regression; \emph{expectiles} are returned rather than quantiles.
 % The default is LMS quantile regression based on the normal distribution.
 
 
-  }
+% }
 
 }
 \details{
@@ -243,7 +249,7 @@ contains further information and examples.
 
 \examples{
 \dontrun{ require("VGAMdata")
-mysubset <- subset(xs.nz, sex == "M" & ethnic == "1" & Study1)
+mysubset <- subset(xs.nz, sex == "M" & ethnicity == "Maori" & study1)
 mysubset <- transform(mysubset, BMI = weight / height^2)
 BMIdata <- na.omit(mysubset)
 BMIdata <- subset(BMIdata, BMI < 80 & age < 65,
@@ -259,7 +265,7 @@ head(predict(fit))
 head(fitted(fit))
 head(BMIdata)
 head(cdf(fit))  # Person 46 is probably overweight, given his age
-100 * colMeans(c(depvar(fit)) < fitted(fit))  # Empirical proportions
+100 * colMeans(depvar(fit, drop = TRUE) < fitted(fit))  # Empirical proportions
 
 # Convergence problems? Try this trick: fit0 is a simpler model used for fit1
 fit0 <- vgam(BMI ~ s(age, df = 4), lms.bcn(zero = c(1, 3)), data = BMIdata)

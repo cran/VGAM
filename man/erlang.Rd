@@ -14,8 +14,9 @@ erlang(shape.arg, link = "loge", imethod = 1, zero = NULL)
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{shape.arg}{
-  The shape parameter.
-  The user must specify a positive integer.
+  The shape parameters.
+  The user must specify a positive integer, or integers for multiple responses.
+  They are recycled \code{by.row = TRUE} according to \code{\link[base]{matrix}}.
 
 
   }
@@ -80,14 +81,14 @@ Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
 
 \note{
   Multiple responses are permitted.
-  The \code{rate} parameter found in \code{\link{gamma2.ab}}
+  The \code{rate} parameter found in \code{\link{gammaR}}
   is \code{1/scale} here---see also \code{\link[stats]{rgamma}}.
 
 
 }
 
 \seealso{
-  \code{\link{gamma2.ab}},
+  \code{\link{gammaR}},
   \code{\link{exponential}},
   \code{\link{simulate.vlm}}.
 

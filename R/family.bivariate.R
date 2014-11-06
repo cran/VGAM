@@ -13,30 +13,28 @@
 
 
 
-dbiclaytoncop <- function(x1, x2, alpha = 0, log = FALSE){
+dbiclaytoncop <- function(x1, x2, apar = 0, log = FALSE) {
   if (!is.logical(log.arg <- log) || length(log) != 1)
     stop("bad input for argument 'log'")
   rm(log)
 
-  A <- x1^(-alpha) + x2^(-alpha) - 1
-  logdensity <- log1p(alpha) -
-                (1 + alpha) * (log(x1) + log(x2)) - 
-                (2 + 1 / alpha) * log(abs(A))  # Avoid warning
+  A <- x1^(-apar) + x2^(-apar) - 1
+  logdensity <- log1p(apar) -
+                (1 + apar) * (log(x1) + log(x2)) - 
+                (2 + 1 / apar) * log(abs(A))  # Avoid warning
 
   out.square <- (x1 < 0) | (x1 > 1) | (x2 < 0) | (x2 > 1)
   logdensity[out.square] <- log(0.0)
 
 
-  index0 <- (rep(alpha, length = length(A)) < sqrt(.Machine$double.eps))
+  index0 <- (rep(apar, length = length(A)) < sqrt(.Machine$double.eps))
   if (any(index0))
     logdensity[index0] <- log(1.0)
 
 
-  index1 <- (rep(alpha, length = length(A)) < 0.0) | (A < 0.0)
+  index1 <- (rep(apar, length = length(A)) < 0.0) | (A < 0.0)
   if (any(index1))
     logdensity[index1] <- NaN
-
-
 
 
 
@@ -48,18 +46,18 @@ dbiclaytoncop <- function(x1, x2, alpha = 0, log = FALSE){
 
 
 
-rbiclaytoncop <- function(n, alpha = 0) {
-  if (any(alpha < 0))
-    stop("argument 'alpha' must be greater or equal to 0")
+rbiclaytoncop <- function(n, apar = 0) {
+  if (any(apar < 0))
+    stop("argument 'apar' must be greater or equal to 0")
 
   u1 <- runif(n = n)
   v2 <- runif(n = n)
 
-  u2 <- (u1^(-alpha) *
-        (v2^(-alpha / (1 + alpha)) - 1) + 1)^(-1 / alpha)
+  u2 <- (u1^(-apar) *
+        (v2^(-apar / (1 + apar)) - 1) + 1)^(-1 / apar)
 
 
-  index0 <- (rep(alpha, length = length(u1)) < sqrt(.Machine$double.eps))
+  index0 <- (rep(apar, length = length(u1)) < sqrt(.Machine$double.eps))
   if (any(index0))
     u2[index0] <- runif(sum(index0))
 
@@ -68,8 +66,8 @@ rbiclaytoncop <- function(n, alpha = 0) {
 
 
 
- biclaytoncop <- function(lalpha    = "loge",
-                          ialpha    = NULL,
+ biclaytoncop <- function(lapar    = "loge",
+                          iapar    = NULL,
                           imethod   = 1,
                           parallel  = FALSE,
                           zero = NULL) {
@@ -77,13 +75,13 @@ rbiclaytoncop <- function(n, alpha = 0) {
   apply.parint <- TRUE
 
 
-  lalpha <- as.list(substitute(lalpha))
-  ealpha <- link2list(lalpha)
-  lalpha <- attr(ealpha, "function.name")
+  lapar <- as.list(substitute(lapar))
+  eapar <- link2list(lapar)
+  lapar <- attr(eapar, "function.name")
 
 
-  if (length(ialpha) && any(ialpha <= 0))
-    stop("argument 'ialpha' must have values in (0, Inf)")
+  if (length(iapar) && any(iapar <= 0))
+    stop("argument 'iapar' must have values in (0, Inf)")
 
 
 
@@ -93,18 +91,18 @@ rbiclaytoncop <- function(n, alpha = 0) {
 
   new("vglmff",
   blurb = c(" bivariate clayton copula distribution)\n","Links:    ",
-                namesof("alpha", lalpha, earg = ealpha)),
+                namesof("apar", lapar, earg = eapar)),
 
   constraints = eval(substitute(expression({
-        constraints <- cm.vgam(matrix(1, M, 1), x = x,
-                               bool = .parallel , 
-                               constraints = constraints,
-                               apply.int = .apply.parint )
+    constraints <- cm.VGAM(matrix(1, M, 1), x = x,
+                           bool = .parallel , 
+                           constraints = constraints,
+                           apply.int = .apply.parint )
 
-        dotzero <- .zero
-        M1 <- 1
-        Yusual <- 2
-        eval(negzero.expression)
+    dotzero <- .zero
+    M1 <- 1
+    Yusual <- 2
+    eval(negzero.expression.VGAM)
   }), list( .zero = zero,
             .apply.parint = apply.parint,
             .parallel = parallel ))),
@@ -143,10 +141,10 @@ rbiclaytoncop <- function(n, alpha = 0) {
     extra$M1 <- M1
     extra$Yusual <- Yusual
     M <- M1 * (ncoly / Yusual)
-    mynames1 <- paste("alpha", if (M / M1 > 1) 1:(M / M1) else "",
+    mynames1 <- paste("apar", if (M / M1 > 1) 1:(M / M1) else "",
                       sep = "")
-    predictors.names <- c(
-      namesof(mynames1, .lalpha , earg = .ealpha , short = TRUE))
+    predictors.names <-
+      namesof(mynames1, .lapar , earg = .eapar , short = TRUE)
 
 
     extra$dimnamesy1 <- dimnames(y)[[1]]
@@ -155,16 +153,15 @@ rbiclaytoncop <- function(n, alpha = 0) {
     
     if (!length(etastart)) {
       
-      alpha.init <- matrix(if (length( .ialpha )) .ialpha else 0 + NA,
-                           n, M / M1, byrow = TRUE)
+      apar.init <- matrix(if (length( .iapar )) .iapar else 0 + NA,
+                          n, M / M1, byrow = TRUE)
 
-      if (!length( .ialpha ))
+      if (!length( .iapar ))
         for (spp. in 1:(M / M1)) {
           ymatj <- y[, (Yusual * spp. - 1):(Yusual * spp.)]
 
-              
-              
-          alpha.init0 <- if ( .imethod == 1) {
+
+          apar.init0 <- if ( .imethod == 1) {
             k.tau <- kendall.tau(ymatj[, 1], ymatj[, 2], exact = FALSE,
                                  max.n = 500)
 
@@ -178,44 +175,38 @@ rbiclaytoncop <- function(n, alpha = 0) {
             rhobit(pearson.rho)
           }
 
-
-
-
-          if (any(is.na(alpha.init[, spp.])))
-            alpha.init[, spp.] <- alpha.init0
+          if (any(is.na(apar.init[, spp.])))
+            apar.init[, spp.] <- apar.init0
         }
           
-      etastart <- theta2eta(alpha.init, .lalpha , earg = .ealpha )
+      etastart <- theta2eta(apar.init, .lapar , earg = .eapar )
     }
   }), list( .imethod = imethod,
-                .lalpha = lalpha,
-                .ealpha = ealpha,
-                .ialpha = ialpha ))),
+            .lapar = lapar,
+            .eapar = eapar,
+            .iapar = iapar ))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
-
     eta <- as.matrix(eta)
     fv.matrix <- matrix(0.5, nrow(eta), extra$ncoly)
-        
-        
+
     if (length(extra$dimnamesy2))
       dimnames(fv.matrix) <- list(extra$dimnamesy1,
                                   extra$dimnamesy2)
     fv.matrix
-  }  , list( .lalpha = lalpha,
-             .ealpha = ealpha ))),
+  }  , list( .lapar = lapar,
+             .eapar = eapar ))),
 
   last = eval(substitute(expression({
-        
     M1 <- extra$M1
     Yusual <- extra$Yusual
-    misc$link <- rep( .lalpha , length = M)
+    misc$link <- rep( .lapar , length = M)
     temp.names <- mynames1
     names(misc$link) <- temp.names
     
     misc$earg <- vector("list", M)
     names(misc$earg) <- temp.names
     for (ii in 1:M) {
-      misc$earg[[ii]] <- .ealpha
+      misc$earg[[ii]] <- .eapar
     }
 
     misc$M1 <- M1
@@ -225,16 +216,15 @@ rbiclaytoncop <- function(n, alpha = 0) {
     misc$parallel  <- .parallel
     misc$apply.parint <- .apply.parint
     misc$multipleResponses <- TRUE
-
   }) , list( .imethod = imethod,
              .parallel = parallel, .apply.parint = apply.parint,
-             .lalpha = lalpha,
-             .ealpha = ealpha ))),
+             .lapar = lapar,
+             .eapar = eapar ))),
   loglikelihood = eval(substitute(
     function(mu, y, w, residuals = FALSE, eta,
              extra = NULL,
              summation = TRUE) {
-    Alpha <- eta2theta(eta, .lalpha , earg = .ealpha )
+    Alpha <- eta2theta(eta, .lapar , earg = .eapar )
 
     if (residuals) {
       stop("loglikelihood residuals not implemented yet")
@@ -243,39 +233,34 @@ rbiclaytoncop <- function(n, alpha = 0) {
       ll.elts <-
         c(w) * dbiclaytoncop(x1  = c(y[, c(TRUE, FALSE)]),
                              x2  = c(y[, c(FALSE, TRUE)]),
-                             alpha = c(Alpha), log = TRUE)
+                             apar = c(Alpha), log = TRUE)
       if (summation) {
         sum(ll.elts)
       } else {
         ll.elts
       }
     }
-  } , list( .lalpha = lalpha,
-            .ealpha = ealpha,
+  } , list( .lapar = lapar,
+            .eapar = eapar,
             .imethod = imethod ))),
   vfamily = c("biclaytoncop"),
 
-
-
   simslot = eval(substitute(
   function(object, nsim) {
-
     pwts <- if (length(pwts <- object@prior.weights) > 0)
               pwts else weights(object, type = "prior")
     if (any(pwts != 1)) 
       warning("ignoring prior weights")
     eta <- predict(object)
-    Alpha <- eta2theta(eta, .lalpha , earg = .ealpha )
+    Alpha <- eta2theta(eta, .lapar , earg = .eapar )
     rbiclaytoncop(nsim * length(Alpha),
-                  alpha = c(Alpha))
-  }  , list( .lalpha = lalpha,
-             .ealpha = ealpha ))),
-
-
+                  apar = c(Alpha))
+  }  , list( .lapar = lapar,
+             .eapar = eapar ))),
 
 
   deriv = eval(substitute(expression({
-    Alpha <- eta2theta(eta, .lalpha , earg = .ealpha )
+    Alpha <- eta2theta(eta, .lapar , earg = .eapar )
     Yindex1 <- extra$Yusual * (1:(extra$ncoly/extra$Yusual)) - 1
     Yindex2 <- extra$Yusual * (1:(extra$ncoly/extra$Yusual))
 
@@ -284,42 +269,39 @@ rbiclaytoncop <- function(n, alpha = 0) {
 
     
     AA <- y[, Yindex1]^(-Alpha) + y[, Yindex2]^(-Alpha) - 1
-    dAA.dalpha <- -y[, Yindex1]^(-Alpha) * log(y[, Yindex1]) -
+    dAA.dapar <- -y[, Yindex1]^(-Alpha) * log(y[, Yindex1]) -
                    y[, Yindex2]^(-Alpha) * log(y[, Yindex2])
-    dl.dalpha <- 1 / (1 + Alpha) - log(y[, Yindex1] * y[, Yindex2]) -
-                 dAA.dalpha / AA * (2 + 1 / Alpha ) + log(AA) / Alpha^2
+    dl.dapar <- 1 / (1 + Alpha) - log(y[, Yindex1] * y[, Yindex2]) -
+                 dAA.dapar / AA * (2 + 1 / Alpha ) + log(AA) / Alpha^2
    
 
 
-    dalpha.deta <- dtheta.deta(Alpha, .lalpha , earg = .ealpha )
+    dapar.deta <- dtheta.deta(Alpha, .lapar , earg = .eapar )
 
-    dl.deta <- c(w) * cbind(dl.dalpha) * dalpha.deta
+    dl.deta <- c(w) * cbind(dl.dapar) * dapar.deta
     dl.deta
-  }), list( .lalpha = lalpha,
-            .ealpha = ealpha,
+  }), list( .lapar = lapar,
+            .eapar = eapar,
             .imethod = imethod ))),
 
   weight = eval(substitute(expression({
-
-
-    par <- Alpha +1 #20130808
+    par <- Alpha + 1  # 20130808
     denom1 <- (3 * par -2) * (2 * par - 1)
     denom2 <- 2 * (par - 1)
-    v1 <- trigamma(1 / (denom2))
-    v2 <- trigamma(par / (denom2))
-    v3 <- trigamma((2 * par - 1) / (denom2))
-    Rho. <- 1 / denom1 * (1 + par / (denom2) * (v1 - v2) +
-            1 / (denom2) * (v2 - v3))
+    v1 <- trigamma(1 / denom2)
+    v2 <- trigamma(par / denom2)
+    v3 <- trigamma((2 * par - 1) / denom2)
+    Rho. <- (1 + par  * (v1 - v2) / denom2 +
+                        (v2 - v3) / denom2) / denom1
     
     out <- 1 / par^2 + 2 / (par * (par - 1) * (2 * par - 1)) +
            4 * par / (3 * par - 2) - 2 * (2 * par - 1) * Rho. / (par - 1)
-    ned2l.dalpha  <- out
+    ned2l.dapar  <- out
 
-
-    wz <- ned2l.dalpha * dalpha.deta^2
- c(w) * wz
-  }), list( .lalpha = lalpha,
-            .ealpha = ealpha,
+    wz <- ned2l.dapar * dapar.deta^2
+    c(w) * wz
+  }), list( .lapar = lapar,
+            .eapar = eapar,
             .imethod = imethod ))))
 }
 
@@ -430,7 +412,7 @@ bistudent.deriv.dof <-  function(u, v, nu, rho) {
             namesof("rho", lrho, earg = erho)),
 
   constraints = eval(substitute(expression({
-    constraints <- cm.vgam(matrix(1, M, 1), x = x,
+    constraints <- cm.VGAM(matrix(1, M, 1), x = x,
                            bool = .parallel , 
                            constraints = constraints,
                            apply.int = .apply.parint )
@@ -438,7 +420,7 @@ bistudent.deriv.dof <-  function(u, v, nu, rho) {
     dotzero <- .zero
     M1 <- 2
     Yusual <- 2
-    eval(negzero.expression)
+    eval(negzero.expression.VGAM)
   }), list( .zero = zero,
             .apply.parint = apply.parint,
             .parallel = parallel ))),
@@ -736,17 +718,21 @@ pbinormcop <- function(q1, q2, rho = 0) {
       any(abs(rho) >= 1))
     stop("bad input for argument 'rho'")
 
-  pnorm2(x1 = qnorm(q1),
-         x2 = qnorm(q2),
-         cov12 = rho)
+  pbinorm(q1 = qnorm(q1), q2 = qnorm(q2), cov12 = rho)
 }
 
 
-rbinormcop <- function(n, rho = 0) {
+rbinormcop <- function(n, rho = 0  #, inverse = FALSE
+                      ) {
 
+  inverse <- FALSE
   ymat <- rbinorm(n = n, cov12 = rho)
-  cbind(y1 = pnorm(ymat[, 1]),
-        y2 = pnorm(ymat[, 2]))
+  if (inverse) {
+    ymat
+  } else {
+    cbind(y1 = pnorm(ymat[, 1]),
+          y2 = pnorm(ymat[, 2]))
+  }
 }
 
 
@@ -786,7 +772,7 @@ rbinormcop <- function(n, rho = 0) {
             namesof("rho", lrho, earg = erho)),
 
   constraints = eval(substitute(expression({
-    constraints <- cm.vgam(matrix(1, M, 1), x = x,
+    constraints <- cm.VGAM(matrix(1, M, 1), x = x,
                            bool = .parallel , 
                            constraints = constraints,
                            apply.int = .apply.parint )
@@ -794,7 +780,7 @@ rbinormcop <- function(n, rho = 0) {
     dotzero <- .zero
     M1 <- 1
     Yusual <- 2
-    eval(negzero.expression)
+    eval(negzero.expression.VGAM)
   }), list( .zero = zero,
             .apply.parint = apply.parint,
             .parallel = parallel ))),
@@ -997,12 +983,12 @@ rbinormcop <- function(n, rho = 0) {
 
 
 
-bilogistic4.control <- function(save.weight = TRUE, ...) {
+bilogistic.control <- function(save.weight = TRUE, ...) {
   list(save.weight = save.weight)
 }
 
 
- bilogistic4 <- function(llocation = "identitylink",
+ bilogistic  <- function(llocation = "identitylink",
                          lscale = "loge",
                          iloc1 = NULL, iscale1 = NULL,
                          iloc2 = NULL, iscale2 = NULL,
@@ -1033,7 +1019,7 @@ bilogistic4.control <- function(save.weight = TRUE, ...) {
             "\n", "\n",
             "Means:     location1, location2"),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.vgam(constraints, x, .zero, M)
+    constraints <- cm.zero.VGAM(constraints, x, .zero, M)
   }), list( .zero = zero))),
   initialize = eval(substitute(expression({
 
@@ -1139,7 +1125,7 @@ bilogistic4.control <- function(save.weight = TRUE, ...) {
     }
   }, list( .llocat = llocat, .lscale = lscale,
            .elocat = elocat, .escale = escale ))),
-  vfamily = c("bilogistic4"),
+  vfamily = c("bilogistic"),
 
 
   simslot = eval(substitute(
@@ -1154,9 +1140,9 @@ bilogistic4.control <- function(save.weight = TRUE, ...) {
     Scale1 <- eta2theta(eta[, 2], .lscale , .escale )
     locat2 <- eta2theta(eta[, 3], .llocat , .elocat )
     Scale2 <- eta2theta(eta[, 4], .lscale , .escale )
-    rbilogis4(nsim * length(locat1),
-              loc1 = locat1, scale1 = Scale1,
-              loc2 = locat2, scale2 = Scale2)
+    rbilogis(nsim * length(locat1),
+             loc1 = locat1, scale1 = Scale1,
+             loc2 = locat2, scale2 = Scale2)
   }, list( .llocat = llocat, .lscale = lscale,
            .elocat = elocat, .escale = escale ))),
 
@@ -1186,11 +1172,11 @@ bilogistic4.control <- function(save.weight = TRUE, ...) {
     dscale2.deta <- dtheta.deta(Scale2, .lscale , .escale )
 
     if (iter == 1) {
-        etanew <- eta
+      etanew <- eta
     } else {
-        derivold <- derivnew
-        etaold <- etanew
-        etanew <- eta
+      derivold <- derivnew
+      etaold <- etanew
+      etanew <- eta
     }
     derivnew <- c(w) * cbind(dl.dlocat1 * dlocat1.deta,
                              dl.dscale1 * dscale1.deta,
@@ -1219,8 +1205,8 @@ bilogistic4.control <- function(save.weight = TRUE, ...) {
 
 
 
-dbilogis4 <- function(x1, x2, loc1 = 0, scale1 = 1,
-                      loc2 = 0, scale2 = 1, log = FALSE) {
+dbilogis <- function(x1, x2, loc1 = 0, scale1 = 1,
+                     loc2 = 0, scale2 = 1, log = FALSE) {
   if (!is.logical(log.arg <- log) || length(log) != 1)
     stop("bad input for argument 'log'")
   rm(log)
@@ -1228,25 +1214,31 @@ dbilogis4 <- function(x1, x2, loc1 = 0, scale1 = 1,
 
 
 
-    L <- max(length(x1), length(x2),
-             length(loc1), length(loc2),
-             length(scale1), length(scale2))
-    if (length(x1    ) != L) x1     <- rep(x1,     length.out = L)
-    if (length(x2    ) != L) x2     <- rep(x2,     length.out = L)
-    if (length(loc1  ) != L) loc1   <- rep(loc1,   length.out = L)
-    if (length(loc2  ) != L) loc2   <- rep(loc2,   length.out = L)
-    if (length(scale1) != L) scale1 <- rep(scale1, length.out = L)
-    if (length(scale2) != L) scale2 <- rep(scale2, length.out = L)
-    zedd1 <- (-(x1 - loc1) / scale1)
-    zedd2 <- (-(x2 - loc2) / scale2)
-    logdensity <- log(2) + log(zedd1) + log(zedd2) - log(scale1) - 
-                  log(scale1) - 3 * log1p(exp(zedd1) + exp(zedd2))
-    if (log.arg) logdensity else exp(logdensity)
+  L <- max(length(x1), length(x2),
+           length(loc1), length(loc2),
+           length(scale1), length(scale2))
+  if (length(x1    ) != L) x1     <- rep(x1,     length.out = L)
+  if (length(x2    ) != L) x2     <- rep(x2,     length.out = L)
+  if (length(loc1  ) != L) loc1   <- rep(loc1,   length.out = L)
+  if (length(loc2  ) != L) loc2   <- rep(loc2,   length.out = L)
+  if (length(scale1) != L) scale1 <- rep(scale1, length.out = L)
+  if (length(scale2) != L) scale2 <- rep(scale2, length.out = L)
+  zedd1 <- (x1 - loc1) / scale1
+  zedd2 <- (x2 - loc2) / scale2
+
+
+
+
+  logdensity <- log(2) - zedd1 - zedd2 - log(scale1) - 
+                log(scale1) - 3 * log1p(exp(-zedd1) + exp(-zedd2))
+
+
+  if (log.arg) logdensity else exp(logdensity)
 }
 
 
 
-pbilogis4 <-
+pbilogis <-
   function(q1, q2, loc1 = 0, scale1 = 1, loc2 = 0, scale2 = 1) {
 
   ans <- 1 / (1 + exp(-(q1-loc1)/scale1) + exp(-(q2-loc2)/scale2))
@@ -1257,7 +1249,7 @@ pbilogis4 <-
 
 
 
-rbilogis4 <- function(n, loc1 = 0, scale1 = 1, loc2 = 0, scale2 = 1) {
+rbilogis <- function(n, loc1 = 0, scale1 = 1, loc2 = 0, scale2 = 1) {
 
 
   y1 <- rlogis(n = n, location = loc1, scale = scale1)
@@ -1305,11 +1297,11 @@ rbilogis4 <- function(n, loc1 = 0, scale1 = 1, loc2 = 0, scale2 = 1) {
             namesof("b",  lb,  earg = eb ), ", ",
             namesof("bp", lbp, earg = ebp)),
   constraints = eval(substitute(expression({
-    constraints <- cm.vgam(matrix(c(1, 1,0,0, 0,0, 1, 1), M, 2), x = x,
+    constraints <- cm.VGAM(matrix(c(1, 1,0,0, 0,0, 1, 1), M, 2), x = x,
                            bool = .independent ,
                            constraints = constraints,
                            apply.int = TRUE)
-    constraints <- cm.zero.vgam(constraints, x, .zero, M)
+    constraints <- cm.zero.VGAM(constraints, x, .zero, M)
   }), list(.independent = independent, .zero = zero))),
   initialize = eval(substitute(expression({
 
@@ -1471,7 +1463,7 @@ rbilogis4 <- function(n, loc1 = 0, scale1 = 1, loc2 = 0, scale2 = 1) {
                            ishape1 = NULL,
                            ishape2 = NULL,
                            imethod = 1,
-                           zero = 1) {
+                           zero = 2:3) {
   lscale <- as.list(substitute(lscale))
   escale <- link2list(lscale)
   lscale <- attr(escale, "function.name")
@@ -1505,11 +1497,11 @@ rbilogis4 <- function(n, loc1 = 0, scale1 = 1, loc2 = 0, scale2 = 1) {
   new("vglmff",
   blurb = c("Bivariate gamma: McKay's distribution\n",
             "Links:    ",
-            namesof("scale",  lscale), ", ",
-            namesof("shape1", lshape1), ", ",
-            namesof("shape2", lshape2)),
+            namesof("scale",  lscale,  earg = escale ), ", ",
+            namesof("shape1", lshape1, earg = eshape1), ", ",
+            namesof("shape2", lshape2, earg = eshape2)),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.vgam(constraints, x, .zero, M)
+    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
   }), list( .zero = zero ))),
   initialize = eval(substitute(expression({
 
@@ -1557,9 +1549,9 @@ rbilogis4 <- function(n, loc1 = 0, scale1 = 1, loc2 = 0, scale2 = 1) {
       a.grid <- if (length( .iscale )) c( .iscale ) else
          c(0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1, 2, 5, 10, 20, 50, 100)
       extraargs <- list(momentsY = momentsY)
-      ainit <- getMaxMin(a.grid, objfun = mcg2.loglik,
-                         y = y, x = x, w = w, maximize = TRUE,
-                         extraargs = extraargs)
+      ainit <- grid.search(a.grid, objfun = mcg2.loglik,
+                           y = y, x = x, w = w, maximize = TRUE,
+                           extraargs = extraargs)
       ainit <- rep(if (is.Numeric( .iscale )) .iscale else ainit,
                    length.out = n)
       pinit <- (1/ainit) * abs(momentsY[1]) + 0.01
@@ -1677,54 +1669,55 @@ rbilogis4 <- function(n, loc1 = 0, scale1 = 1, loc2 = 0, scale2 = 1) {
 
 
 
-rbifrankcop <- function(n, alpha) {
+rbifrankcop <- function(n, apar) {
   use.n <- if ((length.n <- length(n)) > 1) length.n else
            if (!is.Numeric(n, integer.valued = TRUE,
                            length.arg = 1, positive = TRUE))
               stop("bad input for argument 'n'") else n
-  if (!is.Numeric(alpha, positive = TRUE))
-    stop("bad input for argument 'alpha'")
-  if (length(alpha) != use.n) alpha <- rep(alpha, length.out = use.n)
+  if (!is.Numeric(apar, positive = TRUE))
+    stop("bad input for argument 'apar'")
+  if (length(apar) != use.n)
+    apar <- rep(apar, length.out = use.n)
   U <- runif(use.n)
   V <- runif(use.n)
 
-  T <- alpha^U + (alpha - alpha^U) * V
+  T <- apar^U + (apar - apar^U) * V
   X <- U
-  index <- (abs(alpha - 1) < .Machine$double.eps)
+  index <- (abs(apar - 1) < .Machine$double.eps)
   Y <- U
   if (any(!index))
     Y[!index] <- logb(T[!index] / (T[!index] +
-                      (1 - alpha[!index]) * V[!index]),
-                      base = alpha[!index])
+                      (1 - apar[!index]) * V[!index]),
+                      base = apar[!index])
   ans <- matrix(c(X, Y), nrow = use.n, ncol = 2)
   if (any(index)) {
-    ans[index, 1] <- runif(sum(index))  # Uniform density for alpha == 1
+    ans[index, 1] <- runif(sum(index))  # Uniform density for apar == 1
     ans[index, 2] <- runif(sum(index))
   }
   ans
 }
 
 
-pbifrankcop <- function(q1, q2, alpha) {
+pbifrankcop <- function(q1, q2, apar) {
   if (!is.Numeric(q1))                     stop("bad input for 'q1'")
   if (!is.Numeric(q2))                     stop("bad input for 'q2'")
-  if (!is.Numeric(alpha, positive = TRUE)) stop("bad input for 'alpha'")
+  if (!is.Numeric(apar, positive = TRUE)) stop("bad input for 'apar'")
 
-  L <- max(length(q1), length(q2), length(alpha))
-  if (length(alpha) != L) alpha <- rep(alpha, length.out = L)
+  L <- max(length(q1), length(q2), length(apar))
+  if (length(apar) != L) apar <- rep(apar, length.out = L)
   if (length(q1   ) != L) q1    <- rep(q1,    length.out = L)
   if (length(q2   ) != L) q2    <- rep(q2,    length.out = L)
 
   x <- q1; y <- q2
   index <- (x >= 1 & y <  1) | (y >= 1 & x <  1) |
            (x <= 0 | y <= 0) | (x >= 1 & y >= 1) |
-           (abs(alpha - 1) < .Machine$double.eps)
+           (abs(apar - 1) < .Machine$double.eps)
   ans <- as.numeric(index)
   if (any(!index))
-  ans[!index] <- logb(1 + ((alpha[!index])^(x[!index]) - 1)*
-                 ((alpha[!index])^(y[!index]) - 1)/(alpha[!index] - 1), 
-                 base = alpha[!index])
-  ind2 <- (abs(alpha - 1) < .Machine$double.eps)
+  ans[!index] <- logb(1 + ((apar[!index])^(x[!index]) - 1)*
+                 ((apar[!index])^(y[!index]) - 1)/(apar[!index] - 1), 
+                 base = apar[!index])
+  ind2 <- (abs(apar - 1) < .Machine$double.eps)
   ans[ind2] <- x[ind2] * y[ind2]
   ans[x >= 1 & y <  1] <- y[x >= 1 & y < 1]  # P(Y2 < q2) = q2
   ans[y >= 1 & x <  1] <- x[y >= 1 & x < 1]  # P(Y1 < q1) = q1
@@ -1734,7 +1727,24 @@ pbifrankcop <- function(q1, q2, alpha) {
 }
 
 
-dbifrankcop <- function(x1, x2, alpha, log = FALSE) {
+
+
+
+if (FALSE)
+dbifrank <- function(x1, x2, apar, log = FALSE) {
+  if (!is.logical(log.arg <- log) || length(log) != 1)
+    stop("bad input for argument 'log'")
+  rm(log)
+  logdens <- (x1+x2)*log(apar) + log(apar-1) + log(log(apar)) -
+             2 * log(apar - 1 + (apar^x1 - 1) * (apar^x2 - 1))
+
+  if (log.arg) logdens else exp(logdens)
+}
+
+
+
+
+dbifrankcop <- function(x1, x2, apar, log = FALSE) {
   if (!is.logical(log.arg <- log) || length(log) != 1)
     stop("bad input for argument 'log'")
   rm(log)
@@ -1742,25 +1752,25 @@ dbifrankcop <- function(x1, x2, alpha, log = FALSE) {
 
   if (!is.Numeric(x1))                     stop("bad input for 'x1'")
   if (!is.Numeric(x2))                     stop("bad input for 'x2'")
-  if (!is.Numeric(alpha, positive = TRUE)) stop("bad input for 'alpha'")
+  if (!is.Numeric(apar, positive = TRUE)) stop("bad input for 'apar'")
 
-  L <- max(length(x1), length(x2), length(alpha))
-  if (length(alpha) != L) alpha <- rep(alpha, length.out = L)
+  L <- max(length(x1), length(x2), length(apar))
+  if (length(apar) != L) apar <- rep(apar, length.out = L)
   if (length(x1   ) != L) x1    <- rep(x1,    length.out = L)
   if (length(x2   ) != L) x2    <- rep(x2,    length.out = L)
 
   if (log.arg) {
-    denom <- alpha-1 + (alpha^x1  - 1) * (alpha^x2  - 1)
+    denom <- apar-1 + (apar^x1  - 1) * (apar^x2  - 1)
     denom <- abs(denom)
-    log((alpha - 1) * log(alpha)) + (x1+x2)*log(alpha) - 2 * log(denom)
+    log((apar - 1) * log(apar)) + (x1+x2)*log(apar) - 2 * log(denom)
   } else {
-    temp <- (alpha - 1) + (alpha^x1 - 1) * (alpha^x2 - 1)
-    index <- (abs(alpha - 1) < .Machine$double.eps)
+    temp <- (apar - 1) + (apar^x1 - 1) * (apar^x2 - 1)
+    index <- (abs(apar - 1) < .Machine$double.eps)
     ans <- x1
     if (any(!index))
-      ans[!index] <- (alpha[!index] - 1) * log(alpha[!index]) *
-                     (alpha[!index])^(x1[!index] +
-                                      x2[!index]) / (temp[!index])^2
+      ans[!index] <- (apar[!index] - 1) * log(apar[!index]) *
+                     (apar[!index])^(x1[!index] +
+                                     x2[!index]) / (temp[!index])^2
     ans[x1 <= 0 | x2 <= 0 | x1 >= 1 | x2 >= 1] <- 0
     ans[index] <- 1
     ans
@@ -1855,7 +1865,7 @@ bifrankcop.control <- function(save.weight = TRUE, ...) {
       stop("loglikelihood residuals not implemented yet")
     } else {
       ll.elts <- c(w) * dbifrankcop(x1 = y[, 1], x2 = y[, 2],
-                                    alpha = apar, log = TRUE)
+                                    apar = apar, log = TRUE)
       if (summation) {
         sum(ll.elts)
       } else {
@@ -1876,7 +1886,7 @@ bifrankcop.control <- function(save.weight = TRUE, ...) {
       warning("ignoring prior weights")
     eta <- predict(object)
     apar <- eta2theta(eta, .lapar , earg = .eapar )
-    rbifrankcop(nsim * length(apar), alpha = c(apar))
+    rbifrankcop(nsim * length(apar), apar = c(apar))
   }, list( .lapar = lapar, .eapar = eapar ))),
 
 
@@ -1907,7 +1917,7 @@ bifrankcop.control <- function(save.weight = TRUE, ...) {
 
     run.mean <- 0
     for (ii in 1:( .nsimEIM )) {
-      ysim <- rbifrankcop(n, alpha = apar)
+      ysim <- rbifrankcop(n, apar = apar)
         y1 <- ysim[, 1]; y2 <- ysim[, 2];
         eval.de3 <- eval(de3)
         d2l.dthetas2 <-  attr(eval.de3, "hessian")
@@ -1950,7 +1960,8 @@ bifrankcop.control <- function(save.weight = TRUE, ...) {
 
 
 
- gammahyp <- function(ltheta = "loge", itheta = NULL, expected = FALSE) {
+ gammahyperbola <-
+  function(ltheta = "loge", itheta = NULL, expected = FALSE) {
 
   ltheta <- as.list(substitute(ltheta))
   etheta <- link2list(ltheta)
@@ -2024,7 +2035,7 @@ bifrankcop.control <- function(save.weight = TRUE, ...) {
       }
     }
   }, list( .ltheta = ltheta, .etheta = etheta ))),
-  vfamily = c("gammahyp"),
+  vfamily = c("gammahyperbola"),
   deriv = eval(substitute(expression({
     theta <- eta2theta(eta, .ltheta , .etheta )
     Dl.dtheta <- exp(-theta) * y[, 1] * (1+theta) / theta^2 - y[, 2]
@@ -2049,9 +2060,10 @@ bifrankcop.control <- function(save.weight = TRUE, ...) {
 
 
 
- morgenstern <- function(lapar = "rhobit",
-                         iapar = NULL, tola0 = 0.01,
-                         imethod = 1) {
+ bifgmexp <-
+  function(lapar = "rhobit",
+           iapar = NULL, tola0 = 0.01,
+           imethod = 1) {
   lapar <- as.list(substitute(lapar))
   earg  <- link2list(lapar)
   lapar <- attr(earg, "function.name")
@@ -2073,7 +2085,8 @@ bifrankcop.control <- function(save.weight = TRUE, ...) {
 
 
   new("vglmff",
-  blurb = c("Morgenstern's bivariate exponential distribution\n",
+  blurb = c("Bivariate Farlie-Gumbel-Morgenstern ",
+            "exponential distribution\n",  # Morgenstern's 
             "Links:    ",
             namesof("apar", lapar, earg = earg )),
   initialize = eval(substitute(expression({
@@ -2146,7 +2159,7 @@ bifrankcop.control <- function(save.weight = TRUE, ...) {
       }
     }
   }, list( .lapar = lapar, .earg = earg, .tola0 = tola0 ))),
-  vfamily = c("morgenstern"),
+  vfamily = c("bifgmexp"),  # morgenstern
   deriv = eval(substitute(expression({
     alpha  <- eta2theta(eta, .lapar , earg = .earg )
     alpha[abs(alpha) < .tola0 ] <- .tola0
@@ -2159,19 +2172,19 @@ bifrankcop.control <- function(save.weight = TRUE, ...) {
     dalpha.deta <- dtheta.deta(alpha,  .lapar , earg = .earg )
 
     c(w) * cbind(dl.dalpha * dalpha.deta)
-  }), list( .lapar = lapar, .earg = earg, .tola0=tola0 ))),
+  }), list( .lapar = lapar, .earg = earg, .tola0 = tola0 ))),
   weight = eval(substitute(expression({
     d2l.dalpha2 <- dl.dalpha^2
     d2alpha.deta2 <- d2theta.deta2(alpha,  .lapar , earg = .earg )
     wz <- c(w) * (dalpha.deta^2 * d2l.dalpha2 - d2alpha.deta2 * dl.dalpha)
-    if (TRUE &&
-       intercept.only) {
-        wz <- cbind(wz)
+    if (TRUE  &&
+        intercept.only) {
+      wz <- cbind(wz)
       sumw <- sum(w)
       for (iii in 1:ncol(wz))
-        wz[,iii] <- sum(wz[, iii]) / sumw
+        wz[, iii] <- sum(wz[, iii]) / sumw
       pooled.weight <- TRUE
-      wz <- c(w) * wz   # Put back the weights
+      wz <- c(w) * wz  # Put back the weights
     } else {
       pooled.weight <- FALSE
     }
@@ -2182,71 +2195,71 @@ bifrankcop.control <- function(save.weight = TRUE, ...) {
 
 
 
-rfgm <- function(n, alpha) {
+rbifgmcop <- function(n, apar) {
   use.n <- if ((length.n <- length(n)) > 1) length.n else
            if (!is.Numeric(n, integer.valued = TRUE,
                            length.arg = 1, positive = TRUE))
               stop("bad input for argument 'n'") else n
 
-  if (!is.Numeric(alpha))
-    stop("bad input for argument 'alpha'")
-  if (any(abs(alpha) > 1))
-    stop("argument 'alpha' has values out of range")
+  if (!is.Numeric(apar))
+    stop("bad input for argument 'apar'")
+  if (any(abs(apar) > 1))
+    stop("argument 'apar' has values out of range")
 
   y1 <- V1 <- runif(use.n)
   V2 <- runif(use.n)
   temp <- 2*y1 - 1
-  A <- alpha * temp - 1
-  B <- sqrt(1 - 2 * alpha * temp + (alpha*temp)^2 + 4 * alpha * V2 * temp)
+  A <- apar * temp - 1
+  B <- sqrt(1 - 2 * apar * temp + (apar*temp)^2 + 4 * apar * V2 * temp)
   y2 <- 2 * V2 / (B - A)
   matrix(c(y1, y2), nrow = use.n, ncol = 2)
 }
 
 
 
-dfgm <- function(x1, x2, alpha, log = FALSE) {
+dbifgmcop <- function(x1, x2, apar, log = FALSE) {
   if (!is.logical(log.arg <- log) ||
       length(log) != 1)
     stop("bad input for argument 'log'")
   rm(log)
 
-  if (!is.Numeric(alpha))
-    stop("bad input for 'alpha'")
-  if (any(abs(alpha) > 1))
-    stop("'alpha' values out of range")
+  if (!is.Numeric(apar))
+    stop("bad input for 'apar'")
+  if (any(abs(apar) > 1))
+    stop("'apar' values out of range")
   if ( !is.logical( log.arg ) ||
        length( log.arg ) != 1 )
     stop("bad input for argument 'log'")
 
-  L <- max(length(x1), length(x2), length(alpha))
-  if (length(x1)    != L)  x1    <- rep(x1,    length.out = L)
-  if (length(x2)    != L)  x2    <- rep(x2,    length.out = L)
-  if (length(alpha) != L)  alpha <- rep(alpha, length.out = L)
+  L <- max(length(x1), length(x2), length(apar))
+  if (length(x1)    != L)  x1   <- rep(x1,   length.out = L)
+  if (length(x2)    != L)  x2   <- rep(x2,   length.out = L)
+  if (length(apar)  != L)  apar <- rep(apar, length.out = L)
   ans <- 0 * x1
   xnok <- (x1 <= 0) | (x1 >= 1) | (x2 <= 0) | (x2 >= 1)
   if ( log.arg ) {
-    ans[!xnok] <- log1p(alpha[!xnok] * (1-2*x1[!xnok]) * (1-2*x2[!xnok]))
+    ans[!xnok] <- log1p(apar[!xnok] * (1-2*x1[!xnok]) * (1-2*x2[!xnok]))
     ans[xnok] <- log(0)
   } else {
-    ans[!xnok] <-   1 + alpha[!xnok] * (1-2*x1[!xnok]) * (1-2*x2[!xnok])
+    ans[!xnok] <-   1 + apar[!xnok] * (1-2*x1[!xnok]) * (1-2*x2[!xnok])
     ans[xnok] <- 0
     if (any(ans < 0))
-      stop("negative values in the density (alpha out of range)")
+      stop("negative values in the density (apar out of range)")
   }
   ans
 }
 
 
-pfgm <- function(q1, q2, alpha) {
+pbifgmcop <- function(q1, q2, apar) {
   if (!is.Numeric(q1))     stop("bad input for 'q1'")
   if (!is.Numeric(q2))     stop("bad input for 'q2'")
-  if (!is.Numeric(alpha))  stop("bad input for 'alpha'")
-  if (any(abs(alpha) > 1)) stop("'alpha' values out of range")
+  if (!is.Numeric(apar))  stop("bad input for 'apar'")
+  if (any(abs(apar) > 1)) stop("'apar' values out of range")
 
-  L <- max(length(q1), length(q2), length(alpha))
+  L <- max(length(q1), length(q2), length(apar))
   if (length(q1)    != L)     q1 <- rep(q1,    length.out = L)
   if (length(q2)    != L)     q2 <- rep(q2,    length.out = L)
-  if (length(alpha) != L)  alpha <- rep(alpha, length.out = L)
+  if (length(apar) != L)  apar <- rep(apar, length.out = L)
 
   x <- q1
   y <- q2
@@ -2256,7 +2269,7 @@ pfgm <- function(q1, q2, alpha) {
            (x >= 1 & y >= 1)
   ans <- as.numeric(index)
   if (any(!index)) {
-    ans[!index] <-    q1[!index] *   q2[!index] * (1 + alpha[!index] *
+    ans[!index] <-    q1[!index] *   q2[!index] * (1 + apar[!index] *
                    (1-q1[!index])*(1-q2[!index]))
   }
   ans[x >= 1 & y<1] <- y[x >= 1 & y<1]  # P(Y2 < q2) = q2
@@ -2271,8 +2284,8 @@ pfgm <- function(q1, q2, alpha) {
 
 
 
- fgm <- function(lapar = "rhobit", iapar = NULL,
-                 imethod = 1) {
+ bifgmcop <- function(lapar = "rhobit", iapar = NULL,
+                      imethod = 1) {
 
   lapar <- as.list(substitute(lapar))
   earg  <- link2list(lapar)
@@ -2290,7 +2303,7 @@ pfgm <- function(q1, q2, alpha) {
 
 
   new("vglmff",
-  blurb = c("Farlie-Gumbel-Morgenstern distribution\n",
+  blurb = c("Farlie-Gumbel-Morgenstern copula \n",  # distribution
             "Links:    ",
             namesof("apar", lapar, earg = earg )),
   initialize = eval(substitute(expression({
@@ -2350,7 +2363,6 @@ pfgm <- function(q1, q2, alpha) {
   }, list( .lapar = lapar, .earg = earg ))),
   last = eval(substitute(expression({
     misc$link <-    c("apar" = .lapar )
-
     misc$earg <- list("apar" = .earg  )
 
     misc$expected <- FALSE
@@ -2364,8 +2376,8 @@ pfgm <- function(q1, q2, alpha) {
     if (residuals) {
       stop("loglikelihood residuals not implemented yet")
     } else {
-      ll.elts <- c(w) * dfgm(x1 = y[, 1],
-                             x2 = y[, 2], alpha = alpha, log = TRUE)
+      ll.elts <- c(w) * dbifgmcop(x1 = y[, 1],
+                                  x2 = y[, 2], apar = alpha, log = TRUE)
       if (summation) {
         sum(ll.elts)
       } else {
@@ -2373,9 +2385,7 @@ pfgm <- function(q1, q2, alpha) {
       }
     }
   }, list( .lapar = lapar, .earg = earg ))),
-  vfamily = c("fgm"),
-
-
+  vfamily = c("bifgmcop"),
 
 
   simslot = eval(substitute(
@@ -2387,10 +2397,8 @@ pfgm <- function(q1, q2, alpha) {
       warning("ignoring prior weights")
     eta <- predict(object)
     alpha <- eta2theta(eta, .lapar , earg = .earg )
-    rfgm(nsim * length(alpha), alpha = c(alpha))
+    rbifgmcop(nsim * length(alpha), apar = c(alpha))
   }, list( .lapar = lapar, .earg = earg ))),
-
-
 
 
 
@@ -2423,7 +2431,9 @@ pfgm <- function(q1, q2, alpha) {
 
 
 
- bigumbelI <- function(lapar = "identitylink", iapar = NULL, imethod = 1) {
+
+ bigumbelIexp <-
+  function(lapar = "identitylink", iapar = NULL, imethod = 1) {
 
   lapar <- as.list(substitute(lapar))
   earg  <- link2list(lapar)
@@ -2440,7 +2450,7 @@ pfgm <- function(q1, q2, alpha) {
 
 
   new("vglmff",
-  blurb = c("Gumbel's Type I bivariate distribution\n",
+  blurb = c("Gumbel's Type I bivariate exponential distribution\n",
             "Links:    ",
             namesof("apar", lapar, earg = earg )),
   initialize = eval(substitute(expression({
@@ -2516,7 +2526,7 @@ pfgm <- function(q1, q2, alpha) {
       }
     }
   }, list( .lapar = lapar, .earg = earg ))),
-  vfamily = c("bigumbelI"),
+  vfamily = c("bigumbelIexp"),
   deriv = eval(substitute(expression({
     alpha  <- eta2theta(eta, .lapar , earg = .earg )
     numerator <- (alpha * y[, 1] - 1) * y[, 2] +
@@ -2555,7 +2565,7 @@ pfgm <- function(q1, q2, alpha) {
 
 
 
-pplack <- function(q1, q2, oratio) {
+pbiplackcop <- function(q1, q2, oratio) {
   if (!is.Numeric(q1)) stop("bad input for 'q1'")
   if (!is.Numeric(q2)) stop("bad input for 'q2'")
   if (!is.Numeric(oratio, positive = TRUE)) stop("bad input for 'oratio'")
@@ -2588,7 +2598,7 @@ pplack <- function(q1, q2, oratio) {
 
 
 
-rplack <- function(n, oratio) {
+rbiplackcop <- function(n, oratio) {
   use.n <- if ((length.n <- length(n)) > 1) length.n else
            if (!is.Numeric(n, integer.valued = TRUE,
                            length.arg = 1, positive = TRUE))
@@ -2607,7 +2617,7 @@ rplack <- function(n, oratio) {
 
 
 
-dplack <- function(x1, x2, oratio, log = FALSE) {
+dbiplackcop <- function(x1, x2, oratio, log = FALSE) {
   if (!is.logical(log.arg <- log) || length(log) != 1)
     stop("bad input for argument 'log'")
   rm(log)
@@ -2626,13 +2636,13 @@ dplack <- function(x1, x2, oratio, log = FALSE) {
 
 
 
-plackett.control <- function(save.weight = TRUE, ...) {
+biplackettcop.control <- function(save.weight = TRUE, ...) {
   list(save.weight = save.weight)
 }
 
 
 
- plackett <- function(link = "loge", ioratio = NULL,
+ biplackettcop <- function(link = "loge", ioratio = NULL,
                       imethod = 1, nsimEIM = 200) {
 
   link <- as.list(substitute(link))
@@ -2650,7 +2660,7 @@ plackett.control <- function(save.weight = TRUE, ...) {
 
 
   new("vglmff",
-  blurb = c("Plackett distribution\n",
+  blurb = c("Plackett distribution (bivariate copula)\n",
             "Links:    ",
             namesof("oratio", link, earg = earg )),
   initialize = eval(substitute(expression({
@@ -2724,7 +2734,7 @@ plackett.control <- function(save.weight = TRUE, ...) {
     if (residuals) {
       stop("loglikelihood residuals not implemented yet")
     } else {
-      ll.elts <- c(w) * dplack(x1 = y[, 1], x2 = y[, 2],
+      ll.elts <- c(w) * dbiplackcop(x1 = y[, 1], x2 = y[, 2],
                                oratio = oratio, log = TRUE)
       if (summation) {
         sum(ll.elts)
@@ -2733,7 +2743,7 @@ plackett.control <- function(save.weight = TRUE, ...) {
       }
     }
   }, list( .link = link, .earg = earg ))),
-  vfamily = c("plackett"),
+  vfamily = c("biplackettcop"),
 
 
   simslot = eval(substitute(
@@ -2745,7 +2755,7 @@ plackett.control <- function(save.weight = TRUE, ...) {
       warning("ignoring prior weights")
     eta <- predict(object)
     oratio <- eta2theta(eta, .link , earg = .earg )
-    rplack(nsim * length(oratio), oratio = c(oratio))
+    rbiplackcop(nsim * length(oratio), oratio = c(oratio))
   }, list(  .link = link, .earg = earg ))),
 
 
@@ -2774,7 +2784,7 @@ plackett.control <- function(save.weight = TRUE, ...) {
                     name = "oratio", hessian = FALSE)
     run.var <- 0
     for (ii in 1:( .nsimEIM )) {
-      ysim <- rplack(n, oratio = oratio)
+      ysim <- rbiplackcop(n, oratio = oratio)
       y1sim <- ysim[, 1]
       y2sim <- ysim[, 1]
         eval.sd3 <- eval(sd3)
@@ -2795,92 +2805,99 @@ plackett.control <- function(save.weight = TRUE, ...) {
 
 
 
-damh <- function(x1, x2, alpha, log = FALSE) {
+
+dbiamhcop <- function(x1, x2, apar, log = FALSE) {
   if (!is.logical(log.arg <- log) || length(log) != 1)
     stop("bad input for argument 'log'")
   rm(log)
 
 
 
-  L <- max(length(x1), length(x2), length(alpha))
-  alpha <- rep(alpha,  length.out = L)
+  L <- max(length(x1), length(x2), length(apar))
+  apar <- rep(apar,  length.out = L)
   x1    <- rep(x1,     length.out = L)
   x2    <- rep(x2,     length.out = L)
-  temp <- 1 - alpha*(1-x1)*(1-x2)
+  temp <- 1 - apar*(1-x1)*(1-x2)
 
   if (log.arg) {
-    ans <- log1p(-alpha+2*alpha*x1*x2/temp) - 2*log(temp)
+    ans <- log1p(-apar+2*apar*x1*x2/temp) - 2*log(temp)
     ans[(x1 <= 0) | (x1 >= 1) | (x2 <= 0) | (x2 >= 1)] <- log(0)
   } else {
-    ans <- (1-alpha+2*alpha*x1*x2/temp) / (temp^2)
+    ans <- (1-apar+2*apar*x1*x2/temp) / (temp^2)
     ans[(x1 <= 0) | (x1 >= 1) | (x2 <= 0) | (x2 >= 1)] <- 0
   }
-  ans[abs(alpha) > 1] <- NA
+  ans[abs(apar) > 1] <- NA
   ans
 }
 
 
-pamh <- function(q1, q2, alpha) {
+pbiamhcop <- function(q1, q2, apar) {
   if (!is.Numeric(q1)) stop("bad input for 'q1'")
   if (!is.Numeric(q2)) stop("bad input for 'q2'")
-  if (!is.Numeric(alpha)) stop("bad input for 'alpha'")
+  if (!is.Numeric(apar)) stop("bad input for 'apar'")
 
-  L <- max(length(q1), length(q2), length(alpha))
-  if (length(q1) != L)  q1 <- rep(q1, length.out = L)
-  if (length(q2) != L)  q2 <- rep(q2, length.out = L)
-  if (length(alpha) != L)  alpha <- rep(alpha, length.out = L)
+  L <- max(length(q1), length(q2), length(apar))
+  if (length(q1)    != L)  q1    <- rep(q1,    length.out = L)
+  if (length(q2)    != L)  q2    <- rep(q2,    length.out = L)
+  if (length(apar) != L)  apar <- rep(apar, length.out = L)
 
-  x <- q1; y <- q2
+  x <- q1
+  y <- q2
   index <- (x >= 1 & y < 1) | (y >= 1 & x <  1) |
            (x <= 0 | y<= 0) | (x >= 1 & y >= 1)
   ans <- as.numeric(index)
   if (any(!index)) {
-      ans[!index] <- (q1[!index]*q2[!index]) / (1 -
-                     alpha[!index]*(1-q1[!index])*(1-q2[!index]))
+    ans[!index] <- (q1[!index] * q2[!index]) / (1 -
+                   apar[!index] * (1-q1[!index]) * (1-q2[!index]))
   }
   ans[x >= 1 & y <  1] <- y[x >= 1 & y < 1]  # P(Y2 < q2) = q2
   ans[y >= 1 & x <  1] <- x[y >= 1 & x < 1]  # P(Y1 < q1) = q1
   ans[x <= 0 | y <= 0] <- 0
   ans[x >= 1 & y >= 1] <- 1
-  ans[abs(alpha) > 1] <- NA
+  ans[abs(apar) > 1] <- NA
   ans
 }
 
 
-ramh <- function(n, alpha) {
+rbiamhcop <- function(n, apar) {
   use.n <- if ((length.n <- length(n)) > 1) length.n else
            if (!is.Numeric(n, integer.valued = TRUE,
                            length.arg = 1, positive = TRUE))
               stop("bad input for argument 'n'") else n
 
-  if (any(abs(alpha) > 1))
-    stop("'alpha' values out of range")
+
+
+
+
+
+  if (any(abs(apar) > 1))
+    stop("'apar' values out of range")
 
   U1 <- V1 <- runif(use.n)
   V2 <- runif(use.n)
   b <- 1-V1
-  A <- -alpha*(2*b*V2+1)+2*alpha^2*b^2*V2+1
-  B <- alpha^2*(4*b^2*V2-4*b*V2+1)+alpha*(4*V2-4*b*V2-2)+1
-  U2 <- (2*V2*(alpha*b - 1)^2)/(A+sqrt(B))
+  A <- -apar*(2*b*V2+1)+2*apar^2*b^2*V2+1
+  B <- apar^2*(4*b^2*V2-4*b*V2+1)+apar*(4*V2-4*b*V2-2)+1
+  U2 <- (2*V2*(apar*b - 1)^2)/(A+sqrt(B))
   matrix(c(U1, U2), nrow = use.n, ncol = 2)
 }
 
 
-amh.control <- function(save.weight = TRUE, ...) {
+biamhcop.control <- function(save.weight = TRUE, ...) {
   list(save.weight = save.weight)
 }
 
 
- amh <- function(lalpha = "rhobit", ialpha = NULL,
+ biamhcop <- function(lapar = "rhobit", iapar = NULL,
                  imethod = 1, nsimEIM = 250) {
-  lalpha <- as.list(substitute(lalpha))
-  ealpha <- link2list(lalpha)
-  lalpha <- attr(ealpha, "function.name")
+  lapar <- as.list(substitute(lapar))
+  eapar <- link2list(lapar)
+  lapar <- attr(eapar, "function.name")
 
 
 
-  if (length(ialpha) && (abs(ialpha) > 1))
-    stop("'ialpha' should be less than or equal to 1 in absolute value")
+  if (length(iapar) && (abs(iapar) > 1))
+    stop("'iapar' should be less than or equal to 1 in absolute value")
   if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
     imethod > 2)
@@ -2896,7 +2913,7 @@ amh.control <- function(save.weight = TRUE, ...) {
   new("vglmff",
   blurb = c("Ali-Mikhail-Haq distribution\n",
             "Links:    ",
-            namesof("alpha", lalpha, earg = ealpha )),
+            namesof("apar", lapar, earg = eapar )),
   initialize = eval(substitute(expression({
     if (any(y < 0) || any(y > 1))
         stop("the response must have values in the unit square")
@@ -2915,13 +2932,13 @@ amh.control <- function(save.weight = TRUE, ...) {
 
 
     predictors.names <-
-      c(namesof("alpha", .lalpha, earg = .ealpha, short = TRUE))
+      c(namesof("apar", .lapar, earg = .eapar, short = TRUE))
 
     if (length(dimnames(y)))
       extra$dimnamesy2 <- dimnames(y)[[2]]
 
     if (!length(etastart)) {
-      ainit  <- if (length( .ialpha ))  .ialpha else {
+      ainit  <- if (length( .iapar ))  .iapar else {
           mean1 <- if ( .imethod == 1) weighted.mean(y[, 1], w) else
                    median(y[, 1])
           mean2 <- if ( .imethod == 1) weighted.mean(y[, 2], w) else
@@ -2931,45 +2948,45 @@ amh.control <- function(save.weight = TRUE, ...) {
       }
       ainit <- min(0.95, max(ainit, -0.95))
       etastart <-
-        theta2eta(rep(ainit, length.out = n), .lalpha, earg = .ealpha )
+        theta2eta(rep(ainit, length.out = n), .lapar , earg = .eapar )
     }
-  }), list( .lalpha = lalpha, .ealpha = ealpha, .ialpha = ialpha,
+  }), list( .lapar = lapar, .eapar = eapar, .iapar = iapar,
             .imethod = imethod))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
-    alpha <- eta2theta(eta, .lalpha, earg = .ealpha )
-    fv.matrix <- matrix(0.5, length(alpha), 2)
+    apar <- eta2theta(eta, .lapar, earg = .eapar )
+    fv.matrix <- matrix(0.5, length(apar), 2)
     if (length(extra$dimnamesy2))
         dimnames(fv.matrix) <- list(names(eta), extra$dimnamesy2)
     fv.matrix
-  }, list( .lalpha = lalpha, .ealpha = ealpha ))),
+  }, list( .lapar = lapar, .eapar = eapar ))),
   last = eval(substitute(expression({
-    misc$link <-    c("alpha" = .lalpha )
+    misc$link <-    c("apar" = .lapar )
 
-    misc$earg <- list("alpha" = .ealpha )
+    misc$earg <- list("apar" = .eapar )
 
     misc$expected <- TRUE
     misc$nsimEIM <- .nsimEIM
     misc$multipleResponses <- FALSE
-  }), list( .lalpha = lalpha,
-            .ealpha = ealpha, .nsimEIM = nsimEIM ))),
+  }), list( .lapar = lapar,
+            .eapar = eapar, .nsimEIM = nsimEIM ))),
   loglikelihood = eval(substitute(
     function(mu, y, w, residuals = FALSE, eta,
              extra = NULL,
              summation = TRUE) {
-    alpha <- eta2theta(eta, .lalpha, earg = .ealpha )
+    apar <- eta2theta(eta, .lapar, earg = .eapar )
     if (residuals) {
       stop("loglikelihood residuals not implemented yet")
     } else {
-      ll.elts <- c(w) * damh(x1 = y[, 1], x2 = y[, 2],
-                             alpha = alpha, log = TRUE)
+      ll.elts <- c(w) * dbiamhcop(x1 = y[, 1], x2 = y[, 2],
+                             apar = apar, log = TRUE)
       if (summation) {
         sum(ll.elts)
       } else {
         ll.elts
       }
     }
-  }, list( .lalpha = lalpha, .ealpha = ealpha ))),
-  vfamily = c("amh"),
+  }, list( .lapar = lapar, .eapar = eapar ))),
+  vfamily = c("biamhcop"),
 
 
 
@@ -2981,44 +2998,44 @@ amh.control <- function(save.weight = TRUE, ...) {
     if (any(pwts != 1)) 
       warning("ignoring prior weights")
     eta <- predict(object)
-    alpha <- eta2theta(eta, .lalpha , earg = .ealpha )
-    ramh(nsim * length(alpha), alpha = c(alpha))
-  }, list( .lalpha = lalpha, .ealpha = ealpha ))),
+    apar <- eta2theta(eta, .lapar , earg = .eapar )
+    rbiamhcop(nsim * length(apar), apar = c(apar))
+  }, list( .lapar = lapar, .eapar = eapar ))),
 
 
 
   deriv = eval(substitute(expression({
-    alpha <- eta2theta(eta, .lalpha, earg = .ealpha )
+    apar <- eta2theta(eta, .lapar, earg = .eapar )
 
-    dalpha.deta <- dtheta.deta(alpha, .lalpha, earg = .ealpha )
+    dapar.deta <- dtheta.deta(apar, .lapar, earg = .eapar )
 
     y1 <- y[, 1]
     y2 <- y[, 2]
-    de3 <- deriv3(~ (log(1 - alpha+
-                        (2 * alpha*y1*y2/(1-alpha*(1-y1)*(1-y2)))) -
-                    2 * log(1 - alpha*(1-y1)*(1-y2))) ,
-                    name = "alpha", hessian = FALSE)
+    de3 <- deriv3(~ (log(1 - apar+
+                        (2 * apar*y1*y2/(1-apar*(1-y1)*(1-y2)))) -
+                    2 * log(1 - apar*(1-y1)*(1-y2))) ,
+                    name = "apar", hessian = FALSE)
     eval.de3 <- eval(de3)
 
-    dl.dalpha <-  attr(eval.de3, "gradient")
+    dl.dapar <-  attr(eval.de3, "gradient")
 
-    c(w) * dl.dalpha * dalpha.deta
-  }), list( .lalpha = lalpha, .ealpha = ealpha ))),
+    c(w) * dl.dapar * dapar.deta
+  }), list( .lapar = lapar, .eapar = eapar ))),
   weight = eval(substitute(expression({
-    sd3 <- deriv3(~ (log(1 - alpha +
-                        (2 * alpha * y1sim * y2sim / (1 - alpha *
+    sd3 <- deriv3(~ (log(1 - apar +
+                        (2 * apar * y1sim * y2sim / (1 - apar *
                          (1 - y1sim) * (1-y2sim)))) -
-                     2 * log(1-alpha*(1-y1sim)*(1-y2sim))),
-                     name = "alpha", hessian = FALSE)
+                     2 * log(1-apar*(1-y1sim)*(1-y2sim))),
+                     name = "apar", hessian = FALSE)
     run.var <- 0
     for (ii in 1:( .nsimEIM )) {
-      ysim <- ramh(n, alpha = alpha)
+      ysim <- rbiamhcop(n, apar = apar)
       y1sim <- ysim[, 1]
       y2sim <- ysim[, 1]
       eval.sd3 <- eval(sd3)
-      dl.alpha <-  attr(eval.sd3, "gradient")
+      dl.apar <-  attr(eval.sd3, "gradient")
       rm(ysim, y1sim, y2sim)
-      temp3 <- dl.dalpha
+      temp3 <- dl.dapar
       run.var <- ((ii - 1) * run.var + temp3^2) / ii
     }
 
@@ -3026,11 +3043,11 @@ amh.control <- function(save.weight = TRUE, ...) {
         matrix(colMeans(cbind(run.var)),
                n, dimm(M), byrow = TRUE) else cbind(run.var)
 
-    wz <- wz * dalpha.deta^2
+    wz <- wz * dapar.deta^2
 
     c(w) * wz
-  }), list( .lalpha = lalpha,
-            .ealpha = ealpha, .nsimEIM = nsimEIM ))))
+  }), list( .lapar = lapar,
+            .eapar = eapar, .nsimEIM = nsimEIM ))))
 }
 
 
@@ -3146,16 +3163,26 @@ rbinorm <- function(n, mean1 = 0, mean2 = 0,
     temp8.m[2, 1] <- 1
     temp8.s <- diag(5)[, -4]
     temp8.s[4, 3] <- 1
-    constraints <- cm.vgam(temp8.m, x = x,
+    constraints <- cm.VGAM(temp8.m, x = x,
                            bool = .eq.mean ,
                            constraints = constraints, apply.int = TRUE)
-    constraints <- cm.vgam(temp8.s, x = x,
+    constraints <- cm.VGAM(temp8.s, x = x,
                            bool = .eq.sd ,
                            constraints = constraints, apply.int = TRUE)
-    constraints <- cm.zero.vgam(constraints, x, .zero, M)
+    constraints <- cm.zero.VGAM(constraints, x, .zero, M)
   }), list( .zero = zero,
             .eq.sd   = eq.sd,
             .eq.mean = eq.mean ))),
+
+  infos = eval(substitute(function(...) {
+    list(M1 = 5,
+         Q1 = 2,
+         eq.mean = .eq.mean ,
+         eq.sd   = .eq.sd   )
+    }, list( .zero    = zero,
+             .eq.mean = eq.mean,
+             .eq.sd   = eq.sd    ))),
+
   initialize = eval(substitute(expression({
 
     temp5 <-
@@ -3285,11 +3312,11 @@ rbinorm <- function(n, mean1 = 0, mean2 = 0,
     if (any(pwts != 1)) 
       warning("ignoring prior weights")
     eta <- predict(object)
-    mean1 <- eta2theta(eta[, 1], .lmean1, earg = .emean1)
-    mean2 <- eta2theta(eta[, 2], .lmean2, earg = .emean2)
-    sd1   <- eta2theta(eta[, 3], .lsd1  , earg = .esd1  )
-    sd2   <- eta2theta(eta[, 4], .lsd2  , earg = .esd2  )
-    Rho   <- eta2theta(eta[, 5], .lrho  , earg = .erho  )
+    mean1 <- eta2theta(eta[, 1], .lmean1 , earg = .emean1 )
+    mean2 <- eta2theta(eta[, 2], .lmean2 , earg = .emean2 )
+    sd1   <- eta2theta(eta[, 3], .lsd1   , earg = .esd1   )
+    sd2   <- eta2theta(eta[, 4], .lsd2   , earg = .esd2   )
+    Rho   <- eta2theta(eta[, 5], .lrho   , earg = .erho   )
     rbinorm(nsim * length(sd1),
             mean1 = mean1, mean2 = mean2,
             var1 = sd1^2, var2 = sd2^2, cov12 = Rho * sd1 * sd2)

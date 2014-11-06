@@ -319,7 +319,7 @@ qtplot.gumbel <-
 
 
   if (is.Numeric(R))
-    R <- rep(R, length=nrow(eta))
+    R <- rep(R, length = nrow(eta))
 
   if (!is.Numeric(percentiles))
     stop("the 'percentiles' argument needs to be assigned a value")
@@ -332,7 +332,7 @@ qtplot.gumbel <-
   fitted.values <- object@family@linkinv(eta = eta, extra = extra) 
 
   answer <- list(fitted.values = fitted.values,
-                 percentiles = percentiles)
+                 percentiles   = percentiles)
 
   if (!show.plot)
     return(answer)
@@ -380,7 +380,8 @@ qtplot.gumbel <-
       if (label) {
         mylabel <- (dimnames(answer$fitted)[[2]])[ii]
         text(par()$usr[2], temp[nrow(temp), 2],
-             mylabel, adj = tadj, col = tcol.arg[ii], err = -1)
+             mylabel, adj = tadj, col = tcol.arg[ii], err = -1,
+             cex = par()$cex.axis, xpd = par()$xpd)
     }
   }
 
@@ -697,20 +698,18 @@ rlplot.gev <-
   function(object, show.plot = TRUE,
            probability = c((1:9)/100, (1:9)/10, 0.95, 0.99, 0.995, 0.999),
            add.arg = FALSE,
-           xlab = "Return Period",
+           xlab = if(log.arg) "Return Period (log-scale)" else "Return Period",
            ylab = "Return Level",
            main = "Return Level Plot",
            pch = par()$pch, pcol.arg = par()$col, pcex = par()$cex,
            llty.arg = par()$lty, lcol.arg = par()$col, llwd.arg = par()$lwd,
            slty.arg = par()$lty, scol.arg = par()$col, slwd.arg = par()$lwd,
            ylim = NULL,
-           log = TRUE,
+           log.arg = TRUE,
            CI = TRUE,
            epsilon = 1.0e-05,
            ...) {
 
-  log.arg <- log
-  rm(log)
   if (!is.Numeric(epsilon, length.arg = 1) ||
       abs(epsilon) > 0.10)
     stop("bad input for 'epsilon'")
@@ -740,7 +739,11 @@ rlplot.gev <-
       plot(log(1/yp), zp, log = "", type = "n",
            ylim = if (length(ylim)) ylim else
                 c(min(c(ydata, zp)), max(c(ydata, zp))),
-           xlab = xlab, ylab = ylab, main = main, ...)
+           xlab = xlab, ylab = ylab, main = main, 
+           cex.axis = par()$cex.axis, 
+           cex.main = par()$cex.main, 
+           cex.lab  = par()$cex.lab, 
+           ...)
     points(log(-1/log((1:n)/(n+1))), ydata, col = pcol.arg,
            pch = pch, cex = pcex)
     lines(log(1/yp), zp,
@@ -751,7 +754,11 @@ rlplot.gev <-
            ylim = if (length(ylim)) ylim else
                   c(min(c(ydata, zp)),
                     max(c(ydata, zp))),
-           xlab = xlab, ylab = ylab, main = main, ...)
+           xlab = xlab, ylab = ylab, main = main,
+           cex.axis = par()$cex.axis, 
+           cex.main = par()$cex.main, 
+           cex.lab  = par()$cex.lab, 
+           ...)
     points(-1/log((1:n)/(n+1)), ydata, col = pcol.arg,
            pch = pch, cex = pcex)
     lines(1/yp, zp, lwd = llwd.arg, col = lcol.arg, lty = llty.arg)
@@ -767,13 +774,19 @@ rlplot.gev <-
       TTheta <- eta[, ii]
       use.earg <- earg[[ii]]
       newcall <- paste(Links[ii],
-                "(theta = TTheta, earg = use.earg, inverse = TRUE)",
+                "(theta = TTheta, ",
+                "  inverse = TRUE)",
                  sep = "")
+
+
+
       newcall <- parse(text = newcall)[[1]]
       uteta <- eval(newcall)  # Theta, the untransformed parameter
       uteta <- uteta + epsilon  # Perturb it
       newcall <- paste(Links[ii],
-                       "(theta = uteta, earg = use.earg)", sep = "")
+                       "(theta = uteta",
+                       ")",
+                       sep = "")
       newcall <- parse(text = newcall)[[1]]
       teta <- eval(newcall)  # The transformed parameter
       peta <- eta

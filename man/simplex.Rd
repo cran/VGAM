@@ -11,7 +11,7 @@
 \usage{
 simplex(lmu = "logit", lsigma = "loge",
         imu = NULL, isigma = NULL,
-        imethod = 1, shrinkage.init = 0.95, zero = 2)
+        imethod = 1, ishrinkage = 0.95, zero = 2)
 
 }
 %- maybe also 'usage' for other objects documented here.
@@ -28,7 +28,7 @@ simplex(lmu = "logit", lsigma = "loge",
 
 
   }
-  \item{imethod, shrinkage.init, zero}{
+  \item{imethod, ishrinkage, zero}{
   See \code{\link{CommonVGAMffArguments}} for more information.
 
 

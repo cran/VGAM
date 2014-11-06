@@ -173,7 +173,7 @@ calldcqo <- function(cmatrix, etamat, xmat, ymat, wvec,
       if (sdnumat[lookat] > control$MUXfactor[lookat] *
                             control$isd.latvar[lookat]) {
           muxer <- control$isd.latvar[lookat] *
-                  control$MUXfactor[lookat] / sdnumat[lookat]
+                   control$MUXfactor[lookat] / sdnumat[lookat]
           cmatrix[, lookat] <- cmatrix[, lookat] * muxer
           if (control$trace) {
             cat(paste("Taking evasive action for latent variable ",
@@ -187,8 +187,8 @@ calldcqo <- function(cmatrix, etamat, xmat, ymat, wvec,
     numat <- xmat[,control$colx2.index,drop=FALSE] %*% cmatrix
     evnu <- eigen(var(numat))
     temp7 <- if (Rank > 1)
-                   evnu$vector %*% diag(evnu$value^(-0.5)) else
-                   evnu$vector %*% evnu$value^(-0.5)
+               evnu$vector %*% diag(evnu$value^(-0.5)) else
+               evnu$vector %*% evnu$value^(-0.5)
         cmatrix <- cmatrix %*% temp7
         cmatrix <- crow1C(cmatrix, control$Crow1positive)
         numat <- xmat[, control$colx2.index, drop = FALSE] %*% cmatrix
@@ -381,7 +381,7 @@ ny <- names(y)
 
 
     special.matrix <- matrix(-34956.125, M, M)  # An unlikely used matrix
-    just.testing <- cm.vgam(special.matrix, x, rrcontrol$noRRR,
+    just.testing <- cm.VGAM(special.matrix, x, rrcontrol$noRRR,
                             constraints)
     findex <- trivial.constraints(just.testing, special.matrix)
     tc1 <- trivial.constraints(constraints)

@@ -13,106 +13,153 @@
 
 
 
- G1G2G3 <- function(link = "logit",
+ A1A2A3 <- function(link = "logit", inbreeding = TRUE,
                     ip1 = NULL, ip2 = NULL, iF = NULL) {
+
+
 
   link <- as.list(substitute(link))
   earg <- link2list(link)
   link <- attr(earg, "function.name")
 
 
+  if (!is.logical(inbreeding) || length(inbreeding) > 1)
+    stop("argument 'inbreeding' must be a single logical")
+
 
   new("vglmff",
-  blurb = c("G1-G2-G3 phenotype\n\n",
+  blurb = c("G1-G2-G3 phenotype (",
+            ifelse(inbreeding, "with", "without"),
+            " the Hardy-Weinberg equilibrium assumption)\n\n",
             "Links:    ",
-            namesof("p1", link, earg = earg), ", ", 
-            namesof("p2", link, earg = earg), ", ", 
-            namesof("f",  link, earg = earg, tag = FALSE)),
+            namesof("p1", link, earg = earg, tag = FALSE), ", ", 
+            namesof("p2", link, earg = earg, tag = FALSE),
+            if (!inbreeding) paste(",",
+            namesof("f",  link, earg = earg, tag = FALSE)) else
+            ""),
   deviance = Deviance.categorical.data.vgam,
+  infos = eval(substitute(function(...) {
+    list(Q1 = 6,
+         M1 = ifelse( .inbreeding , 2, 3),
+         expected = TRUE,
+         multipleResponses = FALSE,
+         link = if ( .inbreeding ) c("p1" = .link , "p2" = .link ) else
+                            c("p1" = .link , "p2" = .link , "f" = .link ))
+  }, list( .link = link, .inbreeding = inbreeding ))),
+
   initialize = eval(substitute(expression({
     mustart.orig <- mustart
 
     delete.zero.colns <- FALSE
-    eval(process.categorical.data.vgam)
+    eval(process.categorical.data.VGAM)
 
     if (length(mustart.orig))
       mustart <- mustart.orig
 
-    ok.col.ny <- c("G1G1","G1G2","G1G3","G2G2","G2G3","G3G3")
+    ok.col.ny <- c("A1A1", "A1A2", "A1A3", "A2A2", "A2A3", "A3A3")
     if (length(col.ny <- colnames(y)) == length(ok.col.ny) &&
        setequal(ok.col.ny, col.ny)) {
         if (!all(ok.col.ny == col.ny))
             stop("the columns of the response matrix should have ",
                  "names (output of colnames()) ordered as ",
-                 "c('G1G1','G1G2','G1G3','G2G2','G2G3','G3G3')")
+                 "c('A1A1','A1A2','A1A3','A2A2','A2A3','A3A3')")
     }
 
     predictors.names <-
      c(namesof("p1", .link , earg = .earg , tag = FALSE),
        namesof("p2", .link , earg = .earg , tag = FALSE),
+       if ( .inbreeding ) NULL else
        namesof("f",  .link , earg = .earg , tag = FALSE))
+    mustart <- (y + mustart) / 2
+
 
     if (is.null(etastart)) {
 
 
 
-      mydeterminant <- mustart[, 2] * mustart[, 3] +
+      mydeterminant <- weighted.mean(
+                       mustart[, 2] * mustart[, 3] +
                        mustart[, 2] * mustart[, 5] +
-                       mustart[, 3] * mustart[, 5]
+                       mustart[, 3] * mustart[, 5], w)
       p1 <- if (is.numeric( .ip1 )) rep( .ip1 , len = n) else
-            mustart[, 2] * mustart[, 3] / mydeterminant
+            weighted.mean(mustart[, 2] * mustart[, 3], w) / mydeterminant
       p2 <- if (is.numeric( .ip2 )) rep( .ip2 , len = n) else
-            mustart[, 2] * mustart[, 5] / mydeterminant
+            weighted.mean(mustart[, 2] * mustart[, 5], w) / mydeterminant
       ff <- if (is.numeric( .iF  )) rep( .iF  , len = n) else
-            abs(1 - mustart[, 2] / (2 * p1 * p2))
-
-      if (any(p1 <= 0) || any(p1 >= 1))
-        stop("bad initial value for 'p1'")
-      if (any(p2 <= 0) || any(p2 >= 1))
-        stop("bad initial value for 'p2'")
+            weighted.mean(abs(1 - mustart[, 2] / (2 * p1 * p2)), w)
+      p1 <- rep(p1, len = n)
+      p2 <- rep(p2, len = n)
+      ff <- rep(ff, len = n)
+      p1[p1 < 0.05] <- 0.05
+      p1[p1 > 0.99] <- 0.99
+      p2[p2 < 0.05] <- 0.05
+      p2[p2 > 0.99] <- 0.99
+      ff[ff < 0.05] <- 0.05
+      ff[ff > 0.99] <- 0.99
 
       etastart <-
         cbind(theta2eta(p1, .link , earg = .earg ),
               theta2eta(p2, .link , earg = .earg ),
+              if ( .inbreeding ) NULL else
               theta2eta(ff, .link , earg = .earg ))
       mustart <- NULL  # Since etastart has been computed.
 
     }
   }), list( .link = link, .ip1 = ip1, .ip2 = ip2, .iF = iF,
+            .inbreeding = inbreeding,
             .earg = earg))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
     p1 <- eta2theta(eta[, 1], link = .link , earg = .earg )
     p2 <- eta2theta(eta[, 2], link = .link , earg = .earg )
-    f  <- eta2theta(eta[, 3], link = .link , earg = .earg )
+    f  <- if ( .inbreeding ) 0 else
+          eta2theta(eta[, 3], link = .link , earg = .earg )
     p3 <- abs(1 - p1 - p2)
-      cbind("G1G1" = f*p1+(1-f)*p1^2,
-            "G1G2" = 2*p1*p2*(1-f),
-            "G1G3" = 2*p1*p3*(1-f),
-            "G2G2" = f*p2+(1-f)*p2^2,
-            "G2G3" = 2*p2*p3*(1-f),
-            "G3G3" = f*p3+(1-f)*p3^2)
-  }, list( .link = link, .earg = earg))),
+      cbind("A1A1" = f*p1+(1-f)*p1^2,
+            "A1A2" = 2*p1*p2*(1-f),
+            "A1A3" = 2*p1*p3*(1-f),
+            "A2A2" = f*p2+(1-f)*p2^2,
+            "A2A3" = 2*p2*p3*(1-f),
+            "A3A3" = f*p3+(1-f)*p3^2)
+  }, list( .link = link, .earg = earg, .inbreeding = inbreeding))),
 
   last = eval(substitute(expression({
-    misc$link <-    c(p1 = .link , p2 = .link , f = .link )
-
-    misc$earg <- list(p1 = .earg , p2 = .earg , f = .earg )
+    if ( .inbreeding ) {
+      misc$link <-    c(p1 = .link , p2 = .link )
+      misc$earg <- list(p1 = .earg , p2 = .earg )
+    } else {
+      misc$link <-    c(p1 = .link , p2 = .link , f = .link )
+      misc$earg <- list(p1 = .earg , p2 = .earg , f = .earg )
+    }
 
     misc$expected <- TRUE
-  }), list( .link = link, .earg = earg))),
+  }), list( .link = link, .earg = earg, .inbreeding = inbreeding ))),
 
-  loglikelihood = function(mu, y, w, residuals = FALSE, eta, extra = NULL)
+  loglikelihood = function(mu, y, w, residuals = FALSE,
+                           eta, extra = NULL)
     if (residuals)
       stop("loglikelihood residuals not implemented yet") else {
-          sum(dmultinomial(x = w * y, size = w, prob = mu,
-                           log = TRUE, dochecking = FALSE))
+      sum(dmultinomial(x = w * y, size = w, prob = mu,
+                       log = TRUE, dochecking = FALSE))
       },
-  vfamily = c("G1G2G3", "vgenetic"),
+  vfamily = c("A1A2A3", "vgenetic"),
   deriv = eval(substitute(expression({
     p1 <- eta2theta(eta[, 1], link = .link , earg = .earg )
     p2 <- eta2theta(eta[, 2], link = .link , earg = .earg )
     p3 <- 1-p1-p2
-    f  <- eta2theta(eta[, 3], link = .link , earg = .earg )
+    f  <- if ( .inbreeding ) 0 else
+          eta2theta(eta[, 3], link = .link , earg = .earg )
+    if ( .inbreeding ) {
+    dl.dp1 <- (2*y[, 1]+y[, 2]+y[, 4])/p1 -
+              (2*y[,6]+y[, 4]+y[,5])/(1-p1-p2)
+    dl.dp2 <- (2*y[, 3]+y[, 2]+y[,5])/p2 -
+              (2*y[,6]+y[, 4]+y[,5])/(1-p1-p2)
+
+    dp1.deta <- dtheta.deta(p1, link = .link , earg = .earg )
+    dp2.deta <- dtheta.deta(p2, link = .link , earg = .earg )
+
+    c(w) * cbind(dl.dp1 * dp1.deta,
+                 dl.dp2 * dp2.deta)
+    } else {
     dP1 <- cbind(f + 2*p1*(1-f), 2*(1-f)*p2, 2*(1-f)*(1-p2-2*p1),
                 0, -2*(1-f)*p2, -f - 2*p3*(1-f))
     dP2 <- cbind(0, 2*p1*(1-f), -2*(1-f)*p1, f+2*p2*(1-f),
@@ -127,8 +174,20 @@
     c(w) * cbind(dPP.deta[, 1] * dl1,
                  dPP.deta[, 2] * dl2, 
                  dPP.deta[, 3] * dl3)
-  }), list( .link = link, .earg = earg))),
+  }
+  }), list( .link = link, .earg = earg, .inbreeding = inbreeding ))),
   weight = eval(substitute(expression({
+    if ( .inbreeding ) {
+    qq <- 1-p1-p2
+    wz <- matrix(as.numeric(NA), n, dimm(M))  # dimm(M)==3 because M==2
+    ned2l.dp12  <-  2 * (1/p1 + 1/qq)
+    ned2l.dp22  <-  2 * (1/p2 + 1/qq)
+    ned2l.dp1dp2 <-  2 / qq
+    wz[, iam(1, 1, M)] <- ned2l.dp12 * dp1.deta^2
+    wz[, iam(2, 2, M)] <- ned2l.dp22 * dp2.deta^2
+    wz[, iam(1, 2, M)] <- ned2l.dp1dp2 * dp1.deta * dp2.deta
+    c(w) * wz
+    } else {
     dPP <- array(c(dP1, dP2, dP3), c(n, 6, 3))
 
     wz <- matrix(as.numeric(NA), n, dimm(M))  # dimm(M)==6 because M==3
@@ -140,12 +199,23 @@
                               dPP.deta[, i1] * dPP.deta[, i2]
     }
     c(w) * wz
-  }), list( .link = link, .earg = earg))))
+  }
+  }), list( .link = link, .earg = earg, .inbreeding = inbreeding ))))
 }
 
 
 
+
+
+
+
+
+if (FALSE)
  AAaa.nohw <- function(link = "logit", ipA = NULL, iF = NULL) {
+
+
+
+
 
   link <- as.list(substitute(link))
   earg <- link2list(link)
@@ -162,7 +232,7 @@
     mustart.orig <- mustart
 
     delete.zero.colns <- FALSE
-    eval(process.categorical.data.vgam)
+    eval(process.categorical.data.VGAM)
 
     if (length(mustart.orig))
       mustart <- mustart.orig
@@ -252,7 +322,13 @@
 
 
 
+
+ if (FALSE)
  AB.Ab.aB.ab2 <- function(link = "logit", init.p = NULL) {
+
+
+
+
 
   link <- as.list(substitute(link))
   earg <- link2list(link)
@@ -268,26 +344,31 @@
     mustart.orig <- mustart
 
     delete.zero.colns <- FALSE
-    eval(process.categorical.data.vgam)
+    eval(process.categorical.data.VGAM)
     predictors.names <- namesof("p", .link , earg = .earg , tag = FALSE)
 
-    if (length(mustart.orig))
+    if (length(mustart.orig)) {
       mustart <- mustart.orig
+    }
 
-        ok.col.ny <- c("AB","Ab","aB","ab")
-        if (length(col.ny <- colnames(y)) == length(ok.col.ny) &&
+    ok.col.ny <- c("AB","Ab","aB","ab")
+    if (length(col.ny <- colnames(y)) == length(ok.col.ny) &&
            setequal(ok.col.ny, col.ny)) {
             if (!all(ok.col.ny == col.ny))
                 stop("the columns of the response matrix should have names ",
                      "(output of colnames()) ordered as c('AB','Ab','aB','ab')")
-        }
+    }
 
-        if (is.null(etastart)) {
-            p.init <- if (is.numeric(.init.p)) rep(.init.p, n) else
-                     c(1 - 2 * sqrt(mustart[, 4]))
-            etastart <- theta2eta(p.init, .link , earg = .earg )
-            mustart <- NULL  # Since etastart has been computed.
-        }
+    mustart <- (mustart + y) / 2
+
+    if (is.null(etastart)) {
+      p.init <- if (is.numeric( .init.p )) rep( .init.p , n) else
+                rep(c(1 - 2 * sqrt(weighted.mean(mustart[, 4], w))), n)
+      p.init <- ifelse(p.init < 0.01, 0.01, p.init)
+      p.init <- ifelse(p.init > 0.99, 0.99, p.init)
+      etastart <- theta2eta(p.init, .link , earg = .earg )
+      mustart <- NULL  # Since etastart has been computed.
+    }
     }), list( .link = link, .init.p=init.p, .earg = earg))),
     linkinv = eval(substitute(function(eta,extra = NULL) {
         p <- eta2theta(eta, link = .link , earg = .earg )
@@ -331,49 +412,68 @@
 
 
 
- A1A2A3 <- function(link = "logit", ip1 = NULL, ip2 = NULL) {
+
+
+
+
+
+
+ if (FALSE)
+ A1A2A3.orig <- function(link = "logit", ip1 = NULL, ip2 = NULL) {
   link <- as.list(substitute(link))
   earg <- link2list(link)
   link <- attr(earg, "function.name")
+
+
 
 
   new("vglmff",
   blurb = c("A1A2A3 Allele System ",
             "(A1A1, A1A2, A2A2, A1A3, A2A3, A3A3)\n\n",
             "Links:    ",
-            namesof("p1", link, earg = earg), ", ", 
-            namesof("p2", link, earg = earg, tag = FALSE)),
+            namesof("pA", link, earg = earg), ", ", 
+            namesof("pB", link, earg = earg, tag = FALSE)),
   deviance = Deviance.categorical.data.vgam,
+  infos = eval(substitute(function(...) {
+    list(M1 = 2,
+         Q1 = 6,
+         multipleResponses = FALSE,
+         expected = TRUE,
+         link = c("pA" = .link , "pB" = .link ))
+  }, list( .link = link ))),
+
   initialize = eval(substitute(expression({
     mustart.orig <- mustart
 
     delete.zero.colns <- FALSE
-    eval(process.categorical.data.vgam)
+    eval(process.categorical.data.VGAM)
 
     if (length(mustart.orig))
       mustart <- mustart.orig
 
-        ok.col.ny <- c("A1A1","A1A2","A2A2","A1A3","A2A3","A3A3")
+        ok.col.ny <- c("A1A1", "A1A2", "A2A2", "A1A3", "A2A3", "A3A3")
         if (length(col.ny <- colnames(y)) == length(ok.col.ny) &&
            setequal(ok.col.ny, col.ny)) {
             if (!all(ok.col.ny == col.ny))
                 stop("the columns of the response matrix should have names ",
                      "(output of colnames()) ordered as ",
-                     "c('A1A1','A1A2','A2A2','A1A3','A2A3','A3A3')")
+                     "c('A1A1', 'A1A2', 'A2A2', 'A1A3', 'A2A3', 'A3A3')")
         }
+    
+     predictors.names <-
+          c(namesof("pA", .link , earg = .earg , tag = FALSE),
+            namesof("pB", .link , earg = .earg , tag = FALSE))
+    mustart <- (y + mustart) / 2
 
-        predictors.names <-
-            c(namesof("pA", .link , earg = .earg , tag = FALSE),
-              namesof("pB", .link , earg = .earg , tag = FALSE))
 
-        if (is.null(etastart)) {
-            p1 <- if (is.numeric(.ip1)) rep(.ip1, n) else
-                       c(sqrt(mustart[, 1]))
-            p2 <- if (is.numeric(.ip2)) rep(.ip2, n) else
-                       c(sqrt(mustart[, 3]))
-            etastart <- cbind(theta2eta(p1, .link , earg = .earg ),
-                              theta2eta(p2, .link , earg = .earg ))
-            mustart <- NULL  # Since etastart has been computed.
+    if (is.null(etastart)) {
+        p1 <- if (is.numeric(.ip1 )) rep( .ip1 , len = n) else
+               rep(c(sqrt( weighted.mean(mustart[, 1], w) )), len = n)
+        p2 <- if (is.numeric(.ip2 )) rep( .ip2 , len = n) else
+               rep(c(sqrt( weighted.mean(mustart[, 3], w) )), len = n)
+        etastart <- cbind(theta2eta(p1, .link , earg = .earg ),
+                          theta2eta(p2, .link , earg = .earg ))
+        mustart <- NULL  # Since etastart has been computed.
     }
   }), list( .link = link, .ip1 = ip1, .ip2 = ip2, .earg = earg))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
@@ -397,7 +497,8 @@
   }), list( .link = link, .earg = earg))),
 
 
-  loglikelihood = function(mu, y, w, residuals = FALSE, eta, extra = NULL)
+  loglikelihood = function(mu, y, w, residuals = FALSE,
+                           eta, extra = NULL)
     if (residuals)
       stop("loglikelihood residuals not implemented yet") else {
       sum(dmultinomial(x = w * y, size = w, prob = mu,
@@ -408,8 +509,10 @@
     p1 <- eta2theta(eta[, 1], link = .link , earg = .earg )
     p2 <- eta2theta(eta[, 2], link = .link , earg = .earg )
 
-    dl.dp1 <- (2*y[, 1]+y[, 2]+y[, 4])/p1 - (2*y[,6]+y[, 4]+y[,5])/(1-p1-p2)
-    dl.dp2 <- (2*y[, 3]+y[, 2]+y[,5])/p2 - (2*y[,6]+y[, 4]+y[,5])/(1-p1-p2)
+    dl.dp1 <- (2*y[, 1]+y[, 2]+y[, 4])/p1 -
+              (2*y[,6]+y[, 4]+y[,5])/(1-p1-p2)
+    dl.dp2 <- (2*y[, 3]+y[, 2]+y[,5])/p2 -
+              (2*y[,6]+y[, 4]+y[,5])/(1-p1-p2)
 
     dp1.deta <- dtheta.deta(p1, link = .link , earg = .earg )
     dp2.deta <- dtheta.deta(p2, link = .link , earg = .earg )
@@ -452,7 +555,7 @@
     mustart.orig <- mustart
 
     delete.zero.colns <- FALSE
-    eval(process.categorical.data.vgam)
+    eval(process.categorical.data.VGAM)
 
     if (length(mustart.orig))
       mustart <- mustart.orig
@@ -564,7 +667,7 @@
     mustart.orig <- mustart
 
     delete.zero.colns <- FALSE
-    eval(process.categorical.data.vgam)
+    eval(process.categorical.data.VGAM)
 
     if (length(mustart.orig))
       mustart <- mustart.orig
@@ -581,15 +684,16 @@
     predictors.names <-
       c(namesof("pA", .link , earg = .earg , tag = FALSE),
         namesof("pB", .link , earg = .earg , tag = FALSE))
+    mustart <- (y + mustart) / 2
 
     if (!length(etastart)) {
       pO <- if (is.Numeric( .ipO )) rep( .ipO , len = n) else
-           c(sqrt(mustart[, 4]))
+        rep(c(sqrt( weighted.mean(mustart[, 4], w)) ), len = n)
       pA <- if (is.Numeric( .ipA )) rep( .ipA , len = n) else
-          c(1 - sqrt(mustart[, 2] + mustart[, 4]))
+        rep(c(1 - sqrt(weighted.mean(mustart[, 2] + mustart[, 4], w))), len = n)
       pB <- abs(1 - pA - pO)
       etastart <- cbind(theta2eta(pA, .link , earg = .earg ),
-                       theta2eta(pB, .link , earg = .earg ))
+                        theta2eta(pB, .link , earg = .earg ))
       mustart <- NULL  # Since etastart has been computed.
     }
   }), list( .link = link, .ipO = ipO, .ipA = ipA, .earg = earg))),
@@ -677,10 +781,11 @@
     mustart.orig <- mustart
 
     delete.zero.colns <- FALSE
-    eval(process.categorical.data.vgam)
+    eval(process.categorical.data.VGAM)
 
-    if (length(mustart.orig))
+    if (length(mustart.orig)) {
       mustart <- mustart.orig
+    }
 
     ok.col.ny <- c("AB","Ab","aB","ab")
     if (length(col.ny <- colnames(y)) == length(ok.col.ny) &&
@@ -692,14 +797,17 @@
     }
 
     predictors.names <- namesof("p", .link , earg = .earg , tag = FALSE)
+    mustart <- (y + mustart) / 2
 
     if (is.null(etastart)) {
-      p <- if (is.numeric( .init.p )) rep(.init.p, len = n) else
-          c(sqrt(4 * mustart[, 4]))
-      etastart <- cbind(theta2eta(p, .link , earg = .earg ))
+      p.init <- if (is.numeric( .init.p )) rep( .init.p , len = n) else
+        rep(c(sqrt(4 * weighted.mean(mustart[, 4], w))), len = n)
+
+      etastart <- cbind(theta2eta(p.init, .link , earg = .earg ))
+      etastart <- jitter(etastart)
       mustart <- NULL  # Since etastart has been computed.
     }
-  }), list( .link = link, .init.p=init.p, .earg = earg))),
+  }), list( .link = link, .init.p = init.p, .earg = earg))),
   linkinv = eval(substitute(function(eta,extra = NULL) {
     p <- eta2theta(eta, link = .link , earg = .earg )
     pp4 <- p * p / 4
@@ -749,58 +857,121 @@
 
 
 
- AA.Aa.aa <- function(link = "logit", init.pA = NULL) {
-  link <- as.list(substitute(link))
-  earg <- link2list(link)
-  link <- attr(earg, "function.name")
 
+
+
+
+
+
+
+
+ AA.Aa.aa <-
+  function(linkp = "logit",
+           linkf = "logit",
+           inbreeding = TRUE,
+           ipA = NULL,
+           ifp = NULL,
+           zero = NULL) {
+    
+  linkp <- as.list(substitute(linkp))
+  eargp <- link2list(linkp)
+  linkp <- attr(eargp, "function.name")
+
+  linkf <- as.list(substitute(linkf))
+  eargf <- link2list(linkf)
+  linkf <- attr(eargf, "function.name")
+
+  if (!is.logical(inbreeding) || length(inbreeding) > 1)
+    stop("argument 'inbreeding' must be a single logical")
+
+  
 
   new("vglmff",
-  blurb = c("AA-Aa-aa phenotype\n\n",
-            "Links:    ", namesof("pA", link, earg = earg)),
+  blurb = c("AA-Aa-aa phenotype (",
+            ifelse(inbreeding, "with", "without"),
+            " the Hardy-Weinberg equilibrium assumption)\n\n",
+            "Links:    ",
+            namesof("pA", linkp, earg = eargp, tag = FALSE),
+            if (!inbreeding) paste(",",
+            namesof("f",  linkf, earg = eargf, tag = FALSE)) else
+            ""),
   deviance = Deviance.categorical.data.vgam,
+  infos = eval(substitute(function(...) {
+    list(M1 = ifelse( .inbreeding , 1, 2),
+         Q1 = 3,
+         multipleResponses = FALSE,
+         expected = TRUE,
+         zero = .zero ,
+         link = if ( .inbreeding ) c("pA" = .linkp ) else
+                            c("pA" = .linkp , "f" = .linkf ))
+  }, list( .linkp = linkp,
+           .linkf = linkf, .inbreeding = inbreeding,
+           .zero = zero ))),
+
   initialize = eval(substitute(expression({
     mustart.orig <- mustart
 
     delete.zero.colns <- FALSE
-    eval(process.categorical.data.vgam)
+    eval(process.categorical.data.VGAM)
 
     if (length(mustart.orig))
       mustart <- mustart.orig
 
-    ok.col.ny <- c("AA","Aa","aa")
+    ok.col.ny <- c("AA", "Aa", "aa")
     if (length(col.ny <- colnames(y)) == length(ok.col.ny) &&
-       setequal(ok.col.ny, col.ny)) {
-        if (!all(ok.col.ny == col.ny))
-          stop("the columns of the response matrix ",
-               "should have names ",
-               "(output of colnames()) ordered as c('AA','Aa','aa')")
+      setequal(ok.col.ny, col.ny)) {
+      if (!all(ok.col.ny == col.ny))
+        stop("the columns of the response matrix ",
+             "should have names ",
+             "(output of colnames()) ordered as c('AA','Aa','aa')")
     }
 
-    predictors.names <- namesof("pA", .link , earg = .earg , tag = FALSE)
+    predictors.names <-
+      c(namesof("pA", .linkp , earg = .eargp , tag = FALSE),
+        if ( .inbreeding ) NULL else
+        namesof("f",  .linkf , earg = .eargf , tag = FALSE))
+    mustart <- (y + mustart) / 2
+        
 
     if (is.null(etastart)) {
-      pA <- if (is.numeric(.init.pA)) rep(.init.pA, n) else
-                c(sqrt(mustart[, 1]))
-      etastart <- cbind(theta2eta(pA, .link , earg = .earg ))
+      pA <- if (is.numeric( .ipA )) rep( .ipA , len = n) else
+              rep(c(sqrt( weighted.mean(mustart[, 1], w))), len = n)
+      fp <- if (is.numeric( .ifp )) rep( .ifp , len = n) else
+              runif(n)  # 1- mustart[, 2]/(2*pA*(1-pA))
+      etastart <- cbind(theta2eta(pA, .linkp , earg = .eargp ),
+                        if ( .inbreeding ) NULL else
+                        theta2eta(fp, .linkf , earg = .eargf ) )
       mustart <- NULL  # Since etastart has been computed.
     }
-  }), list( .link = link, .init.pA=init.pA, .earg = earg))),
-  linkinv = eval(substitute(function(eta,extra = NULL) {
-    pA <- eta2theta(eta, link = .link , earg = .earg )
-    pp <- pA*pA
-    cbind(AA = pp,
-          Aa = 2*pA*(1-pA),
-          aa = (1-pA)^2) 
-  }, list( .link = link, .earg = earg))),
+  }), list( .linkp = linkp, .linkf = linkf,
+            .ipA = ipA, .ifp = ifp, .inbreeding = inbreeding,
+            .eargp = eargp, .eargf = eargf ))),
+  linkinv = eval(substitute(function(eta, extra = NULL) {
+    eta <- as.matrix(eta)
+    pA <- eta2theta(eta[, 1], link = .linkp , earg = .eargp )
+    fp <- if ( .inbreeding ) 0 else
+          eta2theta(eta[, 2], link = .linkf , earg = .eargf )
+
+    cbind(AA = pA^2 + pA * (1-pA) * fp,
+          Aa = 2 * pA * (1-pA) * (1 - fp),
+          aa = (1-pA)^2 + pA * (1-pA) * fp)
+  }, list( .linkp = linkp, .linkf = linkf,
+           .eargp = eargp, .eargf = eargf,
+           .inbreeding = inbreeding ))),
 
   last = eval(substitute(expression({
-    misc$link <-    c("pA" = .link )
+    if ( .inbreeding ) {
+      misc$link <-    c("pA" = .linkp )
+      misc$earg <- list("pA" = .eargp )
+    } else {
+      misc$link <-    c("pA" = .linkp, "f" = .linkf )
+      misc$earg <- list("pA" = .eargp, "f" = .eargf )
+    }
+    misc$expected <- TRUE
+  }), list( .linkp = linkp, .linkf = linkf,
+            .eargp = eargp, .eargf = eargf,
+            .inbreeding = inbreeding ))),
 
-    misc$earg <- list("pA" = .earg )
-
-    misc$expected = TRUE
-  }), list( .link = link, .earg = earg))),
 
 
   loglikelihood = function(mu, y, w, residuals = FALSE, eta, extra = NULL)
@@ -811,19 +982,59 @@
     },
   vfamily = c("AA.Aa.aa", "vgenetic"),
   deriv = eval(substitute(expression({
-    pA  <- eta2theta(eta, link = .link , earg = .earg )
-    nAA <- w * y[, 1]
-    nAa <- w * y[, 2]
-    naa <- w * y[, 3]
-    dl.dpA <- (2*nAA+nAa)/pA - (nAa+2*naa)/(1-pA)
-    dpA.deta <- dtheta.deta(pA, link = .link , earg = .earg )
-    dl.dpA * dpA.deta
-  }), list( .link = link, .earg = earg))),
+    eta <- as.matrix(eta)
+    pA <- eta2theta(eta[, 1], link = .linkp , earg = .eargp )
+    fp <- if ( .inbreeding ) 0 else
+          eta2theta(eta[, 2], link = .linkf , earg = .eargf )
+
+    if ( .inbreeding ) {
+      nAA <- w * y[, 1]
+      nAa <- w * y[, 2]
+      naa <- w * y[, 3]
+      dl.dpA <- (2*nAA+nAa)/pA - (nAa+2*naa)/(1-pA)
+      dpA.deta <- dtheta.deta(pA, link = .linkp , earg = .eargp )
+      dl.dpA * dpA.deta
+    } else {
+      dP1 <- cbind(fp + 2*pA*(1-fp),
+                    2*(1-fp)*(1-2*pA),
+                   -2*(1-pA) + fp*(1-2*pA))
+      dP2 <- cbind(pA*(1-pA),
+                   -2*pA*(1-pA),
+                   pA*(1-pA))
+      dl1 <- rowSums(y * dP1 / mu)
+      dl2 <- rowSums(y * dP2 / mu)
+
+      dPP.deta <- dtheta.deta(pA, link = .linkp , earg = .eargp )
+      dfp.deta <- dtheta.deta(fp, link = .linkf , earg = .eargf )
+
+      c(w) * cbind(dPP.deta * dl1,
+                   dfp.deta * dl2)      
+    }  
+  }), list( .linkp = linkp, .linkf = linkf,
+            .eargp = eargp, .eargf = eargf,
+            .inbreeding = inbreeding ))),
   weight = eval(substitute(expression({
-    ned2l.dp2 <- (2*nAA+nAa)/pA^2 + (nAa+2*naa)/(1-pA)^2
-    wz <- cbind((dpA.deta^2) * ned2l.dp2)
-    wz
-  }), list( .link = link, .earg = earg))))
+    if ( .inbreeding ) {
+      ned2l.dp2 <- (2*nAA+nAa)/pA^2 + (nAa+2*naa)/(1-pA)^2
+      wz <- cbind((dpA.deta^2) * ned2l.dp2)
+      wz
+    } else {
+      dPP <- array(c(dP1, dP2), c(n, 3, 2))
+      dPP.deta <- cbind(dtheta.deta(pA, link = .linkp , earg = .eargp ),
+                        dtheta.deta(fp, link = .linkf , earg = .eargf ))
+      wz <- matrix(as.numeric(NA), n, dimm(M))  # dimm(M)==3 because M==2
+      for (i1 in 1:M)
+        for (i2 in i1:M) {
+          index <- iam(i1, i2, M)
+          wz[, index] <- rowSums(dPP[,, i1, drop = TRUE] *
+                                 dPP[,, i2, drop = TRUE] / mu) *
+                                 dPP.deta[, i1] * dPP.deta[, i2]
+        }
+      c(w) * wz
+    }
+  }), list( .linkp = linkp, .linkf = linkf,
+            .eargp = eargp, .eargf = eargf,
+            .inbreeding = inbreeding ))))
 }
 
 

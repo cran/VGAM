@@ -1,6 +1,6 @@
 \name{hypersecant}
 \alias{hypersecant}
-\alias{hypersecant.1}
+\alias{hypersecant01}
 \alias{nef.hs}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Hyperbolic Secant Distribution Family Function }
@@ -12,7 +12,7 @@
 }
 \usage{
   hypersecant(link.theta = elogit(min = -pi/2, max = pi/2), init.theta = NULL)
-hypersecant.1(link.theta = elogit(min = -pi/2, max = pi/2), init.theta = NULL)
+hypersecant01(link.theta = elogit(min = -pi/2, max = pi/2), init.theta = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -46,7 +46,7 @@ hypersecant.1(link.theta = elogit(min = -pi/2, max = pi/2), init.theta = NULL)
 
 
 
-  Another parameterization is used for \code{hypersecant.1()}:
+  Another parameterization is used for \code{hypersecant01()}:
   let \eqn{Y = (logit U) / \pi}{Y = (logit U) / pi}.
   Then this uses
   \deqn{f(u;\theta)=(\cos(\theta)/\pi) \times
@@ -78,7 +78,7 @@ hypersecant.1(link.theta = elogit(min = -pi/2, max = pi/2), init.theta = NULL)
   \emph{The Theory of Dispersion Models}.
   London: Chapman & Hall.
 % p.101, Eqn (3.37) for hypersecant().
-% p.101, Eqn (3.38) for hypersecant.1().
+% p.101, Eqn (3.38) for hypersecant01().
 
 
 Morris, C. N. (1982)
@@ -104,14 +104,14 @@ Natural exponential families with quadratic variance functions.
 \examples{
 hdata <- data.frame(x2 = rnorm(nn <- 200))
 hdata <- transform(hdata, y = rnorm(nn))  # Not very good data!
-fit <- vglm(y ~ x2, hypersecant, data = hdata, trace = TRUE, crit = "coef")
-coef(fit, matrix = TRUE)
-fit@misc$earg
+fit1 <- vglm(y ~ x2, hypersecant, data = hdata, trace = TRUE, crit = "coef")
+coef(fit1, matrix = TRUE)
+fit1@misc$earg
 
 # Not recommended:
-fit <- vglm(y ~ x2, hypersecant(link = "identitylink"), data = hdata, trace = TRUE)
-coef(fit, matrix = TRUE)
-fit@misc$earg
+fit2 <- vglm(y ~ x2, hypersecant(link = "identitylink"), data = hdata, trace = TRUE)
+coef(fit2, matrix = TRUE)
+fit2@misc$earg
 }
 \keyword{models}
 \keyword{regression}

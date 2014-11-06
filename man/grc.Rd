@@ -390,9 +390,9 @@ model3 <- rcim(auuc, Rank = 1, fam = multinomial,
 fitted(model3)
 summary(model3)
 
-# Roughly median polish but not 100 percent reliable
+# Median polish but not 100 percent reliable. Maybe call alaplace2()...
 \dontrun{
-rcim0 <- rcim(auuc, fam = alaplace2(tau = 0.5, intparloc = TRUE), trace = TRUE)
+rcim0 <- rcim(auuc, fam = alaplace1(tau = 0.5), trace = FALSE, maxit = 500)
 round(fitted(rcim0), digits = 0)
 round(100 * (fitted(rcim0) - auuc) / auuc, digits = 0)  # Discrepancy
 depvar(rcim0)
@@ -434,10 +434,10 @@ uqo.rcim1 <- rcim(Y, Rank = 1,
 
 # Plot 1
 par(mfrow = c(2, 2))
-plot(attr(pdata, "optima"), Coef(uqo.rcim1)@A,
-     col = "blue", type = "p", main = "(a) UQO optima",
-     xlab = "True optima", ylab = "Estimated (UQO) optima")
-mylm <- lm(Coef(uqo.rcim1)@A ~ attr(pdata, "optima"))
+plot(attr(pdata, "optimums"), Coef(uqo.rcim1)@A,
+     col = "blue", type = "p", main = "(a) UQO optimums",
+     xlab = "True optimums", ylab = "Estimated (UQO) optimums")
+mylm <- lm(Coef(uqo.rcim1)@A ~ attr(pdata, "optimums"))
 abline(coef = coef(mylm), col = "orange", lty = "dashed")
 
 # Plot 2

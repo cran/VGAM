@@ -15,7 +15,8 @@
 
 
 
- cenpoisson <- function(link = "loge", imu = NULL) {
+
+ cens.poisson <- function(link = "loge", imu = NULL) {
 
   link <- as.list(substitute(link))
   earg <- link2list(link)
@@ -71,7 +72,7 @@
        init.mu[extra$leftcensored] <- pmax(y[extra$leftcensored, 1], 1/8)
     } else
     if (centype == "counting") {
-      stop("type == 'counting' not compatible with cenpoisson()")
+      stop("type == 'counting' not compatible with cens.poisson()")
       init.mu <- pmax(y[, 1], 1/8)
       stop("currently not working")
     } else
@@ -117,7 +118,7 @@
                         ppois(y[cenI, 1], mu[cenI])))
     }
   },
-  vfamily = "cenpoisson",
+  vfamily = "cens.poisson",
   deriv = eval(substitute(expression({
     cen0 <- extra$uncensored
     cenL <- extra$leftcensored
@@ -333,9 +334,10 @@ if (FALSE)
 
 
 
- cennormal1 <-
- cennormal <- function(lmu = "identitylink", lsd = "loge",
-                       imethod = 1, zero = 2) {
+ cennormal <-
+ cens.normal <- function(lmu = "identitylink", lsd = "loge",
+                         imethod = 1, zero = 2) {
+
 
 
   lmu <- as.list(substitute(lmu))
@@ -360,7 +362,7 @@ if (FALSE)
                           namesof("sd", lsd, tag = TRUE), "\n",
             "Conditional variance: sd^2"),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.vgam(constraints, x, .zero , M)
+    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
   }), list( .zero = zero ))),
   initialize = eval(substitute(expression({
 
@@ -429,7 +431,7 @@ if (FALSE)
     sum(w[cen0] * ell1) + sum(w[cenL] * ell2) + sum(w[cenU] * ell3)
   }, list( .lmu = lmu, .lsd = lsd,
            .emu = emu, .esd = esd ))),
-  vfamily = c("cennormal"),
+  vfamily = c("cens.normal"),
   deriv = eval(substitute(expression({
     cenL <- extra$leftcensored
     cenU <- extra$rightcensored
@@ -520,8 +522,8 @@ if (FALSE)
 
 
 
- cenrayleigh <- function(lscale = "loge",
-                         oim  = TRUE) {
+ cens.rayleigh <- function(lscale = "loge",
+                           oim  = TRUE) {
 
   lscale <- as.list(substitute(lscale))
   escale <- link2list(lscale)
@@ -582,7 +584,7 @@ if (FALSE)
       sum(w[cenU] * (y[cenU]/Scale[cenU])^2) * 0.5
   }, list( .lscale = lscale,
            .escale = escale ))),
-  vfamily = c("cenrayleigh"),
+  vfamily = c("cens.rayleigh"),
   deriv = eval(substitute(expression({
     cen0 <- !extra$rightcensored   # uncensored obsns
     cenU <- extra$rightcensored
@@ -623,12 +625,14 @@ if (FALSE)
 
 
 
- weibull <-
-  function(lshape = "loge", lscale = "loge",
-           ishape = NULL,   iscale = NULL,
+
+ weibullR <-
+  function(lscale = "loge", lshape = "loge",
+           iscale = NULL,   ishape = NULL,
+           lss = TRUE,
            nrfs = 1,
            probs.y = c(0.2, 0.5, 0.8),
-           imethod = 1, zero = -2) {
+           imethod = 1, zero = ifelse(lss, -2, -1)) {
 
 
 
@@ -670,26 +674,34 @@ if (FALSE)
     if (!is.Numeric(iscale, positive = TRUE))
       stop("argument 'iscale' values must be positive")
 
+  scale.TF <- if (lss) c(TRUE, FALSE) else c(FALSE, TRUE)
+  scale.12 <- if (lss) 1:2 else 2:1
+  blurb.vec <- c(namesof("scale", lscale, earg = escale),
+                 namesof("shape", lshape, earg = eshape))
+  blurb.vec <- blurb.vec[scale.12]
 
   new("vglmff",
   blurb = c("Weibull distribution\n\n",
             "Links:    ",
-            namesof("shape", lshape, earg = eshape), ", ", 
-            namesof("scale", lscale, earg = escale), "\n", 
+            blurb.vec[1], ", ",
+            blurb.vec[2], "\n",
             "Mean:     scale * gamma(1 + 1/shape)\n",
             "Variance: scale^2 * (gamma(1 + 2/shape) - ",
                       "gamma(1 + 1/shape)^2)"),
  constraints = eval(substitute(expression({
     dotzero <- .zero
     M1 <- 2
-    eval(negzero.expression)
-  }), list( .zero = zero ))),
+    eval(negzero.expression.VGAM)
+  }), list( .zero = zero,
+            .scale.12 = scale.12, .scale.TF = scale.TF, .lss = lss ))),
 
   infos = eval(substitute(function(...) {
     list(M1 = 2,
          Q1 = 1,
+         expected = TRUE,
+         multipleResponses = TRUE,
          zero = .zero )
-  }, list( .zero = zero
+  }, list( .zero = zero, .scale.12 = scale.12, .scale.TF = scale.TF
          ))),
 
   initialize = eval(substitute(expression({
@@ -717,11 +729,21 @@ if (FALSE)
            "don't use SurvS4()")
 
 
-    mynames1 <- paste("shape", if (ncoly > 1) 1:ncoly else "", sep = "")
-    mynames2 <- paste("scale", if (ncoly > 1) 1:ncoly else "", sep = "")
-    predictors.names <-
-        c(namesof(mynames1, .lshape , earg = .eshape , tag = FALSE),
-          namesof(mynames2, .lscale , earg = .escale , tag = FALSE))[
+    if ( .lss ) {
+      mynames1 <- paste("scale", if (ncoly > 1) 1:ncoly else "", sep = "")
+      mynames2 <- paste("shape", if (ncoly > 1) 1:ncoly else "", sep = "")
+      predictors.names <-
+          c(namesof(mynames1, .lscale , earg = .escale , tag = FALSE),
+            namesof(mynames2, .lshape , earg = .eshape , tag = FALSE))
+            
+    } else {
+      mynames1 <- paste("shape", if (ncoly > 1) 1:ncoly else "", sep = "")
+      mynames2 <- paste("scale", if (ncoly > 1) 1:ncoly else "", sep = "")
+      predictors.names <-
+          c(namesof(mynames1, .lshape , earg = .eshape , tag = FALSE),
+            namesof(mynames2, .lscale , earg = .escale , tag = FALSE))
+    }
+    predictors.names <- predictors.names[
           interleave.VGAM(M, M = M1)]
 
 
@@ -750,7 +772,10 @@ if (FALSE)
             Scale.init[, ilocal] <- exp(fit0$coef["Intercept"])
         }  # ilocal
 
-        etastart <-
+        etastart <- if ( .lss )
+          cbind(theta2eta(Scale.init, .lscale , earg = .escale ),
+                theta2eta(Shape.init, .lshape , earg = .eshape ))[,
+                interleave.VGAM(M, M = M1)] else
           cbind(theta2eta(Shape.init, .lshape , earg = .eshape ),
                 theta2eta(Scale.init, .lscale , earg = .escale ))[,
                 interleave.VGAM(M, M = M1)]
@@ -760,13 +785,15 @@ if (FALSE)
             .escale = escale, .eshape = eshape,
             .iscale = iscale, .ishape = ishape,
             .probs.y = probs.y,
+            .scale.12 = scale.12, .scale.TF = scale.TF, .lss = lss,
             .imethod = imethod ) )),
   linkinv = eval(substitute(function(eta, extra = NULL) {
-    Shape <- eta2theta(eta[, c(TRUE, FALSE)], .lshape , earg = .eshape )
-    Scale <- eta2theta(eta[, c(FALSE, TRUE)], .lscale , earg = .escale )
+    Scale <- eta2theta(eta[,    .scale.TF  ], .lscale , earg = .escale )
+    Shape <- eta2theta(eta[, !( .scale.TF )], .lshape , earg = .eshape )
     Scale * gamma(1 + 1 / Shape)
   }, list( .lscale = lscale, .lshape = lshape,
-           .escale = escale, .eshape = eshape ) )),
+           .escale = escale, .eshape = eshape,
+           .scale.12 = scale.12, .scale.TF = scale.TF, .lss = lss ) )),
   last = eval(substitute(expression({
     regnotok <- any(Shape <= 2)
     if (any(Shape <= 1)) {
@@ -788,17 +815,19 @@ if (FALSE)
 
 
     M1 <- extra$M1
-    misc$link <-
-      c(rep( .lshape , length = ncoly),
-        rep( .lscale , length = ncoly))[interleave.VGAM(M, M = M1)]
+    avector <- if ( .lss ) c(rep( .lscale , length = ncoly),
+                             rep( .lshape , length = ncoly)) else
+                           c(rep( .lshape , length = ncoly),
+                             rep( .lscale , length = ncoly))
+    misc$link <- avector[interleave.VGAM(M, M = M1)]
     temp.names <- c(mynames1, mynames2)[interleave.VGAM(M, M = M1)]
     names(misc$link) <- temp.names
 
     misc$earg <- vector("list", M)
     names(misc$earg) <- temp.names
     for (ii in 1:ncoly) {
-      misc$earg[[M1*ii-1]] <- .eshape
-      misc$earg[[M1*ii  ]] <- .escale
+      misc$earg[[M1*ii-1]] <- if ( .lss ) .escale else .eshape
+      misc$earg[[M1*ii  ]] <- if ( .lss ) .eshape else .escale
     }
 
     misc$M1 <- M1
@@ -812,23 +841,25 @@ if (FALSE)
   }), list( .lscale = lscale, .lshape = lshape,
             .escale = escale, .eshape = eshape,
             .imethod = imethod,
+            .scale.12 = scale.12, .scale.TF = scale.TF, .lss = lss,
             .nrfs = nrfs ) )),
   loglikelihood = eval(substitute(
           function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
-    Shape <- eta2theta(eta[, c(TRUE, FALSE)], .lshape , earg = .eshape )
-    Scale <- eta2theta(eta[, c(FALSE, TRUE)], .lscale , earg = .escale )
+    Scale <- eta2theta(eta[,    .scale.TF  ], .lscale , earg = .escale )
+    Shape <- eta2theta(eta[, !( .scale.TF )], .lshape , earg = .eshape )
 
     if (residuals) stop("loglikelihood residuals not ",
                         "implemented yet") else {
       sum(c(w) * dweibull(x = y, shape = Shape, scale = Scale, log = TRUE))
     }
   }, list( .lscale = lscale, .lshape = lshape,
-           .escale = escale, .eshape = eshape ) )),
-  vfamily = c("weibull"),
+           .escale = escale, .eshape = eshape,
+           .scale.12 = scale.12, .scale.TF = scale.TF, .lss = lss ) )),
+  vfamily = c("weibullR"),
   deriv = eval(substitute(expression({
     M1 <- 2
-    Shape <- eta2theta(eta[, c(TRUE, FALSE)], .lshape , earg = .eshape )
-    Scale <- eta2theta(eta[, c(FALSE, TRUE)], .lscale , earg = .escale )
+    Scale <- eta2theta(eta[,    .scale.TF  ], .lscale , earg = .escale )
+    Shape <- eta2theta(eta[, !( .scale.TF )], .lshape , earg = .eshape )
 
     dl.dshape <- 1 / Shape + log(y / Scale) -
                  log(y / Scale) * (y / Scale)^Shape
@@ -837,11 +868,15 @@ if (FALSE)
     dshape.deta <- dtheta.deta(Shape, .lshape, earg = .eshape )
     dscale.deta <- dtheta.deta(Scale, .lscale , earg = .escale )
 
-    myderiv <- c(w) * cbind(dl.dshape * dshape.deta,
-                            dl.dscale * dscale.deta)
+    myderiv <- if ( .lss )
+                 c(w) * cbind(dl.dscale * dscale.deta,
+                              dl.dshape * dshape.deta) else
+                 c(w) * cbind(dl.dshape * dshape.deta,
+                              dl.dscale * dscale.deta)
     myderiv[, interleave.VGAM(M, M = M1)]
   }), list( .lscale = lscale, .lshape = lshape,
-            .escale = escale, .eshape = eshape ) )),
+            .escale = escale, .eshape = eshape,
+            .scale.12 = scale.12, .scale.TF = scale.TF, .lss = lss ) )),
   weight = eval(substitute(expression({
     EulerM <- -digamma(1.0)
 
@@ -850,15 +885,21 @@ if (FALSE)
     ned2l.dscale <- (Shape / Scale)^2
     ned2l.dshapescale <- (EulerM-1) / Scale
 
-    wz <- array(c(c(w) * ned2l.dshape * dshape.deta^2,
-                  c(w) * ned2l.dscale * dscale.deta^2,
-                  c(w) * ned2l.dshapescale * dscale.deta * dshape.deta),
-                dim = c(n, M / M1, 3))
+    wz <- if ( .lss )
+            array(c(c(w) * ned2l.dscale * dscale.deta^2,
+                    c(w) * ned2l.dshape * dshape.deta^2,
+                    c(w) * ned2l.dshapescale * dscale.deta * dshape.deta),
+                  dim = c(n, M / M1, 3)) else
+            array(c(c(w) * ned2l.dshape * dshape.deta^2,
+                    c(w) * ned2l.dscale * dscale.deta^2,
+                    c(w) * ned2l.dshapescale * dscale.deta * dshape.deta),
+                  dim = c(n, M / M1, 3))
     wz <- arwz2wz(wz, M = M, M1 = M1)
 
 
     wz
-  }), list( .eshape = eshape, .nrfs = nrfs ))))
+  }), list( .eshape = eshape, .nrfs = nrfs,
+            .scale.12 = scale.12, .scale.TF = scale.TF, .lss = lss ))))
 }
 
 
@@ -965,8 +1006,8 @@ is.SurvS4 <- function(x) inherits(x, "SurvS4")
 
 
 
-setIs(class1 = "SurvS4",
-      class2 = "matrix")  # Forces vglm()@y to be a matrix
+ setIs(class1 = "SurvS4",
+       class2 = "matrix")  # Forces vglm()@y to be a matrix
 
 
 
@@ -1140,7 +1181,7 @@ pgamma.deriv.unscaled <- function(q, shape) {
  constraints = eval(substitute(expression({
     dotzero <- .zero
     M1 <- 2
-    eval(negzero.expression)
+    eval(negzero.expression.VGAM)
   }), list( .zero = zero ))),
 
   infos = eval(substitute(function(...) {

@@ -5,10 +5,11 @@
 \description{
   Maximum likelihood estimation for the exponential distribution.
 
+
 }
 \usage{
 exponential(link = "loge", location = 0, expected = TRUE,
-            shrinkage.init = 0.95, zero = NULL)
+            ishrinkage = 0.95, parallel = FALSE, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -16,18 +17,22 @@ exponential(link = "loge", location = 0, expected = TRUE,
   Parameter link function applied to the positive parameter \eqn{rate}.
   See \code{\link{Links}} for more choices.
 
+
   }
   \item{location}{
   Numeric of length 1, the known location parameter, \eqn{A}, say.
+
 
   }
   \item{expected}{
   Logical. If \code{TRUE} Fisher scoring is used,
   otherwise Newton-Raphson. The latter is usually faster.
 
+
   }
-  \item{shrinkage.init, zero}{
+  \item{ishrinkage, parallel, zero}{
   See \code{\link{CommonVGAMffArguments}} for information.
+
 
   }
 
@@ -57,6 +62,7 @@ Forbes, C., Evans, M., Hastings, N. and Peacock, B. (2011)
 Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
 
 
+
 }
 
 \author{ T. W. Yee }
@@ -75,13 +81,15 @@ Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
 }
 \seealso{
     \code{\link{amlexponential}},
+    \code{\link{gpd}},
     \code{\link{laplace}},
     \code{\link{expgeometric}},
     \code{\link{explogff}},
     \code{\link{poissonff}},
     \code{\link{mix2exp}},
     \code{\link{freund61}},
-    \code{\link{simulate.vlm}}.
+    \code{\link{simulate.vlm}},
+    \code{\link[stats]{Exponential}}.
 
 
 %   \code{\link{cexpon}},
@@ -97,11 +105,26 @@ edata <- transform(edata, rate = exp(eta))
 edata <- transform(edata, y = rexp(nn, rate = rate))
 with(edata, stem(y))
 
-fit.slow <- vglm(y ~ x2 + x3, exponential, data = edata, trace = TRUE, crit = "c")
+fit.slow <- vglm(y ~ x2 + x3, exponential, data = edata, trace = TRUE)
 fit.fast <- vglm(y ~ x2 + x3, exponential(exp = FALSE), data = edata,
                  trace = TRUE, crit = "coef")
 coef(fit.slow, mat = TRUE)
 summary(fit.slow)
+
+
+# Compare results with a GPD. Has a threshold.
+threshold <- 0.5
+gdata <- data.frame(y1 = threshold + rexp(n = 3000, rate = exp(1.5)))
+
+fit.exp <- vglm(y1 ~ 1, exponential(location = threshold), data = gdata)
+coef(fit.exp, matrix = TRUE)
+Coef(fit.exp)
+logLik(fit.exp)
+
+fit.gpd <- vglm(y1 ~ 1, gpd(threshold =  threshold), data = gdata)
+coef(fit.gpd, matrix = TRUE)
+Coef(fit.gpd)
+logLik(fit.gpd)
 }
 \keyword{models}
 \keyword{regression}

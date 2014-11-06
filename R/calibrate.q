@@ -75,7 +75,7 @@ calibrate.qrrvglm <-
 
   if (!Quadratic && type == "vcov")
     stop("cannot have 'type=\"vcov\"' when object is ",
-         "a \"cao\" object")
+         "a \"rrvgam\" object")
 
   if (is.vector(newdata))
     newdata <- rbind(newdata)
@@ -143,7 +143,7 @@ calibrate.qrrvglm <-
               everything = FALSE,
               mu.function = slot(object@family, "linkinv")) else
         optim(par = initial.vals[ii, ],
-              fn = .my.calib.objfunction.cao,
+              fn = .my.calib.objfunction.rrvgam,
               method = optim.control$Method.optim,  # "BFGS" or "CG" or...
               control = c(fnscale = ifelse(minimize.obfunct, 1, -1),
                           use.optim.control),
@@ -217,7 +217,7 @@ calibrate.qrrvglm <-
                     misc.list = object@misc,
                     everything = TRUE,
                     mu.function = slot(object@family, "linkinv")) else
-            .my.calib.objfunction.cao(BestOFpar[i1, ],
+            .my.calib.objfunction.rrvgam(BestOFpar[i1, ],
                     y = newdata[i1, ],
                     extra = object@extra,
                     objfun = obfunct,
@@ -229,7 +229,7 @@ calibrate.qrrvglm <-
       muValues <- rbind(muValues, matrix(ans$mu, nrow = 1))
       etaValues <- rbind(etaValues, matrix(ans$eta, nrow = 1))
       if (Quadratic)
-        vcValues[,,i1] <- ans$vcmat  # Can be NULL for "cao" objects
+        vcValues[,,i1] <- ans$vcmat  # Can be NULL for "rrvgam" objects
     }
     if (type == "response") {
        dimnames(muValues) <- dimnames(newdata)
@@ -313,7 +313,7 @@ calibrate.qrrvglm <-
 
  
 
-.my.calib.objfunction.cao <-
+.my.calib.objfunction.rrvgam <-
   function(bnu, y, extra = NULL,
            objfun, object, Coefs,
            misc.list,
@@ -323,7 +323,7 @@ calibrate.qrrvglm <-
     NOS <- Coefs@NOS 
     eta <- matrix(as.numeric(NA), 1, NOS)
     for (jlocal in 1:NOS) {
-      eta[1, jlocal] <- predictcao(object, grid = bnu, sppno = jlocal,
+      eta[1, jlocal] <- predictrrvgam(object, grid = bnu, sppno = jlocal,
                                    Rank = Rank, deriv = 0)$yvals
     }
     mu <- rbind(mu.function(eta, extra))  # Make sure it has one row 

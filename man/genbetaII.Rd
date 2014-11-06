@@ -124,9 +124,9 @@ More improvements could be made here.
     \code{\link{sinmad}},
     \code{\link{fisk}},
     \code{\link{lomax}},
-    \code{\link{invlomax}},
+    \code{\link{inv.lomax}},
     \code{\link{paralogistic}},
-    \code{\link{invparalogistic}},
+    \code{\link{inv.paralogistic}},
     \code{\link{lino}}.
 
 

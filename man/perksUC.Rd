@@ -14,10 +14,10 @@
 
 }
 \usage{
-dperks(x, shape, scale = 1, log = FALSE)
-pperks(q, shape, scale = 1)
-qperks(p, shape, scale = 1)
-rperks(n, shape, scale = 1)
+dperks(x, scale = 1, shape, log = FALSE)
+pperks(q, scale = 1, shape)
+qperks(p, scale = 1, shape)
+rperks(n, scale = 1, shape)
 }
 \arguments{
   \item{x, q}{vector of quantiles.}

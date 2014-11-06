@@ -7,17 +7,17 @@
 
 
 .min.criterion.VGAM <-
-  c("deviance" = TRUE,
+  c("deviance"      = TRUE,
     "loglikelihood" = FALSE,
-    "AIC" = TRUE, 
-    "Likelihood" = FALSE,
-    "res.ss" = TRUE,
-    "coefficients" = TRUE)
+    "AIC"           = TRUE, 
+    "Likelihood"    = FALSE,
+    "res.ss"        = TRUE,
+    "coefficients"  = TRUE)
 
 
  
 
-vlm.control <- function(save.weight = TRUE,
+vlm.control <- function(save.weights = TRUE,
                         tol = 1e-7,
                         method = "qr", 
                         checkwz = TRUE,
@@ -32,7 +32,7 @@ vlm.control <- function(save.weight = TRUE,
   if (!is.Numeric(wzepsilon, length.arg = 1, positive = TRUE))
     stop("bad input for argument 'wzepsilon'")
 
-  list(save.weight = save.weight,
+  list(save.weights = save.weights,
        tol = tol,
        method = method,
        checkwz = checkwz,
@@ -44,13 +44,14 @@ vlm.control <- function(save.weight = TRUE,
 
 vglm.control <- function(checkwz = TRUE,
                          Check.rank = TRUE,
+                         Check.cm.rank = TRUE,
                          criterion = names(.min.criterion.VGAM), 
                          epsilon = 1e-7,
                          half.stepsizing = TRUE,
                          maxit = 30, 
                          noWarning = FALSE,
                          stepsize = 1, 
-                         save.weight = FALSE,
+                         save.weights = FALSE,
                          trace = FALSE,
                          wzepsilon = .Machine$double.eps^0.75,
                          xij = NULL,
@@ -102,6 +103,7 @@ vglm.control <- function(checkwz = TRUE,
 
     list(checkwz = checkwz,
          Check.rank = Check.rank, 
+         Check.cm.rank = Check.cm.rank,
          convergence = convergence, 
          criterion = criterion,
          epsilon = epsilon,
@@ -109,7 +111,7 @@ vglm.control <- function(checkwz = TRUE,
          maxit = maxit,
          noWarning = as.logical(noWarning)[1],
          min.criterion = .min.criterion.VGAM,
-         save.weight = as.logical(save.weight)[1],
+         save.weights = as.logical(save.weights)[1],
          stepsize = stepsize,
          trace = as.logical(trace)[1],
          wzepsilon = wzepsilon,

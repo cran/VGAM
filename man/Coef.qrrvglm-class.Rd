@@ -44,11 +44,11 @@ linear predictors and \eqn{n} is the number of observations.
           }
     \item{\code{Maximum}:}{Of class \code{"numeric"}, the 
           \eqn{M} maximum fitted values. That is, the fitted values 
-          at the optima for \code{noRRR = ~ 1} models.
+          at the optimums for \code{noRRR = ~ 1} models.
     If \code{noRRR} is not \code{~ 1} then these will be \code{NA}s. }
     \item{\code{NOS}:}{Number of species.}
     \item{\code{Optimum}:}{Of class \code{"matrix"}, the values
-          of the latent variables where the optima are. 
+          of the latent variables where the optimums are. 
           If the curves are not bell-shaped, then the value will
           be \code{NA} or \code{NaN}.}
     \item{\code{Optimum.order}:}{Of class \code{"matrix"}, the permutation

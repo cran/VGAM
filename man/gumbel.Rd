@@ -186,7 +186,7 @@ egumbel(llocation = "identitylink", lscale = "loge",
 \seealso{
   \code{\link{rgumbel}},
   \code{\link{dgumbelII}},
-  \code{\link{cgumbel}},
+  \code{\link{cens.gumbel}},
   \code{\link{guplot}},
   \code{\link{gev}},
   \code{\link{egev}},

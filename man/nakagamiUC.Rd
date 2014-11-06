@@ -12,17 +12,17 @@
 
 }
 \usage{
-dnaka(x, shape, scale = 1, log = FALSE)
-pnaka(q, shape, scale = 1)
-qnaka(p, shape, scale = 1, ...)
-rnaka(n, shape, scale = 1, Smallno = 1.0e-6)
+dnaka(x, scale = 1, shape, log = FALSE)
+pnaka(q, scale = 1, shape)
+qnaka(p, scale = 1, shape, ...)
+rnaka(n, scale = 1, shape, Smallno = 1.0e-6)
 }
 \arguments{
   \item{x, q}{vector of quantiles.}
   \item{p}{vector of probabilities.}
   \item{n}{number of observations.
     Must be a positive integer of length 1.}
-  \item{shape, scale }{
+  \item{scale, shape}{
   arguments for the parameters of the distribution.
   See \code{\link{nakagami}} for more details.
   For \code{rnaka}, arguments \code{shape} and \code{scale} must be of
@@ -74,7 +74,7 @@ rnaka(n, shape, scale = 1, Smallno = 1.0e-6)
 \examples{
 \dontrun{ x <- seq(0, 3.2, len = 200)
 plot(x, dgamma(x, shape = 1), type = "n", col = "black", ylab = "",
-     ylim = c(0,1.5), main = "dnaka(x, shape)")
+     ylim = c(0,1.5), main = "dnaka(x, shape = shape)")
 lines(x, dnaka(x, shape = 1), col = "orange")
 lines(x, dnaka(x, shape = 2), col = "blue")
 lines(x, dnaka(x, shape = 3), col = "green")
@@ -82,7 +82,7 @@ legend(2, 1.0, col = c("orange","blue","green"), lty = rep(1, len = 3),
        legend = paste("shape =", c(1, 2, 3)))
 
 plot(x, pnorm(x), type = "n", col = "black", ylab = "",
-     ylim = 0:1, main = "pnaka(x, shape)")
+     ylim = 0:1, main = "pnaka(x, shape = shape)")
 lines(x, pnaka(x, shape = 1), col = "orange")
 lines(x, pnaka(x, shape = 2), col = "blue")
 lines(x, pnaka(x, shape = 3), col = "green")

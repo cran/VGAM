@@ -40,7 +40,7 @@ Coef(object, ...)
 
   For quadratic and additive ordination models, this function
   can return ecological meaningful quantities such as tolerances,
-  optima, maxima.
+  optimums, maximums.
 
 
 }
@@ -85,7 +85,7 @@ Reduced-rank vector generalized linear models.
 \examples{
 nn <- 1000
 bdata <- data.frame(y = rbeta(nn, shape1 = 1, shape2 = 3))  # Original scale
-fit <- vglm(y ~ 1, beta.ab, data = bdata, trace = TRUE)  # Intercept-only model
+fit <- vglm(y ~ 1, betaR, data = bdata, trace = TRUE)  # Intercept-only model
 coef(fit, matrix = TRUE)  # Both on a log scale
 Coef(fit)  # On the original scale
 }

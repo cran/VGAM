@@ -11,8 +11,8 @@
 
 }
 \usage{
-dbiclaytoncop(x1, x2, alpha = 0, log = FALSE)
-rbiclaytoncop(n, alpha = 0)
+dbiclaytoncop(x1, x2, apar = 0, log = FALSE)
+rbiclaytoncop(n, apar = 0)
 }
 %pbiclaytoncop(q1, q2, rho = 0)
 \arguments{
@@ -25,7 +25,7 @@ rbiclaytoncop(n, alpha = 0)
     Same as \code{\link[stats]{rnorm}}.
 
   }
-  \item{alpha}{the association parameter.
+  \item{apar}{the association parameter.
   Should be in the interval \eqn{[0, \infty)}{[0, Inf)}.
   The default corresponds to independence.
 
@@ -34,6 +34,8 @@ rbiclaytoncop(n, alpha = 0)
   \item{log}{
   Logical.
   If \code{TRUE} then the logarithm is returned.
+
+
 %   Same as \code{\link[stats]{rnorm}}.
 
 
@@ -42,6 +44,7 @@ rbiclaytoncop(n, alpha = 0)
 \value{
   \code{dbiclaytoncop} gives the density at point (\code{x1},\code{x2}),
   \code{rbiclaytoncop} generates random deviates (a two-column matrix).
+
 
 % \code{pbiclaytoncop} gives the distribution function, and
 
@@ -82,6 +85,7 @@ A model for association in bivariate survival data.
 
 }
 \seealso{
+  \code{\link{biclaytoncop}},
   \code{\link{binormalcop}},
   \code{\link{binormal}}.
 
@@ -91,7 +95,7 @@ A model for association in bivariate survival data.
 \dontrun{ edge <- 0.01  # A small positive value
 N <- 101; x <- seq(edge, 1.0 - edge, len = N); Rho <- 0.7
 ox <- expand.grid(x, x)
-zedd <- dbiclaytoncop(ox[, 1], ox[, 2], alpha = Rho, log = TRUE)
+zedd <- dbiclaytoncop(ox[, 1], ox[, 2], apar = Rho, log = TRUE)
 par(mfrow = c(1, 2))
 contour(x, x, matrix(zedd, N, N), col = "blue", labcex = 1.5, las = 1)
 plot(rbiclaytoncop(1000, 2), col = "blue", las = 1)
@@ -100,7 +104,7 @@ plot(rbiclaytoncop(1000, 2), col = "blue", las = 1)
 \keyword{distribution}
 
 
-%plot(r <- rbiclaytoncop(n = 3000, alpha = exp(2)), col = "blue")
+%plot(r <- rbiclaytoncop(n = 3000, apar = exp(2)), col = "blue")
 %par(mfrow = c(1, 2))
 %hist(r[, 1])  # Should be uniform
 %hist(r[, 2])  # Should be uniform

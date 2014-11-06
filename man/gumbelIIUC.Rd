@@ -14,10 +14,10 @@
 
 }
 \usage{
-dgumbelII(x, shape, scale = 1, log = FALSE)
-pgumbelII(q, shape, scale = 1)
-qgumbelII(p, shape, scale = 1)
-rgumbelII(n, shape, scale = 1)
+dgumbelII(x, scale = 1, shape, log = FALSE)
+pgumbelII(q, scale = 1, shape)
+qgumbelII(p, scale = 1, shape)
+rgumbelII(n, scale = 1, shape)
 }
 \arguments{
   \item{x, q}{vector of quantiles.}
@@ -55,21 +55,21 @@ rgumbelII(n, shape, scale = 1)
 }
 \examples{
 probs <- seq(0.01, 0.99, by = 0.01)
-Shape <- exp( 0.5); Scale <- exp(1);
-max(abs(pgumbelII(qgumbelII(p = probs, Shape, Scale),
-                  Shape, Scale) - probs))  # Should be 0
+Scale <- exp(1); Shape <- exp( 0.5);
+max(abs(pgumbelII(qgumbelII(p = probs, shape = Shape, Scale),
+                  shape = Shape, Scale) - probs))  # Should be 0
 
 \dontrun{ x <- seq(-0.1, 10, by = 0.01);
-plot(x, dgumbelII(x, Shape, Scale), type = "l", col = "blue", las = 1,
+plot(x, dgumbelII(x, shape = Shape, Scale), type = "l", col = "blue", las = 1,
      main = "Blue is density, orange is cumulative distribution function",
      sub = "Purple lines are the 10,20,...,90 percentiles",
      ylab = "", ylim = 0:1)
 abline(h = 0, col = "blue", lty = 2)
-lines(x, pgumbelII(x, Shape, Scale), col = "orange")
+lines(x, pgumbelII(x, shape = Shape, Scale), col = "orange")
 probs <- seq(0.1, 0.9, by = 0.1)
-Q <- qgumbelII(probs, Shape, Scale)
-lines(Q, dgumbelII(Q, Shape, Scale), col = "purple", lty = 3, type = "h")
-pgumbelII(Q, Shape, Scale) - probs # Should be all zero
+Q <- qgumbelII(probs, shape = Shape, Scale)
+lines(Q, dgumbelII(Q, Scale, Shape), col = "purple", lty = 3, type = "h")
+pgumbelII(Q, shape = Shape, Scale) - probs # Should be all zero
 abline(h = probs, col = "purple", lty = 3) }
 }
 \keyword{distribution}

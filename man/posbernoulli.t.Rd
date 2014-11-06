@@ -153,6 +153,20 @@ capture--recapture experiments.
   \bold{62}, 3--135.
 
 
+Yee, T. W. and Stoklosa, J. and Huggins, R. M. (2014)
+The \pkg{VGAM} package for capture--recapture data using the
+conditional likelihood.
+In preparation.
+
+
+%\emph{Journal of Statistical Software},
+%\bold{32}, 1--34.
+%\url{http://www.jstatsoft.org/v32/i10/}.
+
+
+
+
+
 }
 \author{ Thomas W. Yee. }
 

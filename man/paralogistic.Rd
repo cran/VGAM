@@ -84,9 +84,9 @@ Hoboken, NJ, USA: Wiley-Interscience.
     \code{\link{betaII}},
     \code{\link{dagum}},
     \code{\link{fisk}},
-    \code{\link{invlomax}},
+    \code{\link{inv.lomax}},
     \code{\link{lomax}},
-    \code{\link{invparalogistic}}.
+    \code{\link{inv.paralogistic}}.
 
 }
 
