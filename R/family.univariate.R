@@ -7886,18 +7886,16 @@ dgengamma.stacy <- function(x, scale = 1, d = 1, k = 1, log = FALSE) {
     stop("bad input for argument 'log'")
   rm(log)
 
-  if (!is.Numeric(scale, positive = TRUE))
-    stop("bad input for argument 'scale'")
   if (!is.Numeric(d, positive = TRUE))
     stop("bad input for argument 'd'")
   if (!is.Numeric(k, positive = TRUE))
     stop("bad input for argument 'k'")
 
-  N <- max(length(x), length(scale), length(d), length(k))
-  x <- rep(x, length.out = N);
-  scale <- rep(scale, length.out = N);
-  d <- rep(d, length.out = N);
-  k <- rep(k, length.out = N); 
+  N     <- max(length(x), length(scale), length(d), length(k))
+  x     <- rep(x,     length.out = N)
+  scale <- rep(scale, length.out = N)
+  d     <- rep(d,     length.out = N)
+  k     <- rep(k,     length.out = N) 
 
   Loglik <- rep(log(0), length.out = N)
   xok <- x > 0
@@ -7906,11 +7904,24 @@ dgengamma.stacy <- function(x, scale = 1, d = 1, k = 1, log = FALSE) {
     Loglik[xok] <- log(d[xok]) + (-d[xok]*k[xok]) * log(scale[xok]) +
                (d[xok]*k[xok]-1) * log(x[xok]) - zedd - lgamma(k[xok])
   }
-  if (log.arg) {
+
+
+  Loglik[is.infinite(x)] <- log(0)  # 20141208; KaiH.
+
+
+  answer <- if (log.arg) {
     Loglik
   } else {
     exp(Loglik)
   }
+
+
+  answer[scale <  0] <- NaN
+  answer[scale == 0] <- NaN  # Not strictly correct
+  if (any(scale <= 0))
+    warning("NaNs produced")
+
+  answer
 }
 
 

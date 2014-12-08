@@ -23,7 +23,11 @@ rgompertz(n, scale = 1, shape)
 \arguments{
   \item{x, q}{vector of quantiles.}
   \item{p}{vector of probabilities.}
-  \item{n}{number of observations. }
+  \item{n}{number of observations.
+  Same as in \code{\link[stats]{runif}}.
+
+
+  }
   \item{log}{
   Logical.
   If \code{log = TRUE} then the logarithm of the density is returned.

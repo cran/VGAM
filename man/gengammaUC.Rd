@@ -22,7 +22,11 @@ rgengamma.stacy(n, scale = 1, d = 1, k = 1)
 \arguments{
   \item{x, q}{vector of quantiles.}
   \item{p}{vector of probabilities.}
-  \item{n}{number of observations. Positive integer of length 1.}
+  \item{n}{number of observations.
+  Same as in \code{\link[stats]{runif}}.
+
+
+  }
   \item{scale}{the (positive) scale parameter \eqn{b}.}
   \item{d, k}{the (positive) parameters \eqn{d} and \eqn{k}.}
   \item{log}{

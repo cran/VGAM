@@ -132,15 +132,21 @@ Numerical rank of the fitted model.
  from class \code{ "vlm"}.
 The \emph{working} residuals at the final IRLS iteration.
  }
-    \item{\code{res.ss}:}{Object of class \code{"numeric"},
+    \item{\code{ResSS}:}{Object of class \code{"numeric"},
  from class \code{ "vlm"}.
 Residual sum of squares at the final IRLS iteration with
 the adjusted dependent vectors and weight matrices.
+
+
+
  }
     \item{\code{smart.prediction}:}{Object of class
 \code{"list"}, from class \code{ "vlm"}.
 A list of data-dependent parameters (if any)
     that are used by smart prediction.
+
+
+
  }
     \item{\code{terms}:}{Object of class \code{"list"},
  from class \code{ "vlm"}.

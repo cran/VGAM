@@ -21,7 +21,13 @@ rnaka(n, scale = 1, shape, Smallno = 1.0e-6)
   \item{x, q}{vector of quantiles.}
   \item{p}{vector of probabilities.}
   \item{n}{number of observations.
-    Must be a positive integer of length 1.}
+    Same as in \code{\link[stats]{runif}}.
+
+
+%   Must be a positive integer of length 1.
+
+
+  }
   \item{scale, shape}{
   arguments for the parameters of the distribution.
   See \code{\link{nakagami}} for more details.

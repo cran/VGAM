@@ -1998,7 +1998,6 @@ InverseBrat <-
     mu
   }, list( .link = link, .earg = earg, .countdata = countdata ))),
   last = eval(substitute(expression({
-print("y.names")
     if ( .countdata ) {
       misc$link <- .link
       misc$earg <- list( .earg )

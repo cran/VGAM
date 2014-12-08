@@ -24,9 +24,10 @@ dbinom2.or(mu1,
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{n}{
-    number of observations. Must be a single positive integer.
+    number of observations.
+    Same as in \code{\link[stats]{runif}}.
     The arguments \code{mu1}, \code{mu2}, \code{oratio} are recycled to
-    length \code{n}.
+    this value.
 
 
   }

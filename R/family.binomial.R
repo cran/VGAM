@@ -420,10 +420,12 @@ rbinom2.or <-
            colnames = if (twoCols) c("y1", "y2") else
                          c("00", "01", "10", "11"),
            ErrorCheck = TRUE) {
+  use.n <- if ((length.n <- length(n)) > 1) length.n else
+           if (!is.Numeric(n, integer.valued = TRUE,
+                           length.arg = 1, positive = TRUE))
+              stop("bad input for argument 'n'") else n
+
   if (ErrorCheck) {
-    if (!is.Numeric(n, integer.valued = TRUE, positive = TRUE,
-                    length.arg = 1))
-      stop("bad input for argument 'n'")
     if (!is.Numeric(mu1, positive = TRUE) || max(mu1) >= 1)
       stop("bad input for argument 'mu1'") 
     if (!is.Numeric(mu2, positive = TRUE) || max(mu2) >= 1)
@@ -441,10 +443,10 @@ rbinom2.or <-
                      exchangeable = exchangeable,
                      tol = tol, ErrorCheck = ErrorCheck)
 
-  answer <- matrix(0, n, 2,
+  answer <- matrix(0, use.n, 2,
                    dimnames = list(NULL,
                                    if (twoCols) colnames else NULL))
-  yy <- runif(n)
+  yy <- runif(use.n)
   cs1 <- dmat[, "00"] + dmat[, "01"]
   cs2 <- cs1 + dmat[, "10"]
   index <- (dmat[, "00"] < yy) & (yy <= cs1)
@@ -453,9 +455,11 @@ rbinom2.or <-
   answer[index, 1] <- 1
   index <- (yy > cs2)
   answer[index,] <- 1
-  if (twoCols) answer else {
-    answer4 <- matrix(0, n, 4, dimnames = list(NULL, colnames))
-    answer4[cbind(1:n, 1 + 2*answer[, 1] + answer[, 2])] <- 1
+  if (twoCols) {
+    answer
+  } else {
+    answer4 <- matrix(0, use.n, 4, dimnames = list(NULL, colnames))
+    answer4[cbind(1:use.n, 1 + 2*answer[, 1] + answer[, 2])] <- 1
     answer4
   }
 }
@@ -730,10 +734,12 @@ rbinom2.rho <-
            colnames = if (twoCols) c("y1", "y2") else
                       c("00", "01", "10", "11"),
            ErrorCheck = TRUE) {
+  use.n <- if ((length.n <- length(n)) > 1) length.n else
+           if (!is.Numeric(n, integer.valued = TRUE,
+                           length.arg = 1, positive = TRUE))
+              stop("bad input for argument 'n'") else n
+
   if (ErrorCheck) {
-    if (!is.Numeric(n, integer.valued = TRUE,
-                    positive = TRUE, length.arg = 1))
-      stop("bad input for argument 'n'")
     if (!is.Numeric(mu1, positive = TRUE) ||
         max(mu1) >= 1)
       stop("bad input for argument 'mu1'") 
@@ -754,10 +760,10 @@ rbinom2.rho <-
                       exchangeable = exchangeable,
                       ErrorCheck = ErrorCheck)
 
-  answer <- matrix(0, n, 2,
+  answer <- matrix(0, use.n, 2,
                    dimnames = list(NULL,
                                    if (twoCols) colnames else NULL))
-  yy <- runif(n)
+  yy <- runif(use.n)
   cs1 <- dmat[, "00"] + dmat[, "01"]
   cs2 <- cs1 + dmat[, "10"]
   index <- (dmat[, "00"] < yy) & (yy <= cs1)
@@ -766,9 +772,11 @@ rbinom2.rho <-
   answer[index, 1] <- 1
   index <- (yy > cs2)
   answer[index,] <- 1
-  if (twoCols) answer else {
-    answer4 <- matrix(0, n, 4, dimnames = list(NULL, colnames))
-    answer4[cbind(1:n, 1 + 2*answer[, 1] + answer[, 2])] <- 1
+  if (twoCols) {
+    answer
+  } else {
+    answer4 <- matrix(0, use.n, 4, dimnames = list(NULL, colnames))
+    answer4[cbind(1:use.n, 1 + 2*answer[, 1] + answer[, 2])] <- 1
     answer4
   }
 }

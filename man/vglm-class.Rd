@@ -120,7 +120,7 @@ Numerical rank of the fitted model.
  from class \code{ "vlm"}.
 The \emph{working} residuals at the final IRLS iteration.
  }
-    \item{\code{res.ss}:}{Object of class \code{"numeric"},
+    \item{\code{ResSS}:}{Object of class \code{"numeric"},
  from class \code{ "vlm"}.
 Residual sum of squares at the final IRLS iteration with
 the adjusted dependent vectors and weight matrices.

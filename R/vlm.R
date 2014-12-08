@@ -96,7 +96,7 @@ vlm <- function(formula,
 
   fit <- vlm.wfit(xmat = x, zmat = y, Hlist = Hlist, wz = wz, U = NULL,
                  matrix.out = FALSE, is.vlmX = FALSE,
-                 res.ss = TRUE, qr = qr.arg,
+                 ResSS = TRUE, qr = qr.arg,
                  x.ret = TRUE, offset = offset)
 
   ncol.X.vlm <- fit$rank
@@ -148,7 +148,7 @@ vlm <- function(formula,
       "coefficients" = fit$coefficients,
       "constraints"  = fit$constraints,
       "control"      = control, 
-      "criterion"    = list(deviance = fit$res.ss),
+      "criterion"    = list(deviance = fit$ResSS),
       "dispersion"   = 1,
       "df.residual"  = fit$df.residual,
       "df.total"     = n*M,
@@ -159,7 +159,7 @@ vlm <- function(formula,
       "R"            = fit$R,
       "rank"         = fit$rank,
       "residuals"    = as.matrix(fit$residuals),
-      "res.ss"       = fit$res.ss,
+      "ResSS"       = fit$ResSS,
       "smart.prediction" = as.list(fit$smart.prediction),
       "terms"        = list(terms = mt))
 

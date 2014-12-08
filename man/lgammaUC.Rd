@@ -23,7 +23,11 @@ rlgamma(n, location = 0, scale = 1, shape = 1)
 \arguments{
   \item{x, q}{vector of quantiles.}
   \item{p}{vector of probabilities.}
-  \item{n}{number of observations. Positive integer of length 1.}
+  \item{n}{number of observations.
+   Same as \code{\link[stats]{runif}}.
+
+
+  }
   \item{location}{the location parameter \eqn{a}.}
   \item{scale}{the (positive) scale parameter \eqn{b}.}
   \item{shape}{the (positive) shape parameter \eqn{k}.}

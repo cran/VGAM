@@ -110,7 +110,7 @@ tapplymat1 <- function(mat, function.arg = c("cumsum", "diff", "cumprod")) {
   NR <- nrow(mat)
   NC <- ncol(mat)
   fred <- .C("tapply_mat1", mat = as.double(mat), as.integer(NR),
-             as.integer(NC), as.integer(type), PACKAGE = "VGAM")
+             as.integer(NC), as.integer(type))  # , PACKAGE = "VGAM"
   dim(fred$mat) <- c(NR, NC)
   dimnames(fred$mat) <- dimnames(mat)
   switch(function.arg,

@@ -28,7 +28,11 @@ rlog(n, prob, Smallno = 1.0e-6)
 
   }
 % \item{p}{vector of probabilities.}
-  \item{n}{number of observations. A single positive integer.}
+  \item{n}{number of observations.
+  Same as in \code{\link[stats]{runif}}.
+
+
+  }
   \item{prob}{ 
    The parameter value \eqn{c} described in in \code{\link{logff}}.
    Here it is called \code{prob} because \eqn{0<c<1} is the range.

@@ -79,17 +79,20 @@ qcard <- function(p, mu, rho, tolerance=1.0e-7, maxits=500) {
 
 
 rcard <- function(n, mu, rho, ...) {
+  use.n <- if ((length.n <- length(n)) > 1) length.n else
+           if (!is.Numeric(n, integer.valued = TRUE,
+                           length.arg = 1, positive = TRUE))
+              stop("bad input for argument 'n'") else n
+
+
   if (!is.Numeric(mu) || any(mu < 0) || any(mu > 2*pi))
     stop("argument 'mu' must be between 0 and 2*pi inclusive")
   if (!is.Numeric(rho) || max(abs(rho) > 0.5))
     stop("argument 'rho' must be between -0.5 and 0.5 inclusive")
-  if (!is.Numeric(n, positive = TRUE,
-                  integer.valued = TRUE, length.arg = 1))
-    stop("argument 'n' must be a single positive integer")
 
-  mu <- rep(mu, len = n)
-  rho <- rep(rho, len = n)
-  qcard(runif (n), mu = mu, rho = rho, ...)
+  mu <- rep(mu, len = use.n)
+  rho <- rep(rho, len = use.n)
+  qcard(runif(use.n), mu = mu, rho = rho, ...)
 }
 
 

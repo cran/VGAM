@@ -265,9 +265,8 @@ drice <- function(x, sigma, vee, log = FALSE) {
 }
 
 
+
 rrice <- function(n, sigma, vee) {
-  if (!is.Numeric(n, integer.valued = TRUE, length.arg = 1))
-    stop("bad input for argument 'n'")
   theta <- 1  # any number
   X <- rnorm(n, mean = vee * cos(theta), sd = sigma)
   Y <- rnorm(n, mean = vee * sin(theta), sd = sigma)
@@ -780,11 +779,13 @@ dyules <- function(x, rho, log = FALSE) {
 }
 
 
+
+
 ryules <- function(n, rho) {
-  if (!is.Numeric(n, integer.valued = TRUE, length.arg = 1))
-    stop("bad input for argument 'n'")
-  rgeom(n, prob = exp(-rexp(n, rate=rho))) + 1
+  rgeom(n, prob = exp(-rexp(n, rate = rho))) + 1
 }
+
+
 
 
 pyules <- function(q, rho) {

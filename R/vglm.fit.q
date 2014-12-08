@@ -471,7 +471,7 @@ vglm.fit <-
         iter = iter,
         misc = misc,
         post = post,
-        res.ss = tfit$res.ss,
+        ResSS = tfit$ResSS,
         x = x,
         y = y)),
         vclass = slot(family, "vfamily"))

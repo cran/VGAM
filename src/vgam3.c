@@ -154,7 +154,7 @@ void Free_fapc0tnbewg7qruh(double *wkumc9idWrk1,
 void F77_NAME(vdigami)(double*, double*, double*,
                        double*, double*, double*,
                        double*, double*, double*,
-                       double*, int*);
+                       int*,    double*);
 
 void VGAM_C_vdigami(double d[], double x[], double p[],
                     double gplog[], double gp1log[], double psip[],
@@ -226,11 +226,12 @@ void VGAM_C_vdigami(double d[], double x[], double p[],
 
 
 
+
   for (ayfnwr1v = 0; ayfnwr1v < *f8yswcat; ayfnwr1v++) {
     F77_CALL(vdigami)(d, x, p,
                       gplog, gp1log, psip,
                       psip1, psidp, psidp1,
-                      tmax, ifault);
+                      ifault, tmax);
     d += 6;
     x++;
     p++;

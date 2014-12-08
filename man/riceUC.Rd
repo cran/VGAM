@@ -27,7 +27,7 @@ rrice(n, sigma, vee)
   \item{x, q}{vector of quantiles.}
   \item{p}{vector of probabilities.}
   \item{n}{number of observations.
-  Must be a positive integer of length 1.
+  Same as in \code{\link[stats]{runif}}.
 
   }
   \item{vee, sigma}{

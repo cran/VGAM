@@ -8,18 +8,22 @@
    Maximum likelihood estimation of the 2-parameter
    Frechet distribution.
 
+
 %  and 3-parameter
+
 
 }
 \usage{
 frechet(location = 0, lscale = "loge", lshape = logoff(offset = -2),
         iscale = NULL, ishape = NULL, nsimEIM = 250, zero = NULL)
+}
 %frechet3(anchor = NULL, ldifference = "loge", lscale = "loge",
 %         lshape = "loglog",
 %         ilocation = NULL, iscale = NULL, ishape = NULL,
 %         zero = NULL, effpos = .Machine$double.eps^0.75)
-}
 %- maybe also 'usage' for other objects documented here.
+
+
 \arguments{
   \item{location}{
   Numeric. Location parameter.
@@ -94,6 +98,7 @@ frechet(location = 0, lscale = "loge", lshape = logoff(offset = -2),
 
 % Note that the \code{\link{loglog}} link ensures \eqn{s > 1}.
 
+
 % whereas \code{frechet3} estimates it.
 % Estimating \eqn{a} well requires a lot of data and
 % a good choice of \code{ilocation} will help speed up convergence.
@@ -102,6 +107,7 @@ frechet(location = 0, lscale = "loge", lshape = logoff(offset = -2),
 % It would be great if the first linear/additive predictor was a direct
 % function of the location parameter, but this can run the risk that
 % the estimate is out of range (i.e., greater than \code{min(y)}).
+
 
 
 }

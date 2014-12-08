@@ -185,7 +185,7 @@ df.residual(zef1, type = "lm")
 
 mle1 <- vglm(cbind(invest.g, invest.w) ~
              capital.g + value.g + capital.w + value.w,
-             SURff(mle.normal = TRUE, divisor = "n-max"),
+             SURff(mle.normal = TRUE),
              epsilon = 1e-11,
              data = gew, trace = TRUE, constraints = clist)
 round(coef(mle1, matrix = TRUE), digits = 4)  # MLE
@@ -195,3 +195,9 @@ round(sqrt(diag(vcov(mle1))),    digits = 4)  # SEs
 % R documentation directory.
 \keyword{models}
 \keyword{regression}
+
+
+
+% Prior to 20141108:
+%            SURff(mle.normal = TRUE, divisor = "n-max"),
+

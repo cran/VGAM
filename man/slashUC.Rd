@@ -20,6 +20,8 @@ rslash(n, mu = 0, sigma = 1)
   \item{x, q}{vector of quantiles.}
   \item{n}{
   Same as \code{\link[stats]{runif}}.
+
+
 % number of observations. Must be a single positive integer.
 
 

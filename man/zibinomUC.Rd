@@ -26,7 +26,7 @@ rzibinom(n, size, prob, pstr0 = 0)
   \item{size}{number of trials. It is the \eqn{N} symbol in the formula
    given in \code{\link{zibinomial}}. }
   \item{prob}{probability of success on each trial. }
-  \item{n}{number of observations. Must be a single positive integer. }
+  \item{n}{ Same as in \code{\link[stats]{runif}}.  }
   \item{log, log.p, lower.tail}{ Arguments that are passed on to 
       \code{\link[stats:Binomial]{pbinom}}.}
   \item{pstr0}{ 

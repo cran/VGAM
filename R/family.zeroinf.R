@@ -3137,6 +3137,7 @@ qzinegbin <- function(p, size, prob = NULL, munb = NULL, pstr0 = 0) {
 }
 
 
+
 rzinegbin <- function(n, size, prob = NULL, munb = NULL, pstr0 = 0) {
   if (length(munb)) {
     if (length(prob))

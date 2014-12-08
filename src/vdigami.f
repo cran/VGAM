@@ -22,14 +22,23 @@ C  And a wrapper function written to call this subroutine.
 C  TMAX is now input.
 C  Seems to work but more testing is required.
 C
+C  20141108; A, C, CP, CPP, DSP, DSPP, DFP, DFPP, F, S, TMAXP etc. now 
+C  declared, by T. W. Yee.
+C  ABS() changed to DABS() too.
+C
+C
       DOUBLE PRECISION X, P, GPLOG, GP1LOG, PSIP, PSIP1, PSIDP, PSIDP1
       DOUBLE PRECISION TMAX
       INTEGER          IFAULT
 C
+      DOUBLE PRECISION A, AN, B, C, CP, CPC, CPP, DSP, DSPP, DFP, DFPP
+      DOUBLE PRECISION F, PM1, S, S0, XLOG, TERM, TMAXP
 C
 C
 C
 C
+C
+      INTEGER          I, I2
       DOUBLE PRECISION PN(6), D(6), DP(6), DPP(6), ZERO, ONE, TWO
 C     DATA TMAX/100.0/
       DATA E, OFLO, VSMALL/1.D-6, 1.D30, 1.D-30/
@@ -111,9 +120,9 @@ C
       DPP(5) = B*DPP(3) + AN*DPP(1) + TWO*(TERM*DP(1) - DP(3))
       DPP(6) = B*DPP(4) + AN*DPP(2) + TWO*(TERM*DP(2) - DP(4))
 C
-      IF (ABS(PN(6)) .LT. VSMALL) GO TO 35
+      IF (DABS(PN(6)) .LT. VSMALL) GO TO 35
       S = PN(5) / PN(6)
-      C = ABS(S - S0)
+      C = DABS(S - S0)
       IF (C*P .GT. E) GO TO 34
       IF (C .LE. E*S) GO TO 42
 C
@@ -126,7 +135,7 @@ C
    36 CONTINUE
 C
       IF (TERM .GT. TMAX) GO TO 1001
-      IF (ABS(PN(5)) .LT. OFLO) GO TO 32
+      IF (DABS(PN(5)) .LT. OFLO) GO TO 32
       DO 41 I = 1, 4
 	DP(I) = DP(I) / OFLO
 	DPP(I) = DPP(I) / OFLO

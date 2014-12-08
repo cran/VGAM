@@ -165,7 +165,7 @@ predict.vlm <- function(object,
       object <- as(object, "vlm")  # Coerce
       fit.summary <- summaryvlm(object, dispersion=dispersion)
       sigma <- if (is.numeric(fit.summary@sigma)) fit.summary@sigma else
-               sqrt(deviance(object) / object@df.residual)  # was @res.ss
+               sqrt(deviance(object) / object@df.residual)  # was @ResSS
       pred <- Build.terms.vlm(x = X_vlm, coefs = coefs,
                               cov = sigma^2 * fit.summary@cov.unscaled,
                               assign = vasgn,

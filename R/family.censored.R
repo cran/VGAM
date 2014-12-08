@@ -1087,8 +1087,7 @@ pgamma.deriv.unscaled <- function(q, shape) {
 
 
 
-  gam0 <- exp(lgamma(shape) +
-              pgamma(q = q, shape = shape, log.p = TRUE))
+  gam0 <- exp(lgamma(shape) + pgamma(q = q, shape = shape, log.p = TRUE))
 
   I.sq <- pgamma(q = q, shape = shape)
 
@@ -1099,7 +1098,7 @@ pgamma.deriv.unscaled <- function(q, shape) {
   gam1 <- gam0 * G1s
 
 
-  dG1s <- trigamma(shape) + alld[, 4] / I.sq - tmp3^2 # eqn (4.13)
+  dG1s <- trigamma(shape) + alld[, 4] / I.sq - tmp3^2  # eqn (4.13)
   G2s <- dG1s + G1s^2  # eqn (4.12)
 
   gam2 <- gam0 * G2s

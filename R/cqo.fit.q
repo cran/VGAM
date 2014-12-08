@@ -582,7 +582,7 @@ ny <- names(y)
         iter = iter,
         misc = misc,
         post = post,
-        res.ss = 000,
+        ResSS = 000,
         x = x,
         y = y)),
         vclass = family@vfamily)
@@ -662,7 +662,7 @@ ny <- names(y)
     alt <- valt(x = cbind(X1, X2), z = etamat,
                 U = sqrt(t(wts)), Rank = effrank,
                 Hlist = NULL, Cinit = NULL, trace = FALSE,
-                colx1.index = 1:ncol(X1), Criterion = "res.ss")
+                colx1.index = 1:ncol(X1), Criterion = "ResSS")
     temp.control <- list(Rank = effrank, colx1.index = 1:ncol(X1),
                          Alpha = 0.5,
                          colx2.index = (ncol(X1)+1):(ncol(X1) + ncol(X2)),
@@ -689,7 +689,7 @@ ny <- names(y)
     U <- t(sqrt(wts))
     tmp <- vlm.wfit(xmat = X1, zmat = etamat, Hlist = NULL, U = U,
                     matrix.out = TRUE,
-                    is.vlmX = FALSE, res.ss = TRUE, qr = FALSE, xij = xij)
+                    is.vlmX = FALSE, ResSS = TRUE, qr = FALSE, xij = xij)
     ans <- crow1C(as.matrix(tmp$resid),
                   rep(Crow1positive, length.out = effrank))
     if (effrank < Rank) {

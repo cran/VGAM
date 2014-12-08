@@ -144,7 +144,7 @@ vglm <- function(formula,
     "R"            = fit$R,
     "rank"         = fit$rank,
     "residuals"    = as.matrix(fit$residuals),
-    "res.ss"       = fit$res.ss,
+    "ResSS"       = fit$ResSS,
     "smart.prediction" = as.list(fit$smart.prediction),
     "terms"        = list(terms = mt))
 

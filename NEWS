@@ -6,6 +6,21 @@
 
 
 
+                CHANGES IN VGAM VERSION 0.9-6
+
+NEW FEATURES
+
+    o   All d-type functions handle the 'n' argument the same
+        way as runif(). This was done with the help of Kai Huang.
+
+
+BUG FIXES and CHANGES
+
+    o   Slot "res.ss" changed to "ResSS".
+    o   Some argument reference errors found by valgrind have been fixed.
+
+
+
                 CHANGES IN VGAM VERSION 0.9-5
 
 NEW FEATURES

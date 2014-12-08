@@ -610,8 +610,10 @@ qtikuv <- function(p, d, mean = 0, sigma = 1, ...) {
 
 
 rtikuv <- function(n, d, mean = 0, sigma = 1, Smallno = 1.0e-6) {
-  if (!is.Numeric(n, positive = TRUE, integer.valued = TRUE))
-    stop("bad input for argument 'n'")
+  use.n <- if ((length.n <- length(n)) > 1) length.n else
+           if (!is.Numeric(n, integer.valued = TRUE,
+                           length.arg = 1, positive = TRUE))
+            stop("bad input for argument 'n'") else n
   if (!is.Numeric(d, length.arg = 1) || max(d) >= 2)
     stop("bad input for argument 'd'")
   if (!is.Numeric(mean, length.arg = 1))
@@ -622,7 +624,7 @@ rtikuv <- function(n, d, mean = 0, sigma = 1, Smallno = 1.0e-6) {
       Smallno > 0.01 ||
       Smallno < 2 * .Machine$double.eps)
       stop("bad input for argument 'Smallno'")
-  ans <- rep(0.0, len = n)
+  ans <- rep(0.0, len = use.n)
 
   ptr1 <- 1; ptr2 <- 0
   hh <- 2 - d
@@ -631,20 +633,20 @@ rtikuv <- function(n, d, mean = 0, sigma = 1, Smallno = 1.0e-6) {
                  dtikuv(x = mean + sigma*sqrt(4 - 2*hh),
                         d = d, mean = mean, sigma = sigma),
                  KK / (sqrt(2 * pi) * sigma))
-  while (ptr2 < n) {
+  while (ptr2 < use.n) {
     Lower <- mean - 5 * sigma
     while (ptikuv(q = Lower, d = d, mean = mean, sigma = sigma) > Smallno)
       Lower <- Lower - sigma
     Upper <- mean + 5 * sigma
     while (ptikuv(q = Upper, d = d, mean = mean, sigma = sigma) < 1-Smallno)
       Upper <- Upper + sigma
-    x <- runif(2*n, min = Lower, max = Upper)
-    index <- runif(2*n, max = ymax) <
+    x <- runif(2*use.n, min = Lower, max = Upper)
+    index <- runif(2*use.n, max = ymax) <
              dtikuv(x, d = d, mean = mean, sigma = sigma)
     sindex <- sum(index)
     if (sindex) {
-      ptr2 <- min(n, ptr1 + sindex - 1)
-      ans[ptr1:ptr2] = (x[index])[1:(1+ptr2-ptr1)]
+      ptr2 <- min(use.n, ptr1 + sindex - 1)
+      ans[ptr1:ptr2] <- (x[index])[1:(1+ptr2-ptr1)]
       ptr1 <- ptr2 + 1
     }
   }

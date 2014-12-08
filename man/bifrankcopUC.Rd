@@ -17,7 +17,10 @@ rbifrankcop(n, apar)
 \arguments{
   \item{x1, x2, q1, q2}{vector of quantiles.}
   \item{n}{number of observations.
-    Must be a positive integer of length 1.}
+    Same as in \code{\link[stats]{runif}}.
+
+
+  }
   \item{apar}{the positive association parameter. }
   \item{log}{
   Logical.

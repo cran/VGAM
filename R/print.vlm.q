@@ -34,9 +34,9 @@ show.vlm <- function(object) {
   if (length(deviance(object)) &&
       is.finite(deviance(object)))
     cat("Deviance:", format(deviance(object)), "\n")
-  if (length(object@res.ss) &&
-      is.finite(object@res.ss))
-    cat("Residual Sum of Squares:", format(object@res.ss), "\n")
+  if (length(object@ResSS) &&
+      is.finite(object@ResSS))
+    cat("Residual Sum of Squares:", format(object@ResSS), "\n")
 
   invisible(object)
 }
@@ -79,9 +79,9 @@ print.vlm <- function(x, ...) {
   if (length(deviance(x)) &&
       is.finite(deviance(x)))
     cat("Deviance:", format(deviance(x)), "\n")
-  if (length(x@res.ss) &&
-      is.finite(x@res.ss))
-    cat("Residual Sum of Squares:", format(x@res.ss), "\n")
+  if (length(x@ResSS) &&
+      is.finite(x@ResSS))
+    cat("Residual Sum of Squares:", format(x@ResSS), "\n")
 
   invisible(x)
 }

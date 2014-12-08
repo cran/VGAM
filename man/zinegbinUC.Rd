@@ -23,7 +23,7 @@ rzinegbin(n, size, prob = NULL, munb = NULL, pstr0 = 0)
 \arguments{
   \item{x, q}{vector of quantiles.}
   \item{p}{vector of probabilities.}
-  \item{n}{number of observations. Must be a single positive integer. }
+  \item{n}{ Same as in \code{\link[stats]{runif}}.  }
   \item{size, prob, munb, log}{
   Arguments matching \code{\link[stats:NegBinomial]{dnbinom}}.
   The argument \code{munb} corresponds to \code{mu} in

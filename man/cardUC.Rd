@@ -21,7 +21,11 @@ rcard(n, mu, rho, ...)
 \arguments{
   \item{x, q}{vector of quantiles.}
   \item{p}{vector of probabilities.}
-  \item{n}{number of observations. Must be a single positive integer. }
+  \item{n}{number of observations.
+  Same as in \code{\link[stats]{runif}}.
+
+
+  }
   \item{mu, rho}{
   See \code{\link{cardioid}} for more information.
 

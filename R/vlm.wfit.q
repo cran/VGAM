@@ -12,10 +12,10 @@
 
 vlm.wfit <-
   function(xmat, zmat, Hlist, wz = NULL, U = NULL, 
-           matrix.out = FALSE, is.vlmX = FALSE, res.ss = TRUE, qr = FALSE,
+           matrix.out = FALSE, is.vlmX = FALSE, ResSS = TRUE, qr = FALSE,
            x.ret = FALSE,
            offset = NULL,
-           omit.these = NULL, only.res.ss = FALSE,
+           omit.these = NULL, only.ResSS = FALSE,
            ncolx = if (matrix.out && is.vlmX) {
                      stop("need argument 'ncolx'") 
                    } else {
@@ -29,7 +29,7 @@ vlm.wfit <-
   zmat <- as.matrix(zmat)
   n <- nrow(zmat)
   M <- ncol(zmat)
-  if (!only.res.ss) {
+  if (!only.ResSS) {
     contrast.save <- attr(xmat, "contrasts")
     znames <- dimnames(zmat)[[2]]
   }
@@ -73,10 +73,10 @@ vlm.wfit <-
 
   ans <- lm.fit(X.vlm, y = z.vlm, ...)
 
-  if (res.ss) {
-    ans$res.ss <- sum(ans$resid^2)
-    if (only.res.ss)
-      return(list(res.ss = ans$res.ss))
+  if (ResSS) {
+    ans$ResSS <- sum(ans$resid^2)
+    if (only.ResSS)
+      return(list(ResSS = ans$ResSS))
   }
 
   if (length(omit.these) && any(omit.these)) {
@@ -169,8 +169,8 @@ print.vlm.wfit <- function(x, ...) {
   }
   cat("\nDegrees of Freedom:", n*M, "Total;", rdf, "Residual\n")
 
-  if (!is.null(x$res.ss)) {
-    cat("Residual Sum of Squares:", format(x$res.ss), "\n")
+  if (!is.null(x$ResSS)) {
+    cat("Residual Sum of Squares:", format(x$ResSS), "\n")
   }
 
   invisible(x)

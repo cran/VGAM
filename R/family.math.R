@@ -105,10 +105,8 @@ lambertW <- function(x, tolerance = 1.0e-10, maxit = 50) {
  pgamma.deriv <- function(q, shape, tmax = 100) {
 
   nnn <- max(length(q), length(shape))
-  if (length(q) != nnn)
-    q <- rep(q, length = nnn)
-  if (length(shape) != nnn)
-    shape <- rep(shape, length = nnn)
+  if (length(q)     != nnn) q     <- rep(q,     length = nnn)
+  if (length(shape) != nnn) shape <- rep(shape, length = nnn)
 
   if (!is.Numeric(q, positive = TRUE))
     stop("bad input for argument 'q'")

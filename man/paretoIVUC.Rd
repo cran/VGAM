@@ -47,7 +47,11 @@ rparetoI(n, scale = 1, shape = 1)
 \arguments{
   \item{x, q}{vector of quantiles. }
   \item{p}{vector of probabilities. }
-  \item{n}{number of observations. Must be a single positive integer.
+  \item{n}{number of observations.
+  Same as in \code{\link[stats]{runif}}.
+
+
+% Must be a single positive integer.
 
 
   }

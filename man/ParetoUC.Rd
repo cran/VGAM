@@ -20,7 +20,11 @@ rpareto(n, scale = 1, shape)
 \arguments{
   \item{x, q}{vector of quantiles.}
   \item{p}{vector of probabilities.}
-  \item{n}{number of observations. Must be a single positive integer. }
+  \item{n}{number of observations.
+  Same as in \code{\link[stats]{runif}}.
+
+
+  }
   \item{scale, shape}{the \eqn{\alpha}{alpha} and \eqn{k} parameters.}
   \item{log}{
   Logical.

@@ -653,7 +653,7 @@ rrvglm.fit <-
         iter = iter,
         misc = misc,
         post = post,
-        res.ss = if (nice31) 000 else tfit$res.ss,
+        ResSS = if (nice31) 000 else tfit$ResSS,
         x = x,
         y = y)),
         vclass = family@vfamily)

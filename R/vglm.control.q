@@ -11,7 +11,7 @@
     "loglikelihood" = FALSE,
     "AIC"           = TRUE, 
     "Likelihood"    = FALSE,
-    "res.ss"        = TRUE,
+    "ResSS"        = TRUE,
     "coefficients"  = TRUE)
 
 

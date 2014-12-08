@@ -55,10 +55,10 @@ summaryvlm <-
     }
   } else if (dispersion == 0) {
       dispersion <-
-        if (!length(object@res.ss)) {
-          stop("object@res.ss is empty")
+        if (!length(object@ResSS)) {
+          stop("object@ResSS is empty")
       } else {
-        object@res.ss / object@df.residual
+        object@ResSS / object@df.residual
       }
       object@misc$estimated.dispersion <- TRUE
   } else {
@@ -190,8 +190,8 @@ show.summary.vlm <- function(x, digits = NULL, quote = TRUE,
   }
 
 
-  if (!is.null(x@res.ss))
-    cat("\nResidual Sum of Squares:", format(round(x@res.ss, digits)),
+  if (!is.null(x@ResSS))
+    cat("\nResidual Sum of Squares:", format(round(x@ResSS, digits)),
         "on", round(rdf, digits), "degrees of freedom\n")
 
 

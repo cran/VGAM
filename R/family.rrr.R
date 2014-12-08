@@ -21,7 +21,7 @@ replace.constraints <- function(Hlist, cm, index) {
  valt.control <- function(
                  Alphavec = c(2, 4, 6, 9, 12, 16, 20, 25, 30, 40, 50,
                               60, 80, 100, 125, 2^(8:12)),
-                 Criterion = c("res.ss", "coefficients"),
+                 Criterion = c("ResSS", "coefficients"),
                  Linesearch = FALSE,
                  Maxit = 7,
                  Suppress.warning = TRUE,
@@ -29,7 +29,7 @@ replace.constraints <- function(Hlist, cm, index) {
 
   if (mode(Criterion) != "character" && mode(Criterion) != "name")
     Criterion <- as.character(substitute(Criterion))
-  Criterion <- match.arg(Criterion, c("res.ss", "coefficients"))[1]
+  Criterion <- match.arg(Criterion, c("ResSS", "coefficients"))[1]
 
   list(Alphavec = Alphavec,
        Criterion = Criterion, 
@@ -68,7 +68,7 @@ qrrvglm.xprod <- function(numat, Aoffset, Quadratic, I.tolerances) {
                   Cinit = NULL,
                   Alphavec = c(2, 4, 6, 9, 12, 16, 20, 25, 30, 40, 50,
                                60, 80, 100, 125, 2^(8:12)),
-                  Criterion = c("res.ss", "coefficients"),
+                  Criterion = c("ResSS", "coefficients"),
                   Crow1positive = rep(TRUE, length.out = Rank),
                   colx1.index,
                   Linesearch = FALSE,
@@ -88,7 +88,7 @@ qrrvglm.xprod <- function(numat, Aoffset, Quadratic, I.tolerances) {
 
   if (mode(Criterion) != "character" && mode(Criterion) != "name")
     Criterion <- as.character(substitute(Criterion))
-  Criterion <- match.arg(Criterion, c("res.ss", "coefficients"))[1]
+  Criterion <- match.arg(Criterion, c("ResSS", "coefficients"))[1]
 
   if (any(diff(Alphavec) <= 0))
     stop("'Alphavec' must be an increasing sequence") 
@@ -130,10 +130,10 @@ qrrvglm.xprod <- function(numat, Aoffset, Quadratic, I.tolerances) {
   if (is.null(Cinit))
     Cinit <- matrix(rnorm(p2*Rank, sd = sd.Cinit), p2, Rank)
 
-  fit <- list(res.ss = 0)  # Only for initial old.crit below
+  fit <- list(ResSS = 0)  # Only for initial old.crit below
 
   C <- Cinit  # This is input for the main iter loop
-  old.crit <- switch(Criterion, coefficients = C, res.ss = fit$res.ss)
+  old.crit <- switch(Criterion, coefficients = C, ResSS = fit$ResSS)
 
   recover <- 0  # Allow a few iterations between different line searches 
   for (iter in 1:Maxit) {
@@ -144,13 +144,13 @@ qrrvglm.xprod <- function(numat, Aoffset, Quadratic, I.tolerances) {
                                        if (p1) x[, colx1.index] else NULL)
       fit <- vlm.wfit(xmat = new.latvar.model.matrix, z, Hlist = clist2,
                       U = U, matrix.out = TRUE, is.vlmX = FALSE,
-                      res.ss = FALSE, qr = FALSE, xij = xij)
+                      ResSS = FALSE, qr = FALSE, xij = xij)
       A <- t(fit$mat.coef[1:Rank, , drop = FALSE])
 
       clist1 <- replace.constraints(Hlist, A, colx2.index)
       fit <- vlm.wfit(xmat = x, z, Hlist = clist1, U = U,
                       matrix.out = TRUE, is.vlmX = FALSE,
-                      res.ss = TRUE, qr = FALSE, xij = xij)
+                      ResSS = TRUE, qr = FALSE, xij = xij)
       C <- fit$mat.coef[colx2.index, , drop = FALSE] %*% A %*%
            solve(t(A) %*% A)
 
@@ -169,14 +169,14 @@ qrrvglm.xprod <- function(numat, Aoffset, Quadratic, I.tolerances) {
           switch(Criterion,
                  coefficients = max(abs(C - old.crit) / (
                                     Tolerance + abs(C))),
-                 res.ss = max(abs(fit$res.ss - old.crit) / (
-                              Tolerance + fit$res.ss)))
+                 ResSS = max(abs(fit$ResSS - old.crit) / (
+                              Tolerance + fit$ResSS)))
 
         if (trace) {
           cat("   Alternating iteration", iter,
               ",   Convergence criterion  = ", format(ratio), "\n")
-          if (!is.null(fit$res.ss))
-              cat("    ResSS  = ", fit$res.ss, "\n")
+          if (!is.null(fit$ResSS))
+              cat("    ResSS  = ", fit$ResSS, "\n")
           flush.console()
       }
 
@@ -192,7 +192,7 @@ qrrvglm.xprod <- function(numat, Aoffset, Quadratic, I.tolerances) {
           xnew <- C
 
           direction1 <- (xnew - xold)  # / sqrt(1 + sum((xnew-xold)^2))
-          ftemp <- fit$res.ss  # Most recent objective function 
+          ftemp <- fit$ResSS  # Most recent objective function 
           use.alpha <- 0  # The current step relative to (xold, yold)
           for (itter in 1:length(Alphavec)) {
             CC <- xold + Alphavec[itter] * direction1
@@ -204,12 +204,12 @@ qrrvglm.xprod <- function(numat, Aoffset, Quadratic, I.tolerances) {
 
             try <- vlm.wfit(xmat = try.new.latvar.model.matrix, z,
                             Hlist = clist2, U = U, matrix.out = TRUE,
-                            is.vlmX = FALSE, res.ss = TRUE, qr = FALSE,
+                            is.vlmX = FALSE, ResSS = TRUE, qr = FALSE,
                             xij = xij)
-            if (try$res.ss < ftemp) {
+            if (try$ResSS < ftemp) {
               use.alpha <- Alphavec[itter]
               fit <- try 
-              ftemp <- try$res.ss
+              ftemp <- try$ResSS
               C <- CC 
               A <- t(fit$mat.coef[1:Rank, , drop = FALSE])
               latvar.mat <- x[, colx2.index, drop = FALSE] %*% C
@@ -229,14 +229,14 @@ qrrvglm.xprod <- function(numat, Aoffset, Quadratic, I.tolerances) {
     xold <- C # Do not take care of drift
     old.crit <- switch(Criterion,
                        coefficients = C,
-                       res.ss = fit$res.ss)
+                       ResSS = fit$ResSS)
   }  # End of iter loop
 
   list(A = A,
        C = C,
        fitted = fit$fitted,
        new.coeffs = fit$coef,
-       res.ss = fit$res.ss)
+       ResSS = fit$ResSS)
 }
 
 
@@ -329,13 +329,13 @@ valt.2iter <- function(x, z, U, Hlist, A, control) {
 
   clist1 <- replace.constraints(Hlist, A, control$colx2.index)
   fit <- vlm.wfit(xmat = x, z, Hlist = clist1, U = U, matrix.out = TRUE, 
-                  is.vlmX = FALSE, res.ss = TRUE, qr = FALSE, xij = control$xij)
+                  is.vlmX = FALSE, ResSS = TRUE, qr = FALSE, xij = control$xij)
   C <- fit$mat.coef[control$colx2.index, , drop = FALSE] %*%
        A %*% solve(t(A) %*% A)
 
   list(A = A, C = C,
        fitted = fit$fitted, new.coeffs = fit$coef,
-       Hlist = clist1, res.ss = fit$res.ss)
+       Hlist = clist1, ResSS = fit$ResSS)
 }
 
 
@@ -363,7 +363,7 @@ valt.1iter <- function(x, z, U, Hlist, C, control,
         zedd[,Index.corner] <- zedd[,Index.corner] - latvar.mat
 
     if (nice31 && MSratio == 1) {
-        fit <- list(mat.coef = NULL, fitted.values = NULL, res.ss = 0)
+        fit <- list(mat.coef = NULL, fitted.values = NULL, ResSS = 0)
 
         clist2 <- NULL # for vlm.wfit
 
@@ -376,12 +376,12 @@ valt.1iter <- function(x, z, U, Hlist, C, control,
                                Hlist = clist2,
                                U = U[i5,, drop = FALSE],
                                matrix.out = TRUE,
-                               is.vlmX = FALSE, res.ss = TRUE,
+                               is.vlmX = FALSE, ResSS = TRUE,
                                qr = FALSE,
                                Eta.range = control$Eta.range,
                                xij = control$xij,
                                lp.names = lp.names[i5])
-            fit$res.ss <- fit$res.ss + tmp100$res.ss
+            fit$ResSS <- fit$ResSS + tmp100$ResSS
             fit$mat.coef <- cbind(fit$mat.coef, tmp100$mat.coef)
             fit$fitted.values <- cbind(fit$fitted.values,
                                        tmp100$fitted.values)
@@ -390,7 +390,7 @@ valt.1iter <- function(x, z, U, Hlist, C, control,
         fit <- vlm.wfit(xmat = new.latvar.model.matrix,
                        zedd, Hlist = clist2, U = U,
                        matrix.out = TRUE,
-                       is.vlmX = FALSE, res.ss = TRUE, qr = FALSE,
+                       is.vlmX = FALSE, ResSS = TRUE, qr = FALSE,
                        Eta.range = control$Eta.range,
                        xij = control$xij, lp.names = lp.names)
     }
@@ -419,7 +419,7 @@ valt.1iter <- function(x, z, U, Hlist, C, control,
 
     list(Amat = A, B1 = B1, Cmat = C, Dmat = Dmat,
          fitted = if (M == 1) c(fv) else fv,
-         new.coeffs = fit$coef, constraints = clist2, res.ss = fit$res.ss,
+         new.coeffs = fit$coef, constraints = clist2, ResSS = fit$ResSS,
          offset = if (length(tmp833$offset)) tmp833$offset else NULL)
 }
 
@@ -740,7 +740,7 @@ rrr.derivative.expression <- expression({
               rrcontrol$Reltol[iter] else rev(rrcontrol$Reltol)[1]
           quasi.newton <-
             optim(par = theta0,
-                  fn = rrr.derivC.res.ss, 
+                  fn = rrr.derivC.ResSS, 
                   method = which.optimizer,
                   control = list(fnscale = rrcontrol$Fnscale, 
                                  maxit = rrcontrol$Maxit,
@@ -808,7 +808,7 @@ rrr.derivative.expression <- expression({
 
 
 
-rrr.derivC.res.ss <- function(theta, U, z, M, xmat, Hlist, rrcontrol,
+rrr.derivC.ResSS <- function(theta, U, z, M, xmat, Hlist, rrcontrol,
                           omit.these = NULL) {
 
   if (rrcontrol$trace) {
@@ -848,10 +848,10 @@ rrr.derivC.res.ss <- function(theta, U, z, M, xmat, Hlist, rrcontrol,
 
 
     vlm.wfit(xmat = tmp700$new.latvar.model.matrix, zmat = z,
-             Hlist = Hlist, ncolx = ncol(xmat), U = U, only.res.ss = TRUE,
-             matrix.out = FALSE, is.vlmX = FALSE, res.ss = TRUE,
+             Hlist = Hlist, ncolx = ncol(xmat), U = U, only.ResSS = TRUE,
+             matrix.out = FALSE, is.vlmX = FALSE, ResSS = TRUE,
              qr = FALSE, Eta.range = rrcontrol$Eta.range,
-             xij = rrcontrol$xij)$res.ss
+             xij = rrcontrol$xij)$ResSS
 }
 
 
@@ -1619,7 +1619,7 @@ summary.rrvglm <- function(object, correlation = FALSE,
     answer@df[1] <- answer@df[1] + tmp8 * object@control$Rank
     answer@df[2] <- answer@df[2] - tmp8 * object@control$Rank
     if (dispersion == 0) {
-      dispersion <- tmp5$res.ss / answer@df[2]  # Estimate 
+      dispersion <- tmp5$ResSS / answer@df[2]  # Estimate 
     }
 
     answer@coef3 <- get.rrvglm.se2(answer@cov.unscaled,
@@ -1839,7 +1839,7 @@ get.rrvglm.se1 <- function(fit, omit13 = FALSE, kill.all = FALSE,
     dimnames(ans) <- list(names(acoefs), names(acoefs))
     list(cov.unscaled = ans,
          coefficients = acoefs,
-         res.ss       = sfit1122@res.ss)
+         ResSS       = sfit1122@ResSS)
 }
 
 
@@ -1908,7 +1908,7 @@ num.deriv.rrr <- function(fit, M, r, x1mat, x2mat,
       newfit <- vlm.wfit(xmat = x2mat, zmat = newzmat,
                                Hlist = small.Hlist, U = U,
                                matrix.out = FALSE, is.vlmX = FALSE,
-                               res.ss = TRUE, qr = FALSE, x.ret = FALSE,
+                               ResSS = TRUE, qr = FALSE, x.ret = FALSE,
                                offset = NULL, xij = xij)
       dct.da[ptr, ] <- (newfit$coef - t(Cimat)) / h.step
       ptr <- ptr + 1
@@ -2096,7 +2096,7 @@ dcda.fast <- function(theta, wz, U, z, M, r, xmat, pp, Index.corner,
 
 
 
-rrr.deriv.res.ss <- function(theta, wz, U, z, M, r, xmat,
+rrr.deriv.ResSS <- function(theta, wz, U, z, M, r, xmat,
                          pp, Index.corner, intercept = TRUE,
                          xij = NULL) {
 
@@ -2116,7 +2116,7 @@ rrr.deriv.res.ss <- function(theta, wz, U, z, M, r, xmat,
   }
 
   vlm.wfit(xmat = xmat, z, Hlist, U = U, matrix.out = FALSE,
-           res.ss = TRUE, xij = xij)$res.ss
+           ResSS = TRUE, xij = xij)$ResSS
 }
 
 

@@ -23,7 +23,7 @@ rzigeom(n, prob, pstr0 = 0)
   \item{x, q}{vector of quantiles.}
   \item{p}{vector of probabilities.}
   \item{prob}{see \code{\link[stats]{dgeom}}.}
-  \item{n}{number of observations. }
+  \item{n}{ Same as in \code{\link[stats]{runif}}.  }
   \item{pstr0}{ 
   Probability of structural zero (ignoring the geometric distribution),
   called \eqn{\phi}{phi}. The default value corresponds
