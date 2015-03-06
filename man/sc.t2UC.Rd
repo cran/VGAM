@@ -14,8 +14,8 @@
 }
 \usage{
 dsc.t2(x, location = 0, scale = 1, log = FALSE)
-psc.t2(q, location = 0, scale = 1, log = FALSE)
-qsc.t2(p, location = 0, scale = 1)
+psc.t2(q, location = 0, scale = 1, lower.tail = TRUE, log.p = FALSE)
+qsc.t2(p, location = 0, scale = 1, lower.tail = TRUE, log.p = FALSE)
 rsc.t2(n, location = 0, scale = 1)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -40,6 +40,12 @@ rsc.t2(n, location = 0, scale = 1)
 
 
   }
+  \item{lower.tail, log.p}{
+  Same meaning as in \code{\link[stats:TDist]{pt}}
+  or \code{\link[stats:TDist]{qt}}.
+
+
+  }
 }
 \details{
   A Student-t distribution with 2 degrees of freedom and
@@ -59,7 +65,7 @@ rsc.t2(n, location = 0, scale = 1)
 
 
 }
-\author{ T. W. Yee }
+\author{ T. W. Yee and Kai Huang }
 
 %\note{ 
 %}

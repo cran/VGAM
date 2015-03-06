@@ -12,7 +12,7 @@
 }
 \usage{
 dyules(x, rho, log = FALSE)
-pyules(q, rho)
+pyules(q, rho, log.p = FALSE)
 ryules(n, rho)
 }
 %qyules(p, rho)
@@ -33,6 +33,12 @@ ryules(n, rho)
 
   }
   \item{log}{logical; if TRUE, the logarithm is returned. }
+  \item{log.p}{
+  Same meaning as in \code{\link[stats:Normal]{pnorm}}
+  or \code{\link[stats:Normal]{qnorm}}.
+
+
+  }
 }
 \details{
   See \code{\link{yulesimon}}, the \pkg{VGAM} family function

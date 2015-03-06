@@ -5,6 +5,18 @@
 %
 %
 %
+% 201412
+\alias{nparam,ANY-method}
+\alias{nparam,vlm-method}
+\alias{nparam,qrrvglm-method}
+\alias{nparam,rrvgam-method}
+\alias{nparam,vgam-method}
+\alias{nparam,vglm-method}
+\alias{nparam,rrvglm-method}
+\alias{linkfun,ANY-method}
+\alias{linkfun,vglm-method}
+%
+%
 % 201407
 \alias{concoef,ANY-method}
 \alias{concoef,rrvgam-method}
@@ -23,9 +35,9 @@
 \alias{simulate,vlm-method}
 %
 % 20131104
-\alias{family.name,ANY-method}
-\alias{family.name,vlm-method}
-\alias{family.name,vglmff-method}
+\alias{familyname,ANY-method}
+\alias{familyname,vlm-method}
+\alias{familyname,vglmff-method}
 % 20130903
 \alias{BIC,ANY-method}
 \alias{BIC,vlm-method}

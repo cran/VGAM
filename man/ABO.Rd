@@ -8,21 +8,27 @@
 
 }
 \usage{
-ABO(link = "logit", ipA = NULL, ipO = NULL)
+ABO(link.pA = "logit", link.pB = "logit", ipA = NULL, ipB = NULL,
+    ipO = NULL, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{link}{
-  Link function applied to \code{pA} and \code{pB}.
+  \item{link.pA, link.pB}{
+  Link functions applied to \code{pA} and \code{pB}.
   See \code{\link{Links}} for more choices.
 
 
   }
-  \item{ipA, ipO}{
-  Optional initial value for \code{pA} and \code{pO}.
+  \item{ipA, ipB, ipO}{
+  Optional initial value for \code{pA} and \code{pB} and \code{pO}.
   A \code{NULL} value means values are computed internally.
 
 
+  }
+  \item{zero}{
+  Details at \code{\link{CommonVGAMffArguments}}.
+
+  
   }
 
 }
@@ -79,7 +85,8 @@ ABO(link = "logit", ipA = NULL, ipO = NULL)
 }
 \examples{
 ymat <- cbind(A = 725, B = 258, AB = 72, O = 1073)  # Order matters, not the name
-fit <- vglm(ymat ~ 1, ABO(link = identitylink), trace = TRUE, cri = "coef")
+fit <- vglm(ymat ~ 1, ABO(link.pA = identitylink,
+                          link.pB = identitylink), trace = TRUE, cri = "coef")
 coef(fit, matrix = TRUE)
 Coef(fit)  # Estimated pA and pB
 rbind(ymat, sum(ymat) * fitted(fit))

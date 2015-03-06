@@ -12,10 +12,10 @@
 
 }
 \usage{
-dfisk(x, shape1.a, scale = 1, log = FALSE)
-pfisk(q, shape1.a, scale = 1)
-qfisk(p, shape1.a, scale = 1)
-rfisk(n, shape1.a, scale = 1)
+dfisk(x, scale = 1, shape1.a, log = FALSE)
+pfisk(q, scale = 1, shape1.a, lower.tail = TRUE, log.p = FALSE)
+qfisk(p, scale = 1, shape1.a, lower.tail = TRUE, log.p = FALSE)
+rfisk(n, scale = 1, shape1.a)
 }
 \arguments{
   \item{x, q}{vector of quantiles.}
@@ -27,6 +27,12 @@ rfisk(n, shape1.a, scale = 1)
   \item{log}{
   Logical.
   If \code{log = TRUE} then the logarithm of the density is returned.
+
+  }
+  \item{lower.tail, log.p}{
+  Same meaning as in \code{\link[stats:Normal]{pnorm}}
+  or \code{\link[stats:Normal]{qnorm}}.
+
 
   }
 
@@ -47,7 +53,7 @@ Hoboken, NJ, USA: Wiley-Interscience.
 
 
 }
-\author{ T. W. Yee }
+\author{ T. W. Yee and Kai Huang }
 \details{
   See \code{\link{fisk}}, which is the \pkg{VGAM} family function
   for estimating the parameters by maximum likelihood estimation.
@@ -66,8 +72,8 @@ Hoboken, NJ, USA: Wiley-Interscience.
 
 }
 \examples{
-fdata <- data.frame(y = rfisk(n = 1000, 4, 6))
-fit <- vglm(y ~ 1, fisk, data = fdata, trace = TRUE, crit = "coef")
+fdata <- data.frame(y = rfisk(n = 1000, shape = exp(1), scale = exp(2)))
+fit <- vglm(y ~ 1, fisk(lss = FALSE), data = fdata, trace = TRUE)
 coef(fit, matrix = TRUE)
 Coef(fit)
 }

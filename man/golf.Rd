@@ -132,7 +132,7 @@ gdata <- transform(gdata, cuty = Cut(y1, breaks = cutpoints))
 \dontrun{ par(mfrow = c(1, 1), las = 1)
 with(gdata, plot(x2, x3, col = cuty, pch = as.character(cuty))) }
 with(gdata, table(cuty) / sum(table(cuty)))
-fit <- vglm(cuty ~ x2 + x3, cumulative(mv = TRUE,
+fit <- vglm(cuty ~ x2 + x3, cumulative(multiple.responses = TRUE,
            reverse = TRUE, parallel = FALSE ~ -1,
            link = golf(cutpoint = cutpoints[2:3], lambda = lambda)),
            data = gdata, trace = TRUE)
@@ -157,10 +157,10 @@ fit@misc
 % y1 <- rnbinom(nn, mu=mymu, size=shape)
 % cuty <- Cut(y1)
 % fit <- vglm(cuty ~ x2 + x3, fam = cumulative(link = "golf", rev = TRUE,
-%            mv = TRUE, parallel = TRUE, earg = list(lambda=shape)))
+%            multiple.responses = TRUE, parallel = TRUE, earg = list(lambda=shape)))
 % coef(fit)
 % fit <- vglm(cuty ~ x2 + x3, fam = cumulative(link = "probit", rev = TRUE,
-%            mv = TRUE, parallel = TRUE))
+%            multiple.responses = TRUE, parallel = TRUE))
 % coef(fit, matrix = TRUE)
 % coef(fit)
 

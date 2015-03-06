@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2014 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -36,6 +36,7 @@ dkumar <- function(x, shape1, shape2, log = FALSE) {
 }
 
 
+
 rkumar <- function(n, shape1, shape2) {
   ans <- (1 - (runif(n))^(1/shape2))^(1/shape1)
   ans[(shape1 <= 0) | (shape2 <= 0)] <- NaN
@@ -43,22 +44,81 @@ rkumar <- function(n, shape1, shape2) {
 }
 
 
-qkumar <- function(p, shape1, shape2) {
+
+qkumar <- function(p, shape1, shape2,
+                   lower.tail = TRUE, log.p = FALSE) {
 
 
-  ans <- (1.0 - (1.0 - p)^(1/shape2))^(1/shape1)
+
+  if (!is.logical(lower.tail) || length(lower.tail) != 1)
+    stop("bad input for argument 'lower.tail'")
+
+  if (!is.logical(log.p) || length(log.p) != 1)
+    stop("bad input for argument 'log.p'")
+
+  if (lower.tail) {
+    if (log.p) {
+      ln.p <- p
+      ans <- (-expm1((1/shape2) * log(-expm1(ln.p))))^(1/shape1)
+      ans[ln.p > 0] <- NaN
+    } else {
+      ans <- (-expm1((1/shape2) * log1p(-p)))^(1/shape1)
+      ans[p < 0] <- NaN
+      ans[p == 0] <- 0
+      ans[p == 1] <- 1
+      ans[p > 1] <- NaN
+    }
+  } else {
+    if (log.p) {
+      ln.p <- p
+      ans <- (-expm1(ln.p / shape2))^(1/shape1)
+      ans[ln.p > 0] <- NaN
+      ans
+    } else {
+      ans <- (-expm1((1/shape2) * log(p)))^(1/shape1)
+      ans[p < 0] <- NaN
+      ans[p == 0] <- 1
+      ans[p == 1] <- 0
+      ans[p > 1] <- NaN
+    }
+  }
   ans[(shape1 <= 0) | (shape2 <= 0)] = NaN
-  ans[p <  0] <- NaN
-  ans[p >  1] <- NaN
   ans
 }
 
 
-pkumar <- function(q, shape1, shape2) {
 
-  ans <- 1.0 - (1.0 - q^shape1)^shape2
-  ans[q <= 0] <- 0
-  ans[q >= 1] <- 1
+pkumar <- function(q, shape1, shape2,
+                   lower.tail = TRUE, log.p = FALSE) {
+
+  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+    stop("bad input for argument 'lower.tail'")
+
+  if (!is.logical(log.p) || length(log.p) != 1)
+    stop("bad input for argument 'log.p'")
+
+  if (lower.tail) {
+    if (log.p) {
+      ans <- log(-expm1(shape2 * log1p(-q^shape1)))
+      ans[q <= 0 ] <- -Inf
+      ans[q >= 1] <- 0
+    } else {
+      ans <- -expm1(shape2 * log1p(-q^shape1))
+      ans[q <= 0] <- 0
+      ans[q >= 1] <- 1
+    }
+  } else {
+    if (log.p) {
+      ans <- shape2 * log1p(-q^shape1)
+      ans[q <= 0] <- 0
+      ans[q >= 1] <- -Inf
+    } else {
+      ans <- exp(shape2 * log1p(-q^shape1))
+      ans[q <= 0] <- 1
+      ans[q >= 1] <- 0
+    }
+  }
+
   ans[(shape1 <= 0) | (shape2 <= 0)] <- NaN
   ans
 }
@@ -261,6 +321,9 @@ drice <- function(x, sigma, vee, log = FALSE) {
                      x.abs
   logdensity[sigma <= 0] <- NaN
   logdensity[vee < 0] <- NaN
+
+  logdensity[is.infinite(x)] <- -Inf  # 20141209 KaiH
+
   if (log.arg) logdensity else exp(logdensity)
 }
 
@@ -276,30 +339,39 @@ rrice <- function(n, sigma, vee) {
 
 
 
-marcumQ <- function(a, b, m = 1, lower.tail = TRUE, ... ) {
-  pchisq(b^2, df = 2*m, ncp = a^2, lower.tail = lower.tail, ... )
-}
-
-
-price <- function(q, sigma, vee, lower.tail = TRUE, ...) {
-  marcumQ(vee/sigma, q/sigma, m = 1, lower.tail = lower.tail, ... )
-}
-
-
-qrice <- function(p, sigma, vee, ... ) {
-  sqrt(qchisq(p, df = 2, ncp = (vee/sigma)^2, ... )) * sigma
+marcumQ <- function(a, b, m = 1,
+                    lower.tail = TRUE, log.p = FALSE, ... ) {
+  pchisq(b^2, df = 2*m, ncp = a^2,
+         lower.tail = lower.tail, log.p = log.p, ... )
 }
 
 
 
+price <- function(q, sigma, vee,
+                  lower.tail = TRUE, log.p = FALSE, ...) {
+  ans <- marcumQ(vee/sigma, q/sigma, m = 1,
+                 lower.tail = lower.tail, log.p = log.p, ... )
+  ans
+}
+
+
+
+qrice <- function(p, sigma, vee,
+                  lower.tail = TRUE, log.p = FALSE, ... ) {
+  sqrt(qchisq(p, df = 2, ncp = (vee/sigma)^2,
+              lower.tail = lower.tail, log.p = log.p, ... )) * sigma
+}
 
 
 
 
 
 
-riceff.control <- function(save.weight = TRUE, ...) {
-    list(save.weight = save.weight)
+
+
+
+riceff.control <- function(save.weights = TRUE, ...) {
+    list(save.weights = save.weights)
 }
 
 
@@ -307,9 +379,6 @@ riceff.control <- function(save.weight = TRUE, ...) {
                     isigma = NULL, ivee = NULL,
                     nsimEIM = 100, zero = NULL, nowarning = FALSE) {
 
-  if (!nowarning)
-    warning("order of the linear/additive predictors has been changed",
-            " in VGAM version 0.9-5")
 
 
   lvee     <- as.list(substitute(lvee))
@@ -556,8 +625,8 @@ rskellam <- function(n, mu1, mu2) {
 
 
 
-skellam.control <- function(save.weight = TRUE, ...) {
-  list(save.weight = save.weight)
+skellam.control <- function(save.weights = TRUE, ...) {
+  list(save.weights = save.weights)
 }
 
 
@@ -788,19 +857,23 @@ ryules <- function(n, rho) {
 
 
 
-pyules <- function(q, rho) {
+pyules <- function(q, rho, log.p = FALSE) {
+
+
   tq <- trunc(q)
   ans <- 1 - tq * beta(abs(tq), rho+1)
   ans[q < 1] <- 0
+  ans[is.infinite(q) & q > 0] <- 1  # 20141215 KaiH
   ans[(rho <= 0) | (rho <= 0)] <- NA
+  if (log.p) log(ans) else ans
   ans
 }
 
 
 
 
-yulesimon.control <- function(save.weight = TRUE, ...) {
-  list(save.weight = save.weight)
+yulesimon.control <- function(save.weights = TRUE, ...) {
+  list(save.weights = save.weights)
 }
 
 
@@ -995,22 +1068,49 @@ dlind <- function(x, theta, log = FALSE) {
 
   if ( log.arg ) {
     ans <- 2 * log(theta) + log1p(x) - theta * x - log1p(theta)
-    ans[(x < 0)] <- log(0)
+    ans[x < 0 | is.infinite(x)] <- log(0)  # 20141209 KaiH
   } else {
     ans <- theta^2 * (1 + x) * exp(-theta * x) / (1 + theta)
-    ans[(x < 0)] <- 0
+    ans[x < 0 | is.infinite(x)] <- 0  # 20141209 KaiH
   }
-  ans[(theta <= 0)] <- NaN
+  ans[theta <= 0] <- NaN
   ans
 }
 
 
 
-plind <- function(q, theta) {
+plind <- function(q, theta, lower.tail = TRUE, log.p = FALSE) {
 
-  ifelse(q > 0,
-         1 - (theta + 1 + theta * q) * exp(-theta * q) / (1 + theta),
-         0)
+
+  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+    stop("bad input for argument 'lower.tail'")
+
+  if (!is.logical(log.p) || length(log.p) != 1)
+    stop("bad input for argument 'log.p'")
+
+  if (lower.tail) {
+    if (log.p) {
+      ans <- log(-expm1(-theta * q + log1p(q / (1 + 1/theta))))
+      ans[q <= 0 ] <- -Inf
+      ans[q == Inf] <- 0
+    } else {
+      ans <- -expm1(-theta * q + log1p(q / (1 + 1/theta)))
+      ans[q <= 0] <- 0
+      ans[q == Inf] <- 1
+    }
+  } else {
+    if (log.p) {
+      ans <- -theta * q + log1p(q / (1 + 1/theta))
+      ans[q <= 0] <- 0
+      ans[q == Inf] <- -Inf
+    } else {
+      ans <- exp(-theta * q + log1p(q / (1 + 1/theta)))
+      ans[q <= 0] <- 1
+      ans[q == Inf] <- 0
+    }
+  }
+  ans[theta <= 0] <- NaN
+  ans
 }
 
 
@@ -1026,7 +1126,7 @@ rlind <- function(n, theta) {
 
 
 
-  ifelse(runif(use.n) < rep(theta / (1 + theta), length = use.n),
+  ifelse(runif(use.n) < rep(1 / (1 + 1/theta), length = use.n),
          rexp(use.n, theta),
          rgamma(use.n, shape = 2, scale = 1 / theta))
 }
@@ -1220,8 +1320,8 @@ ppoislindley <- function(q, theta) {
 
 
 if (FALSE)
-poislindley.control <- function(save.weight = TRUE, ...) {
-  list(save.weight = save.weight)
+poislindley.control <- function(save.weights = TRUE, ...) {
+  list(save.weights = save.weights)
 }
 
 
@@ -1428,7 +1528,8 @@ dslash <- function(x, mu = 0, sigma = 1, log = FALSE,
 
 
 
-pslash <- function(q, mu = 0, sigma = 1, very.negative = -10000) {
+pslash <- function(q, mu = 0, sigma = 1, very.negative = -10000,
+                   lower.tail = TRUE, log.p = FALSE) {
   if (any(is.na(q)))
     stop("argument 'q' must have non-missing values")
   if (!is.Numeric(mu))
@@ -1438,6 +1539,13 @@ pslash <- function(q, mu = 0, sigma = 1, very.negative = -10000) {
   if (!is.Numeric(very.negative, length.arg = 1) ||
      (very.negative >= 0))
     stop("argument 'very.negative' must be quite negative")
+
+  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+    stop("bad input for argument 'lower.tail'")
+
+  if (!is.logical(log.p) || length(log.p) != 1)
+    stop("bad input for argument 'log.p'")
+
   L <- max(length(q), length(mu), length(sigma))
   if (length(q)     != L) q     <- rep(q,     len = L)
   if (length(mu)    != L) mu    <- rep(mu,    len = L)
@@ -1469,7 +1577,12 @@ pslash <- function(q, mu = 0, sigma = 1, very.negative = -10000) {
   }
   if (extreme.q)
     warning("returning 0 or 1 values for extreme values of argument 'q'")
-  ans
+
+  if (lower.tail) {
+    if (log.p) log(ans) else ans
+  } else {
+    if (log.p) log1p(-ans) else -expm1(log(ans))
+  }
 }
 
 
@@ -1481,8 +1594,8 @@ rslash <- function (n, mu = 0, sigma = 1) {
 
 
 
-slash.control <- function(save.weight = TRUE, ...) {
-  list(save.weight = save.weight)
+slash.control <- function(save.weights = TRUE, ...) {
+  list(save.weights = save.weights)
 }
 
 
@@ -1828,6 +1941,7 @@ dlogF <- function(x, shape1, shape2, log = FALSE) {
   logdensity <- shape1*x - lbeta(shape1, shape2) -
                 (shape1 + shape2) * log1pexp(x)
 
+  logdensity[is.infinite(x)] <- -Inf  # 20141209 KaiH
 
   if (log.arg) logdensity else exp(logdensity)
 }
@@ -1992,6 +2106,8 @@ dlogF <- function(x, shape1, shape2, log = FALSE) {
 
 
 
+
+
 dbenf <- function(x, ndigits = 1, log = FALSE) {
   if (!is.Numeric(ndigits, length.arg = 1,
                   positive = TRUE, integer.valued = TRUE) ||
@@ -2017,6 +2133,7 @@ dbenf <- function(x, ndigits = 1, log = FALSE) {
 }
 
 
+
 rbenf <- function(n, ndigits = 1) {
   if (!is.Numeric(ndigits, length.arg = 1,
                   positive = TRUE, integer.valued = TRUE) ||
@@ -2040,7 +2157,14 @@ rbenf <- function(n, ndigits = 1) {
 }
 
 
-pbenf <- function(q, ndigits = 1, log.p = FALSE) {
+
+pbenf <- function(q, ndigits = 1, lower.tail = TRUE, log.p = FALSE) {
+
+  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+    stop("bad input for argument 'lower.tail'")
+  if (!is.logical(log.p) || length(log.p) != 1)
+    stop("bad input for argument 'log.p'")
+
   if (!is.Numeric(ndigits, length.arg = 1,
                   positive = TRUE, integer.valued = TRUE) ||
       ndigits > 2)
@@ -2051,17 +2175,60 @@ pbenf <- function(q, ndigits = 1, log.p = FALSE) {
   ans <- q * NA
   floorq <- floor(q)
   indexTF <- is.finite(q) & (floorq >= lowerlimit)
-  ans[indexTF] <- log10(1 + floorq[indexTF]) -
-                  ifelse(ndigits == 1, 0, 1)
-  ans[!is.na(q) & !is.nan(q) & (q >= upperlimit)] <- 1
-  ans[!is.na(q) & !is.nan(q) & (q <  lowerlimit)] <- 0
-  if (log.p) log(ans) else ans
+
+  if (ndigits == 1) {
+    if (lower.tail) {
+      if (log.p) {
+        ans[indexTF] <- log(log10(1 + floorq[indexTF]))
+        ans[q <  lowerlimit ] <- -Inf
+        ans[q >= upperlimit] <- 0
+      } else {
+        ans[indexTF] <- log10(1 + floorq[indexTF])
+        ans[q <  lowerlimit] <- 0
+        ans[q >= upperlimit] <- 1
+      }
+    } else {
+      if (log.p) {
+        ans[indexTF] <- log1p(-log10(1 + floorq[indexTF]))
+        ans[q <  lowerlimit] <- 0
+        ans[q >= upperlimit] <- -Inf
+      } else {
+        ans[indexTF] <- log10(10 / (1 + floorq[indexTF]))
+        ans[q <  lowerlimit] <- 1
+        ans[q >= upperlimit] <- 0
+      }
+    }
+  } else {
+    if (lower.tail) {
+      if (log.p) {
+        ans[indexTF] <- log(log10((1 + floorq[indexTF])/10))
+        ans[q <  lowerlimit ] <- -Inf
+        ans[q >= upperlimit] <- 0
+      } else {
+        ans[indexTF] <- log10((1 + floorq[indexTF])/10)
+        ans[q <  lowerlimit] <- 0
+        ans[q >= upperlimit] <- 1
+     }
+    } else {
+      if (log.p) {
+        ans[indexTF] <- log(log10(100/(1 + floorq[indexTF])))
+        ans[q <  lowerlimit] <- 0
+        ans[q >= upperlimit] <- -Inf
+      } else {
+        ans[indexTF] <- log10(100/(1 + floorq[indexTF]))
+        ans[q <  lowerlimit] <- 1
+        ans[q >= upperlimit] <- 0
+      }
+    }
+  }
+  ans
 }
 
 
 
-
+if (FALSE)
 qbenf <- function(p, ndigits = 1) {
+
   if (!is.Numeric(ndigits, length.arg = 1,
                   positive = TRUE, integer.valued = TRUE) ||
       ndigits > 2)
@@ -2085,6 +2252,83 @@ qbenf <- function(p, ndigits = 1) {
   ans[!is.na(p) & !is.nan(p) & (p == 1)] <- upperlimit
   ans
 }
+
+
+
+
+qbenf <- function(p, ndigits = 1,
+                  lower.tail = TRUE, log.p = FALSE) {
+  if (!is.Numeric(ndigits, length.arg = 1,
+                  positive = TRUE, integer.valued = TRUE) ||
+      ndigits > 2)
+    stop("argument 'ndigits' must be 1 or 2")
+
+  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+    stop("bad input for argument 'lower.tail'")
+
+  if (!is.logical(log.p) || length(log.p) != 1)
+    stop("bad input for argument 'log.p'")
+
+  if (log.p) { 
+    bad <- ((p > 0) | is.na(p) | is.nan(p))
+  } else {
+    bad <- ((p < 0) | (p > 1) | is.na(p) | is.nan(p))
+  }
+  if (any(bad))
+    stop("bad input for argument 'p'")
+
+  lowerlimit <- ifelse(ndigits == 1, 1, 10)
+  upperlimit <- ifelse(ndigits == 1, 9, 99)
+  ans <- rep(lowerlimit, length = length(p))
+
+  if (lower.tail) {
+    for (ii in (lowerlimit+1):upperlimit) {
+      indexTF <- is.finite(p) &
+                 (pbenf(ii-1, ndigits = ndigits,
+                        lower.tail = lower.tail, log.p = log.p) < p) &
+              (p <= pbenf(ii, ndigits = ndigits,
+                          lower.tail = lower.tail, log.p = log.p))
+      ans[indexTF] <- ii
+    }
+  } else {  ## when lower.tail = F, pbenf(ii-1) >= p & pben(ii) < p
+    for (ii in (lowerlimit+1):upperlimit) {
+      indexTF <- is.finite(p) &
+                 (pbenf(ii-1, ndigits = ndigits,
+                        lower.tail = lower.tail, log.p = log.p) >= p) &
+                 (p > pbenf(ii, ndigits = ndigits,
+                            lower.tail = lower.tail, log.p = log.p))
+      ans[indexTF] <- ii
+    }
+  }
+
+  if (lower.tail) {
+    if (log.p) {
+      ans[p > 0] <- NaN
+      ans[p == -Inf] <- lowerlimit
+    } else {
+      ans[p < 0] <- NaN
+      ans[p == 0] <- lowerlimit
+      ans[p == 1] <- upperlimit
+      ans[p > 1] <- NaN
+    }
+  } else {
+    if (log.p) {
+      ans[p > 0] <- NaN
+      ans[p == -Inf] <- upperlimit
+    } else {
+      ans[p < 0] <- NaN
+      ans[p == 0] <- upperlimit
+      ans[p == 1] <- lowerlimit
+      ans[p > 1] <- NaN
+    }
+  }
+  ans
+}
+
+
+
+
+
 
 
 

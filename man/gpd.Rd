@@ -94,7 +94,7 @@ gpd(threshold = 0, lscale = "loge", lshape = logoff(offset = 0.5),
   }
 % \item{rshape}{ 
 % Numeric, of length 2.
-% Range of \eqn{\xi}{xi} if \code{lshape = "elogit"} is chosen.
+% Range of \eqn{\xi}{xi} if \code{lshape = "extlogit"} is chosen.
 % The default values ensures the algorithm works (\eqn{\xi > -0.5}{xi > -0.5})
 % and the variance exists (\eqn{\xi < 0.5}{xi < 0.5}).
 
@@ -180,7 +180,7 @@ gpd(threshold = 0, lscale = "loge", lshape = logoff(offset = 0.5),
 
   The mean of \eqn{Y} does not exist unless \eqn{\xi < 1}{xi < 1}, and
   the variance does not exist unless \eqn{\xi < 0.5}{xi < 0.5}.  So if
-  you want to fit a model with finite variance use \code{lshape = "elogit"}.
+  you want to fit a model with finite variance use \code{lshape = "extlogit"}.
 
 
 }

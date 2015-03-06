@@ -192,10 +192,11 @@ Regression and ordered categorical variables.
   \code{\link{cqo}} for more details about QRR-VGLMs.
 
 
-  With multivariate binary responses, one must use
-  \code{binomialff(mv = TRUE)} to indicate that the response
-  (matrix) is multivariate. Otherwise, it is interpreted
-  as a single binary response variable.
+  With multiple binary responses, one must use
+  \code{binomialff(multiple.responses = TRUE)} to indicate
+  that the response is a matrix with one response per column.
+  Otherwise, it is interpreted as a single binary response
+  variable.
 
 
 }

@@ -138,7 +138,8 @@ A Bayesian analysis of zero-inflated generalized Poisson model.
 
   Yee, T. W. (2014)
   Reduced-rank vector generalized linear models with two linear predictors.
-  \emph{Computational Statistics and Data Analysis}.
+  \emph{Computational Statistics and Data Analysis},
+  \bold{71}, 889--902.
 
 
 

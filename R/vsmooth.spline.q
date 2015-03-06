@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2014 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -108,10 +108,11 @@ setMethod("depvar",  "vsmooth.spline", function(object, ...)
 vsmooth.spline <-
   function(x, y, w = NULL, df = rep(5, M),
            spar = NULL,  #rep(0,M),
+           i.constraint = diag(M),
+           x.constraint = diag(M),
+           constraints = list("(Intercepts)" = i.constraint,
+                              x = x.constraint),
            all.knots = FALSE, 
-           iconstraint = diag(M),
-           xconstraint = diag(M),
-           constraints = list("(Intercepts)" = diag(M), x = diag(M)),
            var.arg = FALSE,
            scale.w = TRUE,
            nk = NULL,
@@ -198,8 +199,8 @@ vsmooth.spline <-
 
  
   if (missing.constraints) {
-    constraints <- list("(Intercepts)" = eval(iconstraint),
-                        "x"            = eval(xconstraint))
+    constraints <- list("(Intercepts)" = eval(i.constraint),
+                        "x"            = eval(x.constraint))
   }
   constraints <- eval(constraints)
   if (is.matrix(constraints)) {
@@ -253,7 +254,7 @@ vsmooth.spline <-
 
       lfit <- vlm(yinyin ~ 1 + x,  # xxx
                  constraints = constraints,
-                 save.weight = FALSE,
+                 save.weights = FALSE,
                  qr.arg = FALSE, x.arg = FALSE, y.arg = FALSE,
                  smart = FALSE,
                  weights = matrix(collaps$wzbar, neff, dim2wz))
@@ -314,7 +315,7 @@ vsmooth.spline <-
   nknots <- nk
   if (all.knots) {
     knot <- if (noround) {
-      valid.vknotl2(c(rep(xbar[1],3), xbar, rep(xbar[neff],3)))
+      valid.vknotl2(c(rep(xbar[1], 3), xbar, rep(xbar[neff], 3)))
     } else { 
       c(rep(xbar[1], 3), xbar, rep(xbar[neff], 3))
     }

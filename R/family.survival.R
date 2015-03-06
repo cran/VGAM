@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2014 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -193,33 +193,72 @@ dbisa <- function(x, scale = 1, shape, log = FALSE) {
 }
 
 
-pbisa <- function(q, scale = 1, shape) {
-  if (!is.Numeric(q))
-    stop("bad input for argument 'q'")
-  if (!is.Numeric(shape, positive = TRUE))
-    stop("bad input for argument 'shape'")
-  if (!is.Numeric(scale, positive = TRUE))
-    stop("bad input for argument 'scale'")
-  ans <- pnorm(((temp <- sqrt(q/scale)) - 1/temp) / shape)
-  ans[scale < 0 | shape < 0] <- NA
-  ans[q <= 0] <- 0
+
+pbisa <- function(q, scale = 1, shape,
+                  lower.tail = TRUE, log.p = FALSE) {
+
+  
+  ans <- pnorm(((temp <- sqrt(q/scale)) - 1/temp) / shape,
+               lower.tail = lower.tail, log.p = log.p)
+  ans[scale < 0 | shape < 0] <- NaN
+  ans[q <= 0] <- if (lower.tail) ifelse(log.p, log(0), 0) else
+                                 ifelse(log.p, log(1), 1)
   ans
 }
 
 
-qbisa <- function(p, scale = 1, shape) {
-  if (!is.Numeric(p, positive = TRUE) || any(p >= 1))
-      stop("argument 'p' must have values inside the interval (0,1)")
-  if (!is.Numeric(shape, positive = TRUE))
-    stop("bad input for argument 'shape'")
-  if (!is.Numeric(scale, positive = TRUE))
-    stop("bad input for argument 'scale'")
-  A <- qnorm(p)
+
+qbisa <- function(p, scale = 1, shape,
+                  lower.tail = TRUE, log.p = FALSE) {
+
+  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+    stop("bad input for argument 'lower.tail'")
+
+  if (!is.logical(log.p) || length(log.p) != 1)
+    stop("bad input for argument 'log.p'")
+
+
+  A <- qnorm(p, lower.tail = lower.tail, log.p = log.p)
   temp1 <- A * shape * sqrt(4 + A^2 * shape^2)
   ans1 <- (2 + A^2 * shape^2 + temp1) * scale / 2
   ans2 <- (2 + A^2 * shape^2 - temp1) * scale / 2
-  ifelse(p < 0.5, pmin(ans1, ans2), pmax(ans1, ans2))
+
+
+
+  if (lower.tail) {
+    if (log.p) {
+      ln.p <- p
+      ans <- ifelse(exp(p) < 0.5, pmin(ans1, ans2), pmax(ans1, ans2))
+      ans[ln.p == -Inf] <- 0
+      ans[ln.p == 0] <- Inf
+     #ans[ln.p > 0] <- NaN
+    } else {
+      ans <- ifelse(p < 0.5, pmin(ans1, ans2), pmax(ans1, ans2))
+     #ans[p < 0] <- NaN
+      ans[p == 0] <- 0
+      ans[p == 1] <- Inf
+     #ans[p > 1] <- NaN
+    }
+  } else {
+    if (log.p) {
+      ln.p <- p
+      ans <- ifelse(-expm1(p) < 0.5, pmin(ans1, ans2), pmax(ans1, ans2))
+      ans[ln.p == -Inf] <- Inf
+      ans[ln.p == 0] <- 0
+     #ans[ln.p > 0] <- NaN
+    } else { 
+      ans <- ifelse(p > 0.5, pmin(ans1, ans2), pmax(ans1, ans2))
+     #ans[p < 0] <- NaN
+      ans[p == 0] <- Inf
+      ans[p == 1] <- 0
+     #ans[p > 1] <- NaN
+    }
+  }
+
+  ans[scale < 0 | shape < 0] <- NaN
+  ans
 }
+
 
 
 rbisa <- function(n, scale = 1, shape) {
@@ -249,9 +288,6 @@ rbisa <- function(n, scale = 1, shape) {
                   iscale = 1,      ishape = NULL,
                   imethod = 1, zero = NULL, nowarning = FALSE) {
 
-  if (!nowarning)
-    warning("order of the linear/additive predictors has been changed",
-            " in VGAM version 0.9-5")
 
 
   lshape <- as.list(substitute(lshape))

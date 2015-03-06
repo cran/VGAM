@@ -9,11 +9,16 @@
 
 }
 \usage{
-paralogistic(lshape1.a = "loge", lscale = "loge",
-             ishape1.a = 2, iscale = NULL, zero = NULL)
+paralogistic(lss, lshape1.a = "loge", lscale = "loge",
+                  ishape1.a = 2, iscale = NULL, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
+  \item{lss}{ See \code{\link{CommonVGAMffArguments}} for important information.
+  
+  
+  }
+
   \item{lshape1.a, lscale}{
   Parameter link functions applied to the
   (positive) shape parameter \code{a} and
@@ -91,9 +96,9 @@ Hoboken, NJ, USA: Wiley-Interscience.
 }
 
 \examples{
-pdata <- data.frame(y = rparalogistic(n = 3000, exp(1), exp(2)))
-fit <- vglm(y ~ 1, paralogistic, data = pdata, trace = TRUE)
-fit <- vglm(y ~ 1, paralogistic(ishape1.a = 2.3, iscale = 7),
+pdata <- data.frame(y = rparalogistic(n = 3000, exp(1), scale = exp(2)))
+fit <- vglm(y ~ 1, paralogistic(lss = FALSE), data = pdata, trace = TRUE)
+fit <- vglm(y ~ 1, paralogistic(lss = FALSE, ishape1.a = 2.3, iscale = 7),
             data = pdata, trace = TRUE, epsilon = 1e-8)
 coef(fit, matrix = TRUE)
 Coef(fit)

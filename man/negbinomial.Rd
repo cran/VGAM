@@ -12,8 +12,9 @@
 \usage{
 negbinomial(lmu = "loge", lsize = "loge",
             imu = NULL, isize = NULL, probs.y = 0.75,
-            nsimEIM = 100, cutoff = 0.995,
-            Maxiter = 5000, deviance.arg = FALSE, imethod = 1,
+            nsimEIM = 250, cutoff.prob = 0.995,
+            max.qnbinom = 1000, max.chunk.Mb = 20,
+            deviance.arg = FALSE, imethod = 1, gsize = exp((-4):4),
             parallel = FALSE, ishrinkage = 0.95, zero = -2)
 polya(lprob = "logit", lsize = "loge",
       iprob = NULL, isize = NULL, probs.y = 0.75, nsimEIM = 100,
@@ -37,7 +38,8 @@ polyaR(lsize = "loge", lprob = "logit",
   \code{\link[stats:NegBinomial]{rnbinom}} respectively.
   Common alternatives for \code{lsize} are
   \code{\link{negloge}} and
-  \code{\link{reciprocal}}.
+  \code{\link{reciprocal}}, and
+  \code{\link{loglog}} (if \eqn{k > 1}).
 
 
   }
@@ -47,16 +49,9 @@ polyaR(lsize = "loge", lprob = "logit",
   (and/or use \code{imethod}).
   For a \eqn{S}-column response, \code{isize} can be of length \eqn{S}.
   A value \code{NULL} means an initial value for each response is
-  computed internally using a range of values.
+  computed internally using a gridsearch based on \code{gsize}.
   The last argument is ignored if used within \code{\link{cqo}}; see
   the \code{iKvector} argument of \code{\link{qrrvglm.control}} instead.
-
-
-  }
-  \item{probs.y}{
-  Passed into the \code{probs} argument
-  of \code{\link[stats:quantile]{quantile}}
-  when \code{imethod = 3} to obtain an initial value for the mean.
 
 
   }
@@ -64,38 +59,92 @@ polyaR(lsize = "loge", lprob = "logit",
   \item{nsimEIM}{
   This argument is used
   for computing the diagonal element of the
-  \emph{expected information matrix} (EIM) corresponding to \eqn{k}.
+  \emph{expected information matrix} (EIM) corresponding to \eqn{k}
+  based on the \emph{simulated Fisher scoring} (SFS) algorithm.
   See \code{\link{CommonVGAMffArguments}} for more information
-  and the note below.
+  and the notes below.
+  SFS is one of two algorithms for computing the EIM elements
+  (so that both algorithms may be used on a given data set).
+  SFS is faster than the exact method when \code{Qmax} is large.
+
 
 
   }
-  \item{cutoff}{
-  Used in the finite series approximation.
-  A numeric which is close to 1 but never exactly 1.
+  \item{cutoff.prob}{
+  Fed into the \code{p} argument
+  of \code{\link[stats:NegBinomial]{qnbinom}}
+  in order to obtain an upper limit for the approximate
+  support of the distribution, called \code{Qmax}, say.
+  Hence the approximate support is \code{0:Qmax}.
+  This argument should be 
+  a numeric and close to 1 but never exactly 1.
   Used to specify how many terms of the infinite series
   for computing the second diagonal element of the
   EIM are actually used.
-  The sum of the probabilites are added until they reach
-  this value or more (but no more than \code{Maxiter}
-  terms allowed).
-  It is like specifying \code{p} in an imaginary function
-  \code{qnegbin(p)}.
+  The closer this argument is to 1, the more accurate the
+  standard errors of the regression coefficients will be.
+
+
+
+% The sum of the probabilites are added until they reach
+% at least this value.
+% (but no more than \code{Maxiter} terms allowed).
+% Used in the finite series approximation.
+% It is like specifying \code{p} in an imaginary function \code{qnegbin(p)}.
 
 
   }
-  \item{Maxiter}{
-  Used in the finite series approximation.
-  Integer. The maximum number of terms allowed when computing
-  the second diagonal element of the EIM.
-  In theory, the value involves an infinite series.
-  If this argument is too small then the value may be inaccurate.
+  \item{max.chunk.Mb, max.qnbinom}{
+    \code{max.qnbinom} is used to describe the eligibility of 
+    individual observations
+    to have their EIM computed by the \emph{exact method}.
+    Here, we are concerned about
+  computing the EIM wrt \eqn{k}.
+  The exact method algorithm operates separately on each response
+  variable,
+  and it constructs a large matrix provided that the number of columns
+  is less than \code{max.qnbinom}.
+  If so, then the computations are done in chunks, so
+  that no more than about \code{max.chunk.Mb} megabytes
+  of memory is used at a time (actually, it is proportional to this amount).
+  Regarding eligibility of this algorithm, each observation must
+  have the \code{cutoff.prob} quantile less than \code{max.qnbinom}
+  as its approximate support.
+  If you have abundant memory then you might try setting
+  \code{max.chunk.Mb = Inf}, but then the computations might take
+  a very long time.
+  Setting \code{max.chunk.Mb = 0} or \code{max.qnbinom = 0}
+  will force the EIM to be computed using the SFS algorithm only
+  (this \emph{used to be} the default method for \emph{all} the observations).
+  When the fitted values of the model are large and \eqn{k} is small,
+  the computation of the EIM will be costly with respect to time
+  and memory if the exact method is used. Hence the argument
+  \code{max.qnbinom} limits the cost in terms of time.
 
+
+% Thus the number of columns of the matrix can be controlled by
+% the argument \code{cutoff.prob}.
 
   }
+
+
+\item{gsize}{
+  Similar to \code{gsigma} in \code{\link{CommonVGAMffArguments}}.
+
+
+}
+
+% \item{Maxiter}{
+% Used in the finite series approximation.
+% Integer. The maximum number of terms allowed when computing
+% the second diagonal element of the EIM.
+% In theory, the value involves an infinite series.
+% If this argument is too small then the value may be inaccurate.
+
+
+% }
   \item{deviance.arg}{
   Logical.
-
   If \code{TRUE}, the deviance is computed \emph{after} convergence.
   It only works in the NB-2 model.
   It is also necessary to set \code{criterion = "coefficients"}
@@ -139,6 +188,13 @@ polyaR(lsize = "loge", lprob = "logit",
 
 
   }
+  \item{probs.y}{
+  Passed into the \code{probs} argument
+  of \code{\link[stats:quantile]{quantile}}
+  when \code{imethod = 3} to obtain an initial value for the mean.
+
+
+  }
   \item{ishrinkage}{
   How much shrinkage is used when initializing \eqn{\mu}{mu}.
   The value must be between 0 and 1 inclusive, and
@@ -175,7 +231,7 @@ polyaR(lsize = "loge", lprob = "logit",
   mean \eqn{\mu}{mu} and an \emph{index} parameter
   \eqn{k}, both which are positive.
   Specifically, the density of a random variable \eqn{Y} is 
-  \deqn{f(y;\mu,k) ~=~ {y + k - 1 \choose y} \,
+  \deqn{f(y;\mu,k) = {y + k - 1 \choose y} \,
     \left( \frac{\mu}{\mu+k} \right)^y\,
     \left( \frac{k}{k+\mu} \right)^k }{%
     f(y;mu,k) = C_{y}^{y + k - 1}
@@ -197,10 +253,10 @@ polyaR(lsize = "loge", lprob = "logit",
 
 
   For \code{polya} the density is
-  \deqn{f(y;p,k) ~=~ {y + k - 1 \choose y} \,
+  \deqn{f(y;p,k) = {y + k - 1 \choose y} \,
     \left( 1 - p \right)^y\,
     p^k }{%
-    f(y;k,p) = C_{y}^{y + k - 1}
+    f(y;p,k) = C_{y}^{y + k - 1}
     [1 - p]^y p^k}
   where \eqn{y=0,1,2,\ldots},
   and \eqn{k > 0} and \eqn{0 < p < 1}{0 < p < 1}. 
@@ -222,11 +278,13 @@ polyaR(lsize = "loge", lprob = "logit",
   classical GLM framework with one of the parameters being
   of interest and the other treated as a nuisance/scale
   parameter (this is implemented in the \pkg{MASS} library). The
-  \pkg{VGAM} family function \code{negbinomial} treats both
+  \pkg{VGAM} family function \code{negbinomial()} treats both
   parameters on the same footing, and estimates them both
-  by full maximum likelihood estimation. Simulated Fisher
-  scoring is employed as the default (see the \code{nsimEIM}
-  argument).
+  by full maximum likelihood estimation.
+
+
+%  SFS is employed as the default (see the \code{nsimEIM}
+%  argument).
 
 
   The parameters \eqn{\mu}{mu} and \eqn{k} are independent
@@ -237,20 +295,23 @@ polyaR(lsize = "loge", lprob = "logit",
 
 
   These \pkg{VGAM} family functions handle
-  \emph{multivariate} responses, so that a matrix can be
-  used as the response. The number of columns is the number
+  \emph{multiple} responses, so that a response matrix can be
+  inputted. The number of columns is the number
   of species, say, and setting \code{zero = -2} means that
   \emph{all} species have a \eqn{k} equalling a (different)
   intercept only.
 
 
+  
 }
 \section{Warning}{
-  The Poisson model corresponds to \eqn{k} equalling
+  Poisson regression corresponds to \eqn{k} equalling
   infinity.  If the data is Poisson or close to Poisson,
   numerical problems will occur. Possibly choosing a
-  log-log link may help in such cases, otherwise use
+  log-log link may help in such cases, otherwise try
   \code{\link{poissonff}} or \code{\link{quasipoissonff}}.
+  It is possible to fit a NBD that has a similar variance
+  function as a quasi-Poisson; see the NB-1 example below.
 
 
   These functions are fragile; the maximum likelihood
@@ -262,6 +323,20 @@ polyaR(lsize = "loge", lprob = "logit",
   Assigning values to the \code{isize} argument may lead
   to a local solution, and smaller values are preferred
   over large values when using this argument.
+
+
+  If one wants to force SFS
+  to be used on all observations, then
+  set \code{max.qnbinom = 0} or \code{max.chunk.Mb = 0}.
+  If one wants to force the exact method
+  to be used for all observations, then
+  set \code{max.qnbinom = Inf}.
+  If the computer has \emph{much} memory, then trying
+  \code{max.chunk.Mb = Inf} may provide a small speed increase.
+  If SFS is used at all, then the \code{@weights} slot of the
+  fitted object will be a matrix;
+  otherwise that slot will be a \code{0 x 0} matrix.
+  
 
 
   Yet to do: write a family function which uses the methods
@@ -298,7 +373,8 @@ Fitting the negative binomial distribution to biological data.
 
   Yee, T. W. (2014)
   Reduced-rank vector generalized linear models with two linear predictors.
-  \emph{Computational Statistics and Data Analysis}.
+  \emph{Computational Statistics and Data Analysis},
+  \bold{71}, 889--902.
 
 
 
@@ -329,15 +405,23 @@ Fitting the negative binomial distribution to biological data.
   For \code{negbinomial()}
   the diagonal element of the \emph{expected information matrix}
   (EIM) for parameter \eqn{k}
-  involves an infinite series; consequently simulated Fisher scoring
-  (see \code{nsimEIM}) is the default. This algorithm should definitely be
-  used if \code{max(ymat)} is large, e.g., \code{max(ymat) > 300} or there
-  are any outliers in \code{ymat}.
-  A second algorithm involving a finite series approximation can be
-  invoked by setting \code{nsimEIM = NULL}.
-  Then the arguments
-  \code{Maxiter} and
-  \code{cutoff} are pertinent.
+  involves an infinite series; consequently SFS
+  (see \code{nsimEIM}) is used as the backup algorithm only.
+  SFS should be better if \code{max(ymat)} is large,
+  e.g., \code{max(ymat) > 1000},
+  or if there are any outliers in \code{ymat}.
+  The default algorithm involves a finite series approximation 
+  to the support \code{0:Inf};
+  the arguments
+  \code{max.memory},
+  \code{min.size} and
+  \code{cutoff.prob} are pertinent.
+
+
+% \code{slope.mu},
+% the arguments \code{Maxiter} and
+% can be invoked by setting \code{nsimEIM = NULL}.
+
 
 
   Regardless of the algorithm used,
@@ -345,13 +429,14 @@ Fitting the negative binomial distribution to biological data.
   outliers or is large in magnitude.
   If convergence failure occurs, try using arguments
   (in recommended decreasing order)
+  \code{max.qnbinom},
   \code{nsimEIM},
+  \code{cutoff.prob},
   \code{ishrinkage},
   \code{imethod},
-  \code{Maxiter}, 
-  \code{cutoff},
   \code{isize},
-  \code{zero}.
+  \code{zero},
+  \code{max.chunk.Mb}.
 
 
   The function \code{negbinomial} can be used by the fast algorithm in
@@ -424,7 +509,8 @@ Fitting the negative binomial distribution to biological data.
   \code{\link{cao}},
   \code{\link{cqo}},
   \code{\link{CommonVGAMffArguments}},
-  \code{\link{simulate.vlm}}.
+  \code{\link{simulate.vlm}},
+  \code{\link[stats:NegBinomial]{qnbinom}}.
 
 
 % \code{\link[MASS]{rnegbin}}.
@@ -432,32 +518,33 @@ Fitting the negative binomial distribution to biological data.
 
 }
 \examples{
-# Example 1: apple tree data
+# Example 1: apple tree data (Bliss and Fisher, 1953)
 appletree <- data.frame(y = 0:7, w = c(70, 38, 17, 10, 9, 3, 2, 1))
 fit <- vglm(y ~ 1, negbinomial(deviance = TRUE), data = appletree,
-            weights = w, crit = "coef")
+            weights = w, crit = "coef")  # Obtain the deviance
 fit <- vglm(y ~ 1, negbinomial(deviance = TRUE), data = appletree,
             weights = w, half.step = FALSE)  # Alternative method
 summary(fit)
 coef(fit, matrix = TRUE)
-Coef(fit)
+Coef(fit)  # For intercept-only models
 deviance(fit)  # NB2 only; needs 'crit = "coef"' & 'deviance = TRUE' above
 
-# Example 2: simulated data with multivariate response
-ndata <- data.frame(x2 = runif(nn <- 500))
+# Example 2: simulated data with multiple responses
+ndata <- data.frame(x2 = runif(nn <- 300))
 ndata <- transform(ndata, y1 = rnbinom(nn, mu = exp(3+x2), size = exp(1)),
                           y2 = rnbinom(nn, mu = exp(2-x2), size = exp(0)))
 fit1 <- vglm(cbind(y1, y2) ~ x2, negbinomial, data = ndata, trace = TRUE)
 coef(fit1, matrix = TRUE)
 
-# Example 3: large counts so definitely use the nsimEIM argument
-ndata <- transform(ndata, y3 = rnbinom(nn, mu = exp(12+x2), size = exp(1)))
+# Example 3: large counts implies SFS is used
+ndata <- transform(ndata, y3 = rnbinom(nn, mu = exp(10+x2), size = exp(1)))
 with(ndata, range(y3))  # Large counts
-fit2 <- vglm(y3 ~ x2, negbinomial(nsimEIM = 100), data = ndata, trace = TRUE)
+fit2 <- vglm(y3 ~ x2, negbinomial, data = ndata, trace = TRUE)
 coef(fit2, matrix = TRUE)
+head(fit2@weights)  # Non-empty; SFS was used
 
 # Example 4: a NB-1 to estimate a negative binomial with Var(Y) = phi0 * mu
-nn <- 1000  # Number of observations
+nn <- 500  # Number of observations
 phi0 <- 10  # Specify this; should be greater than unity
 delta0 <- 1 / (phi0 - 1)
 mydata <- data.frame(x2 = runif(nn), x3 = runif(nn))
@@ -490,5 +577,4 @@ summary(glm(y3 ~ x2 + x3, quasipoisson, mydata))$disper  # cf. moment estimator
 \keyword{regression}
 
 
-%y1 = MASS:::rnegbin(n, mu=exp(3+x), theta=exp(1))  # k is theta
-%y2 = MASS:::rnegbin(n, mu=exp(2-x), theta=exp(0))
+

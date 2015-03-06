@@ -17,7 +17,7 @@
 }
 \usage{
 dlind(x, theta, log = FALSE)
-plind(q, theta)
+plind(q, theta, lower.tail = TRUE, log.p = FALSE)
 rlind(n, theta)
 }
 %qlind(p, theta)
@@ -39,6 +39,12 @@ rlind(n, theta)
 
 
   }
+  \item{lower.tail, log.p}{
+  Same meaning as in \code{\link[stats:Normal]{pnorm}}
+  or \code{\link[stats:Normal]{qnorm}}.
+
+
+  }
 
 }
 \value{
@@ -51,7 +57,7 @@ rlind(n, theta)
 
 
 }
-\author{ T. W. Yee }
+\author{ T. W. Yee and Kai Huang }
 \details{
   See \code{\link{lindley}} for details.
 

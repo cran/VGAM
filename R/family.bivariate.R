@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2014 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -336,6 +336,8 @@ dbistudentt <- function(x1, x2, df, rho = 0, log = FALSE) {
     log(2 * pi) - 0.5 * log1p(-rho^2)  # -
 
   logdensity[df <= 0] <- NaN  # Not picked up by dt().
+
+  logdensity[is.infinite(x1) | is.infinite(x2)] <- log(0)  # 20141216  KaiH
 
   if (log.arg) logdensity else exp(logdensity)
 }
@@ -983,8 +985,8 @@ rbinormcop <- function(n, rho = 0  #, inverse = FALSE
 
 
 
-bilogistic.control <- function(save.weight = TRUE, ...) {
-  list(save.weight = save.weight)
+bilogistic.control <- function(save.weights = TRUE, ...) {
+  list(save.weights = save.weights)
 }
 
 
@@ -1231,6 +1233,9 @@ dbilogis <- function(x1, x2, loc1 = 0, scale1 = 1,
 
   logdensity <- log(2) - zedd1 - zedd2 - log(scale1) - 
                 log(scale1) - 3 * log1p(exp(-zedd1) + exp(-zedd2))
+
+
+  logdensity[x1 == -Inf | x2 == -Inf] <- log(0)  # 20141216 KaiH
 
 
   if (log.arg) logdensity else exp(logdensity)
@@ -1780,8 +1785,8 @@ dbifrankcop <- function(x1, x2, apar, log = FALSE) {
 
 
 
-bifrankcop.control <- function(save.weight = TRUE, ...) {
-  list(save.weight = save.weight)
+bifrankcop.control <- function(save.weights = TRUE, ...) {
+  list(save.weights = save.weights)
 }
 
 
@@ -2636,8 +2641,8 @@ dbiplackcop <- function(x1, x2, oratio, log = FALSE) {
 
 
 
-biplackettcop.control <- function(save.weight = TRUE, ...) {
-  list(save.weight = save.weight)
+biplackettcop.control <- function(save.weights = TRUE, ...) {
+  list(save.weights = save.weights)
 }
 
 
@@ -2883,8 +2888,8 @@ rbiamhcop <- function(n, apar) {
 }
 
 
-biamhcop.control <- function(save.weight = TRUE, ...) {
-  list(save.weight = save.weight)
+biamhcop.control <- function(save.weights = TRUE, ...) {
+  list(save.weights = save.weights)
 }
 
 
@@ -3083,6 +3088,9 @@ dbinorm <- function(x1, x2, mean1 = 0, mean2 = 0,
   logpdf <- -log(2 * pi) - log(sd1) - log(sd2) -
               0.5 * log1p(-rho^2) +
             -(0.5 / temp5)  * (zedd1^2 + (-2 * rho * zedd1 + zedd2) * zedd2)
+
+  logpdf[is.infinite(x1) | is.infinite(x2)] <- log(0)  # 20141216 KaiH
+
   if (log.arg) logpdf else exp(logpdf)
 }
 

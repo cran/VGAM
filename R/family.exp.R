@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2014 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -13,7 +13,21 @@
 
 
 
-qeunif <- function(p, min = 0, max = 1, Maxit.nr = 10, Tol.nr = 1.0e-6) {
+qeunif <- function(p, min = 0, max = 1, Maxit.nr = 10, Tol.nr = 1.0e-6,
+                   lower.tail = TRUE, log.p = FALSE) {
+
+
+  if (!is.logical(log.arg <- log.p) || length(log.p) != 1)
+    stop("bad input for argument 'log.p'")
+  rm(log.p)   # 20150102 KaiH
+  
+  if (lower.tail) {
+    if (log.arg)
+      p <- exp(p)
+  } else {
+    p <- if (log.arg) -expm1(p) else 1 - p
+  }
+
 
   ppp <- p
   vsmallno <- sqrt(.Machine$double.eps)
@@ -52,25 +66,44 @@ qeunif <- function(p, min = 0, max = 1, Maxit.nr = 10, Tol.nr = 1.0e-6) {
 }
 
 
-peunif <- function(q, min = 0, max = 1, log = FALSE) {
-  if (!is.logical(log.arg <- log) || length(log) != 1)
-    stop("bad input for argument 'log'")
-  rm(log)
+
+peunif <- function(q, min = 0, max = 1,
+                   lower.tail = TRUE, log.p = FALSE) {
+
+  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+    stop("bad input for argument 'lower.tail'")
+  
+  if (!is.logical(log.p) || length(log.p) != 1)
+    stop("bad input for argument 'log.p'")
+  
   if (any(min >= max))
     stop("argument 'min' has values greater or equal to argument 'max'")
 
   eee <- (q - min) / (max - min)
-  if (log.arg) {
-    logGofy <- 2 * log(eee) - log1p(2 * eee * (eee - 1))
-    logGofy[eee < 0] <- -Inf
-    logGofy[eee > 1] <- 0.0
-    logGofy
+
+  if (lower.tail) {
+    if (log.p) {
+      Gofy <- -log1p((1/eee - 1)^2)
+      Gofy[eee < 0] <- -Inf
+      Gofy[eee > 1] <- 0.0
+    } else {
+      Gofy <- eee^2 / (exp(2*log1p(-eee)) + eee^2)  # KaiH
+      Gofy <- 1 / (1 + (1/eee - 1)^2)
+      Gofy[eee < 0] <- 0.0
+      Gofy[eee > 1] <- 1.0
+    }
   } else {
-    Gofy <- eee^2 / (1 + 2 * eee * (eee - 1))
-    Gofy[eee < 0] <- 0.0
-    Gofy[eee > 1] <- 1.0
-    Gofy
+    if (log.p) {
+      Gofy <- 2*log1p(-eee) - log(exp(2*log1p(-eee)) + eee^2)
+      Gofy[eee < 0] <- 0.0
+      Gofy[eee > 1] <- -Inf
+    } else {
+      Gofy <- exp(2*log1p(-eee)) / (exp(2*log1p(-eee)) + eee^2)
+      Gofy[eee < 0] <- 1
+      Gofy[eee > 1] <- 0
+    }
   }
+  Gofy
 }
 
 
@@ -93,6 +126,7 @@ deunif <- function(x, min = 0, max = 1, log = FALSE) {
     gunif <- function(y)
         as.numeric(y >= 0 & y <= 1) * 2*y*(1-y) / (2*y*(1-y) - 1)^2
     ans <- gunif(eee) / (max - min)
+    ans[is.infinite(x)] <- 0  # 20141209 KaiH
   }
   ans
 }
@@ -109,8 +143,16 @@ reunif <- function(n, min = 0, max = 1) {
 
 
 
-qenorm <- function(p, mean = 0, sd = 1, Maxit.nr = 10,
-                   Tol.nr = 1.0e-6) {
+
+
+qenorm <- function(p, mean = 0, sd = 1, Maxit.nr = 10, Tol.nr = 1.0e-6,
+                   lower.tail = TRUE, log.p = FALSE) {
+  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+    stop("bad input for argument 'lower.tail'")
+
+  if (!is.logical(log.p) || length(log.p) != 1)
+    stop("bad input for argument 'log.p'")
+  
   ppp <- p
   if (!is.Numeric( Tol.nr, length.arg = 1, positive = TRUE) ||
       Tol.nr > 0.10)
@@ -118,48 +160,101 @@ qenorm <- function(p, mean = 0, sd = 1, Maxit.nr = 10,
          "positive value, or is too large")
   nrok <- is.finite(ppp)
 
-  eee <-  qnorm(ppp, sd = 2/3)
+  eee <-  qnorm(ppp, sd = 2/3, lower.tail = lower.tail, log.p = log.p) 
+
 
 
   gnorm <- function(y) dnorm(y) / (y * (1-2*pnorm(y)) - 2*dnorm(y))^2
 
+
   for (iii in 1:Maxit.nr) {
-    realdiff <- (penorm(eee[nrok]) - ppp[nrok]) / gnorm(eee[nrok])
+    if (lower.tail) {
+      realdiff <- if (log.p) {
+        ln.ppp <- ppp
+        (penorm(eee[nrok]) - exp(ln.ppp[nrok])) / gnorm(eee[nrok])
+      } else {
+        (penorm(eee[nrok]) - ppp[nrok]) / gnorm(eee[nrok])
+      }
+    } else {
+      realdiff <- if (log.p) {
+        ln.ppp <- ppp
+        (penorm(eee[nrok]) + expm1(ln.ppp[nrok])) / gnorm(eee[nrok])
+      } else {
+        (penorm(eee[nrok]) + expm1(log(ppp[nrok]))) / gnorm(eee[nrok])
+      }
+    }
     eee[nrok] <- eee[nrok] - realdiff
-    if (all(abs(realdiff) / (1.0 + abs(realdiff)) < Tol.nr )) break
-    if (iii == Maxit.nr) warning("did not converge")
+    if (all(abs(realdiff) / (1.0 + abs(realdiff)) < Tol.nr ))
+      break
+    if (iii == Maxit.nr)
+      warning("did not converge")
   }
+
+
 
   if (max(abs(penorm(eee[nrok]) - ppp[nrok])) > Tol.nr)
     warning("did not converge on the second check")
 
-  eee[ppp == 0] <- -Inf
-  eee[ppp == 1] <-  Inf
-  eee[ppp <  0] <- NA
-  eee[ppp >  1] <- NA
+
+  if (lower.tail) {
+    if (log.p) {
+      eee[ln.ppp > 0] <- NaN
+    } else {
+      eee[ppp == 0] <- -Inf
+      eee[ppp == 1] <-  Inf
+      eee[ppp <  0] <- NaN
+      eee[ppp >  1] <- NaN
+    }
+  } else {
+    if (log.p) {
+      eee[ln.ppp > 0] <- NaN
+    } else { 
+      eee[ppp == 0] <- Inf
+      eee[ppp == 1] <- -Inf
+      eee[ppp <  0] <- NaN
+      eee[ppp >  1] <- NaN
+    }
+  }
   eee * ifelse(sd >= 0, sd, NaN) + mean
 }
 
 
-penorm <- function(q, mean = 0, sd = 1, log = FALSE) {
-  if (!is.logical(log.arg <- log) || length(log) != 1)
-    stop("bad input for argument 'log'")
-  rm(log)
+
+penorm <- function(q, mean = 0, sd = 1,
+                   lower.tail = TRUE, log.p = FALSE) {
+  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+    stop("bad input for argument 'lower.tail'")
+  
+  if (!is.logical(log.p) || length(log.p) != 1)
+    stop("bad input for argument 'log.p'")
 
   eee <- (q - mean) / sd
   tmp1 <- -dnorm(eee) - eee * pnorm(eee)
-  if (log.arg) {
-    logGofy <- log(tmp1) - log(2 * tmp1 + eee)
-    logGofy[eee <= -Inf] <- -Inf
-    logGofy[eee >=  Inf] <- 0.0
-    logGofy
+
+  if (lower.tail) {
+    if (log.p) {
+      Gofy <- log(tmp1 / (2 * tmp1 + eee))
+      Gofy[eee <= -Inf] <- -Inf
+      Gofy[eee >=  Inf] <- 0
+    } else {
+      Gofy <- tmp1 / (2 * tmp1 + eee)
+      Gofy[eee <= -Inf] <- 0.0
+      Gofy[eee >=  Inf] <- 1.0
+    }
   } else {
-    Gofy <- tmp1 / (2 * tmp1 + eee)
-    Gofy[eee <= -Inf] <- 0.0
-    Gofy[eee >=  Inf] <- 1.0
-    Gofy
+    if (log.p) {
+      Gofy <- log((tmp1 + eee) / (2 * tmp1 + eee))
+      Gofy[eee <= -Inf] <- 0
+      Gofy[eee >=  Inf] <- -Inf
+    } else {
+      Gofy <- (tmp1 + eee) / (2 * tmp1 + eee)
+      Gofy[eee <= -Inf] <- 1
+      Gofy[eee >=  Inf] <- 0
+    }
   }
+  Gofy
 }
+
 
 
 denorm <- function(x, mean = 0, sd = 1, log = FALSE) {
@@ -193,7 +288,18 @@ renorm <- function(n, mean = 0, sd = 1) {
 
 
 
-qeexp <- function(p, rate = 1, Maxit.nr = 10, Tol.nr = 1.0e-6) {
+qeexp <- function(p, rate = 1, Maxit.nr = 10, Tol.nr = 1.0e-6,
+                  lower.tail = TRUE, log.p = FALSE) {
+  if (!is.logical(log.arg <- log.p) || length(log.p) != 1)
+    stop("bad input for argument 'log.p'")
+  rm(log.p)   # 20150102 KaiH
+  
+  if (lower.tail) {
+    if (log.arg) p <- exp(p)
+  } else {
+    p <- if (log.arg) -expm1(p) else 1 - p
+  }
+  
   ppp <- p
   vsmallno <- sqrt(.Machine$double.eps)
   if (!is.Numeric( Tol.nr, length.arg = 1, positive = TRUE) ||
@@ -230,25 +336,39 @@ qeexp <- function(p, rate = 1, Maxit.nr = 10, Tol.nr = 1.0e-6) {
 }
 
 
-peexp <- function(q, rate = 1, log = FALSE) {
-  if (!is.logical(log.arg <- log) || length(log) != 1)
-    stop("bad input for argument 'log'")
-  rm(log)
+
+peexp <- function(q, rate = 1, lower.tail = TRUE, log.p = FALSE) {
+  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+    stop("bad input for argument 'lower.tail'")
+  
+  if (!is.logical(log.p) || length(log.p) != 1)
+    stop("bad input for argument 'log.p'")
 
   eee <- q * rate
-  if (log.arg) {
-    tmp1 <- -expm1(-eee) - eee
-    logGofy <- log1p(- eee - exp(-eee)) - log(2 * tmp1 + eee - 1.0)
-    logGofy[eee <    0] <- log(0.0)
-    logGofy[eee >= Inf] <- log(1.0)
-    logGofy
+  tmp1 <- -expm1(-eee) - eee
+
+  if (lower.tail) {
+    if (log.p) {
+      Gofy <- log(-tmp1) - log(expm1(-eee) + exp(-eee) + eee)
+      Gofy[eee < 0 ] <- -Inf
+      Gofy[eee == Inf] <- 0
+    } else {
+      Gofy <- tmp1 / (-expm1(-eee) - exp(-eee) - eee)
+      Gofy[eee < 0] <- 0
+      Gofy[eee == Inf] <- 1
+    }
   } else {
-    tmp1 <- -expm1(-eee) - eee
-    Gofy <- tmp1 / (2 * tmp1 + eee - 1.0)
-    Gofy[eee <    0] <- 0.0
-    Gofy[eee >= Inf] <- 1.0
-    Gofy
+    if (log.p) {
+      Gofy <- -eee - log(expm1(-eee) + exp(-eee) + eee)
+      Gofy[eee < 0] <- 0
+      Gofy[eee == Inf] <- -Inf
+    } else {
+      Gofy <- exp(-eee)/(expm1(-eee) +exp(-eee) +eee)
+      Gofy[eee < 0] <- 1
+      Gofy[eee == Inf] <- 0
+    }
   }
+  Gofy
 }
 
 
@@ -264,11 +384,13 @@ deexp <- function(x, rate = 1, log = FALSE) {
 
   if (log.arg) {
     ans <- log(eee) - eee + 2.0 * log((1-x) - 2 * exp(-x)) + log(rate)
+    ans[is.infinite(x)] <- log(0)
   } else {
     gexp <- function(y)
       as.numeric(y >= 0) * y * exp(-y) / ((1-y) - 2 * exp(-y))^2
     ans <- gexp(eee) * rate
     ans[rate <=  0.0] <- NaN
+    ans[is.infinite(x)] <- 0
   }
   ans
 }
@@ -299,33 +421,89 @@ dsc.t2 <- function(x, location = 0, scale = 1, log = FALSE) {
 
 
 
-psc.t2 <- function(q, location = 0, scale = 1, log = FALSE) {
-  if (!is.logical(log.arg <- log) || length(log) != 1)
-    stop("bad input for argument 'log'")
-  rm(log)
+
+
+psc.t2 <- function(q, location = 0, scale = 1,
+                   lower.tail = TRUE, log.p = FALSE) {
+  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+    stop("bad input for argument 'lower.tail'")
+  
+  if (!is.logical(log.p) || length(log.p) != 1)
+    stop("bad input for argument 'log.p'")
 
   zedd <- (q - location) / scale
   zedd[scale <= 0] <- NaN
 
-  if (log.arg) {
-    -log(2) + log1p(zedd / sqrt(4 + zedd^2))
+  if (lower.tail) {
+    if (log.p) {
+      ans <- log(0.5) + log1p(zedd / sqrt(4 + zedd^2))
+      ans[q == -Inf] <- log(0)
+      ans[q == Inf] <- log(1) 
+      } else {
+      ans <- 0.5 * (1 + zedd / sqrt(4 + zedd^2))
+      ans[q == -Inf] <- 0 
+      ans[q == Inf] <- 1
+      }
   } else {
-    0.5 * (1 + zedd / sqrt(4 + zedd^2))
+    if (log.p) {
+      ans <- log(0.5) + log1p(-zedd / sqrt(4 + zedd^2))
+      ans[q == -Inf] <- log(1)
+      ans[q == Inf] <- log(0)
+    } else {
+      ans <- 0.5 * exp(log1p(-zedd / sqrt(4 + zedd^2)))
+      ans[q == -Inf] <- 1 
+      ans[q == Inf] <- 0 
+    }
   }
+  ans 
 }
 
 
 
 
-qsc.t2 <- function(p, location = 0, scale = 1) {
 
-  answer <- -2 * (1 - 2*p) / sqrt(1 - (1 - 2*p)^2)
-  answer[p  < 0] <- NaN
-  answer[p  > 1] <- NaN
-  answer[p == 0] <- -Inf
-  answer[p == 1] <- +Inf
 
-  answer <- answer * scale + location
+qsc.t2 <- function(p, location = 0, scale = 1,
+                   lower.tail = TRUE, log.p = FALSE) {
+
+  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+    stop("bad input for argument 'lower.tail'")
+  
+  if (!is.logical(log.p) || length(log.p) != 1)
+    stop("bad input for argument 'log.p'")
+  
+  if (lower.tail) {
+    if (log.p) {
+      ln.p <- p
+      ans <- exp(0.5*(ln.p - log(-expm1(ln.p)))) -
+             exp(0.5*(log(-expm1(ln.p)) - ln.p))
+      ans[ln.p > 0] <- NaN
+    } else {
+      ans <- exp(0.5*(log(p) - log1p(-p))) -
+             exp(0.5*(log1p(-p) - log(p)))
+      ans[p < 0] <- NaN
+      ans[p == 0] <- -Inf
+      ans[p == 1] <- Inf
+      ans[p > 1] <- NaN
+    }
+  } else {
+    if (log.p) {
+      ln.p <- p
+      ans <- exp(0.5*(log(-expm1(ln.p)) - ln.p)) -
+             exp(0.5*(ln.p - log(-expm1(ln.p))))
+      ans[ln.p > 0] <- NaN
+      ans
+    } else { 
+      ans <- exp(0.5*(log1p(-p) - log(p))) -
+             exp(0.5*(log(p) - log1p(-p)))
+      ans[p < 0] <- NaN
+      ans[p == 0] <- Inf
+      ans[p == 1] <- -Inf
+      ans[p > 1] <- NaN
+    }
+  }
+
+  answer <- ans * scale + location
   answer[scale <= 0] <- NaN
   answer
 }
@@ -338,6 +516,8 @@ rsc.t2 <- function(n, location = 0, scale = 1) {
   answer[scale <= 0] <- NaN
   answer
 }
+
+
 
 
 

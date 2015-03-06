@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2014 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -417,8 +417,8 @@ qposnegbin <- function(p, size, prob = NULL, munb = NULL) {
 
 
 
-posnegbinomial.control <- function(save.weight = TRUE, ...) {
-  list(save.weight = save.weight)
+posnegbinomial.control <- function(save.weights = TRUE, ...) {
+  list(save.weights = save.weights)
 }
 
 
@@ -1105,7 +1105,7 @@ dposbinom <- function(x, size, prob, log = FALSE) {
 
  posbinomial <-
   function(link = "logit",
-           mv = FALSE, parallel = FALSE,
+           multiple.responses = FALSE, parallel = FALSE,
            omit.constant = FALSE,
 
            p.small = 1e-4, no.warning = FALSE,
@@ -1121,13 +1121,13 @@ dposbinom <- function(x, size, prob, log = FALSE) {
 
 
 
-  if (!is.logical(mv) || length(mv) != 1)
-    stop("bad input for argument 'mv'")
+  if (!is.logical(multiple.responses) || length(multiple.responses) != 1)
+    stop("bad input for argument 'multiple.responses'")
 
   if (!is.logical(omit.constant) || length(omit.constant) != 1)
     stop("bad input for argument 'omit.constant'")
 
-  if (mv && length(zero) &&
+  if (multiple.responses && length(zero) &&
       !is.Numeric(zero, integer.valued = TRUE))
     stop("bad input for argument 'zero'")
 
@@ -1139,7 +1139,7 @@ dposbinom <- function(x, size, prob, log = FALSE) {
   new("vglmff",
   blurb = c("Positive-binomial distribution\n\n",
             "Links:    ",
-            if (mv)
+            if (multiple.responses)
             c(namesof("prob1", link, earg = earg, tag = FALSE),
               ",...,",
               namesof("probM", link, earg = earg, tag = FALSE)) else
@@ -1167,7 +1167,7 @@ dposbinom <- function(x, size, prob, log = FALSE) {
   initialize = eval(substitute(expression({
 
     mustart.orig <- mustart
-    if ( .mv ) {
+    if ( .multiple.responses ) {
     temp5 <-
     w.y.check(w = w, y = y,
               Is.positive.y = TRUE,
@@ -1200,7 +1200,7 @@ dposbinom <- function(x, size, prob, log = FALSE) {
     }
 
 
-    if ( .mv ) {
+    if ( .multiple.responses ) {
 
       dn2 <- if (is.matrix(y)) dimnames(y)[[2]] else NULL
       dn2 <- if (length(dn2)) {
@@ -1240,12 +1240,12 @@ dposbinom <- function(x, size, prob, log = FALSE) {
   }), list( .link = link,
             .p.small    = p.small,
             .no.warning = no.warning,
-            .earg = earg, .mv = mv ))),
+            .earg = earg, .multiple.responses = multiple.responses ))),
 
   linkinv = eval(substitute(function(eta, extra = NULL) {
     w <- extra$w
     binprob <- eta2theta(eta, .link , earg = .earg )
-    nvec <- if ( .mv ) {
+    nvec <- if ( .multiple.responses ) {
              w
            } else {
              if (is.numeric(extra$orig.w)) round(w / extra$orig.w) else
@@ -1254,7 +1254,8 @@ dposbinom <- function(x, size, prob, log = FALSE) {
     binprob / (1.0 - (1.0 - binprob)^nvec)
   },
 
-  list( .link = link, .earg = earg, .mv = mv ))),
+  list( .link = link, .earg = earg,
+        .multiple.responses = multiple.responses ))),
   last = eval(substitute(expression({
     extra$w   <- NULL # Kill it off 
 
@@ -1272,7 +1273,7 @@ dposbinom <- function(x, size, prob, log = FALSE) {
     misc$needto.omit.constant <- TRUE  # Safety mechanism
     
     
-    misc$mv   <- .mv
+    misc$multiple.responses   <- .multiple.responses
     w <- as.numeric(w)
 
 
@@ -1289,7 +1290,8 @@ if (length(extra$tau)) {
 }
 
     
-  }), list( .link = link, .earg = earg, .mv = mv,
+  }), list( .link = link, .earg = earg,
+            .multiple.responses = multiple.responses,
             .omit.constant = omit.constant ))),
 
   loglikelihood = eval(substitute(
@@ -1297,13 +1299,13 @@ if (length(extra$tau)) {
              extra = NULL,
              summation = TRUE) {
 
-      ycounts <- if ( .mv ) {
+      ycounts <- if ( .multiple.responses ) {
                   round(y * extra$orig.w)
                  } else {
                    if (is.numeric(extra$orig.w)) y * w / extra$orig.w else
                    y * w  # Convert proportions to counts
                  }
-      nvec <- if ( .mv ) {
+      nvec <- if ( .multiple.responses ) {
                 w
               } else {
                 if (is.numeric(extra$orig.w)) round(w / extra$orig.w) else
@@ -1328,7 +1330,7 @@ if (length(extra$tau)) {
       }
     }
   }, list( .link = link, .earg = earg,
-          .mv = mv,
+          .multiple.responses = multiple.responses,
           .omit.constant = omit.constant ))),
 
   vfamily = c("posbinomial"),
@@ -1342,8 +1344,8 @@ if (length(extra$tau)) {
     pwts <- if (length(pwts <- object@prior.weights) > 0)
               pwts else weights(object, type = "prior")
 
-    if ( .mv )
-      stop("cannot run simulate() when 'mv = TRUE'")
+    if ( .multiple.responses )
+      stop("cannot run simulate() when 'multiple.responses = TRUE'")
 
     eta <- predict(object)
     binprob <- eta2theta(eta, .link , earg = .earg )
@@ -1353,7 +1355,7 @@ if (length(extra$tau)) {
     w <- pwts  # 20140101
 
 
-    nvec <- if ( .mv ) {
+    nvec <- if ( .multiple.responses ) {
               w
             } else {
               if (is.numeric(extra$orig.w)) round(w / extra$orig.w) else
@@ -1361,7 +1363,7 @@ if (length(extra$tau)) {
             }
     rposbinom(nsim * length(eta), size = nvec, prob = binprob)
   }, list( .link = link, .earg = earg,
-          .mv = mv,
+          .multiple.responses = multiple.responses,
           .omit.constant = omit.constant ))),
 
 
@@ -1372,7 +1374,7 @@ if (length(extra$tau)) {
     use.orig.w <- if (is.numeric(extra$orig.w)) extra$orig.w else
                   rep(1, n)
 
-    nvec <- if ( .mv ) {
+    nvec <- if ( .multiple.responses ) {
               w
             } else {
               if (is.numeric(extra$orig.w)) round(w / extra$orig.w) else
@@ -1389,7 +1391,8 @@ if (length(extra$tau)) {
              (1 - binprob) * temp3 / temp1
 
     c(w) * dl.dmu * dmu.deta
-  }), list( .link = link, .earg = earg, .mv = mv ))),
+  }), list( .link = link, .earg = earg,
+            .multiple.responses = multiple.responses ))),
   weight = eval(substitute(expression({
 
     ned2l.dmu2 <- 1 / (binprob * temp1) +
@@ -1401,7 +1404,8 @@ if (length(extra$tau)) {
 
     wz <- c(w) * ned2l.dmu2 * dmu.deta^2
     wz
-  }), list( .link = link, .earg = earg, .mv = mv ))))
+  }), list( .link = link, .earg = earg,
+            .multiple.responses = multiple.responses ))))
 }
 
 
@@ -1563,8 +1567,8 @@ if (length(extra$tau)) {
     for (ii in 1:M) misc$earg[[ii]] <- .earg
 
 
-    misc$mv           <- TRUE
-    misc$iprob        <- .iprob
+    misc$multiple.responses  <- TRUE
+    misc$iprob               <- .iprob
 
 
     R <- tfit$qr$qr[1:ncol.X.vlm, 1:ncol.X.vlm, drop = FALSE]
@@ -1890,8 +1894,8 @@ if (length(extra$tau)) {
     misc$earg[[1]] <- .earg
     misc$earg[[2]] <- .earg
 
-    misc$expected    <- TRUE
-    misc$mv          <- TRUE
+    misc$expected           <- TRUE
+    misc$multiple.responses <- TRUE
     misc$ipcapture   <- .ipcapture
     misc$iprecapture <- .iprecapture
     misc$drop.b      <- .drop.b
@@ -2326,8 +2330,8 @@ if (length(extra$tau)) {
       misc$earg[[ii]] <- .earg
 
 
-    misc$mv           <- TRUE
-    misc$iprob        <- .iprob
+    misc$multiple.responses <- TRUE
+    misc$iprob              <- .iprob
 
 
 

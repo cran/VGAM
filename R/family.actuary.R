@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2014 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -47,24 +47,69 @@ dgumbelII <- function(x, scale = 1, shape, log = FALSE) {
 }
 
 
-pgumbelII <- function(q, scale = 1, shape) {
 
-  LLL <- max(length(q), length(shape), length(scale))
+pgumbelII <- function(q, scale = 1, shape,
+                      lower.tail = TRUE, log.p = FALSE) {
+
+  # 20150121 KaiH
+  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+    stop("bad input for argument 'lower.tail'")
+  
+  # 20150121 KaiH
+  if (!is.logical(log.p) || length(log.p) != 1)
+    stop("bad input for argument 'log.p'")
+  
+  LLL <- max(length(q), length(shape), length(scale)) 
   if (length(q)       != LLL) q       <- rep(q,       length.out = LLL)
   if (length(shape)   != LLL) shape   <- rep(shape,   length.out = LLL)
   if (length(scale)   != LLL) scale   <- rep(scale,   length.out = LLL)
-
-
-  ans <- exp(-(q / scale)^(-shape))
-  ans[(q <= 0)] <- 0
+  
+  # 20150121 KaiH 
+  if (lower.tail) {
+    if (log.p) { 
+      ans <- -(q / scale)^(-shape)
+      ans[q <= 0 ] <- -Inf
+      ans[q == Inf] <- 0
+    } else { 
+      ans <- exp(-(q / scale)^(-shape))
+      ans[q <= 0] <- 0 
+      ans[q == Inf] <- 1
+    }
+  } else {
+    if (log.p) {
+      ans <- log(-expm1(-(q / scale)^(-shape)))
+      ans[q <= 0] <- 0 
+      ans[q == Inf] <- -Inf
+    } else { 
+      ans <- -expm1(-(q / scale)^(-shape))
+      ans[q <= 0] <- 1 
+      ans[q == Inf] <- 0
+    }
+  } 
   ans[shape <= 0 | scale <= 0] <- NaN
-  ans[q == Inf] <- 1
   ans
 }
 
 
 
-qgumbelII <- function(p, scale = 1, shape) {
+
+
+
+
+
+
+
+qgumbelII <- function(p, scale = 1, shape,
+                      lower.tail = TRUE, log.p = FALSE) {
+
+
+
+  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+    stop("bad input for argument 'lower.tail'")
+  if (!is.logical(log.p) || length(log.p) != 1)
+    stop("bad input for argument 'log.p'")
+
+
 
   LLL <- max(length(p), length(shape), length(scale))
   if (length(p)       != LLL) p       <- rep(p,       length.out = LLL)
@@ -72,11 +117,32 @@ qgumbelII <- function(p, scale = 1, shape) {
   if (length(scale)   != LLL) scale   <- rep(scale,   length.out = LLL)
 
 
-  ans <- scale * (-log(p))^(-1 / shape)
-  ans[p < 0] <- NaN
-  ans[p == 0] <- 0
-  ans[p == 1] <- Inf
-  ans[p > 1] <- NaN
+  if (lower.tail) {
+    if (log.p) {
+      ln.p <- p
+      ans <- scale * (-ln.p)^(-1 / shape)
+      ans[ln.p > 0] <- NaN
+    } else { # Default
+      ans <- scale * (-log(p))^(-1 / shape)
+      ans[p < 0] <- NaN
+      ans[p == 0] <- 0
+      ans[p == 1] <- Inf
+      ans[p > 1] <- NaN
+    }
+  } else {
+    if (log.p) {
+      ln.p <- p
+      ans <- scale * (-log(-expm1(ln.p)))^(-1 / shape)
+      ans[ln.p > 0] <- NaN
+    } else {
+      ans <- scale * (-log1p(-p))^(-1 / shape)
+      ans[p < 0] <- NaN
+      ans[p == 0] <- Inf
+      ans[p == 1] <- 0
+      ans[p > 1] <- NaN
+    }
+  }
+
   ans[shape <= 0 | scale <= 0] <- NaN
   ans
 }
@@ -102,10 +168,6 @@ rgumbelII <- function(n, scale = 1, shape) {
            imethod = 1, zero = -1, nowarning = FALSE) {
 
 
-
-  if (!nowarning)
-    warning("order of the linear/additive predictors has been changed",
-            " in VGAM version 0.9-5")
 
 
   lshape <- as.list(substitute(lshape))
@@ -605,7 +667,16 @@ dperks <- function(x, scale = 1, shape, log = FALSE) {
 
 
 
-pperks <- function(q, scale = 1, shape) {
+pperks <- function(q, scale = 1, shape,
+                   lower.tail = TRUE, log.p = FALSE) {
+
+
+  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+    stop("bad input for argument 'lower.tail'")
+
+  if (!is.logical(log.p) || length(log.p) != 1)
+    stop("bad input for argument 'log.p'")
+
 
   LLL <- max(length(q), length(shape), length(scale))
   if (length(q)       != LLL) q       <- rep(q,       length.out = LLL)
@@ -614,32 +685,87 @@ pperks <- function(q, scale = 1, shape) {
 
   logS <- -q + (log1p(shape) -
           log(shape + exp(-q * scale))) / scale
-  ans <- -expm1(logS)
 
-  ans[(q <= 0)] <- 0
+
+  if (lower.tail) {
+    if (log.p) {
+      ans <- log(-expm1(logS))
+      ans[q <= 0 ] <- -Inf
+      ans[q == Inf] <- 0
+    } else {
+      ans <- -expm1(logS)
+      ans[q <= 0] <- 0
+      ans[q == Inf] <- 1
+    }
+  } else {
+    if (log.p) {
+      ans <- logS
+      ans[q <= 0] <- 0
+      ans[q == Inf] <- -Inf
+    } else {
+      ans <- exp(logS)
+      ans[q <= 0] <- 1
+      ans[q == Inf] <- 0
+    }
+  }
+
   ans[shape <= 0 | scale <= 0] <- NaN
-  ans[q == Inf] <- 1
   ans
 }
 
 
-qperks <- function(p, scale = 1, shape) {
+qperks <- function(p, scale = 1, shape, lower.tail = TRUE, log.p = FALSE) {
+
+  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+    stop("bad input for argument 'lower.tail'")
+
+  if (!is.logical(log.p) || length(log.p) != 1)
+    stop("bad input for argument 'log.p'")
 
   LLL <- max(length(p), length(shape), length(scale))
   if (length(p)       != LLL) p       <- rep(p,       length.out = LLL)
   if (length(shape)   != LLL) shape   <- rep(shape,   length.out = LLL)
   if (length(scale)   != LLL) scale   <- rep(scale,   length.out = LLL)
 
-  tmp <- scale * log1p(-p)
-  onemFb <- exp(tmp)
-  ans <- (log1p(shape - onemFb) - log(shape) - tmp) / scale
-  ans[p < 0] <- NaN
-  ans[p == 0] <- 0
-  ans[p > 1] <- NaN
-  ans[p == 1] <- Inf
+
+  if (lower.tail) {
+    if (log.p) {
+      ln.p <- p
+      tmp <- scale * log(-expm1(ln.p))
+      onemFb <- exp(tmp)
+      ans <- (log1p(shape - onemFb) - log(shape) - tmp) / scale
+      ans[ln.p > 0] <- NaN
+    } else {
+      tmp <- scale * log1p(-p)
+      onemFb <- exp(tmp)
+      ans <- (log1p(shape - onemFb) - log(shape) - tmp) / scale
+      ans[p < 0] <- NaN
+      ans[p == 0] <- 0
+      ans[p == 1] <- Inf
+      ans[p > 1] <- NaN
+    }
+  } else {
+    if (log.p) {
+      ln.p <- p
+      tmp <- scale * ln.p
+      onemFb <- exp(tmp)
+      ans <- (log1p(shape - onemFb) - log(shape) - tmp) / scale
+      ans[ln.p > 0] <- NaN
+    } else {
+      tmp <- scale * log(p)
+      onemFb <- exp(tmp)
+      ans <- (log1p(shape - onemFb) - log(shape) - tmp) / scale
+      ans[p < 0] <- NaN
+      ans[p == 0] <- Inf
+      ans[p == 1] <- 0
+      ans[p > 1] <- NaN
+    }
+  }
+
   ans[shape <= 0 | scale <= 0] <- NaN
   ans
 }
+
 
 
 rperks <- function(n, scale = 1, shape) {
@@ -650,8 +776,8 @@ rperks <- function(n, scale = 1, shape) {
 
 
 
-perks.control <- function(save.weight = TRUE, ...) {
-  list(save.weight = save.weight)
+perks.control <- function(save.weights = TRUE, ...) {
+  list(save.weights = save.weights)
 }
 
 
@@ -664,9 +790,6 @@ perks.control <- function(save.weight = TRUE, ...) {
            zero = NULL, nowarning = FALSE) {
 
 
-  if (!nowarning)
-    warning("order of the linear/additive predictors has been changed",
-            " in VGAM version 0.9-5")
 
   lshape <- as.list(substitute(lshape))
   eshape <- link2list(lshape)
@@ -1027,7 +1150,15 @@ dmakeham <- function(x, scale = 1, shape, epsilon = 0, log = FALSE) {
 
 
 
-pmakeham <- function(q, scale = 1, shape, epsilon = 0) {
+pmakeham <- function(q, scale = 1, shape, epsilon = 0,
+                     lower.tail = TRUE, log.p = FALSE) {
+
+
+  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+    stop("bad input for argument 'lower.tail'")
+
+  if (!is.logical(log.p) || length(log.p) != 1)
+    stop("bad input for argument 'log.p'")
 
   LLL <- max(length(q), length(shape), length(scale), length(epsilon))
   if (length(q)       != LLL) q       <- rep(q,       length.out = LLL)
@@ -1035,17 +1166,42 @@ pmakeham <- function(q, scale = 1, shape, epsilon = 0) {
   if (length(scale)   != LLL) scale   <- rep(scale,   length.out = LLL)
   if (length(epsilon) != LLL) epsilon <- rep(epsilon, length.out = LLL)
 
+  if (lower.tail) {
+    if (log.p) {
+      ans <- log(-expm1(-q * epsilon - (shape / scale) * expm1(scale * q)))
+      ans[q <= 0 ] <- -Inf
+      ans[q == Inf] <- 0
+    } else {
+      ans <- -expm1(-q * epsilon - (shape / scale) * expm1(scale * q))
+      ans[q <= 0] <- 0
+      ans[q == Inf] <- 1
+    }
+  } else {
+    if (log.p) {
+      ans <- -q * epsilon - (shape / scale) * expm1(scale * q)
+      ans[q <= 0] <- 0
+      ans[q == Inf] <- -Inf
+    } else {
+      ans <- exp(-q * epsilon - (shape / scale) * expm1(scale * q))
+      ans[q <= 0] <- 1
+      ans[q == Inf] <- 0
+    }
+  }
 
-  ans <- -expm1(-q * epsilon - (shape / scale) * expm1(scale * q))
-  ans[(q <= 0)] <- 0
   ans[shape <= 0 | scale <= 0 | epsilon < 0] <- NaN
-  ans[q == Inf] <- 1
   ans
 }
 
 
 
-qmakeham <- function(p, scale = 1, shape, epsilon = 0) {
+qmakeham <- function(p, scale = 1, shape, epsilon = 0,
+                     lower.tail = TRUE, log.p = FALSE) {
+
+  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+    stop("bad input for argument 'lower.tail'")
+
+  if (!is.logical(log.p) || length(log.p) != 1)
+    stop("bad input for argument 'log.p'")
 
   LLL <- max(length(p), length(shape), length(scale), length(epsilon))
   if (length(p)       != LLL) p       <- rep(p,       length.out = LLL)
@@ -1054,20 +1210,53 @@ qmakeham <- function(p, scale = 1, shape, epsilon = 0) {
   if (length(epsilon) != LLL) epsilon <- rep(epsilon, length.out = LLL)
 
 
-  ans <- shape / (scale * epsilon) - log1p(-p) / epsilon -
-  lambertW((shape / epsilon) * exp(shape / epsilon) *
-          (1 - p)^(-(scale / epsilon))) / scale
+  if (lower.tail) {
+    if (log.p) {
+      ln.p <- p
+      ans <- shape / (scale * epsilon) - log(-expm1(ln.p)) / epsilon -
+        lambertW((shape / epsilon) * exp(shape / epsilon) *
+                   exp(log(-expm1(ln.p)) * (-scale / epsilon))) / scale
+      ans[ln.p == 0] <- Inf
+      ans[ln.p > 0] <- NaN
+    } else {
+      ans <- shape / (scale * epsilon) - log1p(-p) / epsilon -
+        lambertW((shape / epsilon) * exp(shape / epsilon) *
+                   exp( (-scale / epsilon) * log1p(-p) )) / scale
+      ans[p < 0] <- NaN
+      ans[p == 0] <- 0
+      ans[p == 1] <- Inf
+      ans[p > 1] <- NaN
+    }
+  } else {
+    if (log.p) {
+      ln.p <- p
+      ans <-  shape / (scale * epsilon) - ln.p / epsilon -
+        lambertW((shape / epsilon) * exp(shape / epsilon) *
+                  exp(ln.p * (-scale / epsilon))) / scale
+      ans[ln.p == -Inf] <- Inf
+      ans[ln.p > 0] <- NaN
+    } else {
+      ans <- shape / (scale * epsilon) - log(p) / epsilon -
+        lambertW((shape / epsilon) * exp(shape / epsilon) *
+                  p^(-scale / epsilon)) / scale
+      ans[p < 0] <- NaN
+      ans[p == 0] <- Inf
+      ans[p == 1] <- 0
+      ans[p > 1] <- NaN
+    }
+  }
+
   ans[epsilon == 0] <-
     qgompertz(p     =     p[epsilon == 0],
               shape = shape[epsilon == 0],
-              scale = scale[epsilon == 0])
-  ans[p < 0] <- NaN
-  ans[p == 0] <- 0
-  ans[p == 1] <- Inf
-  ans[p > 1] <- NaN
+              scale = scale[epsilon == 0],
+              lower.tail = lower.tail,
+              log.p = log.p)
+
   ans[shape <= 0 | scale <= 0 | epsilon < 0] <- NaN
   ans
 }
+
 
 
 rmakeham <- function(n, scale = 1, shape, epsilon = 0) {
@@ -1077,8 +1266,8 @@ rmakeham <- function(n, scale = 1, shape, epsilon = 0) {
 
 
 
-makeham.control <- function(save.weight = TRUE, ...) {
-  list(save.weight = save.weight)
+makeham.control <- function(save.weights = TRUE, ...) {
+  list(save.weights = save.weights)
 }
 
 
@@ -1096,9 +1285,6 @@ makeham.control <- function(save.weight = TRUE, ...) {
 
 
 
-  if (!nowarning)
-    warning("order of the linear/additive predictors has been changed",
-            " in VGAM version 0.9-5")
 
 
   lepsil <- lepsilon
@@ -1482,36 +1668,93 @@ dgompertz <- function(x, scale = 1, shape, log = FALSE) {
 
 
 
-pgompertz <- function(q, scale = 1, shape) {
+pgompertz <- function(q, scale = 1, shape,
+                      lower.tail = TRUE, log.p = FALSE) {
+
+
+  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+    stop("bad input for argument 'lower.tail'")
+
+  if (!is.logical(log.p) || length(log.p) != 1)
+    stop("bad input for argument 'log.p'")
 
   LLL <- max(length(q), length(shape), length(scale))
   if (length(q)       != LLL) q       <- rep(q,       length.out = LLL)
   if (length(shape)   != LLL) shape   <- rep(shape,   length.out = LLL)
   if (length(scale)   != LLL) scale   <- rep(scale,   length.out = LLL)
 
-  ans <- -expm1((-shape / scale) * expm1(scale * q))
-  ans[(q <= 0)] <- 0
+
+  if (lower.tail) {
+    if (log.p) {
+      ans <- log1p(-exp((-shape / scale) * expm1(scale * q)))
+      ans[q <= 0 ] <- -Inf
+      ans[q == Inf] <- 0
+    } else {
+      ans <- -expm1((-shape / scale) * expm1(scale * q))
+      ans[q <= 0] <- 0
+      ans[q == Inf] <- 1
+    }
+  } else {
+    if (log.p) {
+      ans <- (-shape / scale) * expm1(scale * q)
+      ans[q <= 0] <- 0
+      ans[q == Inf] <- -Inf
+    } else {
+      ans <- exp((-shape / scale) * expm1(scale * q))
+      ans[q <= 0] <- 1
+      ans[q == Inf] <- 0
+    }
+  }
   ans[shape <= 0 | scale <= 0] <- NaN
-  ans[q == Inf] <- 1
   ans
 }
 
 
-qgompertz <- function(p, scale = 1, shape) {
+
+qgompertz <- function(p, scale = 1, shape,
+                      lower.tail = TRUE, log.p = FALSE) {
+
+  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+    stop("bad input for argument 'lower.tail'")
+  if (!is.logical(log.p) || length(log.p) != 1)
+    stop("bad input for argument 'log.p'")
 
   LLL <- max(length(p), length(shape), length(scale))
   if (length(p)       != LLL) p       <- rep(p,       length.out = LLL)
   if (length(shape)   != LLL) shape   <- rep(shape,   length.out = LLL)
   if (length(scale)   != LLL) scale   <- rep(scale,   length.out = LLL)
 
-  ans <- log1p((-scale / shape) * log1p(-p)) / scale
-  ans[p < 0] <- NaN
-  ans[p == 0] <- 0
-  ans[p == 1] <- Inf
-  ans[p > 1] <- NaN
+  if (lower.tail) {
+    if (log.p) {
+      ln.p <- p
+      ans <- log1p((-scale / shape) * log(-expm1(ln.p))) / scale
+      ans[ln.p > 0] <- NaN
+    } else {
+      ans <- log1p((-scale / shape) * log1p(-p)) / scale
+      ans[p < 0] <- NaN
+      ans[p == 0] <- 0
+      ans[p == 1] <- Inf
+      ans[p > 1] <- NaN
+    }
+  } else {
+    if (log.p) {
+      ln.p <- p
+      ans <- log1p((-scale / shape) * ln.p) / scale
+      ans[ln.p > 0] <- NaN
+    } else {
+      ans <- log1p((-scale / shape) * log(p)) / scale
+      ans[p < 0] <- NaN
+      ans[p == 0] <- Inf
+      ans[p == 1] <- 0
+      ans[p > 1] <- NaN
+    }
+  }
   ans[shape <= 0 | scale <= 0] <- NaN
   ans
 }
+
+
+
 
 
 rgompertz <- function(n, scale = 1, shape) {
@@ -1524,8 +1767,8 @@ rgompertz <- function(n, scale = 1, shape) {
 
 
 
-gompertz.control <- function(save.weight = TRUE, ...) {
-  list(save.weight = save.weight)
+gompertz.control <- function(save.weights = TRUE, ...) {
+  list(save.weights = save.weights)
 }
 
 
@@ -1538,9 +1781,6 @@ gompertz.control <- function(save.weight = TRUE, ...) {
 
 
 
-  if (!nowarning)
-    warning("order of the linear/additive predictors has been changed",
-            " in VGAM version 0.9-5")
 
   lshape <- as.list(substitute(lshape))
   eshape <- link2list(lshape)
@@ -1880,8 +2120,8 @@ rmoe <- function (n, alpha = 1, lambda = 1) {
 
 
 
-exponential.mo.control <- function(save.weight = TRUE, ...) {
-  list(save.weight = save.weight)
+exponential.mo.control <- function(save.weights = TRUE, ...) {
+  list(save.weights = save.weights)
 }
 
 
@@ -2173,7 +2413,8 @@ if (ii < 3) {
 
 
 
- genbetaII <- function(lshape1.a = "loge",
+ genbetaII <- function(lss,
+                       lshape1.a = "loge",
                        lscale = "loge",
                        lshape2.p = "loge",
                        lshape3.q = "loge",
@@ -2182,6 +2423,10 @@ if (ii < 3) {
                        ishape2.p = 1.0,
                        ishape3.q = 1.0,
                        zero = NULL) {
+
+  if (!is.logical(lss) || lss)
+    stop("argument 'lss' not specified correctly. ",
+         "See online help for important information")
 
 
   if (length(zero) &&
@@ -2209,14 +2454,14 @@ if (ii < 3) {
 
   new("vglmff",
   blurb = c("Generalized Beta II distribution\n\n",
-          "Links:    ",
-          namesof("shape1.a", lshape1.a, earg = eshape1.a), ", ", 
-          namesof("scale",    lscale,    earg = escale), ", ", 
-          namesof("shape2.p", lshape2.p, earg = eshape2.p), ", ", 
-          namesof("shape3.q", lshape3.q, earg = eshape3.q), "\n", 
-          "Mean:     scale * gamma(shape2.p + 1/shape1.a) * ",
-                    "gamma(shape3.q - 1/shape1.a) / ",
-                    "(gamma(shape2.p) * gamma(shape3.q))"),
+            "Links:    ",
+            namesof("shape1.a", lshape1.a, earg = eshape1.a), ", ", 
+            namesof("scale",    lscale,    earg = escale), ", ", 
+            namesof("shape2.p", lshape2.p, earg = eshape2.p), ", ", 
+            namesof("shape3.q", lshape3.q, earg = eshape3.q), "\n", 
+            "Mean:     scale * gamma(shape2.p + 1/shape1.a) * ",
+                      "gamma(shape3.q - 1/shape1.a) / ",
+                      "(gamma(shape2.p) * gamma(shape3.q))"),
   constraints = eval(substitute(expression({
     constraints <- cm.zero.VGAM(constraints, x, .zero , M)
   }), list( .zero = zero ))),
@@ -2233,7 +2478,7 @@ if (ii < 3) {
         namesof("shape3.q", .lshape3.q , earg = .eshape3.q , tag = FALSE))
 
     if (!length( .ishape1.a ) || !length( .iscale )) {
-      qvec <- c( .25, .5, .75)   # Arbitrary; could be made an argument
+      qvec <- c( .25, .5, .75)  # Arbitrary; could be made an argument
       ishape3.q <- if (length( .ishape3.q)) .ishape3.q else 1
       xvec <- log( (1-qvec)^(-1/ ishape3.q ) - 1 )
       fit0 <- lsfit(x = xvec, y = log(quantile(y, qvec )))
@@ -2363,13 +2608,13 @@ if (ii < 3) {
     temp5b <- trigamma(qq)
 
     ned2l.da <- (1 + parg+qq + parg * qq * (temp5a + temp5b +
-              (temp3b - temp3a + (parg-qq)/(parg*qq))^2 -
-              (parg^2 + qq^2) / (parg*qq)^2)) / (aa^2 * (1+parg+qq))
+                (temp3b - temp3a + (parg-qq)/(parg*qq))^2 -
+                (parg^2 + qq^2) / (parg*qq)^2)) / (aa^2 * (1+parg+qq))
     ned2l.dscale <- aa^2 * parg * qq / (scale^2 * (1+parg+qq))
     ned2l.dp <- temp5a - temp5
     ned2l.dq <- temp5b - temp5
     ned2l.dascale <- (parg - qq - parg * qq *
-                   (temp3a -temp3b)) / (scale*(1 + parg+qq))
+                     (temp3a -temp3b)) / (scale*(1 + parg+qq))
     ned2l.dap <- -(qq   * (temp3a -temp3b) -1) / (aa*(parg+qq))
     ned2l.daq <- -(parg * (temp3b -temp3a) -1) / (aa*(parg+qq))
     ned2l.dscalep <-  aa * qq   / (scale*(parg+qq))
@@ -2396,41 +2641,51 @@ if (ii < 3) {
 }
 
 
-rsinmad <- function(n, shape1.a, scale = 1, shape3.q)
-  qsinmad(runif(n), shape1.a, scale = scale, shape3.q)
+rsinmad <- function(n, scale = 1, shape1.a, shape3.q)
+  qsinmad(runif(n), shape1.a = shape1.a, scale = scale,
+          shape3.q = shape3.q)
 
 
 rlomax <- function(n, scale = 1, shape3.q)
-  rsinmad(n, shape1.a = 1, scale = scale, shape3.q)
+  rsinmad(n, scale = scale, shape1.a = 1, shape3.q = shape3.q)
 
 
-rfisk <- function(n, shape1.a, scale = 1)
-  rsinmad(n, shape1.a, scale = scale, shape3.q = 1)
+rfisk <- function(n, scale = 1, shape1.a)
+  rsinmad(n, scale = scale, shape1.a = shape1.a, shape3.q = 1)
 
 
-rparalogistic <- function(n, shape1.a, scale = 1)
-  rsinmad(n, shape1.a, scale = scale, shape1.a)
+rparalogistic <- function(n, scale = 1, shape1.a)
+  rsinmad(n, scale = scale, shape1.a = shape1.a, shape3.q = shape1.a)
 
 
-rdagum <- function(n, shape1.a, scale = 1, shape2.p)
-  qdagum(runif(n), shape1.a = shape1.a, scale = scale,
+rdagum <- function(n, scale = 1, shape1.a, shape2.p)
+  qdagum(runif(n), scale = scale, shape1.a = shape1.a,
          shape2.p = shape2.p)
 
 
 rinv.lomax <- function(n, scale = 1, shape2.p)
-  rdagum(n, shape1.a = 1, scale = scale, shape2.p)
+  rdagum(n, scale = scale, shape1.a = 1, shape2.p = shape2.p)
 
 
-rinv.paralogistic <- function(n, shape1.a, scale = 1)
-  rdagum(n, shape1.a, scale = scale, shape1.a)
+rinv.paralogistic <- function(n, scale = 1, shape1.a)
+  rdagum(n, scale = scale, shape1.a = shape1.a, shape2.p = shape1.a)
 
 
 
 
-qsinmad <- function(p, shape1.a, scale = 1, shape3.q) {
-  bad <- (p < 0) | (p > 1) | is.na(p)
-  ans <- NA * p
-  ans[is.nan(p)] <- NaN
+qsinmad <- function(p, scale = 1, shape1.a, shape3.q,
+                    lower.tail = TRUE,
+                    log.p = FALSE) {
+
+
+
+  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+    stop("bad input for argument 'lower.tail'")
+
+  if (!is.logical(log.p) || length(log.p) != 1)
+    stop("bad input for argument 'log.p'")
+
+
 
   LLL <- max(length(p), length(shape1.a), length(scale),
                         length(shape3.q))
@@ -2443,30 +2698,62 @@ qsinmad <- function(p, shape1.a, scale = 1, shape3.q) {
   if (length(shape3.q) != LLL)
     shape3.q  <- rep(shape3.q,  length.out = LLL)
 
-  Shape1.a <- shape1.a[!bad]
-  Scale    <- scale[!bad]
-  Shape3.q <- shape3.q[!bad]
 
-  QQ <- p[!bad]
-  ans[!bad] <- Scale * ((1 - QQ)^(-1/Shape3.q) - 1)^(1/Shape1.a)
+  if (lower.tail) {
+    if (log.p) {
+      ln.p <- p
+      ans <- scale * expm1((-1/shape3.q) * log(-expm1(ln.p)))^(1/shape1.a)
+    } else {
+      ans <- scale * expm1((-1/shape3.q) * log1p(-p))^(1/shape1.a)
+      ans[p == 0] <- 0
+      ans[p == 1] <- Inf
+    }
+  } else {
+    if (log.p) {
+      ln.p <- p
+      ans <- scale * expm1(-ln.p / shape3.q)^(1/shape1.a)
+    } else {
+      ans <- scale * expm1(-log(p) / shape3.q)^(1/shape1.a)
+      ans[p == 0] <- Inf
+      ans[p == 1] <- 0
+    }
+  }
+
+  ans[scale    <= 0 | shape1.a <= 0 | shape3.q <= 0] <- NaN
   ans
 }
 
 
-qlomax <- function(p, scale = 1, shape3.q)
-  qsinmad(p, shape1.a = 1, scale = scale, shape3.q)
 
 
-qfisk <- function(p, shape1.a, scale = 1)
-  qsinmad(p, shape1.a, scale = scale, shape3.q = 1)
+qlomax <- function(p, scale = 1, shape3.q,
+                   lower.tail = TRUE, log.p = FALSE)
+  qsinmad(p, shape1.a = 1, scale = scale, shape3.q = shape3.q,
+          lower.tail = lower.tail, log.p = log.p)
+
+qfisk <- function(p, scale = 1, shape1.a,
+                  lower.tail = TRUE, log.p = FALSE)
+  qsinmad(p, shape1.a = shape1.a, scale = scale, shape3.q = 1,
+          lower.tail = lower.tail, log.p = log.p)
+
+qparalogistic <- function(p, scale = 1, shape1.a,
+                          lower.tail = TRUE, log.p = FALSE)
+  qsinmad(p, shape1.a = shape1.a, scale = scale,
+          shape3.q = shape1.a,  ## 20150121 KaiH; add shape3.q = shape1.a
+          lower.tail = lower.tail, log.p = log.p)
 
 
-qparalogistic <- function(p, shape1.a, scale = 1)
-  qsinmad(p, shape1.a, scale = scale, shape1.a)
 
 
 
-qdagum <- function(p, shape1.a, scale = 1, shape2.p) {
+qdagum <- function(p, scale = 1, shape1.a, shape2.p,
+                   lower.tail = TRUE, log.p = FALSE) {
+
+  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+    stop("bad input for argument 'lower.tail'")
+  if (!is.logical(log.p) || length(log.p) != 1)
+    stop("bad input for argument 'log.p'")
+
 
   LLL <- max(length(p), length(shape1.a), length(scale),
                         length(shape2.p))
@@ -2479,31 +2766,63 @@ qdagum <- function(p, shape1.a, scale = 1, shape2.p) {
   if (length(shape2.p) != LLL)
     shape2.p  <- rep(shape2.p,  length.out = LLL)
 
+  if (lower.tail) {
+    if (log.p) {
+      ln.p <- p
+      ans <- scale * (expm1(-ln.p/shape2.p))^(-1/shape1.a)
+      ans[ln.p > 0] <- NaN
+    } else {
+      ans <- scale * (expm1(-log(p)/shape2.p))^(-1/shape1.a)
+      ans[p < 0] <- NaN
+      ans[p == 0] <- 0
+      ans[p == 1] <- Inf
+      ans[p > 1] <- NaN
+    }
+  } else {
+    if (log.p) {
+      ln.p <- p
+      ans <- scale * (expm1(-log(-expm1(ln.p))/shape2.p))^(-1/shape1.a)
+      ans[ln.p > 0] <- NaN
+    } else {
+      ans <- scale * (expm1(-log1p(-p)/shape2.p))^(-1/shape1.a)
+      ans[p < 0] <- NaN
+      ans[p == 0] <- Inf
+      ans[p == 1] <- 0
+      ans[p > 1] <- NaN
+    }
+  }
 
-  bad <- (p < 0) | (p > 1) | (scale <= 0) | is.na(p)
-
-  ans <- NA * p
-  ans[is.nan(p)] <- NaN
-  ans[!bad] <- scale[!bad] *
-             (p[!bad]^(-1/shape2.p[!bad]) - 1)^(-1/shape1.a[!bad])
+  ans[scale <= 0 | shape1.a <= 0 | shape2.p <= 0] <- NaN
   ans
 }
 
 
 
-qinv.lomax <- function(p, scale = 1, shape2.p)
-  qdagum(p, shape1.a = 1, scale = scale, shape2.p)
+
+qinv.lomax <- function(p, scale = 1, shape2.p,
+                       lower.tail = TRUE, log.p = FALSE)
+  qdagum(p, scale = scale, shape1.a = 1, shape2.p = shape2.p,
+         lower.tail = lower.tail, log.p = log.p)
 
 
-qinv.paralogistic <- function(p, shape1.a, scale = 1)
-  qdagum(p, shape1.a, scale = scale, shape1.a)
+qinv.paralogistic <- function(p, scale = 1, shape1.a,
+                              lower.tail = TRUE, log.p = FALSE)
+  qdagum(p, scale = scale, shape1.a = shape1.a,
+         shape2.p = shape1.a,   ##  20150121 Kai; add shape2.p = shape1.a
+         lower.tail = lower.tail, log.p = log.p)
 
 
 
 
+psinmad <- function(q, scale = 1, shape1.a, shape3.q,
+                    lower.tail = TRUE, log.p = FALSE) {
 
 
-psinmad <- function(q, shape1.a, scale = 1, shape3.q) {
+  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+    stop("bad input for argument 'lower.tail'")
+
+  if (!is.logical(log.p) || length(log.p) != 1)
+    stop("bad input for argument 'log.p'")
 
 
   LLL <- max(length(q), length(shape1.a), length(scale),
@@ -2517,40 +2836,70 @@ psinmad <- function(q, shape1.a, scale = 1, shape3.q) {
   if (length(shape3.q) != LLL)
     shape3.q  <- rep(shape3.q,  length.out = LLL)
 
-
-  notpos <- (q <= 0) & !is.na(q)
-  Shape1.a <- shape1.a[!notpos]
-  Scale    <-    scale[!notpos]
-  Shape3.q <- shape3.q[!notpos]
-  QQ       <-        q[!notpos]
-
-  ans <- 0 * q # rep(0.0, len = LLL)
-  ans[!notpos] <- 1 - (1 + (QQ / Scale)^Shape1.a)^(-Shape3.q)
-
-  ans[scale    <= 0] <- NaN
-  ans[shape1.a <= 0] <- NaN
-  ans[shape3.q <= 0] <- NaN
-
-  ans[q == -Inf] <- 0
-
+  # 20150121 KaiH
+  if (lower.tail) {
+    if (log.p) {
+      ans <- log1p(-(1 + (q / scale)^shape1.a)^(-shape3.q))
+      ans[q <= 0 ] <- -Inf
+      ans[q == Inf] <- 0
+    } else {
+      ans <- exp(log1p(-(1 + (q / scale)^shape1.a)^(-shape3.q)))
+      ans[q <= 0] <- 0
+      ans[q == Inf] <- 1
+    }
+  } else {
+    if (log.p) {
+      ans <- (-shape3.q) * log1p((q / scale)^shape1.a)
+      ans[q <= 0] <- 0
+      ans[q == Inf] <- -Inf
+    } else {
+      ans <- (1 + (q / scale)^shape1.a)^(-shape3.q)
+      ans[q <= 0] <- 1
+      ans[q == Inf] <- 0
+    }
+  }
+  ans[scale <= 0 | shape1.a <= 0 | shape3.q <= 0] <- NaN
   ans
 }
 
 
-plomax <- function(q, scale = 1, shape3.q)
-  psinmad(q, shape1.a = 1, scale = scale, shape3.q)
-
-
-pfisk <- function(q, shape1.a, scale = 1)
-  psinmad(q, shape1.a, scale = scale, shape3.q = 1)
-
-
-pparalogistic <- function(q, shape1.a, scale = 1)
-  psinmad(q, shape1.a, scale = scale, shape1.a)
 
 
 
-pdagum <- function(q, shape1.a, scale = 1, shape2.p) {
+
+plomax <- function(q, scale = 1, shape3.q,   # Change the order
+                   lower.tail = TRUE, log.p = FALSE)
+  psinmad(q, shape1.a = 1, scale = scale, shape3.q = shape3.q,
+          lower.tail = lower.tail, log.p = log.p)
+
+
+pfisk <- function(q, scale = 1, shape1.a,
+                  lower.tail = TRUE, log.p = FALSE)
+  psinmad(q, shape1.a = shape1.a, scale = scale, shape3.q = 1,
+          lower.tail = lower.tail, log.p = log.p)
+
+
+pparalogistic <- function(q, scale = 1, shape1.a,   # Change the order
+                          lower.tail = TRUE, log.p = FALSE)
+  psinmad(q, shape1.a = shape1.a, scale = scale,
+          shape3.q = shape1.a,  # Add shape3.q = shape1.a
+          lower.tail = lower.tail, log.p = log.p)
+
+
+
+
+
+
+pdagum <- function(q, scale = 1, shape1.a, shape2.p,
+                   lower.tail = TRUE, log.p = FALSE) {
+
+
+
+  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+    stop("bad input for argument 'lower.tail'")
+
+  if (!is.logical(log.p) || length(log.p) != 1)
+    stop("bad input for argument 'log.p'")
 
 
   LLL <- max(length(q), length(shape1.a), length(scale),
@@ -2564,20 +2913,30 @@ pdagum <- function(q, shape1.a, scale = 1, shape2.p) {
   if (length(shape2.p) != LLL)
     shape2.p  <- rep(shape2.p,  length.out = LLL)
 
-  notpos   <- (q <= 0) & !is.na(q)
-  Shape1.a <- shape1.a[!notpos]
-  Scale    <-    scale[!notpos]
-  Shape2.p <- shape2.p[!notpos]
-  QQ       <-        q[!notpos]
 
-  ans <- 0 * q
-  ans[!notpos] <- (1 + (QQ/Scale)^(-Shape1.a))^(-Shape2.p)
+  if (lower.tail) {
+    if (log.p) {
+      ans <- (-shape2.p) * log1p((q/scale)^(-shape1.a))
+      ans[q <= 0 ] <- -Inf
+      ans[q == Inf] <- 0
+    } else {
+      ans <- exp( (-shape2.p) * log1p((q/scale)^(-shape1.a)) )
+      ans[q <= 0] <- 0
+      ans[q == Inf] <- 1
+    }
+  } else {
+    if (log.p) {
+      ans <- log1p(-(1 + (q/scale)^(-shape1.a))^(-shape2.p))
+      ans[q <= 0] <- 0
+      ans[q == Inf] <- -Inf
+    } else {
+      stop("unfinished")
+      ans[q <= 0] <- 1
+      ans[q == Inf] <- 0
+    }
+  }
 
-  ans[scale    <= 0] <- NaN
-  ans[shape1.a <= 0] <- NaN
-  ans[shape2.p <= 0] <- NaN
-  ans[q == -Inf] <- 0
-
+  ans[shape1.a <= 0 | scale <= 0 | shape2.p <= 0] <- NaN
   ans
 }
 
@@ -2585,16 +2944,21 @@ pdagum <- function(q, shape1.a, scale = 1, shape2.p) {
 
 
 
-pinv.lomax <- function(q, scale = 1, shape2.p)
-  pdagum(q, shape1.a = 1, scale = scale, shape2.p)
+pinv.lomax <- function(q, scale = 1, shape2.p,
+                       lower.tail = TRUE, log.p = FALSE)
+  pdagum(q, scale = scale, shape1.a = 1, shape2.p = shape2.p,
+         lower.tail = lower.tail, log.p = log.p)
 
 
-pinv.paralogistic <- function(q, shape1.a, scale = 1)
-  pdagum(q, shape1.a, scale = scale, shape1.a)
+pinv.paralogistic <- function(q, scale = 1, shape1.a,
+                              lower.tail = TRUE, log.p = FALSE)
+  pdagum(q, scale = scale, shape1.a = shape1.a,
+         shape2.p = shape1.a,
+         lower.tail = lower.tail, log.p = log.p)
 
 
 
-dsinmad <- function(x, shape1.a, scale = 1, shape3.q, log = FALSE) {
+dsinmad <- function(x, scale = 1, shape1.a, shape3.q, log = FALSE) {
 
   if (!is.logical(log.arg <- log) || length(log) != 1)
     stop("bad input for argument 'log'")
@@ -2624,20 +2988,24 @@ dsinmad <- function(x, shape1.a, scale = 1, shape3.q, log = FALSE) {
 }
 
 
+
 dlomax <- function(x, scale = 1, shape3.q, log = FALSE)
-  dsinmad(x, shape1.a = 1, scale = scale, shape3.q, log = log)
-
-
-dfisk <- function(x, shape1.a, scale = 1, log = FALSE)
-  dsinmad(x, shape1.a, scale = scale, shape3.q = 1, log = log)
-
-
-dparalogistic <- function(x, shape1.a, scale = 1, log = FALSE)
-  dsinmad(x, shape1.a, scale = scale, shape1.a, log = log)
+  dsinmad(x, scale = scale, shape1.a = 1, shape3.q = shape3.q, log = log)
 
 
 
-ddagum <- function(x, shape1.a, scale = 1, shape2.p, log = FALSE) {
+dfisk <- function(x, scale = 1, shape1.a, log = FALSE)
+  dsinmad(x, scale = scale, shape1.a = shape1.a, shape3.q = 1, log = log)
+
+
+
+dparalogistic <- function(x, scale = 1, shape1.a, log = FALSE)
+  dsinmad(x, scale = scale, shape1.a = shape1.a, shape3.q = shape1.a,
+          log = log)
+
+
+
+ddagum <- function(x, scale = 1, shape1.a, shape2.p, log = FALSE) {
   if (!is.logical(log.arg <- log) || length(log) != 1)
     stop("bad input for argument 'log'")
   rm(log)
@@ -2674,22 +3042,32 @@ ddagum <- function(x, shape1.a, scale = 1, shape2.p, log = FALSE) {
 }
 
 
+
 dinv.lomax <- function(x, scale = 1, shape2.p, log = FALSE)
-  ddagum(x, shape1.a = 1, scale = scale, shape2.p, log = log)
+  ddagum(x, scale = scale, shape1.a = 1, shape2.p = shape2.p,
+         log = log)
 
 
-dinv.paralogistic <- function(x, shape1.a, scale = 1, log = FALSE)
-  ddagum(x, shape1.a, scale = scale, shape1.a, log = log)
+dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
+  ddagum(x, scale = scale, shape1.a = shape1.a, shape2.p = shape1.a,
+         log = log)
 
 
 
- sinmad <- function(lshape1.a = "loge",
+ sinmad <- function(lss,
+                    lshape1.a = "loge",
                     lscale = "loge",
                     lshape3.q = "loge",
                     ishape1.a = NULL, 
                     iscale = NULL,
                     ishape3.q = 1.0, 
                     zero = NULL) {
+
+  if (!is.logical(lss) || lss)
+    stop("argument 'lss' not specified correctly. ",
+         "See online help for important information")
+
+
 
 
   if (length(zero) &&
@@ -2905,13 +3283,20 @@ dinv.paralogistic <- function(x, shape1.a, scale = 1, log = FALSE)
 }
 
 
- dagum <- function(lshape1.a = "loge",
+ dagum <- function(lss,
+                   lshape1.a = "loge",
                    lscale = "loge",
                    lshape2.p = "loge",
                    ishape1.a = NULL, 
                    iscale = NULL,
                    ishape2.p = 1.0, 
                    zero = NULL) {
+
+  if (!is.logical(lss) || lss)
+    stop("argument 'lss' not specified correctly. ",
+         "See online help for important information")
+
+
 
   if (length(zero) &&
       !is.Numeric(zero, integer.valued = TRUE, positive = TRUE))
@@ -3120,9 +3505,12 @@ dinv.paralogistic <- function(x, shape1.a, scale = 1, log = FALSE)
 
 
  betaII <-
-   function(lscale = "loge", lshape2.p = "loge", lshape3.q = "loge",
+   function(  # lss,
+            lscale = "loge", lshape2.p = "loge", lshape3.q = "loge",
             iscale = NULL,   ishape2.p = 2,      ishape3.q = 2,
             zero = NULL) {
+
+
 
   if (length(zero) &&
       !is.Numeric(zero, integer.valued = TRUE, positive = TRUE))
@@ -3314,7 +3702,8 @@ dinv.paralogistic <- function(x, shape1.a, scale = 1, log = FALSE)
 
 
 
- lomax <- function(lscale = "loge",    lshape3.q = "loge",
+ lomax <- function(  # lss,
+                   lscale = "loge",    lshape3.q = "loge",
                    iscale = NULL,      ishape3.q = NULL,  # 2.0, 
                                        gshape3.q = exp(-5:5),
                    zero = NULL) {
@@ -3519,9 +3908,16 @@ dinv.paralogistic <- function(x, shape1.a, scale = 1, log = FALSE)
 
 
 
- fisk <- function(lshape1.a = "loge", lscale = "loge",
+ fisk <- function(lss,
+                  lshape1.a = "loge", lscale = "loge",
                   ishape1.a = NULL,   iscale = NULL,
                   zero = NULL) {
+
+  if (!is.logical(lss) || lss)
+    stop("argument 'lss' not specified correctly. ",
+         "See online help for important information")
+
+
 
   if (length(zero) &&
       !is.Numeric(zero, integer.valued = TRUE, positive = TRUE))
@@ -3692,11 +4088,12 @@ dinv.paralogistic <- function(x, shape1.a, scale = 1, log = FALSE)
 }
 
 
- inv.lomax <- function(lscale = "loge",
-                      lshape2.p = "loge",
-                      iscale = NULL,
-                      ishape2.p = 1.0, 
-                      zero = NULL) {
+ inv.lomax <- function(  # lss,
+                       lscale = "loge",
+                       lshape2.p = "loge",
+                       iscale = NULL,
+                       ishape2.p = 1.0, 
+                       zero = NULL) {
 
   if (length(zero) &&
       !is.Numeric(zero, integer.valued = TRUE, positive = TRUE))
@@ -3854,11 +4251,18 @@ dinv.paralogistic <- function(x, shape1.a, scale = 1, log = FALSE)
 }
 
 
- paralogistic <- function(lshape1.a = "loge",
+ paralogistic <- function(lss,
+                          lshape1.a = "loge",
                           lscale = "loge",
                           ishape1.a = 2,
                           iscale = NULL,
                           zero = NULL) {
+
+  if (!is.logical(lss) || lss)
+    stop("argument 'lss' not specified correctly. ",
+         "See online help for important information")
+
+
 
 
   if (length(zero) &&
@@ -4040,9 +4444,17 @@ dinv.paralogistic <- function(x, shape1.a, scale = 1, log = FALSE)
 }
 
 
- inv.paralogistic <- function(lshape1.a = "loge", lscale = "loge",
-                             ishape1.a = 2,      iscale = NULL,
-                             zero = NULL) {
+
+ inv.paralogistic <- function(lss,
+                              lshape1.a = "loge", lscale = "loge",
+                              ishape1.a = 2,      iscale = NULL,
+                              zero = NULL) {
+
+  if (!is.logical(lss) || lss)
+    stop("argument 'lss' not specified correctly. ",
+         "See online help for important information")
+
+
 
   if (length(zero) &&
       !is.Numeric(zero, integer.valued = TRUE, positive = TRUE))

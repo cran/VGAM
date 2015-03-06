@@ -7,11 +7,12 @@
 }
 \usage{
 vsmooth.spline(x, y, w = NULL, df = rep(5, M), spar = NULL,
-               all.knots = FALSE, iconstraint = diag(M),
-               xconstraint = diag(M), 
-               constraints = list("(Intercepts)" = diag(M), x = diag(M)), 
-               var.arg = FALSE, scale.w = TRUE, nk = NULL,
-               control.spar = list())
+               i.constraint = diag(M),
+               x.constraint = diag(M), 
+               constraints = list("(Intercepts)" = i.constraint,
+                                  x = x.constraint), 
+               all.knots = FALSE, var.arg = FALSE, scale.w = TRUE,
+               nk = NULL, control.spar = list())
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -83,14 +84,14 @@ but if \code{n <= 40} then all the unique values of \code{x} are used.
 
 
 }
-  \item{iconstraint}{ A \code{M}-row constraint matrix for the
+  \item{i.constraint}{ A \code{M}-row constraint matrix for the
 intercepts. It must be of full column rank.
 By default, the constraint matrix for the intercepts is the
 \code{M} by \code{M} identity matrix, meaning no constraints.
 
 
 }
-  \item{xconstraint}{ A \code{M}-row constraint matrix for \code{x}. 
+  \item{x.constraint}{ A \code{M}-row constraint matrix for \code{x}. 
 It must be of full column rank.
 By default, the constraint matrix for the intercepts is the
 \code{M} by \code{M} identity matrix, meaning no constraints.
@@ -98,7 +99,7 @@ By default, the constraint matrix for the intercepts is the
 
 }
   \item{constraints}{ 
-An alternative to specifying \code{iconstraint} and \code{xconstraint},
+An alternative to specifying \code{i.constraint} and \code{x.constraint},
 this is a list with two components corresponding to the
 intercept and \code{x} respectively. They must both be a
 \code{M}-row constraint matrix with full column rank.
@@ -212,7 +213,8 @@ plot(fit)  # The 1st and 3rd functions do not differ by a constant
 }
 
 mat <- matrix(c(1,0,1, 0,1,0), 3, 2)
-(fit2 <- vsmooth.spline(x, y, w = ww, df = 5, iconstr = mat, xconstr = mat))
+(fit2 <- vsmooth.spline(x, y, w = ww, df = 5, i.constr = mat,
+                        x.constr = mat))
 # The 1st and 3rd functions do differ by a constant:
 mycols <- c("orange", "blue", "orange")
 \dontrun{ plot(fit2, lcol = mycols, pcol = mycols, las = 1) }

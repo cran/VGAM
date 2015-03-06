@@ -142,7 +142,7 @@ pdata <- transform(pdata, y1 = rposbinom(nn, size = sizev1, prob = prob1),
 with(pdata, table(y1))
 with(pdata, table(y2))
 # Multivariate response
-fit2 <- vglm(cbind(y1, y2) ~ x2, posbinomial(mv = TRUE),
+fit2 <- vglm(cbind(y1, y2) ~ x2, posbinomial(multiple.responses = TRUE),
              trace  = TRUE, data = pdata, weight = cbind(sizev1, sizev2))
 coef(fit2, matrix = TRUE)
 }

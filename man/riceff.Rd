@@ -14,7 +14,11 @@ riceff(lsigma = "loge", lvee = "loge", isigma = NULL,
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{nowarning}{ Logical. Suppress a warning? }
+  \item{nowarning}{ Logical. Suppress a warning?
+  Ignored for \pkg{VGAM} 0.9-7 and higher.
+
+
+   }
 
 
   \item{lvee, lsigma}{

@@ -7,7 +7,7 @@
   von Mises distribution by maximum likelihood estimation.
 }
 \usage{
-vonmises(llocation = elogit(min = 0, max = 2 * pi), lscale = "loge",
+vonmises(llocation = extlogit(min = 0, max = 2 * pi), lscale = "loge",
          ilocation = NULL, iscale = NULL, imethod = 1, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.

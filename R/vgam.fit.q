@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2014 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -24,7 +24,7 @@ vgam.fit <-
   check.Rank <- TRUE  # Set this to false for family functions vppr() etc.
   epsilon <- control$epsilon
   maxit <- control$maxit
-  save.weight <- control$save.weight
+  save.weights <- control$save.weights
   trace <- control$trace
 
   bf.maxit <- control$bf.maxit
@@ -316,7 +316,7 @@ vgam.fit <-
     if (M == 1) {
       wz <- as.vector(wz)  # Convert wz into a vector
     } # else
-    fit$weights <- if (save.weight) wz else NULL
+    fit$weights <- if (save.weights) wz else NULL
 
 
 

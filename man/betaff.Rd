@@ -24,8 +24,8 @@ betaff(A = 0, B = 1, lmu = "logit", lphi = "loge",
   \item{lmu, lphi}{ 
   Link function for the mean and precision parameters. 
   The values \eqn{A} and \eqn{B} are extracted from the
-  \code{min} and \code{max} arguments of \code{\link{elogit}}.
-  Consequently, only \code{\link{elogit}} is allowed.
+  \code{min} and \code{max} arguments of \code{\link{extlogit}}.
+  Consequently, only \code{\link{extlogit}} is allowed.
 
 
 % See below for more details.
@@ -111,7 +111,7 @@ betaff(A = 0, B = 1, lmu = "logit", lphi = "loge",
   The response must have values in the interval (\eqn{A}, \eqn{B}).
   The user currently needs to manually choose \code{lmu} to match
   the input of arguments \code{A} and \code{B}, e.g.,
-  with \code{\link{elogit}}; see the example below. 
+  with \code{\link{extlogit}}; see the example below. 
 
 
 }
@@ -127,7 +127,7 @@ betaff(A = 0, B = 1, lmu = "logit", lphi = "loge",
   \code{\link{rbetageom}},
   \code{\link{rbetanorm}},
   \code{\link{kumar}},
-  \code{\link{elogit}},
+  \code{\link{extlogit}},
   \code{\link{simulate.vlm}}.
 
 
@@ -148,7 +148,7 @@ bdata <- transform(bdata,
                    y = rbeta(nn, shape1 = shape1, shape2 = shape2))
 bdata <- transform(bdata, Y = 5 + 8 * y)  # From 5 to 13, not 0 to 1
 fit <- vglm(Y ~ x2, data = bdata, trace = TRUE,
-            betaff(A = 5, B = 13, lmu = elogit(min = 5, max = 13)))
+            betaff(A = 5, B = 13, lmu = extlogit(min = 5, max = 13)))
 coef(fit, matrix = TRUE)
 }
 \keyword{models}

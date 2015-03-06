@@ -7,7 +7,8 @@
 
 }
 \usage{
-dirichlet(link = "loge", parallel = FALSE, zero = NULL)
+dirichlet(link = "loge", parallel = FALSE, zero = NULL,
+          imethod = 1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -20,7 +21,7 @@ dirichlet(link = "loge", parallel = FALSE, zero = NULL)
 
 
   }
-  \item{parallel, zero}{
+  \item{parallel, zero, imethod}{
   See \code{\link{CommonVGAMffArguments}} for more information.
 
 

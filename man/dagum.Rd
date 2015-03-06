@@ -7,11 +7,16 @@
   Dagum distribution.
 }
 \usage{
-dagum(lshape1.a = "loge", lscale = "loge", lshape2.p = "loge",
-      ishape1.a = NULL, iscale = NULL, ishape2.p = 1, zero = NULL)
+dagum(lss, lshape1.a = "loge", lscale = "loge", lshape2.p = "loge",
+           ishape1.a = NULL, iscale = NULL, ishape2.p = 1, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
+  \item{lss}{ See \code{\link{CommonVGAMffArguments}} for important information.
+  
+  
+  }
+
   \item{lshape1.a, lscale, lshape2.p}{
   Parameter link functions applied to the
   (positive) parameters \code{a}, \code{scale}, and \code{p}.
@@ -105,9 +110,10 @@ while estimates for \eqn{a} and \eqn{p} can be considered unbiased for
 }
 
 \examples{
-ddata <- data.frame(y = rdagum(n = 3000, exp(1), exp(2), exp(1)))
-fit <- vglm(y ~ 1, dagum, data = ddata, trace = TRUE)
-fit <- vglm(y ~ 1, dagum(ishape1.a = exp(1)), data = ddata, trace = TRUE)
+ddata <- data.frame(y = rdagum(n = 3000, scale = exp(2), shape1 = exp(1), exp(1)))
+fit <- vglm(y ~ 1, dagum(lss = FALSE), data = ddata, trace = TRUE)
+fit <- vglm(y ~ 1, dagum(lss = FALSE, ishape1.a = exp(1)),
+            data = ddata, trace = TRUE)
 coef(fit, matrix = TRUE)
 Coef(fit)
 summary(fit)

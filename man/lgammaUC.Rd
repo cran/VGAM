@@ -16,8 +16,10 @@
 }
 \usage{
 dlgamma(x, location = 0, scale = 1, shape = 1, log = FALSE)
-plgamma(q, location = 0, scale = 1, shape = 1)
-qlgamma(p, location = 0, scale = 1, shape = 1)
+plgamma(q, location = 0, scale = 1, shape = 1,
+        lower.tail = TRUE, log.p = FALSE)
+qlgamma(p, location = 0, scale = 1, shape = 1,
+        lower.tail = TRUE, log.p = FALSE)
 rlgamma(n, location = 0, scale = 1, shape = 1)
 }
 \arguments{
@@ -34,6 +36,12 @@ rlgamma(n, location = 0, scale = 1, shape = 1)
   \item{log}{
   Logical.
   If \code{log = TRUE} then the logarithm of the density is returned.
+
+
+  }
+  \item{lower.tail, log.p}{
+  Same meaning as in \code{\link[stats:Normal]{pnorm}}
+  or \code{\link[stats:Normal]{qnorm}}.
 
 
   }
@@ -56,7 +64,7 @@ London: Imperial College Press.
 
 
 }
-\author{ T. W. Yee }
+\author{ T. W. Yee and Kai Huang }
 \details{
   See \code{\link{lgamma1}}, the \pkg{VGAM} family function for
   estimating the one parameter standard log-gamma distribution by maximum
@@ -65,10 +73,12 @@ London: Imperial College Press.
   the appropriate length if necessary.
 
 
+
 }
 \note{
   The \pkg{VGAM} family function \code{\link{lgamma3}} is
   for the three parameter (nonstandard) log-gamma distribution.
+
 
 
 }

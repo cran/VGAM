@@ -41,7 +41,7 @@ cqo(formula, family, data = list(), weights = NULL, subset = NULL,
   \code{\link{gamma2}},
   \code{\link{gaussianff}}.
   Sometimes special arguments are required for \code{cqo()}, e.g.,
-  \code{binomialff(mv = TRUE)}.
+  \code{binomialff(multiple.responses = TRUE)}.
   Also, \code{\link{quasipoissonff}} and \code{\link{quasibinomialff}}
   may or may not work.
 
@@ -460,7 +460,8 @@ original FORTRAN code into C.
   In Example 4 below, constrained binary quadratic ordination (in old
   nomenclature, constrained Gaussian logit ordination) is fitted to some
   simulated data coming from a species packing model.
-  With multivariate binary responses, one must use \code{mv = TRUE} to
+  With multivariate binary responses, one must
+  use \code{multiple.responses = TRUE} to
   indicate that the response (matrix) is multivariate. Otherwise, it is
   interpreted as a single binary response variable.
   In Example 5 below, the deviance residuals are plotted for each species.
@@ -640,7 +641,8 @@ mydata <- rcqo(n, p, S, fam = "binomial", hi.abundance = 4,
                eq.tol = TRUE, es.opt = TRUE, eq.max = TRUE)
 myform <- attr(mydata, "formula")
 set.seed(1234)
-b1et <- cqo(myform, binomialff(mv = TRUE, link = "cloglog"), data = mydata)
+b1et <- cqo(myform, binomialff(multiple.responses = TRUE, link = "cloglog"),
+            data = mydata)
 sort(deviance(b1et, history = TRUE))  # A history of all the iterations
 lvplot(b1et, y = TRUE, lcol = 1:S, pch = 1:S, pcol = 1:S, las = 1)
 Coef(b1et)

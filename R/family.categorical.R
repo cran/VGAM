@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2014 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -830,7 +830,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
  cumulative <- function(link = "logit",
                         parallel = FALSE,  # Does not apply to the intercept
                         reverse = FALSE, 
-                        mv = FALSE,
+                        multiple.responses = FALSE,
                         whitespace = FALSE) {
 
 
@@ -848,14 +848,14 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
   fillerChar <- ifelse(whitespace, " ", "")
 
 
-  if (!is.logical(mv) || length(mv) != 1)
-    stop("argument 'mv' must be a single logical")
+  if (!is.logical(multiple.responses) || length(multiple.responses) != 1)
+    stop("argument 'multiple.responses' must be a single logical")
   if (!is.logical(reverse) || length(reverse) != 1)
     stop("argument 'reverse' must be a single logical")
 
 
   new("vglmff",
-  blurb = if ( mv )
+  blurb = if ( multiple.responses )
           c(paste("Multivariate cumulative", link, "model\n\n"),
           "Links:   ",
           namesof(if (reverse) 
@@ -870,7 +870,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
                   ifelse(whitespace, "P[Y <= j]",   "P[Y<=j]"),
                   link, earg = earg)),
   constraints = eval(substitute(expression({
-    if ( .mv ) {
+    if ( .multiple.responses ) {
       if ( !length(constraints) ) {
           Llevels <- extra$Llevels
           NOS <- extra$NOS
@@ -886,13 +886,14 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
                              apply.int = .apply.parint ,
                              constraints = constraints)
     }
-  }), list( .parallel = parallel, .mv = mv,
+  }), list( .parallel = parallel,
+            .multiple.responses = multiple.responses,
             .apply.parint = apply.parint ))),
   deviance = eval(substitute(
     function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
 
     answer <-
-    if ( .mv ) {
+    if ( .multiple.responses ) {
       totdev <- 0
       NOS <- extra$NOS
       Llevels <- extra$Llevels
@@ -916,7 +917,8 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
                                      summation = TRUE)
     }
     answer
-  }, list( .earg = earg, .link = link, .mv = mv ) )),
+  }, list( .earg = earg, .link = link,
+           .multiple.responses = multiple.responses ) )),
 
   initialize = eval(substitute(expression({
 
@@ -928,8 +930,8 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
       warning("response should be ordinal---see ordered()")
 
 
-    extra$mv <- .mv
-    if ( .mv ) {
+    extra$multiple.responses <- .multiple.responses
+    if ( .multiple.responses ) {
       checkCut(y)  # Check the input; stops if there is an error.
       if (any(w != 1) || ncol(cbind(w)) != 1)
           stop("the 'weights' argument must be a vector of all ones")
@@ -987,7 +989,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
       if (length(dimnames(y)))
         extra$dimnamesy2 <- dimnames(y)[[2]]
   }
-  }), list( .reverse = reverse, .mv = mv,
+  }), list( .reverse = reverse, .multiple.responses = multiple.responses,
             .link = link, .earg = earg,
             .fillerChar = fillerChar,
             .whitespace = whitespace ))),
@@ -995,7 +997,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
 
     linkinv = eval(substitute( function(eta, extra = NULL) {
         answer <-
-        if ( .mv ) {
+        if ( .multiple.responses ) {
           NOS <- extra$NOS
           Llevels <- extra$Llevels
           fv.matrix <- matrix(0, nrow(eta), NOS*Llevels)
@@ -1036,10 +1038,10 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
         answer
     }, list( .reverse = reverse,
              .link = link, .earg = earg,
-             .mv = mv ))),
+             .multiple.responses = multiple.responses ))),
 
   last = eval(substitute(expression({
-    if ( .mv ) {
+    if ( .multiple.responses ) {
       misc$link <- .link
       misc$earg <- list( .earg )
 
@@ -1060,16 +1062,17 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
     misc$parameters <- mynames
     misc$reverse <- .reverse
     misc$parallel <- .parallel
-    misc$mv <- .mv
+    misc$multiple.responses <- .multiple.responses
   }), list(
             .reverse = reverse, .parallel = parallel,
             .link = link, .earg = earg,
-            .fillerChar = fillerChar, .mv = mv,
+            .fillerChar = fillerChar,
+            .multiple.responses = multiple.responses,
             .whitespace = whitespace ))),
 
   linkfun = eval(substitute( function(mu, extra = NULL) {
     answer <- 
-    if ( .mv ) {
+    if ( .multiple.responses ) {
       NOS <- extra$NOS
       Llevels <- extra$Llevels
       eta.matrix <- matrix(0, nrow(mu), NOS*(Llevels-1))
@@ -1092,7 +1095,8 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
     answer
   }, list(
            .link = link, .earg = earg,
-           .reverse = reverse, .mv = mv ))),
+           .reverse = reverse,
+           .multiple.responses = multiple.responses ))),
   loglikelihood =
     function(mu, y, w, residuals = FALSE, eta, extra = NULL,
              summation = TRUE) {
@@ -1124,7 +1128,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
   deriv = eval(substitute(expression({
     mu.use <- pmax(mu, .Machine$double.eps * 1.0e-0)
     deriv.answer <-
-    if ( .mv ) {
+    if ( .multiple.responses ) {
       NOS <- extra$NOS
       Llevels <- extra$Llevels
       dcump.deta <- resmat <- matrix(0, n, NOS * (Llevels-1))
@@ -1149,9 +1153,9 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
     deriv.answer
   }), list( .link = link, .earg = earg,
             .reverse = reverse,
-            .mv = mv ))),
+            .multiple.responses = multiple.responses ))),
   weight = eval(substitute(expression({
-    if ( .mv ) {
+    if ( .multiple.responses ) {
       NOS <- extra$NOS
       Llevels <- extra$Llevels
       wz <- matrix(0, n, NOS*(Llevels-1))  # Diagonal elts only for a start
@@ -1193,7 +1197,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
     }
     wz
   }), list( .earg = earg, .link = link,
-            .mv = mv ))))
+            .multiple.responses = multiple.responses ))))
 }
 
 
@@ -2466,9 +2470,9 @@ ordpoissonProbs <- function(extra, mu, deriv = 0) {
     }
     } else {
 
-    if (is.logical(is.multivariateY <- object@misc$mv) &&
+    if (is.logical(is.multivariateY <- object@misc$multiple.responses) &&
         is.multivariateY)
-      stop("cannot handle cumulative(mv = TRUE)")
+      stop("cannot handle cumulative(multiple.responses = TRUE)")
     reverse <- object@misc$reverse
     linkfunctions <- object@misc$link
     all.eargs  <- object@misc$earg

@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2014 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -46,28 +46,95 @@ dexppois <- function(x, rate = 1, shape, log = FALSE) {
 }
 
 
-qexppois<- function(p, rate = 1, shape) {
-  ans <- -log(log(p * -(expm1(shape)) + exp(shape)) / shape) / rate
-  ans[(shape <= 0) | (rate <= 0)] = NaN
-  ans[p < 0] <- NaN
-  ans[p > 1] <- NaN
-  ans
-}
 
 
 
-pexppois<- function(q, rate = 1, shape) {
-  ans <-(exp(shape * exp(-rate * q)) -
-         exp(shape)) / -expm1(shape)  
-  ans[q <= 0] <- 0
+
+qexppois<- function(p, rate = 1, shape, 
+                    lower.tail = TRUE, log.p = FALSE) { 
+  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+    stop("bad input for argument 'lower.tail'")
+  
+  if (!is.logical(log.p) || length(log.p) != 1)
+    stop("bad input for argument 'log.p'")
+  
+  if (lower.tail) {
+    if (log.p) {
+      ln.p <- p
+      ans <- -log(log(exp(ln.p) * (-expm1(shape)) + exp(shape)) / shape) / rate
+      ans[ln.p > 0] <- NaN
+    } else {
+      ans <- -log(log(p * (-expm1(shape)) + exp(shape)) / shape) / rate
+      ans[p < 0] <- NaN
+      ans[p > 1] <- NaN
+    }
+  } else {
+    if (log.p) {
+      ln.p <- p
+      ans <- -log(log(expm1(ln.p) * expm1(shape) + exp(shape)) / shape) / rate
+      ans[ln.p > 0] <- NaN
+    } else { 
+      ans <- -log(log(p * expm1(shape) + 1) / shape) / rate
+      ans[p < 0] <- NaN
+      ans[p > 1] <- NaN
+    }
+  }
   ans[(shape <= 0) | (rate <= 0)] <- NaN
   ans
 }
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+pexppois<- function(q, rate = 1, shape, 
+                    lower.tail = TRUE, log.p = FALSE) {
+  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+    stop("bad input for argument 'lower.tail'")
+  
+  if (!is.logical(log.p) || length(log.p) != 1)
+    stop("bad input for argument 'log.p'")
+  
+  if (lower.tail) {
+    if (log.p) {
+      ans <- log((exp(shape * exp(-rate * q)) -
+                    exp(shape)) / -expm1(shape))
+      ans[q <= 0 ] <- -Inf
+      ans[q == Inf] <- 0
+    } else {
+      ans <- (exp(shape * exp(-rate * q)) - exp(shape)) / (-expm1(shape))
+      ans[q <= 0] <- 0
+      ans[q == Inf] <- 1
+    }
+  } else {
+    if (log.p) {
+      ans <- log(expm1(shape * exp(-rate * q)) / expm1(shape))
+      ans[q <= 0] <- 0
+      ans[q == Inf] <- -Inf
+    } else {
+      ans <- expm1(shape * exp(-rate * q)) / expm1(shape)
+      ans[q <= 0] <- 1
+      ans[q == Inf] <- 0
+    }
+  } 
+  ans[(shape <= 0) | (rate <= 0)] <- NaN
+  ans
+}
+
+
+
+
 rexppois <- function(n, rate = 1, shape) {
-  ans <- -log(log(runif(n) * -(expm1(shape)) +
+  ans <- -log(log(runif(n) * (-expm1(shape)) +
          exp(shape)) / shape) / rate
   ans[(shape <= 0) | (rate <= 0)] <- NaN
   ans
@@ -270,6 +337,7 @@ dgenray <- function(x, scale = 1, shape, log = FALSE) {
                        (shape[xok] - 1) * log1p(-exp(-temp1^2))
   }
   logdensity[(shape <= 0) | (scale <= 0)] <- NaN
+  logdensity[is.infinite(x)] <- log(0)  # 20141209 KaiH
   if (log.arg) {
     logdensity
   } else {
@@ -278,23 +346,81 @@ dgenray <- function(x, scale = 1, shape, log = FALSE) {
 }
 
 
-pgenray <- function(q, scale = 1, shape) {
-  ans <- (-expm1(-(q/scale)^2))^shape
-  ans[q <= 0] <- 0
+
+
+
+
+pgenray <- function(q, scale = 1, shape, 
+                    lower.tail = TRUE, log.p = FALSE) {
+  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+    stop("bad input for argument 'lower.tail'")
+  
+  if (!is.logical(log.p) || length(log.p) != 1)
+    stop("bad input for argument 'log.p'")
+  
+  if (lower.tail) {
+    if (log.p) {
+      ans <- log((-expm1(-(q/scale)^2))^shape)
+      ans[q <= 0 ] <- -Inf
+    } else {
+      ans <- (-expm1(-(q/scale)^2))^shape
+      ans[q <= 0] <- 0
+    }
+  } else {
+    if (log.p) {
+      ans <- log(-expm1(shape*log(-expm1(-(q/scale)^2))))
+      ans[q <= 0] <- 0
+    } else {
+      ans <- -expm1(shape*log(-expm1(-(q/scale)^2)))
+      ans[q <= 0] <- 1
+    }
+  } 
   ans[(shape <= 0) | (scale <= 0)] <- NaN
   ans
 }
 
 
-qgenray <- function(p, scale = 1, shape) {
-  ans <- scale * sqrt(-log1p(-(p^(1/shape))))
+
+
+
+
+
+
+
+qgenray <- function(p, scale = 1, shape, 
+                    lower.tail = TRUE, log.p = FALSE) {
+  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+    stop("bad input for argument 'lower.tail'")
+  
+  if (!is.logical(log.p) || length(log.p) != 1)
+    stop("bad input for argument 'log.p'")
+  
+  if (lower.tail) {
+    if (log.p) {
+      ln.p <- p
+      ans <- scale * sqrt(-log1p(-(exp(ln.p)^(1/shape))))
+      ans[ln.p > 0] <- NaN
+    } else {
+      ans <- scale * sqrt(-log1p(-(p^(1/shape))))
+      ans[p < 0] <- NaN
+      ans[p > 1] <- NaN
+    }
+  } else {
+    if (log.p) {
+      ln.p <- p
+      ans <- scale * sqrt(-log1p(-((-expm1(ln.p))^(1/shape))))
+      ans[ln.p > 0] <- NaN
+    } else { 
+      ans <- scale * sqrt(-log1p(-exp((1/shape)*log1p(-p))))
+      ans[p < 0] <- NaN
+      ans[p > 1] <- NaN
+    }
+  }
   ans[(shape <= 0) | (scale <= 0)] <- NaN
-  ans[p < 0] <- NaN
-  ans[p > 1] <- NaN
-  ans[p == 0] <- 0
-  ans[p == 1] <- Inf
   ans
 }
+
+
 
 
 
@@ -308,8 +434,8 @@ rgenray <- function(n, scale = 1, shape) {
 
 
 
-genrayleigh.control <- function(save.weight = TRUE, ...) {
-    list(save.weight = save.weight)
+genrayleigh.control <- function(save.weights = TRUE, ...) {
+    list(save.weights = save.weights)
 }
 
 
@@ -567,8 +693,8 @@ rexpgeom <- function(n, scale = 1, shape) {
 
 
 
-expgeometric.control <- function(save.weight = TRUE, ...) {
-  list(save.weight = save.weight)
+expgeometric.control <- function(save.weights = TRUE, ...) {
+  list(save.weights = save.weights)
 }
 
 
@@ -845,8 +971,8 @@ rexplog <- function(n, scale = 1, shape) {
 
 
 
-explogff.control <- function(save.weight = TRUE, ...) {
-    list(save.weight = save.weight)
+explogff.control <- function(save.weights = TRUE, ...) {
+    list(save.weights = save.weights)
 }
 
 

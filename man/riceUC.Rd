@@ -17,8 +17,8 @@
 
 \usage{
 drice(x, sigma, vee, log = FALSE)
-price(q, sigma, vee, lower.tail = TRUE, ...)
-qrice(p, sigma, vee, ...)
+price(q, sigma, vee, lower.tail = TRUE, log.p = FALSE, ...)
+qrice(p, sigma, vee, lower.tail = TRUE, log.p = FALSE, ...)
 rrice(n, sigma, vee)
 }
 
@@ -40,9 +40,9 @@ rrice(n, sigma, vee)
 
 
   }
-  \item{lower.tail}{
-  Logical.
-  If \code{TRUE} then the LHS area, else the RHS area.
+  \item{lower.tail, log.p}{
+  Same meaning as in \code{\link[stats:Normal]{pnorm}}
+  or \code{\link[stats:Normal]{qnorm}}.
 
 
   }
@@ -63,7 +63,7 @@ rrice(n, sigma, vee)
 
 
 }
-\author{ T. W. Yee }
+\author{ T. W. Yee and Kai Huang }
 \details{
   See \code{\link{riceff}}, the \pkg{VGAM} family function
   for estimating the two parameters,

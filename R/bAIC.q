@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2014 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -8,14 +8,6 @@
 
 
 
-
-
-
-
-if (!isGeneric("AIC"))
-  setGeneric("AIC", function(object, ..., k = 2)
-             standardGeneric("AIC"),
-             package = "VGAM")
 
 
 
@@ -38,58 +30,55 @@ check.omit.constant <- function(object) {
 
 
 
-AICvlm <- function(object, ..., 
-                   corrected = FALSE,
-                   k = 2) {
+
+
+if (!isGeneric("nparam"))
+  setGeneric("nparam", function(object, ...)
+             standardGeneric("nparam"),
+             package = "VGAM")
+
+
+
+nparam.vlm <- function(object, dpar = TRUE, ...) {
+
   estdisp <- object@misc$estimated.dispersion
 
-
   check.omit.constant(object)
-
 
   no.dpar <- if (length(estdisp) && is.logical(estdisp) && estdisp)
     length(object@misc$dispersion) else 0
 
-  tot.par <- length(coefvlm(object)) + no.dpar
-  ans <- (-2) * logLik.vlm(object, ...) + k * tot.par
-
-  if (corrected) {
-    ans <- ans + k * tot.par * (tot.par + 1) / (
-           nobs(object) - tot.par - 1)
-  }
-  ans
+  tot.par <- length(coefvlm(object)) + as.numeric(dpar) * no.dpar
+  tot.par
 }
 
 
 
 
-AICvgam <- function(object, ...,
-                    k = 2) {
+
+nparam.vgam <- function(object, dpar = TRUE,
+                        linear.only = FALSE, ...) {
 
   estdisp <- object@misc$estimated.dispersion
 
-
   check.omit.constant(object)
-
 
   no.dpar <- if (length(estdisp) && is.logical(estdisp) && estdisp)
              length(object@misc$dispersion) else 0 
   nldf <- if (is.Numeric(object@nl.df)) sum(object@nl.df) else 0
 
-  -2 * logLik.vlm(object, ...) +
-  k * (length(coefvlm(object)) + no.dpar + nldf)
-
+  if (linear.only) {
+    length(coefvlm(object)) + as.numeric(dpar) * no.dpar
+  } else {
+    length(coefvlm(object)) + as.numeric(dpar) * no.dpar + nldf
+  }
 }
 
 
 
-
-AICrrvglm <- function(object, ...,
-                      k = 2) {
-
+nparam.rrvglm <- function(object, dpar = TRUE, ...) {
 
   check.omit.constant(object)
-
 
   estdisp <- object@misc$estimated.dispersion
   no.dpar <- if (length(estdisp) && is.logical(estdisp) && estdisp)
@@ -101,19 +90,14 @@ AICrrvglm <- function(object, ...,
 
 
 
-  -2 * logLik.vlm(object, ...) +
-  k * (length(coefvlm(object)) + no.dpar + elts.tildeA)
+  length(coefvlm(object)) + as.numeric(dpar) * no.dpar + elts.tildeA
 }
 
 
 
-
-AICqrrvglm <- function(object, ...,
-                       k = 2) {
-
+nparam.qrrvglm <- function(object, dpar = TRUE, ...) {
 
   check.omit.constant(object)
-
 
   estdisp <- object@misc$estimated.dispersion
   no.dpar <- if (length(estdisp) && is.logical(estdisp) && estdisp)
@@ -150,34 +134,17 @@ AICqrrvglm <- function(object, ...,
 
 
 
-  loglik.try <- logLik.qrrvglm(object, ...)
-  if (!is.numeric(loglik.try))
-    warning("cannot compute the log-likelihood of 'object'. ",
-            "Returning NULL")
-
-
-
-
   elts.B1 <- length(object@extra$B1)
   elts.C  <- length(object@extra$Cmat)
   num.params <- elts.B1 + elts.tildeA  + elts.D + elts.C
 
-
-  if (is.numeric(loglik.try)) {
-    (-2) * loglik.try     + k * num.params
-  } else {
-
-    NULL
-  }
+  num.params
 }
 
 
 
+nparam.rrvgam <- function(object, dpar = TRUE, ...) {
 
-
- 
- AICrrvgam <- function(object, ...,
-                       k = 2) {
 
 
   check.omit.constant(object)
@@ -201,13 +168,6 @@ AICqrrvglm <- function(object, ...,
 
 
 
-  loglik.try <- logLik(object, ...)
-  if (!is.numeric(loglik.try))
-    warning("cannot compute the log-likelihood of 'object'. ",
-            "Returning NULL")
-
-
-
 
   elts.B1     <- length(object@extra$B1)  # 0 since a NULL
   elts.C      <- length(object@extra$Cmat)
@@ -216,6 +176,145 @@ AICqrrvglm <- function(object, ...,
   num.params <- elts.B1 + elts.C + (
                 2 * length(object@extra$df1.nl) + elts.df1.nl) -
                 (Rank + length(str0)) * Rank
+
+
+  num.params
+}
+
+
+
+setMethod("nparam", "vlm",
+           function(object, ...)
+           nparam.vlm(object, ...))
+
+setMethod("nparam", "vglm",
+           function(object, ...)
+           nparam.vlm(object, ...))
+
+setMethod("nparam", "vgam",
+           function(object, ...)
+           nparam.vgam(object, ...))
+
+setMethod("nparam", "rrvglm",
+           function(object, ...)
+           nparam.rrvglm(object, ...))
+
+setMethod("nparam", "qrrvglm",
+           function(object, ...)
+           nparam.qrrvglm(object, ...))
+
+
+setMethod("nparam", "rrvgam",
+           function(object, ...)
+           nparam.rrvgam(object, ...))
+
+
+
+
+
+
+
+
+
+if (!isGeneric("AIC"))
+  setGeneric("AIC", function(object, ..., k = 2)
+             standardGeneric("AIC"),
+             package = "VGAM")
+
+
+
+
+
+
+AICvlm <- function(object, ..., 
+                   corrected = FALSE,
+                   k = 2) {
+  estdisp <- object@misc$estimated.dispersion
+
+
+  tot.par <- nparam.vlm(object, dpar = TRUE)
+  ans <- (-2) * logLik.vlm(object, ...) + k * tot.par
+
+  if (corrected) {
+    ans <- ans + k * tot.par * (tot.par + 1) / (
+           nobs(object) - tot.par - 1)
+  }
+  ans
+}
+
+
+
+
+AICvgam <- function(object, ...,
+                    k = 2) {
+
+
+  sum.lco.no.dpar.nldf <- nparam.vgam(object, dpar = TRUE,
+                                      linear.only = FALSE)
+
+  -2 * logLik.vlm(object, ...) + k * sum.lco.no.dpar.nldf
+}
+
+
+
+
+AICrrvglm <- function(object, ...,
+                      k = 2) {
+
+
+
+  sum.lco.no.dpar.A <- nparam.rrvglm(object, dpar = TRUE)
+  (-2) * logLik.vlm(object, ...) + k * sum.lco.no.dpar.A
+}
+
+
+
+
+AICqrrvglm <- function(object, ...,
+                       k = 2) {
+
+
+
+
+
+
+
+  loglik.try <- logLik.qrrvglm(object, ...)
+  if (!is.numeric(loglik.try))
+    warning("cannot compute the log-likelihood of 'object'. ",
+            "Returning NULL")
+
+  num.params <- nparam.qrrvglm(object, dpar = TRUE)
+
+
+  if (is.numeric(loglik.try)) {
+    (-2) * loglik.try     + k * num.params
+  } else {
+
+    NULL
+  }
+}
+
+
+
+
+
+ 
+ AICrrvgam <- function(object, ...,
+                       k = 2) {
+
+
+
+
+
+
+
+  loglik.try <- logLik(object, ...)
+  if (!is.numeric(loglik.try))
+    warning("cannot compute the log-likelihood of 'object'. ",
+            "Returning NULL")
+
+  num.params <- nparam.rrvgam(object, dpar = TRUE)
 
 
   if (is.numeric(loglik.try)) {

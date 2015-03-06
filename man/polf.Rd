@@ -134,7 +134,7 @@ fit <- vglm(cuty ~ x2 + x3, data = pdata, trace = TRUE,
             cumulative(reverse = TRUE,
                        parallel = TRUE,
                        link = polf(cutpoint = cutpoints[2:3]),
-                       mv = TRUE))
+                       multiple.responses = TRUE))
 head(depvar(fit))
 head(fitted(fit))
 head(predict(fit))

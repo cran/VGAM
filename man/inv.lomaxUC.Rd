@@ -13,8 +13,8 @@
 }
 \usage{
 dinv.lomax(x, scale = 1, shape2.p, log = FALSE)
-pinv.lomax(q, scale = 1, shape2.p)
-qinv.lomax(p, scale = 1, shape2.p)
+pinv.lomax(q, scale = 1, shape2.p, lower.tail = TRUE, log.p = FALSE)
+qinv.lomax(p, scale = 1, shape2.p, lower.tail = TRUE, log.p = FALSE)
 rinv.lomax(n, scale = 1, shape2.p)
 }
 \arguments{
@@ -27,6 +27,12 @@ rinv.lomax(n, scale = 1, shape2.p)
   \item{log}{
   Logical.
   If \code{log = TRUE} then the logarithm of the density is returned.
+
+  }
+  \item{lower.tail, log.p}{
+  Same meaning as in \code{\link[stats:Normal]{pnorm}}
+  or \code{\link[stats:Normal]{qnorm}}.
+
 
   }
 

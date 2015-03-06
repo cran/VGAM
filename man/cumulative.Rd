@@ -10,7 +10,7 @@
 }
 \usage{
 cumulative(link = "logit", parallel = FALSE, reverse = FALSE,
-           mv = FALSE, whitespace = FALSE)
+           multiple.responses = FALSE, whitespace = FALSE)
 }
 %apply.parint = FALSE,
 %scumulative(link = "logit",
@@ -76,9 +76,9 @@ cumulative(link = "logit", parallel = FALSE, reverse = FALSE,
 
 
   }
-  \item{mv}{
+  \item{multiple.responses}{
   Logical.
-  Multivariate response? If \code{TRUE} then the input should be
+  Multiple responses? If \code{TRUE} then the input should be
   a matrix with values \eqn{1,2,\dots,L}, where \eqn{L=J+1} is the
   number of levels.
   Each column of the matrix is a response, i.e., multivariate response.

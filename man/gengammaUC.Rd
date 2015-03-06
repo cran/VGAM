@@ -15,8 +15,10 @@
 }
 \usage{
 dgengamma.stacy(x, scale = 1, d = 1, k = 1, log = FALSE)
-pgengamma.stacy(q, scale = 1, d = 1, k = 1)
-qgengamma.stacy(p, scale = 1, d = 1, k = 1)
+pgengamma.stacy(q, scale = 1, d = 1, k = 1,
+                lower.tail = TRUE, log.p = FALSE)
+qgengamma.stacy(p, scale = 1, d = 1, k = 1,
+                lower.tail = TRUE, log.p = FALSE)
 rgengamma.stacy(n, scale = 1, d = 1, k = 1)
 }
 \arguments{
@@ -32,6 +34,12 @@ rgengamma.stacy(n, scale = 1, d = 1, k = 1)
   \item{log}{
   Logical.
   If \code{log = TRUE} then the logarithm of the density is returned.
+
+
+  }
+  \item{lower.tail, log.p}{
+  Same meaning as in \code{\link[stats:Normal]{pnorm}}
+  or \code{\link[stats:Normal]{qnorm}}.
 
 
   }
@@ -53,7 +61,7 @@ Parameter estimation for a generalized gamma distribution.
 
 
 }
-\author{ T. W. Yee }
+\author{ T. W. Yee and Kai Huang }
 \details{
   See \code{\link{gengamma.stacy}}, the \pkg{VGAM} family function
   for estimating the generalized gamma distribution

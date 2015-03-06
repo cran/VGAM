@@ -9,7 +9,7 @@
 
 }
 \usage{
-AA.Aa.aa(linkp = "logit", linkf = "logit", inbreeding = TRUE,
+AA.Aa.aa(linkp = "logit", linkf = "logit", inbreeding = FALSE,
          ipA = NULL, ifp = NULL, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -25,7 +25,7 @@ AA.Aa.aa(linkp = "logit", linkf = "logit", inbreeding = TRUE,
 
   }
   \item{inbreeding}{
-    Logical. Is the inbreeding coefficient \eqn{f} equal to 0?
+    Logical. Is there inbreeding?
 
 
 %HWE assumption to be made?
@@ -45,7 +45,8 @@ AA.Aa.aa(linkp = "logit", linkf = "logit", inbreeding = TRUE,
   The probability of getting a count in the first column of the
   input (an AA) is \code{pA*pA}.
   When \code{inbreeding = TRUE}, an additional parameter \code{f} is used.
-  If \code{inbreeding = FALSE} then \eqn{f = 0}.
+  If \code{inbreeding = FALSE} then \eqn{f = 0} and Hardy-Weinberg
+  Equilibrium (HWE) is assumed.
 
 
 
@@ -107,8 +108,8 @@ Sunderland, MA: Sinauer Associates, Inc.
 }
 \examples{
 y <- cbind(53, 95, 38)
-fit1 <- vglm(y ~ 1, AA.Aa.aa(linkp = "probit"), trace = TRUE)
-fit2 <- vglm(y ~ 1, AA.Aa.aa(inbreeding = FALSE), trace = TRUE)
+fit1 <- vglm(y ~ 1, AA.Aa.aa, trace = TRUE)
+fit2 <- vglm(y ~ 1, AA.Aa.aa(inbreeding = TRUE), trace = TRUE)
 rbind(y, sum(y) * fitted(fit1))
 Coef(fit1)  # Estimated pA
 Coef(fit2)  # Estimated pA and f

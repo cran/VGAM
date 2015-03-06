@@ -15,8 +15,9 @@
 }
 \usage{
 denorm(x, mean = 0, sd = 1, log = FALSE)
-penorm(q, mean = 0, sd = 1, log = FALSE)
-qenorm(p, mean = 0, sd = 1, Maxit.nr = 10, Tol.nr = 1.0e-6)
+penorm(q, mean = 0, sd = 1, lower.tail = TRUE, log.p = FALSE)
+qenorm(p, mean = 0, sd = 1, Maxit.nr = 10, Tol.nr = 1.0e-6,
+       lower.tail = TRUE, log.p = FALSE)
 renorm(n, mean = 0, sd = 1)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -28,6 +29,12 @@ renorm(n, mean = 0, sd = 1)
   }
   \item{n, mean, sd, log}{
   See \code{\link[stats:Normal]{rnorm}}.
+
+
+  }
+  \item{lower.tail, log.p}{
+  Same meaning as in \code{\link[stats:Normal]{pnorm}}
+  or \code{\link[stats:Normal]{qnorm}}.
 
 
   }
@@ -54,10 +61,12 @@ Thus
 \code{renorm} generates random variates from \eqn{g}.
 
 
+
 For \code{qenorm} the Newton-Raphson algorithm is used to solve for
 \eqn{y} satisfying \eqn{p = G(y)}.
 Numerical problems may occur when values of \code{p} are
 very close to 0 or 1.
+
 
 
 }
@@ -79,7 +88,7 @@ very close to 0 or 1.
 %\bold{20}, 149--153.
 %
 %}
-\author{ T. W. Yee }
+\author{ T. W. Yee and Kai Huang }
 
 %\note{ 
 %The ``\code{q}'', as the first character of ``\code{qeunif}'',

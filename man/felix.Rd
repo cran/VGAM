@@ -8,7 +8,7 @@
 
 }
 \usage{
-felix(link = elogit(min = 0, max = 0.5), imethod = 1)
+felix(link = extlogit(min = 0, max = 0.5), imethod = 1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

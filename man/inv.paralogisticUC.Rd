@@ -13,10 +13,10 @@
 
 }
 \usage{
-dinv.paralogistic(x, shape1.a, scale = 1, log = FALSE)
-pinv.paralogistic(q, shape1.a, scale = 1)
-qinv.paralogistic(p, shape1.a, scale = 1)
-rinv.paralogistic(n, shape1.a, scale = 1)
+dinv.paralogistic(x, scale = 1, shape1.a, log = FALSE)
+pinv.paralogistic(q, scale = 1, shape1.a, lower.tail = TRUE, log.p = FALSE)
+qinv.paralogistic(p, scale = 1, shape1.a, lower.tail = TRUE, log.p = FALSE)
+rinv.paralogistic(n, scale = 1, shape1.a)
 }
 \arguments{
   \item{x, q}{vector of quantiles.}
@@ -28,6 +28,12 @@ rinv.paralogistic(n, shape1.a, scale = 1)
   \item{log}{
   Logical.
   If \code{log = TRUE} then the logarithm of the density is returned.
+
+  }
+  \item{lower.tail, log.p}{
+  Same meaning as in \code{\link[stats:Normal]{pnorm}}
+  or \code{\link[stats:Normal]{qnorm}}.
+
 
   }
 
@@ -68,8 +74,8 @@ Hoboken, NJ, USA: Wiley-Interscience.
 
 }
 \examples{
-idata <- data.frame(y = rinv.paralogistic(n = 3000, exp(1), exp(2)))
-fit <- vglm(y ~ 1, inv.paralogistic(ishape1.a = 2.1),
+idata <- data.frame(y = rinv.paralogistic(n = 3000, exp(1), scale = exp(2)))
+fit <- vglm(y ~ 1, inv.paralogistic(lss = FALSE, ishape1.a = 2.1),
             data = idata, trace = TRUE, crit = "coef")
 coef(fit, matrix = TRUE)
 Coef(fit)

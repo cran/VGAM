@@ -8,7 +8,7 @@
 
 }
 \usage{
-A1A2A3(link = "logit", inbreeding = TRUE, ip1 = NULL, ip2 = NULL, iF = NULL)
+A1A2A3(link = "logit", inbreeding = FALSE, ip1 = NULL, ip2 = NULL, iF = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -18,7 +18,7 @@ A1A2A3(link = "logit", inbreeding = TRUE, ip1 = NULL, ip2 = NULL, iF = NULL)
 
   }
   \item{inbreeding}{
-    Logical. Is the inbreeding coefficient \eqn{f} equal to 0?
+    Logical. Is there inbreeding?
 
 
 %   Logical. Is the HWE assumption to be made?
@@ -35,7 +35,8 @@ A1A2A3(link = "logit", inbreeding = TRUE, ip1 = NULL, ip2 = NULL, iF = NULL)
   \code{p3=1-p1-p2} is the third probability.
   The parameter \code{f} is the third independent parameter if
   \code{inbreeding = TRUE}.
-  If \code{inbreeding = FALSE} then \eqn{f = 0}.
+  If \code{inbreeding = FALSE} then \eqn{f = 0} and Hardy-Weinberg
+  Equilibrium (HWE) is assumed.
 
 
 
@@ -89,8 +90,7 @@ ymat <- cbind(108, 196, 429, 143, 513, 559)
 fit <- vglm(ymat ~ 1, A1A2A3(link = probit), trace = TRUE, crit = "coef")
 fit <- vglm(ymat ~ 1, A1A2A3(link = logit, ip1 = 0.3, ip2 = 0.3, iF = 0.02),
             trace = TRUE, crit = "coef")
-fit <- vglm(ymat ~ 1, A1A2A3(link = "identitylink"), trace = TRUE)
-Coef(fit)  # Estimated p1, p2 and f
+Coef(fit)  # Estimated p1 and p2 
 rbind(ymat, sum(ymat) * fitted(fit))
 sqrt(diag(vcov(fit)))
 }

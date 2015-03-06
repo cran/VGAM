@@ -1,5 +1,5 @@
-\name{fsqrt}
-\alias{fsqrt}
+\name{foldsqrt}
+\alias{foldsqrt}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Folded Square Root Link Function }
 \description{
@@ -8,8 +8,8 @@
 
 }
 \usage{
-fsqrt(theta, min = 0, max = 1, mux = sqrt(2),
-      inverse = FALSE, deriv = 0, short = TRUE, tag = FALSE)
+foldsqrt(theta, min = 0, max = 1, mux = sqrt(2),
+         inverse = FALSE, deriv = 0, short = TRUE, tag = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -39,7 +39,7 @@ fsqrt(theta, min = 0, max = 1, mux = sqrt(2),
 
 }
 \value{
-  For \code{fsqrt} with \code{deriv = 0}:
+  For \code{foldsqrt} with \code{deriv = 0}:
   \eqn{K (\sqrt{\theta-L} - \sqrt{U-\theta})}{K *
          (sqrt(theta-L) - sqrt(U-theta))}
   or
@@ -81,28 +81,28 @@ fsqrt(theta, min = 0, max = 1, mux = sqrt(2),
 }
 \examples{
 p <- seq(0.01, 0.99, by = 0.01)
-fsqrt(p)
-max(abs(fsqrt(fsqrt(p), inverse = TRUE) - p))  # Should be 0
+foldsqrt(p)
+max(abs(foldsqrt(foldsqrt(p), inverse = TRUE) - p))  # Should be 0
 
 p <- c(seq(-0.02, 0.02, by = 0.01), seq(0.97, 1.02, by = 0.01))
-fsqrt(p)  # Has NAs
+foldsqrt(p)  # Has NAs
 
 \dontrun{
 p <- seq(0.01, 0.99, by = 0.01)
 par(mfrow = c(2, 2), lwd = (mylwd <- 2))
 y <- seq(-4, 4, length = 100)
 for (d in 0:1) {
-  matplot(p, cbind(logit(p, deriv = d), fsqrt(p, deriv = d)),
+  matplot(p, cbind(logit(p, deriv = d), foldsqrt(p, deriv = d)),
           type = "n", col = "purple", ylab = "transformation", las = 1,
           main = if (d == 0) "Some probability link functions"
           else "First derivative")
   lines(p, logit(p, deriv = d), col = "limegreen")
   lines(p, probit(p, deriv = d), col = "purple")
   lines(p, cloglog(p, deriv = d), col = "chocolate")
-  lines(p, fsqrt(p, deriv = d), col = "tan")
+  lines(p, foldsqrt(p, deriv = d), col = "tan")
   if (d == 0) {
     abline(v = 0.5, h = 0, lty = "dashed")
-    legend(0, 4.5, c("logit", "probit", "cloglog", "fsqrt"), lwd = 2,
+    legend(0, 4.5, c("logit", "probit", "cloglog", "foldsqrt"), lwd = 2,
            col = c("limegreen","purple","chocolate", "tan"))
   } else
     abline(v = 0.5, lty = "dashed")
@@ -110,7 +110,7 @@ for (d in 0:1) {
 
 for (d in 0) {
   matplot(y, cbind(logit(y, deriv = d, inverse = TRUE),
-                   fsqrt(y, deriv = d, inverse = TRUE)),
+                   foldsqrt(y, deriv = d, inverse = TRUE)),
           type = "n", col = "purple", xlab = "transformation", ylab = "p",
           lwd = 2, las = 1,
           main = if (d == 0) "Some inverse probability link functions"
@@ -118,10 +118,10 @@ for (d in 0) {
   lines(y, logit(y, deriv = d, inverse = TRUE), col = "limegreen")
   lines(y, probit(y, deriv = d, inverse = TRUE), col = "purple")
   lines(y, cloglog(y, deriv = d, inverse = TRUE), col = "chocolate")
-  lines(y, fsqrt(y, deriv = d, inverse = TRUE), col = "tan")
+  lines(y, foldsqrt(y, deriv = d, inverse = TRUE), col = "tan")
   if (d == 0) {
     abline(h = 0.5, v = 0, lty = "dashed")
-    legend(-4, 1, c("logit", "probit", "cloglog", "fsqrt"), lwd = 2,
+    legend(-4, 1, c("logit", "probit", "cloglog", "foldsqrt"), lwd = 2,
            col = c("limegreen","purple","chocolate", "tan"))
   }
 }
@@ -129,7 +129,7 @@ par(lwd = 1)
 }
 
 # This is lucky to converge
-fit.h <- vglm(agaaus ~ sm.bs(altitude), binomialff(link = fsqrt(mux = 5)),
+fit.h <- vglm(agaaus ~ sm.bs(altitude), binomialff(link = foldsqrt(mux = 5)),
               data = hunua, trace = TRUE)
 \dontrun{
 plotvgam(fit.h, se = TRUE, lcol = "orange", scol = "orange",
@@ -141,7 +141,7 @@ head(predict(fit.h, hunua, type = "response"))
 # The following fails.
 pneumo <- transform(pneumo, let = log(exposure.time))
 fit <- vglm(cbind(normal, mild, severe) ~ let,
-            cumulative(link = fsqrt(mux = 10), par = TRUE, rev = TRUE),
+            cumulative(link = foldsqrt(mux = 10), par = TRUE, rev = TRUE),
             data = pneumo, trace = TRUE, maxit = 200) }
 }
 \keyword{math}

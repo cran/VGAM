@@ -13,8 +13,10 @@
 }
 \usage{
 dfrechet(x, location = 0, scale = 1, shape, log = FALSE)
-pfrechet(q, location = 0, scale = 1, shape)
-qfrechet(p, location = 0, scale = 1, shape)
+pfrechet(q, location = 0, scale = 1, shape,
+         lower.tail = TRUE, log.p = FALSE)
+qfrechet(p, location = 0, scale = 1, shape,
+         lower.tail = TRUE, log.p = FALSE)
 rfrechet(n, location = 0, scale = 1, shape)
 }
 \arguments{
@@ -30,6 +32,12 @@ rfrechet(n, location = 0, scale = 1, shape)
   \item{log}{
   Logical.
   If \code{log = TRUE} then the logarithm of the density is returned.
+
+
+  }
+  \item{lower.tail, log.p}{
+  Same meaning as in \code{\link[stats:Uniform]{punif}}
+  or \code{\link[stats:Uniform]{qunif}}.
 
 
   }
@@ -53,7 +61,7 @@ Hoboken, NJ, USA: Wiley-Interscience.
 
 
 }
-\author{ T. W. Yee }
+\author{ T. W. Yee and Kai Huang }
 \details{
   See \code{\link{frechet}}, the \pkg{VGAM}
   family function for estimating the 2 parameters (without location

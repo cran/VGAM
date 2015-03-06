@@ -14,7 +14,7 @@
 }
 \usage{
 dtruncpareto(x, lower, upper, shape, log = FALSE)
-ptruncpareto(q, lower, upper, shape)
+ptruncpareto(q, lower, upper, shape, lower.tail = TRUE, log.p = FALSE)
 qtruncpareto(p, lower, upper, shape)
 rtruncpareto(n, lower, upper, shape)
 }
@@ -28,6 +28,12 @@ rtruncpareto(n, lower, upper, shape)
   \item{lower, upper, shape}{
   the lower, upper and shape (\eqn{k}) parameters.
   If necessary, values are recycled.
+
+
+  }
+  \item{lower.tail, log.p}{
+  Same meaning as in \code{\link[stats:Normal]{pnorm}}
+  or \code{\link[stats:Normal]{qnorm}}.
 
 
   }
@@ -52,7 +58,7 @@ rtruncpareto(n, lower, upper, shape)
 
 
 }
-\author{ T. W. Yee }
+\author{ T. W. Yee and Kai Huang }
 \details{
 
   See \code{\link{truncpareto}}, the \pkg{VGAM} family function
@@ -84,11 +90,11 @@ lines(qq, dtruncpareto(qq, low = lower, upp = upper, shape = kay),
 lines(xx, ptruncpareto(xx, low = lower, upp = upper, shape = kay),
       col = "orange") }
 pp <- seq(0.1, 0.9, by = 0.1)
-qq <- qtruncpareto(pp, low = lower, upp = upper, shape = kay)
+qq <- qtruncpareto(pp, lower = lower, upper = upper, shape = kay)
 
-ptruncpareto(qq, low = lower, upp = upper, shape = kay)
-qtruncpareto(ptruncpareto(qq, low = lower, upp = upper, shape = kay),
-         low = lower, upp = upper, shape = kay) - qq  # Should be all 0
+ptruncpareto(qq, lower = lower, upper = upper, shape = kay)
+qtruncpareto(ptruncpareto(qq, lower = lower, upper = upper, shape = kay),
+         lower = lower, upper = upper, shape = kay) - qq  # Should be all 0
 }
 \keyword{distribution}
 

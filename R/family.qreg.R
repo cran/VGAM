@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2014 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -650,8 +650,8 @@ gleg.weight.yjn.13 <- function(z, lambda, mymu, sigma, derivmat = NULL) {
 
 
 
-lms.yjn2.control <- function(save.weight = TRUE, ...) {
-    list(save.weight=save.weight)
+lms.yjn2.control <- function(save.weights = TRUE, ...) {
+    list(save.weights = save.weights)
 }
 
  lms.yjn2 <- function(percentiles = c(25, 50, 75),
@@ -1914,8 +1914,16 @@ ralap <- function(n, location = 0, scale = 1, tau = 0.5,
 }
 
 
+
 palap <- function(q, location = 0, scale = 1, tau = 0.5,
-                  kappa = sqrt(tau/(1-tau))) {
+                  kappa = sqrt(tau/(1-tau)),
+                  lower.tail = TRUE, log.p = FALSE) {
+
+  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+    stop("bad input for argument 'lower.tail'")
+  
+  if (!is.logical(log.p) || length(log.p) != 1)
+    stop("bad input for argument 'log.p'")
 
   NN <- max(length(q), length(location), length(scale), length(kappa),
             length(tau))
@@ -1926,20 +1934,46 @@ palap <- function(q, location = 0, scale = 1, tau = 0.5,
   if (length(tau)      != NN) tau      <- rep(tau,      length.out = NN)
 
   exponent <- -(sqrt(2) / scale) * abs(q - location) *
-             ifelse(q >= location, kappa, 1/kappa)
+              ifelse(q >= location, kappa, 1/kappa)
   temp5 <- exp(exponent) / (1 + kappa^2)
-  ans <- 1 - temp5
   index1 <- (q < location)
-  ans[index1] <- (kappa[index1])^2 * temp5[index1]
 
+
+  if (lower.tail) {
+    if (log.p) {
+      ans <- log1p(-exp(exponent) / (1 + kappa^2))
+      logtemp5 <- exponent - log1p(kappa^2)
+      ans[index1] <- 2 * log(kappa[index1]) + logtemp5[index1]
+    } else {
+      ans <- (kappa^2 - expm1(exponent)) / (1 + kappa^2)
+      ans[index1] <- (kappa[index1])^2 * temp5[index1]
+    }
+  } else {
+    if (log.p) {
+      ans <- exponent - log1p(kappa^2)  # logtemp5
+      ans[index1] <- log1p(-(kappa[index1])^2 * temp5[index1])
+    } else {
+      ans <- temp5
+      ans[index1] <- (1 + (kappa[index1])^2 *
+                     (-expm1(exponent[index1]))) / (1+(kappa[index1])^2)
+      }
+  } 
   indexTF <- (scale > 0) & (tau > 0) & (tau < 1) & (kappa > 0)  # &
   ans[!indexTF] <- NaN
   ans
 }
 
 
+
 qalap <- function(p, location = 0, scale = 1, tau = 0.5,
-                  kappa = sqrt(tau / (1 - tau))) {
+                  kappa = sqrt(tau / (1 - tau)),
+                  lower.tail = TRUE, log.p = FALSE) {
+
+  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+    stop("bad input for argument 'lower.tail'")
+  
+  if (!is.logical(log.p) || length(log.p) != 1)
+    stop("bad input for argument 'log.p'")
 
   NN <- max(length(p), length(location), length(scale), length(kappa),
             length(tau))
@@ -1950,22 +1984,53 @@ qalap <- function(p, location = 0, scale = 1, tau = 0.5,
   if (length(tau)      != NN) tau      <- rep(tau,      length.out = NN)
 
 
-  ans <- p
-  temp5 <- kappa^2 / (1 + kappa^2)
-  index1 <- (p <= temp5)
-  exponent <- p[index1] / temp5[index1]
-  ans[index1] <- location[index1] + (scale[index1] * kappa[index1]) *
-                log(exponent) / sqrt(2)
-  ans[!index1] <- location[!index1] - (scale[!index1] / kappa[!index1]) *
-                 (log1p((kappa[!index1])^2) +
-                  log1p(-p[!index1])) / sqrt(2)
 
-  indexTF <- (scale > 0) & (tau > 0) & (tau < 1) & (kappa > 0) &
-            (p >= 0) & (p <= 1)
+  temp5 <- kappa^2 / (1 + kappa^2)
+  if (lower.tail) {
+    if (log.p) {
+      ans <- exp(p) 
+      index1 <- (exp(p) <= temp5)
+      exponent <- exp(p[index1]) / temp5[index1]
+      ans[index1] <- location[index1] + (scale[index1] * kappa[index1]) *
+        log(exponent) / sqrt(2)
+      ans[!index1] <- location[!index1] - (scale[!index1] / kappa[!index1]) *
+        (log1p((kappa[!index1])^2) +
+           log(-expm1(p[!index1]))) / sqrt(2)
+    } else {
+      ans <- p 
+      index1 <- (p <= temp5)
+      exponent <- p[index1] / temp5[index1]
+      ans[index1] <- location[index1] + (scale[index1] * kappa[index1]) *
+        log(exponent) / sqrt(2)
+      ans[!index1] <- location[!index1] - (scale[!index1] / kappa[!index1]) *
+                      (log1p((kappa[!index1])^2) +
+                      log1p(-p[!index1])) / sqrt(2)
+    }
+  } else {
+    if (log.p) {
+      ans <- -expm1(p) 
+      index1 <- (-expm1(p)  <= temp5)
+      exponent <- -expm1(p[index1]) / temp5[index1]
+      ans[index1] <- location[index1] + (scale[index1] * kappa[index1]) *
+        log(exponent) / sqrt(2)
+      ans[!index1] <- location[!index1] - (scale[!index1] / kappa[!index1]) *
+        (log1p((kappa[!index1])^2) +
+           p[!index1]) / sqrt(2)
+    } else {
+      ans <- exp(log1p(-p)) 
+      index1 <- (p >= (1 / (1+kappa^2))) 
+      exponent <- exp(log1p(-p[index1])) / temp5[index1]
+      ans[index1] <- location[index1] + (scale[index1] * kappa[index1]) *
+        log(exponent) / sqrt(2)
+      ans[!index1] <- location[!index1] - (scale[!index1] / kappa[!index1]) *
+        (log1p((kappa[!index1])^2) +
+           log(p[!index1])) / sqrt(2)
+    }
+  }
+
+  indexTF <- (scale > 0) & (tau > 0) & (tau < 1) & (kappa > 0)  # &
   ans[!indexTF] <- NaN
-  ans[p == 0 & indexTF] <- -Inf
-  ans[p == 1 & indexTF] <-  Inf
-  ans
+  ans  
 }
 
 
@@ -1989,6 +2054,7 @@ rloglap <- function(n, location.ald = 0, scale.ald = 1, tau = 0.5,
   ans[!indexTF] <- NaN
   ans
 }
+
 
 
 dloglap <- function(x, location.ald = 0, scale.ald = 1, tau = 0.5,
@@ -2025,31 +2091,66 @@ dloglap <- function(x, location.ald = 0, scale.ald = 1, tau = 0.5,
 
 
 
-
 qloglap <- function(p, location.ald = 0, scale.ald = 1,
-                    tau = 0.5, kappa = sqrt(tau/(1-tau))) {
+                    tau = 0.5, kappa = sqrt(tau/(1-tau)),
+                    lower.tail = TRUE, log.p = FALSE) {
+
+  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+    stop("bad input for argument 'lower.tail'")
+  
+  if (!is.logical(log.p) || length(log.p) != 1)
+    stop("bad input for argument 'log.p'")
+
+
   NN <- max(length(p), length(location.ald), length(scale.ald),
             length(kappa))
   p        <- rep(p,            length.out = NN)
-  location <- rep(location.ald, length.out = NN);
+  location <- rep(location.ald, length.out = NN)
   scale    <- rep(scale.ald,    length.out = NN)
-  kappa    <- rep(kappa,        length.out = NN);
+  kappa    <- rep(kappa,        length.out = NN)
   tau      <- rep(tau,          length.out = NN)
 
 
   Alpha <- sqrt(2) * kappa / scale.ald
   Beta  <- sqrt(2) / (scale.ald * kappa)
   Delta <- exp(location.ald)
-
   temp9 <- Alpha + Beta
-  ans <- Delta * (p * temp9 / Alpha)^(1/Beta)
-  index1 <- (p > Alpha / temp9)
-  ans[index1] <- (Delta * ((1-p) * temp9 / Beta)^(-1/Alpha))[index1]
-  ans[p == 0] <- 0
-  ans[p == 1] <- Inf
 
+
+  if (lower.tail) {
+    if (log.p) {
+      ln.p <- p
+      ans <- ifelse((exp(ln.p) > Alpha / temp9), 
+                    Delta * (-expm1(ln.p) * temp9 / Beta)^(-1/Alpha),
+                    Delta * (exp(ln.p) * temp9 / Alpha)^(1/Beta))
+      ans[ln.p > 0] <- NaN
+    } else {
+      ans <- ifelse((p > Alpha / temp9), 
+                    Delta * exp((-1/Alpha) * (log1p(-p) + log(temp9/Beta))),
+                    Delta * (p * temp9 / Alpha)^(1/Beta))
+      ans[p <  0] <- NaN
+      ans[p == 0] <- 0
+      ans[p == 1] <- Inf
+      ans[p >  1] <- NaN
+    }
+  } else {
+    if (log.p) {
+      ln.p <- p
+      ans <- ifelse((-expm1(ln.p) > Alpha / temp9), 
+                    Delta * (exp(ln.p) * temp9 / Beta)^(-1/Alpha),
+                    Delta * (-expm1(ln.p) * temp9 / Alpha)^(1/Beta))
+      ans[ln.p > 0] <- NaN
+    } else { 
+      ans <- ifelse((p < (temp9 - Alpha) / temp9), 
+                    Delta * (p * temp9 / Beta)^(-1/Alpha),
+                    Delta * exp((1/Beta)*(log1p(-p) + log(temp9/Alpha))))
+      ans[p <  0] <- NaN
+      ans[p == 0] <- Inf
+      ans[p == 1] <- 0
+      ans[p >  1] <- NaN
+    }
+  }
   indexTF <- (scale.ald > 0) & (tau > 0) & (tau < 1) & (kappa > 0)
-            (p >= 0) & (p <= 1)  # &
   ans[!indexTF] <- NaN
   ans
 }
@@ -2057,24 +2158,56 @@ qloglap <- function(p, location.ald = 0, scale.ald = 1,
 
 
 ploglap <- function(q, location.ald = 0, scale.ald = 1,
-                    tau = 0.5, kappa = sqrt(tau/(1-tau))) {
+                    tau = 0.5, kappa = sqrt(tau/(1-tau)),
+                    lower.tail = TRUE, log.p = FALSE) {
+
+  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+    stop("bad input for argument 'lower.tail'")
+  
+  if (!is.logical(log.p) || length(log.p) != 1)
+    stop("bad input for argument 'log.p'")
+  
   NN <- max(length(q), length(location.ald), length(scale.ald),
             length(kappa))
-  location <- rep(location.ald, length.out = NN);
-  scale <- rep(scale.ald, length.out = NN)
-  kappa <- rep(kappa, length.out = NN);
-  q <- rep(q, length.out = NN)
-  tau <- rep(tau, length.out = NN)
+  location <- rep(location.ald, length.out = NN)
+  scale    <- rep(scale.ald,    length.out = NN)
+  kappa    <- rep(kappa,        length.out = NN)
+  q        <- rep(q,            length.out = NN)
+  tau      <- rep(tau,          length.out = NN)
 
   Alpha <- sqrt(2) * kappa / scale.ald
   Beta  <- sqrt(2) / (scale.ald * kappa)
   Delta <- exp(location.ald)
 
   temp9 <- Alpha + Beta
-  ans <- (Alpha / temp9) * (q / Delta)^(Beta)
-  ans[q <= 0] <- 0
-  index1 <- (q >= Delta)
-  ans[index1] <- (1 - (Beta/temp9) * (Delta/q)^(Alpha))[index1]
+  index1 <- (Delta <= q)
+
+
+  if (lower.tail) {
+    if (log.p) {
+      ans <- log((Alpha / temp9) * (q / Delta)^(Beta))
+      ans[index1] <- log1p((-(Beta/temp9) * (Delta/q)^(Alpha))[index1])
+      ans[q <= 0 ] <- -Inf
+      ans[q == Inf] <- 0
+    } else {
+      ans <- (Alpha / temp9) * (q / Delta)^(Beta)
+      ans[index1] <- -expm1((log(Beta/temp9) + Alpha * log(Delta/q)))[index1]
+      ans[q <= 0] <- 0
+      ans[q == Inf] <- 1
+    }
+  } else {
+    if (log.p) {
+      ans <- log1p(-(Alpha / temp9) * (q / Delta)^(Beta))
+      ans[index1] <- log(((Beta/temp9) * (Delta/q)^(Alpha))[index1])
+      ans[q <= 0] <- 0
+      ans[q == Inf] <- -Inf
+    } else {
+      ans <- -expm1(log(Alpha/temp9) + Beta * log(q/Delta))
+      ans[index1] <- ((Beta/temp9) * (Delta/q)^(Alpha))[index1]
+      ans[q <= 0] <- 1
+      ans[q == Inf] <- 0
+    }
+  } 
 
   indexTF <- (scale.ald > 0) & (tau > 0) & (tau < 1) & (kappa > 0)  # &
   ans[!indexTF] <- NaN
@@ -2090,6 +2223,7 @@ rlogitlap <- function(n, location.ald = 0, scale.ald = 1, tau = 0.5,
               tau = tau, kappa = kappa),
         inverse = TRUE)  # earg = earg
 }
+
 
 
 dlogitlap <- function(x, location.ald = 0, scale.ald = 1, tau = 0.5,
@@ -2123,6 +2257,7 @@ dlogitlap <- function(x, location.ald = 0, scale.ald = 1, tau = 0.5,
   logdensity[x >  1 & indexTF] <- -Inf
   if (log.arg) logdensity else exp(logdensity)
 }
+
 
 
 qlogitlap <- function(p, location.ald = 0, scale.ald = 1,
@@ -2170,6 +2305,7 @@ rprobitlap <- function(n, location.ald = 0, scale.ald = 1, tau = 0.5,
                tau = tau, kappa = kappa),
                inverse = TRUE)
 }
+
 
 
 dprobitlap <-
@@ -2266,12 +2402,14 @@ pprobitlap <- function(q, location.ald = 0, scale.ald = 1,
 
 
 
+
 rclogloglap <- function(n, location.ald = 0, scale.ald = 1, tau = 0.5,
                         kappa = sqrt(tau/(1-tau))) {
   cloglog(ralap(n = n, location = location.ald, scale = scale.ald,
                 tau = tau, kappa = kappa),  # earg = earg,
           inverse = TRUE)
 }
+
 
 
 dclogloglap <- function(x, location.ald = 0, scale.ald = 1, tau = 0.5,
@@ -3323,31 +3461,80 @@ dlaplace <- function(x, location = 0, scale = 1, log = FALSE) {
 }
 
 
-plaplace <- function(q, location = 0, scale = 1) {
-  if (!is.Numeric(scale, positive = TRUE)) 
-    stop("argument 'scale' must be positive")
-  zedd <- (q-location) / scale
 
+plaplace <- function(q, location = 0, scale = 1,
+                     lower.tail = TRUE, log.p =FALSE) {
+  zedd <- (q - location) / scale
+
+  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+    stop("bad input for argument 'lower.tail'")
+  if (!is.logical(log.p) || length(log.p) != 1)
+    stop("bad input for argument 'log.p'")
+  
   L <- max(length(q), length(location), length(scale))
   if (length(q)        != L) q        <- rep(q,        length.out = L)
   if (length(location) != L) location <- rep(location, length.out = L)
   if (length(scale)    != L) scale    <- rep(scale,    length.out = L)
 
-  ifelse(q < location, 0.5 * exp(zedd), 1 - 0.5 * exp(-zedd))
+
+  if (lower.tail) {
+    if (log.p) {
+      ans <- ifelse(q < location, log(0.5) + zedd, log1p(- 0.5 * exp(-zedd)))
+    } else {
+      ans <- ifelse(q < location, 0.5 * exp(zedd), 1 - 0.5 * exp(-zedd))
+    }
+  } else {
+    if (log.p) {
+      ans <- ifelse(q < location, log1p(- 0.5 * exp(zedd)), log(0.5) - zedd)
+    } else {
+      ans <- ifelse(q < location, 1 - 0.5 * exp(zedd), 0.5 * exp(-zedd))
+    }
+  }
+  ans[scale <= 0] <- NaN
+  ans
 }
 
 
-qlaplace <- function(p, location = 0, scale = 1) {
-  if (!is.Numeric(scale, positive = TRUE)) 
-    stop("argument 'scale' must be positive")
+
+qlaplace <- function(p, location = 0, scale = 1,
+                     lower.tail = TRUE, log.p = FALSE) {
+  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+    stop("bad input for argument 'lower.tail'")
+  
+  if (!is.logical(log.p) || length(log.p) != 1)
+    stop("bad input for argument 'log.p'")
+
 
   L <- max(length(p), length(location), length(scale))
   if (length(p)        != L) p        <- rep(p,        length.out = L)
   if (length(location) != L) location <- rep(location, length.out = L)
   if (length(scale)    != L) scale    <- rep(scale,    length.out = L)
 
-  location - sign(p-0.5) * scale * log(2 * ifelse(p < 0.5, p, 1-p))
+
+  if (lower.tail) {
+    if (log.p) {
+      ln.p <- p
+      ans <- location - sign(exp(ln.p)-0.5) * scale *
+             log(2 * ifelse(exp(ln.p) < 0.5, exp(ln.p), -expm1(ln.p)))
+    } else {
+      ans <- location - sign(p-0.5) * scale * log(2 * ifelse(p < 0.5, p, 1-p))
+    }
+  } else {
+    if (log.p) {
+      ln.p <- p
+      ans <- location - sign(0.5 - exp(ln.p)) * scale *
+             log(2 * ifelse(-expm1(ln.p) < 0.5, -expm1(ln.p), exp(ln.p)))
+     # ans[ln.p > 0] <- NaN
+    } else { 
+      ans <- location - sign(0.5 - p) * scale *
+             log(2 * ifelse(p > 0.5, 1 - p, p))
+    }
+  }
+
+  ans[scale <= 0] <- NaN
+  ans  
 }
+
 
 
 rlaplace <- function(n, location = 0, scale = 1) {
@@ -3513,8 +3700,8 @@ rlaplace <- function(n, location = 0, scale = 1) {
 
 
 
-fff.control <- function(save.weight = TRUE, ...) {
-  list(save.weight = save.weight)
+fff.control <- function(save.weights = TRUE, ...) {
+  list(save.weights = save.weights)
 }
 
 
@@ -3836,11 +4023,11 @@ fff.control <- function(save.weight = TRUE, ...) {
 
 
 
+
 dbenini <- function(x, y0, shape, log = FALSE) {
   if (!is.logical(log.arg <- log) || length(log) != 1)
     stop("bad input for argument 'log'")
   rm(log)
-
 
 
   N <- max(length(x), length(shape), length(y0))
@@ -3853,17 +4040,24 @@ dbenini <- function(x, y0, shape, log = FALSE) {
   tempxok <- log(x[xok]/y0[xok])
   logdensity[xok] <- log(2*shape[xok]) - shape[xok] * tempxok^2 +
                     log(tempxok) - log(x[xok])
+  logdensity[is.infinite(x)] <- log(0)  # 20141209 KaiH
   if (log.arg) logdensity else exp(logdensity)
 }
 
 
-pbenini <- function(q, y0, shape) {
+
+pbenini <- function(q, y0, shape, lower.tail = TRUE, log.p = FALSE) {
   if (!is.Numeric(q))
     stop("bad input for argument 'q'")
   if (!is.Numeric(shape, positive = TRUE))
     stop("bad input for argument 'shape'")
   if (!is.Numeric(y0, positive = TRUE))
     stop("bad input for argument 'y0'")
+  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+    stop("bad input for argument 'lower.tail'")
+  if (!is.logical(log.p) || length(log.p) != 1)
+    stop("bad input for argument 'log.p'")
+
   N <- max(length(q), length(shape), length(y0))
   if (length(q)        != N) q        <- rep(q,        length.out = N)
   if (length(shape)    != N) shape    <- rep(shape,    length.out = N)
@@ -3871,21 +4065,57 @@ pbenini <- function(q, y0, shape) {
 
   ans <- y0 * 0
   ok <- q > y0
-  ans[ok] <-   -expm1(-shape[ok] * (log(q[ok]/y0[ok]))^2)
+
+
+  if (lower.tail) {
+    if (log.p) {
+      ans[ok] <- log(-expm1(-shape[ok] * (log(q[ok]/y0[ok]))^2))
+      ans[q <= y0 ] <- -Inf
+    } else {
+      ans[ok] <- -expm1(-shape[ok] * (log(q[ok]/y0[ok]))^2)
+    }
+  } else {
+    if (log.p) {
+      ans[ok] <- -shape[ok] * (log(q[ok]/y0[ok]))^2
+      ans[q <= y0] <- 0
+    } else {
+      ans[ok] <- exp(-shape[ok] * (log(q[ok]/y0[ok]))^2)
+      ans[q <= y0] <- 1
+    }
+  } 
+
   ans
 }
 
 
-qbenini <- function(p, y0, shape) {
-  if (!is.Numeric(p, positive = TRUE) ||
-      any(p >= 1)) 
-    stop("bad input for argument 'p'")
-  if (!is.Numeric(shape, positive = TRUE))
-  stop("bad input for argument 'shape'")
-  if (!is.Numeric(y0, positive = TRUE))
-    stop("bad input for argument 'y0'")
-  y0 * exp(sqrt(-log1p(-p) / shape))
+
+qbenini <- function(p, y0, shape, lower.tail = TRUE, log.p = FALSE) {
+
+
+  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+    stop("bad input for argument 'lower.tail'")
+  if (!is.logical(log.p) || length(log.p) != 1)
+    stop("bad input for argument 'log.p'")
+  
+  if (lower.tail) {
+    if (log.p) {
+      ln.p <- p
+      ans <- y0 * exp(sqrt(-log(-expm1(ln.p)) / shape))
+    } else {
+      ans <- y0 * exp(sqrt(-log1p(-p) / shape))
+    }
+  } else {
+    if (log.p) {
+      ln.p <- p
+      ans <- y0 * exp(sqrt(-ln.p / shape))
+    } else { 
+      ans <-  y0 * exp(sqrt(-log(p) / shape))
+    }
+  }
+  ans[y0 <= 0] <- NaN
+  ans
 }
+
 
 
 rbenini <- function(n, y0, shape) {
@@ -4076,6 +4306,9 @@ rbenini <- function(n, y0, shape) {
     if (abs(x) > floor(x)) { # zero prob for -ve or non-integer
       0
     } else
+    if (x == Inf) { # 20141215 KaiH  
+      0
+    } else
     if (x > bigx) {
       z <- (log(x) - meanlog) / sdlog
       (1 + (z^2 + log(x) - meanlog - 1) / (2 * x * sdlog^2)) *
@@ -4191,59 +4424,71 @@ rtriangle <- function(n, theta, lower = 0, upper = 1) {
 }
 
 
-qtriangle <- function(p, theta, lower = 0, upper = 1) {
-  if (!is.Numeric(p, positive = TRUE))
-    stop("bad input for argument 'p'")
-  if (!is.Numeric(theta))
-    stop("bad input for argument 'theta'")
-  if (!is.Numeric(lower))
-    stop("bad input for argument 'lower'")
-  if (!is.Numeric(upper))
-    stop("bad input for argument 'upper'")
-  if (!all(lower < theta & theta < upper))
-    stop("lower < theta < upper values are required")
 
+qtriangle <- function(p, theta, lower = 0, upper = 1,
+                      lower.tail = TRUE, log.p = FALSE) {
+
+  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+    stop("bad input for argument 'lower.tail'")
+  
+  if (!is.logical(log.p) || length(log.p) != 1)
+    stop("bad input for argument 'log.p'")
+  
   N <- max(length(p), length(theta), length(lower), length(upper))
   if (length(p)     != N) p     <- rep(p,     length.out = N)
   if (length(theta) != N) theta <- rep(theta, length.out = N)
   if (length(lower) != N) lower <- rep(lower, length.out = N)
   if (length(upper) != N) upper <- rep(upper, length.out = N)
 
-  bad <- (p < 0) | (p > 1)
-  if (any(bad))
-    stop("bad input for argument 'p'")
-
-  Neg <- (p <= (theta - lower)/(upper - lower))
   ans <- as.numeric(NA) * p
-  temp1 <- p * (upper - lower) * (theta - lower)
+  if (lower.tail) {
+    if (log.p) {
+      Neg <- (exp(ln.p) <= (theta - lower) / (upper - lower))
+      temp1 <- exp(ln.p) * (upper - lower) * (theta - lower)
+      Pos <- (exp(ln.p) >= (theta - lower) / (upper - lower))
+      pstar <- (exp(ln.p) - (theta - lower) / (upper - lower)) /
+               ((upper - theta) / (upper - lower))
+    } else {
+      Neg <- (p <= (theta - lower) / (upper - lower))
+      temp1 <- p * (upper - lower) * (theta - lower)
+      Pos <- (p >= (theta - lower) / (upper - lower))
+      pstar <- (p - (theta - lower) / (upper - lower)) /
+               ((upper - theta) / (upper - lower))
+    }
+  } else {
+    if (log.p) {
+      ln.p <- p
+      Neg <- (exp(ln.p) >= (upper- theta) / (upper - lower))
+      temp1 <- -expm1(ln.p) * (upper - lower) * (theta - lower)
+      Pos <- (exp(ln.p) <= (upper- theta) / (upper - lower))
+      pstar <- (-expm1(ln.p) - (theta - lower) / (upper - lower)) /
+               ((upper - theta) / (upper - lower))
+    } else { 
+      Neg <- (p >= (upper- theta) / (upper - lower))
+      temp1 <- (1 - p) * (upper - lower) * (theta - lower)
+      Pos <- (p <= (upper- theta) / (upper - lower))
+      pstar <- ((upper- theta) / (upper - lower) - p) /
+               ((upper - theta) / (upper - lower))
+    }
+  }
   ans[ Neg] <- lower[ Neg] + sqrt(temp1[ Neg])
-
-  Pos <- (p >= (theta - lower)/(upper - lower))
   if (any(Pos)) {
-    pstar <- (p - (theta - lower)/(upper - lower)) / (1 -
-            (theta - lower) / (upper - lower))
     qstar <- cbind(1 - sqrt(1-pstar), 1 + sqrt(1-pstar))
     qstar <- qstar[Pos,, drop = FALSE]
     qstar <- ifelse(qstar[, 1] >= 0 & qstar[, 1] <= 1,
-                   qstar[, 1],
-                   qstar[, 2])
+                    qstar[, 1],
+                    qstar[, 2])
     ans[Pos] <- theta[Pos] + qstar * (upper - theta)[Pos]
   }
+  
+  ans[theta < lower | theta > upper] <- NaN
   ans
 }
 
 
-ptriangle <- function(q, theta, lower = 0, upper = 1) {
-  if (!is.Numeric(q))
-    stop("bad input for argument 'q'")
-  if (!is.Numeric(theta))
-    stop("bad input for argument 'theta'")
-  if (!is.Numeric(lower))
-    stop("bad input for argument 'lower'")
-  if (!is.Numeric(upper))
-    stop("bad input for argument 'upper'")
-  if (!all(lower < theta & theta < upper))
-    stop("lower < theta < upper values are required")
+
+ptriangle <- function(q, theta, lower = 0, upper = 1, 
+                      lower.tail = TRUE, log.p = FALSE) {
 
   N <- max(length(q), length(theta), length(lower), length(upper))
   if (length(q)     != N) q     <- rep(q,     length.out = N)
@@ -4251,17 +4496,61 @@ ptriangle <- function(q, theta, lower = 0, upper = 1) {
   if (length(lower) != N) lower <- rep(lower, length.out = N)
   if (length(upper) != N) upper <- rep(upper, length.out = N)
 
-  ans <- q * 0
+  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+    stop("bad input for argument 'lower.tail'")
+  
+  if (!is.logical(log.p) || length(log.p) != 1)
+    stop("bad input for argument 'log.p'")
 
-  qstar <- (q - lower)^2 / ((upper-lower) * (theta-lower))
+  ans <- q * 0
+  qstar <- (q - lower)^2 / ((upper - lower) * (theta - lower))
   Neg <- (lower <= q & q <= theta)
-  ans[Neg] <- (qstar)[Neg]
+
+
+  ans[Neg] <- if (lower.tail) {
+    if (log.p) {
+      (log(qstar))[Neg]
+    } else {
+      qstar[Neg]
+    }
+  } else {
+    if (log.p) {
+      (log1p(-qstar))[Neg]
+    } else {
+      1 - qstar[Neg]
+    }
+  } 
 
   Pos <- (theta <= q & q <= upper)
   qstar <- (q - theta) / (upper-theta)
-  ans[Pos] <- ((theta-lower)/(upper-lower))[Pos] +
-             (qstar * (2-qstar) * (upper-theta) / (upper - lower))[Pos]
-  ans[q >= upper] <- 1
+  
+  if (lower.tail) {
+    if (log.p) {
+      ans[Pos] <- log(((theta-lower)/(upper-lower))[Pos] +
+                  (qstar * (2-qstar) * (upper-theta) / (upper - lower))[Pos])
+      ans[q <= lower] <- -Inf
+      ans[q >= upper] <- 0
+    } else {
+      ans[Pos] <- ((theta-lower)/(upper-lower))[Pos] +
+                  (qstar * (2-qstar) * (upper-theta) / (upper - lower))[Pos]
+      ans[q <= lower] <- 0
+      ans[q >= upper] <- 1
+    }
+  } else {
+    if (log.p) {
+      ans[Pos] <- log(((upper - theta)/(upper-lower))[Pos] +
+                  (qstar * (2-qstar) * (upper-theta) / (upper - lower))[Pos])
+      ans[q <= lower] <- 0
+      ans[q >= upper] <- -Inf
+    } else {
+      ans[Pos] <- ((upper - theta)/(upper-lower))[Pos] +
+                  (qstar * (2-qstar) * (upper-theta) / (upper - lower))[Pos]
+      ans[q <= lower] <- 1
+      ans[q >= upper] <- 0
+    }
+  } 
+
+  ans[theta < lower | theta > upper] <- NaN
   ans
 }
 
@@ -4271,7 +4560,7 @@ ptriangle <- function(q, theta, lower = 0, upper = 1) {
 
  triangle <-
   function(lower = 0, upper = 1,
-           link = elogit(min = 0, max = 1),
+           link = extlogit(min = 0, max = 1),
            itheta = NULL) {
 
 
@@ -4716,8 +5005,8 @@ loglaplace1.control <- function(maxit = 300, ...) {
 
 
 
-loglaplace2.control <- function(save.weight = TRUE, ...) {
-  list(save.weight = save.weight)
+loglaplace2.control <- function(save.weights = TRUE, ...) {
+  list(save.weights = save.weights)
 }
 
  loglaplace2 <- function(tau = NULL,

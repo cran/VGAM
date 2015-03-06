@@ -15,8 +15,9 @@
 }
 \usage{
 deexp(x, rate = 1, log = FALSE)
-peexp(q, rate = 1, log = FALSE)
-qeexp(p, rate = 1, Maxit.nr = 10, Tol.nr = 1.0e-6)
+peexp(q, rate = 1, lower.tail = TRUE, log.p = FALSE)
+qeexp(p, rate = 1, Maxit.nr = 10, Tol.nr = 1.0e-6,
+      lower.tail = TRUE, log.p = FALSE)
 reexp(n, rate = 1)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -28,6 +29,12 @@ reexp(n, rate = 1)
   }
   \item{n, rate, log}{
   See \code{\link[stats:Exponential]{rexp}}.
+
+
+  }
+  \item{lower.tail, log.p}{
+  Same meaning as in \code{\link[stats:Exponential]{pexp}}
+  or \code{\link[stats:Exponential]{qexp}}.
 
 
   }
@@ -80,7 +87,7 @@ very close to 0 or 1.
 %\bold{20}, 149--153.
 %
 %}
-\author{ T. W. Yee }
+\author{ T. W. Yee and Kai Huang }
 
 %\note{ 
 %The ``\code{q}'', as the first character of ``\code{qeunif}'',

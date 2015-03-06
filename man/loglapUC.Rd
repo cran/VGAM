@@ -18,9 +18,9 @@
 dloglap(x, location.ald = 0, scale.ald = 1,
         tau = 0.5, kappa = sqrt(tau/(1-tau)), log = FALSE)
 ploglap(q, location.ald = 0, scale.ald = 1,
-        tau = 0.5, kappa = sqrt(tau/(1-tau)))
+        tau = 0.5, kappa = sqrt(tau/(1-tau)), lower.tail = TRUE, log.p = FALSE)
 qloglap(p, location.ald = 0, scale.ald = 1,
-        tau = 0.5, kappa = sqrt(tau/(1-tau)))
+        tau = 0.5, kappa = sqrt(tau/(1-tau)), lower.tail = TRUE, log.p = FALSE)
 rloglap(n, location.ald = 0, scale.ald = 1,
         tau = 0.5, kappa = sqrt(tau/(1-tau)))
 }
@@ -51,6 +51,12 @@ rloglap(n, location.ald = 0, scale.ald = 1,
   \item{log}{
   if \code{TRUE}, probabilities \code{p} are given as \code{log(p)}.
   }
+  \item{lower.tail, log.p}{
+  Same meaning as in \code{\link[stats:Normal]{pnorm}}
+  or \code{\link[stats:Normal]{qnorm}}.
+
+
+  }
 
 }
 \details{
@@ -79,7 +85,7 @@ Log-Laplace distributions.
 
 
 }
-\author{ T. W. Yee }
+\author{ T. W. Yee and Kai Huang }
 %\note{
 %  The \pkg{VGAM} family function \code{\link{loglaplace3}}
 %  estimates the three parameters by maximum likelihood estimation.

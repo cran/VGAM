@@ -16,8 +16,8 @@
 }
 \usage{
 dmakeham(x, scale = 1, shape, epsilon = 0, log = FALSE)
-pmakeham(q, scale = 1, shape, epsilon = 0)
-qmakeham(p, scale = 1, shape, epsilon = 0)
+pmakeham(q, scale = 1, shape, epsilon = 0, lower.tail = TRUE, log.p = FALSE)
+qmakeham(p, scale = 1, shape, epsilon = 0, lower.tail = TRUE, log.p = FALSE)
 rmakeham(n, scale = 1, shape, epsilon = 0)
 }
 \arguments{
@@ -33,6 +33,13 @@ rmakeham(n, scale = 1, shape, epsilon = 0)
   If \code{log = TRUE} then the logarithm of the density is returned.
 
   }
+  \item{lower.tail, log.p}{
+  Same meaning as in \code{\link[stats:Normal]{pnorm}}
+  or \code{\link[stats:Normal]{qnorm}}.
+
+
+  }
+
   \item{scale, shape}{positive scale and shape parameters. }
   \item{epsilon}{another parameter. Must be non-negative. See below. }
 
@@ -45,7 +52,7 @@ rmakeham(n, scale = 1, shape, epsilon = 0)
 
 
 }
-\author{ T. W. Yee }
+\author{ T. W. Yee and Kai Huang }
 \details{
   See \code{\link{makeham}} for details.
   The default value of \code{epsilon = 0} corresponds

@@ -272,7 +272,7 @@ Reduced-rank vector generalized linear models.
 Yee, T. W. and Hadi, A. F. (2014)
 Row-column interaction models, with an R implementation.
 \emph{Computational Statistics},
-\bold{29}, in press.
+\bold{29}, 1427--1445.
 
 
 Goodman, L. A. (1981)

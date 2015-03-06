@@ -12,7 +12,7 @@
 }
 \usage{
 dzipf(x, N, s, log = FALSE)
-pzipf(q, N, s)
+pzipf(q, N, s, log.p = FALSE)
 }
 \arguments{
   \item{x, q}{vector of quantiles.}
@@ -31,7 +31,12 @@ pzipf(q, N, s)
 
 
   }
+  \item{log.p}{
+  Same meaning as in \code{\link[stats:Normal]{pnorm}}
+  or \code{\link[stats:Normal]{qnorm}}.
 
+
+  }
 }
 \value{
   \code{dzipf} gives the density, and

@@ -13,7 +13,7 @@
 }
 \usage{
 dhzeta(x, alpha, log = FALSE)
-phzeta(q, alpha)
+phzeta(q, alpha, log.p = FALSE)
 qhzeta(p, alpha)
 rhzeta(n, alpha)
 }
@@ -40,6 +40,12 @@ rhzeta(n, alpha)
   \item{log}{
   Logical.
   If \code{log = TRUE} then the logarithm of the density is returned.
+
+
+  }
+  \item{log.p}{
+  Same meaning as in \code{\link[stats:Normal]{pnorm}}
+  or \code{\link[stats:Normal]{qnorm}}.
 
 
   }
@@ -70,7 +76,7 @@ rhzeta(n, alpha)
 %
 %
 %}
-\author{ T. W. Yee }
+\author{ T. W. Yee and Kai Huang }
 \note{ 
   Given some response data, the \pkg{VGAM} family function
   \code{\link{hzeta}} estimates the parameter \code{alpha}.

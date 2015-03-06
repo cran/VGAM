@@ -8,11 +8,16 @@
 
 }
 \usage{
-fisk(lshape1.a = "loge", lscale = "loge",
-     ishape1.a = NULL, iscale = NULL, zero = NULL)
+fisk(lss, lshape1.a = "loge", lscale = "loge",
+          ishape1.a = NULL, iscale = NULL, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
+  \item{lss}{ See \code{\link{CommonVGAMffArguments}} for important information.
+  
+  
+  }
+
   \item{lshape1.a, lscale}{
   Parameter link functions applied to the
   (positive) parameters \code{a} and \code{scale}.
@@ -92,9 +97,9 @@ Hoboken, NJ: Wiley-Interscience.
 }
 
 \examples{
-fdata <- data.frame(y = rfisk(n = 200, exp(1), exp(2)))
-fit <- vglm(y ~ 1, fisk, data = fdata, trace = TRUE)
-fit <- vglm(y ~ 1, fisk(ishape1.a = exp(1)), data = fdata, trace = TRUE)
+fdata <- data.frame(y = rfisk(n = 200, shape = exp(1), scale = exp(2)))
+fit <- vglm(y ~ 1, fisk(lss = FALSE), data = fdata, trace = TRUE)
+fit <- vglm(y ~ 1, fisk(lss = FALSE, ishape1.a = exp(1)), data = fdata, trace = TRUE)
 coef(fit, matrix = TRUE)
 Coef(fit)
 summary(fit)

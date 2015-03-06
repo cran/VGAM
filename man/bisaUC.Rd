@@ -12,8 +12,8 @@
 }
 \usage{
 dbisa(x, scale = 1, shape, log = FALSE)
-pbisa(q, scale = 1, shape)
-qbisa(p, scale = 1, shape)
+pbisa(q, scale = 1, shape, lower.tail = TRUE, log.p = FALSE)
+qbisa(p, scale = 1, shape, lower.tail = TRUE, log.p = FALSE)
 rbisa(n, scale = 1, shape)
 }
 \arguments{
@@ -35,6 +35,12 @@ rbisa(n, scale = 1, shape)
 
 
   }
+  \item{lower.tail, log.p}{
+  Same meaning as in \code{\link[stats:Normal]{pnorm}}
+  or \code{\link[stats:Normal]{qnorm}}.
+
+
+  }
 }
 \value{
   \code{dbisa} gives the density,
@@ -44,7 +50,7 @@ rbisa(n, scale = 1, shape)
 
 
 }
-\author{ T. W. Yee }
+\author{ T. W. Yee  and Kai Huang }
 \details{
   The Birnbaum-Saunders distribution
   is a distribution which is used in survival analysis.

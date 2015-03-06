@@ -11,10 +11,11 @@
 \usage{
 zibinomial(lpstr0 = "logit", lprob = "logit",
            type.fitted = c("mean", "pobs0", "pstr0", "onempstr0"),
-           ipstr0 = NULL, zero = NULL, mv = FALSE, imethod = 1)
+           ipstr0 = NULL, zero = NULL, multiple.responses = FALSE, imethod = 1)
 zibinomialff(lprob = "logit", lonempstr0 = "logit",
              type.fitted = c("mean", "pobs0", "pstr0", "onempstr0"),
-             ionempstr0 = NULL, zero = 2, mv = FALSE, imethod = 1)
+             ionempstr0 = NULL, zero = 2, multiple.responses = FALSE,
+             imethod = 1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -62,10 +63,12 @@ zibinomialff(lprob = "logit", lonempstr0 = "logit",
 % See \code{\link{CommonVGAMffArguments}} for more information.
 
 % }
-  \item{mv}{ 
-  Logical. Currently it must be \code{FALSE} to mean the function does
-  not handle multivariate responses. This is to remain compatible with
-  the same argument in \code{\link{binomialff}}.
+  \item{multiple.responses}{ 
+  Logical. Currently it must be \code{FALSE} to mean the
+  function does not handle multivariate responses. This
+  is to remain compatible with the same argument in
+  \code{\link{binomialff}}.
+
 
   }
   \item{zero, imethod}{ 
@@ -158,7 +161,7 @@ Fitting and interpreting occupancy models.
 % the \code{misc} slot has a component called \code{pobs0} which is the
 % estimate of the probability of an observed 0, i.e., \eqn{P(Y=0)}.
 % This family function currently cannot handle a multivariate
-% response (only \code{mv = FALSE} can be handled).
+% response (only \code{multiple.responses = FALSE} can be handled).
 
 % 20130316; adding this:
   Estimated probabilities of a structural zero and an 

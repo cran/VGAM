@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2014 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -37,7 +37,7 @@ ToString <- function(x)
            type.fitted = c("mean", "pobs0", "pstr0", "onempstr0"),
            probs.x = c(0.15, 0.85),
            probs.y = c(0.25, 0.50, 0.75),
-           mv = FALSE, earg.link = FALSE,
+           multiple.responses = FALSE, earg.link = FALSE,
            whitespace = FALSE, bred = FALSE, lss = TRUE,
            oim = FALSE, nsimEIM = 100,
            zero = NULL) {
@@ -839,10 +839,10 @@ care.exp <- function(x,
 
 
 
-fsqrt <- function(theta,  #  = NA  , = NULL,
-                  min = 0, max = 1, mux = sqrt(2),
-                  inverse = FALSE, deriv = 0,
-                  short = TRUE, tag = FALSE) {
+foldsqrt <- function(theta,  #  = NA  , = NULL,
+                     min = 0, max = 1, mux = sqrt(2),
+                     inverse = FALSE, deriv = 0,
+                     short = TRUE, tag = FALSE) {
   if (!is.Numeric(min, length.arg = 1))
     stop("bad input for 'min' component")
   if (!is.Numeric(max, length.arg = 1))
@@ -854,7 +854,7 @@ fsqrt <- function(theta,  #  = NA  , = NULL,
 
   if (is.character(theta)) {
     string <- if (short) 
-      paste("fsqrt(", theta, ")", sep = "") else {
+      paste("foldsqrt(", theta, ")", sep = "") else {
       if (abs(mux-sqrt(2)) < 1.0e-10)
         paste("sqrt(2*", theta, ") - sqrt(2*(1-", theta, "))",
               sep = "") else
@@ -940,7 +940,8 @@ fsqrt <- function(theta,  #  = NA  , = NULL,
 
 
 
- elogit <- function(theta,
+
+ extlogit <- function(theta,
                     min = 0, max = 1,
                     bminvalue = NULL,
                     bmaxvalue = NULL,
@@ -957,10 +958,10 @@ fsqrt <- function(theta,  #  = NA  , = NULL,
   if (is.character(theta)) {
     string <- if (short) {
       if (A != 0 || B != 1)
-        paste("elogit(", theta,
+        paste("extlogit(", theta,
               ", min = ", A,
               ", max = ", B, ")", sep = "") else
-        paste("elogit(", theta, ")", sep = "")
+        paste("extlogit(", theta, ")", sep = "")
     } else {
       paste("log((", theta, "-min)/(max-", theta, "))", sep = "")
     }
@@ -1616,6 +1617,58 @@ fsqrt <- function(theta,  #  = NA  , = NULL,
      ans
   }
 }
+
+
+
+
+
+
+linkfun.vglm <- function(object, earg = FALSE, ...) {
+  if (!any(slotNames(object) == "extra"))
+    stop("cannot access the 'extra' slot of the object")
+  if (!any(slotNames(object) == "misc"))
+    stop("cannot access the 'misc' slot of the object")
+
+  M <- npred(object)
+
+  misc <- object@misc
+  LINKS1 <- misc$link
+  EARGS1 <- misc$earg
+
+  extra <- object@extra
+  LINKS2 <- extra$link
+  EARGS2 <- extra$earg
+
+  if (length(LINKS1) != M && length(LINKS2) != M) {
+    if (LINKS1 != "multilogit" && LINKS2 != "multilogit")
+      warning("the length of the 'links' component is not ", M)
+  }
+
+  if (length(LINKS1)) {
+    if (earg) list(link = LINKS1, earg = EARGS1) else LINKS1
+  } else {
+    if (earg) list(link = LINKS2, earg = EARGS2) else LINKS2
+  }
+}
+
+
+
+if (!isGeneric("linkfun"))
+  setGeneric("linkfun", function(object, ...) standardGeneric("linkfun"))
+
+
+
+setMethod("linkfun", "vglm", function(object, ...)
+    linkfun.vglm(object, ...))
+
+
+
+
+
+
+
+
+
 
 
 

@@ -12,8 +12,8 @@
 }
 \usage{
 dkumar(x, shape1, shape2, log = FALSE)
-pkumar(q, shape1, shape2)
-qkumar(p, shape1, shape2)
+pkumar(q, shape1, shape2, lower.tail = TRUE, log.p = FALSE)
+qkumar(p, shape1, shape2, lower.tail = TRUE, log.p = FALSE)
 rkumar(n, shape1, shape2)
 }
 \arguments{
@@ -29,7 +29,12 @@ rkumar(n, shape1, shape2)
   If \code{log = TRUE} then the logarithm of the density is returned.
 
   }
+  \item{lower.tail, log.p}{
+  Same meaning as in \code{\link[stats:Normal]{pnorm}}
+  or \code{\link[stats:Normal]{qnorm}}.
 
+
+  }
 }
 \value{
   \code{dkumar} gives the density,
@@ -38,7 +43,7 @@ rkumar(n, shape1, shape2)
   \code{rkumar} generates random deviates.
 
 }
-\author{ T. W. Yee }
+\author{ T. W. Yee and Kai Huang }
 \details{
   See \code{\link{kumar}}, the \pkg{VGAM} family function
   for estimating the parameters, 

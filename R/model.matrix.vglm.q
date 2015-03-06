@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2014 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -532,7 +532,9 @@ npred.vlm <- function(object,
     if (is.numeric(ans.infos)) ans.infos else
     if (is.numeric(ans.y    )) ans.y     else
     ans
-  } else ans
+  } else {
+    ans
+  }
 
   ans
 }

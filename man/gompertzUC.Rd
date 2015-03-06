@@ -16,8 +16,8 @@
 }
 \usage{
 dgompertz(x, scale = 1, shape, log = FALSE)
-pgompertz(q, scale = 1, shape)
-qgompertz(p, scale = 1, shape)
+pgompertz(q, scale = 1, shape, lower.tail = TRUE, log.p = FALSE)
+qgompertz(p, scale = 1, shape, lower.tail = TRUE, log.p = FALSE)
 rgompertz(n, scale = 1, shape)
 }
 \arguments{
@@ -34,6 +34,12 @@ rgompertz(n, scale = 1, shape)
 
 
   }
+  \item{lower.tail, log.p}{
+  Same meaning as in \code{\link[stats:Normal]{pnorm}}
+  or \code{\link[stats:Normal]{qnorm}}.
+
+
+  }
   \item{scale, shape}{positive scale and shape parameters. }
 
 }
@@ -45,7 +51,7 @@ rgompertz(n, scale = 1, shape)
 
 
 }
-\author{ T. W. Yee }
+\author{ T. W. Yee and Kai Huang }
 \details{
   See \code{\link{gompertz}} for details.
 

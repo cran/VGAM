@@ -9,16 +9,16 @@
 
 }
 \usage{
-quasibinomialff(link = "logit", mv = FALSE, onedpar = !mv,
-                parallel = FALSE, zero = NULL)
+quasibinomialff(link = "logit", multiple.responses = FALSE,
+                onedpar = !multiple.responses, parallel = FALSE, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{link}{ Link function. See \code{\link{Links}} for more choices.
 
   }
-  \item{mv}{ 
-   Multivariate response? If \code{TRUE}, then the response is interpreted
+  \item{multiple.responses}{ 
+   Multiple responses? If \code{TRUE}, then the response is interpreted
    as \eqn{M} binary responses, where \eqn{M} is the number of columns
    of the response matrix. In this case, the response matrix should have
    zero/one values only.
@@ -31,7 +31,8 @@ quasibinomialff(link = "logit", mv = FALSE, onedpar = !mv,
 
   }
   \item{onedpar}{ 
-  One dispersion parameter? If \code{mv}, then a separate dispersion
+  One dispersion parameter? If \code{multiple.responses}, then
+  a separate dispersion
   parameter will be computed for each response (column), by default.
   Setting \code{onedpar=TRUE} will pool them so that there is only one
   dispersion parameter to be estimated.
@@ -39,7 +40,8 @@ quasibinomialff(link = "logit", mv = FALSE, onedpar = !mv,
 
   }
   \item{parallel}{ 
-  A logical or formula. Used only if \code{mv} is \code{TRUE}.  This
+  A logical or formula. Used only if \code{multiple.responses}
+  is \code{TRUE}.  This
   argument allows for the parallelism assumption whereby the regression
   coefficients for a variable is constrained to be equal over the \eqn{M}
   linear/additive predictors.
@@ -66,10 +68,11 @@ quasibinomialff(link = "logit", mv = FALSE, onedpar = !mv,
   is more common in practice.
 
 
-  Setting \code{mv=TRUE} is necessary when fitting a Quadratic RR-VGLM
-  (see \code{\link{cqo}}) because the response will be a matrix of
-  \eqn{M} columns (e.g., one column per species). Then there will be
-  \eqn{M} dispersion parameters (one per column of the response).
+  Setting \code{multiple.responses=TRUE} is necessary
+  when fitting a Quadratic RR-VGLM (see \code{\link{cqo}})
+  because the response will be a matrix of \eqn{M} columns
+  (e.g., one column per species). Then there will be \eqn{M}
+  dispersion parameters (one per column of the response).
 
 
 }
@@ -92,17 +95,19 @@ quasibinomialff(link = "logit", mv = FALSE, onedpar = !mv,
 }
 \author{ Thomas W. Yee }
 \note{
-  If \code{mv} is \code{FALSE} (the default), then the response can be
-  of one of three formats: a factor (first level taken as success), a
-  vector of proportions of success, or a 2-column matrix (first column =
-  successes) of counts.  The argument \code{weights} in the modelling
-  function can also be specified. In particular, for a general vector
-  of proportions, you will need to specify \code{weights} because the
-  number of trials is needed.
+  If \code{multiple.responses} is \code{FALSE} (the default),
+  then the response can be of one of three formats: a factor
+  (first level taken as success), a vector of proportions of
+  success, or a 2-column matrix (first column = successes)
+  of counts.  The argument \code{weights} in the modelling
+  function can also be specified. In particular, for a
+  general vector of proportions, you will need to specify
+  \code{weights} because the number of trials is needed.
 
 
-  If \code{mv} is \code{TRUE}, then the matrix response can only be of
-  one format: a matrix of 1's and 0's (1=success).
+  If \code{multiple.responses} is \code{TRUE}, then the
+  matrix response can only be of one format: a matrix of
+  1s and 0s (1=success).
 
 
   This function is only a front-end to the \pkg{VGAM} family function

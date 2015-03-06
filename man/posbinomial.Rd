@@ -7,13 +7,13 @@
 
 }
 \usage{
-posbinomial(link = "logit", mv = FALSE, parallel = FALSE,
+posbinomial(link = "logit", multiple.responses = FALSE, parallel = FALSE,
             omit.constant = FALSE, p.small = 1e-4, no.warning = FALSE,
             zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{link, mv, parallel, zero}{
+  \item{link, multiple.responses, parallel, zero}{
   Details at \code{\link{CommonVGAMffArguments}}.
 
 
@@ -106,11 +106,11 @@ Drapers Company Research Memoirs.
   \code{\link{binomialff}}.
 
 
-  If \code{mv = TRUE} then each column of the matrix response
+  If \code{multiple.responses = TRUE} then each column of the matrix response
   should be a count (the number of successes), and the
   \code{weights} argument should be a matrix of the same dimension
   as the response containing the number of trials.
-  If \code{mv = FALSE} then the response input should be the same
+  If \code{multiple.responses = FALSE} then the response input should be the same
   as \code{\link{binomialff}}.
 
 

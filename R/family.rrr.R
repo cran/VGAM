@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2014 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -1789,11 +1789,11 @@ get.rrvglm.se1 <- function(fit, omit13 = FALSE, kill.all = FALSE,
                vlm(bb,
                    constraints = Hlist, criterion = "d", weights = wz,
                    data = bbdata,
-                   save.weight = TRUE, smart = FALSE, trace = trace.arg,
+                   save.weights = TRUE, smart = FALSE, trace = trace.arg,
                    x.arg = TRUE) else
                vlm(bb,
                    constraints = Hlist, criterion = "d", weights = wz,
-                   save.weight = TRUE, smart = FALSE, trace = trace.arg,
+                   save.weights = TRUE, smart = FALSE, trace = trace.arg,
                    x.arg = TRUE)
 
 

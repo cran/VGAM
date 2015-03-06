@@ -148,7 +148,7 @@ TypicalVGAMlinkFunction(theta, someParameter = 0,
   \code{\link{probit}},
   \code{\link{cloglog}},
   \code{\link{cauchit}},
-  \code{\link{fsqrt}},
+  \code{\link{foldsqrt}},
   \code{\link{logc}},
   \code{\link{golf}},
   \code{\link{polf}},
@@ -171,7 +171,7 @@ TypicalVGAMlinkFunction(theta, someParameter = 0,
 
 
   For parameters between \eqn{A} and \eqn{B}:
-  \code{\link{elogit}},
+  \code{\link{extlogit}},
   \code{\link{logoff}} (\eqn{B = \infty}{B = Inf}).
 
 
@@ -194,6 +194,7 @@ TypicalVGAMlinkFunction(theta, someParameter = 0,
 
 \seealso{
   \code{\link{TypicalVGAMfamilyFunction}},
+  \code{\link{linkfun}},
   \code{\link{vglm}},
   \code{\link{vgam}},
   \code{\link{rrvglm}}.

@@ -20,6 +20,11 @@ bilogistic(llocation = "identitylink", lscale = "loge",
   See \code{\link{Links}} for more choices.
 
 
+
+% 20150227; yettodo: expand/change llocation to lloc1 and lloc2.
+
+
+
   }
   \item{lscale}{
   Parameter link function applied to both

@@ -28,20 +28,28 @@
 }
 \usage{
 dparetoIV(x, location = 0, scale = 1, inequality = 1, shape = 1, log = FALSE)
-pparetoIV(q, location = 0, scale = 1, inequality = 1, shape = 1)
-qparetoIV(p, location = 0, scale = 1, inequality = 1, shape = 1)
+pparetoIV(q, location = 0, scale = 1, inequality = 1, shape = 1,
+          lower.tail = TRUE, log.p = FALSE)
+qparetoIV(p, location = 0, scale = 1, inequality = 1, shape = 1,
+          lower.tail = TRUE, log.p = FALSE)
 rparetoIV(n, location = 0, scale = 1, inequality = 1, shape = 1)
 dparetoIII(x, location = 0, scale = 1, inequality = 1, log = FALSE)
-pparetoIII(q, location = 0, scale = 1, inequality = 1)
-qparetoIII(p, location = 0, scale = 1, inequality = 1)
+pparetoIII(q, location = 0, scale = 1, inequality = 1,
+           lower.tail = TRUE, log.p = FALSE)
+qparetoIII(p, location = 0, scale = 1, inequality = 1,
+           lower.tail = TRUE, log.p = FALSE)
 rparetoIII(n, location = 0, scale = 1, inequality = 1)
 dparetoII(x, location = 0, scale = 1, shape = 1, log = FALSE)
-pparetoII(q, location = 0, scale = 1, shape = 1)
-qparetoII(p, location = 0, scale = 1, shape = 1)
+pparetoII(q, location = 0, scale = 1, shape = 1,
+          lower.tail = TRUE, log.p = FALSE)
+qparetoII(p, location = 0, scale = 1, shape = 1,
+          lower.tail = TRUE, log.p = FALSE)
 rparetoII(n, location = 0, scale = 1, shape = 1)
 dparetoI(x, scale = 1, shape = 1, log = FALSE)
-pparetoI(q, scale = 1, shape = 1)
-qparetoI(p, scale = 1, shape = 1)
+pparetoI(q, scale = 1, shape = 1,
+         lower.tail = TRUE, log.p = FALSE)
+qparetoI(p, scale = 1, shape = 1,
+         lower.tail = TRUE, log.p = FALSE)
 rparetoI(n, scale = 1, shape = 1)
 }
 \arguments{
@@ -61,6 +69,12 @@ rparetoI(n, scale = 1, shape = 1)
   \item{log}{
   Logical.
   If \code{log = TRUE} then the logarithm of the density is returned.
+
+  }
+  \item{lower.tail, log.p}{
+  Same meaning as in \code{\link[stats:Normal]{pnorm}}
+  or \code{\link[stats:Normal]{qnorm}}.
+
 
   }
 
@@ -88,7 +102,7 @@ Fairland, Maryland: International Cooperative Publishing House.
 
 
 }
-\author{ T. W. Yee }
+\author{ T. W. Yee and Kai Huang }
 \details{
   For the formulas and other details 
   see \code{\link{paretoIV}}.

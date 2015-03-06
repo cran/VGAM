@@ -76,7 +76,8 @@ nbcanlink(theta, size = NULL, wrt.eta = NULL, bvalue = NULL,
 
   Yee, T. W. (2014)
   Reduced-rank vector generalized linear models with two linear predictors.
-  \emph{Computational Statistics and Data Analysis}.
+  \emph{Computational Statistics and Data Analysis},
+  \bold{71}, 889--902.
 
 
   Hilbe, J. M. (2011)

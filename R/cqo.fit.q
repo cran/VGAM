@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2014 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -317,7 +317,7 @@ cqo.fit <- function(x, y, w = rep(1, length(x[, 1])),
   nonparametric <- FALSE
   epsilon <- control$epsilon
   maxitl <- control$maxitl
-  save.weight <- control$save.weight
+  save.weights <- control$save.weights
   trace <- control$trace
   orig.stepsize <- control$stepsize
 
@@ -546,7 +546,7 @@ ny <- names(y)
     if (M == 1) {
       wz <- as.vector(wz)  # Convert wz into a vector
     }
-    fit$weights <- if (save.weight) wz else NULL
+    fit$weights <- if (save.weights) wz else NULL
 
     misc <- list(
         colnames.x = xn,

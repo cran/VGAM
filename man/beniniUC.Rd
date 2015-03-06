@@ -14,8 +14,8 @@
 }
 \usage{
 dbenini(x, y0, shape, log = FALSE)
-pbenini(q, y0, shape)
-qbenini(p, y0, shape)
+pbenini(q, y0, shape, lower.tail = TRUE, log.p = FALSE)
+qbenini(p, y0, shape, lower.tail = TRUE, log.p = FALSE)
 rbenini(n, y0, shape)
 }
 \arguments{
@@ -40,6 +40,12 @@ rbenini(n, y0, shape)
 
 
   }
+  \item{lower.tail, log.p}{
+  Same meaning as in \code{\link[stats:Normal]{pnorm}}
+  or \code{\link[stats:Normal]{qnorm}}.
+
+
+  }
 
 }
 \value{
@@ -59,7 +65,7 @@ Hoboken, NJ, USA: Wiley-Interscience.
 
 
 }
-\author{ T. W. Yee }
+\author{ T. W. Yee and Kai Huang }
 \details{
   See \code{\link{benini1}}, the \pkg{VGAM} family function
   for estimating the parameter \eqn{s} by maximum likelihood estimation,

@@ -13,8 +13,8 @@
 }
 \usage{
 dlino(x, shape1, shape2, lambda = 1, log = FALSE)
-plino(q, shape1, shape2, lambda = 1)
-qlino(p, shape1, shape2, lambda = 1)
+plino(q, shape1, shape2, lambda = 1, lower.tail = TRUE, log.p = FALSE)
+qlino(p, shape1, shape2, lambda = 1, lower.tail = TRUE, log.p = FALSE)
 rlino(n, shape1, shape2, lambda = 1)
 }
 \arguments{
@@ -29,6 +29,12 @@ rlino(n, shape1, shape2, lambda = 1)
   \item{log}{
   Logical.
   If \code{log = TRUE} then the logarithm of the density is returned.
+
+  }
+  \item{lower.tail, log.p}{
+  Same meaning as in \code{\link[stats:Normal]{pnorm}}
+  or \code{\link[stats:Normal]{qnorm}}.
+
 
   }
 }
@@ -54,7 +60,7 @@ rlino(n, shape1, shape2, lambda = 1)
 %}
 
 
-\author{ T. W. Yee }
+\author{ T. W. Yee and Kai Huang }
 \details{
   See \code{\link{lino}}, the \pkg{VGAM} family function
   for estimating the parameters, 

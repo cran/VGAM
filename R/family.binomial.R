@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2014 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -67,8 +67,8 @@ process.binomial2.data.VGAM <- expression({
 
 
 
-betabinomial.control <- function(save.weight = TRUE, ...) {
-  list(save.weight = save.weight)
+betabinomial.control <- function(save.weights = TRUE, ...) {
+  list(save.weights = save.weights)
 }
 
 
@@ -119,8 +119,8 @@ betabinomial.control <- function(save.weight = TRUE, ...) {
     if (!all(w == 1))
       extra$orig.w <- w
 
-    if (is.null( .nsimEIM)) {
-      save.weight <- control$save.weight <- FALSE
+    if (is.null( .nsimEIM )) {
+      save.weights <- control$save.weights <- FALSE
     }
 
     mustart.orig <- mustart
@@ -785,8 +785,8 @@ rbinom2.rho <-
 
 
 
-binom2.rho.control <- function(save.weight = TRUE, ...) {
-  list(save.weight = save.weight)
+binom2.rho.control <- function(save.weights = TRUE, ...) {
+  list(save.weights = save.weights)
 }
 
 
@@ -866,8 +866,8 @@ binom2.rho.control <- function(save.weight = TRUE, ...) {
         namesof("mu2", .lmu12 , earg = .emu12 , short = TRUE),
         namesof("rho", .lrho ,  earg = .erho,  short = TRUE))
 
-    if (is.null( .nsimEIM)) {
-      save.weight <- control$save.weight <- FALSE
+    if (is.null( .nsimEIM )) {
+      save.weights <- control$save.weights <- FALSE
     }
 
 
@@ -1583,38 +1583,41 @@ my.dbinom <- function(x,
 
 
 
-betabinomialff.control <- function(save.weight = TRUE, ...) {
-    list(save.weight = save.weight)
+betabinomialff.control <- function(save.weights = TRUE, ...) {
+    list(save.weights = save.weights)
 }
 
 
 
 
  betabinomialff <-
-  function(lshape12 = "loge",
-           i1 = 1, i2 = NULL, imethod = 1,
+  function(lshape1 = "loge",lshape2 = "loge",
+           ishape1 = 1, ishape2 = NULL, imethod = 1,
            ishrinkage = 0.95, nsimEIM = NULL,
            zero = NULL) {
 
 
 
 
-  lshape12 <- as.list(substitute(lshape12))
-  earg <- link2list(lshape12)
-  lshape12 <- attr(earg, "function.name")
+  lshape1 <- as.list(substitute(lshape1))
+  earg1 <- link2list(lshape1)
+  lshape1 <- attr(earg1, "function.name")
 
 
+  lshape2 <- as.list(substitute(lshape2))
+  earg2 <- link2list(lshape2)
+  lshape2 <- attr(earg2, "function.name")
 
 
-  if (!is.Numeric(i1, positive = TRUE))
-    stop("bad input for argument 'i1'")
+  if (!is.Numeric(ishape1, positive = TRUE))
+    stop("bad input for argument 'ishape1'")
   if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
      imethod > 3)
     stop("argument 'imethod' must be 1, 2 or 3")
 
-  if (length(i2) && !is.Numeric(i2, positive = TRUE))
-    stop("bad input for argument 'i2'")
+  if (length(ishape2) && !is.Numeric(ishape2, positive = TRUE))
+    stop("bad input for argument 'ishape2'")
 
   if (!is.null(nsimEIM)) {
     if (!is.Numeric(nsimEIM, length.arg = 1,
@@ -1628,8 +1631,8 @@ betabinomialff.control <- function(save.weight = TRUE, ...) {
   new("vglmff",
   blurb = c("Beta-binomial model\n",
             "Links:    ",
-            namesof("shape1", lshape12, earg = earg), ", ",
-            namesof("shape2", lshape12, earg = earg), "\n",
+            namesof("shape1", lshape1, earg = earg1), ", ",
+            namesof("shape2", lshape2, earg = earg2), "\n",
             "Mean:     mu = shape1 / (shape1+shape2)", "\n",
             "Variance: mu * (1-mu) * (1+(w-1)*rho) / w, ",
                        "where rho = 1 / (shape1+shape2+1)"),
@@ -1640,8 +1643,8 @@ betabinomialff.control <- function(save.weight = TRUE, ...) {
     if (!all(w == 1))
       extra$orig.w <- w
 
-    if (is.null( .nsimEIM)) {
-      save.weight <- control$save.weight <- FALSE
+    if (is.null( .nsimEIM )) {
+      save.weights <- control$save.weights <- FALSE
     }
 
     mustart.orig <- mustart
@@ -1649,17 +1652,17 @@ betabinomialff.control <- function(save.weight = TRUE, ...) {
     if (length(mustart.orig))
       mustart <- mustart.orig  # Retain it if inputted
     predictors.names <-
-         c(namesof("shape1", .lshape12 , earg = .earg, tag = FALSE),
-           namesof("shape2", .lshape12 , earg = .earg, tag = FALSE))
+         c(namesof("shape1", .lshape1 , earg = .earg1 , tag = FALSE),
+           namesof("shape2", .lshape2 , earg = .earg2 , tag = FALSE))
 
     if (!length(etastart)) {
 
       mustart.use <- if (length(mustart.orig)) mustart.orig else
                     mustart
 
-      shape1 <- rep( .i1 , len = n)
-      shape2 <- if (length( .i2 )) {
-                  rep( .i2 , len = n)
+      shape1 <- rep( .ishape1 , len = n)
+      shape2 <- if (length( .ishape2 )) {
+                  rep( .ishape2 , len = n)
                 } else if (length(mustart.orig)) {
                   shape1 * (1 / mustart.use - 1)
                 } else if ( .imethod == 1) {
@@ -1677,31 +1680,35 @@ betabinomialff.control <- function(save.weight = TRUE, ...) {
          warning("the response (as counts) does not appear to ",
                  "be integer-valued. Am rounding to integer values.")
       ycounts <- round(ycounts)  # Make sure it is an integer
-      etastart <- cbind(theta2eta(shape1, .lshape12 , earg = .earg ),
-                        theta2eta(shape2, .lshape12 , earg = .earg ))
+      etastart <- cbind(theta2eta(shape1, .lshape1 , earg = .earg1 ),
+                        theta2eta(shape2, .lshape2 , earg = .earg2 ))
       mustart <- NULL  # Since etastart has been computed.
     }
-  }), list( .lshape12 = lshape12, .earg = earg, .i1 = i1, .i2 = i2,
+  }), list( .lshape1 = lshape1, .lshape2 = lshape2,
+            .earg1 = earg1, .earg2 = earg2,
+            .ishape1 = ishape1, .ishape2 = ishape2,
             .nsimEIM = nsimEIM,
             .imethod = imethod, .ishrinkage = ishrinkage ))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
-    shape1 <- eta2theta(eta[, 1], .lshape12 , earg = .earg )
-    shape2 <- eta2theta(eta[, 2], .lshape12 , earg = .earg )
+    shape1 <- eta2theta(eta[, 1], .lshape1 , earg = .earg1 )
+    shape2 <- eta2theta(eta[, 2], .lshape2 , earg = .earg2 )
     shape1 / (shape1 + shape2)
-  }, list( .lshape12 = lshape12, .earg = earg ))),
+  }, list( .lshape1 = lshape1, .lshape2 = lshape2,
+           .earg1 = earg1, .earg2 = earg2 ))),
   last = eval(substitute(expression({
-    misc$link <-    c("shape1" = .lshape12 , "shape2" = .lshape12 )
+    misc$link <-    c("shape1" = .lshape1 , "shape2" = .lshape2 )
 
-    misc$earg <- list("shape1" = .earg ,     "shape2" = .earg )
+    misc$earg <- list("shape1" = .earg1 ,   "shape2" = .earg2   )
 
-    shape1 <- eta2theta(eta[, 1], .lshape12 , earg = .earg )
-    shape2 <- eta2theta(eta[, 2], .lshape12 , earg = .earg )
+    shape1 <- eta2theta(eta[, 1], .lshape1 , earg = .earg1 )
+    shape2 <- eta2theta(eta[, 2], .lshape2 , earg = .earg2 )
 
     misc$rho <- 1 / (shape1 + shape2 + 1)
     misc$expected <- TRUE
     misc$nsimEIM <- .nsimEIM
     misc$zero <- .zero
-  }), list( .lshape12 = lshape12, .earg = earg,
+  }), list( .lshape1 = lshape1, .lshape2 = lshape2,
+            .earg1 = earg1, .earg2 = earg2,
             .nsimEIM = nsimEIM, .zero = zero ))),
   loglikelihood = eval(substitute(
     function(mu, y, w, residuals = FALSE, eta, extra = NULL,
@@ -1714,8 +1721,8 @@ betabinomialff.control <- function(save.weight = TRUE, ...) {
       warning("converting 'ycounts' to integer in @loglikelihood")
     ycounts <- round(ycounts)
 
-    shape1 <- eta2theta(eta[, 1], .lshape12 , earg = .earg )
-    shape2 <- eta2theta(eta[, 2], .lshape12 , earg = .earg )
+    shape1 <- eta2theta(eta[, 1], .lshape1 , earg = .earg1 )
+    shape2 <- eta2theta(eta[, 2], .lshape2 , earg = .earg2 )
     nvec <- if (is.numeric(extra$orig.w)) round(w / extra$orig.w) else
               round(w)
     if (residuals) {
@@ -1731,7 +1738,8 @@ betabinomialff.control <- function(save.weight = TRUE, ...) {
         ll.elts
       }
     }
-  }, list( .lshape12 = lshape12, .earg = earg ))),
+  }, list( .lshape1 = lshape1, .lshape2 = lshape2,
+           .earg1 = earg1, .earg2 = earg2 ))),
   vfamily = c("betabinomialff"),
 
 
@@ -1748,14 +1756,15 @@ betabinomialff.control <- function(save.weight = TRUE, ...) {
     w <- pwts
     eta <- predict(object)
     extra <- object@extra
-    shape1 <- eta2theta(eta[, 1], .lshape12 , earg = .earg )
-    shape2 <- eta2theta(eta[, 2], .lshape12 , earg = .earg )
+    shape1 <- eta2theta(eta[, 1], .lshape1 , earg = .earg1 )
+    shape2 <- eta2theta(eta[, 2], .lshape2 , earg = .earg2 )
     nvec <- if (is.numeric(extra$orig.w)) round(w / extra$orig.w) else
               round(w)
     rbetabinom.ab(nsim * length(shape1), size = nvec,
                   shape1 = shape1,
                   shape2 = shape2)
-  }, list( .lshape12 = lshape12, .earg = earg ))),
+  }, list( .lshape1 = lshape1, .lshape2 = lshape2, 
+           .earg1 = earg1, .earg2 = earg2 ))),
 
 
 
@@ -1766,11 +1775,11 @@ betabinomialff.control <- function(save.weight = TRUE, ...) {
               round(w)
     ycounts <- if (is.numeric(extra$orig.w)) y * w / extra$orig.w else
               y * w # Convert proportions to counts
-    shape1 <- eta2theta(eta[, 1], .lshape12 , earg = .earg )
-    shape2 <- eta2theta(eta[, 2], .lshape12 , earg = .earg )
+    shape1 <- eta2theta(eta[, 1], .lshape1 , earg = .earg1 )
+    shape2 <- eta2theta(eta[, 2], .lshape2 , earg = .earg2 )
 
-    dshape1.deta <- dtheta.deta(shape1, .lshape12 , earg = .earg )
-    dshape2.deta <- dtheta.deta(shape2, .lshape12 , earg = .earg )
+    dshape1.deta <- dtheta.deta(shape1, .lshape1 , earg = .earg1 )
+    dshape2.deta <- dtheta.deta(shape2, .lshape2 , earg = .earg2 )
 
     dl.dshape1 <- digamma(shape1+ycounts) -
                   digamma(shape1+shape2+nvec) -
@@ -1782,7 +1791,8 @@ betabinomialff.control <- function(save.weight = TRUE, ...) {
     (if (is.numeric(extra$orig.w)) extra$orig.w else 1) *
     cbind(dl.dshape1 * dshape1.deta,
           dl.dshape2 * dshape2.deta)
-  }), list( .lshape12 = lshape12, .earg = earg ))),
+  }), list( .lshape1 = lshape1, .lshape2 = lshape2,
+            .earg1 = earg1, .earg2 = earg2 ))),
   weight = eval(substitute(expression({
     if (is.null( .nsimEIM)) {
       wz <- matrix(as.numeric(NA), n, dimm(M))  #3=dimm(2)
@@ -1828,7 +1838,8 @@ betabinomialff.control <- function(save.weight = TRUE, ...) {
       wz <- wz * dthetas.detas[, ind1$row] * dthetas.detas[, ind1$col]
       wz * (if (is.numeric(extra$orig.w)) extra$orig.w else 1)
     }
-  }), list( .lshape12 = lshape12, .earg = earg,
+  }), list( .lshape1 = lshape1, .lshape2 = lshape2, 
+            .earg1 = earg1, .earg2 = earg2,
             .nsimEIM = nsimEIM ))))
 }
 
@@ -2600,8 +2611,8 @@ if (FALSE)
                   namesof("mu1", .lmu12 , earg = .emu12 , short = TRUE),
                   namesof("mu2", .lmu12 , earg = .emu12 , short = TRUE))
 
-    if (is.null( .nsimEIM)) {
-         save.weight <- control$save.weight <- FALSE
+    if (is.null( .nsimEIM )) {
+         save.weights <- control$save.weights <- FALSE
     }
     if (is.null(etastart)) {
       mu1.init= if (is.Numeric(.imu1))

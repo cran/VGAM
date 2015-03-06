@@ -13,8 +13,8 @@
 }
 \usage{
 dlaplace(x, location = 0, scale = 1, log = FALSE)
-plaplace(q, location = 0, scale = 1)
-qlaplace(p, location = 0, scale = 1)
+plaplace(q, location = 0, scale = 1, lower.tail = TRUE, log.p = FALSE)
+qlaplace(p, location = 0, scale = 1, lower.tail = TRUE, log.p = FALSE)
 rlaplace(n, location = 0, scale = 1)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -39,6 +39,12 @@ rlaplace(n, location = 0, scale = 1)
   \item{log}{
   Logical.
   If \code{log = TRUE} then the logarithm of the density is returned.
+
+
+  }
+  \item{lower.tail, log.p}{
+  Same meaning as in \code{\link[stats:Normal]{pnorm}}
+  or \code{\link[stats:Normal]{qnorm}}.
 
 
   }
@@ -82,7 +88,7 @@ Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
 
 
 }
-\author{ T. W. Yee }
+\author{ T. W. Yee and Kai Huang}
 %\note{
 %  The \pkg{VGAM} family function \code{\link{laplace}}
 %  estimates the two parameters by maximum likelihood estimation.

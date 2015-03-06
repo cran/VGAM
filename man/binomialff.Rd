@@ -9,8 +9,8 @@
 
 }
 \usage{
-binomialff(link = "logit", dispersion = 1, mv = FALSE,
-           onedpar = !mv, parallel = FALSE,
+binomialff(link = "logit", dispersion = 1, multiple.responses = FALSE,
+           onedpar = !multiple.responses, parallel = FALSE,
            zero = NULL, bred = FALSE, earg.link = FALSE)
 
 }
@@ -29,11 +29,11 @@ binomialff(link = "logit", dispersion = 1, mv = FALSE,
   Dispersion parameter. By default, maximum likelihood is used to
   estimate the model because it is known.  However, the user can specify
   \code{dispersion = 0} to have it estimated, or else specify a known
-  positive value (or values if \code{mv} is \code{TRUE}).
+  positive value (or values if \code{multiple.responses} is \code{TRUE}).
 
 
   }
-  \item{mv}{ 
+  \item{multiple.responses}{ 
   Multivariate response? If \code{TRUE}, then the response is interpreted
   as \eqn{M} independent binary responses, where \eqn{M} is the number
   of columns of the response matrix. In this case, the response matrix
@@ -53,7 +53,7 @@ binomialff(link = "logit", dispersion = 1, mv = FALSE,
 
   }
   \item{onedpar}{ 
-  One dispersion parameter? If \code{mv}, then a separate dispersion
+  One dispersion parameter? If \code{multiple.responses}, then a separate dispersion
   parameter will be computed for each response (column), by default.
   Setting \code{onedpar = TRUE} will pool them so that there is only one
   dispersion parameter to be estimated.
@@ -61,7 +61,7 @@ binomialff(link = "logit", dispersion = 1, mv = FALSE,
 
   }
   \item{parallel}{ 
-  A logical or formula. Used only if \code{mv} is \code{TRUE}.  This
+  A logical or formula. Used only if \code{multiple.responses} is \code{TRUE}.  This
   argument allows for the parallelism assumption whereby the regression
   coefficients for a variable is constrained to be equal over the \eqn{M}
   linear/additive predictors.
@@ -87,7 +87,7 @@ binomialff(link = "logit", dispersion = 1, mv = FALSE,
   \item{bred}{
   Details at \code{\link{CommonVGAMffArguments}}.
   Setting \code{bred = TRUE} should work for
-  multiple responses (\code{mv = TRUE}) and
+  multiple responses (\code{multiple.responses = TRUE}) and
   all \pkg{VGAM} link functions;
   it has been tested for
   \code{\link{logit}} only (and it gives similar
@@ -115,7 +115,7 @@ binomialff(link = "logit", dispersion = 1, mv = FALSE,
   is more common in practice.
 
 
-  Setting \code{mv = TRUE} is necessary when fitting a Quadratic RR-VGLM
+  Setting \code{multiple.responses = TRUE} is necessary when fitting a Quadratic RR-VGLM
   (see \code{\link{cqo}}) because the response is a matrix of \eqn{M}
   columns (e.g., one column per species). Then there will be \eqn{M}
   dispersion parameters (one per column of the response matrix).
@@ -156,7 +156,7 @@ binomialff(link = "logit", dispersion = 1, mv = FALSE,
 \author{ Thomas W. Yee }
 
 \note{
-  If \code{mv} is \code{FALSE} (default) then the response can be of one
+  If \code{multiple.responses} is \code{FALSE} (default) then the response can be of one
   of two formats:
   a factor (first level taken as failure),
   or a 2-column matrix (first column = successes) of counts.
@@ -172,7 +172,7 @@ binomialff(link = "logit", dispersion = 1, mv = FALSE,
   predictors.
 
 
-  If \code{mv} is \code{TRUE}, then the matrix response can only be of
+  If \code{multiple.responses} is \code{TRUE}, then the matrix response can only be of
   one format: a matrix of 1's and 0's (1 = success).
 
 
@@ -254,7 +254,8 @@ with(shunua, lines(altitude, fitted(fit), col = "orange", lwd = 2)) }
 
 
 # Fit two species simultaneously
-fit2 <- vgam(cbind(agaaus, kniexc) ~ s(altitude), binomialff(mv = TRUE), shunua)
+fit2 <- vgam(cbind(agaaus, kniexc) ~ s(altitude),
+             binomialff(multiple.responses = TRUE), data = shunua)
 \dontrun{
 with(shunua, matplot(altitude, fitted(fit2), type = "l",
      main = "Two species response curves", las = 1)) }

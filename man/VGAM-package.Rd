@@ -111,9 +111,10 @@ Maintainer: Thomas Yee \email{t.yee@auckland.ac.nz}.
 \references{
 
 
-Yee, T. W. (2014)
-Vector Generalized Linear and Additive Models.
-\emph{Monograph in preparation}.
+Yee, T. W. (2015)
+Vector Generalized Linear and Additive Models:
+With an Implementation in R.
+\emph{Springer} (to appear).
 
 
 Yee, T. W. and Hastie, T. J. (2003)
@@ -159,7 +160,8 @@ The \pkg{VGAM} package for categorical data analysis.
 
   Yee, T. W. (2014)
   Reduced-rank vector generalized linear models with two linear predictors.
-  \emph{Computational Statistics and Data Analysis}.
+  \emph{Computational Statistics and Data Analysis},
+  \bold{71}, 889--902.
 
 
 
@@ -212,7 +214,7 @@ coef(fit2, matrix = TRUE)  # These should agree with the above values
 
 # Example 3; fit a two species GAM simultaneously
 fit3 <- vgam(cbind(agaaus, kniexc) ~ s(altitude, df = c(2, 3)),
-            binomialff(mv = TRUE), hunua)
+             binomialff(multiple.responses = TRUE), data = hunua)
 coef(fit3, matrix = TRUE)   # Not really interpretable
 \dontrun{ plot(fit3, se = TRUE, overlay = TRUE, lcol = 3:4, scol = 3:4)
 

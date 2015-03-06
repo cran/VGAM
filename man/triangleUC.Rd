@@ -13,8 +13,8 @@
 }
 \usage{
 dtriangle(x, theta, lower = 0, upper = 1, log = FALSE)
-ptriangle(q, theta, lower = 0, upper = 1)
-qtriangle(p, theta, lower = 0, upper = 1)
+ptriangle(q, theta, lower = 0, upper = 1, lower.tail = TRUE, log.p = FALSE)
+qtriangle(p, theta, lower = 0, upper = 1, lower.tail = TRUE, log.p = FALSE)
 rtriangle(n, theta, lower = 0, upper = 1)
 }
 \arguments{
@@ -35,6 +35,12 @@ rtriangle(n, theta, lower = 0, upper = 1)
 
 
   }
+  \item{lower.tail, log.p}{
+  Same meaning as in \code{\link[stats:Normal]{pnorm}}
+  or \code{\link[stats:Normal]{qnorm}}.
+
+
+  }
 
 }
 \value{
@@ -48,7 +54,7 @@ rtriangle(n, theta, lower = 0, upper = 1)
 %\references{
 %
 %}
-\author{ T. W. Yee }
+\author{ T. W. Yee and Kai Huang }
 \details{
   See \code{\link{triangle}}, the \pkg{VGAM} family function
   for estimating the parameter \eqn{\theta}{theta} by

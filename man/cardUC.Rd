@@ -13,8 +13,9 @@
 }
 \usage{
 dcard(x, mu, rho, log = FALSE)
-pcard(q, mu, rho)
-qcard(p, mu, rho, tolerance = 1e-07, maxits = 500)
+pcard(q, mu, rho, lower.tail = TRUE, log.p = FALSE)
+qcard(p, mu, rho, tolerance = 1e-07, maxits = 500,
+      lower.tail = TRUE, log.p = FALSE)
 rcard(n, mu, rho, ...)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -47,6 +48,12 @@ rcard(n, mu, rho, ...)
 
 
   }
+  \item{lower.tail, log.p}{
+  Same meaning as in \code{\link[stats:Normal]{pnorm}}
+  or \code{\link[stats:Normal]{qnorm}}.
+
+
+  }
 
 }
 \details{
@@ -65,7 +72,7 @@ rcard(n, mu, rho, ...)
 
 }
 %\references{ }
-\author{ Thomas W. Yee }
+\author{ Thomas W. Yee and Kai Huang }
 \note{ 
   Convergence problems might occur with \code{rcard}.
 

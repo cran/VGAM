@@ -1,6 +1,6 @@
 \name{logit}
 \alias{logit}
-\alias{elogit}
+\alias{extlogit}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Logit Link Function }
 \description{
@@ -11,8 +11,8 @@
 \usage{
 logit(theta, bvalue = NULL, inverse = FALSE, deriv = 0,
       short = TRUE, tag = FALSE)
-elogit(theta, min = 0, max = 1, bminvalue = NULL, bmaxvalue = NULL,
-       inverse = FALSE, deriv = 0, short = TRUE, tag = FALSE)
+extlogit(theta, min = 0, max = 1, bminvalue = NULL, bmaxvalue = NULL,
+         inverse = FALSE, deriv = 0, short = TRUE, tag = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -25,7 +25,7 @@ elogit(theta, min = 0, max = 1, bminvalue = NULL, bmaxvalue = NULL,
   \item{bvalue, bminvalue, bmaxvalue}{
   See \code{\link{Links}}.
   These are boundary values.
-  For \code{elogit}, values of \code{theta} less than or equal
+  For \code{extlogit}, values of \code{theta} less than or equal
   to \eqn{A} or greater than or equal to \eqn{B} can be replaced
   by \code{bminvalue} and \code{bmaxvalue}.
 
@@ -38,7 +38,7 @@ elogit(theta, min = 0, max = 1, bminvalue = NULL, bmaxvalue = NULL,
 % (respectively, and if given) before computing the logit.
 
   \item{min, max}{
-  For \code{elogit},
+  For \code{extlogit},
   \code{min} gives \eqn{A}, 
   \code{max} gives \eqn{B}, and for out of range values, 
   \code{bminvalue} and \code{bmaxvalue}.
@@ -60,7 +60,7 @@ elogit(theta, min = 0, max = 1, bminvalue = NULL, bmaxvalue = NULL,
   \code{Inf}, \code{-Inf}, \code{NA} or \code{NaN}.
 
 
-  The \emph{extended} logit link function \code{elogit} should be used
+  The \emph{extended} logit link function \code{extlogit} should be used
   more generally for parameters that lie in the interval \eqn{(A,B)}, say.
   The formula is
   \deqn{\log((\theta-A)/(B-\theta))}{%
@@ -104,7 +104,7 @@ elogit(theta, min = 0, max = 1, bminvalue = NULL, bmaxvalue = NULL,
 \note{
   Numerical instability may occur when \code{theta} is
   close to 1 or 0 (for \code{logit}), or close to \eqn{A} or \eqn{B} for
-  \code{elogit}.
+  \code{extlogit}.
   One way of overcoming this is to use, e.g., \code{bvalue}.
 
 
@@ -136,7 +136,7 @@ logit(p)  # Has NAs
 logit(p, bvalue = .Machine$double.eps)  # Has no NAs
 
 p <- seq(0.9, 2.2, by = 0.1)
-elogit(p, min = 1, max = 2,
+extlogit(p, min = 1, max = 2,
           bminvalue = 1 + .Machine$double.eps,
           bmaxvalue = 2 - .Machine$double.eps)  # Has no NAs
 
@@ -178,9 +178,9 @@ for (d in 0) {
 }
 
 p <- seq(0.21, 0.59, by = 0.01)
-plot(p, elogit(p, min = 0.2, max = 0.6),
+plot(p, extlogit(p, min = 0.2, max = 0.6),
      type = "l", col = "black", ylab = "transformation", xlim = c(0, 1),
-     las = 1, main = "elogit(p, min = 0.2, max = 0.6)")
+     las = 1, main = "extlogit(p, min = 0.2, max = 0.6)")
 par(lwd = 1)
 }
 }

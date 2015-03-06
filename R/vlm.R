@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2014 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -181,7 +181,7 @@ vlm <- function(formula,
   }
   if (x.arg)
     slot(answer, "x") <- x # The 'small' design matrix
-  if (control$save.weight)
+  if (control$save.weights)
     slot(answer, "weights") <- wz
   if (length(xlev))
     slot(answer, "xlevels") <- xlev

@@ -11,12 +11,11 @@
 
 }
 \usage{
-  dhuber(x, k = 0.862, mu = 0, sigma = 1, log = FALSE)
- edhuber(x, k = 0.862, mu = 0, sigma = 1, log = FALSE)
-  rhuber(n, k = 0.862, mu = 0, sigma = 1)
-  qhuber(p, k = 0.862, mu = 0, sigma = 1)
-  phuber(q, k = 0.862, mu = 0, sigma = 1)
-
+ dhuber(x, k = 0.862, mu = 0, sigma = 1, log = FALSE)
+edhuber(x, k = 0.862, mu = 0, sigma = 1, log = FALSE)
+ rhuber(n, k = 0.862, mu = 0, sigma = 1)
+ qhuber(p, k = 0.862, mu = 0, sigma = 1, lower.tail = TRUE, log.p = FALSE)
+ phuber(q, k = 0.862, mu = 0, sigma = 1, lower.tail = TRUE, log.p = FALSE)
 }
 \arguments{
   \item{x, q}{numeric vector, vector of quantiles.}
@@ -37,6 +36,12 @@
   \item{log}{
   Logical.
   If \code{log = TRUE} then the logarithm of the result is returned.
+
+  }
+  \item{lower.tail, log.p}{
+  Same meaning as in \code{\link[stats:Normal]{pnorm}}
+  or \code{\link[stats:Normal]{qnorm}}.
+
 
   }
 
@@ -79,12 +84,15 @@
    (from \pkg{smoothmest}) and
    slight modifications were made by T. W. Yee to
    replace looping by vectorization and addition of the \code{log} argument.
-   Arash Ardalan wrote \code{[pq]huber()}.
+   Arash Ardalan wrote \code{[pq]huber()}, and
+   two arguments for these were implemented by Kai Huang.
    This helpfile was adapted from \pkg{smoothmest}.
+
 
 }
 \seealso{
     \code{\link{huber2}}.
+
 
 }
 

@@ -14,7 +14,8 @@
 dtobit(x, mean = 0, sd = 1, Lower = 0, Upper = Inf, log = FALSE)
 ptobit(q, mean = 0, sd = 1, Lower = 0, Upper = Inf,
        lower.tail = TRUE, log.p = FALSE)
-qtobit(p, mean = 0, sd = 1, Lower = 0, Upper = Inf)
+qtobit(p, mean = 0, sd = 1, Lower = 0, Upper = Inf,
+       lower.tail = TRUE, log.p = FALSE)
 rtobit(n, mean = 0, sd = 1, Lower = 0, Upper = Inf)
 }
 \arguments{
@@ -48,43 +49,62 @@ rtobit(n, mean = 0, sd = 1, Lower = 0, Upper = Inf)
   for estimating the parameters, 
   for details.
   Note that the density at \code{Lower} and \code{Upper} is the
-  value of \code{\link[stats:Normal]{dnorm}} evaluated there plus
-  the area to the left/right of that point too.
-  Thus there are two spikes; see the example below.
+  the area to the left and right of those points.
+  Thus there are two spikes (but less in value); see the example below.
+  Consequently, \code{dtobit(Lower) + dtobit(Upper) + } the area
+  in between equals unity.
+
+  
+
+
+% 20141223; this is old:
+% Note that the density at \code{Lower} and \code{Upper} is the
+% value of \code{\link[stats:Normal]{dnorm}} evaluated there plus
+% the area to the left/right of that point too.
+
+
 
 }
 %\note{
 
 %}
 \seealso{
-  \code{\link{tobit}}.
+  \code{\link{tobit}},
+  \code{\link[stats:Normal]{rnorm}}.
 
 
 }
 \examples{
-\dontrun{ m <- 0.5; x <- seq(-2, 4, len = 501)
-Lower <- -1; Upper <- 2.5
-plot(x, ptobit(x, m = m, Lower = Lower, Upper = Upper),
+mu <- 0.5; x <- seq(-2, 4, by = 0.01)
+Lower <- -1; Upper <- 2.0
+
+integrate(dtobit, lower = Lower, upper = Upper,
+          mean = mu, Lower = Lower, Upper = Upper)$value +
+dtobit(Lower, mean = mu, Lower = Lower, Upper = Upper) +
+dtobit(Upper, mean = mu, Lower = Lower, Upper = Upper)  # Adds to unity
+
+\dontrun{ 
+plot(x, ptobit(x, m = mu, Lower = Lower, Upper = Upper),
      type = "l", ylim = 0:1, las = 1, col = "orange",
-     ylab = paste("ptobit(m = ", m, ", sd = 1, Lower =", Lower,
+     ylab = paste("ptobit(m = ", mu, ", sd = 1, Lower =", Lower,
                   ", Upper =", Upper, ")"),
      main = "Orange is cumulative distribution function; blue is density",
      sub = "Purple lines are the 10,20,...,90 percentiles")
 abline(h = 0)
-lines(x, dtobit(x, m = m, Lower = Lower, Upper = Upper), col = "blue")
+lines(x, dtobit(x, m = mu, Lower = Lower, Upper = Upper), col = "blue")
 
 probs <- seq(0.1, 0.9, by = 0.1)
-Q <- qtobit(probs, m = m, Lower = Lower, Upper = Upper)
-lines(Q, ptobit(Q, m = m, Lower = Lower, Upper = Upper),
+Q <- qtobit(probs, m = mu, Lower = Lower, Upper = Upper)
+lines(Q, ptobit(Q, m = mu, Lower = Lower, Upper = Upper),
       col = "purple", lty = "dashed", type = "h")
-lines(Q, dtobit(Q, m = m, Lower = Lower, Upper = Upper),
+lines(Q, dtobit(Q, m = mu, Lower = Lower, Upper = Upper),
       col = "darkgreen", lty = "dashed", type = "h")
 abline(h = probs, col = "purple", lty = "dashed")
-max(abs(ptobit(Q, m = m, Lower = Lower, Upper = Upper) - probs))  # Should be 0
+max(abs(ptobit(Q, m = mu, Lower = Lower, Upper = Upper) - probs))  # Should be 0
 
-endpts <- c(Lower, Upper)  # Endpoints have a spike
-lines(endpts, dtobit(endpts, m = m, Lower = Lower, Upper = Upper),
-      col = "blue", lwd = 2, type = "h")
+endpts <- c(Lower, Upper)  # Endpoints have a spike (not quite, actually)
+lines(endpts, dtobit(endpts, m = mu, Lower = Lower, Upper = Upper),
+      col = "blue", lwd = 3, type = "h")
 }
 }
 \keyword{distribution}

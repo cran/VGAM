@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2014 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -1428,33 +1428,33 @@ vweighted.mean.default <- function (x, w, ..., na.rm = FALSE) {
 
 
 
-family.name.vlm <- function(object, all = FALSE, ...) {
+familyname.vlm <- function(object, all = FALSE, ...) {
   ans <- object@family@vfamily
   if (all) ans else ans[1]
 }
 
 
-family.name.vglmff <- function(object, all = FALSE, ...) {
+familyname.vglmff <- function(object, all = FALSE, ...) {
   ans <- object@vfamily
   if (all) ans else ans[1]
 }
 
 
 
-if (!isGeneric("family.name"))
-    setGeneric("family.name",
-  function(object, ...) standardGeneric("family.name"))
+if (!isGeneric("familyname"))
+    setGeneric("familyname",
+  function(object, ...) standardGeneric("familyname"))
 
 
-setMethod("family.name", "vglmff",
+setMethod("familyname", "vglmff",
          function(object, ...)
-         family.name.vglmff(object, ...))
+         familyname.vglmff(object, ...))
 
 
 
-setMethod("family.name", "vlm",
+setMethod("familyname", "vlm",
          function(object, ...)
-         family.name.vlm(object, ...))
+         familyname.vlm(object, ...))
 
 
 

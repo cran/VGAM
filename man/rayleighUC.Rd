@@ -14,8 +14,8 @@
 }
 \usage{
 drayleigh(x, scale = 1, log = FALSE)
-prayleigh(q, scale = 1)
-qrayleigh(p, scale = 1)
+prayleigh(q, scale = 1, lower.tail = TRUE, log.p = FALSE)
+qrayleigh(p, scale = 1, lower.tail = TRUE, log.p = FALSE)
 rrayleigh(n, scale = 1)
 }
 \arguments{
@@ -30,6 +30,12 @@ rrayleigh(n, scale = 1)
   \item{log}{
   Logical.
   If \code{log = TRUE} then the logarithm of the density is returned.
+
+
+  }
+  \item{lower.tail, log.p}{
+  Same meaning as in \code{\link[stats:Normal]{pnorm}}
+  or \code{\link[stats:Normal]{qnorm}}.
 
 
   }
@@ -51,7 +57,7 @@ Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
 
 
 }
-\author{ T. W. Yee }
+\author{ T. W. Yee and Kai Huang }
 \details{
   See \code{\link{rayleigh}}, the \pkg{VGAM} family
   function for estimating the scale parameter \eqn{b} by

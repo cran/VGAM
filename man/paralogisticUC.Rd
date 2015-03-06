@@ -12,10 +12,10 @@
 
 }
 \usage{
-dparalogistic(x, shape1.a, scale = 1, log = FALSE)
-pparalogistic(q, shape1.a, scale = 1)
-qparalogistic(p, shape1.a, scale = 1)
-rparalogistic(n, shape1.a, scale = 1)
+dparalogistic(x, scale = 1, shape1.a, log = FALSE)
+pparalogistic(q, scale = 1, shape1.a, lower.tail = TRUE, log.p = FALSE)
+qparalogistic(p, scale = 1, shape1.a, lower.tail = TRUE, log.p = FALSE)
+rparalogistic(n, scale = 1, shape1.a)
 }
 \arguments{
   \item{x, q}{vector of quantiles.}
@@ -27,6 +27,12 @@ rparalogistic(n, shape1.a, scale = 1)
   \item{log}{
   Logical.
   If \code{log=TRUE} then the logarithm of the density is returned.
+
+  }
+  \item{lower.tail, log.p}{
+  Same meaning as in \code{\link[stats:Normal]{pnorm}}
+  or \code{\link[stats:Normal]{qnorm}}.
+
 
   }
 
@@ -47,7 +53,7 @@ Hoboken, NJ, USA: Wiley-Interscience.
 
 
 }
-\author{ T. W. Yee }
+\author{ T. W. Yee and Kai Huang }
 \details{
   See \code{\link{paralogistic}}, which is the \pkg{VGAM} family function
   for estimating the parameters by maximum likelihood estimation.
@@ -67,8 +73,9 @@ Hoboken, NJ, USA: Wiley-Interscience.
 
 }
 \examples{
-pdata <- data.frame(y = rparalogistic(n = 3000, exp(1), exp(2)))
-fit <- vglm(y ~ 1, paralogistic(ishape1.a = 2.1), data = pdata, trace = TRUE)
+pdata <- data.frame(y = rparalogistic(n = 3000, scale = exp(1), exp(2)))
+fit <- vglm(y ~ 1, paralogistic(lss = FALSE, ishape1.a = 4.1),
+            data = pdata, trace = TRUE)
 coef(fit, matrix = TRUE)
 Coef(fit)
 }

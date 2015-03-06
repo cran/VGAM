@@ -126,7 +126,7 @@ cuty <- Cut(y1, breaks = cutpoints)
 \dontrun{ plot(x2, x3, col = cuty, pch = as.character(cuty)) }
 table(cuty) / sum(table(cuty))
 fit <- vglm(cuty ~ x2 + x3, trace = TRUE,
-            cumulative(reverse = TRUE, mv = TRUE,
+            cumulative(reverse = TRUE, multiple.responses = TRUE,
                        parallel = TRUE,
                        link = nbolf(cutpoint = cutpoints[2:3], k = k)))
 head(depvar(fit))

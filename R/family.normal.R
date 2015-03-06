@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2014 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -223,7 +223,6 @@ dposnorm <- function(x, mean = 0, sd = 1, log = FALSE) {
     stop("bad input for argument 'log'")
   rm(log)
 
-
   L <- max(length(x), length(mean), length(sd))
   if (length(x)    != L) x    <- rep(x,    len = L)
   if (length(mean) != L) mean <- rep(mean, len = L)
@@ -238,21 +237,45 @@ dposnorm <- function(x, mean = 0, sd = 1, log = FALSE) {
 }
 
 
-pposnorm <- function(q, mean = 0, sd = 1) {
-  L <- max(length(q), length(mean), length(sd))
-  if (length(q)    != L) q    <- rep(q,    len = L)
-  if (length(mean) != L) mean <- rep(mean, len = L)
-  if (length(sd)   != L) sd   <- rep(sd,   len = L)
 
-  ifelse(q < 0, 0, (pnorm(q, mean = mean, sd = sd) -
-                    pnorm(0, mean = mean, sd = sd)) / pnorm(q = mean / sd))
+pposnorm <- function(q, mean = 0, sd = 1,
+                     lower.tail = TRUE, log.p = FALSE) {
+  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+    stop("bad input for argument 'lower.tail'")
+
+  if (!is.logical(log.p) || length(log.p) != 1)
+    stop("bad input for argument 'log.p'")
+
+
+  ans <- (pnorm(q, mean = mean, sd = sd) -
+          pnorm(0, mean = mean, sd = sd)) / pnorm(mean / sd)
+  ans[q <= 0] <- 0
+
+  if (lower.tail) {
+    if (log.p) log(ans) else ans
+  } else {
+    if (log.p) log1p(-ans) else 1-ans
+  }
 }
 
 
-qposnorm <- function(p, mean = 0, sd = 1) {
+
+qposnorm <- function(p, mean = 0, sd = 1,
+                     lower.tail = TRUE, log.p = FALSE) {
+  if (!is.logical(log.arg <- log.p) || length(log.p) != 1)
+    stop("bad input for argument 'log.p'")
+  rm(log.p)   # 20150102 KaiH
+  
+  if (lower.tail) {
+    if (log.arg) p <- exp(p)
+  } else {
+    p <- if (log.arg) -expm1(p) else 1 - p
+  }
+
   qnorm(p = p + (1 - p) * pnorm(0, mean = mean, sd = sd),
         mean = mean, sd = sd)
 }
+
 
 
 rposnorm <- function(n, mean = 0, sd = 1) {
@@ -262,8 +285,8 @@ rposnorm <- function(n, mean = 0, sd = 1) {
 
 
 
- posnormal.control <- function(save.weight = TRUE, ...) {
-  list(save.weight = save.weight)
+ posnormal.control <- function(save.weights = TRUE, ...) {
+  list(save.weights = save.weights)
 }
 
 
@@ -476,20 +499,15 @@ dbetanorm <- function(x, shape1, shape2, mean = 0, sd = 1, log = FALSE) {
   rm(log)
 
 
-  ans <- if (log.arg) {
+  logden <-
     dnorm(x = x, mean = mean, sd = sd, log = TRUE) +
     (shape1-1) * pnorm(q = x, mean = mean, sd = sd, log.p = TRUE) +
     (shape2-1) * pnorm(q = x, mean = mean, sd = sd, log.p = TRUE,
                        lower.tail = FALSE) -
     lbeta(shape1, shape2)
-  } else {
-    dnorm(x = x, mean = mean, sd = sd) *
-    pnorm(q = x, mean = mean, sd = sd)^(shape1-1) *
-    pnorm(q = x, mean = mean, sd = sd,
-          lower.tail = FALSE)^(shape2-1) / beta(shape1, shape2)
-  }
 
-  ans
+  logden[is.infinite(x)] <- log(0)  # 20141210 KaiH
+  if (log.arg) logden else exp(logden)
 }
 
 
@@ -503,10 +521,14 @@ pbetanorm <- function(q, shape1, shape2, mean = 0, sd = 1,
 }
 
 
-qbetanorm <- function(p, shape1, shape2, mean = 0, sd = 1) {
-  qnorm(p = qbeta(p = p, shape1 = shape1, shape2 = shape2),
+
+qbetanorm <- function(p, shape1, shape2, mean = 0, sd = 1,
+                      lower.tail = TRUE, log.p = FALSE) {
+  qnorm(p = qbeta(p = p, shape1 = shape1, shape2 = shape2,
+                  lower.tail = lower.tail, log.p = log.p),
         mean = mean, sd = sd)
 }
+
 
 
 rbetanorm <- function(n, shape1, shape2, mean = 0, sd = 1) {
@@ -535,20 +557,26 @@ dtikuv <- function(x, d, mean = 0, sigma = 1, log = FALSE) {
 
   hh <- 2 - d
   KK <- 1 / (1 + 1/hh + 0.75/hh^2)
-  if (log.arg) {
-    dnorm(x = x, mean = mean, sd = sigma, log = TRUE) + log(KK) +
+  logden <- dnorm(x = x, mean = mean, sd = sigma, log = TRUE) + log(KK) +
     2 * log1p(((x-mean)/sigma)^2 / (2*hh))
-  } else {
-    dnorm(x = x, mean = mean, sd = sigma) * KK *
-    (1 + ((x-mean)/sigma)^2 / (2*hh))^2
-  }
+  logden[is.infinite(x)] <- log(0)  # 20141209 KaiH
+  if (log.arg) logden else exp(logden)
 }
 
 
-ptikuv <- function(q, d, mean = 0, sigma = 1) {
+
+ptikuv <- function(q, d, mean = 0, sigma = 1,
+                   lower.tail = TRUE, log.p = FALSE) {
   if (!is.Numeric(d, length.arg = 1) ||
       max(d) >= 2)
     stop("bad input for argument 'd'")
+
+  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+    stop("bad input for argument 'lower.tail'")
+
+  if (!is.logical(log.arg <- log.p) || length(log.p) != 1)
+    stop("bad input for argument 'log.p'")
+  rm(log.p)   # 20141231 KaiH
 
   L <- max(length(q), length(mean), length(sigma))
   if (length(q)     != L) q     <- rep(q,     len = L)
@@ -569,25 +597,38 @@ ptikuv <- function(q, d, mean = 0, sigma = 1) {
     ans[rhs] <- 1.0 - Recall(q = (2*mean[rhs] - q[rhs]), d = d,
                              mean = mean[rhs], sigma = sigma[rhs])
   }
-  ans
+
+  if (lower.tail) {
+    if (log.arg) log(ans) else ans
+  } else {
+    if (log.arg) log1p(-ans) else 1 - ans
+  }
 }
 
 
-qtikuv <- function(p, d, mean = 0, sigma = 1, ...) {
-  if (!is.Numeric(p, positive = TRUE) || max(p) >= 1)
-    stop("bad input for argument 'p'")
+
+
+qtikuv <- function(p, d, mean = 0, sigma = 1, 
+                   lower.tail = TRUE, log.p = FALSE, ...) {
+  if (!is.logical(log.p) || length(log.p) != 1)
+    stop("bad input for argument 'log.p'")
+  
   if (!is.Numeric(d, length.arg = 1) || max(d) >= 2)
     stop("bad input for argument 'd'")
-  if (!is.Numeric(mean))
-    stop("bad input for argument 'mean'")
-  if (!is.Numeric(sigma))
-    stop("bad input for argument 'sigma'")
 
+  orig.p <- p
+  if (lower.tail) {
+    if (log.p) p <- exp(p)
+  } else {
+    p <- if (log.p) -expm1(p) else 1 - p
+  }
+  
   L <- max(length(p), length(mean), length(sigma))
   if (length(p)     != L) p     <- rep(p,     len = L)
   if (length(mean)  != L) mean  <- rep(mean,  len = L)
   if (length(sigma) != L) sigma <- rep(sigma, len = L)
   ans <- rep(0.0, len = L)
+
 
   myfun <- function(x, d, mean = 0, sigma = 1, p)
     ptikuv(q = x, d = d, mean = mean, sigma = sigma) - p
@@ -605,6 +646,15 @@ qtikuv <- function(p, d, mean = 0, sigma = 1, ...) {
                        d = d, p = p[ii],
                        mean = mean[ii], sigma = sigma[ii], ...)$root
   }
+
+
+  if (log.p) {
+    ans[orig.p > 0] <- NaN
+  } else {
+    ans[orig.p < 0] <- NaN
+    ans[orig.p > 1] <- NaN
+  }
+
   ans
 }
 
@@ -823,26 +873,63 @@ dfoldnorm <- function(x, mean = 0, sd = 1, a1 = 1, a2 = 1,
 }
 
 
-pfoldnorm <- function(q, mean = 0, sd = 1, a1 = 1, a2 = 1) {
+
+pfoldnorm <- function(q, mean = 0, sd = 1, a1 = 1, a2 = 1,
+                      lower.tail = TRUE, log.p = FALSE) {
 
 
-  L <- max(length(q), length(mean), length(sd))
-  if (length(q)    != L) q    <- rep(q,    len = L)
-  if (length(mean) != L) mean <- rep(mean, len = L)
-  if (length(sd)   != L) sd   <- rep(sd,   len = L)
+  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+    stop("bad input for argument 'lower.tail'")
+  if (!is.logical(log.p) || length(log.p) != 1)
+    stop("bad input for argument 'log.p'")
 
-  ans <- ifelse(q < 0, 0, pnorm(q =  q/(a1*sd) - mean/sd) -
-                          pnorm(q = -q/(a2*sd) - mean/sd))
-  ans[a1 <= 0 | a2 <= 0] <- NA
-  ans[sd <= 0] <- NA
+
+
+  if (lower.tail) {
+    if (log.p) {
+      ans <- log(pnorm(q =  q/(a1*sd) - mean/sd) - 
+                 pnorm(q = -q/(a2*sd) - mean/sd))
+      ans[q <= 0 ] <- -Inf
+      ans[q == Inf] <- 0
+    } else {
+      ans <- pnorm(q =  q/(a1*sd) - mean/sd) - 
+             pnorm(q = -q/(a2*sd) - mean/sd)
+      ans[q <= 0] <- 0
+      ans[q == Inf] <- 1
+    }
+  } else {
+    if (log.p) {
+      ans <- log(pnorm(q =  q/(a1*sd) - mean/sd, lower.tail = FALSE) + 
+                 pnorm(q = -q/(a2*sd) - mean/sd))
+      ans[q <= 0] <- 0
+      ans[q == Inf] <- -Inf
+    } else {
+      ans <- pnorm(q =  q/(a1*sd) - mean/sd, lower.tail = FALSE) + 
+             pnorm(q = -q/(a2*sd) - mean/sd)
+      ans[q <= 0] <- 1
+      ans[q == Inf] <- 0
+    }
+  } 
+  ans[a1 <= 0 | a2 <= 0] <- NaN
+  ans[sd <= 0] <- NaN
   ans
 }
 
 
-qfoldnorm <- function(p, mean = 0, sd = 1, a1 = 1, a2 = 1, ...) {
-  if (!is.Numeric(p, positive = TRUE) || max(p) >= 1)
-    stop("bad input for argument 'p'")
 
+qfoldnorm <- function(p, mean = 0, sd = 1, a1 = 1, a2 = 1,
+                      lower.tail = TRUE, log.p = FALSE, ...) {
+
+  if (!is.logical(log.arg <- log.p) || length(log.p) != 1)
+    stop("bad input for argument 'log.p'")
+  rm(log.p)
+  
+  if (lower.tail) {
+    if (log.arg) p <- exp(p)
+  } else {
+    p <- if (log.arg) -expm1(p) else 1 - p
+  }
+  
   L <- max(length(p), length(mean), length(sd), length(a1), length(a2))
   if (length(p)    != L) p    <- rep(p,    len = L)
   if (length(mean) != L) mean <- rep(mean, len = L)
@@ -855,8 +942,8 @@ qfoldnorm <- function(p, mean = 0, sd = 1, a1 = 1, a2 = 1, ...) {
     pfoldnorm(q = x, mean = mean, sd = sd, a1 = a1, a2 = a2) - p
 
   for (ii in 1:L) {
-    mytheta <- mean[ii]/sd[ii]
-    EY <- sd[ii] * ((a1[ii]+a2[ii]) *
+    mytheta <- mean[ii] / sd[ii]
+    EY <- sd[ii] * ((a1[ii] + a2[ii]) *
          (mytheta * pnorm(mytheta) + dnorm(mytheta)) -
           a2[ii] * mytheta)
     Upper <- 2 * EY
@@ -869,11 +956,12 @@ qfoldnorm <- function(p, mean = 0, sd = 1, a1 = 1, a2 = 1, ...) {
                        p = p[ii], ...)$root
   }
 
-  ans[a1 <= 0 | a2 <= 0] <- NA
-  ans[sd <= 0] <- NA
+  ans[a1 <= 0 | a2 <= 0] <- NaN
+  ans[sd <= 0] <- NaN
 
   ans
 }
+
 
 
 rfoldnorm <- function(n, mean = 0, sd = 1, a1 = 1, a2=1) {
@@ -1232,60 +1320,48 @@ dtobit <- function(x, mean = 0, sd = 1,
   if (length(Lower) != L) Lower <- rep(Lower, len = L)
   if (length(Upper) != L) Upper <- rep(Upper, len = L)
 
+  if (!all(Lower < Upper, na.rm = TRUE))
+    stop("all(Lower < Upper) is not TRUE")
+
   ans <- dnorm(x = x, mean = mean, sd = sd, log = log.arg)
   ans[x <  Lower] <- if (log.arg) log(0.0) else 0.0
   ans[x >  Upper] <- if (log.arg) log(0.0) else 0.0
 
 
   ind3 <- x == Lower
-  ans[ind3] <- if (log.arg) {
-        log(exp(ans[ind3]) +
-            pnorm(q = Lower[ind3], mean = mean[ind3], sd = sd[ind3]))
-      } else {
-        ans[ind3] +
-        pnorm(q = Lower[ind3], mean = mean[ind3], sd = sd[ind3])
-      }
+  ans[ind3] <- pnorm(q = Lower[ind3], mean = mean[ind3], sd = sd[ind3],
+                     log.p = log.arg)
 
   ind4 <- x == Upper
-  ans[ind4] <- if (log.arg) {
-        log(exp(ans[ind4]) +
-            pnorm(q = Upper[ind4], mean = mean[ind4], sd = sd[ind4],
-                  lower.tail = FALSE))
-      } else {
-        ans[ind4] +
-        pnorm(q = Upper[ind4], mean = mean[ind4], sd = sd[ind4],
-              lower.tail = FALSE)
-      }
+  ans[ind4] <- pnorm(q = Upper[ind4], mean = mean[ind4], sd = sd[ind4],
+                     lower.tail = FALSE, log.p = log.arg)
+
   ans
 }
 
 
 
-ptobit <- function(q, mean = 0, sd = 1,
-                  Lower = 0, Upper = Inf,
-                  lower.tail = TRUE, log.p = FALSE) {
+ptobit <- function(q, mean = 0, sd = 1, Lower = 0, Upper = Inf,
+                   lower.tail = TRUE, log.p = FALSE) {
 
   if (!is.logical(lower.tail) || length(lower.tail) != 1)
     stop("argument 'lower.tail' must be a single logical")
   if (!is.logical(log.p) || length(log.p) != 1)
     stop("argument 'log.p' must be a single logical")
 
-  L <- max(length(q), length(mean), length(sd),
-           length(Lower), length(Upper))
-  if (length(q)     != L) q     <- rep(q,     len = L)
-  if (length(mean)  != L) mean  <- rep(mean,  len = L)
-  if (length(sd)    != L) sd    <- rep(sd,    len = L)
-  if (length(Lower) != L) Lower <- rep(Lower, len = L)
-  if (length(Upper) != L) Upper <- rep(Upper, len = L)
 
-  ans <- pnorm(q = q, mean = mean, sd = sd, lower.tail = lower.tail)
+  if (!all(Lower < Upper, na.rm = TRUE))
+    stop("all(Lower < Upper) is not TRUE")
+
+
+  ans <- pnorm(q = q, mean = mean, sd = sd, 
+               lower.tail = lower.tail, log.p = log.p)
   ind1 <- (q <  Lower)
   ans[ind1] <- if (lower.tail) ifelse(log.p, log(0.0), 0.0) else
                                ifelse(log.p, log(1.0), 1.0)
   ind2 <- (Upper <= q)
   ans[ind2] <- if (lower.tail) ifelse(log.p, log(1.0), 1.0) else
                                ifelse(log.p, log(0.0), 0.0)
-
   ans
 }
 
@@ -1293,25 +1369,39 @@ ptobit <- function(q, mean = 0, sd = 1,
 
 
 qtobit <- function(p, mean = 0, sd = 1,
-                  Lower = 0, Upper = Inf) {
+                   Lower = 0, Upper = Inf,
+                   lower.tail = TRUE, log.p = FALSE) {
 
-  L <- max(length(p), length(mean), length(sd),
-           length(Lower), length(Upper))
-  if (length(p)     != L) p     <- rep(p,     len = L)
-  if (length(mean)  != L) mean  <- rep(mean,  len = L)
-  if (length(sd)    != L) sd    <- rep(sd,    len = L)
-  if (length(Lower) != L) Lower <- rep(Lower, len = L)
-  if (length(Upper) != L) Upper <- rep(Upper, len = L)
 
-  ans <- qnorm(p = p, mean = mean, sd = sd)
-  pnorm.Lower <- ptobit(q = Lower, mean = mean, sd = sd)
-  pnorm.Upper <- ptobit(q = Upper, mean = mean, sd = sd)
+  if (!all(Lower < Upper, na.rm = TRUE))
+    stop("all(Lower < Upper) is not TRUE")
 
-  ind1 <- (p <= pnorm.Lower)
-  ans[ind1] <- Lower[ind1]
+  # 20150127 KaiH; add lower.tail = lower.tail, log.p = log.p
+  ans <- qnorm(p, mean = mean, sd = sd, 
+               lower.tail = lower.tail, log.p = log.p)
+  pnorm.Lower <- ptobit(q = Lower, mean = mean, sd = sd, 
+                        lower.tail = lower.tail, log.p = log.p)
+  pnorm.Upper <- ptobit(q = Upper, mean = mean, sd = sd, 
+                        lower.tail = lower.tail, log.p = log.p)
 
-  ind2 <- (pnorm.Upper <= p)
-  ans[ind2] <- Upper[ind2]
+if (FALSE) {
+  if (lower.tail) {
+    ind1 <- (p <= pnorm.Lower)
+    ans[ind1] <- Lower[ind1]
+    ind2 <- (pnorm.Upper <= p)
+    ans[ind2] <- Upper[ind2] 
+  } else {
+    ind1 <- (p >= pnorm.Lower)
+    ans[ind1] <- Lower[ind1]
+    ind2 <- (pnorm.Upper >= p)
+    ans[ind2] <- Upper[ind2] 
+  }
+} else {
+  ans <- qnorm(p = p, mean = mean, sd = sd,
+               lower.tail = lower.tail, log.p = log.p)
+  ans <- pmax(ans, Lower)
+  ans <- pmin(ans, Upper)
+}
 
   ans
 }
@@ -1333,12 +1423,20 @@ rtobit <- function(n, mean = 0, sd = 1, Lower = 0, Upper = Inf) {
   if (length(Lower) != L) Lower <- rep(Lower, len = L)
   if (length(Upper) != L) Upper <- rep(Upper, len = L)
 
+  if (!all(Lower < Upper, na.rm = TRUE))
+    stop("all(Lower < Upper) is not TRUE")
+
   ans <- rnorm(n = use.n, mean = mean, sd = sd)
   cenL <- (ans < Lower)
-  ans[cenL] <- Lower[cenL]
   cenU <- (ans > Upper)
+  if (FALSE) {
+  ans[cenL] <- Lower[cenL]
   ans[cenU] <- Upper[cenU]
-
+} else {
+  ans <- pmax(ans, Lower)
+  ans <- pmin(ans, Upper)
+}
+  
   attr(ans, "Lower") <- Lower
   attr(ans, "Upper") <- Upper
   attr(ans, "cenL") <- cenL
@@ -1349,8 +1447,8 @@ rtobit <- function(n, mean = 0, sd = 1, Lower = 0, Upper = Inf) {
 
 
 
-tobit.control <- function(save.weight = TRUE, ...) {
-  list(save.weight = save.weight)
+tobit.control <- function(save.weights = TRUE, ...) {
+  list(save.weights = save.weights)
 }
 
 
@@ -1476,6 +1574,11 @@ tobit.control <- function(save.weight = TRUE, ...) {
         namesof(temp2.names, .lsd , earg = .esd , tag = FALSE))
     predictors.names <- predictors.names[interleave.VGAM(M, M = M1)]
 
+
+    if ( .stdTobit ) {
+      save.weights <- control$save.weights <- FALSE
+    }
+
     if (!length(etastart)) {
       anyc <- cbind(extra$censoredL | extra$censoredU)
       i11 <- if ( .imethod == 1) anyc else FALSE  # can be all data
@@ -1509,6 +1612,7 @@ tobit.control <- function(save.weight = TRUE, ...) {
            .emu = emu, .esd = esd,
            .Imu = imu, .isd = isd,
            .type.fitted = type.fitted,
+           .stdTobit = stdTobit,
            .imethod = imethod ))),
   linkinv = eval(substitute( function(eta, extra = NULL) {
     M1 <- 2
@@ -1581,12 +1685,6 @@ tobit.control <- function(save.weight = TRUE, ...) {
     misc$stdTobit <- .stdTobit
     misc$Lower <- Lowmat
     misc$Upper <- Uppmat
-
-
-    if ( .stdTobit ) {
-      save.weight <- control$save.weight <- FALSE
-      fit$weights <- NULL
-    }
 
 
   }), list( .lmu = lmu, .lsd = lsd,
@@ -3166,6 +3264,9 @@ dskewnorm <- function(x, location = 0, scale = 1, shape = 0, log = FALSE) {
   zedd <- (x - location) / scale
   loglik <- log(2) + dnorm(zedd, log = TRUE) +
             pnorm(shape * zedd, log.p = TRUE) - log(scale)
+
+  loglik[is.infinite(x)] <- log(0)  # 20141209 KaiH
+
   if (log.arg) {
     loglik
   } else {

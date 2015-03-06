@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2014 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -129,14 +129,14 @@ rrar.Wmat <- function(y, Ranks., MM, ki, plag, aa, uu, n, coeffs) {
 
 
 
-rrar.control <- function(stepsize = 0.5, save.weight = TRUE, ...) {
+rrar.control <- function(stepsize = 0.5, save.weights = TRUE, ...) {
 
   if (stepsize <= 0 || stepsize > 1) {
     warning("bad value of stepsize; using 0.5 instead")
     stepsize <- 0.5
   }
   list(stepsize = stepsize,
-       save.weight = as.logical(save.weight)[1])
+       save.weights = as.logical(save.weights)[1])
 }
 
 
@@ -282,8 +282,8 @@ rrar.control <- function(stepsize = 0.5, save.weight = TRUE, ...) {
 
 
 
-vglm.garma.control <- function(save.weight = TRUE, ...) {
-    list(save.weight = as.logical(save.weight)[1])
+vglm.garma.control <- function(save.weights = TRUE, ...) {
+    list(save.weights = as.logical(save.weights)[1])
 }
 
 

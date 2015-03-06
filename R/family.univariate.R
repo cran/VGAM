@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2014 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -167,8 +167,8 @@
 
 
 
-hzeta.control <- function(save.weight = TRUE, ...) {
-  list(save.weight = save.weight)
+hzeta.control <- function(save.weights = TRUE, ...) {
+  list(save.weights = save.weights)
 }
 
 
@@ -322,7 +322,8 @@ dhzeta <- function(x, alpha, log = FALSE) {
 }
 
 
-phzeta <- function(q, alpha) {
+
+phzeta <- function(q, alpha, log.p = FALSE) {
 
 
   nn <- max(length(q), length(alpha))
@@ -334,10 +335,13 @@ phzeta <- function(q, alpha) {
   ans <- 0 * q
   ans[!zero] <- 1 - (2*q[!zero]+1)^(-alpha[!zero])
 
-  ans[alpha <= 0] <- NaN
+  ans[q == -Inf] <- 0  # 20141215 KaiH
+  ans[q ==  Inf] <- 1  # 20141215 KaiH
 
-  ans
+  ans[alpha <= 0] <- NaN
+  if (log.p) log(ans) else ans
 }
+
 
 
 qhzeta <- function(p, alpha) {
@@ -878,12 +882,19 @@ rdiric <- function(n, shape, dimension = NULL,
 
 
 
- dirichlet <- function(link = "loge", parallel = FALSE, zero = NULL) {
+ dirichlet <- function(link = "loge", parallel = FALSE, zero = NULL,
+                       imethod = 1) {
 
 
   link <- as.list(substitute(link))
   earg <- link2list(link)
   link <- attr(earg, "function.name")
+
+
+  if (!is.Numeric(imethod, length.arg = 1,
+                  integer.valued = TRUE, positive = TRUE) ||
+     imethod > 2)
+    stop("argument 'imethod' must be 1 or 2")
 
 
   if (length(zero) &&
@@ -922,11 +933,16 @@ rdiric <- function(n, shape, dimension = NULL,
     predictors.names <-
       namesof(mynames1, .link , earg = .earg , short = TRUE)
     if (!length(etastart)) {
-      yy <- matrix(t(y) %*% rep(1 / nrow(y), nrow(y)), nrow(y), M,
-                   byrow = TRUE)
+      yy <- if ( .imethod == 2) {
+        matrix(colMeans(y), nrow(y), M, byrow = TRUE)
+      } else {
+        0.5 * (y + matrix(colMeans(y), nrow(y), M, byrow = TRUE))
+      }
+
       etastart <- theta2eta(yy, .link , earg = .earg )
     }
-  }), list( .link = link, .earg = earg ))),
+  }), list( .link = link, .earg = earg,
+            .imethod = imethod ))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
     shape <- eta2theta(eta, .link , earg = .earg )
     prop.table(shape, 1)
@@ -941,7 +957,9 @@ rdiric <- function(n, shape, dimension = NULL,
       misc$earg[[ii]] <- .earg
 
     misc$expected <- TRUE
-  }), list( .link = link, .earg = earg ))),
+    misc$imethod <- .imethod
+  }), list( .link = link, .earg = earg,
+            .imethod = imethod ))),
   loglikelihood = eval(substitute(
     function(mu, y, w, residuals = FALSE, eta,
              extra = NULL,
@@ -1106,25 +1124,26 @@ dzeta <- function(x, p, log = FALSE) {
   rm(log)
 
 
-    if (!is.Numeric(p, positive = TRUE))  # || min(p) <= 1
-        stop("'p' must be numeric and > 0")
-    LLL <- max(length(p), length(x))
-    x <- rep(x, length.out = LLL);
-    p <- rep(p, length.out = LLL)
+  if (!is.Numeric(p, positive = TRUE))  # || min(p) <= 1
+      stop("'p' must be numeric and > 0")
+  LLL <- max(length(p), length(x))
+  x <- rep(x, length.out = LLL);
+  p <- rep(p, length.out = LLL)
 
-    ox <- !is.finite(x)
-    zero <- ox | round(x) != x | x < 1
-    if (any(zero)) warning("non-integer x and/or x < 1 or NAs")
-    ans <- rep(if (log.arg) log(0) else 0, length.out = LLL)
-    if (any(!zero)) {
-        if (log.arg) {
-            ans[!zero] <- (-p[!zero]-1)*log(x[!zero]) - log(zeta(p[!zero]+1))
-        } else {
-            ans[!zero] <- x[!zero]^(-p[!zero]-1) / zeta(p[!zero]+1)
-        }
-    }
-    if (any(ox)) ans[ox] <- NA
-    ans
+  ox <- !is.finite(x)
+  zero <- ox | round(x) != x | x < 1
+  if (any(zero)) warning("non-integer x and/or x < 1 or NAs")
+  ans <- rep(if (log.arg) log(0) else 0, length.out = LLL)
+  if (any(!zero)) {
+      if (log.arg) {
+          ans[!zero] <- (-p[!zero]-1)*log(x[!zero]) - log(zeta(p[!zero]+1))
+      } else {
+          ans[!zero] <- x[!zero]^(-p[!zero]-1) / zeta(p[!zero]+1)
+      }
+  }
+  if (any(ox))
+    ans[ox] <- 0.0  # 20141215 KaiH
+  ans
 }
 
 
@@ -1330,7 +1349,7 @@ dzipf <- function(x, N, s, log = FALSE) {
 
 
 
-pzipf <- function(q, N, s) {
+pzipf <- function(q, N, s, log.p = FALSE) {
     if (!is.Numeric(q))
         stop("bad input for argument 'q'")
     if (!is.Numeric(N, integer.valued = TRUE, positive = TRUE))
@@ -1350,8 +1369,9 @@ pzipf <- function(q, N, s) {
     if (any(!zeroOR1))
         ans[!zeroOR1] <- gharmonic(floorq[!zeroOR1], s[!zeroOR1]) /
                         gharmonic(N[!zeroOR1], s[!zeroOR1])
-    ans
+    if (log.p) log(ans) else ans
 }
+
 
 
  zipf <- function(N = NULL, link = "loge", init.s = NULL) {
@@ -1473,8 +1493,8 @@ pzipf <- function(q, N, s) {
 
 
 
-cauchy.control <- function(save.weight = TRUE, ...) {
-    list(save.weight = save.weight)
+cauchy.control <- function(save.weights = TRUE, ...) {
+    list(save.weights = save.weights)
 }
 
 
@@ -2323,7 +2343,7 @@ dfelix <- function(x, a = 0.25, log = FALSE) {
 
 
 
- felix <- function(link = elogit(min = 0, max = 0.5), imethod = 1) {
+ felix <- function(link = extlogit(min = 0, max = 0.5), imethod = 1) {
 
   link <- as.list(substitute(link))
   earg <- link2list(link)
@@ -4064,8 +4084,8 @@ rbetageom <- function(n, shape1, shape2) {
 
 
 
-negbinomial.control <- function(save.weight = TRUE, ...) {
-    list(save.weight = save.weight)
+negbinomial.control <- function(save.weights = TRUE, ...) {
+    list(save.weights = save.weights)
 }
 
 
@@ -4074,14 +4094,13 @@ negbinomial.control <- function(save.weight = TRUE, ...) {
   function(lmu = "loge", lsize = "loge",
            imu = NULL,   isize = NULL,
            probs.y = 0.75,
-           nsimEIM = 100, cutoff = 0.995, Maxiter = 5000,
+           nsimEIM = 250, cutoff.prob = 0.995, # Maxiter = 5000,
+           max.qnbinom = 1000,
+           max.chunk.Mb = 20,  # max.memory = Inf is allowed
            deviance.arg = FALSE, imethod = 1,
+           gsize = exp((-4):4),
            parallel = FALSE,
            ishrinkage = 0.95, zero = -2) {
-
-
-
-
 
 
 
@@ -4102,6 +4121,7 @@ negbinomial.control <- function(save.weight = TRUE, ...) {
   lmuuu <- as.list(substitute(lmu))
   emuuu <- link2list(lmuuu)
   lmuuu <- attr(emuuu, "function.name")
+  
   imuuu <- imu
 
   lsize <- as.list(substitute(lsize))
@@ -4114,13 +4134,10 @@ negbinomial.control <- function(save.weight = TRUE, ...) {
   if (length(isize) && !is.Numeric(isize, positive = TRUE))
     stop("bad input for argument 'isize'")
 
-  if (!is.Numeric(cutoff, length.arg = 1) ||
-    cutoff < 0.8 ||
-    cutoff >= 1)
-    stop("range error in the argument 'cutoff'")
-  if (!is.Numeric(Maxiter, integer.valued = TRUE, length.arg = 1) ||
-    Maxiter < 100)
-    stop("bad input for argument 'Maxiter'")
+  if (!is.Numeric(cutoff.prob, length.arg = 1) ||
+    cutoff.prob < 0.95 ||
+    cutoff.prob >= 1)
+    stop("range error in the argument 'cutoff.prob'")
   if (!is.Numeric(imethod, length.arg = 1,
     integer.valued = TRUE, positive = TRUE) ||
      imethod > 3)
@@ -4130,13 +4147,11 @@ negbinomial.control <- function(save.weight = TRUE, ...) {
      ishrinkage > 1)
     stop("bad input for argument 'ishrinkage'")
 
-  if (!is.null(nsimEIM)) {
     if (!is.Numeric(nsimEIM, length.arg = 1, integer.valued = TRUE))
       stop("bad input for argument 'nsimEIM'")
     if (nsimEIM <= 10)
       warning("argument 'nsimEIM' should be an integer ",
                "greater than 10, say")
-  }
 
 
     if (!is.logical( parallel ) || length( parallel ) != 1)
@@ -4174,13 +4189,14 @@ negbinomial.control <- function(save.weight = TRUE, ...) {
 
 
 
-
-
   infos = eval(substitute(function(...) {
     list(M1 = 2,
          Q1 = 1,
-         zero = .zero)
-  }, list( .zero = zero ))),
+         multipleResponses = TRUE,
+         lmu = .lmuuu ,
+         lsize = .lsize ,
+         zero = .zero )
+  }, list( .zero = zero, .lsize = lsize, .lmuuu = lmuuu ))),
 
 
 
@@ -4195,10 +4211,6 @@ negbinomial.control <- function(save.weight = TRUE, ...) {
               colsyperw = 1, maximize = TRUE)
     w <- temp5$w
     y <- temp5$y
-
-
-
-
 
 
     assign("CQO.FastAlgorithm",
@@ -4223,14 +4235,11 @@ negbinomial.control <- function(save.weight = TRUE, ...) {
     NOS <- ncoly <- ncol(y)  # Number of species
     predictors.names <-
      c(namesof(if (NOS == 1) "mu"   else paste("mu",   1:NOS, sep = ""),
-                .lmuuu, earg = .emuuu, tag = FALSE),
+                .lmuuu , earg = .emuuu , tag = FALSE),
        namesof(if (NOS == 1) "size" else paste("size", 1:NOS, sep = ""),
                 .lsize , earg = .esize , tag = FALSE))
     predictors.names <- predictors.names[interleave.VGAM(M, M = M1)]
 
-    if (is.null( .nsimEIM )) {
-       save.weight <- control$save.weight <- FALSE
-    }
 
     if (is.numeric( .mu.init ))
       MU.INIT <- matrix( .mu.init , nrow(y), ncol(y), byrow = TRUE)
@@ -4238,36 +4247,35 @@ negbinomial.control <- function(save.weight = TRUE, ...) {
 
     if (!length(etastart)) {
       mu.init <- y
-      for (iii in 1:ncol(y)) {
+      for (jay in 1:ncol(y)) {
         use.this <- if ( .imethod == 1) {
-          weighted.mean(y[, iii], w[, iii]) + 1/16
+          weighted.mean(y[, jay], w[, jay]) + 1/16
         } else if ( .imethod == 3) {
-          c(quantile(y[, iii], probs = .probs.y ) + 1/16)
+          c(quantile(y[, jay], probs = .probs.y ) + 1/16)
         } else {
-          median(y[, iii]) + 1/16
+          median(y[, jay]) + 1/16
         }
 
         if (is.numeric( .mu.init )) {
-          mu.init[, iii] <- MU.INIT[, iii]
+          mu.init[, jay] <- MU.INIT[, jay]
         } else {
-          medabsres <- median(abs(y[, iii] - use.this)) + 1/32
+          medabsres <- median(abs(y[, jay] - use.this)) + 1/32
           allowfun <- function(z, maxtol = 1) sign(z) * pmin(abs(z), maxtol)
-          mu.init[, iii] <- use.this + (1 - .ishrinkage ) *
-                           allowfun(y[, iii] - use.this, maxtol = medabsres)
+          mu.init[, jay] <- use.this + (1 - .ishrinkage ) *
+                           allowfun(y[, jay] - use.this, maxtol = medabsres)
 
-          mu.init[, iii] <- abs(mu.init[, iii]) + 1 / 1024
+          mu.init[, jay] <- abs(mu.init[, jay]) + 1 / 1024
         }
-      }  # of for (iii)
+      }  # of for (jay)
 
       if ( is.Numeric( .k.init )) {
-        kay.init <- matrix( .k.init, nrow = n, ncol = NOS, byrow = TRUE)
+        kay.init <- matrix( .k.init , nrow = n, ncol = NOS, byrow = TRUE)
       } else {
         negbinomial.Loglikfun <- function(kmat, y, x, w, extraargs) {
             mu <- extraargs
             sum(c(w) * dnbinom(x = y, mu = mu, size = kmat, log = TRUE))
         }
-        k.grid <- 2^((-7):7)
-        k.grid <- 2^(seq(-8, 8, length = 40))
+        k.grid <- .gsize
         kay.init <- matrix(0, nrow = n, ncol = NOS)
         for (spp. in 1:NOS) {
           kay.init[, spp.] <- grid.search(k.grid,
@@ -4295,7 +4303,7 @@ negbinomial.control <- function(save.weight = TRUE, ...) {
       }
   }), list( .lmuuu = lmuuu, .lsize = lsize,
             .emuuu = emuuu, .esize = esize,
-            .mu.init = imu,
+            .mu.init = imu, .gsize = gsize,
             .deviance.arg = deviance.arg,
             .k.init = isize, .probs.y = probs.y,
             .ishrinkage = ishrinkage, .nsimEIM = nsimEIM,
@@ -4326,8 +4334,12 @@ negbinomial.control <- function(save.weight = TRUE, ...) {
     if (exists("CQO.FastAlgorithm", envir = VGAMenv))
         rm("CQO.FastAlgorithm", envir = VGAMenv)
 
-    temp0303 <- c(rep( .lmuuu, length = NOS),
-                 rep( .lsize , length = NOS))
+
+    save.weights <- control$save.weights <- !all(ind2)
+
+    
+    temp0303 <- c(rep( .lmuuu , length = NOS),
+                  rep( .lsize , length = NOS))
     names(temp0303) =
       c(if (NOS == 1) "mu"   else paste("mu",   1:NOS, sep = ""),
         if (NOS == 1) "size" else paste("size", 1:NOS, sep = ""))
@@ -4341,7 +4353,8 @@ negbinomial.control <- function(save.weight = TRUE, ...) {
       misc$earg[[M1*ii  ]] <- .esize
     }
 
-    misc$cutoff <- .cutoff 
+    misc$max.chunk.Mb <- .max.chunk.Mb
+    misc$cutoff.prob <- .cutoff.prob
     misc$imethod <- .imethod 
     misc$nsimEIM <- .nsimEIM
     misc$expected <- TRUE
@@ -4349,7 +4362,8 @@ negbinomial.control <- function(save.weight = TRUE, ...) {
     misc$multipleResponses <- TRUE
   }), list( .lmuuu = lmuuu, .lsize = lsize,
             .emuuu = emuuu, .esize = esize,
-            .cutoff = cutoff,
+            .cutoff.prob = cutoff.prob,  # .min.size = min.size,
+            .max.chunk.Mb = max.chunk.Mb,
             .nsimEIM = nsimEIM,
             .ishrinkage = ishrinkage,
             .imethod = imethod ))),
@@ -4388,14 +4402,13 @@ negbinomial.control <- function(save.weight = TRUE, ...) {
     NOS <- ncol(eta) / M1
 
     eta.k <- eta[, M1*(1:NOS), drop = FALSE]
-    if ( .lsize == "loge") {
+
+    if ( FALSE && .lsize == "loge") {
         bigval <- 68
         eta.k <- ifelse(eta.k >  bigval,  bigval, eta.k)
         eta.k <- ifelse(eta.k < -bigval, -bigval, eta.k)
     }
     kmat <- eta2theta(eta.k, .lsize , earg = .esize )
-
-
 
 
 
@@ -4475,15 +4488,11 @@ negbinomial.control <- function(save.weight = TRUE, ...) {
 
 
 
-
-
-
-
     M1 <- 2
     NOS <- ncol(eta) / M1
     M <- ncol(eta)
     eta.k <- eta[, M1*(1:NOS)  , drop = FALSE]
-    if ( .lsize == "loge") {
+    if (FALSE && .lsize == "loge") {
       bigval <- 68
       eta.k <- ifelse(eta.k >  bigval,  bigval, eta.k)
       eta.k <- ifelse(eta.k < -bigval, -bigval, eta.k)
@@ -4512,7 +4521,7 @@ negbinomial.control <- function(save.weight = TRUE, ...) {
       newemu$wrt.eta <- 2
     dk.deta1 <- dtheta.deta(mu, .lmuuu , earg = newemu)  # eta2
 
-    dk.deta2 <- dtheta.deta(kmat, .lsize , earg = .esize)
+    dk.deta2 <- dtheta.deta(kmat, .lsize , earg = .esize )
 
 
 
@@ -4525,15 +4534,6 @@ negbinomial.control <- function(save.weight = TRUE, ...) {
         myderiv[, 1:NOS] <- dl.dk  * dk.deta1
       } else {
       }
-    }
-
-
-
-
-    if ( FALSE && .lmuuu == "nbcanlink") {  # 20130823 FALSE added
-      if ( iter%% 2 == 1)
-      myderiv[, 1:NOS] <-
-      myderiv[, 1:NOS] + c(w) * dl.dk * dk.deta1 * 1  # 20130823 Annul this
     }
 
 
@@ -4550,44 +4550,104 @@ negbinomial.control <- function(save.weight = TRUE, ...) {
             .deviance.arg = deviance.arg,
             .emuuu = emuuu, .esize = esize))),
 
+
+
   weight = eval(substitute(expression({
     wz <- matrix(as.numeric(NA), n, M)
 
 
-    if (is.null( .nsimEIM )) {
-      fred2 <- .Fortran("enbin9", ans = double(n*NOS),
-                  as.double(kmat), as.double(mu), as.double( .cutoff ),
-                  as.integer(n), ok = as.integer(1), as.integer(NOS),
-                  sumpdf = double(1), as.double( .Machine$double.eps ),
-                  as.integer( .Maxiter ))
-      if (fred2$ok != 1)
-        stop("error in Fortran subroutine exnbin9")
-      dim(fred2$ans) <- c(n, NOS)
-      ned2l.dk2 <- -fred2$ans - 1/kmat + 1/(kmat+mu)
-      wz[, M1*(1:NOS)] <- dk.deta2^2 * ned2l.dk2
+    max.qnbinom <- .max.qnbinom
+    max.chunk.Mb <- .max.chunk.Mb
+
+
+    EIM.NB.special2 <- function(mu, size, y.max = NULL,
+                                cutoff.prob = 0.995,
+                                intercept.only = FALSE) {
 
 
 
-    } else {
+      if (intercept.only) {
+        mu <- mu[1]
+        size <- size[1]
+      }
 
-      run.varcov <- matrix(0, n, NOS)
+      if (!is.numeric(y.max)) {
+        y.max <- max(qnbinom(p = cutoff.prob, mu = mu, size = size)) + 2
+      }
 
-      for (ii in 1:( .nsimEIM )) {
-        ysim <- rnbinom(n = n*NOS, mu = c(mu), size = c(kmat))
-        if (NOS > 1) dim(ysim) = c(n, NOS)
-        dl.dk <- digamma(ysim + kmat) - digamma(kmat) -
-                (ysim + kmat) / (mu + kmat) +
-                1 + log(kmat / (kmat + mu))
-        run.varcov <- run.varcov + dl.dk^2
-      }  # end of for loop
+      Y.mat <- if (intercept.only) 0:y.max else
+               matrix(0:y.max, length(mu), y.max+1, byrow = TRUE)
+      trigg.term <- if (intercept.only) {
+         dnbinom(Y.mat, size = size, mu = mu) %*% trigamma(Y.mat + size)
+      } else {
+         rowSums(dnbinom(Y.mat, size = size, mu = mu) *
+                 trigamma(Y.mat + size))
+      }
+      ned2l.dk2 <- trigamma(size) - 1 / size + 1 / (size + mu) - trigg.term
+      ned2l.dk2
+    }  # end of EIM.NB.special2()
 
-      run.varcov <- cbind(run.varcov / .nsimEIM )
-      ned2l.dk2 <- if (intercept.only)
-          matrix(colMeans(run.varcov),
-                 n, ncol(run.varcov), byrow = TRUE) else run.varcov
+    
 
-      wz[, M1*(1:NOS)] <- ned2l.dk2 * dk.deta2^2
-    }  # end of else
+    ind2 <- matrix(FALSE, n, NOS)  # Used for SFS
+    for (jay in 1:NOS) {
+      Q.maxs <- qnbinom(p = .cutoff.prob , mu = mu[, jay], size = kmat[, jay])
+      ind1 <- if (max.chunk.Mb > 0) (Q.maxs < max.qnbinom) else FALSE
+        if ((NN <- sum(ind1)) > 0) {
+          Object.Size <- NN * 8 * max(Q.maxs) / (2^20)  # Mb; 8 bytes / double
+          n.chunks <- if (intercept.only) 1 else
+                      max(1, ceiling( Object.Size / max.chunk.Mb))
+          chunk.rows <- ceiling(NN / n.chunks)
+          ind2[, jay] <- ind1  # Save this
+          wind2 <- which(ind1)
+
+
+          upr.ptr <- 0
+          lwr.ptr <- upr.ptr + 1
+          while (lwr.ptr <= NN) {
+            upr.ptr <- min(upr.ptr + chunk.rows, NN)
+            sind2 <- wind2[lwr.ptr:upr.ptr]
+            wz[sind2, M1*jay] <-
+              EIM.NB.special2(mu          =   mu[sind2, jay],
+                              size        = kmat[sind2, jay],
+                              y.max = max(Q.maxs[sind2]),
+                              cutoff.prob = .cutoff.prob ,
+                              intercept.only = intercept.only) *
+              (dk.deta2[sind2, jay])^2
+            lwr.ptr <- upr.ptr + 1
+          }  # while
+
+      }
+    }  # end of for (jay in 1:NOS)
+
+
+
+
+
+
+    for (jay in 1:NOS) {
+      run.varcov <- 0
+      ii.TF <- !ind2[, jay]  # Not assigned above
+      if (any(ii.TF)) {
+        kkvec <- kmat[ii.TF, jay]
+        muvec <-   mu[ii.TF, jay]
+        for (ii in 1:( .nsimEIM )) {
+          ysim <- rnbinom(sum(ii.TF), mu = muvec, size = kkvec)
+          dl.dk <- digamma(ysim + kkvec) - digamma(kkvec) -
+                   (ysim + kkvec) / (muvec + kkvec) +
+                   1 + log(kkvec / (kkvec + muvec))
+          run.varcov <- run.varcov + dl.dk^2
+        }  # end of for loop
+
+        run.varcov <- c(run.varcov / .nsimEIM )
+        ned2l.dk2 <- if (intercept.only) mean(run.varcov) else run.varcov
+
+        wz[ii.TF, M1*jay] <- ned2l.dk2 * (dk.deta2[ii.TF, jay])^2
+      }
+    }
+
+
+    save.weights <- !all(ind2)
 
 
     ned2l.dmu2 <- 1 / mu - 1 / (mu + kmat)
@@ -4595,10 +4655,8 @@ negbinomial.control <- function(save.weight = TRUE, ...) {
 
 
 
-
-
     if ( .lmuuu == "nbcanlink") {
-      if ( iter%% 2 == 0) {
+      if ( iter %% 2 == 0) {
         wz[, M1*(1:NOS) - 1] <- ned2l.dk2 * dk.deta1^2
       } else {
       }
@@ -4607,31 +4665,14 @@ negbinomial.control <- function(save.weight = TRUE, ...) {
 
 
 
-
-    if ( FALSE && .lmuuu == "nbcanlink") {  # 20130823 FALSE added
-      if ( iter%% 2 == 1)
-      wz[, M1*(1:NOS)-1] <-
-      wz[, M1*(1:NOS)-1] + ned2l.dk2 * dk.deta1^2 * 1  # 20130823
-
-      if (FALSE)
-      wz <- cbind(wz,
-                  kronecker(ned2l.dk2 * dk.deta1 * dk.deta2,
-                            if (NOS > 1) cbind(1, 0) else 1))
-    }
-
-
-
-
-
-
-
-
     w.wz.merge(w = w, wz = wz, n = n, M = M, ndepy = NOS)
-  }), list( .cutoff = cutoff,
-            .Maxiter = Maxiter,
+  }), list( .cutoff.prob = cutoff.prob,
+            .max.qnbinom = max.qnbinom,
+            .max.chunk.Mb = max.chunk.Mb,
             .lmuuu = lmuuu,
             .nsimEIM = nsimEIM ))))
 
+  
 
 
   if (deviance.arg) {
@@ -4682,8 +4723,11 @@ negbinomial.control <- function(save.weight = TRUE, ...) {
 
 
 
-polya.control <- function(save.weight = TRUE, ...) {
-    list(save.weight = save.weight)
+
+
+
+polya.control <- function(save.weights = TRUE, ...) {
+    list(save.weights = save.weights)
 }
 
 
@@ -4787,7 +4831,7 @@ polya.control <- function(save.weight = TRUE, ...) {
     predictors.names <- predictors.names[interleave.VGAM(M, M = 2)]
 
     if (is.null( .nsimEIM )) {
-       save.weight <- control$save.weight <- FALSE
+       save.weights <- control$save.weights <- FALSE
     }
 
     
@@ -5072,8 +5116,8 @@ polya.control <- function(save.weight = TRUE, ...) {
 
 
 
-polyaR.control <- function(save.weight = TRUE, ...) {
-    list(save.weight = save.weight)
+polyaR.control <- function(save.weights = TRUE, ...) {
+    list(save.weights = save.weights)
 }
 
 
@@ -5178,7 +5222,7 @@ polyaR.control <- function(save.weight = TRUE, ...) {
     predictors.names <- predictors.names[interleave.VGAM(M, M = 2)]
 
     if (is.null( .nsimEIM )) {
-       save.weight <- control$save.weight <- FALSE
+       save.weights <- control$save.weights <- FALSE
     }
 
     
@@ -6765,7 +6809,7 @@ rsimplex <- function(n, mu = 0.5, dispersion = 1) {
 
 
 
- hypersecant <- function(link.theta = elogit(min = -pi/2, max = pi/2),
+ hypersecant <- function(link.theta = extlogit(min = -pi/2, max = pi/2),
                          init.theta = NULL) {
 
 
@@ -6841,7 +6885,7 @@ rsimplex <- function(n, mu = 0.5, dispersion = 1) {
 
 
 
- hypersecant01 <- function(link.theta = elogit(min = -pi/2, max = pi/2),
+ hypersecant01 <- function(link.theta = extlogit(min = -pi/2, max = pi/2),
                            init.theta = NULL) {
 
 
@@ -7074,7 +7118,7 @@ rsimplex <- function(n, mu = 0.5, dispersion = 1) {
 
 
 
- inv.binomial <- function(lrho = elogit(min = 0.5, max = 1),
+ inv.binomial <- function(lrho = extlogit(min = 0.5, max = 1),
                           llambda = "loge",
                           irho = NULL,
                           ilambda = NULL,
@@ -7216,7 +7260,7 @@ rsimplex <- function(n, mu = 0.5, dispersion = 1) {
 
 
 
- genpoisson <- function(llambda = elogit(min = -1, max = 1),
+ genpoisson <- function(llambda = extlogit(min = -1, max = 1),
                         ltheta = "loge",
                         ilambda = NULL, itheta = NULL,
                         use.approx = TRUE,
@@ -7402,31 +7446,36 @@ dlgamma <- function(x, location = 0, scale = 1, shape = 1, log = FALSE) {
   if (!is.Numeric(shape, positive = TRUE))
     stop("bad input for argument 'shape'")
   z <- (x-location) / scale
-  if (log.arg) {
-    shape * z - exp(z) - log(scale) - lgamma(shape)
-  } else {
-    exp(shape * z - exp(z)) / (scale * gamma(shape))
-  }
+  logden <- shape * z - exp(z) - log(scale) - lgamma(shape)
+  logden[is.infinite(x)] <- log(0)  # 20141210
+  if (log.arg) logden else exp(logden)
 }
 
 
-plgamma <- function(q, location = 0, scale = 1, shape = 1) {
+
+plgamma <- function(q, location = 0, scale = 1, shape = 1,
+                    lower.tail = TRUE, log.p = FALSE) {
+
+
 
   zedd <- (q - location) / scale
-  ans <- pgamma(exp(zedd), shape)
+  ans <- pgamma(exp(zedd), shape, lower.tail = lower.tail, log.p = log.p)
   ans[scale <  0] <- NaN
   ans
 }
 
 
-qlgamma <- function(p, location = 0, scale = 1, shape = 1) {
-  if (!is.Numeric(scale, positive = TRUE))
-    stop("bad input for argument 'scale'")
 
-  ans <- location + scale * log(qgamma(p, shape))
+qlgamma <- function(p, location = 0, scale = 1, shape = 1,
+                    lower.tail = TRUE, log.p = FALSE) {
+
+
+  ans <- location + scale * log(qgamma(p, shape,
+                                       lower.tail = lower.tail, log.p = log.p))
   ans[scale <  0] <- NaN
   ans
 }
+
 
 
 rlgamma <- function(n, location = 0, scale = 1, shape = 1) {
@@ -7926,22 +7975,25 @@ dgengamma.stacy <- function(x, scale = 1, d = 1, k = 1, log = FALSE) {
 
 
 
-
-pgengamma.stacy <- function(q, scale = 1, d = 1, k = 1) {
+pgengamma.stacy <- function(q, scale = 1, d = 1, k = 1,
+                            lower.tail = TRUE, log.p = FALSE) {
   zedd <- (q / scale)^d
-  ans <- pgamma(zedd, k)
+  ans <- pgamma(zedd, k, lower.tail = lower.tail, log.p = log.p)
   ans[scale <  0] <- NaN
   ans[d     <= 0] <- NaN
   ans
 }
 
 
-qgengamma.stacy <- function(p, scale = 1, d = 1, k = 1) {
-  ans <- scale * qgamma(p, k)^(1/d)
+
+qgengamma.stacy <- function(p, scale = 1, d = 1, k = 1,
+                            lower.tail = TRUE, log.p = FALSE) {
+  ans <- scale * qgamma(p, k, lower.tail = lower.tail, log.p = log.p)^(1/d)
   ans[scale <  0] <- NaN
   ans[d     <= 0] <- NaN
   ans
 }
+
 
 
 rgengamma.stacy <- function(n, scale = 1, d = 1, k = 1) {
@@ -8139,27 +8191,27 @@ dlog <- function(x, prob, log = FALSE) {
     stop("bad input for argument 'log'")
   rm(log)
 
-    if (!is.Numeric(prob, positive = TRUE) || max(prob) >= 1)
-        stop("bad input for argument 'prob'")
-    N <- max(length(x), length(prob))
-    if (length(x) != N)
-        x <- rep(x, length.out = N)
-    if (length(prob) != N)
-        prob <- rep(prob, length.out = N)
-    ox <- !is.finite(x)
-    zero <- ox | round(x) != x | x < 1
-    ans <- rep(0.0, length.out = length(x))
-        if (log.arg) {
-            ans[ zero] <- log(0.0)
-            ans[!zero] <- x[!zero] * log(prob[!zero]) - log(x[!zero]) -
-                         log(-log1p(-prob[!zero]))
-        } else {
-            ans[!zero] <- -(prob[!zero]^(x[!zero])) / (x[!zero] *
-                         log1p(-prob[!zero]))
-        }
-    if (any(ox))
-        ans[ox] <- NA
-    ans
+  if (!is.Numeric(prob, positive = TRUE) || max(prob) >= 1)
+      stop("bad input for argument 'prob'")
+  N <- max(length(x), length(prob))
+  if (length(x) != N)
+    x <- rep(x, length.out = N)
+  if (length(prob) != N)
+    prob <- rep(prob, length.out = N)
+  ox <- !is.finite(x)
+  zero <- ox | round(x) != x | x < 1
+  ans <- rep(0.0, length.out = length(x))
+  if (log.arg) {
+    ans[ zero] <- log(0.0)
+    ans[!zero] <- x[!zero] * log(prob[!zero]) - log(x[!zero]) -
+                  log(-log1p(-prob[!zero]))
+    ans[ox] <- log(0)  # 20141212 KaiH
+  } else {
+    ans[!zero] <- -(prob[!zero]^(x[!zero])) / (x[!zero] *
+                   log1p(-prob[!zero]))
+    ans[ox] <- 0.0  # 20141212 KaiH
+  }
+  ans
 }
 
 
@@ -8597,24 +8649,32 @@ dlino <- function(x, shape1, shape2, lambda = 1, log = FALSE) {
   loglik <-  dbeta(x = x, shape1 = shape1, shape2 = shape2, log = TRUE) +
              shape1 * log(lambda) -
             (shape1+shape2) * log1p(-(1-lambda) * x)
+  loglik[is.infinite(x)] <- log(0)  # 20141208 KaiH
   if (log.arg) loglik else exp(loglik)
 }
 
 
-plino <- function(q, shape1, shape2, lambda = 1) {
-  ans <- pbeta(q = lambda * q / (1 - (1-lambda) * q),
-               shape1 = shape1, shape2 = shape2)
+
+plino <- function(q, shape1, shape2, lambda = 1,
+                  lower.tail = TRUE, log.p = FALSE) {
+  ans <- pbeta(q = 1 / (1 + (1/q - 1) / lambda),  # lambda * q / (1 - (1-lambda) * q),
+               shape1 = shape1, shape2 = shape2,
+               lower.tail = lower.tail, log.p = log.p)
   ans[lambda <= 0] <- NaN
   ans
 }
 
 
-qlino <- function(p, shape1, shape2, lambda = 1) {
-  Y <- qbeta(p = p, shape1 = shape1, shape2 = shape2)
+
+qlino <- function(p, shape1, shape2, lambda = 1,
+                  lower.tail = TRUE, log.p = FALSE) {
+  Y <- qbeta(p = p, shape1 = shape1, shape2 = shape2,
+             lower.tail = lower.tail, log.p = log.p)
   ans <- Y / (lambda + (1-lambda)*Y)
   ans[lambda <= 0] <- NaN
   ans
 }
+
 
 
 rlino <- function(n, shape1, shape2, lambda = 1) {
@@ -8938,30 +8998,51 @@ dmaxwell <- function(x, rate, log = FALSE) {
 
 
 
-pmaxwell <- function(q, rate) {
-  L <- max(length(q), length(rate))
-  q    <- rep(q,    length.out = L)
-  rate <- rep(rate, length.out = L) 
-  ans <- ifelse(q > 0,
-                erf(q*sqrt(rate/2)) - q*exp(-0.5*rate*q^2) * sqrt(2*rate/pi),
-                0)
-  ans[rate <= 0] <- NaN
+pmaxwell <- function(q, rate, lower.tail = TRUE, log.p = FALSE) {
+  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+    stop("bad input for argument 'lower.tail'")
+
+  if (!is.logical(log.p) || length(log.p) != 1)
+    stop("bad input for argument 'log.p'")
+
+
+  if (lower.tail) {
+    if (log.p) {
+      ans <- log(erf(q*sqrt(rate/2)) - q*exp(-0.5*rate*q^2) * sqrt(2*rate/pi))
+      ans[q <= 0 ] <- -Inf
+      ans[q == Inf] <- 0
+    } else {
+      ans <- erf(q*sqrt(rate/2)) - q*exp(-0.5*rate*q^2) * sqrt(2*rate/pi)
+      ans[q <= 0] <- 0
+      ans[q == Inf] <- 1
+    }
+  } else {
+    if (log.p) {
+      ans <- log1p(-erf(q*sqrt(rate/2)) + q*exp(-0.5*rate*q^2) * sqrt(2*rate/pi))
+      ans[q <= 0] <- 0
+      ans[q == Inf] <- -Inf
+    } else {
+      ans <- exp(log1p(-erf(q*sqrt(rate/2)) + q*exp(-0.5*rate*q^2) * sqrt(2*rate/pi)))
+      ans[q <= 0] <- 1
+      ans[q == Inf] <- 0
+    }
+  }
   ans
 }
 
 
-qmaxwell <- function(p, rate) {
 
-  sqrt(2 * qgamma(p = p, 1.5) / rate)
+qmaxwell <- function(p, rate, lower.tail = TRUE, log.p = FALSE) {
+
+  sqrt(2 * qgamma(p = p, 1.5, lower.tail = lower.tail, log.p = log.p) / rate)
 }
+
 
 
 rmaxwell <- function(n, rate) {
 
   sqrt(2 * rgamma(n = n, 1.5) / rate)
 }
-
-
 
 
 
@@ -9127,25 +9208,21 @@ dnaka <- function(x, scale = 1, shape, log = FALSE) {
                               scale = scale[xok] / shape[xok],
                               log = TRUE) +
                       log(2) + log(x[xok])
+    logdensity[is.infinite(x)] <- log(0)  # 20141208 KaiH
+
     if (log.arg) logdensity else exp(logdensity)
 }
 
 
-pnaka <- function(q, scale = 1, shape) {
-    if (!is.Numeric(q))
-      stop("bad input for argument 'q'")
-    if (!is.Numeric(shape, positive = TRUE))
-      stop("bad input for argument 'shape'")
-    if (!is.Numeric(scale, positive = TRUE))
-      stop("bad input for argument 'scale'")
 
-    L <- max(length(q), length(shape), length(scale))
-    q     <- rep(q,     length.out = L)
-    shape <- rep(shape, length.out = L)
-    scale <- rep(scale, length.out = L)
+pnaka <- function(q, scale = 1, shape, lower.tail = TRUE, log.p = FALSE) {
 
-    ifelse(q <= 0, 0, pgamma(shape * q^2 / scale, shape))
+  ans <- pgamma(shape * q^2 / scale, shape = shape,
+                lower.tail = lower.tail, log.p = log.p)
+  ans[scale <  0] <- NaN
+  ans
 }
+
 
 
 qnaka <- function(p, scale = 1, shape, ...) {
@@ -9239,9 +9316,6 @@ rnaka <- function(n, scale = 1, shape, Smallno = 1.0e-6) {
   lscale <- attr(escale, "function.name")
 
 
-  if (!nowarning)
-    warning("order of the linear/additive predictors has been changed",
-            " in VGAM version 0.9-5")
 
   new("vglmff",
   blurb = c("Nakagami distribution f(y) = 2 * (shape/scale)^shape *\n",
@@ -9360,29 +9434,78 @@ drayleigh <- function(x, scale = 1, log = FALSE) {
   xok <- (x > 0)
   logdensity[xok] <- log(x[xok]) - 0.5 * (x[xok]/scale[xok])^2 -
                      2 * log(scale[xok])
+  logdensity[is.infinite(x)] <- log(0)  # 20141208 KaiH
   if (log.arg) logdensity else exp(logdensity)
 }
 
 
-prayleigh <- function(q, scale = 1) {
-  if (any(scale <= 0, na.rm = TRUE))
-    stop("argument 'scale' must be positive")
 
-  L     <- max(length(q), length(scale)) 
-  q     <- rep(q,     length.out = L)
-  scale <- rep(scale, length.out = L)
+prayleigh <- function(q, scale = 1, lower.tail = TRUE, log.p = FALSE) {
+  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+    stop("bad input for argument 'lower.tail'")
 
-  ifelse(q > 0, -expm1(-0.5 * (q / scale)^2), 0)
+  if (!is.logical(log.p) || length(log.p) != 1)
+    stop("bad input for argument 'log.p'")
+
+
+  if (lower.tail) {
+    if (log.p) {
+      ans <- log(-expm1(-0.5 * (q / scale)^2))
+      ans[q <= 0 ] <- -Inf
+    } else {
+      ans <- -expm1(-0.5 * (q / scale)^2)
+      ans[q <= 0] <- 0
+    }
+  } else {
+      if (log.p) {
+        ans <- -0.5 * (q / scale)^2
+        ans[q <= 0] <- 0
+      } else {
+        ans <- exp(-0.5 * (q / scale)^2)
+        ans[q <= 0] <- 1
+      }
+    }
+  ans[scale <  0] <- NaN
+  ans
 }
 
 
-qrayleigh <- function(p, scale = 1) {
-  if (any(p <= 0, na.rm = TRUE) || any(p >= 1, na.rm = TRUE))
-    stop("argument 'p' must be between 0 and 1")
-  ans <- scale * sqrt(-2 * log1p(-p))
+
+qrayleigh <- function(p, scale = 1,
+                      lower.tail = TRUE, log.p = FALSE) {
+
+  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+    stop("bad input for argument 'lower.tail'")
+
+  if (!is.logical(log.p) || length(log.p) != 1)
+    stop("bad input for argument 'log.p'")
+
+  if (lower.tail) {
+    if (log.p) {
+      ln.p <- p
+      ans <- scale * sqrt(-2 * log(-expm1(ln.p)))
+      ans[ln.p > 0] <- NaN
+    } else {
+      ans <- scale * sqrt(-2 * log1p(-p))
+      ans[p < 0] <- NaN
+      ans[p == 0] <- 0
+      ans[p == 1] <- Inf
+    }
+  } else {
+    if (log.p) {
+      ln.p <- p
+      ans <- scale * sqrt(-2 * ln.p)
+      ans[ln.p > 0] <- NaN
+      ans
+    } else {
+      ans <- scale * sqrt(-2 * log(p))
+      ans[p > 1] <- NaN
+    }
+  }
   ans[scale <= 0] <- NaN
   ans
 }
+
 
 
 rrayleigh <- function(n, scale = 1) {
@@ -9584,50 +9707,90 @@ dparetoIV <- function(x, location = 0, scale = 1, inequality = 1,
                     (1/inequality[xok]-1) * log(zedd[xok]) - 
                     (shape[xok]+1) *
                       log1p(zedd[xok]^(1/inequality[xok]))
+  logdensity[is.infinite(x)] <- log(0)  # 20141208 KaiH
   if (log.arg) logdensity else exp(logdensity)
 }
 
 
+
 pparetoIV <-
-  function(q, location = 0, scale = 1, inequality = 1, shape = 1) {
-  if (!is.Numeric(q))
-    stop("bad input for argument 'q'")
-  if (!is.Numeric(scale, positive = TRUE)) 
-    stop("bad input for argument 'scale'")
-  if (!is.Numeric(inequality, positive = TRUE)) 
-    stop("bad input for argument 'inequality'")
-  if (!is.Numeric(shape, positive = TRUE)) 
-    stop("bad input for argument 'shape'")
+  function(q, location = 0, scale = 1, inequality = 1, shape = 1,
+           lower.tail = TRUE, log.p = FALSE) {
 
-  N <- max(length(q), length(location), length(scale),
-          length(inequality), length(shape))
-  if (length(q)          != N) q          <- rep(q,          length.out = N)
-  if (length(location)   != N) location   <- rep(location,   length.out = N)
-  if (length(inequality) != N) inequality <- rep(inequality, length.out = N)
-  if (length(shape)      != N) shape      <- rep(shape,      length.out = N)
-  if (length(scale)      != N) scale      <- rep(scale,      length.out = N)
+  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+    stop("bad input for argument 'lower.tail'")
+  if (!is.logical(log.p) || length(log.p) != 1)
+    stop("bad input for argument 'log.p'")
 
-  answer <- q * 0
-  ii <- q > location
-  zedd <- (q[ii] - location[ii]) / scale[ii]
-  answer[ii] <- 1 - (1 + zedd^(1/inequality[ii]))^(-shape[ii])
+
+  zedd <- (q - location) / scale
+
+  if (lower.tail) {
+    if (log.p) {
+      answer <- log(-expm1(log1p(zedd^(1/inequality)) * (-shape)))
+      answer[q <= 0 ] <- -Inf
+      answer[q == Inf] <- 0
+    } else {
+      answer <- -expm1(log1p(zedd^(1/inequality)) * (-shape))
+      answer[q <= 0] <- 0
+      answer[q == Inf] <- 1
+    }
+  } else {
+    if (log.p) {
+      answer <- log1p(zedd^(1/inequality)) * (-shape)
+      answer[q <= 0] <- 0
+      answer[q == Inf] <- -Inf
+    } else {
+      answer <- exp(log1p(zedd^(1/inequality)) * (-shape))
+      answer[q <= 0] <- 1
+      answer[q == Inf] <- 0
+    }
+  }
+  answer[scale <= 0 | shape <= 0 | inequality <= 0] <- NaN
   answer
 }
 
 
+
 qparetoIV <-
-  function(p, location = 0, scale = 1, inequality = 1, shape = 1) {
-  if (!is.Numeric(p, positive = TRUE) || any(p >= 1)) 
-    stop("bad input for argument 'p'")
-  if (!is.Numeric(inequality, positive = TRUE)) 
-    stop("bad input for argument 'inequality'")
-  if (!is.Numeric(shape, positive = TRUE)) 
-    stop("bad input for argument 'shape'")
-  ans <- location + scale * (-1 + (1-p)^(-1/shape))^inequality
-  ans[scale <= 0] <- NaN
-  ans[shape <= 0] <- NaN
+  function(p, location = 0, scale = 1, inequality = 1, shape = 1,
+           lower.tail = TRUE, log.p = FALSE) {
+
+  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+    stop("bad input for argument 'lower.tail'")
+  if (!is.logical(log.p) || length(log.p) != 1)
+    stop("bad input for argument 'log.p'")
+
+  if (lower.tail) {
+    if (log.p) {
+      ln.p <- p
+      ans <- location + scale * (expm1((-1/shape)*log(-expm1(ln.p))))^inequality
+      ans[ln.p > 0] <- NaN
+    } else {
+      ans <- location + scale * (expm1((-1/shape) * log1p(-p)))^inequality
+      ans[p < 0] <- NaN
+      ans[p == 0] <- 0
+      ans[p == 1] <- Inf
+      ans[p > 1] <- NaN
+    }
+  } else {
+    if (log.p) {
+      ln.p <- p
+      ans <- location + scale * (expm1((-1/shape)*ln.p))^inequality
+      ans[ln.p > 0] <- NaN
+      ans
+    } else {
+      ans <- location + scale * (expm1((-1/shape)*log(p)))^inequality
+      ans[p < 0] <- NaN
+      ans[p == 0] <- Inf
+      ans[p == 1] <- 0
+      ans[p > 1] <- NaN
+    }
+  }
+  ans[scale <= 0 | shape <= 0 | inequality <= 0] <- NaN
   ans
 }
+
 
 
 rparetoIV <-
@@ -9646,13 +9809,17 @@ dparetoIII <- function(x, location = 0, scale = 1, inequality = 1,
   dparetoIV(x = x, location = location, scale = scale,
             inequality = inequality, shape = 1, log = log)
 
-pparetoIII <- function(q, location = 0, scale = 1, inequality = 1)
+pparetoIII <- function(q, location = 0, scale = 1, inequality = 1,
+                       lower.tail = TRUE, log.p = FALSE)
   pparetoIV(q = q, location = location, scale = scale,
-            inequality = inequality, shape = 1)
+            inequality = inequality, shape = 1,
+            lower.tail = lower.tail, log.p = log.p)
 
-qparetoIII <- function(p, location = 0, scale = 1, inequality = 1)
+qparetoIII <- function(p, location = 0, scale = 1, inequality = 1,
+                       lower.tail = TRUE, log.p = FALSE)
   qparetoIV(p = p, location = location, scale = scale,
-            inequality = inequality, shape = 1)
+            inequality = inequality, shape = 1,
+            lower.tail = lower.tail, log.p = log.p)
 
 rparetoIII <- function(n, location = 0, scale = 1, inequality = 1)
   rparetoIV(n = n, location= location, scale = scale,
@@ -9662,16 +9829,19 @@ rparetoIII <- function(n, location = 0, scale = 1, inequality = 1)
 
 dparetoII <- function(x, location = 0, scale = 1, shape = 1, log = FALSE)
   dparetoIV(x = x, location = location, scale = scale,
-            inequality = 1, shape = shape,
-            log = log)
+            inequality = 1, shape = shape, log = log)
 
-pparetoII <- function(q, location = 0, scale = 1, shape = 1)
+pparetoII <- function(q, location = 0, scale = 1, shape = 1,
+                      lower.tail = TRUE, log.p = FALSE)
   pparetoIV(q = q, location = location, scale = scale,
-            inequality = 1, shape = shape)
+            inequality = 1, shape = shape,
+            lower.tail = lower.tail, log.p = log.p)
 
-qparetoII <- function(p, location = 0, scale = 1, shape = 1)
+qparetoII <- function(p, location = 0, scale = 1, shape = 1,
+                      lower.tail = TRUE, log.p = FALSE)
   qparetoIV(p = p, location = location, scale = scale,
-            inequality = 1, shape = shape)
+            inequality = 1, shape = shape,
+            lower.tail = lower.tail, log.p = log.p)
 
 rparetoII <- function(n, location = 0, scale = 1, shape = 1)
   rparetoIV(n = n, location = location, scale = scale,
@@ -9682,13 +9852,17 @@ dparetoI <- function(x, scale = 1, shape = 1, log = FALSE)
   dparetoIV(x = x, location = scale, scale = scale, inequality = 1,
             shape = shape, log = log)
 
-pparetoI <- function(q, scale = 1, shape = 1)
+pparetoI <- function(q, scale = 1, shape = 1,
+                     lower.tail = TRUE, log.p = FALSE)
   pparetoIV(q = q, location = scale, scale = scale, inequality = 1,
-            shape = shape)
+            shape = shape,
+            lower.tail = lower.tail, log.p = log.p)
 
-qparetoI <- function(p, scale = 1, shape = 1)
+qparetoI <- function(p, scale = 1, shape = 1,
+                     lower.tail = TRUE, log.p = FALSE)
   qparetoIV(p = p, location = scale, scale = scale, inequality = 1,
-            shape = shape)
+            shape = shape,
+            lower.tail = lower.tail, log.p = log.p)
 
 rparetoI <- function(n, scale = 1, shape = 1)
   rparetoIV(n = n, location = scale, scale = scale, inequality = 1,
@@ -10192,36 +10366,89 @@ dpareto <- function(x, scale = 1, shape, log = FALSE) {
   shape <- rep(shape, length.out = L)
 
   logdensity <- rep(log(0), length.out = L)
-  xok <- (x > scale)
+  xok <- (x >= scale)  # 20141212 KaiH
   logdensity[xok] <- log(shape[xok]) + shape[xok] * log(scale[xok]) -
                       (shape[xok]+1) * log(x[xok])
   if (log.arg) logdensity else exp(logdensity)
 }
 
 
-ppareto <- function(q, scale = 1, shape) {
 
-  L <- max(length(q), length(scale), length(shape))
-  q <- rep(q, length.out = L);
-  scale <- rep(scale, length.out = L);
-  shape <- rep(shape, length.out = L)
+ppareto <- function(q, scale = 1, shape,
+                    lower.tail = TRUE, log.p = FALSE) {
+  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+    stop("bad input for argument 'lower.tail'")
 
-  ans <- ifelse(q > scale, 1 - (scale/q)^shape, 0)
-  ans[scale <= 0] <- NaN
-  ans[shape <= 0] <- NaN
+  if (!is.logical(log.p) || length(log.p) != 1)
+    stop("bad input for argument 'log.p'")
+
+
+  if (lower.tail) {
+    if (log.p) {
+      ans <- log1p(-(scale/q)^shape)
+      ans[q <= scale] <- -Inf
+      ans[q == Inf] <- 0
+    } else {
+      ans <- exp(log1p(-(scale/q)^shape))
+      ans[q <= scale] <- 0
+      ans[q == Inf] <- 1
+    }
+  } else {
+    if (log.p) {
+      ans <- log((scale/q)^shape)
+      ans[q <= scale] <- 0
+      ans[q == Inf] <- -Inf
+    } else {
+      ans <- (scale/q)^shape
+      ans[q <= scale] <- 1
+      ans[q == Inf] <- 0
+    }
+  }
+
+  ans[shape <= 0 | scale <= 0] <- NaN
   ans
 }
 
 
-qpareto <- function(p, scale = 1, shape) {
-  if (any(p <= 0) || any(p >= 1))
-    stop("argument 'p' must be between 0 and 1")
 
-  ans <- scale / (1 - p)^(1/shape)
-  ans[scale <= 0] <- NaN
-  ans[shape <= 0] <- NaN
+qpareto <- function(p, scale = 1, shape,
+                    lower.tail = TRUE, log.p = FALSE) {
+  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+    stop("bad input for argument 'lower.tail'")
+
+  if (!is.logical(log.p) || length(log.p) != 1)
+    stop("bad input for argument 'log.p'")
+
+  if (lower.tail) {
+    if (log.p) {
+      ln.p <- p
+      ans <- scale / (-expm1(ln.p))^(1/shape)
+      ans[ln.p > 0] <- NaN
+    } else {
+      ans <- scale / exp(log1p(-p) * (1/shape))
+      ans[p < 0] <- NaN
+      ans[p == 0] <- scale
+      ans[p == 1] <- Inf
+      ans[p > 1] <- NaN
+    }
+  } else {
+    if (log.p) {
+      ln.p <- p
+      ans <- scale / exp(ln.p)^(1/shape)
+      ans[ln.p > 0] <- NaN
+      ans
+    } else {
+      ans <- scale / p^(1/shape)
+      ans[p < 0] <- NaN
+      ans[p == 0] <- Inf
+      ans[p == 1] <- scale
+      ans[p > 1] <- NaN
+    }
+  }
+  ans[shape <= 0 | scale <= 0] <- NaN
   ans
 }
+
 
 
 rpareto <- function(n, scale = 1, shape) {
@@ -10338,8 +10565,6 @@ dtruncpareto <- function(x, lower, upper, shape, log = FALSE) {
     stop("bad input for argument 'log'")
   rm(log)
 
-  if (!is.Numeric(x))
-    stop("bad input for argument 'x'")
   if (!is.Numeric(lower, positive = TRUE))
     stop("argument 'lower' must be positive")
   if (!is.Numeric(upper, positive = TRUE))
@@ -10364,13 +10589,23 @@ dtruncpareto <- function(x, lower, upper, shape, log = FALSE) {
   logdensity[shape <= 0] <- NaN
   logdensity[upper < lower] <- NaN
   logdensity[0 > lower] <- NaN
+
   if (log.arg) logdensity else exp(logdensity)
 }
 
 
-ptruncpareto <- function(q, lower, upper, shape) {
+
+ptruncpareto <- function(q, lower, upper, shape,
+                         lower.tail = TRUE, log.p = FALSE) {
   if (!is.Numeric(q))
     stop("bad input for argument 'q'")
+
+  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+    stop("bad input for argument 'lower.tail'")
+
+ if (!is.logical(log.arg <- log.p) || length(log.p) != 1)
+    stop("bad input for argument 'log.p'")
+  rm(log.p)   # 20141231 KaiH
 
   L <- max(length(q), length(lower), length(upper), length(shape)) 
   if (length(q)     != L) q     <- rep(q,     length.out = L)
@@ -10389,8 +10624,13 @@ ptruncpareto <- function(q, lower, upper, shape) {
   ans[upper <= 0] <- NaN
   ans[shape <= 0] <- NaN
 
-  ans
+  if (lower.tail) {
+    if (log.arg) log(ans) else ans
+  } else {
+    if (log.arg) log1p(-ans) else exp(log1p(-ans))
+  }
 }
+
 
 
 qtruncpareto <- function(p, lower, upper, shape) {

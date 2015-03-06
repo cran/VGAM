@@ -13,10 +13,10 @@
 
 }
 \usage{
-ddagum(x, shape1.a, scale = 1, shape2.p, log = FALSE)
-pdagum(q, shape1.a, scale = 1, shape2.p)
-qdagum(p, shape1.a, scale = 1, shape2.p)
-rdagum(n, shape1.a, scale = 1, shape2.p)
+ddagum(x, scale = 1, shape1.a, shape2.p, log = FALSE)
+pdagum(q, scale = 1, shape1.a, shape2.p, lower.tail = TRUE, log.p = FALSE)
+qdagum(p, scale = 1, shape1.a, shape2.p, lower.tail = TRUE, log.p = FALSE)
+rdagum(n, scale = 1, shape1.a, shape2.p)
 }
 \arguments{
   \item{x, q}{vector of quantiles.}
@@ -28,6 +28,12 @@ rdagum(n, shape1.a, scale = 1, shape2.p)
   \item{log}{
   Logical.
   If \code{log = TRUE} then the logarithm of the density is returned.
+
+  }
+  \item{lower.tail, log.p}{
+  Same meaning as in \code{\link[stats:Normal]{pnorm}}
+  or \code{\link[stats:Normal]{qnorm}}.
+
 
   }
 
@@ -49,7 +55,7 @@ Hoboken, NJ, USA: Wiley-Interscience.
 
 
 }
-\author{ T. W. Yee }
+\author{ T. W. Yee and Kai Huang }
 \details{
   See \code{\link{dagum}}, which is the \pkg{VGAM} family function
   for estimating the parameters by maximum likelihood estimation.

@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2014 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -226,7 +226,7 @@
 
 
 if (FALSE)
- Abbott <- function(lprob1 = elogit(min = 0, max = 1),  # For now, that is
+ Abbott <- function(lprob1 = extlogit(min = 0, max = 1),  # For now, that is
                    lprob0 = "logit",
                    iprob0 = NULL, iprob1 = NULL,
                    nointercept = 2,  # NULL,

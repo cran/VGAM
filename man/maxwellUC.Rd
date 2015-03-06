@@ -14,8 +14,8 @@
 }
 \usage{
 dmaxwell(x, rate, log = FALSE)
-pmaxwell(q, rate)
-qmaxwell(p, rate)
+pmaxwell(q, rate, lower.tail = TRUE, log.p = FALSE)
+qmaxwell(p, rate, lower.tail = TRUE, log.p = FALSE)
 rmaxwell(n, rate)
 }
 \arguments{
@@ -28,6 +28,12 @@ rmaxwell(n, rate)
   \item{log}{
   Logical.
   If \code{log = TRUE} then the logarithm of the density is returned.
+
+  }
+  \item{lower.tail, log.p}{
+  Same meaning as in \code{\link[stats:Normal]{pnorm}}
+  or \code{\link[stats:Normal]{qnorm}}.
+
 
   }
 
@@ -48,7 +54,7 @@ rmaxwell(n, rate)
 
 
 }
-\author{ T. W. Yee }
+\author{ T. W. Yee and Kai Huang }
 \details{
   See \code{\link{maxwell}}, the \pkg{VGAM} family function for
   estimating the (rate) parameter \eqn{a} by maximum likelihood

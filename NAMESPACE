@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2014 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -11,6 +11,8 @@ importMethodsFrom("splines")
 importFrom("splines", splineDesign, bs, ns)
 
 
+export(nparam, nparam.vlm, nparam.vgam, nparam.rrvglm, nparam.qrrvglm, nparam.rrvgam)
+export(linkfun, linkfun.vglm)
 export(sm.bs, sm.ns, sm.scale.default, sm.poly, sm.scale)
 exportMethods(coefficients, coef)
 importFrom("stats", coefficients, coef)
@@ -39,9 +41,9 @@ importFrom("stats", simulate)
 
 
 
-export(family.name.vlm)
-export(family.name.vglmff)
-exportMethods(family.name)
+export(familyname.vlm)
+export(familyname.vglmff)
+exportMethods(familyname)
 export(logLik.qrrvglm)
 
 
@@ -292,7 +294,36 @@ dirmultinomial, dirmul.old,
 dtheta.deta, d2theta.deta2)
 
 
-export(cloglog,cauchit,elogit,explink,fisherz,logc,loge,logneg,logit,
+
+S3method(anova, vgam)
+S3method(anova, vglm)
+S3method(as.character, SurvS4)
+S3method(biplot, qrrvglm)
+S3method(biplot,  rrvglm)
+S3method(deviance, qrrvglm)
+S3method(deviance, vlm)
+S3method(logLik, qrrvglm)
+S3method(logLik, vlm)
+S3method(model.matrix, qrrvglm)
+S3method(nobs, vlm)
+S3method(persp, rrvgam)
+S3method(plot, rrvgam)
+S3method(plot, vgam)
+S3method(predict, rrvgam)
+S3method(predict, rrvglm)
+S3method(predict, vgam)
+S3method(predict, vlm)
+S3method(simulate, vlm)
+S3method(sm.scale, default)
+S3method(summary, grc)
+S3method(summary, qrrvglm)
+S3method(summary, rrvgam)
+S3method(summary, rrvglm)
+S3method(terms, vlm)
+
+
+
+export(cloglog,cauchit,extlogit,explink,fisherz,logc,loge,logneg,logit,
        logoff,negreciprocal,
        probit,reciprocal,rhobit,
        golf,polf,nbolf,nbolf2,Cut)
@@ -305,7 +336,7 @@ export(poisson.points, dpois.points)
 export(m2a, 
 erlang,
 dfelix, felix,
-fittedvlm, fittedvsmooth.spline, fsqrt,
+fittedvlm, fittedvsmooth.spline, foldsqrt,
 formulavlm, formulaNA.VGAM,
 garma, gaussianff,
 hypersecant, hypersecant01, 

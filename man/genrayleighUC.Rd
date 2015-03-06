@@ -13,8 +13,8 @@
 }
 \usage{
 dgenray(x, scale = 1, shape, log = FALSE)
-pgenray(q, scale = 1, shape)
-qgenray(p, scale = 1, shape)
+pgenray(q, scale = 1, shape, lower.tail = TRUE, log.p = FALSE)
+qgenray(p, scale = 1, shape, lower.tail = TRUE, log.p = FALSE)
 rgenray(n, scale = 1, shape)
 }
 \arguments{
@@ -30,6 +30,12 @@ rgenray(n, scale = 1, shape)
 
 
   }
+  \item{lower.tail, log.p}{
+  Same meaning as in \code{\link[stats:Normal]{pnorm}}
+  or \code{\link[stats:Normal]{qnorm}}.
+
+
+  }
 
 }
 \value{
@@ -38,8 +44,11 @@ rgenray(n, scale = 1, shape)
   \code{qgenray} gives the quantile function, and
   \code{rgenray} generates random deviates.
 
+
 }
-\author{ J. G. Lauder and T. W. Yee }
+
+\author{ Kai Huang and J. G. Lauder and T. W. Yee }
+
 \details{
   See \code{\link{genrayleigh}}, the \pkg{VGAM} family function
   for estimating the parameters, 

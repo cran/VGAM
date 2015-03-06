@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2014 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -29,7 +29,7 @@ cao.fit <-
   check.rank <- TRUE
   nonparametric <- TRUE
   optim.maxit <- control$optim.maxit
-  save.weight <- control$save.weight
+  save.weights <- control$save.weights
   trace <- control$trace
   minimize.criterion <- control$min.criterion
 

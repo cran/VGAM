@@ -16,8 +16,10 @@
 \usage{
 dalap(x, location = 0, scale = 1, tau = 0.5, kappa = sqrt(tau/(1-tau)),
       log = FALSE)
-palap(q, location = 0, scale = 1, tau = 0.5, kappa = sqrt(tau/(1-tau)))
-qalap(p, location = 0, scale = 1, tau = 0.5, kappa = sqrt(tau/(1-tau)))
+palap(q, location = 0, scale = 1, tau = 0.5, kappa = sqrt(tau/(1-tau)),
+      lower.tail = TRUE, log.p = FALSE)
+qalap(p, location = 0, scale = 1, tau = 0.5, kappa = sqrt(tau/(1-tau)),
+      lower.tail = TRUE, log.p = FALSE)
 ralap(n, location = 0, scale = 1, tau = 0.5, kappa = sqrt(tau/(1-tau)))
 }
 %- maybe also 'usage' for other objects documented here.
@@ -60,6 +62,12 @@ ralap(n, location = 0, scale = 1, tau = 0.5, kappa = sqrt(tau/(1-tau)))
 
 
   }
+  \item{lower.tail, log.p}{
+  Same meaning as in \code{\link[stats:Normal]{pnorm}}
+  or \code{\link[stats:Normal]{qnorm}}.
+
+
+  }
 
 }
 \details{
@@ -89,7 +97,7 @@ Boston: Birkhauser.
 
 
 }
-\author{ T. W. Yee }
+\author{ T. W. Yee and Kai Huang }
 %\note{
 %  The \pkg{VGAM} family function \code{\link{alaplace3}}
 %  estimates the three parameters by maximum likelihood estimation.

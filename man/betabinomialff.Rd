@@ -10,24 +10,25 @@
 
 }
 \usage{
-betabinomialff(lshape12 = "loge", i1 = 1, i2 = NULL,
-               imethod = 1, ishrinkage = 0.95, nsimEIM = NULL, zero = NULL)
+betabinomialff(lshape1 = "loge", lshape2 = "loge", ishape1 = 1,
+               ishape2 = NULL, imethod = 1, ishrinkage = 0.95,
+               nsimEIM = NULL, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{lshape12}{ 
-  Link function applied to both (positive) shape parameters
+  \item{lshape1, lshape2}{ 
+  Link functions for the two (positive) shape parameters
   of the beta distribution.
   See \code{\link{Links}} for more choices.
 
 
   }
-  \item{i1, i2}{ 
+  \item{ishape1, ishape2}{ 
   Initial value for the shape parameters.
   The first must be positive, and is recyled to the necessary length.
   The second is optional.
   If a failure to converge occurs, try assigning a different value
-  to \code{i1} and/or using \code{i2}.
+  to \code{ishape1} and/or using \code{ishape2}.
 
 
   }
@@ -165,8 +166,8 @@ betabinomialff(lshape12 = "loge", i1 = 1, i2 = NULL,
   This family function is prone to numerical difficulties
   due to the expected information matrices not being positive-definite
   or ill-conditioned over some regions of the parameter space.
-  If problems occur try setting \code{i1} to be some other
-  positive value, using \code{i2} and/or setting \code{zero = 2}.
+  If problems occur try setting \code{ishape1} to be some other
+  positive value, using \code{ishape2} and/or setting \code{zero = 2}.
 
 
   This family function may be renamed in the future.

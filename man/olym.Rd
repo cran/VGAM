@@ -36,15 +36,17 @@ data(olym12)
 % This is a simple two-way contingency table of counts.
 
 }
-\source{
-\url{http://www.associatedcontent.com/article/979484/2008_summer_olympic_medal_count_total.html},
-\url{http://www.london2012.com/medals/medal-count/}.
+% \source{
 
 
-}
+% url{http://www.associatedcontent.com/article/979484/2008_summer_olympic_medal_count_total.html},
+% url{http://www.london2012.com/medals/medal-count/}.
+
+
+% }
 \references{
-  The official English website was/is \url{http://en.beijing2008.cn}
-  and \url{http://www.london2012.com}.
+  The official English website was/is \code{http://en.beijing2008.cn}
+  and \code{http://www.london2012.com}.
   Help from Viet Hoang Quoc is gratefully acknowledged.
 
 

@@ -12,7 +12,8 @@
 }
 \usage{
 dslash(x, mu = 0, sigma = 1, log = FALSE, smallno = .Machine$double.eps*1000)
-pslash(q, mu = 0, sigma = 1, very.negative = -10000)
+pslash(q, mu = 0, sigma = 1, very.negative = -10000,
+       lower.tail = TRUE, log.p = FALSE)
 rslash(n, mu = 0, sigma = 1)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -52,6 +53,12 @@ rslash(n, mu = 0, sigma = 1)
   }
   \item{smallno}{
   See \code{\link{slash}}.
+
+
+  }
+  \item{lower.tail, log.p}{
+  Same meaning as in \code{\link[stats:Normal]{pnorm}}
+  or \code{\link[stats:Normal]{qnorm}}.
 
 
   }

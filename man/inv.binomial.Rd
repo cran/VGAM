@@ -8,7 +8,7 @@
 
 }
 \usage{
-inv.binomial(lrho = elogit(min = 0.5, max = 1),
+inv.binomial(lrho = extlogit(min = 0.5, max = 1),
              llambda = "loge", irho = NULL, ilambda = NULL, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.

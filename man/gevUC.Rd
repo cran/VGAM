@@ -17,8 +17,8 @@
 \usage{
 dgev(x, location = 0, scale = 1, shape = 0, log = FALSE, tolshape0 =
      sqrt(.Machine$double.eps), oobounds.log = -Inf, giveWarning = FALSE)
-pgev(q, location = 0, scale = 1, shape = 0)
-qgev(p, location = 0, scale = 1, shape = 0)
+pgev(q, location = 0, scale = 1, shape = 0, lower.tail = TRUE, log.p = FALSE)
+qgev(p, location = 0, scale = 1, shape = 0, lower.tail = TRUE, log.p = FALSE)
 rgev(n, location = 0, scale = 1, shape = 0)
 }
 \arguments{
@@ -33,6 +33,12 @@ rgev(n, location = 0, scale = 1, shape = 0)
   \item{log}{
   Logical.
   If \code{log = TRUE} then the logarithm of the density is returned.
+
+  }
+  \item{lower.tail, log.p}{
+  Same meaning as in \code{\link[stats:Uniform]{punif}}
+  or \code{\link[stats:Uniform]{qunif}}.
+
 
   }
   \item{tolshape0}{

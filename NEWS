@@ -6,11 +6,61 @@
 
 
 
+                CHANGES IN VGAM VERSION 0.9-7
+
+NEW FEATURES
+
+    o   Tested okay on R 3.1.2.
+    o   linkfun() and nparam() are new generic functions.
+    o   betabinomialff() replaces 'lshape12' with 'lshape1' and 'lshape2'.
+        Arguments 'i1' and 'i2' are now 'ishape1' and 'ishape2'.
+    o   ABO() has more arguments.
+    o   Arguments lower.tail and log.p have been added to quite
+        a few pq-type functions (work done by Kai Huang).
+
+
+BUG FIXES and CHANGES
+
+    o   family.name() renamed to familyname().
+    o   Argument 'mv' has been renamed to 'multiple.responses'.
+        This applies to about 10 family functions such as binomialff().
+    o   Argument 'lss' added to betaII(), dagum(), fisk(),
+        genbetaII(), inv.paralogistic(), paralogistic(),
+        sinmad(). Note that the order of the arguments of
+        these functions will change in the near future, and
+        consequently the order of the parameters.
+        The [dpqr]-type functions of all these distributions
+        have arguments that have been rearranged.
+    o   All d-type functions handle 'x = Inf' and 'x = -Inf'.
+        Much help from Kai Huang here.
+        Thanks to Ott Toomet for alerting me to this type of bug.
+    o   vsmooth.spline() has 2 argument name changes, and
+        a little reordering of its arguments.
+    o   More p-type functions handle 'q = Inf' and 'q = -Inf'.
+        More q-type functions handle 'p = 0' and 'p = 1'.
+        Much help from Kai Huang here.
+    o   AA.Aa.aa() and A1A2A3() handled 'inbreeding' the wrong way round.
+    o   pposnorm() returned wrong answers.
+    o   ptobit(log.p = TRUE) was incorrect, as well as some
+        other bugs in [dpqr]tobit().
+        The dtobit(Lower) and dtobit(Upper) have changed.
+    o   negbinomial() now computes the EIM wrt the 'size' parameter based
+        on a finite approximation to an infinite series (provide the
+        mu and size parameter has values lying in a certain range).
+        This may be time- and/or memory-hungry, but the user has
+        control over this via some arguments such as max.mu, min.size
+        and chunk.max.Mb.
+    o   Renamed functions:
+        elogit() is now called extlogit(),
+        fsqrt() is now called foldsqrt().
+
+
+
                 CHANGES IN VGAM VERSION 0.9-6
 
 NEW FEATURES
 
-    o   All d-type functions handle the 'n' argument the same
+    o   All r-type functions handle the 'n' argument the same
         way as runif(). This was done with the help of Kai Huang.
 
 

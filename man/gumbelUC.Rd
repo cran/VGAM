@@ -14,8 +14,8 @@
 }
 \usage{
 dgumbel(x, location = 0, scale = 1, log = FALSE)
-pgumbel(q, location = 0, scale = 1)
-qgumbel(p, location = 0, scale = 1)
+pgumbel(q, location = 0, scale = 1, lower.tail = TRUE, log.p = FALSE)
+qgumbel(p, location = 0, scale = 1, lower.tail = TRUE, log.p = FALSE)
 rgumbel(n, location = 0, scale = 1)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -23,19 +23,33 @@ rgumbel(n, location = 0, scale = 1)
   \item{x, q}{vector of quantiles.}
   \item{p}{vector of probabilities.}
   \item{n}{number of observations.
-  If \code{length(n) > 1} then the length is taken to be the number required.}
+  If \code{length(n) > 1} then the length is taken to be the number required.
+
+
+  }
   \item{location}{the location parameter \eqn{\mu}{mu}.
     This is not the mean
-    of the Gumbel distribution (see \bold{Details} below). }
+    of the Gumbel distribution (see \bold{Details} below).
+
+
+  }
   \item{scale}{the scale parameter \eqn{\sigma}{sigma}.
     This is not the standard deviation
-    of the Gumbel distribution (see \bold{Details} below). }
+    of the Gumbel distribution (see \bold{Details} below).
+
+
+  }
   \item{log}{
   Logical.
   If \code{log = TRUE} then the logarithm of the density is returned.
 
   }
+  \item{lower.tail, log.p}{
+  Same meaning as in \code{\link[stats:Uniform]{punif}}
+  or \code{\link[stats:Uniform]{qunif}}.
 
+
+  }
 }
 \details{
   The Gumbel distribution is a special case of the

@@ -7,7 +7,7 @@
 
 }
 \usage{
-genpoisson(llambda = elogit(min = -1, max = 1), ltheta = "loge",
+genpoisson(llambda = extlogit(min = -1, max = 1), ltheta = "loge",
            ilambda = NULL, itheta = NULL,
            use.approx = TRUE, imethod = 1, zero = 1)
 }

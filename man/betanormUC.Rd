@@ -14,7 +14,8 @@
 dbetanorm(x, shape1, shape2, mean = 0, sd = 1, log = FALSE)
 pbetanorm(q, shape1, shape2, mean = 0, sd = 1,
           lower.tail = TRUE, log.p = FALSE)
-qbetanorm(p, shape1, shape2, mean = 0, sd = 1)
+qbetanorm(p, shape1, shape2, mean = 0, sd = 1,
+          lower.tail = TRUE, log.p = FALSE)
 rbetanorm(n, shape1, shape2, mean = 0, sd = 1)
 }
 \arguments{
@@ -92,14 +93,14 @@ x <- seq(-10, 2, len = 501)
 plot(x, dbetanorm(x, shape1, shape2, m = m), type = "l", ylim = 0:1, las = 1,
      ylab = paste("betanorm(",shape1,", ",shape2,", m=",m, ", sd=1)", sep = ""),
      main = "Blue is density, orange is cumulative distribution function",
-     sub = "Purple lines are the 10,20,...,90 percentiles", col = "blue")
+     sub = "Gray lines are the 10,20,...,90 percentiles", col = "blue")
 lines(x, pbetanorm(x, shape1, shape2, m = m), col = "orange")
-abline(h = 0)
+abline(h = 0, col = "black")
 probs <- seq(0.1, 0.9, by = 0.1)
 Q <- qbetanorm(probs, shape1, shape2, m = m)
-lines(Q, dbetanorm(Q, shape1, shape2, m = m), col = "purple", lty = 3, type = "h")
-lines(Q, pbetanorm(Q, shape1, shape2, m = m), col = "purple", lty = 3, type = "h")
-abline(h = probs, col = "purple", lty = 3)
+lines(Q, dbetanorm(Q, shape1, shape2, m = m), col = "gray50", lty = 2, type = "h")
+lines(Q, pbetanorm(Q, shape1, shape2, m = m), col = "gray50", lty = 2, type = "h")
+abline(h = probs, col = "gray50", lty = 2)
 pbetanorm(Q, shape1, shape2, m = m) - probs  # Should be all 0
 }
 }

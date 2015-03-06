@@ -120,9 +120,11 @@ mydata <- rcqo(n, p, S, eq.tol = TRUE, es.opt = TRUE, eq.max = TRUE,
                family = "binomial", hi.abundance = 5, seed = 123,
                Rank = Rank)
 fitc <- cqo(attr(mydata, "formula"), I.tol = TRUE, data = mydata,
-            fam = binomialff(mv = TRUE, link = "cloglog"), Rank = Rank)
+            fam = binomialff(multiple.responses = TRUE, link = "cloglog"),
+            Rank = Rank)
 fitl <- cqo(attr(mydata, "formula"), I.tol = TRUE, data = mydata,
-            fam = binomialff(mv = TRUE, link = "logit"), Rank = Rank)
+            fam = binomialff(multiple.responses = TRUE, link = "logit"),
+            Rank = Rank)
 
 # Compare the fitted models (cols 1 and 3) with the truth (col 2)
 cbind(concoef(fitc), attr(mydata, "concoefficients"), concoef(fitl))

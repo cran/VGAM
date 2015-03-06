@@ -14,8 +14,8 @@
 }
 \usage{
 dtikuv(x, d, mean = 0, sigma = 1, log = FALSE)
-ptikuv(q, d, mean = 0, sigma = 1)
-qtikuv(p, d, mean = 0, sigma = 1, ...)
+ptikuv(q, d, mean = 0, sigma = 1, lower.tail = TRUE, log.p = FALSE)
+qtikuv(p, d, mean = 0, sigma = 1, lower.tail = TRUE, log.p = FALSE, ...)
 rtikuv(n, d, mean = 0, sigma = 1, Smallno = 1.0e-6)
 }
 \arguments{
@@ -53,6 +53,12 @@ rtikuv(n, d, mean = 0, sigma = 1, Smallno = 1.0e-6)
 
 
   }
+  \item{lower.tail, log.p}{
+  Same meaning as in \code{\link[stats:Normal]{pnorm}}
+  or \code{\link[stats:Normal]{qnorm}}.
+
+
+  }
 
 }
 \value{
@@ -63,7 +69,7 @@ rtikuv(n, d, mean = 0, sigma = 1, Smallno = 1.0e-6)
 
 
 }
-\author{ T. W. Yee }
+\author{ T. W. Yee and Kai Huang }
 \details{
   See \code{\link{tikuv}} for more details.
 

@@ -15,8 +15,8 @@
 }
 \usage{
 dperks(x, scale = 1, shape, log = FALSE)
-pperks(q, scale = 1, shape)
-qperks(p, scale = 1, shape)
+pperks(q, scale = 1, shape, lower.tail = TRUE, log.p = FALSE)
+qperks(p, scale = 1, shape, lower.tail = TRUE, log.p = FALSE)
 rperks(n, scale = 1, shape)
 }
 \arguments{
@@ -31,6 +31,13 @@ rperks(n, scale = 1, shape)
   If \code{log = TRUE} then the logarithm of the density is returned.
 
   }
+  \item{lower.tail, log.p}{
+  Same meaning as in \code{\link[stats:Normal]{pnorm}}
+  or \code{\link[stats:Normal]{qnorm}}.
+  
+
+  }
+
   \item{shape, scale}{positive shape and scale parameters. }
 
 }
@@ -42,7 +49,7 @@ rperks(n, scale = 1, shape)
 
 
 }
-\author{ T. W. Yee }
+\author{ T. W. Yee and Kai Huang }
 \details{
   See \code{\link{perks}} for details.
 

@@ -188,7 +188,9 @@ rrvglm.control(Rank = 1, Algorithm = c("alternating", "derivative"),
   }
   \item{noWarning, Check.rank, Check.cm.rank}{
     Same as \code{\link{vglm.control}}.
+    Ignored for \pkg{VGAM} 0.9-7 and higher.
 
+  
 
   }
   \item{wzepsilon}{

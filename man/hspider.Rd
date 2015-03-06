@@ -70,7 +70,8 @@ hsbin <- hspider  # Binary species data
 hsbin[, -(1:6)] <- as.numeric(hsbin[, -(1:6)] > 0)
 set.seed(123)
 ahsb1 <- cao(cbind(Alopcune, Arctlute, Auloalbi, Zoraspin) ~
-             WaterCon + ReflLux, family = binomialff(mv = TRUE),
+             WaterCon + ReflLux,
+             family = binomialff(multiple.responses = TRUE),
              df1.nl = 2.2, Bestof = 3, data = hsbin)
 par(mfrow = 2:1, las = 1)
 lvplot(ahsb1, type = "predictors", llwd = 2, ylab = "logit p", lcol = 1:9)

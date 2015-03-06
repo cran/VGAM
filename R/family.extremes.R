@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2014 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -99,76 +99,111 @@ rgev <- function(n, location = 0, scale = 1, shape = 0) {
   }
 
   logdensity[scale <= 0] <- NaN
+
+  logdensity[is.infinite(x)] <- log(0)  # 20141209 KaiH
+
   if (log.arg) logdensity else exp(logdensity)
 }
 
 
 
-pgev <- function(q, location = 0, scale = 1, shape = 0) {
-  if (!is.Numeric(q))
-    stop("bad input for argument 'q'")
-  if (!is.Numeric(location))
-    stop("bad input for argument 'location'")
-  if (!is.Numeric(shape))
-    stop("bad input for argument 'shape'")
+pgev <- function(q, location = 0, scale = 1, shape = 0,
+                 lower.tail = TRUE, log.p = FALSE) {
+  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+    stop("bad input for argument 'lower.tail'")
+
+  if (!is.logical(log.arg <- log.p) || length(log.p) != 1)
+    stop("bad input for argument 'log.p'")
+  
 
   use.n <- max(length(q), length(location), length(scale), length(shape))
-  ans <- numeric(use.n)
   if (length(shape)    != use.n)
     shape    <- rep(shape,        length.out = use.n)
   if (length(location) != use.n)
-    location <- rep(location,     length.out = use.n); 
+    location <- rep(location,     length.out = use.n)
   if (length(scale)    != use.n)
     scale    <- rep(scale,        length.out = use.n)
   if (length(q)        != use.n)
     q        <- rep(q,            length.out = use.n)
 
-  scase <- abs(shape) < sqrt( .Machine$double.eps )
-  nscase <- sum(scase)
+  scase0 <- abs(shape) < sqrt( .Machine$double.eps )  # Effectively 0
   zedd <- (q - location) / scale
-  if (use.n - nscase) {
-    use.zedd <- pmax(0, 1 + shape * zedd)
-    ans[!scase] <- exp(-use.zedd[!scase]^(-1 / shape[!scase]))
+  use.zedd <- pmax(0, 1 + shape * zedd)
+
+  if (lower.tail) {
+    if (log.p) {
+      ans <- -use.zedd^(-1 / shape)
+    } else {
+      ans <- exp(-use.zedd^(-1 / shape))
+    }
+  } else {
+    if (log.p) {
+      ans <- log(-expm1(-use.zedd^(-1 / shape)))
+    } else {
+      ans <- -expm1(-use.zedd^(-1 / shape))
+    }
   }
-  if (nscase) {
-    ans[scase] <- pgumbel(q[scase], location = location[scase],
-                          scale = scale[scase])
+
+  if (any(scase0)) {
+    ans[scase0] <- pgumbel(q[scase0], location = location[scase0],
+                           scale = scale[scase0],
+                           lower.tail = lower.tail, log.p = log.p)
   }
+
   ans[scale <= 0] <- NaN
   ans
 }
 
 
 
-qgev <- function(p, location = 0, scale = 1, shape = 0) {
-  if (!is.Numeric(p, positive = TRUE) || any(p >= 1))
-    stop("0 < p < 1 is required")
-  if (!is.Numeric(location))
-    stop("bad input for argument 'location'")
-  if (!is.Numeric(shape))
-    stop("bad input for argument 'shape'")
+qgev <- function(p, location = 0, scale = 1, shape = 0,
+                 lower.tail = TRUE, log.p = FALSE) {
+
+  if (!is.logical(log.p) || length(log.p) != 1)
+    stop("bad input for argument 'log.p'")
+  
+ 
+
 
   use.n <- max(length(p), length(location), length(scale), length(shape))
-  ans <- numeric(use.n)
   if (length(shape)    != use.n)
     shape    <- rep(shape,        length.out = use.n)
   if (length(location) != use.n)
-    location <- rep(location,     length.out = use.n); 
+    location <- rep(location,     length.out = use.n)
   if (length(scale)    != use.n)
     scale    <- rep(scale,        length.out = use.n)
   if (length(p)        != use.n)
     p        <- rep(p,            length.out = use.n)
 
 
-  scase <- abs(shape) < sqrt( .Machine$double.eps )
-  nscase <- sum(scase)
-  if (use.n - nscase) {
-    ans[!scase] <- location[!scase] + scale[!scase] *
-        ((-log(p[!scase]))^(-shape[!scase]) - 1) / shape[!scase]
+  scase0 <- abs(shape) < sqrt( .Machine$double.eps )
+  if (lower.tail) {
+    if (log.p) {
+      ln.p <- p
+      ans <- location + scale * ((-ln.p)^(-shape) - 1) / shape
+      ans[ln.p > 0] <- NaN
+    } else {
+      ans <- location + scale * ((-log(p))^(-shape) - 1) / shape
+      ans[p == 1] <-  Inf
+      ans[p >  1] <- NaN
+    }
+  } else {
+    if (log.p) {
+      ln.p <- p
+      ans <- location + scale * ((-log1p(-exp(ln.p)))^(-shape) - 1) / shape
+      ans[ln.p > 0] <- NaN
+    } else {
+      ans <- location + scale * ((-log1p(-p))^(-shape) - 1) / shape
+      ans[p == 1] <-  Inf
+      ans[p >  1] <- NaN
+      ans[p <  0] <- NaN
+    }
   }
-  if (nscase)
-    ans[scase] <- qgumbel(p[scase], location = location[scase],
-                          scale = scale[scase])
+
+  if (any(scase0))
+    ans[scase0] <- qgumbel(p[scase0], location = location[scase0],
+                           scale = scale[scase0],
+                           lower.tail = lower.tail, log.p = log.p)
   ans[scale <= 0] <- NaN
   ans
 }
@@ -313,7 +348,7 @@ qgev <- function(p, location = 0, scale = 1, shape = 0) {
         rep( .ishape, length.out = nrow(y)) else NULL
       LIST.lshape <- .lshape
 
-      if ( .lshape == "elogit" && length(init.xi) &&
+      if ( .lshape == "extlogit" && length(init.xi) &&
           (any(init.xi <= LIST.lshape$min |
                init.xi >= LIST.lshape$max)))
           stop("bad input for an argument in 'lshape'")
@@ -758,7 +793,7 @@ dgammadx <- function(x, deriv.arg = 1) {
       init.xi  <- if (length( .ishape ))
                   rep( .ishape , length.out = length(y)) else NULL
       eshape <- .eshape
-      if ( .lshape == "elogit" && length(init.xi) && 
+      if ( .lshape == "extlogit" && length(init.xi) && 
          (any(init.xi <= eshape$min | init.xi >= eshape$max)))
         stop("bad input for argument 'eshape'")
       if ( .imethod == 1) {
@@ -989,12 +1024,7 @@ dgammadx <- function(x, deriv.arg = 1) {
 
 
 rgumbel <- function(n, location = 0, scale = 1) {
-  use.n <- if ((length.n <- length(n)) > 1) length.n else
-           if (!is.Numeric(n, integer.valued = TRUE,
-                           length.arg = 1, positive = TRUE))
-              stop("bad input for argument 'n'") else n
-
-  answer <- location - scale * log(-log(runif(use.n)))
+  answer <- location - scale * log(-log(runif(n)))
   answer[scale <= 0] <- NaN
   answer
 }
@@ -1007,25 +1037,77 @@ dgumbel <- function(x, location = 0, scale = 1, log = FALSE) {
 
   zedd <- (x - location) / scale
   logdensity <- -zedd - exp(-zedd) - log(scale)
+  logdensity[is.infinite(x)] <- log(0)  # 20141209 KaiH
   if (log.arg) logdensity else exp(logdensity)
 }
 
 
-qgumbel <- function(p, location = 0, scale = 1) {
-  answer <- location - scale * log(-log(p))
-  answer[scale <= 0] <- NaN
-  answer[p <  0] <- NaN
-  answer[p >  1] <- NaN
-  answer[p == 0] <- -Inf
-  answer[p == 1] <-  Inf
-  answer
+
+qgumbel <- function(p, location = 0, scale = 1,
+                    lower.tail = TRUE, log.p = FALSE) {
+  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+    stop("bad input for argument 'lower.tail'")
+  
+  if (!is.logical(log.p) || length(log.p) != 1)
+    stop("bad input for argument 'log.p'")
+
+  if (lower.tail) {
+    if (log.p) {
+      ln.p <- p
+      ans <- location - scale * log(-ln.p)
+    } else {
+      ans <- location - scale * log(-log(p))
+      ans[p == 0] <- -Inf
+      ans[p == 1] <-  Inf
+    }
+  } else {
+    if (log.p) {
+      ln.p <- p
+      ans <- location - scale * log(-log(-expm1(ln.p)))
+      ans[ln.p > 0] <- NaN
+    } else { 
+      ans <- location - scale * log(-log1p(-p))
+      ans[p == 0] <-  Inf
+      ans[p == 1] <- -Inf
+    }
+  }
+  ans[scale <= 0] <- NaN
+  ans
 }
 
 
-pgumbel <- function(q, location = 0, scale = 1) {
-  answer <- exp(-exp(-(q - location) / scale))
-  answer[scale <= 0] <- NaN
-  answer
+
+pgumbel <- function(q, location = 0, scale = 1,
+                    lower.tail = TRUE, log.p = FALSE) {
+  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+    stop("bad input for argument 'lower.tail'")
+  if (!is.logical(log.p) || length(log.p) != 1)
+    stop("bad input for argument 'log.p'")
+  
+  if (lower.tail) {
+    if (log.p) {
+      ans <- -exp(-(q - location) / scale)
+      ans[q <= -Inf] <- -Inf
+      ans[q ==  Inf] <- 0
+    } else {
+      ans <- exp(-exp(-(q - location) / scale))
+      ans[q <= -Inf] <- 0
+      ans[q ==  Inf] <- 1
+    }
+  } else {
+    if (log.p) {
+      ans <- log(-expm1(-exp(-(q - location) / scale)))
+      ans[q <= -Inf] <- 0
+      ans[q ==  Inf] <- -Inf
+    } else {
+      ans <- -expm1(-exp(-(q - location) / scale))
+      ans[q <= -Inf] <- 1
+      ans[q ==  Inf] <- 0
+    }
+  } 
+
+  ans[scale <= 0] <- NaN
+  ans
 }
 
 
@@ -1300,8 +1382,6 @@ dgpd <- function(x, location = 0, scale = 1, shape = 0, log = FALSE,
 
 
 
-
-
   logdensity <- rep(log(0), length.out = L)
   scase <- abs(shape) < tolshape0
   nscase <- sum(scase)
@@ -1339,13 +1419,15 @@ dgpd <- function(x, location = 0, scale = 1, shape = 0, log = FALSE,
 
 
 
-pgpd <- function(q, location = 0, scale = 1, shape = 0) {
-  if (!is.Numeric(q))
-    stop("bad input for argument 'q'")
-  if (!is.Numeric(location))
-    stop("bad input for argument 'location'")
-  if (!is.Numeric(shape))
-    stop("bad input for argument 'shape'")
+pgpd <- function(q, location = 0, scale = 1, shape = 0,
+                 lower.tail = TRUE, log.p = FALSE) {
+
+
+  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+    stop("bad input for argument 'lower.tail'")
+  if (!is.logical(log.p) || length(log.p) != 1)
+    stop("bad input for argument 'log.p'")
+
 
   use.n <- max(length(q), length(location), length(scale), length(shape))
 
@@ -1363,24 +1445,44 @@ pgpd <- function(q, location = 0, scale = 1, shape = 0) {
   use.zedd <- pmax(zedd, 0)
 
 
-  scase <- abs(shape) < sqrt( .Machine$double.eps )
-  nscase <- sum(scase)
-  if (use.n - nscase) {
+  scase0 <- abs(shape) < sqrt( .Machine$double.eps )
+  nscase0 <- sum(scase0)
+  if (use.n - nscase0) {
     ans <- 1 - pmax(1 + shape * use.zedd, 0)^(-1/shape)
   }
-  if (nscase) {
+  if (nscase0) {
     pos <- (zedd >= 0)
-    ind9 <- ( pos & scase)
+    ind9 <- ( pos & scase0)
     ans[ind9] <-  -expm1(-use.zedd[ind9])
-    ind9 <- (!pos & scase)
+    ind9 <- (!pos & scase0)
     ans[ind9] <- 0
   }
   ans[scale <= 0] <- NaN
-  ans
+
+  if (lower.tail) {
+    if (log.p) log(ans) else ans
+  } else {
+    if (log.p) log1p(-ans) else 1-ans
+  }
 }
 
 
-qgpd <- function(p, location = 0, scale = 1, shape = 0) {
+
+qgpd <- function(p, location = 0, scale = 1, shape = 0,
+                 lower.tail = TRUE, log.p = FALSE) {
+
+  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+    stop("bad input for argument 'lower.tail'")
+
+  if (!is.logical(log.arg <- log.p) || length(log.p) != 1)
+    stop("bad input for argument 'log.p'")
+  rm(log.p)
+  
+  if (lower.tail) {
+    if (log.arg) p <- exp(p)
+  } else {
+    p <- if (log.arg) -expm1(p) else 1 - p
+  }
 
   use.n <- max(length(p), length(location), length(scale), length(shape))
 
@@ -1388,7 +1490,7 @@ qgpd <- function(p, location = 0, scale = 1, shape = 0) {
   if (length(shape)    != use.n)
     shape    <- rep(shape,        length.out = use.n)
   if (length(location) != use.n)
-    location <- rep(location,     length.out = use.n); 
+    location <- rep(location,     length.out = use.n)
   if (length(scale)    != use.n)
     scale    <- rep(scale,        length.out = use.n)
   if (length(p)        != use.n)
@@ -2283,27 +2385,74 @@ dfrechet <- function(x, location = 0, scale = 1, shape, log = FALSE) {
 }
 
 
-pfrechet <- function(q, location = 0, scale = 1, shape) {
-  if (!is.Numeric(scale, positive = TRUE))
-    stop("scale must be positive")
-  if (!is.Numeric(shape, positive = TRUE))
-    stop("shape must be positive")
+
+pfrechet <- function(q, location = 0, scale = 1, shape,
+                     lower.tail = TRUE, log.p = FALSE) {
+  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+    stop("bad input for argument 'lower.tail'")
+  if (!is.logical(log.p) || length(log.p) != 1)
+    stop("bad input for argument 'log.p'")
+
   rzedd <- scale / (q - location)
-  ans <- exp(-(rzedd^shape))
-  ans[q <= location] <- 0
+
+
+  if (lower.tail) {
+    if (log.p) {
+      ans <- -(rzedd^shape)
+      ans[q <= location] <- -Inf
+    } else {  
+      ans <- exp(-(rzedd^shape))
+      ans[q <= location] <- 0 
+      }
+  } else {
+    if (log.p) {
+      ans <- log(-expm1(-(rzedd^shape)))
+      ans[q <= location] <- 0
+    } else {
+      ans <- -expm1(-(rzedd^shape)) 
+      ans[q <= location]  <- 1
+    }
+  }
   ans
 }
 
 
-qfrechet <- function(p, location = 0, scale = 1, shape) {
-  if (!is.Numeric(p, positive = TRUE) || any(p >= 1))
-    stop("0 < p < 1 is required")
-  if (!is.Numeric(scale, positive = TRUE))
-    stop("scale must be positive")
-  if (!is.Numeric(shape, positive = TRUE))
-    stop("shape must be positive")
-  location + scale * (-log(p))^(-1/shape)
+
+qfrechet <- function(p, location = 0, scale = 1, shape,
+                     lower.tail = TRUE, log.p = FALSE) {
+  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+    stop("bad input for argument 'lower.tail'")
+  if (!is.logical(log.p) || length(log.p) != 1)
+    stop("bad input for argument 'log.p'")
+
+  if (lower.tail) {
+    if (log.p) {
+      ln.p <- p
+      ans <- location + scale * (-ln.p)^(-1 / shape)
+      ans[ln.p > 0] <- NaN
+    } else {
+      ans <- location + scale * (-log(p))^(-1 / shape)
+      ans[p < 0] <- NaN
+      ans[p == 0] <- location
+      ans[p == 1] <- Inf
+      ans[p > 1] <- NaN
+    }
+  } else {
+    if (log.p) {
+      ln.p <- p
+      ans <- location + scale * (-log(-expm1(ln.p)))^(-1 / shape)
+      ans[ln.p > 0] <- NaN
+    } else { 
+      ans <- location + scale * (-log1p(-p))^(-1 / shape)
+      ans[p < 0] <- NaN
+      ans[p == 0] <- Inf
+      ans[p == 1] <- location
+      ans[p > 1] <- NaN
+    }
+  }
+  ans
 }
+
 
 
 rfrechet <- function(n, location = 0, scale = 1, shape) {
@@ -2322,8 +2471,8 @@ rfrechet <- function(n, location = 0, scale = 1, shape) {
 
 
 
-frechet.control <- function(save.weight = TRUE, ...) {
-    list(save.weight = save.weight)
+frechet.control <- function(save.weights = TRUE, ...) {
+    list(save.weights = save.weights)
 }
 
 
@@ -2531,8 +2680,8 @@ frechet.control <- function(save.weight = TRUE, ...) {
 
 
 
-frechet3.control <- function(save.weight = TRUE, ...) {
-    list(save.weight = save.weight)
+frechet3.control <- function(save.weights = TRUE, ...) {
+    list(save.weights = save.weights)
 }
 
 
@@ -2779,8 +2928,8 @@ if (FALSE)
 }
 
 
-rec.normal.control <- function(save.weight = TRUE, ...) {
-    list(save.weight = save.weight)
+rec.normal.control <- function(save.weights = TRUE, ...) {
+    list(save.weights = save.weights)
 }
 
 
@@ -2920,8 +3069,8 @@ rec.normal.control <- function(save.weight = TRUE, ...) {
 
 
 
-rec.exp1.control <- function(save.weight = TRUE, ...) {
-  list(save.weight = save.weight)
+rec.exp1.control <- function(save.weights = TRUE, ...) {
+  list(save.weights = save.weights)
 }
 
 
@@ -3050,16 +3199,19 @@ dpois.points <- function(x, lambda, ostatistic,
   ans2 <- log(2) + ostatistic * log(pi * lambda) -
           lgamma(ostatistic) + (2 * ostatistic - 1) * log(x) -
           lambda * pi * x^2
+  ans2[x < 0 | is.infinite(x)] <- log(0)  # 20141209 KaiH
 
   ans3 <- log(3) + ostatistic * log(4 * pi * lambda / 3) -
           lgamma(ostatistic) + (3 * ostatistic - 1) * log(x) -
           (4/3) * lambda * pi * x^3
+  ans3[x < 0 | is.infinite(x)] <- log(0)  # 20141209 KaiH
 
   ans <- ifelse(dimension == 2, ans2, ans3)
 
 
   if (log.arg) ans else exp(ans)
 }
+
 
 
  poisson.points <-

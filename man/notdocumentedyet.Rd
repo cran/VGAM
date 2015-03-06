@@ -2,6 +2,11 @@
 \alias{notdocumentedyet}
 %
 %
+%
+%
+%
+% 201412;
+%\alias{linkfun.vglm}
 % 201408;
 \alias{dlevy}
 \alias{plevy}
@@ -28,9 +33,9 @@
 % 201312;
 % \alias{simulate.vlm}
 % 201311;
-\alias{family.name}
-\alias{family.name.vlm}
-\alias{family.name.vglmff}
+\alias{familyname}
+\alias{familyname.vlm}
+\alias{familyname.vglmff}
 % 201309;
 \alias{I.col}
 \alias{BIC}

@@ -7,11 +7,16 @@
   Singh-Maddala distribution.
 }
 \usage{
-sinmad(lshape1.a = "loge", lscale = "loge", lshape3.q = "loge",
-       ishape1.a = NULL, iscale = NULL, ishape3.q = 1, zero = NULL)
+sinmad(lss, lshape1.a = "loge", lscale = "loge", lshape3.q = "loge",
+            ishape1.a = NULL, iscale = NULL, ishape3.q = 1, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
+  \item{lss}{ See \code{\link{CommonVGAMffArguments}} for important information.
+
+
+  }
+
   \item{lshape1.a, lscale, lshape3.q}{
   Parameter link functions applied to the
   (positive) parameters \code{a}, \code{scale}, and \code{q}.
@@ -100,9 +105,11 @@ Hoboken, NJ, USA: Wiley-Interscience.
 }
 
 \examples{
-sdata <- data.frame(y = rsinmad(n = 1000, exp(1), exp(2), exp(0)))
-fit <- vglm(y ~ 1, sinmad, data = sdata, trace = TRUE)
-fit <- vglm(y ~ 1, sinmad(ishape1.a = exp(1)), data = sdata, trace = TRUE)
+sdata <- data.frame(y = rsinmad(n = 1000, shape1 = exp(1),
+                    scale = exp(2), shape3 = exp(0)))
+fit <- vglm(y ~ 1, sinmad(lss = FALSE), data = sdata, trace = TRUE)
+fit <- vglm(y ~ 1, sinmad(lss = FALSE, ishape1.a = exp(1)),
+            data = sdata, trace = TRUE)
 coef(fit, matrix = TRUE)
 Coef(fit)
 summary(fit)
@@ -114,13 +121,13 @@ sdata <- data.frame(y1 = rbeta(1000, 6, 6))
 # hist(with(sdata, y1))
 if (FALSE) {
 # This fails
-  fit1 <- vglm(y1 ~ 1, sinmad, data = sdata, trace = TRUE)
-  fit1 <- vglm(y1 ~ 1, sinmad, data = sdata, trace = TRUE, maxit = 6,
-               crit = "coef")
+  fit1 <- vglm(y1 ~ 1, sinmad(lss = FALSE), data = sdata, trace = TRUE)
+  fit1 <- vglm(y1 ~ 1, sinmad(lss = FALSE), data = sdata, trace = TRUE,
+               maxit = 6, crit = "coef")
   Coef(fit1)
 }
 # Try this remedy:
-fit2 <- vglm(y1 ~ 1, sinmad(ishape3.q = 3, lshape3.q = "loglog"),
+fit2 <- vglm(y1 ~ 1, sinmad(lss = FALSE, ishape3.q = 3, lshape3.q = "loglog"),
              data = sdata, trace = TRUE, stepsize = 0.05, maxit = 99)
 coef(fit2, matrix = TRUE)
 Coef(fit2)

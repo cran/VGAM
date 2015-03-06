@@ -14,8 +14,9 @@
 }
 \usage{
 deunif(x, min = 0, max = 1, log = FALSE)
-peunif(q, min = 0, max = 1, log = FALSE)
-qeunif(p, min = 0, max = 1, Maxit.nr = 10, Tol.nr = 1.0e-6)
+peunif(q, min = 0, max = 1, lower.tail = TRUE, log.p = FALSE)
+qeunif(p, min = 0, max = 1, Maxit.nr = 10, Tol.nr = 1.0e-6,
+       lower.tail = TRUE, log.p = FALSE)
 reunif(n, min = 0, max = 1)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -32,6 +33,12 @@ reunif(n, min = 0, max = 1)
   }
   \item{n, min, max, log}{
   See \code{\link[stats:Uniform]{runif}}.
+
+
+  }
+  \item{lower.tail, log.p}{
+  Same meaning as in \code{\link[stats:Uniform]{punif}}
+  or \code{\link[stats:Uniform]{qunif}}.
 
 
   }
@@ -128,7 +135,7 @@ quantile and expectile regression.
 
 
 }
-\author{ T. W. Yee }
+\author{ T. W. Yee and Kai Huang }
 
 %\note{ 
 %The ``\code{q}'', as the first character of ``\code{qeunif}'',

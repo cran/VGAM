@@ -8,12 +8,17 @@
 
 }
 \usage{
-genbetaII(lshape1.a = "loge", lscale = "loge", lshape2.p = "loge", lshape3.q = "loge",
-          ishape1.a = NULL, iscale = NULL, ishape2.p = 1, ishape3.q = 1,
-          zero = NULL)
+genbetaII(lss, lshape1.a = "loge", lscale = "loge", lshape2.p = "loge",
+          lshape3.q = "loge", ishape1.a = NULL, iscale = NULL,
+          ishape2.p = 1, ishape3.q = 1, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
+  \item{lss}{ See \code{\link{CommonVGAMffArguments}} for important information.
+
+
+  }
+
   \item{lshape1.a, lscale, lshape2.p, lshape3.q}{
   Parameter link functions applied to the
   shape parameter \code{a},
@@ -35,6 +40,13 @@ genbetaII(lshape1.a = "loge", lscale = "loge", lshape2.p = "loge", lshape3.q = "
   Optional initial values for \code{p} and \code{q}.
 
   }
+% \item{gshape1.a, gscale, gshape2.p, gshape3.q}{
+% See \code{\link{CommonVGAMffArguments}} for information.
+
+
+
+
+% }
   \item{zero}{
   An integer-valued vector specifying which
   linear/additive predictors are modelled as intercepts only.
@@ -134,10 +146,12 @@ More improvements could be made here.
 
 \examples{
 \dontrun{
-gdata <- data.frame(y = rsinmad(3000, exp(2), exp(2), exp(1)))  # A special case!
-fit <- vglm(y ~ 1, genbetaII, data = gdata, trace = TRUE)
+gdata <- data.frame(y = rsinmad(3000, shape1 = exp(2), scale = exp(2),
+                                shape3 = exp(1)))  # A special case!
+fit <- vglm(y ~ 1, genbetaII(lss = FALSE), data = gdata, trace = TRUE)
 fit <- vglm(y ~ 1, data = gdata, trace = TRUE,
-            genbetaII(ishape1.a = 4, ishape2.p = 2.2, iscale = 7, ishape3.q = 2.3))
+            genbetaII(lss = FALSE, ishape1.a = 4, ishape2.p = 2.2,
+                      iscale = 7, ishape3.q = 2.3))
 coef(fit, matrix = TRUE)
 Coef(fit)
 summary(fit)

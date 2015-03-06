@@ -14,8 +14,8 @@
 }
 \usage{
 dbenf(x, ndigits = 1, log = FALSE)
-pbenf(q, ndigits = 1, log.p = FALSE)
-qbenf(p, ndigits = 1)
+pbenf(q, ndigits = 1, lower.tail = TRUE, log.p = FALSE)
+qbenf(p, ndigits = 1, lower.tail = TRUE, log.p = FALSE)
 rbenf(n, ndigits = 1)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -47,7 +47,12 @@ rbenf(n, ndigits = 1)
 
 
   }
+  \item{lower.tail}{
+  Same meaning as in \code{\link[stats:Normal]{pnorm}}
+  or \code{\link[stats:Normal]{qnorm}}.
 
+
+  }
 }
 \details{
 
@@ -105,7 +110,7 @@ Note on the Frequency of Use of the Different Digits in Natural Numbers.
 \bold{4}, 39--40.
 
 }
-\author{ T. W. Yee }
+\author{ T. W. Yee and Kai Huang }
 %\note{ 
 %  Currently only the leading digit is handled.
 %  The first two leading digits would be the next simple extension.

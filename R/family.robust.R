@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2014 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -93,28 +93,60 @@ rhuber <- function(n, k = 0.862, mu = 0, sigma = 1) {
 
 
 
-qhuber <- function (p, k = 0.862, mu = 0, sigma = 1) {
-  if (min(sigma) <= 0)
-    stop("argument 'sigma' must be positive")
-  if (min(k)     <= 0)
-    stop("argument 'k' must be positive")
+qhuber <- function (p, k = 0.862, mu = 0, sigma = 1,
+                    lower.tail = TRUE, log.p = FALSE ) {
+
+  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+    stop("bad input for argument 'lower.tail'") 
+  if (!is.logical(log.p) || length(log.p) != 1)
+    stop("bad input for argument 'log.p'")
 
   cnorm <- sqrt(2 * pi) * ((2 * pnorm(k) - 1) + 2 * dnorm(k) / k)
-  x <- pmin(p, 1 - p)
+  if (lower.tail) {
+    if (log.p) {
+      ln.p <- p 
+      x <- pmin(exp(ln.p), -expm1(ln.p))
+    } else {
+      x <- pmin(p, 1 - p)
+    }
+  } else {
+    if (log.p) {
+      ln.p <- p
+      x <- pmin(-expm1(ln.p), exp(ln.p))
+    } else { 
+      x <- pmin(1 - p, p)
+    }
+  }
   q <- ifelse(x <= sqrt(2 * pi) * dnorm(k) / ( k * cnorm),
               log(k * cnorm * x) / k - k / 2,
               qnorm(abs(1 - pnorm(k) + x * cnorm / sqrt(2 * pi) -
                     dnorm(k) / k)))
-  ifelse(p < 0.5, mu + q * sigma,
-                  mu - q * sigma)
+  ans <- if (lower.tail) {
+    if (log.p) {
+      ifelse(exp(ln.p) < 0.5, mu + q * sigma, mu - q * sigma)
+    } else {
+      ifelse(p < 0.5, mu + q * sigma, mu - q * sigma)
+    } } else {
+      if (log.p) {
+        ifelse(exp(ln.p) > 0.5, mu + q * sigma, mu - q * sigma)
+      } else { 
+        ifelse(p > 0.5, mu + q * sigma, mu - q * sigma)
+      }
+    }
+  ans[k <= 0 | sigma <= 0] <- NaN
+  ans
 }
 
 
 
 
-phuber <- function(q, k = 0.862, mu = 0, sigma = 1) {
-  if (any(sigma <= 0))
-    stop("argument 'sigma' must be positive")
+phuber <- function(q, k = 0.862, mu = 0, sigma = 1,
+                   lower.tail = TRUE, log.p = FALSE ) {
+
+  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+    stop("bad input for argument 'lower.tail'") 
+  if (!is.logical(log.p) || length(log.p) != 1)
+    stop("bad input for argument 'log.p'")
 
   A1  <- (2 * dnorm(k) / k - 2 * pnorm(-k))
   eps <- A1 / (1 + A1)
@@ -123,8 +155,25 @@ phuber <- function(q, k = 0.862, mu = 0, sigma = 1) {
   p <- ifelse(x <= -k ,
               exp(k^2 / 2) / k * exp(k * x) / sqrt(2 * pi),
               dnorm(k) / k + pnorm(x) - pnorm(-k))
-  p <- p * (1 - eps)
-  ifelse(zedd <= 0, p, 1 - p)
+  
+  if (lower.tail) {
+    if (log.p) {
+      ans <- ifelse(zedd <= 0, log(p) + log1p(-eps),
+                               log1p(exp(log(p) + log1p(-eps))))
+    } else {
+      ans <- ifelse(zedd <= 0, exp(log(p) + log1p(-eps)),
+                               -expm1(log(p) + log1p(-eps)))
+    }
+  } else {
+    if (log.p) {
+      ans <- ifelse(zedd <= 0, log1p(exp(log(p) + log1p(-eps))),
+                               log(p) + log1p(-eps))
+    } else {
+      ans <- ifelse(zedd <= 0, -expm1(log(p) + log1p(-eps)),
+                               exp(log(p) + log1p(-eps)))
+    }
+  } 
+  ans
 }
 
 

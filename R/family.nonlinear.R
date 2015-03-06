@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2014 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -12,11 +12,11 @@
 
 
 
-vnonlinear.control <- function(save.weight = TRUE, ...) {
+vnonlinear.control <- function(save.weights = TRUE, ...) {
 
 
 
-    list(save.weight = as.logical(save.weight)[1])
+    list(save.weights = as.logical(save.weights)[1])
 }
 
 
@@ -71,8 +71,8 @@ subset.lohi <- function(xvec, yvec,
 
 
 
-micmen.control <- function(save.weight = TRUE, ...) {
-    list(save.weight = save.weight)
+micmen.control <- function(save.weights = TRUE, ...) {
+    list(save.weights = save.weights)
 }
 
 
@@ -356,8 +356,8 @@ micmen.control <- function(save.weight = TRUE, ...) {
 
 
 
-skira.control <- function(save.weight = TRUE, ...) {
-  list(save.weight = save.weight)
+skira.control <- function(save.weights = TRUE, ...) {
+  list(save.weights = save.weights)
 }
 
 

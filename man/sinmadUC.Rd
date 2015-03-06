@@ -13,10 +13,10 @@
 
 }
 \usage{
-dsinmad(x, shape1.a, scale = 1, shape3.q, log = FALSE)
-psinmad(q, shape1.a, scale = 1, shape3.q)
-qsinmad(p, shape1.a, scale = 1, shape3.q)
-rsinmad(n, shape1.a, scale = 1, shape3.q)
+dsinmad(x, scale = 1, shape1.a, shape3.q, log = FALSE)
+psinmad(q, scale = 1, shape1.a, shape3.q, lower.tail = TRUE, log.p = FALSE)
+qsinmad(p, scale = 1, shape1.a, shape3.q, lower.tail = TRUE, log.p = FALSE)
+rsinmad(n, scale = 1, shape1.a, shape3.q)
 }
 \arguments{
   \item{x, q}{vector of quantiles.}
@@ -28,6 +28,12 @@ rsinmad(n, shape1.a, scale = 1, shape3.q)
   \item{log}{
   Logical.
   If \code{log = TRUE} then the logarithm of the density is returned.
+
+  }
+  \item{lower.tail, log.p}{
+  Same meaning as in \code{\link[stats:Normal]{pnorm}}
+  or \code{\link[stats:Normal]{qnorm}}.
+
 
   }
 
@@ -49,7 +55,7 @@ Hoboken, NJ: Wiley-Interscience.
 
 
 }
-\author{ T. W. Yee }
+\author{ T. W. Yee and Kai Huang }
 \details{
   See \code{\link{sinmad}}, which is the \pkg{VGAM} family function
   for estimating the parameters by maximum likelihood estimation.
@@ -69,8 +75,8 @@ Hoboken, NJ: Wiley-Interscience.
 
 }
 \examples{
-sdata <- data.frame(y = rsinmad(n = 3000, exp(1), exp(2), exp(1)))
-fit <- vglm(y ~ 1, sinmad(ishape1.a = 2.1), data = sdata,
+sdata <- data.frame(y = rsinmad(n = 3000, scale = exp(2), shape1 = exp(1), exp(1)))
+fit <- vglm(y ~ 1, sinmad(lss = FALSE, ishape1.a = 2.1), data = sdata,
             trace = TRUE, crit = "coef")
 coef(fit, matrix = TRUE)
 Coef(fit)

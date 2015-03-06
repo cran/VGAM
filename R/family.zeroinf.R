@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2014 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -1024,8 +1024,8 @@ rzipois <- function(n, lambda, pstr0 = 0) {
 
 
 
-zanegbinomial.control <- function(save.weight = TRUE, ...) {
-  list(save.weight = save.weight)
+zanegbinomial.control <- function(save.weights = TRUE, ...) {
+  list(save.weights = save.weights)
 }
 
 
@@ -1486,8 +1486,8 @@ zanegbinomial.control <- function(save.weight = TRUE, ...) {
 
 
 
-zanegbinomialff.control <- function(save.weight = TRUE, ...) {
-  list(save.weight = save.weight)
+zanegbinomialff.control <- function(save.weights = TRUE, ...) {
+  list(save.weights = save.weights)
 }
 
 
@@ -2331,9 +2331,9 @@ dposnegbin <- function(x, munb, size, log = FALSE) {
            type.fitted = c("mean", "pobs0", "pstr0", "onempstr0"),
            ipstr0 = NULL,
            zero = NULL,  # 20130917; was originally zero = 1,
-           mv = FALSE, imethod = 1) {
-  if (as.logical(mv))
-    stop("argument 'mv' must be FALSE")
+           multiple.responses = FALSE, imethod = 1) {
+  if (as.logical(multiple.responses))
+    stop("argument 'multiple.responses' must be FALSE")
 
   lpstr0 <- as.list(substitute(lpstr0))
   epstr0 <- link2list(lpstr0)
@@ -2606,15 +2606,15 @@ dposnegbin <- function(x, munb, size, log = FALSE) {
            type.fitted = c("mean", "pobs0", "pstr0", "onempstr0"),
            ionempstr0 = NULL,
            zero = 2,
-           mv = FALSE, imethod = 1) {
+           multiple.responses = FALSE, imethod = 1) {
 
 
 
 
 
 
-  if (as.logical(mv))
-    stop("argument 'mv' must be FALSE")
+  if (as.logical(multiple.responses))
+    stop("argument 'multiple.responses' must be FALSE")
 
   lprob <- as.list(substitute(lprob))
   eprob <- link2list(lprob)
@@ -3184,8 +3184,8 @@ rzinegbin <- function(n, size, prob = NULL, munb = NULL, pstr0 = 0) {
 
 
 
-zinegbinomial.control <- function(save.weight = TRUE, ...) {
-  list(save.weight = save.weight)
+zinegbinomial.control <- function(save.weights = TRUE, ...) {
+  list(save.weights = save.weights)
 }
 
 
@@ -3644,8 +3644,8 @@ zinegbinomial.control <- function(save.weight = TRUE, ...) {
 
     for (spp. in 1:NOS) {
       wz1[,, spp.] <- wz1[,, spp.] *
-                     dthetas.detas[, M1 * (spp. - 1) + ind3$row] *
-                     dthetas.detas[, M1 * (spp. - 1) + ind3$col]
+                      dthetas.detas[, M1 * (spp. - 1) + ind3$row] *
+                      dthetas.detas[, M1 * (spp. - 1) + ind3$col]
     }
 
     for (spp. in 1:NOS) {
@@ -3672,8 +3672,8 @@ zinegbinomial.control <- function(save.weight = TRUE, ...) {
 
 
 
-zinegbinomialff.control <- function(save.weight = TRUE, ...) {
-  list(save.weight = save.weight)
+zinegbinomialff.control <- function(save.weights = TRUE, ...) {
+  list(save.weights = save.weights)
 }
 
 

@@ -13,7 +13,7 @@
 }
 \usage{
 dnaka(x, scale = 1, shape, log = FALSE)
-pnaka(q, scale = 1, shape)
+pnaka(q, scale = 1, shape, lower.tail = TRUE, log.p = FALSE)
 qnaka(p, scale = 1, shape, ...)
 rnaka(n, scale = 1, shape, Smallno = 1.0e-6)
 }
@@ -54,6 +54,12 @@ rnaka(n, scale = 1, shape, Smallno = 1.0e-6)
 
 
   }
+  \item{lower.tail, log.p}{
+  Same meaning as in \code{\link[stats:Normal]{pnorm}}
+  or \code{\link[stats:Normal]{qnorm}}.
+
+
+  }
 }
 \value{
   \code{dnaka} gives the density,
@@ -63,7 +69,7 @@ rnaka(n, scale = 1, shape, Smallno = 1.0e-6)
 
 
 }
-\author{ T. W. Yee }
+\author{ T. W. Yee and Kai Huang }
 \details{
   See \code{\link{nakagami}} for more details.
 

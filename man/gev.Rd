@@ -92,7 +92,7 @@ egev(llocation = "identitylink", lscale = "loge", lshape = logoff(offset = 0.5),
   }
 %  \item{rshape}{
 %  Numeric, of length 2.
-%  Range of \eqn{\xi}{xi} if \code{lshape = "elogit"} is chosen.
+%  Range of \eqn{\xi}{xi} if \code{lshape = "extlogit"} is chosen.
 %  The rationale for the default values is given below.
 %  }
 
@@ -174,7 +174,7 @@ egev(llocation = "identitylink", lscale = "loge", lshape = logoff(offset = 0.5),
   the maximum likelihood estimators are completely regular.
   To have some control over the estimated \eqn{\xi}{xi} try
   using \code{lshape = logoff(offset = 0.5)}, say,
-  or \code{lshape = elogit(min = -0.5, max = 0.5)}, say.
+  or \code{lshape = extlogit(min = -0.5, max = 0.5)}, say.
 
 
 % and when \eqn{-1 < \xi < -0.5}{-1 < xi < -0.5} they exist but are
@@ -271,7 +271,7 @@ egev(llocation = "identitylink", lscale = "loge", lshape = logoff(offset = 0.5),
   \code{\link{gpd}},
   \code{\link{weibullR}},
   \code{\link{frechet}},
-  \code{\link{elogit}},
+  \code{\link{extlogit}},
   \code{\link{oxtemp}},
   \code{\link{venice}}.
 

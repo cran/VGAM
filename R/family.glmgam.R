@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2014 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -13,12 +13,14 @@
 
 
 
- binomialff <- function(link = "logit",
-                        dispersion = 1, mv = FALSE, onedpar = !mv,
-                        parallel = FALSE,  # apply.parint = FALSE,
-                        zero = NULL,
-                        bred = FALSE,
-                        earg.link = FALSE) {
+ binomialff <-
+  function(link = "logit",
+           dispersion = 1,
+           multiple.responses = FALSE, onedpar = !multiple.responses,
+           parallel = FALSE,  # apply.parint = FALSE,
+           zero = NULL,
+           bred = FALSE,
+           earg.link = FALSE) {
 
 
  if (!is.logical(bred) || length(bred) > 1)
@@ -44,7 +46,7 @@
 
   ans <-
   new("vglmff",
-  blurb = if (mv) c("Multiple binomial model\n\n", 
+  blurb = if (multiple.responses) c("Multiple binomial model\n\n", 
          "Link:     ", namesof("mu[,j]", link, earg = earg), "\n",
          "Variance: mu[,j]*(1-mu[,j])") else
          c("Binomial model\n\n", 
@@ -82,7 +84,7 @@
 
 
 
-    if ( .mv ) {
+    if ( .multiple.responses ) {
       temp5 <-
       w.y.check(w = w, y = y,
                 Is.nonnegative.y = TRUE,
@@ -128,7 +130,7 @@
 
 
 
-      extra$mv <- TRUE
+      extra$multiple.responses <- TRUE
 
     } else {
 
@@ -178,14 +180,14 @@
 
 
     if ( .bred ) {
-      if ( !control$save.weight ) {
-       save.weight <- control$save.weight <- TRUE
+      if ( !control$save.weights ) {
+       save.weights <- control$save.weights <- TRUE
       }
     }
 
 
 
-    }), list( .link = link, .mv = mv,
+    }), list( .link = link, .multiple.responses = multiple.responses,
               .earg = earg, .bred = bred ))),
 
   linkinv = eval(substitute(function(eta, extra = NULL) {
@@ -208,7 +210,7 @@
       temp87 <- (y-mu)^2 * wz / (
                 dtheta.deta(mu, link = .link ,
                             earg = .earg )^2)  # w cancel
-      if (.mv && ! .onedpar ) {
+      if (.multiple.responses && ! .onedpar ) {
         dpar <- rep(as.numeric(NA), len = M)
         temp87 <- cbind(temp87)
         nrow.mu <- if (is.matrix(mu)) nrow(mu) else length(mu)
@@ -221,7 +223,7 @@
       }
     }
 
-    misc$mv <- .mv
+    misc$multiple.responses <- .multiple.responses
     misc$dispersion <- dpar
     misc$default.dispersion <- 1
     misc$estimated.dispersion <- .estimated.dispersion
@@ -238,7 +240,7 @@
 
   }), list( .dispersion = dispersion,
             .estimated.dispersion = estimated.dispersion,
-            .onedpar = onedpar, .mv = mv,
+            .onedpar = onedpar, .multiple.responses = multiple.responses,
             .bred = bred,
             .link = link, .earg = earg))),
 
@@ -265,7 +267,7 @@
         warning("converting 'ycounts' to integer in @loglikelihood")
       ycounts <- round(ycounts)
 
-      ll.elts <- if ( .mv ) {
+      ll.elts <- if ( .multiple.responses ) {
         c(w) * (    ycounts  * log(   mu) +
                (1 - ycounts) * log1p(-mu))
       } else {
@@ -278,7 +280,7 @@
         ll.elts
       }
     }
-  }, list( .mv = mv ))),
+  }, list( .multiple.responses = multiple.responses ))),
 
   vfamily = c("binomialff", "vcategorical"),
 
@@ -387,7 +389,7 @@
 
 
 
-  if (!mv)
+  if (!multiple.responses)
     ans@deviance <- 
       function(mu, y, w, residuals = FALSE, eta, extra = NULL,
                summation = TRUE) {
@@ -1030,8 +1032,8 @@ rinv.gaussian <- function(n, mu, lambda) {
 
 
     if ( .bred ) {
-      if ( !control$save.weight ) {
-       save.weight <- control$save.weight <- TRUE
+      if ( !control$save.weights ) {
+       save.weights <- control$save.weights <- TRUE
       }
     }
 
@@ -1186,7 +1188,7 @@ rinv.gaussian <- function(n, mu, lambda) {
  quasibinomialff <-
   function(
            link = "logit",
-           mv = FALSE, onedpar = !mv,
+           multiple.responses = FALSE, onedpar = !multiple.responses,
            parallel = FALSE, zero = NULL) {
 
 
@@ -1197,7 +1199,8 @@ rinv.gaussian <- function(n, mu, lambda) {
   dispersion <- 0 # Estimated; this is the only difference with binomialff()
   ans <- binomialff(link = earg, earg.link = TRUE,
                     dispersion = dispersion,
-                    mv = mv, onedpar = onedpar,
+                    multiple.responses = multiple.responses,
+                    onedpar = onedpar,
                     parallel = parallel, zero = zero)
   ans@vfamily <- "quasibinomialff"
   ans@infos <- eval(substitute(function(...) {
@@ -1537,9 +1540,10 @@ rinv.gaussian <- function(n, mu, lambda) {
 
 
 if (FALSE)
- matched.binomial <- function(mvar = NULL, link = "logit",
-                              parallel = TRUE,
-                              smallno = .Machine$double.eps^(3/4)) {
+ matched.binomial <-
+  function(multiple.responses = NULL, link = "logit",
+           parallel = TRUE,
+           smallno = .Machine$double.eps^(3/4)) {
   link <- as.list(substitute(link))
   earg <- link2list(link)
   link <- attr(earg, "function.name")
@@ -1552,11 +1556,13 @@ if (FALSE)
   if (is.logical(parallel) && !parallel)
     stop("'parallel' must be TRUE")
 
-    temp <- terms(mvar)
-    mvar <- attr(temp,"term.labels")
-    if (length(mvar) != 1) stop("cannot obtain the matching variable")
-    if (!is.character(mvar) || length(mvar) != 1) {
-        stop("bad input for 'mvar'")
+    temp <- terms(multiple.responses)
+    multiple.responses <- attr(temp,"term.labels")
+    if (length(multiple.responses) != 1)
+      stop("cannot obtain the matching variable")
+    if (!is.character(multiple.responses) ||
+        length(multiple.responses) != 1) {
+      stop("bad input for 'multiple.responses'")
     }
 
     new("vglmff",
@@ -1567,20 +1573,20 @@ if (FALSE)
                                bool = .parallel ,
                                constraints = constraints,
                                apply.int = TRUE)
-        constraints[[extra$mvar]] <- diag(M)
+        constraints[[extra$multiple.responses]] <- diag(M)
 
         specialCM <- list(a = vector("list", M-1))
         for (ii in 1:(M-1)) {
           specialCM[[1]][[ii]] <-
-            (constraints[[extra$mvar]])[, 1+ii,drop = FALSE]
+            (constraints[[extra$multiple.responses]])[, 1+ii,drop = FALSE]
         }
-        names(specialCM) = extra$mvar
+        names(specialCM) = extra$multiple.responses
     }), list( .parallel = parallel ))),
     initialize = eval(substitute(expression({
         if (!all(w == 1))
             extra$orig.w = w
 
-        mvar <- .mvar
+        multiple.responses <- .multiple.responses
 
         NCOL <- function (x) 
             if (is.array(x) && length(dim(x)) > 1 ||
@@ -1608,22 +1614,23 @@ if (FALSE)
     temp1 <- attr(x, "assign")
     if (colnames(x)[1] != "(Intercept)")
       stop("x must have an intercept")
-    M <- CCC <- length(temp1[[mvar]]) +
+    M <- CCC <- length(temp1[[multiple.responses]]) +
                 (colnames(x)[1] == "(Intercept)")
-    temp9 <- x[,temp1[[mvar]],drop = FALSE]
+    temp9 <- x[,temp1[[multiple.responses]],drop = FALSE]
     temp9 <- temp9 * matrix(2:CCC, n, CCC-1, byrow = TRUE)
     temp9 <- apply(temp9, 1, max)
       temp9[temp9 == 0] <- 1
       extra$NoMatchedSets <- CCC
       extra$n <- n
       extra$M <- M
-      extra$mvar <- mvar
+      extra$multiple.responses <- multiple.responses
       extra$index9 <- temp9
 
     predictors.names <-
       namesof("mu", .link , earg = .earg , short = TRUE)
     predictors.names <- rep(predictors.names, len = M)
-  }), list( .link = link, .earg = earg, .mvar = mvar ))),
+  }), list( .link = link, .earg = earg,
+            .multiple.responses = multiple.responses ))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
     mu <- eta2theta(eta, link = .link , earg = .earg )
     mu[cbind(1:extra$n, extra$index9)]
@@ -1782,16 +1789,17 @@ mypool <- function(x, index) {
           etastart <- theta2eta(mustart, link = "logit", earg = list())
 
         temp1 = attr(x, "assign")
-        mvar = extra$mvar
-        if (length(mvar) != n) stop("input extra$mvar doesn't look right")
+        multiple.responses = extra$multiple.responses
+        if (length(multiple.responses) != n)
+          stop("input extra$multiple.responses doesn't look right")
 
         if (any(y != 0 & y != 1))
             stop("response vector must have 0 or 1 values only")
-        xrle = rle(mvar)
-        if (length(unique(mvar)) != length(xrel$length))
-            stop("extra$mvar must take on contiguous values")
+        xrle = rle(multiple.responses)
+        if (length(unique(multiple.responses)) != length(xrel$length))
+          stop("extra$multiple.responses must take on contiguous values")
 
-        temp9 = factor(mvar)
+        temp9 = factor(multiple.responses)
         extra$NoMatchedSets = levels(temp9)
         extra$n = n
         extra$M = M
@@ -1799,10 +1807,11 @@ mypool <- function(x, index) {
         extra$index9 = temp9
         predictors.names <-
           namesof("mu", .link , earg = .earg , short = TRUE)
-  }), list( .link = link, .earg = earg, .mvar = mvar ))),
+  }), list( .link = link, .earg = earg,
+            .multiple.responses = multiple.responses ))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
       denominator <- exp(eta)
-      numerator <- mypool(denominator, extra$mvar)
+      numerator <- mypool(denominator, extra$multiple.responses)
       numerator / denominator
   }, list( .link = link, .earg = earg  ))),
   last = eval(substitute(expression({
@@ -1856,7 +1865,7 @@ mypool <- function(x, index) {
 
 
 
- augbinomial <- function(link = "logit", mv = FALSE,
+ augbinomial <- function(link = "logit", multiple.responses = FALSE,
                         parallel = TRUE) {
 
     if (!is.logical(parallel) ||
@@ -1870,7 +1879,8 @@ mypool <- function(x, index) {
 
 
   new("vglmff",
-  blurb = if (mv) c("Augmented multivariate binomial model\n\n", 
+  blurb = if (multiple.responses)
+          c("Augmented multivariate binomial model\n\n", 
          "Link:     ",
          namesof("mu.1[,j]", link, earg = earg), ", ",
          namesof("mu.2[,j]", link, earg = earg),
@@ -1897,7 +1907,7 @@ mypool <- function(x, index) {
 
     M1 = 2
 
-    if ( .mv ) {
+    if ( .multiple.responses ) {
         y = as.matrix(y)
         M = M1 * ncol(y)
         if (!all(y == 0 | y == 1))
@@ -1971,7 +1981,8 @@ mypool <- function(x, index) {
             c(namesof("mu.1", .link , earg = .earg , short = TRUE),
               namesof("mu.2", .link , earg = .earg , short = TRUE))
       }
-  }), list( .link = link, .mv = mv, .earg = earg))),
+  }), list( .link = link,
+            .multiple.responses = multiple.responses, .earg = earg))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
     Mdiv2  =  ncol(eta) / 2
     index1 =  2*(1:Mdiv2) - 1
@@ -1990,8 +2001,9 @@ mypool <- function(x, index) {
 
     misc$parallel <- .parallel
     misc$expected <- TRUE
-    misc$mv <- .mv
-  }), list( .link = link, .mv = mv, .earg = earg,
+    misc$multiple.responses <- .multiple.responses
+  }), list( .link = link,
+            .multiple.responses = multiple.responses, .earg = earg,
             .parallel = parallel ))),
   linkfun = eval(substitute(function(mu, extra = NULL) {
     usualanswer = theta2eta(mu, .link , earg = .earg )

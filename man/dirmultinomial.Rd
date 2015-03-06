@@ -141,9 +141,13 @@ Yu, P. and Shaw, C. A. (2014).
 An Efficient Algorithm for Accurate Computation of
 the Dirichlet-Multinomial Log-Likelihood Function.
 \emph{Bioinformatics},
-\bold{30},
-in press;
-\url{doi:10.1093/bioinformatics/btu079}.
+\bold{30}, 1547--54.
+
+
+
+% url {doi:10.1093/bioinformatics/btu079}.
+% number =      {11},
+
 
 
 % first published online February 11, 2014

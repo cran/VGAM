@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2014 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -33,25 +33,45 @@ dcard <- function(x, mu, rho, log = FALSE) {
 }
 
 
-pcard <- function(q, mu, rho) {
-  if (!is.Numeric(mu) || any(mu < 0) || any(mu > 2*pi))
-    stop("'mu' must be between 0 and 2*pi inclusive")
-  if (!is.Numeric(rho) || max(abs(rho) > 0.5))
-    stop("'rho' must be between -0.5 and 0.5 inclusive")
-  ans <- (q + 2 * rho * (sin(q-mu) + sin(mu))) / (2*pi)
-  ans[q >= (2*pi)] <- 1
-  ans[q <= 0] <- 0
+
+pcard <- function(q, mu, rho, lower.tail = TRUE, log.p = FALSE) {
+  
+  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+    stop("bad input for argument 'lower.tail'")
+  if (!is.logical(log.p) || length(log.p) != 1)
+    stop("bad input for argument 'log.p'")
+
+  if (lower.tail) {
+    if (log.p) {
+      ans <- log((q + 2 * rho * (sin(q-mu) + sin(mu))) / (2*pi))
+      ans[q <= 0 ] <- -Inf
+      ans[q >= (2*pi)]  <- 0
+    } else {
+      ans <- (q + 2 * rho * (sin(q-mu) + sin(mu))) / (2*pi)
+      ans[q <= 0] <- 0
+      ans[q >= (2*pi)] <- 1
+    }
+  } else {
+    if (log.p) {
+      ans <- log1p(-(q + 2 * rho * (sin(q-mu) + sin(mu))) / (2*pi))
+      ans[q <= 0] <- 0
+      ans[q >= (2*pi)]  <- -Inf
+    } else {
+      ans <- (2*pi - q - 2 * rho * (sin(q-mu) + sin(mu))) / (2*pi)
+      ans[q <= 0] <- 1
+      ans[q >= (2*pi)] <- 0
+    }
+  } 
+  ans[mu < 0 | mu > 2*pi] <- NaN  # A warning() may be a good idea here
+  ans[abs(rho) > 0.5] <- NaN
   ans
 }
 
 
 
-qcard <- function(p, mu, rho, tolerance=1.0e-7, maxits=500) {
-  if (!is.Numeric(mu) || any(mu < 0) || any(mu > 2*pi))
-    stop("'mu' must be between 0 and 2*pi inclusive")
-  if (!is.Numeric(rho) || max(abs(rho) > 0.5))
-    stop("'rho' must be between -0.5 and 0.5 inclusive")
-  if (!is.Numeric(p, positive = TRUE) || any(p > 1))
+qcard <- function(p, mu, rho, tolerance = 1.0e-7, maxits = 500,
+                  lower.tail = TRUE, log.p = FALSE) {
+  if (!is.Numeric(p) || any(p < 0) || any(p > 1))
     stop("'p' must be between 0 and 1")
 
   nn <- max(length(p), length(mu), length(rho))
@@ -60,19 +80,73 @@ qcard <- function(p, mu, rho, tolerance=1.0e-7, maxits=500) {
   if (length(rho) != nn) rho <- rep(rho, len = nn)
 
 
-  oldans <- 2 * pi * p
-
-  for (its in 1:maxits) {
-    ans <- oldans - (oldans + 2 * rho * (sin(oldans-mu)+sin(mu)) -
-           2*pi*p) / (1 + 2 * rho * cos(oldans - mu))
-    index <- (ans <= 0) | (ans > 2*pi)
-    if (any(index)) {
-      ans[index] <- runif (sum(index), 0, 2*pi)
+  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+    stop("bad input for argument 'lower.tail'")
+  if (!is.logical(log.p) || length(log.p) != 1)
+    stop("bad input for argument 'log.p'")
+  
+  if (lower.tail) {
+    if (log.p) {
+      ln.p <- p
+      for (its in 1:maxits) {
+        oldans <- 2 * pi * exp(ln.p)
+        ans <- oldans - (oldans + 2 * rho * (sin(oldans-mu)+sin(mu)) -
+                           2*pi*exp(ln.p)) / (1 + 2 * rho * cos(oldans - mu))
+        index <- (ans < 0) | (ans > 2*pi)  # 20141216 KaiH  Remove ans == 0
+        if (any(index)) {
+          ans[index] <- runif (sum(index), 0, 2*pi)
+        }
+        if (max(abs(ans - oldans)) < tolerance) break;
+        if (its == maxits) {warning("did not converge"); break}
+        oldans <- ans
       }
-    if (max(abs(ans - oldans)) < tolerance) break;
-    if (its == maxits) {warning("did not converge"); break}
-    oldans <- ans
+    } else {
+      for (its in 1:maxits) {
+        oldans <- 2 * pi * p
+        ans <- oldans - (oldans + 2 * rho * (sin(oldans-mu)+sin(mu)) -
+               2*pi*p) / (1 + 2 * rho * cos(oldans - mu))
+        index <- (ans < 0) | (ans > 2*pi)  # 20141216 KaiH  Remove ans == 0
+        if (any(index)) {
+          ans[index] <- runif(sum(index), 0, 2*pi)
+        }
+        if (max(abs(ans - oldans)) < tolerance) break;
+        if (its == maxits) {warning("did not converge"); break}
+        oldans <- ans
+      }
+    }
+  } else {
+    if (log.p) {
+      ln.p <- p
+      for (its in 1:maxits) {
+        oldans <- - 2 * pi * expm1(ln.p)
+        ans <- oldans - (oldans + 2 * rho * (sin(oldans-mu)+sin(mu)) +
+               2*pi*expm1(ln.p)) / (1 + 2 * rho * cos(oldans - mu))
+        index <- (ans < 0) | (ans > 2*pi)
+        if (any(index)) {
+          ans[index] <- runif (sum(index), 0, 2*pi)
+        }
+        if (max(abs(ans - oldans)) < tolerance) break;
+        if (its == maxits) {warning("did not converge"); break}
+        oldans <- ans 
+       }
+    } else { 
+      for (its in 1:maxits) {
+        oldans <- 2 * pi - 2 * pi * p
+        ans <- oldans - (oldans + 2 * rho * (sin(oldans-mu)+sin(mu)) -
+               2*pi + 2*pi*p) / (1 + 2 * rho * cos(oldans - mu))
+        index <- (ans < 0) | (ans > 2*pi)  
+        if (any(index)) {
+          ans[index] <- runif (sum(index), 0, 2*pi)
+        }
+        if (max(abs(ans - oldans)) < tolerance) break;
+        if (its == maxits) {warning("did not converge"); break}
+        oldans <- ans
+      }
+    }
   }
+
+  ans[mu < 0 | mu > 2*pi] <- NaN  # A warning() may be a good idea here
+  ans[abs(rho) > 0.5] <- NaN
   ans
 }
 
@@ -98,15 +172,15 @@ rcard <- function(n, mu, rho, ...) {
 
 
 
-cardioid.control <- function(save.weight = TRUE, ...) {
-    list(save.weight = save.weight)
+cardioid.control <- function(save.weights = TRUE, ...) {
+    list(save.weights = save.weights)
 }
 
 
 
  cardioid <- function(
-     lmu  = elogit(min = 0, max = 2*pi),
-     lrho = elogit(min = -0.5, max = 0.5),
+     lmu  = extlogit(min = 0, max = 2*pi),
+     lrho = extlogit(min = -0.5, max = 0.5),
      imu = NULL, irho = 0.3,
      nsimEIM = 100, zero = NULL) {
 
@@ -272,7 +346,7 @@ cardioid.control <- function(save.weight = TRUE, ...) {
 
 
 
- vonmises <- function(llocation = elogit(min = 0, max = 2*pi),
+ vonmises <- function(llocation = extlogit(min = 0, max = 2*pi),
                       lscale  = "loge",
                       ilocation = NULL, iscale  = NULL,
                       imethod = 1, zero = NULL) {

@@ -33,7 +33,7 @@ TypicalVGAMfamilyFunction(lsigma = "loge",
                           type.fitted = c("mean", "pobs0", "pstr0", "onempstr0"),
                           probs.x = c(0.15, 0.85),
                           probs.y = c(0.25, 0.50, 0.75),
-                          mv = FALSE, earg.link = FALSE,
+                          multiple.responses = FALSE, earg.link = FALSE,
                           whitespace = FALSE, bred = FALSE, lss = TRUE,
                           oim = FALSE, nsimEIM = 100, zero = NULL)
 }
@@ -236,6 +236,15 @@ except for \eqn{X_2}.
   For example, the arguments of \code{\link{weibullR}} are
   scale and shape, whereas \code{\link[stats]{rweibull}}
   are shape and scale.
+  As a temporary measure
+  (from \pkg{VGAM} 0.9-7 onwards but prior to version 1.0-0),
+  some family functions such as \code{\link{sinmad}} have an
+  \code{lss} argument without a default. For these,
+  setting \code{lss = FALSE} will work.
+  Later, \code{lss = TRUE} will be the default.
+  Be careful for the \code{dpqr}-type functions, e.g.,
+  \code{\link{rsinmad}}.
+
 
 
   }
@@ -327,7 +336,7 @@ except for \eqn{X_2}.
 
   }
 
-  \item{mv}{
+  \item{multiple.responses}{
   Logical.
   Some \pkg{VGAM} family functions allow a multivariate or vector response.
   If so, then usually the response is a matrix with columns
@@ -335,10 +344,10 @@ except for \eqn{X_2}.
   They are all fitted simultaneously.
   Arguments such as \code{parallel} may then be useful to allow
   for relationships between the regressions of each response variable.
-  If \code{mv = TRUE} then sometimes the response is interpreted
+  If \code{multiple.responses = TRUE} then sometimes the response is interpreted
   differently, e.g., \code{\link{posbinomial}} chooses the first
   column of a matrix response as success and combines the other
-  columns as failure, but when \code{mv = TRUE} then each column
+  columns as failure, but when \code{multiple.responses = TRUE} then each column
   of the response matrix is the number of successes and the
   \code{weights} argument is of the same dimension as the
   response and contains the number of trials.
@@ -397,6 +406,14 @@ except for \eqn{X_2}.
   \code{summary(fit)},
   \code{vcov(fit)},
   etc. may be misleading.
+
+
+  Changes relating to the code{lss} argument have very important
+  consequences and users must beware.
+  Good programming style is to rely on the argument names and not
+  on the order.
+
+
 
 }
 

@@ -7,11 +7,16 @@
   inverse paralogistic distribution.
 }
 \usage{
-inv.paralogistic(lshape1.a = "loge", lscale = "loge",
-                 ishape1.a = 2, iscale = NULL, zero = NULL)
+inv.paralogistic(lss, lshape1.a = "loge", lscale = "loge",
+                      ishape1.a = 2, iscale = NULL, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
+  \item{lss}{ See \code{\link{CommonVGAMffArguments}} for important information.
+  
+  
+  }
+
   \item{lshape1.a, lscale}{ 
   Parameter link functions applied to the
   (positive) shape parameter \code{a} and
@@ -92,9 +97,9 @@ Hoboken, NJ, USA: Wiley-Interscience.
 }
 
 \examples{
-idata <- data.frame(y = rinv.paralogistic(n = 3000, exp(1), exp(2)))
-fit <- vglm(y ~ 1, inv.paralogistic, data = idata, trace = TRUE)
-fit <- vglm(y ~ 1, inv.paralogistic(ishape1.a = 2.7, iscale = 7.3),
+idata <- data.frame(y = rinv.paralogistic(n = 3000, exp(1), scale = exp(2)))
+fit <- vglm(y ~ 1, inv.paralogistic(lss = FALSE), data = idata, trace = TRUE)
+fit <- vglm(y ~ 1, inv.paralogistic(lss = FALSE, ishape1.a = 2.7, iscale = 7.3),
             data = idata, trace = TRUE, epsilon = 1e-8)
 coef(fit, matrix = TRUE)
 Coef(fit)

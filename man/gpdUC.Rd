@@ -17,8 +17,10 @@
 dgpd(x, location = 0, scale = 1, shape = 0, log = FALSE,
      tolshape0 = sqrt(.Machine$double.eps),
      oobounds.log = -Inf, giveWarning = FALSE)
-pgpd(q, location = 0, scale = 1, shape = 0)
-qgpd(p, location = 0, scale = 1, shape = 0)
+pgpd(q, location = 0, scale = 1, shape = 0,
+     lower.tail = TRUE, log.p = FALSE)
+qgpd(p, location = 0, scale = 1, shape = 0,
+     lower.tail = TRUE, log.p = FALSE)
 rgpd(n, location = 0, scale = 1, shape = 0)
 }
 \arguments{
@@ -32,6 +34,12 @@ rgpd(n, location = 0, scale = 1, shape = 0)
   \item{log}{
   Logical.
   If \code{log = TRUE} then the logarithm of the density is returned.
+
+
+  }
+  \item{lower.tail, log.p}{
+  Same meaning as in \code{\link[stats:Uniform]{punif}}
+  or \code{\link[stats:Uniform]{qunif}}.
 
 
   }
@@ -68,6 +76,8 @@ rgpd(n, location = 0, scale = 1, shape = 0)
   \code{pgpd} gives the distribution function,
   \code{qgpd} gives the quantile function, and
   \code{rgpd} generates random deviates.
+
+
 }
 \references{
 Coles, S. (2001)
@@ -76,7 +86,7 @@ London: Springer-Verlag.
 
 
 }
-\author{ T. W. Yee }
+\author{ T. W. Yee and Kai Huang }
 \details{
   See \code{\link{gpd}}, the \pkg{VGAM} family function
   for estimating the two parameters by maximum likelihood estimation,

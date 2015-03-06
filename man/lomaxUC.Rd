@@ -12,8 +12,8 @@
 }
 \usage{
 dlomax(x, scale = 1, shape3.q, log = FALSE)
-plomax(q, scale = 1, shape3.q)
-qlomax(p, scale = 1, shape3.q)
+plomax(q, scale = 1, shape3.q, lower.tail = TRUE, log.p = FALSE)
+qlomax(p, scale = 1, shape3.q, lower.tail = TRUE, log.p = FALSE)
 rlomax(n, scale = 1, shape3.q)
 }
 \arguments{
@@ -26,6 +26,12 @@ rlomax(n, scale = 1, shape3.q)
   \item{log}{
   Logical.
   If \code{log = TRUE} then the logarithm of the density is returned.
+
+  }
+  \item{lower.tail, log.p}{
+  Same meaning as in \code{\link[stats:Normal]{pnorm}}
+  or \code{\link[stats:Normal]{qnorm}}.
+
 
   }
 
@@ -48,7 +54,7 @@ Hoboken, NJ, USA: Wiley-Interscience.
 
 
 }
-\author{ T. W. Yee }
+\author{ T. W. Yee and Kai Huang }
 \details{
   See \code{\link{lomax}}, which is the \pkg{VGAM} family function
   for estimating the parameters by maximum likelihood estimation.

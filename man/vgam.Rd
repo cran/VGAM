@@ -253,7 +253,7 @@ pfit$sigma
 
 # Fit two species simultaneously 
 fit2 <- vgam(cbind(agaaus, kniexc) ~ s(altitude, df = c(2, 3)),
-             binomialff(mv = TRUE), data = hunua)
+             binomialff(multiple.responses = TRUE), data = hunua)
 coef(fit2, matrix = TRUE)  # Not really interpretable 
 \dontrun{ plot(fit2, se = TRUE, overlay = TRUE, lcol = 1:2, scol = 1:2)
 
@@ -270,9 +270,11 @@ zdata <- transform(zdata, y = rbinom(nn, 1, 0.5))
 zdata <- transform(zdata, subS = runif(nn) < 0.7)
 sub.zdata <- subset(zdata, subS)  # Use this instead
 if (FALSE)
-  fit4a <- vgam(cbind(y, y) ~ s(x2, df = 2), binomialff(mv = TRUE), 
+  fit4a <- vgam(cbind(y, y) ~ s(x2, df = 2),
+                binomialff(multiple.responses = TRUE), 
                 data = zdata, subset = subS)  # This fails!!!
-fit4b <- vgam(cbind(y, y) ~ s(x2, df = 2), binomialff(mv = TRUE), 
+fit4b <- vgam(cbind(y, y) ~ s(x2, df = 2),
+              binomialff(multiple.responses = TRUE), 
               data = sub.zdata)  # This succeeds!!!
 }
 \keyword{models}

@@ -7,8 +7,8 @@
   cardioid distribution by maximum likelihood estimation.
 }
 \usage{
-cardioid(lmu = elogit(min = 0, max = 2*pi),
-         lrho = elogit(min = -0.5, max = 0.5),
+cardioid(lmu = extlogit(min = 0, max = 2*pi),
+         lrho = extlogit(min = -0.5, max = 0.5),
          imu = NULL, irho = 0.3, nsimEIM = 100, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -88,7 +88,7 @@ Singapore: World Scientific.
 
 \seealso{
   \code{\link{rcard}},
-  \code{\link{elogit}},
+  \code{\link{extlogit}},
   \code{\link{vonmises}}.
 
 
