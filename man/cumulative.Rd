@@ -197,9 +197,9 @@ Vector generalized additive models.
 \bold{58}, 481--493.
 
 
-Further information and examples on categorical data analysis
-by the \pkg{VGAM} package can be found at
-\url{http://www.stat.auckland.ac.nz/~yee/VGAM/doc/categorical.pdf}.
+%Further information and examples on categorical data analysis
+%by the \pkg{VGAM} package can be found at
+%\url{http://www.stat.auckland.ac.nz/~yee/VGAM/doc/categorical.pdf}.
 
 
 }

@@ -118,7 +118,6 @@ Deviance.categorical.data.vgam <-
     smu <- ifelse(smu < double.eps, double.eps, smu)
 
 
-
     devmu[smallmu] <- smy * log(smu)
   }
   devmu[!smallmu] <- y[!smallmu] * log(mu[!smallmu])
@@ -146,7 +145,7 @@ Deviance.categorical.data.vgam <-
 
 
 dmultinomial <- function(x, size = NULL, prob, log = FALSE,
-                        dochecking = TRUE, smallno = 1.0e-7) {
+                         dochecking = TRUE, smallno = 1.0e-7) {
   if (!is.logical(log.arg <- log) || length(log) != 1)
     stop("bad input for argument 'log'")
   rm(log)
@@ -189,8 +188,8 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
 
 
  sratio <- function(link = "logit",
-                   parallel = FALSE, reverse = FALSE, zero = NULL,
-                   whitespace = FALSE) {
+                    parallel = FALSE, reverse = FALSE, zero = NULL,
+                    whitespace = FALSE) {
   link <- as.list(substitute(link))
   earg  <- link2list(link)
   link <- attr(earg, "function.name")
@@ -208,13 +207,30 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
   blurb = c("Stopping ratio model\n\n",
             "Links:    ",
             namesof(if (reverse)
-            ifelse(whitespace, "P[Y = j+1|Y <= j+1]", "P[Y=j+1|Y<=j+1]") else
-            ifelse(whitespace, "P[Y = j|Y >= j]",     "P[Y=j|Y>=j]"),
+            ifelse(whitespace, "P[Y = j+1|Y <= j+1]",
+                               "P[Y=j+1|Y<=j+1]") else
+            ifelse(whitespace, "P[Y = j|Y >= j]",
+                               "P[Y=j|Y>=j]"),
                    link, earg = earg), "\n",
             "Variance: ",
             ifelse(whitespace,
                    "mu[,j] * (1 - mu[,j]); -mu[,j] * mu[,k]",
                    "mu[,j]*(1-mu[,j]); -mu[,j]*mu[,k]")),
+  infos = eval(substitute(function(...) {
+    list(M1 = NA,  # zz -1?
+         Q1 = NA,
+         multipleResponses = FALSE,
+         parallel = .parallel ,
+         reverse = .reverse ,
+         whitespace = .whitespace ,
+         zero = .zero ,
+         link = .link )
+  }, list( .link = link,
+           .zero = zero,
+           .parallel = parallel,
+           .reverse = reverse,
+           .whitespace = whitespace ))),
+
   constraints = eval(substitute(expression({
     constraints <- cm.VGAM(matrix(1, M, 1), x = x,
                            bool = .parallel ,
@@ -286,7 +302,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
     misc$fillerChar <- .fillerChar
     misc$whitespace <- .whitespace
 
-    extra <- list()   # kill what was used 
+    extra <- list()  # kill what was used 
   }), list( .earg = earg, .link = link, .reverse = reverse,
             .fillerChar = fillerChar,
             .whitespace = whitespace ))),
@@ -309,7 +325,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
       stop("loglikelihood residuals not implemented yet")
     } else {
       ycounts <- if (is.numeric(extra$orig.w)) y * w / extra$orig.w else
-                 y * w # Convert proportions to counts
+                 y * w  # Convert proportions to counts
       nvec <- if (is.numeric(extra$orig.w)) round(w / extra$orig.w) else
               round(w)
 
@@ -385,8 +401,10 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
   blurb = c("Continuation ratio model\n\n", 
             "Links:    ",
             namesof(if (reverse)
-            ifelse(whitespace, "P[Y < j+1|Y <= j+1]", "P[Y<j+1|Y<=j+1]") else
-            ifelse(whitespace, "P[Y > j|Y >= j]",     "P[Y>j|Y>=j]"),
+            ifelse(whitespace, "P[Y < j+1|Y <= j+1]",
+                               "P[Y<j+1|Y<=j+1]") else
+            ifelse(whitespace, "P[Y > j|Y >= j]",
+                               "P[Y>j|Y>=j]"),
                    link, earg = earg),
             "\n",
             "Variance: ",
@@ -394,12 +412,30 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
                    "mu[,j] * (1 - mu[,j]); -mu[,j] * mu[,k]",
                    "mu[,j]*(1-mu[,j]); -mu[,j]*mu[,k]")),
 
+  infos = eval(substitute(function(...) {
+    list(M1 = NA,  # zz -1?
+         Q1 = NA,
+         multipleResponses = FALSE,
+         parallel = .parallel ,
+         reverse = .reverse ,
+         whitespace = .whitespace ,
+         zero = .zero ,
+         link = .link )
+  }, list( .link = link,
+           .zero = zero,
+           .parallel = parallel,
+           .reverse = reverse,
+           .whitespace = whitespace ))),
+
+
   constraints = eval(substitute(expression({
     constraints <- cm.VGAM(matrix(1, M, 1), x = x,
                            bool = .parallel ,
                            constraints = constraints)
     constraints <- cm.zero.VGAM(constraints, x, .zero , M)
   }), list( .parallel = parallel, .zero = zero ))),
+
+
   deviance = Deviance.categorical.data.vgam,
 
   initialize = eval(substitute(expression({
@@ -423,8 +459,8 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
     y.names <- paste("mu", 1:(M+1), sep = "")
 
     extra$mymat <- if ( .reverse )
-                    tapplymat1(y, "cumsum") else
-                    tapplymat1(y[, ncol(y):1], "cumsum")[, ncol(y):1]
+                   tapplymat1(y, "cumsum") else
+                   tapplymat1(y[, ncol(y):1], "cumsum")[, ncol(y):1]
 
     if (length(dimnames(y)))
       extra$dimnamesy2 <- dimnames(y)[[2]]
@@ -489,7 +525,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
       stop("loglikelihood residuals not implemented yet")
     } else {
       ycounts <- if (is.numeric(extra$orig.w)) y * w / extra$orig.w else
-                 y * w # Convert proportions to counts
+                 y * w  # Convert proportions to counts
       nvec <- if (is.numeric(extra$orig.w)) round(w / extra$orig.w) else
               round(w)
 
@@ -551,7 +587,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
   function(maxit = 21, panic = FALSE, ...) {
   if (maxit < 1) {
       warning("bad value of maxit; using 21 instead")
-      maxit = 21
+      maxit <- 21
   }
   list(maxit = maxit, panic = as.logical(panic)[1])
 }
@@ -562,7 +598,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
            criterion = c("aic1", "aic2", names( .min.criterion.VGAM )),
            ...) {
   if (mode(criterion) != "character" && mode(criterion) != "name")
-      criterion <- as.character(substitute(criterion))
+    criterion <- as.character(substitute(criterion))
   criterion <- match.arg(criterion,
       c("aic1", "aic2", names( .min.criterion.VGAM )))[1]
 
@@ -679,6 +715,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
     list(parallel = .parallel ,
          refLevel = .refLevel ,
          M1 = -1,
+         link = "multilogit",
          multipleResponses = FALSE,
          zero = .zero )
   }, list( .zero = zero,
@@ -763,7 +800,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
       stop("loglikelihood residuals not implemented yet")
     } else {
       ycounts <- if (is.numeric(extra$orig.w)) y * w / extra$orig.w else
-                 y * w # Convert proportions to counts
+                 y * w  # Convert proportions to counts
       nvec <- if (is.numeric(extra$orig.w)) round(w / extra$orig.w) else
               round(w)
 
@@ -794,7 +831,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
   }), list( .refLevel = refLevel ))),
   weight = eval(substitute(expression({
     mytiny <- (mu < sqrt(.Machine$double.eps)) | 
-             (mu > 1.0 - sqrt(.Machine$double.eps))
+              (mu > 1.0 - sqrt(.Machine$double.eps))
 
     use.refLevel <- if ( .refLevel < 0) M+1 else .refLevel
 
@@ -811,11 +848,11 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
         wz[, 1:M] <- wz[, 1:M] + mu[, -use.refLevel ]
     }
 
-    atiny <- (mytiny %*% rep(1, ncol(mu))) > 0 # apply(mytiny, 1, any)
+    atiny <- (mytiny %*% rep(1, ncol(mu))) > 0  # apply(mytiny, 1, any)
     if (any(atiny)) {
       if (M == 1) wz[atiny] <- wz[atiny] *
-                              (1 + .Machine$double.eps^0.5) +
-                              .Machine$double.eps else
+                               (1 + .Machine$double.eps^0.5) +
+                               .Machine$double.eps else
       wz[atiny, 1:M] <- wz[atiny, 1:M] * (1 + .Machine$double.eps^0.5) +
                        .Machine$double.eps
     }
@@ -869,16 +906,30 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
                   ifelse(whitespace, "P[Y >= j+1]", "P[Y>=j+1]") else
                   ifelse(whitespace, "P[Y <= j]",   "P[Y<=j]"),
                   link, earg = earg)),
+  infos = eval(substitute(function(...) {
+    list(M1 = NA,  # zz -1?
+         Q1 = NA,
+         multipleResponses = .multiple.responses ,
+         parallel = .parallel ,
+         reverse = .reverse ,
+         whitespace = .whitespace ,
+         link =  .link )
+  }, list( .link = link,
+           .parallel = parallel,
+           .multiple.responses = multiple.responses,
+           .reverse = reverse,
+           .whitespace = whitespace ))),
+
   constraints = eval(substitute(expression({
     if ( .multiple.responses ) {
       if ( !length(constraints) ) {
-          Llevels <- extra$Llevels
-          NOS <- extra$NOS
-          Hk.matrix <- kronecker(diag(NOS), matrix(1,Llevels-1,1))
-          constraints <- cm.VGAM(Hk.matrix, x = x,
-                                 bool = .parallel ,
-                                 apply.int = .apply.parint ,
-                                 constraints = constraints)
+        Llevels <- extra$Llevels
+        NOS <- extra$NOS
+        Hk.matrix <- kronecker(diag(NOS), matrix(1,Llevels-1,1))
+        constraints <- cm.VGAM(Hk.matrix, x = x,
+                               bool = .parallel ,
+                               apply.int = .apply.parint ,
+                               constraints = constraints)
       }
     } else {
       constraints <- cm.VGAM(matrix(1, M, 1), x = x,
@@ -899,7 +950,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
       Llevels <- extra$Llevels
       for (iii in 1:NOS) {
         cindex <- (iii-1)*(Llevels-1) + 1:(Llevels-1)
-        aindex <- (iii-1)*(Llevels) + 1:(Llevels)
+        aindex <- (iii-1)*(Llevels  ) + 1:(Llevels)
         totdev <- totdev +
                   Deviance.categorical.data.vgam(
                     mu = mu[, aindex, drop = FALSE],
@@ -1216,7 +1267,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
 
 
  acat <- function(link = "loge", parallel = FALSE,
-                 reverse = FALSE, zero = NULL, whitespace = FALSE) {
+                  reverse = FALSE, zero = NULL, whitespace = FALSE) {
 
 
   link <- as.list(substitute(link))
@@ -1243,6 +1294,21 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
             ifelse(whitespace,
             "mu[,j] * (1 - mu[,j]); -mu[,j] * mu[,k]",
             "mu[,j]*(1-mu[,j]); -mu[,j]*mu[,k]")),
+  infos = eval(substitute(function(...) {
+    list(M1 = NA,  # zz -1?
+         Q1 = NA,
+         multipleResponses = FALSE,
+         parallel = .parallel ,
+         reverse = .reverse ,
+         whitespace = .whitespace ,
+         zero = .zero ,
+         link = .link )
+  }, list( .link = link,
+           .zero = zero,
+           .parallel = parallel,
+           .reverse = reverse,
+           .whitespace = whitespace ))),
+
   constraints = eval(substitute(expression({
     constraints <- cm.VGAM(matrix(1, M, 1), x = x,
                            bool = .parallel ,
@@ -1329,7 +1395,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
       stop("loglikelihood residuals not implemented yet")
     } else {
       ycounts <- if (is.numeric(extra$orig.w)) y * w / extra$orig.w else
-                 y * w # Convert proportions to counts
+                 y * w  # Convert proportions to counts
       nvec <- if (is.numeric(extra$orig.w)) round(w / extra$orig.w) else
               round(w)
 
@@ -1420,11 +1486,13 @@ acat.deriv <- function(zeta, reverse, M, n) {
 
 
 
+
+
  brat <- function(refgp = "last",
                   refvalue = 1,
-                  init.alpha = 1) {
-  if (!is.Numeric(init.alpha, positive = TRUE))
-    stop("'init.alpha' must contain positive values only")
+                  ialpha = 1) {
+  if (!is.Numeric(ialpha, positive = TRUE))
+    stop("'ialpha' must contain positive values only")
   if (!is.Numeric(refvalue, length.arg = 1, positive = TRUE))
     stop("'refvalue' must be a single positive value")
 
@@ -1438,6 +1506,17 @@ acat.deriv <- function(zeta, reverse, M, n) {
   blurb = c(paste("Bradley-Terry model (without ties)\n\n"), 
             "Links:   ",
             namesof("alpha's", "loge")),
+  infos = eval(substitute(function(...) {
+    list(M1 = NA,  # zz -1?
+         Q1 = NA,
+         multipleResponses = FALSE,
+         refvalue = .refvalue ,
+         refgp = .refgp ,
+         ialpha = .ialpha )
+  }, list( .ialpha = ialpha,
+           .refgp = refgp,
+           .refvalue = refvalue ))),
+
   initialize = eval(substitute(expression({
     are.ties <- attr(y, "are.ties")  # If Brat() was used
     if (is.logical(are.ties) && are.ties)
@@ -1447,10 +1526,10 @@ acat.deriv <- function(zeta, reverse, M, n) {
     M <- (1:length(try.index))[(try.index+1)*(try.index) == ncol(y)]
     if (!is.finite(M))
       stop("cannot determine 'M'")
-    init.alpha <- matrix(rep( .init.alpha , length.out = M),
-                         n, M, byrow = TRUE)
-    etastart <- matrix(theta2eta(init.alpha, "loge",
-                                earg = list(theta = NULL)),
+    ialpha <- matrix(rep( .ialpha , length.out = M),
+                     n, M, byrow = TRUE)
+    etastart <- matrix(theta2eta(ialpha, "loge",
+                                 earg = list(theta = NULL)),
                        n, M, byrow = TRUE)
     refgp <- .refgp
     if (!intercept.only)
@@ -1461,7 +1540,7 @@ acat.deriv <- function(zeta, reverse, M, n) {
     predictors.names <-
       namesof(paste("alpha", uindex, sep = ""), "loge", short = TRUE)
 
-  }), list( .refgp = refgp, .init.alpha = init.alpha ))),
+  }), list( .refgp = refgp, .ialpha = ialpha ))),
 
   linkinv = eval(substitute( function(eta, extra = NULL) {
     probs <- NULL
@@ -1572,12 +1651,12 @@ acat.deriv <- function(zeta, reverse, M, n) {
 
  bratt <- function(refgp = "last",
                    refvalue = 1,
-                   init.alpha = 1,
+                   ialpha = 1,
                    i0 = 0.01) {
   if (!is.Numeric(i0, length.arg = 1, positive = TRUE))
     stop("'i0' must be a single positive value")
-  if (!is.Numeric(init.alpha, positive = TRUE))
-    stop("'init.alpha' must contain positive values only")
+  if (!is.Numeric(ialpha, positive = TRUE))
+    stop("'ialpha' must contain positive values only")
   if (!is.Numeric(refvalue, length.arg = 1, positive = TRUE))
     stop("'refvalue' must be a single positive value")
 
@@ -1591,12 +1670,25 @@ acat.deriv <- function(zeta, reverse, M, n) {
   blurb = c(paste("Bradley-Terry model (with ties)\n\n"), 
             "Links:   ",
             namesof("alpha's", "loge"), ", log(alpha0)"),
+  infos = eval(substitute(function(...) {
+    list(M1 = NA,  # zz -1?
+         Q1 = NA,
+         multipleResponses = FALSE,
+         refvalue = .refvalue ,
+         refgp = .refgp ,
+         i0 = .i0 ,
+         ialpha = .ialpha )
+  }, list( .ialpha = ialpha,
+           .i0 = i0,
+           .refgp = refgp,
+           .refvalue = refvalue ))),
+
   initialize = eval(substitute(expression({
     try.index <- 1:400
     M <- (1:length(try.index))[(try.index*(try.index-1)) == ncol(y)]
     if (!is.Numeric(M, length.arg = 1, integer.valued = TRUE))
       stop("cannot determine 'M'")
-    NCo <- M # Number of contestants
+    NCo <- M  # Number of contestants
 
     are.ties <- attr(y, "are.ties")  # If Brat() was used
     if (is.logical(are.ties)) {
@@ -1608,10 +1700,10 @@ acat.deriv <- function(zeta, reverse, M, n) {
       ties <- 0 * y
     }
 
-    init.alpha <- rep( .init.alpha, len = NCo-1)
+    ialpha <- rep( .ialpha, len = NCo-1)
     ialpha0 <- .i0
     etastart <-
-      cbind(matrix(theta2eta(init.alpha,
+      cbind(matrix(theta2eta(ialpha,
                              "loge",
                              list(theta = NULL)),
                    n, NCo-1, byrow = TRUE),
@@ -1632,7 +1724,7 @@ acat.deriv <- function(zeta, reverse, M, n) {
       namesof("alpha0", "loge", short = TRUE))
   }), list( .refgp = refgp,
            .i0 = i0,
-           .init.alpha=init.alpha ))),
+           .ialpha = ialpha ))),
 
   linkinv = eval(substitute( function(eta, extra = NULL) {
     probs <- qprobs <- NULL
@@ -1693,7 +1785,7 @@ acat.deriv <- function(zeta, reverse, M, n) {
     for (ii in 1:nrow(eta)) {
       alpha <- .brat.alpha(eta2theta(eta[ii, -M], "loge",
                                      earg = list(theta = NULL)),
-                          .refvalue, .refgp )
+                           .refvalue, .refgp )
       alpha0 <- loge(eta[ii, M], inverse = TRUE)
       ymat <- InverseBrat(   y[ii, ], NCo = M, diag = 0)
       tmat <- InverseBrat(ties[ii, ], NCo = M, diag = 0)
@@ -2124,265 +2216,6 @@ ordpoissonProbs <- function(extra, mu, deriv = 0) {
 
 
 
- if (FALSE)
- scumulative <- function(link = "logit", earg = list(),
-                         lscale = "loge", escale = list(),
-                         parallel = FALSE, sparallel = TRUE,
-                         reverse = FALSE,
-                         iscale = 1) {
-  stop("sorry, not working yet")
-
-  link <- as.list(substitute(link))
-  earg <- link2list(link)
-  link <- attr(earg, "function.name")
-
-  lscale <- as.list(substitute(lscale))
-  escale <- link2list(lscale)
-  lscale <- attr(escale, "function.name")
-
-
-
-  if (!is.Numeric(iscale, positive = TRUE))
-    stop("bad input for argument 'iscale'")
-  if (!is.logical(reverse) || length(reverse) != 1)
-    stop("argument 'reverse' must be a single logical")
-
-    new("vglmff",
-    blurb = c(paste("Scaled cumulative", link, "model\n\n"),
-              "Links:   ",
-              namesof(if (reverse) "P[Y>=j+1]" else "P[Y<=j]",
-                      link, earg = earg),
-              ", ",
-              namesof("scale_j", lscale, escale)),
-    constraints = eval(substitute(expression({
-        J <- M / 2
-        constraints <- cm.VGAM(matrix(1, J, 1), x = x,
-                               bool = .parallel ,
-                               apply.int = FALSE,
-                               constraints = constraints)
-        constraints[["(Intercept)"]] = rbind(constraints[["(Intercept)"]],
-            matrix(0, J, ncol(constraints[["(Intercept)"]])))
-
-        cm2 <- cm.VGAM(matrix(1, J, 1), x = x,
-                           bool = .sparallel ,
-                           apply.int = FALSE,
-                           constraints = NULL)
-
-        for (ii in 2:length(constraints))
-            constraints[[ii]] <-
-                cbind(rbind(constraints[[ii]],
-                            matrix(0, J, ncol(constraints[[ii]]))),
-                      rbind(matrix(0, J, ncol(cm2[[ii]])), cm2[[ii]]))
-
-    for (ii in 1:length(constraints))
-      constraints[[ii]] <-
-        (constraints[[ii]])[interleave.VGAM(M, M = 2),, drop = FALSE]
-  }), list( .parallel = parallel, .sparallel=sparallel ))),
-  deviance = eval(substitute(
-      function(mu, y, w, residuals = FALSE, eta, extra = NULL,
-               summation = TRUE) {
-      answer <-
-        Deviance.categorical.data.vgam(mu = mu,
-                y = y, w = w, residuals = residuals,
-                eta = eta, extra = extra,
-                summation = summation)
-      answer
-  }, list( .earg = earg, .link = link ) )),
-  initialize = eval(substitute(expression({
-
-    if (is.factor(y) && !is.ordered(y))
-      warning("response should be ordinal---see ordered()")
-
-
-    if (intercept.only)
-        stop("use cumulative() for intercept-only models")
-
-
-    delete.zero.colns = TRUE # Cannot have FALSE since then prob(Y=jay)=0
-    eval(process.categorical.data.VGAM)
-
-
-    M <- 2*(ncol(y)-1)
-    J <- M / 2
-    extra$J <- J
-    mynames <- if ( .reverse )
-      paste("P[Y>=", 2:(1+J), "]", sep = "") else
-      paste("P[Y<=", 1:J,     "]", sep = "")
-    predictors.names <- c(
-        namesof(mynames, .link , short = TRUE, earg = .earg ),
-        namesof(paste("scale_", 1:J, sep = ""),
-                .lscale, short = TRUE, earg = .escale ))
-
-
-    y.names <- paste("mu", 1:(J+1), sep = "")
-
-    if (length(dimnames(y)))
-      extra$dimnamesy2 <- dimnames(y)[[2]]
-
-    predictors.names <- predictors.names[interleave.VGAM(M, M = 2)]
-
-  }), list( .link = link, .lscale = lscale, .reverse = reverse,
-            .earg = earg, .escale = escale ))),
-  linkinv = eval(substitute( function(eta, extra = NULL) {
-    J <- extra$J
-    M <- 2*J
-    etamat1 <- eta[, 2*(1:J)-1, drop = FALSE]
-    etamat2 <- eta[, 2*(1:J),  drop = FALSE]
-    scalemat <- eta2theta(etamat2, .lscale, earg = .escale )
-    fv.matrix <-
-    if ( .reverse ) {
-        ccump <- cbind(1,
-                      eta2theta(etamat1 / scalemat,
-                                .link , earg = .earg ))
-        cbind(-tapplymat1(ccump, "diff"), ccump[, ncol(ccump)])
-    } else {
-        cump <- cbind(eta2theta(etamat1 / scalemat,
-                               .link , earg = .earg ),
-                     1)
-        cbind(cump[, 1], tapplymat1(cump, "diff"))
-    }
-    if (length(extra$dimnamesy2))
-      dimnames(fv.matrix) <- list(dimnames(eta)[[1]],
-                                 extra$dimnamesy2)
-    fv.matrix
-  }, list( .link = link, .lscale = lscale, .reverse = reverse,
-           .earg = earg, .escale = escale ))),
-  last = eval(substitute(expression({
-    J <- extra$J
-    misc$link <-
-      c(rep( .link , length = J),
-        rep( .lscale, length = J))[interleave.VGAM(M, M = 2)]
-    names(misc$link) <- predictors.names
-    misc$earg <- vector("list", M)
-    names(misc$earg) <- names(misc$link)
-    for (ii in 1:J) misc$earg[[2*ii-1]] <- .earg
-    for (ii in 1:J) misc$earg[[2*ii  ]] <- .escale
-    misc$parameters <- mynames
-    misc$reverse <- .reverse
-    misc$parallel <- .parallel
-    misc$sparallel <- .sparallel
-  }), list( .link = link, .lscale = lscale,
-            .reverse = reverse, .parallel = parallel,
-            .sparallel = sparallel,
-            .earg = earg, .escale = escale ))),
-  linkfun = eval(substitute( function(mu, extra = NULL) {
-    cump <- tapplymat1(as.matrix(mu), "cumsum")
-    J <- ncol(as.matrix(mu)) - 1
-    M <- 2 * J
-    answer <-  cbind(
-        theta2eta(if ( .reverse ) 1-cump[, 1:J] else cump[, 1:J],
-                  .link ,
-                  earg = .earg ),
-        matrix(theta2eta( .iscale, .lscale , earg = .escale ),
-               nrow(as.matrix(mu)), J, byrow = TRUE))
-    answer <- answer[,interleave.VGAM(M, M = 2)]
-    answer
-  }, list( .link = link, .lscale = lscale, .reverse = reverse,
-           .iscale = iscale, .earg = earg, .escale = escale ))),
-  loglikelihood =
-    function(mu, y, w, residuals = FALSE, eta, extra = NULL,
-             summation = TRUE) {
-    if (residuals) {
-      stop("loglikelihood residuals not implemented yet")
-    } else {
-      ycounts <- if (is.numeric(extra$orig.w)) y * w / extra$orig.w else
-                y * w # Convert proportions to counts
-      nvec <- if (is.numeric(extra$orig.w)) round(w / extra$orig.w) else
-                round(w)
-
-      smallno <- 1.0e4 * .Machine$double.eps
-      if (max(abs(ycounts - round(ycounts))) > smallno)
-        warning("converting 'ycounts' to integer in @loglikelihood")
-      ycounts <- round(ycounts)
-
-      ll.elts <-
-        (if (is.numeric(extra$orig.w)) extra$orig.w else 1) *
-         dmultinomial(x = ycounts, size = nvec, prob = mu,
-                      log = TRUE, dochecking = FALSE)
-      if (summation) {
-        sum(ll.elts)
-      } else {
-        ll.elts
-      }
-    }
-  },
-  vfamily = c("scumulative", "vcategorical"),
-  deriv = eval(substitute(expression({
-        ooz <- iter %% 2
-
-        J <- extra$J
-        mu.use = pmax(mu, .Machine$double.eps * 1.0e-0)
-
-        etamat1 <- eta[, 2*(1:J)-1, drop = FALSE]
-        etamat2 <- eta[, 2*(1:J)  , drop = FALSE]
-        scalemat <- eta2theta(etamat2, .lscale, earg = .escale )
-
-        cump <- eta2theta(etamat1 / scalemat, .link , earg = .earg )
-        dcump.deta <- dtheta.deta(cump, .link , earg = .earg )
-        dscale.deta <- dtheta.deta(scalemat, .lscale, earg = .escale )
-        dl.dcump <- (if ( .reverse ) -w  else w) * 
-                (y[, 1:J]/mu.use[, 1:J] - y[, -1]/mu.use[, -1])
-        dcump.dscale <- -dcump.deta * etamat1 / scalemat^2
-        ans <- cbind(dl.dcump * dcump.deta / scalemat,
-                    dl.dcump * dcump.dscale * dscale.deta)
-        ans <- ans[,interleave.VGAM(M, M = 2)]
-        if (ooz) ans[, c(TRUE, FALSE)] = 0 else
-                 ans[, c(FALSE, TRUE)] = 0
-        ans
-    }), list( .link = link, .lscale = lscale, .reverse = reverse,
-              .earg = earg, .escale = escale ))),
-    weight = eval(substitute(expression({
-
-        wz <- matrix(0, n, 2*(2*M-3))
-
-        wz[, 2*(1:J)-1] <- if (ooz) c(w) * (dcump.deta / scalemat)^2 *
-                         (1/mu.use[, 1:J] + 1/mu.use[, -1]) else 1
-        wz[, 2*(1:J)] <- if (ooz) 1 else
-                        c(w) * (dcump.dscale * dscale.deta)^2 *
-                       (1/mu.use[, 1:J] + 1/mu.use[, -1])
-        wz0 <- c(w) * (dcump.deta / scalemat) * 
-                  (dcump.dscale * dscale.deta) *
-                  (1/mu.use[, 1:J] + 1/mu.use[, -1])
-        wz0 <- as.matrix(wz0)
-        for (ii in 1:J)
-            wz[,iam(2*ii-1,2*ii,M = M)] <- if (ooz) wz0[, ii] else 0
-
-        if (J > 1) {
-            wz0 <- -c(w) *
-                  (dcump.deta[, -J] / scalemat[, -J]) *
-                  (dcump.deta[, -1]  / scalemat[, -1]) / mu.use[, 2:J]
-            wz0 <- as.matrix(wz0)  # Just in case J=2
-            for (ii in 1:(J-1))
-              wz[, iam(2*ii-1, 2*ii+1, M = M)] <- if (ooz) wz0[, ii] else 0
-            wz0 <- -c(w) * (dcump.dscale[, -1] * dscale.deta[, -1]) *
-                       (dcump.dscale[, -J] *
-                        dscale.deta[, -J]) / mu.use[, 2:J]
-            wz0 <- as.matrix(wz0)
-            for (ii in 1:(J-1))
-                wz[,iam(2*ii,2*ii+2,M = M)] <- if (ooz) wz0[, ii] else 0
-
-
-
-            wz0 <- -c(w) * (dcump.deta[, -J] / scalemat[, -J]) *
-                          (dcump.dscale[, -1] *
-                           dscale.deta[, -1]) / mu.use[, 2:J]
-            wz0 <- as.matrix(wz0)
-            for (ii in 1:(J-1))
-              wz[,iam(2*ii-1,2*ii+2,M = M)] <- if (ooz) wz0[, ii] else 0
-            wz0 <- -c(w) * (dcump.deta[, -1] / scalemat[, -1]) *
-                          (dcump.dscale[, -J] *
-                          dscale.deta[, -J]) / mu.use[, 2:J]
-            wz0 <- as.matrix(wz0)
-            for (ii in 1:(J-1))
-                wz[,iam(2*ii,2*ii+1,M = M)] <- if (ooz) wz0[, ii] else 0
-        }
-        wz
-    }), list( .link = link, .lscale = lscale, .earg = earg,
-              .escale = escale ))))
-}
-
-
-
 
 
  margeff <- function(object, subset = NULL) {
@@ -2408,7 +2241,7 @@ ordpoissonProbs <- function(extra, mu, deriv = 0) {
             "the LM design matrix")
 
   nnn <- object@misc$n
-  M <- object@misc$M # ncol(B)  # length(pvec) - 1
+  M <- object@misc$M  # ncol(B)  # length(pvec) - 1
 
 
     if (model.multinomial) {
@@ -2417,7 +2250,7 @@ ordpoissonProbs <- function(extra, mu, deriv = 0) {
     B <- if (!length(rlev)) {
         cbind(cfit, 0)
     } else {
-        if (rlev == M+1) { # Default
+        if (rlev == M+1) {  # Default
             cbind(cfit, 0)
         } else if (rlev == 1) {
             cbind(0, cfit)
@@ -2453,18 +2286,18 @@ ordpoissonProbs <- function(extra, mu, deriv = 0) {
         (B - temp2) * temp3
     } else {
         if (is.logical(ii))
-            ii <- (1:nnn)[ii]
+          ii <- (1:nnn)[ii]
 
         ans <- array(0, c(ppp, M+1, length(ii)),
                      dimnames = list(dimnames(B)[[1]],
                                      dimnames(B)[[2]],
                                      dimnames(fitted(object)[ii,])[[1]]))
         for (ilocal in 1:length(ii)) {
-            pvec  <- fitted(object)[ii[ilocal],]
-            temp1 <- B * matrix(pvec, ppp, M+1, byrow = TRUE)
-            temp2 <- matrix(rowSums(temp1), ppp, M+1)
-            temp3 <- matrix(pvec, nrow(B), M+1, byrow = TRUE)
-            ans[,,ilocal] <- (B - temp2) * temp3
+          pvec  <- fitted(object)[ii[ilocal], ]
+          temp1 <- B * matrix(pvec, ppp, M+1, byrow = TRUE)
+          temp2 <- matrix(rowSums(temp1), ppp, M+1)
+          temp3 <- matrix(pvec, nrow(B), M+1, byrow = TRUE)
+          ans[ , , ilocal] <- (B - temp2) * temp3
         }
         ans
     }
@@ -2475,9 +2308,9 @@ ordpoissonProbs <- function(extra, mu, deriv = 0) {
       stop("cannot handle cumulative(multiple.responses = TRUE)")
     reverse <- object@misc$reverse
     linkfunctions <- object@misc$link
-    all.eargs  <- object@misc$earg
+    all.eargs <- object@misc$earg
     B <- cfit <- coefvlm(object, matrix.out = TRUE)
-    ppp   <- nrow(B)
+    ppp <- nrow(B)
 
     hdot <- lpmat <- kronecker(predict(object), matrix(1, ppp, 1))
     resmat <- cbind(hdot, 1)
@@ -2512,11 +2345,11 @@ ordpoissonProbs <- function(extra, mu, deriv = 0) {
       return(temp1)
     } else
     if (is.numeric(ii) && (length(ii) == 1)) {
-      return(temp1[,, ii])
+      return(temp1[, , ii])
     } else {
-      return(temp1[,, ii])
+      return(temp1[, , ii])
     }
-    }
+  }
 }
 
 
@@ -2603,6 +2436,7 @@ prplot <- function(object,
          lwd = lwd, rlwd = rlwd, rug.arg = rug.arg,
          las = las, main = main)
 }
+
 
 
 

@@ -7,8 +7,7 @@
   non-negative integers.
 }
 \usage{
-dirmul.old(link = "loge",
-           init.alpha = 0.01, parallel = FALSE, zero = NULL)
+dirmul.old(link = "loge", ialpha = 0.01, parallel = FALSE, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -19,7 +18,7 @@ dirmul.old(link = "loge",
   Here, \eqn{M} is the number of columns of the response matrix.
 
   }
-  \item{init.alpha}{
+  \item{ialpha}{
   Numeric vector. Initial values for the 
   \code{alpha} vector. Must be positive.
   Recycled to length \eqn{M}.
@@ -97,9 +96,9 @@ Overdispersion in allelic counts and \eqn{\theta}-correction in forensic genetic
 
 
 
-Documentation accompanying the \pkg{VGAM} package at
-\url{http://www.stat.auckland.ac.nz/~yee}
-contains further information and examples.
+%Documentation accompanying the \pkg{VGAM} package at
+%\url{http://www.stat.auckland.ac.nz/~yee}
+%contains further information and examples.
 
 
 }

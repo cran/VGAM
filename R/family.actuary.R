@@ -13,7 +13,6 @@
 
 
 
-
 dgumbelII <- function(x, scale = 1, shape, log = FALSE) {
 
 
@@ -2412,233 +2411,467 @@ if (ii < 3) {
 
 
 
-
- genbetaII <- function(lss,
+ genbetaII <- function(lscale    = "loge",
                        lshape1.a = "loge",
-                       lscale = "loge",
                        lshape2.p = "loge",
                        lshape3.q = "loge",
+                       iscale    = NULL,
                        ishape1.a = NULL,
-                       iscale = NULL,
-                       ishape2.p = 1.0,
-                       ishape3.q = 1.0,
-                       zero = NULL) {
+                       ishape2.p = NULL,
+                       ishape3.q = NULL,
+                       lss       = TRUE,
+                       gscale    = exp(-5:5),
+                       gshape1.a = exp(-5:5),
+                       gshape2.p = exp(-5:5),
+                       gshape3.q = exp(-5:5),
+                       zero      = ifelse(lss, -(2:4), -c(1, 3:4))) {
 
-  if (!is.logical(lss) || lss)
-    stop("argument 'lss' not specified correctly. ",
-         "See online help for important information")
 
 
-  if (length(zero) &&
-      !is.Numeric(zero, integer.valued = TRUE, positive = TRUE))
+
+  if (length(lss) != 1 && !is.logical(lss))
+    stop("Argument 'lss' not specified correctly")
+  
+  
+  if (length(iscale) && !is.Numeric(iscale, positive = TRUE)) 
+    stop("Bad input for argument 'iscale'")
+  
+  if (length(ishape1.a) && !is.Numeric(ishape1.a, positive = TRUE))
+    stop("Bad input for argument 'ishape1.a'")
+  
+  if (length(ishape2.p) && !is.Numeric(ishape2.p, positive = TRUE))
+    stop("Bad input for argument 'ishape2.p'")
+  
+  if (length(ishape3.q) && !is.Numeric(ishape3.q, positive = TRUE))
+    stop("Bad input for argument 'ishape3.q'")
+  
+
+  if (length(zero) && !is.Numeric(zero, integer.valued = TRUE))
     stop("bad input for argument 'zero'")
-
-
-  lshape1.a <- as.list(substitute(lshape1.a))
-  eshape1.a <- link2list(lshape1.a)
-  lshape1.a <- attr(eshape1.a, "function.name")
-
-  lshape2.p <- as.list(substitute(lshape2.p))
-  eshape2.p <- link2list(lshape2.p)
-  lshape2.p <- attr(eshape2.p, "function.name")
-
-  lshape3.q <- as.list(substitute(lshape3.q))
-  eshape3.q <- link2list(lshape3.q)
-  lshape3.q <- attr(eshape3.q, "function.name")
-
+  
   lscale <- as.list(substitute(lscale))
   escale <- link2list(lscale)
   lscale <- attr(escale, "function.name")
+  
+  lshape1.a <- as.list(substitute(lshape1.a))
+  eshape1.a <- link2list(lshape1.a)
+  lshape1.a <- attr(eshape1.a, "function.name")
+  
+  lshape2.p <- as.list(substitute(lshape2.p))
+  eshape2.p <- link2list(lshape2.p)
+  lshape2.p <- attr(eshape2.p, "function.name")
+  
+  lshape3.q <- as.list(substitute(lshape3.q))
+  eshape3.q <- link2list(lshape3.q)
+  lshape3.q <- attr(eshape3.q, "function.name")
+   
 
-
-
-  new("vglmff",
-  blurb = c("Generalized Beta II distribution\n\n",
-            "Links:    ",
-            namesof("shape1.a", lshape1.a, earg = eshape1.a), ", ", 
-            namesof("scale",    lscale,    earg = escale), ", ", 
-            namesof("shape2.p", lshape2.p, earg = eshape2.p), ", ", 
-            namesof("shape3.q", lshape3.q, earg = eshape3.q), "\n", 
-            "Mean:     scale * gamma(shape2.p + 1/shape1.a) * ",
-                      "gamma(shape3.q - 1/shape1.a) / ",
-                      "(gamma(shape2.p) * gamma(shape3.q))"),
+  new("vglmff", 
+  blurb = 
+    c("Generalized Beta II distribution \n\n",
+      "Links:    ", 
+      ifelse (lss,
+              namesof("scale"   , lscale   , earg = escale),
+              namesof("shape1.a", lshape1.a, earg = eshape1.a)), ", ",
+      ifelse (lss, 
+              namesof("shape1.a", lshape1.a, earg = eshape1.a),
+              namesof("scale"   , lscale   , earg = escale)), ", ",
+      namesof("shape2.p" , lshape2.p, earg = eshape2.p), ", ",
+      namesof("shape3.q" , lshape3.q, earg = eshape3.q), "\n",
+      "Mean:     scale * gamma(shape2.p + 1/shape1.a) * ",
+                "gamma(shape3.q - 1/shape1.a) / ",
+                "(gamma(shape2.p) * gamma(shape3.q))"),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
+    dotzero <- .zero
+    M1 <- 4
+    eval(negzero.expression.VGAM)
   }), list( .zero = zero ))),
-  initialize = eval(substitute(expression({
+  infos = eval(substitute(function(...) {
+    list(M1 = 4,
+         Q1 = 1,
+         expected = TRUE,
+         zero = .zero ,
+         multipleResponses = TRUE,
+         lscale    = .lscale    , lshape1.a = .lshape1.a ,
+         escale    = .escale    , eshape1.a = .eshape1.a ,
+         lshape2.p = .lshape2.p , lshape3.q = .lshape3.q ,
+         eshape2.p = .eshape2.p , eshape3.q = .eshape3.q ,
+         .zero = zero )
+  }, list( .lscale = lscale      , .lshape1.a = lshape1.a,
+           .escale = escale      , .eshape1.a = eshape1.a,
+           .lshape2.p = lshape2.p, .lshape3.q = lshape3.q,
+           .eshape2.p = eshape2.p, .eshape3.q = eshape3.q,
+           .zero = zero ))),
+  initialize = eval(substitute(expression({ 
+    temp5 <- w.y.check(w = w, y = y, 
+                       Is.positive.y = TRUE, 
+                       ncol.w.max = Inf, 
+                       ncol.y.max = Inf, 
+                       out.wy = TRUE, 
+                       colsyperw = 1, 
+                       maximize = TRUE)
+    y    <- temp5$y
+    w    <- temp5$w
+    M1 <- 4  # Number of parameters for one response
+    NOS  <- ncoly <- ncol(y)
+    M    <- M1*ncol(y)
 
-    w.y.check(w = w, y = y,
-              ncol.w.max = 1, ncol.y.max = 1)
+    scaL.names  <- param.names("scale",     NOS)
+    sha1.names  <- param.names("shape1.a",  NOS)
+    sha2.names  <- param.names("shape2.p",  NOS)
+    sha3.names  <- param.names("shape3.q",  NOS)
 
-
-    predictors.names <-
-      c(namesof("shape1.a", .lshape1.a , earg = .eshape1.a , tag = FALSE),
-        namesof("scale"   , .lscale    , earg = .escale    , tag = FALSE),
-        namesof("shape2.p", .lshape2.p , earg = .eshape2.p , tag = FALSE),
-        namesof("shape3.q", .lshape3.q , earg = .eshape3.q , tag = FALSE))
-
-    if (!length( .ishape1.a ) || !length( .iscale )) {
-      qvec <- c( .25, .5, .75)  # Arbitrary; could be made an argument
-      ishape3.q <- if (length( .ishape3.q)) .ishape3.q else 1
-      xvec <- log( (1-qvec)^(-1/ ishape3.q ) - 1 )
-      fit0 <- lsfit(x = xvec, y = log(quantile(y, qvec )))
-    }
-
-    if (!length(etastart)) {
-      aa      <- rep(if (length( .ishape1.a )) .ishape1.a else
-                     abs(1 / fit0$coef[2]),
-                     length.out = n)
-      scale   <- rep(if (length( .iscale )) .iscale else
-                     exp(fit0$coef[1]), length = n)
-      qq      <- rep(if (length( .ishape3.q )) .ishape3.q else 1.0,
-                     length.out = n)
-      parg    <- rep(if (length( .ishape2.p )) .ishape2.p else 1.0,
-                     length.out = n)
-
-
-      outOfRange <- (qq - 1/aa <= 0)
-      qq[outOfRange] <- 1 / aa[outOfRange] + 1
-      outOfRange <- (parg + 1/aa <= 0)
-      parg[outOfRange] <- 1 / aa[outOfRange] + 1
+    predictors.names <- c(
+      if ( .lss ) {
+        c(namesof(scaL.names , .lscale    , earg = .escale    , tag = FALSE),
+          namesof(sha1.names , .lshape1.a , earg = .eshape1.a , tag = FALSE))
+      } else {
+        c(namesof(sha1.names , .lshape1.a , earg = .eshape1.a , tag = FALSE),
+          namesof(scaL.names , .lscale    , earg = .escale    , tag = FALSE))
+      },
+      namesof(sha2.names , .lshape2.p , earg = .eshape2.p , tag = FALSE),
+      namesof(sha3.names , .lshape3.q , earg = .eshape3.q , tag = FALSE))
+    predictors.names <- predictors.names[interleave.VGAM(M, M = M1)]
     
+    if (!length(etastart)) {
+      sc.init <-
+      aa.init <-
+      pp.init <-
+      qq.init <- matrix(as.numeric(NA), n, NOS)
+          
+      for (spp. in 1:NOS) {  # For each response 'y_spp.'... do:
+        yvec <- y[, spp.]
+        wvec <- w[, spp.]
+
+          gscale     <- .gscale
+          gshape1.a  <- .gshape1.a
+          gshape2.p  <- .gshape2.p        
+          gshape3.q  <- .gshape3.q
+          if (length( .iscale ))
+            gscale    <-  rep( .iscale    , length = NOS)
+          if (length( .ishape1.a ))
+            gshape1.a <-  rep( .ishape1.a , length = NOS)
+          if (length( .ishape2.p ))
+            gshape2.p <-  rep( .ishape2.p , length = NOS)
+          if (length( .ishape3.q ))
+            gshape3.q <-  rep( .ishape3.q , length = NOS)
+          allmat1 <- expand.grid(shape1.a = gshape1.a,
+                                 shape2.p = gshape2.p,
+                                 shape3.q = gshape3.q)
+          allmat2 <- matrix(as.numeric(NA), nrow(allmat1), 2)
+
+          ll.gbII <- function(scaleval, x = x, y = y, w = w, extraargs) { 
+            ans <- sum(c(w) * dgenbetaII(x = y,
+                                         scale    = scaleval,
+                                         shape1.a = extraargs$Shape1.a,
+                                         shape2.p = extraargs$Shape2.p,
+                                         shape3.q = extraargs$Shape3.q,
+                                         log = TRUE))
+            ans
+          }
+
+          for (iloc in 1:nrow(allmat1)) {
+            allmat2[iloc, ] <-
+              grid.search(gscale, objfun = ll.gbII,
+                            y = yvec, x = x, w = wvec,
+                            ret.objfun = TRUE,  # 2nd value is the loglik
+                            extraargs = list(Shape1.a = allmat1[iloc, 1],
+                                             Shape2.p = allmat1[iloc, 2],
+                                             Shape3.q = allmat1[iloc, 3]))
+          }
+          ind5 <- which.max(allmat2[, 2])  # 2nd value is the loglik
+          sc.init[, spp.] <- allmat2[ind5, 1]
+          aa.init[, spp.] <- allmat1[ind5, 1]
+          pp.init[, spp.] <- allmat1[ind5, 2]
+          qq.init[, spp.] <- allmat1[ind5, 3]
+      }  # End of for (spp. ...)
+
+
+      finite.mean <- 1 < aa.init * qq.init
+      COP.use <- 1.15
+      while (FALSE && any(!finite.mean)) {
+        qq.init[!finite.mean] <- 0.1 + qq.init[!finite.mean] * COP.use
+        aa.init[!finite.mean] <- 0.1 + aa.init[!finite.mean] * COP.use
+        finite.mean <- 1 < aa.init * qq.init
+      }
 
       etastart <-
-        cbind(theta2eta(aa,    .lshape1.a , earg = .eshape1.a ),
-              theta2eta(scale, .lscale ,    earg = .escale ),
-              theta2eta(parg,  .lshape2.p , earg = .eshape2.p ),
-              theta2eta(qq,    .lshape3.q , earg = .eshape3.q ))
-    }
-  }), list( .lshape1.a = lshape1.a, .lscale = lscale,
+        cbind(if ( .lss )
+              cbind(theta2eta(sc.init, .lscale    , earg = .escale    ),
+                    theta2eta(aa.init, .lshape1.a , earg = .eshape1.a )) else
+              cbind(theta2eta(aa.init, .lshape1.a , earg = .eshape1.a ),
+                    theta2eta(sc.init, .lscale    , earg = .escale    )),
+              theta2eta(pp.init , .lshape2.p , earg = .eshape2.p ),
+              theta2eta(qq.init , .lshape3.q , earg = .eshape3.q ))
+      etastart <- etastart[, interleave.VGAM(M, M = M1)]
+    }  # End of etastart.
+  }), list( .lscale    = lscale   , .lshape1.a = lshape1.a,
+            .escale    = escale   , .eshape1.a = eshape1.a,
+            .iscale    = iscale   , .ishape1.a = ishape1.a,
+            .gscale    = gscale   , .gshape1.a = gshape1.a,           
             .lshape2.p = lshape2.p, .lshape3.q = lshape3.q,
-            .eshape1.a = eshape1.a, .escale = escale, 
             .eshape2.p = eshape2.p, .eshape3.q = eshape3.q,
-            .ishape1.a = ishape1.a, .iscale = iscale, 
-            .ishape2.p = ishape2.p, .ishape3.q = ishape3.q ))),
+            .ishape2.p = ishape2.p, .ishape3.q = ishape3.q,
+            .gshape2.p = gshape2.p, .gshape3.q = gshape3.q,
+            .lss = lss ))), 
   linkinv = eval(substitute(function(eta, extra = NULL) {
-    aa     <- eta2theta(eta[, 1], .lshape1.a , earg = .eshape1.a )
-    Scale  <- eta2theta(eta[, 2], .lscale ,    earg = .escale )
-    parg   <- eta2theta(eta[, 3], .lshape2.p , earg = .eshape2.p )
-    qq     <- eta2theta(eta[, 4], .lshape3.q , earg = .eshape3.q )
-    ans <- Scale * exp(lgamma(parg + 1/aa) +
-                       lgamma(qq   - 1/aa) - lgamma(parg) - lgamma(qq))
-    ans[parg + 1/aa <= 0] <- NA
-    ans[qq   - 1/aa <= 0] <- NA
-    ans[aa          <= 0] <- NA
-    ans[Scale       <= 0] <- NA
-    ans[parg        <= 0] <- NA
-    ans[qq          <= 0] <- NA
-    ans
-  }, list( .lshape1.a = lshape1.a, .lscale = lscale,
-           .eshape1.a = eshape1.a, .escale = escale, 
-           .eshape2.p = eshape2.p, .eshape3.q = eshape3.q,
-           .lshape2.p = lshape2.p, .lshape3.q = lshape3.q ))),
-  last = eval(substitute(expression({
-    misc$link <-    c(shape1.a = .lshape1.a , scale = .lscale ,
-                      shape2.p = .lshape2.p , shape3.q = .lshape3.q )
-
-    misc$earg <- list(shape1.a = .eshape1.a , scale = .escale ,
-                      shape2.p = .eshape2.p , shape3.q = .eshape3.q )
-
-    misc$expected <- TRUE
-    misc$multipleResponses <- FALSE
-  }), list( .lshape1.a = lshape1.a, .lscale = lscale,
-            .eshape1.a = eshape1.a, .escale = escale, 
-            .eshape2.p = eshape2.p, .eshape3.q = eshape3.q,
-            .lshape2.p = lshape2.p, .lshape3.q = lshape3.q ))),
-  loglikelihood = eval(substitute(
-    function(mu, y, w, residuals = FALSE, eta,
-             extra = NULL,
-             summation = TRUE) {
-    aa     <- eta2theta(eta[, 1], .lshape1.a , earg = .eshape1.a )
-    scale  <- eta2theta(eta[, 2], .lscale , earg = .escale )
-    parg   <- eta2theta(eta[, 3], .lshape2.p , earg = .eshape2.p )
-    qq     <- eta2theta(eta[, 4], .lshape3.q , earg = .eshape3.q )
-    if (residuals) {
-      stop("loglikelihood residuals not implemented yet")
+    M1 <- 4
+    NOS <- ncol(eta)/M1
+    if ( .lss ) {
+      Scale <- eta2theta(eta[, M1*(1:NOS) - 3, drop = FALSE],
+                         .lscale ,  earg = .escale )
+      aa    <- eta2theta(eta[, M1*(1:NOS) - 2, drop = FALSE],
+                         .lshape1.a , earg = .eshape1.a )
     } else {
-      ll.elts <-
-        c(w) * (log(aa) + (aa * parg - 1) * log(y) -
-                aa * parg * log(scale) +
-              - lbeta(parg, qq) - (parg + qq) * log1p((y/scale)^aa))
-      if (summation) {
-        sum(ll.elts)
-      } else {
-        ll.elts
-      }
+      aa    <- eta2theta(eta[, M1*(1:NOS) - 3, drop = FALSE],
+                         .lshape1.a , earg = .eshape1.a )
+      Scale <- eta2theta(eta[, M1*(1:NOS) - 2, drop = FALSE],
+                         .lscale    ,  earg = .escale )
     }
-  }, list( .lshape1.a = lshape1.a, .lscale = lscale,
-           .eshape1.a = eshape1.a, .escale = escale, 
-           .eshape2.p = eshape2.p, .eshape3.q = eshape3.q,
-           .lshape2.p = lshape2.p, .lshape3.q = lshape3.q ))),
-  vfamily = c("genbetaII"),
-  deriv = eval(substitute(expression({
-    aa     <- eta2theta(eta[, 1], .lshape1.a , earg = .eshape1.a )
-    scale  <- eta2theta(eta[, 2], .lscale ,    earg = .escale )
-    parg   <- eta2theta(eta[, 3], .lshape2.p , earg = .eshape2.p )
-    qq     <- eta2theta(eta[, 4], .lshape3.q , earg = .eshape3.q )
+    parg <- eta2theta(eta[, M1*(1:NOS) - 1, drop = FALSE],
+                      .lshape2.p , earg = .eshape2.p )
+    qq   <- eta2theta(eta[, M1*(1:NOS)    , drop = FALSE],
+                      .lshape3.q , earg = .eshape3.q )
 
-    temp1 <- log(y/scale)
-    temp2 <- (y/scale)^aa
+    ans <- cbind(Scale * exp(lgamma(parg + 1/aa) +
+                             lgamma(qq   - 1/aa) -
+                             lgamma(parg) - lgamma(qq)))
+    ans
+  }, list( .lscale    = lscale   , .lshape1.a = lshape1.a,
+           .escale    = escale   , .eshape1.a = eshape1.a,
+           .lshape2.p = lshape2.p, .lshape3.q = lshape3.q,
+           .eshape2.p = eshape2.p, .eshape3.q = eshape3.q,
+           .lss = lss ))),
+  last = eval(substitute(expression({
+    M1 <- 4
+
+    misc$link <- c(rep( if ( .lss ) .lscale else .lshape1.a , len = ncoly),
+                   rep( if ( .lss ) .lshape1.a else .lscale , len = ncoly),
+                   rep( .lshape2.p , length = ncoly),
+                   rep( .lshape3.q , length = ncoly))[
+                   interleave.VGAM(M, M = M1)]
+    temp.names <- if ( .lss ) {
+      c(scaL.names, sha1.names, sha2.names, sha3.names)
+    } else {
+      c(sha1.names, scaL.names, sha2.names, sha3.names)
+    }
+    names(misc$link) <- temp.names[interleave.VGAM(M, M = M1)]
+
+    misc$earg <- vector("list", M)
+    names(misc$earg) <- temp.names
+    for (ii in 1:ncoly) {
+      if ( .lss ) {
+        misc$earg[[M1*ii-3]] <- .escale
+        misc$earg[[M1*ii-2]] <- .eshape1.a
+    } else {
+        misc$earg[[M1*ii-3]] <- .eshape1.a
+        misc$earg[[M1*ii-2]] <- .escale
+    }
+      misc$earg[[M1*ii-1]] <- .eshape2.p
+      misc$earg[[M1*ii  ]] <- .eshape3.q
+    }
+
+    misc$expected          <- TRUE
+    misc$multipleResponses <- TRUE
+  }), list( .lscale    = lscale   , .lshape1.a = lshape1.a,
+            .escale    = escale   , .eshape1.a = eshape1.a,
+            .lshape2.p = lshape2.p, .lshape3.q = lshape3.q,
+            .eshape2.p = eshape2.p, .eshape3.q = eshape3.q,
+            .lss = lss ))), 
+  loglikelihood = eval(substitute(
+    function(mu, y, w, residuals = FALSE, 
+             eta, extra = NULL, summation = TRUE) {
+      M1  <- 4
+      NOS <- ncol(eta)/M1
+      if ( .lss ) {
+        Scale <- eta2theta(eta[, M1*(1:NOS) - 3, drop = FALSE],
+                           .lscale    , earg = .escale    )
+        aa    <- eta2theta(eta[, M1*(1:NOS) - 2, drop = FALSE],
+                           .lshape1.a , earg = .eshape1.a )
+      } else {
+        aa    <- eta2theta(eta[, M1*(1:NOS) - 3, drop = FALSE],
+                           .lshape1.a , earg = .eshape1.a )
+        Scale <- eta2theta(eta[, M1*(1:NOS) - 2, drop = FALSE],
+                           .lscale    , earg = .escale    )
+      }
+      parg   <- eta2theta(eta[, M1*(1:NOS) - 1, drop = FALSE],
+                          .lshape2.p , earg = .eshape2.p )
+      qq     <- eta2theta(eta[, M1*(1:NOS)    , drop = FALSE],
+                          .lshape3.q , earg = .eshape3.q )
+      if (residuals) {
+        stop("loglikelihood residuals not implemented yet")
+      } else {
+        ll.elts <-
+          c(w) * dgenbetaII(x = y, scale = Scale, shape1.a = aa,
+                            shape2.p = parg, shape3.q = qq, log = TRUE)
+        if (summation) {
+          sum(ll.elts)
+        } else {
+          ll.elts
+        }
+      }
+    }, list( .lscale    = lscale   , .lshape1.a = lshape1.a,
+             .escale    = escale   , .eshape1.a = eshape1.a,
+             .lshape2.p = lshape2.p, .lshape3.q = lshape3.q,
+             .eshape2.p = eshape2.p, .eshape3.q = eshape3.q,
+             .lss = lss ))),
+  vfamily = c("genbetaII"),
+  deriv = eval(substitute(expression({ 
+    NOS <- ncol(eta)/M1  # Needed for summary()
+    if ( .lss ) { 
+      Scale <- eta2theta(eta[, M1*(1:NOS) - 3, drop = FALSE],
+                         .lscale    , earg = .escale   )
+      aa    <- eta2theta(eta[, M1*(1:NOS) - 2, drop = FALSE],
+                         .lshape1.a , earg = .eshape1.a)
+    } else {
+      aa    <- eta2theta(eta[, M1*(1:NOS) - 3, drop = FALSE],
+                         .lshape1.a , earg = .eshape1.a)
+      Scale <- eta2theta(eta[, M1*(1:NOS) - 2, drop = FALSE],
+                         .lscale    , earg = .escale )
+    }  
+    parg <- eta2theta(eta[, M1*(1:NOS) - 1, drop = FALSE],
+                      .lshape2.p , earg = .eshape2.p)
+    qq   <- eta2theta(eta[, M1*(1:NOS)    , drop = FALSE],
+                      .lshape3.q , earg = .eshape3.q)
+    temp1 <- log(y/Scale)
+    temp2 <- (y/Scale)^aa
     temp3 <- digamma(parg + qq)
     temp3a <- digamma(parg)
     temp3b <- digamma(qq)
     temp4 <- log1p(temp2)
-
+  
+    dl.dscale <- (aa/Scale) * (-parg + (parg+qq) / (1+1/temp2))
     dl.da <- 1/aa + parg * temp1 - (parg+qq) * temp1 / (1+1/temp2)
-    dl.dscale <- (aa/scale) * (-parg + (parg+qq) / (1+1/temp2))
     dl.dp <- aa * temp1 + temp3 - temp3a - temp4
     dl.dq <- temp3 - temp3b - temp4
-
+    
+    dscale.deta <- dtheta.deta(Scale, .lscale ,    earg = .escale )
     da.deta     <- dtheta.deta(aa,    .lshape1.a , earg = .eshape1.a )
-    dscale.deta <- dtheta.deta(scale, .lscale ,    earg = .escale )
     dp.deta     <- dtheta.deta(parg,  .lshape2.p , earg = .eshape2.p )
     dq.deta     <- dtheta.deta(qq,    .lshape3.q , earg = .eshape3.q )
-
-    c(w) * cbind( dl.da * da.deta,
-                  dl.dscale * dscale.deta,
-                  dl.dp * dp.deta,
-                  dl.dq * dq.deta )
-  }), list( .lshape1.a = lshape1.a, .lscale = lscale,
-            .eshape1.a = eshape1.a, .escale = escale, 
-            .eshape2.p = eshape2.p, .eshape3.q = eshape3.q,
-            .lshape2.p = lshape2.p, .lshape3.q = lshape3.q ))),
+    
+    myderiv <- if ( .lss ) {
+      c(w) * cbind(dl.dscale * dscale.deta,
+                   dl.da * da.deta,
+                   dl.dp * dp.deta,
+                   dl.dq * dq.deta)
+    } else {
+      c(w) * cbind(dl.da * da.deta,
+                   dl.dscale * dscale.deta,
+                   dl.dp * dp.deta,
+                   dl.dq * dq.deta)
+    }
+    myderiv[, interleave.VGAM(M, M = M1)]
+  }), list(  .lscale    = lscale   , .lshape1.a = lshape1.a,
+             .escale    = escale   , .eshape1.a = eshape1.a,
+             .lshape2.p = lshape2.p, .lshape3.q = lshape3.q,
+             .eshape2.p = eshape2.p, .eshape3.q = eshape3.q,
+             .lss = lss ))),
   weight = eval(substitute(expression({
     temp5  <- trigamma(parg + qq)
     temp5a <- trigamma(parg)
     temp5b <- trigamma(qq)
 
-    ned2l.da <- (1 + parg+qq + parg * qq * (temp5a + temp5b +
+    ned2l.da <- (1 + parg + qq + parg * qq * (temp5a + temp5b +
                 (temp3b - temp3a + (parg-qq)/(parg*qq))^2 -
                 (parg^2 + qq^2) / (parg*qq)^2)) / (aa^2 * (1+parg+qq))
-    ned2l.dscale <- aa^2 * parg * qq / (scale^2 * (1+parg+qq))
-    ned2l.dp <- temp5a - temp5
-    ned2l.dq <- temp5b - temp5
+    ned2l.dscale  <- (aa^2) * parg * qq / ((1+parg+qq) * Scale^2)
+    ned2l.dp      <- temp5a - temp5
+    ned2l.dq      <- temp5b - temp5
     ned2l.dascale <- (parg - qq - parg * qq *
-                     (temp3a -temp3b)) / (scale*(1 + parg+qq))
-    ned2l.dap <- -(qq   * (temp3a -temp3b) -1) / (aa*(parg+qq))
-    ned2l.daq <- -(parg * (temp3b -temp3a) -1) / (aa*(parg+qq))
-    ned2l.dscalep <-  aa * qq   / (scale*(parg+qq))
-    ned2l.dscaleq <- -aa * parg / (scale*(parg+qq))
-    ned2l.dpq <- -temp5
-
-    wz <- matrix(as.numeric(NA), n, dimm(M))  # M==4 means 10=dimm(M)
-    wz[, iam(1, 1, M)] <- ned2l.da * da.deta^2
-    wz[, iam(2, 2, M)] <- ned2l.dscale * dscale.deta^2
-    wz[, iam(3, 3, M)] <- ned2l.dp * dp.deta^2
-    wz[, iam(4, 4, M)] <- ned2l.dq * dq.deta^2
-    wz[, iam(1, 2, M)] <- ned2l.dascale * da.deta * dscale.deta
-    wz[, iam(1, 3, M)] <- ned2l.dap * da.deta * dp.deta
-    wz[, iam(1, 4, M)] <- ned2l.daq * da.deta * dq.deta
-    wz[, iam(2, 3, M)] <- ned2l.dscalep * dscale.deta * dp.deta
-    wz[, iam(2, 4, M)] <- ned2l.dscaleq * dscale.deta * dq.deta
-    wz[, iam(3, 4, M)] <- ned2l.dpq * dp.deta * dq.deta
-    wz <- c(w) * wz
+                     (temp3a -temp3b)) / (Scale*(1 + parg+qq))
+    ned2l.dap     <- -(qq   * (temp3a -temp3b) -1) / (aa*(parg+qq))
+    ned2l.daq     <- -(parg * (temp3b -temp3a) -1) / (aa*(parg+qq))
+    ned2l.dscalep <-  aa * qq   / (Scale*(parg+qq))
+    ned2l.dscaleq <- -aa * parg / (Scale*(parg+qq))
+    ned2l.dpq     <- -temp5
+    wz <- if ( .lss ) {
+      array(c(c(w) * ned2l.dscale * dscale.deta^2,
+              c(w) * ned2l.da * da.deta^2,
+              c(w) * ned2l.dp * dp.deta^2,
+              c(w) * ned2l.dq * dq.deta^2,
+              c(w) * ned2l.dascale * da.deta * dscale.deta,
+              c(w) * ned2l.dap * da.deta * dp.deta,
+              c(w) * ned2l.dpq * dp.deta * dq.deta,
+              c(w) * ned2l.dscalep * dscale.deta * dp.deta,
+              c(w) * ned2l.daq * da.deta * dq.deta,
+              c(w) * ned2l.dscaleq * dscale.deta * dq.deta),
+            dim = c(n, M/M1, M1*(M1+1)/2))
+    } else {
+      array(c(c(w) * ned2l.da * da.deta^2,
+              c(w) * ned2l.dscale * dscale.deta^2,
+              c(w) * ned2l.dp * dp.deta^2,
+              c(w) * ned2l.dq * dq.deta^2,
+              c(w) * ned2l.dascale * da.deta * dscale.deta,
+              c(w) * ned2l.dscalep * dscale.deta * dp.deta,
+              c(w) * ned2l.dpq * dp.deta * dq.deta,
+              c(w) * ned2l.dap * da.deta * dp.deta,
+              c(w) * ned2l.dscaleq * dscale.deta * dq.deta,
+              c(w) * ned2l.daq * da.deta * dq.deta),
+            dim = c(n, M/M1, M1*(M1+1)/2))
+    }
+    wz <- arwz2wz(wz, M = M, M1 = M1)
     wz
-  }), list( .lshape1.a <- lshape1.a, .lscale = lscale,
-            .eshape1.a <- eshape1.a, .escale = escale, 
-            .eshape2.p <- eshape2.p, .eshape3.q = eshape3.q,
-            .lshape2.p <- lshape2.p, .lshape3.q = lshape3.q ))))
+  }), list( .lscale    = lscale   , .lshape1.a = lshape1.a,
+            .escale    = escale   , .eshape1.a = eshape1.a, 
+            .lshape2.p = lshape2.p, .lshape3.q = lshape3.q,
+            .eshape2.p = eshape2.p, .eshape3.q = eshape3.q,
+            .lss = lss ))))
 }
+
+
+
+
+
+
+
+
+
+
+dgenbetaII <- function(x, scale = 1, shape1.a, shape2.p, shape3.q,
+                       log = FALSE)  {
+
+  if (!is.logical(log.arg <- log) || length(log) != 1)
+    stop("Bad input for argument 'log'")
+  rm(log)
+
+
+  logden <- log(shape1.a) + (shape1.a * shape2.p - 1) * log(abs(x)) -
+            shape1.a * shape2.p * log(scale) -
+            lbeta(shape2.p, shape3.q) -
+            (shape2.p + shape3.q) * log1p((abs(x)/scale)^shape1.a)
+  
+
+  if (any(x <= 0) || any(is.infinite(x))) {
+    LLL <- max(length(x),        length(scale),
+               length(shape1.a), length(shape2.p), length(shape3.q))
+    if (length(x)        != LLL) x        <- rep(x,        length = LLL)
+    if (length(scale)    != LLL) scale    <- rep(scale,    length = LLL)
+    if (length(shape1.a) != LLL) shape1.a <- rep(shape1.a, length = LLL)
+    if (length(shape2.p) != LLL) shape2.p <- rep(shape2.p, length = LLL)
+    if (length(shape3.q) != LLL) shape3.q <- rep(shape3.q, length = LLL)
+
+    logden[is.infinite(x)] <- log(0)
+    logden[x < 0] <- log(0)  
+    x.eq.0 <- !is.na(x) & (x == 0)
+    if (any(x.eq.0)) {
+      axp <- shape1.a[x.eq.0] * shape2.p[x.eq.0]
+      logden[x.eq.0 & axp <  1] <- log(Inf)
+      ind5 <- x.eq.0 & axp == 1
+      logden[ind5] <- log(shape1.a[ind5]) -
+        shape1.a[ind5] * shape2.p[ind5] * log(scale[ind5]) -
+        lbeta(shape2.p[ind5], shape3.q[ind5]) -
+        (shape2.p[ind5] + shape3.q[ind5]) *
+        log1p((0/scale[ind5])^shape1.a[ind5])
+      logden[x.eq.0 & axp >  1] <- log(0)    
+    }
+  }
+
+  if (log.arg) logden else exp(logden)
+}
+
+
+
 
 
 rsinmad <- function(n, scale = 1, shape1.a, shape3.q)
@@ -2958,6 +3191,15 @@ pinv.paralogistic <- function(q, scale = 1, shape1.a,
 
 
 
+
+
+dbetaII <- function(x, scale = 1, shape2.p, shape3.q, log = FALSE)
+  dgenbetaII(x = x, scale = scale, shape1.a = 1,
+             shape2.p = shape2.p, shape3.q = shape3.q, log = log)
+
+
+
+
 dsinmad <- function(x, scale = 1, shape1.a, shape3.q, log = FALSE) {
 
   if (!is.logical(log.arg <- log) || length(log) != 1)
@@ -2966,9 +3208,9 @@ dsinmad <- function(x, scale = 1, shape1.a, shape3.q, log = FALSE) {
 
   LLL      <- max(length(x),     length(shape1.a),
                   length(scale), length(shape3.q))
-  x        <- rep(x,         length.out = LLL);
+  x        <- rep(x,         length.out = LLL)
   shape1.a <- rep(shape1.a,  length.out = LLL)
-  scale    <- rep(scale,     length.out = LLL);
+  scale    <- rep(scale,     length.out = LLL)
   shape3.q <- rep(shape3.q,  length.out = LLL)
 
   Loglik <- rep(log(0), length.out = LLL)
@@ -3054,104 +3296,231 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
 
 
 
- sinmad <- function(lss,
-                    lshape1.a = "loge",
-                    lscale = "loge",
-                    lshape3.q = "loge",
-                    ishape1.a = NULL, 
-                    iscale = NULL,
-                    ishape3.q = 1.0, 
-                    zero = NULL) {
-
-  if (!is.logical(lss) || lss)
-    stop("argument 'lss' not specified correctly. ",
-         "See online help for important information")
 
 
 
 
-  if (length(zero) &&
-      !is.Numeric(zero, integer.valued = TRUE, positive = TRUE))
+
+ sinmad    <- function(lscale    = "loge",
+                       lshape1.a = "loge",
+                       lshape3.q = "loge",
+                       iscale    = NULL,
+                       ishape1.a = NULL,
+                       ishape3.q = NULL,
+                       imethod   = 1,
+                       lss       = TRUE,
+                       gscale    = exp(-5:5),
+                       gshape1.a = exp(-5:5),
+                       gshape3.q = exp(-5:5),
+                       probs.y   = c(0.25, 0.50, 0.75),
+                       zero      = ifelse(lss, -(2:3), -c(1, 3))) {
+
+
+
+
+  if (length(lss) != 1 && !is.logical(lss))
+    stop("Argument 'lss' not specified correctly")
+  
+  if (!is.Numeric(imethod, length.arg = 1,
+                  integer.valued = TRUE, 
+                  positive = TRUE) || imethod > 2)
+    stop("Bad input for argument 'imethod'")
+  
+  if (length(iscale) && !is.Numeric(iscale, positive = TRUE)) 
+    stop("Bad input for argument 'iscale'")
+  
+  if (length(ishape1.a) && !is.Numeric(ishape1.a, positive = TRUE))
+    stop("Bad input for argument 'ishape1.a'")
+  
+  if (length(ishape3.q) && !is.Numeric(ishape3.q, positive = TRUE))
+    stop("Bad input for argument 'ishape3.q'")
+  
+  if (length(probs.y) < 2 || max(probs.y) > 1 || 
+        !is.Numeric(probs.y, positive = TRUE))
+    stop("Bad input for argument 'probs.y'")
+
+  if (length(zero) && !is.Numeric(zero, integer.valued = TRUE))
     stop("bad input for argument 'zero'")
-
-
-  lshape1.a <- as.list(substitute(lshape1.a))
-  eshape1.a <- link2list(lshape1.a)
-  lshape1.a <- attr(eshape1.a, "function.name")
-
-  lshape3.q <- as.list(substitute(lshape3.q))
-  eshape3.q <- link2list(lshape3.q)
-  lshape3.q <- attr(eshape3.q, "function.name")
-
+  
   lscale <- as.list(substitute(lscale))
   escale <- link2list(lscale)
   lscale <- attr(escale, "function.name")
+  
+  lshape1.a <- as.list(substitute(lshape1.a))
+  eshape1.a <- link2list(lshape1.a)
+  lshape1.a <- attr(eshape1.a, "function.name")
+  
+  lshape3.q <- as.list(substitute(lshape3.q))
+  eshape3.q <- link2list(lshape3.q)
+  lshape3.q <- attr(eshape3.q, "function.name")
+   
 
-
-
-  new("vglmff",
-  blurb = c("Singh-Maddala distribution\n\n",
-          "Links:    ",
-          namesof("shape1.a", lshape1.a, earg = eshape1.a), ", ", 
-          namesof("scale",    lscale,    earg = escale),    ", ", 
-          namesof("shape3.q", lshape3.q, earg = eshape3.q), "\n", 
-          "Mean:     scale * gamma(1 + 1/shape1.a) * ",
-                    "gamma(shape3.q - 1/shape1.a) / ",
-                    "gamma(shape3.q)"),
+  new("vglmff", 
+  blurb = 
+    c("Singh-Maddala distribution \n\n",
+      "Links:    ", 
+      ifelse (lss,
+              namesof("scale"   , lscale   , earg = escale),
+              namesof("shape1.a", lshape1.a, earg = eshape1.a)), ", ",
+      ifelse (lss, 
+              namesof("shape1.a", lshape1.a, earg = eshape1.a),
+              namesof("scale"   , lscale   , earg = escale)), ", ",
+      namesof("shape3.q" , lshape3.q, earg = eshape3.q), "\n",
+      "Mean:     scale * gamma(shape2.p + 1/shape1.a) * ",
+                "gamma(shape3.q - 1/shape1.a) / ",
+                "gamma(shape3.q)"),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
+    dotzero <- .zero
+    M1 <- 3
+    eval(negzero.expression.VGAM)
   }), list( .zero = zero ))),
-  initialize = eval(substitute(expression({
+  infos = eval(substitute(function(...) {
+    list(M1 = 3,
+         Q1 = 1,
+         expected = TRUE,
+         zero = .zero ,
+         multipleResponses = TRUE,
+         lscale = .lscale ,       lshape1.a = .lshape1.a ,
+         escale = .escale ,       eshape1.a = .eshape1.a ,
+                                  lshape3.q = .lshape3.q ,
+                                  eshape3.q = .eshape3.q ,
+         .zero = zero )
+  }, list( .lscale = lscale      , .lshape1.a = lshape1.a,
+           .escale = escale      , .eshape1.a = eshape1.a,
+                                   .lshape3.q = lshape3.q,
+                                   .eshape3.q = eshape3.q,
+           .zero = zero ))),
+  initialize = eval(substitute(expression({ 
+    temp5 <- w.y.check(w = w, y = y, 
+                       Is.positive.y = TRUE, 
+                       ncol.w.max = Inf, 
+                       ncol.y.max = Inf, 
+                       out.wy = TRUE, 
+                       colsyperw = 1, 
+                       maximize = TRUE)
+    y    <- temp5$y
+    w    <- temp5$w
+    M1 <- 3  # Number of parameters for one response
+    NOS  <- ncoly <- ncol(y)
+    M    <- M1*ncol(y)
 
-    w.y.check(w = w, y = y,
-              ncol.w.max = 1, ncol.y.max = 1)
+    scaL.names  <- param.names("scale",     NOS)
+    sha1.names  <- param.names("shape1.a",  NOS)
+    sha3.names  <- param.names("shape3.q",  NOS)
 
-
-    predictors.names <-
-        c(namesof("shape1.a", .lshape1.a , earg = .eshape1.a , tag = FALSE),
-          namesof("scale",    .lscale ,    earg = .escale ,    tag = FALSE),
-          namesof("shape3.q", .lshape3.q , earg = .eshape3.q , tag = FALSE))
-    parg <- 1
-
-    if (!length( .ishape1.a) || !length( .iscale )) {
-        qvec <- c( .25, .5, .75)  # Arbitrary; could be made an argument
-        ishape3.q <- if (length( .ishape3.q)) .ishape3.q else 1
-        xvec <- log( (1-qvec)^(-1/ ishape3.q ) - 1 )
-        fit0 <- lsfit(x = xvec, y = log(quantile(y, qvec )))
-    }
-
-
-
+    predictors.names <- c(
+      if ( .lss ) {
+        c(namesof(scaL.names , .lscale    , earg = .escale    , tag = FALSE),
+          namesof(sha1.names , .lshape1.a , earg = .eshape1.a , tag = FALSE))
+      } else {
+        c(namesof(sha1.names , .lshape1.a , earg = .eshape1.a , tag = FALSE),
+          namesof(scaL.names , .lscale    , earg = .escale    , tag = FALSE))
+      },
+      namesof(sha3.names , .lshape3.q , earg = .eshape3.q , tag = FALSE))
+    predictors.names <- predictors.names[interleave.VGAM(M, M = M1)]
+    
     if (!length(etastart)) {
-      aa    <- rep(if (length( .ishape1.a)) .ishape1.a else 1/fit0$coef[2],
-                   length.out = n)
-      scale <- rep(if (length( .iscale )) .iscale else exp(fit0$coef[1]),
-                   length.out = n)
-      qq    <- rep(if (length( .ishape3.q)) .ishape3.q else 1.0,
-                   length.out = n)
+      sc.init <-
+      aa.init <-
+      qq.init <- matrix(as.numeric(NA), n, NOS)
+          
+      for (spp. in 1:NOS) {  # For each response 'y_spp.'... do:
+        yvec <- y[, spp.]
+        wvec <- w[, spp.]
 
+        if ( .imethod == 1 ) {
+          gscale     <- .gscale
+          gshape1.a  <- .gshape1.a
+          gshape3.q  <- .gshape3.q
+          if (length( .iscale ))
+            gscale    <-  rep( .iscale    , length = NOS)
+          if (length( .ishape1.a ))
+            gshape1.a <-  rep( .ishape1.a , length = NOS)
+          if (length( .ishape3.q ))
+            gshape3.q <-  rep( .ishape3.q , length = NOS)
+          allmat1 <- expand.grid(shape1.a = gshape1.a,
+                                 shape3.q = gshape3.q)
+          allmat2 <- matrix(as.numeric(NA), nrow(allmat1), 2)
 
-      outOfRange <- (aa * qq <= 1)
-      qq[outOfRange] <- 1 / aa[outOfRange] + 1 
+          ll.sinm <- function(scaleval, x = x, y = y, w = w, extraargs) { 
+            ans <- sum(c(w) * dgenbetaII(x = y,
+                                         scale    = scaleval,
+                                         shape1.a = extraargs$Shape1.a,
+                                         shape2.p = 1,
+                                         shape3.q = extraargs$Shape3.q,
+                                         log = TRUE))
+            ans
+          }
 
+          for (iloc in 1:nrow(allmat1)) {
+            allmat2[iloc, ] <-
+              grid.search(gscale, objfun = ll.sinm,
+                            y = yvec, x = x, w = wvec,
+                            ret.objfun = TRUE,  # 2nd value is the loglik
+                            extraargs = list(Shape1.a = allmat1[iloc, 1],
+                                             Shape3.q = allmat1[iloc, 2]))
+          }
+          ind5 <- which.max(allmat2[, 2])  # 2nd value is the loglik
+          sc.init[, spp.] <- allmat2[ind5, 1]
+          aa.init[, spp.] <- allmat1[ind5, 1]
+          qq.init[, spp.] <- allmat1[ind5, 2]
+       } else {  # .imethod == 2
+          qvec <- .probs.y 
+          ishape3.q <- if (length( .ishape3.q )) .ishape3.q else 1
+          xvec <- log( (1-qvec)^(-1/ ishape3.q ) - 1 )
+          fit0 <- lsfit(x = xvec, y = log(quantile(yvec,  qvec)))
+          sc.init[, spp.] <- if (length( .iscale )) .iscale else
+                             exp(fit0$coef[1])
+          aa.init[, spp.] <- if (length( .ishape1.a )) .ishape1.a else
+                             1/fit0$coef[2]
+          qq.init[, spp.] <- ishape3.q
+        }
+      }  # End of for (spp. ...)
 
-        etastart <-
-          cbind(theta2eta(aa,    .lshape1.a , earg = .eshape1.a ),
-                theta2eta(scale, .lscale    , earg = .escale ),
-                theta2eta(qq,    .lshape3.q , earg = .eshape3.q ))
-    }
-  }), list( .lshape1.a = lshape1.a, .lscale = lscale,
-            .lshape3.q = lshape3.q,
-            .eshape1.a = eshape1.a, .escale = escale, 
-            .eshape3.q = eshape3.q,
-            .ishape1.a = ishape1.a, .iscale = iscale, 
-            .ishape3.q = ishape3.q ))),
+      finite.mean <- 1 < aa.init * qq.init
+      COP.use <- 1.15
+      while (FALSE && any(!finite.mean)) {
+        qq.init[!finite.mean] <- 0.1 + qq.init[!finite.mean] * COP.use
+        aa.init[!finite.mean] <- 0.1 + aa.init[!finite.mean] * COP.use
+        finite.mean <- 1 < aa.init * qq.init
+      }
 
+      etastart <-
+        cbind(if ( .lss )
+              cbind(theta2eta(sc.init, .lscale    , earg = .escale    ),
+                    theta2eta(aa.init, .lshape1.a , earg = .eshape1.a )) else
+              cbind(theta2eta(aa.init, .lshape1.a , earg = .eshape1.a ),
+                    theta2eta(sc.init, .lscale    , earg = .escale    )),
+              theta2eta(qq.init , .lshape3.q , earg = .eshape3.q ))
+      etastart <- etastart[, interleave.VGAM(M, M = M1)]
+    }  # End of etastart.
+  }), list( .lscale    = lscale   , .lshape1.a = lshape1.a,
+            .escale    = escale   , .eshape1.a = eshape1.a,
+            .iscale    = iscale   , .ishape1.a = ishape1.a,
+            .gscale    = gscale   , .gshape1.a = gshape1.a,           
+                                    .lshape3.q = lshape3.q,
+                                    .eshape3.q = eshape3.q,
+                                    .ishape3.q = ishape3.q,
+                                    .gshape3.q = gshape3.q,
+            .imethod   = imethod   , .probs.y  = probs.y,
+            .lss = lss ))), 
   linkinv = eval(substitute(function(eta, extra = NULL) {
-    aa     <- eta2theta(eta[, 1], .lshape1.a , earg = .eshape1.a )
-    Scale  <- eta2theta(eta[, 2], .lscale ,    earg = .escale )
-    parg   <- 1
-    qq     <- eta2theta(eta[, 3], .lshape3.q , earg = .eshape3.q )
+    M1 <- 3
+    NOS <- ncol(eta)/M1
+    if ( .lss ) {
+      Scale <- eta2theta(eta[, M1*(1:NOS) - 2, drop = FALSE],
+                         .lscale ,  earg = .escale )
+      aa    <- eta2theta(eta[, M1*(1:NOS) - 1, drop = FALSE],
+                         .lshape1.a , earg = .eshape1.a )
+    } else {
+      aa    <- eta2theta(eta[, M1*(1:NOS) - 2, drop = FALSE],
+                         .lshape1.a , earg = .eshape1.a )
+      Scale <- eta2theta(eta[, M1*(1:NOS) - 1, drop = FALSE],
+                         .lscale    ,  earg = .escale )
+    }
+    parg <- 1
+    qq   <- eta2theta(eta[, M1*(1:NOS)    , drop = FALSE],
+                      .lshape3.q , earg = .eshape3.q )
 
     ans <- Scale * exp(lgamma(parg + 1/aa) +
                       lgamma(qq   - 1/aa) - lgamma(parg) - lgamma(qq))
@@ -3161,55 +3530,82 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
     ans[Scale       <= 0] <- NA
     ans[qq          <= 0] <- NA
     ans
-  }, list( .lshape1.a = lshape1.a, .lscale = lscale,
-           .eshape1.a = eshape1.a, .escale = escale, 
-           .eshape3.q = eshape3.q,
-           .lshape3.q = lshape3.q ))),
-
+  }, list( .lscale    = lscale   , .lshape1.a = lshape1.a,
+           .escale    = escale   , .eshape1.a = eshape1.a,
+                                   .lshape3.q = lshape3.q,
+                                   .eshape3.q = eshape3.q,
+           .lss = lss ))),
   last = eval(substitute(expression({
-    misc$link <-
-         c(shape1.a = .lshape1.a ,
-           scale    = .lscale ,
-           shape3.q = .lshape3.q )
+    M1 <- 3
 
-    misc$earg <-
-      list(shape1.a = .eshape1.a ,
-           scale    = .escale ,
-           shape3.q = .eshape3.q )
-
-    misc$expected <- TRUE
-    misc$multipleResponses <- FALSE
-  }), list( .lshape1.a = lshape1.a, .lscale = lscale,
-
-            .eshape1.a = eshape1.a, .escale = escale, 
-            .eshape3.q = eshape3.q,
-            .lshape3.q = lshape3.q ))),
-  loglikelihood = eval(substitute(
-    function(mu, y, w, residuals = FALSE, eta,
-             extra = NULL,
-             summation = TRUE) {
-    aa    <- eta2theta(eta[, 1], .lshape1.a , earg = .eshape1.a )
-    scale <- eta2theta(eta[, 2], .lscale ,    earg = .escale )
-    parg <- 1
-    qq    <- eta2theta(eta[, 3], .lshape3.q, earg = .eshape3.q )
-    if (residuals) {
-      stop("loglikelihood residuals not implemented yet")
+    misc$link <- c(rep( if ( .lss ) .lscale else .lshape1.a , len = ncoly),
+                   rep( if ( .lss ) .lshape1.a else .lscale , len = ncoly),
+                   rep( .lshape3.q , length = ncoly))[
+                   interleave.VGAM(M, M = M1)]
+    temp.names <- if ( .lss ) {
+      c(scaL.names, sha1.names,             sha3.names)
     } else {
-      ll.elts <- c(w) * dsinmad(x = y, shape1.a = aa, scale = scale,
-                                shape3.q = qq, log = TRUE)
-      if (summation) {
-        sum(ll.elts)
-      } else {
-        ll.elts
-      }
+      c(sha1.names, scaL.names,             sha3.names)
     }
-  }, list( .lshape1.a = lshape1.a, .lscale = lscale,
-           .lshape3.q = lshape3.q,
-           .eshape1.a = eshape1.a, .escale = escale,
-           .eshape3.q = eshape3.q ))),
+    names(misc$link) <- temp.names[interleave.VGAM(M, M = M1)]
+
+    misc$earg <- vector("list", M)
+    names(misc$earg) <- temp.names
+    for (ii in 1:ncoly) {
+      if ( .lss ) {
+        misc$earg[[M1*ii-2]] <- .escale
+        misc$earg[[M1*ii-1]] <- .eshape1.a
+    } else {
+        misc$earg[[M1*ii-2]] <- .eshape1.a
+        misc$earg[[M1*ii-1]] <- .escale
+    }
+      misc$earg[[M1*ii  ]] <- .eshape3.q
+    }
+
+    misc$expected          <- TRUE
+    misc$multipleResponses <- TRUE
+  }), list( .lscale    = lscale   , .lshape1.a = lshape1.a,
+            .escale    = escale   , .eshape1.a = eshape1.a,
+                                    .lshape3.q = lshape3.q,
+                                    .eshape3.q = eshape3.q,
+            .lss = lss ))), 
+  loglikelihood = eval(substitute(
+    function(mu, y, w, residuals = FALSE, 
+             eta, extra = NULL, summation = TRUE) {
+      M1  <- 3
+      NOS <- ncol(eta)/M1
+      if ( .lss ) {
+        Scale <- eta2theta(eta[, M1*(1:NOS) - 2, drop = FALSE],
+                           .lscale    , earg = .escale    )
+        aa    <- eta2theta(eta[, M1*(1:NOS) - 1, drop = FALSE],
+                           .lshape1.a , earg = .eshape1.a )
+      } else {
+        aa    <- eta2theta(eta[, M1*(1:NOS) - 2, drop = FALSE],
+                           .lshape1.a , earg = .eshape1.a )
+        Scale <- eta2theta(eta[, M1*(1:NOS) - 1, drop = FALSE],
+                           .lscale    , earg = .escale    )
+      }
+      parg   <- 1
+      qq     <- eta2theta(eta[, M1*(1:NOS)    , drop = FALSE],
+                          .lshape3.q , earg = .eshape3.q )
+      if (residuals) {
+        stop("loglikelihood residuals not implemented yet")
+      } else {
+        ll.elts <-
+          c(w) * dgenbetaII(x = y, scale = Scale, shape1.a = aa,
+                            shape2.p = parg, shape3.q = qq, log = TRUE)
+        if (summation) {
+          sum(ll.elts)
+        } else {
+          ll.elts
+        }
+      }
+    }, list( .lscale    = lscale   , .lshape1.a = lshape1.a,
+             .escale    = escale   , .eshape1.a = eshape1.a,
+                                     .lshape3.q = lshape3.q,
+                                     .eshape3.q = eshape3.q,
+             .lss = lss ))),
   vfamily = c("sinmad"),
-
-
   simslot = eval(substitute(
   function(object, nsim) {
 
@@ -3217,780 +3613,350 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
               pwts else weights(object, type = "prior")
     if (any(pwts != 1)) 
       warning("ignoring prior weights")
+
     eta <- predict(object)
-    aa    <- eta2theta(eta[, 1], .lshape1.a , earg = .eshape1.a )
-    scale <- eta2theta(eta[, 2], .lscale ,    earg = .escale )
-    qq    <- eta2theta(eta[, 3], .lshape3.q,  earg = .eshape3.q )
-    rsinmad(nsim * length(qq), shape1.a = aa, scale = scale,
+    M1 <- 3
+    NOS <- ncol(eta)/M1
+    if ( .lss ) {
+      Scale <- eta2theta(eta[, M1*(1:NOS) - 2, drop = FALSE],
+                         .lscale ,  earg = .escale )
+      aa    <- eta2theta(eta[, M1*(1:NOS) - 1, drop = FALSE],
+                         .lshape1.a , earg = .eshape1.a )
+    } else {
+      aa    <- eta2theta(eta[, M1*(1:NOS) - 2, drop = FALSE],
+                         .lshape1.a , earg = .eshape1.a )
+      Scale <- eta2theta(eta[, M1*(1:NOS) - 1, drop = FALSE],
+                         .lscale    ,  earg = .escale )
+    }
+    qq   <- eta2theta(eta[, M1*(1:NOS)    , drop = FALSE],
+                      .lshape3.q , earg = .eshape3.q )
+
+    rsinmad(nsim * length(qq), shape1.a = aa, scale = Scale,
             shape3.q = qq)
-  }, list( .lshape1.a = lshape1.a, .lscale = lscale,
-           .lshape3.q = lshape3.q,
-           .eshape1.a = eshape1.a, .escale = escale,
-           .eshape3.q = eshape3.q ))),
-
-
-  deriv = eval(substitute(expression({
-    aa    <- eta2theta(eta[, 1], .lshape1.a , earg = .eshape1.a )
-    scale <- eta2theta(eta[, 2], .lscale    , earg = .escale )
+  }, list( .lscale    = lscale   , .lshape1.a = lshape1.a,
+           .escale    = escale   , .eshape1.a = eshape1.a,
+                                   .lshape3.q = lshape3.q,
+                                   .eshape3.q = eshape3.q
+                      ))),
+  deriv = eval(substitute(expression({ 
+    NOS <- ncol(eta)/M1  # Needed for summary()
+    if ( .lss ) { 
+      Scale <- eta2theta(eta[, M1*(1:NOS) - 2, drop = FALSE],
+                         .lscale    , earg = .escale   )
+      aa    <- eta2theta(eta[, M1*(1:NOS) - 1, drop = FALSE],
+                         .lshape1.a , earg = .eshape1.a)
+    } else {
+      aa    <- eta2theta(eta[, M1*(1:NOS) - 2, drop = FALSE],
+                         .lshape1.a , earg = .eshape1.a)
+      Scale <- eta2theta(eta[, M1*(1:NOS) - 1, drop = FALSE],
+                         .lscale    , earg = .escale )
+    }  
     parg <- 1
-    qq <-    eta2theta(eta[, 3], .lshape3.q , earg = .eshape3.q )
-
-    temp1 <- log(y/scale)
-    temp2 <- (y/scale)^aa
-    temp3a <- digamma(parg)
-    temp3b <- digamma(qq)
-
-    dl.da <- 1 / aa + parg * temp1 - (parg + qq) * temp1 / (1 + 1 / temp2)
-    dl.dscale <- (aa / scale) * (-parg + (parg + qq) / (1 + 1 / temp2))
-    dl.dq <- digamma(parg + qq) - temp3b - log1p(temp2)
-
-    da.deta     <- dtheta.deta(aa,    .lshape1.a , earg = .eshape1.a )
-    dscale.deta <- dtheta.deta(scale, .lscale ,    earg = .escale )
-    dq.deta     <- dtheta.deta(qq,    .lshape3.q , earg = .eshape3.q )
-
-    c(w) * cbind(dl.da     * da.deta,
-                 dl.dscale * dscale.deta,
-                 dl.dq     * dq.deta )
-  }), list( .lshape1.a = lshape1.a, .lscale = lscale,
-            .eshape1.a = eshape1.a, .escale = escale, 
-            .eshape3.q = eshape3.q,
-            .lshape3.q = lshape3.q ))),
-
-  weight = eval(substitute(expression({
-    ned2l.da <- (1 + parg+qq + parg * qq * (trigamma(parg) + trigamma(qq) +
-                (temp3b - temp3a + (parg-qq)/(parg*qq))^2 - 
-                (parg^2 + qq^2) / (parg*qq)^2)) / (aa^2 * (1 + parg + qq))
-    ned2l.dscale <- aa^2 * parg * qq / (scale^2 * (1+parg+qq))
-    ned2l.dq <- 1/qq^2
-    ned2l.dascale <- (parg - qq - parg*qq *
-                     (temp3a -temp3b)) / (scale*(1 + parg+qq))
-    ned2l.daq <- -(parg * (temp3b -temp3a) -1) / (aa*(parg+qq))
-    ned2l.dscaleq <- -aa * parg / (scale*(parg+qq))
-
-    wz <- matrix(as.numeric(NA), n, dimm(M))  #M==3 means 6=dimm(M)
-    wz[, iam(1, 1, M)] <- ned2l.da * da.deta^2
-    wz[, iam(2, 2, M)] <- ned2l.dscale * dscale.deta^2
-    wz[, iam(3, 3, M)] <- ned2l.dq * dq.deta^2
-    wz[, iam(1, 2, M)] <- ned2l.dascale * da.deta * dscale.deta
-    wz[, iam(1, 3, M)] <- ned2l.daq * da.deta * dq.deta
-    wz[, iam(2, 3, M)] <- ned2l.dscaleq * dscale.deta * dq.deta
-    wz <- c(w) * wz
-    wz
-  }), list( .lshape1.a = lshape1.a, .lscale = lscale,
-            .eshape1.a = eshape1.a, .escale = escale, 
-            .eshape3.q = eshape3.q,
-            .lshape3.q = lshape3.q ))))
-}
-
-
- dagum <- function(lss,
-                   lshape1.a = "loge",
-                   lscale = "loge",
-                   lshape2.p = "loge",
-                   ishape1.a = NULL, 
-                   iscale = NULL,
-                   ishape2.p = 1.0, 
-                   zero = NULL) {
-
-  if (!is.logical(lss) || lss)
-    stop("argument 'lss' not specified correctly. ",
-         "See online help for important information")
-
-
-
-  if (length(zero) &&
-      !is.Numeric(zero, integer.valued = TRUE, positive = TRUE))
-      stop("bad input for argument 'zero'")
-
-
-  lshape1.a <- as.list(substitute(lshape1.a))
-  eshape1.a <- link2list(lshape1.a)
-  lshape1.a <- attr(eshape1.a, "function.name")
-
-  lshape2.p <- as.list(substitute(lshape2.p))
-  eshape2.p <- link2list(lshape2.p)
-  lshape2.p <- attr(eshape2.p, "function.name")
-
-  lscale <- as.list(substitute(lscale))
-  escale <- link2list(lscale)
-  lscale <- attr(escale, "function.name")
-
-
-
-  new("vglmff",
-  blurb = c("Dagum distribution\n\n",
-          "Links:    ",
-          namesof("shape1.a",     lshape1.a,     earg = eshape1.a), ", ", 
-          namesof("scale",        lscale,        earg = escale), ", ", 
-          namesof("shape2.p",     lshape2.p,     earg = eshape2.p), "\n", 
-        "Mean:     scale * gamma(shape2.p + 1/shape1.a) * ",
-                  "gamma(1 - 1/shape1.a) / ",
-                  "gamma(shape2.p)"),
-  constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
-  }), list( .zero = zero ))),
-  initialize = eval(substitute(expression({
-
-    w.y.check(w = w, y = y,
-              ncol.w.max = 1, ncol.y.max = 1)
-
-    predictors.names <-
-      c(namesof("shape1.a", .lshape1.a , earg = .eshape1.a , tag = FALSE),
-        namesof("scale",    .lscale ,    earg = .escale ,    tag = FALSE),
-        namesof("shape2.p", .lshape2.p , earg = .eshape2.p , tag = FALSE))
-
-    if (!length( .ishape1.a) || !length( .iscale )) {
-        qvec <- c( .25, .5, .75)  # Arbitrary; could be made an argument
-        ishape2.p <- if (length( .ishape2.p)) .ishape2.p else 1
-        xvec <- log( qvec^(-1/ ishape2.p ) - 1 )
-        fit0 <- lsfit(x = xvec, y = log(quantile(y, qvec )))
-    }
-
-        if (!length(etastart)) {
-          parg <- rep(if (length( .ishape2.p )) .ishape2.p else 1.0,
-                      length.out = n)
-          aa <- rep(if (length( .ishape1.a )) .ishape1.a else
-                    -1/fit0$coef[2],
-                   length.out = n)
-          scale <- rep(if (length( .iscale )) .iscale else
-                       exp(fit0$coef[1]),
-                       length.out = n)
-
-
-      outOfRange <- (parg + 1/aa <= 0)
-      parg[outOfRange] <- 1 / aa[outOfRange] + 1
-    
-
-
-
-
-      etastart <-
-        cbind(theta2eta(aa,    .lshape1.a ,  earg = .eshape1.a ),
-              theta2eta(scale, .lscale ,     earg = .escale ),
-              theta2eta(parg,  .lshape2.p ,  earg = .eshape2.p ))
-    }
-  }), list( .lshape1.a = lshape1.a, .lscale = lscale,
-            .lshape2.p = lshape2.p,
-            .eshape1.a = eshape1.a, .escale = escale, 
-            .eshape2.p = eshape2.p,
-            .ishape1.a = ishape1.a, .iscale = iscale, 
-            .ishape2.p = ishape2.p ))),
-  linkinv = eval(substitute(function(eta, extra = NULL) {
-    aa     <- eta2theta(eta[, 1], .lshape1.a ,  earg = .eshape1.a )
-    Scale  <- eta2theta(eta[, 2], .lscale ,     earg = .escale )
-    parg   <- eta2theta(eta[, 3], .lshape2.p ,  earg = .eshape2.p )
-    qq     <- 1
-
-    ans <- Scale * exp(lgamma(parg + 1/aa) +
-                       lgamma(qq   - 1/aa) - lgamma(parg) - lgamma(qq))
-    ans[parg + 1/aa <= 0] <- NA
-    ans[qq   - 1/aa <= 0] <- NA
-    ans[aa          <= 0] <- NA
-    ans[Scale       <= 0] <- NA
-    ans[parg        <= 0] <- NA
-    ans
-    }, list( .lshape1.a = lshape1.a, .lscale = lscale,
-             .eshape1.a = eshape1.a, .escale = escale, 
-             .eshape2.p = eshape2.p,
-             .lshape2.p = lshape2.p ))),
-  last = eval(substitute(expression({
-    misc$link <-    c(shape1.a = .lshape1.a , scale = .lscale ,
-                      p = .lshape2.p )
-
-    misc$earg <- list(shape1.a = .eshape1.a , scale = .escale ,
-                      p = .eshape2.p )
-
-    misc$expected <- TRUE
-    misc$multipleResponses <- FALSE
-  }), list( .lshape1.a = lshape1.a, .lscale = lscale,
-            .lshape2.p = lshape2.p,
-            .eshape1.a = eshape1.a, .escale = escale,
-            .eshape2.p = eshape2.p ))),
-  loglikelihood = eval(substitute(
-    function(mu, y, w, residuals = FALSE, eta,
-             extra = NULL,
-             summation = TRUE) {
-    aa    <- eta2theta(eta[, 1], .lshape1.a ,  earg = .eshape1.a )
-    Scale <- eta2theta(eta[, 2], .lscale ,     earg = .escale )
-    parg  <- eta2theta(eta[, 3], .lshape2.p ,  earg = .eshape2.p )
-    qq <- 1
-    if (residuals) {
-      stop("loglikelihood residuals not implemented yet")
-    } else {
-      ll.elts <- c(w) * ddagum(x = y, shape1.a = aa, scale = Scale,
-                               shape2.p = parg, log = TRUE)
-      if (summation) {
-        sum(ll.elts)
-      } else {
-        ll.elts
-      }
-    }
-  }, list( .lshape1.a = lshape1.a, .lscale = lscale,
-           .lshape2.p = lshape2.p, 
-           .eshape1.a = eshape1.a, .escale = escale,
-           .eshape2.p = eshape2.p ))),
-  vfamily = c("dagum"),
-
-
-  simslot = eval(substitute(
-  function(object, nsim) {
-
-    pwts <- if (length(pwts <- object@prior.weights) > 0)
-              pwts else weights(object, type = "prior")
-    if (any(pwts != 1)) 
-      warning("ignoring prior weights")
-    eta <- predict(object)
-    aa    <- eta2theta(eta[, 1], .lshape1.a , earg = .eshape1.a )
-    Scale <- eta2theta(eta[, 2], .lscale ,    earg = .escale )
-    parg  <- eta2theta(eta[, 3], .lshape2.p,  earg = .eshape2.p )
-    rdagum(nsim * length(parg), shape1.a = aa, scale = Scale,
-           shape2.p = parg)
-  }, list( .lshape1.a = lshape1.a, .lscale = lscale,
-           .lshape2.p = lshape2.p, 
-           .eshape1.a = eshape1.a, .escale = escale,
-           .eshape2.p = eshape2.p ))),
-
-
-  deriv = eval(substitute(expression({
-    aa    <- eta2theta(eta[, 1], .lshape1.a ,  earg = .eshape1.a )
-    Scale <- eta2theta(eta[, 2], .lscale ,     earg = .escale )
-    parg  <- eta2theta(eta[, 3], .lshape2.p ,  earg = .eshape2.p )
-    qq <- 1
-
-    temp1 <- log(y / Scale)
-    temp2 <- (y / Scale)^aa
-    temp3a <- digamma(parg)
-    temp3b <- digamma(qq)
-
-    dl.da <- 1/aa + parg * temp1 - (parg+qq) * temp1 / (1+1/temp2)
-    dl.dscale <- (aa/Scale) * (-parg + (parg+qq) / (1+1/temp2))
-    dl.dp <- aa * temp1 + digamma(parg + qq) - temp3a - log1p(temp2)
-
-    da.deta     <- dtheta.deta(aa,    .lshape1.a , earg = .eshape1.a )
-    dscale.deta <- dtheta.deta(Scale, .lscale ,    earg = .escale )
-    dp.deta     <- dtheta.deta(parg,  .lshape2.p , earg = .eshape2.p )
-
-    c(w) * cbind( dl.da     * da.deta,
-                  dl.dscale * dscale.deta,
-                  dl.dp     * dp.deta )
-  }), list( .lshape1.a = lshape1.a, .lscale = lscale,
-            .eshape1.a = eshape1.a, .escale = escale, 
-            .eshape2.p = eshape2.p,
-            .lshape2.p = lshape2.p ))),
-  weight = eval(substitute(expression({
-    ned2l.da <- (1 + parg+qq + parg * qq * (trigamma(parg) + trigamma(qq) +
-                (temp3b - temp3a + (parg-qq)/(parg*qq))^2 - 
-                (parg^2 + qq^2) / (parg*qq)^2)) / (aa^2 * (1+parg+qq))
-    ned2l.dscale <- aa^2 * parg * qq / (Scale^2 * (1+parg+qq))
-    ned2l.dp <- 1 / parg^2 
-    ned2l.dascale <- (parg - qq - parg * qq *(temp3a -temp3b)
-                   ) / (Scale * (1 + parg+qq))
-    ned2l.dap= -(qq   * (temp3a -temp3b) -1) / (aa*(parg+qq))
-    ned2l.dscalep <-  aa * qq   / (Scale * (parg + qq))
-    wz <- matrix(as.numeric(NA), n, dimm(M))  #M==3 means 6=dimm(M)
-    wz[, iam(1, 1, M)] <- ned2l.da     * da.deta^2
-    wz[, iam(2, 2, M)] <- ned2l.dscale * dscale.deta^2
-    wz[, iam(3, 3, M)] <- ned2l.dp     * dp.deta^2
-    wz[, iam(1, 2, M)] <- ned2l.dascale * da.deta * dscale.deta
-    wz[, iam(1, 3, M)] <- ned2l.dap * da.deta * dp.deta
-    wz[, iam(2, 3, M)] <- ned2l.dscalep * dscale.deta * dp.deta
-    wz <- c(w) * wz
-    wz
-  }), list( .lshape1.a = lshape1.a, .lscale = lscale,
-            .eshape1.a = eshape1.a, .escale = escale, 
-            .eshape2.p = eshape2.p,
-            .lshape2.p = lshape2.p ))))
-}
-
-
-
- betaII <-
-   function(  # lss,
-            lscale = "loge", lshape2.p = "loge", lshape3.q = "loge",
-            iscale = NULL,   ishape2.p = 2,      ishape3.q = 2,
-            zero = NULL) {
-
-
-
-  if (length(zero) &&
-      !is.Numeric(zero, integer.valued = TRUE, positive = TRUE))
-    stop("bad input for argument 'zero'")
-
-
-
-  lshape2.p <- as.list(substitute(lshape2.p))
-  eshape2.p <- link2list(lshape2.p)
-  lshape2.p <- attr(eshape2.p, "function.name")
-
-  lshape3.q <- as.list(substitute(lshape3.q))
-  eshape3.q <- link2list(lshape3.q)
-  lshape3.q <- attr(eshape3.q, "function.name")
-
-  lscale <- as.list(substitute(lscale))
-  escale <- link2list(lscale)
-  lscale <- attr(escale, "function.name")
-
-
-
-  new("vglmff",
-  blurb = c("Beta II distribution\n\n",
-          "Links:    ",
-          namesof("scale",    lscale,    earg = escale), ", ", 
-          namesof("shape2.p", lshape2.p, earg = eshape2.p), ", ", 
-          namesof("shape3.q", lshape3.q, earg = eshape3.q), "\n", 
-        "Mean:     scale * gamma(shape2.p + 1) * ",
-                  "gamma(shape3.q - 1) / ",
-                  "(gamma(shape2.p) * gamma(shape3.q))"),
-  constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
-  }), list( .zero = zero ))),
-  initialize = eval(substitute(expression({
-
-    w.y.check(w = w, y = y,
-              ncol.w.max = 1, ncol.y.max = 1)
-
-
-    predictors.names <-
-    c(namesof("scale",    .lscale ,   earg = .escale ,   tag = FALSE),
-      namesof("shape2.p", .lshape2.p, earg = .eshape2.p, tag = FALSE),
-      namesof("shape3.q", .lshape3.q, earg = .eshape3.q, tag = FALSE))
-
-    if (!length( .iscale )) {
-      qvec <- c(0.25, .5, .75)  # Arbitrary; could be made an argument
-      ishape3.q <- if (length( .ishape3.q)) .ishape3.q else 1
-      xvec <- log( (1-qvec)^(-1/ ishape3.q ) - 1 )
-      fit0 <- lsfit(x = xvec, y = log(quantile(y, qvec )))
-    }
-
-    if (!length(etastart)) {
-      scale <- rep(if (length( .iscale )) .iscale else
-                   exp(fit0$coef[1]),
-                   length.out = n)
-      qq    <- rep(if (length( .ishape3.q)) .ishape3.q else 1.0,
-                   length.out = n)
-      parg  <- rep(if (length( .ishape2.p)) .ishape2.p else 1.0,
-                   length.out = n)
-
-
-
-      aa     <- 1
-      outOfRange <- (parg + 1/aa <= 0)
-      parg[outOfRange] <- 1 / aa[outOfRange] + 1
-      outOfRange <- (qq   - 1/aa <= 0)
-      qq[outOfRange] <- 1 / aa + 1
-
-
-      etastart <-
-        cbind(theta2eta(scale, .lscale ,   earg = .escale ),
-              theta2eta(parg,  .lshape2.p, earg = .eshape2.p ),
-              theta2eta(qq,    .lshape3.q, earg = .eshape3.q))
-    }
-  }), list( .lscale = lscale,
-            .escale = escale, 
-            .lshape2.p = lshape2.p, .lshape3.q = lshape3.q,
-            .eshape2.p = eshape2.p, .eshape3.q = eshape3.q,
-            .iscale = iscale, 
-            .ishape2.p = ishape2.p,
-            .ishape3.q = ishape3.q ))),
-  linkinv = eval(substitute(function(eta, extra = NULL) {
-    aa     <- 1
-    Scale  <- eta2theta(eta[, 1], .lscale , earg = .escale )
-    parg   <- eta2theta(eta[, 2], .lshape2.p, earg = .eshape2.p )
-    qq     <- eta2theta(eta[, 3], .lshape3.q, earg = .eshape3.q)
-
-    ans <- Scale * exp(lgamma(parg + 1/aa) +
-                       lgamma(qq   - 1/aa) - lgamma(parg) - lgamma(qq))
-    ans[parg + 1/aa <= 0] <- NA
-    ans[qq   - 1/aa <= 0] <- NA
-    ans[Scale       <= 0] <- NA
-    ans[parg        <= 0] <- NA
-    ans[qq          <= 0] <- NA
-    ans
-    }, list( .lscale = lscale,
-             .escale = escale, 
-             .eshape2.p = eshape2.p, .eshape3.q = eshape3.q,
-             .lshape2.p = lshape2.p, .lshape3.q = lshape3.q ))),
-  last = eval(substitute(expression({
-    misc$link <-    c(scale    = .lscale ,
-                      shape2.p = .lshape2.p,
-                      shape3.q = .lshape3.q)
-
-    misc$earg <- list(scale    = .escale ,
-                      shape2.p = .eshape2.p,
-                      shape3.q = .eshape3.q)
-
-    misc$expected <- TRUE
-    misc$multipleResponses <- FALSE
-  }), list(
-    .lscale = lscale, .lshape2.p = lshape2.p, .lshape3.q = lshape3.q,
-    .escale = escale, .eshape2.p = eshape2.p, .eshape3.q = eshape3.q ))),
-  loglikelihood = eval(substitute(
-    function(mu, y, w, residuals = FALSE, eta,
-             extra = NULL,
-             summation = TRUE) {
-    aa <- 1
-    scale <- eta2theta(eta[, 1], .lscale ,   earg = .escale )
-    parg  <- eta2theta(eta[, 2], .lshape2.p, earg = .eshape2.p )
-    qq    <- eta2theta(eta[, 3], .lshape3.q, earg = .eshape3.q)
-    if (residuals) {
-      stop("loglikelihood residuals not implemented yet")
-    } else {
-      ll.elts <-
-        c(w) * (log(aa) + (aa*parg-1)*log(y) - aa*parg*log(scale) +
-               (-lbeta(parg, qq)) - (parg+qq)*log1p((y/scale)^aa))
-      if (summation) {
-        sum(ll.elts)
-      } else {
-        ll.elts
-      }
-    }
-  }, list( .lscale = lscale,
-           .escale = escale, 
-           .eshape2.p = eshape2.p, .eshape3.q = eshape3.q,
-           .lshape2.p = lshape2.p, .lshape3.q = lshape3.q ))),
-  vfamily = c("betaII"),
-  deriv = eval(substitute(expression({
-    aa <- 1
-    scale <- eta2theta(eta[, 1], .lscale   , earg = .escale )
-    parg  <- eta2theta(eta[, 2], .lshape2.p, earg = .eshape2.p )
-    qq    <- eta2theta(eta[, 3], .lshape3.q, earg = .eshape3.q)
-
-    temp1 <- log(y/scale)
-    temp2 <- (y/scale)^aa
+    qq   <- eta2theta(eta[, M1*(1:NOS)    , drop = FALSE],
+                      .lshape3.q , earg = .eshape3.q)
+    temp1 <- log(y/Scale)
+    temp2 <- (y/Scale)^aa
     temp3 <- digamma(parg + qq)
     temp3a <- digamma(parg)
     temp3b <- digamma(qq)
     temp4 <- log1p(temp2)
-
-    dl.dscale <- (aa/scale) * (-parg + (parg+qq) / (1+1/temp2))
-    dl.dp <- aa * temp1 + temp3 - temp3a - temp4
+  
+    dl.dscale <- (aa/Scale) * (-parg + (parg+qq) / (1+1/temp2))
+    dl.da <- 1/aa + parg * temp1 - (parg+qq) * temp1 / (1+1/temp2)
     dl.dq <- temp3 - temp3b - temp4
-
-    dscale.deta <- dtheta.deta(scale, .lscale , earg = .escale )
-    dp.deta <- dtheta.deta(parg, .lshape2.p, earg = .eshape2.p )
-    dq.deta <- dtheta.deta(qq, .lshape3.q, earg = .eshape3.q)
-
-    c(w) * cbind( dl.dscale * dscale.deta,
-                  dl.dp * dp.deta,
-                  dl.dq * dq.deta )
-  }), list( .lscale = lscale,
-            .escale = escale, 
-            .eshape2.p = eshape2.p, .eshape3.q = eshape3.q,
-            .lshape2.p = lshape2.p, .lshape3.q = lshape3.q ))),
+    
+    dscale.deta <- dtheta.deta(Scale, .lscale ,    earg = .escale )
+    da.deta     <- dtheta.deta(aa,    .lshape1.a , earg = .eshape1.a )
+    dq.deta     <- dtheta.deta(qq,    .lshape3.q , earg = .eshape3.q )
+    
+    myderiv <- if ( .lss ) {
+      c(w) * cbind(dl.dscale * dscale.deta,
+                   dl.da * da.deta,
+                   dl.dq * dq.deta)
+    } else {
+      c(w) * cbind(dl.da * da.deta,
+                   dl.dscale * dscale.deta,
+                   dl.dq * dq.deta)
+    }
+    myderiv[, interleave.VGAM(M, M = M1)]
+  }), list(  .lscale    = lscale   , .lshape1.a = lshape1.a,
+             .escale    = escale   , .eshape1.a = eshape1.a,
+                                     .lshape3.q = lshape3.q,
+                                     .eshape3.q = eshape3.q,
+             .lss = lss ))),
   weight = eval(substitute(expression({
     temp5  <- trigamma(parg + qq)
-    ned2l.dscale <- aa^2 * parg * qq / (scale^2 * (1+parg+qq))
-    ned2l.dp <- trigamma(parg) - temp5
-    ned2l.dq <- trigamma(qq) - temp5
-    ned2l.dscalep <-  aa * qq   / (scale*(parg+qq))
-    ned2l.dscaleq <- -aa * parg / (scale*(parg+qq))
-    ned2l.dpq <- -temp5
+    temp5a <- trigamma(parg)
+    temp5b <- trigamma(qq)
 
-    wz <- matrix(as.numeric(NA), n, dimm(M))  #M==3 means 6=dimm(M)
-    wz[, iam(1, 1, M)] <- ned2l.dscale * dscale.deta^2
-    wz[, iam(2, 2, M)] <- ned2l.dp * dp.deta^2
-    wz[, iam(3, 3, M)] <- ned2l.dq * dq.deta^2
-    wz[, iam(1, 2, M)] <- ned2l.dscalep * dscale.deta * dp.deta
-    wz[, iam(1, 3, M)] <- ned2l.dscaleq * dscale.deta * dq.deta
-    wz[, iam(2, 3, M)] <- ned2l.dpq * dp.deta * dq.deta
-    wz <- c(w) * wz
+    ned2l.da <- (1 + parg + qq + parg * qq * (temp5a + temp5b +
+                (temp3b - temp3a + (parg-qq)/(parg*qq))^2 -
+                (parg^2 + qq^2) / (parg*qq)^2)) / (aa^2 * (1+parg+qq))
+    ned2l.dscale  <- (aa^2) * parg * qq / ((1+parg+qq) * Scale^2)
+    ned2l.dq      <- temp5b - temp5
+    ned2l.dascale <- (parg - qq - parg * qq *
+                     (temp3a -temp3b)) / (Scale*(1 + parg+qq))
+    ned2l.daq     <- -(parg * (temp3b -temp3a) -1) / (aa*(parg+qq))
+    ned2l.dscaleq <- -aa * parg / (Scale*(parg+qq))
+    wz <- if ( .lss ) {
+      array(c(c(w) * ned2l.dscale * dscale.deta^2,
+              c(w) * ned2l.da * da.deta^2,
+              c(w) * ned2l.dq * dq.deta^2,
+              c(w) * ned2l.dascale * da.deta * dscale.deta,
+              c(w) * ned2l.daq * da.deta * dq.deta,
+              c(w) * ned2l.dscaleq * dscale.deta * dq.deta),
+            dim = c(n, M/M1, M1*(M1+1)/2))
+    } else {
+      array(c(c(w) * ned2l.da * da.deta^2,
+              c(w) * ned2l.dscale * dscale.deta^2,
+              c(w) * ned2l.dq * dq.deta^2,
+              c(w) * ned2l.dascale * da.deta * dscale.deta,
+              c(w) * ned2l.dscaleq * dscale.deta * dq.deta,
+              c(w) * ned2l.daq * da.deta * dq.deta),
+            dim = c(n, M/M1, M1*(M1+1)/2))
+    }
+    wz <- arwz2wz(wz, M = M, M1 = M1)
     wz
-  }), list(
-    .lscale = lscale, .lshape2.p = lshape2.p, .lshape3.q = lshape3.q,
-    .escale = escale, .eshape2.p = eshape2.p, .eshape3.q = eshape3.q ))))
+  }), list( .lscale    = lscale   , .lshape1.a = lshape1.a,
+            .escale    = escale   , .eshape1.a = eshape1.a, 
+                                    .lshape3.q = lshape3.q,
+                                    .eshape3.q = eshape3.q,
+            .lss = lss ))))
 }
 
 
 
- lomax <- function(  # lss,
-                   lscale = "loge",    lshape3.q = "loge",
-                   iscale = NULL,      ishape3.q = NULL,  # 2.0, 
-                                       gshape3.q = exp(-5:5),
-                   zero = NULL) {
 
 
-  if (length(zero) &&
-      !is.Numeric(zero, integer.valued = TRUE, positive = TRUE))
+
+
+
+
+
+
+
+ dagum     <- function(lscale    = "loge",
+                       lshape1.a = "loge",
+                       lshape2.p = "loge",
+                       iscale    = NULL,
+                       ishape1.a = NULL,
+                       ishape2.p = NULL,
+                       imethod   = 1,
+                       lss       = TRUE,
+                       gscale    = exp(-5:5),
+                       gshape1.a = exp(-5:5),
+                       gshape2.p = exp(-5:5),
+                       probs.y   = c(0.25, 0.50, 0.75),
+                       zero      = ifelse(lss, -(2:3), -c(1, 3))) {
+
+
+
+
+
+  if (length(lss) != 1 && !is.logical(lss))
+    stop("Argument 'lss' not specified correctly")
+  
+  if (!is.Numeric(imethod, length.arg = 1,
+                  integer.valued = TRUE, 
+                  positive = TRUE) || imethod > 2)
+    stop("Bad input for argument 'imethod'")
+  
+  if (length(iscale) && !is.Numeric(iscale, positive = TRUE)) 
+    stop("Bad input for argument 'iscale'")
+  
+  if (length(ishape1.a) && !is.Numeric(ishape1.a, positive = TRUE))
+    stop("Bad input for argument 'ishape1.a'")
+  
+  if (length(ishape2.p) && !is.Numeric(ishape2.p, positive = TRUE))
+    stop("Bad input for argument 'ishape2.p'")
+  
+  if (length(probs.y) < 2 || max(probs.y) > 1 || 
+        !is.Numeric(probs.y, positive = TRUE))
+    stop("Bad input for argument 'probs.y'")
+
+  if (length(zero) && !is.Numeric(zero, integer.valued = TRUE))
     stop("bad input for argument 'zero'")
-
-
-
-  lshape3.q <- as.list(substitute(lshape3.q))
-  eshape3.q <- link2list(lshape3.q)
-  lshape3.q <- attr(eshape3.q, "function.name")
-
+  
   lscale <- as.list(substitute(lscale))
   escale <- link2list(lscale)
   lscale <- attr(escale, "function.name")
-
-
-
-  new("vglmff",
-  blurb = c("Lomax distribution\n\n",
-          "Links:    ",
-          namesof("scale",    lscale,    earg = escale), ", ", 
-          namesof("shape3.q", lshape3.q, earg = eshape3.q), "\n", 
-          "Mean:     scale / (shape3.q - 1)"),
-  constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
-  }), list( .zero = zero ))),
-  initialize = eval(substitute(expression({
-    if (ncol(cbind(y)) != 1)
-        stop("response must be a vector or a one-column matrix")
-
-    w.y.check(w = w, y = y,
-              ncol.w.max = 1, ncol.y.max = 1)
-
-
-
-    mynames1 <- "scale"
-    mynames2 <- "shape3.q"
-    predictors.names <-
-      c(namesof(mynames1,  .lscale    , earg = .escale ,    tag = FALSE),
-        namesof(mynames2,  .lshape3.q , earg = .eshape3.q , tag = FALSE))
-
-    aa <- parg <- 1
-
-
-
-                   
-    lomax.Loglikfun <- function(shape3.q, y, x, w, extraargs) {
-      qvec <- c(0.25, 0.5, 0.75)  # Arbitrary; could be made an argument
-      xvec <- log( (1-qvec)^(-1/ shape3.q ) - 1 )
-      fit0 <- lsfit(x = xvec, y = log(quantile(y, qvec )))
-      init.scale <- exp(fit0$coef[1])
-
-      ans <- sum(c(w) * dlomax(x = y, shape3.q = shape3.q,
-                               scale = init.scale, log = TRUE))
-      ans
-    }
-
-    shape3.q.grid <- .gshape3.q
-    yvec <- y
-    wvec <- w
-    Init.shape3.q <-
-        grid.search(shape3.q.grid,
-                    objfun = lomax.Loglikfun,
-                    y = yvec, x = x, w = wvec,
-                    extraargs = NULL)
-
-
-
-
-    if (!length( .iscale )) {
-      qvec <- c(0.25, 0.5, 0.75)  # Arbitrary; could be made an argument
-      ishape3.q <- if (length( .ishape3.q )) .ishape3.q else Init.shape3.q
-      xvec <- log( (1-qvec)^(-1/ ishape3.q ) - 1 )
-      fit0 <- lsfit(x = xvec, y = log(quantile(y, qvec )))
-    }
-
-    if (!length(etastart)) {
-      qq    <- rep(if (length( .ishape3.q)) .ishape3.q else Init.shape3.q,
-                   length.out = n)
-      scale <- rep(if (length( .iscale )) .iscale else
-                   exp(fit0$coef[1]),
-                   length.out = n)
-
-
-      aa     <- 1
-      outOfRange <- (qq   - 1/aa <= 0)
-      qq[outOfRange] <- 1 / aa + 1
-
-
-
-      etastart <-
-        cbind(theta2eta(scale, .lscale   , earg = .escale ),
-              theta2eta(qq,    .lshape3.q, earg = .eshape3.q))
-    }
-  }), list( .lscale = lscale, .lshape3.q = lshape3.q,
-            .escale = escale, .eshape3.q = eshape3.q,
-                              .gshape3.q = gshape3.q,
-            .iscale = iscale, .ishape3.q = ishape3.q ))),
-  linkinv = eval(substitute(function(eta, extra = NULL) {
-    aa     <- 1
-    Scale  <- eta2theta(eta[, 1], .lscale    , earg = .escale )
-    parg   <- 1
-    qq     <- eta2theta(eta[, 2], .lshape3.q , earg = .eshape3.q )
-
-
-
-
-
-    ans <- Scale * exp(lgamma(parg + 1/aa) +
-                       lgamma(qq   - 1/aa) - lgamma(parg) - lgamma(qq))
-    ans[parg + 1/aa <= 0] <- NA
-    ans[qq   - 1/aa <= 0] <- NA
-    ans[Scale       <= 0] <- NA
-    ans[qq          <= 0] <- NA
-    ans
-  }, list( .lscale = lscale, .lshape3.q = lshape3.q,
-           .escale = escale, .eshape3.q = eshape3.q ))),
-  last = eval(substitute(expression({
-    misc$link <-    c(scale = .lscale , shape3.q = .lshape3.q )
-
-    misc$earg <- list(scale = .escale , shape3.q = .eshape3.q )
-
-
-    misc$expected <- TRUE
-    misc$multipleResponses <- FALSE
-  }), list( .lscale = lscale, .lshape3.q = lshape3.q,
-            .escale = escale, .eshape3.q = eshape3.q ))),
-  loglikelihood = eval(substitute(
-    function(mu, y, w, residuals = FALSE, eta,
-             extra = NULL,
-             summation = TRUE) {
-    aa <- 1
-    scale <- eta2theta(eta[, 1], .lscale ,    earg = .escale )
-    parg <- 1
-    qq <-    eta2theta(eta[, 2], .lshape3.q,  earg = .eshape3.q )
-    if (residuals) {
-      stop("loglikelihood residuals not implemented yet")
-    } else {
-      ll.elts <- c(w) * dlomax(x = y, scale = scale,
-                               shape3.q = qq, log = TRUE)
-      if (summation) {
-        sum(ll.elts)
-      } else {
-        ll.elts
-      }
-    }
-  }, list( .lscale = lscale, .lshape3.q = lshape3.q,
-           .escale = escale, .eshape3.q = eshape3.q ))),
-  vfamily = c("lomax"),
-
-
-  simslot = eval(substitute(
-  function(object, nsim) {
-
-    pwts <- if (length(pwts <- object@prior.weights) > 0)
-              pwts else weights(object, type = "prior")
-    if (any(pwts != 1)) 
-      warning("ignoring prior weights")
-    eta <- predict(object)
-    scale <- eta2theta(eta[, 1], .lscale ,    earg = .escale )
-    qq <-    eta2theta(eta[, 2], .lshape3.q,  earg = .eshape3.q )
-    rlomax(nsim * length(qq), scale = scale, shape3.q = qq)
-  }, list( .lscale = lscale, .lshape3.q = lshape3.q,
-           .escale = escale, .eshape3.q = eshape3.q ))),
-
-
-  deriv = eval(substitute(expression({
-    aa <- 1
-    scale <- eta2theta(eta[, 1], .lscale , earg = .escale )
-    parg <- 1
-    qq <- eta2theta(eta[, 2], .lshape3.q, earg = .eshape3.q)
-    temp2 <- (y/scale)^aa
-
-    dl.dscale <- (aa/scale) * (-parg + (parg+qq) / (1+1/temp2))
-    dl.dq <- digamma(parg + qq) - digamma(qq) - log1p(temp2)
-
-    dscale.deta <- dtheta.deta(scale, .lscale ,   earg = .escale )
-    dq.deta     <- dtheta.deta(qq,    .lshape3.q, earg = .eshape3.q)
-
-    c(w) * cbind( dl.dscale * dscale.deta,
-                  dl.dq * dq.deta )
-  }), list( .lscale = lscale, .lshape3.q = lshape3.q,
-            .escale = escale, .eshape3.q = eshape3.q ))),
-  weight = eval(substitute(expression({
-    ned2l.dscale <- aa^2 * parg * qq / (scale^2 * (1+parg+qq))
-    ned2l.dq <- 1/qq^2 
-    ned2l.dscaleq <- -aa * parg / (scale*(parg+qq))
-
-    wz <- matrix(as.numeric(NA), n, dimm(M))  #M == 2 means 3=dimm(M)
-    wz[, iam(1, 1, M)] <- ned2l.dscale * dscale.deta^2
-    wz[, iam(2, 2, M)] <- ned2l.dq * dq.deta^2
-    wz[, iam(1, 2, M)] <- ned2l.dscaleq * dscale.deta * dq.deta
-    wz <- c(w) * wz
-    wz
-  }), list( .lscale = lscale, .lshape3.q = lshape3.q,
-            .escale = escale, .eshape3.q = eshape3.q ))))
-}
-
-
-
- fisk <- function(lss,
-                  lshape1.a = "loge", lscale = "loge",
-                  ishape1.a = NULL,   iscale = NULL,
-                  zero = NULL) {
-
-  if (!is.logical(lss) || lss)
-    stop("argument 'lss' not specified correctly. ",
-         "See online help for important information")
-
-
-
-  if (length(zero) &&
-      !is.Numeric(zero, integer.valued = TRUE, positive = TRUE))
-    stop("bad input for argument 'zero'")
-
-
+  
   lshape1.a <- as.list(substitute(lshape1.a))
   eshape1.a <- link2list(lshape1.a)
   lshape1.a <- attr(eshape1.a, "function.name")
+  
+  lshape2.p <- as.list(substitute(lshape2.p))
+  eshape2.p <- link2list(lshape2.p)
+  lshape2.p <- attr(eshape2.p, "function.name")
+  
 
-  lscale <- as.list(substitute(lscale))
-  escale <- link2list(lscale)
-  lscale <- attr(escale, "function.name")
-
-
-
-  new("vglmff",
-  blurb = c("Fisk distribution\n\n",
-            "Links:    ",
-            namesof("shape1.a", lshape1.a, earg = eshape1.a), ", ", 
-            namesof("scale",    lscale,    earg = escale), "\n", 
-            "Mean:     scale * gamma(1 + 1/shape1.a) * ",
-                      "gamma(1 - 1/shape1.a)"),
+  new("vglmff", 
+  blurb = 
+    c("Dagum distribution \n\n",
+      "Links:    ", 
+      ifelse (lss,
+              namesof("scale"   , lscale   , earg = escale),
+              namesof("shape1.a", lshape1.a, earg = eshape1.a)), ", ",
+      ifelse (lss, 
+              namesof("shape1.a", lshape1.a, earg = eshape1.a),
+              namesof("scale"   , lscale   , earg = escale)), ", ",
+      namesof("shape2.p" , lshape2.p, earg = eshape2.p), "\n",
+      "Mean:     scale * gamma(shape2.p + 1/shape1.a) * ",
+                "gamma(1 - 1/shape1.a) / ",
+                "gamma(shape2.p)"),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
+    dotzero <- .zero
+    M1 <- 3
+    eval(negzero.expression.VGAM)
   }), list( .zero = zero ))),
-  initialize = eval(substitute(expression({
+  infos = eval(substitute(function(...) {
+    list(M1 = 3,
+         Q1 = 1,
+         expected = TRUE,
+         zero = .zero ,
+         multipleResponses = TRUE,
+         lscale    = .lscale    , lshape1.a = .lshape1.a ,
+         escale    = .escale    , eshape1.a = .eshape1.a ,
+         lshape2.p = .lshape2.p ,                         
+         eshape2.p = .eshape2.p ,                         
+         .zero = zero )
+  }, list( .lscale = lscale      , .lshape1.a = lshape1.a,
+           .escale = escale      , .eshape1.a = eshape1.a,
+           .lshape2.p = lshape2.p,                        
+           .eshape2.p = eshape2.p,                        
+           .zero = zero ))),
+  initialize = eval(substitute(expression({ 
+    temp5 <- w.y.check(w = w, y = y, 
+                       Is.positive.y = TRUE, 
+                       ncol.w.max = Inf, 
+                       ncol.y.max = Inf, 
+                       out.wy = TRUE, 
+                       colsyperw = 1, 
+                       maximize = TRUE)
+    y    <- temp5$y
+    w    <- temp5$w
+    M1 <- 3  # Number of parameters for one response
+    NOS  <- ncoly <- ncol(y)
+    M    <- M1*ncol(y)
 
-    w.y.check(w = w, y = y,
-              ncol.w.max = 1, ncol.y.max = 1)
+    scaL.names  <- param.names("scale",     NOS)
+    sha1.names  <- param.names("shape1.a",  NOS)
+    sha2.names  <- param.names("shape2.p",  NOS)
 
-
-    predictors.names <-
-      c(namesof("shape1.a", .lshape1.a , earg = .eshape1.a , tag = FALSE),
-        namesof("scale",    .lscale    , earg = .escale    , tag = FALSE))
-
-    qq <- parg <- 1
-
-    if (!length( .iscale )) {
-      qvec <- c( 0.25, 0.5, 0.75)  # Arbitrary; could be made an argument
-      xvec <- log( 1 / qvec - 1 )
-      fit0 <- lsfit(x = xvec, y = log(quantile(y, qvec )))
-    }
-
+    predictors.names <- c(
+      if ( .lss ) {
+        c(namesof(scaL.names , .lscale    , earg = .escale    , tag = FALSE),
+          namesof(sha1.names , .lshape1.a , earg = .eshape1.a , tag = FALSE))
+      } else {
+        c(namesof(sha1.names , .lshape1.a , earg = .eshape1.a , tag = FALSE),
+          namesof(scaL.names , .lscale    , earg = .escale    , tag = FALSE))
+      },
+      namesof(sha2.names , .lshape2.p , earg = .eshape2.p , tag = FALSE))
+    predictors.names <- predictors.names[interleave.VGAM(M, M = M1)]
+    
     if (!length(etastart)) {
-      aa <- rep(if (length( .ishape1.a)) .ishape1.a else
-                abs(-1 / fit0$coef[2]),
-                length.out = n)
-      scale <- rep(if (length( .iscale )) .iscale else
-                   exp(fit0$coef[1]),
-                   length.out = n)
+      sc.init <-
+      aa.init <-
+      pp.init <- matrix(as.numeric(NA), n, NOS)
+          
+      for (spp. in 1:NOS) {  # For each response 'y_spp.'... do:
+        yvec <- y[, spp.]
+        wvec <- w[, spp.]
+
+        if ( .imethod == 1 ) {
+          gscale     <- .gscale
+          gshape1.a  <- .gshape1.a
+          gshape2.p  <- .gshape2.p        
+          if (length( .iscale ))
+            gscale    <-  rep( .iscale    , length = NOS)
+          if (length( .ishape1.a ))
+            gshape1.a <-  rep( .ishape1.a , length = NOS)
+          if (length( .ishape2.p ))
+            gshape2.p <-  rep( .ishape2.p , length = NOS)
+          allmat1 <- expand.grid(shape1.a = gshape1.a,
+                                 shape2.p = gshape2.p)
+          allmat2 <- matrix(as.numeric(NA), nrow(allmat1), 2)
+
+          ll.dagu <- function(scaleval, x = x, y = y, w = w, extraargs) { 
+            ans <- sum(c(w) * dgenbetaII(x = y,
+                                         scale    = scaleval,
+                                         shape1.a = extraargs$Shape1.a,
+                                         shape2.p = extraargs$Shape2.p,
+                                         shape3.q = 1,
+                                         log = TRUE))
+            ans
+          }
+
+          for (iloc in 1:nrow(allmat1)) {
+            allmat2[iloc, ] <-
+              grid.search(gscale, objfun = ll.dagu,
+                            y = yvec, x = x, w = wvec,
+                            ret.objfun = TRUE,  # 2nd value is the loglik
+                            extraargs = list(Shape1.a = allmat1[iloc, 1],
+                                             Shape2.p = allmat1[iloc, 2]))
+          }
+          ind5 <- which.max(allmat2[, 2])  # 2nd value is the loglik
+          sc.init[, spp.] <- allmat2[ind5, 1]
+          aa.init[, spp.] <- allmat1[ind5, 1]
+          pp.init[, spp.] <- allmat1[ind5, 2]
+       } else {  # .imethod == 2
+          qvec <- .probs.y 
+          ishape2.p <- if (length( .ishape2.p )) .ishape2.p else 1
+          xvec <- log( qvec^(-1/ ishape2.p) - 1 )
+          fit0 <- lsfit(x = xvec, y = log(quantile(yvec,  qvec)))
+          sc.init[, spp.] <- if (length( .iscale )) .iscale else
+                             exp(fit0$coef[1])
+          aa.init[, spp.] <- if (length( .ishape1.a )) .ishape1.a else
+                             -1/fit0$coef[2]
+          pp.init[, spp.] <- ishape2.p
+      }
+    }  # End of for (spp. ...)
 
 
-      parg   <- 1
-      qq     <- 1
-      outOfRange <- (parg + 1/aa <= 0)
-        parg[outOfRange] <- 1 / aa[outOfRange] + 1
-        outOfRange <- (qq   - 1/aa <= 0)
-      qq[outOfRange] <- 1 / aa + 1
 
-
+      finite.mean <- 1 < aa.init
+      COP.use <- 1.15
+      while (FALSE && any(!finite.mean)) {
+        aa.init[!finite.mean] <- 0.1 + aa.init[!finite.mean] * COP.use
+        finite.mean <- 1 < aa.init
+      }
 
       etastart <-
-        cbind(theta2eta(aa,    .lshape1.a , earg = .eshape1.a ),
-              theta2eta(scale, .lscale    , earg = .escale ))
-    }
-  }), list( .lshape1.a = lshape1.a, .lscale = lscale,
-            .eshape1.a = eshape1.a, .escale = escale, 
-            .ishape1.a = ishape1.a, .iscale = iscale ))),
+        cbind(if ( .lss )
+              cbind(theta2eta(sc.init, .lscale    , earg = .escale    ),
+                    theta2eta(aa.init, .lshape1.a , earg = .eshape1.a )) else
+              cbind(theta2eta(aa.init, .lshape1.a , earg = .eshape1.a ),
+                    theta2eta(sc.init, .lscale    , earg = .escale    )),
+              theta2eta(pp.init , .lshape2.p , earg = .eshape2.p ))
+      etastart <- etastart[, interleave.VGAM(M, M = M1)]
+    }  # End of etastart.
+  }), list( .lscale    = lscale   , .lshape1.a = lshape1.a,
+            .escale    = escale   , .eshape1.a = eshape1.a,
+            .iscale    = iscale   , .ishape1.a = ishape1.a,
+            .gscale    = gscale   , .gshape1.a = gshape1.a,           
+            .lshape2.p = lshape2.p,                        
+            .eshape2.p = eshape2.p,                        
+            .ishape2.p = ishape2.p,
+            .gshape2.p = gshape2.p,
+            .imethod   = imethod   , .probs.y = probs.y,
+            .lss = lss ))), 
   linkinv = eval(substitute(function(eta, extra = NULL) {
-    aa     <- eta2theta(eta[, 1], .lshape1.a , earg = .eshape1.a )
-    Scale  <- eta2theta(eta[, 2], .lscale    , earg = .escale )
-    parg   <- 1
+    M1 <- 3
+    NOS <- ncol(eta)/M1
+    if ( .lss ) {
+      Scale <- eta2theta(eta[, M1*(1:NOS) - 2, drop = FALSE],
+                         .lscale ,  earg = .escale )
+      aa    <- eta2theta(eta[, M1*(1:NOS) - 1, drop = FALSE],
+                         .lshape1.a , earg = .eshape1.a )
+    } else {
+      aa    <- eta2theta(eta[, M1*(1:NOS) - 2, drop = FALSE],
+                         .lshape1.a , earg = .eshape1.a )
+      Scale <- eta2theta(eta[, M1*(1:NOS) - 1, drop = FALSE],
+                         .lscale    ,  earg = .escale )
+    }
+    parg <- eta2theta(eta[, M1*(1:NOS)    , drop = FALSE],
+                      .lshape2.p , earg = .eshape2.p )
+
     qq     <- 1
 
     ans <- Scale * exp(lgamma(parg + 1/aa) +
@@ -3999,39 +3965,83 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
     ans[qq   - 1/aa <= 0] <- NA
     ans[aa          <= 0] <- NA
     ans[Scale       <= 0] <- NA
+    ans[parg        <= 0] <- NA
     ans
-  }, list( .lshape1.a = lshape1.a, .lscale = lscale,
-           .eshape1.a = eshape1.a, .escale = escale))),
+  }, list( .lscale    = lscale   , .lshape1.a = lshape1.a,
+           .escale    = escale   , .eshape1.a = eshape1.a,
+           .lshape2.p = lshape2.p,
+           .eshape2.p = eshape2.p,
+           .lss = lss ))),
   last = eval(substitute(expression({
-    misc$link <-    c(shape1.a = .lshape1.a , scale = .lscale )
+    M1 <- 3
 
-    misc$earg <- list(shape1.a = .eshape1.a , scale = .escale )
-
-    misc$expected <- TRUE
-    misc$multipleResponses <- FALSE
-  }), list( .lshape1.a = lshape1.a, .lscale = lscale,
-            .eshape1.a = eshape1.a, .escale = escale))),
-  loglikelihood = eval(substitute(
-    function(mu, y, w, residuals = FALSE, eta,
-             extra = NULL,
-             summation = TRUE) {
-    aa    <- eta2theta(eta[, 1], .lshape1.a , earg = .eshape1.a )
-    Scale <- eta2theta(eta[, 2], .lscale    , earg = .escale )
-    parg <- qq <- 1
-    if (residuals) {
-      stop("loglikelihood residuals not implemented yet")
+    misc$link <- c(rep( if ( .lss ) .lscale else .lshape1.a , len = ncoly),
+                   rep( if ( .lss ) .lshape1.a else .lscale , len = ncoly),
+                   rep( .lshape2.p , length = ncoly))[
+                   interleave.VGAM(M, M = M1)]
+    temp.names <- if ( .lss ) {
+      c(scaL.names, sha1.names, sha2.names)
     } else {
-      ll.elts <- c(w) * dfisk(x = y, shape1.a = aa, scale = Scale, log = TRUE)
-      if (summation) {
-        sum(ll.elts)
-      } else {
-        ll.elts
-      }
+      c(sha1.names, scaL.names, sha2.names)
     }
-  }, list( .lshape1.a = lshape1.a, .lscale = lscale,
-           .eshape1.a = eshape1.a, .escale = escale))),
-  vfamily = c("fisk"),
+    names(misc$link) <- temp.names[interleave.VGAM(M, M = M1)]
 
+    misc$earg <- vector("list", M)
+    names(misc$earg) <- temp.names
+    for (ii in 1:ncoly) {
+      if ( .lss ) {
+        misc$earg[[M1*ii-2]] <- .escale
+        misc$earg[[M1*ii-1]] <- .eshape1.a
+      } else {
+        misc$earg[[M1*ii-2]] <- .eshape1.a
+        misc$earg[[M1*ii-1]] <- .escale
+      }
+      misc$earg[[M1*ii  ]] <- .eshape2.p
+    }
+
+    misc$expected          <- TRUE
+    misc$multipleResponses <- TRUE
+  }), list( .lscale    = lscale   , .lshape1.a = lshape1.a,
+            .escale    = escale   , .eshape1.a = eshape1.a,
+            .lshape2.p = lshape2.p,
+            .eshape2.p = eshape2.p,
+            .lss = lss ))), 
+  loglikelihood = eval(substitute(
+    function(mu, y, w, residuals = FALSE, 
+             eta, extra = NULL, summation = TRUE) {
+      M1  <- 3
+      NOS <- ncol(eta)/M1
+      if ( .lss ) {
+        Scale <- eta2theta(eta[, M1*(1:NOS) - 2, drop = FALSE],
+                           .lscale    , earg = .escale    )
+        aa    <- eta2theta(eta[, M1*(1:NOS) - 1, drop = FALSE],
+                           .lshape1.a , earg = .eshape1.a )
+      } else {
+        aa    <- eta2theta(eta[, M1*(1:NOS) - 2, drop = FALSE],
+                           .lshape1.a , earg = .eshape1.a )
+        Scale <- eta2theta(eta[, M1*(1:NOS) - 1, drop = FALSE],
+                           .lscale    , earg = .escale    )
+      }
+      parg   <- eta2theta(eta[, M1*(1:NOS)    , drop = FALSE],
+                          .lshape2.p , earg = .eshape2.p )
+      if (residuals) {
+        stop("loglikelihood residuals not implemented yet")
+      } else {
+        ll.elts <-
+          c(w) * dgenbetaII(x = y, scale = Scale, shape1.a = aa,
+                            shape2.p = parg, shape3.q = 1, log = TRUE)
+        if (summation) {
+          sum(ll.elts)
+        } else {
+          ll.elts
+        }
+      }
+    }, list( .lscale    = lscale   , .lshape1.a = lshape1.a,
+             .escale    = escale   , .eshape1.a = eshape1.a,
+             .lshape2.p = lshape2.p,
+             .eshape2.p = eshape2.p,
+             .lss = lss ))),
+  vfamily = c("dagum"),
 
   simslot = eval(substitute(
   function(object, nsim) {
@@ -4041,167 +4051,1361 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
     if (any(pwts != 1)) 
       warning("ignoring prior weights")
     eta <- predict(object)
-    aa    <- eta2theta(eta[, 1], .lshape1.a , earg = .eshape1.a )
-    Scale <- eta2theta(eta[, 2], .lscale ,    earg = .escale )
-    rfisk(nsim * length(aa), shape1.a = aa, scale = Scale)
-  }, list( .lshape1.a = lshape1.a, .lscale = lscale,
-           .eshape1.a = eshape1.a, .escale = escale ))),
+    if ( .lss ) { 
+      Scale <- eta2theta(eta[, M1*(1:NOS) - 2, drop = FALSE],
+                         .lscale    , earg = .escale   )
+      aa    <- eta2theta(eta[, M1*(1:NOS) - 1, drop = FALSE],
+                         .lshape1.a , earg = .eshape1.a)
+    } else {
+      aa    <- eta2theta(eta[, M1*(1:NOS) - 2, drop = FALSE],
+                         .lshape1.a , earg = .eshape1.a)
+      Scale <- eta2theta(eta[, M1*(1:NOS) - 1, drop = FALSE],
+                         .lscale    , earg = .escale )
+    }  
+    parg <- eta2theta(eta[, M1*(1:NOS)    , drop = FALSE],
+                      .lshape2.p , earg = .eshape2.p)
+    qq   <- 1
+    rdagum(nsim * length(parg), shape1.a = aa, scale = Scale,
+           shape2.p = parg)
+  }, list(  .lscale    = lscale   , .lshape1.a = lshape1.a,
+            .escale    = escale   , .eshape1.a = eshape1.a,
+            .lshape2.p = lshape2.p,
+            .eshape2.p = eshape2.p,
+            .lss = lss ))),
 
 
   deriv = eval(substitute(expression({
-    aa    <- eta2theta(eta[, 1], .lshape1.a , earg = .eshape1.a )
-    scale <- eta2theta(eta[, 2], .lscale    , earg = .escale )
-    parg <- qq <- 1
-
-    temp1 <- log(y/scale)
-    temp2 <- (y/scale)^aa
+    M1 <- 3
+    NOS <- ncol(eta)/M1  # Needed for summary()
+    if ( .lss ) { 
+      Scale <- eta2theta(eta[, M1*(1:NOS) - 2, drop = FALSE],
+                         .lscale    , earg = .escale   )
+      aa    <- eta2theta(eta[, M1*(1:NOS) - 1, drop = FALSE],
+                         .lshape1.a , earg = .eshape1.a)
+    } else {
+      aa    <- eta2theta(eta[, M1*(1:NOS) - 2, drop = FALSE],
+                         .lshape1.a , earg = .eshape1.a)
+      Scale <- eta2theta(eta[, M1*(1:NOS) - 1, drop = FALSE],
+                         .lscale    , earg = .escale )
+    }  
+    parg <- eta2theta(eta[, M1*(1:NOS)    , drop = FALSE],
+                      .lshape2.p , earg = .eshape2.p)
+    qq   <- 1
+    temp1 <- log(y/Scale)
+    temp2 <- (y/Scale)^aa
+    temp3 <- digamma(parg + qq)
     temp3a <- digamma(parg)
     temp3b <- digamma(qq)
-
+    temp4 <- log1p(temp2)
+  
+    dl.dscale <- (aa/Scale) * (-parg + (parg+qq) / (1+1/temp2))
     dl.da <- 1/aa + parg * temp1 - (parg+qq) * temp1 / (1+1/temp2)
-    dl.dscale <- (aa/scale) * (-parg + (parg+qq) / (1+1/temp2))
+    dl.dp <- aa * temp1 + temp3 - temp3a - temp4
+    
+    dscale.deta <- dtheta.deta(Scale, .lscale ,    earg = .escale )
+    da.deta     <- dtheta.deta(aa,    .lshape1.a , earg = .eshape1.a )
+    dp.deta     <- dtheta.deta(parg,  .lshape2.p , earg = .eshape2.p )
+    
+    myderiv <- if ( .lss ) {
+      c(w) * cbind(dl.dscale * dscale.deta,
+                   dl.da * da.deta,
+                   dl.dp * dp.deta)
+    } else {
+      c(w) * cbind(dl.da * da.deta,
+                   dl.dscale * dscale.deta,
+                   dl.dp * dp.deta)
+    }
+    myderiv[, interleave.VGAM(M, M = M1)]
+  }), list(  .lscale    = lscale   , .lshape1.a = lshape1.a,
+             .escale    = escale   , .eshape1.a = eshape1.a,
+             .lshape2.p = lshape2.p,
+             .eshape2.p = eshape2.p,
+             .lss = lss ))),
+  weight = eval(substitute(expression({
+    temp5  <- trigamma(parg + qq)
+    temp5a <- trigamma(parg)
+    temp5b <- trigamma(qq)
 
-    da.deta     <- dtheta.deta(aa,   .lshape1.a , earg = .eshape1.a )
-    dscale.deta <- dtheta.deta(scale, .lscale   , earg = .escale )
-
-    c(w) * cbind( dl.da * da.deta,
-                  dl.dscale * dscale.deta )
-  }), list( .lshape1.a = lshape1.a, .lscale = lscale,
-            .eshape1.a = eshape1.a, .escale = escale))),
-    weight = eval(substitute(expression({
-    ned2l.da <- (1 + parg+qq + parg * qq * (trigamma(parg) + trigamma(qq) +
-                (temp3b - temp3a + (parg-qq)/(parg*qq))^2 - 
+    ned2l.da <- (1 + parg + qq + parg * qq * (temp5a + temp5b +
+                (temp3b - temp3a + (parg-qq)/(parg*qq))^2 -
                 (parg^2 + qq^2) / (parg*qq)^2)) / (aa^2 * (1+parg+qq))
-    ned2l.dscale <- aa^2 * parg * qq / (scale^2 * (1 + parg + qq))
-    ned2l.dascale <- (parg - qq - parg*qq*(temp3a - temp3b)) / (
-                      scale * (1 + parg + qq))
-
-    wz <- matrix(as.numeric(NA), n, dimm(M))  #M == 2 means 3=dimm(M)
-    wz[, iam(1, 1, M)] <- ned2l.da * da.deta^2
-    wz[, iam(2, 2, M)] <- ned2l.dscale * dscale.deta^2
-    wz[, iam(1, 2, M)] <- ned2l.dascale * da.deta * dscale.deta
-
-    wz <- c(w) * wz
+    ned2l.dscale  <- (aa^2) * parg * qq / ((1+parg+qq) * Scale^2)
+    ned2l.dp      <- temp5a - temp5
+    ned2l.dascale <- (parg - qq - parg * qq *
+                     (temp3a -temp3b)) / (Scale*(1 + parg+qq))
+    ned2l.dap     <- -(qq   * (temp3a -temp3b) -1) / (aa*(parg+qq))
+    ned2l.dscalep <-  aa * qq   / (Scale*(parg+qq))
+    wz <- if ( .lss ) {
+      array(c(c(w) * ned2l.dscale * dscale.deta^2,
+              c(w) * ned2l.da * da.deta^2,
+              c(w) * ned2l.dp * dp.deta^2,
+              c(w) * ned2l.dascale * da.deta * dscale.deta,
+              c(w) * ned2l.dap * da.deta * dp.deta,
+              c(w) * ned2l.dscalep * dscale.deta * dp.deta),
+            dim = c(n, M/M1, M1*(M1+1)/2))
+    } else {
+      array(c(c(w) * ned2l.da * da.deta^2,
+              c(w) * ned2l.dscale * dscale.deta^2,
+              c(w) * ned2l.dp * dp.deta^2,
+              c(w) * ned2l.dascale * da.deta * dscale.deta,
+              c(w) * ned2l.dscalep * dscale.deta * dp.deta,
+              c(w) * ned2l.dap * da.deta * dp.deta),
+            dim = c(n, M/M1, M1*(M1+1)/2))
+    }
+    wz <- arwz2wz(wz, M = M, M1 = M1)
     wz
-  }), list( .lshape1.a = lshape1.a, .lscale = lscale,
-            .eshape1.a = eshape1.a, .escale = escale))))
+  }), list( .lscale    = lscale   , .lshape1.a = lshape1.a,
+            .escale    = escale   , .eshape1.a = eshape1.a, 
+            .lshape2.p = lshape2.p,
+            .eshape2.p = eshape2.p,
+            .lss = lss ))))
 }
 
 
- inv.lomax <- function(  # lss,
-                       lscale = "loge",
+
+
+
+
+    betaII <- function(lscale    = "loge",
                        lshape2.p = "loge",
-                       iscale = NULL,
-                       ishape2.p = 1.0, 
-                       zero = NULL) {
+                       lshape3.q = "loge",
+                       iscale    = NULL,
+                       ishape2.p = NULL,
+                       ishape3.q = NULL,
+                       imethod   = 1,
+                       gscale    = exp(-5:5),
+                       gshape2.p = exp(-5:5),
+                       gshape3.q = exp(-5:5),
+                       probs.y   = c(0.25, 0.50, 0.75),
+                       zero      = -(2:3)) {
 
-  if (length(zero) &&
-      !is.Numeric(zero, integer.valued = TRUE, positive = TRUE))
+
+
+
+  if (!is.Numeric(imethod, length.arg = 1,
+                  integer.valued = TRUE, 
+                  positive = TRUE) || imethod > 2)
+    stop("Bad input for argument 'imethod'")
+  
+  if (length(iscale   ) && !is.Numeric(iscale   ,  positive = TRUE))
+    stop("Bad input for argument 'iscale'")
+  
+  if (length(ishape2.p) && !is.Numeric(ishape2.p, positive = TRUE))
+    stop("Bad input for argument 'ishape2.p'")
+  
+  if (length(ishape3.q) && !is.Numeric(ishape3.q, positive = TRUE))
+    stop("Bad input for argument 'ishape3.q'")
+  
+  if (length(probs.y) < 2 || max(probs.y) > 1 || 
+        !is.Numeric(probs.y, positive = TRUE))
+    stop("Bad input for argument 'probs.y'")
+
+  if (length(zero) && !is.Numeric(zero, integer.valued = TRUE))
     stop("bad input for argument 'zero'")
-
-
+  
+  lscale <- as.list(substitute(lscale))
+  escale <- link2list(lscale)
+  lscale <- attr(escale, "function.name")
+  
   lshape2.p <- as.list(substitute(lshape2.p))
   eshape2.p <- link2list(lshape2.p)
   lshape2.p <- attr(eshape2.p, "function.name")
+  
+  lshape3.q <- as.list(substitute(lshape3.q))
+  eshape3.q <- link2list(lshape3.q)
+  lshape3.q <- attr(eshape3.q, "function.name")
+   
 
+  new("vglmff", 
+  blurb = 
+    c("Beta II distribution \n\n",
+      "Links:    ", 
+      namesof("scale"    , lscale   , earg = escale   ), ", ",
+      namesof("shape2.p" , lshape2.p, earg = eshape2.p), ", ",
+      namesof("shape3.q" , lshape3.q, earg = eshape3.q), "\n",
+      "Mean:     scale * gamma(shape2.p + 1) * ",
+                "gamma(shape3.q - 1) / ",
+                "(gamma(shape2.p) * gamma(shape3.q))"),
+  constraints = eval(substitute(expression({
+    dotzero <- .zero
+    M1 <- 3
+    eval(negzero.expression.VGAM)
+  }), list( .zero = zero ))),
+  infos = eval(substitute(function(...) {
+    list(M1 = 3,
+         Q1 = 1,
+         expected = TRUE,
+         zero = .zero ,
+         multipleResponses = TRUE,
+         lscale    = .lscale    ,
+         escale    = .escale    ,
+         lshape2.p = .lshape2.p , lshape3.q = .lshape3.q ,
+         eshape2.p = .eshape2.p , eshape3.q = .eshape3.q ,
+         .zero = zero )
+  }, list( .lscale = lscale      ,
+           .escale = escale      ,
+           .lshape2.p = lshape2.p, .lshape3.q = lshape3.q,
+           .eshape2.p = eshape2.p, .eshape3.q = eshape3.q,
+           .zero = zero ))),
+  initialize = eval(substitute(expression({ 
+    temp5 <- w.y.check(w = w, y = y, 
+                       Is.positive.y = TRUE, 
+                       ncol.w.max = Inf, 
+                       ncol.y.max = Inf, 
+                       out.wy = TRUE, 
+                       colsyperw = 1, 
+                       maximize = TRUE)
+    y    <- temp5$y
+    w    <- temp5$w
+    M1 <- 3  # Number of parameters for one response
+    NOS  <- ncoly <- ncol(y)
+    M    <- M1*ncol(y)
+
+    scaL.names  <- param.names("scale",     NOS)
+    sha2.names  <- param.names("shape2.p",  NOS)
+    sha3.names  <- param.names("shape3.q",  NOS)
+
+    predictors.names <-
+      c(namesof(scaL.names , .lscale    , earg = .escale    , tag = FALSE),
+        namesof(sha2.names , .lshape2.p , earg = .eshape2.p , tag = FALSE),
+        namesof(sha3.names , .lshape3.q , earg = .eshape3.q , tag = FALSE))
+    predictors.names <- predictors.names[interleave.VGAM(M, M = M1)]
+    
+    if (!length(etastart)) {
+      sc.init <-
+      pp.init <-
+      qq.init <- matrix(as.numeric(NA), n, NOS)
+          
+      for (spp. in 1:NOS) {  # For each response 'y_spp.'... do:
+        yvec <- y[, spp.]
+        wvec <- w[, spp.]
+
+        if ( .imethod == 1 ) {
+          gscale     <- .gscale
+          gshape2.p  <- .gshape2.p        
+          gshape3.q  <- .gshape3.q
+          if (length( .iscale ))
+            gscale    <-  rep( .iscale    , length = NOS)
+          if (length( .ishape2.p ))
+            gshape2.p <-  rep( .ishape2.p , length = NOS)
+          if (length( .ishape3.q ))
+            gshape3.q <-  rep( .ishape3.q , length = NOS)
+          allmat1 <- expand.grid(shape2.p = gshape2.p,
+                                 shape3.q = gshape3.q)
+          allmat2 <- matrix(as.numeric(NA), nrow(allmat1), 2)
+
+          ll.beII <- function(scaleval, x = x, y = y, w = w, extraargs) { 
+            ans <- sum(c(w) * dgenbetaII(x = y,
+                                         scale    = scaleval,
+                                         shape1.a = 1,
+                                         shape2.p = extraargs$Shape2.p,
+                                         shape3.q = extraargs$Shape3.q,
+                                         log = TRUE))
+            ans
+          }
+
+          for (iloc in 1:nrow(allmat1)) {
+            allmat2[iloc, ] <-
+              grid.search(gscale, objfun = ll.beII,
+                            y = yvec, x = x, w = wvec,
+                            ret.objfun = TRUE,  # 2nd value is the loglik
+                            extraargs = list(Shape2.p = allmat1[iloc, 1],
+                                             Shape3.q = allmat1[iloc, 2]))
+          }
+          ind5 <- which.max(allmat2[, 2])  # 2nd value is the loglik
+          sc.init[, spp.] <- allmat2[ind5, 1]
+          pp.init[, spp.] <- allmat1[ind5, 1]
+          qq.init[, spp.] <- allmat1[ind5, 2]
+      } else {  # .imethod == 2
+
+        sc.init[, spp.] <- if (length( .iscale )) .iscale else {
+          qvec <- .probs.y
+          ishape3.q <- if (length( .ishape3.q )) .ishape3.q else 1
+          xvec <- log( (1-qvec)^(-1/ ishape3.q ) - 1 )
+          fit0 <- lsfit(x = xvec, y = log(quantile(yvec, qvec )))
+          exp(fit0$coef[1])
+        }
+        pp.init[, spp.] <- if (length( .ishape2.p )) .ishape2.p else 1.0
+        qq.init[, spp.] <- if (length( .ishape3.q )) .ishape3.q else 1.0
+       }
+     }  # End of for (spp. ...)
+
+
+
+
+      finite.mean <- 1 < qq.init
+      COP.use <- 1.15
+      while (any(!finite.mean)) {
+        qq.init[!finite.mean] <- 0.1 + qq.init[!finite.mean] * COP.use
+        finite.mean <- 1 < qq.init
+      }
+
+      etastart <-
+        cbind(theta2eta(sc.init , .lscale    , earg = .escale    ),
+              theta2eta(pp.init , .lshape2.p , earg = .eshape2.p ),
+              theta2eta(qq.init , .lshape3.q , earg = .eshape3.q ))
+      etastart <- etastart[, interleave.VGAM(M, M = M1)]
+    }  # End of etastart.
+  }), list( .lscale    = lscale   ,
+            .escale    = escale   ,
+            .iscale    = iscale   ,
+            .gscale    = gscale   ,
+            .lshape2.p = lshape2.p, .lshape3.q = lshape3.q,
+            .eshape2.p = eshape2.p, .eshape3.q = eshape3.q,
+            .ishape2.p = ishape2.p, .ishape3.q = ishape3.q,
+            .gshape2.p = gshape2.p, .gshape3.q = gshape3.q,
+            .imethod   = imethod   , .probs.y = probs.y
+                       ))), 
+  linkinv = eval(substitute(function(eta, extra = NULL) {
+    M1 <- 3
+    NOS <- ncol(eta)/M1
+    Scale <- eta2theta(eta[, M1*(1:NOS) - 2, drop = FALSE],
+                       .lscale ,  earg = .escale )
+    aa    <- 1
+    parg  <- eta2theta(eta[, M1*(1:NOS) - 1, drop = FALSE],
+                      .lshape2.p , earg = .eshape2.p )
+    qq    <- eta2theta(eta[, M1*(1:NOS)    , drop = FALSE],
+                      .lshape3.q , earg = .eshape3.q )
+
+    ans <- Scale * exp(lgamma(parg + 1/aa) +
+                       lgamma(qq   - 1/aa) - lgamma(parg) - lgamma(qq))
+    ans[parg + 1/aa <= 0] <- NA
+    ans[qq   - 1/aa <= 0] <- NA
+    ans[Scale       <= 0] <- NA
+    ans[parg        <= 0] <- NA
+    ans[qq          <= 0] <- NA
+    ans
+  }, list( .lscale    = lscale   ,
+           .escale    = escale   ,
+           .lshape2.p = lshape2.p, .lshape3.q = lshape3.q,
+           .eshape2.p = eshape2.p, .eshape3.q = eshape3.q
+                      ))),
+  last = eval(substitute(expression({
+    M1 <- 3
+
+    misc$link <- c(rep( .lscale    , length = ncoly),
+                   rep( .lshape2.p , length = ncoly),
+                   rep( .lshape3.q , length = ncoly))[
+                   interleave.VGAM(M, M = M1)]
+    temp.names <- c(scaL.names,             sha2.names, sha3.names)
+    names(misc$link) <- temp.names[interleave.VGAM(M, M = M1)]
+
+    misc$earg <- vector("list", M)
+    names(misc$earg) <- temp.names
+    for (ii in 1:ncoly) {
+      misc$earg[[M1*ii-2]] <- .escale
+      misc$earg[[M1*ii-1]] <- .eshape2.p
+      misc$earg[[M1*ii  ]] <- .eshape3.q
+    }
+
+    misc$expected          <- TRUE
+    misc$multipleResponses <- TRUE
+  }), list( .lscale    = lscale   ,
+            .escale    = escale   ,
+            .lshape2.p = lshape2.p, .lshape3.q = lshape3.q,
+            .eshape2.p = eshape2.p, .eshape3.q = eshape3.q
+                       ))), 
+  loglikelihood = eval(substitute(
+    function(mu, y, w, residuals = FALSE, 
+             eta, extra = NULL, summation = TRUE) {
+      M1  <- 3
+      NOS <- ncol(eta)/M1
+      Scale  <- eta2theta(eta[, M1*(1:NOS) - 2, drop = FALSE],
+                          .lscale    , earg = .escale    )
+      aa     <- 1
+      parg   <- eta2theta(eta[, M1*(1:NOS) - 1, drop = FALSE],
+                          .lshape2.p , earg = .eshape2.p )
+      qq     <- eta2theta(eta[, M1*(1:NOS)    , drop = FALSE],
+                          .lshape3.q , earg = .eshape3.q )
+      if (residuals) {
+        stop("loglikelihood residuals not implemented yet")
+      } else {
+        ll.elts <-
+          c(w) * dgenbetaII(x = y, scale = Scale, shape1.a = aa,
+                            shape2.p = parg, shape3.q = qq, log = TRUE)
+        if (summation) {
+          sum(ll.elts)
+        } else {
+          ll.elts
+        }
+      }
+    }, list( .lscale    = lscale   ,
+             .escale    = escale   ,
+             .lshape2.p = lshape2.p, .lshape3.q = lshape3.q,
+             .eshape2.p = eshape2.p, .eshape3.q = eshape3.q
+                        ))),
+  vfamily = c("betaII"),
+  deriv = eval(substitute(expression({ 
+    NOS <- ncol(eta)/M1  # Needed for summary()
+    Scale <- eta2theta(eta[, M1*(1:NOS) - 2, drop = FALSE],
+                       .lscale    , earg = .escale    )
+    aa    <- 1
+    parg  <- eta2theta(eta[, M1*(1:NOS) - 1, drop = FALSE],
+                       .lshape2.p , earg = .eshape2.p )
+    qq    <- eta2theta(eta[, M1*(1:NOS)    , drop = FALSE],
+                       .lshape3.q , earg = .eshape3.q )
+    temp1 <- log(y/Scale)
+    temp2 <- (y/Scale)^aa
+    temp3 <- digamma(parg + qq)
+    temp3a <- digamma(parg)
+    temp3b <- digamma(qq)
+    temp4 <- log1p(temp2)
+  
+    dl.dscale <- (aa/Scale) * (-parg + (parg+qq) / (1+1/temp2))
+    dl.dp <- aa * temp1 + temp3 - temp3a - temp4
+    dl.dq <- temp3 - temp3b - temp4
+    
+    dscale.deta <- dtheta.deta(Scale, .lscale ,    earg = .escale )
+    dp.deta     <- dtheta.deta(parg,  .lshape2.p , earg = .eshape2.p )
+    dq.deta     <- dtheta.deta(qq,    .lshape3.q , earg = .eshape3.q )
+    
+    myderiv <-
+      c(w) * cbind(dl.dscale * dscale.deta,
+                   dl.dp * dp.deta,
+                   dl.dq * dq.deta)
+    myderiv[, interleave.VGAM(M, M = M1)]
+  }), list(  .lscale    = lscale   ,
+             .escale    = escale   ,
+             .lshape2.p = lshape2.p, .lshape3.q = lshape3.q,
+             .eshape2.p = eshape2.p, .eshape3.q = eshape3.q
+                        ))),
+  weight = eval(substitute(expression({
+    temp5  <- trigamma(parg + qq)
+    temp5a <- trigamma(parg)
+    temp5b <- trigamma(qq)
+
+    ned2l.dscale  <- (aa^2) * parg * qq / ((1+parg+qq) * Scale^2)
+    ned2l.dp      <- temp5a - temp5
+    ned2l.dq      <- temp5b - temp5
+    ned2l.dscalep <-  aa * qq   / (Scale*(parg+qq))
+    ned2l.dscaleq <- -aa * parg / (Scale*(parg+qq))
+    ned2l.dpq     <- -temp5
+    wz <- 
+      array(c(c(w) * ned2l.dscale * dscale.deta^2,
+              c(w) * ned2l.dp * dp.deta^2,
+              c(w) * ned2l.dq * dq.deta^2,
+              c(w) * ned2l.dscalep * dscale.deta * dp.deta,
+              c(w) * ned2l.dpq * dp.deta * dq.deta,  # Switched!!
+              c(w) * ned2l.dscaleq * dscale.deta * dq.deta),
+            dim = c(n, M/M1, M1*(M1+1)/2))
+    wz <- arwz2wz(wz, M = M, M1 = M1)
+    wz
+  }), list( .lscale    = lscale   ,
+            .escale    = escale   ,
+            .lshape2.p = lshape2.p, .lshape3.q = lshape3.q,
+            .eshape2.p = eshape2.p, .eshape3.q = eshape3.q
+                       ))))
+}
+
+
+
+
+
+
+ lomax     <- function(lscale    = "loge",
+                       lshape3.q = "loge",
+                       iscale    = NULL,
+                       ishape3.q = NULL,
+                       imethod   = 1,
+                       gscale    = exp(-5:5),
+                       gshape3.q = exp(-5:5),  # Finite mean only if qq>1
+                       probs.y   = c(0.25, 0.50, 0.75),
+                       zero      = -2) {
+
+
+
+
+  if (!is.Numeric(imethod, length.arg = 1,
+                  integer.valued = TRUE, 
+                  positive = TRUE) || imethod > 2)
+    stop("Bad input for argument 'imethod'")
+  
+  if (length(iscale) && !is.Numeric(iscale, positive = TRUE)) 
+    stop("Bad input for argument 'iscale'")
+  
+  if (length(ishape3.q) && !is.Numeric(ishape3.q, positive = TRUE))
+    stop("Bad input for argument 'ishape3.q'")
+  
+  if (length(probs.y) < 2 || max(probs.y) > 1 || 
+        !is.Numeric(probs.y, positive = TRUE))
+    stop("Bad input for argument 'probs.y'")
+
+  if (length(zero) && !is.Numeric(zero, integer.valued = TRUE))
+    stop("bad input for argument 'zero'")
+  
   lscale <- as.list(substitute(lscale))
   escale <- link2list(lscale)
   lscale <- attr(escale, "function.name")
+  
+  lshape3.q <- as.list(substitute(lshape3.q))
+  eshape3.q <- link2list(lshape3.q)
+  lshape3.q <- attr(eshape3.q, "function.name")
+   
 
-
-
-
-  new("vglmff",
-  blurb = c("Inverse Lomax distribution\n\n",
-          "Links:    ",
-          namesof("scale",    lscale,    earg = escale), ", ", 
-          namesof("shape2.p", lshape2.p, earg = eshape2.p), "\n", 
-          "Mean:     does not exist"),
+  new("vglmff", 
+  blurb = 
+    c("Lomax distribution \n\n",
+      "Links:    ", 
+      namesof("scale"    , lscale   , earg = escale   ), ", ",
+      namesof("shape3.q" , lshape3.q, earg = eshape3.q), "\n",
+      "Mean:     scale / (shape3.q - 1)"),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
+    dotzero <- .zero
+    M1 <- 2
+    eval(negzero.expression.VGAM)
   }), list( .zero = zero ))),
-  initialize = eval(substitute(expression({
+  infos = eval(substitute(function(...) {
+    list(M1 = 2,
+         Q1 = 1,
+         expected = TRUE,
+         zero = .zero ,
+         multipleResponses = TRUE,
+         lscale = .lscale ,
+         escale = .escale ,
+                                  lshape3.q = .lshape3.q ,
+                                  eshape3.q = .eshape3.q ,
+         .zero = zero )
+  }, list( .lscale = lscale      ,
+           .escale = escale      ,
+                                   .lshape3.q = lshape3.q,
+                                   .eshape3.q = eshape3.q,
+           .zero = zero ))),
+  initialize = eval(substitute(expression({ 
+    temp5 <- w.y.check(w = w, y = y, 
+                       Is.positive.y = TRUE, 
+                       ncol.w.max = Inf, 
+                       ncol.y.max = Inf, 
+                       out.wy = TRUE, 
+                       colsyperw = 1, 
+                       maximize = TRUE)
+    y    <- temp5$y
+    w    <- temp5$w
+    M1 <- 2  # Number of parameters for one response
+    NOS  <- ncoly <- ncol(y)
+    M    <- M1*ncol(y)
 
-    w.y.check(w = w, y = y,
-              ncol.w.max = 1, ncol.y.max = 1)
-
-
+    scaL.names  <- param.names("scale",     NOS)
+    sha3.names  <- param.names("shape3.q",  NOS)
 
     predictors.names <-
-      c(namesof("scale",    .lscale ,   earg = .escale    , tag = FALSE),
-        namesof("shape2.p", .lshape2.p, earg = .eshape2.p , tag = FALSE))
+      c(namesof(scaL.names , .lscale    , earg = .escale    , tag = FALSE),
+        namesof(sha3.names , .lshape3.q , earg = .eshape3.q , tag = FALSE))
+    predictors.names <- predictors.names[interleave.VGAM(M, M = M1)]
+    
+    if (!length(etastart)) {
+      sc.init <-
+      qq.init <- matrix(as.numeric(NA), n, NOS)
+          
+      for (spp. in 1:NOS) {  # For each response 'y_spp.'... do:
+        yvec <- y[, spp.]
+        wvec <- w[, spp.]
 
-    qq <- aa <- 1
+        if ( .imethod == 1) {
+          gscale     <- .gscale
+          gshape3.q  <- .gshape3.q
+          if (length( .iscale ))
+            gscale    <-  rep( .iscale    , length = NOS)
+          if (length( .ishape3.q ))
+            gshape3.q <-  rep( .ishape3.q , length = NOS)
+          allmat1 <- cbind(shape3.q = gshape3.q)
+          allmat2 <- matrix(as.numeric(NA), nrow(allmat1), 2)
 
-    if (!length( .iscale )) {
-      qvec <- c(0.25, .5, .75)  # Arbitrary; could be made an argument
-      ishape2.p <- if (length( .ishape2.p)) .ishape2.p else 1
-      xvec <- log( qvec^(-1/ ishape2.p ) - 1 )
-      fit0 <- lsfit(x = xvec, y = log(quantile(y, qvec )))
-    }
-        if (!length(etastart)) {
-          scale <- rep(if (length( .iscale )) .iscale else
-                       exp(fit0$coef[1]),
-                       length.out = n)
-          parg <- rep(if (length( .ishape2.p)) .ishape2.p else 1.0,
-                      length.out = n)
+          ll.lomx <- function(scaleval, x = x, y = y, w = w, extraargs) { 
+            ans <- sum(c(w) * dgenbetaII(x = y,
+                                         scale    = scaleval,
+                                         shape1.a = 1,
+                                         shape2.p = 1,
+                                         shape3.q = extraargs$Shape3.q,
+                                         log = TRUE))
+            ans
+          }
 
-
-
-
-          etastart <-
-            cbind(theta2eta(scale, .lscale ,   earg = .escale ),
-                  theta2eta(parg,  .lshape2.p, earg = .eshape2.p ))
+          for (iloc in 1:nrow(allmat1)) {
+            allmat2[iloc, ] <-
+              grid.search(gscale, objfun = ll.lomx,
+                            y = yvec, x = x, w = wvec,
+                            ret.objfun = TRUE,  # 2nd value is the loglik
+                            extraargs = list(Shape3.q = allmat1[iloc, 1]))
+          }
+          ind5 <- which.max(allmat2[, 2])  # 2nd value is the loglik
+          sc.init[, spp.] <- allmat2[ind5, 1]
+          qq.init[, spp.] <- allmat1[ind5, 1]
+       } else {  # .imethod == 2
+          qvec <- .probs.y 
+          iscale <- if (length( .iscale )) .iscale else 1
+          xvec <- log1p( quantile(yvec / iscale, probs = qvec) )
+          fit0 <- lsfit(x = xvec, y = -log1p(-qvec), intercept = FALSE)
+          sc.init[, spp.] <- iscale
+          qq.init[, spp.] <- if (length( .ishape3.q )) .ishape3.q else
+                             fit0$coef
         }
-    }), list( .lscale = lscale, .lshape2.p = lshape2.p,
-              .escale = escale, .eshape2.p = eshape2.p,
-              .iscale = iscale, .ishape2.p = ishape2.p ))),
+      }  # End of for (spp. ...)
+
+      finite.mean <- 1 < qq.init
+      COP.use <- 1.15
+      while (FALSE && any(!finite.mean)) {
+        qq.init[!finite.mean] <- 0.1 + qq.init[!finite.mean] * COP.use
+        finite.mean <- 1 < qq.init
+      }
+
+      etastart <-
+        cbind(theta2eta(sc.init, .lscale    , earg = .escale    ),
+              theta2eta(qq.init, .lshape3.q , earg = .eshape3.q ))
+      etastart <- etastart[, interleave.VGAM(M, M = M1)]
+    }  # End of etastart.
+  }), list( .lscale    = lscale   ,
+            .escale    = escale   ,
+            .iscale    = iscale   ,
+            .gscale    = gscale   ,
+                                    .lshape3.q = lshape3.q,
+                                    .eshape3.q = eshape3.q,
+                                    .ishape3.q = ishape3.q,
+                                    .gshape3.q = gshape3.q,
+            .imethod   = imethod   , .probs.y  = probs.y
+                       ))), 
   linkinv = eval(substitute(function(eta, extra = NULL) {
-    Scale  <- eta2theta(eta[, 1], .lscale ,   earg = .escale )
-    parg   <- eta2theta(eta[, 2], .lshape2.p, earg = .eshape2.p )
+    M1 <- 2
+    NOS <- ncol(eta)/M1
+    Scale <- eta2theta(eta[, M1*(1:NOS) - 1, drop = FALSE],
+                       .lscale    , earg = .escale    )
+    aa    <- 1
+    parg  <- 1
+    qq    <- eta2theta(eta[, M1*(1:NOS)    , drop = FALSE],
+                       .lshape3.q , earg = .eshape3.q )
+
+    ans <- Scale * exp(lgamma(parg + 1/aa) +
+                       lgamma(qq   - 1/aa) - lgamma(parg) - lgamma(qq))
+    ans[parg + 1/aa <= 0] <- NA
+    ans[qq   - 1/aa <= 0] <- NA
+    ans[Scale       <= 0] <- NA
+    ans[qq          <= 0] <- NA
+    ans
+  }, list( .lscale    = lscale   ,
+           .escale    = escale   ,
+                                   .lshape3.q = lshape3.q,
+                                   .eshape3.q = eshape3.q
+                      ))),
+  last = eval(substitute(expression({
+    M1 <- 2
+
+    misc$link <- c(rep( .lscale    , length = ncoly),
+                   rep( .lshape3.q , length = ncoly))[
+                   interleave.VGAM(M, M = M1)]
+    temp.names <-
+      c(scaL.names,                         sha3.names)
+    names(misc$link) <- temp.names[interleave.VGAM(M, M = M1)]
+
+    misc$earg <- vector("list", M)
+    names(misc$earg) <- temp.names
+    for (ii in 1:ncoly) {
+      misc$earg[[M1*ii-1]] <- .escale
+      misc$earg[[M1*ii  ]] <- .eshape3.q
+    }
+
+    misc$expected          <- TRUE
+    misc$multipleResponses <- TRUE
+  }), list( .lscale    = lscale   ,
+            .escale    = escale   ,
+                                    .lshape3.q = lshape3.q,
+                                    .eshape3.q = eshape3.q
+                       ))), 
+  loglikelihood = eval(substitute(
+    function(mu, y, w, residuals = FALSE, 
+             eta, extra = NULL, summation = TRUE) {
+      M1  <- 2
+      NOS <- ncol(eta)/M1
+      Scale <- eta2theta(eta[, M1*(1:NOS) - 1, drop = FALSE],
+                         .lscale    , earg = .escale    )
+      aa    <- 1
+      parg  <- 1
+      qq    <- eta2theta(eta[, M1*(1:NOS)    , drop = FALSE],
+                         .lshape3.q , earg = .eshape3.q )
+      if (residuals) {
+        stop("loglikelihood residuals not implemented yet")
+      } else {
+        ll.elts <-
+          c(w) * dgenbetaII(x = y, scale = Scale, shape1.a = aa,
+                            shape2.p = parg, shape3.q = qq, log = TRUE)
+        if (summation) {
+          sum(ll.elts)
+        } else {
+          ll.elts
+        }
+      }
+    }, list( .lscale    = lscale   ,
+             .escale    = escale   ,
+                                     .lshape3.q = lshape3.q,
+                                     .eshape3.q = eshape3.q
+                        ))),
+  vfamily = c("lomax"),
+  simslot = eval(substitute(
+  function(object, nsim) {
+
+    pwts <- if (length(pwts <- object@prior.weights) > 0)
+              pwts else weights(object, type = "prior")
+    if (any(pwts != 1)) 
+      warning("ignoring prior weights")
+
+    eta <- predict(object)
+    M1 <- 2
+    NOS <- ncol(eta)/M1
+    Scale <- eta2theta(eta[, M1*(1:NOS) - 1, drop = FALSE],
+                       .lscale ,  earg = .escale )
+    qq    <- eta2theta(eta[, M1*(1:NOS)    , drop = FALSE],
+                       .lshape3.q , earg = .eshape3.q )
+
+    rlomax(nsim * length(qq), scale = Scale, shape3.q = qq)
+  }, list( .lscale    = lscale   ,
+           .escale    = escale   ,
+                                   .lshape3.q = lshape3.q,
+                                   .eshape3.q = eshape3.q
+                      ))),
+  deriv = eval(substitute(expression({ 
+    NOS <- ncol(eta)/M1  # Needed for summary()
+    Scale <- eta2theta(eta[, M1*(1:NOS) - 1, drop = FALSE],
+                       .lscale    , earg = .escale   )
+    aa    <- 1
+    parg  <- 1
+    qq    <- eta2theta(eta[, M1*(1:NOS)    , drop = FALSE],
+                       .lshape3.q , earg = .eshape3.q)
+    temp1 <- log(y/Scale)
+    temp2 <- (y/Scale)^aa
+    temp3 <- digamma(parg + qq)
+    temp3a <- digamma(parg)
+    temp3b <- digamma(qq)
+    temp4 <- log1p(temp2)
+  
+    dl.dscale <- (aa/Scale) * (-parg + (parg+qq) / (1+1/temp2))
+    dl.dq <- temp3 - temp3b - temp4
+    
+    dscale.deta <- dtheta.deta(Scale, .lscale ,    earg = .escale )
+    dq.deta     <- dtheta.deta(qq,    .lshape3.q , earg = .eshape3.q )
+    
+    myderiv <-
+      c(w) * cbind(dl.dscale * dscale.deta,
+                   dl.dq * dq.deta)
+    myderiv[, interleave.VGAM(M, M = M1)]
+  }), list(  .lscale    = lscale   ,
+             .escale    = escale   ,
+                                     .lshape3.q = lshape3.q,
+                                     .eshape3.q = eshape3.q
+                        ))),
+  weight = eval(substitute(expression({
+    temp5  <- trigamma(parg + qq)
+    temp5a <- trigamma(parg)
+    temp5b <- trigamma(qq)
+
+    ned2l.dscale  <- (aa^2) * parg * qq / ((1+parg+qq) * Scale^2)
+    ned2l.dq      <- temp5b - temp5
+    ned2l.dscaleq <- -aa * parg / (Scale*(parg+qq))
+    wz <-
+      array(c(c(w) * ned2l.dscale * dscale.deta^2,
+              c(w) * ned2l.dq * dq.deta^2,
+              c(w) * ned2l.dscaleq * dscale.deta * dq.deta),
+            dim = c(n, M/M1, M1*(M1+1)/2))
+    wz <- arwz2wz(wz, M = M, M1 = M1)
+    wz
+  }), list( .lscale    = lscale   ,
+            .escale    = escale   ,
+                                    .lshape3.q = lshape3.q,
+                                    .eshape3.q = eshape3.q
+                       ))))
+}
 
 
+
+
+
+
+
+
+
+
+  fisk     <- function(lscale    = "loge",
+                       lshape1.a = "loge",
+                       iscale    = NULL,
+                       ishape1.a = NULL,
+                       imethod   = 1,
+                       lss       = TRUE,
+                       gscale    = exp(-5:5),
+                       gshape1.a = exp(-5:5),
+                       probs.y   = c(0.25, 0.50, 0.75),
+                       zero      = ifelse(lss, -2, -1)) {
+
+
+
+
+
+  if (length(lss) != 1 && !is.logical(lss))
+    stop("Argument 'lss' not specified correctly")
+  
+  if (!is.Numeric(imethod, length.arg = 1,
+                  integer.valued = TRUE, 
+                  positive = TRUE) || imethod > 2)
+    stop("Bad input for argument 'imethod'")
+  
+  if (length(iscale) && !is.Numeric(iscale, positive = TRUE)) 
+    stop("Bad input for argument 'iscale'")
+  
+  if (length(ishape1.a) && !is.Numeric(ishape1.a, positive = TRUE))
+    stop("Bad input for argument 'ishape1.a'")
+  
+  if (length(probs.y) < 2 || max(probs.y) > 1 || 
+        !is.Numeric(probs.y, positive = TRUE))
+    stop("Bad input for argument 'probs.y'")
+
+  if (length(zero) && !is.Numeric(zero, integer.valued = TRUE))
+    stop("bad input for argument 'zero'")
+  
+  lscale <- as.list(substitute(lscale))
+  escale <- link2list(lscale)
+  lscale <- attr(escale, "function.name")
+  
+  lshape1.a <- as.list(substitute(lshape1.a))
+  eshape1.a <- link2list(lshape1.a)
+  lshape1.a <- attr(eshape1.a, "function.name")
+  
+
+  new("vglmff", 
+  blurb = 
+    c("Fisk distribution \n\n",
+      "Links:    ", 
+      ifelse (lss,
+              namesof("scale"   , lscale   , earg = escale),
+              namesof("shape1.a", lshape1.a, earg = eshape1.a)), ", ",
+      ifelse (lss, 
+              namesof("shape1.a", lshape1.a, earg = eshape1.a),
+              namesof("scale"   , lscale   , earg = escale)), "\n",
+      "Mean:     scale * gamma(1 + 1/shape1.a) * ",
+                "gamma(1 - 1/shape1.a)"),
+  constraints = eval(substitute(expression({
+    dotzero <- .zero
+    M1 <- 2
+    eval(negzero.expression.VGAM)
+  }), list( .zero = zero ))),
+  infos = eval(substitute(function(...) {
+    list(M1 = 2,
+         Q1 = 1,
+         expected = TRUE,
+         zero = .zero ,
+         multipleResponses = TRUE,
+         lscale = .lscale ,       lshape1.a = .lshape1.a ,
+         escale = .escale ,       eshape1.a = .eshape1.a ,
+         .zero = zero )
+  }, list( .lscale = lscale      , .lshape1.a = lshape1.a,
+           .escale = escale      , .eshape1.a = eshape1.a,
+           .zero = zero ))),
+  initialize = eval(substitute(expression({ 
+    temp5 <- w.y.check(w = w, y = y, 
+                       Is.positive.y = TRUE, 
+                       ncol.w.max = Inf, 
+                       ncol.y.max = Inf, 
+                       out.wy = TRUE, 
+                       colsyperw = 1, 
+                       maximize = TRUE)
+    y    <- temp5$y
+    w    <- temp5$w
+    M1 <- 2  # Number of parameters for one response
+    NOS  <- ncoly <- ncol(y)
+    M    <- M1*ncol(y)
+
+    scaL.names  <- param.names("scale",     NOS)
+    sha1.names  <- param.names("shape1.a",  NOS)
+
+    predictors.names <- if ( .lss ) {
+      c(namesof(scaL.names , .lscale    , earg = .escale    , tag = FALSE),
+        namesof(sha1.names , .lshape1.a , earg = .eshape1.a , tag = FALSE))
+    } else {
+      c(namesof(sha1.names , .lshape1.a , earg = .eshape1.a , tag = FALSE),
+        namesof(scaL.names , .lscale    , earg = .escale    , tag = FALSE))
+    }
+    predictors.names <- predictors.names[interleave.VGAM(M, M = M1)]
+    
+    if (!length(etastart)) {
+      sc.init <-
+      aa.init <- matrix(as.numeric(NA), n, NOS)
+          
+      for (spp. in 1:NOS) {  # For each response 'y_spp.'... do:
+        yvec <- y[, spp.]
+        wvec <- w[, spp.]
+
+        if ( .imethod == 1 ) {
+          gscale     <- .gscale
+          gshape1.a  <- .gshape1.a
+          if (length( .iscale ))
+            gscale    <-  rep( .iscale    , length = NOS)
+          if (length( .ishape1.a ))
+            gshape1.a <-  rep( .ishape1.a , length = NOS)
+          allmat1 <- cbind(shape1.a = gshape1.a)
+          allmat2 <- matrix(as.numeric(NA), nrow(allmat1), 2)
+
+          ll.fisk <- function(scaleval, x = x, y = y, w = w, extraargs) { 
+            ans <- sum(c(w) * dgenbetaII(x = y,
+                                         scale    = scaleval,
+                                         shape1.a = extraargs$Shape1.a,
+                                         shape2.p = 1,
+                                         shape3.q = 1,
+                                         log = TRUE))
+            ans
+          }
+
+          for (iloc in 1:nrow(allmat1)) {
+            allmat2[iloc, ] <-
+              grid.search(gscale, objfun = ll.fisk,
+                            y = yvec, x = x, w = wvec,
+                            ret.objfun = TRUE,  # 2nd value is the loglik
+                            extraargs = list(Shape1.a = allmat1[iloc, 1]))
+          }
+          ind5 <- which.max(allmat2[, 2])  # 2nd value is the loglik
+          sc.init[, spp.] <- allmat2[ind5, 1]
+          aa.init[, spp.] <- allmat1[ind5, 1]
+       } else {  # .imethod == 2
+          qvec <- .probs.y 
+          iscale <- if (length( .iscale )) .iscale else 1
+          xvec <- log( quantile(yvec / iscale, probs = qvec) )
+          fit0 <- lsfit(x = xvec, y = logit(qvec), intercept = FALSE)
+          sc.init[, spp.] <- iscale
+          aa.init[, spp.] <- if (length( .ishape1.a )) .ishape1.a else
+                             fit0$coef
+        }
+      }  # End of for (spp. ...)
+
+
+      finite.mean <- 1 < aa.init
+      COP.use <- 1.15
+      while (FALSE && any(!finite.mean)) {
+        aa.init[!finite.mean] <- 0.1 + aa.init[!finite.mean] * COP.use
+        finite.mean <- 1 < aa.init
+      }
+
+      etastart <-
+        if ( .lss )
+          cbind(theta2eta(sc.init, .lscale    , earg = .escale    ),
+                theta2eta(aa.init, .lshape1.a , earg = .eshape1.a )) else
+          cbind(theta2eta(aa.init, .lshape1.a , earg = .eshape1.a ),
+                theta2eta(sc.init, .lscale    , earg = .escale    ))
+      etastart <- etastart[, interleave.VGAM(M, M = M1)]
+    }  # End of etastart.
+  }), list( .lscale    = lscale   , .lshape1.a = lshape1.a,
+            .escale    = escale   , .eshape1.a = eshape1.a,
+            .iscale    = iscale   , .ishape1.a = ishape1.a,
+            .gscale    = gscale   , .gshape1.a = gshape1.a,           
+            .imethod   = imethod   , .probs.y  = probs.y,
+            .lss = lss ))), 
+  linkinv = eval(substitute(function(eta, extra = NULL) {
+    M1 <- 2
+    NOS <- ncol(eta)/M1
+    if ( .lss ) {
+      Scale <- eta2theta(eta[, M1*(1:NOS) - 1, drop = FALSE],
+                         .lscale ,  earg = .escale )
+      aa    <- eta2theta(eta[, M1*(1:NOS)    , drop = FALSE],
+                         .lshape1.a , earg = .eshape1.a )
+    } else {
+      aa    <- eta2theta(eta[, M1*(1:NOS) - 1, drop = FALSE],
+                         .lshape1.a , earg = .eshape1.a )
+      Scale <- eta2theta(eta[, M1*(1:NOS)    , drop = FALSE],
+                         .lscale    ,  earg = .escale )
+    }
+    parg <- 1
+    qq   <- 1
+
+    ans <- Scale * exp(lgamma(parg + 1/aa) +
+                      lgamma(qq   - 1/aa) - lgamma(parg) - lgamma(qq))
+    ans[parg + 1/aa <= 0] <- NA
+    ans[qq   - 1/aa <= 0] <- NA
+    ans[Scale       <= 0] <- NA
+    ans[aa          <= 0] <- NA
+    ans
+  }, list( .lscale    = lscale   , .lshape1.a = lshape1.a,
+           .escale    = escale   , .eshape1.a = eshape1.a,
+           .lss = lss ))),
+  last = eval(substitute(expression({
+    M1 <- 2
+
+    misc$link <- c(rep( if ( .lss ) .lscale else .lshape1.a , len = ncoly),
+                   rep( if ( .lss ) .lshape1.a else .lscale , len = ncoly))[
+                   interleave.VGAM(M, M = M1)]
+    temp.names <- if ( .lss ) {
+      c(scaL.names, sha1.names)
+    } else {
+      c(sha1.names, scaL.names)
+    }
+    names(misc$link) <- temp.names[interleave.VGAM(M, M = M1)]
+
+    misc$earg <- vector("list", M)
+    names(misc$earg) <- temp.names
+    for (ii in 1:ncoly)
+      if ( .lss ) {
+        misc$earg[[M1*ii-1]] <- .escale
+        misc$earg[[M1*ii  ]] <- .eshape1.a
+      } else {
+        misc$earg[[M1*ii-1]] <- .eshape1.a
+        misc$earg[[M1*ii  ]] <- .escale
+      }
+
+    misc$expected          <- TRUE
+    misc$multipleResponses <- TRUE
+  }), list( .lscale    = lscale   , .lshape1.a = lshape1.a,
+            .escale    = escale   , .eshape1.a = eshape1.a,
+            .lss = lss ))), 
+  loglikelihood = eval(substitute(
+    function(mu, y, w, residuals = FALSE, 
+             eta, extra = NULL, summation = TRUE) {
+      M1  <- 2
+      NOS <- ncol(eta)/M1
+      if ( .lss ) {
+        Scale <- eta2theta(eta[, M1*(1:NOS) - 1, drop = FALSE],
+                           .lscale    , earg = .escale    )
+        aa    <- eta2theta(eta[, M1*(1:NOS)    , drop = FALSE],
+                           .lshape1.a , earg = .eshape1.a )
+      } else {
+        aa    <- eta2theta(eta[, M1*(1:NOS) - 1, drop = FALSE],
+                           .lshape1.a , earg = .eshape1.a )
+        Scale <- eta2theta(eta[, M1*(1:NOS)    , drop = FALSE],
+                           .lscale    , earg = .escale    )
+      }
+      if (residuals) {
+        stop("loglikelihood residuals not implemented yet")
+      } else {
+        ll.elts <-
+          c(w) * dfisk(x = y, scale = Scale, shape1.a = aa, log = TRUE)
+        if (summation) {
+          sum(ll.elts)
+        } else {
+          ll.elts
+        }
+      }
+    }, list( .lscale    = lscale   , .lshape1.a = lshape1.a,
+             .escale    = escale   , .eshape1.a = eshape1.a,
+             .lss = lss ))),
+  vfamily = c("fisk"),
+  simslot = eval(substitute(
+  function(object, nsim) {
+
+    pwts <- if (length(pwts <- object@prior.weights) > 0)
+              pwts else weights(object, type = "prior")
+    if (any(pwts != 1)) 
+      warning("ignoring prior weights")
+
+    eta <- predict(object)
+    M1 <- 2
+    NOS <- ncol(eta)/M1
+    if ( .lss ) {
+      Scale <- eta2theta(eta[, M1*(1:NOS) - 1, drop = FALSE],
+                         .lscale ,  earg = .escale )
+      aa    <- eta2theta(eta[, M1*(1:NOS)    , drop = FALSE],
+                         .lshape1.a , earg = .eshape1.a )
+    } else {
+      aa    <- eta2theta(eta[, M1*(1:NOS) - 1, drop = FALSE],
+                         .lshape1.a , earg = .eshape1.a )
+      Scale <- eta2theta(eta[, M1*(1:NOS)    , drop = FALSE],
+                         .lscale    ,  earg = .escale )
+    }
+    rfisk(nsim * length(aa), shape1.a = aa, scale = Scale)
+  }, list( .lscale    = lscale   , .lshape1.a = lshape1.a,
+           .escale    = escale   , .eshape1.a = eshape1.a,
+           .lss = lss ))),
+  deriv = eval(substitute(expression({ 
+    NOS <- ncol(eta)/M1  # Needed for summary()
+    if ( .lss ) { 
+      Scale <- eta2theta(eta[, M1*(1:NOS) - 1, drop = FALSE],
+                         .lscale    , earg = .escale   )
+      aa    <- eta2theta(eta[, M1*(1:NOS)    , drop = FALSE],
+                         .lshape1.a , earg = .eshape1.a)
+    } else {
+      aa    <- eta2theta(eta[, M1*(1:NOS) - 1, drop = FALSE],
+                         .lshape1.a , earg = .eshape1.a)
+      Scale <- eta2theta(eta[, M1*(1:NOS)    , drop = FALSE],
+                         .lscale    , earg = .escale )
+    }  
+    parg <- 1
+    qq   <- 1
+    temp1 <- log(y/Scale)
+    temp2 <- (y/Scale)^aa
+    temp3 <- digamma(parg + qq)
+    temp3a <- digamma(parg)
+    temp3b <- digamma(qq)
+    temp4 <- log1p(temp2)
+  
+    dl.dscale <- (aa/Scale) * (-parg + (parg+qq) / (1+1/temp2))
+    dl.da <- 1/aa + parg * temp1 - (parg+qq) * temp1 / (1+1/temp2)
+    
+    dscale.deta <- dtheta.deta(Scale, .lscale ,    earg = .escale )
+    da.deta     <- dtheta.deta(aa,    .lshape1.a , earg = .eshape1.a )
+    
+    myderiv <- if ( .lss ) {
+      c(w) * cbind(dl.dscale * dscale.deta,
+                   dl.da * da.deta)
+    } else {
+      c(w) * cbind(dl.da * da.deta,
+                   dl.dscale * dscale.deta)
+    }
+    myderiv[, interleave.VGAM(M, M = M1)]
+  }), list(  .lscale    = lscale   , .lshape1.a = lshape1.a,
+             .escale    = escale   , .eshape1.a = eshape1.a,
+             .lss = lss ))),
+  weight = eval(substitute(expression({
+    temp5  <- trigamma(parg + qq)
+    temp5a <- trigamma(parg)
+    temp5b <- trigamma(qq)
+
+    ned2l.da <- (1 + parg + qq + parg * qq * (temp5a + temp5b +
+                (temp3b - temp3a + (parg-qq)/(parg*qq))^2 -
+                (parg^2 + qq^2) / (parg*qq)^2)) / (aa^2 * (1+parg+qq))
+    ned2l.dscale  <- (aa^2) * parg * qq / ((1+parg+qq) * Scale^2)
+    ned2l.dascale <- (parg - qq - parg * qq *
+                     (temp3a -temp3b)) / (Scale*(1 + parg+qq))
+    wz <- if ( .lss ) {
+      array(c(c(w) * ned2l.dscale * dscale.deta^2,
+              c(w) * ned2l.da * da.deta^2,
+              c(w) * ned2l.dascale * da.deta * dscale.deta),
+            dim = c(n, M/M1, M1*(M1+1)/2))
+    } else {
+      array(c(c(w) * ned2l.da * da.deta^2,
+              c(w) * ned2l.dscale * dscale.deta^2,
+              c(w) * ned2l.dascale * da.deta * dscale.deta),
+            dim = c(n, M/M1, M1*(M1+1)/2))
+    }
+    wz <- arwz2wz(wz, M = M, M1 = M1)
+    wz
+  }), list( .lscale    = lscale   , .lshape1.a = lshape1.a,
+            .escale    = escale   , .eshape1.a = eshape1.a, 
+            .lss = lss ))))
+}
+
+
+
+
+
+
+
+
+
+
+
+ inv.lomax <- function(lscale    = "loge",
+                       lshape2.p = "loge",
+                       iscale    = NULL,
+                       ishape2.p = NULL,
+                       imethod   = 1,
+                       gscale    = exp(-5:5),
+                       gshape2.p = exp(-5:5),
+                       probs.y   = c(0.25, 0.50, 0.75),
+                       zero      = -2) {
+
+
+
+
+
+
+  if (!is.Numeric(imethod, length.arg = 1,
+                  integer.valued = TRUE, 
+                  positive = TRUE) || imethod > 2)
+    stop("Bad input for argument 'imethod'")
+  
+  if (length(iscale) && !is.Numeric(iscale, positive = TRUE)) 
+    stop("Bad input for argument 'iscale'")
+  
+  if (length(ishape2.p) && !is.Numeric(ishape2.p, positive = TRUE))
+    stop("Bad input for argument 'ishape2.p'")
+  
+  if (length(probs.y) < 2 || max(probs.y) > 1 || 
+        !is.Numeric(probs.y, positive = TRUE))
+    stop("Bad input for argument 'probs.y'")
+
+  if (length(zero) && !is.Numeric(zero, integer.valued = TRUE))
+    stop("bad input for argument 'zero'")
+  
+  lscale <- as.list(substitute(lscale))
+  escale <- link2list(lscale)
+  lscale <- attr(escale, "function.name")
+  
+  lshape2.p <- as.list(substitute(lshape2.p))
+  eshape2.p <- link2list(lshape2.p)
+  lshape2.p <- attr(eshape2.p, "function.name")
+  
+
+  new("vglmff", 
+  blurb = 
+    c("Inverse Lomax distribution \n\n",
+      "Links:    ", 
+      namesof("scale"    , lscale   , earg = escale),    ", ",
+      namesof("shape2.p" , lshape2.p, earg = eshape2.p), "\n",
+      "Mean:     does not exist"),
+  constraints = eval(substitute(expression({
+    dotzero <- .zero
+    M1 <- 2
+    eval(negzero.expression.VGAM)
+  }), list( .zero = zero ))),
+  infos = eval(substitute(function(...) {
+    list(M1 = 2,
+         Q1 = 1,
+         expected = TRUE,
+         zero = .zero ,
+         multipleResponses = TRUE,
+         lscale    = .lscale    ,
+         escale    = .escale    ,
+         lshape2.p = .lshape2.p ,                         
+         eshape2.p = .eshape2.p ,                         
+         .zero = zero )
+  }, list( .lscale = lscale      ,
+           .escale = escale      ,
+           .lshape2.p = lshape2.p,                        
+           .eshape2.p = eshape2.p,                        
+           .zero = zero ))),
+  initialize = eval(substitute(expression({ 
+    temp5 <- w.y.check(w = w, y = y, 
+                       Is.positive.y = TRUE, 
+                       ncol.w.max = Inf, 
+                       ncol.y.max = Inf, 
+                       out.wy = TRUE, 
+                       colsyperw = 1, 
+                       maximize = TRUE)
+    y    <- temp5$y
+    w    <- temp5$w
+    M1 <- 2  # Number of parameters for one response
+    NOS  <- ncoly <- ncol(y)
+    M    <- M1*ncol(y)
+
+    scaL.names  <- param.names("scale",     NOS)
+    sha2.names  <- param.names("shape2.p",  NOS)
+
+    predictors.names <-
+      c(namesof(scaL.names , .lscale    , earg = .escale    , tag = FALSE),
+        namesof(sha2.names , .lshape2.p , earg = .eshape2.p , tag = FALSE))
+    predictors.names <- predictors.names[interleave.VGAM(M, M = M1)]
+    
+    if (!length(etastart)) {
+      sc.init <-
+      pp.init <- matrix(as.numeric(NA), n, NOS)
+          
+      for (spp. in 1:NOS) {  # For each response 'y_spp.'... do:
+        yvec <- y[, spp.]
+        wvec <- w[, spp.]
+
+        if ( .imethod == 1 ) {
+          gscale     <- .gscale
+          gshape2.p  <- .gshape2.p        
+          if (length( .iscale ))
+            gscale    <-  rep( .iscale    , length = NOS)
+          if (length( .ishape2.p ))
+            gshape2.p <-  rep( .ishape2.p , length = NOS)
+          allmat1 <- cbind(shape2.p = gshape2.p)
+          allmat2 <- matrix(as.numeric(NA), nrow(allmat1), 2)
+
+          ll.invL <- function(scaleval, x = x, y = y, w = w, extraargs) { 
+            ans <- sum(c(w) * dgenbetaII(x = y,
+                                         scale    = scaleval,
+                                         shape1.a = 1,
+                                         shape2.p = extraargs$Shape2.p,
+                                         shape3.q = 1,
+                                         log = TRUE))
+            ans
+          }
+
+          for (iloc in 1:nrow(allmat1)) {
+            allmat2[iloc, ] <-
+              grid.search(gscale, objfun = ll.invL,
+                            y = yvec, x = x, w = wvec,
+                            ret.objfun = TRUE,  # 2nd value is the loglik
+                            extraargs = list(Shape2.p = allmat1[iloc, 1]))
+          }
+          ind5 <- which.max(allmat2[, 2])  # 2nd value is the loglik
+          sc.init[, spp.] <- allmat2[ind5, 1]
+          pp.init[, spp.] <- allmat1[ind5, 1]
+       } else {  # .imethod == 2
+          qvec <- .probs.y 
+          ishape2.p <- if (length( .ishape2.p )) .ishape2.p else 1
+          xvec <- log( qvec^(-1/ ishape2.p) - 1 )
+          fit0 <- lsfit(x = xvec, y = log(quantile(yvec,  qvec)))
+          sc.init[, spp.] <- if (length( .iscale )) .iscale else
+                             exp(fit0$coef[1])
+          pp.init[, spp.] <- ishape2.p
+      }
+    }  # End of for (spp. ...)
+
+
+      etastart <-
+        cbind(theta2eta(sc.init, .lscale    , earg = .escale    ),
+              theta2eta(pp.init, .lshape2.p , earg = .eshape2.p ))
+      etastart <- etastart[, interleave.VGAM(M, M = M1)]
+    }  # End of etastart.
+  }), list( .lscale    = lscale   ,
+            .escale    = escale   ,
+            .iscale    = iscale   ,
+            .gscale    = gscale   ,
+            .lshape2.p = lshape2.p,                        
+            .eshape2.p = eshape2.p,                        
+            .ishape2.p = ishape2.p,
+            .gshape2.p = gshape2.p,
+            .imethod   = imethod   , .probs.y = probs.y
+                       ))), 
+  linkinv = eval(substitute(function(eta, extra = NULL) {
+
+    M1 <- 2
+    NOS <- ncol(eta)/M1
+    Scale <- eta2theta(eta[, M1*(1:NOS) - 1, drop = FALSE],
+                       .lscale    , earg = .escale    )
+    parg  <- eta2theta(eta[, M1*(1:NOS)    , drop = FALSE],
+                       .lshape2.p , earg = .eshape2.p )
 
     qinv.lomax(p = 0.5, scale = Scale, shape2.p = parg)
-    }, list( .lscale = lscale,
-             .escale = escale, 
-             .eshape2.p = eshape2.p,
-             .lshape2.p = lshape2.p ))),
+  }, list( .lscale    = lscale   ,
+           .escale    = escale   ,
+           .lshape2.p = lshape2.p,
+           .eshape2.p = eshape2.p
+                      ))),
   last = eval(substitute(expression({
-    misc$link <-    c(scale = .lscale , shape2.p = .lshape2.p )
+    M1 <- 2
 
-    misc$earg <- list(scale = .escale , shape2.p = .eshape2.p )
+    misc$link <- c(rep( .lscale    , length = ncoly),
+                   rep( .lshape2.p , length = ncoly))[
+                   interleave.VGAM(M, M = M1)]
+    temp.names <- c(scaL.names, sha2.names)
+    names(misc$link) <- temp.names[interleave.VGAM(M, M = M1)]
 
-    misc$expected <- TRUE
-    misc$multipleResponses <- FALSE
-  }), list( .lscale = lscale,
-            .escale = escale, 
-            .eshape2.p = eshape2.p,
-            .lshape2.p = lshape2.p ))),
-  loglikelihood = eval(substitute(
-    function(mu, y, w, residuals = FALSE, eta,
-             extra = NULL,
-             summation = TRUE) {
-    aa <- 1
-    Scale <- eta2theta(eta[, 1], .lscale    , earg = .escale    )
-    parg  <- eta2theta(eta[, 2], .lshape2.p , earg = .eshape2.p )
-    qq <- 1
-    if (residuals) {
-      stop("loglikelihood residuals not implemented yet")
-    } else {
-      ll.elts <- c(w) * dinv.lomax(x = y, scale = Scale,
-                                  shape2.p = parg, log = TRUE)
-      if (summation) {
-        sum(ll.elts)
-      } else {
-        ll.elts
-      }
+    misc$earg <- vector("list", M)
+    names(misc$earg) <- temp.names
+    for (ii in 1:ncoly) {
+      misc$earg[[M1*ii-1]] <- .escale
+      misc$earg[[M1*ii  ]] <- .eshape2.p
     }
-  }, list( .lscale = lscale, .lshape2.p = lshape2.p,
-           .escale = escale, .eshape2.p = eshape2.p ))),
+
+    misc$expected          <- TRUE
+    misc$multipleResponses <- TRUE
+  }), list( .lscale    = lscale   ,
+            .escale    = escale   ,
+            .lshape2.p = lshape2.p,
+            .eshape2.p = eshape2.p
+                       ))), 
+  loglikelihood = eval(substitute(
+    function(mu, y, w, residuals = FALSE, 
+             eta, extra = NULL, summation = TRUE) {
+      M1  <- 2
+      NOS <- ncol(eta)/M1
+      Scale <- eta2theta(eta[, M1*(1:NOS) - 1, drop = FALSE],
+                         .lscale    , earg = .escale    )
+      parg  <- eta2theta(eta[, M1*(1:NOS)    , drop = FALSE],
+                         .lshape2.p , earg = .eshape2.p )
+      if (residuals) {
+        stop("loglikelihood residuals not implemented yet")
+      } else {
+        ll.elts <-
+          c(w) * dgenbetaII(x = y, scale = Scale, shape1.a = 1,
+                            shape2.p = parg, shape3.q = 1, log = TRUE)
+        if (summation) {
+          sum(ll.elts)
+        } else {
+          ll.elts
+        }
+      }
+    }, list( .lscale    = lscale   ,
+             .escale    = escale   ,
+             .lshape2.p = lshape2.p,
+             .eshape2.p = eshape2.p
+                        ))),
   vfamily = c("inv.lomax"),
 
-
   simslot = eval(substitute(
   function(object, nsim) {
 
@@ -4210,183 +5414,341 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
     if (any(pwts != 1)) 
       warning("ignoring prior weights")
     eta <- predict(object)
-    Scale <- eta2theta(eta[, 1], .lscale    , earg = .escale    )
-    parg  <- eta2theta(eta[, 2], .lshape2.p , earg = .eshape2.p )
+    Scale <- eta2theta(eta[, M1*(1:NOS) - 1, drop = FALSE],
+                       .lscale    , earg = .escale    )
+    parg  <- eta2theta(eta[, M1*(1:NOS)    , drop = FALSE],
+                       .lshape2.p , earg = .eshape2.p )
+    aa   <- 1
+    qq   <- 1    
     rinv.lomax(nsim * length(Scale), scale = Scale, shape2.p = parg)
-  }, list( .lscale = lscale, .lshape2.p = lshape2.p,
-           .escale = escale, .eshape2.p = eshape2.p ))),
+  }, list(  .lscale    = lscale   ,
+            .escale    = escale   ,
+            .lshape2.p = lshape2.p,
+            .eshape2.p = eshape2.p
+                       ))),
 
 
   deriv = eval(substitute(expression({
-    aa <- qq <- 1 
-    scale <- eta2theta(eta[, 1], .lscale    , earg = .escale    )
-    parg  <- eta2theta(eta[, 2], .lshape2.p , earg = .eshape2.p )
-
-    temp1 <- log(y/scale)
-    temp2 <- (y/scale)^aa
-
-    dl.dscale <- (aa/scale) * (-parg + (parg+qq) / (1+1/temp2))
-    dl.dp <- aa * temp1 + digamma(parg + qq) - digamma(parg) - log1p(temp2)
-
-    dscale.deta <- dtheta.deta(scale, .lscale ,    earg = .escale )
+    M1 <- 2
+    NOS <- ncol(eta)/M1  # Needed for summary()
+    Scale <- eta2theta(eta[, M1*(1:NOS) - 1, drop = FALSE],
+                       .lscale    , earg = .escale    )
+    parg  <- eta2theta(eta[, M1*(1:NOS)    , drop = FALSE],
+                       .lshape2.p , earg = .eshape2.p )
+    qq   <- 1
+    aa   <- 1
+    temp1 <- log(y/Scale)
+    temp2 <- (y/Scale)^aa
+    temp3 <- digamma(parg + qq)
+    temp3a <- digamma(parg)
+    temp3b <- digamma(qq)
+    temp4 <- log1p(temp2)
+  
+    dl.dscale <- (aa/Scale) * (-parg + (parg+qq) / (1+1/temp2))
+    dl.dp <- aa * temp1 + temp3 - temp3a - temp4
+    
+    dscale.deta <- dtheta.deta(Scale, .lscale ,    earg = .escale )
     dp.deta     <- dtheta.deta(parg,  .lshape2.p , earg = .eshape2.p )
-
-    c(w) * cbind( dl.dscale * dscale.deta,
-                  dl.dp     * dp.deta )
-  }), list( .lscale = lscale, .lshape2.p = lshape2.p,
-            .escale = escale, .eshape2.p = eshape2.p ))),
+    
+    myderiv <-
+      c(w) * cbind(dl.dscale * dscale.deta,
+                   dl.dp * dp.deta)
+    myderiv[, interleave.VGAM(M, M = M1)]
+  }), list(  .lscale    = lscale   ,
+             .escale    = escale   ,
+             .lshape2.p = lshape2.p,
+             .eshape2.p = eshape2.p
+                        ))),
   weight = eval(substitute(expression({
-    ned2l.dscale <- aa^2 * parg * qq / (scale^2 * (1 + parg + qq))
-    ned2l.dp <- 1 / parg^2 
-    ned2l.dscalep <-  aa * qq   / (scale * (parg + qq))
+    temp5  <- trigamma(parg + qq)
+    temp5a <- trigamma(parg)
+    temp5b <- trigamma(qq)
 
-    wz <- matrix(as.numeric(NA), n, dimm(M))  #M == 2 means 3=dimm(M)
-    wz[, iam(1, 1, M)] <- ned2l.dscale * dscale.deta^2
-    wz[, iam(2, 2, M)] <- ned2l.dp * dp.deta^2
-    wz[, iam(1, 2, M)] <- ned2l.dscalep * dscale.deta * dp.deta
-    wz <- c(w) * wz
+    ned2l.dscale  <- (aa^2) * parg * qq / ((1+parg+qq) * Scale^2)
+    ned2l.dp      <- temp5a - temp5
+    ned2l.dscalep <-  aa * qq   / (Scale*(parg+qq))
+    wz <-
+      array(c(c(w) * ned2l.dscale * dscale.deta^2,
+              c(w) * ned2l.dp * dp.deta^2,
+              c(w) * ned2l.dscalep * dscale.deta * dp.deta),
+            dim = c(n, M/M1, M1*(M1+1)/2))
+    wz <- arwz2wz(wz, M = M, M1 = M1)
     wz
-  }), list( .lscale = lscale, .lshape2.p = lshape2.p,
-            .escale = escale, .eshape2.p = eshape2.p ))))
+  }), list( .lscale    = lscale   ,
+            .escale    = escale   ,
+            .lshape2.p = lshape2.p,
+            .eshape2.p = eshape2.p
+                       ))))
 }
 
 
- paralogistic <- function(lss,
-                          lshape1.a = "loge",
-                          lscale = "loge",
-                          ishape1.a = 2,
-                          iscale = NULL,
-                          zero = NULL) {
-
-  if (!is.logical(lss) || lss)
-    stop("argument 'lss' not specified correctly. ",
-         "See online help for important information")
 
 
 
 
-  if (length(zero) &&
-      !is.Numeric(zero, integer.valued = TRUE, positive = TRUE))
+ paralogistic <-
+              function(lscale    = "loge",
+                       lshape1.a = "loge",
+                       iscale    = NULL,
+                       ishape1.a = NULL,
+                       imethod   = 1,
+                       lss       = TRUE,
+                       gscale    = exp(-5:5),
+                       gshape1.a = exp(-5:5),
+                       probs.y   = c(0.25, 0.50, 0.75),
+                       zero      = ifelse(lss, -2, -1)) {
+
+
+
+
+
+  if (length(lss) != 1 && !is.logical(lss))
+    stop("Argument 'lss' not specified correctly")
+  
+  if (!is.Numeric(imethod, length.arg = 1,
+                  integer.valued = TRUE, 
+                  positive = TRUE) || imethod > 2)
+    stop("Bad input for argument 'imethod'")
+  
+  if (length(iscale) && !is.Numeric(iscale, positive = TRUE)) 
+    stop("Bad input for argument 'iscale'")
+  
+  if (length(ishape1.a) && !is.Numeric(ishape1.a, positive = TRUE))
+    stop("Bad input for argument 'ishape1.a'")
+  
+  if (length(probs.y) < 2 || max(probs.y) > 1 || 
+        !is.Numeric(probs.y, positive = TRUE))
+    stop("Bad input for argument 'probs.y'")
+
+  if (length(zero) && !is.Numeric(zero, integer.valued = TRUE))
     stop("bad input for argument 'zero'")
-
-
-  lshape1.a <- as.list(substitute(lshape1.a))
-  eshape1.a <- link2list(lshape1.a)
-  lshape1.a <- attr(eshape1.a, "function.name")
-
+  
   lscale <- as.list(substitute(lscale))
   escale <- link2list(lscale)
   lscale <- attr(escale, "function.name")
-
-
+  
+  lshape1.a <- as.list(substitute(lshape1.a))
+  eshape1.a <- link2list(lshape1.a)
+  lshape1.a <- attr(eshape1.a, "function.name")
+  
 
   new("vglmff",
-  blurb = c("Paralogistic distribution\n\n",
-          "Links:    ",
-          namesof("shape1.a", lshape1.a, earg = eshape1.a), ", ", 
-          namesof("scale",    lscale,    earg = escale), "\n", 
-          "Mean:     scale * gamma(1 + 1/shape1.a) * ",
-                    "gamma(shape1.a - 1/shape1.a) / gamma(shape1.a)"),
+  blurb = 
+    c("Paralogistic distribution \n\n",
+      "Links:    ", 
+      ifelse (lss,
+              namesof("scale"   , lscale   , earg = escale),
+              namesof("shape1.a", lshape1.a, earg = eshape1.a)), ", ",
+      ifelse (lss, 
+              namesof("shape1.a", lshape1.a, earg = eshape1.a),
+              namesof("scale"   , lscale   , earg = escale)), "\n",
+      "Mean:     scale * gamma(1 + 1/shape1.a) * ",
+                "gamma(shape1.a - 1/shape1.a) / ",
+                "gamma(shape1.a)"),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
+    dotzero <- .zero
+    M1 <- 2
+    eval(negzero.expression.VGAM)
   }), list( .zero = zero ))),
-  initialize = eval(substitute(expression({
+  infos = eval(substitute(function(...) {
+    list(M1 = 2,
+         Q1 = 1,
+         expected = TRUE,
+         zero = .zero ,
+         multipleResponses = TRUE,
+         lscale = .lscale ,       lshape1.a = .lshape1.a ,
+         escale = .escale ,       eshape1.a = .eshape1.a ,
+         .zero = zero )
+  }, list( .lscale = lscale      , .lshape1.a = lshape1.a,
+           .escale = escale      , .eshape1.a = eshape1.a,
+           .zero = zero ))),
+  initialize = eval(substitute(expression({ 
+    temp5 <- w.y.check(w = w, y = y, 
+                       Is.positive.y = TRUE, 
+                       ncol.w.max = Inf, 
+                       ncol.y.max = Inf, 
+                       out.wy = TRUE, 
+                       colsyperw = 1, 
+                       maximize = TRUE)
+    y    <- temp5$y
+    w    <- temp5$w
+    M1 <- 2  # Number of parameters for one response
+    NOS  <- ncoly <- ncol(y)
+    M    <- M1*ncol(y)
 
-    w.y.check(w = w, y = y,
-              ncol.w.max = 1, ncol.y.max = 1)
-
-
+    scaL.names  <- param.names("scale",     NOS)
+    sha1.names  <- param.names("shape1.a",  NOS)
 
     predictors.names <-
-      c(namesof("shape1.a", .lshape1.a , earg = .eshape1.a , tag = FALSE),
-        namesof("scale",    .lscale ,    earg = .escale ,    tag = FALSE))
-
-    parg <- 1
-
-    if (!length( .ishape1.a) || !length( .iscale )) {
-      qvec <- c( .25, .5, .75)  # Arbitrary; could be made an argument
-      ishape1.a <- if (length( .ishape1.a)) .ishape1.a else 1
-      xvec <- log( (1-qvec)^(-1/ ishape1.a ) - 1 )
-      fit0 <- lsfit(x = xvec, y = log(quantile(y, qvec )))
-    }
-
+      if ( .lss ) {
+        c(namesof(scaL.names , .lscale    , earg = .escale    , tag = FALSE),
+          namesof(sha1.names , .lshape1.a , earg = .eshape1.a , tag = FALSE))
+      } else {
+        c(namesof(sha1.names , .lshape1.a , earg = .eshape1.a , tag = FALSE),
+          namesof(scaL.names , .lscale    , earg = .escale    , tag = FALSE))
+      }
+    predictors.names <- predictors.names[interleave.VGAM(M, M = M1)]
+    
     if (!length(etastart)) {
-      aa <- rep(if (length( .ishape1.a)) .ishape1.a else
-                abs(1/fit0$coef[2]),
-                length.out = n)
-      scale <- rep(if (length( .iscale )) .iscale else
-                   exp(fit0$coef[1]),
-                   length.out = n)
+      sc.init <-
+      aa.init <- matrix(as.numeric(NA), n, NOS)
+          
+      for (spp. in 1:NOS) {  # For each response 'y_spp.'... do:
+        yvec <- y[, spp.]
+        wvec <- w[, spp.]
 
+        if ( .imethod == 1 ) {
+          gscale     <- .gscale
+          gshape1.a  <- .gshape1.a
+          if (length( .iscale ))
+            gscale    <-  rep( .iscale    , length = NOS)
+          if (length( .ishape1.a ))
+            gshape1.a <-  rep( .ishape1.a , length = NOS)
+          allmat1 <- expand.grid(shape1.a = gshape1.a)
+          allmat2 <- matrix(as.numeric(NA), nrow(allmat1), 2)
 
+          ll.para <- function(scaleval, x = x, y = y, w = w, extraargs) { 
+            ans <- sum(c(w) * dgenbetaII(x = y,
+                                         scale    = scaleval,
+                                         shape1.a = extraargs$Shape1.a,
+                                         shape2.p = 1,
+                                         shape3.q = extraargs$Shape1.a,
+                                         log = TRUE))
+            ans
+          }
 
+          for (iloc in 1:nrow(allmat1)) {
+            allmat2[iloc, ] <-
+              grid.search(gscale, objfun = ll.para,
+                            y = yvec, x = x, w = wvec,
+                            ret.objfun = TRUE,  # 2nd value is the loglik
+                            extraargs = list(Shape1.a = allmat1[iloc, 1]))
+          }
+          ind5 <- which.max(allmat2[, 2])  # 2nd value is the loglik
+          sc.init[, spp.] <- allmat2[ind5, 1]
+          aa.init[, spp.] <- allmat1[ind5, 1]
+       } else {  # .imethod == 2
+          qvec <- .probs.y 
+          ishape3.q <- if (length( .ishape1.a )) .ishape1.a else 1
+          xvec <- log( (1-qvec)^(-1/ ishape3.q) - 1 )
+          fit0 <- lsfit(x = xvec, y = log(quantile(yvec,  qvec)))
+          sc.init[, spp.] <- if (length( .iscale )) .iscale else
+                             exp(fit0$coef[1])
+          aa.init[, spp.] <- if (length( .ishape1.a )) .ishape1.a else
+                             1/fit0$coef[2]
+        }
+      }  # End of for (spp. ...)
 
+      finite.mean <- 1 < aa.init * aa.init
+      COP.use <- 1.15
+      while (FALSE && any(!finite.mean)) {
+        aa.init[!finite.mean] <- 0.1 + aa.init[!finite.mean] * COP.use
+        finite.mean <- 1 < aa.init * aa.init
+      }
+
+      etastart <- if ( .lss )
+              cbind(theta2eta(sc.init, .lscale    , earg = .escale    ),
+                    theta2eta(aa.init, .lshape1.a , earg = .eshape1.a )) else
+              cbind(theta2eta(aa.init, .lshape1.a , earg = .eshape1.a ),
+                    theta2eta(sc.init, .lscale    , earg = .escale    ))
+      etastart <- etastart[, interleave.VGAM(M, M = M1)]
+    }  # End of etastart.
+  }), list( .lscale    = lscale   , .lshape1.a = lshape1.a,
+            .escale    = escale   , .eshape1.a = eshape1.a,
+            .iscale    = iscale   , .ishape1.a = ishape1.a,
+            .gscale    = gscale   , .gshape1.a = gshape1.a,           
+            .imethod   = imethod  , .probs.y  = probs.y,
+            .lss = lss ))), 
+  linkinv = eval(substitute(function(eta, extra = NULL) {
+    M1 <- 2
+    NOS <- ncol(eta)/M1
+    if ( .lss ) {
+      Scale <- eta2theta(eta[, M1*(1:NOS) - 1, drop = FALSE],
+                         .lscale ,  earg = .escale )
+      aa    <- eta2theta(eta[, M1*(1:NOS)    , drop = FALSE],
+                         .lshape1.a , earg = .eshape1.a )
+    } else {
+      aa    <- eta2theta(eta[, M1*(1:NOS) - 1, drop = FALSE],
+                         .lshape1.a , earg = .eshape1.a )
+      Scale <- eta2theta(eta[, M1*(1:NOS)    , drop = FALSE],
+                         .lscale    ,  earg = .escale )
+    }
+    parg <- 1
+    qq   <- aa
+
+    ans <- Scale * exp(lgamma(parg + 1/aa) +
+                       lgamma(qq   - 1/aa) - lgamma(parg) - lgamma(qq))
+    ans[parg + 1/aa <= 0] <- NA
+    ans[qq   - 1/aa <= 0] <- NA
+    ans[aa          <= 0] <- NA
+    ans[Scale       <= 0] <- NA
+    ans
+  }, list( .lscale    = lscale   , .lshape1.a = lshape1.a,
+           .escale    = escale   , .eshape1.a = eshape1.a,
+           .lss = lss ))),
+  last = eval(substitute(expression({
+    M1 <- 2
+
+    misc$link <- c(rep( if ( .lss ) .lscale else .lshape1.a , len = ncoly),
+                   rep( if ( .lss ) .lshape1.a else .lscale , len = ncoly))[
+                   interleave.VGAM(M, M = M1)]
+    temp.names <- if ( .lss ) {
+      c(scaL.names, sha1.names)
+    } else {
+      c(sha1.names, scaL.names)
+    }
+    names(misc$link) <- temp.names[interleave.VGAM(M, M = M1)]
+
+    misc$earg <- vector("list", M)
+    names(misc$earg) <- temp.names
+    for (ii in 1:ncoly)
+      if ( .lss ) {
+        misc$earg[[M1*ii-1]] <- .escale
+        misc$earg[[M1*ii  ]] <- .eshape1.a
+      } else {
+        misc$earg[[M1*ii-1]] <- .eshape1.a
+        misc$earg[[M1*ii  ]] <- .escale
+      }
+
+    misc$expected          <- TRUE
+    misc$multipleResponses <- TRUE
+  }), list( .lscale    = lscale   , .lshape1.a = lshape1.a,
+            .escale    = escale   , .eshape1.a = eshape1.a,
+            .lss = lss ))), 
+  loglikelihood = eval(substitute(
+    function(mu, y, w, residuals = FALSE, 
+             eta, extra = NULL, summation = TRUE) {
+      M1  <- 2
+      NOS <- ncol(eta)/M1
+      if ( .lss ) {
+        Scale <- eta2theta(eta[, M1*(1:NOS) - 1, drop = FALSE],
+                           .lscale    , earg = .escale    )
+        aa    <- eta2theta(eta[, M1*(1:NOS)    , drop = FALSE],
+                           .lshape1.a , earg = .eshape1.a )
+      } else {
+        aa    <- eta2theta(eta[, M1*(1:NOS) - 1, drop = FALSE],
+                           .lshape1.a , earg = .eshape1.a )
+        Scale <- eta2theta(eta[, M1*(1:NOS)    , drop = FALSE],
+                           .lscale    , earg = .escale    )
+      }
       parg   <- 1
       qq     <- aa
-      outOfRange <- (parg + 1/aa <= 0)
-      parg[outOfRange] <- 1 / aa[outOfRange] + 1
-      outOfRange <- (qq   - 1/aa <= 0)
-      aa[outOfRange] <-
-      qq[outOfRange] <- 2 # Need aa > 1, where aa == qq
-
-
-        etastart <-
-          cbind(theta2eta(aa,    .lshape1.a , earg = .eshape1.a ),
-                theta2eta(scale, .lscale ,    earg = .escale ))
-      }
-  }), list( .lshape1.a = lshape1.a, .lscale = lscale,
-            .eshape1.a = eshape1.a, .escale = escale, 
-            .ishape1.a = ishape1.a, .iscale = iscale
-            ))),
-  linkinv = eval(substitute(function(eta, extra = NULL) {
-    aa     <- eta2theta(eta[, 1], .lshape1.a , earg = .eshape1.a )
-    Scale  <- eta2theta(eta[, 2], .lscale ,    earg = .escale )
-    parg   <- 1
-    qq     <- aa
-
-    ans <- Scale * exp(lgamma(parg + 1/aa) +
-                       lgamma(qq   - 1/aa) - lgamma(parg) - lgamma(qq))
-    ans[parg + 1/aa <= 0] <- NA
-    ans[qq   - 1/aa <= 0] <- NA
-    ans[aa          <= 0] <- NA
-    ans[Scale       <= 0] <- NA
-    ans
-  }, list( .lshape1.a = lshape1.a, .lscale = lscale,
-           .eshape1.a = eshape1.a, .escale = escale))),
-  last = eval(substitute(expression({
-    misc$link <-    c(shape1.a = .lshape1.a , scale = .lscale )
-
-    misc$earg <- list(shape1.a = .eshape1.a , scale = .escale )
-
-    misc$expected <- TRUE
-    misc$multipleResponses <- FALSE
-  }), list( .lshape1.a = lshape1.a, .lscale = lscale,
-            .eshape1.a = eshape1.a, .escale = escale))),
-  loglikelihood = eval(substitute(
-    function(mu, y, w, residuals = FALSE, eta,
-             extra = NULL,
-             summation = TRUE) {
-    aa    <- eta2theta(eta[, 1], .lshape1.a , earg = .eshape1.a )
-    Scale <- eta2theta(eta[, 2], .lscale ,    earg = .escale )
-    parg <- 1
-    qq <- aa
-    if (residuals) {
-      stop("loglikelihood residuals not implemented yet")
-    } else {
-      ll.elts <- c(w) * dparalogistic(x = y, shape1.a = aa,
-                                      scale = Scale, log = TRUE)
-      if (summation) {
-        sum(ll.elts)
+      if (residuals) {
+        stop("loglikelihood residuals not implemented yet")
       } else {
-        ll.elts
+        ll.elts <-
+          c(w) * dgenbetaII(x = y, scale = Scale, shape1.a = aa,
+                            shape2.p = parg, shape3.q = aa, log = TRUE)
+        if (summation) {
+          sum(ll.elts)
+        } else {
+          ll.elts
+        }
       }
-    }
-  }, list( .lshape1.a = lshape1.a, .lscale = lscale,
-           .eshape1.a = eshape1.a, .escale = escale))),
+    }, list( .lscale    = lscale   , .lshape1.a = lshape1.a,
+             .escale    = escale   , .eshape1.a = eshape1.a,
+             .lss = lss ))),
   vfamily = c("paralogistic"),
-
-
-
   simslot = eval(substitute(
   function(object, nsim) {
 
@@ -4394,142 +5756,288 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
               pwts else weights(object, type = "prior")
     if (any(pwts != 1)) 
       warning("ignoring prior weights")
+
     eta <- predict(object)
-    aa    <- eta2theta(eta[, 1], .lshape1.a , earg = .eshape1.a )
-    Scale <- eta2theta(eta[, 2], .lscale  ,   earg = .escale )
+    M1 <- 2
+    NOS <- ncol(eta)/M1
+    if ( .lss ) {
+      Scale <- eta2theta(eta[, M1*(1:NOS) - 1, drop = FALSE],
+                         .lscale ,  earg = .escale )
+      aa    <- eta2theta(eta[, M1*(1:NOS)    , drop = FALSE],
+                         .lshape1.a , earg = .eshape1.a )
+    } else {
+      aa    <- eta2theta(eta[, M1*(1:NOS) - 1, drop = FALSE],
+                         .lshape1.a , earg = .eshape1.a )
+      Scale <- eta2theta(eta[, M1*(1:NOS)    , drop = FALSE],
+                         .lscale    ,  earg = .escale )
+    }
     rparalogistic(nsim * length(Scale), shape1.a = aa, scale = Scale)
-  }, list( .lshape1.a = lshape1.a, .lscale = lscale,
-           .eshape1.a = eshape1.a, .escale = escale))),
-
-
-
-  deriv = eval(substitute(expression({
-    aa    <- eta2theta(eta[, 1], .lshape1.a , earg = .eshape1.a )
-    scale <- eta2theta(eta[, 2], .lscale ,    earg = .escale )
+  }, list( .lscale    = lscale   , .lshape1.a = lshape1.a,
+           .escale    = escale   , .eshape1.a = eshape1.a,
+           .lss = lss ))),
+  deriv = eval(substitute(expression({ 
+    NOS <- ncol(eta)/M1  # Needed for summary()
+    if ( .lss ) { 
+      Scale <- eta2theta(eta[, M1*(1:NOS) - 1, drop = FALSE],
+                         .lscale    , earg = .escale   )
+      aa    <- eta2theta(eta[, M1*(1:NOS)    , drop = FALSE],
+                         .lshape1.a , earg = .eshape1.a)
+    } else {
+      aa    <- eta2theta(eta[, M1*(1:NOS) - 1, drop = FALSE],
+                         .lshape1.a , earg = .eshape1.a)
+      Scale <- eta2theta(eta[, M1*(1:NOS)    , drop = FALSE],
+                         .lscale    , earg = .escale )
+    }  
     parg <- 1
-    qq <- aa
+    qq   <- aa
 
-    temp1 <- log(y/scale)
-    temp2 <- (y/scale)^aa
+    temp1 <- log(y/Scale)
+    temp2 <- (y/Scale)^aa
+    temp3 <- digamma(parg + qq)
     temp3a <- digamma(parg)
     temp3b <- digamma(qq)
-
-    dl.da     <- 1/aa + parg * temp1 - (parg+qq) * temp1 / (1+1/temp2)
-    dl.dscale <- (aa/scale) * (-parg + (parg+qq) / (1+1/temp2))
-
+    temp4 <- log1p(temp2)
+  
+    dl.dscale <- (aa/Scale) * (-parg + (parg+qq) / (1+1/temp2))
+    dl.da <- 1/aa + parg * temp1 - (parg+qq) * temp1 / (1+1/temp2)
+    
+    dscale.deta <- dtheta.deta(Scale, .lscale ,    earg = .escale )
     da.deta     <- dtheta.deta(aa,    .lshape1.a , earg = .eshape1.a )
-    dscale.deta <- dtheta.deta(scale, .lscale ,    earg = .escale )
-
-    c(w) * cbind( dl.da * da.deta,
-               dl.dscale * dscale.deta)
-  }), list( .lshape1.a = lshape1.a, .lscale = lscale,
-            .eshape1.a = eshape1.a, .escale = escale))),
+    
+    myderiv <- if ( .lss ) {
+      c(w) * cbind(dl.dscale * dscale.deta,
+                   dl.da * da.deta)
+    } else {
+      c(w) * cbind(dl.da * da.deta,
+                   dl.dscale * dscale.deta)
+    }
+    myderiv[, interleave.VGAM(M, M = M1)]
+  }), list(  .lscale    = lscale   , .lshape1.a = lshape1.a,
+             .escale    = escale   , .eshape1.a = eshape1.a,
+             .lss = lss ))),
   weight = eval(substitute(expression({
-    ned2l.da <- (1 + parg + qq +
-                 parg * qq * (trigamma(parg) + trigamma(qq) +
-                (temp3b - temp3a + (parg-qq)/(parg*qq))^2 - 
-                (parg^2 + qq^2) / (parg*qq)^2)) / (aa^2 * (1+parg+qq))
-    ned2l.dscale <- aa^2 * parg * qq / (scale^2 * (1+parg+qq))
-    ned2l.dascale <- (parg - qq - parg*qq*(temp3a -temp3b)) /(
-                      scale*(1 + parg+qq))
+    temp5  <- trigamma(parg + qq)
+    temp5a <- trigamma(parg)
+    temp5b <- trigamma(qq)
 
-    wz <- matrix(as.numeric(NA), n, dimm(M))  #M == 2 means 3=dimm(M)
-    wz[, iam(1, 1, M)] <- ned2l.da * da.deta^2
-    wz[, iam(2, 2, M)] <- ned2l.dscale * dscale.deta^2
-    wz[, iam(1, 2, M)] <- ned2l.dascale * da.deta * dscale.deta
-    wz <- c(w) * wz
+    ned2l.da <- (1 + parg + qq + parg * qq * (temp5a + temp5b +
+                (temp3b - temp3a + (parg-qq)/(parg*qq))^2 -
+                (parg^2 + qq^2) / (parg*qq)^2)) / (aa^2 * (1+parg+qq))
+    ned2l.dscale  <- (aa^2) * parg * qq / ((1+parg+qq) * Scale^2)
+    ned2l.dascale <- (parg - qq - parg * qq *
+                     (temp3a -temp3b)) / (Scale*(1 + parg+qq))
+    wz <- if ( .lss ) {
+      array(c(c(w) * ned2l.dscale * dscale.deta^2,
+              c(w) * ned2l.da * da.deta^2,
+              c(w) * ned2l.dascale * da.deta * dscale.deta),
+            dim = c(n, M/M1, M1*(M1+1)/2))
+    } else {
+      array(c(c(w) * ned2l.da * da.deta^2,
+              c(w) * ned2l.dscale * dscale.deta^2,
+              c(w) * ned2l.dascale * da.deta * dscale.deta),
+            dim = c(n, M/M1, M1*(M1+1)/2))
+    }
+    wz <- arwz2wz(wz, M = M, M1 = M1)
     wz
-  }), list( .lshape1.a = lshape1.a, .lscale = lscale,
-            .eshape1.a = eshape1.a, .escale = escale))))
+  }), list( .lscale    = lscale   , .lshape1.a = lshape1.a,
+            .escale    = escale   , .eshape1.a = eshape1.a, 
+            .lss = lss ))))
 }
 
 
 
- inv.paralogistic <- function(lss,
-                              lshape1.a = "loge", lscale = "loge",
-                              ishape1.a = 2,      iscale = NULL,
-                              zero = NULL) {
-
-  if (!is.logical(lss) || lss)
-    stop("argument 'lss' not specified correctly. ",
-         "See online help for important information")
 
 
 
-  if (length(zero) &&
-      !is.Numeric(zero, integer.valued = TRUE, positive = TRUE))
+ inv.paralogistic <-
+              function(lscale    = "loge",
+                       lshape1.a = "loge",
+                       iscale    = NULL,
+                       ishape1.a = NULL,
+                       imethod   = 1,
+                       lss       = TRUE,
+                       gscale    = exp(-5:5),
+                       gshape1.a = exp(-5:5),
+                       probs.y   = c(0.25, 0.50, 0.75),
+                       zero      = ifelse(lss, -2, -1)) {
+
+
+
+
+  if (length(lss) != 1 && !is.logical(lss))
+    stop("Argument 'lss' not specified correctly")
+  
+  if (!is.Numeric(imethod, length.arg = 1,
+                  integer.valued = TRUE, 
+                  positive = TRUE) || imethod > 2)
+    stop("Bad input for argument 'imethod'")
+  
+  if (length(iscale) && !is.Numeric(iscale, positive = TRUE)) 
+    stop("Bad input for argument 'iscale'")
+  
+  if (length(ishape1.a) && !is.Numeric(ishape1.a, positive = TRUE))
+    stop("Bad input for argument 'ishape1.a'")
+  
+  if (length(probs.y) < 2 || max(probs.y) > 1 || 
+        !is.Numeric(probs.y, positive = TRUE))
+    stop("Bad input for argument 'probs.y'")
+
+  if (length(zero) && !is.Numeric(zero, integer.valued = TRUE))
     stop("bad input for argument 'zero'")
-
-
-  lshape1.a <- as.list(substitute(lshape1.a))
-  eshape1.a <- link2list(lshape1.a)
-  lshape1.a <- attr(eshape1.a, "function.name")
-
+  
   lscale <- as.list(substitute(lscale))
   escale <- link2list(lscale)
   lscale <- attr(escale, "function.name")
+  
+  lshape1.a <- as.list(substitute(lshape1.a))
+  eshape1.a <- link2list(lshape1.a)
+  lshape1.a <- attr(eshape1.a, "function.name")
+  
 
-
-  new("vglmff",
-  blurb = c("Inverse paralogistic distribution\n\n",
-            "Links:    ",
-            namesof("shape1.a", lshape1.a, earg = eshape1.a), ", ", 
-            namesof("scale",    lscale,    earg = escale), "\n", 
-            "Mean:     scale * gamma(shape1.a + 1/shape1.a) * ",
-                      "gamma(1 - 1/shape1.a)/gamma(shape1.a)"),
+  new("vglmff", 
+  blurb = 
+    c("Inverse paralogistic distribution \n\n",
+      "Links:    ", 
+      ifelse (lss,
+              namesof("scale"   , lscale   , earg = escale),
+              namesof("shape1.a", lshape1.a, earg = eshape1.a)), ", ",
+      ifelse (lss, 
+              namesof("shape1.a", lshape1.a, earg = eshape1.a),
+              namesof("scale"   , lscale   , earg = escale)), "\n",
+      "Mean:     scale * gamma(shape1.a + 1/shape1.a) * ",
+                "gamma(1 - 1/shape1.a) / ",
+                "gamma(shape1.a)"),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
+    dotzero <- .zero
+    M1 <- 2
+    eval(negzero.expression.VGAM)
   }), list( .zero = zero ))),
-  initialize = eval(substitute(expression({
+  infos = eval(substitute(function(...) {
+    list(M1 = 2,
+         Q1 = 1,
+         expected = TRUE,
+         zero = .zero ,
+         multipleResponses = TRUE,
+         lscale    = .lscale    , lshape1.a = .lshape1.a ,
+         escale    = .escale    , eshape1.a = .eshape1.a ,
+         .zero = zero )
+  }, list( .lscale = lscale      , .lshape1.a = lshape1.a,
+           .escale = escale      , .eshape1.a = eshape1.a,
+           .zero = zero ))),
+  initialize = eval(substitute(expression({ 
+    temp5 <- w.y.check(w = w, y = y, 
+                       Is.positive.y = TRUE, 
+                       ncol.w.max = Inf, 
+                       ncol.y.max = Inf, 
+                       out.wy = TRUE, 
+                       colsyperw = 1, 
+                       maximize = TRUE)
+    y    <- temp5$y
+    w    <- temp5$w
+    M1 <- 2  # Number of parameters for one response
+    NOS  <- ncoly <- ncol(y)
+    M    <- M1*ncol(y)
 
-    w.y.check(w = w, y = y,
-              ncol.w.max = 1, ncol.y.max = 1)
+    scaL.names  <- param.names("scale",     NOS)
+    sha1.names  <- param.names("shape1.a",  NOS)
 
-
-    predictors.names <-
-      c(namesof("shape1.a", .lshape1.a ,  earg = .eshape1.a , tag = FALSE),
-        namesof("scale",    .lscale    ,  earg = .escale ,    tag = FALSE))
-
-    if (!length( .ishape1.a) || !length( .iscale )) {
-      qvec <- c( .25, .5, .75)  # Arbitrary; could be made an argument
-      ishape2.p <- if (length( .ishape1.a )) .ishape1.a else 1
-      xvec <- log( qvec^(-1/ ishape2.p ) - 1 )
-      fit0 <- lsfit(x = xvec, y = log(quantile(y, qvec )))
-    }
-
-    qq <- 1
+    predictors.names <- if ( .lss ) {
+        c(namesof(scaL.names , .lscale    , earg = .escale    , tag = FALSE),
+          namesof(sha1.names , .lshape1.a , earg = .eshape1.a , tag = FALSE))
+      } else {
+        c(namesof(sha1.names , .lshape1.a , earg = .eshape1.a , tag = FALSE),
+          namesof(scaL.names , .lscale    , earg = .escale    , tag = FALSE))
+      }
+    predictors.names <- predictors.names[interleave.VGAM(M, M = M1)]
+    
     if (!length(etastart)) {
-      aa <- rep(if (length( .ishape1.a)) .ishape1.a else -1/fit0$coef[2],
-                length = n)
-      scale <- rep(if (length( .iscale )) .iscale else
-                  exp(fit0$coef[1]), length = n)
+      sc.init <-
+      aa.init <- matrix(as.numeric(NA), n, NOS)
+          
+      for (spp. in 1:NOS) {  # For each response 'y_spp.'... do:
+        yvec <- y[, spp.]
+        wvec <- w[, spp.]
+
+        if ( .imethod == 1 ) {
+          gscale     <- .gscale
+          gshape1.a  <- .gshape1.a
+          if (length( .iscale ))
+            gscale    <-  rep( .iscale    , length = NOS)
+          if (length( .ishape1.a ))
+            gshape1.a <-  rep( .ishape1.a , length = NOS)
+          allmat1 <- cbind(shape1.a = gshape1.a)
+          allmat2 <- matrix(as.numeric(NA), nrow(allmat1), 2)
+
+          ll.invp <- function(scaleval, x = x, y = y, w = w, extraargs) { 
+            ans <- sum(c(w) * dgenbetaII(x = y,
+                                         scale    = scaleval,
+                                         shape1.a = extraargs$Shape1.a,
+                                         shape2.p = extraargs$Shape1.a,
+                                         shape3.q = 1,
+                                         log = TRUE))
+            ans
+          }
+
+          for (iloc in 1:nrow(allmat1)) {
+            allmat2[iloc, ] <-
+              grid.search(gscale, objfun = ll.invp,
+                            y = yvec, x = x, w = wvec,
+                            ret.objfun = TRUE,  # 2nd value is the loglik
+                            extraargs = list(Shape1.a = allmat1[iloc, 1]))
+          }
+          ind5 <- which.max(allmat2[, 2])  # 2nd value is the loglik
+          sc.init[, spp.] <- allmat2[ind5, 1]
+          aa.init[, spp.] <- allmat1[ind5, 1]
+        } else {  # .imethod == 2
+          qvec <- .probs.y 
+          ishape2.p <- if (length( .ishape1.a )) .ishape1.a else 1
+          xvec <- log( qvec^(-1/ ishape2.p) - 1 )
+          fit0 <- lsfit(x = xvec, y = log(quantile(yvec,  qvec)))
+          sc.init[, spp.] <- if (length( .iscale )) .iscale else
+                             exp(fit0$coef[1])
+          aa.init[, spp.] <- if (length( .ishape1.a )) .ishape1.a else
+                             -1/fit0$coef[2]
+        }
+      }  # End of for (spp. ...)
 
 
 
+      finite.mean <- 1 < aa.init
+      COP.use <- 1.15
+      while (FALSE && any(!finite.mean)) {
+        aa.init[!finite.mean] <- 0.1 + aa.init[!finite.mean] * COP.use
+        finite.mean <- 1 < aa.init
+      }
 
-
-    parg <- aa
-    qq <- 1
-      outOfRange <- (parg + 1/aa <= 0)
-      parg[outOfRange] <-
-        aa[outOfRange] <- 2
-      outOfRange <- (qq   - 1/aa <= 0)
-      qq[outOfRange] <- 1 / aa[outOfRange] + 1
-
-
-
-      etastart <-
-        cbind(theta2eta(aa,    .lshape1.a , earg = .eshape1.a ),
-              theta2eta(scale, .lscale ,    earg = .escale ))
-    }
-  }), list( .lshape1.a = lshape1.a, .lscale = lscale,
-            .eshape1.a = eshape1.a, .escale = escale,
-            .ishape1.a = ishape1.a, .iscale = iscale ))),
+      etastart <- if ( .lss )
+          cbind(theta2eta(sc.init, .lscale    , earg = .escale    ),
+                theta2eta(aa.init, .lshape1.a , earg = .eshape1.a )) else
+          cbind(theta2eta(aa.init, .lshape1.a , earg = .eshape1.a ),
+                theta2eta(sc.init, .lscale    , earg = .escale    ))
+      etastart <- etastart[, interleave.VGAM(M, M = M1)]
+    }  # End of etastart.
+  }), list( .lscale    = lscale   , .lshape1.a = lshape1.a,
+            .escale    = escale   , .eshape1.a = eshape1.a,
+            .iscale    = iscale   , .ishape1.a = ishape1.a,
+            .gscale    = gscale   , .gshape1.a = gshape1.a,           
+            .imethod   = imethod  , .probs.y   = probs.y,
+            .lss = lss ))), 
   linkinv = eval(substitute(function(eta, extra = NULL) {
-    aa     <- eta2theta(eta[, 1], .lshape1.a , earg = .eshape1.a )
-    Scale  <- eta2theta(eta[, 2], .lscale    , earg = .escale )
+    M1 <- 2
+    NOS <- ncol(eta)/M1
+    if ( .lss ) {
+      Scale <- eta2theta(eta[, M1*(1:NOS) - 1, drop = FALSE],
+                         .lscale ,  earg = .escale )
+      aa    <- eta2theta(eta[, M1*(1:NOS)    , drop = FALSE],
+                         .lshape1.a , earg = .eshape1.a )
+    } else {
+      aa    <- eta2theta(eta[, M1*(1:NOS) - 1, drop = FALSE],
+                         .lshape1.a , earg = .eshape1.a )
+      Scale <- eta2theta(eta[, M1*(1:NOS)    , drop = FALSE],
+                         .lscale    ,  earg = .escale )
+    }
     parg <- aa
-    qq <- 1
+    qq   <- 1
 
     ans <- Scale * exp(lgamma(parg + 1/aa) +
                        lgamma(qq   - 1/aa) - lgamma(parg) - lgamma(qq))
@@ -4538,41 +6046,71 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
     ans[aa          <= 0] <- NA
     ans[Scale       <= 0] <- NA
     ans
-  }, list( .lshape1.a = lshape1.a, .lscale = lscale,
-           .eshape1.a = eshape1.a, .escale = escale))),
+  }, list( .lscale    = lscale   , .lshape1.a = lshape1.a,
+           .escale    = escale   , .eshape1.a = eshape1.a,
+           .lss = lss ))),
   last = eval(substitute(expression({
-    misc$link <-    c(shape1.a = .lshape1.a , scale = .lscale )
+    M1 <- 2
 
-    misc$earg <- list(shape1.a = .eshape1.a , scale = .escale )
-
-    misc$expected <- TRUE
-    misc$multipleResponses <- FALSE
-  }), list( .lshape1.a = lshape1.a, .lscale = lscale,
-            .eshape1.a = eshape1.a, .escale = escale))),
-  loglikelihood = eval(substitute(
-    function(mu, y, w, residuals = FALSE, eta,
-             extra = NULL,
-             summation = TRUE) {
-    aa    <- eta2theta(eta[, 1], .lshape1.a , earg = .eshape1.a )
-    Scale <- eta2theta(eta[, 2], .lscale ,    earg = .escale )
-    parg <- aa
-    qq <- 1
-    if (residuals) {
-      stop("loglikelihood residuals not implemented yet")
+    misc$link <- c(rep( if ( .lss ) .lscale else .lshape1.a , len = ncoly),
+                   rep( if ( .lss ) .lshape1.a else .lscale , len = ncoly))[
+                   interleave.VGAM(M, M = M1)]
+    temp.names <- if ( .lss ) {
+      c(scaL.names, sha1.names)
     } else {
-      ll.elts <- c(w) * dinv.paralogistic(x = y, shape1.a = aa,
-                                         scale = Scale, log = TRUE)
-      if (summation) {
-        sum(ll.elts)
-      } else {
-        ll.elts
-      }
+      c(sha1.names, scaL.names)
     }
-  }, list( .lshape1.a = lshape1.a, .lscale = lscale,
-           .eshape1.a = eshape1.a, .escale = escale))),
+    names(misc$link) <- temp.names[interleave.VGAM(M, M = M1)]
+
+    misc$earg <- vector("list", M)
+    names(misc$earg) <- temp.names
+    for (ii in 1:ncoly)
+      if ( .lss ) {
+        misc$earg[[M1*ii-1]] <- .escale
+        misc$earg[[M1*ii  ]] <- .eshape1.a
+      } else {
+        misc$earg[[M1*ii-1]] <- .eshape1.a
+        misc$earg[[M1*ii  ]] <- .escale
+      }
+
+    misc$expected          <- TRUE
+    misc$multipleResponses <- TRUE
+  }), list( .lscale    = lscale   , .lshape1.a = lshape1.a,
+            .escale    = escale   , .eshape1.a = eshape1.a,
+            .lss = lss ))), 
+  loglikelihood = eval(substitute(
+    function(mu, y, w, residuals = FALSE, 
+             eta, extra = NULL, summation = TRUE) {
+      M1  <- 2
+      NOS <- ncol(eta)/M1
+      if ( .lss ) {
+        Scale <- eta2theta(eta[, M1*(1:NOS) - 1, drop = FALSE],
+                           .lscale    , earg = .escale    )
+        aa    <- eta2theta(eta[, M1*(1:NOS)    , drop = FALSE],
+                           .lshape1.a , earg = .eshape1.a )
+      } else {
+        aa    <- eta2theta(eta[, M1*(1:NOS) - 1, drop = FALSE],
+                           .lshape1.a , earg = .eshape1.a )
+        Scale <- eta2theta(eta[, M1*(1:NOS)    , drop = FALSE],
+                           .lscale    , earg = .escale    )
+      }
+      parg   <- aa
+      if (residuals) {
+        stop("loglikelihood residuals not implemented yet")
+      } else {
+        ll.elts <-
+          c(w) * dgenbetaII(x = y, scale = Scale, shape1.a = aa,
+                            shape2.p = aa, shape3.q = 1, log = TRUE)
+        if (summation) {
+          sum(ll.elts)
+        } else {
+          ll.elts
+        }
+      }
+    }, list( .lscale    = lscale   , .lshape1.a = lshape1.a,
+             .escale    = escale   , .eshape1.a = eshape1.a,
+             .lss = lss ))),
   vfamily = c("inv.paralogistic"),
-
-
 
   simslot = eval(substitute(
   function(object, nsim) {
@@ -4582,199 +6120,104 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
     if (any(pwts != 1)) 
       warning("ignoring prior weights")
     eta <- predict(object)
-    aa    <- eta2theta(eta[, 1], .lshape1.a , earg = .eshape1.a )
-    Scale <- eta2theta(eta[, 2], .lscale  ,   earg = .escale )
+    if ( .lss ) { 
+      Scale <- eta2theta(eta[, M1*(1:NOS) - 1, drop = FALSE],
+                         .lscale    , earg = .escale   )
+      aa    <- eta2theta(eta[, M1*(1:NOS)    , drop = FALSE],
+                         .lshape1.a , earg = .eshape1.a)
+    } else {
+      aa    <- eta2theta(eta[, M1*(1:NOS) - 1, drop = FALSE],
+                         .lshape1.a , earg = .eshape1.a)
+      Scale <- eta2theta(eta[, M1*(1:NOS)    , drop = FALSE],
+                         .lscale    , earg = .escale )
+    }  
+    parg <- aa
+    qq   <- 1
     rinv.paralogistic(nsim * length(Scale), shape1.a = aa, scale = Scale)
-  }, list( .lshape1.a = lshape1.a, .lscale = lscale,
-           .eshape1.a = eshape1.a, .escale = escale))),
-
+  }, list(  .lscale    = lscale   , .lshape1.a = lshape1.a,
+            .escale    = escale   , .eshape1.a = eshape1.a,
+            .lss = lss ))),
 
 
   deriv = eval(substitute(expression({
-    aa    <- eta2theta(eta[, 1], .lshape1.a , earg = .eshape1.a )
-    scale <- eta2theta(eta[, 2], .lscale ,    earg = .escale )
-    parg <- aa 
-    qq <- 1
-
-    temp1 <- log(y/scale)
-    temp2 <- (y/scale)^aa
+    M1 <- 2
+    NOS <- ncol(eta)/M1  # Needed for summary()
+    if ( .lss ) { 
+      Scale <- eta2theta(eta[, M1*(1:NOS) - 1, drop = FALSE],
+                         .lscale    , earg = .escale   )
+      aa    <- eta2theta(eta[, M1*(1:NOS)    , drop = FALSE],
+                         .lshape1.a , earg = .eshape1.a)
+    } else {
+      aa    <- eta2theta(eta[, M1*(1:NOS) - 1, drop = FALSE],
+                         .lshape1.a , earg = .eshape1.a)
+      Scale <- eta2theta(eta[, M1*(1:NOS)    , drop = FALSE],
+                         .lscale    , earg = .escale )
+    }  
+    parg <- aa
+    qq   <- 1
+    temp1 <- log(y/Scale)
+    temp2 <- (y/Scale)^aa
+    temp3 <- digamma(parg + qq)
     temp3a <- digamma(parg)
     temp3b <- digamma(qq)
-
+    temp4 <- log1p(temp2)
+  
+    dl.dscale <- (aa/Scale) * (-parg + (parg+qq) / (1+1/temp2))
     dl.da <- 1/aa + parg * temp1 - (parg+qq) * temp1 / (1+1/temp2)
-    dl.dscale <- (aa/scale) * (-parg + (parg+qq) / (1+1/temp2))
-
+    
+    dscale.deta <- dtheta.deta(Scale, .lscale ,    earg = .escale )
     da.deta     <- dtheta.deta(aa,    .lshape1.a , earg = .eshape1.a )
-    dscale.deta <- dtheta.deta(scale, .lscale ,    earg = .escale )
-
-    c(w) * cbind( dl.da     * da.deta,
-                  dl.dscale * dscale.deta )
-  }), list( .lshape1.a = lshape1.a, .lscale = lscale,
-            .eshape1.a = eshape1.a, .escale = escale))),
-
-  weight = eval(substitute(expression({
-    ned2l.da <- (1 + parg + qq +
-                 parg * qq * (trigamma(parg) + trigamma(qq) +
-                (temp3b - temp3a + (parg-qq)/(parg*qq))^2 - 
-                (parg^2 + qq^2) / (parg*qq)^2)) / (aa^2 * (1 + parg + qq))
-    ned2l.dscale <- aa^2 * parg * qq / (scale^2 * (1 + parg + qq))
-    ned2l.dascale <- (parg - qq -
-                      parg * qq * (temp3a -temp3b)) / (scale *
-                     (1 + parg + qq))
-
-    wz <- matrix(as.numeric(NA), n, dimm(M))  # M==3 means 6=dimm(M)
-    wz[, iam(1, 1, M)] <- ned2l.da * da.deta^2
-    wz[, iam(2, 2, M)] <- ned2l.dscale * dscale.deta^2
-    wz[, iam(1, 2, M)] <- ned2l.dascale * da.deta * dscale.deta
-    wz <- c(w) * wz
-    wz
-  }), list( .lshape1.a = lshape1.a, .lscale = lscale,
-            .eshape1.a = eshape1.a, .escale = escale))))
-}
-
-
-
-
-
-
-
-
-
- if (FALSE)
- genlognormal <- function(link.sigma = "loge", link.r = "loge",
-                          init.sigma = 1, init.r = 1, zero = NULL) {
-warning("20040402; does not work, possibly because first derivs are ",
-        "not continuous (sign() is used). Certainly, the derivs wrt ",
-        "mymu are problematic (run with maxit=4:9 and look at weight ",
-        "matrices). Possibly fundamentally cannot be estimated by IRLS. ",
-        "Pooling does not seem to help")
-
-
-
-  if (length(zero) &&
-      !is.Numeric(zero, integer.valued = TRUE, positive = TRUE))
-    stop("bad input for argument 'zero'")
-
-
-
-  link.sigma <- as.list(substitute(link.sigma))
-  esigma <- link2list(link.sigma)
-  link.sigma <- attr(esigma, "function.name")
-
-  link.r <- as.list(substitute(link.r))
-  er <- link2list(link.r)
-  link.r <- attr(er, "function.name")
-
-
-  new("vglmff",
-  blurb = c("Three-parameter generalized lognormal distribution\n\n",
-          "Links:    ",
-          "loc; ",
-          namesof("sigma", link.sigma, earg = esigma, tag = TRUE), ", ",
-          namesof("r",     link.r,     earg = er,     tag = TRUE)),
-  constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
-  }), list( .zero = zero ))),
-  initialize = eval(substitute(expression({
-    if (ncol(cbind(y)) != 1)
-      stop("response must be a vector or a one-column matrix")
-    predictors.names <-
-    c(namesof("loc", "identitylink", earg = list(),     tag = FALSE),
-      namesof("sigma", .link.sigma, earg = .esigma, tag = FALSE),
-      namesof("r",     .link.r,     earg = .er,     tag = FALSE))
-
-    if (!length( .init.sigma) || !length( .init.r)) {
-      init.r <- if (length( .init.r)) .init.r else 1
-      sigma.init <- (0.5 * sum(abs(log(y) -
-                               mean(log(y )))^init.r))^(1/init.r)
-    }
-    if (any(y <= 0))
-      stop("y must be positive")
-
-    if (!length(etastart)) {
-      sigma.init <- rep(if (length( .init.sigma)) .init.sigma else
-                        sigma.init, length.out = n)
-      r.init <- if (length( .init.r)) .init.r else init.r
-      etastart <-
-        cbind(mu = rep(log(median(y)), length.out = n),
-              sigma = sigma.init,
-              r = r.init)
-    }
-  }), list( .link.sigma = link.sigma, .link.r = link.r,
-            .init.sigma = init.sigma, .init.r = init.r ))),
-
-  linkinv = eval(substitute(function(eta, extra = NULL) {
-    mymu  <- eta2theta(eta[, 1], "identitylink" , earg = list())
-    sigma <- eta2theta(eta[, 2], .link.sigma , earg = .esigma )
-    rrrrr <- eta2theta(eta[, 3], .link.r , earg = .er )
-    rrrrr
-  }, list( .link.sigma = link.sigma, .link.r = link.r ))),
-
-  last = eval(substitute(expression({
-    misc$link = c(loc = "identitylink",
-                  "sigma" = .link.sigma,
-                  r = .link.r )
-    misc$expected = TRUE
-  }), list( .link.sigma = link.sigma, .link.r = link.r ))),
-  loglikelihood = eval(substitute(
-    function(mu, y, w, residuals = FALSE, eta,
-             extra = NULL,
-             summation = TRUE) {
-    mymu <- eta2theta(eta[, 1], "identitylink", earg = list())
-    sigma <- eta2theta(eta[, 2], .link.sigma, earg = .esigma)
-    r <- eta2theta(eta[, 3], .link.r, earg = .er)
-    temp89 <- (abs(log(y)-mymu)/sigma)^r
-    if (residuals) {
-      stop("loglikelihood residuals not implemented yet")
+    
+    myderiv <- if ( .lss ) {
+      c(w) * cbind(dl.dscale * dscale.deta,
+                   dl.da * da.deta)
     } else {
-      ll.elts <- c(w) * (-log(r^(1/r) * sigma) - lgamma(1+1/r) - temp89/r)
-      if (summation) {
-        sum(ll.elts)
-      } else {
-        ll.elts
-      }
+      c(w) * cbind(dl.da * da.deta,
+                   dl.dscale * dscale.deta)
     }
-  }, list( .link.sigma = link.sigma, .link.r = link.r ))),
-  vfamily = c("genlognormal3"),
-  deriv = eval(substitute(expression({
-    mymu  <- eta2theta(eta[, 1], "identitylink", earg = list())
-    sigma <- eta2theta(eta[, 2], .link.sigma, earg = .esigma)
+    myderiv[, interleave.VGAM(M, M = M1)]
+  }), list(  .lscale    = lscale   , .lshape1.a = lshape1.a,
+             .escale    = escale   , .eshape1.a = eshape1.a,
+             .lss = lss ))),
+  weight = eval(substitute(expression({
+    temp5  <- trigamma(parg + qq)
+    temp5a <- trigamma(parg)
+    temp5b <- trigamma(qq)
 
-    r <- eta2theta(eta[, 3], .link.r, earg = .er)
-    ss <- 1 + 1/r
-    temp33 <- (abs(log(y)-mymu)/sigma)
-    temp33r1 <- temp33^(r-1)
-
-    dl.dmymu <- temp33r1 * sign(log(y)-mymu) / sigma
-    dl.dsigma <- (temp33*temp33r1 - 1) / sigma
-    dl.dr <- (log(r) - 1 + digamma(ss) + temp33*temp33r1)/r^2 -
-             temp33r1 * log(temp33r1) / r
-
-    dmymu.deta <- dtheta.deta(mymu, "identitylink", earg = list())
-    dsigma.deta <- dtheta.deta(sigma, .link.sigma, earg = .esigma)
-    dr.deta <- dtheta.deta(r, .link.r, earg = .er)
-
-    c(w) * cbind(dl.dmymu * dmymu.deta, 
-                 dl.dsigma * dsigma.deta, 
-                 dl.dr * dr.deta)
-  }), list( .link.sigma = link.sigma, .link.r = link.r ))),
-  weight = expression({
-    wz <- matrix(0, n, 6)  # 5 will have small savings of 1 column
-
-    B <- log(r) + digamma(ss)
-    ned2l.dmymu2 <- (r-1) * gamma(1-1/r) / (sigma^2 * r^(2/r) * gamma(ss))
-    ned2l.dsigma2 <- r / sigma^2
-    ned2l.dr2 <- (ss * trigamma(ss) + B^2 - 1) / r^3 
-    ned2l.dsigmar <- -B / (r * sigma)
-
-    wz[, iam(1, 1, M)] <- ned2l.dmymu2 * dmymu.deta^2
-    wz[, iam(2, 2, M)] <- ned2l.dsigma2 * dsigma.deta^2
-    wz[, iam(3, 3, M)] <- ned2l.dr2 * dr.deta^2
-    wz[, iam(2, 3, M)] <- ned2l.dsigmar * dsigma.deta * dr.deta
-    wz = c(w) * wz
+    ned2l.da <- (1 + parg + qq + parg * qq * (temp5a + temp5b +
+                (temp3b - temp3a + (parg-qq)/(parg*qq))^2 -
+                (parg^2 + qq^2) / (parg*qq)^2)) / (aa^2 * (1+parg+qq))
+    ned2l.dscale  <- (aa^2) * parg * qq / ((1+parg+qq) * Scale^2)
+    ned2l.dascale <- (parg - qq - parg * qq *
+                     (temp3a -temp3b)) / (Scale*(1 + parg+qq))
+    wz <- if ( .lss ) {
+      array(c(c(w) * ned2l.dscale * dscale.deta^2,
+              c(w) * ned2l.da * da.deta^2,
+              c(w) * ned2l.dascale * da.deta * dscale.deta),
+            dim = c(n, M/M1, M1*(M1+1)/2))
+    } else {
+      array(c(c(w) * ned2l.da * da.deta^2,
+              c(w) * ned2l.dscale * dscale.deta^2,
+              c(w) * ned2l.dascale * da.deta * dscale.deta),
+            dim = c(n, M/M1, M1*(M1+1)/2))
+    }
+    wz <- arwz2wz(wz, M = M, M1 = M1)
     wz
-  }))
+  }), list( .lscale    = lscale   , .lshape1.a = lshape1.a,
+            .escale    = escale   , .eshape1.a = eshape1.a, 
+            .lss = lss ))))
 }
+
+
+
+
+
+
+
+
+
+
+
 
 
 

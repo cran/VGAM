@@ -51,7 +51,7 @@ rsinmad(n, scale = 1, shape1.a, shape3.q)
 Kleiber, C. and Kotz, S. (2003)
 \emph{Statistical Size Distributions in Economics and
              Actuarial Sciences},
-Hoboken, NJ: Wiley-Interscience.
+Hoboken, NJ, USA: Wiley-Interscience.
 
 
 }
@@ -75,7 +75,8 @@ Hoboken, NJ: Wiley-Interscience.
 
 }
 \examples{
-sdata <- data.frame(y = rsinmad(n = 3000, scale = exp(2), shape1 = exp(1), exp(1)))
+sdata <- data.frame(y = rsinmad(n = 3000, scale = exp(2),
+                                shape1 = exp(1), shape3 = exp(1)))
 fit <- vglm(y ~ 1, sinmad(lss = FALSE, ishape1.a = 2.1), data = sdata,
             trace = TRUE, crit = "coef")
 coef(fit, matrix = TRUE)

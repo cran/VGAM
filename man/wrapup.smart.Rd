@@ -24,13 +24,13 @@ wrapup.smart()
 
 
 }
-\references{
-  See the technical help file at \url{http://www.stat.auckland.ac.nz/~yee}
-  for details.
-
-
-
-}
+%\references{
+% See the technical help file at \url{http://www.stat.auckland.ac.nz/~yee}
+% for details.
+%
+%
+%
+%}
 \seealso{
   \code{\link{setup.smart}}. 
 

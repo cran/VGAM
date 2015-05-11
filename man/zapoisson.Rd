@@ -143,9 +143,9 @@ A Bayesian analysis of zero-inflated generalized Poisson model.
 
 
 
-Documentation accompanying the \pkg{VGAM} package at
-\url{http://www.stat.auckland.ac.nz/~yee}
-contains further information and examples.
+%Documentation accompanying the \pkg{VGAM} package at
+%\url{http://www.stat.auckland.ac.nz/~yee}
+%contains further information and examples.
 
 
 }

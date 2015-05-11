@@ -75,9 +75,9 @@ McCullagh, P. and Nelder, J. A. (1989)
   \emph{Generalized Linear Models}, 2nd ed. London: Chapman & Hall.
 
 
-Documentation accompanying the \pkg{VGAM} package at
-\url{http://www.stat.auckland.ac.nz/~yee}
-contains further information and examples.
+%Documentation accompanying the \pkg{VGAM} package at
+%\url{http://www.stat.auckland.ac.nz/~yee}
+%contains further information and examples.
 
 
 }

@@ -188,8 +188,8 @@
 
 
 if (FALSE)
- cexpon <- 
- ecexpon <- function(link = "loge", location = 0) {
+ cens.exponential <- 
+ ecens.exponential <- function(link = "loge", location = 0) {
   if (!is.Numeric(location, length.arg = 1))
     stop("bad input for 'location'")
 
@@ -285,7 +285,7 @@ if (FALSE)
     sum(w[cenI] * log(-exp(-rate[cenI]*(y[cenI, 2]-extra$location))+
     exp(-rate[cenI]*(y[cenI, 1]-extra$location))))
   }, list( .link = link ))),
-  vfamily = c("ecexpon"),
+  vfamily = c("ecens.exponential"),
   deriv = eval(substitute(expression({
     rate <- 1 / (mu - extra$location)
     cen0 <- extra$uncensored

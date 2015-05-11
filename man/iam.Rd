@@ -82,12 +82,12 @@ iam(j, k, M, both = FALSE, diag = TRUE)
 
   }
 }
-\references{ 
-  The website \url{http://www.stat.auckland.ac.nz/~yee} contains
-  some additional information.
-
-
-}
+%\references{ 
+%  The website \url{http://www.stat.auckland.ac.nz/~yee} contains
+%  some additional information.
+%
+%
+%}
 \author{ T. W. Yee }
 \note{
   This function is used in the \code{weight} slot of many \pkg{VGAM}

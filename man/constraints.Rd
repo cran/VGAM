@@ -135,8 +135,8 @@ Reduced-rank vector generalized linear models.
 \bold{3}, 15--41.
 
 
-\url{http://www.stat.auckland.ac.nz/~yee} contains additional
-information.
+%\url{http://www.stat.auckland.ac.nz/~yee} contains additional
+%information.
 
 
 }

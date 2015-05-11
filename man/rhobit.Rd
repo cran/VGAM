@@ -59,13 +59,13 @@ rhobit(theta, bminvalue = NULL, bmaxvalue = NULL,
 
 
 }
-\references{
-Documentation accompanying the \pkg{VGAM} package at
-\url{http://www.stat.auckland.ac.nz/~yee}
-contains further information and examples.
-
-
-}
+%\references{
+%Documentation accompanying the \pkg{VGAM} package at
+%\url{http://www.stat.auckland.ac.nz/~yee}
+%contains further information and examples.
+%
+%
+%}
 \author{ Thomas W. Yee }
 
 \note{

@@ -92,7 +92,7 @@ Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
     \code{\link[stats]{Exponential}}.
 
 
-%   \code{\link{cexpon}},
+%   \code{\link{cens.exponential}},
 
 
 }

@@ -6,6 +6,43 @@
 
 
 
+                CHANGES IN VGAM VERSION 0.9-8
+
+NEW FEATURES
+
+    o   Tested okay on R 3.2.0.
+    o   is.buggy() tests to see if a fitted VGAM object suffers
+        from known bugs, e.g., a vgam() object with at least one
+        s() term whose constraint matrix does not have orthogonal
+        columns.
+    o   New family function: AR1(d).
+    o   New function: dgenpois().
+    o   The package has been updated to reflect the new
+        J. Stat. Soft. paper by Yee, Stoklosa and Huggins.
+        A vignette based on this paper is now included.
+    o   dgenbetaII() has now been written; and genbetaII() improved,
+        and about 8 special cases of genbetaII() have
+        all been modernized to handle multiple responses
+        and a default grid search over all the parameters
+        (arguments 'gscale' and 'gshape1.a', etc.). These
+        families are based on Kleiber and Kotz (2003).
+
+
+BUG FIXES and CHANGES
+
+    o   Family function genpoisson() has been modernized, and 
+        should give correct results wrt AIC() etc.
+    o   Argument 'init.alpha' renamed to 'ialpha', for the brat(),
+        bratt(), and dirmul.old() families.
+    o   Calls to N.hat.posbernoulli() used Hlist = constraints rather
+        than Hlist = Hlist; this failed for RR-VGLMs.
+    o   Family function tobit() obtains initial values even
+        in the case when it would otherwise fit an underdetermined
+        system of equations. Thanks to McClelland Kemp for picking
+        this up.
+
+
+
                 CHANGES IN VGAM VERSION 0.9-7
 
 NEW FEATURES
@@ -21,7 +58,6 @@ NEW FEATURES
 
 BUG FIXES and CHANGES
 
-    o   family.name() renamed to familyname().
     o   Argument 'mv' has been renamed to 'multiple.responses'.
         This applies to about 10 family functions such as binomialff().
     o   Argument 'lss' added to betaII(), dagum(), fisk(),

@@ -50,9 +50,9 @@ Yee, T. W. (2004)
 Quantile regression via vector generalized additive models.
 \emph{Statistics in Medicine}, \bold{23}, 2295--2315.
 
-Documentation accompanying the \pkg{VGAM} package at
-\url{http://www.stat.auckland.ac.nz/~yee}
-contains further information and examples.
+%Documentation accompanying the \pkg{VGAM} package at
+%\url{http://www.stat.auckland.ac.nz/~yee}
+%contains further information and examples.
 
 }
 \author{ Thomas W. Yee }

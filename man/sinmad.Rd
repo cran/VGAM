@@ -7,8 +7,11 @@
   Singh-Maddala distribution.
 }
 \usage{
-sinmad(lss, lshape1.a = "loge", lscale = "loge", lshape3.q = "loge",
-            ishape1.a = NULL, iscale = NULL, ishape3.q = 1, zero = NULL)
+sinmad(lscale = "loge", lshape1.a = "loge", lshape3.q = "loge", 
+       iscale = NULL, ishape1.a = NULL, ishape3.q = NULL, imethod = 1, 
+       lss = TRUE, gscale = exp(-5:5), gshape1.a = exp(-5:5),
+       gshape3.q = exp(-5:5), probs.y = c(0.25, 0.5, 0.75),
+       zero = ifelse(lss, -(2:3), -c(1, 3)))
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -19,19 +22,26 @@ sinmad(lss, lshape1.a = "loge", lscale = "loge", lshape3.q = "loge",
 
   \item{lshape1.a, lscale, lshape3.q}{
   Parameter link functions applied to the
-  (positive) parameters \code{a}, \code{scale}, and \code{q}.
+  (positive) parameters \eqn{a}, \code{scale}, and \eqn{q}.
   See \code{\link{Links}} for more choices.
 
   }
-  \item{ishape1.a, iscale, ishape3.q}{
-  Optional initial values for \code{a}, \code{scale}, and \code{q}.
+  \item{iscale, ishape1.a, ishape3.q, imethod, zero}{
+  See \code{\link{CommonVGAMffArguments}} for information.
+  For \code{imethod = 2} a good initial value for
+  \code{ishape3.q} is needed to obtain good estimates for
+  the other parameters.
+
 
   }
-  \item{zero}{
-  An integer-valued vector specifying which
-  linear/additive predictors are modelled as intercepts only.
-  Here, the values must be from the set \{1,2,3\} which correspond to
-  \code{a}, \code{scale}, \code{q}, respectively.
+  \item{gscale, gshape1.a, gshape3.q}{
+  See \code{\link{CommonVGAMffArguments}} for information.
+
+
+  }
+  \item{probs.y}{
+  See \code{\link{CommonVGAMffArguments}} for information.
+
 
   }
 }
@@ -44,9 +54,11 @@ beta-P, and generalized log-logistic distribution.
   More details can be found in Kleiber and Kotz (2003).
 
 
+
 Some distributions which are special cases of the 3-parameter Singh-Maddala
 are the Lomax (\eqn{a=1}), Fisk (\eqn{q=1}), and
 paralogistic (\eqn{a=q}).
+
 
 
 The Singh-Maddala distribution has density
@@ -62,6 +74,7 @@ The mean is
   \deqn{E(Y) = b \, \Gamma(1 + 1/a) \, \Gamma(q - 1/a) / \Gamma(q)}{%
         E(Y) = b  gamma(1 + 1/a)  gamma(q - 1/a) /  gamma(q)}
 provided \eqn{-a < 1 < aq}; these are returned as the fitted values.
+This family function handles multiple responses.
 
 
 }
@@ -84,7 +97,7 @@ Hoboken, NJ, USA: Wiley-Interscience.
 
 \author{ T. W. Yee }
 \note{
-  See the note in \code{\link{genbetaII}}.
+  See the notes in \code{\link{genbetaII}}.
 
 
 }

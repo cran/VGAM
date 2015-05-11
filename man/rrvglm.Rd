@@ -148,13 +148,14 @@ Regression and ordered categorical variables.
 
   Yee, T. W. (2014)
   Reduced-rank vector generalized linear models with two linear predictors.
-  \emph{Computational Statistics and Data Analysis}.
+  \emph{Computational Statistics and Data Analysis},
+  \bold{71}, 889--902.
 
 
 
-  Documentation accompanying the \pkg{VGAM} package at
-  \url{http://www.stat.auckland.ac.nz/~yee}
-  contains further information and examples.
+%  Documentation accompanying the \pkg{VGAM} package at
+%  \url{http://www.stat.auckland.ac.nz/~yee}
+%  contains further information and examples.
 
 }
 

@@ -312,8 +312,8 @@ micmen.control <- function(save.weights = TRUE, ...) {
 
     if ( .firstDeriv == "rpar") {
       if (FALSE) {
-        wz <-  dmus.dthetas[,index$row] *  dmus.dthetas[,index$col] *
-               dthetas.detas[,index$row] * dthetas.detas[,index$col]
+        wz <-   dmus.dthetas[, index$row] *  dmus.dthetas[, index$col] *
+               dthetas.detas[, index$row] * dthetas.detas[, index$col]
         if (M > 1)
           wz[, 2:M] <- wz[, 2:M] + rpar
       } else {

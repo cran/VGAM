@@ -7,8 +7,10 @@
   inverse paralogistic distribution.
 }
 \usage{
-inv.paralogistic(lss, lshape1.a = "loge", lscale = "loge",
-                      ishape1.a = 2, iscale = NULL, zero = NULL)
+inv.paralogistic(lscale = "loge", lshape1.a = "loge", iscale = NULL, 
+    ishape1.a = NULL, imethod = 1, lss = TRUE, gscale = exp(-5:5), 
+    gshape1.a = exp(-5:5), probs.y = c(0.25, 0.5, 0.75),
+    zero = ifelse(lss, -2, -1))
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -17,24 +19,31 @@ inv.paralogistic(lss, lshape1.a = "loge", lscale = "loge",
   
   }
 
-  \item{lshape1.a, lscale}{ 
+ \item{lshape1.a, lscale}{
   Parameter link functions applied to the
-  (positive) shape parameter \code{a} and
-  (positive) scale parameter \code{scale}.
+  (positive) parameters \code{a}  and \code{scale}.
   See \code{\link{Links}} for more choices.
 
   }
-  \item{ishape1.a, iscale}{
-  Optional initial values for \code{a} and \code{scale}.
+  \item{iscale, ishape1.a, imethod, zero}{
+  See \code{\link{CommonVGAMffArguments}} for information.
+  For \code{imethod = 2} a good initial value for 
+  \code{ishape1.a} is needed to obtain a good estimate for
+  the other parameter.
+
 
   }
-  \item{zero}{
-  An integer-valued vector specifying which
-  linear/additive predictors are modelled as intercepts only.
-  Here, the values must be from the set \{1,2\} which correspond to
-  \code{a}, \code{scale}, respectively.
+  \item{gscale, gshape1.a}{
+  See \code{\link{CommonVGAMffArguments}} for information.
+
 
   }
+  \item{probs.y}{
+  See \code{\link{CommonVGAMffArguments}} for information.
+
+
+  }
+
 }
 \details{
   The 2-parameter inverse paralogistic distribution is the 4-parameter
@@ -54,6 +63,8 @@ The mean is
   \deqn{E(Y) = b \, \Gamma(a + 1/a) \, \Gamma(1 - 1/a) / \Gamma(a)}{%
         E(Y) = b  gamma(a + 1/a)  gamma(1 - 1/a) /  gamma(a)}
 provided \eqn{a > 1}; these are returned as the fitted values.
+This family function handles multiple responses.
+
 
 
 }
@@ -76,7 +87,7 @@ Hoboken, NJ, USA: Wiley-Interscience.
 
 \author{ T. W. Yee }
 \note{
-  See the note in \code{\link{genbetaII}}.
+  See the notes in \code{\link{genbetaII}}.
 
 
 }
@@ -99,8 +110,8 @@ Hoboken, NJ, USA: Wiley-Interscience.
 \examples{
 idata <- data.frame(y = rinv.paralogistic(n = 3000, exp(1), scale = exp(2)))
 fit <- vglm(y ~ 1, inv.paralogistic(lss = FALSE), data = idata, trace = TRUE)
-fit <- vglm(y ~ 1, inv.paralogistic(lss = FALSE, ishape1.a = 2.7, iscale = 7.3),
-            data = idata, trace = TRUE, epsilon = 1e-8)
+fit <- vglm(y ~ 1, inv.paralogistic(imethod = 2, ishape1.a = 4),
+            data = idata, trace = TRUE, crit = "coef")
 coef(fit, matrix = TRUE)
 Coef(fit)
 summary(fit)

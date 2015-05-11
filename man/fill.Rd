@@ -86,12 +86,12 @@ fill(x, values = 0, ncolx = ncol(x))
 
 
 }
-\references{ 
-  More information can be found at
-  \url{http://www.stat.auckland.ac.nz/~yee}.
-
-
-}
+%\references{ 
+%  More information can be found at
+%  \url{http://www.stat.auckland.ac.nz/~yee}.
+%
+%
+%}
 
 % \section{Warning }{
 % Care is needed in such cases.
@@ -244,6 +244,25 @@ max(abs(head(predict(fit3)) -
 \dontrun{
 plotvgam(fit3, se = TRUE, xlab = "lop")  # Correct
 }
+
+
+# Example 4. Capture-recapture model with ephemeral and enduring
+# memory effects. Similar to Yang and Chao (2005), Biometrics.
+deermice <- transform(deermice, Lag1 = y1)
+M.tbh.lag1 <-
+  vglm(cbind(y1, y2, y3, y4, y5, y6) ~ sex + weight + Lag1,
+       posbernoulli.tb(parallel.t = FALSE ~ 0,
+                       parallel.b = FALSE ~ 0,
+                       drop.b = FALSE ~ 1),
+       xij = list(Lag1 ~ fill(y1) + fill(y2) + fill(y3) + fill(y4) +
+                         fill(y5) + fill(y6) +
+                         y1 + y2 + y3 + y4 + y5),
+       form2 = ~ sex + weight + Lag1 +
+                 fill(y1) + fill(y2) + fill(y3) + fill(y4) +
+                 fill(y5) + fill(y6) +
+                 y1 + y2 + y3 + y4 + y5 + y6,
+       data = deermice, trace = TRUE)
+coef(M.tbh.lag1)
 }
 \keyword{models}
 \keyword{regression}

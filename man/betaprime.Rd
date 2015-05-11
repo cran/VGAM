@@ -80,9 +80,9 @@ Volume 2,
 New York: Wiley.
 
 
-Documentation accompanying the \pkg{VGAM} package at
-\url{http://www.stat.auckland.ac.nz/~yee}
-contains further information and examples.
+%Documentation accompanying the \pkg{VGAM} package at
+%\url{https://www.stat.auckland.ac.nz/~yee}
+%contains further information and examples.
 
 
 }

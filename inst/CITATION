@@ -80,4 +80,27 @@ citEntry(entry = "Manual",
 
 
 
+citEntry(entry = "Article",
+  title        = "The {VGAM} Package for Capture-Recapture Data Using the Conditional Likelihood",
+  author       = personList(as.person("Thomas W. Yee"),
+                   as.person("Jakub Stoklosa"),
+                   as.person("Richard M. Huggins")),
+  journal      = "Journal of Statistical Software",
+  year         = "2015",
+  volume       = "65",
+  number       = "5",
+  pages        = "1--33",
+  url          = "http://www.jstatsoft.org/v65/i05/",
+
+  textVersion  =
+  paste("Thomas W. Yee, Jakub Stoklosa, Richard M. Huggins (2015).",
+        "The VGAM Package for Capture-Recapture Data Using the Conditional Likelihood.",
+        "Journal of Statistical Software, 65(5), 1-33.",
+        "URL http://www.jstatsoft.org/v65/i05/.")
+)
+
+
+
+
+
 

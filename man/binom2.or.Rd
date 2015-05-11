@@ -152,9 +152,9 @@ binom2.or(lmu = "logit", lmu1 = lmu, lmu2 = lmu, loratio = "loge",
   Journal of Theoretical Biology, \bold{259}(4), 684--694.
 
 
-  Documentation accompanying the \pkg{VGAM} package at
-  \url{http://www.stat.auckland.ac.nz/~yee}
-  contains further information and examples.
+% Documentation accompanying the \pkg{VGAM} package at
+% \url{https://www.stat.auckland.ac.nz/~yee}
+% contains further information and examples.
 
 
 }

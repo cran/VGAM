@@ -167,9 +167,9 @@ The \code{VGAM} Package.
 \emph{R News}, \bold{8}, 28--39.
 
 
-  Documentation accompanying the \pkg{VGAM} package at
-  \url{http://www.stat.auckland.ac.nz/~yee}
-  contains further information and examples.
+%Documentation accompanying the \pkg{VGAM} package at
+%\url{http://www.stat.auckland.ac.nz/~yee}
+%contains further information and examples.
 
 
 }
@@ -215,7 +215,8 @@ The \code{VGAM} Package.
 \section{WARNING}{
   Currently \code{vgam} can only handle constraint matrices \code{cmat},
   say, such that \code{crossprod(cmat)} is diagonal.
-  This is a bug that I will try to fix up soon.
+  This is a bug that I will try to fix up soon;
+  see \code{\link{is.buggy}}.
 
 
   See warnings in \code{\link{vglm.control}}.
@@ -224,6 +225,7 @@ The \code{VGAM} Package.
 }
 
 \seealso{
+  \code{\link{is.buggy}},
   \code{\link{vgam.control}},
   \code{\link{vgam-class}},
   \code{\link{vglmff-class}},

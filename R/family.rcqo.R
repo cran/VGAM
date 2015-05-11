@@ -105,6 +105,8 @@ rcqo <- function(n, p, S,
       on.exit(assign(".Random.seed", R.seed, envir = .GlobalEnv))
     }
   })
+
+
   change.seed.expression <- expression({
       if (length(seed)) set.seed(seed)
   })
@@ -160,20 +162,23 @@ rcqo <- function(n, p, S,
         optimums[, r] <- seq(-AA, AA, len = S^(1/Rank))
       }
     } else if (Rank == 2) {
-      optimums <- expand.grid(latvar1 = seq(-AA[1], AA[1], len = S^(1/Rank)),
-                            latvar2 = seq(-AA[2], AA[2], len = S^(1/Rank)))
+      optimums <-
+        expand.grid(latvar1 = seq(-AA[1], AA[1], len = S^(1/Rank)),
+                    latvar2 = seq(-AA[2], AA[2], len = S^(1/Rank)))
     } else if (Rank == 3) {
-      optimums <- expand.grid(latvar1 = seq(-AA[1], AA[1], len = S^(1/Rank)),
-                            latvar2 = seq(-AA[2], AA[2], len = S^(1/Rank)),
-                            latvar3 = seq(-AA[3], AA[3], len = S^(1/Rank)))
+      optimums <-
+        expand.grid(latvar1 = seq(-AA[1], AA[1], len = S^(1/Rank)),
+                    latvar2 = seq(-AA[2], AA[2], len = S^(1/Rank)),
+                    latvar3 = seq(-AA[3], AA[3], len = S^(1/Rank)))
     } else {
-      optimums <- expand.grid(latvar1 = seq(-AA[1], AA[1], len = S^(1/Rank)),
-                            latvar2 = seq(-AA[2], AA[2], len = S^(1/Rank)),
-                            latvar3 = seq(-AA[3], AA[3], len = S^(1/Rank)),
-                            latvar4 = seq(-AA[4], AA[4], len = S^(1/Rank)))
+      optimums <-
+        expand.grid(latvar1 = seq(-AA[1], AA[1], len = S^(1/Rank)),
+                    latvar2 = seq(-AA[2], AA[2], len = S^(1/Rank)),
+                    latvar3 = seq(-AA[3], AA[3], len = S^(1/Rank)),
+                    latvar4 = seq(-AA[4], AA[4], len = S^(1/Rank)))
     }
     if (Rank > 1)
-      optimums <- matrix(unlist(optimums), S, Rank)  # Make sure its a matrix
+    optimums <- matrix(unlist(optimums), S, Rank)  # Make sure its a matrix
   } else {
     optimums <- matrix(1, S, Rank)
     eval(change.seed.expression)
@@ -194,7 +199,8 @@ rcqo <- function(n, p, S,
   ynames <- paste("y", 1:S, sep = "")
   Kvector <- rep(Kvector, len = S)
   names(Kvector) <- ynames
-  latvarnames <- if (Rank == 1) "latvar" else paste("latvar", 1:Rank, sep = "")
+  latvarnames <- if (Rank == 1) "latvar" else
+                 paste("latvar", 1:Rank, sep = "")
   Tols <- if (eq.tolerances) {
     matrix(1, S, Rank)
   } else {
@@ -220,12 +226,12 @@ rcqo <- function(n, p, S,
   names(log.maximums) <- ynames
   etamat <- matrix(log.maximums, n, S, byrow = TRUE)
   for (jay in 1:S) {
-      optmat <- matrix(optimums[jay, ], nrow = n, ncol = Rank, byrow = TRUE)
-      tolmat <- matrix(  Tols[jay, ], nrow = n, ncol = Rank, byrow = TRUE)
-      temp <- cbind((latvarmat - optmat) / tolmat)
-      for (r in 1:Rank)
-        etamat[, jay] <- etamat[, jay] -
-                         0.5 * (latvarmat[, r] - optmat[jay, r]) * temp[, r]
+    optmat <- matrix(optimums[jay, ], nrow = n, ncol = Rank, byrow = TRUE)
+    tolmat <- matrix(    Tols[jay, ], nrow = n, ncol = Rank, byrow = TRUE)
+    temp <- cbind((latvarmat - optmat) / tolmat)
+    for (r in 1:Rank)
+      etamat[, jay] <- etamat[, jay] -
+                       0.5 * (latvarmat[, r] - optmat[jay, r]) * temp[, r]
   }
 
   rootdist <- switch(family,
@@ -271,7 +277,7 @@ rcqo <- function(n, p, S,
   attr(ans, "concoefficients") <- Ccoefs
   attr(ans, "Crow1positive") <- Crow1positive
   attr(ans, "family") <- family
-  attr(ans, "formula") <- myform # Useful for running cqo() on the data
+  attr(ans, "formula") <- myform  # Useful for running cqo() on the data
   attr(ans, "Rank") <- Rank
   attr(ans, "family") <- family
   attr(ans, "Kvector") <- Kvector
@@ -286,7 +292,7 @@ rcqo <- function(n, p, S,
   attr(ans, "eq.maximums") <- eq.maximums ||
                               all(lo.abundance == hi.abundance)
   attr(ans, "es.optimums") <- es.optimums
-  attr(ans, "seed") <- seed # RNGstate
+  attr(ans, "seed") <- seed  # RNGstate
   attr(ans, "sd.tolerances") <- sd.tolerances
   attr(ans, "sd.latvar") <- if (scale.latvar) sd.latvar else sd.latvarr
   attr(ans, "sd.optimums") <- sd.optimums
@@ -314,7 +320,7 @@ dcqo <-
            sd.optimums = 1,
            nlevels = 4,  # ignored unless family = "ordinal"
            seed = NULL) {
- warning("12/6/06; needs a lot of work based on rcqo()")
+ warning("20060612; needs a lot of work based on rcqo()")
 
 
   if (mode(family) != "character" && mode(family) != "name")

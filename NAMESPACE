@@ -7,6 +7,16 @@
 useDynLib(VGAM)
 
 
+export(dgenpois)
+export(AR1)
+export(dAR1)
+export(AR1.control)
+export(param.names)
+export(is.buggy.vlm)
+exportMethods(is.buggy)
+
+
+
 importMethodsFrom("splines")
 importFrom("splines", splineDesign, bs, ns)
 
@@ -230,7 +240,6 @@ export(pnorm2, dnorm2)
 
 export(iam,
 fill, fill1, fill2, fill3,
-abbott,
 biamhcop, dbiamhcop, pbiamhcop, rbiamhcop, 
 bigamma.mckay,
 freund61,
@@ -549,7 +558,7 @@ export(dgengamma.stacy, pgengamma.stacy, qgengamma.stacy, rgengamma.stacy)
 
 export(
 dbenf, pbenf, qbenf, rbenf,
-genbetaII, genpoisson,
+genbetaII, dgenbetaII, genpoisson,
 geometric, truncgeometric,
 dlino, plino, qlino, rlino, lino, 
 grc,

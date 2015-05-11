@@ -210,7 +210,7 @@ Vector generalized additive models.
 \bold{58}, 481--493.
 
 
-\url{http://www.stat.auckland.ac.nz/~yee}
+%\url{http://www.stat.auckland.ac.nz/~yee}
 
 
 }

@@ -195,9 +195,9 @@ Vector generalized additive models.
 \bold{58}, 481--493.
 
 
-\url{http://www.stat.auckland.ac.nz/~yee} contains further
-information on how to write \pkg{VGAM} family functions.
-The file is amongst other \pkg{VGAM} PDF documentation.
+%\url{http://www.stat.auckland.ac.nz/~yee} contains further
+%information on how to write \pkg{VGAM} family functions.
+%The file is amongst other \pkg{VGAM} PDF documentation.
 
 
 }

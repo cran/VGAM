@@ -1283,7 +1283,8 @@ if (length(extra$tau)) {
     R[lower.tri(R)] <- 0
     tmp6 <- N.hat.posbernoulli(eta = eta, link = .link , earg = .earg ,
                                R = R, w = w,
-                               X.vlm = X.vlm.save, Hlist = constraints,
+                               X.vlm = X.vlm.save,
+                               Hlist = Hlist,  # 20150428; bug fixed here
                                extra = extra, model.type = "0")
     extra$N.hat    <- tmp6$N.hat
     extra$SE.N.hat <- tmp6$SE.N.hat
@@ -1575,7 +1576,8 @@ if (length(extra$tau)) {
     R[lower.tri(R)] <- 0
     tmp6 <- N.hat.posbernoulli(eta = eta, link = .link , earg = .earg ,
                                R = R, w = w,
-                               X.vlm = X.vlm.save, Hlist = constraints,
+                               X.vlm = X.vlm.save,
+                               Hlist = Hlist,  # 20150428; bug fixed here
                                extra = extra, model.type = "t")
     extra$N.hat    <- tmp6$N.hat
     extra$SE.N.hat <- tmp6$SE.N.hat
@@ -1908,7 +1910,8 @@ if (length(extra$tau)) {
     R[lower.tri(R)] <- 0
     tmp6 <- N.hat.posbernoulli(eta = eta, link = .link , earg = .earg ,
                                R = R, w = w,
-                               X.vlm = X.vlm.save, Hlist = constraints,
+                               X.vlm = X.vlm.save,
+                               Hlist = Hlist,  # 20150428; bug fixed here
                                extra = extra, model.type = "b")
     extra$N.hat    <- tmp6$N.hat
     extra$SE.N.hat <- tmp6$SE.N.hat
@@ -2339,7 +2342,8 @@ if (length(extra$tau)) {
     R[lower.tri(R)] <- 0
     tmp6 <- N.hat.posbernoulli(eta = eta, link = .link , earg = .earg ,
                                R = R, w = w,
-                               X.vlm = X.vlm.save, Hlist = constraints,
+                               X.vlm = X.vlm.save,
+                               Hlist = Hlist,  # 20150428; bug fixed here
                                extra = extra, model.type = "tb")
     extra$N.hat    <- tmp6$N.hat
     extra$SE.N.hat <- tmp6$SE.N.hat

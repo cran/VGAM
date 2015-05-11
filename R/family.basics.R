@@ -177,6 +177,8 @@ subsetc <-
 
 
 
+
+
  grid.search <- function(vov, objfun, y, x, w, extraargs = NULL,
                          maximize = TRUE, abs.arg = FALSE,
                          ret.objfun = FALSE, ...) {
@@ -197,7 +199,10 @@ subsetc <-
     stop("something has gone wrong!")
   ans <- if (length(try.this) == 1)
     try.this else sample(try.this, size = 1)
-  if (ret.objfun) c(ans, objvals[ans == vov]) else ans
+
+
+  myvec <- objvals[ans == vov]  # Could be a vector
+  if (ret.objfun) c(ans, myvec[1]) else ans
 }
 
 
@@ -1398,6 +1403,15 @@ arwz2wz <- function(arwz, M = 1, M1 = 1) {
 }
 
 
+
+
+
+
+
+
+param.names <- function(string, S) {
+  if (S == 1) string else paste(string, 1:S, sep = "")
+}
 
 
 

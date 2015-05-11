@@ -3,13 +3,13 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Generalized Poisson distribution }
 \description{
-  Estimation of the two parameters of a generalized Poisson distribution.
+  Estimation of the two-parameter generalized Poisson distribution.
 
 }
 \usage{
-genpoisson(llambda = extlogit(min = -1, max = 1), ltheta = "loge",
+genpoisson(llambda = "rhobit", ltheta = "loge",
            ilambda = NULL, itheta = NULL,
-           use.approx = TRUE, imethod = 1, zero = 1)
+           use.approx = TRUE, imethod = 1, ishrinkage = 0.95, zero = -1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -17,7 +17,8 @@ genpoisson(llambda = extlogit(min = -1, max = 1), ltheta = "loge",
   Parameter link functions for \eqn{\lambda} and \eqn{\theta}.
   See \code{\link{Links}} for more choices.
   The \eqn{\lambda} parameter lies at least within the interval
-  \eqn{[-1,1]}; see below for more details.
+  \eqn{[-1,1]}; see below for more details,
+  and an alternative link is \code{\link{rhobit}}.
   The \eqn{\theta} parameter is positive, therefore the default is the
   log link.
 
@@ -36,22 +37,29 @@ genpoisson(llambda = extlogit(min = -1, max = 1), ltheta = "loge",
 
   }
   \item{imethod}{
-  An integer with value \code{1} or \code{2} which
+  An integer with value \code{1} or \code{2} or \code{3} which
   specifies the initialization method for the parameters.
   If failure to converge occurs try another value
   and/or else specify a value for \code{ilambda} and/or \code{itheta}.
 
 
   }
-  \item{zero}{
-  An integer vector, containing the value 1 or 2.
-  If so, \eqn{\lambda} or \eqn{\theta} respectively
-  are modelled as an intercept only.
-  If set to \code{NULL} then both linear/additive predictors are modelled
-  as functions of the explanatory variables.
+  \item{ishrinkage, zero}{
+    See \code{\link{CommonVGAMffArguments}} for information.
 
-
+    
   }
+% \item{zero}{
+% An integer vector, containing the value 1 or 2.
+% If so, \eqn{\lambda} or \eqn{\theta} respectively
+% are modelled as an intercept only.
+% If set to \code{NULL} then both linear/additive predictors are modelled
+% as functions of the explanatory variables.
+
+
+% }
+
+
 }
 \details{
 The generalized Poisson distribution has density
@@ -66,10 +74,20 @@ when \eqn{\lambda < 0}
 [and then \eqn{P(Y=y) = 0} for \eqn{y > m}].
 Note the complicated support for this distribution means,
 for some data sets,
-the default link for \code{llambda} is not always appropriate.
+the default link for \code{llambda} will not always work, and
+some tinkering may be required to get it running.
 
 
-An ordinary Poisson distribution corresponds to \eqn{\lambda = 0}{lambda = 0}.
+
+As Consul and Famoye (2006) state on p.165, the lower limits
+on \eqn{\lambda} and \eqn{m \ge 4}{m >= 4} are imposed
+to ensure that there are at least 5 classes with nonzero
+probability when \eqn{\lambda} is negative.
+
+
+
+An ordinary Poisson distribution corresponds
+to \eqn{\lambda = 0}{lambda = 0}.
 The mean (returned as the fitted values) is 
 \eqn{E(Y) = \theta / (1 - \lambda)}
 and the variance is \eqn{\theta / (1 - \lambda)^3}.
@@ -105,23 +123,45 @@ New York, USA: Marcel Dekker.
 
 
 }
+\section{Warning }{
+  Monitor convergence!
+  This family function is fragile.
+  Don't get confused because \code{theta}
+  (and not \code{lambda}) here really
+  matches more closely with \code{lambda} of
+  \code{\link[stats:Poisson]{dpois}}.
+
+  
+}
+
 \author{ T. W. Yee }
 \note{
-  This distribution is useful for dispersion modelling.
+  This family function handles multiple responses.
+  This distribution is potentially useful for dispersion modelling.
   Convergence problems may occur when \code{lambda} is very close
   to 0 or 1.
+  If a failure occurs then you might want to try something like
+  \code{llambda = extlogit(min = -0.9, max = 1)}
+  to handle the LHS complicated constraint,
+  and if that doesn't work, try
+  \code{llambda = extlogit(min = -0.8, max = 1)}, etc.
 
 
 }
+
 \seealso{
-  \code{\link{poissonff}}.
+  \code{\link{poissonff}},
+  \code{\link[stats:Poisson]{dpois}}.
+  \code{\link{dgenpois}},
+  \code{\link{rhobit}},
+  \code{\link{extlogit}}.
 
 
 }
 \examples{
 gdata <- data.frame(x2 = runif(nn <- 200))
-gdata <- transform(gdata, y1 = rpois(nn, exp(2 - x2)))  # Ordinary Poisson data
-fit <- vglm(y1 ~ x2, genpoisson(zero = 1), data = gdata, trace = TRUE)
+gdata <- transform(gdata, y1 = rpois(nn, exp(2 - x2)))  # Poisson data
+fit <- vglm(y1 ~ x2, genpoisson, data = gdata, trace = TRUE)
 coef(fit, matrix = TRUE)
 summary(fit)
 }

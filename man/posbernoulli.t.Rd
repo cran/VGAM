@@ -157,15 +157,10 @@ Yee, T. W. and Stoklosa, J. and Huggins, R. M. (2015)
 The \pkg{VGAM} package for capture--recapture data using the
 conditional likelihood.
   \emph{Journal of Statistical Software},
-  in press.
+  \bold{65}, 1--33.
+  \url{http://www.jstatsoft.org/v65/i05/}.
 
-% \bold{62}, 3--135.
-
-
-%\emph{Journal of Statistical Software},
-%\bold{32}, 1--34.
-%\url{http://www.jstatsoft.org/v32/i10/}.
-
+% \bold{65}(5), 1--33.
 
 
 

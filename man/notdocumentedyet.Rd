@@ -4,6 +4,12 @@
 %
 %
 %
+% 201503, 201504, 201505;
+\alias{dbetaII}
+\alias{AR1.control}
+\alias{param.names}
+%\alias{is.buggy}
+%\alias{is.buggy.vlm}
 %
 % 201412;
 %\alias{linkfun.vglm}
@@ -32,7 +38,7 @@
 %
 % 201312;
 % \alias{simulate.vlm}
-% 201311;
+% 201311;             20150316: modified to familyname
 \alias{familyname}
 \alias{familyname.vlm}
 \alias{familyname.vglmff}
@@ -273,7 +279,7 @@
 \alias{Tol.qrrvglm}
 %\alias{Tol.uqo}
 \alias{a2m}
-\alias{abbott}
+% \alias{abbott}  % 20150320; no longer releasing family.quantal.R.
 % \alias{acat.deriv}
 % \alias{add.arg}
 % \alias{add.constraints}

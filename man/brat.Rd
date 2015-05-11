@@ -8,7 +8,7 @@
 
 }
 \usage{
-brat(refgp = "last", refvalue = 1, init.alpha = 1)
+brat(refgp = "last", refvalue = 1, ialpha = 1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -26,7 +26,7 @@ brat(refgp = "last", refvalue = 1, init.alpha = 1)
 
 
   }
-  \item{init.alpha}{
+  \item{ialpha}{
   Initial values for the \eqn{\alpha}{alpha}s. 
   These are recycled to the appropriate length.
 

@@ -7,29 +7,38 @@
   inverse Lomax distribution.
 }
 \usage{
-inv.lomax(lscale = "loge", lshape2.p = "loge",
-          iscale = NULL, ishape2.p = 1, zero = NULL)
+inv.lomax(lscale = "loge", lshape2.p = "loge", iscale = NULL, 
+    ishape2.p = NULL, imethod = 1, gscale = exp(-5:5), gshape2.p = exp(-5:5), 
+    probs.y = c(0.25, 0.5, 0.75), zero = -2)
 }
+
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{lscale, lshape2.p}{
+ \item{lscale, lshape2.p}{
   Parameter link functions applied to the
-  (positive) scale parameter \code{scale} and
-  (positive) shape parameter \code{p}.
+  (positive) parameters \eqn{b}, and \eqn{p}.
   See \code{\link{Links}} for more choices.
 
   }
-  \item{iscale, ishape2.p}{
-  Optional initial values for \code{scale} and \code{p}.
+  \item{iscale, ishape2.p, imethod, zero}{
+  See \code{\link{CommonVGAMffArguments}} for information.
+  For \code{imethod = 2} a good initial value for 
+  \code{ishape2.p} is needed to obtain a good estimate for
+  the other parameter.
+
 
   }
-  \item{zero}{
-  An integer-valued vector specifying which
-  linear/additive predictors are modelled as intercepts only.
-  Here, the values must be from the set \{1,2\} which correspond to
-  \code{scale}, \code{p}, respectively.
+  \item{gscale, gshape2.p}{
+  See \code{\link{CommonVGAMffArguments}} for information.
+
 
   }
+  \item{probs.y}{
+  See \code{\link{CommonVGAMffArguments}} for information.
+
+
+  }
+
 }
 \details{
   The 2-parameter inverse Lomax distribution is the 4-parameter
@@ -46,7 +55,9 @@ The inverse Lomax distribution has density
   for \eqn{b > 0}, \eqn{p > 0}, \eqn{y \geq 0}{y >= 0}.
 Here, \eqn{b} is the scale parameter \code{scale},
 and \code{p} is a shape parameter.
-The mean does not seem to exist; the median is returned as the fitted values.
+The mean does not seem to exist; the \emph{median} is returned
+as the fitted values.
+This family function handles multiple responses.
 
 
 
@@ -75,7 +86,7 @@ Hoboken, NJ, USA: Wiley-Interscience.
 
 \author{ T. W. Yee }
 \note{
-  See the note in \code{\link{genbetaII}}.
+  See the notes in \code{\link{genbetaII}}.
 
 
 }
@@ -96,10 +107,10 @@ Hoboken, NJ, USA: Wiley-Interscience.
 }
 
 \examples{
-idata <- data.frame(y = rinv.lomax(n = 2000, exp(2), exp(1)))
+idata <- data.frame(y = rinv.lomax(n = 2000, scale = exp(2), exp(1)))
 fit <- vglm(y ~ 1, inv.lomax, data = idata, trace = TRUE)
-fit <- vglm(y ~ 1, inv.lomax(iscale = exp(2), ishape2.p = exp(1)), data = idata,
-            trace = TRUE, epsilon = 1e-8)
+fit <- vglm(y ~ 1, inv.lomax(iscale = exp(3)), data = idata,
+            trace = TRUE, epsilon = 1e-8, crit = "coef")
 coef(fit, matrix = TRUE)
 Coef(fit)
 summary(fit)

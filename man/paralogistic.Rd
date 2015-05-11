@@ -9,8 +9,10 @@
 
 }
 \usage{
-paralogistic(lss, lshape1.a = "loge", lscale = "loge",
-                  ishape1.a = 2, iscale = NULL, zero = NULL)
+paralogistic(lscale = "loge", lshape1.a = "loge", iscale = NULL, 
+    ishape1.a = NULL, imethod = 1, lss = TRUE, gscale = exp(-5:5), 
+    gshape1.a = exp(-5:5), probs.y = c(0.25, 0.5, 0.75),
+    zero = ifelse(lss, -2, -1))
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -18,23 +20,28 @@ paralogistic(lss, lshape1.a = "loge", lscale = "loge",
   
   
   }
-
   \item{lshape1.a, lscale}{
   Parameter link functions applied to the
-  (positive) shape parameter \code{a} and
-  (positive) scale parameter \code{scale}.
+  (positive) parameters \eqn{a} and \code{scale}.
   See \code{\link{Links}} for more choices.
 
   }
-  \item{ishape1.a, iscale}{
-  Optional initial values for \code{a} and \code{scale}.
+  \item{iscale, ishape1.a, imethod, zero}{
+  See \code{\link{CommonVGAMffArguments}} for information.
+  For \code{imethod = 2} a good initial value for
+  \code{ishape1.a} is needed to obtain good estimates for
+  the other parameter.
+
 
   }
-  \item{zero}{
-  An integer-valued vector specifying which
-  linear/additive predictors are modelled as intercepts only.
-  Here, the values must be from the set \{1,2\} which correspond to
-  \code{a}, \code{scale}, respectively.
+  \item{gscale, gshape1.a}{
+  See \code{\link{CommonVGAMffArguments}} for information.
+
+
+  }
+  \item{probs.y}{
+  See \code{\link{CommonVGAMffArguments}} for information.
+
 
   }
 }
@@ -56,6 +63,8 @@ The mean is
   \deqn{E(Y) = b \, \Gamma(1 + 1/a) \, \Gamma(a - 1/a) / \Gamma(a)}{%
         E(Y) = b  gamma(1 + 1/a)  gamma(a - 1/a) /  gamma(a)}
 provided \eqn{a > 1}; these are returned as the fitted values.
+This family function handles multiple responses.
+
 
 
 }
@@ -78,13 +87,14 @@ Hoboken, NJ, USA: Wiley-Interscience.
 
 \author{ T. W. Yee }
 \note{
-  See the note in \code{\link{genbetaII}}.
+  See the notes in \code{\link{genbetaII}}.
 
 
 }
 
 \seealso{
     \code{\link{Paralogistic}},
+    \code{\link{sinmad}},
     \code{\link{genbetaII}},
     \code{\link{betaII}},
     \code{\link{dagum}},
@@ -96,10 +106,10 @@ Hoboken, NJ, USA: Wiley-Interscience.
 }
 
 \examples{
-pdata <- data.frame(y = rparalogistic(n = 3000, exp(1), scale = exp(2)))
+pdata <- data.frame(y = rparalogistic(n = 3000, exp(1), scale = exp(1)))
 fit <- vglm(y ~ 1, paralogistic(lss = FALSE), data = pdata, trace = TRUE)
-fit <- vglm(y ~ 1, paralogistic(lss = FALSE, ishape1.a = 2.3, iscale = 7),
-            data = pdata, trace = TRUE, epsilon = 1e-8)
+fit <- vglm(y ~ 1, paralogistic(ishape1.a = 2.3, iscale = 5),
+            data = pdata, trace = TRUE)
 coef(fit, matrix = TRUE)
 Coef(fit)
 summary(fit)

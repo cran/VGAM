@@ -193,9 +193,9 @@ sm.scale(x, center = TRUE, scale = TRUE)
   \code{\link[splines]{bs}} and \code{\link[splines]{ns}} call.
 
 
-  The website \url{http://www.stat.auckland.ac.nz/~yee}
-  contains more information such as how to write a
-  smart function, and other technical details.
+% The website \url{http://www.stat.auckland.ac.nz/~yee}
+% contains more information such as how to write a
+% smart function, and other technical details.
 
 
   The functions \code{\link[VGAM]{vglm}},

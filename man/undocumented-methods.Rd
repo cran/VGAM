@@ -5,6 +5,13 @@
 %
 %
 %
+% 201503, for R 3.1.3:
+\alias{is.buggy,ANY-method}
+\alias{is.buggy,vlm-method}
+\alias{familyname,ANY-method}
+\alias{familyname,vlm-method}
+\alias{familyname,vglmff-method}
+%
 % 201412
 \alias{nparam,ANY-method}
 \alias{nparam,vlm-method}
@@ -35,9 +42,9 @@
 \alias{simulate,vlm-method}
 %
 % 20131104
-\alias{familyname,ANY-method}
-\alias{familyname,vlm-method}
-\alias{familyname,vglmff-method}
+\alias{family.name,ANY-method}
+\alias{family.name,vlm-method}
+\alias{family.name,vglmff-method}
 % 20130903
 \alias{BIC,ANY-method}
 \alias{BIC,vlm-method}

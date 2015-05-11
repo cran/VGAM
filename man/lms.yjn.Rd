@@ -119,9 +119,11 @@ In: Haerdle, W. and Ronz, B.,
 \emph{Proceedings in Computational Statistics COMPSTAT 2002}.
 Heidelberg: Physica-Verlag.
 
-Documentation accompanying the \pkg{VGAM} package at
-\url{http://www.stat.auckland.ac.nz/~yee}
-contains further information and examples.
+
+%Documentation accompanying the \pkg{VGAM} package at
+%\url{http://www.stat.auckland.ac.nz/~yee}
+%contains further information and examples.
+
 
 }
 \author{ Thomas W. Yee }

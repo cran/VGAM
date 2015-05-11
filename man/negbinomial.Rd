@@ -182,9 +182,11 @@ polyaR(lsize = "loge", lprob = "logit",
   Setting \code{parallel = TRUE} is useful in order to get
   something similar to \code{\link{quasipoissonff}} or
   what is known as NB-1.
-  The parallelism constraint does not apply to any intercept term.
+  If \code{parallel = TRUE} then the parallelism constraint
+  does not apply to any intercept term.
   You should set \code{zero = NULL} too if \code{parallel = TRUE} to
   avoid a conflict.
+
 
 
   }

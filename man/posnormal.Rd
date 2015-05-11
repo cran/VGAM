@@ -80,14 +80,14 @@ posnormal(lmean = "identitylink", lsd = "loge",
 
 
 }
-\references{
-
-  Documentation accompanying the \pkg{VGAM} package at
-  \url{http://www.stat.auckland.ac.nz/~yee}
-  contains further information and examples.
-
-
-}
+%\references{
+%
+%  Documentation accompanying the \pkg{VGAM} package at
+%  \url{http://www.stat.auckland.ac.nz/~yee}
+%  contains further information and examples.
+%
+%
+%}
 \author{ Thomas W. Yee }
 \note{
   The response variable for this family function is the same as

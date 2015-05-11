@@ -23,6 +23,7 @@ tobit(Lower = 0, Upper = Inf, lmu = "identitylink", lsd = "loge",
   variable.
   May be a vector (see below for more information).
 
+
   }
   \item{Upper}{
   Numeric. It is the value \eqn{U} described below. 
@@ -33,6 +34,7 @@ tobit(Lower = 0, Upper = Inf, lmu = "identitylink", lsd = "loge",
   variable.
   May be a vector (see below for more information).
 
+
   }
   \item{lmu, lsd}{
   Parameter link functions for the mean and standard deviation parameters.
@@ -40,10 +42,12 @@ tobit(Lower = 0, Upper = Inf, lmu = "identitylink", lsd = "loge",
   The standard deviation is a positive quantity, therefore a log link 
   is its default.
 
+
   }
 
   \item{imu, isd}{
   See \code{\link{CommonVGAMffArguments}} for information.
+
 
   }
   \item{type.fitted}{
@@ -62,10 +66,12 @@ tobit(Lower = 0, Upper = Inf, lmu = "identitylink", lsd = "loge",
   Initialization method. Either 1 or 2, this specifies
   two methods for obtaining initial values for the parameters.
 
+
   }
   \item{nsimEIM}{
-  Used if nonstandard Tobit model.
+  Used for the nonstandard Tobit model.
   See \code{\link{CommonVGAMffArguments}} for information.
+
 
   }
   \item{zero}{
@@ -74,6 +80,8 @@ tobit(Lower = 0, Upper = Inf, lmu = "identitylink", lsd = "loge",
   as an intercept-only.
   Setting \code{zero = NULL} means both linear/additive predictors
   are modelled as functions of the explanatory variables.
+  See \code{\link{CommonVGAMffArguments}} for information.
+
 
   }
 }
@@ -155,6 +163,19 @@ tobit(Lower = 0, Upper = Inf, lmu = "identitylink", lsd = "loge",
   are censored in that direction.
   The function \code{\link{cens.normal}} is an alternative
   to \code{tobit()}.
+
+
+
+
+% 20150417; McClelland Kemp bug:
+
+
+  When obtaining initial values, if the algorithm would
+  otherwise want to fit an underdetermined system of
+  equations, then it uses the entire data set instead.
+  This might result in rather poor quality initial values,
+  and consequently, monitoring convergence is advised.
+
 
 
 }

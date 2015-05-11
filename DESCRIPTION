@@ -1,6 +1,6 @@
 Package: VGAM
-Version: 0.9-7
-Date: 2015-03-06
+Version: 0.9-8
+Date: 2015-05-11
 Title: Vector Generalized Linear and Additive Models
 Author: Thomas W. Yee <t.yee@auckland.ac.nz>
 Maintainer: Thomas Yee <t.yee@auckland.ac.nz>
@@ -9,23 +9,25 @@ Suggests: VGAMdata, MASS
 Description: An implementation of about 6 major classes of
     statistical regression models. At the heart of it are the
     vector generalized linear and additive model (VGLM/VGAM)
-    classes.  Many (150+) models and distributions are estimated
-    by maximum likelihood estimation (MLE) or penalized MLE, using
-    Fisher scoring. VGLMs can be loosely thought of as multivariate
-    GLMs. VGAMs are data-driven VGLMs (i.e., with smoothing). The
-    other classes are RR-VGLMs (reduced-rank VGLMs), quadratic
-    RR-VGLMs, reduced-rank VGAMs, RCIMs (row-column interaction
-    models)---these classes perform constrained and unconstrained
-    quadratic ordination (CQO/UQO) models in ecology, as well
-    as constrained additive ordination (CAO). Note that these
-    functions are subject to change, especially before version
-    1.0.0 is released; see the NEWS file for latest changes.
+    classes. Currently only fixed-effects models are implemented,
+    i.e., no random-effects models. Many (150+) models and
+    distributions are estimated by maximum likelihood estimation
+    (MLE) or penalized MLE, using Fisher scoring. VGLMs can be
+    loosely thought of as multivariate GLMs. VGAMs are data-driven
+    VGLMs (i.e., with smoothing). The other classes are RR-VGLMs
+    (reduced-rank VGLMs), quadratic RR-VGLMs, reduced-rank VGAMs,
+    RCIMs (row-column interaction models)---these classes perform
+    constrained and unconstrained quadratic ordination (CQO/UQO)
+    models in ecology, as well as constrained additive ordination
+    (CAO). Note that these functions are subject to change,
+    especially before version 1.0.0 is released; see the NEWS
+    file for latest changes.
 License: GPL-2
-URL: http://www.stat.auckland.ac.nz/~yee/VGAM
+URL: https://www.stat.auckland.ac.nz/~yee/VGAM
 NeedsCompilation: yes
 BuildVignettes: yes
 LazyLoad: yes
 LazyData: yes
-Packaged: 2015-03-06 09:11:02 UTC; tyee001
+Packaged: 2015-05-11 03:49:53 UTC; tyee001
 Repository: CRAN
-Date/Publication: 2015-03-06 10:38:52
+Date/Publication: 2015-05-11 11:14:54

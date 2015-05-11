@@ -61,9 +61,9 @@ The equilibrium size distribution of freely-forming groups.
 \emph{Sociometry}, \bold{24}, 36--45.
 
 
-Documentation accompanying the \pkg{VGAM} package at
-\url{http://www.stat.auckland.ac.nz/~yee}
-contains further information and examples.
+%Documentation accompanying the \pkg{VGAM} package at
+%\url{http://www.stat.auckland.ac.nz/~yee}
+%contains further information and examples.
 
 
 }

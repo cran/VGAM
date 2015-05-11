@@ -235,7 +235,7 @@ vglm.control(checkwz = TRUE, Check.rank = TRUE, Check.cm.rank = TRUE,
 
 \seealso{
   \code{\link{vglm}},
-  \code{\link{fill}}.
+  \code{\link{fill1}}.
   The author's homepage has further documentation about
   the \code{xij} argument;
   see also \code{\link{Select}}.

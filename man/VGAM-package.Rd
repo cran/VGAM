@@ -26,6 +26,7 @@ The central modelling functions are
 \code{\link{vglm}},
 \code{\link{vgam}},
 \code{\link{rrvglm}},
+\code{\link{rcim}},
 \code{\link{cqo}},
 \code{\link{cao}}.
 For detailed control of fitting,
@@ -34,6 +35,7 @@ each of these has its own control function, e.g.,
 The package uses S4 (see \code{\link[methods]{methods-package}}).
 A companion package called \pkg{VGAMdata} contains some larger
 data sets which were shifted from \pkg{VGAM}.
+
 
 
 The classes of GLMs and GAMs are special cases of VGLMs and VGAMs.
@@ -56,10 +58,12 @@ nonlinear least-squares
 problems.
 
 
+
 VGAMs are to VGLMs what GAMs are to GLMs.
 Vector smoothing (see \code{\link{vsmooth.spline}}) allows several
 additive predictors to be estimated as a sum of smooth functions of
 the covariates.
+
 
 
 For a complete list of this package, use \code{library(help = "VGAM")}.
@@ -166,9 +170,19 @@ The \pkg{VGAM} package for categorical data analysis.
 
 
 
-(Oldish) documentation accompanying the \pkg{VGAM} package at
-\url{http://www.stat.auckland.ac.nz/~yee/VGAM}
-contains some further information and examples.
+My website for the \pkg{VGAM} package is at
+\url{https://www.stat.auckland.ac.nz/~yee/VGAM}
+and I hope to put more resources there in the future,
+especially as relating to my book.
+
+
+
+
+%(Oldish) documentation accompanying the \pkg{VGAM} package at
+%\url{http://www.stat.auckland.ac.nz/~yee/VGAM}
+%contains some further information and examples.
+
+
 
 
 }
@@ -181,6 +195,7 @@ contains some further information and examples.
   \code{\link{vglm}},
   \code{\link{vgam}},
   \code{\link{rrvglm}},
+  \code{\link{rcim}},
   \code{\link{cqo}},
   \code{\link{TypicalVGAMfamilyFunction}},
   \code{\link{CommonVGAMffArguments}},

@@ -78,7 +78,8 @@ approach to capture experiments.
 
 \seealso{
     \code{\link[VGAM:posbernoulli.b]{posbernoulli.b}},
-    \code{\link[VGAM:posbernoulli.t]{posbernoulli.t}}.
+    \code{\link[VGAM:posbernoulli.t]{posbernoulli.t}},
+    \code{\link{fill1}}.
 
 
 }

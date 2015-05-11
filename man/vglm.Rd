@@ -353,9 +353,9 @@ The \code{VGAM} Package.
 \emph{R News}, \bold{8}, 28--39.
 
 
-  Documentation accompanying the \pkg{VGAM} package at
-  \url{http://www.stat.auckland.ac.nz/~yee}
-  contains further information and examples.
+%  Documentation accompanying the \pkg{VGAM} package at
+%  \url{http://www.stat.auckland.ac.nz/~yee}
+%  contains further information and examples.
 
 
 }

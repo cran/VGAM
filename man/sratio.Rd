@@ -90,9 +90,12 @@ The \pkg{VGAM} package for categorical data analysis.
 \url{http://www.jstatsoft.org/v32/i10/}.
 
 
-Documentation accompanying the \pkg{VGAM} package at
-\url{http://www.stat.auckland.ac.nz/~yee}
-contains further information and examples.
+
+%Documentation accompanying the \pkg{VGAM} package at
+%\url{http://www.stat.auckland.ac.nz/~yee}
+%contains further information and examples.
+
+
 
 }
 \author{ Thomas W. Yee }

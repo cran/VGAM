@@ -711,7 +711,7 @@ rhzeta <- function(n, alpha) {
 
 
 
-dirmul.old <- function(link = "loge", init.alpha = 0.01,
+dirmul.old <- function(link = "loge", ialpha = 0.01,
                        parallel = FALSE, zero = NULL) {
 
   link <- as.list(substitute(link))
@@ -723,8 +723,8 @@ dirmul.old <- function(link = "loge", init.alpha = 0.01,
     !is.Numeric(zero, integer.valued = TRUE, positive = TRUE))
     stop("bad input for argument 'zero'")
 
-  if (!is.Numeric(init.alpha, positive = TRUE))
-    stop("'init.alpha' must contain positive values only")
+  if (!is.Numeric(ialpha, positive = TRUE))
+    stop("'ialpha' must contain positive values only")
 
 
   new("vglmff",
@@ -753,12 +753,12 @@ dirmul.old <- function(link = "loge", init.alpha = 0.01,
       extra$y  <- y
 
       if (!length(etastart)) {
-        yy <- if (is.numeric( .init.alpha))
-            matrix( .init.alpha, n, M, byrow = TRUE) else
+        yy <- if (is.numeric( .ialpha))
+            matrix( .ialpha , n, M, byrow = TRUE) else
             matrix(runif(n*M), n, M)
         etastart <- theta2eta(yy, .link , earg = .earg )
     }
-  }), list( .link = link, .earg = earg, .init.alpha = init.alpha ))),
+  }), list( .link = link, .earg = earg, .ialpha = ialpha ))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
     shape <- eta2theta(eta, .link , earg = .earg )
     M <- if (is.matrix(eta)) ncol(eta) else 1
@@ -1175,7 +1175,7 @@ dzeta <- function(x, p, log = FALSE) {
          Q1 = 1,
          multipleResponses = TRUE,
          zero = .zero ,
-         link = .link)
+         link = .link )
   }, list( .link = link,
            .zero = zero ))),
   initialize = eval(substitute(expression({
@@ -4094,7 +4094,7 @@ negbinomial.control <- function(save.weights = TRUE, ...) {
   function(lmu = "loge", lsize = "loge",
            imu = NULL,   isize = NULL,
            probs.y = 0.75,
-           nsimEIM = 250, cutoff.prob = 0.995, # Maxiter = 5000,
+           nsimEIM = 250, cutoff.prob = 0.995,  # Maxiter = 5000,
            max.qnbinom = 1000,
            max.chunk.Mb = 20,  # max.memory = Inf is allowed
            deviance.arg = FALSE, imethod = 1,
@@ -4154,9 +4154,7 @@ negbinomial.control <- function(save.weights = TRUE, ...) {
                "greater than 10, say")
 
 
-    if (!is.logical( parallel ) || length( parallel ) != 1)
-      stop("argument 'parallel' must be TRUE or FALSE")
-    if ( parallel  && length(zero))
+    if (is.logical( parallel ) && parallel  && length(zero))
       stop("need to set 'zero = NULL' when parallel = TRUE")
 
 
@@ -4176,26 +4174,27 @@ negbinomial.control <- function(save.weights = TRUE, ...) {
 
   constraints = eval(substitute(expression({
 
-    dotzero <- .zero
-    M1 <- 2
-    eval(negzero.expression.VGAM)
 
-    if ( .parallel && ncol(cbind(y)) > 1)
-      stop("univariate responses needed if 'parallel = TRUE'")
+
+
     constraints <- cm.VGAM(matrix(1, M, 1), x = x,
                            bool = .parallel , 
                            constraints = constraints)
+
+    dotzero <- .zero
+    M1 <- 2
+    eval(negzero.expression.VGAM)
   }), list( .parallel = parallel, .zero = zero ))),
 
 
 
   infos = eval(substitute(function(...) {
-    list(M1 = 2,
-         Q1 = 1,
+    list(M1    = 2,
+         Q1    = 1,
          multipleResponses = TRUE,
-         lmu = .lmuuu ,
+         lmu   = .lmuuu ,
          lsize = .lsize ,
-         zero = .zero )
+         zero  = .zero )
   }, list( .zero = zero, .lsize = lsize, .lmuuu = lmuuu ))),
 
 
@@ -4262,7 +4261,7 @@ negbinomial.control <- function(save.weights = TRUE, ...) {
           medabsres <- median(abs(y[, jay] - use.this)) + 1/32
           allowfun <- function(z, maxtol = 1) sign(z) * pmin(abs(z), maxtol)
           mu.init[, jay] <- use.this + (1 - .ishrinkage ) *
-                           allowfun(y[, jay] - use.this, maxtol = medabsres)
+                            allowfun(y[, jay] - use.this, maxtol = medabsres)
 
           mu.init[, jay] <- abs(mu.init[, jay]) + 1 / 1024
         }
@@ -4272,8 +4271,8 @@ negbinomial.control <- function(save.weights = TRUE, ...) {
         kay.init <- matrix( .k.init , nrow = n, ncol = NOS, byrow = TRUE)
       } else {
         negbinomial.Loglikfun <- function(kmat, y, x, w, extraargs) {
-            mu <- extraargs
-            sum(c(w) * dnbinom(x = y, mu = mu, size = kmat, log = TRUE))
+          mu <- extraargs
+          sum(c(w) * dnbinom(x = y, mu = mu, size = kmat, log = TRUE))
         }
         k.grid <- .gsize
         kay.init <- matrix(0, nrow = n, ncol = NOS)
@@ -4284,8 +4283,6 @@ negbinomial.control <- function(save.weights = TRUE, ...) {
                                           extraargs = mu.init[, spp.])
         }
       }
-
-
 
     newemu <- .emuuu
     if ( .lmuuu == "nbcanlink") {
@@ -5248,7 +5245,8 @@ polyaR.control <- function(save.weights = TRUE, ...) {
         } else {
           medabsres <- median(abs(y[, iii] - use.this)) + 1/32
           allowfun <- function(z, maxtol = 1) sign(z) * pmin(abs(z), maxtol)
-          mu.init[, iii] <- use.this + (1 - .ishrinkage ) * allowfun(y[, iii] -
+          mu.init[, iii] <- use.this +
+                            (1 - .ishrinkage ) * allowfun(y[, iii] -
                           use.this, maxtol = medabsres)
 
           mu.init[, iii] <- abs(mu.init[, iii]) + 1 / 1024
@@ -5276,12 +5274,12 @@ polyaR.control <- function(save.weights = TRUE, ...) {
       }
 
       prob.init <- if (length(PROB.INIT)) PROB.INIT else
-                  kayy.init / (kayy.init + mu.init)
+                   kayy.init / (kayy.init + mu.init)
 
 
       etastart <-
-        cbind(theta2eta(kayy.init, .lsize , earg = .esize),
-              theta2eta(prob.init, .lprob , earg = .eprob))
+        cbind(theta2eta(kayy.init, .lsize , earg = .esize ),
+              theta2eta(prob.init, .lprob , earg = .eprob ))
               
       etastart <-
         etastart[, interleave.VGAM(M, M = M1), drop = FALSE]
@@ -7260,11 +7258,47 @@ rsimplex <- function(n, mu = 0.5, dispersion = 1) {
 
 
 
- genpoisson <- function(llambda = extlogit(min = -1, max = 1),
+
+dgenpois <- function(x, lambda = 0, theta, log = FALSE) {
+  if (!is.logical(log.arg <- log) || length(log) != 1)
+    stop("bad input for argument 'log'")
+  rm(log)
+
+  LLL <- max(length(x), length(lambda), length(theta))
+  if (length(x)      != LLL) x      <- rep(x,      len = LLL)
+  if (length(lambda) != LLL) lambda <- rep(lambda, len = LLL)
+  if (length(theta)  != LLL) theta  <- rep(theta,  len = LLL)
+
+  llans <- -x*lambda - theta + (x-1) * log(theta + x*lambda) +
+           log(theta) - lgamma(x+1)
+  llans[x < 0] <- log(0)
+  llans[x != round(x)] <- log(0)  # x should be integer-valued
+  llans[lambda > 1] <- NaN
+  if (any(ind1 <- (lambda < 0))) {
+    epsilon <- 1.0e-9  # Needed to handle a "<" rather than a "<=".
+    mmm <- pmax(4, floor(theta/abs(lambda) - epsilon))
+    llans[ind1 & mmm < pmax(-1, -theta/mmm)] <- NaN
+    llans[ind1 & mmm < x] <- log(0)  # probability 0, not NaN
+  }
+  if (log.arg) {
+    llans
+  } else {
+    exp(llans)
+  }
+}
+
+
+
+
+
+ genpoisson <- function(llambda = "rhobit",
                         ltheta = "loge",
                         ilambda = NULL, itheta = NULL,
                         use.approx = TRUE,
-                        imethod = 1, zero = 1) {
+                        imethod = 1,
+                        ishrinkage = 0.95,
+                        zero = -1) {
+
 
 
   llambda <- as.list(substitute(llambda))
@@ -7276,15 +7310,16 @@ rsimplex <- function(n, mu = 0.5, dispersion = 1) {
   ltheta <- attr(etheta, "function.name")
 
 
-  if (length(zero) &&
-      !is.Numeric(zero, integer.valued = TRUE, positive = TRUE))
-    stop("bad input for argument 'zero'")
+  if (!is.Numeric(ishrinkage, length.arg = 1) ||
+     ishrinkage < 0 ||
+     ishrinkage > 1)
+    stop("bad input for argument 'ishrinkage'")
 
 
   if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
-     imethod > 2)
-    stop("argument 'imethod' must be 1 or 2")
+     imethod > 3)
+    stop("argument 'imethod' must be 1 or 2 or 3")
 
   if (!is.logical(use.approx) || length(use.approx) != 1)
     stop("'use.approx' must be logical value")
@@ -7296,82 +7331,131 @@ rsimplex <- function(n, mu = 0.5, dispersion = 1) {
   blurb = c("Generalized Poisson distribution\n\n",
             "Links:    ",
             namesof("lambda", llambda, earg = elambda), ", ", 
-            namesof("theta", ltheta, earg = etheta), "\n", 
+            namesof("theta",  ltheta,  earg = etheta ), "\n", 
             "Mean:     theta / (1-lambda)\n",
             "Variance: theta / (1-lambda)^3"),
-  constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
+ constraints = eval(substitute(expression({
+
+    M1 <- 2
+    dotzero <- .zero
+    eval(negzero.expression.VGAM)
   }), list( .zero = zero ))),
+
+  infos = eval(substitute(function(...) {
+    list(M1 = 2,
+         Q1 = 1,
+         multipleResponses = TRUE,
+         imethod = .imethod ,
+         zero = .zero )
+  }, list( .zero = zero,
+           .imethod = imethod ))),
+
   initialize = eval(substitute(expression({
-
+    temp5 <-
     w.y.check(w = w, y = y,
-              ncol.w.max = 1,
-              ncol.y.max = 1)
+              ncol.w.max = Inf,  # 1,
+              ncol.y.max = Inf,  # 1,
+              Is.integer.y = TRUE,
+              out.wy = TRUE,
+              colsyperw = 1,
+              maximize = TRUE)
+    w <- temp5$w
+    y <- temp5$y
 
-
-
-
+    extra$ncoly <- ncoly <- NOS <- ncol(y)
+    extra$M1 <- M1 <- 2
+    M <- M1 * ncoly
+    mynames1 <- param.names("lambda", NOS)
+    mynames2 <- param.names("theta",  NOS)
 
     predictors.names <-
-       c(namesof("lambda", .llambda , earg = .elambda , tag = FALSE),
-         namesof("theta",  .ltheta ,  earg = .etheta,  tag = FALSE))
-    init.lambda <- if ( .imethod == 1)
-      1 - sqrt(weighted.mean(y, w) / var(y)) else 0.5
-    init.theta  <- if ( .imethod == 1)
-      sqrt((0.01 + weighted.mean(y, w)^3) / var(y)) else
-      median(y) * (1-init.lambda)
-    if (init.theta <= 0)
-      init.theta <- 0.1
-    cutpt <- if (init.lambda < 0) {
-      mmm <- max(trunc(-init.theta / init.lambda), 4)
-      max(-1, -init.theta /mmm)
-    } else -1
-    if (init.lambda <= cutpt)
-      init.lambda <- cutpt + 0.1
-    if (init.lambda >= 1)
-      init.lambda <- 0.9
+       c(namesof(mynames1, .llambda , earg = .elambda , tag = FALSE),
+         namesof(mynames2, .ltheta  , earg = .etheta  , tag = FALSE))
+    predictors.names <- predictors.names[interleave.VGAM(M, M = M1)]
+
+    init.lambda <- init.theta <- matrix(0, n, NOS)
+    for (spp. in 1: NOS) {
+      init.lambda[, spp.] <- if ( .imethod == 1) {
+        min(max(0.05,
+                1 - sqrt(weighted.mean(y[, spp.],
+                                       w[, spp.]) / var(y[, spp.]))),
+            0.95)
+      } else if ( .imethod == 2) {
+        runif(n, max = 0.1)
+      } else {
+        runif(n, max = 0.7)
+      }
+
+      init.theta[, spp.]  <- if ( .imethod == 2) {
+        (y[, spp.] + weighted.mean(y[, spp.], w[, spp.])) / 2
+      } else if ( .imethod == 3) {
+        (y[, spp.] + median(y[, spp.])) / 2
+      } else {
+        (1 - .ishrinkage ) * y[, spp.] +
+             .ishrinkage   * weighted.mean(y[, spp.], w[, spp.])
+      }
+    }
+
     if (!length(etastart)) {
-      lambda <- rep(if (length( .ilambda)) .ilambda else
-                   init.lambda, length = n)
-      theta <- rep(if (length( .itheta)) .itheta else init.theta ,
-                  length = n)
+      init.lambda <- if (length( .ilambda ))
+                       matrix( .ilambda , n, NOS, byrow = TRUE) else
+                       init.lambda
+      init.theta  <- if (length( .itheta ))
+                       matrix( .itheta  , n, NOS, byrow = TRUE) else
+                       init.theta
       etastart <-
-        cbind(theta2eta(lambda, .llambda , earg = .elambda ),
-              theta2eta(theta,  .ltheta ,  earg = .etheta ))
+        cbind(theta2eta(init.lambda, .llambda , earg = .elambda ),
+              theta2eta(init.theta,  .ltheta  , earg = .etheta  ))
+      etastart <- etastart[, interleave.VGAM(M, M = M1), drop = FALSE]
     }
   }), list( .ltheta = ltheta, .llambda = llambda,
             .etheta = etheta, .elambda = elambda,
-            .imethod = imethod,
+            .imethod = imethod, .ishrinkage = ishrinkage,
             .itheta = itheta, .ilambda = ilambda )) ),
   linkinv = eval(substitute(function(eta, extra = NULL) {
-    lambda <- eta2theta(eta[, 1], .llambda , earg = .elambda )
-    theta  <- eta2theta(eta[, 2], .ltheta , earg = .etheta )
+    lambda <- eta2theta(eta[, c(TRUE, FALSE)], .llambda , earg = .elambda )
+    theta  <- eta2theta(eta[, c(FALSE, TRUE)], .ltheta  , earg = .etheta  )
     theta / (1 - lambda)
   }, list( .ltheta = ltheta, .llambda = llambda,
            .etheta = etheta, .elambda = elambda ))),
   last = eval(substitute(expression({
-    misc$link <-    c(lambda = .llambda , theta = .ltheta )
-    misc$earg <- list(lambda = .elambda , theta = .etheta )
-    if (! .use.approx )
-      misc$pooled.weight <- pooled.weight
+    M1 <- extra$M1
+
+    temp.names <- c(mynames1, mynames2)
+    temp.names <- temp.names[interleave.VGAM(M1 * ncoly, M = M1)]
+
+    misc$link <- rep( .llambda , length = M1 * ncoly)
+    misc$earg <- vector("list", M1 * ncoly)
+    names(misc$link) <-
+    names(misc$earg) <- temp.names
+    for (ii in 1:ncoly) {
+      misc$link[ M1*ii-1 ] <- .llambda
+      misc$link[ M1*ii   ] <- .ltheta
+      misc$earg[[M1*ii-1]] <- .elambda
+      misc$earg[[M1*ii  ]] <- .etheta
+    }
+
+    misc$M1 <- M1
+    misc$expected <- TRUE
+    misc$imethod <- .imethod
+    misc$multipleResponses <- TRUE
+
+      misc$use.approx <- .use.approx
   }), list( .ltheta = ltheta, .llambda = llambda,
-            .use.approx = use.approx,
+            .use.approx = use.approx, .imethod = imethod,
             .etheta = etheta, .elambda = elambda ))),
   loglikelihood = eval(substitute(
     function(mu, y, w, residuals = FALSE, eta,
              extra = NULL,
              summation = TRUE) {
-    lambda <- eta2theta(eta[, 1], .llambda , earg = .elambda )
-    theta  <- eta2theta(eta[, 2], .ltheta  , earg = .etheta  )
+    lambda <- eta2theta(eta[, c(TRUE, FALSE)], .llambda , earg = .elambda )
+    theta  <- eta2theta(eta[, c(FALSE, TRUE)], .ltheta  , earg = .etheta  )
     index <- (y == 0)
     if (residuals) {
       stop("loglikelihood residuals not implemented yet")
     } else {
-      ll.elts <-
-        (w[index] * (-theta[index])) +
-        (w[!index] * (-y[!index]*lambda[!index]-theta[!index] +
-         (y[!index]-1)*log(theta[!index]+y[!index]*lambda[!index]) +
-         log(theta[!index]) - lgamma(y[!index]+1)) )
+      ll.elts <- dgenpois(x = y, lambda = lambda, theta = theta,
+                          log = TRUE)
       if (summation) {
         sum(ll.elts)
       } else {
@@ -7382,50 +7466,50 @@ rsimplex <- function(n, mu = 0.5, dispersion = 1) {
            .etheta = etheta, .elambda = elambda ))),
   vfamily = c("genpoisson"),
   deriv = eval(substitute(expression({
-    lambda <- eta2theta(eta[, 1], .llambda , earg = .elambda )
-    theta <- eta2theta(eta[, 2], .ltheta , earg = .etheta )
-    dl.dlambda <- -y + y*(y-1)/(theta+y*lambda)
-    dl.dtheta <- -1 + (y-1)/(theta+y*lambda) + 1/theta
-    dTHETA.deta <- dtheta.deta(theta, .ltheta , earg = .etheta )
+    M1  <- 2
+    NOS <- ncol(eta)/M1
+
+    lambda <- eta2theta(eta[, c(TRUE, FALSE)], .llambda , earg = .elambda )
+    theta  <- eta2theta(eta[, c(FALSE, TRUE)], .ltheta  , earg = .etheta  )
+    dl.dlambda <- -y + y*(y-1) / (theta+y*lambda)
+    dl.dtheta  <- -1 +   (y-1) / (theta+y*lambda) + 1/theta
+    dTHETA.deta  <- dtheta.deta(theta,  .ltheta  , earg = .etheta  )
     dlambda.deta <- dtheta.deta(lambda, .llambda , earg = .elambda )
-    c(w) * cbind(dl.dlambda * dlambda.deta,
-                 dl.dtheta * dTHETA.deta )
+    myderiv <- c(w) * cbind(dl.dlambda * dlambda.deta,
+                            dl.dtheta  * dTHETA.deta )
+    myderiv[, interleave.VGAM(M, M = M1)]
   }), list( .ltheta = ltheta, .llambda = llambda,
             .etheta = etheta, .elambda = elambda ))),
   weight = eval(substitute(expression({
-    wz <- matrix(as.numeric(NA), n, dimm(M))  #3=dimm(M)
+    wz <- matrix(0, n, M + M-1)  # Tridiagonal
+
     if ( .use.approx ) {
-        BBB <- (theta+2)*(theta+2*lambda-theta*lambda)-(theta^2)*(1-lambda)
-        d2l.dlambda2 <- 2 * theta * (theta+2) / ((1-lambda) * BBB)
-        d2l.dtheta2 <- 2 * (1 + lambda * (2/theta - 1)) / BBB
-        d2l.dthetalambda <-  2 * theta / BBB
-        wz[, iam(1, 1, M)] <- d2l.dlambda2 * dlambda.deta^2
-        wz[, iam(2, 2, M)] <- d2l.dtheta2 * dTHETA.deta^2
-        wz[, iam(1, 2, M)] <- d2l.dthetalambda * dTHETA.deta * dlambda.deta
-        wz <- c(w) * wz
+      BBB <- (theta+2)*(theta+2*lambda-theta*lambda)-(theta^2)*(1-lambda)
+      d2l.dlambda2 <- 2 * theta * (theta+2) / ((1-lambda) * BBB)
+      d2l.dtheta2 <- 2 * (1 + lambda * (2/theta - 1)) / BBB
+      d2l.dthetalambda <-  2 * theta / BBB
+      wz[, M1*(1:NOS) - 1    ] <- d2l.dlambda2 * dlambda.deta^2
+      wz[, M1*(1:NOS)        ] <- d2l.dtheta2  * dTHETA.deta^2
+      wz[, M1*(1:NOS) + M - 1] <- d2l.dthetalambda * dTHETA.deta  *
+                                                     dlambda.deta
     } else {
-        d2l.dlambda2 <- -y^2 * (y-1) / (theta+y*lambda)^2
-        d2l.dtheta2 <- -(y-1)/(theta+y*lambda)^2 - 1 / theta^2
-        d2l.dthetalambda <-  -y * (y-1) / (theta+y*lambda)^2 
-        wz[, iam(1, 1, M)] <- -d2l.dlambda2 * dlambda.deta^2
-        wz[, iam(2, 2, M)] <- -d2l.dtheta2 * dTHETA.deta^2
-        wz[, iam(1, 2, M)] <- -d2l.dthetalambda * dTHETA.deta * dlambda.deta
+      d2l.dlambda2 <- -y^2 * (y-1) / (theta+y*lambda)^2
+      d2l.dtheta2 <- -(y-1)/(theta+y*lambda)^2 - 1 / theta^2
+      d2l.dthetalambda <-  -y * (y-1) / (theta+y*lambda)^2 
+      wz[, M1*(1:NOS) - 1    ] <- -d2l.dlambda2 * dlambda.deta^2
+      wz[, M1*(1:NOS)        ] <- -d2l.dtheta2 * dTHETA.deta^2
+      wz[, M1*(1:NOS) + M - 1] <- -d2l.dthetalambda * dTHETA.deta * dlambda.deta
 
-        d2THETA.deta2 <- d2theta.deta2(theta, .ltheta , earg = .etheta )
-        d2lambdadeta2 <- d2theta.deta2(lambda, .llambda , earg = .elambda )
-        wz[, iam(1, 1, M)] <- wz[, iam(1, 1, M)] - dl.dlambda * d2lambdadeta2
-        wz[, iam(2, 2, M)] <- wz[, iam(2, 2, M)] - dl.dtheta * d2THETA.deta2
-        wz <- c(w) * wz
+      d2THETA.deta2 <- d2theta.deta2(theta,  .ltheta  , earg = .etheta  )
+      d2lambdadeta2 <- d2theta.deta2(lambda, .llambda , earg = .elambda )
+      wz[, M1*(1:NOS) - 1    ] <-
+      wz[, M1*(1:NOS) - 1    ] - dl.dlambda * d2lambdadeta2
+      wz[, M1*(1:NOS)        ] <-
+      wz[, M1*(1:NOS)        ] - dl.dtheta * d2THETA.deta2
+    }
 
-        if (intercept.only) {
-          sumw <- sum(w)
-          for (ii in 1:ncol(wz))
-            wz[, ii] <- sum(wz[, ii]) / sumw
-          pooled.weight <- TRUE
-          wz <- c(w) * wz   # Put back the weights
-        } else
-          pooled.weight <- FALSE
-        }
+    wz <- w.wz.merge(w = w, wz = wz, n = n, M = M + (M - 1),
+                     ndepy = NOS)
     wz
   }), list( .ltheta = ltheta, .llambda = llambda,
             .use.approx = use.approx,

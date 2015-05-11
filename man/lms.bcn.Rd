@@ -180,9 +180,9 @@ Quantile regression via vector generalized additive models.
 \bold{23}, 2295--2315.
 
 
-Documentation accompanying the \pkg{VGAM} package at
-\url{http://www.stat.auckland.ac.nz/~yee}
-contains further information and examples.
+%Documentation accompanying the \pkg{VGAM} package at
+%\url{http://www.stat.auckland.ac.nz/~yee}
+%contains further information and examples.
 
 }
 \author{ Thomas W. Yee }
@@ -203,12 +203,13 @@ contains further information and examples.
   is often a good idea. See the example below.
 
 
-  While it is usual to regress the response against a single
-  covariate, it is possible to add other explanatory variables,
-  e.g., gender.
-  See
-  \url{http://www.stat.auckland.ac.nz/~yee}
-  for further information and examples about this feature.
+% While it is usual to regress the response against a single
+% covariate, it is possible to add other explanatory variables,
+% e.g., gender.
+% See
+% \url{http://www.stat.auckland.ac.nz/~yee}
+% for further information and examples about this feature.
+
 
 }
 

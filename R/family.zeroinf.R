@@ -1949,44 +1949,6 @@ zanegbinomialff.control <- function(save.weights = TRUE, ...) {
 
 
 
- if (FALSE)
-rposnegbin <- function(n, munb, size) {
-  if (!is.Numeric(size, positive = TRUE))
-    stop("argument 'size' must be positive")
-  if (!is.Numeric(munb, positive = TRUE))
-    stop("argument 'munb' must be positive")
-  if (!is.Numeric(n, positive = TRUE, integer.valued = TRUE,
-                  length.arg = 1))
-    stop("argument 'n' must be a positive integer")
-  ans <- rnbinom(n = n, mu = munb, size = size)
-  munb <- rep(munb, length = n)
-  size <- rep(size, length = n)
-  index <- ans == 0
-  while (any(index)) {
-    more <- rnbinom(n = sum(index), mu = munb[index], size = size[index])
-    ans[index] <- more
-    index <- ans == 0
-  }
-  ans
-}
-
- if (FALSE)
-dposnegbin <- function(x, munb, size, log = FALSE) {
-  if (!is.Numeric(size, positive = TRUE))
-    stop("argument 'size' must be positive")
-  if (!is.Numeric(munb, positive = TRUE))
-    stop("argument 'munb' must be positive")
-  ans <- dnbinom(x = x, mu = munb, size = size, log=log)
-  ans0 <- dnbinom(x=0, mu = munb, size = size, log = FALSE)
-  ans <- if (log) ans - log1p(-ans0) else ans/(1-ans0)
-  ans[x == 0] <- if (log) -Inf else 0
-  ans
-}
-
-
-
-
-
 
 
 

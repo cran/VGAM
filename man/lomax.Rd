@@ -8,9 +8,9 @@
 
 }
 \usage{
-lomax(lscale = "loge", lshape3.q = "loge",
-      iscale = NULL,   ishape3.q = NULL,
-      gshape3.q = exp(-5:5), zero = NULL)
+lomax(lscale = "loge", lshape3.q = "loge", iscale = NULL, 
+      ishape3.q = NULL, imethod = 1, gscale = exp(-5:5),
+      gshape3.q = exp(-5:5), probs.y = c(0.25, 0.5, 0.75), zero = -2)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -21,13 +21,16 @@ lomax(lscale = "loge", lshape3.q = "loge",
 
 
   }
-  \item{iscale, ishape3.q}{
-  Optional initial values for \code{scale} and \code{q}.
+  \item{iscale, ishape3.q, imethod}{
+  See \code{\link{CommonVGAMffArguments}} for information.
+  For \code{imethod = 2} a good initial value for
+  \code{iscale} is needed to obtain a good estimate for
+  the other parameter.
 
 
   }
 
-  \item{gshape3.q, zero}{
+  \item{gscale, gshape3.q, zero, probs.y}{
   See
   \code{\link{CommonVGAMffArguments}}.
 
@@ -68,6 +71,8 @@ The mean is
   \deqn{E(Y) = b/(q-1)}{%
         E(Y) = b/(q-1)}
 provided \eqn{q > 1}; these are returned as the fitted values.
+This family function handles multiple responses.
+
 
 
 }
@@ -90,7 +95,7 @@ Hoboken, NJ, USA: Wiley-Interscience.
 
 \author{ T. W. Yee }
 \note{
-  See the note in \code{\link{genbetaII}}.
+  See the notes in \code{\link{genbetaII}}.
 
 
 }

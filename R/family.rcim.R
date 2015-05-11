@@ -839,7 +839,7 @@ plota21 <- function(rrvglm2, show.plot = TRUE, nseq.a21 = 31,
 
   if (show.plot) {
     plot(a21.matrix[ ,1], a21.matrix[ ,2], type = "l",
-            col = "blue",
+            col = "blue", cex.lab = 1.1,
             xlab = expression(a[21]), ylab = "Log-likelihood")  # ...
 
     abline(v = (Hlist.orig[[length(Hlist.orig)]])[2, 1],

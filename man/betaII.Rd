@@ -7,8 +7,10 @@
   beta II distribution.
 }
 \usage{
-betaII(lscale = "loge", lshape2.p = "loge", lshape3.q = "loge",
-       iscale = NULL, ishape2.p = 2, ishape3.q = 2, zero = NULL)
+betaII(lscale = "loge", lshape2.p = "loge", lshape3.q = "loge", 
+       iscale = NULL, ishape2.p = NULL, ishape3.q = NULL, imethod = 1, 
+       gscale = exp(-5:5), gshape2.p = exp(-5:5), gshape3.q = exp(-5:5), 
+       probs.y = c(0.25, 0.5, 0.75), zero = -(2:3))
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -19,16 +21,18 @@ betaII(lscale = "loge", lshape2.p = "loge", lshape3.q = "loge",
 
 
   }
-  \item{iscale, ishape2.p, ishape3.q}{
-  Optional initial values for \code{scale}, \code{p} and \code{q}.
+  \item{iscale, ishape2.p, ishape3.q, imethod, zero}{
+  See \code{\link{CommonVGAMffArguments}} for information.
 
 
   }
-  \item{zero}{
-  An integer-valued vector specifying which
-  linear/additive predictors are modelled as intercepts only.
-  Here, the values must be from the set \{1,2,3\} which correspond to
-  \code{scale}, \code{p}, \code{q}, respectively.
+  \item{gscale, gshape2.p, gshape3.q}{
+  See \code{\link{CommonVGAMffArguments}} for information.
+
+
+  }
+  \item{probs.y}{
+  See \code{\link{CommonVGAMffArguments}} for information.
 
 
   }
@@ -52,6 +56,7 @@ The mean is
   \deqn{E(Y) = b \, \Gamma(p + 1) \, \Gamma(q - 1) / (\Gamma(p) \, \Gamma(q))}{%
         E(Y) = b  gamma(p + 1)  gamma(q - 1) / ( gamma(p)  gamma(q))}
 provided \eqn{q > 1}; these are returned as the fitted values.
+This family function handles multiple responses.
 
 
 }
@@ -73,7 +78,7 @@ Hoboken, NJ, USA: Wiley-Interscience.
 
 \author{ T. W. Yee }
 \note{
-  See the note in \code{\link{genbetaII}}.
+  See the notes in \code{\link{genbetaII}}.
 
 
 }
@@ -93,7 +98,8 @@ Hoboken, NJ, USA: Wiley-Interscience.
 }
 
 \examples{
-bdata <- data.frame(y = rsinmad(2000, shape1.a = 1, exp(2), exp(1)))  # Not genuine data!
+bdata <- data.frame(y = rsinmad(2000, shape1.a = 1, shape3.q = exp(2),
+                                scale = exp(1)))  # Not genuine data!
 fit <- vglm(y ~ 1, betaII, data = bdata, trace = TRUE)
 fit <- vglm(y ~ 1, betaII(ishape2.p = 0.7, ishape3.q = 0.7),
             data = bdata, trace = TRUE)

@@ -637,20 +637,23 @@ qgev <- function(p, location = 0, scale = 1, shape = 0,
         stop("cannot handle shape == 0 with a multivariate response")
 
       EulerM <- -digamma(1)
-      wz[is.zero, iam(2, 2, M)] <- (pi^2/6 + (1-EulerM)^2) / sigma[is.zero]^2
+      wz[is.zero, iam(2, 2, M)] <- (pi^2/6 + (1-EulerM)^2)/sigma[is.zero]^2
       wz[is.zero, iam(3, 3, M)] <- 2.4236
-      wz[is.zero, iam(1, 2, M)] <- (digamma(2) + 2*(EulerM-1)) / sigma[is.zero]^2
-      wz[is.zero, iam(1, 3, M)]= -(trigamma(1)/2 + digamma(1)*
-                                   (digamma(1)/2+1)) / sigma[is.zero]
-      wz[is.zero, iam(2, 3, M)] <- (-dgammadx(2, 3)/6 + dgammadx(1, 1) +
-                                   2*dgammadx(1, 2) +
-                                   2*dgammadx(1, 3)/3) / sigma[is.zero]
+      wz[is.zero, iam(1, 2, M)] <-
+        (digamma(2) + 2 * (EulerM-1)) / sigma[is.zero]^2
+      wz[is.zero, iam(1, 3, M)] <-
+       -(trigamma(1) / 2 + digamma(1) * (digamma(1)/2+1)) / sigma[is.zero]
+      wz[is.zero, iam(2, 3, M)] <-
+        (-dgammadx(2, 3)/6 + dgammadx(1, 1) +
+                           2*dgammadx(1, 2) +
+                           2*dgammadx(1, 3)/3) / sigma[is.zero]
 
       if (FALSE ) {
         wz[, iam(1, 2, M)] <- 2 * r.vec / sigma^2
         wz[, iam(2, 2, M)] <- -4 * r.vec * digamma(r.vec+1) + 2 * r.vec +
-                              (4 * dgammadx(r.vec+1, deriv.arg = 1) - 
-          3 * dgammadx(r.vec+1, deriv.arg = 2)) / gamma(r.vec)  # Not checked
+                              (4 * dgammadx(r.vec+1, deriv.arg = 1) -
+          3 * dgammadx(r.vec+1,
+                       deriv.arg = 2)) / gamma(r.vec)  # Not checked
       }
     }
 
@@ -2680,252 +2683,7 @@ frechet.control <- function(save.weights = TRUE, ...) {
 
 
 
-frechet3.control <- function(save.weights = TRUE, ...) {
-    list(save.weights = save.weights)
-}
 
-
-
-
-if (FALSE)
- frechet3 <- function(anchor = NULL,
-                     ldifference = "loge",
-                     lscale = "loge",
-                     lshape = logoff(offset = -2),
-                     ilocation = NULL, iscale = NULL, ishape = NULL,
-                     nsimEIM = 250,
-                     zero = 1) {
-  lscale <- as.list(substitute(lscale))
-  escale <- link2list(lscale)
-  lscale <- attr(escale, "function.name")
-
-  lshape <- as.list(substitute(lshape))
-  eshape <- link2list(lshape)
-  lshape <- attr(eshape, "function.name")
-
-  ldiffr <- as.list(substitute(ldifference))
-  ediffr <- link2list(ldiffr)
-  ldiffr <- attr(escale, "function.name")
-
-
-
-
-  stopifnot(nsimEIM > 10, length(nsimEIM) == 1, nsimEIM == round(nsimEIM))
-
-
-  new("vglmff",
-  blurb = c("3-parameter Frechet distribution\n",
-            "Links:    ",
-            namesof("difference", link = ldiffr, earg = ediffr), ", ", 
-            namesof("scale",      link = lscale, earg = escale), ", ",
-            namesof("shape",      link = lshape, earg = eshape)),
-  constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x, .zero, M)
-  }), list( .zero = zero ))),
-  initialize = eval(substitute(expression({
-    if (ncol(cbind(y)) != 1)
-      stop("response must be a vector or a one-column matrix")
-
-    predictors.names <-
-    c(namesof("difference", .ldiffr , earg = .ediffr, short = TRUE),
-      namesof("scale",      .lscale , earg = .escale, short = TRUE),
-      namesof("shape",      .lshape , earg = .eshape, short = TRUE))
-
-    anchorpt <- if (is.Numeric( .anchor, length.arg = 1))
-               .anchor else min(y)
-    if (min(y) < anchorpt)
-      stop("anchor point is too large")
-    extra$LHSanchor <- anchorpt
-
-    if (!length(etastart)) {
-
-
-      frech.aux <- function(shapeval, y, x, w, extraargs) {
-        myprobs <- c(0.25, 0.5, 0.75)
-        myobsns <- quantile(y, probs = myprobs)
-        myquant <- (-log(myprobs))^(-1/shapeval)
-        myfit <- lsfit(x = myquant, y = myobsns, intercept = TRUE)
-        sum(myfit$resid^2)
-      } 
-
-      shape.grid <- c(100, 70, 40, 20, 12, 8, 4, 2, 1.5)
-      shape.grid <- c(1 / shape.grid, 1, shape.grid)
-      try.this <- grid.search(shape.grid, objfun = frech.aux,
-                              y = y,  x = x, w = w, maximize = FALSE,
-                              abs.arg = TRUE)
-
-      shape.init <-
-        if (length( .ishape ))
-          rep( .ishape , length.out = n) else {
-          rep(try.this , length.out = n)  # variance exists if shape > 2
-      }
-
-
-
-
-        myprobs <- c(0.25, 0.5, 0.75)
-        myobsns <- quantile(y, probs = myprobs)
-        myquant <- (-log(myprobs))^(-1/shape.init[1])
-        myfit <- lsfit(x = myquant, y = myobsns)
- plot(myobsns ~ myquant)
-
-
-      Scale.init <- if (length( .iscale )) {
-        rep( .iscale , length.out = n)
-      } else {
-        if (all(shape.init > 1)) {
-          myfit$coef[2]
-        } else {
-          rep(1.0, length.out = n)
-        }
-      }
-
-
-      locinit <- if (length( .ilocation ))
-                rep( .ilocation , length.out = n) else {
-        if (myfit$coef[1] < min(y)) {
-          rep(myfit$coef[1], length.out = n)
-        } else {
-          rep(anchorpt - 0.01 * diff(range(y)), length.out = n)
-        }
-      }
-      if (any(y <= locinit))
-        stop("initial values for 'location' are out of range")
-      if (any(anchorpt <= locinit))
-        stop("require anchor point > initial location parameter value")
-
-
-
-
-      etastart <-
-        cbind(theta2eta(anchorpt - locinit, .ldiffr),
-              theta2eta(Scale.init, .lscale), 
-              theta2eta(shape.init, .lshape))
-      }
-  }), list( .ldiffr = ldiffr, .lscale = lscale, .lshape = lshape, 
-            .ediffr = ediffr, .escale = escale, .eshape = eshape, 
-            .iscale = iscale, .ishape = ishape,
-            .ilocation = ilocation, .anchor = anchor ))),
-  linkinv = eval(substitute(function(eta, extra = NULL) {
-    loctn <- extra$LHSanchor -
-            eta2theta(eta[, 1], .ldiffr , earg = .ediffr)
-    Scale <- eta2theta(eta[, 2], .lscale , earg = .escale )
-    shape <- eta2theta(eta[, 3], .lshape , earg = .eshape )
-    ans <- rep(as.numeric(NA), length.out = length(shape))
-    okay <- shape > 1
-    ans[okay] <- loctn[okay] + Scale[okay] * gamma(1 - 1/shape[okay])
-    ans
-  }, list( .ldiffr = ldiffr, .lscale = lscale, .lshape = lshape,
-           .ediffr = ediffr, .escale = escale, .eshape = eshape ))), 
-  last = eval(substitute(expression({
-    misc$links <- c("difference" = .ldiffr ,
-                    "scale"      = .lscale ,
-                    "shape"      = .lshape)
-
-    misc$earg <- list("difference" = .ediffr,
-                      "scale"      = .escale,
-                      "shape"      = .eshape)
-
-    misc$nsimEIM <- .nsimEIM
-
-    extra$location <- loctn   # Store the location parameter estimate here
-
-  }), list( .ldiffr = ldiffr, .lscale = lscale, .lshape = lshape,
-            .ediffr = ediffr, .escale = escale, .eshape = eshape,
-            .nsimEIM = nsimEIM ))),  
-  loglikelihood = eval(substitute(
-    function(mu, y, w, residuals = FALSE, eta, extra = NULL,
-             summation = TRUE) {
-    loctn <- extra$LHSanchor -
-             eta2theta(eta[, 1], .ldiffr , earg = .ediffr)
-    Scale <- eta2theta(eta[, 2], .lscale , earg = .escale )
-    shape <- eta2theta(eta[, 3], .lshape , earg = .eshape )
-    if (residuals) {
-      stop("loglikelihood residuals not implemented yet")
-    } else {
-      ll.elts <- c(w) * dfrechet(x = y, location = loctn, scale = Scale,
-                                 shape = shape, log = TRUE)
-      if (summation) {
-        sum(ll.elts)
-      } else {
-        ll.elts
-      }
-    }
-  }, list( .ldiffr = ldiffr, .lscale = lscale, .lshape = lshape,
-           .ediffr = ediffr, .escale = escale, .eshape = eshape ))),
-  vfamily = c("frechet3", "vextremes"),
-  deriv = eval(substitute(expression({
-    Difrc      <- eta2theta(eta[, 1], .ldiffr , earg = .ediffr )
-    Scale      <- eta2theta(eta[, 2], .lscale , earg = .escale )
-    shape      <- eta2theta(eta[, 3], .lshape , earg = .eshape )
-
-    loctn <- extra$LHSanchor - Difrc
-    rzedd <- Scale / (y - loctn)   # reciprocial of zedd
-
-    dl.dloct <- (shape + 1) / (y - loctn) -
-               (shape / (y - loctn)) * (rzedd)^shape
-    dl.ddifff <- -dl.dloct
-    dl.dScale <- shape * (1 - rzedd^shape) / Scale
-    dl.dshape <- 1 / shape + log(rzedd) * (1 -  rzedd^shape)
-
-    dthetas.detas <- cbind(
-      ddifff.deta <- dtheta.deta(Difrc, .ldiffr , earg = .ediffr ),
-      dScale.deta <- dtheta.deta(Scale, .lscale , earg = .escale ),
-      dShape.deta <- dtheta.deta(shape, .lshape , earg = .eshape ))
-
-    ans <-
-    c(w) * cbind(dl.ddifff,
-                 dl.dScale,
-                 dl.dshape) * dthetas.detas
-
-
-    ans
-  }), list( .ldiffr = ldiffr, .lscale = lscale, .lshape = lshape,
-            .ediffr = ediffr, .escale = escale, .eshape = eshape ))),
-  weight = eval(substitute(expression({
-
-    run.varcov <- 0
-    ind1 <- iam(NA, NA, M = M, both = TRUE, diag = TRUE)
-
-    if (length( .nsimEIM )) {
-      for (ii in 1:( .nsimEIM )) {
-          ysim <- rfrechet(n, location = loctn, scale = Scale, shape = shape)
-
-          rzedd <- Scale / (ysim - loctn)   # reciprocial of zedd
-
-          dl.dloct <- (shape + 1) / (ysim - loctn) -
-                     (shape / (ysim - loctn)) * (rzedd)^shape
-          dl.ddifff <- -dl.dloct
-
-          dl.dScale <- shape * (1 - rzedd^shape) / Scale
-          dl.dshape <- 1 / shape + log(rzedd) * (1 -  rzedd^shape)
-
-          rm(ysim)
-          temp3 <- cbind(dl.ddifff, dl.dScale, dl.dshape)
-          run.varcov <- run.varcov +
-                       temp3[, ind1$row.index] *
-                       temp3[, ind1$col.index]
-      }
-      run.varcov <- run.varcov / .nsimEIM
-
-      wz <- if (intercept.only)
-          matrix(colMeans(run.varcov),
-                 n, ncol(run.varcov), byrow = TRUE) else run.varcov
-
-      wz <- c(w) * wz * dthetas.detas[, ind1$row] *
-                       dthetas.detas[, ind1$col]
-    } else {
-      stop("argument 'nsimEIM' must be numeric")
-    }
-
- print("head(wz)")
- print( head(wz) )
- print("summary(wz) ,,,,,,,,,,,,,,,,,,")
- print( summary(wz) )
-
-    wz
-  }), list( .nsimEIM = nsimEIM ))))
-}
 
 
 rec.normal.control <- function(save.weights = TRUE, ...) {

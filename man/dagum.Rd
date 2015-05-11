@@ -7,8 +7,10 @@
   Dagum distribution.
 }
 \usage{
-dagum(lss, lshape1.a = "loge", lscale = "loge", lshape2.p = "loge",
-           ishape1.a = NULL, iscale = NULL, ishape2.p = 1, zero = NULL)
+dagum(lscale = "loge", lshape1.a = "loge", lshape2.p = "loge", 
+      iscale = NULL, ishape1.a = NULL, ishape2.p = NULL, imethod = 1, 
+      lss = TRUE, gscale = exp(-5:5), gshape1.a = exp(-5:5), gshape2.p = exp(-5:5), 
+      probs.y = c(0.25, 0.5, 0.75), zero = ifelse(lss, -(2:3), -c(1, 3)))
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -17,23 +19,31 @@ dagum(lss, lshape1.a = "loge", lscale = "loge", lshape2.p = "loge",
   
   }
 
-  \item{lshape1.a, lscale, lshape2.p}{
+ \item{lshape1.a, lscale, lshape2.p}{
   Parameter link functions applied to the
   (positive) parameters \code{a}, \code{scale}, and \code{p}.
   See \code{\link{Links}} for more choices.
 
   }
-  \item{ishape1.a, iscale, ishape2.p}{
-  Optional initial values for \code{a}, \code{scale}, and \code{p}.
+  \item{iscale, ishape1.a, ishape2.p, imethod, zero}{
+  See \code{\link{CommonVGAMffArguments}} for information.
+  For \code{imethod = 2} a good initial value for 
+  \code{ishape2.p} is needed to obtain a good estimate for
+  the other parameter.
+
 
   }
-  \item{zero}{
-  An integer-valued vector specifying which
-  linear/additive predictors are modelled as intercepts only.
-  Here, the values must be from the set \{1,2,3\} which correspond to
-  \code{a}, \code{scale}, \code{p}, respectively.
+  \item{gscale, gshape1.a, gshape2.p}{
+  See \code{\link{CommonVGAMffArguments}} for information.
+
 
   }
+  \item{probs.y}{
+  See \code{\link{CommonVGAMffArguments}} for information.
+
+
+  }
+
 }
 \details{
   The 3-parameter Dagum distribution is the 4-parameter
@@ -60,6 +70,7 @@ The mean is
   \deqn{E(Y) = b \, \Gamma(p + 1/a) \, \Gamma(1 - 1/a) / \Gamma(p)}{%
         E(Y) = b  gamma(p + 1/a)  gamma(1 - 1/a) /  gamma(p)}
 provided \eqn{-ap < 1 < a}; these are returned as the fitted values.
+This family function handles multiple responses.
 
 
 }
@@ -82,7 +93,7 @@ Hoboken, NJ, USA: Wiley-Interscience.
 
 \author{ T. W. Yee }
 \note{
-  See the note in \code{\link{genbetaII}}.
+  See the notes in \code{\link{genbetaII}}.
 
 
 From Kleiber and Kotz (2003), the MLE is rather sensitive to isolated
@@ -110,7 +121,8 @@ while estimates for \eqn{a} and \eqn{p} can be considered unbiased for
 }
 
 \examples{
-ddata <- data.frame(y = rdagum(n = 3000, scale = exp(2), shape1 = exp(1), exp(1)))
+ddata <- data.frame(y = rdagum(n = 3000, scale = exp(2),
+                               shape1 = exp(1), shape2 = exp(1)))
 fit <- vglm(y ~ 1, dagum(lss = FALSE), data = ddata, trace = TRUE)
 fit <- vglm(y ~ 1, dagum(lss = FALSE, ishape1.a = exp(1)),
             data = ddata, trace = TRUE)

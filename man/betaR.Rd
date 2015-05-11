@@ -103,9 +103,11 @@ betaR(lshape1 = "loge", lshape2 = "loge",
 %Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
 
 
-  Documentation accompanying the \pkg{VGAM} package at
-  \url{http://www.stat.auckland.ac.nz/~yee}
-  contains further information and examples.
+%  Documentation accompanying the \pkg{VGAM} package at
+%  \url{https://www.stat.auckland.ac.nz/~yee}
+%  contains further information and examples.
+
+
 
 }
 \author{ Thomas W. Yee }

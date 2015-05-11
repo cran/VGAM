@@ -114,6 +114,7 @@ Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
     \code{\link{skewnormal}},
     \code{\link{double.cens.normal}},
     \code{\link{SURff}},
+    \code{\link{AR1}},
     \code{\link{huber2}},
     \code{\link{studentt}},
     \code{\link{binormal}},

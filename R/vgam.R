@@ -380,3 +380,54 @@ shadowvgam <-
 
 
 
+
+
+is.buggy.vlm <- function(object, each.term = FALSE, ...) {
+
+
+    
+  Hk.list <- constraints(object)
+  ncl <- names(Hk.list)
+  TFvec <- rep(FALSE, length = length(ncl))
+  names(TFvec) <- ncl
+
+
+
+  if (!is(object, "vgam")) {
+    return(if (each.term) TFvec else any(TFvec))
+  }
+  if (!length(object@nl.chisq)) {
+    return(if (each.term) TFvec else any(TFvec))
+  }
+
+  for (kay in 1:length(ncl)) {
+    cmat <- Hk.list[[kay]]
+    if (ncol(cmat) > 1 && substring(ncl[kay], 1, 2) == "s(") {
+      CMat <- crossprod(cmat)  # t(cmat) %*% cmat
+      TFvec[kay] <- any(CMat[lower.tri(CMat)] != 0 |
+                        CMat[upper.tri(CMat)] != 0)
+    }
+  }
+  if (each.term) TFvec else any(TFvec)
+}
+
+
+
+if (!isGeneric("is.buggy"))
+  setGeneric("is.buggy", function(object, ...)
+             standardGeneric("is.buggy"),
+             package = "VGAM")
+
+
+
+setMethod("is.buggy", signature(object = "vlm"),
+          function(object, ...)
+          is.buggy.vlm(object, ...))
+
+
+
+
+
+
+
+

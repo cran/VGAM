@@ -117,6 +117,7 @@ Vector generalized additive models.
 
 \seealso{
   \code{\link{vgam}},
+  \code{\link{is.buggy}},
   \code{\link{vsmooth.spline}}.
 
 

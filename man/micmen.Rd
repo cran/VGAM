@@ -108,9 +108,9 @@ micmen(rpar = 0.001, divisor = 10, init1 = NULL, init2 = NULL,
   New York: Wiley.
 
 
-  Documentation accompanying the \pkg{VGAM} package at
-  \url{http://www.stat.auckland.ac.nz/~yee}
-  contains further information and examples.
+% Documentation accompanying the \pkg{VGAM} package at
+% \url{http://www.stat.auckland.ac.nz/~yee}
+% contains further information and examples.
 
 
 }

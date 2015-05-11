@@ -8,9 +8,12 @@
 
 }
 \usage{
-genbetaII(lss, lshape1.a = "loge", lscale = "loge", lshape2.p = "loge",
-          lshape3.q = "loge", ishape1.a = NULL, iscale = NULL,
-          ishape2.p = 1, ishape3.q = 1, zero = NULL)
+genbetaII(lscale = "loge", lshape1.a = "loge", lshape2.p = "loge",
+          lshape3.q = "loge", iscale = NULL, ishape1.a = NULL,
+          ishape2.p = NULL, ishape3.q = NULL, lss = TRUE,
+          gscale = exp(-5:5), gshape1.a = exp(-5:5),
+          gshape2.p = exp(-5:5), gshape3.q = exp(-5:5),
+          zero = ifelse(lss, -(2:4), -c(1, 3:4)))
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -30,14 +33,17 @@ genbetaII(lss, lshape1.a = "loge", lscale = "loge", lshape2.p = "loge",
 
 
   }
-  \item{ishape1.a, iscale}{
-  Optional initial values for \code{a} and \code{scale}.
-  A \code{NULL} means a value is computed internally.
+  \item{iscale, ishape1.a, ishape2.p, ishape3.q}{
+  Optional initial values for the parameters.
+  A \code{NULL} means a value is computed internally using
+  the arguments \code{gscale}, \code{gshape1.a}, etc.
 
 
   }
-  \item{ishape2.p, ishape3.q}{
-  Optional initial values for \code{p} and \code{q}.
+  \item{gscale, gshape1.a, gshape2.p, gshape3.q}{
+    See \code{\link{CommonVGAMffArguments}} for information.
+    Replaced by \code{iscale}, \code{ishape1.a} etc. if given.
+
 
   }
 % \item{gshape1.a, gscale, gshape2.p, gshape3.q}{
@@ -50,8 +56,9 @@ genbetaII(lss, lshape1.a = "loge", lscale = "loge", lshape2.p = "loge",
   \item{zero}{
   An integer-valued vector specifying which
   linear/additive predictors are modelled as intercepts only.
-  Here, the values must be from the set \{1,2,3,4\} which correspond to
-  \code{a}, \code{scale}, \code{p}, \code{q}, respectively.
+  The default is to set all the shape parameters to be
+  intercept-only.
+
 
 
   }
@@ -87,6 +94,8 @@ provided \eqn{-ap < 1 < aq}; these are returned as the fitted values.
 %\eqn{u^{p-1} (1-u)^{q-1}}{u^(p-1) (1-u)^(q-1)} where \eqn{y>0}.
 
 
+  This family function handles multiple responses.
+
 
 }
 \value{
@@ -112,24 +121,47 @@ Fisher information matrix for the Feller-Pareto distribution.
 
 }
 
-\author{ T. W. Yee }
+\author{ T. W. Yee, with help from Victor Miranda. }
 \note{
-
+  The default is to use a grid search with respect to all
+  four parameters; this is quite costly and is time consuming.
 If the self-starting initial values fail, try experimenting
-with the initial value arguments, especially those whose
-default value is not \code{NULL}.
+with the initial value arguments.
 Also, the constraint \eqn{-ap < 1 < aq}
 may be violated as the iterations progress so it pays
 to monitor convergence, e.g., set \code{trace = TRUE}.
 Successful convergence depends on having very good initial
-values. This is rather difficult for this distribution!
-More improvements could be made here.
+values. This is rather difficult for this distribution so that
+a grid search is conducted by default.
+One suggestion for increasing the estimation reliability
+is to set \code{stepsize = 0.5} and \code{maxit = 100};
+see \code{\link{vglm.control}}.
+
+
+}
+\section{Warning}{
+  This distribution is very flexible and it is not generally
+  recommended to use this family function when the sample size is
+  small---numerical problems easily occur with small samples.
+  Probably several hundred observations at least are needed in order
+  to estimate the parameters with any level of confidence.
+  Neither is the inclusion of covariates recommended at all---not
+  unless there are several thousand observations.
+  The mean is finite only when \eqn{-ap < 1 < aq}, and this can be
+  easily violated by the parameter estimates for small sample sizes.
+  Try fitting some of the special cases of this distribution
+  (e.g., \code{\link{sinmad}}, \code{\link{fisk}}, etc.) first, and
+  then possibly use those models for initial values for this
+  distribution.
 
 
 
 }
 
+
+
 \seealso{
+    \code{\link{dgenbetaII}},
     \code{\link{betaff}},
     \code{\link{betaII}},
     \code{\link{dagum}},
@@ -139,19 +171,20 @@ More improvements could be made here.
     \code{\link{inv.lomax}},
     \code{\link{paralogistic}},
     \code{\link{inv.paralogistic}},
-    \code{\link{lino}}.
+    \code{\link{lino}},
+    \code{\link{CommonVGAMffArguments}},
+    \code{\link{vglm.control}}.
 
 
 }
 
 \examples{
 \dontrun{
-gdata <- data.frame(y = rsinmad(3000, shape1 = exp(2), scale = exp(2),
+gdata <- data.frame(y = rsinmad(3000, shape1 = exp(1), scale = exp(2),
                                 shape3 = exp(1)))  # A special case!
 fit <- vglm(y ~ 1, genbetaII(lss = FALSE), data = gdata, trace = TRUE)
 fit <- vglm(y ~ 1, data = gdata, trace = TRUE,
-            genbetaII(lss = FALSE, ishape1.a = 4, ishape2.p = 2.2,
-                      iscale = 7, ishape3.q = 2.3))
+            genbetaII(ishape1.a = 3, iscale = 7, ishape3.q = 2.3))
 coef(fit, matrix = TRUE)
 Coef(fit)
 summary(fit)

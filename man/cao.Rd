@@ -256,9 +256,13 @@ Yee, T. W. (2006)
 Constrained additive ordination.
 \emph{Ecology}, \bold{87}, 203--213.
 
-  Documentation accompanying the \pkg{VGAM} package at
-  \url{http://www.stat.auckland.ac.nz/~yee}
-  contains further information and examples.
+
+
+% Documentation accompanying the \pkg{VGAM} package at
+% \url{http://www.stat.auckland.ac.nz/~yee}
+% contains further information and examples.
+
+
 
 }   
 \author{T. W. Yee}
