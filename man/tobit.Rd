@@ -8,10 +8,19 @@
 }
 \usage{
 tobit(Lower = 0, Upper = Inf, lmu = "identitylink", lsd = "loge",
-      nsimEIM = 250, imu = NULL, isd = NULL, 
+      imu = NULL, isd = NULL, 
       type.fitted = c("uncensored", "censored", "mean.obs"),
-      imethod = 1, zero = -2)
+      byrow.arg = FALSE, imethod = 1, zero = -2)
 }
+% 20151024 yettodo: maybe add a new option to 'type.fitted':
+%     type.fitted = c("uncensored", "censored", "mean.obs", "truncated"),
+% where "truncated" is only concerned with values of y > Lower;
+% values of y <= Lower are ignored.
+%
+%
+%
+%
+%
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{Lower}{
@@ -45,7 +54,7 @@ tobit(Lower = 0, Upper = Inf, lmu = "identitylink", lsd = "loge",
 
   }
 
-  \item{imu, isd}{
+  \item{imu, isd, byrow.arg}{
   See \code{\link{CommonVGAMffArguments}} for information.
 
 
@@ -59,17 +68,14 @@ tobit(Lower = 0, Upper = Inf, lmu = "identitylink", lsd = "loge",
   this is a doubly truncated normal distribution
   augmented by point masses at the truncation points
   (see \code{\link{dtobit}}).
+  See \code{\link{CommonVGAMffArguments}} for more information.
+
 
 
   }
   \item{imethod}{
-  Initialization method. Either 1 or 2, this specifies
-  two methods for obtaining initial values for the parameters.
-
-
-  }
-  \item{nsimEIM}{
-  Used for the nonstandard Tobit model.
+  Initialization method. Either 1 or 2 or 3, this specifies
+  some methods for obtaining initial values for the parameters.
   See \code{\link{CommonVGAMffArguments}} for information.
 
 
@@ -99,9 +105,11 @@ tobit(Lower = 0, Upper = Inf, lmu = "identitylink", lsd = "loge",
   responses if it is below or above certain cutpoints.
 
 
+
   The defaults for \code{Lower} and \code{Upper} and
   \code{lmu} correspond to the \emph{standard} Tobit model.
-  Then Fisher scoring is used, else simulated Fisher scoring.
+  Fisher scoring is used for the standard and nonstandard
+  models.
   By default, the mean \eqn{x_i^T \beta}{x_i^T beta} is
   the first linear/additive predictor, and the log of
   the standard deviation is the second linear/additive
@@ -110,21 +118,19 @@ tobit(Lower = 0, Upper = Inf, lmu = "identitylink", lsd = "loge",
   of \eqn{x_i^T \beta}{x_i^T beta}.
 
 
+
 }
 \section{Warning }{
-  Convergence is often slow. Setting \code{crit = "coeff"}
-  is recommended since premature convergence of the log-likelihood
-  is common.
-  Simulated Fisher scoring is implemented for the nonstandard
-  Tobit model. For this, the working weight matrices for
-  some observations are prone to not being positive-definite;
-  if so then some checking of the final model is recommended
-  and/or try inputting some initial values.
+  If values of the response and \code{Lower} and/or \code{Upper}
+  are not integers then there is the danger that the value is
+  wrongly interpreted as uncensored.
+  For example, if the first 10 values of the response were
+  \code{runif(10)} and \code{Lower} was assigned these value then
+  testing \code{y[1:10] == Lower[1:10]} is numerically fraught.
+  Currently, if any \code{y < Lower} or \code{y > Upper} then
+  a warning is issued.
 
-
-%  The working weight matrices for most observations 
-%  are not positive-definite. These responses would otherwise have a
-%  fitted value much less than the cutpoint.
+ 
 }
 
 \value{
@@ -148,9 +154,12 @@ tobit(Lower = 0, Upper = Inf, lmu = "identitylink", lsd = "loge",
   If so, then \code{Lower} and \code{Upper}
   are recycled into a matrix with the number of columns equal
   to the number of responses,
-  and the recycling is done row-wise (\code{byrow = TRUE}).
+  and the recycling is done row-wise \emph{if} \code{byrow.arg = TRUE}.
+  The default order is as \code{\link[base]{matrix}}, which
+  is \code{byrow.arg = FALSE}.
   For example, these are returned in \code{fit4@misc$Lower} and
   \code{fit4@misc$Upper} below.
+
 
 
   If there is no censoring then
@@ -163,7 +172,6 @@ tobit(Lower = 0, Upper = Inf, lmu = "identitylink", lsd = "loge",
   are censored in that direction.
   The function \code{\link{cens.normal}} is an alternative
   to \code{tobit()}.
-
 
 
 
@@ -185,12 +193,13 @@ tobit(Lower = 0, Upper = Inf, lmu = "identitylink", lsd = "loge",
   \code{\link{uninormal}},
   \code{\link{double.cens.normal}},
   \code{\link{posnormal}},
+  \code{\link{CommonVGAMffArguments}},
   \code{\link[stats:Normal]{rnorm}}.
+
 
 
 }
 \examples{
-\dontrun{
 # Here, fit1 is a standard Tobit model and fit2 is a nonstandard Tobit model
 tdata <- data.frame(x2 = seq(-1, 1, length = (nn <- 100)))
 set.seed(1)
@@ -212,40 +221,38 @@ with(tdata, table(y2 == Lower | y2 == Upper))  # How many censored values?
 with(tdata, table(attr(y2, "cenL")))
 with(tdata, table(attr(y2, "cenU")))
 
-fit1 <- vglm(y1 ~ x2, tobit, data = tdata, trace = TRUE,
-             crit = "coeff")  # crit = "coeff" is recommended
+fit1 <- vglm(y1 ~ x2, tobit, data = tdata, trace = TRUE)
 coef(fit1, matrix = TRUE)
 summary(fit1)
 
 fit2 <- vglm(y2 ~ x2, tobit(Lower = Lower, Upper = Upper, type.f = "cens"),
-            data = tdata, crit = "coeff", trace = TRUE)  # ditto
+             data = tdata, trace = TRUE)
 table(fit2@extra$censoredL)
 table(fit2@extra$censoredU)
 coef(fit2, matrix = TRUE)
 
-fit3 <- vglm(y3 ~ x2,
-            tobit(Lower = with(tdata, Lower.vec),
-                  Upper = with(tdata, Upper.vec), type.f = "cens"),
-            data = tdata, crit = "coeff", trace = TRUE)  # ditto
+fit3 <- vglm(y3 ~ x2, tobit(Lower = with(tdata, Lower.vec),
+                            Upper = with(tdata, Upper.vec), type.f = "cens"),
+             data = tdata, trace = TRUE)
 table(fit3@extra$censoredL)
 table(fit3@extra$censoredU)
 coef(fit3, matrix = TRUE)
 
 # fit4 is fit3 but with type.fitted = "uncen".
 fit4 <- vglm(cbind(y3, y4) ~ x2,
-            tobit(Lower = rep(with(tdata, Lower.vec), each = 2),
-                  Upper = rep(with(tdata, Upper.vec), each = 2)),
-            data = tdata, crit = "coeff", trace = TRUE)  # ditto
+             tobit(Lower = rep(with(tdata, Lower.vec), each = 2),
+                   Upper = rep(with(tdata, Upper.vec), each = 2),
+                   byrow.arg = TRUE),
+             data = tdata, crit = "coeff", trace = TRUE)
 head(fit4@extra$censoredL)  # A matrix
 head(fit4@extra$censoredU)  # A matrix
 head(fit4@misc$Lower)       # A matrix
 head(fit4@misc$Upper)       # A matrix
 coef(fit4, matrix = TRUE)
-}
 
-\dontrun{ # Plot the results
+\dontrun{ # Plot fit1--fit4
 par(mfrow = c(2, 2))
-# Plot fit1
+
 plot(y1 ~ x2, tdata, las = 1, main = "Standard Tobit model",
      col = as.numeric(attr(y1, "cenL")) + 3,
      pch = as.numeric(attr(y1, "cenL")) + 1)
@@ -258,7 +265,6 @@ lines(fitted(fit1) ~ x2, tdata, col = "orange", lwd = 2, lty = 2)
 lines(fitted(lm(y1 ~ x2, tdata)) ~ x2, tdata, col = "black",
       lty = 2, lwd = 2)  # This is simplest but wrong!
 
-# Plot fit2
 plot(y2 ~ x2, data = tdata, las = 1, main = "Tobit model",
      col = as.numeric(attr(y2, "cenL")) + 3 +
            as.numeric(attr(y2, "cenU")),
@@ -273,13 +279,12 @@ lines(fitted(fit2) ~ x2, tdata, col = "orange", lwd = 2, lty = 2)
 lines(fitted(lm(y2 ~ x2, tdata)) ~ x2, tdata, col = "black",
       lty = 2, lwd = 2)  # This is simplest but wrong!
 
-# Plot fit3
 plot(y3 ~ x2, data = tdata, las = 1,
      main = "Tobit model with nonconstant censor levels",
-     col = as.numeric(attr(y3, "cenL")) + 3 +
-           as.numeric(attr(y3, "cenU")),
+     col = as.numeric(attr(y3, "cenL")) + 2 +
+           as.numeric(attr(y3, "cenU") * 2),
      pch = as.numeric(attr(y3, "cenL")) + 1 +
-           as.numeric(attr(y3, "cenU")))
+           as.numeric(attr(y3, "cenU") * 2))
 legend(x = "topleft", leg = c("censored", "uncensored"),
        pch = c(2, 1), col = c("blue", "green"))
 legend(-1.0, 3.5, c("Truth", "Estimate", "Naive"),
@@ -289,13 +294,12 @@ lines(fitted(fit3) ~ x2, tdata, col = "orange", lwd = 2, lty = 2)
 lines(fitted(lm(y3 ~ x2, tdata)) ~ x2, tdata, col = "black",
       lty = 2, lwd = 2)  # This is simplest but wrong!
 
-# Plot fit4
 plot(y3 ~ x2, data = tdata, las = 1,
      main = "Tobit model with nonconstant censor levels",
-     col = as.numeric(attr(y3, "cenL")) + 3 +
-           as.numeric(attr(y3, "cenU")),
+     col = as.numeric(attr(y3, "cenL")) + 2 +
+           as.numeric(attr(y3, "cenU") * 2),
      pch = as.numeric(attr(y3, "cenL")) + 1 +
-           as.numeric(attr(y3, "cenU")))
+           as.numeric(attr(y3, "cenU") * 2))
 legend(x = "topleft", leg = c("censored", "uncensored"),
        pch = c(2, 1), col = c("blue", "green"))
 legend(-1.0, 3.5, c("Truth", "Estimate", "Naive"),

@@ -94,6 +94,7 @@ polf(theta, cutpoint = NULL,
 
 }
 \examples{
+\dontrun{
 polf("p", cutpoint = 2, short = FALSE)
 polf("p", cutpoint = 2, tag = TRUE)
 
@@ -102,12 +103,13 @@ y <- polf(p, cutpoint = 2)
 y. <- polf(p, cutpoint = 2, deriv = 1)
 max(abs(polf(y, cutpoint = 2, inv = TRUE) - p))  # Should be 0
 
-\dontrun{par(mfrow = c(2, 1), las = 1)
-plot(p, y, type = "l", col = "blue", main = "polf()")
-abline(h = 0, v = 0.5, col = "orange", lty = "dashed")
-
-plot(p, y., type = "l", col = "blue",
-     main = "(Reciprocal of) first POLF derivative") }
+#\ dontrun{ par(mfrow = c(2, 1), las = 1)
+#plot(p, y, type = "l", col = "blue", main = "polf()")
+#abline(h = 0, v = 0.5, col = "orange", lty = "dashed")
+#
+#plot(p, y., type = "l", col = "blue",
+#     main = "(Reciprocal of) first POLF derivative")
+#}
 
 
 # Rutherford and Geiger data
@@ -128,7 +130,7 @@ pdata <- transform(pdata, mymu = exp( 3 + 1 * x2 - 2 * x3))
 pdata <- transform(pdata, y1 = rpois(nn, lambda = mymu))
 cutpoints <- c(-Inf, 10, 20, Inf)
 pdata <- transform(pdata, cuty = Cut(y1, breaks = cutpoints))
-\dontrun{ with(pdata, plot(x2, x3, col = cuty, pch = as.character(cuty))) }
+#\ dontrun{ with(pdata, plot(x2, x3, col = cuty, pch = as.character(cuty))) }
 with(pdata, table(cuty) / sum(table(cuty)))
 fit <- vglm(cuty ~ x2 + x3, data = pdata, trace = TRUE,
             cumulative(reverse = TRUE,
@@ -142,6 +144,7 @@ coef(fit)
 coef(fit, matrix = TRUE)
 constraints(fit)
 fit@misc$earg
+}
 }
 \keyword{math}
 \keyword{models}

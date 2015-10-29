@@ -745,7 +745,13 @@ Confint.nb1 <- function(nb1, level = 0.95) {
   delta0.hat <- exp(mydiff)
   (phi0.hat <- 1 + 1 / delta0.hat)  # MLE of phi0
 
-  myvcov <- vcovvlm(as(nb1, "vglm"))  # Not great; improve this!
+
+
+
+  myvcov <- vcov(as(nb1, "vglm"))  # Not great; improve this!
+
+
+
   myvec <- cbind(c(-1, 1, rep(0, len = nrow(myvcov) - 2)))
   (se.mydiff <- sqrt(t(myvec) %*%  myvcov %*%  myvec))
 
@@ -968,7 +974,12 @@ plota21 <- function(rrvglm2, show.plot = TRUE, nseq.a21 = 31,
       }
 
 
-      Covmat <- vcovvlm(model, dispersion = dispersion)
+
+
+      Covmat <- vcov(model, dispersion = dispersion)
+
+
+
       covmat <- Covmat[unlist(coef.indices),
                        unlist(coef.indices), drop = FALSE]
       covmat <- if (M > 1) {
@@ -986,7 +997,15 @@ plota21 <- function(rrvglm2, show.plot = TRUE, nseq.a21 = 31,
         refPos <- which(coef.indices == 0)
         coef.indices <- coef.indices[-refPos]
       }
-      covmat <- vcovvlm(model, dispersion = dispersion)
+
+
+
+
+      covmat <- vcov(model, dispersion = dispersion)
+
+
+
+
       covmat <- covmat[coef.indices, coef.indices, drop = FALSE]
 
       if (is.null(estimates))

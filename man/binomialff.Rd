@@ -156,7 +156,8 @@ binomialff(link = "logit", dispersion = 1, multiple.responses = FALSE,
 \author{ Thomas W. Yee }
 
 \note{
-  If \code{multiple.responses} is \code{FALSE} (default) then the response can be of one
+  If \code{multiple.responses} is \code{FALSE} (default) then
+  the response can be of one
   of two formats:
   a factor (first level taken as failure),
   or a 2-column matrix (first column = successes) of counts.
@@ -172,8 +173,8 @@ binomialff(link = "logit", dispersion = 1, multiple.responses = FALSE,
   predictors.
 
 
-  If \code{multiple.responses} is \code{TRUE}, then the matrix response can only be of
-  one format: a matrix of 1's and 0's (1 = success).
+  If \code{multiple.responses} is \code{TRUE}, then the matrix response
+  can only be of one format: a matrix of 1's and 0's (1 = success).
 
 
   The call \code{binomialff(dispersion = 0, ...)} is equivalent to
@@ -246,7 +247,8 @@ quasibinomialff()
 quasibinomialff(link = "probit")
 
 shunua <- hunua[sort.list(with(hunua, altitude)), ]  # Sort by altitude
-fit <- vglm(agaaus ~ poly(altitude, 2), binomialff(link = cloglog), shunua)
+fit <- vglm(agaaus ~ poly(altitude, 2), binomialff(link = cloglog),
+            data = shunua)
 \dontrun{
 plot(agaaus ~ jitter(altitude), shunua, col = "blue", ylab = "P(Agaaus = 1)",
      main = "Presence/absence of Agathis australis", las = 1)

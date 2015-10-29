@@ -13,6 +13,8 @@
 
 
  
+ 
+ 
 qtplot.lms.bcn <- function(percentiles = c(25, 50, 75),
                            eta = NULL, yoffset = 0) {
 
@@ -21,11 +23,14 @@ qtplot.lms.bcn <- function(percentiles = c(25, 50, 75),
                    dimnames = list(dimnames(eta)[[1]],
                    paste(as.character(percentiles), "%", sep = "")))
   for (ii in 1:lp) {
-    answer[, ii] <- eta[, 2] * (1+eta[, 1] * eta[, 3] *
-                    qnorm(percentiles[ii]/100))^(1/eta[, 1])
+    answer[, ii] <- qlms.bcn(p      = percentiles[ii]/100,
+                             lambda = eta[, 1],
+                             mu     = eta[, 2],
+                             sigma  = eta[, 3])
   }
   answer 
 }
+ 
  
  
 qtplot.lms.bcg <- function(percentiles = c(25,50,75),
@@ -795,7 +800,16 @@ rlplot.gev <-
                                          extra = extra2)[1, ]
       zpp[, ii] <- (zpp[, ii] - zp) / epsilon  # On the transformed scale
     }
-    VCOV <- vcovvlm(object, untransform = TRUE)
+
+
+
+
+    VCOV <- vcov(object, untransform = TRUE)
+
+
+
+
+
     vv <- numeric(nrow(zpp))
     for (ii in 1:nrow(zpp))
       vv[ii] <- t(as.matrix(zpp[ii, ])) %*% VCOV %*% as.matrix(zpp[ii, ])

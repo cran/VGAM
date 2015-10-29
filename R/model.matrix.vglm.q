@@ -235,9 +235,19 @@ attrassignlm <- function(object, ...)
 
 
 
+
+
+
+model.matrix.vlm <- function(object, ...)
+  model.matrixvlm(object, ...)
+
+
+
+
+
  model.matrixvlm <- function(object,
-                            type = c("vlm", "lm", "lm2", "bothlmlm2"),
-                            linpred.index = NULL,
+                             type = c("vlm", "lm", "lm2", "bothlmlm2"),
+                             linpred.index = NULL,
                             ...) {
 
 
@@ -505,7 +515,7 @@ npred.vlm <- function(object,
   type.arg <- match.arg(type, c("total", "one.response"))[1]
 
 
-  ans <- 
+  MM <- 
     if (length(object@misc$M))
       object@misc$M else
     if (ncol(as.matrix(predict(object))) > 0)
@@ -513,30 +523,28 @@ npred.vlm <- function(object,
     stop("cannot seem to obtain 'M'")
 
 
-  ans <-
   if (type.arg == "one.response") {
-    ans.infos <- ans.y <- NULL
+    M1.infos <- NULL
     infos.fun <- object@family@infos
     Ans.infos <- infos.fun()
     if (is.list(Ans.infos) && length(Ans.infos$M1))
-      ans.infos <- Ans.infos$M1
+      M1.infos <- Ans.infos$M1
 
     Q1 <- Ans.infos$Q1
     if (is.numeric(Q1)) {
-      ans.y <- ncol(depvar(object)) / Q1
-      if (is.numeric(ans.infos) && ans.infos != ans.y)
+      S <- ncol(depvar(object)) / Q1  # Number of (multiple) responses
+      if (is.numeric(M1.infos) && M1.infos * S != MM)
         warning("contradiction in values after computing it two ways")
     }
 
 
-    if (is.numeric(ans.infos)) ans.infos else
-    if (is.numeric(ans.y    )) ans.y     else
-    ans
-  } else {
-    ans
+    M1 <- if (is.numeric(M1.infos)) M1.infos else
+          if (is.numeric(MM      )) MM       else
+          stop("failed to compute 'M'")
+    M1
+  } else {  # One response is assumed, by default
+    MM
   }
-
-  ans
 }
 
 

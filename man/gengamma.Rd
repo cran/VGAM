@@ -9,7 +9,9 @@
 }
 \usage{
 gengamma.stacy(lscale = "loge", ld = "loge", lk = "loge",
-               iscale = NULL, id = NULL, ik = NULL, zero = NULL)
+               iscale = NULL, id = NULL, ik = NULL,
+               gscale    = exp(-5:5), gshape1.d = exp(-5:5),
+               gshape2.k = exp(-5:5), zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -23,6 +25,12 @@ gengamma.stacy(lscale = "loge", ld = "loge", lk = "loge",
   \item{iscale, id, ik}{
   Initial value for \eqn{b}, \eqn{d} and \eqn{k}, respectively.
   The defaults mean an initial value is determined internally for each.
+
+
+  }
+  \item{gscale, gshape1.d, gshape2.k}{
+    See \code{\link{CommonVGAMffArguments}} for information.
+    Replaced by \code{iscale}, \code{id} etc. if given.
 
 
   }

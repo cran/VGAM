@@ -54,7 +54,7 @@ explink(theta, bvalue = NULL, inverse = FALSE, deriv = 0, short = TRUE, tag = FA
 
 
   For \code{deriv = 1}, then the function returns
-  \emph{d} \code{theta} / \emph{d} \code{eta} as a function of \code{theta}
+  \emph{d} \code{eta} / \emph{d} \code{theta} as a function of \code{theta}
   if \code{inverse = FALSE},
   else if \code{inverse = TRUE} then it returns the reciprocal.
 

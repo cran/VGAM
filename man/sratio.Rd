@@ -71,13 +71,13 @@ sratio(link = "logit", parallel = FALSE, reverse = FALSE,
 
 }
 \references{
-Agresti, A. (2002)
+Agresti, A. (2013)
 \emph{Categorical Data Analysis},
-2nd ed. New York: Wiley.
+3rd ed. Hoboken, NJ, USA: Wiley.
 
 Simonoff, J. S. (2003)
 \emph{Analyzing Categorical Data},
-New York: Springer-Verlag.
+New York, USA: Springer-Verlag.
 
 McCullagh, P. and Nelder, J. A. (1989)
 \emph{Generalized Linear Models}, 2nd ed. London: Chapman & Hall.

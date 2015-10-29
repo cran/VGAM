@@ -284,7 +284,7 @@ qgev <- function(p, location = 0, scale = 1, shape = 0,
             namesof("scale",    lscale, escale), ", ",
             namesof("shape",    lshape, eshape)),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x, .zero, M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
   }), list( .zero = zero ))),
   infos = eval(substitute(function(...) {
     list(M1 = 3,
@@ -761,7 +761,7 @@ dgammadx <- function(x, deriv.arg = 1) {
           namesof("scale",    link = lscale, earg = escale), ", ",
           namesof("shape",    link = lshape, earg = eshape)),
   constraints = eval(substitute(expression({
-      constraints <- cm.zero.VGAM(constraints, x, .zero, M)
+      constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
   }), list( .zero = zero ))),
   infos = eval(substitute(function(...) {
     list(M1 = 3,
@@ -1154,7 +1154,7 @@ pgumbel <- function(q, location = 0, scale = 1,
             namesof("location", llocat,  earg = elocat ), ", ",
             namesof("scale",    lscale, earg = escale )),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x, .zero, M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
   }), list( .zero = zero ))),
   initialize = eval(substitute(expression({
 
@@ -2054,7 +2054,7 @@ setMethod("guplot", "vlm",
             "Mean:     location + scale*0.5772..\n",
             "Variance: pi^2 * scale^2 / 6"),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x, .zero, M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
   }), list( .zero = zero ))),
   initialize = eval(substitute(expression({
     y <- cbind(y)
@@ -2211,7 +2211,7 @@ setMethod("guplot", "vlm",
             "Mean:     location + scale*0.5772..\n",
             "Variance: pi^2 * scale^2 / 6"),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x, .zero, M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
   }), list( .zero = zero ))),
   initialize = eval(substitute(expression({
     y <- cbind(y)
@@ -2509,7 +2509,7 @@ frechet.control <- function(save.weights = TRUE, ...) {
             namesof("scale", link = lscale, earg = escale ), ", ",
             namesof("shape", link = lshape, earg = eshape )),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x, .zero, M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
   }), list( .zero = zero ))),
   initialize = eval(substitute(expression({
 
@@ -2720,7 +2720,7 @@ rec.normal.control <- function(save.weights = TRUE, ...) {
             "\n",
             "Variance: sd^2"),
   constraints = eval(substitute(expression({
-      constraints <- cm.zero.VGAM(constraints, x, .zero, M)
+      constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
   }), list( .zero = zero ))),
   initialize = eval(substitute(expression({
 

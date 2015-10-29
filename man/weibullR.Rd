@@ -208,6 +208,7 @@ Concerns about Maximum Likelihood Estimation for
 }
 
 \seealso{
+    \code{\link{weibull.mean}},
     \code{\link[stats:Weibull]{dweibull}},
     \code{\link{truncweibull}},
     \code{\link{gev}},

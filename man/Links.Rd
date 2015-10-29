@@ -1,23 +1,22 @@
 \name{Links}
 \alias{Links}
-\alias{TypicalVGAMlinkFunction}
+\alias{TypicalVGAMlink}
 \title{Link functions for VGLM/VGAM/etc. families}
 \description{
   The \pkg{VGAM} package provides a number of (parameter) link functions
   which are described in general here. Collectively, they offer the user
-  considerable flexibility for modelling data.
+  considerable choice and flexibility for modelling data.
 
 }
 \usage{
-TypicalVGAMlinkFunction(theta, someParameter = 0,
-                        bvalue = NULL,
-                        inverse = FALSE, deriv = 0,
-                        short = TRUE, tag = FALSE)
+TypicalVGAMlink(theta, someParameter = 0, bvalue = NULL, inverse = FALSE,
+                deriv = 0, short = TRUE, tag = FALSE)
 }
 \arguments{
   \item{theta}{
   Numeric or character.
-  Actually this can be \eqn{\theta}{theta} (default) or \eqn{\eta}{eta},
+  This is usually \eqn{\theta}{theta} (default) but can sometimes
+  be \eqn{\eta}{eta},
   depending on the other arguments.
   If \code{theta} is character then \code{inverse} and 
   \code{deriv} are ignored.
@@ -71,14 +70,17 @@ TypicalVGAMlinkFunction(theta, someParameter = 0,
 
 
   \item{inverse}{
-  Logical. If \code{TRUE} the inverse link value
+    Logical. If \code{TRUE} and \code{deriv = 0}  then
+    the inverse link value
   \eqn{\theta}{theta} is returned, hence the argument
   \code{theta} is really \eqn{\eta}{eta}.
+  In all other cases, the argument \code{theta} is
+  really \eqn{\theta}{theta}.
 
 
   }
   \item{deriv}{
-  Integer. Either 0, 1, or 2 specifying the order of the derivative.
+  Integer. Either 0, 1, or 2, specifying the order of the derivative.
 
 
   }
@@ -96,7 +98,8 @@ TypicalVGAMlinkFunction(theta, someParameter = 0,
 }
 \value{
 
-  Returns one of the link function value or its first or second derivative,
+  Returns one of:
+  the link function value or its first or second derivative,
   the inverse link or its first or second derivative,
   or a character description of the link.
 
@@ -105,22 +108,61 @@ TypicalVGAMlinkFunction(theta, someParameter = 0,
   If \code{inverse = FALSE} and \code{deriv = 0} (default) then the
   ordinary link
   function \eqn{\eta = g(\theta)}{eta = g(theta)} is returned.
+
+
+  If \code{inverse = TRUE} and \code{deriv = 0} then the inverse
+  link function value is returned, hence \code{theta} is really
+  \eqn{\eta}{eta} (the only occasion this happens).
+
+
   If \code{inverse = FALSE} and \code{deriv = 1} then it is
-  \eqn{d\theta / d\eta}{d theta / d eta} 
+  \eqn{d\eta / d\theta}{d eta / d theta} 
   \emph{as a function of} \eqn{\theta}{theta}.
   If \code{inverse = FALSE} and \code{deriv = 2} then it is
+  \eqn{d^2\eta / d\theta^2}{d^2 eta / d theta^2}
+  \emph{as a function of} \eqn{\theta}{theta}.
+
+
+  If \code{inverse = TRUE} and \code{deriv = 1} then it is
+  \eqn{d\theta / d\eta}{d theta / d eta} 
+  \emph{as a function of} \eqn{\theta}{theta}.
+  If \code{inverse = TRUE} and \code{deriv = 2} then it is
   \eqn{d^2\theta / d\eta^2}{d^2 theta / d eta^2}
   \emph{as a function of} \eqn{\theta}{theta}.
 
 
-  If \code{inverse = TRUE} and \code{deriv = 0} then the inverse
-  link function is returned, hence \code{theta} is really
-  \eqn{\eta}{eta}.
-  If \code{inverse = TRUE} and \code{deriv} is positive then the 
-  \emph{reciprocal} of the same link function with
-  \code{(theta = theta, someParameter, inverse = TRUE, deriv = deriv)}
-  is returned.
 
+  It is only when \code{deriv = 1} that
+  \code{linkfun(theta, deriv = 1, inverse = TRUE)}
+  and
+  \code{linkfun(theta, deriv = 1, inverse = FALSE)}
+    are \emph{reciprocals} of each other.
+    In particular,
+  \code{linkfun(theta, deriv = 2, inverse = TRUE)}
+  and
+  \code{linkfun(theta, deriv = 2, inverse = FALSE)}
+  are \emph{not} reciprocals of each other in general.
+
+
+
+% Prior to 20150711; this was what it was:
+  
+% If \code{inverse = FALSE} and \code{deriv = 1} then it is
+% \eqn{d\theta / d\eta}{d theta / d eta} 
+% \emph{as a function of} \eqn{\theta}{theta}.
+% If \code{inverse = FALSE} and \code{deriv = 2} then it is
+% \eqn{d^2\theta / d\eta^2}{d^2 theta / d eta^2}
+% \emph{as a function of} \eqn{\theta}{theta}.
+
+
+% If \code{inverse = TRUE} and \code{deriv = 0} then the inverse
+% link function is returned, hence \code{theta} is really
+% \eqn{\eta}{eta}.
+% If \code{inverse = TRUE} and \code{deriv} is positive then the 
+% \emph{reciprocal} of the same link function with
+% \code{(theta = theta, someParameter, inverse = TRUE, deriv = deriv)}
+% is returned.
+  
 
 }
 \details{
@@ -129,6 +171,9 @@ TypicalVGAMlinkFunction(theta, someParameter = 0,
   In this help file we have \eqn{\eta = g(\theta)}{eta = g(theta)}
   where \eqn{g} is the link function, \eqn{\theta}{theta} is the
   parameter and \eqn{\eta}{eta} is the linear/additive predictor.
+  The link \eqn{g} must be strictly monotonic and
+  twice-differentiable in its range.
+
 
 
 % The arguments \code{short} and \code{tag} are used only if
@@ -142,6 +187,8 @@ TypicalVGAMlinkFunction(theta, someParameter = 0,
 
 
   The following is a brief enumeration of all \pkg{VGAM} link functions.
+
+
 
   For parameters lying between 0 and 1 (e.g., probabilities):
   \code{\link{logit}},
@@ -192,6 +239,27 @@ TypicalVGAMlinkFunction(theta, someParameter = 0,
 
 }
 
+
+\section{Warning }{
+  The output of link functions changed at \pkg{VGAM} \code{0.9-9}
+  (date was around 2015-07).
+  Formerly, \code{linkfun(theta, deriv = 1)} is now
+  \code{linkfun(theta, deriv = 1, inverse = TRUE)}, or equivalently,
+  \code{1 / linkfun(theta, deriv = 1, inverse = TRUE)}.
+  Also, formerly, \code{linkfun(theta, deriv = 2)} was
+  \code{1 / linkfun(theta, deriv = 2, inverse = TRUE)}.
+  This was a bug.
+  Altogether, these are big changes and the user should beware!
+
+
+  
+  One day in the future, \emph{all} \pkg{VGAM} link functions
+  may be renamed to end in the characters \code{"link"}.
+
+
+  
+}
+
 \seealso{
   \code{\link{TypicalVGAMfamilyFunction}},
   \code{\link{linkfun}},
@@ -222,7 +290,7 @@ TypicalVGAMlinkFunction(theta, someParameter = 0,
   \code{binomialff(link = c("logit", "probit", "cloglog",
   "cauchit", "identitylink"), ...)}
   it is now
-  \code{binomialff(link = "logit", ...)}
+  \code{binomialff(link = "logit", ...)}.
   No checking will be done to see if the user's choice is reasonable.
   This means that the user can write his/her own \pkg{VGAM} link function
   and use it within any \pkg{VGAM} family function.
@@ -239,9 +307,11 @@ TypicalVGAMlinkFunction(theta, someParameter = 0,
   during the 2nd half of 2012).
   The major change is that arguments such as \code{offset} that used to
   be passed in via those arguments can done directly through
-  the link function. For example, \code{gev(lshape = "logoff",
-  eshape = list(offset = 0.5))} is replaced by \code{gev(lshape
-  = logoff(offset = 0.5))}. The \code{@misc} slot no longer
+  the link function. For example,
+  \code{gev(lshape = "logoff", eshape = list(offset = 0.5))}
+  is replaced by
+  \code{gev(lshape = logoff(offset = 0.5))}.
+  The \code{@misc} slot no longer
   has \code{link} and \code{earg} components, but two other
   components replace these. Functions such as \code{dtheta.deta()},
   \code{d2theta.deta2()}, \code{eta2theta()}, \code{theta2eta()}
@@ -266,8 +336,8 @@ logoff(1:5, earg = list(offset = 1))
 powerlink(1:5, earg = list(power = 2))
 }
 
-fit1 <- vgam(agaaus ~ altitude, binomialff(link = "cloglog"), hunua)  # okay
-fit2 <- vgam(agaaus ~ altitude, binomialff(link = "cloglog"), hunua)  # okay
+fit1 <- vgam(agaaus ~ altitude, binomialff(link = "cloglog"), hunua)  # best
+fit2 <- vgam(agaaus ~ altitude, binomialff(link =  cloglog ), hunua)  # okay
 
 \dontrun{
 # This no longer works since "clog" is not a valid VGAM link function:
@@ -279,8 +349,7 @@ y <- rbeta(n = 1000, shape1 = exp(0), shape2 = exp(1))
 fit1 <- vglm(y ~ 1, betaR(lshape1 = "identitylink", lshape2 = "identitylink"),
              trace = TRUE, crit = "coef")
 fit2 <- vglm(y ~ 1, betaR(lshape1 = logoff(offset = 1.1),
-                          lshape2 = logoff(offset = 1.1)),
-            trace = TRUE, crit = "coef")
+                          lshape2 = logoff(offset = 1.1)), trace = TRUE)
 vcov(fit1, untransform = TRUE)
 vcov(fit1, untransform = TRUE) - vcov(fit2, untransform = TRUE)  # Should be all 0s
 \dontrun{ # This is old:
@@ -290,12 +359,12 @@ fit2@misc$earg  # Some 'special' parameters are here
 
 
 par(mfrow = c(2, 2))
-p <- seq(0.01, 0.99, len = 200)
+p <- seq(0.05, 0.95, len = 200)  # A rather restricted range
 x <- seq(-4, 4, len = 200)
 plot(p, logit(p), type = "l", col = "blue")
 plot(x, logit(x, inverse = TRUE), type = "l", col = "blue")
-plot(p, logit(p, deriv = 1), type = "l", col = "blue")  # reciprocal!
-plot(p, logit(p, deriv = 2), type = "l", col = "blue")  # reciprocal!
+plot(p, logit(p, deriv = 1), type = "l", col = "blue")  # 1 / (p*(1-p))
+plot(p, logit(p, deriv = 2), type = "l", col = "blue")  # (2*p-1)/(p*(1-p))^2
 }
 }
 \keyword{models}

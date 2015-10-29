@@ -25,6 +25,38 @@
 
 
 
+dlms.bcn <- function(x, lambda = 1, mu = 0, sigma = 1,
+                     tol0 = 0.001, log = FALSE) {
+  if (!is.logical(log.arg <- log) || length(log) != 1)
+    stop("bad input for argument 'log'")
+  rm(log)
+
+  zedd   <- ((x/mu)^lambda - 1) / (lambda * sigma)
+  log.dz.dy <- (lambda - 1) * log(x/mu) - log(mu * sigma)
+
+  is.eff.0 <- abs(lambda) < tol0
+  if (any(is.eff.0)) {
+    zedd[is.eff.0] <- log(x[is.eff.0] / mu[is.eff.0]) / sigma[is.eff.0]
+    log.dz.dy[is.eff.0] <- -log(x[is.eff.0] * sigma[is.eff.0])
+  }
+  logden <- dnorm(zedd, log = TRUE) + log.dz.dy
+  if (log.arg) logden else exp(logden)
+}
+
+
+
+qlms.bcn <- function(p, lambda = 1, mu = 0, sigma = 1) {
+
+  answer <- mu * (1 + lambda * sigma * qnorm(p))^(1/lambda)
+  answer
+}
+
+
+
+
+
+
+
 lms.bcn.control <-
 lms.bcg.control <-
 lms.yjn.control <- function(trace = TRUE, ...)
@@ -33,15 +65,15 @@ lms.yjn.control <- function(trace = TRUE, ...)
 
 
  lms.bcn <- function(percentiles = c(25, 50, 75),
-                      zero = c(1, 3),
-                      llambda = "identitylink",
-                      lmu = "identitylink",
-                      lsigma = "loge",
-                      idf.mu = 4,
-                      idf.sigma = 2,
-                      ilambda = 1,
-                      isigma = NULL,
-                      tol0 = 0.001) {
+                     zero = c(1, 3),
+                     llambda = "identitylink",
+                     lmu = "identitylink",
+                     lsigma = "loge",
+                     idf.mu = 4,
+                     idf.sigma = 2,
+                     ilambda = 1,
+                     isigma = NULL,
+                     tol0 = 0.001) {
   llambda <- as.list(substitute(llambda))
   elambda <- link2list(llambda)
   llambda <- attr(elambda, "function.name")
@@ -76,7 +108,7 @@ lms.yjn.control <- function(trace = TRUE, ...)
             namesof("mu",     link = lmu,     earg = emu), ", ",
             namesof("sigma",  link = lsigma,  earg = esigma)),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
   }), list( .zero = zero))),
   initialize = eval(substitute(expression({
 
@@ -156,19 +188,12 @@ lms.yjn.control <- function(trace = TRUE, ...)
     muvec  <- eta2theta(eta[, 2], .lmu     , earg = .emu )
     sigma  <- eta2theta(eta[, 3], .lsigma  , earg = .esigma )
 
-    zedd   <- ((y/muvec)^lambda - 1) / (lambda * sigma)
-    log.dz.dy <- (lambda - 1) * log(y/muvec) - log(muvec * sigma)
-
-    is.eff.0 <- abs(lambda) < .tol0
-    if (any(is.eff.0)) {
-      zedd[is.eff.0] <- log(y[is.eff.0] / muvec[is.eff.0]) / sigma[is.eff.0]
-      log.dz.dy[is.eff.0] <- -log(y[is.eff.0] * sigma[is.eff.0])
-    }
 
     if (residuals) {
       stop("loglikelihood residuals not implemented yet")
     } else {
-      ll.elts <- c(w) * (dnorm(zedd, log = TRUE) + log.dz.dy)
+      ll.elts <- dlms.bcn(x = y, lambda = lambda, mu = mu, sigma = sigma,
+                          tol0 = .tol0 , log = TRUE)
       if (summation) {
         sum(ll.elts)
       } else {
@@ -256,7 +281,7 @@ lms.yjn.control <- function(trace = TRUE, ...)
             namesof("mu", link = lmu, earg = emu), ", ",
             namesof("sigma", link = lsigma, earg = esigma)),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
   }), list(.zero = zero))),
   initialize = eval(substitute(expression({
 
@@ -650,6 +675,7 @@ gleg.weight.yjn.13 <- function(z, lambda, mymu, sigma, derivmat = NULL) {
 
 
 
+
 lms.yjn2.control <- function(save.weights = TRUE, ...) {
     list(save.weights = save.weights)
 }
@@ -696,7 +722,7 @@ lms.yjn2.control <- function(save.weights = TRUE, ...) {
             ", ",
             namesof("sigma", link = lsigma, earg = esigma)),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
   }), list(.zero = zero))),
   initialize = eval(substitute(expression({
 
@@ -898,7 +924,7 @@ lms.yjn2.control <- function(save.weights = TRUE, ...) {
             ", mu, ",
             namesof("sigma", link = lsigma, earg = esigma)),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
   }), list(.zero = zero))),
   initialize = eval(substitute(expression({
 
@@ -1545,14 +1571,14 @@ amlbinomial.deviance <- function(mu, y, w, residuals = FALSE,
     devy[nz] <- devy[nz] + (1 - y[nz]) * log1p(-y[nz])
     devmu <- y * log(mu) + (1 - y) * log1p(-mu)
     if (any(small <- mu * (1 - mu) < .Machine$double.eps)) {
-        warning("fitted values close to 0 or 1")
-        smu <- mu[small]
-        sy <- y[small]
-        smu <- ifelse(smu < .Machine$double.eps,
-                      .Machine$double.eps, smu)
-        onemsmu <- ifelse((1 - smu) < .Machine$double.eps,
-                          .Machine$double.eps, 1 - smu)
-        devmu[small] <- sy * log(smu) + (1 - sy) * log(onemsmu)
+      warning("fitted values close to 0 or 1")
+      smu <- mu[small]
+      sy <- y[small]
+      smu <- ifelse(smu < .Machine$double.eps,
+                    .Machine$double.eps, smu)
+      onemsmu <- ifelse((1 - smu) < .Machine$double.eps,
+                        .Machine$double.eps, 1 - smu)
+      devmu[small] <- sy * log(smu) + (1 - sy) * log(onemsmu)
     }
     devi <- 2 * (devy - devmu)
     if (residuals) {
@@ -2331,7 +2357,7 @@ dprobitlap <-
   if (meth2) {
     dx.dy <- x
     use.x <- probit(x[index1])  # earg = earg
-    logdensity[index1] =
+    logdensity[index1] <-
       dalap(x = use.x, location = location.ald[index1],
             scale = scale.ald[index1], tau = tau[index1],
             kappa = kappa[index1], log = TRUE)
@@ -2354,7 +2380,8 @@ dprobitlap <-
 
   if (meth2) {
     dx.dy[index1] <- probit(x[index1],  # earg = earg,
-                           inverse = FALSE, deriv = 1)
+                            inverse = TRUE,
+                            deriv = 1)
     dx.dy[!index1] <- 0
     dx.dy[!indexTF] <- NaN
     if (log.arg) logdensity - log(abs(dx.dy)) else
@@ -2423,9 +2450,9 @@ dclogloglap <- function(x, location.ald = 0, scale.ald = 1, tau = 0.5,
 
   NN <- max(length(x), length(location.ald), length(scale.ald),
            length(kappa))
-  location.ald <- rep(location.ald, length.out = NN);
+  location.ald <- rep(location.ald, length.out = NN)
   scale.ald <- rep(scale.ald, length.out = NN)
-  kappa <- rep(kappa, length.out = NN);
+  kappa <- rep(kappa, length.out = NN)
   x <- rep(x, length.out = NN)
   tau <- rep(tau, length.out = NN)
 
@@ -2457,7 +2484,7 @@ dclogloglap <- function(x, location.ald = 0, scale.ald = 1, tau = 0.5,
 
   if (meth2) {
     dx.dy[index1] <- cloglog(x[index1],  # earg = earg,
-                            inverse = FALSE, deriv = 1)
+                             inverse = TRUE, deriv = 1)
     dx.dy[!index1] <- 0
     dx.dy[!indexTF] <- NaN
     if (log.arg) logdensity - log(abs(dx.dy)) else
@@ -2644,7 +2671,7 @@ alaplace2.control <- function(maxit = 100, ...) {
     dotzero <- .zero
     M1 <- 2
     eval(negzero.expression.VGAM)
-    constraints <- cm.zero.VGAM(constraints, x, z.Index, M)
+    constraints <- cm.zero.VGAM(constraints, x = x, z.Index, M = M)
   }), list( .parallel.locat = parallel.locat,
             .parallel.scale = parallel.scale,
             .zero = zero,
@@ -3031,7 +3058,7 @@ alaplace1.control <- function(maxit = 100, ...) {
     
     constraints <- con.locat
 
-    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
   }), list( .parallel.locat = parallel.locat,
             .zero = zero,
             .apply.parint.locat = apply.parint.locat ))),
@@ -3311,7 +3338,7 @@ alaplace3.control <- function(maxit = 100, ...) {
             "\n",
             "Variance: Scale^2 * (1 + kappa^4) / (2 * kappa^2)"),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
   }), list( .zero = zero ))),
   infos = eval(substitute(function(...) {
     list(M1 = 3,
@@ -3599,7 +3626,7 @@ rlaplace <- function(n, location = 0, scale = 1) {
             "Mean:     location", "\n",
             "Variance: 2*scale^2"),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
   }), list( .zero = zero ))),
   initialize = eval(substitute(expression({
 
@@ -3744,7 +3771,7 @@ fff.control <- function(save.weights = TRUE, ...) {
             "2*df2^2*(df1+df2-2)/(df1*(df2-2)^2*(df2-4)) ",
             "provided df2>4 and ncp = 0"),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
   }), list( .zero = zero ))),
   initialize = eval(substitute(expression({
 
@@ -4011,7 +4038,7 @@ fff.control <- function(save.weights = TRUE, ...) {
                    trigamma(1+Nvec*prob-yvec) -
                    trigamma(1+Nvec*(1-prob)-w+yvec))
     }
-    d2prob.deta2 <- d2theta.deta2(prob, .lprob, earg = .earg )
+    d2prob.deta2 <- d2theta.deta2(prob, .lprob , earg = .earg )
 
     wz <- -(dprob.deta^2) * d2l.dprob2
     wz <- c(w) * wz
@@ -4558,12 +4585,17 @@ ptriangle <- function(q, theta, lower = 0, upper = 1,
 
 
 
+
+
+triangle.control <- function(stepsize = 0.33, maxit = 100, ...) {
+  list(stepsize = stepsize, maxit = maxit)
+}
+
+
  triangle <-
   function(lower = 0, upper = 1,
            link = extlogit(min = 0, max = 1),
            itheta = NULL) {
-
-
 
 
 
@@ -4613,8 +4645,8 @@ ptriangle <- function(q, theta, lower = 0, upper = 1,
 
 
 
-    extra$lower <- rep( .lower, length.out = n)
-    extra$upper <- rep( .upper, length.out = n)
+    extra$lower <- rep( .lower , length.out = n)
+    extra$upper <- rep( .upper , length.out = n)
 
     if (any(y <= extra$lower | y >= extra$upper))
       stop("some y values in [lower,upper] detected")
@@ -4690,8 +4722,7 @@ ptriangle <- function(q, theta, lower = 0, upper = 1,
 
 
   deriv = eval(substitute(expression({
-    Theta <- eta2theta(eta, .link , earg = .earg ) 
-
+    Theta       <- eta2theta(eta,     .link , earg = .earg )
     dTheta.deta <- dtheta.deta(Theta, .link , earg = .earg )
 
     pos <- y > Theta
@@ -4703,11 +4734,11 @@ ptriangle <- function(q, theta, lower = 0, upper = 1,
     dl.dTheta[neg] <-  -1 / (Theta[neg]-lower[neg])
     dl.dTheta[pos] <-   1 / (upper[pos]-Theta[pos])
 
-    w * dl.dTheta * dTheta.deta
+    c(w) * dl.dTheta * dTheta.deta
   }), list( .link = link, .earg = earg ))),
   weight = eval(substitute(expression({
-    d2l.dTheta2 <-  1 / ((Theta - lower) * (upper - Theta))
-    wz <- d2l.dTheta2 * dTheta.deta^2
+    var.dl.dTheta <-  1 / ((Theta - lower) * (upper - Theta))
+    wz <- var.dl.dTheta * dTheta.deta^2
     c(w) * wz
   }), list( .link = link, .earg = earg ))))
 }
@@ -4728,6 +4759,7 @@ adjust0.loglaplace1 <- function(ymat, y, w, rep0) {
 loglaplace1.control <- function(maxit = 300, ...) {
   list(maxit = maxit)
 }
+
 
  loglaplace1 <- function(tau = NULL,
                      llocation = "loge",
@@ -4814,7 +4846,7 @@ loglaplace1.control <- function(maxit = 300, ...) {
     constraints <- cm.VGAM(matrix(1, M, 1), x = x,
                            bool = .parallel.locat ,
                            constraints = constraints, apply.int = FALSE)
-    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
   }), list( .parallel.locat = parallel.locat,
             .Scale.arg = Scale.arg, .zero = zero ))),
   initialize = eval(substitute(expression({
@@ -5087,9 +5119,9 @@ loglaplace2.control <- function(save.weights = TRUE, ...) {
             "Quantiles:  location", "\n",
             "Variance:   zz scale^2 * (1 + kappa^4) / (2 * kappa^2)"),
   constraints = eval(substitute(expression({
-      .ZERO <- .zero
-      if (is.character( .ZERO)) .ZERO <- eval(parse(text = .ZERO))
-      .PARALLEL <- .parallel.locat
+  .ZERO <- .zero
+  if (is.character( .ZERO)) .ZERO <- eval(parse(text = .ZERO))
+  .PARALLEL <- .parallel.locat
       parelHmat <- if (is.logical( .PARALLEL ) && .PARALLEL )
                   matrix(1, M/2, 1) else diag(M/2)
       scaleHmat <- if (is.logical( .eq.scale ) && .eq.scale )
@@ -5100,7 +5132,7 @@ loglaplace2.control <- function(save.weights = TRUE, ...) {
                              bool = .PARALLEL ,
                              constraints = constraints,
                              apply.int = FALSE)
-      constraints <- cm.zero.VGAM(constraints, x, .ZERO, M)
+  constraints <- cm.zero.VGAM(constraints, x = x, .ZERO , M = M)
 
       if ( .PARALLEL && names(constraints)[1] == "(Intercept)") {
           parelHmat <- diag(M/2)
@@ -5416,7 +5448,7 @@ adjust01.logitlaplace1 <- function(ymat, y, w, rep01) {
     constraints <- cm.VGAM(matrix(1, M, 1), x = x,
                            bool = .parallel.locat ,
                            constraints = constraints, apply.int = FALSE)
-    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
   }), list( .parallel.locat = parallel.locat,
             .Scale.arg = Scale.arg, .zero = zero ))),
   initialize = eval(substitute(expression({

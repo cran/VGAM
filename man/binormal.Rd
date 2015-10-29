@@ -38,7 +38,13 @@ binormal(lmean1 = "identitylink", lmean2 = "identitylink",
   \item{eq.mean, eq.sd}{ 
   Logical or formula.
   Constrains the means or the standard deviations to be equal.
-  Only one of these arguments may be assigned a value.
+
+
+
+
+% 20150530; FALSE now; they work separately:
+% Only one of these arguments may be assigned a value.
+
 
 
   }
@@ -104,7 +110,7 @@ bdata <- data.frame(x2 = runif(nn), x3 = runif(nn))
 bdata <- transform(bdata, y1 = rnorm(nn, 1 + 2 * x2),
                           y2 = rnorm(nn, 3 + 4 * x2))
 fit1 <- vglm(cbind(y1, y2) ~ x2,
-            binormal(eq.sd = TRUE), data = bdata, trace = TRUE)
+             binormal(eq.sd = TRUE), data = bdata, trace = TRUE)
 coef(fit1, matrix = TRUE)
 constraints(fit1)
 summary(fit1)

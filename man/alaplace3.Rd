@@ -233,9 +233,10 @@ alaplace3(llocation = "identitylink", lscale = "loge", lkappa = "loge",
   Boston: Birkhauser.
 
 
-Yee, T. W. (2014)
-Vector Generalized Linear and Additive Models.
-\emph{Monograph in preparation}.
+Yee, T. W. (2015)
+Vector Generalized Linear and Additive Models: With an
+Implementation in R.
+\emph{Monograph to appear}.
 
 
 

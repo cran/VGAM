@@ -44,7 +44,7 @@ propodds(reverse = TRUE, whitespace = FALSE)
 
 Agresti, A. (2010)
 \emph{Analysis of Ordinal Categorical Data},
-2nd ed. New York: Wiley.
+2nd ed. Hoboken, NJ, USA: Wiley.
 
 
 Yee, T. W. (2010)

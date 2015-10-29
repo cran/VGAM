@@ -1,0 +1,17 @@
+2015-10-26  Thomas Yee <t.yee at auckland dot ac dot nz>
+
+	* R/links.q (all link functions): big changes, when
+	  deriv >= 1 wrt 'inverse' argument. For example,
+	  logit(p, deriv = 1, inverse = TRUE) is now
+	  logit(p, deriv = 1, inverse = FALSE).
+	  Models fitted under <= VGAM 0.9-9 and saved might not work
+	  under >= VGAM 1.0-0.
+
+
+2015-10-26  Thomas Yee <t.yee at auckland dot ac dot nz>
+
+	* R/family.normal.R (tobit): tobit()@weight implements
+	  Fisher scoring entirely.
+
+
+	  

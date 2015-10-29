@@ -84,7 +84,7 @@ extlogit(theta, min = 0, max = 1, bminvalue = NULL, bmaxvalue = NULL,
 
 
   For \code{deriv = 1}, then the function returns
-  \emph{d} \code{theta} / \emph{d} \code{eta} as a function of \code{theta}
+  \emph{d} \code{eta} / \emph{d} \code{theta} as a function of \code{theta}
   if \code{inverse = FALSE},
   else if \code{inverse = TRUE} then it returns the reciprocal.
 
@@ -125,7 +125,7 @@ extlogit(theta, min = 0, max = 1, bminvalue = NULL, bmaxvalue = NULL,
     \code{\link{multilogit}}.
 
 
- }
+}
 \examples{
 p <- seq(0.01, 0.99, by = 0.01)
 logit(p)
@@ -144,14 +144,16 @@ extlogit(p, min = 1, max = 2,
 y <- seq(-4, 4, length = 100)
 p <- seq(0.01, 0.99, by = 0.01)
 for (d in 0:1) {
-  matplot(p, cbind(logit(p, deriv = d), probit(p, deriv = d)),
+  myinv <- (d > 0)
+  matplot(p, cbind( logit(p, deriv = d, inverse = myinv),
+                   probit(p, deriv = d, inverse = myinv)),
           type = "n", col = "purple", ylab = "transformation", las = 1,
           main = if (d ==  0) "Some probability link functions"
-          else "First derivative")
-  lines(p,   logit(p, deriv = d), col = "limegreen")
-  lines(p,  probit(p, deriv = d), col = "purple")
-  lines(p, cloglog(p, deriv = d), col = "chocolate")
-  lines(p, cauchit(p, deriv = d), col = "tan")
+          else "1 / first derivative")
+  lines(p,   logit(p, deriv = d, inverse = myinv), col = "limegreen")
+  lines(p,  probit(p, deriv = d, inverse = myinv), col = "purple")
+  lines(p, cloglog(p, deriv = d, inverse = myinv), col = "chocolate")
+  lines(p, cauchit(p, deriv = d, inverse = myinv), col = "tan")
   if (d ==  0) {
     abline(v = 0.5, h = 0, lty = "dashed")
     legend(0, 4.5, c("logit", "probit", "cloglog", "cauchit"),

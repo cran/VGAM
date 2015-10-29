@@ -202,7 +202,7 @@ subsetc <-
 
 
   myvec <- objvals[ans == vov]  # Could be a vector
-  if (ret.objfun) c(ans, myvec[1]) else ans
+  if (ret.objfun) c(Value = ans, ObjFun = myvec[1]) else ans
 }
 
 
@@ -391,7 +391,7 @@ cm.nointercept.VGAM <- function(constraints, x, nointercept, M) {
 
 
 
- cm.zero.VGAM <- function(constraints, x, zero, M) {
+ cm.zero.VGAM <- function(constraints, x, zero = NULL, M = 1) {
 
   asgn <- attr(x, "assign")
   nasgn <- names(asgn)
@@ -1192,7 +1192,7 @@ negzero.expression.VGAM <- expression({
   z.Index <- if (!length(dotzero)) NULL else
                    unique(sort(c(zneg.index, zpos.index)))
 
-  constraints <- cm.zero.VGAM(constraints, x, z.Index, M)
+  constraints <- cm.zero.VGAM(constraints, x = x, z.Index, M = M)
 })
 
 
@@ -1212,6 +1212,30 @@ is.empty.list <- function(mylist) {
 
 interleave.VGAM <- function(L, M)
   c(matrix(1:L, nrow = M, byrow = TRUE))
+
+
+
+
+
+interleave.cmat <- function(cmat1, cmat2) {
+  ncol1 <- ncol(cmat1)
+  ncol2 <- ncol(cmat2)
+  if (ncol1 == 1) {
+    return(cbind(cmat1, cmat2))
+  } else {  # ncol1 > 1
+    if (ncol2 == 1) {
+      return(cbind(cmat1[, 1], cmat2, cmat1[, -1]))
+    } else
+    if (ncol1 != ncol2) {
+      warning("this function is confused. Returning cbind(cmat1, cmat2)")
+      return(cbind(cmat1[, 1], cmat2, cmat1[, -1]))
+    } else {  # ncol1 == ncol2 and both are > 1.
+      kronecker(cmat1, cbind(1, 0)) +
+      kronecker(cmat2, cbind(0, 1))        
+    }
+  }
+}
+
 
 
 

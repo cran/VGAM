@@ -13,7 +13,7 @@
 negbinomial(lmu = "loge", lsize = "loge",
             imu = NULL, isize = NULL, probs.y = 0.75,
             nsimEIM = 250, cutoff.prob = 0.995,
-            max.qnbinom = 1000, max.chunk.Mb = 20,
+            max.qnbinom = 1000, max.chunk.MB = 20,
             deviance.arg = FALSE, imethod = 1, gsize = exp((-4):4),
             parallel = FALSE, ishrinkage = 0.95, zero = -2)
 polya(lprob = "logit", lsize = "loge",
@@ -94,7 +94,7 @@ polyaR(lsize = "loge", lprob = "logit",
 
 
   }
-  \item{max.chunk.Mb, max.qnbinom}{
+  \item{max.chunk.MB, max.qnbinom}{
     \code{max.qnbinom} is used to describe the eligibility of 
     individual observations
     to have their EIM computed by the \emph{exact method}.
@@ -105,15 +105,15 @@ polyaR(lsize = "loge", lprob = "logit",
   and it constructs a large matrix provided that the number of columns
   is less than \code{max.qnbinom}.
   If so, then the computations are done in chunks, so
-  that no more than about \code{max.chunk.Mb} megabytes
+  that no more than about \code{max.chunk.MB} megabytes
   of memory is used at a time (actually, it is proportional to this amount).
   Regarding eligibility of this algorithm, each observation must
   have the \code{cutoff.prob} quantile less than \code{max.qnbinom}
   as its approximate support.
   If you have abundant memory then you might try setting
-  \code{max.chunk.Mb = Inf}, but then the computations might take
+  \code{max.chunk.MB = Inf}, but then the computations might take
   a very long time.
-  Setting \code{max.chunk.Mb = 0} or \code{max.qnbinom = 0}
+  Setting \code{max.chunk.MB = 0} or \code{max.qnbinom = 0}
   will force the EIM to be computed using the SFS algorithm only
   (this \emph{used to be} the default method for \emph{all} the observations).
   When the fitted values of the model are large and \eqn{k} is small,
@@ -329,12 +329,12 @@ polyaR(lsize = "loge", lprob = "logit",
 
   If one wants to force SFS
   to be used on all observations, then
-  set \code{max.qnbinom = 0} or \code{max.chunk.Mb = 0}.
+  set \code{max.qnbinom = 0} or \code{max.chunk.MB = 0}.
   If one wants to force the exact method
   to be used for all observations, then
   set \code{max.qnbinom = Inf}.
   If the computer has \emph{much} memory, then trying
-  \code{max.chunk.Mb = Inf} may provide a small speed increase.
+  \code{max.chunk.MB = Inf} may provide a small speed increase.
   If SFS is used at all, then the \code{@weights} slot of the
   fitted object will be a matrix;
   otherwise that slot will be a \code{0 x 0} matrix.
@@ -438,7 +438,7 @@ Fitting the negative binomial distribution to biological data.
   \code{imethod},
   \code{isize},
   \code{zero},
-  \code{max.chunk.Mb}.
+  \code{max.chunk.MB}.
 
 
   The function \code{negbinomial} can be used by the fast algorithm in

@@ -172,8 +172,10 @@ vglm <- function(formula,
     slot(answer, "Xm2") <- Xm2  # The second (lm) design matrix
   if (y.arg && length(Ym2))
     slot(answer, "Ym2") <- as.matrix(Ym2)  # The second response
-  if (!is.null(form2))
+  if (!is.null(form2)) {
     slot(answer, "callXm2") <- retlist$call
+    answer@misc$Terms2 <- retlist$Terms2
+  }
   answer@misc$formula <- formula
   answer@misc$form2 <- form2
 
@@ -254,7 +256,7 @@ shadowvglm <-
          matrix(, NROW(y), 0)
     attr(x, "assign") <- attrassigndefault(x, mt)
 
-    list(Xm2 = x, Ym2 = y, call = ocall)
+    list(Xm2 = x, Ym2 = y, call = ocall, Terms2 = mt)
 }
 
 

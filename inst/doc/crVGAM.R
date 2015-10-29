@@ -175,6 +175,7 @@ summary(fit.bh)
 ###################################################
 ### code chunk number 18: plot-deermice
 ###################################################
+getOption("SweaveHooks")[["fig"]]()
 par(mfrow = c(2, 2))
 par(las = 1, cex = 1.1, mar = c(3.8, 4, 0.5, 0.2) + 0.1)
 par(mgp = c(2.3, 1, 0))  # Default is c(3, 1, 0)
@@ -185,8 +186,6 @@ plot(fit.bh, se = TRUE, las = 1, lcol = "blue", scol = "orange",
      rcol = "purple", scale = 5, mgp = c(2.0, 1, 0))
 
 # < < poz-posbernoulli-eg-deermice-smooth-shadow> >
-
-
 
 
 
@@ -269,6 +268,7 @@ plot.info <- plot(M.h.GAM,
 ###################################################
 ### code chunk number 24: plot-bird
 ###################################################
+getOption("SweaveHooks")[["fig"]]()
 par(mfrow = c(1, 1))
 
 

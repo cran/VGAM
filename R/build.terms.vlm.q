@@ -9,17 +9,37 @@ if (!isGeneric("terms"))
 
 
 
-
-
 terms.vlm <- function(x, ...) {
-  v <- x@terms
-  if (!length(v))
-    stop("terms slot is empty")
-  v <- v$terms
-  if (!length(v))
-    stop("no terms component")
-  v
+  termsvlm(x, ...)
 }
+
+
+
+termsvlm <- function(x, form.number = 1, ...) {
+  if (!is.Numeric(form.number, integer.valued = TRUE,
+                  length.arg = 1, positive = TRUE) ||
+      form.number > 2)
+    stop("argument 'form.number' must be 1 or 2")
+
+
+  v <- if (form.number == 1) {
+    v <- x@terms
+    if (!length(v))
+      stop("terms slot is empty")
+    v$terms
+  } else if (form.number == 2) {
+    x@misc$Terms2
+  }
+  if (length(v)) {
+    v
+  } else {
+    warning("no terms component; returning a NULL")
+    NULL
+  }
+}
+
+
+
 
 
 setMethod("terms", "vlm", function(x, ...) terms.vlm(x, ...))

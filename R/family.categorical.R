@@ -97,7 +97,6 @@ Deviance.categorical.data.vgam <-
 
 
 
-
   if (ncol(y) == 1 || ncol(mu) == 1)
     stop("arguments 'y' and 'mu' must have at least 2 columns")
 
@@ -235,7 +234,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
     constraints <- cm.VGAM(matrix(1, M, 1), x = x,
                            bool = .parallel ,
                            constraints = constraints)
-    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
   }), list( .parallel = parallel, .zero = zero ))),
   deviance = Deviance.categorical.data.vgam,
 
@@ -432,7 +431,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
     constraints <- cm.VGAM(matrix(1, M, 1), x = x,
                            bool = .parallel ,
                            constraints = constraints)
-    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
   }), list( .parallel = parallel, .zero = zero ))),
 
 
@@ -703,7 +702,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
                            bool = .parallel ,
                            apply.int = TRUE,
                            constraints = constraints)
-    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
     constraints <- cm.nointercept.VGAM(constraints, x, .nointercept , M)
   }), list( .parallel = parallel, .zero = zero,
             .nointercept = nointercept,
@@ -1313,7 +1312,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
     constraints <- cm.VGAM(matrix(1, M, 1), x = x,
                            bool = .parallel ,
                            constraints = constraints)
-    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
   }), list( .parallel = parallel, .zero = zero ))),
 
   deviance = Deviance.categorical.data.vgam,
@@ -2026,7 +2025,7 @@ InverseBrat <-
                            bool = .parallel ,
                            apply.int = TRUE,
                            constraints = constraints)
-    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
   }), list( .parallel = parallel, .zero = zero ))),
   initialize = eval(substitute(expression({
     orig.y <- cbind(y)  # Convert y into a matrix if necessary
@@ -2224,10 +2223,11 @@ ordpoissonProbs <- function(extra, mu, deriv = 0) {
   ii <- ii.save <- subset
   if (!is(object, "vglm"))
     stop("'object' is not a vglm() object")
-  if (!any(temp.logical <- is.element(c("multinomial","cumulative"),
-                                     object@family@vfamily)))
-    stop("'object' is not a 'multinomial' or 'cumulative' VGLM!")
-  model.multinomial <- temp.logical[1]
+  if (!any(temp.logical <-
+    is.element(c("multinomial", "cumulative", "acat"),
+               object@family@vfamily)))
+    stop("'object' is not a 'multinomial' or 'acat' or 'cumulative' VGLM!")
+  vfamily <- object@family@vfamily
   if (is(object, "vgam"))
     stop("'object' is a vgam() object")
   if (length(object@control$xij))
@@ -2244,7 +2244,7 @@ ordpoissonProbs <- function(extra, mu, deriv = 0) {
   M <- object@misc$M  # ncol(B)  # length(pvec) - 1
 
 
-    if (model.multinomial) {
+    if (any(vfamily == "multinomial")) {
     rlev <- object@misc$refLevel
     cfit <- coefvlm(object, matrix.out = TRUE)
     B <- if (!length(rlev)) {
@@ -2301,6 +2301,21 @@ ordpoissonProbs <- function(extra, mu, deriv = 0) {
         }
         ans
     }
+    } else if (any(vfamily == "acat")) {
+    stop("currently the 'acat' family is unsupported here")
+    reverse <- object@misc$reverse
+    linkfunctions <- object@misc$link
+    all.eargs <- object@misc$earg
+    B <- cfit <- coefvlm(object, matrix.out = TRUE)
+    ppp <- nrow(B)
+    etamat <- predict(object)  # nnn x M
+
+
+
+
+
+
+
     } else {
 
     if (is.logical(is.multivariateY <- object@misc$multiple.responses) &&

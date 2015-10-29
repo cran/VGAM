@@ -73,6 +73,10 @@ lognormal(lmeanlog = "identitylink", lsdlog = "loge", zero = 2)
   \deqn{E(Y) = \exp(\mu + 0.5 \sigma^2)}{%
         E(Y) = exp(mu + 0.5 sigma^2)}
   and not \eqn{\mu}{mu}, make up the fitted values.
+  The variance of \eqn{Y} is
+  \deqn{Var(Y) = [\exp(\sigma^2) -1] \exp(2\mu + \sigma^2).}{%
+        Var(Y) = [exp(sigma^2) -1] * exp(2 mu + sigma^2).}
+
 
 
 % A random variable \eqn{Y} has a 3-parameter lognormal distribution
@@ -85,9 +89,11 @@ lognormal(lmeanlog = "identitylink", lsdlog = "loge", zero = 2)
 % and not \eqn{\mu}{mu}, make up the fitted values.
 
 
+
 % \code{lognormal()} and \code{lognormal3()} fit the 2- and 3-parameter
 % lognormal distribution respectively. Clearly, if the location
 % parameter \eqn{\lambda=0}{lambda=0} then both distributions coincide.
+
 
 
 }

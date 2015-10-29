@@ -58,7 +58,7 @@
                            constraints = constraints,
                            apply.int = .apply.parint )
 
-    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
   }), list( .zero = zero,
             .parallel = parallel, .apply.parint = apply.parint ))),
   infos = eval(substitute(function(...) {
@@ -339,7 +339,12 @@
 
       varY <- mu * (1 - mu) / w  # Is a matrix if M>1. Seems the most correct.
       d1.ADJ <-   dtheta.deta(mu, .link , earg = .earg )
-      d2.ADJ <- d2theta.deta2(mu, .link , earg = .earg )
+
+      temp.earg <- .earg
+      temp.earg$inverse <- FALSE
+      temp.earg$inverse <- TRUE
+      d2.ADJ <- d2theta.deta2(mu, .link , earg = temp.earg )
+
 
 
       yBRED <- y + matrix(Hvector, n, M, byrow = TRUE) *
@@ -389,16 +394,28 @@
 
 
 
-  if (!multiple.responses)
+
+
+
     ans@deviance <- 
-      function(mu, y, w, residuals = FALSE, eta, extra = NULL,
-               summation = TRUE) {
-    Deviance.categorical.data.vgam(mu = cbind(mu, 1-mu),
-                                   y = cbind(y, 1-y),
-                                   w = w, residuals = residuals,
-                                   eta = eta, extra = extra,
-                                   summation = summation)
-  }
+      if (multiple.responses)
+        function(mu, y, w, residuals = FALSE, eta, extra = NULL,
+                 summation = TRUE) {
+      Deviance.categorical.data.vgam(mu  = mu,
+                                     y   = y,
+                                     w   = w, residuals = residuals,
+                                     eta = eta, extra = extra,
+                                     summation = summation)
+        } else
+        function(mu, y, w, residuals = FALSE, eta, extra = NULL,
+                 summation = TRUE) {
+      Deviance.categorical.data.vgam(mu  = cbind(mu, 1-mu),
+                                     y   = cbind(y , 1-y),
+                                     w   = w, residuals = residuals,
+                                     eta = eta, extra = extra,
+                                     summation = summation)
+        }
+
 
   ans
 }
@@ -766,7 +783,7 @@ rinv.gaussian <- function(n, mu, lambda) {
                            constraints = constraints,
                            apply.int = .apply.parint )
 
-    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
   }), list( .zero = zero,
             .parallel = parallel, .apply.parint = apply.parint ))),
   infos = eval(substitute(function(...) {
@@ -968,7 +985,7 @@ rinv.gaussian <- function(n, mu, lambda) {
     constraints <- cm.VGAM(matrix(1, M, 1), x = x, 
                            bool = .parallel , 
                            constraints = constraints)
-    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
   }), list( .parallel = parallel, .zero = zero ))),
 
   deviance =
@@ -1272,7 +1289,7 @@ rinv.gaussian <- function(n, mu, lambda) {
             "Mean:     ", "mean\n",
             "Variance: mean / dispersion"),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
   }), list( .zero = zero ))),
 
   infos = eval(substitute(function(...) {
@@ -1374,8 +1391,9 @@ rinv.gaussian <- function(n, mu, lambda) {
 
 
 
- double.expbinomial <- function(lmean = "logit", ldispersion = "logit",
-                          idispersion = 0.25, zero = 2) {
+ double.expbinomial <-
+  function(lmean = "logit", ldispersion = "logit",
+           idispersion = 0.25, zero = 2) {
 
   lmean <- as.list(substitute(lmean))
   emean <- link2list(lmean)
@@ -1398,7 +1416,7 @@ rinv.gaussian <- function(n, mu, lambda) {
             namesof("dispersion", ldisp, earg = edisp), "\n",
             "Mean:     ", "mean\n"),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
   }), list( .zero = zero ))),
   initialize = eval(substitute(expression({
     if (!all(w == 1))
@@ -1420,8 +1438,7 @@ rinv.gaussian <- function(n, mu, lambda) {
           y[w == 0] <- 0
           if (!all(y == 0 | y == 1))
             stop("response values 'y' must be 0 or 1")
-          init.mu <-
-          mustart <- (0.5 + w * y) / (1 + w)
+          init.mu <- (0.5 + w * y) / (1 + w)
 
 
           no.successes <- y
@@ -1438,8 +1455,7 @@ rinv.gaussian <- function(n, mu, lambda) {
             nvec <- y[, 1] + y[, 2]
             y <- ifelse(nvec > 0, y[, 1] / nvec, 0)
             w <- w * nvec
-            init.mu <-
-            mustart <- (0.5 + nvec * y) / (1 + nvec)
+            init.mu <- (0.5 + nvec * y) / (1 + nvec)
         } else
             stop("for the double.expbinomial family, response 'y' must be a ",
                  "vector of 0 and 1's\n",
@@ -1449,15 +1465,11 @@ rinv.gaussian <- function(n, mu, lambda) {
                      "successes and col 2 is the no. of failures")
 
     dn2 <- if (is.matrix(y)) dimnames(y)[[2]] else NULL
-    dn2 <- if (length(dn2)) {
-        paste("E[", dn2, "]", sep = "") 
-    } else {
-        "mu"
-    }
+    dn2 <- if (length(dn2)) paste("E[", dn2, "]", sep = "") else "mu"
 
     predictors.names <-
-    c(namesof(dn2,          .lmean, earg = .emean, short = TRUE),
-      namesof("dispersion", .ldisp, earg = .edisp, short = TRUE))
+    c(namesof(dn2,          .lmean , earg = .emean , short = TRUE),
+      namesof("dispersion", .ldisp , earg = .edisp , short = TRUE))
 
     tmp2 <- rep( .idisp , len = n)
 
@@ -1468,7 +1480,7 @@ rinv.gaussian <- function(n, mu, lambda) {
             .ldisp = ldisp, .edisp = edisp,
             .idisp = idisp ))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
-    eta2theta(eta[, 1], link = .lmean, earg = .emean)
+    eta2theta(eta[, 1], link = .lmean , earg = .emean )
   }, list( .lmean = lmean, .emean = emean,
            .ldisp = ldisp, .edisp = edisp ))),
   last = eval(substitute(expression({

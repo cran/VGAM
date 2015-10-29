@@ -83,6 +83,9 @@ calibrate.qrrvglm <-
     newdata <- as.matrix(newdata)
   newdata <- newdata[, object@misc$ynames, drop = FALSE]
 
+
+
+
   obfunct <- slot(object@family, object@misc$criterion)
   minimize.obfunct <-
     if (Quadratic) object@control$min.criterion else
@@ -135,7 +138,7 @@ calibrate.qrrvglm <-
               method = optim.control$Method.optim,  # "BFGS" or "CG" or...
               control = c(fnscale = ifelse(minimize.obfunct, 1, -1),
                           use.optim.control),
-              y = newdata[i1, ],
+              y = newdata[i1, , drop = FALSE],  # drop added 20150624
               extra = object@extra,
               objfun = obfunct,
               Coefs = Coefobject,
@@ -147,7 +150,7 @@ calibrate.qrrvglm <-
               method = optim.control$Method.optim,  # "BFGS" or "CG" or...
               control = c(fnscale = ifelse(minimize.obfunct, 1, -1),
                           use.optim.control),
-              y = newdata[i1, ],
+              y = newdata[i1, , drop = FALSE],  # drop added 20150624
               extra = object@extra,
                 objfun = obfunct,
                 object = object,
@@ -210,7 +213,7 @@ calibrate.qrrvglm <-
     for (i1 in 1:nn) {
       ans <- if (Quadratic)
                .my.calib.objfunction.qrrvglm(BestOFpar[i1, ],
-                    y = newdata[i1, ],
+                    y = newdata[i1, , drop = FALSE],  # drop added 20150624
                     extra = object@extra,
                     objfun = obfunct,
                     Coefs = Coefobject,
@@ -218,7 +221,7 @@ calibrate.qrrvglm <-
                     everything = TRUE,
                     mu.function = slot(object@family, "linkinv")) else
             .my.calib.objfunction.rrvgam(BestOFpar[i1, ],
-                    y = newdata[i1, ],
+                    y = newdata[i1, , drop = FALSE],  # drop added 20150624
                     extra = object@extra,
                     objfun = obfunct,
                     object = object,
@@ -295,7 +298,7 @@ calibrate.qrrvglm <-
     for (s in 1:M) {
       vec1 <- cbind(Coefs@A[s, ]) +
               2 * matrix(Coefs@D[, , s], Rank, Rank) %*% bnumat
-      vcmat <- vcmat + mu[1,s] * vec1 %*% t(vec1)
+      vcmat <- vcmat + mu[1, s] * vec1 %*% t(vec1)
     }
     vcmat <- solve(vcmat)
   } else {
@@ -324,7 +327,7 @@ calibrate.qrrvglm <-
     eta <- matrix(as.numeric(NA), 1, NOS)
     for (jlocal in 1:NOS) {
       eta[1, jlocal] <- predictrrvgam(object, grid = bnu, sppno = jlocal,
-                                   Rank = Rank, deriv = 0)$yvals
+                                      Rank = Rank, deriv = 0)$yvals
     }
     mu <- rbind(mu.function(eta, extra))  # Make sure it has one row 
     value <- objfun(mu = mu, y = y,

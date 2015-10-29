@@ -74,9 +74,12 @@ World Scientific: Singapore.
 }
 \author{ T. W. Yee }
 \section{Warning}{
-  The MLE regularity conditions do not seem to hold for this
-  distribution so that misleading inferences may result, e.g., in
-  the \code{summary} and \code{vcov} of the object.
+  The MLE regularity conditions do not hold for this
+  distribution
+  (e.g., the first derivative evaluated at the mode
+  does not exist because it is not continuous)
+  so that misleading inferences may result, e.g.,
+  in the \code{summary} and \code{vcov} of the object.
   Additionally, convergence to the MLE often appears to fail.
 
 

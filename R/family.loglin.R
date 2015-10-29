@@ -28,7 +28,7 @@
                            apply.int = TRUE,
                            cm.default           = cm.intercept.default,
                            cm.intercept.default = cm.intercept.default)
-    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
   }), list( .exchangeable = exchangeable, .zero = zero ))),
   initialize = expression({
 
@@ -161,7 +161,7 @@
                            apply.int = TRUE,
                            cm.default           = cm.intercept.default,
                            cm.intercept.default = cm.intercept.default)
-    constraints <- cm.zero.VGAM(constraints, x, .zero, M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
   }), list( .exchangeable = exchangeable, .zero = zero ))),
   initialize = expression({
     predictors.names <- c("u1", "u2", "u3", "u12", "u13", "u23")

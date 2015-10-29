@@ -47,6 +47,7 @@ AA.Aa.aa(linkp = "logit", linkf = "logit", inbreeding = FALSE,
   When \code{inbreeding = TRUE}, an additional parameter \code{f} is used.
   If \code{inbreeding = FALSE} then \eqn{f = 0} and Hardy-Weinberg
   Equilibrium (HWE) is assumed.
+  The EIM is used if \code{inbreeding = FALSE}.
 
 
 

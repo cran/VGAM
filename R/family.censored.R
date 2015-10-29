@@ -159,7 +159,7 @@
   }), list( .link = link, .earg = earg ))),
   weight = eval(substitute(expression({
     d2lambda.deta2 <- d2theta.deta2(theta = lambda,
-                                   link = .link, earg = .earg)
+                                    link = .link, earg = .earg )
     d2l.dlambda2 <- 1 / lambda # uncensored; Fisher scoring
 
     if (any(cenU)) {
@@ -362,7 +362,7 @@ if (FALSE)
                           namesof("sd", lsd, tag = TRUE), "\n",
             "Conditional variance: sd^2"),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
   }), list( .zero = zero ))),
   initialize = eval(substitute(expression({
 
@@ -626,6 +626,260 @@ if (FALSE)
 
 
 
+
+ weibull.mean <-
+  function(lmean = "loge", lshape = "loge",
+           imean = NULL,   ishape = NULL,
+           probs.y = c(0.2, 0.5, 0.8),
+           imethod = 1, zero = -2) {
+
+
+
+
+  imeann <- imean
+
+
+  lshape <- as.list(substitute(lshape))
+  eshape <- link2list(lshape)
+  lshape <- attr(eshape, "function.name")
+
+  lmeann <- as.list(substitute(lmean))
+  emeann <- link2list(lmeann)
+  lmeann <- attr(emeann, "function.name")
+
+
+  if (length(zero) &&
+      !is.Numeric(zero, integer.valued = TRUE))
+    stop("bad input for argument 'zero'")
+
+  if (!is.Numeric(imethod, length.arg = 1,
+                  integer.valued = TRUE, positive = TRUE) ||
+      imethod > 2)
+    stop("argument 'imethod' must be 1 or 2")
+
+  if (!is.Numeric(probs.y, positive  = TRUE) ||
+      length(probs.y) < 2 ||
+      max(probs.y) >= 1)
+    stop("bad input for argument 'probs.y'")
+
+
+  if (length(ishape))
+    if (!is.Numeric(ishape, positive = TRUE))
+      stop("argument 'ishape' values must be positive")
+
+  if (length(imeann))
+    if (!is.Numeric(imeann, positive = TRUE))
+      stop("argument 'imean' values must be positive")
+
+  blurb.vec <- c(namesof("mean",  lmeann, earg = emeann),
+                 namesof("shape", lshape, earg = eshape))
+
+  new("vglmff",
+  blurb = c("Weibull distribution (parameterized by the mean)\n\n",
+            "Links:    ",
+            blurb.vec[1], ", ",
+            blurb.vec[2], "\n",
+            "Mean:     mean\n",
+            "Variance: mean^2 * (gamma(1 + 2/shape) / ",
+                      "gamma(1 + 1/shape)^2 - 1)"),
+ constraints = eval(substitute(expression({
+    dotzero <- .zero
+    M1 <- 2
+    eval(negzero.expression.VGAM)
+  }), list( .zero = zero,
+            .lmeann = lmeann ))),
+
+  infos = eval(substitute(function(...) {
+    list(M1 = 2,
+         Q1 = 1,
+         expected = TRUE,
+         multipleResponses = TRUE,
+         zero = .zero )
+  }, list( .zero = zero ))),
+
+  initialize = eval(substitute(expression({
+
+    temp5 <-
+    w.y.check(w = w, y = y,
+              Is.positive.y = TRUE,
+              ncol.w.max = Inf,
+              ncol.y.max = Inf,
+              out.wy = TRUE,
+              colsyperw = 1,
+              maximize = TRUE)
+    w <- temp5$w
+    y <- temp5$y
+
+    ncoly <- ncol(y)
+    M1 <- 2
+    extra$ncoly <- ncoly
+    extra$M1 <- M1
+    M <- M1 * ncoly
+
+
+    if (is.SurvS4(y))
+      stop("only uncensored observations are allowed; ",
+           "don't use SurvS4()")
+
+
+    mynames1 <- param.names("mean" , ncoly)
+    mynames2 <- param.names("shape", ncoly)
+    predictors.names <-
+        c(namesof(mynames1, .lmeann , earg = .emeann , tag = FALSE),
+          namesof(mynames2, .lshape , earg = .eshape , tag = FALSE))
+    predictors.names <- predictors.names[interleave.VGAM(M, M = M1)]
+
+
+    Meann.init <- matrix(if (length( .imeann )) .imeann else 0.5 * colMeans(y),
+                         n, ncoly, byrow = TRUE) + 0.5 * y
+    Shape.init <- matrix(if (length( .ishape )) .ishape else 0 + NA,
+                         n, ncoly, byrow = TRUE)
+
+    if (!length(etastart)) {
+      if (!length( .ishape ) ||
+          !length( .imeann )) {
+        for (ilocal in 1:ncoly) {
+
+          anyc <- FALSE  # extra$leftcensored | extra$rightcensored
+          i11 <- if ( .imethod == 1) anyc else FALSE  # Can be all data
+          probs.y <- .probs.y
+          xvec <- log(-log1p(-probs.y))
+          fit0 <- lsfit(x  = xvec,
+                        y  = log(quantile(y[!i11, ilocal],
+                                 probs = probs.y )))
+
+
+          if (!is.Numeric(Shape.init[, ilocal]))
+            Shape.init[, ilocal] <- 1 / fit0$coef["X"]
+        }  # ilocal
+
+        etastart <- 
+          cbind(theta2eta(Meann.init, .lmeann , earg = .emeann ),
+                theta2eta(Shape.init, .lshape , earg = .eshape ))[,
+                interleave.VGAM(M, M = M1)]
+      }
+    }
+  }), list( .lmeann = lmeann, .lshape = lshape,
+            .emeann = emeann, .eshape = eshape,
+            .imeann = imeann, .ishape = ishape,
+            .probs.y = probs.y,
+            .imethod = imethod ) )),
+  linkinv = eval(substitute(function(eta, extra = NULL) {
+    Meann <- eta2theta(eta[, c(TRUE, FALSE)], .lmeann , earg = .emeann )
+    Meann
+  }, list( .lmeann = lmeann, .lshape = lshape,
+           .emeann = emeann, .eshape = eshape ) )),
+  last = eval(substitute(expression({
+    regnotok <- any(Shape <= 2)
+    if (any(Shape <= 1)) {
+      warning("MLE regularity conditions are violated",
+              "(shape <= 1) at the final iteration: ",
+              "MLEs are not consistent")
+    } else if (any(1 < Shape & Shape < 2)) {
+      warning("MLE regularity conditions are violated",
+              "(1 < shape < 2) at the final iteration: ",
+              "MLEs exist but are not asymptotically normal")
+    } else if (any(2 == Shape)) {
+      warning("MLE regularity conditions are violated",
+              "(shape == 2) at the final iteration: ",
+              "MLEs exist and are normal and asymptotically ",
+              "efficient but with a slower convergence rate than when ",
+              "shape > 2")
+    }
+
+
+
+    M1 <- extra$M1
+    avector <- c(rep( .lmeann , length = ncoly),
+                 rep( .lshape , length = ncoly))
+    misc$link <- avector[interleave.VGAM(M, M = M1)]
+    temp.names <- c(mynames1, mynames2)[interleave.VGAM(M, M = M1)]
+    names(misc$link) <- temp.names
+
+    misc$earg <- vector("list", M)
+    names(misc$earg) <- temp.names
+    for (ii in 1:ncoly) {
+      misc$earg[[M1*ii-1]] <- .emeann
+      misc$earg[[M1*ii  ]] <- .eshape
+    }
+
+    misc$M1 <- M1
+    misc$imethod <- .imethod
+    misc$expected <- TRUE
+    misc$multipleResponses <- TRUE
+
+
+    misc$RegCondOK <- !regnotok # Save this for later
+    misc$expected <- TRUE   # all(cen0)
+  }), list( .lmeann = lmeann, .lshape = lshape,
+            .emeann = emeann, .eshape = eshape,
+            .imethod = imethod ) )),
+  loglikelihood = eval(substitute(
+          function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
+    Meann <- eta2theta(eta[, c(TRUE, FALSE)], .lmeann , earg = .emeann )
+    Shape <- eta2theta(eta[, c(FALSE, TRUE)], .lshape , earg = .eshape )
+
+    if (residuals) stop("loglikelihood residuals not ",
+                        "implemented yet") else {
+      sum(c(w) * dweibull(x = y, shape = Shape,
+                          scale = Meann / gamma(1 + 1/Shape),
+                          log = TRUE))
+    }
+  }, list( .lmeann = lmeann, .lshape = lshape,
+           .emeann = emeann, .eshape = eshape ) )),
+  vfamily = c("weibull.mean"),
+  deriv = eval(substitute(expression({
+    M1 <- 2
+    Meann <- eta2theta(eta[, c(TRUE, FALSE)], .lmeann , earg = .emeann )
+    Shape <- eta2theta(eta[, c(FALSE, TRUE)], .lshape , earg = .eshape )
+
+    if (FALSE) {
+    } else {
+      EulerM <- -digamma(1.0)
+      AA <- (EulerM - 1)^2 + (pi^2) / 6
+      BB <- digamma(1 + 1/Shape)
+      CC <- y * gamma(1 + 1/Shape) / Meann
+      dl.dmeann <- (CC^Shape - 1) * Shape / Meann  # Agrees
+      dl.dshape <- 1/Shape -
+                   (log(y/Meann) + lgamma(1 + 1/Shape)) * (CC^Shape - 1) + 
+                   (BB / Shape) * (CC^Shape - 1)
+    }
+
+
+    dmeann.deta <- dtheta.deta(Meann, .lmeann , earg = .emeann )
+    dshape.deta <- dtheta.deta(Shape, .lshape , earg = .eshape )
+
+    myderiv <- c(w) * cbind(dl.dmeann * dmeann.deta,
+                            dl.dshape * dshape.deta)
+    myderiv[, interleave.VGAM(M, M = M1)]
+  }), list( .lmeann = lmeann, .lshape = lshape,
+            .emeann = emeann, .eshape = eshape ) )),
+  weight = eval(substitute(expression({
+
+    if (FALSE) {
+    } else {
+      ned2l.dmeann <- (Shape / Meann)^2  #
+      ned2l.dshape <- AA / Shape^2  # Unchanged
+      ned2l.dshapemeann <- (EulerM - 1 + BB) / Meann
+    }
+
+
+    wz <- array(c(c(w) * ned2l.dmeann * dmeann.deta^2,
+                  c(w) * ned2l.dshape * dshape.deta^2,
+                  c(w) * ned2l.dshapemeann * dmeann.deta * dshape.deta),
+                dim = c(n, M / M1, 3))
+    wz <- arwz2wz(wz, M = M, M1 = M1)
+
+
+    wz
+  }), list( .eshape = eshape ))))
+}
+
+
+
+
+
+
  weibullR <-
   function(lscale = "loge", lshape = "loge",
            iscale = NULL,   ishape = NULL,
@@ -850,7 +1104,7 @@ if (FALSE)
 
     if (residuals) stop("loglikelihood residuals not ",
                         "implemented yet") else {
-      sum(c(w) * dweibull(x = y, shape = Shape, scale = Scale, log = TRUE))
+      sum(c(w) * dweibull(y, shape = Shape, scale = Scale, log = TRUE))
     }
   }, list( .lscale = lscale, .lshape = lshape,
            .escale = escale, .eshape = eshape,
@@ -881,9 +1135,15 @@ if (FALSE)
     EulerM <- -digamma(1.0)
 
 
-    ned2l.dshape <- (6*(EulerM - 1)^2 + pi^2)/(6*Shape^2)  # KK (2003)
+
+
+
     ned2l.dscale <- (Shape / Scale)^2
+    ned2l.dshape <- (6*(EulerM - 1)^2 + pi^2)/(6*Shape^2)  # KK (2003)
     ned2l.dshapescale <- (EulerM-1) / Scale
+
+
+
 
     wz <- if ( .lss )
             array(c(c(w) * ned2l.dscale * dscale.deta^2,

@@ -1,0 +1,73 @@
+Software and datasets to support 'Vector Generalized Linear and
+Additive Models: With an Implementation in R', 
+first edition, by T. W. Yee.
+Springer, 2015.
+
+
+This file is intended to clarify ownership and copyright: where
+possible individual files also carry brief copyright notices.
+This file was adapted from the file of the same name from the
+MASS bundle.
+
+
+Copyrights
+==========
+
+Some slightly-modified FORTRAN subroutines from
+http://pages.cs.wisc.edu/~deboor/pgs/
+are used for the B-spline computations.
+
+
+Some modified LINPACK subroutines appear in the files
+./src/vlinpack?.f
+
+
+Portions of the smoothing code called by vsmooth.spline() is
+based on an adaptation of F. O'Sullivan's BART code.
+
+
+Regarding file ./src/lerchphi.c, this program is copyright by
+
+Sergej V. Aksenov (http://www.geocities.com/saksenov) and 
+Ulrich D. Jentschura (jentschura@physik.tu-dresden.de), 2002.
+Version 1.00 (May 1, 2002)
+
+
+R function pgamma.deriv() operates by a wrapper function to a
+Fortran subroutine written by R. J. Moore. The subroutine was
+modified to run using double precision. The original code came
+from http://lib.stat.cmu.edu/apstat/187.
+
+
+R functions expint(x), expexpint(x), expint.E1(x)
+operate by wrapper functions to code downloaded from
+http://www.netlib.org/specfun/ei
+
+
+My understanding is that the dataset files VGAM/data/* and
+VGAMdata/data/* are not copyright.
+
+
+All other files are copyright (C) 1998-2015 T. W. Yee.
+
+
+Licence
+=======
+
+    This is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 or 3 of the License
+    (at your option).
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+Files share/licenses/GPL-2 and share/licenses/GPL-3 in the R
+(source or binary) distribution are copies of versions 2 and 3
+of the 'GNU General Public License'.
+These can also be viewed at https://www.r-project.org/Licenses/
+
+t.yee@auckland.ac.nz
+

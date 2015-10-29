@@ -7,6 +7,13 @@
 
 
 
+coef.vlm <- function(object, ...) {
+
+  coefvlm(object, ...)
+}
+
+
+
 coefvlm <- function(object, matrix.out = FALSE, label = TRUE,
                     colon = FALSE) {
 
@@ -77,6 +84,8 @@ setMethod("coefficients", "vglm", function(object, ...)
            coefvlm(object, ...))
 setMethod("coef", "vglm", function(object, ...)
            coefvlm(object, ...))
+
+
 
 
 

@@ -66,7 +66,7 @@ nbcanlink(theta, size = NULL, wrt.eta = NULL, bvalue = NULL,
   when \code{inverse = FALSE}, and if \code{inverse = TRUE} then
   \code{kmatrix / expm1(-theta)}.
   For \code{deriv = 1}, then the function returns
-  \emph{d} \code{theta} / \emph{d} \code{eta} as a function of \code{theta}
+  \emph{d} \code{eta} / \emph{d} \code{theta} as a function of \code{theta}
   if \code{inverse = FALSE},
   else if \code{inverse = TRUE} then it returns the reciprocal.
 
@@ -91,7 +91,8 @@ nbcanlink(theta, size = NULL, wrt.eta = NULL, bvalue = NULL,
 
 \section{Warning}{
   This function currently does not work very well with \code{\link{negbinomial}}!
-  The NB-C model is sensitive to the initial values and may converge to a local solution.
+  The NB-C model is sensitive to the initial values and may converge to a
+  local solution.
   Pages 210 and 309 of Hilbe (2011) notes convergence difficulties (of
   Newton-Raphson type algorithms), and this applies here.
   This function should work okay with \code{\link{negbinomial.size}}.
@@ -147,7 +148,7 @@ plot(nbcanlink(mymu, size = kmatrix) ~ mymu, las = 1,
 set.seed(123)
 ndata <- data.frame(x2 = runif(nn <- 1000 ))
 size1 <- exp(1); size2 <- exp(2)
-ndata <- transform(ndata, eta1 = -1 - 2 * x2,  # eta1 < 0
+ndata <- transform(ndata, eta1 = -1 - 1 * x2,  # eta1 < 0
                           size1 = size1,
                           size2 = size2)
 ndata <- transform(ndata,
@@ -158,8 +159,10 @@ ndata <- transform(ndata, y1 = rnbinom(nn, mu = mu1, size = size1),
 head(ndata)
 summary(ndata)
 
-fit <- vglm(cbind(y1, y2) ~ x2, negbinomial("nbcanlink", imethod = 3),
-            stepsize = 0.5, data = ndata,  # Deliberately slow the convergence rate
+fit <- vglm(cbind(y1, y2) ~ x2,
+#           negbinomial("nbcanlink", imethod = 1, max.chunk.MB = 9),
+            negbinomial("nbcanlink", imethod = 2),
+            stepsize = 0.25, data = ndata,  # Deliberately slow the convergence rate
             maxit = 100, trace = TRUE)  # Warning: may converge to a local soln
 coef(fit, matrix = TRUE)
 summary(fit)
@@ -172,3 +175,9 @@ summary(fit)
 % The variance-covariance matrix may be wrong when the
 % canonical link is used.
 % vcov(fit)  # May be wrong
+
+
+
+% 20150714; yettodo: fix up this and getting it going.
+% Hint: the working weights are treated as diagonal, whereas it isn't!
+

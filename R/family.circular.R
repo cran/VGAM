@@ -215,7 +215,7 @@ cardioid.control <- function(save.weights = TRUE, ...) {
             "pi + (rho/pi) *",
             "((2*pi-mu)*sin(2*pi-mu)+cos(2*pi-mu)-mu*sin(mu)-cos(mu))"),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x, .zero, M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
   }), list( .zero = zero ))),
   initialize = eval(substitute(expression({
 
@@ -381,7 +381,7 @@ cardioid.control <- function(save.weights = TRUE, ...) {
             "\n", "\n",
             "Mean:     location"),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x, .zero, M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
   }), list( .zero = zero ))),
   infos = eval(substitute(function(...) {
     list(M1 = 2,

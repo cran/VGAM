@@ -566,7 +566,7 @@ rsc.t2 <- function(n, location = 0, scale = 1) {
             "Mean:     location\n",
             "Variance: infinite"),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x, .zero, M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
   }), list( .zero = zero ))),
   initialize = eval(substitute(expression({
 

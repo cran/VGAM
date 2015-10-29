@@ -19,11 +19,10 @@
   function(theta,
            link = "identitylink",
            earg = list(theta = theta,  # Needed
-                       inverse = FALSE,
+                       inverse = TRUE,  # 20150711: big change!!!!
                        deriv = 1,
                        short = TRUE,
                        tag = FALSE)) {
-
 
   function.name  <- link
 
@@ -33,6 +32,10 @@
   }
 
   earg[["theta"]] <- theta  # New data
+
+  if (length(earg$inverse))
+    earg[["inverse"]] <- TRUE else
+    earg$inverse <- TRUE
 
   earg[["deriv"]] <- 1  # New
 
@@ -48,7 +51,7 @@
   function(theta,
            link = "identitylink",
            earg = list(theta = theta,  # Needed
-                       inverse = FALSE,
+                       inverse = TRUE,  # 20150711: big change!!!!
                        deriv = 2,
                        short = TRUE,
                        tag = FALSE)) {
@@ -61,6 +64,11 @@
     warning("apparent conflict in name of link function in D2theta.deta2")
 
   earg[["theta"]] <- theta  # New data
+
+
+  if (length(earg$inverse))
+    earg[["inverse"]] <- TRUE else
+    earg$inverse <- TRUE
 
   earg[["deriv"]] <- 2  # New
 

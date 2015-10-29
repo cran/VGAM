@@ -104,20 +104,21 @@ golf(theta, lambda = 1, cutpoint = NULL,
 
 }
 \examples{
+\dontrun{
 golf("p", lambda = 1, short = FALSE)
 golf("p", lambda = 1, tag = TRUE)
 
 p <- seq(0.02, 0.98, len = 201)
 y <- golf(p, lambda = 1)
-y. <- golf(p, lambda = 1, deriv = 1)
-max(abs(golf(y, lambda = 1, inv = TRUE) - p))  # Should be 0
+y. <- golf(p, lambda = 1, deriv = 1, inverse = TRUE)
+max(abs(golf(y, lambda = 1, inverse = TRUE) - p))  # Should be 0
 
-\dontrun{par(mfrow = c(2, 1), las = 1)
-plot(p, y, type = "l", col = "blue", main = "golf()")
-abline(h = 0, v = 0.5, col = "orange", lty = "dashed")
-plot(p, y., type = "l", col = "blue",
-     main = "(Reciprocal of) first GOLF derivative")
-}
+#\ dontrun{par(mfrow = c(2, 1), las = 1)
+#plot(p, y, type = "l", col = "blue", main = "golf()")
+#abline(h = 0, v = 0.5, col = "orange", lty = "dashed")
+#plot(p, y., type = "l", col = "blue",
+#     main = "(Reciprocal of) first GOLF derivative")
+#}
 
 # Another example
 gdata <- data.frame(x2 = sort(runif(nn <- 1000)))
@@ -129,8 +130,8 @@ gdata <- transform(gdata,
 cutpoints <- c(-Inf, 10, 20, Inf)
 gdata <- transform(gdata, cuty = Cut(y1, breaks = cutpoints))
 
-\dontrun{ par(mfrow = c(1, 1), las = 1)
-with(gdata, plot(x2, x3, col = cuty, pch = as.character(cuty))) }
+#\ dontrun{ par(mfrow = c(1, 1), las = 1)
+#with(gdata, plot(x2, x3, col = cuty, pch = as.character(cuty))) }
 with(gdata, table(cuty) / sum(table(cuty)))
 fit <- vglm(cuty ~ x2 + x3, cumulative(multiple.responses = TRUE,
            reverse = TRUE, parallel = FALSE ~ -1,
@@ -143,6 +144,7 @@ coef(fit)
 coef(fit, matrix = TRUE)
 constraints(fit)
 fit@misc
+}
 }
 \keyword{math}
 \keyword{models}

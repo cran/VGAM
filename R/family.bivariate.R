@@ -1021,7 +1021,7 @@ bilogistic.control <- function(save.weights = TRUE, ...) {
             "\n", "\n",
             "Means:     location1, location2"),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x, .zero, M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
   }), list( .zero = zero))),
   initialize = eval(substitute(expression({
 
@@ -1306,7 +1306,7 @@ rbilogis <- function(n, loc1 = 0, scale1 = 1, loc2 = 0, scale2 = 1) {
                            bool = .independent ,
                            constraints = constraints,
                            apply.int = TRUE)
-    constraints <- cm.zero.VGAM(constraints, x, .zero, M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
   }), list(.independent = independent, .zero = zero))),
   initialize = eval(substitute(expression({
 
@@ -3150,8 +3150,6 @@ rbinorm <- function(n, mean1 = 0, mean2 = 0,
 
   trivial1 <- is.logical(eq.mean) && length(eq.mean) == 1 && !eq.mean
   trivial2 <- is.logical(eq.sd  ) && length(eq.sd  ) == 1 && !eq.sd
-  if (!trivial1 && !trivial2)
-    stop("only one of 'eq.mean' and 'eq.sd' can be assigned a value")
 
   if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
@@ -3167,17 +3165,45 @@ rbinorm <- function(n, mean1 = 0, mean2 = 0,
             namesof("sd2",   lsd2,   earg = esd2   ), ", ",
             namesof("rho",   lrho,   earg = erho   )),
   constraints = eval(substitute(expression({
-    temp8.m <- diag(5)[, -2]
-    temp8.m[2, 1] <- 1
-    temp8.s <- diag(5)[, -4]
-    temp8.s[4, 3] <- 1
-    constraints <- cm.VGAM(temp8.m, x = x,
-                           bool = .eq.mean ,
-                           constraints = constraints, apply.int = TRUE)
-    constraints <- cm.VGAM(temp8.s, x = x,
-                           bool = .eq.sd ,
-                           constraints = constraints, apply.int = TRUE)
-    constraints <- cm.zero.VGAM(constraints, x, .zero, M)
+
+
+    constraints.orig <- constraints
+    M1 <- 5
+    NOS <- M / M1
+
+    cm1.m <-
+    cmk.m <- kronecker(diag(NOS), rbind(diag(2), matrix(0, 3, 2)))
+    con.m <- cm.VGAM(kronecker(diag(NOS), rbind(1, 1, 0, 0, 0)),
+                     x = x,
+                     bool = .eq.mean ,  #
+                     constraints = constraints.orig,
+                     apply.int = TRUE, 
+                     cm.default           = cmk.m,
+                     cm.intercept.default = cm1.m)
+
+
+    cm1.s <-
+    cmk.s <- kronecker(diag(NOS),
+                       rbind(matrix(0, 2, 2), diag(2), matrix(0, 1, 2)))
+    con.s <- cm.VGAM(kronecker(diag(NOS), rbind(0, 0, 1, 1, 0)),
+                     x = x,
+                     bool = .eq.sd ,  #
+                     constraints = constraints.orig,
+                     apply.int = TRUE,
+                     cm.default           = cmk.s,
+                     cm.intercept.default = cm1.s)
+
+
+    con.use <- con.m
+    for (klocal in 1:length(con.m)) {
+      con.use[[klocal]] <-
+        cbind(con.m[[klocal]],
+              con.s[[klocal]],
+              kronecker(matrix(1, NOS, 1), diag(5)[, 5]))
+
+    }
+
+    constraints <- cm.zero.VGAM(con.use    , x = x, .zero , M = M)
   }), list( .zero = zero,
             .eq.sd   = eq.sd,
             .eq.mean = eq.mean ))),
@@ -3186,20 +3212,22 @@ rbinorm <- function(n, mean1 = 0, mean2 = 0,
     list(M1 = 5,
          Q1 = 2,
          eq.mean = .eq.mean ,
-         eq.sd   = .eq.sd   )
+         eq.sd   = .eq.sd   ,
+         zero    = .zero )
     }, list( .zero    = zero,
              .eq.mean = eq.mean,
              .eq.sd   = eq.sd    ))),
 
   initialize = eval(substitute(expression({
+    Q1 <- 2
 
     temp5 <-
     w.y.check(w = w, y = y,
               ncol.w.max = 1,
-              ncol.y.max = 2,
-              ncol.y.min = 2,
+              ncol.y.max = Q1,
+              ncol.y.min = Q1,
               out.wy = TRUE,
-              colsyperw = 2,
+              colsyperw = Q1,
               maximize = TRUE)
     w <- temp5$w
     y <- temp5$y

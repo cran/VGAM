@@ -160,14 +160,14 @@ cumulative(link = "logit", parallel = FALSE, reverse = FALSE,
 }
 \references{
 
-Agresti, A. (2002)
+Agresti, A. (2013)
 \emph{Categorical Data Analysis},
-2nd ed. New York: Wiley.
+3rd ed. Hoboken, NJ, USA: Wiley.
 
 
 Agresti, A. (2010)
 \emph{Analysis of Ordinal Categorical Data},
-2nd ed. New York: Wiley.
+2nd ed. Hoboken, NJ, USA: Wiley.
 
 
 Dobson, A. J. and Barnett, A. (2008)

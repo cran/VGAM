@@ -3,8 +3,22 @@
 %
 %
 %
+% 201509, for a bug in car::linearHypothesis() and car:::Anova():
+\alias{as.char.expression}
+\alias{coef.vlm}
+\alias{vcov.vlm}
+\alias{model.matrix.vlm}
+%\alias{has.intercept}
+%\alias{has.interceptvlm}
+%\alias{term.names}
+%\alias{term.namesvlm}
+\alias{responseName}
+\alias{responseNamevlm}
 %
-% 201503, 201504, 201505;
+% 201503, 201504, 201505, 201508;
+%\alias{confintvglm}
+\alias{qlms.bcn}
+\alias{dlms.bcn}
 \alias{dbetaII}
 \alias{AR1.control}
 \alias{param.names}
@@ -23,6 +37,7 @@
 \alias{expected.betabin.ab}
 % 201406;
 \alias{interleave.VGAM}
+\alias{interleave.cmat}  % 201506;
 \alias{marcumQ}
 \alias{QR.Q}
 \alias{QR.R}
@@ -53,7 +68,7 @@
 %\alias{biclaytoncop}
 %
 % 201307;
-\alias{posnormal.control}
+%\alias{posnormal.control}
 \alias{rec.normal.control}
 \alias{rec.exp1.control}
 %\alias{kendall.tau}
@@ -136,9 +151,8 @@
 \alias{coef}
 \alias{logLik}
 \alias{plot}
-\alias{show.summary.vglm}
-\alias{vcov}
-\alias{vcovvlm}
+%\alias{vcov}      % 20150828
+%\alias{vcovvlm}      % 20150828
 \alias{VGAMenv}
 \alias{nobs}
 \alias{show.Coef.rrvgam}
@@ -152,7 +166,7 @@
 \alias{show.summary.rrvglm}
 %\alias{show.summary.uqo}
 \alias{show.summary.vgam}
-\alias{show.summary.vglm}
+% \alias{show.summary.vglm} % 20150831
 \alias{show.summary.vlm}
 %\alias{show.uqo}
 \alias{show.vanova}
@@ -387,7 +401,6 @@
 \alias{case.namesvlm}
 %
 \alias{formula}
-\alias{formulavlm}
 \alias{formulaNA.VGAM}
 \alias{gammaff}
 % \alias{get.arg}
@@ -579,10 +592,11 @@
 \alias{summary.rrvglm}
 %\alias{summary.uqo}
 \alias{summaryvgam}
-\alias{summaryvglm}
+%\alias{summaryvglm}  % 20150831
 \alias{summaryvlm}
 % \alias{tapplymat1}
 \alias{terms.vlm}
+\alias{termsvlm}
 \alias{theta2eta}
 % \alias{trivial.constraints}
 % \alias{update.vgam}
@@ -602,7 +616,7 @@
 \alias{vcontrol.expression}
 % \alias{vcovdefault}
 % \alias{vcovqrrvglm}
-\alias{vcovrrvglm}
+%\alias{vcovrrvglm}   % 20150828
 % \alias{vcovvlm}
 % \alias{veigen}
 % \alias{vellipse}

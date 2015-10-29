@@ -12,6 +12,7 @@
 
 
 
+
 dkumar <- function(x, shape1, shape2, log = FALSE) {
   if (!is.logical(log.arg <- log) || length(log) != 1)
     stop("bad input for argument 'log'")
@@ -375,6 +376,7 @@ riceff.control <- function(save.weights = TRUE, ...) {
 }
 
 
+
  riceff <- function(lsigma = "loge", lvee = "loge",
                     isigma = NULL, ivee = NULL,
                     nsimEIM = 100, zero = NULL, nowarning = FALSE) {
@@ -413,7 +415,7 @@ riceff.control <- function(save.weights = TRUE, ...) {
             "besselI(-z/2, nu = 0) - z * besselI(-z/2, nu = 1)) ",
             "where z=-vee^2/(2*sigma^2)"),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
   }), list( .zero = zero ))),
   initialize = eval(substitute(expression({
 
@@ -669,7 +671,7 @@ skellam.control <- function(save.weights = TRUE, ...) {
                            bool = .parallel , 
                            constraints = constraints,
                            apply.int = TRUE)
-    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
   }), list( .parallel = parallel, .zero = zero ))),
   initialize = eval(substitute(expression({
 
@@ -1272,15 +1274,15 @@ rlind <- function(n, theta) {
 
     dl.dtheta <- 2 / theta - 1 / (1 + theta) - y
 
-    dtheta.deta <- dtheta.deta(theta, .link , earg = .earg )
+    DTHETA.DETA <- dtheta.deta(theta, .link , earg = .earg )
 
-    c(w) * dl.dtheta * dtheta.deta
+    c(w) * dl.dtheta * DTHETA.DETA
   }), list( .link = link, .earg = earg ))),
   weight = eval(substitute(expression({
 
     ned2l.dtheta2 <- (theta^2 + 4 * theta + 2) / (theta * (1 + theta))^2
 
-    c(w) * ned2l.dtheta2 * dtheta.deta^2
+    c(w) * ned2l.dtheta2 * DTHETA.DETA^2
   }), list( .zero = zero ))))
 }
 
@@ -1467,9 +1469,9 @@ if (FALSE)
 
     dl.dtheta <- 2 / theta + 1 / (y + 2 + theta) - (y + 3) / (theta + 1)
 
-    dtheta.deta <- dtheta.deta(theta, .link , earg = .earg )
+    DTHETA.DETA <- dtheta.deta(theta, .link , earg = .earg )
 
-    c(w) * dl.dtheta * dtheta.deta
+    c(w) * dl.dtheta * DTHETA.DETA
   }), list( .link = link, .earg = earg ))),
   weight = eval(substitute(expression({
 
@@ -1486,7 +1488,7 @@ if (FALSE)
         matrix(colMeans(cbind(run.var)),
                n, M, byrow = TRUE) else cbind(run.var)
 
-    wz <- wz * dtheta.deta^2
+    wz <- wz * DTHETA.DETA^2
 
 
     c(w) * wz
@@ -1650,7 +1652,7 @@ slash.control <- function(save.weights = TRUE, ...) {
          "\n1/(2*sigma*sqrt(2*pi))",
          "\t\t\t\t\t\t\ty=mu\n")),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
   }), list( .zero = zero ))),
   initialize = eval(substitute(expression({
 

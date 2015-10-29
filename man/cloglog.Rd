@@ -40,11 +40,11 @@ cloglog(theta, bvalue = NULL, inverse = FALSE, deriv = 0,
 \value{
   For \code{deriv = 0}, the complimentary log-log of \code{theta},
   i.e., \code{log(-log(1 - theta))} when \code{inverse = FALSE}, and if
-  \code{inverse = TRUE} then \code{1-exp(-exp(theta))},.
+  \code{inverse = TRUE} then \code{1-exp(-exp(theta))}.
 
 
   For \code{deriv = 1}, then the function returns
-  \emph{d} \code{theta} / \emph{d} \code{eta} as a function of \code{theta}
+  \emph{d} \code{eta} / \emph{d} \code{theta} as a function of \code{theta}
   if \code{inverse = FALSE},
   else if \code{inverse = TRUE} then it returns the reciprocal.
 
@@ -56,6 +56,7 @@ cloglog(theta, bvalue = NULL, inverse = FALSE, deriv = 0,
 \references{
     McCullagh, P. and Nelder, J. A. (1989)
     \emph{Generalized Linear Models}, 2nd ed. London: Chapman & Hall.
+    
     
 }
 \author{ Thomas W. Yee }

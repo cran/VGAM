@@ -74,9 +74,9 @@ brat(refgp = "last", refvalue = 1, ialpha = 1)
 
 }
 \references{ 
-Agresti, A. (2002)
+Agresti, A. (2013)
 \emph{Categorical Data Analysis},
-2nd ed. New York: Wiley.
+3rd ed. Hoboken, NJ, USA: Wiley.
 
 
 Stigler, S. (1994)

@@ -69,7 +69,7 @@ the covariates.
 For a complete list of this package, use \code{library(help = "VGAM")}.
 New \pkg{VGAM} family functions are continually being written and
 added to the package.
-A monograph about VGLM and VGAMs etc. is currently in the making.
+A monograph about VGLM and VGAMs etc. appeared in October 2015.
 
 
 
@@ -118,7 +118,8 @@ Maintainer: Thomas Yee \email{t.yee@auckland.ac.nz}.
 Yee, T. W. (2015)
 Vector Generalized Linear and Additive Models:
 With an Implementation in R.
-\emph{Springer} (to appear).
+New York, USA: \emph{Springer}.
+
 
 
 Yee, T. W. and Hastie, T. J. (2003)
@@ -170,8 +171,8 @@ The \pkg{VGAM} package for categorical data analysis.
 
 
 
-My website for the \pkg{VGAM} package is at
-\url{https://www.stat.auckland.ac.nz/~yee/VGAM}
+My website for the \pkg{VGAM} package and book is at
+\url{https://www.stat.auckland.ac.nz/~yee}
 and I hope to put more resources there in the future,
 especially as relating to my book.
 

@@ -70,8 +70,8 @@ N.hat.posbernoulli <-
 
 
   if (length(extra$p.small) &&
-     any(pibbeta < extra$p.small) &&
-     !extra$no.warning)
+      any(pibbeta < extra$p.small) &&
+      !extra$no.warning)
     warning("The abundance estimation for this model can be unstable")
 
 
@@ -85,7 +85,8 @@ N.hat.posbernoulli <-
     for (jay in 1:tau) {
       linpred.index <- jay.index[jay]
       Index0 <- Hmatrices[linpred.index, ] != 0
-      X.lm.jay <- X.vlm[(0:(n.lm - 1)) * M + linpred.index, Index0,
+      X.lm.jay <- X.vlm[(0:(n.lm - 1)) * M + linpred.index,
+                        Index0,
                         drop = FALSE]
 
       dvect[, Index0] <-
@@ -1257,7 +1258,7 @@ dposbinom <- function(x, size, prob, log = FALSE) {
   list( .link = link, .earg = earg,
         .multiple.responses = multiple.responses ))),
   last = eval(substitute(expression({
-    extra$w   <- NULL # Kill it off 
+    extra$w <- NULL  # Kill it off 
 
 
     misc$link <- rep( .link , length = M)
@@ -1278,17 +1279,17 @@ dposbinom <- function(x, size, prob, log = FALSE) {
 
 
 
-if (length(extra$tau)) {
-    R <- tfit$qr$qr[1:ncol.X.vlm, 1:ncol.X.vlm, drop = FALSE]
-    R[lower.tri(R)] <- 0
-    tmp6 <- N.hat.posbernoulli(eta = eta, link = .link , earg = .earg ,
-                               R = R, w = w,
-                               X.vlm = X.vlm.save,
-                               Hlist = Hlist,  # 20150428; bug fixed here
-                               extra = extra, model.type = "0")
-    extra$N.hat    <- tmp6$N.hat
-    extra$SE.N.hat <- tmp6$SE.N.hat
-}
+    if (length(extra$tau)) {
+      R <- tfit$qr$qr[1:ncol.X.vlm, 1:ncol.X.vlm, drop = FALSE]
+      R[lower.tri(R)] <- 0
+      tmp6 <- N.hat.posbernoulli(eta = eta, link = .link , earg = .earg ,
+                                 R = R, w = w,
+                                 X.vlm = X.vlm.save,
+                                 Hlist = Hlist,  # 20150428; bug fixed here
+                                 extra = extra, model.type = "0")
+      extra$N.hat    <- tmp6$N.hat
+      extra$SE.N.hat <- tmp6$SE.N.hat
+    }
 
     
   }), list( .link = link, .earg = earg,

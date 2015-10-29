@@ -147,7 +147,8 @@ rdata <- transform(rdata, y = pmin(U, ystar))
 \dontrun{ par(mfrow = c(1, 2))
 hist(with(rdata, ystar)); hist(with(rdata, y)) }
 extra <- with(rdata, list(rightcensored = ystar > U))
-fit <- vglm(y ~ 1, cens.rayleigh, data = rdata, trace = TRUE, extra = extra)
+fit <- vglm(y ~ 1, cens.rayleigh, data = rdata, trace = TRUE,
+            extra = extra, crit = "coef")
 table(fit@extra$rightcen)
 coef(fit, matrix = TRUE)
 head(fitted(fit))

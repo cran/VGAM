@@ -2326,13 +2326,15 @@ zanegbinomialff.control <- function(save.weights = TRUE, ...) {
             namesof("prob" , lprob , earg = eprob ), "\n",
             "Mean:     (1 - pstr0) * prob"),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
   }), list( .zero = zero ))),
 
 
   infos = eval(substitute(function(...) {
     list(M1 = 2,
          type.fitted  = .type.fitted ,
+         expected = TRUE,
+         multiple.responses  = FALSE,
          zero = .zero )
   }, list( .zero = zero,
            .type.fitted = type.fitted
@@ -2537,6 +2539,7 @@ zanegbinomialff.control <- function(save.weights = TRUE, ...) {
 
 
 
+
     ned2l.dmubin2 <- (w * (1 - phi) / (mubin * (1 - mubin)^2)) *
                      (1 - mubin - w * mubin *
                      (1 - mubin)^w * phi / pobs0)
@@ -2607,7 +2610,7 @@ zanegbinomialff.control <- function(save.weights = TRUE, ...) {
             namesof("onempstr0", lonempstr0, earg = eonempstr0), "\n",
             "Mean:     onempstr0 * prob"),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
   }), list( .zero = zero ))),
 
 
@@ -4599,6 +4602,7 @@ rzigeom <- function(n, prob, pstr0 = 0) {
            zero = NULL) {
 
 
+
   expected <- TRUE
 
 
@@ -4859,7 +4863,7 @@ rzigeom <- function(n, prob, pstr0 = 0) {
     prob   <- eta2theta(eta[, c(FALSE, TRUE)], .lprob  , earg = .eprob  )
 
 
-    prob0 <- prob  # P(Y == 0) from parent distribution
+    prob0 <- prob  # P(Y == 0) from parent distribution, aka f(0)
     pobs0 <- pstr0 + (1 - pstr0) * prob0  # P(Y == 0)
     index0 <- (y == 0)
 
@@ -4882,8 +4886,13 @@ rzigeom <- function(n, prob, pstr0 = 0) {
             .eprob = eprob, .epstr0 = epstr0 ))),
   weight = eval(substitute(expression({
     if ( .expected ) {
-      ned2l.dprob2 <- (1 - pstr0) * (1 / (prob^2 * (1 - prob)) +
-                                    (1 - pstr0) / pobs0)
+
+
+      ned2l.dprob2 <- (1 - pstr0)^2 / pobs0 +
+                      (1 - pstr0) * ((1 - prob) / prob) *
+                                    (1 / prob + 1 / (1 - prob)^2)
+
+
       ned2l.dpstr0.prob <- 1 / pobs0
       ned2l.dpstr02 <- (1 - prob0) / ((1 - pstr0) * pobs0)
     } else {
@@ -5223,8 +5232,12 @@ rzigeom <- function(n, prob, pstr0 = 0) {
             .eprob = eprob, .eonempstr0 = eonempstr0 ))),
   weight = eval(substitute(expression({
     if ( .expected ) {
-      ned2l.dprob2 <- (    onempstr0) * (1 / (prob^2 * (1 - prob)) +
-                                    ( onempstr0) / pobs0)
+
+      ned2l.dprob2 <- (onempstr0)^2 / pobs0 +
+                      (onempstr0) * ((1 - prob) / prob) *
+                                    (1 / prob + 1 / (1 - prob)^2)
+
+
       ned2l.donempstr0.prob <- -1 / pobs0
       ned2l.donempstr02 <- (1 - prob0) / ((    onempstr0) * pobs0)
     } else {
@@ -5496,7 +5509,7 @@ rzabinom <- function(n, size, prob, pobs0 = 0) {
             namesof("prob" ,   lprob,  earg = eprob),  "\n",
             "Mean:     (1 - pobs0) * prob / (1 - (1 - prob)^size)"),
   constraints = eval(substitute(expression({
-      constraints <- cm.zero.VGAM(constraints, x, .zero , M)
+      constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
   }), list( .zero = zero ))),
 
   infos = eval(substitute(function(...) {
@@ -5800,7 +5813,7 @@ rzabinom <- function(n, size, prob, pobs0 = 0) {
             namesof("onempobs0", lonempobs0, earg = eonempobs0), "\n",
             "Mean:     onempobs0 * prob / (1 - (1 - prob)^size)"),
   constraints = eval(substitute(expression({
-      constraints <- cm.zero.VGAM(constraints, x, .zero , M)
+      constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
   }), list( .zero = zero ))),
 
   infos = eval(substitute(function(...) {

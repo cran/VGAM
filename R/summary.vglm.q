@@ -25,7 +25,8 @@ summaryvglm <-
   function(object, correlation = FALSE,
            dispersion = NULL, digits = NULL,
            presid = TRUE,
-           signif.stars = getOption("show.signif.stars")
+           signif.stars = getOption("show.signif.stars"),
+           nopredictors = FALSE
           ) {
 
 
@@ -88,6 +89,7 @@ summaryvglm <-
 
 
   answer@misc$signif.stars <- signif.stars  # 20140728
+  answer@misc$nopredictors <- nopredictors  # 20150831
 
 
   if (is.numeric(stuff@dispersion))
@@ -113,7 +115,8 @@ show.summary.vglm <-
            prefix = "",
            presid = TRUE,
            signif.stars = NULL,  # Use this if logical; 20140728
-           nopredictors = FALSE) {
+           nopredictors = NULL   # Use this if logical; 20150831
+           ) {
 
   M <- x@misc$M
   coef <- x@coef3  # icients
@@ -151,6 +154,14 @@ show.summary.vglm <-
     use.signif.stars <- getOption("show.signif.stars")
 
 
+  use.nopredictors <- if (is.logical(nopredictors))
+    nopredictors else x@misc$nopredictors  # 20140728
+  if (!is.logical(use.nopredictors)) {
+    warning("cannot determine 'nopredictors'; choosing FALSE")
+    use.nopredictors <- FALSE
+  }
+
+
   cat("\nCoefficients:\n")
   printCoefmat(coef, digits = digits,
                signif.stars = use.signif.stars,
@@ -160,7 +171,7 @@ show.summary.vglm <-
 
   cat("\nNumber of linear predictors: ", M, "\n")
 
-  if (!is.null(x@misc$predictors.names) && !nopredictors) {
+  if (!is.null(x@misc$predictors.names) && !use.nopredictors) {
     if (M == 1) {
       cat("\nName of linear predictor:",
           paste(x@misc$predictors.names, collapse = ", "), "\n") 
@@ -267,6 +278,15 @@ vcovdefault <- function(object, ...) {
 
 
 
+
+
+
+vcov.vlm <- function(object, ...) {
+
+  vcovvlm(object, ...)
+}
+
+
  vcovvlm <-
 function(object, dispersion = NULL, untransform = FALSE) {
 
@@ -357,13 +377,16 @@ function(object, dispersion = NULL, untransform = FALSE) {
 
 
     if (new.way) {
-      use.earg[["inverse"]] <- TRUE # New
-      use.earg[["theta"]] <- TTheta # New
+      use.earg[["inverse"]] <- TRUE  # New
+      use.earg[["theta"]] <- TTheta  # New
       Theta <- do.call(function.name, use.earg)
 
-      use.earg[["inverse"]] <- FALSE # Reset this
-      use.earg[["deriv"]] <- 1 # New
-      use.earg[["theta"]] <- Theta # Renew this
+
+      use.earg[["inverse"]] <- TRUE  # Reset this
+
+
+      use.earg[["deriv"]] <- 1  # New
+      use.earg[["theta"]] <- Theta  # Renew this
       tvector[ii] <- do.call(function.name, use.earg)
     } else {
       stop("link functions handled in the new way now")

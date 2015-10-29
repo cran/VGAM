@@ -12,7 +12,7 @@ AR1(ldrift = "identitylink", lsd  = "loge", lvar = "loge",
     lrho = "rhobit", idrift  = NULL,
     isd  = NULL, ivar = NULL, irho = NULL,
     ishrinkage = 0.9, type.likelihood = c("exact", "conditional"),
-    var.arg = FALSE, almost1 = 0.99, zero = c(-2, -3))
+    var.arg = FALSE, nodrift = FALSE, almost1 = 0.99, zero = c(-2, -3))
 }
 
 %     deviance.arg = FALSE,
@@ -48,6 +48,13 @@ AR1(ldrift = "identitylink", lsd  = "loge", lvar = "loge",
   }
   \item{var.arg}{
   Same meaning as \code{\link{uninormal}}.
+
+
+  }
+  \item{nodrift}{
+  Logical, for determining whether to estimate the drift parameter.
+  The default is to estimate it.
+  If \code{TRUE}, the drift parameter is set to 0 and not estimated.
 
 
   }
@@ -155,7 +162,7 @@ AR1(ldrift = "identitylink", lsd  = "loge", lvar = "loge",
 
 }
 \examples{
-# Example 1: using  arimia.sim() to generate a stationary time series
+# Example 1: using  arima.sim() to generate a stationary time series
 nn <- 100; set.seed(1)
 tsdata <- data.frame(x2 =  runif(nn))
 tsdata  <- transform(tsdata,

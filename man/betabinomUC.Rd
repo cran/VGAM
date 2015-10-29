@@ -19,10 +19,15 @@
 dbetabinom(x, size, prob, rho = 0, log = FALSE)
 pbetabinom(q, size, prob, rho, log.p = FALSE)
 rbetabinom(n, size, prob, rho = 0)
-dbetabinom.ab(x, size, shape1, shape2, log = FALSE, .dontuse.prob = NULL)
+dbetabinom.ab(x, size, shape1, shape2, log = FALSE, Inf.shape = 1e6)
 pbetabinom.ab(q, size, shape1, shape2, log.p = FALSE)
 rbetabinom.ab(n, size, shape1, shape2, .dontuse.prob = NULL)
 }
+
+
+%             Infinity.shape = 1e5 .dontuse.prob = NULL
+
+
 \arguments{
   \item{x, q}{vector of quantiles.}
 % \item{p}{vector of probabilities.}
@@ -60,6 +65,19 @@ rbetabinom.ab(n, size, shape1, shape2, .dontuse.prob = NULL)
 
   }
 
+  \item{Inf.shape}{
+  Numeric. A large value such that,
+  if \code{shape1} or \code{shape2} exceeds this, then
+  it is taken to be \code{Inf}.
+  Also, if \code{shape1} or \code{shape2} is less than its reciprocal,
+  then it might be loosely thought of as being effectively \code{0}
+  (although not treated exactly as so in the code).
+  This feature/approximation is needed to avoid numerical
+  problem with catastrophic cancellation of
+  multiple \code{\link[base:Special]{lbeta}} calls.
+
+
+  }
   \item{.dontuse.prob}{
   An argument that should be ignored and unused.
 

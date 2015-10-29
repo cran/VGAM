@@ -111,9 +111,9 @@ McCullagh, P. and Nelder, J. A. (1989)
 London: Chapman & Hall.
 
 
-Agresti, A. (2002)
+Agresti, A. (2013)
 \emph{Categorical Data Analysis},
-2nd ed. New York, USA: Wiley.
+3rd ed. Hoboken, NJ, USA: Wiley.
 
 
 Hastie, T. J., Tibshirani, R. J. and Friedman, J. H. (2009)

@@ -1,7 +1,7 @@
 \name{SURff}
 \alias{SURff}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{ Seemingly Unrelated Regressions
+\title{ Seemingly Unrelated Regressions Family Function
 %%  ~~function to do ... ~~
 }
 \description{

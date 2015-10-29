@@ -35,7 +35,8 @@ TypicalVGAMfamilyFunction(lsigma = "loge",
                           probs.y = c(0.25, 0.50, 0.75),
                           multiple.responses = FALSE, earg.link = FALSE,
                           whitespace = FALSE, bred = FALSE, lss = TRUE,
-                          oim = FALSE, nsimEIM = 100, zero = NULL)
+                          oim = FALSE, nsimEIM = 100, byrow.arg = FALSE,
+                          zero = NULL)
 }
 \arguments{
 %                         apply.parint = FALSE,
@@ -327,12 +328,16 @@ except for \eqn{X_2}.
   Often this argument is only used if
   the argument \code{imethod} is assigned a certain value.
 
+
+
   }
   \item{nointercept}{
   An integer-valued vector specifying which
   linear/additive predictors have no intercepts.
   Any values must be from the set \{1,2,\ldots,\eqn{M}\}.
   A value of \code{NULL} means no such constraints.
+
+
 
   }
 
@@ -352,6 +357,8 @@ except for \eqn{X_2}.
   \code{weights} argument is of the same dimension as the
   response and contains the number of trials.
 
+
+
   }
   \item{earg.link}{
   Sometimes the link argument can receive \code{earg}-type input,
@@ -359,12 +366,30 @@ except for \eqn{X_2}.
   This argument should be generally ignored.
 
 
+
+  }
+  \item{byrow.arg}{
+  Logical.
+  Some \pkg{VGAM} family functions that handle multiple responses
+  have arguments that allow input to be fed in which affect
+  all the responses,
+  e.g., \code{imu} for initalizing a \code{mu} parameter.
+  In such cases it is sometime more convenient
+  to input one value per response by
+  setting \code{byrow.arg = TRUE}; then values are recycled
+  in order to form a matrix of the appropriate dimension.
+  This argument matches \code{byrow} in \code{\link[base]{matrix}};
+  in fact it is fed into such using \code{matrix(..., byrow = byrow.arg)}.
+  This argument has no effect when there is one response.
+
+
   }
   \item{bred}{
   Logical.
   Some \pkg{VGAM} family functions will allow bias-reduction based
   on the work by Kosmidis and Firth. 
-  Currently none are working yet!
+  Sometimes half-stepping is a good idea; set \code{stepsize = 0.5}
+  and monitor convergence by setting \code{trace = TRUE}.
 
 
 

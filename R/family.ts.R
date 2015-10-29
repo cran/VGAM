@@ -245,7 +245,8 @@ rrar.control <- function(stepsize = 0.5, save.weights = TRUE, ...) {
   }),
   vfamily = "rrar",
   deriv = expression({
-    temp8 <- rrar.Wmat(y.save,Ranks.,MM,ki,plag,aa,uu,nn,new.coeffs)
+    temp8 <- rrar.Wmat(y.save, Ranks., MM, ki, plag,
+                       aa, uu, nn, new.coeffs)
     X.vlm.save <- temp8$UU %*% temp8$Ht 
 
     extra$coeffs <- new.coeffs
@@ -260,7 +261,7 @@ rrar.control <- function(stepsize = 0.5, save.weights = TRUE, ...) {
       resmat <- resmat - y.save[tt - ii, , drop = FALSE] %*%
                          t(Ak1 %*% Di %*% t(Ci))
     }
-    omegahat <- (t(resmat) %*% resmat) / n # MM x MM
+    omegahat <- (t(resmat) %*% resmat) / n  # MM x MM
     omegainv <- solve(omegahat)
 
     omegainv <- solve(omegahat)
@@ -319,7 +320,7 @@ vglm.garma.control <- function(save.weights = TRUE, ...) {
     tt.index <- (1 + plag):nrow(x)
     p.lm <- ncol(x)
 
-    copy.X.vlm <- TRUE   # x matrix changes at each iteration 
+    copy.X.vlm <- TRUE  # x matrix changes at each iteration 
 
     if ( .link == "logit"   || .link == "probit" ||
          .link == "cloglog" || .link == "cauchit") {
@@ -331,9 +332,9 @@ vglm.garma.control <- function(save.weights = TRUE, ...) {
     }
 
 
-    x.save <- x # Save the original
-    y.save <- y # Save the original
-    w.save <- w # Save the original
+    x.save <- x  # Save the original
+    y.save <- y  # Save the original
+    w.save <- w  # Save the original
 
     new.coeffs <- .coefstart  # Needed for iter = 1 of @weight
     new.coeffs <- if (length(new.coeffs))
@@ -538,6 +539,7 @@ setMethod("show", "Coef.rrar",
            ishrinkage = 0.9, 
            type.likelihood = c("exact", "conditional"),
            var.arg = FALSE,  # TRUE,
+           nodrift = FALSE,  # TRUE,
            almost1 = 0.99,
            zero = c(-2, -3)) {
   imethod <- 1
@@ -561,6 +563,10 @@ setMethod("show", "Coef.rrar",
 
 
 
+
+  if (!is.logical(nodrift) ||
+      length(nodrift) != 1)
+    stop("argument 'nodrift' must be a single logical")
 
   if (!is.logical(var.arg) ||
       length(var.arg) != 1)
@@ -591,31 +597,35 @@ setMethod("show", "Coef.rrar",
 
 
   new("vglmff", 
-  blurb = c("Three-parameter autoregressive process of order-1\n\n",
-            "Links:        ",
-            namesof("drift", lsmn, earg = esmn), ", ",
+  blurb = c(ifelse(nodrift, "Two", "Three"),
+            "-parameter autoregressive process of order-1\n\n",
+            "Links:       ",
+            if (nodrift) "" else
+              paste(namesof("drift", lsmn, earg = esmn), ", ", sep = ""),
             namesof(n.sc     , l.sc, earg = e.sc), ", ",
             namesof("ARcoef1", lrho, earg = erho), "\n",
             "Model:       Y_t = drift + rho * Y_{t-1} + error_{t},", "\n",
             "             where 'error_{2:n}' ~ N(0, sigma^2) independently",
+            if (nodrift) ", and drift = 0" else "",
                           "\n",
             "Mean:        drift / (1 - rho)", "\n",
             "Correlation: rho = ARcoef1", "\n",
             "Variance:    sd^2 / (1 - rho^2)"),
   constraints = eval(substitute(expression({
 
-    M1 <- 3
+    M1 <- 3 - .nodrift
     dotzero <- .zero
     eval(negzero.expression.VGAM)
-  }), list( .zero = zero ))),
+  }), list( .zero = zero,
+            .nodrift = nodrift ))),
   infos = eval(substitute(function(...) {
-    list(M1 = 3, 
+    list(M1 = 3 - nodrift, 
          Q1 = 1, 
          expected = TRUE, 
          multipleResponse = TRUE,
          type.likelihood = .type.likelihood ,
-         ldrift = .lsmn ,
-         edrift = .esmn ,
+         ldrift = if ( .nodrift) NULL else .lsmn ,
+         edrift = if ( .nodrift) NULL else .esmn ,
          lvar = .lvar ,
          lsd  = .lsdv ,
          evar = .evar ,
@@ -627,9 +637,10 @@ setMethod("show", "Coef.rrar",
   }, list( .lsmn = lsmn, .lvar = lvar, .lsdv = lsdv, .lrho = lrho,
            .esmn = esmn, .evar = evar, .esdv = esdv, .erho = erho,
            .type.likelihood = type.likelihood,
+           .nodrift = nodrift,
            .almost1 = almost1, .zero = zero))),
   initialize = eval(substitute(expression({
-    extra$M1 <- M1 <- 3
+    extra$M1 <- M1 <- 3 - .nodrift
     check <- w.y.check(w = w, y = y,
                        Is.positive.y = FALSE,
                        ncol.w.max = Inf,
@@ -647,7 +658,8 @@ setMethod("show", "Coef.rrar",
     M <- M1*NOS
     var.names <- param.names("var",     NOS)
     sdv.names <- param.names("sd",      NOS)
-    smn.names <- param.names("drift", NOS)
+    smn.names <- if ( .nodrift ) NULL else
+                 param.names("drift",   NOS)
     rho.names <- param.names("rho",     NOS)
 
     mynames1 <- smn.names
@@ -655,7 +667,8 @@ setMethod("show", "Coef.rrar",
     mynames3 <- rho.names
 
     predictors.names <-
-      c(namesof(smn.names, .lsmn , earg = .esmn , tag = FALSE),
+      c(if ( .nodrift ) NULL else
+        namesof(smn.names, .lsmn , earg = .esmn , tag = FALSE),
         if ( .var.arg ) 
         namesof(var.names, .lvar , earg = .evar , tag = FALSE) else
         namesof(sdv.names, .lsdv , earg = .esdv , tag = FALSE),
@@ -689,7 +702,8 @@ setMethod("show", "Coef.rrar",
       }  
 
       etastart <-
-        cbind(theta2eta(init.smn, .lsmn , earg = .esmn ),
+        cbind(if ( .nodrift ) NULL else
+              theta2eta(init.smn, .lsmn , earg = .esmn ),
               if ( .var.arg ) 
               theta2eta(init.var, .lvar , earg = .evar ) else
               theta2eta(init.sdv, .lsdv , earg = .esdv ),
@@ -701,17 +715,20 @@ setMethod("show", "Coef.rrar",
             .ismn = ismn, .irho = irho, .isdv = isd , .ivar = ivar,
             .type.likelihood = type.likelihood, .ishrinkage = ishrinkage,
             .var.arg = var.arg,
+            .nodrift = nodrift,
             .imethod = imethod ))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
-    M1  <- 3
+    M1  <- 3 - .nodrift
     NOS <- ncol(eta)/M1
-    ar.smn <- eta2theta(eta[, M1*(1:NOS) - 2, drop = FALSE],
-                        .lsmn , earg = .esmn )
+    ar.smn <- if ( .nodrift ) 0 else
+      eta2theta(eta[, M1*(1:NOS) - 2, drop = FALSE],
+                .lsmn , earg = .esmn )
     ar.rho <- eta2theta(eta[, M1*(1:NOS)    , drop = FALSE],
                         .lrho , earg = .erho )
     ar.smn / (1 - ar.rho)
   }, list ( .lsmn = lsmn, .lrho = lrho , .lsdv = lsdv, .lvar = lvar ,
             .var.arg = var.arg, .type.likelihood = type.likelihood,
+            .nodrift = nodrift,
             .esmn = esmn, .erho = erho , .esdv = esdv, .evar = evar ))),
   last = eval(substitute(expression({
     if (any(abs(ar.rho) > 1)) 
@@ -728,10 +745,12 @@ setMethod("show", "Coef.rrar",
     names(misc$link) <-
     names(misc$earg) <- temp.names
     for (ii in 1:ncoly) {
-      misc$link[ M1*ii-2 ] <- .lsmn
+      if ( !( .nodrift ))
+        misc$link[ M1*ii-2 ] <- .lsmn
       misc$link[ M1*ii-1 ] <- if ( .var.arg ) .lvar else .lsdv
       misc$link[ M1*ii   ] <- .lrho
-      misc$earg[[M1*ii-2]] <- .esmn
+      if ( !( .nodrift ))
+        misc$earg[[M1*ii-2]] <- .esmn
       misc$earg[[M1*ii-1]] <- if ( .var.arg ) .evar else .esdv
       misc$earg[[M1*ii  ]] <- .erho
     }
@@ -742,17 +761,19 @@ setMethod("show", "Coef.rrar",
     misc$expected <- TRUE
     misc$imethod <- .imethod
     misc$multipleResponses <- TRUE
+    misc$nodrift <- .nodrift
 
 
   }), list( .lsmn = lsmn, .lrho = lrho, .lsdv = lsdv, .lvar = lvar,
             .esmn = esmn, .erho = erho, .esdv = esdv, .evar = evar,
             .irho = irho, .isdv = isd , .ivar = ivar,
+            .nodrift = nodrift,
             .var.arg = var.arg, .type.likelihood = type.likelihood,
             .imethod = imethod ))),
   loglikelihood = eval(substitute(
     function(mu, y, w, residuals= FALSE, eta, 
              extra = NULL, summation = TRUE) {
-      M1  <- 3
+      M1  <- 3 - .nodrift
       NOS <- ncol(eta)/M1
 
       if ( .var.arg ) {
@@ -763,8 +784,9 @@ setMethod("show", "Coef.rrar",
                             .lsdv , earg = .esdv )
         ar.var <- ar.sdv^2
       }  
-      ar.smn <- eta2theta(eta[, M1*(1:NOS) - 2, drop = FALSE],
-                          .lsmn , earg = .esmn )
+      ar.smn <- if ( .nodrift ) 0 else
+        eta2theta(eta[, M1*(1:NOS) - 2, drop = FALSE],
+                  .lsmn , earg = .esmn )
       ar.rho <- eta2theta(eta[, M1*(1:NOS)    , drop = FALSE],
                           .lrho , earg = .erho )
     
@@ -788,6 +810,7 @@ setMethod("show", "Coef.rrar",
           
     }, list( .lsmn = lsmn, .lrho = lrho , .lsdv = lsdv, .lvar = lvar ,
              .var.arg = var.arg, .type.likelihood = type.likelihood,
+             .nodrift = nodrift,
              .esmn = esmn, .erho = erho , .esdv = esdv, .evar = evar ))),
 
   vfamily = c("AR1"),
@@ -802,7 +825,7 @@ setMethod("show", "Coef.rrar",
         warning("ignoring prior weights")
       eta <- predict(object)
       fva <- fitted(object)      
-      M1  <- 3
+      M1  <- 3 - .nodrift
       NOS <- ncol(eta)/M1
 
       if ( .var.arg ) {
@@ -813,8 +836,9 @@ setMethod("show", "Coef.rrar",
                             .lsdv , earg = .esdv )
         ar.var <- ar.sdv^2
       }  
-      ar.smn <- eta2theta(eta[, M1*(1:NOS) - 2, drop = FALSE],
-                          .lsmn , earg = .esmn )
+      ar.smn <- if ( .nodrift ) matrix(0, n, NOS) else
+        eta2theta(eta[, M1*(1:NOS) - 2, drop = FALSE],
+                  .lsmn , earg = .esmn )
       ar.rho <- eta2theta(eta[, M1*(1:NOS)    , drop = FALSE],
                           .lrho , earg = .erho )
 
@@ -831,13 +855,14 @@ setMethod("show", "Coef.rrar",
     ans
   }, list( .lsmn = lsmn, .lrho = lrho , .lsdv = lsdv, .lvar = lvar ,
            .var.arg = var.arg, .type.likelihood = type.likelihood,
+           .nodrift = nodrift,
            .esmn = esmn, .erho = erho , .esdv = esdv, .evar = evar ))),
 
 
 
 
   deriv = eval(substitute(expression({
-    M1  <- 3
+    M1  <- 3 - .nodrift
     NOS <- ncol(eta)/M1
     ncoly <- ncol(as.matrix(y))
     
@@ -850,8 +875,9 @@ setMethod("show", "Coef.rrar",
       ar.var <- ar.sdv^2
     }  
     
-    ar.smn <- eta2theta(eta[, M1*(1:NOS) - 2, drop = FALSE],
-                        .lsmn , earg = .esmn )
+    ar.smn <- if ( .nodrift ) matrix(0, n, NOS) else
+      eta2theta(eta[, M1*(1:NOS) - 2, drop = FALSE],
+                .lsmn , earg = .esmn )
     ar.rho <- eta2theta(eta[, M1*(1:NOS)    , drop = FALSE],
                         .lrho , earg = .erho )
 
@@ -880,7 +906,8 @@ setMethod("show", "Coef.rrar",
                     ar.rho[1, ] / temp5[1, ]
     if ( .var.arg ) {
       dl.dvar[1, ] <- -0.5 / ar.var[1, ] +
-                       0.5 *  temp5[1, ] * ((y[1, ] - mu[1, ]) / ar.var[1, ])^2
+                       0.5 *  temp5[1, ] *
+                       ((y[1, ] - mu[1, ]) / ar.var[1, ])^2
     } else {
       dl.dsdv[1, ] <- -1 / ar.sdv[1, ] +
                        temp5[1, ] * (y[1, ] - mu[1, ])^2 / (ar.sdv[1, ])^3
@@ -897,7 +924,7 @@ setMethod("show", "Coef.rrar",
       dsdv.deta <- dtheta.deta(ar.sdv, .lsdv , earg = .esdv )
     }
     myderiv <-
-      c(w) * cbind(dl.dsmn * dsmn.deta,
+      c(w) * cbind(if ( .nodrift ) NULL else dl.dsmn * dsmn.deta,
                    if ( .var.arg ) dl.dvar * dvar.deta else
                                    dl.dsdv * dsdv.deta,
                    dl.drho * drho.deta)
@@ -905,24 +932,29 @@ setMethod("show", "Coef.rrar",
     myderiv[, interleave.VGAM(M, M = M1)]
   }), list( .lsmn = lsmn, .lrho = lrho, .lsdv = lsdv, .lvar = lvar,
             .esmn = esmn, .erho = erho, .esdv = esdv, .evar = evar,
+            .nodrift = nodrift,
             .var.arg = var.arg, .type.likelihood = type.likelihood ))),
   weight = eval(substitute(expression({
     if ( .var.arg ) {
       ned2l.dvar    <- 0.5 / ar.var^2
       ned2l.drhovar <-  matrix(0, n, ncoly)
-      ned2l.drhovar[1, ] <- .almost1 * ar.rho[1, ] / (ar.var[1, ] * temp5[1, ])
+      ned2l.drhovar[1, ] <- .almost1 * ar.rho[1, ] / (ar.var[1, ] *
+                                                      temp5[1, ])
     } else {
       ned2l.dsdv    <- 2 / ar.var
       ned2l.drhosdv <-  matrix(0, n, ncoly)
       ned2l.drhosdv[1, ] <- 2 *
-                            .almost1 * ar.rho[1, ] / (ar.sdv[1, ] * temp5[1, ])
+                            .almost1 * ar.rho[1, ] / (ar.sdv[1, ] *
+                                                      temp5[1, ])
     }
     
-    ned2l.dsmn <- 1 / ar.var
-    ned2l.dsmn[1, ] <- (1 + ar.rho[1, ]) / ((1 - ar.rho[1, ]) * ar.var[1, ])
-
-    ned2l.dsmnrho <- mu / ar.var
-    ned2l.dsmnrho[1, ] <- 0
+    if ( !( .nodrift )) {
+      ned2l.dsmn <- 1 / ar.var
+      ned2l.dsmn[1, ] <- (1 + ar.rho[1, ]) / ((1 - ar.rho[1, ]) *
+                                              ar.var[1, ])
+      ned2l.dsmnrho <- mu / ar.var
+      ned2l.dsmnrho[1, ] <- 0
+    }
 
     ned2l.drho <- ((    mu[-n, , drop = FALSE])^2 +
                     ar.var[-n, , drop = FALSE] /
@@ -930,24 +962,28 @@ setMethod("show", "Coef.rrar",
     ned2l.drho <- rbind(0, ned2l.drho)
     ned2l.drho[1, ]  <- 2 * (ar.rho[1, ] / temp5[1, ])^2
     
-    wz <- matrix(0, n, M + (M - 1) + (M - 2))
-    wz[, M1*(1:NOS) - 2] <- ned2l.dsmn * dsmn.deta^2
+    ncol.wz <- M + (M - 1) + ifelse( .nodrift , 0, M - 2)
+    wz <- matrix(0, n, ncol.wz)
+
+    if ( !( .nodrift ))
+      wz[, M1*(1:NOS) - 2] <- ned2l.dsmn * dsmn.deta^2
     wz[, M1*(1:NOS) - 1] <-
       if ( .var.arg ) ned2l.dvar * dvar.deta^2 else
                       ned2l.dsdv * dsdv.deta^2
     wz[, M1*(1:NOS)    ] <- ned2l.drho * drho.deta^2
 
-    wz[, M1*(1:NOS) + M + (M - 1) - M1 + 1] <- ned2l.dsmnrho *
-                                               dsmn.deta * drho.deta
+    if ( !( .nodrift ))
+      wz[, M1*(1:NOS) + M + (M - 1) - M1 + 1] <- ned2l.dsmnrho *
+                                                 dsmn.deta * drho.deta
     wz[, M1*(1:NOS) + M - 1] <-
       if ( .var.arg ) ned2l.drhovar * drho.deta * dvar.deta else
                       ned2l.drhosdv * drho.deta * dsdv.deta
 
+    wz <- w.wz.merge(w = w, wz = wz, n = n, M = ncol.wz, ndepy = NOS)
 
-    wz <- w.wz.merge(w = w, wz = wz, n = n, M = M + (M - 1) + (M - 2),
-                     ndepy = NOS)
     wz
   }), list( .var.arg = var.arg, .type.likelihood = type.likelihood,
+            .nodrift = nodrift,
             .almost1 = almost1)))
   )
 }  # End of function 'AR1'

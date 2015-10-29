@@ -99,6 +99,7 @@ nbolf(theta, cutpoint = NULL, k = NULL,
 
 }
 \examples{
+\dontrun{
 nbolf("p", cutpoint = 2, k = 1, short = FALSE)
 nbolf("p", cutpoint = 2, k = 1, tag = TRUE)
 
@@ -107,12 +108,12 @@ y <- nbolf(p,cutpoint = 2, k = 1)
 y. <- nbolf(p,cutpoint = 2, k = 1, deriv = 1)
 max(abs(nbolf(y,cutpoint = 2, k = 1, inv = TRUE) - p))  # Should be 0
 
-\dontrun{ par(mfrow = c(2, 1), las = 1)
-plot(p, y, type = "l", col = "blue", main = "nbolf()")
-abline(h = 0, v = 0.5, col = "red", lty = "dashed")
-
-plot(p, y., type = "l", col = "blue",
-     main = "(Reciprocal of) first NBOLF derivative") }
+#\ dontrun{ par(mfrow = c(2, 1), las = 1)
+#plot(p, y, type = "l", col = "blue", main = "nbolf()")
+#abline(h = 0, v = 0.5, col = "red", lty = "dashed")
+#
+#plot(p, y., type = "l", col = "blue",
+#     main = "(Reciprocal of) first NBOLF derivative") }
 
 # Another example
 nn <- 1000
@@ -123,7 +124,7 @@ k <- 4
 y1 <- rnbinom(nn, mu = mymu, size = k)
 cutpoints <- c(-Inf, 10, 20, Inf)
 cuty <- Cut(y1, breaks = cutpoints)
-\dontrun{ plot(x2, x3, col = cuty, pch = as.character(cuty)) }
+#\ dontrun{ plot(x2, x3, col = cuty, pch = as.character(cuty)) }
 table(cuty) / sum(table(cuty))
 fit <- vglm(cuty ~ x2 + x3, trace = TRUE,
             cumulative(reverse = TRUE, multiple.responses = TRUE,
@@ -136,6 +137,7 @@ coef(fit)
 coef(fit, matrix = TRUE)
 constraints(fit)
 fit@misc
+}
 }
 \keyword{math}
 \keyword{models}

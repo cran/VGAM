@@ -1,6 +1,6 @@
 Package: VGAM
-Version: 0.9-8
-Date: 2015-05-11
+Version: 1.0-0
+Date: 2015-10-29
 Title: Vector Generalized Linear and Additive Models
 Author: Thomas W. Yee <t.yee@auckland.ac.nz>
 Maintainer: Thomas Yee <t.yee@auckland.ac.nz>
@@ -9,7 +9,10 @@ Suggests: VGAMdata, MASS
 Description: An implementation of about 6 major classes of
     statistical regression models. At the heart of it are the
     vector generalized linear and additive model (VGLM/VGAM)
-    classes. Currently only fixed-effects models are implemented,
+    classes, and the book "Vector Generalized Linear and
+    Additive Models: With an Implementation in R" (Yee, 2015)
+    gives details of the statistical framework and VGAM package.
+    Currently only fixed-effects models are implemented,
     i.e., no random-effects models. Many (150+) models and
     distributions are estimated by maximum likelihood estimation
     (MLE) or penalized MLE, using Fisher scoring. VGLMs can be
@@ -19,15 +22,14 @@ Description: An implementation of about 6 major classes of
     RCIMs (row-column interaction models)---these classes perform
     constrained and unconstrained quadratic ordination (CQO/UQO)
     models in ecology, as well as constrained additive ordination
-    (CAO). Note that these functions are subject to change,
-    especially before version 1.0.0 is released; see the NEWS
-    file for latest changes.
-License: GPL-2
+    (CAO). Note that these functions are subject to change;
+    see the NEWS and ChangeLog files for latest changes.
+License: GPL-2 | GPL-3
 URL: https://www.stat.auckland.ac.nz/~yee/VGAM
 NeedsCompilation: yes
 BuildVignettes: yes
 LazyLoad: yes
 LazyData: yes
-Packaged: 2015-05-11 03:49:53 UTC; tyee001
+Packaged: 2015-10-29 02:09:52 UTC; tyee001
 Repository: CRAN
-Date/Publication: 2015-05-11 11:14:54
+Date/Publication: 2015-10-29 08:29:12

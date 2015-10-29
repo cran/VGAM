@@ -63,7 +63,7 @@
             "\n", "\n",
             "Mean:     nu*theta/(1+nu)"),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M)
   }), list( .zero = zero ))),
   initialize = eval(substitute(expression({
     w.y.check(w, y)
@@ -422,7 +422,7 @@ rhzeta <- function(n, alpha) {
     constraints <- cm.VGAM(mycmatrix, x = x,
                            bool = .PARALLEL ,
                            constraints, apply.int = TRUE)
-    constraints <- cm.zero.VGAM(constraints, x, .ZERO , M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .ZERO , M)
   }), list( .parallel = parallel, .zero = zero ))),
   initialize = eval(substitute(expression({
     mustart.orig <- mustart
@@ -738,7 +738,7 @@ dirmul.old <- function(link = "loge", ialpha = 0.01,
     constraints <- cm.VGAM(matrix(1, M, 1), x = x,
                            bool = .parallel ,
                            constraints, apply.int = TRUE)
-    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M)
   }), list( .parallel = parallel, .zero = zero ))),
   initialize = eval(substitute(expression({
     y <- as.matrix(y)
@@ -912,7 +912,7 @@ rdiric <- function(n, shape, dimension = NULL,
     constraints <- cm.VGAM(matrix(1, M, 1), x = x,
                            bool = .parallel ,
                            constraints, apply.int = TRUE)
-    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M)
   }), list( .parallel = parallel, .zero = zero ))),
   initialize = eval(substitute(expression({
     y <- as.matrix(y)
@@ -1542,7 +1542,7 @@ cauchy.control <- function(save.weights = TRUE, ...) {
             "Mean:     NA\n",
             "Variance: NA"),
   constraints = eval(substitute(expression({
-      constraints <- cm.zero.VGAM(constraints, x, .zero , M)
+      constraints <- cm.zero.VGAM(constraints, x = x, .zero , M)
   }), list( .zero = zero ))),
   initialize = eval(substitute(expression({
     predictors.names <- c(
@@ -2491,7 +2491,7 @@ dfelix <- function(x, a = 0.25, log = FALSE) {
             namesof("mu",  lmu,  earg = emu),  ", ",
             namesof("phi", lphi, earg = ephi)),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M)
   }), list( .zero = zero ))),
   initialize = eval(substitute(expression({
     if (min(y) <= .A || max(y) >= .B)
@@ -2676,7 +2676,7 @@ dfelix <- function(x, a = 0.25, log = FALSE) {
     constraints <- cm.VGAM(matrix(1, M, 1), x = x,
                            bool = .parallel ,
                            constraints, apply.int  = TRUE)
-    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M)
   }), list( .parallel = parallel, .zero = zero ))),
   infos = eval(substitute(function(...) {
     list(M1 = 2,
@@ -2878,7 +2878,7 @@ simple.exponential <- function() {
   constraints = eval(substitute(expression({
     constraints <- cm.VGAM(matrix(1, M, 1), x = x, bool = .parallel ,
                            constraints = constraints, apply.int = TRUE)
-    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M)
   }), list( .parallel = parallel, .zero = zero ))),
   infos = eval(substitute(function(...) {
     list(M1 = 1, Q1 = 1, multipleResponses = TRUE, zero = .zero )
@@ -3004,7 +3004,7 @@ simple.exponential <- function() {
   constraints = eval(substitute(expression({
     constraints <- cm.VGAM(matrix(1, M, 1), x = x, bool = .parallel ,
                            constraints = constraints, apply.int = TRUE)
-    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M)
   }), list( .parallel = parallel, .zero = zero ))),
   infos = eval(substitute(function(...) {
     list(M1 = 1,
@@ -3599,7 +3599,7 @@ simple.exponential <- function() {
         dotzero <- .zero
         M1 <- 2
         eval(negzero.expression.VGAM)
-        constraints <- cm.zero.VGAM(constraints, x, z.Index, M)
+        constraints <- cm.zero.VGAM(constraints, x = x, z.Index, M)
   }), list( .zero = zero,
             .parallel = parallel, .apply.parint = apply.parint ))),
 
@@ -3635,9 +3635,9 @@ simple.exponential <- function() {
       NOS <- ncoly <- ncol(y)  # Number of species
 
 
-      temp1.names =
+      temp1.names <-
         if (NOS == 1) "mu"    else paste("mu",    1:NOS, sep = "")
-      temp2.names =
+      temp2.names <-
         if (NOS == 1) "shape" else paste("shape", 1:NOS, sep = "")
       predictors.names <-
           c(namesof(temp1.names, .lmu ,    earg = .emu ,    tag = FALSE),
@@ -3657,9 +3657,9 @@ simple.exponential <- function() {
         init.shape <- matrix(1.0, n, NOS)
         mymu <- y # + 0.167 * (y == 0)  # imethod == 1 (the default)
         if ( .imethod == 2) {
-                for (ii in 1:ncol(y)) {
-                    mymu[, ii] <- weighted.mean(y[, ii], w = w[, ii])
-                }
+            for (ii in 1:ncol(y)) {
+              mymu[, ii] <- weighted.mean(y[, ii], w = w[, ii])
+            }
         }
         for (spp in 1:NOS) {
           junk <- lsfit(x, y[, spp], wt = w[, spp], intercept = FALSE)
@@ -3772,9 +3772,9 @@ simple.exponential <- function() {
     NOS <- ncol(eta) / M1
 
     mymu  <- eta2theta(eta[, M1 * (1:NOS) - 1],
-                      .lmu ,    earg = .emu    )
+                       .lmu ,    earg = .emu    )
     shape <- eta2theta(eta[, M1 * (1:NOS)],
-                      .lshape , earg = .eshape )
+                       .lshape , earg = .eshape )
 
     dl.dmu <- shape * (y / mymu - 1) / mymu
     dl.dshape <- log(y) + log(shape) - log(mymu) + 1 - digamma(shape) -
@@ -3784,21 +3784,20 @@ simple.exponential <- function() {
     dshape.deta <- dtheta.deta(shape, .lshape , earg = .eshape )
 
     myderiv <- c(w) * cbind(dl.dmu    * dmu.deta,
-                           dl.dshape * dshape.deta)
+                            dl.dshape * dshape.deta)
     myderiv[, interleave.VGAM(M, M = M1)]
   }), list( .lmu = lmu, .lshape = lshape,
             .emu = emu, .eshape = eshape))),
   weight = eval(substitute(expression({
     ned2l.dmu2 <- shape / (mymu^2)
     ned2l.dshape2 <- trigamma(shape) - 1 / shape
-    wz <- matrix(as.numeric(NA), n, M)  # 2 = M; diagonal!
+    wz <- matrix(as.numeric(NA), n, M)  # 2 = M1; diagonal!
 
     wz[, M1*(1:NOS)-1] <- ned2l.dmu2 * dmu.deta^2
     wz[, M1*(1:NOS)  ] <- ned2l.dshape2 * dshape.deta^2
 
 
     w.wz.merge(w = w, wz = wz, n = n, M = M, ndepy = NOS)
-
   }), list( .lmu = lmu ))))
 
 
@@ -4096,7 +4095,7 @@ negbinomial.control <- function(save.weights = TRUE, ...) {
            probs.y = 0.75,
            nsimEIM = 250, cutoff.prob = 0.995,  # Maxiter = 5000,
            max.qnbinom = 1000,
-           max.chunk.Mb = 20,  # max.memory = Inf is allowed
+           max.chunk.MB = 20,  # max.memory = Inf is allowed
            deviance.arg = FALSE, imethod = 1,
            gsize = exp((-4):4),
            parallel = FALSE,
@@ -4350,7 +4349,7 @@ negbinomial.control <- function(save.weights = TRUE, ...) {
       misc$earg[[M1*ii  ]] <- .esize
     }
 
-    misc$max.chunk.Mb <- .max.chunk.Mb
+    misc$max.chunk.MB <- .max.chunk.MB
     misc$cutoff.prob <- .cutoff.prob
     misc$imethod <- .imethod 
     misc$nsimEIM <- .nsimEIM
@@ -4360,7 +4359,7 @@ negbinomial.control <- function(save.weights = TRUE, ...) {
   }), list( .lmuuu = lmuuu, .lsize = lsize,
             .emuuu = emuuu, .esize = esize,
             .cutoff.prob = cutoff.prob,  # .min.size = min.size,
-            .max.chunk.Mb = max.chunk.Mb,
+            .max.chunk.MB = max.chunk.MB,
             .nsimEIM = nsimEIM,
             .ishrinkage = ishrinkage,
             .imethod = imethod ))),
@@ -4508,7 +4507,7 @@ negbinomial.control <- function(save.weights = TRUE, ...) {
 
     dl.dmu <- y / mu - (y + kmat) / (mu + kmat)
     dl.dk  <- digamma(y + kmat) - digamma(kmat) -
-              (y + kmat) / (mu + kmat) + 1 + log(kmat / (kmat + mu))
+              (y - mu) / (mu + kmat) + log(kmat / (kmat + mu))
 
     if ( .lmuuu == "nbcanlink")
       newemu$wrt.eta <- 1
@@ -4554,7 +4553,7 @@ negbinomial.control <- function(save.weights = TRUE, ...) {
 
 
     max.qnbinom <- .max.qnbinom
-    max.chunk.Mb <- .max.chunk.Mb
+    max.chunk.MB <- .max.chunk.MB
 
 
     EIM.NB.special2 <- function(mu, size, y.max = NULL,
@@ -4588,12 +4587,13 @@ negbinomial.control <- function(save.weights = TRUE, ...) {
 
     ind2 <- matrix(FALSE, n, NOS)  # Used for SFS
     for (jay in 1:NOS) {
-      Q.maxs <- qnbinom(p = .cutoff.prob , mu = mu[, jay], size = kmat[, jay])
-      ind1 <- if (max.chunk.Mb > 0) (Q.maxs < max.qnbinom) else FALSE
+      Q.maxs <- qnbinom(p = .cutoff.prob , mu = mu[, jay],
+                        size = kmat[, jay])
+      ind1 <- if (max.chunk.MB > 0) (Q.maxs < max.qnbinom) else FALSE
         if ((NN <- sum(ind1)) > 0) {
-          Object.Size <- NN * 8 * max(Q.maxs) / (2^20)  # Mb; 8 bytes / double
+          Object.Size <- NN * 8 * max(Q.maxs) / (2^20)  # Mb; 8 bytes/double
           n.chunks <- if (intercept.only) 1 else
-                      max(1, ceiling( Object.Size / max.chunk.Mb))
+                      max(1, ceiling( Object.Size / max.chunk.MB))
           chunk.rows <- ceiling(NN / n.chunks)
           ind2[, jay] <- ind1  # Save this
           wind2 <- which(ind1)
@@ -4652,9 +4652,12 @@ negbinomial.control <- function(save.weights = TRUE, ...) {
 
 
 
-    if ( .lmuuu == "nbcanlink") {
+    if ( FALSE && .lmuuu == "nbcanlink") {
       if ( iter %% 2 == 0) {
+
         wz[, M1*(1:NOS) - 1] <- ned2l.dk2 * dk.deta1^2
+
+
       } else {
       }
     }
@@ -4665,7 +4668,7 @@ negbinomial.control <- function(save.weights = TRUE, ...) {
     w.wz.merge(w = w, wz = wz, n = n, M = M, ndepy = NOS)
   }), list( .cutoff.prob = cutoff.prob,
             .max.qnbinom = max.qnbinom,
-            .max.chunk.Mb = max.chunk.Mb,
+            .max.chunk.MB = max.chunk.MB,
             .lmuuu = lmuuu,
             .nsimEIM = nsimEIM ))))
 
@@ -6542,7 +6545,7 @@ rsimplex <- function(n, mu = 0.5, dispersion = 1) {
             "Mean:              mu\n",
             "Variance function: V(mu) = mu^3 * (1 - mu)^3"),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M)
   }), list( .zero = zero ))),
   initialize = eval(substitute(expression({
     if (any(y <= 0.0 | y >= 1.0))
@@ -7147,7 +7150,7 @@ rsimplex <- function(n, mu = 0.5, dispersion = 1) {
             "Mean:     lambda*(1-rho)/(2*rho-1)\n",
             "Variance: lambda*rho*(1-rho)/(2*rho-1)^3\n"),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M)
   }), list( .zero = zero ))),
   initialize = eval(substitute(expression({
 
@@ -7709,7 +7712,7 @@ rlgamma <- function(n, location = 0, scale = 1, shape = 1) {
             namesof("shape",    lshape, earg = eshape), "\n\n",
             "Mean:     a + b * digamma(k)", "\n"),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M)
   }), list( .zero = zero ))),
   initialize = eval(substitute(expression({
 
@@ -7891,7 +7894,7 @@ rlgamma <- function(n, location = 0, scale = 1, shape = 1) {
             namesof("shape", lshape, earg = eshape), "\n", "\n",
             "Mean:     a", "\n"),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M)
   }), list( .zero = zero ))),
   initialize = eval(substitute(expression({
 
@@ -8033,9 +8036,10 @@ dgengamma.stacy <- function(x, scale = 1, d = 1, k = 1, log = FALSE) {
   Loglik <- rep(log(0), length.out = N)
   xok <- x > 0
   if (any(xok)) {
-    zedd <- (x[xok]/scale[xok])^d[xok]
-    Loglik[xok] <- log(d[xok]) + (-d[xok]*k[xok]) * log(scale[xok]) +
-               (d[xok]*k[xok]-1) * log(x[xok]) - zedd - lgamma(k[xok])
+    zedd <- (x[xok]/scale[xok])^(d[xok])
+    Loglik[xok] <- log(d[xok]) + (-d[xok] * k[xok]) * log(scale[xok]) +
+                   (d[xok] * k[xok]-1) * log(x[xok]) - zedd -
+                   lgamma(k[xok])
   }
 
 
@@ -8089,9 +8093,15 @@ rgengamma.stacy <- function(n, scale = 1, d = 1, k = 1) {
 }
 
 
+
  gengamma.stacy <-
   function(lscale = "loge", ld = "loge", lk = "loge",
-           iscale = NULL, id = NULL, ik = NULL, zero = NULL) {
+           iscale = NULL, id = NULL, ik = NULL,
+           gscale    = exp(-5:5),
+           gshape1.d = exp(-5:5),
+           gshape2.k = exp(-5:5),
+           zero = NULL) {
+
 
   lscale <- as.list(substitute(lscale))
   escale <- link2list(lscale)
@@ -8127,14 +8137,20 @@ rgengamma.stacy <- function(n, scale = 1, d = 1, k = 1) {
             namesof("k", lk, earg = ek), "\n", "\n",
             "Mean:     b * gamma(k+1/d) / gamma(k)", "\n"),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M)
   }), list( .zero = zero ))),
   initialize = eval(substitute(expression({
 
+    temp5 <-
     w.y.check(w = w, y = y,
               Is.positive.y = TRUE,
               ncol.w.max = 1,
-              ncol.y.max = 1)
+              ncol.y.max = 1,
+              out.wy = TRUE,
+              colsyperw = 1,
+              maximize = TRUE)
+    w <- temp5$w
+    y <- temp5$y
 
 
 
@@ -8144,32 +8160,71 @@ rgengamma.stacy <- function(n, scale = 1, d = 1, k = 1) {
         namesof("k", .lk , earg = .ek , tag = FALSE))
 
 
+    NOS <- 1  # For now
+
+
+
     if (!length(etastart)) {
-      b.init <- if (length( .iscale ))
-          rep( .iscale , length.out = length(y)) else {
-          rep(mean(y^2) / mean(y), length.out = length(y))
-      }
-      k.init <- if (length( .ik ))
-          rep( .ik , length.out = length(y)) else {
-          rep(mean(y) / b.init, length.out = length(y))
-      }
-      d.init <- if (length( .id ))
-          rep( .id , length.out = length(y)) else {
-          rep(digamma(k.init) / mean(log(y / b.init)),
-              length.out = length(y))
-      }
-        etastart <-
-          cbind(theta2eta(b.init, .lscale , earg = .escale ),
-                theta2eta(d.init, .ld , earg = .ed ),
-                theta2eta(k.init, .lk , earg = .ek ))
-    }
+      sc.init <-
+      dd.init <-
+      kk.init <- matrix(as.numeric(NA), n, NOS)
+          
+      for (spp. in 1:NOS) {  # For each response 'y_spp.'... do:
+        yvec <- y[, spp.]
+        wvec <- w[, spp.]
+
+          gscale     <- .gscale
+          gshape1.d  <- .gshape1.d
+          gshape2.k  <- .gshape2.k        
+          if (length( .iscale ))
+            gscale    <-  rep( .iscale    , length = NOS)
+          if (length( .id        ))
+            gshape1.d <-  rep( .id        , length = NOS)
+          if (length( .ik        ))
+            gshape2.p <-  rep( .ik        , length = NOS)
+          allmat1 <- expand.grid(shape1.d = gshape1.d,
+                                 shape2.k = gshape2.k)
+          allmat2 <- matrix(as.numeric(NA), nrow(allmat1), 2)
+
+          ll.gstacy <- function(scaleval, x = x, y = y, w = w, extraargs) { 
+            ans <- sum(c(w) * dgengamma.stacy(x = y,
+                                              scale    = scaleval,
+                                              d        = extraargs$Shape1.d,
+                                              k        = extraargs$Shape2.k,
+                                              log = TRUE))
+            ans
+          }
+
+          for (iloc in 1:nrow(allmat1)) {
+            allmat2[iloc, ] <-
+              grid.search(gscale, objfun = ll.gstacy,
+                            y = yvec, x = x, w = wvec,
+                            ret.objfun = TRUE,  # 2nd value is the loglik
+                            extraargs = list(Shape1.d = allmat1[iloc, 1],
+                                             Shape2.k = allmat1[iloc, 2]))
+          }
+          ind5 <- which.max(allmat2[, 2])  # 2nd value is the loglik
+          sc.init[, spp.] <- allmat2[ind5, 1]
+          dd.init[, spp.] <- allmat1[ind5, 1]
+          kk.init[, spp.] <- allmat1[ind5, 2]
+      }  # End of for (spp. ...)
+
+
+      etastart <-
+        cbind(theta2eta(sc.init,  .lscale    , earg = .escale  ),
+              theta2eta(dd.init , .ld        , earg = .ed      ),
+              theta2eta(kk.init , .lk        , earg = .ek      ))
+    }  # End of etastart.
   }), list( .lscale = lscale, .ld = ld, .lk = lk,
             .escale = escale, .ed = ed, .ek = ek,
-            .iscale = iscale, .id = id, .ik = ik ))),
+            .iscale = iscale, .id = id, .ik = ik,
+            .gscale = gscale, .gshape1.d = gshape1.d,           
+                              .gshape2.k = gshape2.k
+           ))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
     b <- eta2theta(eta[, 1], .lscale , earg = .escale )
-    d <- eta2theta(eta[, 2], .ld , earg = .ed )
-    k <- eta2theta(eta[, 3], .lk , earg = .ek )
+    d <- eta2theta(eta[, 2], .ld     , earg = .ed )
+    k <- eta2theta(eta[, 3], .lk     , earg = .ek )
     b * gamma(k + 1 / d) / gamma(k)
   }, list( .lscale = lscale, .lk = lk, .ld = ld,
            .escale = escale, .ek = ek, .ed = ed ))),
@@ -8184,8 +8239,8 @@ rgengamma.stacy <- function(n, scale = 1, d = 1, k = 1) {
              extra = NULL,
              summation = TRUE) {
     b <- eta2theta(eta[, 1], .lscale , earg = .escale )
-    d <- eta2theta(eta[, 2], .ld , earg = .ed )
-    k <- eta2theta(eta[, 3], .lk , earg = .ek )
+    d <- eta2theta(eta[, 2], .ld     , earg = .ed )
+    k <- eta2theta(eta[, 3], .lk     , earg = .ek )
 
     if (residuals) {
       stop("loglikelihood residuals not implemented yet")
@@ -8227,8 +8282,8 @@ rgengamma.stacy <- function(n, scale = 1, d = 1, k = 1) {
 
   deriv = eval(substitute(expression({
     b <- eta2theta(eta[, 1], .lscale , earg = .escale )
-    d <- eta2theta(eta[, 2], .ld , earg = .ed )
-    k <- eta2theta(eta[, 3], .lk , earg = .ek )
+    d <- eta2theta(eta[, 2], .ld     , earg = .ed )
+    k <- eta2theta(eta[, 3], .lk     , earg = .ek )
 
     tmp22 <- (y/b)^d
     tmp33 <- log(y/b)
@@ -8237,8 +8292,8 @@ rgengamma.stacy <- function(n, scale = 1, d = 1, k = 1) {
     dl.dk <- d * tmp33 - digamma(k)
 
     db.deta <- dtheta.deta(b, .lscale , earg = .escale )
-    dd.deta <- dtheta.deta(d, .ld , earg = .ed )
-    dk.deta <- dtheta.deta(k, .lk , earg = .ek )
+    dd.deta <- dtheta.deta(d, .ld     , earg = .ed )
+    dk.deta <- dtheta.deta(k, .lk     , earg = .ek )
 
     c(w) * cbind(dl.db * db.deta,
                  dl.dd * dd.deta,
@@ -8805,7 +8860,7 @@ rlino <- function(n, shape1, shape2, lambda = 1) {
             namesof("lambda", llambda, earg = elambda), "\n", 
             "Mean:     something complicated"),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M)
   }), list( .zero = zero ))),
   initialize = eval(substitute(expression({
     if (min(y) <= 0 || max(y) >= 1)
@@ -8974,7 +9029,7 @@ rlino <- function(n, shape1, shape2, lambda = 1) {
             namesof("shape2", link, earg = earg), "\n",
             "Mean:     shape1/(shape2-1) provided shape2>1"),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M)
   }), list( .zero = zero ))),
   initialize = eval(substitute(expression({
 
@@ -9152,7 +9207,7 @@ rmaxwell <- function(n, rate) {
             "\n", "\n",
             "Mean:    sqrt(8 / (rate * pi))"),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M)
   }), list( .zero = zero ))),
 
   infos = eval(substitute(function(...) {
@@ -11008,7 +11063,7 @@ rtruncpareto <- function(n, lower, upper, shape) {
              namesof("shape", lshape, earg = eshape), "\n",
              "Mean:     (digamma(shape+1)-digamma(1)) / rate"),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M)
   }), list( .zero = zero ))),
   initialize = eval(substitute(expression({
 

@@ -358,7 +358,7 @@
            .zero = zero ))),
 
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
   }), list( .zero = zero ))),
 
 
@@ -695,11 +695,11 @@
           eta2theta(eta[, 2], link = .linkf , earg = .eargf ) else 0
 
     if ( .inbreeding ) {
-      dP1 <- cbind(fp + 2*pA*(1-fp),
-                    2*(1-fp)*(1-2*pA),
-                   -2*(1-pA) + fp*(1-2*pA))
+      dP1 <- cbind(2*pA*(1-fp) + fp,
+                   2*(1-fp)*(1-2*pA),
+                  -2*(1-pA) + fp*(1-2*pA))
       dP2 <- cbind(pA*(1-pA),
-                   -2*pA*(1-pA),
+                  -2*pA*(1-pA),
                    pA*(1-pA))
       dl1 <- rowSums(y * dP1 / mu)
       dl2 <- rowSums(y * dP2 / mu)
@@ -710,9 +710,9 @@
       c(w) * cbind(dPP.deta * dl1,
                    dfp.deta * dl2)      
     } else {
-      nAA <- w * y[, 1]
-      nAa <- w * y[, 2]
-      naa <- w * y[, 3]
+      nAA <- c(w) * y[, 1]
+      nAa <- c(w) * y[, 2]
+      naa <- c(w) * y[, 3]
       dl.dpA <- (2*nAA+nAa)/pA - (nAa+2*naa)/(1-pA)
       dpA.deta <- dtheta.deta(pA, link = .linkp , earg = .eargp )
       dl.dpA * dpA.deta
@@ -735,8 +735,8 @@
         }
       c(w) * wz
     } else {
-      ned2l.dp2 <- (2*nAA + nAa) / pA^2 + (nAa + 2*naa) / (1-pA)^2
-      wz <- cbind((dpA.deta^2) * ned2l.dp2)
+      ned2l.dp2 <- 2 / (pA * (1-pA))
+      wz <- cbind(c(w) * ned2l.dp2 * dpA.deta^2)
       wz
     }
   }), list( .linkp = linkp, .linkf = linkf,

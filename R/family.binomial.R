@@ -1365,22 +1365,16 @@ my.dbinom <- function(x,
 
 
  dbetabinom.ab <- function(x, size, shape1, shape2, log = FALSE,
-                           .dontuse.prob = NULL) {
+                           Inf.shape = 1e6
+                          ) {
 
 
+  Bigg <- Inf.shape
   if (!is.logical(log.arg <- log) || length(log) != 1)
     stop("bad input for argument 'log'")
   rm(log)
 
 
-  if (!is.Numeric(x))
-    stop("bad input for argument 'x'")
-  if (!is.Numeric(size, integer.valued = TRUE))
-    stop("bad input for argument 'size'")
-  if (any(shape1 < 0, na.rm = TRUE))
-    stop("negative values for argument 'shape1' not allowed")
-  if (any(shape2 < 0, na.rm = TRUE))
-    stop("negative values for argument 'shape2' not allowed")
 
 
   LLL <- max(length(x), length(size), length(shape1), length(shape2))
@@ -1389,38 +1383,94 @@ my.dbinom <- function(x,
   if (length(shape1) != LLL) shape1 <- rep(shape1, len = LLL)
   if (length(shape2) != LLL) shape2 <- rep(shape2, len = LLL)
 
-  ans <- 0 * x
+  ans <- x
+  ans[TRUE] <- log(0)
+  ans[is.na(x)]  <- NA
+  ans[is.nan(x)] <- NaN
+
+
+  ok0 <- !is.na(shape1) & !is.na(shape2) & !is.na(x) & !is.na(size)
   ok <- (round(x) == x) & (x >= 0) & (x <= size) &
-        is.finite(shape1) & is.finite(shape2)
+        is.finite(shape1) & is.finite(shape2) & ok0
   if (any(ok)) {
     ans[ok] <- lchoose(size[ok], x[ok]) +
-               lbeta(shape1[ok] + x[ok], shape2[ok] + size[ok] - x[ok]) -
+               lbeta(shape1[ok]            + x[ok],
+                     shape2[ok] + size[ok] - x[ok]) -
                lbeta(shape1[ok], shape2[ok])
-    if (log.arg) {
-    } else {
-      ans[ok] <- exp(ans[ok])
+
+
+    endpt <- (x == size) & ((shape1 < 1/Bigg) | (shape2 < 1/Bigg)) & ok0
+    if (any(endpt)) {
+      ans[endpt] <- lgamma(size[endpt] + shape1[endpt]) +
+                    lgamma(shape1[endpt] + shape2[endpt]) -
+                   (lgamma(size[endpt] + shape1[endpt] + shape2[endpt]) +
+                    lgamma(shape1[endpt]))
     }
+
+
+
+
+    endpt <- (x == 0) & ((shape1 < 1/Bigg) | (shape2 < 1/Bigg)) & ok0
+    if (any(endpt)) {
+      ans[endpt] <- lgamma(size[endpt] + shape2[endpt]) +
+                    lgamma(shape1[endpt] + shape2[endpt]) -
+                   (lgamma(size[endpt] + shape1[endpt] + shape2[endpt]) +
+                    lgamma(shape2[endpt]))
+    }
+
+
+
+
+
+    endpt <- ((shape1 > Bigg) | (shape2 > Bigg)) & ok0
+    if (any(endpt)) {
+      ans[endpt] <- lchoose(size[endpt], x[endpt]) +
+                    lgamma(x[endpt] + shape1[endpt]) +
+                    lgamma(size[endpt] - x[endpt] + shape2[endpt]) +
+                    lgamma(shape1[endpt] + shape2[endpt]) -
+                   (lgamma(size[endpt] + shape1[endpt] + shape2[endpt]) +
+                    lgamma(shape1[endpt]) +
+                    lgamma(shape2[endpt]))
+    }
+  }  # if (any(ok))
+
+
+
+  if (!log.arg) {
+    ans <- exp(ans)
   }
 
-  okay1 <- is.na(shape1)       & is.infinite(shape2)  # rho = 0 and prob == 0
-  okay2 <- is.infinite(shape1) & is.na(shape2)       # rho = 0 and prob == 1
-  okay3 <- is.infinite(shape1) & is.infinite(shape2)  # rho = 0 and 0 < prob < 1
 
-  if (sum.okay1 <- sum(okay1))
-    ans[okay1] <- dbinom(x = x[okay1], size = size[okay1],
-                         prob = 0,
-                         log = log.arg)
-  if (sum.okay2 <- sum(okay2))
-    ans[okay2] <- dbinom(x = x[okay2], size = size[okay2],
-                         prob = 1,
-                         log = log.arg)
-  if (sum.okay3 <- sum(okay3)) {
-    if (length(.dontuse.prob)   != LLL)
-      .dontuse.prob   <- rep( .dontuse.prob ,   len = LLL)
-    ans[okay3] <- dbinom(x = x[okay3], size = size[okay3],
-                         prob = .dontuse.prob[okay3],
-                         log = log.arg)
+
+  if (FALSE) {
+    ok1 <- is.na(shape1)       & is.infinite(shape2)  # rho==0 & prob==0
+    ok2 <- is.infinite(shape1) & is.na(shape2)        # rho==0 & prob==1
+    ok3 <- is.infinite(shape1) & is.infinite(shape2)  # rho==0 & 0<prob<1
+  } else {
+    ok1 <-   is.finite(shape1) & is.infinite(shape2)  # rho==0 & prob==0
+    ok2 <- is.infinite(shape1) &   is.finite(shape2)  # rho==0 & prob==1
+    ok3 <- is.infinite(shape1) & is.infinite(shape2)  # prob undefined
+
   }
+
+  if (any(ok1))
+    ans[ok1] <- dbinom(x = x[ok1], size = size[ok1],
+                       prob = shape1[ok1] / (shape1[ok1]+shape2[ok1]),  # 0,
+                       log = log.arg)
+  if (any(ok2))
+    ans[ok2] <- dbinom(x = x[ok2], size = size[ok2],
+                       prob = 1,  # Inf / (finite + Inf) == 1
+                       log = log.arg)
+  if (any(ok3)) {
+    ans[ok3] <- dbinom(x = x[ok3], size = size[ok3],
+                       prob = shape1[ok3] / (shape1[ok3]+shape2[ok3]),
+                       log = log.arg)
+  }
+
+
+  ans[shape1 < 0] <- NaN
+  ans[shape2 < 0] <- NaN
+
 
   ans
 }
@@ -1445,34 +1495,36 @@ my.dbinom <- function(x,
   if (length(q)       != LLL) q      <- rep(q,      len = LLL)
   if (length(shape1)  != LLL) shape1 <- rep(shape1, len = LLL)
   if (length(shape2)  != LLL) shape2 <- rep(shape2, len = LLL)
-  if (length(size)    != LLL) size   <- rep(size,   len = LLL);
+  if (length(size)    != LLL) size   <- rep(size,   len = LLL)
 
-  ans <- q * 0  # Retains names(q)
+  ans <- q   # Retains names(q)
+  ans[] <- 0  #  Set all elements to 0
 
   if (max(abs(size   -   size[1])) < 1.0e-08 &&
       max(abs(shape1 - shape1[1])) < 1.0e-08 &&
       max(abs(shape2 - shape2[1])) < 1.0e-08) {
-    qstar <- floor(q)
+    if (any(is.infinite(qstar <- floor(q))))
+      stop("argument 'q' must be finite")
     temp <- if (max(qstar) >= 0) {
-             dbetabinom.ab(0:max(qstar), size = size[1],
-                           shape1 = shape1[1],
-                           shape2 = shape2[1])
-           } else {
-             0 * qstar
-           }
+              dbetabinom.ab(0:max(qstar), size = size[1],
+                            shape1 = shape1[1],
+                            shape2 = shape2[1])
+            } else {
+              0 * qstar
+            }
       unq <- unique(qstar)
     for (ii in unq) {
-      index <- qstar == ii
+      index <- (qstar == ii)
       ans[index] <- if (ii >= 0) sum(temp[1:(1+ii)]) else 0
     }
   } else {
     for (ii in 1:LLL) {
       qstar <- floor(q[ii])
       ans[ii] <- if (qstar >= 0) {
-                  sum(dbetabinom.ab(x = 0:qstar, size = size[ii],
-                                    shape1 = shape1[ii],
-                                    shape2 = shape2[ii]))
-                } else 0
+                   sum(dbetabinom.ab(x = 0:qstar, size = size[ii],
+                                     shape1 = shape1[ii],
+                                     shape2 = shape2[ii]))
+                 } else 0
     }
   }
   if (log.p) log(ans) else ans
@@ -1534,8 +1586,7 @@ my.dbinom <- function(x,
 
  dbetabinom <- function(x, size, prob, rho = 0, log = FALSE) {
   dbetabinom.ab(x = x, size = size, shape1 = prob*(1-rho)/rho,
-                shape2 = (1-prob)*(1-rho)/rho, log = log,
-                .dontuse.prob = prob)
+                shape2 = (1-prob)*(1-rho)/rho, log = log)
 }
 
 

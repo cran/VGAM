@@ -363,36 +363,36 @@ valt.1iter <- function(x, z, U, Hlist, C, control,
         zedd[,Index.corner] <- zedd[,Index.corner] - latvar.mat
 
     if (nice31 && MSratio == 1) {
-        fit <- list(mat.coef = NULL, fitted.values = NULL, ResSS = 0)
+      fit <- list(mat.coef = NULL, fitted.values = NULL, ResSS = 0)
 
-        clist2 <- NULL # for vlm.wfit
+      clist2 <- NULL # for vlm.wfit
 
-        i5 <- rep(0, length.out = MSratio)
-        for (ii in 1:NOS) {
-          i5 <- i5 + 1:MSratio
+      i5 <- rep(0, length.out = MSratio)
+      for (ii in 1:NOS) {
+        i5 <- i5 + 1:MSratio
 
-            tmp100 <- vlm.wfit(xmat = new.latvar.model.matrix,
-                               zedd[, i5, drop = FALSE],
-                               Hlist = clist2,
-                               U = U[i5,, drop = FALSE],
-                               matrix.out = TRUE,
-                               is.vlmX = FALSE, ResSS = TRUE,
-                               qr = FALSE,
-                               Eta.range = control$Eta.range,
-                               xij = control$xij,
-                               lp.names = lp.names[i5])
-            fit$ResSS <- fit$ResSS + tmp100$ResSS
-            fit$mat.coef <- cbind(fit$mat.coef, tmp100$mat.coef)
-            fit$fitted.values <- cbind(fit$fitted.values,
-                                       tmp100$fitted.values)
-        }
+        tmp100 <- vlm.wfit(xmat = new.latvar.model.matrix,
+                           zedd[, i5, drop = FALSE],
+                           Hlist = clist2,
+                           U = U[i5,, drop = FALSE],
+                           matrix.out = TRUE,
+                           is.vlmX = FALSE, ResSS = TRUE,
+                           qr = FALSE,
+                           Eta.range = control$Eta.range,
+                           xij = control$xij,
+                           lp.names = lp.names[i5])
+        fit$ResSS <- fit$ResSS + tmp100$ResSS
+        fit$mat.coef <- cbind(fit$mat.coef, tmp100$mat.coef)
+        fit$fitted.values <- cbind(fit$fitted.values,
+                                   tmp100$fitted.values)
+      }
     } else {
-        fit <- vlm.wfit(xmat = new.latvar.model.matrix,
-                       zedd, Hlist = clist2, U = U,
-                       matrix.out = TRUE,
-                       is.vlmX = FALSE, ResSS = TRUE, qr = FALSE,
-                       Eta.range = control$Eta.range,
-                       xij = control$xij, lp.names = lp.names)
+      fit <- vlm.wfit(xmat = new.latvar.model.matrix,
+                      zedd, Hlist = clist2, U = U,
+                      matrix.out = TRUE,
+                      is.vlmX = FALSE, ResSS = TRUE, qr = FALSE,
+                      Eta.range = control$Eta.range,
+                      xij = control$xij, lp.names = lp.names)
     }
     A <- if (tmp833$NoA) matrix(0, M, Rank) else
         t(fit$mat.coef[1:Rank,, drop = FALSE])
@@ -447,11 +447,11 @@ rrr.init.expression <- expression({
     if (modelno == 3 || modelno == 5) {
 
 
-        M <- 2 * ifelse(is.matrix(y), ncol(y), 1)
-          control$str0 <-
-        rrcontrol$str0 <- seq(from = 2, to = M, by = 2)  # Handles A
-          control$Dzero <-
-        rrcontrol$Dzero <- seq(from = 2, to = M, by = 2)  # Handles D
+      M <- 2 * ifelse(is.matrix(y), ncol(y), 1)
+        control$str0 <-
+      rrcontrol$str0 <- seq(from = 2, to = M, by = 2)  # Handles A
+        control$Dzero <-
+      rrcontrol$Dzero <- seq(from = 2, to = M, by = 2)  # Handles D
 
 
     }
@@ -502,7 +502,7 @@ rrr.alternating.expression <- expression({
           elts <- matrix(elts, 1, Rank)
         Dk <- m2a(elts, M = Rank)[, , 1]
         Dk <- matrix(Dk, Rank, Rank)
-        Dk <- t(Mmat) %*% Dk  %*% Mmat  # 22/8/03; Not diagonal in general
+        Dk <- t(Mmat) %*% Dk  %*% Mmat  # 20030822; Not diagonal in general.
         Dmat[kay, ] <- Dk[cbind(ind0$row.index[1:ncol(Dmat)],
                                 ind0$col.index[1:ncol(Dmat)])] 
       }
@@ -902,6 +902,7 @@ Coef.qrrvglm <-
   function(object,
            varI.latvar = FALSE,
            refResponse = NULL, ...) {
+
 
 
 
@@ -1362,7 +1363,7 @@ predictqrrvglm <-
       setup.smart("read", smart.prediction = object@smart.prediction)
     }
 
-    tt <- object@terms$terms  # terms(object)  # 11/8/03; object@terms$terms
+    tt <- object@terms$terms  # terms(object)  # 20030811; object@terms$terms
     X <- model.matrix(delete.response(tt), newdata,
                       contrasts = if (length(object@contrasts))
                                   object@contrasts else NULL,
@@ -1546,7 +1547,8 @@ summary.rrvglm <- function(object, correlation = FALSE,
                            h.step = 0.0001, 
                            kill.all = FALSE, omit13 = FALSE,
                            fixA = FALSE, 
-                           presid = TRUE, ...) {
+                           presid = TRUE, 
+                           nopredictors = FALSE, ...) {
 
 
 
@@ -1561,10 +1563,10 @@ summary.rrvglm <- function(object, correlation = FALSE,
       stop("bad input for 'h.step'")
 
     if (!object@control$Corner)
-        stop("this function works with corner constraints only")
+      stop("this function works with corner constraints only")
 
     if (is.null(dispersion))
-        dispersion <- object@misc$dispersion
+      dispersion <- object@misc$dispersion
 
     newobject <- as(object, "vglm")
 
@@ -1630,6 +1632,8 @@ summary.rrvglm <- function(object, correlation = FALSE,
     answer@sigma <- dispersion^0.5
 
 
+    answer@misc$nopredictors <- nopredictors  # 20150925
+
     answer
 }
 
@@ -1639,9 +1643,9 @@ summary.rrvglm <- function(object, correlation = FALSE,
 
 
 get.rrvglm.se1 <- function(fit, omit13 = FALSE, kill.all = FALSE,
-                          numerical = TRUE,
-                          fixA = FALSE, h.step = 0.0001,
-                          trace.arg = FALSE, ...) {
+                           numerical = TRUE,
+                           fixA = FALSE, h.step = 0.0001,
+                           trace.arg = FALSE, ...) {
 
 
 
@@ -1653,7 +1657,7 @@ get.rrvglm.se1 <- function(fit, omit13 = FALSE, kill.all = FALSE,
 
 
   if (!length(fit@x))
-    stop("fix@x is empty. Run rrvglm(... , x= TRUE)")
+    stop("fix@x is empty. Run rrvglm(... , x = TRUE)")
 
   colx1.index <- fit@control$colx1.index  # May be NULL
   colx2.index <- fit@control$colx2.index 
@@ -1677,7 +1681,7 @@ get.rrvglm.se1 <- function(fit, omit13 = FALSE, kill.all = FALSE,
 
   wz <- weights(fit, type = "work")  # old: wweights(fit)  #fit@weights
   if (!length(wz))
-      stop("cannot get fit@weights")
+    stop("cannot get fit@weights")
 
   M <- fit@misc$M
   n <- fit@misc$n
@@ -1686,20 +1690,20 @@ get.rrvglm.se1 <- function(fit, omit13 = FALSE, kill.all = FALSE,
   theta <- c(Amat[-c(Index.corner,str0), ])
   if (fit@control$checkwz)
     wz <- checkwz(wz, M = M, trace = trace,
-                 wzepsilon = fit@control$wzepsilon)
+                  wzepsilon = fit@control$wzepsilon)
    U <- vchol(wz, M = M, n = n, silent= TRUE)
 
-  if (numerical) {
-    delct.da <- num.deriv.rrr(fit, M = M, r = Rank,
-                    x1mat = x1mat, x2mat = x2mat, p2 = p2, 
-                    Index.corner, Aimat = Amat,
-                    B1mat = B1mat, Cimat = Cmat,
-                    h.step = h.step,
-                    colx2.index = colx2.index,
-                    xij = fit@control$xij,
-                    str0 = str0)
+  delct.da <- if (numerical) {
+    num.deriv.rrr(fit, M = M, r = Rank,
+                  x1mat = x1mat, x2mat = x2mat, p2 = p2, 
+                  Index.corner, Aimat = Amat,
+                  B1mat = B1mat, Cimat = Cmat,
+                  h.step = h.step,
+                  colx2.index = colx2.index,
+                  xij = fit@control$xij,
+                  str0 = str0)
   } else {
-    delct.da <- dctda.fast.only(theta = theta, wz = wz,
+    dctda.fast.only(theta = theta, wz = wz,
                     U = U, zmat,
                     M = M, r = Rank, x1mat = x1mat,
                     x2mat = x2mat, p2 = p2,
@@ -1722,13 +1726,13 @@ get.rrvglm.se1 <- function(fit, omit13 = FALSE, kill.all = FALSE,
   cov2233 <- solve(sfit2233@cov.unscaled)  # Includes any intercepts
   dimnames(cov2233) <- list(d8, d8)
 
-    log.vec33 <- NULL 
-    nassign <- names(fit@constraints) 
-    choose.from <-  varassign(fit@constraints, nassign)
-    for (ii in nassign)
-      if (any(ii == names(colx2.index))) {
-        log.vec33 <- c(log.vec33, choose.from[[ii]])
-      }
+  log.vec33 <- NULL 
+  nassign <- names(fit@constraints) 
+  choose.from <-  varassign(fit@constraints, nassign)
+  for (ii in nassign)
+    if (any(ii == names(colx2.index))) {
+      log.vec33 <- c(log.vec33, choose.from[[ii]])
+    }
     cov33 <- cov2233[ log.vec33, log.vec33, drop = FALSE]  # r*p2 by r*p2
     cov23 <- cov2233[-log.vec33, log.vec33, drop = FALSE]
     cov22 <- cov2233[-log.vec33,-log.vec33, drop = FALSE]
@@ -1921,9 +1925,9 @@ num.deriv.rrr <- function(fit, M, r, x1mat, x2mat,
 
 
 dctda.fast.only <- function(theta, wz, U, zmat, M, r, x1mat, x2mat,
-                           p2, Index.corner, Aimat, B1mat, Cimat,
-                           xij = NULL,
-                           str0 = NULL) {
+                            p2, Index.corner, Aimat, B1mat, Cimat,
+                            xij = NULL,
+                            str0 = NULL) {
 
 
   if (length(str0))
@@ -1985,7 +1989,7 @@ dctda.fast.only <- function(theta, wz, U, zmat, M, r, x1mat, x2mat,
 
 
 dcda.fast <- function(theta, wz, U, z, M, r, xmat, pp, Index.corner,
-                     intercept= TRUE, xij = NULL) {
+                      intercept = TRUE, xij = NULL) {
 
 
 
@@ -2033,29 +2037,29 @@ dcda.fast <- function(theta, wz, U, z, M, r, xmat, pp, Index.corner,
   cbindex <- (1:M)[-Index.corner]
   resid2 <- mux22(t(wz),
                   z - matrix(int.vec, nn, M, byrow = TRUE), M = M,
-                  upper = FALSE, as.matrix = TRUE)  # mat= TRUE,
+                  upper = FALSE, as.matrix = TRUE)  # mat = TRUE,
 
   for (s in 1:r)
-      for (tt in cbindex) {
-          fred <- (if (intercept) t(xmat[, -1, drop = FALSE]) else
-                   t(xmat)) * matrix(resid2[, tt], pp, nn, byrow = TRUE) 
-          temp2 <- kronecker(I.col(s, r), rowSums(fred))
+    for (tt in cbindex) {
+      fred <- (if (intercept) t(xmat[, -1, drop = FALSE]) else
+               t(xmat)) * matrix(resid2[, tt], pp, nn, byrow = TRUE) 
+      temp2 <- kronecker(I.col(s, r), rowSums(fred))
 
-          temp4 <- rep(0,pp)
-          for (k in 1:r) {
-              Wiak <- mux22(t(wz),
-                            matrix(Aimat[, k], nn, M, byrow = TRUE),
-                            M = M, upper = FALSE, as.matrix = TRUE)
-              wxx <- Wiak[,tt] * (if (intercept)
-                                  xmat[, -1, drop = FALSE] else
-                                  xmat)
-              blocki <- (if (intercept)
-                        t(xmat[, -1, drop = FALSE]) else
-                        t(xmat)) %*% wxx
-              temp4 <- temp4 + blocki %*% Cimat[, k]
-          }
-          dc.da[,,tt,s] <- G %*% (temp2 - 2 * kronecker(I.col(s, r), temp4))
+      temp4 <- rep(0,pp)
+      for (k in 1:r) {
+        Wiak <- mux22(t(wz),
+                      matrix(Aimat[, k], nn, M, byrow = TRUE),
+                      M = M, upper = FALSE, as.matrix = TRUE)
+        wxx <- Wiak[,tt] * (if (intercept)
+                            xmat[, -1, drop = FALSE] else
+                            xmat)
+        blocki <- (if (intercept)
+                  t(xmat[, -1, drop = FALSE]) else
+                  t(xmat)) %*% wxx
+        temp4 <- temp4 + blocki %*% Cimat[, k]
       }
+      dc.da[,,tt,s] <- G %*% (temp2 - 2 * kronecker(I.col(s, r), temp4))
+    }
   ans1 <- dc.da[,,cbindex,, drop = FALSE]  # pp x r x (M-r) x r 
   ans1 <- aperm(ans1, c(2, 1, 3, 4))   # r x pp x (M-r) x r 
 
@@ -2064,12 +2068,12 @@ dcda.fast <- function(theta, wz, U, z, M, r, xmat, pp, Index.corner,
 
   detastar.da <- array(0,c(M,r,r,nn))
   for (s in 1:r)
-      for (j in 1:r) {
-          t1 <- t(dc.da[,j,,s])
-          t1 <- matrix(t1, M, pp)
-          detastar.da[,j,s,] <- t1 %*% (if (intercept)
-                                t(xmat[,-1, drop = FALSE]) else t(xmat))
-      }
+    for (j in 1:r) {
+      t1 <- t(dc.da[,j,,s])
+      t1 <- matrix(t1, M, pp)
+      detastar.da[,j,s,] <- t1 %*% (if (intercept)
+                            t(xmat[,-1, drop = FALSE]) else t(xmat))
+    }
 
   etastar <- (if (intercept) xmat[,-1, drop = FALSE] else xmat) %*% Cimat
   eta <- matrix(int.vec, nn, M, byrow = TRUE) + etastar %*% t(Aimat)
@@ -2082,7 +2086,7 @@ dcda.fast <- function(theta, wz, U, z, M, r, xmat, pp, Index.corner,
   AtWi <- array(t(AtWi), c(r, M, nn))
   for (ss in 1:r) {
     temp90 <- (m2a(t(colSums(etastar[, ss]*wz)), M = M))[, , 1]  # MxM
-    temp92 <- array(detastar.da[,,ss,], c(M,r,nn))
+    temp92 <- array(detastar.da[,,ss,], c(M, r, nn))
     temp93 <- mux7(temp92, AtWi)
     temp91 <- rowSums(temp93, dims = 2)  # M x M
     deta0.da[,,ss] <- -(temp90 + temp91) %*% sumWinv
@@ -2097,8 +2101,8 @@ dcda.fast <- function(theta, wz, U, z, M, r, xmat, pp, Index.corner,
 
 
 rrr.deriv.ResSS <- function(theta, wz, U, z, M, r, xmat,
-                         pp, Index.corner, intercept = TRUE,
-                         xij = NULL) {
+                            pp, Index.corner, intercept = TRUE,
+                            xij = NULL) {
 
   Amat <- matrix(as.numeric(NA), M, r)
   Amat[Index.corner,] <- diag(r)
@@ -2158,27 +2162,27 @@ rrr.deriv.gradient.fast <- function(theta, wz, U, z, M, r, xmat,
       stop("Cimat wrong shape")
 
   fred <- kronecker(matrix(1, 1,r),
-                   if (intercept) xmat[, -1, drop = FALSE] else xmat)
+                    if (intercept) xmat[, -1, drop = FALSE] else xmat)
   fred <- kronecker(fred, matrix(1, M, 1))
   barney <- kronecker(Aimat, matrix(1, 1, pp))
   barney <- kronecker(matrix(1, nn, 1), barney)
 
   temp <- array(t(barney*fred), c(r*pp, M, nn))
   temp <- aperm(temp, c(2, 1, 3))
-  temp <- mux5(wz, temp, M = M, matrix.arg= TRUE)
+  temp <- mux5(wz, temp, M = M, matrix.arg = TRUE)
   temp <- m2a(temp, M = r * pp)  # Note M != M here!
   G <- solve(rowSums(temp, dims = 2))
 
   dc.da <- array(NA,c(pp,r,r,M))
   cbindex <- (1:M)[-Index.corner]
   resid2 <- mux22(t(wz), z - matrix(int.vec, nn, M, byrow = TRUE),
-                 M = M,
-                 upper = FALSE, as.matrix = TRUE)
+                  M = M,
+                  upper = FALSE, as.matrix = TRUE)
 
   for (s in 1:r)
     for (tt in cbindex) {
-      fred <- (if (intercept) t(xmat[,-1, drop = FALSE]) else
-               t(xmat)) * matrix(resid2[,tt],pp,nn,byrow = TRUE) 
+      fred <- (if (intercept) t(xmat[, -1, drop = FALSE]) else
+               t(xmat)) * matrix(resid2[, tt], pp, nn, byrow = TRUE) 
       temp2 <- kronecker(I.col(s, r), rowSums(fred))
 
       temp4 <- rep(0,pp)
@@ -2187,10 +2191,10 @@ rrr.deriv.gradient.fast <- function(theta, wz, U, z, M, r, xmat,
                      matrix(Aimat[, k], nn, M, byrow = TRUE),
                      M = M, upper = FALSE, as.matrix = TRUE)
         wxx <- Wiak[,tt] * (if (intercept)
-                           xmat[, -1, drop = FALSE] else xmat)
+                            xmat[, -1, drop = FALSE] else xmat)
         blocki <- (if (intercept) t(xmat[, -1, drop = FALSE]) else
                   t(xmat)) %*% wxx 
-        temp4 <- temp4 + blocki %*% Cimat[,k]
+        temp4 <- temp4 + blocki %*% Cimat[, k]
       }
       dc.da[,,s,tt] <- G %*% (temp2 - 2 * kronecker(I.col(s, r), temp4))
     }
@@ -2237,7 +2241,7 @@ rrr.deriv.gradient.fast <- function(theta, wz, U, z, M, r, xmat,
     ans[,s] <- a1 + a2 + a3
   }
 
-  ans <- -2 * c(ans[cbindex,])
+  ans <- -2 * c(ans[cbindex, ])
 
   ans
 }
@@ -2250,8 +2254,9 @@ rrr.deriv.gradient.fast <- function(theta, wz, U, z, M, r, xmat,
 
 
 vellipse <- function(R, ratio = 1, orientation = 0,
-                    center = c(0, 0), N = 300) {
-  if (length(center) != 2) stop("center must be of length 2")
+                     center = c(0, 0), N = 300) {
+  if (length(center) != 2)
+    stop("argument 'center' must be of length 2")
   theta <-       2*pi*(0:N)/N
   x1 <-       R*cos(theta)
   y1 <- ratio*R*sin(theta)
@@ -2284,7 +2289,7 @@ biplot.qrrvglm <- function(x, ...) {
           chull.arg = FALSE, clty = 2, ccol = par()$col, clwd = par()$lwd,
               cpch = "   ",
           C = FALSE,
-              OriginC = c("origin","mean"),
+              OriginC = c("origin", "mean"),
               Clty = par()$lty, Ccol = par()$col, Clwd = par()$lwd,
               Ccex = par()$cex, Cadj.arg = -0.1, stretchC = 1, 
           sites = FALSE, spch = NULL, scol = par()$col, scex = par()$cex,
@@ -2307,7 +2312,7 @@ biplot.qrrvglm <- function(x, ...) {
 
     Rank <- object@control$Rank
     if (Rank > 2)
-        stop("can only handle rank 1 or 2 models")
+      stop("can only handle rank 1 or 2 models")
     M <- object@misc$M
     NOS <- ncol(object@y)
     MSratio <- M / NOS  # First value is g(mean) = quadratic form in latvar
@@ -2333,7 +2338,7 @@ biplot.qrrvglm <- function(x, ...) {
                 if ( y && type == "fitted.values")
                 object@y else r.curves,
                 type = "n", xlab = xlab, ylab = ylab, ...)
-      } else { # Rank == 2
+      } else {  # Rank == 2
         matplot(c(Coef.list@Optimum[1, ], nustar[, 1]),
                 c(Coef.list@Optimum[2, ], nustar[, 2]),
                 type = "n", xlab = xlab, ylab = ylab, ...)
@@ -2395,22 +2400,22 @@ biplot.qrrvglm <- function(x, ...) {
             lty = clty, col = ccol, lwd = clwd)
     }
     if (length(ellipse)) {
-        ellipse.temp <- if (ellipse > 0) ellipse else 0.95
-        if (ellipse < 0 && (!object@control$eq.tolerances || varI.latvar))
-          stop("an equal-tolerances assumption and 'varI.latvar = FALSE' ",
-               "is needed for 'ellipse' < 0")
-        if ( check.ok ) {
-          colx1.index <- object@control$colx1.index
-          if (!(length(colx1.index) == 1 &&
-                names(colx1.index) == "(Intercept)"))
-            stop("can only plot ellipses for intercept models only")
-        }
-        for (i in 1:ncol(r.curves)) {
-          cutpoint <- object@family@linkfun( if (Absolute) ellipse.temp
-                          else Coef.list@Maximum[i] * ellipse.temp,
-                          extra = object@extra)
-          if (MSratio > 1) 
-            cutpoint <- cutpoint[1, 1]
+      ellipse.temp <- if (ellipse > 0) ellipse else 0.95
+      if (ellipse < 0 && (!object@control$eq.tolerances || varI.latvar))
+        stop("an equal-tolerances assumption and 'varI.latvar = FALSE' ",
+             "is needed for 'ellipse' < 0")
+      if ( check.ok ) {
+        colx1.index <- object@control$colx1.index
+        if (!(length(colx1.index) == 1 &&
+              names(colx1.index) == "(Intercept)"))
+          stop("can only plot ellipses for intercept models only")
+      }
+      for (i in 1:ncol(r.curves)) {
+        cutpoint <- object@family@linkfun( if (Absolute) ellipse.temp
+                        else Coef.list@Maximum[i] * ellipse.temp,
+                        extra = object@extra)
+        if (MSratio > 1) 
+          cutpoint <- cutpoint[1, 1]
 
           cutpoint <- object@family@linkfun(Coef.list@Maximum[i],
                       extra = object@extra) - cutpoint
@@ -2418,8 +2423,8 @@ biplot.qrrvglm <- function(x, ...) {
             Mmat <- diag(rep(ifelse(object@control$Crow1positive, 1, -1),
                             length.out = Rank))
             etoli <- eigen(t(Mmat) %*% Coef.list@Tolerance[,,i] %*% Mmat)
-            A <- ifelse(etoli$val[1]>0,sqrt(2*cutpoint*etoli$val[1]),Inf)
-            B <- ifelse(etoli$val[2]>0,sqrt(2*cutpoint*etoli$val[2]),Inf)
+            A <- ifelse(etoli$val[1]>0, sqrt(2*cutpoint*etoli$val[1]), Inf)
+            B <- ifelse(etoli$val[2]>0, sqrt(2*cutpoint*etoli$val[2]), Inf)
             if (ellipse < 0)
               A <- B <- -ellipse / 2
 
@@ -2430,7 +2435,7 @@ biplot.qrrvglm <- function(x, ...) {
             if (all(is.finite(c(A,B))))
               lines(vellipse(R = 2*A, ratio = B/A,
                              orientation = theta.angle,
-                             center = Coef.list@Optimum[,i],
+                             center = Coef.list@Optimum[, i],
                              N = egrid),
                     lwd = elwd[i], col =ecol[i], lty = elty[i])
             }
@@ -2469,35 +2474,35 @@ biplot.qrrvglm <- function(x, ...) {
 
 
 lvplot.rrvglm <- function(object,
-                         A = TRUE,
-                         C = TRUE,
-                         scores = FALSE, show.plot = TRUE,
-                         groups = rep(1, n),
-                         gapC = sqrt(sum(par()$cxy^2)), scaleA = 1,
-                         xlab = "Latent Variable 1",
-                         ylab = "Latent Variable 2",
+                          A = TRUE,
+                          C = TRUE,
+                          scores = FALSE, show.plot = TRUE,
+                          groups = rep(1, n),
+                          gapC = sqrt(sum(par()$cxy^2)), scaleA = 1,
+                          xlab = "Latent Variable 1",
+                          ylab = "Latent Variable 2",
          Alabels= if (length(object@misc$predictors.names))
          object@misc$predictors.names else paste("LP", 1:M, sep = ""),
-                         Aadj = par()$adj,
-                         Acex = par()$cex,
-                         Acol = par()$col,
-                         Apch = NULL,
-                         Clabels=rownames(Cmat),
-                         Cadj = par()$adj,
-                         Ccex = par()$cex,
-                         Ccol = par()$col, 
-                         Clty = par()$lty, 
-                         Clwd = par()$lwd, 
-                         chull.arg = FALSE,
-                         ccex = par()$cex,
-                         ccol = par()$col,
-                         clty = par()$lty,
-                         clwd = par()$lwd,
-                         spch = NULL,
-                         scex = par()$cex,
-                         scol = par()$col,
-                         slabels=rownames(x2mat),
-                         ...) {
+                          Aadj = par()$adj,
+                          Acex = par()$cex,
+                          Acol = par()$col,
+                          Apch = NULL,
+                          Clabels=rownames(Cmat),
+                          Cadj = par()$adj,
+                          Ccex = par()$cex,
+                          Ccol = par()$col, 
+                          Clty = par()$lty, 
+                          Clwd = par()$lwd, 
+                          chull.arg = FALSE,
+                          ccex = par()$cex,
+                          ccol = par()$col,
+                          clty = par()$lty,
+                          clwd = par()$lwd,
+                          spch = NULL,
+                          scex = par()$cex,
+                          scol = par()$col,
+                          slabels = rownames(x2mat),
+                          ...) {
 
 
     if (object@control$Rank != 2 && show.plot)
@@ -2689,7 +2694,8 @@ show.Coef.rrvglm <- function(x, ...) {
     setGeneric("biplot", function(x, ...) standardGeneric("biplot")) 
 
 
-setMethod("Coef", "qrrvglm", function(object, ...) Coef.qrrvglm(object, ...))
+setMethod("Coef", "qrrvglm", function(object, ...)
+          Coef.qrrvglm(object, ...))
 
 
 
@@ -2761,6 +2767,9 @@ show.summary.qrrvglm <- function(x, ...) {
 
 
  setClass("summary.qrrvglm", contains = "qrrvglm")
+
+
+
 
 
 

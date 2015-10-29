@@ -69,9 +69,9 @@ acat(link = "loge", parallel = FALSE, reverse = FALSE,
 
 }
 \references{
-Agresti, A. (2002)
+Agresti, A. (2013)
 \emph{Categorical Data Analysis},
-2nd ed. New York: Wiley.
+3rd ed. Hoboken, NJ, USA: Wiley.
 
 
 Simonoff, J. S. (2003)

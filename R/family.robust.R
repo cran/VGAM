@@ -217,7 +217,7 @@ phuber <- function(q, k = 0.862, mu = 0, sigma = 1,
             namesof("scale",     lscale,  earg = escale), "\n\n",
             "Mean: location"),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x, .zero, M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
   }), list( .zero = zero ))),
   initialize = eval(substitute(expression({
 

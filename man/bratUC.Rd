@@ -71,9 +71,9 @@ Brat(mat, ties = 0 * mat, string = c(">", "=="), whitespace = FALSE)
 \references{
 
 
-Agresti, A. (2002)
+Agresti, A. (2013)
 \emph{Categorical Data Analysis},
-2nd ed. New York: Wiley.
+3rd ed. Hoboken, NJ, USA: Wiley.
 
 
 }

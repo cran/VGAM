@@ -41,7 +41,7 @@
             "\n",
             "Variance: sd^2"),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
   }) , list( .zero = zero))),
 
 
@@ -315,7 +315,7 @@ rbisa <- function(n, scale = 1, shape) {
             namesof("scale", lscale, earg = escale, tag = TRUE), "; ",
             namesof("shape", lshape, earg = eshape, tag = TRUE)),
   constraints = eval(substitute(expression({
-      constraints <- cm.zero.VGAM(constraints, x, .zero , M)
+      constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
   }) , list( .zero = zero))),
   initialize = eval(substitute(expression({
     if (ncol(y <- cbind(y)) != 1)

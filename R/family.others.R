@@ -189,7 +189,7 @@ rexppois <- function(n, rate = 1, shape) {
 
 
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
   }), list( .zero = zero))),
 
   initialize = eval(substitute(expression({
@@ -476,7 +476,7 @@ genrayleigh.control <- function(save.weights = TRUE, ...) {
             namesof("scale", lscale, earg = escale), ", ",
             namesof("shape", lshape, earg = eshape), "\n"),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x, .zero, M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
   }), list( .zero = zero ))),
 
   initialize = eval(substitute(expression({
@@ -743,7 +743,7 @@ expgeometric.control <- function(save.weights = TRUE, ...) {
             "shape) / (shape / scale)"), 
                            
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x, .zero, M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
   }), list( .zero = zero ))),
  
 
@@ -1020,7 +1020,7 @@ explogff.control <- function(save.weights = TRUE, ...) {
             "Mean:     ", "(-polylog(2, 1 - p) * scale) / log(shape)"),
 
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x, .zero, M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
   }), list( .zero = zero ))),
 
   initialize = eval(substitute(expression({
@@ -1356,7 +1356,7 @@ tpnff <- function(llocation = "identitylink", lscale = "loge",
             namesof("scale",     lscale,  earg = escale), "\n\n",
             "Mean: "),
   constraints = eval(substitute(expression({
-          constraints <- cm.zero.VGAM(constraints, x, .zero, M)
+          constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
   }), list( .zero = zero ))),
   initialize = eval(substitute(expression({
 
@@ -1529,7 +1529,7 @@ tpnff3 <- function(llocation = "identitylink",
             namesof("skewpar",  lscale, earg = eskewp),  "\n\n",
             "Mean: "),
   constraints = eval(substitute(expression({
-          constraints <- cm.zero.VGAM(constraints, x, .zero, M)
+          constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
   }), list( .zero = zero ))),
   initialize = eval(substitute(expression({
 

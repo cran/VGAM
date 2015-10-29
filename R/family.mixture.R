@@ -91,7 +91,7 @@ mix2normal.control <- function(trace = TRUE, ...) {
                            bool = .eq.sd ,
                            constraints = constraints,
                            apply.int = TRUE)
-    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
   }), list( .zero = zero, .eq.sd = eq.sd ))),
   initialize = eval(substitute(expression({
 
@@ -320,7 +320,7 @@ mix2poisson.control <- function(trace = TRUE, ...) {
             namesof("lambda2", llambda, earg = el2, tag = FALSE), "\n",
             "Mean:     phi*lambda1 + (1 - phi)*lambda2"),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x, .zero, M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
   }), list( .zero = zero ))),
   initialize = eval(substitute(expression({
 
@@ -492,6 +492,8 @@ mix2exp.control <- function(trace = TRUE, ...) {
   list(trace = trace)
 }
 
+
+
  mix2exp <- function(lphi = "logit", llambda = "loge",
                      iphi = 0.5, il1 = NULL, il2 = NULL,
                      qmu = c(0.8, 0.2), nsimEIM = 100, zero = 1) {
@@ -535,7 +537,7 @@ mix2exp.control <- function(trace = TRUE, ...) {
             "Mean:     phi / lambda1 + (1 - phi) / lambda2\n"),
 
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x, .zero, M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
   }), list( .zero = zero ))),
 
   initialize = eval(substitute(expression({

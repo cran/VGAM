@@ -7,6 +7,63 @@
 useDynLib(VGAM)
 
 
+
+export(as.char.expression)
+
+
+
+
+
+
+
+
+
+S3method(vcov, vlm, vcovvlm)
+S3method(coef, vlm, coefvlm)
+S3method(df.residual, vlm, df.residual_vlm)
+S3method(model.matrix, vlm, model.matrixvlm)
+S3method(formula, vlm, formulavlm)
+export(vcov.vlm, coef.vlm, formula.vlm, model.matrix.vlm)
+export(has.interceptvlm)
+exportMethods(has.intercept)
+export(term.namesvlm)
+exportMethods(term.names)
+export(responseNamevlm)
+exportMethods(responseName)
+
+
+
+
+  importFrom("grDevices", "chull")
+  importFrom("graphics", "abline", "arrows", "axis", "lines", "matlines",
+             "matplot", "matpoints", "mtext", "par", "points", "rug",
+             "segments", "text")
+  importFrom("methods", "as", "is", "new", "slot", "slot<-", "slotNames",
+             "show")
+  importFrom("stats", ".getXlevels", "as.formula", "contrasts<-",
+             "dbeta", "dbinom", "delete.response", "deriv3", "dgamma",
+             "dgeom", "dnbinom", "dt", "dweibull", "getCall",
+             "integrate", "is.empty.model", "lm.fit", "median",
+             "model.offset", "model.response", "model.weights",
+             "na.fail", "napredict", "optim", "pbeta", "pbinom",
+             "pgamma", "pgeom", "pnbinom", "polym", "printCoefmat",
+             "pweibull", "qbeta", "qbinom", "qchisq", "qf", "qgamma",
+             "qgeom", "qnbinom", "qt", "quantile", "qweibull", "rbeta",
+             "rbinom", "rgamma", "rgeom", "rlnorm", "rlogis", "rnbinom",
+             "runif", "rweibull", "sd", "spline", "terms.formula",
+             "time", "uniroot", "update.formula", "var", "weighted.mean")
+  importFrom("utils", "flush.console", "getS3method", "head")
+
+
+
+
+importFrom("stats4", confint)  # For S4, not S3
+export(confintvglm)  # For S4, not S3
+export(confintrrvglm)  # For S4, not S3
+export(confintvgam)  # For S4, not S3
+exportMethods(confint)  # For S4, not S3
+
+
 export(dgenpois)
 export(AR1)
 export(dAR1)
@@ -171,7 +228,7 @@ export(is.empty.list)
 
 export(
 Build.terms.vlm,
-interleave.VGAM,
+interleave.VGAM, interleave.cmat,
 procVec,
 ResSS.vgam,
 valt.control,
@@ -357,6 +414,7 @@ dlevy, plevy, qlevy, rlevy, levy,
 lms.bcg.control, lms.bcn.control, lmscreg.control,
 lms.yjn.control, 
 lms.bcg, lms.bcn, lms.yjn, lms.yjn2,
+dlms.bcn, qlms.bcn,
 lqnorm,
 dbilogis, pbilogis, rbilogis, bilogistic,
 logistic1, logistic,
@@ -422,7 +480,9 @@ summary.rrvgam, summary.grc,
   summary.qrrvglm,
 summary.rrvglm,
 summaryvgam, summaryvglm, summaryvlm,
-s.vam, terms.vlm, 
+s.vam,
+terms.vlm, 
+termsvlm, 
 Tol.Coef.qrrvglm, Tol.qrrvglm,
 triangle, dtriangle, ptriangle, qtriangle, rtriangle, 
   vcovvlm,
@@ -608,7 +668,7 @@ poissonff,
 dposbinom, pposbinom, qposbinom, rposbinom, posbinomial,
 dposgeom, pposgeom, qposgeom, rposgeom, # posgeometric,
 dposnegbin, pposnegbin, qposnegbin, rposnegbin, posnegbinomial,
-dposnorm, pposnorm, qposnorm, rposnorm, posnormal, posnormal.control,
+dposnorm, pposnorm, qposnorm, rposnorm, posnormal,
 dpospois, ppospois, qpospois, rpospois, pospoisson,
 qtplot.lmscreg, quasibinomialff, quasipoissonff, rdiric, rigff,
 rrar, rrvglm.control,
@@ -627,7 +687,7 @@ cqo,
 qrrvglm.control,
 vgam.control, vgam, vglm.control, vglm,
 vsmooth.spline,
-weibullR, yip88,
+weibull.mean, weibullR, yip88,
 dzabinom, pzabinom, qzabinom, rzabinom, zabinomial, zabinomialff,
 dzageom, pzageom, qzageom, rzageom, zageometric, zageometricff,
 dzanegbin, pzanegbin, qzanegbin, rzanegbin, zanegbinomial, zanegbinomialff,

@@ -77,7 +77,7 @@ vglm.fit <-
       eta <- slot(family, "linkfun")(mu, extra)
     } else {
       warning("argument 'mustart' assigned a value ",
-              "but there is no 'link' slot to use it")
+              "but there is no 'linkfun' slot to use it")
     }
   }
 

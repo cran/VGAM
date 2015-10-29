@@ -6,6 +6,69 @@
 
 
 
+                CHANGES IN VGAM VERSION 1.0-0
+
+NEW FEATURES
+
+    o   Official version that goes with the just-released book
+        "Vector Generalized Linear and Additive Models:
+        With an Implementation in R" by T. W. Yee (2015),
+        Springer: New York, USA.
+    o   gengamma.stacy() implements a grid search wrt
+        all its parameters.
+    o   New functions: [dp]lms.bcn().
+    o   New family function: weibull.mean().
+    o   triangle.control() slows down the speed of the iterations
+        towards the MLE, because the regularity conditions do not hold.
+    o   New arguments: AR1(nodrift = FALSE).
+    o   binormal has arguments eq.mean and eq.sd which now operate
+        independently.
+    o   confint() should work for objects that are "vglm"s.
+        Thanks to Tingting Zhan for suggesting this.
+    o   Tested okay on R 3.2.2.
+    o   Methods functions for responseName() and term.names() and
+        has.intercept().
+
+
+BUG FIXES and CHANGES
+
+    o   Link functions have changed a lot!!!
+        They return different values when deriv = 1 and deriv = 2,
+        coupled with inverse = TRUE and inverse = FALSE.
+        Type ?Links to see examples. 
+        The first derivatives become reciprocals of each other
+        when inverse = TRUE and inverse = FALSE, however the
+        2nd derivatives are no longer reciprocals of each other.
+        Also affected are dtheta.deta() and d2theta.deta2(), etc.
+    o   'show()' added to importMethods('methods') in NAMESPACE.
+    o   The following currently do not work:
+        golf(), nbolf(), polf().
+    o   AA.Aa.aa() used the OIM and worked for intercept-only models,
+        but now it uses the EIM.
+    o   logneg("a", short = TRUE) has been modified.
+    o   posnormal(): the first and second derivatives have been modified
+        for both SFS and ordinary FS,
+        and the default is zero = -2 now ('sd' is intercept-only).
+        Several other improvements have been done.
+    o   binomialff()@deviance is assigned all the time now.
+    o   dbetabin.ab() better handles extremes in the shape
+        parameters (very close to 0 and larger than 1e6, say).
+        Thanks to Juraj Medzihorsky for picking this up.
+    o   Family functions: zigeometric()@weight and zigeometricff()@weight
+        had one element incorrect.
+    o   logit("a+b", short = FALSE) was labelled incorrectly, etc.
+    o   Family function tobit()@weights implements Fisher scoring
+        entirely. And it handles observations whose fitted
+        values are (relatively) large and positive; thanks to
+        Victor Champonnois for picking up this bug.
+    o   S3 methods function df.residual_vlm() also called by df.residual.vlm().
+        This is to avoid a bug picked up by car::linearHypothesis().
+        Ditto for vcovvlm() by vcov.vlm().
+        Also model.matrix() and formula().
+        Thanks to Michael Friendly and John Fox for help here.
+
+
+
                 CHANGES IN VGAM VERSION 0.9-8
 
 NEW FEATURES

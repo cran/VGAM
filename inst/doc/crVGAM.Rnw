@@ -126,6 +126,15 @@ options(prompt = "R> ", continue = "+")
 \label{sec:intro}
 
 
+
+Note: this vignette is essentially \cite{yee:stok:hugg:2015}.
+
+
+
+\bigskip
+
+
+
 Capture--recapture (CR) surveys are widely used in ecology and 
 epidemiology to estimate population sizes. In essence they are 
 sampling schemes that allow the estimation of both $n$ and $p$ 
@@ -378,7 +387,7 @@ function based only on the individuals observed at least once is
 \begin{eqnarray}
 \label{eq:posbern.condlikelihood}
 L_{c} & \propto & \prod_{i=1}^{n} 
-\frac{\prod\limits_{j=1}^{\tau} p_{ij}^{y_{ij}} (1-p_{ij})^{1 - y_{ij}}}
+\frac{\prod_{j=1}^{\tau} p_{ij}^{y_{ij}} (1-p_{ij})^{1 - y_{ij}}}
 {1-\prod_{s=1}^{\tau}(1-p_{is}^{\dagger})}.
 \end{eqnarray}
 is used. Here $p_{is}^{\dagger}$ are the $p_{ij}$ computed as if the
@@ -508,7 +517,8 @@ Appendix A.
 \label{sec:Nhat}
 
 
-In the above linear models, to estimate $N$ let $\pi_{i}(\btheta)=1-\prod\limits_{s=1}^{\tau}(1-p_{is}^{\dagger})$ 
+In the above linear models, to estimate $N$
+let $\pi_{i}(\btheta)=1-\prod_{s=1}^{\tau}(1-p_{is}^{\dagger})$ 
 be the probability that individual $i$ is captured at least once 
 in the course of the study. Then, if $\btheta$ is known, 
 the Horvitz--Thompson \citep[HT;][]{horv:thom:1952} estimator
@@ -1470,9 +1480,12 @@ plot(fit.bh, se = TRUE, las = 1, lcol = "blue", scol = "orange",
 
 
 % ---------------------------------------------------------------------
+
+\setkeys{Gin}{width=0.9\textwidth} % 0.8 is the current default
+
 \begin{figure}[tt]
 \begin{center}
-<<plot-deermice, width=6.0, height=5, echo=FALSE, message=FALSE, warning=FALSE>>=
+<<fig=TRUE,label=plot-deermice, width=6.0, height=5, echo=FALSE, message=FALSE, warning=FALSE>>=
 par(mfrow = c(2, 2))
 par(las = 1, cex = 1.1, mar = c(3.8, 4, 0.5, 0.2) + 0.1)
 par(mgp = c(2.3, 1, 0))  # Default is c(3, 1, 0)
@@ -1485,8 +1498,6 @@ plot(fit.bh, se = TRUE, las = 1, lcol = "blue", scol = "orange",
 # < < poz-posbernoulli-eg-deermice-smooth-shadow> >
 
 
-
-
 @
 \caption{Estimated component functions with approximate $\pm 2$ 
 pointwise SE bands fitting a $\calM_{bh}$-VGAM, using 
@@ -1495,6 +1506,9 @@ each covariate value $x_{ik}$.\label{fig:poz:deermice}
 }
 \end{center}
 \end{figure}
+
+
+\setkeys{Gin}{width=0.8\textwidth} % 0.8 is the current default
 
 
 % ---------------------------------------------------------------------
@@ -1604,11 +1618,13 @@ legend("topleft", legend = c("Fat present", "Fat not present"), bty = "n",
 
 
 
+% ---------------------------------------------------------------------
 
+\setkeys{Gin}{width=0.9\textwidth} % 0.8 is the current default
 
 \begin{figure}[tt]
 \begin{center}
-<<plot-bird, width=6.0, height=5.5, echo=FALSE, message=FALSE, warning=FALSE>>=
+<<fig=TRUE, label=plot-bird, width=6.0, height=5.5, echo=FALSE, message=FALSE, warning=FALSE>>=
 par(mfrow = c(1, 1))
 
 
@@ -1666,6 +1682,12 @@ Notice that the standard errors are wider at the boundaries.
 }
 \end{center}
 \end{figure}
+
+
+\setkeys{Gin}{width=0.8\textwidth} % 0.8 is the current default
+
+
+% ---------------------------------------------------------------------
 
 
 Both the estimates for the population size and shape of the fitted 
@@ -2112,7 +2134,7 @@ We give the first and (expected) second derivatives of the models.
 Let $z_{ij}= 1$ if individual $i$ has been captured before occasion $j$,
 else $=0$. Also, let $p_{cj}$ and $p_{rj}$ be the probability that an
 individual is captured/recaptured at sampling occasion $j$, 
-and $Q_{s:t} = \prod\limits_{j=s}^{t} (1-p_{cj})$.
+and $Q_{s:t} = \prod_{j=s}^{t} (1-p_{cj})$.
 Occasionally, subscripts $i$ are omitted for clarity.
 \cite{hugg:1989} gives a general form for the derivatives of the
 conditional likelihood (\ref{eq:posbern.condlikelihood}).
@@ -2218,9 +2240,15 @@ to the probabilities in the conditional
 likelihood function (\ref{eq:posbern.condlikelihood}), viz.
 \[
 {\widehat{p}}_{ij}^{ y_{ij}} \left(1-\widehat{p}_{ij}\right)^{1-y_{ij}}
-\cdot\left[1 - \prod\limits_{s=1}^{\tau}
-\left( 1 - \widehat{p}_{i,cs}^{}\right)\right]^{-1}.
+\cdot
+\left[
+ 1 - \prod_{s=1}^{\tau}
+\left( 1 - \widehat{p}_{i,cs}^{}\right)
+\right]^{-1}.
 \]
+
+
+
 Alternatively, the unconditional means of the $Y_j$ can be
 returned as the fitted values upon selecting
 \code{type.fitted = "mean"} argument.

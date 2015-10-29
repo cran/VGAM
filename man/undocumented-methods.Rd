@@ -4,6 +4,18 @@
 %\alias{ccoef-method}
 %
 %
+% 201509:
+\alias{term.names,ANY-method}
+\alias{term.names,vlm-method}
+\alias{responseName,ANY-method}
+\alias{responseName,vlm-method}
+\alias{has.intercept,ANY-method}
+\alias{has.intercept,vlm-method}
+% 201508, for R 3.2.2:
+\alias{confint,ANY-method}
+\alias{confint,vglm-method}
+\alias{confint,vgam-method}
+\alias{confint,rrvglm-method}
 %
 % 201503, for R 3.1.3:
 \alias{is.buggy,ANY-method}

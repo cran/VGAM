@@ -8,16 +8,28 @@
 
 
 
-formulavlm <- function(x, fnumber = 1, ...) {
-  if (!is.Numeric(fnumber, integer.valued = TRUE,
+
+
+formula.vlm <- function(x, ...)
+  formulavlm(x, ...)
+
+
+
+
+
+
+
+
+formulavlm <- function(x, form.number = 1, ...) {
+  if (!is.Numeric(form.number, integer.valued = TRUE,
                   length.arg = 1, positive = TRUE) ||
-      fnumber > 2)
-    stop("argument 'fnumber' must be 1 or 2")
+      form.number > 2)
+    stop("argument 'form.number' must be 1 or 2")
 
   if (!any(slotNames(x) == "misc"))
     stop("cannot find slot 'misc'")
 
-  if (fnumber == 1) x@misc$formula else x@misc$form2
+  if (form.number == 1) x@misc$formula else x@misc$form2
 }
 
 
@@ -176,11 +188,88 @@ setMethod("case.names", "grc",
 
 
 
+has.interceptvlm <- function(object, form.number = 1, ...) {
+  if (!is.Numeric(form.number, integer.valued = TRUE,
+                  length.arg = 1, positive = TRUE) ||
+      form.number > 2)
+    stop("argument 'form.number' must be 1 or 2")
+
+
+  if (form.number == 1) {
+    if (is.numeric(aa <- attr(terms(object), "intercept")))
+      as.logical(aa) else
+      FALSE
+  } else if (form.number == 2) {
+    if (is.numeric(aa <- attr(terms(object, form.number = 2), "intercept")))
+      as.logical(aa) else
+      FALSE
+  }
+}
+
+
+if (!isGeneric("has.intercept"))
+    setGeneric("has.intercept", function(object, ...)
+               standardGeneric("has.intercept"),
+               package = "VGAM")
+
+
+setMethod("has.intercept",  "vlm", function(object, ...)
+           has.interceptvlm(object, ...))
 
 
 
 
 
+
+
+term.namesvlm <- function(model, form.number = 1, ...) {
+  if (!is.Numeric(form.number, integer.valued = TRUE,
+                  length.arg = 1, positive = TRUE) ||
+      form.number > 2)
+    stop("argument 'form.number' must be 1 or 2")
+
+    aa <- if (has.intercept(model, form.number = form.number))
+          "(Intercept)" else NULL
+    bb <- attr(terms(model, form.number = form.number), "term.labels")
+    c(aa, bb)
+}
+
+
+if (!isGeneric("term.names"))
+    setGeneric("term.names", function(model, ...)
+               standardGeneric("term.names"),
+               package = "VGAM")
+
+
+setMethod("term.names",  "vlm", function(model, ...)
+           term.namesvlm(model, ...))
+
+
+
+
+
+
+
+responseNamevlm <- function(model, form.number = 1, ...) {
+  TERMS.MODEL <-terms(model, form.number = form.number)
+  if (length(aa <- attr(TERMS.MODEL, "dataClasses")) &&
+      length(bb <- attr(TERMS.MODEL, "response"   )) &&
+      bb == 1) {
+    names(aa)[1]
+  } else {
+    NULL
+  }
+}
+
+
+if (!isGeneric("responseName"))
+  setGeneric("responseName", function(model, ...)
+             standardGeneric("responseName"),
+             package = "VGAM")
+
+
+setMethod("responseName",  "vlm", function(model, ...)
+           responseNamevlm(model, ...))
 
 
 
