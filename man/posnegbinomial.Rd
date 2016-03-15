@@ -8,10 +8,13 @@
 
 }
 \usage{
-posnegbinomial(lmunb = "loge", lsize = "loge",
-               isize = NULL, zero = -2, nsimEIM = 250,
-               ishrinkage = 0.95, imethod = 1)
-
+posnegbinomial(zero = "size", type.fitted = c("mean", "munb", "prob0"),
+           nsimEIM = 500, cutoff.prob = 0.999,
+           eps.trig = 1e-7, max.support = 4000, max.chunk.MB = 30,
+           lmunb = "loge", lsize = "loge",
+           imethod = 1, imunb = NULL, probs.y = 0.35,
+           ishrinkage = 0.95, isize = NULL,
+           gsize.mux = exp((-12:6)/2))
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -41,13 +44,33 @@ posnegbinomial(lmunb = "loge", lsize = "loge",
 
 
   }
-  \item{nsimEIM, zero}{ 
+  \item{nsimEIM, zero, eps.trig}{ 
   See \code{\link{CommonVGAMffArguments}}.
+
+
+  }
+  \item{probs.y, cutoff.prob}{
+    Similar to \code{\link{negbinomial}}.
+
+
+  }
+  \item{imunb, max.support}{
+    Similar to \code{\link{negbinomial}}.
+
+
+  }
+  \item{max.chunk.MB, gsize.mux}{
+    Similar to \code{\link{negbinomial}}.
 
 
   }
   \item{ishrinkage, imethod}{
   See \code{\link{negbinomial}}.
+
+  }
+  \item{type.fitted}{
+    See \code{\link{CommonVGAMffArguments}} for details.
+
 
   }
 }
@@ -73,7 +96,7 @@ posnegbinomial(lmunb = "loge", lsize = "loge",
   ordinary negative binomial distribution.
 
 
-  This function handles \emph{multivariate} responses, so that a matrix
+  This function handles \emph{multiple} responses, so that a matrix
   can be used as the response. The number of columns is the number
   of species, say, and setting \code{zero = -2} means that \emph{all}
   species have a \code{k} equalling a (different) intercept only.
@@ -81,15 +104,30 @@ posnegbinomial(lmunb = "loge", lsize = "loge",
 
 }
 \section{Warning}{
-  The Poisson model corresponds to \code{k} equalling infinity.
-  If the data is Poisson or close to Poisson, numerical problems may
-  occur. Possibly a loglog link could be added in the future to try help
-  handle this problem.
+  This family function is fragile;
+  at least two cases will lead to numerical problems.
+  Firstly, 
+  the positive-Poisson model corresponds to \code{k} equalling infinity.
+  If the data is positive-Poisson or close to positive-Poisson,
+  then the estimated \code{k} will diverge to \code{Inf} or some
+  very large value.
+  Secondly, if the data is clustered about the value 1 because
+  the \code{munb} parameter is close to 0
+  then numerical problems will also occur.
+  Users should set \code{trace = TRUE} to monitor convergence.
+  In the situation when both cases hold, the result returned
+  (which will be untrustworthy) will depend on the initial values.
+
+  
+%  Then trying a \code{\link{loglog}} link might help
+%  handle this problem.
 
 
-  This \pkg{VGAM} family function is computationally expensive
-  and usually runs slowly;
-  setting \code{trace = TRUE} is useful for monitoring convergence.
+  This \pkg{VGAM} family function inherits the same warnings as
+  \code{\link{negbinomial}}.
+  And if \code{k} is much less than 1 then the estimation may
+  be slow.
+
 
 
 }
@@ -118,7 +156,17 @@ posnegbinomial(lmunb = "loge", lsize = "loge",
 }
 \author{ Thomas W. Yee }
 \note{
-    This family function handles multiple responses.
+  If the estimated \eqn{k} is very large then fitting a
+  \code{\link{pospoisson}} model is a good idea.
+
+
+
+  If both \code{munb} and \eqn{k} are large then it may be
+  necessary to decrease \code{eps.trig} and increase
+  \code{max.support} so that the EIMs are positive-definite,
+  e.g.,
+  \code{eps.trig = 1e-8} and \code{max.support = Inf}.
+  
 
 
 }
@@ -141,20 +189,19 @@ posnegbinomial(lmunb = "loge", lsize = "loge",
 }
 
 \examples{
-\dontrun{
 pdata <- data.frame(x2 = runif(nn <- 1000))
 pdata <- transform(pdata, y1 = rposnegbin(nn, munb = exp(0+2*x2), size = exp(1)),
                           y2 = rposnegbin(nn, munb = exp(1+2*x2), size = exp(3)))
 fit <- vglm(cbind(y1, y2) ~ x2, posnegbinomial, data = pdata, trace = TRUE)
 coef(fit, matrix = TRUE)
-dim(depvar(fit))  # dim(fit@y) is not as good
+dim(depvar(fit))  # Using dim(fit@y) is not recommended
 
 
 # Another artificial data example
 pdata2 <- data.frame(munb = exp(2), size = exp(3)); nn <- 1000
 pdata2 <- transform(pdata2, y3 = rposnegbin(nn, munb = munb, size = size))
 with(pdata2, table(y3))
-fit <- vglm(y3 ~ 1, posnegbinomial, pdata2, trace = TRUE)
+fit <- vglm(y3 ~ 1, posnegbinomial, data = pdata2, trace = TRUE)
 coef(fit, matrix = TRUE)
 with(pdata2, mean(y3))  # Sample mean
 head(with(pdata2, munb/(1-(size/(size+munb))^size)), 1)  # Population mean
@@ -168,7 +215,8 @@ coef(fit, matrix = TRUE)
 Coef(fit)
 (khat <- Coef(fit)["size"])
 pdf2 <- dposnegbin(x = with(corbet, ofreq), mu = fitted(fit), size = khat)
-print( with(corbet, cbind(ofreq, species, fitted = pdf2*sum(species))), digits = 1)
+print(with(corbet, cbind(ofreq, species, fitted = pdf2*sum(species))), dig = 1)
+\dontrun{
 with(corbet,
 matplot(ofreq, cbind(species, fitted = pdf2*sum(species)), las = 1,
         xlab = "Observed frequency (of individual butterflies)",
@@ -181,6 +229,15 @@ matplot(ofreq, cbind(species, fitted = pdf2*sum(species)), las = 1,
 
 
 % bigN = with(corbet, sum(species))
+
+
+
+%posnegbinomial(lmunb = "loge", lsize = "loge", imunb = NULL,
+%               isize = NULL, zero = "size", nsimEIM = 250,
+%               probs.y = 0.75, cutoff.prob = 0.999,
+%               max.support = 2000, max.chunk.MB = 30, 
+%               gsize = exp((-4):4), ishrinkage = 0.95, imethod = 1)
+
 
 
 

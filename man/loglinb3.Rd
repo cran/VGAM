@@ -7,7 +7,7 @@
 
 }
 \usage{
-loglinb3(exchangeable = FALSE, zero = 4:6)
+loglinb3(exchangeable = FALSE, zero = c("u12", "u13", "u23"))
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -16,8 +16,10 @@ loglinb3(exchangeable = FALSE, zero = 4:6)
     be equal.
 
   }
-  \item{zero}{ Which linear/additive predictor is modelled as an
-    intercept only? A \code{NULL} means none.
+  \item{zero}{ Which linear/additive predictors are modelled as
+    intercept-only?
+    A \code{NULL} means none.
+    See \code{\link{CommonVGAMffArguments}} for further information.
 
 
   }

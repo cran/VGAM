@@ -7,8 +7,9 @@
 }
 \usage{
 gammaR(lrate = "loge", lshape = "loge", irate = NULL,
-       ishape = NULL, lss = TRUE, zero = ifelse(lss, -2, -1))
+       ishape = NULL, lss = TRUE, zero = "shape")
 }
+%                                 zero = ifelse(lss, -2, -1)
 %- maybe also 'usage' for other objects documented here.
 \arguments{
 % \item{nowarning}{ Logical. Suppress a warning? }

@@ -77,7 +77,7 @@ betabinomial.control <- function(save.weights = TRUE, ...) {
                           lrho = "logit",
                           irho = NULL,
                           imethod = 1, ishrinkage = 0.95,
-                          nsimEIM = NULL, zero = 2) {
+                          nsimEIM = NULL, zero = "rho") {
   lmu <- as.list(substitute(lmu))
   emu <- link2list(lmu)
   lmu <- attr(emu, "function.name")
@@ -113,8 +113,29 @@ betabinomial.control <- function(save.weights = TRUE, ...) {
             "Mean:       mu", "\n",
             "Variance:   mu*(1-mu)*(1+(w-1)*rho)/w"),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
+                                predictors.names = predictors.names,
+                                M1 = 3)
   }), list( .zero = zero ))),
+
+
+  infos = eval(substitute(function(...) {
+    list(M1 = 3,
+         expected = TRUE,
+         multipleResponses = FALSE,
+         parameters.names = c("mu", "rho"),
+         imethod  = .imethod ,
+         ishrinkage  = .ishrinkage ,
+         nsimEIM  = .nsimEIM ,
+         lmu  = .lmu ,
+         lrho = .lrho ,
+         zero = .zero )
+  }, list( .lmu = lmu, .lrho = lrho,
+           .imethod = imethod, .ishrinkage = ishrinkage,
+           .zero = zero,
+           .nsimEIM = nsimEIM ))),
+
+
   initialize = eval(substitute(expression({
     if (!all(w == 1))
       extra$orig.w <- w
@@ -302,7 +323,7 @@ betabinomial.control <- function(save.weights = TRUE, ...) {
             .emu = emu, .erho = erho  ))),
   weight = eval(substitute(expression({
     if (is.null( .nsimEIM )) {
-      wz <- matrix(as.numeric(NA), n, dimm(M))  #3=dimm(2)
+      wz <- matrix(NA_real_, n, dimm(M))  #3=dimm(2)
       wz11 <- -(expected.betabin.ab(nvec, shape1, shape2, TRUE) -
                trigamma(shape1+shape2+nvec) -
                trigamma(shape1) + trigamma(shape1+shape2))
@@ -470,7 +491,7 @@ rbinom2.or <-
  binom2.or <- function(lmu = "logit", lmu1 = lmu, lmu2 = lmu,
                        loratio = "loge",
                        imu1 = NULL, imu2 = NULL, ioratio = NULL,
-                       zero = 3,
+                       zero = "oratio",
                        exchangeable = FALSE,
                        tol = 0.001,
                        more.robust = FALSE) {
@@ -522,9 +543,30 @@ rbinom2.or <-
                            apply.int = TRUE,
                            cm.default           = cm.intercept.default,
                            cm.intercept.default = cm.intercept.default)
-      constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
+      constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
+                                  predictors.names = predictors.names,
+                                  M1 = 3)
   }), list( .exchangeable = exchangeable, .zero = zero ))),
   deviance = Deviance.categorical.data.vgam,
+
+  infos = eval(substitute(function(...) {
+    list(M1 = 3,
+         expected = TRUE,
+         multipleResponses = FALSE,
+         parameters.names = c("mu1", "mu2", "oratio"),
+         exchangeable = .exchangeable ,
+         lmu1 = .lmu1 ,
+         lmu2 = .lmu2 ,
+         loratio = .loratio ,
+         zero = .zero )
+  }, list( .lmu1 = lmu1,
+           .lmu2 = lmu2,
+           .loratio = loratio,
+           .zero = zero,
+           .exchangeable = exchangeable
+         ))),
+
+
   initialize = eval(substitute(expression({
     mustart.orig <- mustart
     eval(process.binomial2.data.VGAM)
@@ -687,7 +729,69 @@ rbinom2.or <-
     c(w) * wz
   }), list( .lmu1 = lmu1, .lmu2 = lmu2, .loratio = loratio,
             .emu1 = emu1, .emu2 = emu2, .eoratio = eoratio ))))
-}
+}  # binom2.or
+
+
+
+
+
+
+
+
+
+
+setClass("binom2",         contains = "vglmff")
+setClass("binom2.or",      contains = "binom2")
+
+
+
+
+
+setMethod("summaryvglmS4VGAM",  signature(VGAMff = "binom2.or"),
+  function(object,
+           VGAMff,
+           ...) {
+
+  cfit <- coef.vlm(object, matrix = TRUE)
+  if (rownames(cfit)[1] == "(Intercept)" &&
+      all(cfit[-1, 3] == 0)) {
+    object@post$oratio <- eta2theta(cfit[1, 3],
+                                    link = object@misc$link[3],
+                                    earg = object@misc$earg[[3]])
+  }
+
+  object@post
+})
+
+
+setMethod("showsummaryvglmS4VGAM",  signature(VGAMff = "binom2.or"),
+  function(object,
+           VGAMff,
+           ...) {
+ if (length(object@post$oratio) == 1 &&
+      is.numeric(object@post$oratio)) {
+    cat("\nOdds ratio: ", round(object@post$oratio, digits = 4), "\n")
+  }
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 dbinom2.rho <-
@@ -791,13 +895,15 @@ binom2.rho.control <- function(save.weights = TRUE, ...) {
 
 
 
- binom2.rho <- function(lrho = "rhobit",
-                        lmu = "probit",  # added 20120817
-                        imu1 = NULL, imu2 = NULL, irho = NULL,
-                        imethod = 1,
-                        zero = 3, exchangeable = FALSE,
-                        grho = seq(-0.95, 0.95, by = 0.05),
-                        nsimEIM = NULL) {
+ binom2.rho <-
+  function(lmu = "probit",  # added 20120817, order swapped 20151128
+           lrho = "rhobit",
+           imu1 = NULL, imu2 = NULL, irho = NULL,
+           imethod = 1,
+           zero =  "rho",   # 3
+           exchangeable = FALSE,
+           grho = seq(-0.95, 0.95, by = 0.05),
+           nsimEIM = NULL) {
 
 
 
@@ -844,14 +950,22 @@ binom2.rho.control <- function(save.weights = TRUE, ...) {
                            bool = .exchangeable ,
                            constraints = constraints,
                            apply.int = TRUE)
-    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
+                                predictors.names = predictors.names,
+                                M1 = 3)
   }), list( .exchangeable = exchangeable, .zero = zero ))),
 
   infos = eval(substitute(function(...) {
     list(M1 = 3,
+         expected = TRUE,
          multipleResponses = FALSE,
+         parameters.names = c("mu1", "mu2", "rho"),
+         lmu1 = .lmu12,
+         lmu2 = .lmu12,
+         lrho = .lrho ,
          zero = .zero )
-  }, list( .zero = zero ))),
+  }, list( .lmu12 = lmu12, .lrho = lrho,
+           .zero = zero ))),
 
 
   initialize = eval(substitute(expression({
@@ -1203,9 +1317,9 @@ dnorm2 <- function(x, y, rho = 0, log = FALSE) {
     warning("some negative values returned")
 
   answer[is.inf1.neg] <- 0
-  answer[is.inf1.pos] <- pnorm(Z2[is.inf1.neg])
+  answer[is.inf1.pos] <- pnorm(Z2[is.inf1.pos])  # pnorm(Z2[is.inf1.neg])
   answer[is.inf2.neg] <- 0
-  answer[is.inf2.pos] <- pnorm(Z1[is.inf2.neg])
+  answer[is.inf2.pos] <- pnorm(Z1[is.inf2.pos])  # pnorm(Z1[is.inf2.neg])
 
   answer
 }
@@ -1551,7 +1665,7 @@ my.dbinom <- function(x,
   if (length(shape1) != use.n) shape1 <- rep(shape1, len = use.n)
   if (length(shape2) != use.n) shape2 <- rep(shape2, len = use.n)
 
-  ans <- rep(as.numeric(NA), len = use.n)
+  ans <- rep(NA_real_, len = use.n)
   okay0 <- is.finite(shape1) & is.finite(shape2)
   if (smalln <- sum(okay0))
     ans[okay0] <- rbinom(n = smalln, size = size[okay0],
@@ -1642,7 +1756,7 @@ betabinomialff.control <- function(save.weights = TRUE, ...) {
 
 
  betabinomialff <-
-  function(lshape1 = "loge",lshape2 = "loge",
+  function(lshape1 = "loge", lshape2 = "loge",
            ishape1 = 1, ishape2 = NULL, imethod = 1,
            ishrinkage = 0.95, nsimEIM = NULL,
            zero = NULL) {
@@ -1688,8 +1802,23 @@ betabinomialff.control <- function(save.weights = TRUE, ...) {
             "Variance: mu * (1-mu) * (1+(w-1)*rho) / w, ",
                        "where rho = 1 / (shape1+shape2+1)"),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
+                                predictors.names = predictors.names,
+                                M1 = 2)
   }), list( .zero = zero ))),
+
+
+  infos = eval(substitute(function(...) {
+    list(M1 = 2,
+         expected = TRUE,
+         multipleResponses = FALSE,
+         parameters.names = c("shape1", "shape2"),
+         lshape1 = .lshape1 ,
+         lshape2 = .lshape2 ,
+         zero = .zero )
+  }, list( .zero = zero ))),
+
+
   initialize = eval(substitute(expression({
     if (!all(w == 1))
       extra$orig.w <- w
@@ -1709,7 +1838,7 @@ betabinomialff.control <- function(save.weights = TRUE, ...) {
     if (!length(etastart)) {
 
       mustart.use <- if (length(mustart.orig)) mustart.orig else
-                    mustart
+                     mustart
 
       shape1 <- rep( .ishape1 , len = n)
       shape2 <- if (length( .ishape2 )) {
@@ -1846,7 +1975,7 @@ betabinomialff.control <- function(save.weights = TRUE, ...) {
             .earg1 = earg1, .earg2 = earg2 ))),
   weight = eval(substitute(expression({
     if (is.null( .nsimEIM)) {
-      wz <- matrix(as.numeric(NA), n, dimm(M))  #3=dimm(2)
+      wz <- matrix(NA_real_, n, dimm(M))  #3=dimm(2)
       wz[, iam(1, 1, M)] <- -(expected.betabin.ab(nvec,shape1,shape2,
                                               TRUE) -
                           trigamma(shape1+shape2+nvec) -
@@ -1926,9 +2055,26 @@ betabinomialff.control <- function(save.weights = TRUE, ...) {
             "Links:    ",
             namesof("prob",  lprob,  earg = eprob), ", ",
             namesof("shape", lshape, earg = eshape)),
+
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
+                                predictors.names = predictors.names,
+                                M1 = 2)
   }), list( .zero = zero ))),
+
+
+  infos = eval(substitute(function(...) {
+    list(M1 = 2,
+         expected = TRUE,
+         multipleResponses = FALSE,
+         parameters.names = c("prob", "shape"),
+         lprob  = .lprob ,
+         lshape = .lshape ,
+         zero = .zero )
+  }, list( .lprob = lprob, .lshape = lshape,
+           .zero = zero ))),
+
+
   initialize = eval(substitute(expression({
     eval(geometric()@initialize)
 
@@ -2116,15 +2262,30 @@ betabinomialff.control <- function(save.weights = TRUE, ...) {
             "Links:    ",
             namesof("prob1", lprob1, earg = eprob1), ", ",
             namesof("prob2", lprob2, earg = eprob2)),
+
   constraints = eval(substitute(expression({
     constraints <- cm.VGAM(matrix(1, M, 1), x = x,
                            bool = .parallel ,
                            constraints = constraints,
                            apply.int = .apply.parint )
-    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
+                                predictors.names = predictors.names,
+                                M1 = 2)
   }), list( .parallel = parallel,
             .apply.parint = apply.parint,
             .zero = zero ))),
+
+  infos = eval(substitute(function(...) {
+    list(M1 = 2,
+         expected = TRUE,
+         multipleResponses = FALSE,
+         parameters.names = c("prob1", "prob2"),
+         lprob1 = .lprob1 ,
+         lprob2 = .lprob2 ,
+         zero = .zero )
+  }, list( .zero = zero ))),
+
+
   initialize = eval(substitute(expression({
     if (!is.vector(w))
       stop("the 'weights' argument must be a vector")
@@ -2259,7 +2420,8 @@ betabinomialff.control <- function(save.weights = TRUE, ...) {
                         loratio = "loge",
                         imu12 = NULL, iphi12 = NULL,
                         ioratio = NULL,
-                        zero = 2:3, tol = 0.001, addRidge = 0.001) {
+                        zero = c("phi12", "oratio"),
+                        tol = 0.001, addRidge = 0.001) {
 
 
   lmu12 <- as.list(substitute(lmu12))
@@ -2295,9 +2457,29 @@ betabinomialff.control <- function(save.weights = TRUE, ...) {
             namesof("mu12",   lmu12,   earg = emu12), ", ",
             namesof("phi12",  lphi12,  earg = ephi12), ", ",
             namesof("oratio", loratio, earg = eoratio)),
+
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
+                                predictors.names = predictors.names,
+                                M1 = 3)
     }), list( .zero = zero ))),
+
+
+  infos = eval(substitute(function(...) {
+    list(M1 = 3,
+         expected = TRUE,
+         multipleResponses = FALSE,
+         parameters.names = c("mu12", "phi12", "oratio"),
+         lmu12   = .lmu12 ,
+         lphi12  = .lphi12 ,
+         loratio = .loratio ,
+         zero = .zero )
+  }, list( .zero = zero,
+           .lmu12 = lmu12, .lphi12 = lphi12, .loratio = loratio
+         ))),
+
+
+
   initialize = eval(substitute(expression({
     eval(process.binomial2.data.VGAM)
 
@@ -2632,7 +2814,8 @@ betabinomialff.control <- function(save.weights = TRUE, ...) {
                         lmu = "probit",  # added 20120817
                         imu1 = NULL, imu2 = NULL, irho = NULL,
                         imethod = 1,
-                        zero = 3, exchangeable = FALSE,
+                        zero = 3,
+                        exchangeable = FALSE,
                         grho = seq(-0.95, 0.95, by = 0.05)) {
 
 
@@ -2669,12 +2852,15 @@ betabinomialff.control <- function(save.weights = TRUE, ...) {
                            bool = .exchangeable ,
                            constraints = constraints,
                            apply.int = TRUE)
-    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
+                                predictors.names = predictors.names,
+                                M1 = 3)
   }), list( .exchangeable = exchangeable, .zero = zero ))),
 
   infos = eval(substitute(function(...) {
     list(M1 = 3,
          multipleResponses = FALSE,
+         parameters.names = c("mu1", "mu2", "rho"),
          zero = .zero )
   }, list( .zero = zero ))),
 

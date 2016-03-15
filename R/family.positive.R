@@ -335,6 +335,7 @@ dposbern <- function(x, prob, prob0 = prob, log = FALSE) {
 
 
 
+
 dposnegbin <- function(x, size, prob = NULL, munb = NULL, log = FALSE) {
   if (length(munb)) {
     if (length(prob))
@@ -369,6 +370,7 @@ dposnegbin <- function(x, size, prob = NULL, munb = NULL, log = FALSE) {
 }
 
 
+
 pposnegbin <- function(q, size, prob = NULL, munb = NULL) {
 
   if (length(munb)) {
@@ -389,6 +391,7 @@ pposnegbin <- function(q, size, prob = NULL, munb = NULL) {
          dnbinom(0, size = size, prob = prob))
        / pnbinom(0, size = size, prob = prob, lower.tail = FALSE))
 }
+
 
 
 qposnegbin <- function(p, size, prob = NULL, munb = NULL) {
@@ -416,6 +419,116 @@ qposnegbin <- function(p, size, prob = NULL, munb = NULL) {
 
 
 
+    EIM.posNB.specialp <- function(munb, size,
+                                   y.max = NULL,  # Must be an integer
+                                   cutoff.prob = 0.995,
+                                   prob0, df0.dkmat, df02.dkmat2,
+                                   intercept.only = FALSE,
+                                   second.deriv = TRUE) {
+
+
+      if (intercept.only) {
+        munb        <- munb[1]
+        size        <- size[1]
+        prob0       <- prob0[1]
+        df0.dkmat   <- df0.dkmat[1]
+        df02.dkmat2 <- df02.dkmat2[1]
+      }
+
+      y.min <- 0  # Same as negbinomial() actually. A fixed constant really
+
+      if (!is.numeric(y.max)) {
+        eff.p <- sort(c(cutoff.prob, 1 - cutoff.prob))
+        y.max <- max(qposnegbin(p = eff.p[2], munb = munb, size = size)) + 10
+      }
+
+      Y.mat <- if (intercept.only) y.min:y.max else
+               matrix(y.min:y.max, length(munb), y.max-y.min+1, byrow = TRUE)
+  neff.row <- ifelse(intercept.only, 1, nrow(Y.mat))
+  neff.col <- ifelse(intercept.only, length(Y.mat), ncol(Y.mat))
+
+      if (FALSE) {
+      Y.mat2 <- Y.mat + 1
+      trigg.term0 <- if (intercept.only) {
+         dposnegbin(Y.mat2, size=size, munb=munb) %*% trigamma(Y.mat2+size)
+      } else {
+         rowSums(dposnegbin(Y.mat2, size = size, munb = munb) *
+                 trigamma(Y.mat2 + size))
+      }
+      }
+
+
+  trigg.term <- 
+  if (TRUE) {
+    answerC <- .C("eimpnbinomspecialp",
+      as.integer(intercept.only),
+      as.double(neff.row), as.double(neff.col),
+      as.double(size),
+      as.double(1 - pposnegbin(Y.mat, size = size, munb = munb)),
+      rowsums = double(neff.row))
+      answerC$rowsums
+  }
+
+
+
+      mymu <- munb / (1 - prob0)  # E(Y)
+      ned2l.dk2 <- trigg.term -
+         munb / (size * (size + munb)) - (mymu - munb) / (munb + size)^2
+
+      if (second.deriv)
+        ned2l.dk2 <- ned2l.dk2 - df02.dkmat2 / (1 - prob0) -
+         (df0.dkmat / (1 - prob0))^2
+      ned2l.dk2
+    }  # end of EIM.posNB.specialp()
+
+
+
+
+
+
+
+    EIM.posNB.speciald <- function(munb, size,
+                                   y.min = 1,  # 20160201; must be an integer
+                                   y.max = NULL,  # Must be an integer
+                                   cutoff.prob = 0.995,
+                                   prob0, df0.dkmat, df02.dkmat2,
+                                   intercept.only = FALSE,
+                                   second.deriv = TRUE) {
+
+
+      if (intercept.only) {
+        munb        <- munb[1]
+        size        <- size[1]
+        prob0       <- prob0[1]
+        df0.dkmat   <- df0.dkmat[1]
+        df02.dkmat2 <- df02.dkmat2[1]
+      }
+
+      if (!is.numeric(y.max)) {
+        eff.p <- sort(c(cutoff.prob, 1 - cutoff.prob))
+        y.max <- max(qposnegbin(p = eff.p[2], munb = munb, size = size)) + 10
+      }
+
+      Y.mat <- if (intercept.only) y.min:y.max else
+               matrix(y.min:y.max, length(munb), y.max-y.min+1, byrow = TRUE)
+      trigg.term <- if (intercept.only) {
+         dposnegbin(Y.mat, size = size, munb = munb) %*% trigamma(Y.mat + size)
+      } else {
+         rowSums(dposnegbin(Y.mat, size = size, munb = munb) *
+                 trigamma(Y.mat + size))
+      }
+
+      mymu <- munb / (1 - prob0)  # E(Y)
+      ned2l.dk2 <- trigamma(size) - munb / (size * (size + munb)) -
+        (mymu - munb) / (munb + size)^2 - trigg.term
+      if (second.deriv)
+        ned2l.dk2 <- ned2l.dk2 - df02.dkmat2 / (1 - prob0) -
+         (df0.dkmat / (1 - prob0))^2
+      ned2l.dk2
+    }  # end of EIM.posNB.speciald()
+
+
+
 
 
 posnegbinomial.control <- function(save.weights = TRUE, ...) {
@@ -424,22 +537,27 @@ posnegbinomial.control <- function(save.weights = TRUE, ...) {
 
 
 
- posnegbinomial <- function(lmunb = "loge", lsize = "loge",
-                            isize = NULL, zero = -2,
-                            nsimEIM = 250,
-                            ishrinkage = 0.95, imethod = 1) {
+ posnegbinomial <-
+  function(
+           zero = "size",
+           type.fitted = c("mean", "munb", "prob0"),
+           nsimEIM = 500,
+           cutoff.prob = 0.999,  # higher is better for large 'size'
+           eps.trig = 1e-7,
+           max.support = 4000,  # 20160201; I have changed this
+           max.chunk.MB = 30,  # max.memory = Inf is allowed
+           lmunb = "loge", lsize = "loge",
+           imethod = 1,
+           imunb = NULL,
+           probs.y = 0.35,
+           ishrinkage = 0.95,
+           isize = NULL,
+           gsize.mux = exp((-12:6)/2)) {
 
-  if (!is.Numeric(imethod, length.arg = 1,
-                  integer.valued = TRUE, positive = TRUE) ||
-     imethod > 2)
-    stop("argument 'imethod' must be 1 or 2")
+
+
   if (length(isize) && !is.Numeric(isize, positive = TRUE))
       stop("bad input for argument 'isize'")
-  if (!is.Numeric(ishrinkage, length.arg = 1) ||
-     ishrinkage < 0 ||
-     ishrinkage > 1)
-    stop("bad input for argument 'ishrinkage'")
-
 
   lmunb <- as.list(substitute(lmunb))
   emunb <- link2list(lmunb)
@@ -449,6 +567,13 @@ posnegbinomial.control <- function(save.weights = TRUE, ...) {
   esize <- link2list(lsize)
   lsize <- attr(esize, "function.name")
 
+  type.fitted <- match.arg(type.fitted,
+                           c("mean", "munb", "prob0"))[1]
+
+
+  if (!is.Numeric(eps.trig, length.arg = 1,
+                  positive = TRUE) || eps.trig > 0.001)
+    stop("argument 'eps.trig' must be positive and smaller in value")
 
   if (!is.Numeric(nsimEIM, length.arg = 1,
                   positive = TRUE, integer.valued = TRUE))
@@ -465,36 +590,40 @@ posnegbinomial.control <- function(save.weights = TRUE, ...) {
             "Mean:     munb / (1 - (size / (size + munb))^size)"),
   constraints = eval(substitute(expression({
 
-    dotzero <- .zero
-    M1 <- 2
-    eval(negzero.expression.VGAM)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
+                                predictors.names = predictors.names,
+                                M1 = 2)
   }), list( .zero = zero ))),
   infos = eval(substitute(function(...) {
     list(M1 = 2,
          Q1 = 1,
+         expected = TRUE,
+         multipleResponses = TRUE,
+         parameters.names = c("munb", "size"),
+         nsimEIM = .nsimEIM ,
+         eps.trig = .eps.trig ,
          lmunb = .lmunb ,
          emunb = .emunb ,
+         type.fitted  = .type.fitted ,
+         zero = .zero ,
          lsize = .lsize ,
          esize = .esize )
   }, list( .lmunb = lmunb, .lsize = lsize, .isize = isize,
-            .emunb = emunb, .esize = esize,
-            .ishrinkage = ishrinkage,
-            .imethod = imethod ))),
+           .emunb = emunb, .esize = esize,
+           .zero = zero, .nsimEIM = nsimEIM,
+           .ishrinkage = ishrinkage, .eps.trig = eps.trig,
+           .imethod = imethod,
+           .type.fitted = type.fitted ))),
 
   initialize = eval(substitute(expression({
     M1 <- 2
 
-    if (any(y == 0))
-      stop("there are zero values in the response")
-    y <- as.matrix(y) 
-
-
     temp5 <-
     w.y.check(w = w, y = y,
-              Is.nonnegative.y = TRUE,
+              Is.integer.y = TRUE,
+              Is.positive.y = TRUE,
               ncol.w.max = Inf,
               ncol.y.max = Inf,
-              Is.integer.y = TRUE,
               out.wy = TRUE,
               colsyperw = 1,
               maximize = TRUE)
@@ -503,79 +632,106 @@ posnegbinomial.control <- function(save.weights = TRUE, ...) {
 
 
 
-
-
     M <- M1 * ncol(y) 
     extra$NOS <- NOS <- ncoly <- ncol(y)  # Number of species
+    extra$type.fitted      <- .type.fitted
+    extra$dimnamesy <- dimnames(y)
 
     predictors.names <- c(
-      namesof(if (NOS == 1) "munb" else
-              paste("munb", 1:NOS, sep = ""),
-              .lmunb, earg = .emunb, tag = FALSE),
-      namesof(if (NOS == 1) "size" else
-              paste("size", 1:NOS, sep = ""),
-              .lsize, earg = .esize, tag = FALSE))
-    predictors.names <- predictors.names[interleave.VGAM(M, M = M1)]
+      namesof(param.names("munb", NOS), .lmunb , earg = .emunb , tag = FALSE),
+      namesof(param.names("size", NOS), .lsize , earg = .esize , tag = FALSE))
+    predictors.names <- predictors.names[interleave.VGAM(M, M1 = M1)]
+
 
     if (!length(etastart)) {
-      mu.init <- y
-      for (iii in 1:ncol(y)) {
-        use.this <- if ( .imethod == 1) {
-          weighted.mean(y[, iii], w[, iii])
-        } else {
-          median(y[,iii])
-        }
-        mu.init[, iii] <- (1 - .ishrinkage ) * y[, iii] + .ishrinkage * use.this
-      }
+      munb.init <- Init.mu(y = y, w = w, imethod = .imethod ,  # x = x,
+                           imu = .imunb , ishrinkage = .ishrinkage ,
+                           probs.y = .probs.y )
+
 
       if ( is.Numeric( .isize )) {
-        kmat0 <- matrix( .isize , nrow = n, ncol = NOS, byrow = TRUE)
+        size.init <- matrix( .isize , nrow = n, ncol = NOS, byrow = TRUE)
       } else {
-        posnegbinomial.Loglikfun =
-            function(kmat, y, x, w, extraargs) {
-            munb <- extraargs
-              sum(w * dposnegbin(x = y, size = kmat, munb = munb,
-                                 log = TRUE))
-              }
-            k.grid <- 2^((-6):6)
-            kmat0 <- matrix(0, nrow = n, ncol = NOS)
-            for (spp. in 1:NOS) {
-              kmat0[, spp.] <-
-                grid.search(k.grid,
-                            objfun = posnegbinomial.Loglikfun,
-                            y = y[, spp.], x = x, w = w[, spp.],
-                            extraargs = mu.init[, spp.])
-            }
+        posnegbinomial.Loglikfun <- function(kval, y, x, w, extraargs) {
+          munb <- extraargs
+          sum(c(w) * dposnegbin(x = y, mu = munb, size = kval, log = TRUE))
+        }
+        size.init <- matrix(0, nrow = n, ncol = NOS)
+        for (jay in 1:NOS) {
+          size.grid <- .gsize.mux * mean(munb.init[, jay])
+          size.init[, jay] <-
+            grid.search(size.grid,
+                        objfun = posnegbinomial.Loglikfun,
+                        y = y[, jay],  # x = x,
+                        w = w[, jay],
+                        extraargs = munb.init[, jay])
+        }
       }
-      p00 <- (kmat0 / (kmat0 + mu.init))^kmat0
+
+
+
       etastart <-
         cbind(
-              theta2eta(mu.init * (1 - p00), .lmunb, earg = .emunb ),
-              theta2eta(kmat0,               .lsize, earg = .esize ))
-      etastart <- etastart[,interleave.VGAM(M, M = M1), drop = FALSE]
+              theta2eta(munb.init            , .lmunb , earg = .emunb ),
+              theta2eta(size.init,             .lsize , earg = .esize ))
+      etastart <- etastart[, interleave.VGAM(M, M1 = M1), drop = FALSE]
     }
-  }), list( .lmunb = lmunb, .lsize = lsize, .isize = isize,
-            .emunb = emunb, .esize = esize,
-            .ishrinkage = ishrinkage,
-            .imethod = imethod ))),
+  }), list( .lmunb = lmunb, .lsize  = lsize,
+            .imunb = imunb, .isize = isize,
+            .emunb = emunb, .esize  = esize, .gsize.mux = gsize.mux,
+            .ishrinkage = ishrinkage, .probs.y = probs.y,
+            .imethod = imethod,
+            .type.fitted = type.fitted ))),
+
   linkinv = eval(substitute(function(eta, extra = NULL) {
-    M1 <- 2
-    NOS <- ncol(eta) / M1
-    munb <- eta2theta(eta[, M1*(1:NOS)-1, drop = FALSE],
-                     .lmunb, earg = .emunb )
-    kmat <- eta2theta(eta[, M1*(1:NOS),   drop = FALSE],
-                     .lsize, earg = .esize )
-    po0 <- (kmat / (kmat + munb))^kmat
-    munb / (1 - po0)
+   type.fitted <- if (length(extra$type.fitted)) extra$type.fitted else {
+                     warning("cannot find 'type.fitted'. ",
+                             "Returning the 'mean'.")
+                     "mean"
+                   }
+
+    type.fitted <- match.arg(type.fitted,
+                     c("mean", "munb", "prob0"))[1]
+
+    TF <- c(TRUE, FALSE)
+    munb <- eta2theta(eta[,  TF, drop = FALSE], .lmunb , earg = .emunb )
+    kmat <- eta2theta(eta[, !TF, drop = FALSE], .lsize , earg = .esize )
+
+
+    tempk <- 1 / (1 + munb / kmat)  # kmat / (kmat + munb)
+    prob0  <- tempk^kmat
+    oneminusf0  <- 1 - prob0
+
+    smallval <- 1e-3  # Something like this is needed
+    if (any(big.size <- munb / kmat < smallval)) {
+      prob0[big.size]  <- exp(-munb[big.size])  # The limit as kmat --> Inf
+      oneminusf0[big.size] <- -expm1(-munb[big.size])
+    }
+
+    ans <- switch(type.fitted,
+                  "mean"      = munb / oneminusf0,
+                  "munb"      = munb,
+                  "prob0"     = prob0)  # P(Y=0)
+     if (length(extra$dimnamesy) &&
+        is.matrix(ans) &&
+        length(extra$dimnamesy[[2]]) == ncol(ans) &&
+        length(extra$dimnamesy[[2]]) > 0) {
+      if (length(extra$dimnamesy[[1]]) == nrow(ans))       
+        dimnames(ans) <- extra$dimnamesy
+    } else
+    if (NCOL(ans) == 1 &&
+        is.matrix(ans)) {
+      colnames(ans) <- NULL
+    }
+   ans
   }, list( .lsize = lsize, .lmunb = lmunb,
            .esize = esize, .emunb = emunb ))),
   last = eval(substitute(expression({
     temp0303 <- c(rep( .lmunb , length = NOS),
                   rep( .lsize , length = NOS))
-    names(temp0303) =
-       c(if (NOS == 1) "munb" else paste("munb", 1:NOS, sep = ""),
-         if (NOS == 1) "size" else paste("size", 1:NOS, sep = ""))
-    temp0303  <- temp0303[interleave.VGAM(M, M = M1)]
+    names(temp0303) <- c(param.names("munb", NOS),
+                         param.names("size", NOS))
+    temp0303  <- temp0303[interleave.VGAM(M, M1 = M1)]
     misc$link <- temp0303  # Already named
 
     misc$earg <- vector("list", M1*NOS)
@@ -585,21 +741,26 @@ posnegbinomial.control <- function(save.weights = TRUE, ...) {
       misc$earg[[M1*ii  ]] <- .esize
     }
 
+    misc$max.chunk.MB <- .max.chunk.MB
+    misc$cutoff.prob <- .cutoff.prob
+    misc$imethod <- .imethod 
     misc$nsimEIM <- .nsimEIM
-    misc$imethod <- .imethod
-  }), list( .lmunb = lmunb, .lsize = lsize,
-            .emunb = emunb, .esize = esize,
-            .nsimEIM = nsimEIM, .imethod = imethod ))),
+    misc$expected <- TRUE
+    misc$ishrinkage <- .ishrinkage
+    misc$multipleResponses <- TRUE
+   }), list( .lmunb = lmunb, .lsize = lsize,
+             .emunb = emunb, .esize = esize,
+             .cutoff.prob = cutoff.prob,
+             .max.chunk.MB = max.chunk.MB,
+             .ishrinkage = ishrinkage,
+             .nsimEIM = nsimEIM, .imethod = imethod ))),
   loglikelihood = eval(substitute(
     function(mu, y, w, residuals = FALSE, eta,
              extra = NULL,
              summation = TRUE) {
-    M1 <- 2
-    NOS <- ncol(eta) / M1
-    munb <- eta2theta(eta[, M1*(1:NOS)-1, drop = FALSE],
-                      .lmunb, earg = .emunb )
-    kmat <- eta2theta(eta[, M1*(1:NOS)  , drop = FALSE],
-                      .lsize, earg = .esize )
+    TFvec <- c(TRUE, FALSE)
+    munb <- eta2theta(eta[,  TFvec, drop = FALSE], .lmunb , earg = .emunb )
+    kmat <- eta2theta(eta[, !TFvec, drop = FALSE], .lsize , earg = .esize )
     if (residuals) {
       stop("loglikelihood residuals not implemented yet")
     } else {
@@ -636,6 +797,24 @@ posnegbinomial.control <- function(save.weights = TRUE, ...) {
            .emunb = emunb, .esize = esize ))),
 
 
+  validparams = eval(substitute(function(eta, extra = NULL) {
+    munb <- eta2theta(eta[, c(TRUE, FALSE), drop = FALSE],
+                     .lmunb , earg = .emunb )
+    size <- eta2theta(eta[, c(FALSE, TRUE), drop = FALSE],
+                     .lsize , earg = .esize )
+
+    smallval <- 1e-2
+    ans <- all(is.finite(munb)) && all(munb > 0) &&
+           all(is.finite(size)) && all(size > 0) &&
+           (overdispersion <- all(munb / size > smallval))
+    if (!overdispersion)
+        warning("parameter 'size' has very large values; ",
+                "replacing them by an arbitrary large value within ",
+                "the parameter space. Try fitting a positive-Poisson ",
+                "model instead.")
+    ans
+  }, list( .lmunb = lmunb, .emunb = emunb,
+           .lsize = lsize, .esize = esize))),
 
 
 
@@ -643,98 +822,211 @@ posnegbinomial.control <- function(save.weights = TRUE, ...) {
     M1 <- 2
     NOS <- extra$NOS
 
-    munb <- eta2theta(eta[, M1*(1:NOS)-1, drop = FALSE],
-                      .lmunb , earg = .emunb )
-    kmat <- eta2theta(eta[, M1*(1:NOS)  , drop = FALSE],
-                      .lsize , earg = .esize )
-
-    dmunb.deta <- dtheta.deta(munb, .lmunb, earg = .emunb )
-    dsize.deta <- dtheta.deta(kmat, .lsize, earg = .esize )
-    NOS <- ncol(eta) / M1
+    TFvec <- c(TRUE, FALSE)
+    munb <- eta2theta(eta[,  TFvec, drop = FALSE], .lmunb , earg = .emunb )
+    kmat <- eta2theta(eta[, !TFvec, drop = FALSE], .lsize , earg = .esize )
 
 
-    tempk <- kmat / (kmat + munb)
+    smallval <- 1e-3  # Something like this is needed
+    if (any(big.size <- munb / kmat < smallval)) {
+        warning("parameter 'size' has very large values; ",
+                "try fitting a positive-Poisson ",
+                "model instead")
+        kmat[big.size] <- munb[big.size] / smallval
+    }
+
+
+    dmunb.deta <- dtheta.deta(munb, .lmunb , earg = .emunb )
+    dsize.deta <- dtheta.deta(kmat, .lsize , earg = .esize )
+
+
+    tempk <- 1 / (1 + munb / kmat)  # kmat / (kmat + munb)
     tempm <- munb / (kmat + munb)
     prob0  <- tempk^kmat
     oneminusf0  <- 1 - prob0
+    AA16 <- tempm + log(tempk)
     df0.dmunb   <- -tempk * prob0
-    df0.dkmat   <- prob0 * (tempm + log(tempk))
-    df02.dmunb2 <- prob0 * tempk / (kmat + munb) - tempk * df0.dmunb
-    df02.dkmat2 <- (prob0 / kmat) * tempm^2
-    df02.dkmat.dmunb <- prob0 * (-tempk) * (tempm + log(tempk)) -
-                        tempm * prob0 / (kmat + munb)
+    df0.dkmat   <- prob0 * AA16
+    df02.dmunb2 <- prob0 * tempk * (1 + 1/kmat) / (1 + munb/kmat)
+    df02.dkmat2 <- prob0 * ((tempm^2) / kmat + AA16^2)
+    df02.dkmat.dmunb <- -prob0 * (tempm/kmat + AA16) / (1 + munb/kmat)
 
 
-    dl.dmunb <- y / munb - (y + kmat) / (munb + kmat) +
+
+    if (any(big.size)) {
+      prob0[big.size]  <- exp(-munb[big.size])  # The limit as kmat --> Inf
+      oneminusf0[big.size] <- -expm1(-munb[big.size])
+      df0.dmunb[big.size] <- -tempk[big.size] * prob0[big.size]
+      df0.dkmat[big.size] <-  prob0[big.size] * AA16[big.size]
+      df02.dmunb2[big.size] <- prob0[big.size] * tempk[big.size] *
+        (1 + 1/kmat[big.size]) / (1 + smallval)
+      df02.dkmat2[big.size] <- prob0[big.size] *
+        ((tempm[big.size])^2 / kmat[big.size] + AA16[big.size]^2)
+      df02.dkmat.dmunb[big.size] <- -prob0[big.size] *
+        (tempm[big.size]/kmat[big.size] + AA16[big.size]) / (1 + smallval)
+    }
+
+
+
+
+    smallno <- 1e-6
+    if (FALSE && all(near.boundary <- oneminusf0 < smallno)) {
+        warning("solution near the boundary; either there is no need ",
+                "to fit a positive NBD or the distribution is centred ",
+                "on the value 1")
+        oneminusf0[near.boundary] <- smallno
+        prob0[near.boundary] <- 1 - oneminusf0[near.boundary]
+    }
+
+
+
+
+    dl.dmunb <- y / munb - (1 + y/kmat) / (1 + munb/kmat) +
                 df0.dmunb / oneminusf0
     dl.dsize <- digamma(y + kmat) - digamma(kmat) -
-                (y + kmat)/(munb + kmat) + 1 + log(tempk) +
+                (y - munb) / (munb + kmat) + log(tempk) +
                 df0.dkmat / oneminusf0
 
+
+    if (any(big.size)) {
+      dl.dsize[big.size] <- 1e-8  # A small number
+    }
+
+
+    
     myderiv <- c(w) * cbind(dl.dmunb * dmunb.deta,
                             dl.dsize * dsize.deta)
-    myderiv[, interleave.VGAM(M, M = M1)]
+    myderiv[, interleave.VGAM(M, M1 = M1)]
   }), list( .lmunb = lmunb, .lsize = lsize,
             .emunb = emunb, .esize = esize ))),
+
+
   weight = eval(substitute(expression({
-    run.varcov =
-    wz <- matrix(0.0, n, 2 * M1 * NOS - 1)
+    wz <- matrix(0, n, M+M-1)
+    mymu <- munb / oneminusf0  # Is the same as 'mu', == E(Y)
 
-
-
-
-    if (FALSE) {
-    usualmeanY <-  munb
-    meanY <- usualmeanY / oneminusf0
-    ed2l.dmu2 <- meanY / munb^2 -
-                (meanY + kmat) / (munb + kmat)^2 -
-                df02.dmunb2 / oneminusf0 -
-                (df0.dmunb / oneminusf0)^2
-    }
+    max.support <- .max.support
+    max.chunk.MB <- .max.chunk.MB
 
 
 
 
 
-    {
-      ind2 <- iam(NA, NA, M = M1, both = TRUE, diag = TRUE)
-      for (ii in 1:( .nsimEIM )) {
-        ysim <- rposnegbin(n = n*NOS, mu = c(munb), size = c(kmat))
-        dim(ysim) <- c(n, NOS)
+    ind2 <- matrix(FALSE, n, NOS)  # Used for SFS
+    for (jay in 1:NOS) {
+      eff.p <- sort(c( .cutoff.prob , 1 - .cutoff.prob ))
+      Q.mins <- 1
+      Q.maxs <-      qposnegbin(p    = eff.p[2] ,
+                                munb = munb[, jay],
+                                size = kmat[, jay]) + 10
 
-        dl.dmunb <- ysim / munb - (ysim + kmat) / (munb + kmat) +
-                    df0.dmunb / oneminusf0
-        dl.dsize <- digamma(ysim + kmat) - digamma(kmat) -
-                    (ysim + kmat) / (munb + kmat) + 1 + log(tempk) +
-                    df0.dkmat / oneminusf0
 
-        for (kk in 1:NOS) {
-          temp2 <- cbind(dl.dmunb[, kk],
-                         dl.dsize[, kk]) *
-                   cbind(dmunb.deta[, kk],
-                         dsize.deta[, kk])
-          small.varcov <- temp2[, ind2$row.index] *
-                          temp2[, ind2$col.index]
+      eps.trig <- .eps.trig
+      Q.MAXS <-      pmax(10, ceiling(1 / sqrt(eps.trig)))  #
+      Q.maxs <- pmin(Q.maxs, Q.MAXS)
 
-          run.varcov[, ((kk-1)*M1+1):(kk*M1)] =
-          run.varcov[, ((kk-1)*M1+1):(kk*M1)] +
-            c(small.varcov[, 1:M1])
-          run.varcov[, M + (kk-1)*M1 + 1] =
-          run.varcov[, M + (kk-1)*M1 + 1] +
-            c(small.varcov[, M1 + 1])
-        }
-      }  # ii
 
-      run.varcov <- cbind(run.varcov / .nsimEIM )
-      wz <- if (intercept.only)
-          matrix(colMeans(run.varcov),
-                 n, ncol(run.varcov), byrow = TRUE) else run.varcov
+      ind1 <- if (max.chunk.MB > 0) (Q.maxs - Q.mins < max.support) else FALSE
+      if ((NN <- sum(ind1)) > 0) {
+        Object.Size <- NN * 8 * max(Q.maxs - Q.mins) / (2^20)
+        n.chunks <- if (intercept.only) 1 else
+                    max(1, ceiling( Object.Size / max.chunk.MB))
+        chunk.rows <- ceiling(NN / n.chunks)
+        ind2[, jay] <- ind1  # Save this
+        wind2 <- which(ind1)
 
-    }
 
-    w.wz.merge(w = w, wz = wz, n = n, M = M, ndepy = M / M1)
-  }), list( .nsimEIM = nsimEIM ))))
+        upr.ptr <- 0
+        lwr.ptr <- upr.ptr + 1
+        while (lwr.ptr <= NN) {
+          upr.ptr <- min(upr.ptr + chunk.rows, NN)
+          sind2 <- wind2[lwr.ptr:upr.ptr]
+          wz[sind2, M1*jay] <-
+            EIM.posNB.specialp(munb        = munb[sind2, jay],
+                               size        = kmat[sind2, jay],
+                               y.max = max(Q.maxs[sind2]),
+                               cutoff.prob = .cutoff.prob ,
+                               prob0       =       prob0[sind2, jay],
+                               df0.dkmat   =   df0.dkmat[sind2, jay],
+                               df02.dkmat2 = df02.dkmat2[sind2, jay],
+                               intercept.only = intercept.only)
+          
+          
+          if (any(eim.kk.TF <-       wz[sind2, M1*jay] <= 0 |
+                               is.na(wz[sind2, M1*jay]))) {
+            ind2[sind2[eim.kk.TF], jay] <- FALSE
+          }
+          
+          
+          lwr.ptr <- upr.ptr + 1
+        }  # while
+
+      }  # if
+    }  # end of for (jay in 1:NOS)
+
+
+
+
+
+
+
+    for (jay in 1:NOS) {
+      run.varcov <- 0
+      ii.TF <- !ind2[, jay]  # Not assigned above
+      if (any(ii.TF)) {
+        kkvec <- kmat[ii.TF, jay]
+        muvec <- munb[ii.TF, jay]
+        for (ii in 1:( .nsimEIM )) {
+          ysim <- rposnegbin(sum(ii.TF), munb = muvec, size = kkvec)
+          dl.dk <- digamma(ysim + kkvec) - digamma(kkvec) -
+                   (ysim - muvec) / (muvec + kkvec) +
+                   log1p(-muvec / (kkvec + muvec)) +
+                   df0.dkmat[ii.TF, jay] / oneminusf0[ii.TF, jay]
+          run.varcov <- run.varcov + dl.dk^2
+        }  # end of for loop
+
+        run.varcov <- c(run.varcov / .nsimEIM )
+        ned2l.dk2 <- if (intercept.only) mean(run.varcov) else run.varcov
+
+        wz[ii.TF, M1*jay] <- ned2l.dk2  # * (dsize.deta[ii.TF, jay])^2
+      }
+    }  # jay
+
+
+
+    wz[, M1*(1:NOS)    ] <- wz[, M1*(1:NOS)    ] * dsize.deta^2
+
+
+
+
+
+
+    save.weights <- !all(ind2)
+
+
+    ned2l.dmunb2 <- mymu / munb^2 -
+        ((1 + mymu/kmat) / kmat) / (1 + munb/kmat)^2 -
+        df02.dmunb2 / oneminusf0 -
+        (df0.dmunb / oneminusf0)^2
+    wz[,     M1*(1:NOS) - 1] <- ned2l.dmunb2 * dmunb.deta^2
+
+
+    ned2l.dmunbsize <- (munb - mymu) / (munb + kmat)^2 -
+      df02.dkmat.dmunb / oneminusf0 -
+      df0.dmunb * df0.dkmat / oneminusf0^2
+    wz[, M + M1*(1:NOS) - 1] <- ned2l.dmunbsize * dmunb.deta * dsize.deta
+
+
+
+
+    w.wz.merge(w = w, wz = wz, n = n, M = M, ndepy = NOS)
+  }), list( .cutoff.prob = cutoff.prob, .eps.trig = eps.trig,
+            .max.support = max.support,
+            .max.chunk.MB = max.chunk.MB,
+            .nsimEIM = nsimEIM ))))
+
 }
+
 
 
 
@@ -743,6 +1035,7 @@ posnegbinomial.control <- function(save.weights = TRUE, ...) {
 dposgeom <- function(x, prob, log = FALSE) {
   dgeom(x - 1, prob = prob, log = log)
 }
+
 
 
 pposgeom <- function(q, prob) {
@@ -759,6 +1052,7 @@ pposgeom <- function(q, prob) {
 }
 
 
+
 qposgeom <- function(p, prob) {
 
 
@@ -772,7 +1066,6 @@ qposgeom <- function(p, prob) {
   ans[p == 1] <- Inf
   ans
 }
-
 
 
 
@@ -863,7 +1156,9 @@ rposnegbin <- function(n, size, prob = NULL, munb = NULL) {
 
 
 
- pospoisson <- function(link = "loge", expected = TRUE,
+ pospoisson <- function(link = "loge",
+                        type.fitted = c("mean", "lambda", "prob0"),
+                        expected = TRUE,
                         ilambda = NULL, imethod = 1, zero = NULL) {
 
   link <- as.list(substitute(link))
@@ -876,14 +1171,9 @@ rposnegbin <- function(n, size, prob = NULL, munb = NULL) {
   if (length( ilambda) && !is.Numeric(ilambda, positive = TRUE))
     stop("bad input for argument 'ilambda'")
 
-  if (!is.Numeric(imethod, length.arg = 1,
-                  integer.valued = TRUE, positive = TRUE) ||
-    imethod > 3)
-    stop("argument 'imethod' must be 1 or 2 or 3")
+  type.fitted <- match.arg(type.fitted,
+                           c("mean", "lambda", "prob0"))[1]
 
-  if (length(zero) &&
-      !is.Numeric(zero, integer.valued = TRUE))
-    stop("bad input for argument 'zero'")
 
 
 
@@ -892,26 +1182,32 @@ rposnegbin <- function(n, size, prob = NULL, munb = NULL) {
             "Links:    ",
             namesof("lambda", link, earg = earg, tag = FALSE)),
   constraints = eval(substitute(expression({
-    dotzero <- .zero
-    M1 <- 1
-    eval(negzero.expression.VGAM)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
+                                predictors.names = predictors.names,
+                                M1 = 1)
   }), list( .zero = zero ))),
 
   infos = eval(substitute(function(...) {
     list(M1 = 1,
          Q1 = 1,
+         expected = TRUE,
+         multipleResponses = TRUE,
+         parameters.names = c("lambda"),
          link = .link ,
+         type.fitted  = .type.fitted ,
+         expected = .expected ,
          earg = .earg)
-  }, list( .link = link, .earg = earg ))),
+  }, list( .link = link, .earg = earg,
+          .expected = expected,
+          .type.fitted = type.fitted ))),
 
   initialize = eval(substitute(expression({
-
     temp5 <-
     w.y.check(w = w, y = y,
               Is.positive.y = TRUE,
+              Is.integer.y = TRUE,
               ncol.w.max = Inf,
               ncol.y.max = Inf,
-              Is.integer.y = TRUE,
               out.wy = TRUE,
               colsyperw = 1,
               maximize = TRUE)
@@ -923,33 +1219,49 @@ rposnegbin <- function(n, size, prob = NULL, munb = NULL) {
     extra$ncoly <- ncoly
     extra$M1 <- M1
     M <- M1 * ncoly
+    extra$type.fitted      <- .type.fitted
+    extra$dimnamesy <- dimnames(y)
 
 
+    mynames1 <- param.names("lambda", ncoly)
+    predictors.names <- namesof(mynames1, .link , earg = .earg, tag = FALSE)
 
-    mynames1 <- paste("lambda",
-                      if (ncoly > 1) 1:ncoly else "", sep = "")
-    predictors.names <-
-      namesof(mynames1, .link , earg = .earg, tag = FALSE)
+    if (!length(etastart)) {
+      lambda.init <- Init.mu(y = y, w = w, imethod = .imethod ,
+                             imu = .ilambda )
 
-    if ( .imethod == 1) {
-      lambda.init <- apply(y, 2, median) + 1/8
-      lambda.init <- matrix(lambda.init, n, ncoly, byrow = TRUE)
-    } else if ( .imethod == 2) {
-      lambda.init <- apply(y, 2, weighted.mean, w = w) + 1/8
-      lambda.init <- matrix(lambda.init, n, ncoly, byrow = TRUE)
-    } else {
-      lambda.init <- -y / expm1(-y)
-    }
-    if (length( .ilambda))
-      lambda.init <- lambda.init * 0 + .ilambda
-
-    if (!length(etastart))
       etastart <- theta2eta(lambda.init, .link , earg = .earg)
+    }
   }), list( .link = link, .earg = earg,
-            .ilambda = ilambda, .imethod = imethod ))),
+            .ilambda = ilambda, .imethod = imethod,
+            .type.fitted = type.fitted ))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
+   type.fitted <- if (length(extra$type.fitted)) extra$type.fitted else {
+                     warning("cannot find 'type.fitted'. ",
+                             "Returning the 'mean'.")
+                     "mean"
+                   }
+
+    type.fitted <- match.arg(type.fitted,
+                     c("mean", "lambda", "prob0"))[1]
+
     lambda <- eta2theta(eta, .link , earg = .earg )
-    -lambda / expm1(-lambda)
+    ans <- switch(type.fitted,
+                  "mean"      = -lambda / expm1(-lambda),
+                  "lambda"    = lambda,
+                  "prob0"     = exp(-lambda))  # P(Y=0)
+     if (length(extra$dimnamesy) &&
+        is.matrix(ans) &&
+        length(extra$dimnamesy[[2]]) == ncol(ans) &&
+        length(extra$dimnamesy[[2]]) > 0) {
+      if (length(extra$dimnamesy[[1]]) == nrow(ans))       
+        dimnames(ans) <- extra$dimnamesy
+    } else
+    if (NCOL(ans) == 1 &&
+        is.matrix(ans)) {
+      colnames(ans) <- NULL
+    }
+   ans
   }, list( .link = link, .earg = earg ))),
   last = eval(substitute(expression({
     misc$link <- rep( .link , len = M)
@@ -1010,10 +1322,10 @@ rposnegbin <- function(n, size, prob = NULL, munb = NULL) {
   }), list( .link = link, .earg = earg ))),
   weight = eval(substitute(expression({
     if ( .expected ) {
-      ned2l.dlambda2 <- (temp6 + 1) * (1/lambda - 1/temp6) / temp6
+      ned2l.dlambda2 <- (1 + 1 / temp6) * (1/lambda - 1/temp6)
       wz <-  ned2l.dlambda2 * dlambda.deta^2
     } else {
-      d2l.dlambda2 <- y / lambda^2 - (temp6 + 1) / temp6^2
+      d2l.dlambda2 <- y / lambda^2 - (1 + 1 / temp6 + 1) / temp6
       d2lambda.deta2 <- d2theta.deta2(lambda, .link , earg = .earg)
       wz <- (dlambda.deta^2) * d2l.dlambda2 - dl.dlambda * d2lambda.deta2
     }
@@ -1128,9 +1440,6 @@ dposbinom <- function(x, size, prob, log = FALSE) {
   if (!is.logical(omit.constant) || length(omit.constant) != 1)
     stop("bad input for argument 'omit.constant'")
 
-  if (multiple.responses && length(zero) &&
-      !is.Numeric(zero, integer.valued = TRUE))
-    stop("bad input for argument 'zero'")
 
 
   if (!is.Numeric(p.small, positive = TRUE, length.arg = 1))
@@ -1151,18 +1460,22 @@ dposbinom <- function(x, size, prob, log = FALSE) {
                            bool = .parallel , 
                            constraints = constraints)
 
-    dotzero <- .zero
-    M1 <- 1
-    eval(negzero.expression.VGAM)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
+                                predictors.names = predictors.names,
+                                M1 = 1)
   }), list( .parallel = parallel, .zero = zero ))),
   infos = eval(substitute(function(...) {
     list(M1 = 1,
          Q1 = 1,
+         expected = TRUE,
+         multipleResponses = .multiple.responses ,
+         parameters.names = c("prob"),
          p.small    = .p.small ,
          no.warning = .no.warning ,
          zero = .zero )
   }, list( .zero = zero,
            .p.small    = p.small,
+           .multiple.responses = multiple.responses,
            .no.warning = no.warning ))),
 
   initialize = eval(substitute(expression({
@@ -1474,7 +1787,10 @@ dposbinom <- function(x, size, prob, log = FALSE) {
             .apply.parint = apply.parint ))),
   infos = eval(substitute(function(...) {
     list(M1 = 1,
+         Q1 = NA,
+         expected = TRUE,
          multipleResponses = TRUE,
+         parameters.names = c("prob"),
          p.small    = .p.small ,
          no.warning = .no.warning ,
          apply.parint = .apply.parint ,
@@ -1645,7 +1961,7 @@ dposbinom <- function(x, size, prob, log = FALSE) {
     ned2l.dprobs2 <- 1 / (probs * AAA) + 1 / temp2 -
                      probs / (AAA * temp2) - (B.s / AAA)^2
 
-    wz <- matrix(as.numeric(NA), n, dimm(M))
+    wz <- matrix(NA_real_, n, dimm(M))
     wz[, 1:M] <- ned2l.dprobs2 * (dprobs.deta^2)
 
     for (slocal in 1:(M-1))
@@ -1739,11 +2055,13 @@ dposbinom <- function(x, size, prob, log = FALSE) {
 
   infos = eval(substitute(function(...) {
     list(M1 = 2,
+         expected = TRUE,
+         multipleResponses = FALSE,
+         parameters.names = c("pcapture", "precapture"),
          p.small    = .p.small ,
          no.warning = .no.warning ,
          type.fitted = .type.fitted ,
-         apply.parint.b = .apply.parint.b ,
-         multipleResponses = FALSE)
+         apply.parint.b = .apply.parint.b )
   }, list(
            .apply.parint.b = apply.parint.b,
            .p.small    = p.small,
@@ -1787,11 +2105,11 @@ dposbinom <- function(x, size, prob, log = FALSE) {
 
     temp5 <-
     w.y.check(w = w, y = y,
+              Is.integer.y = TRUE,
               Is.nonnegative.y = TRUE,
               ncol.w.max = 1,
               ncol.y.min = 2,
               ncol.y.max = Inf,
-              Is.integer.y = TRUE,
               out.wy = TRUE,
               colsyperw = ncol(y),
               maximize = TRUE)
@@ -2159,7 +2477,9 @@ dposbinom <- function(x, size, prob, log = FALSE) {
             .apply.parint.t = apply.parint.t ))),
   infos = eval(substitute(function(...) {
     list(M1 = 2,
+         expected = TRUE,
          multipleResponses  = TRUE,
+         parameters.names = as.character(NA),
          ridge.constant     = .ridge.constant ,
          ridge.power        = .ridge.power ,
          drop.b             = .drop.b,
@@ -2489,6 +2809,59 @@ dposbinom <- function(x, size, prob, log = FALSE) {
 
 
 
+
+
+
+setClass("posbernoulli.tb",     contains = "vglmff")
+setClass("posbernoulli.t",      contains = "posbernoulli.tb")
+setClass("posbernoulli.b",      contains = "posbernoulli.tb")
+
+ setClass("posbinomial",        contains = "posbernoulli.b")
+
+
+
+setMethod("summaryvglmS4VGAM",  signature(VGAMff = "posbernoulli.tb"),
+  function(object,
+           VGAMff,
+           ...) {
+  object@post
+})
+
+
+
+setMethod("showsummaryvglmS4VGAM",  signature(VGAMff = "posbernoulli.tb"),
+  function(object,
+           VGAMff,
+           ...) {
+ if (length(object@extra$N.hat) == 1 &&
+      is.numeric(object@extra$N.hat)) {
+    cat("\nEstimate of N: ", round(object@extra$N.hat, digits = 3), "\n")
+    cat("\nStd. Error of N: ", round(object@extra$SE.N.hat, digits = 3), "\n")
+
+    confint.N <- object@extra$N.hat + c(Lower = -1, Upper = 1) *
+                                      qnorm(0.975) * object@extra$SE.N.hat
+    cat("\nApproximate 95 percent confidence interval for N:\n")
+    print(round(confint.N, digits = 2))
+  }
+})
+
+
+
+setMethod("showsummaryvglmS4VGAM",  signature(VGAMff = "posbernoulli.b"),
+  function(object,
+           VGAMff,
+           ...) {
+  callNextMethod(VGAMff = VGAMff, object = object, ...)
+})
+
+
+
+setMethod("showsummaryvglmS4VGAM",  signature(VGAMff = "posbernoulli.t"),
+  function(object,
+           VGAMff,
+           ...) {
+  callNextMethod(VGAMff = VGAMff, object = object, ...)
+})
 
 
 

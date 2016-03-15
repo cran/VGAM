@@ -35,10 +35,11 @@ sratio(link = "logit", parallel = FALSE, reverse = FALSE,
 
   }
   \item{zero}{
-  An integer-valued vector specifying which
+  Can be an integer-valued vector specifying which
   linear/additive predictors are modelled as intercepts only.
   The values must be from the set \{1,2,\ldots,\eqn{M}\}.
   The default value means none are modelled as intercept-only terms.
+
 
   }
   \item{whitespace}{
@@ -132,6 +133,7 @@ The \pkg{VGAM} package for categorical data analysis.
   \code{\link{acat}},
   \code{\link{cumulative}},
   \code{\link{multinomial}},
+  \code{\link{margeff}},
   \code{\link{pneumo}},
   \code{\link{logit}},
   \code{\link{probit}},

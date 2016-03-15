@@ -11,7 +11,7 @@
 gpd(threshold = 0, lscale = "loge", lshape = logoff(offset = 0.5),
     percentiles = c(90, 95), iscale = NULL, ishape = NULL,
     tolshape0 = 0.001, type.fitted = c("percentiles", "mean"),
-    giveWarning = TRUE, imethod = 1, zero = -2)
+    giveWarning = TRUE, imethod = 1, zero = "shape")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -123,7 +123,7 @@ gpd(threshold = 0, lscale = "loge", lshape = logoff(offset = 0.5),
 
   }
   \item{zero}{
-  An integer-valued vector specifying which
+  Can be an integer-valued vector specifying which
   linear/additive predictors are modelled as intercepts only.
   For one response, the value should be from the set \{1,2\} corresponding
   respectively to \eqn{\sigma}{sigma} and \eqn{\xi}{xi}.

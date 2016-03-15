@@ -10,10 +10,14 @@
 
 }
 \usage{
-zapoisson(lpobs0 = "logit", llambda = "loge",
-          type.fitted = c("mean", "pobs0", "onempobs0"), zero = NULL)
-zapoissonff(llambda = "loge", lonempobs0 = "logit",
-            type.fitted = c("mean", "pobs0", "onempobs0"), zero = -2)
+zapoisson(lpobs0 = "logit", llambda = "loge", type.fitted =
+          c("mean", "lambda", "pobs0", "onempobs0"), imethod = 1,
+          ipobs0 = NULL, ilambda = NULL, ishrinkage = 0.95, probs.y = 0.35,
+          zero = NULL)
+zapoissonff(llambda = "loge", lonempobs0 = "logit", type.fitted =
+            c("mean", "lambda", "pobs0", "onempobs0"), imethod = 1,
+            ilambda = NULL, ionempobs0 = NULL, ishrinkage = 0.95,
+            probs.y = 0.35, zero = "onempobs0")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -50,8 +54,15 @@ zapoissonff(llambda = "loge", lonempobs0 = "logit",
 % }
 
 
-  \item{zero}{
-  See \code{\link{CommonVGAMffArguments}} for more information.
+  \item{imethod, ipobs0, ionempobs0, ilambda, ishrinkage}{
+  See \code{\link{CommonVGAMffArguments}} for information.
+
+
+
+  }
+  \item{probs.y, zero}{
+  See \code{\link{CommonVGAMffArguments}} for information.
+
 
 % Integer valued vector, usually assigned \eqn{-1} or \eqn{1} if used
 % at all.  Specifies which of the two linear/additive predictors are
@@ -229,4 +240,12 @@ with(Abdata, mean(yy))  # Compare this with fitted(fit3)
 }
 \keyword{models}
 \keyword{regression}
+
+
+%zapoisson(lpobs0 = "logit", llambda = "loge",
+%          type.fitted = c("mean", "pobs0", "onempobs0"), zero = NULL)
+%zapoissonff(llambda = "loge", lonempobs0 = "logit",
+%            type.fitted = c("mean", "pobs0", "onempobs0"), zero = "onempobs0")
+
+
 

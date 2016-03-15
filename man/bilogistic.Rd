@@ -53,7 +53,8 @@ bilogistic(llocation = "identitylink", lscale = "loge",
   \item{zero}{ An integer-valued vector specifying which
   linear/additive predictors are modelled as intercepts only.
   The default is none of them.
-  If used, choose values from the set \{1,2,3,4\}.
+  If used, one can choose values from the set \{1,2,3,4\}.
+  See \code{\link{CommonVGAMffArguments}} for more information.
 
 
   }

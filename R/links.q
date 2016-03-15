@@ -277,12 +277,7 @@ care.exp <- function(x,
   }
   if (inverse) {
     switch(deriv+1, {
-        yy <- theta
-        Neg <- (theta <  0) & !is.na(theta)
-        yy[ Neg] <- exp(theta[Neg]) / (1 + exp(theta[Neg]))
-        Pos <- (theta >= 0) & !is.na(theta)
-        yy[Pos] <- 1 / (1 + exp(-theta[Pos]))
-        yy
+        plogis(theta)
            },
            1 / Recall(theta = theta,
                       bvalue = bvalue,
@@ -291,10 +286,7 @@ care.exp <- function(x,
            stop("argument 'deriv' unmatched"))
   } else {
     switch(deriv+1, {
-       temp2 <- log(theta) - log1p(-theta)
-       if (any(near0.5 <- (abs(theta - 0.5) < 0.000125) & !is.na(theta)))
-         temp2[near0.5] <- log(theta[near0.5] / (1 - theta[near0.5]))
-       temp2
+       qlogis(theta)
        },
        exp(-log(theta) - log1p(-theta)),
        (2 * theta - 1) / (exp(log(theta) + log1p(-theta)))^2,
@@ -1627,7 +1619,7 @@ warning("20150711; this function has not been updated")
 
  nbcanlink <- function(theta,
                        size = NULL,
-                       wrt.eta = NULL,
+                       wrt.param = NULL,
                        bvalue = NULL,
                        inverse = FALSE, deriv = 0,
                        short = TRUE, tag = FALSE) {
@@ -1656,8 +1648,8 @@ warning("20150711; this function has not been updated")
 
 
   if (deriv > 0) {
-    if (!(wrt.eta %in% 1:2))
-      stop("argument 'wrt.eta' should be 1 or 2")
+    if (!(wrt.param %in% 1:2))
+      stop("argument 'wrt.param' should be 1 or 2")
   }
 
 
@@ -1673,21 +1665,21 @@ warning("20150711; this function has not been updated")
        ans
        },
 
-        if (wrt.eta == 1) (theta * (theta + kmatrix)) / kmatrix else
+        if (wrt.param == 1) (theta * (theta + kmatrix)) / kmatrix else
         -(theta + kmatrix),
 
-       if (wrt.eta == 1)
+       if (wrt.param == 1)
        (2 * theta + kmatrix) * theta * (theta + kmatrix) / kmatrix^2 else
         theta + kmatrix)
   } else {
     ans <-
     switch(deriv+1,
-        log(theta / (theta + kmatrix)) ,
+        log(theta / (theta + kmatrix)),
 
-        if (wrt.eta == 1) kmatrix / (theta * (theta + kmatrix)) else
+        if (wrt.param == 1) kmatrix / (theta * (theta + kmatrix)) else
         -1 / (theta + kmatrix),
 
-       if (wrt.eta == 1)
+       if (wrt.param == 1)
        (2 * theta + kmatrix) *
          (-kmatrix) / (theta * (theta + kmatrix))^2 else
         1 / (theta + kmatrix)^2)
@@ -1746,6 +1738,57 @@ setMethod("linkfun", "vglm", function(object, ...)
 
 
 
+
+
+
+
+ logitoffsetlink <-
+  function(theta,
+           offset = 0,
+           inverse = FALSE, deriv = 0,
+           short = TRUE, tag = FALSE) {
+  if (is.character(theta)) {
+    string <- if (short) 
+        paste("logitoffsetlink(",
+               theta,
+              ", ", offset[1],
+              ")", sep = "") else
+        paste("log(",
+              as.char.expression(theta),
+              "/(1-",
+              as.char.expression(theta),
+              ")",
+              " - ", offset[1],
+              ")", sep = "")
+    if (tag) 
+      string <- paste("Logit-with-offset:", string) 
+    return(string)
+  }
+
+
+
+
+  if (inverse) {
+    switch(deriv+1, {
+           exp.eta <- exp(theta) 
+           (exp.eta + offset) / (1 + exp.eta + offset)
+           },
+           1 / Recall(theta = theta,
+                      offset = offset,
+                      inverse = FALSE, deriv = deriv),
+           theta * (1 - theta) * (1 - 2 * theta),
+           stop("argument 'deriv' unmatched"))
+  } else {
+    switch(deriv+1, {
+       temp2 <- log(theta / (1 - theta) - offset)
+       temp2
+       },
+       1 / ((1 - theta) * (theta - (1-theta) * offset)),
+       (2 * (theta - offset * (1-theta)) - 1) / (
+       (theta - (1-theta)*offset) * (1-theta))^2,
+       stop("argument 'deriv' unmatched"))
+  }
+}
 
 
 

@@ -391,7 +391,69 @@ cm.nointercept.VGAM <- function(constraints, x, nointercept, M) {
 
 
 
- cm.zero.VGAM <- function(constraints, x, zero = NULL, M = 1) {
+ cm.zero.VGAM <- function(constraints, x, zero = NULL, M = 1,
+                          predictors.names, M1 = 1) {
+
+
+  dotzero <- zero  # Transition
+
+  if (is.character(dotzero)) {
+
+
+
+
+  which.numeric.all <- NULL
+  for (ii in 1:length(dotzero)) {
+    which.ones <-
+        grep(dotzero[ii], predictors.names, fixed = TRUE)
+    if (length(which.ones)) {
+      which.numeric.all <- c(which.numeric.all, which.ones)
+    } else {
+      warning("some values of argument 'zero' are unmatched. Ignoring them")
+    }
+  }
+  which.numeric <- unique(sort(which.numeric.all))
+
+  if (!length(which.numeric)) {
+    warning("No values of argument 'zero' were matched.")
+    which.numeric <- NULL
+  } else if (length(which.numeric.all) > length(which.numeric)) {
+    warning("There were redundant values of argument 'zero'.")
+  }
+
+    dotzero <- which.numeric
+  }
+
+
+
+  posdotzero <-  dotzero[dotzero > 0]
+  negdotzero <-  dotzero[dotzero < 0]
+
+
+  zneg.index <- if (length(negdotzero)) {
+
+    if (!is.Numeric(-negdotzero, positive = TRUE,
+                    integer.valued = TRUE) ||
+        max(-negdotzero) > M1)
+        stop("bad input for argument 'zero'")
+
+    bigUniqInt <- 1080
+    zneg.index <- rep(0:bigUniqInt, rep(length(negdotzero),
+                      1 + bigUniqInt)) * M1 + abs(negdotzero)
+    sort(intersect(zneg.index, 1:M))
+  } else {
+    NULL
+  }
+
+  zpos.index <- if (length(posdotzero)) posdotzero else NULL
+  z.Index <- if (!length(dotzero))
+               NULL else
+               unique(sort(c(zneg.index, zpos.index)))
+
+
+  zero <- z.Index  # Transition
+
+
 
   asgn <- attr(x, "assign")
   nasgn <- names(asgn)
@@ -409,8 +471,6 @@ cm.nointercept.VGAM <- function(constraints, x, nointercept, M) {
   if (is.null(zero))
     return(constraints)
 
-  if (!is.numeric(zero))
-    stop("argument 'zero' must be numeric")
   if (any(zero < 1 | zero > M))
     stop("argument 'zero' out of range")
   if (nasgn[1] != "(Intercept)")
@@ -918,7 +978,7 @@ procVec <- function(vec, yn, Default) {
     if (length(nvec2)) {
       if (any(!is.element(nvec2, yn)))
           stop("some names given which are superfluous")
-      answer <- rep(as.numeric(NA), length.out = length(yn))
+      answer <- rep(NA_real_, length.out = length(yn))
       names(answer) <- yn
       answer[nvec2] <- vec[nvec2]
       answer[is.na(answer)] <-
@@ -1050,7 +1110,7 @@ mbesselI0 <- function(x, deriv.arg = 0) {
   if (FALSE) {
     }
 
-    ans <- matrix(as.numeric(NA), nrow = nn, ncol = deriv.arg+1)
+    ans <- matrix(NA_real_, nrow = nn, ncol = deriv.arg+1)
     ans[, 1] <- besselI(x, nu = 0)
     if (deriv.arg>=1) ans[,2] <- besselI(x, nu = 1) 
     if (deriv.arg>=2) ans[,3] <- ans[,1] - ans[,2] / x
@@ -1170,10 +1230,42 @@ negzero.expression.VGAM <- expression({
 
 
 
+
+
+
+
+  if (is.character(dotzero)) {
+
+
+
+
+  which.numeric.all <- NULL
+  for (ii in 1:length(dotzero)) {
+    which.ones <-
+        grep(dotzero[ii], predictors.names, fixed = TRUE)
+    if (length(which.ones)) {
+      which.numeric.all <- c(which.numeric.all, which.ones)
+    } else {
+      warning("some values of argument 'zero' are unmatched. Ignoring them")
+    }
+  }
+  which.numeric <- unique(sort(which.numeric.all))
+
+  if (!length(which.numeric)) {
+    warning("No values of argument 'zero' were matched.")
+    which.numeric <- NULL
+  } else if (length(which.numeric.all) > length(which.numeric)) {
+    warning("There were redundant values of argument 'zero'.")
+  }
+
+    dotzero <- which.numeric
+  }
+
+
+
   posdotzero <-  dotzero[dotzero > 0]
   negdotzero <-  dotzero[dotzero < 0]
 
-  bigUniqInt <- 1080
   zneg.index <- if (length(negdotzero)) {
 
     if (!is.Numeric(-negdotzero, positive = TRUE,
@@ -1181,6 +1273,7 @@ negzero.expression.VGAM <- expression({
         max(-negdotzero) > M1)
         stop("bad input for argument 'zero'")
 
+    bigUniqInt <- 1080
     zneg.index <- rep(0:bigUniqInt, rep(length(negdotzero),
                       1 + bigUniqInt)) * M1 + abs(negdotzero)
     sort(intersect(zneg.index, 1:M))
@@ -1189,8 +1282,9 @@ negzero.expression.VGAM <- expression({
   }
 
   zpos.index <- if (length(posdotzero)) posdotzero else NULL
-  z.Index <- if (!length(dotzero)) NULL else
-                   unique(sort(c(zneg.index, zpos.index)))
+  z.Index <- if (!length(dotzero))
+               NULL else
+               unique(sort(c(zneg.index, zpos.index)))
 
   constraints <- cm.zero.VGAM(constraints, x = x, z.Index, M = M)
 })
@@ -1210,8 +1304,20 @@ is.empty.list <- function(mylist) {
 
 
 
-interleave.VGAM <- function(L, M)
-  c(matrix(1:L, nrow = M, byrow = TRUE))
+
+
+
+  interleave.VGAM  <- function(.M, M1, inverse = FALSE) {
+  if (inverse) {
+    NRs <- (.M)/M1
+    if (round(NRs) != NRs)
+      stop("Incompatible number of parameters")
+    c(matrix(1:(.M), nrow = NRs, byrow = TRUE))
+  } else {
+    c(matrix(1:(.M), nrow = M1, byrow = TRUE))
+  }
+}
+
 
 
 

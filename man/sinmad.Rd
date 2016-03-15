@@ -11,9 +11,10 @@ sinmad(lscale = "loge", lshape1.a = "loge", lshape3.q = "loge",
        iscale = NULL, ishape1.a = NULL, ishape3.q = NULL, imethod = 1, 
        lss = TRUE, gscale = exp(-5:5), gshape1.a = exp(-5:5),
        gshape3.q = exp(-5:5), probs.y = c(0.25, 0.5, 0.75),
-       zero = ifelse(lss, -(2:3), -c(1, 3)))
+       zero = "shape")
 }
 %- maybe also 'usage' for other objects documented here.
+%      zero = ifelse(lss, -(2:3), -c(1, 3))
 \arguments{
   \item{lss}{ See \code{\link{CommonVGAMffArguments}} for important information.
 

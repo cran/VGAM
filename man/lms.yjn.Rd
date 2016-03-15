@@ -8,12 +8,12 @@
   to normality.
 }
 \usage{
-lms.yjn(percentiles = c(25, 50, 75), zero = c(1,3),
+lms.yjn(percentiles = c(25, 50, 75), zero = c("lambda", "sigma"),
         llambda = "identitylink", lsigma = "loge",
         idf.mu = 4, idf.sigma = 2,
         ilambda = 1, isigma = NULL, rule = c(10, 5),
         yoffset = NULL, diagW = FALSE, iters.diagW = 6)
-lms.yjn2(percentiles=c(25,50,75), zero=c(1,3),
+lms.yjn2(percentiles=c(25,50,75), zero = c("lambda", "sigma"),
          llambda = "identitylink", lmu = "identitylink", lsigma = "loge",
          idf.mu = 4, idf.sigma = 2, ilambda = 1.0,
          isigma = NULL, yoffset = NULL, nsimEIM = 250)

@@ -115,7 +115,6 @@ vglm <- function(formula,
            family = family, 
            control = control,
            constraints = constraints,
-           criterion = control$criterion,
            extra = extra,
            qr.arg = qr.arg,
            Terms = mt, function.name = function.name, ...)

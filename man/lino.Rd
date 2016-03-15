@@ -32,10 +32,12 @@ lino(lshape1 = "loge", lshape2 = "loge", llambda = "loge",
 
   }
   \item{zero}{
-  An integer-valued vector specifying which
+  Can be an integer-valued vector specifying which
   linear/additive predictors are modelled as intercepts only.
   Here, the values must be from the set \{1,2,3\} which correspond to
   \eqn{a}, \eqn{b}, \eqn{\lambda}{lambda}, respectively.
+  See \code{\link{CommonVGAMffArguments}} for more information.
+
 
   }
 }

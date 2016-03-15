@@ -218,7 +218,9 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
   infos = eval(substitute(function(...) {
     list(M1 = NA,  # zz -1?
          Q1 = NA,
+         expected = TRUE,
          multipleResponses = FALSE,
+         parameters.names = as.character(NA),
          parallel = .parallel ,
          reverse = .reverse ,
          whitespace = .whitespace ,
@@ -234,7 +236,9 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
     constraints <- cm.VGAM(matrix(1, M, 1), x = x,
                            bool = .parallel ,
                            constraints = constraints)
-    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
+                                predictors.names = predictors.names,
+                                M1 = M)
   }), list( .parallel = parallel, .zero = zero ))),
   deviance = Deviance.categorical.data.vgam,
 
@@ -343,7 +347,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
         ll.elts
       }
     },
-  vfamily = c("sratio", "vcategorical"),
+  vfamily = c("sratio", "VGAMordinal", "VGAMcategorical"),
   deriv = eval(substitute(expression({
     if (!length(extra$mymat)) {
       extra$mymat <- if ( .reverse ) tapplymat1(y, "cumsum") else
@@ -414,7 +418,9 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
   infos = eval(substitute(function(...) {
     list(M1 = NA,  # zz -1?
          Q1 = NA,
+         expected = TRUE,
          multipleResponses = FALSE,
+         parameters.names = as.character(NA),
          parallel = .parallel ,
          reverse = .reverse ,
          whitespace = .whitespace ,
@@ -431,7 +437,9 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
     constraints <- cm.VGAM(matrix(1, M, 1), x = x,
                            bool = .parallel ,
                            constraints = constraints)
-    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
+                                predictors.names = predictors.names,
+                                M1 = M)
   }), list( .parallel = parallel, .zero = zero ))),
 
 
@@ -478,7 +486,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
     } else {
       djs <- eta2theta(eta, .link , earg = .earg )
       temp <- tapplymat1(djs, "cumprod")
-      cbind(1 - djs,1) * cbind(1, temp)
+      cbind(1 - djs, 1) * cbind(1, temp)
     }
     if (length(extra$dimnamesy2))
       dimnames(fv.matrix) <- list(dimnames(eta)[[1]],
@@ -544,7 +552,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
       }
     }
   },
-  vfamily = c("cratio", "vcategorical"),
+  vfamily = c("cratio", "VGAMordinal", "VGAMcategorical"),
 
   deriv = eval(substitute(expression({
     if (!length(extra$mymat)) {
@@ -613,7 +621,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
 }
 
 
- vglm.vcategorical.control <-
+ vglm.VGAMcategorical.control <-
   function(maxit = 30,
            trace = FALSE,
            panic = TRUE, ...) {
@@ -702,7 +710,9 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
                            bool = .parallel ,
                            apply.int = TRUE,
                            constraints = constraints)
-    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
+                                predictors.names = predictors.names,
+                                M1 = M)
     constraints <- cm.nointercept.VGAM(constraints, x, .nointercept , M)
   }), list( .parallel = parallel, .zero = zero,
             .nointercept = nointercept,
@@ -715,7 +725,9 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
          refLevel = .refLevel ,
          M1 = -1,
          link = "multilogit",
+         expected = TRUE,
          multipleResponses = FALSE,
+         parameters.names = as.character(NA),
          zero = .zero )
   }, list( .zero = zero,
            .refLevel = refLevel,
@@ -819,7 +831,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
       }
     }
   },
-  vfamily = c("multinomial", "vcategorical"),
+  vfamily = c("multinomial", "VGAMcategorical"),
   deriv = eval(substitute(expression({
     if ( .refLevel < 0) {
       c(w) * (y[, -ncol(y)] - mu[, -ncol(y)])
@@ -908,7 +920,9 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
   infos = eval(substitute(function(...) {
     list(M1 = NA,  # zz -1?
          Q1 = NA,
+         expected = TRUE,
          multipleResponses = .multiple.responses ,
+         parameters.names = as.character(NA),
          parallel = .parallel ,
          reverse = .reverse ,
          whitespace = .whitespace ,
@@ -1174,7 +1188,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
       }
     }
   },
-  vfamily = c("cumulative", "vcategorical"),
+  vfamily = c("cumulative", "VGAMordinal", "VGAMcategorical"),
   deriv = eval(substitute(expression({
     mu.use <- pmax(mu, .Machine$double.eps * 1.0e-0)
     deriv.answer <-
@@ -1296,7 +1310,9 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
   infos = eval(substitute(function(...) {
     list(M1 = NA,  # zz -1?
          Q1 = NA,
+         expected = TRUE,
          multipleResponses = FALSE,
+         parameters.names = as.character(NA),
          parallel = .parallel ,
          reverse = .reverse ,
          whitespace = .whitespace ,
@@ -1312,7 +1328,9 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
     constraints <- cm.VGAM(matrix(1, M, 1), x = x,
                            bool = .parallel ,
                            constraints = constraints)
-    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
+                                predictors.names = predictors.names,
+                                M1 = M)
   }), list( .parallel = parallel, .zero = zero ))),
 
   deviance = Deviance.categorical.data.vgam,
@@ -1414,7 +1432,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
       }
     }
   },
-  vfamily = c("acat", "vcategorical"),
+  vfamily = c("acat", "VGAMordinal", "VGAMcategorical"),
   deriv = eval(substitute(expression({
     zeta <- eta2theta(eta, .link , earg = .earg )  # May be zetar
 
@@ -1436,7 +1454,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
     answer
   }), list( .earg = earg, .link = link, .reverse = reverse) )),
   weight = eval(substitute(expression({
-    wz <- matrix(as.numeric(NA), n, dimm(M)) 
+    wz <- matrix(NA_real_, n, dimm(M)) 
 
     hess <- attr(d1, "hessian") / d1
 
@@ -1508,7 +1526,9 @@ acat.deriv <- function(zeta, reverse, M, n) {
   infos = eval(substitute(function(...) {
     list(M1 = NA,  # zz -1?
          Q1 = NA,
+         expected = TRUE,
          multipleResponses = FALSE,
+         parameters.names = as.character(NA),
          refvalue = .refvalue ,
          refgp = .refgp ,
          ialpha = .ialpha )
@@ -1596,7 +1616,7 @@ acat.deriv <- function(zeta, reverse, M, n) {
       }
     }
   },
-  vfamily = c("brat"),
+  vfamily = c("brat", "VGAMcategorical"),
   deriv = eval(substitute(expression({
     ans <- NULL
     uindex <- if ( .refgp == "last") 1:M else (1:(M+1))[-( .refgp ) ]
@@ -1672,7 +1692,9 @@ acat.deriv <- function(zeta, reverse, M, n) {
   infos = eval(substitute(function(...) {
     list(M1 = NA,  # zz -1?
          Q1 = NA,
+         expected = TRUE,
          multipleResponses = FALSE,
+         parameters.names = as.character(NA),
          refvalue = .refvalue ,
          refgp = .refgp ,
          i0 = .i0 ,
@@ -1774,7 +1796,7 @@ acat.deriv <- function(zeta, reverse, M, n) {
       }
     }
   },
-  vfamily = c("bratt"),
+  vfamily = c("bratt", "VGAMcategorical"),
   deriv = eval(substitute(expression({
     ans <- NULL
     ties <- extra$ties
@@ -1985,9 +2007,10 @@ InverseBrat <-
 
 
  ordpoisson <- function(cutpoints,
-                       countdata = FALSE, NOS = NULL, Levels = NULL,
-                       init.mu = NULL, parallel = FALSE, zero = NULL,
-                       link = "loge") {
+                        countdata = FALSE, NOS = NULL, Levels = NULL,
+                        init.mu = NULL, parallel = FALSE,
+                        zero = NULL,
+                        link = "loge") {
 
   link <- as.list(substitute(link))
   earg  <- link2list(link)
@@ -2020,13 +2043,28 @@ InverseBrat <-
   new("vglmff",
   blurb = c(paste("Ordinal Poisson model\n\n"), 
             "Link:     ", namesof("mu", link, earg = earg)),
+
+
   constraints = eval(substitute(expression({
     constraints <- cm.VGAM(matrix(1, M, 1), x = x,
                            bool = .parallel ,
                            apply.int = TRUE,
                            constraints = constraints)
-    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
+                                predictors.names = predictors.names,
+                                M1 = 1)
   }), list( .parallel = parallel, .zero = zero ))),
+
+  infos = eval(substitute(function(...) {
+    list(M1 = 1,
+         Q1 = 1,
+         expected = TRUE,
+         multipleResponses = TRUE,
+         parameters.names = c("mu"),
+         lmu = .link ,
+         zero = .zero )
+  }, list( .zero = zero, .link = link ))),
+
   initialize = eval(substitute(expression({
     orig.y <- cbind(y)  # Convert y into a matrix if necessary
     if ( .countdata ) {
@@ -2080,9 +2118,8 @@ InverseBrat <-
     extra$cutpoints <- cp.vector
     extra$n <- n
 
-    mynames <- if (M > 1) paste("mu", 1:M, sep = "") else "mu"
-    predictors.names <-
-      namesof(mynames, .link , short = TRUE, earg = .earg )
+    mynames <- param.names("mu", M)
+    predictors.names <- namesof(mynames, .link , earg = .earg , tag = FALSE)
   }), list( .link = link, .countdata = countdata, .earg = earg,
             .cutpoints=cutpoints, .NOS=NOS, .Levels=Levels,
             .init.mu = init.mu
@@ -2127,7 +2164,7 @@ InverseBrat <-
       }
       }
   },
-  vfamily = c("ordpoisson", "vcategorical"),
+  vfamily = c("ordpoisson", "VGAMcategorical"),
   deriv = eval(substitute(expression({
     probs <- ordpoissonProbs(extra, mu)
     probs.use <- pmax(probs, .Machine$double.eps * 1.0e-0)
@@ -2217,16 +2254,631 @@ ordpoissonProbs <- function(extra, mu, deriv = 0) {
 
 
 
- margeff <- function(object, subset = NULL) {
+
+findFirstMethod <- function(methodsfn, charvec) {
+  answer <- NULL
+  for (ii in 1:length(charvec)) {
+    if (existsMethod(methodsfn, signature(VGAMff = charvec[ii]))) {
+      answer <- charvec[ii]
+      break
+    }
+  }
+  answer
+}
 
 
-  ii <- ii.save <- subset
+
+margeff <- function(object, subset = NULL, ...) {
+
+
+  try.this <- findFirstMethod("margeffS4VGAM", object@family@vfamily)
+  if (length(try.this)) {
+    margeffS4VGAM(object = object,
+            subset = subset,
+            VGAMff = new(try.this),
+        ...)
+  } else {
+    stop("Could not find a methods function for 'margeffS4VGAM' ",
+         "emanating from '", object@family@vfamily[1], "'")
+  }
+}
+
+
+
+
+
+subsetarray3 <- function(array3, subset = NULL) {
+  if (is.null(subset)) {
+    return(array3)
+  } else
+    if (is.numeric(subset) && (length(subset) == 1)) {
+      return(array3[, , subset])
+  } else {
+    return(array3[, , subset])
+  }
+  warning("argument 'subset' unmatched. Doing nothing")
+  array3
+}
+
+
+
+
+
+setClass("VGAMcategorical",     contains = "vglmff")
+
+setClass("VGAMordinal",         contains = "VGAMcategorical")
+setClass("multinomial",         contains = "VGAMcategorical")
+
+setClass("acat",                contains = "VGAMordinal")
+setClass("cumulative",          contains = "VGAMordinal")
+setClass("cratio",              contains = "VGAMordinal")
+setClass("sratio",              contains = "VGAMordinal")
+
+
+
+setMethod("margeffS4VGAM",
+          signature(VGAMff = "VGAMcategorical"),
+  function(object,
+           subset = NULL,
+           VGAMff,
+           ...) {
+  object@post$M <- M   <- object@misc$M
+  object@post$n <- nnn <- object@misc$n
+  invisible(object)
+  })
+
+
+
+
+setMethod("margeffS4VGAM",  signature(VGAMff ="multinomial"),
+  function(object,
+           subset = NULL,
+           VGAMff,
+           ...) {
+
+  object <- callNextMethod(VGAMff = VGAMff,
+                           object = object,
+                           subset = subset,
+                           ...)
+
+  M   <- object@misc$M
+  nnn <- object@misc$n
+    cfit <- coefvlm(object, matrix.out = TRUE)
+    rlev <- object@misc$refLevel
+    if (!length(rlev))
+      relev <- M+1  # Default
+    Bmat <- matrix(0, nrow(cfit), 1 + ncol(cfit))
+    Bmat[, -rlev] <- cfit
+    ppp   <- nrow(Bmat)
+    pvec1 <- fitted(object)[1, ]
+    rownames(Bmat) <- rownames(cfit)
+    colnames(Bmat) <- if (length(names(pvec1))) names(pvec1) else
+                      paste("mu", 1:(M+1), sep = "")
+
+
+    BB <- array(Bmat, c(ppp, M+1, nnn))
+    pvec  <- c(t(fitted(object)))
+    pvec  <- rep(pvec, each = ppp)
+    temp1 <- array(BB * pvec, c(ppp, M+1, nnn))
+    temp2 <- aperm(temp1, c(2, 1, 3))  # (M+1) x ppp x nnn
+    temp2 <- colSums(temp2)  # ppp x nnn
+    temp2 <- array(rep(temp2, each = M+1), c(M+1, ppp, nnn))
+    temp2 <- aperm(temp2, c(2, 1, 3))  # ppp x (M+1) x nnn
+    temp3 <- pvec
+    ans.mlm <- array((BB - temp2) * temp3, c(ppp, M+1, nnn),
+                     dimnames = list(dimnames(Bmat)[[1]],
+                     dimnames(Bmat)[[2]], dimnames(fitted(object))[[1]]))
+    return(subsetarray3(ans.mlm, subset = subset))
+  })
+
+
+
+
+setMethod("margeffS4VGAM",  signature(VGAMff = "VGAMordinal"),
+  function(object,
+           subset = NULL,
+           VGAMff,
+           ...) {
+  M   <- object@misc$M
+  nnn <- object@misc$n
+
+  object@post$reverse <- object@misc$reverse
+  object@post$linkfunctions <- linkfunctions <- object@misc$link
+  object@post$all.eargs <- all.eargs <- object@misc$earg
+  object@post$Bmat <- Bmat <- coefvlm(object, matrix.out = TRUE)
+  object@post$ppp <- nrow(Bmat)
+  etamat <- predict(object)
+
+  hdot <- Thetamat <- etamat
+  for (jlocal in 1:M) {
+    Thetamat[, jlocal] <- eta2theta(etamat[, jlocal],
+                                    link = linkfunctions[jlocal],
+                                    earg = all.eargs[[jlocal]])
+    hdot[, jlocal] <- dtheta.deta(Thetamat[, jlocal],
+                                  link = linkfunctions[jlocal],
+                                  earg = all.eargs[[jlocal]])
+  }  # jlocal
+
+
+  object@post$hdot <- hdot
+  object@post$Thetamat <- Thetamat
+  object
+  })
+
+
+
+
+
+setMethod("margeffS4VGAM",  signature(VGAMff = "cumulative"),
+  function(object,
+           subset = NULL,
+           VGAMff,
+           ...) {
+
+
+  object <- callNextMethod(VGAMff = VGAMff,
+                           object = object,
+                           subset = subset,
+                           ...)
+  reverse <- object@post$reverse
+  linkfunctions <- object@post$linkfunctions
+  all.eargs <- object@post$all.eargs
+  Bmat <- cfit <- object@post$Bmat
+  ppp <- object@post$ppp
+  etamat <- predict(object)  # nnn x M
+  fitmat <- fitted(object)   # nnn x (M + 1)
+  nnn <- nrow(etamat)
+  M   <- ncol(etamat)
+  hdot <- object@post$hdot
+  Thetamat <- object@post$Thetamat
+
+
+
+
+    hdot.big <- kronecker(hdot, matrix(1, ppp, 1))  # Enlarged
+    resmat <- cbind(hdot.big, 1)
+    resmat[, 1] <- ifelse(reverse, -1, 1) * hdot.big[, 1] * cfit[, 1]
+
+    if (M > 1) {
+      for (jlocal in 2:M) {
+        resmat[, jlocal] <- ifelse(reverse, -1, 1) *
+          (hdot.big[, jlocal    ] * cfit[, jlocal    ] -
+           hdot.big[, jlocal - 1] * cfit[, jlocal - 1])
+      }  # jlocal
+
+    }  # if
+
+    resmat[, M+1] <- ifelse(reverse, 1, -1) * hdot.big[, M] * cfit[, M]
+
+    ans.cum <- array(resmat, c(ppp, nnn, M+1),
+                     dimnames = list(dimnames(Bmat)[[1]],
+                                     dimnames(fitted(object))[[1]],
+                                     dimnames(fitted(object))[[2]]))
+    ans.cum <- aperm(ans.cum, c(1, 3, 2))  # ppp x (M+1) x nnn
+
+    subsetarray3(ans.cum, subset = subset)
+  })
+
+
+
+
+
+
+
+setMethod("margeffS4VGAM",  signature(VGAMff = "acat"),
+  function(object,
+           subset = NULL,
+           VGAMff,
+           ...) {
+
+
+  object <- callNextMethod(VGAMff = VGAMff,
+                           object = object,
+                           subset = subset,
+                           ...)
+  reverse <- object@post$reverse
+  linkfunctions <- object@post$linkfunctions
+  all.eargs <- object@post$all.eargs
+  Bmat <- cfit <- object@post$Bmat
+  ppp <- object@post$ppp
+  etamat <- predict(object)  # nnn x M
+  fitmat <- fitted(object)   # nnn x (M + 1)
+  nnn <- nrow(etamat)
+  M   <- ncol(etamat)
+  hdot <- object@post$hdot
+  Thetamat <- object@post$Thetamat
+
+
+
+
+    expcs.etamat <- if (reverse)
+      exp(tapplymat1(etamat[, M:1, drop = FALSE],
+                     "cumsum")[, M:1, drop = FALSE]) else
+      exp(tapplymat1(etamat, "cumsum"))
+    csexpcs.etavec <- rowSums(expcs.etamat)
+
+
+
+    if (!all(object@misc$link == "loge"))
+      stop("currently only the 'loge' link is supported")
+ 
+ 
+  acat.derivs <- function(jay, tee,
+                          M, expcs.etamat, Thetamat,
+                          prob1, probMplus1,
+                          reverse = FALSE) {
+
+    if (jay > M+1) stop("argument 'jay' out of range")
+    if (M   < tee) stop("argument 'tee' out of range")
+
+    if (reverse) {  # ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+      dpMplus1.detat <- -(probMplus1^2) *
+                        rowSums(expcs.etamat[, 1:tee, drop = FALSE])
+      if (jay == M+1) {
+        return(dpMplus1.detat)
+      }
+      if (jay <= tee) {
+        return((probMplus1 + dpMplus1.detat) * expcs.etamat[, jay])
+      }
+      if (tee < jay) {
+        return(dpMplus1.detat * expcs.etamat[, jay])
+      }
+    } else {  # reverse = FALSE ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+      dp1.detat <- -(prob1^2) * rowSums(expcs.etamat[, tee:M, drop = FALSE])
+      if (jay == 1) {
+        return(dp1.detat)
+      }
+      if (jay <= tee) {
+        return(dp1.detat * expcs.etamat[, jay-1])
+      }
+      if (tee < jay) {
+        return((prob1 + dp1.detat) * expcs.etamat[, jay-1])
+      }
+    } # reverse ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+  }  # acat.derivs
+
+
+
+  A        <- array(0, c(i = nnn, vars = ppp, probs = M + 1, etas = M))
+  ansarray <- array(0, c(vars = ppp, i = nnn, probs = M + 1))
+  if (reverse) {
+    probMplus1 <- 1 / (1 +  csexpcs.etavec) # Last level of Y
+  } else {
+    prob1 <- 1 / (1 +  csexpcs.etavec)  # First level of Y
+  }
+
+    for (jlocal in 1:(M+1)) {
+      for (tlocal in 1:M) {
+        A[, , jlocal, tlocal] <-
+          acat.derivs(jay = jlocal, tee = tlocal,
+                      M = M, expcs.etamat = expcs.etamat,
+                      Thetamat = Thetamat,
+                      prob1 = prob1, probMplus1 = probMplus1,
+                      reverse = reverse)
+      }
+    }
+
+
+    A <- aperm(A, c(2, 1, 3, 4))  # c(ppp, nnn, M+1, M)
+    for (jlocal in 1:(M + 1)) {
+      for (tlocal in 1:M) {
+        ansarray[,, jlocal]  <- ansarray[,, jlocal] +
+                                A[,, jlocal, tlocal] * Bmat[, tlocal]
+      }
+    }
+    ans.acat <- aperm(ansarray, c(1, 3, 2))  # c(ppp, M+1, nnn)
+    dimnames(ans.acat) <- list(rownames(Bmat),
+                               colnames(fitmat),
+                               rownames(etamat))
+    subsetarray3(ans.acat, subset = subset)
+  })
+
+
+
+
+
+  cratio.derivs <- function(jay, tee,
+                            hdot, M, cpThetamat, Thetamat,
+                            reverse = FALSE) {
+
+    if (jay >= M+1) stop("argument 'jay' out of range")
+    if (M   <  tee) stop("argument 'tee' out of range")
+
+    if (reverse) {  # ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+      if (jay == 1) {
+        return(hdot[, tee] * cpThetamat[, 1] / Thetamat[, tee])
+      }
+
+      if (jay-1 == tee) {
+        return(-hdot[, jay-1] * cpThetamat[, jay])
+      }
+      if (jay <= tee) {
+        return((1 - Thetamat[, jay-1]) *
+                hdot[, tee] * cpThetamat[, jay] / Thetamat[, tee])
+      }
+      return(rep(0, length = nrow(Thetamat)))  # Since jay-1 > tee
+    } else {  # reverse = FALSE ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+      if (jay == 1 && tee == 1) {
+        return(-hdot[, 1])
+      }
+
+      if (jay == tee) {
+        return(-hdot[, jay] * cpThetamat[, jay-1])
+      }
+      if (tee < jay) {
+        return((1 - Thetamat[, jay]) *
+                hdot[, tee] * cpThetamat[, jay-1] / Thetamat[, tee])
+      }
+      return(rep(0, length = nrow(Thetamat)))  # Since jay < tee
+    } # reverse ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+  }  # cratio.derivs
+
+
+
+
+
+
+setMethod("margeffS4VGAM",  signature(VGAMff = "cratio"),
+  function(object,
+           subset = NULL,
+           VGAMff,
+           ...) {
+
+
+  object <- callNextMethod(VGAMff = VGAMff,
+                           object = object,
+                           subset = subset,
+                           ...)
+  reverse <- object@post$reverse
+  linkfunctions <- object@post$linkfunctions
+  all.eargs <- object@post$all.eargs
+  Bmat <- cfit <- object@post$Bmat
+  ppp <- object@post$ppp
+  etamat <- predict(object)  # nnn x M
+  fitmat <- fitted(object)   # nnn x (M + 1)
+  nnn <- nrow(etamat)
+  M   <- ncol(etamat)
+  hdot <- object@post$hdot
+  Thetamat <- object@post$Thetamat
+
+
+
+
+
+   
+
+  vfamily <- object@family@vfamily
+  c.nots <- any(vfamily == "cratio")
+
+  if (any(vfamily == "cratio")) {
+    cpThetamat <- if (reverse)
+      tapplymat1(    Thetamat[, M:1, drop = FALSE],
+                 "cumprod")[, M:1, drop = FALSE] else
+      tapplymat1(    Thetamat, "cumprod")
+  }
+
+
+
+  A        <- array(0, c(i = nnn, vars = ppp, probs = M + 1, etas = M))
+  ansarray <- array(0, c(vars = ppp, i = nnn, probs = M + 1))
+
+
+  choosemat <- if (c.nots) Thetamat else 1 - Thetamat
+  if (min(choosemat) <= 0)
+    warning("division by 0 may occur")
+
+
+
+
+
+
+    if (reverse) {
+      for (tlocal in 1:M) {
+        for (jlocal in 1:tlocal) {
+          A[, , jlocal, tlocal] <-
+            cratio.derivs(jay = jlocal, tee = tlocal,
+                          hdot = ifelse(c.nots, 1, -1) * hdot,
+                          M = M, cpThetamat = cpThetamat,
+                          Thetamat = choosemat,
+                          reverse = reverse)
+        }
+      }
+      if (M > 1)
+        for (jlocal in 2:M) {
+          A[, , jlocal, jlocal-1] <-
+            cratio.derivs(jay = jlocal, tee = jlocal-1,
+                          hdot = ifelse(c.nots, 1, -1) * hdot,
+                          M = M, cpThetamat = cpThetamat,
+                          Thetamat = choosemat,
+                          reverse = reverse)
+        }
+    } else {
+     for (jlocal in 1:M) {
+        for (tlocal in 1:jlocal) {
+          A[, , jlocal, tlocal] <-
+            cratio.derivs(jay = jlocal, tee = tlocal,
+                          hdot = ifelse(c.nots, 1, -1) * hdot,
+                          M = M, cpThetamat = cpThetamat,
+                          Thetamat = choosemat,
+                          reverse = reverse)
+        }
+      }
+    }
+
+    if (reverse) {
+      A[, , M+1, M] <- ifelse(c.nots, -1, 1) * hdot[, M]
+    } else {
+      for (jlocal in 1:M) { 
+        for (tlocal in 1:jlocal) {
+          A[, , M+1, tlocal] <- if (c.nots) {
+            A[, , M+1, tlocal] - A[, , jlocal, tlocal]
+          } else {
+            -hdot[, tlocal] * cpThetamat[, M] / choosemat[, tlocal]
+          }
+        }
+      }
+    }
+
+    A <- aperm(A, c(2, 1, 3, 4))  # c(ppp, nnn, M+1, M)
+    for (jlocal in 1:(M + 1)) {
+      for (tlocal in 1:M) {
+        ansarray[,, jlocal]  <- ansarray[,, jlocal] +
+                                A[,, jlocal, tlocal] * Bmat[, tlocal]
+      }
+    }
+    ans.csratio <- aperm(ansarray, c(1, 3, 2))  # c(ppp, M+1, nnn)
+    dimnames(ans.csratio) <- list(rownames(Bmat),
+                                  colnames(fitmat),
+                                  rownames(etamat))
+    subsetarray3(ans.csratio, subset = subset)  # "cratio" and "sratio"
+  })
+
+
+
+
+setMethod("margeffS4VGAM",  signature(VGAMff = "sratio"),
+  function(object,
+           subset = NULL,
+           VGAMff,
+           ...) {
+
+
+
+
+
+
+
+
+  object <- callNextMethod(VGAMff = VGAMff,
+                           object = object,
+                           subset = subset,
+                           ...)
+  reverse <- object@post$reverse
+  linkfunctions <- object@post$linkfunctions
+  all.eargs <- object@post$all.eargs
+  Bmat <- cfit <- object@post$Bmat
+  ppp <- object@post$ppp
+  etamat <- predict(object)  # nnn x M
+  fitmat <- fitted(object)   # nnn x (M + 1)
+  nnn <- nrow(etamat)
+  M   <- ncol(etamat)
+  hdot <- object@post$hdot
+  Thetamat <- object@post$Thetamat
+
+
+
+
+  vfamily <- object@family@vfamily
+  c.nots <- any(vfamily == "cratio")
+  if (any(vfamily == "sratio")) {
+    cpThetamat <- if (reverse)
+      tapplymat1(1 - Thetamat[, M:1, drop = FALSE],
+                 "cumprod")[, M:1, drop = FALSE] else
+      tapplymat1(1 - Thetamat, "cumprod")
+  }
+
+
+
+  A        <- array(0, c(i = nnn, vars = ppp, probs = M + 1, etas = M))
+  ansarray <- array(0, c(vars = ppp, i = nnn, probs = M + 1))
+
+
+  choosemat <- if (c.nots) Thetamat else 1 - Thetamat
+  if (min(choosemat) <= 0)
+    warning("division by 0 may occur")
+
+
+
+
+
+
+
+
+
+
+
+    if (reverse) {
+      for (tlocal in 1:M) {
+        for (jlocal in 1:tlocal) {
+          A[, , jlocal, tlocal] <-
+            cratio.derivs(jay = jlocal, tee = tlocal,
+                          hdot = ifelse(c.nots, 1, -1) * hdot,
+                          M = M, cpThetamat = cpThetamat,
+                          Thetamat = choosemat,
+                          reverse = reverse)
+        }
+      }
+      if (M > 1)
+        for (jlocal in 2:M) {
+          A[, , jlocal, jlocal-1] <-
+            cratio.derivs(jay = jlocal, tee = jlocal-1,
+                          hdot = ifelse(c.nots, 1, -1) * hdot,
+                          M = M, cpThetamat = cpThetamat,
+                          Thetamat = choosemat,
+                          reverse = reverse)
+        }
+    } else {
+     for (jlocal in 1:M) {
+        for (tlocal in 1:jlocal) {
+          A[, , jlocal, tlocal] <-
+            cratio.derivs(jay = jlocal, tee = tlocal,
+                          hdot = ifelse(c.nots, 1, -1) * hdot,
+                          M = M, cpThetamat = cpThetamat,
+                          Thetamat = choosemat,
+                          reverse = reverse)
+        }
+      }
+    }
+
+    if (reverse) {
+      A[, , M+1, M] <- ifelse(c.nots, -1, 1) * hdot[, M]
+    } else {
+      for (jlocal in 1:M) { 
+        for (tlocal in 1:jlocal) {
+          A[, , M+1, tlocal] <- if (c.nots) {
+            A[, , M+1, tlocal] - A[, , jlocal, tlocal]
+          } else {
+            -hdot[, tlocal] * cpThetamat[, M] / choosemat[, tlocal]
+          }
+        }
+      }
+    }
+
+    A <- aperm(A, c(2, 1, 3, 4))  # c(ppp, nnn, M+1, M)
+    for (jlocal in 1:(M + 1)) {
+      for (tlocal in 1:M) {
+        ansarray[,, jlocal]  <- ansarray[,, jlocal] +
+                                A[,, jlocal, tlocal] * Bmat[, tlocal]
+      }
+    }
+    ans.csratio <- aperm(ansarray, c(1, 3, 2))  # c(ppp, M+1, nnn)
+    dimnames(ans.csratio) <- list(rownames(Bmat),
+                                  colnames(fitmat),
+                                  rownames(etamat))
+    subsetarray3(ans.csratio, subset = subset)  # "cratio" and "sratio"
+  })
+
+
+
+
+
+
+
+
+ margefff <- function(object, subset = NULL) {
+
+
+  ii <- subset
   if (!is(object, "vglm"))
     stop("'object' is not a vglm() object")
   if (!any(temp.logical <-
-    is.element(c("multinomial", "cumulative", "acat"),
+    is.element(c("multinomial", "cumulative", "acat", "cratio", "sratio"),
                object@family@vfamily)))
-    stop("'object' is not a 'multinomial' or 'acat' or 'cumulative' VGLM!")
+    stop("'object' is not a 'multinomial' or 'acat' or 'cumulative' ",
+         " or 'cratio' or 'sratio' VGLM!")
   vfamily <- object@family@vfamily
   if (is(object, "vgam"))
     stop("'object' is a vgam() object")
@@ -2248,42 +2900,42 @@ ordpoissonProbs <- function(extra, mu, deriv = 0) {
     rlev <- object@misc$refLevel
     cfit <- coefvlm(object, matrix.out = TRUE)
     B <- if (!length(rlev)) {
-        cbind(cfit, 0)
+      cbind(cfit, 0)
     } else {
-        if (rlev == M+1) {  # Default
-            cbind(cfit, 0)
-        } else if (rlev == 1) {
-            cbind(0, cfit)
-        } else {
-            cbind(cfit[, 1:(rlev-1)], 0, cfit[,rlev:M])
-        }
+      if (rlev == M+1) {  # Default
+        cbind(cfit, 0)
+      } else if (rlev == 1) {
+        cbind(0, cfit)
+      } else {
+        cbind(cfit[, 1:(rlev-1)], 0, cfit[, rlev:M])
+      }
     }
     ppp   <- nrow(B)
-    pvec1 <- fitted(object)[ 1,]
+    pvec1 <- fitted(object)[1, ]
     colnames(B) <- if (length(names(pvec1))) names(pvec1) else
                    paste("mu", 1:(M+1), sep = "")
 
     if (is.null(ii)) {
-        BB <- array(B, c(ppp, M+1, nnn))
-        pvec  <- c(t(fitted(object)))
-        pvec  <- rep(pvec, each=ppp)
-        temp1 <- array(BB * pvec, c(ppp, M+1, nnn))
-        temp2 <- aperm(temp1, c(2,1,3))  # (M+1) x ppp x nnn
-        temp2 <- colSums(temp2)  # ppp x nnn
-        temp2 <- array(rep(temp2, each=M+1), c(M+1, ppp, nnn))
-        temp2 <- aperm(temp2, c(2, 1, 3))  # ppp x (M+1) x nnn
-        temp3 <- pvec
-        ans <- array((BB - temp2) * temp3, c(ppp, M+1, nnn),
-                     dimnames = list(dimnames(B)[[1]],
-                     dimnames(B)[[2]], dimnames(fitted(object))[[1]]))
-        ans
+      BB <- array(B, c(ppp, M+1, nnn))
+      pvec  <- c(t(fitted(object)))
+      pvec  <- rep(pvec, each = ppp)
+      temp1 <- array(BB * pvec, c(ppp, M+1, nnn))
+      temp2 <- aperm(temp1, c(2, 1, 3))  # (M+1) x ppp x nnn
+      temp2 <- colSums(temp2)  # ppp x nnn
+      temp2 <- array(rep(temp2, each = M+1), c(M+1, ppp, nnn))
+      temp2 <- aperm(temp2, c(2, 1, 3))  # ppp x (M+1) x nnn
+      temp3 <- pvec
+      ans <- array((BB - temp2) * temp3, c(ppp, M+1, nnn),
+                   dimnames = list(dimnames(B)[[1]],
+                   dimnames(B)[[2]], dimnames(fitted(object))[[1]]))
+      return(ans)
     } else
-    if (is.numeric(ii) && (length(ii) == 1)) {
-        pvec  <- fitted(object)[ii,]
+    if (is.numeric(ii) && length(ii) == 1) {
+        pvec  <- fitted(object)[ii, ]
         temp1 <- B * matrix(pvec, ppp, M+1, byrow = TRUE)
         temp2 <- matrix(rowSums(temp1), ppp, M+1)
         temp3 <- matrix(pvec, nrow(B), M+1, byrow = TRUE)
-        (B - temp2) * temp3
+        return((B - temp2) * temp3)
     } else {
         if (is.logical(ii))
           ii <- (1:nnn)[ii]
@@ -2291,7 +2943,7 @@ ordpoissonProbs <- function(extra, mu, deriv = 0) {
         ans <- array(0, c(ppp, M+1, length(ii)),
                      dimnames = list(dimnames(B)[[1]],
                                      dimnames(B)[[2]],
-                                     dimnames(fitted(object)[ii,])[[1]]))
+                                     dimnames(fitted(object)[ii, ])[[1]]))
         for (ilocal in 1:length(ii)) {
           pvec  <- fitted(object)[ii[ilocal], ]
           temp1 <- B * matrix(pvec, ppp, M+1, byrow = TRUE)
@@ -2299,56 +2951,81 @@ ordpoissonProbs <- function(extra, mu, deriv = 0) {
           temp3 <- matrix(pvec, nrow(B), M+1, byrow = TRUE)
           ans[ , , ilocal] <- (B - temp2) * temp3
         }
-        ans
-    }
-    } else if (any(vfamily == "acat")) {
-    stop("currently the 'acat' family is unsupported here")
-    reverse <- object@misc$reverse
-    linkfunctions <- object@misc$link
-    all.eargs <- object@misc$earg
-    B <- cfit <- coefvlm(object, matrix.out = TRUE)
-    ppp <- nrow(B)
-    etamat <- predict(object)  # nnn x M
+        return(ans)
+      }
+  }  # "multinomial"
 
 
 
 
 
+  reverse <- object@misc$reverse
+  linkfunctions <- object@misc$link
+  all.eargs <- object@misc$earg
+  B <- cfit <- coefvlm(object, matrix.out = TRUE)
+  ppp <- nrow(B)
+  etamat <- predict(object)  # nnn x M
+  fitmat <- fitted(object)   # nnn x (M + 1)
+  nnn <- nrow(etamat)
 
 
-    } else {
+  hdot <- Thetamat <- etamat
+  for (jlocal in 1:M) {
+    Thetamat[, jlocal] <- eta2theta(etamat[, jlocal],
+                                    link = linkfunctions[jlocal],
+                                    earg = all.eargs[[jlocal]])
+    hdot[, jlocal] <- dtheta.deta(Thetamat[, jlocal],
+                                  link = linkfunctions[jlocal],
+                                  earg = all.eargs[[jlocal]])
+  }  # jlocal
 
-    if (is.logical(is.multivariateY <- object@misc$multiple.responses) &&
-        is.multivariateY)
-      stop("cannot handle cumulative(multiple.responses = TRUE)")
-    reverse <- object@misc$reverse
-    linkfunctions <- object@misc$link
-    all.eargs <- object@misc$earg
-    B <- cfit <- coefvlm(object, matrix.out = TRUE)
-    ppp <- nrow(B)
 
-    hdot <- lpmat <- kronecker(predict(object), matrix(1, ppp, 1))
-    resmat <- cbind(hdot, 1)
-    for (jlocal in 1:M) {
-      Cump <- eta2theta(lpmat[,jlocal],
-                        link = linkfunctions[jlocal],
-                        earg = all.eargs[[jlocal]])
-      hdot[, jlocal]  <- dtheta.deta(Cump,
-                                     link = linkfunctions[jlocal],
-                                     earg = all.eargs[[jlocal]])
-    }
 
-    resmat[, 1] <- ifelse(reverse, -1, 1) * hdot[, 1] * cfit[, 1]
+  if (any(vfamily == "acat")) {
+    expcs.etamat <- if (reverse)
+      exp(tapplymat1(etamat[, M:1, drop = FALSE],
+                     "cumsum")[, M:1, drop = FALSE]) else
+      exp(tapplymat1(etamat, "cumsum"))
+    csexpcs.etavec <- rowSums(expcs.etamat)
+  }
+  if (any(vfamily == "cratio")) {
+    cpThetamat <- if (reverse)
+      tapplymat1(    Thetamat[, M:1, drop = FALSE],
+                 "cumprod")[, M:1, drop = FALSE] else
+      tapplymat1(    Thetamat, "cumprod")
+  }
+  if (any(vfamily == "sratio")) {
+    cpThetamat <- if (reverse)
+      tapplymat1(1 - Thetamat[, M:1, drop = FALSE],
+                 "cumprod")[, M:1, drop = FALSE] else
+      tapplymat1(1 - Thetamat, "cumprod")
+  }
+
+
+
+
+
+  if (is.logical(is.multivariateY <- object@misc$multiple.responses) &&
+      is.multivariateY)
+    stop("cannot handle cumulative(multiple.responses = TRUE)")
+
+
+
+
+  if (any(vfamily == "cumulative")) {
+    hdot.big <- kronecker(hdot, matrix(1, ppp, 1))  # Enlarged
+    resmat <- cbind(hdot.big, 1)
+    resmat[, 1] <- ifelse(reverse, -1, 1) * hdot.big[, 1] * cfit[, 1]
 
     if (M > 1) {
       for (jlocal in 2:M)
         resmat[, jlocal] <- ifelse(reverse, -1, 1) *
-          (hdot[, jlocal    ] * cfit[, jlocal    ] -
-           hdot[, jlocal - 1] * cfit[, jlocal - 1])
+          (hdot.big[, jlocal    ] * cfit[, jlocal    ] -
+           hdot.big[, jlocal - 1] * cfit[, jlocal - 1])
 
-    }
+    }  # jlocal
 
-    resmat[, M+1] <- ifelse(reverse, 1, -1) * hdot[, M] * cfit[, M]
+    resmat[, M+1] <- ifelse(reverse, 1, -1) * hdot.big[, M] * cfit[, M]
 
     temp1 <- array(resmat, c(ppp, nnn, M+1),
                    dimnames = list(dimnames(B)[[1]],
@@ -2364,8 +3041,215 @@ ordpoissonProbs <- function(extra, mu, deriv = 0) {
     } else {
       return(temp1[, , ii])
     }
+  }  # "cumulative"
+
+
+
+
+
+
+
+
+
+  if (any(vfamily == "acat")) {
+    if (!all(object@misc$link == "loge"))
+      stop("currently only the 'loge' link is supported")
+ 
+ 
+  acat.derivs <- function(jay, tee,
+                          M, expcs.etamat, Thetamat,
+                          prob1, probMplus1,
+                          reverse = FALSE) {
+
+    if (jay > M+1) stop("argument 'jay' out of range")
+    if (M   < tee) stop("argument 'tee' out of range")
+
+    if (reverse) {  # ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+      dpMplus1.detat <- -(probMplus1^2) *
+                        rowSums(expcs.etamat[, 1:tee, drop = FALSE])
+      if (jay == M+1) {
+        return(dpMplus1.detat)
+      }
+      if (jay <= tee) {
+        return((probMplus1 + dpMplus1.detat) * expcs.etamat[, jay])
+      }
+      if (tee < jay) {
+        return(dpMplus1.detat * expcs.etamat[, jay])
+      }
+    } else {  # reverse = FALSE ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+      dp1.detat <- -(prob1^2) * rowSums(expcs.etamat[, tee:M, drop = FALSE])
+      if (jay == 1) {
+        return(dp1.detat)
+      }
+      if (jay <= tee) {
+        return(dp1.detat * expcs.etamat[, jay-1])
+      }
+      if (tee < jay) {
+        return((prob1 + dp1.detat) * expcs.etamat[, jay-1])
+      }
+    } # reverse ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+  }  # acat.derivs
+
+
+
+  A        <- array(0, c(i = nnn, vars = ppp, probs = M + 1, etas = M))
+  ansarray <- array(0, c(vars = ppp, i = nnn, probs = M + 1))
+  if (reverse) {
+    probMplus1 <- 1 / (1 +  csexpcs.etavec) # Last level of Y
+  } else {
+    prob1 <- 1 / (1 +  csexpcs.etavec)  # First level of Y
   }
-}
+
+    for (jlocal in 1:(M+1)) {
+      for (tlocal in 1:M) {
+        A[, , jlocal, tlocal] <-
+          acat.derivs(jay = jlocal, tee = tlocal,
+                      M = M, expcs.etamat = expcs.etamat,
+                      Thetamat = Thetamat,
+                      prob1 = prob1, probMplus1 = probMplus1,
+                      reverse = reverse)
+      }
+    }
+
+
+    A <- aperm(A, c(2, 1, 3, 4))  # c(ppp, nnn, M+1, M)
+    for (jlocal in 1:(M + 1)) {
+      for (tlocal in 1:M) {
+        ansarray[,, jlocal]  <- ansarray[,, jlocal] +
+                                A[,, jlocal, tlocal] * B[, tlocal]
+      }
+    }
+    ans.acat <- aperm(ansarray, c(1, 3, 2))  # c(ppp, M+1, nnn)
+    dimnames(ans.acat) <- list(rownames(B),
+                               colnames(fitmat),
+                               rownames(etamat))
+    return(ans.acat)
+  }  # "acat"
+
+
+
+
+   
+
+  c.nots <- any(vfamily == "cratio")
+
+  cratio.derivs <- function(jay, tee,
+                            hdot, M, cpThetamat, Thetamat,
+                            reverse = FALSE) {
+
+    if (jay >= M+1) stop("argument 'jay' out of range")
+    if (M   <  tee) stop("argument 'tee' out of range")
+
+    if (reverse) {  # ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+      if (jay == 1) {
+        return(hdot[, tee] * cpThetamat[, 1] / Thetamat[, tee])
+      }
+
+      if (jay-1 == tee) {
+        return(-hdot[, jay-1] * cpThetamat[, jay])
+      }
+      if (jay <= tee) {
+        return((1 - Thetamat[, jay-1]) *
+                hdot[, tee] * cpThetamat[, jay] / Thetamat[, tee])
+      }
+      return(rep(0, length = nrow(Thetamat)))  # Since jay-1 > tee
+    } else {  # reverse = FALSE ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+      if (jay == 1 && tee == 1) {
+        return(-hdot[, 1])
+      }
+
+      if (jay == tee) {
+        return(-hdot[, jay] * cpThetamat[, jay-1])
+      }
+      if (tee < jay) {
+        return((1 - Thetamat[, jay]) *
+                hdot[, tee] * cpThetamat[, jay-1] / Thetamat[, tee])
+      }
+      return(rep(0, length = nrow(Thetamat)))  # Since jay < tee
+    } # reverse ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+  }  # cratio.derivs
+
+
+  A        <- array(0, c(i = nnn, vars = ppp, probs = M + 1, etas = M))
+  ansarray <- array(0, c(vars = ppp, i = nnn, probs = M + 1))
+
+
+  choosemat <- if (c.nots) Thetamat else 1 - Thetamat
+  if (min(choosemat) <= 0)
+    warning("division by 0 may occur")
+
+
+
+
+  if (any(vfamily == "cratio" | vfamily == "sratio")) {
+
+
+    if (reverse) {
+      for (tlocal in 1:M) {
+        for (jlocal in 1:tlocal) {
+          A[, , jlocal, tlocal] <-
+            cratio.derivs(jay = jlocal, tee = tlocal,
+                          hdot = ifelse(c.nots, 1, -1) * hdot,
+                          M = M, cpThetamat = cpThetamat,
+                          Thetamat = choosemat,
+                          reverse = reverse)
+        }
+      }
+      if (M > 1)
+        for (jlocal in 2:M) {
+          A[, , jlocal, jlocal-1] <-
+            cratio.derivs(jay = jlocal, tee = jlocal-1,
+                          hdot = ifelse(c.nots, 1, -1) * hdot,
+                          M = M, cpThetamat = cpThetamat,
+                          Thetamat = choosemat,
+                          reverse = reverse)
+        }
+    } else {
+     for (jlocal in 1:M) {
+        for (tlocal in 1:jlocal) {
+          A[, , jlocal, tlocal] <-
+            cratio.derivs(jay = jlocal, tee = tlocal,
+                          hdot = ifelse(c.nots, 1, -1) * hdot,
+                          M = M, cpThetamat = cpThetamat,
+                          Thetamat = choosemat,
+                          reverse = reverse)
+        }
+      }
+    }
+
+    if (reverse) {
+      A[, , M+1, M] <- ifelse(c.nots, -1, 1) * hdot[, M]
+    } else {
+      for (jlocal in 1:M) { 
+        for (tlocal in 1:jlocal) {
+          A[, , M+1, tlocal] <- if (c.nots) {
+            A[, , M+1, tlocal] - A[, , jlocal, tlocal]
+          } else {
+            -hdot[, tlocal] * cpThetamat[, M] / choosemat[, tlocal]
+          }
+        }
+      }
+    }
+
+    A <- aperm(A, c(2, 1, 3, 4))  # c(ppp, nnn, M+1, M)
+    for (jlocal in 1:(M + 1)) {
+      for (tlocal in 1:M) {
+        ansarray[,, jlocal]  <- ansarray[,, jlocal] +
+                                A[,, jlocal, tlocal] * B[, tlocal]
+      }
+    }
+    ans.csratio <- aperm(ansarray, c(1, 3, 2))  # c(ppp, M+1, nnn)
+    dimnames(ans.csratio) <- list(rownames(B),
+                                  colnames(fitmat),
+                                  rownames(etamat))
+    return(ans.csratio)
+  }  # "cratio" and "sratio"
+
+
+}  # margefff
 
 
 
@@ -2379,7 +3263,7 @@ prplot <- function(object,
 
 
   if (!any(slotNames(object) == "family") ||
-      !any(object@family@vfamily == "vcategorical"))
+      !any(object@family@vfamily == "VGAMcategorical"))
     stop("'object' does not seem to be a VGAM categorical model object")
 
   if (!any(object@family@vfamily == "cumulative"))
@@ -2537,6 +3421,51 @@ setMethod("is.zero",  "matrix", function(object, ...)
 
 setMethod("is.zero",  "vglm", function(object, ...)
           is.zero.vglm(object, ...))
+
+
+
+
+
+setMethod("showvglmS4VGAM",
+          signature(VGAMff = "acat"),
+  function(object,
+           VGAMff,
+           ...) {
+  cat("\nThis is an adjacent categories model with", 1 + object@misc$M, "levels\n")
+  invisible(object)
+  })
+
+
+setMethod("showvgamS4VGAM",
+          signature(VGAMff = "acat"),
+  function(object,
+           VGAMff,
+           ...) {
+  cat("\nThis is an adjacent categories model with", 1 + object@misc$M, "levels\n")
+  invisible(object)
+  })
+
+
+
+setMethod("showvglmS4VGAM",
+          signature(VGAMff = "multinomial"),
+  function(object,
+           VGAMff,
+           ...) {
+  cat("\nThis is a multinomial logit model with", 1 + object@misc$M, "levels\n")
+  invisible(object)
+  })
+
+
+setMethod("showvgamS4VGAM",
+          signature(VGAMff = "multinomial"),
+  function(object,
+           VGAMff,
+           ...) {
+  cat("\nThis is a multinomial logit model with", 1 + object@misc$M, "levels\n")
+  invisible(object)
+  })
+
 
 
 

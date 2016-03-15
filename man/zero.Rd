@@ -4,8 +4,9 @@
 \title{ The zero Argument in VGAM Family Functions }
 \description{
   The \code{zero} argument allows users to conveniently
-  model certain linear/additive predictors as intercepts
-  only.
+  model certain linear/additive predictors as intercept-only.
+
+
 }
 % \usage{
 % VGAMfamilyFunction(zero = 3)
@@ -51,10 +52,13 @@
   without having to input all the constraint matrices explicitly.
 
 
-  The \code{zero} argument should be assigned an integer vector from the
+  The \code{zero} argument can be assigned an integer vector from the
   set \{\code{1:M}\} where \code{M} is the number of linear/additive
   predictors. Full details about constraint matrices can be found in
   the references.
+  See \code{\link{CommonVGAMffArguments}} for more information.
+
+
 
 
 }
@@ -94,6 +98,7 @@ Reduced-rank vector generalized linear models.
 }
 
 \seealso{
+  \code{\link{CommonVGAMffArguments}},
   \code{\link{constraints}}.
 
 
@@ -105,7 +110,7 @@ args(binom2.or)
 args(gpd)
 
 #LMS quantile regression example
-fit <- vglm(BMI ~ sm.bs(age, df = 4), lms.bcg(zero = c(1,3)),
+fit <- vglm(BMI ~ sm.bs(age, df = 4), lms.bcg(zero = c(1, 3)),
             data = bmi.nz, trace = TRUE)
 coef(fit, matrix = TRUE)
 }

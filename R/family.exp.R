@@ -527,7 +527,7 @@ rsc.t2 <- function(n, location = 0, scale = 1) {
                      llocation = "identitylink", lscale = "loge",
                      ilocation = NULL,   iscale = NULL,
                      imethod = 1,
-                     zero = 2) {
+                     zero = "scale") {
 
  
 
@@ -566,8 +566,24 @@ rsc.t2 <- function(n, location = 0, scale = 1) {
             "Mean:     location\n",
             "Variance: infinite"),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
+                                predictors.names = predictors.names,
+                                M1 = 2)
   }), list( .zero = zero ))),
+
+
+  infos = eval(substitute(function(...) {
+    list(M1 = 2,
+         Q1 = 1,
+         expected = TRUE,
+         multipleResponses = FALSE,
+         parameters.names = c("location", "scale"),
+         llocation = .llocation ,
+         lscale    = .lscale ,
+         zero = .zero )
+  }, list( .zero = zero, .llocation = llocation, .lscale = lscale ))),
+
+
   initialize = eval(substitute(expression({
 
     temp5 <-

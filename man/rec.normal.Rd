@@ -35,11 +35,12 @@ rec.normal(lmean = "identitylink", lsd = "loge",
 
   }
   \item{zero}{
-  An integer vector, containing the value 1 or 2. If so, the mean or
+  Can be an integer vector, containing the value 1 or 2. If so, the mean or
   standard deviation respectively are modelled as an intercept only.
   Usually, setting \code{zero = 2} will be used, if used at all.
   The default value \code{NULL} means both linear/additive predictors
   are modelled as functions of the explanatory variables.
+  See \code{\link{CommonVGAMffArguments}} for more information.
 
 
   }

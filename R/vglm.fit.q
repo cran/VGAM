@@ -14,11 +14,13 @@ vglm.fit <-
            etastart = NULL, mustart = NULL, coefstart = NULL,
            offset = 0, family,
            control = vglm.control(),
-           criterion = "coefficients",
            qr.arg = FALSE,
            constraints = NULL,
            extra = NULL,
            Terms = Terms, function.name = "vglm", ...) {
+
+  if (is.null(criterion <- control$criterion))
+    criterion <- "coefficients"
 
   eff.n <- nrow(x)  # + sum(abs(w[1:nrow(x)]))
 
@@ -62,6 +64,11 @@ vglm.fit <-
     eval(slot(family, "initialize"))  # Initialize mu & M (& optionally w)
 
 
+
+
+
+
+
   if (length(etastart)) {
     eta <- etastart
     mu <- if (length(mustart)) mustart else
@@ -70,6 +77,8 @@ vglm.fit <-
             warning("argument 'etastart' assigned a value ",
                     "but there is no 'linkinv' slot to use it")
   }
+
+
 
   if (length(mustart)) {
     mu <- mustart
@@ -80,6 +89,24 @@ vglm.fit <-
               "but there is no 'linkfun' slot to use it")
     }
   }
+
+
+  validparams <- if (length(body(slot(family, "validparams")))) {
+    slot(family, "validparams")(eta, extra = extra)
+  } else {
+    TRUE
+  }
+  validfitted <- if (length(body(slot(family, "validfitted")))) {
+    slot(family, "validfitted")(mu, extra = extra)
+  } else {
+    TRUE
+  }
+  if (!(validparams && validfitted))
+    stop("could not obtain valid initial values. ",
+         "Try using 'etastart', 'coefstart' or 'mustart', else ",
+         "family-specific arguments such as 'imethod'.")
+
+
 
 
   M <- if (is.matrix(eta)) ncol(eta) else 1
@@ -231,6 +258,29 @@ vglm.fit <-
                                                  new.crit < old.crit)))
     if (!is.logical(take.half.step))
       take.half.step <- TRUE
+
+
+    if (!take.half.step && length(old.coeffs))  {
+      validparams <- if (length(body(slot(family, "validparams")))) {
+        slot(family, "validparams")(eta, extra = extra)
+      } else {
+        TRUE
+      }
+      validfitted <- if (length(body(slot(family, "validfitted")))) {
+        slot(family, "validfitted")(mu, extra = extra)
+      } else {
+        TRUE
+      }
+      take.half.step <- !(validparams && validfitted)
+                        
+
+     if (take.half.step) {
+       stepsize <- orig.stepsize / 4
+      }
+    }
+
+
+
     if (take.half.step) {
       stepsize <- 2 * min(orig.stepsize, 2*stepsize)
       new.coeffs.save <- new.coeffs
@@ -242,7 +292,7 @@ vglm.fit <-
             flush.console()
           }
           stepsize <- stepsize / 2
-          if (too.small <- stepsize < 0.001)
+          if (too.small <- stepsize < 1e-6)
             break
           new.coeffs <- (1-stepsize) * old.coeffs +
                            stepsize  * new.coeffs.save
@@ -266,9 +316,23 @@ vglm.fit <-
                    tfun(mu = mu, y = y, w = w,
                         res = FALSE, eta = eta, extra))
 
-          if ((criterion == "coefficients") || 
-             ( minimize.criterion && new.crit < old.crit) ||
-             (!minimize.criterion && new.crit > old.crit))
+
+          validparams <- if (length(body(slot(family, "validparams")))) {
+            slot(family, "validparams")(eta, extra = extra)
+          } else {
+            TRUE
+          }
+          validfitted <- if (length(body(slot(family, "validfitted")))) {
+            slot(family, "validfitted")(mu, extra = extra)
+          } else {
+            TRUE
+          }
+
+
+          if (validparams && validfitted &&
+             (criterion == "coefficients" || 
+             (( minimize.criterion && new.crit < old.crit) ||
+              (!minimize.criterion && new.crit > old.crit))))
             break
       }  # of repeat
 
@@ -330,6 +394,7 @@ vglm.fit <-
     c.list$coeff <- runif(length(new.coeffs))  # 20030312; twist needed!
     old.coeffs <- new.coeffs
   }  # End of while()
+
 
   if (maxit > 1 && iter >= maxit && !control$noWarning)
     warning("convergence not obtained in ", maxit, " iterations")

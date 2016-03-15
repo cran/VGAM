@@ -12,7 +12,7 @@
 
 }
 \usage{
-cens.normal(lmu = "identitylink", lsd = "loge", imethod = 1, zero = 2)
+cens.normal(lmu = "identitylink", lsd = "loge", imethod = 1, zero = "sd")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -32,11 +32,12 @@ cens.normal(lmu = "identitylink", lsd = "loge", imethod = 1, zero = 2)
 
   }
   \item{zero}{
-  An integer vector, containing the value 1 or 2. If so,
+  A vector, e.g., containing the value 1 or 2; if so,
   the mean or standard deviation respectively are modelled
   as an intercept only.
   Setting \code{zero = NULL} means both linear/additive predictors
   are modelled as functions of the explanatory variables.
+  See \code{\link{CommonVGAMffArguments}} for more information.
 
 
   }
@@ -69,8 +70,8 @@ cens.normal(lmu = "identitylink", lsd = "loge", imethod = 1, zero = 2)
 
 \author{ T. W. Yee }
 \note{ 
-  This function is an alternative to \code{\link{tobit}}
-  but cannot handle a matrix response
+  This function, which is an alternative to \code{\link{tobit}},
+  cannot handle a matrix response
   and uses different working weights.
   If there are no censored observations then \code{\link{uninormal}}
   is recommended instead.
@@ -100,13 +101,14 @@ cdata <- transform(cdata, L = runif(nn,  80,  90),  # Lower censoring points
 cdata <- transform(cdata, y = pmax(L, ystar))  # Left  censored
 cdata <- transform(cdata, y = pmin(U, y))      # Right censored
 with(cdata, hist(y))
-Extra <- list(leftcensored = with(cdata, ystar < L),
+Extra <- list(leftcensored  = with(cdata, ystar < L),
               rightcensored = with(cdata, ystar > U))
 fit1 <- vglm(y ~ x2, cens.normal, data = cdata, crit = "c", extra = Extra)
 fit2 <- vglm(y ~ x2, tobit(Lower = with(cdata, L), Upper = with(cdata, U)),
             data = cdata, crit = "c", trace = TRUE)
 coef(fit1, matrix = TRUE)
-max(abs(coef(fit1, matrix = TRUE) - coef(fit2, matrix = TRUE)))  # Should be 0
+max(abs(coef(fit1, matrix = TRUE) -
+        coef(fit2, matrix = TRUE)))  # Should be 0
 names(fit1@extra)
 }
 }

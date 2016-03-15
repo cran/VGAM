@@ -6,6 +6,7 @@
 
 
 
+
 predictvglm <-
   function(object,
            newdata = NULL,
@@ -20,6 +21,7 @@ predictvglm <-
 
   if (missing(extra)) {
   }
+
 
   if (deriv != 0)
     stop("'deriv' must be 0 for predictvglm()")
@@ -36,11 +38,11 @@ predictvglm <-
 
 
 
-  pred <-
+  predn <-
     if (se.fit) {
       switch(type,
              response = {
-               warning("'type=\"response\"' and 'se.fit=TRUE' not valid ",
+               warning("'type='response' and 'se.fit=TRUE' are not valid ",
                        "together; setting 'se.fit = FALSE'")
                se.fit <- FALSE
                predictor <- predict.vlm(object, newdata = newdata,
@@ -122,19 +124,41 @@ predictvglm <-
                              deriv = deriv, dispersion = dispersion, ...) 
                })  # End of switch
         }
+  }  # End of se.fit == FALSE
+
+
+
+
+  try.this <- findFirstMethod("predictvglmS4VGAM", object@family@vfamily)
+  if (length(try.this)) {
+    predn <-
+      predictvglmS4VGAM(object = object,
+                        VGAMff = new(try.this),
+                        predn  = predn,  # This is 'new'
+                        newdata = newdata,
+                        type = type,
+                        se.fit = se.fit,
+                        deriv = deriv,
+                        dispersion = dispersion,
+                        untransform = untransform,
+                        ...)
+  } else {
   }
+
+
+
 
   if (!length(newdata) && length(na.act)) {
     if (se.fit) {
-      pred$fitted.values <- napredict(na.act[[1]], pred$fitted.values)
-      pred$se.fit <- napredict(na.act[[1]], pred$se.fit)
+      predn$fitted.values <- napredict(na.act[[1]], predn$fitted.values)
+      predn$se.fit        <- napredict(na.act[[1]], predn$se.fit)
     } else {
-      pred <- napredict(na.act[[1]], pred)
+      predn <- napredict(na.act[[1]], predn)
     }
   }
   
-  if (untransform) untransformVGAM(object, pred) else pred
-} # predictvglm
+  if (untransform) untransformVGAM(object, predn) else predn
+}  # predictvglm
 
 
 
@@ -147,13 +171,15 @@ setMethod("predict", "vglm", function(object, ...)
 
 
 
-predict.rrvglm <- function(object, 
-                          newdata = NULL, 
-                          type = c("link", "response", "terms"),
-                          se.fit = FALSE, 
-                          deriv = 0,
-                          dispersion = NULL, 
-                          extra = object@extra, ...) {
+
+predict.rrvglm <-
+  function(object, 
+           newdata = NULL, 
+           type = c("link", "response", "terms"),
+           se.fit = FALSE, 
+           deriv = 0,
+           dispersion = NULL, 
+           extra = object@extra, ...) {
 
   if (se.fit) {
     stop("20030811; predict.rrvglm(..., se.fit=TRUE) not complete yet") 
@@ -216,6 +242,9 @@ predict.rrvglm <- function(object,
 
 setMethod("predict", "rrvglm", function(object, ...) 
   predict.rrvglm(object, ...))
+
+
+
 
 
 
@@ -291,15 +320,50 @@ untransformVGAM <- function(object, pred) {
     upred[, ii] <- Theta
   }
 
-  dmn2 <- if (length(names(object@misc$link)))
-    names(object@misc$link) else {
-      if (length(object@misc$parameters)) object@misc$parameters else NULL
+  dmn2 <- if (length(names(object@misc$link))) {
+    names(object@misc$link)
+  } else {
+    if (length(object@misc$parameters))
+      object@misc$parameters else NULL
   }
   dimnames(upred) <- list(dimnames(upred)[[1]], dmn2)
   upred
 }
 
 
+
+
+
+
+setMethod("predictvglmS4VGAM",  signature(VGAMff = "binom2.or"),
+  function(object,
+           VGAMff,
+           predn,
+           newdata = NULL,
+           type = c("link", "response", "terms"),  # "parameters",
+           se.fit = FALSE,
+           deriv = 0,
+           dispersion = NULL,
+           untransform = FALSE,
+           extra = object@extra,
+           n.ahead = 1,
+           ...) {
+ # object@post <-
+ #   callNextMethod(VGAMff = VGAMff,
+ #                  object = object,
+ #                  ...)
+ #object@post$reverse <- object@misc$reverse
+
+
+  if (se.fit) {
+    predn$junk.component <- rep(coef(object), length = n.ahead)
+    predn$se.fit.junk.component <- rep(diag(vcov(object)), length = n.ahead)
+  } else {
+    could.return.this.instead.of.predn <-
+    predn2 <- rep(coef(object), length = n.ahead)
+  }
+  predn
+})
 
 
 

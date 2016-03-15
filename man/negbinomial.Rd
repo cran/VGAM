@@ -10,18 +10,28 @@
 
 }
 \usage{
-negbinomial(lmu = "loge", lsize = "loge",
-            imu = NULL, isize = NULL, probs.y = 0.75,
-            nsimEIM = 250, cutoff.prob = 0.995,
-            max.qnbinom = 1000, max.chunk.MB = 20,
-            deviance.arg = FALSE, imethod = 1, gsize = exp((-4):4),
-            parallel = FALSE, ishrinkage = 0.95, zero = -2)
-polya(lprob = "logit", lsize = "loge",
-      iprob = NULL, isize = NULL, probs.y = 0.75, nsimEIM = 100,
-      imethod = 1, ishrinkage = 0.95, zero = -2)
-polyaR(lsize = "loge", lprob = "logit", 
-       isize = NULL, iprob = NULL, probs.y = 0.75, nsimEIM = 100,
-       imethod = 1, ishrinkage = 0.95, zero = -1)
+negbinomial(zero = "size", parallel = FALSE, deviance.arg = FALSE,
+            mds.min = 1e-04, nsimEIM = 500, cutoff.prob = 0.999, eps.trig = 1e-7,
+            max.support = 4000, max.chunk.MB = 30,
+            lmu = "loge", lsize = "loge",
+            imethod = 1, imu = NULL, probs.y = 0.35,
+            ishrinkage = 0.95, isize = NULL, gsize.mux = exp((-12:6)/2))
+polya(zero = "size", type.fitted = c("mean", "prob"),
+           mds.min = 1e-04, nsimEIM = 500, cutoff.prob = 0.999,
+           eps.trig = 1e-7, max.support = 4000, max.chunk.MB = 30,
+           lprob = "logit", lsize = "loge",
+           imethod = 1, iprob = NULL,
+           probs.y = 0.35, ishrinkage = 0.95,
+           isize = NULL, gsize.mux = exp((-12:6)/2),
+           imunb = NULL)
+polyaR(zero = "size", type.fitted = c("mean", "prob"),
+           mds.min = 1e-04, nsimEIM = 500,  cutoff.prob = 0.999,
+           eps.trig = 1e-7, max.support = 4000, max.chunk.MB = 30,
+           lsize = "loge", lprob = "logit", 
+           imethod = 1, isize = NULL,
+           iprob = NULL, probs.y = 0.35,
+           ishrinkage = 0.95, gsize.mux = exp((-12:6)/2),
+           imunb = NULL)
 }
 
 %     deviance.arg = FALSE,
@@ -43,13 +53,13 @@ polyaR(lsize = "loge", lprob = "logit",
 
 
   }
-  \item{imu, isize, iprob}{
+  \item{imu, imunb, isize, iprob}{
   Optional initial values for the mean and \eqn{k} and \eqn{p}.
   For \eqn{k}, if failure to converge occurs then try different values
   (and/or use \code{imethod}).
   For a \eqn{S}-column response, \code{isize} can be of length \eqn{S}.
   A value \code{NULL} means an initial value for each response is
-  computed internally using a gridsearch based on \code{gsize}.
+  computed internally using a gridsearch based on \code{gsize.mux}.
   The last argument is ignored if used within \code{\link{cqo}}; see
   the \code{iKvector} argument of \code{\link{qrrvglm.control}} instead.
 
@@ -75,7 +85,12 @@ polyaR(lsize = "loge", lprob = "logit",
   of \code{\link[stats:NegBinomial]{qnbinom}}
   in order to obtain an upper limit for the approximate
   support of the distribution, called \code{Qmax}, say.
-  Hence the approximate support is \code{0:Qmax}.
+  Similarly, the value \code{1-p} is
+  fed into the \code{p} argument
+  of \code{\link[stats:NegBinomial]{qnbinom}}
+  in order to obtain a lower limit for the approximate
+  support of the distribution, called \code{Qmin}, say.
+  Hence the approximate support is \code{Qmin:Qmax}.
   This argument should be 
   a numeric and close to 1 but never exactly 1.
   Used to specify how many terms of the infinite series
@@ -83,6 +98,7 @@ polyaR(lsize = "loge", lprob = "logit",
   EIM are actually used.
   The closer this argument is to 1, the more accurate the
   standard errors of the regression coefficients will be.
+  If this argument is too small, convergence will take longer.
 
 
 
@@ -94,8 +110,8 @@ polyaR(lsize = "loge", lprob = "logit",
 
 
   }
-  \item{max.chunk.MB, max.qnbinom}{
-    \code{max.qnbinom} is used to describe the eligibility of 
+  \item{max.chunk.MB, max.support}{
+    \code{max.support} is used to describe the eligibility of 
     individual observations
     to have their EIM computed by the \emph{exact method}.
     Here, we are concerned about
@@ -103,23 +119,30 @@ polyaR(lsize = "loge", lprob = "logit",
   The exact method algorithm operates separately on each response
   variable,
   and it constructs a large matrix provided that the number of columns
-  is less than \code{max.qnbinom}.
+  is less than \code{max.support}.
   If so, then the computations are done in chunks, so
   that no more than about \code{max.chunk.MB} megabytes
   of memory is used at a time (actually, it is proportional to this amount).
   Regarding eligibility of this algorithm, each observation must
-  have the \code{cutoff.prob} quantile less than \code{max.qnbinom}
-  as its approximate support.
+  have the length of the vector, starting from
+  the \code{1-cutoff.prob} quantile
+  and finishing up at the \code{cutoff.prob} quantile,
+  less than \code{max.support}
+  (as its approximate support).
   If you have abundant memory then you might try setting
   \code{max.chunk.MB = Inf}, but then the computations might take
   a very long time.
-  Setting \code{max.chunk.MB = 0} or \code{max.qnbinom = 0}
+  Setting \code{max.chunk.MB = 0} or \code{max.support = 0}
   will force the EIM to be computed using the SFS algorithm only
   (this \emph{used to be} the default method for \emph{all} the observations).
   When the fitted values of the model are large and \eqn{k} is small,
   the computation of the EIM will be costly with respect to time
   and memory if the exact method is used. Hence the argument
-  \code{max.qnbinom} limits the cost in terms of time.
+  \code{max.support} limits the cost in terms of time.
+  For intercept-only models \code{max.support} is multiplied by
+  a number (such as 10) because only one inner product needs be computed.
+  Note: \code{max.support} is an upper bound and limits the number of
+  terms dictated by the \code{eps.trig} argument.
 
 
 % Thus the number of columns of the matrix can be controlled by
@@ -128,8 +151,46 @@ polyaR(lsize = "loge", lprob = "logit",
   }
 
 
-\item{gsize}{
+\item{mds.min}{
+Numeric.
+Minimum value of the NBD mean divided by \code{size} parameter.
+The closer this ratio is to 0, the closer the distribution is
+to a Poisson.
+Iterations will stop when an estimate of \eqn{k} is so large,
+relative to the mean, than it is below this threshold.
+
+
+
+  }
+
+
+\item{eps.trig}{
+Numeric.
+A small positive value used in the computation of the EIMs.
+It focusses on the denominator of the terms of a series.
+Each term in the series (that is used to approximate an infinite series)
+has a value greater than \code{size / sqrt(eps.trig)},
+thus very small terms are ignored. 
+It's a good idea to set a smaller value that will result in more accuracy,
+but it will require a greater computing time (when \eqn{k} is close to 0).
+And adjustment to \code{max.support} may be needed.
+In particular, the quantity computed by special means
+is \eqn{\psi(k) - E[\psi(Y+k)]}{trigamma(k) - E[trigamma(Y+k)]},
+which is the difference between two
+\code{\link[base]{trigamma}}.
+functions. It is part of the calculation of the EIM with
+respect to the \code{size} parameter.
+
+
+
+}
+\item{gsize.mux}{
   Similar to \code{gsigma} in \code{\link{CommonVGAMffArguments}}.
+  However, this grid is multiplied by the initial
+  estimates of the NBD mean parameter.
+  That is, it is on a relative scale rather than on an
+  absolute scale.
+
 
 
 }
@@ -208,20 +269,25 @@ polyaR(lsize = "loge", lprob = "logit",
 
   }
   \item{zero}{
-  Integer valued vector, usually assigned \eqn{-2} or \eqn{2} if used
-  at all. Specifies which of the two linear/additive predictors are
-  modelled as an intercept only. By default, the \eqn{k} parameter
-  (after \code{lsize} is applied) is modelled as a single unknown
-  number that is estimated. It can be modelled as a function of the
-  explanatory variables by setting \code{zero = NULL}; this has been
-  called a NB-H model by Hilbe (2011). A negative value
-  means that the value is recycled, so setting \eqn{-2} means all \eqn{k}
-  are intercept-only.
+  Can be an integer-valued vector, usually assigned \eqn{-2}
+  or \eqn{2} if used at all. Specifies which of the two
+  linear/additive predictors are modelled as an intercept
+  only. By default, the \eqn{k} parameter (after \code{lsize}
+  is applied) is modelled as a single unknown number that
+  is estimated. It can be modelled as a function of the
+  explanatory variables by setting \code{zero = NULL}; this
+  has been called a NB-H model by Hilbe (2011). A negative
+  value means that the value is recycled, so setting \eqn{-2}
+  means all \eqn{k} are intercept-only.
   See \code{\link{CommonVGAMffArguments}} for more information.
 
 
   }
+  \item{type.fitted}{
+    See \code{\link{CommonVGAMffArguments}} for details.
 
+
+  }
 }
 \details{
   The negative binomial distribution can be motivated in several ways,
@@ -309,11 +375,31 @@ polyaR(lsize = "loge", lprob = "logit",
 \section{Warning}{
   Poisson regression corresponds to \eqn{k} equalling
   infinity.  If the data is Poisson or close to Poisson,
-  numerical problems will occur. Possibly choosing a
-  log-log link may help in such cases, otherwise try
-  \code{\link{poissonff}} or \code{\link{quasipoissonff}}.
-  It is possible to fit a NBD that has a similar variance
-  function as a quasi-Poisson; see the NB-1 example below.
+  numerical problems will occur.
+  Some corrective measures are taken, e.g., 
+  \eqn{k} is capped during estimation
+  to some large value and a warning is issued.
+  Note that \code{dnbinom(0, mu, size = Inf)}
+  currently
+  is a \code{NaN} (a bug),
+  therefore if the data has some 0s then
+  setting \code{crit = "coef"} will avoid the problem that
+  the log-likelihood will be undefined during the last
+  stages of estimation.
+  And setting \code{stepsize = 0.5} for half stepping is
+  probably a good idea too.
+  Possibly setting \code{crit = "coef"} is a good idea because
+  the log-likelihood is often a \code{NaN} when the \code{size}
+  value is very large.
+
+
+
+% Possibly choosing a log-log link may help in such cases,
+% otherwise try \code{\link{poissonff}} or
+% \code{\link{quasipoissonff}}.  It is possible to fit a NBD
+% that has a similar variance function as a quasi-Poisson; see
+% the NB-1 example below.
+
 
 
   These functions are fragile; the maximum likelihood
@@ -327,14 +413,17 @@ polyaR(lsize = "loge", lprob = "logit",
   over large values when using this argument.
 
 
+
   If one wants to force SFS
   to be used on all observations, then
-  set \code{max.qnbinom = 0} or \code{max.chunk.MB = 0}.
+  set \code{max.support = 0} or \code{max.chunk.MB = 0}.
   If one wants to force the exact method
   to be used for all observations, then
-  set \code{max.qnbinom = Inf}.
+  set \code{max.support = Inf}.
   If the computer has \emph{much} memory, then trying
-  \code{max.chunk.MB = Inf} may provide a small speed increase.
+  \code{max.chunk.MB = Inf} and
+  \code{max.support = Inf}
+  may provide a small speed increase.
   If SFS is used at all, then the \code{@weights} slot of the
   fitted object will be a matrix;
   otherwise that slot will be a \code{0 x 0} matrix.
@@ -351,6 +440,7 @@ polyaR(lsize = "loge", lprob = "logit",
   The object is used by modelling functions such as \code{\link{vglm}},
   \code{\link{rrvglm}}
   and \code{\link{vgam}}.
+
 
 
 }
@@ -431,7 +521,7 @@ Fitting the negative binomial distribution to biological data.
   outliers or is large in magnitude.
   If convergence failure occurs, try using arguments
   (in recommended decreasing order)
-  \code{max.qnbinom},
+  \code{max.support},
   \code{nsimEIM},
   \code{cutoff.prob},
   \code{ishrinkage},
@@ -532,21 +622,25 @@ Coef(fit)  # For intercept-only models
 deviance(fit)  # NB2 only; needs 'crit = "coef"' & 'deviance = TRUE' above
 
 # Example 2: simulated data with multiple responses
-ndata <- data.frame(x2 = runif(nn <- 300))
+\dontrun{
+ndata <- data.frame(x2 = runif(nn <- 200))
 ndata <- transform(ndata, y1 = rnbinom(nn, mu = exp(3+x2), size = exp(1)),
                           y2 = rnbinom(nn, mu = exp(2-x2), size = exp(0)))
 fit1 <- vglm(cbind(y1, y2) ~ x2, negbinomial, data = ndata, trace = TRUE)
 coef(fit1, matrix = TRUE)
+}
 
 # Example 3: large counts implies SFS is used
+\dontrun{
 ndata <- transform(ndata, y3 = rnbinom(nn, mu = exp(10+x2), size = exp(1)))
 with(ndata, range(y3))  # Large counts
 fit2 <- vglm(y3 ~ x2, negbinomial, data = ndata, trace = TRUE)
 coef(fit2, matrix = TRUE)
 head(fit2@weights)  # Non-empty; SFS was used
+}
 
 # Example 4: a NB-1 to estimate a negative binomial with Var(Y) = phi0 * mu
-nn <- 500  # Number of observations
+nn <- 200  # Number of observations
 phi0 <- 10  # Specify this; should be greater than unity
 delta0 <- 1 / (phi0 - 1)
 mydata <- data.frame(x2 = runif(nn), x3 = runif(nn))
@@ -579,4 +673,22 @@ summary(glm(y3 ~ x2 + x3, quasipoisson, mydata))$disper  # cf. moment estimator
 \keyword{regression}
 
 
+
+%lmu = "loge", lsize = "loge",
+%            imu = NULL, isize = NULL,
+%            nsimEIM = 250, cutoff.prob = 0.999,
+%            max.support = 2000, max.chunk.MB = 30,
+%            deviance.arg = FALSE, imethod = 1,
+%            probs.y = 0.75, ishrinkage = 0.95,
+%            gsize = exp((-4):4),
+%            parallel = FALSE, ishrinkage = 0.95, zero = "size")
+
+
+
+%polya(lprob = "logit", lsize = "loge",
+%      iprob = NULL, isize = NULL, probs.y = 0.75, nsimEIM = 100,
+%      imethod = 1, ishrinkage = 0.95, zero = "size")
+%polyaR(lsize = "loge", lprob = "logit", 
+%       isize = NULL, iprob = NULL, probs.y = 0.75, nsimEIM = 100,
+%       imethod = 1, ishrinkage = 0.95, zero = "size")
 

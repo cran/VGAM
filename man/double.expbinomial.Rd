@@ -11,8 +11,9 @@
 }
 \usage{
 double.expbinomial(lmean = "logit", ldispersion = "logit",
-                   idispersion = 0.25, zero = 2)
+                   idispersion = 0.25, zero = "dispersion")
 }
+%                  idispersion = 0.25, zero = 2
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{lmean, ldispersion}{ 
@@ -31,12 +32,13 @@ double.expbinomial(lmean = "logit", ldispersion = "logit",
 
   }
   \item{zero}{ 
-  An integer specifying which
-  linear/additive predictor is to be modelled as an intercept only.
-  If assigned, the single value should be either \code{1} or \code{2}.
+  A vector specifying which
+  linear/additive predictor is to be modelled as intercept-only.
+  If assigned, the single value can be either \code{1} or \code{2}.
   The default is to have a single dispersion parameter value.
   To model both parameters as functions of the covariates assign
   \code{zero = NULL}.
+  See \code{\link{CommonVGAMffArguments}} for more details.
 
 
   }

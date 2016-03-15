@@ -10,7 +10,7 @@ posnormal(lmean = "identitylink", lsd = "loge",
           eq.mean = FALSE, eq.sd = FALSE,
           gmean = exp((-5:5)/2), gsd = exp((-1:5)/2),
           imean = NULL, isd = NULL, probs.y = 0.10, imethod = 1,
-          nsimEIM = NULL, zero = -2)
+          nsimEIM = NULL, zero = "sd")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -55,7 +55,7 @@ posnormal(lmean = "identitylink", lsd = "loge",
 
   }
   \item{zero, nsimEIM, probs.y}{
-  See \code{\link{CommonVGAMffArguments}} for more information.
+  See \code{\link{CommonVGAMffArguments}} for information.
 
 
   }

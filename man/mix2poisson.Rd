@@ -10,7 +10,7 @@
 \usage{
 mix2poisson(lphi = "logit", llambda = "loge",
             iphi = 0.5, il1 = NULL, il2 = NULL,
-            qmu = c(0.2, 0.8), nsimEIM = 100, zero = 1)
+            qmu = c(0.2, 0.8), nsimEIM = 100, zero = "phi")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

@@ -24,11 +24,11 @@ alaplace2(tau = NULL,  llocation = "identitylink", lscale = "loge",
           ishrinkage = 0.95,
           parallel.locat =  TRUE ~ 0,
           parallel.scale = FALSE ~ 0,
-          digt = 4, idf.mu = 3, imethod = 1, zero = -2)
+          digt = 4, idf.mu = 3, imethod = 1, zero = "scale")
 
 alaplace3(llocation = "identitylink", lscale = "loge", lkappa = "loge",
           ilocation = NULL, iscale = NULL, ikappa = 1,
-          imethod = 1, zero = 2:3)
+          imethod = 1, zero = c("scale", "kappa"))
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

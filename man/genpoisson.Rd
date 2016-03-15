@@ -9,7 +9,8 @@
 \usage{
 genpoisson(llambda = "rhobit", ltheta = "loge",
            ilambda = NULL, itheta = NULL,
-           use.approx = TRUE, imethod = 1, ishrinkage = 0.95, zero = -1)
+           use.approx = TRUE, imethod = 1, ishrinkage = 0.95,
+           zero = "lambda")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

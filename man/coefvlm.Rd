@@ -77,10 +77,13 @@ Reduced-rank vector generalized linear models.
 
 \seealso{
    \code{\link{vglm}},
+   \code{\link{coefvgam}},
    \code{\link[stats]{coef}}.
 
 
+
 %  \code{\link{coef-method}},
+
 
 
 }

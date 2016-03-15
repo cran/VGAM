@@ -12,10 +12,10 @@
 \usage{
 studentt (ldf = "loglog", idf = NULL, tol1 = 0.1, imethod = 1)
 studentt2(df = Inf, llocation = "identitylink", lscale = "loge",
-          ilocation = NULL, iscale = NULL, imethod = 1, zero = -2)
+          ilocation = NULL, iscale = NULL, imethod = 1, zero = "scale")
 studentt3(llocation = "identitylink", lscale = "loge", ldf = "loglog",
           ilocation = NULL, iscale = NULL, idf = NULL,
-          imethod = 1, zero = -(2:3))
+          imethod = 1, zero = c("scale", "df"))
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

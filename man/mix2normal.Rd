@@ -10,7 +10,7 @@
 \usage{
 mix2normal(lphi = "logit", lmu = "identitylink", lsd = "loge",
            iphi = 0.5, imu1 = NULL, imu2 = NULL, isd1 = NULL, isd2 = NULL,
-           qmu = c(0.2, 0.8), eq.sd = TRUE, nsimEIM = 100, zero = 1)
+           qmu = c(0.2, 0.8), eq.sd = TRUE, nsimEIM = 100, zero = "phi")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -73,8 +73,9 @@ mix2normal(lphi = "logit", lmu = "identitylink", lsd = "loge",
 
   }
   \item{zero}{
-  An integer specifying which linear/additive predictor is modelled as
-  intercepts only.  If given, the value or values must be from the
+  May be an integer vector
+  specifying which linear/additive predictors are modelled as
+  intercept-only.  If given, the value or values can be from the
   set \eqn{\{1,2,\ldots,5\}}{1,2,...,5}. 
   The default is the first one only, meaning \eqn{\phi}{phi}
   is a single parameter even when there are explanatory variables.

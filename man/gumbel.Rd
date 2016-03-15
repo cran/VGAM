@@ -66,8 +66,8 @@ egumbel(llocation = "identitylink", lscale = "loge",
 
 % }
   \item{zero}{ 
-  An integer-valued vector specifying which linear/additive predictors
-  are modelled as intercepts only.  The value (possibly values) must
+  A vector specifying which linear/additive predictors
+  are modelled as intercepts only.  The value (possibly values) can
   be from the set \{1, 2\} corresponding respectively to \eqn{\mu}{mu}
   and \eqn{\sigma}{sigma}.  By default all linear/additive predictors
   are modelled as a linear combination of the explanatory variables.

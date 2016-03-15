@@ -970,7 +970,7 @@ Coef.qrrvglm <-
         Tolerance[, , ii] <- -0.5 * solve(Darray[, , ii])
         bellshaped[ii] <- all(eigen(Tolerance[, , ii])$values > 0)
       }
-    optimum <- matrix(as.numeric(NA), Rank, M)
+    optimum <- matrix(NA_real_, Rank, M)
     for (ii in 1:M)
       if (bellshaped[ii])
         optimum[, ii] <- Tolerance[, , ii] %*% cbind(Amat[ii, ])
@@ -1127,7 +1127,7 @@ Coef.qrrvglm <-
       mymax <- object@family@linkinv(rbind(eta.temp), extra = object@extra)  
       c(mymax)  # Convert from matrix to vector 
     } else {
-      5 * rep(as.numeric(NA), length.out = M)  # Make "numeric"
+      5 * rep(NA_real_, length.out = M)  # Make "numeric"
   }
   names(maximum) <- ynames
     
@@ -1233,7 +1233,7 @@ show.Coef.qrrvglm <- function(x, ...) {
   Rank <- object@Rank
   M <- nrow(object@A)
   NOS <- object@NOS
-  mymat <- matrix(as.numeric(NA), NOS, Rank)
+  mymat <- matrix(NA_real_, NOS, Rank)
   if (Rank == 1) {  # || object@Diagonal
     for (ii in 1:NOS) {
       fred <- if (Rank > 1)
@@ -1870,7 +1870,7 @@ num.deriv.rrr <- function(fit, M, r, x1mat, x2mat,
   if (nrow(Cimat) != p2 || ncol(Cimat) != r)
     stop("'Cimat' wrong shape")
 
-  dct.da <- matrix(as.numeric(NA), (M-r-length(str0))*r, r*p2)
+  dct.da <- matrix(NA_real_, (M-r-length(str0))*r, r*p2)
 
   if ((length(Index.corner) + length(str0)) == M)
     stop("cannot handle full rank models yet")
@@ -1995,7 +1995,7 @@ dcda.fast <- function(theta, wz, U, z, M, r, xmat, pp, Index.corner,
 
   nn <- nrow(xmat)
 
-  Aimat <- matrix(as.numeric(NA), M, r)
+  Aimat <- matrix(NA_real_, M, r)
   Aimat[Index.corner,] <- diag(r)
   Aimat[-Index.corner,] <- theta    # [-(1:M)]
 
@@ -2104,7 +2104,7 @@ rrr.deriv.ResSS <- function(theta, wz, U, z, M, r, xmat,
                             pp, Index.corner, intercept = TRUE,
                             xij = NULL) {
 
-  Amat <- matrix(as.numeric(NA), M, r)
+  Amat <- matrix(NA_real_, M, r)
   Amat[Index.corner,] <- diag(r)
   Amat[-Index.corner,] <- theta    # [-(1:M)]
 
@@ -2135,7 +2135,7 @@ rrr.deriv.gradient.fast <- function(theta, wz, U, z, M, r, xmat,
 
   nn <- nrow(xmat)
 
-  Aimat <- matrix(as.numeric(NA), M, r)
+  Aimat <- matrix(NA_real_, M, r)
   Aimat[Index.corner,] <- diag(r)
   Aimat[-Index.corner,] <- theta    # [-(1:M)]
 

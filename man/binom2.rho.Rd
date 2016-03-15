@@ -10,24 +10,31 @@
 
 }
 \usage{
-binom2.rho(lrho = "rhobit", lmu = "probit", imu1 = NULL, imu2 = NULL,
-           irho = NULL, imethod = 1, zero = 3,
+binom2.rho(lmu = "probit", lrho = "rhobit", imu1 = NULL, imu2 = NULL,
+           irho = NULL, imethod = 1, zero = "rho",
            exchangeable = FALSE, grho = seq(-0.95, 0.95, by = 0.05),
            nsimEIM = NULL)
 binom2.Rho(rho = 0, imu1 = NULL, imu2 = NULL,
            exchangeable = FALSE, nsimEIM = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
+% binom2.rho(lrho = "rhobit", lmu = "probit", imu1 = NULL, imu2 = NULL,...)
 \arguments{
+  \item{lmu}{
+  Link function applied to the marginal probabilities.
+  Should be left alone.
+
+
+  }
   \item{lrho}{
   Link function applied to the \eqn{\rho}{rho} association parameter.
   See \code{\link{Links}} for more choices.
 
 
   }
-  \item{lmu}{
-  Link function applied to the marginal probabilities.
-  Should be left alone.
+  \item{imu1, imu2}{
+  Optional initial values for the two marginal probabilities.
+  May be a vector.
 
 
   }
@@ -38,17 +45,12 @@ binom2.Rho(rho = 0, imu1 = NULL, imu2 = NULL,
 
 
   }
-  \item{imu1, imu2}{
-  Optional initial values for the two marginal probabilities.
-  May be a vector.
-
-
-  }
   \item{zero}{
-  Which linear/additive predictor is modelled as an intercept only?
+  Specifies which linear/additive predictors are modelled as intercept-only.
   A \code{NULL} means none.
   Numerically, the \eqn{\rho}{rho} parameter is easiest modelled as
   an intercept only, hence the default.
+  See \code{\link{CommonVGAMffArguments}} for more information.
 
 
   }
@@ -156,11 +158,12 @@ Freedman, D. A. and Sekhon, J. S. (2010)
   should have.
 
 
-  By default, a constant \eqn{\rho}{rho} is fitted because \code{zero = 3}.
-  Set \code{zero = NULL} if you want the \eqn{\rho}{rho} parameter to
-  be modelled as a function of the explanatory variables.  The value
-  \eqn{\rho}{rho} lies in the interval \eqn{(-1,1)}{(-1,1)}, therefore
-  a \code{\link{rhobit}} link is default.
+  By default, a constant \eqn{\rho}{rho} is fitted because
+  \code{zero = "rho"}.  Set \code{zero = NULL} if you want
+  the \eqn{\rho}{rho} parameter to be modelled as a function
+  of the explanatory variables.  The value \eqn{\rho}{rho}
+  lies in the interval \eqn{(-1,1)}{(-1,1)}, therefore a
+  \code{\link{rhobit}} link is default.
 
 
   Converge problems can occur.

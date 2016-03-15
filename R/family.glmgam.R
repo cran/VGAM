@@ -52,19 +52,25 @@
          c("Binomial model\n\n", 
          "Link:     ", namesof("prob", link, earg = earg), "\n",
          "Variance: mu * (1 - mu)"),
+
   constraints = eval(substitute(expression({
     constraints <- cm.VGAM(matrix(1, M, 1), x = x, 
                            bool = .parallel , 
                            constraints = constraints,
                            apply.int = .apply.parint )
 
-    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
+                                predictors.names = predictors.names,
+                                M1 = 1)
   }), list( .zero = zero,
             .parallel = parallel, .apply.parint = apply.parint ))),
+
   infos = eval(substitute(function(...) {
     list(M1 = 1,
          Q1 = 1,
          bred = .bred ,
+         expected = TRUE,
+         parameters.names = c("prob"),  # new.name
          zero = .zero )
   }, list( .zero = zero,
            .bred = bred ))),
@@ -211,7 +217,7 @@
                 dtheta.deta(mu, link = .link ,
                             earg = .earg )^2)  # w cancel
       if (.multiple.responses && ! .onedpar ) {
-        dpar <- rep(as.numeric(NA), len = M)
+        dpar <- rep(NA_real_, len = M)
         temp87 <- cbind(temp87)
         nrow.mu <- if (is.matrix(mu)) nrow(mu) else length(mu)
         for (ii in 1:M)
@@ -282,7 +288,7 @@
     }
   }, list( .multiple.responses = multiple.responses ))),
 
-  vfamily = c("binomialff", "vcategorical"),
+  vfamily = c("binomialff", "VGAMcategorical"),
 
 
 
@@ -453,6 +459,7 @@
   infos = eval(substitute(function(...) {
     list(M1 = 1,
          Q1 = 1,
+         parameters.names = c("mu"),
          dispersion = .dispersion )
   }, list( .dispersion = dispersion ))),
   initialize = eval(substitute(expression({
@@ -507,7 +514,7 @@
     misc$estimated.dispersion <- .estimated.dispersion
 
     misc$link <- rep( .link , length = M)
-    names(misc$link) <- if (M > 1) paste("mu", 1:M, sep = "") else "mu"
+    names(misc$link) <- param.names("mu", M)
 
     misc$earg <- vector("list", M)
     names(misc$earg) <- names(misc$link)
@@ -579,6 +586,7 @@
   infos = eval(substitute(function(...) {
     list(M1 = 1,
          Q1 = 1,
+         parameters.names = c("mu"),
          dispersion = .dispersion )
   }, list( .earg = earg , .dispersion = dispersion ))),
   initialize = eval(substitute(expression({
@@ -625,7 +633,7 @@
     misc$estimated.dispersion <- .estimated.dispersion
 
     misc$link <- rep( .link , length = M)
-    names(misc$link) <- if (M > 1) paste("mu", 1:M, sep = "") else "mu"
+    names(misc$link) <- param.names("mu", M)
 
     misc$earg <- vector("list", M)
     names(misc$earg) <- names(misc$link)
@@ -758,9 +766,6 @@ rinv.gaussian <- function(n, mu, lambda) {
      ishrinkage > 1)
     stop("bad input for argument 'ishrinkage'")
 
-  if (length(zero) &&
-      !is.Numeric(zero, integer.valued = TRUE, positive = TRUE))
-    stop("bad input for argument 'zero'")
 
 
   if (is.logical(parallel) && parallel && length(zero))
@@ -783,12 +788,16 @@ rinv.gaussian <- function(n, mu, lambda) {
                            constraints = constraints,
                            apply.int = .apply.parint )
 
-    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
+                                predictors.names = predictors.names,
+                                M1 = 2)
   }), list( .zero = zero,
             .parallel = parallel, .apply.parint = apply.parint ))),
   infos = eval(substitute(function(...) {
     list(M1 = 2,
          Q1 = 1,
+         parameters.names = c("mu", "lambda"),
+         expected = TRUE,
          zero = .zero )
   }, list( .zero = zero ))),
 
@@ -813,12 +822,12 @@ rinv.gaussian <- function(n, mu, lambda) {
 
 
 
-    mynames1 <- paste("mu",     if (ncoly > 1) 1:ncoly else "", sep = "")
-    mynames2 <- paste("lambda", if (ncoly > 1) 1:ncoly else "", sep = "")
+    mynames1 <- param.names("mu",     ncoly)
+    mynames2 <- param.names("lambda", ncoly)
     predictors.names <-
       c(namesof(mynames1, .lmu ,     earg = .emu ,     short = TRUE),
         namesof(mynames2, .llambda , earg = .elambda , short = TRUE))[
-          interleave.VGAM(M, M = M1)]
+          interleave.VGAM(M, M1 = M1)]
 
 
 
@@ -844,7 +853,7 @@ rinv.gaussian <- function(n, mu, lambda) {
       etastart <- cbind(
           theta2eta(init.mu, link = .lmu , earg = .emu ),
           theta2eta(init.la, link = .llambda , earg = .elambda ))[,
-          interleave.VGAM(M, M = M1)]
+          interleave.VGAM(M, M1 = M1)]
     }
   }), list( .lmu = lmu, .llambda = llambda,
             .emu = emu, .elambda = elambda,
@@ -859,8 +868,8 @@ rinv.gaussian <- function(n, mu, lambda) {
     M1 <- extra$M1
     misc$link <-
       c(rep( .lmu ,     length = ncoly),
-        rep( .llambda , length = ncoly))[interleave.VGAM(M, M = M1)]
-    temp.names <- c(mynames1, mynames2)[interleave.VGAM(M, M = M1)]
+        rep( .llambda , length = ncoly))[interleave.VGAM(M, M1 = M1)]
+    temp.names <- c(mynames1, mynames2)[interleave.VGAM(M, M1 = M1)]
     names(misc$link) <- temp.names
 
     misc$earg <- vector("list", M)
@@ -921,7 +930,7 @@ rinv.gaussian <- function(n, mu, lambda) {
     dl.dlambda <- 0.5 / lambda - (y - mymu)^2 / (2 * mymu^2 * y)
     myderiv <- c(w) * cbind(dl.dmu * dmu.deta,
                             dl.dlambda * dlambda.deta)
-    myderiv[, interleave.VGAM(M, M = M1)]
+    myderiv[, interleave.VGAM(M, M1 = M1)]
   }), list( .lmu = lmu, .llambda = llambda,
             .emu = emu, .elambda = elambda ))),
 
@@ -932,7 +941,7 @@ rinv.gaussian <- function(n, mu, lambda) {
 
     wz <- cbind(dmu.deta^2 * ned2l.dmu2,
                 dlambda.deta^2 * ned2l.dlambda2)[,
-                interleave.VGAM(M, M = M1)]
+                interleave.VGAM(M, M1 = M1)]
 
     w.wz.merge(w = w, wz = wz, n = n, M = M, ndepy = M / M1)
   }), list( .lmu = lmu, .llambda = llambda,
@@ -985,8 +994,22 @@ rinv.gaussian <- function(n, mu, lambda) {
     constraints <- cm.VGAM(matrix(1, M, 1), x = x, 
                            bool = .parallel , 
                            constraints = constraints)
-    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
+                                predictors.names = predictors.names,
+                                M1 = 1)
   }), list( .parallel = parallel, .zero = zero ))),
+
+  infos = eval(substitute(function(...) {
+    list(M1 = 1,
+         Q1 = 1,
+         expected = TRUE,
+         multipleResponses = TRUE,
+         parameters.names = c("lambda"),
+         bred = .bred ,
+         zero = .zero )
+  }, list( .zero = zero,
+           .bred = bred ))),
+
 
   deviance =
     function(mu, y, w, residuals = FALSE, eta, extra = NULL,
@@ -1005,14 +1028,6 @@ rinv.gaussian <- function(n, mu, lambda) {
       }
     }
   },
-
-  infos = eval(substitute(function(...) {
-    list(M1 = 1,
-         Q1 = 1,
-         bred = .bred ,
-         zero = .zero )
-  }, list( .zero = zero,
-           .bred = bred ))),
 
   initialize = eval(substitute(expression({
 
@@ -1085,7 +1100,7 @@ rinv.gaussian <- function(n, mu, lambda) {
       temp87 <- (y-mu)^2 *
           wz / (dtheta.deta(mu, link = .link , earg = .earg )^2)  # w cancel
       if (M > 1 && ! .onedpar ) {
-        dpar <- rep(as.numeric(NA), length = M)
+        dpar <- rep(NA_real_, length = M)
         temp87 <- cbind(temp87)
         nrow.mu <- if (is.matrix(mu)) nrow(mu) else length(mu)
         for (ii in 1:M)
@@ -1223,8 +1238,11 @@ rinv.gaussian <- function(n, mu, lambda) {
   ans@infos <- eval(substitute(function(...) {
     list(M1 = 1,
          Q1 = 1,
+         multipleResponses = .multiple.responses ,
+         parameters.names = c("prob"),
          zero = .zero )
-  }, list( .zero = zero )))
+  }, list( .zero = zero,
+           .multiple.responses = multiple.responses )))
 
   ans
 }
@@ -1251,6 +1269,8 @@ rinv.gaussian <- function(n, mu, lambda) {
   ans@infos <- eval(substitute(function(...) {
     list(M1 = 1,
          Q1 = 1,
+         multipleResponses = TRUE,
+         parameters.names = c("lambda"),
          zero = .zero )
   }, list( .zero = zero )))
 
@@ -1261,10 +1281,11 @@ rinv.gaussian <- function(n, mu, lambda) {
 
 
 
- double.exppoisson <- function(lmean = "loge",
-                         ldispersion = "logit",
-                         idispersion = 0.8,
-                         zero = NULL) {
+ double.exppoisson <-
+  function(lmean = "loge",
+           ldispersion = "logit",
+           idispersion = 0.8,
+           zero = NULL) {
 
   if (!is.Numeric(idispersion, positive = TRUE))
     stop("bad input for 'idispersion'")
@@ -1289,14 +1310,20 @@ rinv.gaussian <- function(n, mu, lambda) {
             "Mean:     ", "mean\n",
             "Variance: mean / dispersion"),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
+                                predictors.names = predictors.names,
+                                M1 = 2)
   }), list( .zero = zero ))),
 
   infos = eval(substitute(function(...) {
     list(M1 = 2,
-         lmean = .lmean ,
+         parameters.names = c("mean", "dispersion"),
+         lmean       = .lmean ,
+         ldispersion = .ldispersion ,
          zero = .zero )
-  }, list( .lmean = lmean ))),
+  }, list( .lmean       = lmean,
+           .ldispersion = ldispersion,
+           .zero = zero ))),
 
 
   initialize = eval(substitute(expression({
@@ -1379,7 +1406,7 @@ rinv.gaussian <- function(n, mu, lambda) {
   }), list( .lmean = lmean, .emean = emean,
             .ldisp = ldisp, .edisp = edisp ))),
   weight = eval(substitute(expression({
-    wz <- matrix(as.numeric(NA), nrow = n, ncol = 2)  # diagonal
+    wz <- matrix(NA_real_, nrow = n, ncol = 2)  # diagonal
     usethis.lambda <- pmax(lambda, .Machine$double.eps / 10000)
     wz[, iam(1, 1, M)] <- (Disper / usethis.lambda) * dlambda.deta^2
     wz[, iam(2, 2, M)] <- (0.5 / Disper^2) * dDisper.deta^2
@@ -1393,7 +1420,7 @@ rinv.gaussian <- function(n, mu, lambda) {
 
  double.expbinomial <-
   function(lmean = "logit", ldispersion = "logit",
-           idispersion = 0.25, zero = 2) {
+           idispersion = 0.25, zero = "dispersion") {
 
   lmean <- as.list(substitute(lmean))
   emean <- link2list(lmean)
@@ -1416,8 +1443,24 @@ rinv.gaussian <- function(n, mu, lambda) {
             namesof("dispersion", ldisp, earg = edisp), "\n",
             "Mean:     ", "mean\n"),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
+                                predictors.names = predictors.names,
+                                M1 = 2)
   }), list( .zero = zero ))),
+
+
+  infos = eval(substitute(function(...) {
+    list(M1 = 2,
+         Q1 = NA,
+         parameters.names = c("mean", "dispersion"),
+         lmean = .lmean ,
+         ldisp = .ldisp ,
+         multipleResponses = FALSE,
+         zero = .zero )
+  }, list( .lmean = lmean,
+           .zero = zero,
+           .ldisp = ldisp ))),
+
   initialize = eval(substitute(expression({
     if (!all(w == 1))
       extra$orig.w <- w
@@ -1539,7 +1582,7 @@ rinv.gaussian <- function(n, mu, lambda) {
   }), list( .lmean = lmean, .emean = emean,
             .ldisp = ldisp, .edisp = edisp ))),
   weight = eval(substitute(expression({
-    wz <- matrix(as.numeric(NA), nrow = n, ncol = 2)  # diagonal
+    wz <- matrix(NA_real_, nrow = n, ncol = 2)  # diagonal
     wz[, iam(1, 1, M)] <- w * (Disper / temp3) * dprob.deta^2
     wz[, iam(2, 2, M)] <- (0.5 / Disper^2) * dDisper.deta^2
     wz
@@ -1592,6 +1635,7 @@ rinv.gaussian <- function(n, mu, lambda) {
   },
   infos = eval(substitute(function(...) {
     list(M1 = 2,
+         parameters.names = c("mu.1[,j]", "mu.2[,j]"),
          parallel = .parallel)
   }, list( .parallel = parallel ))),
   initialize = eval(substitute(expression({
@@ -1616,7 +1660,7 @@ rinv.gaussian <- function(n, mu, lambda) {
                     "mu.2", .link , earg = .earg , short = TRUE))
         NOS = M / M1
         predictors.names <-
-        predictors.names[interleave.VGAM(M1 * NOS, M = M1)]
+        predictors.names[interleave.VGAM(M1 * NOS, M1 = M1)]
 
 
         if (!length(mustart) && !length(etastart))
@@ -1727,7 +1771,7 @@ rinv.gaussian <- function(n, mu, lambda) {
       }
     }
   },
-  vfamily = c("augbinomial", "vcategorical"),
+  vfamily = c("augbinomial", "VGAMcategorical"),
   deriv = eval(substitute(expression({
     M1 <- 2
     Mdiv2 <-  M / 2
@@ -1753,8 +1797,7 @@ rinv.gaussian <- function(n, mu, lambda) {
       }
 
     myderiv = (cbind(deriv1,
-                     deriv2))[, interleave.VGAM(M1 * NOS,
-                                                M = M1)]
+                     deriv2))[, interleave.VGAM(M1 * NOS, M1 = M1)]
     myderiv
   }), list( .link = link, .earg = earg))),
   weight = eval(substitute(expression({
@@ -1773,7 +1816,7 @@ rinv.gaussian <- function(n, mu, lambda) {
 
 
     my.wk.wt <- cbind(wk.wt1, wk.wt2)
-    my.wk.wt <- my.wk.wt[, interleave.VGAM(M1 * NOS, M = M1)]
+    my.wk.wt <- my.wk.wt[, interleave.VGAM(M1 * NOS, M1 = M1)]
     my.wk.wt
   }), list( .link = link, .earg = earg))))
 }

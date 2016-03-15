@@ -83,7 +83,7 @@ cao  <- function(formula,
   cao.fitter <- get(method)
 
 
-  deviance.Bestof <- rep(as.numeric(NA), len = control$Bestof)
+  deviance.Bestof <- rep(NA_real_, len = control$Bestof)
   for (tries in 1:control$Bestof) {
     if (control$trace && (control$Bestof > 1)) {
       cat(paste("\n========================= Fitting model",

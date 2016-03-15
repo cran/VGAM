@@ -6,8 +6,8 @@
   Fits a positive Poisson distribution.
 }
 \usage{
-pospoisson(link = "loge", expected = TRUE,
-           ilambda = NULL, imethod = 1, zero = NULL)
+pospoisson(link = "loge", type.fitted = c("mean", "lambda", "prob0"),
+           expected = TRUE, ilambda = NULL, imethod = 1, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -23,7 +23,12 @@ pospoisson(link = "loge", expected = TRUE,
 
   }
   \item{ilambda, imethod, zero}{
-  See \code{\link{CommonVGAMffArguments}} for more information.
+  See \code{\link{CommonVGAMffArguments}} for information.
+
+  }
+  \item{type.fitted}{
+    See \code{\link{CommonVGAMffArguments}} for details.
+
 
   }
 

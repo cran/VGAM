@@ -33,8 +33,11 @@ summaryvlm <-
   Coefs <- object@coefficients
   cnames <- names(Coefs)
 
-  if (presid) {
+  Presid <- if (presid) {
     Presid <- residualsvlm(object, type = "pearson")  # NULL if pooled.weight
+    Presid
+  } else {
+    NULL
   }
 
   if (any(is.na(Coefs))) {

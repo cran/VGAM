@@ -854,7 +854,8 @@ plota21 <- function(rrvglm2, show.plot = TRUE, nseq.a21 = 31,
     abline(h = loglik.orig,
            col = "darkorange", lty = "dashed")
 
-    abline(h = loglik.orig - qchisq(0.95, df = 1),
+    abline(h = loglik.orig -
+               qchisq(0.95, df = 1) / 2,
            col = "darkorange", lty = "dashed")
 
     abline(v = a21.hat +  c(-1, 1) * 1.96 * SE.a21.hat,

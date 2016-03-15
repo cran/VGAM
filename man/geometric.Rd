@@ -32,7 +32,7 @@ truncgeometric(upper.limit = Inf,
 
   }
   \item{iprob, imethod, zero}{
-  See \code{\link{CommonVGAMffArguments}} for more details.
+  See \code{\link{CommonVGAMffArguments}} for details.
 
 
   }

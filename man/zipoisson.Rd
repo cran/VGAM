@@ -9,14 +9,15 @@
 
 }
 \usage{
-zipoisson(lpstr0 = "logit", llambda = "loge",
-          type.fitted = c("mean", "pobs0", "pstr0", "onempstr0"),
-          ipstr0 = NULL, ilambda = NULL,
-          imethod = 1, ishrinkage = 0.8, zero = NULL)
-zipoissonff(llambda = "loge", lonempstr0 = "logit",
-            type.fitted = c("mean", "pobs0", "pstr0", "onempstr0"),
-            ilambda = NULL,   ionempstr0 = NULL,
-            imethod = 1, ishrinkage = 0.8, zero = -2)
+zipoisson(lpstr0 = "logit", llambda = "loge", type.fitted =
+          c("mean", "lambda", "pobs0", "pstr0", "onempstr0"), ipstr0 =
+          NULL, ilambda = NULL, gpstr0 = NULL, imethod = 1,
+          ishrinkage = 0.95, probs.y = 0.35, zero = NULL)
+zipoissonff(llambda = "loge", lonempstr0 = "logit", type.fitted =
+            c("mean", "lambda", "pobs0", "pstr0", "onempstr0"),
+            ilambda = NULL, ionempstr0 = NULL, gonempstr0 = NULL,
+            imethod = 1, ishrinkage = 0.95, probs.y = 0.35, zero =
+            "onempstr0")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -80,14 +81,21 @@ zipoissonff(llambda = "loge", lonempstr0 = "logit",
 
   }
   \item{zero}{ 
-  An integer specifying which linear/additive predictor is modelled as
-  intercepts only.  If given, the value must be either 1 or 2, and the
+  Specifies which linear/additive predictors are to be modelled as
+  intercept-only.  If given, the value can be either 1 or 2, and the
   default is none of them. Setting \code{zero = 1} makes \eqn{\phi}{phi}
   a single parameter.
   See \code{\link{CommonVGAMffArguments}} for more information.
 
 
   }
+  \item{gpstr0, gonempstr0, probs.y}{
+   Details at \code{\link{CommonVGAMffArguments}}.
+
+
+  }
+
+
 }
 \details{
   These models are a mixture of a Poisson distribution and the value 0;
@@ -315,3 +323,18 @@ summary(rrzip)
 %# lambda <- (fitted(fit1, type = "mean") / fitted(fit1, type = "onempstr0"))[1]
 %# (prob.struc.0 <- pstr0 / dzipois(x = 0, lambda = lambda, pstr0 = pstr0))
 % fit@misc$pobs0  # Estimate of P(Y = 0)
+
+
+%zipoisson(lpstr0 = "logit", llambda = "loge",
+%          type.fitted = c("mean", "pobs0", "pstr0", "onempstr0"),
+%          ipstr0 = NULL, ilambda = NULL,
+%          imethod = 1, ishrinkage = 0.8, zero = NULL)
+%zipoissonff(llambda = "loge", lonempstr0 = "logit",
+%            type.fitted = c("mean", "pobs0", "pstr0", "onempstr0"),
+%            ilambda = NULL,   ionempstr0 = NULL,
+%            imethod = 1, ishrinkage = 0.8, zero = "onempstr0")
+
+
+
+
+

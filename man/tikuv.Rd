@@ -7,7 +7,8 @@
 
 }
 \usage{
-tikuv(d, lmean = "identitylink", lsigma = "loge", isigma = NULL, zero = 2)
+tikuv(d, lmean = "identitylink", lsigma = "loge", isigma = NULL,
+      zero = "sigma")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -43,13 +44,14 @@ tikuv(d, lmean = "identitylink", lsigma = "loge", isigma = NULL, zero = 2)
 
   }
   \item{zero}{
-  An integer-valued vector specifying which
-  linear/additive predictors are modelled as intercepts only.
-  The values must be from the set \{1,2\} corresponding
+  A vector specifying which
+  linear/additive predictors are modelled as intercept-only.
+  The values can be from the set \{1,2\}, corresponding
   respectively to \eqn{\mu}{mu}, \eqn{\sigma}{sigma}.
   If \code{zero = NULL} then all linear/additive predictors are modelled as
   a linear combination of the explanatory variables.
   For many data sets having \code{zero = 2} is a good idea.
+  See \code{\link{CommonVGAMffArguments}} for information.
 
 
   }

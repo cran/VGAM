@@ -7,6 +7,7 @@
 
 
 
+
 predict.vlm <- function(object,
                         newdata = NULL,
                         type = c("response", "terms"),
@@ -77,7 +78,7 @@ predict.vlm <- function(object,
     }
 
     offset <- if (!is.null(off.num <- attr(ttob, "offset"))) {
-      eval(attr(ttob, "variables")[[off.num+1]], newdata)
+      eval(attr(ttob, "variables")[[off.num + 1]], newdata)
     } else if (!is.null(object@offset))
       eval(object@call$offset, newdata)
 
@@ -164,8 +165,9 @@ predict.vlm <- function(object,
     if (se.fit) {
       object <- as(object, "vlm")  # Coerce
       fit.summary <- summaryvlm(object, dispersion=dispersion)
-      sigma <- if (is.numeric(fit.summary@sigma)) fit.summary@sigma else
-               sqrt(deviance(object) / object@df.residual)  # was @ResSS
+      sigma <- if (is.numeric(fit.summary@sigma))
+        fit.summary@sigma else
+        sqrt(deviance(object) / object@df.residual)  # was @ResSS
       pred <- Build.terms.vlm(x = X_vlm, coefs = coefs,
                               cov = sigma^2 * fit.summary@cov.unscaled,
                               assign = vasgn,
@@ -239,7 +241,7 @@ predict.vlm <- function(object,
       if (raw) {
         kindex <- NULL
         for (ii in 1:pp) 
-          kindex <- c(kindex, (ii-1)*M + (1:ncolHlist[ii]))
+          kindex <- c(kindex, (ii-1) * M + (1:ncolHlist[ii]))
         if (se.fit) {
           pred$fitted.values <- pred$fitted.values[, kindex, drop = FALSE]
           pred$se.fit <- pred$se.fit[, kindex, drop = FALSE]
@@ -352,6 +354,8 @@ predict.vglm.se <- function(fit, ...) {
 
 
 
+
+
 subconstraints <- function(assign, constraints) {
 
 
@@ -363,6 +367,7 @@ subconstraints <- function(assign, constraints) {
   names(ans) <- names(assign)
   ans
 }
+
 
 
 is.linear.term <- function(ch) {
@@ -377,6 +382,7 @@ is.linear.term <- function(ch) {
   names(ans) <- ch
   ans 
 }
+
 
 
 canonical.Hlist <- function(Hlist) {

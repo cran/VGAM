@@ -1,8 +1,91 @@
     *************************************************
     *                                                *
-    *           0.9 SERIES NEWS                      *
+    *           1.0 SERIES NEWS                      *
     *                                                *
     **************************************************
+
+
+
+                CHANGES IN VGAM VERSION 1.0-1
+
+NEW FEATURES
+
+    o   Argument 'zero' has been programmed to handle (a more
+        intuitive) a character vector. Each value of this
+        vector is fed into grep() with fixed = TRUE. Many
+        VGAM family functions have an equivalent default
+        character value of 'zero'.
+    o   New slots: "validparams" and "validfitted" for providing
+        more opportunities for half-stepping.
+    o   The "infos" slot of most family functions have a
+        component called "parameters.names", and also
+        "Q1" and "M1".
+    o   margeff() works for cratio(), sratio() and
+        acat() models, and is generic (with S4 dispatch).
+        For this, "vcategorical" replaced by "VGAMcategorical",
+        and "VGAMordinal" is also a virtual class.
+        And margeffS4VGAM() is generic.
+    o   summaryvglm() calls the generic summaryvglmS4VGAM() in order
+        to compute useful quantities, and it is printed by
+        showsummaryvglmS4VGAM(). Specific examples include
+        the binom2.or() and cumulative() families.
+    o   Similarly, show.vglm() calls the generic showvglmS4VGAM() in
+        order to print extra potentially useful output.
+        Ditto for , show.vgam() which calls showvgamS4VGAM().
+    o   Similarly, predictvglm() calls the generic predictvglmS4VGAM()
+        in order to allow for family-function-specific prediction.
+    o   logitoffsetlink() is new.
+    o   [dpqr]ozibeta() and [dpr]ozibetabinom() and
+        [dpr]ozibetabinom.ab() are new;
+        by Xiangjie Xue and Thomas Yee.
+    o   coef(..., type = c("linear", "nonlinear")) is available
+        for "vgam" objects.
+    o   The following have new 'weights' slots (based on
+        negbinomial()@weight): posnegbinomial(), zanegbinomial[ff](),
+        zinegbinomial[ff](). It is based on the expectation of
+        a difference between 2 trigamma function evaluations being
+        computed using pnbinom(lower.tail = FALSE) and variants.
+        Both functions have some argument defaults tweaked.
+    o   log1mexp() and log1pexp(), based on Martin Maechler's 2012 paper,
+        is 'new'.
+    o   Many zero-altered and zero-inflated families have additional
+        'type.fitted' choices.
+        Initial values for such families hav been improved (via Init.mu()).
+    o   expint(), expexpint(), expint.E1() allow the computation of the
+        first few derivatives.
+    o   Tested okay on R 3.2.4.
+
+
+
+BUG FIXES and CHANGES
+
+    o   Order of arguments changed: binom2.rho(lmu, lrho),
+        negbinomial(), posnegbinomial(),
+        zanegbinomial(), zinegbinomial().
+    o   pzanegbin() could return -.Machine$double.eps. Thanks to
+        Ryan Thompson for notifying me about this.
+    o   pbinorm() used to have a bug wrt Inf and -Inf values in
+        its arguments. Thanks to Xiangjie Xue for picking this up.
+    o   plota21() used qchisq(0.95, df = 1) instead of
+        qchisq(0.95, df = 1) / 2 for LRT confidence intervals.
+        Thanks to Russell Millar for picking this up.
+    o   A new function Init.mu() is used to initialize several
+        family functions, especially those based on the negative
+        binomial and Poisson distributions.
+        The default for Init.mu() is suitable for 0-inflated
+        data.
+    o   The fitted value of polya() was wrong (wasn't the mean).
+    o   Default value of argument 'zero' has changed for:
+        bisa(), gumbelII().
+    o   zibinomialff()@weight had a bug when calling iam().
+    o   [dpqr]nbinom(..., size = Inf) was buggy; it produced many NaNs.
+        Thanks to Martin Maechler for promptly fixing this, for R 3.2.4.
+    o   The arguments of interleave.VGAM() have changed: from
+        interleave.VGAM(L, M) to interleave.VGAM(.M, M1, inverse = FALSE).
+        The is a compromise solution with respect to my book.
+        The 'inverse' argument is due to Victor Miranda.
+    o   summaryvglm() evidently evaluated the weights slot of an
+        object twice. Now it is only done once.
 
 
 
@@ -66,6 +149,14 @@ BUG FIXES and CHANGES
         Ditto for vcovvlm() by vcov.vlm().
         Also model.matrix() and formula().
         Thanks to Michael Friendly and John Fox for help here.
+
+
+
+    *************************************************
+    *                                                *
+    *           0.9 SERIES NEWS                      *
+    *                                                *
+    **************************************************
 
 
 
@@ -148,7 +239,7 @@ BUG FIXES and CHANGES
         mu and size parameter has values lying in a certain range).
         This may be time- and/or memory-hungry, but the user has
         control over this via some arguments such as max.mu, min.size
-        and chunk.max.Mb.
+        and chunk.max.MB.
     o   Renamed functions:
         elogit() is now called extlogit(),
         fsqrt() is now called foldsqrt().
@@ -642,7 +733,6 @@ BUG FIXES and CHANGES
         etc. The year variable has been added.
 
 
-
                 CHANGES IN VGAM VERSION 0.9-0
 
 NEW FEATURES
@@ -724,6 +814,13 @@ BUG FIXES and CHANGES
         and dotFortran()] is now okay because the first argument
         is unnamed.
 
+
+
+    **************************************************
+    *                                                *
+    *           0.8 SERIES NEWS                      *
+    *                                                *
+    **************************************************
 
 
                 CHANGES IN VGAM VERSION 0.8-7

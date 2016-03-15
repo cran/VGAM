@@ -87,6 +87,7 @@ cloglog(theta, bvalue = NULL, inverse = FALSE, deriv = 0,
 
 \seealso{ 
     \code{\link{Links}},
+    \code{\link{logitoffsetlink}},
     \code{\link{logit}},
     \code{\link{probit}},
     \code{\link{cauchit}}.

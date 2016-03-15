@@ -52,12 +52,16 @@ VGAM.weights.function <- function(w, M, n) {
   new("vglmff",
   blurb = c("Vector linear/additive model\n",
             "Links:    identitylink for Y1,...,YM"),
+
   constraints = eval(substitute(expression({
     constraints <- cm.VGAM(matrix(1, M, 1), x = x,
                            bool = .parallel , 
                            constraints = constraints)
-    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
+                                predictors.names = predictors.names,
+                                M1 = 1)
   }), list( .parallel = parallel, .zero = zero ))),
+
   deviance = function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
     M <- if (is.matrix(y)) ncol(y) else 1
     n <- if (is.matrix(y)) nrow(y) else length(y)
@@ -77,6 +81,7 @@ VGAM.weights.function <- function(w, M, n) {
   infos = eval(substitute(function(...) {
     list(M1 = 1,
          Q1 = 1,
+         expected = TRUE,
          multipleResponses = TRUE,
          zero = .zero )
   }, list( .zero = zero ))),
@@ -303,7 +308,7 @@ if (FALSE)
                        gmean = exp((-5:5)/2), gsd = exp((-1:5)/2),
                        imean = NULL, isd = NULL, probs.y = 0.10,
                        imethod = 1,
-                       nsimEIM = NULL, zero = -2) {
+                       nsimEIM = NULL, zero = "sd") {
 
 
 
@@ -327,9 +332,6 @@ if (FALSE)
   if (!is.logical(eq.sd  ) || length(eq.sd  ) != 1)
     stop("bad input for argument 'eq.sd'")
 
-  if (length(zero) &&
-      !is.Numeric(zero, integer.valued = TRUE))
-    stop("bad input for argument 'zero'")
   if (length(isd) &&
       !is.Numeric(isd, positive = TRUE))
     stop("bad input for argument 'isd'")
@@ -388,20 +390,14 @@ if (FALSE)
     }
     constraints <- con.use
 
-    dotzero <- .zero
-    M1 <- 2
-    eval(negzero.expression.VGAM)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
+                                predictors.names = predictors.names,
+                                M1 = 2)
 
 
   }), list( .zero    = zero,
             .eq.sd   = eq.sd,
             .eq.mean = eq.mean ))),
-
-
-
-
-
-
 
 
 
@@ -411,14 +407,12 @@ if (FALSE)
          eq.mean = .eq.mean ,
          eq.sd   = .eq.sd   ,
          multipleResponses = TRUE,
-         par.names = c("mean", "sd"),
+         parameters.names = c("mean", "sd"),
          zero = .zero )
   }, list( .zero = zero,
            .eq.mean = eq.mean,
            .eq.sd   = eq.sd
          ))),
-
-
 
 
   initialize = eval(substitute(expression({
@@ -442,12 +436,12 @@ if (FALSE)
     predictors.names <-
       c(namesof(mean.names , .lmean     , earg = .emean     , tag = FALSE),
         namesof(sdev.names , .lsd       , earg = .esd       , tag = FALSE))
-    predictors.names <- predictors.names[interleave.VGAM(M, M = M1)]
+    predictors.names <- predictors.names[interleave.VGAM(M, M1 = M1)]
 
     if (!length(etastart)) {
-      init.me <- matrix( if (length( .imean )) .imean else as.numeric(NA),
+      init.me <- matrix( if (length( .imean )) .imean else NA_real_,
                         n, NOS, byrow = TRUE)
-      init.sd <-  matrix( if (length( .isd  )) .isd   else as.numeric(NA),
+      init.sd <-  matrix( if (length( .isd  )) .isd   else NA_real_,
                         n, NOS, byrow = TRUE)
 
       mean.grid.orig <- .gmean
@@ -483,7 +477,7 @@ if (FALSE)
         mean.grid <- sort(c(-mean.grid,
                              mean.grid))
         allmat1 <- expand.grid(Mean = mean.grid)
-        allmat2 <- matrix(as.numeric(NA), nrow(allmat1), 2)
+        allmat2 <- matrix(NA_real_, nrow(allmat1), 2)
 
          for (iloc in 1:nrow(allmat1)) {
             allmat2[iloc, ] <-
@@ -505,7 +499,7 @@ if (FALSE)
 
       etastart <- cbind(theta2eta(init.me, .lmean , earg = .emean ),
                         theta2eta(init.sd, .lsd ,   earg = .esd   ))
-      etastart <- etastart[, interleave.VGAM(M, M = M1)]
+      etastart <- etastart[, interleave.VGAM(M, M1 = M1)]
 
     }
   }), list( .lmean = lmean, .lsd = lsd,
@@ -523,9 +517,9 @@ if (FALSE)
          ))),
   last = eval(substitute(expression({
     misc$link <- c(rep( .lmean , length = NOS),
-                   rep( .lsd   , length = NOS))[interleave.VGAM(M, M = M1)]
+                   rep( .lsd   , length = NOS))[interleave.VGAM(M, M1 = M1)]
     temp.names <- c(mean.names, sdev.names)
-    names(misc$link) <- temp.names[interleave.VGAM(M, M = M1)]
+    names(misc$link) <- temp.names[interleave.VGAM(M, M1 = M1)]
 
     misc$earg <- vector("list", M)
     names(misc$earg) <- temp.names
@@ -598,7 +592,7 @@ if (FALSE)
     dsd.deta <- dtheta.deta(mysd, .lsd   , earg = .esd   )
     dthetas.detas <- cbind(dmu.deta, dsd.deta)
     myderiv <- c(w) * dthetas.detas * cbind(dl.dmu, dl.dsd)
-    myderiv <- myderiv[, interleave.VGAM(M, M = M1)]
+    myderiv <- myderiv[, interleave.VGAM(M, M1 = M1)]
     myderiv
   }), list( .lmean = lmean, .lsd = lsd,
             .emean = emean, .esd = esd ))),
@@ -610,7 +604,7 @@ if (FALSE)
 
 
       NOS <- M / M1
-      dThetas.detas <- dthetas.detas[, interleave.VGAM(M, M = M1)]
+      dThetas.detas <- dthetas.detas[, interleave.VGAM(M, M1 = M1)]
 
       wz <- matrix(0.0, n, M + M - 1)  # wz is 'tridiagonal' 
 
@@ -899,7 +893,7 @@ rtikuv <- function(n, d, mean = 0, sigma = 1, Smallno = 1.0e-6) {
 
 
  tikuv <- function(d, lmean = "identitylink", lsigma = "loge",
-                   isigma = NULL, zero = 2) {
+                   isigma = NULL, zero = "sigma") {
 
 
   lmean <- as.list(substitute(lmean))
@@ -912,10 +906,6 @@ rtikuv <- function(n, d, mean = 0, sigma = 1, Smallno = 1.0e-6) {
 
 
 
-  if (length(zero) &&
-     (!is.Numeric(zero, integer.valued = TRUE, positive = TRUE) ||
-     max(zero) > 2))
-    stop("bad input for argument 'zero'")
   if (!is.Numeric(d, length.arg = 1) || max(d) >= 2)
       stop("bad input for argument 'd'")
 
@@ -930,12 +920,17 @@ rtikuv <- function(n, d, mean = 0, sigma = 1, Smallno = 1.0e-6) {
           "\n", "\n",
           "Mean:     mean"),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
+                                predictors.names = predictors.names,
+                                M1 = 2)
   }), list( .zero = zero ))),
 
   infos = eval(substitute(function(...) {
     list(M1 = 2,
+         Q1 = 1,
+         expected = TRUE,
          multipleResponses = FALSE,
+         parameters.names = c("mean", "sigma"),
          zero = .zero )
   }, list( .zero = zero ))),
 
@@ -945,12 +940,12 @@ rtikuv <- function(n, d, mean = 0, sigma = 1, Smallno = 1.0e-6) {
 
 
     predictors.names <- 
-      c(namesof("mean",  .lmean ,  earg = .emean,  tag = FALSE),
-        namesof("sigma", .lsigma, earg = .esigma, tag = FALSE))
+      c(namesof("mean",  .lmean  , earg = .emean  , tag = FALSE),
+        namesof("sigma", .lsigma , earg = .esigma , tag = FALSE))
 
 
     if (!length(etastart)) {
-      sigma.init <- if (length(.isigma)) rep(.isigma, length = n) else {
+      sigma.init <- if (length( .isigma )) rep( .isigma , length = n) else {
         hh <- 2 - .d
         KK <- 1 / (1 + 1/hh + 0.75/hh^2)
         K2 <- 1 + 3/hh + 15/(4*hh^2)
@@ -958,8 +953,8 @@ rtikuv <- function(n, d, mean = 0, sigma = 1, Smallno = 1.0e-6) {
       }
       mean.init <- rep(weighted.mean(y, w), len = n) 
       etastart <-
-        cbind(theta2eta(mean.init,  .lmean ,  earg = .emean ),
-              theta2eta(sigma.init, .lsigma, earg = .esigma))
+        cbind(theta2eta(mean.init,  .lmean  , earg = .emean  ),
+              theta2eta(sigma.init, .lsigma , earg = .esigma ))
     }
   }),list( .lmean = lmean, .lsigma = lsigma,
                            .isigma = isigma, .d = d,
@@ -969,9 +964,9 @@ rtikuv <- function(n, d, mean = 0, sigma = 1, Smallno = 1.0e-6) {
   }, list( .lmean = lmean,
            .emean = emean, .esigma = esigma ))),
   last = eval(substitute(expression({
-      misc$link <-    c("mean"= .lmean , "sigma"= .lsigma )
+      misc$link <-    c("mean" = .lmean , "sigma"= .lsigma )
 
-      misc$earg <- list("mean"= .emean , "sigma"= .esigma )
+      misc$earg <- list("mean" = .emean , "sigma"= .esigma )
 
       misc$expected <- TRUE
       misc$d <- .d 
@@ -1038,7 +1033,7 @@ rtikuv <- function(n, d, mean = 0, sigma = 1, Smallno = 1.0e-6) {
     ned2l.dmymu2 <- Dnos / sigma^2
     ned2l.dnu2   <- Dstar / sigma^2
 
-    wz <- matrix(as.numeric(NA), n, M)  # diagonal matrix
+    wz <- matrix(NA_real_, n, M)  # diagonal matrix
     wz[, iam(1, 1, M)] <- ned2l.dmymu2 * dmu.deta^2
     wz[, iam(2, 2, M)] <- ned2l.dnu2 * dsigma.deta^2
     c(w) * wz
@@ -1195,9 +1190,6 @@ rfoldnorm <- function(n, mean = 0, sd = 1, a1 = 1, a2 = 1) {
 
 
 
-  if (length(zero) &&
-      !is.Numeric(zero, integer.valued = TRUE, positive = TRUE))
-    stop("bad input for argument 'zero'")
 
   if (!is.Numeric(nsimEIM, length.arg = 1,
                   integer.valued = TRUE) ||
@@ -1217,8 +1209,11 @@ rfoldnorm <- function(n, mean = 0, sd = 1, a1 = 1, a2 = 1) {
             namesof("sd",   lsd,   earg = esd,   tag = TRUE)),
   infos = eval(substitute(function(...) {
     list(M1 = 2,
+         Q1 = 1,
          a1 = .a1 ,
          a2 = .a2 ,
+         multiple.responses = FALSE,
+         parameters.names = c("mean", "sd"),
          zero = .zero ,
          nsimEIM = .nsimEIM )
   }, list( .zero = zero,
@@ -1644,7 +1639,7 @@ rtobit <- function(n, mean = 0, sd = 1, Lower = 0, Upper = Inf) {
                    imu = NULL,        isd = NULL,
                    type.fitted = c("uncensored", "censored", "mean.obs"),
                    byrow.arg = FALSE,
-                   imethod = 1, zero = -2) {
+                   imethod = 1, zero = "sd") {
 
 
 
@@ -1675,9 +1670,6 @@ rtobit <- function(n, mean = 0, sd = 1, Lower = 0, Upper = Inf) {
     stop("arguments 'Lower' and 'Upper' must be numeric and ",
          "satisfy Lower < Upper")
 
-  if (length(zero) &&
-      !is.Numeric(zero, integer.valued = TRUE))
-    stop("bad input for argument 'zero'")
 
   if (mode(type.fitted) != "character" && mode(type.fitted) != "name")
     type.fitted <- as.character(substitute(type.fitted))
@@ -1699,9 +1691,9 @@ rtobit <- function(n, mean = 0, sd = 1, Lower = 0, Upper = Inf) {
             "Conditional variance: sd^2"),
   constraints = eval(substitute(expression({
 
-    dotzero <- .zero
-    M1 <- 2
-    eval(negzero.expression.VGAM)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
+                                predictors.names = predictors.names,
+                                M1 = 2)
 
   }), list( .zero = zero ))),
 
@@ -1710,7 +1702,8 @@ rtobit <- function(n, mean = 0, sd = 1, Lower = 0, Upper = Inf) {
          Q1 = 1,
          type.fitted = .type.fitted ,
          zero = .zero ,
-         expected = TRUE,
+         multiple.responses = TRUE,
+         parameters.names = c("mu", "sd"),
          byrow.arg = .byrow.arg ,
          stdTobit = .stdTobit ,
          expected = TRUE )
@@ -1757,7 +1750,7 @@ rtobit <- function(n, mean = 0, sd = 1, Lower = 0, Upper = Inf) {
     predictors.names <-
       c(namesof(temp1.names, .lmu , earg = .emu , tag = FALSE),
         namesof(temp2.names, .lsd , earg = .esd , tag = FALSE))
-    predictors.names <- predictors.names[interleave.VGAM(M, M = M1)]
+    predictors.names <- predictors.names[interleave.VGAM(M, M1 = M1)]
 
 
     if (!length(etastart)) {
@@ -1803,7 +1796,7 @@ rtobit <- function(n, mean = 0, sd = 1, Lower = 0, Upper = Inf) {
       etastart <- cbind(theta2eta(mu.init, .lmu , earg = .emu ),
                         theta2eta(sd.init, .lsd , earg = .esd ))
 
-      etastart <- etastart[, interleave.VGAM(M, M = M1), drop = FALSE]
+      etastart <- etastart[, interleave.VGAM(M, M1 = M1), drop = FALSE]
     }   # if (!length(etastart))
  }), list( .Lower = Lower, .Upper = Upper,
            .lmu = lmu, .lsd = lsd,
@@ -1866,10 +1859,9 @@ rtobit <- function(n, mean = 0, sd = 1, Lower = 0, Upper = Inf) {
 
     temp0303 <- c(rep( .lmu , length = ncoly),
                   rep( .lsd , length = ncoly))
-    names(temp0303) <-
-      c(param.names("mu", ncoly),
-        param.names("sd", ncoly))
-    temp0303 <- temp0303[interleave.VGAM(M, M = M1)]
+    names(temp0303) <- c(param.names("mu", ncoly),
+                         param.names("sd", ncoly))
+    temp0303 <- temp0303[interleave.VGAM(M, M1 = M1)]
     misc$link <- temp0303  # Already named
 
     misc$earg <- vector("list", M)
@@ -2027,11 +2019,11 @@ moment.millsratio2 <- function(zedd) {
     }
 
     dthetas.detas <- cbind(dmu.deta, dsd.deta)
-    dThetas.detas <- dthetas.detas[, interleave.VGAM(M, M = M1)]
+    dThetas.detas <- dthetas.detas[, interleave.VGAM(M, M1 = M1)]
 
     myderiv <- cbind(c(w) * dl.dmu,
                      c(w) * dl.dsd) * dthetas.detas
-    myderiv[, interleave.VGAM(M, M = M1)]
+    myderiv[, interleave.VGAM(M, M1 = M1)]
   }), list( .lmu = lmu, .lsd = lsd,
             .emu = emu, .esd = esd,
             .byrow.arg = byrow.arg,
@@ -2172,7 +2164,7 @@ moment.millsratio2 <- function(zedd) {
                        isd = NULL,
                        parallel = FALSE,
                        smallno = 1.0e-5,
-                       zero = -2) {
+                       zero = "sd") {
 
 
 
@@ -2197,9 +2189,6 @@ moment.millsratio2 <- function(zedd) {
 
 
 
-  if (length(zero) &&
-      !is.Numeric(zero, integer.valued = TRUE))
-      stop("bad input for argument 'zero'")
 
 
   if (!is.Numeric(smallno, length.arg = 1,
@@ -2247,9 +2236,9 @@ moment.millsratio2 <- function(zedd) {
               constraints = constraints,
               apply.int = .apply.parint )
 
-    dotzero <- .zero
-    M1 <- 2
-    eval(negzero.expression.VGAM)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
+                                predictors.names = predictors.names,
+                                M1 = 2)
   }), list( .zero = zero,
             .parallel = parallel, .apply.parint = apply.parint ))),
 
@@ -2259,8 +2248,13 @@ moment.millsratio2 <- function(zedd) {
          Q1 = 1,
          expected = TRUE,
          multipleResponses = TRUE,
+         parameters.names = c("mean", if ( .var.arg ) "var" else "sd"),
+         var.arg = .var.arg ,
+         parallel = .parallel ,
          zero = .zero )
-  }, list( .zero = zero ))),
+  }, list( .zero = zero ,
+           .parallel = parallel ,
+           .var.arg = var.arg ))),
 
   initialize = eval(substitute(expression({
     orig.y <- y
@@ -2311,16 +2305,14 @@ moment.millsratio2 <- function(zedd) {
 
 
 
-    mynames1 <- paste("mean",
-                      if (ncoly > 1) 1:ncoly else "", sep = "")
-    mynames2 <- paste(if ( .var.arg ) "var" else "sd",
-                      if (ncoly > 1) 1:ncoly else "", sep = "")
+    mynames1 <- param.names("mean", ncoly)
+    mynames2 <- param.names(if ( .var.arg ) "var" else "sd", ncoly)
     predictors.names <-
         c(namesof(mynames1, .lmean , earg = .emean , tag = FALSE),
           if ( .var.arg ) 
           namesof(mynames2, .lvare , earg = .evare , tag = FALSE) else
           namesof(mynames2, .lsdev , earg = .esdev , tag = FALSE))
-    predictors.names <- predictors.names[interleave.VGAM(M, M = M1)]
+    predictors.names <- predictors.names[interleave.VGAM(M, M1 = M1)]
     extra$predictors.names <- predictors.names
 
 
@@ -2369,7 +2361,7 @@ moment.millsratio2 <- function(zedd) {
               theta2eta(sdev.init^2, .lvare , earg = .evare ) else
               theta2eta(sdev.init  , .lsdev , earg = .esdev ))
       etastart <-
-        etastart[, interleave.VGAM(ncol(etastart), M = M1)]
+        etastart[, interleave.VGAM(ncol(etastart), M1 = M1)]
 
       colnames(etastart) <- predictors.names
     }
@@ -2402,7 +2394,7 @@ moment.millsratio2 <- function(zedd) {
     M1 <- extra$M1
 
     temp.names <- c(mynames1, mynames2)
-    temp.names <- temp.names[interleave.VGAM(M1 * ncoly, M = M1)]
+    temp.names <- temp.names[interleave.VGAM(M1 * ncoly, M1 = M1)]
     misc$link <- rep( .lmean , length = M1 * ncoly)
     misc$earg <- vector("list", M1 * ncoly)
     names(misc$link) <- names(misc$earg) <- temp.names
@@ -2533,7 +2525,7 @@ moment.millsratio2 <- function(zedd) {
            cbind(dl.dmu * dmu.deta,
                  if ( .var.arg ) dl.dva * dva.deta else
                                  dl.dsd * dsd.deta)
-    ans <- ans[, interleave.VGAM(ncol(ans), M = M1)]
+    ans <- ans[, interleave.VGAM(ncol(ans), M1 = M1)]
 
 
 
@@ -2546,7 +2538,7 @@ moment.millsratio2 <- function(zedd) {
             .smallno = smallno,
             .var.arg = var.arg ))),
   weight = eval(substitute(expression({
-    wz <- matrix(as.numeric(NA), n, M)  # Diagonal matrix
+    wz <- matrix(NA_real_, n, M)  # Diagonal matrix
 
 
     ned2l.dmu2 <- 1 / sdev^2
@@ -2585,7 +2577,7 @@ moment.millsratio2 <- function(zedd) {
            imethod = 1,
            icoefficients = NULL,
            isd = NULL,
-           zero = "M") {
+           zero = "sd") {
 
 
 
@@ -2605,8 +2597,6 @@ moment.millsratio2 <- function(zedd) {
 
 
 
-  if (is.character(zero) && zero != "M")
-    stop("bad input for argument 'zero'")
 
 
 
@@ -2635,18 +2625,29 @@ moment.millsratio2 <- function(zedd) {
 
   constraints = eval(substitute(expression({
 
+
+
+    M1 <- NA
+  if (FALSE) {
     dotzero <- .zero
     if (is.character(dotzero) && dotzero == "M")
       dotzero <- M
 
     M1 <- NA
     eval(negzero.expression.VGAM)
+  } else {
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
+                                predictors.names = predictors.names,
+                                M1 = M)  # 20151222; Okay for one response?
+  }
   }), list( .zero = zero 
           ))),
 
   infos = eval(substitute(function(...) {
     list(M1 = NA,
          Q1 = 1,
+         multipleResponses = FALSE,  # zz unsure
+         parameters.names = as.character(NA),  # zz unsure
          zero = .zero )
   }, list( .zero = zero ))),
 
@@ -2767,9 +2768,7 @@ moment.millsratio2 <- function(zedd) {
     mynames1 <- mynames1[-max(extra$col.index.is.multilogit)]
   }
 
-    mynames2 <- paste(if ( .var.arg ) "var" else "sd",
-                      if (ncoly > 1) 1:ncoly else "", sep = "")
-
+    mynames2 <- param.names(if ( .var.arg ) "var" else "sd", ncoly)
     predictors.names <-
         c(mynames1,
           if ( .var.arg ) 
@@ -3167,7 +3166,7 @@ moment.millsratio2 <- function(zedd) {
 
 
  lognormal <- function(lmeanlog = "identitylink", lsdlog = "loge",
-                       zero = 2) {
+                       zero = "sdlog") {
 
 
 
@@ -3183,10 +3182,6 @@ moment.millsratio2 <- function(zedd) {
 
 
 
-  if (length(zero) &&
-     (!is.Numeric(zero, integer.valued = TRUE, positive = TRUE) ||
-     zero > 2))
-    stop("bad input for argument argument 'zero'")
 
 
   new("vglmff",
@@ -3195,8 +3190,27 @@ moment.millsratio2 <- function(zedd) {
           namesof("meanlog", lmulog, earg = emulog, tag = TRUE), ", ",
           namesof("sdlog",   lsdlog, earg = esdlog, tag = TRUE)),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
+                                predictors.names = predictors.names,
+                                M1 = 2)
   }), list( .zero = zero ))),
+
+
+  infos = eval(substitute(function(...) {
+    list(M1 = 2,
+         Q1 = 1,
+         lmeanlog = .lmeanlog ,
+         lsdlog   = .lsdlog ,
+         expected = TRUE,
+         multipleResponses = FALSE,
+         parameters.names = c("meanlog", "sdlog"),
+         zero = .zero )
+  }, list( .zero = zero,
+           .lmeanlog = lmeanlog,
+           .lsdlog   = lsdlog
+         ))),
+
+
   initialize = eval(substitute(expression({
 
     w.y.check(w = w, y = y,
@@ -3205,8 +3219,8 @@ moment.millsratio2 <- function(zedd) {
 
 
     predictors.names <-
-        c(namesof("meanlog", .lmulog , earg = .emulog, tag = FALSE),
-          namesof("sdlog",   .lsdlog , earg = .esdlog, tag = FALSE))
+        c(namesof("meanlog", .lmulog , earg = .emulog , tag = FALSE),
+          namesof("sdlog",   .lsdlog , earg = .esdlog , tag = FALSE))
 
     if (!length(etastart)) {
       mylm <- lm.wfit(x = x, y = c(log(y)), w = c(w))
@@ -3242,7 +3256,8 @@ moment.millsratio2 <- function(zedd) {
     if (residuals) {
       stop("loglikelihood residuals not implemented yet")
     } else {
-      ll.elts <- c(w) * dlnorm(y, meanlog = mulog, sdlog = sdlog, log = TRUE)
+      ll.elts <- c(w) * dlnorm(y, meanlog = mulog, sdlog = sdlog,
+                               log = TRUE)
       if (summation) {
         sum(ll.elts)
       } else {
@@ -3288,7 +3303,7 @@ moment.millsratio2 <- function(zedd) {
   }), list( .lmulog = lmulog, .lsdlog = lsdlog,
             .emulog = emulog, .esdlog = esdlog ))),
   weight = expression({
-    wz <- matrix(as.numeric(NA), n, 2)  # Diagonal!
+    wz <- matrix(NA_real_, n, 2)  # Diagonal!
     ned2l.dmulog2 <- 1 / sdlog^2
     ned2l.dsdlog2 <- 2 * ned2l.dmulog2
 
@@ -3376,11 +3391,14 @@ rskewnorm <- function(n, location = 0, scale = 1, shape = 0) {
   new("vglmff",
   blurb = c("1-parameter skew-normal distribution\n\n",
           "Link:     ",
-          namesof("shape", lshape , earg = eshape ), "\n",
+          namesof("shape", lshape , earg = eshape), "\n",
           "Mean:     shape * sqrt(2 / (pi * (1 + shape^2 )))\n",
           "Variance: 1-mu^2"),
   infos = eval(substitute(function(...) {
     list(M1 = 1,
+         Q1 = 1,
+         multipleResponses = FALSE,
+         parameters.names = c("shape"),
          nsimEIM = .nsimEIM)
   }, list( .nsimEIM = nsimEIM ))),
   initialize = eval(substitute(expression({

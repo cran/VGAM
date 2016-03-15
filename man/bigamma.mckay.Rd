@@ -10,7 +10,7 @@
 \usage{
 bigamma.mckay(lscale = "loge", lshape1 = "loge", lshape2 = "loge",
               iscale = NULL, ishape1 = NULL, ishape2 = NULL,
-              imethod = 1, zero = 2:3)
+              imethod = 1, zero = "shape")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

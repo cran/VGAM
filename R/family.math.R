@@ -12,6 +12,7 @@
 
 
 
+if (FALSE)
 log1pexp <- function(x) {
 
   ans <- log1p(exp(x))
@@ -153,6 +154,99 @@ lambertW <- function(x, tolerance = 1.0e-10, maxit = 50) {
 
 
 
+
+
+
+expint <- function (x, deriv = 0) {
+  if (deriv == 0) {
+    LLL <- length(x)
+    answer <- .C("sf_C_expint", x = as.double(x), size = as.integer(LLL),
+                 ans = double(LLL))$ans
+    answer[x < 0] <- NA
+    answer[x == 0] <- NA
+    answer
+  } else {
+    if (!is.Numeric(deriv, integer.valued = TRUE, positive = TRUE) ||
+        deriv > 3)
+      stop("Bad input for argument 'deriv'")
+    answer <- rep(0, length(x))
+    if (deriv == 1) {
+      answer <- exp(x) / x  
+    }
+    if (deriv == 2) {
+      answer <- exp(x) / x - exp(x) / x^2
+    }
+    if (deriv == 3) {
+      answer <- exp(x) / x - 2 * exp(x) / x^2 +
+        2 * exp(x) / x^3
+    }
+    answer
+  }
+}
+
+
+expexpint <- function (x, deriv = 0) {
+  LLL <- length(x)
+  answer <- .C("sf_C_expexpint", x = as.double(x), size = as.integer(LLL),
+               ans = double(LLL))$ans
+  answer[x <  0] <- NA
+  answer[x == 0] <- NA
+  if (deriv > 0) {
+    if (!is.Numeric(deriv, integer.valued = TRUE, positive = TRUE) ||
+        deriv > 3)
+      stop("Bad input for argument 'deriv'")
+    if (deriv >= 1) {
+      answer <- -answer + 1 / x
+    }
+    if (deriv >= 2) {
+      answer <- -answer - 1 / x^2
+    }
+    if (deriv == 3) {
+      answer <- -answer + 2 / x^3
+    }
+  }
+  answer
+}
+
+
+expint.E1 <- function (x, deriv = 0) {
+  if (deriv == 0) {
+    LLL <- length(x)
+    answer <- .C("sf_C_expint_e1", x = as.double(x), size = as.integer(LLL),
+                 ans = double(LLL))$ans
+    answer[x < 0] <- NA
+    answer[x == 0] <- NA
+  } else {
+    if (!is.Numeric(deriv, integer.valued = TRUE, positive = TRUE) ||
+        deriv > 3)
+      stop("Bad input for argument 'deriv'")
+    answer <- rep(0, length(x))
+    if (deriv == 1) {
+      answer <- exp(-x) / x  
+    }
+    if (deriv == 2) {
+      answer <- exp(-x) / x + exp(-x) / x^2
+    }
+    if (deriv == 3) {
+      answer <- exp(-x) / x + 2 * exp(-x) / x^2 +
+        2 * exp(-x) / x^3
+    }
+    answer <- (-1)^deriv * answer
+  }
+  answer
+}
+
+
+
+
+
+
+
+
+
+
+
+if (FALSE)
 expint <- function(x) {
 
 
@@ -170,6 +264,7 @@ expint <- function(x) {
 
 
 
+if (FALSE)
 expexpint <- function(x) {
 
 
@@ -192,6 +287,7 @@ expexpint <- function(x) {
 
 
 
+if (FALSE)
 expint.E1 <- function(x) {
 
 

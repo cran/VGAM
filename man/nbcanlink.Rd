@@ -8,7 +8,7 @@
 
 }
 \usage{
-nbcanlink(theta, size = NULL, wrt.eta = NULL, bvalue = NULL,
+nbcanlink(theta, size = NULL, wrt.param = NULL, bvalue = NULL,
           inverse = FALSE, deriv = 0, short = TRUE, tag = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -20,13 +20,13 @@ nbcanlink(theta, size = NULL, wrt.eta = NULL, bvalue = NULL,
 
 
   }
-  \item{size, wrt.eta}{
+  \item{size, wrt.param}{
   \code{size} contains the \eqn{k} matrix which
   must be of a conformable dimension as \code{theta}.
-  Also, if \code{deriv > 0} then \code{wrt.eta}
+  Also, if \code{deriv > 0} then \code{wrt.param}
   is either 1 or 2 (1 for with respect to the first
-  linear predictor, and 2 for with respect to the second
-  linear predictor (a function of \eqn{k})).
+  parameter, and 2 for with respect to the second
+  parameter (\code{size})).
 
 
   }

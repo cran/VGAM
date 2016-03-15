@@ -12,7 +12,7 @@
 \usage{
 huber1(llocation = "identitylink", k = 0.862, imethod = 1)
 huber2(llocation = "identitylink", lscale = "loge",
-       k = 0.862, imethod = 1, zero = 2)
+       k = 0.862, imethod = 1, zero = "scale")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -31,7 +31,7 @@ huber2(llocation = "identitylink", lscale = "loge",
   \item{imethod, zero}{ 
   See \code{\link{CommonVGAMffArguments}} for information.
   The default value of \code{zero} means the scale parameter is
-  modelled as an intercept-only.
+  modelled as intercept-only.
 
 
   }

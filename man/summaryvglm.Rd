@@ -12,10 +12,10 @@
 summaryvglm(object, correlation = FALSE,
             dispersion = NULL, digits = NULL, presid = TRUE,
             signif.stars = getOption("show.signif.stars"),
-           nopredictors = FALSE)
+            nopredictors = FALSE, ...)
 \method{show}{summary.vglm}(x, digits = max(3L, getOption("digits") - 3L),
            quote = TRUE, prefix = "", presid = TRUE,
-           signif.stars = NULL, nopredictors = NULL)
+           signif.stars = NULL, nopredictors = NULL, ...)
 }
 \arguments{
   \item{object}{an object of class \code{"vglm"}, usually, a result of a
@@ -41,6 +41,7 @@ summaryvglm(object, correlation = FALSE,
                        are not printed out.
                        The default is that they are. }
   \item{prefix}{ Not used. }
+  \item{\ldots}{ Not used. }
 
 
 }
@@ -96,6 +97,21 @@ distribution is used.
 % \code{summary} can be used with Gaussian \code{glm} fits to handle the
 % case of a linear regression with known error variance, something not
 % handled by \code{\link{summary.lm}}.
+
+
+
+
+% 20151215
+  It is possible for programmers to write a methods function to
+  print out extra quantities when \code{summary(vglmObject)} is
+  called.
+  The generic function is \code{summaryvglmS4VGAM()}, and one
+  can use the S4 function \code{\link[methods]{setMethod}} to
+  compute the quantities needed.
+  Also needed is the generic function is \code{showsummaryvglmS4VGAM()}
+  to actually print the quantities out.
+
+
 
 
 }

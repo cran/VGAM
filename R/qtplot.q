@@ -19,7 +19,7 @@ qtplot.lms.bcn <- function(percentiles = c(25, 50, 75),
                            eta = NULL, yoffset = 0) {
 
   lp <- length(percentiles)
-  answer <- matrix(as.numeric(NA), nrow(eta), lp,
+  answer <- matrix(NA_real_, nrow(eta), lp,
                    dimnames = list(dimnames(eta)[[1]],
                    paste(as.character(percentiles), "%", sep = "")))
   for (ii in 1:lp) {
@@ -38,7 +38,7 @@ qtplot.lms.bcg <- function(percentiles = c(25,50,75),
 
   cc <- percentiles
   lp <- length(percentiles)
-  answer <- matrix(as.numeric(NA), nrow(eta), lp,
+  answer <- matrix(NA_real_, nrow(eta), lp,
                    dimnames = list(dimnames(eta)[[1]],
                    paste(as.character(percentiles), "%", sep = "")))
   lambda <- eta[, 1]
@@ -60,7 +60,7 @@ qtplot.lms.yjn <- function(percentiles = c(25,50,75),
 
   cc <- percentiles
   lp <- length(percentiles)
-  answer <- matrix(as.numeric(NA), nrow(eta), lp,
+  answer <- matrix(NA_real_, nrow(eta), lp,
                    dimnames = list(dimnames(eta)[[1]],
                    paste(as.character(percentiles), "%", sep = "")))
   lambda <- eta[, 1]
@@ -852,7 +852,7 @@ explot.lms.bcn <- function(percentiles = c(25, 50, 75),
                            eta = NULL, yoffset = 0) {
 
   lp <- length(percentiles)
-  answer <- matrix(as.numeric(NA), nrow(eta), lp,
+  answer <- matrix(NA_real_, nrow(eta), lp,
                    dimnames = list(dimnames(eta)[[1]],
                    paste(as.character(percentiles), "%", sep = "")))
   for (ii in 1:lp) {

@@ -35,11 +35,13 @@ gengamma.stacy(lscale = "loge", ld = "loge", lk = "loge",
 
   }
   \item{zero}{
-  An integer-valued vector specifying which
-  linear/additive predictors are modelled as intercepts only.
-  The values must be from the set \{1,2,3\}.
-  The default value means none are modelled as intercept-only terms.
-  See \code{\link{CommonVGAMffArguments}} for more information.
+  See \code{\link{CommonVGAMffArguments}} for information.
+
+
+% An integer-valued vector specifying which
+% linear/additive predictors are modelled as intercepts only.
+% The values must be from the set \{1,2,3\}.
+% The default value means none are modelled as intercept-only terms.
 
 
   }

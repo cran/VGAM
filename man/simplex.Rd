@@ -9,9 +9,8 @@
 
 }
 \usage{
-simplex(lmu = "logit", lsigma = "loge",
-        imu = NULL, isigma = NULL,
-        imethod = 1, ishrinkage = 0.95, zero = 2)
+simplex(lmu = "logit", lsigma = "loge", imu = NULL, isigma = NULL,
+        imethod = 1, ishrinkage = 0.95, zero = "sigma")
 
 }
 %- maybe also 'usage' for other objects documented here.
@@ -29,7 +28,7 @@ simplex(lmu = "logit", lsigma = "loge",
 
   }
   \item{imethod, ishrinkage, zero}{
-  See \code{\link{CommonVGAMffArguments}} for more information.
+  See \code{\link{CommonVGAMffArguments}} for information.
 
 
   }

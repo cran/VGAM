@@ -119,6 +119,7 @@ The \pkg{VGAM} package for categorical data analysis.
   response is a matrix;
   see \code{\link[base:factor]{ordered}}.
 
+
 }
 
 \seealso{
@@ -126,7 +127,9 @@ The \pkg{VGAM} package for categorical data analysis.
     \code{\link{cratio}},
     \code{\link{sratio}},
     \code{\link{multinomial}},
+    \code{\link{margeff}},
     \code{\link{pneumo}}.
+
 
 }
 \examples{

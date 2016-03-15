@@ -15,11 +15,12 @@ multinomial(zero = NULL, parallel = FALSE, nointercept = NULL,
 \arguments{
 
   \item{zero}{
-  An integer-valued vector specifying which
+  Can be an integer-valued vector specifying which
   linear/additive predictors are modelled as intercepts only.
   Any values must be from the set \{1,2,\ldots,\eqn{M}\}.
   The default value means none are modelled as intercept-only terms.
   See \code{\link{CommonVGAMffArguments}} for more information.
+
 
 
   }

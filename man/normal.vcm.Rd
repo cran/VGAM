@@ -16,7 +16,7 @@ normal.vcm(link.list = list("(Default)" = "identitylink"),
            lsd = "loge", lvar = "loge",
            esd = list(), evar = list(),
            var.arg = FALSE, imethod = 1,
-           icoefficients = NULL, isd = NULL, zero = "M")
+           icoefficients = NULL, isd = NULL, zero = "sd")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -63,10 +63,11 @@ normal.vcm(link.list = list("(Default)" = "identitylink"),
   \item{zero}{
   See \code{\link{CommonVGAMffArguments}} for more information.
   The default applies to the last one,
-  viz. the standard deviation/variance.
+  viz. the standard deviation/variance parameter.
 
 
   }
+
 
 }
 \details{

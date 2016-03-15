@@ -9,7 +9,8 @@
 }
 \usage{
 prentice74(llocation = "identitylink", lscale = "loge", lshape = "identitylink",
-           ilocation = NULL, iscale = NULL, ishape = NULL, zero = 2:3)
+           ilocation = NULL, iscale = NULL, ishape = NULL,
+           zero = c("scale", "shape"))
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -36,9 +37,9 @@ prentice74(llocation = "identitylink", lscale = "loge", lshape = "identitylink",
 
   }
   \item{zero}{
-  An integer-valued vector specifying which
+  Can be an integer-valued vector specifying which
   linear/additive predictors are modelled as intercepts-only.
-  The values must be from the set \{1,2,3\}.
+  Then the values must be from the set \{1,2,3\}.
   See \code{\link{CommonVGAMffArguments}} for more information.
 
 

@@ -29,14 +29,14 @@ riceff(lsigma = "loge", lvee = "loge", isigma = NULL,
   }
   \item{ivee, isigma}{
   Optional initial values for the parameters.
-  See \code{\link{CommonVGAMffArguments}} for more information.
   If convergence failure occurs (this \pkg{VGAM} family function seems
   to require good initial values) try using these arguments.
+  See \code{\link{CommonVGAMffArguments}} for more information.
 
 
   }
   \item{nsimEIM, zero}{
-  See \code{\link{CommonVGAMffArguments}} for more information.
+  See \code{\link{CommonVGAMffArguments}} for information.
 
 
   }

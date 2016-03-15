@@ -8,10 +8,20 @@
 \alias{pbetabinom.ab}
 %\alias{qbetabinom.ab}
 \alias{rbetabinom.ab}
+%\alias{Ozibetabinom}
+\alias{dozibetabinom}
+\alias{pozibetabinom}
+%\alias{qozibetabinom}
+\alias{rozibetabinom}
+\alias{dozibetabinom.ab}
+\alias{pozibetabinom.ab}
+%\alias{qozibetabinom.ab}
+\alias{rozibetabinom.ab}
 \title{The Beta-Binomial Distribution}
 \description{
   Density, distribution function, and random
-  generation for the beta-binomial distribution.
+  generation for the beta-binomial distribution
+  and the inflated beta-binomial distribution.
 
 
 }
@@ -22,6 +32,14 @@ rbetabinom(n, size, prob, rho = 0)
 dbetabinom.ab(x, size, shape1, shape2, log = FALSE, Inf.shape = 1e6)
 pbetabinom.ab(q, size, shape1, shape2, log.p = FALSE)
 rbetabinom.ab(n, size, shape1, shape2, .dontuse.prob = NULL)
+dozibetabinom(x, size, prob, rho = 0, pstr0 = 0, pstrsize = 0, log = FALSE)
+pozibetabinom(q, size, prob, rho, pstr0 = 0, pstrsize = 0, 
+              lower.tail = TRUE, log.p = FALSE)
+rozibetabinom(n, size, prob, rho = 0, pstr0 = 0, pstrsize = 0)
+dozibetabinom.ab(x, size, shape1, shape2, pstr0 = 0, pstrsize = 0, log = FALSE)
+pozibetabinom.ab(q, size, shape1, shape2, pstr0 = 0, pstrsize = 0,
+              lower.tail = TRUE, log.p = FALSE)
+rozibetabinom.ab(n, size, shape1, shape2, pstr0 = 0, pstrsize = 0)
 }
 
 
@@ -58,9 +76,8 @@ rbetabinom.ab(n, size, shape1, shape2, .dontuse.prob = NULL)
 
 
   }
-  \item{log, log.p}{
-  Logical.
-  If \code{TRUE} then all probabilities \code{p} are given as \code{log(p)}.
+  \item{log, log.p, lower.tail}{
+  Same meaning as \code{\link[stats]{runif}}.
 
 
   }
@@ -83,6 +100,20 @@ rbetabinom.ab(n, size, shape1, shape2, .dontuse.prob = NULL)
 
 
   }
+  
+  \item{pstr0}{
+  Probability of a structual zero (i.e., ignoring the beta-binomial distribution). 
+  The default value of \code{pstr0} corresponds to the response having a
+  beta-binomial distribuion inflated only at \code{size}.
+  
+  }
+  
+  \item{pstrsize}{
+  Probability of a structual maximum value \code{size}. The default value of
+  \code{pstrsize} corresponds to the response having a beta-binomial distribution
+  inflated only at 0.
+  
+  }
 
 
 }
@@ -94,9 +125,13 @@ rbetabinom.ab(n, size, shape1, shape2, .dontuse.prob = NULL)
 
 % \code{qbetabinom} and \code{qbetabinom.ab} gives the quantile function, and
 
+  \code{dozibetabinom} and \code{dozibetabinom.ab} give the inflated density,
+  \code{pozibetabinom} and \code{pozibetabinom.ab} give the inflated distribution function, and
+  \code{rozibetabinom} and \code{rozibetabinom.ab} generate random inflated deviates.
+
 
 }
-\author{ T. W. Yee }
+\author{ T. W. Yee and Xiangjie Xue}
 \details{
   The beta-binomial distribution is a binomial distribution whose
   probability of success is not a constant but it is generated from a
@@ -111,9 +146,26 @@ rbetabinom.ab(n, size, shape1, shape2, .dontuse.prob = NULL)
   estimating the parameters, for the formula of the probability density
   function and other details.
 
+  For the inflated beta-binomial distribution, the probability mass 
+  function is
+  \deqn{P(Y = y) =(1 - pstr0 - pstrsize) \times BB(y) + pstr0 \times I[y = 0] +
+        pstrsize \times I[y = size]}{%
+        F(Y = y) =(1 -  pstr0 - pstrsize) * BB(y) +  pstr0 * I[y = 0] +
+        pstrsize * I[y = size]}
+        
+  where \eqn{BB(y)} is the probability mass function
+  of the beta-binomial distribution with the same shape parameters
+  (\code{\link[VGAM]{pbetabinom.ab}}), 
+  \code{pstr0} is the inflated probability at 0
+  and \code{pstrsize} is the inflated probability at 1.
+  The default values of \code{pstr0} and \code{pstrsize} mean that these
+  functions behave like the ordinary \code{\link[VGAM]{Betabinom}}
+  when only the essential arguments are inputted.
+
 
 }
 \note{
+  \code{pozibetabinom}, \code{pozibetabinom.ab}, 
   \code{pbetabinom} and \code{pbetabinom.ab} can be particularly slow.
   The functions here ending in \code{.ab} are called from those
   functions which don't.
@@ -127,7 +179,8 @@ rbetabinom.ab(n, size, shape1, shape2, .dontuse.prob = NULL)
 }
 \seealso{
   \code{\link{betabinomial}},
-  \code{\link{betabinomialff}}.
+  \code{\link{betabinomialff}},
+  \code{\link{Ozibeta}}.
 
 
 }
@@ -155,7 +208,21 @@ barplot(rbind(dy, ty / sum(ty)),
                      ", shape2=", s2, ") (blue) vs\n",
         " Random generated beta-binomial(size=", N, ", prob=", s1/(s1+s2),
         ") (orange)", sep = ""), cex.main = 0.8,
-        names.arg = as.character(xx)) }
+        names.arg = as.character(xx)) 
+
+set.seed(208); N <- 1000000; size = 20;
+pstr0 <- 0.2; pstrsize <- 0.2
+k <- rozibetabinom.ab(N, size, s1, s2, pstr0, pstrsize)
+hist(k, probability = TRUE, border = "blue",
+     main = "Blue = inflated; orange = ordinary beta-binomial",
+     breaks = -0.5 : (size + 0.5))
+sum(k == 0) / N  # Proportion of 0
+sum(k == size) / N  # Proportion of size
+lines(0 : size,
+      dbetabinom.ab(0 : size, size, s1, s2), col = "orange")
+lines(0 : size, col = "blue",
+      dozibetabinom.ab(0 : size, size, s1, s2, pstr0, pstrsize))
+}
 }
 \keyword{distribution}
 

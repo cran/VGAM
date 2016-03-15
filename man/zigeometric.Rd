@@ -10,13 +10,13 @@
 }
 \usage{
 zigeometric(lpstr0  = "logit", lprob = "logit",
-            type.fitted = c("mean", "pobs0", "pstr0", "onempstr0"),
+            type.fitted = c("mean", "prob", "pobs0", "pstr0", "onempstr0"),
             ipstr0  = NULL, iprob = NULL,
             imethod = 1, bias.red = 0.5, zero = NULL)
 zigeometricff(lprob = "logit", lonempstr0 = "logit",
-              type.fitted = c("mean", "pobs0", "pstr0", "onempstr0"),
+              type.fitted = c("mean", "prob", "pobs0", "pstr0", "onempstr0"),
               iprob = NULL, ionempstr0 = NULL,
-              imethod = 1, bias.red = 0.5, zero = -2)
+              imethod = 1, bias.red = 0.5, zero = "onempstr0")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

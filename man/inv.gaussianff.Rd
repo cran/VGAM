@@ -31,7 +31,7 @@ inv.gaussianff(lmu = "loge", llambda = "loge",
 
   }
   \item{imethod, ishrinkage, zero}{ 
-  See \code{\link{CommonVGAMffArguments}} for more information.
+  See \code{\link{CommonVGAMffArguments}} for information.
 
 
   }

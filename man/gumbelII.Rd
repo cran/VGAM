@@ -12,9 +12,10 @@
 \usage{
 gumbelII(lscale = "loge", lshape = "loge", iscale = NULL, ishape = NULL,
          probs.y = c(0.2, 0.5, 0.8), perc.out = NULL, imethod = 1,
-         zero = -1, nowarning = FALSE)
+         zero = "shape", nowarning = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
+%        zero = "scale", nowarning = FALSE 20151128
 \arguments{
 
   \item{nowarning}{ Logical. Suppress a warning? }

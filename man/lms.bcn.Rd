@@ -8,7 +8,7 @@
 
 }
 \usage{
-lms.bcn(percentiles = c(25, 50, 75), zero = c(1, 3),
+lms.bcn(percentiles = c(25, 50, 75), zero = c("lambda", "sigma"),
         llambda = "identitylink", lmu = "identitylink", lsigma = "loge",
         idf.mu = 4, idf.sigma = 2, ilambda = 1,
         isigma = NULL, tol0 = 0.001)
@@ -32,7 +32,7 @@ lms.bcn(percentiles = c(25, 50, 75), zero = c(1, 3),
 
   }
   \item{zero}{
-  An integer-valued vector specifying which
+  Can be an integer-valued vector specifying which
   linear/additive predictors are modelled as intercepts only.
   The values must be from the set \{1,2,3\}.
   The default value usually increases the chance of successful convergence.
@@ -148,7 +148,7 @@ Of the three functions, it is often a good idea to allow
 \eqn{\lambda(x)}{lambda(x)} and \eqn{\sigma(x)}{sigma(x)}
 usually vary more smoothly with \eqn{x}. This is somewhat
 reflected in the default value for the argument \code{zero},
-viz. \code{zero = c(1,3)}.
+viz. \code{zero = c(1, 3)}.
 
 
 }
@@ -199,8 +199,9 @@ Quantile regression via vector generalized additive models.
 
   In general, the lambda and sigma functions should be more smoother
   than the mean function.
-  Having \code{zero = 1}, \code{zero = 3} or \code{zero = c(1,3)}
+  Having \code{zero = 1}, \code{zero = 3} or \code{zero = c(1, 3)}
   is often a good idea. See the example below.
+
 
 
 % While it is usual to regress the response against a single

@@ -4,6 +4,50 @@
 %\alias{ccoef-method}
 %
 %
+% 201602:
+\alias{predictvglmS4VGAM,ANY,binom2.or-method}
+% 201601:
+\alias{showvglmS4VGAM,ANY,acat-method}
+\alias{showvgamS4VGAM,ANY,acat-method}
+\alias{showvglmS4VGAM,ANY,multinomial-method}
+\alias{showvgamS4VGAM,ANY,multinomial-method}
+%
+%\alias{coef,vgam-method}
+%\alias{coefficients,vgam-method}
+% 201512:
+\alias{summaryvglmS4VGAM,ANY,binom2.or-method}
+\alias{showsummaryvglmS4VGAM,ANY,binom2.or-method}
+%
+\alias{summaryvglmS4VGAM,ANY,posbernoulli.tb-method}
+\alias{showsummaryvglmS4VGAM,ANY,posbernoulli.tb-method}
+%
+\alias{showsummaryvglmS4VGAM,ANY,posbernoulli.b-method}
+\alias{showsummaryvglmS4VGAM,ANY,posbernoulli.t-method}
+%
+\alias{summaryvglmS4VGAM,ANY,VGAMcategorical-method}
+\alias{summaryvglmS4VGAM,ANY,cumulative-method}
+\alias{summaryvglmS4VGAM,ANY,multinomial-method}
+%
+\alias{showsummaryvglmS4VGAM,ANY,VGAMcategorical-method}
+\alias{showsummaryvglmS4VGAM,ANY,cumulative-method}
+\alias{showsummaryvglmS4VGAM,ANY,multinomial-method}
+%
+\alias{margeffS4VGAM,ANY,ANY,VGAMcategorical-method}
+\alias{margeffS4VGAM,ANY,ANY,VGAMordinal-method}
+\alias{margeffS4VGAM,ANY,ANY,acat-method}
+\alias{margeffS4VGAM,ANY,ANY,cratio-method}
+\alias{margeffS4VGAM,ANY,ANY,sratio-method}
+\alias{margeffS4VGAM,ANY,ANY,cumulative-method}
+\alias{margeffS4VGAM,ANY,ANY,multinomial-method}
+%
+%\alias{margeffS4VGAM,ANY,VGAMcategorical-method}
+%\alias{margeffS4VGAM,ANY,VGAMordinal-method}
+%\alias{margeffS4VGAM,ANY,acat-method}
+%\alias{margeffS4VGAM,ANY,cratio-method}
+%\alias{margeffS4VGAM,ANY,sratio-method}
+%\alias{margeffS4VGAM,ANY,cumulative-method}
+%\alias{margeffS4VGAM,ANY,multinomial-method}
+%
 % 201509:
 \alias{term.names,ANY-method}
 \alias{term.names,vlm-method}

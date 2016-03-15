@@ -39,10 +39,11 @@ freund61(la = "loge",  lap = "loge",  lb = "loge", lbp = "loge",
 
   }
   \item{zero}{
-  An integer-valued vector specifying which
+  A vector specifying which
   linear/additive predictors are modelled as intercepts only.
-  The values must be from the set \{1,2,3,4\}.
+  The values can be from the set \{1,2,3,4\}.
   The default is none of them.
+  See \code{\link{CommonVGAMffArguments}} for more information.
 
 
   }

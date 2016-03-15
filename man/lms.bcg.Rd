@@ -7,7 +7,7 @@
   to the gamma distribution.
 }
 \usage{
-lms.bcg(percentiles = c(25, 50, 75), zero = c(1, 3), 
+lms.bcg(percentiles = c(25, 50, 75), zero = c("lambda", "sigma"),
         llambda = "identitylink", lmu = "identitylink", lsigma = "loge",
         idf.mu = 4, idf.sigma = 2, ilambda = 1, isigma = NULL)
 }

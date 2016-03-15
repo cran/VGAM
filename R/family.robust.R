@@ -181,7 +181,8 @@ phuber <- function(q, k = 0.862, mu = 0, sigma = 1,
 
 
  huber2 <- function(llocation = "identitylink", lscale = "loge",
-                    k = 0.862, imethod = 1, zero = 2) {
+                    k = 0.862, imethod = 1,
+                    zero = "scale") {
 
 
   A1 <- (2 * dnorm(k) / k - 2 * pnorm(-k))
@@ -195,9 +196,6 @@ phuber <- function(q, k = 0.862, mu = 0, sigma = 1,
   if (!is.Numeric(k, length.arg = 1, positive = TRUE))
     stop("bad input for argument 'k'")
 
-  if (length(zero) &&
-      !is.Numeric(zero, integer.valued = TRUE, positive = TRUE))
-    stop("bad input for argument 'zero'")
 
 
   llocat <- as.list(substitute(llocation))
@@ -216,9 +214,27 @@ phuber <- function(q, k = 0.862, mu = 0, sigma = 1,
             namesof("location",  llocat,  earg = elocat), ", ",
             namesof("scale",     lscale,  earg = escale), "\n\n",
             "Mean: location"),
+
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
+                                predictors.names = predictors.names,
+                                M1 = 2)
   }), list( .zero = zero ))),
+
+  infos = eval(substitute(function(...) {
+    list(M1 = 2,
+         Q1 = 1,
+         expected = TRUE,
+         multipleResponses = FALSE,
+         parameters.names = c("location", "scale"),
+         llocation = .llocat ,
+         lscale    = .lscale ,
+         zero = .zero )
+  }, list( .zero = zero,
+           .llocat = llocat,
+           .lscale = lscale ))),
+
+
   initialize = eval(substitute(expression({
 
     temp5 <-
@@ -321,7 +337,7 @@ phuber <- function(q, k = 0.862, mu = 0, sigma = 1,
             .elocat = elocat, .escale = escale,
             .eps    = eps,       .k      = k ))),
   weight = eval(substitute(expression({
-    wz   <- matrix(as.numeric(NA), n, 2)  # diag matrix; y is one-col too
+    wz   <- matrix(NA_real_, n, 2)  # diag matrix; y is one-col too
 
 
 
@@ -468,7 +484,7 @@ phuber <- function(q, k = 0.862, mu = 0, sigma = 1,
             .elocat = elocat,
             .eps    = eps,       .k      = k ))),
   weight = eval(substitute(expression({
-    wz   <- matrix(as.numeric(NA), n, 1)  # diag matrix; y is one-col too
+    wz   <- matrix(NA_real_, n, 1)  # diag matrix; y is one-col too
 
 
 

@@ -10,7 +10,7 @@
 \usage{
 gamma2(lmu = "loge", lshape = "loge",
        imethod = 1,  ishape = NULL,
-       parallel = FALSE, deviance.arg = FALSE, zero = -2)
+       parallel = FALSE, deviance.arg = FALSE, zero = "shape")
 }
 %- maybe also 'usage' for other objects documented here.
 % apply.parint = FALSE,
@@ -51,21 +51,24 @@ gamma2(lmu = "loge", lshape = "loge",
 
   }
   \item{zero}{
+  See \code{\link{CommonVGAMffArguments}} for information.
+
+
 % An integer specifying which
 % linear/additive predictor is to be modelled as an intercept only.
 % If assigned, the single value should be either 1 or 2 or \code{NULL}.
 % The default is to model \eqn{shape} as an intercept only.
 % A value \code{NULL} means neither 1 or 2.
 
-    Integer valued vector, usually assigned \eqn{-2} or \eqn{2} if
-    used at all.  Specifies which of the two linear/additive predictors
-    are modelled as an intercept only. By default, the shape parameter
-    (after \code{lshape} is applied) is modelled as a single unknown
-    number that is estimated.  It can be modelled as a function of
-    the explanatory variables by setting \code{zero = NULL}.  A negative
-    value means that the value is recycled, so setting \eqn{-2} means
-    all shape parameters are intercept only.
-    See \code{\link{CommonVGAMffArguments}} for more information.
+%   Integer valued vector, usually assigned \eqn{-2} or \eqn{2} if
+%   used at all.  Specifies which of the two linear/additive predictors
+%   are modelled as an intercept only. By default, the shape parameter
+%   (after \code{lshape} is applied) is modelled as a single unknown
+%   number that is estimated.  It can be modelled as a function of
+%   the explanatory variables by setting \code{zero = NULL}.  A negative
+%   value means that the value is recycled, so setting \eqn{-2} means
+%   all shape parameters are intercept only.
+%   See \code{\link{CommonVGAMffArguments}} for more information.
 
 
   }

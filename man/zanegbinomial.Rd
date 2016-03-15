@@ -10,14 +10,19 @@
 
 }
 \usage{
-zanegbinomial(lpobs0 = "logit", lmunb = "loge", lsize = "loge",
-              type.fitted = c("mean", "pobs0"),
-              ipobs0 = NULL, isize = NULL, zero = -3, imethod = 1,
-              nsimEIM = 250, ishrinkage = 0.95)
+zanegbinomial(zero = "size", type.fitted = c("mean", "munb", "pobs0"),
+              nsimEIM = 500, cutoff.prob = 0.999, eps.trig = 1e-7,
+              max.support = 4000, max.chunk.MB = 30, lpobs0 = "logit",
+              lmunb = "loge", lsize = "loge", imethod = 1, ipobs0 = NULL,
+              imunb = NULL, probs.y = 0.35, ishrinkage = 0.95,
+              isize = NULL, gsize.mux = exp((-12:6)/2))
 zanegbinomialff(lmunb = "loge", lsize = "loge", lonempobs0 = "logit",
-                type.fitted = c("mean", "pobs0", "onempobs0"),
-                isize = NULL, ionempobs0 = NULL, zero = c(-2, -3),
-                imethod = 1, nsimEIM = 250, ishrinkage = 0.95)
+                type.fitted = c("mean", "munb", "pobs0", "onempobs0"),
+                isize = NULL, ionempobs0 = NULL, zero = c("size",
+                "onempobs0"), probs.y = 0.35, cutoff.prob = 0.999,
+                eps.trig = 1e-7, max.support = 4000, max.chunk.MB = 30,
+                gsize.mux = exp((-12:6)/2), imethod = 1, imunb = NULL,
+                nsimEIM = 500, ishrinkage = 0.95)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -64,8 +69,9 @@ zanegbinomialff(lmunb = "loge", lsize = "loge", lonempobs0 = "logit",
 %             epobs0 = list(),  emunb = list(), esize = list(),
 % }
 
-  \item{ipobs0, isize}{ 
-    Optional initial values for \eqn{p_0}{pobs0} and \code{k}.
+  \item{ipobs0, imunb, isize}{ 
+    Optional initial values for \eqn{p_0}{pobs0} and \code{munb}
+    and \code{k}.
     If given then it is okay to give one value
     for each response/species by inputting a vector whose length
     is the number of columns of the response matrix.
@@ -77,7 +83,7 @@ zanegbinomialff(lmunb = "loge", lsize = "loge", lonempobs0 = "logit",
 %   the probability of an observed value is to be modelled with the
 %   covariates.
     Specifies which of the three linear predictors are
-    modelled as an intercept only.
+    modelled as intercept-only.
 %   By default, the \code{k} and \eqn{p_0}{pobs0}
 %   parameters for each response are modelled as
 %   single unknown numbers that are estimated.
@@ -98,6 +104,18 @@ zanegbinomialff(lmunb = "loge", lsize = "loge", lonempobs0 = "logit",
   \item{ishrinkage}{
   See \code{\link{negbinomial}}
   and \code{\link{CommonVGAMffArguments}}.
+
+  }
+
+
+  \item{probs.y, cutoff.prob, gsize.mux, eps.trig}{
+  See \code{\link{negbinomial}}.
+%  and \code{\link{CommonVGAMffArguments}}.
+
+  }
+  \item{max.support, max.chunk.MB}{
+  See \code{\link{negbinomial}}.
+%  and \code{\link{CommonVGAMffArguments}}.
 
   }
 }
@@ -174,13 +192,17 @@ for counts with extra zeros.
 
 }
 \section{Warning }{
+  This family function is fragile; it inherits the same difficulties as
+  \code{\link{posnegbinomial}}.
   Convergence for this \pkg{VGAM} family function seems to depend quite
   strongly on providing good initial values.
+
 
 
   This \pkg{VGAM} family function is computationally expensive
   and usually runs slowly;
   setting \code{trace = TRUE} is useful for monitoring convergence.
+
 
 
   Inference obtained from \code{summary.vglm} and \code{summary.vgam}
@@ -189,11 +211,11 @@ for counts with extra zeros.
   data to check that these are reasonable.
 
 
+
 }
 
 \author{ T. W. Yee }
 \note{
-
   Note this family function allows \eqn{p_0}{pobs0} to be modelled as
   functions of the covariates provided \code{zero} is set correctly.
   It is a conditional model, not a mixture model.
@@ -245,4 +267,34 @@ head(predict(fit))
 }
 \keyword{models}
 \keyword{regression}
+
+
+%             lpobs0 = "logit", lmunb = "loge", lsize = "loge",
+%             type.fitted = c("mean", "pobs0"),
+%             ipobs0 = NULL, isize = NULL, zero = "size",
+%             probs.y = 0.75, cutoff.prob = 0.999,
+%             max.support = 2000, max.chunk.MB = 30,
+%             gsize = exp((-4):4),
+%             imethod = 1, nsimEIM = 250, ishrinkage = 0.95)
+
+
+
+%zanegbinomial(
+%zero = "size", type.fitted = c("mean", "pobs0"),
+%           nsimEIM = 250, cutoff.prob = 0.999,
+%           max.support = 2000, max.chunk.MB = 30,
+%           lpobs0 = "logit", lmunb = "loge", lsize = "loge",
+%           imethod = 1, ipobs0 = NULL, probs.y = 0.75,
+%           ishrinkage = 0.95, isize = NULL, gsize = exp((-4):4))
+
+%zanegbinomialff(lmunb = "loge", lsize = "loge", lonempobs0 = "logit",
+%                type.fitted = c("mean", "pobs0", "onempobs0"), isize = NULL,
+%                ionempobs0 = NULL, zero = c("size", "onempobs0"),
+%                probs.y = 0.75, cutoff.prob = 0.999,
+%                max.support = 2000, max.chunk.MB = 30,
+%                gsize = exp((-4):4),
+%                imethod = 1, nsimEIM = 250, ishrinkage = 0.95)
+
+
+
 

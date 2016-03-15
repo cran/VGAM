@@ -127,7 +127,7 @@ vlm.wfit <-
 
 
   dx2 <- if (is.vlmX) NULL else dimnames(xmat)[[2]]
-  B <- matrix(as.numeric(NA),
+  B <- matrix(NA_real_,
               nrow = M, ncol = ncolx, dimnames = list(lp.names, dx2))
   if (is.null(Hlist)) {
     Hlist <- replace.constraints(vector("list", ncolx), diag(M), 1:ncolx)

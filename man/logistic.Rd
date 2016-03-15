@@ -13,7 +13,7 @@
 \usage{
 logistic1(llocation = "identitylink", scale.arg = 1, imethod = 1)
 logistic(llocation = "identitylink", lscale = "loge",
-         ilocation = NULL, iscale = NULL, imethod = 1, zero = -2)
+         ilocation = NULL, iscale = NULL, imethod = 1, zero = "scale")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -31,12 +31,12 @@ logistic(llocation = "identitylink", lscale = "loge",
 
   }
   \item{ilocation, iscale}{
-  See \code{\link{CommonVGAMffArguments}} for more information.
+  See \code{\link{CommonVGAMffArguments}} for information.
 
 
   }
   \item{imethod, zero}{
-  See \code{\link{CommonVGAMffArguments}} for more information.
+  See \code{\link{CommonVGAMffArguments}} for information.
 
 
   }
@@ -117,6 +117,7 @@ A Note on Deriving the Information Matrix for a Logistic Distribution,
 
 \seealso{
   \code{\link[stats:Logistic]{rlogis}},
+  \code{\link{CommonVGAMffArguments}},
   \code{\link{logit}},
   \code{\link{cumulative}},
   \code{\link{bilogistic}},

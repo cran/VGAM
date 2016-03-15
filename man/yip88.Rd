@@ -7,7 +7,7 @@
 
 }
 \usage{
-yip88(link = "loge", n.arg = NULL)
+yip88(link = "loge", n.arg = NULL, imethod = 1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -20,6 +20,11 @@ yip88(link = "loge", n.arg = NULL)
    The total number of observations in the data set. Needed when the
    response variable has all the zeros deleted from it, so that the
    number of zeros can be determined.
+
+  }
+  \item{imethod}{ 
+   Details at \code{\link{CommonVGAMffArguments}}.
+
 
   }
 }
@@ -145,9 +150,6 @@ coef(fit3, matrix = TRUE)
 Coef(fit3)  # Estimate of lambda (they get 0.6997 with SE 0.1520)
 head(fitted(fit3))
 mean(yy)  # Compare this with fitted(fit3)
-
-
-
 }
 \keyword{models}
 \keyword{regression}

@@ -9,14 +9,22 @@
 
 }
 \usage{
-zinegbinomial(lpstr0 = "logit", lmunb = "loge", lsize = "loge",
-              type.fitted = c("mean", "pobs0", "pstr0", "onempstr0"),
-              ipstr0 = NULL, isize = NULL, zero = -3,
-              imethod = 1, ishrinkage = 0.95, nsimEIM = 250)
+zinegbinomial(zero = "size",
+              type.fitted = c("mean", "munb", "pobs0", "pstr0",
+              "onempstr0"),
+              nsimEIM = 500, cutoff.prob = 0.999, eps.trig = 1e-7,
+              max.support = 4000, max.chunk.MB = 30,
+              lpstr0 = "logit", lmunb = "loge", lsize = "loge",
+              imethod = 1, ipstr0 = NULL, imunb =  NULL,
+              probs.y = 0.35, ishrinkage = 0.95,
+              isize = NULL, gsize.mux = exp((-12:6)/2))
 zinegbinomialff(lmunb = "loge", lsize = "loge", lonempstr0 = "logit",
-                type.fitted = c("mean", "pobs0", "pstr0", "onempstr0"),
-                isize = NULL, ionempstr0 = NULL, zero = c(-2, -3),
-                imethod = 1, ishrinkage = 0.95, nsimEIM = 250)
+                type.fitted = c("mean", "munb", "pobs0", "pstr0",
+                "onempstr0"), imunb = NULL, isize = NULL, ionempstr0 =
+                NULL, zero = c("size", "onempstr0"), imethod = 1,
+                ishrinkage = 0.95, probs.y = 0.35, cutoff.prob = 0.999,
+                eps.trig = 1e-7,  max.support = 4000, max.chunk.MB = 30,
+                gsize.mux = exp((-12:6)/2), nsimEIM = 500)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -42,10 +50,13 @@ zinegbinomialff(lmunb = "loge", lsize = "loge", lonempstr0 = "logit",
 
   }
 
-  \item{ipstr0, isize}{
-  Optional initial values for \eqn{\phi}{pstr0} and \eqn{k}{k}.
+  \item{ipstr0, isize, imunb}{
+  Optional initial values for \eqn{\phi}{pstr0}
+  and \eqn{k}{k}
+  and \eqn{\mu}{munb}.
   The default is to compute an initial value internally for both.
   If a vector then recycling is used.
+
 
   }
 
@@ -63,28 +74,46 @@ zinegbinomialff(lmunb = "loge", lsize = "loge", lonempstr0 = "logit",
   If failure to converge occurs try another value
   and/or else specify a value for \code{ishrinkage}.
 
+
+
   }
   \item{zero}{ 
-  Integers specifying which linear/additive predictor is modelled
-  as intercepts only.  If given, their absolute values must be
+  Specifies which linear/additive predictors are to be modelled
+  as intercept-only.  They can be such that their absolute values are
   either 1 or 2 or 3.
   The default is the \eqn{\phi}{pstr0} and \eqn{k} parameters
   (both for each response).
   See \code{\link{CommonVGAMffArguments}} for more information.
 
+
+
   }
   \item{ishrinkage, nsimEIM}{ 
   See \code{\link{CommonVGAMffArguments}} for information.
+
+
+  }
+  \item{probs.y, cutoff.prob, max.support, max.chunk.MB }{ 
+    See \code{\link{negbinomial}}
+    and/or \code{\link{posnegbinomial}} for details,
+
+
+  }
+  \item{gsize.mux, eps.trig}{ 
+    These arguments relate to grid searching in the initialization process.
+    See \code{\link{negbinomial}}
+    and/or \code{\link{posnegbinomial}} for details,
+
 
   }
 }
 \details{
   These functions are based on
   \deqn{P(Y=0) =  \phi + (1-\phi) (k/(k+\mu))^k,}{%
-        P(Y=0) =  \phi + (1-\phi) * (k/(k+\mu))^k,}
+        P(Y=0) =   phi + (1- phi) * (k/(k+munb))^k,}
   and for \eqn{y=1,2,\ldots},
   \deqn{P(Y=y) =  (1-\phi) \, dnbinom(y, \mu, k).}{%
-        P(Y=y) =  (1-\phi) * dnbinom(y, \mu, k).}
+        P(Y=y) =  (1- phi) * dnbinom(y, munb, k).}
   The parameter \eqn{\phi}{phi} satisfies \eqn{0 < \phi < 1}{0 < phi < 1}.
   The mean of \eqn{Y} is \eqn{(1-\phi) \mu}{(1-phi)*munb}
   (returned as the fitted values).
@@ -97,7 +126,7 @@ zinegbinomialff(lmunb = "loge", lsize = "loge", lonempstr0 = "logit",
   of the negative binomial distribution.
 
 
-  Independent multivariate responses are handled.
+  Independent multiple responses are handled.
   If so then arguments \code{ipstr0} and \code{isize} may be vectors
   with length equal to the number of responses.
 
@@ -152,6 +181,7 @@ zinegbinomialff(lmunb = "loge", lsize = "loge", lonempstr0 = "logit",
   negative binomial as \eqn{k} tends to infinity.
 
 
+
   The zero-\emph{deflated} negative binomial distribution
   might be fitted by setting \code{lpstr0 = identitylink},
   albeit, not entirely reliably. See \code{\link{zipoisson}}
@@ -164,26 +194,49 @@ zinegbinomialff(lmunb = "loge", lsize = "loge", lonempstr0 = "logit",
 }
 
 \section{Warning }{
-  Numerical problems can occur, e.g., when the probability of
-  zero is actually less than, not more than, the nominal
+  This model can be difficult to fit to data,
+  and this family function is fragile.
+  The model is especially difficult to fit reliably when
+  the estimated \eqn{k} parameter is very large (so the model
+  approaches a zero-inflated Poisson distribution) or
+  much less than 1
+  (and gets more difficult as it approaches 0).
+  Numerical problems can also occur, e.g., when the probability of
+  a zero is actually less than, and not more than, the nominal
   probability of zero.
+  Similarly, numerical problems can occur if there is little
+  or no 0-inflation, or when the sample size is small.
   Half-stepping is not uncommon.
-  If failure to converge occurs, try using combinations of arguments
+  Successful convergence is sensitive to the initial values, therefore
+  if failure to converge occurs, try using combinations of arguments
   \code{stepsize} (in \code{\link{vglm.control}}),
   \code{imethod},
+  \code{imunb},
   \code{ishrinkage},
   \code{ipstr0},
   \code{isize}, and/or
   \code{zero} if there are explanatory variables.
+  Else try fitting an ordinary \code{\link{negbinomial}} model
+  or a \code{\link{zipoisson}} model.
 
 
-  An infinite loop might occur if some of the fitted values
-  (the means) are too close to 0.
+
+%  An infinite loop might occur if some of the fitted values
+%  (the means) are too close to 0.
 
 
-  This \pkg{VGAM} family function is computationally expensive
-  and usually runs slowly;
+
+  This \pkg{VGAM} family function can be computationally expensive
+  and can run slowly;
   setting \code{trace = TRUE} is useful for monitoring convergence.
+
+
+
+% 20160208; A bug caused this, but has been fixed now:
+% And \code{\link{zinegbinomial}} may converge slowly when
+% the estimated \eqn{k} parameter is less than 1;
+% and get slower as it approaches 0.
+
 
 
 } 
@@ -197,16 +250,15 @@ zinegbinomialff(lmunb = "loge", lsize = "loge", lonempstr0 = "logit",
 
 }
 \examples{
-\dontrun{ # Example 1
+# Example 1
 ndata <- data.frame(x2 = runif(nn <- 1000))
 ndata <- transform(ndata, pstr0 = logit(-0.5 + 1 * x2, inverse = TRUE),
                           munb  =   exp( 3   + 1 * x2),
                           size  =   exp( 0   + 2 * x2))
 ndata <- transform(ndata,
-                   y1 = rzinegbin(nn, mu = munb, size = size, pstr0 = pstr0),
-                   y2 = rzinegbin(nn, mu = munb, size = size, pstr0 = pstr0))
+                   y1 = rzinegbin(nn, mu = munb, size = size, pstr0 = pstr0))
 with(ndata, table(y1)["0"] / sum(table(y1)))
-fit <- vglm(cbind(y1, y2) ~ x2, zinegbinomial(zero = NULL), data = ndata)
+fit <- vglm(y1 ~ x2, zinegbinomial(zero = NULL), data = ndata)
 coef(fit, matrix = TRUE)
 summary(fit)
 head(cbind(fitted(fit), with(ndata, (1 - pstr0) * munb)))
@@ -214,6 +266,7 @@ round(vcov(fit), 3)
 
 
 # Example 2: RR-ZINB could also be called a COZIVGLM-ZINB-2
+\dontrun{
 ndata <- data.frame(x2 = runif(nn <- 2000))
 ndata <- transform(ndata, x3 = runif(nn))
 ndata <- transform(ndata, eta1 =          3   + 1   * x2 + 2 * x3)
@@ -232,3 +285,37 @@ Coef(rrzinb)
 \keyword{models}
 \keyword{regression}
 
+%zinegbinomial(lpstr0 = "logit", lmunb = "loge", lsize = "loge",
+%              type.fitted = c("mean", "pobs0", "pstr0", "onempstr0"),
+%              ipstr0 = NULL, isize = NULL, zero = "size",
+%              imethod = 1, ishrinkage = 0.95,
+%              probs.y = 0.75, cutoff.prob = 0.999,
+%              max.support = 2000, max.chunk.MB = 30,
+%              gpstr0 = 1:19/20, gsize = exp((-4):4),
+%              nsimEIM = 250)
+
+
+%zinegbinomial(zero = "size",
+%              type.fitted = c("mean", "pobs0", "pstr0", "onempstr0"),
+%              nsimEIM = 250, cutoff.prob = 0.999, max.support = 2000,
+%              max.chunk.MB = 30,
+%              lpstr0 = "logit", lmunb = "loge", lsize = "loge",
+%              imethod = 1, ipstr0 = NULL, imunb =  NULL,
+%              probs.y = 0.85, ishrinkage = 0.95,
+%              isize = NULL, gpstr0 = 1:19/20, gsize = exp((-4):4))
+%zinegbinomialff(lmunb = "loge", lsize = "loge", lonempstr0 = "logit",
+%                type.fitted = c("mean", "pobs0", "pstr0", "onempstr0"),
+%                isize = NULL, ionempstr0 = NULL,
+%                zero = c("size", "onempstr0"),
+%                imethod = 1, ishrinkage = 0.95,
+%                probs.y = 0.75, cutoff.prob = 0.999,
+%                max.support = 2000, max.chunk.MB = 30,
+%                gonempstr0 = 1:19/20, gsize = exp((-4):4),
+%                nsimEIM = 250)
+
+
+%ndata <- transform(ndata,
+%                   y1 = rzinegbin(nn, mu = munb, size = size, pstr0 = pstr0),
+%                   y2 = rzinegbin(nn, mu = munb, size = size, pstr0 = pstr0))
+%with(ndata, table(y1)["0"] / sum(table(y1)))
+%fit <- vglm(cbind(y1, y2) ~ x2, zinegbinomial(zero = NULL), data = ndata)

@@ -11,11 +11,29 @@ useDynLib(VGAM)
 export(as.char.expression)
 
 
+export(predictvglmS4VGAM)
+export(EIM.posNB.speciald, EIM.NB.speciald,
+       EIM.posNB.specialp, EIM.NB.specialp)
+export(.min.criterion.VGAM)
+export(pozibetabinom, pozibetabinom.ab,
+       rozibetabinom, rozibetabinom.ab,
+       dozibetabinom, dozibetabinom.ab,
+       Init.mu)
+
+
+export(log1mexp)
+export(dozibeta, pozibeta, qozibeta, rozibeta)
+export(logitoffsetlink)
+export(showvglmS4VGAM)
+export(showvgamS4VGAM)
 
 
 
-
-
+export(subsetarray3)
+export(tapplymat1)
+export(findFirstMethod)
+export(summaryvglmS4VGAM)
+export(showsummaryvglmS4VGAM)
 
 
 S3method(vcov, vlm, vcovvlm)
@@ -39,6 +57,7 @@ exportMethods(responseName)
              "matplot", "matpoints", "mtext", "par", "points", "rug",
              "segments", "text")
   importFrom("methods", "as", "is", "new", "slot", "slot<-", "slotNames",
+             "callNextMethod", "existsMethod", "signature",
              "show")
   importFrom("stats", ".getXlevels", "as.formula", "contrasts<-",
              "dbeta", "dbinom", "delete.response", "deriv3", "dgamma",
@@ -47,6 +66,7 @@ exportMethods(responseName)
              "model.offset", "model.response", "model.weights",
              "na.fail", "napredict", "optim", "pbeta", "pbinom",
              "pgamma", "pgeom", "pnbinom", "polym", "printCoefmat",
+             "plogis", "qlogis", 
              "pweibull", "qbeta", "qbinom", "qchisq", "qf", "qgamma",
              "qgeom", "qnbinom", "qt", "quantile", "qweibull", "rbeta",
              "rbinom", "rgamma", "rgeom", "rlnorm", "rlogis", "rnbinom",
@@ -349,7 +369,7 @@ cdf, cdf.lms.bcg, cdf.lms.bcn,
 cdf.lms.yjn, cdf.vglm, 
 Coef.rrvgam, Coefficients,
 coefqrrvglm, 
-coefvlm,
+coefvlm, coefvgam,
 coefvsmooth.spline, coefvsmooth.spline.fit,
 constraints, constraints.vlm, 
 deplot, deplot.default, deplot.lms.bcg, deplot.lms.bcn,
@@ -488,7 +508,7 @@ triangle, dtriangle, ptriangle, qtriangle, rtriangle,
   vcovvlm,
 vglm.fit, vgam.fit,
 vglm.garma.control, vglm.multinomial.control,
-vglm.multinomial.deviance.control, vglm.vcategorical.control,
+vglm.multinomial.deviance.control, vglm.VGAMcategorical.control,
 vlm, vlm.control,
 vnonlinear.control,
 wweights, yeo.johnson,
@@ -634,7 +654,10 @@ loglinb2, loglinb3,
 loglog,
 lvplot.qrrvglm, lvplot.rrvglm,
 Max, MNSs,
-dmultinomial, multinomial, margeff)
+dmultinomial, multinomial,
+margeffS4VGAM,
+cratio.derivs,
+margeff)
 
 
 export(

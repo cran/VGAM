@@ -125,19 +125,20 @@ vcontrol.expression <- expression({
 
   control <- control   # First one, e.g., vgam.control(...)
   mylist <- family@vfamily
-  for (i in length(mylist):1) {
+  for (jay in length(mylist):1) {
     for (ii in 1:2) {
       temp <- paste(if (ii == 1) "" else
                     paste(function.name, ".", sep = ""),
-                    mylist[i], ".control", sep = "")
+                    mylist[jay], ".control", sep = "")
       if (exists(temp, envir = VGAMenv)) {
         temp <- get(temp)
         temp <- temp(...)
-        for (k in names(temp))
-          control[[k]] <- temp[[k]]
+        for (kk in names(temp))
+          control[[kk]] <- temp[[kk]]
       }
     }
   }
+
 
 
   orig.criterion <- control$criterion

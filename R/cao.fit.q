@@ -659,8 +659,8 @@ callcaoc <- function(cmatrix,
 
 
   if (Rank == 2) {
-    smopar <- (c(spar1, spar2))[interleave.VGAM(4 * NOS, M = 2)]
-    dofvec <- (1.0 + c(df1.nl, df2.nl))[interleave.VGAM(4 * NOS, M = 2)]
+    smopar <- (c(spar1, spar2))[interleave.VGAM(4 * NOS, M1 = 2)]
+    dofvec <- (1.0 + c(df1.nl, df2.nl))[interleave.VGAM(4 * NOS, M1 = 2)]
     lamvec <- 0 * dofvec
     stop("20100414; havent got Rank = 2 going yet")
   } else {
@@ -1159,11 +1159,11 @@ Coef.rrvgam <- function(object,
       object@latvar
     }
 
-    optimum <- matrix(as.numeric(NA), Rank, NOS,
+    optimum <- matrix(NA_real_, Rank, NOS,
                       dimnames = list(latvar.names, ynames))
     extents <- apply(latvar.mat, 2, range)  # 2 by R
 
-    maximum <- rep(as.numeric(NA), len = NOS)
+    maximum <- rep(NA_real_, len = NOS)
 
     which.species <- 1:NOS  # Do it for all species
     if (Rank == 1) {
@@ -1859,7 +1859,7 @@ persp.rrvgam <-
     which.species.numer <- match(which.species, sppNames)
   }
 
-  LP <- matrix(as.numeric(NA), nrow(latvarmat), NOS)
+  LP <- matrix(NA_real_, nrow(latvarmat), NOS)
   for (sppno in 1:NOS) {
     temp <- predictrrvgam(object = object, grid = latvarmat, sppno = sppno,
                        Rank = Rank, deriv = 0, MSratio = MSratio)

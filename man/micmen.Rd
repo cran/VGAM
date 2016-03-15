@@ -48,24 +48,16 @@ micmen(rpar = 0.001, divisor = 10, init1 = NULL, init2 = NULL,
 
   }
   \item{imethod, probs.x}{
-  See \code{\link{CommonVGAMffArguments}} for more information.
+  See \code{\link{CommonVGAMffArguments}} for information.
 
   }
-  \item{nsimEIM}{
-  See \code{\link{CommonVGAMffArguments}} for more information.
+  \item{nsimEIM, zero}{
+  See \code{\link{CommonVGAMffArguments}} for information.
 
   }
   \item{oim}{
   Use the OIM?
-  See \code{\link{CommonVGAMffArguments}} for more information.
-
-  }
-  \item{zero}{
-  An integer-valued vector specifying which
-  linear/additive predictors are modelled as intercepts only.
-  The values must be from the set \{1,2\}.
-  A \code{NULL} means none.
-  See \code{\link{CommonVGAMffArguments}} for more information.
+  See \code{\link{CommonVGAMffArguments}} for information.
 
   }
 }

@@ -34,7 +34,7 @@ residualsvlm  <-
         if (pooled.weight) return(NULL)
         n <- object@misc$n
         M <- object@misc$M
-        wz <- weights(object, type = "w")  # $weights
+        wz <- weights(object, type = "work")  # $weights
         if (!length(wz))
           wz <- if (M == 1) rep(1, n) else matrix(1, n, M)
 
@@ -99,7 +99,7 @@ residualsvglm  <-
 
       n <- object@misc$n
       M <- object@misc$M
-      wz <- weights(object, type = "w")   # $weights
+      wz <- weights(object, type = "work")   # $weights
 
       if (M == 1) {
         if (any(wz < 0))

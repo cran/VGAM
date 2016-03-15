@@ -60,6 +60,8 @@ setClass("vglmff", representation(
       "middle2"       = "expression",
       "summary.dispersion"  = "logical",
       "vfamily"       = "character",
+      "validparams"   = "function",  # Added 20160305
+      "validfitted"   = "function",  # Added 20160305
       "simslot"       = "function",
       "deriv"         = "expression",
       "weight"        = "expression"),  #  "call"
@@ -536,6 +538,70 @@ setMethod("QR.Q", "vglm",
     NULL
   }
 })
+
+
+
+
+
+
+if (!isGeneric("margeffS4VGAM"))
+    setGeneric("margeffS4VGAM",
+               function(object, subset = NULL,
+                        VGAMff,
+                        ...)
+                 standardGeneric("margeffS4VGAM"),
+               package = "VGAM")
+
+
+
+
+
+if (!isGeneric("summaryvglmS4VGAM"))
+    setGeneric("summaryvglmS4VGAM",
+               function(object,
+                        VGAMff,
+                        ...)
+                 standardGeneric("summaryvglmS4VGAM"),
+               package = "VGAM")
+
+
+if (!isGeneric("showsummaryvglmS4VGAM"))
+    setGeneric("showsummaryvglmS4VGAM",
+               function(object,
+                        VGAMff,
+                        ...)
+                 standardGeneric("showsummaryvglmS4VGAM"),
+               package = "VGAM")
+
+
+
+
+
+if (!isGeneric("showvglmS4VGAM"))
+    setGeneric("showvglmS4VGAM",
+               function(object,
+                        VGAMff,
+                        ...)
+                 standardGeneric("showvglmS4VGAM"),
+               package = "VGAM")
+
+if (!isGeneric("showvgamS4VGAM"))
+    setGeneric("showvgamS4VGAM",
+               function(object,
+                        VGAMff,
+                        ...)
+                 standardGeneric("showvgamS4VGAM"),
+               package = "VGAM")
+
+
+
+if (!isGeneric("predictvglmS4VGAM"))
+    setGeneric("predictvglmS4VGAM",
+               function(object,
+                        VGAMff,
+                        ...)
+                 standardGeneric("predictvglmS4VGAM"),
+               package = "VGAM")
 
 
 

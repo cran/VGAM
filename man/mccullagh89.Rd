@@ -26,10 +26,8 @@ mccullagh89(ltheta = "rhobit", lnu = logoff(offset = 0.5),
 
   }
   \item{zero}{
-  An integer-valued vector specifying which
-  linear/additive predictors are modelled as intercepts only.
-  The default is none of them.
-  If used, choose one value from the set \{1,2\}.
+  See \code{\link{CommonVGAMffArguments}} for information.
+
 
   }
 }

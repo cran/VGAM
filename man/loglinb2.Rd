@@ -7,9 +7,9 @@
 
 }
 \usage{
-loglinb2(exchangeable = FALSE, zero = 3)
-
+loglinb2(exchangeable = FALSE, zero = "u12")
 }
+%loglinb2(exchangeable = FALSE, zero = 3)
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{exchangeable}{ Logical.
@@ -17,8 +17,11 @@ loglinb2(exchangeable = FALSE, zero = 3)
     be equal. Should be set \code{TRUE} for ears, eyes, etc. data.
 
   }
-  \item{zero}{ Which linear/additive predictor is modelled as an
-    intercept only? A \code{NULL} means none of them.
+  \item{zero}{ Which linear/additive predictors are modelled as
+    intercept-only?
+    A \code{NULL} means none of them.
+    See \code{\link{CommonVGAMffArguments}} for more information.
+
 
   }
 

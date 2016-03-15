@@ -13,7 +13,7 @@
 \usage{
 zipebcom(lmu12 = "cloglog", lphi12 = "logit", loratio = "loge",
          imu12 = NULL, iphi12 = NULL, ioratio = NULL, 
-         zero = 2:3, tol = 0.001, addRidge = 0.001)
+         zero = c("phi12", "oratio"), tol = 0.001, addRidge = 0.001)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

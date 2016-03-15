@@ -13,7 +13,7 @@
 \usage{
 weibullR(lscale = "loge", lshape = "loge",
          iscale = NULL,   ishape = NULL, lss = TRUE, nrfs = 1,
-         probs.y = c(0.2, 0.5, 0.8), imethod = 1, zero = ifelse(lss, -2, -1))
+         probs.y = c(0.2, 0.5, 0.8), imethod = 1, zero = "shape")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -48,6 +48,7 @@ weibullR(lscale = "loge", lshape = "loge",
   }
   \item{zero, probs.y, lss}{
   Details at \code{\link{CommonVGAMffArguments}}.
+
 
   }
 }

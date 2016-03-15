@@ -10,12 +10,13 @@
 }
 \usage{
 zibinomial(lpstr0 = "logit", lprob = "logit",
-           type.fitted = c("mean", "pobs0", "pstr0", "onempstr0"),
-           ipstr0 = NULL, zero = NULL, multiple.responses = FALSE, imethod = 1)
+           type.fitted = c("mean", "prob", "pobs0", "pstr0", "onempstr0"),
+           ipstr0 = NULL, zero = NULL, multiple.responses = FALSE,
+           imethod = 1)
 zibinomialff(lprob = "logit", lonempstr0 = "logit",
-             type.fitted = c("mean", "pobs0", "pstr0", "onempstr0"),
-             ionempstr0 = NULL, zero = 2, multiple.responses = FALSE,
-             imethod = 1)
+             type.fitted = c("mean", "prob", "pobs0", "pstr0", "onempstr0"),
+             ionempstr0 = NULL, zero = "onempstr0",
+             multiple.responses = FALSE, imethod = 1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -73,7 +74,7 @@ zibinomialff(lprob = "logit", lonempstr0 = "logit",
   }
   \item{zero, imethod}{ 
   See \code{\link{CommonVGAMffArguments}} for information.
-  Argument \code{zero} has changed its default value for version 0.9-2.
+  Argument \code{zero} changed its default value for version 0.9-2.
 
 
   }
@@ -208,7 +209,8 @@ zdata <- transform(zdata,
                    y = rzibinom(nn, size = sv, prob = mubin, pstr0 = pstr0))
 with(zdata, table(y))
 fit <- vglm(cbind(y, sv - y) ~ 1, zibinomialff, data = zdata, trace = TRUE)
-fit <- vglm(cbind(y, sv - y) ~ 1, zibinomialff, data = zdata, trace = TRUE, stepsize = 0.5)
+fit <- vglm(cbind(y, sv - y) ~ 1, zibinomialff, data = zdata, trace = TRUE,
+            stepsize = 0.5)
 
 coef(fit, matrix = TRUE)
 Coef(fit)  # Useful for intercept-only models

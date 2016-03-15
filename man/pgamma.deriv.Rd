@@ -81,7 +81,8 @@ pgamma.deriv(q, shape, tmax = 100)
   T. W. Yee wrote the wrapper function to the Fortran subroutine
   written by R. J. Moore. The subroutine was modified to run using
   double precision.
-  The original code came from \url{http://lib.stat.cmu.edu/apstat/187}.
+  The original code came from \code{http://lib.stat.cmu.edu/apstat/187}.
+  but this website has since become stale.
 
   
 }

@@ -199,7 +199,7 @@ lrtest_vglm <- function(object, ..., name = NULL) {
     }
   }
 
-  rval <- matrix(rep(as.numeric(NA), 5 * nmodels), ncol = 5)
+  rval <- matrix(rep(NA_real_, 5 * nmodels), ncol = 5)
   colnames(rval) <- c("#Df", "LogLik", "Df", "Chisq", "Pr(>Chisq)")
   rownames(rval) <- 1:nmodels
   
@@ -374,7 +374,7 @@ lrtest.default <- function(object, ..., name = NULL) {
     }
   }
 
-  rval <- matrix(rep(as.numeric(NA), 5 * nmodels), ncol = 5)
+  rval <- matrix(rep(NA_real_, 5 * nmodels), ncol = 5)
   colnames(rval) <- c("#Df", "LogLik", "Df", "Chisq", "Pr(>Chisq)")
   rownames(rval) <- 1:nmodels
   
@@ -549,7 +549,7 @@ waldtest_default <- function(object, ..., vcov = NULL,
     stop("to compare more than 2 models `vcov.' needs to be a function")
 
   test <- match.arg(test)
-  rval <- matrix(rep(as.numeric(NA), 4 * nmodels), ncol = 4)
+  rval <- matrix(rep(NA_real_, 4 * nmodels), ncol = 4)
   colnames(rval) <- c("Res.Df", "Df", test,
                       paste("Pr(>", test, ")", sep = ""))
   rownames(rval) <- 1:nmodels

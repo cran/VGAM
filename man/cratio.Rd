@@ -5,6 +5,7 @@
 \description{
   Fits a continuation ratio logit/probit/cloglog/cauchit/...
   regression model to an ordered (preferably) factor response.
+
 }
 \usage{
 cratio(link = "logit", parallel = FALSE, reverse = FALSE, zero = NULL,
@@ -81,11 +82,6 @@ Agresti, A. (2013)
 3rd ed. Hoboken, NJ, USA: Wiley.
 
 
-Simonoff, J. S. (2003)
-\emph{Analyzing Categorical Data},
-New York: Springer-Verlag.
-
-
 McCullagh, P. and Nelder, J. A. (1989)
 \emph{Generalized Linear Models}, 2nd ed. London: Chapman & Hall.
 
@@ -135,6 +131,7 @@ The \pkg{VGAM} package for categorical data analysis.
   \code{\link{acat}},
   \code{\link{cumulative}},
   \code{\link{multinomial}},
+  \code{\link{margeff}},
   \code{\link{pneumo}},
   \code{\link{logit}},
   \code{\link{probit}},
@@ -152,7 +149,12 @@ coef(fit, matrix = TRUE)
 constraints(fit)
 predict(fit)
 predict(fit, untransform = TRUE)
+margeff(fit)
 }
 \keyword{models}
 \keyword{regression}
+
+%Simonoff, J. S. (2003)
+%\emph{Analyzing Categorical Data},
+%New York: Springer-Verlag.
 

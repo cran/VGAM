@@ -1,5 +1,6 @@
 \name{AR1}
 \alias{AR1}
+\alias{AR1.control}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Autoregressive Process with Order-1 Family Function }
 \description{
@@ -10,10 +11,13 @@
 \usage{
 AR1(ldrift = "identitylink", lsd  = "loge", lvar = "loge",
     lrho = "rhobit", idrift  = NULL,
-    isd  = NULL, ivar = NULL, irho = NULL,
-    ishrinkage = 0.9, type.likelihood = c("exact", "conditional"),
-    var.arg = FALSE, nodrift = FALSE, almost1 = 0.99, zero = c(-2, -3))
+    isd  = NULL, ivar = NULL, irho = NULL, imethod = 1,
+    ishrinkage = 1, type.likelihood = c("exact", "conditional"),
+    var.arg = FALSE, nodrift = FALSE, almost1 = 0.99,
+    zero = c(if (var.arg) "var" else "sd", "rho"))
+ AR1.control(half.stepsizing = FALSE, ...)
 }
+%   zero = c(-2, -3)
 
 %     deviance.arg = FALSE,
 
@@ -41,8 +45,12 @@ AR1(ldrift = "identitylink", lsd  = "loge", lvar = "loge",
 
   }
 
-  \item{ishrinkage, zero}{
+  \item{ishrinkage, imethod, zero}{
   See \code{\link{CommonVGAMffArguments}} for more information.
+  The default for \code{zero} assumes there is a drift parameter to
+  be estimated (the default for that argument), so if a drift parameter
+  is suppressed and there are covariates, then \code{zero} will need
+  to be assigned the value 1 or 2 or \code{NULL}.
 
 
   }
@@ -76,6 +84,21 @@ AR1(ldrift = "identitylink", lsd  = "loge", lvar = "loge",
   A value close to 1 but slightly smaller. One of the off-diagonal
   EIM elements is multiplied by this, to ensure that the EIM is
   positive-definite.
+
+
+
+}
+
+
+\item{half.stepsizing, \ldots}{
+  A logical value, overwriting that of \code{\link{vglm.control}}.
+  Currently this setting is potentially dangerous, and is used
+  for aesthetics at the solution---no jittering occurs.
+  This can often be seen by setting \code{trace = TRUE} when the
+  value is set to \code{TRUE}.
+  The jittering is due to some heuristics applied to handle the
+  first observation---either by setting its prior weight to a value
+  very close to 0, else adjust for its EIM which is not of full rank.
 
 
 
@@ -163,18 +186,18 @@ AR1(ldrift = "identitylink", lsd  = "loge", lvar = "loge",
 }
 \examples{
 # Example 1: using  arima.sim() to generate a stationary time series
-nn <- 100; set.seed(1)
+nn <- 1000; set.seed(1)
 tsdata <- data.frame(x2 =  runif(nn))
+ar.coef.1 <- rhobit(-2, inverse = TRUE)  # Approx -0.8
+ar.coef.2 <- rhobit( 1, inverse = TRUE)  # Approx  0.5
 tsdata  <- transform(tsdata,
               index = 1:nn,
-              TS1 = arima.sim(nn, model = list(ar = -0.80),
+              TS1 = arima.sim(nn, model = list(ar = ar.coef.1),
                               sd = exp(1.0)),
-              TS2 = arima.sim(nn, model = list(ar =  0.50),
+              TS2 = arima.sim(nn, model = list(ar = ar.coef.2),
                               sd = exp(1.0 + 2 * x2)))
-fit1a <- vglm(cbind(TS1, TS2) ~ x2, AR1(zero = c(1:4, 6)),
-             data = tsdata, trace = TRUE)
-rhobit(-0.8)
-rhobit( 0.5)
+fit1a <- vglm(cbind(TS1, TS2) ~ x2, AR1(zero = "rho", nodrift = TRUE),
+              data = tsdata, trace = TRUE)
 coef(fit1a, matrix = TRUE)
 summary(fit1a)  # SEs are useful to know
 
@@ -200,6 +223,13 @@ head(weights(fit2a, type= "working"))  # Ditto
 }
 \keyword{models}
 \keyword{regression}
+
+
+
+%fit1a <- vglm(cbind(TS1, TS2) ~ x2, AR1(zero = c(1:4, 6)),
+%             data = tsdata, trace = TRUE)
+
+
 
 
 

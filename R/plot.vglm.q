@@ -838,7 +838,7 @@ vvplot.factor <-
 
   about <- function(ux, M, Delta = 1 / M) {
     if (M == 1) return(cbind(ux))
-    ans <- matrix(as.numeric(NA), length(ux), M)
+    ans <- matrix(NA_real_, length(ux), M)
     grid <- seq(-Delta, Delta, len = M)
     for (ii in 1:M) {
       ans[, ii] <- ux + grid[ii]

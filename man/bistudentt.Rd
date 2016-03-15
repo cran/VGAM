@@ -11,7 +11,7 @@
 \usage{
 bistudentt(ldf = "loglog", lrho = "rhobit",
            idf = NULL, irho = NULL, imethod = 1,
-           parallel = FALSE, zero = -1)
+           parallel = FALSE, zero = "rho")
 }
 %- maybe also 'usage' for other objects documented here.
 %apply.parint = TRUE,

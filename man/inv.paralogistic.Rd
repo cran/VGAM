@@ -10,7 +10,7 @@
 inv.paralogistic(lscale = "loge", lshape1.a = "loge", iscale = NULL, 
     ishape1.a = NULL, imethod = 1, lss = TRUE, gscale = exp(-5:5), 
     gshape1.a = exp(-5:5), probs.y = c(0.25, 0.5, 0.75),
-    zero = ifelse(lss, -2, -1))
+    zero = "shape")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

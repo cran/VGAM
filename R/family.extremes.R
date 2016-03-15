@@ -222,7 +222,7 @@ qgev <- function(p, location = 0, scale = 1, shape = 0,
           tolshape0 = 0.001,
           type.fitted = c("percentiles", "mean"),
           giveWarning = TRUE,
-          zero = 2:3) {
+          zero = c("scale", "shape")) {
 
 
 
@@ -272,9 +272,6 @@ qgev <- function(p, location = 0, scale = 1, shape = 0,
   if (!is.Numeric(gshape, length.arg = 2) ||
       gshape[1] >= gshape[2])
     stop("bad input for argument 'gshape'")
-  if (length(zero) &&
-      !is.Numeric(zero, integer.valued = TRUE, positive = TRUE))
-    stop("bad input for argument 'zero'")
 
 
   new("vglmff",
@@ -284,14 +281,24 @@ qgev <- function(p, location = 0, scale = 1, shape = 0,
             namesof("scale",    lscale, escale), ", ",
             namesof("shape",    lshape, eshape)),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
+                                predictors.names = predictors.names,
+                                M1 = 3)
   }), list( .zero = zero ))),
+
   infos = eval(substitute(function(...) {
     list(M1 = 3,
+         Q1 = 1,
+         expected = TRUE,
          multipleResponses = FALSE,
+         parameters.names = c("location", "scale", "shape"),
+         llocation = .llocat ,
+         lscale    = .lscale ,
+         lshape    = .lshape ,
          type.fitted = .type.fitted ,
          zero = .zero )
   }, list( .zero = zero,
+           .llocat = llocation, .lscale = lscale, .lshape = lshape,
            .type.fitted = type.fitted ))),
 
 
@@ -398,8 +405,8 @@ qgev <- function(p, location = 0, scale = 1, shape = 0,
 
       bad <- ((1 + init.xi*(y-init.mu)/init.sig) <= 0)
       if (fred <- sum(bad)) {
-        warning(paste(fred, "observations violating boundary",
-        "constraints while initializing. Taking corrective action."))
+        warning(fred, "observations violating boundary constraints ",
+                "while initializing. Taking corrective action")
         init.xi[bad] <- ifelse(y[bad] > init.mu[bad], 0.1, -0.1)
       }
 
@@ -424,11 +431,13 @@ qgev <- function(p, location = 0, scale = 1, shape = 0,
     shape <- eta2theta(eta[, 3], .lshape , .eshape )
 
 
-    type.fitted <- if (length(extra$type.fitted)) extra$type.fitted else {
-                     warning("cannot find 'type.fitted'. ",
-                             "Returning 'percentiles'.")
-                     "percentiles"
-                   }
+    type.fitted <-
+      if (length(extra$type.fitted)) {
+        extra$type.fitted
+      } else {
+        warning("cannot find 'type.fitted'. Returning 'percentiles'.")
+        "percentiles"
+      }
 
     type.fitted <- match.arg(type.fitted,
                              c("percentiles", "mean"))[1]
@@ -441,7 +450,7 @@ qgev <- function(p, location = 0, scale = 1, shape = 0,
     LP <- length(cent)
     if (type.fitted == "percentiles" &&  # Upward compatibility:
         LP > 0) {
-      fv <- matrix(as.numeric(NA), nrow(eta), LP)
+      fv <- matrix(NA_real_, nrow(eta), LP)
       for (ii in 1:LP) {
         yp <- -log(cent[ii] / 100)
         fv[!is.zero, ii] <- Locat[!is.zero] - sigma[!is.zero] *
@@ -511,9 +520,7 @@ qgev <- function(p, location = 0, scale = 1, shape = 0,
     mytolerance <- 0  # .Machine$double.eps
     if (any(bad <- (A1 <= mytolerance), na.rm = TRUE)) {
       if ( .giveWarning )
-        warning("There are", sum(bad),
-                "range violations in @loglikelihood")
-
+        warning("There are", sum(bad), "range violations in @loglikelihood")
       cat("There are", sum(bad),
           "range violations in @loglikelihood\n")
       flush.console()
@@ -565,7 +572,7 @@ qgev <- function(p, location = 0, scale = 1, shape = 0,
     dsi.deta <- dtheta.deta(sigma, .lscale , .escale )
     dxi.deta <- dtheta.deta(shape, .lshape , .eshape )
 
-    is.zero <- (abs(shape) < .tolshape0)
+    is.zero <- (abs(shape) < .tolshape0 )
     ii <- 1:nrow(eta)
     zedd <- (y-Locat) / sigma
     A <- 1 + shape * zedd
@@ -622,7 +629,7 @@ qgev <- function(p, location = 0, scale = 1, shape = 0,
     k2 <- k1 * kay
     k3 <- k2 * kay  # kay^3 * (1-2*kay)
 
-    wz <- matrix(as.numeric(NA), n, 6)
+    wz <- matrix(NA_real_, n, 6)
     wz[, iam(1, 1, M)] <- tmp2 / (sigma^2 * k0)
     wz[, iam(1, 2, M)] <- (tmp2 - tmp1) / (sigma^2 * k1)
     wz[, iam(1, 3, M)] <- (tmp1 * temp13 - tmp2) / (sigma * k2)
@@ -707,7 +714,7 @@ dgammadx <- function(x, deriv.arg = 1) {
                   tolshape0 = 0.001,
                   type.fitted = c("percentiles", "mean"),
                   giveWarning = TRUE,
-                  zero = 2:3) {
+                  zero = c("scale", "shape")) {
   if (!is.logical(giveWarning) || length(giveWarning) != 1)
     stop("bad input for argument 'giveWarning'")
   if (length(iscale) && !is.Numeric(iscale, positive = TRUE))
@@ -749,9 +756,6 @@ dgammadx <- function(x, deriv.arg = 1) {
                     positive = TRUE) ||
         tolshape0 > 0.1)
       stop("bad input for argument 'tolshape0'")
-    if (length(zero) &&
-        !is.Numeric(zero, integer.valued = TRUE, positive = TRUE))
-      stop("bad input for argument 'zero'")
 
 
   new("vglmff",
@@ -761,15 +765,27 @@ dgammadx <- function(x, deriv.arg = 1) {
           namesof("scale",    link = lscale, earg = escale), ", ",
           namesof("shape",    link = lshape, earg = eshape)),
   constraints = eval(substitute(expression({
-      constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
+                                predictors.names = predictors.names,
+                                M1 = 3)
   }), list( .zero = zero ))),
+
+
   infos = eval(substitute(function(...) {
     list(M1 = 3,
+         Q1 = 1,
+         expected = TRUE,
          multipleResponses = FALSE,
+         parameters.names = c("location", "scale", "shape"),
+         llocation = .llocat ,
+         lscale    = .lscale ,
+         lshape    = .lshape ,
          type.fitted = .type.fitted ,
          zero = .zero )
   }, list( .zero = zero,
+           .llocat = llocation, .lscale = lscale, .lshape = lshape,
            .type.fitted = type.fitted ))),
+
 
   initialize = eval(substitute(expression({
     M1 <- extra$M1 <- 3
@@ -845,8 +861,8 @@ dgammadx <- function(x, deriv.arg = 1) {
         }
         bad <- (1 + init.xi * (y - init.mu) / init.sig <= 0)
         if (fred <- sum(bad, na.rm = TRUE)) {
-          warning(paste(fred, "observations violating boundary",
-          "constraints while initializing. Taking corrective action."))
+          warning(fred, "observations violating boundary constraints ",
+                  "while initializing. Taking corrective action")
           init.xi[bad] <- ifelse(y[bad] > init.mu[bad], 0.01, -0.01)
         }
 
@@ -867,11 +883,13 @@ dgammadx <- function(x, deriv.arg = 1) {
     loc   <- eta2theta(eta[, 1], .llocat , earg = .elocat )
     sigma <- eta2theta(eta[, 2], .lscale , earg = .escale )
     xi    <- eta2theta(eta[, 3], .lshape , earg = .eshape )
-    type.fitted <- if (length(extra$type.fitted)) extra$type.fitted else {
-                     warning("cannot find 'type.fitted'. ",
-                             "Returning 'percentiles'.")
-                     "percentiles"
-                   }
+    type.fitted <-
+      if (length(extra$type.fitted)) {
+        extra$type.fitted
+      } else {
+        warning("cannot find 'type.fitted'. Returning 'percentiles'.")
+        "percentiles"
+      }
 
     type.fitted <- match.arg(type.fitted,
                              c("percentiles", "mean"))[1]
@@ -883,7 +901,7 @@ dgammadx <- function(x, deriv.arg = 1) {
     LP <- length(cent)
     if (type.fitted == "percentiles" &&  # Upward compatibility:
         LP > 0) {
-      fv <- matrix(as.numeric(NA), nrow(eta), LP)
+      fv <- matrix(NA_real_, nrow(eta), LP)
       for (ii in 1:LP) {
         yp <- -log(cent[ii] / 100)
         fv[!is.zero, ii] <- loc[!is.zero] - sigma[!is.zero] *
@@ -992,7 +1010,7 @@ dgammadx <- function(x, deriv.arg = 1) {
     temp100 <- gamma(2-kay)
     pp <- (1-kay)^2 * gamma(1-2*kay)  # gamma(0) is undefined so kay != 0.5
     qq <- temp100 * (digamma(1-kay) - (1-kay)/kay)
-    wz <- matrix(as.numeric(NA), n, 6)
+    wz <- matrix(NA_real_, n, 6)
     wz[, iam(1, 1, M)] <- pp / sigma^2
     wz[, iam(2, 2, M)] <- (1 - 2*temp100 + pp) / (sigma * kay)^2
     EulerM <- -digamma(1)
@@ -1139,9 +1157,6 @@ pgumbel <- function(q, location = 0, scale = 1,
       max(percentiles) >= 100))
     stop("bad input for argument 'percentiles'")
 
-  if (length(zero) &&
-      !is.Numeric(zero, integer.valued = TRUE, positive = TRUE))
-    stop("bad input for argument 'zero'")
 
   if (length(iscale) && !is.Numeric(iscale, positive = TRUE))
     stop("bad input for argument 'iscale'")
@@ -1154,8 +1169,27 @@ pgumbel <- function(q, location = 0, scale = 1,
             namesof("location", llocat,  earg = elocat ), ", ",
             namesof("scale",    lscale, earg = escale )),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
+                                predictors.names = predictors.names,
+                                M1 = 2)
   }), list( .zero = zero ))),
+
+
+  infos = eval(substitute(function(...) {
+    list(M1 = 2,
+         Q1 = 1,
+         expected = TRUE,
+         multipleResponses = FALSE,
+         parameters.names = c("location", "scale"),
+         llocation = .llocat ,
+         lscale    = .lscale ,
+         mpv = .mpv ,
+         zero = .zero )
+  }, list( .zero = zero,
+           .llocat = llocation, .lscale = lscale,
+           .mpv = mpv ))),
+
+
   initialize = eval(substitute(expression({
 
     predictors.names <-
@@ -1213,7 +1247,7 @@ pgumbel <- function(q, location = 0, scale = 1,
     LP <- length(Percentiles)  # may be 0
     if (LP > 0) {
       mpv <- extra$mpv
-      mu <- matrix(as.numeric(NA), nrow(eta), LP + mpv)  # LP may be 0
+      mu <- matrix(NA_real_, nrow(eta), LP + mpv)  # LP may be 0
       Rvec <- extra$R
       for (ii in 1:LP) {
         ci <- if (is.Numeric(Rvec))
@@ -1307,7 +1341,7 @@ pgumbel <- function(q, location = 0, scale = 1,
     temp5[col(temp5) > r.vec] <- 0
     temp5 <- temp5 %*% rep(1, ncol(temp5))
 
-    wz <- matrix(as.numeric(NA), n, dimm(M = 2))  # 3=dimm(M = 2)
+    wz <- matrix(NA_real_, n, dimm(M = 2))  # 3=dimm(M = 2)
     wz[, iam(1, 1, M)] <- r.vec / sigma^2
     wz[, iam(2, 1, M)] <- -(1 + r.vec * temp6) / sigma^2
     wz[, iam(2, 2, M)] <- (2*(r.vec+1)*temp6 + r.vec*(trigamma(r.vec) +
@@ -1538,7 +1572,7 @@ qgpd <- function(p, location = 0, scale = 1, shape = 0,
           type.fitted = c("percentiles", "mean"),
           giveWarning = TRUE,
           imethod = 1,
-          zero = -2) {
+          zero = "shape") {
 
   type.fitted <- match.arg(type.fitted,
                            c("percentiles", "mean"))[1]
@@ -1569,9 +1603,6 @@ qgpd <- function(p, location = 0, scale = 1, shape = 0,
       tolshape0 > 0.1)
     stop("bad input for argument 'tolshape0'")
 
-  if (length(zero) &&
-      !is.Numeric(zero, integer.valued = TRUE))
-    stop("bad input for argument 'zero'")
 
 
   new("vglmff",
@@ -1580,18 +1611,25 @@ qgpd <- function(p, location = 0, scale = 1, shape = 0,
           namesof("scale", link = lscale, earg = escale ), ", ",
           namesof("shape", link = lshape, earg = eshape )),
  constraints = eval(substitute(expression({
-    dotzero <- .zero
-    M1 <- 2
-    eval(negzero.expression.VGAM)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
+                                predictors.names = predictors.names,
+                                M1 = 2)
   }), list( .zero = zero ))),
 
   infos = eval(substitute(function(...) {
     list(M1 = 2,
          Q1 = 1,
+         expected = TRUE,
+         multipleResponses = TRUE,
+         parameters.names = c("scale", "shape"),
+         lscale    = .lscale ,
+         lshape    = .lshape ,
          type.fitted = .type.fitted ,
          zero = .zero )
-  }, list( .zero = zero, .type.fitted = type.fitted
+  }, list( .zero = zero, .type.fitted = type.fitted,
+           .lscale = lscale, .lshape = lshape
          ))),
+
 
 
   initialize = eval(substitute(expression({
@@ -1637,12 +1675,12 @@ qgpd <- function(p, location = 0, scale = 1, shape = 0,
     extra$threshold <- Threshold
 
 
-    mynames1 <- paste("scale",   if (ncoly > 1) 1:ncoly else "", sep = "")
-    mynames2 <- paste("shape",   if (ncoly > 1) 1:ncoly else "", sep = "")
+    mynames1 <- param.names("scale", ncoly)
+    mynames2 <- param.names("shape", ncoly)
     predictors.names <-
         c(namesof(mynames1, .lscale , earg = .escale , tag = FALSE),
           namesof(mynames2, .lshape , earg = .eshape , tag = FALSE))[
-          interleave.VGAM(M, M = M1)]
+          interleave.VGAM(M, M1 = M1)]
 
 
 
@@ -1679,7 +1717,7 @@ qgpd <- function(p, location = 0, scale = 1, shape = 0,
       etastart <-
         cbind(theta2eta(init.sig, .lscale , earg = .escale ),
               theta2eta(init.xii, .lshape , earg = .eshape ))[,
-              interleave.VGAM(M, M = M1)]
+              interleave.VGAM(M, M1 = M1)]
     }
   }), list( .lscale = lscale, .lshape = lshape,
             .iscale = iscale, .ishape = ishape,
@@ -1699,11 +1737,13 @@ qgpd <- function(p, location = 0, scale = 1, shape = 0,
       shape <- as.matrix(shape)
 
 
-    type.fitted <- if (length(extra$type.fitted)) extra$type.fitted else {
-                     warning("cannot find 'type.fitted'. ",
-                             "Returning 'percentiles'.")
-                     "percentiles"
-                   }
+    type.fitted <-
+      if (length(extra$type.fitted)) {
+        extra$type.fitted
+      } else {
+        warning("cannot find 'type.fitted'. Returning 'percentiles'.")
+        "percentiles"
+      }
 
     type.fitted <- match.arg(type.fitted,
                              c("percentiles", "mean"))[1]
@@ -1736,7 +1776,7 @@ qgpd <- function(p, location = 0, scale = 1, shape = 0,
       is.zero <- (abs(shape) < tolshape0 )  # A matrix
 
       LP <- length(percentiles)
-      fv <- matrix(as.numeric(NA), length(shape), LP)
+      fv <- matrix(NA_real_, length(shape), LP)
       is.zero <- (abs(shape) < tolshape0)
       for (ii in 1:LP) {
         temp <- 1 - percentiles[ii] / 100
@@ -1794,8 +1834,8 @@ qgpd <- function(p, location = 0, scale = 1, shape = 0,
     M1 <- extra$M1
     misc$link <-
       c(rep( .lscale , length = ncoly),
-        rep( .lshape , length = ncoly))[interleave.VGAM(M, M = M1)]
-    temp.names <- c(mynames1, mynames2)[interleave.VGAM(M, M = M1)]
+        rep( .lshape , length = ncoly))[interleave.VGAM(M, M1 = M1)]
+    temp.names <- c(mynames1, mynames2)[interleave.VGAM(M, M1 = M1)]
     names(misc$link) <- temp.names
 
     misc$earg <- vector("list", M)
@@ -1879,7 +1919,7 @@ qgpd <- function(p, location = 0, scale = 1, shape = 0,
     myderiv <- 
     c(w) * cbind(dl.dsigma * dsigma.deta,
                  dl.dShape * dShape.deta)
-    myderiv[, interleave.VGAM(M, M = M1)]
+    myderiv[, interleave.VGAM(M, M1 = M1)]
   }), list( .tolshape0 = tolshape0,
             .lscale = lscale, .escale = escale,
             .lshape = lshape, .eshape = eshape ))),
@@ -2038,9 +2078,6 @@ setMethod("guplot", "vlm",
       max(percentiles) >= 100))
     stop("bad input for argument 'percentiles'")
 
-  if (length(zero) &&
-      !is.Numeric(zero, integer.valued = TRUE, positive = TRUE))
-    stop("bad input for argument 'zero'")
 
   if (length(iscale) && !is.Numeric(iscale, positive = TRUE))
     stop("bad input for argument 'iscale'")
@@ -2048,14 +2085,34 @@ setMethod("guplot", "vlm",
   new("vglmff",
   blurb = c("Gumbel distribution (univariate response)\n\n",
             "Links:    ",
-            namesof("location", llocat, 
-                    earg = elocat, tag = TRUE), ", ", 
-            namesof("scale", lscale, earg = escale , tag = TRUE), "\n",
+            namesof("location", llocat, earg = elocat, tag = TRUE), ", ",
+            namesof("scale",    lscale, earg = escale, tag = TRUE), "\n",
             "Mean:     location + scale*0.5772..\n",
             "Variance: pi^2 * scale^2 / 6"),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
+                                predictors.names = predictors.names,
+                                M1 = 2)
   }), list( .zero = zero ))),
+
+
+
+  infos = eval(substitute(function(...) {
+    list(M1 = 2,
+         Q1 = 1,
+         expected = TRUE,
+         multipleResponses = FALSE,
+         parameters.names = c("location", "scale"),
+         llocation = .llocat ,
+         lscale    = .lscale ,
+         mpv = .mpv ,
+         zero = .zero )
+  }, list( .zero = zero,
+           .llocat = llocation, .lscale = lscale,
+           .mpv = mpv ))),
+
+
+
   initialize = eval(substitute(expression({
     y <- cbind(y)
     if (ncol(y) > 1)
@@ -2099,7 +2156,7 @@ setMethod("guplot", "vlm",
     mpv <- extra$mpv
     LP <- length(Percentiles)  # may be 0
     if (!LP) return(locat + sigma * EulerM)
-    mu <- matrix(as.numeric(NA), nrow(eta), LP + mpv)
+    mu <- matrix(NA_real_, nrow(eta), LP + mpv)
     Rvec <- extra$R
     if (1 <= LP)
     for (ii in 1:LP) {
@@ -2110,7 +2167,7 @@ setMethod("guplot", "vlm",
     if (mpv)
       mu[, ncol(mu)] <- locat - sigma * log(log(2))
     dmn2 <- if (LP >= 1) paste(as.character(Percentiles), "%",
-                              sep = "") else NULL
+                               sep = "") else NULL
     if (mpv)
       dmn2 <- c(dmn2, "MPV")
     dimnames(mu) <- list(dimnames(eta)[[1]], dmn2)
@@ -2165,7 +2222,7 @@ setMethod("guplot", "vlm",
     ned2l.dloc2 <- 1 / sca^2
     ned2l.dscaloc <- -(1 + digamma1) / sca^2 
 
-    wz = matrix(as.numeric(NA), n, dimm(M = 2))
+    wz = matrix(NA_real_, n, dimm(M = 2))
     wz[, iam(1, 1, M)] <- ned2l.dloc2 * dloc.deta^2
     wz[, iam(2, 2, M)] <- ned2l.dsca2 * dsca.deta^2
     wz[, iam(1, 2, M)] <- ned2l.dscaloc * dloc.deta * dsca.deta
@@ -2180,7 +2237,8 @@ setMethod("guplot", "vlm",
  cens.gumbel <- function(llocation = "identitylink",
                          lscale = "loge",
                          iscale = NULL,
-                         mean = TRUE, percentiles = NULL, zero = 2) {
+                         mean = TRUE, percentiles = NULL,
+                         zero = "scale") {
   llocat <- as.list(substitute(llocation))
   elocat <- link2list(llocat)
   llocat <- attr(elocat, "function.name")
@@ -2196,31 +2254,42 @@ setMethod("guplot", "vlm",
                any(percentiles >= 100)))
     stop("valid percentiles values must be given when mean = FALSE")
 
-  if (length(zero) &&
-      !is.Numeric(zero, integer.valued = TRUE, positive = TRUE))
-    stop("bad input for argument 'zero'")
 
 
   new("vglmff",
   blurb = c("Censored Gumbel distribution\n\n",
             "Links:    ",
-            namesof("location", llocat,  earg = elocat, tag = TRUE),
-            ", ", 
-            namesof("scale", lscale, earg = escale, tag = TRUE),
-            "\n",
+            namesof("location", llocat, earg = elocat, tag = TRUE), ", ", 
+            namesof("scale",    lscale, earg = escale, tag = TRUE), "\n",
             "Mean:     location + scale*0.5772..\n",
             "Variance: pi^2 * scale^2 / 6"),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
+                                predictors.names = predictors.names,
+                                M1 = 2)
   }), list( .zero = zero ))),
+
+
+  infos = eval(substitute(function(...) {
+    list(M1 = 2,
+         Q1 = 1,
+         expected = TRUE,
+         multipleResponses = FALSE,
+         parameters.names = c("location", "scale"),
+         llocation = .llocat ,
+         lscale    = .lscale ,
+         percentiles = .percentiles ,
+         zero = .zero )
+  }, list( .zero = zero,
+           .llocat = llocation, .lscale = lscale,
+           .percentiles = percentiles ))),
+
   initialize = eval(substitute(expression({
     y <- cbind(y)
     if (ncol(y) > 1)
       stop("Use gumbel.block() to handle multivariate responses")
     if (any(y) <= 0)
       stop("all response values must be positive")
-
-
 
 
 
@@ -2255,7 +2324,7 @@ setMethod("guplot", "vlm",
     EulerM <- -digamma(1)
     if (.mean) loc + sc * EulerM else {
       LP <- length(.percentiles)  # 0 if NULL
-      mu <- matrix(as.numeric(NA), nrow(eta), LP)
+      mu <- matrix(NA_real_, nrow(eta), LP)
       for (ii in 1:LP) {
           ci <- -log( .percentiles[ii] / 100)
           mu[, ii] <- loc - sc * log(ci)
@@ -2337,7 +2406,7 @@ setMethod("guplot", "vlm",
     ed2l.dsc2 <- ((2+digamma1)*digamma1 + trigamma(1) + 1) / sc^2
     ed2l.dloc2 <- 1 / sc^2
     ed2l.dlocsc <- -(1 + digamma1) / sc^2 
-    wz <- matrix(as.numeric(NA), n, dimm(M = 2))
+    wz <- matrix(NA_real_, n, dimm(M = 2))
     wz[, iam(1, 1, M)] <- A2 * ed2l.dloc2 * dloc.deta^2
     wz[, iam(2, 2, M)] <- A2 * ed2l.dsc2 * dsc.deta^2
     wz[, iam(1, 2, M)] <- A2 * ed2l.dlocsc * dloc.deta * dsc.deta
@@ -2509,8 +2578,27 @@ frechet.control <- function(save.weights = TRUE, ...) {
             namesof("scale", link = lscale, earg = escale ), ", ",
             namesof("shape", link = lshape, earg = eshape )),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
+                                predictors.names = predictors.names,
+                                M1 = 2)
   }), list( .zero = zero ))),
+
+
+  infos = eval(substitute(function(...) {
+    list(M1 = 2,
+         Q1 = 1,
+         expected = TRUE,
+         multipleResponses = FALSE,
+         parameters.names = c("scale", "shape"),
+         lscale  = .lscale ,
+         lshape  = .lshape ,
+         nsimEIM = .nsimEIM ,
+         zero = .zero )
+  }, list( .zero = zero,
+           .lscale = lscale,
+           .lshape = lshape,
+           .nsimEIM = nsimEIM ))),
+
   initialize = eval(substitute(expression({
 
 
@@ -2587,7 +2675,7 @@ frechet.control <- function(save.weights = TRUE, ...) {
     Scale <- eta2theta(eta[, 1], .lscale , earg = .escale )
     shape <- eta2theta(eta[, 2], .lshape , earg = .eshape )
 
-    ans <- rep(as.numeric(NA), length.out = length(shape))
+    ans <- rep(NA_real_, length.out = length(shape))
     ok <- shape > 1
     ans[ok] <- loc[ok] + Scale[ok] * gamma(1 - 1/shape[ok])
     ans
@@ -2692,8 +2780,8 @@ rec.normal.control <- function(save.weights = TRUE, ...) {
 
 
  rec.normal <- function(lmean = "identitylink", lsd = "loge",
-                       imean = NULL, isd = NULL, imethod = 1,
-                       zero = NULL) {
+                        imean = NULL, isd = NULL, imethod = 1,
+                        zero = NULL) {
   lmean <- as.list(substitute(lmean))
   emean <- link2list(lmean)
   lmean <- attr(emean, "function.name")
@@ -2720,8 +2808,29 @@ rec.normal.control <- function(save.weights = TRUE, ...) {
             "\n",
             "Variance: sd^2"),
   constraints = eval(substitute(expression({
-      constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
+                                predictors.names = predictors.names,
+                                M1 = 2)
   }), list( .zero = zero ))),
+
+
+  infos = eval(substitute(function(...) {
+    list(M1 = 2,
+         Q1 = 1,
+         expected = TRUE,
+         multipleResponses = FALSE,
+         parameters.names = c("mean", "sd"),
+         lmean  = .lmean ,
+         lsd    = .lsd ,
+         imethod = .imethod ,
+         zero = .zero )
+  }, list( .zero = zero,
+           .lmean = lmean,
+           .lsd   = lsd,
+           .imethod = imethod ))),
+
+
+
   initialize = eval(substitute(expression({
 
 

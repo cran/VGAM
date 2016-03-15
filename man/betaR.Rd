@@ -9,8 +9,8 @@
 }
 \usage{
 betaR(lshape1 = "loge", lshape2 = "loge",
-         i1 = NULL, i2 = NULL, trim = 0.05,
-         A = 0, B = 1, parallel = FALSE, zero = NULL)
+      i1 = NULL, i2 = NULL, trim = 0.05,
+      A = 0, B = 1, parallel = FALSE, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

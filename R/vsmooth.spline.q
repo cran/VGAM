@@ -283,12 +283,12 @@ vsmooth.spline <-
     if (all(!nonlin)) {
 
       junk.fill <- new("vsmooth.spline.fit",
-                       "Bcoefficients" = matrix(as.numeric(NA), 1, 1),
+                       "Bcoefficients" = matrix(NA_real_, 1, 1),
                        "knots"         = numeric(0),
                        "xmin"          = numeric(0),
                        "xmax"          = numeric(0))  # 8/11/03
 
-      dratio <- as.numeric(NA)
+      dratio <- NA_real_
 
       object <-
       new("vsmooth.spline",
@@ -634,7 +634,7 @@ predictvsmooth.spline.fit <- function(object, x, deriv = 0) {
   good <- !(bad.left | bad.right)
 
   ncb <- ncol(object@Bcoefficients)
-  y <- matrix(as.numeric(NA), length(xs), ncb)
+  y <- matrix(NA_real_, length(xs), ncb)
   if (ngood <- sum(good)) {
     junk <- .C("Yee_vbvs", as.integer(ngood),
           as.double(object@knots), as.double(object@Bcoefficients),

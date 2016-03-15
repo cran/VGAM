@@ -44,7 +44,10 @@ vonmises(llocation = extlogit(min = 0, max = 2 * pi), lscale = "loge",
   An integer-valued vector specifying which
   linear/additive predictors are modelled as intercepts only.
   The default is none of them.
-  If used, choose one value from the set \{1,2\}.
+  If used, one can choose one value from the set \{1,2\}.
+  See \code{\link{CommonVGAMffArguments}} for more information.
+
+
 
   }
 %  \item{hstep}{ Positive numeric. The \eqn{h} used for the finite difference

@@ -140,6 +140,7 @@ rrar.control <- function(stepsize = 0.5, save.weights = TRUE, ...) {
 }
 
 
+
  rrar <- function(Ranks = 1, coefstart = NULL) {
   lag.p <- length(Ranks)
 
@@ -345,7 +346,7 @@ vglm.garma.control <- function(save.weights = TRUE, ...) {
       etastart <- x[-indices, , drop = FALSE] %*% new.coeffs[1:p.lm]
     }
 
-    x <- cbind(x, matrix(as.numeric(NA), n, plag))  # Right size now
+    x <- cbind(x, matrix(NA_real_, n, plag))  # Right size now
     dx <- dimnames(x.save)
     morenames <- paste("(lag", 1:plag, ")", sep = "") 
     dimnames(x) <- list(dx[[1]], c(dx[[2]], morenames)) 
@@ -517,12 +518,23 @@ setMethod("show", "Coef.rrar",
 
 
 
- AR1.control <- function(criterion = "coefficients",
-                         stepsize = 0.33,
-                         maxit = 100, ...) {
+if (FALSE)
+ AR1.control <- function(criterion = "loglikelihood",
+                         stepsize = 1,
+                         maxit = 30, ...) {
   list(criterion = criterion,
        stepsize  = stepsize,
        maxit     = maxit)
+}
+
+
+
+if (TRUE)
+ AR1.control <-
+    function(half.stepsizing = FALSE,  # Avoids jittering very near the solution
+                         ...) {
+  list(half.stepsizing = half.stepsizing
+       )
 }
 
 
@@ -536,15 +548,16 @@ setMethod("show", "Coef.rrar",
            isd  = NULL,
            ivar = NULL,
            irho = NULL,
-           ishrinkage = 0.9, 
+           imethod = 1,
+           ishrinkage = 1,  # 0.90; unity means a constant
            type.likelihood = c("exact", "conditional"),
            var.arg = FALSE,  # TRUE,
            nodrift = FALSE,  # TRUE,
            almost1 = 0.99,
-           zero = c(-2, -3)) {
-  imethod <- 1
+           zero = c(if (var.arg) "var" else "sd", "rho")  # "ARcoef1"
+          ) {
   type.likelihood <- match.arg(type.likelihood,
-                           c("exact", "conditional"))[1]
+                               c("exact", "conditional"))[1]
 
   if (!is.Numeric(almost1, length.arg = 1) || almost1 < 0.9 ||
       almost1 >= 1)
@@ -562,8 +575,6 @@ setMethod("show", "Coef.rrar",
   
 
 
-
-
   if (!is.logical(nodrift) ||
       length(nodrift) != 1)
     stop("argument 'nodrift' must be a single logical")
@@ -572,8 +583,6 @@ setMethod("show", "Coef.rrar",
       length(var.arg) != 1)
     stop("argument 'var.arg' must be a single logical")
 
-  if(length(zero) && !is.Numeric(zero, integer.valued = TRUE))
-    stop("Bad input for argument 'zero'.")
   ismn <- idrift
   lsmn <- as.list(substitute(ldrift))
   esmn <- link2list(lsmn)
@@ -602,8 +611,8 @@ setMethod("show", "Coef.rrar",
             "Links:       ",
             if (nodrift) "" else
               paste(namesof("drift", lsmn, earg = esmn), ", ", sep = ""),
-            namesof(n.sc     , l.sc, earg = e.sc), ", ",
-            namesof("ARcoef1", lrho, earg = erho), "\n",
+            namesof(n.sc , l.sc, earg = e.sc), ", ",
+            namesof("rho", lrho, earg = erho), "\n",
             "Model:       Y_t = drift + rho * Y_{t-1} + error_{t},", "\n",
             "             where 'error_{2:n}' ~ N(0, sigma^2) independently",
             if (nodrift) ", and drift = 0" else "",
@@ -624,8 +633,8 @@ setMethod("show", "Coef.rrar",
          expected = TRUE, 
          multipleResponse = TRUE,
          type.likelihood = .type.likelihood ,
-         ldrift = if ( .nodrift) NULL else .lsmn ,
-         edrift = if ( .nodrift) NULL else .esmn ,
+         ldrift = if ( .nodrift ) NULL else .lsmn ,
+         edrift = if ( .nodrift ) NULL else .esmn ,
          lvar = .lvar ,
          lsd  = .lsdv ,
          evar = .evar ,
@@ -651,7 +660,7 @@ setMethod("show", "Coef.rrar",
     w <- check$w
     y <- check$y
     if ( .type.likelihood == "conditional")
-      w[1, ] <- 1.0e-6
+      w[1, ] <- 1.0e-8  # 1.0e-6
 
     
     NOS <- ncoly <- ncol(y)
@@ -673,33 +682,33 @@ setMethod("show", "Coef.rrar",
         namesof(var.names, .lvar , earg = .evar , tag = FALSE) else
         namesof(sdv.names, .lsdv , earg = .esdv , tag = FALSE),
         namesof(rho.names, .lrho , earg = .erho , tag = FALSE))
-    predictors.names <- predictors.names[interleave.VGAM(M, M = M1)]
+    predictors.names <- predictors.names[interleave.VGAM(M, M1 = M1)]
 
 
     if (!length(etastart)) {
-      init.smn <- if (length( .ismn ))
-                    matrix( .ismn , n, NOS, byrow = TRUE) else
-                    (1 - .ishrinkage ) * y +
-                         .ishrinkage   * matrix(colMeans(y),
-                                                n, ncoly, byrow = TRUE)
-      init.rho <- matrix(if (length( .irho )) .irho else 0.05,
+      init.smn <- Init.mu(y = y, w = w, imethod = .imethod ,  # x = x,
+                          imu = .ismn , ishrinkage = .ishrinkage ,
+                          pos.only = FALSE)
+
+
+
+
+      init.rho <- matrix(if (length( .irho )) .irho else 0.1,  # Dummy value
                          n, NOS, byrow = TRUE)
-      init.sdv <- matrix(if (length( .isdv )) .isdv else 1.0,
+      init.sdv <- matrix(if (length( .isdv )) .isdv else 1.0,  # Dummy value
                          n, NOS, byrow = TRUE)
-      init.var <- matrix(if (length( .ivar )) .ivar else 1.0,
+      init.var <- matrix(if (length( .ivar )) .ivar else 1.0,  # Dummy value
                          n, NOS, byrow = TRUE)
-      if ( .imethod == 1 ) {
-        for (spp. in 1: NOS) {
-          mycor <- cor(y[-1, spp.], y[-n, spp.])
-          init.smn[-1, spp.] <- init.smn[-1, spp.] * (1 - mycor)
-          if (!length( .irho ))
-            init.rho[, spp.] <- sign(mycor) * min(0.95, abs(mycor))
-          if (!length( .ivar ))
-            init.var[, spp.] <- var(y[, spp.]) * (1 - mycor^2)
-          if (!length( .isdv ))
-            init.sdv[, spp.] <- sqrt(init.var[, spp.])
-        }
-      }  
+      for (jay in 1: NOS) {
+        mycor <- cor(y[-1, jay], y[-n, jay])
+        init.smn[-1, jay] <- init.smn[-1, jay] * (1 - mycor)
+        if (!length( .irho ))
+          init.rho[, jay] <- sign(mycor) * min(0.95, abs(mycor))
+        if (!length( .ivar ))
+          init.var[, jay] <- var(y[, jay]) * (1 - mycor^2)
+        if (!length( .isdv ))
+          init.sdv[, jay] <- sqrt(init.var[, jay])
+      }  # for
 
       etastart <-
         cbind(if ( .nodrift ) NULL else
@@ -708,7 +717,7 @@ setMethod("show", "Coef.rrar",
               theta2eta(init.var, .lvar , earg = .evar ) else
               theta2eta(init.sdv, .lsdv , earg = .esdv ),
               theta2eta(init.rho, .lrho , earg = .erho ))
-      etastart <- etastart[, interleave.VGAM(M, M = M1), drop = FALSE]
+      etastart <- etastart[, interleave.VGAM(M, M1 = M1), drop = FALSE]
     }  # end of etastart
   }), list( .lsmn = lsmn, .lrho = lrho, .lsdv = lsdv, .lvar = lvar,
             .esmn = esmn, .erho = erho, .esdv = esdv, .evar = evar,
@@ -738,7 +747,7 @@ setMethod("show", "Coef.rrar",
     M1 <- extra$M1
 
     temp.names <- c(mynames1, mynames2, mynames3)
-    temp.names <- temp.names[interleave.VGAM(M1 * ncoly, M = M1)]
+    temp.names <- temp.names[interleave.VGAM(M1 * ncoly, M1 = M1)]
 
     misc$link <- rep( .lrho , length = M1 * ncoly)
     misc$earg <- vector("list", M1 * ncoly)
@@ -929,7 +938,7 @@ setMethod("show", "Coef.rrar",
                                    dl.dsdv * dsdv.deta,
                    dl.drho * drho.deta)
                    
-    myderiv[, interleave.VGAM(M, M = M1)]
+    myderiv[, interleave.VGAM(M, M1 = M1)]
   }), list( .lsmn = lsmn, .lrho = lrho, .lsdv = lsdv, .lvar = lvar,
             .esmn = esmn, .erho = erho, .esdv = esdv, .evar = evar,
             .nodrift = nodrift,
@@ -958,7 +967,7 @@ setMethod("show", "Coef.rrar",
 
     ned2l.drho <- ((    mu[-n, , drop = FALSE])^2 +
                     ar.var[-n, , drop = FALSE] /
-                     temp5[-1, , drop = FALSE]) / ar.var[-1, , drop = FALSE]
+                     temp5[-n, , drop = FALSE]) / ar.var[-1, , drop = FALSE]
     ned2l.drho <- rbind(0, ned2l.drho)
     ned2l.drho[1, ]  <- 2 * (ar.rho[1, ] / temp5[1, ])^2
     
@@ -1004,7 +1013,7 @@ dAR1 <- function(x,
                  log = FALSE) {
 
   type.likelihood <- match.arg(type.likelihood,
-                           c("exact", "conditional"))[1]
+                               c("exact", "conditional"))[1]
 
   is.vector.x <- is.vector(x)
 

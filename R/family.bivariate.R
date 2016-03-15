@@ -90,7 +90,7 @@ rbiclaytoncop <- function(n, apar = 0) {
     stop("argument 'imethod' must be 1 or 2 or 3")
 
   new("vglmff",
-  blurb = c(" bivariate clayton copula distribution)\n","Links:    ",
+  blurb = c(" bivariate Clayton copula distribution)\n","Links:    ",
                 namesof("apar", lapar, earg = eapar)),
 
   constraints = eval(substitute(expression({
@@ -99,10 +99,9 @@ rbiclaytoncop <- function(n, apar = 0) {
                            constraints = constraints,
                            apply.int = .apply.parint )
 
-    dotzero <- .zero
-    M1 <- 1
-    Yusual <- 2
-    eval(negzero.expression.VGAM)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
+                                predictors.names = predictors.names,
+                                M1 = 1)
   }), list( .zero = zero,
             .apply.parint = apply.parint,
             .parallel = parallel ))),
@@ -110,26 +109,28 @@ rbiclaytoncop <- function(n, apar = 0) {
   infos = eval(substitute(function(...) {
     list(M1 = 1,
          Q1 = 2,
-         Yusual = 2,
-         apply.parint = .apply.parint,
-         parallel = .parallel,
+         apply.parint = .apply.parint ,
+         parameters.names = c("apar"),
+         lapar = .lapar ,
+         parallel = .parallel ,
          zero = .zero )
     }, list( .zero = zero,
              .apply.parint = apply.parint, 
+             .lapar = lapar,
              .parallel = parallel ))),
 
   initialize = eval(substitute(expression({
     M1 <- 1
-    Yusual <- 2
+    Q1 <- 2
 
     temp5 <-
       w.y.check(w = w, y = y,
                 Is.positive.y = TRUE,
                 ncol.w.max = Inf,
                 ncol.y.max = Inf,
-                ncol.y.min = Yusual,
+                ncol.y.min = Q1,
                 out.wy = TRUE,
-                colsyperw = Yusual,
+                colsyperw = Q1,
                 maximize = TRUE)
 
     w <- temp5$w
@@ -139,10 +140,9 @@ rbiclaytoncop <- function(n, apar = 0) {
     ncoly <- ncol(y)
     extra$ncoly <- ncoly
     extra$M1 <- M1
-    extra$Yusual <- Yusual
-    M <- M1 * (ncoly / Yusual)
-    mynames1 <- paste("apar", if (M / M1 > 1) 1:(M / M1) else "",
-                      sep = "")
+    extra$Q1 <- Q1
+    M <- M1 * (ncoly / Q1)
+    mynames1 <- param.names("apar", M / M1)
     predictors.names <-
       namesof(mynames1, .lapar , earg = .eapar , short = TRUE)
 
@@ -158,7 +158,7 @@ rbiclaytoncop <- function(n, apar = 0) {
 
       if (!length( .iapar ))
         for (spp. in 1:(M / M1)) {
-          ymatj <- y[, (Yusual * spp. - 1):(Yusual * spp.)]
+          ymatj <- y[, (Q1 * spp. - 1):(Q1 * spp.)]
 
 
           apar.init0 <- if ( .imethod == 1) {
@@ -198,7 +198,7 @@ rbiclaytoncop <- function(n, apar = 0) {
 
   last = eval(substitute(expression({
     M1 <- extra$M1
-    Yusual <- extra$Yusual
+    Q1 <- extra$Q1
     misc$link <- rep( .lapar , length = M)
     temp.names <- mynames1
     names(misc$link) <- temp.names
@@ -210,7 +210,7 @@ rbiclaytoncop <- function(n, apar = 0) {
     }
 
     misc$M1 <- M1
-    misc$Yusual <- Yusual
+    misc$Q1 <- Q1
     misc$imethod <- .imethod
     misc$expected <- TRUE
     misc$parallel  <- .parallel
@@ -261,8 +261,8 @@ rbiclaytoncop <- function(n, apar = 0) {
 
   deriv = eval(substitute(expression({
     Alpha <- eta2theta(eta, .lapar , earg = .eapar )
-    Yindex1 <- extra$Yusual * (1:(extra$ncoly/extra$Yusual)) - 1
-    Yindex2 <- extra$Yusual * (1:(extra$ncoly/extra$Yusual))
+    Yindex1 <- extra$Q1 * (1:(extra$ncoly/extra$Q1)) - 1
+    Yindex2 <- extra$Q1 * (1:(extra$ncoly/extra$Q1))
 
 
 
@@ -374,7 +374,7 @@ bistudent.deriv.dof <-  function(u, v, nu, rho) {
             irho    = NULL,
             imethod = 1,
             parallel = FALSE,
-            zero = -1) {
+            zero = "rho") {
 
 
 
@@ -419,10 +419,9 @@ bistudent.deriv.dof <-  function(u, v, nu, rho) {
                            constraints = constraints,
                            apply.int = .apply.parint )
 
-    dotzero <- .zero
-    M1 <- 2
-    Yusual <- 2
-    eval(negzero.expression.VGAM)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
+                                predictors.names = predictors.names,
+                                M1 = 2)
   }), list( .zero = zero,
             .apply.parint = apply.parint,
             .parallel = parallel ))),
@@ -430,7 +429,7 @@ bistudent.deriv.dof <-  function(u, v, nu, rho) {
   infos = eval(substitute(function(...) {
     list(M1 = 2,
          Q1 = 2,
-         Yusual = 2,
+         parameters.names = c("df", "rho"),
          apply.parint = .apply.parint ,
          parallel = .parallel ,
          zero = .zero )
@@ -440,15 +439,15 @@ bistudent.deriv.dof <-  function(u, v, nu, rho) {
 
   initialize = eval(substitute(expression({
     M1 <- 2
-    Yusual <- 2
+    Q1 <- 2
 
     temp5 <-
     w.y.check(w = w, y = y,
               ncol.w.max = Inf,
               ncol.y.max = Inf,
-              ncol.y.min = Yusual,
+              ncol.y.min = Q1,
               out.wy = TRUE,
-              colsyperw = Yusual,
+              colsyperw = Q1,
               maximize = TRUE)
 
     w <- temp5$w
@@ -458,16 +457,14 @@ bistudent.deriv.dof <-  function(u, v, nu, rho) {
     ncoly <- ncol(y)
     extra$ncoly <- ncoly
     extra$M1 <- M1
-    extra$Yusual <- Yusual
-    M <- M1 * (ncoly / Yusual)
-    mynames1 <- paste("df",  if (M / M1 > 1) 1:(M / M1) else "",
-                      sep = "")
-    mynames2 <- paste("rho", if (M / M1 > 1) 1:(M / M1) else "",
-                      sep = "")
+    extra$Q1 <- Q1
+    M <- M1 * (ncoly / Q1)
+    mynames1 <- param.names("df",  M / M1)
+    mynames2 <- param.names("rho", M / M1)
     predictors.names <- c(
       namesof(mynames1, .ldof , earg = .edof , short = TRUE),
       namesof(mynames2, .lrho , earg = .erho , short = TRUE))[
-              interleave.VGAM(M, M = M1)]
+              interleave.VGAM(M, M1 = M1)]
 
 
     extra$dimnamesy1 <- dimnames(y)[[1]]
@@ -513,7 +510,7 @@ bistudent.deriv.dof <-  function(u, v, nu, rho) {
         cbind(theta2eta(dof.init, .ldof , earg = .edof ),
               theta2eta(rho.init, .lrho , earg = .erho ))
 
-      etastart <- etastart[, interleave.VGAM(M, M = M1)]
+      etastart <- etastart[, interleave.VGAM(M, M1 = M1)]
 
     }
   }), list( .imethod = imethod,
@@ -536,12 +533,12 @@ bistudent.deriv.dof <-  function(u, v, nu, rho) {
   last = eval(substitute(expression({
 
     M1 <- extra$M1
-    Yusual <- extra$Yusual
+    Q1 <- extra$Q1
     misc$link <-
       c(rep( .ldof , length = M / M1),
         rep( .lrho , length = M / M1))[
-                       interleave.VGAM(M, M = M1)]
-    temp.names <- c(mynames1, mynames2)[interleave.VGAM(M, M = M1)]
+                       interleave.VGAM(M, M1 = M1)]
+    temp.names <- c(mynames1, mynames2)[interleave.VGAM(M, M1 = M1)]
     names(misc$link) <- temp.names
 
     misc$earg <- vector("list", M)
@@ -552,7 +549,7 @@ bistudent.deriv.dof <-  function(u, v, nu, rho) {
     }
 
     misc$M1 <- M1
-    misc$Yusual <- Yusual
+    misc$Q1 <- Q1
     misc$imethod <- .imethod
     misc$expected <- TRUE
     misc$parallel  <- .parallel
@@ -576,8 +573,8 @@ bistudent.deriv.dof <-  function(u, v, nu, rho) {
     if (residuals) {
       stop("loglikelihood residuals not implemented yet")
     } else {
-      Yindex1 <- extra$Yusual * (1:(extra$ncoly/extra$Yusual)) - 1
-      Yindex2 <- extra$Yusual * (1:(extra$ncoly/extra$Yusual))
+      Yindex1 <- extra$Q1 * (1:(extra$ncoly/extra$Q1)) - 1
+      Yindex2 <- extra$Q1 * (1:(extra$ncoly/extra$Q1))
       ll.elts <-
         c(w) * dbistudentt(x1  = y[, Yindex1, drop = FALSE],
                            x2  = y[, Yindex2, drop = FALSE],
@@ -594,13 +591,13 @@ bistudent.deriv.dof <-  function(u, v, nu, rho) {
            .imethod = imethod ))),
   vfamily = c("bistudentt"),
   deriv = eval(substitute(expression({
-    M1 <- Yusual <- 2
+    M1 <- Q1 <- 2
     Dof <- eta2theta(eta[, c(TRUE, FALSE), drop = FALSE],
                      .ldof , earg = .edof )
     Rho <- eta2theta(eta[, c(FALSE, TRUE), drop = FALSE],
                      .lrho , earg = .erho )
-    Yindex1 <- extra$Yusual * (1:(extra$ncoly/extra$Yusual)) - 1
-    Yindex2 <- extra$Yusual * (1:(extra$ncoly/extra$Yusual))
+    Yindex1 <- extra$Q1 * (1:(extra$ncoly/extra$Q1)) - 1
+    Yindex2 <- extra$Q1 * (1:(extra$ncoly/extra$Q1))
 
 
     x1 <- c(y[, Yindex1])  # Convert into a vector
@@ -651,7 +648,7 @@ bistudent.deriv.dof <-  function(u, v, nu, rho) {
 
     ans <- c(w) * cbind(dl.ddof * ddof.deta,
                         dl.drho * drho.deta)
-    ans <- ans[, interleave.VGAM(M, M = M1)]
+    ans <- ans[, interleave.VGAM(M, M1 = M1)]
     ans
   }), list( .lrho = lrho, .ldof = ldof,
             .erho = erho, .edof = edof,
@@ -779,10 +776,9 @@ rbinormcop <- function(n, rho = 0  #, inverse = FALSE
                            constraints = constraints,
                            apply.int = .apply.parint )
 
-    dotzero <- .zero
-    M1 <- 1
-    Yusual <- 2
-    eval(negzero.expression.VGAM)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
+                                predictors.names = predictors.names,
+                                M1 = 1)
   }), list( .zero = zero,
             .apply.parint = apply.parint,
             .parallel = parallel ))),
@@ -790,7 +786,7 @@ rbinormcop <- function(n, rho = 0  #, inverse = FALSE
   infos = eval(substitute(function(...) {
     list(M1 = 1,
          Q1 = 2,
-         Yusual = 2,
+         parameters.names = c("rho"),
          apply.parint = .apply.parint ,
          parallel = .parallel ,
          zero = .zero )
@@ -800,16 +796,16 @@ rbinormcop <- function(n, rho = 0  #, inverse = FALSE
 
   initialize = eval(substitute(expression({
     M1 <- 1
-    Yusual <- 2
+    Q1 <- 2
 
     temp5 <-
     w.y.check(w = w, y = y,
               Is.positive.y = TRUE,
               ncol.w.max = Inf,
               ncol.y.max = Inf,
-              ncol.y.min = Yusual,
+              ncol.y.min = Q1,
               out.wy = TRUE,
-              colsyperw = Yusual,
+              colsyperw = Q1,
               maximize = TRUE)
 
     w <- temp5$w
@@ -819,10 +815,9 @@ rbinormcop <- function(n, rho = 0  #, inverse = FALSE
     ncoly <- ncol(y)
     extra$ncoly <- ncoly
     extra$M1 <- M1
-    extra$Yusual <- Yusual
-    M <- M1 * (ncoly / Yusual)
-    mynames1 <- paste("rho", if (M / M1 > 1) 1:(M / M1) else "",
-                      sep = "")
+    extra$Q1 <- Q1
+    M <- M1 * (ncoly / Q1)
+    mynames1 <- param.names("rho", M / M1)
     predictors.names <- c(
       namesof(mynames1, .lrho , earg = .erho , short = TRUE))
 
@@ -838,7 +833,7 @@ rbinormcop <- function(n, rho = 0  #, inverse = FALSE
 
       if (!length( .irho ))
       for (spp. in 1:(M / M1)) {
-        ymatj <- y[, (Yusual * spp. - 1):(Yusual * spp.)]
+        ymatj <- y[, (Q1 * spp. - 1):(Q1 * spp.)]
 
 
         rho.init0 <- if ( .imethod == 1) {
@@ -882,7 +877,7 @@ rbinormcop <- function(n, rho = 0  #, inverse = FALSE
   last = eval(substitute(expression({
 
     M1 <- extra$M1
-    Yusual <- extra$Yusual
+    Q1 <- extra$Q1
     misc$link <- rep( .lrho , length = M)
     temp.names <- mynames1
     names(misc$link) <- temp.names
@@ -894,7 +889,7 @@ rbinormcop <- function(n, rho = 0  #, inverse = FALSE
     }
 
     misc$M1 <- M1
-    misc$Yusual <- Yusual
+    misc$Q1 <- Q1
     misc$imethod <- .imethod
     misc$expected <- TRUE
     misc$parallel  <- .parallel
@@ -915,8 +910,8 @@ rbinormcop <- function(n, rho = 0  #, inverse = FALSE
     if (residuals) {
       stop("loglikelihood residuals not implemented yet")
     } else {
-      Yindex1 <- extra$Yusual * (1:(extra$ncoly/extra$Yusual)) - 1
-      Yindex2 <- extra$Yusual * (1:(extra$ncoly/extra$Yusual))
+      Yindex1 <- extra$Q1 * (1:(extra$ncoly/extra$Q1)) - 1
+      Yindex2 <- extra$Q1 * (1:(extra$ncoly/extra$Q1))
       ll.elts <-
         c(w) * dbinormcop(x1  = y[, Yindex1, drop = FALSE],
                           x2  = y[, Yindex2, drop = FALSE],
@@ -952,8 +947,8 @@ rbinormcop <- function(n, rho = 0  #, inverse = FALSE
 
   deriv = eval(substitute(expression({
     Rho <- eta2theta(eta, .lrho , earg = .erho )
-    Yindex1 <- extra$Yusual * (1:(extra$ncoly/extra$Yusual)) - 1
-    Yindex2 <- extra$Yusual * (1:(extra$ncoly/extra$Yusual))
+    Yindex1 <- extra$Q1 * (1:(extra$ncoly/extra$Q1)) - 1
+    Yindex2 <- extra$Q1 * (1:(extra$ncoly/extra$Q1))
 
     temp7 <- 1 - Rho^2
     q.y <- qnorm(y)
@@ -1017,12 +1012,24 @@ bilogistic.control <- function(save.weights = TRUE, ...) {
             namesof("location1", llocat, elocat), ", ",
             namesof("scale1",    lscale, escale), ", ",
             namesof("location2", llocat, elocat), ", ",
-            namesof("scale2",    lscale, escale),
-            "\n", "\n",
+            namesof("scale2",    lscale, escale), "\n", "\n",
             "Means:     location1, location2"),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
+                                predictors.names = predictors.names,
+                                M1 = 4)
   }), list( .zero = zero))),
+
+
+  infos = eval(substitute(function(...) {
+    list(M1 = 4,
+         Q1 = 2,
+         parameters.names = c("location1", "scale1", "location2", "scale2"),
+         zero = .zero )
+  }, list( .zero = zero
+         ))),
+
+
   initialize = eval(substitute(expression({
 
     temp5 <-
@@ -1089,11 +1096,11 @@ bilogistic.control <- function(save.weights = TRUE, ...) {
     cbind(eta[, 1], eta[, 2])
   },
   last = eval(substitute(expression({
-    misc$link <-    c(location1 = .llocat, scale1 = .lscale,
-                      location2 = .llocat, scale2 = .lscale)
+    misc$link <-    c(location1 = .llocat , scale1 = .lscale ,
+                      location2 = .llocat , scale2 = .lscale )
 
-    misc$earg <- list(location1 = .elocat, scale1 = .escale,
-                      location2 = .elocat, scale2 = .escale)
+    misc$earg <- list(location1 = .elocat , scale1 = .escale ,
+                      location2 = .elocat , scale2 = .escale )
 
     misc$expected <- FALSE
     misc$BFGS <- TRUE
@@ -1302,12 +1309,39 @@ rbilogis <- function(n, loc1 = 0, scale1 = 1, loc2 = 0, scale2 = 1) {
             namesof("b",  lb,  earg = eb ), ", ",
             namesof("bp", lbp, earg = ebp)),
   constraints = eval(substitute(expression({
+    M1 <- 4
+    Q1 <- 2
     constraints <- cm.VGAM(matrix(c(1, 1,0,0, 0,0, 1, 1), M, 2), x = x,
                            bool = .independent ,
                            constraints = constraints,
                            apply.int = TRUE)
-    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
-  }), list(.independent = independent, .zero = zero))),
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
+                                predictors.names = predictors.names,
+                                M1 = 4)
+  }), list( .independent = independent, .zero = zero))),
+
+
+
+  infos = eval(substitute(function(...) {
+    list(M1 = 4,
+         Q1 = 2,
+         expected = TRUE,
+         multipleResponses = FALSE,
+         parameters.names = c("a", "ap", "b", "bp"),
+         la    = .la  ,
+         lap   = .lap ,
+         lb    = .lb  ,
+         lbp   = .lbp ,
+         independent = .independent ,
+         zero = .zero )
+    }, list( .zero = zero,
+             .la    = la  ,
+             .lap   = lap ,
+             .lb    = lb  ,
+             .lbp   = lbp ,
+             .independent = independent ))),
+
+
   initialize = eval(substitute(expression({
 
     temp5 <-
@@ -1323,14 +1357,14 @@ rbilogis <- function(n, loc1 = 0, scale1 = 1, loc2 = 0, scale2 = 1) {
 
 
     predictors.names <-
-      c(namesof("a",  .la,  earg = .ea , short = TRUE), 
-        namesof("ap", .lap, earg = .eap, short = TRUE), 
-        namesof("b",  .lb,  earg = .eb , short = TRUE), 
-        namesof("bp", .lbp, earg = .ebp, short = TRUE))
+      c(namesof("a",  .la  , earg = .ea  , short = TRUE), 
+        namesof("ap", .lap , earg = .eap , short = TRUE), 
+        namesof("b",  .lb  , earg = .eb  , short = TRUE), 
+        namesof("bp", .lbp , earg = .ebp , short = TRUE))
     extra$y1.lt.y2 = y[, 1] < y[, 2]
 
     if (!(arr <- sum(extra$y1.lt.y2)) || arr == n)
-        stop("identifiability problem: either all y1<y2 or y2<y1")
+      stop("identifiability problem: either all y1<y2 or y2<y1")
 
     if (!length(etastart)) {
       sumx  <- sum(y[ extra$y1.lt.y2, 1]);
@@ -1343,20 +1377,20 @@ rbilogis <- function(n, loc1 = 0, scale1 = 1, loc2 = 0, scale2 = 1) {
         sumx <- sumx * 1.1; sumxp <- sumxp * 1.2;
         sumy <- sumy * 1.2; sumyp <- sumyp * 1.3;
       }
-      ainit  <- if (length(.ia))  rep(.ia, length.out = n) else
-         arr / (sumx + sumyp)
-      apinit <- if (length(.iap)) rep(.iap,length.out = n) else
-         (n-arr)/(sumxp-sumyp)
-      binit  <- if (length(.ib))  rep(.ib, length.out = n) else
-         (n-arr)/(sumx +sumyp)
-      bpinit <- if (length(.ib))  rep(.ibp,length.out = n) else
-         arr / (sumy - sumx)
+      ainit  <- if (length( .ia  )) rep( .ia  , length.out = n) else
+            arr  / (sumx  + sumyp)
+      apinit <- if (length( .iap )) rep( .iap , length.out = n) else
+         (n-arr) / (sumxp - sumyp)
+      binit  <- if (length( .ib  )) rep( .ib  , length.out = n) else
+         (n-arr) / (sumx  + sumyp)
+      bpinit <- if (length( .ibp )) rep( .ibp , length.out = n) else
+            arr  / (sumy - sumx)
 
       etastart <-
-        cbind(theta2eta(rep(ainit,  length.out = n), .la,  earg = .ea  ),
-              theta2eta(rep(apinit, length.out = n), .lap, earg = .eap ),
-              theta2eta(rep(binit,  length.out = n), .lb,  earg = .eb  ),
-              theta2eta(rep(bpinit, length.out = n), .lbp, earg = .ebp ))
+        cbind(theta2eta(rep(ainit,  length.out = n), .la  , earg = .ea  ),
+              theta2eta(rep(apinit, length.out = n), .lap , earg = .eap ),
+              theta2eta(rep(binit,  length.out = n), .lb  , earg = .eb  ),
+              theta2eta(rep(bpinit, length.out = n), .lbp , earg = .ebp ))
     }
   }), list( .la = la, .lap = lap, .lb = lb, .lbp = lbp,
             .ea = ea, .eap = eap, .eb = eb, .ebp = ebp,
@@ -1371,9 +1405,8 @@ rbilogis <- function(n, loc1 = 0, scale1 = 1, loc2 = 0, scale2 = 1) {
   }, list( .la = la, .lap = lap, .lb = lb, .lbp = lbp,
            .ea = ea, .eap = eap, .eb = eb, .ebp = ebp ))),
   last = eval(substitute(expression({
-    misc$link <-    c("a" = .la, "ap" = .lap, "b" = .lb, "bp" = .lbp)
-
-    misc$earg <- list("a" = .ea, "ap" = .eap, "b" = .eb, "bp" = .ebp)
+    misc$link <-    c("a" = .la , "ap" = .lap , "b" = .lb , "bp" = .lbp )
+    misc$earg <- list("a" = .ea , "ap" = .eap , "b" = .eb , "bp" = .ebp )
 
     misc$multipleResponses <- FALSE
   }), list( .la = la, .lap = lap, .lb = lb, .lbp = lbp,
@@ -1468,7 +1501,7 @@ rbilogis <- function(n, loc1 = 0, scale1 = 1, loc2 = 0, scale2 = 1) {
                            ishape1 = NULL,
                            ishape2 = NULL,
                            imethod = 1,
-                           zero = 2:3) {
+                           zero = "shape") {
   lscale <- as.list(substitute(lscale))
   escale <- link2list(lscale)
   lscale <- attr(escale, "function.name")
@@ -1506,8 +1539,29 @@ rbilogis <- function(n, loc1 = 0, scale1 = 1, loc2 = 0, scale2 = 1) {
             namesof("shape1", lshape1, earg = eshape1), ", ",
             namesof("shape2", lshape2, earg = eshape2)),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x, .zero , M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
+                                predictors.names = predictors.names,
+                                M1 = 3)
   }), list( .zero = zero ))),
+
+
+
+  infos = eval(substitute(function(...) {
+    list(M1 = 3,
+         Q1 = 2,
+         expected = TRUE,
+         multipleResponses = FALSE,
+         parameters.names = c("scale", "shape1", "shape2"),
+         lscale  = .lscale  ,
+         lshape1 = .lshape1 ,
+         lshape2 = .lshape2 ,
+         zero = .zero )
+    }, list( .zero = zero,
+             .lscale  = lscale ,
+             .lshape1 = lshape1,
+             .lshape2 = lshape2 ))),
+
+
   initialize = eval(substitute(expression({
 
     temp5 <-
@@ -1649,15 +1703,15 @@ rbilogis <- function(n, loc1 = 0, scale1 = 1, loc2 = 0, scale2 = 1) {
     d23 <- 0
 
     wz <- matrix(0, n, dimm(M))
-    wz[, iam(1, 1, M)] <- dtheta.deta(aparam, .lscale)^2 * d11
-    wz[, iam(2, 2, M)] <- dtheta.deta(shape1, .lshape1)^2 * d22
-    wz[, iam(3, 3, M)] <- dtheta.deta(shape2, .lshape2)^2 * d33
-    wz[, iam(1, 2, M)] <- dtheta.deta(aparam, .lscale) *
-                          dtheta.deta(shape1, .lshape1) * d12
-    wz[, iam(1, 3, M)] <- dtheta.deta(aparam, .lscale) *
-                          dtheta.deta(shape2, .lshape2) * d13
-    wz[, iam(2, 3, M)] <- dtheta.deta(shape1, .lshape1) *
-                          dtheta.deta(shape2, .lshape2) * d23
+    wz[, iam(1, 1, M)] <- dtheta.deta(aparam, .lscale  )^2 * d11
+    wz[, iam(2, 2, M)] <- dtheta.deta(shape1, .lshape1 )^2 * d22
+    wz[, iam(3, 3, M)] <- dtheta.deta(shape2, .lshape2 )^2 * d33
+    wz[, iam(1, 2, M)] <- dtheta.deta(aparam, .lscale  ) *
+                          dtheta.deta(shape1, .lshape1 ) * d12
+    wz[, iam(1, 3, M)] <- dtheta.deta(aparam, .lscale  ) *
+                          dtheta.deta(shape2, .lshape2 ) * d13
+    wz[, iam(2, 3, M)] <- dtheta.deta(shape1, .lshape1 ) *
+                          dtheta.deta(shape2, .lshape2 ) * d23
 
     c(w) * wz
   }), list( .lscale = lscale, .lshape1 = lshape1,
@@ -3123,7 +3177,7 @@ rbinorm <- function(n, mean1 = 0, mean2 = 0,
                       isd1   = NULL,       isd2   = NULL,
                       irho   = NULL,       imethod = 1,
                       eq.mean = FALSE,     eq.sd = FALSE,
-                      zero = 3:5) {
+                      zero = c("sd", "rho")) {
 
   lmean1 <- as.list(substitute(lmean1))
   emean1 <- link2list(lmean1)
@@ -3203,7 +3257,9 @@ rbinorm <- function(n, mean1 = 0, mean2 = 0,
 
     }
 
-    constraints <- cm.zero.VGAM(con.use    , x = x, .zero , M = M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
+                                predictors.names = predictors.names,
+                                M1 = 5)
   }), list( .zero = zero,
             .eq.sd   = eq.sd,
             .eq.mean = eq.mean ))),
@@ -3211,6 +3267,9 @@ rbinorm <- function(n, mean1 = 0, mean2 = 0,
   infos = eval(substitute(function(...) {
     list(M1 = 5,
          Q1 = 2,
+         expected = TRUE,
+         multipleResponses = FALSE,
+         parameters.names = c("mean1", "mean2", "sd1", "sd2", "rho"),
          eq.mean = .eq.mean ,
          eq.sd   = .eq.sd   ,
          zero    = .zero )
@@ -3288,16 +3347,16 @@ rbinorm <- function(n, mean1 = 0, mean2 = 0,
              .esd1   = esd1  , .esd2   = esd2  , .erho = erho ))),
 
   last = eval(substitute(expression({
-    misc$link <-    c("mean1" = .lmean1,
-                      "mean2" = .lmean2,
-                      "sd1"   = .lsd1,
-                      "sd2"   = .lsd2,
+    misc$link <-    c("mean1" = .lmean1 ,
+                      "mean2" = .lmean2 ,
+                      "sd1"   = .lsd1 ,
+                      "sd2"   = .lsd2 ,
                       "rho"   = .lrho )
 
-    misc$earg <- list("mean1" = .emean1,
-                      "mean2" = .emean2, 
-                      "sd1"   = .esd1,
-                      "sd2"   = .esd2,
+    misc$earg <- list("mean1" = .emean1 ,
+                      "mean2" = .emean2 , 
+                      "sd1"   = .esd1 ,
+                      "sd2"   = .esd2 ,
                       "rho"   = .erho )
 
     misc$expected <- TRUE
@@ -3310,11 +3369,11 @@ rbinorm <- function(n, mean1 = 0, mean2 = 0,
     function(mu, y, w, residuals = FALSE, eta,
              extra = NULL,
              summation = TRUE) {
-    mean1 <- eta2theta(eta[, 1], .lmean1, earg = .emean1)
-    mean2 <- eta2theta(eta[, 2], .lmean2, earg = .emean2)
-    sd1   <- eta2theta(eta[, 3], .lsd1  , earg = .esd1  )
-    sd2   <- eta2theta(eta[, 4], .lsd2  , earg = .esd2  )
-    Rho   <- eta2theta(eta[, 5], .lrho  , earg = .erho  )
+    mean1 <- eta2theta(eta[, 1], .lmean1 , earg = .emean1 )
+    mean2 <- eta2theta(eta[, 2], .lmean2 , earg = .emean2 )
+    sd1   <- eta2theta(eta[, 3], .lsd1   , earg = .esd1   )
+    sd2   <- eta2theta(eta[, 4], .lsd2   , earg = .esd2   )
+    Rho   <- eta2theta(eta[, 5], .lrho   , earg = .erho   )
 
     if (residuals) {
       stop("loglikelihood residuals not implemented yet")

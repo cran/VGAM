@@ -9,7 +9,7 @@
 }
 \usage{
 laplace(llocation = "identitylink", lscale = "loge",
-        ilocation = NULL, iscale = NULL, imethod = 1, zero = 2)
+        ilocation = NULL, iscale = NULL, imethod = 1, zero = "scale")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -35,7 +35,7 @@ laplace(llocation = "identitylink", lscale = "loge",
 
   }
   \item{zero}{
-  See \code{\link{CommonVGAMffArguments}} for more information.
+  See \code{\link{CommonVGAMffArguments}} for information.
 
 
   }

@@ -12,11 +12,13 @@
 gev(llocation = "identitylink", lscale = "loge", lshape = logoff(offset = 0.5),
     percentiles = c(95, 99), iscale=NULL, ishape = NULL,
     imethod = 1, gshape = c(-0.45, 0.45), tolshape0 = 0.001,
-    type.fitted = c("percentiles", "mean"), giveWarning = TRUE, zero = 2:3)
+    type.fitted = c("percentiles", "mean"), giveWarning = TRUE,
+    zero = c("scale", "shape"))
 egev(llocation = "identitylink", lscale = "loge", lshape = logoff(offset = 0.5),
      percentiles = c(95, 99), iscale=NULL,  ishape = NULL,
      imethod = 1, gshape = c(-0.45, 0.45), tolshape0 = 0.001,
-     type.fitted = c("percentiles", "mean"), giveWarning = TRUE, zero = 2:3)
+     type.fitted = c("percentiles", "mean"), giveWarning = TRUE,
+     zero = c("scale", "shape"))
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -128,13 +130,14 @@ egev(llocation = "identitylink", lscale = "loge", lshape = logoff(offset = 0.5),
 
   }
   \item{zero}{ 
-  An integer-valued vector specifying which
+  A specifying which
   linear/additive predictors are modelled as intercepts only.
-  The values must be from the set \{1,2,3\} corresponding
+  The values can be from the set \{1,2,3\} corresponding
   respectively to \eqn{\mu}{mu}, \eqn{\sigma}{sigma}, \eqn{\xi}{xi}.
   If \code{zero = NULL} then all linear/additive predictors are modelled as
   a linear combination of the explanatory variables.
   For many data sets having \code{zero = 3} is a good idea.
+  See \code{\link{CommonVGAMffArguments}} for information.
 
 
   }
@@ -185,7 +188,7 @@ egev(llocation = "identitylink", lscale = "loge", lshape = logoff(offset = 0.5),
 
 }
 \section{Warning }{
-  Currently, if an estimate of \eqn{\xi}{xi} is too close to zero then
+  Currently, if an estimate of \eqn{\xi}{xi} is too close to 0 then
   an error will occur for \code{gev()} with multivariate responses.
   In general, \code{egev()} is more reliable than \code{gev()}.
 

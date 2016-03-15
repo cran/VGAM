@@ -70,8 +70,11 @@
 
   infos = eval(substitute(function(...) {
     list(M1 = 1,  # zz???
+         Q1 = 1,
          parallel = .parallel ,
-         multipleResponses = TRUE )
+         expected = TRUE,
+         multipleResponses = TRUE,
+         parameters.names = as.character(NA))
   }, list( .parallel = parallel ))),
 
   initialize = eval(substitute(expression({

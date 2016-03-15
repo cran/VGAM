@@ -177,6 +177,16 @@ Objects can be created by calls of the form \code{new("vglmff", ...)}.
   of the weight matrices.
    
   }
+
+  \item{\code{validfitted, validparams}:}{
+  Functions that test that the fitted values and
+  all parameters are within range.
+  These functions can issue a warning if violations are detected.
+   
+
+  }
+
+
 }
 }
 

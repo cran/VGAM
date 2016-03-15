@@ -13,9 +13,11 @@
 
 
 
+
 yformat <- function(x, digits = options()$digits) {
   format(ifelse(abs(x) < 0.001, signif(x, digits), round(x, digits)))
 }
+
 
 
 
@@ -26,7 +28,8 @@ summaryvglm <-
            dispersion = NULL, digits = NULL,
            presid = TRUE,
            signif.stars = getOption("show.signif.stars"),
-           nopredictors = FALSE
+           nopredictors = FALSE,
+           ...  # Added 20151211
           ) {
 
 
@@ -48,6 +51,8 @@ summaryvglm <-
   stuff <- summaryvlm(
                       object,
 
+                      presid = FALSE,
+ 
                       correlation = correlation,
                       dispersion = dispersion)
 
@@ -79,6 +84,7 @@ summaryvglm <-
       df = stuff@df,
       sigma = stuff@sigma)
 
+
   if (presid) {
     Presid <- resid(object, type = "pearson")
     if (length(Presid))
@@ -95,8 +101,118 @@ summaryvglm <-
   if (is.numeric(stuff@dispersion))
     slot(answer, "dispersion") <- stuff@dispersion
 
+
+
+
+
+
+  try.this <- findFirstMethod("summaryvglmS4VGAM", object@family@vfamily)
+  if (length(try.this)) {
+    new.postslot <-
+    summaryvglmS4VGAM(object = object,
+                      VGAMff = new(try.this),
+                      ...)
+    answer@post <- new.postslot
+  } else {
+  }
+
+
+
   answer
 }
+
+
+
+
+
+
+
+
+setMethod("summaryvglmS4VGAM",  signature(VGAMff = "cumulative"),
+  function(object,
+           VGAMff,
+           ...) {
+   object@post <-
+     callNextMethod(VGAMff = VGAMff,
+                    object = object,
+                    ...)
+  object@post$reverse <- object@misc$reverse
+ 
+
+  cfit <- coef(object, matrix = TRUE)
+  M <- ncol(cfit)
+  if (rownames(cfit)[1] ==  "(Intercept)")
+    object@post$expcoeffs <- exp(coef(object)[-(1:M)])
+
+
+  object@post
+})
+
+
+
+setMethod("showsummaryvglmS4VGAM",  signature(VGAMff = "cumulative"),
+  function(object,
+           VGAMff,
+           ...) {
+
+  if (length(object@post$expcoeffs)) {
+    cat("\nExponentiated coefficients:\n")
+    print(object@post$expcoeffs)
+  }
+  if (FALSE) {
+    if (object@post$reverse)
+    cat("Reversed\n\n") else
+    cat("Not reversed\n\n")
+  }
+})
+
+
+
+
+
+
+setMethod("summaryvglmS4VGAM",  signature(VGAMff = "multinomial"),
+  function(object,
+           VGAMff,
+           ...) {
+   object@post <-
+     callNextMethod(VGAMff = VGAMff,
+                    object = object,
+                    ...)
+  object@post$refLevel <- object@misc$refLevel
+  object@post
+})
+
+
+
+setMethod("showsummaryvglmS4VGAM",  signature(VGAMff = "multinomial"),
+  function(object,
+           VGAMff,
+           ...) {
+  cat("\nReference group is level ", object@post$refLevel,
+      " of the response\n")
+  callNextMethod(VGAMff = VGAMff,
+                 object = object,
+                 ...)
+})
+
+
+
+setMethod("summaryvglmS4VGAM",  signature(VGAMff = "VGAMcategorical"),
+  function(object,
+           VGAMff,
+           ...) {
+  object@post
+})
+
+
+setMethod("showsummaryvglmS4VGAM",  signature(VGAMff = "VGAMcategorical"),
+  function(object,
+           VGAMff,
+           ...) {
+})
+
+
 
 
 
@@ -108,6 +224,7 @@ setMethod("logLik",  "summary.vglm", function(object, ...)
   logLik.vlm(object, ...))
 
 
+
 show.summary.vglm <-
   function(x,
            digits = max(3L, getOption("digits") - 3L),  # Same as glm()
@@ -115,7 +232,8 @@ show.summary.vglm <-
            prefix = "",
            presid = TRUE,
            signif.stars = NULL,  # Use this if logical; 20140728
-           nopredictors = NULL   # Use this if logical; 20150831
+           nopredictors = NULL,   # Use this if logical; 20150831
+           ...  # Added 20151214
            ) {
 
   M <- x@misc$M
@@ -230,6 +348,7 @@ show.summary.vglm <-
 
   cat("\nNumber of iterations:", format(trunc(x@iter)), "\n")
 
+
   if (!is.null(correl)) {
     ncol.X.vlm <- dim(correl)[2]
     if (ncol.X.vlm > 1) {
@@ -241,8 +360,24 @@ show.summary.vglm <-
             digits = digits)
     }
   }
+
+
+
+
+
+  try.this <- findFirstMethod("showsummaryvglmS4VGAM", x@family@vfamily)
+  if (length(try.this)) {
+    showsummaryvglmS4VGAM(object = x,
+            VGAMff = new(try.this),
+            ...)
+  } else {
+  }
+
+
+
   invisible(NULL)
 }
+
 
 
 
@@ -260,6 +395,33 @@ setMethod("show", "summary.vglm",
           show.summary.vglm(object))
 
 
+
+
+
+
+
+
+
+
+if (FALSE)
+show.summary.binom2.or <-
+  function(x,
+           digits = max(3L, getOption("digits") - 3L)  # Same as glm()
+          ) {
+
+  if (length(x@post$oratio) == 1 &&
+      is.numeric(x@post$oratio)) {
+    cat("\nOdds ratio: ", round(x@post$oratio, digits), "\n")
+  }
+}
+
+
+
+
+if (FALSE)
+setMethod("show", "summary.binom2.or",
+          function(object)
+          show.summary.vglm(object))
 
 
 

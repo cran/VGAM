@@ -510,7 +510,7 @@ rrvglm.fit <-
       stop("rrvglm only handles full-rank models (currently)")
 
     if (nice31) {
-      R <- matrix(as.numeric(NA), 5, 5)
+      R <- matrix(NA_real_, 5, 5)
     } else {
       R <- tfit$qr$qr[1:ncol.X.vlm, 1:ncol.X.vlm, drop = FALSE]
       R[lower.tri(R)] <- 0

@@ -14,7 +14,7 @@
 \usage{
 weibull.mean(lmean = "loge", lshape = "loge", imean = NULL,
              ishape = NULL, probs.y = c(0.2, 0.5, 0.8),
-             imethod = 1, zero = -2)
+             imethod = 1, zero = "shape")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

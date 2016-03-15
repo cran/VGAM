@@ -9,7 +9,7 @@
 
 }
 \usage{
-lognormal(lmeanlog = "identitylink", lsdlog = "loge", zero = 2)
+lognormal(lmeanlog = "identitylink", lsdlog = "loge", zero = "sdlog")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -32,10 +32,10 @@ lognormal(lmeanlog = "identitylink", lsdlog = "loge", zero = 2)
 
 
   \item{zero}{
-  An integer-valued vector specifying which
-  linear/additive predictors are modelled as intercepts only.
+  Specifies which
+  linear/additive predictor is modelled as intercept-only.
   For \code{lognormal()},
-  the values must be from the set \{1,2\} which correspond to
+  the values can be from the set \{1,2\} which correspond to
   \code{mu}, \code{sigma}, respectively.
   See \code{\link{CommonVGAMffArguments}} for more information.
 

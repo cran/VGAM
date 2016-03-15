@@ -81,8 +81,9 @@ levy(location = 0, lscale = "loge", iscale = NULL)
 
 
 \seealso{ 
-  The Nolan article is at
-  \url{http://academic2.american.edu/~jpnolan/stable/chap1.pdf}.
+  The Nolan article was at
+  \code{http://academic2.american.edu/~jpnolan/stable/chap1.pdf}.
+
 
 
 % \code{\link{dlevy}}.

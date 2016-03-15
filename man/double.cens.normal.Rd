@@ -9,7 +9,7 @@
 }
 \usage{
 double.cens.normal(r1 = 0, r2 = 0, lmu = "identitylink", lsd = "loge",
-                   imu = NULL, isd = NULL, zero = 2)
+                   imu = NULL, isd = NULL, zero = "sd")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -37,15 +37,18 @@ double.cens.normal(r1 = 0, r2 = 0, lmu = "identitylink", lsd = "loge",
   \code{r1} or \code{r2} are positive.
 
 
+
   By default, the mean is the first linear/additive predictor and
   the log of the standard deviation is the second linear/additive
   predictor.
+
 
 
 } \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}},
   and \code{\link{vgam}}.
+
 
 
 }
@@ -95,7 +98,8 @@ c(sd(mu.save), sd(sd.save))
 
 # Data from Sarhan and Greenberg (1962); MLEs are mu = 9.2606, sd = 1.3754
 strontium90 <- data.frame(y = c(8.2, 8.4, 9.1, 9.8, 9.9))
-fit <- vglm(y ~ 1, double.cens.normal(r1 = 2, r2 = 3, isd = 6), strontium90, trace = TRUE)
+fit <- vglm(y ~ 1, double.cens.normal(r1 = 2, r2 = 3, isd = 6),
+            data = strontium90, trace = TRUE)
 coef(fit, matrix = TRUE)
 Coef(fit)
 }

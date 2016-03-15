@@ -117,11 +117,13 @@ extlogit(theta, min = 0, max = 1, bminvalue = NULL, bmaxvalue = NULL,
 
 \seealso{ 
     \code{\link{Links}},
+    \code{\link{logitoffsetlink}},
     \code{\link{probit}},
     \code{\link{cloglog}},
     \code{\link{cauchit}},
     \code{\link{logistic1}},
     \code{\link{loge}},
+    \code{\link[stats]{plogis}},
     \code{\link{multilogit}}.
 
 

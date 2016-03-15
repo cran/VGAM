@@ -11,11 +11,11 @@
 }
 \usage{
 zabinomial(lpobs0 = "logit", lprob = "logit",
-           type.fitted = c("mean", "pobs0"),
+           type.fitted = c("mean", "prob", "pobs0"),
            ipobs0 = NULL, iprob = NULL, imethod = 1, zero = NULL)
 zabinomialff(lprob = "logit", lonempobs0 = "logit",
-             type.fitted = c("mean", "pobs0", "onempobs0"),
-             iprob = NULL, ionempobs0 = NULL, imethod = 1, zero = 2)
+             type.fitted = c("mean", "prob", "pobs0", "onempobs0"),
+             iprob = NULL, ionempobs0 = NULL, imethod = 1, zero = "onempobs0")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -161,11 +161,12 @@ zdata <- transform(zdata,
                    y1 = rzabinom(nn, size = size, prob = prob, pobs0 = pobs0))
 with(zdata, table(y1))
 
-fit <- vglm(cbind(y1, size - y1) ~ x2, zabinomial(zero = NULL), data = zdata, trace = TRUE)
-coef(fit, matrix = TRUE)
-head(fitted(fit))
-head(predict(fit))
-summary(fit)
+zfit <- vglm(cbind(y1, size - y1) ~ x2, zabinomial(zero = NULL),
+             data = zdata, trace = TRUE)
+coef(zfit, matrix = TRUE)
+head(fitted(zfit))
+head(predict(zfit))
+summary(zfit)
 }
 \keyword{models}
 \keyword{regression}

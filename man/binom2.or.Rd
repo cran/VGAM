@@ -13,7 +13,7 @@
 }
 \usage{
 binom2.or(lmu = "logit", lmu1 = lmu, lmu2 = lmu, loratio = "loge",
-          imu1 = NULL, imu2 = NULL, ioratio = NULL, zero = 3,
+          imu1 = NULL, imu2 = NULL, ioratio = NULL, zero = "oratio",
           exchangeable = FALSE, tol = 0.001, more.robust = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -47,7 +47,10 @@ binom2.or(lmu = "logit", lmu1 = lmu, lmu2 = lmu, loratio = "loge",
   }
   \item{zero}{
   Which linear/additive predictor is modelled as an intercept only?
+  The default is for the odds ratio.
   A \code{NULL} means none.
+  See \code{\link{CommonVGAMffArguments}} for more details.
+
 
 
   }
@@ -92,7 +95,7 @@ binom2.or(lmu = "logit", lmu1 = lmu, lmu2 = lmu, loratio = "loge",
   The model is fitted by maximum likelihood estimation since the full
   likelihood is specified.
   The two binary responses are independent if and only if the odds ratio
-  is unity, or equivalently, the log odds ratio is zero.  Fisher scoring
+  is unity, or equivalently, the log odds ratio is 0.  Fisher scoring
   is implemented.
 
 

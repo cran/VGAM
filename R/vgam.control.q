@@ -102,7 +102,7 @@ vgam.nlchisq <- function(qr, resid, wz, smomat, deriv, U, smooth.labels,
 
   trivc <- trivial.constraints(constraints)
 
-  ans <- rep(as.numeric(NA), length = ncol(smomat))
+  ans <- rep(NA_real_, length = ncol(smomat))
   Uderiv <- vbacksub(U, t(deriv), M = M, n = n)  # \bU_i^{-1} \biu_i
 
 

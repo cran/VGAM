@@ -28,7 +28,7 @@ skellam(lmu1 = "loge", lmu2 = "loge", imu1 = NULL, imu2 = NULL,
 
   }
   \item{nsimEIM, parallel, zero}{
-  See \code{\link{CommonVGAMffArguments}} for more information.
+  See \code{\link{CommonVGAMffArguments}} for information.
   In particular, setting \code{parallel=TRUE} will constrain the
   two means to be equal.
 

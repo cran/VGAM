@@ -12,7 +12,7 @@
 cauchy(llocation = "identitylink", lscale = "loge",
        ilocation = NULL, iscale = NULL,
        iprobs = seq(0.2, 0.8, by = 0.2),
-       imethod = 1, nsimEIM = NULL, zero = 2)
+       imethod = 1, nsimEIM = NULL, zero = "scale")
 cauchy1(scale.arg = 1, llocation = "identitylink",
         ilocation = NULL, imethod = 1)
 }
@@ -48,7 +48,7 @@ cauchy1(scale.arg = 1, llocation = "identitylink",
 
   }
   \item{zero, nsimEIM}{
-  See \code{\link{CommonVGAMffArguments}} for more information.
+  See \code{\link{CommonVGAMffArguments}} for information.
 
 
   }

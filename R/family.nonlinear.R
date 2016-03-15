@@ -131,8 +131,11 @@ micmen.control <- function(save.weights = TRUE, ...) {
             "Variance: constant"),
 
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = 2)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
+                                predictors.names = predictors.names,
+                                M1 = 2)
   }), list( .zero = zero))),
+
 
   deviance = function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
     M <- if (is.matrix(y)) ncol(y) else 1
@@ -142,6 +145,20 @@ micmen.control <- function(save.weights = TRUE, ...) {
       ResSS.vgam(y - mu, w, M = M)
     }
   },
+
+
+  infos = eval(substitute(function(...) {
+    list(M1 = 2,
+         Q1 = 1,
+         expected = TRUE,
+         multipleResponses = FALSE,
+         parameters.names = c("theta1", "theta2"),
+         link1    = .link1 ,
+         link2    = .link2 ,
+         zero = .zero )
+  }, list( .zero = zero,
+           .link1 = link1, .link2 = link2
+         ))),
 
   initialize = eval(substitute(expression({
 
@@ -409,8 +426,11 @@ skira.control <- function(save.weights = TRUE, ...) {
             namesof("theta1", link1, earg = earg1), ", ",
             namesof("theta2", link2, earg = earg2)),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = 2)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
+                                predictors.names = predictors.names,
+                                M1 = 2)
   }), list( .zero = zero ))),
+
   deviance = function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
     M <- if (is.matrix(y))
       ncol(y) else 1
@@ -420,6 +440,20 @@ skira.control <- function(save.weights = TRUE, ...) {
       ResSS.vgam(y - mu, w, M = M)
     }
   },
+
+  infos = eval(substitute(function(...) {
+    list(M1 = 2,
+         Q1 = 1,
+         expected = TRUE,
+         multipleResponses = FALSE,
+         parameters.names = c("theta1", "theta2"),
+         link1    = .link1 ,
+         link2    = .link2 ,
+         zero = .zero )
+  }, list( .zero = zero,
+           .link1 = link1, .link2 = link2
+         ))),
+
   initialize = eval(substitute(expression({
 
  warning("20101105; need to fix a bug in the signs of initial vals")

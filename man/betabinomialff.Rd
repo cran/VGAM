@@ -33,11 +33,13 @@ betabinomialff(lshape1 = "loge", lshape2 = "loge", ishape1 = 1,
 
   }
   \item{zero}{ 
-  An integer specifying which linear/additive predictor is to be modelled
+  Can be
+  an integer specifying which linear/additive predictor is to be modelled
   as an intercept only. If assigned, the single value should be either
   \code{1} or \code{2}. The default is to model both shape parameters
   as functions of the covariates. If a failure to converge occurs,
   try \code{zero = 2}.
+  See \code{\link{CommonVGAMffArguments}} for more information.
 
 
   }

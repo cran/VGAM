@@ -11,7 +11,8 @@
 \usage{
 lgamma1(lshape = "loge", ishape = NULL)
 lgamma3(llocation = "identitylink", lscale = "loge", lshape = "loge",
-        ilocation = NULL, iscale = NULL, ishape = 1, zero = 2:3)
+        ilocation = NULL, iscale = NULL, ishape = 1,
+        zero = c("scale", "shape"))
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

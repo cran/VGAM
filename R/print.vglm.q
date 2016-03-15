@@ -9,6 +9,7 @@
 
 
 show.vglm <- function(object) {
+
   if (!is.null(cl <- object@call)) {
     cat("Call:\n")
     dput(cl)
@@ -50,6 +51,20 @@ show.vglm <- function(object) {
           cat(paste(ii, ":", sep = ""),
               format(object@criterion[[ii]]), "\n")
   }
+
+
+
+
+
+  try.this <- findFirstMethod("showvglmS4VGAM", object@family@vfamily)
+  if (length(try.this)) {
+    showvglmS4VGAM(object = object,
+                   VGAMff = new(try.this))
+  } else {
+  }
+
+
+
 
   invisible(object)
 }
@@ -100,6 +115,18 @@ show.vgam <- function(object) {
       criterion != "coefficients")
     cat(paste(criterion, ":", sep = ""),
         format(object[[criterion]]), "\n")
+
+
+
+
+  try.this <- findFirstMethod("showvgamS4VGAM", object@family@vfamily)
+  if (length(try.this)) {
+    showvgamS4VGAM(object = object,
+                   VGAMff = new(try.this))
+  } else {
+  }
+
+
 
   invisible(object)
 }

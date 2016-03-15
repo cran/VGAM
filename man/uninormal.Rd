@@ -12,7 +12,7 @@
 \usage{
 uninormal(lmean = "identitylink", lsd = "loge", lvar = "loge",
           var.arg = FALSE, imethod = 1, isd = NULL, parallel = FALSE,
-          smallno = 1e-05, zero = -2)
+          smallno = 1e-05, zero = "sd")
 }
 %- maybe also 'usage' for other objects documented here.
 %         apply.parint = FALSE,

@@ -58,6 +58,7 @@ makeham(lscale = "loge", lshape = "loge", lepsilon = "loge",
   See \code{\link{CommonVGAMffArguments}}.
   Argument \code{probs.y} is used only when \code{imethod = 2}.
 
+
   }
   \item{oim.mean}{
   To be currently ignored.

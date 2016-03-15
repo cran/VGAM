@@ -41,7 +41,8 @@ slash(lmu = "identitylink", lsigma = "loge",
 
   }
   \item{nsimEIM, zero}{
-  See \code{\link{CommonVGAMffArguments}} for more information.
+  See \code{\link{CommonVGAMffArguments}} for information.
+
 
   }
   \item{smallno}{

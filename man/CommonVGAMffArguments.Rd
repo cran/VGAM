@@ -270,8 +270,12 @@ except for \eqn{X_2}.
 
   }
   \item{zero}{
-  An integer specifying which linear/additive predictor is modelled
-  as intercept-only. That is, the regression coefficients are
+  Either an integer vector, or a vector of character strings.
+
+
+  If an integer, then it specifies which 
+  linear/additive predictor is modelled as \emph{intercept-only}.
+  That is, the regression coefficients are
   set to zero for all covariates except for the intercept.
   If \code{zero} is specified then it may be a vector with values
   from the set \eqn{\{1,2,\ldots,M\}}.
@@ -311,6 +315,42 @@ except for \eqn{X_2}.
   Note: \code{zero} may have positive and negative values,
   for example, setting \code{zero = c(-2, 3)} in the above example
   would be equivalent to \code{zero = c(2, 3, 5, 8, 11)}.
+
+
+
+  The argument \code{zero} also
+  accepts a character vector (for \pkg{VGAM} 1.0-1 onwards).
+  Each value is fed into \code{\link[base]{grep}} with
+  \code{fixed = TRUE}, meaning that wildcards \code{"*"} are not useful.
+  See the example below---all the variants work;
+  those with \code{LOCAT} issue a warning that that value is unmatched.
+Importantly, the parameter names 
+are \code{c("location1", "scale1", "location2", "scale2")}
+because there are 2 responses.
+Yee (2015) described \code{zero} for only numerical input.
+Allowing character input is particularly important when the
+number of parameters cannot be determined without having the actual
+data first. For example, with time series data, an ARMA(\eqn{p},\eqn{q}) process
+might have parameters \eqn{\theta_1,\ldots,\theta_p} which should
+be intercept-only by default. Then specifying a numerical default
+value for \code{zero} would be too difficult (there are the drift
+and scale parameters too).
+However, it is possible with the character representation:
+\code{zero = "theta"} would achieve this.
+In the future, most \pkg{VGAM} family functions might be converted
+  to the character representation---the advantage being that it
+  is more readable.
+  When programming a \pkg{VGAM} family function that allows character
+  input, the variable \code{predictors.names}
+  must be assigned correctly.
+
+
+%Note that \code{zero} accepts wildcards (cf. the Linux operating system):
+%\code{"location*"} means that \emph{all} location parameters
+%are intercept-only.
+% When programming a \pkg{VGAM} family function that allows character
+% input, the variables \code{parameters.names}
+% and \code{Q1}
 
 
   }
@@ -451,6 +491,16 @@ except for \eqn{X_2}.
 
 \references{
 
+
+
+Yee, T. W. (2015)
+Vector Generalized Linear and Additive Models:
+With an Implementation in R.
+New York, USA: \emph{Springer}.
+
+
+
+
 Kosmidis, I. and Firth, D. (2009)
 Bias reduction in exponential family nonlinear models.
 \emph{Biometrika},
@@ -468,6 +518,7 @@ Bias reduction in exponential family nonlinear models.
 \seealso{
   \code{\link{Links}},
   \code{\link{vglmff-class}},
+  \code{\link{UtilitiesVGAM}},
   \code{\link{normal.vcm}},
   \code{\link{multilogit}}.
 
@@ -538,6 +589,29 @@ fit2 <- vglm(cbind(normal, mild, severe) ~ let,
              sratio(whitespace = TRUE,  parallel = TRUE), data = pneumo)
 head(predict(fit1), 2)  # No white spaces
 head(predict(fit2), 2)  # Uses white spaces
+
+# Example 7 ('zero' argument with character input)
+set.seed(123); n <- 1000
+ldata <- data.frame(x2 = runif(n))
+ldata <- transform(ldata, y1 = rlogis(n, loc = 0+5*x2, scale = exp(2)))
+ldata <- transform(ldata, y2 = rlogis(n, loc = 0+5*x2, scale = exp(0+1*x2)))
+ldata <- transform(ldata, w1 = runif(n))
+ldata <- transform(ldata, w2 = runif(n))
+fit7 <- vglm(cbind(y1, y2) ~ x2,
+#            logistic(zero = "location1"),  # location1 is intercept-only
+#            logistic(zero = "location2"),
+#            logistic(zero = "location*"),  # Not okay... all is unmatched
+#            logistic(zero = "scale1"),
+#            logistic(zero = "scale2"),
+#            logistic(zero = "scale"),  # Both scale parameters are matched
+             logistic(zero = c("location", "scale2")),  # All but scale1
+#            logistic(zero = c("LOCAT", "scale2")),  # Only scale2 is matched
+#            logistic(zero = c("LOCAT")),  # Nothing is matched
+#            trace = TRUE,
+#            weights = cbind(w1, w2),
+             weights = w1,
+             data = ldata)
+coef(fit7, matrix = TRUE)
 }
 
 \keyword{models}

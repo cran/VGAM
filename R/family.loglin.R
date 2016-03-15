@@ -6,8 +6,7 @@
 
 
 
- loglinb2 <- function(exchangeable = FALSE, zero = 3) {
-
+ loglinb2 <- function(exchangeable = FALSE, zero = "u12") {
 
 
   if (!is.logical(exchangeable))
@@ -28,8 +27,24 @@
                            apply.int = TRUE,
                            cm.default           = cm.intercept.default,
                            cm.intercept.default = cm.intercept.default)
-    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
+                                predictors.names = predictors.names,
+                                M1 = 3)
   }), list( .exchangeable = exchangeable, .zero = zero ))),
+
+
+
+  infos = eval(substitute(function(...) {
+    list(M1 = 3,
+         Q1 = 4,  # ncol(fitted(object))
+         expected = TRUE,
+         multipleResponses = FALSE,
+         parameters.names = c("u1", "u2", "u12"),
+         zero = .zero )
+  }, list( .zero = zero
+         ))),
+
+
   initialize = expression({
 
 
@@ -50,7 +65,7 @@
     predictors.names <- c("u1", "u2", "u12")
 
     if (length(mustart) + length(etastart) == 0) {
-      mustart <- matrix(as.numeric(NA), nrow(y), 4)
+      mustart <- matrix(NA_real_, nrow(y), 4)
       mustart[,1] <- weighted.mean((1-y[,1])*(1-y[,2]), w)
       mustart[,2] <- weighted.mean((1-y[,1])*y[,2], w)
       mustart[,3] <- weighted.mean(y[,1]*(1-y[,2]), w)
@@ -126,7 +141,7 @@
     d2u0.du1u3 <- -(1 + exp(u2)) * exp(u1 + u2 + u12) / denom^2 
     d2u0.du2u3 <- -(1 + exp(u1)) * exp(u1 + u2 + u12) / denom^2 
 
-    wz <- matrix(as.numeric(NA), n, dimm(M)) 
+    wz <- matrix(NA_real_, n, dimm(M)) 
     wz[,iam(1,1,M)] <- -d2u0.du1.2 
     wz[,iam(2,2,M)] <- -d2u0.du22
     wz[,iam(3,3,M)] <- -d2u0.du122 
@@ -140,7 +155,8 @@
 
 
 
- loglinb3 <- function(exchangeable = FALSE, zero = 4:6) {
+ loglinb3 <- function(exchangeable = FALSE,
+                      zero = c("u12", "u13", "u23")) {
 
 
   if (!is.logical(exchangeable))
@@ -161,8 +177,23 @@
                            apply.int = TRUE,
                            cm.default           = cm.intercept.default,
                            cm.intercept.default = cm.intercept.default)
-    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
+                                predictors.names = predictors.names,
+                                M1 = 6)
   }), list( .exchangeable = exchangeable, .zero = zero ))),
+
+
+  infos = eval(substitute(function(...) {
+    list(M1 = 6,
+         Q1 = 8,  # ncol(fitted(object))
+         expected = TRUE,
+         multipleResponses = FALSE,
+         parameters.names = c("u1", "u2", "u3", "u12", "u13", "u23"),
+         zero = .zero )
+  }, list( .zero = zero
+         ))),
+
+
   initialize = expression({
     predictors.names <- c("u1", "u2", "u3", "u12", "u13", "u23")
 
@@ -201,7 +232,7 @@
 
 
     if (length(mustart) + length(etastart) == 0) {
-      mustart <- matrix(as.numeric(NA), nrow(y), 2^3)
+      mustart <- matrix(NA_real_, nrow(y), 2^3)
       mustart[,1] <- weighted.mean((1-y[,1])*(1-y[,2])*(1-y[,3]), w)
       mustart[,2] <- weighted.mean((1-y[,1])*(1-y[,2])*y[,3], w)
       mustart[,3] <- weighted.mean((1-y[,1])*y[,2]*(1-y[,3]), w)
@@ -323,7 +354,7 @@
     dA3.du1 <- exp(u1 + u3 + u13) + allterms
     dA3.du2 <- exp(u2 + u3 + u23) + allterms
 
-    wz <- matrix(as.numeric(NA), n, dimm(6)) 
+    wz <- matrix(NA_real_, n, dimm(6)) 
     expu0 <- exp(u0)
 
     wz[,iam(1,1,M)] <- A1 * (1 - expu0 * A1)

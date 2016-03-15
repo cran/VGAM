@@ -53,7 +53,7 @@ poissonff(link = "loge", dispersion = 1, onedpar = FALSE, imu = NULL,
 
   }
   \item{zero}{
-  An integer-valued vector specifying which linear/additive predictors
+  Can be an integer-valued vector specifying which linear/additive predictors
   are modelled as intercepts only.  The values must be from the set
   \{1,2,\ldots,\eqn{M}\}, where \eqn{M} is the number of columns of the
   matrix response.

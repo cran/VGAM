@@ -49,7 +49,7 @@ coefvlm <- function(object, matrix.out = FALSE, label = TRUE,
   if (all(trivial.constraints(Hlist) == 1)) {
     Bmat <- matrix(ans, nrow = ncolx, ncol = M, byrow = TRUE)
   } else {
-    Bmat <- matrix(as.numeric(NA), nrow = ncolx, ncol = M)
+    Bmat <- matrix(NA_real_, nrow = ncolx, ncol = M)
 
     if (!matrix.out)
       return(ans) 
@@ -166,6 +166,35 @@ setMethod("Coefficients", "vlm", function(object, ...)
                Coef.vlm(object, ...))
 setMethod("Coef", "vlm", function(object, ...)
                Coef.vlm(object, ...))
+
+
+
+
+
+
+coefvgam <-
+  function(object, type = c("linear", "nonlinear"), ...) {
+  type <- match.arg(type, c("linear", "nonlinear"))[1]
+
+
+  if (type == "linear") {
+    coefvlm(object, ...)
+  } else {
+    object@Bspline
+  }
+}
+
+
+
+setMethod("coefficients", "vgam",
+          function(object, ...)
+          coefvgam(object, ...))
+
+
+setMethod("coef", "vgam",
+          function(object, ...)
+          coefvgam(object, ...))
+
 
 
 

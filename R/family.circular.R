@@ -96,8 +96,12 @@ qcard <- function(p, mu, rho, tolerance = 1.0e-7, maxits = 500,
         if (any(index)) {
           ans[index] <- runif (sum(index), 0, 2*pi)
         }
-        if (max(abs(ans - oldans)) < tolerance) break;
-        if (its == maxits) {warning("did not converge"); break}
+        if (max(abs(ans - oldans)) < tolerance)
+          break
+        if (its == maxits) {
+          warning("did not converge")
+          break
+        }
         oldans <- ans
       }
     } else {
@@ -109,8 +113,12 @@ qcard <- function(p, mu, rho, tolerance = 1.0e-7, maxits = 500,
         if (any(index)) {
           ans[index] <- runif(sum(index), 0, 2*pi)
         }
-        if (max(abs(ans - oldans)) < tolerance) break;
-        if (its == maxits) {warning("did not converge"); break}
+        if (max(abs(ans - oldans)) < tolerance)
+          break
+        if (its == maxits) {
+          warning("did not converge")
+          break
+        }
         oldans <- ans
       }
     }
@@ -125,8 +133,12 @@ qcard <- function(p, mu, rho, tolerance = 1.0e-7, maxits = 500,
         if (any(index)) {
           ans[index] <- runif (sum(index), 0, 2*pi)
         }
-        if (max(abs(ans - oldans)) < tolerance) break;
-        if (its == maxits) {warning("did not converge"); break}
+        if (max(abs(ans - oldans)) < tolerance)
+          break
+        if (its == maxits) {
+          warning("did not converge")
+          break
+        }
         oldans <- ans 
        }
     } else { 
@@ -138,8 +150,12 @@ qcard <- function(p, mu, rho, tolerance = 1.0e-7, maxits = 500,
         if (any(index)) {
           ans[index] <- runif (sum(index), 0, 2*pi)
         }
-        if (max(abs(ans - oldans)) < tolerance) break;
-        if (its == maxits) {warning("did not converge"); break}
+        if (max(abs(ans - oldans)) < tolerance)
+          break
+        if (its == maxits) {
+          warning("did not converge")
+          break
+        }
         oldans <- ans
       }
     }
@@ -215,8 +231,26 @@ cardioid.control <- function(save.weights = TRUE, ...) {
             "pi + (rho/pi) *",
             "((2*pi-mu)*sin(2*pi-mu)+cos(2*pi-mu)-mu*sin(mu)-cos(mu))"),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
+                                predictors.names = predictors.names,
+                                M1 = 2)
   }), list( .zero = zero ))),
+
+
+  infos = eval(substitute(function(...) {
+    list(M1 = 2,
+         Q1 = 1,
+         expected = TRUE,
+         multipleResponses = FALSE,
+         parameters.names = c("mu", "rho"),
+         nsimEIM = .nsimEIM ,
+         lmu  = .lmu  ,
+         lrho = .lrho ,
+         zero = .zero )
+  }, list( .zero = zero, .lmu = lmu, .lrho = lrho,
+           .nsimEIM = nsimEIM ))),
+
+
   initialize = eval(substitute(expression({
 
 
@@ -234,40 +268,40 @@ cardioid.control <- function(save.weights = TRUE, ...) {
       stop("the response must be in (0, 2*pi)")
 
     predictors.names <- c(
-      namesof("mu",  .lmu,  earg = .emu , tag = FALSE),
-      namesof("rho", .lrho, earg = .erho, tag = FALSE))
+      namesof("mu",  .lmu  , earg = .emu  , tag = FALSE),
+      namesof("rho", .lrho , earg = .erho , tag = FALSE))
 
     if (!length(etastart)) {
-      rho.init <- rep(if (length(.irho)) .irho else 0.3, length=n)
+      rho.init <- rep(if (length( .irho )) .irho else 0.3, length = n)
 
       cardioid.Loglikfun <- function(mu, y, x, w, extraargs) {
         rho <- extraargs$irho
         sum(w * (-log(2*pi) + log1p(2*rho*cos(y-mu))))
       }
-      mu.grid <- seq(0.1, 6.0, len=19)
+      mu.grid <- seq(0.1, 6.0, len = 19)
       mu.init <- if (length( .imu )) .imu else
           grid.search(mu.grid, objfun = cardioid.Loglikfun,
                       y = y,  x = x, w = w,
                       extraargs = list(irho = rho.init))
       mu.init <- rep(mu.init, length=length(y))
       etastart <-
-        cbind(theta2eta( mu.init, .lmu,  earg = .emu),
-              theta2eta(rho.init, .lrho, earg = .erho))
+        cbind(theta2eta( mu.init, .lmu  , earg = .emu  ),
+              theta2eta(rho.init, .lrho , earg = .erho ))
     }
   }), list( .lmu = lmu, .lrho = lrho,
             .imu = imu, .irho = irho,
             .emu = emu, .erho = erho ))),
   linkinv = eval(substitute(function(eta, extra = NULL){
-    mu  <- eta2theta(eta[, 1], link = .lmu,  earg = .emu)
-    rho <- eta2theta(eta[, 2], link = .lrho, earg = .erho)
+    mu  <- eta2theta(eta[, 1], link = .lmu  , earg = .emu  )
+    rho <- eta2theta(eta[, 2], link = .lrho , earg = .erho )
       pi + (rho/pi) *
       ((2*pi-mu)*sin(2*pi-mu) + cos(2*pi-mu) - mu*sin(mu) - cos(mu))
   }, list( .lmu = lmu, .lrho = lrho,
            .emu = emu, .erho = erho ))),
   last = eval(substitute(expression({
-    misc$link <-    c("mu" = .lmu, "rho" = .lrho)
+    misc$link <-    c("mu" = .lmu , "rho" = .lrho )
 
-    misc$earg <- list("mu" = .emu, "rho" = .erho)
+    misc$earg <- list("mu" = .emu , "rho" = .erho )
 
     misc$expected <- TRUE
     misc$nsimEIM <- .nsimEIM
@@ -276,8 +310,8 @@ cardioid.control <- function(save.weights = TRUE, ...) {
   loglikelihood = eval(substitute(
     function(mu, y, w, residuals = FALSE, eta, extra = NULL,
              summation = TRUE) {
-    mu  <- eta2theta(eta[, 1], link = .lmu, earg = .emu)
-    rho <- eta2theta(eta[, 2], link = .lrho, earg = .erho)
+    mu  <- eta2theta(eta[, 1], link = .lmu  , earg = .emu  )
+    rho <- eta2theta(eta[, 2], link = .lrho , earg = .erho )
     if (residuals) {
       stop("loglikelihood residuals not implemented yet")
     } else {
@@ -298,28 +332,19 @@ cardioid.control <- function(save.weights = TRUE, ...) {
 
 
 
-
-
-
-
-
-
-
-
-
   deriv = eval(substitute(expression({
-    mu  <- eta2theta(eta[, 1], link = .lmu,  earg = .emu)
-    rho <- eta2theta(eta[, 2], link = .lrho, earg = .erho)
+    mu  <- eta2theta(eta[, 1], link = .lmu  , earg = .emu  )
+    rho <- eta2theta(eta[, 2], link = .lrho , earg = .erho )
 
-    dmu.deta  <- dtheta.deta(mu,  link = .lmu,  earg = .emu)
-    drho.deta <- dtheta.deta(rho, link = .lrho, earg = .erho)
+    dmu.deta  <- dtheta.deta(mu,  link = .lmu  , earg = .emu  )
+    drho.deta <- dtheta.deta(rho, link = .lrho , earg = .erho )
 
     dl.dmu <-  2 * rho * sin(y-mu) / (1 + 2 * rho * cos(y-mu))
     dl.drho <- 2 * cos(y-mu) / (1 + 2 * rho * cos(y-mu))
     c(w) * cbind(dl.dmu  *  dmu.deta,
                  dl.drho * drho.deta)
-  }), list( .lmu = lmu, .lrho=lrho,
-            .emu = emu, .erho=erho, .nsimEIM=nsimEIM ))),
+  }), list( .lmu = lmu, .lrho = lrho,
+            .emu = emu, .erho = erho, .nsimEIM = nsimEIM ))),
   weight = eval(substitute(expression({
     run.varcov <- 0
     ind1   <- iam(NA, NA, M = M, both = TRUE, diag = TRUE)
@@ -331,14 +356,16 @@ cardioid.control <- function(save.weights = TRUE, ...) {
       rm(ysim)
       temp3 <- cbind(dl.dmu, dl.drho)
       run.varcov <- ((ii-1) * run.varcov +
-                 temp3[,ind1$row.index]*temp3[,ind1$col.index]) / ii
+                    temp3[, ind1$row.index] *
+                    temp3[, ind1$col.index]) / ii
     }
     wz <- if (intercept.only)
         matrix(colMeans(run.varcov),
                n, ncol(run.varcov), byrow = TRUE) else run.varcov
 
     dtheta.detas <- cbind(dmu.deta, drho.deta)
-    wz <- wz * dtheta.detas[,index0$row] * dtheta.detas[,index0$col]
+    wz <- wz * dtheta.detas[, index0$row] *
+               dtheta.detas[, index0$col]
     c(w) * wz
   }), list( .lmu = lmu, .lrho = lrho,
             .emu = emu, .erho = erho, .nsimEIM = nsimEIM ))))
@@ -367,9 +394,6 @@ cardioid.control <- function(save.weights = TRUE, ...) {
      imethod > 2)
     stop("argument 'imethod' must be 1 or 2")
 
-  if (length(zero) &&
-      !is.Numeric(zero, integer.valued = TRUE, positive = TRUE))
-      stop("bad input for argument 'zero'")
 
 
 
@@ -380,13 +404,19 @@ cardioid.control <- function(save.weights = TRUE, ...) {
             namesof("scale",    lscale, earg = escale),
             "\n", "\n",
             "Mean:     location"),
+
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
+                                predictors.names = predictors.names,
+                                M1 = 2)
   }), list( .zero = zero ))),
+
   infos = eval(substitute(function(...) {
     list(M1 = 2,
-         zero = .zero ,
-         parameterNames = c("location", "scale"))
+         expected = TRUE,
+         multipleResponses = FALSE,
+         parameters.names = c("location", "scale"),
+         zero = .zero )
   }, list( .zero = zero ))),
 
   initialize = eval(substitute(expression({
@@ -395,8 +425,8 @@ cardioid.control <- function(save.weights = TRUE, ...) {
 
 
       predictors.names <-
-        c(namesof("location", .llocat, earg = .elocat, tag = FALSE),
-          namesof("scale",    .lscale, earg = .escale, tag = FALSE))
+        c(namesof("location", .llocat , earg = .elocat , tag = FALSE),
+          namesof("scale",    .lscale , earg = .escale , tag = FALSE))
 
       if (!length(etastart)) {
         if ( .imethod == 1) {
@@ -409,13 +439,13 @@ cardioid.control <- function(save.weights = TRUE, ...) {
         }
 
         locat.init <- if (length( .ilocat ))
-                       rep( .ilocat , len=n) else
-                       rep(locat.init, len=n)
+                       rep( .ilocat , len = n) else
+                       rep(locat.init, len = n)
         scale.init <- if (length( .iscale ))
                      rep( .iscale , len = n) else rep(1, len = n)
         etastart <- cbind(
-            theta2eta(locat.init, .llocat, earg = .elocat),
-            theta2eta(scale.init, .lscale, earg = .escale))
+            theta2eta(locat.init, .llocat , earg = .elocat ),
+            theta2eta(scale.init, .lscale , earg = .escale ))
       }
       y <- y %% (2*pi)  # Coerce after initial values have been computed
   }), list( .imethod = imethod, .ilocat = ilocat,
@@ -423,7 +453,7 @@ cardioid.control <- function(save.weights = TRUE, ...) {
             .lscale = lscale, .llocat = llocat,
             .iscale = iscale ))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
-    eta2theta(eta[, 1], .llocat, earg = .elocat) %% (2*pi)
+    eta2theta(eta[, 1], .llocat , earg = .elocat ) %% (2*pi)
   }, list( .escale = escale, .lscale = lscale,
            .llocat = llocat, .elocat = elocat ))),
   last = eval(substitute(expression({
@@ -437,13 +467,14 @@ cardioid.control <- function(save.weights = TRUE, ...) {
   loglikelihood = eval(substitute(
     function(mu, y, w, residuals = FALSE, eta, extra = NULL,
              summation = TRUE) {
-    locat <- eta2theta(eta[, 1], .llocat, earg = .elocat)
-    Scale <- eta2theta(eta[, 2], .lscale, earg = .escale)
+    locat <- eta2theta(eta[, 1], .llocat , earg = .elocat )
+    Scale <- eta2theta(eta[, 2], .lscale , earg = .escale )
 
     if (residuals) {
       stop("loglikelihood residuals not implemented yet")
     } else {
-      ll.elts <- c(w) * (Scale * cos(y - locat) - log(mbesselI0(x = Scale)))
+      ll.elts <- c(w) * (Scale * cos(y - locat) -
+                         log(mbesselI0(x = Scale)))
       if (summation) {
         sum(ll.elts)
       } else {
@@ -454,8 +485,8 @@ cardioid.control <- function(save.weights = TRUE, ...) {
            .llocat = llocat, .elocat = elocat ))),
   vfamily = c("vonmises"),
   deriv = eval(substitute(expression({
-    locat <- eta2theta(eta[, 1], .llocat, earg = .elocat)
-    Scale <- eta2theta(eta[, 2], .lscale, earg = .escale)
+    locat <- eta2theta(eta[, 1], .llocat , earg = .elocat )
+    Scale <- eta2theta(eta[, 2], .lscale , earg = .escale )
 
     tmp6 <- mbesselI0(x = Scale, deriv = 2)
     dl.dlocat <- Scale * sin(y - locat)
@@ -463,19 +494,19 @@ cardioid.control <- function(save.weights = TRUE, ...) {
 
     dlocat.deta <- dtheta.deta(locat, .llocat ,
                                  earg = .elocat )
-    dscale.deta <- dtheta.deta(Scale, .lscale, earg = .escale)
+    dscale.deta <- dtheta.deta(Scale, .lscale , earg = .escale )
 
     c(w) * cbind(dl.dlocat * dlocat.deta,
-                 dl.dscale    * dscale.deta)
+                 dl.dscale * dscale.deta)
   }), list( .escale = escale, .lscale = lscale,
             .llocat = llocat, .elocat = elocat ))),
   weight = eval(substitute(expression({
     ned2l.dlocat2 <- Scale * tmp6[, 2] / tmp6[, 1]
     ned2l.dscale2 <- tmp6[, 3] / tmp6[, 1] - (tmp6[, 2] / tmp6[, 1])^2
 
-    wz <- matrix(as.numeric(NA), nrow = n, ncol = 2)  # diagonal
-    wz[,iam(1, 1, M)] <- ned2l.dlocat2 * dlocat.deta^2
-    wz[,iam(2, 2, M)] <- ned2l.dscale2 * dscale.deta^2
+    wz <- matrix(0, nrow = n, ncol = 2)  # diagonal
+    wz[, iam(1, 1, M)] <- ned2l.dlocat2 * dlocat.deta^2
+    wz[, iam(2, 2, M)] <- ned2l.dscale2 * dscale.deta^2
     c(w) * wz
   }), list( .escale = escale, .elocat = elocat,
             .lscale = lscale, .llocat = llocat ))))

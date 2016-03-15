@@ -183,7 +183,7 @@ calibrate.qrrvglm <-
       BestOFpar <- rbind(BestOFpar, OFpar[index, ])
       BestOFvalues <- c(BestOFvalues, OFvalues[index])
     } else {
-      BestOFpar <- rbind(BestOFpar, rep(as.numeric(NA), len = Rank))
+      BestOFpar <- rbind(BestOFpar, rep(NA_real_, len = Rank))
       BestOFvalues <- c(BestOFvalues, NA)
     }
   }
@@ -324,7 +324,7 @@ calibrate.qrrvglm <-
            mu.function) {
     Rank <- length(bnu)
     NOS <- Coefs@NOS 
-    eta <- matrix(as.numeric(NA), 1, NOS)
+    eta <- matrix(NA_real_, 1, NOS)
     for (jlocal in 1:NOS) {
       eta[1, jlocal] <- predictrrvgam(object, grid = bnu, sppno = jlocal,
                                       Rank = Rank, deriv = 0)$yvals

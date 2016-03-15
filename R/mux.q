@@ -62,7 +62,7 @@ mux2 <- function(cc, xmat) {
   M <- d[1]
   if (d[2] != p || d[3] != n)
     stop("dimension size inconformable")
-  ans <- rep(as.numeric(NA), n*M)
+  ans <- rep(NA_real_, n*M)
   fred <- .C("mux2", as.double(cc), as.double(t(xmat)),
                ans = as.double(ans), as.integer(p), as.integer(n),
                as.integer(M), NAOK = TRUE)
@@ -81,7 +81,7 @@ mux22 <- function(cc, xmat, M, upper = FALSE, as.matrix = FALSE) {
   index <- iam(NA, NA, M, both = TRUE, diag = TRUE)
   dimm.value <- nrow(cc)  # Usually M or M(M+1)/2
 
-  ans <- rep(as.numeric(NA), n*M)
+  ans <- rep(NA_real_, n*M)
   fred <- .C("mux22", as.double(cc), as.double(t(xmat)),
                ans = as.double(ans), as.integer(dimm.value),
                as.integer(index$row), as.integer(index$col),
@@ -212,7 +212,7 @@ mux9 <- function(cc, xmat) {
   M <- dimcc[1]
   n <- dimcc[3]
 
-  ans <-  matrix(as.numeric(NA), n, M)
+  ans <-  matrix(NA_real_, n, M)
   fred <- .C("mux9", as.double(cc), as.double(xmat),
                ans = as.double(ans),
                as.integer(M), as.integer(n), NAOK = TRUE)
@@ -280,7 +280,7 @@ mux15 <- function(cc, xmat) {
   if (max(abs(t(cc)-cc))>0.000001)
     stop("argument 'cc' is not symmetric")
 
-  ans <- rep(as.numeric(NA), n*M*M)
+  ans <- rep(NA_real_, n*M*M)
   fred <- .C("mux15", as.double(cc), as.double(t(xmat)),
                ans = as.double(ans), as.integer(M),
                as.integer(n), NAOK = TRUE)

@@ -13,6 +13,11 @@ void tyee_C_dgam1w(double sjwyig9t[], double lfu2qhid[], int *f8yswcat, int *dvh
 void tyee_C_tgam1w(double sjwyig9t[], double lfu2qhid[], int *f8yswcat, int *dvhw1ulq);
 void tyee_C_cum8sum(double ci1oyxas[], double lfu2qhid[], int *nlfu2qhid,
                     double valong[], int *ntot, int *notdvhw1ulq);
+void eimpnbinomspecialp(int *interceptonly, double *nrows,
+			double *ncols, double *sizevec,
+			double *pnbinommat,
+                        double *rowsums);
+
 
 void tyee_C_vdgam1(double *xval, double *lfu2qhid, int *dvhw1ulq) {
 
@@ -134,4 +139,51 @@ void tyee_C_cum8sum(double ci1oyxas[], double lfu2qhid[], int *nlfu2qhid,
 
   *notdvhw1ulq = (iii == *nlfu2qhid) ? 0 : 1;
 }
+
+
+
+
+
+
+void eimpnbinomspecialp(int *interceptonly,
+			double *nrows,
+			double *ncols,
+			double *sizevec,     /* length is nrows */
+			double *pnbinommat,
+                        double *rowsums) {
+
+
+  double ayfnwr1v, yq6lorbx, tmp1 = 0.0, tmp2;
+  double *fpdlcqk9rowsums, *fpdlcqk9sizevec;
+
+
+  if (*interceptonly == 1) {
+    for (yq6lorbx = 0; yq6lorbx < *ncols; yq6lorbx++) {
+      tmp2 = (*sizevec + yq6lorbx);
+      tmp1 += *pnbinommat++ / (tmp2 * tmp2);
+    }
+    *rowsums = tmp1;
+    return;
+  }
+
+
+
+  fpdlcqk9rowsums = rowsums;
+  for (ayfnwr1v = 0; ayfnwr1v < *nrows; ayfnwr1v++)
+    *fpdlcqk9rowsums++ = 0.0;
+
+  for (yq6lorbx = 0; yq6lorbx < *ncols; yq6lorbx++) {
+    fpdlcqk9rowsums = rowsums;
+    fpdlcqk9sizevec = sizevec;
+    for (ayfnwr1v = 0; ayfnwr1v < *nrows; ayfnwr1v++) {
+      tmp2 = (yq6lorbx + *fpdlcqk9sizevec++);
+      tmp1 = *pnbinommat++ / (tmp2 * tmp2);
+      *fpdlcqk9rowsums++ += tmp1;
+    }
+  }
+}
+
+
+
+
 

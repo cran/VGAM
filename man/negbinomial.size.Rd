@@ -9,7 +9,7 @@
 }
 \usage{
 negbinomial.size(size = Inf, lmu = "loge", imu = NULL,
-                 probs.y = 0.75, imethod = 1,
+                 probs.y = 0.35, imethod = 1,
                  ishrinkage = 0.95, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.

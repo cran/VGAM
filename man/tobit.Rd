@@ -10,7 +10,7 @@
 tobit(Lower = 0, Upper = Inf, lmu = "identitylink", lsd = "loge",
       imu = NULL, isd = NULL, 
       type.fitted = c("uncensored", "censored", "mean.obs"),
-      byrow.arg = FALSE, imethod = 1, zero = -2)
+      byrow.arg = FALSE, imethod = 1, zero = "sd")
 }
 % 20151024 yettodo: maybe add a new option to 'type.fitted':
 %     type.fitted = c("uncensored", "censored", "mean.obs", "truncated"),
@@ -81,12 +81,12 @@ tobit(Lower = 0, Upper = Inf, lmu = "identitylink", lsd = "loge",
 
   }
   \item{zero}{
-  An integer vector, containing the value 1 or 2. If so,
+  A vector, e.g., containing the value 1 or 2. If so,
   the mean or standard deviation respectively are modelled
   as an intercept-only.
   Setting \code{zero = NULL} means both linear/additive predictors
   are modelled as functions of the explanatory variables.
-  See \code{\link{CommonVGAMffArguments}} for information.
+  See \code{\link{CommonVGAMffArguments}} for more information.
 
 
   }

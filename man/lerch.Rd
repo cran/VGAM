@@ -56,7 +56,8 @@ lerch(x, s, v, tolerance = 1.0e-10, iter = 100)
 
 }
 \references{
-  \url{http://aksenov.freeshell.org/lerchphi/source/lerchphi.c}.
+  Originally the code was found at
+  \code{http://aksenov.freeshell.org/lerchphi/source/lerchphi.c}.
 
 
   Bateman, H. (1953)

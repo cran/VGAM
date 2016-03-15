@@ -13,9 +13,10 @@ genbetaII(lscale = "loge", lshape1.a = "loge", lshape2.p = "loge",
           ishape2.p = NULL, ishape3.q = NULL, lss = TRUE,
           gscale = exp(-5:5), gshape1.a = exp(-5:5),
           gshape2.p = exp(-5:5), gshape3.q = exp(-5:5),
-          zero = ifelse(lss, -(2:4), -c(1, 3:4)))
+          zero = "shape")
 }
 %- maybe also 'usage' for other objects documented here.
+%         zero = ifelse(lss, -(2:4), -c(1, 3:4))
 \arguments{
   \item{lss}{ See \code{\link{CommonVGAMffArguments}} for important information.
 
@@ -54,10 +55,14 @@ genbetaII(lscale = "loge", lshape1.a = "loge", lshape2.p = "loge",
 
 % }
   \item{zero}{
-  An integer-valued vector specifying which
-  linear/additive predictors are modelled as intercepts only.
   The default is to set all the shape parameters to be
   intercept-only.
+  See \code{\link{CommonVGAMffArguments}} for information.
+
+
+
+% An integer-valued vector specifying which
+% linear/additive predictors are modelled as intercepts only.
 
 
 

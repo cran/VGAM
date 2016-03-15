@@ -8,8 +8,8 @@
 
 }
 \usage{
-bisa(lscale = "loge", lshape = "loge",
-     iscale = 1, ishape = NULL, imethod = 1, zero = NULL, nowarning = FALSE)
+bisa(lscale = "loge", lshape = "loge", iscale = 1,
+     ishape = NULL, imethod = 1, zero = "shape", nowarning = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -44,10 +44,14 @@ bisa(lscale = "loge", lshape = "loge",
 
   }
   \item{zero}{
-  An integer-valued vector specifying which
-  linear/additive predictors are modelled as intercepts only.
-  The default is none of them.
+  Specifies which linear/additive predictor is modelled as intercept-only.
   If used, choose one value from the set \{1,2\}.
+  See \code{\link{CommonVGAMffArguments}} for more details.
+
+
+
+% The default is none of them.
+
 
 
   }
@@ -128,7 +132,8 @@ New York: Wiley.
 
 \seealso{
   \code{\link{pbisa}},
-  \code{\link{inv.gaussianff}}.
+  \code{\link{inv.gaussianff}},
+  \code{\link{CommonVGAMffArguments}}.
 
 
 }

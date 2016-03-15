@@ -10,9 +10,10 @@
 }
 \usage{
 betabinomial(lmu = "logit", lrho = "logit", irho = NULL, imethod = 1,
-             ishrinkage = 0.95, nsimEIM = NULL, zero = 2)
+             ishrinkage = 0.95, nsimEIM = NULL, zero = "rho")
 }
 %- maybe also 'usage' for other objects documented here.
+%            ishrinkage = 0.95, nsimEIM = NULL, zero = 2
 \arguments{
   \item{lmu, lrho}{ 
   Link functions applied to the two parameters.
@@ -40,13 +41,14 @@ betabinomial(lmu = "logit", lrho = "logit", irho = NULL, imethod = 1,
 
   }
   \item{zero}{ 
-  An integer specifying which
+  Specifyies which
   linear/additive predictor is to be modelled as an intercept only.
-  If assigned, the single value should be either \code{1} or \code{2}.
+  If assigned, the single value can be either \code{1} or \code{2}.
   The default is to have a single correlation parameter.
   To model both parameters as functions of the covariates assign
   \code{zero = NULL}.
   See \code{\link{CommonVGAMffArguments}} for more information.
+
 
 
   }
@@ -166,7 +168,7 @@ betabinomial(lmu = "logit", lrho = "logit", irho = NULL, imethod = 1,
 \section{Warning }{
 
 
-  If the estimated rho parameter is close to zero then it pays to
+  If the estimated rho parameter is close to 0 then it pays to
   try \code{lrho = "rhobit"}. One day this may become the default
   link function.
 

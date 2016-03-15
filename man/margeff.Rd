@@ -1,23 +1,34 @@
 \name{margeff}
 \alias{margeff}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{ Marginal effects for the multinomial logit and cumulative models }
+\title{ Marginal effects for several categorical response models }
 \description{
   Marginal effects for the multinomial logit model and
-  cumulative logit/probit/... models: the derivative
-  of the fitted probabilities with respect to each explanatory
-  variable.
+  cumulative logit/probit/... models and
+  continuation ratio models and
+  stopping ratio models and
+  adjacent categories models:
+  the derivative of the fitted probabilities with respect to
+  each explanatory variable.
+
 
 }
 \usage{
-margeff(object, subset = NULL)
+margeff(object, subset = NULL, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{object}{
-  A \code{\link{vglm}} \code{\link{multinomial}}
+  A \code{\link{vglm}} object,
+  with one of the following family functions:
+  \code{\link{multinomial}},
+  \code{\link{cumulative}},
+  \code{\link{cratio}},
+  \code{\link{sratio}}
   or
-    \code{\link{cumulative}} object.
+  \code{\link{acat}}.
+
+
 
   }
   \item{subset}{
@@ -25,15 +36,35 @@ margeff(object, subset = NULL)
   Recycling is used if possible.
   The default means all observations.
 
+
   }
 
+  \item{\dots}{
+  further arguments passed into the other methods functions.
+% e.g., \code{subset}.
+
+
+  }
 }
 \details{
   Computes the derivative of the fitted probabilities
-  of a multinomial logit model
-  or
-  cumulative logit/probit/... model
+  of the categorical response model
   with respect to each explanatory variable.
+  Formerly one big function, this function now uses S4
+  dispatch to break up the computations.
+
+
+
+% 20151215
+  The function \code{margeff()} is \emph{not} generic. However, it
+  calls the function \code{margeffS4VGAM()} which \emph{is}.
+  This is based on the class of the \code{VGAMff} argument, and
+  it uses the S4 function \code{\link[methods]{setMethod}} to
+  correctly dispatch to the required methods function.
+  The inheritance is given by the \code{vfamily} slot of the
+  \pkg{VGAM} family function.
+
+
 
 }
 \value{
@@ -42,7 +73,7 @@ margeff(object, subset = NULL)
   \eqn{M+1} levels, and there are \eqn{n} observations.
 
 
-  If
+  In general, if
   \code{is.numeric(subset)}
   and
   \code{length(subset) == 1} then a
@@ -51,7 +82,13 @@ margeff(object, subset = NULL)
 
 }
 % \references{ ~put references to the literature/web site here ~ }
-\author{ T. W. Yee }
+\author{ T. W. Yee,
+with some help and motivation from Stasha Rmandic.
+
+
+
+}
+
 \section{Warning }{
   Care is needed in interpretation, e.g., the change is not
   universally accurate for a unit change in each explanatory
@@ -71,6 +108,15 @@ margeff(object, subset = NULL)
   of the form \code{ ~ x2 + x3 + x4}, etc.
 
 
+
+  Some numerical problems may occur if the fitted values are
+  close to 0 or 1 for the
+  \code{\link{cratio}} and
+  \code{\link{sratio}} models.
+  Models with offsets may result in an incorrect answer.
+
+
+
 }
 
 \note{
@@ -82,18 +128,32 @@ margeff(object, subset = NULL)
   nor \code{\link{vgam}} objects.
 
 
-  For \code{\link{multinomial}}
-  if \code{subset} is numeric then the function uses a \code{for} loop over
-  the observations (slow).
-  The default computations use vectorization; this uses more memory than a
-  \code{for} loop but is faster.
+
+% 20151211; this is now false, so can delete this:
+% For \code{\link{multinomial}},
+% if \code{subset} is numeric then the function uses a \code{for} loop over
+% the observations (slow).
+% The default computations use vectorization; this uses more memory than a
+% \code{for} loop but is faster.
+
+
+
+  Some other limitations are imposed, e.g.,
+  for \code{\link{acat}} models
+  only a \code{\link{loge}} link is allowed.
+
 
 
 }
 \seealso{
   \code{\link{multinomial}},
   \code{\link{cumulative}},
+  \code{\link{propodds}},
+  \code{\link{acat}},
+  \code{\link{cratio}},
+  \code{\link{sratio}},
   \code{\link{vglm}}.
+
 
 }
 

@@ -336,8 +336,7 @@ if (FALSE)
 
  cennormal <-
  cens.normal <- function(lmu = "identitylink", lsd = "loge",
-                         imethod = 1, zero = 2) {
-
+                         imethod = 1, zero = "sd") {
 
 
   lmu <- as.list(substitute(lmu))
@@ -347,7 +346,6 @@ if (FALSE)
   lsd <- as.list(substitute(lsd))
   esd <- link2list(lsd)
   lsd <- attr(esd, "function.name")
-
 
 
   if (!is.Numeric(imethod, length.arg = 1,
@@ -362,8 +360,19 @@ if (FALSE)
                           namesof("sd", lsd, tag = TRUE), "\n",
             "Conditional variance: sd^2"),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
+                                predictors.names = predictors.names,
+                                M1 = 2)
   }), list( .zero = zero ))),
+  infos = eval(substitute(function(...) {
+    list(M1 = 2,
+         Q1 = 1,
+         zero = .zero ,
+         multiple.responses = FALSE,
+         parameters.names = c("mu", "sd"),
+         expected = TRUE )
+  }, list( .zero = zero ))),
+
   initialize = eval(substitute(expression({
 
     temp5 <-
@@ -383,8 +392,8 @@ if (FALSE)
         stop("some observations are both right and left censored!")
 
     predictors.names <-
-      c(namesof("mu", .lmu , earg =.emu, tag = FALSE),
-        namesof("sd", .lsd, earg =.esd, tag = FALSE))
+      c(namesof("mu", .lmu , earg = .emu , tag = FALSE),
+        namesof("sd", .lsd , earg = .esd , tag = FALSE))
 
     if (!length(etastart)) {
       anyc <- extra$leftcensored | extra$rightcensored
@@ -404,9 +413,9 @@ if (FALSE)
     eta2theta(eta[, 1], .lmu , earg = .emu )
   }, list( .lmu = lmu, .emu = emu ))),
   last = eval(substitute(expression({
-    misc$link <-    c("mu" = .lmu , "sd" = .lsd)
+    misc$link <-    c("mu" = .lmu , "sd" = .lsd )
 
-    misc$earg <- list("mu" = .emu ,"sd" = .esd )
+    misc$earg <- list("mu" = .emu , "sd" = .esd )
 
     misc$expected <- TRUE
     misc$multipleResponses <- FALSE
@@ -419,7 +428,7 @@ if (FALSE)
     cen0 <- !cenL & !cenU   # uncensored obsns
 
     mum <- eta2theta(eta[, 1], .lmu , earg = .emu )
-    sdv <- eta2theta(eta[, 2], .lsd, earg = .esd )
+    sdv <- eta2theta(eta[, 2], .lsd , earg = .esd )
 
     Lower <- ifelse(cenL, y, -Inf)
     Upper <- ifelse(cenU, y,  Inf)
@@ -428,7 +437,9 @@ if (FALSE)
     ell3 <- log1p(-pnorm(( Upper[cenU] -  mum[cenU]) / sdv[cenU]))
     if (residuals) stop("loglikelihood residuals not ",
                         "implemented yet") else
-    sum(w[cen0] * ell1) + sum(w[cenL] * ell2) + sum(w[cenU] * ell3)
+    sum(w[cen0] * ell1) +
+    sum(w[cenL] * ell2) +
+    sum(w[cenU] * ell3)
   }, list( .lmu = lmu, .lsd = lsd,
            .emu = emu, .esd = esd ))),
   vfamily = c("cens.normal"),
@@ -446,7 +457,7 @@ if (FALSE)
     dl.dsd <- (((y-mum)/sdv)^2 - 1) / sdv
 
     dmu.deta <- dtheta.deta(mum, .lmu , earg = .emu )
-    dsd.deta <- dtheta.deta(sdv, .lsd, earg = .esd )
+    dsd.deta <- dtheta.deta(sdv, .lsd , earg = .esd )
 
     if (any(cenL)) {
       mumL <- mum - Lower
@@ -477,8 +488,8 @@ if (FALSE)
     A3 <- 1 - pnorm((Upper - mum) / sdv)  # Upper
     A2 <- 1 - A1 - A3                     # Middle; uncensored
     wz <- matrix(0, n, 3)
-    wz[,iam(1, 1,M)] <- A2 * 1 / sdv^2  # ed2l.dmu2
-    wz[,iam(2, 2,M)] <- A2 * 2 / sdv^2  # ed2l.dsd2
+    wz[, iam(1, 1,M)] <- A2 * 1 / sdv^2  # ed2l.dmu2
+    wz[, iam(2, 2,M)] <- A2 * 2 / sdv^2  # ed2l.dsd2
     mumL <- mum - Lower
     temp21L <- mumL / sdv
     PhiL <- pnorm(temp21L)
@@ -486,15 +497,15 @@ if (FALSE)
     temp31L <- ((1-PhiL) * sdv)^2 
     wz.cenL11 <- phiL * (phiL - (1-PhiL)*temp21L) / temp31L
     wz.cenL22 <- mumL * phiL * ((1-PhiL) * (2 - temp21L^2) +
-                mumL * phiL / sdv) / (sdv * temp31L)
+                 mumL * phiL / sdv) / (sdv * temp31L)
     wz.cenL12 <- phiL * ((1-PhiL)*(temp21L^2 - 1) -
-                temp21L*phiL) / temp31L
+                 temp21L*phiL) / temp31L
     wz.cenL11[!is.finite(wz.cenL11)] <- 0
     wz.cenL22[!is.finite(wz.cenL22)] <- 0
     wz.cenL12[!is.finite(wz.cenL12)] <- 0
-    wz[,iam(1, 1,M)] <- wz[,iam(1, 1,M)] + A1 * wz.cenL11
-    wz[,iam(2, 2,M)] <- wz[,iam(2, 2,M)] + A1 * wz.cenL22
-    wz[,iam(1, 2,M)] <- A1 * wz.cenL12
+    wz[, iam(1, 1, M)] <- wz[, iam(1, 1, M)] + A1 * wz.cenL11
+    wz[, iam(2, 2, M)] <- wz[, iam(2, 2, M)] + A1 * wz.cenL22
+    wz[, iam(1, 2, M)] <- A1 * wz.cenL12
     mumU <- Upper - mum    # often Inf
     temp21U <- mumU / sdv    # often Inf
     PhiU <- pnorm(temp21U)  # often 1
@@ -505,16 +516,16 @@ if (FALSE)
     tmp9 <- (1-PhiU) * (2 - temp21U^2)
     wzcenU22 <- mumU * phiU * (tmp9 + mumU * phiU / sdv) / (sdv * temp31U)
     wzcenU12 <- -phiU * ((1-PhiU)*(temp21U^2 - 1) -
-                temp21U*phiU) / temp31U
+                 temp21U*phiU) / temp31U
     wzcenU11[!is.finite(wzcenU11)] <- 0  # Needed when Upper==Inf
     wzcenU22[!is.finite(wzcenU22)] <- 0  # Needed when Upper==Inf
     wzcenU12[!is.finite(wzcenU12)] <- 0  # Needed when Upper==Inf
-    wz[,iam(1, 1,M)] <- wz[,iam(1, 1,M)] + A3 * wzcenU11
-    wz[,iam(2, 2,M)] <- wz[,iam(2, 2,M)] + A3 * wzcenU22
-    wz[,iam(1, 2,M)] <- wz[,iam(1, 2,M)] + A3 * wzcenU12
-    wz[,iam(1, 1,M)] <- wz[,iam(1, 1,M)] * dmu.deta^2
-    wz[,iam(2, 2,M)] <- wz[,iam(2, 2,M)] * dsd.deta^2
-    wz[,iam(1, 2,M)] <- wz[,iam(1, 2,M)] * dmu.deta * dsd.deta
+    wz[, iam(1, 1, M)] <- wz[, iam(1, 1, M)] + A3 * wzcenU11
+    wz[, iam(2, 2, M)] <- wz[, iam(2, 2, M)] + A3 * wzcenU22
+    wz[, iam(1, 2, M)] <- wz[, iam(1, 2, M)] + A3 * wzcenU12
+    wz[, iam(1, 1, M)] <- wz[, iam(1, 1, M)] * dmu.deta^2
+    wz[, iam(2, 2, M)] <- wz[, iam(2, 2, M)] * dsd.deta^2
+    wz[, iam(1, 2, M)] <- wz[, iam(1, 2, M)] * dmu.deta * dsd.deta
     c(w) * wz
   }), list( .lmu = lmu, .lsd = lsd ))))
 }
@@ -631,7 +642,7 @@ if (FALSE)
   function(lmean = "loge", lshape = "loge",
            imean = NULL,   ishape = NULL,
            probs.y = c(0.2, 0.5, 0.8),
-           imethod = 1, zero = -2) {
+           imethod = 1, zero = "shape") {
 
 
 
@@ -648,9 +659,6 @@ if (FALSE)
   lmeann <- attr(emeann, "function.name")
 
 
-  if (length(zero) &&
-      !is.Numeric(zero, integer.valued = TRUE))
-    stop("bad input for argument 'zero'")
 
   if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
@@ -683,9 +691,9 @@ if (FALSE)
             "Variance: mean^2 * (gamma(1 + 2/shape) / ",
                       "gamma(1 + 1/shape)^2 - 1)"),
  constraints = eval(substitute(expression({
-    dotzero <- .zero
-    M1 <- 2
-    eval(negzero.expression.VGAM)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
+                                predictors.names = predictors.names,
+                                M1 = 2)
   }), list( .zero = zero,
             .lmeann = lmeann ))),
 
@@ -694,8 +702,12 @@ if (FALSE)
          Q1 = 1,
          expected = TRUE,
          multipleResponses = TRUE,
+         parameters.names = c("mean", "shape"),
+         lmean  = .lmeann ,
+         lshape = .lshape ,
          zero = .zero )
-  }, list( .zero = zero ))),
+  }, list( .zero = zero,
+           .lmeann = lmeann, .lshape = lshape ))),
 
   initialize = eval(substitute(expression({
 
@@ -727,7 +739,7 @@ if (FALSE)
     predictors.names <-
         c(namesof(mynames1, .lmeann , earg = .emeann , tag = FALSE),
           namesof(mynames2, .lshape , earg = .eshape , tag = FALSE))
-    predictors.names <- predictors.names[interleave.VGAM(M, M = M1)]
+    predictors.names <- predictors.names[interleave.VGAM(M, M1 = M1)]
 
 
     Meann.init <- matrix(if (length( .imeann )) .imeann else 0.5 * colMeans(y),
@@ -756,7 +768,7 @@ if (FALSE)
         etastart <- 
           cbind(theta2eta(Meann.init, .lmeann , earg = .emeann ),
                 theta2eta(Shape.init, .lshape , earg = .eshape ))[,
-                interleave.VGAM(M, M = M1)]
+                interleave.VGAM(M, M1 = M1)]
       }
     }
   }), list( .lmeann = lmeann, .lshape = lshape,
@@ -792,8 +804,8 @@ if (FALSE)
     M1 <- extra$M1
     avector <- c(rep( .lmeann , length = ncoly),
                  rep( .lshape , length = ncoly))
-    misc$link <- avector[interleave.VGAM(M, M = M1)]
-    temp.names <- c(mynames1, mynames2)[interleave.VGAM(M, M = M1)]
+    misc$link <- avector[interleave.VGAM(M, M1 = M1)]
+    temp.names <- c(mynames1, mynames2)[interleave.VGAM(M, M1 = M1)]
     names(misc$link) <- temp.names
 
     misc$earg <- vector("list", M)
@@ -851,7 +863,7 @@ if (FALSE)
 
     myderiv <- c(w) * cbind(dl.dmeann * dmeann.deta,
                             dl.dshape * dshape.deta)
-    myderiv[, interleave.VGAM(M, M = M1)]
+    myderiv[, interleave.VGAM(M, M1 = M1)]
   }), list( .lmeann = lmeann, .lshape = lshape,
             .emeann = emeann, .eshape = eshape ) )),
   weight = eval(substitute(expression({
@@ -886,7 +898,7 @@ if (FALSE)
            lss = TRUE,
            nrfs = 1,
            probs.y = c(0.2, 0.5, 0.8),
-           imethod = 1, zero = ifelse(lss, -2, -1)) {
+           imethod = 1, zero = "shape") {
 
 
 
@@ -899,9 +911,6 @@ if (FALSE)
   lscale <- attr(escale, "function.name")
 
 
-  if (length(zero) &&
-      !is.Numeric(zero, integer.valued = TRUE))
-    stop("bad input for argument 'zero'")
 
   if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
@@ -943,9 +952,9 @@ if (FALSE)
             "Variance: scale^2 * (gamma(1 + 2/shape) - ",
                       "gamma(1 + 1/shape)^2)"),
  constraints = eval(substitute(expression({
-    dotzero <- .zero
-    M1 <- 2
-    eval(negzero.expression.VGAM)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
+                                predictors.names = predictors.names,
+                                M1 = 2)
   }), list( .zero = zero,
             .scale.12 = scale.12, .scale.TF = scale.TF, .lss = lss ))),
 
@@ -954,8 +963,17 @@ if (FALSE)
          Q1 = 1,
          expected = TRUE,
          multipleResponses = TRUE,
+         parameters.names = if ( .lss )
+           c("scale", "shape") else
+           c("shape", "scale"),
+         lss = .lss ,
+         lscale = .lscale ,
+         lshape = .lshape ,
          zero = .zero )
-  }, list( .zero = zero, .scale.12 = scale.12, .scale.TF = scale.TF
+  }, list( .zero = zero, .scale.12 = scale.12, .scale.TF = scale.TF,
+           .lscale = lscale ,
+           .lshape = lshape ,
+           .lss = lss 
          ))),
 
   initialize = eval(substitute(expression({
@@ -984,21 +1002,21 @@ if (FALSE)
 
 
     if ( .lss ) {
-      mynames1 <- paste("scale", if (ncoly > 1) 1:ncoly else "", sep = "")
-      mynames2 <- paste("shape", if (ncoly > 1) 1:ncoly else "", sep = "")
+      mynames1 <- param.names("scale", ncoly)
+      mynames2 <- param.names("shape", ncoly)
       predictors.names <-
           c(namesof(mynames1, .lscale , earg = .escale , tag = FALSE),
             namesof(mynames2, .lshape , earg = .eshape , tag = FALSE))
             
     } else {
-      mynames1 <- paste("shape", if (ncoly > 1) 1:ncoly else "", sep = "")
-      mynames2 <- paste("scale", if (ncoly > 1) 1:ncoly else "", sep = "")
+      mynames1 <- param.names("shape", ncoly)
+      mynames2 <- param.names("scale", ncoly)
       predictors.names <-
           c(namesof(mynames1, .lshape , earg = .eshape , tag = FALSE),
             namesof(mynames2, .lscale , earg = .escale , tag = FALSE))
     }
     predictors.names <- predictors.names[
-          interleave.VGAM(M, M = M1)]
+          interleave.VGAM(M, M1 = M1)]
 
 
     Shape.init <- matrix(if (length( .ishape )) .ishape else 0 + NA,
@@ -1029,10 +1047,10 @@ if (FALSE)
         etastart <- if ( .lss )
           cbind(theta2eta(Scale.init, .lscale , earg = .escale ),
                 theta2eta(Shape.init, .lshape , earg = .eshape ))[,
-                interleave.VGAM(M, M = M1)] else
+                interleave.VGAM(M, M1 = M1)] else
           cbind(theta2eta(Shape.init, .lshape , earg = .eshape ),
                 theta2eta(Scale.init, .lscale , earg = .escale ))[,
-                interleave.VGAM(M, M = M1)]
+                interleave.VGAM(M, M1 = M1)]
       }
     }
   }), list( .lscale = lscale, .lshape = lshape,
@@ -1073,8 +1091,8 @@ if (FALSE)
                              rep( .lshape , length = ncoly)) else
                            c(rep( .lshape , length = ncoly),
                              rep( .lscale , length = ncoly))
-    misc$link <- avector[interleave.VGAM(M, M = M1)]
-    temp.names <- c(mynames1, mynames2)[interleave.VGAM(M, M = M1)]
+    misc$link <- avector[interleave.VGAM(M, M1 = M1)]
+    temp.names <- c(mynames1, mynames2)[interleave.VGAM(M, M1 = M1)]
     names(misc$link) <- temp.names
 
     misc$earg <- vector("list", M)
@@ -1127,7 +1145,7 @@ if (FALSE)
                               dl.dshape * dshape.deta) else
                  c(w) * cbind(dl.dshape * dshape.deta,
                               dl.dscale * dscale.deta)
-    myderiv[, interleave.VGAM(M, M = M1)]
+    myderiv[, interleave.VGAM(M, M1 = M1)]
   }), list( .lscale = lscale, .lshape = lshape,
             .escale = escale, .eshape = eshape,
             .scale.12 = scale.12, .scale.TF = scale.TF, .lss = lss ) )),
@@ -1379,7 +1397,8 @@ pgamma.deriv.unscaled <- function(q, shape) {
            iAlpha = NULL,   iBetaa = NULL,
            nrfs = 1,
            probs.y = c(0.2, 0.5, 0.8),
-           imethod = 1, zero = -2) {
+           imethod = 1,
+           zero = "Betaa") {
 
 
 
@@ -1398,9 +1417,6 @@ pgamma.deriv.unscaled <- function(q, shape) {
   lBetaa <- attr(eBetaa, "function.name")
 
 
-  if (length(zero) &&
-      !is.Numeric(zero, integer.valued = TRUE))
-    stop("bad input for argument 'zero'")
 
   if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
@@ -1438,17 +1454,24 @@ pgamma.deriv.unscaled <- function(q, shape) {
                     lower.limit, sep = ", ") else
               ""),
  constraints = eval(substitute(expression({
-    dotzero <- .zero
-    M1 <- 2
-    eval(negzero.expression.VGAM)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
+                                predictors.names = predictors.names,
+                                M1 = 2)
   }), list( .zero = zero ))),
 
   infos = eval(substitute(function(...) {
     list(M1 = 2,
          Q1 = 1,
+         expected = TRUE,
+         multipleResponses = TRUE,
+         parameters.names = c("Alpha", "Betaa"),
          lower.limit = .lower.limit ,
+         lAlpha = .lAlpha ,
+         lBetaa = .lBetaa ,
          zero = .zero )
   }, list( .zero = zero,
+           .lAlpha = lAlpha ,
+           .lBetaa = lBetaa ,
            .lower.limit = lower.limit
          ))),
 
@@ -1484,12 +1507,12 @@ pgamma.deriv.unscaled <- function(q, shape) {
            "don't use SurvS4()")
 
 
-    mynames1 <- paste("Alpha", if (ncoly > 1) 1:ncoly else "", sep = "")
-    mynames2 <- paste("Betaa", if (ncoly > 1) 1:ncoly else "", sep = "")
+    mynames1 <- param.names("Alpha", ncoly)
+    mynames2 <- param.names("Betaa", ncoly)
     predictors.names <-
         c(namesof(mynames1, .lAlpha , earg = .eAlpha , tag = FALSE),
           namesof(mynames2, .lBetaa , earg = .eBetaa , tag = FALSE))[
-          interleave.VGAM(M, M = M1)]
+          interleave.VGAM(M, M1 = M1)]
 
 
     Alpha.init <- matrix(if (length( .iAlpha )) .iAlpha else 0 + NA,
@@ -1525,7 +1548,7 @@ pgamma.deriv.unscaled <- function(q, shape) {
       etastart <-
         cbind(theta2eta(Alpha.init, .lAlpha , earg = .eAlpha ),
               theta2eta(Betaa.init, .lBetaa , earg = .eBetaa ))[,
-              interleave.VGAM(M, M = M1)]
+              interleave.VGAM(M, M1 = M1)]
     }
   }), list( .lBetaa = lBetaa, .lAlpha = lAlpha,
             .eBetaa = eBetaa, .eAlpha = eAlpha,
@@ -1572,8 +1595,8 @@ pgamma.deriv.unscaled <- function(q, shape) {
     M1 <- extra$M1
     misc$link <-
       c(rep( .lAlpha , length = ncoly),
-        rep( .lBetaa , length = ncoly))[interleave.VGAM(M, M = M1)]
-    temp.names <- c(mynames1, mynames2)[interleave.VGAM(M, M = M1)]
+        rep( .lBetaa , length = ncoly))[interleave.VGAM(M, M1 = M1)]
+    temp.names <- c(mynames1, mynames2)[interleave.VGAM(M, M1 = M1)]
     names(misc$link) <- temp.names
 
     misc$earg <- vector("list", M)
@@ -1639,7 +1662,7 @@ pgamma.deriv.unscaled <- function(q, shape) {
 
     myderiv <- c(w) * cbind(dl.dAlpha * dAlpha.deta,
                             dl.dBetaa * dBetaa.deta)
-    myderiv[, interleave.VGAM(M, M = M1)]
+    myderiv[, interleave.VGAM(M, M1 = M1)]
   }), list( .lBetaa = lBetaa, .lAlpha = lAlpha,
             .eBetaa = eBetaa, .eAlpha = eAlpha,
             .lower.limit = lower.limit ) )),

@@ -11,11 +11,11 @@ zetaff(link = "loge", init.p = NULL, zero = NULL)
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{link, init.p, zero}{
-  See \code{\link{CommonVGAMffArguments}} for more information.
   These arguments apply to the (positive) parameter \eqn{p}.
   See \code{\link{Links}} for more choices.
   Choosing \code{\link{loglog}} constrains \eqn{p>1}, but
   may fail if the maximum likelihood estimate is less than one.
+  See \code{\link{CommonVGAMffArguments}} for more information.
 
 
   }

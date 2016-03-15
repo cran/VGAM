@@ -155,9 +155,6 @@ pkumar <- function(q, shape1, shape2,
   if (!is.Numeric(grid.shape1, length.arg = 2, positive = TRUE))
     stop("bad input for argument 'grid.shape1'")
 
-  if (length(zero) &&
-      !is.Numeric(zero, integer.valued = TRUE))
-    stop("bad input for argument 'zero'")
 
   new("vglmff",
   blurb = c("Kumaraswamy distribution\n\n",
@@ -165,14 +162,22 @@ pkumar <- function(q, shape1, shape2,
                           namesof("shape2", lshape2, eshape2, tag = FALSE), "\n",
             "Mean:     shape2 * beta(1 + 1 / shape1, shape2)"),
  constraints = eval(substitute(expression({
-    dotzero <- .zero
-    M1 <- 2
-    eval(negzero.expression.VGAM)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
+                                predictors.names = predictors.names,
+                                M1 = 2)
   }), list( .zero = zero ))),
+
   infos = eval(substitute(function(...) {
-    list(M1 = 2, Q1 = 1, expected = TRUE, multipleResponses = TRUE,
-         lshape1 = .lshape1 , lshape2 = .lshape2 , zero = .zero )
+    list(M1 = 2,
+         Q1 = 1,
+         expected = TRUE,
+         multipleResponses = TRUE,
+         parameters.names = c("shape1", "shape2"),
+         lshape1 = .lshape1 ,
+         lshape2 = .lshape2 ,
+         zero = .zero )
   }, list( .zero = zero, .lshape1 = lshape1, .lshape2 = lshape2 ))),
+
   initialize = eval(substitute(expression({
     checklist <- w.y.check(w = w, y = y, Is.positive.y = TRUE,
                            ncol.w.max = Inf, ncol.y.max = Inf,
@@ -185,12 +190,12 @@ pkumar <- function(q, shape1, shape2,
     extra$ncoly <- ncoly <- ncol(y)
     extra$M1 <- M1 <- 2
     M <- M1 * ncoly
-    mynames1 <- paste("shape1", if (ncoly > 1) 1:ncoly else "", sep = "")
-    mynames2 <- paste("shape2", if (ncoly > 1) 1:ncoly else "", sep = "")
+    mynames1 <- param.names("shape1", ncoly)
+    mynames2 <- param.names("shape2", ncoly)
     predictors.names <-
         c(namesof(mynames1, .lshape1 , earg = .eshape1 , tag = FALSE),
           namesof(mynames2, .lshape2 , earg = .eshape2 , tag = FALSE))[
-          interleave.VGAM(M, M = M1)]
+          interleave.VGAM(M, M1 = M1)]
 
     if (!length(etastart)) {
       kumar.Loglikfun <- function(shape1, y, x, w, extraargs) {
@@ -212,7 +217,7 @@ pkumar <- function(q, shape1, shape2,
 
       etastart <- cbind(theta2eta(shape1.init, .lshape1 , earg = .eshape1 ),
                         theta2eta(shape2.init, .lshape2 , earg = .eshape2 ))[,
-                  interleave.VGAM(M, M = M1)]
+                  interleave.VGAM(M, M1 = M1)]
     }
   }), list( .lshape1 = lshape1, .lshape2 = lshape2,
             .ishape1 = ishape1, .ishape2 = ishape2,
@@ -226,8 +231,8 @@ pkumar <- function(q, shape1, shape2,
            .eshape1 = eshape1, .eshape2 = eshape2 ))),
   last = eval(substitute(expression({
     misc$link <- c(rep( .lshape1 , length = ncoly),
-                   rep( .lshape2 , length = ncoly))[interleave.VGAM(M, M = M1)]
-    temp.names <- c(mynames1, mynames2)[interleave.VGAM(M, M = M1)]
+                   rep( .lshape2 , length = ncoly))[interleave.VGAM(M, M1 = M1)]
+    temp.names <- c(mynames1, mynames2)[interleave.VGAM(M, M1 = M1)]
     names(misc$link) <- temp.names
 
     misc$earg <- vector("list", M)
@@ -269,7 +274,7 @@ pkumar <- function(q, shape1, shape2,
     dl.dshape2 <- 1 / shape2 + log1p(-y^shape1)
     dl.deta <- c(w) * cbind(dl.dshape1 * dshape1.deta,
                             dl.dshape2 * dshape2.deta)
-    dl.deta[, interleave.VGAM(M, M = M1)]
+    dl.deta[, interleave.VGAM(M, M1 = M1)]
   }), list( .lshape1 = lshape1, .lshape2 = lshape2,
             .eshape1 = eshape1, .eshape2 = eshape2 ))),
   weight = eval(substitute(expression({
@@ -414,9 +419,25 @@ riceff.control <- function(save.weights = TRUE, ...) {
             "sigma*sqrt(pi/2)*exp(z/2)*((1-z)*",
             "besselI(-z/2, nu = 0) - z * besselI(-z/2, nu = 1)) ",
             "where z=-vee^2/(2*sigma^2)"),
+
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
+                                predictors.names = predictors.names,
+                                M1 = 2)
   }), list( .zero = zero ))),
+
+  infos = eval(substitute(function(...) {
+    list(M1 = 2,
+         Q1 = 1,
+         expected = FALSE,
+         multipleResponses = FALSE,
+         parameters.names = c("sigma", "vee"),
+         nsimEIM = .nsimEIM,
+         lsigma = .lsigma ,
+         lvee = .lvee ,
+         zero = .zero )
+  }, list( .zero = zero, .lsigma = lsigma, .lvee = lvee,
+           .nsimEIM = nsimEIM ))),
   initialize = eval(substitute(expression({
 
     temp5 <-
@@ -671,8 +692,22 @@ skellam.control <- function(save.weights = TRUE, ...) {
                            bool = .parallel , 
                            constraints = constraints,
                            apply.int = TRUE)
-    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
+                                predictors.names = predictors.names,
+                                M1 = 2)
   }), list( .parallel = parallel, .zero = zero ))),
+  infos = eval(substitute(function(...) {
+    list(M1 = 2,
+         Q1 = 1,
+         expected = FALSE,
+         multipleResponses = FALSE,
+         parameters.names = c("mu1", "mu2"),
+         nsimEIM = .nsimEIM,
+         lmu1 = .lmu1 ,
+         lmu2 = .lmu2 ,
+         zero = .zero )
+  }, list( .zero = zero, .lmu1 = lmu1, .lmu2 = lmu2,
+           .nsimEIM = nsimEIM ))),
   initialize = eval(substitute(expression({
 
 
@@ -899,9 +934,6 @@ yulesimon.control <- function(save.weights = TRUE, ...) {
       nsimEIM <= 50)
     stop("argument 'nsimEIM' should be an integer greater than 50")
 
-  if (length(zero) &&
-      !is.Numeric(zero, integer.valued = TRUE, positive = TRUE))
-    stop("bad input for argument 'zero'")
 
 
   new("vglmff",
@@ -913,15 +945,16 @@ yulesimon.control <- function(save.weights = TRUE, ...) {
             "Variance: rho^2 / ((rho - 1)^2 * (rho - 2)), ",
             "provided rho > 2"),
   constraints = eval(substitute(expression({
-    dotzero <- .zero
-    M1 <- 1
-    eval(negzero.expression.VGAM)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
+                                predictors.names = predictors.names,
+                                M1 = 1)
   }), list( .zero = zero ))),
 
   infos = eval(substitute(function(...) {
     list(M1 = 1,
          Q1 = 1,
          nsimEIM = .nsimEIM,
+         parameters.names = c("rho"),
          zero = .zero )
   }, list( .zero = zero,
            .nsimEIM = nsimEIM ))),
@@ -951,9 +984,8 @@ yulesimon.control <- function(save.weights = TRUE, ...) {
     M <- M1 * ncoly
 
 
-    mynames1  <- paste("rho", if (ncoly > 1) 1:ncoly else "", sep = "")
-    predictors.names <-
-      namesof(mynames1, .link , earg = .earg , tag = FALSE) 
+    mynames1  <- param.names("rho", ncoly)
+    predictors.names <- namesof(mynames1, .link , earg = .earg , tag = FALSE)
 
     if (!length(etastart)) {
       wmeany <- colSums(y * w) / colSums(w) + 1/8
@@ -1149,9 +1181,6 @@ rlind <- function(n, theta) {
   link <- attr(earg, "function.name")
 
 
-  if (length(zero) &&
-      !is.Numeric(zero, integer.valued = TRUE, positive = TRUE))
-    stop("bad input for argument 'zero'")
 
 
   new("vglmff",
@@ -1164,14 +1193,17 @@ rlind <- function(n, theta) {
             "Variance: (theta^2 + 4 * theta + 2) / (theta * (theta + 1))^2"),
 
   constraints = eval(substitute(expression({
-    dotzero <- .zero
-    M1 <- 1
-    eval(negzero.expression.VGAM)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
+                                predictors.names = predictors.names,
+                                M1 = 1)
   }), list( .zero = zero ))),
 
   infos = eval(substitute(function(...) {
     list(M1 = 1,
          Q1 = 1,
+         expected = TRUE,
+         multipleResponses = TRUE,
+         parameters.names = c("theta"),
          zero = .zero )
   }, list( .zero = zero ))),
 
@@ -1199,9 +1231,8 @@ rlind <- function(n, theta) {
     M <- M1 * ncoly
 
 
-    mynames1  <- paste("theta", if (ncoly > 1) 1:ncoly else "", sep = "")
-    predictors.names <-
-      namesof(mynames1, .link , earg = .earg , tag = FALSE) 
+    mynames1  <- param.names("theta", ncoly)
+    predictors.names <- namesof(mynames1, .link , earg = .earg , tag = FALSE)
 
     if (!length(etastart)) {
       wmeany <- colSums(y * w) / colSums(w) + 1/8
@@ -1352,9 +1383,6 @@ if (FALSE)
       nsimEIM <= 50)
     stop("argument 'nsimEIM' should be an integer greater than 50")
 
-  if (length(zero) &&
-      !is.Numeric(zero, integer.valued = TRUE, positive = TRUE))
-    stop("bad input for argument 'zero'")
 
 
   new("vglmff",
@@ -1368,15 +1396,16 @@ if (FALSE)
                       "(theta * (theta + 1))^2, "
             ),
   constraints = eval(substitute(expression({
-    dotzero <- .zero
-    M1 <- 1
-    eval(negzero.expression.VGAM)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
+                                predictors.names = predictors.names,
+                                M1 = 1)
   }), list( .zero = zero ))),
 
   infos = eval(substitute(function(...) {
     list(M1 = 1,
          Q1 = 1,
-         nsimEIM = .nsimEIM,
+         nsimEIM = .nsimEIM ,
+         parameters.names = c("theta"),
          zero = .zero )
   }, list( .zero = zero,
            .nsimEIM = nsimEIM ))),
@@ -1406,9 +1435,8 @@ if (FALSE)
     M <- M1 * ncoly
 
 
-    mynames1  <- paste("theta", if (ncoly > 1) 1:ncoly else "", sep = "")
-    predictors.names <-
-      namesof(mynames1, .link , earg = .earg , tag = FALSE) 
+    mynames1  <- param.names("theta", ncoly)
+    predictors.names <- namesof(mynames1, .link , earg = .earg , tag = FALSE)
 
     if (!length(etastart)) {
       wmeany <- colSums(y * w) / colSums(w) + 1/8
@@ -1621,9 +1649,6 @@ slash.control <- function(save.weights = TRUE, ...) {
       !is.Numeric(isigma, positive = TRUE))
     stop("argument 'isigma' must be > 0")
 
-  if (length(zero) &&
-      !is.Numeric(zero, integer.valued = TRUE, positive = TRUE))
-    stop("bad input for argument 'zero'")
 
 
   if (!is.Numeric(nsimEIM, length.arg = 1,
@@ -1651,9 +1676,26 @@ slash.control <- function(save.weights = TRUE, ...) {
          "\ty!=mu",
          "\n1/(2*sigma*sqrt(2*pi))",
          "\t\t\t\t\t\t\ty=mu\n")),
+
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
+                                predictors.names = predictors.names,
+                                M1 = 2)
   }), list( .zero = zero ))),
+
+
+  infos = eval(substitute(function(...) {
+    list(M1 = 2,
+         Q1 = 1,
+         expected = TRUE,
+         multipleResponses = FALSE,
+         parameters.names = c("mu", "sigma"),
+         lmu    = .lmu ,
+         lsigma = .lsigma ,
+         zero = .zero )
+  }, list( .zero = zero, .lmu = lmu, .lsigma = lsigma ))),
+
+
   initialize = eval(substitute(expression({
 
     temp5 <-
@@ -1706,9 +1748,9 @@ slash.control <- function(save.weights = TRUE, ...) {
       NA * eta2theta(eta[, 1], link = .lmu , earg = .emu )
   }, list( .lmu = lmu, .emu = emu ))),
   last = eval(substitute(expression({
-    misc$link <-    c("mu" = .lmu , "sigma" = .lsigma)
+    misc$link <-    c("mu" = .lmu , "sigma" = .lsigma )
 
-    misc$earg <- list("mu" = .emu, "sigma" = .esigma )
+    misc$earg <- list("mu" = .emu , "sigma" = .esigma )
 
     misc$expected <- TRUE
     misc$nsimEIM <- .nsimEIM
@@ -2374,9 +2416,6 @@ qbenf <- function(p, ndigits = 1,
     stop("argument 'imethod' must be 1 or 2 or 3")
 
 
- if (length(zero) &&
-      !is.Numeric(zero, integer.valued = TRUE, positive = TRUE))
-    stop("bad input for argument 'zero'")
 
   uu.ll <- min(upper.limit)
 
@@ -2397,17 +2436,23 @@ qbenf <- function(p, ndigits = 1,
                          "(1 - prob)^", upper.limit+1, ")", sep = ""),
                          "")),
   constraints = eval(substitute(expression({
-    dotzero <- .zero
-    M1 <- 1
-    eval(negzero.expression.VGAM)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
+                                predictors.names = predictors.names,
+                                M1 = 1)
   }), list( .zero = zero ))),
 
   infos = eval(substitute(function(...) {
     list(M1 = 1,
          Q1 = 1,
+         expected = .expected ,
+         imethod = .imethod ,
+         multipleResponses = TRUE,
+         parameters.names = c("prob"),
          upper.limit = .upper.limit ,
          zero = .zero )
   }, list( .zero = zero,
+           .expected = expected,
+           .imethod = imethod,
            .upper.limit = upper.limit ))),
 
   initialize = eval(substitute(expression({
@@ -2436,9 +2481,8 @@ qbenf <- function(p, ndigits = 1,
       stop("some response values greater than argument 'upper.limit'")
 
 
-    mynames1 <- paste("prob", if (ncoly > 1) 1:ncoly else "", sep = "")
-    predictors.names <-
-      namesof(mynames1, .link , earg = .earg , tag = FALSE)
+    mynames1 <- param.names("prob", ncoly)
+    predictors.names <- namesof(mynames1, .link , earg = .earg , tag = FALSE)
 
 
     if (!length(etastart)) {

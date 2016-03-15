@@ -3,6 +3,27 @@
 %
 %
 %
+% 201602:
+\alias{Init.mu}
+\alias{.min.criterion.VGAM}
+\alias{predictvglmS4VGAM}
+% 201601:
+\alias{EIM.NB.speciald}
+\alias{EIM.NB.specialp}
+\alias{EIM.posNB.speciald}
+\alias{EIM.posNB.specialp}
+\alias{showvglmS4VGAM}
+\alias{showvgamS4VGAM}
+%\alias{coefvgam}
+%
+% 201512:
+\alias{margeffS4VGAM}
+\alias{showsummaryvglmS4VGAM}
+\alias{summaryvglmS4VGAM}
+\alias{findFirstMethod}
+\alias{cratio.derivs}
+\alias{subsetarray3}
+\alias{tapplymat1}
 % 201509, for a bug in car::linearHypothesis() and car:::Anova():
 \alias{as.char.expression}
 \alias{coef.vlm}
@@ -20,8 +41,8 @@
 \alias{qlms.bcn}
 \alias{dlms.bcn}
 \alias{dbetaII}
-\alias{AR1.control}
-\alias{param.names}
+% \alias{AR1.control}
+% \alias{param.names}  % 20151105
 %\alias{is.buggy}
 %\alias{is.buggy.vlm}
 %
@@ -36,7 +57,7 @@
 \alias{grid.search}
 \alias{expected.betabin.ab}
 % 201406;
-\alias{interleave.VGAM}
+% \alias{interleave.VGAM}   DONE 20151204
 \alias{interleave.cmat}  % 201506;
 \alias{marcumQ}
 \alias{QR.Q}
@@ -367,7 +388,7 @@
 \alias{deviance.qrrvglm}
 %\alias{df.residual}
 %\alias{df.residual_vlm}
-\alias{dimm}
+% \alias{dimm}  % 20151105
 % \alias{dneg.binomial}
 \alias{dnorm2}
 %\alias{dotC}
@@ -631,7 +652,7 @@
 \alias{vglm.multinomial.control}
 \alias{vglm.multinomial.deviance.control}
 \alias{dmultinomial}
-\alias{vglm.vcategorical.control}
+\alias{vglm.VGAMcategorical.control}
 % \alias{vindex}
 % \alias{vlabel}
 \alias{vlm}

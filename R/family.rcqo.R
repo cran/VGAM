@@ -157,7 +157,7 @@ rcqo <- function(n, p, S,
         S^(1/Rank) < 2)
       stop("S^(1/Rank) must be an integer greater or equal to 2")
     if (Rank == 1) {
-      optimums <- matrix(as.numeric(NA), S, Rank)
+      optimums <- matrix(NA_real_, S, Rank)
       for (r in 1:Rank) {
         optimums[, r] <- seq(-AA, AA, len = S^(1/Rank))
       }

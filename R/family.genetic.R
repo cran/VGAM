@@ -46,6 +46,8 @@
          M1 = ifelse( .inbreeding , 3, 2),
          expected = TRUE,
          multipleResponses = FALSE,
+         parameters.names = c("p1", "p2",
+                if ( .inbreeding ) "f" else NULL),
          link = if ( .inbreeding )
                   c("p1" = .link , "p2" = .link , "f" = .link ) else
                   c("p1" = .link , "p2" = .link  ))
@@ -183,7 +185,7 @@
   weight = eval(substitute(expression({
     if ( .inbreeding ) {
       dPP <- array(c(dP1, dP2, dP3), c(n, 6, 3))
-      wz <- matrix(as.numeric(NA), n, dimm(M))  # dimm(M)==6 because M==3
+      wz <- matrix(NA_real_, n, dimm(M))  # dimm(M)==6 because M==3
       for (i1 in 1:M)
         for (i2 in i1:M) {
           index <- iam(i1, i2, M)
@@ -193,7 +195,7 @@
       }
     } else {
       qq <- 1-p1-p2
-      wz <- matrix(as.numeric(NA), n, dimm(M))  # dimm(M)==3 because M==2
+      wz <- matrix(NA_real_, n, dimm(M))  # dimm(M)==3 because M==2
       ned2l.dp12  <-  2 * (1/p1 + 1/qq)
       ned2l.dp22  <-  2 * (1/p2 + 1/qq)
       ned2l.dp1dp2 <-  2 / qq
@@ -309,7 +311,7 @@
   }), list( .link = link, .earg = earg))),
   weight = eval(substitute(expression({
     dPP <- array(c(dP1,dP2,dP3), c(n,6, 3))
-    wz <- matrix(as.numeric(NA), n, dimm(M))  # dimm(M)==6 because M==3
+    wz <- matrix(NA_real_, n, dimm(M))  # dimm(M)==6 because M==3
     for (i1 in 1:M)
       for (i2 in i1:M) {
         index <- iam(i1,i2, M)
@@ -344,10 +346,18 @@
             namesof("pA", link.pA, earg = earg.pA, tag = FALSE), ", ", 
             namesof("pB", link.pB, earg = earg.pB, tag = FALSE)),
   deviance = Deviance.categorical.data.vgam,
+
+  constraints = eval(substitute(expression({
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
+                                predictors.names = predictors.names,
+                                M1 = 2)
+  }), list( .zero = zero ))),
+
   infos = eval(substitute(function(...) {
     list(M1 = 2,
          Q1 = 4,
          multipleResponses = FALSE,
+         parameters.names = c("pA", "pB"),
          expected = TRUE,
          zero = .zero ,
          link = c("pA" = .link.pA , "pB" = .link.pB ),
@@ -356,11 +366,6 @@
   }, list( .link.pA = link.pA, .link.pB = link.pB,
            .earg.pA = earg.pA, .earg.pB = earg.pB,
            .zero = zero ))),
-
-  constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
-  }), list( .zero = zero ))),
-
 
   initialize = eval(substitute(expression({
     mustart.orig <- mustart
@@ -455,7 +460,7 @@
             .earg.pA = earg.pA, .earg.pB = earg.pB ))),
 
   weight = eval(substitute(expression({
-    wz <- matrix(as.numeric(NA), n, dimm(M))  # dimm(M)==3 because M==2
+    wz <- matrix(NA_real_, n, dimm(M))  # dimm(M)==3 because M==2
 
     ned2l.dp2  <- (1 + 2/ppp + 4*qqq/qbar + ppp/pbar)
     ned2l.dq2  <- (1 + 2/qqq + 4*ppp/pbar + qqq/qbar)
@@ -607,10 +612,12 @@
     list(M1 = ifelse( .inbreeding , 2, 1),
          Q1 = 3,
          multipleResponses = FALSE,
+         parameters.names = c("pA",
+                if ( .inbreeding ) "f" else NULL),
          expected = TRUE,
          zero = .zero ,
          link = if ( .inbreeding ) c("pA" = .linkp , "f" = .linkf ) else
-                            c("pA" = .linkp ))
+                                   c("pA" = .linkp ))
   }, list( .linkp = linkp,
            .linkf = linkf, .inbreeding = inbreeding,
            .zero = zero ))),
@@ -725,7 +732,7 @@
       dPP <- array(c(dP1, dP2), c(n, 3, 2))
       dPP.deta <- cbind(dtheta.deta(pA, link = .linkp , earg = .eargp ),
                         dtheta.deta(fp, link = .linkf , earg = .eargf ))
-      wz <- matrix(as.numeric(NA), n, dimm(M))  # dimm(M)==3 because M==2
+      wz <- matrix(NA_real_, n, dimm(M))  # dimm(M)==3 because M==2
       for (i1 in 1:M)
         for (i2 in i1:M) {
           index <- iam(i1, i2, M)

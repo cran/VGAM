@@ -15,7 +15,7 @@ binormal(lmean1 = "identitylink", lmean2 = "identitylink",
          isd1   = NULL,       isd2   = NULL,
          irho   = NULL,       imethod = 1,
          eq.mean = FALSE,     eq.sd = FALSE,
-         zero = 3:5)
+         zero = c("sd", "rho"))
 
 
 }

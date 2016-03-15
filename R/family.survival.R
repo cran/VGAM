@@ -16,7 +16,8 @@
   function(r1 = 0, r2 = 0,
            lmu = "identitylink",
            lsd = "loge",
-           imu = NULL, isd = NULL, zero = 2) {
+           imu = NULL, isd = NULL,
+           zero = "sd") {
   if (!is.Numeric(r1, length.arg = 1, integer.valued = TRUE) ||
       r1 < 0)
     stop("bad input for 'r1'")
@@ -34,21 +35,34 @@
 
 
   new("vglmff",
-  blurb = c("Univariate Normal distribution with double censoring\n\n",
+  blurb = c("Univariate normal distribution with double censoring\n\n",
             "Links:    ",
             namesof("mu", lmu, earg = emu, tag = TRUE), ", ",
             namesof("sd", lsd, earg = esd, tag = TRUE),
             "\n",
             "Variance: sd^2"),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
+                                predictors.names = predictors.names,
+                                M1 = 2)
   }) , list( .zero = zero))),
 
+  infos = eval(substitute(function(...) {
+    list(M1 = 2,
+         Q1 = 1,
+         expected = TRUE,
+         multipleResponses = FALSE,
+         parameters.names = c("mu", "sd"),
+         lmu = .lmu ,
+         lsd = .lsd ,
+         zero = .zero )
+  }, list( .zero = zero, .lmu = lmu, .lsd = lsd
+         ))),
 
   initialize = eval(substitute(expression({
     predictors.names <-
-      c(namesof("mu", .lmu, earg =.emu, tag = FALSE),
-        namesof("sd", .lsd, earg =.esd, tag = FALSE))
+      c(namesof("mu", .lmu , earg = .emu , tag = FALSE),
+        namesof("sd", .lsd , earg = .esd , tag = FALSE))
 
     if (ncol(y <- cbind(y)) != 1)
       stop("the response must be a vector or a one-column matrix")
@@ -132,15 +146,15 @@
     dl.dsd <- -1/sd + (y-mu)^2 / sd^3 +
              ((- .r1 * z1*fz1/Fz1 + .r2 * z2*fz2/(1-Fz2)) / sd) / (n*w)
 
-    dmu.deta <- dtheta.deta(mu, .lmu, earg =.emu)
-    dsd.deta <- dtheta.deta(sd, .lsd, earg =.esd)
+    dmu.deta <- dtheta.deta(mu, .lmu , earg =.emu )
+    dsd.deta <- dtheta.deta(sd, .lsd , earg =.esd )
 
     c(w) * cbind(dl.dmu * dmu.deta, dl.dsd * dsd.deta)
   }) , list( .lmu = lmu, .lsd = lsd,
              .emu = emu, .esd = esd,
              .r1 = r1, .r2 = r2 ))),
-  weight=expression({
-    wz <- matrix(as.numeric(NA), n, dimm(M))
+  weight = expression({
+    wz <- matrix(NA_real_, n, dimm(M))
 
     Q.1 <- ifelse(q1 == 0, 1, q1)  # Saves division by 0 below; not elegant
     Q.2 <- ifelse(q2 == 0, 1, q2)  # Saves division by 0 below; not elegant
@@ -286,7 +300,9 @@ rbisa <- function(n, scale = 1, shape) {
 
  bisa <- function(lscale = "loge", lshape = "loge",
                   iscale = 1,      ishape = NULL,
-                  imethod = 1, zero = NULL, nowarning = FALSE) {
+                  imethod = 1,
+                  zero = "shape",
+                  nowarning = FALSE) {
 
 
 
@@ -315,15 +331,31 @@ rbisa <- function(n, scale = 1, shape) {
             namesof("scale", lscale, earg = escale, tag = TRUE), "; ",
             namesof("shape", lshape, earg = eshape, tag = TRUE)),
   constraints = eval(substitute(expression({
-      constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
+                                predictors.names = predictors.names,
+                                M1 = 2)
   }) , list( .zero = zero))),
+
+  infos = eval(substitute(function(...) {
+    list(M1 = 2,
+         Q1 = 1,
+         expected = TRUE,
+         multipleResponses = FALSE,
+         parameters.names = c("scale", "shape"),
+         lscale = .lscale ,
+         lshape = .lshape ,
+         zero = .zero )
+  }, list( .zero = zero, .lscale = lscale, .lshape = lshape
+         ))),
+
+
   initialize = eval(substitute(expression({
     if (ncol(y <- cbind(y)) != 1)
       stop("the response must be a vector or a one-column matrix")
 
     predictors.names <-
-      c(namesof("scale", .lscale , earg = .escale, tag = FALSE),
-        namesof("shape", .lshape , earg = .eshape, tag = FALSE))
+      c(namesof("scale", .lscale , earg = .escale , tag = FALSE),
+        namesof("shape", .lshape , earg = .eshape , tag = FALSE))
 
     if (!length(etastart)) {
       scale.init <- rep( .iscale , len = n)
@@ -397,7 +429,7 @@ rbisa <- function(n, scale = 1, shape) {
   }) , list( .lshape = lshape, .lscale = lscale,
              .eshape = eshape, .escale = escale ))),
   weight = eval(substitute(expression({
-    wz <- matrix(as.numeric(NA), n, M)  # Diagonal!!
+    wz <- matrix(NA_real_, n, M)  # Diagonal!!
     wz[, iam(2, 2, M)] <- 2 * dsh.deta^2 / sh^2
     hfunction <- function(alpha)
       alpha * sqrt(pi/2) - pi * exp(2/alpha^2) *
